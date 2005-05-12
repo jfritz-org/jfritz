@@ -1,0 +1,6 @@
+# Ignore binary directories
+ant/*
+bin/*
+
+# Ignore password file
+build-release-pwd.xml
