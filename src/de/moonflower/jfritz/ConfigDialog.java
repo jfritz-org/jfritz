@@ -20,27 +20,26 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
 
 /**
- * JDialog for JFritz configuration.
- * TODO: I18N
+ * JDialog for JFritz configuration. TODO: I18N
  *
  * @author Arno Willig
  */
 public class ConfigDialog extends JDialog {
 
-	protected JTextField address, areaCode, countryCode, areaPrefix, countryPrefix;
+	protected JTextField address, areaCode, countryCode, areaPrefix,
+			countryPrefix;
 
 	protected JPasswordField pass;
+
+	protected JSlider timerSlider;
 
 	protected JButton okButton;
 
 	protected JButton cancelButton;
-
-	protected JLabel passLabel, addressLabel,
-	areaCodeLabel,intCodeLabel,areaPrefixLabel,intPrefixLabel,
-	deleteAfterFetchLabel;
 
 	private boolean pressed_OK = false;
 
@@ -75,7 +74,6 @@ public class ConfigDialog extends JDialog {
 		this.address.setText(address);
 	}
 
-
 	public void setValues(Properties properties) {
 		pass.setText(properties.getProperty("box.password"));
 		address.setText(properties.getProperty("box.address"));
@@ -83,15 +81,18 @@ public class ConfigDialog extends JDialog {
 		countryCode.setText(properties.getProperty("country.code"));
 		areaPrefix.setText(properties.getProperty("area.prefix"));
 		countryPrefix.setText(properties.getProperty("country.prefix"));
+		timerSlider.setValue(Integer.parseInt(properties.getProperty("fetch.timer")));
 	}
 
 	public void storeValues(Properties properties) {
 		properties.setProperty("box.password", new String(pass.getPassword()));
-		properties.setProperty("box.address",address.getText());
-		properties.setProperty("area.code",areaCode.getText());
-		properties.setProperty("country.code",countryCode.getText());
-		properties.setProperty("area.prefix",areaPrefix.getText());
-		properties.setProperty("country.prefix",countryPrefix.getText());
+		properties.setProperty("box.address", address.getText());
+		properties.setProperty("area.code", areaCode.getText());
+		properties.setProperty("country.code", countryCode.getText());
+		properties.setProperty("area.prefix", areaPrefix.getText());
+		properties.setProperty("country.prefix", countryPrefix.getText());
+		if (timerSlider.getValue()<3) timerSlider.setValue(3);
+		properties.setProperty("fetch.timer", Integer.toString(timerSlider.getValue()));
 	}
 
 	protected void dialogInit() {
@@ -106,13 +107,11 @@ public class ConfigDialog extends JDialog {
 		countryPrefix = new JTextField("", 3);
 		okButton = new JButton("Okay");
 		cancelButton = new JButton("Abbruch");
-		passLabel = new JLabel("Fritz!Box-Passwort: ");
-		addressLabel = new JLabel("Fritz!Box-Addresse: ");
-		areaCodeLabel = new JLabel("Ortsvorwahl: ");
-		intCodeLabel = new JLabel("Landesvorwahl: ");
-		areaPrefixLabel = new JLabel("Orts-Prefix: ");
-		intPrefixLabel = new JLabel("Landes-Prefix: ");
-		deleteAfterFetchLabel = new JLabel("Anruferliste nach Übertragung auf der Fritz!Box löschen?");
+		timerSlider = new JSlider(0, 120, 30);
+		timerSlider.setPaintTicks(true);
+		timerSlider.setMinorTickSpacing(10);
+		timerSlider.setMajorTickSpacing(30);
+		timerSlider.setPaintLabels(true);
 
 		super.dialogInit();
 
@@ -151,62 +150,75 @@ public class ConfigDialog extends JDialog {
 		c.anchor = GridBagConstraints.EAST;
 
 		c.gridy = 1;
-		gridbag.setConstraints(addressLabel, c);
-		pane.add(addressLabel);
+		label = new JLabel("Fritz!Box-Addresse: ");
+		gridbag.setConstraints(label, c);
+		pane.add(label);
 		gridbag.setConstraints(address, c);
 		address.addActionListener(actionListener);
 		address.addKeyListener(keyListener);
 		pane.add(address);
 
 		c.gridy = 2;
-		gridbag.setConstraints(passLabel, c);
-		pane.add(passLabel);
+		label = new JLabel("Fritz!Box-Passwort: ");
+		gridbag.setConstraints(label, c);
+		pane.add(label);
 		gridbag.setConstraints(pass, c);
 		pass.addActionListener(actionListener);
 		pass.addKeyListener(keyListener);
 		pane.add(pass);
 
 		c.gridy = 3;
-		gridbag.setConstraints(areaCodeLabel, c);
-		pane.add(areaCodeLabel);
+		label = new JLabel("Ortsvorwahl: ");
+		gridbag.setConstraints(label, c);
+		pane.add(label);
 		gridbag.setConstraints(areaCode, c);
 		areaCode.addActionListener(actionListener);
 		areaCode.addKeyListener(keyListener);
 		pane.add(areaCode);
 
 		c.gridy = 4;
-		gridbag.setConstraints(intCodeLabel, c);
-		pane.add(intCodeLabel);
+		label = new JLabel("Landesvorwahl: ");
+		gridbag.setConstraints(label, c);
+		pane.add(label);
 		gridbag.setConstraints(countryCode, c);
 		countryCode.addActionListener(actionListener);
 		countryCode.addKeyListener(keyListener);
 		pane.add(countryCode);
 
 		c.gridy = 5;
-		gridbag.setConstraints(areaPrefixLabel, c);
-		pane.add(areaPrefixLabel);
+		label = new JLabel("Orts-Prefix: ");
+		gridbag.setConstraints(label, c);
+		pane.add(label);
 		gridbag.setConstraints(areaPrefix, c);
 		areaPrefix.addActionListener(actionListener);
 		areaPrefix.addKeyListener(keyListener);
 		pane.add(areaPrefix);
 
 		c.gridy = 6;
-		gridbag.setConstraints(intPrefixLabel, c);
-		pane.add(intPrefixLabel);
+		label = new JLabel("Landes-Prefix: ");
+		gridbag.setConstraints(label, c);
+		pane.add(label);
 		gridbag.setConstraints(countryPrefix, c);
 		countryCode.addActionListener(actionListener);
 		countryCode.addKeyListener(keyListener);
 		pane.add(countryPrefix);
 
-		/*
 		c.gridy = 7;
-		gridbag.setConstraints(deleteAfterFetchLabel, c);
-		pane.add(deleteAfterFetchLabel);
-		gridbag.setConstraints(countryPrefix, c);
-		countryCode.addActionListener(actionListener);
-		countryCode.addKeyListener(keyListener);
-		pane.add(countryPrefix);
-		*/
+		label = new JLabel("Timer (in min): ");
+		gridbag.setConstraints(label, c);
+		pane.add(label);
+		gridbag.setConstraints(timerSlider, c);
+		//		slider.addActionListener(actionListener);
+		timerSlider.addKeyListener(keyListener);
+		pane.add(timerSlider);
+
+		/*
+		 * c.gridy = 7; gridbag.setConstraints(deleteAfterFetchLabel, c);
+		 * pane.add(deleteAfterFetchLabel);
+		 * gridbag.setConstraints(countryPrefix, c);
+		 * countryCode.addActionListener(actionListener);
+		 * countryCode.addKeyListener(keyListener); pane.add(countryPrefix);
+		 */
 
 		c.gridy = 8;
 		c.gridwidth = GridBagConstraints.REMAINDER;

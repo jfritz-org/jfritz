@@ -24,7 +24,6 @@
  */
 package de.moonflower.jfritz;
 
-
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -42,6 +41,7 @@ import java.util.InvalidPropertiesFormatException;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.Timer;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
@@ -62,7 +62,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
-
 /**
  * This is main class of JFritz, which creates the GUI.
  *
@@ -73,7 +72,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 
 	public final static String PROGRAM_NAME = "JFritz!";
 
-	public final static String PROGRAM_VERSION = "0.2.2";
+	public final static String PROGRAM_VERSION = "0.2.3";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -90,13 +89,18 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 	Properties defaultProperties, properties, participants;
 
 	CallerList callerlist;
+
 	CallerTable callertable;
+
+	Timer timer;
 
 	JMenuBar menu;
 
 	JToolBar toolbar;
 
 	JButton fetchButton, lookupButton;
+
+	JToggleButton taskButton;
 
 	JProgressBar progressbar;
 
@@ -126,7 +130,6 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		javax.swing.SwingUtilities.invokeLater(this);
 	}
 
-
 	public void run() {
 		createAndShowGUI();
 		callerlist.loadFromXMLFile();
@@ -134,6 +137,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		callerlist.sortAllRowsBy(1, false);
 		setStatus(callerlist.getRowCount() + " "
 				+ messages.getString("entries"));
+
 	}
 
 	private void createAndShowGUI() {
@@ -200,6 +204,15 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 						"/de/moonflower/jfritz/resources/images/fetch.png"))));
 		toolbar.add(fetchButton);
 
+		taskButton = new JToggleButton(); // FIXME
+		taskButton.setToolTipText(messages.getString("fetchtask"));
+		taskButton.setActionCommand("fetchTask");
+		taskButton.addActionListener(this);
+		taskButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource(
+						"/de/moonflower/jfritz/resources/images/clock.png"))));
+		toolbar.add(taskButton);
+
 		lookupButton = new JButton();
 		lookupButton.setToolTipText(messages.getString("reverse_lookup"));
 		lookupButton.setActionCommand("reverselookup");
@@ -217,9 +230,14 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		JButton button = new JButton();
 		button.setActionCommand("phonebook");
 		button.addActionListener(this);
-		button.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/phonebook.png"))));
+		button
+				.setIcon(new ImageIcon(
+						Toolkit
+								.getDefaultToolkit()
+								.getImage(
+										getClass()
+												.getResource(
+														"/de/moonflower/jfritz/resources/images/phonebook.png"))));
 		button.setToolTipText(messages.getString("phonebook"));
 		button.setEnabled(false);
 		toolbar.add(button);
@@ -238,9 +256,14 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		button = new JButton();
 		button.setActionCommand("openoffice");
 		button.addActionListener(this);
-		button.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/openoffice.png"))));
+		button
+				.setIcon(new ImageIcon(
+						Toolkit
+								.getDefaultToolkit()
+								.getImage(
+										getClass()
+												.getResource(
+														"/de/moonflower/jfritz/resources/images/openoffice.png"))));
 		button.setToolTipText(messages.getString("export_openoffice"));
 		button.setEnabled(false);
 		toolbar.add(button);
@@ -340,13 +363,14 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 	 *
 	 */
 	public void createTable() {
-//		FilteredCallerList fcl = new FilteredCallerList();
-//		fcl.setRealTableModel(callerlist);
-//		fcl.setHiddenColumn(3);
-//		callertable = new CallerTable(fcl,messages);
-		callertable = new CallerTable(callerlist,messages,properties);
+		//		FilteredCallerList fcl = new FilteredCallerList();
+		//		fcl.setRealTableModel(callerlist);
+		//		fcl.setHiddenColumn(3);
+		//		callertable = new CallerTable(fcl,messages);
+		callertable = new CallerTable(callerlist, messages, properties);
 
-//		callerlist.addTableModelListener(new ModelListener(callertable, participants));
+		//		callerlist.addTableModelListener(new ModelListener(callertable,
+		// participants));
 
 		add(new JScrollPane(callertable), BorderLayout.CENTER);
 	}
@@ -431,13 +455,15 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		} else if (e.getActionCommand() == "about") {
 			showAboutDialog();
 		} else if (e.getActionCommand() == "help") {
-			System.err.println("No help yet");
+			System.err.println("No help available yet");
 		} else if (e.getActionCommand() == "config") {
 			showConfigDialog();
 		} else if (e.getActionCommand() == "phonebook") {
 			showPhoneBook();
 		} else if (e.getActionCommand() == "fetchList") {
 			fetchList();
+		} else if (e.getActionCommand() == "fetchTask") {
+			fetchTask(((JToggleButton) e.getSource()).isSelected());
 		} else if (e.getActionCommand() == "reverselookup") {
 			reverseLookup();
 		} else if (e.getActionCommand() == "filter_callin") {
@@ -455,9 +481,25 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 	}
 
 	/**
+	 * start/stop timer for cyclic caller list fetching
+	 * @param enabled
+	 */
+	private void fetchTask(boolean enabled) {
+		if (enabled) {
+			timer = new Timer();
+			timer.schedule(new FetchListTask(this), 5000,
+					Integer.parseInt(properties.getProperty("fetch.timer")) * 60000);
+			System.out.println("Timer enabled");
+		} else {
+			timer.cancel();
+			System.out.println("Timer disabled");
+		}
+	}
+
+	/**
 	 * Fetch list from box
 	 */
-	private void fetchList() {
+	public void fetchList() {
 		if (!isretrieving) { // Prevent multiple clicking
 			isretrieving = true;
 			final SwingWorker worker = new SwingWorker() {
@@ -475,8 +517,8 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 							String password = showPasswordDialog(properties
 									.getProperty("box.password"));
 							if (!password.equals("")) {
-								properties.setProperty("box.password",
-										password);
+								properties
+										.setProperty("box.password", password);
 							} else { // Cancel
 								isdone = true;
 							}
@@ -505,15 +547,13 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 				}
 			};
 			worker.start();
-		} else {
-//			System.err.println("Multiple clicking is disabled..");
 		}
 	}
 
 	/**
 	 *
 	 */
-	private void reverseLookup() {
+	public void reverseLookup() {
 		if (!isretrieving) { // Prevent multiple clicking
 			isretrieving = true;
 			final SwingWorker worker = new SwingWorker() {
@@ -526,7 +566,8 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 							Vector data = callerlist.getCallVector();
 							Call call = (Call) data.get(i);
 							String number = call.getNumber();
-							String participant = callerlist.getParticipantFromNumber(call.getNumber());
+							String participant = callerlist
+									.getParticipantFromNumber(call.getNumber());
 							if (!number.equals("") && (participant.equals(""))) {
 								setStatus(messages
 										.getString("reverse_lookup_for")
@@ -556,7 +597,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 			};
 			worker.start();
 		} else {
-//			System.err.println("Multiple clicking is disabled..");
+			//			System.err.println("Multiple clicking is disabled..");
 		}
 	}
 
@@ -682,7 +723,6 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		return messages;
 	}
 
-
 	public void loadProperties() {
 		participants = new Properties();
 		defaultProperties = new Properties();
@@ -695,6 +735,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		defaultProperties.setProperty("area.prefix", "0");
 		defaultProperties.setProperty("country.code", "49");
 		defaultProperties.setProperty("area.code", "441");
+		defaultProperties.setProperty("fetch.timer", "5");
 
 		try {
 			FileInputStream fis = new FileInputStream(PROPERTIES_FILE);
@@ -764,13 +805,11 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 	 * @param busy
 	 */
 	public void setBusy(boolean busy) {
-		/* TODO: Activate this code when all buttons are implemented
-		Component[] c = toolbar.getComponents();
-		for (int i=0;i<c.length;i++) {
-			if (c[i].getClass().equals(JButton.class))
-			c[i].setEnabled(!busy);
-		}
-		*/
+		/*
+		 * TODO: Activate this code when all buttons are implemented Component[]
+		 * c = toolbar.getComponents(); for (int i=0;i <c.length;i++) { if
+		 * (c[i].getClass().equals(JButton.class)) c[i].setEnabled(!busy); }
+		 */
 		fetchButton.setEnabled(!busy);
 		lookupButton.setEnabled(!busy);
 

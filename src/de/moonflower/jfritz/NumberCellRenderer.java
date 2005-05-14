@@ -28,7 +28,7 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 
 	final ImageIcon imagePhone, imageHandy, imageHome, imageWorld;
 
-	final ImageIcon imageD1, imageD2, imageO2, imageEplus;
+	final ImageIcon imageD1, imageD2, imageO2, imageEplus, imageSipgate;
 
 	final static boolean showHandyLogos = true;
 
@@ -64,6 +64,9 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 		imageEplus = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/eplus.png")));
+		imageSipgate = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource(
+						"/de/moonflower/jfritz/resources/images/sipgate.png")));
 
 	}
 
@@ -104,6 +107,12 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 					} else {
 						label.setIcon(imageHandy);
 					}
+				} else if ((number.startsWith(properties
+						.getProperty("area.prefix")
+						+ properties.getProperty("area.code")+"1988"))||
+						(number.startsWith("01801777"))) {
+					label.setIcon(imageSipgate);
+					setToolTipText(messages.getString("voip_call"));
 				} else if (number.startsWith(properties
 						.getProperty("area.prefix")
 						+ properties.getProperty("area.code"))) {

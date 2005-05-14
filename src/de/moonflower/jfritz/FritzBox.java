@@ -21,7 +21,8 @@ import java.util.regex.Pattern;
 /**
  * Static class for data retrieval from the fritz box
  *
- * TODO: This class needs to be abstracted, so that subclasses for each boxtype can be implemented.
+ * TODO: This class needs to be abstracted, so that subclasses for each boxtype
+ * can be implemented.
  *
  * @author Arno Willig
  *
@@ -84,9 +85,7 @@ public class FritzBox {
 			}
 
 		} catch (WrongPasswordException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
 		}
 
 		return boxtype;
@@ -163,22 +162,28 @@ public class FritzBox {
 				printout.close();
 			}
 
-			// Get response data
-			BufferedReader d = new BufferedReader(new InputStreamReader(urlConn
-					.getInputStream()));
-			int i = 0;
-			String str;
+			BufferedReader d;
 
-			while (null != ((str = d.readLine()))) {
-				// Password seems to be wrong
-				if (str.contains("FEHLER:&nbsp;Das angegebene Kennwort "))
-					wrong_pass = true;
-				// Skip a few lines
-				//if (i > 778)
-				data += str;
-				i++;
+			try {
+				// Get response data
+				d = new BufferedReader(new InputStreamReader(urlConn
+						.getInputStream()));
+				int i = 0;
+				String str;
+				while (null != ((str = d.readLine()))) {
+					// Password seems to be wrong
+					if (str.contains("FEHLER:&nbsp;Das angegebene Kennwort "))
+						wrong_pass = true;
+					// Skip a few lines
+					//if (i > 778)
+					data += str;
+					i++;
+				}
+				d.close();
+			} catch (IOException e1) {
+				throw new IOException("Network unavailable");
 			}
-			d.close();
+
 			if (wrong_pass)
 				throw new WrongPasswordException("Password invalid");
 		}
@@ -270,9 +275,11 @@ public class FritzBox {
 					String number = create_area_number(m.group(3),
 							countryPrefix, countryCode, areaPrefix, areaCode);
 					Date datum = new Date();
-					datum = new SimpleDateFormat("dd.MM.yy HH:mm").parse(m.group(2));
+					datum = new SimpleDateFormat("dd.MM.yy HH:mm").parse(m
+							.group(2));
 
-					Call call = new Call(symbol, datum, number, port, route,duration);
+					Call call = new Call(symbol, datum, number, port, route,
+							duration);
 					list.add(call);
 
 				} catch (ParseException e) {
@@ -296,16 +303,22 @@ public class FritzBox {
 	public static String create_area_number(String number,
 			String countryPrefix, String countryCode, String areaPrefix,
 			String areaCode) {
-		if (number.startsWith(countryPrefix)) {
-			if (number.startsWith(countryPrefix + countryCode)) {
-				number = areaPrefix
-						+ number.substring(countryPrefix.length()
-								+ countryCode.length());
-			}
-		} else if (number.startsWith(areaPrefix)) {
+		if (!number.equals("")) {
+			if (number.startsWith(countryPrefix)) { // International call
 
-		} else if (!number.equals("")) {
-			number = areaPrefix + areaCode + number;
+				if (number.startsWith(countryPrefix + countryCode)) {
+					// if own country, remove countrycode
+					number = areaPrefix
+							+ number.substring(countryPrefix.length()
+									+ countryCode.length());
+				}
+			} else if (number.startsWith(areaPrefix)) {
+				if (number.startsWith("010")) { // cut 01013 and others
+					number = number.substring(5);
+				}
+			} else {
+				number = areaPrefix + areaCode + number;
+			}
 		}
 		return number;
 	}
