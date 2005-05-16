@@ -1,5 +1,7 @@
 /**
  * JFritz!
+ * jfritz.sourceforge.net
+ *
  * (c) Arno Willig <akw@thinkwiki.org>
  *
  * Created on 08.04.2005
@@ -7,6 +9,7 @@
  * TODO:
  * Optionen-Dialog: box.clear_after_fetch=true/false
  * Optionen-Dialog: Bei Programmstart automatisch abrufen
+ *
  * ColumnWidth speichern.
  *
  * JTable:
@@ -18,8 +21,6 @@
  * Telefonbuch für Participants
  * JAR: Signing, Deploying, Website jfritz.moonflower.de oder Sourceforge
  *
- * * I18N java.util.Locale
- * * Farben unter Windows
  *
  */
 package de.moonflower.jfritz;
@@ -39,6 +40,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Timer;
@@ -121,8 +123,15 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		//currentLocale = new Locale("en", "US");
 		currentLocale = new Locale("de", "DE");
 
-		messages = ResourceBundle.getBundle(
-				"de.moonflower.jfritz.resources.jfritz", currentLocale);
+		try {
+//			messages = ResourceBundle.getBundle(
+//					"de.moonflower.jfritz.resources.jfritz", currentLocale);
+			messages = ResourceBundle.getBundle(
+					"de.moonflower.jfritz.resources.jfritz", currentLocale);
+		} catch (MissingResourceException e) {
+			System.err.println("Can't find i18n resource!");
+			System.exit(0);
+		}
 
 		new ReverseLookup();
 
@@ -400,6 +409,11 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		item.addActionListener(this);
 		item.setEnabled(false);
 		fritzMenu.add(item);
+		item = new JMenuItem(messages.getString("quickdials"), 'l');
+		item.setActionCommand("quickdial");
+		item.addActionListener(this);
+		item.setEnabled(true);
+		fritzMenu.add(item);
 		fritzMenu.add(new JSeparator());
 		item = new JMenuItem(messages.getString("prog_exit"), 'x');
 		item.setActionCommand("exit");
@@ -460,6 +474,8 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 			showConfigDialog();
 		} else if (e.getActionCommand() == "phonebook") {
 			showPhoneBook();
+		} else if (e.getActionCommand() == "quickdial") {
+			showQuickDialDialog();
 		} else if (e.getActionCommand() == "fetchList") {
 			fetchList();
 		} else if (e.getActionCommand() == "fetchTask") {
@@ -482,13 +498,14 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 
 	/**
 	 * start/stop timer for cyclic caller list fetching
+	 *
 	 * @param enabled
 	 */
 	private void fetchTask(boolean enabled) {
 		if (enabled) {
 			timer = new Timer();
-			timer.schedule(new FetchListTask(this), 5000,
-					Integer.parseInt(properties.getProperty("fetch.timer")) * 60000);
+			timer.schedule(new FetchListTask(this), 5000, Integer
+					.parseInt(properties.getProperty("fetch.timer")) * 60000);
 			System.out.println("Timer enabled");
 		} else {
 			timer.cancel();
@@ -599,6 +616,21 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		} else {
 			//			System.err.println("Multiple clicking is disabled..");
 		}
+	}
+
+	/**
+	 * Show the quick dial dialog
+	 */
+	private void showQuickDialDialog() {
+		QuickDialDialog p = new QuickDialDialog(this);
+
+		//p.setValues(properties);
+		if (p.showDialog()) {
+			//			p.storeValues(properties);
+			//			saveProperties();
+		}
+		p.dispose();
+		p = null;
 	}
 
 	/**
@@ -822,4 +854,10 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}
 
+	/**
+	 * @return Returns the properties.
+	 */
+	public final Properties getProperties() {
+		return properties;
+	}
 }

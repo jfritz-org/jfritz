@@ -4,7 +4,6 @@
  */
 package de.moonflower.jfritz;
 
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,7 +28,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.SAXException;
-
 
 /**
  * This class manages the caller list.
@@ -328,9 +326,8 @@ public class CallerList extends AbstractTableModel {
 				.getProperty("country.prefix"), properties
 				.getProperty("country.code"), properties
 				.getProperty("area.prefix"), properties
-				.getProperty("area.code")
-
-		);
+				.getProperty("area.code"), FritzBox.detectBoxType(properties
+				.getProperty("box.address")));
 
 		for (Enumeration el = data.elements(); el.hasMoreElements();) {
 			addEntry((Call) el.nextElement());

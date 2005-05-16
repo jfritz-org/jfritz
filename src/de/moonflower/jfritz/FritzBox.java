@@ -33,6 +33,9 @@ public class FritzBox {
 
 	final static byte BOXTYPE_FRITZBOX_7050 = 2;
 
+	final static String POSTDATA_QUICKDIAL_FRITZBOX_7050 = "getpage=../html/de/menus/menu2.html"
+			+ "&var%3Alang=de&var%3Amenu=fon&var%3Apagename=kurzwahlen&login%3Acommand%2Fpassword=";
+
 	final static String POSTDATA_LIST_FRITZBOX_7050 = "getpage=../html/de/menus/menu2.html"
 			+ "&var%3Alang=de&var%3Amenu=fon&var%3Apagename=foncalls&login%3Acommand%2Fpassword=";
 
@@ -58,6 +61,14 @@ public class FritzBox {
 			+ " <td class=\"c5\"><script type=\"text/javascript\">document.write\\(uiPortDisplay\\(\"(\\d*)\"\\)\\);</script></td>"
 			+ " <td class=\"c7\"><script type=\"text/javascript\">document.write\\(uiRouteDisplay\\(\"(\\w*)\"\\)\\);</script></td>"
 			+ " <td class=\"c6\"><script type=\"text/javascript\">document.write\\(uiDauerDisplay\\(\"(\\d*)\"\\)\\);</script></td>"
+			+ " </tr>";
+
+	final static String PATTERN_QUICKDIAL_FRITZBOX_7050 = "<tr class=\"Dialoglist\">"
+			+ " <td style=\"text-align: center;\">(\\d*)</td>"
+			+ " <td>(\\w*)</td>"
+			+ " <td>([^<]*)</td>"
+			+ " <td style=\"text-align: right;\"><button [^>]*> <img [^>]*></button></td>"
+			+ " <td style=\"text-align: right;\"><button [^>]*> <img [^>]*></button></td>"
 			+ " </tr>";
 
 	final static String POSTDATA_CLEAR_FRITZBOX_FON_WLAN = "getpage=../html/menus/menu2.html"
@@ -105,12 +116,10 @@ public class FritzBox {
 	 */
 	public static Vector retrieveCallersFromFritzBox(String box_address,
 			String password, String countryPrefix, String countryCode,
-			String areaPrefix, String areaCode) throws WrongPasswordException,
-			IOException {
+			String areaPrefix, String areaCode, byte boxtype)
+			throws WrongPasswordException, IOException {
 
 		String postdata;
-		byte boxtype = detectBoxType(box_address);
-
 		if (boxtype == BOXTYPE_FRITZBOX_7050) {
 			postdata = POSTDATA_LIST_FRITZBOX_7050 + password;
 		} else {
@@ -118,9 +127,23 @@ public class FritzBox {
 		}
 		String urlstr = "http://" + box_address + "/cgi-bin/webcm";
 		String data = fetchDataFromURL(urlstr, postdata);
-		Vector list = parseData(data, boxtype, countryPrefix, countryCode,
-				areaPrefix, areaCode);
+		Vector list = parseCallerData(data, boxtype, countryPrefix,
+				countryCode, areaPrefix, areaCode);
 		return list;
+	}
+
+	public static Vector retrieveQuickDialsFromFritzBox(String box_address,
+			String box_password, byte boxtype) throws WrongPasswordException,
+			IOException {
+		String postdata;
+		if (boxtype == BOXTYPE_FRITZBOX_7050) {
+			postdata = POSTDATA_QUICKDIAL_FRITZBOX_7050 + box_password;
+		} else { // FIXME POSTDATA_QUICKDIAL_FRITZBOX_7050
+			postdata = POSTDATA_QUICKDIAL_FRITZBOX_7050 + box_password;
+		}
+		String urlstr = "http://" + box_address + "/cgi-bin/webcm";
+		String data = fetchDataFromURL(urlstr, postdata);
+		return parseQuickDialData(data, boxtype);
 	}
 
 	/**
@@ -219,13 +242,26 @@ public class FritzBox {
 		return matcher.replaceAll(" ");
 	}
 
+	public static Vector parseQuickDialData(String data, int boxtype) {
+		Vector list = new Vector();
+		data = removeDuplicateWhitespace(data);
+		Pattern p;
+		p = Pattern.compile(PATTERN_QUICKDIAL_FRITZBOX_7050);
+		Matcher m = p.matcher(data);
+
+		while (m.find())
+			list.add(new QuickDial(m.group(1), m.group(2), m.group(3)));
+
+		return list;
+	}
+
 	/**
 	 * Parses html data from the fritz!box's web interface.
 	 *
 	 * @param data
 	 *
 	 */
-	public static Vector parseData(String data, int boxtype,
+	public static Vector parseCallerData(String data, int boxtype,
 			String countryPrefix, String countryCode, String areaPrefix,
 			String areaCode) {
 		Vector list = new Vector();
@@ -236,10 +272,7 @@ public class FritzBox {
 			p = Pattern.compile(PATTERN_FRITZBOX_7050);
 			Matcher m = p.matcher(data);
 
-			int i = 0;
 			while (m.find()) {
-				i++;
-				//System.err.println("Found:"+m.group(1)+"|"+m.group(2)+"|"+m.group(3)+"|"+m.group(4)+"|"+m.group(5)+"|"+m.group(6));
 				try {
 					CallType symbol = new CallType(Byte.parseByte(m.group(1)));
 					String port = m.group(4);
