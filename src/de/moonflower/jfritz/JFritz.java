@@ -125,7 +125,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
         try {
             // messages = new JFritzTextResource_de();
             messages = ResourceBundle.getBundle(
-                    "de.moonflower.jfritz.resources.jfritz2", currentLocale);
+                    "de.moonflower.jfritz.resources.jfritz", currentLocale);
 
         } catch (MissingResourceException e) {
             System.err.println("Can't find i18n resource!");
