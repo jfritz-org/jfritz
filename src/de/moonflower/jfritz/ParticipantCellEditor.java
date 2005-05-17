@@ -6,16 +6,12 @@ package de.moonflower.jfritz;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.text.ParseException;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JComponent;
-import javax.swing.JFormattedTextField;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
-import javax.swing.text.MaskFormatter;
-import javax.swing.text.NumberFormatter;
 
 /**
  * This class manages editing of the participant cell in the caller table.

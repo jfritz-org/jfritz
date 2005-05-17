@@ -425,6 +425,10 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		item.addActionListener(this);
 		item.setEnabled(false);
 		helpMenu.add(item);
+		item = new JMenuItem(messages.getString("jfritz_website"), 'w');
+		item.setActionCommand("website");
+		item.addActionListener(this);
+		helpMenu.add(item);
 		helpMenu.add(new JSeparator());
 		item = new JMenuItem(messages.getString("prog_info"), 'i');
 		item.setActionCommand("about");
@@ -470,6 +474,16 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 			showAboutDialog();
 		} else if (e.getActionCommand() == "help") {
 			System.err.println("No help available yet");
+		} else if (e.getActionCommand() == "website") {
+			final String url="http://jfritz.sourceforge.net/";
+		    try {
+ //             Runtime.getRuntime().exec( "rundll32 url.dll,FileProtocolHandler " +
+ //             "javascript:location.href=" + url + "" );
+                Runtime.getRuntime().exec( "rundll32 url.dll,FileProtocolHandler " +
+                        url );
+            } catch (IOException e1) {
+    			System.err.println("Website opening works only on win32 platforms.");
+            }
 		} else if (e.getActionCommand() == "config") {
 			showConfigDialog();
 		} else if (e.getActionCommand() == "phonebook") {
