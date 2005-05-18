@@ -7,15 +7,32 @@
  *
  * Created on 08.04.2005
  *
- * Authors:
+ * Authors working on the project:
  * 		akw			Arno Willig <akw@thinkwiki.org>
- * 		robotniko	Robert Palmer
+ * 		robotniko	Robert Palmer <robotniko@gmx.de>
  *
+ *
+ * This tool is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This driver is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this driver; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  *
  * TODO:
  * Optionen-Dialog: box.clear_after_fetch=true/false
  * Optionen-Dialog: Bei Programmstart automatisch abrufen
+ * SIP-Provider: SIP-Provider Handling
+ * QuickDial: Kurzwahlverwaltung
+ * Phonebook: Telefonbuch für Participants
  *
  * ColumnWidth speichern.
  *
@@ -23,9 +40,8 @@
  * - Filtern von CallTypes
  * - Suchfeld für Name/Nummernsuche
  *
- *
  * Statistik: Top-Caller (Name/Nummer, Wie oft, Wie lange)
- * Telefonbuch für Participants
+ *
  * JAR: Signing, Deploying, Website jfritz.moonflower.de oder Sourceforge
  *
  *
@@ -83,7 +99,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 
 	public final static String PROGRAM_VERSION = "0.2.5";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.9 2005/05/18 09:54:43 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.10 2005/05/18 09:58:56 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
