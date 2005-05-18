@@ -1,4 +1,5 @@
 /*
+ *
  * Created on 14.04.2005
  *
  */
@@ -6,7 +7,6 @@ package de.moonflower.jfritz;
 
 import java.awt.Color;
 import java.awt.Component;
-
 import javax.swing.AbstractCellEditor;
 import javax.swing.JComponent;
 import javax.swing.JTable;
@@ -68,6 +68,7 @@ public class ParticipantCellEditor extends AbstractCellEditor implements
 	public boolean isValid(String s) {
 		return true;
 	}
+
 	/**
 	 * @see javax.swing.AbstractCellEditor#fireEditingCanceled()
 	 */

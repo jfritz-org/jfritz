@@ -1,4 +1,5 @@
 /*
+ *
  * Password dialog box
  */
 

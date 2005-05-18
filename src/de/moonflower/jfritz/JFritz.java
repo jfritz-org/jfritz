@@ -77,6 +77,8 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 
     public final static String PROGRAM_VERSION = "0.2.5";
 
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.8 2005/05/18 07:36:20 akw Exp $";
+
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
     public final static String PROPERTIES_FILE = "jfritz.properties.xml";

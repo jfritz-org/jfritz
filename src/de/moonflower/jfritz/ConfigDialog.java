@@ -1,4 +1,5 @@
 /*
+ *
  * Password dialog box
  */
 
@@ -81,18 +82,24 @@ public class ConfigDialog extends JDialog {
 		countryCode.setText(properties.getProperty("country.code"));
 		areaPrefix.setText(properties.getProperty("area.prefix"));
 		countryPrefix.setText(properties.getProperty("country.prefix"));
-		timerSlider.setValue(Integer.parseInt(properties.getProperty("fetch.timer")));
+		timerSlider.setValue(Integer.parseInt(properties
+				.getProperty("fetch.timer")));
 	}
 
 	public void storeValues(Properties properties) {
+		if (areaCode.getText().startsWith(areaPrefix.getText()))
+			areaCode.setText(areaCode.getText().substring(
+					areaPrefix.getText().length()));
 		properties.setProperty("box.password", new String(pass.getPassword()));
 		properties.setProperty("box.address", address.getText());
 		properties.setProperty("area.code", areaCode.getText());
 		properties.setProperty("country.code", countryCode.getText());
 		properties.setProperty("area.prefix", areaPrefix.getText());
 		properties.setProperty("country.prefix", countryPrefix.getText());
-		if (timerSlider.getValue()<3) timerSlider.setValue(3);
-		properties.setProperty("fetch.timer", Integer.toString(timerSlider.getValue()));
+		if (timerSlider.getValue() < 3)
+			timerSlider.setValue(3);
+		properties.setProperty("fetch.timer", Integer.toString(timerSlider
+				.getValue()));
 	}
 
 	protected void dialogInit() {

@@ -1,8 +1,10 @@
-package de.moonflower.jfritz;
 /*
- * Created on 10.04.2005
  *
+ * Created on 10.04.2005
  */
+
+package de.moonflower.jfritz;
+
 /**
  * thrown when the web admin password of the fritz box is invalid
  * @author Arno Willig

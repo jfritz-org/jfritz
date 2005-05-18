@@ -1,4 +1,5 @@
 /*
+ *
  * Created on 08.04.2005
  *
  */
@@ -244,7 +245,7 @@ public class CallerList extends AbstractTableModel {
 	 * @return name of participant
 	 */
 	public String getParticipantFromNumber(String number) {
-		String areanumber = FritzBox.create_area_number(number, properties
+		String areanumber = JFritzUtils.create_area_number(number, properties
 				.getProperty("country.prefix"), properties
 				.getProperty("country.code"), properties
 				.getProperty("area.prefix"), properties
@@ -320,14 +321,14 @@ public class CallerList extends AbstractTableModel {
 	 * @throws IOException
 	 */
 	public void getNewData() throws WrongPasswordException, IOException {
-		Vector data = FritzBox.retrieveCallersFromFritzBox(properties
+		Vector data = JFritzUtils.retrieveCallersFromFritzBox(properties
 				.getProperty("box.address"), properties
 				.getProperty("box.password"), properties
 				.getProperty("country.prefix"), properties
 				.getProperty("country.code"), properties
 				.getProperty("area.prefix"), properties
-				.getProperty("area.code"), FritzBox.detectBoxType(properties
-				.getProperty("box.address")));
+				.getProperty("area.code"), JFritzUtils.detectBoxType(properties
+				.getProperty("box.address"),properties.getProperty("box.password")));
 
 		for (Enumeration el = data.elements(); el.hasMoreElements();) {
 			addEntry((Call) el.nextElement());
@@ -338,7 +339,7 @@ public class CallerList extends AbstractTableModel {
 		// Clear data on fritz box ?
 		if (properties.getProperty("box.clear_after_fetch", "false").equals(
 				"true")) {
-			FritzBox.clearListOnFritzBox(properties.getProperty("box.address"),
+			JFritzUtils.clearListOnFritzBox(properties.getProperty("box.address"),
 					properties.getProperty("box.password"));
 		}
 
@@ -375,7 +376,7 @@ public class CallerList extends AbstractTableModel {
 		case 1:
 			return call.getCalldate();
 		case 2:
-			return FritzBox.create_area_number(call.getNumber(), properties
+			return JFritzUtils.create_area_number(call.getNumber(), properties
 					.getProperty("country.prefix"), properties
 					.getProperty("country.code"), properties
 					.getProperty("area.prefix"), properties

@@ -1,4 +1,5 @@
 /*
+ *
  * Created on 05.05.2005
  *
  */
@@ -126,7 +127,7 @@ public class ReverseLookup {
 						.compile("<a class=\"blb\" href=\"[^\"]*\">([^<]*)</a>");
 				Matcher m = p.matcher(data);
 				if (m.find()) {
-System.out.println("Pattern: "+m.group(1).trim());
+					// System.out.println("Pattern: "+m.group(1).trim());
 					return beautifyMatch(m.group(1).trim());
 				}
 			} catch (IOException e1) {

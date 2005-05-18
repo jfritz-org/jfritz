@@ -1,3 +1,6 @@
+/*
+ *
+ */
 package de.moonflower.jfritz;
 
 import javax.swing.SwingUtilities;
