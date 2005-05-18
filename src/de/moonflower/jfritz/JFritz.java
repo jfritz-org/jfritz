@@ -17,9 +17,9 @@
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
- * This driver is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * This piece of software is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -99,7 +99,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 
 	public final static String PROGRAM_VERSION = "0.2.5";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.10 2005/05/18 09:58:56 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.11 2005/05/18 13:23:12 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
