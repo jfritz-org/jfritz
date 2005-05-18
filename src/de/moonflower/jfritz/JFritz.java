@@ -99,7 +99,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 
 	public final static String PROGRAM_VERSION = "0.2.5";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.11 2005/05/18 13:23:12 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.12 2005/05/18 18:53:20 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -345,6 +345,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		tbutton.setActionCommand("filter_callin");
 		tbutton.addActionListener(this);
 		tbutton.setToolTipText(messages.getString("filter_callin"));
+		tbutton.setEnabled( false );
 		toolbar.add(tbutton);
 
 		tbutton = new JToggleButton(
@@ -367,7 +368,9 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		tbutton.setActionCommand("filter_callinfailed");
 		tbutton.addActionListener(this);
 		tbutton.setToolTipText(messages.getString("filter_callinfailed"));
+		tbutton.setEnabled( false );
 		toolbar.add(tbutton);
+
 		tbutton = new JToggleButton(
 				new ImageIcon(
 						Toolkit
@@ -388,6 +391,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		tbutton.setActionCommand("filter_callout");
 		tbutton.addActionListener(this);
 		tbutton.setToolTipText(messages.getString("filter_callout"));
+		tbutton.setEnabled( false );
 		toolbar.add(tbutton);
 
 		getContentPane().add(toolbar, BorderLayout.NORTH);

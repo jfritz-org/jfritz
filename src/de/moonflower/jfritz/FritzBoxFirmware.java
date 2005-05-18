@@ -36,8 +36,7 @@ public class FritzBoxFirmware {
 			"getpage=../html/de/menus/menu2.html&var%3Alang=de&var%3Amenu=home&var%3Apagename=home&login%3Acommand%2Fpassword=",
 			"getpage=../html/menus/menu2.html&var%3Alang=de&var%3Amenu=home&var%3Apagename=home&login%3Acommand%2Fpassword=" };
 
-	private final static String PATTERN_DETECT_FIRMWARE = "<span class=\"Dialoglabel\">Firmware-Version "
-			+ "</span>(\\d\\d).(\\d\\d).(\\d\\d)";
+	private final static String PATTERN_DETECT_FIRMWARE = "<span class=\"Dialoglabel\">[^<]*</span>(\\d\\d).(\\d\\d).(\\d\\d)";
 
 	/**
 	 * Firmware Constructor using Bytes
@@ -75,8 +74,10 @@ public class FritzBoxFirmware {
 	 * @param minorFirmwareVersion
 	 */
 	public FritzBoxFirmware(String firmware) throws InvalidFirmwareException {
-		if (firmware == null) throw new InvalidFirmwareException("No firmware found");
-		if (firmware.length() != 8) throw new InvalidFirmwareException("Firmware number crippled");
+		if (firmware == null)
+			throw new InvalidFirmwareException("No firmware found");
+		if (firmware.length() != 8)
+			throw new InvalidFirmwareException("Firmware number crippled");
 
 		this.boxtype = Byte.parseByte(firmware.substring(0, 2));
 		this.majorFirmwareVersion = Byte.parseByte(firmware.substring(3, 5));
