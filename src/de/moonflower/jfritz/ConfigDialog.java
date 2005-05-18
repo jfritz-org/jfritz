@@ -5,6 +5,8 @@
 
 package de.moonflower.jfritz;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -13,15 +15,19 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JSlider;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
 /**
@@ -38,41 +44,27 @@ public class ConfigDialog extends JDialog {
 
 	protected JSlider timerSlider;
 
-	protected JButton okButton;
+	protected JButton okButton, cancelButton, boxtypeButton;
 
-	protected JButton cancelButton;
+	protected JCheckBox deleteAfterFetchButton, fetchAfterStartButton;
+
+	protected JLabel boxtypeLabel;
+
+	protected FritzBoxFirmware firmware;
 
 	private boolean pressed_OK = false;
-
-	public ConfigDialog(Frame parent, String title) {
-	}
 
 	public ConfigDialog(Frame parent) {
 		super(parent, true);
 		if (parent != null) {
 			setLocationRelativeTo(parent);
 		}
+		setTitle("JFritz Konfiguration");
 		drawDialog();
-	}
-
-	public String getPass() {
-		return new String(pass.getPassword());
-	}
-
-	public String getAddress() {
-		return new String(address.getText());
 	}
 
 	public boolean okPressed() {
 		return pressed_OK;
-	}
-
-	public void setPass(String pass) {
-		this.pass.setText(pass);
-	}
-
-	public void setAddress(String address) {
-		this.address.setText(address);
 	}
 
 	public void setValues(Properties properties) {
@@ -84,12 +76,20 @@ public class ConfigDialog extends JDialog {
 		countryPrefix.setText(properties.getProperty("country.prefix"));
 		timerSlider.setValue(Integer.parseInt(properties
 				.getProperty("fetch.timer")));
+		try {
+			firmware = new FritzBoxFirmware(properties
+					.getProperty("box.firmware"));
+		} catch (InvalidFirmwareException e) {
+		}
+		setBoxTypeLabel();
 	}
 
 	public void storeValues(Properties properties) {
+		// Remove leading "0" from areaCode
 		if (areaCode.getText().startsWith(areaPrefix.getText()))
 			areaCode.setText(areaCode.getText().substring(
 					areaPrefix.getText().length()));
+
 		properties.setProperty("box.password", new String(pass.getPassword()));
 		properties.setProperty("box.address", address.getText());
 		properties.setProperty("area.code", areaCode.getText());
@@ -100,18 +100,31 @@ public class ConfigDialog extends JDialog {
 			timerSlider.setValue(3);
 		properties.setProperty("fetch.timer", Integer.toString(timerSlider
 				.getValue()));
-	}
 
-	protected void dialogInit() {
+		if (firmware != null) {
+			properties.setProperty("box.firmware", firmware
+					.getFirmwareVersion());
+		}
 	}
 
 	protected void drawDialog() {
-		pass = new JPasswordField("", 16);
-		address = new JTextField("", 16);
-		areaCode = new JTextField("", 6);
-		countryCode = new JTextField("", 3);
-		areaPrefix = new JTextField("", 3);
-		countryPrefix = new JTextField("", 3);
+		GridBagLayout gridbag = new GridBagLayout();
+		GridBagConstraints c = new GridBagConstraints();
+		c.insets.top = 5;
+		c.insets.bottom = 5;
+		c.anchor = GridBagConstraints.EAST;
+
+		// Create JTabbedPane
+		JTabbedPane tpane = new JTabbedPane(JTabbedPane.TOP);
+		JPanel boxpane = new JPanel(gridbag);
+		JPanel otherpane = new JPanel(gridbag);
+		JPanel phonepane = new JPanel(gridbag);
+		JPanel quickdialpane = new JPanel(gridbag);
+
+		tpane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		boxpane.setBorder(BorderFactory.createEmptyBorder(10, 20, 5, 20));
+
+		JLabel label;
 		okButton = new JButton("Okay");
 		cancelButton = new JButton("Abbruch");
 		timerSlider = new JSlider(0, 120, 30);
@@ -119,8 +132,6 @@ public class ConfigDialog extends JDialog {
 		timerSlider.setMinorTickSpacing(10);
 		timerSlider.setMajorTickSpacing(30);
 		timerSlider.setPaintLabels(true);
-
-		super.dialogInit();
 
 		KeyListener keyListener = (new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
@@ -136,111 +147,138 @@ public class ConfigDialog extends JDialog {
 				}
 			}
 		});
-		addKeyListener(keyListener);
 
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Object source = e.getSource();
 				pressed_OK = (source == pass || source == okButton);
-				ConfigDialog.this.setVisible(false);
+				if (source == pass || source == okButton
+						|| source == cancelButton) {
+					ConfigDialog.this.setVisible(false);
+				} else if (source == boxtypeButton) {
+
+					try {
+
+						firmware = FritzBoxFirmware.detectFirmwareVersion(
+								address.getText(), new String(pass
+										.getPassword()));
+
+						// firmware = new FritzBoxFirmware("14", "1", "35");
+						setBoxTypeLabel();
+					} catch (WrongPasswordException e1) {
+						System.err.println("Password wrong!");
+						boxtypeLabel.setForeground(Color.RED);
+						boxtypeLabel.setText("Passwort ungültig!");
+					} catch (IOException e1) {
+						System.err.println("Address wrong!");
+						boxtypeLabel.setForeground(Color.RED);
+						boxtypeLabel.setText("Box-Adresse ungültig!");
+					}
+
+				}
 			}
 		};
-
-		GridBagLayout gridbag = new GridBagLayout();
-		GridBagConstraints c = new GridBagConstraints();
-		c.insets.top = 5;
-		c.insets.bottom = 5;
-		JPanel pane = new JPanel(gridbag);
-		pane.setBorder(BorderFactory.createEmptyBorder(10, 20, 5, 20));
-		JLabel label;
-
-		c.anchor = GridBagConstraints.EAST;
 
 		c.gridy = 1;
 		label = new JLabel("Fritz!Box-Addresse: ");
 		gridbag.setConstraints(label, c);
-		pane.add(label);
+		boxpane.add(label);
+		address = new JTextField("", 16);
 		gridbag.setConstraints(address, c);
-		address.addActionListener(actionListener);
-		address.addKeyListener(keyListener);
-		pane.add(address);
+		boxpane.add(address);
 
 		c.gridy = 2;
 		label = new JLabel("Fritz!Box-Passwort: ");
 		gridbag.setConstraints(label, c);
-		pane.add(label);
+		boxpane.add(label);
+		pass = new JPasswordField("", 16);
 		gridbag.setConstraints(pass, c);
-		pass.addActionListener(actionListener);
-		pass.addKeyListener(keyListener);
-		pane.add(pass);
+		boxpane.add(pass);
 
 		c.gridy = 3;
+		label = new JLabel("Fritz!Box-Typ: ");
+		gridbag.setConstraints(label, c);
+		boxpane.add(label);
+		boxtypeLabel = new JLabel();
+		gridbag.setConstraints(boxtypeLabel, c);
+		boxpane.add(boxtypeLabel);
+		c.gridy = 4;
+		boxtypeButton = new JButton("Typ erkennen");
+		boxtypeButton.addActionListener(actionListener);
+
+		gridbag.setConstraints(boxtypeButton, c);
+		boxpane.add(boxtypeButton);
+
+		c.gridy = 1;
 		label = new JLabel("Ortsvorwahl: ");
 		gridbag.setConstraints(label, c);
-		pane.add(label);
+		phonepane.add(label);
+		areaCode = new JTextField("", 6);
 		gridbag.setConstraints(areaCode, c);
-		areaCode.addActionListener(actionListener);
-		areaCode.addKeyListener(keyListener);
-		pane.add(areaCode);
+		phonepane.add(areaCode);
 
-		c.gridy = 4;
+		c.gridy = 2;
 		label = new JLabel("Landesvorwahl: ");
 		gridbag.setConstraints(label, c);
-		pane.add(label);
+		phonepane.add(label);
+		countryCode = new JTextField("", 3);
 		gridbag.setConstraints(countryCode, c);
-		countryCode.addActionListener(actionListener);
-		countryCode.addKeyListener(keyListener);
-		pane.add(countryCode);
+		phonepane.add(countryCode);
 
-		c.gridy = 5;
+		c.gridy = 3;
 		label = new JLabel("Orts-Prefix: ");
 		gridbag.setConstraints(label, c);
-		pane.add(label);
+		phonepane.add(label);
+		areaPrefix = new JTextField("", 3);
 		gridbag.setConstraints(areaPrefix, c);
-		areaPrefix.addActionListener(actionListener);
-		areaPrefix.addKeyListener(keyListener);
-		pane.add(areaPrefix);
+		phonepane.add(areaPrefix);
 
-		c.gridy = 6;
+		c.gridy = 4;
 		label = new JLabel("Landes-Prefix: ");
 		gridbag.setConstraints(label, c);
-		pane.add(label);
+		phonepane.add(label);
+		countryPrefix = new JTextField("", 3);
 		gridbag.setConstraints(countryPrefix, c);
-		countryCode.addActionListener(actionListener);
-		countryCode.addKeyListener(keyListener);
-		pane.add(countryPrefix);
+		phonepane.add(countryPrefix);
 
-		c.gridy = 7;
+		otherpane.setLayout(new BoxLayout(otherpane, BoxLayout.Y_AXIS));
 		label = new JLabel("Timer (in min): ");
-		gridbag.setConstraints(label, c);
-		pane.add(label);
-		gridbag.setConstraints(timerSlider, c);
-		//		slider.addActionListener(actionListener);
-		timerSlider.addKeyListener(keyListener);
-		pane.add(timerSlider);
+		otherpane.add(label);
+		otherpane.add(timerSlider);
 
-		/*
-		 * c.gridy = 7; gridbag.setConstraints(deleteAfterFetchLabel, c);
-		 * pane.add(deleteAfterFetchLabel);
-		 * gridbag.setConstraints(countryPrefix, c);
-		 * countryCode.addActionListener(actionListener);
-		 * countryCode.addKeyListener(keyListener); pane.add(countryPrefix);
-		 */
+		label = new JLabel(": ");
+		fetchAfterStartButton = new JCheckBox("Nach Programmstart Liste holen");
+		otherpane.add(fetchAfterStartButton);
+		// TODO Make this work :)
+		fetchAfterStartButton.setEnabled(false);
 
-		c.gridy = 8;
+		label = new JLabel("Nach Laden auf Box löschen: ");
+		deleteAfterFetchButton = new JCheckBox("Nach Laden auf Box löschen");
+		otherpane.add(deleteAfterFetchButton);
+		// TODO Make this work :)
+		deleteAfterFetchButton.setEnabled(false);
+
+		// Create OK/Cancel Panel
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.anchor = GridBagConstraints.CENTER;
-		JPanel panel = new JPanel();
+		JPanel okcancelpanel = new JPanel();
 		okButton.addActionListener(actionListener);
 		okButton.addKeyListener(keyListener);
-		panel.add(okButton);
+		okcancelpanel.add(okButton);
 		cancelButton.addActionListener(actionListener);
 		cancelButton.addKeyListener(keyListener);
-		panel.add(cancelButton);
-		gridbag.setConstraints(panel, c);
-		pane.add(panel);
+		cancelButton.setMnemonic(KeyEvent.VK_ESCAPE);
+		okcancelpanel.add(cancelButton);
+		gridbag.setConstraints(okcancelpanel, c);
+		tpane.addTab("FRITZ!Box", boxpane);
+		tpane.addTab("Telefon", phonepane);
+		tpane.addTab("Weiteres", otherpane);
 
-		getContentPane().add(pane);
+		getContentPane().setLayout(new BorderLayout());
+		getContentPane().add(tpane, BorderLayout.CENTER);
+		getContentPane().add(okcancelpanel, BorderLayout.SOUTH);
+
+		addKeyListener(keyListener);
 
 		pack();
 	}
@@ -248,5 +286,16 @@ public class ConfigDialog extends JDialog {
 	public boolean showDialog() {
 		setVisible(true);
 		return okPressed();
+	}
+
+	public void setBoxTypeLabel() {
+		if (firmware != null) {
+			boxtypeLabel.setForeground(Color.BLUE);
+			boxtypeLabel.setText(firmware.getBoxName() + " ("
+					+ firmware.getFirmwareVersion() + ")");
+		} else {
+			boxtypeLabel.setForeground(Color.RED);
+			boxtypeLabel.setText("unbekannt");
+		}
 	}
 }

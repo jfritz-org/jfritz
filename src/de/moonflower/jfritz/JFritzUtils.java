@@ -81,20 +81,26 @@ public class JFritzUtils {
 			+ " <td class=\"c3\"><script type=\"text/javascript\">document.write\\(ProviderDisplay\\(\"([^\"]*)\"\\)\\);</script></td>";
 
 	/**
-	 * Detects type of fritz box by detected the firmware version
+	 * Detects type of fritz box by detecting the firmware version
 	 *
 	 * @param box_address
 	 * @return boxtype
 	 * @throws WrongPasswordException
 	 * @throws IOException
 	 */
-	public static byte detectBoxType(String box_address, String box_password)
-			throws WrongPasswordException, IOException {
-		byte boxtype = 0;
-		FritzBoxFirmware fw = FritzBoxFirmware.detectFirmwareVersion(
-				box_address, box_password);
-		System.out.println("Found Firmware: " + fw + " (" + fw.getBoxName()
-				+ ")");
+	public static byte detectBoxType(String firmware, String box_address,
+			String box_password) throws WrongPasswordException, IOException {
+		FritzBoxFirmware fw;
+		try {
+			fw = new FritzBoxFirmware(firmware);
+		} catch (InvalidFirmwareException e) {
+			fw = FritzBoxFirmware.detectFirmwareVersion(box_address,
+					box_password);
+			System.out.println("Found Firmware: " + fw + " (" + fw.getBoxName()
+					+ ")");
+
+		}
+
 		// TODO: retrieveSipProvider(box_address,box_password,fw.getBoxType());
 		return fw.getBoxType();
 	}

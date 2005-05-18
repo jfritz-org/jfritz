@@ -328,7 +328,9 @@ public class CallerList extends AbstractTableModel {
 				.getProperty("country.code"), properties
 				.getProperty("area.prefix"), properties
 				.getProperty("area.code"), JFritzUtils.detectBoxType(properties
-				.getProperty("box.address"),properties.getProperty("box.password")));
+				.getProperty("box.firmware"), properties
+				.getProperty("box.address"), properties
+				.getProperty("box.password")));
 
 		for (Enumeration el = data.elements(); el.hasMoreElements();) {
 			addEntry((Call) el.nextElement());
@@ -339,8 +341,9 @@ public class CallerList extends AbstractTableModel {
 		// Clear data on fritz box ?
 		if (properties.getProperty("box.clear_after_fetch", "false").equals(
 				"true")) {
-			JFritzUtils.clearListOnFritzBox(properties.getProperty("box.address"),
-					properties.getProperty("box.password"));
+			JFritzUtils.clearListOnFritzBox(properties
+					.getProperty("box.address"), properties
+					.getProperty("box.password"));
 		}
 
 	}

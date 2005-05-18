@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
  */
 public class FritzBoxFirmware {
 
-
 	public final static byte BOXTYPE_FRITZBOX_FON = 6;
 
 	public final static byte BOXTYPE_FRITZBOX_ATA = 11;
@@ -69,6 +68,23 @@ public class FritzBoxFirmware {
 	}
 
 	/**
+	 * Firmware Constructor using a single String
+	 *
+	 * @param boxtype
+	 * @param majorFirmwareVersion
+	 * @param minorFirmwareVersion
+	 */
+	public FritzBoxFirmware(String firmware) throws InvalidFirmwareException {
+		if (firmware == null) throw new InvalidFirmwareException("No firmware found");
+		if (firmware.length() != 8) throw new InvalidFirmwareException("Firmware number crippled");
+
+		this.boxtype = Byte.parseByte(firmware.substring(0, 2));
+		this.majorFirmwareVersion = Byte.parseByte(firmware.substring(3, 5));
+		this.minorFirmwareVersion = Byte.parseByte(firmware.substring(6, 8));
+
+	}
+
+	/**
 	 * Static method for firmware detection
 	 *
 	 * @param box_address
@@ -102,7 +118,8 @@ public class FritzBoxFirmware {
 			return fw;
 		} else {
 			System.err.println("detectFirmwareVersion: Password wrong?");
-			throw new WrongPasswordException("Could not detect FRITZ!Box firmware version.");
+			throw new WrongPasswordException(
+					"Could not detect FRITZ!Box firmware version.");
 		}
 	}
 

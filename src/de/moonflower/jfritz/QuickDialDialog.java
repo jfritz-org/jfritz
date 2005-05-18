@@ -57,12 +57,13 @@ public class QuickDialDialog extends JDialog {
 					properties.getProperty("box.address"), properties
 							.getProperty("box.password"), JFritzUtils
 							.detectBoxType(properties
+									.getProperty("box.firmware"),properties
 									.getProperty("box.address"), properties
 									.getProperty("box.password")));
 		} catch (WrongPasswordException e) {
-			e.printStackTrace();
+			System.err.println("getQuickDialData: Wrong password");
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println("getQuickDialData: Box not found");
 		}
 	}
 
