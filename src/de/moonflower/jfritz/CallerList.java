@@ -389,6 +389,12 @@ public class CallerList extends AbstractTableModel {
 		case 4:
 			return call.getPort();
 		case 5:
+			if (call.getRoute().startsWith("SIP")) {
+				String sipstr = properties.getProperty(call.getRoute());
+				if (sipstr!=null) {
+					return sipstr;
+				} else return call.getRoute();
+			}
 			return call.getRoute();
 		case 6:
 			return Integer.toString(call.getDuration());

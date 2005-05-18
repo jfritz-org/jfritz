@@ -24,12 +24,18 @@ public class SipProvider {
 		return phoneNumber;
 	}
 
-	public final String getName() {
+	public final String getProvider() {
 		return providerName;
 	}
 
 	public String toString() {
-		return "SIP" + providerID + ": " + phoneNumber + "@" + providerName;
+		return phoneNumber + "@" + providerName;
 	}
 
+	/**
+	 * @return Returns the providerID.
+	 */
+	public final int getProviderID() {
+		return providerID;
+	}
 }

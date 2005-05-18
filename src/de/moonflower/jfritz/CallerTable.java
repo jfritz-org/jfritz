@@ -116,6 +116,7 @@ public class CallerTable extends JTable {
 		col = getColumnModel().getColumn(5);
 		col.setHeaderValue(messages.getString("route"));
 		headerTips.setToolTip(col, messages.getString("route_desc"));
+		col.setCellRenderer(new RouteCellRenderer());
 		col.setMaxWidth(200);
 
 		col = getColumnModel().getColumn(6);
