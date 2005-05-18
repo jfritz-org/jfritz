@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
  * TODO: This class needs to be abstracted, so that subclasses for each boxtype
  * can be implemented.
  *
- * @author Arno Willig
+ * @author akw
  *
  */
 public class JFritzUtils {
@@ -71,24 +71,32 @@ public class JFritzUtils {
 	final static String POSTDATA_CLEAR_FRITZBOX_FON_WLAN = "getpage=../html/menus/menu2.html"
 			+ "&var%3Apagename=foncalls&var%3Amenu=fon&telcfg%3Asettings/ClearJournal=1";
 
+	final static String POSTDATA_SIPPROVIDER = "getpage=../html/de/menus/menu2.html"
+			+ "&var%3Alang=de&var%3Amenu=fon&var%3Apagename=siplist&login%3Acommand%2Fpassword=";
+
+	final static String PATTERN_SIPPROVIDER = "<!-- \"(\\d)\" / \"(\\w*)\" -->"
+			+ " <td class=\"c1\"> <input type=checkbox id=\"uiViewActivsip\\d\""
+			+ " onclick=\"uiOnChangeActivated\\('uiViewActivsip\\d','uiPostActivsip\\d'\\); return true;\">"
+			+ " </td> <td class=\"c2\">(\\w*)</td>"
+			+ " <td class=\"c3\"><script type=\"text/javascript\">document.write\\(ProviderDisplay\\(\"([^\"]*)\"\\)\\);</script></td>";
+
 	/**
 	 * Detects type of fritz box by detected the firmware version
 	 *
 	 * @param box_address
 	 * @return boxtype
+	 * @throws WrongPasswordException
+	 * @throws IOException
 	 */
-	public static byte detectBoxType(String box_address, String box_password) {
+	public static byte detectBoxType(String box_address, String box_password)
+			throws WrongPasswordException, IOException {
 		byte boxtype = 0;
-		try {
-			FritzBoxFirmware fw = FritzBoxFirmware.detectFirmwareVersion(box_address, box_password);
-			System.out.println("Found Firmware: "+fw+" ("+fw.getBoxName()+")");
-			return fw.getBoxType();
-		} catch (WrongPasswordException e) {
-			System.out.println("Wrong password");
-			System.out.println("Wrong passwordb");
-		} catch (IOException e) {
-		}
-		return 0;
+		FritzBoxFirmware fw = FritzBoxFirmware.detectFirmwareVersion(
+				box_address, box_password);
+		System.out.println("Found Firmware: " + fw + " (" + fw.getBoxName()
+				+ ")");
+		// TODO: retrieveSipProvider(box_address,box_password,fw.getBoxType());
+		return fw.getBoxType();
 	}
 
 	/**
@@ -121,6 +129,15 @@ public class JFritzUtils {
 		return list;
 	}
 
+	/**
+	 *
+	 * @param box_address
+	 * @param box_password
+	 * @param boxtype
+	 * @return Vector of QuickDial objects
+	 * @throws WrongPasswordException
+	 * @throws IOException
+	 */
 	public static Vector retrieveQuickDialsFromFritzBox(String box_address,
 			String box_password, byte boxtype) throws WrongPasswordException,
 			IOException {
@@ -136,6 +153,51 @@ public class JFritzUtils {
 	}
 
 	/**
+	 * retrieves vector of SipProviders stored in the FritzBox
+	 *
+	 * @param box_address
+	 * @param password
+	 * @param boxtype
+	 * @return Vector of SipProvider
+	 * @throws WrongPasswordException
+	 * @throws IOException
+	 * @author robotniko
+	 */
+	public static Vector retrieveSipProvider(String box_address,
+			String password, byte boxtype) throws WrongPasswordException,
+			IOException {
+
+		String postdata = POSTDATA_SIPPROVIDER + password;
+		String urlstr = "http://" + box_address + "/cgi-bin/webcm";
+		String data = fetchDataFromURL(urlstr, postdata);
+		Vector list = parseSipProvider(data);
+		return list;
+	}
+
+	/**
+	 * parses html data from the fritz!box's web interface and retrieves SIP
+	 * information.
+	 *
+	 * @param data
+	 *            html data
+	 * @return list of SipProvider objects
+	 * @author robotniko, akw
+	 */
+	public static Vector parseSipProvider(String data) {
+		Vector list = new Vector();
+		data = removeDuplicateWhitespace(data);
+		Pattern p;
+		p = Pattern.compile(PATTERN_SIPPROVIDER);
+		Matcher m = p.matcher(data);
+		while (m.find()) {
+			list.add(new SipProvider(Integer.parseInt(m.group(1)), m.group(3),
+					m.group(4)));
+			// System.out.println("SIP-Provider: "+list.lastElement());
+		}
+		return list;
+	}
+
+	/**
 	 * fetches html data from url using POST requests
 	 *
 	 * @param urlstr
@@ -143,6 +205,7 @@ public class JFritzUtils {
 	 * @return html data
 	 * @throws WrongPasswordException
 	 * @throws IOException
+	 * @author akw
 	 */
 	public static String fetchDataFromURL(String urlstr, String postdata)
 			throws WrongPasswordException, IOException {
@@ -203,7 +266,7 @@ public class JFritzUtils {
 	}
 
 	/**
-	 * Clears the caller list on the fritz box
+	 * clears the caller list on the fritz box
 	 *
 	 * @param box_address
 	 * @param password
@@ -231,6 +294,13 @@ public class JFritzUtils {
 		return matcher.replaceAll(" ");
 	}
 
+	/**
+	 * creates a list of QuickDial objects
+	 *
+	 * @param data
+	 * @param boxtype
+	 * @return list of QuickDial objects
+	 */
 	public static Vector parseQuickDialData(String data, int boxtype) {
 		Vector list = new Vector();
 		data = removeDuplicateWhitespace(data);
@@ -248,7 +318,7 @@ public class JFritzUtils {
 	 * Parses html data from the fritz!box's web interface.
 	 *
 	 * @param data
-	 *
+	 * @author akw
 	 */
 	public static Vector parseCallerData(String data, int boxtype,
 			String countryPrefix, String countryCode, String areaPrefix,
@@ -343,6 +413,17 @@ public class JFritzUtils {
 			}
 		}
 		return number;
+	}
+
+	/**
+	 * creates a String with version and date of CVS Id-Tag
+	 *
+	 * @param tag
+	 * @return String with version and date of CVS Id-Tag
+	 */
+	public static String getVersionFromCVSTag(String tag) {
+		String[] parts = tag.split(" ");
+		return "CVS v" + parts[2] + " (" + parts[3] + ")";
 	}
 
 }

@@ -2,21 +2,20 @@
  *
  * Created on 16.05.2005
  *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 package de.moonflower.jfritz;
 
 /**
  * @author rob
  *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 public class SipProvider {
-	String providerName,phoneNumber;
+	private int providerID;
 
-	public SipProvider(String providerName, String phoneNumber) {
+	private String providerName, phoneNumber;
+
+	public SipProvider(int providerID, String phoneNumber, String providerName) {
+		this.providerID = providerID;
 		this.providerName = providerName;
 		this.phoneNumber = phoneNumber;
 	}
@@ -29,5 +28,8 @@ public class SipProvider {
 		return providerName;
 	}
 
+	public String toString() {
+		return "SIP" + providerID + ": " + phoneNumber + "@" + providerName;
+	}
 
 }
