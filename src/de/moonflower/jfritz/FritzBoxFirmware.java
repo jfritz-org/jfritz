@@ -18,11 +18,12 @@ import java.util.regex.Pattern;
  */
 public class FritzBoxFirmware {
 
-	public final static byte BOXTYPE_FRITZBOX_ATA = 0; // TODO correct value??
 
 	public final static byte BOXTYPE_FRITZBOX_FON = 6;
 
-	public final static byte BOXTYPE_FRITZBOX_5050 = 0; // TODO correct value??
+	public final static byte BOXTYPE_FRITZBOX_ATA = 11;
+
+	public final static byte BOXTYPE_FRITZBOX_5050 = 12;
 
 	public final static byte BOXTYPE_FRITZBOX_7050 = 14;
 
@@ -143,10 +144,10 @@ public class FritzBoxFirmware {
 			return "FRITZ!Box Fon WLAN";
 		case 14:
 			return "FRITZ!Box 7050";
-		case 100:
-			return "FRITZ!Box 5050"; // TODO Insert correct value
-		case 101:
-			return "FRITZ!Box ata"; // TODO Insert correct value
+		case 12:
+			return "FRITZ!Box 5050";
+		case 11:
+			return "FRITZ!Box ata";
 		default:
 			return "unknown";
 		}
