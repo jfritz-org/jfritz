@@ -18,25 +18,25 @@ import java.util.regex.Pattern;
  */
 public class FritzBoxFirmware {
 
-	final static byte BOXTYPE_FRITZBOX_ATA = 0; // TODO correct value??
+	public final static byte BOXTYPE_FRITZBOX_ATA = 0; // TODO correct value??
 
-	final static byte BOXTYPE_FRITZBOX_FON = 6;
+	public final static byte BOXTYPE_FRITZBOX_FON = 6;
 
-	final static byte BOXTYPE_FRITZBOX_5050 = 0; // TODO correct value??
+	public final static byte BOXTYPE_FRITZBOX_5050 = 0; // TODO correct value??
 
-	final static byte BOXTYPE_FRITZBOX_7050 = 14;
+	public final static byte BOXTYPE_FRITZBOX_7050 = 14;
 
-	byte boxtype;
+	private byte boxtype;
 
-	byte majorFirmwareVersion;
+	private byte majorFirmwareVersion;
 
-	byte minorFirmwareVersion;
+	private byte minorFirmwareVersion;
 
-	final static String[] POSTDATA_DETECT_FIRMWARE = {
+	private final static String[] POSTDATA_DETECT_FIRMWARE = {
 			"getpage=../html/de/menus/menu2.html&var%3Alang=de&var%3Amenu=home&var%3Apagename=home&login%3Acommand%2Fpassword=",
 			"getpage=../html/menus/menu2.html&var%3Alang=de&var%3Amenu=home&var%3Apagename=home&login%3Acommand%2Fpassword=" };
 
-	final static String PATTERN_DETECT_FIRMWARE = "<span class=\"Dialoglabel\">Firmware-Version "
+	private final static String PATTERN_DETECT_FIRMWARE = "<span class=\"Dialoglabel\">Firmware-Version "
 			+ "</span>(\\d\\d).(\\d\\d).(\\d\\d)";
 
 	/**
@@ -99,9 +99,10 @@ public class FritzBoxFirmware {
 			FritzBoxFirmware fw = new FritzBoxFirmware(boxtypeString,
 					majorFirmwareVersion, minorFirmwareVersion);
 			return fw;
+		} else {
+			System.err.println("detectFirmwareVersion: Password wrong?");
+			throw new WrongPasswordException("Could not detect FRITZ!Box firmware version.");
 		}
-		System.out.println("OHA");
-		throw new IOException("Could not detect Firmware");
 	}
 
 	/**
