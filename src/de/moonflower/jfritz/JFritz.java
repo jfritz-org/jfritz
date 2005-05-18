@@ -1,4 +1,5 @@
 /**
+ *
  * JFritz!
  * jfritz.sourceforge.net
  *
@@ -74,7 +75,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 
     public final static String PROGRAM_NAME = "JFritz!";
 
-    public final static String PROGRAM_VERSION = "0.2.3";
+    public final static String PROGRAM_VERSION = "0.2.5";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -82,43 +83,43 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 
     public final static String PARTICIPANTS_FILE = "jfritz.participants.xml";
 
-    public final static String CALLS_FILE = "jfritz.calls.xml";
+	public final static String CALLS_FILE = "jfritz.calls.xml";
 
-    public final static String CALLS_CSV_FILE = "calls.csv";
+	public final static String CALLS_CSV_FILE = "calls.csv";
 
-    public ResourceBundle messages;
+	public ResourceBundle messages;
 
-    Properties defaultProperties, properties, participants;
+	Properties defaultProperties, properties, participants;
 
-    CallerList callerlist;
+	CallerList callerlist;
 
-    CallerTable callertable;
+	CallerTable callertable;
 
-    Timer timer;
+	Timer timer;
 
-    JMenuBar menu;
+	JMenuBar menu;
 
-    JToolBar toolbar;
+	JToolBar toolbar;
 
-    JButton fetchButton, lookupButton;
+	JButton fetchButton, lookupButton;
 
-    JToggleButton taskButton;
+	JToggleButton taskButton;
 
-    JProgressBar progressbar;
+	JProgressBar progressbar;
 
-    boolean isretrieving = false;
+	boolean isretrieving = false;
 
-    Locale currentLocale;
+	Locale currentLocale;
 
-    public static void main(String[] args) {
-        new JFritz();
-    }
+	public static void main(String[] args) {
+		new JFritz();
+	}
 
-    public JFritz() {
-        System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION
-                + " (c) 2005 by " + PROGRAM_AUTHOR);
-        loadProperties();
-        saveProperties();
+	public JFritz() {
+		System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION
+				+ " (c) 2005 by " + PROGRAM_AUTHOR);
+		loadProperties();
+		saveProperties();
 
         //currentLocale = new Locale("en", "US");
         currentLocale = new Locale("de", "DE");
