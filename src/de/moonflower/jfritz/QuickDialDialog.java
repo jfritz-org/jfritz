@@ -239,7 +239,10 @@ public class QuickDialDialog extends JDialog {
 
 		panel.add(bottomPane, BorderLayout.SOUTH);
 		getContentPane().add(panel);
-		pack();
+
+		setSize(new Dimension(400,350));
+		// setResizable(false);
+		// pack();
 	}
 
 	public boolean okPressed() {

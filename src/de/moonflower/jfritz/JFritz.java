@@ -44,7 +44,7 @@
  *
  * JAR: Signing, Deploying, Website jfritz.moonflower.de oder Sourceforge
  *
- * CHANGLELOG:
+ * CHANGELOG:
  *
  * JFritz! 0.2.7:
  * - Notify users whenn calls have been retrieved
@@ -141,7 +141,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 
 	public final static String PROGRAM_VERSION = "0.2.7";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.15 2005/05/19 11:54:44 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.16 2005/05/19 12:18:21 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -152,6 +152,9 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 	public final static String CALLS_FILE = "jfritz.calls.xml";
 
 	public final static String CALLS_CSV_FILE = "calls.csv";
+
+	public final static boolean IS_RELEASE = Integer.parseInt(PROGRAM_VERSION
+			.substring(PROGRAM_VERSION.lastIndexOf(".") + 1)) % 2 == 1;
 
 	public ResourceBundle messages;
 
@@ -314,8 +317,24 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 												.getResource(
 														"/de/moonflower/jfritz/resources/images/phonebook.png"))));
 		button.setToolTipText(messages.getString("phonebook"));
-		button.setEnabled(false);
+		button.setEnabled(IS_RELEASE);
 		toolbar.add(button);
+
+		button = new JButton();
+		button.setActionCommand("quickdial");
+		button.addActionListener(this);
+		button
+				.setIcon(new ImageIcon(
+						Toolkit
+								.getDefaultToolkit()
+								.getImage(
+										getClass()
+												.getResource(
+														"/de/moonflower/jfritz/resources/images/quickdial.png"))));
+		button.setToolTipText(messages.getString("quickdial"));
+		button.setEnabled(IS_RELEASE);
+		toolbar.add(button);
+
 		toolbar.addSeparator();
 
 		button = new JButton();
@@ -335,14 +354,11 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/excel.png"))));
 		button.setToolTipText(messages.getString("export_excel"));
-		button.setEnabled(false);
+		button.setEnabled(IS_RELEASE);
 		toolbar.add(button);
 
 		button = new JButton();
 		button.setActionCommand("export_openoffice");
-		button.addActionListener(this);
-		button = new JButton();
-		button.setActionCommand("excel");
 		button.addActionListener(this);
 		button.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
@@ -360,7 +376,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 												.getResource(
 														"/de/moonflower/jfritz/resources/images/openoffice.png"))));
 		button.setToolTipText(messages.getString("export_openoffice"));
-		button.setEnabled(false);
+		button.setEnabled(IS_RELEASE);
 		toolbar.add(button);
 
 		button = new JButton();
@@ -370,7 +386,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/help.png"))));
 		button.setToolTipText(messages.getString("help_menu"));
-		button.setEnabled(false);
+		button.setEnabled(IS_RELEASE);
 		toolbar.add(button);
 
 		toolbar.addSeparator();
@@ -405,7 +421,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		tbutton.setActionCommand("filter_callin");
 		tbutton.addActionListener(this);
 		tbutton.setToolTipText(messages.getString("filter_callin"));
-		tbutton.setEnabled(false);
+		tbutton.setEnabled(IS_RELEASE);
 		toolbar.add(tbutton);
 
 		tbutton = new JToggleButton(
@@ -428,7 +444,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		tbutton.setActionCommand("filter_callinfailed");
 		tbutton.addActionListener(this);
 		tbutton.setToolTipText(messages.getString("filter_callinfailed"));
-		tbutton.setEnabled(false);
+		tbutton.setEnabled(IS_RELEASE);
 		toolbar.add(tbutton);
 
 		tbutton = new JToggleButton(
@@ -451,7 +467,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		tbutton.setActionCommand("filter_callout");
 		tbutton.addActionListener(this);
 		tbutton.setToolTipText(messages.getString("filter_callout"));
-		tbutton.setEnabled(false);
+		tbutton.setEnabled(IS_RELEASE);
 		toolbar.add(tbutton);
 
 		getContentPane().add(toolbar, BorderLayout.NORTH);
@@ -501,13 +517,13 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		item = new JMenuItem(messages.getString("export_excel"), 'c');
 		item.setActionCommand("export_excel");
 		item.addActionListener(this);
-		item.setEnabled(false);
+		item.setEnabled(IS_RELEASE);
 		exportMenu.add(item);
 
 		item = new JMenuItem(messages.getString("export_openoffice"), 'c');
 		item.setActionCommand("export_openoffice");
 		item.addActionListener(this);
-		item.setEnabled(false);
+		item.setEnabled(IS_RELEASE);
 		exportMenu.add(item);
 		fritzMenu.add(exportMenu);
 
@@ -515,12 +531,12 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		item = new JMenuItem(messages.getString("phonebook"), 'b');
 		item.setActionCommand("phonebook");
 		item.addActionListener(this);
-		item.setEnabled(false);
+		item.setEnabled(IS_RELEASE);
 		fritzMenu.add(item);
 		item = new JMenuItem(messages.getString("quickdials"));
 		item.setActionCommand("quickdial");
 		item.addActionListener(this);
-		item.setEnabled(false);
+		item.setEnabled(IS_RELEASE);
 		fritzMenu.add(item);
 		fritzMenu.add(new JSeparator());
 		item = new JMenuItem(messages.getString("prog_exit"), 'x');
@@ -531,7 +547,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		item = new JMenuItem(messages.getString("help_content"), 'h');
 		item.setActionCommand("help");
 		item.addActionListener(this);
-		item.setEnabled(false);
+		item.setEnabled(IS_RELEASE);
 		helpMenu.add(item);
 		item = new JMenuItem(messages.getString("jfritz_website"), 'w');
 		item.setActionCommand("website");
@@ -559,12 +575,10 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		item = new JMenuItem(messages.getString("config"), 'e');
 		item.setActionCommand("config");
 		item.addActionListener(this);
-		//		item.setEnabled( false );
 		optionsMenu.add(item);
 
 		menu = new JMenuBar();
 		menu.add(fritzMenu);
-		//		menu.add(editMenu);
 		menu.add(optionsMenu);
 		menu.add(helpMenu);
 		setJMenuBar(menu);
