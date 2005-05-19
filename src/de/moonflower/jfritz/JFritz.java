@@ -47,6 +47,7 @@
  * CHANGELOG:
  *
  * JFritz! 0.2.7:
+ * - Bugfix: Firmware detection had nasty bug
  * - Notify users whenn calls have been retrieved
  * - CSV Export
  *
@@ -141,7 +142,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 
 	public final static String PROGRAM_VERSION = "0.2.7";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.16 2005/05/19 12:18:21 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.17 2005/05/19 12:27:46 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 

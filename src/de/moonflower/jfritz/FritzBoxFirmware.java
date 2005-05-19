@@ -69,17 +69,19 @@ public class FritzBoxFirmware {
 	/**
 	 * Firmware Constructor using a single String
 	 *
-	 * @param firmware Firmware string like '14.06.37'
+	 * @param firmware
+	 *            Firmware string like '14.06.37'
 	 */
 	public FritzBoxFirmware(String firmware) throws InvalidFirmwareException {
 		if (firmware == null)
 			throw new InvalidFirmwareException("No firmware found");
-		if (firmware.length() != 8)
+		String[] parts = firmware.split("\\.");
+		if (parts.length !=3)
 			throw new InvalidFirmwareException("Firmware number crippled");
 
-		this.boxtype = Byte.parseByte(firmware.substring(0, 2));
-		this.majorFirmwareVersion = Byte.parseByte(firmware.substring(3, 5));
-		this.minorFirmwareVersion = Byte.parseByte(firmware.substring(6, 8));
+		this.boxtype = Byte.parseByte(parts[0]);
+		this.majorFirmwareVersion = Byte.parseByte(parts[1]);
+		this.minorFirmwareVersion = Byte.parseByte(parts[2]);
 
 	}
 
