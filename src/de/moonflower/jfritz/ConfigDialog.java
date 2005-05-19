@@ -12,6 +12,7 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -24,6 +25,7 @@ import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -56,7 +58,8 @@ public class ConfigDialog extends JDialog {
 
 	private JButton okButton, cancelButton, boxtypeButton;
 
-	private JCheckBox deleteAfterFetchButton, fetchAfterStartButton, notifyOnCallsButton;
+	private JCheckBox deleteAfterFetchButton, fetchAfterStartButton,
+			notifyOnCallsButton;
 
 	private JLabel boxtypeLabel;
 
@@ -85,9 +88,12 @@ public class ConfigDialog extends JDialog {
 	 * @param properties
 	 */
 	public void setValues(Properties properties) {
-		notifyOnCallsButton.setSelected( Boolean.parseBoolean(properties.getProperty("option.notifyOnCalls")));
-		fetchAfterStartButton.setSelected( Boolean.parseBoolean(properties.getProperty("option.fetchAfterStart")));
-		deleteAfterFetchButton.setSelected( Boolean.parseBoolean(properties.getProperty("option.deleteAfterFetch")));
+		notifyOnCallsButton.setSelected(Boolean.parseBoolean(properties
+				.getProperty("option.notifyOnCalls")));
+		fetchAfterStartButton.setSelected(Boolean.parseBoolean(properties
+				.getProperty("option.fetchAfterStart")));
+		deleteAfterFetchButton.setSelected(Boolean.parseBoolean(properties
+				.getProperty("option.deleteAfterFetch")));
 		pass.setText(properties.getProperty("box.password"));
 		address.setText(properties.getProperty("box.address"));
 		areaCode.setText(properties.getProperty("area.code"));
@@ -103,10 +109,10 @@ public class ConfigDialog extends JDialog {
 		}
 		setBoxTypeLabel();
 		for (int i = 0; i < 10; i++) {
-			String sipstr = properties.getProperty("SIP"+i);
+			String sipstr = properties.getProperty("SIP" + i);
 			if (sipstr != null) {
 				String[] parts = sipstr.split("@");
-				SipProvider sip = new SipProvider(i,parts[0],parts[1]);
+				SipProvider sip = new SipProvider(i, parts[0], parts[1]);
 				sipmodel.addProvider(sip);
 			}
 		}
@@ -123,9 +129,12 @@ public class ConfigDialog extends JDialog {
 			areaCode.setText(areaCode.getText().substring(
 					areaPrefix.getText().length()));
 
-		properties.setProperty("option.notifyOnCalls", Boolean.toString(notifyOnCallsButton.isSelected()));
-		properties.setProperty("option.fetchAfterStart", Boolean.toString(fetchAfterStartButton.isSelected()));
-		properties.setProperty("option.deleteAfterFetch", Boolean.toString(deleteAfterFetchButton.isSelected()));
+		properties.setProperty("option.notifyOnCalls", Boolean
+				.toString(notifyOnCallsButton.isSelected()));
+		properties.setProperty("option.fetchAfterStart", Boolean
+				.toString(fetchAfterStartButton.isSelected()));
+		properties.setProperty("option.deleteAfterFetch", Boolean
+				.toString(deleteAfterFetchButton.isSelected()));
 		properties.setProperty("box.password", new String(pass.getPassword()));
 		properties.setProperty("box.address", address.getText());
 		properties.setProperty("area.code", areaCode.getText());
@@ -156,7 +165,7 @@ public class ConfigDialog extends JDialog {
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets.top = 5;
 		c.insets.bottom = 5;
-		c.anchor = GridBagConstraints.EAST;
+		c.anchor = GridBagConstraints.WEST;
 
 		// Create JTabbedPane
 		JTabbedPane tpane = new JTabbedPane(JTabbedPane.TOP);
@@ -236,35 +245,44 @@ public class ConfigDialog extends JDialog {
 		};
 
 		c.gridy = 1;
-		label = new JLabel("Fritz!Box-Addresse: ");
+		ImageIcon boxicon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource(
+						"/de/moonflower/jfritz/resources/images/fritzbox.png")));
+		label = new JLabel("");
+		label.setIcon(boxicon);
+		gridbag.setConstraints(label, c);
+		boxpane.add(label);
+		label = new JLabel("FRITZ!-Box-Einstellungen");
+		gridbag.setConstraints(label, c);
+		boxpane.add(label);
+
+		c.gridy = 2;
+		label = new JLabel("Addresse: ");
 		gridbag.setConstraints(label, c);
 		boxpane.add(label);
 		address = new JTextField("", 16);
 		gridbag.setConstraints(address, c);
 		boxpane.add(address);
 
-		c.gridy = 2;
-		label = new JLabel("Fritz!Box-Passwort: ");
+		c.gridy = 3;
+		label = new JLabel("Passwort: ");
 		gridbag.setConstraints(label, c);
 		boxpane.add(label);
 		pass = new JPasswordField("", 16);
 		gridbag.setConstraints(pass, c);
 		boxpane.add(pass);
 
-		c.gridy = 3;
-		label = new JLabel("Fritz!Box-Typ: ");
-		gridbag.setConstraints(label, c);
-		boxpane.add(label);
-		boxtypeLabel = new JLabel();
-		gridbag.setConstraints(boxtypeLabel, c);
-		boxpane.add(boxtypeLabel);
 		c.gridy = 4;
 		boxtypeButton = new JButton("Typ erkennen");
 		boxtypeButton.setActionCommand("detectboxtype");
 		boxtypeButton.addActionListener(actionListener);
-
 		gridbag.setConstraints(boxtypeButton, c);
 		boxpane.add(boxtypeButton);
+		boxtypeLabel = new JLabel();
+		gridbag.setConstraints(boxtypeLabel, c);
+		boxpane.add(boxtypeLabel);
+
+
 
 		c.gridy = 1;
 		label = new JLabel("Ortsvorwahl: ");
@@ -380,14 +398,13 @@ public class ConfigDialog extends JDialog {
 		tpane.addTab("SIP-Nummern", sippane);
 		tpane.addTab("Weiteres", otherpane);
 
-
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(tpane, BorderLayout.CENTER);
 		getContentPane().add(okcancelpanel, BorderLayout.SOUTH);
 
 		addKeyListener(keyListener);
 
-		setSize(new Dimension(400,350));
+		setSize(new Dimension(480, 350));
 		setResizable(false);
 		// pack();
 	}

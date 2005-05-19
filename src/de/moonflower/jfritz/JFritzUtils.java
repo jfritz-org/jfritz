@@ -39,46 +39,49 @@ public class JFritzUtils {
 	final static String POSTDATA_LIST_FRITZBOX_FON_WLAN = "getpage=../html/menus/menu2.html"
 			+ "&var%3Apagename=foncalls&var%3Amenu=fon&login%3Acommand%2Fpassword=";
 
+	final static String POSTDATA_SIPPROVIDER_FRITZBOX_FON_WLAN = "getpage=../html/menus/menu2.html"
+			+ "&var%3Amenu=fon&var%3Apagename=siplist&login%3Acommand%2Fpassword=";
+
+	final static String POSTDATA_SIPPROVIDER_FRITZBOX_7050 = "getpage=../html/de/menus/menu2.html"
+			+ "&var%3Alang=de&var%3Amenu=fon&var%3Apagename=siplist&login%3Acommand%2Fpassword=";
+
+	final static String POSTDATA_CLEAR_FRITZBOX_FON_WLAN = "getpage=../html/menus/menu2.html"
+			+ "&var%3Apagename=foncalls&var%3Amenu=fon&telcfg%3Asettings/ClearJournal=1";
+
 	// FIXME for 7050
 	final static String POSTDATA_CLEAR_FRITZBOX_7050 = "getpage=../html/de/menus/menu2.html"
 			+ "&var%3Apagename=foncalls&var%3Amenu=fon&telcfg%3Asettings/ClearJournal=1";
 
 	final static String PATTERN_FRITZBOX_FON_WLAN = "<tr class=\"Dialoglist\">"
-			+ " <td class=\"c1\"><script type=\"text/javascript\">document.write\\(uiCallSymbol\\(\"(\\d)\"\\)\\);</script></td>"
-			+ " <td class=\"c3\">(\\d\\d\\.\\d\\d\\.\\d\\d \\d\\d:\\d\\d)</td>"
-			+ " <td class=\"c4\"><script type=\"text/javascript\">document.write\\(uiRufnummerDisplay\\(\"(\\d*)\"\\)\\);</script></td>"
-			+ " <td class=\"c5\"><script type=\"text/javascript\">document.write\\(uiPortDisplay\\(\"(\\d*)\"\\)\\);</script></td>"
-			+ " <td class=\"c6\"><script type=\"text/javascript\">document.write\\(uiDauerDisplay\\(\"(\\d*)\"\\)\\);</script></td>"
-			+ " </tr>";
+			+ "\\s*<td class=\"c1\"><script type=\"text/javascript\">document.write\\(uiCallSymbol\\(\"(\\d)\"\\)\\);</script></td>"
+			+ "\\s*<td class=\"c3\">(\\d\\d\\.\\d\\d\\.\\d\\d \\d\\d:\\d\\d)</td>"
+			+ "\\s*<td class=\"c4\"><script type=\"text/javascript\">document.write\\(uiRufnummerDisplay\\(\"(\\d*)\"\\)\\);</script></td>"
+			+ "\\s*<td class=\"c5\"><script type=\"text/javascript\">document.write\\(uiPortDisplay\\(\"(\\d*)\"\\)\\);</script></td>"
+			+ "\\s*<td class=\"c6\"><script type=\"text/javascript\">document.write\\(uiDauerDisplay\\(\"(\\d*)\"\\)\\);</script></td>"
+			+ "\\s*</tr>";
 
 	final static String PATTERN_FRITZBOX_7050 = "<tr class=\"Dialoglist\">"
-			+ " <td class=\"c1\"><script type=\"text/javascript\">document.write\\(uiCallSymbol\\(\"(\\d)\"\\)\\);</script></td>"
-			+ " <td class=\"c3\">(\\d\\d\\.\\d\\d\\.\\d\\d \\d\\d:\\d\\d)</td>"
-			+ " <td class=\"c4\"><script type=\"text/javascript\">document.write\\(uiRufnummerDisplay\\(\"(\\d*)\"\\)\\);</script></td>"
-			+ " <td class=\"c5\"><script type=\"text/javascript\">document.write\\(uiPortDisplay\\(\"(\\d*)\"\\)\\);</script></td>"
-			+ " <td class=\"c7\"><script type=\"text/javascript\">document.write\\(uiRouteDisplay\\(\"(\\w*)\"\\)\\);</script></td>"
-			+ " <td class=\"c6\"><script type=\"text/javascript\">document.write\\(uiDauerDisplay\\(\"(\\d*)\"\\)\\);</script></td>"
-			+ " </tr>";
+			+ "\\s*<td class=\"c1\"><script type=\"text/javascript\">document.write\\(uiCallSymbol\\(\"(\\d)\"\\)\\);</script></td>"
+			+ "\\s*<td class=\"c3\">(\\d\\d\\.\\d\\d\\.\\d\\d \\d\\d:\\d\\d)</td>"
+			+ "\\s*<td class=\"c4\"><script type=\"text/javascript\">document.write\\(uiRufnummerDisplay\\(\"(\\d*)\"\\)\\);</script></td>"
+			+ "\\s*<td class=\"c5\"><script type=\"text/javascript\">document.write\\(uiPortDisplay\\(\"(\\d*)\"\\)\\);</script></td>"
+			+ "\\s*<td class=\"c7\"><script type=\"text/javascript\">document.write\\(uiRouteDisplay\\(\"(\\w*)\"\\)\\);</script></td>"
+			+ "\\s*<td class=\"c6\"><script type=\"text/javascript\">document.write\\(uiDauerDisplay\\(\"(\\d*)\"\\)\\);</script></td>"
+			+ "\\s*</tr>";
 
 	final static String PATTERN_QUICKDIAL_FRITZBOX_7050 = "<tr class=\"Dialoglist\">"
-			+ " <td style=\"text-align: center;\">(\\d*)</td>"
-			+ " <td>(\\w*)</td>"
-			+ " <td>([^<]*)</td>"
-			+ " <td style=\"text-align: right;\"><button [^>]*> <img [^>]*></button></td>"
-			+ " <td style=\"text-align: right;\"><button [^>]*> <img [^>]*></button></td>"
-			+ " </tr>";
-
-	final static String POSTDATA_CLEAR_FRITZBOX_FON_WLAN = "getpage=../html/menus/menu2.html"
-			+ "&var%3Apagename=foncalls&var%3Amenu=fon&telcfg%3Asettings/ClearJournal=1";
-
-	final static String POSTDATA_SIPPROVIDER = "getpage=../html/de/menus/menu2.html"
-			+ "&var%3Alang=de&var%3Amenu=fon&var%3Apagename=siplist&login%3Acommand%2Fpassword=";
+			+ "\\s*<td style=\"text-align: center;\">(\\d*)</td>"
+			+ "\\s*<td>(\\w*)</td>"
+			+ "\\s*<td>([^<]*)</td>"
+			+ "\\s*<td style=\"text-align: right;\"><button [^>]*> <img [^>]*></button></td>"
+			+ "\\s*<td style=\"text-align: right;\"><button [^>]*> <img [^>]*></button></td>"
+			+ "\\s*</tr>";
 
 	final static String PATTERN_SIPPROVIDER = "<!-- \"(\\d)\" / \"(\\w*)\" -->"
-			+ " <td class=\"c1\"> <input type=checkbox id=\"uiViewActivsip\\d\""
-			+ " onclick=\"uiOnChangeActivated\\('uiViewActivsip\\d','uiPostActivsip\\d'\\); return true;\">"
-			+ " </td> <td class=\"c2\">(\\w*)</td>"
-			+ " <td class=\"c3\"><script type=\"text/javascript\">document.write\\(ProviderDisplay\\(\"([^\"]*)\"\\)\\);</script></td>";
+			+ "\\s*<td class=\"c1\"> <input type=checkbox id=\"uiViewActivsip\\d\""
+			+ "\\s*onclick=\"uiOnChangeActivated\\('uiViewActivsip\\d','uiPostActivsip\\d'\\); return true;\">"
+			+ "\\s*</td>\\s*<td class=\"c2\">(\\w*)</td>"
+			+ "\\s*<td class=\"c3\"><script type=\"text/javascript\">document.write\\(ProviderDisplay\\(\"([^\"]*)\"\\)\\);</script></td>";
 
 	/**
 	 * Detects type of fritz box by detecting the firmware version
@@ -130,6 +133,14 @@ public class JFritzUtils {
 		}
 		String urlstr = "http://" + box_address + "/cgi-bin/webcm";
 		String data = fetchDataFromURL(urlstr, postdata);
+
+		/*
+		 * // DEBUG: Test other versions try { data = ""; String thisLine;
+		 * BufferedReader in = new BufferedReader(new FileReader(
+		 * "/home/akw/calls-mod-0.55.html")); while ((thisLine = in.readLine()) !=
+		 * null) { data += thisLine; } in.close(); } catch (IOException e) { } //
+		 * END OF DEBUG SECTION
+		 */
 		Vector list = parseCallerData(data, boxtype, countryPrefix,
 				countryCode, areaPrefix, areaCode);
 		return list;
@@ -167,13 +178,18 @@ public class JFritzUtils {
 	 * @return Vector of SipProvider
 	 * @throws WrongPasswordException
 	 * @throws IOException
-	 * author robotniko
+	 *             author robotniko
 	 */
 	public static Vector retrieveSipProvider(String box_address,
 			String password, byte boxtype) throws WrongPasswordException,
 			IOException {
+		String postdata = "";
+		if (boxtype == FritzBoxFirmware.BOXTYPE_FRITZBOX_7050) {
+			postdata = POSTDATA_SIPPROVIDER_FRITZBOX_7050 + password;
+		} else {
+			postdata = POSTDATA_SIPPROVIDER_FRITZBOX_FON_WLAN + password;
 
-		String postdata = POSTDATA_SIPPROVIDER + password;
+		}
 		String urlstr = "http://" + box_address + "/cgi-bin/webcm";
 		String data = fetchDataFromURL(urlstr, postdata);
 		Vector list = parseSipProvider(data);
@@ -186,8 +202,7 @@ public class JFritzUtils {
 	 *
 	 * @param data
 	 *            html data
-	 * @return list of SipProvider objects
-	 * author robotniko, akw
+	 * @return list of SipProvider objects author robotniko, akw
 	 */
 	public static Vector parseSipProvider(String data) {
 		Vector list = new Vector();
@@ -296,7 +311,9 @@ public class JFritzUtils {
 	public static String removeDuplicateWhitespace(String inputStr) {
 		Pattern p = Pattern.compile("\\s+");
 		Matcher matcher = p.matcher(inputStr);
-		return matcher.replaceAll(" ");
+		String outputStr = matcher.replaceAll(" ");
+		outputStr.replaceAll(">\\s+<", "><");
+		return outputStr;
 	}
 
 	/**
@@ -358,11 +375,12 @@ public class JFritzUtils {
 		} else {
 			p = Pattern.compile(PATTERN_FRITZBOX_FON_WLAN);
 			Matcher m = p.matcher(data);
-
 			int i = 0;
 			while (m.find()) {
 				i++;
-				//System.err.println("Found:"+m.group(1)+"|"+m.group(2)+"|"+m.group(3)+"|"+m.group(4)+"|"+m.group(5));
+				System.err.println("Found:" + m.group(1) + "|" + m.group(2)
+						+ "|" + m.group(3) + "|" + m.group(4) + "|"
+						+ m.group(5));
 				try {
 					CallType symbol = new CallType(Byte.parseByte(m.group(1)));
 					String port = m.group(4);

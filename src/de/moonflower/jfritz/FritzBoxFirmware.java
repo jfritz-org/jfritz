@@ -32,11 +32,13 @@ public class FritzBoxFirmware {
 
 	private byte minorFirmwareVersion;
 
+	private String modFirmwareVersion;
+
 	private final static String[] POSTDATA_DETECT_FIRMWARE = {
 			"getpage=../html/de/menus/menu2.html&var%3Alang=de&var%3Amenu=home&var%3Apagename=home&login%3Acommand%2Fpassword=",
 			"getpage=../html/menus/menu2.html&var%3Alang=de&var%3Amenu=home&var%3Apagename=home&login%3Acommand%2Fpassword=" };
 
-	private final static String PATTERN_DETECT_FIRMWARE = "<span class=\"Dialoglabel\">[^<]*</span>(\\d\\d).(\\d\\d).(\\d\\d)";
+	private final static String PATTERN_DETECT_FIRMWARE = "<span class=\"Dialoglabel\">[^<]*</span>(\\d\\d).(\\d\\d).(\\d\\d)([^<]*)";
 
 	/**
 	 * Firmware Constructor using Bytes
@@ -50,6 +52,7 @@ public class FritzBoxFirmware {
 		this.boxtype = boxtype;
 		this.majorFirmwareVersion = majorFirmwareVersion;
 		this.minorFirmwareVersion = minorFirmwareVersion;
+		this.modFirmwareVersion = "";
 	}
 
 	/**
@@ -64,6 +67,23 @@ public class FritzBoxFirmware {
 		this.boxtype = Byte.parseByte(boxtype);
 		this.majorFirmwareVersion = Byte.parseByte(majorFirmwareVersion);
 		this.minorFirmwareVersion = Byte.parseByte(minorFirmwareVersion);
+		this.modFirmwareVersion = "";
+	}
+
+	/**
+	 * Firmware Constructor using Strings
+	 *
+	 * @param boxtype
+	 * @param majorFirmwareVersion
+	 * @param minorFirmwareVersion
+	 * @param modFirmwareVersion
+	 */
+	public FritzBoxFirmware(String boxtype, String majorFirmwareVersion,
+			String minorFirmwareVersion, String modFirmwareVersion) {
+		this.boxtype = Byte.parseByte(boxtype);
+		this.majorFirmwareVersion = Byte.parseByte(majorFirmwareVersion);
+		this.minorFirmwareVersion = Byte.parseByte(minorFirmwareVersion);
+		this.modFirmwareVersion = modFirmwareVersion;
 	}
 
 	/**
@@ -73,16 +93,21 @@ public class FritzBoxFirmware {
 	 *            Firmware string like '14.06.37'
 	 */
 	public FritzBoxFirmware(String firmware) throws InvalidFirmwareException {
+		String mod = "";
 		if (firmware == null)
 			throw new InvalidFirmwareException("No firmware found");
+		if (firmware.contains("mod")) {
+			mod = firmware.substring(firmware.indexOf("mod"));
+			firmware = firmware.substring(0, firmware.indexOf("mod"));
+		}
 		String[] parts = firmware.split("\\.");
-		if (parts.length !=3)
+		if (parts.length != 3)
 			throw new InvalidFirmwareException("Firmware number crippled");
 
 		this.boxtype = Byte.parseByte(parts[0]);
 		this.majorFirmwareVersion = Byte.parseByte(parts[1]);
 		this.minorFirmwareVersion = Byte.parseByte(parts[2]);
-
+		this.modFirmwareVersion = mod;
 	}
 
 	/**
@@ -107,15 +132,17 @@ public class FritzBoxFirmware {
 					POSTDATA_DETECT_FIRMWARE[i] + box_password).trim();
 			i++;
 		}
-
+		// Modded firmware: data = "<div class=\"pDialogo\" style=\"text-align: center; padding: 5px 10px;\"> FRITZ!Box Fon WLAN, <span class=\"Dialoglabel\">Modified-Firmware </span>08.03.37mod-0.55 \n</div>";
 		Pattern p = Pattern.compile(PATTERN_DETECT_FIRMWARE);
 		Matcher m = p.matcher(data);
 		if (m.find()) {
 			String boxtypeString = m.group(1);
 			String majorFirmwareVersion = m.group(2);
 			String minorFirmwareVersion = m.group(3);
+			String modFirmwareVersion = m.group(4).trim();
 			FritzBoxFirmware fw = new FritzBoxFirmware(boxtypeString,
-					majorFirmwareVersion, minorFirmwareVersion);
+					majorFirmwareVersion, minorFirmwareVersion,
+					modFirmwareVersion);
 			return fw;
 		} else {
 			System.err.println("detectFirmwareVersion: Password wrong?");
@@ -151,7 +178,8 @@ public class FritzBoxFirmware {
 	public final String getFirmwareVersion() {
 		DecimalFormat df = new DecimalFormat("##,##,##");
 		return df.format(boxtype * 10000 + majorFirmwareVersion * 100
-				+ minorFirmwareVersion);
+				+ minorFirmwareVersion)
+				+ modFirmwareVersion;
 	}
 
 	public String getBoxName() {
