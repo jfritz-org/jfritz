@@ -44,7 +44,45 @@
  *
  * JAR: Signing, Deploying, Website jfritz.moonflower.de oder Sourceforge
  *
+ * Changelog:
  *
+ * JFritz! 0.2.7:
+ * - Notify users whenn calls have been retrieved
+ *
+ * JFritz! 0.2.6:
+ * - Several bugfixes
+ * - Support for Fritz!Boxes with modified firmware
+ * - Improved config dialog
+ * - Improved firmware detection
+ * - Initial support für SIP-Provider
+ * - Firmware/SIP-Provider are saved in config file
+ *
+ * JFritz! 0.2.4:
+ * - Several bugfixes
+ * - Improventsment on number resolution
+ * - Optimized Reverse Lookup
+ *
+ * JFritz! 0.2.2:
+ * - FRITZ!Box FON WLAN works again and is detected automatically.
+ * - Target MSN is displayed
+ * - Bugfixes for Reverse Lookup (Mobile phone numbers are filtered now)
+ * - Nice icons for calltypes (Regular call, Area call, Mobile call)
+ * - Several small bugfixes
+ *
+ * JFritz! 0.2.0:
+ * - Improved GUI, arranged colours for win32 platform
+ * - New ToolBar with nice icons
+ * - Bugfix: Not all calls had been retrieved from box
+ * - Improved reverse lookup
+ * - Automatic box detection (does not yet work perfectly)
+ * - Internal class restructuring
+ *
+ * JFritz! 0.1.6:
+ * - Calls are now saved in XML format
+ * - Support for Fritz!Box 7050
+ *
+ * JFritz! 0.1.0:
+ * - Initial version
  */
 package de.moonflower.jfritz;
 
@@ -97,9 +135,9 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 
 	public final static String PROGRAM_NAME = "JFritz!";
 
-	public final static String PROGRAM_VERSION = "0.2.6";
+	public final static String PROGRAM_VERSION = "0.2.7";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.13 2005/05/18 23:00:54 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.14 2005/05/19 10:25:06 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 

@@ -69,9 +69,7 @@ public class FritzBoxFirmware {
 	/**
 	 * Firmware Constructor using a single String
 	 *
-	 * @param boxtype
-	 * @param majorFirmwareVersion
-	 * @param minorFirmwareVersion
+	 * @param firmware Firmware string like '14.06.37'
 	 */
 	public FritzBoxFirmware(String firmware) throws InvalidFirmwareException {
 		if (firmware == null)

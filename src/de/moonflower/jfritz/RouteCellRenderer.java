@@ -23,13 +23,16 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 public class RouteCellRenderer extends DefaultTableCellRenderer {
 
-	final ImageIcon imageSIP;
+	final ImageIcon imageSIP, imagePhone;
 
 	public RouteCellRenderer() {
 		super();
 		imageSIP = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/world.png")));
+		imagePhone = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource(
+						"/de/moonflower/jfritz/resources/images/phone.png")));
 
 	}
 
@@ -59,11 +62,11 @@ public class RouteCellRenderer extends DefaultTableCellRenderer {
 				routeStr = route;
 				setIcon(null);
 				setToolTipText("Festnetz-Telefonat: " + route);
-
+				setIcon(imagePhone);
 			}
 
 			label.setText(routeStr);
-			label.setHorizontalAlignment(JLabel.RIGHT);
+			label.setHorizontalAlignment(JLabel.LEFT);
 		}
 		return label;
 	}

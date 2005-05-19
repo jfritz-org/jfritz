@@ -56,7 +56,7 @@ public class ConfigDialog extends JDialog {
 
 	private JButton okButton, cancelButton, boxtypeButton;
 
-	private JCheckBox deleteAfterFetchButton, fetchAfterStartButton;
+	private JCheckBox deleteAfterFetchButton, fetchAfterStartButton, notifyOnCallsButton;
 
 	private JLabel boxtypeLabel;
 
@@ -79,7 +79,15 @@ public class ConfigDialog extends JDialog {
 		return pressed_OK;
 	}
 
+	/**
+	 * sets properties to dialog components
+	 *
+	 * @param properties
+	 */
 	public void setValues(Properties properties) {
+		notifyOnCallsButton.setSelected( Boolean.parseBoolean(properties.getProperty("option.notifyOnCalls")));
+		fetchAfterStartButton.setSelected( Boolean.parseBoolean(properties.getProperty("option.fetchAfterStart")));
+		deleteAfterFetchButton.setSelected( Boolean.parseBoolean(properties.getProperty("option.deleteAfterFetch")));
 		pass.setText(properties.getProperty("box.password"));
 		address.setText(properties.getProperty("box.address"));
 		areaCode.setText(properties.getProperty("area.code"));
@@ -104,12 +112,20 @@ public class ConfigDialog extends JDialog {
 		}
 	}
 
+	/**
+	 * stores values in dialog components to programm properties
+	 *
+	 * @param properties
+	 */
 	public void storeValues(Properties properties) {
 		// Remove leading "0" from areaCode
 		if (areaCode.getText().startsWith(areaPrefix.getText()))
 			areaCode.setText(areaCode.getText().substring(
 					areaPrefix.getText().length()));
 
+		properties.setProperty("option.notifyOnCalls", Boolean.toString(notifyOnCallsButton.isSelected()));
+		properties.setProperty("option.fetchAfterStart", Boolean.toString(fetchAfterStartButton.isSelected()));
+		properties.setProperty("option.deleteAfterFetch", Boolean.toString(deleteAfterFetchButton.isSelected()));
 		properties.setProperty("box.password", new String(pass.getPassword()));
 		properties.setProperty("box.address", address.getText());
 		properties.setProperty("area.code", areaCode.getText());
@@ -287,23 +303,23 @@ public class ConfigDialog extends JDialog {
 		otherpane.add(label);
 		otherpane.add(timerSlider);
 
-		label = new JLabel(": ");
 		fetchAfterStartButton = new JCheckBox("Nach Programmstart Liste holen");
 		otherpane.add(fetchAfterStartButton);
 		// TODO Make this work :)
 		fetchAfterStartButton.setEnabled(false);
 
-		label = new JLabel("Nach Laden auf Box löschen: ");
 		deleteAfterFetchButton = new JCheckBox("Nach Laden auf Box löschen");
 		otherpane.add(deleteAfterFetchButton);
 		// TODO Make this work :)
 		deleteAfterFetchButton.setEnabled(false);
 
+		notifyOnCallsButton = new JCheckBox("Bei neuen Anrufen benachrichtigen");
+		otherpane.add(notifyOnCallsButton);
+		// TODO Make this work :)
+		// notifyOnCallsButton.setEnabled(false);
+
 		// Create SIP Panel
 		// TODO: To do it :-)
-		String data[][] = { { "A", "B", "C" }, { "U", "V", "W" },
-				{ "A", "B", "C" }, { "A", "B", "C" }, { "A", "B", "C" },
-				{ "A", "B", "C" }, { "A", "B", "C" }, { "A", "B", "C" } };
 
 		JPanel sipButtonPane = new JPanel();
 		sipmodel = new SipProviderTableModel();

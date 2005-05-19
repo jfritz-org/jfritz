@@ -24,6 +24,7 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
@@ -286,10 +287,10 @@ public class CallerList extends AbstractTableModel {
 	 * @param route
 	 * @param duration
 	 */
-	public void addEntry(CallType symbol, Date datum, String number,
+	public boolean addEntry(CallType symbol, Date datum, String number,
 			String port, String route, int duration) {
 		Call call = new Call(symbol, datum, number, port, route, duration);
-		addEntry(call);
+		return addEntry(call);
 	}
 
 	/**
@@ -297,21 +298,22 @@ public class CallerList extends AbstractTableModel {
 	 *
 	 * @param call
 	 */
-	public void addEntry(Call call) {
-		boolean found = false;
+	public boolean addEntry(Call call) {
+		boolean newEntry = true;
 
 		for (Enumeration el = getCallVector().elements(); el.hasMoreElements();) {
 
 			Date d = ((Call) el.nextElement()).getCalldate();
 			if (d.equals(call.getCalldate())) { // We already have this call
-				found = true;
+				newEntry = false;
 				break;
 			}
 		}
 
-		if (!found) { // Add new entry to table model
+		if (newEntry) { // Add new entry to table model
 			callerdata.add(call);
 		}
+		return newEntry;
 	}
 
 	/**
@@ -332,14 +334,32 @@ public class CallerList extends AbstractTableModel {
 				.getProperty("box.address"), properties
 				.getProperty("box.password")));
 
+		int newEntries = 0;
 		for (Enumeration el = data.elements(); el.hasMoreElements();) {
-			addEntry((Call) el.nextElement());
+			boolean newEntry = addEntry((Call) el.nextElement());
+			if (newEntry)
+				newEntries++;
 		}
 
 		saveToXMLFile();
 
+		// Notify user?
+		if (properties.getProperty("option.notifyOnCalls", "false").equals(
+				"true")
+				&& (newEntries > 0)) {
+			System.out.println(newEntries + " new calls retrieved!");
+			// TODO: I18N
+			if (newEntries == 1) {
+				JOptionPane.showMessageDialog(null,
+						"Ein neuer Anruf empfangen!");
+			} else {
+				JOptionPane.showMessageDialog(null, newEntries
+						+ " neue Anrufe empfangen!");
+			}
+
+		}
 		// Clear data on fritz box ?
-		if (properties.getProperty("box.clear_after_fetch", "false").equals(
+		if (properties.getProperty("option.deleteAfterFetch", "false").equals(
 				"true")) {
 			JFritzUtils.clearListOnFritzBox(properties
 					.getProperty("box.address"), properties
@@ -391,9 +411,10 @@ public class CallerList extends AbstractTableModel {
 		case 5:
 			if (call.getRoute().startsWith("SIP")) {
 				String sipstr = properties.getProperty(call.getRoute());
-				if (sipstr!=null) {
+				if (sipstr != null) {
 					return sipstr;
-				} else return call.getRoute();
+				} else
+					return call.getRoute();
 			}
 			return call.getRoute();
 		case 6:
