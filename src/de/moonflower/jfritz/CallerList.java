@@ -5,21 +5,17 @@
  */
 package de.moonflower.jfritz;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Properties;
-import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -118,8 +114,6 @@ public class CallerList extends AbstractTableModel {
 			fos = new FileOutputStream(JFritz.CALLS_FILE);
 			PrintWriter pw = new PrintWriter(fos);
 			pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			//			pw.println("<!DOCTYPE calls SYSTEM
-			// \"http://java.moonflower.de/jfritz/calls.dtd\">");
 			pw.println("<!DOCTYPE calls SYSTEM \"calls.dtd\">");
 			pw.println("<calls>");
 			pw.println("<comment>Calls for " + JFritz.PROGRAM_NAME + " v"
@@ -149,38 +143,30 @@ public class CallerList extends AbstractTableModel {
 			pw.println("</calls>");
 			pw.close();
 		} catch (FileNotFoundException e) {
-			System.err.println("Konnte " + JFritz.CALLS_CSV_FILE
-					+ " nicht beschreiben!");
+			System.err.println("Could not write " + JFritz.CALLS_FILE + "!");
 		}
 	}
 
-	public void saveToCSVFile() {
-		// FIXME: This should not work properly!
-		System.out.println("Saving to *deprecated* file "
-				+ JFritz.CALLS_CSV_FILE);
+	/**
+	 * Saves callerlist to csv file
+	 *
+	 * @param filename
+	 */
+	public void saveToCSVFile(String filename) {
+		System.out.println("Saving to csv file " + filename);
 		FileOutputStream fos;
 		try {
-			fos = new FileOutputStream(JFritz.CALLS_CSV_FILE);
+			fos = new FileOutputStream(filename);
 			PrintWriter pw = new PrintWriter(fos);
 
-			Vector data = getCallVector();
-			Enumeration en = data.elements();
+			Enumeration en = getCallVector().elements();
 			while (en.hasMoreElements()) {
-				Vector v = (Vector) en.nextElement();
-				CallType type = (CallType) v.get(0);
-				Date datum = (Date) v.get(1);
-				String number = (String) v.get(2);
-				int port = Integer.parseInt((String) v.get(4));
-				int duration = Integer.parseInt((String) v.get(5));
-				SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm");
-				String csvline = type.toInt() + ";\"" + df.format(datum)
-						+ "\";\"" + number + "\";" + port + ";" + duration;
-				pw.println(csvline);
+				Call call = (Call) en.nextElement();
+				pw.println(call.toCSV());
 			}
 			pw.close();
 		} catch (FileNotFoundException e) {
-			System.err.println("Konnte " + JFritz.CALLS_CSV_FILE
-					+ " nicht beschreiben!");
+			System.err.println("Could not write " + filename + "!");
 		}
 
 	}
@@ -211,39 +197,9 @@ public class CallerList extends AbstractTableModel {
 		}
 	}
 
-	public void loadFromCSVFile() {
-		String line;
-		try {
-			BufferedReader f = new BufferedReader(new FileReader(
-					JFritz.CALLS_CSV_FILE));
-			while ((line = f.readLine()) != null) {
-				StringTokenizer st = new StringTokenizer(line, ";");
-				try {
-					CallType calltype = new CallType(Byte.parseByte(st
-							.nextToken()));
-					SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm");
-					Date datum = df.parse(st.nextToken().replaceAll("\"", ""));
-					String number = st.nextToken().replaceAll("\"", "");
-					String port = st.nextToken();
-					int duration = Integer.parseInt(st.nextToken());
-					addEntry(calltype, datum, number, port, "", duration); // TODO
-					// route
-					// ?
-				} catch (ParseException e2) {
-					System.err.println("Error on parsing "
-							+ JFritz.CALLS_CSV_FILE);
-				}
-			}
-			f.close();
-		} catch (IOException e1) {
-			//			System.err.println("Could not read " + callcsvfile + "!");
-		}
-	}
-
 	/**
-	 *
-	 * @param number
-	 * @return name of participant
+	 * @param number of participant
+	 * @return Returns name of participant
 	 */
 	public String getParticipantFromNumber(String number) {
 		String areanumber = JFritzUtils.create_area_number(number, properties
@@ -266,7 +222,7 @@ public class CallerList extends AbstractTableModel {
 	}
 
 	/**
-	 * removes all duplicate whitespaces from inputStr
+	 * Removes all duplicate whitespaces from inputStr
 	 *
 	 * @param inputStr
 	 * @return outputStr
@@ -278,7 +234,7 @@ public class CallerList extends AbstractTableModel {
 	}
 
 	/**
-	 * adds new Call to CallerList
+	 * Adds new Call to CallerList
 	 *
 	 * @param symbol
 	 * @param datum
@@ -317,7 +273,7 @@ public class CallerList extends AbstractTableModel {
 	}
 
 	/**
-	 * retrieves data from FRITZ!Box
+	 * Retrieves data from FRITZ!Box
 	 *
 	 * @throws WrongPasswordException
 	 * @throws IOException

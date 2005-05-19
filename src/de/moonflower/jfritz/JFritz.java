@@ -44,10 +44,11 @@
  *
  * JAR: Signing, Deploying, Website jfritz.moonflower.de oder Sourceforge
  *
- * Changelog:
+ * CHANGLELOG:
  *
  * JFritz! 0.2.7:
  * - Notify users whenn calls have been retrieved
+ * - CSV Export
  *
  * JFritz! 0.2.6:
  * - Several bugfixes
@@ -95,6 +96,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -110,6 +112,7 @@ import java.util.Vector;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -124,6 +127,7 @@ import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.filechooser.FileFilter;
 
 /**
  * This is main class of JFritz, which creates the GUI.
@@ -137,7 +141,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 
 	public final static String PROGRAM_VERSION = "0.2.7";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.14 2005/05/19 10:25:06 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.15 2005/05/19 11:54:44 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -206,11 +210,9 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 	public void run() {
 		createAndShowGUI();
 		callerlist.loadFromXMLFile();
-		callerlist.loadFromCSVFile();
 		callerlist.sortAllRowsBy(1, false);
 		setStatus(callerlist.getRowCount() + " "
 				+ messages.getString("entries"));
-
 	}
 
 	private void createAndShowGUI() {
@@ -317,7 +319,17 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		toolbar.addSeparator();
 
 		button = new JButton();
-		button.setActionCommand("excel");
+		button.setActionCommand("export_csv");
+		button.addActionListener(this);
+		button.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource(
+						"/de/moonflower/jfritz/resources/images/csv.png"))));
+		button.setToolTipText(messages.getString("export_csv"));
+		button.setEnabled(true);
+		toolbar.add(button);
+
+		button = new JButton();
+		button.setActionCommand("export_excel");
 		button.addActionListener(this);
 		button.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
@@ -327,8 +339,18 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		toolbar.add(button);
 
 		button = new JButton();
-		button.setActionCommand("openoffice");
+		button.setActionCommand("export_openoffice");
 		button.addActionListener(this);
+		button = new JButton();
+		button.setActionCommand("excel");
+		button.addActionListener(this);
+		button.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource(
+						"/de/moonflower/jfritz/resources/images/excel.png"))));
+		button.setToolTipText(messages.getString("export_excel"));
+		button.setEnabled(true);
+		toolbar.add(button);
+
 		button
 				.setIcon(new ImageIcon(
 						Toolkit
@@ -383,7 +405,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		tbutton.setActionCommand("filter_callin");
 		tbutton.addActionListener(this);
 		tbutton.setToolTipText(messages.getString("filter_callin"));
-		tbutton.setEnabled( false );
+		tbutton.setEnabled(false);
 		toolbar.add(tbutton);
 
 		tbutton = new JToggleButton(
@@ -406,7 +428,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		tbutton.setActionCommand("filter_callinfailed");
 		tbutton.addActionListener(this);
 		tbutton.setToolTipText(messages.getString("filter_callinfailed"));
-		tbutton.setEnabled( false );
+		tbutton.setEnabled(false);
 		toolbar.add(tbutton);
 
 		tbutton = new JToggleButton(
@@ -429,7 +451,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		tbutton.setActionCommand("filter_callout");
 		tbutton.addActionListener(this);
 		tbutton.setToolTipText(messages.getString("filter_callout"));
-		tbutton.setEnabled( false );
+		tbutton.setEnabled(false);
 		toolbar.add(tbutton);
 
 		getContentPane().add(toolbar, BorderLayout.NORTH);
@@ -462,6 +484,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		JMenu optionsMenu = new JMenu(messages.getString("options_menu"));
 		JMenu helpMenu = new JMenu(messages.getString("help_menu"));
 		JMenu lnfMenu = new JMenu(messages.getString("lnf_menu"));
+		JMenu exportMenu = new JMenu(messages.getString("export_menu"));
 
 		JMenuItem item = new JMenuItem(messages.getString("fetchlist"), 'a');
 		item.setActionCommand("fetchList");
@@ -471,13 +494,30 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		item.setActionCommand("reverselookup");
 		item.addActionListener(this);
 		fritzMenu.add(item);
+		item = new JMenuItem(messages.getString("export_csv"), 'c');
+		item.setActionCommand("export_csv");
+		item.addActionListener(this);
+		exportMenu.add(item);
+		item = new JMenuItem(messages.getString("export_excel"), 'c');
+		item.setActionCommand("export_excel");
+		item.addActionListener(this);
+		item.setEnabled(false);
+		exportMenu.add(item);
+
+		item = new JMenuItem(messages.getString("export_openoffice"), 'c');
+		item.setActionCommand("export_openoffice");
+		item.addActionListener(this);
+		item.setEnabled(false);
+		exportMenu.add(item);
+		fritzMenu.add(exportMenu);
+
 		fritzMenu.add(new JSeparator());
-		item = new JMenuItem(messages.getString("phonebook"), 'l');
+		item = new JMenuItem(messages.getString("phonebook"), 'b');
 		item.setActionCommand("phonebook");
 		item.addActionListener(this);
 		item.setEnabled(false);
 		fritzMenu.add(item);
-		item = new JMenuItem(messages.getString("quickdials"), 'l');
+		item = new JMenuItem(messages.getString("quickdials"));
 		item.setActionCommand("quickdial");
 		item.addActionListener(this);
 		item.setEnabled(false);
@@ -736,7 +776,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		JOptionPane.showMessageDialog(this, PROGRAM_NAME + " v"
 				+ PROGRAM_VERSION + "\n"
 				+ JFritzUtils.getVersionFromCVSTag(CVS_TAG) + "\n\n"
-				+ "(c) 2005 by " + PROGRAM_AUTHOR+"\n\n"
+				+ "(c) 2005 by " + PROGRAM_AUTHOR + "\n\n"
 				+ "This tool is developed and released under\n"
 				+ "the terms of the GNU General Public License\n\n"
 				+ "Long live Free Software!");
@@ -918,6 +958,27 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 			} catch (IOException e1) {
 				System.err
 						.println("Website opening works only on win32 platforms.");
+			}
+		} else if (e.getActionCommand() == "export_csv") {
+
+			JFileChooser fc = new JFileChooser();
+			fc.setDialogTitle(messages.getString("export_csv"));
+			fc.setDialogType(JFileChooser.SAVE_DIALOG);
+			fc.setSelectedFile(new File(CALLS_CSV_FILE));
+			fc.setFileFilter(new FileFilter() {
+				public boolean accept(File f) {
+					return f.isDirectory()
+							|| f.getName().toLowerCase().endsWith(".csv");
+				}
+
+				public String getDescription() {
+					return "CSV-Dateien";
+				}
+			});
+
+			if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+				File file = fc.getSelectedFile();
+				callerlist.saveToCSVFile(file.getAbsolutePath());
 			}
 		} else if (e.getActionCommand() == "config") {
 			showConfigDialog();
