@@ -142,8 +142,7 @@ public class FritzBoxFirmware {
 							+ box_password).trim();
 			i++;
 		}
-		// Modded firmware: data = "<div class=\"pDialogo\" style=\"text-align:
-		// center; padding: 5px 10px;\"> FRITZ!Box Fon WLAN, <span
+		// Modded firmware: data = "> FRITZ!Box Fon WLAN, <span
 		// class=\"Dialoglabel\">Modified-Firmware </span>08.03.37mod-0.55
 		// \n</div>";
 		Pattern p = Pattern.compile(PATTERN_DETECT_FIRMWARE);
@@ -153,9 +152,8 @@ public class FritzBoxFirmware {
 			String majorFirmwareVersion = m.group(2);
 			String minorFirmwareVersion = m.group(3);
 			String modFirmwareVersion = m.group(4).trim();
-			return new FritzBoxFirmware(boxtypeString,
-					majorFirmwareVersion, minorFirmwareVersion,
-					modFirmwareVersion);
+			return new FritzBoxFirmware(boxtypeString, majorFirmwareVersion,
+					minorFirmwareVersion, modFirmwareVersion);
 		} else {
 			System.err.println("detectFirmwareVersion: Password wrong?");
 			throw new WrongPasswordException(
@@ -172,28 +170,18 @@ public class FritzBoxFirmware {
 
 	/**
 	 * @return Returns the access method string.
+	 *
+	 * TODO: Später noch die Major-Version mit einbeziehen, falls es mit neueren
+	 * Versionen nicht klappen sollte
+	 *
 	 */
 	public final String getAccessMethod() {
 		int accessMethod;
-		switch (boxtype) {
-		case BOXTYPE_FRITZBOX_FON:
+		if (minorFirmwareVersion < 42)
 			accessMethod = ACCESS_METHOD_PRIOR_0342;
-			break;
-		case BOXTYPE_FRITZBOX_FON_WLAN:
-			accessMethod = ACCESS_METHOD_PRIOR_0342;
-			break;
-		case BOXTYPE_FRITZBOX_ATA:
-			accessMethod = ACCESS_METHOD_PRIOR_0342;
-			break;
-		case BOXTYPE_FRITZBOX_5050:
+		else
 			accessMethod = ACCESS_METHOD_POST_0342;
-			break;
-		case BOXTYPE_FRITZBOX_7050:
-			accessMethod = ACCESS_METHOD_POST_0342;
-			break;
-		default:
-			accessMethod = ACCESS_METHOD_POST_0342;
-		}
+
 		return POSTDATA_ACCESS_METHOD[accessMethod];
 	}
 

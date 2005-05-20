@@ -323,12 +323,9 @@ public class JFritzUtils {
 		data = removeDuplicateWhitespace(data);
 
 		Pattern p;
-		if ((firmware.getBoxType() == FritzBoxFirmware.BOXTYPE_FRITZBOX_7050)
-				|| (firmware.getBoxType() == FritzBoxFirmware.BOXTYPE_FRITZBOX_5050)) {
-			p = Pattern.compile(PATTERN_LIST_NEW);
-		} else {
-			p = Pattern.compile(PATTERN_LIST_OLD);
-		}
+
+		if (firmware.getMinorFirmwareVersion() < 42) p = Pattern.compile(PATTERN_LIST_OLD);
+		else p = Pattern.compile(PATTERN_LIST_NEW);
 		Matcher m = p.matcher(data);
 
 		while (m.find()) {
