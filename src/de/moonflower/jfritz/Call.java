@@ -36,18 +36,6 @@ public class Call {
 		this.duration = duration;
 	}
 
-	/*
-	 * public String getParticipantFromNumber(String number, Properties
-	 * properties) { String areanumber = FritzBox.create_area_number(number,
-	 * properties .getProperty("country.prefix"), properties
-	 * .getProperty("area.prefix"), properties .getProperty("area.code"));
-	 * String participant = participants.getProperty(areanumber, ""); if
-	 * (!number.equals("")) { if (participant.equals("")) { // TODO participant =
-	 * ReverseLookup.lookup( number ); // System.out.println("Reverse-Lookup for " +
-	 * number+": // "+participant); if (!participant.equals("")) {
-	 * participants.setProperty(areanumber, participant); } } } return
-	 * participant; }
-	 */
 	/**
 	 * @return Returns the calldate.
 	 */

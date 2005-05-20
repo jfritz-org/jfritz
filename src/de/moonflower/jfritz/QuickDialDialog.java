@@ -61,9 +61,9 @@ public class QuickDialDialog extends JDialog {
 									.getProperty("box.address"), properties
 									.getProperty("box.password")));
 		} catch (WrongPasswordException e) {
-			System.err.println("getQuickDialData: Wrong password");
+			Debug.err("getQuickDialData: Wrong password");
 		} catch (IOException e) {
-			System.err.println("getQuickDialData: Box not found");
+			Debug.err("getQuickDialData: Box not found");
 		}
 	}
 
@@ -81,7 +81,7 @@ public class QuickDialDialog extends JDialog {
 		JPanel topPane = new JPanel();
 		KeyListener keyListener = (new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
-				System.out.println("KEY: " + e);
+				Debug.msg("KEY: " + e);
 				if (e.getKeyCode() == KeyEvent.VK_ESCAPE
 						|| (e.getSource() == cancelButton && e.getKeyCode() == KeyEvent.VK_ENTER)) {
 					pressed_OK = false;

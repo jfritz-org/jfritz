@@ -218,12 +218,12 @@ public class ConfigDialog extends JDialog {
 						// firmware = new FritzBoxFirmware("14", "1", "35");
 						setBoxTypeLabel();
 					} catch (WrongPasswordException e1) {
-						System.err.println("Password wrong!");
+						Debug.err("Password wrong!");
 						boxtypeLabel.setForeground(Color.RED);
 						boxtypeLabel.setText("Passwort ungültig!");
 						firmware = null;
 					} catch (IOException e1) {
-						System.err.println("Address wrong!");
+						Debug.err("Address wrong!");
 						boxtypeLabel.setForeground(Color.RED);
 						boxtypeLabel.setText("Box-Adresse ungültig!");
 						firmware = null;
@@ -236,9 +236,9 @@ public class ConfigDialog extends JDialog {
 						sipmodel.setData(data);
 						sipmodel.fireTableDataChanged();
 					} catch (WrongPasswordException e1) {
-						System.err.println("Password wrong");
+						Debug.err("Password wrong");
 					} catch (IOException e1) {
-						System.err.println("Box address wrong");
+						Debug.err("Box address wrong");
 					}
 				}
 			}

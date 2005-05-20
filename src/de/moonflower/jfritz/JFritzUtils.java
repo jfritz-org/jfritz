@@ -87,8 +87,7 @@ public class JFritzUtils {
 		} catch (InvalidFirmwareException e) {
 			fw = FritzBoxFirmware.detectFirmwareVersion(box_address,
 					box_password);
-			System.out.println("Found Firmware: " + fw + " (" + fw.getBoxName()
-					+ ")");
+			Debug.msg("Found Firmware: " + fw + " (" + fw.getBoxName() + ")");
 
 		}
 		return fw;
@@ -187,7 +186,7 @@ public class JFritzUtils {
 		while (m.find()) {
 			list.add(new SipProvider(Integer.parseInt(m.group(1)), m.group(3),
 					m.group(4)));
-			// System.out.println("SIP-Provider: "+list.lastElement());
+			Debug.msg("SIP-Provider: " + list.lastElement());
 		}
 		return list;
 	}
@@ -212,7 +211,7 @@ public class JFritzUtils {
 		try {
 			url = new URL(urlstr);
 		} catch (MalformedURLException e) {
-			System.err.println("URL invalid: " + urlstr);
+			Debug.err("URL invalid: " + urlstr);
 			throw new WrongPasswordException("URL invalid: " + urlstr);
 		}
 
@@ -324,8 +323,10 @@ public class JFritzUtils {
 
 		Pattern p;
 
-		if (firmware.getMinorFirmwareVersion() < 42) p = Pattern.compile(PATTERN_LIST_OLD);
-		else p = Pattern.compile(PATTERN_LIST_NEW);
+		if (firmware.getMinorFirmwareVersion() < 42)
+			p = Pattern.compile(PATTERN_LIST_OLD);
+		else
+			p = Pattern.compile(PATTERN_LIST_NEW);
 		Matcher m = p.matcher(data);
 
 		while (m.find()) {

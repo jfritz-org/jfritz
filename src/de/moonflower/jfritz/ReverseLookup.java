@@ -60,7 +60,7 @@ public class ReverseLookup {
 		String participant = "";
 		if (numberIsMobile(number)) {
 			participant = "? (Mobil)";
-		} else if (numberIsFreecall(number)){
+		} else if (numberIsFreecall(number)) {
 			participant = "? (Freecall)";
 		} else {
 			participant = lookupDasOertliche(number);
@@ -74,6 +74,7 @@ public class ReverseLookup {
 	public static boolean numberIsMobile(String number) {
 		return mobileMap.containsKey(number.substring(0, 4));
 	}
+
 	public static boolean numberIsFreecall(String number) {
 		return number.startsWith("0800");
 	}
@@ -90,8 +91,7 @@ public class ReverseLookup {
 	 */
 
 	public static String lookupDasOertliche(String number) {
-		//
-		System.out.println("Looking up " + number + "...");
+		Debug.msg("Looking up " + number + "...");
 		URL url = null;
 		URLConnection urlConn;
 		DataOutputStream printout;
@@ -104,7 +104,7 @@ public class ReverseLookup {
 		try {
 			url = new URL(urlstr);
 		} catch (MalformedURLException e) {
-			System.err.println("URL invalid: " + urlstr);
+			Debug.err("URL invalid: " + urlstr);
 		}
 		if (url != null) {
 
@@ -116,9 +116,9 @@ public class ReverseLookup {
 				BufferedReader d = new BufferedReader(new InputStreamReader(con
 						.getInputStream()));
 				int i = 0;
-				String str="";
+				String str = "";
 
-				while ((i<700)&&(null != ((str = d.readLine())))) {
+				while ((i < 700) && (null != ((str = d.readLine())))) {
 					data += str;
 					i++;
 				}
@@ -127,11 +127,11 @@ public class ReverseLookup {
 						.compile("<a class=\"blb\" href=\"[^\"]*\">([^<]*)</a>");
 				Matcher m = p.matcher(data);
 				if (m.find()) {
-					// System.out.println("Pattern: "+m.group(1).trim());
+					Debug.msg(3,"Pattern: "+m.group(1).trim());
 					return beautifyMatch(m.group(1).trim());
 				}
 			} catch (IOException e1) {
-				System.err.println("Error while retrieving " + urlstr);
+				Debug.err("Error while retrieving " + urlstr);
 			}
 		}
 		return "";

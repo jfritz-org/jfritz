@@ -29,7 +29,7 @@ public class FetchListTask extends TimerTask {
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
-		System.out.println("Running FetchListTask..");
+		Debug.msg("Running FetchListTask..");
 		jfritz.fetchList();
 	}
 

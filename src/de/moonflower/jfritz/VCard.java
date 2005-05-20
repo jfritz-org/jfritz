@@ -47,7 +47,7 @@ public class VCard {
 			pw.println(this.toString());
 			pw.close();
 		} catch (FileNotFoundException e) {
-			System.err.println("Could not write " + file.getName() + "!");
+			Debug.err("Could not write " + file.getName() + "!");
 		}
 
 	}

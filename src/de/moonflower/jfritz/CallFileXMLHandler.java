@@ -15,6 +15,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * XML Handler for reading the call file
+ *
  * @author Arno Willig
  *
  */
@@ -86,7 +87,7 @@ public class CallFileXMLHandler extends DefaultHandler {
 			try {
 				calldate = df.parse(chars.replaceAll("\"", ""));
 			} catch (ParseException e) {
-				System.err.println("Date problem:  " + chars);
+				Debug.err("Date problem:  " + chars);
 				System.exit(0);
 				calldate = null;
 			}
