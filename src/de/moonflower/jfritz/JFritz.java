@@ -148,7 +148,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 
 	public final static String PROGRAM_VERSION = "0.2.9";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.20 2005/05/20 14:08:02 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.21 2005/05/20 15:20:54 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -177,7 +177,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 
 	JToolBar toolbar;
 
-	JButton fetchButton, lookupButton;
+	JButton fetchButton, lookupButton, vcardButton;
 
 	JToggleButton taskButton;
 
@@ -351,46 +351,40 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/csv.png"))));
 		button.setToolTipText(messages.getString("export_csv"));
-		button.setEnabled(true);
 		toolbar.add(button);
 
-		button = new JButton();
-		button.setActionCommand("export_vcard");
-		button.addActionListener(this);
-		button.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+		vcardButton = new JButton();
+		vcardButton.setActionCommand("export_vcard");
+		vcardButton.addActionListener(this);
+		vcardButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/vcard.png"))));
-		button.setToolTipText(messages.getString("export_vcard"));
-		button.setEnabled(IS_RELEASE);
-		toolbar.add(button);
+		vcardButton.setToolTipText(messages.getString("export_vcard"));
+		toolbar.add(vcardButton);
 
 		/*
-		button = new JButton();
-		button.setActionCommand("export_excel");
-		button.addActionListener(this);
-		button.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/excel.png"))));
-		button.setToolTipText(messages.getString("export_excel"));
-		button.setEnabled(IS_RELEASE);
-		toolbar.add(button);
-
-		button = new JButton();
-		button.setActionCommand("export_openoffice");
-		button.addActionListener(this);
-		button.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/excel.png"))));
-		button.setToolTipText(messages.getString("export_excel"));
-		button.setEnabled(true);
-		toolbar.add(button);
-
-		button.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource(
-				"/de/moonflower/jfritz/resources/images/openoffice.png"))));
-		button.setToolTipText(messages.getString("export_openoffice"));
-		button.setEnabled(IS_RELEASE);
-		toolbar.add(button);
-*/
+		 * button = new JButton(); button.setActionCommand("export_excel");
+		 * button.addActionListener(this); button.setIcon(new
+		 * ImageIcon(Toolkit.getDefaultToolkit().getImage(
+		 * getClass().getResource(
+		 * "/de/moonflower/jfritz/resources/images/excel.png"))));
+		 * button.setToolTipText(messages.getString("export_excel"));
+		 * button.setEnabled(IS_RELEASE); toolbar.add(button);
+		 *
+		 * button = new JButton(); button.setActionCommand("export_openoffice");
+		 * button.addActionListener(this); button.setIcon(new
+		 * ImageIcon(Toolkit.getDefaultToolkit().getImage(
+		 * getClass().getResource(
+		 * "/de/moonflower/jfritz/resources/images/excel.png"))));
+		 * button.setToolTipText(messages.getString("export_excel"));
+		 * button.setEnabled(true); toolbar.add(button);
+		 *
+		 * button.setIcon(new
+		 * ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource(
+		 * "/de/moonflower/jfritz/resources/images/openoffice.png"))));
+		 * button.setToolTipText(messages.getString("export_openoffice"));
+		 * button.setEnabled(IS_RELEASE); toolbar.add(button);
+		 */
 		button = new JButton();
 		button.setActionCommand("help");
 		button.addActionListener(this);
@@ -968,8 +962,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 	 * Action Listener for menu and toolbar
 	 */
 	public void actionPerformed(ActionEvent e) {
-		//		System.out.println("Action " + e.getActionCommand() + " was
-		// pressed.");
+		// System.out.println("Action " + e.getActionCommand());
 		if (e.getActionCommand() == "exit") {
 			showExitDialog();
 		} else if (e.getActionCommand() == "about") {
@@ -1005,6 +998,39 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 			if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 				File file = fc.getSelectedFile();
 				callerlist.saveToCSVFile(file.getAbsolutePath());
+			}
+		} else if (e.getActionCommand() == "export_vcard") {
+			if (callertable.getSelectedRow() >= 0
+					&& !((String) callertable.getModel().getValueAt(
+							callertable.getSelectedRow(), 3)).startsWith("?")
+					&& !((String) callertable.getModel().getValueAt(
+							callertable.getSelectedRow(), 3)).equals("")) {
+				String name = (String) callertable.getModel().getValueAt(
+						callertable.getSelectedRow(), 3);
+				String number = (String) callertable.getModel().getValueAt(
+						callertable.getSelectedRow(), 2);
+				JFileChooser fc = new JFileChooser();
+				fc.setDialogTitle(messages.getString("export_vcard"));
+				fc.setDialogType(JFileChooser.SAVE_DIALOG);
+				fc.setSelectedFile(new File(number + ".vcf"));
+				fc.setFileFilter(new FileFilter() {
+					public boolean accept(File f) {
+						return f.isDirectory()
+								|| f.getName().toLowerCase().endsWith(".vcf");
+					}
+
+					public String getDescription() {
+						return "VCard (.vcf)";
+					}
+				});
+
+				if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+					File file = fc.getSelectedFile();
+					VCard vcard = new VCard(name, number);
+					vcard.saveToFile(file);
+				}
+			} else {
+				System.err.println("No valid row selected");
 			}
 		} else if (e.getActionCommand() == "config") {
 			showConfigDialog();

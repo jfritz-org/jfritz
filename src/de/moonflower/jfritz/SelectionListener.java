@@ -15,6 +15,7 @@ import javax.swing.event.ListSelectionListener;
 
 /**
  * Listener class for copying phone numbers to clipboard
+ *
  * @author Arno Willig
  *
  */
@@ -36,7 +37,10 @@ public class SelectionListener implements ListSelectionListener {
 			int row = table.getSelectedRow();
 			if (row >= 0) {
 				String number = (String) table.getModel().getValueAt(row, 2);
-				Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
+				String name = (String) table.getModel().getValueAt(row, 3);
+				Clipboard clip = Toolkit.getDefaultToolkit()
+						.getSystemClipboard();
+				// VCard vcard = new VCard((String) table.getModel().getValueAt(row, 3),number);
 				StringSelection cont = new StringSelection(number);
 				clip.setContents(cont, null);
 			}

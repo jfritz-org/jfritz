@@ -27,8 +27,8 @@ import javax.swing.table.TableModel;
  */
 public class CallerTable extends JTable {
 
-	public ResourceBundle messages;
-	Properties properties, participants;
+	private ResourceBundle messages;
+	private Properties properties, participants;
 
 
 	/**
@@ -41,7 +41,6 @@ public class CallerTable extends JTable {
 		setProperties(properties);
 		setTableProperties();
 		createColumns(messages);
-
 	}
 
 	/**
@@ -69,9 +68,6 @@ public class CallerTable extends JTable {
 
 		SelectionListener listener = new SelectionListener(this);
 		getSelectionModel().addListSelectionListener(listener);
-		// getColumnModel().getSelectionModel().addListSelectionListener(listener);
-
-
 	}
 
 	/**
