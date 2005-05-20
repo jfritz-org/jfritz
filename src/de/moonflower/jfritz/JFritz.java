@@ -1,7 +1,7 @@
 /**
  *
  * JFritz!
- * jfritz.sourceforge.net
+ * http://jfritz.sourceforge.net
  *
  * (c) Arno Willig <akw@thinkwiki.org>
  *
@@ -147,7 +147,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 
 	public final static String PROGRAM_VERSION = "0.2.9";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.18 2005/05/19 15:13:36 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.19 2005/05/20 13:49:40 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -354,6 +354,17 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		toolbar.add(button);
 
 		button = new JButton();
+		button.setActionCommand("export_vcard");
+		button.addActionListener(this);
+		button.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource(
+						"/de/moonflower/jfritz/resources/images/vcard.png"))));
+		button.setToolTipText(messages.getString("export_vcard"));
+		button.setEnabled(IS_RELEASE);
+		toolbar.add(button);
+
+		/*
+		button = new JButton();
 		button.setActionCommand("export_excel");
 		button.addActionListener(this);
 		button.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
@@ -373,18 +384,12 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		button.setEnabled(true);
 		toolbar.add(button);
 
-		button
-				.setIcon(new ImageIcon(
-						Toolkit
-								.getDefaultToolkit()
-								.getImage(
-										getClass()
-												.getResource(
-														"/de/moonflower/jfritz/resources/images/openoffice.png"))));
+		button.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource(
+				"/de/moonflower/jfritz/resources/images/openoffice.png"))));
 		button.setToolTipText(messages.getString("export_openoffice"));
 		button.setEnabled(IS_RELEASE);
 		toolbar.add(button);
-
+*/
 		button = new JButton();
 		button.setActionCommand("help");
 		button.addActionListener(this);
