@@ -30,37 +30,24 @@ import java.util.regex.Pattern;
  */
 public class JFritzUtils {
 
-	final static String POSTDATA_QUICKDIAL_FRITZBOX_7050 = "getpage=../html/de/menus/menu2.html"
-			+ "&var%3Alang=de&var%3Amenu=fon&var%3Apagename=kurzwahlen&login%3Acommand%2Fpassword=";
+	final static String POSTDATA_LIST = "&var%3Alang=de&var%3Amenu=fon&var%3Apagename=foncalls&login%3Acommand%2Fpassword=";
 
-	final static String POSTDATA_LIST_FRITZBOX_7050 = "getpage=../html/de/menus/menu2.html"
-			+ "&var%3Alang=de&var%3Amenu=fon&var%3Apagename=foncalls&login%3Acommand%2Fpassword=";
+	final static String POSTDATA_QUICKDIAL = "&var%3Alang=de&var%3Amenu=fon&var%3Apagename=kurzwahlen&login%3Acommand%2Fpassword=";
 
-	final static String POSTDATA_LIST_FRITZBOX_FON_WLAN = "getpage=../html/menus/menu2.html"
-			+ "&var%3Apagename=foncalls&var%3Amenu=fon&login%3Acommand%2Fpassword=";
+	final static String POSTDATA_SIPPROVIDER = "&var%3Alang=de&var%3Amenu=fon&var%3Apagename=siplist&login%3Acommand%2Fpassword=";
 
-	final static String POSTDATA_SIPPROVIDER_FRITZBOX_FON_WLAN = "getpage=../html/menus/menu2.html"
-			+ "&var%3Amenu=fon&var%3Apagename=siplist&login%3Acommand%2Fpassword=";
+	final static String POSTDATA_CLEAR = "&var%3Alang=de&var%3Apagename=foncalls&var%3Amenu=fon&telcfg%3Asettings/ClearJournal=1";
 
-	final static String POSTDATA_SIPPROVIDER_FRITZBOX_7050 = "getpage=../html/de/menus/menu2.html"
-			+ "&var%3Alang=de&var%3Amenu=fon&var%3Apagename=siplist&login%3Acommand%2Fpassword=";
-
-	final static String POSTDATA_CLEAR_FRITZBOX_FON_WLAN = "getpage=../html/menus/menu2.html"
-			+ "&var%3Apagename=foncalls&var%3Amenu=fon&telcfg%3Asettings/ClearJournal=1";
-
-	// FIXME for 7050
-	final static String POSTDATA_CLEAR_FRITZBOX_7050 = "getpage=../html/de/menus/menu2.html"
-			+ "&var%3Apagename=foncalls&var%3Amenu=fon&telcfg%3Asettings/ClearJournal=1";
-
-	final static String PATTERN_FRITZBOX_FON_WLAN = "<tr class=\"Dialoglist\">"
+	final static String PATTERN_LIST_OLD = "<tr class=\"Dialoglist\">"
 			+ "\\s*<td class=\"c1\"><script type=\"text/javascript\">document.write\\(uiCallSymbol\\(\"(\\d)\"\\)\\);</script></td>"
 			+ "\\s*<td class=\"c3\">(\\d\\d\\.\\d\\d\\.\\d\\d \\d\\d:\\d\\d)</td>"
 			+ "\\s*<td class=\"c4\"><script type=\"text/javascript\">document.write\\(uiRufnummerDisplay\\(\"(\\d*)\"\\)\\);</script></td>"
 			+ "\\s*<td class=\"c5\"><script type=\"text/javascript\">document.write\\(uiPortDisplay\\(\"(\\d*)\"\\)\\);</script></td>"
+			+ "()"
 			+ "\\s*<td class=\"c6\"><script type=\"text/javascript\">document.write\\(uiDauerDisplay\\(\"(\\d*)\"\\)\\);</script></td>"
 			+ "\\s*</tr>";
 
-	final static String PATTERN_FRITZBOX_7050 = "<tr class=\"Dialoglist\">"
+	final static String PATTERN_LIST_NEW = "<tr class=\"Dialoglist\">"
 			+ "\\s*<td class=\"c1\"><script type=\"text/javascript\">document.write\\(uiCallSymbol\\(\"(\\d)\"\\)\\);</script></td>"
 			+ "\\s*<td class=\"c3\">(\\d\\d\\.\\d\\d\\.\\d\\d \\d\\d:\\d\\d)</td>"
 			+ "\\s*<td class=\"c4\"><script type=\"text/javascript\">document.write\\(uiRufnummerDisplay\\(\"(\\d*)\"\\)\\);</script></td>"
@@ -69,7 +56,7 @@ public class JFritzUtils {
 			+ "\\s*<td class=\"c6\"><script type=\"text/javascript\">document.write\\(uiDauerDisplay\\(\"(\\d*)\"\\)\\);</script></td>"
 			+ "\\s*</tr>";
 
-	final static String PATTERN_QUICKDIAL_FRITZBOX_7050 = "<tr class=\"Dialoglist\">"
+	final static String PATTERN_QUICKDIAL = "<tr class=\"Dialoglist\">"
 			+ "\\s*<td style=\"text-align: center;\">(\\d*)</td>"
 			+ "\\s*<td>(\\w*)</td>"
 			+ "\\s*<td>([^<]*)</td>"
@@ -91,8 +78,9 @@ public class JFritzUtils {
 	 * @throws WrongPasswordException
 	 * @throws IOException
 	 */
-	public static byte detectBoxType(String firmware, String box_address,
-			String box_password) throws WrongPasswordException, IOException {
+	public static FritzBoxFirmware detectBoxType(String firmware,
+			String box_address, String box_password)
+			throws WrongPasswordException, IOException {
 		FritzBoxFirmware fw;
 		try {
 			fw = new FritzBoxFirmware(firmware);
@@ -103,9 +91,7 @@ public class JFritzUtils {
 					+ ")");
 
 		}
-
-		// TODO: retrieveSipProvider(box_address,box_password,fw.getBoxType());
-		return fw.getBoxType();
+		return fw;
 	}
 
 	/**
@@ -122,15 +108,11 @@ public class JFritzUtils {
 	 */
 	public static Vector retrieveCallersFromFritzBox(String box_address,
 			String password, String countryPrefix, String countryCode,
-			String areaPrefix, String areaCode, byte boxtype)
+			String areaPrefix, String areaCode, FritzBoxFirmware firmware)
 			throws WrongPasswordException, IOException {
 
 		String postdata;
-		if (boxtype == FritzBoxFirmware.BOXTYPE_FRITZBOX_7050) {
-			postdata = POSTDATA_LIST_FRITZBOX_7050 + password;
-		} else {
-			postdata = POSTDATA_LIST_FRITZBOX_FON_WLAN + password;
-		}
+		postdata = firmware.getAccessMethod() + POSTDATA_LIST + password;
 		String urlstr = "http://" + box_address + "/cgi-bin/webcm";
 		String data = fetchDataFromURL(urlstr, postdata);
 
@@ -141,7 +123,7 @@ public class JFritzUtils {
 		 * null) { data += thisLine; } in.close(); } catch (IOException e) { } //
 		 * END OF DEBUG SECTION
 		 */
-		Vector list = parseCallerData(data, boxtype, countryPrefix,
+		Vector list = parseCallerData(data, firmware, countryPrefix,
 				countryCode, areaPrefix, areaCode);
 		return list;
 	}
@@ -156,24 +138,20 @@ public class JFritzUtils {
 	 * @throws IOException
 	 */
 	public static Vector retrieveQuickDialsFromFritzBox(String box_address,
-			String box_password, byte boxtype) throws WrongPasswordException,
-			IOException {
-		String postdata;
-		if (boxtype == FritzBoxFirmware.BOXTYPE_FRITZBOX_7050) {
-			postdata = POSTDATA_QUICKDIAL_FRITZBOX_7050 + box_password;
-		} else { // FIXME POSTDATA_QUICKDIAL_FRITZBOX_7050
-			postdata = POSTDATA_QUICKDIAL_FRITZBOX_7050 + box_password;
-		}
+			String box_password, FritzBoxFirmware firmware)
+			throws WrongPasswordException, IOException {
+		String postdata = firmware.getAccessMethod() + POSTDATA_QUICKDIAL
+				+ box_password;
 		String urlstr = "http://" + box_address + "/cgi-bin/webcm";
 		String data = fetchDataFromURL(urlstr, postdata);
-		return parseQuickDialData(data, boxtype);
+		return parseQuickDialData(data, firmware);
 	}
 
 	/**
 	 * retrieves vector of SipProviders stored in the FritzBox
 	 *
 	 * @param box_address
-	 * @param password
+	 * @param box_password
 	 * @param boxtype
 	 * @return Vector of SipProvider
 	 * @throws WrongPasswordException
@@ -181,15 +159,11 @@ public class JFritzUtils {
 	 *             author robotniko
 	 */
 	public static Vector retrieveSipProvider(String box_address,
-			String password, byte boxtype) throws WrongPasswordException,
-			IOException {
-		String postdata = "";
-		if (boxtype == FritzBoxFirmware.BOXTYPE_FRITZBOX_7050) {
-			postdata = POSTDATA_SIPPROVIDER_FRITZBOX_7050 + password;
-		} else {
-			postdata = POSTDATA_SIPPROVIDER_FRITZBOX_FON_WLAN + password;
+			String box_password, FritzBoxFirmware firmware)
+			throws WrongPasswordException, IOException {
 
-		}
+		String postdata = firmware.getAccessMethod() + POSTDATA_SIPPROVIDER
+				+ box_password;
 		String urlstr = "http://" + box_address + "/cgi-bin/webcm";
 		String data = fetchDataFromURL(urlstr, postdata);
 		Vector list = parseSipProvider(data);
@@ -293,13 +267,13 @@ public class JFritzUtils {
 	 * @throws IOException
 	 * @throws WrongPasswordException
 	 */
-	public static void clearListOnFritzBox(String box_address, String password)
-			throws WrongPasswordException, IOException {
+	public static void clearListOnFritzBox(String box_address, String password,
+			FritzBoxFirmware firmware) throws WrongPasswordException,
+			IOException {
 		System.out.println("Clearing List");
 		String urlstr = "http://" + box_address + "/cgi-bin/webcm";
-		String postdata = POSTDATA_CLEAR_FRITZBOX_7050;
+		String postdata = firmware.getAccessMethod() + POSTDATA_CLEAR;
 		fetchDataFromURL(urlstr, postdata);
-
 	}
 
 	/**
@@ -323,11 +297,12 @@ public class JFritzUtils {
 	 * @param boxtype
 	 * @return list of QuickDial objects
 	 */
-	public static Vector parseQuickDialData(String data, int boxtype) {
+	public static Vector parseQuickDialData(String data,
+			FritzBoxFirmware firmware) {
 		Vector list = new Vector();
 		data = removeDuplicateWhitespace(data);
 		Pattern p;
-		p = Pattern.compile(PATTERN_QUICKDIAL_FRITZBOX_7050);
+		p = Pattern.compile(PATTERN_QUICKDIAL);
 		Matcher m = p.matcher(data);
 
 		while (m.find())
@@ -341,67 +316,38 @@ public class JFritzUtils {
 	 *
 	 * @param data
 	 */
-	public static Vector parseCallerData(String data, int boxtype,
-			String countryPrefix, String countryCode, String areaPrefix,
-			String areaCode) {
+	public static Vector parseCallerData(String data,
+			FritzBoxFirmware firmware, String countryPrefix,
+			String countryCode, String areaPrefix, String areaCode) {
 		Vector list = new Vector();
 		data = removeDuplicateWhitespace(data);
 
 		Pattern p;
-		if (boxtype == FritzBoxFirmware.BOXTYPE_FRITZBOX_7050) {
-			p = Pattern.compile(PATTERN_FRITZBOX_7050);
-			Matcher m = p.matcher(data);
-
-			while (m.find()) {
-				try {
-					CallType symbol = new CallType(Byte.parseByte(m.group(1)));
-					String port = m.group(4);
-					String route = m.group(5);
-					int duration = Integer.parseInt(m.group(6));
-					String number = create_area_number(m.group(3),
-							countryPrefix, countryCode, areaPrefix, areaCode);
-					Date datum = new Date();
-					datum = new SimpleDateFormat("dd.MM.yy HH:mm").parse(m
-							.group(2));
-
-					Call call = new Call(symbol, datum, number, port, route,
-							duration);
-					list.add(call);
-
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
-			}
+		if ((firmware.getBoxType() == FritzBoxFirmware.BOXTYPE_FRITZBOX_7050)
+				|| (firmware.getBoxType() == FritzBoxFirmware.BOXTYPE_FRITZBOX_5050)) {
+			p = Pattern.compile(PATTERN_LIST_NEW);
 		} else {
-			p = Pattern.compile(PATTERN_FRITZBOX_FON_WLAN);
-			Matcher m = p.matcher(data);
-			int i = 0;
-			while (m.find()) {
-				i++;
-				System.err.println("Found:" + m.group(1) + "|" + m.group(2)
-						+ "|" + m.group(3) + "|" + m.group(4) + "|"
-						+ m.group(5));
-				try {
-					CallType symbol = new CallType(Byte.parseByte(m.group(1)));
-					String port = m.group(4);
-					String route = "";
-					int duration = Integer.parseInt(m.group(5));
-					String number = create_area_number(m.group(3),
-							countryPrefix, countryCode, areaPrefix, areaCode);
-					Date datum = new Date();
-					datum = new SimpleDateFormat("dd.MM.yy HH:mm").parse(m
-							.group(2));
+			p = Pattern.compile(PATTERN_LIST_OLD);
+		}
+		Matcher m = p.matcher(data);
 
-					Call call = new Call(symbol, datum, number, port, route,
-							duration);
-					list.add(call);
+		while (m.find()) {
+			try {
+				CallType symbol = new CallType(Byte.parseByte(m.group(1)));
+				String port = m.group(4);
+				String route = m.group(5);
+				int duration = Integer.parseInt(m.group(6));
+				String number = create_area_number(m.group(3), countryPrefix,
+						countryCode, areaPrefix, areaCode);
+				Date date = new SimpleDateFormat("dd.MM.yy HH:mm").parse(m
+						.group(2));
 
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
+				list.add(new Call(symbol, date, number, port, route, duration));
+
+			} catch (ParseException e) {
+				e.printStackTrace();
 			}
 		}
-
 		return list;
 	}
 

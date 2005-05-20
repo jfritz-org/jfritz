@@ -20,11 +20,17 @@ public class FritzBoxFirmware {
 
 	public final static byte BOXTYPE_FRITZBOX_FON = 6;
 
+	public final static byte BOXTYPE_FRITZBOX_FON_WLAN = 8;
+
 	public final static byte BOXTYPE_FRITZBOX_ATA = 11;
 
 	public final static byte BOXTYPE_FRITZBOX_5050 = 12;
 
 	public final static byte BOXTYPE_FRITZBOX_7050 = 14;
+
+	public final static byte ACCESS_METHOD_POST_0342 = 0;
+
+	public final static byte ACCESS_METHOD_PRIOR_0342 = 1;
 
 	private byte boxtype;
 
@@ -34,9 +40,11 @@ public class FritzBoxFirmware {
 
 	private String modFirmwareVersion;
 
-	private final static String[] POSTDATA_DETECT_FIRMWARE = {
-			"getpage=../html/de/menus/menu2.html&var%3Alang=de&var%3Amenu=home&var%3Apagename=home&login%3Acommand%2Fpassword=",
-			"getpage=../html/menus/menu2.html&var%3Alang=de&var%3Amenu=home&var%3Apagename=home&login%3Acommand%2Fpassword=" };
+	private final static String[] POSTDATA_ACCESS_METHOD = {
+			"getpage=../html/de/menus/menu2.html",
+			"getpage=../html/menus/menu2.html" };
+
+	private final static String POSTDATA_DETECT_FIRMWARE = "&var%3Alang=de&var%3Amenu=home&var%3Apagename=home&login%3Acommand%2Fpassword=";
 
 	private final static String PATTERN_DETECT_FIRMWARE = "<span class=\"Dialoglabel\">[^<]*</span>(\\d\\d).(\\d\\d).(\\d\\d)([^<]*)";
 
@@ -115,7 +123,7 @@ public class FritzBoxFirmware {
 	 *
 	 * @param box_address
 	 * @param box_password
-	 * @return an instance of FritzBoxFirmware
+	 * @return New instance of FritzBoxFirmware
 	 * @throws WrongPasswordException
 	 * @throws IOException
 	 */
@@ -127,12 +135,17 @@ public class FritzBoxFirmware {
 		int i = 0;
 
 		// Try postdata's until code is found
-		while ((data.length() == 0) && (i < POSTDATA_DETECT_FIRMWARE.length)) {
-			data = JFritzUtils.fetchDataFromURL(urlstr,
-					POSTDATA_DETECT_FIRMWARE[i] + box_password).trim();
+		while ((data.length() == 0) && (i < POSTDATA_ACCESS_METHOD.length)) {
+			data = JFritzUtils.fetchDataFromURL(
+					urlstr,
+					POSTDATA_ACCESS_METHOD[i] + POSTDATA_DETECT_FIRMWARE
+							+ box_password).trim();
 			i++;
 		}
-		// Modded firmware: data = "<div class=\"pDialogo\" style=\"text-align: center; padding: 5px 10px;\"> FRITZ!Box Fon WLAN, <span class=\"Dialoglabel\">Modified-Firmware </span>08.03.37mod-0.55 \n</div>";
+		// Modded firmware: data = "<div class=\"pDialogo\" style=\"text-align:
+		// center; padding: 5px 10px;\"> FRITZ!Box Fon WLAN, <span
+		// class=\"Dialoglabel\">Modified-Firmware </span>08.03.37mod-0.55
+		// \n</div>";
 		Pattern p = Pattern.compile(PATTERN_DETECT_FIRMWARE);
 		Matcher m = p.matcher(data);
 		if (m.find()) {
@@ -140,10 +153,9 @@ public class FritzBoxFirmware {
 			String majorFirmwareVersion = m.group(2);
 			String minorFirmwareVersion = m.group(3);
 			String modFirmwareVersion = m.group(4).trim();
-			FritzBoxFirmware fw = new FritzBoxFirmware(boxtypeString,
+			return new FritzBoxFirmware(boxtypeString,
 					majorFirmwareVersion, minorFirmwareVersion,
 					modFirmwareVersion);
-			return fw;
 		} else {
 			System.err.println("detectFirmwareVersion: Password wrong?");
 			throw new WrongPasswordException(
@@ -156,6 +168,33 @@ public class FritzBoxFirmware {
 	 */
 	public final byte getBoxType() {
 		return boxtype;
+	}
+
+	/**
+	 * @return Returns the access method string.
+	 */
+	public final String getAccessMethod() {
+		int accessMethod;
+		switch (boxtype) {
+		case BOXTYPE_FRITZBOX_FON:
+			accessMethod = ACCESS_METHOD_PRIOR_0342;
+			break;
+		case BOXTYPE_FRITZBOX_FON_WLAN:
+			accessMethod = ACCESS_METHOD_PRIOR_0342;
+			break;
+		case BOXTYPE_FRITZBOX_ATA:
+			accessMethod = ACCESS_METHOD_PRIOR_0342;
+			break;
+		case BOXTYPE_FRITZBOX_5050:
+			accessMethod = ACCESS_METHOD_POST_0342;
+			break;
+		case BOXTYPE_FRITZBOX_7050:
+			accessMethod = ACCESS_METHOD_POST_0342;
+			break;
+		default:
+			accessMethod = ACCESS_METHOD_POST_0342;
+		}
+		return POSTDATA_ACCESS_METHOD[accessMethod];
 	}
 
 	/**

@@ -3,6 +3,7 @@
  * JFritz!
  * http://jfritz.sourceforge.net
  *
+ *
  * (c) Arno Willig <akw@thinkwiki.org>
  *
  * Created on 08.04.2005
@@ -147,7 +148,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 
 	public final static String PROGRAM_VERSION = "0.2.9";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.19 2005/05/20 13:49:40 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.20 2005/05/20 14:08:02 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 

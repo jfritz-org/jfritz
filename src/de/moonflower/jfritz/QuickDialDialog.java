@@ -114,6 +114,7 @@ public class QuickDialDialog extends JDialog {
 		};
 
 		okButton = new JButton("Okay");
+		okButton.setEnabled(JFritz.IS_RELEASE);
 		cancelButton = new JButton("Abbruch");
 		newButton = new JButton("Neue Kurzwahl");
 		newButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(

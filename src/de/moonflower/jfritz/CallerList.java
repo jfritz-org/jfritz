@@ -198,7 +198,8 @@ public class CallerList extends AbstractTableModel {
 	}
 
 	/**
-	 * @param number of participant
+	 * @param number
+	 *            of participant
 	 * @return Returns name of participant
 	 */
 	public String getParticipantFromNumber(String number) {
@@ -319,7 +320,10 @@ public class CallerList extends AbstractTableModel {
 				"true")) {
 			JFritzUtils.clearListOnFritzBox(properties
 					.getProperty("box.address"), properties
-					.getProperty("box.password"));
+					.getProperty("box.password"), JFritzUtils.detectBoxType(
+					properties.getProperty("box.firmware"), properties
+							.getProperty("box.address"), properties
+							.getProperty("box.password")));
 		}
 
 	}
