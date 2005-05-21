@@ -5,11 +5,12 @@
  */
 package de.moonflower.jfritz;
 
-import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
@@ -22,9 +23,15 @@ import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.xml.sax.EntityResolver;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLReader;
 
 /**
  * This class manages the caller list.
@@ -32,6 +39,21 @@ import org.xml.sax.SAXException;
  * @author Arno Willig
  */
 public class CallerList extends AbstractTableModel {
+
+	private static final String CALLS_DTD_URI = "http://jfritz.moonflower.de/dtd/calls.dtd";
+
+	private static final String CALLS_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+			+ "<!-- DTD for JFritz calls -->"
+			+ "<!ELEMENT calls (commment?,entry*)>"
+			+ "<!ELEMENT comment (#PCDATA)>"
+			+ "<!ELEMENT date (#PCDATA)>"
+			+ "<!ELEMENT caller (#PCDATA)>"
+			+ "<!ELEMENT port (#PCDATA)>"
+			+ "<!ELEMENT route (#PCDATA)>"
+			+ "<!ELEMENT duration (#PCDATA)>"
+			+ "<!ELEMENT entry (date,caller?,port?,route?,duration?)>"
+			+ "<!ATTLIST entry calltype (call_in|call_in_failed|call_out) #REQUIRED>";
+
 	private JFritzProperties properties, participants;
 
 	private Vector callerdata;
@@ -97,7 +119,8 @@ public class CallerList extends AbstractTableModel {
 		setProperties(properties, participants);
 	}
 
-	public void setProperties(JFritzProperties properties, JFritzProperties participants) {
+	public void setProperties(JFritzProperties properties,
+			JFritzProperties participants) {
 		this.properties = properties;
 		this.participants = participants;
 	}
@@ -113,7 +136,7 @@ public class CallerList extends AbstractTableModel {
 			fos = new FileOutputStream(JFritz.CALLS_FILE);
 			PrintWriter pw = new PrintWriter(fos);
 			pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			pw.println("<!DOCTYPE calls SYSTEM \"calls.dtd\">");
+			pw.println("<!DOCTYPE calls SYSTEM \"" + CALLS_DTD_URI + "\">");
 			pw.println("<calls>");
 			pw.println("<comment>Calls for " + JFritz.PROGRAM_NAME + " v"
 					+ JFritz.PROGRAM_VERSION + "</comment>");
@@ -171,26 +194,71 @@ public class CallerList extends AbstractTableModel {
 	}
 
 	/**
-	 * loads calls from xml file
+	 * Loads calls from xml file
 	 *
 	 */
 	public void loadFromXMLFile() {
 		try {
+
 			// Workaround for SAX parser
-			File dtd = new File("calls.dtd");
-			dtd.deleteOnExit();
-			if (!dtd.exists()) {
-				// System.out.println("Creating empty DTD file");
-				dtd.createNewFile();
-			}
+			// File dtd = new File("calls.dtd");
+			// dtd.deleteOnExit();
+			// if (!dtd.exists()) dtd.createNewFile();
+
 			SAXParserFactory factory = SAXParserFactory.newInstance();
-			factory.setValidating(false);
-			factory.newSAXParser().parse(new File(JFritz.CALLS_FILE),
-					new CallFileXMLHandler(this));
+			factory.setValidating(false); // FIXME Something wrong with the DTD
+			SAXParser parser = factory.newSAXParser();
+			XMLReader reader = parser.getXMLReader();
+
+			reader.setErrorHandler(new ErrorHandler() {
+				public void error(SAXParseException x) throws SAXException {
+					// Debug.err(x.toString());
+					throw x;
+				}
+
+				public void fatalError(SAXParseException x) throws SAXException {
+					// Debug.err(x.toString());
+					throw x;
+				}
+
+				public void warning(SAXParseException x) throws SAXException {
+					// Debug.err(x.toString());
+					throw x;
+				}
+			});
+			reader.setEntityResolver(new EntityResolver() {
+				public InputSource resolveEntity(String publicId,
+						String systemId) throws SAXException, IOException {
+					if (systemId.equals(CALLS_DTD_URI)
+							|| systemId.equals("calls.dtd")) {
+						InputSource is;
+						is = new InputSource(new StringReader(CALLS_DTD));
+						is.setSystemId(CALLS_DTD_URI);
+						return is;
+					}
+					throw new SAXException("Invalid system identifier: "
+							+ systemId);
+				}
+
+			});
+			reader.setContentHandler(new CallFileXMLHandler(this));
+			reader
+					.parse(new InputSource(new FileInputStream(
+							JFritz.CALLS_FILE)));
+			// parser.parse(new File(JFritz.CALLS_FILE),new
+			// CallFileXMLHandler(this));
+
 		} catch (ParserConfigurationException e) {
 			Debug.err("Error with ParserConfiguration!");
 		} catch (SAXException e) {
 			Debug.err("Error on parsing " + JFritz.CALLS_FILE + "!");
+			if (e.getLocalizedMessage().startsWith("Relative URI")) {
+				Debug.err(e.getLocalizedMessage());
+				Debug.errDlg("STRUKTURÄNDERUNG!\n\nBitte in der Datei jfritz.calls.xml\n "
+						+ "die Zeichenkette \"calls.dtd\" durch\n \""
+						+ CALLS_DTD_URI + "\"\n ersetzen!");
+				System.exit(0);
+			}
 		} catch (IOException e) {
 			Debug.err("Could not read " + JFritz.CALLS_FILE + "!");
 		}
@@ -321,7 +389,6 @@ public class CallerList extends AbstractTableModel {
 	 *
 	 * @see javax.swing.table.TableModel#getRowCount()
 	 */
-
 	public int getRowCount() {
 		return callerdata.size();
 	}
@@ -474,8 +541,8 @@ public class CallerList extends AbstractTableModel {
 	 * TODO: To be implemented..
 	 */
 	public void updateFilter() {
-		Debug.err("CallTypeFilter: " + filterCallIn + "|"
-				+ filterCallInFailed + "|" + filterCallOut);
+		Debug.err("CallTypeFilter: " + filterCallIn + "|" + filterCallInFailed
+				+ "|" + filterCallOut);
 
 	}
 

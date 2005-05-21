@@ -4,6 +4,8 @@
  */
 package de.moonflower.jfritz;
 
+import javax.swing.JOptionPane;
+
 /**
  * @author Arno Willig
  *
@@ -31,4 +33,7 @@ public class Debug {
 		System.err.println("ERROR: " + message);
 	}
 
+	public static void errDlg(String message) {
+		JOptionPane.showMessageDialog(null, message);
+	}
 }
