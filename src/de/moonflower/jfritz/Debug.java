@@ -34,6 +34,7 @@ public class Debug {
 	}
 
 	public static void errDlg(String message) {
+		err(message);
 		JOptionPane.showMessageDialog(null, message);
 	}
 }

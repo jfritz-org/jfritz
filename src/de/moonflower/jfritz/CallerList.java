@@ -252,11 +252,14 @@ public class CallerList extends AbstractTableModel {
 			Debug.err("Error with ParserConfiguration!");
 		} catch (SAXException e) {
 			Debug.err("Error on parsing " + JFritz.CALLS_FILE + "!");
-			if (e.getLocalizedMessage().startsWith("Relative URI")) {
+			if (e.getLocalizedMessage().startsWith("Relative URI")
+					|| e.getLocalizedMessage().startsWith(
+							"Invalid system identifier")) {
 				Debug.err(e.getLocalizedMessage());
-				Debug.errDlg("STRUKTURÄNDERUNG!\n\nBitte in der Datei jfritz.calls.xml\n "
-						+ "die Zeichenkette \"calls.dtd\" durch\n \""
-						+ CALLS_DTD_URI + "\"\n ersetzen!");
+				Debug
+						.errDlg("STRUKTURÄNDERUNG!\n\nBitte in der Datei jfritz.calls.xml\n "
+								+ "die Zeichenkette \"calls.dtd\" durch\n \""
+								+ CALLS_DTD_URI + "\"\n ersetzen!");
 				System.exit(0);
 			}
 		} catch (IOException e) {
