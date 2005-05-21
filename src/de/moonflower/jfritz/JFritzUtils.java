@@ -7,6 +7,7 @@ package de.moonflower.jfritz;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -84,6 +85,9 @@ public class JFritzUtils {
 		FritzBoxFirmware fw;
 		try {
 			fw = new FritzBoxFirmware(firmware);
+			// FIXME: Debug
+			// fw = new FritzBoxFirmware("08.03.53mod-0.57");
+			Debug.msg("Using Firmware: " + fw + " (" + fw.getBoxName() + ")");
 		} catch (InvalidFirmwareException e) {
 			fw = FritzBoxFirmware.detectFirmwareVersion(box_address,
 					box_password);
@@ -110,18 +114,29 @@ public class JFritzUtils {
 			String areaPrefix, String areaCode, FritzBoxFirmware firmware)
 			throws WrongPasswordException, IOException {
 
-		String postdata;
-		postdata = firmware.getAccessMethod() + POSTDATA_LIST + password;
+		String data = "";
+		String postdata = firmware.getAccessMethod() + POSTDATA_LIST + password;
 		String urlstr = "http://" + box_address + "/cgi-bin/webcm";
-		String data = fetchDataFromURL(urlstr, postdata);
+		data = fetchDataFromURL(urlstr, postdata);
 
-		/*
-		 * // DEBUG: Test other versions try { data = ""; String thisLine;
-		 * BufferedReader in = new BufferedReader(new FileReader(
-		 * "/home/akw/calls-mod-0.55.html")); while ((thisLine = in.readLine()) !=
-		 * null) { data += thisLine; } in.close(); } catch (IOException e) { } //
-		 * END OF DEBUG SECTION
-		 */
+		// DEBUG: Test other versions
+		if (false) {
+			String filename = "/home/akw/wmcm/webcm_akw.htm";
+			Debug.msg("Debug mode: Loading " + filename);
+			try {
+				data = "";
+				String thisLine;
+				BufferedReader in = new BufferedReader(new FileReader(filename));
+				while ((thisLine = in.readLine()) != null) {
+					data += thisLine;
+				}
+				in.close();
+			} catch (IOException e) {
+				Debug.err("File not found: " + filename);
+			}
+		}
+		// END OF DEBUG SECTION
+
 		Vector list = parseCallerData(data, firmware, countryPrefix,
 				countryCode, areaPrefix, areaCode);
 		return list;
@@ -240,7 +255,7 @@ public class JFritzUtils {
 				String str;
 				while (null != ((str = d.readLine()))) {
 					// Password seems to be wrong
-					if (str.contains("FEHLER:&nbsp;Das angegebene Kennwort "))
+					if (str.indexOf("FEHLER:&nbsp;Das angegebene Kennwort ")>0)
 						wrong_pass = true;
 					// Skip a few lines
 					//if (i > 778)
@@ -320,13 +335,14 @@ public class JFritzUtils {
 			String countryCode, String areaPrefix, String areaCode) {
 		Vector list = new Vector();
 		data = removeDuplicateWhitespace(data);
-
+		Debug.msg(3,"Parsing data: "+data);
 		Pattern p;
-
+		Debug.msg(2,"FirmwareMinorVersion: "+firmware.getMinorFirmwareVersion());
 		if (firmware.getMinorFirmwareVersion() < 42)
 			p = Pattern.compile(PATTERN_LIST_OLD);
 		else
 			p = Pattern.compile(PATTERN_LIST_NEW);
+
 		Matcher m = p.matcher(data);
 
 		while (m.find()) {

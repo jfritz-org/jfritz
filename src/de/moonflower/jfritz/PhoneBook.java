@@ -50,7 +50,7 @@ public class PhoneBook extends JFrame {
 		createStatusbar();
 */
 		// pack();
-		this.setLocationByPlatform(true);
+		// FIXME: Works only in J2SE 1.5: this.setLocationByPlatform(true);
 		setVisible(true);
 	}
 }

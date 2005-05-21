@@ -9,7 +9,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Properties;
 import java.util.ResourceBundle;
 
 import javax.swing.JTable;
@@ -28,14 +27,14 @@ import javax.swing.table.TableModel;
 public class CallerTable extends JTable {
 
 	private ResourceBundle messages;
-	private Properties properties, participants;
+	private JFritzProperties properties, participants;
 
 
 	/**
 	 * Constructs CallerTable
 	 * @param callerlist
 	 */
-	public CallerTable(TableModel callerlist, ResourceBundle messages, Properties properties) {
+	public CallerTable(TableModel callerlist, ResourceBundle messages, JFritzProperties properties) {
 		super(callerlist);
 		setMessages(messages);
 		setProperties(properties);
@@ -154,7 +153,7 @@ public class CallerTable extends JTable {
 	/**
 	 * @param properties The messages to set.
 	 */
-	public void setProperties(Properties properties) {
+	public void setProperties(JFritzProperties properties) {
 		this.properties = properties;
 	}
 

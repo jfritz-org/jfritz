@@ -47,7 +47,9 @@
  *
  * CHANGELOG:
  *
- * JFritz! 0.2.9:
+ * JFritz! 0.3.0: Major release
+ * - Compatibility for JRE 1.4.2
+ * - Severel bugfixes
  *
  * JFritz! 0.2.8:
  * - Bugfix: Firmware detection had nasty bug
@@ -77,7 +79,7 @@
  * - Nice icons for calltypes (Regular call, Area call, Mobile call)
  * - Several small bugfixes
  *
- * JFritz! 0.2.0:
+ * JFritz! 0.2.0: Major release
  * - Improved GUI, arranged colours for win32 platform
  * - New ToolBar with nice icons
  * - Bugfix: Not all calls had been retrieved from box
@@ -108,10 +110,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.InvalidPropertiesFormatException;
 import java.util.Locale;
 import java.util.MissingResourceException;
-import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.Vector;
@@ -146,9 +146,9 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 
 	public final static String PROGRAM_NAME = "JFritz!";
 
-	public final static String PROGRAM_VERSION = "0.2.9";
+	public final static String PROGRAM_VERSION = "0.3.0";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.23 2005/05/20 18:18:36 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.24 2005/05/21 13:50:59 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -166,7 +166,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 
 	public ResourceBundle messages;
 
-	Properties defaultProperties, properties, participants;
+	JFritzProperties defaultProperties, properties, participants;
 
 	CallerList callerlist;
 
@@ -224,10 +224,9 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		setDefaultLookAndFeel();
 		setTitle(PROGRAM_NAME);
 		setSize(new Dimension(640, 300));
-		setLocationByPlatform(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		setLayout(new BorderLayout());
+		getContentPane().setLayout(new BorderLayout());
 
 		createMenu();
 		createToolbar();
@@ -276,7 +275,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 						"/de/moonflower/jfritz/resources/images/fetch.png"))));
 		toolbar.add(fetchButton);
 
-		taskButton = new JToggleButton(); // FIXME
+		taskButton = new JToggleButton();
 		taskButton.setToolTipText(messages.getString("fetchtask"));
 		taskButton.setActionCommand("fetchTask");
 		taskButton.addActionListener(this);
@@ -480,7 +479,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		//		callerlist.addTableModelListener(new ModelListener(callertable,
 		// participants));
 
-		add(new JScrollPane(callertable), BorderLayout.CENTER);
+		getContentPane().add(new JScrollPane(callertable), BorderLayout.CENTER);
 	}
 
 	/**
@@ -839,9 +838,9 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 	 * Loads properties from xml files
 	 */
 	public void loadProperties() {
-		participants = new Properties();
-		defaultProperties = new Properties();
-		properties = new Properties(defaultProperties);
+		participants = new JFritzProperties();
+		defaultProperties = new JFritzProperties();
+		properties = new JFritzProperties(defaultProperties);
 
 		// Default properties
 		defaultProperties.setProperty("box.address", "fritz.box");
@@ -859,8 +858,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		} catch (FileNotFoundException e) {
 			Debug.err("File " + PROPERTIES_FILE
 					+ " not found, using default values");
-		} catch (InvalidPropertiesFormatException e) {
-		} catch (IOException e) {
+		} catch (Exception e) {
 		}
 
 		try {
@@ -870,8 +868,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 		} catch (FileNotFoundException e) {
 			Debug.err("File " + PARTICIPANTS_FILE
 					+ " not found, using default values");
-		} catch (InvalidPropertiesFormatException e) {
-		} catch (IOException e) {
+		} catch (Exception e) {
 		}
 		saveProperties();
 	}
@@ -943,7 +940,7 @@ public class JFritz extends JFrame implements Runnable, ActionListener,
 	/**
 	 * @return Returns the properties.
 	 */
-	public final Properties getProperties() {
+	public final JFritzProperties getProperties() {
 		return properties;
 	}
 

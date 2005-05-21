@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Properties;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,7 +32,7 @@ import org.xml.sax.SAXException;
  * @author Arno Willig
  */
 public class CallerList extends AbstractTableModel {
-	private Properties properties, participants;
+	private JFritzProperties properties, participants;
 
 	private Vector callerdata;
 
@@ -93,12 +92,12 @@ public class CallerList extends AbstractTableModel {
 	 * @param properties
 	 * @param participants
 	 */
-	public CallerList(Properties properties, Properties participants) {
+	public CallerList(JFritzProperties properties, JFritzProperties participants) {
 		this();
 		setProperties(properties, participants);
 	}
 
-	public void setProperties(Properties properties, Properties participants) {
+	public void setProperties(JFritzProperties properties, JFritzProperties participants) {
 		this.properties = properties;
 		this.participants = participants;
 	}

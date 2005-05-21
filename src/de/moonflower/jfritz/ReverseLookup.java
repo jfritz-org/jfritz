@@ -138,7 +138,7 @@ public class ReverseLookup {
 	}
 
 	public static String beautifyMatch(String match) {
-		if (match.contains(" ")) {
+		if (match.indexOf(" ")>0) {
 			// Add a comma after surname
 			match = match.substring(0, match.indexOf(" ")) + ","
 					+ match.substring(match.indexOf(" "));

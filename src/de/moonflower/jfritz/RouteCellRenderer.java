@@ -46,13 +46,13 @@ public class RouteCellRenderer extends DefaultTableCellRenderer {
 			String routeStr;
 			String route = (String) value;
 
-			if (route.contains("@")) {
+			if (route.indexOf("@")>=0) {
 				// SIP Call and we know the provider
 				String[] parts = route.split("@");
 				routeStr = parts[0];
 				setToolTipText("Internet-Telefonat: " + route);
 				setIcon(imageSIP);
-			} else if (route.contains("SIP")) {
+			} else if (route.indexOf("SIP")>=0) {
 				// SIP Call but we don't know the provider
 				routeStr = route;
 				setToolTipText("Internet-Telefonat: " + route);

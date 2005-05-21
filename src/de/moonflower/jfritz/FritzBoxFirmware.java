@@ -104,7 +104,7 @@ public class FritzBoxFirmware {
 		String mod = "";
 		if (firmware == null)
 			throw new InvalidFirmwareException("No firmware found");
-		if (firmware.contains("mod")) {
+		if (firmware.indexOf("mod")>0) {
 			mod = firmware.substring(firmware.indexOf("mod"));
 			firmware = firmware.substring(0, firmware.indexOf("mod"));
 		}

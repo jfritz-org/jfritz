@@ -7,7 +7,6 @@ package de.moonflower.jfritz;
 
 import java.awt.Component;
 import java.awt.Toolkit;
-import java.util.Properties;
 import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
@@ -23,7 +22,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  * @author Arno Willig
  */
 public class NumberCellRenderer extends DefaultTableCellRenderer {
-	Properties properties;
+	JFritzProperties properties;
 
 	ResourceBundle messages;
 
@@ -36,7 +35,7 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 	/**
 	 * renders the number field in the CallerTable
 	 */
-	public NumberCellRenderer(Properties properties, ResourceBundle messages) {
+	public NumberCellRenderer(JFritzProperties properties, ResourceBundle messages) {
 		super();
 		this.properties = properties;
 		this.messages = messages;
