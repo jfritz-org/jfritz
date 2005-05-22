@@ -81,9 +81,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	}
 
 	public void run() {
-		jfritz.getCallerlist().loadFromXMLFile();
+		jfritz.getCallerlist().loadFromXMLFile(JFritz.CALLS_FILE);
 		jfritz.getCallerlist().sortAllRowsBy(1, false);
-		setStatus("");
+		setStatus();
 	}
 
 	private void createGUI() {
@@ -131,7 +131,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		progressbar = new JProgressBar();
 		progressbar.setValue(0);
 		progressbar.setStringPainted(true);
-		setStatus("");
+		setStatus();
 		getContentPane().add(progressbar, BorderLayout.SOUTH);
 	}
 
@@ -146,6 +146,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		fetchButton.setActionCommand("fetchList");
 		fetchButton.addActionListener(this);
 		fetchButton.setIcon(getImage("fetch.png"));
+		fetchButton.setFocusPainted(false);
 		toolbar.add(fetchButton);
 
 		taskButton = new JToggleButton();
@@ -240,38 +241,43 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 		// FILTER BUTTONS
 
-		JToggleButton tbutton = new JToggleButton(getImage("callin_grey.png"),
-				true);
-		tbutton.setSelectedIcon(getImage("callin.png"));
-		tbutton.setActionCommand("filter_callin");
-		tbutton.addActionListener(this);
-		tbutton.setToolTipText(jfritz.getMessages().getString("filter_callin"));
-		tbutton.setSelected(!Boolean.parseBoolean(properties.getProperty(
+		JToggleButton tb = new JToggleButton(getImage("callin_grey.png"), true);
+		tb.setSelectedIcon(getImage("callin.png"));
+		tb.setActionCommand("filter_callin");
+		tb.addActionListener(this);
+		tb.setToolTipText(jfritz.getMessages().getString("filter_callin"));
+		tb.setSelected(!Boolean.parseBoolean(properties.getProperty(
 				"filter.callin", "false")));
+		toolbar.add(tb);
 
-		toolbar.add(tbutton);
-
-		tbutton = new JToggleButton(getImage("callinfailed_grey.png"), true);
-		tbutton.setSelectedIcon(getImage("callinfailed.png"));
-		tbutton.setActionCommand("filter_callinfailed");
-		tbutton.addActionListener(this);
-		tbutton.setToolTipText(jfritz.getMessages().getString(
-				"filter_callinfailed"));
-		tbutton.setSelected(!Boolean.parseBoolean(properties.getProperty(
+		tb = new JToggleButton(getImage("callinfailed_grey.png"), true);
+		tb.setSelectedIcon(getImage("callinfailed.png"));
+		tb.setActionCommand("filter_callinfailed");
+		tb.addActionListener(this);
+		tb
+				.setToolTipText(jfritz.getMessages().getString(
+						"filter_callinfailed"));
+		tb.setSelected(!Boolean.parseBoolean(properties.getProperty(
 				"filter.callinfailed", "false")));
-		toolbar.add(tbutton);
+		toolbar.add(tb);
 
-		tbutton = new JToggleButton(getImage("callout_grey.png"), true);
-		tbutton.setSelectedIcon(getImage("callout.png"));
-		tbutton.setActionCommand("filter_callout");
-		tbutton.addActionListener(this);
-		tbutton
-				.setToolTipText(jfritz.getMessages()
-						.getString("filter_callout"));
-		tbutton.setSelected(!Boolean.parseBoolean(properties.getProperty(
+		tb = new JToggleButton(getImage("callout_grey.png"), true);
+		tb.setSelectedIcon(getImage("callout.png"));
+		tb.setActionCommand("filter_callout");
+		tb.addActionListener(this);
+		tb.setToolTipText(jfritz.getMessages().getString("filter_callout"));
+		tb.setSelected(!Boolean.parseBoolean(properties.getProperty(
 				"filter.callout", "false")));
+		toolbar.add(tb);
 
-		toolbar.add(tbutton);
+		tb = new JToggleButton(getImage("phone_grey.png"), true);
+		tb.setSelectedIcon(getImage("phone.png"));
+		tb.setActionCommand("filter_number");
+		tb.addActionListener(this);
+		tb.setToolTipText(jfritz.getMessages().getString("filter_number"));
+		tb.setSelected(!Boolean.parseBoolean(properties.getProperty(
+				"filter.number", "false")));
+		toolbar.add(tb);
 
 		getContentPane().add(toolbar, BorderLayout.NORTH);
 	}
@@ -421,7 +427,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 							setBusy(true);
 							setStatus(jfritz.getMessages().getString(
 									"fetchdata"));
-							jfritz.getCallerlist().getNewData();
+							jfritz.getCallerlist().getNewCalls();
 							isdone = true;
 						} catch (WrongPasswordException e) {
 							setBusy(false);
@@ -454,7 +460,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 				public void finished() {
 					setBusy(false);
-					setStatus("");
+					setStatus();
 					jfritz.getCallerlist().sortAllRowsBy(1, false);
 					jfritz.getCallerlist().updateFilter();
 					callertable.tableChanged(callertableevent);
@@ -481,7 +487,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 						for (int i = 0; i < jfritz.getCallerlist()
 								.getRowCount(); i++) {
 							Vector data = jfritz.getCallerlist()
-									.getCallVector();
+									.getFilteredCallVector();
 							Call call = (Call) data.get(i);
 							String number = call.getNumber();
 							String participant = jfritz.getCallerlist()
@@ -490,6 +496,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 								setStatus(jfritz.getMessages().getString(
 										"reverse_lookup_for")
 										+ " " + number + " ...");
+								Debug.msg("Reverse lookup for " + number);
 								if (participant.equals("")) {
 									participant = ReverseLookup.lookup(number);
 								}
@@ -511,7 +518,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					setBusy(false);
 					isretrieving = false;
 					int rows = jfritz.getCallerlist().getRowCount();
-					setStatus("");
+					setStatus();
 				}
 			};
 			worker.start();
@@ -657,14 +664,24 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	}
 
 	/**
+	 * Sets standard info into the status bar
+	 *
+	 */
+	public void setStatus() {
+		progressbar.setString(jfritz.getCallerlist().getRowCount() + " "
+				+ jfritz.getMessages().getString("entries") + ", "
+				+ jfritz.getMessages().getString("total_duration") + ": "
+				+ (jfritz.getCallerlist().getTotalDuration() / 60) + " min");
+	}
+
+	/**
 	 * Sets text in the status bar
 	 *
 	 * @param status
 	 */
 	public void setStatus(String status) {
 		if (status.equals(""))
-			progressbar.setString(jfritz.getCallerlist().getRowCount() + " "
-					+ jfritz.getMessages().getString("entries"));
+			setStatus();
 		else
 			progressbar.setString(status);
 	}
@@ -789,6 +806,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			callertable.tableChanged(callertableevent);
 		} else if (e.getActionCommand() == "filter_callout") {
 			properties.setProperty("filter.callout", Boolean
+					.toString(!((JToggleButton) e.getSource()).isSelected()));
+			jfritz.getCallerlist().updateFilter();
+			callertable.tableChanged(callertableevent);
+		} else if (e.getActionCommand() == "filter_number") {
+			properties.setProperty("filter.number", Boolean
 					.toString(!((JToggleButton) e.getSource()).isSelected()));
 			jfritz.getCallerlist().updateFilter();
 			callertable.tableChanged(callertableevent);

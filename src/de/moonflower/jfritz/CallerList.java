@@ -58,36 +58,17 @@ public class CallerList extends AbstractTableModel {
 
 	private JFritzWindow jframe;
 
-	private Vector callerdata;
+	private Vector filteredCallerData;
 
-	private Vector unfilteredcallerdata;
-
-	public Vector getCallVector() {
-		return unfilteredcallerdata;
-	}
-
-	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		return (!((Call) unfilteredcallerdata.get(rowIndex)).getNumber()
-				.equals("") && (columnIndex == 3));
-	}
-
-	public Class getColumnClass(int columnIndex) {
-		Object o = getValueAt(0, columnIndex);
-		if (o == null) {
-			return Object.class;
-		} else {
-			return o.getClass();
-		}
-
-	}
+	private Vector unfilteredCallerData;
 
 	/**
-	 * CallerList Constructor
+	 * Constructs new CallerList
 	 *
 	 */
 	public CallerList() {
-		callerdata = new Vector();
-		unfilteredcallerdata = new Vector();
+		filteredCallerData = new Vector();
+		unfilteredCallerData = new Vector();
 	}
 
 	/**
@@ -108,21 +89,53 @@ public class CallerList extends AbstractTableModel {
 	}
 
 	/**
-	 * Save caller list to xml file.
 	 *
+	 * @return Unfiltered Vector of Calls
 	 */
-	public void saveToXMLFile() {
-		Debug.msg("Saving to file " + JFritz.CALLS_FILE);
+	public Vector getUnfilteredCallVector() {
+		return unfilteredCallerData;
+	}
+
+	/**
+	 *
+	 * @return Filtered Vector of Calls
+	 */
+	public Vector getFilteredCallVector() {
+		return filteredCallerData;
+	}
+
+	public boolean isCellEditable(int rowIndex, int columnIndex) {
+		return (!((Call) filteredCallerData.get(rowIndex)).getNumber().equals(
+				"") && (columnIndex == 3));
+	}
+
+	public Class getColumnClass(int columnIndex) {
+		Object o = getValueAt(0, columnIndex);
+		if (o == null) {
+			return Object.class;
+		} else {
+			return o.getClass();
+		}
+
+	}
+
+	/**
+	 * Saves caller list to xml file.
+	 *
+	 * @param filename
+	 */
+	public void saveToXMLFile(String filename) {
+		Debug.msg("Saving to file " + filename);
 		FileOutputStream fos;
 		try {
-			fos = new FileOutputStream(JFritz.CALLS_FILE);
+			fos = new FileOutputStream(filename);
 			PrintWriter pw = new PrintWriter(fos);
 			pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			pw.println("<!DOCTYPE calls SYSTEM \"" + CALLS_DTD_URI + "\">");
 			pw.println("<calls>");
 			pw.println("<comment>Calls for " + JFritz.PROGRAM_NAME + " v"
 					+ JFritz.PROGRAM_VERSION + "</comment>");
-			Enumeration en = unfilteredcallerdata.elements();
+			Enumeration en = unfilteredCallerData.elements();
 			while (en.hasMoreElements()) {
 				Call call = (Call) en.nextElement();
 				CallType type = call.getCalltype();
@@ -147,7 +160,7 @@ public class CallerList extends AbstractTableModel {
 			pw.println("</calls>");
 			pw.close();
 		} catch (FileNotFoundException e) {
-			Debug.err("Could not write " + JFritz.CALLS_FILE + "!");
+			Debug.err("Could not write " + filename + "!");
 		}
 	}
 
@@ -163,7 +176,7 @@ public class CallerList extends AbstractTableModel {
 			fos = new FileOutputStream(filename);
 			PrintWriter pw = new PrintWriter(fos);
 
-			Enumeration en = getCallVector().elements();
+			Enumeration en = getUnfilteredCallVector().elements();
 			while (en.hasMoreElements()) {
 				Call call = (Call) en.nextElement();
 				pw.println(call.toCSV());
@@ -179,7 +192,7 @@ public class CallerList extends AbstractTableModel {
 	 * Loads calls from xml file
 	 *
 	 */
-	public void loadFromXMLFile() {
+	public void loadFromXMLFile(String filename) {
 		try {
 
 			// Workaround for SAX parser
@@ -224,9 +237,7 @@ public class CallerList extends AbstractTableModel {
 
 			});
 			reader.setContentHandler(new CallFileXMLHandler(this));
-			reader
-					.parse(new InputSource(new FileInputStream(
-							JFritz.CALLS_FILE)));
+			reader.parse(new InputSource(new FileInputStream(filename)));
 			// parser.parse(new File(JFritz.CALLS_FILE),new
 			// CallFileXMLHandler(this));
 			updateFilter();
@@ -234,7 +245,7 @@ public class CallerList extends AbstractTableModel {
 		} catch (ParserConfigurationException e) {
 			Debug.err("Error with ParserConfiguration!");
 		} catch (SAXException e) {
-			Debug.err("Error on parsing " + JFritz.CALLS_FILE + "!");
+			Debug.err("Error on parsing " + filename + "!");
 			if (e.getLocalizedMessage().startsWith("Relative URI")
 					|| e.getLocalizedMessage().startsWith(
 							"Invalid system identifier")) {
@@ -246,14 +257,14 @@ public class CallerList extends AbstractTableModel {
 				System.exit(0);
 			}
 		} catch (IOException e) {
-			Debug.err("Could not read " + JFritz.CALLS_FILE + "!");
+			Debug.err("Could not read " + filename + "!");
 		}
 	}
 
 	/**
 	 * @param number
 	 *            of participant
-	 * @return Returns name of participant
+	 * @return name of participant
 	 */
 	public String getParticipantFromNumber(String number) {
 		String areanumber = JFritzUtils.create_area_number(number, properties
@@ -300,7 +311,8 @@ public class CallerList extends AbstractTableModel {
 	public boolean addEntry(Call call) {
 		boolean newEntry = true;
 
-		for (Enumeration el = getCallVector().elements(); el.hasMoreElements();) {
+		for (Enumeration el = getUnfilteredCallVector().elements(); el
+				.hasMoreElements();) {
 
 			Date d = ((Call) el.nextElement()).getCalldate();
 			if (d.equals(call.getCalldate())) { // We already have this call
@@ -310,7 +322,7 @@ public class CallerList extends AbstractTableModel {
 		}
 
 		if (newEntry) { // Add new entry to table model
-			unfilteredcallerdata.add(call);
+			unfilteredCallerData.add(call);
 		}
 		return newEntry;
 	}
@@ -321,7 +333,7 @@ public class CallerList extends AbstractTableModel {
 	 * @throws WrongPasswordException
 	 * @throws IOException
 	 */
-	public void getNewData() throws WrongPasswordException, IOException {
+	public void getNewCalls() throws WrongPasswordException, IOException {
 		Vector data = JFritzUtils.retrieveCallersFromFritzBox(properties
 				.getProperty("box.address"), properties
 				.getProperty("box.password"), properties
@@ -340,7 +352,7 @@ public class CallerList extends AbstractTableModel {
 				newEntries++;
 		}
 
-		saveToXMLFile();
+		saveToXMLFile(JFritz.CALLS_FILE);
 
 		// Notify user?
 		if (properties.getProperty("option.notifyOnCalls", "false").equals(
@@ -376,7 +388,7 @@ public class CallerList extends AbstractTableModel {
 	 * @see javax.swing.table.TableModel#getRowCount()
 	 */
 	public int getRowCount() {
-		return callerdata.size();
+		return filteredCallerData.size();
 	}
 
 	/**
@@ -385,7 +397,7 @@ public class CallerList extends AbstractTableModel {
 	 * @see javax.swing.table.TableModel#getColumnCount()
 	 */
 	public int getColumnCount() {
-		// 6 Columns on the Table
+		// 7 Columns on the Table
 		return 7;
 	}
 
@@ -393,7 +405,7 @@ public class CallerList extends AbstractTableModel {
 	 * returns the value at a specific position
 	 */
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Call call = (Call) callerdata.get(rowIndex);
+		Call call = (Call) filteredCallerData.get(rowIndex);
 		switch (columnIndex) {
 		case 0:
 			return call.getCalltype();
@@ -429,7 +441,7 @@ public class CallerList extends AbstractTableModel {
 	 * Sets a value to a specific position
 	 */
 	public void setValueAt(Object object, int rowIndex, int columnIndex) {
-		Call call = (Call) callerdata.get(rowIndex);
+		Call call = (Call) filteredCallerData.get(rowIndex);
 		if (columnIndex == 3) {
 			setParticipant(object.toString(), rowIndex);
 		}
@@ -443,7 +455,7 @@ public class CallerList extends AbstractTableModel {
 	 * @param rowIndex
 	 */
 	public void setParticipant(String participant, int rowIndex) {
-		Call call = (Call) callerdata.get(rowIndex);
+		Call call = (Call) filteredCallerData.get(rowIndex);
 		if (!call.getNumber().equals("")) { // no empty numbers
 			if (participant.equals("")) {
 				participants.remove(call.getNumber());
@@ -464,7 +476,8 @@ public class CallerList extends AbstractTableModel {
 	 *            Order of sorting
 	 */
 	public void sortAllRowsBy(int colIndex, boolean ascending) {
-		Collections.sort(callerdata, new ColumnSorter(colIndex, ascending));
+		Collections.sort(filteredCallerData, new ColumnSorter(colIndex,
+				ascending));
 		fireTableStructureChanged();
 	}
 
@@ -531,34 +544,55 @@ public class CallerList extends AbstractTableModel {
 				.getProperty("filter.callinfailed"));
 		boolean filterCallOut = Boolean.parseBoolean(properties
 				.getProperty("filter.callout"));
+		boolean filterNumber = Boolean.parseBoolean(properties
+				.getProperty("filter.number"));
 
 		Debug.msg(3, "CallTypeFilter: " + filterCallIn + "|"
 				+ filterCallInFailed + "|" + filterCallOut);
 
-		if ((!filterCallIn) && (!filterCallInFailed) && (!filterCallOut))
-			callerdata = unfilteredcallerdata;
-		else {
-			Enumeration en = unfilteredcallerdata.elements();
+		if ((!filterCallIn) && (!filterCallInFailed) && (!filterCallOut)
+				&& (!filterNumber)) {
+			filteredCallerData = unfilteredCallerData;
+		} else {
+			Enumeration en = unfilteredCallerData.elements();
 			Vector filteredcallerdata;
 			filteredcallerdata = new Vector();
 			while (en.hasMoreElements()) {
 				Call call = (Call) en.nextElement();
-				if ((!filterCallIn)
-						&& (call.getCalltype().toInt() == CallType.CALLIN))
-					filteredcallerdata.add(call);
-				if ((!filterCallInFailed)
-						&& (call.getCalltype().toInt() == CallType.CALLIN_FAILED))
-					filteredcallerdata.add(call);
-				if ((!filterCallOut)
-						&& (call.getCalltype().toInt() == CallType.CALLOUT))
-					filteredcallerdata.add(call);
+				if (!(filterNumber && call.number.equals(""))) {
+					if ((!filterCallIn)
+							&& (call.getCalltype().toInt() == CallType.CALLIN))
+						filteredcallerdata.add(call);
+					if ((!filterCallInFailed)
+							&& (call.getCalltype().toInt() == CallType.CALLIN_FAILED))
+						filteredcallerdata.add(call);
+					if ((!filterCallOut)
+							&& (call.getCalltype().toInt() == CallType.CALLOUT))
+						filteredcallerdata.add(call);
+				}
 			}
-			callerdata = filteredcallerdata;
+			filteredCallerData = filteredcallerdata;
 		}
-		if (jframe != null) jframe.setStatus("");
+		if (jframe != null)
+			jframe.setStatus("");
 	}
+
 	/**
-	 * @param jfritzwindow The jframe to set.
+	 * @return Total duration of all (filtered) calls
+	 */
+	public int getTotalDuration() {
+		Enumeration en = getFilteredCallVector().elements();
+		int total = 0;
+		while (en.hasMoreElements()) {
+			Call call = (Call) en.nextElement();
+			total += call.getDuration();
+		}
+		return total;
+	}
+
+	/**
+	 * @param jfritzwindow
+	 *            The jframe to set.
 	 */
 	public final void setJFritzWindow(JFritzWindow jfritzwindow) {
 		this.jframe = jfritzwindow;

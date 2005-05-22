@@ -47,11 +47,13 @@
  *
  * CHANGELOG:
  *
- * JFritz! 0.3.1:
+ * JFritz! 0.3.2:
  * - Saves and restores window position/size
  * - Saves and restores width of table columns
  * - CallTypeFilter works now (thanks to robotniko)
- * - Filter option will be saved
+ * - Filter option is saved
+ * - Added filter for calls without displayed number
+ * - Total duration of calls now displayed in status bar
  *
  * JFritz! 0.3.0: Major release
  * - Compatibility for JRE 1.4.2
@@ -123,9 +125,9 @@ public class JFritz {
 
 	public final static String PROGRAM_NAME = "JFritz!";
 
-	public final static String PROGRAM_VERSION = "0.3.1";
+	public final static String PROGRAM_VERSION = "0.3.2";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.27 2005/05/22 20:22:38 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.28 2005/05/22 22:56:28 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 

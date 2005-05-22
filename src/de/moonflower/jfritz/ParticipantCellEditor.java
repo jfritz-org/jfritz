@@ -40,22 +40,13 @@ public class ParticipantCellEditor extends AbstractCellEditor implements
 		return component;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
+	/**
 	 * @see javax.swing.CellEditor#getCellEditorValue()
 	 */
 	public Object getCellEditorValue() {
 		return ((JTextField) component).getText();
 	}
 
-	/*
-	 * public boolean isCellEditable(EventObject evt) { if (evt instanceof
-	 * MouseEvent) { int clickCount;
-	 *
-	 * clickCount = 2; return ((MouseEvent)evt).getClickCount() >= clickCount; }
-	 * return true; }
-	 */
 	public boolean stopCellEditing() {
 		String s = (String) getCellEditorValue();
 		if (!isValid(s)) { // Should display an error message at this point
