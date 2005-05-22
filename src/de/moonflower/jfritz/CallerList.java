@@ -60,12 +60,6 @@ public class CallerList extends AbstractTableModel {
 
 	private Vector unfilteredcallerdata;
 
-	boolean filterCallIn = false;
-
-	boolean filterCallInFailed = false;
-
-	boolean filterCallOut = false;
-
 	public Vector getCallVector() {
 		return unfilteredcallerdata;
 	}
@@ -85,21 +79,6 @@ public class CallerList extends AbstractTableModel {
 
 	}
 
-	/**
-	 * Sets content filters
-	 *
-	 * @param filter_callin
-	 * @param filter_callinfailed
-	 * @param filter_callout
-	 */
-	public void setFilter(boolean filter_callin, boolean filter_callinfailed,
-			boolean filter_callout) {
-		this.filterCallIn = filter_callin;
-		this.filterCallInFailed = filter_callinfailed;
-		this.filterCallOut = filter_callout;
-		Debug.msg("Setting filter to: " + filterCallIn + ", "
-				+ filterCallInFailed + ", " + filterCallOut);
-	}
 
 	/**
 	 * CallerList Constructor
@@ -547,8 +526,13 @@ public class CallerList extends AbstractTableModel {
 	 * TODO: To be implemented..
 	 */
 	public void updateFilter() {
-		Debug.err("CallTypeFilter: " + filterCallIn + "|" + filterCallInFailed
-				+ "|" + filterCallOut);
+		boolean  filterCallIn = Boolean.parseBoolean(properties.getProperty("filter.callin"));
+		boolean filterCallInFailed = Boolean.parseBoolean(properties.getProperty("filter.callinfailed"));
+		boolean filterCallOut = Boolean.parseBoolean(properties.getProperty("filter.callout"));
+		Debug.msg(3, "CallTypeFilter: " + filterCallIn + "|"
+				+ filterCallInFailed + "|" + filterCallOut);
+
+
 		if ((!filterCallIn) && (!filterCallInFailed) && (!filterCallOut))
 			callerdata = unfilteredcallerdata;
 		else {
@@ -569,33 +553,6 @@ public class CallerList extends AbstractTableModel {
 			}
 			callerdata = filteredcallerdata;
 		}
-	}
 
-	/**
-	 * @param filter_callin
-	 *            The filter_callin to set.
-	 */
-	public void setFilterCallIn(boolean filter_callin) {
-		this.filterCallIn = filter_callin;
-		updateFilter();
 	}
-
-	/**
-	 * @param filter_callinfailed
-	 *            The filter_callinfailed to set.
-	 */
-	public void setFilterCallInFailed(boolean filter_callinfailed) {
-		this.filterCallInFailed = filter_callinfailed;
-		updateFilter();
-	}
-
-	/**
-	 * @param filter_callout
-	 *            The filter_callout to set.
-	 */
-	public void setFilterCallOut(boolean filter_callout) {
-		this.filterCallOut = filter_callout;
-		updateFilter();
-	}
-
 }
