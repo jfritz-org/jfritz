@@ -146,18 +146,14 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		fetchButton.setToolTipText(jfritz.getMessages().getString("fetchlist"));
 		fetchButton.setActionCommand("fetchList");
 		fetchButton.addActionListener(this);
-		fetchButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/fetch.png"))));
+		fetchButton.setIcon(getImage("fetch.png"));
 		toolbar.add(fetchButton);
 
 		taskButton = new JToggleButton();
 		taskButton.setToolTipText(jfritz.getMessages().getString("fetchtask"));
 		taskButton.setActionCommand("fetchTask");
 		taskButton.addActionListener(this);
-		taskButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/clock.png"))));
+		taskButton.setIcon(getImage("clock.png"));
 		toolbar.add(taskButton);
 
 		lookupButton = new JButton();
@@ -165,27 +161,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				"reverse_lookup"));
 		lookupButton.setActionCommand("reverselookup");
 		lookupButton.addActionListener(this);
-		lookupButton
-				.setIcon(new ImageIcon(
-						Toolkit
-								.getDefaultToolkit()
-								.getImage(
-										getClass()
-												.getResource(
-														"/de/moonflower/jfritz/resources/images/reverselookup.png"))));
+		lookupButton.setIcon(getImage("reverselookup.png"));
 		toolbar.add(lookupButton);
 
 		JButton button = new JButton();
 		button.setActionCommand("phonebook");
 		button.addActionListener(this);
-		button
-				.setIcon(new ImageIcon(
-						Toolkit
-								.getDefaultToolkit()
-								.getImage(
-										getClass()
-												.getResource(
-														"/de/moonflower/jfritz/resources/images/phonebook.png"))));
+		button.setIcon(getImage("phonebook.png"));
 		button.setToolTipText(jfritz.getMessages().getString("phonebook"));
 		button.setEnabled(JFritz.DEVEL_VERSION);
 		toolbar.add(button);
@@ -193,14 +175,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		button = new JButton();
 		button.setActionCommand("quickdial");
 		button.addActionListener(this);
-		button
-				.setIcon(new ImageIcon(
-						Toolkit
-								.getDefaultToolkit()
-								.getImage(
-										getClass()
-												.getResource(
-														"/de/moonflower/jfritz/resources/images/quickdial.png"))));
+		button.setIcon(getImage("quickdial.png"));
 		button.setToolTipText(jfritz.getMessages().getString("quickdial"));
 		button.setEnabled(JFritz.DEVEL_VERSION);
 		toolbar.add(button);
@@ -210,18 +185,14 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		button = new JButton();
 		button.setActionCommand("export_csv");
 		button.addActionListener(this);
-		button.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/csv.png"))));
+		button.setIcon(getImage("csv.png"));
 		button.setToolTipText(jfritz.getMessages().getString("export_csv"));
 		toolbar.add(button);
 
 		vcardButton = new JButton();
 		vcardButton.setActionCommand("export_vcard");
 		vcardButton.addActionListener(this);
-		vcardButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/vcard.png"))));
+		vcardButton.setIcon(getImage("vcard.png"));
 		vcardButton.setToolTipText(jfritz.getMessages().getString(
 				"export_vcard"));
 		toolbar.add(vcardButton);
@@ -252,9 +223,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		button = new JButton();
 		button.setActionCommand("help");
 		button.addActionListener(this);
-		button.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/help.png"))));
+		button.setIcon(getImage("help.png"));
 		button.setToolTipText(jfritz.getMessages().getString("help_menu"));
 		button.setEnabled(JFritz.DEVEL_VERSION);
 		toolbar.add(button);
@@ -264,9 +233,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		button = new JButton();
 		button.setActionCommand("config");
 		button.addActionListener(this);
-		button.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/config.png"))));
+		button.setIcon(getImage("config.png"));
 		button.setToolTipText(jfritz.getMessages().getString("config"));
 		toolbar.add(button);
 
@@ -274,23 +241,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 		// FILTER BUTTONS
 
-		JToggleButton tbutton = new JToggleButton(
-				new ImageIcon(
-						Toolkit
-								.getDefaultToolkit()
-								.getImage(
-										getClass()
-												.getResource(
-														"/de/moonflower/jfritz/resources/images/callin_grey.png"))),
+		JToggleButton tbutton = new JToggleButton(getImage("callin_grey.png"),
 				true);
-		tbutton
-				.setSelectedIcon(new ImageIcon(
-						Toolkit
-								.getDefaultToolkit()
-								.getImage(
-										getClass()
-												.getResource(
-														"/de/moonflower/jfritz/resources/images/callin.png"))));
+		tbutton.setSelectedIcon(getImage("callin.png"));
 		tbutton.setActionCommand("filter_callin");
 		tbutton.addActionListener(this);
 		tbutton.setToolTipText(jfritz.getMessages().getString("filter_callin"));
@@ -299,23 +252,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 		toolbar.add(tbutton);
 
-		tbutton = new JToggleButton(
-				new ImageIcon(
-						Toolkit
-								.getDefaultToolkit()
-								.getImage(
-										getClass()
-												.getResource(
-														"/de/moonflower/jfritz/resources/images/callinfailed_grey.png"))),
-				true);
-		tbutton
-				.setSelectedIcon(new ImageIcon(
-						Toolkit
-								.getDefaultToolkit()
-								.getImage(
-										getClass()
-												.getResource(
-														"/de/moonflower/jfritz/resources/images/callinfailed.png"))));
+		tbutton = new JToggleButton(getImage("callinfailed_grey.png"), true);
+		tbutton.setSelectedIcon(getImage("callinfailed.png"));
 		tbutton.setActionCommand("filter_callinfailed");
 		tbutton.addActionListener(this);
 		tbutton.setToolTipText(jfritz.getMessages().getString(
@@ -324,23 +262,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				"filter.callinfailed", "false")));
 		toolbar.add(tbutton);
 
-		tbutton = new JToggleButton(
-				new ImageIcon(
-						Toolkit
-								.getDefaultToolkit()
-								.getImage(
-										getClass()
-												.getResource(
-														"/de/moonflower/jfritz/resources/images/callout_grey.png"))),
-				true);
-		tbutton
-				.setSelectedIcon(new ImageIcon(
-						Toolkit
-								.getDefaultToolkit()
-								.getImage(
-										getClass()
-												.getResource(
-														"/de/moonflower/jfritz/resources/images/callout.png"))));
+		tbutton = new JToggleButton(getImage("callout_grey.png"), true);
+		tbutton.setSelectedIcon(getImage("callout.png"));
 		tbutton.setActionCommand("filter_callout");
 		tbutton.addActionListener(this);
 		tbutton
@@ -898,6 +821,12 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			JFritzProperties participants) {
 		this.properties = properties;
 		this.participants = participants;
+	}
+
+	public ImageIcon getImage(String filename) {
+		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource(
+						"/de/moonflower/jfritz/resources/images/" + filename)));
 	}
 
 }
