@@ -52,7 +52,7 @@ public class QuickDialDialog extends JDialog {
 	 * @param owner
 	 * @throws java.awt.HeadlessException
 	 */
-	public QuickDialDialog(JFritz owner) throws HeadlessException {
+	public QuickDialDialog(JFritzWindow owner) throws HeadlessException {
 		super(owner, true);
 		if (owner != null) {
 			setLocationRelativeTo(owner);

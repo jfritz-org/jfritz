@@ -25,10 +25,10 @@ import javax.swing.JFrame;
  */
 public class PhoneBook extends JFrame {
 
-	JFritz jfritz;
+	JFritzWindow jfritz;
 	ResourceBundle messages;
 
-	public PhoneBook(JFritz jfritz) {
+	public PhoneBook(JFritzWindow jfritz) {
 		super();
 		this.jfritz = jfritz;
 		messages = jfritz.getMessages();

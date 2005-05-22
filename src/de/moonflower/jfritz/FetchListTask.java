@@ -15,12 +15,12 @@ import java.util.TimerTask;
  */
 public class FetchListTask extends TimerTask {
 
-	JFritz jfritz;
+	JFritzWindow jfritz;
 
 	/**
 	 * Set JFritz instance to FetchListTask
 	 */
-	public FetchListTask(JFritz jfritz) {
+	public FetchListTask(JFritzWindow jfritz) {
 		super();
 		this.jfritz = jfritz;
 	}
