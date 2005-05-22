@@ -56,6 +56,8 @@ public class CallerList extends AbstractTableModel {
 
 	private JFritzProperties properties, participants;
 
+	private JFritzWindow jframe;
+
 	private Vector callerdata;
 
 	private Vector unfilteredcallerdata;
@@ -78,7 +80,6 @@ public class CallerList extends AbstractTableModel {
 		}
 
 	}
-
 
 	/**
 	 * CallerList Constructor
@@ -522,16 +523,17 @@ public class CallerList extends AbstractTableModel {
 	// ************************************************************************************************************
 	/**
 	 * Update the call filter.
-	 *
-	 * TODO: To be implemented..
 	 */
 	public void updateFilter() {
-		boolean  filterCallIn = Boolean.parseBoolean(properties.getProperty("filter.callin"));
-		boolean filterCallInFailed = Boolean.parseBoolean(properties.getProperty("filter.callinfailed"));
-		boolean filterCallOut = Boolean.parseBoolean(properties.getProperty("filter.callout"));
+		boolean filterCallIn = Boolean.parseBoolean(properties
+				.getProperty("filter.callin"));
+		boolean filterCallInFailed = Boolean.parseBoolean(properties
+				.getProperty("filter.callinfailed"));
+		boolean filterCallOut = Boolean.parseBoolean(properties
+				.getProperty("filter.callout"));
+
 		Debug.msg(3, "CallTypeFilter: " + filterCallIn + "|"
 				+ filterCallInFailed + "|" + filterCallOut);
-
 
 		if ((!filterCallIn) && (!filterCallInFailed) && (!filterCallOut))
 			callerdata = unfilteredcallerdata;
@@ -553,6 +555,12 @@ public class CallerList extends AbstractTableModel {
 			}
 			callerdata = filteredcallerdata;
 		}
-
+		if (jframe != null) jframe.setStatus("");
+	}
+	/**
+	 * @param jfritzwindow The jframe to set.
+	 */
+	public final void setJFritzWindow(JFritzWindow jfritzwindow) {
+		this.jframe = jfritzwindow;
 	}
 }

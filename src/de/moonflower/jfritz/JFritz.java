@@ -125,7 +125,7 @@ public class JFritz {
 
 	public final static String PROGRAM_VERSION = "0.3.1";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.26 2005/05/22 19:04:58 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.27 2005/05/22 20:22:38 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -159,6 +159,7 @@ public class JFritz {
 		callerlist = new CallerList(properties, participants);
 
 		jframe = new JFritzWindow(this);
+		callerlist.setJFritzWindow(jframe);
 		javax.swing.SwingUtilities.invokeLater(jframe);
 	}
 
