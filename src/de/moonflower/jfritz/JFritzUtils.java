@@ -111,8 +111,8 @@ public class JFritzUtils {
 	 */
 	public static Vector retrieveCallersFromFritzBox(String box_address,
 			String password, String countryPrefix, String countryCode,
-			String areaPrefix, String areaCode, FritzBoxFirmware firmware)
-			throws WrongPasswordException, IOException {
+			String areaPrefix, String areaCode, FritzBoxFirmware firmware,
+			JFritz jfritz) throws WrongPasswordException, IOException {
 
 		String data = "";
 		String postdata = firmware.getAccessMethod() + POSTDATA_LIST + password;
@@ -138,7 +138,7 @@ public class JFritzUtils {
 		// END OF DEBUG SECTION
 
 		Vector list = parseCallerData(data, firmware, countryPrefix,
-				countryCode, areaPrefix, areaCode);
+				countryCode, areaPrefix, areaCode, jfritz);
 		return list;
 	}
 
@@ -255,7 +255,7 @@ public class JFritzUtils {
 				String str;
 				while (null != ((str = d.readLine()))) {
 					// Password seems to be wrong
-					if (str.indexOf("FEHLER:&nbsp;Das angegebene Kennwort ")>0)
+					if (str.indexOf("FEHLER:&nbsp;Das angegebene Kennwort ") > 0)
 						wrong_pass = true;
 					// Skip a few lines
 					//if (i > 778)
@@ -332,12 +332,14 @@ public class JFritzUtils {
 	 */
 	public static Vector parseCallerData(String data,
 			FritzBoxFirmware firmware, String countryPrefix,
-			String countryCode, String areaPrefix, String areaCode) {
+			String countryCode, String areaPrefix, String areaCode,
+			JFritz jfritz) {
 		Vector list = new Vector();
 		data = removeDuplicateWhitespace(data);
-		Debug.msg(3,"Parsing data: "+data);
+		Debug.msg(3, "Parsing data: " + data);
 		Pattern p;
-		Debug.msg(2,"FirmwareMinorVersion: "+firmware.getMinorFirmwareVersion());
+		Debug.msg(2, "FirmwareMinorVersion: "
+				+ firmware.getMinorFirmwareVersion());
 		if (firmware.getMinorFirmwareVersion() < 42)
 			p = Pattern.compile(PATTERN_LIST_OLD);
 		else
@@ -351,12 +353,13 @@ public class JFritzUtils {
 				String port = m.group(4);
 				String route = m.group(5);
 				int duration = Integer.parseInt(m.group(6));
-				String number = create_area_number(m.group(3), countryPrefix,
+				String number = createAreaNumber(m.group(3), countryPrefix,
 						countryCode, areaPrefix, areaCode);
 				Date date = new SimpleDateFormat("dd.MM.yy HH:mm").parse(m
 						.group(2));
 
-				list.add(new Call(symbol, date, number, port, route, duration));
+				list.add(new Call(jfritz, symbol, date, number, port, route,
+						duration));
 
 			} catch (ParseException e) {
 				e.printStackTrace();
@@ -374,10 +377,14 @@ public class JFritzUtils {
 	 * @param areaCode
 	 * @return number with area code prefix
 	 */
-	public static String create_area_number(String number,
-			String countryPrefix, String countryCode, String areaPrefix,
-			String areaCode) {
+	public static String createAreaNumber(String number, String countryPrefix,
+			String countryCode, String areaPrefix, String areaCode) {
 		if (!number.equals("")) {
+			if (number.startsWith(countryCode) && number.length() > 10) {
+				// International numbers without countryPrefix
+				// (some VOIP numbers)
+				number = countryPrefix + number;
+			}
 			if (number.startsWith(countryPrefix)) { // International call
 
 				if (number.startsWith(countryPrefix + countryCode)) {

@@ -14,20 +14,23 @@ import java.util.Date;
  */
 public class Call {
 
-	CallType calltype;
+	private JFritz jfritz;
 
-	Date calldate;
+	private CallType calltype;
 
-	String number;
+	private Date calldate;
 
-	String route;
+	private String number;
 
-	String port;
+	private String route;
 
-	int duration;
+	private String port;
 
-	public Call(CallType calltype, Date calldate, String number, String port,
-			String route, int duration) {
+	private int duration;
+
+	public Call(JFritz jfritz, CallType calltype, Date calldate, String number,
+			String port, String route, int duration) {
+		this.jfritz = jfritz;
 		this.calltype = calltype;
 		this.calldate = calldate;
 		this.number = number;
@@ -55,6 +58,18 @@ public class Call {
 	 */
 	public String getNumber() {
 		return number;
+	}
+
+	/**
+	 * @return Returns the number.
+	 */
+	public String getParticipant() {
+		String areanumber = JFritzUtils.createAreaNumber(number, jfritz
+				.getProperties().getProperty("country.prefix"), jfritz
+				.getProperties().getProperty("country.code"), jfritz
+				.getProperties().getProperty("area.prefix"), jfritz
+				.getProperties().getProperty("area.code"));
+		return jfritz.getParticipants().getProperty(areanumber, "");
 	}
 
 	/**

@@ -63,7 +63,7 @@ public class CallerTable extends JTable {
 
 		getTableHeader().setReorderingAllowed(false);
 		getTableHeader().setResizingAllowed(true);
-		getTableHeader().addMouseListener(new ColumnHeaderListener());
+		getTableHeader().addMouseListener(new ColumnHeaderListener(getModel()));
 
 		SelectionListener listener = new SelectionListener(this);
 		getSelectionModel().addListSelectionListener(listener);

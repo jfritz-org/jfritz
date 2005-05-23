@@ -79,7 +79,7 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 		if (value != null) {
 			String number = (String) value;
 // FIXME
-			number = JFritzUtils.create_area_number(number,
+			number = JFritzUtils.createAreaNumber(number,
 					properties.getProperty("country.prefix"),
 					properties.getProperty("country.code"),
 					properties.getProperty("area.prefix"),

@@ -54,13 +54,15 @@ public class CallerList extends AbstractTableModel {
 			+ "<!ELEMENT entry (date,caller?,port?,route?,duration?)>"
 			+ "<!ATTLIST entry calltype (call_in|call_in_failed|call_out) #REQUIRED>";
 
-	private JFritzProperties properties, participants;
-
-	private JFritzWindow jframe;
+	private JFritz jfritz;
 
 	private Vector filteredCallerData;
 
 	private Vector unfilteredCallerData;
+
+	private int sortColumn = 1;
+
+	private boolean sortDirection = false;
 
 	/**
 	 * Constructs new CallerList
@@ -77,15 +79,9 @@ public class CallerList extends AbstractTableModel {
 	 * @param properties
 	 * @param participants
 	 */
-	public CallerList(JFritzProperties properties, JFritzProperties participants) {
+	public CallerList(JFritz jfritz) {
 		this();
-		setProperties(properties, participants);
-	}
-
-	public void setProperties(JFritzProperties properties,
-			JFritzProperties participants) {
-		this.properties = properties;
-		this.participants = participants;
+		this.jfritz = jfritz;
 	}
 
 	/**
@@ -238,9 +234,7 @@ public class CallerList extends AbstractTableModel {
 			});
 			reader.setContentHandler(new CallFileXMLHandler(this));
 			reader.parse(new InputSource(new FileInputStream(filename)));
-			// parser.parse(new File(JFritz.CALLS_FILE),new
-			// CallFileXMLHandler(this));
-			updateFilter();
+			sortAllUnfilteredRows();
 
 		} catch (ParserConfigurationException e) {
 			Debug.err("Error with ParserConfiguration!");
@@ -259,20 +253,6 @@ public class CallerList extends AbstractTableModel {
 		} catch (IOException e) {
 			Debug.err("Could not read " + filename + "!");
 		}
-	}
-
-	/**
-	 * @param number
-	 *            of participant
-	 * @return name of participant
-	 */
-	public String getParticipantFromNumber(String number) {
-		String areanumber = JFritzUtils.create_area_number(number, properties
-				.getProperty("country.prefix"), properties
-				.getProperty("country.code"), properties
-				.getProperty("area.prefix"), properties
-				.getProperty("area.code"));
-		return participants.getProperty(areanumber, "");
 	}
 
 	/**
@@ -299,7 +279,8 @@ public class CallerList extends AbstractTableModel {
 	 */
 	public boolean addEntry(CallType symbol, Date datum, String number,
 			String port, String route, int duration) {
-		Call call = new Call(symbol, datum, number, port, route, duration);
+		Call call = new Call(jfritz, symbol, datum, number, port, route,
+				duration);
 		return addEntry(call);
 	}
 
@@ -334,16 +315,17 @@ public class CallerList extends AbstractTableModel {
 	 * @throws IOException
 	 */
 	public void getNewCalls() throws WrongPasswordException, IOException {
-		Vector data = JFritzUtils.retrieveCallersFromFritzBox(properties
-				.getProperty("box.address"), properties
-				.getProperty("box.password"), properties
-				.getProperty("country.prefix"), properties
-				.getProperty("country.code"), properties
-				.getProperty("area.prefix"), properties
-				.getProperty("area.code"), JFritzUtils.detectBoxType(properties
-				.getProperty("box.firmware"), properties
-				.getProperty("box.address"), properties
-				.getProperty("box.password")));
+		Vector data = JFritzUtils.retrieveCallersFromFritzBox(jfritz
+				.getProperties().getProperty("box.address"), jfritz
+				.getProperties().getProperty("box.password"), jfritz
+				.getProperties().getProperty("country.prefix"), jfritz
+				.getProperties().getProperty("country.code"), jfritz
+				.getProperties().getProperty("area.prefix"), jfritz
+				.getProperties().getProperty("area.code"), JFritzUtils
+				.detectBoxType(jfritz.getProperties().getProperty(
+						"box.firmware"), jfritz.getProperties().getProperty(
+						"box.address"), jfritz.getProperties().getProperty(
+						"box.password")), jfritz);
 
 		int newEntries = 0;
 		for (Enumeration el = data.elements(); el.hasMoreElements();) {
@@ -352,11 +334,12 @@ public class CallerList extends AbstractTableModel {
 				newEntries++;
 		}
 
+		sortAllUnfilteredRows();
 		saveToXMLFile(JFritz.CALLS_FILE);
 
 		// Notify user?
-		if (properties.getProperty("option.notifyOnCalls", "false").equals(
-				"true")
+		if (jfritz.getProperties().getProperty("option.notifyOnCalls", "false")
+				.equals("true")
 				&& (newEntries > 0)) {
 			Debug.msg(newEntries + " new calls retrieved!");
 			// TODO: I18N
@@ -370,14 +353,14 @@ public class CallerList extends AbstractTableModel {
 
 		}
 		// Clear data on fritz box ?
-		if (properties.getProperty("option.deleteAfterFetch", "false").equals(
-				"true")) {
-			JFritzUtils.clearListOnFritzBox(properties
-					.getProperty("box.address"), properties
-					.getProperty("box.password"), JFritzUtils.detectBoxType(
-					properties.getProperty("box.firmware"), properties
-							.getProperty("box.address"), properties
-							.getProperty("box.password")));
+		if (jfritz.getProperties().getProperty("option.deleteAfterFetch",
+				"false").equals("true")) {
+			JFritzUtils.clearListOnFritzBox(jfritz.getProperties().getProperty(
+					"box.address"), jfritz.getProperties().getProperty(
+					"box.password"), JFritzUtils.detectBoxType(jfritz
+					.getProperties().getProperty("box.firmware"), jfritz
+					.getProperties().getProperty("box.address"), jfritz
+					.getProperties().getProperty("box.password")));
 		}
 
 	}
@@ -412,18 +395,20 @@ public class CallerList extends AbstractTableModel {
 		case 1:
 			return call.getCalldate();
 		case 2:
-			return JFritzUtils.create_area_number(call.getNumber(), properties
-					.getProperty("country.prefix"), properties
-					.getProperty("country.code"), properties
-					.getProperty("area.prefix"), properties
-					.getProperty("area.code"));
+			return JFritzUtils.createAreaNumber(call.getNumber(), jfritz
+					.getProperties().getProperty("country.prefix"), jfritz
+					.getProperties().getProperty("country.code"), jfritz
+					.getProperties().getProperty("area.prefix"), jfritz
+					.getProperties().getProperty("area.code"));
 		case 3:
-			return getParticipantFromNumber(call.getNumber());
+			return call.getParticipant();
+		// return getParticipantFromNumber(call.getNumber());
 		case 4:
 			return call.getPort();
 		case 5:
 			if (call.getRoute().startsWith("SIP")) {
-				String sipstr = properties.getProperty(call.getRoute());
+				String sipstr = jfritz.getProperties().getProperty(
+						call.getRoute());
 				if (sipstr != null) {
 					return sipstr;
 				} else
@@ -458,9 +443,10 @@ public class CallerList extends AbstractTableModel {
 		Call call = (Call) filteredCallerData.get(rowIndex);
 		if (!call.getNumber().equals("")) { // no empty numbers
 			if (participant.equals("")) {
-				participants.remove(call.getNumber());
+				jfritz.getParticipants().remove(call.getNumber());
 			} else {
-				participants.setProperty(call.getNumber(), participant);
+				jfritz.getParticipants().setProperty(call.getNumber(),
+						participant);
 			}
 			fireTableCellUpdated(rowIndex, 3);
 			fireTableStructureChanged();
@@ -468,16 +454,43 @@ public class CallerList extends AbstractTableModel {
 	}
 
 	/**
-	 * Sort table model rows by a specific column
+	 * Sort table model rows by a specific column and direction
 	 *
-	 * @param colIndex
+	 * @param col
 	 *            Index of column to be sorted by
-	 * @param ascending
+	 * @param asc
 	 *            Order of sorting
 	 */
-	public void sortAllRowsBy(int colIndex, boolean ascending) {
-		Collections.sort(filteredCallerData, new ColumnSorter(colIndex,
-				ascending));
+	public void sortAllFilteredRowsBy(int col, boolean asc) {
+		Debug.msg("Sorting column " + col + " " + asc);
+		Collections.sort(filteredCallerData, new ColumnSorter(col, asc));
+		fireTableStructureChanged();
+	}
+
+	/**
+	 * Sort table model rows by a specific column. The direction is determined
+	 * automatically.
+	 *
+	 * @param col
+	 *            Index of column to be sorted by
+	 */
+	public void sortAllFilteredRowsBy(int col) {
+		if ((sortColumn == col) && (sortDirection == false)) {
+			sortDirection = true;
+		} else {
+			sortColumn = col;
+			sortDirection = false;
+		}
+		sortAllFilteredRowsBy(sortColumn, sortDirection);
+	}
+
+	public void sortAllUnfilteredRows() {
+		Debug.msg("Sorting unfiltered data");
+		Collections.sort(unfilteredCallerData, new ColumnSorter(1, false));
+		// Resort filtered data
+		Collections.sort(filteredCallerData, new ColumnSorter(sortColumn,
+				sortDirection));
+		updateFilter();
 		fireTableStructureChanged();
 	}
 
@@ -495,10 +508,38 @@ public class CallerList extends AbstractTableModel {
 		}
 
 		public int compare(Object a, Object b) {
+			Object o1, o2;
 			Call v1 = (Call) a;
 			Call v2 = (Call) b;
-			Object o1 = v1.getCalldate();
-			Object o2 = v2.getCalldate();
+			switch (colIndex) {
+			case 0:
+				o1 = v1.getCalltype().toString();
+				o2 = v2.getCalltype().toString();
+				break;
+			case 2:
+				o1 = v1.getNumber();
+				o2 = v2.getNumber();
+				break;
+			case 3:
+				o1 = v1.getParticipant();
+				o2 = v2.getParticipant();
+				break;
+			case 4:
+				o1 = v1.getPort();
+				o2 = v2.getPort();
+				break;
+			case 5:
+				o1 = v1.getRoute();
+				o2 = v2.getRoute();
+				break;
+			case 6:
+				o1 = format(Integer.toString(v1.getDuration()), 10);
+				o2 = format(Integer.toString(v2.getDuration()), 10);
+				break;
+			default:
+				o1 = v1.getCalldate();
+				o2 = v2.getCalldate();
+			}
 
 			// Treat empty strains like nulls
 			if (o1 instanceof String && ((String) o1).length() == 0) {
@@ -531,6 +572,17 @@ public class CallerList extends AbstractTableModel {
 			}
 		}
 
+		public String format(String s, int places) {
+			int j = places - s.length();
+			if (j > 0) {
+				StringBuffer sb = null;
+				sb = new StringBuffer(j);
+				for (int k = 0; k < j; k++)
+					sb.append(' ');
+				return sb.toString() + s;
+			} else
+				return s;
+		}
 	}
 
 	// ************************************************************************************************************
@@ -538,13 +590,13 @@ public class CallerList extends AbstractTableModel {
 	 * Update the call filter.
 	 */
 	public void updateFilter() {
-		boolean filterCallIn = Boolean.parseBoolean(properties
+		boolean filterCallIn = Boolean.parseBoolean(jfritz.getProperties()
 				.getProperty("filter.callin"));
-		boolean filterCallInFailed = Boolean.parseBoolean(properties
-				.getProperty("filter.callinfailed"));
-		boolean filterCallOut = Boolean.parseBoolean(properties
+		boolean filterCallInFailed = Boolean.parseBoolean(jfritz
+				.getProperties().getProperty("filter.callinfailed"));
+		boolean filterCallOut = Boolean.parseBoolean(jfritz.getProperties()
 				.getProperty("filter.callout"));
-		boolean filterNumber = Boolean.parseBoolean(properties
+		boolean filterNumber = Boolean.parseBoolean(jfritz.getProperties()
 				.getProperty("filter.number"));
 
 		Debug.msg(3, "CallTypeFilter: " + filterCallIn + "|"
@@ -553,13 +605,14 @@ public class CallerList extends AbstractTableModel {
 		if ((!filterCallIn) && (!filterCallInFailed) && (!filterCallOut)
 				&& (!filterNumber)) {
 			filteredCallerData = unfilteredCallerData;
+			sortAllFilteredRowsBy(sortColumn, sortDirection);
 		} else {
 			Enumeration en = unfilteredCallerData.elements();
 			Vector filteredcallerdata;
 			filteredcallerdata = new Vector();
 			while (en.hasMoreElements()) {
 				Call call = (Call) en.nextElement();
-				if (!(filterNumber && call.number.equals(""))) {
+				if (!(filterNumber && call.getNumber().equals(""))) {
 					if ((!filterCallIn)
 							&& (call.getCalltype().toInt() == CallType.CALLIN))
 						filteredcallerdata.add(call);
@@ -572,9 +625,10 @@ public class CallerList extends AbstractTableModel {
 				}
 			}
 			filteredCallerData = filteredcallerdata;
+			sortAllFilteredRowsBy(sortColumn, sortDirection);
 		}
-		if (jframe != null)
-			jframe.setStatus("");
+		if (jfritz.getJframe() != null)
+			jfritz.getJframe().setStatus();
 	}
 
 	/**
@@ -590,11 +644,4 @@ public class CallerList extends AbstractTableModel {
 		return total;
 	}
 
-	/**
-	 * @param jfritzwindow
-	 *            The jframe to set.
-	 */
-	public final void setJFritzWindow(JFritzWindow jfritzwindow) {
-		this.jframe = jfritzwindow;
-	}
 }
