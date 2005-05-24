@@ -137,7 +137,7 @@ public class JFritz {
 
 	public final static String PROGRAM_VERSION = "0.3.3";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.33 2005/05/24 13:43:03 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.34 2005/05/24 14:37:23 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -175,6 +175,8 @@ public class JFritz {
 		new ReverseLookup();
 		loadMessages(new Locale("de", "DE"));
 		callerlist = new CallerList(this);
+		callerlist.loadFromXMLFile(CALLS_FILE);
+
 		jframe = new JFritzWindow(this);
 
 		ssdpthread = new SSDPdiscoverThread(this, SSDP_TIMEOUT);

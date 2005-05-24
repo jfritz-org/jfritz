@@ -65,22 +65,14 @@ public class CallerList extends AbstractTableModel {
 	private boolean sortDirection = false;
 
 	/**
-	 * Constructs new CallerList
-	 *
-	 */
-	public CallerList() {
-		filteredCallerData = new Vector();
-		unfilteredCallerData = new Vector();
-	}
-
-	/**
 	 * CallerList Constructor
 	 *
 	 * @param properties
 	 * @param participants
 	 */
 	public CallerList(JFritz jfritz) {
-		this();
+		filteredCallerData = new Vector();
+		unfilteredCallerData = new Vector();
 		this.jfritz = jfritz;
 	}
 
@@ -609,16 +601,15 @@ public class CallerList extends AbstractTableModel {
 		boolean filterNumber = JFritzUtils.parseBoolean(jfritz.getProperties()
 				.getProperty("filter.number"));
 		String filterSearch = jfritz.getProperties().getProperty(
-				"filter.search","");
+				"filter.search", "");
 
-		Debug.msg(3, "CallTypeFilter: " + filterCallIn + "|"
-				+ filterCallInFailed + "|" + filterCallOut+"|"+filterSearch);
+		Debug
+				.msg(3, "CallTypeFilter: " + filterCallIn + "|"
+						+ filterCallInFailed + "|" + filterCallOut + "|"
+						+ filterSearch);
 
-		if ((!filterCallIn)
-				&& (!filterCallInFailed)
-				&& (!filterCallOut)
-				&& (!filterNumber)
-				&& (filterSearch.length()==0)) {
+		if ((!filterCallIn) && (!filterCallInFailed) && (!filterCallOut)
+				&& (!filterNumber) && (filterSearch.length() == 0)) {
 			filteredCallerData = unfilteredCallerData;
 			sortAllFilteredRowsBy(sortColumn, sortDirection);
 		} else {
@@ -628,8 +619,9 @@ public class CallerList extends AbstractTableModel {
 			while (en.hasMoreElements()) {
 				Call call = (Call) en.nextElement();
 				if (filterSearch.length() == 0
-						|| call.getNumber().indexOf(filterSearch)>-1
-						|| call.getParticipant().toLowerCase().indexOf(filterSearch.toLowerCase())>-1)
+						|| call.getNumber().indexOf(filterSearch) > -1
+						|| call.getParticipant().toLowerCase().indexOf(
+								filterSearch.toLowerCase()) > -1)
 					if (!(filterNumber && call.getNumber().equals(""))) {
 						if ((!filterCallIn)
 								&& (call.getCalltype().toInt() == CallType.CALLIN))
@@ -645,6 +637,7 @@ public class CallerList extends AbstractTableModel {
 			filteredCallerData = filteredcallerdata;
 			sortAllFilteredRowsBy(sortColumn, sortDirection);
 		}
+		// FIXME
 		if (jfritz.getJframe() != null)
 			jfritz.getJframe().setStatus();
 	}

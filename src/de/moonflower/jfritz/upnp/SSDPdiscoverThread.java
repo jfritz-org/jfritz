@@ -34,15 +34,19 @@ public class SSDPdiscoverThread extends Thread {
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
+		jfritz.getJframe().setStatus(
+				jfritz.getMessages().getString("detect_boxes"));
 		jfritz.getJframe().setBusy(true);
+
 		devices = UPNPUtils.SSDP_discoverFritzBoxes(timeout);
 		jfritz.getJframe().setBusy(false);
+		jfritz.getJframe().setStatus();
 	}
 
 	/**
 	 * @return Returns the fritz box devices.
 	 */
-	public final Vector getDevices() {
+	synchronized public final Vector getDevices() {
 		return devices;
 	}
 }
