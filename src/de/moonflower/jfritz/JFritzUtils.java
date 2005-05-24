@@ -418,7 +418,7 @@ public class JFritzUtils {
 	}
 
 	public static boolean parseBoolean(String input) {
-		if (input.equalsIgnoreCase("true"))
+		if (input != null && input.equalsIgnoreCase("true"))
 			return true;
 		else
 			return false;

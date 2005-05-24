@@ -609,13 +609,16 @@ public class CallerList extends AbstractTableModel {
 		boolean filterNumber = JFritzUtils.parseBoolean(jfritz.getProperties()
 				.getProperty("filter.number"));
 		String filterSearch = jfritz.getProperties().getProperty(
-				"filter.search");
+				"filter.search","");
 
 		Debug.msg(3, "CallTypeFilter: " + filterCallIn + "|"
 				+ filterCallInFailed + "|" + filterCallOut+"|"+filterSearch);
 
-		if ((!filterCallIn) && (!filterCallInFailed) && (!filterCallOut)
-				&& (!filterNumber) && (filterSearch.length()==0)) {
+		if ((!filterCallIn)
+				&& (!filterCallInFailed)
+				&& (!filterCallOut)
+				&& (!filterNumber)
+				&& (filterSearch.length()==0)) {
 			filteredCallerData = unfilteredCallerData;
 			sortAllFilteredRowsBy(sortColumn, sortDirection);
 		} else {

@@ -48,6 +48,7 @@
  * - New search filter feature
  * - Sorting of columns by clicking on column headers
  * - VOIP numbers starting with 49 are now rewritten correctly
+ * - SSDP Autodetection of Fritz!Boxes
  * - Bugfix: Config-Dialog now saves all values correctly
  * - Bugfix: No empty SIP provider after detection
  * - Bugfix: Save-Dialog on export functions
@@ -136,7 +137,7 @@ public class JFritz {
 
 	public final static String PROGRAM_VERSION = "0.3.3";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.32 2005/05/24 13:19:41 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.33 2005/05/24 13:43:03 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
