@@ -27,6 +27,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -39,6 +40,8 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableCellRenderer;
 
+import de.moonflower.jfritz.upnp.SSDPPacket;
+
 /**
  * JDialog for JFritz configuration.
  *
@@ -47,6 +50,10 @@ import javax.swing.table.TableCellRenderer;
  * TODO: A lot of I18N..
  */
 public class ConfigDialog extends JDialog {
+
+	private JFritz jfritz;
+
+	private JComboBox addressCombo;
 
 	private JTextField address, areaCode, countryCode, areaPrefix,
 			countryPrefix;
@@ -60,7 +67,7 @@ public class ConfigDialog extends JDialog {
 	private JCheckBox deleteAfterFetchButton, fetchAfterStartButton,
 			notifyOnCallsButton;
 
-	private JLabel boxtypeLabel;
+	private JLabel boxtypeLabel, macLabel;
 
 	private FritzBoxFirmware firmware;
 
@@ -68,12 +75,16 @@ public class ConfigDialog extends JDialog {
 
 	private boolean pressed_OK = false;
 
+	private Vector devices;
+
 	public ConfigDialog(Frame parent) {
 		super(parent, true);
 		if (parent != null) {
 			setLocationRelativeTo(parent);
+			jfritz = ((JFritzWindow) parent).getJFritz();
 		}
 		setTitle("JFritz Konfiguration");
+		devices = jfritz.getDevices();
 		drawDialog();
 	}
 
@@ -101,6 +112,15 @@ public class ConfigDialog extends JDialog {
 		countryPrefix.setText(properties.getProperty("country.prefix"));
 		timerSlider.setValue(Integer.parseInt(properties
 				.getProperty("fetch.timer")));
+
+		for (int i = 0; i < devices.size(); i++) {
+			SSDPPacket p = (SSDPPacket) devices.get(i);
+			if (p.getIP().getHostAddress().equals(address.getText())) {
+				addressCombo.setSelectedIndex(i);
+			}
+
+		}
+
 		try {
 			firmware = new FritzBoxFirmware(properties
 					.getProperty("box.firmware"));
@@ -208,6 +228,13 @@ public class ConfigDialog extends JDialog {
 				if (source == pass || source == okButton
 						|| source == cancelButton) {
 					ConfigDialog.this.setVisible(false);
+				} else if (e.getActionCommand().equals("addresscombo")) {
+					int i = addressCombo.getSelectedIndex();
+					SSDPPacket dev = (SSDPPacket) devices.get(i);
+					address.setText(dev.getIP().getHostAddress());
+					firmware = dev.getFirmware();
+					setBoxTypeLabel();
+					macLabel.setText(dev.getMAC());
 				} else if (e.getActionCommand().equals("detectboxtype")) {
 					try {
 						firmware = FritzBoxFirmware.detectFirmwareVersion(
@@ -251,19 +278,38 @@ public class ConfigDialog extends JDialog {
 		label.setIcon(boxicon);
 		gridbag.setConstraints(label, c);
 		boxpane.add(label);
-		label = new JLabel("FRITZ!-Box-Einstellungen");
+		label = new JLabel("FRITZ!Box-Einstellungen");
 		gridbag.setConstraints(label, c);
 		boxpane.add(label);
 
 		c.gridy = 2;
-		label = new JLabel("Addresse: ");
+		label = new JLabel("FRITZ!Box: ");
+		gridbag.setConstraints(label, c);
+		boxpane.add(label);
+		address = new JTextField("", 16);
+		gridbag.setConstraints(address, c);
+
+		addressCombo = new JComboBox();
+		Enumeration en = devices.elements();
+		while (en.hasMoreElements()) {
+			SSDPPacket p = (SSDPPacket) en.nextElement();
+			addressCombo.addItem(p.getShortName());
+		}
+
+		gridbag.setConstraints(addressCombo, c);
+		addressCombo.setActionCommand("addresscombo");
+		addressCombo.addActionListener(actionListener);
+		boxpane.add(addressCombo);
+
+		c.gridy = 3;
+		label = new JLabel("IP-Addresse: ");
 		gridbag.setConstraints(label, c);
 		boxpane.add(label);
 		address = new JTextField("", 16);
 		gridbag.setConstraints(address, c);
 		boxpane.add(address);
 
-		c.gridy = 3;
+		c.gridy = 4;
 		label = new JLabel("Passwort: ");
 		gridbag.setConstraints(label, c);
 		boxpane.add(label);
@@ -271,7 +317,7 @@ public class ConfigDialog extends JDialog {
 		gridbag.setConstraints(pass, c);
 		boxpane.add(pass);
 
-		c.gridy = 4;
+		c.gridy = 5;
 		boxtypeButton = new JButton("Typ erkennen");
 		boxtypeButton.setActionCommand("detectboxtype");
 		boxtypeButton.addActionListener(actionListener);
@@ -280,6 +326,14 @@ public class ConfigDialog extends JDialog {
 		boxtypeLabel = new JLabel();
 		gridbag.setConstraints(boxtypeLabel, c);
 		boxpane.add(boxtypeLabel);
+
+		c.gridy = 6;
+		label = new JLabel("MAC-Addresse: ");
+		gridbag.setConstraints(label, c);
+		boxpane.add(label);
+		macLabel = new JLabel();
+		gridbag.setConstraints(macLabel, c);
+		boxpane.add(macLabel);
 
 		c.gridy = 1;
 		label = new JLabel("Ortsvorwahl: ");

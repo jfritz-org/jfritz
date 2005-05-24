@@ -8,6 +8,8 @@ import java.net.SocketTimeoutException;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import de.moonflower.jfritz.Debug;
+
 /*
  * Created on 22.05.2005
  *
@@ -18,9 +20,6 @@ import java.util.Vector;
  *
  */
 public class UPNPUtils {
-
-	public UPNPUtils() {
-	}
 
 	/**
 	 * @param timeout
@@ -44,7 +43,7 @@ public class UPNPUtils {
 			}
 			socket.close();
 		} catch (SocketTimeoutException e) {
-			System.err.println("Timeout for SSDP");
+			Debug.msg("Timeout for SSDP");
 		} catch (SocketException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -53,12 +52,19 @@ public class UPNPUtils {
 		return devices;
 	}
 
-	public static void main(String[] args) {
-		Vector dev = SSDP_discoverDevices(2000);
-		Enumeration en = dev.elements();
+	public static Vector SSDP_discoverFritzBoxes(int timeout) {
+		Vector devices = SSDP_discoverDevices(timeout);
+		Vector fritzboxes = new Vector();
+		Enumeration en = devices.elements();
 		while (en.hasMoreElements()) {
 			SSDPPacket p = (SSDPPacket) en.nextElement();
-			System.out.println("UPNP: " + p.getUdpPacket().getAddress());
+			if (p.getServer().toLowerCase().indexOf("avm fritz!box") > 0) {
+				Debug.msg("Box found at " + p.getIP().toString() + ": "
+						+ p.getServer());
+				fritzboxes.add(p);
+			}
 		}
+		return fritzboxes;
 	}
+
 }

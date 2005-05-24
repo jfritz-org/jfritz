@@ -4,6 +4,9 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import de.moonflower.jfritz.FritzBoxFirmware;
+import de.moonflower.jfritz.InvalidFirmwareException;
+
 /*
  * Created on 22.05.2005
  *
@@ -126,5 +129,31 @@ public class SSDPPacket {
 	 */
 	public final void setUdpPacket(DatagramPacket packet) {
 		this.udpPacket = packet;
+	}
+
+	public final InetAddress getIP() {
+		return udpPacket.getAddress();
+	}
+
+	public final String getShortName() {
+		String parts[] = getServer().split(" ", 4);
+		String name = parts[3];
+		return name;
+	}
+
+	public String getMAC() {
+		String parts[] = getServer().split(" ", 2);
+		String mac = parts[0].substring(10);
+		return mac;
+	}
+
+	public FritzBoxFirmware getFirmware() {
+		String parts[] = getServer().split(" ", 2);
+		String fwstr = getServer().substring(getServer().lastIndexOf(" ") + 1);
+		try {
+			return new FritzBoxFirmware(fwstr);
+		} catch (InvalidFirmwareException e) {
+			return null;
+		}
 	}
 }

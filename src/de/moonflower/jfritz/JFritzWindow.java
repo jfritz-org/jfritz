@@ -65,7 +65,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	JToolBar mBar;
 
-	JButton fetchButton, lookupButton, vcardButton;
+	JButton fetchButton, lookupButton, configButton, vcardButton;
 
 	JTextField searchFilter;
 
@@ -247,12 +247,12 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 		mBar.addSeparator();
 
-		button = new JButton();
-		button.setActionCommand("config");
-		button.addActionListener(this);
-		button.setIcon(getImage("config.png"));
-		button.setToolTipText(jfritz.getMessages().getString("config"));
-		mBar.add(button);
+		configButton = new JButton();
+		configButton.setActionCommand("config");
+		configButton.addActionListener(this);
+		configButton.setIcon(getImage("config.png"));
+		configButton.setToolTipText(jfritz.getMessages().getString("config"));
+		mBar.add(configButton);
 
 		mBar.addSeparator();
 
@@ -746,6 +746,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		 */
 		fetchButton.setEnabled(!busy);
 		lookupButton.setEnabled(!busy);
+		configButton.setEnabled(!busy);
 
 		menu.setEnabled(!busy);
 		progressbar.setIndeterminate(busy);
@@ -898,6 +899,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/" + filename)));
+	}
+
+	/**
+	 * @return Returns the JFritz object.
+	 */
+	public final JFritz getJFritz() {
+		return jfritz;
 	}
 
 }

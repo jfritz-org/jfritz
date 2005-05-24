@@ -119,9 +119,12 @@ import java.util.Enumeration;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.Vector;
 
 import javax.swing.JOptionPane;
 import javax.swing.table.TableColumn;
+
+import de.moonflower.jfritz.upnp.SSDPdiscoverThread;
 
 /**
  * @author Arno Willig
@@ -131,9 +134,9 @@ public class JFritz {
 
 	public final static String PROGRAM_NAME = "JFritz!";
 
-	public final static String PROGRAM_VERSION = "0.3.4";
+	public final static String PROGRAM_VERSION = "0.3.3";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.31 2005/05/24 10:40:58 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.32 2005/05/24 13:19:41 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -144,6 +147,8 @@ public class JFritz {
 	public final static String CALLS_FILE = "jfritz.calls.xml";
 
 	public final static String CALLS_CSV_FILE = "calls.csv";
+
+	public final static int SSDP_TIMEOUT = 3000;
 
 	public final static boolean DEVEL_VERSION = Integer
 			.parseInt(PROGRAM_VERSION.substring(PROGRAM_VERSION
@@ -157,6 +162,10 @@ public class JFritz {
 
 	private CallerList callerlist;
 
+	private Vector devices;
+
+	private SSDPdiscoverThread ssdpthread;
+
 	/**
 	 *
 	 */
@@ -166,6 +175,10 @@ public class JFritz {
 		loadMessages(new Locale("de", "DE"));
 		callerlist = new CallerList(this);
 		jframe = new JFritzWindow(this);
+
+		ssdpthread = new SSDPdiscoverThread(this, SSDP_TIMEOUT);
+		ssdpthread.start();
+
 		javax.swing.SwingUtilities.invokeLater(jframe);
 	}
 
@@ -195,8 +208,8 @@ public class JFritz {
 		properties = new JFritzProperties(defaultProperties);
 
 		// Default properties
-		defaultProperties.setProperty("box.address", "fritz.box");
-		defaultProperties.setProperty("box.password", "fritzbox");
+		defaultProperties.setProperty("box.address", "192.168.178.1");
+		defaultProperties.setProperty("box.password", "");
 		defaultProperties.setProperty("country.prefix", "00");
 		defaultProperties.setProperty("area.prefix", "0");
 		defaultProperties.setProperty("country.code", "49");
@@ -329,5 +342,16 @@ public class JFritz {
 	 */
 	public final JFritzWindow getJframe() {
 		return jframe;
+	}
+
+	/**
+	 * @return Returns the fritzbox devices.
+	 */
+	public final Vector getDevices() {
+		try {
+			ssdpthread.join();
+		} catch (InterruptedException e) {
+		}
+		return ssdpthread.getDevices();
 	}
 }
