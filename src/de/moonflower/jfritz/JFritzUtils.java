@@ -199,9 +199,11 @@ public class JFritzUtils {
 		p = Pattern.compile(PATTERN_SIPPROVIDER);
 		Matcher m = p.matcher(data);
 		while (m.find()) {
-			list.add(new SipProvider(Integer.parseInt(m.group(1)), m.group(3),
-					m.group(4)));
-			Debug.msg("SIP-Provider: " + list.lastElement());
+			if (!(m.group(4).equals(""))) {
+				list.add(new SipProvider(Integer.parseInt(m.group(1)), m
+						.group(3), m.group(4)));
+				Debug.msg("SIP-Provider: " + list.lastElement());
+			}
 		}
 		return list;
 	}
@@ -413,6 +415,13 @@ public class JFritzUtils {
 	public static String getVersionFromCVSTag(String tag) {
 		String[] parts = tag.split(" ");
 		return "CVS v" + parts[2] + " (" + parts[3] + ")";
+	}
+
+	public static boolean parseBoolean(String input) {
+		if (input.equalsIgnoreCase("true"))
+			return true;
+		else
+			return false;
 	}
 
 }

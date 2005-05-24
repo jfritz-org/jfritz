@@ -17,24 +17,30 @@ import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.Vector;
 
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.filechooser.FileFilter;
 
@@ -244,7 +250,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		tb.setActionCommand("filter_callin");
 		tb.addActionListener(this);
 		tb.setToolTipText(jfritz.getMessages().getString("filter_callin"));
-		tb.setSelected(!Boolean.parseBoolean(properties.getProperty(
+		tb.setSelected(!JFritzUtils.parseBoolean(properties.getProperty(
 				"filter.callin", "false")));
 		toolbar.add(tb);
 
@@ -255,7 +261,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		tb
 				.setToolTipText(jfritz.getMessages().getString(
 						"filter_callinfailed"));
-		tb.setSelected(!Boolean.parseBoolean(properties.getProperty(
+		tb.setSelected(!JFritzUtils.parseBoolean(properties.getProperty(
 				"filter.callinfailed", "false")));
 		toolbar.add(tb);
 
@@ -264,7 +270,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		tb.setActionCommand("filter_callout");
 		tb.addActionListener(this);
 		tb.setToolTipText(jfritz.getMessages().getString("filter_callout"));
-		tb.setSelected(!Boolean.parseBoolean(properties.getProperty(
+		tb.setSelected(!JFritzUtils.parseBoolean(properties.getProperty(
 				"filter.callout", "false")));
 		toolbar.add(tb);
 
@@ -273,11 +279,37 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		tb.setActionCommand("filter_number");
 		tb.addActionListener(this);
 		tb.setToolTipText(jfritz.getMessages().getString("filter_number"));
-		tb.setSelected(!Boolean.parseBoolean(properties.getProperty(
+		tb.setSelected(!JFritzUtils.parseBoolean(properties.getProperty(
 				"filter.number", "false")));
 		toolbar.add(tb);
 
-		getContentPane().add(toolbar, BorderLayout.NORTH);
+		JPanel toolPanel = new JPanel(new BorderLayout());
+
+		toolPanel.add(toolbar, BorderLayout.NORTH);
+
+		JPanel fpanel = new JPanel();
+		fpanel.setLayout(new BoxLayout(fpanel, BoxLayout.LINE_AXIS));
+		fpanel.add(new JLabel("Filter: ")); // FIXME
+		JTextField search = new JTextField(properties.getProperty("filter.search",""), 10);
+		search.addCaretListener(new CaretListener() {
+			String filter = "";
+
+			public void caretUpdate(CaretEvent e) {
+				JTextField search = (JTextField) e.getSource();
+				if (!filter.equals(search.getText())) {
+					filter = search.getText();
+					properties.setProperty("filter.search", filter);
+					jfritz.getCallerlist().updateFilter();
+					callertable.tableChanged(callertableevent);
+				}
+			}
+
+		});
+		fpanel.add(search);
+		toolPanel.add(fpanel, BorderLayout.CENTER);
+		getContentPane().add(toolPanel, BorderLayout.NORTH);
+		//		getContentPane().add(toolbar, BorderLayout.NORTH);
+		//		getContentPane().add(search, BorderLayout.NORTH);
 	}
 
 	/**

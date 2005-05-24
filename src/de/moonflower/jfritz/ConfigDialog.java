@@ -87,11 +87,11 @@ public class ConfigDialog extends JDialog {
 	 * @param properties
 	 */
 	public void setValues(JFritzProperties properties) {
-		notifyOnCallsButton.setSelected(Boolean.getBoolean(properties
+		notifyOnCallsButton.setSelected(JFritzUtils.parseBoolean(properties
 				.getProperty("option.notifyOnCalls")));
-		fetchAfterStartButton.setSelected(Boolean.getBoolean(properties
+		fetchAfterStartButton.setSelected(JFritzUtils.parseBoolean(properties
 				.getProperty("option.fetchAfterStart")));
-		deleteAfterFetchButton.setSelected(Boolean.getBoolean(properties
+		deleteAfterFetchButton.setSelected(JFritzUtils.parseBoolean(properties
 				.getProperty("option.deleteAfterFetch")));
 		pass.setText(properties.getProperty("box.password"));
 		address.setText(properties.getProperty("box.address"));
