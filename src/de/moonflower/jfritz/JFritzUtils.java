@@ -69,7 +69,7 @@ public class JFritzUtils {
 			+ "\\s*<td class=\"c1\"> <input type=checkbox id=\"uiViewActivsip\\d\""
 			+ "\\s*onclick=\"uiOnChangeActivated\\('uiViewActivsip\\d','uiPostActivsip\\d'\\); return true;\">"
 			+ "\\s*</td>\\s*<td class=\"c2\">(\\w*)</td>"
-			+ "\\s*<td class=\"c3\"><script type=\"text/javascript\">document.write\\(ProviderDisplay\\(\"([^\"]*)\"\\)\\);</script></td>";
+			+ "\\s*<td class=\"c3\"><script type=\"text/javascript\">document.write\\(ProviderDisplay\\(\"([^\"]*)\"\\)\\)";
 
 	/**
 	 * Detects type of fritz box by detecting the firmware version

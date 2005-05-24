@@ -1,10 +1,16 @@
 package de.moonflower.jfritz.upnp;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -67,4 +73,53 @@ public class UPNPUtils {
 		return fritzboxes;
 	}
 
+	public static void SOAPTest() {
+		// http://192.168.178.1:49000/upnp/control/WANCommonIFC1
+		// UpstreamMaxBitRate, DownstreamMaxBitRate, PhysicalLinkStatus:
+		// urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetCommonLinkProperties
+		// Bytes-Statistik, DNS:
+		// urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetAddonInfos
+		// urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetModulationType
+
+		// http://192.168.178.1:49000/upnp/control/WANIPConn1
+		// urn:schemas-upnp-org:service:WANIPConnection:1#GetExternalIPAddress
+		// Uptime and Connection:
+		// urn:schemas-upnp-org:service:WANIPConnection:1#GetStatusInfo
+
+		final String server = "http://192.168.178.1:49000/upnp/control/WANCommonIFC1";
+		final String SOAP_ACTION = "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetAddonInfos";
+
+		try {
+			URL u = new URL(server);
+			URLConnection uc = u.openConnection();
+
+			uc.setDoOutput(true);
+			uc.setDoInput(true);
+			uc
+					.setRequestProperty("Content-Type",
+							"text/xml; charset=\"utf-8\"");
+			uc.setRequestProperty("SOAPAction", SOAP_ACTION);
+
+			DataOutputStream printout = new DataOutputStream(uc
+					.getOutputStream());
+			printout.close();
+
+			InputStream in = uc.getInputStream();
+			BufferedReader d = new BufferedReader(new InputStreamReader(uc
+					.getInputStream()));
+
+			String data = "", str;
+			while (null != ((str = d.readLine()))) {
+				data += str + "\n";
+			}
+
+			System.out.println(data);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void main(String[] args) {
+		UPNPUtils.SOAPTest();
+	}
 }

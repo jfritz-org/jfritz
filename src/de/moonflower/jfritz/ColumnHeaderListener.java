@@ -40,22 +40,12 @@ public class ColumnHeaderListener extends MouseAdapter {
 			return;
 		}
 
-		// Disable editing
-		try {
-			list.getJfritz().getJframe().callertable.getCellEditor().cancelCellEditing();
-		} catch (NullPointerException e) {
-
-		}
-		list.getJfritz().getJframe().callertable.editCellAt(-1,-1,null);
-		list.sortAllFilteredRowsBy(mColIndex);
-		list.fireTableDataChanged();
-
 		// Determine if mouse was clicked between column heads
 		Rectangle headerRect = table.getTableHeader().getHeaderRect(vColIndex);
 		if (vColIndex == 0) {
-			headerRect.width -= 3; // Hard-coded constant
+			headerRect.width -= 6; // Hard-coded constant
 		} else {
-			headerRect.grow(-3, 0); // Hard-coded constant
+			headerRect.grow(-6, 0); // Hard-coded constant
 		}
 		if (!headerRect.contains(evt.getX(), evt.getY())) {
 			// Mouse was clicked between column heads
@@ -66,6 +56,18 @@ public class ColumnHeaderListener extends MouseAdapter {
 			if (evt.getX() < headerRect.x) {
 				vLeftColIndex--;
 			}
+
+		} else {
+			// Disable editing
+			try {
+				list.getJfritz().getJframe().callertable.getCellEditor().cancelCellEditing();
+			} catch (NullPointerException e) {
+
+			}
+			list.getJfritz().getJframe().callertable.editCellAt(-1,-1,null);
+			list.sortAllFilteredRowsBy(mColIndex);
+			list.fireTableDataChanged();
+
 
 		}
 	}
