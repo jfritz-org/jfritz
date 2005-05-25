@@ -26,7 +26,7 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 
 	ResourceBundle messages;
 
-	final ImageIcon imagePhone, imageHandy, imageHome, imageWorld;
+	final ImageIcon imagePhone, imageHandy, imageHome, imageWorld, imageFreeCall;
 
 	final ImageIcon imageD1, imageD2, imageO2, imageEplus, imageSipgate;
 
@@ -67,6 +67,9 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 		imageSipgate = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/sipgate.png")));
+		imageFreeCall = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource(
+						"/de/moonflower/jfritz/resources/images/freecall.png")));
 
 	}
 
@@ -122,6 +125,9 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 						.getProperty("country.prefix"))) {
 					label.setIcon(imageWorld);
 					setToolTipText(messages.getString("int_call"));
+				} else if (number.startsWith("0800")){
+					label.setIcon(imageFreeCall);
+					setToolTipText(messages.getString("freecall"));
 				} else {
 					label.setIcon(imagePhone);
 					setToolTipText(messages.getString("fixed_network"));

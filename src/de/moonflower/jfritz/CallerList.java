@@ -67,8 +67,7 @@ public class CallerList extends AbstractTableModel {
 	/**
 	 * CallerList Constructor
 	 *
-	 * @param properties
-	 * @param participants
+	 * @param jfritz
 	 */
 	public CallerList(JFritz jfritz) {
 		filteredCallerData = new Vector();

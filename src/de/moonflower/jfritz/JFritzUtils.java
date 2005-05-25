@@ -147,7 +147,7 @@ public class JFritzUtils {
 	 *
 	 * @param box_address
 	 * @param box_password
-	 * @param boxtype
+	 * @param firmware
 	 * @return Vector of QuickDial objects
 	 * @throws WrongPasswordException
 	 * @throws IOException
@@ -167,7 +167,7 @@ public class JFritzUtils {
 	 *
 	 * @param box_address
 	 * @param box_password
-	 * @param boxtype
+	 * @param firmware
 	 * @return Vector of SipProvider
 	 * @throws WrongPasswordException
 	 * @throws IOException
@@ -311,7 +311,7 @@ public class JFritzUtils {
 	 * creates a list of QuickDial objects
 	 *
 	 * @param data
-	 * @param boxtype
+	 * @param firmware
 	 * @return list of QuickDial objects
 	 */
 	public static Vector parseQuickDialData(String data,
