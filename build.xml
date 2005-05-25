@@ -6,11 +6,12 @@
 	<property name="dist" value="dist"/>
 
 	<target name="compile">
-		<mkdir dir="${dist}"/>
+		<mkdir dir="${build}"/>
 		<javac srcdir="${src}" destdir="${build}"/>
 	</target>
 
 	<target name="jar" depends="compile">
+		<mkdir dir="${dist}"/>
 		<jar jarfile="${dist}/jfritz.jar" basedir="${build}"/>
 	</target>
 
@@ -23,10 +24,6 @@
 		<tar tarfile="${dist}/jfritz-javadoc.tar" basedir="${doc}" />
 		<gzip src="${dist}/jfritz-javadoc.tar" zipfile="${dist}/jfritz-javadoc.tar.gz"/>
 		<delete file="${dist}/jfritz-javadoc.tar"/>
-	</target>
-
-	<target name="dist">
-
 	</target>
 
 	<target name="clean">
