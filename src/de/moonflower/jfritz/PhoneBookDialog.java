@@ -30,11 +30,8 @@ import java.awt.Toolkit;
  *
  * @author Robert Palmer
  *
- * TODO: Tabelle mit Einträgen
- * - Eintrag suchen
- * - Reverse Lookup
- * - Eintäge importieren (Outlook, Evolution)
- * - Sortierung der Einträge
+ * TODO: Tabelle mit Einträgen - Eintrag suchen - Reverse Lookup - Eintäge
+ * importieren (Outlook, Evolution) - Sortierung der Einträge
  *
  */
 
@@ -54,7 +51,8 @@ public class PhoneBookDialog extends JDialog {
 	 * @param owner
 	 * @throws java.awt.HeadlessException
 	 */
-	public PhoneBookDialog(JFritzWindow owner, JFritz jfritz) throws HeadlessException {
+	public PhoneBookDialog(JFritzWindow owner, JFritz jfritz)
+			throws HeadlessException {
 		super(owner, true);
 		if (owner != null) {
 			setLocationRelativeTo(owner);
@@ -70,133 +68,8 @@ public class PhoneBookDialog extends JDialog {
 		drawDialog();
 	}
 
-	private void createTable(){
-		AbstractTableModel model = new AbstractTableModel() {
-
-			public int getRowCount() {
-				return personList.size();
-			}
-
-			public int getColumnCount() {
-				return 12;
-			}
-
-			public String getColumnName(int column) {
-				switch (column) {
-				case 0:
-					return messages.getString("firstName");
-				case 1:
-					return messages.getString("middleName");
-				case 2:
-					return messages.getString("lastName");
-				case 3:
-					return messages.getString("homeTelephoneNumber");
-				case 4:
-					return messages.getString("mobileTelephoneNumber");
-				case 5:
-					return messages.getString("businessTelephoneNumber");
-				case 6:
-					return messages.getString("otherTelephoneNumber");
-				case 7:
-					return messages.getString("emailAddress");
-				case 8:
-					return messages.getString("street");
-				case 9:
-					return messages.getString("postalCode");
-				case 10:
-					return messages.getString("city");
-				case 11:
-					return messages.getString("category");
-
-				default:
-					return null;
-				}
-			}
-
-			public Object getValueAt(int rowIndex, int columnIndex) {
-				Person currentEntry = (Person) personList.get(rowIndex);
-				switch (columnIndex) {
-				case 0:
-					return currentEntry.getFirstName();
-				case 1:
-					return currentEntry.getMiddleName();
-				case 2:
-					return currentEntry.getLastName();
-				case 3:
-					return currentEntry.getHomeTelNumber();
-				case 4:
-					return currentEntry.getMobileTelNumber();
-				case 5:
-					return currentEntry.getBusinessTelNumber();
-				case 6:
-					return currentEntry.getOtherTelNumber();
-				case 7:
-					return currentEntry.getEmailAddress();
-				case 8:
-					return currentEntry.getStreet();
-				case 9:
-					return currentEntry.getPostalCode();
-				case 10:
-					return currentEntry.getCity();
-				case 11:
-					return currentEntry.getCategory();
-				default:
-					return null;
-
-				}
-			}
-
-			/**
-			 * Sets a value to a specific position
-			 */
-			public void setValueAt(Object object, int rowIndex, int columnIndex) {
-				if (rowIndex < table.getRowCount()) {
-					Person currentEntry = (Person) personList.get(rowIndex);
-
-					switch (columnIndex) {
-					case 0:
-						currentEntry.setFirstName(object.toString());
-						break;
-					case 1:
-						currentEntry.setMiddleName(object.toString());
-						break;
-					case 2:
-						currentEntry.setLastName(object.toString());
-						break;
-					case 3:
-						currentEntry.setHomeTelNumber(object.toString());
-						break;
-					case 4:
-						currentEntry.setMobileTelNumber(object.toString());
-						break;
-					case 5:
-						currentEntry.setBusinessTelNumber(object.toString());
-						break;
-					case 6:
-						currentEntry.setOtherTelNumber(object.toString());
-						break;
-					case 7:
-						currentEntry.setEmailAddress(object.toString());
-						break;
-					case 8:
-						currentEntry.setStreet(object.toString());
-						break;
-					case 9:
-						currentEntry.setPostalCode(object.toString());
-						break;
-					case 10:
-						currentEntry.setCity(object.toString());
-						break;
-					case 11:
-						currentEntry.setCategory(object.toString());
-						break;
-					}
-					fireTableCellUpdated(rowIndex, columnIndex);
-				}
-			}
-
-		};
-		table = new JTable(model) {
+	private void createTable() {
+		table = new JTable(jfritz.getPhonebook()) {
 			public Component prepareRenderer(TableCellRenderer renderer,
 					int rowIndex, int vColIndex) {
 				Component c = super.prepareRenderer(renderer, rowIndex,
@@ -223,26 +96,26 @@ public class PhoneBookDialog extends JDialog {
 		table.setCellSelectionEnabled(false);
 		table.setRowSelectionAllowed(true);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		if (table.getRowCount() != 0) { table.setRowSelectionInterval(0, 0); }
+		if (table.getRowCount() != 0) {
+			table.setRowSelectionInterval(0, 0);
+		}
 
-		// Edit nur durch Doppelklick, ansonsten hier auskommentieren und erweitern
-/**		table.getColumnModel().getColumn(0).setCellEditor(
-				new ParticipantCellEditor());
-		table.getColumnModel().getColumn(1).setCellEditor(
-				new ParticipantCellEditor());
-		table.getColumnModel().getColumn(2).setCellEditor(
-				new ParticipantCellEditor());
-**/
+		// Edit nur durch Doppelklick, ansonsten hier auskommentieren und
+		// erweitern
+		/**
+		 * table.getColumnModel().getColumn(0).setCellEditor( new
+		 * ParticipantCellEditor());
+		 * table.getColumnModel().getColumn(1).setCellEditor( new
+		 * ParticipantCellEditor());
+		 * table.getColumnModel().getColumn(2).setCellEditor( new
+		 * ParticipantCellEditor());
+		 */
 	}
 
-	/**
-	 * @param owner
-	 */
 	private void drawDialog() {
 		super.dialogInit();
 		createTable();
-		setTitle("Phonebook");
-//		setTitle(messages.getString("phonebook"));
+		setTitle(messages.getString("phonebook"));
 		setModal(true);
 		setLayout(new BorderLayout());
 		getContentPane().setLayout(new BorderLayout());
@@ -250,37 +123,37 @@ public class PhoneBookDialog extends JDialog {
 		JPanel topPane = new JPanel();
 		JPanel centerPane = new JPanel();
 
-		saveButton = new JButton("Speichern");
+		saveButton = new JButton("Speichern"); // TODO I18N
 		saveButton.addActionListener(new java.awt.event.ActionListener() {
-		      public void actionPerformed(ActionEvent e) {
-		        saveButton_actionPerformed(e);
-		      }
-		    });
+			public void actionPerformed(ActionEvent e) {
+				saveButton_actionPerformed(e);
+			}
+		});
 
-		cancelButton = new JButton("Abbruch");
+		cancelButton = new JButton("Abbruch");// TODO I18N
 		cancelButton.addActionListener(new java.awt.event.ActionListener() {
-		      public void actionPerformed(ActionEvent e) {
-		        cancelButton_actionPerformed(e);
-		      }
-		    });
-		newButton = new JButton("Hinzufügen");
+			public void actionPerformed(ActionEvent e) {
+				cancelButton_actionPerformed(e);
+			}
+		});
+		newButton = new JButton("Hinzufügen");// TODO I18N
 		newButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-		getClass().getResource(
-				"/de/moonflower/jfritz/resources/images/add.png"))));
+				getClass().getResource(
+						"/de/moonflower/jfritz/resources/images/add.png"))));
 		newButton.addActionListener(new java.awt.event.ActionListener() {
-		      public void actionPerformed(ActionEvent e) {
-		        newButton_actionPerformed(e);
-		      }
-		    });
-		delButton = new JButton("Löschen");
+			public void actionPerformed(ActionEvent e) {
+				newButton_actionPerformed(e);
+			}
+		});
+		delButton = new JButton("Löschen");// TODO I18N
 		delButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/delete.png"))));
 		delButton.addActionListener(new java.awt.event.ActionListener() {
-		      public void actionPerformed(ActionEvent e) {
-		        deleteButton_actionPerformed(e);
-		      }
-		    });
+			public void actionPerformed(ActionEvent e) {
+				deleteButton_actionPerformed(e);
+			}
+		});
 		topPane.add(newButton);
 		topPane.add(delButton);
 
@@ -296,42 +169,43 @@ public class PhoneBookDialog extends JDialog {
 		panel.add(bottomPane, BorderLayout.SOUTH);
 		getContentPane().add(panel);
 
-		setSize(new Dimension(800,350));
+		setSize(new Dimension(800, 350));
 	}
 
-    void saveButton_actionPerformed(ActionEvent e){
-    	jfritz.getPhonebook().updatePersons(personList);
-    	jfritz.getPhonebook().saveToXMLFile(JFritz.PHONEBOOK_FILE);
-    }
+	void saveButton_actionPerformed(ActionEvent e) {
+		jfritz.getPhonebook().updatePersons(personList);
+		jfritz.getPhonebook().saveToXMLFile(JFritz.PHONEBOOK_FILE);
+	}
 
-	void cancelButton_actionPerformed(ActionEvent e){
-    	this.dispose();
-    }
+	void cancelButton_actionPerformed(ActionEvent e) {
+		this.dispose();
+	}
 
-	void newButton_actionPerformed(ActionEvent e){
-		Person newEntry = new Person("New","","Entry","","","","","","","","","");
+	void newButton_actionPerformed(ActionEvent e) {
+		Person newEntry = new Person("New", "", "Entry", "", "", "", "", "",
+				"", "", "", "");
 		personList.add(newEntry);
-		AbstractTableModel model = (AbstractTableModel) table
-		.getModel();
+		AbstractTableModel model = (AbstractTableModel) table.getModel();
 		model.fireTableChanged(null);
-    }
+	}
 
-	void deleteButton_actionPerformed(ActionEvent e){
-	int row = table.getSelectedRow();
-	if (row >= 0) {
-		AbstractTableModel model = (AbstractTableModel) table
-		.getModel();
-		personList.remove(row);
+	void deleteButton_actionPerformed(ActionEvent e) {
+		int row = table.getSelectedRow();
+		if (row >= 0) {
+			AbstractTableModel model = (AbstractTableModel) table.getModel();
+			personList.remove(row);
 
-		//		model.fireTableDataChanged();
-		model.fireTableRowsDeleted(row,row);
-		if (table.getRowCount() != 0) {
-			if (table.getRowCount() > row) {table.setRowSelectionInterval(row, row); }
-			else { table.setRowSelectionInterval(row-1, row-1); }
+			//		model.fireTableDataChanged();
+			model.fireTableRowsDeleted(row, row);
+			if (table.getRowCount() != 0) {
+				if (table.getRowCount() > row) {
+					table.setRowSelectionInterval(row, row);
+				} else {
+					table.setRowSelectionInterval(row - 1, row - 1);
+				}
+			}
 		}
 	}
-	}
-
 
 	public boolean showDialog() {
 		setVisible(true);

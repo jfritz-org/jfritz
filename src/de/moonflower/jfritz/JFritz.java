@@ -137,7 +137,7 @@ public class JFritz {
 
 	public final static String PROGRAM_VERSION = "0.3.3";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.36 2005/05/25 17:39:52 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.37 2005/05/25 18:48:13 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -159,19 +159,21 @@ public class JFritz {
 			.parseInt(PROGRAM_VERSION.substring(PROGRAM_VERSION
 					.lastIndexOf(".") + 1)) % 2 == 1;
 
-	JFritzWindow jframe;
+	private JFritzWindow jframe;
 
-	ResourceBundle messages;
+	private ResourceBundle messages;
 
-	JFritzProperties defaultProperties, properties, participants;
-
-	private CallerList callerlist;
-
-	private PhoneBook phonebook;
+	private JFritzProperties defaultProperties, properties, participants;
 
 	private Vector devices;
 
 	private SSDPdiscoverThread ssdpthread;
+
+	// Table models
+	private CallerList callerlist;
+
+	private PhoneBook phonebook;
+
 
 	/**
 	 *

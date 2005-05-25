@@ -79,7 +79,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 */
 	public JFritzWindow(JFritz jfritz) {
 		this.jfritz = jfritz;
-		setProperties(jfritz.properties, jfritz.participants);
+		setProperties(jfritz.getProperties(), jfritz.getParticipants());
 		createGUI();
 		setVisible(true);
 	}

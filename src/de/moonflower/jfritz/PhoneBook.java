@@ -28,32 +28,30 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 public class PhoneBook extends AbstractTableModel {
-	private static final String CALLS_DTD_URI = "http://jfritz.moonflower.de/dtd/calls.dtd";
+	private static final String PHONEBOOK_DTD_URI = "http://jfritz.moonflower.de/dtd/phonebook.dtd";
 
-	private static final String CALLS_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+	private static final String PHONEBOOK_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 			+ "<!-- DTD for JFritz phonebook -->"
 			+ "<!ELEMENT firstname (commment?,entry*)>"
 			+ "<!ELEMENT middlename (#PCDATA)>"
 			+ "<!ELEMENT lastname (#PCDATA)>"
 			+ "<!ELEMENT entry (firstname?,middlename?,lastname?)>";
 
-
 	private Vector persons;
 
 	private JFritz jfritz;
 
-	public PhoneBook (JFritz jfritz){
+	public PhoneBook(JFritz jfritz) {
 		this.jfritz = jfritz;
 		persons = new Vector();
 
 	}
 
-	public Vector getPersons(){
+	public Vector getPersons() {
 		return persons;
 	}
 
-	public void addEntry(Person newPerson)
-	{
+	public void addEntry(Person newPerson) {
 		persons.add(newPerson);
 	}
 
@@ -69,7 +67,8 @@ public class PhoneBook extends AbstractTableModel {
 			fos = new FileOutputStream(filename);
 			PrintWriter pw = new PrintWriter(fos);
 			pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			pw.println("<!DOCTYPE phonebook SYSTEM \"" + CALLS_DTD_URI + "\">");
+			pw.println("<!DOCTYPE phonebook SYSTEM \"" + PHONEBOOK_DTD_URI
+					+ "\">");
 			pw.println("<phonebook>");
 			pw.println("<comment>Phonebook for " + JFritz.PROGRAM_NAME + " v"
 					+ JFritz.PROGRAM_VERSION + "</comment>");
@@ -77,18 +76,29 @@ public class PhoneBook extends AbstractTableModel {
 			while (en.hasMoreElements()) {
 				Person current = (Person) en.nextElement();
 				pw.println("<entry>");
-				pw.println("\t<firstname>" + current.getFirstName() +"</firstname>");
-				pw.println("\t<middlename>" + current.getMiddleName() +"</middlename>");
-				pw.println("\t<lastname>" + current.getLastName() +"</lastname>");
-				pw.println("\t<street>" + current.getStreet() +"</street>");
-				pw.println("\t<postcode>" + current.getPostalCode() +"</postcode>");
-				pw.println("\t<city>" + current.getCity() +"</city>");
-				pw.println("\t<homenumber>" + current.getHomeTelNumber() +"</homenumber>");
-				pw.println("\t<mobilenumber>" + current.getMobileTelNumber() +"</mobilenumber>");
-				pw.println("\t<businessnumber>" + current.getBusinessTelNumber() +"</businessnumber>");
-				pw.println("\t<othernumber>" + current.getOtherTelNumber() +"</othernumber>");
-				pw.println("\t<email>" + current.getEmailAddress() +"</email>");
-				pw.println("\t<category>" + current.getCategory() +"</category>");
+				pw.println("\t<firstname>" + current.getFirstName()
+						+ "</firstname>");
+				pw.println("\t<middlename>" + current.getMiddleName()
+						+ "</middlename>");
+				pw.println("\t<lastname>" + current.getLastName()
+						+ "</lastname>");
+				pw.println("\t<street>" + current.getStreet() + "</street>");
+				pw.println("\t<postcode>" + current.getPostalCode()
+						+ "</postcode>");
+				pw.println("\t<city>" + current.getCity() + "</city>");
+				pw.println("\t<homenumber>" + current.getHomeTelNumber()
+						+ "</homenumber>");
+				pw.println("\t<mobilenumber>" + current.getMobileTelNumber()
+						+ "</mobilenumber>");
+				pw.println("\t<businessnumber>"
+						+ current.getBusinessTelNumber() + "</businessnumber>");
+				pw.println("\t<othernumber>" + current.getOtherTelNumber()
+						+ "</othernumber>");
+				pw
+						.println("\t<email>" + current.getEmailAddress()
+								+ "</email>");
+				pw.println("\t<category>" + current.getCategory()
+						+ "</category>");
 				pw.println("</entry>");
 			}
 			pw.println("</phonebook>");
@@ -100,14 +110,8 @@ public class PhoneBook extends AbstractTableModel {
 
 	public void loadFromXMLFile(String filename) {
 		try {
-
-			// Workaround for SAX parser
-			// File dtd = new File("calls.dtd");
-			// dtd.deleteOnExit();
-			// if (!dtd.exists()) dtd.createNewFile();
-
 			SAXParserFactory factory = SAXParserFactory.newInstance();
-			factory.setValidating(false); // FIXME Something wrong with the DTD
+			factory.setValidating(false);
 			SAXParser parser = factory.newSAXParser();
 			XMLReader reader = parser.getXMLReader();
 
@@ -130,11 +134,10 @@ public class PhoneBook extends AbstractTableModel {
 			reader.setEntityResolver(new EntityResolver() {
 				public InputSource resolveEntity(String publicId,
 						String systemId) throws SAXException, IOException {
-					if (systemId.equals(CALLS_DTD_URI)
-							|| systemId.equals("calls.dtd")) {
+					if (systemId.equals(PHONEBOOK_DTD_URI)) {
 						InputSource is;
-						is = new InputSource(new StringReader(CALLS_DTD));
-						is.setSystemId(CALLS_DTD_URI);
+						is = new InputSource(new StringReader(PHONEBOOK_DTD));
+						is.setSystemId(PHONEBOOK_DTD_URI);
 						return is;
 					}
 					throw new SAXException("Invalid system identifier: "
@@ -153,24 +156,11 @@ public class PhoneBook extends AbstractTableModel {
 					|| e.getLocalizedMessage().startsWith(
 							"Invalid system identifier")) {
 				Debug.err(e.getLocalizedMessage());
-				Debug
-						.errDlg("STRUKTURÄNDERUNG!\n\nBitte in der Datei jfritz.calls.xml\n "
-								+ "die Zeichenkette \"calls.dtd\" durch\n \""
-								+ CALLS_DTD_URI + "\"\n ersetzen!");
 				System.exit(0);
 			}
 		} catch (IOException e) {
 			Debug.err("Could not read " + filename + "!");
 		}
-	}
-
-	public int getRowCount() {
-		return persons.size();
-	}
-
-	public int getColumnCount() {
-		// 12 Columns on the Table
-		return 12;
 	}
 
 	public Object getValueAt(int rowIndex, int columnIndex) {
@@ -209,4 +199,43 @@ public class PhoneBook extends AbstractTableModel {
 		this.persons = pb;
 	}
 
+	public int getRowCount() {
+		return persons.size();
+	}
+
+	public int getColumnCount() {
+		return 12;
+	}
+
+	public String getColumnName(int column) {
+		switch (column) {
+		case 0:
+			return jfritz.getMessages().getString("firstName");
+		case 1:
+			return jfritz.getMessages().getString("middleName");
+		case 2:
+			return jfritz.getMessages().getString("lastName");
+		case 3:
+			return jfritz.getMessages().getString("homeTelephoneNumber");
+		case 4:
+			return jfritz.getMessages().getString("mobileTelephoneNumber");
+		case 5:
+			return jfritz.getMessages().getString("businessTelephoneNumber");
+		case 6:
+			return jfritz.getMessages().getString("otherTelephoneNumber");
+		case 7:
+			return jfritz.getMessages().getString("emailAddress");
+		case 8:
+			return jfritz.getMessages().getString("street");
+		case 9:
+			return jfritz.getMessages().getString("postalCode");
+		case 10:
+			return jfritz.getMessages().getString("city");
+		case 11:
+			return jfritz.getMessages().getString("category");
+
+		default:
+			return null;
+		}
+	}
 }
