@@ -15,6 +15,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import de.moonflower.jfritz.Debug;
+import de.moonflower.jfritz.JFritz;
 
 /*
  * Created on 22.05.2005
@@ -39,7 +40,7 @@ public class UPNPUtils {
 			socket.send(SSDPPacket.getSSDPDiscoverPacket());
 
 			int i = 0;
-			while (i < 10) {
+			while (i < JFritz.SSDP_MAX_BOXES) {
 				DatagramPacket packet = new DatagramPacket(new byte[1024],
 						1024, SSDPPacket.getSSDPAddress(), socket
 								.getLocalPort());

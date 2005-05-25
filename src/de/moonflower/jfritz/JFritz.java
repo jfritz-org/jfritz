@@ -137,7 +137,7 @@ public class JFritz {
 
 	public final static String PROGRAM_VERSION = "0.3.3";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.35 2005/05/25 17:29:42 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.36 2005/05/25 17:39:52 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -151,7 +151,9 @@ public class JFritz {
 
 	public final static String CALLS_CSV_FILE = "calls.csv";
 
-	public final static int SSDP_TIMEOUT = 3000;
+	public final static int SSDP_TIMEOUT = 1000;
+
+	public final static int SSDP_MAX_BOXES = 3;
 
 	public final static boolean DEVEL_VERSION = Integer
 			.parseInt(PROGRAM_VERSION.substring(PROGRAM_VERSION
