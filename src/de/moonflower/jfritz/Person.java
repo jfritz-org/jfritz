@@ -59,8 +59,16 @@ public class Person {
 		return firstName + middleName + lastName;
 	}
 
-	public String getName() {
-		return firstName + middleName + lastName;
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public String getMiddleName() {
+		return middleName;
+	}
+
+	public String getLastName() {
+		return lastName;
 	}
 
 	public String getStreet() {

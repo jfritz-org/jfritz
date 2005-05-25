@@ -13,7 +13,6 @@ import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.Vector;
@@ -42,16 +41,6 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.filechooser.FileFilter;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-
-import de.moonflower.jfritz.upnp.AddonInfosXMLHandler;
-import de.moonflower.jfritz.upnp.UPNPUtils;
 
 /**
  * This is main window class of JFritz, which creates the GUI.
@@ -592,6 +581,19 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	}
 
 	/**
+	 * Shows the stats dialog
+	 *
+	 * TODO: A lot..
+	 */
+	private void showStatsDialog() {
+		StatsDialog p = new StatsDialog(this);
+		if (p.showDialog()) {
+		}
+		p.dispose();
+		p = null;
+	}
+
+	/**
 	 * Shows the configuration dialog
 	 */
 	private void showConfigDialog() {
@@ -630,7 +632,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	public void showPhoneBook() {
 		// TODO: A phonebook (jtable) in which the participants can be edited.
 
-		// PhoneBook pb = new PhoneBook(this);
+		PhoneBookDialog pb = new PhoneBookDialog(this, jfritz);
+
+		if (pb.showDialog()) {
+		}
+		pb.dispose();
+		pb = null;
+
 	}
 
 	/**
@@ -836,23 +844,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		} else if (e.getActionCommand() == "quickdial") {
 			showQuickDialDialog();
 		} else if (e.getActionCommand() == "stats") {
-			String xml = UPNPUtils.getSOAPData();
-			SAXParserFactory factory = SAXParserFactory.newInstance();
-			factory.setValidating(false); // FIXME Something wrong with the DTD
-			SAXParser parser;
-			try {
-				parser = factory.newSAXParser();
-				XMLReader reader = parser.getXMLReader();
-				reader.setContentHandler(new AddonInfosXMLHandler());
-				reader.parse(new InputSource(new StringReader(xml)));
-
-			} catch (ParserConfigurationException e1) {
-				System.err.println(e1);
-			} catch (SAXException e1) {
-				System.err.println(e1);
-			} catch (IOException e1) {
-				System.err.println(e1);
-			}
+			showStatsDialog();
 
 		} else if (e.getActionCommand() == "fetchList") {
 			fetchList();

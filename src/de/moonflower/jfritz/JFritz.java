@@ -137,7 +137,7 @@ public class JFritz {
 
 	public final static String PROGRAM_VERSION = "0.3.3";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.34 2005/05/24 14:37:23 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.35 2005/05/25 17:29:42 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -146,6 +146,8 @@ public class JFritz {
 	public final static String PARTICIPANTS_FILE = "jfritz.participants.xml";
 
 	public final static String CALLS_FILE = "jfritz.calls.xml";
+
+	public final static String PHONEBOOK_FILE = "jfritz.phonebook.xml";
 
 	public final static String CALLS_CSV_FILE = "calls.csv";
 
@@ -163,6 +165,8 @@ public class JFritz {
 
 	private CallerList callerlist;
 
+	private PhoneBook phonebook;
+
 	private Vector devices;
 
 	private SSDPdiscoverThread ssdpthread;
@@ -176,6 +180,9 @@ public class JFritz {
 		loadMessages(new Locale("de", "DE"));
 		callerlist = new CallerList(this);
 		callerlist.loadFromXMLFile(CALLS_FILE);
+
+		phonebook = new PhoneBook(this);
+		phonebook.loadFromXMLFile(PHONEBOOK_FILE);
 
 		jframe = new JFritzWindow(this);
 
@@ -317,6 +324,13 @@ public class JFritz {
 	 */
 	public final CallerList getCallerlist() {
 		return callerlist;
+	}
+
+	/**
+	 * @return Returns the phonebook.
+	 */
+	public final PhoneBook getPhonebook() {
+		return phonebook;
 	}
 
 	/**

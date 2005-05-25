@@ -239,7 +239,7 @@ public class QuickDialDialog extends JDialog {
 		table.setCellSelectionEnabled(false);
 		table.setRowSelectionAllowed(true);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		table.setRowSelectionInterval(0, 0);
+		if (table.getRowCount() != 0) table.setRowSelectionInterval(0, 0);
 		table.getColumnModel().getColumn(0).setCellEditor(
 				new ParticipantCellEditor());
 		table.getColumnModel().getColumn(1).setCellEditor(
