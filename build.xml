@@ -1,6 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project default="javadoc">
-<target name="javadoc">
-<javadoc access="public" author="true" classpath="bin" destdir="doc" doctitle="JFritz! Documentation" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="de.moonflower.jfritz,de.moonflower.jfritz.upnp" source="1.4" sourcepath="src" splitindex="true" use="true" version="true"/>
-</target>
+	<property name="src" value="src"/>
+	<property name="doc" value="doc"/>
+	<property name="build" value="bin"/>
+	<property name="dist" value="dist"/>
+
+	<target name="compile">
+		<mkdir dir="${dist}"/>
+		<javac srcdir="${src}" destdir="${build}"/>
+	</target>
+
+	<target name="jar" depends="compile">
+		<jar jarfile="${dist}/jfritz.jar" basedir="${build}"/>
+	</target>
+
+	<target name="javadoc">
+		<javadoc access="public" author="true" classpath="${build}" destdir="${doc}" doctitle="JFritz! Documentation" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="de.moonflower.jfritz,de.moonflower.jfritz.upnp" source="1.4" sourcepath="src" splitindex="true" use="true" version="true"/>
+	</target>
+
+	<target name="doc-archive" depends="javadoc">
+		<mkdir dir="${dist}"/>
+		<tar tarfile="${dist}/jfritz-javadoc.tar" basedir="${doc}" />
+		<gzip src="${dist}/jfritz-javadoc.tar" zipfile="${dist}/jfritz-javadoc.tar.gz"/>
+		<delete file="${dist}/jfritz-javadoc.tar"/>
+	</target>
+
+	<target name="dist">
+
+	</target>
+
+	<target name="clean">
+		<delete dir="${build}"/>
+		<delete dir="${dist}"/>
+	</target>
+
+	<target name="update">
+		<cvs command="update"/>
+	</target>
 </project>
