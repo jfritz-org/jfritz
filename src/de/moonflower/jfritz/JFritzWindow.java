@@ -13,6 +13,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.Vector;
@@ -41,7 +42,15 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.filechooser.FileFilter;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+
+import de.moonflower.jfritz.upnp.AddonInfosXMLHandler;
 import de.moonflower.jfritz.upnp.UPNPUtils;
 
 /**
@@ -827,7 +836,24 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		} else if (e.getActionCommand() == "quickdial") {
 			showQuickDialDialog();
 		} else if (e.getActionCommand() == "stats") {
-			UPNPUtils.SOAPTest();
+			String xml = UPNPUtils.getSOAPData();
+			SAXParserFactory factory = SAXParserFactory.newInstance();
+			factory.setValidating(false); // FIXME Something wrong with the DTD
+			SAXParser parser;
+			try {
+				parser = factory.newSAXParser();
+				XMLReader reader = parser.getXMLReader();
+				reader.setContentHandler(new AddonInfosXMLHandler());
+				reader.parse(new InputSource(new StringReader(xml)));
+
+			} catch (ParserConfigurationException e1) {
+				System.err.println(e1);
+			} catch (SAXException e1) {
+				System.err.println(e1);
+			} catch (IOException e1) {
+				System.err.println(e1);
+			}
+
 		} else if (e.getActionCommand() == "fetchList") {
 			fetchList();
 		} else if (e.getActionCommand() == "fetchTask") {

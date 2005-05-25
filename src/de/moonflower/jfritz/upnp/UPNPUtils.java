@@ -73,7 +73,7 @@ public class UPNPUtils {
 		return fritzboxes;
 	}
 
-	public static void SOAPTest() {
+	public static String getSOAPData() {
 		// http://192.168.178.1:49000/upnp/control/WANCommonIFC1
 		// UpstreamMaxBitRate, DownstreamMaxBitRate, PhysicalLinkStatus:
 		// urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetCommonLinkProperties
@@ -86,6 +86,7 @@ public class UPNPUtils {
 		// Uptime and Connection:
 		// urn:schemas-upnp-org:service:WANIPConnection:1#GetStatusInfo
 
+		String data = "";
 		final String server = "http://192.168.178.1:49000/upnp/control/WANCommonIFC1";
 		final String SOAP_ACTION = "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetAddonInfos";
 
@@ -108,18 +109,13 @@ public class UPNPUtils {
 			BufferedReader d = new BufferedReader(new InputStreamReader(uc
 					.getInputStream()));
 
-			String data = "", str;
-			while (null != ((str = d.readLine()))) {
+			String str;
+			while (null != ((str = d.readLine())))
 				data += str + "\n";
-			}
 
-			System.out.println(data);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public static void main(String[] args) {
-		UPNPUtils.SOAPTest();
+		return data;
 	}
 }
