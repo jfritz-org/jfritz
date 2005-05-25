@@ -125,7 +125,13 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 import javax.swing.table.TableColumn;
 
-import de.moonflower.jfritz.upnp.SSDPdiscoverThread;
+import de.moonflower.jfritz.dialogs.phonebook.PhoneBook;
+import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.JFritzProperties;
+import de.moonflower.jfritz.utils.ReverseLookup;
+import de.moonflower.jfritz.utils.upnp.SSDPdiscoverThread;
+import de.moonflower.jfritz.window.CallerList;
+import de.moonflower.jfritz.window.JFritzWindow;
 
 /**
  * @author Arno Willig
@@ -137,7 +143,7 @@ public class JFritz {
 
 	public final static String PROGRAM_VERSION = "0.3.3";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.37 2005/05/25 18:48:13 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.38 2005/05/25 20:02:27 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -265,7 +271,7 @@ public class JFritz {
 		properties.setProperty("position.height", Integer.toString(jframe
 				.getSize().height));
 
-		Enumeration en = jframe.callertable.getColumnModel().getColumns();
+		Enumeration en = jframe.getCallertable().getColumnModel().getColumns();
 		int i = 0;
 		while (en.hasMoreElements()) {
 			int width = ((TableColumn) en.nextElement()).getWidth();
