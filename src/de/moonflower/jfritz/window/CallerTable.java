@@ -22,7 +22,6 @@ import de.moonflower.jfritz.window.cellrenderer.CallTypeCellRenderer;
 import de.moonflower.jfritz.window.cellrenderer.DateCellRenderer;
 import de.moonflower.jfritz.window.cellrenderer.DurationCellRenderer;
 import de.moonflower.jfritz.window.cellrenderer.NumberCellRenderer;
-import de.moonflower.jfritz.window.cellrenderer.ParticipantCellEditor;
 import de.moonflower.jfritz.window.cellrenderer.PortCellRenderer;
 import de.moonflower.jfritz.window.cellrenderer.RouteCellRenderer;
 
@@ -110,7 +109,7 @@ public class CallerTable extends JTable {
 		col = getColumnModel().getColumn(3);
 		col.setHeaderValue(messages.getString("participant"));
 		headerTips.setToolTip(col, messages.getString("participant_desc"));
-		col.setCellEditor(new ParticipantCellEditor());
+		col.setCellEditor(new TextFieldCellEditor());
 		col.setPreferredWidth(Integer.parseInt(properties.getProperty(
 				"column3.width", "120")));
 

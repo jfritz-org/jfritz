@@ -597,8 +597,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 		//p.setValues(properties);
 		if (p.showDialog()) {
-			//			p.storeValues(properties);
-			//			saveProperties();
+			p.getDataModel().saveToXMLFile(JFritz.QUICKDIALS_FILE);
 		}
 		p.dispose();
 		p = null;

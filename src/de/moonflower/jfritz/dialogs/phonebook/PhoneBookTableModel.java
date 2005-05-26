@@ -30,7 +30,7 @@ import org.xml.sax.XMLReader;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.Debug;
 
-public class PhoneBook extends AbstractTableModel {
+public class PhoneBookTableModel extends AbstractTableModel {
 	private static final String PHONEBOOK_DTD_URI = "http://jfritz.moonflower.de/dtd/phonebook.dtd";
 
 	private static final String PHONEBOOK_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -44,7 +44,7 @@ public class PhoneBook extends AbstractTableModel {
 
 	private JFritz jfritz;
 
-	public PhoneBook(JFritz jfritz) {
+	public PhoneBookTableModel(JFritz jfritz) {
 		this.jfritz = jfritz;
 		persons = new Vector();
 
