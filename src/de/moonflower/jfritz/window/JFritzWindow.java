@@ -55,7 +55,8 @@ import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.ReverseLookup;
 import de.moonflower.jfritz.utils.SwingWorker;
-import de.moonflower.jfritz.utils.VCard;
+import de.moonflower.jfritz.vcard.VCard;
+import de.moonflower.jfritz.vcard.VCardList;
 
 /**
  * This is main window class of JFritz, which creates the GUI.
@@ -821,39 +822,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				jfritz.getCallerlist().saveToCSVFile(file.getAbsolutePath());
 			}
 		} else if (e.getActionCommand() == "export_vcard") {
-			if (callertable.getSelectedRow() >= 0
-					&& !((String) callertable.getModel().getValueAt(
-							callertable.getSelectedRow(), 3)).startsWith("?")
-					&& !((String) callertable.getModel().getValueAt(
-							callertable.getSelectedRow(), 3)).equals("")) {
-				String name = (String) callertable.getModel().getValueAt(
-						callertable.getSelectedRow(), 3);
-				String number = (String) callertable.getModel().getValueAt(
-						callertable.getSelectedRow(), 2);
-				JFileChooser fc = new JFileChooser();
-				fc.setDialogTitle(jfritz.getMessages()
-						.getString("export_vcard"));
-				fc.setDialogType(JFileChooser.SAVE_DIALOG);
-				fc.setSelectedFile(new File(number + ".vcf"));
-				fc.setFileFilter(new FileFilter() {
-					public boolean accept(File f) {
-						return f.isDirectory()
-								|| f.getName().toLowerCase().endsWith(".vcf");
-					}
-
-					public String getDescription() {
-						return "VCard (.vcf)";
-					}
-				});
-
-				if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-					File file = fc.getSelectedFile();
-					VCard vcard = new VCard(name, number);
-					vcard.saveToFile(file);
-				}
-			} else {
-				Debug.err("No valid row selected");
-			}
+			exportVCard();
 		} else if (e.getActionCommand() == "config") {
 			showConfigDialog();
 		} else if (e.getActionCommand() == "phonebook") {
@@ -896,6 +865,52 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			jfritz.getCallerlist().fireTableStructureChanged();
 		} else {
 			Debug.err("Unimplemented action: " + e.getActionCommand());
+		}
+	}
+
+	/**
+	 * Exports VCard or VCardList
+	 */
+	public void exportVCard() {
+		VCardList list = new VCardList();
+		JFileChooser fc = new JFileChooser();
+		fc.setDialogTitle(jfritz.getMessages().getString("export_vcard"));
+		fc.setDialogType(JFileChooser.SAVE_DIALOG);
+		fc.setFileFilter(new FileFilter() {
+			public boolean accept(File f) {
+				return f.isDirectory()
+						|| f.getName().toLowerCase().endsWith(".vcf");
+			}
+
+			public String getDescription() {
+				return "VCard (.vcf)";
+			}
+		});
+
+		int rows[] = callertable.getSelectedRows();
+		for (int i = 0; i < rows.length; i++) {
+			String name = (String) callertable.getModel()
+					.getValueAt(rows[i], 3);
+			String number = (String) callertable.getModel().getValueAt(rows[i],
+					2);
+			if (!name.startsWith("?") && !number.equals("")) {
+				list.addVCard(new VCard(name, number));
+			}
+		}
+		if (list.getCount() > 0) {
+			if (list.getCount() == 1) {
+				fc
+						.setSelectedFile(new File(list.getVCard(0).getFon()
+								+ ".vcf"));
+			} else if (list.getCount() > 1) {
+				fc.setSelectedFile(new File("jfritz.vcf"));
+			}
+			if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+				File file = fc.getSelectedFile();
+				list.saveToFile(file);
+			}
+		} else {
+			Debug.err("No single valid row selected");
 		}
 	}
 

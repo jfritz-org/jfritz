@@ -54,7 +54,7 @@ public class UPNPUtils {
 		} catch (SocketException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			Debug.err(e.toString());
 		}
 		return devices;
 	}
