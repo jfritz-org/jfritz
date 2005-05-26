@@ -612,6 +612,13 @@ public class CallerList extends AbstractTableModel {
 						+ filterCallInFailed + "|" + filterCallOut + "|"
 						+ filterSearch);
 
+
+		try {
+			jfritz.getJframe().getCallertable().getCellEditor().cancelCellEditing();
+			} catch (NullPointerException e) {
+			}
+
+
 		if ((!filterCallIn) && (!filterCallInFailed) && (!filterCallOut)
 				&& (!filterNumber) && (filterSearch.length() == 0)) {
 			filteredCallerData = unfilteredCallerData;

@@ -191,7 +191,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		button.setActionCommand("quickdial");
 		button.addActionListener(this);
 		button.setIcon(getImage("quickdial.png"));
-		button.setToolTipText(jfritz.getMessages().getString("quickdial"));
+		button.setToolTipText(jfritz.getMessages().getString("quickdials"));
 		button.setEnabled(JFritz.DEVEL_VERSION);
 		mBar.add(button);
 
@@ -593,14 +593,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * TODO: A lot..
 	 */
 	private void showQuickDialDialog() {
-		QuickDialDialog p = new QuickDialDialog(this);
-
-		//p.setValues(properties);
-		if (p.showDialog()) {
-			p.getDataModel().saveToXMLFile(JFritz.QUICKDIALS_FILE);
+		QuickDialDialog dialog = new QuickDialDialog(this);
+		if (dialog.showDialog()) {
+			dialog.getDataModel().saveToXMLFile(JFritz.QUICKDIALS_FILE);
 		}
-		p.dispose();
-		p = null;
+		dialog.dispose();
 	}
 
 	/**
@@ -609,25 +606,22 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * TODO: A lot..
 	 */
 	private void showStatsDialog() {
-		StatsDialog p = new StatsDialog(this);
-		if (p.showDialog()) {
+		StatsDialog dialog = new StatsDialog(this);
+		if (dialog.showDialog()) {
 		}
-		p.dispose();
-		p = null;
+		dialog.dispose();
 	}
 
 	/**
 	 * Shows the configuration dialog
 	 */
 	private void showConfigDialog() {
-		ConfigDialog p = new ConfigDialog(this);
-		p.setValues(properties);
-		if (p.showDialog()) {
-			p.storeValues(properties);
+		ConfigDialog dialog = new ConfigDialog(this);
+		if (dialog.showDialog()) {
+			dialog.storeValues(properties);
 			jfritz.saveProperties();
 		}
-		p.dispose();
-		p = null;
+		dialog.dispose();
 	}
 
 	/**

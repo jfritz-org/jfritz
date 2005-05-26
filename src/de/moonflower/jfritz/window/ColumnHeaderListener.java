@@ -14,7 +14,6 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
-
 /**
  * Listener for clicks on the caller table header columns.
  *
@@ -64,10 +63,7 @@ public class ColumnHeaderListener extends MouseAdapter {
 				list.getJfritz().getJframe().getCallertable().getCellEditor()
 						.cancelCellEditing();
 			} catch (NullPointerException e) {
-
 			}
-			list.getJfritz().getJframe().getCallertable().editCellAt(-1, -1,
-					null);
 			list.sortAllFilteredRowsBy(mColIndex);
 			list.fireTableDataChanged();
 

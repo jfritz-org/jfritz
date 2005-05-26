@@ -93,9 +93,10 @@ public class ConfigDialog extends JDialog {
 			setLocationRelativeTo(parent);
 			jfritz = ((JFritzWindow) parent).getJFritz();
 		}
-		setTitle("JFritz Konfiguration");
+		setTitle(getJfritz().getMessages().getString("config"));
 		devices = jfritz.getDevices();
 		drawDialog();
+		setValues();
 	}
 
 	public boolean okPressed() {
@@ -107,20 +108,23 @@ public class ConfigDialog extends JDialog {
 	 *
 	 * @param properties
 	 */
-	public void setValues(JFritzProperties properties) {
-		notifyOnCallsButton.setSelected(JFritzUtils.parseBoolean(properties
-				.getProperty("option.notifyOnCalls")));
-		fetchAfterStartButton.setSelected(JFritzUtils.parseBoolean(properties
-				.getProperty("option.fetchAfterStart")));
-		deleteAfterFetchButton.setSelected(JFritzUtils.parseBoolean(properties
-				.getProperty("option.deleteAfterFetch")));
-		pass.setText(properties.getProperty("box.password"));
-		address.setText(properties.getProperty("box.address"));
-		areaCode.setText(properties.getProperty("area.code"));
-		countryCode.setText(properties.getProperty("country.code"));
-		areaPrefix.setText(properties.getProperty("area.prefix"));
-		countryPrefix.setText(properties.getProperty("country.prefix"));
-		timerSlider.setValue(Integer.parseInt(properties
+	public void setValues() {
+		notifyOnCallsButton.setSelected(JFritzUtils.parseBoolean(getJfritz()
+				.getProperties().getProperty("option.notifyOnCalls")));
+		fetchAfterStartButton.setSelected(JFritzUtils.parseBoolean(getJfritz()
+				.getProperties().getProperty("option.fetchAfterStart")));
+		deleteAfterFetchButton.setSelected(JFritzUtils.parseBoolean(getJfritz()
+				.getProperties().getProperty("option.deleteAfterFetch")));
+		pass.setText(getJfritz().getProperties().getProperty("box.password"));
+		address.setText(getJfritz().getProperties().getProperty("box.address"));
+		areaCode.setText(getJfritz().getProperties().getProperty("area.code"));
+		countryCode.setText(getJfritz().getProperties().getProperty(
+				"country.code"));
+		areaPrefix.setText(getJfritz().getProperties().getProperty(
+				"area.prefix"));
+		countryPrefix.setText(getJfritz().getProperties().getProperty(
+				"country.prefix"));
+		timerSlider.setValue(Integer.parseInt(getJfritz().getProperties()
 				.getProperty("fetch.timer")));
 
 		for (int i = 0; i < devices.size(); i++) {
@@ -132,13 +136,13 @@ public class ConfigDialog extends JDialog {
 		}
 
 		try {
-			firmware = new FritzBoxFirmware(properties
+			firmware = new FritzBoxFirmware(getJfritz().getProperties()
 					.getProperty("box.firmware"));
 		} catch (InvalidFirmwareException e) {
 		}
 		setBoxTypeLabel();
 		for (int i = 0; i < 10; i++) {
-			String sipstr = properties.getProperty("SIP" + i);
+			String sipstr = getJfritz().getProperties().getProperty("SIP" + i);
 			if (sipstr != null) {
 				String[] parts = sipstr.split("@");
 				SipProvider sip = new SipProvider(i, parts[0], parts[1]);
@@ -484,5 +488,12 @@ public class ConfigDialog extends JDialog {
 			boxtypeLabel.setForeground(Color.RED);
 			boxtypeLabel.setText("unbekannt");
 		}
+	}
+
+	/**
+	 * @return Returns the jfritz object.
+	 */
+	public final JFritz getJfritz() {
+		return jfritz;
 	}
 }

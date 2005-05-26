@@ -4,14 +4,25 @@
  */
 package de.moonflower.jfritz.dialogs.quickdial;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.util.Enumeration;
 import java.util.Vector;
 
 import javax.swing.table.AbstractTableModel;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.EntityResolver;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
@@ -29,15 +40,16 @@ public class QuickDialTableModel extends AbstractTableModel {
 	private static final String QUICKDIALS_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 			+ "<!-- DTD for JFritz quickdials -->"
 			+ "<!ELEMENT quickdials (commment?,entry*)>"
+			+ "<!ELEMENT comment (#PCDATA)>"
+			+ "<!ELEMENT entry (number?,vanity?,description?)>"
 			+ "<!ELEMENT number (#PCDATA)>"
 			+ "<!ELEMENT vanity (#PCDATA)>"
 			+ "<!ELEMENT description (#PCDATA)>"
-			+ "<!ELEMENT entry (number?,vanity?,description?)>"
 			+ "<!ATTLIST entry id CDATA #REQUIRED>";
 
 	JFritz jfritz;
 
-	Vector quickDialData;
+	Vector modelData;
 
 	/**
 	 *
@@ -45,13 +57,14 @@ public class QuickDialTableModel extends AbstractTableModel {
 	public QuickDialTableModel(JFritz jfritz) {
 		super();
 		this.jfritz = jfritz;
+		modelData = new Vector();
 	}
 
 	/**
 	 * @see javax.swing.table.TableModel#getRowCount()
 	 */
 	public int getRowCount() {
-		return quickDialData.size();
+		return modelData.size();
 	}
 
 	/**
@@ -65,16 +78,16 @@ public class QuickDialTableModel extends AbstractTableModel {
 	 * @see javax.swing.table.TableModel#getValueAt(int, int)
 	 */
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		QuickDial quick = (QuickDial) quickDialData.get(rowIndex);
+		QuickDial quick = (QuickDial) modelData.get(rowIndex);
 		switch (columnIndex) {
 		case 0:
-			return quick.getDescription();
-		case 1:
 			return quick.getQuickdial();
-		case 2:
+		case 1:
 			return quick.getVanity();
-		case 3:
+		case 2:
 			return quick.getNumber();
+		case 3:
+			return quick.getDescription();
 		default:
 			return null;
 		}
@@ -85,20 +98,20 @@ public class QuickDialTableModel extends AbstractTableModel {
 	 */
 	public void setValueAt(Object object, int rowIndex, int columnIndex) {
 		if (rowIndex < getRowCount()) {
-			QuickDial dial = (QuickDial) quickDialData.get(rowIndex);
+			QuickDial dial = (QuickDial) modelData.get(rowIndex);
 
 			switch (columnIndex) {
 			case 0:
-				dial.setDescription(object.toString());
-				break;
-			case 1:
 				dial.setQuickdial(object.toString());
 				break;
-			case 2:
+			case 1:
 				dial.setVanity(object.toString());
 				break;
-			case 3:
+			case 2:
 				dial.setNumber(object.toString());
+				break;
+			case 3:
+				dial.setDescription(object.toString());
 				break;
 			}
 			fireTableCellUpdated(rowIndex, columnIndex);
@@ -108,13 +121,13 @@ public class QuickDialTableModel extends AbstractTableModel {
 	public String getColumnName(int column) {
 		switch (column) {
 		case 0:
-			return jfritz.getMessages().getString("description");
-		case 1:
 			return jfritz.getMessages().getString("quickdial");
-		case 2:
+		case 1:
 			return jfritz.getMessages().getString("vanity");
-		case 3:
+		case 2:
 			return jfritz.getMessages().getString("number");
+		case 3:
+			return jfritz.getMessages().getString("description");
 		default:
 			return null;
 		}
@@ -122,7 +135,7 @@ public class QuickDialTableModel extends AbstractTableModel {
 
 	public void getQuickDialDataFromFritzBox() {
 		try {
-			quickDialData = JFritzUtils.retrieveQuickDialsFromFritzBox(jfritz
+			modelData = JFritzUtils.retrieveQuickDialsFromFritzBox(jfritz
 					.getProperties().getProperty("box.address"), jfritz
 					.getProperties().getProperty("box.password"), JFritzUtils
 					.detectBoxType(jfritz.getProperties().getProperty(
@@ -136,8 +149,64 @@ public class QuickDialTableModel extends AbstractTableModel {
 		}
 	}
 
+	public void addEntry(QuickDial quickDial) {
+		modelData.add(quickDial);
+	}
+
+	public void remove(int row) {
+		modelData.remove(row);
+	}
+
 	/**
-	 * Saves phonebook to xml file.
+	 * Loads quickdial list from xml file
+	 *
+	 * @param filename
+	 */
+	public void loadFromXMLFile(String filename) {
+		try {
+			SAXParserFactory factory = SAXParserFactory.newInstance();
+			factory.setValidating(false);
+			XMLReader reader = factory.newSAXParser().getXMLReader();
+			reader.setErrorHandler(new ErrorHandler() {
+				public void error(SAXParseException x) throws SAXException {
+					throw x;
+				}
+				public void fatalError(SAXParseException x) throws SAXException {
+					throw x;
+				}
+				public void warning(SAXParseException x) throws SAXException {
+					throw x;
+				}
+			});
+			reader.setEntityResolver(new EntityResolver() {
+				public InputSource resolveEntity(String publicId,
+						String systemId) throws SAXException, IOException {
+					if (systemId.equals(QUICKDIALS_DTD_URI)) {
+						InputSource is = new InputSource(new StringReader(
+								QUICKDIALS_DTD));
+						is.setSystemId(QUICKDIALS_DTD_URI);
+						return is;
+					}
+					throw new SAXException("Invalid system identifier: "
+							+ systemId);
+				}
+
+			});
+			reader.setContentHandler(new QuickDialXMLHandler(this));
+			reader.parse(new InputSource(new FileInputStream(filename)));
+
+		} catch (ParserConfigurationException e) {
+			Debug.err("Error with ParserConfiguration!");
+		} catch (SAXException e) {
+			Debug.err("Error on parsing " + filename + "!");
+			e.printStackTrace();
+		} catch (IOException e) {
+			Debug.err("Could not read " + filename + "!");
+		}
+	}
+
+	/**
+	 * Saves quickdial list to xml file.
 	 *
 	 * @param filename
 	 */
@@ -153,7 +222,7 @@ public class QuickDialTableModel extends AbstractTableModel {
 			pw.println("<quickdials>");
 			pw.println("\t<comment>QuickDial list for " + JFritz.PROGRAM_NAME
 					+ " v" + JFritz.PROGRAM_VERSION + "</comment>");
-			Enumeration en = quickDialData.elements();
+			Enumeration en = modelData.elements();
 			while (en.hasMoreElements()) {
 				QuickDial current = (QuickDial) en.nextElement();
 				pw.println("\t<entry id=\"" + current.getQuickdial() + "\">");
