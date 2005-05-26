@@ -34,7 +34,7 @@ public class JFritzProperties extends Properties {
 			throws InvalidPropertiesFormatException, IOException {
 		if (in == null)
 			throw new NullPointerException();
-		XMLUtils.load(this, in);
+		XMLProperties.load(this, in);
 	}
 
 	public synchronized void storeToXML(OutputStream os, String comment)
@@ -48,7 +48,7 @@ public class JFritzProperties extends Properties {
 			String encoding) throws IOException {
 		if (os == null)
 			throw new NullPointerException();
-		XMLUtils.save(this, os, comment, encoding);
+		XMLProperties.save(this, os, comment, encoding);
 	}
 
 	public Object setProperty(String key, String value) {

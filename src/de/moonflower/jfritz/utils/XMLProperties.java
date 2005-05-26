@@ -1,10 +1,3 @@
-/*
- * @(#)XMLUtils.java	1.5 04/06/07
- *
- * Copyright 2004 Sun Microsystems, Inc. All rights reserved.
- * SUN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
-
 package de.moonflower.jfritz.utils;
 
 import java.io.IOException;
@@ -46,13 +39,9 @@ import de.moonflower.jfritz.exceptions.InvalidPropertiesFormatException;
  *
  * @version 1.9, 01/23/03
  * @author Michael McCloskey
- * @since 1.3
  */
-public class XMLUtils {
+public class XMLProperties {
 
-	// XML loading and saving methods for Properties
-
-	// The required DTD URI for exported properties
 	private static final String PROPS_DTD_URI = "http://java.sun.com/dtd/properties.dtd";
 
 	private static final String PROPS_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
