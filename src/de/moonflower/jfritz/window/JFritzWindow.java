@@ -13,6 +13,8 @@ import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -80,6 +82,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	JToolBar mBar;
 
 	JButton fetchButton, lookupButton, configButton, vcardButton;
+
+	JToggleButton dateButton;
 
 	JTextField searchFilter;
 
@@ -304,16 +308,16 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				"filter.number", "false")));
 		fBar.add(tb);
 
-		tb = new JToggleButton(getImage("calendar_grey.png"), true);
-		tb.setSelectedIcon(getImage("calendar.png"));
-		tb.setActionCommand("filter_date");
-		tb.addActionListener(this);
-		tb.setToolTipText(jfritz.getMessages().getString("filter_date"));
-		tb.setSelected(!JFritzUtils.parseBoolean(properties.getProperty(
-				"filter.date", "false")));
-		fBar.add(tb);
-
-		// TODO FROM-TO Date filter
+		dateButton = new JToggleButton(getImage("calendar_grey.png"), true);
+		dateButton.setSelectedIcon(getImage("calendar.png"));
+		dateButton.setActionCommand("filter_date");
+		dateButton.addActionListener(this);
+		dateButton
+				.setToolTipText(jfritz.getMessages().getString("filter_date"));
+		dateButton.setSelected(!JFritzUtils.parseBoolean(properties
+				.getProperty("filter.date", "false")));
+		setDateFilterText();
+		fBar.add(dateButton);
 
 		fBar.addSeparator();
 
@@ -571,28 +575,45 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 										+ " " + number + " ...");
 								Debug.msg("Reverse lookup for " + number);
 								if (participant.equals("")) {
-                                    Person newPerson;
-                                    participant = ReverseLookup.lookup(number);
-                                    if (participant.equals("?")) {
-										newPerson = new Person("?","","?","","","",call.getNumber(),"","","",call.getNumber(),"","");
-									}
-									else if (participant.equals("? (Mobil)")) {
-										newPerson = new Person("?","","?","","","","",call.getNumber(),"","",call.getNumber(),"","");
-									}
-									else if (participant.equals("? (Freecall)")) {
-										newPerson = new Person("?","","?","","","",call.getNumber(),"","","",call.getNumber(),"","");
-									}
-									else {
-										if (participant.indexOf(",")>-1) {
-											// Found Firstname and Lastname, separated by ,
-											String list[] = participant.split(",");
-											System.out.println(list[0]+" "+list[1]);
-											newPerson = new Person(list[1],"",list[0],"","","",call.getNumber(),"","","",call.getNumber(),"","");
-										}
-										else {
+									Person newPerson;
+									participant = ReverseLookup.lookup(number);
+									if (participant.equals("?")) {
+										newPerson = new Person("?", "", "?",
+												"", "", "", call.getNumber(),
+												"", "", "", call.getNumber(),
+												"", "");
+									} else if (participant.equals("? (Mobil)")) {
+										newPerson = new Person("?", "", "?",
+												"", "", "", "", call
+														.getNumber(), "", "",
+												call.getNumber(), "", "");
+									} else if (participant
+											.equals("? (Freecall)")) {
+										newPerson = new Person("?", "", "?",
+												"", "", "", call.getNumber(),
+												"", "", "", call.getNumber(),
+												"", "");
+									} else {
+										if (participant.indexOf(",") > -1) {
+											// Found Firstname and Lastname,
+											// separated by ,
+											String list[] = participant
+													.split(",");
+											System.out.println(list[0] + " "
+													+ list[1]);
+											newPerson = new Person(list[1], "",
+													list[0], "", "", "", call
+															.getNumber(), "",
+													"", "", call.getNumber(),
+													"", "");
+										} else {
 											// Found only one name
 											// Probably a company
-											newPerson = new Person("","",participant,"","","","","",call.getNumber(),"",call.getNumber(),"","");
+											newPerson = new Person("", "",
+													participant, "", "", "",
+													"", "", call.getNumber(),
+													"", call.getNumber(), "",
+													"");
 										}
 									}
 									jfritz.getPhonebook().addEntry(newPerson);
@@ -895,6 +916,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					.toString(!((JToggleButton) e.getSource()).isSelected()));
 			jfritz.getCallerlist().updateFilter();
 			jfritz.getCallerlist().fireTableStructureChanged();
+		} else if (e.getActionCommand() == "filter_date") {
+			properties.setProperty("filter.date", Boolean
+					.toString(!((JToggleButton) e.getSource()).isSelected()));
+			setDataFilterFromSelection();
+			jfritz.getCallerlist().fireTableStructureChanged();
 		} else if (e.getActionCommand() == "clearSearchFilter") {
 			searchFilter.setText("");
 			properties.setProperty("filter.search", "");
@@ -902,6 +928,54 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			jfritz.getCallerlist().fireTableStructureChanged();
 		} else {
 			Debug.err("Unimplemented action: " + e.getActionCommand());
+		}
+	}
+
+	private void setDataFilterFromSelection() {
+		Date from = null;
+		Date to = null;
+		try {
+			int rows[] = getCallertable().getSelectedRows();
+			for (int i = 0; i < rows.length; i++) {
+				Call call = (Call) jfritz.getCallerlist()
+						.getFilteredCallVector().get(rows[i]);
+
+				if (to == null || call.getCalldate().after(to))
+					to = call.getCalldate();
+
+				if (from == null || call.getCalldate().before(from))
+					from = call.getCalldate();
+			}
+		} catch (Exception e) {
+			System.err.println(e.toString());
+		}
+		if (to == null)
+			to = new Date();
+		if (from == null)
+			from = new Date();
+		String fromstr = new SimpleDateFormat("dd.MM.yy").format(from);
+		String tostr = new SimpleDateFormat("dd.MM.yy").format(to);
+
+		properties.setProperty("filter.date_from", fromstr);
+		properties.setProperty("filter.date_to", tostr);
+		setDateFilterText();
+		jfritz.getCallerlist().updateFilter();
+	}
+
+	/**
+	 *
+	 */
+	public void setDateFilterText() {
+		if (JFritzUtils.parseBoolean(properties.getProperty("filter.date"))) {
+			if (properties.getProperty("filter.date_from").equals(
+					properties.getProperty("filter.date_to"))) {
+				dateButton.setText(properties.getProperty("filter.date_from"));
+			} else {
+				dateButton.setText(properties.getProperty("filter.date_from")
+						+ " - " + properties.getProperty("filter.date_to"));
+			}
+		} else {
+			dateButton.setText("");
 		}
 	}
 

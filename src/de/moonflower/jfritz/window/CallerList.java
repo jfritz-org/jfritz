@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
@@ -604,8 +605,14 @@ public class CallerList extends AbstractTableModel {
 				.getProperty("filter.callout"));
 		boolean filterNumber = JFritzUtils.parseBoolean(jfritz.getProperties()
 				.getProperty("filter.number"));
+		boolean filterDate = JFritzUtils.parseBoolean(jfritz.getProperties()
+				.getProperty("filter.date"));
 		String filterSearch = jfritz.getProperties().getProperty(
 				"filter.search", "");
+		String filterDateFrom = jfritz.getProperties().getProperty(
+				"filter.date_from", "");
+		String filterDateTo = jfritz.getProperties().getProperty(
+				"filter.date_to", "");
 
 		Debug
 				.msg(3, "CallTypeFilter: " + filterCallIn + "|"
@@ -619,7 +626,8 @@ public class CallerList extends AbstractTableModel {
 		}
 
 		if ((!filterCallIn) && (!filterCallInFailed) && (!filterCallOut)
-				&& (!filterNumber) && (filterSearch.length() == 0)) {
+				&& (!filterNumber) && (!filterDate)
+				&& (filterSearch.length() == 0)) {
 			// Use unfiltered data
 			filteredCallerData = unfilteredCallerData;
 			sortAllFilteredRowsBy(sortColumn, sortDirection);
@@ -629,23 +637,38 @@ public class CallerList extends AbstractTableModel {
 			filteredcallerdata = new Vector();
 			while (en.hasMoreElements()) {
 				Call call = (Call) en.nextElement();
+				boolean dateFilterPassed = true;
+				boolean searchFilterPassed = true;
 
 				// SearchFilter: Number, Participant, Date
-				boolean searchFilterPassed = true;
-				String part[] = filterSearch.split(" ");
-				for (int i = 0; i < part.length; i++) {
-					if (part[i].length() > 0
-							&& call.getNumber().indexOf(part[i]) == -1
+				String parts[] = filterSearch.split(" ");
+				for (int i = 0; i < parts.length; i++) {
+					String part = parts[i];
+					if (part.length() > 0
+							&& call.getNumber().indexOf(parts[i]) == -1
 							&& call.getParticipant().toLowerCase().indexOf(
-									part[i].toLowerCase()) == -1
-							&& (!part[i].contains(".") || new SimpleDateFormat(
-									"dd.MM.yy").format(call.getCalldate())
-									.indexOf(part[i]) == -1)) {
+									part.toLowerCase()) == -1) {
 						searchFilterPassed = false;
 						break;
 					}
 				}
-				if (searchFilterPassed)
+
+				try {
+					if (filterDate
+							&& !(call.getCalldate().after(
+									new SimpleDateFormat("dd.MM.yy")
+											.parse(filterDateFrom)) && call
+									.getCalldate().before(
+											new SimpleDateFormat(
+													"dd.MM.yy HH:mm")
+													.parse(filterDateTo
+															+ " 23:59")))) {
+						dateFilterPassed = false;
+					}
+				} catch (ParseException e1) {
+				}
+
+				if (searchFilterPassed && dateFilterPassed)
 					if (!(filterNumber && call.getNumber().equals(""))) {
 						if ((!filterCallIn)
 								&& (call.getCalltype().toInt() == CallType.CALLIN))
