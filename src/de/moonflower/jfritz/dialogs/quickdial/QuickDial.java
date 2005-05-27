@@ -11,7 +11,7 @@ package de.moonflower.jfritz.dialogs.quickdial;
  */
 public class QuickDial {
 
-	String description, quickdial, vanity, number;
+	private String description, quickdial, vanity, number;
 
 	/**
 	 * creates new QuickDial object

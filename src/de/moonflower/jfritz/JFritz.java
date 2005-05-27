@@ -44,8 +44,10 @@
  * JAR: Signing, Deploying, Website jfritz.moonflower.de oder Sourceforge
  *
  * CHANGELOG:
- * JFritz! 0.3.3
+ *
+ * JFritz! 0.3.4
  * - New search filter feature
+ * - New date and date range filter feature
  * - Sorting of columns by clicking on column headers
  * - VOIP numbers starting with 49 are now rewritten correctly
  * - SSDP Autodetection of Fritz!Boxes
@@ -144,9 +146,11 @@ public class JFritz {
 
 	public final static String PROGRAM_NAME = "JFritz!";
 
-	public final static String PROGRAM_VERSION = "0.3.3";
+	public final static String PROGRAM_VERSION = "0.3.4";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.40 2005/05/27 10:50:33 akw Exp $";
+	public final static String PROGRAM_URL = "http://jfritz.sourceforge.net/";
+
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.41 2005/05/27 20:44:42 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 

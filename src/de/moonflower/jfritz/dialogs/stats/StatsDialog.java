@@ -16,12 +16,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ResourceBundle;
-import java.util.Vector;
 
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
@@ -32,7 +32,6 @@ import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.Debug;
-import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.upnp.AddonInfosXMLHandler;
 import de.moonflower.jfritz.utils.upnp.UPNPUtils;
 import de.moonflower.jfritz.window.JFritzWindow;
@@ -43,13 +42,12 @@ import de.moonflower.jfritz.window.JFritzWindow;
  */
 public class StatsDialog extends JDialog {
 
-	JFritzProperties properties;
-
-	ResourceBundle messages;
-
-	Vector quickDialData;
+	JFritz jfritz;
 
 	JButton okButton, cancelButton, refreshButton;
+
+	JLabel byteSendRateLabel, byteReceiveRateLabel, totalBytesSendLabel,
+			totalBytesReceivedLabel, dns1Label, dns2Label;
 
 	private boolean pressed_OK = false;
 
@@ -61,22 +59,24 @@ public class StatsDialog extends JDialog {
 		super(owner, true);
 		if (owner != null) {
 			setLocationRelativeTo(owner);
-			this.properties = owner.getProperties();
-			this.messages = owner.getMessages();
+			this.jfritz = owner.getJFritz();
 		}
-		getStats();
 		drawDialog();
+		getStats();
 	}
 
 	/**
 	 *
 	 */
 	private void getStats() {
-		String xml = UPNPUtils.getSOAPData();
+		final String server = "http://192.168.178.1:49000/upnp/control/WANCommonIFC1";
+		final String urn = "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetAddonInfos";
+
+		String xml = UPNPUtils.getSOAPData(server,urn);
 		try {
 			XMLReader reader = SAXParserFactory.newInstance().newSAXParser()
 					.getXMLReader();
-			reader.setContentHandler(new AddonInfosXMLHandler());
+			reader.setContentHandler(new AddonInfosXMLHandler(this));
 			reader.parse(new InputSource(new StringReader(xml)));
 
 		} catch (ParserConfigurationException e1) {
@@ -95,12 +95,16 @@ public class StatsDialog extends JDialog {
 	private void drawDialog() {
 		super.dialogInit();
 
-		setTitle(messages.getString("stats"));
+		setTitle(jfritz.getMessages().getString("stats"));
 		setModal(true);
 		setLayout(new BorderLayout());
 		getContentPane().setLayout(new BorderLayout());
-		JPanel bottomPane = new JPanel();
 		JPanel topPane = new JPanel();
+		JPanel mainPane = new JPanel();
+		JPanel bottomPane = new JPanel();
+		BoxLayout boxlayout = new BoxLayout(mainPane,BoxLayout.Y_AXIS);
+		mainPane.setLayout(boxlayout);
+
 		KeyListener keyListener = (new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				Debug.msg("KEY: " + e);
@@ -147,14 +151,28 @@ public class StatsDialog extends JDialog {
 		cancelButton.addActionListener(actionListener);
 		cancelButton.addKeyListener(keyListener);
 		refreshButton.addActionListener(actionListener);
+
 		bottomPane.add(okButton);
 		bottomPane.add(cancelButton);
+
+		byteSendRateLabel = new JLabel();
+		byteReceiveRateLabel = new JLabel();
+		totalBytesSendLabel = new JLabel();
+		totalBytesReceivedLabel = new JLabel();
+		dns1Label = new JLabel();
+		dns2Label = new JLabel();
+
+		mainPane.add(byteSendRateLabel);
+		mainPane.add(byteReceiveRateLabel);
+		mainPane.add(totalBytesSendLabel);
+		mainPane.add(totalBytesReceivedLabel);
+		mainPane.add(dns1Label);
+		mainPane.add(dns2Label);
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
 		panel.add(topPane, BorderLayout.NORTH);
-		//panel.
-		// panel.add(new JScrollPane(table), BorderLayout.CENTER);
+		panel.add(mainPane, BorderLayout.CENTER);
 
 		panel.add(bottomPane, BorderLayout.SOUTH);
 		getContentPane().add(panel);
@@ -172,4 +190,21 @@ public class StatsDialog extends JDialog {
 		setVisible(true);
 		return okPressed();
 	}
+
+	public void setAddonInfos(int byteSendRate, int byteReceiveRate,
+			int totalBytesSent, int totalBytesReceived, String dns1, String dns2) {
+		byteSendRateLabel.setText(jfritz.getMessages().getString(
+		"bytessendrate")+ ": " + byteSendRate);
+		byteReceiveRateLabel.setText(jfritz.getMessages().getString(
+		"bytesreceivedrate")+ ": " + byteReceiveRate);
+		totalBytesSendLabel.setText(jfritz.getMessages().getString(
+				"totaldatasent")
+				+ ": " + (totalBytesSent/1024)+" KByte");
+		totalBytesReceivedLabel.setText(jfritz.getMessages().getString(
+				"totaldatareceived")
+				+ ": " + (totalBytesReceived/1024)+" KByte");
+		dns1Label.setText("DNS Server 1: " + dns1);
+		dns2Label.setText("DNS Server 2: " + dns2);
+	}
+
 }

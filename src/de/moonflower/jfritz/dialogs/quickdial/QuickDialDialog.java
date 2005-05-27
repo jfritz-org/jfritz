@@ -21,6 +21,7 @@ import java.util.ResourceBundle;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -78,7 +79,6 @@ public class QuickDialDialog extends JDialog {
 
 		setTitle(messages.getString("quickdials"));
 		setModal(true);
-		setLayout(new BorderLayout());
 		getContentPane().setLayout(new BorderLayout());
 		JPanel bottomPane = new JPanel();
 
@@ -124,12 +124,13 @@ public class QuickDialDialog extends JDialog {
 					model.fireTableDataChanged();
 				} else if (e.getActionCommand() == "storeSIP") {
 					Debug.err("Not yet implemented");
+					JOptionPane.showMessageDialog(null,
+							"Geduld!\n\nFunktion noch nicht implementiert.");
 				}
 			}
 		};
 
 		okButton = new JButton("Okay");
-		okButton.setEnabled(JFritz.DEVEL_VERSION);
 		okButton.addActionListener(actionListener);
 		okButton.addKeyListener(keyListener);
 
@@ -160,9 +161,10 @@ public class QuickDialDialog extends JDialog {
 		JButton b2 = new JButton("Auf die Box speichern");
 		b2.setActionCommand("storeSIP");
 		b2.addActionListener(actionListener);
-		b2.setEnabled(false);
+		//b2.setEnabled(false);
 		// b2.setIcon(new
 		// ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/de/moonflower/jfritz/resources/images/export.png"))));
+
 
 		toolbar.add(newButton);
 		toolbar.add(delButton);

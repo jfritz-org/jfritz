@@ -74,7 +74,7 @@ public class UPNPUtils {
 		return fritzboxes;
 	}
 
-	public static String getSOAPData() {
+	public static String getSOAPData(String url, String urn) {
 		// http://192.168.178.1:49000/upnp/control/WANCommonIFC1
 		// UpstreamMaxBitRate, DownstreamMaxBitRate, PhysicalLinkStatus:
 		// urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetCommonLinkProperties
@@ -88,11 +88,9 @@ public class UPNPUtils {
 		// urn:schemas-upnp-org:service:WANIPConnection:1#GetStatusInfo
 
 		String data = "";
-		final String server = "http://192.168.178.1:49000/upnp/control/WANCommonIFC1";
-		final String SOAP_ACTION = "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetAddonInfos";
 
 		try {
-			URL u = new URL(server);
+			URL u = new URL(url);
 			URLConnection uc = u.openConnection();
 
 			uc.setDoOutput(true);
@@ -100,7 +98,7 @@ public class UPNPUtils {
 			uc
 					.setRequestProperty("Content-Type",
 							"text/xml; charset=\"utf-8\"");
-			uc.setRequestProperty("SOAPAction", SOAP_ACTION);
+			uc.setRequestProperty("SOAPAction", urn);
 
 			DataOutputStream printout = new DataOutputStream(uc
 					.getOutputStream());

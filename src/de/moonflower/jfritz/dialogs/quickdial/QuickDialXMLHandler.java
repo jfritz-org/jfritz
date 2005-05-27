@@ -73,7 +73,7 @@ public class QuickDialXMLHandler extends DefaultHandler {
 		} else if (qName.equals("entry")) {
 			if (dataModel != null) { // Add an entry to the dataModel
 				Debug.msg("QuickDial: "+id+", "+number+", "+vanity+", "+description);
-				dataModel.addEntry(new QuickDial(id, number, vanity, description));
+				dataModel.addEntry(new QuickDial(id, vanity, number, description));
 			}
 		}
 	}

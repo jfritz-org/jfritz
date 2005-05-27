@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.dialogs.quickdial.QuickDial;
+import de.moonflower.jfritz.dialogs.quickdial.QuickDialTableModel;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
@@ -161,14 +162,14 @@ public class JFritzUtils {
 	 * @throws WrongPasswordException
 	 * @throws IOException
 	 */
-	public static Vector retrieveQuickDialsFromFritzBox(String box_address,
+	public static Vector retrieveQuickDialsFromFritzBox(QuickDialTableModel model,String box_address,
 			String box_password, FritzBoxFirmware firmware)
 			throws WrongPasswordException, IOException {
 		String postdata = firmware.getAccessMethod() + POSTDATA_QUICKDIAL
 				+ box_password;
 		String urlstr = "http://" + box_address + "/cgi-bin/webcm";
 		String data = fetchDataFromURL(urlstr, postdata);
-		return parseQuickDialData(data, firmware);
+		return parseQuickDialData(model,data, firmware);
 	}
 
 	/**
@@ -323,16 +324,17 @@ public class JFritzUtils {
 	 * @param firmware
 	 * @return list of QuickDial objects
 	 */
-	public static Vector parseQuickDialData(String data,
+	public static Vector parseQuickDialData(QuickDialTableModel model,String data,
 			FritzBoxFirmware firmware) {
 		Vector list = new Vector();
 		data = removeDuplicateWhitespace(data);
 		Pattern p = Pattern.compile(PATTERN_QUICKDIAL);
 		Matcher m = p.matcher(data);
 
-		while (m.find())
-			list.add(new QuickDial(m.group(1), m.group(2), m.group(3), null));
-
+		while (m.find()) {
+			String description = model.getDescriptionFromNumber(m.group(3));
+			list.add(new QuickDial(m.group(1), m.group(2), m.group(3), description));
+		}
 		return list;
 	}
 

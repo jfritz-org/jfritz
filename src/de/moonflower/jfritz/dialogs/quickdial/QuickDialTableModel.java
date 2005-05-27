@@ -134,8 +134,8 @@ public class QuickDialTableModel extends AbstractTableModel {
 	}
 
 	public void getQuickDialDataFromFritzBox() {
-		try {
-			modelData = JFritzUtils.retrieveQuickDialsFromFritzBox(jfritz
+		try {//FIXME
+			modelData = JFritzUtils.retrieveQuickDialsFromFritzBox(this, jfritz
 					.getProperties().getProperty("box.address"), jfritz
 					.getProperties().getProperty("box.password"), JFritzUtils
 					.detectBoxType(jfritz.getProperties().getProperty(
@@ -171,9 +171,11 @@ public class QuickDialTableModel extends AbstractTableModel {
 				public void error(SAXParseException x) throws SAXException {
 					throw x;
 				}
+
 				public void fatalError(SAXParseException x) throws SAXException {
 					throw x;
 				}
+
 				public void warning(SAXParseException x) throws SAXException {
 					throw x;
 				}
@@ -244,4 +246,13 @@ public class QuickDialTableModel extends AbstractTableModel {
 		}
 	}
 
+	public String getDescriptionFromNumber(String number) {
+		Enumeration en = modelData.elements();
+		while (en.hasMoreElements()) {
+			QuickDial q = (QuickDial) en.nextElement();
+			if (q.getNumber().equals(number))
+				return q.getDescription();
+		}
+		return null;
+	}
 }

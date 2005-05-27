@@ -198,7 +198,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		button.addActionListener(this);
 		button.setIcon(getImage("quickdial.png"));
 		button.setToolTipText(jfritz.getMessages().getString("quickdials"));
-		button.setEnabled(JFritz.DEVEL_VERSION);
+		// button.setEnabled(JFritz.DEVEL_VERSION);
 		mBar.add(button);
 
 		mBar.addSeparator();
@@ -393,6 +393,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		item.setActionCommand("export_csv");
 		item.addActionListener(this);
 		exportMenu.add(item);
+
+		item = new JMenuItem(jfritz.getMessages().getString("export_vcard"),
+				'v');
+		item.setActionCommand("export_vcard");
+		item.addActionListener(this);
+		exportMenu.add(item);
+
 		item = new JMenuItem(jfritz.getMessages().getString("export_excel"),
 				'c');
 		item.setActionCommand("export_excel");
@@ -629,7 +636,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 						isdone = true;
 					}
-					jfritz.getPhonebook().saveToXMLFile(JFritz.PHONEBOOK_FILE);
+					// jfritz.getPhonebook().saveToXMLFile(JFritz.PHONEBOOK_FILE);
 					return null;
 				}
 
@@ -745,6 +752,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				+ JFritz.PROGRAM_VERSION + "\n"
 				+ JFritzUtils.getVersionFromCVSTag(JFritz.CVS_TAG) + "\n\n"
 				+ "(c) 2005 by " + JFritz.PROGRAM_AUTHOR + "\n\n"
+				+ JFritz.PROGRAM_URL + "\n\n"
 				+ "This tool is developed and released under\n"
 				+ "the terms of the GNU General Public License\n\n"
 				+ "Long live Free Software!");
@@ -856,7 +864,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			try {
 				Runtime.getRuntime().exec(
 						"rundll32 url.dll,FileProtocolHandler " + url);
-			} catch (IOException e1) {
+			} catch (IOException e1) { // FIXME
+				JOptionPane.showMessageDialog(this, "Please visit "
+						+ JFritz.PROGRAM_URL);
 				Debug.err("Website opening works only on win32 platforms.");
 			}
 		} else if (e.getActionCommand() == "export_csv") {
@@ -1022,6 +1032,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			}
 		} else {
 			Debug.err("No single valid row selected");
+			JOptionPane.showMessageDialog(this,
+					"Fehler:\n\nKeine einzige sinnvolle Zeile selektiert!\n\n"
+							+ "Bitte eine oder mehrere Zeilen auswählen,\n"
+							+ "um die Daten als VCard zu exportieren!");
+
 		}
 	}
 
