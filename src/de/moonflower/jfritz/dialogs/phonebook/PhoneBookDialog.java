@@ -14,16 +14,22 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 import java.util.Vector;
+import java.awt.GridLayout;
 
 import javax.swing.ImageIcon;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.JRadioButton;
+import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.ButtonGroup;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.window.JFritzWindow;
@@ -48,7 +54,21 @@ public class PhoneBookDialog extends JDialog {
 
 	JTable table;
 
-	Vector personList;
+	JLabel labelFirstName, labelMiddleName, labelLastName,
+			labelStreet, labelPostalCode, labelCity,
+			labelHomeNumber, labelMobileNumber,
+			labelBusinessNumber, labelOtherNumber,
+			labelEmail, labelStandardNumber, textStandardNumber;
+	JTextField textFieldFirstName, textFieldMiddleName, textFieldLastName,
+			textFieldStreet, textFieldPostalCode, textFieldCity,
+			textFieldHomeNumber, textFieldMobileNumber,
+			textFieldBusinessNumber, textFieldOtherNumber,
+			textFieldEmail;
+
+	JButton setStandardHomeNumber, setStandardMobileNumber,
+			setStandardBusinessNumber, setStandardOtherNumber;
+
+	Vector oldPersonList;
 
 	/**
 	 * @param owner
@@ -63,10 +83,10 @@ public class PhoneBookDialog extends JDialog {
 		}
 		this.jfritz = jfritz;
 
-		personList = new Vector();
+		oldPersonList = new Vector();
 		// make a copy of persons in Phonebook
 		// and do operations on copied entries
-		personList = (Vector) jfritz.getPhonebook().getPersons().clone();
+		oldPersonList = (Vector) jfritz.getPhonebook().getPersons().clone();
 
 		drawDialog();
 	}
@@ -88,7 +108,7 @@ public class PhoneBookDialog extends JDialog {
 			}
 
 			public boolean isCellEditable(int rowIndex, int columnIndex) {
-				return true;
+				return false;
 			}
 
 		};
@@ -102,17 +122,6 @@ public class PhoneBookDialog extends JDialog {
 		if (table.getRowCount() != 0) {
 			table.setRowSelectionInterval(0, 0);
 		}
-
-		// Edit nur durch Doppelklick, ansonsten hier auskommentieren und
-		// erweitern
-		/**
-		 * table.getColumnModel().getColumn(0).setCellEditor( new
-		 * ParticipantCellEditor());
-		 * table.getColumnModel().getColumn(1).setCellEditor( new
-		 * ParticipantCellEditor());
-		 * table.getColumnModel().getColumn(2).setCellEditor( new
-		 * ParticipantCellEditor());
-		 */
 	}
 
 	private void drawDialog() {
@@ -163,35 +172,138 @@ public class PhoneBookDialog extends JDialog {
 		bottomPane.add(saveButton);
 		bottomPane.add(cancelButton);
 
+		JPanel panelLabelsAndTextFields = new JPanel();
+		panelLabelsAndTextFields.setLayout(new GridLayout(11,2));
+		System.out.println("Gridlayout");
+
+		labelFirstName = new JLabel(messages.getString("firstName")+": ");
+		textFieldFirstName = new JTextField();
+		labelMiddleName = new JLabel(messages.getString("middleName")+": ");
+		textFieldMiddleName = new JTextField();
+		labelLastName = new JLabel(messages.getString("lastName")+": ");
+		textFieldLastName = new JTextField();
+		labelStreet = new JLabel(messages.getString("street")+": ");
+		textFieldStreet = new JTextField();
+		labelPostalCode = new JLabel(messages.getString("postalCode")+": ");
+		textFieldPostalCode = new JTextField();
+		labelCity = new JLabel(messages.getString("city")+": ");
+		textFieldCity = new JTextField();
+		labelHomeNumber = new JLabel(messages.getString("homeTelephoneNumber")+": ");
+		textFieldHomeNumber = new JTextField();
+		setStandardHomeNumber = new JButton("Standard");
+		labelMobileNumber = new JLabel(messages.getString("mobileTelephoneNumber")+": ");
+		textFieldMobileNumber = new JTextField();
+		setStandardMobileNumber = new JButton("Standard");
+		labelBusinessNumber = new JLabel(messages.getString("businessTelephoneNumber")+": ");
+		textFieldBusinessNumber = new JTextField();
+		setStandardBusinessNumber = new JButton("Standard");
+		labelOtherNumber = new JLabel(messages.getString("otherTelephoneNumber")+": ");
+		textFieldOtherNumber = new JTextField();
+		setStandardOtherNumber = new JButton("Standard");
+
+		labelEmail = new JLabel(messages.getString("emailAddress")+": ");
+		textFieldEmail = new JTextField();
+		labelStandardNumber = new JLabel("Standard Nummer"+": ");
+		textStandardNumber = new JLabel("Not Set");
+
+	    JRadioButton radioButtonHome = new JRadioButton("");
+	    radioButtonHome.setActionCommand("standardHome");
+	    JRadioButton radioButtonMobile = new JRadioButton("");
+	    radioButtonMobile.setActionCommand("standardMobile");
+	    JRadioButton radioButtonBusiness = new JRadioButton("");
+	    radioButtonBusiness.setActionCommand("standardBusiness");
+	    JRadioButton radioButtonOther = new JRadioButton("");
+	    radioButtonOther.setActionCommand("standardOther");
+
+		panelLabelsAndTextFields.add(labelFirstName);
+		panelLabelsAndTextFields.add(textFieldFirstName);
+
+		panelLabelsAndTextFields.add(labelMiddleName);
+		panelLabelsAndTextFields.add(textFieldMiddleName);
+
+		panelLabelsAndTextFields.add(labelLastName);
+		panelLabelsAndTextFields.add(textFieldLastName);
+
+		panelLabelsAndTextFields.add(labelStreet);
+		panelLabelsAndTextFields.add(textFieldStreet);
+
+		panelLabelsAndTextFields.add(labelPostalCode);
+		panelLabelsAndTextFields.add(textFieldPostalCode);
+
+		panelLabelsAndTextFields.add(labelCity);
+		panelLabelsAndTextFields.add(textFieldCity);
+
+		JPanel homeNumberPanel = new JPanel();
+		homeNumberPanel.setLayout(new BoxLayout(homeNumberPanel,BoxLayout.X_AXIS));
+		homeNumberPanel.add(radioButtonHome);
+		homeNumberPanel.add(labelHomeNumber);
+
+		panelLabelsAndTextFields.add(homeNumberPanel);
+		panelLabelsAndTextFields.add(textFieldHomeNumber);
+
+		JPanel mobileNumberPanel = new JPanel();
+		mobileNumberPanel.setLayout(new BoxLayout(mobileNumberPanel,BoxLayout.X_AXIS));
+		mobileNumberPanel.add(radioButtonMobile);
+		mobileNumberPanel.add(labelMobileNumber);
+		panelLabelsAndTextFields.add(mobileNumberPanel);
+		panelLabelsAndTextFields.add(textFieldMobileNumber);
+
+		JPanel businessNumberPanel = new JPanel();
+		businessNumberPanel.setLayout(new BoxLayout(businessNumberPanel,BoxLayout.X_AXIS));
+		businessNumberPanel.add(radioButtonBusiness);
+		businessNumberPanel.add(labelBusinessNumber);
+		panelLabelsAndTextFields.add(businessNumberPanel);
+		panelLabelsAndTextFields.add(textFieldBusinessNumber);
+
+		JPanel otherNumberPanel = new JPanel();
+		otherNumberPanel.setLayout(new BoxLayout(otherNumberPanel,BoxLayout.X_AXIS));
+		otherNumberPanel.add(radioButtonOther);
+		otherNumberPanel.add(labelOtherNumber);
+		panelLabelsAndTextFields.add(otherNumberPanel);
+		panelLabelsAndTextFields.add(textFieldOtherNumber);
+/**		panelLabelsAndTextFields.add(labelEmail);
+		panelLabelsAndTextFields.add(textFieldEmail);
+*/
+		centerPane.setLayout(new BoxLayout(centerPane,BoxLayout.Y_AXIS));
+		centerPane.add(new JScrollPane(table),BorderLayout.NORTH);
+		centerPane.add(panelLabelsAndTextFields,BorderLayout.CENTER);
+
 		getContentPane().add(topPane, BorderLayout.NORTH);
-		getContentPane().add(new JScrollPane(table), BorderLayout.CENTER);
+		getContentPane().add(centerPane, BorderLayout.CENTER);
 		getContentPane().add(bottomPane, BorderLayout.SOUTH);
 
-		setSize(new Dimension(800, 350));
+	    ButtonGroup group = new ButtonGroup();
+	    group.add(radioButtonHome);
+	    group.add(radioButtonMobile);
+	    group.add(radioButtonBusiness);
+	    group.add(radioButtonOther);
+
+		setSize(new Dimension(480, 500));
 	}
 
 	void saveButton_actionPerformed(ActionEvent e) {
-		jfritz.getPhonebook().updatePersons(personList);
 		jfritz.getPhonebook().saveToXMLFile(JFritz.PHONEBOOK_FILE);
+		oldPersonList = (Vector) jfritz.getPhonebook().getPersons().clone();
 	}
 
 	void cancelButton_actionPerformed(ActionEvent e) {
+		jfritz.getPhonebook().updatePersons(oldPersonList);
 		this.dispose();
 	}
 
 	void newButton_actionPerformed(ActionEvent e) {
-		Person newEntry = new Person("New", "", "Entry", "", "", "", "", "",
-				"", "", "", "");
-		personList.add(newEntry);
+		Person newEntry = new Person("New", "", "Entry", "", "", "", "", "", "",
+				"", "123", "", "");
 		AbstractTableModel model = (AbstractTableModel) table.getModel();
-		model.fireTableChanged(null);
+		jfritz.getPhonebook().getPersons().add(newEntry);
+		model.fireTableRowsInserted(model.getRowCount(),model.getRowCount());
 	}
 
 	void deleteButton_actionPerformed(ActionEvent e) {
 		int row = table.getSelectedRow();
 		if (row >= 0) {
 			AbstractTableModel model = (AbstractTableModel) table.getModel();
-			personList.remove(row);
+			jfritz.getPhonebook().getPersons().remove(row);
 
 			//		model.fireTableDataChanged();
 			model.fireTableRowsDeleted(row, row);

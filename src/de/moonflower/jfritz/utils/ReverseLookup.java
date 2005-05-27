@@ -143,8 +143,8 @@ public class ReverseLookup {
 			// Add a comma after surname
 			match = match.substring(0, match.indexOf(" ")) + ","
 					+ match.substring(match.indexOf(" "));
-			// Replace 'u.' with '&'
-			match = match.replaceAll("( u\\.)", "&");
+			// Replace 'u.' with 'und'
+			match = match.replaceAll("( u\\.)", "und");
 			// Put parentheses around last word
 			match = match.replaceFirst("  ([\\S]*)", " ($1)");
 		}

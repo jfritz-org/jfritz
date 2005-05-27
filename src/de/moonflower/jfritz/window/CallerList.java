@@ -612,27 +612,40 @@ public class CallerList extends AbstractTableModel {
 						+ filterCallInFailed + "|" + filterCallOut + "|"
 						+ filterSearch);
 
-
 		try {
-			jfritz.getJframe().getCallertable().getCellEditor().cancelCellEditing();
-			} catch (NullPointerException e) {
-			}
-
+			jfritz.getJframe().getCallertable().getCellEditor()
+					.cancelCellEditing();
+		} catch (NullPointerException e) {
+		}
 
 		if ((!filterCallIn) && (!filterCallInFailed) && (!filterCallOut)
 				&& (!filterNumber) && (filterSearch.length() == 0)) {
+			// Use unfiltered data
 			filteredCallerData = unfilteredCallerData;
 			sortAllFilteredRowsBy(sortColumn, sortDirection);
-		} else {
+		} else { // Data got to be filtered
 			Enumeration en = unfilteredCallerData.elements();
 			Vector filteredcallerdata;
 			filteredcallerdata = new Vector();
 			while (en.hasMoreElements()) {
 				Call call = (Call) en.nextElement();
-				if (filterSearch.length() == 0
-						|| call.getNumber().indexOf(filterSearch) > -1
-						|| call.getParticipant().toLowerCase().indexOf(
-								filterSearch.toLowerCase()) > -1)
+
+				// SearchFilter: Number, Participant, Date
+				boolean searchFilterPassed = true;
+				String part[] = filterSearch.split(" ");
+				for (int i = 0; i < part.length; i++) {
+					if (part[i].length() > 0
+							&& call.getNumber().indexOf(part[i]) == -1
+							&& call.getParticipant().toLowerCase().indexOf(
+									part[i].toLowerCase()) == -1
+							&& (!part[i].contains(".") || new SimpleDateFormat(
+									"dd.MM.yy").format(call.getCalldate())
+									.indexOf(part[i]) == -1)) {
+						searchFilterPassed = false;
+						break;
+					}
+				}
+				if (searchFilterPassed)
 					if (!(filterNumber && call.getNumber().equals(""))) {
 						if ((!filterCallIn)
 								&& (call.getCalltype().toInt() == CallType.CALLIN))

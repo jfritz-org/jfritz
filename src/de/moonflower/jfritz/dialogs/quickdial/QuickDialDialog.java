@@ -194,7 +194,7 @@ public class QuickDialDialog extends JDialog {
 		};
 		table.setRowHeight(24);
 		table.setFocusable(false);
-		table.setAutoCreateColumnsFromModel(false);
+		table.setAutoCreateColumnsFromModel(true);
 		table.setColumnSelectionAllowed(false);
 		table.setCellSelectionEnabled(false);
 		table.setRowSelectionAllowed(true);
@@ -206,7 +206,7 @@ public class QuickDialDialog extends JDialog {
 				new TextFieldCellEditor());
 		table.getColumnModel().getColumn(1).setCellEditor(
 				new TextFieldCellEditor());
-		// TODO new NumberFieldCellEditor());
+		// TODO new QuickDialFieldCellEditor());
 		table.getColumnModel().getColumn(2).setCellEditor(
 				new TextFieldCellEditor());
 		table.getColumnModel().getColumn(3).setCellEditor(
@@ -214,15 +214,14 @@ public class QuickDialDialog extends JDialog {
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
+
 		panel.add(toolbar, BorderLayout.NORTH);
 		panel.add(new JScrollPane(table), BorderLayout.CENTER);
-
 		panel.add(bottomPane, BorderLayout.SOUTH);
+
 		getContentPane().add(panel);
 
 		setSize(new Dimension(600, 350));
-		// setResizable(false);
-		// pack();
 	}
 
 	public boolean okPressed() {

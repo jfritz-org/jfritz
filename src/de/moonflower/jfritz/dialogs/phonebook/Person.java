@@ -26,6 +26,8 @@ public class Person {
 
 	private String otherTelephoneNumber;
 
+	private String standardTelephoneNumber;
+
 	private String emailAddress;
 
 	private String category;
@@ -34,7 +36,7 @@ public class Person {
 			String street, String postalCode, String city,
 			String homeTelephoneNumber, String mobileTelephoneNumber,
 			String businessTelephoneNumber, String otherTelephoneNumber,
-			String emailAddress, String category) {
+			String standardTelephoneNumber, String emailAddress, String category) {
 		this.firstName = firstName;
 		this.middleName = middleName;
 		this.lastName = lastName;
@@ -45,6 +47,7 @@ public class Person {
 		this.mobileTelephoneNumber = mobileTelephoneNumber;
 		this.businessTelephoneNumber = businessTelephoneNumber;
 		this.otherTelephoneNumber = otherTelephoneNumber;
+		this.standardTelephoneNumber = standardTelephoneNumber;
 		this.emailAddress = emailAddress;
 		this.category = category;
 	}
@@ -154,4 +157,31 @@ public class Person {
 	public void setCategory(String category) {
 		this.category = category;
 	}
+
+	/**
+	 * @return Returns the standardTelephoneNumber.
+	 */
+	public String getStandardTelephoneNumber() {
+		return standardTelephoneNumber;
+	}
+	/**
+	 * @param standardTelephoneNumber The standardTelephoneNumber to set.
+	 */
+	public void setStandardTelephoneNumber(String standardTelephoneNumber) {
+		this.standardTelephoneNumber = standardTelephoneNumber;
+	}
+
+	/**
+	 * Checks if person has telephonnumber number
+	 * @param number
+	 * @return
+	 */
+	public boolean hasNumber(String number) {
+		if (number.equals(homeTelephoneNumber)) return true;
+		else if (number.equals(mobileTelephoneNumber)) return true;
+		else if (number.equals(businessTelephoneNumber)) return true;
+		else if (number.equals(otherTelephoneNumber)) return true;
+		else return false;
+	}
 }
+

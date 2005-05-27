@@ -97,6 +97,8 @@ public class PhoneBookTableModel extends AbstractTableModel {
 						+ current.getBusinessTelNumber() + "</businessnumber>");
 				pw.println("\t<othernumber>" + current.getOtherTelNumber()
 						+ "</othernumber>");
+				pw.println("\t<standardnumber>" + current.getStandardTelephoneNumber()
+						+ "</standardnumber>");
 				pw
 						.println("\t<email>" + current.getEmailAddress()
 								+ "</email>");
@@ -170,29 +172,11 @@ public class PhoneBookTableModel extends AbstractTableModel {
 		Person person = (Person) persons.get(rowIndex);
 		switch (columnIndex) {
 		case 0:
-			return person.getFirstName();
+			return person.getFirstName() + " " + person.getMiddleName();
 		case 1:
-			return person.getMiddleName();
-		case 2:
 			return person.getLastName();
-		case 3:
-			return person.getHomeTelNumber();
-		case 4:
-			return person.getMobileTelNumber();
-		case 5:
-			return person.getBusinessTelNumber();
-		case 6:
-			return person.getOtherTelNumber();
-		case 7:
-			return person.getEmailAddress();
-		case 8:
-			return person.getStreet();
-		case 9:
-			return person.getPostalCode();
-		case 10:
-			return person.getCity();
-		case 11:
-			return person.getCategory();
+		case 2:
+			return person.getStandardTelephoneNumber();
 		default:
 			throw new IllegalArgumentException("Invalid column: " + columnIndex);
 		}
@@ -207,7 +191,7 @@ public class PhoneBookTableModel extends AbstractTableModel {
 	}
 
 	public int getColumnCount() {
-		return 12;
+		return 3;
 	}
 
 	public String getColumnName(int column) {
@@ -215,28 +199,9 @@ public class PhoneBookTableModel extends AbstractTableModel {
 		case 0:
 			return jfritz.getMessages().getString("firstName");
 		case 1:
-			return jfritz.getMessages().getString("middleName");
-		case 2:
 			return jfritz.getMessages().getString("lastName");
-		case 3:
-			return jfritz.getMessages().getString("homeTelephoneNumber");
-		case 4:
-			return jfritz.getMessages().getString("mobileTelephoneNumber");
-		case 5:
-			return jfritz.getMessages().getString("businessTelephoneNumber");
-		case 6:
-			return jfritz.getMessages().getString("otherTelephoneNumber");
-		case 7:
-			return jfritz.getMessages().getString("emailAddress");
-		case 8:
-			return jfritz.getMessages().getString("street");
-		case 9:
-			return jfritz.getMessages().getString("postalCode");
-		case 10:
-			return jfritz.getMessages().getString("city");
-		case 11:
-			return jfritz.getMessages().getString("category");
-
+		case 2:
+			return jfritz.getMessages().getString("telephoneNumber");
 		default:
 			return null;
 		}

@@ -49,9 +49,12 @@
  * - Sorting of columns by clicking on column headers
  * - VOIP numbers starting with 49 are now rewritten correctly
  * - SSDP Autodetection of Fritz!Boxes
+ * - QuickDial Management
+ * - Selection of multiple rows copies VCards to clipboard
  * - Bugfix: Config-Dialog now saves all values correctly
  * - Bugfix: No empty SIP provider after detection
  * - Bugfix: Save-Dialog on export functions
+ * - Code rearrangement
  *
  *
  * JFritz! 0.3.2:
@@ -143,7 +146,7 @@ public class JFritz {
 
 	public final static String PROGRAM_VERSION = "0.3.3";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.39 2005/05/26 06:23:19 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.40 2005/05/27 10:50:33 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
