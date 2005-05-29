@@ -166,7 +166,7 @@ public class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.42 2005/05/29 15:17:12 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.43 2005/05/29 16:22:24 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -190,7 +190,7 @@ public class JFritz {
 			.parseInt(PROGRAM_VERSION.substring(PROGRAM_VERSION
 					.lastIndexOf(".") + 1)) % 2 == 1;
 
-	public final static boolean SYSTRAY_SUPPORT = false;
+	public final static boolean SYSTRAY_SUPPORT = true;
 
 	private SystemTray systray;
 
