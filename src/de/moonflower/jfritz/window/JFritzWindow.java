@@ -777,10 +777,14 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 */
 	public void showExitDialog() {
 		// FIXME Option for direct closing
-		int exit = JOptionPane.showConfirmDialog(this, jfritz.getMessages()
-				.getString("really_quit"), JFritz.PROGRAM_NAME,
-				JOptionPane.YES_NO_OPTION);
-		if (exit == JOptionPane.YES_OPTION) {
+		boolean exit = true;
+
+		if (properties.getProperty("option.confirmOnExit", "true") == "true")
+			exit = JOptionPane.showConfirmDialog(this, jfritz.getMessages()
+					.getString("really_quit"), JFritz.PROGRAM_NAME,
+					JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+
+		if (exit) {
 			jfritz.saveProperties();
 			System.exit(0);
 		}

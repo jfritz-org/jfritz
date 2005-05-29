@@ -75,7 +75,7 @@ public class ConfigDialog extends JDialog {
 	private JButton okButton, cancelButton, boxtypeButton;
 
 	private JCheckBox deleteAfterFetchButton, fetchAfterStartButton,
-			notifyOnCallsButton;
+			notifyOnCallsButton,confirmOnExitButton;
 
 	private JLabel boxtypeLabel, macLabel;
 
@@ -115,6 +115,9 @@ public class ConfigDialog extends JDialog {
 				.getProperties().getProperty("option.fetchAfterStart")));
 		deleteAfterFetchButton.setSelected(JFritzUtils.parseBoolean(getJfritz()
 				.getProperties().getProperty("option.deleteAfterFetch")));
+		confirmOnExitButton.setSelected(JFritzUtils.parseBoolean(getJfritz()
+				.getProperties().getProperty("option.confirmOnExit","true")));
+
 		pass.setText(getJfritz().getProperties().getProperty("box.password"));
 		address.setText(getJfritz().getProperties().getProperty("box.address"));
 		areaCode.setText(getJfritz().getProperties().getProperty("area.code"));
@@ -168,6 +171,9 @@ public class ConfigDialog extends JDialog {
 				.toString(fetchAfterStartButton.isSelected()));
 		properties.setProperty("option.deleteAfterFetch", Boolean
 				.toString(deleteAfterFetchButton.isSelected()));
+		properties.setProperty("option.confirmOnExit", Boolean
+				.toString(confirmOnExitButton.isSelected()));
+
 		properties.setProperty("box.password", new String(pass.getPassword()));
 		properties.setProperty("box.address", address.getText());
 		properties.setProperty("area.code", areaCode.getText());
@@ -398,7 +404,10 @@ public class ConfigDialog extends JDialog {
 
 		notifyOnCallsButton = new JCheckBox("Bei neuen Anrufen benachrichtigen");
 		otherpane.add(notifyOnCallsButton);
-		// TODO Make this work :)
+
+		confirmOnExitButton = new JCheckBox("Bei Beenden nachfragen");
+		otherpane.add(confirmOnExitButton);
+
 		// notifyOnCallsButton.setEnabled(false);
 
 		// Create SIP Panel

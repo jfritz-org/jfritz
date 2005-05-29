@@ -20,7 +20,7 @@
  *
  * This piece of software is distributed in the hope that it will be
  * useful, but WITHOUT ANY WARRANTY; without even the implied warranty
- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * of MERCHANTABILITY or FöITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -166,7 +166,7 @@ public class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.43 2005/05/29 16:22:24 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.44 2005/05/29 22:03:31 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
