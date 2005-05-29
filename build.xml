@@ -15,6 +15,12 @@
 		<jar jarfile="${dist}/jfritz.jar" basedir="${build}"/>
 	</target>
 
+	<target name="lib-jar" description="makes the thirdparty jar">
+		<jar update="no" index="yes" jarfile="lib/jdic.jar">
+			<zipgroupfileset refid= "classpath-fileset"/>
+		</jar>
+	</target>
+
 	<target name="javadoc">
 		<javadoc access="public" author="true" classpath="${build}" destdir="${doc}" doctitle="JFritz! Documentation" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="de.moonflower.jfritz,de.moonflower.jfritz.upnp" source="1.4" sourcepath="src" splitindex="true" use="true" version="true"/>
 	</target>
