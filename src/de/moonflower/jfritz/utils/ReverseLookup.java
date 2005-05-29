@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 /**
  * Class for telephone number reverse lookup using "dasoertliche.de"
  *
@@ -81,6 +80,11 @@ public class ReverseLookup {
 	}
 
 	public static String getMobileProvider(String number) {
+		if (number.length() < 5)
+			return "";
+		Object provider = mobileMap.get(number.substring(0, 4));
+		if (provider == null)
+			return "";
 		return mobileMap.get(number.substring(0, 4)).toString();
 	}
 
@@ -128,7 +132,7 @@ public class ReverseLookup {
 						.compile("<a class=\"blb\" href=\"[^\"]*\">([^<]*)</a>");
 				Matcher m = p.matcher(data);
 				if (m.find()) {
-					Debug.msg(3,"Pattern: "+m.group(1).trim());
+					Debug.msg(3, "Pattern: " + m.group(1).trim());
 					return beautifyMatch(m.group(1).trim());
 				}
 			} catch (IOException e1) {
@@ -139,7 +143,7 @@ public class ReverseLookup {
 	}
 
 	public static String beautifyMatch(String match) {
-		if (match.indexOf(" ")>0) {
+		if (match.indexOf(" ") > 0) {
 			// Add a comma after surname
 			match = match.substring(0, match.indexOf(" ")) + ","
 					+ match.substring(match.indexOf(" "));

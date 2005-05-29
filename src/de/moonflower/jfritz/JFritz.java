@@ -29,10 +29,10 @@
  *
  *
  * TODO:
+ * SIP-Provider: Nach Fetch Table neu aufbauen
  * Optionen-Dialog: box.clear_after_fetch=true/false
  * Optionen-Dialog: Bei Programmstart automatisch abrufen
  *
- * SIP-Provider: SIP-Provider Handling
  * QuickDial: Kurzwahlverwaltung
  * Phonebook: Telefonbuch für Participants
  *
@@ -44,6 +44,12 @@
  * JAR: Signing, Deploying, Website jfritz.moonflower.de oder Sourceforge
  *
  * CHANGELOG:
+ *
+ * JFritz! 0.3.5
+ * - New mobile phone filter feature
+ * - Systray support for Unix/Windows
+ * - Systray ballon messages
+ * - Browser opening on Unix platforms
  *
  * JFritz! 0.3.4
  * - New search filter feature
@@ -117,6 +123,8 @@
 
 package de.moonflower.jfritz;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -127,8 +135,14 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Vector;
 
+import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.table.TableColumn;
+
+import org.jdesktop.jdic.tray.SystemTray;
+import org.jdesktop.jdic.tray.TrayIcon;
 
 import de.moonflower.jfritz.dialogs.phonebook.PhoneBookTableModel;
 import de.moonflower.jfritz.utils.Debug;
@@ -146,11 +160,13 @@ public class JFritz {
 
 	public final static String PROGRAM_NAME = "JFritz!";
 
-	public final static String PROGRAM_VERSION = "0.3.4";
+	public final static String PROGRAM_VERSION = "0.3.5";
 
 	public final static String PROGRAM_URL = "http://jfritz.sourceforge.net/";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.41 2005/05/27 20:44:42 akw Exp $";
+	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
+
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.42 2005/05/29 15:17:12 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -174,6 +190,12 @@ public class JFritz {
 			.parseInt(PROGRAM_VERSION.substring(PROGRAM_VERSION
 					.lastIndexOf(".") + 1)) % 2 == 1;
 
+	public final static boolean SYSTRAY_SUPPORT = false;
+
+	private SystemTray systray;
+
+	private TrayIcon trayIcon;
+
 	private JFritzWindow jframe;
 
 	private ResourceBundle messages;
@@ -189,13 +211,12 @@ public class JFritz {
 
 	private PhoneBookTableModel phonebook;
 
-
 	/**
 	 *
 	 */
 	public JFritz() {
-		loadProperties();
 		new ReverseLookup();
+		loadProperties();
 		loadMessages(new Locale("de", "DE"));
 		callerlist = new CallerList(this);
 		callerlist.loadFromXMLFile(CALLS_FILE);
@@ -205,6 +226,11 @@ public class JFritz {
 
 		jframe = new JFritzWindow(this);
 
+		if (SYSTRAY_SUPPORT) {
+			systray = SystemTray.getDefaultSystemTray();
+			createTrayMenu();
+		}
+
 		ssdpthread = new SSDPdiscoverThread(this, SSDP_TIMEOUT);
 		ssdpthread.start();
 
@@ -212,6 +238,53 @@ public class JFritz {
 	}
 
 	/**
+	 * Creates the tray icon menu
+	 */
+	private void createTrayMenu() {
+		System.setProperty("javax.swing.adjustPopupLocationToFit", "false");
+
+		JPopupMenu menu = new JPopupMenu("JFritz! Menu");
+		JMenuItem menuItem = new JMenuItem(PROGRAM_NAME + " v"
+				+ PROGRAM_VERSION);
+		menuItem.setEnabled(false);
+		menu.add(menuItem);
+		menu.addSeparator();
+		menuItem = new JMenuItem(getMessages().getString("fetchlist"));
+		menuItem.setActionCommand("fetchList");
+		menuItem.addActionListener(jframe);
+		menu.add(menuItem);
+		menuItem = new JMenuItem(getMessages().getString("reverse_lookup"));
+		menuItem.setActionCommand("reverselookup");
+		menuItem.addActionListener(jframe);
+		menu.add(menuItem);
+		menuItem = new JMenuItem(getMessages().getString("config"));
+		menuItem.setActionCommand("config");
+		menuItem.addActionListener(jframe);
+		menu.add(menuItem);
+		menu.addSeparator();
+		menuItem = new JMenuItem(getMessages().getString("prog_exit"));
+		menuItem.setActionCommand("exit");
+		menuItem.addActionListener(jframe);
+		menu.add(menuItem);
+
+		ImageIcon icon = new ImageIcon(
+				JFritz.class
+						.getResource("/de/moonflower/jfritz/resources/images/phone.png"));
+
+		trayIcon = new TrayIcon(icon, "JFritz!", menu);
+		trayIcon.setIconAutoSize(false);
+		trayIcon
+				.setCaption(JFritz.PROGRAM_NAME + " v" + JFritz.PROGRAM_VERSION);
+		trayIcon.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				jframe.setVisible(!jframe.isVisible());
+			}
+		});
+		systray.addTrayIcon(trayIcon);
+	}
+
+	/**
+	 * Loads resource messages
 	 *
 	 * @param locale
 	 */
@@ -389,5 +462,25 @@ public class JFritz {
 		} catch (InterruptedException e) {
 		}
 		return ssdpthread.getDevices();
+	}
+
+	/**
+	 * @return Returns the trayIcon.
+	 */
+	public final TrayIcon getTrayIcon() {
+		return trayIcon;
+	}
+
+	/**
+	 * Displays balloon info message
+	 *
+	 * @param msg
+	 */
+	public void infoMsg(String msg) {
+		Debug.msg(msg);
+		if (SYSTRAY_SUPPORT) {
+			getTrayIcon().displayMessage(JFritz.PROGRAM_NAME, msg,
+					TrayIcon.INFO_MESSAGE_TYPE);
+		}
 	}
 }

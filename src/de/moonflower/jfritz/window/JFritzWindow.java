@@ -13,6 +13,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
@@ -45,9 +46,12 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.filechooser.FileFilter;
 
+import org.jdesktop.jdic.desktop.Desktop;
+
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.dialogs.AddressPasswordDialog;
 import de.moonflower.jfritz.dialogs.ConfigDialog;
+import de.moonflower.jfritz.dialogs.phonebook.Person;
 import de.moonflower.jfritz.dialogs.phonebook.PhoneBookDialog;
 import de.moonflower.jfritz.dialogs.quickdial.QuickDialDialog;
 import de.moonflower.jfritz.dialogs.stats.StatsDialog;
@@ -59,7 +63,6 @@ import de.moonflower.jfritz.utils.ReverseLookup;
 import de.moonflower.jfritz.utils.SwingWorker;
 import de.moonflower.jfritz.vcard.VCard;
 import de.moonflower.jfritz.vcard.VCardList;
-import de.moonflower.jfritz.dialogs.phonebook.Person;
 
 /**
  * This is main window class of JFritz, which creates the GUI.
@@ -102,7 +105,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		this.jfritz = jfritz;
 		setProperties(jfritz.getProperties(), jfritz.getParticipants());
 		createGUI();
-		setVisible(true);
+		if (properties.getProperty("option.startminimized", "false") != "true") {
+			setVisible(true);
+		}
 	}
 
 	private void createGUI() {
@@ -306,6 +311,15 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		tb.setToolTipText(jfritz.getMessages().getString("filter_number"));
 		tb.setSelected(!JFritzUtils.parseBoolean(properties.getProperty(
 				"filter.number", "false")));
+		fBar.add(tb);
+
+		tb = new JToggleButton(getImage("handy_grey.png"), true);
+		tb.setSelectedIcon(getImage("handy.png"));
+		tb.setActionCommand("filter_handy");
+		tb.addActionListener(this);
+		tb.setToolTipText(jfritz.getMessages().getString("filter_handy"));
+		tb.setSelected(!JFritzUtils.parseBoolean(properties.getProperty(
+				"filter.handy", "false")));
 		fBar.add(tb);
 
 		dateButton = new JToggleButton(getImage("calendar_grey.png"), true);
@@ -762,6 +776,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * Shows the exit dialog
 	 */
 	public void showExitDialog() {
+		// FIXME Option for direct closing
 		int exit = JOptionPane.showConfirmDialog(this, jfritz.getMessages()
 				.getString("really_quit"), JFritz.PROGRAM_NAME,
 				JOptionPane.YES_NO_OPTION);
@@ -807,10 +822,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 *
 	 */
 	public void setStatus() {
-		progressbar.setString(jfritz.getCallerlist().getRowCount() + " "
+		String status = jfritz.getCallerlist().getRowCount() + " "
 				+ jfritz.getMessages().getString("entries") + ", "
 				+ jfritz.getMessages().getString("total_duration") + ": "
-				+ (jfritz.getCallerlist().getTotalDuration() / 60) + " min");
+				+ (jfritz.getCallerlist().getTotalDuration() / 60) + " min";
+		progressbar.setString(status);
 	}
 
 	/**
@@ -821,8 +837,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	public void setStatus(String status) {
 		if (status.equals(""))
 			setStatus();
-		else
+		else {
 			progressbar.setString(status);
+			// jfritz.infoMsg(status);
+		}
 	}
 
 	/**
@@ -858,16 +876,22 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		} else if (e.getActionCommand() == "about") {
 			showAboutDialog();
 		} else if (e.getActionCommand() == "help") {
-			Debug.err("No help available yet");
-		} else if (e.getActionCommand() == "website") {
-			final String url = "http://jfritz.sourceforge.net/";
 			try {
-				Runtime.getRuntime().exec(
-						"rundll32 url.dll,FileProtocolHandler " + url);
-			} catch (IOException e1) { // FIXME
+				Desktop.browse(new URL(JFritz.DOCUMENTATION_URL));
+			} catch (Exception e1) {
+				Debug.err("Website opening works only on win32 platforms.");
+				JOptionPane.showMessageDialog(this, "Please visit "
+						+ JFritz.DOCUMENTATION_URL);
+			}
+		} else if (e.getActionCommand() == "website") {
+			try {
+				// Runtime.getRuntime().exec("rundll32
+				// url.dll,FileProtocolHandler "+ JFritz.PROGRAM_URL);
+				Desktop.browse(new URL(JFritz.PROGRAM_URL));
+			} catch (Exception e1) {
+				Debug.err("Website opening works only on win32 platforms.");
 				JOptionPane.showMessageDialog(this, "Please visit "
 						+ JFritz.PROGRAM_URL);
-				Debug.err("Website opening works only on win32 platforms.");
 			}
 		} else if (e.getActionCommand() == "export_csv") {
 
@@ -923,6 +947,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			jfritz.getCallerlist().fireTableStructureChanged();
 		} else if (e.getActionCommand() == "filter_number") {
 			properties.setProperty("filter.number", Boolean
+					.toString(!((JToggleButton) e.getSource()).isSelected()));
+			jfritz.getCallerlist().updateFilter();
+			jfritz.getCallerlist().fireTableStructureChanged();
+		} else if (e.getActionCommand() == "filter_handy") {
+			properties.setProperty("filter.handy", Boolean
 					.toString(!((JToggleButton) e.getSource()).isSelected()));
 			jfritz.getCallerlist().updateFilter();
 			jfritz.getCallerlist().fireTableStructureChanged();

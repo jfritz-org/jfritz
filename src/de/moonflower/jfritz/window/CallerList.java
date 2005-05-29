@@ -21,7 +21,6 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -348,13 +347,13 @@ public class CallerList extends AbstractTableModel {
 				&& (newEntries > 0)) {
 			Debug.msg(newEntries + " new calls retrieved!");
 			// TODO: I18N
+			String msg;
 			if (newEntries == 1) {
-				JOptionPane.showMessageDialog(null,
-						"Ein neuer Anruf empfangen!");
+				msg = "Ein neuer Anruf empfangen!";
 			} else {
-				JOptionPane.showMessageDialog(null, newEntries
-						+ " neue Anrufe empfangen!");
+				msg = newEntries + " neue Anrufe empfangen!";
 			}
+			jfritz.infoMsg(msg);
 
 		}
 		// Clear data on fritz box ?
@@ -605,6 +604,8 @@ public class CallerList extends AbstractTableModel {
 				.getProperty("filter.callout"));
 		boolean filterNumber = JFritzUtils.parseBoolean(jfritz.getProperties()
 				.getProperty("filter.number"));
+		boolean filterHandy = JFritzUtils.parseBoolean(jfritz.getProperties()
+				.getProperty("filter.handy"));
 		boolean filterDate = JFritzUtils.parseBoolean(jfritz.getProperties()
 				.getProperty("filter.date"));
 		String filterSearch = jfritz.getProperties().getProperty(
@@ -626,7 +627,7 @@ public class CallerList extends AbstractTableModel {
 		}
 
 		if ((!filterCallIn) && (!filterCallInFailed) && (!filterCallOut)
-				&& (!filterNumber) && (!filterDate)
+				&& (!filterNumber) && (!filterDate) && (!filterHandy)
 				&& (filterSearch.length() == 0)) {
 			// Use unfiltered data
 			filteredCallerData = unfilteredCallerData;
@@ -639,6 +640,7 @@ public class CallerList extends AbstractTableModel {
 				Call call = (Call) en.nextElement();
 				boolean dateFilterPassed = true;
 				boolean searchFilterPassed = true;
+				boolean handyFilterPassed = true;
 
 				// SearchFilter: Number, Participant, Date
 				String parts[] = filterSearch.split(" ");
@@ -668,15 +670,18 @@ public class CallerList extends AbstractTableModel {
 				} catch (ParseException e1) {
 				}
 
-				if (searchFilterPassed && dateFilterPassed)
+				if (filterHandy && !(call.isMobileCall()))
+					handyFilterPassed = false;
+
+				if (searchFilterPassed && dateFilterPassed && handyFilterPassed)
 					if (!(filterNumber && call.getNumber().equals(""))) {
 						if ((!filterCallIn)
 								&& (call.getCalltype().toInt() == CallType.CALLIN))
 							filteredcallerdata.add(call);
-						if ((!filterCallInFailed)
+						else if ((!filterCallInFailed)
 								&& (call.getCalltype().toInt() == CallType.CALLIN_FAILED))
 							filteredcallerdata.add(call);
-						if ((!filterCallOut)
+						else if ((!filterCallOut)
 								&& (call.getCalltype().toInt() == CallType.CALLOUT))
 							filteredcallerdata.add(call);
 					}
@@ -684,7 +689,6 @@ public class CallerList extends AbstractTableModel {
 			filteredCallerData = filteredcallerdata;
 			sortAllFilteredRowsBy(sortColumn, sortDirection);
 		}
-		// FIXME
 		if (jfritz.getJframe() != null)
 			jfritz.getJframe().setStatus();
 	}

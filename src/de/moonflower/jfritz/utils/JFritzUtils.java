@@ -162,14 +162,15 @@ public class JFritzUtils {
 	 * @throws WrongPasswordException
 	 * @throws IOException
 	 */
-	public static Vector retrieveQuickDialsFromFritzBox(QuickDialTableModel model,String box_address,
-			String box_password, FritzBoxFirmware firmware)
-			throws WrongPasswordException, IOException {
+	public static Vector retrieveQuickDialsFromFritzBox(
+			QuickDialTableModel model, String box_address, String box_password,
+			FritzBoxFirmware firmware) throws WrongPasswordException,
+			IOException {
 		String postdata = firmware.getAccessMethod() + POSTDATA_QUICKDIAL
 				+ box_password;
 		String urlstr = "http://" + box_address + "/cgi-bin/webcm";
 		String data = fetchDataFromURL(urlstr, postdata);
-		return parseQuickDialData(model,data, firmware);
+		return parseQuickDialData(model, data, firmware);
 	}
 
 	/**
@@ -324,8 +325,8 @@ public class JFritzUtils {
 	 * @param firmware
 	 * @return list of QuickDial objects
 	 */
-	public static Vector parseQuickDialData(QuickDialTableModel model,String data,
-			FritzBoxFirmware firmware) {
+	public static Vector parseQuickDialData(QuickDialTableModel model,
+			String data, FritzBoxFirmware firmware) {
 		Vector list = new Vector();
 		data = removeDuplicateWhitespace(data);
 		Pattern p = Pattern.compile(PATTERN_QUICKDIAL);
@@ -333,7 +334,8 @@ public class JFritzUtils {
 
 		while (m.find()) {
 			String description = model.getDescriptionFromNumber(m.group(3));
-			list.add(new QuickDial(m.group(1), m.group(2), m.group(3), description));
+			list.add(new QuickDial(m.group(1), m.group(2), m.group(3),
+					description));
 		}
 		return list;
 	}
@@ -433,6 +435,20 @@ public class JFritzUtils {
 			return true;
 		else
 			return false;
+	}
+
+	public static String lookupAreaCode(String number) {
+		Debug.msg("Looking up " + number + "...");
+		// FIXME: Does not work (Cookies)
+		String urlstr = "http://www.vorwahl.de/national.php";
+		String postdata = "search=1&vorwahl=" + number;
+		String data = "";
+		try {
+			data = fetchDataFromURL(urlstr, postdata);
+		} catch (Exception e) {
+		}
+		System.out.println("DATA: " + data.trim());
+		return "";
 	}
 
 }
