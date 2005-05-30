@@ -418,7 +418,7 @@ public class ConfigDialog extends JDialog {
 		deleteAfterFetchButton = new JCheckBox("Nach Laden auf Box löschen");
 		otherpane.add(deleteAfterFetchButton);
 		// TODO Make this work :)
-		deleteAfterFetchButton.setEnabled(false);
+//		deleteAfterFetchButton.setEnabled(false);
 
 		startMinimizedButton = new JCheckBox("Programm minimiert starten");
 		otherpane.add(startMinimizedButton);
