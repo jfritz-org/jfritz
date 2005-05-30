@@ -342,12 +342,16 @@ public class CallerList extends AbstractTableModel {
 		saveToXMLFile(JFritz.CALLS_FILE);
 
 		// Notify user?
-		if (jfritz.getProperties().getProperty("option.notifyOnCalls", "false")
-				.equals("true")
+		if ((jfritz.getProperties().getProperty("option.notifyOnCalls")
+				.equals("true"))
 				&& (newEntries > 0)) {
+			jfritz.getJframe().setVisible(true);
+			jfritz.getJframe().toFront();
+		}
+		if (newEntries > 0) {
 			Debug.msg(newEntries + " new calls retrieved!");
-			// TODO: I18N
 			String msg;
+			// TODO: I18N
 			if (newEntries == 1) {
 				msg = "Ein neuer Anruf empfangen!";
 			} else {

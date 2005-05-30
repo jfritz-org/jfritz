@@ -105,9 +105,19 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		this.jfritz = jfritz;
 		setProperties(jfritz.getProperties(), jfritz.getParticipants());
 		createGUI();
-		if (properties.getProperty("option.startminimized", "false") != "true") {
+		if (!properties.getProperty("option.startMinimized", "false").equals(
+				"true")) {
 			setVisible(true);
 		}
+		if (properties.getProperty("option.timerAfterStart", "false").equals(
+				"true")) {
+			taskButton.doClick();
+		}
+		if (properties.getProperty("option.fetchAfterStart", "false").equals(
+				"true")) {
+			fetchButton.doClick();
+		}
+
 	}
 
 	private void createGUI() {
@@ -174,7 +184,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		fetchButton.setIcon(getImage("fetch.png"));
 		fetchButton.setFocusPainted(false);
 		mBar.add(fetchButton);
-
 		taskButton = new JToggleButton();
 		taskButton.setToolTipText(jfritz.getMessages().getString("fetchtask"));
 		taskButton.setActionCommand("fetchTask");

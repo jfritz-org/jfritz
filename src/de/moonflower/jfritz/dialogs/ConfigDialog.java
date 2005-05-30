@@ -38,6 +38,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.TableCellRenderer;
 
 import de.moonflower.jfritz.JFritz;
@@ -75,9 +77,9 @@ public class ConfigDialog extends JDialog {
 	private JButton okButton, cancelButton, boxtypeButton;
 
 	private JCheckBox deleteAfterFetchButton, fetchAfterStartButton,
-			notifyOnCallsButton,confirmOnExitButton;
+			notifyOnCallsButton,confirmOnExitButton,startMinimizedButton,timerAfterStartButton;
 
-	private JLabel boxtypeLabel, macLabel;
+	private JLabel boxtypeLabel, macLabel, timerLabel;
 
 	private FritzBoxFirmware firmware;
 
@@ -113,10 +115,14 @@ public class ConfigDialog extends JDialog {
 				.getProperties().getProperty("option.notifyOnCalls")));
 		fetchAfterStartButton.setSelected(JFritzUtils.parseBoolean(getJfritz()
 				.getProperties().getProperty("option.fetchAfterStart")));
+		timerAfterStartButton.setSelected(JFritzUtils.parseBoolean(getJfritz()
+				.getProperties().getProperty("option.timerAfterStart")));
 		deleteAfterFetchButton.setSelected(JFritzUtils.parseBoolean(getJfritz()
 				.getProperties().getProperty("option.deleteAfterFetch")));
 		confirmOnExitButton.setSelected(JFritzUtils.parseBoolean(getJfritz()
 				.getProperties().getProperty("option.confirmOnExit","true")));
+		startMinimizedButton.setSelected(JFritzUtils.parseBoolean(getJfritz()
+				.getProperties().getProperty("option.startMinimized","false")));
 
 		pass.setText(getJfritz().getProperties().getProperty("box.password"));
 		address.setText(getJfritz().getProperties().getProperty("box.address"));
@@ -169,10 +175,14 @@ public class ConfigDialog extends JDialog {
 				.toString(notifyOnCallsButton.isSelected()));
 		properties.setProperty("option.fetchAfterStart", Boolean
 				.toString(fetchAfterStartButton.isSelected()));
+		properties.setProperty("option.timerAfterStart", Boolean
+				.toString(timerAfterStartButton.isSelected()));
 		properties.setProperty("option.deleteAfterFetch", Boolean
 				.toString(deleteAfterFetchButton.isSelected()));
 		properties.setProperty("option.confirmOnExit", Boolean
 				.toString(confirmOnExitButton.isSelected()));
+		properties.setProperty("option.startMinimized", Boolean
+				.toString(startMinimizedButton.isSelected()));
 
 		properties.setProperty("box.password", new String(pass.getPassword()));
 		properties.setProperty("box.address", address.getText());
@@ -225,6 +235,14 @@ public class ConfigDialog extends JDialog {
 		timerSlider.setMinorTickSpacing(10);
 		timerSlider.setMajorTickSpacing(30);
 		timerSlider.setPaintLabels(true);
+		timerSlider.setName("bla");
+		timerSlider.addChangeListener( new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				if (timerSlider.getValue()<3) timerSlider.setValue(3);
+				timerLabel.setText("Timer: "+timerSlider.getValue()+" min.");
+			}
+
+		});
 
 		KeyListener keyListener = (new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
@@ -388,30 +406,29 @@ public class ConfigDialog extends JDialog {
 		phonepane.add(countryPrefix);
 
 		otherpane.setLayout(new BoxLayout(otherpane, BoxLayout.Y_AXIS));
-		label = new JLabel("Timer (in min): ");
-		otherpane.add(label);
+		timerLabel = new JLabel("Timer (in min): ");
+		otherpane.add(timerLabel);
 		otherpane.add(timerSlider);
 
 		fetchAfterStartButton = new JCheckBox("Nach Programmstart Liste holen");
 		otherpane.add(fetchAfterStartButton);
-		// TODO Make this work :)
-		fetchAfterStartButton.setEnabled(false);
+
+		timerAfterStartButton = new JCheckBox("Nach Programmstart Timer aktivieren");
+		otherpane.add(timerAfterStartButton);
 
 		deleteAfterFetchButton = new JCheckBox("Nach Laden auf Box löschen");
 		otherpane.add(deleteAfterFetchButton);
 		// TODO Make this work :)
 		deleteAfterFetchButton.setEnabled(false);
 
-		notifyOnCallsButton = new JCheckBox("Bei neuen Anrufen benachrichtigen");
+		startMinimizedButton = new JCheckBox("Programm minimiert starten");
+		otherpane.add(startMinimizedButton);
+
+		notifyOnCallsButton = new JCheckBox("Bei neuen Anrufen Fenster in den Vordergrund");
 		otherpane.add(notifyOnCallsButton);
 
 		confirmOnExitButton = new JCheckBox("Bei Beenden nachfragen");
 		otherpane.add(confirmOnExitButton);
-
-		// notifyOnCallsButton.setEnabled(false);
-
-		// Create SIP Panel
-		// TODO: To do it :-)
 
 		JPanel sipButtonPane = new JPanel();
 		sipmodel = new SipProviderTableModel();
