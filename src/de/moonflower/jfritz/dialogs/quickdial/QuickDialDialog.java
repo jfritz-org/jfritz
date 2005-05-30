@@ -36,6 +36,7 @@ import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.window.JFritzWindow;
 import de.moonflower.jfritz.window.TextFieldCellEditor;
 
+
 /**
  * @author Arno Willig
  *

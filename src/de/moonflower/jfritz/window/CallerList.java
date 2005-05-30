@@ -295,12 +295,12 @@ public class CallerList extends AbstractTableModel {
 	 */
 	public boolean addEntry(Call call) {
 		boolean newEntry = true;
-
-		for (Enumeration el = getUnfilteredCallVector().elements(); el
-				.hasMoreElements();) {
-
-			Date d = ((Call) el.nextElement()).getCalldate();
-			if (d.equals(call.getCalldate())) { // We already have this call
+		Enumeration en = getUnfilteredCallVector().elements();
+		while (en.hasMoreElements()) {
+			Call c = (Call) en.nextElement();
+			if (c.getCalldate().equals(call.getCalldate())
+					&& (c.getNumber().equals(call.getNumber()))) {
+				// We already have this call
 				newEntry = false;
 				break;
 			}

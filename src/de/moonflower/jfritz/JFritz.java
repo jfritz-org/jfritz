@@ -50,6 +50,7 @@
  * - Systray support for Unix/Windows
  * - Systray ballon messages
  * - Browser opening on Unix platforms
+ * - Bugfix: Call with same timestamp are collected
  *
  * JFritz! 0.3.4
  * - New search filter feature
@@ -166,7 +167,7 @@ public class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.44 2005/05/29 22:03:31 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.45 2005/05/30 22:26:32 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -206,16 +207,15 @@ public class JFritz {
 
 	private SSDPdiscoverThread ssdpthread;
 
-	// Table models
 	private CallerList callerlist;
 
 	private PhoneBookTableModel phonebook;
 
 	/**
-	 *
+	 *  Constructs JFritz object
 	 */
 	public JFritz() {
-		new ReverseLookup();
+		new ReverseLookup(); // Initialize ReverseLookup
 		loadProperties();
 		loadMessages(new Locale("de", "DE"));
 		callerlist = new CallerList(this);
@@ -227,14 +227,48 @@ public class JFritz {
 		jframe = new JFritzWindow(this);
 
 		if (SYSTRAY_SUPPORT) {
-			systray = SystemTray.getDefaultSystemTray();
-			createTrayMenu();
+			try {
+				systray = SystemTray.getDefaultSystemTray();
+				createTrayMenu();
+			} catch (Exception e) {
+				Debug.err(e.toString());
+			}
 		}
 
 		ssdpthread = new SSDPdiscoverThread(this, SSDP_TIMEOUT);
 		ssdpthread.start();
 
 		javax.swing.SwingUtilities.invokeLater(jframe);
+	}
+
+	/**
+	 * Main method for starting JFritz!
+	 *
+	 * @param args
+	 *            Program arguments (-h -v)
+	 */
+	public static void main(String[] args) {
+		System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION
+				+ " (c) 2005 by " + PROGRAM_AUTHOR);
+
+		if (DEVEL_VERSION)
+			Debug.on();
+
+		for (int n = 0; n < args.length; n++) {
+			String opt = args[n];
+			if (opt.equals("-h") || opt.equals("--help")) {
+				System.out.println("Arguments:");
+				System.out.println(" -h or --help		This short description");
+				System.out
+						.println(" -v or --verbose	Turn on debug information");
+				System.exit(0);
+			} else if (opt.equals("-v") || opt.equals("--verbose")
+					|| opt.equals("--debug")) {
+				Debug.on();
+			}
+		}
+
+		new JFritz();
 	}
 
 	/**
@@ -382,34 +416,19 @@ public class JFritz {
 	}
 
 	/**
-	 * Main method for starting JFritz!
+	 * Displays balloon info message
 	 *
-	 * @param args
-	 *            Program arguments (-h -v)
+	 * @param msg
 	 */
-	public static void main(String[] args) {
-		System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION
-				+ " (c) 2005 by " + PROGRAM_AUTHOR);
-
-		if (DEVEL_VERSION)
-			Debug.on();
-
-		for (int n = 0; n < args.length; n++) {
-			String opt = args[n];
-			if (opt.equals("-h") || opt.equals("--help")) {
-				System.out.println("Arguments:");
-				System.out.println(" -h or --help		This short description");
-				System.out
-						.println(" -v or --verbose	Turn on debug information");
-				System.exit(0);
-			} else if (opt.equals("-v") || opt.equals("--verbose")
-					|| opt.equals("--debug")) {
-				Debug.on();
-			}
+	public void infoMsg(String msg) {
+		Debug.msg(msg);
+		if (SYSTRAY_SUPPORT) {
+			getTrayIcon().displayMessage(JFritz.PROGRAM_NAME, msg,
+					TrayIcon.INFO_MESSAGE_TYPE);
 		}
-
-		new JFritz();
 	}
+
+	// Getter methods for private JFritz objects//
 
 	/**
 	 * @return Returns the callerlist.
@@ -469,18 +488,5 @@ public class JFritz {
 	 */
 	public final TrayIcon getTrayIcon() {
 		return trayIcon;
-	}
-
-	/**
-	 * Displays balloon info message
-	 *
-	 * @param msg
-	 */
-	public void infoMsg(String msg) {
-		Debug.msg(msg);
-		if (SYSTRAY_SUPPORT) {
-			getTrayIcon().displayMessage(JFritz.PROGRAM_NAME, msg,
-					TrayIcon.INFO_MESSAGE_TYPE);
-		}
 	}
 }
