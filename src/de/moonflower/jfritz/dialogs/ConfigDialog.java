@@ -235,7 +235,6 @@ public class ConfigDialog extends JDialog {
 		timerSlider.setMinorTickSpacing(10);
 		timerSlider.setMajorTickSpacing(30);
 		timerSlider.setPaintLabels(true);
-		timerSlider.setName("bla");
 		timerSlider.addChangeListener( new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				if (timerSlider.getValue()<3) timerSlider.setValue(3);
