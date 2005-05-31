@@ -342,7 +342,7 @@ public class CallerList extends AbstractTableModel {
 		saveToXMLFile(JFritz.CALLS_FILE);
 
 		// Notify user?
-		if ((jfritz.getProperties().getProperty("option.notifyOnCalls")
+		if ((jfritz.getProperties().getProperty("option.notifyOnCalls","true")
 				.equals("true"))
 				&& (newEntries > 0)) {
 			jfritz.getJframe().setVisible(true);
