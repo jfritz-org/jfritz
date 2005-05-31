@@ -29,26 +29,21 @@
  *
  *
  * TODO:
- * SIP-Provider: Nach Fetch Table neu aufbauen
- * Optionen-Dialog: box.clear_after_fetch=true/false
- * Optionen-Dialog: Bei Programmstart automatisch abrufen
- *
  * QuickDial: Kurzwahlverwaltung
  * Phonebook: Telefonbuch für Participants
  *
  * CallerList: Einzelne Einträge löschen
  * CallerList: Einträge löschen älter als Datum
- *
+ * CallerList: ev. Popup-Menu?
  * Statistik: Top-Caller (Name/Nummer, Wie oft, Wie lange)
  *
- * JAR: Signing, Deploying, Website jfritz.moonflower.de oder Sourceforge
  *
  * CHANGELOG:
  *
- * JFritz! 0.3.5
+ * JFritz! 0.3.6
  * - New mobile phone filter feature
- * - Systray support for Unix/Windows
- * - Systray ballon messages
+ * - Systray support for Linux/Solaris/Windows
+ * - Systray ballon messages for Linux/Solaris/Windows
  * - Browser opening on Unix platforms
  * - Bugfix: Call with same timestamp are collected
  *
@@ -161,13 +156,13 @@ public class JFritz {
 
 	public final static String PROGRAM_NAME = "JFritz!";
 
-	public final static String PROGRAM_VERSION = "0.3.5";
+	public final static String PROGRAM_VERSION = "0.3.6";
 
 	public final static String PROGRAM_URL = "http://jfritz.sourceforge.net/";
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.45 2005/05/30 22:26:32 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.46 2005/05/31 11:56:27 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -191,7 +186,7 @@ public class JFritz {
 			.parseInt(PROGRAM_VERSION.substring(PROGRAM_VERSION
 					.lastIndexOf(".") + 1)) % 2 == 1;
 
-	public final static boolean SYSTRAY_SUPPORT = true;
+	public static boolean SYSTRAY_SUPPORT = false;
 
 	private SystemTray systray;
 
@@ -212,7 +207,7 @@ public class JFritz {
 	private PhoneBookTableModel phonebook;
 
 	/**
-	 *  Constructs JFritz object
+	 * Constructs JFritz object
 	 */
 	public JFritz() {
 		new ReverseLookup(); // Initialize ReverseLookup
@@ -225,6 +220,8 @@ public class JFritz {
 		phonebook.loadFromXMLFile(PHONEBOOK_FILE);
 
 		jframe = new JFritzWindow(this);
+
+		checkForSystraySupport();
 
 		if (SYSTRAY_SUPPORT) {
 			try {
@@ -239,6 +236,17 @@ public class JFritz {
 		ssdpthread.start();
 
 		javax.swing.SwingUtilities.invokeLater(jframe);
+	}
+
+	/**
+	 * Checks for systray availability
+	 */
+	private void checkForSystraySupport() {
+		String os = System.getProperty("os.name");
+		if (os.equals("Linux") || os.equals("Solaris")
+				|| os.startsWith("Windows")) {
+			SYSTRAY_SUPPORT = true;
+		}
 	}
 
 	/**
@@ -258,13 +266,16 @@ public class JFritz {
 			String opt = args[n];
 			if (opt.equals("-h") || opt.equals("--help")) {
 				System.out.println("Arguments:");
-				System.out.println(" -h or --help		This short description");
+				System.out.println(" -h or --help	 This short description");
 				System.out
-						.println(" -v or --verbose	Turn on debug information");
+						.println(" -v or --verbose Turn on debug information");
+				System.out.println(" -s or --systray Turn on systray support");
 				System.exit(0);
 			} else if (opt.equals("-v") || opt.equals("--verbose")
 					|| opt.equals("--debug")) {
 				Debug.on();
+			} else if (opt.equals("-s") || opt.equals("--systray")) {
+				JFritz.SYSTRAY_SUPPORT = true;
 			}
 		}
 
@@ -425,6 +436,19 @@ public class JFritz {
 		if (SYSTRAY_SUPPORT) {
 			getTrayIcon().displayMessage(JFritz.PROGRAM_NAME, msg,
 					TrayIcon.INFO_MESSAGE_TYPE);
+		}
+	}
+
+	/**
+	 * Displays balloon error message
+	 *
+	 * @param msg
+	 */
+	public void errorMsg(String msg) {
+		Debug.err(msg);
+		if (SYSTRAY_SUPPORT) {
+			getTrayIcon().displayMessage(JFritz.PROGRAM_NAME, msg,
+					TrayIcon.ERROE_MESSAGE_TYPE);
 		}
 	}
 

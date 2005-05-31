@@ -4,8 +4,8 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
-import de.moonflower.jfritz.firmware.InvalidFirmwareException;
 
 /*
  * Created on 22.05.2005

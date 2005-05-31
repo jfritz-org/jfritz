@@ -1073,11 +1073,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				list.saveToFile(file);
 			}
 		} else {
-			Debug.err("No single valid row selected");
-			JOptionPane.showMessageDialog(this,
-					"Fehler:\n\nKeine einzige sinnvolle Zeile selektiert!\n\n"
-							+ "Bitte eine oder mehrere Zeilen auswählen,\n"
-							+ "um die Daten als VCard zu exportieren!");
+			jfritz.errorMsg("Keine einzige sinnvolle Zeile selektiert!\n\n"
+					+ "Bitte eine oder mehrere Zeilen auswählen,\n"
+					+ "um die Daten als VCard zu exportieren!");
 
 		}
 	}

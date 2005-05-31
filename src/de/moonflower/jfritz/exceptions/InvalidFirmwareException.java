@@ -3,10 +3,10 @@
  * Created on 10.04.2005
  */
 
-package de.moonflower.jfritz.firmware;
+package de.moonflower.jfritz.exceptions;
 
 /**
- * thrown when the firmware string is invalid
+ * thrown when a firmware object is invalid
  * @author Arno Willig
  *
  */

@@ -24,9 +24,9 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.dialogs.quickdial.QuickDial;
 import de.moonflower.jfritz.dialogs.quickdial.QuickDialTableModel;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
+import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
-import de.moonflower.jfritz.firmware.InvalidFirmwareException;
 import de.moonflower.jfritz.window.Call;
 import de.moonflower.jfritz.window.CallType;
 
@@ -183,11 +183,13 @@ public class JFritzUtils {
 	 * @throws WrongPasswordException
 	 * @throws IOException
 	 *             author robotniko
+	 * @throws InvalidFirmwareException
 	 */
 	public static Vector retrieveSipProvider(String box_address,
 			String box_password, FritzBoxFirmware firmware)
-			throws WrongPasswordException, IOException {
-
+			throws WrongPasswordException, IOException, InvalidFirmwareException {
+		if (firmware == null)
+			throw new InvalidFirmwareException("No valid firmware");
 		String postdata = firmware.getAccessMethod() + POSTDATA_SIPPROVIDER
 				+ box_password;
 		String urlstr = "http://" + box_address + "/cgi-bin/webcm";
