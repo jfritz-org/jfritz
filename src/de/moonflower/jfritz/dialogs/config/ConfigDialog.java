@@ -3,7 +3,7 @@
  * Password dialog box
  */
 
-package de.moonflower.jfritz.dialogs;
+package de.moonflower.jfritz.dialogs.config;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

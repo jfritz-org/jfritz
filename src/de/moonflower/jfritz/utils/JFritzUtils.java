@@ -27,7 +27,8 @@ import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
-import de.moonflower.jfritz.window.Call;
+import de.moonflower.jfritz.struct.Call;
+import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.window.CallType;
 
 /**
@@ -187,7 +188,8 @@ public class JFritzUtils {
 	 */
 	public static Vector retrieveSipProvider(String box_address,
 			String box_password, FritzBoxFirmware firmware)
-			throws WrongPasswordException, IOException, InvalidFirmwareException {
+			throws WrongPasswordException, IOException,
+			InvalidFirmwareException {
 		if (firmware == null)
 			throw new InvalidFirmwareException("No valid firmware");
 		String postdata = firmware.getAccessMethod() + POSTDATA_SIPPROVIDER
@@ -370,8 +372,9 @@ public class JFritzUtils {
 				String port = m.group(4);
 				String route = m.group(5);
 				int duration = Integer.parseInt(m.group(6));
-				String number = createAreaNumber(m.group(3), countryPrefix,
-						countryCode, areaPrefix, areaCode);
+				PhoneNumber number = new PhoneNumber(createAreaNumber(m
+						.group(3), countryPrefix, countryCode, areaPrefix,
+						areaCode));
 				Date date = new SimpleDateFormat("dd.MM.yy HH:mm").parse(m
 						.group(2));
 

@@ -2,7 +2,7 @@
  * Created on 26.05.2005
  *
  */
-package de.moonflower.jfritz.vcard;
+package de.moonflower.jfritz.struct;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,26 +28,27 @@ public class VCardList {
 		list = new Vector();
 	}
 
-	public void addVCard(VCard vcard) {
+	public void addVCard(Person person) {
 		boolean found = false;
 		Enumeration en = list.elements();
 		while (en.hasMoreElements()) {
-			VCard c = (VCard) en.nextElement();
-			if (c.getFon().equals(vcard.getFon())) {
+			Person p = (Person) en.nextElement();
+			if (p.getStandardTelephoneNumber().equals(
+					person.getStandardTelephoneNumber())) {
 				found = true;
 				break;
 			}
 		}
 		if (!found)
-			list.add(vcard);
+			list.add(person);
 	}
 
 	public int getCount() {
 		return list.size();
 	}
 
-	public VCard getVCard(int i) {
-		return (VCard) list.get(i);
+	public Person getPerson(int i) {
+		return (Person) list.get(i);
 	}
 
 	/**
@@ -60,19 +61,19 @@ public class VCardList {
 		try {
 			fos = new FileOutputStream(file);
 			PrintWriter pw = new PrintWriter(fos);
-			pw.println(this.toString());
+			pw.println(toVCardList());
 			pw.close();
 		} catch (FileNotFoundException e) {
 			Debug.err("Could not write " + file.getName() + "!");
 		}
 	}
 
-	public String toString() {
+	public String toVCardList() {
 		String str = "";
 		Enumeration en = list.elements();
 		while (en.hasMoreElements()) {
-			VCard vcard = (VCard) en.nextElement();
-			str += vcard.toString();
+			Person p = (Person) en.nextElement();
+			str += p.toVCard();
 		}
 		return str;
 	}

@@ -3,6 +3,8 @@ package de.moonflower.jfritz.dialogs.phonebook;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import de.moonflower.jfritz.struct.Person;
+
 public class SelectionListener implements ListSelectionListener {
 	PhoneBookDialog phbd;
 
@@ -17,8 +19,7 @@ public class SelectionListener implements ListSelectionListener {
 			int last = e.getLastIndex();
 			int rows[] = phbd.getTable().getSelectedRows();
 			if (rows.length != 0) {
-				PhoneBookTableModel model = (PhoneBookTableModel) phbd
-						.getTable().getModel();
+				PhoneBook model = (PhoneBook) phbd.getTable().getModel();
 				Person editPerson;
 				// Bei mehrerer Zeilenauswahl wird nur das erste Element zum
 				// Bearbeiten angezeigt
@@ -29,11 +30,11 @@ public class SelectionListener implements ListSelectionListener {
 				phbd.setTextFieldStreet(editPerson.getStreet());
 				phbd.setTextFieldPostalCode(editPerson.getPostalCode());
 				phbd.setTextFieldCity(editPerson.getCity());
-				phbd.setTextFieldHomeNumber(editPerson.getHomeTelNumber());
-				phbd.setTextFieldMobileNumber(editPerson.getMobileTelNumber());
+				phbd.setTextFieldHomeNumber(editPerson.getHomeTelNumber().getNumber());
+				phbd.setTextFieldMobileNumber(editPerson.getMobileTelNumber().getNumber());
 				phbd.setTextFieldBusinessNumber(editPerson
-						.getBusinessTelNumber());
-				phbd.setTextFieldOtherNumber(editPerson.getOtherTelNumber());
+						.getBusinessTelNumber().getNumber());
+				phbd.setTextFieldOtherNumber(editPerson.getOtherTelNumber().getNumber());
 				phbd.setRadioButtonHome(false);
 				phbd.setRadioButtonMobile(false);
 				phbd.setRadioButtonBusiness(false);

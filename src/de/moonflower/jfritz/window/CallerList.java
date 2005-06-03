@@ -35,6 +35,9 @@ import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.struct.Call;
+import de.moonflower.jfritz.struct.Person;
+import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
@@ -100,8 +103,8 @@ public class CallerList extends AbstractTableModel {
 	 *
 	 */
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		return (!((Call) filteredCallerData.get(rowIndex)).getNumber().equals(
-				"") && (columnIndex == 3));
+		return (!((Call) filteredCallerData.get(rowIndex)).getPhoneNumber()
+				.equals("") && (columnIndex == 3));
 	}
 
 	/**
@@ -139,7 +142,7 @@ public class CallerList extends AbstractTableModel {
 				Call call = (Call) en.nextElement();
 				CallType type = call.getCalltype();
 				Date datum = call.getCalldate();
-				String caller = call.getNumber();
+				PhoneNumber caller = call.getPhoneNumber();
 				String port = call.getPort();
 				String route = call.getRoute();
 				int duration = call.getDuration();
@@ -281,7 +284,7 @@ public class CallerList extends AbstractTableModel {
 	 * @param route
 	 * @param duration
 	 */
-	public boolean addEntry(CallType symbol, Date datum, String number,
+	public boolean addEntry(CallType symbol, Date datum, PhoneNumber number,
 			String port, String route, int duration) {
 		Call call = new Call(jfritz, symbol, datum, number, port, route,
 				duration);
@@ -299,7 +302,8 @@ public class CallerList extends AbstractTableModel {
 		while (en.hasMoreElements()) {
 			Call c = (Call) en.nextElement();
 			if (c.getCalldate().equals(call.getCalldate())
-					&& (c.getNumber().equals(call.getNumber()))) {
+					&& (c.getPhoneNumber().getNumber().equals(call
+							.getPhoneNumber().getNumber()))) {
 				// We already have this call
 				newEntry = false;
 				break;
@@ -405,14 +409,9 @@ public class CallerList extends AbstractTableModel {
 		case 1:
 			return call.getCalldate();
 		case 2:
-			return JFritzUtils.createAreaNumber(call.getNumber(), jfritz
-					.getProperties().getProperty("country.prefix"), jfritz
-					.getProperties().getProperty("country.code"), jfritz
-					.getProperties().getProperty("area.prefix"), jfritz
-					.getProperties().getProperty("area.code"));
+			return call.getPhoneNumber();
 		case 3:
-			return call.getParticipant();
-		// return getParticipantFromNumber(call.getNumber());
+			return call.getPerson();
 		case 4:
 			return call.getPort();
 		case 5:
@@ -438,7 +437,8 @@ public class CallerList extends AbstractTableModel {
 	public void setValueAt(Object object, int rowIndex, int columnIndex) {
 		Call call = (Call) filteredCallerData.get(rowIndex);
 		if (columnIndex == 3) {
-			setParticipant(object.toString(), rowIndex);
+			Person p = new Person("", "", object.toString());
+			setPerson(p, rowIndex);
 		}
 		fireTableCellUpdated(rowIndex, columnIndex);
 	}
@@ -449,18 +449,41 @@ public class CallerList extends AbstractTableModel {
 	 * @param participant
 	 * @param rowIndex
 	 */
-	public void setParticipant(String participant, int rowIndex) {
+	public void setParticipant2(String participant, int rowIndex) {
 		Call call = (Call) filteredCallerData.get(rowIndex);
-		if (!call.getNumber().equals("")) { // no empty numbers
+
+		if (!call.getPhoneNumber().equals("")) { // no empty numbers
 			if (participant.equals("")) {
-				jfritz.getParticipants().remove(call.getNumber());
+				Debug.err("REMOVING PARTICIPANT");
+
+				// FIXME jfritz.getParticipants().remove(call.getPhoneNumber());
 			} else {
-				jfritz.getParticipants().setProperty(call.getNumber(),
-						participant);
+				Debug.err("SETTING PARTICIPANT: " + participant);
+				// FIXME
+				// jfritz.getParticipants().setProperty(call.getPhoneNumber().getNumber(),
+				// participant);
 			}
 			fireTableCellUpdated(rowIndex, 3);
 			fireTableStructureChanged();
 		}
+	}
+
+	public void setPerson(Person person, int rowIndex) {
+		Call call = (Call) filteredCallerData.get(rowIndex);
+
+		if (call.getPhoneNumber() != null) { // no empty numbers
+			if (person == null) {
+				Debug.err("REMOVING PERSON");
+				// FIXME
+				// jfritz.getPhonebook().removeEntry(call.getPhoneNumber());
+			} else {
+				Debug.err("SETTING PERSON");
+				jfritz.getPhonebook().addEntry(person);
+			}
+			fireTableCellUpdated(rowIndex, 3);
+			fireTableStructureChanged();
+		}
+
 	}
 
 	/**
@@ -527,12 +550,12 @@ public class CallerList extends AbstractTableModel {
 				o2 = v2.getCalltype().toString();
 				break;
 			case 2:
-				o1 = v1.getNumber();
-				o2 = v2.getNumber();
+				o1 = v1.getPhoneNumber().getNumber();
+				o2 = v2.getPhoneNumber().getNumber();
 				break;
 			case 3:
-				o1 = v1.getParticipant();
-				o2 = v2.getParticipant();
+				o1 = v1.getPerson().getFullname();
+				o2 = v2.getPerson().getFullname();
 				break;
 			case 4:
 				o1 = v1.getPort();
@@ -651,9 +674,10 @@ public class CallerList extends AbstractTableModel {
 				for (int i = 0; i < parts.length; i++) {
 					String part = parts[i];
 					if (part.length() > 0
-							&& call.getNumber().indexOf(parts[i]) == -1
-							&& call.getParticipant().toLowerCase().indexOf(
-									part.toLowerCase()) == -1) {
+							&& call.getPhoneNumber().getNumber().indexOf(
+									parts[i]) == -1
+							&& call.getPerson().getFullname().toLowerCase()
+									.indexOf(part.toLowerCase()) == -1) {
 						searchFilterPassed = false;
 						break;
 					}
@@ -678,7 +702,8 @@ public class CallerList extends AbstractTableModel {
 					handyFilterPassed = false;
 
 				if (searchFilterPassed && dateFilterPassed && handyFilterPassed)
-					if (!(filterNumber && call.getNumber().equals(""))) {
+					if (!(filterNumber && call.getPhoneNumber().getNumber()
+							.equals(""))) {
 						if ((!filterCallIn)
 								&& (call.getCalltype().toInt() == CallType.CALLIN))
 							filteredcallerdata.add(call);

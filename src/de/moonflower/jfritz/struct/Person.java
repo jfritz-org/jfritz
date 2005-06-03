@@ -1,4 +1,11 @@
-package de.moonflower.jfritz.dialogs.phonebook;
+package de.moonflower.jfritz.struct;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+
+import de.moonflower.jfritz.utils.Debug;
 
 /**
  * @author rob
@@ -18,15 +25,15 @@ public class Person {
 
 	private String city;
 
-	private String homeTelephoneNumber;
+	private PhoneNumber homeTelephoneNumber;
 
-	private String mobileTelephoneNumber;
+	private PhoneNumber mobileTelephoneNumber;
 
-	private String businessTelephoneNumber;
+	private PhoneNumber businessTelephoneNumber;
 
-	private String otherTelephoneNumber;
+	private PhoneNumber otherTelephoneNumber;
 
-	private String standardTelephoneNumber;
+	private PhoneNumber standardTelephoneNumber;
 
 	private String emailAddress;
 
@@ -43,11 +50,11 @@ public class Person {
 		this.street = street;
 		this.postalCode = postalCode;
 		this.city = city;
-		this.homeTelephoneNumber = homeTelephoneNumber;
-		this.mobileTelephoneNumber = mobileTelephoneNumber;
-		this.businessTelephoneNumber = businessTelephoneNumber;
-		this.otherTelephoneNumber = otherTelephoneNumber;
-		this.standardTelephoneNumber = standardTelephoneNumber;
+		this.homeTelephoneNumber = new PhoneNumber(homeTelephoneNumber);
+		this.mobileTelephoneNumber = new PhoneNumber(mobileTelephoneNumber);
+		this.businessTelephoneNumber = new PhoneNumber(businessTelephoneNumber);
+		this.otherTelephoneNumber = new PhoneNumber(otherTelephoneNumber);
+		this.standardTelephoneNumber = new PhoneNumber(standardTelephoneNumber);
 		this.emailAddress = emailAddress;
 		this.category = category;
 	}
@@ -63,7 +70,36 @@ public class Person {
 	}
 
 	public String getFullname() {
-		return firstName + " " + middleName + " " + lastName;
+		return (lastName + ", " + firstName + " " + middleName).trim();
+	}
+
+	public String toVCard() {
+		String vcard = "";
+		vcard = "BEGIN:vCard\n" + "VERSION:3.0\n" + "FN: " + getFullname() + "\n"
+				+ "TEL;TYPE=VOICE,MSG,WORK:" + getStandardTelephoneNumber() + "\n" + "END:vCard\n";
+		return vcard;
+	}
+
+	/**
+	 * Saves vcard to file
+	 *
+	 * @param file
+	 */
+	public void saveToVCard(File file) {
+		FileOutputStream fos;
+		try {
+			fos = new FileOutputStream(file);
+			PrintWriter pw = new PrintWriter(fos);
+			pw.println(toVCard());
+			pw.close();
+		} catch (FileNotFoundException e) {
+			Debug.err("Could not write " + file.getName() + "!");
+		}
+	}
+
+	public PhoneNumber[] getNumbers() {
+		return new PhoneNumber[] { homeTelephoneNumber, mobileTelephoneNumber,
+				businessTelephoneNumber, otherTelephoneNumber };
 	}
 
 	public String getFirstName() {
@@ -90,19 +126,19 @@ public class Person {
 		return city;
 	}
 
-	public String getHomeTelNumber() {
+	public PhoneNumber getHomeTelNumber() {
 		return homeTelephoneNumber;
 	}
 
-	public String getMobileTelNumber() {
+	public PhoneNumber getMobileTelNumber() {
 		return mobileTelephoneNumber;
 	}
 
-	public String getBusinessTelNumber() {
+	public PhoneNumber getBusinessTelNumber() {
 		return businessTelephoneNumber;
 	}
 
-	public String getOtherTelNumber() {
+	public PhoneNumber getOtherTelNumber() {
 		return otherTelephoneNumber;
 	}
 
@@ -139,19 +175,19 @@ public class Person {
 	}
 
 	public void setHomeTelNumber(String telNumber) {
-		this.homeTelephoneNumber = telNumber;
+		this.homeTelephoneNumber = new PhoneNumber(telNumber);
 	}
 
 	public void setMobileTelNumber(String telNumber) {
-		this.mobileTelephoneNumber = telNumber;
+		this.mobileTelephoneNumber = new PhoneNumber(telNumber);
 	}
 
 	public void setBusinessTelNumber(String telNumber) {
-		this.businessTelephoneNumber = telNumber;
+		this.businessTelephoneNumber = new PhoneNumber(telNumber);
 	}
 
 	public void setOtherTelNumber(String telNumber) {
-		this.otherTelephoneNumber = telNumber;
+		this.otherTelephoneNumber = new PhoneNumber(telNumber);
 	}
 
 	public void setEmailAddress(String email) {
@@ -165,7 +201,7 @@ public class Person {
 	/**
 	 * @return Returns the standardTelephoneNumber.
 	 */
-	public String getStandardTelephoneNumber() {
+	public PhoneNumber getStandardTelephoneNumber() {
 		return standardTelephoneNumber;
 	}
 
@@ -174,14 +210,14 @@ public class Person {
 	 *            The standardTelephoneNumber to set.
 	 */
 	public void setStandardTelephoneNumber(String standardTelephoneNumber) {
-		this.standardTelephoneNumber = standardTelephoneNumber;
+		this.standardTelephoneNumber = new PhoneNumber(standardTelephoneNumber);
 	}
 
 	/**
-	 * Checks if person has telephonnumber number
+	 * Checks if person has telephone number number
 	 *
 	 * @param number
-	 * @return
+	 * @return True if person has a phone number
 	 */
 	public boolean hasNumber(String number) {
 		if (number.equals(homeTelephoneNumber))

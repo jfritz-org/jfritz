@@ -15,13 +15,15 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 
+import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.window.cellrenderer.CallTypeCellRenderer;
 import de.moonflower.jfritz.window.cellrenderer.DateCellRenderer;
 import de.moonflower.jfritz.window.cellrenderer.DurationCellRenderer;
 import de.moonflower.jfritz.window.cellrenderer.NumberCellRenderer;
+import de.moonflower.jfritz.window.cellrenderer.PersonCellRenderer;
 import de.moonflower.jfritz.window.cellrenderer.PortCellRenderer;
 import de.moonflower.jfritz.window.cellrenderer.RouteCellRenderer;
 
@@ -32,22 +34,21 @@ import de.moonflower.jfritz.window.cellrenderer.RouteCellRenderer;
  */
 public class CallerTable extends JTable {
 
-	private ResourceBundle messages;
+	private JFritz jfritz;
 
-	private JFritzProperties properties, participants;
+	private JFritzProperties properties;
 
 	/**
 	 * Constructs CallerTable
 	 *
 	 * @param callerlist
 	 */
-	public CallerTable(TableModel callerlist, ResourceBundle messages,
-			JFritzProperties properties) {
-		super(callerlist);
-		setMessages(messages);
-		setProperties(properties);
+	public CallerTable(JFritz jfritz) {
+		super(jfritz.getCallerlist());
+		this.jfritz = jfritz;
+		properties = jfritz.getProperties();
 		setTableProperties();
-		createColumns(messages);
+		createColumns(jfritz.getMessages());
 	}
 
 	/**
@@ -56,10 +57,11 @@ public class CallerTable extends JTable {
 	private void setTableProperties() {
 		setDefaultRenderer(CallType.class, new CallTypeCellRenderer());
 		setDefaultRenderer(Date.class, new DateCellRenderer());
+		// FIXME setDefaultRenderer(Person.class, new PersonCellRenderer());
+		setDefaultRenderer(PhoneNumber.class, new NumberCellRenderer(jfritz));
 		// TODO: Create classes for Number, Port and Duration
 		// setDefaultRenderer(Port.class, new PortCellRenderer());
 		// setDefaultRenderer(Duration.class, new DurationCellRenderer());
-		// setDefaultRenderer(Number.class, new NumberCellRenderer());
 
 		setRowHeight(24);
 		setAutoCreateColumnsFromModel(false);
@@ -101,7 +103,7 @@ public class CallerTable extends JTable {
 
 		col = getColumnModel().getColumn(2);
 		col.setHeaderValue(messages.getString("number"));
-		col.setCellRenderer(new NumberCellRenderer(properties, messages));
+		//col.setCellRenderer(new NumberCellRenderer(jfritz));
 		headerTips.setToolTip(col, messages.getString("number_desc"));
 		col.setPreferredWidth(Integer.parseInt(properties.getProperty(
 				"column2.width", "128")));
@@ -110,6 +112,7 @@ public class CallerTable extends JTable {
 		col.setHeaderValue(messages.getString("participant"));
 		headerTips.setToolTip(col, messages.getString("participant_desc"));
 		col.setCellEditor(new TextFieldCellEditor());
+		col.setCellRenderer(new PersonCellRenderer());
 		col.setPreferredWidth(Integer.parseInt(properties.getProperty(
 				"column3.width", "120")));
 
@@ -149,14 +152,6 @@ public class CallerTable extends JTable {
 			c.setBackground(new Color(204, 204, 255));
 		}
 		return c;
-	}
-
-	/**
-	 * @param messages
-	 *            The messages to set.
-	 */
-	public void setMessages(ResourceBundle messages) {
-		this.messages = messages;
 	}
 
 	/**

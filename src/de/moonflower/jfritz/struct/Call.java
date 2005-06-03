@@ -3,14 +3,14 @@
  * Created on 08.05.2005
  *
  */
-package de.moonflower.jfritz.window;
+package de.moonflower.jfritz.struct;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.ReverseLookup;
+import de.moonflower.jfritz.window.CallType;
 
 /**
  * @author Arno Willig row.add(symbol); row.add(datum); row.add(number);
@@ -24,7 +24,7 @@ public class Call {
 
 	private Date calldate;
 
-	private String number;
+	private PhoneNumber number;
 
 	private String route;
 
@@ -32,8 +32,8 @@ public class Call {
 
 	private int duration;
 
-	public Call(JFritz jfritz, CallType calltype, Date calldate, String number,
-			String port, String route, int duration) {
+	public Call(JFritz jfritz, CallType calltype, Date calldate,
+			PhoneNumber number, String port, String route, int duration) {
 		this.jfritz = jfritz;
 		this.calltype = calltype;
 		this.calldate = calldate;
@@ -60,20 +60,15 @@ public class Call {
 	/**
 	 * @return Returns the number.
 	 */
-	public String getNumber() {
+	public PhoneNumber getPhoneNumber() {
 		return number;
 	}
 
 	/**
-	 * @return Returns the number.
+	 * @return Returns the person the number belongs to or null.
 	 */
-	public String getParticipant() {
-		String areanumber = JFritzUtils.createAreaNumber(number, jfritz
-				.getProperties().getProperty("country.prefix"), jfritz
-				.getProperties().getProperty("country.code"), jfritz
-				.getProperties().getProperty("area.prefix"), jfritz
-				.getProperties().getProperty("area.code"));
-		return jfritz.getParticipants().getProperty(areanumber, "");
+	public Person getPerson() {
+		return jfritz.getPhonebook().findPerson(number);
 	}
 
 	/**
@@ -111,7 +106,7 @@ public class Call {
 	}
 
 	public boolean isMobileCall() {
-		String provider = ReverseLookup.getMobileProvider(number);
+		String provider = ReverseLookup.getMobileProvider(number.getNumber());
 		return (!provider.equals(""));
 	}
 }

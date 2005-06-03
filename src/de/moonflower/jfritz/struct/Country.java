@@ -2,7 +2,7 @@
  * Created on 02.06.2005
  *
  */
-package de.moonflower.jfritz.utils;
+package de.moonflower.jfritz.struct;
 
 /**
  * @author Arno Willig

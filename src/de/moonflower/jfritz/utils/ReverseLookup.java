@@ -15,7 +15,8 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import de.moonflower.jfritz.dialogs.phonebook.Person;
+
+import de.moonflower.jfritz.struct.Person;
 
 /**
  * Class for telephone number reverse lookup using "dasoertliche.de"

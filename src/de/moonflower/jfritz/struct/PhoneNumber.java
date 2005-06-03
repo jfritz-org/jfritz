@@ -2,9 +2,8 @@
  * Created on 01.06.2005
  *
  */
-package de.moonflower.jfritz.utils;
+package de.moonflower.jfritz.struct;
 
-import de.moonflower.jfritz.dialogs.phonebook.Person;
 
 /**
  * @author Arno Willig
@@ -18,7 +17,7 @@ public class PhoneNumber {
 
 	private String number = "";
 
-	private String predial = "";
+	private String callbycall = "";
 
 	/**
 	 * Constructs a PhoneNumber
@@ -27,7 +26,7 @@ public class PhoneNumber {
 	 */
 	public PhoneNumber(String fullNumber) {
 		if (fullNumber.startsWith("010")) { // cut 01013 and others
-			predial = fullNumber.substring(0, 5);
+			callbycall = fullNumber.substring(0, 5);
 			number = fullNumber.substring(5);
 		} else
 			number = fullNumber;
@@ -40,68 +39,28 @@ public class PhoneNumber {
 		return getNumber();
 	}
 
+	/**
+	 *
+	 * @return the full number
+	 */
 	public String getNumber() {
 		return number;
 	}
 
 	/**
-	 *
-	 * @return Vorvorwahl
+	 * @return CallByCall predial number
 	 */
-	public String getPreDial() {
-
-		return "01013";
-	}
-
-	/**
-	 *
-	 * @return Country code (49 for Germany, 41 for Switzerland)
-	 */
-	public String getCountryCode() {
-		return "49";
-	}
-
-	/**
-	 * @return Area code
-	 */
-	public String getAreaCode() {
-		return "441";
-	}
-
-	/**
-	 *
-	 * @return Local part of number
-	 */
-	public String getLocalPart() {
-		return "592904";
-	}
-
-	/**
-	 *
-	 * @return Mobile provider
-	 */
-	public String getMobileProvider() {
-		return "O2";
-	}
-
-	public Person lookupPerson() {
-		return null;
+	public String getCallByCall() {
+		return callbycall;
 	}
 
 	/**
 	 * @return True if number has a Vorvorwahl (like 01013)
 	 */
-	public boolean hasPreDial() {
-		String predial = "01013";
-		return (predial.length() > 0);
+	public boolean hasCallByCall() {
+		return (callbycall.length() > 0);
 	}
 
-	/**
-	 * @return True if number is a mobile one
-	 */
-	public boolean isMobile() {
-		return false;
-	}
 
 	/**
 	 * @return True if number is a FreeCall number
@@ -138,4 +97,46 @@ public class PhoneNumber {
 			return true; // Switzerland Medical
 		return false;
 	}
+
+	// FIXME: This does not work yet ***************
+
+
+	/**
+	 *
+	 * @return Country code (49 for Germany, 41 for Switzerland)
+	 */
+	public String getCountryCode() {
+		return "49";
+	}
+
+	/**
+	 * @return Area code
+	 */
+	public String getAreaCode() {
+		return "441";
+	}
+
+	/**
+	 *
+	 * @return Local part of number
+	 */
+	public String getLocalPart() {
+		return "592904";
+	}
+
+	/**
+	 *
+	 * @return Mobile provider
+	 */
+	public String getMobileProvider() {
+		return "O2";
+	}
+
+	/**
+	 * @return True if number is a mobile one
+	 */
+	public boolean isMobile() {
+		return false;
+	}
+
 }

@@ -13,8 +13,9 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import de.moonflower.jfritz.vcard.VCard;
-import de.moonflower.jfritz.vcard.VCardList;
+import de.moonflower.jfritz.struct.Person;
+import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.VCardList;
 
 /**
  * Listener class for copying phone numbers to clipboard
@@ -43,22 +44,17 @@ public class SelectionListener implements ListSelectionListener {
 
 			int rows[] = table.getSelectedRows();
 			for (int i = 0; i < rows.length; i++) {
-				String name = (String) table.getModel().getValueAt(rows[i], 3);
-				String number = (String) table.getModel()
-						.getValueAt(rows[i], 2);
-				if ( !name.startsWith("?") &&  !number.equals("") ) {
-					list.addVCard(new VCard(name, number));
+				Person person = (Person) table.getModel()
+						.getValueAt(rows[i], 3);
+				String number = ((PhoneNumber) table.getModel().getValueAt(
+						rows[i], 2)).getNumber();
+				if (person != null) { // FIXME person.getVCard
+					list.addVCard(new Person("", "", person.getFullname(), "",
+							"", "", "", "", "", "", number, "", ""));
 				}
 			}
 
-			/*
-			 * int row = table.getSelectedRow(); if (row >= 0) { String number =
-			 * (String) table.getModel().getValueAt(row, 2); String name =
-			 * (String) table.getModel().getValueAt(row, 3); // VCard vcard =
-			 * new VCard((String) // table.getModel().getValueAt(row,
-			 * 3),number);
-			 */
-			StringSelection cont = new StringSelection(list.toString());
+			StringSelection cont = new StringSelection(list.toVCardList());
 			clip.setContents(cont, null);
 		}
 	}

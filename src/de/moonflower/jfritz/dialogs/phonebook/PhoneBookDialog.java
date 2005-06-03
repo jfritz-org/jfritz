@@ -33,6 +33,7 @@ import javax.swing.ButtonGroup;
 import java.awt.Rectangle;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.window.JFritzWindow;
 
 /**

@@ -7,17 +7,15 @@ package de.moonflower.jfritz.window.cellrenderer;
 
 import java.awt.Component;
 import java.awt.Toolkit;
-import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import de.moonflower.jfritz.utils.JFritzProperties;
-import de.moonflower.jfritz.utils.JFritzUtils;
+import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.ReverseLookup;
-
 
 /**
  * This is the renderer for the call type cell of the table, which shows a small
@@ -26,23 +24,22 @@ import de.moonflower.jfritz.utils.ReverseLookup;
  * @author Arno Willig
  */
 public class NumberCellRenderer extends DefaultTableCellRenderer {
-	JFritzProperties properties;
+	private JFritz jfritz;
 
-	ResourceBundle messages;
+	private final ImageIcon imagePhone, imageHandy, imageHome, imageWorld,
+			imageFreeCall;
 
-	final ImageIcon imagePhone, imageHandy, imageHome, imageWorld, imageFreeCall;
+	private final ImageIcon imageD1, imageD2, imageO2, imageEplus,
+			imageSipgate;
 
-	final ImageIcon imageD1, imageD2, imageO2, imageEplus, imageSipgate;
-
-	final static boolean showHandyLogos = true;
+	private final static boolean showHandyLogos = true;
 
 	/**
 	 * renders the number field in the CallerTable
 	 */
-	public NumberCellRenderer(JFritzProperties properties, ResourceBundle messages) {
+	public NumberCellRenderer(JFritz jfritz) {
 		super();
-		this.properties = properties;
-		this.messages = messages;
+		this.jfritz = jfritz;
 
 		imagePhone = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
@@ -57,14 +54,14 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/world.png")));
 		imageD1 = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-				getClass()
-						.getResource("/de/moonflower/jfritz/resources/images/d1.png")));
+				getClass().getResource(
+						"/de/moonflower/jfritz/resources/images/d1.png")));
 		imageD2 = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-				getClass()
-						.getResource("/de/moonflower/jfritz/resources/images/d2.png")));
+				getClass().getResource(
+						"/de/moonflower/jfritz/resources/images/d2.png")));
 		imageO2 = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-				getClass()
-						.getResource("/de/moonflower/jfritz/resources/images/o2.png")));
+				getClass().getResource(
+						"/de/moonflower/jfritz/resources/images/o2.png")));
 		imageEplus = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/eplus.png")));
@@ -84,20 +81,26 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 				value, isSelected, hasFocus, row, column);
 
 		if (value != null) {
-			String number = (String) value;
-// FIXME
-			number = JFritzUtils.createAreaNumber(number,
-					properties.getProperty("country.prefix"),
-					properties.getProperty("country.code"),
-					properties.getProperty("area.prefix"),
-					properties.getProperty("area.code"));
-			setToolTipText(number);
-			if (number.length() > 4) { // if valid number present, draw icon
-				if (ReverseLookup.numberIsMobile(number)) {
-					String provider = ReverseLookup.getMobileProvider(number);
-					if (provider.equals("")) provider="unknown";
+			PhoneNumber number = (PhoneNumber) value;
+			// FIXME
+			/*
+			 * number = JFritzUtils.createAreaNumber(number,
+			 * properties.getProperty("country.prefix"),
+			 * properties.getProperty("country.code"),
+			 * properties.getProperty("area.prefix"),
+			 * properties.getProperty("area.code"));
+			 */
+			setToolTipText(number.toString());
+			if (number.getNumber().length() > 4) { // if valid number present,
+				// draw icon
+				if (ReverseLookup.numberIsMobile(number.getNumber())) {
+					String provider = ReverseLookup.getMobileProvider(number
+							.getNumber());
+					if (provider.equals(""))
+						provider = "unknown";
 
-					setToolTipText(messages.getString("cellphone_network")
+					setToolTipText(jfritz.getMessages().getString(
+							"cellphone_network")
 							+ ": " + provider);
 					if (showHandyLogos) {
 						if (provider.equals("D1")) {
@@ -114,27 +117,27 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 					} else {
 						label.setIcon(imageHandy);
 					}
-				} else if ((number.startsWith(properties
+				} else if ((number.getNumber().startsWith(jfritz.getProperties()
 						.getProperty("area.prefix")
-						+ properties.getProperty("area.code")+"1988"))||
-						(number.startsWith("01801777"))) {
+						+ jfritz.getProperties().getProperty("area.code") + "1988"))
+						|| (number.getNumber().startsWith("01801777"))) {
 					label.setIcon(imageSipgate);
-					setToolTipText(messages.getString("voip_call"));
-				} else if (number.startsWith(properties
-						.getProperty("area.prefix")
-						+ properties.getProperty("area.code"))) {
+					setToolTipText(jfritz.getMessages().getString("voip_call"));
+				} else if (number.getNumber().startsWith(
+						jfritz.getProperties().getProperty("area.prefix")
+								+ jfritz.getProperties().getProperty("area.code"))) {
 					label.setIcon(imageHome);
-					setToolTipText(messages.getString("local_call"));
-				} else if (number.startsWith(properties
-						.getProperty("country.prefix"))) {
+					setToolTipText(jfritz.getMessages().getString("local_call"));
+				} else if (number.getNumber().startsWith(
+						jfritz.getProperties().getProperty("country.prefix"))) {
 					label.setIcon(imageWorld);
-					setToolTipText(messages.getString("int_call"));
-				} else if (number.startsWith("0800")){
+					setToolTipText(jfritz.getMessages().getString("int_call"));
+				} else if (number.getNumber().startsWith("0800")) {
 					label.setIcon(imageFreeCall);
-					setToolTipText(messages.getString("freecall"));
+					setToolTipText(jfritz.getMessages().getString("freecall"));
 				} else {
 					label.setIcon(imagePhone);
-					setToolTipText(messages.getString("fixed_network"));
+					setToolTipText(jfritz.getMessages().getString("fixed_network"));
 				}
 			} else {
 				label.setIcon(null);

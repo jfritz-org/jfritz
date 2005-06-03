@@ -31,9 +31,11 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.struct.Person;
+import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
 
-public class PhoneBookTableModel extends AbstractTableModel {
+public class PhoneBook extends AbstractTableModel {
 	private static final String PHONEBOOK_DTD_URI = "http://jfritz.moonflower.de/dtd/phonebook.dtd";
 
 	private static final String PHONEBOOK_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -47,7 +49,7 @@ public class PhoneBookTableModel extends AbstractTableModel {
 
 	private JFritz jfritz;
 
-	public PhoneBookTableModel(JFritz jfritz) {
+	public PhoneBook(JFritz jfritz) {
 		this.jfritz = jfritz;
 		persons = new Vector();
 
@@ -196,7 +198,7 @@ public class PhoneBookTableModel extends AbstractTableModel {
 	}
 
 	/**
-	 * Replaces Phonebookentries with Vector of new Phonebookentries
+	 * Replaces Phonebook entries with Vector of new Phonebook entries
 	 *
 	 * @param pb
 	 */
@@ -223,5 +225,19 @@ public class PhoneBookTableModel extends AbstractTableModel {
 		default:
 			return null;
 		}
+	}
+
+	public Person findPerson(PhoneNumber number) {
+		Enumeration en = persons.elements();
+		while (en.hasMoreElements()) {
+			Person p = (Person) en.nextElement();
+			PhoneNumber[] numbers = p.getNumbers();
+			for (int i = 0; i < numbers.length; i++) {
+				if (numbers[i].getNumber().equals(number.getNumber())) {
+					return p;
+				}
+			}
+		}
+		return null;
 	}
 }
