@@ -41,7 +41,6 @@ public class VCardList {
 			}
 		}
 		if (!found) {
-			Debug.msg("Adding person: "+person.getFullname());
 			list.add(person);
 		}
 	}

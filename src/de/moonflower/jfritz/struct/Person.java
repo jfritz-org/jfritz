@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
+import java.util.Enumeration;
 import java.util.Vector;
 
 import de.moonflower.jfritz.utils.Debug;
@@ -14,40 +15,31 @@ import de.moonflower.jfritz.utils.Debug;
  */
 public class Person {
 
-	private String firstName;
+	private String firstName = "";
 
-	private String lastName;
+	private String lastName = "";
 
-	private String middleName;
+	private String middleName = "";
 
-	private String street;
+	private String street = "";
 
-	private String postalCode;
+	private String postalCode = "";
 
-	private String city;
+	private String city = "";
 
-	private Vector numbers; // Soll die anderen einzelnen Nummern ersetzen
+	private String standard = "";
 
-	private PhoneNumber homeTelephoneNumber;
+	private String emailAddress = "";
 
-	private PhoneNumber mobileTelephoneNumber;
+	private Vector numbers;
 
-	private PhoneNumber businessTelephoneNumber;
-
-	private PhoneNumber otherTelephoneNumber;
-
-	private PhoneNumber standardTelephoneNumber;
-
-	private String emailAddress;
-
-	private String category;
+	public Person() {
+		numbers = new Vector();
+	}
 
 	public Person(String firstName, String middleName, String lastName,
-			String street, String postalCode, String city,
-			String homeTelephoneNumber, String mobileTelephoneNumber,
-			String businessTelephoneNumber, String otherTelephoneNumber,
-			String standardTelephoneNumber, String emailAddress, String category) {
-		numbers = new Vector();
+			String street, String postalCode, String city, String eMail) {
+		this();
 
 		this.firstName = firstName;
 		this.middleName = middleName;
@@ -55,46 +47,34 @@ public class Person {
 		this.street = street;
 		this.postalCode = postalCode;
 		this.city = city;
-		this.homeTelephoneNumber = new PhoneNumber(homeTelephoneNumber);
-		this.mobileTelephoneNumber = new PhoneNumber(mobileTelephoneNumber);
-		this.businessTelephoneNumber = new PhoneNumber(businessTelephoneNumber);
-		this.otherTelephoneNumber = new PhoneNumber(otherTelephoneNumber);
-		this.standardTelephoneNumber = new PhoneNumber(standardTelephoneNumber);
-		this.emailAddress = emailAddress;
-		this.category = category;
+		this.emailAddress = eMail;
 
-		if (homeTelephoneNumber.length() > 0)
-			addNumber(new PhoneNumber(homeTelephoneNumber, "home"));
-		if (mobileTelephoneNumber.length() > 0)
-			addNumber(new PhoneNumber(mobileTelephoneNumber, "mobile"));
-		if (businessTelephoneNumber.length() > 0)
-			addNumber(new PhoneNumber(businessTelephoneNumber, "business"));
-		if (otherTelephoneNumber.length() > 0)
-			addNumber(new PhoneNumber(otherTelephoneNumber, "other"));
 	}
 
-	public Person(String number) {
-		this("?", "", "?", "", "", "", number, "", "", "", number, "", "");
-		addNumber(new PhoneNumber(number, "home"));
-	}
+	public Person(String firstName, String lastName) {
+		this();
 
-	public Person(String firstName, String middleName, String lastName) {
 		this.firstName = firstName;
-		this.middleName = middleName;
 		this.lastName = lastName;
 	}
 
 	public void addNumber(PhoneNumber number) {
 		numbers.add(number);
+		if (numbers.size() == 1)
+			setStandard(number.getType());
+	}
+
+	public void addNumber(String number, String type) {
+		addNumber(new PhoneNumber(number, type));
 	}
 
 	public Vector getNumbers() {
 		return numbers;
 	}
 
-	public PhoneNumber[] getNumbers_OLD() {
-		return new PhoneNumber[] { homeTelephoneNumber, mobileTelephoneNumber,
-				businessTelephoneNumber, otherTelephoneNumber };
+	public void setNumbers(Vector numbers, String std) {
+		this.numbers = numbers;
+		this.standard = std;
 	}
 
 	public String getFullname() {
@@ -154,28 +134,41 @@ public class Person {
 		return city;
 	}
 
-	public PhoneNumber getHomeTelNumber() {
-		return homeTelephoneNumber;
+	public PhoneNumber getPhoneNumber(String type) {
+		Enumeration en = numbers.elements();
+		while (en.hasMoreElements()) {
+			PhoneNumber n = (PhoneNumber) en.nextElement();
+			if (n.getType().equals(type))
+				return n;
+		}
+		return null;
 	}
 
-	public PhoneNumber getMobileTelNumber() {
-		return mobileTelephoneNumber;
+	/**
+	 * @return Returns the standard PhoneNumber
+	 */
+	public PhoneNumber getStandardTelephoneNumber() {
+		return getPhoneNumber(standard);
 	}
 
-	public PhoneNumber getBusinessTelNumber() {
-		return businessTelephoneNumber;
-	}
-
-	public PhoneNumber getOtherTelNumber() {
-		return otherTelephoneNumber;
+	/**
+	 * Checks if person has telephone number
+	 *
+	 * @param number
+	 * @return True if person has a phone number
+	 */
+	public boolean hasNumber(String number) {
+		Enumeration en = numbers.elements();
+		while (en.hasMoreElements()) {
+			PhoneNumber n = (PhoneNumber) en.nextElement();
+			if (number.equals(n.getNumber()))
+				return true;
+		}
+		return false;
 	}
 
 	public String getEmailAddress() {
 		return emailAddress;
-	}
-
-	public String getCategory() {
-		return category;
 	}
 
 	public void setFirstName(String firstName) {
@@ -202,61 +195,22 @@ public class Person {
 		this.city = city;
 	}
 
-	public void setHomeTelNumber(String telNumber) {
-		this.homeTelephoneNumber = new PhoneNumber(telNumber);
-	}
-
-	public void setMobileTelNumber(String telNumber) {
-		this.mobileTelephoneNumber = new PhoneNumber(telNumber);
-	}
-
-	public void setBusinessTelNumber(String telNumber) {
-		this.businessTelephoneNumber = new PhoneNumber(telNumber);
-	}
-
-	public void setOtherTelNumber(String telNumber) {
-		this.otherTelephoneNumber = new PhoneNumber(telNumber);
-	}
-
 	public void setEmailAddress(String email) {
 		this.emailAddress = email;
 	}
 
-	public void setCategory(String category) {
-		this.category = category;
+	/**
+	 * @return Returns the standard.
+	 */
+	public final String getStandard() {
+		return standard;
 	}
 
 	/**
-	 * @return Returns the standardTelephoneNumber.
+	 * @param standard
+	 *            The standard to set.
 	 */
-	public PhoneNumber getStandardTelephoneNumber() {
-		return standardTelephoneNumber;
-	}
-
-	/**
-	 * @param standardTelephoneNumber
-	 *            The standardTelephoneNumber to set.
-	 */
-	public void setStandardTelephoneNumber(String standardTelephoneNumber) {
-		this.standardTelephoneNumber = new PhoneNumber(standardTelephoneNumber);
-	}
-
-	/**
-	 * Checks if person has telephone number number
-	 *
-	 * @param number
-	 * @return True if person has a phone number
-	 */
-	public boolean hasNumber(String number) {
-		if (number.equals(homeTelephoneNumber))
-			return true;
-		else if (number.equals(mobileTelephoneNumber))
-			return true;
-		else if (number.equals(businessTelephoneNumber))
-			return true;
-		else if (number.equals(otherTelephoneNumber))
-			return true;
-		else
-			return false;
+	public final void setStandard(String standard) {
+		this.standard = standard;
 	}
 }

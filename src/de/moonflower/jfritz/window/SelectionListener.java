@@ -45,11 +45,8 @@ public class SelectionListener implements ListSelectionListener {
 			for (int i = 0; i < rows.length; i++) {
 				Person person = (Person) table.getModel()
 						.getValueAt(rows[i], 3);
-				if (person != null) { // FIXME person.getVCard
-					list.addVCard(new Person("", "", person.getFullname(), "",
-							"", "", "", "", "", "", person
-									.getStandardTelephoneNumber().getNumber(),
-							"", ""));
+				if (person != null && person.getFullname() != "") { // FIXME person.getVCard
+					list.addVCard(person);
 				}
 			}
 

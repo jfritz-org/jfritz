@@ -161,7 +161,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * Create the status bar
 	 */
 	public void createStatusbar() {
-		// TODO: This can be done nice (more info fields, etc.)
 		progressbar = new JProgressBar();
 		progressbar.setValue(0);
 		progressbar.setStringPainted(true);
@@ -598,7 +597,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 									.getFilteredCallVector();
 							Call call = (Call) data.get(i);
 							PhoneNumber number = call.getPhoneNumber();
-							// String participant = call.getParticipant();
 							if (number != null && (call.getPerson() == null)) {
 								setStatus(jfritz.getMessages().getString(
 										"reverse_lookup_for")
@@ -611,7 +609,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 								if (newPerson != null) {
 									jfritz.getPhonebook().addEntry(newPerson);
 									// jfritz.getCallerlist().setPerson(newPerson,i);
-									jfritz.getCallerlist().fireTableDataChanged();
+									jfritz.getCallerlist()
+											.fireTableDataChanged();
 								}
 
 							}
@@ -638,8 +637,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	/**
 	 * Shows the quick dial dialog
-	 *
-	 * TODO: A lot..
 	 */
 	private void showQuickDialDialog() {
 		QuickDialDialog dialog = new QuickDialDialog(this);
@@ -651,8 +648,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	/**
 	 * Shows the stats dialog
-	 *
-	 * TODO: A lot..
 	 */
 	private void showStatsDialog() {
 		StatsDialog dialog = new StatsDialog(this);
@@ -696,11 +691,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * Shows the phone book
 	 */
 	public void showPhoneBook() {
-		// TODO: A phonebook (jtable) in which the participants can be edited.
-
 		PhoneBookDialog pb = new PhoneBookDialog(this, jfritz);
 
 		if (pb.showDialog()) {
+			// TODO Save ???
 		}
 		pb.dispose();
 		pb = null;
@@ -745,7 +739,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * Shows the exit dialog
 	 */
 	public void showExitDialog() {
-		// FIXME Option for direct closing
 		boolean exit = true;
 
 		if (properties.getProperty("option.confirmOnExit", "true") == "true")
@@ -1013,16 +1006,12 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				return "VCard (.vcf)";
 			}
 		});
-
 		int rows[] = callertable.getSelectedRows();
 		for (int i = 0; i < rows.length; i++) {
-			String name = (String) callertable.getModel()
-					.getValueAt(rows[i], 3);
-			String number = (String) callertable.getModel().getValueAt(rows[i],
-					2);
-			if (!name.startsWith("?") && !number.equals("")) {
-				list.addVCard(new Person("", "", name, "", "", "", "", "", "",
-						"", number, "", ""));
+			Person person = (Person) callertable.getModel().getValueAt(rows[i],
+					3);
+			if (person != null && person.getFullname() != "") {
+				list.addVCard(person);
 			}
 		}
 		if (list.getCount() > 0) {

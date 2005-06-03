@@ -61,11 +61,12 @@ public class ReverseLookup {
 	public static Person lookup(String number) {
 		Person newPerson;
 		if (numberIsMobile(number)) {
-			newPerson = new Person("", "", "", "", "", "", "", number, "", "",
-					number, "", "");
+			newPerson = new Person();
+			newPerson.addNumber(number, "mobile");
+			Debug.msg("Adding mobile "+number);
 		} else if (numberIsFreecall(number)) {
-			newPerson = new Person("", "", "FreeCall", "", "", "", number, "",
-					"", "", number, "", "");
+			newPerson = new Person("", "FreeCall");
+			newPerson.addNumber(number, "business");
 		} else {
 			newPerson = lookupDasOertliche(number);
 		}
@@ -150,16 +151,16 @@ public class ReverseLookup {
 
 					newPerson = new Person(firstname, "", lastname,
 							splitAddress[0], splitPostCodeCity[0],
-							splitPostCodeCity[1].trim(), number, "", "", "",
-							number, "", "");
+							splitPostCodeCity[1].trim(),"");
+					newPerson.addNumber(number, "home");
 					return newPerson;
 				}
 			} catch (IOException e1) {
 				Debug.err("Error while retrieving " + urlstr);
 			}
 		}
-		newPerson = new Person("", "", "", "", "", "", number, "", "", "",
-				number, "", "");
+		newPerson = new Person();
+		newPerson.addNumber(number, "home");
 		return newPerson;
 	}
 

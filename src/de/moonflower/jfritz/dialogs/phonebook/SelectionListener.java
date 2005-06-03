@@ -30,15 +30,18 @@ public class SelectionListener implements ListSelectionListener {
 				phbd.setTextFieldStreet(editPerson.getStreet());
 				phbd.setTextFieldPostalCode(editPerson.getPostalCode());
 				phbd.setTextFieldCity(editPerson.getCity());
+				/*
 				phbd.setTextFieldHomeNumber(editPerson.getHomeTelNumber().getNumber());
 				phbd.setTextFieldMobileNumber(editPerson.getMobileTelNumber().getNumber());
 				phbd.setTextFieldBusinessNumber(editPerson
 						.getBusinessTelNumber().getNumber());
 				phbd.setTextFieldOtherNumber(editPerson.getOtherTelNumber().getNumber());
+				*/
 				phbd.setRadioButtonHome(false);
 				phbd.setRadioButtonMobile(false);
 				phbd.setRadioButtonBusiness(false);
 				phbd.setRadioButtonOther(false);
+				/*
 				if (editPerson.getStandardTelephoneNumber().equals(
 						editPerson.getHomeTelNumber())) {
 					phbd.setRadioButtonHome(true);
@@ -52,6 +55,7 @@ public class SelectionListener implements ListSelectionListener {
 						editPerson.getOtherTelNumber())) {
 					phbd.setRadioButtonOther(true);
 				}
+				*/
 			}
 		}
 		if (e.getValueIsAdjusting()) {

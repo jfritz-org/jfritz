@@ -149,8 +149,8 @@ public class CallerList extends AbstractTableModel {
 				SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 				pw.println("<entry calltype=\"" + type.toString() + "\">");
 				pw.println("\t<date>" + df.format(datum) + "</date>");
-				if (!caller.equals(""))
-					pw.println("\t<caller>" + caller + "</caller>");
+				if (caller != null)
+					pw.println("\t<caller>" + caller.getNumber() + "</caller>");
 				if (!port.equals(""))
 					pw.println("\t<port>" + port + "</port>");
 				if (!route.equals(""))
@@ -295,17 +295,21 @@ public class CallerList extends AbstractTableModel {
 	 * adds new Call to CallerList
 	 *
 	 * @param call
+	 * @return true if call was added successfully
 	 */
+
 	public boolean addEntry(Call call) {
 		boolean newEntry = true;
 		Enumeration en = getUnfilteredCallVector().elements();
 		while (en.hasMoreElements()) {
 			Call c = (Call) en.nextElement();
-			if (c.getCalldate().equals(call.getCalldate())
-					&& (c.getPhoneNumber().getNumber().equals(call
-							.getPhoneNumber().getNumber()))) {
-				// We already have this call
-				newEntry = false;
+			String nr1 = "", nr2 = "";
+			if (c.getPhoneNumber() != null)
+				nr1 = c.getPhoneNumber().getNumber();
+			if (call.getPhoneNumber() != null)
+				nr2 = call.getPhoneNumber().getNumber();
+			if (c.getCalldate().equals(call.getCalldate()) && (nr1).equals(nr2)) {
+				newEntry = false; // We already have this call
 				break;
 			}
 		}
@@ -438,7 +442,7 @@ public class CallerList extends AbstractTableModel {
 		Call call = (Call) filteredCallerData.get(rowIndex);
 		if (columnIndex == 3) {
 			Debug.msg("Setting person to " + object.toString());
-			Person p = new Person("", "", object.toString());
+			Person p = new Person("", object.toString());
 			setPerson(p, rowIndex);
 		}
 		fireTableCellUpdated(rowIndex, columnIndex);

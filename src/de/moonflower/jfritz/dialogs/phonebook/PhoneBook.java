@@ -61,24 +61,25 @@ public class PhoneBook extends AbstractTableModel {
 	}
 
 	public void addEntry(Person newPerson) {
-		boolean found = false;
 		Enumeration en = persons.elements();
 		while (en.hasMoreElements()) {
 			Person p = (Person) en.nextElement();
-			if (p.getStandardTelephoneNumber().getNumber().equals(
-					newPerson.getStandardTelephoneNumber().getNumber())) {
-				found = true;
-				break;
+			PhoneNumber pn1 = p.getStandardTelephoneNumber();
+			PhoneNumber pn2 = newPerson.getStandardTelephoneNumber();
+
+			if (pn1.getNumber().equals(pn2.getNumber())) {
+				// changeEntry(p, newPerson);
+				return;
 			}
 		}
-		if (!found) {
-			persons.add(newPerson);
-		}
+
+		persons.add(newPerson);
 	}
 
-	public void changeEntry(Person person) {
+	public void changeEntry(Person person, Person newPerson) {
 		// FIXME
-		Debug.err("PhoneBook:changeEntry(Person person)  IMPLEMENT ME!");
+		Debug
+				.err("PhoneBook:changeEntry(Person person, Person newPerson)  IMPLEMENT ME!");
 	}
 
 	/**
@@ -132,37 +133,16 @@ public class PhoneBook extends AbstractTableModel {
 										+ "</city>");
 					pw.println("\t</address>");
 				}
-				String std;
-				if (current.getStandardTelephoneNumber().getNumber().equals(
-						current.getMobileTelNumber().getNumber()))
-					std = "mobile";
-				else if (current.getStandardTelephoneNumber().getNumber()
-						.equals(current.getBusinessTelNumber().getNumber()))
-					std = "business";
-				else if (current.getStandardTelephoneNumber().getNumber()
-						.equals(current.getOtherTelNumber().getNumber()))
-					std = "other";
-				else
-					std = "home";
 
-				pw.println("\t<phonenumbers standard=\"" + std + "\">");
-				if (current.getHomeTelNumber().getNumber().length() > 0)
-					pw.println("\t\t<number type=\"home\">"
-							+ current.getHomeTelNumber() + "</number>");
-				if (current.getMobileTelNumber().getNumber().length() > 0)
-					pw.println("\t\t<number type=\"mobile\">"
-							+ current.getMobileTelNumber() + "</number>");
-				if (current.getBusinessTelNumber().getNumber().length() > 0)
-					pw.println("\t\t<number type=\"business\">"
-							+ current.getBusinessTelNumber() + "</number>");
-				if (current.getOtherTelNumber().getNumber().length() > 0)
-					pw.println("\t\t<number type=\"other\">"
-							+ current.getOtherTelNumber() + "</number>");
-				/*
-				 * if (current.getStandardTelephoneNumber().getNumber().length() >
-				 * 0) pw.println("\t\t <number type=\"standard\">" +
-				 * current.getStandardTelephoneNumber() + " </number>");
-				 */
+				pw.println("\t<phonenumbers standard=\""
+						+ current.getStandard() + "\">");
+				Enumeration en2 = current.getNumbers().elements();
+				while (en2.hasMoreElements()) {
+					PhoneNumber nr = (PhoneNumber) en2.nextElement();
+					pw.println("\t\t<number type=\"" + nr.getType() + "\">"
+							+ nr.getNumber() + "</number>");
+
+				}
 				pw.println("\t</phonenumbers>");
 
 				if (current.getEmailAddress().length() > 0) {
@@ -172,15 +152,12 @@ public class PhoneBook extends AbstractTableModel {
 								+ "</email>");
 					pw.println("\t</internet>");
 				}
-
-				if (current.getCategory().length() > 0) {
-					pw.println("\t<categories>");
-					if (current.getCategory().length() > 0)
-						pw.println("\t\t<category>" + current.getCategory()
-								+ "</category>");
-					pw.println("\t</categories>");
-				}
-
+				/*
+				 * if (current.getCategory().length() > 0) { pw.println("\t
+				 * <categories>"); if (current.getCategory().length() > 0)
+				 * pw.println("\t\t <category>" + current.getCategory() + "
+				 * </category>"); pw.println("\t </categories>"); }
+				 */
 				pw.println("</entry>");
 			}
 			pw.println("</phonebook>");
@@ -313,14 +290,6 @@ public class PhoneBook extends AbstractTableModel {
 					return p;
 				}
 			}
-			/*
-			PhoneNumber[] numbers = p.getNumbers();
-			for (int i = 0; i < numbers.length; i++) {
-				if (numbers[i].getNumber().equals(number.getNumber())) {
-					return p;
-				}
-			}
-			*/
 		}
 		return null;
 	}

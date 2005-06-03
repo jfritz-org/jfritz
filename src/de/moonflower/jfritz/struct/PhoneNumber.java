@@ -10,7 +10,7 @@ import de.moonflower.jfritz.utils.ReverseLookup;
  * @author Arno Willig
  *
  */
-public class PhoneNumber {
+public class PhoneNumber implements Comparable {
 
 	public static String intPrefix = "+";
 
@@ -146,4 +146,28 @@ public class PhoneNumber {
 		return (!provider.equals(""));
 	}
 
+	/**
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	public int compareTo(Object arg0) {
+		if (arg0.getClass().equals(this.getClass())) {
+
+		}
+		return 0;
+	}
+
+
+	/**
+	 * @return Returns the type.
+	 */
+	public final String getType() {
+		return type;
+	}
+
+	/**
+	 * @param type The type to set.
+	 */
+	public final void setType(String type) {
+		this.type = type;
+	}
 }
