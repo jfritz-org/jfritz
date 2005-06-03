@@ -10,27 +10,26 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 import java.util.Vector;
-import java.awt.GridLayout;
 
-import javax.swing.ImageIcon;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.JRadioButton;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.ButtonGroup;
-import java.awt.Rectangle;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.struct.Person;
@@ -193,8 +192,7 @@ public class PhoneBookDialog extends JDialog {
 
 		bottomPane.add(changeButton);
 
-		JPanel panelLabelsAndTextFields = new JPanel();
-		panelLabelsAndTextFields.setLayout(new GridLayout(11, 2));
+		JPanel panelLabelsAndTextFields = new PersonPanel(jfritz);
 
 		labelFirstName = new JLabel(messages.getString("firstName") + ": ");
 		textFieldFirstName = new JTextField();

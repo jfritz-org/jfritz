@@ -6,7 +6,6 @@ package de.moonflower.jfritz.struct;
 
 import de.moonflower.jfritz.utils.ReverseLookup;
 
-
 /**
  * @author Arno Willig
  *
@@ -21,12 +20,10 @@ public class PhoneNumber {
 
 	private String callbycall = "";
 
-	/**
-	 * Constructs a PhoneNumber
-	 *
-	 * @param fullNumber
-	 */
-	public PhoneNumber(String fullNumber) {
+	private String type = "";
+
+	public PhoneNumber(String fullNumber, String type) {
+		this.type = type;
 		if (fullNumber.startsWith("010")) { // cut 01013 and others
 			callbycall = fullNumber.substring(0, 5);
 			number = fullNumber.substring(5);
@@ -35,6 +32,15 @@ public class PhoneNumber {
 		if (number.startsWith(intPrefix)) {
 			// TODO
 		}
+	}
+
+	/**
+	 * Constructs a PhoneNumber
+	 *
+	 * @param fullNumber
+	 */
+	public PhoneNumber(String fullNumber) {
+		this(fullNumber, "");
 	}
 
 	public String toString() {
@@ -62,7 +68,6 @@ public class PhoneNumber {
 	public boolean hasCallByCall() {
 		return (callbycall.length() > 0);
 	}
-
 
 	/**
 	 * @return True if number is a FreeCall number
@@ -101,7 +106,6 @@ public class PhoneNumber {
 	}
 
 	// FIXME: This does not work yet ***************
-
 
 	/**
 	 *

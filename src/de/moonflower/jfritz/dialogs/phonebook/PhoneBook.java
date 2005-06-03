@@ -305,12 +305,22 @@ public class PhoneBook extends AbstractTableModel {
 		Enumeration en = persons.elements();
 		while (en.hasMoreElements()) {
 			Person p = (Person) en.nextElement();
+			Vector numbers = p.getNumbers();
+			Enumeration en2 = numbers.elements();
+			while (en2.hasMoreElements()) {
+				PhoneNumber n = (PhoneNumber) en2.nextElement();
+				if (n.getNumber().equals(number.getNumber())) {
+					return p;
+				}
+			}
+			/*
 			PhoneNumber[] numbers = p.getNumbers();
 			for (int i = 0; i < numbers.length; i++) {
 				if (numbers[i].getNumber().equals(number.getNumber())) {
 					return p;
 				}
 			}
+			*/
 		}
 		return null;
 	}

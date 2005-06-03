@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
+import java.util.Vector;
 
 import de.moonflower.jfritz.utils.Debug;
 
@@ -25,6 +26,8 @@ public class Person {
 
 	private String city;
 
+	private Vector numbers; // Soll die anderen einzelnen Nummern ersetzen
+
 	private PhoneNumber homeTelephoneNumber;
 
 	private PhoneNumber mobileTelephoneNumber;
@@ -44,6 +47,8 @@ public class Person {
 			String homeTelephoneNumber, String mobileTelephoneNumber,
 			String businessTelephoneNumber, String otherTelephoneNumber,
 			String standardTelephoneNumber, String emailAddress, String category) {
+		numbers = new Vector();
+
 		this.firstName = firstName;
 		this.middleName = middleName;
 		this.lastName = lastName;
@@ -57,10 +62,20 @@ public class Person {
 		this.standardTelephoneNumber = new PhoneNumber(standardTelephoneNumber);
 		this.emailAddress = emailAddress;
 		this.category = category;
+
+		if (homeTelephoneNumber.length() > 0)
+			addNumber(new PhoneNumber(homeTelephoneNumber, "home"));
+		if (mobileTelephoneNumber.length() > 0)
+			addNumber(new PhoneNumber(mobileTelephoneNumber, "mobile"));
+		if (businessTelephoneNumber.length() > 0)
+			addNumber(new PhoneNumber(businessTelephoneNumber, "business"));
+		if (otherTelephoneNumber.length() > 0)
+			addNumber(new PhoneNumber(otherTelephoneNumber, "other"));
 	}
 
 	public Person(String number) {
 		this("?", "", "?", "", "", "", number, "", "", "", number, "", "");
+		addNumber(new PhoneNumber(number, "home"));
 	}
 
 	public Person(String firstName, String middleName, String lastName) {
@@ -69,16 +84,32 @@ public class Person {
 		this.lastName = lastName;
 	}
 
+	public void addNumber(PhoneNumber number) {
+		numbers.add(number);
+	}
+
+	public Vector getNumbers() {
+		return numbers;
+	}
+
+	public PhoneNumber[] getNumbers_OLD() {
+		return new PhoneNumber[] { homeTelephoneNumber, mobileTelephoneNumber,
+				businessTelephoneNumber, otherTelephoneNumber };
+	}
+
 	public String getFullname() {
-		if (lastName.length()==0) return "";
-		if (firstName.length()==0) return lastName;
+		if (lastName.length() == 0)
+			return "";
+		if (firstName.length() == 0)
+			return lastName;
 		return (lastName + ", " + firstName + " " + middleName).trim();
 	}
 
 	public String toVCard() {
 		String vcard = "";
-		vcard = "BEGIN:vCard\n" + "VERSION:3.0\n" + "FN: " + getFullname() + "\n"
-				+ "TEL;TYPE=VOICE,MSG,WORK:" + getStandardTelephoneNumber() + "\n" + "END:vCard\n";
+		vcard = "BEGIN:vCard\n" + "VERSION:3.0\n" + "FN: " + getFullname()
+				+ "\n" + "TEL;TYPE=VOICE,MSG,WORK:"
+				+ getStandardTelephoneNumber() + "\n" + "END:vCard\n";
 		return vcard;
 	}
 
@@ -97,11 +128,6 @@ public class Person {
 		} catch (FileNotFoundException e) {
 			Debug.err("Could not write " + file.getName() + "!");
 		}
-	}
-
-	public PhoneNumber[] getNumbers() {
-		return new PhoneNumber[] { homeTelephoneNumber, mobileTelephoneNumber,
-				businessTelephoneNumber, otherTelephoneNumber };
 	}
 
 	public String getFirstName() {

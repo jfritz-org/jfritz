@@ -72,15 +72,16 @@ public class JFritzUtils {
 			+ "\\s*<td style=\"text-align: center;\">(\\d*)</td>"
 			+ "\\s*<td>(\\w*)</td>"
 			+ "\\s*<td>([^<]*)</td>"
-			+ "\\s*<td style=\"text-align: right;\"><button [^>]*> <img [^>]*></button></td>"
-			+ "\\s*<td style=\"text-align: right;\"><button [^>]*> <img [^>]*></button></td>"
+			+ "\\s*<td style=\"text-align: right;\"><button [^>]*>\\s*<img [^>]*></button></td>"
+			+ "\\s*<td style=\"text-align: right;\"><button [^>]*>\\s*<img [^>]*></button></td>"
 			+ "\\s*</tr>";
 
 	final static String PATTERN_SIPPROVIDER = "<!-- \"(\\d)\" / \"(\\w*)\" -->"
 			+ "\\s*<td class=\"c1\">\\s*<input type=checkbox id=\"uiViewActivsip\\d\""
 			+ "\\s*onclick=\"uiOnChangeActivated\\('uiViewActivsip\\d','uiPostActivsip\\d'\\); return true;\">"
 			+ "\\s*</td>"
-			+ "\\s*<td class=\"c2\">([\\(]*[\\w*\\s*]*[\\)]*[\\w*\\s*]*)</td>"
+//			+ "\\s*<td class=\"c2\">([\\(]*[\\w*\\s*]*[\\)]*[\\w*\\s*]*)</td>"
+			+ "\\s*<td class=\"c2\">([^<]*)</td>"
 			+ "\\s*<td class=\"c3\"><script type=\"text/javascript\">document.write\\(ProviderDisplay\\(\"([^\"]*)\"\\)\\);</script></td>";
 
 	/**
