@@ -48,6 +48,7 @@ public class PersonCellRenderer extends DefaultTableCellRenderer {
 			label.setHorizontalAlignment(JLabel.LEFT);
 		} else {
 			label.setIcon(null);
+			label.setText("");
 		}
 		return label;
 	}

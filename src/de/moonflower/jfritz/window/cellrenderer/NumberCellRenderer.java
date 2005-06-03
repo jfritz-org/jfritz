@@ -82,14 +82,6 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 
 		if (value != null) {
 			PhoneNumber number = (PhoneNumber) value;
-			// FIXME
-			/*
-			 * number = JFritzUtils.createAreaNumber(number,
-			 * properties.getProperty("country.prefix"),
-			 * properties.getProperty("country.code"),
-			 * properties.getProperty("area.prefix"),
-			 * properties.getProperty("area.code"));
-			 */
 			setToolTipText(number.toString());
 			if (number.getNumber().length() > 4) { // if valid number present,
 				// draw icon
@@ -142,6 +134,8 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 			} else {
 				label.setIcon(null);
 			}
+		} else {
+			label.setIcon(null);
 		}
 		return label;
 	}

@@ -33,14 +33,17 @@ public class VCardList {
 		Enumeration en = list.elements();
 		while (en.hasMoreElements()) {
 			Person p = (Person) en.nextElement();
-			if (p.getStandardTelephoneNumber().equals(
-					person.getStandardTelephoneNumber())) {
+			if (p.getStandardTelephoneNumber().getNumber().equals(
+					person.getStandardTelephoneNumber().getNumber())
+					|| p.getLastName().equals("")) {
 				found = true;
 				break;
 			}
 		}
-		if (!found)
+		if (!found) {
+			Debug.msg("Adding person: "+person.getFullname());
 			list.add(person);
+		}
 	}
 
 	public int getCount() {

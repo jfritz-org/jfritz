@@ -61,9 +61,11 @@ public class ReverseLookup {
 	public static Person lookup(String number) {
 		Person newPerson;
 		if (numberIsMobile(number)) {
-			newPerson = new Person(number);
+			newPerson = new Person("", "", "", "", "", "", "", number, "", "",
+					number, "", "");
 		} else if (numberIsFreecall(number)) {
-			newPerson = new Person("?","","FREECALL","","","",number,"","","",number,"","");
+			newPerson = new Person("", "", "FreeCall", "", "", "", number, "",
+					"", "", number, "", "");
 		} else {
 			newPerson = lookupDasOertliche(number);
 		}
@@ -132,21 +134,32 @@ public class ReverseLookup {
 						.compile("<a class=\"blb\" href=\"[^\"]*\">([^<]*)</a><br>([^<]*)</td>");
 				Matcher m = p.matcher(data);
 				if (m.find()) {
-					Debug.msg(3,"Pattern: "+m.group(1).trim());
-					Debug.msg(3,"Pattern: "+m.group(2).trim());
-					// TODO: wie splittet man am ersten SPACE und nicht an jedem?
+					Debug.msg(3, "Pattern: " + m.group(1).trim());
+					Debug.msg(3, "Pattern: " + m.group(2).trim());
+					// TODO: wie splittet man am ersten SPACE und nicht an
+					// jedem?
 					String[] splitNames, splitAddress, splitPostCodeCity;
 					splitNames = m.group(1).trim().split(" ");
 					splitAddress = m.group(2).trim().split(", ");
 					splitPostCodeCity = splitAddress[1].split(" ");
-					newPerson = new Person(splitNames[1],"",splitNames[0],splitAddress[0],splitPostCodeCity[0],splitPostCodeCity[1],number,"","","",number,"","");
+					String firstname = "", lastname = "";
+					if (splitNames.length > 1) {
+						firstname = splitNames[1];
+					}
+					lastname = splitNames[0];
+
+					newPerson = new Person(firstname, "", lastname,
+							splitAddress[0], splitPostCodeCity[0],
+							splitPostCodeCity[1].trim(), number, "", "", "",
+							number, "", "");
 					return newPerson;
 				}
 			} catch (IOException e1) {
 				Debug.err("Error while retrieving " + urlstr);
 			}
 		}
-		newPerson = new Person("?","","?","","","",number,"","","",number,"","");
+		newPerson = new Person("", "", "", "", "", "", number, "", "", "",
+				number, "", "");
 		return newPerson;
 	}
 

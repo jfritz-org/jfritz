@@ -168,13 +168,11 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.48 2005/06/03 05:41:02 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.49 2005/06/03 08:42:33 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
 	public final static String PROPERTIES_FILE = "jfritz.properties.xml";
-
-	// public final static String PARTICIPANTS_FILE = "jfritz.participants.xml";
 
 	public final static String CALLS_FILE = "jfritz.calls.xml";
 
@@ -219,11 +217,13 @@ public final class JFritz {
 		new ReverseLookup(); // Initialize ReverseLookup
 		loadProperties();
 		loadMessages(new Locale("de", "DE"));
-		callerlist = new CallerList(this);
-		callerlist.loadFromXMLFile(CALLS_FILE);
 
 		phonebook = new PhoneBook(this);
 		phonebook.loadFromXMLFile(PHONEBOOK_FILE);
+
+		callerlist = new CallerList(this);
+		callerlist.loadFromXMLFile(CALLS_FILE);
+
 
 		jframe = new JFritzWindow(this);
 

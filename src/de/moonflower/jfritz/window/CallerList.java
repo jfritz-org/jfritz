@@ -103,8 +103,8 @@ public class CallerList extends AbstractTableModel {
 	 *
 	 */
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		return (!((Call) filteredCallerData.get(rowIndex)).getPhoneNumber()
-				.equals("") && (columnIndex == 3));
+		return ((columnIndex == 3) && (((Call) filteredCallerData.get(rowIndex))
+				.getPhoneNumber() != null));
 	}
 
 	/**
@@ -437,35 +437,11 @@ public class CallerList extends AbstractTableModel {
 	public void setValueAt(Object object, int rowIndex, int columnIndex) {
 		Call call = (Call) filteredCallerData.get(rowIndex);
 		if (columnIndex == 3) {
+			Debug.msg("Setting person to " + object.toString());
 			Person p = new Person("", "", object.toString());
 			setPerson(p, rowIndex);
 		}
 		fireTableCellUpdated(rowIndex, columnIndex);
-	}
-
-	/**
-	 * Sets the participant of a specifix row
-	 *
-	 * @param participant
-	 * @param rowIndex
-	 */
-	public void setParticipant2(String participant, int rowIndex) {
-		Call call = (Call) filteredCallerData.get(rowIndex);
-
-		if (!call.getPhoneNumber().equals("")) { // no empty numbers
-			if (participant.equals("")) {
-				Debug.err("REMOVING PARTICIPANT");
-
-				// FIXME jfritz.getParticipants().remove(call.getPhoneNumber());
-			} else {
-				Debug.err("SETTING PARTICIPANT: " + participant);
-				// FIXME
-				// jfritz.getParticipants().setProperty(call.getPhoneNumber().getNumber(),
-				// participant);
-			}
-			fireTableCellUpdated(rowIndex, 3);
-			fireTableStructureChanged();
-		}
 	}
 
 	public void setPerson(Person person, int rowIndex) {
@@ -473,12 +449,14 @@ public class CallerList extends AbstractTableModel {
 
 		if (call.getPhoneNumber() != null) { // no empty numbers
 			if (person == null) {
-				Debug.err("REMOVING PERSON");
+				Debug.err("Callerlist:setPerson() IMPLEMENT ME (remove)");
 				// FIXME
 				// jfritz.getPhonebook().removeEntry(call.getPhoneNumber());
 			} else {
-				Debug.err("SETTING PERSON");
-				jfritz.getPhonebook().addEntry(person);
+				Debug.err("Callerlist:setPerson() IMPLEMENT ME (add/change)");
+				// FIXME
+				// jfritz.getPhonebook().addEntry(person);
+				// jfritz.getPhonebook().changeEntry(person);
 			}
 			fireTableCellUpdated(rowIndex, 3);
 			fireTableStructureChanged();
@@ -674,10 +652,12 @@ public class CallerList extends AbstractTableModel {
 				for (int i = 0; i < parts.length; i++) {
 					String part = parts[i];
 					if (part.length() > 0
-							&& call.getPhoneNumber().getNumber().indexOf(
-									parts[i]) == -1
-							&& call.getPerson().getFullname().toLowerCase()
-									.indexOf(part.toLowerCase()) == -1) {
+							&& (call.getPhoneNumber() == null || call
+									.getPhoneNumber().getNumber().indexOf(
+											parts[i]) == -1)
+							&& (call.getPerson() == null || call.getPerson()
+									.getFullname().toLowerCase().indexOf(
+											part.toLowerCase()) == -1)) {
 						searchFilterPassed = false;
 						break;
 					}
@@ -698,12 +678,12 @@ public class CallerList extends AbstractTableModel {
 				} catch (ParseException e1) {
 				}
 
-				if (filterHandy && (call.isMobileCall()))
+				if (filterHandy && call.getPhoneNumber() != null
+						&& call.getPhoneNumber().isMobile())
 					handyFilterPassed = false;
 
 				if (searchFilterPassed && dateFilterPassed && handyFilterPassed)
-					if (!(filterNumber && call.getPhoneNumber().getNumber()
-							.equals(""))) {
+					if (!(filterNumber && call.getPhoneNumber() == null)) {
 						if ((!filterCallIn)
 								&& (call.getCalltype().toInt() == CallType.CALLIN))
 							filteredcallerdata.add(call);

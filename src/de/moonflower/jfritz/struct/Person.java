@@ -70,6 +70,8 @@ public class Person {
 	}
 
 	public String getFullname() {
+		if (lastName.length()==0) return "";
+		if (firstName.length()==0) return lastName;
 		return (lastName + ", " + firstName + " " + middleName).trim();
 	}
 

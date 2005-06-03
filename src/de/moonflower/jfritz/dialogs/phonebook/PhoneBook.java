@@ -38,7 +38,8 @@ import de.moonflower.jfritz.utils.Debug;
 public class PhoneBook extends AbstractTableModel {
 	private static final String PHONEBOOK_DTD_URI = "http://jfritz.moonflower.de/dtd/phonebook.dtd";
 
-	private static final String PHONEBOOK_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+	// TODO Write correct dtd
+	private static final String PHONEBOOK_DTD = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>"
 			+ "<!-- DTD for JFritz phonebook -->"
 			+ "<!ELEMENT firstname (commment?,entry*)>"
 			+ "<!ELEMENT middlename (#PCDATA)>"
@@ -60,7 +61,24 @@ public class PhoneBook extends AbstractTableModel {
 	}
 
 	public void addEntry(Person newPerson) {
-		persons.add(newPerson);
+		boolean found = false;
+		Enumeration en = persons.elements();
+		while (en.hasMoreElements()) {
+			Person p = (Person) en.nextElement();
+			if (p.getStandardTelephoneNumber().getNumber().equals(
+					newPerson.getStandardTelephoneNumber().getNumber())) {
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			persons.add(newPerson);
+		}
+	}
+
+	public void changeEntry(Person person) {
+		// FIXME
+		Debug.err("PhoneBook:changeEntry(Person person)  IMPLEMENT ME!");
 	}
 
 	/**
@@ -68,13 +86,13 @@ public class PhoneBook extends AbstractTableModel {
 	 *
 	 * @param filename
 	 */
-	public void saveToXMLFile(String filename) {
+	public synchronized void saveToXMLFile(String filename) {
 		Debug.msg("Saving to file " + filename);
 		FileOutputStream fos;
 		try {
 			fos = new FileOutputStream(filename);
 			PrintWriter pw = new PrintWriter(fos);
-			pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+			pw.println("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>");
 			pw.println("<!DOCTYPE phonebook SYSTEM \"" + PHONEBOOK_DTD_URI
 					+ "\">");
 			pw.println("<phonebook>");
@@ -84,32 +102,85 @@ public class PhoneBook extends AbstractTableModel {
 			while (en.hasMoreElements()) {
 				Person current = (Person) en.nextElement();
 				pw.println("<entry>");
-				pw.println("\t<firstname>" + current.getFirstName()
-						+ "</firstname>");
-				pw.println("\t<middlename>" + current.getMiddleName()
-						+ "</middlename>");
-				pw.println("\t<lastname>" + current.getLastName()
-						+ "</lastname>");
-				pw.println("\t<street>" + current.getStreet() + "</street>");
-				pw.println("\t<postcode>" + current.getPostalCode()
-						+ "</postcode>");
-				pw.println("\t<city>" + current.getCity() + "</city>");
-				pw.println("\t<homenumber>" + current.getHomeTelNumber()
-						+ "</homenumber>");
-				pw.println("\t<mobilenumber>" + current.getMobileTelNumber()
-						+ "</mobilenumber>");
-				pw.println("\t<businessnumber>"
-						+ current.getBusinessTelNumber() + "</businessnumber>");
-				pw.println("\t<othernumber>" + current.getOtherTelNumber()
-						+ "</othernumber>");
-				pw.println("\t<standardnumber>"
-						+ current.getStandardTelephoneNumber()
-						+ "</standardnumber>");
-				pw
-						.println("\t<email>" + current.getEmailAddress()
+				if (current.getFullname().length() > 0) {
+					pw.println("\t<name>");
+					if (current.getFirstName().length() > 0)
+						pw.println("\t\t<firstname>" + current.getFirstName()
+								+ "</firstname>");
+					if (current.getMiddleName().length() > 0)
+						pw.println("\t\t<middlename>" + current.getMiddleName()
+								+ "</middlename>");
+					if (current.getLastName().length() > 0)
+						pw.println("\t\t<lastname>" + current.getLastName()
+								+ "</lastname>");
+					pw.println("\t</name>");
+				}
+
+				if ((current.getStreet().length() > 0)
+						|| (current.getPostalCode().length() > 0)
+						|| (current.getCity().length() > 0)) {
+					pw.println("\t<address>");
+					if (current.getStreet().length() > 0)
+						pw.println("\t\t<street>" + current.getStreet()
+								+ "</street>");
+					if (current.getPostalCode().length() > 0)
+						pw.println("\t\t<postcode>" + current.getPostalCode()
+								+ "</postcode>");
+					if (current.getCity().length() > 0)
+						pw
+								.println("\t\t<city>" + current.getCity()
+										+ "</city>");
+					pw.println("\t</address>");
+				}
+				String std;
+				if (current.getStandardTelephoneNumber().getNumber().equals(
+						current.getMobileTelNumber().getNumber()))
+					std = "mobile";
+				else if (current.getStandardTelephoneNumber().getNumber()
+						.equals(current.getBusinessTelNumber().getNumber()))
+					std = "business";
+				else if (current.getStandardTelephoneNumber().getNumber()
+						.equals(current.getOtherTelNumber().getNumber()))
+					std = "other";
+				else
+					std = "home";
+
+				pw.println("\t<phonenumbers standard=\"" + std + "\">");
+				if (current.getHomeTelNumber().getNumber().length() > 0)
+					pw.println("\t\t<number type=\"home\">"
+							+ current.getHomeTelNumber() + "</number>");
+				if (current.getMobileTelNumber().getNumber().length() > 0)
+					pw.println("\t\t<number type=\"mobile\">"
+							+ current.getMobileTelNumber() + "</number>");
+				if (current.getBusinessTelNumber().getNumber().length() > 0)
+					pw.println("\t\t<number type=\"business\">"
+							+ current.getBusinessTelNumber() + "</number>");
+				if (current.getOtherTelNumber().getNumber().length() > 0)
+					pw.println("\t\t<number type=\"other\">"
+							+ current.getOtherTelNumber() + "</number>");
+				/*
+				 * if (current.getStandardTelephoneNumber().getNumber().length() >
+				 * 0) pw.println("\t\t <number type=\"standard\">" +
+				 * current.getStandardTelephoneNumber() + " </number>");
+				 */
+				pw.println("\t</phonenumbers>");
+
+				if (current.getEmailAddress().length() > 0) {
+					pw.println("\t<internet>");
+					if (current.getEmailAddress().length() > 0)
+						pw.println("\t\t<email>" + current.getEmailAddress()
 								+ "</email>");
-				pw.println("\t<category>" + current.getCategory()
-						+ "</category>");
+					pw.println("\t</internet>");
+				}
+
+				if (current.getCategory().length() > 0) {
+					pw.println("\t<categories>");
+					if (current.getCategory().length() > 0)
+						pw.println("\t\t<category>" + current.getCategory()
+								+ "</category>");
+					pw.println("\t</categories>");
+				}
+
 				pw.println("</entry>");
 			}
 			pw.println("</phonebook>");
@@ -119,7 +190,7 @@ public class PhoneBook extends AbstractTableModel {
 		}
 	}
 
-	public void loadFromXMLFile(String filename) {
+	public synchronized void loadFromXMLFile(String filename) {
 		try {
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			factory.setValidating(false);
@@ -163,6 +234,7 @@ public class PhoneBook extends AbstractTableModel {
 			Debug.err("Error with ParserConfiguration!");
 		} catch (SAXException e) {
 			Debug.err("Error on parsing " + filename + "!");
+			e.printStackTrace();
 			if (e.getLocalizedMessage().startsWith("Relative URI")
 					|| e.getLocalizedMessage().startsWith(
 							"Invalid system identifier")) {
@@ -228,6 +300,8 @@ public class PhoneBook extends AbstractTableModel {
 	}
 
 	public Person findPerson(PhoneNumber number) {
+		if (number == null)
+			return null;
 		Enumeration en = persons.elements();
 		while (en.hasMoreElements()) {
 			Person p = (Person) en.nextElement();
@@ -240,4 +314,5 @@ public class PhoneBook extends AbstractTableModel {
 		}
 		return null;
 	}
+
 }

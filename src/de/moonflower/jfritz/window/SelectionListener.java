@@ -14,7 +14,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.struct.VCardList;
 
 /**
@@ -46,11 +45,11 @@ public class SelectionListener implements ListSelectionListener {
 			for (int i = 0; i < rows.length; i++) {
 				Person person = (Person) table.getModel()
 						.getValueAt(rows[i], 3);
-				String number = ((PhoneNumber) table.getModel().getValueAt(
-						rows[i], 2)).getNumber();
 				if (person != null) { // FIXME person.getVCard
 					list.addVCard(new Person("", "", person.getFullname(), "",
-							"", "", "", "", "", "", number, "", ""));
+							"", "", "", "", "", "", person
+									.getStandardTelephoneNumber().getNumber(),
+							"", ""));
 				}
 			}
 

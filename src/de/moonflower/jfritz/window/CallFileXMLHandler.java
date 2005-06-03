@@ -97,7 +97,10 @@ public class CallFileXMLHandler extends DefaultHandler {
 		} else if (qName.equals("entry")) {
 
 			if (callerlist != null) { // Add an entry to the callerlist
-				callerlist.addEntry(calltype, calldate, new PhoneNumber(caller), port, route,
+				PhoneNumber number = null;
+				if (caller.length() > 0)
+					number = new PhoneNumber(caller);
+				callerlist.addEntry(calltype, calldate, number, port, route,
 						duration);
 			}
 

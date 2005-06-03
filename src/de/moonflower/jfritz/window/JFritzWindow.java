@@ -57,6 +57,7 @@ import de.moonflower.jfritz.dialogs.stats.StatsDialog;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
+import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.struct.VCardList;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzProperties;
@@ -596,20 +597,22 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 							Vector data = jfritz.getCallerlist()
 									.getFilteredCallVector();
 							Call call = (Call) data.get(i);
-							String number = call.getPhoneNumber().getNumber();
+							PhoneNumber number = call.getPhoneNumber();
 							// String participant = call.getParticipant();
-							if (!number.equals("")
-									&& (call.getPerson() == null)) {
+							if (number != null && (call.getPerson() == null)) {
 								setStatus(jfritz.getMessages().getString(
 										"reverse_lookup_for")
-										+ " " + number + " ...");
-								Debug.msg("Reverse lookup for " + number);
+										+ " " + number.getNumber() + " ...");
+								Debug.msg("Reverse lookup for "
+										+ number.getNumber());
 
-								Person newPerson = ReverseLookup.lookup(number);
+								Person newPerson = ReverseLookup.lookup(number
+										.getNumber());
 								if (newPerson != null) {
 									jfritz.getPhonebook().addEntry(newPerson);
+									// jfritz.getCallerlist().setPerson(newPerson,i);
+									jfritz.getCallerlist().fireTableDataChanged();
 								}
-								jfritz.getCallerlist().setPerson(newPerson, i);
 
 							}
 						}

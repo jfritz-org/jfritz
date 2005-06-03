@@ -13,6 +13,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
+import de.moonflower.jfritz.struct.Person;
+
 /**
  * This class manages editing of the participant cell in the caller table.
  *
@@ -34,7 +36,10 @@ public class TextFieldCellEditor extends AbstractCellEditor implements
 		}
 		((JTextField) component).setBackground(new Color(127, 255, 255));
 		// Configure the component with the specified value
-		((JTextField) component).setText((String) value);
+		String strval = "";
+		if (value != null)
+			strval = ((Person) value).getFullname();
+		((JTextField) component).setText(strval);
 
 		// Return the configured component
 		return component;
@@ -74,6 +79,5 @@ public class TextFieldCellEditor extends AbstractCellEditor implements
 		super.fireEditingStopped();
 
 	}
-
 
 }

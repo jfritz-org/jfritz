@@ -4,6 +4,8 @@
  */
 package de.moonflower.jfritz.struct;
 
+import de.moonflower.jfritz.utils.ReverseLookup;
+
 
 /**
  * @author Arno Willig
@@ -136,7 +138,8 @@ public class PhoneNumber {
 	 * @return True if number is a mobile one
 	 */
 	public boolean isMobile() {
-		return false;
+		String provider = ReverseLookup.getMobileProvider(getNumber());
+		return (!provider.equals(""));
 	}
 
 }

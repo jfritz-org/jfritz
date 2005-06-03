@@ -9,7 +9,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.utils.ReverseLookup;
 import de.moonflower.jfritz.window.CallType;
 
 /**
@@ -68,7 +67,10 @@ public class Call {
 	 * @return Returns the person the number belongs to or null.
 	 */
 	public Person getPerson() {
-		return jfritz.getPhonebook().findPerson(number);
+		if (number == null)
+			return null;
+		else
+			return jfritz.getPhonebook().findPerson(number);
 	}
 
 	/**
@@ -105,8 +107,4 @@ public class Call {
 		return toCSV();
 	}
 
-	public boolean isMobileCall() {
-		String provider = ReverseLookup.getMobileProvider(number.getNumber());
-		return (!provider.equals(""));
-	}
 }
