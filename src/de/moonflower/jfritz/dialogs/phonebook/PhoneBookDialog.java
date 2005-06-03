@@ -9,6 +9,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -192,7 +193,9 @@ public class PhoneBookDialog extends JDialog {
 
 		bottomPane.add(changeButton);
 
-		JPanel panelLabelsAndTextFields = new PersonPanel(jfritz);
+		JPanel akwPanel = new PersonPanel(jfritz);
+		JPanel panelLabelsAndTextFields = new JPanel();
+		panelLabelsAndTextFields.setLayout(new GridLayout(0, 2));
 
 		labelFirstName = new JLabel(messages.getString("firstName") + ": ");
 		textFieldFirstName = new JTextField();

@@ -111,7 +111,8 @@ public class CallerTable extends JTable {
 		col = getColumnModel().getColumn(3);
 		col.setHeaderValue(messages.getString("participant"));
 		headerTips.setToolTip(col, messages.getString("participant_desc"));
-		col.setCellEditor(new TextFieldCellEditor());
+		//col.setCellEditor(new TextFieldCellEditor());
+		col.setCellEditor(new PersonCellEditor());
 		col.setCellRenderer(new PersonCellRenderer());
 		col.setPreferredWidth(Integer.parseInt(properties.getProperty(
 				"column3.width", "120")));

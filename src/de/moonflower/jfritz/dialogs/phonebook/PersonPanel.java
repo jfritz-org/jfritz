@@ -35,21 +35,22 @@ public class PersonPanel extends JPanel {
 	}
 
 	private void drawPanel() {
-		setLayout(new GridLayout(0, 2));
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new GridLayout(0, 2));
 		JButton okButton = new JButton("Übernehmen"); // TODO I18N
 		JButton cancelButton = new JButton("Abbruch"); // TODO I18N
 		JLabel label = new JLabel(messages.getString("firstName") + ": ");
-		add(label);
+		buttonPanel.add(label);
 		tfFirstName = new JTextField();
-		add(tfFirstName);
+		buttonPanel.add(tfFirstName);
 		label = new JLabel(messages.getString("middleName") + ": ");
-		this.add(label);
+		buttonPanel.add(label);
 		tfMiddleName = new JTextField();
-		add(tfMiddleName);
+		buttonPanel.add(tfMiddleName);
 		label = new JLabel(messages.getString("lastName") + ": ");
-		this.add(label);
+		buttonPanel.add(label);
 		tfLastName = new JTextField();
-		add(tfLastName);
+		buttonPanel.add(tfLastName);
 		label = new JLabel(messages.getString("street") + ": ");
 		label = new JLabel(messages.getString("postalCode") + ": ");
 		label = new JLabel(messages.getString("city") + ": ");
@@ -57,9 +58,9 @@ public class PersonPanel extends JPanel {
 		label = new JLabel(messages.getString("mobileTelephoneNumber") + ": ");
 		label = new JLabel(messages.getString("businessTelephoneNumber") + ": ");
 		label = new JLabel(messages.getString("otherTelephoneNumber") + ": ");
+		// this.add(buttonPanel);
 
-
-		this.add(okButton);
-		this.add(cancelButton);
+		// this.add(okButton);
+		// this.add(cancelButton);
 	}
 }
