@@ -52,6 +52,10 @@ public class Person {
 		this.category = category;
 	}
 
+	public Person(String number) {
+		this("?", "", "?", "", "", "", number, "", "", "", number, "", "");
+	}
+
 	public Person(String firstName, String middleName, String lastName) {
 		this.firstName = firstName;
 		this.middleName = middleName;
@@ -59,7 +63,7 @@ public class Person {
 	}
 
 	public String getFullname() {
-		return firstName + middleName + lastName;
+		return firstName + " " + middleName + " " + lastName;
 	}
 
 	public String getFirstName() {
@@ -164,8 +168,10 @@ public class Person {
 	public String getStandardTelephoneNumber() {
 		return standardTelephoneNumber;
 	}
+
 	/**
-	 * @param standardTelephoneNumber The standardTelephoneNumber to set.
+	 * @param standardTelephoneNumber
+	 *            The standardTelephoneNumber to set.
 	 */
 	public void setStandardTelephoneNumber(String standardTelephoneNumber) {
 		this.standardTelephoneNumber = standardTelephoneNumber;
@@ -173,15 +179,20 @@ public class Person {
 
 	/**
 	 * Checks if person has telephonnumber number
+	 *
 	 * @param number
 	 * @return
 	 */
 	public boolean hasNumber(String number) {
-		if (number.equals(homeTelephoneNumber)) return true;
-		else if (number.equals(mobileTelephoneNumber)) return true;
-		else if (number.equals(businessTelephoneNumber)) return true;
-		else if (number.equals(otherTelephoneNumber)) return true;
-		else return false;
+		if (number.equals(homeTelephoneNumber))
+			return true;
+		else if (number.equals(mobileTelephoneNumber))
+			return true;
+		else if (number.equals(businessTelephoneNumber))
+			return true;
+		else if (number.equals(otherTelephoneNumber))
+			return true;
+		else
+			return false;
 	}
 }
-

@@ -1,4 +1,4 @@
-/**
+ /**
  */
 
 package de.moonflower.jfritz.window;
@@ -605,48 +605,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 										+ " " + number + " ...");
 								Debug.msg("Reverse lookup for " + number);
 								if (participant.equals("")) {
-									Person newPerson;
-									participant = ReverseLookup.lookup(number);
-									if (participant.equals("?")) {
-										newPerson = new Person("?", "", "?",
-												"", "", "", call.getNumber(),
-												"", "", "", call.getNumber(),
-												"", "");
-									} else if (participant.equals("? (Mobil)")) {
-										newPerson = new Person("?", "", "?",
-												"", "", "", "", call
-														.getNumber(), "", "",
-												call.getNumber(), "", "");
-									} else if (participant
-											.equals("? (Freecall)")) {
-										newPerson = new Person("?", "", "?",
-												"", "", "", call.getNumber(),
-												"", "", "", call.getNumber(),
-												"", "");
-									} else {
-										if (participant.indexOf(",") > -1) {
-											// Found Firstname and Lastname,
-											// separated by ,
-											String list[] = participant
-													.split(",");
-											System.out.println(list[0] + " "
-													+ list[1]);
-											newPerson = new Person(list[1], "",
-													list[0], "", "", "", call
-															.getNumber(), "",
-													"", "", call.getNumber(),
-													"", "");
-										} else {
-											// Found only one name
-											// Probably a company
-											newPerson = new Person("", "",
-													participant, "", "", "",
-													"", "", call.getNumber(),
-													"", call.getNumber(), "",
-													"");
-										}
-									}
+									Person newPerson = ReverseLookup.lookup(number);
 									jfritz.getPhonebook().addEntry(newPerson);
+									participants.setProperty(number,newPerson.getFullname());
+									jfritz.getCallerlist().setParticipant(newPerson.getFullname(), i);
 								}
 								if (!participant.equals("")) {
 									participants.setProperty(number,
@@ -659,7 +621,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 						isdone = true;
 					}
-					// jfritz.getPhonebook().saveToXMLFile(JFritz.PHONEBOOK_FILE);
+					jfritz.getPhonebook().saveToXMLFile(JFritz.PHONEBOOK_FILE);
 					return null;
 				}
 
@@ -805,6 +767,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	protected void processWindowEvent(WindowEvent e) {
 		if (e.getID() == WindowEvent.WINDOW_CLOSING) {
 			showExitDialog();
+		} else if (e.getID() == WindowEvent.WINDOW_ICONIFIED) {
+			setState(JFrame.ICONIFIED);
+			if (JFritz.SYSTRAY_SUPPORT)
+				setVisible(false);
 		} else {
 			super.processWindowEvent(e);
 		}

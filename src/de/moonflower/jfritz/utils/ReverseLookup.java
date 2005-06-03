@@ -15,6 +15,7 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import de.moonflower.jfritz.dialogs.phonebook.Person;
 
 /**
  * Class for telephone number reverse lookup using "dasoertliche.de"
@@ -56,19 +57,16 @@ public class ReverseLookup {
 		mobileMap.put("0179", "O2");
 	}
 
-	public static String lookup(String number) {
-		String participant = "";
+	public static Person lookup(String number) {
+		Person newPerson;
 		if (numberIsMobile(number)) {
-			participant = "? (Mobil)";
+			newPerson = new Person(number);
 		} else if (numberIsFreecall(number)) {
-			participant = "? (Freecall)";
+			newPerson = new Person("?","","FREECALL","","","",number,"","","",number,"","");
 		} else {
-			participant = lookupDasOertliche(number);
-			if (participant.equals("")) {
-				participant = "?";
-			}
+			newPerson = lookupDasOertliche(number);
 		}
-		return participant;
+		return newPerson;
 	}
 
 	public static boolean numberIsMobile(String number) {
@@ -95,7 +93,7 @@ public class ReverseLookup {
 	 * @return name
 	 */
 
-	public static String lookupDasOertliche(String number) {
+	public static Person lookupDasOertliche(String number) {
 		Debug.msg("Looking up " + number + "...");
 		URL url = null;
 		URLConnection urlConn;
@@ -103,6 +101,7 @@ public class ReverseLookup {
 		String data = "";
 		boolean wrong_pass = false;
 		boolean wrong_url = false;
+		Person newPerson;
 
 		String urlstr = "http://www.dasoertliche.de/DB4Web/es/oetb2suche/home.htm?main=Antwort&s=2&kw_invers="
 				+ number;
@@ -129,17 +128,25 @@ public class ReverseLookup {
 				}
 				d.close();
 				Pattern p = Pattern
-						.compile("<a class=\"blb\" href=\"[^\"]*\">([^<]*)</a>");
+						.compile("<a class=\"blb\" href=\"[^\"]*\">([^<]*)</a><br>([^<]*)</td>");
 				Matcher m = p.matcher(data);
 				if (m.find()) {
-					Debug.msg(3, "Pattern: " + m.group(1).trim());
-					return beautifyMatch(m.group(1).trim());
+					Debug.msg(3,"Pattern: "+m.group(1).trim());
+					Debug.msg(3,"Pattern: "+m.group(2).trim());
+					// TODO: wie splittet man am ersten SPACE und nicht an jedem?
+					String[] splitNames, splitAddress, splitPostCodeCity;
+					splitNames = m.group(1).trim().split(" ");
+					splitAddress = m.group(2).trim().split(", ");
+					splitPostCodeCity = splitAddress[1].split(" ");
+					newPerson = new Person(splitNames[1],"",splitNames[0],splitAddress[0],splitPostCodeCity[0],splitPostCodeCity[1],number,"","","",number,"","");
+					return newPerson;
 				}
 			} catch (IOException e1) {
 				Debug.err("Error while retrieving " + urlstr);
 			}
 		}
-		return "";
+		newPerson = new Person("?","","?","","","",number,"","","",number,"","");
+		return newPerson;
 	}
 
 	public static String beautifyMatch(String match) {

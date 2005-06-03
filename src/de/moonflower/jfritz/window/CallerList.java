@@ -342,7 +342,7 @@ public class CallerList extends AbstractTableModel {
 		saveToXMLFile(JFritz.CALLS_FILE);
 
 		// Notify user?
-		if ((jfritz.getProperties().getProperty("option.notifyOnCalls","true")
+		if ((jfritz.getProperties().getProperty("option.notifyOnCalls", "true")
 				.equals("true"))
 				&& (newEntries > 0)) {
 			jfritz.getJframe().setVisible(true);
@@ -674,7 +674,7 @@ public class CallerList extends AbstractTableModel {
 				} catch (ParseException e1) {
 				}
 
-				if (filterHandy && !(call.isMobileCall()))
+				if (filterHandy && (call.isMobileCall()))
 					handyFilterPassed = false;
 
 				if (searchFilterPassed && dateFilterPassed && handyFilterPassed)

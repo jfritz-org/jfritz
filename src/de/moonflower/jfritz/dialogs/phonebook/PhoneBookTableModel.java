@@ -5,6 +5,9 @@ package de.moonflower.jfritz.dialogs.phonebook;
  *
  * @author Robert Palmer
  *
+ * TODO: Sonderzeichen beim Speichern und lesen ersetzen, sonst ist das
+ * Phonebook nicht lesbar
+ *
  */
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -97,7 +100,8 @@ public class PhoneBookTableModel extends AbstractTableModel {
 						+ current.getBusinessTelNumber() + "</businessnumber>");
 				pw.println("\t<othernumber>" + current.getOtherTelNumber()
 						+ "</othernumber>");
-				pw.println("\t<standardnumber>" + current.getStandardTelephoneNumber()
+				pw.println("\t<standardnumber>"
+						+ current.getStandardTelephoneNumber()
 						+ "</standardnumber>");
 				pw
 						.println("\t<email>" + current.getEmailAddress()
@@ -182,6 +186,20 @@ public class PhoneBookTableModel extends AbstractTableModel {
 		}
 	}
 
+	/**
+	 * Returns info about stored Person
+	 *
+	 * @param rowIndex
+	 */
+	public Person getPersonAt(int rowIndex) {
+		return (Person) persons.get(rowIndex);
+	}
+
+	/**
+	 * Replaces Phonebookentries with Vector of new Phonebookentries
+	 *
+	 * @param pb
+	 */
 	public void updatePersons(Vector pb) {
 		this.persons = pb;
 	}
