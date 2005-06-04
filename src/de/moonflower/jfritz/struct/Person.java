@@ -58,6 +58,27 @@ public class Person {
 		this.lastName = lastName;
 	}
 
+	public Person(Person person) {
+		this();
+		copyFrom(person);
+	}
+
+	public void copyFrom(Person person) {
+		firstName = person.getFirstName();
+		middleName = person.getMiddleName();
+		lastName = person.getLastName();
+		street = person.getStreet();
+		postalCode = person.getPostalCode();
+		city = person.getCity();
+		emailAddress = person.getEmailAddress();
+		standard = person.getStandard();
+		numbers.clear();
+		Enumeration en = person.getNumbers().elements();
+		while (en.hasMoreElements()) {
+			numbers.add(en.nextElement());
+		}
+	}
+
 	public void addNumber(PhoneNumber number) {
 		numbers.add(number);
 		if (numbers.size() == 1)
@@ -77,9 +98,17 @@ public class Person {
 		this.standard = std;
 	}
 
+	public boolean isEmpty() {
+		return getFullname().equals("") && numbers.size() < 2;
+	}
+
 	public String getFullname() {
-		if (lastName.length() == 0)
-			return "";
+		if (lastName.length() == 0) {
+			if (firstName.length() == 0)
+				return "";
+			else
+				return firstName;
+		}
 		if (firstName.length() == 0)
 			return lastName;
 		return (lastName + ", " + firstName + " " + middleName).trim();

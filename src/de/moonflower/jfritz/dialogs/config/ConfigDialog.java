@@ -43,6 +43,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.table.TableCellRenderer;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.dialogs.sip.SipProviderTableModel;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
@@ -52,7 +53,6 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.upnp.SSDPPacket;
-import de.moonflower.jfritz.window.JFritzWindow;
 
 /**
  * JDialog for JFritz configuration.

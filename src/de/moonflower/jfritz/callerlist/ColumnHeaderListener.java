@@ -3,7 +3,7 @@
  * Created on 16.04.2005
  *
  */
-package de.moonflower.jfritz.window;
+package de.moonflower.jfritz.callerlist;
 
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;

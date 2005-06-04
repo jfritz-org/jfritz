@@ -29,7 +29,7 @@ import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.PhoneNumber;
-import de.moonflower.jfritz.window.CallType;
+import de.moonflower.jfritz.callerlist.CallType;
 
 /**
  * Static class for data retrieval from the fritz box

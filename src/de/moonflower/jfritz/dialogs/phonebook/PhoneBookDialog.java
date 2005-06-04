@@ -33,8 +33,8 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.window.JFritzWindow;
 
 /**
  * Shows a phone book dialog in which the entries can be edited.
@@ -193,8 +193,8 @@ public class PhoneBookDialog extends JDialog {
 
 		bottomPane.add(changeButton);
 
-		JPanel akwPanel = new PersonPanel(jfritz);
 		JPanel panelLabelsAndTextFields = new JPanel();
+		PersonPanel akwpanel = new PersonPanel(jfritz,null);
 		panelLabelsAndTextFields.setLayout(new GridLayout(0, 2));
 
 		labelFirstName = new JLabel(messages.getString("firstName") + ": ");
@@ -296,7 +296,10 @@ public class PhoneBookDialog extends JDialog {
 		 */
 		centerPane.setLayout(new BoxLayout(centerPane, BoxLayout.Y_AXIS));
 		centerPane.add(new JScrollPane(table), BorderLayout.NORTH);
-		centerPane.add(panelLabelsAndTextFields, BorderLayout.CENTER);
+
+
+		// centerPane.add(panelLabelsAndTextFields, BorderLayout.CENTER);
+		centerPane.add(akwpanel, BorderLayout.CENTER);
 
 		getContentPane().add(topPane, BorderLayout.NORTH);
 		getContentPane().add(centerPane, BorderLayout.CENTER);

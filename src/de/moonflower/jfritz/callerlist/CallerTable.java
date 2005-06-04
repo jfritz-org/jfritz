@@ -3,13 +3,12 @@
  * Created on 08.05.2005
  *
  */
-package de.moonflower.jfritz.window;
+package de.moonflower.jfritz.callerlist;
 
 import java.awt.Color;
 import java.awt.Component;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.ResourceBundle;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -48,7 +47,7 @@ public class CallerTable extends JTable {
 		this.jfritz = jfritz;
 		properties = jfritz.getProperties();
 		setTableProperties();
-		createColumns(jfritz.getMessages());
+		createColumns();
 	}
 
 	/**
@@ -84,56 +83,57 @@ public class CallerTable extends JTable {
 	 *
 	 * @param messages
 	 */
-	private void createColumns(ResourceBundle messages) {
+	private void createColumns() {
 		ColumnHeaderToolTips headerTips = new ColumnHeaderToolTips();
 
 		TableColumn col = getColumnModel().getColumn(0);
-		col.setHeaderValue(messages.getString("type"));
-		headerTips.setToolTip(col, messages.getString("type_desc"));
+		col.setHeaderValue(jfritz.getMessages().getString("type"));
+		headerTips.setToolTip(col, jfritz.getMessages().getString("type_desc"));
 		col.setMinWidth(32);
 		col.setMaxWidth(32);
 		col.setPreferredWidth(Integer.parseInt(properties.getProperty(
 				"column0.width", "32")));
 
 		col = getColumnModel().getColumn(1);
-		col.setHeaderValue(messages.getString("date"));
-		headerTips.setToolTip(col, messages.getString("date_desc"));
+		col.setHeaderValue(jfritz.getMessages().getString("date"));
+		headerTips.setToolTip(col, jfritz.getMessages().getString("date_desc"));
 		col.setPreferredWidth(Integer.parseInt(properties.getProperty(
 				"column1.width", "120")));
 
 		col = getColumnModel().getColumn(2);
-		col.setHeaderValue(messages.getString("number"));
+		col.setHeaderValue(jfritz.getMessages().getString("number"));
 		//col.setCellRenderer(new NumberCellRenderer(jfritz));
-		headerTips.setToolTip(col, messages.getString("number_desc"));
+		headerTips.setToolTip(col, jfritz.getMessages().getString("number_desc"));
 		col.setPreferredWidth(Integer.parseInt(properties.getProperty(
 				"column2.width", "128")));
 
 		col = getColumnModel().getColumn(3);
-		col.setHeaderValue(messages.getString("participant"));
-		headerTips.setToolTip(col, messages.getString("participant_desc"));
+		col.setHeaderValue(jfritz.getMessages().getString("participant"));
+		headerTips.setToolTip(col, jfritz.getMessages().getString("participant_desc"));
 		//col.setCellEditor(new TextFieldCellEditor());
-		col.setCellEditor(new PersonCellEditor());
+		col.setCellEditor(new PersonCellEditor(jfritz));
+
 		col.setCellRenderer(new PersonCellRenderer());
 		col.setPreferredWidth(Integer.parseInt(properties.getProperty(
 				"column3.width", "120")));
 
 		col = getColumnModel().getColumn(4);
-		col.setHeaderValue(messages.getString("port"));
-		headerTips.setToolTip(col, messages.getString("port_desc"));
+		col.setHeaderValue(jfritz.getMessages().getString("port"));
+		headerTips.setToolTip(col, jfritz.getMessages().getString("port_desc"));
 		col.setCellRenderer(new PortCellRenderer());
 		col.setPreferredWidth(Integer.parseInt(properties.getProperty(
 				"column4.width", "60")));
 
 		col = getColumnModel().getColumn(5);
-		col.setHeaderValue(messages.getString("route"));
-		headerTips.setToolTip(col, messages.getString("route_desc"));
+		col.setHeaderValue(jfritz.getMessages().getString("route"));
+		headerTips.setToolTip(col, jfritz.getMessages().getString("route_desc"));
 		col.setCellRenderer(new RouteCellRenderer());
 		col.setPreferredWidth(Integer.parseInt(properties.getProperty(
 				"column5.width", "100")));
 
 		col = getColumnModel().getColumn(6);
-		col.setHeaderValue(messages.getString("duration"));
-		headerTips.setToolTip(col, messages.getString("duration_desc"));
+		col.setHeaderValue(jfritz.getMessages().getString("duration"));
+		headerTips.setToolTip(col, jfritz.getMessages().getString("duration_desc"));
 		col.setCellRenderer(new DurationCellRenderer());
 		col.setPreferredWidth(Integer.parseInt(properties.getProperty(
 				"column6.width", "60")));

@@ -31,10 +31,10 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.upnp.AddonInfosXMLHandler;
 import de.moonflower.jfritz.utils.upnp.UPNPUtils;
-import de.moonflower.jfritz.window.JFritzWindow;
 
 /**
  * @author Arno Willig
@@ -173,7 +173,6 @@ public class StatsDialog extends JDialog {
 		panel.setLayout(new BorderLayout());
 		panel.add(topPane, BorderLayout.NORTH);
 		panel.add(mainPane, BorderLayout.CENTER);
-
 		panel.add(bottomPane, BorderLayout.SOUTH);
 		getContentPane().add(panel);
 

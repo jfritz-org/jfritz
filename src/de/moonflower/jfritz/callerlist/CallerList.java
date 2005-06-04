@@ -3,7 +3,7 @@
  * Created on 08.04.2005
  *
  */
-package de.moonflower.jfritz.window;
+package de.moonflower.jfritz.callerlist;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -441,9 +441,7 @@ public class CallerList extends AbstractTableModel {
 	public void setValueAt(Object object, int rowIndex, int columnIndex) {
 		Call call = (Call) filteredCallerData.get(rowIndex);
 		if (columnIndex == 3) {
-			Debug.msg("Setting person to " + object.toString());
-			Person p = new Person("", object.toString());
-			setPerson(p, rowIndex);
+			setPerson((Person) object, rowIndex);
 		}
 		fireTableCellUpdated(rowIndex, columnIndex);
 	}
@@ -453,17 +451,16 @@ public class CallerList extends AbstractTableModel {
 
 		if (call.getPhoneNumber() != null) { // no empty numbers
 			if (person == null) {
-				Debug.err("Callerlist:setPerson() IMPLEMENT ME (remove)");
-				// FIXME
-				// jfritz.getPhonebook().removeEntry(call.getPhoneNumber());
+				Debug.err("Callerlist.setPerson():  IMPLEMENT ME (remove person)");
 			} else {
-				Debug.err("Callerlist:setPerson() IMPLEMENT ME (add/change)");
-				// FIXME
-				// jfritz.getPhonebook().addEntry(person);
-				// jfritz.getPhonebook().changeEntry(person);
+				if (call.getPerson() == null) {
+					if (!person.isEmpty())
+					jfritz.getPhonebook().addEntry(person);
+				} else if (!call.getPerson().equals(person)) {
+					call.getPerson().copyFrom(person);
+				}
 			}
-			fireTableCellUpdated(rowIndex, 3);
-			fireTableStructureChanged();
+			fireTableDataChanged();
 		}
 
 	}
@@ -532,12 +529,24 @@ public class CallerList extends AbstractTableModel {
 				o2 = v2.getCalltype().toString();
 				break;
 			case 2:
-				o1 = v1.getPhoneNumber().getNumber();
-				o2 = v2.getPhoneNumber().getNumber();
+				if (v1.getPhoneNumber() != null)
+					o1 = v1.getPhoneNumber().getNumber();
+				else
+					o1 = null;
+				if (v2.getPhoneNumber() != null)
+					o2 = v2.getPhoneNumber().getNumber();
+				else
+					o2 = null;
 				break;
 			case 3:
-				o1 = v1.getPerson().getFullname();
-				o2 = v2.getPerson().getFullname();
+				if (v1.getPerson() != null)
+					o1 = v1.getPerson().getFullname();
+				else
+					o1 = null;
+				if (v2.getPerson() != null)
+					o2 = v2.getPerson().getFullname();
+				else
+					o2 = null;
 				break;
 			case 4:
 				o1 = v1.getPort();
@@ -548,8 +557,14 @@ public class CallerList extends AbstractTableModel {
 				o2 = v2.getRoute();
 				break;
 			case 6:
-				o1 = format(Integer.toString(v1.getDuration()), 10);
-				o2 = format(Integer.toString(v2.getDuration()), 10);
+				if (v1.getDuration() != 0)
+					o1 = format(Integer.toString(v1.getDuration()), 10);
+				else
+					o1 = null;
+				if (v2.getDuration() != 0)
+					o2 = format(Integer.toString(v2.getDuration()), 10);
+				else
+					o2 = null;
 				break;
 			default:
 				o1 = v1.getCalldate();

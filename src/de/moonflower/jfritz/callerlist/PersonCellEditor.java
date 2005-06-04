@@ -3,7 +3,7 @@
  * Created on 14.04.2005
  *
  */
-package de.moonflower.jfritz.window;
+package de.moonflower.jfritz.callerlist;
 
 import java.awt.Component;
 
@@ -12,6 +12,9 @@ import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
+import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.dialogs.phonebook.PersonEditorPanel;
+import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 
 /**
@@ -22,7 +25,15 @@ import de.moonflower.jfritz.struct.Person;
 public class PersonCellEditor extends AbstractCellEditor implements
 		TableCellEditor {
 
-	JComponent component = new PersonEditorPanel(null);
+	private JFritz jfritz;
+
+	JComponent component;
+
+	public PersonCellEditor(JFritz jfritz) {
+		super();
+		this.jfritz = jfritz;
+		component = new PersonEditorPanel(this);
+	}
 
 	/**
 	 * @see javax.swing.table.TableCellEditor#getTableCellEditorComponent(javax.swing.JTable,
@@ -30,17 +41,24 @@ public class PersonCellEditor extends AbstractCellEditor implements
 	 */
 	public Component getTableCellEditorComponent(JTable table, Object value,
 			boolean isSelected, int row, int column) {
-
 		if (isSelected) {
 			// cell (and perhaps other cells) are selected
 		}
-		// ((PersonEditorPanel) component).repaint();
+		PersonEditorPanel panel = (PersonEditorPanel) component;
+		Person person = (Person) value;
+		// panel.repaint();
 		// Configure the component with the specified value
-
 		String strval = "";
-		if (value != null)
-			strval = ((Person) value).getFullname();
-		((PersonEditorPanel) component).setText(strval);
+		if (value != null) {
+			strval = person.getFullname();
+		} else {
+			person = new Person();
+			Call c = (Call) jfritz.getCallerlist().getFilteredCallVector().get(row);
+			c.getPhoneNumber().setType();
+			person.addNumber(c.getPhoneNumber());
+		}
+		panel.setPerson(person);
+		panel.setText(strval);
 
 		// Return the configured component
 		return component;
@@ -50,34 +68,20 @@ public class PersonCellEditor extends AbstractCellEditor implements
 	 * @see javax.swing.CellEditor#getCellEditorValue()
 	 */
 	public Object getCellEditorValue() {
-		return ((PersonEditorPanel) component).getText();
+		Person p = ((PersonEditorPanel) component).getPerson();
+		return p;
 	}
 
 	public boolean stopCellEditing() {
-		String s = (String) getCellEditorValue();
-		if (!isValid(s)) { // Should display an error message at this point
-			return false;
-		}
+		Person p = (Person) getCellEditorValue();
+		// Not valid: return false;
 		return super.stopCellEditing();
 	}
 
-	public boolean isValid(String s) {
-		return true;
-	}
-
 	/**
-	 * @see javax.swing.AbstractCellEditor#fireEditingCanceled()
+	 * @return Returns the jfritz.
 	 */
-	protected void fireEditingCanceled() {
-		super.fireEditingCanceled();
+	public final JFritz getJfritz() {
+		return jfritz;
 	}
-
-	/**
-	 * @see javax.swing.AbstractCellEditor#fireEditingStopped()
-	 */
-	protected void fireEditingStopped() {
-		super.fireEditingStopped();
-
-	}
-
 }

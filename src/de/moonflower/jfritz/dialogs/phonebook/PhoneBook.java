@@ -66,20 +66,11 @@ public class PhoneBook extends AbstractTableModel {
 			Person p = (Person) en.nextElement();
 			PhoneNumber pn1 = p.getStandardTelephoneNumber();
 			PhoneNumber pn2 = newPerson.getStandardTelephoneNumber();
-
-			if (pn1.getNumber().equals(pn2.getNumber())) {
-				// changeEntry(p, newPerson);
+			if (pn1 != null && pn2 != null && pn1.getNumber().equals(pn2.getNumber())) {
 				return;
 			}
 		}
-
 		persons.add(newPerson);
-	}
-
-	public void changeEntry(Person person, Person newPerson) {
-		// FIXME
-		Debug
-				.err("PhoneBook:changeEntry(Person person, Person newPerson)  IMPLEMENT ME!");
 	}
 
 	/**

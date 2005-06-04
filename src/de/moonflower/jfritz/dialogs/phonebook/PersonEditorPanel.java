@@ -2,7 +2,7 @@
  * Created on 03.06.2005
  *
  */
-package de.moonflower.jfritz.window;
+package de.moonflower.jfritz.dialogs.phonebook;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -13,10 +13,10 @@ import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
-import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.callerlist.PersonCellEditor;
+import de.moonflower.jfritz.struct.Person;
 
 /**
  * @author Arno Willig
@@ -24,7 +24,9 @@ import de.moonflower.jfritz.JFritz;
  */
 public class PersonEditorPanel extends JComponent implements ActionListener {
 
-	private JFritz jfritz;
+	private PersonCellEditor editor;
+
+	private Person person;
 
 	private JTextField input;
 
@@ -33,9 +35,9 @@ public class PersonEditorPanel extends JComponent implements ActionListener {
 	/**
 	 *
 	 */
-	public PersonEditorPanel(JFritz jfritz) {
+	public PersonEditorPanel(PersonCellEditor editor) {
 		super();
-		this.jfritz = jfritz;
+		this.editor = editor;
 		drawPanel();
 	}
 
@@ -46,13 +48,14 @@ public class PersonEditorPanel extends JComponent implements ActionListener {
 
 		setLayout(new BorderLayout());
 		input = new JTextField("  ");
+		input.setEditable(false);
 		button = new JButton();
 		button.setIcon(icon);
 		button.setFocusable(false);
 		button.addActionListener(this);
 		input.setBackground(new Color(127, 255, 255));
 		input.setFocusable(true);
-		add(button, BorderLayout.WEST);
+		add(button, BorderLayout.EAST);
 		add(input, BorderLayout.CENTER);
 	}
 
@@ -68,8 +71,28 @@ public class PersonEditorPanel extends JComponent implements ActionListener {
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent e) {
-		JOptionPane.showMessageDialog(this, JFritz.PROGRAM_NAME + " v"
-				+ JFritz.PROGRAM_VERSION + "\n"
-				+ "This is not yet implemented!");
+		PersonDialog p = new PersonDialog(editor.getJfritz(), person);
+		if (p.showDialog()) {
+			person = p.getPerson();
+			input.setText(person.getFullname());
+			editor.stopCellEditing();
+		}
+		p.dispose();
+
+	}
+
+	/**
+	 * @return Returns the person.
+	 */
+	public final Person getPerson() {
+		return person;
+	}
+
+	/**
+	 * @param person
+	 *            The person to set.
+	 */
+	public final void setPerson(Person person) {
+		this.person = person;
 	}
 }

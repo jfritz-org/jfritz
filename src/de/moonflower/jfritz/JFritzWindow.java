@@ -1,7 +1,7 @@
 /**
  */
 
-package de.moonflower.jfritz.window;
+package de.moonflower.jfritz;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
@@ -48,7 +48,6 @@ import javax.swing.filechooser.FileFilter;
 
 import org.jdesktop.jdic.desktop.Desktop;
 
-import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.dialogs.config.ConfigDialog;
 import de.moonflower.jfritz.dialogs.phonebook.PhoneBookDialog;
 import de.moonflower.jfritz.dialogs.quickdial.QuickDialDialog;
@@ -64,6 +63,7 @@ import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.ReverseLookup;
 import de.moonflower.jfritz.utils.SwingWorker;
+import de.moonflower.jfritz.callerlist.CallerTable;
 
 /**
  * This is main window class of JFritz, which creates the GUI.

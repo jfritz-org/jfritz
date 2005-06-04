@@ -160,8 +160,7 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.ReverseLookup;
 import de.moonflower.jfritz.utils.upnp.SSDPdiscoverThread;
-import de.moonflower.jfritz.window.CallerList;
-import de.moonflower.jfritz.window.JFritzWindow;
+import de.moonflower.jfritz.callerlist.CallerList;
 
 /**
  * @author Arno Willig
@@ -177,7 +176,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.50 2005/06/03 08:49:12 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.51 2005/06/04 13:29:43 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 

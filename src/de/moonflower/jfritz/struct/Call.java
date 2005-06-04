@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.window.CallType;
+import de.moonflower.jfritz.callerlist.CallType;
 
 /**
  * @author Arno Willig row.add(symbol); row.add(datum); row.add(number);

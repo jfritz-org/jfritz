@@ -3,7 +3,7 @@
  * Created on 09.04.2005
  *
  */
-package de.moonflower.jfritz.window;
+package de.moonflower.jfritz.callerlist;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
