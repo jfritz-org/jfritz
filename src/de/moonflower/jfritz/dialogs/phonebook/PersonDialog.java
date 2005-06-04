@@ -54,6 +54,7 @@ public class PersonDialog extends JDialog implements ActionListener {
 		setModal(true);
 		setLayout(new BorderLayout());
 		getContentPane().setLayout(new BorderLayout());
+
 		JPanel topPane = new JPanel();
 		JPanel bottomPane = new JPanel();
 
@@ -68,6 +69,7 @@ public class PersonDialog extends JDialog implements ActionListener {
 		okButton = new JButton("Okay");
 		okButton.setActionCommand("ok");
 		okButton.addActionListener(this);
+
 		cancelButton = new JButton("Abbruch");
 		cancelButton.setActionCommand("cancel");
 		cancelButton.addActionListener(this);
@@ -78,7 +80,7 @@ public class PersonDialog extends JDialog implements ActionListener {
 		getContentPane().add(topPane, BorderLayout.NORTH);
 		getContentPane().add(personPanel, BorderLayout.CENTER);
 		getContentPane().add(bottomPane, BorderLayout.SOUTH);
-		setSize(new Dimension(300, 350));
+		setSize(new Dimension(350, 400));
 
 	}
 

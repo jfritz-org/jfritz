@@ -12,7 +12,12 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Enumeration;
+import java.util.MissingResourceException;
+import java.util.Vector;
 
+import javax.swing.AbstractListModel;
+import javax.swing.BorderFactory;
+import javax.swing.ComboBoxModel;
 import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -39,12 +44,71 @@ import de.moonflower.jfritz.struct.PhoneNumber;
  */
 public class PersonPanel extends JPanel implements ActionListener,
 		ListSelectionListener {
+	PhoneTypeModel typeModel;
+
+	private final class PhoneType {
+		String type;
+
+		public PhoneType(String type) {
+			this.type = type;
+		}
+
+		public String getType() {
+			return type;
+		}
+
+		public String toString() {
+			try {
+				return jfritz.getMessages().getString("phone_" + type);
+			} catch (MissingResourceException e) {
+				return type;
+			}
+		}
+	}
+
+	private final class PhoneTypeModel extends AbstractListModel implements
+			ComboBoxModel {
+
+		private PhoneType sel;
+
+		private Vector types;
+
+		public PhoneTypeModel() {
+			super();
+			types = new Vector();
+			types.add(new PhoneType("home"));
+			types.add(new PhoneType("mobile"));
+			types.add(new PhoneType("homezone"));
+			types.add(new PhoneType("business"));
+			types.add(new PhoneType("other"));
+			types.add(new PhoneType("fax"));
+			types.add(new PhoneType("sip"));
+		}
+
+		public Vector getTypes() {
+			return types;
+		}
+
+		public int getSize() {
+			return types.size();
+		}
+
+		public Object getElementAt(int index) {
+			return types.get(index);
+		}
+
+		public void setSelectedItem(Object anItem) {
+			sel = (PhoneType) anItem;
+		}
+
+		public Object getSelectedItem() {
+			return sel;
+		}
+
+	}
 
 	private final class NumberTableModel extends AbstractTableModel {
 		private final String columnNames[] = { "Std", "Typ", "Nummer" };
-
-		protected final String[] validTypes = { "home", "mobile", "business",
-				"other", "fax", "sip" };
 
 		public int getRowCount() {
 			return person.getNumbers().size();
@@ -65,8 +129,8 @@ public class PersonPanel extends JPanel implements ActionListener,
 						.elementAt(rowIndex)).getType().equals(
 						person.getStandard()));
 			case 1:
-				return ((PhoneNumber) person.getNumbers().elementAt(rowIndex))
-						.getType();
+				return new PhoneType(((PhoneNumber) person.getNumbers()
+						.elementAt(rowIndex)).getType());
 			case 2:
 				return ((PhoneNumber) person.getNumbers().elementAt(rowIndex))
 						.getNumber();
@@ -84,13 +148,14 @@ public class PersonPanel extends JPanel implements ActionListener,
 				case 0:
 					if (p.getType() != "")
 						person.setStandard(p.getType());
+					break;
 				case 1:
-					if (isValidType(value, p.getType())) {
+					if (isValidType((PhoneType) value, p.getType())) {
 						if (person.getStandard().equals(p.getType())
 								|| person.getStandard().equals("")) {
-							person.setStandard((String) value);
+							person.setStandard(((PhoneType) value).getType());
 						}
-						p.setType((String) value);
+						p.setType(((PhoneType) value).getType());
 					}
 					break;
 				case 2:
@@ -115,27 +180,24 @@ public class PersonPanel extends JPanel implements ActionListener,
 			return true;
 		}
 
-		protected boolean isValidType(Object value, Object oldvalue) {
-			if (value instanceof String) {
-				String sValue = (String) value;
-				String soldValue = (String) oldvalue;
-				if (sValue.equals(soldValue))
-					return true;
+		protected boolean isValidType(PhoneType value, String oldvalue) {
+			if (value == null) return false;
+			if (value.getType().equals(oldvalue))
+				return true;
 
-				for (int i = 0; i < validTypes.length; i++) {
-					if (sValue.equals(validTypes[i])) {
-						Enumeration en = person.getNumbers().elements();
-						while (en.hasMoreElements()) {
-							String type = ((PhoneNumber) en.nextElement())
-									.getType();
-							if (sValue.equals(type))
-								return false;
-						}
-						return true;
+			for (int i = 0; i < typeModel.getSize(); i++) {
+				if (value.getType().equals(
+						((PhoneType) typeModel.getElementAt(i)).getType())) {
+					Enumeration en = person.getNumbers().elements();
+					while (en.hasMoreElements()) {
+						String type = ((PhoneNumber) en.nextElement())
+								.getType();
+						if (value.getType().equals(type))
+							return false;
 					}
+					return true;
 				}
 			}
-
 			return false;
 		}
 
@@ -144,13 +206,6 @@ public class PersonPanel extends JPanel implements ActionListener,
 		 */
 		public String getColumnName(int column) {
 			return columnNames[column];
-		}
-
-		/**
-		 * @return Returns the valid types.
-		 */
-		public final String[] getValidTypes() {
-			return validTypes;
 		}
 	}
 
@@ -202,6 +257,8 @@ public class PersonPanel extends JPanel implements ActionListener,
 	}
 
 	private void drawPanel() {
+		setBorder(BorderFactory.createEmptyBorder(10, 20, 5, 20));
+
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridLayout(0, 2));
 		JLabel label = new JLabel(jfritz.getMessages().getString("firstName")
@@ -236,6 +293,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		buttonPanel.add(tfEmail);
 
 		JPanel numberPanel = createNumberPanel();
+		numberPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
 		this.setLayout(new BorderLayout());
 		this.add(buttonPanel, BorderLayout.NORTH);
@@ -247,8 +305,9 @@ public class PersonPanel extends JPanel implements ActionListener,
 	 */
 	private JPanel createNumberPanel() {
 		JPanel numberPanel = new JPanel(new BorderLayout());
-		NumberTableModel model = new NumberTableModel();
-		numberTable = new JTable(model) {
+		NumberTableModel numberModel = new NumberTableModel();
+		typeModel = new PhoneTypeModel();
+		numberTable = new JTable(numberModel) {
 			public Component prepareRenderer(TableCellRenderer renderer,
 					int rowIndex, int vColIndex) {
 				Component c = super.prepareRenderer(renderer, rowIndex,
@@ -273,7 +332,6 @@ public class PersonPanel extends JPanel implements ActionListener,
 		numberTable.getColumnModel().getColumn(0).setMinWidth(20);
 		numberTable.getColumnModel().getColumn(0).setMaxWidth(20);
 		numberTable.getSelectionModel().addListSelectionListener(this);
-
 		// Renderers
 		CheckBoxRenderer checkBoxRenderer = new CheckBoxRenderer();
 		numberTable.getColumnModel().getColumn(0).setCellRenderer(
@@ -282,7 +340,8 @@ public class PersonPanel extends JPanel implements ActionListener,
 		// Editors
 		JCheckBox checkBox = new JCheckBox();
 		checkBox.setHorizontalAlignment(JLabel.CENTER);
-		JComboBox comboBox = new JComboBox(model.getValidTypes());
+		JComboBox comboBox = new JComboBox(typeModel);
+
 		comboBox.setEditable(false);
 		DefaultCellEditor checkBoxEditor = new DefaultCellEditor(checkBox);
 		DefaultCellEditor comboEditor = new DefaultCellEditor(comboBox);
@@ -310,6 +369,8 @@ public class PersonPanel extends JPanel implements ActionListener,
 		numberButtonPanel.add(addButton);
 		numberButtonPanel.add(delButton);
 
+		JLabel label = new JLabel("Telefonnummern:");
+		numberPanel.add(label, BorderLayout.NORTH);
 		numberPanel.add(new JScrollPane(numberTable), BorderLayout.CENTER);
 		numberPanel.add(numberButtonPanel, BorderLayout.SOUTH);
 

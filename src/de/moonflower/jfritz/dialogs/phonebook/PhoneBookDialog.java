@@ -194,7 +194,7 @@ public class PhoneBookDialog extends JDialog {
 		bottomPane.add(changeButton);
 
 		JPanel panelLabelsAndTextFields = new JPanel();
-		PersonPanel akwpanel = new PersonPanel(jfritz,null);
+		PersonPanel akwpanel = new PersonPanel(jfritz,new Person());
 		panelLabelsAndTextFields.setLayout(new GridLayout(0, 2));
 
 		labelFirstName = new JLabel(messages.getString("firstName") + ": ");

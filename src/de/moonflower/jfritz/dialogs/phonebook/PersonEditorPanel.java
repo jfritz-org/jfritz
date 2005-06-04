@@ -8,7 +8,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -22,7 +23,7 @@ import de.moonflower.jfritz.struct.Person;
  * @author Arno Willig
  *
  */
-public class PersonEditorPanel extends JComponent implements ActionListener {
+public class PersonEditorPanel extends JComponent {
 
 	private PersonCellEditor editor;
 
@@ -52,10 +53,25 @@ public class PersonEditorPanel extends JComponent implements ActionListener {
 		button = new JButton();
 		button.setIcon(icon);
 		button.setFocusable(false);
-		button.addActionListener(this);
+		button.setBorderPainted(false);
+		button.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() > 1) {
+					PersonDialog p = new PersonDialog(editor.getJfritz(),
+							person);
+					if (p.showDialog()) {
+						person = p.getPerson();
+						input.setText(person.getFullname());
+						editor.stopCellEditing();
+					}
+					p.dispose();
+				}
+			}
+		});
+
 		input.setBackground(new Color(127, 255, 255));
 		input.setFocusable(true);
-		add(button, BorderLayout.EAST);
+		add(button, BorderLayout.WEST);
 		add(input, BorderLayout.CENTER);
 	}
 
@@ -71,13 +87,6 @@ public class PersonEditorPanel extends JComponent implements ActionListener {
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent e) {
-		PersonDialog p = new PersonDialog(editor.getJfritz(), person);
-		if (p.showDialog()) {
-			person = p.getPerson();
-			input.setText(person.getFullname());
-			editor.stopCellEditing();
-		}
-		p.dispose();
 
 	}
 
