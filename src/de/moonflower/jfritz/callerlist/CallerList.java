@@ -357,7 +357,6 @@ public class CallerList extends AbstractTableModel {
 			jfritz.getJframe().toFront();
 		}
 		if (newEntries > 0) {
-			Debug.msg(newEntries + " new calls retrieved!");
 			String msg;
 			// TODO: I18N
 			if (newEntries == 1) {
@@ -451,11 +450,12 @@ public class CallerList extends AbstractTableModel {
 
 		if (call.getPhoneNumber() != null) { // no empty numbers
 			if (person == null) {
-				Debug.err("Callerlist.setPerson():  IMPLEMENT ME (remove person)");
+				Debug
+						.err("Callerlist.setPerson():  IMPLEMENT ME (remove person)");
 			} else {
 				if (call.getPerson() == null) {
 					if (!person.isEmpty())
-					jfritz.getPhonebook().addEntry(person);
+						jfritz.getPhonebook().addEntry(person);
 				} else if (!call.getPerson().equals(person)) {
 					call.getPerson().copyFrom(person);
 				}
