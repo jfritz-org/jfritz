@@ -280,6 +280,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				"export_menu"));
 		JMenu viewMenu = new JMenu(jfritz.getMessages().getString("view_menu"));
 
+
+
 		JMenuItem item = new JMenuItem(jfritz.getMessages().getString(
 				"fetchlist"), 'a');
 		item.setActionCommand("fetchList");
@@ -368,8 +370,18 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		item.addActionListener(this);
 		optionsMenu.add(item);
 
-		item = new JMenuItem(jfritz.getMessages().getString("view_menu"), 'l');
-		item.setActionCommand("view");
+
+
+		item = new JMenuItem(jfritz.getMessages().getString("callerlist"), null);
+		item.setActionCommand("callerlist");
+		item.addActionListener(this);
+		viewMenu.add(item);
+		item = new JMenuItem(jfritz.getMessages().getString("phonebook"), null);
+		item.setActionCommand("phonebook");
+		item.addActionListener(this);
+		viewMenu.add(item);
+		item = new JMenuItem(jfritz.getMessages().getString("quickdials"), null);
+		item.setActionCommand("quickdial");
 		item.addActionListener(this);
 		viewMenu.add(item);
 
@@ -733,6 +745,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			exportVCard();
 		else if (e.getActionCommand() == "config")
 			showConfigDialog();
+		else if (e.getActionCommand() == "callerlist")
+			tabber.setSelectedComponent(callerListPanel);
 		else if (e.getActionCommand() == "phonebook")
 			tabber.setSelectedComponent(phoneBookPanel);
 		else if (e.getActionCommand() == "quickdial")

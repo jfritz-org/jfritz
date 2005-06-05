@@ -22,6 +22,8 @@ import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellRenderer;
 
 import de.moonflower.jfritz.JFritz;
@@ -29,6 +31,7 @@ import de.moonflower.jfritz.utils.Debug;
 
 /**
  * Main panel for QuickDials
+ *
  * @author Arno Willig
  */
 public class QuickDialPanel extends JPanel implements ActionListener,
@@ -47,6 +50,12 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 		setLayout(new BorderLayout());
 		dataModel = new QuickDials(jfritz);
 		// dataModel.getQuickDialDataFromFritzBox();
+
+		dataModel.addTableModelListener(new TableModelListener() {
+			public void tableChanged(TableModelEvent e) {
+				updateButtons();
+			}
+		});
 		dataModel.loadFromXMLFile(JFritz.QUICKDIALS_FILE);
 		add(createQuickDialToolBar(), BorderLayout.NORTH);
 		add(createQuickDialTable(), BorderLayout.CENTER);
@@ -63,18 +72,21 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/add.png"))));
 
-		delButton = new JButton(jfritz.getMessages().getString("delete_quickdial"));
+		delButton = new JButton(jfritz.getMessages().getString(
+				"delete_quickdial"));
 		delButton.setActionCommand("deleteSIP");
 		delButton.addActionListener(this);
 		delButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/delete.png"))));
 
-		JButton fetchButton = new JButton(jfritz.getMessages().getString("fetch_from_box"));
+		JButton fetchButton = new JButton(jfritz.getMessages().getString(
+				"fetch_from_box"));
 		fetchButton.setActionCommand("fetchSIP");
 		fetchButton.addActionListener(this);
 
-		JButton storeButton = new JButton(jfritz.getMessages().getString("store_to_box"));
+		JButton storeButton = new JButton(jfritz.getMessages().getString(
+				"store_to_box"));
 		storeButton.setActionCommand("storeSIP");
 		storeButton.addActionListener(this);
 

@@ -5,6 +5,7 @@
 package de.moonflower.jfritz.dialogs.phonebook;
 
 import java.awt.BorderLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -12,8 +13,8 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -65,11 +66,13 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	 */
 	private JPanel createEditPanel() {
 		JPanel editPanel = new JPanel(new BorderLayout());
-
 		JPanel editButtonPanel = new JPanel();
 		saveButton = new JButton(jfritz.getMessages().getString("save"));
 		saveButton.setActionCommand("save");
 		saveButton.addActionListener(this);
+		saveButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource(
+						"/de/moonflower/jfritz/resources/images/okay.png"))));
 		cancelButton = new JButton(jfritz.getMessages().getString("reset"));
 		cancelButton.setActionCommand("cancel");
 		cancelButton.addActionListener(this);
@@ -86,7 +89,16 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	public JToolBar createPhoneBookToolBar() {
 		JToolBar toolBar = new JToolBar();
 		toolBar.setFloatable(true);
-		toolBar.add(new JLabel("Phonebook-ToolBar"));
+		JButton addButton = new JButton(jfritz.getMessages().getString("new_entry"));
+		addButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource(
+						"/de/moonflower/jfritz/resources/images/add.png"))));
+		JButton delButton = new JButton(jfritz.getMessages().getString("del_entry"));
+		delButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource(
+						"/de/moonflower/jfritz/resources/images/delete.png"))));
+		toolBar.add(addButton);
+		toolBar.add(delButton);
 		return toolBar;
 	}
 

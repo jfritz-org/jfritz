@@ -17,6 +17,7 @@ import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.io.StringReader;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -72,7 +73,7 @@ public class StatsDialog extends JDialog {
 		final String server = "http://192.168.178.1:49000/upnp/control/WANCommonIFC1";
 		final String urn = "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetAddonInfos";
 
-		String xml = UPNPUtils.getSOAPData(server,urn);
+		String xml = UPNPUtils.getSOAPData(server, urn);
 		try {
 			XMLReader reader = SAXParserFactory.newInstance().newSAXParser()
 					.getXMLReader();
@@ -102,7 +103,8 @@ public class StatsDialog extends JDialog {
 		JPanel topPane = new JPanel();
 		JPanel mainPane = new JPanel();
 		JPanel bottomPane = new JPanel();
-		BoxLayout boxlayout = new BoxLayout(mainPane,BoxLayout.Y_AXIS);
+		BoxLayout boxlayout = new BoxLayout(mainPane, BoxLayout.Y_AXIS);
+		mainPane.setBorder(BorderFactory.createEmptyBorder(10, 20, 5, 20));
 		mainPane.setLayout(boxlayout);
 
 		KeyListener keyListener = (new KeyAdapter() {
@@ -134,7 +136,9 @@ public class StatsDialog extends JDialog {
 		};
 
 		okButton = new JButton("Okay");
-		okButton.setEnabled(JFritz.DEVEL_VERSION);
+		okButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource(
+						"/de/moonflower/jfritz/resources/images/okay.png"))));
 		cancelButton = new JButton("Abbruch");
 		refreshButton = new JButton("Statistik aktualisieren");
 		refreshButton
@@ -193,15 +197,17 @@ public class StatsDialog extends JDialog {
 	public void setAddonInfos(int byteSendRate, int byteReceiveRate,
 			int totalBytesSent, int totalBytesReceived, String dns1, String dns2) {
 		byteSendRateLabel.setText(jfritz.getMessages().getString(
-		"bytessendrate")+ ": " + byteSendRate);
+				"bytessendrate")
+				+ ": " + byteSendRate);
 		byteReceiveRateLabel.setText(jfritz.getMessages().getString(
-		"bytesreceivedrate")+ ": " + byteReceiveRate);
+				"bytesreceivedrate")
+				+ ": " + byteReceiveRate);
 		totalBytesSendLabel.setText(jfritz.getMessages().getString(
 				"totaldatasent")
-				+ ": " + (totalBytesSent/1024)+" KByte");
+				+ ": " + (totalBytesSent / 1024) + " KByte");
 		totalBytesReceivedLabel.setText(jfritz.getMessages().getString(
 				"totaldatareceived")
-				+ ": " + (totalBytesReceived/1024)+" KByte");
+				+ ": " + (totalBytesReceived / 1024) + " KByte");
 		dns1Label.setText("DNS Server 1: " + dns1);
 		dns2Label.setText("DNS Server 2: " + dns2);
 	}

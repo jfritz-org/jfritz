@@ -231,8 +231,11 @@ public class ConfigDialog extends JDialog {
 		boxpane.setBorder(BorderFactory.createEmptyBorder(10, 20, 5, 20));
 
 		JLabel label;
-		okButton = new JButton("Okay");
-		cancelButton = new JButton("Abbruch");
+		okButton = new JButton(jfritz.getMessages().getString("okay"));
+		okButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource(
+						"/de/moonflower/jfritz/resources/images/okay.png"))));
+		cancelButton = new JButton(jfritz.getMessages().getString("cancel"));
 		timerSlider = new JSlider(0, 120, 30);
 		timerSlider.setPaintTicks(true);
 		timerSlider.setMinorTickSpacing(10);
