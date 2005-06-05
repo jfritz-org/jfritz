@@ -8,6 +8,8 @@ import java.awt.BorderLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -24,6 +26,7 @@ import javax.swing.event.CaretListener;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.struct.Call;
+import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
@@ -48,11 +51,11 @@ public class CallerListPanel extends JPanel implements ActionListener, CaretList
 		this.properties = jfritz.getProperties();
 
 		setLayout(new BorderLayout());
-		add(creatCallerListToolBar(), BorderLayout.NORTH);
+		add(createCallerListToolBar(), BorderLayout.NORTH);
 		add(createCallerListTable(), BorderLayout.CENTER);
 	}
 
-	public JToolBar creatCallerListToolBar() {
+	public JToolBar createCallerListToolBar() {
 		JToolBar toolBar = new JToolBar();
 		toolBar.setFloatable(true);
 
@@ -147,6 +150,15 @@ public class CallerListPanel extends JPanel implements ActionListener, CaretList
 
 	public JScrollPane createCallerListTable() {
 		callerTable = new CallerTable(jfritz);
+
+		callerTable.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() > 1) {
+					Debug.msg("DOPPELKLICK");
+				}
+			}
+
+		});
 		return new JScrollPane(callerTable);
 	}
 

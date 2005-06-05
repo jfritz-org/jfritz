@@ -30,6 +30,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
@@ -44,7 +46,7 @@ import de.moonflower.jfritz.struct.PhoneNumber;
  *
  */
 public class PersonPanel extends JPanel implements ActionListener,
-		ListSelectionListener {
+		ListSelectionListener, CaretListener {
 	PhoneTypeModel typeModel;
 
 	private final class PhoneType {
@@ -248,6 +250,8 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 	private JTable numberTable;
 
+	private boolean hasChanged = false;
+
 	/**
 	 *
 	 */
@@ -267,31 +271,38 @@ public class PersonPanel extends JPanel implements ActionListener,
 				+ ": ");
 		buttonPanel.add(label);
 		tfFirstName = new JTextField(person.getFirstName());
+		tfFirstName.addCaretListener(this);
 		buttonPanel.add(tfFirstName);
 		label = new JLabel(jfritz.getMessages().getString("middleName") + ": ");
 		buttonPanel.add(label);
 		tfMiddleName = new JTextField(person.getMiddleName());
+		tfMiddleName.addCaretListener(this);
 		buttonPanel.add(tfMiddleName);
 		label = new JLabel(jfritz.getMessages().getString("lastName") + ": ");
 		buttonPanel.add(label);
 		tfLastName = new JTextField(person.getLastName());
+		tfLastName.addCaretListener(this);
 		buttonPanel.add(tfLastName);
 		label = new JLabel(jfritz.getMessages().getString("street") + ": ");
 		buttonPanel.add(label);
 		tfStreet = new JTextField(person.getStreet());
+		tfStreet.addCaretListener(this);
 		buttonPanel.add(tfStreet);
 		label = new JLabel(jfritz.getMessages().getString("postalCode") + ": ");
 		buttonPanel.add(label);
 		tfPostalCode = new JTextField(person.getPostalCode());
+		tfPostalCode.addCaretListener(this);
 		buttonPanel.add(tfPostalCode);
 		label = new JLabel(jfritz.getMessages().getString("city") + ": ");
 		buttonPanel.add(label);
 		tfCity = new JTextField(person.getCity());
+		tfCity.addCaretListener(this);
 		buttonPanel.add(tfCity);
 		label = new JLabel(jfritz.getMessages().getString("emailAddress")
 				+ ": ");
 		buttonPanel.add(label);
 		tfEmail = new JTextField(person.getEmailAddress());
+		tfEmail.addCaretListener(this);
 		buttonPanel.add(tfEmail);
 
 		JPanel numberPanel = createNumberPanel();
@@ -492,5 +503,59 @@ public class PersonPanel extends JPanel implements ActionListener,
 	 */
 	public final String getEmail() {
 		return tfEmail.getText();
+	}
+
+	/**
+	 * @param person
+	 *            The person to set.
+	 */
+	public final void setPerson(Person person) {
+		this.person = person;
+		updateGUI();
+	}
+
+	public final void updateGUI() {
+		tfFirstName.setText(person.getFirstName());
+		tfMiddleName.setText(person.getMiddleName());
+		tfLastName.setText(person.getLastName());
+		tfStreet.setText(person.getStreet());
+		tfPostalCode.setText(person.getPostalCode());
+		tfCity.setText(person.getCity());
+		tfEmail.setText(person.getEmailAddress());
+		((NumberTableModel) numberTable.getModel()).fireTableDataChanged();
+	}
+
+	public final Person updatePerson() {
+		person.setFirstName(tfFirstName.getText());
+		person.setMiddleName(tfMiddleName.getText());
+		person.setLastName(tfLastName.getText());
+		person.setStreet(tfStreet.getText());
+		person.setPostalCode(tfPostalCode.getText());
+		person.setCity(tfCity.getText());
+		person.setEmailAddress(tfEmail.getText());
+		hasChanged = false;
+		return person;
+	}
+
+	/**
+	 * @return Returns the hasChanged.
+	 */
+	public final boolean hasChanged() {
+		return hasChanged;
+	}
+
+	/**
+	 * @see javax.swing.event.CaretListener#caretUpdate(javax.swing.event.CaretEvent)
+	 */
+	public void caretUpdate(CaretEvent e) {
+		boolean hasChangedOld = hasChanged;
+		hasChanged = !tfFirstName.getText().equals(person.getFirstName())
+				|| !tfMiddleName.getText().equals(person.getMiddleName())
+				|| !tfLastName.getText().equals(person.getLastName())
+				|| !tfStreet.getText().equals(person.getStreet())
+				|| !tfPostalCode.getText().equals(person.getPostalCode())
+				|| !tfCity.getText().equals(person.getCity())
+				|| !tfEmail.getText().equals(person.getEmailAddress());
+		firePropertyChange("hasChanged", hasChangedOld, hasChanged);
 	}
 }

@@ -15,6 +15,7 @@ import javax.swing.event.ListSelectionListener;
 
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.VCardList;
+import de.moonflower.jfritz.utils.Debug;
 
 /**
  * Listener class for copying phone numbers to clipboard
@@ -24,12 +25,12 @@ import de.moonflower.jfritz.struct.VCardList;
  */
 public class SelectionListener implements ListSelectionListener {
 
-	JTable table;
+	CallerTable table;
 
 	// It is necessary to keep the table since it is not possible
 	// to determine the table from the event's source
 	public SelectionListener(JTable table) {
-		this.table = table;
+		this.table = (CallerTable) table;
 	}
 
 	/**
@@ -52,6 +53,11 @@ public class SelectionListener implements ListSelectionListener {
 
 			StringSelection cont = new StringSelection(list.toVCardList());
 			clip.setContents(cont, null);
+
+			if (rows.length==1) {
+				Debug.msg("FIXME: SelectionListener: Select PhoneBookEntry");
+//				table.getJfritz().getJframe()
+			}
 		}
 	}
 }

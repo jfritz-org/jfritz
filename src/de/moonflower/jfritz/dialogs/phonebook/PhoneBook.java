@@ -243,7 +243,10 @@ public class PhoneBook extends AbstractTableModel {
 	 * @param rowIndex
 	 */
 	public Person getPersonAt(int rowIndex) {
-		return (Person) persons.get(rowIndex);
+		if (rowIndex >= 0)
+			return (Person) persons.get(rowIndex);
+		else
+			return null;
 	}
 
 	/**
@@ -289,4 +292,16 @@ public class PhoneBook extends AbstractTableModel {
 		return null;
 	}
 
+	/**
+	 * @param columnIndex
+	 * @return class of column
+	 */
+	public Class getColumnClass(int columnIndex) {
+		Object o = getValueAt(0, columnIndex);
+		if (o == null) {
+			return Object.class;
+		} else {
+			return o.getClass();
+		}
+	}
 }

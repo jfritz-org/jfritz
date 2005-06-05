@@ -34,9 +34,11 @@ public class PhoneBookTable extends JTable {
 		setCellSelectionEnabled(false);
 		setRowSelectionAllowed(true);
 		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		getSelectionModel().addListSelectionListener(this);
-		this.getColumnModel().getColumn(4).setCellRenderer(new CallTypeDateCellRenderer());
 
+		// setDefaultRenderer(Call.class, new CallTypeDateCellRenderer());
+
+		this.getColumnModel().getColumn(4).setCellRenderer(
+				new CallTypeDateCellRenderer());
 	}
 
 	public Component prepareRenderer(TableCellRenderer renderer, int rowIndex,
@@ -51,5 +53,4 @@ public class PhoneBookTable extends JTable {
 		}
 		return c;
 	}
-
 }
