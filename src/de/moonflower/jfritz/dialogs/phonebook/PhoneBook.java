@@ -46,6 +46,9 @@ public class PhoneBook extends AbstractTableModel {
 			+ "<!ELEMENT lastname (#PCDATA)>"
 			+ "<!ELEMENT entry (firstname?,middlename?,lastname?)>";
 
+	private final String columnNames[] = { "fullName", "telephoneNumber",
+			"address", "city", "last_call" };
+
 	private Vector persons;
 
 	private JFritz jfritz;
@@ -66,7 +69,8 @@ public class PhoneBook extends AbstractTableModel {
 			Person p = (Person) en.nextElement();
 			PhoneNumber pn1 = p.getStandardTelephoneNumber();
 			PhoneNumber pn2 = newPerson.getStandardTelephoneNumber();
-			if (pn1 != null && pn2 != null && pn1.getNumber().equals(pn2.getNumber())) {
+			if (pn1 != null && pn2 != null
+					&& pn1.getNumber().equals(pn2.getNumber())) {
 				return;
 			}
 		}
@@ -218,13 +222,18 @@ public class PhoneBook extends AbstractTableModel {
 		Person person = (Person) persons.get(rowIndex);
 		switch (columnIndex) {
 		case 0:
-			return person.getFirstName() + " " + person.getMiddleName();
+			return person.getFullname();
 		case 1:
-			return person.getLastName();
-		case 2:
 			return person.getStandardTelephoneNumber();
+		case 2:
+			return person.getStreet();
+		case 3:
+			return person.getPostalCode() + " " + person.getCity();
+		case 4:
+			return jfritz.getCallerlist().findLastCall(person);
 		default:
-			throw new IllegalArgumentException("Invalid column: " + columnIndex);
+			return "X";
+		//throw new IllegalArgumentException("Invalid column: " + columnIndex);
 		}
 	}
 
@@ -251,19 +260,14 @@ public class PhoneBook extends AbstractTableModel {
 	}
 
 	public int getColumnCount() {
-		return 3;
+		return columnNames.length;
 	}
 
 	public String getColumnName(int column) {
-		switch (column) {
-		case 0:
-			return jfritz.getMessages().getString("firstName");
-		case 1:
-			return jfritz.getMessages().getString("lastName");
-		case 2:
-			return jfritz.getMessages().getString("telephoneNumber");
-		default:
-			return null;
+		try {
+			return jfritz.getMessages().getString(columnNames[column]);
+		} catch (Exception e) {
+			return columnNames[column];
 		}
 	}
 

@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.dialogs.quickdial.QuickDial;
-import de.moonflower.jfritz.dialogs.quickdial.QuickDialTableModel;
+import de.moonflower.jfritz.dialogs.quickdial.QuickDials;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
@@ -165,7 +165,7 @@ public class JFritzUtils {
 	 * @throws IOException
 	 */
 	public static Vector retrieveQuickDialsFromFritzBox(
-			QuickDialTableModel model, String box_address, String box_password,
+			QuickDials model, String box_address, String box_password,
 			FritzBoxFirmware firmware) throws WrongPasswordException,
 			IOException {
 		String postdata = firmware.getAccessMethod() + POSTDATA_QUICKDIAL
@@ -330,7 +330,7 @@ public class JFritzUtils {
 	 * @param firmware
 	 * @return list of QuickDial objects
 	 */
-	public static Vector parseQuickDialData(QuickDialTableModel model,
+	public static Vector parseQuickDialData(QuickDials model,
 			String data, FritzBoxFirmware firmware) {
 		Vector list = new Vector();
 		data = removeDuplicateWhitespace(data);

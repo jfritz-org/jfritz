@@ -16,16 +16,16 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.cellrenderer.CallTypeCellRenderer;
+import de.moonflower.jfritz.cellrenderer.DateCellRenderer;
+import de.moonflower.jfritz.cellrenderer.DurationCellRenderer;
+import de.moonflower.jfritz.cellrenderer.NumberCellRenderer;
+import de.moonflower.jfritz.cellrenderer.PersonCellRenderer;
+import de.moonflower.jfritz.cellrenderer.PortCellRenderer;
+import de.moonflower.jfritz.cellrenderer.RouteCellRenderer;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.JFritzProperties;
-import de.moonflower.jfritz.window.cellrenderer.CallTypeCellRenderer;
-import de.moonflower.jfritz.window.cellrenderer.DateCellRenderer;
-import de.moonflower.jfritz.window.cellrenderer.DurationCellRenderer;
-import de.moonflower.jfritz.window.cellrenderer.NumberCellRenderer;
-import de.moonflower.jfritz.window.cellrenderer.PersonCellRenderer;
-import de.moonflower.jfritz.window.cellrenderer.PortCellRenderer;
-import de.moonflower.jfritz.window.cellrenderer.RouteCellRenderer;
 
 /**
  * Creates table of callers

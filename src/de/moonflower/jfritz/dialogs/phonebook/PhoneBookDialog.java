@@ -83,7 +83,7 @@ public class PhoneBookDialog extends JDialog {
 		super(owner, true);
 		if (owner != null) {
 			setLocationRelativeTo(owner);
-			this.messages = owner.getMessages();
+			this.messages = jfritz.getMessages();
 		}
 		this.jfritz = jfritz;
 

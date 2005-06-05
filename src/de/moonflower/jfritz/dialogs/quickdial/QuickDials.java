@@ -30,10 +30,11 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
- * @author Arno Willig
+ * Table model for QuickDials
  *
+ * @author Arno Willig
  */
-public class QuickDialTableModel extends AbstractTableModel {
+public class QuickDials extends AbstractTableModel {
 
 	private static final String QUICKDIALS_DTD_URI = "http://jfritz.moonflower.de/dtd/quickdials.dtd";
 
@@ -49,22 +50,22 @@ public class QuickDialTableModel extends AbstractTableModel {
 
 	JFritz jfritz;
 
-	Vector modelData;
+	Vector quickDials;
 
 	/**
 	 *
 	 */
-	public QuickDialTableModel(JFritz jfritz) {
+	public QuickDials(JFritz jfritz) {
 		super();
 		this.jfritz = jfritz;
-		modelData = new Vector();
+		quickDials = new Vector();
 	}
 
 	/**
 	 * @see javax.swing.table.TableModel#getRowCount()
 	 */
 	public int getRowCount() {
-		return modelData.size();
+		return quickDials.size();
 	}
 
 	/**
@@ -78,7 +79,7 @@ public class QuickDialTableModel extends AbstractTableModel {
 	 * @see javax.swing.table.TableModel#getValueAt(int, int)
 	 */
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		QuickDial quick = (QuickDial) modelData.get(rowIndex);
+		QuickDial quick = (QuickDial) quickDials.get(rowIndex);
 		switch (columnIndex) {
 		case 0:
 			return quick.getQuickdial();
@@ -98,7 +99,7 @@ public class QuickDialTableModel extends AbstractTableModel {
 	 */
 	public void setValueAt(Object object, int rowIndex, int columnIndex) {
 		if (rowIndex < getRowCount()) {
-			QuickDial dial = (QuickDial) modelData.get(rowIndex);
+			QuickDial dial = (QuickDial) quickDials.get(rowIndex);
 
 			switch (columnIndex) {
 			case 0:
@@ -134,8 +135,8 @@ public class QuickDialTableModel extends AbstractTableModel {
 	}
 
 	public void getQuickDialDataFromFritzBox() {
-		try {//FIXME
-			modelData = JFritzUtils.retrieveQuickDialsFromFritzBox(this, jfritz
+		try {
+			quickDials = JFritzUtils.retrieveQuickDialsFromFritzBox(this, jfritz
 					.getProperties().getProperty("box.address"), jfritz
 					.getProperties().getProperty("box.password"), JFritzUtils
 					.detectBoxType(jfritz.getProperties().getProperty(
@@ -150,11 +151,11 @@ public class QuickDialTableModel extends AbstractTableModel {
 	}
 
 	public void addEntry(QuickDial quickDial) {
-		modelData.add(quickDial);
+		quickDials.add(quickDial);
 	}
 
 	public void remove(int row) {
-		modelData.remove(row);
+		quickDials.remove(row);
 	}
 
 	/**
@@ -224,7 +225,7 @@ public class QuickDialTableModel extends AbstractTableModel {
 			pw.println("<quickdials>");
 			pw.println("\t<comment>QuickDial list for " + JFritz.PROGRAM_NAME
 					+ " v" + JFritz.PROGRAM_VERSION + "</comment>");
-			Enumeration en = modelData.elements();
+			Enumeration en = quickDials.elements();
 			while (en.hasMoreElements()) {
 				QuickDial current = (QuickDial) en.nextElement();
 				pw.println("\t<entry id=\"" + current.getQuickdial() + "\">");
@@ -247,12 +248,18 @@ public class QuickDialTableModel extends AbstractTableModel {
 	}
 
 	public String getDescriptionFromNumber(String number) {
-		Enumeration en = modelData.elements();
+		Enumeration en = quickDials.elements();
 		while (en.hasMoreElements()) {
 			QuickDial q = (QuickDial) en.nextElement();
 			if (q.getNumber().equals(number))
 				return q.getDescription();
 		}
 		return null;
+	}
+	/**
+	 * @return Returns the quickDials.
+	 */
+	public final Vector getQuickDials() {
+		return quickDials;
 	}
 }

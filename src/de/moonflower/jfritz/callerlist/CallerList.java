@@ -178,7 +178,8 @@ public class CallerList extends AbstractTableModel {
 		try {
 			fos = new FileOutputStream(filename);
 			PrintWriter pw = new PrintWriter(fos);
-			pw.println("\"CallType\";\"Date\";\"Number\";\"Route\";\"Port\";\"Duration\"");
+			pw
+					.println("\"CallType\";\"Date\";\"Number\";\"Route\";\"Port\";\"Duration\"");
 
 			Enumeration en = getUnfilteredCallVector().elements();
 			while (en.hasMoreElements()) {
@@ -736,5 +737,23 @@ public class CallerList extends AbstractTableModel {
 	 */
 	public final JFritz getJfritz() {
 		return jfritz;
+	}
+
+	/**
+	 * @param person
+	 * @return Returns last call of person
+	 */
+	public Call findLastCall(Person person) {
+		// FIXME: Nicht nur Standardnummer suchen
+		Enumeration en = unfilteredCallerData.elements();
+		while (en.hasMoreElements()) {
+			Call call = (Call) en.nextElement();
+			if (call.getPhoneNumber() != null
+					&& call.getPhoneNumber().getNumber().equals(
+							person.getStandardTelephoneNumber().getNumber())) {
+				return call;
+			}
+		}
+		return null;
 	}
 }

@@ -3,7 +3,7 @@
  * Created on 06.05.2005
  *
  */
-package de.moonflower.jfritz.window.cellrenderer;
+package de.moonflower.jfritz.cellrenderer;
 
 import java.awt.Component;
 import java.text.SimpleDateFormat;

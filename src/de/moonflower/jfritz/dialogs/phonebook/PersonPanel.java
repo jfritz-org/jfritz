@@ -7,6 +7,7 @@ package de.moonflower.jfritz.dialogs.phonebook;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -181,7 +182,8 @@ public class PersonPanel extends JPanel implements ActionListener,
 		}
 
 		protected boolean isValidType(PhoneType value, String oldvalue) {
-			if (value == null) return false;
+			if (value == null)
+				return false;
 			if (value.getType().equals(oldvalue))
 				return true;
 
@@ -295,13 +297,16 @@ public class PersonPanel extends JPanel implements ActionListener,
 		JPanel numberPanel = createNumberPanel();
 		numberPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
-		this.setLayout(new BorderLayout());
-		this.add(buttonPanel, BorderLayout.NORTH);
-		this.add(numberPanel, BorderLayout.CENTER);
+		setLayout(new BorderLayout());
+		add(buttonPanel, BorderLayout.NORTH);
+		add(numberPanel, BorderLayout.CENTER);
+		setPreferredSize(new Dimension(350, -1));
+		setMinimumSize(new Dimension(350, 0));
+		setMaximumSize(new Dimension(350, 0));
 	}
 
 	/**
-	 * @return Retruns number panel with number table
+	 * @return Returns number panel with number table
 	 */
 	private JPanel createNumberPanel() {
 		JPanel numberPanel = new JPanel(new BorderLayout());
@@ -349,8 +354,8 @@ public class PersonPanel extends JPanel implements ActionListener,
 		numberTable.getColumnModel().getColumn(1).setCellEditor(comboEditor);
 
 		// Buttons
-		addButton = new JButton("add number");
-		delButton = new JButton("delete number");
+		addButton = new JButton();
+		delButton = new JButton();
 		addButton.setActionCommand("add");
 		addButton.addActionListener(this);
 		addButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
@@ -365,14 +370,18 @@ public class PersonPanel extends JPanel implements ActionListener,
 		if (person.getNumbers().size() == 1)
 			delButton.setEnabled((false));
 
-		JPanel numberButtonPanel = new JPanel();
-		numberButtonPanel.add(addButton);
-		numberButtonPanel.add(delButton);
+		JLabel label = new JLabel("Telefonnummern:", JLabel.LEFT);
 
-		JLabel label = new JLabel("Telefonnummern:");
-		numberPanel.add(label, BorderLayout.NORTH);
+		JPanel numberButtonPanel = new JPanel(new GridLayout(0, 2));
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.add(addButton);
+		buttonPanel.add(delButton);
+
+		numberButtonPanel.add(label);
+		numberButtonPanel.add(buttonPanel);
+
+		numberPanel.add(numberButtonPanel, BorderLayout.NORTH);
 		numberPanel.add(new JScrollPane(numberTable), BorderLayout.CENTER);
-		numberPanel.add(numberButtonPanel, BorderLayout.SOUTH);
 
 		updateAddDelButtons();
 
