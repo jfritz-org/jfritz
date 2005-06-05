@@ -22,6 +22,7 @@ public class YAClistener implements Runnable {
 
 	public void run() {
 		try {
+			Debug.msg("Starting YAC listener");
 			// TODO: configurable Port
 			ServerSocket serverSocket = new ServerSocket(yacPort);
 			while (true) {
@@ -42,8 +43,9 @@ public class YAClistener implements Runnable {
 						if (nachricht.startsWith("@CALL")) {
 							nachricht = nachricht.substring(5);
 							splitList = nachricht.split("~");
-							outputString = jfritz.getMessages().getString(
-									"incoming_call");
+							outputString = "<b>"
+									+ jfritz.getMessages().getString(
+											"incoming_call") + "</b>";
 							if (!splitList[0].equals("")) {
 								outputString = outputString
 										+ "\n"
@@ -55,19 +57,20 @@ public class YAClistener implements Runnable {
 									+ jfritz.getMessages().getString("number")
 									+ ": " + splitList[1];
 						} else {
-							outputString = jfritz.getMessages().getString(
-									"yac_message")
-									+ ": " + nachricht;
+							outputString = "<b>"
+									+ jfritz.getMessages().getString(
+											"yac_message") + "</b>" + ":\n"
+									+ nachricht;
 						}
 					} else {
-						outputString = jfritz.getMessages().getString(
-								"yac_message")
-								+ ": " + nachricht;
+						outputString = "<b>"
+								+ jfritz.getMessages().getString("yac_message")
+								+ "</b>" + ":\n" + nachricht;
 					}
 
 					jfritz.infoMsg(outputString);
 					if (!JFritz.SYSTRAY_SUPPORT) {
-						//TODO: PopUP-Message
+						//TODO: PopUp-Message
 					}
 				}
 				socket.close();
