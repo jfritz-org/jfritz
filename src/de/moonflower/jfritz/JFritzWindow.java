@@ -14,8 +14,6 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -26,33 +24,30 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
 import javax.swing.filechooser.FileFilter;
 
 import org.jdesktop.jdic.desktop.Desktop;
 
+import de.moonflower.jfritz.callerlist.CallerListPanel;
 import de.moonflower.jfritz.callerlist.CallerTable;
 import de.moonflower.jfritz.dialogs.config.ConfigDialog;
 import de.moonflower.jfritz.dialogs.phonebook.PhoneBookDialog;
+import de.moonflower.jfritz.dialogs.phonebook.PhoneBookPanel;
 import de.moonflower.jfritz.dialogs.quickdial.QuickDialDialog;
+import de.moonflower.jfritz.dialogs.quickdial.QuickDialPanel;
 import de.moonflower.jfritz.dialogs.simple.AddressPasswordDialog;
 import de.moonflower.jfritz.dialogs.stats.StatsDialog;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
@@ -78,25 +73,25 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	JFritzProperties properties, participants;
 
-	CallerTable callertable;
-
 	Timer timer;
 
 	JMenuBar menu;
 
 	JToolBar mBar;
 
-	JButton fetchButton, lookupButton, configButton, vcardButton;
-
-	JToggleButton dateButton;
-
-	JTextField searchFilter;
+	private JButton fetchButton, lookupButton, configButton, vcardButton;
 
 	JToggleButton taskButton;
 
 	JProgressBar progressbar;
 
 	boolean isretrieving = false;
+
+	private CallerListPanel callerListPanel;
+
+	private PhoneBookPanel phoneBookPanel;
+
+	private QuickDialPanel quickDialPanel;
 
 	/**
 	 * Constructs JFritzWindow
@@ -137,33 +132,28 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		setLocation(x, y);
 		setSize(w, h);
 
+		callerListPanel = new CallerListPanel(jfritz);
+		phoneBookPanel = new PhoneBookPanel(jfritz);
+		quickDialPanel = new QuickDialPanel(jfritz);
+
+		JTabbedPane t = new JTabbedPane(JTabbedPane.BOTTOM);
+		t.addTab(jfritz.getMessages().getString("callerlist"), callerListPanel);
+		t.addTab(jfritz.getMessages().getString("phonebook"), phoneBookPanel);
+		t.addTab(jfritz.getMessages().getString("quickdials"), quickDialPanel);
+
 		// Adding gui components
-		getContentPane().setLayout(new BorderLayout());
 		setJMenuBar(createMenu());
-
-		JTabbedPane tpane = new JTabbedPane(JTabbedPane.TOP);
-
-		tpane.addTab(jfritz.getMessages().getString("callerlist"),
-				createCallerListPanel());
-		tpane.addTab(jfritz.getMessages().getString("phonebook"), new JPanel());
-		tpane
-				.addTab(jfritz.getMessages().getString("quickdials"),
-						new JPanel());
-
+		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(createMainToolBar(), BorderLayout.NORTH);
-		getContentPane().add(tpane, BorderLayout.CENTER);
+		getContentPane().add(t, BorderLayout.CENTER);
 		getContentPane().add(createStatusBar(), BorderLayout.SOUTH);
 
 		jfritz.getCallerlist().fireTableStructureChanged();
 	}
 
-	public JPanel createCallerListPanel() {
-		JPanel panel = new JPanel(new BorderLayout());
-		panel.add(createFilterToolBar(), BorderLayout.NORTH);
-		panel.add(createTable(), BorderLayout.CENTER);
-		return panel;
-	}
-
+	/**
+	 * Sets default Look'n'Feel
+	 */
 	public void setDefaultLookAndFeel() {
 		setDefaultLookAndFeelDecorated(true);
 		try {
@@ -273,107 +263,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 		mBar.addSeparator();
 		return mBar;
-	}
-
-	/**
-	 * Creates the filter ToolBar
-	 */
-	public JToolBar createFilterToolBar() {
-		JToolBar fBar = new JToolBar();
-		fBar.setFloatable(true);
-
-		JToggleButton tb = new JToggleButton(getImage("callin_grey.png"), true);
-		tb.setSelectedIcon(getImage("callin.png"));
-		tb.setActionCommand("filter_callin");
-		tb.addActionListener(this);
-		tb.setToolTipText(jfritz.getMessages().getString("filter_callin"));
-		tb.setSelected(!JFritzUtils.parseBoolean(properties.getProperty(
-				"filter.callin", "false")));
-		fBar.add(tb);
-
-		tb = new JToggleButton(getImage("callinfailed_grey.png"), true);
-		tb.setSelectedIcon(getImage("callinfailed.png"));
-		tb.setActionCommand("filter_callinfailed");
-		tb.addActionListener(this);
-		tb
-				.setToolTipText(jfritz.getMessages().getString(
-						"filter_callinfailed"));
-		tb.setSelected(!JFritzUtils.parseBoolean(properties.getProperty(
-				"filter.callinfailed", "false")));
-		fBar.add(tb);
-
-		tb = new JToggleButton(getImage("callout_grey.png"), true);
-		tb.setSelectedIcon(getImage("callout.png"));
-		tb.setActionCommand("filter_callout");
-		tb.addActionListener(this);
-		tb.setToolTipText(jfritz.getMessages().getString("filter_callout"));
-		tb.setSelected(!JFritzUtils.parseBoolean(properties.getProperty(
-				"filter.callout", "false")));
-		fBar.add(tb);
-
-		tb = new JToggleButton(getImage("phone_grey.png"), true);
-		tb.setSelectedIcon(getImage("phone.png"));
-		tb.setActionCommand("filter_number");
-		tb.addActionListener(this);
-		tb.setToolTipText(jfritz.getMessages().getString("filter_number"));
-		tb.setSelected(!JFritzUtils.parseBoolean(properties.getProperty(
-				"filter.number", "false")));
-		fBar.add(tb);
-
-		tb = new JToggleButton(getImage("handy_grey.png"), true);
-		tb.setSelectedIcon(getImage("handy.png"));
-		tb.setActionCommand("filter_handy");
-		tb.addActionListener(this);
-		tb.setToolTipText(jfritz.getMessages().getString("filter_handy"));
-		tb.setSelected(!JFritzUtils.parseBoolean(properties.getProperty(
-				"filter.handy", "false")));
-		fBar.add(tb);
-
-		dateButton = new JToggleButton(getImage("calendar_grey.png"), true);
-		dateButton.setSelectedIcon(getImage("calendar.png"));
-		dateButton.setActionCommand("filter_date");
-		dateButton.addActionListener(this);
-		dateButton
-				.setToolTipText(jfritz.getMessages().getString("filter_date"));
-		dateButton.setSelected(!JFritzUtils.parseBoolean(properties
-				.getProperty("filter.date", "false")));
-		setDateFilterText();
-		fBar.add(dateButton);
-
-		fBar.addSeparator();
-
-		fBar.add(new JLabel(jfritz.getMessages().getString("search") + ": "));
-		searchFilter = new JTextField(properties.getProperty("filter.search",
-				""), 10);
-		searchFilter.addCaretListener(new CaretListener() {
-			String filter = "";
-
-			public void caretUpdate(CaretEvent e) {
-				JTextField search = (JTextField) e.getSource();
-				if (!filter.equals(search.getText())) {
-					filter = search.getText();
-					properties.setProperty("filter.search", filter);
-					jfritz.getCallerlist().updateFilter();
-					jfritz.getCallerlist().fireTableStructureChanged();
-				}
-			}
-
-		});
-
-		fBar.add(searchFilter);
-		JButton button = new JButton(jfritz.getMessages().getString("clear"));
-		button.setActionCommand("clearSearchFilter");
-		button.addActionListener(this);
-		fBar.add(button);
-		return fBar;
-	}
-
-	/**
-	 * Creates the caller table
-	 */
-	public JScrollPane createTable() {
-		callertable = new CallerTable(jfritz);
-		return new JScrollPane(callertable);
 	}
 
 	/**
@@ -924,63 +813,15 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		} else if (e.getActionCommand() == "filter_date") {
 			properties.setProperty("filter.date", Boolean
 					.toString(!((JToggleButton) e.getSource()).isSelected()));
-			setDataFilterFromSelection();
+			callerListPanel.setDataFilterFromSelection();
 			jfritz.getCallerlist().fireTableStructureChanged();
 		} else if (e.getActionCommand() == "clearSearchFilter") {
-			searchFilter.setText("");
+			callerListPanel.setSearchFilter("");
 			properties.setProperty("filter.search", "");
 			jfritz.getCallerlist().updateFilter();
 			jfritz.getCallerlist().fireTableStructureChanged();
 		} else {
 			Debug.err("Unimplemented action: " + e.getActionCommand());
-		}
-	}
-
-	private void setDataFilterFromSelection() {
-		Date from = null;
-		Date to = null;
-		try {
-			int rows[] = getCallertable().getSelectedRows();
-			for (int i = 0; i < rows.length; i++) {
-				Call call = (Call) jfritz.getCallerlist()
-						.getFilteredCallVector().get(rows[i]);
-
-				if (to == null || call.getCalldate().after(to))
-					to = call.getCalldate();
-
-				if (from == null || call.getCalldate().before(from))
-					from = call.getCalldate();
-			}
-		} catch (Exception e) {
-			System.err.println(e.toString());
-		}
-		if (to == null)
-			to = new Date();
-		if (from == null)
-			from = new Date();
-		String fromstr = new SimpleDateFormat("dd.MM.yy").format(from);
-		String tostr = new SimpleDateFormat("dd.MM.yy").format(to);
-
-		properties.setProperty("filter.date_from", fromstr);
-		properties.setProperty("filter.date_to", tostr);
-		setDateFilterText();
-		jfritz.getCallerlist().updateFilter();
-	}
-
-	/**
-	 *
-	 */
-	public void setDateFilterText() {
-		if (JFritzUtils.parseBoolean(properties.getProperty("filter.date"))) {
-			if (properties.getProperty("filter.date_from").equals(
-					properties.getProperty("filter.date_to"))) {
-				dateButton.setText(properties.getProperty("filter.date_from"));
-			} else {
-				dateButton.setText(properties.getProperty("filter.date_from")
-						+ " - " + properties.getProperty("filter.date_to"));
-			}
-		} else {
-			dateButton.setText("");
 		}
 	}
 
@@ -1002,10 +843,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				return "VCard (.vcf)";
 			}
 		});
-		int rows[] = callertable.getSelectedRows();
+		int rows[] = callerListPanel.getCallerTable().getSelectedRows();
 		for (int i = 0; i < rows.length; i++) {
-			Person person = (Person) callertable.getModel().getValueAt(rows[i],
-					3);
+			Person person = (Person) callerListPanel.getCallerTable()
+					.getModel().getValueAt(rows[i], 3);
 			if (person != null && person.getFullname() != "") {
 				list.addVCard(person);
 			}
@@ -1066,7 +907,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	/**
 	 * @return Returns the callertable.
 	 */
-	public final CallerTable getCallertable() {
-		return callertable;
+	public final CallerTable getCallerTable() {
+		return callerListPanel.getCallerTable();
 	}
 }
