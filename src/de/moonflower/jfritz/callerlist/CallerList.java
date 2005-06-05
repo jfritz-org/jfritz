@@ -642,7 +642,7 @@ public class CallerList extends AbstractTableModel {
 				"filter.date_to", "");
 
 		try {
-			jfritz.getJframe().getCallertable().getCellEditor()
+			jfritz.getJframe().getCallerTable().getCellEditor()
 					.cancelCellEditing();
 		} catch (NullPointerException e) {
 		}

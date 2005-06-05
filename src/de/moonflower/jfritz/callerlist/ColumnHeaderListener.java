@@ -60,7 +60,7 @@ public class ColumnHeaderListener extends MouseAdapter {
 		} else {
 			// Disable editing
 			try {
-				list.getJfritz().getJframe().getCallertable().getCellEditor()
+				list.getJfritz().getJframe().getCallerTable().getCellEditor()
 						.cancelCellEditing();
 			} catch (NullPointerException e) {
 			}
