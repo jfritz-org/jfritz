@@ -36,6 +36,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
@@ -87,7 +88,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	JButton fetchButton, lookupButton, configButton, vcardButton;
 
-	JToggleButton dateButton, listButton;
+	JToggleButton dateButton;
 
 	JTextField searchFilter;
 
@@ -138,12 +139,29 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 		// Adding gui components
 		getContentPane().setLayout(new BorderLayout());
-		createMenu();
-		createToolbar();
-		createTable();
-		createStatusbar();
+		setJMenuBar(createMenu());
+
+		JTabbedPane tpane = new JTabbedPane(JTabbedPane.TOP);
+
+		tpane.addTab(jfritz.getMessages().getString("callerlist"),
+				createCallerListPanel());
+		tpane.addTab(jfritz.getMessages().getString("phonebook"), new JPanel());
+		tpane
+				.addTab(jfritz.getMessages().getString("quickdials"),
+						new JPanel());
+
+		getContentPane().add(createMainToolBar(), BorderLayout.NORTH);
+		getContentPane().add(tpane, BorderLayout.CENTER);
+		getContentPane().add(createStatusBar(), BorderLayout.SOUTH);
 
 		jfritz.getCallerlist().fireTableStructureChanged();
+	}
+
+	public JPanel createCallerListPanel() {
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.add(createFilterToolBar(), BorderLayout.NORTH);
+		panel.add(createTable(), BorderLayout.CENTER);
+		return panel;
 	}
 
 	public void setDefaultLookAndFeel() {
@@ -158,24 +176,21 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	}
 
 	/**
-	 * Create the status bar
+	 * Create the StatusBar
 	 */
-	public void createStatusbar() {
+	public JProgressBar createStatusBar() {
 		progressbar = new JProgressBar();
 		progressbar.setValue(0);
 		progressbar.setStringPainted(true);
-		getContentPane().add(progressbar, BorderLayout.SOUTH);
+		return progressbar;
 	}
 
 	/**
-	 * Creates a tool bar
+	 * Creates the main ToolBar
 	 */
-	public void createToolbar() {
+	public JToolBar createMainToolBar() {
 		mBar = new JToolBar();
-		mBar.setFloatable(false);
-
-		JToolBar fBar = new JToolBar();
-		fBar.setFloatable(false);
+		mBar.setFloatable(true);
 
 		fetchButton = new JButton();
 		fetchButton.setToolTipText(jfritz.getMessages().getString("fetchlist"));
@@ -212,7 +227,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		button.addActionListener(this);
 		button.setIcon(getImage("quickdial.png"));
 		button.setToolTipText(jfritz.getMessages().getString("quickdials"));
-		// button.setEnabled(JFritz.DEVEL_VERSION);
 		mBar.add(button);
 
 		mBar.addSeparator();
@@ -240,29 +254,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		button.setEnabled(JFritz.DEVEL_VERSION);
 		mBar.add(button);
 
-		/*
-		 * button = new JButton(); button.setActionCommand("export_excel");
-		 * button.addActionListener(this); button.setIcon(new
-		 * ImageIcon(Toolkit.getDefaultToolkit().getImage(
-		 * getClass().getResource(
-		 * "/de/moonflower/jfritz/resources/images/excel.png"))));
-		 * button.setToolTipText(messages.getString("export_excel"));
-		 * button.setEnabled(IS_RELEASE); toolbar.add(button);
-		 *
-		 * button = new JButton(); button.setActionCommand("export_openoffice");
-		 * button.addActionListener(this); button.setIcon(new
-		 * ImageIcon(Toolkit.getDefaultToolkit().getImage(
-		 * getClass().getResource(
-		 * "/de/moonflower/jfritz/resources/images/excel.png"))));
-		 * button.setToolTipText(messages.getString("export_excel"));
-		 * button.setEnabled(true); toolbar.add(button);
-		 *
-		 * button.setIcon(new
-		 * ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource(
-		 * "/de/moonflower/jfritz/resources/images/openoffice.png"))));
-		 * button.setToolTipText(messages.getString("export_openoffice"));
-		 * button.setEnabled(IS_RELEASE); toolbar.add(button);
-		 */
 		button = new JButton();
 		button.setActionCommand("help");
 		button.addActionListener(this);
@@ -281,28 +272,15 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		mBar.add(configButton);
 
 		mBar.addSeparator();
+		return mBar;
+	}
 
-		dateButton = new JToggleButton();
-		dateButton.setToolTipText(jfritz.getMessages().getString("fetchtask"));
-		dateButton.setActionCommand("switchList");
-		dateButton.addActionListener(this);
-		dateButton.setIcon(getImage("phonebook.png"));
-		dateButton.setSelectedIcon(getImage("callerlist.png"));
-		dateButton.setOpaque(true);
-		dateButton.setFocusable(false);
-		mBar.add(dateButton);
-
-
-
-
-
-
-
-
-
-
-
-		// FILTER TOOLBAR
+	/**
+	 * Creates the filter ToolBar
+	 */
+	public JToolBar createFilterToolBar() {
+		JToolBar fBar = new JToolBar();
+		fBar.setFloatable(true);
 
 		JToggleButton tb = new JToggleButton(getImage("callin_grey.png"), true);
 		tb.setSelectedIcon(getImage("callin.png"));
@@ -383,35 +361,25 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		});
 
 		fBar.add(searchFilter);
-		button = new JButton(jfritz.getMessages().getString("clear"));
+		JButton button = new JButton(jfritz.getMessages().getString("clear"));
 		button.setActionCommand("clearSearchFilter");
 		button.addActionListener(this);
 		fBar.add(button);
-
-		JPanel toolPanel = new JPanel(new BorderLayout());
-
-		toolPanel.add(mBar, BorderLayout.NORTH);
-		//mBar.add(fBar);
-		toolPanel.add(fBar, BorderLayout.CENTER);
-		getContentPane().add(toolPanel, BorderLayout.NORTH);
-		//		getContentPane().add(toolbar, BorderLayout.NORTH);
-		//		getContentPane().add(search, BorderLayout.NORTH);
+		return fBar;
 	}
 
 	/**
 	 * Creates the caller table
-	 *
 	 */
-	public void createTable() {
+	public JScrollPane createTable() {
 		callertable = new CallerTable(jfritz);
-		getContentPane().add(new JScrollPane(callertable), BorderLayout.CENTER);
+		return new JScrollPane(callertable);
 	}
 
 	/**
 	 * Creates the menu bar
-	 *
 	 */
-	public void createMenu() {
+	public JMenuBar createMenu() {
 		JMenu jfritzMenu = new JMenu(JFritz.PROGRAM_NAME);
 		JMenu editMenu = new JMenu(jfritz.getMessages().getString("edit_menu"));
 		JMenu optionsMenu = new JMenu(jfritz.getMessages().getString(
@@ -420,6 +388,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		JMenu lnfMenu = new JMenu(jfritz.getMessages().getString("lnf_menu"));
 		JMenu exportMenu = new JMenu(jfritz.getMessages().getString(
 				"export_menu"));
+		JMenu viewMenu = new JMenu(jfritz.getMessages().getString("view_menu"));
 
 		JMenuItem item = new JMenuItem(jfritz.getMessages().getString(
 				"fetchlist"), 'a');
@@ -509,11 +478,17 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		item.addActionListener(this);
 		optionsMenu.add(item);
 
+		item = new JMenuItem(jfritz.getMessages().getString("view_menu"), 'l');
+		item.setActionCommand("view");
+		item.addActionListener(this);
+		viewMenu.add(item);
+
 		menu = new JMenuBar();
 		menu.add(jfritzMenu);
 		menu.add(optionsMenu);
+		menu.add(viewMenu);
 		menu.add(helpMenu);
-		setJMenuBar(menu);
+		return menu;
 	}
 
 	/**
@@ -844,10 +819,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		 * c = toolbar.getComponents(); for (int i=0;i <c.length;i++) { if
 		 * (c[i].getClass().equals(JButton.class)) c[i].setEnabled(!busy); }
 		 */
-		fetchButton.setEnabled(!busy);
-		lookupButton.setEnabled(!busy);
-		configButton.setEnabled(!busy);
-
+		if (fetchButton != null) {
+			fetchButton.setEnabled(!busy);
+			lookupButton.setEnabled(!busy);
+			configButton.setEnabled(!busy);
+		}
 		menu.setEnabled(!busy);
 		progressbar.setIndeterminate(busy);
 		if (busy)

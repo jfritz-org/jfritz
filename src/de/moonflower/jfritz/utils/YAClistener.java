@@ -35,9 +35,7 @@ public class YAClistener implements Runnable {
 					if (nachricht == null)
 						break;
 					// parsing incoming DATA
-					if (JFritz.DEVEL_VERSION) {
-						Debug.msg("Got YAC-Data: " + nachricht);
-					}
+					Debug.msg("Got YAC-Data: " + nachricht);
 					String outputString = "";
 					if (nachricht.contains("~")) {
 						if (nachricht.startsWith("@CALL")) {

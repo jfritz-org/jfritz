@@ -177,7 +177,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.53 2005/06/05 05:41:02 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.54 2005/06/05 06:41:48 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -266,7 +266,6 @@ public final class JFritz {
 
 		YAClistener yacListener = new YAClistener(this);
 		yacListener.run();
-
 	}
 
 	/**
