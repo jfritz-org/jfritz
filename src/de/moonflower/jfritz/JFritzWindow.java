@@ -211,7 +211,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		button.addActionListener(this);
 		button.setIcon(getImage("phonebook.png"));
 		button.setToolTipText(jfritz.getMessages().getString("phonebook"));
-		button.setEnabled(JFritz.DEVEL_VERSION);
 		mBar.add(button);
 
 		button = new JButton();
@@ -846,4 +845,14 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	public void run() {
 	}
 
+	/**
+	 * @return Returns the phoneBookPanel.
+	 */
+	public final PhoneBookPanel getPhoneBookPanel() {
+		return phoneBookPanel;
+	}
+
+	public void activatePhoneBook() {
+		tabber.setSelectedComponent(phoneBookPanel);
+	}
 }

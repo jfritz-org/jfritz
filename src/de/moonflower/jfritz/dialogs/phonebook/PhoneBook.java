@@ -292,6 +292,7 @@ public class PhoneBook extends AbstractTableModel {
 		return null;
 	}
 
+
 	/**
 	 * @param columnIndex
 	 * @return class of column

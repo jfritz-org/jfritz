@@ -17,7 +17,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -31,9 +30,12 @@ import de.moonflower.jfritz.struct.Person;
  */
 public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		PropertyChangeListener, ActionListener {
+
+	private final int PERSONPANEL_WIDTH = 350;
+
 	private JFritz jfritz;
 
-	private JTable phoneBookTable;
+	private PhoneBookTable phoneBookTable;
 
 	private PersonPanel personPanel;
 
@@ -95,8 +97,8 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() > 1) {
 					int loc = splitPane.getDividerLocation();
-					if (loc < 350)
-						splitPane.setDividerLocation(350);
+					if (loc < PERSONPANEL_WIDTH)
+						splitPane.setDividerLocation(PERSONPANEL_WIDTH);
 					else
 						splitPane.setDividerLocation(0);
 				}
@@ -141,4 +143,21 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		propertyChange(null);
 	}
 
+	/**
+	 * @return Returns the phoneBookTable.
+	 */
+	public final PhoneBookTable getPhoneBookTable() {
+		return phoneBookTable;
+	}
+
+	/**
+	 * @return Returns the personPanel.
+	 */
+	public final PersonPanel getPersonPanel() {
+		return personPanel;
+	}
+
+	public void showPersonPanel() {
+		splitPane.setDividerLocation(PERSONPANEL_WIDTH);
+	}
 }

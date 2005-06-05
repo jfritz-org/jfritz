@@ -26,7 +26,6 @@ import javax.swing.event.CaretListener;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.struct.Call;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
@@ -34,7 +33,8 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  * @author Arno Willig
  *
  */
-public class CallerListPanel extends JPanel implements ActionListener, CaretListener {
+public class CallerListPanel extends JPanel implements ActionListener,
+		CaretListener {
 	private JFritz jfritz;
 
 	private JFritzProperties properties;
@@ -124,7 +124,7 @@ public class CallerListPanel extends JPanel implements ActionListener, CaretList
 		searchFilter = new JTextField(properties.getProperty("filter.search",
 				""), 10);
 		searchFilter.addCaretListener(this);
-			searchFilter.addCaretListener(new CaretListener() {
+		searchFilter.addCaretListener(new CaretListener() {
 			String filter = "";
 
 			public void caretUpdate(CaretEvent e) {
@@ -154,7 +154,7 @@ public class CallerListPanel extends JPanel implements ActionListener, CaretList
 		callerTable.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() > 1) {
-					Debug.msg("DOPPELKLICK");
+					jfritz.getJframe().activatePhoneBook();
 				}
 			}
 
@@ -270,7 +270,7 @@ public class CallerListPanel extends JPanel implements ActionListener, CaretList
 	 * @see javax.swing.event.CaretListener#caretUpdate(javax.swing.event.CaretEvent)
 	 */
 	public void caretUpdate(CaretEvent e) {
-		String filter="";
+		String filter = "";
 		JTextField search = (JTextField) e.getSource();
 		if (!filter.equals(search.getText())) {
 			filter = search.getText();

@@ -35,7 +35,7 @@
  * CallerList: Alle Einträge löschen
  * CallerList: ev. Popup-Menu?
  * Statistik: Top-Caller (Name/Nummer, Wie oft, Wie lange)
- * YAC-Messages: Config-Options: enabled/disabled + listening TCP-Port
+ * YAC-Messages: Config-Options: enabled/disabled
  *
  *
  * CHANGELOG:
@@ -44,14 +44,18 @@
  * - Systray minimizes JFrame
  * - Mobile filter inverted
  * - Removed participant support in favour of person
+ * - Phon
+ * - Added commandline option --fetch
  * - Rewrote xml handler for phonebook
  * - Added PhoneNumber class
  * - Restructured packages
- * - Added commandline option --fetch
  *
  * TODO:
+ * - Sort Phonebook (new entries must be sorted, too)
+ * - Implement Phonebook ToolBar (add/delete
  * - Merging of person entries
  * - Implement reverselookup for Switzerland (www.telsearch.ch)
+ * - CMD Option --export-csv
  *
  * JFritz! 0.3.6
  * - New mobile phone filter feature
@@ -177,7 +181,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.55 2005/06/05 07:45:39 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.56 2005/06/05 16:33:16 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
