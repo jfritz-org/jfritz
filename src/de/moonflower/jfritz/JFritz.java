@@ -35,6 +35,7 @@
  * CallerList: Alle Einträge löschen
  * CallerList: ev. Popup-Menu?
  * Statistik: Top-Caller (Name/Nummer, Wie oft, Wie lange)
+ * YAC-Messages: Config-Options: enabled/disabled + listening TCP-Port
  *
  *
  * CHANGELOG:
@@ -160,6 +161,7 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.ReverseLookup;
 import de.moonflower.jfritz.utils.upnp.SSDPdiscoverThread;
+import de.moonflower.jfritz.utils.YAClistener;
 
 /**
  * @author Arno Willig
@@ -175,7 +177,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.52 2005/06/04 14:56:40 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.53 2005/06/05 05:41:02 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -261,6 +263,10 @@ public final class JFritz {
 		ssdpthread.start();
 
 		javax.swing.SwingUtilities.invokeLater(jframe);
+
+		YAClistener yacListener = new YAClistener(this);
+		yacListener.run();
+
 	}
 
 	/**

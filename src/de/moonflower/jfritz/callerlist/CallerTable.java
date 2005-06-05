@@ -16,6 +16,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.window.cellrenderer.CallTypeCellRenderer;

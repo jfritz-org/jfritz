@@ -9,7 +9,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.callerlist.CallType;
 
 /**
  * @author Arno Willig row.add(symbol); row.add(datum); row.add(number);
@@ -99,8 +98,8 @@ public class Call {
 	 */
 	public String toCSV() {
 		SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-		return calltype.toInt() + ";" + df.format(calldate) + ";" + number
-				+ ";" + route + ";" + port + ";" + duration;
+		return "\""+calltype.toInt() + "\";\"" + df.format(calldate) + "\";\"" + number
+				+ "\";\"" + route + "\";\"" + port + "\";\"" + duration+"\"";
 	}
 
 	public String toString() {

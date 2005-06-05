@@ -36,6 +36,7 @@ import org.xml.sax.XMLReader;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.struct.Call;
+import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
@@ -177,6 +178,7 @@ public class CallerList extends AbstractTableModel {
 		try {
 			fos = new FileOutputStream(filename);
 			PrintWriter pw = new PrintWriter(fos);
+			pw.println("\"CallType\";\"Date\";\"Number\";\"Route\";\"Port\";\"Duration\"");
 
 			Enumeration en = getUnfilteredCallVector().elements();
 			while (en.hasMoreElements()) {
@@ -638,11 +640,6 @@ public class CallerList extends AbstractTableModel {
 				"filter.date_from", "");
 		String filterDateTo = jfritz.getProperties().getProperty(
 				"filter.date_to", "");
-
-		Debug
-				.msg(3, "CallTypeFilter: " + filterCallIn + "|"
-						+ filterCallInFailed + "|" + filterCallOut + "|"
-						+ filterSearch);
 
 		try {
 			jfritz.getJframe().getCallertable().getCellEditor()
