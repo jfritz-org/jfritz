@@ -140,9 +140,9 @@ public class ReverseLookup {
 					// TODO: wie splittet man am ersten SPACE und nicht an
 					// jedem?
 					String[] splitNames, splitAddress, splitPostCodeCity;
-					splitNames = m.group(1).trim().split(" ");
+					splitNames = m.group(1).trim().split(" ",2);
 					splitAddress = m.group(2).trim().split(", ");
-					splitPostCodeCity = splitAddress[1].split(" ");
+					splitPostCodeCity = splitAddress[1].split(" ",2);
 					String firstname = "", lastname = "";
 					if (splitNames.length > 1) {
 						firstname = splitNames[1];
