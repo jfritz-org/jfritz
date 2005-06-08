@@ -268,7 +268,7 @@ public class PhoneBook extends AbstractTableModel {
 
 	public String getColumnName(int column) {
 		try {
-			return jfritz.getMessages().getString(columnNames[column]);
+			return JFritz.getMessage(columnNames[column]);
 		} catch (Exception e) {
 			return columnNames[column];
 		}

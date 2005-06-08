@@ -26,7 +26,6 @@ import javax.swing.event.CaretListener;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.struct.Call;
-import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
@@ -37,8 +36,6 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		CaretListener {
 	private JFritz jfritz;
 
-	private JFritzProperties properties;
-
 	private CallerTable callerTable;
 
 	private JToggleButton dateButton;
@@ -48,7 +45,6 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	public CallerListPanel(JFritz jfritz) {
 		super();
 		this.jfritz = jfritz;
-		this.properties = jfritz.getProperties();
 
 		setLayout(new BorderLayout());
 		add(createCallerListToolBar(), BorderLayout.NORTH);
@@ -63,8 +59,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		tb.setSelectedIcon(getImage("callin.png"));
 		tb.setActionCommand("filter_callin");
 		tb.addActionListener(this);
-		tb.setToolTipText(jfritz.getMessages().getString("filter_callin"));
-		tb.setSelected(!JFritzUtils.parseBoolean(properties.getProperty(
+		tb.setToolTipText(JFritz.getMessage("filter_callin"));
+		tb.setSelected(!JFritzUtils.parseBoolean(JFritz.getProperty(
 				"filter.callin", "false")));
 		toolBar.add(tb);
 
@@ -72,10 +68,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		tb.setSelectedIcon(getImage("callinfailed.png"));
 		tb.setActionCommand("filter_callinfailed");
 		tb.addActionListener(this);
-		tb
-				.setToolTipText(jfritz.getMessages().getString(
-						"filter_callinfailed"));
-		tb.setSelected(!JFritzUtils.parseBoolean(properties.getProperty(
+		tb.setToolTipText(JFritz.getMessage("filter_callinfailed"));
+		tb.setSelected(!JFritzUtils.parseBoolean(JFritz.getProperty(
 				"filter.callinfailed", "false")));
 		toolBar.add(tb);
 
@@ -83,8 +77,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		tb.setSelectedIcon(getImage("callout.png"));
 		tb.setActionCommand("filter_callout");
 		tb.addActionListener(this);
-		tb.setToolTipText(jfritz.getMessages().getString("filter_callout"));
-		tb.setSelected(!JFritzUtils.parseBoolean(properties.getProperty(
+		tb.setToolTipText(JFritz.getMessage("filter_callout"));
+		tb.setSelected(!JFritzUtils.parseBoolean(JFritz.getProperty(
 				"filter.callout", "false")));
 		toolBar.add(tb);
 
@@ -92,8 +86,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		tb.setSelectedIcon(getImage("phone.png"));
 		tb.setActionCommand("filter_number");
 		tb.addActionListener(this);
-		tb.setToolTipText(jfritz.getMessages().getString("filter_number"));
-		tb.setSelected(!JFritzUtils.parseBoolean(properties.getProperty(
+		tb.setToolTipText(JFritz.getMessage("filter_number"));
+		tb.setSelected(!JFritzUtils.parseBoolean(JFritz.getProperty(
 				"filter.number", "false")));
 		toolBar.add(tb);
 
@@ -101,8 +95,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		tb.setSelectedIcon(getImage("handy.png"));
 		tb.setActionCommand("filter_handy");
 		tb.addActionListener(this);
-		tb.setToolTipText(jfritz.getMessages().getString("filter_handy"));
-		tb.setSelected(!JFritzUtils.parseBoolean(properties.getProperty(
+		tb.setToolTipText(JFritz.getMessage("filter_handy"));
+		tb.setSelected(!JFritzUtils.parseBoolean(JFritz.getProperty(
 				"filter.handy", "false")));
 		toolBar.add(tb);
 
@@ -110,19 +104,17 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		dateButton.setSelectedIcon(getImage("calendar.png"));
 		dateButton.setActionCommand("filter_date");
 		dateButton.addActionListener(this);
-		dateButton
-				.setToolTipText(jfritz.getMessages().getString("filter_date"));
-		dateButton.setSelected(!JFritzUtils.parseBoolean(properties
-				.getProperty("filter.date", "false")));
+		dateButton.setToolTipText(JFritz.getMessage("filter_date"));
+		dateButton.setSelected(!JFritzUtils.parseBoolean(JFritz.getProperty(
+				"filter.date", "false")));
 		setDateFilterText();
 		toolBar.add(dateButton);
 
 		toolBar.addSeparator();
 
-		toolBar
-				.add(new JLabel(jfritz.getMessages().getString("search") + ": "));
-		searchFilter = new JTextField(properties.getProperty("filter.search",
-				""), 10);
+		toolBar.add(new JLabel(JFritz.getMessage("search") + ": "));
+		searchFilter = new JTextField(JFritz.getProperty("filter.search", ""),
+				10);
 		searchFilter.addCaretListener(this);
 		searchFilter.addCaretListener(new CaretListener() {
 			String filter = "";
@@ -131,7 +123,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 				JTextField search = (JTextField) e.getSource();
 				if (!filter.equals(search.getText())) {
 					filter = search.getText();
-					properties.setProperty("filter.search", filter);
+					JFritz.setProperty("filter.search", filter);
 					jfritz.getCallerlist().updateFilter();
 					jfritz.getCallerlist().fireTableStructureChanged();
 				}
@@ -140,7 +132,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		});
 
 		toolBar.add(searchFilter);
-		JButton button = new JButton(jfritz.getMessages().getString("clear"));
+		JButton button = new JButton(JFritz.getMessage("clear"));
 		button.setActionCommand("clearSearchFilter");
 		button.addActionListener(this);
 		toolBar.add(button);
@@ -173,13 +165,13 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	}
 
 	public void setDateFilterText() {
-		if (JFritzUtils.parseBoolean(properties.getProperty("filter.date"))) {
-			if (properties.getProperty("filter.date_from").equals(
-					properties.getProperty("filter.date_to"))) {
-				dateButton.setText(properties.getProperty("filter.date_from"));
+		if (JFritzUtils.parseBoolean(JFritz.getProperty("filter.date"))) {
+			if (JFritz.getProperty("filter.date_from").equals(
+					JFritz.getProperty("filter.date_to"))) {
+				dateButton.setText(JFritz.getProperty("filter.date_from"));
 			} else {
-				dateButton.setText(properties.getProperty("filter.date_from")
-						+ " - " + properties.getProperty("filter.date_to"));
+				dateButton.setText(JFritz.getProperty("filter.date_from")
+						+ " - " + JFritz.getProperty("filter.date_to"));
 			}
 		} else {
 			dateButton.setText("");
@@ -211,8 +203,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		String fromstr = new SimpleDateFormat("dd.MM.yy").format(from);
 		String tostr = new SimpleDateFormat("dd.MM.yy").format(to);
 
-		properties.setProperty("filter.date_from", fromstr);
-		properties.setProperty("filter.date_to", tostr);
+		JFritz.setProperty("filter.date_from", fromstr);
+		JFritz.setProperty("filter.date_to", tostr);
 		setDateFilterText();
 		jfritz.getCallerlist().updateFilter();
 	}
@@ -226,39 +218,39 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("filter_callin")) {
-			properties.setProperty("filter.callin", Boolean
+			JFritz.setProperty("filter.callin", Boolean
 					.toString(!((JToggleButton) e.getSource()).isSelected()));
 			jfritz.getCallerlist().updateFilter();
 			jfritz.getCallerlist().fireTableStructureChanged();
 
 		} else if (e.getActionCommand().equals("filter_callinfailed")) {
-			properties.setProperty("filter.callinfailed", Boolean
+			JFritz.setProperty("filter.callinfailed", Boolean
 					.toString(!((JToggleButton) e.getSource()).isSelected()));
 			jfritz.getCallerlist().updateFilter();
 			jfritz.getCallerlist().fireTableStructureChanged();
 		} else if (e.getActionCommand().equals("filter_callout")) {
-			properties.setProperty("filter.callout", Boolean
+			JFritz.setProperty("filter.callout", Boolean
 					.toString(!((JToggleButton) e.getSource()).isSelected()));
 			jfritz.getCallerlist().updateFilter();
 			jfritz.getCallerlist().fireTableStructureChanged();
 		} else if (e.getActionCommand() == "filter_number") {
-			properties.setProperty("filter.number", Boolean
+			JFritz.setProperty("filter.number", Boolean
 					.toString(!((JToggleButton) e.getSource()).isSelected()));
 			jfritz.getCallerlist().updateFilter();
 			jfritz.getCallerlist().fireTableStructureChanged();
 		} else if (e.getActionCommand() == "filter_handy") {
-			properties.setProperty("filter.handy", Boolean
+			JFritz.setProperty("filter.handy", Boolean
 					.toString(!((JToggleButton) e.getSource()).isSelected()));
 			jfritz.getCallerlist().updateFilter();
 			jfritz.getCallerlist().fireTableStructureChanged();
 		} else if (e.getActionCommand() == "filter_date") {
-			properties.setProperty("filter.date", Boolean
+			JFritz.setProperty("filter.date", Boolean
 					.toString(!((JToggleButton) e.getSource()).isSelected()));
 			setDataFilterFromSelection();
 			jfritz.getCallerlist().fireTableStructureChanged();
 		} else if (e.getActionCommand() == "clearSearchFilter") {
 			setSearchFilter("");
-			properties.setProperty("filter.search", "");
+			JFritz.setProperty("filter.search", "");
 			jfritz.getCallerlist().updateFilter();
 			jfritz.getCallerlist().fireTableStructureChanged();
 
@@ -274,7 +266,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		JTextField search = (JTextField) e.getSource();
 		if (!filter.equals(search.getText())) {
 			filter = search.getText();
-			properties.setProperty("filter.search", filter);
+			JFritz.setProperty("filter.search", filter);
 			jfritz.getCallerlist().updateFilter();
 			jfritz.getCallerlist().fireTableStructureChanged();
 		}

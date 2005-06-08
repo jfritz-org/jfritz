@@ -165,7 +165,6 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.ReverseLookup;
-import de.moonflower.jfritz.utils.YAClistener;
 import de.moonflower.jfritz.utils.upnp.SSDPdiscoverThread;
 
 /**
@@ -182,7 +181,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.57 2005/06/08 09:16:55 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.58 2005/06/08 19:10:44 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -206,16 +205,15 @@ public final class JFritz {
 
 	public static boolean SYSTRAY_SUPPORT = false;
 
-
 	private JFritzProperties defaultProperties;
 
-	public static JFritzProperties properties;
+	private static JFritzProperties properties;
 
-	public static ResourceBundle messages;
+	private static ResourceBundle messages;
 
 	private SystemTray systray;
 
-	private TrayIcon trayIcon;
+	private static TrayIcon trayIcon;
 
 	private JFritzWindow jframe;
 
@@ -272,8 +270,6 @@ public final class JFritz {
 
 		javax.swing.SwingUtilities.invokeLater(jframe);
 
-		YAClistener yacListener = new YAClistener(this);
-		yacListener.run();
 	}
 
 	/**
@@ -338,20 +334,20 @@ public final class JFritz {
 		menuItem.setEnabled(false);
 		menu.add(menuItem);
 		menu.addSeparator();
-		menuItem = new JMenuItem(getMessages().getString("fetchlist"));
+		menuItem = new JMenuItem(getMessage("fetchlist"));
 		menuItem.setActionCommand("fetchList");
 		menuItem.addActionListener(jframe);
 		menu.add(menuItem);
-		menuItem = new JMenuItem(getMessages().getString("reverse_lookup"));
+		menuItem = new JMenuItem(getMessage("reverse_lookup"));
 		menuItem.setActionCommand("reverselookup");
 		menuItem.addActionListener(jframe);
 		menu.add(menuItem);
-		menuItem = new JMenuItem(getMessages().getString("config"));
+		menuItem = new JMenuItem(getMessage("config"));
 		menuItem.setActionCommand("config");
 		menuItem.addActionListener(jframe);
 		menu.add(menuItem);
 		menu.addSeparator();
-		menuItem = new JMenuItem(getMessages().getString("prog_exit"));
+		menuItem = new JMenuItem(getMessage("prog_exit"));
 		menuItem.setActionCommand("exit");
 		menuItem.addActionListener(jframe);
 		menu.add(menuItem);
@@ -473,10 +469,10 @@ public final class JFritz {
 	 *
 	 * @param msg
 	 */
-	public void infoMsg(String msg) {
+	public static void infoMsg(String msg) {
 		System.out.println(msg);
 		if (SYSTRAY_SUPPORT) {
-			getTrayIcon().displayMessage(JFritz.PROGRAM_NAME, msg,
+			trayIcon.displayMessage(JFritz.PROGRAM_NAME, msg,
 					TrayIcon.INFO_MESSAGE_TYPE);
 		}
 	}
@@ -489,7 +485,7 @@ public final class JFritz {
 	public void errorMsg(String msg) {
 		Debug.err(msg);
 		if (SYSTRAY_SUPPORT) {
-			getTrayIcon().displayMessage(JFritz.PROGRAM_NAME, msg,
+			trayIcon.displayMessage(JFritz.PROGRAM_NAME, msg,
 					TrayIcon.ERROE_MESSAGE_TYPE);
 		}
 	}
@@ -511,17 +507,35 @@ public final class JFritz {
 	}
 
 	/**
-	 * @return Returns the messages.
+	 * @return Returns a message.
 	 */
-	public final ResourceBundle getMessages() {
-		return messages;
+	public static String getMessage(String msg) {
+		String i18n = messages.getString(msg);
+		if (i18n.length() == 0)
+			i18n = msg;
+		return i18n;
 	}
 
 	/**
 	 * @return Returns the properties.
 	 */
-	public final JFritzProperties getProperties() {
+	public final JFritzProperties getProperties2() {
 		return properties;
+	}
+
+	public static String getProperty(String property, String defaultValue) {
+		return properties.getProperty(property, defaultValue);
+	}
+
+	public static String getProperty(String property) {
+		return getProperty(property, "");
+	}
+
+	public static void setProperty(String property, String value) {
+		properties.setProperty(property, value);
+	}
+	public static void removeProperty(String property) {
+		properties.remove(property);
 	}
 
 	/**
@@ -542,10 +556,4 @@ public final class JFritz {
 		return ssdpthread.getDevices();
 	}
 
-	/**
-	 * @return Returns the trayIcon.
-	 */
-	public final TrayIcon getTrayIcon() {
-		return trayIcon;
-	}
 }

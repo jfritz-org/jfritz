@@ -62,7 +62,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 		public String toString() {
 			try {
-				return jfritz.getMessages().getString("phone_" + type);
+				return JFritz.getMessage("phone_" + type);
 			} catch (MissingResourceException e) {
 				return type;
 			}
@@ -267,38 +267,38 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridLayout(0, 2));
-		JLabel label = new JLabel(jfritz.getMessages().getString("firstName")
+		JLabel label = new JLabel(JFritz.getMessage("firstName")
 				+ ": ");
 		buttonPanel.add(label);
 		tfFirstName = new JTextField(person.getFirstName());
 		tfFirstName.addCaretListener(this);
 		buttonPanel.add(tfFirstName);
-		label = new JLabel(jfritz.getMessages().getString("middleName") + ": ");
+		label = new JLabel(JFritz.getMessage("middleName") + ": ");
 		buttonPanel.add(label);
 		tfMiddleName = new JTextField(person.getMiddleName());
 		tfMiddleName.addCaretListener(this);
 		buttonPanel.add(tfMiddleName);
-		label = new JLabel(jfritz.getMessages().getString("lastName") + ": ");
+		label = new JLabel(JFritz.getMessage("lastName") + ": ");
 		buttonPanel.add(label);
 		tfLastName = new JTextField(person.getLastName());
 		tfLastName.addCaretListener(this);
 		buttonPanel.add(tfLastName);
-		label = new JLabel(jfritz.getMessages().getString("street") + ": ");
+		label = new JLabel(JFritz.getMessage("street") + ": ");
 		buttonPanel.add(label);
 		tfStreet = new JTextField(person.getStreet());
 		tfStreet.addCaretListener(this);
 		buttonPanel.add(tfStreet);
-		label = new JLabel(jfritz.getMessages().getString("postalCode") + ": ");
+		label = new JLabel(JFritz.getMessage("postalCode") + ": ");
 		buttonPanel.add(label);
 		tfPostalCode = new JTextField(person.getPostalCode());
 		tfPostalCode.addCaretListener(this);
 		buttonPanel.add(tfPostalCode);
-		label = new JLabel(jfritz.getMessages().getString("city") + ": ");
+		label = new JLabel(JFritz.getMessage("city") + ": ");
 		buttonPanel.add(label);
 		tfCity = new JTextField(person.getCity());
 		tfCity.addCaretListener(this);
 		buttonPanel.add(tfCity);
-		label = new JLabel(jfritz.getMessages().getString("emailAddress")
+		label = new JLabel(JFritz.getMessage("emailAddress")
 				+ ": ");
 		buttonPanel.add(label);
 		tfEmail = new JTextField(person.getEmailAddress());

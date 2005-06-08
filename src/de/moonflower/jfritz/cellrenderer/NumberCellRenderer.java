@@ -92,8 +92,7 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 					if (provider.equals(""))
 						provider = "unknown";
 
-					setToolTipText(jfritz.getMessages().getString(
-							"cellphone_network")
+					setToolTipText(JFritz.getMessage("cellphone_network")
 							+ ": " + provider);
 					if (showHandyLogos) {
 						if (provider.equals("D1")) {
@@ -110,27 +109,25 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 					} else {
 						label.setIcon(imageHandy);
 					}
-				} else if ((number.getFullNumber().startsWith(jfritz
-						.getProperties().getProperty("area.prefix")
-						+ jfritz.getProperties().getProperty("area.code")
-						+ "1988"))
+				} else if ((number.getFullNumber().startsWith(JFritz
+						.getProperty("area.prefix")
+						+ JFritz.getProperty("area.code") + "1988"))
 						|| (number.getFullNumber().startsWith("01801777"))) {
 					label.setIcon(imageSipgate);
-					setToolTipText(jfritz.getMessages().getString("voip_call"));
+					setToolTipText(JFritz.getMessage("voip_call"));
 				} else if (number.isLocalCall()) {
 					label.setIcon(imageHome);
-					setToolTipText(jfritz.getMessages().getString("local_call"));
+					setToolTipText(JFritz.getMessage("local_call"));
 				} else if (number.getFullNumber().startsWith(
-						jfritz.getProperties().getProperty("country.prefix"))) {
+						JFritz.getProperty("country.prefix"))) {
 					label.setIcon(imageWorld);
-					setToolTipText(jfritz.getMessages().getString("int_call"));
+					setToolTipText(JFritz.getMessage("int_call"));
 				} else if (number.isFreeCall()) {
 					label.setIcon(imageFreeCall);
-					setToolTipText(jfritz.getMessages().getString("freecall"));
+					setToolTipText(JFritz.getMessage("freecall"));
 				} else {
 					label.setIcon(imagePhone);
-					setToolTipText(jfritz.getMessages().getString(
-							"fixed_network"));
+					setToolTipText(JFritz.getMessage("fixed_network"));
 				}
 			} else {
 				label.setIcon(null);

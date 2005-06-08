@@ -67,13 +67,13 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	private JPanel createEditPanel() {
 		JPanel editPanel = new JPanel(new BorderLayout());
 		JPanel editButtonPanel = new JPanel();
-		saveButton = new JButton(jfritz.getMessages().getString("save"));
+		saveButton = new JButton(JFritz.getMessage("save"));
 		saveButton.setActionCommand("save");
 		saveButton.addActionListener(this);
 		saveButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/okay.png"))));
-		cancelButton = new JButton(jfritz.getMessages().getString("reset"));
+		cancelButton = new JButton(JFritz.getMessage("reset"));
 		cancelButton.setActionCommand("cancel");
 		cancelButton.addActionListener(this);
 		editButtonPanel.add(saveButton);
@@ -89,11 +89,11 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	public JToolBar createPhoneBookToolBar() {
 		JToolBar toolBar = new JToolBar();
 		toolBar.setFloatable(true);
-		JButton addButton = new JButton(jfritz.getMessages().getString("new_entry"));
+		JButton addButton = new JButton(JFritz.getMessage("new_entry"));
 		addButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/add.png"))));
-		JButton delButton = new JButton(jfritz.getMessages().getString("del_entry"));
+		JButton delButton = new JButton(JFritz.getMessage("del_entry"));
 		delButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/delete.png"))));

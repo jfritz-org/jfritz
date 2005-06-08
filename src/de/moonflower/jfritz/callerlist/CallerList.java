@@ -152,7 +152,8 @@ public class CallerList extends AbstractTableModel {
 				pw.println("<entry calltype=\"" + type.toString() + "\">");
 				pw.println("\t<date>" + df.format(datum) + "</date>");
 				if (caller != null)
-					pw.println("\t<caller>" + caller.getFullNumber() + "</caller>");
+					pw.println("\t<caller>" + caller.getFullNumber()
+							+ "</caller>");
 				if (!port.equals(""))
 					pw.println("\t<port>" + port + "</port>");
 				if (!route.equals(""))
@@ -331,17 +332,16 @@ public class CallerList extends AbstractTableModel {
 	 * @throws IOException
 	 */
 	public void getNewCalls() throws WrongPasswordException, IOException {
-		Vector data = JFritzUtils.retrieveCallersFromFritzBox(jfritz
-				.getProperties().getProperty("box.address"), Encryption.decrypt(jfritz
-				.getProperties().getProperty("box.password")), jfritz
-				.getProperties().getProperty("country.prefix"), jfritz
-				.getProperties().getProperty("country.code"), jfritz
-				.getProperties().getProperty("area.prefix"), jfritz
-				.getProperties().getProperty("area.code"), JFritzUtils
-				.detectBoxType(jfritz.getProperties().getProperty(
-						"box.firmware"), jfritz.getProperties().getProperty(
-						"box.address"), jfritz.getProperties().getProperty(
-						"box.password")), jfritz);
+		Vector data = JFritzUtils.retrieveCallersFromFritzBox(JFritz
+				.getProperty("box.address"), Encryption.decrypt(JFritz
+				.getProperty("box.password")), JFritz
+				.getProperty("country.prefix"), JFritz
+				.getProperty("country.code"),
+				JFritz.getProperty("area.prefix"), JFritz
+						.getProperty("area.code"), JFritzUtils.detectBoxType(
+						JFritz.getProperty("box.firmware"), JFritz
+								.getProperty("box.address"), JFritz
+								.getProperty("box.password")), jfritz);
 
 		int newEntries = 0;
 		for (Enumeration el = data.elements(); el.hasMoreElements();) {
@@ -354,8 +354,7 @@ public class CallerList extends AbstractTableModel {
 		saveToXMLFile(JFritz.CALLS_FILE);
 
 		// Notify user?
-		if ((jfritz.getProperties().getProperty("option.notifyOnCalls", "true")
-				.equals("true"))
+		if ((JFritz.getProperty("option.notifyOnCalls", "true").equals("true"))
 				&& (newEntries > 0)) {
 			jfritz.getJframe().setVisible(true);
 			jfritz.getJframe().toFront();
@@ -368,18 +367,18 @@ public class CallerList extends AbstractTableModel {
 			} else {
 				msg = newEntries + " neue Anrufe empfangen!";
 			}
-			jfritz.infoMsg(msg);
+			JFritz.infoMsg(msg);
 
 		}
 		// Clear data on fritz box ?
-		if (jfritz.getProperties().getProperty("option.deleteAfterFetch",
-				"false").equals("true")) {
-			JFritzUtils.clearListOnFritzBox(jfritz.getProperties().getProperty(
-					"box.address"), jfritz.getProperties().getProperty(
-					"box.password"), JFritzUtils.detectBoxType(jfritz
-					.getProperties().getProperty("box.firmware"), jfritz
-					.getProperties().getProperty("box.address"), Encryption.decrypt(jfritz
-					.getProperties().getProperty("box.password"))));
+		if (JFritz.getProperty("option.deleteAfterFetch", "false").equals(
+				"true")) {
+			JFritzUtils.clearListOnFritzBox(JFritz.getProperty("box.address"),
+					JFritz.getProperty("box.password"), JFritzUtils
+							.detectBoxType(JFritz.getProperty("box.firmware"),
+									JFritz.getProperty("box.address"),
+									Encryption.decrypt(JFritz
+											.getProperty("box.password"))));
 		}
 
 	}
@@ -423,8 +422,7 @@ public class CallerList extends AbstractTableModel {
 			return call.getPort();
 		case 5:
 			if (call.getRoute().startsWith("SIP")) {
-				String sipstr = jfritz.getProperties().getProperty(
-						call.getRoute());
+				String sipstr = JFritz.getProperty(call.getRoute());
 				if (sipstr != null) {
 					return sipstr;
 				} else
@@ -624,24 +622,21 @@ public class CallerList extends AbstractTableModel {
 	 * Updates the call filter.
 	 */
 	public void updateFilter() {
-		boolean filterCallIn = JFritzUtils.parseBoolean(jfritz.getProperties()
+		boolean filterCallIn = JFritzUtils.parseBoolean(JFritz
 				.getProperty("filter.callin"));
-		boolean filterCallInFailed = JFritzUtils.parseBoolean(jfritz
-				.getProperties().getProperty("filter.callinfailed"));
-		boolean filterCallOut = JFritzUtils.parseBoolean(jfritz.getProperties()
+		boolean filterCallInFailed = JFritzUtils.parseBoolean(JFritz
+				.getProperty("filter.callinfailed"));
+		boolean filterCallOut = JFritzUtils.parseBoolean(JFritz
 				.getProperty("filter.callout"));
-		boolean filterNumber = JFritzUtils.parseBoolean(jfritz.getProperties()
+		boolean filterNumber = JFritzUtils.parseBoolean(JFritz
 				.getProperty("filter.number"));
-		boolean filterHandy = JFritzUtils.parseBoolean(jfritz.getProperties()
+		boolean filterHandy = JFritzUtils.parseBoolean(JFritz
 				.getProperty("filter.handy"));
-		boolean filterDate = JFritzUtils.parseBoolean(jfritz.getProperties()
+		boolean filterDate = JFritzUtils.parseBoolean(JFritz
 				.getProperty("filter.date"));
-		String filterSearch = jfritz.getProperties().getProperty(
-				"filter.search", "");
-		String filterDateFrom = jfritz.getProperties().getProperty(
-				"filter.date_from", "");
-		String filterDateTo = jfritz.getProperties().getProperty(
-				"filter.date_to", "");
+		String filterSearch = JFritz.getProperty("filter.search", "");
+		String filterDateFrom = JFritz.getProperty("filter.date_from", "");
+		String filterDateTo = JFritz.getProperty("filter.date_to", "");
 
 		try {
 			jfritz.getJframe().getCallerTable().getCellEditor()
@@ -750,8 +745,10 @@ public class CallerList extends AbstractTableModel {
 		while (en.hasMoreElements()) {
 			Call call = (Call) en.nextElement();
 			if (call.getPhoneNumber() != null
-					&& call.getPhoneNumber().getFullNumber().equals(
-							person.getStandardTelephoneNumber().getFullNumber())) {
+					&& call.getPhoneNumber().getFullNumber()
+							.equals(
+									person.getStandardTelephoneNumber()
+											.getFullNumber())) {
 				return call;
 			}
 		}

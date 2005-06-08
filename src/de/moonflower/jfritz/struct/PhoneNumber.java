@@ -60,10 +60,10 @@ public class PhoneNumber implements Comparable {
 	}
 
 	public String convertToIntNumber() {
-		String countryCode = JFritz.properties.getProperty("country.code");
-		String countryPrefix = JFritz.properties.getProperty("country.prefix");
-		String areaCode = JFritz.properties.getProperty("area.code");
-		String areaPrefix = JFritz.properties.getProperty("area.prefix");
+		String countryCode = JFritz.getProperty("country.code");
+		String countryPrefix = JFritz.getProperty("country.prefix");
+		String areaCode = JFritz.getProperty("area.code");
+		String areaPrefix = JFritz.getProperty("area.prefix");
 
 		if ((number.length() < 4) // A valid number??
 				|| (number.startsWith("+")) // International number
@@ -100,9 +100,9 @@ public class PhoneNumber implements Comparable {
 	}
 
 	public String getShortNumber() {
-		String countryCode = JFritz.properties.getProperty("country.code");
-		String areaCode = JFritz.properties.getProperty("area.code");
-		String areaPrefix = JFritz.properties.getProperty("area.prefix");
+		String countryCode = JFritz.getProperty("country.code");
+		String areaCode = JFritz.getProperty("area.code");
+		String areaPrefix = JFritz.getProperty("area.prefix");
 		if (number.startsWith("+" + countryCode + areaCode))
 			return number.substring(countryCode.length() + areaCode.length()
 					+ 1);
@@ -112,10 +112,10 @@ public class PhoneNumber implements Comparable {
 	}
 
 	public String getAreaNumber() {
-		String countryCode = JFritz.properties.getProperty("country.code");
-		String countryPrefix = JFritz.properties.getProperty("country.prefix");
-		String areaCode = JFritz.properties.getProperty("area.code");
-		String areaPrefix = JFritz.properties.getProperty("area.prefix");
+		String countryCode = JFritz.getProperty("country.code");
+		String countryPrefix = JFritz.getProperty("country.prefix");
+		String areaCode = JFritz.getProperty("area.code");
+		String areaPrefix = JFritz.getProperty("area.prefix");
 		if (number.startsWith("+" + countryCode))
 			return areaPrefix + number.substring(countryCode.length() + 1);
 		return number;
@@ -146,8 +146,8 @@ public class PhoneNumber implements Comparable {
 	 * @return True if number is a local number
 	 */
 	public boolean isLocalCall() {
-		String countryCode = JFritz.properties.getProperty("country.code");
-		String areaCode = JFritz.properties.getProperty("area.code");
+		String countryCode = JFritz.getProperty("country.code");
+		String areaCode = JFritz.getProperty("area.code");
 		return number.startsWith("+" + countryCode + areaCode);
 	}
 
@@ -155,7 +155,7 @@ public class PhoneNumber implements Comparable {
 	 * @return True if number is a SIP number
 	 */
 	public boolean isSIPNumber() {
-		String countryCode = JFritz.properties.getProperty("country.code");
+		String countryCode = JFritz.getProperty("country.code");
 		return ((number.indexOf('@') > 0) || number.startsWith("00038") // PurTel
 				|| number.startsWith("555") // SIPGate
 		|| number.startsWith("777") // SIPGate

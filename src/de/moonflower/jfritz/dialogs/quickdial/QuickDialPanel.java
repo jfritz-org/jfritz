@@ -65,14 +65,14 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 		JToolBar toolBar = new JToolBar();
 		toolBar.setFloatable(true);
 
-		addButton = new JButton(jfritz.getMessages().getString("new_quickdial"));
+		addButton = new JButton(JFritz.getMessage("new_quickdial"));
 		addButton.setActionCommand("addSIP");
 		addButton.addActionListener(this);
 		addButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/add.png"))));
 
-		delButton = new JButton(jfritz.getMessages().getString(
+		delButton = new JButton(JFritz.getMessage(
 				"delete_quickdial"));
 		delButton.setActionCommand("deleteSIP");
 		delButton.addActionListener(this);
@@ -80,12 +80,12 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/delete.png"))));
 
-		JButton fetchButton = new JButton(jfritz.getMessages().getString(
+		JButton fetchButton = new JButton(JFritz.getMessage(
 				"fetch_from_box"));
 		fetchButton.setActionCommand("fetchSIP");
 		fetchButton.addActionListener(this);
 
-		JButton storeButton = new JButton(jfritz.getMessages().getString(
+		JButton storeButton = new JButton(JFritz.getMessage(
 				"store_to_box"));
 		storeButton.setActionCommand("storeSIP");
 		storeButton.addActionListener(this);

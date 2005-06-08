@@ -123,13 +123,13 @@ public class QuickDials extends AbstractTableModel {
 	public String getColumnName(int column) {
 		switch (column) {
 		case 0:
-			return jfritz.getMessages().getString("quickdial");
+			return JFritz.getMessage("quickdial");
 		case 1:
-			return jfritz.getMessages().getString("vanity");
+			return JFritz.getMessage("vanity");
 		case 2:
-			return jfritz.getMessages().getString("number");
+			return JFritz.getMessage("number");
 		case 3:
-			return jfritz.getMessages().getString("description");
+			return JFritz.getMessage("description");
 		default:
 			return null;
 		}
@@ -138,13 +138,12 @@ public class QuickDials extends AbstractTableModel {
 	public void getQuickDialDataFromFritzBox() {
 		try {
 			quickDials = JFritzUtils.retrieveQuickDialsFromFritzBox(this,
-					jfritz.getProperties().getProperty("box.address"),
-					Encryption.decrypt(jfritz.getProperties().getProperty(
-							"box.password")), JFritzUtils.detectBoxType(jfritz
-							.getProperties().getProperty("box.firmware"),
-							jfritz.getProperties().getProperty("box.address"),
-							jfritz.getProperties().getProperty(
-									Encryption.decrypt("box.password"))));
+					JFritz.getProperty("box.address"), Encryption
+							.decrypt(JFritz.getProperty("box.password")),
+					JFritzUtils.detectBoxType(JFritz
+							.getProperty("box.firmware"), JFritz
+							.getProperty("box.address"), JFritz
+							.getProperty(Encryption.decrypt("box.password"))));
 		} catch (WrongPasswordException e) {
 			Debug.err("getQuickDialData: Wrong password");
 		} catch (IOException e) {

@@ -96,7 +96,7 @@ public class StatsDialog extends JDialog {
 	private void drawDialog() {
 		super.dialogInit();
 
-		setTitle(jfritz.getMessages().getString("stats"));
+		setTitle(JFritz.getMessage("stats"));
 		setModal(true);
 		setLayout(new BorderLayout());
 		getContentPane().setLayout(new BorderLayout());
@@ -196,16 +196,16 @@ public class StatsDialog extends JDialog {
 
 	public void setAddonInfos(int byteSendRate, int byteReceiveRate,
 			int totalBytesSent, int totalBytesReceived, String dns1, String dns2) {
-		byteSendRateLabel.setText(jfritz.getMessages().getString(
+		byteSendRateLabel.setText(JFritz.getMessage(
 				"bytessendrate")
 				+ ": " + byteSendRate);
-		byteReceiveRateLabel.setText(jfritz.getMessages().getString(
+		byteReceiveRateLabel.setText(JFritz.getMessage(
 				"bytesreceivedrate")
 				+ ": " + byteReceiveRate);
-		totalBytesSendLabel.setText(jfritz.getMessages().getString(
+		totalBytesSendLabel.setText(JFritz.getMessage(
 				"totaldatasent")
 				+ ": " + (totalBytesSent / 1024) + " KByte");
-		totalBytesReceivedLabel.setText(jfritz.getMessages().getString(
+		totalBytesReceivedLabel.setText(JFritz.getMessage(
 				"totaldatareceived")
 				+ ": " + (totalBytesReceived / 1024) + " KByte");
 		dns1Label.setText("DNS Server 1: " + dns1);
