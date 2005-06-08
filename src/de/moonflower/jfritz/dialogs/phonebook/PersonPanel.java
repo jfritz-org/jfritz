@@ -136,7 +136,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 						.elementAt(rowIndex)).getType());
 			case 2:
 				return ((PhoneNumber) person.getNumbers().elementAt(rowIndex))
-						.getNumber();
+						.getFullNumber();
 			default:
 				return null;
 
@@ -162,7 +162,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 					}
 					break;
 				case 2:
-					if (isValidNumber((String) value, p.getNumber())) {
+					if (isValidNumber((String) value, p.getFullNumber())) {
 						p.setNumber((String) value);
 					}
 				default:
@@ -176,7 +176,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 				return true;
 			Enumeration en = person.getNumbers().elements();
 			while (en.hasMoreElements()) {
-				String nr = ((PhoneNumber) en.nextElement()).getNumber();
+				String nr = ((PhoneNumber) en.nextElement()).getFullNumber();
 				if (value.equals(nr))
 					return false;
 			}
@@ -440,7 +440,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		Enumeration en = person.getNumbers().elements();
 		boolean addEnabled = true;
 		while (en.hasMoreElements()) {
-			String nr = ((PhoneNumber) en.nextElement()).getNumber();
+			String nr = ((PhoneNumber) en.nextElement()).getFullNumber();
 			if (nr.equals("")) {
 				addEnabled = false;
 				break;

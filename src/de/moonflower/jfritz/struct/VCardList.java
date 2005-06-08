@@ -33,8 +33,8 @@ public class VCardList {
 		Enumeration en = list.elements();
 		while (en.hasMoreElements()) {
 			Person p = (Person) en.nextElement();
-			if (p.getStandardTelephoneNumber().getNumber().equals(
-					person.getStandardTelephoneNumber().getNumber())
+			if (p.getStandardTelephoneNumber().getFullNumber().equals(
+					person.getStandardTelephoneNumber().getFullNumber())
 					|| p.getLastName().equals("")) {
 				found = true;
 				break;

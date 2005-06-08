@@ -40,6 +40,7 @@ import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
@@ -151,7 +152,7 @@ public class CallerList extends AbstractTableModel {
 				pw.println("<entry calltype=\"" + type.toString() + "\">");
 				pw.println("\t<date>" + df.format(datum) + "</date>");
 				if (caller != null)
-					pw.println("\t<caller>" + caller.getNumber() + "</caller>");
+					pw.println("\t<caller>" + caller.getFullNumber() + "</caller>");
 				if (!port.equals(""))
 					pw.println("\t<port>" + port + "</port>");
 				if (!route.equals(""))
@@ -308,9 +309,9 @@ public class CallerList extends AbstractTableModel {
 			Call c = (Call) en.nextElement();
 			String nr1 = "", nr2 = "";
 			if (c.getPhoneNumber() != null)
-				nr1 = c.getPhoneNumber().getNumber();
+				nr1 = c.getPhoneNumber().getFullNumber();
 			if (call.getPhoneNumber() != null)
-				nr2 = call.getPhoneNumber().getNumber();
+				nr2 = call.getPhoneNumber().getFullNumber();
 			if (c.getCalldate().equals(call.getCalldate()) && (nr1).equals(nr2)) {
 				newEntry = false; // We already have this call
 				break;
@@ -331,8 +332,8 @@ public class CallerList extends AbstractTableModel {
 	 */
 	public void getNewCalls() throws WrongPasswordException, IOException {
 		Vector data = JFritzUtils.retrieveCallersFromFritzBox(jfritz
-				.getProperties().getProperty("box.address"), jfritz
-				.getProperties().getProperty("box.password"), jfritz
+				.getProperties().getProperty("box.address"), Encryption.decrypt(jfritz
+				.getProperties().getProperty("box.password")), jfritz
 				.getProperties().getProperty("country.prefix"), jfritz
 				.getProperties().getProperty("country.code"), jfritz
 				.getProperties().getProperty("area.prefix"), jfritz
@@ -377,8 +378,8 @@ public class CallerList extends AbstractTableModel {
 					"box.address"), jfritz.getProperties().getProperty(
 					"box.password"), JFritzUtils.detectBoxType(jfritz
 					.getProperties().getProperty("box.firmware"), jfritz
-					.getProperties().getProperty("box.address"), jfritz
-					.getProperties().getProperty("box.password")));
+					.getProperties().getProperty("box.address"), Encryption.decrypt(jfritz
+					.getProperties().getProperty("box.password"))));
 		}
 
 	}
@@ -533,11 +534,11 @@ public class CallerList extends AbstractTableModel {
 				break;
 			case 2:
 				if (v1.getPhoneNumber() != null)
-					o1 = v1.getPhoneNumber().getNumber();
+					o1 = v1.getPhoneNumber().getFullNumber();
 				else
 					o1 = null;
 				if (v2.getPhoneNumber() != null)
-					o2 = v2.getPhoneNumber().getNumber();
+					o2 = v2.getPhoneNumber().getFullNumber();
 				else
 					o2 = null;
 				break;
@@ -670,7 +671,7 @@ public class CallerList extends AbstractTableModel {
 					String part = parts[i];
 					if (part.length() > 0
 							&& (call.getPhoneNumber() == null || call
-									.getPhoneNumber().getNumber().indexOf(
+									.getPhoneNumber().getFullNumber().indexOf(
 											parts[i]) == -1)
 							&& (call.getPerson() == null || call.getPerson()
 									.getFullname().toLowerCase().indexOf(
@@ -749,8 +750,8 @@ public class CallerList extends AbstractTableModel {
 		while (en.hasMoreElements()) {
 			Call call = (Call) en.nextElement();
 			if (call.getPhoneNumber() != null
-					&& call.getPhoneNumber().getNumber().equals(
-							person.getStandardTelephoneNumber().getNumber())) {
+					&& call.getPhoneNumber().getFullNumber().equals(
+							person.getStandardTelephoneNumber().getFullNumber())) {
 				return call;
 			}
 		}

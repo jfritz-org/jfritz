@@ -27,6 +27,7 @@ import org.xml.sax.XMLReader;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
@@ -136,13 +137,14 @@ public class QuickDials extends AbstractTableModel {
 
 	public void getQuickDialDataFromFritzBox() {
 		try {
-			quickDials = JFritzUtils.retrieveQuickDialsFromFritzBox(this, jfritz
-					.getProperties().getProperty("box.address"), jfritz
-					.getProperties().getProperty("box.password"), JFritzUtils
-					.detectBoxType(jfritz.getProperties().getProperty(
-							"box.firmware"), jfritz.getProperties()
-							.getProperty("box.address"), jfritz.getProperties()
-							.getProperty("box.password")));
+			quickDials = JFritzUtils.retrieveQuickDialsFromFritzBox(this,
+					jfritz.getProperties().getProperty("box.address"),
+					Encryption.decrypt(jfritz.getProperties().getProperty(
+							"box.password")), JFritzUtils.detectBoxType(jfritz
+							.getProperties().getProperty("box.firmware"),
+							jfritz.getProperties().getProperty("box.address"),
+							jfritz.getProperties().getProperty(
+									Encryption.decrypt("box.password"))));
 		} catch (WrongPasswordException e) {
 			Debug.err("getQuickDialData: Wrong password");
 		} catch (IOException e) {
@@ -256,6 +258,7 @@ public class QuickDials extends AbstractTableModel {
 		}
 		return null;
 	}
+
 	/**
 	 * @return Returns the quickDials.
 	 */

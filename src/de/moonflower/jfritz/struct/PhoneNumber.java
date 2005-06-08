@@ -4,6 +4,7 @@
  */
 package de.moonflower.jfritz.struct;
 
+import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.ReverseLookup;
 
 /**
@@ -11,10 +12,6 @@ import de.moonflower.jfritz.utils.ReverseLookup;
  *
  */
 public class PhoneNumber implements Comparable {
-
-	public static String intPrefix = "+";
-
-	public static String areaPrefix = "0";
 
 	private String number = "";
 
@@ -28,9 +25,10 @@ public class PhoneNumber implements Comparable {
 	 * @param fullNumber
 	 * @param
 	 */
-	public PhoneNumber(String fullNumber, String type) {
+	public PhoneNumber(String number, String type) {
 		this.type = type;
-		setNumber(fullNumber);
+		this.number = number;
+		refactorNumber();
 	}
 
 	/**
@@ -42,30 +40,84 @@ public class PhoneNumber implements Comparable {
 		this(fullNumber, "");
 	}
 
-	/**
-	 *
-	 * @param fullNumber
-	 */
-	public void setNumber(String fullNumber) {
-		if (fullNumber.startsWith("010")) { // cut 01013 and others
-			callbycall = fullNumber.substring(0, 5);
-			number = fullNumber.substring(5);
-		} else
-			number = fullNumber;
-		if (number.startsWith(intPrefix)) {
-			// TODO
+	public void setNumber(String number) {
+		this.number = number;
+		refactorNumber();
+	}
+
+	public void refactorNumber() {
+		cutCallByCall();
+		convertToIntNumber();
+	}
+
+	public String cutCallByCall() {
+		String callbycall = "";
+		if (number.startsWith("010")) { // cut 01013 and others
+			callbycall = number.substring(0, 5);
+			number = number.substring(5);
 		}
+		return number;
+	}
+
+	public String convertToIntNumber() {
+		String countryCode = JFritz.properties.getProperty("country.code");
+		String countryPrefix = JFritz.properties.getProperty("country.prefix");
+		String areaCode = JFritz.properties.getProperty("area.code");
+		String areaPrefix = JFritz.properties.getProperty("area.prefix");
+
+		if ((number.length() < 4) // A valid number??
+				|| (number.startsWith("+")) // International number
+				|| isSIPNumber() // SIP Number
+				|| isEmergencyCall() // Emergency
+		) {
+			return number;
+		}
+
+		if (number.startsWith(countryCode) && number.length() > 10) {
+			// International numbers without countryPrefix
+			// (some VOIP numbers) }
+			return "+" + number;
+		}
+		if (number.startsWith(countryPrefix)) { // International call
+			return "+" + number.substring(countryPrefix.length());
+		}
+		if (number.startsWith(areaPrefix)) {
+			return "+" + countryCode + number.substring(areaPrefix.length());
+		}
+		return "+" + countryCode + areaCode + number;
 	}
 
 	public String toString() {
-		return getNumber();
+		return getFullNumber();
 	}
 
 	/**
 	 *
 	 * @return the full number
 	 */
-	public String getNumber() {
+	public String getFullNumber() {
+		return number;
+	}
+
+	public String getShortNumber() {
+		String countryCode = JFritz.properties.getProperty("country.code");
+		String areaCode = JFritz.properties.getProperty("area.code");
+		String areaPrefix = JFritz.properties.getProperty("area.prefix");
+		if (number.startsWith("+" + countryCode + areaCode))
+			return number.substring(countryCode.length() + areaCode.length()
+					+ 1);
+		if (number.startsWith("+" + countryCode))
+			return areaPrefix + number.substring(countryCode.length() + 1);
+		return number;
+	}
+
+	public String getAreaNumber() {
+		String countryCode = JFritz.properties.getProperty("country.code");
+		String countryPrefix = JFritz.properties.getProperty("country.prefix");
+		String areaCode = JFritz.properties.getProperty("area.code");
+		String areaPrefix = JFritz.properties.getProperty("area.prefix");
+		if (number.startsWith("+" + countryCode))
+			return areaPrefix + number.substring(countryCode.length() + 1);
 		return number;
 	}
 
@@ -91,10 +143,23 @@ public class PhoneNumber implements Comparable {
 	}
 
 	/**
+	 * @return True if number is a local number
+	 */
+	public boolean isLocalCall() {
+		String countryCode = JFritz.properties.getProperty("country.code");
+		String areaCode = JFritz.properties.getProperty("area.code");
+		return number.startsWith("+" + countryCode + areaCode);
+	}
+
+	/**
 	 * @return True if number is a SIP number
 	 */
 	public boolean isSIPNumber() {
-		return (number.indexOf('@') > 0);
+		String countryCode = JFritz.properties.getProperty("country.code");
+		return ((number.indexOf('@') > 0) || number.startsWith("00038") // PurTel
+				|| number.startsWith("555") // SIPGate
+		|| number.startsWith("777") // SIPGate
+		);
 	}
 
 	/**
@@ -126,14 +191,16 @@ public class PhoneNumber implements Comparable {
 	 * @return Country code (49 for Germany, 41 for Switzerland)
 	 */
 	public String getCountryCode() {
-		return "49";
+		//	return "49";
+		return "";
 	}
 
 	/**
 	 * @return Area code
 	 */
 	public String getAreaCode() {
-		return "441";
+		//		return "441";
+		return "";
 	}
 
 	/**
@@ -141,7 +208,8 @@ public class PhoneNumber implements Comparable {
 	 * @return Local part of number
 	 */
 	public String getLocalPart() {
-		return "592904";
+		//		return "592904";
+		return "";
 	}
 
 	/**
@@ -149,14 +217,15 @@ public class PhoneNumber implements Comparable {
 	 * @return Mobile provider
 	 */
 	public String getMobileProvider() {
-		return "O2";
+		//		return "O2";
+		return "";
 	}
 
 	/**
 	 * @return True if number is a mobile one
 	 */
 	public boolean isMobile() {
-		String provider = ReverseLookup.getMobileProvider(getNumber());
+		String provider = ReverseLookup.getMobileProvider(getFullNumber());
 		return (!provider.equals(""));
 	}
 

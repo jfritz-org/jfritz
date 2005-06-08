@@ -83,11 +83,12 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 		if (value != null) {
 			PhoneNumber number = (PhoneNumber) value;
 			setToolTipText(number.toString());
-			if (number.getNumber().length() > 4) { // if valid number present,
-				// draw icon
-				if (ReverseLookup.numberIsMobile(number.getNumber())) {
+			label.setText(number.getShortNumber());
+			if (number.getFullNumber().length() > 4) {
+				// if (ReverseLookup.numberIsMobile(number.getFullNumber())) {
+				if (number.isMobile()) {
 					String provider = ReverseLookup.getMobileProvider(number
-							.getNumber());
+							.getFullNumber());
 					if (provider.equals(""))
 						provider = "unknown";
 
@@ -109,27 +110,27 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 					} else {
 						label.setIcon(imageHandy);
 					}
-				} else if ((number.getNumber().startsWith(jfritz.getProperties()
-						.getProperty("area.prefix")
-						+ jfritz.getProperties().getProperty("area.code") + "1988"))
-						|| (number.getNumber().startsWith("01801777"))) {
+				} else if ((number.getFullNumber().startsWith(jfritz
+						.getProperties().getProperty("area.prefix")
+						+ jfritz.getProperties().getProperty("area.code")
+						+ "1988"))
+						|| (number.getFullNumber().startsWith("01801777"))) {
 					label.setIcon(imageSipgate);
 					setToolTipText(jfritz.getMessages().getString("voip_call"));
-				} else if (number.getNumber().startsWith(
-						jfritz.getProperties().getProperty("area.prefix")
-								+ jfritz.getProperties().getProperty("area.code"))) {
+				} else if (number.isLocalCall()) {
 					label.setIcon(imageHome);
 					setToolTipText(jfritz.getMessages().getString("local_call"));
-				} else if (number.getNumber().startsWith(
+				} else if (number.getFullNumber().startsWith(
 						jfritz.getProperties().getProperty("country.prefix"))) {
 					label.setIcon(imageWorld);
 					setToolTipText(jfritz.getMessages().getString("int_call"));
-				} else if (number.getNumber().startsWith("0800")) {
+				} else if (number.isFreeCall()) {
 					label.setIcon(imageFreeCall);
 					setToolTipText(jfritz.getMessages().getString("freecall"));
 				} else {
 					label.setIcon(imagePhone);
-					setToolTipText(jfritz.getMessages().getString("fixed_network"));
+					setToolTipText(jfritz.getMessages().getString(
+							"fixed_network"));
 				}
 			} else {
 				label.setIcon(null);

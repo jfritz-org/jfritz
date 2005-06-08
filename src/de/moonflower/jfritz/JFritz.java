@@ -162,10 +162,11 @@ import de.moonflower.jfritz.callerlist.CallerList;
 import de.moonflower.jfritz.dialogs.phonebook.PhoneBook;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.ReverseLookup;
-import de.moonflower.jfritz.utils.upnp.SSDPdiscoverThread;
 import de.moonflower.jfritz.utils.YAClistener;
+import de.moonflower.jfritz.utils.upnp.SSDPdiscoverThread;
 
 /**
  * @author Arno Willig
@@ -181,7 +182,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.56 2005/06/05 16:33:16 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.57 2005/06/08 09:16:55 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -205,15 +206,18 @@ public final class JFritz {
 
 	public static boolean SYSTRAY_SUPPORT = false;
 
+
+	private JFritzProperties defaultProperties;
+
+	public static JFritzProperties properties;
+
+	public static ResourceBundle messages;
+
 	private SystemTray systray;
 
 	private TrayIcon trayIcon;
 
 	private JFritzWindow jframe;
-
-	private ResourceBundle messages;
-
-	private JFritzProperties defaultProperties, properties; //, participants;
 
 	private Vector devices;
 
@@ -259,7 +263,7 @@ public final class JFritz {
 				createTrayMenu();
 			} catch (Exception e) {
 				Debug.err(e.toString());
-				SYSTRAY_SUPPORT=false;
+				SYSTRAY_SUPPORT = false;
 			}
 		}
 
@@ -293,7 +297,8 @@ public final class JFritz {
 	public static void main(String[] args) {
 		System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION
 				+ " (c) 2005 by " + PROGRAM_AUTHOR);
-		if (DEVEL_VERSION) Debug.on();
+		if (DEVEL_VERSION)
+			Debug.on();
 		boolean onlyFetchCalls = false;
 
 		for (int n = 0; n < args.length; n++) {
@@ -402,7 +407,7 @@ public final class JFritz {
 
 		// Default properties
 		defaultProperties.setProperty("box.address", "192.168.178.1");
-		defaultProperties.setProperty("box.password", "");
+		defaultProperties.setProperty("box.password", Encryption.encrypt(""));
 		defaultProperties.setProperty("country.prefix", "00");
 		defaultProperties.setProperty("area.prefix", "0");
 		defaultProperties.setProperty("country.code", "49");

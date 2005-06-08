@@ -63,7 +63,7 @@ public class ReverseLookup {
 		if (numberIsMobile(number)) {
 			newPerson = new Person();
 			newPerson.addNumber(number, "mobile");
-			Debug.msg("Adding mobile "+number);
+			Debug.msg("Adding mobile " + number);
 		} else if (numberIsFreecall(number)) {
 			newPerson = new Person("", "FreeCall");
 			newPerson.addNumber(number, "business");
@@ -74,7 +74,8 @@ public class ReverseLookup {
 	}
 
 	public static boolean numberIsMobile(String number) {
-		return mobileMap.containsKey(number.substring(0, 4));
+		return number.length() > 3
+				&& mobileMap.containsKey(number.substring(0, 4));
 	}
 
 	public static boolean numberIsFreecall(String number) {
@@ -140,9 +141,9 @@ public class ReverseLookup {
 					// TODO: wie splittet man am ersten SPACE und nicht an
 					// jedem?
 					String[] splitNames, splitAddress, splitPostCodeCity;
-					splitNames = m.group(1).trim().split(" ",2);
+					splitNames = m.group(1).trim().split(" ", 2);
 					splitAddress = m.group(2).trim().split(", ");
-					splitPostCodeCity = splitAddress[1].split(" ",2);
+					splitPostCodeCity = splitAddress[1].split(" ", 2);
 					String firstname = "", lastname = "";
 					if (splitNames.length > 1) {
 						firstname = splitNames[1];
@@ -151,7 +152,7 @@ public class ReverseLookup {
 
 					newPerson = new Person(firstname, "", lastname,
 							splitAddress[0], splitPostCodeCity[0],
-							splitPostCodeCity[1].trim(),"");
+							splitPostCodeCity[1].trim(), "");
 					newPerson.addNumber(number, "home");
 					return newPerson;
 				}

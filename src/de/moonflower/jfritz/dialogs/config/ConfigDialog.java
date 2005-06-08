@@ -50,6 +50,7 @@ import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.upnp.SSDPPacket;
@@ -127,7 +128,7 @@ public class ConfigDialog extends JDialog {
 						.getProperties().getProperty("option.startMinimized",
 								"false")));
 
-		pass.setText(getJfritz().getProperties().getProperty("box.password"));
+		pass.setText(Encryption.decrypt(getJfritz().getProperties().getProperty("box.password")));
 		address.setText(getJfritz().getProperties().getProperty("box.address"));
 		areaCode.setText(getJfritz().getProperties().getProperty("area.code"));
 		countryCode.setText(getJfritz().getProperties().getProperty(
@@ -187,7 +188,7 @@ public class ConfigDialog extends JDialog {
 		properties.setProperty("option.startMinimized", Boolean
 				.toString(startMinimizedButton.isSelected()));
 
-		properties.setProperty("box.password", new String(pass.getPassword()));
+		properties.setProperty("box.password", Encryption.encrypt(new String(pass.getPassword())));
 		properties.setProperty("box.address", address.getText());
 		properties.setProperty("area.code", areaCode.getText());
 		properties.setProperty("country.code", countryCode.getText());

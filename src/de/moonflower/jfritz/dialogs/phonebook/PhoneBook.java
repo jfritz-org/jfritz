@@ -70,7 +70,7 @@ public class PhoneBook extends AbstractTableModel {
 			PhoneNumber pn1 = p.getStandardTelephoneNumber();
 			PhoneNumber pn2 = newPerson.getStandardTelephoneNumber();
 			if (pn1 != null && pn2 != null
-					&& pn1.getNumber().equals(pn2.getNumber())) {
+					&& pn1.getFullNumber().equals(pn2.getFullNumber())) {
 				return;
 			}
 		}
@@ -135,7 +135,7 @@ public class PhoneBook extends AbstractTableModel {
 				while (en2.hasMoreElements()) {
 					PhoneNumber nr = (PhoneNumber) en2.nextElement();
 					pw.println("\t\t<number type=\"" + nr.getType() + "\">"
-							+ nr.getNumber() + "</number>");
+							+ nr.getFullNumber() + "</number>");
 
 				}
 				pw.println("\t</phonenumbers>");
@@ -284,7 +284,7 @@ public class PhoneBook extends AbstractTableModel {
 			Enumeration en2 = numbers.elements();
 			while (en2.hasMoreElements()) {
 				PhoneNumber n = (PhoneNumber) en2.nextElement();
-				if (n.getNumber().equals(number.getNumber())) {
+				if (n.getFullNumber().equals(number.getFullNumber())) {
 					return p;
 				}
 			}

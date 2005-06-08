@@ -190,7 +190,7 @@ public class Person {
 		Enumeration en = numbers.elements();
 		while (en.hasMoreElements()) {
 			PhoneNumber n = (PhoneNumber) en.nextElement();
-			if (number.equals(n.getNumber()))
+			if (number.equals(n.getFullNumber()))
 				return true;
 		}
 		return false;
