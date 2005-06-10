@@ -46,7 +46,7 @@ public class YAClistener implements Runnable {
 							msg = msg.substring(0, msg.length() - 1);
 						}
 						String outputString = "";
-						if (msg.contains("~")) {
+						if (msg.indexOf('~')>-1) {
 							if (msg.startsWith("@CALL")) {
 								msg = msg.substring(5);
 								splitList = msg.split("~");

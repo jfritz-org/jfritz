@@ -18,7 +18,7 @@ import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 
 /**
- * This class manages editing of the participant cell in the caller table.
+ * This class manages editing of the person cell in the caller table.
  *
  * @author Arno Willig
  */

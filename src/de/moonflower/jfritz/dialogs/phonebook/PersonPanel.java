@@ -13,8 +13,9 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Enumeration;
-import java.util.MissingResourceException;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
@@ -40,6 +41,7 @@ import javax.swing.table.TableCellRenderer;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneType;
 
 /**
  * @author Arno Willig
@@ -47,30 +49,14 @@ import de.moonflower.jfritz.struct.PhoneNumber;
  */
 public class PersonPanel extends JPanel implements ActionListener,
 		ListSelectionListener, CaretListener {
+
 	PhoneTypeModel typeModel;
-
-	private final class PhoneType {
-		String type;
-
-		public PhoneType(String type) {
-			this.type = type;
-		}
-
-		public String getType() {
-			return type;
-		}
-
-		public String toString() {
-			try {
-				return JFritz.getMessage("phone_" + type);
-			} catch (MissingResourceException e) {
-				return type;
-			}
-		}
-	}
 
 	private final class PhoneTypeModel extends AbstractListModel implements
 			ComboBoxModel {
+
+		private String[] basicTypes = { "home", "mobile", "homezone",
+				"business", "other", "fax", "sip" };
 
 		private PhoneType sel;
 
@@ -79,13 +65,44 @@ public class PersonPanel extends JPanel implements ActionListener,
 		public PhoneTypeModel() {
 			super();
 			types = new Vector();
-			types.add(new PhoneType("home"));
-			types.add(new PhoneType("mobile"));
-			types.add(new PhoneType("homezone"));
-			types.add(new PhoneType("business"));
-			types.add(new PhoneType("other"));
-			types.add(new PhoneType("fax"));
-			types.add(new PhoneType("sip"));
+			setTypes();
+		}
+
+		public void setTypes() {
+			types.clear();
+			int[] typeCount = new int[basicTypes.length];
+			for (int i = 0; i < typeCount.length; i++)
+				typeCount[i] = 0;
+
+			Enumeration en = person.getNumbers().elements();
+			while (en.hasMoreElements()) {
+				String type = ((PhoneNumber) en.nextElement()).getType();
+				Pattern p = Pattern.compile("([a-z]*)(\\d*)");
+				Matcher m = p.matcher(type);
+				if (m.find()) {
+					for (int i = 0; i < typeCount.length; i++) {
+						if (basicTypes[i].equals(m.group(1))) {
+							if (m.group(2).equals("")) {
+								typeCount[i] = 1;
+							} else if (typeCount[i] < Integer.parseInt(m
+									.group(2))) {
+								typeCount[i] = Integer.parseInt(m.group(2));
+							}
+							break;
+						}
+					}
+				}
+			}
+			for (int i = 0; i < typeCount.length; i++) {
+				if (typeCount[i] == 0) {
+					types.add(new PhoneType(basicTypes[i]));
+				} else {
+					types
+							.add(new PhoneType(basicTypes[i]
+									+ (typeCount[i] + 1)));
+				}
+			}
+			fireContentsChanged(this, 0, types.size() - 1);
 		}
 
 		public Vector getTypes() {
@@ -267,8 +284,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridLayout(0, 2));
-		JLabel label = new JLabel(JFritz.getMessage("firstName")
-				+ ": ");
+		JLabel label = new JLabel(JFritz.getMessage("firstName") + ": ");
 		buttonPanel.add(label);
 		tfFirstName = new JTextField(person.getFirstName());
 		tfFirstName.addCaretListener(this);
@@ -298,8 +314,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		tfCity = new JTextField(person.getCity());
 		tfCity.addCaretListener(this);
 		buttonPanel.add(tfCity);
-		label = new JLabel(JFritz.getMessage("emailAddress")
-				+ ": ");
+		label = new JLabel(JFritz.getMessage("emailAddress") + ": ");
 		buttonPanel.add(label);
 		tfEmail = new JTextField(person.getEmailAddress());
 		tfEmail.addCaretListener(this);
@@ -381,7 +396,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		if (person.getNumbers().size() == 1)
 			delButton.setEnabled((false));
 
-		JLabel label = new JLabel("Telefonnummern:", JLabel.LEFT);
+		JLabel label = new JLabel("Telefonnummern:", JLabel.LEFT); // TODO: I18N
 
 		JPanel numberButtonPanel = new JPanel(new GridLayout(0, 2));
 		JPanel buttonPanel = new JPanel();
@@ -405,6 +420,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("add")) {
 			person.getNumbers().add(new PhoneNumber("", ""));
+			typeModel.setTypes();
 		} else if (e.getActionCommand().equals("del")) {
 			int row = numberTable.getSelectedRow();
 			// Shift standard number if deleted
@@ -447,6 +463,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 			}
 		}
 		addButton.setEnabled(addEnabled);
+		typeModel.setTypes();
 	}
 
 	/**
@@ -457,7 +474,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 	}
 
 	/**
-	 * @return Returns the tfCity.
+	 * @return Returns the City.
 	 */
 	public final String getCity() {
 		return tfCity.getText();
@@ -523,6 +540,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		tfCity.setText(person.getCity());
 		tfEmail.setText(person.getEmailAddress());
 		((NumberTableModel) numberTable.getModel()).fireTableDataChanged();
+		typeModel.setTypes();
 	}
 
 	public final Person updatePerson() {

@@ -11,8 +11,7 @@ import java.util.Date;
 import de.moonflower.jfritz.JFritz;
 
 /**
- * @author Arno Willig row.add(symbol); row.add(datum); row.add(number);
- *         row.add(participant); row.add(port);
+ * @author Arno Willig
  */
 public class Call {
 

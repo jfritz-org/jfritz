@@ -181,7 +181,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.58 2005/06/08 19:10:44 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.59 2005/06/10 15:24:44 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -397,7 +397,6 @@ public final class JFritz {
 	 * Loads properties from xml files
 	 */
 	public void loadProperties() {
-		// participants = new JFritzProperties();
 		defaultProperties = new JFritzProperties();
 		properties = new JFritzProperties(defaultProperties);
 
@@ -419,14 +418,6 @@ public final class JFritz {
 					+ " not found, using default values");
 		} catch (Exception e) {
 		}
-		/*
-		 * try { FileInputStream fis = new
-		 * FileInputStream(JFritz.PARTICIPANTS_FILE);
-		 * participants.loadFromXML(fis); fis.close(); } catch
-		 * (FileNotFoundException e) { Debug.err("File " +
-		 * JFritz.PARTICIPANTS_FILE + " not found, using default values"); }
-		 * catch (Exception e) { }
-		 */
 	}
 
 	/**

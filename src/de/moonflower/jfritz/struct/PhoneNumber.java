@@ -47,7 +47,7 @@ public class PhoneNumber implements Comparable {
 
 	public void refactorNumber() {
 		cutCallByCall();
-		convertToIntNumber();
+		number = convertToIntNumber();
 	}
 
 	public String cutCallByCall() {

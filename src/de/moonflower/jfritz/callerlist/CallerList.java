@@ -476,7 +476,7 @@ public class CallerList extends AbstractTableModel {
 	 *            Order of sorting
 	 */
 	public void sortAllFilteredRowsBy(int col, boolean asc) {
-		Debug.msg("Sorting column " + col + " " + asc);
+		//		Debug.msg("Sorting column " + col + " " + asc);
 		Collections.sort(filteredCallerData, new ColumnSorter(col, asc));
 		fireTableStructureChanged();
 	}

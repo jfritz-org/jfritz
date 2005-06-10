@@ -16,9 +16,10 @@ import javax.swing.table.TableCellEditor;
 import de.moonflower.jfritz.struct.Person;
 
 /**
- * This class manages editing of the participant cell in the caller table.
+ * This deprecated class manages editing of the participant cell in the caller table.
  *
  * @author Arno Willig
+ *
  */
 public class TextFieldCellEditor extends AbstractCellEditor implements
 		TableCellEditor {

@@ -149,7 +149,7 @@ public class ConfigDialog extends JDialog {
 		setBoxTypeLabel();
 		for (int i = 0; i < 10; i++) {
 			String sipstr = JFritz.getProperty("SIP" + i);
-			if (sipstr != null) {
+			if (sipstr != null && sipstr.length() >0) {
 				String[] parts = sipstr.split("@");
 				SipProvider sip = new SipProvider(i, parts[0], parts[1]);
 				sipmodel.addProvider(sip);
