@@ -78,7 +78,7 @@ public class ConfigDialog extends JDialog {
 
 	private JCheckBox deleteAfterFetchButton, fetchAfterStartButton,
 			notifyOnCallsButton, confirmOnExitButton, startMinimizedButton,
-			timerAfterStartButton, passwordAfterStartButton;
+			timerAfterStartButton, passwordAfterStartButton, soundButton;
 
 	private JLabel boxtypeLabel, macLabel, timerLabel;
 
@@ -124,6 +124,8 @@ public class ConfigDialog extends JDialog {
 				.getProperty("option.confirmOnExit", "true")));
 		startMinimizedButton.setSelected(JFritzUtils.parseBoolean(JFritz
 				.getProperty("option.startMinimized", "false")));
+		soundButton.setSelected(JFritzUtils.parseBoolean(JFritz
+				.getProperty("option.playSounds", "true")));
 		boolean pwAfterStart = !Encryption.decrypt(
 				JFritz.getProperty("jfritz.password", "")).equals(
 				JFritz.PROGRAM_SECRET
@@ -186,6 +188,8 @@ public class ConfigDialog extends JDialog {
 				.toString(confirmOnExitButton.isSelected()));
 		JFritz.setProperty("option.startMinimized", Boolean
 				.toString(startMinimizedButton.isSelected()));
+		JFritz.setProperty("option.playSounds", Boolean
+				.toString(soundButton.isSelected()));
 		if (!passwordAfterStartButton.isSelected()) {
 			JFritz.setProperty("jfritz.password", Encryption.encrypt(JFritz.PROGRAM_SECRET
 					+ new String(pass.getPassword())));
@@ -449,6 +453,9 @@ public class ConfigDialog extends JDialog {
 		notifyOnCallsButton = new JCheckBox(
 				"Bei neuen Anrufen Fenster in den Vordergrund");
 		otherpane.add(notifyOnCallsButton);
+
+		soundButton = new JCheckBox("Bei eingehenden Anrufen Sound abspielen");
+		otherpane.add(soundButton);
 
 		confirmOnExitButton = new JCheckBox("Bei Beenden nachfragen");
 		otherpane.add(confirmOnExitButton);

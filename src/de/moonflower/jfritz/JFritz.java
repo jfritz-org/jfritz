@@ -41,7 +41,7 @@
  *
  * CHANGELOG:
  *
- * JFritz! 0.3.9
+ * JFritz! 0.4.0
  * - Systray minimizes JFrame
  * - Mobile filter inverted
  * - Removed participant support in favour of person
@@ -49,7 +49,7 @@
  * - Added commandline option --fetch
  * - Rewrote xml handler for phonebook
  * - Option for password check on program start
- *
+ * - Call monitor with sound notification
  *
  * Internal:
  * - Added PhoneNumber class
@@ -57,8 +57,6 @@
  * - Restructured packages
  *
  * TODO:
- * - Sort Phonebook (new entries must be sorted, too)
- * - Implement Phonebook ToolBar (add/delete
  * - Merging of person entries
  * - Implement reverselookup for Switzerland (www.telsearch.ch)
  * - CMD Option --export-csv
@@ -82,7 +80,6 @@
  * - Bugfix: No empty SIP provider after detection
  * - Bugfix: Save-Dialog on export functions
  * - Code rearrangement
- *
  *
  * JFritz! 0.3.2:
  * - Saves and restores window position/size
@@ -148,12 +145,19 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Vector;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -167,10 +171,13 @@ import org.jdesktop.jdic.tray.TrayIcon;
 import de.moonflower.jfritz.callerlist.CallerList;
 import de.moonflower.jfritz.dialogs.phonebook.PhoneBook;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzProperties;
+import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.YAClistener;
+import de.moonflower.jfritz.utils.upnp.JFritzTelnet;
 import de.moonflower.jfritz.utils.upnp.SSDPdiscoverThread;
 
 /**
@@ -189,7 +196,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.60 2005/06/12 06:47:53 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.61 2005/06/12 18:23:44 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -231,9 +238,13 @@ public final class JFritz {
 
 	private CallerList callerlist;
 
-	private PhoneBook phonebook;
+	private static PhoneBook phonebook;
 
 	private YAClistener yacListener;
+
+	private JFritzTelnet telnet;
+
+	private static URL ringSound;
 
 	/**
 	 * Constructs JFritz object
@@ -241,6 +252,7 @@ public final class JFritz {
 	public JFritz(boolean onlyFetchCalls) {
 		loadProperties();
 		loadMessages(new Locale("de", "DE"));
+		loadSounds();
 
 		phonebook = new PhoneBook(this);
 		phonebook.loadFromXMLFile(PHONEBOOK_FILE);
@@ -279,6 +291,14 @@ public final class JFritz {
 
 		javax.swing.SwingUtilities.invokeLater(jframe);
 
+	}
+
+	/**
+	 * Loads sounds from resources
+	 */
+	private void loadSounds() {
+		ringSound = getClass().getResource(
+				"/de/moonflower/jfritz/resources/sounds/oldphone.wav");
 	}
 
 	/**
@@ -477,6 +497,57 @@ public final class JFritz {
 		}
 	}
 
+	public static void callMsg(String caller, String called) {
+		String callerstr = "", calledstr = "";
+		String callername = phonebook.findPerson(new PhoneNumber(caller))
+				.getFullname();
+		String calledname = phonebook.findPerson(new PhoneNumber(called))
+				.getFullname();
+		if (callername.length() == 0)
+			callerstr = caller;
+		else
+			callerstr = caller + " (" + callername + ")";
+		if (calledname.length() == 0)
+			calledstr = called;
+		else
+			calledstr = called + " (" + calledname + ")";
+		infoMsg("Telefonanruf\nvon " + callerstr + "\nan " + calledstr + "!");
+		if (JFritzUtils.parseBoolean(JFritz.getProperty("option.playSounds",
+				"true"))) {
+			playSound(ringSound);
+		}
+
+	}
+
+	/**
+	 * Plays a sound by a given resource URL
+	 */
+	public static void playSound(URL sound) {
+		try {
+			AudioInputStream ais = AudioSystem.getAudioInputStream(sound);
+			DataLine.Info info = new DataLine.Info(Clip.class, ais.getFormat(),
+					((int) ais.getFrameLength() * ais.getFormat()
+							.getFrameSize()));
+			Clip clip = (Clip) AudioSystem.getLine(info);
+			clip.open(ais);
+			clip.start();
+			while (true) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e1) {
+				}
+				if (!clip.isRunning()) {
+					break;
+				}
+			}
+			clip.stop();
+			clip.close();
+		} catch (UnsupportedAudioFileException e) {
+		} catch (IOException e) {
+		} catch (LineUnavailableException e) {
+		}
+	}
+
 	/**
 	 * Displays balloon error message
 	 *
@@ -553,4 +624,15 @@ public final class JFritz {
 		properties.remove(property);
 	}
 
+	/**
+	 * @return Returns the telnet connection
+	 */
+	public JFritzTelnet getTelnet() {
+		return telnet;
+	}
+
+	public JFritzTelnet newTelnet() {
+		telnet = new JFritzTelnet();
+		return telnet;
+	}
 }

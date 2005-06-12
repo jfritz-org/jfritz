@@ -15,7 +15,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.struct.PhoneNumber;
-import de.moonflower.jfritz.utils.Debug;
 
 /**
  * This is the renderer for the call type cell of the table, which shows a small
@@ -84,7 +83,7 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 			PhoneNumber number = (PhoneNumber) value;
 			setToolTipText(number.toString());
 			label.setText(number.getShortNumber());
-			Debug.msg("Number: "+number.getShortNumber());
+			// Debug.msg("Number: "+number.getShortNumber());
 			if (number.getFullNumber().length() > 6) {
 				if (number.isMobile()) {
 					String provider = number.getMobileProvider();

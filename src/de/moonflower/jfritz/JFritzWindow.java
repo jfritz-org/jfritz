@@ -618,6 +618,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			quickDialPanel.getDataModel().saveToXMLFile(JFritz.QUICKDIALS_FILE);
 
 			jfritz.saveProperties();
+			if (jfritz.getTelnet() != null)
+			jfritz.getTelnet().interrupt();
 			System.exit(0);
 		}
 	}
@@ -688,15 +690,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * @param busy
 	 */
 	public void setBusy(boolean busy) {
-		/*
-		 * TODO: Activate this code when all buttons are implemented Component[]
-		 * c = toolbar.getComponents(); for (int i=0;i <c.length;i++) { if
-		 * (c[i].getClass().equals(JButton.class)) c[i].setEnabled(!busy); }
-		 */
 		if (fetchButton != null) {
 			fetchButton.setEnabled(!busy);
 			lookupButton.setEnabled(!busy);
 			configButton.setEnabled(!busy);
+			monitorButton.setEnabled(!busy);
 		}
 		menu.setEnabled(!busy);
 		progressbar.setIndeterminate(busy);
@@ -752,9 +750,18 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		else if (e.getActionCommand() == "fetchTask")
 			fetchTask(((JToggleButton) e.getSource()).isSelected());
 		else if (e.getActionCommand() == "callMonitor") {
+			boolean active = ((JToggleButton) e.getSource()).isSelected();
+			if (active) {
+				Debug.msg("start callMonitor");
+				fetchList();
+				jfritz.newTelnet().start();
+			} else {
+				Debug.msg("stop callMonitor");
+				jfritz.getTelnet().interrupt();
+			}
 			// TODO FETCHTASK
 			// yacListener.run();
-			Debug.msg("No YAC Listener yet");
+
 		} else if (e.getActionCommand() == "reverselookup")
 			reverseLookup();
 		else
