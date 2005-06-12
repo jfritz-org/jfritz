@@ -15,7 +15,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.struct.PhoneNumber;
-import de.moonflower.jfritz.utils.ReverseLookup;
+import de.moonflower.jfritz.utils.Debug;
 
 /**
  * This is the renderer for the call type cell of the table, which shows a small
@@ -84,11 +84,10 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 			PhoneNumber number = (PhoneNumber) value;
 			setToolTipText(number.toString());
 			label.setText(number.getShortNumber());
-			if (number.getFullNumber().length() > 4) {
-				// if (ReverseLookup.numberIsMobile(number.getFullNumber())) {
+			Debug.msg("Number: "+number.getShortNumber());
+			if (number.getFullNumber().length() > 6) {
 				if (number.isMobile()) {
-					String provider = ReverseLookup.getMobileProvider(number
-							.getFullNumber());
+					String provider = number.getMobileProvider();
 					if (provider.equals(""))
 						provider = "unknown";
 

@@ -180,7 +180,7 @@ public class StatsDialog extends JDialog {
 		panel.add(bottomPane, BorderLayout.SOUTH);
 		getContentPane().add(panel);
 
-		setSize(new Dimension(400, 350));
+		setSize(new Dimension(400, 200));
 		// setResizable(false);
 		// pack();
 	}

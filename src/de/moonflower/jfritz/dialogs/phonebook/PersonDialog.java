@@ -91,7 +91,7 @@ public class PersonDialog extends JDialog implements ActionListener {
 	public boolean showDialog() {
 		setVisible(true);
 		person.setFirstName(personPanel.getFirstName());
-		person.setMiddleName(personPanel.getMiddleName());
+		person.setCompany(personPanel.getCompany());
 		person.setLastName(personPanel.getLastName());
 		person.setCity(personPanel.getCity());
 		person.setEmailAddress(personPanel.getEmail());

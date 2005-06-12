@@ -666,7 +666,7 @@ public class CallerList extends AbstractTableModel {
 					String part = parts[i];
 					if (part.length() > 0
 							&& (call.getPhoneNumber() == null || call
-									.getPhoneNumber().getFullNumber().indexOf(
+									.getPhoneNumber().getAreaNumber().indexOf(
 											parts[i]) == -1)
 							&& (call.getPerson() == null || call.getPerson()
 									.getFullname().toLowerCase().indexOf(
@@ -745,6 +745,7 @@ public class CallerList extends AbstractTableModel {
 		while (en.hasMoreElements()) {
 			Call call = (Call) en.nextElement();
 			if (call.getPhoneNumber() != null
+					&& person.getStandardTelephoneNumber() != null
 					&& call.getPhoneNumber().getFullNumber()
 							.equals(
 									person.getStandardTelephoneNumber()

@@ -78,7 +78,7 @@ public class ConfigDialog extends JDialog {
 
 	private JCheckBox deleteAfterFetchButton, fetchAfterStartButton,
 			notifyOnCallsButton, confirmOnExitButton, startMinimizedButton,
-			timerAfterStartButton;
+			timerAfterStartButton, passwordAfterStartButton;
 
 	private JLabel boxtypeLabel, macLabel, timerLabel;
 
@@ -124,6 +124,12 @@ public class ConfigDialog extends JDialog {
 				.getProperty("option.confirmOnExit", "true")));
 		startMinimizedButton.setSelected(JFritzUtils.parseBoolean(JFritz
 				.getProperty("option.startMinimized", "false")));
+		boolean pwAfterStart = !Encryption.decrypt(
+				JFritz.getProperty("jfritz.password", "")).equals(
+				JFritz.PROGRAM_SECRET
+						+ Encryption.decrypt(JFritz.getProperty("box.password",
+								"")));
+		passwordAfterStartButton.setSelected(pwAfterStart);
 
 		pass.setText(Encryption.decrypt(JFritz.getProperty("box.password")));
 		address.setText(JFritz.getProperty("box.address"));
@@ -149,7 +155,7 @@ public class ConfigDialog extends JDialog {
 		setBoxTypeLabel();
 		for (int i = 0; i < 10; i++) {
 			String sipstr = JFritz.getProperty("SIP" + i);
-			if (sipstr != null && sipstr.length() >0) {
+			if (sipstr != null && sipstr.length() > 0) {
 				String[] parts = sipstr.split("@");
 				SipProvider sip = new SipProvider(i, parts[0], parts[1]);
 				sipmodel.addProvider(sip);
@@ -180,6 +186,12 @@ public class ConfigDialog extends JDialog {
 				.toString(confirmOnExitButton.isSelected()));
 		JFritz.setProperty("option.startMinimized", Boolean
 				.toString(startMinimizedButton.isSelected()));
+		if (!passwordAfterStartButton.isSelected()) {
+			JFritz.setProperty("jfritz.password", Encryption.encrypt(JFritz.PROGRAM_SECRET
+					+ new String(pass.getPassword())));
+		} else {
+			JFritz.removeProperty("jfritz.password");
+		}
 
 		JFritz.setProperty("box.password", Encryption.encrypt(new String(pass
 				.getPassword())));
@@ -414,6 +426,10 @@ public class ConfigDialog extends JDialog {
 		timerLabel = new JLabel("Timer (in min): ");
 		otherpane.add(timerLabel);
 		otherpane.add(timerSlider);
+
+		passwordAfterStartButton = new JCheckBox(
+				"Vor Programmstart Passwort erfragen?");
+		otherpane.add(passwordAfterStartButton);
 
 		fetchAfterStartButton = new JCheckBox("Nach Programmstart Liste holen");
 		otherpane.add(fetchAfterStartButton);

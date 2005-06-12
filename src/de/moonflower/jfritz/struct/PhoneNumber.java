@@ -4,8 +4,9 @@
  */
 package de.moonflower.jfritz.struct;
 
+import java.util.HashMap;
+
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.utils.ReverseLookup;
 
 /**
  * @author Arno Willig
@@ -19,6 +20,8 @@ public class PhoneNumber implements Comparable {
 
 	private String type = "";
 
+	static HashMap mobileMap;
+
 	/**
 	 * Constructs a PhoneNumber with a special type
 	 *
@@ -28,6 +31,7 @@ public class PhoneNumber implements Comparable {
 	public PhoneNumber(String number, String type) {
 		this.type = type;
 		this.number = number;
+		createMobileMap();
 		refactorNumber();
 	}
 
@@ -43,6 +47,31 @@ public class PhoneNumber implements Comparable {
 	public void setNumber(String number) {
 		this.number = number;
 		refactorNumber();
+	}
+
+	/**
+	 * creates a map of german cellphone providers
+	 */
+	private void createMobileMap() {
+		if (mobileMap == null) {
+			mobileMap = new HashMap();
+			mobileMap.put("+49151", "D1");
+			mobileMap.put("+49160", "D1");
+			mobileMap.put("+49170", "D1");
+			mobileMap.put("+49171", "D1");
+			mobileMap.put("+49175", "D1");
+			mobileMap.put("+49152", "D2");
+			mobileMap.put("+49162", "D2");
+			mobileMap.put("+49172", "D2");
+			mobileMap.put("+49173", "D2");
+			mobileMap.put("+49174", "D2");
+			mobileMap.put("+49163", "E+");
+			mobileMap.put("+49177", "E+");
+			mobileMap.put("+49178", "E+");
+			mobileMap.put("+49159", "O2");
+			mobileMap.put("+49176", "O2");
+			mobileMap.put("+49179", "O2");
+		}
 	}
 
 	public void refactorNumber() {
@@ -139,7 +168,10 @@ public class PhoneNumber implements Comparable {
 	 * @return True if number is a FreeCall number
 	 */
 	public boolean isFreeCall() {
-		return number.startsWith("0800");
+		boolean ret = number.startsWith("0800");
+		if (ret && getType() == "")
+			type = "business";
+		return ret;
 	}
 
 	/**
@@ -214,19 +246,28 @@ public class PhoneNumber implements Comparable {
 
 	/**
 	 *
-	 * @return Mobile provider
+	 * @return Returns mobile provider
 	 */
 	public String getMobileProvider() {
-		//		return "O2";
-		return "";
+		if (number.length() < 5)
+			return "";
+		Object provider = mobileMap.get(number.substring(0, 6));
+		if (provider == null)
+			return "";
+		return mobileMap.get(number.substring(0, 6)).toString();
 	}
 
 	/**
 	 * @return True if number is a mobile one
 	 */
 	public boolean isMobile() {
-		String provider = ReverseLookup.getMobileProvider(getFullNumber());
-		return (!provider.equals(""));
+		//		String provider = ReverseLookup.getMobileProvider(getFullNumber());
+		//		return (!provider.equals(""));
+		boolean ret = number.length() > 6
+				&& mobileMap.containsKey(number.substring(0, 6));
+		if (ret && getType() == "")
+			type = "mobile";
+		return ret;
 	}
 
 	/**

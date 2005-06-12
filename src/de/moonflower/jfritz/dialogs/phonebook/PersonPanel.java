@@ -260,7 +260,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 	private Person person;
 
-	private JTextField tfFirstName, tfMiddleName, tfLastName, tfStreet,
+	private JTextField tfFirstName, tfCompany, tfLastName, tfStreet,
 			tfPostalCode, tfCity, tfEmail;
 
 	private JButton addButton, delButton;
@@ -289,16 +289,16 @@ public class PersonPanel extends JPanel implements ActionListener,
 		tfFirstName = new JTextField(person.getFirstName());
 		tfFirstName.addCaretListener(this);
 		buttonPanel.add(tfFirstName);
-		label = new JLabel(JFritz.getMessage("middleName") + ": ");
-		buttonPanel.add(label);
-		tfMiddleName = new JTextField(person.getMiddleName());
-		tfMiddleName.addCaretListener(this);
-		buttonPanel.add(tfMiddleName);
 		label = new JLabel(JFritz.getMessage("lastName") + ": ");
 		buttonPanel.add(label);
 		tfLastName = new JTextField(person.getLastName());
 		tfLastName.addCaretListener(this);
 		buttonPanel.add(tfLastName);
+		label = new JLabel(JFritz.getMessage("company") + ": ");
+		buttonPanel.add(label);
+		tfCompany = new JTextField(person.getCompany());
+		tfCompany.addCaretListener(this);
+		buttonPanel.add(tfCompany);
 		label = new JLabel(JFritz.getMessage("street") + ": ");
 		buttonPanel.add(label);
 		tfStreet = new JTextField(person.getStreet());
@@ -481,10 +481,10 @@ public class PersonPanel extends JPanel implements ActionListener,
 	}
 
 	/**
-	 * @return Returns the MiddleName.
+	 * @return Returns the company.
 	 */
-	public final String getMiddleName() {
-		return tfMiddleName.getText();
+	public final String getCompany() {
+		return tfCompany.getText();
 	}
 
 	/**
@@ -533,7 +533,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 	public final void updateGUI() {
 		tfFirstName.setText(person.getFirstName());
-		tfMiddleName.setText(person.getMiddleName());
+		tfCompany.setText(person.getCompany());
 		tfLastName.setText(person.getLastName());
 		tfStreet.setText(person.getStreet());
 		tfPostalCode.setText(person.getPostalCode());
@@ -545,13 +545,15 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 	public final Person updatePerson() {
 		person.setFirstName(tfFirstName.getText());
-		person.setMiddleName(tfMiddleName.getText());
+		person.setCompany(tfCompany.getText());
 		person.setLastName(tfLastName.getText());
 		person.setStreet(tfStreet.getText());
 		person.setPostalCode(tfPostalCode.getText());
 		person.setCity(tfCity.getText());
 		person.setEmailAddress(tfEmail.getText());
 		hasChanged = false;
+		jfritz.getPhonebook().sort();
+
 		return person;
 	}
 
@@ -568,7 +570,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 	public void caretUpdate(CaretEvent e) {
 		boolean hasChangedOld = hasChanged;
 		hasChanged = !tfFirstName.getText().equals(person.getFirstName())
-				|| !tfMiddleName.getText().equals(person.getMiddleName())
+				|| !tfCompany.getText().equals(person.getCompany())
 				|| !tfLastName.getText().equals(person.getLastName())
 				|| !tfStreet.getText().equals(person.getStreet())
 				|| !tfPostalCode.getText().equals(person.getPostalCode())

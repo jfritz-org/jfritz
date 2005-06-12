@@ -15,6 +15,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -53,6 +55,77 @@ public class PhoneBook extends AbstractTableModel {
 
 	private JFritz jfritz;
 
+	/**
+	 * This comparator is used to sort vectors of data
+	 */
+	public class ColumnSorter implements Comparator {
+		int colIndex;
+
+		boolean ascending;
+
+		ColumnSorter(int colIndex, boolean ascending) {
+			this.colIndex = colIndex;
+			this.ascending = ascending;
+		}
+
+		public int compare(Object a, Object b) {
+			Object o1, o2;
+			Person v1 = (Person) a;
+			Person v2 = (Person) b;
+			switch (colIndex) {
+			case 0:
+				o1 = v1.getFullname().toString();
+				o2 = v2.getFullname().toString();
+				break;
+			default:
+				o1 = v1.getFullname().toString();
+				o2 = v2.getFullname().toString();
+			}
+
+			// Treat empty strings like nulls
+			if (o1 instanceof String && ((String) o1).trim().length() == 0) {
+				o1 = null;
+			}
+			if (o2 instanceof String && ((String) o2).trim().length() == 0) {
+				o2 = null;
+			}
+
+			// Sort nulls so they appear last, regardless
+			// of sort order
+			if (o1 == null && o2 == null) {
+				return 0;
+			} else if (o1 == null) {
+				return 1;
+			} else if (o2 == null) {
+				return -1;
+			} else if (o1 instanceof Comparable) {
+				if (ascending) {
+					return ((Comparable) o1).compareTo(o2);
+				} else {
+					return ((Comparable) o2).compareTo(o1);
+				}
+			} else {
+				if (ascending) {
+					return o1.toString().compareTo(o2.toString());
+				} else {
+					return o2.toString().compareTo(o1.toString());
+				}
+			}
+		}
+
+		public String format(String s, int places) {
+			int j = places - s.length();
+			if (j > 0) {
+				StringBuffer sb = null;
+				sb = new StringBuffer(j);
+				for (int k = 0; k < j; k++)
+					sb.append(' ');
+				return sb.toString() + s;
+			} else
+				return s;
+		}
+	}
+
 	public PhoneBook(JFritz jfritz) {
 		this.jfritz = jfritz;
 		persons = new Vector();
@@ -75,6 +148,18 @@ public class PhoneBook extends AbstractTableModel {
 			}
 		}
 		persons.add(newPerson);
+		sort();
+	}
+
+	public void deleteEntry(Person person) {
+		persons.remove(person);
+	}
+
+	/**
+	 * Sorts phonebook alphabetically
+	 */
+	public synchronized void sort() {
+		Collections.sort(persons, new ColumnSorter(0, true));
 	}
 
 	/**
@@ -103,13 +188,13 @@ public class PhoneBook extends AbstractTableModel {
 					if (current.getFirstName().length() > 0)
 						pw.println("\t\t<firstname>" + current.getFirstName()
 								+ "</firstname>");
-					if (current.getMiddleName().length() > 0)
-						pw.println("\t\t<middlename>" + current.getMiddleName()
-								+ "</middlename>");
 					if (current.getLastName().length() > 0)
 						pw.println("\t\t<lastname>" + current.getLastName()
 								+ "</lastname>");
 					pw.println("\t</name>");
+					if (current.getCompany().length() > 0)
+						pw.println("\t<company>" + current.getCompany()
+								+ "</company>");
 				}
 
 				if ((current.getStreet().length() > 0)
@@ -216,6 +301,7 @@ public class PhoneBook extends AbstractTableModel {
 		} catch (IOException e) {
 			Debug.err("Could not read " + filename + "!");
 		}
+		sort();
 	}
 
 	public Object getValueAt(int rowIndex, int columnIndex) {
@@ -247,15 +333,6 @@ public class PhoneBook extends AbstractTableModel {
 			return (Person) persons.get(rowIndex);
 		else
 			return null;
-	}
-
-	/**
-	 * Replaces Phonebook entries with Vector of new Phonebook entries
-	 *
-	 * @param pb
-	 */
-	public void updatePersons(Vector pb) {
-		this.persons = pb;
 	}
 
 	public int getRowCount() {

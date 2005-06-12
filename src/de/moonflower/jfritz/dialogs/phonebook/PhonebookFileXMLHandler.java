@@ -23,7 +23,7 @@ import de.moonflower.jfritz.struct.PhoneNumber;
  */
 public class PhonebookFileXMLHandler extends DefaultHandler {
 
-	String firstName, middleName, lastName, type, standard, email, street,
+	String firstName, company, lastName, type, standard, email, street,
 			postCode, city, category;
 
 	Vector numbers;
@@ -59,7 +59,7 @@ public class PhonebookFileXMLHandler extends DefaultHandler {
 
 		if (eName.equals("entry")) {
 			firstName = "";
-			middleName = "";
+			company = "";
 			lastName = "";
 			numbers = new Vector();
 			street = "";
@@ -81,8 +81,8 @@ public class PhonebookFileXMLHandler extends DefaultHandler {
 			throws SAXException {
 		if (qName.equals("firstname")) {
 			firstName = chars;
-		} else if (qName.equals("middlename")) {
-			middleName = chars;
+		} else if (qName.equals("company")) {
+			company = chars;
 		} else if (qName.equals("lastname")) {
 			lastName = chars;
 		} else if (qName.equals("number")) {
@@ -99,7 +99,7 @@ public class PhonebookFileXMLHandler extends DefaultHandler {
 		} else if (qName.equals("category")) {
 			category = chars;
 		} else if (qName.equals("entry")) {
-			Person newPerson = new Person(firstName, middleName, lastName,
+			Person newPerson = new Person(firstName, company, lastName,
 					street, postCode, city, email);
 
 			newPerson.setNumbers(numbers, standard);

@@ -57,7 +57,6 @@ import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.ReverseLookup;
 import de.moonflower.jfritz.utils.SwingWorker;
-import de.moonflower.jfritz.utils.YAClistener;
 
 /**
  * This is main window class of JFritz, which creates the GUI.
@@ -91,8 +90,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	private QuickDialPanel quickDialPanel;
 
-	private YAClistener yacListener;
-
 	/**
 	 * Constructs JFritzWindow
 	 *
@@ -101,19 +98,18 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	public JFritzWindow(JFritz jfritz) {
 		this.jfritz = jfritz;
 		createGUI();
-		if (!JFritz.getProperty("option.startMinimized", "false").equals(
-				"true")) {
+		if (!JFritz.getProperty("option.startMinimized", "false")
+				.equals("true")) {
 			setVisible(true);
 		}
-		if (JFritz.getProperty("option.timerAfterStart", "false").equals(
-				"true")) {
+		if (JFritz.getProperty("option.timerAfterStart", "false")
+				.equals("true")) {
 			taskButton.doClick();
 		}
-		if (JFritz.getProperty("option.fetchAfterStart", "false").equals(
-				"true")) {
+		if (JFritz.getProperty("option.fetchAfterStart", "false")
+				.equals("true")) {
 			fetchButton.doClick();
 		}
-		yacListener = new YAClistener();
 	}
 
 	private void createGUI() {
@@ -124,10 +120,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		// Setting size and position
 		int x = Integer.parseInt(JFritz.getProperty("position.left", "10"));
 		int y = Integer.parseInt(JFritz.getProperty("position.top", "10"));
-		int w = Integer.parseInt(JFritz
-				.getProperty("position.width", "640"));
-		int h = Integer.parseInt(JFritz.getProperty("position.height",
-				"400"));
+		int w = Integer.parseInt(JFritz.getProperty("position.width", "640"));
+		int h = Integer.parseInt(JFritz.getProperty("position.height", "400"));
 		setLocation(x, y);
 		setSize(w, h);
 
@@ -148,6 +142,22 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		getContentPane().add(createStatusBar(), BorderLayout.SOUTH);
 
 		jfritz.getCallerlist().fireTableStructureChanged();
+		String ask = JFritz.getProperty("jfritz.password", "");
+		String pass = JFritz.getProperty("box.password", "");
+		if (!Encryption.decrypt(ask).equals(
+				JFritz.PROGRAM_SECRET + Encryption.decrypt(pass))) {
+			String password = showPasswordDialog("");
+			if (!password.equals(Encryption.decrypt(pass))) {
+				Debug.err("Wrong password!");
+				System.exit(0);
+			}
+			/*
+			 * if (!password.equals("")) { String enc =
+			 * Encryption.encrypt(JFritz.PROGRAM_SECRET + pass);
+			 * JFritz.setProperty("jfritz.password", enc); }
+			 */
+		}
+
 	}
 
 	/**
@@ -203,8 +213,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		mBar.add(monitorButton);
 
 		lookupButton = new JButton();
-		lookupButton
-				.setToolTipText(JFritz.getMessage("reverse_lookup"));
+		lookupButton.setToolTipText(JFritz.getMessage("reverse_lookup"));
 		lookupButton.setActionCommand("reverselookup");
 		lookupButton.addActionListener(this);
 		lookupButton.setIcon(getImage("reverselookup.png"));
@@ -245,7 +254,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		button.addActionListener(this);
 		button.setIcon(getImage("stats.png"));
 		button.setToolTipText(JFritz.getMessage("stats"));
-		button.setEnabled(JFritz.DEVEL_VERSION);
+		// button.setEnabled(JFritz.DEVEL_VERSION);
 		mBar.add(button);
 
 		button = new JButton();
@@ -253,7 +262,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		button.addActionListener(this);
 		button.setIcon(getImage("help.png"));
 		button.setToolTipText(JFritz.getMessage("help_menu"));
-		button.setEnabled(JFritz.DEVEL_VERSION);
+		// button.setEnabled(JFritz.DEVEL_VERSION);
 		mBar.add(button);
 
 		mBar.addSeparator();
@@ -400,8 +409,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 							jfritz.getJframe().fetchList();
 						}
 
-					}, 5000, Integer.parseInt(JFritz
-							.getProperty("fetch.timer","3")) * 60000);
+					}, 5000, Integer.parseInt(JFritz.getProperty("fetch.timer",
+							"3")) * 60000);
 			Debug.msg("Timer enabled");
 		} else {
 			timer.cancel();
@@ -429,11 +438,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 							setBusy(false);
 							setStatus(JFritz.getMessage("password_wrong"));
 							String password = showPasswordDialog(Encryption
-									.decrypt(JFritz
-											.getProperty("box.password","")));
+									.decrypt(JFritz.getProperty("box.password",
+											"")));
 							if (!password.equals("")) {
-								JFritz.setProperty("box.password",
-										Encryption.encrypt(password));
+								JFritz.setProperty("box.password", Encryption
+										.encrypt(password));
 							} else { // Cancel
 								isdone = true;
 							}
@@ -441,10 +450,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 							setBusy(false);
 							setStatus(JFritz.getMessage("box_not_found"));
 							String box_address = showAddressDialog(JFritz
-									.getProperty("box.address","fritz.box"));
+									.getProperty("box.address", "fritz.box"));
 							if (!box_address.equals("")) {
-								JFritz.setProperty("box.address",
-										box_address);
+								JFritz.setProperty("box.address", box_address);
 							} else { // Cancel
 								isdone = true;
 							}
@@ -490,8 +498,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 								Debug.msg("Reverse lookup for "
 										+ number.getFullNumber());
 
-								Person newPerson = ReverseLookup.lookup(number
-										.getAreaNumber());
+								Person newPerson = ReverseLookup.lookup(number);
 								if (newPerson != null) {
 									jfritz.getPhonebook().addEntry(newPerson);
 									// jfritz.getCallerlist().setPerson(newPerson,i);
@@ -746,8 +753,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			fetchTask(((JToggleButton) e.getSource()).isSelected());
 		else if (e.getActionCommand() == "callMonitor") {
 			// TODO FETCHTASK
-			yacListener.run();
-			fetchTask(((JToggleButton) e.getSource()).isSelected());
+			// yacListener.run();
+			Debug.msg("No YAC Listener yet");
 		} else if (e.getActionCommand() == "reverselookup")
 			reverseLookup();
 		else

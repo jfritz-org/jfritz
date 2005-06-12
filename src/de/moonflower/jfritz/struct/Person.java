@@ -19,7 +19,7 @@ public class Person {
 
 	private String lastName = "";
 
-	private String middleName = "";
+	private String company = "";
 
 	private String street = "";
 
@@ -37,12 +37,12 @@ public class Person {
 		numbers = new Vector();
 	}
 
-	public Person(String firstName, String middleName, String lastName,
+	public Person(String firstName, String company, String lastName,
 			String street, String postalCode, String city, String eMail) {
 		this();
 
 		this.firstName = firstName;
-		this.middleName = middleName;
+		this.company = company;
 		this.lastName = lastName;
 		this.street = street;
 		this.postalCode = postalCode;
@@ -65,7 +65,7 @@ public class Person {
 
 	public void copyFrom(Person person) {
 		firstName = person.getFirstName();
-		middleName = person.getMiddleName();
+		company = person.getCompany();
 		lastName = person.getLastName();
 		street = person.getStreet();
 		postalCode = person.getPostalCode();
@@ -103,15 +103,21 @@ public class Person {
 	}
 
 	public String getFullname() {
-		if (lastName.length() == 0) {
-			if (firstName.length() == 0)
-				return "";
+		String ret = "";
+
+		if (lastName.length() == 0 && firstName.length() > 0) {
+			ret = firstName;
+		} else if (firstName.length() == 0) {
+			ret = lastName;
+		} else
+			ret = (lastName + ", " + firstName).trim();
+		if (company.length() > 0) {
+			if (ret.length() > 0)
+				ret += " (" + company + ")";
 			else
-				return firstName;
+				ret = company;
 		}
-		if (firstName.length() == 0)
-			return lastName;
-		return (lastName + ", " + firstName + " " + middleName).trim();
+		return ret;
 	}
 
 	public String toVCard() {
@@ -143,8 +149,8 @@ public class Person {
 		return firstName;
 	}
 
-	public String getMiddleName() {
-		return middleName;
+	public String getCompany() {
+		return company;
 	}
 
 	public String getLastName() {
@@ -204,8 +210,8 @@ public class Person {
 		this.firstName = firstName;
 	}
 
-	public void setMiddleName(String middleName) {
-		this.middleName = middleName;
+	public void setCompany(String middleName) {
+		this.company = middleName;
 	}
 
 	public void setLastName(String lastName) {

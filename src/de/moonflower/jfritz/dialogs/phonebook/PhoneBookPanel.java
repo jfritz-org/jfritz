@@ -93,10 +93,14 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		addButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/add.png"))));
+		addButton.setActionCommand("addPerson");
+		addButton.addActionListener(this);
 		JButton delButton = new JButton(JFritz.getMessage("del_entry"));
 		delButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/delete.png"))));
+		delButton.setActionCommand("deletePerson");
+		delButton.addActionListener(this);
 		toolBar.add(addButton);
 		toolBar.add(delButton);
 		return toolBar;
@@ -150,6 +154,12 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			personPanel.updateGUI();
 		} else if (e.getActionCommand().equals("save")) {
 			personPanel.updatePerson();
+			jfritz.getPhonebook().fireTableDataChanged();
+		} else if (e.getActionCommand().equals("addPerson")) {
+			jfritz.getPhonebook().addEntry(new Person("", " NEU "));
+			jfritz.getPhonebook().fireTableDataChanged();
+		} else if (e.getActionCommand().equals("deletePerson")) {
+			jfritz.getPhonebook().deleteEntry(personPanel.getPerson());
 			jfritz.getPhonebook().fireTableDataChanged();
 		}
 		propertyChange(null);

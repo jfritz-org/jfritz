@@ -24,7 +24,6 @@ import de.moonflower.jfritz.cellrenderer.PersonCellRenderer;
 import de.moonflower.jfritz.cellrenderer.PortCellRenderer;
 import de.moonflower.jfritz.cellrenderer.RouteCellRenderer;
 import de.moonflower.jfritz.struct.CallType;
-import de.moonflower.jfritz.struct.PhoneNumber;
 
 /**
  * Creates table of callers
@@ -45,6 +44,7 @@ public class CallerTable extends JTable {
 		this.jfritz = jfritz;
 		setTableProperties();
 		createColumns();
+
 	}
 
 	/**
@@ -54,7 +54,7 @@ public class CallerTable extends JTable {
 		setDefaultRenderer(CallType.class, new CallTypeCellRenderer());
 		setDefaultRenderer(Date.class, new DateCellRenderer());
 		// FIXME setDefaultRenderer(Person.class, new PersonCellRenderer());
-		setDefaultRenderer(PhoneNumber.class, new NumberCellRenderer(jfritz));
+		// FIXME setDefaultRenderer(PhoneNumber.class, new NumberCellRenderer(jfritz));
 		// TODO: Create classes for Number, Port and Duration
 		// setDefaultRenderer(Port.class, new PortCellRenderer());
 		// setDefaultRenderer(Duration.class, new DurationCellRenderer());
@@ -99,7 +99,7 @@ public class CallerTable extends JTable {
 
 		col = getColumnModel().getColumn(2);
 		col.setHeaderValue(JFritz.getMessage("number"));
-		//col.setCellRenderer(new NumberCellRenderer(jfritz));
+		col.setCellRenderer(new NumberCellRenderer(jfritz));
 		headerTips.setToolTip(col, JFritz.getMessage("number_desc"));
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
 				"column2.width", "128")));
