@@ -199,7 +199,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.62 2005/06/12 18:36:48 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.63 2005/06/12 18:45:58 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -501,11 +501,15 @@ public final class JFritz {
 	}
 
 	public static void callMsg(String caller, String called) {
-		String callerstr = "", calledstr = "";
+		String callerstr = "", calledstr = "", callername = "", calledname = "";
 		Person callerperson = phonebook.findPerson(new PhoneNumber(caller));
-		String callername = callerperson.getFullname();
 		Person calledperson = phonebook.findPerson(new PhoneNumber(called));
-		String calledname = calledperson.getFullname();
+
+		if (callerperson != null)
+			callername = callerperson.getFullname();
+		if (calledperson != null)
+			calledname = calledperson.getFullname();
+
 		if (callername.length() == 0)
 			callerstr = caller;
 		else
@@ -519,7 +523,6 @@ public final class JFritz {
 				"true"))) {
 			playSound(ringSound);
 		}
-
 	}
 
 	/**
