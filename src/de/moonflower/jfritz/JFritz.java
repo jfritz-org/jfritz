@@ -186,8 +186,8 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.JFritzUtils;
+import de.moonflower.jfritz.utils.TelnetListener;
 import de.moonflower.jfritz.utils.YAClistener;
-import de.moonflower.jfritz.utils.upnp.TelnetListener;
 import de.moonflower.jfritz.utils.upnp.SSDPdiscoverThread;
 
 /**
@@ -206,7 +206,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.65 2005/06/13 06:13:50 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.66 2005/06/13 06:14:58 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 

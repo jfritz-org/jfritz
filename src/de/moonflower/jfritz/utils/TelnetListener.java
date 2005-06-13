@@ -1,10 +1,8 @@
-package de.moonflower.jfritz.utils.upnp;
+package de.moonflower.jfritz.utils;
 
 import org.apache.commons.net.telnet.*;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.utils.Debug;
-import de.moonflower.jfritz.utils.Encryption;
 
 import java.io.*;
 import java.util.regex.Pattern;
