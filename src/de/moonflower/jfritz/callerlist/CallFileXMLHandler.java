@@ -25,7 +25,7 @@ import de.moonflower.jfritz.utils.Debug;
  */
 public class CallFileXMLHandler extends DefaultHandler {
 
-	String chars, caller, port, route;
+	String chars, caller, callbycall, port, route;
 
 	CallerList callerlist;
 
@@ -58,6 +58,7 @@ public class CallFileXMLHandler extends DefaultHandler {
 			port = "";
 			route = "";
 			caller = "";
+			callbycall = "";
 			duration = 0;
 			calldate = null;
 			calltype = null;
@@ -69,7 +70,8 @@ public class CallFileXMLHandler extends DefaultHandler {
 					aName = attrs.getQName(i);
 				if (eName.equals("entry") && aName.equals("calltype")) {
 					calltype = new CallType(attrs.getValue(i));
-
+				} else if (eName.equals("caller") && aName.equals("callbycall")) {
+					callbycall = attrs.getValue(i);
 				}
 			}
 		}
@@ -99,8 +101,11 @@ public class CallFileXMLHandler extends DefaultHandler {
 
 			if (callerlist != null) { // Add an entry to the callerlist
 				PhoneNumber number = null;
-				if (caller.length() > 0)
+				if (caller.length() > 0) {
 					number = new PhoneNumber(caller);
+					if (callbycall.length() > 0)
+						number.setCallbycall(callbycall);
+				}
 				callerlist.addEntry(calltype, calldate, number, port, route,
 						duration);
 			}

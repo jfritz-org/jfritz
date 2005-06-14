@@ -20,10 +20,12 @@ public class TelnetListener extends Thread {
 	//IncomingCall from NT: ID 0, caller: "592904" called: "1815212"
 	private final String PATTERN_TELEFON = "IncomingCall[^:]*: ID ([^,]*), caller: \"([^\"]*)\" called: \"([^\"]*)\"";
 
-
 	private final String PATTERN_VOIP_REQUEST = ">>> Request: INVITE ([^\\n]*)";
+
 	private final String PATTERN_VOIP_CALLTO_ESTABLISHED = "call to ([^ ]*) established";
+
 	private final String PATTERN_VOIP_CALLTO_TERMINATED = "call to ([^ ]*) terminated";
+
 	private final String PATTERN_VOIP_CALLTO_DISCONNECTED = "disconnected\\([^)]*\\):";
 
 	private final char prompt = '#';
@@ -61,7 +63,7 @@ public class TelnetListener extends Thread {
 	}
 
 	private void restartTelefonDaemon() {
-		write("killall telefon && telefon 2 >&1");
+		write("killall telefon && telefon &>&1");
 		Debug.msg("Telefon Daemon restarted.");
 	}
 

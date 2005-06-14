@@ -308,4 +308,16 @@ public class PhoneNumber implements Comparable {
 		else
 			type = "home";
 	}
+	/**
+	 * @return Returns the callbycall.
+	 */
+	public String getCallbycall() {
+		return callbycall;
+	}
+	/**
+	 * @param callbycall The callbycall to set.
+	 */
+	public void setCallbycall(String callbycall) {
+		this.callbycall = callbycall;
+	}
 }

@@ -151,9 +151,17 @@ public class CallerList extends AbstractTableModel {
 				SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 				pw.println("<entry calltype=\"" + type.toString() + "\">");
 				pw.println("\t<date>" + df.format(datum) + "</date>");
-				if (caller != null)
-					pw.println("\t<caller>" + caller.getFullNumber()
-							+ "</caller>");
+				if (caller != null) {
+					if (caller.getCallByCall().length() > 0) {
+						pw.println("\t<caller callbycall=\""
+								+ caller.getCallByCall() + "\">"
+								+ caller.getFullNumber() + "</caller>");
+					} else {
+						pw.println("\t<caller>" + caller.getFullNumber()
+								+ "</caller>");
+					}
+
+				}
 				if (!port.equals(""))
 					pw.println("\t<port>" + port + "</port>");
 				if (!route.equals(""))
