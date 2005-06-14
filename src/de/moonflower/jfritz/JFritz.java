@@ -20,7 +20,7 @@
  *
  * This piece of software is distributed in the hope that it will be
  * useful, but WITHOUT ANY WARRANTY; without even the implied warranty
- * of MERCHANTABILITY or FöITNESS FOR A PARTICULAR PURPOSE.  See the
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -40,7 +40,9 @@
  * BUG: Password on start
  *
  * CHANGELOG:
+ *
  * JFritz! 0.4.2
+ *
  * TODO:
  * - Bugfix: MacOSX
  * - Bugfix: PhoneBook too long??
@@ -50,6 +52,7 @@
  * - Implement reverselookup for Switzerland (www.telsearch.ch)
  * - CMD Option --export-csv
  * - Password Dialog mit "speichern" Haken
+ * - TFTP Box Konfig verwalten
  *
  * JFritz! 0.4.0
  * - Systray minimizes JFrame
@@ -206,7 +209,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.66 2005/06/13 06:14:58 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.67 2005/06/14 12:22:38 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
