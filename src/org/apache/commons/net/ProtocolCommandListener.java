@@ -22,12 +22,13 @@ import java.util.EventListener;
  * text command and arguments to a server, and then receiving an ASCII text
  * reply. For debugging and other purposes, it is extremely useful to log or
  * keep track of the contents of the protocol messages. The
- * ProtocolCommandListener interface coupled with the ProtocolCommandEvent class
- * facilitate this process.
+ * ProtocolCommandListener interface coupled with the
+ * ProtocolCommandEvent class facilitate this process.
  * <p>
  * To receive ProtocolCommandEvents, you merely implement the
  * ProtocolCommandListener interface and register the class as a listener with a
- * ProtocolCommandEvent source such as org.apache.commons.net.ftp.FTPClient.
+ * ProtocolCommandEvent source such as
+ * {@link org.apache.commons.net.ftp.FTPClient}.
  * <p>
  * <p>
  *
