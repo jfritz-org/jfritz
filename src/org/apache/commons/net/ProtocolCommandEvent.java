@@ -26,8 +26,6 @@ import java.util.EventObject;
  *  interface facilitate this process.
  * <p>
  * <p>
- * @see ProtocolCommandListener
- * @see ProtocolCommandSupport
  * @author Daniel F. Savarese
  ***/
 

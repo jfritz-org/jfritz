@@ -24,9 +24,8 @@ public class PhoneNumber implements Comparable {
 
 	/**
 	 * Constructs a PhoneNumber with a special type
-	 *
-	 * @param fullNumber
-	 * @param
+	 * @param number Phone number
+	 * @param type Type of number
 	 */
 	public PhoneNumber(String number, String type) {
 		this.type = type;
@@ -44,13 +43,17 @@ public class PhoneNumber implements Comparable {
 		this(fullNumber, "");
 	}
 
+	/**
+	 * Sets number to this value
+	 * @param number Number to be set
+	 */
 	public void setNumber(String number) {
 		this.number = number;
 		refactorNumber();
 	}
 
 	/**
-	 * creates a map of german cellphone providers
+	 * Creates a map of german cellphone providers
 	 */
 	private void createMobileMap() {
 		if (mobileMap == null) {
@@ -74,11 +77,19 @@ public class PhoneNumber implements Comparable {
 		}
 	}
 
+	/**
+	 * Cuts call by call provider and converts to international number
+	 *
+	 */
 	public void refactorNumber() {
 		cutCallByCall();
 		number = convertToIntNumber();
 	}
 
+	/**
+	 * Cuts call by call part of number
+	 * @return Number withour call by call part
+	 */
 	public String cutCallByCall() {
 		String callbycall = "";
 		if (number.startsWith("010")) { // cut 01013 and others
@@ -88,6 +99,10 @@ public class PhoneNumber implements Comparable {
 		return number;
 	}
 
+	/**
+	 * Converts number to international number
+	 * @return Returns internationalized number
+	 */
 	public String convertToIntNumber() {
 		String countryCode = JFritz.getProperty("country.code");
 		String countryPrefix = JFritz.getProperty("country.prefix");
@@ -116,6 +131,9 @@ public class PhoneNumber implements Comparable {
 		return "+" + countryCode + areaCode + number;
 	}
 
+	/**
+	 * Converts number to string representation
+	 */
 	public String toString() {
 		return getFullNumber();
 	}

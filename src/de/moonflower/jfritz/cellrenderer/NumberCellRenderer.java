@@ -23,8 +23,6 @@ import de.moonflower.jfritz.struct.PhoneNumber;
  * @author Arno Willig
  */
 public class NumberCellRenderer extends DefaultTableCellRenderer {
-	private JFritz jfritz;
-
 	private final ImageIcon imagePhone, imageHandy, imageHome, imageWorld,
 			imageFreeCall;
 
@@ -36,10 +34,8 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 	/**
 	 * renders the number field in the CallerTable
 	 */
-	public NumberCellRenderer(JFritz jfritz) {
+	public NumberCellRenderer() {
 		super();
-		this.jfritz = jfritz;
-
 		imagePhone = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/phone.png")));
