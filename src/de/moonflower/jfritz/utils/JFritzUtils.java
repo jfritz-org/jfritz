@@ -80,7 +80,8 @@ public class JFritzUtils {
 			+ "\\s*<td class=\"c1\">\\s*<input type=checkbox id=\"uiViewActivsip\\d\""
 			+ "\\s*onclick=\"uiOnChangeActivated\\('uiViewActivsip\\d','uiPostActivsip\\d'\\); return true;\">"
 			+ "\\s*</td>"
-//			+ "\\s*<td class=\"c2\">([\\(]*[\\w*\\s*]*[\\)]*[\\w*\\s*]*)</td>"
+			//			+ "\\s*<td
+			// class=\"c2\">([\\(]*[\\w*\\s*]*[\\)]*[\\w*\\s*]*)</td>"
 			+ "\\s*<td class=\"c2\">([^<]*)</td>"
 			+ "\\s*<td class=\"c3\"><script type=\"text/javascript\">document.write\\(ProviderDisplay\\(\"([^\"]*)\"\\)\\);</script></td>";
 
@@ -164,10 +165,9 @@ public class JFritzUtils {
 	 * @throws WrongPasswordException
 	 * @throws IOException
 	 */
-	public static Vector retrieveQuickDialsFromFritzBox(
-			QuickDials model, String box_address, String box_password,
-			FritzBoxFirmware firmware) throws WrongPasswordException,
-			IOException {
+	public static Vector retrieveQuickDialsFromFritzBox(QuickDials model,
+			String box_address, String box_password, FritzBoxFirmware firmware)
+			throws WrongPasswordException, IOException {
 		String postdata = firmware.getAccessMethod() + POSTDATA_QUICKDIAL
 				+ box_password;
 		String urlstr = "http://" + box_address + "/cgi-bin/webcm";
@@ -330,8 +330,8 @@ public class JFritzUtils {
 	 * @param firmware
 	 * @return list of QuickDial objects
 	 */
-	public static Vector parseQuickDialData(QuickDials model,
-			String data, FritzBoxFirmware firmware) {
+	public static Vector parseQuickDialData(QuickDials model, String data,
+			FritzBoxFirmware firmware) {
 		Vector list = new Vector();
 		data = removeDuplicateWhitespace(data);
 		Pattern p = Pattern.compile(PATTERN_QUICKDIAL);
@@ -455,6 +455,16 @@ public class JFritzUtils {
 		}
 		System.out.println("DATA: " + data.trim());
 		return "";
+	}
+
+	public static String replaceSpecialChars(String input) {
+		String out = input;
+		out = out.replaceAll("&", "&amp;");
+		out = out.replaceAll("'", "&apos;");
+		out = out.replaceAll("<", "&lt;");
+		out = out.replaceAll(">", "&gt;");
+		out = out.replaceAll("\"", "&quot;");
+		return out;
 	}
 
 }

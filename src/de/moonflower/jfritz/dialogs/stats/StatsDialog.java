@@ -70,7 +70,7 @@ public class StatsDialog extends JDialog {
 	 *
 	 */
 	private void getStats() {
-		final String server = "http://192.168.178.1:49000/upnp/control/WANCommonIFC1";
+		final String server = "http://"+JFritz.getProperty("box.address")+":49000/upnp/control/WANCommonIFC1";
 		final String urn = "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetAddonInfos";
 
 		String xml = UPNPUtils.getSOAPData(server, urn);
@@ -98,7 +98,6 @@ public class StatsDialog extends JDialog {
 
 		setTitle(JFritz.getMessage("stats"));
 		setModal(true);
-		setLayout(new BorderLayout());
 		getContentPane().setLayout(new BorderLayout());
 		JPanel topPane = new JPanel();
 		JPanel mainPane = new JPanel();

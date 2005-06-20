@@ -36,6 +36,7 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class PhoneBook extends AbstractTableModel {
 	private static final String PHONEBOOK_DTD_URI = "http://jfritz.moonflower.de/dtd/phonebook.dtd";
@@ -186,14 +187,14 @@ public class PhoneBook extends AbstractTableModel {
 				if (current.getFullname().length() > 0) {
 					pw.println("\t<name>");
 					if (current.getFirstName().length() > 0)
-						pw.println("\t\t<firstname>" + current.getFirstName()
+						pw.println("\t\t<firstname>" + JFritzUtils.replaceSpecialChars(current.getFirstName())
 								+ "</firstname>");
 					if (current.getLastName().length() > 0)
-						pw.println("\t\t<lastname>" + current.getLastName()
+						pw.println("\t\t<lastname>" + JFritzUtils.replaceSpecialChars(current.getLastName())
 								+ "</lastname>");
 					pw.println("\t</name>");
 					if (current.getCompany().length() > 0)
-						pw.println("\t<company>" + current.getCompany()
+						pw.println("\t<company>" + JFritzUtils.replaceSpecialChars(current.getCompany())
 								+ "</company>");
 				}
 
@@ -202,14 +203,14 @@ public class PhoneBook extends AbstractTableModel {
 						|| (current.getCity().length() > 0)) {
 					pw.println("\t<address>");
 					if (current.getStreet().length() > 0)
-						pw.println("\t\t<street>" + current.getStreet()
+						pw.println("\t\t<street>" + JFritzUtils.replaceSpecialChars(current.getStreet())
 								+ "</street>");
 					if (current.getPostalCode().length() > 0)
-						pw.println("\t\t<postcode>" + current.getPostalCode()
+						pw.println("\t\t<postcode>" + JFritzUtils.replaceSpecialChars(current.getPostalCode())
 								+ "</postcode>");
 					if (current.getCity().length() > 0)
 						pw
-								.println("\t\t<city>" + current.getCity()
+								.println("\t\t<city>" + JFritzUtils.replaceSpecialChars(current.getCity())
 										+ "</city>");
 					pw.println("\t</address>");
 				}
@@ -220,7 +221,7 @@ public class PhoneBook extends AbstractTableModel {
 				while (en2.hasMoreElements()) {
 					PhoneNumber nr = (PhoneNumber) en2.nextElement();
 					pw.println("\t\t<number type=\"" + nr.getType() + "\">"
-							+ nr.getFullNumber() + "</number>");
+							+ JFritzUtils.replaceSpecialChars(nr.getFullNumber()) + "</number>");
 
 				}
 				pw.println("\t</phonenumbers>");
@@ -228,7 +229,7 @@ public class PhoneBook extends AbstractTableModel {
 				if (current.getEmailAddress().length() > 0) {
 					pw.println("\t<internet>");
 					if (current.getEmailAddress().length() > 0)
-						pw.println("\t\t<email>" + current.getEmailAddress()
+						pw.println("\t\t<email>" + JFritzUtils.replaceSpecialChars(current.getEmailAddress())
 								+ "</email>");
 					pw.println("\t</internet>");
 				}

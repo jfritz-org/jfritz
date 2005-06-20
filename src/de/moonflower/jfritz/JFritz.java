@@ -36,8 +36,13 @@
  * CallerList: ev. Popup-Menu?
  * Statistik: Top-Caller (Name/Nummer, Wie oft, Wie lange)
  * YAC-Messages: Config-Options: enabled/disabled
+ * Watchdog for CallMonitor
  *
  * BUG: Password on start
+ * BUG: No new Phonebook entries after reverselookup, only after restart or double click on an call entry
+ * BUG: Eingabe im IP-Eingabe-PopUp wird ignoriert?
+ * BUG: Box restart beim Call Monitor
+ * BUG: Statistics not working everywhere
  *
  * CHANGELOG:
  *
@@ -210,7 +215,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.68 2005/06/14 13:05:05 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.69 2005/06/20 21:33:44 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 

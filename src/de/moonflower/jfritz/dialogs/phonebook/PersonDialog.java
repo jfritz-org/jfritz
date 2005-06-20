@@ -52,7 +52,6 @@ public class PersonDialog extends JDialog implements ActionListener {
 		super.dialogInit();
 		setTitle("Person editieren");
 		setModal(true);
-		setLayout(new BorderLayout());
 		getContentPane().setLayout(new BorderLayout());
 
 		JPanel topPane = new JPanel();
