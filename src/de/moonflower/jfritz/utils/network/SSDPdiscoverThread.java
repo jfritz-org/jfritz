@@ -2,7 +2,7 @@
  * Created on 24.05.2005
  *
  */
-package de.moonflower.jfritz.utils.upnp;
+package de.moonflower.jfritz.utils.network;
 
 import java.util.Vector;
 

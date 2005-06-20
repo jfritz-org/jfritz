@@ -1,10 +1,16 @@
-package de.moonflower.jfritz.utils;
+package de.moonflower.jfritz.utils.network;
 
 import org.apache.commons.net.telnet.*;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.Encryption;
 
 import java.io.*;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -65,6 +71,13 @@ public class TelnetListener extends Thread {
 	private void restartTelefonDaemon() {
 		write("killall telefon && telefon &>&1");
 		Debug.msg("Telefon Daemon restarted.");
+	}
+
+	private void startSyslogDaemon() {
+		String ip = "192.168.178.20";
+		int port = 4711;
+		write("syslogd -R " + ip + ":" + port);
+		write("killall telefon && telefon | logger &");
 	}
 
 	/**
@@ -186,4 +199,25 @@ public class TelnetListener extends Thread {
 		disconnect();
 	}
 
+	public static InetAddress getIP() {
+		Enumeration ifaces;
+		try {
+			ifaces = NetworkInterface.getNetworkInterfaces();
+			while (ifaces.hasMoreElements()) {
+				NetworkInterface ni = (NetworkInterface) ifaces.nextElement();
+				System.out.println(ni.getName() + ":");
+
+				Enumeration addrs = ni.getInetAddresses();
+
+				while (addrs.hasMoreElements()) {
+					InetAddress addr = (InetAddress) addrs.nextElement();
+					System.out.println(" " + addr.getHostAddress());
+					return addr;
+				}
+			}
+		} catch (SocketException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

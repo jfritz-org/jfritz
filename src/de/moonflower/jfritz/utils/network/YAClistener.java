@@ -1,4 +1,4 @@
-package de.moonflower.jfritz.utils;
+package de.moonflower.jfritz.utils.network;
 
 /**
  * @author Robert Palmer Listens on a TCP-Port on YAC Messages Message format:
@@ -12,6 +12,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.utils.Debug;
 
 public class YAClistener implements Runnable {
 

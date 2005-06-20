@@ -618,8 +618,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			quickDialPanel.getDataModel().saveToXMLFile(JFritz.QUICKDIALS_FILE);
 
 			jfritz.saveProperties();
-			if (jfritz.getTelnet() != null)
-			jfritz.getTelnet().interrupt();
+			// FIXME if (jfritz.getTelnet() != null) jfritz.getTelnet().interrupt();
+			jfritz.stopSyslogListener();
 			System.exit(0);
 		}
 	}
@@ -753,11 +753,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			boolean active = ((JToggleButton) e.getSource()).isSelected();
 			if (active) {
 				Debug.msg("start callMonitor");
-				fetchList();
-				jfritz.newTelnet().start();
+				//fetchList();
+				// FIXME jfritz.newTelnet().start();
+				jfritz.startSyslogListener();
 			} else {
 				Debug.msg("stop callMonitor");
-				jfritz.getTelnet().interrupt();
+				jfritz.stopSyslogListener();
+				// jfritz.getTelnet().interrupt();
 			}
 			// TODO FETCHTASK
 			// yacListener.run();

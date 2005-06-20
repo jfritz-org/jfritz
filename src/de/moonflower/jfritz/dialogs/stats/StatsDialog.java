@@ -34,8 +34,8 @@ import org.xml.sax.XMLReader;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.utils.Debug;
-import de.moonflower.jfritz.utils.upnp.AddonInfosXMLHandler;
-import de.moonflower.jfritz.utils.upnp.UPNPUtils;
+import de.moonflower.jfritz.utils.network.AddonInfosXMLHandler;
+import de.moonflower.jfritz.utils.network.UPNPUtils;
 
 /**
  * @author Arno Willig

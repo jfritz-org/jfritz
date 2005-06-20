@@ -1,4 +1,4 @@
-package de.moonflower.jfritz.utils.upnp;
+package de.moonflower.jfritz.utils.network;
 
 import java.net.DatagramPacket;
 import java.net.InetAddress;
