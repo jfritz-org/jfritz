@@ -189,7 +189,7 @@ public class CallerList extends AbstractTableModel {
 			fos = new FileOutputStream(filename);
 			PrintWriter pw = new PrintWriter(fos);
 			pw
-					.println("\"CallType\";\"Date\";\"Number\";\"Route\";\"Port\";\"Duration\"");
+					.println("\"CallType\";\"Date\";\"Time\";\"Number\";\"Route\";\"Port\";\"Duration\";\"Name\";\"Address\";\"City\"");
 
 			Enumeration en = getUnfilteredCallVector().elements();
 			while (en.hasMoreElements()) {

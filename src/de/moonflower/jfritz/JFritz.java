@@ -30,7 +30,6 @@
  *
  * GLOBAL TODO:
  *
- * CSV-Export: Verschönern
  * CallerList: Einzelne Einträge löschen
  * CallerList: Einträge löschen älter als Datum
  * CallerList: Alle Einträge löschen
@@ -50,6 +49,12 @@
  *
  * JFritz! 0.4.2
  * - CallByCall information is saved
+ * - Phonebook XML-Saving fixed
+ * - Bugfix: Statistic-Dialog uses box.ip not 192.168.178.1
+ * - Compatibility to Java 1.4.2
+ * - Some little Bugfixes
+ * - CMD Option -e : Export CSV
+ * - Advanced CSV-File
  *
  * TODO:
  * - Bugfix: MacOSX
@@ -58,7 +63,6 @@
  *
  * - Merging of person entries
  * - Implement reverselookup for Switzerland (www.telsearch.ch)
- * - CMD Option --export-csv
  * - Password Dialog mit "speichern" Haken
  * - TFTP Box Konfig verwalten
  *
@@ -193,10 +197,12 @@ import de.moonflower.jfritz.dialogs.phonebook.PhoneBook;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.utils.CLIOptions;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.JFritzUtils;
+import de.moonflower.jfritz.utils.CLIOption;
 import de.moonflower.jfritz.utils.network.SSDPdiscoverThread;
 import de.moonflower.jfritz.utils.network.SyslogListener;
 import de.moonflower.jfritz.utils.network.TelnetListener;
@@ -218,7 +224,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.71 2005/06/20 23:10:41 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.72 2005/06/26 16:57:40 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -273,7 +279,7 @@ public final class JFritz {
 	/**
 	 * Constructs JFritz object
 	 */
-	public JFritz(boolean onlyFetchCalls) {
+	public JFritz(boolean fetchCalls, boolean csvExport, String csvFileName) {
 		loadProperties();
 		loadMessages(new Locale("de", "DE"));
 		loadSounds();
@@ -284,7 +290,7 @@ public final class JFritz {
 		callerlist = new CallerList(this);
 		callerlist.loadFromXMLFile(CALLS_FILE);
 
-		if (onlyFetchCalls) {
+		if (fetchCalls) {
 			infoMsg("Anrufliste wird von Fritz!Box geholt..");
 			try {
 				callerlist.getNewCalls();
@@ -293,9 +299,19 @@ public final class JFritz {
 			} catch (IOException e) {
 				Debug.err(e.toString());
 			} finally {
+				if (csvExport) {
+					infoMsg("CSV-Export to " + csvFileName);
+					callerlist.saveToCSVFile(csvFileName);
+				}
 				infoMsg("JFritz! beendet sich nun.");
 				System.exit(0);
 			}
+		}
+
+		if (csvExport) {
+			infoMsg("CSV-Export to " + csvFileName);
+			callerlist.saveToCSVFile(csvFileName);
+			System.exit(0);
 		}
 
 		jframe = new JFritzWindow(this);
@@ -350,31 +366,54 @@ public final class JFritz {
 				+ " (c) 2005 by " + PROGRAM_AUTHOR);
 		if (DEVEL_VERSION)
 			Debug.on();
-		boolean onlyFetchCalls = false;
+		boolean fetchCalls = false;
+		boolean csvExport = false;
+		String csvFileName = "";
 
-		for (int n = 0; n < args.length; n++) {
-			String opt = args[n];
-			if (opt.equals("-h") || opt.equals("--help")) {
-				System.out.println("Arguments:");
-				System.out.println(" -h or --help	 This short description");
-				System.out
-						.println(" -v or --verbose Turn on debug information");
-				System.out.println(" -s or --systray Turn on systray support");
-				System.out.println(" -f or --fetch   Fetch new calls and exit");
+		CLIOptions options = new CLIOptions();
+
+		options.addOption('h', "help", null, "This short description");
+		options.addOption('v', "verbose", null, "Turn on debug information");
+		options.addOption('v', "debug", null, "Turn on debug information");
+		options.addOption('s', "systray", null, "Turn on systray support");
+		options.addOption('f', "fetch", null, "Fetch new calls and exit");
+		options.addOption('e', "export", "filename",
+				"Fetch calls and export to CSV file.");
+
+		Vector foundOptions = options.parseOptions(args);
+		Enumeration en = foundOptions.elements();
+		while (en.hasMoreElements()) {
+			CLIOption option = (CLIOption) en.nextElement();
+
+			switch (option.getShortOption()) {
+			case 'h':
+				System.out.println("Call: java -jar jfritz.jar [Options]");
+				options.printOptions();
 				System.exit(0);
-			} else if (opt.equals("-v") || opt.equals("--verbose")
-					|| opt.equals("--debug")) {
+				break;
+			case 'v':
 				Debug.on();
-			}
-			if (opt.equals("-s") || opt.equals("--systray")) {
+				break;
+			case 's':
 				JFritz.SYSTRAY_SUPPORT = true;
-			}
-			if (opt.equals("-f") || opt.equals("--fetch")) {
-				onlyFetchCalls = true;
+				break;
+			case 'f':
+				fetchCalls = true;
+				break;
+			case 'e':
+				csvExport = true;
+				csvFileName = option.getParameter();
+				if (csvFileName == null) {
+					System.err.println("Parameter not found!");
+					System.exit(0);
+				}
+				break;
+			default:
+				break;
 			}
 		}
+		new JFritz(fetchCalls, csvExport, csvFileName);
 
-		new JFritz(onlyFetchCalls);
 	}
 
 	/**
@@ -512,7 +551,9 @@ public final class JFritz {
 
 	/**
 	 * Displays balloon info message
-	 * @param msg Message to be displayed
+	 *
+	 * @param msg
+	 *            Message to be displayed
 	 */
 	public static void infoMsg(String msg) {
 		System.out.println(msg);
@@ -524,8 +565,11 @@ public final class JFritz {
 
 	/**
 	 * Display call monitor message
-	 * @param caller Caller number
-	 * @param called Called number
+	 *
+	 * @param caller
+	 *            Caller number
+	 * @param called
+	 *            Called number
 	 */
 	public static void callMsg(String caller, String called) {
 		String callerstr = "", calledstr = "", callername = "", calledname = "";
@@ -558,7 +602,9 @@ public final class JFritz {
 
 	/**
 	 * Plays a sound by a given resource URL
-	 * @param sound URL of sound to be played
+	 *
+	 * @param sound
+	 *            URL of sound to be played
 	 */
 	public static void playSound(URL sound) {
 		try {
@@ -647,8 +693,10 @@ public final class JFritz {
 
 	/**
 	 *
-	 * @param property Property to get the value from
-	 * @param defaultValue Default value to be returned if property does not exist
+	 * @param property
+	 *            Property to get the value from
+	 * @param defaultValue
+	 *            Default value to be returned if property does not exist
 	 * @return Returns value of a specific property
 	 */
 	public static String getProperty(String property, String defaultValue) {
@@ -657,7 +705,8 @@ public final class JFritz {
 
 	/**
 	 *
-	 * @param property Property to get the value from
+	 * @param property
+	 *            Property to get the value from
 	 * @return Returns value of a specific property
 	 */
 	public static String getProperty(String property) {
@@ -666,8 +715,11 @@ public final class JFritz {
 
 	/**
 	 * Sets a property to a specific value
-	 * @param property Property to be set
-	 * @param value Value of property
+	 *
+	 * @param property
+	 *            Property to be set
+	 * @param value
+	 *            Value of property
 	 */
 	public static void setProperty(String property, String value) {
 		properties.setProperty(property, value);
@@ -675,7 +727,9 @@ public final class JFritz {
 
 	/**
 	 * Removes a property
-	 * @param property Property to be removed
+	 *
+	 * @param property
+	 *            Property to be removed
 	 */
 	public static void removeProperty(String property) {
 		properties.remove(property);
@@ -690,6 +744,7 @@ public final class JFritz {
 
 	/**
 	 * Creates a new TelnetListener
+	 *
 	 * @return Returns the TelnetListener
 	 */
 	public TelnetListener newTelnet2() {
@@ -698,15 +753,13 @@ public final class JFritz {
 	}
 
 	public SyslogListener startSyslogListener() {
-		Debug.msg("Starting SyslogListener");
 		syslog = new SyslogListener();
 		return syslog;
 	}
 
 	public void stopSyslogListener() {
-		Debug.msg("Stopping SyslogListener");
 		if (syslog != null) {
-			syslog.interrupt();
+			syslog.stopSyslogListener();
 		}
 	}
 }

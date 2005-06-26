@@ -20,7 +20,9 @@ import de.moonflower.jfritz.utils.Debug;
  */
 public class SyslogListener extends Thread {
 
-	private final String PATTERN_TELEFON = "IncomingCall[^:]*: ID ([^,]*), caller: \"([^\"]*)\" called: \"([^\"]*)\"";
+	private final String PATTERN_TELEFON_INCOMING = "IncomingCall[^:]*: ID ([^,]*), caller: \"([^\"]*)\" called: \"([^\"]*)\"";
+	private final String PATTERN_TELEFON_OUTGOING = "IncomingCall[^:]*: ID ([^,]*), caller: \"([^\"]*)\" called: \"([^\"]*)\"";
+
 	private DatagramSocket socket;
 
 	public SyslogListener() {
@@ -38,7 +40,6 @@ public class SyslogListener extends Thread {
 	public void startSyslogListener() {
 		int port = 4711;
 		byte[] log_buffer = new byte[2048];
-		int received_messages = 0;
 		DatagramPacket packet = new DatagramPacket(log_buffer,
 				log_buffer.length);
 
@@ -47,10 +48,9 @@ public class SyslogListener extends Thread {
 			Debug.msg("Starting SyslogListener on port " + port);
 			while (!isInterrupted()) {
 				socket.receive(packet);
-				received_messages++;
 				String msg = new String(packet.getData());
-				Debug.msg("Syslog: "+msg);
-				Pattern p = Pattern.compile(PATTERN_TELEFON);
+				Debug.msg("Syslog: " + msg);
+				Pattern p = Pattern.compile(PATTERN_TELEFON_INCOMING);
 				Matcher m = p.matcher(msg);
 				if (m.find()) {
 					String id = m.group(1);
@@ -64,13 +64,13 @@ public class SyslogListener extends Thread {
 				}
 			}
 		} catch (SocketException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
 		}
+		socket.close();
 	}
 
 	public void stopSyslogListener() {
+		Debug.msg("Stopping SyslogListener");
 		interrupt();
 		socket.close();
 	}
