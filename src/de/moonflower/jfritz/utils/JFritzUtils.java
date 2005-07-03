@@ -401,7 +401,7 @@ public class JFritzUtils {
 	public static String createAreaNumber(String number, String countryPrefix,
 			String countryCode, String areaPrefix, String areaCode) {
 		if (!number.equals("")) {
-			if (number.startsWith(countryCode) && number.length() > 10) {
+			if (number.startsWith(countryCode) && number.length() > 9) {
 				// International numbers without countryPrefix
 				// (some VOIP numbers)
 				number = countryPrefix + number;
@@ -464,6 +464,61 @@ public class JFritzUtils {
 		out = out.replaceAll("<", "&lt;");
 		out = out.replaceAll(">", "&gt;");
 		out = out.replaceAll("\"", "&quot;");
+		return out;
+	}
+
+	public static String replaceSpecialCharsURL(String input, boolean direction) {
+		String out = input;
+		if (direction) {
+			out = out.replaceAll("%", "%25");
+			out = out.replaceAll("\"", "%22");
+			out = out.replaceAll("#", "%23");
+			out = out.replaceAll("&", "%26");
+			out = out.replaceAll("'", "%27");
+			out = out.replaceAll("/", "%2F");
+			out = out.replaceAll("\\:", "%3A");
+			out = out.replaceAll(";", "%3B");
+			out = out.replaceAll("<", "%3C");
+			out = out.replaceAll("=", "%3D");
+			out = out.replaceAll(">", "%3E");
+			out = out.replaceAll("\\?", "%3F");
+			out = out.replaceAll("@", "%40");
+			out = out.replaceAll("\\[", "%5B");
+			out = out.replaceAll("\\\\", "%5C");
+			out = out.replaceAll("]", "%5D");
+			out = out.replaceAll("\\^", "%5E");
+			out = out.replaceAll("`", "%60");
+			out = out.replaceAll("\\{", "%7B");
+			out = out.replaceAll("\\|", "%7C");
+			out = out.replaceAll("}", "%7D");
+			out = out.replaceAll("~", "%7E");
+			out = out.replaceAll("¥", "%B4");
+		}
+		else {
+			out = out.replaceAll("%22","\"");
+			out = out.replaceAll("%23","#");
+			out = out.replaceAll("%25","%");
+			out = out.replaceAll("%26","&");
+			out = out.replaceAll("%27","'");
+			out = out.replaceAll("%2F","/");
+			out = out.replaceAll("%3A",":");
+			out = out.replaceAll("%3B",";");
+			out = out.replaceAll("%3C","<");
+			out = out.replaceAll("%3D","=");
+			out = out.replaceAll("%3E",">");
+			out = out.replaceAll("%3F","?");
+			out = out.replaceAll("%40","@");
+			out = out.replaceAll("%5B","[");
+			out = out.replaceAll("%5C","\\");
+			out = out.replaceAll("%5D","]");
+			out = out.replaceAll("%5E","^");
+			out = out.replaceAll("%60","`");
+			out = out.replaceAll("%7B","{");
+			out = out.replaceAll("%7C","|");
+			out = out.replaceAll("%7D","}");
+			out = out.replaceAll("%7E","~");
+			out = out.replaceAll("%B4","¥");
+		}
 		return out;
 	}
 
