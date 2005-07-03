@@ -5,8 +5,7 @@ package de.moonflower.jfritz.dialogs.phonebook;
  *
  * @author Robert Palmer
  *
- * TODO: Sonderzeichen beim Speichern und lesen ersetzen, sonst ist das
- * Phonebook nicht lesbar
+ * TODO: Cellrenderer for PrivateCell
  *
  */
 import java.io.FileInputStream;
@@ -49,10 +48,11 @@ public class PhoneBook extends AbstractTableModel {
 			+ "<!ELEMENT lastname (#PCDATA)>"
 			+ "<!ELEMENT entry (firstname?,middlename?,lastname?)>";
 
-	private final String columnNames[] = { "fullName", "telephoneNumber",
+	private final String columnNames[] = { "private_entry", "fullName", "telephoneNumber",
 			"address", "city", "last_call" };
 
-	private Vector persons;
+	private Vector filteredPersons;
+	private Vector unfilteredPersons;
 
 	private JFritz jfritz;
 
@@ -129,16 +129,20 @@ public class PhoneBook extends AbstractTableModel {
 
 	public PhoneBook(JFritz jfritz) {
 		this.jfritz = jfritz;
-		persons = new Vector();
-
+		filteredPersons = new Vector();
+		unfilteredPersons = new Vector();
 	}
 
-	public Vector getPersons() {
-		return persons;
+	public Vector getFilteredPersons() {
+		return filteredPersons;
+	}
+
+	public Vector getUnfilteredPersons() {
+		return unfilteredPersons;
 	}
 
 	public void addEntry(Person newPerson) {
-		Enumeration en = persons.elements();
+		Enumeration en = unfilteredPersons.elements();
 		while (en.hasMoreElements()) {
 			Person p = (Person) en.nextElement();
 			PhoneNumber pn1 = p.getStandardTelephoneNumber();
@@ -148,19 +152,21 @@ public class PhoneBook extends AbstractTableModel {
 				return;
 			}
 		}
-		persons.add(newPerson);
-		sort();
+		unfilteredPersons.add(newPerson);
+		updateFilter();
 	}
 
 	public void deleteEntry(Person person) {
-		persons.remove(person);
+		unfilteredPersons.remove(person);
+		updateFilter();
 	}
 
 	/**
 	 * Sorts phonebook alphabetically
 	 */
 	public synchronized void sort() {
-		Collections.sort(persons, new ColumnSorter(0, true));
+		Collections.sort(unfilteredPersons, new ColumnSorter(0, true));
+		this.fireTableDataChanged();
 	}
 
 	/**
@@ -180,10 +186,10 @@ public class PhoneBook extends AbstractTableModel {
 			pw.println("<phonebook>");
 			pw.println("<comment>Phonebook for " + JFritz.PROGRAM_NAME + " v"
 					+ JFritz.PROGRAM_VERSION + "</comment>");
-			Enumeration en = persons.elements();
+			Enumeration en = unfilteredPersons.elements();
 			while (en.hasMoreElements()) {
 				Person current = (Person) en.nextElement();
-				pw.println("<entry>");
+				pw.println("<entry private=\"" + current.isPrivateEntry() + "\">");
 				if (current.getFullname().length() > 0) {
 					pw.println("\t<name>");
 					if (current.getFirstName().length() > 0)
@@ -302,21 +308,23 @@ public class PhoneBook extends AbstractTableModel {
 		} catch (IOException e) {
 			Debug.err("Could not read " + filename + "!");
 		}
-		sort();
+		updateFilter();
 	}
 
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Person person = (Person) persons.get(rowIndex);
+		Person person = (Person) filteredPersons.get(rowIndex);
 		switch (columnIndex) {
-		case 0:
-			return person.getFullname();
+		case 0: if (person.isPrivateEntry()) return "YES";
+			 else return "NO";
 		case 1:
-			return person.getStandardTelephoneNumber();
+			return person.getFullname();
 		case 2:
-			return person.getStreet();
+			return person.getStandardTelephoneNumber();
 		case 3:
-			return (person.getPostalCode() + " " + person.getCity()).trim();
+			return person.getStreet();
 		case 4:
+			return (person.getPostalCode() + " " + person.getCity()).trim();
+		case 5:
 			return jfritz.getCallerlist().findLastCall(person);
 		default:
 			return "X";
@@ -331,13 +339,13 @@ public class PhoneBook extends AbstractTableModel {
 	 */
 	public Person getPersonAt(int rowIndex) {
 		if (rowIndex >= 0)
-			return (Person) persons.get(rowIndex);
+			return (Person) filteredPersons.get(rowIndex);
 		else
 			return null;
 	}
 
 	public int getRowCount() {
-		return persons.size();
+		return filteredPersons.size();
 	}
 
 	public int getColumnCount() {
@@ -355,7 +363,7 @@ public class PhoneBook extends AbstractTableModel {
 	public Person findPerson(PhoneNumber number) {
 		if (number == null)
 			return null;
-		Enumeration en = persons.elements();
+		Enumeration en = filteredPersons.elements();
 		while (en.hasMoreElements()) {
 			Person p = (Person) en.nextElement();
 			Vector numbers = p.getNumbers();
@@ -380,6 +388,28 @@ public class PhoneBook extends AbstractTableModel {
 			return Object.class;
 		} else {
 			return o.getClass();
+		}
+	}
+
+	public void updateFilter() {
+		boolean filter_private = JFritzUtils.parseBoolean(JFritz
+				.getProperty("filter_private"));
+		if (filter_private) {
+			Enumeration en = unfilteredPersons.elements();
+			Vector newFilteredPersons;
+			newFilteredPersons = new Vector();
+			while (en.hasMoreElements()) {
+				Person current = (Person) en.nextElement();
+				if (current.isPrivateEntry()) {
+					newFilteredPersons.add(current);
+				}
+			}
+			filteredPersons = newFilteredPersons;
+			sort();
+		}
+		else {
+			filteredPersons = unfilteredPersons;
+			sort();
 		}
 	}
 }
