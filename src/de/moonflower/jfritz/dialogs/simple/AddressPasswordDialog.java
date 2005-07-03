@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import de.moonflower.jfritz.utils.JFritzUtils;
 /**
  * Simple dialog for Fritz!Box address and password input.
  * TODO: I18N
@@ -57,7 +58,7 @@ public class AddressPasswordDialog extends JDialog {
 	}
 
 	public String getPass() {
-		return new String(pass.getPassword());
+		return JFritzUtils.replaceSpecialCharsURL(new String(pass.getPassword()), true);
 	}
 
 	public String getAddress() {
