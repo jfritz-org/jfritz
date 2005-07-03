@@ -35,10 +35,13 @@ public class PhoneBookTable extends JTable {
 		setRowSelectionAllowed(true);
 		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
+
 		// setDefaultRenderer(Call.class, new CallTypeDateCellRenderer());
 
-		this.getColumnModel().getColumn(4).setCellRenderer(
+		getColumnModel().getColumn(5).setCellRenderer(
 				new CallTypeDateCellRenderer());
+		getColumnModel().getColumn(0).setMinWidth(50);
+		getColumnModel().getColumn(0).setMaxWidth(50);
 	}
 
 	public Component prepareRenderer(TableCellRenderer renderer, int rowIndex,
