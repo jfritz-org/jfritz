@@ -18,12 +18,14 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.struct.Person;
+import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
  * @author Arno Willig
@@ -103,6 +105,20 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		delButton.addActionListener(this);
 		toolBar.add(addButton);
 		toolBar.add(delButton);
+
+		toolBar.addSeparator();
+		toolBar.addSeparator();
+		toolBar.addSeparator();
+
+		JToggleButton tb = new JToggleButton(getImage("AddBook_grey.png"), true);
+		tb.setSelectedIcon(getImage("AddBook.png"));
+		tb.setActionCommand("filter_private");
+		tb.addActionListener(this);
+		tb.setToolTipText(JFritz.getMessage("private_entry"));
+		tb.setSelected(JFritzUtils.parseBoolean(JFritz.getProperty(
+				"filter_private", "false")));
+		toolBar.add(tb);
+
 		return toolBar;
 	}
 
@@ -155,12 +171,18 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		} else if (e.getActionCommand().equals("save")) {
 			personPanel.updatePerson();
 			jfritz.getPhonebook().fireTableDataChanged();
+			jfritz.getPhonebook().saveToXMLFile(JFritz.PHONEBOOK_FILE);
 		} else if (e.getActionCommand().equals("addPerson")) {
 			jfritz.getPhonebook().addEntry(new Person("", " NEU "));
 			jfritz.getPhonebook().fireTableDataChanged();
 		} else if (e.getActionCommand().equals("deletePerson")) {
 			jfritz.getPhonebook().deleteEntry(personPanel.getPerson());
 			jfritz.getPhonebook().fireTableDataChanged();
+			jfritz.getPhonebook().saveToXMLFile(JFritz.PHONEBOOK_FILE);
+		} else if (e.getActionCommand().equals("filter_private")) {
+			JFritz.setProperty("filter_private", Boolean
+					.toString(((JToggleButton) e.getSource()).isSelected()));
+			jfritz.getPhonebook().updateFilter();
 		}
 		propertyChange(null);
 	}
@@ -181,5 +203,11 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 
 	public void showPersonPanel() {
 		splitPane.setDividerLocation(PERSONPANEL_WIDTH);
+	}
+
+	public ImageIcon getImage(String filename) {
+		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource(
+						"/de/moonflower/jfritz/resources/images/" + filename)));
 	}
 }
