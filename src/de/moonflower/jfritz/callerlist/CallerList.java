@@ -348,8 +348,8 @@ public class CallerList extends AbstractTableModel {
 				JFritz.getProperty("area.prefix"), JFritz
 						.getProperty("area.code"), JFritzUtils.detectBoxType(
 						JFritz.getProperty("box.firmware"), JFritz
-								.getProperty("box.address"), JFritz
-								.getProperty("box.password")), jfritz);
+								.getProperty("box.address"), Encryption.decrypt(JFritz
+								.getProperty("box.password"))), jfritz);
 
 		int newEntries = 0;
 		for (Enumeration el = data.elements(); el.hasMoreElements();) {
@@ -762,5 +762,30 @@ public class CallerList extends AbstractTableModel {
 			}
 		}
 		return null;
+	}
+
+	public void clearList() {
+		Debug.msg("Clearing caller Table");
+		unfilteredCallerData.clear();
+		saveToXMLFile(JFritz.CALLS_FILE);
+		fireTableDataChanged();
+	}
+
+	public void removeEntries() {
+		Debug.msg("Removing entries");
+		int row[] = jfritz.getJframe().getCallerTable().getSelectedRows();
+		if (row.length > 0) {
+			Vector personsToDelete = new Vector();
+			for (int i=0; i<row.length; i++) {
+				personsToDelete.add(filteredCallerData.get(row[i]));
+			}
+			Enumeration en = personsToDelete.elements();
+			while (en.hasMoreElements()) {
+				unfilteredCallerData.remove(en.nextElement());
+			}
+			saveToXMLFile(JFritz.CALLS_FILE);
+			updateFilter();
+			fireTableDataChanged();
+		}
 	}
 }
