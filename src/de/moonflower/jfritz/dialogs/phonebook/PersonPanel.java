@@ -35,6 +35,8 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 
@@ -269,6 +271,8 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 	private boolean hasChanged = false;
 
+	private JCheckBox chkBoxPrivateEntry;
+
 	/**
 	 *
 	 */
@@ -284,7 +288,19 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridLayout(0, 2));
-		JLabel label = new JLabel(JFritz.getMessage("firstName") + ": ");
+		JLabel label = new JLabel(JFritz.getMessage("private_entry") + ": ");
+		buttonPanel.add(label);
+		chkBoxPrivateEntry = new JCheckBox();
+	    ChangeListener changeListener = new ChangeListener() {
+	        public void stateChanged(ChangeEvent changeEvent) {
+	        	boolean oldhasChanged = hasChanged;
+	        	hasChanged = chkBoxPrivateEntry.isSelected() != person.isPrivateEntry();
+	    		firePropertyChange("hasChanged", oldhasChanged, hasChanged);
+	        }
+	      };
+		chkBoxPrivateEntry.addChangeListener(changeListener);
+		buttonPanel.add(chkBoxPrivateEntry);
+		label = new JLabel(JFritz.getMessage("firstName") + ": ");
 		buttonPanel.add(label);
 		tfFirstName = new JTextField(person.getFirstName());
 		tfFirstName.addCaretListener(this);
@@ -532,6 +548,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 	}
 
 	public final void updateGUI() {
+		chkBoxPrivateEntry.setSelected(person.isPrivateEntry());
 		tfFirstName.setText(person.getFirstName());
 		tfCompany.setText(person.getCompany());
 		tfLastName.setText(person.getLastName());
@@ -544,6 +561,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 	}
 
 	public final Person updatePerson() {
+		person.setPrivateEntry(chkBoxPrivateEntry.isSelected());
 		person.setFirstName(tfFirstName.getText());
 		person.setCompany(tfCompany.getText());
 		person.setLastName(tfLastName.getText());
