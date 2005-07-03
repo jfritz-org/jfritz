@@ -15,6 +15,8 @@ import de.moonflower.jfritz.utils.Debug;
  */
 public class Person {
 
+	private boolean privateEntry = false;
+
 	private String firstName = "";
 
 	private String lastName = "";
@@ -48,6 +50,7 @@ public class Person {
 		this.postalCode = postalCode;
 		this.city = city;
 		this.emailAddress = eMail;
+		this.privateEntry = false;
 
 	}
 
@@ -56,6 +59,7 @@ public class Person {
 
 		this.firstName = firstName;
 		this.lastName = lastName;
+		this.privateEntry = false;
 	}
 
 	public Person(Person person) {
@@ -77,6 +81,7 @@ public class Person {
 		while (en.hasMoreElements()) {
 			numbers.add(en.nextElement());
 		}
+		privateEntry = person.isPrivateEntry();
 	}
 
 	public void addNumber(PhoneNumber number) {
@@ -247,5 +252,13 @@ public class Person {
 	 */
 	public final void setStandard(String standard) {
 		this.standard = standard;
+	}
+
+	public void setPrivateEntry(boolean b) {
+		privateEntry = b;
+	}
+
+	public boolean isPrivateEntry() {
+		return privateEntry;
 	}
 }
