@@ -25,6 +25,7 @@ import de.moonflower.jfritz.utils.Debug;
 /**
  * @author Arno Willig
  *
+ * TODO: Bugfix: Exception if no UPNP enabled
  */
 public class UPNPUtils {
 
