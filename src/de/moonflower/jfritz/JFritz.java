@@ -225,7 +225,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.73 2005/07/03 11:29:49 robotniko Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.74 2005/07/05 00:58:27 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -668,7 +668,7 @@ public final class JFritz {
 		Debug.err(msg);
 		if (SYSTRAY_SUPPORT) {
 			trayIcon.displayMessage(JFritz.PROGRAM_NAME, msg,
-					TrayIcon.ERROE_MESSAGE_TYPE);
+					TrayIcon.ERROR_MESSAGE_TYPE);
 		}
 	}
 
