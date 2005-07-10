@@ -43,7 +43,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	private JToggleButton dateButton;
 
-	private JButton clearListButton, clearEntryButton;
+	private JButton deleteEntriesButton;
 
 	private JTextField searchFilter;
 
@@ -116,25 +116,15 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		toolBar.add(dateButton);
 
 		toolBar.addSeparator();
-		toolBar.addSeparator();
 
-		clearListButton = new JButton("Liste löschen");
-		clearListButton.setToolTipText("Lösche gesamte Liste");
-		clearListButton.setActionCommand("clear_list");
-		clearListButton.addActionListener(this);
-		clearListButton.setIcon(getImage("clearList.png"));
-		clearListButton.setFocusPainted(false);
-		toolBar.add(clearListButton);
-
-		toolBar.addSeparator();
-
-		clearEntryButton = new JButton("Einträge löschen");
-		clearEntryButton.setToolTipText("Lösche gewählte Einträge");
-		clearEntryButton.setActionCommand("clear_entry");
-		clearEntryButton.addActionListener(this);
-		clearEntryButton.setIcon(getImage("delete.png"));
-		clearEntryButton.setFocusPainted(false);
-		toolBar.add(clearEntryButton);
+		deleteEntriesButton = new JButton();
+		deleteEntriesButton.setToolTipText(JFritz.getMessage("delete_entries"));
+		deleteEntriesButton.setActionCommand("delete_entry");
+		deleteEntriesButton.addActionListener(this);
+		deleteEntriesButton.setIcon(getImage("delete.png"));
+		deleteEntriesButton.setFocusPainted(false);
+		deleteEntriesButton.setEnabled(false);
+		toolBar.add(deleteEntriesButton);
 
 		toolBar.addSeparator();
 
@@ -279,10 +269,10 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			JFritz.setProperty("filter.search", "");
 			jfritz.getCallerlist().updateFilter();
 			jfritz.getCallerlist().fireTableStructureChanged();
-		} else if (e.getActionCommand() == "clear_list") {
-			if (showYesNoDialog("Liste wirklich löschen?") == 0) jfritz.getCallerlist().clearList();
-		} else if (e.getActionCommand() == "clear_entry") {
-			if (showYesNoDialog("Einträge wirklich löschen?") == 0) jfritz.getCallerlist().removeEntries();
+		} else if (e.getActionCommand() == "delete_entry") {
+			if (showYesNoDialog("Wirklich " // TODO I18N
+					+ deleteEntriesButton.getToolTipText() + "?") == 0)
+				jfritz.getCallerlist().removeEntries();
 		}
 
 	}
@@ -314,4 +304,28 @@ public class CallerListPanel extends JPanel implements ActionListener,
 				return k;
 		return -1;
 	}
+
+	public void setDeleteListButton() {
+		deleteEntriesButton.setToolTipText(JFritz.getMessage("delete_list"));
+		// clearList-Icon to big, so use std. delete.png
+		// deleteEntriesButton.setIcon(getImage("clearList.png"));
+		deleteEntriesButton.setEnabled(true);
+	}
+
+	public void setDeleteEntriesButton(int rows) {
+		deleteEntriesButton.setToolTipText(rows + " "
+				+ JFritz.getMessage("delete_entries"));
+		deleteEntriesButton.setEnabled(true);
+	}
+
+	public void setDeleteEntryButton() {
+		deleteEntriesButton.setToolTipText(JFritz.getMessage("delete_entry"));
+		deleteEntriesButton.setEnabled(true);
+	}
+
+	public void disableDeleteEntriesButton() {
+		deleteEntriesButton.setToolTipText(JFritz.getMessage("delete_entries"));
+		deleteEntriesButton.setEnabled(false);
+	}
+
 }

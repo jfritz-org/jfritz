@@ -59,7 +59,8 @@ public class SelectionListener implements ListSelectionListener {
 				// table.getJfritz().getJframe().getPhoneBookPanel().getPersonPanel().setPerson(person);
 				PhoneBookTable pt = table.getJfritz().getJframe()
 						.getPhoneBookPanel().getPhoneBookTable();
-				Vector persons = table.getJfritz().getPhonebook().getFilteredPersons();
+				Vector persons = table.getJfritz().getPhonebook()
+						.getFilteredPersons();
 				for (int i = 0; i < persons.size(); i++) {
 					Person p = (Person) persons.get(i);
 					if (p == person) {
@@ -69,6 +70,18 @@ public class SelectionListener implements ListSelectionListener {
 						break;
 					}
 				}
+				table.getJfritz().getJframe().getCallerListPanel()
+						.setDeleteEntryButton();
+			} else if (rows.length > 0) {
+				if (rows.length == table.getRowCount())
+					table.getJfritz().getJframe().getCallerListPanel()
+							.setDeleteListButton();
+				else
+					table.getJfritz().getJframe().getCallerListPanel()
+							.setDeleteEntriesButton(rows.length);
+			} else {
+				table.getJfritz().getJframe().getCallerListPanel()
+						.disableDeleteEntriesButton();
 			}
 		}
 	}

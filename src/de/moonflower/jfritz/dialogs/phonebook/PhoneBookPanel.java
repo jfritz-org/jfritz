@@ -93,7 +93,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		addButton.setIcon(getImage("add.png"));
 		addButton.setActionCommand("addPerson");
 		addButton.addActionListener(this);
-		JButton delButton = new JButton(JFritz.getMessage("del_entry"));
+		JButton delButton = new JButton(JFritz.getMessage("delete_entry"));
 		delButton.setIcon(getImage("delete.png"));
 		delButton.setActionCommand("deletePerson");
 		delButton.addActionListener(this);
