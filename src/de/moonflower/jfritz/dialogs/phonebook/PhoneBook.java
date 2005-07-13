@@ -13,11 +13,15 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.io.StringReader;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.io.UnsupportedEncodingException;
 
 import javax.swing.table.AbstractTableModel;
 import javax.xml.parsers.ParserConfigurationException;
@@ -41,7 +45,7 @@ public class PhoneBook extends AbstractTableModel {
 	private static final String PHONEBOOK_DTD_URI = "http://jfritz.moonflower.de/dtd/phonebook.dtd";
 
 	// TODO Write correct dtd
-	private static final String PHONEBOOK_DTD = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>"
+	private static final String PHONEBOOK_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 			+ "<!-- DTD for JFritz phonebook -->"
 			+ "<!ELEMENT firstname (commment?,entry*)>"
 			+ "<!ELEMENT middlename (#PCDATA)>"
@@ -178,66 +182,89 @@ public class PhoneBook extends AbstractTableModel {
 		Debug.msg("Saving to file " + filename);
 		FileOutputStream fos;
 		try {
-			fos = new FileOutputStream(filename);
-			PrintWriter pw = new PrintWriter(fos);
-			pw.println("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>");
-			pw.println("<!DOCTYPE phonebook SYSTEM \"" + PHONEBOOK_DTD_URI
+		        BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
+		            new FileOutputStream(filename), "UTF8"));
+//   			fos = new FileOutputStream(filename);
+//			PrintWriter pw = new PrintWriter(fos);
+			pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+			pw.newLine();
+			pw.write("<!DOCTYPE phonebook SYSTEM \"" + PHONEBOOK_DTD_URI
 					+ "\">");
-			pw.println("<phonebook>");
-			pw.println("<comment>Phonebook for " + JFritz.PROGRAM_NAME + " v"
+			pw.newLine();
+			pw.write("<phonebook>");
+			pw.newLine();
+			pw.write("<comment>Phonebook for " + JFritz.PROGRAM_NAME + " v"
 					+ JFritz.PROGRAM_VERSION + "</comment>");
+			pw.newLine();
 			Enumeration en = unfilteredPersons.elements();
 			while (en.hasMoreElements()) {
 				Person current = (Person) en.nextElement();
-				pw.println("<entry private=\"" + current.isPrivateEntry() + "\">");
+				pw.write("<entry private=\"" + current.isPrivateEntry() + "\">");
+				pw.newLine();
 				if (current.getFullname().length() > 0) {
-					pw.println("\t<name>");
+					pw.write("\t<name>");
+					pw.newLine();
 					if (current.getFirstName().length() > 0)
-						pw.println("\t\t<firstname>" + JFritzUtils.replaceSpecialChars(current.getFirstName())
+						pw.write("\t\t<firstname>" + JFritzUtils.replaceSpecialChars(current.getFirstName())
 								+ "</firstname>");
+					pw.newLine();
 					if (current.getLastName().length() > 0)
-						pw.println("\t\t<lastname>" + JFritzUtils.replaceSpecialChars(current.getLastName())
+						pw.write("\t\t<lastname>" + JFritzUtils.replaceSpecialChars(current.getLastName())
 								+ "</lastname>");
-					pw.println("\t</name>");
+					pw.newLine();
+					pw.write("\t</name>");
+					pw.newLine();
 					if (current.getCompany().length() > 0)
-						pw.println("\t<company>" + JFritzUtils.replaceSpecialChars(current.getCompany())
+						pw.write("\t<company>" + JFritzUtils.replaceSpecialChars(current.getCompany())
 								+ "</company>");
+					pw.newLine();
 				}
 
 				if ((current.getStreet().length() > 0)
 						|| (current.getPostalCode().length() > 0)
 						|| (current.getCity().length() > 0)) {
-					pw.println("\t<address>");
+					pw.write("\t<address>");
+					pw.newLine();
 					if (current.getStreet().length() > 0)
-						pw.println("\t\t<street>" + JFritzUtils.replaceSpecialChars(current.getStreet())
+						pw.write("\t\t<street>" + JFritzUtils.replaceSpecialChars(current.getStreet())
 								+ "</street>");
+					pw.newLine();
 					if (current.getPostalCode().length() > 0)
-						pw.println("\t\t<postcode>" + JFritzUtils.replaceSpecialChars(current.getPostalCode())
+						pw.write("\t\t<postcode>" + JFritzUtils.replaceSpecialChars(current.getPostalCode())
 								+ "</postcode>");
+					pw.newLine();
 					if (current.getCity().length() > 0)
 						pw
-								.println("\t\t<city>" + JFritzUtils.replaceSpecialChars(current.getCity())
+						.write("\t\t<city>" + JFritzUtils.replaceSpecialChars(current.getCity())
 										+ "</city>");
-					pw.println("\t</address>");
+					pw.newLine();
+					pw.write("\t</address>");
+					pw.newLine();
 				}
 
-				pw.println("\t<phonenumbers standard=\""
+				pw.write("\t<phonenumbers standard=\""
 						+ current.getStandard() + "\">");
+				pw.newLine();
 				Enumeration en2 = current.getNumbers().elements();
 				while (en2.hasMoreElements()) {
 					PhoneNumber nr = (PhoneNumber) en2.nextElement();
-					pw.println("\t\t<number type=\"" + nr.getType() + "\">"
+					pw.write("\t\t<number type=\"" + nr.getType() + "\">"
 							+ JFritzUtils.replaceSpecialChars(nr.getFullNumber()) + "</number>");
+					pw.newLine();
 
 				}
-				pw.println("\t</phonenumbers>");
+				pw.write("\t</phonenumbers>");
+				pw.newLine();
 
 				if (current.getEmailAddress().length() > 0) {
-					pw.println("\t<internet>");
+					pw.write("\t<internet>");
+					pw.newLine();
 					if (current.getEmailAddress().length() > 0)
-						pw.println("\t\t<email>" + JFritzUtils.replaceSpecialChars(current.getEmailAddress())
+						pw.write("\t\t<email>" + JFritzUtils.replaceSpecialChars(current.getEmailAddress())
 								+ "</email>");
-					pw.println("\t</internet>");
+					pw.newLine();
+					pw.write("\t</internet>");
+					pw.newLine();
 				}
 				/*
 				 * if (current.getCategory().length() > 0) { pw.println("\t
@@ -245,12 +272,17 @@ public class PhoneBook extends AbstractTableModel {
 				 * pw.println("\t\t <category>" + current.getCategory() + "
 				 * </category>"); pw.println("\t </categories>"); }
 				 */
-				pw.println("</entry>");
+				pw.write("</entry>");
+				pw.newLine();
 			}
-			pw.println("</phonebook>");
+			pw.write("</phonebook>");
+			pw.newLine();
 			pw.close();
-		} catch (FileNotFoundException e) {
-			Debug.err("Could not write " + filename + "!");
+		  } catch (UnsupportedEncodingException e) {
+			} catch (FileNotFoundException e) {
+				Debug.err("Could not write " + filename + "!");
+		  } catch (IOException e) {
+		  	Debug.err("IOException " + filename);
 		}
 	}
 
