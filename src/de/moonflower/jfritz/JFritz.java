@@ -56,10 +56,10 @@
  * - CMD Option -l : Debug to Logfile
  * - Advanced CSV-File
  * - Bugfix: Passwords with special chars
+ * - Bugfix: Bigger Config Dialog
+ * - UTF-8 Coding of Phoneboox.xml
  *
  * TODO:
- * - Bugfix: MacOSX
- * - Bugfix: PhoneBook too long??
  * - YAK (Neues Reiterchen)
  *
  * - Merging of person entries
@@ -225,7 +225,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.74 2005/07/05 00:58:27 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.75 2005/07/13 17:21:28 robotniko Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
