@@ -55,6 +55,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.network.SSDPPacket;
 
 import java.net.URLEncoder;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
 /**
@@ -136,7 +137,12 @@ public class ConfigDialog extends JDialog {
 								"")));
 		passwordAfterStartButton.setSelected(pwAfterStart);
 
-		pass.setText(URLEncoder.encode(Encryption.decrypt(JFritz.getProperty("box.password"))));
+		try {
+		pass.setText(URLEncoder.encode(Encryption.decrypt(JFritz.getProperty("box.password")),"UTF-8"));
+		}
+		catch (UnsupportedEncodingException e){
+			Debug.msg("Exception (ConfigDialog:setValues): UnsupportedEncodungException");
+		}
 		encodedPassword = Encryption.decrypt(JFritz.getProperty("box.password"));
 		address.setText(JFritz.getProperty("box.address"));
 		areaCode.setText(JFritz.getProperty("area.code"));
@@ -223,6 +229,206 @@ public class ConfigDialog extends JDialog {
 		}
 	}
 
+	protected JPanel createBoxPane(ActionListener actionListener) {
+		JPanel boxpane = new JPanel();
+		boxpane.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.insets.top = 5;
+		c.insets.bottom = 5;
+		c.insets.left = 5;
+		c.anchor = GridBagConstraints.WEST;
+
+		c.gridy = 1;
+		ImageIcon boxicon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource(
+						"/de/moonflower/jfritz/resources/images/fritzbox.png")));
+		JLabel label = new JLabel("");
+		label.setIcon(boxicon);
+		boxpane.add(label, c);
+		label = new JLabel("FRITZ!Box-Einstellungen");
+		boxpane.add(label, c);
+
+		c.gridy = 2;
+		label = new JLabel("FRITZ!Box: ");
+		boxpane.add(label, c);
+		address = new JTextField("", 16);
+
+		addressCombo = new JComboBox();
+		Enumeration en = devices.elements();
+		while (en.hasMoreElements()) {
+			SSDPPacket p = (SSDPPacket) en.nextElement();
+			addressCombo.addItem(p.getShortName());
+		}
+
+		addressCombo.setActionCommand("addresscombo");
+		addressCombo.addActionListener(actionListener);
+		boxpane.add(addressCombo, c);
+
+		c.gridy = 3;
+		label = new JLabel("IP-Addresse: ");
+		boxpane.add(label, c);
+		address = new JTextField("", 16);
+		boxpane.add(address, c);
+
+		c.gridy = 4;
+		label = new JLabel("Passwort: ");
+		boxpane.add(label, c);
+		pass = new JPasswordField("", 16);
+		boxpane.add(pass, c);
+
+		c.gridy = 5;
+		boxtypeButton = new JButton("Typ erkennen");
+		boxtypeButton.setActionCommand("detectboxtype");
+		boxtypeButton.addActionListener(actionListener);
+		boxpane.add(boxtypeButton, c);
+		boxtypeLabel = new JLabel();
+		boxpane.add(boxtypeLabel, c);
+
+		c.gridy = 6;
+		label = new JLabel("MAC-Addresse: ");
+		boxpane.add(label, c);
+		macLabel = new JLabel();
+		boxpane.add(macLabel, c);
+		return boxpane;
+	}
+
+	protected JPanel createPhonePane() {
+		JPanel phonepane = new JPanel();
+		phonepane.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.insets.top = 5;
+		c.insets.bottom = 5;
+		c.anchor = GridBagConstraints.WEST;
+
+		c.gridy = 1;
+		JLabel label = new JLabel("Ortsvorwahl: ");
+		phonepane.add(label, c);
+		areaCode = new JTextField("", 6);
+		phonepane.add(areaCode, c);
+
+		c.gridy = 2;
+		label = new JLabel("Landesvorwahl: ");
+		phonepane.add(label, c);
+		countryCode = new JTextField("", 3);
+		phonepane.add(countryCode, c);
+
+		c.gridy = 3;
+		label = new JLabel("Orts-Prefix: ");
+		phonepane.add(label, c);
+		areaPrefix = new JTextField("", 3);
+		phonepane.add(areaPrefix, c);
+
+		c.gridy = 4;
+		label = new JLabel("Landes-Prefix: ");
+		phonepane.add(label, c);
+		countryPrefix = new JTextField("", 3);
+		phonepane.add(countryPrefix, c);
+		return phonepane;
+	}
+
+	protected JPanel createSipPane(ActionListener actionListener) {
+		JPanel sippane = new JPanel();
+		sippane.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.insets.top = 5;
+		c.insets.bottom = 5;
+		c.anchor = GridBagConstraints.WEST;
+
+		JPanel sipButtonPane = new JPanel();
+		sipmodel = new SipProviderTableModel();
+		JTable siptable = new JTable(sipmodel) {
+			public Component prepareRenderer(TableCellRenderer renderer,
+					int rowIndex, int vColIndex) {
+				Component c = super.prepareRenderer(renderer, rowIndex,
+						vColIndex);
+				if (rowIndex % 2 == 0 && !isCellSelected(rowIndex, vColIndex)) {
+					c.setBackground(new Color(255, 255, 200));
+				} else if (!isCellSelected(rowIndex, vColIndex)) {
+					// If not shaded, match the table's background
+					c.setBackground(getBackground());
+				} else {
+					c.setBackground(new Color(204, 204, 255));
+				}
+				return c;
+			}
+		};
+		siptable.setRowHeight(24);
+		siptable.setFocusable(false);
+		siptable.setAutoCreateColumnsFromModel(false);
+		siptable.setColumnSelectionAllowed(false);
+		siptable.setCellSelectionEnabled(false);
+		siptable.setRowSelectionAllowed(true);
+		siptable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		siptable.getColumnModel().getColumn(0).setMinWidth(20);
+		siptable.getColumnModel().getColumn(0).setMaxWidth(20);
+		siptable.getColumnModel().getColumn(1).setMinWidth(40);
+		siptable.getColumnModel().getColumn(1).setMaxWidth(40);
+		siptable.setSize(200, 200);
+		JButton b1 = new JButton("Von der Box holen");
+		b1.setActionCommand("fetchSIP");
+		b1.addActionListener(actionListener);
+		JButton b2 = new JButton("Auf die Box speichern");
+		b2.setEnabled(false);
+		sipButtonPane.add(b1);
+		sipButtonPane.add(b2);
+
+		sippane.setLayout(new BorderLayout());
+		sippane.add(sipButtonPane, BorderLayout.NORTH);
+		sippane.add(new JScrollPane(siptable), BorderLayout.CENTER);
+		return sippane;
+	}
+
+	protected JPanel createOtherPane() {
+		JPanel otherpane = new JPanel();
+
+		otherpane.setLayout(new BoxLayout(otherpane, BoxLayout.Y_AXIS));
+		timerLabel = new JLabel("Timer (in min): ");
+		otherpane.add(timerLabel);
+		otherpane.add(timerSlider);
+
+		passwordAfterStartButton = new JCheckBox(
+				"Vor Programmstart Passwort erfragen?");
+		otherpane.add(passwordAfterStartButton);
+
+		timerAfterStartButton = new JCheckBox(
+				"Nach Programmstart Timer aktivieren");
+		otherpane.add(timerAfterStartButton);
+
+		startMinimizedButton = new JCheckBox("Programm minimiert starten");
+		otherpane.add(startMinimizedButton);
+
+		notifyOnCallsButton = new JCheckBox(
+				"Bei neuen Anrufen Fenster in den Vordergrund");
+		otherpane.add(notifyOnCallsButton);
+
+		soundButton = new JCheckBox("Bei eingehenden Anrufen Sound abspielen");
+		otherpane.add(soundButton);
+
+		confirmOnExitButton = new JCheckBox("Bei Beenden nachfragen");
+		otherpane.add(confirmOnExitButton);
+		return otherpane;
+	}
+
+	protected JPanel createCallerListPane() {
+		JPanel cPanel = new JPanel();
+
+		cPanel.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.insets.top = 5;
+		c.insets.bottom = 5;
+		c.anchor = GridBagConstraints.WEST;
+
+		c.gridy = 0;
+		fetchAfterStartButton = new JCheckBox("Nach Programmstart Liste holen");
+		cPanel.add(fetchAfterStartButton, c);
+
+		c.gridy = 1;
+		deleteAfterFetchButton = new JCheckBox("Nach Laden auf Box löschen");
+		cPanel.add(deleteAfterFetchButton, c);
+
+		return cPanel;
+	}
+
 	protected void drawDialog() {
 		GridBagLayout gridbag = new GridBagLayout();
 		GridBagConstraints c = new GridBagConstraints();
@@ -235,7 +441,6 @@ public class ConfigDialog extends JDialog {
 		JPanel boxpane = new JPanel(gridbag);
 		JPanel phonepane = new JPanel(gridbag);
 		JPanel otherpane = new JPanel();
-		JPanel quickdialpane = new JPanel(gridbag);
 		JPanel sippane = new JPanel();
 
 		tpane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -280,7 +485,12 @@ public class ConfigDialog extends JDialog {
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Object source = e.getSource();
-				encodedPassword = URLDecoder.decode(new String(pass.getPassword()));
+				try {
+					encodedPassword = URLDecoder.decode(new String(pass.getPassword()),"UTF-8");
+				}
+					catch (UnsupportedEncodingException ex){
+						Debug.msg("Exception (ConfigDialog:drawDialog): UnsupportedEncodungException");
+					}
 				pressed_OK = (source == pass || source == okButton);
 				if (source == pass || source == okButton
 						|| source == cancelButton) {
@@ -330,178 +540,7 @@ public class ConfigDialog extends JDialog {
 			}
 		};
 
-		c.gridy = 1;
-		ImageIcon boxicon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/fritzbox.png")));
-		label = new JLabel("");
-		label.setIcon(boxicon);
-		gridbag.setConstraints(label, c);
-		boxpane.add(label);
-		label = new JLabel("FRITZ!Box-Einstellungen");
-		gridbag.setConstraints(label, c);
-		boxpane.add(label);
 
-		c.gridy = 2;
-		label = new JLabel("FRITZ!Box: ");
-		gridbag.setConstraints(label, c);
-		boxpane.add(label);
-		address = new JTextField("", 16);
-		gridbag.setConstraints(address, c);
-
-		addressCombo = new JComboBox();
-		Enumeration en = devices.elements();
-		while (en.hasMoreElements()) {
-			SSDPPacket p = (SSDPPacket) en.nextElement();
-			addressCombo.addItem(p.getShortName());
-		}
-
-		gridbag.setConstraints(addressCombo, c);
-		addressCombo.setActionCommand("addresscombo");
-		addressCombo.addActionListener(actionListener);
-		boxpane.add(addressCombo);
-
-		c.gridy = 3;
-		label = new JLabel("IP-Addresse: ");
-		gridbag.setConstraints(label, c);
-		boxpane.add(label);
-		address = new JTextField("", 16);
-		gridbag.setConstraints(address, c);
-		boxpane.add(address);
-
-		c.gridy = 4;
-		label = new JLabel("Passwort: ");
-		gridbag.setConstraints(label, c);
-		boxpane.add(label);
-		pass = new JPasswordField("", 16);
-		gridbag.setConstraints(pass, c);
-		boxpane.add(pass);
-
-		c.gridy = 5;
-		boxtypeButton = new JButton("Typ erkennen");
-		boxtypeButton.setActionCommand("detectboxtype");
-		boxtypeButton.addActionListener(actionListener);
-		gridbag.setConstraints(boxtypeButton, c);
-		boxpane.add(boxtypeButton);
-		boxtypeLabel = new JLabel();
-		gridbag.setConstraints(boxtypeLabel, c);
-		boxpane.add(boxtypeLabel);
-
-		c.gridy = 6;
-		label = new JLabel("MAC-Addresse: ");
-		gridbag.setConstraints(label, c);
-		boxpane.add(label);
-		macLabel = new JLabel();
-		gridbag.setConstraints(macLabel, c);
-		boxpane.add(macLabel);
-
-		c.gridy = 1;
-		label = new JLabel("Ortsvorwahl: ");
-		gridbag.setConstraints(label, c);
-		phonepane.add(label);
-		areaCode = new JTextField("", 6);
-		gridbag.setConstraints(areaCode, c);
-		phonepane.add(areaCode);
-
-		c.gridy = 2;
-		label = new JLabel("Landesvorwahl: ");
-		gridbag.setConstraints(label, c);
-		phonepane.add(label);
-		countryCode = new JTextField("", 3);
-		gridbag.setConstraints(countryCode, c);
-		phonepane.add(countryCode);
-
-		c.gridy = 3;
-		label = new JLabel("Orts-Prefix: ");
-		gridbag.setConstraints(label, c);
-		phonepane.add(label);
-		areaPrefix = new JTextField("", 3);
-		gridbag.setConstraints(areaPrefix, c);
-		phonepane.add(areaPrefix);
-
-		c.gridy = 4;
-		label = new JLabel("Landes-Prefix: ");
-		gridbag.setConstraints(label, c);
-		phonepane.add(label);
-		countryPrefix = new JTextField("", 3);
-		gridbag.setConstraints(countryPrefix, c);
-		phonepane.add(countryPrefix);
-
-		otherpane.setLayout(new BoxLayout(otherpane, BoxLayout.Y_AXIS));
-		timerLabel = new JLabel("Timer (in min): ");
-		otherpane.add(timerLabel);
-		otherpane.add(timerSlider);
-
-		passwordAfterStartButton = new JCheckBox(
-				"Vor Programmstart Passwort erfragen?");
-		otherpane.add(passwordAfterStartButton);
-
-		fetchAfterStartButton = new JCheckBox("Nach Programmstart Liste holen");
-		otherpane.add(fetchAfterStartButton);
-
-		timerAfterStartButton = new JCheckBox(
-				"Nach Programmstart Timer aktivieren");
-		otherpane.add(timerAfterStartButton);
-
-		deleteAfterFetchButton = new JCheckBox("Nach Laden auf Box löschen");
-		otherpane.add(deleteAfterFetchButton);
-		// TODO Make this work :)
-		//		deleteAfterFetchButton.setEnabled(false);
-
-		startMinimizedButton = new JCheckBox("Programm minimiert starten");
-		otherpane.add(startMinimizedButton);
-
-		notifyOnCallsButton = new JCheckBox(
-				"Bei neuen Anrufen Fenster in den Vordergrund");
-		otherpane.add(notifyOnCallsButton);
-
-		soundButton = new JCheckBox("Bei eingehenden Anrufen Sound abspielen");
-		otherpane.add(soundButton);
-
-		confirmOnExitButton = new JCheckBox("Bei Beenden nachfragen");
-		otherpane.add(confirmOnExitButton);
-
-		JPanel sipButtonPane = new JPanel();
-		sipmodel = new SipProviderTableModel();
-		JTable siptable = new JTable(sipmodel) {
-			public Component prepareRenderer(TableCellRenderer renderer,
-					int rowIndex, int vColIndex) {
-				Component c = super.prepareRenderer(renderer, rowIndex,
-						vColIndex);
-				if (rowIndex % 2 == 0 && !isCellSelected(rowIndex, vColIndex)) {
-					c.setBackground(new Color(255, 255, 200));
-				} else if (!isCellSelected(rowIndex, vColIndex)) {
-					// If not shaded, match the table's background
-					c.setBackground(getBackground());
-				} else {
-					c.setBackground(new Color(204, 204, 255));
-				}
-				return c;
-			}
-		};
-		siptable.setRowHeight(24);
-		siptable.setFocusable(false);
-		siptable.setAutoCreateColumnsFromModel(false);
-		siptable.setColumnSelectionAllowed(false);
-		siptable.setCellSelectionEnabled(false);
-		siptable.setRowSelectionAllowed(true);
-		siptable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		siptable.getColumnModel().getColumn(0).setMinWidth(20);
-		siptable.getColumnModel().getColumn(0).setMaxWidth(20);
-		siptable.getColumnModel().getColumn(1).setMinWidth(40);
-		siptable.getColumnModel().getColumn(1).setMaxWidth(40);
-		siptable.setSize(200, 200);
-		JButton b1 = new JButton("Von der Box holen");
-		b1.setActionCommand("fetchSIP");
-		b1.addActionListener(actionListener);
-		JButton b2 = new JButton("Auf die Box speichern");
-		b2.setEnabled(false);
-		sipButtonPane.add(b1);
-		sipButtonPane.add(b2);
-
-		sippane.setLayout(new BorderLayout());
-		sippane.add(sipButtonPane, BorderLayout.NORTH);
-		sippane.add(new JScrollPane(siptable), BorderLayout.CENTER);
 		// Create OK/Cancel Panel
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.anchor = GridBagConstraints.CENTER;
@@ -515,18 +554,20 @@ public class ConfigDialog extends JDialog {
 		okcancelpanel.add(cancelButton);
 		gridbag.setConstraints(okcancelpanel, c);
 
-		tpane.addTab("FRITZ!Box", boxpane); // TODO I18N
-		tpane.addTab("Telefon", phonepane);
-		tpane.addTab("SIP-Nummern", sippane);
-		tpane.addTab("Weiteres", otherpane);
+		tpane.addTab("FRITZ!Box", createBoxPane(actionListener)); // TODO I18N
+		tpane.addTab("Telefon", createPhonePane());
+		tpane.addTab("SIP-Nummern", createSipPane(actionListener));
+		tpane.addTab("Anrufliste", createCallerListPane());
+		tpane.addTab("Weiteres", createOtherPane());
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(tpane, BorderLayout.CENTER);
 		getContentPane().add(okcancelpanel, BorderLayout.SOUTH);
+		c.fill = GridBagConstraints.HORIZONTAL;
 
 		addKeyListener(keyListener);
 
-		setSize(new Dimension(480, 380));
+		setSize(new Dimension(480, 350));
 		setResizable(false);
 		// pack();
 	}
