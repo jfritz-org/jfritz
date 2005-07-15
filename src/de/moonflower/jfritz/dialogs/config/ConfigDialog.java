@@ -41,6 +41,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.JToggleButton;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
@@ -72,7 +73,7 @@ public class ConfigDialog extends JDialog {
 	private JComboBox addressCombo;
 
 	private JTextField address, areaCode, countryCode, areaPrefix,
-			countryPrefix;
+			countryPrefix, yacPort;
 
 	private JPasswordField pass;
 
@@ -82,9 +83,11 @@ public class ConfigDialog extends JDialog {
 
 	private JButton okButton, cancelButton, boxtypeButton;
 
+	private JToggleButton startYACButton;
+
 	private JCheckBox deleteAfterFetchButton, fetchAfterStartButton,
 			notifyOnCallsButton, confirmOnExitButton, startMinimizedButton,
-			timerAfterStartButton, passwordAfterStartButton, soundButton;
+			timerAfterStartButton, passwordAfterStartButton, soundButton, yacAfterStartButton;
 
 	private JLabel boxtypeLabel, macLabel, timerLabel;
 
@@ -130,6 +133,21 @@ public class ConfigDialog extends JDialog {
 				.getProperty("option.startMinimized", "false")));
 		soundButton.setSelected(JFritzUtils.parseBoolean(JFritz
 				.getProperty("option.playSounds", "true")));
+		if (jfritz.getYAC() == null) {
+			startYACButton.setSelected(false);
+		}
+		else {
+			startYACButton.setSelected(true);
+		}
+		yacPort.setText(JFritz.getProperty("option.yacport","10629"));
+		yacAfterStartButton.setSelected(JFritzUtils.parseBoolean(JFritz
+				.getProperty("option.autostartyac", "false")));
+		if (startYACButton.isSelected()) {
+			startYACButton.setText("Stop YAC-Listener");
+		}
+		else {
+			startYACButton.setText("Start YAC-Listener");
+		}
 		boolean pwAfterStart = !Encryption.decrypt(
 				JFritz.getProperty("jfritz.password", "")).equals(
 				JFritz.PROGRAM_SECRET
@@ -198,6 +216,10 @@ public class ConfigDialog extends JDialog {
 				.toString(startMinimizedButton.isSelected()));
 		JFritz.setProperty("option.playSounds", Boolean
 				.toString(soundButton.isSelected()));
+		JFritz.setProperty("option.startyac",Boolean.toString(startYACButton.isSelected()));
+		JFritz.setProperty("option.yacport",yacPort.getText());
+		JFritz.setProperty("option.autostartyac", Boolean.toString(yacAfterStartButton.isSelected()));
+
 		if (!passwordAfterStartButton.isSelected()) {
 			JFritz.setProperty("jfritz.password", Encryption.encrypt(JFritz.PROGRAM_SECRET
 					+ encodedPassword));
@@ -232,6 +254,7 @@ public class ConfigDialog extends JDialog {
 	protected JPanel createBoxPane(ActionListener actionListener) {
 		JPanel boxpane = new JPanel();
 		boxpane.setLayout(new GridBagLayout());
+		boxpane.setBorder(BorderFactory.createEmptyBorder(10, 20, 5, 20));
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets.top = 5;
 		c.insets.bottom = 5;
@@ -429,22 +452,53 @@ public class ConfigDialog extends JDialog {
 		return cPanel;
 	}
 
-	protected void drawDialog() {
-		GridBagLayout gridbag = new GridBagLayout();
+	protected JPanel createYACPane() {
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets.top = 5;
 		c.insets.bottom = 5;
 		c.anchor = GridBagConstraints.WEST;
 
+		c.gridy = 0;
+		c.gridwidth = 2;
+		startYACButton = new JToggleButton();
+		startYACButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFritz.setProperty("option.yacport",yacPort.getText());
+				if (startYACButton.isSelected()) {
+					jfritz.startYACListener();
+					startYACButton.setText("Stop YAC-Listener");
+				}
+				else {
+					jfritz.stopYACListener();
+					startYACButton.setText("Start YAC-Listener");
+				}
+			}
+		});
+		panel.add(startYACButton, c);
+
+		c.gridy = 1;
+		c.gridwidth = 1;
+		JLabel label = new JLabel("YAC-Port: ");
+		panel.add(label, c);
+		yacPort = new JTextField("",5);
+		panel.add(yacPort, c);
+
+		c.gridy = 2;
+		c.gridwidth = 2;
+		yacAfterStartButton = new JCheckBox("YAC-Listener nach Programmstart automatisch starten?");
+		panel.add(yacAfterStartButton, c);
+
+		return panel;
+	}
+
+	protected void drawDialog() {
+
 		// Create JTabbedPane
 		JTabbedPane tpane = new JTabbedPane(JTabbedPane.TOP);
-		JPanel boxpane = new JPanel(gridbag);
-		JPanel phonepane = new JPanel(gridbag);
-		JPanel otherpane = new JPanel();
-		JPanel sippane = new JPanel();
 
 		tpane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		boxpane.setBorder(BorderFactory.createEmptyBorder(10, 20, 5, 20));
 
 		JLabel label;
 		okButton = new JButton(JFritz.getMessage("okay"));
@@ -542,22 +596,26 @@ public class ConfigDialog extends JDialog {
 
 
 		// Create OK/Cancel Panel
+		GridBagConstraints c = new GridBagConstraints();
+		c.insets.top = 5;
+		c.insets.bottom = 5;
+
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.anchor = GridBagConstraints.CENTER;
 		JPanel okcancelpanel = new JPanel();
 		okButton.addActionListener(actionListener);
 		okButton.addKeyListener(keyListener);
-		okcancelpanel.add(okButton);
+		okcancelpanel.add(okButton, c);
 		cancelButton.addActionListener(actionListener);
 		cancelButton.addKeyListener(keyListener);
 		cancelButton.setMnemonic(KeyEvent.VK_ESCAPE);
 		okcancelpanel.add(cancelButton);
-		gridbag.setConstraints(okcancelpanel, c);
 
 		tpane.addTab("FRITZ!Box", createBoxPane(actionListener)); // TODO I18N
 		tpane.addTab("Telefon", createPhonePane());
 		tpane.addTab("SIP-Nummern", createSipPane(actionListener));
 		tpane.addTab("Anrufliste", createCallerListPane());
+		tpane.addTab("YAC-Anrufmonitor", createYACPane());
 		tpane.addTab("Weiteres", createOtherPane());
 
 		getContentPane().setLayout(new BorderLayout());
