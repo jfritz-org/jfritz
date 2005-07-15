@@ -14,97 +14,107 @@ import java.net.Socket;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.Debug;
 
-public class YAClistener implements Runnable {
-
-	private final int yacPort = 10629;
+public class YAClistener extends Thread {
 
 	private boolean isRunning = false;
 
+	private int port;
+
+	private ServerSocket serverSocket;
+
 	public YAClistener() {
+		super();
+		start();
+		port = 10629;
+	}
+
+	public YAClistener(int port) {
+		super();
+		start();
+		this.port = port;
 	}
 
 	public void run() {
-		if (!isRunning) {
-			isRunning = true;
-			try {
-				Debug.msg("Starting YAC listener");
-				// TODO: configurable Port
-				ServerSocket serverSocket = new ServerSocket(yacPort);
-				while (true) {
-					Socket socket = serverSocket.accept();
-					BufferedReader input = new BufferedReader(
-							new InputStreamReader(socket.getInputStream()));
-					while (true) {
-						String[] splitList;
-						String msg = input.readLine();
-						if (msg == null)
-							break;
-						// parsing incoming DATA
-						Debug.msg("Got YAC-Data: " + msg);
-						// if last character is $00, delete it
-						if (msg.length() > 0
-								&& msg.charAt(msg.length() - 1) == 0) {
-							msg = msg.substring(0, msg.length() - 1);
-						}
-						String outputString = "";
-						if (msg.indexOf('~')>-1) {
-							if (msg.startsWith("@CALL")) {
-								msg = msg.substring(5);
-								splitList = msg.split("~");
-								String name = "";
-								String number = "";
-								if (splitList.length == 0) {
-									name = "Unbekannt";
+		startYACListener();
+	}
+
+	public void startYACListener() {
+		isRunning = true;
+		try {
+			Debug.msg("Starting YAC listener");
+			serverSocket = new ServerSocket(port);
+			while (isRunning) {
+				Socket socket = serverSocket.accept();
+				BufferedReader input = new BufferedReader(
+						new InputStreamReader(socket.getInputStream()));
+				while (isRunning) {
+					String[] splitList;
+					String msg = input.readLine();
+					if (msg == null)
+						break;
+					// parsing incoming DATA
+					Debug.msg("Got YAC-Data: " + msg);
+					// if last character is $00, delete it
+					if (msg.length() > 0 && msg.charAt(msg.length() - 1) == 0) {
+						msg = msg.substring(0, msg.length() - 1);
+					}
+					String outputString = "";
+					if (msg.indexOf('~') > -1) {
+						if (msg.startsWith("@CALL")) {
+							msg = msg.substring(5);
+							splitList = msg.split("~");
+							String name = "";
+							String number = "";
+							if (splitList.length == 0) {
+								name = "Unbekannt";
+								number = "Unbekannt";
+							}
+							if (splitList.length == 1) {
+								if (!splitList[0].equals("")) {
+									name = splitList[0];
 									number = "Unbekannt";
 								}
-								if (splitList.length == 1) {
-									if (!splitList[0].equals("")) {
-										name = splitList[0];
-										number = "Unbekannt";
-									}
-								}
-								if (splitList.length == 2) {
-									if (splitList[0].equals("")) {
-										name = "Unbekannt";
-									} else
-										name = splitList[0];
-									number = splitList[1];
-								}
-
-								outputString = JFritz
-										.getMessage("incoming_call")
-										+ "\n"
-										+ JFritz.getMessage("name")
-										+ ": "
-										+ name
-										+ "\n"
-										+ JFritz.getMessage("number")
-										+ ": "
-										+ number;
-							} else {
-								outputString = JFritz.getMessage("yac_message")
-										+ ":\n" + msg;
 							}
+							if (splitList.length == 2) {
+								if (splitList[0].equals("")) {
+									name = "Unbekannt";
+								} else
+									name = splitList[0];
+								number = splitList[1];
+							}
+
+							outputString = JFritz.getMessage("incoming_call")
+									+ "\n" + JFritz.getMessage("name") + ": "
+									+ name + "\n" + JFritz.getMessage("number")
+									+ ": " + number;
 						} else {
 							outputString = JFritz.getMessage("yac_message")
 									+ ":\n" + msg;
 						}
-
-						JFritz.infoMsg(outputString);
-						if (!JFritz.SYSTRAY_SUPPORT) {
-							//TODO: PopUp-Message
-						}
+					} else {
+						outputString = JFritz.getMessage("yac_message") + ":\n"
+								+ msg;
 					}
-					socket.close();
-				}
 
-			} catch (IOException e) {
-				System.out.println(e);
+					JFritz.infoMsg(outputString);
+				}
+				socket.close();
 			}
-			isRunning = false;
-		} else {
-			// TODO: Kill it
-			Debug.msg("Kill yac listener...");
+			serverSocket.close();
+
+		} catch (IOException e) {
+			System.out.println(e);
 		}
 	}
+
+	public void stopYACListener() {
+		Debug.msg("Stopping YACListener");
+		try {
+			serverSocket.close();
+		} catch (IOException e) {
+			Debug.msg("Fehler beim Schliessen des YAC-Sockets");
+		}
+		isRunning = false;
+	}
+
 }
