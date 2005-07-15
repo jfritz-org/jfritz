@@ -470,6 +470,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					setStatus();
 					jfritz.getCallerlist().fireTableStructureChanged();
 					isretrieving = false;
+					if (JFritz.getProperty("option.lookupAfterFetch", "false")
+							.equals("true")) {
+						lookupButton.doClick();
+					}
 				}
 			};
 			worker.start();
@@ -626,6 +630,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			// FIXME if (jfritz.getTelnet() != null)
 			// jfritz.getTelnet().interrupt();
 			jfritz.stopSyslogListener();
+			jfritz.stopYACListener();
 			System.exit(0);
 		}
 	}
