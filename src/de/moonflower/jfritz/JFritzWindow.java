@@ -110,6 +110,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				.equals("true")) {
 			fetchButton.doClick();
 		}
+		if (JFritz.getProperty("option.autostartyac", "false").equals("true")) {
+			jfritz.startYACListener();
+		}
 	}
 
 	private void createGUI() {
@@ -142,16 +145,18 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		getContentPane().add(createStatusBar(), BorderLayout.SOUTH);
 
 		jfritz.getCallerlist().fireTableStructureChanged();
-		String ask = JFritz.getProperty("jfritz.password", "");
-		String pass = JFritz.getProperty("box.password", "");
+		String ask = JFritz.getProperty("jfritz.password", Encryption
+				.encrypt(JFritz.PROGRAM_SECRET + ""));
+		String pass = JFritz
+				.getProperty("box.password", Encryption.encrypt(""));
 		if (!Encryption.decrypt(ask).equals(
 				JFritz.PROGRAM_SECRET + Encryption.decrypt(pass))) {
-				String password = showPasswordDialog("");
-				if (!password.equals(Encryption.decrypt(pass))) {
-					Debug.errDlg("Falsches Passwort!");
-					Debug.err("Wrong password!");
-					System.exit(0);
-				}
+			String password = showPasswordDialog("");
+			if (!password.equals(Encryption.decrypt(pass))) {
+				Debug.errDlg("Falsches Passwort!");
+				Debug.err("Wrong password!");
+				System.exit(0);
+			}
 		}
 
 	}
@@ -163,7 +168,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		setDefaultLookAndFeelDecorated(true);
 		try {
 			UIManager.setLookAndFeel(JFritz.getProperty("lookandfeel",
-					UIManager.getCrossPlatformLookAndFeelClassName()));
+					UIManager.getSystemLookAndFeelClassName()));
+			// Wunsch eines MAC Users, dass das Default LookAndFeel des
+			// Betriebssystems genommen wird
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -616,7 +623,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 			jfritz.saveProperties();
 
-			// FIXME if (jfritz.getTelnet() != null) jfritz.getTelnet().interrupt();
+			// FIXME if (jfritz.getTelnet() != null)
+			// jfritz.getTelnet().interrupt();
 			jfritz.stopSyslogListener();
 			System.exit(0);
 		}
@@ -874,6 +882,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	public void activatePhoneBook() {
 		tabber.setSelectedComponent(phoneBookPanel);
 	}
+
 	/**
 	 * @return Returns the callerListPanel.
 	 */
