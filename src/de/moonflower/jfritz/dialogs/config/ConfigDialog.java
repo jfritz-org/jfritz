@@ -87,7 +87,8 @@ public class ConfigDialog extends JDialog {
 
 	private JCheckBox deleteAfterFetchButton, fetchAfterStartButton,
 			notifyOnCallsButton, confirmOnExitButton, startMinimizedButton,
-			timerAfterStartButton, passwordAfterStartButton, soundButton, yacAfterStartButton;
+			timerAfterStartButton, passwordAfterStartButton, soundButton,
+			yacAfterStartButton, lookupAfterFetchButton;
 
 	private JLabel boxtypeLabel, macLabel, timerLabel;
 
@@ -131,23 +132,25 @@ public class ConfigDialog extends JDialog {
 				.getProperty("option.confirmOnExit", "true")));
 		startMinimizedButton.setSelected(JFritzUtils.parseBoolean(JFritz
 				.getProperty("option.startMinimized", "false")));
-		soundButton.setSelected(JFritzUtils.parseBoolean(JFritz
-				.getProperty("option.playSounds", "true")));
+		soundButton.setSelected(JFritzUtils.parseBoolean(JFritz.getProperty(
+				"option.playSounds", "true")));
 		if (jfritz.getYAC() == null) {
 			startYACButton.setSelected(false);
-		}
-		else {
+		} else {
 			startYACButton.setSelected(true);
 		}
-		yacPort.setText(JFritz.getProperty("option.yacport","10629"));
+		yacPort.setText(JFritz.getProperty("option.yacport", "10629"));
 		yacAfterStartButton.setSelected(JFritzUtils.parseBoolean(JFritz
 				.getProperty("option.autostartyac", "false")));
 		if (startYACButton.isSelected()) {
 			startYACButton.setText("Stop YAC-Listener");
-		}
-		else {
+		} else {
 			startYACButton.setText("Start YAC-Listener");
 		}
+
+		lookupAfterFetchButton.setSelected(JFritzUtils.parseBoolean(JFritz
+				.getProperty("option.lookupAfterFetch", "false")));
+
 		boolean pwAfterStart = !Encryption.decrypt(
 				JFritz.getProperty("jfritz.password", "")).equals(
 				JFritz.PROGRAM_SECRET
@@ -156,12 +159,14 @@ public class ConfigDialog extends JDialog {
 		passwordAfterStartButton.setSelected(pwAfterStart);
 
 		try {
-		pass.setText(URLEncoder.encode(Encryption.decrypt(JFritz.getProperty("box.password")),"UTF-8"));
+			pass.setText(URLEncoder.encode(Encryption.decrypt(JFritz
+					.getProperty("box.password")), "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			Debug
+					.msg("Exception (ConfigDialog:setValues): UnsupportedEncodungException");
 		}
-		catch (UnsupportedEncodingException e){
-			Debug.msg("Exception (ConfigDialog:setValues): UnsupportedEncodungException");
-		}
-		encodedPassword = Encryption.decrypt(JFritz.getProperty("box.password"));
+		encodedPassword = Encryption
+				.decrypt(JFritz.getProperty("box.password"));
 		address.setText(JFritz.getProperty("box.address"));
 		areaCode.setText(JFritz.getProperty("area.code"));
 		countryCode.setText(JFritz.getProperty("country.code"));
@@ -214,18 +219,23 @@ public class ConfigDialog extends JDialog {
 				.toString(confirmOnExitButton.isSelected()));
 		JFritz.setProperty("option.startMinimized", Boolean
 				.toString(startMinimizedButton.isSelected()));
-		JFritz.setProperty("option.playSounds", Boolean
-				.toString(soundButton.isSelected()));
-		JFritz.setProperty("option.startyac",Boolean.toString(startYACButton.isSelected()));
-		JFritz.setProperty("option.yacport",yacPort.getText());
-		JFritz.setProperty("option.autostartyac", Boolean.toString(yacAfterStartButton.isSelected()));
+		JFritz.setProperty("option.playSounds", Boolean.toString(soundButton
+				.isSelected()));
+		JFritz.setProperty("option.startyac", Boolean.toString(startYACButton
+				.isSelected()));
+		JFritz.setProperty("option.yacport", yacPort.getText());
+		JFritz.setProperty("option.autostartyac", Boolean
+				.toString(yacAfterStartButton.isSelected()));
 
 		if (!passwordAfterStartButton.isSelected()) {
-			JFritz.setProperty("jfritz.password", Encryption.encrypt(JFritz.PROGRAM_SECRET
-					+ encodedPassword));
+			JFritz.setProperty("jfritz.password", Encryption
+					.encrypt(JFritz.PROGRAM_SECRET + encodedPassword));
 		} else {
 			JFritz.removeProperty("jfritz.password");
 		}
+
+		JFritz.setProperty("option.lookupAfterFetch", Boolean
+				.toString(lookupAfterFetchButton.isSelected()));
 
 		JFritz.setProperty("box.password", Encryption.encrypt(encodedPassword));
 		JFritz.setProperty("box.address", address.getText());
@@ -449,6 +459,11 @@ public class ConfigDialog extends JDialog {
 		deleteAfterFetchButton = new JCheckBox("Nach Laden auf Box löschen");
 		cPanel.add(deleteAfterFetchButton, c);
 
+		c.gridy = 2;
+		lookupAfterFetchButton = new JCheckBox(
+				"Nach Laden Rückwärtssuche ausführen");
+		cPanel.add(lookupAfterFetchButton, c);
+
 		return cPanel;
 	}
 
@@ -465,12 +480,11 @@ public class ConfigDialog extends JDialog {
 		startYACButton = new JToggleButton();
 		startYACButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JFritz.setProperty("option.yacport",yacPort.getText());
+				JFritz.setProperty("option.yacport", yacPort.getText());
 				if (startYACButton.isSelected()) {
 					jfritz.startYACListener();
 					startYACButton.setText("Stop YAC-Listener");
-				}
-				else {
+				} else {
 					jfritz.stopYACListener();
 					startYACButton.setText("Start YAC-Listener");
 				}
@@ -482,12 +496,13 @@ public class ConfigDialog extends JDialog {
 		c.gridwidth = 1;
 		JLabel label = new JLabel("YAC-Port: ");
 		panel.add(label, c);
-		yacPort = new JTextField("",5);
+		yacPort = new JTextField("", 5);
 		panel.add(yacPort, c);
 
 		c.gridy = 2;
 		c.gridwidth = 2;
-		yacAfterStartButton = new JCheckBox("YAC-Listener nach Programmstart automatisch starten?");
+		yacAfterStartButton = new JCheckBox(
+				"YAC-Listener nach Programmstart automatisch starten?");
 		panel.add(yacAfterStartButton, c);
 
 		return panel;
@@ -540,11 +555,12 @@ public class ConfigDialog extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				Object source = e.getSource();
 				try {
-					encodedPassword = URLDecoder.decode(new String(pass.getPassword()),"UTF-8");
+					encodedPassword = URLDecoder.decode(new String(pass
+							.getPassword()), "UTF-8");
+				} catch (UnsupportedEncodingException ex) {
+					Debug
+							.msg("Exception (ConfigDialog:drawDialog): UnsupportedEncodungException");
 				}
-					catch (UnsupportedEncodingException ex){
-						Debug.msg("Exception (ConfigDialog:drawDialog): UnsupportedEncodungException");
-					}
 				pressed_OK = (source == pass || source == okButton);
 				if (source == pass || source == okButton
 						|| source == cancelButton) {
@@ -577,8 +593,7 @@ public class ConfigDialog extends JDialog {
 				} else if (e.getActionCommand().equals("fetchSIP")) {
 					try {
 						Vector data = JFritzUtils.retrieveSipProvider(address
-								.getText(), encodedPassword,
-								firmware);
+								.getText(), encodedPassword, firmware);
 						sipmodel.setData(data);
 						sipmodel.fireTableDataChanged();
 						jfritz.getCallerlist().fireTableDataChanged();
@@ -593,7 +608,6 @@ public class ConfigDialog extends JDialog {
 				}
 			}
 		};
-
 
 		// Create OK/Cancel Panel
 		GridBagConstraints c = new GridBagConstraints();
