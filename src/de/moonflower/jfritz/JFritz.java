@@ -227,7 +227,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.76 2005/07/15 15:39:51 robotniko Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.77 2005/07/16 11:53:21 robotniko Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -273,11 +273,11 @@ public final class JFritz {
 
 	private static URL ringSound, callSound;
 
-	private YAClistener yac;
+	private YAClistener yacListener = null;
 
-	private TelnetListener telnet;
+	private TelnetListener telnetListener = null;
 
-	private SyslogListener syslog;
+	private SyslogListener syslogListener = null;
 
 	/**
 	 * Constructs JFritz object
@@ -489,11 +489,14 @@ public final class JFritz {
 			public void actionPerformed(ActionEvent e) {
 
 				if (jframe.isVisible()) {
+					Debug.msg("Hide JFritz-Window");
 					jframe.setState(JFrame.ICONIFIED);
 					jframe.setVisible(false);
 				} else {
+					Debug.msg("Show JFritz-Window");
 					jframe.setState(JFrame.NORMAL);
 					jframe.setVisible(true);
+					jframe.toFront();
 				}
 			}
 		});
@@ -583,6 +586,7 @@ public final class JFritz {
 
 	/**
 	 * Displays balloon info message
+	 * TODO: Window when no systray_support
 	 *
 	 * @param msg
 	 *            Message to be displayed
@@ -767,46 +771,40 @@ public final class JFritz {
 		properties.remove(property);
 	}
 
-	/**
-	 * @return Returns the TelnetListener
-	 */
-	public TelnetListener getTelnet2() {
-		return telnet;
-	}
-
-	/**
-	 * Creates a new TelnetListener
-	 *
-	 * @return Returns the TelnetListener
-	 */
-	public TelnetListener newTelnet2() {
-		telnet = new TelnetListener();
-		return telnet;
-	}
-
 	public SyslogListener startSyslogListener() {
-		syslog = new SyslogListener();
-		return syslog;
+		syslogListener = new SyslogListener(this);
+		return syslogListener;
 	}
 
 	public void stopSyslogListener() {
-		if (syslog != null) {
-			syslog.stopSyslogListener();
+		if (syslogListener != null) {
+			syslogListener.stopSyslogListener();
+		}
+	}
+
+	public void startTelnetListener() {
+		telnetListener = new TelnetListener(this);
+	}
+
+	public void stopTelnetListener() {
+		if (telnetListener != null) {
+			telnetListener.stopTelnetListener();
+			telnetListener = null;
 		}
 	}
 
 	public void startYACListener() {
-		yac = new YAClistener(Integer.parseInt(JFritz.getProperty("option.yacport","10629")));
+		yacListener = new YAClistener(Integer.parseInt(JFritz.getProperty("option.yacport","10629")));
 	}
 
 	public void stopYACListener() {
-		if (yac != null) {
-			yac.stopYACListener();
-			yac = null;
+		if (yacListener != null) {
+			yacListener.stopYACListener();
+			yacListener = null;
 		}
  	}
 
 	public YAClistener getYAC() {
-		return yac;
+		return yacListener;
 	}
 }
