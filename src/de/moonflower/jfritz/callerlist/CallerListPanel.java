@@ -270,7 +270,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			jfritz.getCallerlist().updateFilter();
 			jfritz.getCallerlist().fireTableStructureChanged();
 		} else if (e.getActionCommand() == "delete_entry") {
-			if (showYesNoDialog("Wirklich " // TODO I18N
+			if (JFritzUtils.showYesNoDialog("Wirklich " // TODO I18N
 					+ deleteEntriesButton.getToolTipText() + "?") == 0)
 				jfritz.getCallerlist().removeEntries();
 		}
@@ -290,19 +290,6 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			jfritz.getCallerlist().fireTableStructureChanged();
 		}
 
-	}
-
-	public int showYesNoDialog(String question) {
-		JOptionPane pane = new JOptionPane(question);
-		Object[] options = new String[] { "Ja", "Nein" };
-		pane.setOptions(options);
-		JDialog dialog = pane.createDialog(new JFrame(), "Frage");
-		dialog.setVisible(true);
-		Object obj = pane.getValue();
-		for (int k = 0; k < options.length; k++)
-			if (options[k].equals(obj))
-				return k;
-		return -1;
 	}
 
 	public void setDeleteListButton() {
