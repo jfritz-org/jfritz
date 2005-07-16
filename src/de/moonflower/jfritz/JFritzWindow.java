@@ -630,6 +630,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			// FIXME if (jfritz.getTelnet() != null)
 			// jfritz.getTelnet().interrupt();
 			jfritz.stopSyslogListener();
+			jfritz.stopTelnetListener();
 			jfritz.stopYACListener();
 			System.exit(0);
 		}
@@ -767,9 +768,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				//fetchList();
 				// FIXME jfritz.newTelnet().start();
 				jfritz.startSyslogListener();
+//				jfritz.startTelnetListener();
 			} else {
 				Debug.msg("stop callMonitor");
 				jfritz.stopSyslogListener();
+//				jfritz.stopSyslogListener();
 				// jfritz.getTelnet().interrupt();
 			}
 			// TODO FETCHTASK
@@ -893,5 +896,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 */
 	public CallerListPanel getCallerListPanel() {
 		return callerListPanel;
+	}
+
+	public JButton getFetchButton() {
+		return fetchButton;
 	}
 }
