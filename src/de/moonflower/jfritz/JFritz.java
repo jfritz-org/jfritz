@@ -40,6 +40,7 @@
  * BUG: No new Phonebook entries after reverselookup, only after restart or double click on an call entry
  * BUG: Eingabe im IP-Eingabe-PopUp wird ignoriert!
  * BUG: Box restart beim Call Monitor
+ * BUG: 2 Einstellungsfenster können geöffnet werden. Eins normal, eines über Tray
  *
  * CHANGELOG:
  *
@@ -227,7 +228,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.77 2005/07/16 11:53:21 robotniko Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.78 2005/07/17 19:40:20 robotniko Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -537,8 +538,6 @@ public final class JFritz {
 		defaultProperties.setProperty("area.code", "441");
 		defaultProperties.setProperty("fetch.timer", "5");
 		defaultProperties.setProperty("option.yacport","10629");
-		defaultProperties.setProperty("option.startyac","false");
-		defaultProperties.setProperty("option.autostartyac","false");
 
 		try {
 			FileInputStream fis = new FileInputStream(JFritz.PROPERTIES_FILE);
@@ -779,6 +778,7 @@ public final class JFritz {
 	public void stopSyslogListener() {
 		if (syslogListener != null) {
 			syslogListener.stopSyslogListener();
+			syslogListener = null;
 		}
 	}
 
@@ -804,7 +804,7 @@ public final class JFritz {
 		}
  	}
 
-	public YAClistener getYAC() {
+	public YAClistener getCallMonitor() {
 		return yacListener;
 	}
 }

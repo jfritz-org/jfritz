@@ -110,8 +110,12 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				.equals("true")) {
 			fetchButton.doClick();
 		}
-		if (JFritz.getProperty("option.autostartyac", "false").equals("true")) {
-			jfritz.startYACListener();
+		if (JFritz.getProperty("option.autostartcallmonitor", "false").equals("true")) {
+			switch (Integer.parseInt(JFritz.getProperty("option.callMonitorType","0"))) {
+			case 1:	{ jfritz.startTelnetListener(); break; }
+			case 2:	{ jfritz.startSyslogListener(); break; }
+			case 3:	{ jfritz.startYACListener(); break; }
+			}
 		}
 	}
 
@@ -775,8 +779,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 //				jfritz.stopSyslogListener();
 				// jfritz.getTelnet().interrupt();
 			}
-			// TODO FETCHTASK
-			// yacListener.run();
 
 		} else if (e.getActionCommand() == "reverselookup")
 			reverseLookup();
