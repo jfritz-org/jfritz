@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
+import java.util.Vector;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -38,7 +39,7 @@ public class SyslogListener extends Thread implements CallMonitor {
 		this.jfritz = jfritz;
 		if (!JFritzUtils.parseBoolean(JFritz.getProperty(
 				"option.syslogonfritz", "false"))) {
-			startSyslogOnFritzBox();
+			startSyslogOnFritzBox(JFritz.getProperty("option.syslogclientip","192.168.178.21"));
 		}
 		start();
 	}
@@ -102,7 +103,7 @@ public class SyslogListener extends Thread implements CallMonitor {
 		}
 	}
 
-	public static void startSyslogOnFritzBox() {
+	public static void startSyslogOnFritzBox(String ip) {
 		if (JFritzUtils
 				.showYesNoDialog("Der telefond muss neu gestartet werden.\n"
 						+ "Dabei wird ein laufendes Gespräch unterbrochen. Die Anrufliste wird vorher gesichert.\n"
@@ -112,7 +113,7 @@ public class SyslogListener extends Thread implements CallMonitor {
 			Telnet telnet = new Telnet();
 			telnet.connect();
 			int port = 4711;
-			String ip = "192.168.178.21";
+			Debug.msg("IP Adresse für Syslog: " + ip);
 			telnet.write("killall syslogd");
 			telnet.write("syslogd -R " + ip + ":" + port);
 			Debug.msg("Restarting telefond");
@@ -128,8 +129,9 @@ public class SyslogListener extends Thread implements CallMonitor {
 		}
 	}
 
-	public static InetAddress getIP() {
+	public static Vector getIP() {
 		Enumeration ifaces;
+		Vector addresses = new Vector();
 		try {
 			ifaces = NetworkInterface.getNetworkInterfaces();
 			while (ifaces.hasMoreElements()) {
@@ -141,12 +143,13 @@ public class SyslogListener extends Thread implements CallMonitor {
 				while (addrs.hasMoreElements()) {
 					InetAddress addr = (InetAddress) addrs.nextElement();
 					System.out.println(" " + addr.getHostAddress());
-					return addr;
+
+					addresses.add(addr);
 				}
 			}
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return addresses;
 	}
 }
