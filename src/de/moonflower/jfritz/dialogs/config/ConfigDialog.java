@@ -84,7 +84,8 @@ public class ConfigDialog extends JDialog {
 
 	private JSlider timerSlider;
 
-	private JButton okButton, cancelButton, boxtypeButton;
+	private JButton okButton, cancelButton, boxtypeButton,
+			startSyslogOnFritzBoxButton;
 
 	private JToggleButton startCallMonitorButton;
 
@@ -93,7 +94,8 @@ public class ConfigDialog extends JDialog {
 			timerAfterStartButton, passwordAfterStartButton, soundButton,
 			callMonitorAfterStartButton, lookupAfterFetchButton;
 
-	private JPanel callMonitorPane, yacMonitorPane, telnetMonitorPane;
+	private JPanel callMonitorPane, yacMonitorPane, telnetMonitorPane,
+			syslogMonitorPane;
 
 	private JLabel boxtypeLabel, macLabel, timerLabel;
 
@@ -445,9 +447,6 @@ public class ConfigDialog extends JDialog {
 				"Bei neuen Anrufen Fenster in den Vordergrund");
 		otherpane.add(notifyOnCallsButton);
 
-		soundButton = new JCheckBox("Bei eingehenden Anrufen Sound abspielen");
-		otherpane.add(soundButton);
-
 		confirmOnExitButton = new JCheckBox("Bei Beenden nachfragen");
 		otherpane.add(confirmOnExitButton);
 		return otherpane;
@@ -495,8 +494,10 @@ public class ConfigDialog extends JDialog {
 					case 0: {
 						startCallMonitorButton.setVisible(false);
 						callMonitorAfterStartButton.setVisible(false);
+						soundButton.setVisible(false);
 						yacMonitorPane.setVisible(false);
 						telnetMonitorPane.setVisible(false);
+						syslogMonitorPane.setVisible(false);
 						callMonitorPane.repaint();
 						Debug.msg("Kein Anrufmonitor erwünscht");
 						stopAllCallMonitors();
@@ -505,8 +506,10 @@ public class ConfigDialog extends JDialog {
 					case 1: {
 						startCallMonitorButton.setVisible(true);
 						callMonitorAfterStartButton.setVisible(true);
+						soundButton.setVisible(true);
 						yacMonitorPane.setVisible(false);
 						telnetMonitorPane.setVisible(true);
+						syslogMonitorPane.setVisible(false);
 						callMonitorPane.repaint();
 						Debug.msg("Telnet Anrufmonitor gewählt");
 						stopAllCallMonitors();
@@ -516,8 +519,10 @@ public class ConfigDialog extends JDialog {
 					case 2: {
 						startCallMonitorButton.setVisible(true);
 						callMonitorAfterStartButton.setVisible(true);
+						soundButton.setVisible(true);
 						yacMonitorPane.setVisible(false);
 						telnetMonitorPane.setVisible(false);
+						syslogMonitorPane.setVisible(true);
 						callMonitorPane.repaint();
 						Debug.msg("Syslog Anrufmonitor gewählt");
 						stopAllCallMonitors();
@@ -526,8 +531,10 @@ public class ConfigDialog extends JDialog {
 					case 3: {
 						startCallMonitorButton.setVisible(true);
 						callMonitorAfterStartButton.setVisible(true);
+						soundButton.setVisible(true);
 						yacMonitorPane.setVisible(true);
 						telnetMonitorPane.setVisible(false);
+						syslogMonitorPane.setVisible(false);
 						callMonitorPane.repaint();
 						Debug.msg("YAC Anrufmonitor gewählt");
 						stopAllCallMonitors();
@@ -597,12 +604,20 @@ public class ConfigDialog extends JDialog {
 				"Call-Monitor nach Programmstart automatisch starten?");
 		callMonitorPane.add(callMonitorAfterStartButton, c);
 
+		soundButton = new JCheckBox("Bei eingehenden Anrufen Sound abspielen");
 		c.gridy = 3;
+		c.gridwidth = 3;
+		callMonitorPane.add(soundButton, c);
+
+		c.gridy = 4;
 		telnetMonitorPane = new JPanel();
 		telnetMonitorPane = createTelnetPane();
+		syslogMonitorPane = new JPanel();
+		syslogMonitorPane = createSyslogPane();
 		yacMonitorPane = new JPanel();
 		yacMonitorPane = createYACPane();
 		callMonitorPane.add(telnetMonitorPane, c);
+		callMonitorPane.add(syslogMonitorPane, c);
 		callMonitorPane.add(yacMonitorPane, c);
 
 		callMonitorCombo.addActionListener(actionListener);
@@ -634,7 +649,33 @@ public class ConfigDialog extends JDialog {
 		c.insets.bottom = 5;
 		c.anchor = GridBagConstraints.WEST;
 
-		// Vielleicht UserName und Passwort noch einstellen lassen?
+		// TODO: UserName und Passwort einstellen lassen
+		/**
+		 * JLabel label = new JLabel("YAC-Port: "); panel.add(label, c); yacPort =
+		 * new JTextField("", 5); panel.add(yacPort, c);
+		 */
+		return panel;
+	}
+
+	protected JPanel createSyslogPane() {
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.insets.top = 5;
+		c.insets.bottom = 5;
+		c.anchor = GridBagConstraints.WEST;
+
+		// TODO: Syslog Pass-Through
+		startSyslogOnFritzBoxButton = new JButton(
+				"Starte Syslog auf der FritzBox");
+		startSyslogOnFritzBoxButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				jfritz.getJframe().getFetchButton().doClick();
+				SyslogListener.startSyslogOnFritzBox();
+			}
+
+		});
+		panel.add(startSyslogOnFritzBoxButton, c);
 		/**
 		 * JLabel label = new JLabel("YAC-Port: "); panel.add(label, c); yacPort =
 		 * new JTextField("", 5); panel.add(yacPort, c);
