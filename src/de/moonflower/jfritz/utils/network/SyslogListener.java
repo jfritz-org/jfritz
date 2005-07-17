@@ -87,6 +87,7 @@ public class SyslogListener extends Thread implements CallMonitor {
 				p = Pattern.compile(PATTERN_TELEFON_OUTGOING);
 				m = p.matcher(msg);
 				if (m.find()) {
+					System.err.println(m.group(0));
 					String called = m.group(2);
 					if (!called.equals("")) {
 						Debug.msg("NEW OUTGOING CALL: " + called);
