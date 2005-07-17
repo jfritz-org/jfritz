@@ -115,6 +115,12 @@ public class SyslogListener extends Thread {
 			// get new Calls
 			jfritz.getJframe().getFetchButton().doClick();
 			telnet.write("killall telefon && telefon | logger &");
+			try {
+				sleep(500);
+			}
+			catch (InterruptedException ie) {
+				Debug.msg("Failed to sleep Thread SyslogListener");
+			}
 			telnet.disconnect();
 		}
 	}
