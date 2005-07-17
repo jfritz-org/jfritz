@@ -28,7 +28,7 @@ public class SyslogListener extends Thread implements CallMonitor {
 
 	private final String PATTERN_TELEFON_INCOMING = "IncomingCall[^:]*: ID ([^,]*), caller: \"([^\"]*)\" called: \"([^\"]*)\"";
 
-	private final String PATTERN_TELEFON_OUTGOING = "IncomingCall[^:]*: ID ([^,]*), caller: \"([^\"]*)\" called: \"([^\"]*)\"";
+	private final String PATTERN_TELEFON_OUTGOING = "incoming[^:]*: (\\d\\d) ([^ <-]*) <- (\\d)";
 
 	private DatagramSocket socket;
 
@@ -39,7 +39,8 @@ public class SyslogListener extends Thread implements CallMonitor {
 		this.jfritz = jfritz;
 		if (!JFritzUtils.parseBoolean(JFritz.getProperty(
 				"option.syslogonfritz", "false"))) {
-			startSyslogOnFritzBox(JFritz.getProperty("option.syslogclientip","192.168.178.21"));
+			startSyslogOnFritzBox(JFritz.getProperty("option.syslogclientip",
+					"192.168.178.21"));
 		}
 		start();
 	}
@@ -60,21 +61,37 @@ public class SyslogListener extends Thread implements CallMonitor {
 		try {
 			socket = new DatagramSocket(port);
 			Debug.msg("Starting SyslogListener on port " + port);
+			DatagramSocket passthroughSocket = new DatagramSocket(514);
 			while (!isInterrupted()) {
 				socket.receive(packet);
-				String msg = new String(packet.getData());
-				Debug.msg("Syslog: " + msg);
+				String msg = new String(log_buffer, 0, packet.getLength(),
+						"UTF-8");
+				Debug.msg("Get Syslogmessage: " + msg);
+				if (JFritzUtils.parseBoolean(JFritz.getProperty(
+						"option.syslogpassthrough", "false"))) {
+					passthroughSocket.send(packet);
+					//					Debug.msg("Send Syslogmessage: "+ msg);
+				}
 				Pattern p = Pattern.compile(PATTERN_TELEFON_INCOMING);
 				Matcher m = p.matcher(msg);
 				if (m.find()) {
 					String id = m.group(1);
 					String caller = m.group(2);
 					String called = m.group(3);
-					Debug.msg("NEW CALL " + id + ": " + caller + " -> "
-							+ called);
+					Debug.msg("NEW INCOMING CALL " + id + ": " + caller
+							+ " -> " + called);
 
 					// POPUP Messages to JFritz
-					JFritz.callMsg(caller, called);
+					JFritz.callInMsg(caller, called);
+				}
+				p = Pattern.compile(PATTERN_TELEFON_OUTGOING);
+				m = p.matcher(msg);
+				if (m.find()) {
+					String called = m.group(2);
+					if (!called.equals("")) {
+						Debug.msg("NEW OUTGOING CALL: " + called);
+						JFritz.callOutMsg(called);
+					}
 				}
 			}
 		} catch (SocketException e) {
