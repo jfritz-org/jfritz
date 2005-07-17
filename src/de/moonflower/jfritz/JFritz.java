@@ -33,9 +33,7 @@
  * CallerList: Einträge löschen älter als Datum
  * CallerList: ev. Popup-Menu?
  * Statistik: Top-Caller (Name/Nummer, Wie oft, Wie lange)
- * YAC-Messages: Config-Options: enabled/disabled
  * Watchdog for CallMonitor
- * CallMonitor über syslogd
  *
  * BUG: No new Phonebook entries after reverselookup, only after restart or double click on an call entry
  * BUG: Eingabe im IP-Eingabe-PopUp wird ignoriert!
@@ -61,6 +59,7 @@
  * - UTF-8 Coding of Phoneboox.xml
  * - Bugfix: Some charset bugfixing
  * - Anrufmonitor über Telnet, Syslog, YAC
+ * - Syslog passthrough
  *
  * TODO:
  * - YAK (Neues Reiterchen)
@@ -227,7 +226,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.80 2005/07/17 21:55:03 robotniko Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.81 2005/07/17 23:12:56 robotniko Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -602,7 +601,7 @@ public final class JFritz {
 	 * @param called
 	 *            Called number
 	 */
-	public static void callMsg(String caller, String called) {
+	public static void callInMsg(String caller, String called) {
 		String callerstr = "", calledstr = "", callername = "", calledname = "";
 		Person callerperson = phonebook.findPerson(new PhoneNumber(caller));
 		Person calledperson = phonebook.findPerson(new PhoneNumber(called));
@@ -620,14 +619,34 @@ public final class JFritz {
 			calledstr = called;
 		else
 			calledstr = called + " (" + calledname + ")";
-		infoMsg("Telefonanruf\nvon " + callerstr + "\nan " + calledstr + "!");
+		infoMsg("Ankommender Telefonanruf\nvon " + callerstr + "\nan " + calledstr + "!");
 		if (JFritzUtils.parseBoolean(JFritz.getProperty("option.playSounds",
 				"true"))) {
-			if (caller.equals("592904")) { // FIXME Local MSN
-				playSound(callSound);
-			} else {
-				playSound(ringSound);
-			}
+		}
+	}
+
+	/**
+	 * Display call monitor message
+	 *
+	 * @param caller
+	 *            Caller number
+	 * @param called
+	 *            Called number
+	 */
+	public static void callOutMsg(String called) {
+		String callerstr = "", calledstr = "", callername = "", calledname = "";
+		Person calledperson = phonebook.findPerson(new PhoneNumber(called));
+
+		if (calledperson != null)
+			calledname = calledperson.getFullname();
+
+		if (calledname.length() == 0)
+			calledstr = called;
+		else
+			calledstr = called + " (" + calledname + ")";
+		infoMsg("Ausgehender Telefonanruf\n " + "\nan " + calledstr + "!");
+		if (JFritzUtils.parseBoolean(JFritz.getProperty("option.playSounds",
+				"true"))) {
 		}
 	}
 
