@@ -70,7 +70,7 @@ public class ConfigDialog extends JDialog {
 
 	private JFritz jfritz;
 
-	private JComboBox addressCombo;
+	private JComboBox addressCombo, callMonitorCombo;
 
 	private JTextField address, areaCode, countryCode, areaPrefix,
 			countryPrefix, yacPort;
@@ -83,12 +83,14 @@ public class ConfigDialog extends JDialog {
 
 	private JButton okButton, cancelButton, boxtypeButton;
 
-	private JToggleButton startYACButton;
+	private JToggleButton startCallMonitorButton;
 
 	private JCheckBox deleteAfterFetchButton, fetchAfterStartButton,
 			notifyOnCallsButton, confirmOnExitButton, startMinimizedButton,
 			timerAfterStartButton, passwordAfterStartButton, soundButton,
-			yacAfterStartButton, lookupAfterFetchButton;
+			callMonitorAfterStartButton, lookupAfterFetchButton;
+
+	private JPanel callMonitorPane, yacMonitorPane, telnetMonitorPane;
 
 	private JLabel boxtypeLabel, macLabel, timerLabel;
 
@@ -134,18 +136,22 @@ public class ConfigDialog extends JDialog {
 				.getProperty("option.startMinimized", "false")));
 		soundButton.setSelected(JFritzUtils.parseBoolean(JFritz.getProperty(
 				"option.playSounds", "true")));
-		if (jfritz.getYAC() == null) {
-			startYACButton.setSelected(false);
+
+		callMonitorCombo.setSelectedIndex(Integer.parseInt(JFritz.getProperty(
+				"option.callMonitorType", "0")));
+
+		if (jfritz.getCallMonitor() == null) {
+			startCallMonitorButton.setSelected(false);
 		} else {
-			startYACButton.setSelected(true);
+			startCallMonitorButton.setSelected(true);
 		}
 		yacPort.setText(JFritz.getProperty("option.yacport", "10629"));
-		yacAfterStartButton.setSelected(JFritzUtils.parseBoolean(JFritz
-				.getProperty("option.autostartyac", "false")));
-		if (startYACButton.isSelected()) {
-			startYACButton.setText("Stop YAC-Listener");
+		callMonitorAfterStartButton.setSelected(JFritzUtils.parseBoolean(JFritz
+				.getProperty("option.autostartcallmonitor", "false")));
+		if (startCallMonitorButton.isSelected()) {
+			startCallMonitorButton.setText("Stop Call-Monitor");
 		} else {
-			startYACButton.setText("Start YAC-Listener");
+			startCallMonitorButton.setText("Start Call-Monitor");
 		}
 
 		lookupAfterFetchButton.setSelected(JFritzUtils.parseBoolean(JFritz
@@ -221,11 +227,13 @@ public class ConfigDialog extends JDialog {
 				.toString(startMinimizedButton.isSelected()));
 		JFritz.setProperty("option.playSounds", Boolean.toString(soundButton
 				.isSelected()));
-		JFritz.setProperty("option.startyac", Boolean.toString(startYACButton
-				.isSelected()));
+		JFritz.setProperty("option.startcallmonitor", Boolean
+				.toString(startCallMonitorButton.isSelected()));
 		JFritz.setProperty("option.yacport", yacPort.getText());
-		JFritz.setProperty("option.autostartyac", Boolean
-				.toString(yacAfterStartButton.isSelected()));
+		JFritz.setProperty("option.autostartcallmonitor", Boolean
+				.toString(callMonitorAfterStartButton.isSelected()));
+		JFritz.setProperty("option.callMonitorType", String
+				.valueOf(callMonitorCombo.getSelectedIndex()));
 
 		if (!passwordAfterStartButton.isSelected()) {
 			JFritz.setProperty("jfritz.password", Encryption
@@ -467,6 +475,149 @@ public class ConfigDialog extends JDialog {
 		return cPanel;
 	}
 
+	protected void stopAllCallMonitors() {
+		if (startCallMonitorButton.isSelected()) {
+			startCallMonitorButton.setText("Starte Anrufmonitor");
+			startCallMonitorButton.setSelected(false);
+			jfritz.stopSyslogListener();
+			jfritz.stopTelnetListener();
+			jfritz.stopYACListener();
+		}
+	}
+
+	protected JPanel createCallMonitorPane() {
+		ActionListener actionListener = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if ("comboboxchanged".equalsIgnoreCase(e.getActionCommand())) {
+					// Zur Darstellung der gewünschten Einstellungspanels
+					switch (callMonitorCombo.getSelectedIndex()) {
+					case 0: {
+						startCallMonitorButton.setVisible(false);
+						callMonitorAfterStartButton.setVisible(false);
+						yacMonitorPane.setVisible(false);
+						telnetMonitorPane.setVisible(false);
+						callMonitorPane.repaint();
+						Debug.msg("Kein Anrufmonitor erwünscht");
+						stopAllCallMonitors();
+						break;
+					}
+					case 1: {
+						startCallMonitorButton.setVisible(true);
+						callMonitorAfterStartButton.setVisible(true);
+						yacMonitorPane.setVisible(false);
+						telnetMonitorPane.setVisible(true);
+						callMonitorPane.repaint();
+						Debug.msg("Telnet Anrufmonitor gewählt");
+						stopAllCallMonitors();
+						break;
+
+					}
+					case 2: {
+						startCallMonitorButton.setVisible(true);
+						callMonitorAfterStartButton.setVisible(true);
+						yacMonitorPane.setVisible(false);
+						telnetMonitorPane.setVisible(false);
+						callMonitorPane.repaint();
+						Debug.msg("Syslog Anrufmonitor gewählt");
+						stopAllCallMonitors();
+						break;
+					}
+					case 3: {
+						startCallMonitorButton.setVisible(true);
+						callMonitorAfterStartButton.setVisible(true);
+						yacMonitorPane.setVisible(true);
+						telnetMonitorPane.setVisible(false);
+						callMonitorPane.repaint();
+						Debug.msg("YAC Anrufmonitor gewählt");
+						stopAllCallMonitors();
+						break;
+					}
+					}
+				} else if ("startcallmonitor".equalsIgnoreCase(e
+						.getActionCommand())) {
+					JFritz.setProperty("option.yacport", yacPort.getText());
+					// Aktion des StartCallMonitorButtons
+					if (startCallMonitorButton.isSelected()) {
+						switch (callMonitorCombo.getSelectedIndex()) {
+						case 1: {
+							jfritz.startTelnetListener();
+							break;
+						}
+						case 2: {
+							jfritz.startSyslogListener();
+							break;
+						}
+						case 3: {
+							jfritz.startYACListener();
+							break;
+						}
+						}
+						startCallMonitorButton.setText("Stoppe Anrufmonitor");
+					} else {
+						switch (callMonitorCombo.getSelectedIndex()) {
+						case 1: {
+							jfritz.stopTelnetListener();
+							break;
+						}
+						case 2: {
+							jfritz.stopSyslogListener();
+							break;
+						}
+						case 3: {
+							jfritz.stopYACListener();
+							break;
+						}
+
+						}
+						startCallMonitorButton.setText("Starte Anrufmonitor");
+					}
+				}
+
+			}
+		};
+
+		callMonitorPane = new JPanel();
+		callMonitorPane.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.insets.top = 5;
+		c.insets.bottom = 5;
+		c.anchor = GridBagConstraints.WEST;
+
+		c.gridx = 0;
+		c.gridy = 0;
+		callMonitorCombo = new JComboBox();
+		callMonitorCombo.addItem("Keiner");
+		callMonitorCombo.addItem("Telnet");
+		callMonitorCombo.addItem("Syslog");
+		callMonitorCombo.addItem("YAC");
+		callMonitorPane.add(callMonitorCombo, c);
+
+		c.gridy = 1;
+		c.gridwidth = 2;
+		startCallMonitorButton = new JToggleButton();
+		startCallMonitorButton.setActionCommand("startCallMonitor");
+		startCallMonitorButton.addActionListener(actionListener);
+		callMonitorPane.add(startCallMonitorButton, c);
+
+		c.gridy = 2;
+		c.gridwidth = 2;
+		callMonitorAfterStartButton = new JCheckBox(
+				"Call-Monitor nach Programmstart automatisch starten?");
+		callMonitorPane.add(callMonitorAfterStartButton, c);
+
+		c.gridy = 3;
+		telnetMonitorPane = new JPanel();
+		telnetMonitorPane = createTelnetPane();
+		yacMonitorPane = new JPanel();
+		yacMonitorPane = createYACPane();
+		callMonitorPane.add(telnetMonitorPane, c);
+		callMonitorPane.add(yacMonitorPane, c);
+
+		callMonitorCombo.addActionListener(actionListener);
+
+		return callMonitorPane;
+	}
+
 	protected JPanel createYACPane() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
@@ -475,36 +626,27 @@ public class ConfigDialog extends JDialog {
 		c.insets.bottom = 5;
 		c.anchor = GridBagConstraints.WEST;
 
-		c.gridy = 0;
-		c.gridwidth = 2;
-		startYACButton = new JToggleButton();
-		startYACButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JFritz.setProperty("option.yacport", yacPort.getText());
-				if (startYACButton.isSelected()) {
-					jfritz.startYACListener();
-					startYACButton.setText("Stop YAC-Listener");
-				} else {
-					jfritz.stopYACListener();
-					startYACButton.setText("Start YAC-Listener");
-				}
-			}
-		});
-		panel.add(startYACButton, c);
-
-		c.gridy = 1;
-		c.gridwidth = 1;
 		JLabel label = new JLabel("YAC-Port: ");
 		panel.add(label, c);
 		yacPort = new JTextField("", 5);
 		panel.add(yacPort, c);
 
-		c.gridy = 2;
-		c.gridwidth = 2;
-		yacAfterStartButton = new JCheckBox(
-				"YAC-Listener nach Programmstart automatisch starten?");
-		panel.add(yacAfterStartButton, c);
+		return panel;
+	}
 
+	protected JPanel createTelnetPane() {
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.insets.top = 5;
+		c.insets.bottom = 5;
+		c.anchor = GridBagConstraints.WEST;
+
+		// Vielleicht UserName und Passwort noch einstellen lassen?
+		/**
+		 * JLabel label = new JLabel("YAC-Port: "); panel.add(label, c); yacPort =
+		 * new JTextField("", 5); panel.add(yacPort, c);
+		 */
 		return panel;
 	}
 
@@ -629,7 +771,7 @@ public class ConfigDialog extends JDialog {
 		tpane.addTab("Telefon", createPhonePane());
 		tpane.addTab("SIP-Nummern", createSipPane(actionListener));
 		tpane.addTab("Anrufliste", createCallerListPane());
-		tpane.addTab("YAC-Anrufmonitor", createYACPane());
+		tpane.addTab("Anrufmonitor", createCallMonitorPane());
 		tpane.addTab("Weiteres", createOtherPane());
 
 		getContentPane().setLayout(new BorderLayout());
