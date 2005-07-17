@@ -23,7 +23,7 @@ import de.moonflower.jfritz.utils.Debug;
  * @author Arno Willig
  *
  */
-public class SyslogListener extends Thread implements CallMonitor{
+public class SyslogListener extends Thread implements CallMonitor {
 
 	private final String PATTERN_TELEFON_INCOMING = "IncomingCall[^:]*: ID ([^,]*), caller: \"([^\"]*)\" called: \"([^\"]*)\"";
 
@@ -36,6 +36,10 @@ public class SyslogListener extends Thread implements CallMonitor{
 	public SyslogListener(JFritz jfritz) {
 		super();
 		this.jfritz = jfritz;
+		if (!JFritzUtils.parseBoolean(JFritz.getProperty(
+				"option.syslogonfritz", "false"))) {
+			startSyslogOnFritzBox();
+		}
 		start();
 	}
 
@@ -43,7 +47,6 @@ public class SyslogListener extends Thread implements CallMonitor{
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
-		startSyslogOnFritzBox();
 		startSyslogListener();
 	}
 
@@ -99,12 +102,13 @@ public class SyslogListener extends Thread implements CallMonitor{
 		}
 	}
 
-	private void startSyslogOnFritzBox() {
+	public static void startSyslogOnFritzBox() {
 		if (JFritzUtils
 				.showYesNoDialog("Der telefond muss neu gestartet werden.\n"
-						+ "Dabei wird ein laufendes Gespräch unterbrochen.\n"
-						+ "Ohne Neustart wird der Anrufmonitor nicht funktionieren.\n"
+						+ "Dabei wird ein laufendes Gespräch unterbrochen. Die Anrufliste wird vorher gesichert.\n"
+						+ "Diese Aktion muss NUR nach einem Neustart der FritzBox ausgeführt werden.\n"
 						+ "Soll der telefond neu gestartet werden?") == 0) {
+
 			Telnet telnet = new Telnet();
 			telnet.connect();
 			int port = 4711;
@@ -113,14 +117,13 @@ public class SyslogListener extends Thread implements CallMonitor{
 			telnet.write("syslogd -R " + ip + ":" + port);
 			Debug.msg("Restarting telefond");
 			// get new Calls
-			jfritz.getJframe().getFetchButton().doClick();
 			telnet.write("killall telefon && telefon | logger &");
 			try {
 				sleep(500);
-			}
-			catch (InterruptedException ie) {
+			} catch (InterruptedException ie) {
 				Debug.msg("Failed to sleep Thread SyslogListener");
 			}
+			JFritz.setProperty("option.syslogonfritz", "true");
 			telnet.disconnect();
 		}
 	}
