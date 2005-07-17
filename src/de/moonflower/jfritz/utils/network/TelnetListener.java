@@ -2,6 +2,7 @@ package de.moonflower.jfritz.utils.network;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.network.Telnet;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import java.io.IOException;
@@ -31,6 +32,8 @@ public class TelnetListener extends Thread {
 
 	private Telnet telnet;
 
+	private boolean isRunning = false;
+
 	public TelnetListener(JFritz jfritz) {
 		// Fetch new calls
 		jfritz.getJframe().getFetchButton().doClick();
@@ -42,8 +45,16 @@ public class TelnetListener extends Thread {
 
 	public void run() {
 		Debug.msg("run()");
+		if (JFritzUtils
+				.showYesNoDialog("Der telefond muss neu gestartet werden.\n"
+						+ "Dabei wird ein laufendes Gespräch unterbrochen.\n"
+						+ "Ohne Neustart wird der Anrufmonitor nicht funktionieren.\n"
+						+ "Soll der telefond neu gestartet werden?") == 0) {
+
 		restartTelefonDaemon();
+		isRunning = true;
 		parseOutput();
+		}
 	}
 
 	private void restartTelefonDaemon() {
@@ -54,10 +65,8 @@ public class TelnetListener extends Thread {
 	public void parseOutput() {
 		try {
 			String currentLine = "";
-			while (!isInterrupted()) {
+			while (isRunning) {
 				currentLine = telnet.readUntil("\n");
-				if (isInterrupted())
-					break;
 				Pattern p = Pattern.compile(PATTERN_TELEFON);
 				Matcher m = p.matcher(currentLine);
 				if (m.find()) {
@@ -67,25 +76,10 @@ public class TelnetListener extends Thread {
 					Debug.msg("NEW CALL " + id + ": " + caller + " -> "
 							+ called);
 
-					// POPUP Messages to JFritz
 					JFritz.callMsg(caller, called);
+					if (!isRunning) break;
 				}
-				/*
-				 * p = Pattern.compile(PATTERN_VOIP_REQUEST); m =
-				 * p.matcher(currentLine); if (m.find()) { String dialString =
-				 * m.group(1); System.err.print("Sending call request to: ");
-				 * System.err.println(dialString); // POPUP Messages to JFritz }
-				 *
-				 * p = Pattern.compile(PATTERN_VOIP_CALLTO_ESTABLISHED); m =
-				 * p.matcher(currentLine); if (m.find()) {
-				 * System.err.println("CALL TO: " + m.group(1) + "
-				 * ESTABLISHED"); // POPUP Messages to JFritz }
-				 *
-				 * p = Pattern.compile(PATTERN_VOIP_CALLTO_TERMINATED); m =
-				 * p.matcher(currentLine); if (m.find()) { System.err
-				 * .println("CALL TO: " + m.group(1) + " TERMINATED"); // POPUP
-				 * Messages to JFritz }
-				 */
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -95,6 +89,6 @@ public class TelnetListener extends Thread {
 
 	public void stopTelnetListener() {
 		Debug.msg("Stopping TelnetListener");
-		interrupt();
+		isRunning = false;
 	}
 }
