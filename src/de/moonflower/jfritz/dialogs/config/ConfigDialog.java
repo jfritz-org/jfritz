@@ -61,6 +61,7 @@ import de.moonflower.jfritz.utils.network.YAClistener;
 import java.net.URLEncoder;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.InetAddress;
 
 /**
  * JDialog for JFritz configuration.
@@ -73,7 +74,7 @@ public class ConfigDialog extends JDialog {
 
 	private JFritz jfritz;
 
-	private JComboBox addressCombo, callMonitorCombo;
+	private JComboBox addressCombo, callMonitorCombo, ipAddressComboBox;
 
 	private JTextField address, areaCode, countryCode, areaPrefix,
 			countryPrefix, yacPort;
@@ -158,6 +159,8 @@ public class ConfigDialog extends JDialog {
 		} else {
 			startCallMonitorButton.setText("Start Call-Monitor");
 		}
+
+		ipAddressComboBox.setSelectedItem(JFritz.getProperty("option.syslogclientip","192.168.178.20"));
 
 		lookupAfterFetchButton.setSelected(JFritzUtils.parseBoolean(JFritz
 				.getProperty("option.lookupAfterFetch", "false")));
@@ -666,16 +669,41 @@ public class ConfigDialog extends JDialog {
 		c.anchor = GridBagConstraints.WEST;
 
 		// TODO: Syslog Pass-Through
+		c.gridy = 0;
 		startSyslogOnFritzBoxButton = new JButton(
 				"Starte Syslog auf der FritzBox");
 		startSyslogOnFritzBoxButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				jfritz.getJframe().getFetchButton().doClick();
-				SyslogListener.startSyslogOnFritzBox();
+				SyslogListener.startSyslogOnFritzBox(JFritz.getProperty("option.syslogclientip","192.168.178.21"));
 			}
 
 		});
 		panel.add(startSyslogOnFritzBoxButton, c);
+
+		c.gridx = 0;
+		c.gridy = 1;
+		JLabel ipAddressLabel = new JLabel("Wählen Sie die IP-Adresse ihres Rechners: ");
+		panel.add(ipAddressLabel, c);
+
+		c.gridx = 1;
+		c.gridy = 1;
+		ipAddressComboBox = new JComboBox();
+		Vector ipAddresses = new Vector();
+		ipAddresses = SyslogListener.getIP();
+		Enumeration en = ipAddresses.elements();
+		while (en.hasMoreElements()) {
+			InetAddress ad = (InetAddress) en.nextElement();
+			ipAddressComboBox.addItem(ad.toString().substring(1,ad.toString().length()));
+		}
+		ipAddressComboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Debug.msg(ipAddressComboBox.getSelectedItem().toString());
+				JFritz.setProperty("option.syslogclientip",ipAddressComboBox.getSelectedItem().toString());
+			}
+		});
+		panel.add(ipAddressComboBox, c);
+
 		/**
 		 * JLabel label = new JLabel("YAC-Port: "); panel.add(label, c); yacPort =
 		 * new JTextField("", 5); panel.add(yacPort, c);
