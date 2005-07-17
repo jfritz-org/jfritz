@@ -110,6 +110,7 @@ public class YAClistener extends Thread {
 	public void stopYACListener() {
 		Debug.msg("Stopping YACListener");
 		try {
+			if (serverSocket != null)
 			serverSocket.close();
 		} catch (IOException e) {
 			Debug.msg("Fehler beim Schliessen des YAC-Sockets");
