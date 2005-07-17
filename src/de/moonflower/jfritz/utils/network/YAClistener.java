@@ -14,7 +14,7 @@ import java.net.Socket;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.Debug;
 
-public class YAClistener extends Thread {
+public class YAClistener extends Thread implements CallMonitor{
 
 	private boolean isRunning = false;
 
@@ -107,7 +107,7 @@ public class YAClistener extends Thread {
 		}
 	}
 
-	public void stopYACListener() {
+	public void stopCallMonitor() {
 		Debug.msg("Stopping YACListener");
 		try {
 			if (serverSocket != null)

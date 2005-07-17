@@ -16,7 +16,7 @@ import java.util.regex.Matcher;
  *
  */
 
-public class TelnetListener extends Thread {
+public class TelnetListener extends Thread implements CallMonitor{
 
 	//IncomingCall: ID 0, caller: "017623352711" called: "592904"
 	//IncomingCall from NT: ID 0, caller: "592904" called: "1815212"
@@ -55,17 +55,24 @@ public class TelnetListener extends Thread {
 
 		jfritz.getJframe().getFetchButton().doClick();
 		restartTelefonDaemon();
-		isRunning = true;
 		parseOutput();
 		}
 	}
 
 	private void restartTelefonDaemon() {
-		telnet.write("killall telefon && telefon &>&1");
+		telnet.write("killall telefon");
+		telnet.write("telefon &>&1");
+		try {
+			sleep(500);
+		}
+		catch (InterruptedException ie) {
+			Debug.msg("Failed to sleep in restartTelefonDaemon()");
+		}
 		Debug.msg("Telefon Daemon restarted.");
 	}
 
 	public void parseOutput() {
+		isRunning = true;
 		try {
 			String currentLine = "";
 			while (isRunning) {
@@ -86,11 +93,12 @@ public class TelnetListener extends Thread {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			isRunning = false;
 		}
 		telnet.disconnect();
 	}
 
-	public void stopTelnetListener() {
+	public void stopCallMonitor() {
 		Debug.msg("Stopping TelnetListener");
 		isRunning = false;
 	}

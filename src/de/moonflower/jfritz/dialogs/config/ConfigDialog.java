@@ -54,6 +54,9 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.network.SSDPPacket;
+import de.moonflower.jfritz.utils.network.SyslogListener;
+import de.moonflower.jfritz.utils.network.TelnetListener;
+import de.moonflower.jfritz.utils.network.YAClistener;
 
 import java.net.URLEncoder;
 import java.io.UnsupportedEncodingException;
@@ -479,9 +482,7 @@ public class ConfigDialog extends JDialog {
 		if (startCallMonitorButton.isSelected()) {
 			startCallMonitorButton.setText("Starte Anrufmonitor");
 			startCallMonitorButton.setSelected(false);
-			jfritz.stopSyslogListener();
-			jfritz.stopTelnetListener();
-			jfritz.stopYACListener();
+			jfritz.stopCallMonitor();
 		}
 	}
 
@@ -538,37 +539,28 @@ public class ConfigDialog extends JDialog {
 					JFritz.setProperty("option.yacport", yacPort.getText());
 					// Aktion des StartCallMonitorButtons
 					if (startCallMonitorButton.isSelected()) {
+						if (jfritz.getCallMonitor() != null) {
+							jfritz.getCallMonitor().stopCallMonitor();
+						}
 						switch (callMonitorCombo.getSelectedIndex()) {
 						case 1: {
-							jfritz.startTelnetListener();
+							jfritz.setCallMonitor(new TelnetListener(jfritz));
 							break;
 						}
 						case 2: {
-							jfritz.startSyslogListener();
+							jfritz.setCallMonitor(new SyslogListener(jfritz));
 							break;
 						}
 						case 3: {
-							jfritz.startYACListener();
+							jfritz.setCallMonitor(new YAClistener(Integer
+									.parseInt(JFritz.getProperty(
+											"option.yacport", "10629"))));
 							break;
 						}
 						}
 						startCallMonitorButton.setText("Stoppe Anrufmonitor");
 					} else {
-						switch (callMonitorCombo.getSelectedIndex()) {
-						case 1: {
-							jfritz.stopTelnetListener();
-							break;
-						}
-						case 2: {
-							jfritz.stopSyslogListener();
-							break;
-						}
-						case 3: {
-							jfritz.stopYACListener();
-							break;
-						}
-
-						}
+						jfritz.stopCallMonitor();
 						startCallMonitorButton.setText("Starte Anrufmonitor");
 					}
 				}

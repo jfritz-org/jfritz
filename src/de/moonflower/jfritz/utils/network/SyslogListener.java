@@ -23,7 +23,7 @@ import de.moonflower.jfritz.utils.Debug;
  * @author Arno Willig
  *
  */
-public class SyslogListener extends Thread {
+public class SyslogListener extends Thread implements CallMonitor{
 
 	private final String PATTERN_TELEFON_INCOMING = "IncomingCall[^:]*: ID ([^,]*), caller: \"([^\"]*)\" called: \"([^\"]*)\"";
 
@@ -79,7 +79,7 @@ public class SyslogListener extends Thread {
 		socket.close();
 	}
 
-	public void stopSyslogListener() {
+	public void stopCallMonitor() {
 		Debug.msg("Stopping SyslogListener");
 		interrupt();
 		socket.close();

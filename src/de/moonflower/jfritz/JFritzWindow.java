@@ -57,6 +57,9 @@ import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.ReverseLookup;
 import de.moonflower.jfritz.utils.SwingWorker;
+import de.moonflower.jfritz.utils.network.TelnetListener;
+import de.moonflower.jfritz.utils.network.SyslogListener;
+import de.moonflower.jfritz.utils.network.YAClistener;
 
 /**
  * This is main window class of JFritz, which creates the GUI.
@@ -112,9 +115,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		}
 		if (JFritz.getProperty("option.autostartcallmonitor", "false").equals("true")) {
 			switch (Integer.parseInt(JFritz.getProperty("option.callMonitorType","0"))) {
-			case 1:	{ jfritz.startTelnetListener(); break; }
-			case 2:	{ jfritz.startSyslogListener(); break; }
-			case 3:	{ jfritz.startYACListener(); break; }
+			case 1:	{ jfritz.setCallMonitor(new TelnetListener(jfritz)); monitorButton.setSelected(true); break; }
+			case 2:	{ jfritz.setCallMonitor(new SyslogListener(jfritz)); monitorButton.setSelected(true); break; }
+			case 3:	{ jfritz.setCallMonitor(new YAClistener(Integer.parseInt(JFritz.getProperty("option.yacport","10629")))); monitorButton.setSelected(true); break; }
 			}
 		}
 	}
@@ -631,11 +634,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 			jfritz.saveProperties();
 
-			// FIXME if (jfritz.getTelnet() != null)
-			// jfritz.getTelnet().interrupt();
-			jfritz.stopSyslogListener();
-			jfritz.stopTelnetListener();
-			jfritz.stopYACListener();
+			jfritz.stopCallMonitor();
 			System.exit(0);
 		}
 	}
@@ -769,15 +768,16 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			boolean active = ((JToggleButton) e.getSource()).isSelected();
 			if (active) {
 				Debug.msg("start callMonitor");
-				//fetchList();
-				// FIXME jfritz.newTelnet().start();
-				jfritz.startSyslogListener();
-//				jfritz.startTelnetListener();
+				switch (Integer.parseInt(JFritz.getProperty(
+						"option.callMonitorType", "0"))) {
+						case 0: { jfritz.errorMsg("Kein Anrufmonitor ausgewählt"); break; }
+						case 1:	{ jfritz.setCallMonitor(new TelnetListener(jfritz)); break; }
+						case 2:	{ jfritz.setCallMonitor(new SyslogListener(jfritz)); break; }
+						case 3:	{ jfritz.setCallMonitor(new YAClistener(Integer.parseInt(JFritz.getProperty("option.yacport","10629")))); break; }
+				}
 			} else {
 				Debug.msg("stop callMonitor");
-				jfritz.stopSyslogListener();
-//				jfritz.stopSyslogListener();
-				// jfritz.getTelnet().interrupt();
+				jfritz.stopCallMonitor();
 			}
 
 		} else if (e.getActionCommand() == "reverselookup")
