@@ -34,9 +34,11 @@ public class TelnetListener extends Thread {
 
 	private boolean isRunning = false;
 
+	private JFritz jfritz;
+
 	public TelnetListener(JFritz jfritz) {
 		// Fetch new calls
-		jfritz.getJframe().getFetchButton().doClick();
+		this.jfritz = jfritz;
 		telnet = new Telnet();
 		Debug.msg("Starting TelnetListener");
 		telnet.connect();
@@ -51,6 +53,7 @@ public class TelnetListener extends Thread {
 						+ "Ohne Neustart wird der Anrufmonitor nicht funktionieren.\n"
 						+ "Soll der telefond neu gestartet werden?") == 0) {
 
+		jfritz.getJframe().getFetchButton().doClick();
 		restartTelefonDaemon();
 		isRunning = true;
 		parseOutput();

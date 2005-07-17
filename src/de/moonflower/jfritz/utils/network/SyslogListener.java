@@ -36,7 +36,6 @@ public class SyslogListener extends Thread {
 	public SyslogListener(JFritz jfritz) {
 		super();
 		this.jfritz = jfritz;
-		startSyslogOnFritzBox();
 		start();
 	}
 
@@ -44,6 +43,7 @@ public class SyslogListener extends Thread {
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
+		startSyslogOnFritzBox();
 		startSyslogListener();
 	}
 
