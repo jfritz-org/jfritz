@@ -16,6 +16,7 @@ import java.util.Date;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -23,9 +24,6 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.struct.Call;
@@ -270,8 +268,9 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			jfritz.getCallerlist().updateFilter();
 			jfritz.getCallerlist().fireTableStructureChanged();
 		} else if (e.getActionCommand() == "delete_entry") {
-			if (JFritzUtils.showYesNoDialog("Wirklich " // TODO I18N
-					+ deleteEntriesButton.getToolTipText() + "?") == 0)
+			if (JOptionPane.showConfirmDialog(this, "Wirklich " // TODO I18N
+					+ deleteEntriesButton.getToolTipText() + "?",
+					JFritz.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
 				jfritz.getCallerlist().removeEntries();
 		}
 
