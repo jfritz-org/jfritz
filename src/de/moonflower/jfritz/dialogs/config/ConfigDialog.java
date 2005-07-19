@@ -42,6 +42,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.JToggleButton;
+import javax.swing.ButtonGroup;
+import javax.swing.JRadioButton;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
@@ -93,7 +95,8 @@ public class ConfigDialog extends JDialog {
 	private JCheckBox deleteAfterFetchButton, fetchAfterStartButton,
 			notifyOnCallsButton, confirmOnExitButton, startMinimizedButton,
 			timerAfterStartButton, passwordAfterStartButton, soundButton,
-			callMonitorAfterStartButton, lookupAfterFetchButton, syslogPassthroughCheckBox;
+			callMonitorAfterStartButton, lookupAfterFetchButton,
+			syslogPassthroughCheckBox;
 
 	private JPanel callMonitorPane, yacMonitorPane, telnetMonitorPane,
 			syslogMonitorPane;
@@ -107,6 +110,8 @@ public class ConfigDialog extends JDialog {
 	private boolean pressed_OK = false;
 
 	private Vector devices;
+
+	private JRadioButton popupNoButton, popupDialogButton, popupTrayButton;
 
 	public ConfigDialog(Frame parent) {
 		super(parent, true);
@@ -160,8 +165,28 @@ public class ConfigDialog extends JDialog {
 			startCallMonitorButton.setText("Start Call-Monitor");
 		}
 
-		ipAddressComboBox.setSelectedItem(JFritz.getProperty("option.syslogclientip","192.168.178.20"));
-		syslogPassthroughCheckBox.setSelected(JFritzUtils.parseBoolean(JFritz.getProperty("option.syslogpassthrough", "false")));
+		ipAddressComboBox.setSelectedItem(JFritz.getProperty(
+				"option.syslogclientip", "192.168.178.20"));
+		syslogPassthroughCheckBox.setSelected(JFritzUtils.parseBoolean(JFritz
+				.getProperty("option.syslogpassthrough", "false")));
+
+		if (!JFritz.SYSTRAY_SUPPORT) {
+			popupTrayButton.setVisible(false);
+		}
+		switch (Integer.parseInt(JFritz.getProperty("option.popuptype", "1"))) {
+		case 0: {
+			popupNoButton.setSelected(true);
+			break;
+		}
+		case 1: {
+			popupDialogButton.setSelected(true);
+			break;
+		}
+		case 2: {
+			popupTrayButton.setSelected(true);
+			break;
+		}
+		}
 
 		lookupAfterFetchButton.setSelected(JFritzUtils.parseBoolean(JFritz
 				.getProperty("option.lookupAfterFetch", "false")));
@@ -244,6 +269,15 @@ public class ConfigDialog extends JDialog {
 		JFritz.setProperty("option.callMonitorType", String
 				.valueOf(callMonitorCombo.getSelectedIndex()));
 
+		// Set Popup Messages Type
+		if (popupNoButton.isSelected()) {
+			JFritz.setProperty("option.popuptype", "0");
+		} else if (popupDialogButton.isSelected()) {
+			JFritz.setProperty("option.popuptype", "1");
+		} else {
+			JFritz.setProperty("option.popuptype", "2");
+		}
+
 		if (!passwordAfterStartButton.isSelected()) {
 			JFritz.setProperty("jfritz.password", Encryption
 					.encrypt(JFritz.PROGRAM_SECRET + encodedPassword));
@@ -254,7 +288,8 @@ public class ConfigDialog extends JDialog {
 		JFritz.setProperty("option.lookupAfterFetch", Boolean
 				.toString(lookupAfterFetchButton.isSelected()));
 
-		JFritz.setProperty("option.syslogpassthrough", Boolean.toString(syslogPassthroughCheckBox.isSelected()));
+		JFritz.setProperty("option.syslogpassthrough", Boolean
+				.toString(syslogPassthroughCheckBox.isSelected()));
 
 		JFritz.setProperty("box.password", Encryption.encrypt(encodedPassword));
 		JFritz.setProperty("box.address", address.getText());
@@ -449,10 +484,6 @@ public class ConfigDialog extends JDialog {
 		startMinimizedButton = new JCheckBox("Programm minimiert starten");
 		otherpane.add(startMinimizedButton);
 
-		notifyOnCallsButton = new JCheckBox(
-				"Bei neuen Anrufen Fenster in den Vordergrund");
-		otherpane.add(notifyOnCallsButton);
-
 		confirmOnExitButton = new JCheckBox("Bei Beenden nachfragen");
 		otherpane.add(confirmOnExitButton);
 		return otherpane;
@@ -463,8 +494,6 @@ public class ConfigDialog extends JDialog {
 
 		cPanel.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
-		c.insets.top = 5;
-		c.insets.bottom = 5;
 		c.anchor = GridBagConstraints.WEST;
 
 		c.gridy = 0;
@@ -472,10 +501,15 @@ public class ConfigDialog extends JDialog {
 		cPanel.add(fetchAfterStartButton, c);
 
 		c.gridy = 1;
+		notifyOnCallsButton = new JCheckBox(
+				"Bei neuen Anrufen Fenster in den Vordergrund");
+		cPanel.add(notifyOnCallsButton, c);
+
+		c.gridy = 2;
 		deleteAfterFetchButton = new JCheckBox("Nach Laden auf Box löschen");
 		cPanel.add(deleteAfterFetchButton, c);
 
-		c.gridy = 2;
+		c.gridy = 3;
 		lookupAfterFetchButton = new JCheckBox(
 				"Nach Laden Rückwärtssuche ausführen");
 		cPanel.add(lookupAfterFetchButton, c);
@@ -586,36 +620,41 @@ public class ConfigDialog extends JDialog {
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets.top = 5;
 		c.insets.bottom = 5;
+		c.insets.left = 5;
+		c.insets.right = 5;
 		c.anchor = GridBagConstraints.WEST;
 
 		c.gridx = 0;
 		c.gridy = 0;
 		callMonitorCombo = new JComboBox();
+		c.gridwidth = 1;
 		callMonitorCombo.addItem("Keiner");
 		callMonitorCombo.addItem("Telnet");
 		callMonitorCombo.addItem("Syslog");
 		callMonitorCombo.addItem("YAC");
 		callMonitorPane.add(callMonitorCombo, c);
 
-		c.gridy = 1;
+		c.gridx = 1;
+		c.gridy = 0;
 		c.gridwidth = 2;
 		startCallMonitorButton = new JToggleButton();
 		startCallMonitorButton.setActionCommand("startCallMonitor");
 		startCallMonitorButton.addActionListener(actionListener);
 		callMonitorPane.add(startCallMonitorButton, c);
 
-		c.gridy = 2;
-		c.gridwidth = 2;
+		c.gridx = 0;
+		c.gridy = 1;
+		c.gridwidth = 3;
 		callMonitorAfterStartButton = new JCheckBox(
 				"Call-Monitor nach Programmstart automatisch starten?");
 		callMonitorPane.add(callMonitorAfterStartButton, c);
 
 		soundButton = new JCheckBox("Bei eingehenden Anrufen Sound abspielen");
-		c.gridy = 3;
+		c.gridy = 2;
 		c.gridwidth = 3;
 		callMonitorPane.add(soundButton, c);
 
-		c.gridy = 4;
+		c.gridy = 3;
 		telnetMonitorPane = new JPanel();
 		telnetMonitorPane = createTelnetPane();
 		syslogMonitorPane = new JPanel();
@@ -635,8 +674,6 @@ public class ConfigDialog extends JDialog {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
-		c.insets.top = 5;
-		c.insets.bottom = 5;
 		c.anchor = GridBagConstraints.WEST;
 
 		JLabel label = new JLabel("YAC-Port: ");
@@ -651,15 +688,9 @@ public class ConfigDialog extends JDialog {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
-		c.insets.top = 5;
-		c.insets.bottom = 5;
 		c.anchor = GridBagConstraints.WEST;
 
 		// TODO: UserName und Passwort einstellen lassen
-		/**
-		 * JLabel label = new JLabel("YAC-Port: "); panel.add(label, c); yacPort =
-		 * new JTextField("", 5); panel.add(yacPort, c);
-		 */
 		return panel;
 	}
 
@@ -667,18 +698,16 @@ public class ConfigDialog extends JDialog {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
-		c.insets.top = 5;
-		c.insets.bottom = 5;
 		c.anchor = GridBagConstraints.WEST;
 
-		// TODO: Syslog Pass-Through
 		c.gridy = 0;
 		startSyslogOnFritzBoxButton = new JButton(
 				"Starte Syslog auf der FritzBox");
 		startSyslogOnFritzBoxButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				jfritz.getJframe().getFetchButton().doClick();
-				SyslogListener.startSyslogOnFritzBox(JFritz.getProperty("option.syslogclientip","192.168.178.21"));
+				SyslogListener.startSyslogOnFritzBox(JFritz.getProperty(
+						"option.syslogclientip", "192.168.178.21"));
 			}
 
 		});
@@ -686,7 +715,8 @@ public class ConfigDialog extends JDialog {
 
 		c.gridx = 0;
 		c.gridy = 1;
-		JLabel ipAddressLabel = new JLabel("Wählen Sie die IP-Adresse ihres Rechners: ");
+		JLabel ipAddressLabel = new JLabel(
+				"Wählen Sie die IP-Adresse ihres Rechners: ");
 		panel.add(ipAddressLabel, c);
 
 		c.gridx = 1;
@@ -697,12 +727,14 @@ public class ConfigDialog extends JDialog {
 		Enumeration en = ipAddresses.elements();
 		while (en.hasMoreElements()) {
 			InetAddress ad = (InetAddress) en.nextElement();
-			ipAddressComboBox.addItem(ad.toString().substring(1,ad.toString().length()));
+			ipAddressComboBox.addItem(ad.toString().substring(1,
+					ad.toString().length()));
 		}
 		ipAddressComboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Debug.msg(ipAddressComboBox.getSelectedItem().toString());
-				JFritz.setProperty("option.syslogclientip",ipAddressComboBox.getSelectedItem().toString());
+				JFritz.setProperty("option.syslogclientip", ipAddressComboBox
+						.getSelectedItem().toString());
 			}
 		});
 		panel.add(ipAddressComboBox, c);
@@ -711,10 +743,50 @@ public class ConfigDialog extends JDialog {
 		c.gridy = 2;
 		syslogPassthroughCheckBox = new JCheckBox("Syslog-passthrough?");
 		panel.add(syslogPassthroughCheckBox, c);
-		/**
-		 * JLabel label = new JLabel("YAC-Port: "); panel.add(label, c); yacPort =
-		 * new JTextField("", 5); panel.add(yacPort, c);
-		 */
+		return panel;
+	}
+
+	protected JPanel createMessagePane() {
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.anchor = GridBagConstraints.WEST;
+
+		c.gridy = 0;
+		JLabel text = new JLabel("Popupfenster für Informationen: ");
+		panel.add(text, c);
+
+		ActionListener actionListener = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (popupNoButton.isSelected()) {
+					JFritz.setProperty("option.popuptype", "0");
+				} else if (popupDialogButton.isSelected()) {
+					JFritz.setProperty("option.popuptype", "1");
+				} else {
+					JFritz.setProperty("option.popuptype", "2");
+				}
+			}
+		};
+
+		ButtonGroup popupGroup = new ButtonGroup();
+		c.gridy = 1;
+		popupNoButton = new JRadioButton("Keine Popups");
+		popupNoButton.addActionListener(actionListener);
+		popupGroup.add(popupNoButton);
+		panel.add(popupNoButton, c);
+
+		c.gridy = 2;
+		popupDialogButton = new JRadioButton("Popup Fenster");
+		popupDialogButton.addActionListener(actionListener);
+		popupGroup.add(popupDialogButton);
+		panel.add(popupDialogButton, c);
+
+		c.gridy = 3;
+		popupTrayButton = new JRadioButton("Tray-Nachrichten");
+		popupTrayButton.addActionListener(actionListener);
+		popupGroup.add(popupTrayButton);
+		panel.add(popupTrayButton, c);
+
 		return panel;
 	}
 
@@ -840,6 +912,7 @@ public class ConfigDialog extends JDialog {
 		tpane.addTab("SIP-Nummern", createSipPane(actionListener));
 		tpane.addTab("Anrufliste", createCallerListPane());
 		tpane.addTab("Anrufmonitor", createCallMonitorPane());
+		tpane.addTab("Nachrichten", createMessagePane());
 		tpane.addTab("Weiteres", createOtherPane());
 
 		getContentPane().setLayout(new BorderLayout());
