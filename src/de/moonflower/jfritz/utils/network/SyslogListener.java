@@ -92,7 +92,7 @@ public class SyslogListener extends Thread implements CallMonitor {
 					String called = m.group(2);
 					if (!called.equals("")) {
 						Debug.msg("NEW OUTGOING CALL: " + called);
-						JFritz.callOutMsg(called);
+//						JFritz.callOutMsg(called);
 					}
 				}
 			}
@@ -105,7 +105,6 @@ public class SyslogListener extends Thread implements CallMonitor {
 	public void stopCallMonitor() {
 		Debug.msg("Stopping SyslogListener");
 		interrupt();
-		socket.close();
 	}
 
 	private boolean isTelefondRestarted() {
