@@ -89,6 +89,7 @@ public class CallMessageDlg extends JDialog implements ActionListener{
 			super();
 
 			createGUI(caller, called);
+			setAlwaysOnTop(true);
 
 			Timer timer = new Timer();
 			HideTimer task = new HideTimer(this);
