@@ -57,8 +57,6 @@ import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.network.SSDPPacket;
 import de.moonflower.jfritz.utils.network.SyslogListener;
-import de.moonflower.jfritz.utils.network.TelnetListener;
-import de.moonflower.jfritz.utils.network.YAClistener;
 
 import java.net.URLEncoder;
 import java.io.UnsupportedEncodingException;
