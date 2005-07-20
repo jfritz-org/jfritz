@@ -632,11 +632,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 
 		if (exit) {
-			quickDialPanel.getDataModel().saveToXMLFile(JFritz.QUICKDIALS_FILE);
-
-			jfritz.saveProperties();
-
-			jfritz.stopCallMonitor();
+			// Speichern der Daten wird von ShutdownThread durchgeführt
 			System.exit(0);
 		}
 	}
