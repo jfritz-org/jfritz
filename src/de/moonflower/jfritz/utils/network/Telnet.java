@@ -98,7 +98,8 @@ public class Telnet {
 	public String sendCommand(String command) {
 		try {
 			write(command);
-			return readUntil(prompt + " ");
+			String data = readUntil(prompt + " ");
+			return data;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
