@@ -87,8 +87,7 @@ public class ConfigDialog extends JDialog {
 
 	private JSlider timerSlider;
 
-	private JButton okButton, cancelButton, boxtypeButton,
-			startSyslogOnFritzBoxButton;
+	private JButton okButton, cancelButton, boxtypeButton;
 
 	private JToggleButton startCallMonitorButton;
 
@@ -166,7 +165,7 @@ public class ConfigDialog extends JDialog {
 		}
 
 		ipAddressComboBox.setSelectedItem(JFritz.getProperty(
-				"option.syslogclientip", "192.168.178.20"));
+				"option.syslogclientip", "192.168.178.21"));
 		syslogPassthroughCheckBox.setSelected(JFritzUtils.parseBoolean(JFritz
 				.getProperty("option.syslogpassthrough", "false")));
 
@@ -287,6 +286,9 @@ public class ConfigDialog extends JDialog {
 
 		JFritz.setProperty("option.lookupAfterFetch", Boolean
 				.toString(lookupAfterFetchButton.isSelected()));
+
+		JFritz.setProperty(
+				"option.syslogclientip", ipAddressComboBox.getSelectedItem().toString());
 
 		JFritz.setProperty("option.syslogpassthrough", Boolean
 				.toString(syslogPassthroughCheckBox.isSelected()));
@@ -521,6 +523,7 @@ public class ConfigDialog extends JDialog {
 		if (startCallMonitorButton.isSelected()) {
 			startCallMonitorButton.setText("Starte Anrufmonitor");
 			startCallMonitorButton.setSelected(false);
+			jfritz.getJframe().getMonitorButton().setSelected(false);
 			jfritz.stopCallMonitor();
 		}
 	}
@@ -541,6 +544,7 @@ public class ConfigDialog extends JDialog {
 						callMonitorPane.repaint();
 						Debug.msg("Kein Anrufmonitor erwünscht");
 						stopAllCallMonitors();
+
 						break;
 					}
 					case 1: {
@@ -585,29 +589,12 @@ public class ConfigDialog extends JDialog {
 						.getActionCommand())) {
 					JFritz.setProperty("option.yacport", yacPort.getText());
 					// Aktion des StartCallMonitorButtons
+					JFritz.setProperty("option.callMonitorType", String
+							.valueOf(callMonitorCombo.getSelectedIndex()));
+					jfritz.getJframe().switchMonitorButton();
 					if (startCallMonitorButton.isSelected()) {
-						if (jfritz.getCallMonitor() != null) {
-							jfritz.getCallMonitor().stopCallMonitor();
-						}
-						switch (callMonitorCombo.getSelectedIndex()) {
-						case 1: {
-							jfritz.setCallMonitor(new TelnetListener(jfritz));
-							break;
-						}
-						case 2: {
-							jfritz.setCallMonitor(new SyslogListener(jfritz));
-							break;
-						}
-						case 3: {
-							jfritz.setCallMonitor(new YAClistener(Integer
-									.parseInt(JFritz.getProperty(
-											"option.yacport", "10629"))));
-							break;
-						}
-						}
 						startCallMonitorButton.setText("Stoppe Anrufmonitor");
 					} else {
-						jfritz.stopCallMonitor();
 						startCallMonitorButton.setText("Starte Anrufmonitor");
 					}
 				}
@@ -699,19 +686,6 @@ public class ConfigDialog extends JDialog {
 		panel.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.WEST;
-
-		c.gridy = 0;
-		startSyslogOnFritzBoxButton = new JButton(
-				"Starte Syslog auf der FritzBox");
-		startSyslogOnFritzBoxButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				jfritz.getJframe().getFetchButton().doClick();
-				SyslogListener.startSyslogOnFritzBox(JFritz.getProperty(
-						"option.syslogclientip", "192.168.178.21"));
-			}
-
-		});
-		panel.add(startSyslogOnFritzBoxButton, c);
 
 		c.gridx = 0;
 		c.gridy = 1;
