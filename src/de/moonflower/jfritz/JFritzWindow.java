@@ -905,4 +905,12 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	public void saveQuickDials() {
 		quickDialPanel.getDataModel().saveToXMLFile(JFritz.QUICKDIALS_FILE);
 	}
+
+	public void switchMonitorButton() {
+		monitorButton.doClick();
+	}
+
+	public JToggleButton getMonitorButton() {
+		return monitorButton;
+	}
 }
