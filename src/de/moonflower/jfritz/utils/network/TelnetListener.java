@@ -62,12 +62,12 @@ public class TelnetListener extends Thread implements CallMonitor {
 
 	private void restartTelefonDaemon() {
 		telnet.write("killall telefon");
-		telnet.write("telefon &>&1");
 		try {
-			sleep(500);
+			sleep(200);
 		} catch (InterruptedException ie) {
 			Debug.msg("Failed to sleep in restartTelefonDaemon()");
 		}
+		telnet.write("telefon &>&1");
 		Debug.msg("Telefon Daemon restarted.");
 	}
 

@@ -135,15 +135,21 @@ public class SyslogListener extends Thread implements CallMonitor {
 			int port = 4711;
 			Debug.msg("IP Adresse für Syslog: " + ip);
 			telnet.write("killall syslogd");
-			telnet.write("syslogd -R " + ip + ":" + port);
-			Debug.msg("Restarting telefond");
-			// get new Calls
-			telnet.write("killall telefon && telefon | logger &");
 			try {
-				sleep(500);
+				sleep(200);
 			} catch (InterruptedException ie) {
 				Debug.msg("Failed to sleep Thread SyslogListener");
 			}
+			telnet.write("syslogd -R " + ip + ":" + port);
+			Debug.msg("Restarting telefond");
+			// get new Calls
+			telnet.write("killall telefon");
+			try {
+				sleep(200);
+			} catch (InterruptedException ie) {
+				Debug.msg("Failed to sleep Thread SyslogListener");
+			}
+			telnet.write("telefon | logger &");
 			JFritz.setProperty("option.syslogonfritz", "true");
 			telnet.disconnect();
 		}
