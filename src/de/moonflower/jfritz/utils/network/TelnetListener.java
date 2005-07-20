@@ -2,10 +2,8 @@ package de.moonflower.jfritz.utils.network;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.Debug;
-import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.network.Telnet;
-import de.moonflower.jfritz.exceptions.WrongPasswordException;
-import java.io.IOException;
+
 
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
