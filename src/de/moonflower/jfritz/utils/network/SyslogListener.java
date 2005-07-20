@@ -7,7 +7,6 @@ package de.moonflower.jfritz.utils.network;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.Socket;
 import java.net.SocketException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -84,9 +83,17 @@ public class SyslogListener extends Thread implements CallMonitor {
 			if (m.find()) {
 				Debug.msg("Telefon ISN'T RUNNING PROPERLY on FritzBox, RESTARTING TELEFON");
 				restartTelefonOnFritzBox(telnet);
+				JFritz.setProperty("telefond.laststarted", "syslogMonitor");
 			}
 			else {
+				if (!JFritz.getProperty("telefond.laststarted", "").equals("syslogMonitor")) {
+					Debug.msg("Telefon ISN'T RUNNING PROPERLY on FritzBox, RESTARTING TELEFON");
+					restartTelefonOnFritzBox(telnet);
+					JFritz.setProperty("telefond.laststarted", "syslogMonitor");
+				}
+				else {
 				Debug.msg("Telefon IS RUNNING PROPERLY on FritzBox");
+				}
 			}
 
 			telnet.disconnect();
@@ -139,7 +146,19 @@ public class SyslogListener extends Thread implements CallMonitor {
 		int port = 4711;
 		Debug.msg("Starte Syslog auf der FritzBox: syslog -R " + ip + ":" + port);
 		telnet.sendCommand("killall syslogd");
+		try {
+			sleep(1000);
+		}
+		catch (InterruptedException e) {
+			Debug.err("Fehler beim Schlafen: " + e);
+		}
 		telnet.sendCommand("syslogd -R " + ip + ":" + port);
+		try {
+			sleep(1000);
+		}
+		catch (InterruptedException e) {
+			Debug.err("Fehler beim Schlafen: " + e);
+		}
 	}
 
 	private static void restartTelefonOnFritzBox(Telnet telnet) {
@@ -148,11 +167,28 @@ public class SyslogListener extends Thread implements CallMonitor {
 						null,
 						"Der telefond muss neu gestartet werden.\n"
 								+ "Dabei wird ein laufendes Gespräch unterbrochen. Die Anrufliste wird vorher gesichert.\n"
-								+ "Diese Aktion muss NUR nach einem Neustart der FritzBox ausgeführt werden.\n"
 								+ "Soll der telefond neu gestartet werden?",
 						JFritz.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+			try {
+				sleep(1000);
+			}
+			catch (InterruptedException e) {
+				Debug.err("Fehler beim Schlafen: " + e);
+			}
 			telnet.sendCommand("killall telefon");
+			try {
+				sleep(1000);
+			}
+			catch (InterruptedException e) {
+				Debug.err("Fehler beim Schlafen: " + e);
+			}
 			telnet.sendCommand("telefon | logger");
+			try {
+				sleep(1000);
+			}
+			catch (InterruptedException e) {
+				Debug.err("Fehler beim Schlafen: " + e);
+			}
 			Debug.msg("telefond restarted");
 		}
 	}

@@ -62,13 +62,23 @@ public class TelnetListener extends Thread implements CallMonitor {
 
 	private void restartTelefonDaemon() {
 		telnet.write("killall telefon");
+		telnet.readUntil("# ");
+		telnet.readUntil("# ");
 		try {
-			sleep(200);
-		} catch (InterruptedException ie) {
-			Debug.msg("Failed to sleep in restartTelefonDaemon()");
+			sleep(1000);
 		}
-		telnet.write("telefon &>&1");
+		catch (InterruptedException e) {
+			Debug.err("Fehler beim Schlafen: " + e);
+		}
+		telnet.write("telefon &>&1 &");
+		try {
+			sleep(1000);
+		}
+		catch (InterruptedException e) {
+			Debug.err("Fehler beim Schlafen: " + e);
+		}
 		Debug.msg("Telefon Daemon restarted.");
+		JFritz.setProperty("telefond.laststarted", "telnetMonitor");
 	}
 
 	public void parseOutput() {
