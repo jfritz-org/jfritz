@@ -227,7 +227,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.82 2005/07/19 12:30:36 robotniko Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.83 2005/07/20 10:41:41 robotniko Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -476,7 +476,7 @@ public final class JFritz {
 
 		ImageIcon icon = new ImageIcon(
 				JFritz.class
-						.getResource("/de/moonflower/jfritz/resources/images/phone.png"));
+						.getResource("/de/moonflower/jfritz/resources/images/trayicon.png"));
 
 		trayIcon = new TrayIcon(icon, "JFritz!", menu);
 		trayIcon.setIconAutoSize(false);
