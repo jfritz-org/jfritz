@@ -14,6 +14,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
  * XML Handler for reading the call file
@@ -60,12 +61,11 @@ public class PhonebookFileXMLHandler extends DefaultHandler {
 		chars = ""; // Important to clear buffer :)
 
 		if (eName.equals("entry")) {
-			if (attrs.getValue("private").equals("true")) {
-				privateEntry = true;
-				}
-			else {
-				privateEntry = false;
-				}
+			String privEntry = attrs.getValue("private");
+			if (privEntry != null) {
+				privateEntry = JFritzUtils.parseBoolean(attrs.getValue("private"));
+			}
+			else privateEntry = false;
 			firstName = "";
 			company = "";
 			lastName = "";
