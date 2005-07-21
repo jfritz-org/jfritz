@@ -117,7 +117,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			switch (Integer.parseInt(JFritz.getProperty("option.callMonitorType","0"))) {
 			case 1:	{ jfritz.setCallMonitor(new TelnetListener(jfritz)); monitorButton.setSelected(true); break; }
 			case 2:	{ jfritz.setCallMonitor(new SyslogListener(jfritz)); monitorButton.setSelected(true); break; }
-			case 3:	{ jfritz.setCallMonitor(new YAClistener(Integer.parseInt(JFritz.getProperty("option.yacport","10629")))); monitorButton.setSelected(true); break; }
+			case 3:	{ jfritz.setCallMonitor(new YAClistener(jfritz, Integer.parseInt(JFritz.getProperty("option.yacport","10629")))); monitorButton.setSelected(true); break; }
 			}
 		}
 	}
@@ -771,7 +771,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 						case 0: { jfritz.errorMsg("Kein Anrufmonitor ausgewählt"); break; }
 						case 1:	{ jfritz.setCallMonitor(new TelnetListener(jfritz)); break; }
 						case 2:	{ jfritz.setCallMonitor(new SyslogListener(jfritz)); break; }
-						case 3:	{ jfritz.setCallMonitor(new YAClistener(Integer.parseInt(JFritz.getProperty("option.yacport","10629")))); break; }
+						case 3:	{ jfritz.setCallMonitor(new YAClistener(jfritz, Integer.parseInt(JFritz.getProperty("option.yacport","10629")))); break; }
 				}
 			} else {
 				Debug.msg("stop callMonitor");
