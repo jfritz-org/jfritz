@@ -11,6 +11,7 @@ import java.util.regex.Matcher;
 import javax.swing.JOptionPane;
 
 /**
+ * Thread. Logon on FritzBox via Telnet. Captures Callermessages via Telnet.
  *
  * @author Arno Willig
  *

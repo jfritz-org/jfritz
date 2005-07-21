@@ -1,8 +1,11 @@
 package de.moonflower.jfritz.utils.network;
 
 /**
- * @author Robert Palmer Listens on a TCP-Port on YAC Messages Message format:
+ * Thread, listens on a TCP-Port on YAC Messages Message format:
  * @CALLname~number or: message
+ *
+ * @author Robert Palmer
+ *
  */
 
 import java.io.BufferedReader;

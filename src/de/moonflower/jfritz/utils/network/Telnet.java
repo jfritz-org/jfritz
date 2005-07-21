@@ -14,6 +14,8 @@ import de.moonflower.jfritz.utils.Encryption;
 import org.apache.commons.net.telnet.*;
 
 /**
+ * Manages Telnetfunctions: Connect, Login, Disconnect, sendCommand
+ *
  * @author rob
  *
  */
@@ -30,6 +32,10 @@ public class Telnet {
 		telnet = new TelnetClient();
 	}
 
+/**
+ * Connects to FritzBox-IP
+ *
+ */
 	public void connect() {
 		String server = JFritz.getProperty("box.address");
 		String user = "";
@@ -48,6 +54,8 @@ public class Telnet {
 		}
 	}
 	/**
+	 * login on a telnet session with user and password
+	 *
 	 * @param user
 	 * @param password
 	 */
@@ -65,6 +73,12 @@ public class Telnet {
 		Debug.msg("Logged into Telnet connection.");
 	}
 
+	/**
+	 * gets all Data until a pattern is reached
+	 *
+	 * @param pattern
+	 * @return data read until pattern
+	 */
 	public String readUntil(String pattern) {
 		try {
 			char lastChar = pattern.charAt(pattern.length() - 1);
@@ -86,6 +100,11 @@ public class Telnet {
 		return null;
 	}
 
+	/**
+	 * Write value to telnet-session
+	 *
+	 * @param value
+	 */
 	public void write(String value) {
 		try {
 			out.println(value);
@@ -95,6 +114,12 @@ public class Telnet {
 		}
 	}
 
+	/**
+	 * writes command on telnet session and waits till prompt
+	 *
+	 * @param command
+	 * @return data read until prompt
+	 */
 	public String sendCommand(String command) {
 		try {
 			write(command);
@@ -106,10 +131,18 @@ public class Telnet {
 		return null;
 	}
 
+	/**
+	 *
+	 * @return telnetIsConnected
+	 */
 	public boolean isConnected() {
 		return connected;
 	}
 
+	/**
+	 * Disconnects Telnet from FritzBox
+	 *
+	 */
 	public void disconnect() {
 		Debug.msg("Disconnect Telnet connection.");
 		try {
