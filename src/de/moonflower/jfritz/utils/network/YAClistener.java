@@ -16,6 +16,9 @@ import java.net.Socket;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.ReverseLookup;
+import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.Person;
 
 public class YAClistener extends Thread implements CallMonitor{
 
@@ -23,16 +26,20 @@ public class YAClistener extends Thread implements CallMonitor{
 
 	private int port;
 
+	private JFritz jfritz;
+
 	private ServerSocket serverSocket;
 
-	public YAClistener() {
+	public YAClistener(JFritz jfritz) {
 		super();
+		this.jfritz = jfritz;
 		start();
 		port = 10629;
 	}
 
-	public YAClistener(int port) {
+	public YAClistener(JFritz jfritz, int port) {
 		super();
+		this.jfritz = jfritz;
 		start();
 		this.port = port;
 	}
@@ -84,6 +91,31 @@ public class YAClistener extends Thread implements CallMonitor{
 								} else
 									name = splitList[0];
 								number = splitList[1];
+							}
+
+							Debug.msg("Number: " + number);
+							Debug.msg("Name: " + name);
+							if (name.equals("Unbekannt")
+									&& !number.equals("Unbekannt")) {
+								Debug.msg("Searchin in local database ...");
+								Person callerperson = jfritz.getPhonebook()
+										.findPerson(new PhoneNumber(number));
+								if (callerperson != null) {
+									name = callerperson.getFullname();
+									Debug.msg("Found in local database: "
+											+ name);
+								} else {
+									Debug
+											.msg("Searchin on dasoertliche.de ...");
+									Person person = ReverseLookup
+											.lookup(new PhoneNumber(number));
+									if (!person.getFullname().equals("")) {
+										name = person.getFullname();
+										Debug.msg("Found on dasoertliche.de: "
+												+ name);
+									}
+								}
+
 							}
 
 							outputString = JFritz.getMessage("incoming_call")
