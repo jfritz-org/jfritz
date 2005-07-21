@@ -31,39 +31,37 @@
  * GLOBAL TODO:
  *
  * CallerList: Einträge löschen älter als Datum
- * CallerList: ev. Popup-Menu?
+ * CallerList: ev. Popup-Menu? (finde ich auch gut => löschen, reverselookup, ... Rob)
  * Statistik: Top-Caller (Name/Nummer, Wie oft, Wie lange)
  * Watchdog for CallMonitor
  *
  * BUG: No new Phonebook entries after reverselookup, only after restart or double click on an call entry
- * BUG: Eingabe im IP-Eingabe-PopUp wird ignoriert!
- * BUG: Box restart beim Call Monitor
+ * BUG: Eingabe im IP-Eingabe-PopUp wird ignoriert! (ist glaube ich schon behoben)
+ * BUG: Box restart beim Call Monitor (ab und zu wird auch der telefond nicht gestartet)
  * BUG: 2 Einstellungsfenster können geöffnet werden. Eins normal, eines über Tray
+ * BUG: die Autoerkennung, ob telefond für Syslog richtig läuft hat ein Sicherheitsloch. Nun kann jede IP auf Port 1011 zugreifen.
+ * BUG: Bestätigung beim Schliessen von JFritz ist bei manchen Betriebssystemfunktionen (shutdown, ...) nicht vorhanden
+ * BUG: Mehrere Instanzen können zu Datenverlust führen
  *
  * CHANGELOG:
  *
  * JFritz! 0.4.2
  * - CallByCall information is saved
  * - Added Phonebookfilter (Private Phonebook)
- * - Phonebook XML-Saving fixed
  * - Callerlist deleteable
- * - Bugfix: Statistic-Dialog uses box.ip not 192.168.178.1
- * - Bugfix: Compatibility to Java 1.4.2
- * - Some little Bugfixes
+ * - Advanced CSV-File
+ * - Callmonitor with Telnet, Syslog, YAC
+ * - Syslog passthrough
  * - CMD Option -e : Export CSV
  * - CMD Option -c : Clear Callerlist
  * - CMD Option -l : Debug to Logfile
- * - Advanced CSV-File
+ * - Bugfix: Statistic-Dialog uses box.ip not 192.168.178.1
+ * - Bugfix: Compatibility to Java 1.4.2
  * - Bugfix: Passwords with special chars
- * - Bugfix: Bigger Config Dialog
- * - UTF-8 Coding of Phoneboox.xml
  * - Bugfix: Some charset bugfixing
- * - Anrufmonitor über Telnet, Syslog, YAC
- * - Syslog passthrough
+ * - Bugfix: Phonebook XML-Saving fixed (UTF-8 coding)
  *
  * TODO:
- * - YAK (Neues Reiterchen)
- *
  * - Merging of person entries
  * - Implement reverselookup for Switzerland (www.telsearch.ch)
  * - Password Dialog mit "speichern" Haken
@@ -227,7 +225,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.83 2005/07/20 10:41:41 robotniko Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.84 2005/07/21 11:02:22 robotniko Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -638,14 +636,13 @@ public final class JFritz {
 		}
 		case 2: {
 			if (callerstr.equals("")) {
-				trayIcon.displayMessage(JFritz.PROGRAM_NAME, "Ankommender Telefonanruf\nan "
-						+ calledstr + "!",
+				trayIcon.displayMessage(JFritz.PROGRAM_NAME,
+						"Ankommender Telefonanruf\nan " + calledstr + "!",
 						TrayIcon.INFO_MESSAGE_TYPE);
-			}
-			else {
-			trayIcon.displayMessage(JFritz.PROGRAM_NAME, "Ankommender Telefonanruf\nvon " + callerstr + "\nan "
-					+ calledstr + "!",
-					TrayIcon.INFO_MESSAGE_TYPE);
+			} else {
+				trayIcon.displayMessage(JFritz.PROGRAM_NAME,
+						"Ankommender Telefonanruf\nvon " + callerstr + "\nan "
+								+ calledstr + "!", TrayIcon.INFO_MESSAGE_TYPE);
 			}
 			break;
 		}
