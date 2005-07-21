@@ -22,6 +22,9 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.Debug;
 
 /**
+ * Thread. Logon on FritzBox via Telnet. Restart syslogd and telefond on FritzBox.
+ * Captures Syslog messages
+ *
  * @author Arno Willig
  *
  */
