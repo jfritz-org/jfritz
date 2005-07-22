@@ -113,13 +113,11 @@ public class ReverseLookup {
 					d.close();
 					Debug.msg("DasOertliche Webpage: " + data);
 					Pattern p = Pattern
-							.compile("<a class=\"blb\" href=\"[^\"]*\">([^<]*)</a><br>([^<]*)</td>");
+							.compile("<a class=\"blb\" href=\"[^\"]*\">([^<]*)</a>(?:<br>([^<]*))?</td>");
 					Matcher m = p.matcher(data);
 					if (m.find()) {
 						Debug.msg(3, "Pattern1: " + m.group(1).trim());
-						Debug.msg(3, "Pattern2: " + m.group(2).trim());
 						String line1 = m.group(1).trim();
-						String line2 = m.group(2).trim();
 
 						String[] split = line1.split(" ", 2);
 						String firstname = "", lastname = "", company = "", address = "", zipcode = "", city = "";
@@ -140,27 +138,32 @@ public class ReverseLookup {
 							}
 						}
 						firstname = firstname.trim();
-						split = line2.split(", ", 2);
-						String zipcity = "";
-						if (split.length > 1) {
-							address = split[0].trim();
-							zipcity = split[1].trim();
-						} else {
-							zipcity = split[0].trim();
-							address = "";
-						}
-						split = zipcity.split(" ", 2);
-						if (split.length > 1) {
-							zipcode = split[0].trim();
-							city = split[1].trim();
-						} else {
-							city = split[0].trim();
-						}
+						if (m.group(2) != null) {
+							Debug.msg(3, "Pattern2: " + m.group(2).trim());
+							String line2 = m.group(2).trim();
+							split = line2.split(", ", 2);
+							String zipcity = "";
+							if (split.length > 1) {
+								address = split[0].trim();
+								zipcity = split[1].trim();
+							} else {
+								zipcity = split[0].trim();
+								address = "";
+							}
+							split = zipcity.split(" ", 2);
+							if (split.length > 1) {
+								zipcode = split[0].trim();
+								city = split[1].trim();
+							} else {
+								city = split[0].trim();
+							}
 
-						String[] splitNames, splitAddress, splitPostCodeCity;
-						splitAddress = m.group(2).trim().split(",* ");
-						Debug.msg(splitAddress[0]);
-						splitPostCodeCity = splitAddress[1].split(" ", 2);
+							String[] splitNames, splitAddress, splitPostCodeCity;
+							splitAddress = m.group(2).trim().split(",* ");
+							Debug.msg(splitAddress[0]);
+							splitPostCodeCity = splitAddress[1].split(" ", 2);
+
+						}
 
 						Debug.msg("Firstname: " + firstname);
 						Debug.msg("Lastname: " + lastname);
