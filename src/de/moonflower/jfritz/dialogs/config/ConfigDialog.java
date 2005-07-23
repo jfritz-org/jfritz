@@ -601,7 +601,20 @@ public class ConfigDialog extends JDialog {
 		};
 
 		callMonitorPane = new JPanel();
-		callMonitorPane.setLayout(new GridBagLayout());
+		callMonitorPane.setLayout(new BorderLayout());
+		callMonitorCombo = new JComboBox();
+		callMonitorCombo.addItem("Keiner");
+		callMonitorCombo.addItem("Telnet");
+		callMonitorCombo.addItem("Syslog");
+		callMonitorCombo.addItem("YAC");
+		callMonitorCombo.addActionListener(actionListener);
+
+		callMonitorPane.add(callMonitorCombo, BorderLayout.NORTH);
+
+		JPanel pane = new JPanel();
+		callMonitorPane.add(pane,BorderLayout.CENTER);
+
+		pane.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets.top = 5;
 		c.insets.bottom = 5;
@@ -611,13 +624,8 @@ public class ConfigDialog extends JDialog {
 
 		c.gridx = 0;
 		c.gridy = 0;
-		callMonitorCombo = new JComboBox();
 		c.gridwidth = 1;
-		callMonitorCombo.addItem("Keiner");
-		callMonitorCombo.addItem("Telnet");
-		callMonitorCombo.addItem("Syslog");
-		callMonitorCombo.addItem("YAC");
-		callMonitorPane.add(callMonitorCombo, c);
+
 
 		c.gridx = 1;
 		c.gridy = 0;
@@ -625,19 +633,19 @@ public class ConfigDialog extends JDialog {
 		startCallMonitorButton = new JToggleButton();
 		startCallMonitorButton.setActionCommand("startCallMonitor");
 		startCallMonitorButton.addActionListener(actionListener);
-		callMonitorPane.add(startCallMonitorButton, c);
+		pane.add(startCallMonitorButton, c);
 
 		c.gridx = 0;
 		c.gridy = 1;
 		c.gridwidth = 3;
 		callMonitorAfterStartButton = new JCheckBox(
 				"Call-Monitor nach Programmstart automatisch starten?");
-		callMonitorPane.add(callMonitorAfterStartButton, c);
+		pane.add(callMonitorAfterStartButton, c);
 
 		soundButton = new JCheckBox("Bei eingehenden Anrufen Sound abspielen");
 		c.gridy = 2;
 		c.gridwidth = 3;
-		callMonitorPane.add(soundButton, c);
+		pane.add(soundButton, c);
 
 		c.gridy = 3;
 		telnetMonitorPane = new JPanel();
@@ -646,11 +654,10 @@ public class ConfigDialog extends JDialog {
 		syslogMonitorPane = createSyslogPane();
 		yacMonitorPane = new JPanel();
 		yacMonitorPane = createYACPane();
-		callMonitorPane.add(telnetMonitorPane, c);
-		callMonitorPane.add(syslogMonitorPane, c);
-		callMonitorPane.add(yacMonitorPane, c);
+		pane.add(telnetMonitorPane, c);
+		pane.add(syslogMonitorPane, c);
+		pane.add(yacMonitorPane, c);
 
-		callMonitorCombo.addActionListener(actionListener);
 
 		return callMonitorPane;
 	}
@@ -687,8 +694,7 @@ public class ConfigDialog extends JDialog {
 
 		c.gridx = 0;
 		c.gridy = 1;
-		JLabel ipAddressLabel = new JLabel(
-				"Wählen Sie die IP-Adresse ihres Rechners: ");
+		JLabel ipAddressLabel = new JLabel("Lokale IP-Adresse: ");
 		panel.add(ipAddressLabel, c);
 
 		c.gridx = 1;
@@ -699,8 +705,9 @@ public class ConfigDialog extends JDialog {
 		Enumeration en = ipAddresses.elements();
 		while (en.hasMoreElements()) {
 			InetAddress ad = (InetAddress) en.nextElement();
-			ipAddressComboBox.addItem(ad.toString().substring(1,
-					ad.toString().length()));
+				ipAddressComboBox.addItem(ad.toString().substring(1,
+						ad.toString().length()));
+
 		}
 		ipAddressComboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

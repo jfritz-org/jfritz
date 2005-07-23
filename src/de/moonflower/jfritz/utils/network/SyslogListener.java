@@ -22,8 +22,8 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.Debug;
 
 /**
- * Thread. Logon on FritzBox via Telnet. Restart syslogd and telefond on FritzBox.
- * Captures Syslog messages
+ * Thread. Logon on FritzBox via Telnet. Restart syslogd and telefond on
+ * FritzBox. Captures Syslog messages
  *
  * @author Arno Willig
  *
@@ -72,9 +72,9 @@ public class SyslogListener extends Thread implements CallMonitor {
 			m = p.matcher(data);
 			if (m.find()) {
 				Debug.msg("Syslog IS RUNNING PROPERLY on FritzBox");
-			}
-			else {
-				Debug.msg("Syslog ISN'T RUNNING PROPERLY on FritzBox, RESTARTING SYSLOG");
+			} else {
+				Debug
+						.msg("Syslog ISN'T RUNNING PROPERLY on FritzBox, RESTARTING SYSLOG");
 				restartSyslogOnFritzBox(telnet, JFritz.getProperty(
 						"option.syslogclientip", "192.168.178.21"));
 			}
@@ -84,18 +84,19 @@ public class SyslogListener extends Thread implements CallMonitor {
 			p = Pattern.compile(PATTERN_TELEFON_RUNNING);
 			m = p.matcher(data);
 			if (m.find()) {
-				Debug.msg("Telefon ISN'T RUNNING PROPERLY on FritzBox, RESTARTING TELEFON");
+				Debug
+						.msg("Telefon ISN'T RUNNING PROPERLY on FritzBox, RESTARTING TELEFON");
 				restartTelefonOnFritzBox(telnet);
 				JFritz.setProperty("telefond.laststarted", "syslogMonitor");
-			}
-			else {
-				if (!JFritz.getProperty("telefond.laststarted", "").equals("syslogMonitor")) {
-					Debug.msg("Telefon ISN'T RUNNING PROPERLY on FritzBox, RESTARTING TELEFON");
+			} else {
+				if (!JFritz.getProperty("telefond.laststarted", "").equals(
+						"syslogMonitor")) {
+					Debug
+							.msg("Telefon ISN'T RUNNING PROPERLY on FritzBox, RESTARTING TELEFON");
 					restartTelefonOnFritzBox(telnet);
 					JFritz.setProperty("telefond.laststarted", "syslogMonitor");
-				}
-				else {
-				Debug.msg("Telefon IS RUNNING PROPERLY on FritzBox");
+				} else {
+					Debug.msg("Telefon IS RUNNING PROPERLY on FritzBox");
 				}
 			}
 
@@ -131,7 +132,7 @@ public class SyslogListener extends Thread implements CallMonitor {
 					String called = m.group(2);
 					if (!called.equals("")) {
 						Debug.msg("NEW OUTGOING CALL: " + called);
-//						JFritz.callOutMsg(called);
+						//						JFritz.callOutMsg(called);
 					}
 				}
 			}
@@ -147,19 +148,18 @@ public class SyslogListener extends Thread implements CallMonitor {
 
 	public static void restartSyslogOnFritzBox(Telnet telnet, String ip) {
 		int port = 4711;
-		Debug.msg("Starte Syslog auf der FritzBox: syslog -R " + ip + ":" + port);
+		Debug.msg("Starte Syslog auf der FritzBox: syslog -R " + ip + ":"
+				+ port);
 		telnet.sendCommand("killall syslogd");
 		try {
 			sleep(1000);
-		}
-		catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 			Debug.err("Fehler beim Schlafen: " + e);
 		}
 		telnet.sendCommand("syslogd -R " + ip + ":" + port);
 		try {
 			sleep(1000);
-		}
-		catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 			Debug.err("Fehler beim Schlafen: " + e);
 		}
 	}
@@ -174,22 +174,19 @@ public class SyslogListener extends Thread implements CallMonitor {
 						JFritz.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 			try {
 				sleep(1000);
-			}
-			catch (InterruptedException e) {
+			} catch (InterruptedException e) {
 				Debug.err("Fehler beim Schlafen: " + e);
 			}
 			telnet.sendCommand("killall telefon");
 			try {
 				sleep(1000);
-			}
-			catch (InterruptedException e) {
+			} catch (InterruptedException e) {
 				Debug.err("Fehler beim Schlafen: " + e);
 			}
 			telnet.sendCommand("telefon | logger");
 			try {
 				sleep(1000);
-			}
-			catch (InterruptedException e) {
+			} catch (InterruptedException e) {
 				Debug.err("Fehler beim Schlafen: " + e);
 			}
 			Debug.msg("telefond restarted");
@@ -204,14 +201,15 @@ public class SyslogListener extends Thread implements CallMonitor {
 			while (ifaces.hasMoreElements()) {
 				NetworkInterface ni = (NetworkInterface) ifaces.nextElement();
 				System.out.println(ni.getName() + ":");
+				if (!ni.getName().equals("lo")) {
+					Enumeration addrs = ni.getInetAddresses();
 
-				Enumeration addrs = ni.getInetAddresses();
+					while (addrs.hasMoreElements()) {
+						InetAddress addr = (InetAddress) addrs.nextElement();
+						System.out.println(" " + addr.getHostAddress());
 
-				while (addrs.hasMoreElements()) {
-					InetAddress addr = (InetAddress) addrs.nextElement();
-					System.out.println(" " + addr.getHostAddress());
-
-					addresses.add(addr);
+						addresses.add(addr);
+					}
 				}
 			}
 		} catch (SocketException e) {

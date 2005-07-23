@@ -64,7 +64,7 @@
  * TODO:
  * - Merging of person entries
  * - Implement reverselookup for Switzerland (www.telsearch.ch)
- * - Password Dialog mit "speichern" Haken
+ * - Password Dialog mit "Speichern" Haken
  * - TFTP Box Konfig verwalten
  *
  * JFritz! 0.4.0
@@ -226,7 +226,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.85 2005/07/21 16:32:51 robotniko Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.86 2005/07/23 12:12:03 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
