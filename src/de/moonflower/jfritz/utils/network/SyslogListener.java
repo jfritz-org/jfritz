@@ -7,23 +7,22 @@ package de.moonflower.jfritz.utils.network;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.SocketException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.utils.JFritzUtils;
-import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.*;
 
 /**
  * Thread. Logon on FritzBox via Telnet. Restart syslogd and telefond on
- * FritzBox. Captures Syslog messages
+ * FritzBox. Captures Syslog messages.
  *
  * @author Arno Willig
  *
@@ -37,6 +36,10 @@ public class SyslogListener extends Thread implements CallMonitor {
 	private final String PATTERN_SYSLOG_RUNNING = "syslogd -R ([^:4711]*)";
 
 	private final String PATTERN_TELEFON_RUNNING = "telefon a";
+
+	private final String PATTERN_TELEFON_RUNNING2 = "telefon";
+
+	private final int SYSLOG_PORT = 514;
 
 	private DatagramSocket socket;
 
@@ -55,6 +58,10 @@ public class SyslogListener extends Thread implements CallMonitor {
 		startSyslogListener();
 	}
 
+	/**
+	 * Starts syslog listener
+	 *
+	 */
 	public void startSyslogListener() {
 		Pattern p;
 		Matcher m;
@@ -89,6 +96,7 @@ public class SyslogListener extends Thread implements CallMonitor {
 				restartTelefonOnFritzBox(telnet);
 				JFritz.setProperty("telefond.laststarted", "syslogMonitor");
 			} else {
+
 				if (!JFritz.getProperty("telefond.laststarted", "").equals(
 						"syslogMonitor")) {
 					Debug
@@ -103,17 +111,20 @@ public class SyslogListener extends Thread implements CallMonitor {
 			telnet.disconnect();
 			socket = new DatagramSocket(port);
 			Debug.msg("Starting SyslogListener on port " + port);
-			DatagramSocket passthroughSocket = new DatagramSocket(514);
+			// DatagramSocket passthroughSocket = new DatagramSocket(SYSLOG_PORT);
 			while (!isInterrupted()) {
+				Debug.msg("Syslog!!!!");
 				socket.receive(packet);
 				String msg = new String(log_buffer, 0, packet.getLength(),
 						"UTF-8");
 				Debug.msg("Get Syslogmessage: " + msg);
+/*
 				if (JFritzUtils.parseBoolean(JFritz.getProperty(
 						"option.syslogpassthrough", "false"))) {
 					passthroughSocket.send(packet);
-					//					Debug.msg("Send Syslogmessage: "+ msg);
+					// Debug.msg("SendSyslogmessage: "+ msg); }
 				}
+*/
 				p = Pattern.compile(PATTERN_TELEFON_INCOMING);
 				m = p.matcher(msg);
 				if (m.find()) {
@@ -141,11 +152,22 @@ public class SyslogListener extends Thread implements CallMonitor {
 		}
 	}
 
+	/**
+	 * Stops call monitor
+	 */
 	public void stopCallMonitor() {
 		Debug.msg("Stopping SyslogListener");
 		interrupt();
 	}
 
+	/**
+	 * Restarts syslog daemon
+	 *
+	 * @param telnet
+	 *            Telnet connection
+	 * @param ip
+	 *            IP for syslog remote logging
+	 */
 	public static void restartSyslogOnFritzBox(Telnet telnet, String ip) {
 		int port = 4711;
 		Debug.msg("Starte Syslog auf der FritzBox: syslog -R " + ip + ":"
@@ -154,45 +176,48 @@ public class SyslogListener extends Thread implements CallMonitor {
 		try {
 			sleep(1000);
 		} catch (InterruptedException e) {
-			Debug.err("Fehler beim Schlafen: " + e);
 		}
 		telnet.sendCommand("syslogd -R " + ip + ":" + port);
 		try {
 			sleep(1000);
 		} catch (InterruptedException e) {
-			Debug.err("Fehler beim Schlafen: " + e);
 		}
 	}
 
+	/**
+	 * Restarts telefon daemon
+	 *
+	 * @param telnet
+	 *            Telnet connection
+	 */
 	private static void restartTelefonOnFritzBox(Telnet telnet) {
-		if (JOptionPane
-				.showConfirmDialog(
-						null,
-						"Der telefond muss neu gestartet werden.\n"
-								+ "Dabei wird ein laufendes Gespräch unterbrochen. Die Anrufliste wird vorher gesichert.\n"
-								+ "Soll der telefond neu gestartet werden?",
-						JFritz.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+		if (JOptionPane.showConfirmDialog(null,
+				"Der telefond muss neu gestartet werden.\n"
+						+ "Dabei wird ein laufendes Gespräch unterbrochen. "
+						+ "Die Anrufliste wird vorher gesichert.\n"
+						+ "Soll der telefond neu gestartet werden?",
+				JFritz.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 			try {
 				sleep(1000);
 			} catch (InterruptedException e) {
-				Debug.err("Fehler beim Schlafen: " + e);
 			}
 			telnet.sendCommand("killall telefon");
 			try {
 				sleep(1000);
 			} catch (InterruptedException e) {
-				Debug.err("Fehler beim Schlafen: " + e);
 			}
-			telnet.sendCommand("telefon | logger");
+			telnet.sendCommand("telefon | logger &");
 			try {
 				sleep(1000);
 			} catch (InterruptedException e) {
-				Debug.err("Fehler beim Schlafen: " + e);
 			}
 			Debug.msg("telefond restarted");
 		}
 	}
 
+	/**
+	 * @return Returns vector of local IPs
+	 */
 	public static Vector getIP() {
 		Enumeration ifaces;
 		Vector addresses = new Vector();

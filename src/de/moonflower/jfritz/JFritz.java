@@ -226,7 +226,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.86 2005/07/23 12:12:03 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.87 2005/07/23 13:05:56 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -701,8 +701,6 @@ public final class JFritz {
 	/**
 	 * Display call monitor message
 	 *
-	 * @param caller
-	 *            Caller number
 	 * @param called
 	 *            Called number
 	 */

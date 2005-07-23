@@ -581,6 +581,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			jfritz.saveProperties();
 		}
 		dialog.dispose();
+
+
 		monitorButton.setEnabled((Integer.parseInt(JFritz.getProperty(
 				"option.callMonitorType", "0")) > 0));
 	}
