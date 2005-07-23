@@ -6,7 +6,6 @@
 package de.moonflower.jfritz.utils;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -53,8 +52,6 @@ public class ReverseLookup {
 		}
 		Debug.msg("Looking up " + number + "...");
 		URL url = null;
-		URLConnection urlConn;
-		DataOutputStream printout;
 		String data = "";
 		Person newPerson;
 
@@ -118,8 +115,8 @@ public class ReverseLookup {
 					Matcher m = p.matcher(data);
 					// Get name and address
 					if (m.find()) {
-						Debug.msg(3, "Pattern1: " + m.group(1).trim());
 						String line1 = m.group(1).trim();
+						Debug.msg(3, "Pattern1: " + line1);
 
 						String[] split = line1.split(" ", 2);
 						String firstname = "", lastname = "", company = "", address = "", zipcode = "", city = "";
@@ -141,8 +138,8 @@ public class ReverseLookup {
 						}
 						firstname = firstname.trim();
 						if (m.group(2) != null) { // there is an address
-							Debug.msg(3, "Pattern2: " + m.group(2).trim());
 							String line2 = m.group(2).trim();
+							Debug.msg(3, "Pattern2: " + line2);
 							split = line2.split(", ", 2);
 							String zipcity = "";
 							if (split.length > 1) {
@@ -188,5 +185,4 @@ public class ReverseLookup {
 		newPerson.addNumber(number, "home");
 		return newPerson;
 	}
-
 }
