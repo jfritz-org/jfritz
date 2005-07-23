@@ -20,6 +20,8 @@ public class OkayButton extends JButton {
 	/**
 	 *
 	 */
+	private static final long serialVersionUID = 1;
+
 	public OkayButton(JFritz jfritz) {
 		setText("Okay");
 		setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
