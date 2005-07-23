@@ -19,17 +19,16 @@ public class ShutdownThread extends Thread{
 
     public void run() {
 
-   	Debug.msg("Start Shutdown Thread");
+   	Debug.msg("Starting shutdown thread..");
 
    	jfritz.getJframe().saveQuickDials();
    	jfritz.getPhonebook().saveToXMLFile(JFritz.PHONEBOOK_FILE);
 	jfritz.getCallerlist().saveToXMLFile(JFritz.CALLS_FILE);
 
 	jfritz.saveProperties();
-
 	jfritz.stopCallMonitor();
 
-	Debug.msg("Shutdown Thread done");
+	Debug.msg("Shutdown thread done.");
 
     }
 }

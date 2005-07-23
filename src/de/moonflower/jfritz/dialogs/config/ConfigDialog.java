@@ -603,10 +603,10 @@ public class ConfigDialog extends JDialog {
 		callMonitorPane = new JPanel();
 		callMonitorPane.setLayout(new BorderLayout());
 		callMonitorCombo = new JComboBox();
-		callMonitorCombo.addItem("Keiner");
-		callMonitorCombo.addItem("Telnet");
-		callMonitorCombo.addItem("Syslog");
-		callMonitorCombo.addItem("YAC");
+		callMonitorCombo.addItem("Kein Anrufmonitor");
+		callMonitorCombo.addItem("Telnet Anrufmonitor");
+		callMonitorCombo.addItem("Syslog Anrufmonitor");
+		callMonitorCombo.addItem("YAC Anrufmonitor");
 		callMonitorCombo.addActionListener(actionListener);
 
 		callMonitorPane.add(callMonitorCombo, BorderLayout.NORTH);
