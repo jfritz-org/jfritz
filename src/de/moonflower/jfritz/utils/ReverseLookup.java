@@ -94,7 +94,7 @@ public class ReverseLookup {
 					Debug.msg("Header of dasoertliche.de: " + header);
 					Debug.msg("CHARSET : " + charSet);
 
-					// Get response data
+					// Get used Charset
 					BufferedReader d;
 					if (charSet.equals("")) {
 						d = new BufferedReader(new InputStreamReader(con
@@ -106,6 +106,7 @@ public class ReverseLookup {
 					int i = 0;
 					String str = "";
 
+					// Get response data
 					while ((i < 700) && (null != ((str = d.readLine())))) {
 						data += str;
 						i++;
@@ -115,6 +116,7 @@ public class ReverseLookup {
 					Pattern p = Pattern
 							.compile("<a class=\"blb\" href=\"[^\"]*\">([^<]*)</a>(?:<br>([^<]*))?</td>");
 					Matcher m = p.matcher(data);
+					// Get name and address
 					if (m.find()) {
 						Debug.msg(3, "Pattern1: " + m.group(1).trim());
 						String line1 = m.group(1).trim();
@@ -138,7 +140,7 @@ public class ReverseLookup {
 							}
 						}
 						firstname = firstname.trim();
-						if (m.group(2) != null) {
+						if (m.group(2) != null) { // there is an address
 							Debug.msg(3, "Pattern2: " + m.group(2).trim());
 							String line2 = m.group(2).trim();
 							split = line2.split(", ", 2);
@@ -157,12 +159,6 @@ public class ReverseLookup {
 							} else {
 								city = split[0].trim();
 							}
-
-							String[] splitNames, splitAddress, splitPostCodeCity;
-							splitAddress = m.group(2).trim().split(",* ");
-							Debug.msg(splitAddress[0]);
-							splitPostCodeCity = splitAddress[1].split(" ", 2);
-
 						}
 
 						Debug.msg("Firstname: " + firstname);
