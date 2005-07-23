@@ -91,9 +91,7 @@ public class PhoneNumber implements Comparable {
 	 * @return Number withour call by call part
 	 */
 	public String cutCallByCall() {
-		String callbycall = "";
 		if (number.startsWith("010")) { // cut 01013 and others
-			callbycall = number.substring(0, 5);
 			number = number.substring(5);
 		}
 		return number;
@@ -160,8 +158,6 @@ public class PhoneNumber implements Comparable {
 
 	public String getAreaNumber() {
 		String countryCode = JFritz.getProperty("country.code");
-		String countryPrefix = JFritz.getProperty("country.prefix");
-		String areaCode = JFritz.getProperty("area.code");
 		String areaPrefix = JFritz.getProperty("area.prefix");
 		if (number.startsWith("+" + countryCode))
 			return areaPrefix + number.substring(countryCode.length() + 1);
@@ -205,7 +201,6 @@ public class PhoneNumber implements Comparable {
 	 * @return True if number is a SIP number
 	 */
 	public boolean isSIPNumber() {
-		String countryCode = JFritz.getProperty("country.code");
 		return ((number.indexOf('@') > 0) || number.startsWith("00038") // PurTel
 				|| number.startsWith("555") // SIPGate
 		|| number.startsWith("777") // SIPGate
