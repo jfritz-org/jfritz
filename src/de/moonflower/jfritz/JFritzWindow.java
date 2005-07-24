@@ -648,7 +648,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	public void showExitDialog() {
 		boolean exit = true;
 
-		if (JFritz.getProperty("option.confirmOnExit", "true") == "true")
+		if (JFritzUtils.parseBoolean(JFritz.getProperty("option.confirmOnExit", "false")))
 			exit = JOptionPane.showConfirmDialog(this, JFritz
 					.getMessage("really_quit"), JFritz.PROGRAM_NAME,
 					JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
