@@ -42,7 +42,7 @@ import de.moonflower.jfritz.utils.network.UPNPUtils;
  *
  */
 public class StatsDialog extends JDialog {
-
+	private static final long serialVersionUID = 1;
 	JFritz jfritz;
 
 	JButton okButton, cancelButton, refreshButton;

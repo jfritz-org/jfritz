@@ -49,7 +49,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  * @author Arno Willig
  */
 public class CallerList extends AbstractTableModel {
-
+	private static final long serialVersionUID = 1;
 	private static final String CALLS_DTD_URI = "http://jfritz.moonflower.de/dtd/calls.dtd";
 
 	private static final String CALLS_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -448,7 +448,6 @@ public class CallerList extends AbstractTableModel {
 	 * Sets a value to a specific position
 	 */
 	public void setValueAt(Object object, int rowIndex, int columnIndex) {
-		Call call = (Call) filteredCallerData.get(rowIndex);
 		if (columnIndex == 3) {
 			setPerson((Person) object, rowIndex);
 		}

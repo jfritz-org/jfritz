@@ -23,7 +23,7 @@ import java.util.TimerTask;
  * @author rob
  */
 public class MessageDlg extends JDialog implements ActionListener{
-
+	private static final long serialVersionUID = 1;
 		protected void createGUI (String message) {
 			setTitle("JFritz - Info");
 

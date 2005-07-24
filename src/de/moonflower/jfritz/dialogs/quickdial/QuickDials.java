@@ -37,7 +37,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  * @author Arno Willig
  */
 public class QuickDials extends AbstractTableModel {
-
+	private static final long serialVersionUID = 1;
 	private static final String QUICKDIALS_DTD_URI = "http://jfritz.moonflower.de/dtd/quickdials.dtd";
 
 	private static final String QUICKDIALS_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"

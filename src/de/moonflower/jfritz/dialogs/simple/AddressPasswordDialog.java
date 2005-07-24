@@ -33,7 +33,7 @@ import java.net.URLEncoder;
  * @author Arno Willig
  */
 public class AddressPasswordDialog extends JDialog {
-
+	private static final long serialVersionUID = 1;
 	protected JTextField address;
 
 	protected JPasswordField pass;
@@ -129,7 +129,6 @@ public class AddressPasswordDialog extends JDialog {
 		c.insets.bottom = 5;
 		JPanel pane = new JPanel(gridbag);
 		pane.setBorder(BorderFactory.createEmptyBorder(10, 20, 5, 20));
-		JLabel label;
 
 		c.anchor = GridBagConstraints.EAST;
 		c.gridy = 1;

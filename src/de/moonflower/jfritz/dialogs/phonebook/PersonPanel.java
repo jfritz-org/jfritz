@@ -51,12 +51,12 @@ import de.moonflower.jfritz.struct.PhoneType;
  */
 public class PersonPanel extends JPanel implements ActionListener,
 		ListSelectionListener, CaretListener {
-
+	private static final long serialVersionUID = 1;
 	PhoneTypeModel typeModel;
 
 	private final class PhoneTypeModel extends AbstractListModel implements
 			ComboBoxModel {
-
+		private static final long serialVersionUID = 1;
 		private String[] basicTypes = { "home", "mobile", "homezone",
 				"business", "other", "fax", "sip" };
 
@@ -131,7 +131,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 	private final class NumberTableModel extends AbstractTableModel {
 		private final String columnNames[] = { "Std", "Typ", "Nummer" };
-
+		private static final long serialVersionUID = 1;
 		public int getRowCount() {
 			return person.getNumbers().size();
 		}
@@ -234,7 +234,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 	private class CheckBoxRenderer extends JCheckBox implements
 			TableCellRenderer {
-
+		private static final long serialVersionUID = 1;
 		public CheckBoxRenderer() {
 			setHorizontalAlignment(JLabel.CENTER);
 		}
@@ -355,6 +355,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		NumberTableModel numberModel = new NumberTableModel();
 		typeModel = new PhoneTypeModel();
 		numberTable = new JTable(numberModel) {
+			private static final long serialVersionUID = 1;
 			public Component prepareRenderer(TableCellRenderer renderer,
 					int rowIndex, int vColIndex) {
 				Component c = super.prepareRenderer(renderer, rowIndex,

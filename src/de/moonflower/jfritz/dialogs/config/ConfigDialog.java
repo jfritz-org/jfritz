@@ -71,7 +71,7 @@ import java.net.InetAddress;
  * TODO: A lot of I18N..
  */
 public class ConfigDialog extends JDialog {
-
+	private static final long serialVersionUID = 1;
 	private JFritz jfritz;
 
 	private JComboBox addressCombo, callMonitorCombo, ipAddressComboBox;
@@ -424,6 +424,7 @@ public class ConfigDialog extends JDialog {
 		JPanel sipButtonPane = new JPanel();
 		sipmodel = new SipProviderTableModel();
 		JTable siptable = new JTable(sipmodel) {
+			private static final long serialVersionUID = 1;
 			public Component prepareRenderer(TableCellRenderer renderer,
 					int rowIndex, int vColIndex) {
 				Component c = super.prepareRenderer(renderer, rowIndex,
@@ -776,7 +777,6 @@ public class ConfigDialog extends JDialog {
 
 		tpane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-		JLabel label;
 		okButton = new JButton(JFritz.getMessage("okay"));
 		okButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(

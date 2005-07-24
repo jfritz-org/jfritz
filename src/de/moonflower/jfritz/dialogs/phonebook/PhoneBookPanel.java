@@ -33,7 +33,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  */
 public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		PropertyChangeListener, ActionListener {
-
+	private static final long serialVersionUID = 1;
 	private final int PERSONPANEL_WIDTH = 350;
 
 	private JFritz jfritz;

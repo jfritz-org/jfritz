@@ -40,6 +40,7 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class PhoneBook extends AbstractTableModel {
+	private static final long serialVersionUID = 1;
 	private static final String PHONEBOOK_DTD_URI = "http://jfritz.moonflower.de/dtd/phonebook.dtd";
 
 	// TODO Write correct dtd
@@ -178,12 +179,9 @@ public class PhoneBook extends AbstractTableModel {
 	 */
 	public synchronized void saveToXMLFile(String filename) {
 		Debug.msg("Saving to file " + filename);
-		FileOutputStream fos;
 		try {
 		        BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
 		            new FileOutputStream(filename), "UTF8"));
-//   			fos = new FileOutputStream(filename);
-//			PrintWriter pw = new PrintWriter(fos);
 			pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			pw.newLine();
 			pw.write("<!DOCTYPE phonebook SYSTEM \"" + PHONEBOOK_DTD_URI

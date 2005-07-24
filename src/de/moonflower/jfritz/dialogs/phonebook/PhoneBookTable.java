@@ -19,13 +19,14 @@ import de.moonflower.jfritz.cellrenderer.CallTypeDateCellRenderer;
  *
  */
 public class PhoneBookTable extends JTable {
-	private JFritz jfritz;
+	private static final long serialVersionUID = 1;
+	//private JFritz jfritz;
 
 	/**
 	 *
 	 */
 	public PhoneBookTable(JFritz jfritz) {
-		this.jfritz = jfritz;
+		//this.jfritz = jfritz;
 		setModel(jfritz.getPhonebook());
 		setRowHeight(24);
 		setFocusable(false);

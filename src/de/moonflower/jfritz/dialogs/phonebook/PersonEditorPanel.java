@@ -25,7 +25,7 @@ import de.moonflower.jfritz.JFritz;
  *
  */
 public class PersonEditorPanel extends JComponent {
-
+	private static final long serialVersionUID = 1;
 	private PersonCellEditor editor;
 
 	private Person person;

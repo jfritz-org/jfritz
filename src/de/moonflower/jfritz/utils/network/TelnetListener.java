@@ -23,13 +23,13 @@ public class TelnetListener extends Thread implements CallMonitor {
 	//IncomingCall from NT: ID 0, caller: "592904" called: "1815212"
 	private final String PATTERN_TELEFON = "IncomingCall[^:]*: ID ([^,]*), caller: \"([^\"]*)\" called: \"([^\"]*)\"";
 
-	private final String PATTERN_VOIP_REQUEST = ">>> Request: INVITE ([^\\n]*)";
+	//private final String PATTERN_VOIP_REQUEST = ">>> Request: INVITE ([^\\n]*)";
 
-	private final String PATTERN_VOIP_CALLTO_ESTABLISHED = "call to ([^ ]*) established";
+	//private final String PATTERN_VOIP_CALLTO_ESTABLISHED = "call to ([^ ]*) established";
 
-	private final String PATTERN_VOIP_CALLTO_TERMINATED = "call to ([^ ]*) terminated";
+	//private final String PATTERN_VOIP_CALLTO_TERMINATED = "call to ([^ ]*) terminated";
 
-	private final String PATTERN_VOIP_CALLTO_DISCONNECTED = "disconnected\\([^)]*\\):";
+	//private final String PATTERN_VOIP_CALLTO_DISCONNECTED = "disconnected\\([^)]*\\):";
 
 	private Telnet telnet;
 

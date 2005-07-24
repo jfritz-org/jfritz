@@ -11,6 +11,7 @@ package de.moonflower.jfritz.exceptions;
  *
  */
 public class InvalidFirmwareException extends Exception {
+	private static final long serialVersionUID = 1;
     public InvalidFirmwareException() {
         super();
     }

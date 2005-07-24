@@ -24,10 +24,11 @@ import java.io.IOException;
  * responsible for the failure of a copy operation.
  * @see Util
  * @author <a href="mailto:savarese@apache.org">Daniel F. Savarese</a>
- * @version $Id: CopyStreamException.java,v 1.1 2005/06/12 18:23:44 akw Exp $
+ * @version $Id: CopyStreamException.java,v 1.2 2005/07/24 06:18:30 jfahrner Exp $
  */
 public class CopyStreamException extends IOException
 {
+	private static final long serialVersionUID = 1;
     private long totalBytesTransferred;
     private IOException ioException;
 

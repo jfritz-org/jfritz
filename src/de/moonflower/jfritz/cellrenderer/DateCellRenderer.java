@@ -20,6 +20,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  *
  */
 public class DateCellRenderer extends DefaultTableCellRenderer {
+	private static final long serialVersionUID = 1;
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) {
 

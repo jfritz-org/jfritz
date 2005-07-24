@@ -23,7 +23,7 @@ import de.moonflower.jfritz.struct.Person;
  *
  */
 public class PersonDialog extends JDialog implements ActionListener {
-
+	private static final long serialVersionUID = 1;
 	private JFritz jfritz;
 
 	private Person person;

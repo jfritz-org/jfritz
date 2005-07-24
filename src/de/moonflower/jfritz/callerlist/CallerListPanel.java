@@ -35,6 +35,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  */
 public class CallerListPanel extends JPanel implements ActionListener,
 		CaretListener {
+	private static final long serialVersionUID = 1;
 	private JFritz jfritz;
 
 	private CallerTable callerTable;

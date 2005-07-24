@@ -31,7 +31,7 @@ import de.moonflower.jfritz.struct.CallType;
  * @author Arno Willig
  */
 public class CallerTable extends JTable {
-
+	private static final long serialVersionUID = 1;
 	private JFritz jfritz;
 
 	/**

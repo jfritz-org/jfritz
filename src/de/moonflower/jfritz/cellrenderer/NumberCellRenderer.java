@@ -23,6 +23,7 @@ import de.moonflower.jfritz.struct.PhoneNumber;
  * @author Arno Willig
  */
 public class NumberCellRenderer extends DefaultTableCellRenderer {
+	private static final long serialVersionUID = 1;
 	private final ImageIcon imagePhone, imageHandy, imageHome, imageWorld,
 			imageFreeCall;
 

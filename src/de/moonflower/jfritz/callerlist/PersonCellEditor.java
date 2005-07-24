@@ -24,7 +24,7 @@ import de.moonflower.jfritz.struct.Person;
  */
 public class PersonCellEditor extends AbstractCellEditor implements
 		TableCellEditor {
-
+	private static final long serialVersionUID = 1;
 
 	CallerList callerlist;
 	JComponent component;
@@ -73,7 +73,7 @@ public class PersonCellEditor extends AbstractCellEditor implements
 	}
 
 	public boolean stopCellEditing() {
-		Person p = (Person) getCellEditorValue();
+		//Person p = (Person) getCellEditorValue();
 		// Not valid: return false;
 		return super.stopCellEditing();
 	}

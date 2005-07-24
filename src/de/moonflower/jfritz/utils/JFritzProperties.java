@@ -40,6 +40,7 @@ import org.xml.sax.SAXParseException;
  *
  */
 public class JFritzProperties extends Properties {
+	private static final long serialVersionUID = 1;
 	private static final String PROPS_DTD_URI = "http://java.sun.com/dtd/properties.dtd";
 
 	private static final String PROPS_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"

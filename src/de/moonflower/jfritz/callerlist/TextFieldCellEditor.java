@@ -23,7 +23,7 @@ import de.moonflower.jfritz.struct.Person;
  */
 public class TextFieldCellEditor extends AbstractCellEditor implements
 		TableCellEditor {
-
+	private static final long serialVersionUID = 1;
 	JComponent component = new JTextField();
 
 	/**

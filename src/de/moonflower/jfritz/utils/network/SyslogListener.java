@@ -37,17 +37,17 @@ public class SyslogListener extends Thread implements CallMonitor {
 
 	private final String PATTERN_TELEFON_RUNNING = "telefon a";
 
-	private final String PATTERN_TELEFON_RUNNING2 = "telefon";
+	//private final String PATTERN_TELEFON_RUNNING2 = "telefon";
 
-	private final int SYSLOG_PORT = 514;
+	//private final int SYSLOG_PORT = 514;
 
 	private DatagramSocket socket;
 
-	private JFritz jfritz;
+	//private JFritz jfritz;
 
 	public SyslogListener(JFritz jfritz) {
 		super();
-		this.jfritz = jfritz;
+		//this.jfritz = jfritz;
 		start();
 	}
 

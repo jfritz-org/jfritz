@@ -17,6 +17,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  * @author Arno Willig
  */
 public class DurationCellRenderer extends DefaultTableCellRenderer {
+	private static final long serialVersionUID = 1;
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) {
 

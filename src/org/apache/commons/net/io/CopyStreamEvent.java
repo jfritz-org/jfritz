@@ -26,9 +26,10 @@ import java.util.EventObject;
  * <p>
  *
  * @author <a href="mailto:savarese@apache.org">Daniel F. Savarese </a>
- * @version $Id: CopyStreamEvent.java,v 1.2 2005/06/20 22:01:48 akw Exp $
+ * @version $Id: CopyStreamEvent.java,v 1.3 2005/07/24 06:17:55 jfahrner Exp $
  */
 public class CopyStreamEvent extends EventObject {
+	private static final long serialVersionUID = 1;
 	/**
 	 * Constant used to indicate the stream size is unknown.
 	 */

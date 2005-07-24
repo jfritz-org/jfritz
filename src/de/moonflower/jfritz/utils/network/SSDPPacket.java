@@ -148,7 +148,7 @@ public class SSDPPacket {
 	}
 
 	public FritzBoxFirmware getFirmware() {
-		String parts[] = getServer().split(" ", 2);
+		//String parts[] = getServer().split(" ", 2);
 		String fwstr = getServer().substring(getServer().lastIndexOf(" ") + 1);
 		try {
 			return new FritzBoxFirmware(fwstr);

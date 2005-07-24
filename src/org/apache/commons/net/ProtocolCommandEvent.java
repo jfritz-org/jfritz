@@ -31,6 +31,7 @@ import java.util.EventObject;
 
 public class ProtocolCommandEvent extends EventObject
 {
+	private static final long serialVersionUID = 1;
     private int __replyCode;
     private boolean __isCommand;
     private String __message, __command;

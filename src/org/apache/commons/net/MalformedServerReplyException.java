@@ -33,7 +33,7 @@ import java.io.IOException;
 
 public class MalformedServerReplyException extends IOException
 {
-
+	private static final long serialVersionUID = 1;
     /*** Constructs a MalformedServerReplyException with no message ***/
     public MalformedServerReplyException()
     {

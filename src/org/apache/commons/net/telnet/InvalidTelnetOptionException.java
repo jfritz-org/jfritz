@@ -24,7 +24,7 @@ package org.apache.commons.net.telnet;
  ***/
 public class InvalidTelnetOptionException extends Exception
 {
-
+	private static final long serialVersionUID = 1;
     /***
      * Option code
      ***/

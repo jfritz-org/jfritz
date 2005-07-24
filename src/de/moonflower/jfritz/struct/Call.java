@@ -116,7 +116,6 @@ public class Call {
 		if (route == null) outString = outString.concat(";\"\"");
 		else outString = outString.concat(";\"" + route + "\"");
 
-		String portStr = "";
 		if (port.equals("4"))
 			outString = outString.concat(";\"ISDN\"");
 		else if (port.equals("0"))

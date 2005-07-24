@@ -114,7 +114,7 @@ public class TelnetOption
 
     public static int EXTENDED_OPTIONS_LIST = 255;
 
-    private static int __FIRST_OPTION = BINARY;
+    //private static int __FIRST_OPTION = BINARY;
     private static int __LAST_OPTION = EXTENDED_OPTIONS_LIST;
 
     private static final String __optionString[] = {

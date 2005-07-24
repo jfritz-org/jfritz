@@ -23,7 +23,7 @@ import java.util.TimerTask;
  * @author rob
  */
 public class CallMessageDlg extends JDialog implements ActionListener{
-
+	private static final long serialVersionUID = 1;
 		protected void createGUI (String caller, String called) {
 			if (caller != null) {
 				setTitle("JFritz - Ankommender Anruf");

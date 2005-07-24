@@ -39,7 +39,6 @@ public class SelectionListener implements ListSelectionListener {
 	 */
 	public void valueChanged(ListSelectionEvent e) {
 		if (!e.getValueIsAdjusting()) {
-			String str = "";
 			VCardList list = new VCardList();
 			Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
 			Person person = null;

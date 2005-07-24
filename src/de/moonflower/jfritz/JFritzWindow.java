@@ -69,6 +69,8 @@ import de.moonflower.jfritz.utils.network.YAClistener;
 public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		ItemListener {
 
+	private static final long serialVersionUID = 1;
+
 	private JFritz jfritz;
 
 	private Timer timer;
@@ -311,7 +313,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 */
 	public JMenuBar createMenu() {
 		JMenu jfritzMenu = new JMenu(JFritz.PROGRAM_NAME);
-		JMenu editMenu = new JMenu(JFritz.getMessage("edit_menu"));
+		//JMenu editMenu = new JMenu(JFritz.getMessage("edit_menu"));
 		JMenu optionsMenu = new JMenu(JFritz.getMessage("options_menu"));
 		JMenu helpMenu = new JMenu(JFritz.getMessage("help_menu"));
 		JMenu lnfMenu = new JMenu(JFritz.getMessage("lnf_menu"));
@@ -551,7 +553,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				public void finished() {
 					setBusy(false);
 					isretrieving = false;
-					int rows = jfritz.getCallerlist().getRowCount();
+					//int rows = jfritz.getCallerlist().getRowCount();
 					setStatus();
 				}
 			};

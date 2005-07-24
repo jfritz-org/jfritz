@@ -25,7 +25,7 @@ import de.moonflower.jfritz.struct.CallType;
  * @author Arno Willig
  */
 public class CallTypeDateCellRenderer extends DefaultTableCellRenderer {
-
+	private static final long serialVersionUID = 1;
 	final ImageIcon imageCallInFailed, imageCallIn, imageCallOut;
 
 	/**
