@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Timer;
@@ -25,6 +26,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButtonMenuItem;
@@ -362,6 +364,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		jfritzMenu.add(item);
 		jfritzMenu.add(new JSeparator());
 		item = new JMenuItem(JFritz.getMessage("prog_exit"), 'x');
+		item.setAccelerator(KeyStroke.getKeyStroke(
+		        KeyEvent.VK_Q, ActionEvent.ALT_MASK));
 		item.setActionCommand("exit");
 		item.addActionListener(this);
 		jfritzMenu.add(item);
