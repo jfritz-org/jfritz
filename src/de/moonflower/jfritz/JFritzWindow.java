@@ -13,7 +13,6 @@ import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -38,8 +37,6 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.filechooser.FileFilter;
 
-import org.jdesktop.jdic.desktop.Desktop;
-
 import de.moonflower.jfritz.callerlist.CallerListPanel;
 import de.moonflower.jfritz.callerlist.CallerTable;
 import de.moonflower.jfritz.dialogs.config.ConfigDialog;
@@ -56,6 +53,7 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.ReverseLookup;
+import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.SwingWorker;
 import de.moonflower.jfritz.utils.network.TelnetListener;
 import de.moonflower.jfritz.utils.network.SyslogListener;
@@ -751,23 +749,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		else if (e.getActionCommand() == "about")
 			showAboutDialog();
 		else if (e.getActionCommand() == "help") {
-			try {
-				Desktop.browse(new URL(JFritz.DOCUMENTATION_URL));
-			} catch (Exception e1) {
-				Debug.err("Website opening works only on win32 platforms.");
-				JOptionPane.showMessageDialog(this, "Please visit "
-						+ JFritz.DOCUMENTATION_URL);
-			}
+			BrowserLaunch.openURL(JFritz.DOCUMENTATION_URL);
 		} else if (e.getActionCommand() == "website") {
-			try {
-				// Runtime.getRuntime().exec("rundll32
-				// url.dll,FileProtocolHandler "+ JFritz.PROGRAM_URL);
-				Desktop.browse(new URL(JFritz.PROGRAM_URL));
-			} catch (Exception e1) {
-				Debug.err("Website opening works only on win32 platforms.");
-				JOptionPane.showMessageDialog(this, "Please visit "
-						+ JFritz.PROGRAM_URL);
-			}
+			BrowserLaunch.openURL(JFritz.PROGRAM_URL);
 		} else if (e.getActionCommand() == "export_csv")
 			expportCSV();
 		else if (e.getActionCommand() == "export_vcard")
