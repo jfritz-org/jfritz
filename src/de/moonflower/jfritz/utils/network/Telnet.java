@@ -83,7 +83,6 @@ public class Telnet {
 		try {
 			char lastChar = pattern.charAt(pattern.length() - 1);
 			StringBuffer sb = new StringBuffer();
-			boolean found = false;
 			char ch = (char) in.read();
 			while (true) {
 				sb.append(ch); // FIXME This can be done better!!!
