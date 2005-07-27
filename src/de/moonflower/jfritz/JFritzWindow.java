@@ -352,15 +352,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		jfritzMenu.add(exportMenu);
 
 		jfritzMenu.add(new JSeparator());
-		item = new JMenuItem(JFritz.getMessage("phonebook"), 'b');
-		item.setActionCommand("phonebook");
-		item.addActionListener(this);
-		jfritzMenu.add(item);
-		item = new JMenuItem(JFritz.getMessage("quickdials"));
-		item.setActionCommand("quickdial");
-		item.addActionListener(this);
-		jfritzMenu.add(item);
-		jfritzMenu.add(new JSeparator());
 		item = new JMenuItem(JFritz.getMessage("prog_exit"), 'x');
 		item.setAccelerator(KeyStroke.getKeyStroke(
 		        KeyEvent.VK_Q, ActionEvent.ALT_MASK));
