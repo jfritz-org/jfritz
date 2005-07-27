@@ -355,12 +355,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		item = new JMenuItem(JFritz.getMessage("phonebook"), 'b');
 		item.setActionCommand("phonebook");
 		item.addActionListener(this);
-		item.setEnabled(JFritz.DEVEL_VERSION);
 		jfritzMenu.add(item);
 		item = new JMenuItem(JFritz.getMessage("quickdials"));
 		item.setActionCommand("quickdial");
 		item.addActionListener(this);
-		item.setEnabled(JFritz.DEVEL_VERSION);
 		jfritzMenu.add(item);
 		jfritzMenu.add(new JSeparator());
 		item = new JMenuItem(JFritz.getMessage("prog_exit"), 'x');
@@ -373,7 +371,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		item = new JMenuItem(JFritz.getMessage("help_content"), 'h');
 		item.setActionCommand("help");
 		item.addActionListener(this);
-		item.setEnabled(JFritz.DEVEL_VERSION);
+//		item.setEnabled(JFritz.DEVEL_VERSION);
 		helpMenu.add(item);
 		item = new JMenuItem(JFritz.getMessage("jfritz_website"), 'w');
 		item.setActionCommand("website");
