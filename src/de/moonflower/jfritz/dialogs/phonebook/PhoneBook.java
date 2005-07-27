@@ -391,7 +391,7 @@ public class PhoneBook extends AbstractTableModel {
 	public Person findPerson(PhoneNumber number) {
 		if (number == null)
 			return null;
-		Enumeration en = filteredPersons.elements();
+		Enumeration en = unfilteredPersons.elements();
 		while (en.hasMoreElements()) {
 			Person p = (Person) en.nextElement();
 			Vector numbers = p.getNumbers();

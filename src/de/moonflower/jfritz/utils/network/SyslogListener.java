@@ -111,20 +111,20 @@ public class SyslogListener extends Thread implements CallMonitor {
 			telnet.disconnect();
 			socket = new DatagramSocket(port);
 			Debug.msg("Starting SyslogListener on port " + port);
-			// DatagramSocket passthroughSocket = new DatagramSocket(SYSLOG_PORT);
+			// DatagramSocket passthroughSocket = new
+			// DatagramSocket(SYSLOG_PORT);
 			while (!isInterrupted()) {
-				Debug.msg("Syslog!!!!");
 				socket.receive(packet);
 				String msg = new String(log_buffer, 0, packet.getLength(),
 						"UTF-8");
 				Debug.msg("Get Syslogmessage: " + msg);
-/*
-				if (JFritzUtils.parseBoolean(JFritz.getProperty(
-						"option.syslogpassthrough", "false"))) {
-					passthroughSocket.send(packet);
-					// Debug.msg("SendSyslogmessage: "+ msg); }
-				}
-*/
+
+				//if (JFritzUtils.parseBoolean(JFritz.getProperty(
+				//		"option.syslogpassthrough", "false"))) {
+				//  	passthroughSocket.send(packet);
+				//	    Debug.msg("SendSyslogmessage: " + msg);
+				// }
+
 				p = Pattern.compile(PATTERN_TELEFON_INCOMING);
 				m = p.matcher(msg);
 				if (m.find()) {
