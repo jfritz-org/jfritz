@@ -218,7 +218,7 @@ public final class JFritz {
 
 	public final static String PROGRAM_NAME = "JFritz!";
 
-	public final static String PROGRAM_VERSION = "0.4.1";
+	public final static String PROGRAM_VERSION = "0.4.2";
 
 	public final static String PROGRAM_URL = "http://jfritz.sourceforge.net/";
 
@@ -226,7 +226,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.89 2005/07/26 16:24:42 jfahrner Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.90 2005/07/28 20:34:28 akw Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
