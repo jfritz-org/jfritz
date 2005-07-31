@@ -567,7 +567,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	/**
 	 * Shows the configuration dialog
 	 */
-	private void showConfigDialog() {
+	public void showConfigDialog() {
 		ConfigDialog dialog = new ConfigDialog(this);
 		if (dialog.showDialog()) {
 			dialog.storeValues();
