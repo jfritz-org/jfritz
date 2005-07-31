@@ -43,7 +43,17 @@
  * BUG: Bestätigung beim Schliessen von JFritz ist bei manchen Betriebssystemfunktionen (shutdown, ...) nicht vorhanden
  * BUG: Mehrere Instanzen können zu Datenverlust führen
  *
+ *
+ *  * TODO:
+ * - Merging of person entries
+ * - Implement reverselookup for Switzerland (www.telsearch.ch)
+ * - Password Dialog mit "Speichern" Haken
+ * - TFTP Box Konfig verwalten
+
  * CHANGELOG:
+ *
+ * JFritz! 0.4.3
+ * - Added support for MacOSX Application Menu
  *
  * JFritz! 0.4.2
  * - CallByCall information is saved
@@ -61,11 +71,6 @@
  * - Bugfix: Some charset bugfixing
  * - Bugfix: Phonebook XML-Saving fixed (UTF-8 coding)
  *
- * TODO:
- * - Merging of person entries
- * - Implement reverselookup for Switzerland (www.telsearch.ch)
- * - Password Dialog mit "Speichern" Haken
- * - TFTP Box Konfig verwalten
  *
  * JFritz! 0.4.0
  * - Systray minimizes JFrame
@@ -218,7 +223,7 @@ public final class JFritz {
 
 	public final static String PROGRAM_NAME = "JFritz!";
 
-	public final static String PROGRAM_VERSION = "0.4.2";
+	public final static String PROGRAM_VERSION = "0.4.3";
 
 	public final static String PROGRAM_URL = "http://jfritz.sourceforge.net/";
 
@@ -226,7 +231,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.90 2005/07/28 20:34:28 akw Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.91 2005/07/31 01:01:36 robotniko Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -289,6 +294,10 @@ public final class JFritz {
 		else if (osName.startsWith("Windows"))
 			HostOS = "windows";
 		Debug.msg("JFritz runs on "+ HostOS);
+
+		if (HostOS.equalsIgnoreCase("mac")) {
+			MacHandler macHandler = new MacHandler(this);
+		}
 
 		phonebook = new PhoneBook(this);
 		phonebook.loadFromXMLFile(PHONEBOOK_FILE);
