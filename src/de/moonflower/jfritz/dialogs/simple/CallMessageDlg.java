@@ -24,7 +24,13 @@ import java.util.TimerTask;
  */
 public class CallMessageDlg extends JDialog implements ActionListener{
 	private static final long serialVersionUID = 1;
-		protected void createGUI (String caller, String called) {
+		public void showMessage (String caller, String called) {
+			toFront();
+
+			Timer timer = new Timer();
+			HideTimer task = new HideTimer(this);
+			timer.schedule(task, 10000);
+
 			if (caller != null) {
 				setTitle("JFritz - Ankommender Anruf");
 			}
@@ -83,18 +89,6 @@ public class CallMessageDlg extends JDialog implements ActionListener{
 
 		public void actionPerformed(ActionEvent e) {
 			setVisible(false);
-		}
-
-		public CallMessageDlg(String caller, String called) {
-			super();
-
-			createGUI(caller, called);
-
-			toFront();
-
-			Timer timer = new Timer();
-			HideTimer task = new HideTimer(this);
-			timer.schedule(task, 10000);
 		}
 
 		private class HideTimer extends TimerTask {

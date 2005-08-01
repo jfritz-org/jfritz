@@ -24,7 +24,12 @@ import java.util.TimerTask;
  */
 public class MessageDlg extends JDialog implements ActionListener{
 	private static final long serialVersionUID = 1;
-		protected void createGUI (String message) {
+		public void showMessage (String message) {
+			toFront();
+			Timer timer = new Timer();
+			HideTimer task = new HideTimer(this);
+			timer.schedule(task, 10000);
+
 			setTitle("JFritz - Info");
 
 			JButton closeButton = new JButton("OK");
@@ -61,16 +66,6 @@ public class MessageDlg extends JDialog implements ActionListener{
 
 		public void actionPerformed(ActionEvent e) {
 			setVisible(false);
-		}
-
-		public MessageDlg(String message) {
-			super();
-
-			createGUI(message);
-
-			Timer timer = new Timer();
-			HideTimer task = new HideTimer(this);
-			timer.schedule(task, 10000);
 		}
 
 		private class HideTimer extends TimerTask {
