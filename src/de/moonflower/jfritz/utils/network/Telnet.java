@@ -61,7 +61,9 @@ public class Telnet {
 			}
 			int port = 23;
 			try {
-				jfritz.getJframe().setStatus("Verbinde mit Telnet ...");
+				if (jfritz.getJframe() != null) {
+					jfritz.getJframe().setStatus("Verbinde mit Telnet ...");
+				}
 				telnet.connect(server, port); // Connect to the specified server
 				in = telnet.getInputStream();
 				out = new PrintStream(telnet.getOutputStream());
@@ -115,8 +117,8 @@ public class Telnet {
 				if (ch == lastCharLogin || ch == lastCharPasswd || ch == prompt) {
 					if (sb.toString().endsWith(login)) {
 						if (firstLogin) { // wenn Fehlgeschlagen, dann
-										  // mehrmaliges Login mit falschem
-										  // Username verhindern
+							// mehrmaliges Login mit falschem
+							// Username verhindern
 							Debug.msg("Writing Telnet User: " + user);
 							write(user);
 							firstLogin = false;
@@ -136,8 +138,8 @@ public class Telnet {
 									.getProperty("box.password"));
 						}
 						if (firstPassword) {// wenn Fehlgeschlagen, dann
-											// mehrmaliges Login mit falschem
-											// Passwort verhindern
+							// mehrmaliges Login mit falschem
+							// Passwort verhindern
 							Debug.msg("Writing Telnet Password: " + password);
 							write(password);
 							firstPassword = false;
