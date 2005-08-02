@@ -50,6 +50,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  */
 public class CallerList extends AbstractTableModel {
 	private static final long serialVersionUID = 1;
+
 	private static final String CALLS_DTD_URI = "http://jfritz.moonflower.de/dtd/calls.dtd";
 
 	private static final String CALLS_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -321,7 +322,17 @@ public class CallerList extends AbstractTableModel {
 				nr1 = c.getPhoneNumber().getFullNumber();
 			if (call.getPhoneNumber() != null)
 				nr2 = call.getPhoneNumber().getFullNumber();
-			if (c.getCalldate().equals(call.getCalldate()) && (nr1).equals(nr2)) {
+			String route1 = "", route2 = "";
+			if (c.getRoute() != null)
+				route1 = c.getRoute();
+			if (call.getRoute() != null)
+				route2 = call.getRoute();
+			if (c.getCalldate().equals(call.getCalldate())
+					&& (nr1).equals(nr2)
+					&& (c.getPort().equals(call.getPort()))
+					&& (c.getDuration() == call.getDuration())
+					&& (c.getCalltype().toInt() == call.getCalltype().toInt())
+					&& (route1.equals(route2))) {
 				newEntry = false; // We already have this call
 				break;
 			}
@@ -348,8 +359,9 @@ public class CallerList extends AbstractTableModel {
 				JFritz.getProperty("area.prefix"), JFritz
 						.getProperty("area.code"), JFritzUtils.detectBoxType(
 						JFritz.getProperty("box.firmware"), JFritz
-								.getProperty("box.address"), Encryption.decrypt(JFritz
-								.getProperty("box.password"))), jfritz);
+								.getProperty("box.address"), Encryption
+								.decrypt(JFritz.getProperty("box.password"))),
+				jfritz);
 
 		int newEntries = 0;
 		for (Enumeration el = data.elements(); el.hasMoreElements();) {
@@ -776,7 +788,7 @@ public class CallerList extends AbstractTableModel {
 		int row[] = jfritz.getJframe().getCallerTable().getSelectedRows();
 		if (row.length > 0) {
 			Vector personsToDelete = new Vector();
-			for (int i=0; i<row.length; i++) {
+			for (int i = 0; i < row.length; i++) {
 				personsToDelete.add(filteredCallerData.get(row[i]));
 			}
 			Enumeration en = personsToDelete.elements();
