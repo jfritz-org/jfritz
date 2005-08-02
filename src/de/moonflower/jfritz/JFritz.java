@@ -30,23 +30,10 @@
  *
  * GLOBAL TODO:
  *
- * CallerList: Einträge löschen älter als Datum
- * CallerList: ev. Popup-Menu? (finde ich auch gut => löschen, reverselookup, ... Rob)
- * Statistik: Top-Caller (Name/Nummer, Wie oft, Wie lange)
- * Watchdog for CallMonitor
- *
- * BUG: No new Phonebook entries after reverselookup, only after restart or double click on an call entry
- * BUG: Box restart beim Call Monitor (ab und zu wird auch der telefond nicht gestartet)
- * BUG: 2 Einstellungsfenster können geöffnet werden. Eins normal, eines über Tray
+ * BUGS: bitte bei Sourceforge nachschauen und dort auch den Status ändern
  * BUG: die Autoerkennung, ob telefond für Syslog richtig läuft hat ein Sicherheitsloch. Nun kann jede IP auf Port 1011 zugreifen.
- * BUG: Mehrere Instanzen können zu Datenverlust führen
  *
- *
- * TODO:
- * - Merging of person entries
- * - Implement reverselookup for Switzerland (www.telsearch.ch)
- * - Password Dialog mit "Speichern" Haken
- * - TFTP Box Konfig verwalten
+ * FeatureRequests: bitte bei Sourceforge nachschauen und dort auch den Status ändern
 
  * CHANGELOG:
  *
@@ -234,7 +221,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.93 2005/08/02 10:54:01 robotniko Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.94 2005/08/02 15:27:44 robotniko Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
