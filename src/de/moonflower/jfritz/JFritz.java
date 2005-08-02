@@ -36,15 +36,13 @@
  * Watchdog for CallMonitor
  *
  * BUG: No new Phonebook entries after reverselookup, only after restart or double click on an call entry
- * BUG: Eingabe im IP-Eingabe-PopUp wird ignoriert! (ist glaube ich schon behoben)
  * BUG: Box restart beim Call Monitor (ab und zu wird auch der telefond nicht gestartet)
  * BUG: 2 Einstellungsfenster können geöffnet werden. Eins normal, eines über Tray
  * BUG: die Autoerkennung, ob telefond für Syslog richtig läuft hat ein Sicherheitsloch. Nun kann jede IP auf Port 1011 zugreifen.
- * BUG: Bestätigung beim Schliessen von JFritz ist bei manchen Betriebssystemfunktionen (shutdown, ...) nicht vorhanden
  * BUG: Mehrere Instanzen können zu Datenverlust führen
  *
  *
- *  * TODO:
+ * TODO:
  * - Merging of person entries
  * - Implement reverselookup for Switzerland (www.telsearch.ch)
  * - Password Dialog mit "Speichern" Haken
@@ -54,6 +52,11 @@
  *
  * JFritz! 0.4.3
  * - Added support for MacOSX Application Menu
+ * - Telnet: Timeout handling
+ * - Telnet: support for username, password TODO: Einstellmöglichkeiten
+ * - Wait, when no network reachable (On startup, return of standby, ...)
+ * - Bugfix: Syslog-Monitor get Callerlist on Restart
+ * - Bugfix: Check for double entries in Callerlist
  *
  * JFritz! 0.4.2
  * - CallByCall information is saved
@@ -231,7 +234,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.92 2005/08/01 11:56:37 robotniko Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.93 2005/08/02 10:54:01 robotniko Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
