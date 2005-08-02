@@ -43,11 +43,11 @@ public class SyslogListener extends Thread implements CallMonitor {
 
 	private DatagramSocket socket;
 
-	//private JFritz jfritz;
+	private JFritz jfritz;
 
 	public SyslogListener(JFritz jfritz) {
 		super();
-		//this.jfritz = jfritz;
+		this.jfritz = jfritz;
 		start();
 	}
 
@@ -72,7 +72,7 @@ public class SyslogListener extends Thread implements CallMonitor {
 				log_buffer.length);
 
 		try {
-			Telnet telnet = new Telnet();
+			Telnet telnet = new Telnet(jfritz);
 			telnet.connect();
 			data = telnet.sendCommand("ps -A | grep syslog");
 			p = Pattern.compile(PATTERN_SYSLOG_RUNNING);
@@ -190,15 +190,17 @@ public class SyslogListener extends Thread implements CallMonitor {
 	 * @param telnet
 	 *            Telnet connection
 	 */
-	private static void restartTelefonOnFritzBox(Telnet telnet) {
+	private void restartTelefonOnFritzBox(Telnet telnet) {
 		if (JOptionPane.showConfirmDialog(null,
 				"Der telefond muss neu gestartet werden.\n"
 						+ "Dabei wird ein laufendes Gespräch unterbrochen. "
 						+ "Die Anrufliste wird vorher gesichert.\n"
 						+ "Soll der telefond neu gestartet werden?",
 				JFritz.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+			Debug.msg("Get new calls");
+			jfritz.getJframe().getFetchButton().doClick();
 			try {
-				sleep(1000);
+				sleep(5000);
 			} catch (InterruptedException e) {
 			}
 			telnet.sendCommand("killall telefon");
