@@ -40,7 +40,7 @@ public class TelnetListener extends Thread implements CallMonitor {
 	public TelnetListener(JFritz jfritz) {
 		// Fetch new calls
 		this.jfritz = jfritz;
-		telnet = new Telnet();
+		telnet = new Telnet(jfritz);
 		Debug.msg("Starting TelnetListener");
 		telnet.connect();
 		start();
