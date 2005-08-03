@@ -849,10 +849,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				return "VCard (.vcf)";
 			}
 		});
-		int rows[] = callerListPanel.getCallerTable().getSelectedRows();
+		int rows[] = phoneBookPanel.getPhoneBookTable().getSelectedRows();
 		for (int i = 0; i < rows.length; i++) {
-			Person person = (Person) callerListPanel.getCallerTable()
-					.getModel().getValueAt(rows[i], 3);
+			Person person = (Person) jfritz.getPhonebook().getPersonAt(rows[i]);
 			if (person != null && person.getFullname() != "") {
 				list.addVCard(person);
 			}
