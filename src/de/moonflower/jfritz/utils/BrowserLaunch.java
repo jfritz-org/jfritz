@@ -14,10 +14,18 @@ package de.moonflower.jfritz.utils;
 import java.lang.reflect.Method;
 import javax.swing.JOptionPane;
 
+/**
+ * Opens browser with an URL
+ *
+ */
 public class BrowserLaunch {
 
 private static final String errMsg = "Error attempting to launch web browser";
 
+/**
+ * Open new browser with an url
+ * @param url
+ */
 public static void openURL(String url) {
    String osName = System.getProperty("os.name");
    try {

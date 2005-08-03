@@ -20,8 +20,10 @@ import java.util.TimerTask;
 
 
 /**
+ * Class for creating a popup dialog for incoming and outgoing calls. Hides after timeout
  * @author rob
  */
+
 public class CallMessageDlg extends JDialog implements ActionListener{
 	private static final long serialVersionUID = 1;
 		public void showMessage (String caller, String called) {
@@ -29,6 +31,8 @@ public class CallMessageDlg extends JDialog implements ActionListener{
 
 			Timer timer = new Timer();
 			HideTimer task = new HideTimer(this);
+
+			// Timeout 10 sec
 			timer.schedule(task, 10000);
 
 			if (caller != null) {
@@ -87,10 +91,17 @@ public class CallMessageDlg extends JDialog implements ActionListener{
 			setVisible(true);
 		}
 
+		/**
+		 * Hide dialog after OK-Button pressed
+		 */
 		public void actionPerformed(ActionEvent e) {
 			setVisible(false);
 		}
 
+		/**
+		 * Hide dialog after timeout
+		 * @author rob
+		 */
 		private class HideTimer extends TimerTask {
 			private CallMessageDlg msgDialog;
 

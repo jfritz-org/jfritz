@@ -14,20 +14,25 @@ import java.util.Vector;
 import de.moonflower.jfritz.utils.Debug;
 
 /**
+ * Support for VCard-List. Save list to file.
+ *
  * @author Arno Willig
  *
  */
+
+
 public class VCardList {
 
 	Vector list;
 
-	/**
-	 *
-	 */
 	public VCardList() {
 		list = new Vector();
 	}
 
+	/**
+	 * Add person to VCard-List
+	 * @param person
+	 */
 	public void addVCard(Person person) {
 		boolean found = false;
 		Enumeration en = list.elements();

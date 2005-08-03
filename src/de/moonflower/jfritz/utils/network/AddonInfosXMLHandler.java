@@ -14,7 +14,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import de.moonflower.jfritz.dialogs.stats.StatsDialog;
 
 /**
- * XML Handler for reading the call file
+ * XML Handler for reading the statistic file
  *
  * @author Arno Willig
  *

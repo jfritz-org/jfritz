@@ -4,6 +4,8 @@
 package de.moonflower.jfritz.utils.network;
 
 /**
+ * Interface Class for all CallMonitors
+ *
  * @author rob
  */
 public interface CallMonitor {

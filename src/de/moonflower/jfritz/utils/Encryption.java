@@ -14,6 +14,11 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 
+
+/**
+ * Encrypting / decrypting of Strings
+ *
+ */
 public class Encryption {
 	private static final String KEY_STRING = "193-155-248-97-234-56-100-241";
 

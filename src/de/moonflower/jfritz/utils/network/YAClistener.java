@@ -1,12 +1,6 @@
 package de.moonflower.jfritz.utils.network;
 
-/**
- * Thread, listens on a TCP-Port on YAC Messages Message format:
- * @CALLname~number or: message
- *
- * @author Robert Palmer
- *
- */
+
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,6 +14,13 @@ import de.moonflower.jfritz.utils.ReverseLookup;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.struct.Person;
 
+/**
+ * Thread, listens on a TCP-Port on YAC Messages Message format:
+ * @CALLname~number or: message
+ *
+ * @author Robert Palmer
+ *
+ */
 public class YAClistener extends Thread implements CallMonitor{
 
 	private boolean isRunning = false;

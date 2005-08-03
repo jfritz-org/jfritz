@@ -20,14 +20,22 @@ import java.util.TimerTask;
 
 
 /**
+ * Class for creating a popup dialog. Hides after timeout
  * @author rob
  */
 public class MessageDlg extends JDialog implements ActionListener{
 	private static final long serialVersionUID = 1;
+
+		/**
+		 * Show popup dialog with text: message
+		 * @param message
+		 */
 		public void showMessage (String message) {
 			toFront();
 			Timer timer = new Timer();
 			HideTimer task = new HideTimer(this);
+
+			// Timeout 10 sec
 			timer.schedule(task, 10000);
 
 			setTitle("JFritz - Info");
@@ -64,10 +72,17 @@ public class MessageDlg extends JDialog implements ActionListener{
 			setVisible(true);
 		}
 
+		/**
+		 * Hide dialog after OK-Button pressed
+		 */
 		public void actionPerformed(ActionEvent e) {
 			setVisible(false);
 		}
 
+		/**
+		 * Hide dialog after timeout
+		 * @author rob
+		 */
 		private class HideTimer extends TimerTask {
 			private MessageDlg msgDialog;
 
