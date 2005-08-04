@@ -12,9 +12,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.util.Enumeration;
+import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -22,10 +27,15 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.JPopupMenu;
+import javax.swing.JMenuItem;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.struct.Person;
+import de.moonflower.jfritz.struct.VCardList;
 import de.moonflower.jfritz.utils.JFritzUtils;
+import de.moonflower.jfritz.utils.Debug;
 
 /**
  * @author Arno Willig
@@ -34,6 +44,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		PropertyChangeListener, ActionListener {
 	private static final long serialVersionUID = 1;
+
 	private final int PERSONPANEL_WIDTH = 350;
 
 	private JFritz jfritz;
@@ -45,6 +56,8 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	private JSplitPane splitPane;
 
 	private JButton saveButton, cancelButton;
+
+	private JPopupMenu popupMenu;
 
 	public PhoneBookPanel(JFritz jfritz) {
 		this.jfritz = jfritz;
@@ -93,12 +106,23 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		addButton.setIcon(getImage("add.png"));
 		addButton.setActionCommand("addPerson");
 		addButton.addActionListener(this);
+		toolBar.add(addButton);
+
 		JButton delButton = new JButton(JFritz.getMessage("delete_entry"));
+		delButton.setToolTipText(JFritz.getMessage("delete_entry"));
 		delButton.setIcon(getImage("delete.png"));
 		delButton.setActionCommand("deletePerson");
 		delButton.addActionListener(this);
-		toolBar.add(addButton);
 		toolBar.add(delButton);
+
+		toolBar.addSeparator();
+
+		JButton exportVCardButton = new JButton();
+		exportVCardButton.setIcon(getImage("vcard.png"));
+		exportVCardButton.setToolTipText(JFritz.getMessage("export_vcard"));
+		exportVCardButton.setActionCommand("export_vcard");
+		exportVCardButton.addActionListener(this);
+		toolBar.add(exportVCardButton);
 
 		toolBar.addSeparator();
 		toolBar.addSeparator();
@@ -117,20 +141,27 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	}
 
 	public JScrollPane createPhoneBookTable() {
+		popupMenu = new JPopupMenu();
+		JMenuItem menuItem;
+		menuItem = new JMenuItem("Markierte Einträge löschen");
+		menuItem.setActionCommand("deletePerson");
+		menuItem.addActionListener(this);
+		popupMenu.add(menuItem);
+		menuItem = new JMenuItem("Markierten Eintrag bearbeiten");
+		menuItem.setActionCommand("editPerson");
+		menuItem.addActionListener(this);
+		popupMenu.add(menuItem);
+		menuItem = new JMenuItem("Als VCard exportieren");
+		menuItem.setActionCommand("export_vcard");
+		menuItem.addActionListener(this);
+		popupMenu.add(menuItem);
+
+		//Add listener to components that can bring up popup menus.
+		MouseAdapter popupListener = new PopupListener();
+
 		phoneBookTable = new PhoneBookTable(jfritz);
 		phoneBookTable.getSelectionModel().addListSelectionListener(this);
-		phoneBookTable.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() > 1) {
-					int loc = splitPane.getDividerLocation();
-					if (loc < PERSONPANEL_WIDTH)
-						splitPane.setDividerLocation(PERSONPANEL_WIDTH);
-					else
-						splitPane.setDividerLocation(0);
-				}
-			}
-
-		});
+		phoneBookTable.addMouseListener(popupListener);
 		return new JScrollPane(phoneBookTable);
 	}
 
@@ -170,15 +201,52 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			jfritz.getPhonebook().addEntry(new Person("", " NEU "));
 			jfritz.getPhonebook().fireTableDataChanged();
 		} else if (e.getActionCommand().equals("deletePerson")) {
-			jfritz.getPhonebook().deleteEntry(personPanel.getPerson());
-			jfritz.getPhonebook().fireTableDataChanged();
-			jfritz.getPhonebook().saveToXMLFile(JFritz.PHONEBOOK_FILE);
+			removeSelectedPersons();
+		} else if (e.getActionCommand().equals("editPerson")) {
+			// Edit Panel anzeigen, falls verborgen
+			int loc = splitPane.getDividerLocation();
+			if (loc < PERSONPANEL_WIDTH)
+				splitPane.setDividerLocation(PERSONPANEL_WIDTH);
+			;
 		} else if (e.getActionCommand().equals("filter_private")) {
 			JFritz.setProperty("filter_private", Boolean
 					.toString(((JToggleButton) e.getSource()).isSelected()));
 			jfritz.getPhonebook().updateFilter();
+		} else if (e.getActionCommand().equals("export_vcard")) {
+			exportVCard();
+		} else {
+			Debug.msg("Unsupported Command: " + e.getActionCommand());
 		}
 		propertyChange(null);
+	}
+
+	/**
+	 * Removes selected persons from phonebook
+	 *
+	 */
+	private void removeSelectedPersons() {
+		if (JOptionPane.showConfirmDialog(this,
+				"Markierte Einträge wirklich löschen?", JFritz.PROGRAM_NAME,
+				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+
+			int row[] = jfritz.getJframe().getPhoneBookPanel()
+					.getPhoneBookTable().getSelectedRows();
+			if (row.length > 0) {
+				// Markierte Einträge löschen
+				Vector personsToDelete = new Vector();
+				for (int i = 0; i < row.length; i++) {
+					personsToDelete.add(jfritz.getPhonebook()
+							.getFilteredPersons().get(row[i]));
+				}
+				Enumeration en = personsToDelete.elements();
+				while (en.hasMoreElements()) {
+					jfritz.getPhonebook()
+							.deleteEntry((Person) en.nextElement());
+				}
+				jfritz.getPhonebook().fireTableDataChanged();
+				jfritz.getPhonebook().saveToXMLFile(JFritz.PHONEBOOK_FILE);
+			}
+		}
 	}
 
 	/**
@@ -203,5 +271,77 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/" + filename)));
+	}
+
+	/**
+	 * Exports VCard or VCardList
+	 */
+	public void exportVCard() {
+		VCardList list = new VCardList();
+		JFileChooser fc = new JFileChooser();
+		fc.setDialogTitle(JFritz.getMessage("export_vcard"));
+		fc.setDialogType(JFileChooser.SAVE_DIALOG);
+		fc.setFileFilter(new FileFilter() {
+			public boolean accept(File f) {
+				return f.isDirectory()
+						|| f.getName().toLowerCase().endsWith(".vcf");
+			}
+
+			public String getDescription() {
+				return "VCard (.vcf)";
+			}
+		});
+		int rows[] = getPhoneBookTable().getSelectedRows();
+		for (int i = 0; i < rows.length; i++) {
+			Person person = (Person) jfritz.getPhonebook().getPersonAt(rows[i]);
+			if (person != null && person.getFullname() != "") {
+				list.addVCard(person);
+			}
+		}
+		if (list.getCount() > 0) {
+			if (list.getCount() == 1) {
+				fc.setSelectedFile(new File(list.getPerson(0)
+						.getStandardTelephoneNumber()
+						+ ".vcf"));
+			} else if (list.getCount() > 1) {
+				fc.setSelectedFile(new File("jfritz.vcf"));
+			}
+			if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+				File file = fc.getSelectedFile();
+				list.saveToFile(file);
+			}
+		} else {
+			jfritz.errorMsg("Keine einzige sinnvolle Zeile selektiert!\n\n"
+					+ "Bitte eine oder mehrere Zeilen auswählen,\n"
+					+ "um die Daten als VCard zu exportieren!");
+		}
+	}
+
+
+	class PopupListener extends MouseAdapter {
+		public void mouseClicked(MouseEvent e) {
+			if (e.getClickCount() > 1) {
+				int loc = splitPane.getDividerLocation();
+				if (loc < PERSONPANEL_WIDTH)
+					splitPane.setDividerLocation(PERSONPANEL_WIDTH);
+				else
+					splitPane.setDividerLocation(0);
+			}
+		}
+
+		public void mousePressed(MouseEvent e) {
+			maybeShowPopup(e);
+		}
+
+		public void mouseReleased(MouseEvent e) {
+			maybeShowPopup(e);
+		}
+
+		private void maybeShowPopup(MouseEvent e) {
+			if (e.isPopupTrigger()) {
+				jfritz.getJframe().getPhoneBookPanel().popupMenu.show(e
+						.getComponent(), e.getX(), e.getY());
+			}
+		}
 	}
 }

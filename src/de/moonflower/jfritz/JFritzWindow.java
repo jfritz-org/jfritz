@@ -50,7 +50,6 @@ import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
-import de.moonflower.jfritz.struct.VCardList;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -79,7 +78,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	private JToolBar mBar;
 
-	private JButton fetchButton, lookupButton, configButton, vcardButton;
+	private JButton fetchButton, lookupButton, configButton;
 
 	private JToggleButton taskButton, monitorButton;
 
@@ -272,13 +271,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		button.setToolTipText(JFritz.getMessage("export_csv"));
 		mBar.add(button);
 
-		vcardButton = new JButton();
-		vcardButton.setActionCommand("export_vcard");
-		vcardButton.addActionListener(this);
-		vcardButton.setIcon(getImage("vcard.png"));
-		vcardButton.setToolTipText(JFritz.getMessage("export_vcard"));
-		mBar.add(vcardButton);
-
 		button = new JButton();
 		button.setActionCommand("stats");
 		button.addActionListener(this);
@@ -330,11 +322,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		jfritzMenu.add(item);
 		item = new JMenuItem(JFritz.getMessage("export_csv"), 'c');
 		item.setActionCommand("export_csv");
-		item.addActionListener(this);
-		exportMenu.add(item);
-
-		item = new JMenuItem(JFritz.getMessage("export_vcard"), 'v');
-		item.setActionCommand("export_vcard");
 		item.addActionListener(this);
 		exportMenu.add(item);
 
@@ -754,8 +741,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			BrowserLaunch.openURL(JFritz.PROGRAM_URL);
 		} else if (e.getActionCommand() == "export_csv")
 			expportCSV();
-		else if (e.getActionCommand() == "export_vcard")
-			exportVCard();
 		else if (e.getActionCommand() == "config")
 			showConfigDialog();
 		else if (e.getActionCommand() == "callerlist")
@@ -828,50 +813,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
 			jfritz.getCallerlist().saveToCSVFile(file.getAbsolutePath());
-		}
-	}
-
-	/**
-	 * Exports VCard or VCardList
-	 */
-	public void exportVCard() {
-		VCardList list = new VCardList();
-		JFileChooser fc = new JFileChooser();
-		fc.setDialogTitle(JFritz.getMessage("export_vcard"));
-		fc.setDialogType(JFileChooser.SAVE_DIALOG);
-		fc.setFileFilter(new FileFilter() {
-			public boolean accept(File f) {
-				return f.isDirectory()
-						|| f.getName().toLowerCase().endsWith(".vcf");
-			}
-
-			public String getDescription() {
-				return "VCard (.vcf)";
-			}
-		});
-		int rows[] = phoneBookPanel.getPhoneBookTable().getSelectedRows();
-		for (int i = 0; i < rows.length; i++) {
-			Person person = (Person) jfritz.getPhonebook().getPersonAt(rows[i]);
-			if (person != null && person.getFullname() != "") {
-				list.addVCard(person);
-			}
-		}
-		if (list.getCount() > 0) {
-			if (list.getCount() == 1) {
-				fc.setSelectedFile(new File(list.getPerson(0)
-						.getStandardTelephoneNumber()
-						+ ".vcf"));
-			} else if (list.getCount() > 1) {
-				fc.setSelectedFile(new File("jfritz.vcf"));
-			}
-			if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-				File file = fc.getSelectedFile();
-				list.saveToFile(file);
-			}
-		} else {
-			jfritz.errorMsg("Keine einzige sinnvolle Zeile selektiert!\n\n"
-					+ "Bitte eine oder mehrere Zeilen auswählen,\n"
-					+ "um die Daten als VCard zu exportieren!");
 		}
 	}
 
