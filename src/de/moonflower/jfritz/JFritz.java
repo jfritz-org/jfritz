@@ -39,9 +39,11 @@
  *
  * JFritz! 0.4.3
  * - Added support for MacOSX Application Menu
+ * - VCard Export moved from CallerTable to PhoneBook
  * - Telnet: Timeout handling
  * - Telnet: support for username, password TODO: Einstellmöglichkeiten
  * - Wait, when no network reachable (On startup, return of standby, ...)
+ * - Added context menu to phonebook
  * - Bugfix: Syslog-Monitor get Callerlist on Restart
  * - Bugfix: Check for double entries in Callerlist
  *
@@ -221,7 +223,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.94 2005/08/02 15:27:44 robotniko Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.95 2005/08/04 16:56:53 robotniko Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
