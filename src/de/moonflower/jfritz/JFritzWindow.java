@@ -304,7 +304,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * Creates the menu bar
 	 */
 	public JMenuBar createMenu() {
-		JMenu jfritzMenu = new JMenu(JFritz.PROGRAM_NAME);
+		String menu_text = JFritz.PROGRAM_NAME;
+		if (JFritz.runsOn() == "mac")
+			menu_text = "Ablage";
+
+		JMenu jfritzMenu = new JMenu(menu_text);
 		//JMenu editMenu = new JMenu(JFritz.getMessage("edit_menu"));
 		JMenu optionsMenu = new JMenu(JFritz.getMessage("options_menu"));
 		JMenu helpMenu = new JMenu(JFritz.getMessage("help_menu"));
@@ -338,13 +342,15 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		exportMenu.add(item);
 		jfritzMenu.add(exportMenu);
 
-		jfritzMenu.add(new JSeparator());
-		item = new JMenuItem(JFritz.getMessage("prog_exit"), 'x');
-		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
-				ActionEvent.ALT_MASK));
-		item.setActionCommand("exit");
-		item.addActionListener(this);
-		jfritzMenu.add(item);
+		if (JFritz.runsOn() != "mac") {
+			jfritzMenu.add(new JSeparator());
+			item = new JMenuItem(JFritz.getMessage("prog_exit"), 'x');
+			//item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
+			//		ActionEvent.ALT_MASK));
+			item.setActionCommand("exit");
+			item.addActionListener(this);
+			jfritzMenu.add(item);
+		}
 
 		item = new JMenuItem(JFritz.getMessage("help_content"), 'h');
 		item.setActionCommand("help");
@@ -355,11 +361,14 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		item.setActionCommand("website");
 		item.addActionListener(this);
 		helpMenu.add(item);
-		helpMenu.add(new JSeparator());
-		item = new JMenuItem(JFritz.getMessage("prog_info"), 'i');
-		item.setActionCommand("about");
-		item.addActionListener(this);
-		helpMenu.add(item);
+
+		if (JFritz.runsOn() != "mac") {
+			helpMenu.add(new JSeparator());
+			item = new JMenuItem(JFritz.getMessage("prog_info"), 'i');
+			item.setActionCommand("about");
+			item.addActionListener(this);
+			helpMenu.add(item);
+		}
 
 		LookAndFeelInfo[] lnfs = UIManager.getInstalledLookAndFeels();
 		ButtonGroup lnfgroup = new ButtonGroup();
@@ -374,10 +383,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			lnfgroup.add(rbmi);
 		}
 		optionsMenu.add(lnfMenu);
-		item = new JMenuItem(JFritz.getMessage("config"), 'e');
-		item.setActionCommand("config");
-		item.addActionListener(this);
-		optionsMenu.add(item);
+
+		if (JFritz.runsOn() != "mac") {
+			item = new JMenuItem(JFritz.getMessage("config"), 'e');
+			item.setActionCommand("config");
+			item.addActionListener(this);
+			optionsMenu.add(item);
+		}
 
 		item = new JMenuItem(JFritz.getMessage("callerlist"), null);
 		item.setActionCommand("callerlist");
