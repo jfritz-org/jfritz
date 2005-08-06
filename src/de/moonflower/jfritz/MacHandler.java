@@ -100,7 +100,6 @@ public class MacHandler {
 
 		public Object invoke(Object proxy, Method method, Object[] args)
 				throws Throwable {
-			Object result = null;
 
 			if (method.getName().equalsIgnoreCase("handleQuit")) {
 				SwingUtilities.invokeLater(new Runnable() {
