@@ -97,7 +97,7 @@ public class TelnetListener extends Thread implements CallMonitor {
 					Debug.msg("NEW CALL " + id + ": " + caller + " -> "
 							+ called);
 
-					JFritz.callInMsg(caller, called);
+					jfritz.callInMsg(caller, called);
 					if (!isRunning)
 						break;
 				}

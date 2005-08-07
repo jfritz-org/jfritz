@@ -10,9 +10,6 @@ import java.net.Socket;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.Debug;
-import de.moonflower.jfritz.utils.ReverseLookup;
-import de.moonflower.jfritz.struct.PhoneNumber;
-import de.moonflower.jfritz.struct.Person;
 
 /**
  * Thread, listens on a TCP-Port on YAC Messages Message format:
@@ -77,62 +74,36 @@ public class YAClistener extends Thread implements CallMonitor{
 							String name = "";
 							String number = "";
 							if (splitList.length == 0) {
-								name = "Unbekannt";
-								number = "Unbekannt";
+								name = "";
+								number = "";
 							}
 							if (splitList.length == 1) {
 								if (!splitList[0].equals("")) {
 									name = splitList[0];
-									number = "Unbekannt";
+									number = "";
 								}
 							}
 							if (splitList.length == 2) {
 								if (splitList[0].equals("")) {
-									name = "Unbekannt";
+									name = "";
 								} else
 									name = splitList[0];
 								number = splitList[1];
 							}
 
-							Debug.msg("Number: " + number);
-							Debug.msg("Name: " + name);
-							if (name.equals("Unbekannt")
-									&& !number.equals("Unbekannt")) {
-								Debug.msg("Searchin in local database ...");
-								Person callerperson = jfritz.getPhonebook()
-										.findPerson(new PhoneNumber(number));
-								if (callerperson != null) {
-									name = callerperson.getFullname();
-									Debug.msg("Found in local database: "
-											+ name);
-								} else {
-									Debug
-											.msg("Searchin on dasoertliche.de ...");
-									Person person = ReverseLookup
-											.lookup(new PhoneNumber(number));
-									if (!person.getFullname().equals("")) {
-										name = person.getFullname();
-										Debug.msg("Found on dasoertliche.de: "
-												+ name);
-									}
-								}
+							jfritz.callInMsg(number, "", name);
 
-							}
-
-							outputString = JFritz.getMessage("incoming_call")
-									+ "\n" + JFritz.getMessage("name") + ": "
-									+ name + "\n" + JFritz.getMessage("number")
-									+ ": " + number;
 						} else {
 							outputString = JFritz.getMessage("yac_message")
 									+ ":\n" + msg;
+							JFritz.infoMsg(outputString);
 						}
 					} else {
 						outputString = JFritz.getMessage("yac_message") + ":\n"
 								+ msg;
+						JFritz.infoMsg(outputString);
 					}
 
-					JFritz.infoMsg(outputString);
 				}
 				socket.close();
 			}

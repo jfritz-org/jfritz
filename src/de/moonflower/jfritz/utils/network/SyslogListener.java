@@ -135,7 +135,7 @@ public class SyslogListener extends Thread implements CallMonitor {
 							+ " -> " + called);
 
 					// POPUP Messages to JFritz
-					JFritz.callInMsg(caller, called);
+					jfritz.callInMsg(caller, called);
 				}
 				p = Pattern.compile(PATTERN_TELEFON_OUTGOING);
 				m = p.matcher(msg);
