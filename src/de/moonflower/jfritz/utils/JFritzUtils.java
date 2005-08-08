@@ -30,6 +30,7 @@ import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.struct.QuickDial;
+import de.moonflower.jfritz.utils.HTMLUtil;
 
 /**
  * Static class for data retrieval from the fritz box
@@ -272,9 +273,9 @@ public class JFritzUtils {
 						.getInputStream()));
 				int i = 0;
 				String str;
-				while (null != ((str = d.readLine()))) {
+				while (null != ((str = HTMLUtil.stripEntities(d.readLine())))) {
 					// Password seems to be wrong
-					if (str.indexOf("FEHLER:&nbsp;Das angegebene Kennwort ") > 0)
+					if (str.indexOf("FEHLER: Das angegebene Kennwort ") > 0)
 						wrong_pass = true;
 					// Skip a few lines
 					//if (i > 778)
