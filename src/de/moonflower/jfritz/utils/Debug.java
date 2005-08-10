@@ -7,6 +7,8 @@ package de.moonflower.jfritz.utils;
 import javax.swing.JOptionPane;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Write debug messages to STDOUT or FILE.
@@ -51,15 +53,26 @@ public class Debug {
 	}
 
 	/**
+	 *
+	 * @return current Time HH:mm:ss
+	 */
+	private static String getCurrentTime() {
+		Date now = new java.util.Date();
+		SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+		return df.format(now);
+	}
+
+	/**
 	 * Print message with prioriry level
 	 * @param level
 	 * @param message
 	 */
 	public static void msg(int level, String message) {
 		if (debugLevel >= level) {
-			System.out.println("DEBUG: " + message);
+			message = "(" + getCurrentTime() + ") DEBUG: " + message;
+			System.out.println(message);
 			if (logFile) {
-				logMessage("DEBUG: " + message);
+				logMessage(message);
 			}
 		}
 	}
@@ -69,9 +82,10 @@ public class Debug {
 	 * @param message
 	 */
 	public static void err(String message) {
-		System.err.println("ERROR: " + message);
+		message = "(" + getCurrentTime() + ") ERROR: " + message;
+		System.err.println(message);
 		if (logFile) {
-			logMessage("ERROR: " + message);
+			logMessage(message);
 		}
 	}
 
