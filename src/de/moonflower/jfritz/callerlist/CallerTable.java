@@ -7,6 +7,9 @@ package de.moonflower.jfritz.callerlist;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Date;
 import java.util.Enumeration;
 
@@ -70,6 +73,21 @@ public class CallerTable extends JTable {
 		getTableHeader().setReorderingAllowed(false);
 		getTableHeader().setResizingAllowed(true);
 		getTableHeader().addMouseListener(new ColumnHeaderListener(getModel()));
+
+		KeyListener keyListener = (new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+					// Minimize JFritz-Window
+					jfritz.hideShowJFritz();
+				}
+				else if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+					// Delete selected entries
+					((CallerList)getModel()).removeEntries();
+				}
+			}
+		});
+
+		addKeyListener(keyListener);
 
 		SelectionListener listener = new SelectionListener(this);
 		getSelectionModel().addListSelectionListener(listener);
