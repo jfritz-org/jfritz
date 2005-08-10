@@ -15,18 +15,25 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import de.moonflower.jfritz.dialogs.phonebook.PhoneBookTable;
+import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.VCardList;
 
 /**
  * Listener class for copying phone numbers to clipboard
+ * Displays status information about selected calls
  *
  * @author Arno Willig
+ * TODO: Es kopiert aber nicht die Nummern, sondern die vCard ins clipboard
  *
  */
 public class SelectionListener implements ListSelectionListener {
 
-	CallerTable table;
+	private CallerTable table;
+
+	private int selectedCalls = 0;
+
+	private int selectedCallsTotalMinutes = 0;
 
 	// It is necessary to keep the table since it is not possible
 	// to determine the table from the event's source
@@ -35,6 +42,7 @@ public class SelectionListener implements ListSelectionListener {
 	}
 
 	/**
+	 *
 	 * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
 	 */
 	public void valueChanged(ListSelectionEvent e) {
@@ -42,19 +50,25 @@ public class SelectionListener implements ListSelectionListener {
 			VCardList list = new VCardList();
 			Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
 			Person person = null;
+			Call call = null;
 			int rows[] = table.getSelectedRows();
+			selectedCalls = rows.length;
+			selectedCallsTotalMinutes = 0;
 			for (int i = 0; i < rows.length; i++) {
-				person = (Person) table.getModel().getValueAt(rows[i], 3);
+				call = (Call) table.getJfritz().getCallerlist().getFilteredCallVector().get(rows[i]);
+				person = call.getPerson();
 				if (person != null && person.getFullname() != "") { // FIXME
 					// person.getVCard
 					list.addVCard(person);
 				}
+				selectedCallsTotalMinutes += call.getDuration();
 			}
 
 			StringSelection cont = new StringSelection(list.toVCardList());
 			clip.setContents(cont, null);
 
 			if (rows.length == 1) {
+				table.getJfritz().getJframe().setStatus();
 				// table.getJfritz().getJframe().getPhoneBookPanel().getPersonPanel().setPerson(person);
 				PhoneBookTable pt = table.getJfritz().getJframe()
 						.getPhoneBookPanel().getPhoneBookTable();
@@ -72,6 +86,8 @@ public class SelectionListener implements ListSelectionListener {
 				table.getJfritz().getJframe().getCallerListPanel()
 						.setDeleteEntryButton();
 			} else if (rows.length > 0) {
+				// Setze Statusbar mit Infos über selectierte Anrufe
+				table.getJfritz().getJframe().setStatus(selectedCalls + " Telefonate, Gesamtdauer: " + (selectedCallsTotalMinutes / 60) + " min");
 				if (rows.length == table.getRowCount())
 					table.getJfritz().getJframe().getCallerListPanel()
 							.setDeleteListButton();
