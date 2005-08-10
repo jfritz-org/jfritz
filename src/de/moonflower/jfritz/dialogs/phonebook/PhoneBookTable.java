@@ -34,6 +34,7 @@ public class PhoneBookTable extends JTable {
 		setColumnSelectionAllowed(false);
 		setCellSelectionEnabled(false);
 		setRowSelectionAllowed(true);
+		setFocusable(true);
 		setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
 
