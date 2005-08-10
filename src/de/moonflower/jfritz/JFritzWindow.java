@@ -37,6 +37,8 @@ import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 
 import de.moonflower.jfritz.callerlist.CallerListPanel;
@@ -93,6 +95,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	private PhoneBookPanel phoneBookPanel;
 
 	private QuickDialPanel quickDialPanel;
+
+	private ConfigDialog configDialog;
 
 	/**
 	 * Constructs JFritzWindow
@@ -162,6 +166,22 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		tabber.addTab(JFritz.getMessage("callerlist"), callerListPanel);
 		tabber.addTab(JFritz.getMessage("phonebook"), phoneBookPanel);
 		tabber.addTab(JFritz.getMessage("quickdials"), quickDialPanel);
+		tabber.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				if (tabber.getTitleAt(tabber.getSelectedIndex()).equals(
+						JFritz.getMessage("callerlist"))) {
+					setStatus();
+				}
+				else if (tabber.getTitleAt(tabber.getSelectedIndex()).equals(
+						JFritz.getMessage("phonebook"))) {
+					phoneBookPanel.setStatus();
+				}
+				else if (tabber.getTitleAt(tabber.getSelectedIndex()).equals(
+						JFritz.getMessage("quickdials"))) {
+					quickDialPanel.setStatus();
+				}
+			}
+		});
 
 		// Adding gui components
 		setJMenuBar(createMenu());
@@ -178,7 +198,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		if (!Encryption.decrypt(ask).equals(
 				JFritz.PROGRAM_SECRET + Encryption.decrypt(pass))) {
 			String password = showPasswordDialog("");
-			if (!password.equals(Encryption.decrypt(pass))) {
+			if (password == null) { // PasswordDialog canceled
+				Debug.errDlg("Eingabe abgebrochen");
+				Debug.err("Eingabe abgebrochen");
+				System.exit(0);
+			} else if (!password.equals(Encryption.decrypt(pass))) {
 				Debug.errDlg("Falsches Passwort!");
 				Debug.err("Wrong password!");
 				System.exit(0);
@@ -461,11 +485,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 							String password = showPasswordDialog(Encryption
 									.decrypt(JFritz.getProperty("box.password",
 											"")));
-							if (!password.equals("")) {
+							if (password == null) { // Dialog canceled
+								isdone = true;
+							} else {
 								JFritz.setProperty("box.password", Encryption
 										.encrypt(password));
-							} else { // Cancel
-								isdone = true;
 							}
 						} catch (IOException e) {
 							// Warten, falls wir von einem Standby aufwachen,
@@ -479,7 +503,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 								setStatus(JFritz.getMessage("box_not_found"));
 								String box_address = showAddressDialog(JFritz
 										.getProperty("box.address", "fritz.box"));
-								if (!box_address.equals("")) {
+								if (box_address == null) { // Dialog canceled
+									isdone = true;
+								} else {
 									JFritz.setProperty("box.address",
 											box_address);
 								}
@@ -574,15 +600,14 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * Shows the configuration dialog
 	 */
 	public void showConfigDialog() {
-		ConfigDialog dialog = new ConfigDialog(this);
-		if (dialog.showDialog()) {
-			dialog.storeValues();
+		configDialog = new ConfigDialog(this);
+		if (configDialog.showDialog()) {
+			configDialog.storeValues();
 			jfritz.saveProperties();
+			monitorButton.setEnabled((Integer.parseInt(JFritz.getProperty(
+					"option.callMonitorType", "0")) > 0));
 		}
-		dialog.dispose();
-
-		monitorButton.setEnabled((Integer.parseInt(JFritz.getProperty(
-				"option.callMonitorType", "0")) > 0));
+		configDialog.dispose();
 	}
 
 	/**
@@ -592,7 +617,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * @return new_password
 	 */
 	public String showPasswordDialog(String old_password) {
-		String password = "";
+		String password = null;
 		AddressPasswordDialog p = new AddressPasswordDialog(this, true);
 		p.setPass(old_password);
 
@@ -611,7 +636,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * @return address
 	 */
 	public String showAddressDialog(String old_address) {
-		String address = "";
+		String address = null;
 		AddressPasswordDialog p = new AddressPasswordDialog(this, false);
 		p.setAddress(old_address);
 
@@ -886,5 +911,35 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	public JToggleButton getMonitorButton() {
 		return monitorButton;
+	}
+
+	/**
+	 * Let startCallMonitorButtons start or stop callMonitor Changes caption of
+	 * buttons and their status
+	 *
+	 * @param option
+	 *            CALLMONITOR_START or CALLMONITOR_STOP
+	 */
+
+	public void setCallMonitorButtons(int option) {
+		switch (option) {
+		case JFritz.CALLMONITOR_START: {
+			if (configDialog != null) {
+				configDialog.setCallMonitorButtons(option);
+			} else {
+				jfritz.getJframe().getMonitorButton().setSelected(false);
+			}
+			break;
+		}
+		case JFritz.CALLMONITOR_STOP: {
+			if (configDialog != null) {
+				configDialog.setCallMonitorButtons(option);
+			} else {
+				jfritz.getJframe().getMonitorButton().setSelected(true);
+			}
+			break;
+		}
+		}
+
 	}
 }
