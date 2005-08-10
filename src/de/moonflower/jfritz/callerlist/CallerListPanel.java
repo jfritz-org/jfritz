@@ -36,6 +36,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 public class CallerListPanel extends JPanel implements ActionListener,
 		CaretListener {
 	private static final long serialVersionUID = 1;
+
 	private JFritz jfritz;
 
 	private CallerTable callerTable;
@@ -269,10 +270,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			jfritz.getCallerlist().updateFilter();
 			jfritz.getCallerlist().fireTableStructureChanged();
 		} else if (e.getActionCommand() == "delete_entry") {
-			if (JOptionPane.showConfirmDialog(this, "Wirklich " // TODO I18N
-					+ deleteEntriesButton.getToolTipText() + "?",
-					JFritz.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
-				jfritz.getCallerlist().removeEntries();
+			jfritz.getCallerlist().removeEntries();
 		}
 
 	}
