@@ -58,9 +58,6 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.network.SSDPPacket;
 import de.moonflower.jfritz.utils.network.SyslogListener;
 
-import java.net.URLEncoder;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.net.InetAddress;
 
 /**
@@ -72,6 +69,7 @@ import java.net.InetAddress;
  */
 public class ConfigDialog extends JDialog {
 	private static final long serialVersionUID = 1;
+
 	private JFritz jfritz;
 
 	private JComboBox addressCombo, callMonitorCombo, ipAddressComboBox;
@@ -81,7 +79,7 @@ public class ConfigDialog extends JDialog {
 
 	private JPasswordField pass;
 
-	private String encodedPassword = "";
+	private String password = "";
 
 	private JSlider timerSlider;
 
@@ -157,15 +155,18 @@ public class ConfigDialog extends JDialog {
 		callMonitorAfterStartButton.setSelected(JFritzUtils.parseBoolean(JFritz
 				.getProperty("option.autostartcallmonitor", "false")));
 		if (startCallMonitorButton.isSelected()) {
-			startCallMonitorButton.setText("Stop Call-Monitor");
+			setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
 		} else {
-			startCallMonitorButton.setText("Start Call-Monitor");
+			setCallMonitorButtons(JFritz.CALLMONITOR_START);
 		}
 
 		ipAddressComboBox.setSelectedItem(JFritz.getProperty(
 				"option.syslogclientip", "192.168.178.21"));
 		syslogPassthroughCheckBox.setSelected(JFritzUtils.parseBoolean(JFritz
 				.getProperty("option.syslogpassthrough", "false")));
+		// Anhand von Problemen mit dem Passthrough ist diese Checkbox erst
+		// einmal deaktiviert
+		syslogPassthroughCheckBox.setEnabled(false);
 
 		if (!JFritz.SYSTRAY_SUPPORT) {
 			popupTrayButton.setVisible(false);
@@ -195,15 +196,8 @@ public class ConfigDialog extends JDialog {
 								"")));
 		passwordAfterStartButton.setSelected(pwAfterStart);
 
-		try {
-			pass.setText(URLEncoder.encode(Encryption.decrypt(JFritz
-					.getProperty("box.password")), "UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-			Debug
-					.msg("Exception (ConfigDialog:setValues): UnsupportedEncodungException");
-		}
-		encodedPassword = Encryption
-				.decrypt(JFritz.getProperty("box.password"));
+		pass.setText(Encryption.decrypt(JFritz.getProperty("box.password")));
+		password = Encryption.decrypt(JFritz.getProperty("box.password"));
 		address.setText(JFritz.getProperty("box.address"));
 		areaCode.setText(JFritz.getProperty("area.code"));
 		countryCode.setText(JFritz.getProperty("country.code"));
@@ -217,7 +211,6 @@ public class ConfigDialog extends JDialog {
 			if (p.getIP().getHostAddress().equals(address.getText())) {
 				addressCombo.setSelectedIndex(i);
 			}
-
 		}
 
 		try {
@@ -277,7 +270,7 @@ public class ConfigDialog extends JDialog {
 
 		if (!passwordAfterStartButton.isSelected()) {
 			JFritz.setProperty("jfritz.password", Encryption
-					.encrypt(JFritz.PROGRAM_SECRET + encodedPassword));
+					.encrypt(JFritz.PROGRAM_SECRET + password));
 		} else {
 			JFritz.removeProperty("jfritz.password");
 		}
@@ -285,13 +278,13 @@ public class ConfigDialog extends JDialog {
 		JFritz.setProperty("option.lookupAfterFetch", Boolean
 				.toString(lookupAfterFetchButton.isSelected()));
 
-		JFritz.setProperty(
-				"option.syslogclientip", ipAddressComboBox.getSelectedItem().toString());
+		JFritz.setProperty("option.syslogclientip", ipAddressComboBox
+				.getSelectedItem().toString());
 
 		JFritz.setProperty("option.syslogpassthrough", Boolean
 				.toString(syslogPassthroughCheckBox.isSelected()));
 
-		JFritz.setProperty("box.password", Encryption.encrypt(encodedPassword));
+		JFritz.setProperty("box.password", Encryption.encrypt(password));
 		JFritz.setProperty("box.address", address.getText());
 		JFritz.setProperty("area.code", areaCode.getText());
 		JFritz.setProperty("country.code", countryCode.getText());
@@ -424,6 +417,8 @@ public class ConfigDialog extends JDialog {
 		JPanel sipButtonPane = new JPanel();
 		sipmodel = new SipProviderTableModel();
 		JTable siptable = new JTable(sipmodel) {
+			private static final long serialVersionUID = 1;
+
 			public Component prepareRenderer(TableCellRenderer renderer,
 					int rowIndex, int vColIndex) {
 				Component c = super.prepareRenderer(renderer, rowIndex,
@@ -519,9 +514,7 @@ public class ConfigDialog extends JDialog {
 
 	protected void stopAllCallMonitors() {
 		if (startCallMonitorButton.isSelected()) {
-			startCallMonitorButton.setText("Starte Anrufmonitor");
-			startCallMonitorButton.setSelected(false);
-			jfritz.getJframe().getMonitorButton().setSelected(false);
+			setCallMonitorButtons(JFritz.CALLMONITOR_START);
 			jfritz.stopCallMonitor();
 		}
 	}
@@ -542,7 +535,6 @@ public class ConfigDialog extends JDialog {
 						callMonitorPane.repaint();
 						Debug.msg("Kein Anrufmonitor erwünscht");
 						stopAllCallMonitors();
-
 						break;
 					}
 					case 1: {
@@ -591,9 +583,9 @@ public class ConfigDialog extends JDialog {
 							.valueOf(callMonitorCombo.getSelectedIndex()));
 					jfritz.getJframe().switchMonitorButton();
 					if (startCallMonitorButton.isSelected()) {
-						startCallMonitorButton.setText("Stoppe Anrufmonitor");
+						setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
 					} else {
-						startCallMonitorButton.setText("Starte Anrufmonitor");
+						setCallMonitorButtons(JFritz.CALLMONITOR_START);
 					}
 				}
 
@@ -612,7 +604,7 @@ public class ConfigDialog extends JDialog {
 		callMonitorPane.add(callMonitorCombo, BorderLayout.NORTH);
 
 		JPanel pane = new JPanel();
-		callMonitorPane.add(pane,BorderLayout.CENTER);
+		callMonitorPane.add(pane, BorderLayout.CENTER);
 
 		pane.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
@@ -625,7 +617,6 @@ public class ConfigDialog extends JDialog {
 		c.gridx = 0;
 		c.gridy = 0;
 		c.gridwidth = 1;
-
 
 		c.gridx = 1;
 		c.gridy = 0;
@@ -658,7 +649,6 @@ public class ConfigDialog extends JDialog {
 		pane.add(syslogMonitorPane, c);
 		pane.add(yacMonitorPane, c);
 
-
 		return callMonitorPane;
 	}
 
@@ -677,16 +667,48 @@ public class ConfigDialog extends JDialog {
 	}
 
 	protected JPanel createTelnetPane() {
+		final JDialog configDialog;
+		configDialog = this;
+		ActionListener actionListener = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if ("openTelnetConfigDialog".equalsIgnoreCase(e
+						.getActionCommand())) {
+					TelnetConfigDialog telnetConfigDialog = new TelnetConfigDialog(
+							configDialog, jfritz);
+					telnetConfigDialog.setModal(true);
+					telnetConfigDialog.showTelnetConfigDialog();
+				}
+			}
+		};
+
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.WEST;
 
-		// TODO: UserName und Passwort einstellen lassen
+		JButton openTelnetConfigDialogButton = new JButton(
+				"Weitere Einstellungen");
+		openTelnetConfigDialogButton.setActionCommand("openTelnetConfigDialog");
+		openTelnetConfigDialogButton.addActionListener(actionListener);
+		panel.add(openTelnetConfigDialogButton, c);
+
 		return panel;
 	}
 
 	protected JPanel createSyslogPane() {
+		final JDialog configDialog;
+		configDialog = this;
+		ActionListener actionListener = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if ("openTelnetConfigDialog".equalsIgnoreCase(e
+						.getActionCommand())) {
+					TelnetConfigDialog telnetConfigDialog = new TelnetConfigDialog(
+							configDialog, jfritz);
+					telnetConfigDialog.setModal(true);
+					telnetConfigDialog.showTelnetConfigDialog();
+				}
+			}
+		};
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
@@ -705,8 +727,8 @@ public class ConfigDialog extends JDialog {
 		Enumeration en = ipAddresses.elements();
 		while (en.hasMoreElements()) {
 			InetAddress ad = (InetAddress) en.nextElement();
-				ipAddressComboBox.addItem(ad.toString().substring(1,
-						ad.toString().length()));
+			ipAddressComboBox.addItem(ad.toString().substring(1,
+					ad.toString().length()));
 
 		}
 		ipAddressComboBox.addActionListener(new ActionListener() {
@@ -722,6 +744,14 @@ public class ConfigDialog extends JDialog {
 		c.gridy = 2;
 		syslogPassthroughCheckBox = new JCheckBox("Syslog-passthrough?");
 		panel.add(syslogPassthroughCheckBox, c);
+
+		c.gridy = 3;
+		JButton openTelnetConfigDialogButton = new JButton(
+				"Weitere Einstellungen");
+		openTelnetConfigDialogButton.setActionCommand("openTelnetConfigDialog");
+		openTelnetConfigDialogButton.addActionListener(actionListener);
+		panel.add(openTelnetConfigDialogButton, c);
+
 		return panel;
 	}
 
@@ -776,7 +806,6 @@ public class ConfigDialog extends JDialog {
 
 		tpane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-		JLabel label;
 		okButton = new JButton(JFritz.getMessage("okay"));
 		okButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
@@ -815,13 +844,7 @@ public class ConfigDialog extends JDialog {
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Object source = e.getSource();
-				try {
-					encodedPassword = URLDecoder.decode(new String(pass
-							.getPassword()), "UTF-8");
-				} catch (UnsupportedEncodingException ex) {
-					Debug
-							.msg("Exception (ConfigDialog:drawDialog): UnsupportedEncodungException");
-				}
+				password = new String(pass.getPassword());
 				pressed_OK = (source == pass || source == okButton);
 				if (source == pass || source == okButton
 						|| source == cancelButton) {
@@ -836,7 +859,7 @@ public class ConfigDialog extends JDialog {
 				} else if (e.getActionCommand().equals("detectboxtype")) {
 					try {
 						firmware = FritzBoxFirmware.detectFirmwareVersion(
-								address.getText(), encodedPassword);
+								address.getText(), password);
 
 						// firmware = new FritzBoxFirmware("14", "1", "35");
 						setBoxTypeLabel();
@@ -854,7 +877,7 @@ public class ConfigDialog extends JDialog {
 				} else if (e.getActionCommand().equals("fetchSIP")) {
 					try {
 						Vector data = JFritzUtils.retrieveSipProvider(address
-								.getText(), encodedPassword, firmware);
+								.getText(), password, firmware);
 						sipmodel.setData(data);
 						sipmodel.fireTableDataChanged();
 						jfritz.getCallerlist().fireTableDataChanged();
@@ -927,5 +950,24 @@ public class ConfigDialog extends JDialog {
 	 */
 	public final JFritz getJfritz() {
 		return jfritz;
+	}
+
+	/**
+	 * Let startCallMonitorButtons start or stop callMonitor
+	 * Changes caption of buttons and their status
+	 *
+	 * @param option
+	 *            CALLMONITOR_START or CALLMONITOR_STOP
+	 */
+	public void setCallMonitorButtons(int option) {
+		if (option == JFritz.CALLMONITOR_START) {
+			startCallMonitorButton.setText("Starte Anrufmonitor");
+			startCallMonitorButton.setSelected(false);
+			jfritz.getJframe().getMonitorButton().setSelected(false);
+		} else if (option == JFritz.CALLMONITOR_STOP) {
+			startCallMonitorButton.setText("Stoppe Anrufmonitor");
+			startCallMonitorButton.setSelected(true);
+			jfritz.getJframe().getMonitorButton().setSelected(true);
+		}
 	}
 }
