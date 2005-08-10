@@ -21,6 +21,7 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -327,8 +328,7 @@ public class CallerList extends AbstractTableModel {
 				route1 = c.getRoute();
 			if (call.getRoute() != null)
 				route2 = call.getRoute();
-			if (c.getCalldate().equals(call.getCalldate())
-					&& (nr1).equals(nr2)
+			if (c.getCalldate().equals(call.getCalldate()) && (nr1).equals(nr2)
 					&& (c.getPort().equals(call.getPort()))
 					&& (c.getDuration() == call.getDuration())
 					&& (c.getCalltype().toInt() == call.getCalltype().toInt())
@@ -784,20 +784,24 @@ public class CallerList extends AbstractTableModel {
 	}
 
 	public void removeEntries() {
-		Debug.msg("Removing entries");
-		int row[] = jfritz.getJframe().getCallerTable().getSelectedRows();
-		if (row.length > 0) {
-			Vector personsToDelete = new Vector();
-			for (int i = 0; i < row.length; i++) {
-				personsToDelete.add(filteredCallerData.get(row[i]));
+		if (JOptionPane.showConfirmDialog(jfritz.getJframe(), "Wirklich " // TODO I18N
+				+ JFritz.getMessage("delete_entries") + "?",
+				JFritz.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+			Debug.msg("Removing entries");
+			int row[] = jfritz.getJframe().getCallerTable().getSelectedRows();
+			if (row.length > 0) {
+				Vector personsToDelete = new Vector();
+				for (int i = 0; i < row.length; i++) {
+					personsToDelete.add(filteredCallerData.get(row[i]));
+				}
+				Enumeration en = personsToDelete.elements();
+				while (en.hasMoreElements()) {
+					unfilteredCallerData.remove(en.nextElement());
+				}
+				saveToXMLFile(JFritz.CALLS_FILE);
+				updateFilter();
+				fireTableDataChanged();
 			}
-			Enumeration en = personsToDelete.elements();
-			while (en.hasMoreElements()) {
-				unfilteredCallerData.remove(en.nextElement());
-			}
-			saveToXMLFile(JFritz.CALLS_FILE);
-			updateFilter();
-			fireTableDataChanged();
 		}
 	}
 }
