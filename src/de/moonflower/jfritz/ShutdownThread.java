@@ -8,27 +8,29 @@ import de.moonflower.jfritz.utils.Debug;
 /**
  * @author rob
  */
-public class ShutdownThread extends Thread{
+public class ShutdownThread extends Thread {
 
 	private JFritz jfritz;
 
-	public ShutdownThread (JFritz jfritz)
-	{
+	public ShutdownThread(JFritz jfritz) {
 		this.jfritz = jfritz;
 	}
 
-    public void run() {
+	public void run() {
 
-   	Debug.msg("Starting shutdown thread..");
+		Debug.msg("Starting shutdown thread..");
 
-   	jfritz.getJframe().saveQuickDials();
-   	jfritz.getPhonebook().saveToXMLFile(JFritz.PHONEBOOK_FILE);
-	jfritz.getCallerlist().saveToXMLFile(JFritz.CALLS_FILE);
+		if (jfritz.getJframe() != null) {
+			jfritz.getJframe().saveQuickDials();
+			jfritz.getPhonebook().saveToXMLFile(JFritz.PHONEBOOK_FILE);
+			jfritz.getCallerlist().saveToXMLFile(JFritz.CALLS_FILE);
 
-	jfritz.saveProperties();
-	jfritz.stopCallMonitor();
+			jfritz.saveProperties();
+			if (jfritz.getCallMonitor() != null) {
+				jfritz.getCallMonitor().stopCallMonitor();
+			}
+		}
+		Debug.msg("Shutdown thread done.");
 
-	Debug.msg("Shutdown thread done.");
-
-    }
+	}
 }
