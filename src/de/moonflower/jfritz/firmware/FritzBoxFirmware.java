@@ -6,6 +6,7 @@
 package de.moonflower.jfritz.firmware;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -144,7 +145,7 @@ public class FritzBoxFirmware {
 			data = JFritzUtils.fetchDataFromURL(
 					urlstr,
 					POSTDATA_ACCESS_METHOD[i] + POSTDATA_DETECT_FIRMWARE
-							+ box_password).trim();
+							+ URLEncoder.encode(box_password, "ISO-8859-1")).trim();
 			i++;
 		}
 		// Modded firmware: data = "> FRITZ!Box Fon WLAN, <span
