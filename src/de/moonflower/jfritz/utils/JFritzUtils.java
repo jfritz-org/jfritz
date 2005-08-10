@@ -31,12 +31,16 @@ import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.struct.QuickDial;
 import de.moonflower.jfritz.utils.HTMLUtil;
+import java.net.URLEncoder;
 
 /**
  * Static class for data retrieval from the fritz box
  *
  * TODO: This class needs to be abstracted, so that subclasses for each boxtype
  * can be implemented.
+ *
+ * Notiz: Der Webserver auf der Fritzbox unterstützt leider kein UTF-8 als
+ * URL-Codierung, deshalb habe ich ISO-8859-1 genommen
  *
  * @author akw
  *
@@ -130,7 +134,8 @@ public class JFritzUtils {
 			JFritz jfritz) throws WrongPasswordException, IOException {
 
 		String data = "";
-		String postdata = firmware.getAccessMethod() + POSTDATA_LIST + password;
+		String postdata = firmware.getAccessMethod() + POSTDATA_LIST
+				+ URLEncoder.encode(password, "ISO-8859-1");
 		String urlstr = "http://" + box_address + "/cgi-bin/webcm";
 		data = fetchDataFromURL(urlstr, postdata);
 
@@ -170,7 +175,7 @@ public class JFritzUtils {
 			String box_address, String box_password, FritzBoxFirmware firmware)
 			throws WrongPasswordException, IOException {
 		String postdata = firmware.getAccessMethod() + POSTDATA_QUICKDIAL
-				+ box_password;
+				+ URLEncoder.encode(box_password, "ISO-8859-1");
 		String urlstr = "http://" + box_address + "/cgi-bin/webcm";
 		String data = fetchDataFromURL(urlstr, postdata);
 		return parseQuickDialData(model, data, firmware);
@@ -195,7 +200,7 @@ public class JFritzUtils {
 		if (firmware == null)
 			throw new InvalidFirmwareException("No valid firmware");
 		String postdata = firmware.getAccessMethod() + POSTDATA_SIPPROVIDER
-				+ box_password;
+				+ URLEncoder.encode(box_password, "ISO-8859-1");
 		String urlstr = "http://" + box_address + "/cgi-bin/webcm";
 		String data = fetchDataFromURL(urlstr, postdata);
 		Vector list = parseSipProvider(data);
@@ -275,7 +280,8 @@ public class JFritzUtils {
 				String str;
 				while (null != ((str = HTMLUtil.stripEntities(d.readLine())))) {
 					// Password seems to be wrong
-					if (str.indexOf("FEHLER: Das angegebene Kennwort ") > 0)
+//					if (str.indexOf("FEHLER: Das angegebene Kennwort ") > 0)
+					if (str.indexOf("FRITZ!Box Anmeldung") > 0)
 						wrong_pass = true;
 					// Skip a few lines
 					//if (i > 778)
@@ -304,7 +310,7 @@ public class JFritzUtils {
 	public static void clearListOnFritzBox(String box_address, String password,
 			FritzBoxFirmware firmware) throws WrongPasswordException,
 			IOException {
-		System.out.println("Clearing List");
+		Debug.msg("Clearing List");
 		String urlstr = "http://" + box_address + "/cgi-bin/webcm";
 		String postdata = firmware.getAccessMethod() + POSTDATA_CLEAR;
 		fetchDataFromURL(urlstr, postdata);
@@ -459,7 +465,7 @@ public class JFritzUtils {
 	}
 
 	public static String replaceSpecialChars(String input) {
-		// XML Sonderzeichen durch UTF-8 Codierung ersetzen
+		// XML Sonderzeichen durch ASCII Codierung ersetzen
 		String out = input;
 		out = out.replaceAll("&", "&#38;");
 		out = out.replaceAll("'", "&#39;");
