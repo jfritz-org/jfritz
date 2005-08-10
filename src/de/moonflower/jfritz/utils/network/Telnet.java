@@ -7,11 +7,13 @@ package de.moonflower.jfritz.utils.network;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.ConnectException;
-import javax.swing.JOptionPane;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
+import de.moonflower.jfritz.dialogs.config.TelnetConfigDialog;
+import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 
 import org.apache.commons.net.telnet.*;
 
@@ -35,6 +37,10 @@ public class Telnet {
 
 	private final char prompt = '#';
 
+	private static final int LOGIN_OK = 0;
+
+	private static final int LOGIN_CANCELED = 1;
+
 	public Telnet(JFritz jfritz) {
 		this.jfritz = jfritz;
 		telnet = new TelnetClient();
@@ -51,24 +57,34 @@ public class Telnet {
 		int connectionFailures = 0;
 		while (!isdone) {
 			String server = JFritz.getProperty("box.address");
-			String user = JFritz.getProperty("telnet.user", "");
+
 			String password;
 			if (JFritz.getProperty("telnet.password", "").equals("")) {
-				password = "";
-			} else {
-				password = Encryption.decrypt(JFritz
-						.getProperty("telnet.password"));
+				// Noch kein Passwort gesetzt. Zeige Einstellungsdialog
+				TelnetConfigDialog telnetConfigDialog = new TelnetConfigDialog(
+						jfritz.getJframe(), jfritz);
+				telnetConfigDialog.setModal(true);
+				if (telnetConfigDialog.showTelnetConfigDialog() == TelnetConfigDialog.CANCEL_OPTION) {
+					//ABBRUCH
+					return;
+				}
 			}
+
+			String user = JFritz.getProperty("telnet.user", "");
+			password = Encryption
+					.decrypt(JFritz.getProperty("telnet.password"));
 			int port = 23;
 			try {
+				Debug.msg("Verbinde mit Telnet ...");
 				if (jfritz.getJframe() != null) {
 					jfritz.getJframe().setStatus("Verbinde mit Telnet ...");
 				}
 				telnet.connect(server, port); // Connect to the specified server
 				in = telnet.getInputStream();
 				out = new PrintStream(telnet.getOutputStream());
-				login(user, password);
-				connected = true;
+				if (login(user, password) == LOGIN_OK) {
+					connected = true;
+				}
 				isdone = true;
 				Debug.msg("Done");
 			} catch (ConnectException e) { // Connection Timeout
@@ -82,11 +98,20 @@ public class Telnet {
 					Debug.msg("FritzBox not found. Get new IP ...");
 					jfritz.getJframe().setStatus(
 							JFritz.getMessage("box_not_found"));
-					String box_address = jfritz.getJframe().showAddressDialog(
-							JFritz.getProperty("box.address", "fritz.box"));
-					if (!box_address.equals("")) {
-						Debug.msg("New IP for FritzBox: " + box_address);
-						JFritz.setProperty("box.address", box_address);
+					Debug.err("Address wrong!");
+					jfritz.getJframe().setBusy(false);
+					String box_address = jfritz.getJframe()
+							.showAddressDialog(
+									JFritz.getProperty(
+											"box.address",
+											"fritz.box"));
+					if (box_address == null) {
+						jfritz.stopCallMonitor();
+						isdone = true;
+					}
+					else {
+						JFritz.setProperty("box.address",
+								box_address);
 					}
 				}
 			} catch (Exception e) {
@@ -102,8 +127,9 @@ public class Telnet {
 	 * @param password
 	 */
 
-	private void login(String user, String password) {
+	private int login(String user, String password) {
 		try {
+			Debug.msg("Login to Telnet");
 			String login = "ogin: ";
 			String passwd = "assword: ";
 			boolean firstLogin = true;
@@ -116,19 +142,22 @@ public class Telnet {
 				sb.append(ch); // FIXME This can be done better!!!
 				if (ch == lastCharLogin || ch == lastCharPasswd || ch == prompt) {
 					if (sb.toString().endsWith(login)) {
-						if (firstLogin) { // wenn Fehlgeschlagen, dann
-							// mehrmaliges Login mit falschem
-							// Username verhindern
+						// wenn Fehlgeschlagen, dann
+						// mehrmaliges Login mit falschem
+						// Username verhindern
+						if (firstLogin) {
 							Debug.msg("Writing Telnet User: " + user);
 							write(user);
 							firstLogin = false;
 						} else {
-							user = JOptionPane.showInputDialog(jfritz
-									.getJframe(), "Telnet Username: ",
-									"Telnet Username falsch",
-									JOptionPane.QUESTION_MESSAGE);
-							JFritz.setProperty("telnet.user", user);
-							firstLogin = true;
+							TelnetConfigDialog telnetConfigDialog = new TelnetConfigDialog(
+									jfritz.getJframe(), jfritz);
+							telnetConfigDialog.setModal(true);
+							if (telnetConfigDialog.showTelnetConfigDialog() == TelnetConfigDialog.CANCEL_OPTION) {
+								//ABBRUCH
+								jfritz.stopCallMonitor();
+								return LOGIN_CANCELED;
+							}
 						}
 					}
 					if (sb.toString().endsWith(passwd)) {
@@ -137,20 +166,56 @@ public class Telnet {
 							password = Encryption.decrypt(JFritz
 									.getProperty("box.password"));
 						}
-						if (firstPassword) {// wenn Fehlgeschlagen, dann
-							// mehrmaliges Login mit falschem
-							// Passwort verhindern
+						while (true) { // test WebPassword
+							try {
+								FritzBoxFirmware.detectFirmwareVersion(JFritz
+										.getProperty("box.address"), Encryption
+										.decrypt(JFritz
+												.getProperty("box.password")));
+								password = Encryption.decrypt(JFritz
+										.getProperty("box.password"));
+								break; // go on with telnet login
+							} catch (WrongPasswordException e1) {
+								Debug.err("Password wrong!");
+								jfritz.getJframe().setStatus(
+										JFritz.getMessage("password_wrong"));
+								jfritz.getJframe().setBusy(false);
+
+								String newPassword = jfritz.getJframe()
+										.showPasswordDialog(
+												Encryption.decrypt(JFritz
+														.getProperty(
+																"box.password",
+																"")));
+								System.out.println("OLD PASS: "
+										+ Encryption
+												.decrypt(JFritz.getProperty(
+														"box.password", "")));
+								if (newPassword == null) { // Dialog aborted
+									jfritz.stopCallMonitor();
+									return LOGIN_CANCELED;
+								} else {
+									JFritz.setProperty("box.password",
+											Encryption.encrypt(newPassword));
+								}
+							}
+						}
+
+						// wenn Fehlgeschlagen, dann
+						// mehrmaliges Login mit falschem
+						// Passwort verhindern
+						if (firstPassword) {
 							Debug.msg("Writing Telnet Password: " + password);
 							write(password);
 							firstPassword = false;
 						} else {
-							password = JOptionPane.showInputDialog(jfritz
-									.getJframe(), "Telnet Passwort: ",
-									"Telnet Passwort falsch",
-									JOptionPane.QUESTION_MESSAGE);
-							JFritz.setProperty("telnet.password", Encryption
-									.encrypt(password));
-							firstPassword = true;
+							TelnetConfigDialog telnetConfigDialog = new TelnetConfigDialog(
+									jfritz.getJframe(), jfritz);
+							telnetConfigDialog.setModal(true);
+							if (telnetConfigDialog.showTelnetConfigDialog() == TelnetConfigDialog.CANCEL_OPTION) {
+								//ABBRUCH
+								return LOGIN_CANCELED;
+							}
 						}
 					}
 					if (ch == prompt) {
@@ -164,6 +229,7 @@ public class Telnet {
 			Debug.err(e.getMessage());
 		}
 		Debug.msg("Logged into Telnet connection.");
+		return LOGIN_OK;
 	}
 
 	/**

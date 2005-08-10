@@ -4,7 +4,6 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.network.Telnet;
 
-
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -43,7 +42,9 @@ public class TelnetListener extends Thread implements CallMonitor {
 		telnet = new Telnet(jfritz);
 		Debug.msg("Starting TelnetListener");
 		telnet.connect();
-		start();
+		if (telnet.isConnected()) {
+			start();
+		}
 	}
 
 	public void run() {
@@ -59,6 +60,9 @@ public class TelnetListener extends Thread implements CallMonitor {
 			restartTelefonDaemon();
 			parseOutput();
 		}
+		else {
+			jfritz.stopCallMonitor();
+		}
 	}
 
 	private void restartTelefonDaemon() {
@@ -67,15 +71,13 @@ public class TelnetListener extends Thread implements CallMonitor {
 		telnet.readUntil("# ");
 		try {
 			sleep(1000);
-		}
-		catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 			Debug.err("Fehler beim Schlafen: " + e);
 		}
 		telnet.write("telefon &>&1 &");
 		try {
 			sleep(1000);
-		}
-		catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 			Debug.err("Fehler beim Schlafen: " + e);
 		}
 		Debug.msg("Telefon Daemon restarted.");
