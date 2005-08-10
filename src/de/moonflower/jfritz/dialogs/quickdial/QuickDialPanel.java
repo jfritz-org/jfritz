@@ -38,7 +38,7 @@ import de.moonflower.jfritz.utils.Debug;
 public class QuickDialPanel extends JPanel implements ActionListener,
 		ListSelectionListener {
 	private static final long serialVersionUID = 1;
-	//private JFritz jfritz;
+	private JFritz jfritz;
 
 	private QuickDials dataModel;
 
@@ -47,7 +47,7 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 	private JButton addButton, delButton;
 
 	public QuickDialPanel(JFritz jfritz) {
-		//this.jfritz = jfritz;
+		this.jfritz = jfritz;
 		setLayout(new BorderLayout());
 		dataModel = new QuickDials(jfritz);
 		// dataModel.getQuickDialDataFromFritzBox();
@@ -205,5 +205,9 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 			}
 		}
 		addButton.setEnabled(addEnabled);
+	}
+
+	public void setStatus() {
+		jfritz.getJframe().setStatus(getDataModel().getQuickDials().size() + " Einträge");
 	}
 }

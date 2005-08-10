@@ -170,11 +170,15 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	 */
 	public void valueChanged(ListSelectionEvent e) {
 		if (!e.getValueIsAdjusting()) {
-			int row = phoneBookTable.getSelectedRow();
-			if (row > -1) {
+			int rows[] = phoneBookTable.getSelectedRows();
+			if (rows.length == 1) {
 				Person p = ((PhoneBook) phoneBookTable.getModel())
-						.getPersonAt(row);
+						.getPersonAt(rows[0]);
 				personPanel.setPerson(p);
+				setStatus();
+			}
+			else {
+				jfritz.getJframe().setStatus( rows.length + " Einträge ausgewählt");
 			}
 		}
 	}
@@ -317,6 +321,11 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		}
 	}
 
+	public void setStatus() {
+		PhoneBook pb = (PhoneBook) phoneBookTable.getModel();
+		int entries = pb.getFilteredPersons().size();
+		jfritz.getJframe().setStatus(entries + " Einträge");
+	}
 
 	class PopupListener extends MouseAdapter {
 		public void mouseClicked(MouseEvent e) {
