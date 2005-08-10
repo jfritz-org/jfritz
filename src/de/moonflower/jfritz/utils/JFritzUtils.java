@@ -280,7 +280,7 @@ public class JFritzUtils {
 				String str;
 				while (null != ((str = HTMLUtil.stripEntities(d.readLine())))) {
 					// Password seems to be wrong
-//					if (str.indexOf("FEHLER: Das angegebene Kennwort ") > 0)
+					// if (str.indexOf("FEHLER: Das angegebene Kennwort ") > 0)
 					if (str.indexOf("FRITZ!Box Anmeldung") > 0)
 						wrong_pass = true;
 					// Skip a few lines
@@ -383,6 +383,12 @@ public class JFritzUtils {
 				PhoneNumber number = new PhoneNumber(createAreaNumber(m
 						.group(3), countryPrefix, countryCode, areaPrefix,
 						areaCode));
+				if (number.getFullNumber().equals("")) {
+					// Bugfix: wenn Nummer "", wird sie vom Filter nicht richtig
+					// gefiltert
+					// um richtig gefiltert zu werden, muss die Nummer NULL sein
+					number = null;
+				}
 				Date date = new SimpleDateFormat("dd.MM.yy HH:mm").parse(m
 						.group(2));
 
