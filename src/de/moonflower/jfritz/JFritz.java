@@ -225,7 +225,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.97 2005/08/10 14:07:42 robotniko Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.98 2005/08/10 16:47:25 robotniko Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -497,17 +497,7 @@ public final class JFritz {
 				.setCaption(JFritz.PROGRAM_NAME + " v" + JFritz.PROGRAM_VERSION);
 		trayIcon.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
-				if (jframe.isVisible()) {
-					Debug.msg("Hide JFritz-Window");
-					jframe.setState(JFrame.ICONIFIED);
-					jframe.setVisible(false);
-				} else {
-					Debug.msg("Show JFritz-Window");
-					jframe.setState(JFrame.NORMAL);
-					jframe.setVisible(true);
-					jframe.toFront();
-				}
+				hideShowJFritz();
 			}
 		});
 		systray.addTrayIcon(trayIcon);
@@ -880,6 +870,19 @@ public final class JFritz {
 
 	public static String runsOn() {
 		return HostOS;
+	}
+
+	public void hideShowJFritz() {
+		if (jframe.isVisible()) {
+			Debug.msg("Hide JFritz-Window");
+			jframe.setState(JFrame.ICONIFIED);
+			jframe.setVisible(false);
+		} else {
+			Debug.msg("Show JFritz-Window");
+			jframe.setState(JFrame.NORMAL);
+			jframe.setVisible(true);
+			jframe.toFront();
+		}
 	}
 
 }
