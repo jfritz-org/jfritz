@@ -149,6 +149,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		setDefaultLookAndFeel();
 		ShutdownThread shutdownThread = new ShutdownThread(jfritz);
 		Runtime.getRuntime().addShutdownHook(shutdownThread);
+		this.setIconImage(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource(
+						"/de/moonflower/jfritz/resources/images/trayicon.png")));
 
 		// Setting size and position
 		int x = Integer.parseInt(JFritz.getProperty("position.left", "10"));
