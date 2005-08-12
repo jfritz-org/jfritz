@@ -278,7 +278,7 @@ public class Person {
 
 	/**
 	 * @param standard
-	 *            The standard to set.
+	 *            Sets standard number
 	 */
 	public final void setStandard(String standard) {
 		this.standard = standard;
