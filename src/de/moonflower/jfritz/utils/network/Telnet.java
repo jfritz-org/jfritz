@@ -100,18 +100,13 @@ public class Telnet {
 							JFritz.getMessage("box_not_found"));
 					Debug.err("Address wrong!");
 					jfritz.getJframe().setBusy(false);
-					String box_address = jfritz.getJframe()
-							.showAddressDialog(
-									JFritz.getProperty(
-											"box.address",
-											"fritz.box"));
+					String box_address = jfritz.getJframe().showAddressDialog(
+							JFritz.getProperty("box.address", "fritz.box"));
 					if (box_address == null) {
 						jfritz.stopCallMonitor();
 						isdone = true;
-					}
-					else {
-						JFritz.setProperty("box.address",
-								box_address);
+					} else {
+						JFritz.setProperty("box.address", box_address);
 					}
 				}
 			} catch (Exception e) {
@@ -165,42 +160,56 @@ public class Telnet {
 						if (sb.toString().endsWith("web password: ")) {
 							password = Encryption.decrypt(JFritz
 									.getProperty("box.password"));
-						}
-						while (true) { // test WebPassword
-							try {
-								FritzBoxFirmware.detectFirmwareVersion(JFritz
-										.getProperty("box.address"), Encryption
-										.decrypt(JFritz
-												.getProperty("box.password")));
-								password = Encryption.decrypt(JFritz
-										.getProperty("box.password"));
-								break; // go on with telnet login
-							} catch (WrongPasswordException e1) {
-								Debug.err("Password wrong!");
-								jfritz.getJframe().setStatus(
-										JFritz.getMessage("password_wrong"));
-								jfritz.getJframe().setBusy(false);
 
-								String newPassword = jfritz.getJframe()
-										.showPasswordDialog(
-												Encryption.decrypt(JFritz
-														.getProperty(
-																"box.password",
-																"")));
-								System.out.println("OLD PASS: "
-										+ Encryption
-												.decrypt(JFritz.getProperty(
-														"box.password", "")));
-								if (newPassword == null) { // Dialog aborted
-									jfritz.stopCallMonitor();
-									return LOGIN_CANCELED;
-								} else {
-									JFritz.setProperty("box.password",
-											Encryption.encrypt(newPassword));
+							while (true) { // test WebPassword
+								try {
+									FritzBoxFirmware
+											.detectFirmwareVersion(
+													JFritz
+															.getProperty("box.address"),
+													Encryption
+															.decrypt(JFritz
+																	.getProperty("box.password")));
+									password = Encryption.decrypt(JFritz
+											.getProperty("box.password"));
+									break; // go on with telnet login
+								} catch (WrongPasswordException e1) {
+									Debug.err("Password wrong!");
+									jfritz
+											.getJframe()
+											.setStatus(
+													JFritz
+															.getMessage("password_wrong"));
+									jfritz.getJframe().setBusy(false);
+
+									String newPassword = jfritz
+											.getJframe()
+											.showPasswordDialog(
+													Encryption
+															.decrypt(JFritz
+																	.getProperty(
+																			"box.password",
+																			"")));
+									System.out
+											.println("OLD PASS: "
+													+ Encryption
+															.decrypt(JFritz
+																	.getProperty(
+																			"box.password",
+																			"")));
+									if (newPassword == null) { // Dialog aborted
+										jfritz.stopCallMonitor();
+										return LOGIN_CANCELED;
+									} else {
+										JFritz
+												.setProperty(
+														"box.password",
+														Encryption
+																.encrypt(newPassword));
+									}
 								}
 							}
 						}
-
 						// wenn Fehlgeschlagen, dann
 						// mehrmaliges Login mit falschem
 						// Passwort verhindern
