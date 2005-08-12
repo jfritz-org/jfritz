@@ -170,12 +170,4 @@ public class TelnetConfigDialog extends JDialog {
 		getContentPane().add(telnetPanel, BorderLayout.CENTER);
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 	}
-
-
-	private void initGUI() {
-		try {
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 }
