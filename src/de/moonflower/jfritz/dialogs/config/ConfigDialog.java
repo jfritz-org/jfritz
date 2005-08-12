@@ -700,12 +700,12 @@ public class ConfigDialog extends JDialog {
 		configDialog = this;
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if ("openTelnetConfigDialog".equalsIgnoreCase(e
+				if ("openSyslogConfigDialog".equalsIgnoreCase(e
 						.getActionCommand())) {
-					TelnetConfigDialog telnetConfigDialog = new TelnetConfigDialog(
+					SyslogConfigDialog syslogConfigDialog = new SyslogConfigDialog(
 							configDialog, jfritz);
-					telnetConfigDialog.setModal(true);
-					telnetConfigDialog.showTelnetConfigDialog();
+					syslogConfigDialog.setModal(true);
+					syslogConfigDialog.showSyslogConfigDialog();
 				}
 			}
 		};
@@ -746,11 +746,11 @@ public class ConfigDialog extends JDialog {
 		panel.add(syslogPassthroughCheckBox, c);
 
 		c.gridy = 3;
-		JButton openTelnetConfigDialogButton = new JButton(
+		JButton openSyslogConfigDialogButton = new JButton(
 				"Weitere Einstellungen");
-		openTelnetConfigDialogButton.setActionCommand("openTelnetConfigDialog");
-		openTelnetConfigDialogButton.addActionListener(actionListener);
-		panel.add(openTelnetConfigDialogButton, c);
+		openSyslogConfigDialogButton.setActionCommand("openSyslogConfigDialog");
+		openSyslogConfigDialogButton.addActionListener(actionListener);
+		panel.add(openSyslogConfigDialogButton, c);
 
 		return panel;
 	}
