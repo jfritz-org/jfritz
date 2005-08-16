@@ -52,11 +52,13 @@ import de.moonflower.jfritz.struct.PhoneType;
 public class PersonPanel extends JPanel implements ActionListener,
 		ListSelectionListener, CaretListener {
 	private static final long serialVersionUID = 1;
+
 	PhoneTypeModel typeModel;
 
 	private final class PhoneTypeModel extends AbstractListModel implements
 			ComboBoxModel {
 		private static final long serialVersionUID = 1;
+
 		private String[] basicTypes = { "home", "mobile", "homezone",
 				"business", "other", "fax", "sip" };
 
@@ -131,7 +133,9 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 	private final class NumberTableModel extends AbstractTableModel {
 		private final String columnNames[] = { "Std", "Typ", "Nummer" };
+
 		private static final long serialVersionUID = 1;
+
 		public int getRowCount() {
 			return person.getNumbers().size();
 		}
@@ -235,6 +239,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 	private class CheckBoxRenderer extends JCheckBox implements
 			TableCellRenderer {
 		private static final long serialVersionUID = 1;
+
 		public CheckBoxRenderer() {
 			setHorizontalAlignment(JLabel.CENTER);
 		}
@@ -291,13 +296,15 @@ public class PersonPanel extends JPanel implements ActionListener,
 		JLabel label = new JLabel(JFritz.getMessage("private_entry") + ": ");
 		buttonPanel.add(label);
 		chkBoxPrivateEntry = new JCheckBox();
-	    ChangeListener changeListener = new ChangeListener() {
-	        public void stateChanged(ChangeEvent changeEvent) {
-	        	boolean oldhasChanged = hasChanged;
-	        	hasChanged = chkBoxPrivateEntry.isSelected() != person.isPrivateEntry();
-	    		firePropertyChange("hasChanged", oldhasChanged, hasChanged);
-	        }
-	      };
+		chkBoxPrivateEntry.setSelected(person.isPrivateEntry());
+		ChangeListener changeListener = new ChangeListener() {
+			public void stateChanged(ChangeEvent changeEvent) {
+				boolean oldhasChanged = hasChanged;
+				hasChanged = chkBoxPrivateEntry.isSelected() != person
+						.isPrivateEntry();
+				firePropertyChange("hasChanged", oldhasChanged, hasChanged);
+			}
+		};
 		chkBoxPrivateEntry.addChangeListener(changeListener);
 		buttonPanel.add(chkBoxPrivateEntry);
 		label = new JLabel(JFritz.getMessage("firstName") + ": ");
@@ -356,6 +363,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		typeModel = new PhoneTypeModel();
 		numberTable = new JTable(numberModel) {
 			private static final long serialVersionUID = 1;
+
 			public Component prepareRenderer(TableCellRenderer renderer,
 					int rowIndex, int vColIndex) {
 				Component c = super.prepareRenderer(renderer, rowIndex,
@@ -537,6 +545,14 @@ public class PersonPanel extends JPanel implements ActionListener,
 	 */
 	public final String getEmail() {
 		return tfEmail.getText();
+	}
+
+	/**
+	 *
+	 * @return Returns if Person is a private entry
+	 */
+	public final boolean isPrivateEntry() {
+		return chkBoxPrivateEntry.isSelected();
 	}
 
 	/**
