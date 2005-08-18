@@ -75,7 +75,7 @@ public class ConfigDialog extends JDialog {
 	private JComboBox addressCombo, callMonitorCombo, ipAddressComboBox;
 
 	private JTextField address, areaCode, countryCode, areaPrefix,
-			countryPrefix, yacPort;
+			countryPrefix, yacPort, callmessagePort;
 
 	private JPasswordField pass;
 
@@ -94,7 +94,7 @@ public class ConfigDialog extends JDialog {
 			syslogPassthroughCheckBox;
 
 	private JPanel callMonitorPane, yacMonitorPane, telnetMonitorPane,
-			syslogMonitorPane;
+			syslogMonitorPane, callmessageMonitorPane;
 
 	private JLabel boxtypeLabel, macLabel, timerLabel;
 
@@ -152,6 +152,7 @@ public class ConfigDialog extends JDialog {
 			startCallMonitorButton.setSelected(true);
 		}
 		yacPort.setText(JFritz.getProperty("option.yacport", "10629"));
+		callmessagePort.setText(JFritz.getProperty("option.callmessageport", "23232"));
 		callMonitorAfterStartButton.setSelected(JFritzUtils.parseBoolean(JFritz
 				.getProperty("option.autostartcallmonitor", "false")));
 		if (startCallMonitorButton.isSelected()) {
@@ -254,6 +255,7 @@ public class ConfigDialog extends JDialog {
 		JFritz.setProperty("option.startcallmonitor", Boolean
 				.toString(startCallMonitorButton.isSelected()));
 		JFritz.setProperty("option.yacport", yacPort.getText());
+		JFritz.setProperty("option.callmessageport", callmessagePort.getText());
 		JFritz.setProperty("option.autostartcallmonitor", Boolean
 				.toString(callMonitorAfterStartButton.isSelected()));
 		JFritz.setProperty("option.callMonitorType", String
@@ -532,6 +534,7 @@ public class ConfigDialog extends JDialog {
 						yacMonitorPane.setVisible(false);
 						telnetMonitorPane.setVisible(false);
 						syslogMonitorPane.setVisible(false);
+						callmessageMonitorPane.setVisible(false);
 						callMonitorPane.repaint();
 						Debug.msg("Kein Anrufmonitor erwünscht");
 						stopAllCallMonitors();
@@ -544,6 +547,7 @@ public class ConfigDialog extends JDialog {
 						yacMonitorPane.setVisible(false);
 						telnetMonitorPane.setVisible(true);
 						syslogMonitorPane.setVisible(false);
+						callmessageMonitorPane.setVisible(false);
 						callMonitorPane.repaint();
 						Debug.msg("Telnet Anrufmonitor gewählt");
 						stopAllCallMonitors();
@@ -557,6 +561,7 @@ public class ConfigDialog extends JDialog {
 						yacMonitorPane.setVisible(false);
 						telnetMonitorPane.setVisible(false);
 						syslogMonitorPane.setVisible(true);
+						callmessageMonitorPane.setVisible(false);
 						callMonitorPane.repaint();
 						Debug.msg("Syslog Anrufmonitor gewählt");
 						stopAllCallMonitors();
@@ -569,8 +574,22 @@ public class ConfigDialog extends JDialog {
 						yacMonitorPane.setVisible(true);
 						telnetMonitorPane.setVisible(false);
 						syslogMonitorPane.setVisible(false);
+						callmessageMonitorPane.setVisible(false);
 						callMonitorPane.repaint();
 						Debug.msg("YAC Anrufmonitor gewählt");
+						stopAllCallMonitors();
+						break;
+					}
+					case 4: {
+						startCallMonitorButton.setVisible(true);
+						callMonitorAfterStartButton.setVisible(true);
+						soundButton.setVisible(true);
+						yacMonitorPane.setVisible(false);
+						telnetMonitorPane.setVisible(false);
+						syslogMonitorPane.setVisible(false);
+						callmessageMonitorPane.setVisible(true);
+						callMonitorPane.repaint();
+						Debug.msg("Callmessage Anrufmonitor gewählt");
 						stopAllCallMonitors();
 						break;
 					}
@@ -578,6 +597,7 @@ public class ConfigDialog extends JDialog {
 				} else if ("startcallmonitor".equalsIgnoreCase(e
 						.getActionCommand())) {
 					JFritz.setProperty("option.yacport", yacPort.getText());
+					JFritz.setProperty("option.callmessageport", callmessagePort.getText());
 					// Aktion des StartCallMonitorButtons
 					JFritz.setProperty("option.callMonitorType", String
 							.valueOf(callMonitorCombo.getSelectedIndex()));
@@ -599,6 +619,7 @@ public class ConfigDialog extends JDialog {
 		callMonitorCombo.addItem("Telnet Anrufmonitor");
 		callMonitorCombo.addItem("Syslog Anrufmonitor");
 		callMonitorCombo.addItem("YAC Anrufmonitor");
+		callMonitorCombo.addItem("Callmessage Anrufmonitor");
 		callMonitorCombo.addActionListener(actionListener);
 
 		callMonitorPane.add(callMonitorCombo, BorderLayout.NORTH);
@@ -645,6 +666,8 @@ public class ConfigDialog extends JDialog {
 		syslogMonitorPane = createSyslogPane();
 		yacMonitorPane = new JPanel();
 		yacMonitorPane = createYACPane();
+		callmessageMonitorPane = new JPanel();
+		callmessageMonitorPane = createCallmessageMonitorPane();
 		pane.add(telnetMonitorPane, c);
 		pane.add(syslogMonitorPane, c);
 		pane.add(yacMonitorPane, c);
@@ -662,6 +685,20 @@ public class ConfigDialog extends JDialog {
 		panel.add(label, c);
 		yacPort = new JTextField("", 5);
 		panel.add(yacPort, c);
+
+		return panel;
+	}
+
+	protected JPanel createCallmessageMonitorPane() {
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.anchor = GridBagConstraints.WEST;
+
+		JLabel label = new JLabel("Port: ");
+		panel.add(label, c);
+		callmessagePort = new JTextField("", 5);
+		panel.add(callmessagePort, c);
 
 		return panel;
 	}

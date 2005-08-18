@@ -61,6 +61,7 @@ import de.moonflower.jfritz.utils.SwingWorker;
 import de.moonflower.jfritz.utils.network.TelnetListener;
 import de.moonflower.jfritz.utils.network.SyslogListener;
 import de.moonflower.jfritz.utils.network.YAClistener;
+import de.moonflower.jfritz.utils.network.CallmessageListener;
 
 /**
  * This is main window class of JFritz, which creates the GUI.
@@ -105,6 +106,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 */
 	public JFritzWindow(JFritz jfritz) {
 		this.jfritz = jfritz;
+		Debug.msg("Create JFritz-GUI");
 		createGUI();
 		if (!JFritz.getProperty("option.startMinimized", "false")
 				.equals("true")) {
@@ -136,6 +138,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				jfritz.setCallMonitor(new YAClistener(jfritz,
 						Integer.parseInt(JFritz.getProperty("option.yacport",
 								"10629"))));
+				monitorButton.setSelected(true);
+				break;
+			}
+			case 4: {
+				jfritz.setCallMonitor(new CallmessageListener(jfritz,
+						Integer.parseInt(JFritz.getProperty("option.callmessageport",
+								"23232"))));
 				monitorButton.setSelected(true);
 				break;
 			}
@@ -817,6 +826,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					jfritz.setCallMonitor(new YAClistener(jfritz, Integer
 							.parseInt(JFritz.getProperty("option.yacport",
 									"10629"))));
+					break;
+				}
+				case 4: {
+					jfritz.setCallMonitor(new CallmessageListener(jfritz,
+							Integer.parseInt(JFritz.getProperty("option.callmessageport",
+									"23232"))));
+					monitorButton.setSelected(true);
 					break;
 				}
 				}
