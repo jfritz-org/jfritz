@@ -93,13 +93,22 @@ public class CallerListPanel extends JPanel implements ActionListener,
 				"filter.callout", "false")));
 		toolBar.add(tb);
 
-		tb = new JToggleButton(getImage("phone_grey.png"), true);
-		tb.setSelectedIcon(getImage("phone.png"));
+		tb = new JToggleButton(getImage("phone_nonumber_grey.png"), true);
+		tb.setSelectedIcon(getImage("phone_nonumber.png"));
 		tb.setActionCommand("filter_number");
 		tb.addActionListener(this);
 		tb.setToolTipText(JFritz.getMessage("filter_number"));
 		tb.setSelected(!JFritzUtils.parseBoolean(JFritz.getProperty(
 				"filter.number", "false")));
+		toolBar.add(tb);
+
+		tb = new JToggleButton(getImage("phone_grey.png"), true);
+		tb.setSelectedIcon(getImage("phone.png"));
+		tb.setActionCommand("filter_fixed");
+		tb.addActionListener(this);
+		tb.setToolTipText("Anrufe ins Festnetz filtern");
+		tb.setSelected(!JFritzUtils.parseBoolean(JFritz.getProperty(
+				"filter.fixed", "false")));
 		toolBar.add(tb);
 
 		tb = new JToggleButton(getImage("handy_grey.png"), true);
@@ -292,6 +301,11 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			jfritz.getCallerlist().fireTableStructureChanged();
 		} else if (e.getActionCommand() == "filter_number") {
 			JFritz.setProperty("filter.number", Boolean
+					.toString(!((JToggleButton) e.getSource()).isSelected()));
+			jfritz.getCallerlist().updateFilter();
+			jfritz.getCallerlist().fireTableStructureChanged();
+		} else if (e.getActionCommand() == "filter_fixed") {
+			JFritz.setProperty("filter.fixed", Boolean
 					.toString(!((JToggleButton) e.getSource()).isSelected()));
 			jfritz.getCallerlist().updateFilter();
 			jfritz.getCallerlist().fireTableStructureChanged();

@@ -650,6 +650,8 @@ public class CallerList extends AbstractTableModel {
 				.getProperty("filter.callout"));
 		boolean filterNumber = JFritzUtils.parseBoolean(JFritz
 				.getProperty("filter.number"));
+		boolean filterFixed = JFritzUtils.parseBoolean(JFritz
+				.getProperty("filter.fixed"));
 		boolean filterHandy = JFritzUtils.parseBoolean(JFritz
 				.getProperty("filter.handy"));
 		boolean filterDate = JFritzUtils.parseBoolean(JFritz
@@ -668,7 +670,8 @@ public class CallerList extends AbstractTableModel {
 
 		if ((!filterCallIn) && (!filterCallInFailed) && (!filterCallOut)
 				&& (!filterNumber) && (!filterDate) && (!filterHandy)
-				&& (!filterSip) && (filterSearch.length() == 0)) {
+				&& (!filterFixed) && (!filterSip)
+				&& (filterSearch.length() == 0)) {
 			// Use unfiltered data
 			filteredCallerData = unfilteredCallerData;
 			sortAllFilteredRowsBy(sortColumn, sortDirection);
@@ -685,7 +688,8 @@ public class CallerList extends AbstractTableModel {
 				String[] providerEntries = providers.split(",");
 				for (int i = 0; i < providerEntries.length; i++) {
 					if (providerEntries[i].length() > 0) {
-						if (providerEntries[i].charAt(0) == 32) { // delete first SPACE
+						if (providerEntries[i].charAt(0) == 32) { // delete
+																  // first SPACE
 							providerEntries[i] = providerEntries[i]
 									.substring(1);
 						}
@@ -702,6 +706,7 @@ public class CallerList extends AbstractTableModel {
 				boolean dateFilterPassed = true;
 				boolean searchFilterPassed = true;
 				boolean handyFilterPassed = true;
+				boolean fixedFilterPassed = true;
 				boolean sipFilterPassed = true;
 
 				// SearchFilter: Number, Participant, Date
@@ -745,12 +750,15 @@ public class CallerList extends AbstractTableModel {
 				} catch (ParseException e1) {
 				}
 
+				if (filterFixed && call.getPhoneNumber() != null && !call.getPhoneNumber().isMobile())
+					fixedFilterPassed = false;
+
 				if (filterHandy && call.getPhoneNumber() != null
 						&& call.getPhoneNumber().isMobile())
 					handyFilterPassed = false;
 
 				if (searchFilterPassed && dateFilterPassed && handyFilterPassed
-						&& sipFilterPassed)
+						&& fixedFilterPassed && sipFilterPassed)
 					if (!(filterNumber && call.getPhoneNumber() == null)) {
 						if ((!filterCallIn)
 								&& (call.getCalltype().toInt() == CallType.CALLIN))
