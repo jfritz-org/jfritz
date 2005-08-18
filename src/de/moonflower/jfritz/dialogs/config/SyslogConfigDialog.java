@@ -21,7 +21,10 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
+import de.moonflower.jfritz.utils.network.SyslogListener;
+import de.moonflower.jfritz.utils.network.Telnet;
 
 /**
  * Config dialog for Syslog-Callmonitor
@@ -70,7 +73,7 @@ public class SyslogConfigDialog extends JDialog {
 
 	public void initDialog() {
 		setTitle("Syslog - Einstellungen");
-		setSize(250, 170);
+		setSize(250, 200);
 		drawDialog();
 		setProperties();
 	}
@@ -126,6 +129,36 @@ public class SyslogConfigDialog extends JDialog {
 				if (source == okButton || source == cancelButton) {
 					setVisible(false);
 				}
+				if (e.getActionCommand().equals("restartSyslog")) {
+					Telnet telnet = new Telnet(jfritz);
+					telnet.connect();
+					if (telnet.isConnected()) {
+						SyslogListener.restartSyslogOnFritzBox(telnet, JFritz
+								.getProperty("option.syslogclientip",
+										"192.168.178.21"));
+						telnet.disconnect();
+						JFritz.infoMsg("Syslogd erfolgreich gestartet");
+						Debug.msg("Syslogd restarted successfully");
+					}
+					else {
+						JFritz.infoMsg("Fehler beim Verbinden mit Telnet");
+						Debug.msg("Fehler beim Verbinden mit Telnet");
+					}
+				}
+				if (e.getActionCommand().equals("restartTelefon")) {
+					Telnet telnet = new Telnet(jfritz);
+					telnet.connect();
+					if (telnet.isConnected()) {
+						SyslogListener.restartTelefonOnFritzBox(telnet, jfritz);
+						telnet.disconnect();
+						JFritz.infoMsg("Telefond erfolgreich gestartet");
+						Debug.msg("Telefond restarted successfully");
+					}
+					else {
+						JFritz.infoMsg("Fehler beim Verbinden mit Telnet");
+						Debug.msg("Fehler beim Verbinden mit Telnet");
+					}
+				}
 			}
 		};
 
@@ -138,7 +171,7 @@ public class SyslogConfigDialog extends JDialog {
 
 		c.gridwidth = 1;
 		c.gridy = 0;
-		checkSyslog = new JCheckBox("Überprüfe syslogd *");
+		checkSyslog = new JCheckBox("Überprüfe syslogd");
 		checkSyslog
 				.setToolTipText("Überprüft mittels Telnet, ob der Syslog-Daemon"
 						+ " auf der FritzBox richtig läuft"
@@ -146,17 +179,28 @@ public class SyslogConfigDialog extends JDialog {
 		panel.add(checkSyslog, c);
 
 		c.gridy = 1;
-		checkTelefon = new JCheckBox("Überprüfe telefond *");
+		checkTelefon = new JCheckBox("Überprüfe telefond");
 		checkTelefon
 		.setToolTipText("Überprüft mittels Telnet, ob der Telefon-Daemon"
 				+ " auf der FritzBox richtig läuft"
 				+ " und startet ihn gegebenenfalls neu.");
 		panel.add(checkTelefon, c);
 
-
 		c.gridy = 2;
-		JLabel infoLabel = new JLabel("*: Benötigt Telnet auf der FritzBox");
-		panel.add(infoLabel, c);
+		JButton restartSyslog = new JButton("Restart Syslogd on FritzBox");
+		restartSyslog.setActionCommand("restartSyslog");
+		restartSyslog.addActionListener(actionListener);
+		restartSyslog
+		.setToolTipText("Startet den sylsog-Dienst auf der FritzBox neu.");
+		panel.add(restartSyslog, c);
+
+		c.gridy = 3;
+		JButton restartTelefon = new JButton("Restart Telefond on FritzBox");
+		restartTelefon.setActionCommand("restartTelefon");
+		restartTelefon.addActionListener(actionListener);
+		restartTelefon
+		.setToolTipText("Startet den telefon-Dienst auf der FritzBox neu.");
+		panel.add(restartTelefon, c);
 
 		JPanel buttonPanel = new JPanel();
 		okButton = new JButton(JFritz.getMessage("okay"));
