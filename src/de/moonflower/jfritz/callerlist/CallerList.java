@@ -654,6 +654,8 @@ public class CallerList extends AbstractTableModel {
 				.getProperty("filter.handy"));
 		boolean filterDate = JFritzUtils.parseBoolean(JFritz
 				.getProperty("filter.date"));
+		boolean filterSip = JFritzUtils.parseBoolean(JFritz
+				.getProperty("filter.sip"));
 		String filterSearch = JFritz.getProperty("filter.search", "");
 		String filterDateFrom = JFritz.getProperty("filter.date_from", "");
 		String filterDateTo = JFritz.getProperty("filter.date_to", "");
@@ -666,19 +668,41 @@ public class CallerList extends AbstractTableModel {
 
 		if ((!filterCallIn) && (!filterCallInFailed) && (!filterCallOut)
 				&& (!filterNumber) && (!filterDate) && (!filterHandy)
-				&& (filterSearch.length() == 0)) {
+				&& (!filterSip) && (filterSearch.length() == 0)) {
 			// Use unfiltered data
 			filteredCallerData = unfilteredCallerData;
 			sortAllFilteredRowsBy(sortColumn, sortDirection);
 		} else { // Data got to be filtered
-			Enumeration en = unfilteredCallerData.elements();
+			Vector filteredSipProviders = new Vector();
+			if (filterSip) {
+				String providers = JFritz.getProperty("filter.sipProvider",
+						"[]");
+				if (providers.equals("[]")) { // No entries selected
+					filterSip = false;
+				}
+				providers = providers.replaceAll("\\[", "");
+				providers = providers.replaceAll("\\]", "");
+				String[] providerEntries = providers.split(",");
+				for (int i = 0; i < providerEntries.length; i++) {
+					if (providerEntries[i].length() > 0) {
+						if (providerEntries[i].charAt(0) == 32) { // delete first SPACE
+							providerEntries[i] = providerEntries[i]
+									.substring(1);
+						}
+					}
+					filteredSipProviders.add(providerEntries[i]);
+				}
+			}
+
 			Vector filteredcallerdata;
 			filteredcallerdata = new Vector();
+			Enumeration en = unfilteredCallerData.elements();
 			while (en.hasMoreElements()) {
 				Call call = (Call) en.nextElement();
 				boolean dateFilterPassed = true;
 				boolean searchFilterPassed = true;
 				boolean handyFilterPassed = true;
+				boolean sipFilterPassed = true;
 
 				// SearchFilter: Number, Participant, Date
 				String parts[] = filterSearch.split(" ");
@@ -693,6 +717,16 @@ public class CallerList extends AbstractTableModel {
 											part.toLowerCase()) == -1)) {
 						searchFilterPassed = false;
 						break;
+					}
+				}
+
+				if (filterSip) {
+					String route = call.getRoute();
+					if (route.equals("")) {
+						route = "FIXEDLINE";
+					}
+					if (!filteredSipProviders.contains(route)) {
+						searchFilterPassed = false;
 					}
 				}
 
@@ -715,7 +749,8 @@ public class CallerList extends AbstractTableModel {
 						&& call.getPhoneNumber().isMobile())
 					handyFilterPassed = false;
 
-				if (searchFilterPassed && dateFilterPassed && handyFilterPassed)
+				if (searchFilterPassed && dateFilterPassed && handyFilterPassed
+						&& sipFilterPassed)
 					if (!(filterNumber && call.getPhoneNumber() == null)) {
 						if ((!filterCallIn)
 								&& (call.getCalltype().toInt() == CallType.CALLIN))
@@ -784,7 +819,8 @@ public class CallerList extends AbstractTableModel {
 	}
 
 	public void removeEntries() {
-		if (JOptionPane.showConfirmDialog(jfritz.getJframe(), "Wirklich " // TODO I18N
+		if (JOptionPane.showConfirmDialog(jfritz.getJframe(), "Wirklich " // TODO
+				// I18N
 				+ JFritz.getMessage("delete_entries") + "?",
 				JFritz.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 			Debug.msg("Removing entries");

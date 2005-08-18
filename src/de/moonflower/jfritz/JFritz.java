@@ -46,6 +46,7 @@
  * - Added Callmessage-Callmonitor. See Thread Nr. 178199 in IPPF
  * - Wait, when no network reachable (On startup, return of standby, ...)
  * - Added context menu to phonebook
+ * - New Callfilter: Route
  * - Display more information in status bar
  * - Bugfix: Syslog-Monitor get Callerlist on Restart
  * - Bugfix: Check for double entries in Callerlist
@@ -227,7 +228,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.99 2005/08/18 10:03:39 robotniko Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.100 2005/08/18 12:10:30 robotniko Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 

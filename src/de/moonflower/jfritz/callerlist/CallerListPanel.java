@@ -12,6 +12,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -114,6 +115,17 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		setDateFilterText();
 		toolBar.add(dateButton);
 
+		JToggleButton sipButton = new JToggleButton(
+				getImage("world_grey.png"), true);
+		sipButton.setSelectedIcon(getImage("world.png"));
+		sipButton.setActionCommand("filter_sip");
+		sipButton.addActionListener(this);
+		sipButton.setToolTipText("Anrufe nach SIP-Providern filtern");
+		sipButton.setSelected(!JFritzUtils.parseBoolean(JFritz.getProperty(
+				"filter.sip", "false")));
+		setDateFilterText();
+		toolBar.add(sipButton);
+
 		toolBar.addSeparator();
 
 		deleteEntriesButton = new JButton();
@@ -193,7 +205,29 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		}
 	}
 
-	public void setDataFilterFromSelection() {
+	public void setSipProviderFilterFromSelection() {
+		Vector filteredProviders = new Vector();
+		try {
+			int rows[] = callerTable.getSelectedRows();
+			for (int i = 0; i < rows.length; i++) {
+				Call call = (Call) jfritz.getCallerlist()
+						.getFilteredCallVector().get(rows[i]);
+				String route = call.getRoute();
+				if (route.equals("")) {
+					route = "FIXEDLINE";
+				}
+				if (!filteredProviders.contains(route)) {
+						filteredProviders.add(route);
+				}
+			}
+		} catch (Exception e) {
+			System.err.println(e.toString());
+		}
+		JFritz.setProperty("filter.sipProvider", filteredProviders.toString());
+		jfritz.getCallerlist().updateFilter();
+	}
+
+	public void setDateFilterFromSelection() {
 		Date from = null;
 		Date to = null;
 		try {
@@ -261,7 +295,12 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		} else if (e.getActionCommand() == "filter_date") {
 			JFritz.setProperty("filter.date", Boolean
 					.toString(!((JToggleButton) e.getSource()).isSelected()));
-			setDataFilterFromSelection();
+			setDateFilterFromSelection();
+			jfritz.getCallerlist().fireTableStructureChanged();
+		} else if (e.getActionCommand() == "filter_sip") {
+			JFritz.setProperty("filter.sip", Boolean
+					.toString(!((JToggleButton) e.getSource()).isSelected()));
+			setSipProviderFilterFromSelection();
 			jfritz.getCallerlist().fireTableStructureChanged();
 		} else if (e.getActionCommand() == "clearSearchFilter") {
 			setSearchFilter("");
