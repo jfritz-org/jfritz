@@ -117,14 +117,14 @@ public class SyslogListener extends Thread implements CallMonitor {
 						if (m.find()) {
 							Debug
 									.msg("Telefon ISN'T RUNNING PROPERLY on FritzBox, RESTARTING TELEFON");
-							restartTelefonOnFritzBox(telnet);
+							restartTelefonOnFritzBox(telnet, jfritz);
 						} else {
 
 							if (!JFritz.getProperty("telefond.laststarted", "")
 									.equals("syslogMonitor")) {
 								Debug
 										.msg("Telefon ISN'T RUNNING PROPERLY on FritzBox, RESTARTING TELEFON");
-								restartTelefonOnFritzBox(telnet);
+								restartTelefonOnFritzBox(telnet, jfritz);
 							} else {
 								Debug
 										.msg("Telefon IS RUNNING PROPERLY on FritzBox");
@@ -233,7 +233,7 @@ public class SyslogListener extends Thread implements CallMonitor {
 	 * @param telnet
 	 *            Telnet connection
 	 */
-	private void restartTelefonOnFritzBox(Telnet telnet) {
+	public static void restartTelefonOnFritzBox(Telnet telnet, JFritz jfritz) {
 		if (JOptionPane.showConfirmDialog(null,
 				"Der telefond muss neu gestartet werden.\n"
 						+ "Dabei wird ein laufendes Gespräch unterbrochen. "
