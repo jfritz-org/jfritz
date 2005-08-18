@@ -110,7 +110,9 @@ public class Telnet {
 					}
 				}
 			} catch (Exception e) {
+				System.err.println("Error in Class Telnet");
 				e.printStackTrace();
+				return;
 			}
 		}
 	}
