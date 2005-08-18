@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.URLDecoder;
 import java.io.DataOutputStream;
 
@@ -118,8 +119,14 @@ public class CallmessageListener extends Thread implements CallMonitor {
 						.getOutputStream());
 				output.writeBytes("HTTP/1.1 204 No Content");
 				connection.close();
+			} catch (SocketException e) {
+				Debug.err("SocketException: " + e);
+				if (!e.toString().equals("java.net.SocketException: socket closed")) {
+					jfritz.stopCallMonitor();
+				}
 			} catch (Exception e) {
 				JFritz.infoMsg("Exception " + e);
+				Debug.msg("CallmessageListener: Exception " + e);
 				jfritz.stopCallMonitor();
 				isRunning = false;
 				//				break;
@@ -132,7 +139,7 @@ public class CallmessageListener extends Thread implements CallMonitor {
 		try {
 			if (serverSocket != null)
 				serverSocket.close();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			Debug.msg("Fehler beim Schliessen des Sockets");
 		}
 		isRunning = false;
