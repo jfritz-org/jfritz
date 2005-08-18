@@ -17,7 +17,9 @@ import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
@@ -27,7 +29,9 @@ import javax.swing.event.CaretListener;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.struct.Call;
+import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.utils.JFritzUtils;
+import de.moonflower.jfritz.utils.ReverseLookup;
 
 /**
  * @author Arno Willig
@@ -46,6 +50,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	private JButton deleteEntriesButton;
 
 	private JTextField searchFilter;
+
+	private JPopupMenu popupMenu;
 
 	public CallerListPanel(JFritz jfritz) {
 		super();
@@ -169,15 +175,17 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	public JScrollPane createCallerListTable() {
 		callerTable = new CallerTable(jfritz);
+		popupMenu = new JPopupMenu();
+		JMenuItem menuItem;
+		menuItem = new JMenuItem("Reverselookup ...");
+		menuItem.setActionCommand("reverselookup");
+		menuItem.addActionListener(this);
+		popupMenu.add(menuItem);
 
-		callerTable.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() > 1) {
-					jfritz.getJframe().activatePhoneBook();
-				}
-			}
+		MouseAdapter popupListener = new PopupListener();
 
-		});
+
+		callerTable.addMouseListener(popupListener);
 		return new JScrollPane(callerTable);
 	}
 
@@ -309,8 +317,9 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			jfritz.getCallerlist().fireTableStructureChanged();
 		} else if (e.getActionCommand() == "delete_entry") {
 			jfritz.getCallerlist().removeEntries();
+		} else if (e.getActionCommand().equals("reverselookup")) {
+			doReverseLookup();
 		}
-
 	}
 
 	/**
@@ -350,5 +359,44 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		deleteEntriesButton.setToolTipText(JFritz.getMessage("delete_entries"));
 		deleteEntriesButton.setEnabled(false);
 	}
+
+	private void doReverseLookup() {
+		int rows[] = callerTable.getSelectedRows();
+		for (int i = 0; i < rows.length; i++) {
+			Call call = (Call) jfritz.getCallerlist()
+			.getFilteredCallVector().get(rows[i]);
+			Person newPerson = ReverseLookup.lookup(call.getPhoneNumber());
+			if (newPerson != null) {
+				jfritz.getPhonebook().addEntry(newPerson);
+				jfritz.getPhonebook().fireTableDataChanged();
+				jfritz.getCallerlist()
+						.fireTableDataChanged();
+			}
+		}
+	}
+
+	class PopupListener extends MouseAdapter {
+		public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() > 1) {
+					jfritz.getJframe().activatePhoneBook();
+				}
+			}
+
+		public void mousePressed(MouseEvent e) {
+			maybeShowPopup(e);
+		}
+
+		public void mouseReleased(MouseEvent e) {
+			maybeShowPopup(e);
+		}
+
+		private void maybeShowPopup(MouseEvent e) {
+			if (e.isPopupTrigger()) {
+				popupMenu.show(e
+						.getComponent(), e.getX(), e.getY());
+			}
+		}
+	}
+
 
 }
