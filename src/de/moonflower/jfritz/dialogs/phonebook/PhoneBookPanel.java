@@ -348,7 +348,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 
 		private void maybeShowPopup(MouseEvent e) {
 			if (e.isPopupTrigger()) {
-				jfritz.getJframe().getPhoneBookPanel().popupMenu.show(e
+				popupMenu.show(e
 						.getComponent(), e.getX(), e.getY());
 			}
 		}
