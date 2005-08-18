@@ -45,7 +45,7 @@
  * - Syslog-Callmonitor: syslogd and telefond check configurable
  * - Added Callmessage-Callmonitor. See Thread Nr. 178199 in IPPF
  * - Wait, when no network reachable (On startup, return of standby, ...)
- * - Added context menu to phonebook
+ * - Added context menu to phonebook and callerlist
  * - New Callfilter: Route
  * - Display more information in status bar
  * - Bugfix: Syslog-Monitor get Callerlist on Restart
@@ -228,7 +228,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.100 2005/08/18 12:10:30 robotniko Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.101 2005/08/18 12:45:42 robotniko Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -674,6 +674,8 @@ public final class JFritz {
 					Debug.msg("Found on dasoertliche.de: " + name);
 					Debug.msg("Add person to database");
 					phonebook.addEntry(person);
+					phonebook.fireTableDataChanged();
+
 				}
 			}
 		}

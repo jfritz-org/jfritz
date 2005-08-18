@@ -571,7 +571,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 								Person newPerson = ReverseLookup.lookup(number);
 								if (newPerson != null) {
 									jfritz.getPhonebook().addEntry(newPerson);
-									// jfritz.getCallerlist().setPerson(newPerson,i);
+									jfritz.getPhonebook().fireTableDataChanged();
 									jfritz.getCallerlist()
 											.fireTableDataChanged();
 								}
