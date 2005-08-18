@@ -739,6 +739,8 @@ public class ConfigDialog extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				if ("openSyslogConfigDialog".equalsIgnoreCase(e
 						.getActionCommand())) {
+					JFritz.setProperty("option.syslogclientip", ipAddressComboBox
+							.getSelectedItem().toString());
 					SyslogConfigDialog syslogConfigDialog = new SyslogConfigDialog(
 							configDialog, jfritz);
 					syslogConfigDialog.setModal(true);
