@@ -12,9 +12,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JTextField;
+import javax.swing.JLabel;
 
 import de.moonflower.jfritz.callerlist.PersonCellEditor;
 import de.moonflower.jfritz.struct.Person;
@@ -26,13 +25,12 @@ import de.moonflower.jfritz.JFritz;
  */
 public class PersonEditorPanel extends JComponent {
 	private static final long serialVersionUID = 1;
+
 	private PersonCellEditor editor;
 
 	private Person person;
 
-	private JTextField input;
-
-	private JButton button;
+	private JLabel input;
 
 	/**
 	 *
@@ -44,18 +42,9 @@ public class PersonEditorPanel extends JComponent {
 	}
 
 	private void drawPanel() {
-		ImageIcon icon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/modify.png")));
-
 		setLayout(new BorderLayout());
-		input = new JTextField("  ");
-		input.setEditable(false);
-		button = new JButton();
-		button.setIcon(icon);
-		button.setFocusable(false);
-		button.setBorderPainted(false);
-		button.addMouseListener(new MouseAdapter() {
+		input = new JLabel("  ");
+		input.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() > 1) {
 					PersonDialog p = new PersonDialog(editor.getJfritz(),
@@ -65,7 +54,8 @@ public class PersonEditorPanel extends JComponent {
 						input.setText(person.getFullname());
 						editor.stopCellEditing();
 						if (p.okPressed()) {
-							editor.getJfritz().getPhonebook().saveToXMLFile(JFritz.PHONEBOOK_FILE);
+							editor.getJfritz().getPhonebook().saveToXMLFile(
+									JFritz.PHONEBOOK_FILE);
 							editor.getJfritz().getPhonebook().sort();
 						}
 					}
@@ -73,10 +63,13 @@ public class PersonEditorPanel extends JComponent {
 				}
 			}
 		});
+		ImageIcon icon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource(
+						"/de/moonflower/jfritz/resources/images/person.png")));
 
-		input.setBackground(new Color(127, 255, 255));
-		input.setFocusable(true);
-		add(button, BorderLayout.WEST);
+		input.setFocusable(false);
+		input.setForeground(new Color(127,127,255));
+		input.setIcon(icon);
 		add(input, BorderLayout.CENTER);
 	}
 
