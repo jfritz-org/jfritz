@@ -301,13 +301,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		mBar.addSeparator();
 
 		button = new JButton();
-		button.setActionCommand("export_csv");
-		button.addActionListener(this);
-		button.setIcon(getImage("csv.png"));
-		button.setToolTipText(JFritz.getMessage("export_csv"));
-		mBar.add(button);
-
-		button = new JButton();
 		button.setActionCommand("stats");
 		button.addActionListener(this);
 		button.setIcon(getImage("stats.png"));
@@ -792,7 +785,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		} else if (e.getActionCommand() == "website") {
 			BrowserLaunch.openURL(JFritz.PROGRAM_URL);
 		} else if (e.getActionCommand() == "export_csv")
-			expportCSV();
+			exportCSV();
 		else if (e.getActionCommand() == "config")
 			showConfigDialog();
 		else if (e.getActionCommand() == "callerlist")
@@ -854,7 +847,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	/**
 	 * Exports caller list as CSV
 	 */
-	private void expportCSV() {
+	public void exportCSV() {
 		JFileChooser fc = new JFileChooser();
 		fc.setDialogTitle(JFritz.getMessage("export_csv"));
 		fc.setDialogType(JFileChooser.SAVE_DIALOG);
@@ -871,7 +864,31 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		});
 		if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			jfritz.getCallerlist().saveToCSVFile(file.getAbsolutePath());
+			jfritz.getCallerlist().saveToCSVFile(file.getAbsolutePath(), false);
+		}
+	}
+
+	/**
+	 * Exports caller list as XML
+	 */
+	public void exportXML() {
+		JFileChooser fc = new JFileChooser();
+		fc.setDialogTitle("Exportiere Anrufliste als XML-Datei");
+		fc.setDialogType(JFileChooser.SAVE_DIALOG);
+		fc.setSelectedFile(new File(JFritz.CALLS_FILE));
+		fc.setFileFilter(new FileFilter() {
+			public boolean accept(File f) {
+				return f.isDirectory()
+						|| f.getName().toLowerCase().endsWith(".xml");
+			}
+
+			public String getDescription() {
+				return "XML-Dateien";
+			}
+		});
+		if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+			File file = fc.getSelectedFile();
+			jfritz.getCallerlist().saveToXMLFile(file.getAbsolutePath(), false);
 		}
 	}
 
