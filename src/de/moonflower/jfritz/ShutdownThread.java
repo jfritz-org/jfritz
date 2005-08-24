@@ -23,7 +23,7 @@ public class ShutdownThread extends Thread {
 		if (jfritz.getJframe() != null) {
 			jfritz.getJframe().saveQuickDials();
 			jfritz.getPhonebook().saveToXMLFile(JFritz.PHONEBOOK_FILE);
-			jfritz.getCallerlist().saveToXMLFile(JFritz.CALLS_FILE);
+			jfritz.getCallerlist().saveToXMLFile(JFritz.CALLS_FILE, true);
 
 			jfritz.saveProperties();
 			if (jfritz.getCallMonitor() != null) {
