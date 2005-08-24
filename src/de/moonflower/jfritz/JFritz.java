@@ -48,6 +48,7 @@
  * - Added context menu to phonebook and callerlist
  * - New Callfilter: Route, Fixed call
  * - Display more information in status bar
+ * - Export to XML
  * - Bugfix: Syslog-Monitor get Callerlist on Restart
  * - Bugfix: Check for double entries in Callerlist
  * - Bugfix: Reverselookup on call
@@ -228,7 +229,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.103 2005/08/18 21:19:37 robotniko Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.104 2005/08/24 15:37:59 robotniko Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -322,7 +323,7 @@ public final class JFritz {
 			} finally {
 				if (csvExport) {
 					Debug.msg("CSV-Export to " + csvFileName);
-					callerlist.saveToCSVFile(csvFileName);
+					callerlist.saveToCSVFile(csvFileName, true);
 				}
 				if (clearList) {
 					Debug.msg("Clearing Caller List");
@@ -334,7 +335,7 @@ public final class JFritz {
 		}
 		if (csvExport) {
 			Debug.msg("CSV-Export to " + csvFileName);
-			callerlist.saveToCSVFile(csvFileName);
+			callerlist.saveToCSVFile(csvFileName, true);
 			if (clearList) {
 				Debug.msg("Clearing Caller List");
 				callerlist.clearList();
