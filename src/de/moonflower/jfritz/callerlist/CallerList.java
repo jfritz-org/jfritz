@@ -129,8 +129,11 @@ public class CallerList extends AbstractTableModel {
 	 * Saves caller list to xml file.
 	 *
 	 * @param filename
+	 *            Filename to save to
+	 * @param wholeCallerList
+	 *            Save whole caller list or only selected entries
 	 */
-	public void saveToXMLFile(String filename) {
+	public void saveToXMLFile(String filename, boolean wholeCallerList) {
 		Debug.msg("Saving to file " + filename);
 		FileOutputStream fos;
 		try {
@@ -141,38 +144,32 @@ public class CallerList extends AbstractTableModel {
 			pw.println("<calls>");
 			pw.println("<comment>Calls for " + JFritz.PROGRAM_NAME + " v"
 					+ JFritz.PROGRAM_VERSION + "</comment>");
-			Enumeration en = unfilteredCallerData.elements();
-			while (en.hasMoreElements()) {
-				Call call = (Call) en.nextElement();
-				CallType type = call.getCalltype();
-				Date datum = call.getCalldate();
-				PhoneNumber caller = call.getPhoneNumber();
-				String port = call.getPort();
-				String route = call.getRoute();
-				int duration = call.getDuration();
-				SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-				pw.println("<entry calltype=\"" + type.toString() + "\">");
-				pw.println("\t<date>" + df.format(datum) + "</date>");
-				if (caller != null) {
-					if (caller.getCallByCall().length() > 0) {
-						pw.println("\t<caller callbycall=\""
-								+ caller.getCallByCall() + "\">"
-								+ caller.getFullNumber() + "</caller>");
-					} else {
-						pw.println("\t<caller>" + caller.getFullNumber()
-								+ "</caller>");
-					}
+			int rows[] = null;
+			if (jfritz != null && jfritz.getJframe() != null) {
+				rows = jfritz.getJframe().getCallerTable().getSelectedRows();
+			}
+			if (!wholeCallerList && rows != null && rows.length > 0) {
+				for (int i = 0; i < rows.length; i++) {
+					Call currentCall = (Call) filteredCallerData
+							.elementAt(rows[i]);
+					pw.println(currentCall.toXML());
+				}
+			} else if (wholeCallerList) { // Export ALL UNFILTERED Calls
+				Enumeration en = unfilteredCallerData.elements();
+				while (en.hasMoreElements()) {
+					Call call = (Call) en.nextElement();
+					pw.println(call.toXML());
+				}
+			} else {// Export ALL FILTERED Calls
+				Enumeration en = filteredCallerData.elements();
+				while (en.hasMoreElements()) {
+					Call call = (Call) en.nextElement();
+					pw.println(call.toXML());
 
 				}
-				if (!port.equals(""))
-					pw.println("\t<port>" + port + "</port>");
-				if (!route.equals(""))
-					pw.println("\t<route>" + route + "</route>");
-				if (duration > 0)
-					pw.println("\t<duration>" + duration + "</duration>");
-				pw.println("</entry>");
 			}
 			pw.println("</calls>");
+
 			pw.close();
 		} catch (FileNotFoundException e) {
 			Debug.err("Could not write " + filename + "!");
@@ -183,8 +180,11 @@ public class CallerList extends AbstractTableModel {
 	 * Saves callerlist to csv file
 	 *
 	 * @param filename
+	 *            Filename to save to
+	 * @param wholeCallerList
+	 *            Save whole caller list or only selected entries
 	 */
-	public void saveToCSVFile(String filename) {
+	public void saveToCSVFile(String filename, boolean wholeCallerList) {
 		Debug.msg("Saving to csv file " + filename);
 		FileOutputStream fos;
 		try {
@@ -192,11 +192,28 @@ public class CallerList extends AbstractTableModel {
 			PrintWriter pw = new PrintWriter(fos);
 			pw
 					.println("\"CallType\";\"Date\";\"Time\";\"Number\";\"Route\";\"Port\";\"Duration\";\"Name\";\"Address\";\"City\"");
-
-			Enumeration en = getUnfilteredCallVector().elements();
-			while (en.hasMoreElements()) {
-				Call call = (Call) en.nextElement();
-				pw.println(call.toCSV());
+			int rows[] = null;
+			if (jfritz != null && jfritz.getJframe() != null) {
+				rows = jfritz.getJframe().getCallerTable().getSelectedRows();
+			}
+			if (!wholeCallerList && rows != null && rows.length > 0) {
+				for (int i = 0; i < rows.length; i++) {
+					Call currentCall = (Call) filteredCallerData
+							.elementAt(rows[i]);
+					pw.println(currentCall.toCSV());
+				}
+			} else if (wholeCallerList) { // Export ALL UNFILTERED Calls
+				Enumeration en = getUnfilteredCallVector().elements();
+				while (en.hasMoreElements()) {
+					Call call = (Call) en.nextElement();
+					pw.println(call.toCSV());
+				}
+			} else { // Export ALL FILTERED Calls
+				Enumeration en = getFilteredCallVector().elements();
+				while (en.hasMoreElements()) {
+					Call call = (Call) en.nextElement();
+					pw.println(call.toCSV());
+				}
 			}
 			pw.close();
 		} catch (FileNotFoundException e) {
@@ -371,7 +388,7 @@ public class CallerList extends AbstractTableModel {
 		}
 
 		sortAllUnfilteredRows();
-		saveToXMLFile(JFritz.CALLS_FILE);
+		saveToXMLFile(JFritz.CALLS_FILE, true);
 
 		// Notify user?
 		if ((JFritz.getProperty("option.notifyOnCalls", "true").equals("true"))
@@ -688,8 +705,8 @@ public class CallerList extends AbstractTableModel {
 				String[] providerEntries = providers.split(",");
 				for (int i = 0; i < providerEntries.length; i++) {
 					if (providerEntries[i].length() > 0) {
-						if (providerEntries[i].charAt(0) == 32) { // delete
-																  // first SPACE
+						if (providerEntries[i].charAt(0) == 32) { 	// delete
+																	// first SPACE
 							providerEntries[i] = providerEntries[i]
 									.substring(1);
 						}
@@ -750,7 +767,8 @@ public class CallerList extends AbstractTableModel {
 				} catch (ParseException e1) {
 				}
 
-				if (filterFixed && call.getPhoneNumber() != null && !call.getPhoneNumber().isMobile())
+				if (filterFixed && call.getPhoneNumber() != null
+						&& !call.getPhoneNumber().isMobile())
 					fixedFilterPassed = false;
 
 				if (filterHandy && call.getPhoneNumber() != null
@@ -822,7 +840,8 @@ public class CallerList extends AbstractTableModel {
 	public void clearList() {
 		Debug.msg("Clearing caller Table");
 		unfilteredCallerData.clear();
-		saveToXMLFile(JFritz.CALLS_FILE);
+		jfritz.getJframe().getCallerTable().clearSelection();
+		saveToXMLFile(JFritz.CALLS_FILE, true);
 		fireTableDataChanged();
 	}
 
@@ -842,7 +861,7 @@ public class CallerList extends AbstractTableModel {
 				while (en.hasMoreElements()) {
 					unfilteredCallerData.remove(en.nextElement());
 				}
-				saveToXMLFile(JFritz.CALLS_FILE);
+				saveToXMLFile(JFritz.CALLS_FILE, true);
 				updateFilter();
 				fireTableDataChanged();
 			}
