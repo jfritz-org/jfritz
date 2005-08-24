@@ -6,6 +6,9 @@ package de.moonflower.jfritz.dialogs.phonebook;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -20,13 +23,13 @@ import de.moonflower.jfritz.cellrenderer.CallTypeDateCellRenderer;
  */
 public class PhoneBookTable extends JTable {
 	private static final long serialVersionUID = 1;
-	//private JFritz jfritz;
+	private final JFritz jfritz;
 
 	/**
 	 *
 	 */
 	public PhoneBookTable(JFritz jfritz) {
-		//this.jfritz = jfritz;
+		this.jfritz = jfritz;
 		setModel(jfritz.getPhonebook());
 		setRowHeight(24);
 		setFocusable(false);
@@ -36,7 +39,22 @@ public class PhoneBookTable extends JTable {
 		setRowSelectionAllowed(true);
 		setFocusable(true);
 		setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		final PhoneBookTable table = this;
+		KeyListener keyListener = (new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+					// remove selection
+					table.clearSelection();
+					table.jfritz.getJframe().getPhoneBookPanel().setStatus();
+				}
+				else if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+					// Delete selected entries
+					((PhoneBook)getModel()).removeEntries();
+				}
+			}
+		});
 
+		addKeyListener(keyListener);
 
 		// setDefaultRenderer(Call.class, new CallTypeDateCellRenderer());
 
