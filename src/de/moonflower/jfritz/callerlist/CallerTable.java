@@ -74,11 +74,13 @@ public class CallerTable extends JTable {
 		getTableHeader().setResizingAllowed(true);
 		getTableHeader().addMouseListener(new ColumnHeaderListener(getModel()));
 
+		final CallerTable table = this;
 		KeyListener keyListener = (new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-					// Minimize JFritz-Window
-					jfritz.hideShowJFritz();
+					// clear selection
+					table.clearSelection();
+					jfritz.getJframe().setStatus();
 				}
 				else if (e.getKeyCode() == KeyEvent.VK_DELETE) {
 					// Delete selected entries
