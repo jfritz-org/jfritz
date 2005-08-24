@@ -58,13 +58,47 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		this.jfritz = jfritz;
 
 		setLayout(new BorderLayout());
-		add(createCallerListToolBar(), BorderLayout.NORTH);
+		add(createToolBar(), BorderLayout.NORTH);
 		add(createCallerListTable(), BorderLayout.CENTER);
 	}
 
-	public JToolBar createCallerListToolBar() {
-		JToolBar toolBar = new JToolBar();
-		toolBar.setFloatable(true);
+	public JPanel createToolBar() {
+		JToolBar upperToolBar = new JToolBar();
+		upperToolBar.setFloatable(true);
+		JToolBar lowerToolBar = new JToolBar();
+		lowerToolBar.setFloatable(true);
+
+		JButton button = new JButton();
+		button.setActionCommand("export_csv");
+		button.addActionListener(this);
+		button.setIcon(getImage("csv_export.png"));
+		button.setToolTipText(JFritz.getMessage("export_csv"));
+		upperToolBar.add(button);
+
+		button = new JButton();
+		button.setActionCommand("import_csv");
+		button.addActionListener(this);
+		button.setIcon(getImage("csv_import.png"));
+		button.setToolTipText("CSV-Datei importieren");
+		button.setEnabled(false);
+		upperToolBar.add(button);
+
+		button = new JButton();
+		button.setActionCommand("export_xml");
+		button.addActionListener(this);
+		button.setIcon(getImage("xml_export.png"));
+		button.setToolTipText("XML-Datei exportieren");
+		upperToolBar.add(button);
+
+		button = new JButton();
+		button.setActionCommand("import_xml");
+		button.addActionListener(this);
+		button.setIcon(getImage("xml_import.png"));
+		button.setToolTipText("XML-Datei importieren");
+		button.setEnabled(false);
+		upperToolBar.add(button);
+
+		upperToolBar.addSeparator();
 
 		JToggleButton tb = new JToggleButton(getImage("callin_grey.png"), true);
 		tb.setSelectedIcon(getImage("callin.png"));
@@ -73,7 +107,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		tb.setToolTipText(JFritz.getMessage("filter_callin"));
 		tb.setSelected(!JFritzUtils.parseBoolean(JFritz.getProperty(
 				"filter.callin", "false")));
-		toolBar.add(tb);
+		lowerToolBar.add(tb);
 
 		tb = new JToggleButton(getImage("callinfailed_grey.png"), true);
 		tb.setSelectedIcon(getImage("callinfailed.png"));
@@ -82,7 +116,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		tb.setToolTipText(JFritz.getMessage("filter_callinfailed"));
 		tb.setSelected(!JFritzUtils.parseBoolean(JFritz.getProperty(
 				"filter.callinfailed", "false")));
-		toolBar.add(tb);
+		lowerToolBar.add(tb);
 
 		tb = new JToggleButton(getImage("callout_grey.png"), true);
 		tb.setSelectedIcon(getImage("callout.png"));
@@ -91,7 +125,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		tb.setToolTipText(JFritz.getMessage("filter_callout"));
 		tb.setSelected(!JFritzUtils.parseBoolean(JFritz.getProperty(
 				"filter.callout", "false")));
-		toolBar.add(tb);
+		lowerToolBar.add(tb);
 
 		tb = new JToggleButton(getImage("phone_nonumber_grey.png"), true);
 		tb.setSelectedIcon(getImage("phone_nonumber.png"));
@@ -100,7 +134,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		tb.setToolTipText(JFritz.getMessage("filter_number"));
 		tb.setSelected(!JFritzUtils.parseBoolean(JFritz.getProperty(
 				"filter.number", "false")));
-		toolBar.add(tb);
+		lowerToolBar.add(tb);
 
 		tb = new JToggleButton(getImage("phone_grey.png"), true);
 		tb.setSelectedIcon(getImage("phone.png"));
@@ -109,7 +143,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		tb.setToolTipText("Anrufe ins Festnetz filtern");
 		tb.setSelected(!JFritzUtils.parseBoolean(JFritz.getProperty(
 				"filter.fixed", "false")));
-		toolBar.add(tb);
+		lowerToolBar.add(tb);
 
 		tb = new JToggleButton(getImage("handy_grey.png"), true);
 		tb.setSelectedIcon(getImage("handy.png"));
@@ -118,7 +152,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		tb.setToolTipText(JFritz.getMessage("filter_handy"));
 		tb.setSelected(!JFritzUtils.parseBoolean(JFritz.getProperty(
 				"filter.handy", "false")));
-		toolBar.add(tb);
+		lowerToolBar.add(tb);
 
 		dateButton = new JToggleButton(getImage("calendar_grey.png"), true);
 		dateButton.setSelectedIcon(getImage("calendar.png"));
@@ -128,10 +162,10 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		dateButton.setSelected(!JFritzUtils.parseBoolean(JFritz.getProperty(
 				"filter.date", "false")));
 		setDateFilterText();
-		toolBar.add(dateButton);
+		lowerToolBar.add(dateButton);
 
-		JToggleButton sipButton = new JToggleButton(
-				getImage("world_grey.png"), true);
+		JToggleButton sipButton = new JToggleButton(getImage("world_grey.png"),
+				true);
 		sipButton.setSelectedIcon(getImage("world.png"));
 		sipButton.setActionCommand("filter_sip");
 		sipButton.addActionListener(this);
@@ -139,9 +173,9 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		sipButton.setSelected(!JFritzUtils.parseBoolean(JFritz.getProperty(
 				"filter.sip", "false")));
 		setDateFilterText();
-		toolBar.add(sipButton);
+		lowerToolBar.add(sipButton);
 
-		toolBar.addSeparator();
+		lowerToolBar.addSeparator();
 
 		deleteEntriesButton = new JButton();
 		deleteEntriesButton.setToolTipText(JFritz.getMessage("delete_entries"));
@@ -150,11 +184,11 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		deleteEntriesButton.setIcon(getImage("delete.png"));
 		deleteEntriesButton.setFocusPainted(false);
 		deleteEntriesButton.setEnabled(false);
-		toolBar.add(deleteEntriesButton);
+		lowerToolBar.add(deleteEntriesButton);
 
-		toolBar.addSeparator();
+		lowerToolBar.addSeparator();
 
-		toolBar.add(new JLabel(JFritz.getMessage("search") + ": "));
+		lowerToolBar.add(new JLabel(JFritz.getMessage("search") + ": "));
 		searchFilter = new JTextField(JFritz.getProperty("filter.search", ""),
 				10);
 		searchFilter.addCaretListener(this);
@@ -173,26 +207,54 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 		});
 
-		toolBar.add(searchFilter);
-		JButton button = new JButton(JFritz.getMessage("clear"));
+		lowerToolBar.add(searchFilter);
+		button = new JButton(JFritz.getMessage("clear"));
 		button.setActionCommand("clearSearchFilter");
 		button.addActionListener(this);
-		toolBar.add(button);
-		return toolBar;
+		lowerToolBar.add(button);
 
+		JPanel toolbarPanel = new JPanel();
+		toolbarPanel.setLayout(new BorderLayout());
+		toolbarPanel.add(upperToolBar, BorderLayout.NORTH);
+		toolbarPanel.add(lowerToolBar, BorderLayout.SOUTH);
+
+		return toolbarPanel;
 	}
 
 	public JScrollPane createCallerListTable() {
 		callerTable = new CallerTable(jfritz);
 		popupMenu = new JPopupMenu();
 		JMenuItem menuItem;
-		menuItem = new JMenuItem("Reverselookup ...");
+		menuItem = new JMenuItem("Rückwärtssuche");
 		menuItem.setActionCommand("reverselookup");
 		menuItem.addActionListener(this);
 		popupMenu.add(menuItem);
 
-		MouseAdapter popupListener = new PopupListener();
+		popupMenu.addSeparator();
 
+		menuItem = new JMenuItem("CSV Export");
+		menuItem.setActionCommand("export_csv");
+		menuItem.addActionListener(this);
+		popupMenu.add(menuItem);
+
+		menuItem = new JMenuItem("CSV Import");
+		menuItem.setActionCommand("import_csv");
+		menuItem.addActionListener(this);
+		menuItem.setEnabled(false);
+		popupMenu.add(menuItem);
+
+		menuItem = new JMenuItem("XML Export");
+		menuItem.setActionCommand("export_xml");
+		menuItem.addActionListener(this);
+		popupMenu.add(menuItem);
+
+		menuItem = new JMenuItem("XML Import");
+		menuItem.setActionCommand("import_xml");
+		menuItem.addActionListener(this);
+		menuItem.setEnabled(false);
+		popupMenu.add(menuItem);
+
+		MouseAdapter popupListener = new PopupListener();
 
 		callerTable.addMouseListener(popupListener);
 		return new JScrollPane(callerTable);
@@ -234,7 +296,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 					route = "FIXEDLINE";
 				}
 				if (!filteredProviders.contains(route)) {
-						filteredProviders.add(route);
+					filteredProviders.add(route);
 				}
 			}
 		} catch (Exception e) {
@@ -333,6 +395,10 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			jfritz.getCallerlist().removeEntries();
 		} else if (e.getActionCommand().equals("reverselookup")) {
 			doReverseLookup();
+		} else if (e.getActionCommand().equals("export_csv")) {
+			jfritz.getJframe().exportCSV();
+		} else if (e.getActionCommand().equals("export_xml")) {
+			jfritz.getJframe().exportXML();
 		}
 	}
 
@@ -376,25 +442,28 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	private void doReverseLookup() {
 		int rows[] = callerTable.getSelectedRows();
+		if (rows.length > 0) { // nur für markierte Einträge ReverseLookup durchführen
 		for (int i = 0; i < rows.length; i++) {
-			Call call = (Call) jfritz.getCallerlist()
-			.getFilteredCallVector().get(rows[i]);
+			Call call = (Call) jfritz.getCallerlist().getFilteredCallVector()
+					.get(rows[i]);
 			Person newPerson = ReverseLookup.lookup(call.getPhoneNumber());
 			if (newPerson != null) {
 				jfritz.getPhonebook().addEntry(newPerson);
 				jfritz.getPhonebook().fireTableDataChanged();
-				jfritz.getCallerlist()
-						.fireTableDataChanged();
+				jfritz.getCallerlist().fireTableDataChanged();
 			}
+		}
+		} else { // Für alle Einträge ReverseLookup durchführen
+			jfritz.getJframe().reverseLookup();
 		}
 	}
 
 	class PopupListener extends MouseAdapter {
 		public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() > 1) {
-					jfritz.getJframe().activatePhoneBook();
-				}
+			if (e.getClickCount() > 1) {
+				jfritz.getJframe().activatePhoneBook();
 			}
+		}
 
 		public void mousePressed(MouseEvent e) {
 			maybeShowPopup(e);
@@ -406,11 +475,9 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 		private void maybeShowPopup(MouseEvent e) {
 			if (e.isPopupTrigger()) {
-				popupMenu.show(e
-						.getComponent(), e.getX(), e.getY());
+				popupMenu.show(e.getComponent(), e.getX(), e.getY());
 			}
 		}
 	}
-
 
 }
