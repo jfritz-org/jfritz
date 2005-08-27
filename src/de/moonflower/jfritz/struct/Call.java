@@ -101,7 +101,7 @@ public class Call {
 		String outString = "";
 		switch (calltype.toInt()) {
 		case 1: {
-			outString = "\"Incomming\"";
+			outString = "\"Incoming\"";
 			break;
 		}
 		case 2: {
