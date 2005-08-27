@@ -151,7 +151,7 @@ public class Call {
 			outString = outString.concat(";\"" + getPerson().getPostalCode()
 					+ " " + getPerson().getCity() + "\"");
 		} else
-			outString = outString.concat("\"\";\"\";\"\"");
+			outString = outString.concat(";\"\";\"\";\"\"");
 
 		return outString;
 	}
