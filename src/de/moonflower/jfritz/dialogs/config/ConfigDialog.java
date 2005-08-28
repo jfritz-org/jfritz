@@ -91,7 +91,7 @@ public class ConfigDialog extends JDialog {
 			notifyOnCallsButton, confirmOnExitButton, startMinimizedButton,
 			timerAfterStartButton, passwordAfterStartButton, soundButton,
 			callMonitorAfterStartButton, lookupAfterFetchButton,
-			syslogPassthroughCheckBox;
+			syslogPassthroughCheckBox, showCallByCallButton;
 
 	private JPanel callMonitorPane, yacMonitorPane, telnetMonitorPane,
 			syslogMonitorPane, callmessageMonitorPane;
@@ -190,6 +190,9 @@ public class ConfigDialog extends JDialog {
 		lookupAfterFetchButton.setSelected(JFritzUtils.parseBoolean(JFritz
 				.getProperty("option.lookupAfterFetch", "false")));
 
+		showCallByCallButton.setSelected(JFritzUtils.parseBoolean(JFritz
+				.getProperty("option.showCallByCall", "false")));
+
 		boolean pwAfterStart = !Encryption.decrypt(
 				JFritz.getProperty("jfritz.password", "")).equals(
 				JFritz.PROGRAM_SECRET
@@ -279,6 +282,9 @@ public class ConfigDialog extends JDialog {
 
 		JFritz.setProperty("option.lookupAfterFetch", Boolean
 				.toString(lookupAfterFetchButton.isSelected()));
+
+		JFritz.setProperty("option.showCallByCall", Boolean
+				.toString(showCallByCallButton.isSelected()));
 
 		JFritz.setProperty("option.syslogclientip", ipAddressComboBox
 				.getSelectedItem().toString());
@@ -510,6 +516,11 @@ public class ConfigDialog extends JDialog {
 		lookupAfterFetchButton = new JCheckBox(
 				"Nach Laden Rückwärtssuche ausführen");
 		cPanel.add(lookupAfterFetchButton, c);
+
+		c.gridy = 4;
+		showCallByCallButton = new JCheckBox(
+				"Call-By-Call Informationen anzeigen");
+		cPanel.add(showCallByCallButton, c);
 
 		return cPanel;
 	}
