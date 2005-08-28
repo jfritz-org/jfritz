@@ -40,6 +40,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.table.TableColumnModel;
 
 import de.moonflower.jfritz.callerlist.CallerListPanel;
 import de.moonflower.jfritz.callerlist.CallerTable;
@@ -142,8 +143,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				break;
 			}
 			case 4: {
-				jfritz.setCallMonitor(new CallmessageListener(jfritz,
-						Integer.parseInt(JFritz.getProperty("option.callmessageport",
+				jfritz.setCallMonitor(new CallmessageListener(jfritz, Integer
+						.parseInt(JFritz.getProperty("option.callmessageport",
 								"23232"))));
 				monitorButton.setSelected(true);
 				break;
@@ -158,9 +159,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		setDefaultLookAndFeel();
 		ShutdownThread shutdownThread = new ShutdownThread(jfritz);
 		Runtime.getRuntime().addShutdownHook(shutdownThread);
-		this.setIconImage(Toolkit.getDefaultToolkit().getImage(
-				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/trayicon.png")));
+		this
+				.setIconImage(Toolkit
+						.getDefaultToolkit()
+						.getImage(
+								getClass()
+										.getResource(
+												"/de/moonflower/jfritz/resources/images/trayicon.png")));
 
 		// Setting size and position
 		int x = Integer.parseInt(JFritz.getProperty("position.left", "10"));
@@ -183,12 +188,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				if (tabber.getTitleAt(tabber.getSelectedIndex()).equals(
 						JFritz.getMessage("callerlist"))) {
 					setStatus();
-				}
-				else if (tabber.getTitleAt(tabber.getSelectedIndex()).equals(
+				} else if (tabber.getTitleAt(tabber.getSelectedIndex()).equals(
 						JFritz.getMessage("phonebook"))) {
 					phoneBookPanel.setStatus();
-				}
-				else if (tabber.getTitleAt(tabber.getSelectedIndex()).equals(
+				} else if (tabber.getTitleAt(tabber.getSelectedIndex()).equals(
 						JFritz.getMessage("quickdials"))) {
 					quickDialPanel.setStatus();
 				}
@@ -564,7 +567,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 								Person newPerson = ReverseLookup.lookup(number);
 								if (newPerson != null) {
 									jfritz.getPhonebook().addEntry(newPerson);
-									jfritz.getPhonebook().fireTableDataChanged();
+									jfritz.getPhonebook()
+											.fireTableDataChanged();
 									jfritz.getCallerlist()
 											.fireTableDataChanged();
 								}
@@ -611,6 +615,19 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			jfritz.saveProperties();
 			monitorButton.setEnabled((Integer.parseInt(JFritz.getProperty(
 					"option.callMonitorType", "0")) > 0));
+
+			// Show / hide CallByCall column
+			if (JFritzUtils.parseBoolean(JFritz.getProperty(
+					"option.showCallByCall", "false"))) {
+				TableColumnModel colModel = jfritz.getJframe().getCallerTable().getColumnModel();
+				colModel.addColumn(jfritz.getJframe().getCallerTable().getCallByCallColumn());
+				colModel.moveColumn(colModel.getColumnCount()-1, 2);
+				colModel.getColumn(2).setPreferredWidth(Integer.parseInt(JFritz.getProperty(
+						"column2.width", "60")));
+			} else {
+				TableColumnModel colModel = jfritz.getJframe().getCallerTable().getColumnModel();
+				colModel.removeColumn(colModel.getColumn(2));
+			}
 		}
 		configDialog.dispose();
 	}
@@ -662,11 +679,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				+ JFritz.PROGRAM_VERSION + "\n"
 				+ JFritzUtils.getVersionFromCVSTag(JFritz.CVS_TAG) + "\n\n"
 				+ "(c) 2005 by " + JFritz.PROGRAM_AUTHOR + "\n\n"
-				+ "Developers:\n"
-				+ JFritz.PROGRAM_AUTHOR + "\n"
-				+ "Robert Palmer <robotniko@gmx.de>\n\n"
-				+ JFritz.PROGRAM_URL + "\n\n"
-				+ "This tool is developed and released under\n"
+				+ "Developers:\n" + JFritz.PROGRAM_AUTHOR + "\n"
+				+ "Robert Palmer <robotniko@gmx.de>\n\n" + JFritz.PROGRAM_URL
+				+ "\n\n" + "This tool is developed and released under\n"
 				+ "the terms of the GNU General Public License\n\n"
 				+ "Long live Free Software!");
 	}
@@ -826,8 +841,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				}
 				case 4: {
 					jfritz.setCallMonitor(new CallmessageListener(jfritz,
-							Integer.parseInt(JFritz.getProperty("option.callmessageport",
-									"23232"))));
+							Integer.parseInt(JFritz.getProperty(
+									"option.callmessageport", "23232"))));
 					monitorButton.setSelected(true);
 					break;
 				}

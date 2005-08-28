@@ -19,6 +19,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.cellrenderer.CallByCallCellRenderer;
 import de.moonflower.jfritz.cellrenderer.CallTypeCellRenderer;
 import de.moonflower.jfritz.cellrenderer.DateCellRenderer;
 import de.moonflower.jfritz.cellrenderer.DurationCellRenderer;
@@ -36,6 +37,8 @@ import de.moonflower.jfritz.struct.CallType;
 public class CallerTable extends JTable {
 	private static final long serialVersionUID = 1;
 	private JFritz jfritz;
+
+	private TableColumn callByCallColumn = null;
 
 	/**
 	 * Constructs CallerTable
@@ -118,13 +121,21 @@ public class CallerTable extends JTable {
 				"column1.width", "120")));
 
 		col = getColumnModel().getColumn(2);
+		col.setHeaderValue("Call-By-Call");
+		headerTips.setToolTip(col, "Benutzer Call-By-Call Anbieter");
+		col.setCellRenderer(new CallByCallCellRenderer());
+		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
+				"column2.width", "60")));
+		callByCallColumn = col;
+
+		col = getColumnModel().getColumn(3);
 		col.setHeaderValue(JFritz.getMessage("number"));
 		col.setCellRenderer(new NumberCellRenderer());
 		headerTips.setToolTip(col, JFritz.getMessage("number_desc"));
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
-				"column2.width", "128")));
+				"column3.width", "128")));
 
-		col = getColumnModel().getColumn(3);
+		col = getColumnModel().getColumn(4);
 		col.setHeaderValue(JFritz.getMessage("participant"));
 		headerTips.setToolTip(col, JFritz.getMessage("participant_desc"));
 		//col.setCellEditor(new TextFieldCellEditor());
@@ -132,28 +143,28 @@ public class CallerTable extends JTable {
 
 		col.setCellRenderer(new PersonCellRenderer());
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
-				"column3.width", "120")));
+				"column4.width", "120")));
 
-		col = getColumnModel().getColumn(4);
+		col = getColumnModel().getColumn(5);
 		col.setHeaderValue(JFritz.getMessage("port"));
 		headerTips.setToolTip(col, JFritz.getMessage("port_desc"));
 		col.setCellRenderer(new PortCellRenderer());
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
-				"column4.width", "60")));
+				"column5.width", "60")));
 
-		col = getColumnModel().getColumn(5);
+		col = getColumnModel().getColumn(6);
 		col.setHeaderValue(JFritz.getMessage("route"));
 		headerTips.setToolTip(col, JFritz.getMessage("route_desc"));
 		col.setCellRenderer(new RouteCellRenderer());
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
-				"column5.width", "100")));
+				"column6.width", "100")));
 
-		col = getColumnModel().getColumn(6);
+		col = getColumnModel().getColumn(7);
 		col.setHeaderValue(JFritz.getMessage("duration"));
 		headerTips.setToolTip(col, JFritz.getMessage("duration_desc"));
 		col.setCellRenderer(new DurationCellRenderer());
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
-				"column6.width", "60")));
+				"column7.width", "60")));
 
 		getTableHeader().addMouseMotionListener(headerTips);
 	}
@@ -195,5 +206,12 @@ public class CallerTable extends JTable {
 	 */
 	public final JFritz getJfritz() {
 		return jfritz;
+	}
+
+	/**
+	 * @return Returns the callByCall column
+	 */
+	public TableColumn getCallByCallColumn() {
+		return callByCallColumn;
 	}
 }

@@ -435,8 +435,8 @@ public class CallerList extends AbstractTableModel {
 	 * @see javax.swing.table.TableModel#getColumnCount()
 	 */
 	public int getColumnCount() {
-		// 7 Columns on the Table
-		return 7;
+		// 8 Columns on the Table
+		return 8;
 	}
 
 	/**
@@ -451,13 +451,19 @@ public class CallerList extends AbstractTableModel {
 			return call.getCalltype();
 		case 1:
 			return call.getCalldate();
-		case 2:
-			return call.getPhoneNumber();
+		case 2: {
+			if (call.getPhoneNumber() != null) {
+				return call.getPhoneNumber().getCallByCall();
+			} else
+				return null;
+		}
 		case 3:
-			return call.getPerson();
+			return call.getPhoneNumber();
 		case 4:
-			return call.getPort();
+			return call.getPerson();
 		case 5:
+			return call.getPort();
+		case 6:
 			if (call.getRoute().startsWith("SIP")) {
 				String sipstr = JFritz.getProperty(call.getRoute());
 				if (sipstr != null) {
@@ -466,8 +472,9 @@ public class CallerList extends AbstractTableModel {
 					return call.getRoute();
 			}
 			return call.getRoute();
-		case 6:
+		case 7:
 			return Integer.toString(call.getDuration());
+
 		default:
 			throw new IllegalArgumentException("Invalid column: " + columnIndex);
 		}
@@ -569,6 +576,16 @@ public class CallerList extends AbstractTableModel {
 				break;
 			case 2:
 				if (v1.getPhoneNumber() != null)
+					o1 = v1.getPhoneNumber().getCallByCall();
+				else
+					o1 = null;
+				if (v2.getPhoneNumber() != null)
+					o2 = v2.getPhoneNumber().getCallByCall();
+				else
+					o2 = null;
+				break;
+			case 3:
+				if (v1.getPhoneNumber() != null)
 					o1 = v1.getPhoneNumber().getFullNumber();
 				else
 					o1 = null;
@@ -577,7 +594,7 @@ public class CallerList extends AbstractTableModel {
 				else
 					o2 = null;
 				break;
-			case 3:
+			case 4:
 				if (v1.getPerson() != null)
 					o1 = v1.getPerson().getFullname();
 				else
@@ -587,15 +604,15 @@ public class CallerList extends AbstractTableModel {
 				else
 					o2 = null;
 				break;
-			case 4:
+			case 5:
 				o1 = v1.getPort();
 				o2 = v2.getPort();
 				break;
-			case 5:
+			case 6:
 				o1 = v1.getRoute();
 				o2 = v2.getRoute();
 				break;
-			case 6:
+			case 7:
 				if (v1.getDuration() != 0)
 					o1 = format(Integer.toString(v1.getDuration()), 10);
 				else
@@ -705,8 +722,8 @@ public class CallerList extends AbstractTableModel {
 				String[] providerEntries = providers.split(",");
 				for (int i = 0; i < providerEntries.length; i++) {
 					if (providerEntries[i].length() > 0) {
-						if (providerEntries[i].charAt(0) == 32) { 	// delete
-																	// first SPACE
+						if (providerEntries[i].charAt(0) == 32) { // delete
+							// first SPACE
 							providerEntries[i] = providerEntries[i]
 									.substring(1);
 						}
