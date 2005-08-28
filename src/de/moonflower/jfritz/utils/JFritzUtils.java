@@ -380,15 +380,9 @@ public class JFritzUtils {
 				String port = m.group(4);
 				String route = m.group(5);
 				int duration = Integer.parseInt(m.group(6));
-				PhoneNumber number = new PhoneNumber(createAreaNumber(m
+				PhoneNumber number = createAreaNumber(m
 						.group(3), countryPrefix, countryCode, areaPrefix,
-						areaCode));
-				if (number.getFullNumber().equals("")) {
-					// Bugfix: wenn Nummer "", wird sie vom Filter nicht richtig
-					// gefiltert
-					// um richtig gefiltert zu werden, muss die Nummer NULL sein
-					number = null;
-				}
+						areaCode);
 				Date date = new SimpleDateFormat("dd.MM.yy HH:mm").parse(m
 						.group(2));
 
@@ -411,8 +405,9 @@ public class JFritzUtils {
 	 * @param areaCode
 	 * @return number with area code prefix
 	 */
-	public static String createAreaNumber(String number, String countryPrefix,
+	public static PhoneNumber createAreaNumber(String number, String countryPrefix,
 			String countryCode, String areaPrefix, String areaCode) {
+		PhoneNumber phoneNumber;
 		if (!number.equals("")) {
 			if (number.startsWith(countryCode) && number.length() > 9) {
 				// International numbers without countryPrefix
@@ -427,15 +422,13 @@ public class JFritzUtils {
 							+ number.substring(countryPrefix.length()
 									+ countryCode.length());
 				}
-			} else if (number.startsWith(areaPrefix)) {
-				if (number.startsWith("010")) { // cut 01013 and others
-					number = number.substring(5);
-				}
-			} else {
+			} else if (!number.startsWith(areaPrefix)) {
 				number = areaPrefix + areaCode + number;
 			}
+			phoneNumber = new PhoneNumber(number);
+			return phoneNumber;
 		}
-		return number;
+		return null;
 	}
 
 	/**

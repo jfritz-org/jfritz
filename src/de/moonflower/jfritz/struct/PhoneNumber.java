@@ -92,6 +92,7 @@ public class PhoneNumber implements Comparable {
 	 */
 	public String cutCallByCall() {
 		if (number.startsWith("010")) { // cut 01013 and others
+			callbycall = number.substring(0,5);
 			number = number.substring(5);
 		}
 		return number;
@@ -169,6 +170,13 @@ public class PhoneNumber implements Comparable {
 	 */
 	public String getCallByCall() {
 		return callbycall;
+	}
+
+	/**
+	 * @param callbycall The callbycall to set.
+	 */
+	public void setCallByCall(String callbycall) {
+		this.callbycall = callbycall;
 	}
 
 	/**
@@ -320,17 +328,5 @@ public class PhoneNumber implements Comparable {
 			type = "sip";
 		else
 			type = "home";
-	}
-	/**
-	 * @return Returns the callbycall.
-	 */
-	public String getCallbycall() {
-		return callbycall;
-	}
-	/**
-	 * @param callbycall The callbycall to set.
-	 */
-	public void setCallbycall(String callbycall) {
-		this.callbycall = callbycall;
 	}
 }
