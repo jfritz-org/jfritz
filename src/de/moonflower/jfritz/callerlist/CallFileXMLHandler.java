@@ -104,7 +104,7 @@ public class CallFileXMLHandler extends DefaultHandler {
 				if (caller.length() > 0) {
 					number = new PhoneNumber(caller);
 					if (callbycall.length() > 0)
-						number.setCallbycall(callbycall);
+						number.setCallByCall(callbycall);
 				}
 				callerlist.addEntry(calltype, calldate, number, port, route,
 						duration);
