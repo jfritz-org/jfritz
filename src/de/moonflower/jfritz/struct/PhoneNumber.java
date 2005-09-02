@@ -91,7 +91,10 @@ public class PhoneNumber implements Comparable {
 	 * @return Number withour call by call part
 	 */
 	public String cutCallByCall() {
-		if (number.startsWith("010")) { // cut 01013 and others
+		if (number.startsWith("0100")) { // cut 0100yy (y = 0..9)
+			callbycall = number.substring(0,6);
+			number = number.substring(6);
+		} else if (number.startsWith("010")) { // cut 010xx (x = 1..9, y = 0..9)
 			callbycall = number.substring(0,5);
 			number = number.substring(5);
 		}
