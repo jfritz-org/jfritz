@@ -39,7 +39,7 @@
  * CHANGELOG:
  *
  * JFritz! 0.4.3
- * - CallByCall information is saved :) once again
+ * - CallByCall information is saved (only 010xy and 0100yy)
  * - Added support for MacOSX Application Menu
  * - VCard Export moved from CallerTable to PhoneBook
  * - Telnet: Timeout handling
@@ -231,7 +231,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.105 2005/08/28 13:30:54 robotniko Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.106 2005/09/02 10:45:26 robotniko Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
