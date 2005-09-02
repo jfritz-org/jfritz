@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
 
@@ -42,6 +43,14 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		CaretListener {
 	private static final long serialVersionUID = 1;
 
+	private static final int DATEFILTER_SELECTION = 0;
+
+	private static final int DATEFILTER_TODAY = 1;
+
+	private static final int DATEFILTER_THIS_MONTH = 2;
+
+	private static final int DATEFILTER_LAST_MONTH = 3;
+
 	private JFritz jfritz;
 
 	private CallerTable callerTable;
@@ -51,8 +60,6 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	private JButton deleteEntriesButton;
 
 	private JTextField searchFilter;
-
-	private JPopupMenu popupMenu;
 
 	public CallerListPanel(JFritz jfritz) {
 		super();
@@ -163,6 +170,24 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		dateButton.setSelected(!JFritzUtils.parseBoolean(JFritz.getProperty(
 				"filter.date", "false")));
 		setDateFilterText();
+		JPopupMenu datePopupMenu = new JPopupMenu();
+		JMenuItem menuItem;
+		menuItem = new JMenuItem("Heutiger Tag");
+		menuItem.setActionCommand("setdatefilter_thisday");
+		menuItem.addActionListener(this);
+		datePopupMenu.add(menuItem);
+		menuItem = new JMenuItem("Dieser Monat");
+		menuItem.setActionCommand("setdatefilter_thismonth");
+		menuItem.addActionListener(this);
+		datePopupMenu.add(menuItem);
+		menuItem = new JMenuItem("Letzter Monat");
+		menuItem.setActionCommand("setdatefilter_lastmonth");
+		menuItem.addActionListener(this);
+		datePopupMenu.add(menuItem);
+		MouseAdapter popupListener = new PopupListener(datePopupMenu);
+
+		dateButton.addMouseListener(popupListener);
+
 		lowerToolBar.add(dateButton);
 
 		JToggleButton sipButton = new JToggleButton(getImage("world_grey.png"),
@@ -175,8 +200,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 				"filter.sip", "false")));
 		lowerToolBar.add(sipButton);
 
-		callByCallButton = new JToggleButton(
-				getImage("callbycall_grey.png"), true);
+		callByCallButton = new JToggleButton(getImage("callbycall_grey.png"),
+				true);
 		callByCallButton.setSelectedIcon(getImage("callbycall.png"));
 		callByCallButton.setActionCommand("filter_callbycall");
 		callByCallButton.addActionListener(this);
@@ -234,38 +259,38 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	public JScrollPane createCallerListTable() {
 		callerTable = new CallerTable(jfritz);
-		popupMenu = new JPopupMenu();
+		JPopupMenu callerlistPopupMenu = new JPopupMenu();
 		JMenuItem menuItem;
 		menuItem = new JMenuItem("Rückwärtssuche");
 		menuItem.setActionCommand("reverselookup");
 		menuItem.addActionListener(this);
-		popupMenu.add(menuItem);
+		callerlistPopupMenu.add(menuItem);
 
-		popupMenu.addSeparator();
+		callerlistPopupMenu.addSeparator();
 
 		menuItem = new JMenuItem("CSV Export");
 		menuItem.setActionCommand("export_csv");
 		menuItem.addActionListener(this);
-		popupMenu.add(menuItem);
+		callerlistPopupMenu.add(menuItem);
 
 		menuItem = new JMenuItem("CSV Import");
 		menuItem.setActionCommand("import_csv");
 		menuItem.addActionListener(this);
 		menuItem.setEnabled(false);
-		popupMenu.add(menuItem);
+		callerlistPopupMenu.add(menuItem);
 
 		menuItem = new JMenuItem("XML Export");
 		menuItem.setActionCommand("export_xml");
 		menuItem.addActionListener(this);
-		popupMenu.add(menuItem);
+		callerlistPopupMenu.add(menuItem);
 
 		menuItem = new JMenuItem("XML Import");
 		menuItem.setActionCommand("import_xml");
 		menuItem.addActionListener(this);
 		menuItem.setEnabled(false);
-		popupMenu.add(menuItem);
+		callerlistPopupMenu.add(menuItem);
 
-		MouseAdapter popupListener = new PopupListener();
+		MouseAdapter popupListener = new PopupListener(callerlistPopupMenu);
 
 		callerTable.addMouseListener(popupListener);
 
@@ -356,23 +381,52 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		jfritz.getCallerlist().updateFilter();
 	}
 
-	public void setDateFilterFromSelection() {
+	public void setDateFilterFromSelection(int datefilter) {
 		Date from = null;
 		Date to = null;
-		try {
-			int rows[] = callerTable.getSelectedRows();
-			for (int i = 0; i < rows.length; i++) {
-				Call call = (Call) jfritz.getCallerlist()
-						.getFilteredCallVector().get(rows[i]);
+		Calendar cal = Calendar.getInstance();
+		switch (datefilter) {
+		case DATEFILTER_TODAY:
+			from = cal.getTime();
+			to = from;
+			break;
+		case DATEFILTER_THIS_MONTH:
+			from = cal.getTime();
+			to = from;
+			cal.set(Calendar.DAY_OF_MONTH, 1);
+			from = cal.getTime();
+			cal.set(Calendar.DAY_OF_MONTH, cal
+					.getActualMaximum(Calendar.DAY_OF_MONTH));
+			to = cal.getTime();
+			break;
+		case DATEFILTER_LAST_MONTH:
+			from = cal.getTime();
+			to = from;
+			cal.set(Calendar.MONTH, cal.get(Calendar.MONTH)-1); // last month 0=januar, ..., 11=dezember
+			cal.set(Calendar.DAY_OF_MONTH, 1);
+			from = cal.getTime();
+			cal.set(Calendar.DAY_OF_MONTH, cal
+					.getActualMaximum(Calendar.DAY_OF_MONTH));
+			to = cal.getTime();
+			break;
+		case DATEFILTER_SELECTION: {
+			try {
+				int rows[] = callerTable.getSelectedRows();
+				for (int i = 0; i < rows.length; i++) {
+					Call call = (Call) jfritz.getCallerlist()
+							.getFilteredCallVector().get(rows[i]);
 
-				if (to == null || call.getCalldate().after(to))
-					to = call.getCalldate();
+					if (to == null || call.getCalldate().after(to))
+						to = call.getCalldate();
 
-				if (from == null || call.getCalldate().before(from))
-					from = call.getCalldate();
+					if (from == null || call.getCalldate().before(from))
+						from = call.getCalldate();
+				}
+			} catch (Exception e) {
+				System.err.println(e.toString());
 			}
-		} catch (Exception e) {
-			System.err.println(e.toString());
+			break;
+		}
 		}
 		if (to == null)
 			to = new Date();
@@ -427,9 +481,27 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			jfritz.getCallerlist().updateFilter();
 			jfritz.getCallerlist().fireTableStructureChanged();
 		} else if (e.getActionCommand() == "filter_date") {
-			JFritz.setProperty("filter.date", Boolean
-					.toString(!((JToggleButton) e.getSource()).isSelected()));
-			setDateFilterFromSelection();
+			JFritz.setProperty("filter.date", Boolean.toString(!dateButton
+					.isSelected()));
+			setDateFilterFromSelection(DATEFILTER_SELECTION);
+			jfritz.getCallerlist().fireTableStructureChanged();
+		} else if (e.getActionCommand() == "setdatefilter_thisday") {
+			dateButton.setSelected(false);
+			JFritz.setProperty("filter.date", Boolean.toString(!dateButton
+					.isSelected()));
+			setDateFilterFromSelection(DATEFILTER_TODAY);
+			jfritz.getCallerlist().fireTableStructureChanged();
+		} else if (e.getActionCommand() == "setdatefilter_thismonth") {
+			dateButton.setSelected(false);
+			JFritz.setProperty("filter.date", Boolean.toString(!dateButton
+					.isSelected()));
+			setDateFilterFromSelection(DATEFILTER_THIS_MONTH);
+			jfritz.getCallerlist().fireTableStructureChanged();
+		} else if (e.getActionCommand() == "setdatefilter_lastmonth") {
+			dateButton.setSelected(false);
+			JFritz.setProperty("filter.date", Boolean.toString(!dateButton
+					.isSelected()));
+			setDateFilterFromSelection(DATEFILTER_LAST_MONTH);
 			jfritz.getCallerlist().fireTableStructureChanged();
 		} else if (e.getActionCommand() == "filter_sip") {
 			JFritz.setProperty("filter.sip", Boolean
@@ -515,6 +587,13 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	}
 
 	class PopupListener extends MouseAdapter {
+		JPopupMenu popupMenu;
+
+		PopupListener(JPopupMenu popupMenu) {
+			super();
+			this.popupMenu = popupMenu;
+		}
+
 		public void mouseClicked(MouseEvent e) {
 			if (e.getClickCount() > 1) {
 				jfritz.getJframe().activatePhoneBook();
