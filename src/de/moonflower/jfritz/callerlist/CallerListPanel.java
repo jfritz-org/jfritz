@@ -46,7 +46,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	private CallerTable callerTable;
 
-	private JToggleButton dateButton;
+	private JToggleButton dateButton, callByCallButton;
 
 	private JButton deleteEntriesButton;
 
@@ -173,8 +173,18 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		sipButton.setToolTipText("Anrufe nach SIP-Providern filtern");
 		sipButton.setSelected(!JFritzUtils.parseBoolean(JFritz.getProperty(
 				"filter.sip", "false")));
-		setDateFilterText();
 		lowerToolBar.add(sipButton);
+
+		callByCallButton = new JToggleButton(
+				getImage("callbycall_grey.png"), true);
+		callByCallButton.setSelectedIcon(getImage("callbycall.png"));
+		callByCallButton.setActionCommand("filter_callbycall");
+		callByCallButton.addActionListener(this);
+		callByCallButton
+				.setToolTipText("Anrufe nach CallByCall-Providern filtern");
+		callByCallButton.setSelected(!JFritzUtils.parseBoolean(JFritz
+				.getProperty("filter.callbycall", "false")));
+		lowerToolBar.add(callByCallButton);
 
 		lowerToolBar.addSeparator();
 
@@ -260,11 +270,13 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		callerTable.addMouseListener(popupListener);
 
 		// Verstecke CallByCall-Spalte
-		// CallByCall Spalte wird standardmäßig angezeigt, nur noch verstecken nötig
+		// CallByCall Spalte wird standardmäßig angezeigt, nur noch verstecken
+		// nötig
 		if (!JFritzUtils.parseBoolean(JFritz.getProperty(
 				"option.showCallByCall", "false"))) {
 			TableColumnModel colModel = callerTable.getColumnModel();
 			colModel.removeColumn(colModel.getColumn(2));
+			callByCallButton.setEnabled(false);
 		}
 		return new JScrollPane(callerTable);
 	}
@@ -312,6 +324,35 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			System.err.println(e.toString());
 		}
 		JFritz.setProperty("filter.sipProvider", filteredProviders.toString());
+		jfritz.getCallerlist().updateFilter();
+	}
+
+	public void setCallByCallProviderFilterFromSelection() {
+		Vector filteredProviders = new Vector();
+		try {
+			int rows[] = callerTable.getSelectedRows();
+			for (int i = 0; i < rows.length; i++) {
+				Call call = (Call) jfritz.getCallerlist()
+						.getFilteredCallVector().get(rows[i]);
+				String provider = "";
+				if (call.getPhoneNumber() != null) {
+					provider = call.getPhoneNumber().getCallByCall();
+					if (provider.equals("")) {
+						provider = "NONE";
+					}
+				} else {
+					provider = "NONE";
+				}
+				if (!filteredProviders.contains(provider)) {
+					filteredProviders.add(provider);
+				}
+
+			}
+		} catch (Exception e) {
+			System.err.println(e.toString());
+		}
+		JFritz.setProperty("filter.callbycallProvider", filteredProviders
+				.toString());
 		jfritz.getCallerlist().updateFilter();
 	}
 
@@ -395,6 +436,11 @@ public class CallerListPanel extends JPanel implements ActionListener,
 					.toString(!((JToggleButton) e.getSource()).isSelected()));
 			setSipProviderFilterFromSelection();
 			jfritz.getCallerlist().fireTableStructureChanged();
+		} else if (e.getActionCommand() == "filter_callbycall") {
+			JFritz.setProperty("filter.callbycall", Boolean
+					.toString(!((JToggleButton) e.getSource()).isSelected()));
+			setCallByCallProviderFilterFromSelection();
+			jfritz.getCallerlist().fireTableStructureChanged();
 		} else if (e.getActionCommand() == "clearSearchFilter") {
 			setSearchFilter("");
 			JFritz.setProperty("filter.search", "");
@@ -451,17 +497,18 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	private void doReverseLookup() {
 		int rows[] = callerTable.getSelectedRows();
-		if (rows.length > 0) { // nur für markierte Einträge ReverseLookup durchführen
-		for (int i = 0; i < rows.length; i++) {
-			Call call = (Call) jfritz.getCallerlist().getFilteredCallVector()
-					.get(rows[i]);
-			Person newPerson = ReverseLookup.lookup(call.getPhoneNumber());
-			if (newPerson != null) {
-				jfritz.getPhonebook().addEntry(newPerson);
-				jfritz.getPhonebook().fireTableDataChanged();
-				jfritz.getCallerlist().fireTableDataChanged();
+		if (rows.length > 0) { // nur für markierte Einträge ReverseLookup
+			// durchführen
+			for (int i = 0; i < rows.length; i++) {
+				Call call = (Call) jfritz.getCallerlist()
+						.getFilteredCallVector().get(rows[i]);
+				Person newPerson = ReverseLookup.lookup(call.getPhoneNumber());
+				if (newPerson != null) {
+					jfritz.getPhonebook().addEntry(newPerson);
+					jfritz.getPhonebook().fireTableDataChanged();
+					jfritz.getCallerlist().fireTableDataChanged();
+				}
 			}
-		}
 		} else { // Für alle Einträge ReverseLookup durchführen
 			jfritz.getJframe().reverseLookup();
 		}
@@ -489,4 +536,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		}
 	}
 
+	public JToggleButton getCallByCallButton() {
+		return callByCallButton;
+	}
 }

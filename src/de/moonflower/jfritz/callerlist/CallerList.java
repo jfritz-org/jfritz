@@ -692,6 +692,8 @@ public class CallerList extends AbstractTableModel {
 				.getProperty("filter.date"));
 		boolean filterSip = JFritzUtils.parseBoolean(JFritz
 				.getProperty("filter.sip"));
+		boolean filterCallByCall = JFritzUtils.parseBoolean(JFritz
+				.getProperty("filter.callbycall"));
 		String filterSearch = JFritz.getProperty("filter.search", "");
 		String filterDateFrom = JFritz.getProperty("filter.date_from", "");
 		String filterDateTo = JFritz.getProperty("filter.date_to", "");
@@ -704,7 +706,7 @@ public class CallerList extends AbstractTableModel {
 
 		if ((!filterCallIn) && (!filterCallInFailed) && (!filterCallOut)
 				&& (!filterNumber) && (!filterDate) && (!filterHandy)
-				&& (!filterFixed) && (!filterSip)
+				&& (!filterFixed) && (!filterSip) && (!filterCallByCall)
 				&& (filterSearch.length() == 0)) {
 			// Use unfiltered data
 			filteredCallerData = unfilteredCallerData;
@@ -729,6 +731,28 @@ public class CallerList extends AbstractTableModel {
 						}
 					}
 					filteredSipProviders.add(providerEntries[i]);
+				}
+			}
+
+			Vector filteredCallByCallProviders = new Vector();
+			if (filterCallByCall) {
+				String providers = JFritz.getProperty(
+						"filter.callbycallProvider", "[]");
+				if (providers.equals("[]")) { // No entries selected
+					filterCallByCall = false;
+				}
+				providers = providers.replaceAll("\\[", "");
+				providers = providers.replaceAll("\\]", "");
+				String[] providerEntries = providers.split(",");
+				for (int i = 0; i < providerEntries.length; i++) {
+					if (providerEntries[i].length() > 0) {
+						if (providerEntries[i].charAt(0) == 32) { // delete
+							// first SPACE
+							providerEntries[i] = providerEntries[i]
+									.substring(1);
+						}
+					}
+					filteredCallByCallProviders.add(providerEntries[i]);
 				}
 			}
 
@@ -766,6 +790,24 @@ public class CallerList extends AbstractTableModel {
 					}
 					if (!filteredSipProviders.contains(route)) {
 						searchFilterPassed = false;
+					}
+				}
+
+				if (filterCallByCall) {
+					if (call.getPhoneNumber() != null) {
+						String callbycallprovider = call.getPhoneNumber()
+								.getCallByCall();
+						if (callbycallprovider.equals("")) {
+							callbycallprovider = "NONE";
+						}
+						if (!filteredCallByCallProviders
+								.contains(callbycallprovider)) {
+							searchFilterPassed = false;
+						}
+					} else { // Hide calls without number
+						if (!filteredCallByCallProviders.contains("NONE")) {
+							searchFilterPassed = false;
+						}
 					}
 				}
 

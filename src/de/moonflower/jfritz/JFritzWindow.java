@@ -629,6 +629,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					colModel.getColumn(2).setPreferredWidth(
 							Integer.parseInt(JFritz.getProperty(
 									"column2.width", "60")));
+					getCallerListPanel().getCallByCallButton().setEnabled(true);
 				}
 			} else {
 				TableColumnModel colModel = jfritz.getJframe().getCallerTable()
@@ -637,6 +638,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 						"Call-By-Call")) {
 
 					colModel.removeColumn(colModel.getColumn(2));
+					getCallerListPanel().getCallByCallButton().setEnabled(false);
 				}
 			}
 		}
