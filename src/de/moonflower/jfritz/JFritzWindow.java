@@ -619,14 +619,25 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			// Show / hide CallByCall column
 			if (JFritzUtils.parseBoolean(JFritz.getProperty(
 					"option.showCallByCall", "false"))) {
-				TableColumnModel colModel = jfritz.getJframe().getCallerTable().getColumnModel();
-				colModel.addColumn(jfritz.getJframe().getCallerTable().getCallByCallColumn());
-				colModel.moveColumn(colModel.getColumnCount()-1, 2);
-				colModel.getColumn(2).setPreferredWidth(Integer.parseInt(JFritz.getProperty(
-						"column2.width", "60")));
+				TableColumnModel colModel = jfritz.getJframe().getCallerTable()
+						.getColumnModel();
+				if (!colModel.getColumn(2).getHeaderValue().toString().equals(
+						"Call-By-Call")) {
+					colModel.addColumn(jfritz.getJframe().getCallerTable()
+							.getCallByCallColumn());
+					colModel.moveColumn(colModel.getColumnCount() - 1, 2);
+					colModel.getColumn(2).setPreferredWidth(
+							Integer.parseInt(JFritz.getProperty(
+									"column2.width", "60")));
+				}
 			} else {
-				TableColumnModel colModel = jfritz.getJframe().getCallerTable().getColumnModel();
-				colModel.removeColumn(colModel.getColumn(2));
+				TableColumnModel colModel = jfritz.getJframe().getCallerTable()
+						.getColumnModel();
+				if (colModel.getColumn(2).getHeaderValue().toString().equals(
+						"Call-By-Call")) {
+
+					colModel.removeColumn(colModel.getColumn(2));
+				}
 			}
 		}
 		configDialog.dispose();
