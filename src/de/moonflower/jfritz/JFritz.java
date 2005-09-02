@@ -49,6 +49,7 @@
  * - Wait, when no network reachable (On startup, return of standby, ...)
  * - Added context menu to phonebook and callerlist
  * - New Callfilter: Route, Fixed call
+ * - New Datefilter: Right click on date filter button
  * - Display more information in status bar
  * - Export to XML
  * - Bugfix: Syslog-Monitor get Callerlist on Restart
@@ -231,7 +232,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.106 2005/09/02 10:45:26 robotniko Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.107 2005/09/02 18:42:53 robotniko Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
