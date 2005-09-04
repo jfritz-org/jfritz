@@ -586,11 +586,11 @@ public class CallerList extends AbstractTableModel {
 				break;
 			case 3:
 				if (v1.getPhoneNumber() != null)
-					o1 = v1.getPhoneNumber().getFullNumber();
+					o1 = v1.getPhoneNumber().getIntNumber();
 				else
 					o1 = null;
 				if (v2.getPhoneNumber() != null)
-					o2 = v2.getPhoneNumber().getFullNumber();
+					o2 = v2.getPhoneNumber().getIntNumber();
 				else
 					o2 = null;
 				break;
@@ -886,10 +886,10 @@ public class CallerList extends AbstractTableModel {
 			Call call = (Call) en.nextElement();
 			if (call.getPhoneNumber() != null
 					&& person.getStandardTelephoneNumber() != null
-					&& call.getPhoneNumber().getFullNumber()
+					&& call.getPhoneNumber().getIntNumber()
 							.equals(
 									person.getStandardTelephoneNumber()
-											.getFullNumber())) {
+											.getIntNumber())) {
 				return call;
 			}
 		}

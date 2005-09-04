@@ -169,10 +169,10 @@ public class Call {
 			if (number.getCallByCall().length() > 0) {
 				output = output
 						+ ("\t<caller callbycall=\"" + number.getCallByCall()
-								+ "\">" + number.getFullNumber() + "</caller>" + sep);
+								+ "\">" + number.getIntNumber() + "</caller>" + sep);
 			} else {
 				output = output
-						+ ("\t<caller>" + number.getFullNumber() + "</caller>" + sep);
+						+ ("\t<caller>" + number.getIntNumber() + "</caller>" + sep);
 			}
 		}
 		if (!port.equals(""))

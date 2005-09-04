@@ -560,9 +560,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 							if (number != null && (call.getPerson() == null)) {
 								setStatus(JFritz
 										.getMessage("reverse_lookup_for")
-										+ " " + number.getFullNumber() + " ...");
+										+ " " + number.getIntNumber() + " ...");
 								Debug.msg("Reverse lookup for "
-										+ number.getFullNumber());
+										+ number.getIntNumber());
 
 								Person newPerson = ReverseLookup.lookup(number);
 								if (newPerson != null) {

@@ -30,7 +30,7 @@ public class ReverseLookup {
 		if (number.isMobile()) {
 			newPerson = new Person();
 			newPerson.addNumber(number);
-			Debug.msg("Adding mobile " + number.getFullNumber());
+			Debug.msg("Adding mobile " + number.getIntNumber());
 		} else if (number.isFreeCall()) {
 			newPerson = new Person("", "FreeCall");
 			newPerson.addNumber(number);

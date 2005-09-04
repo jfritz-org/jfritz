@@ -81,7 +81,7 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 			setToolTipText(number.toString());
 			label.setText(number.getShortNumber());
 			// Debug.msg("Number: "+number.getShortNumber());
-			if (number.getFullNumber().length() > 6) {
+			if (number.getIntNumber().length() > 6) {
 				if (number.isMobile()) {
 					String provider = number.getMobileProvider();
 					if (provider.equals(""))
@@ -104,16 +104,16 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 					} else {
 						label.setIcon(imageHandy);
 					}
-				} else if ((number.getFullNumber().startsWith(JFritz
+				} else if ((number.getIntNumber().startsWith(JFritz
 						.getProperty("area.prefix")
 						+ JFritz.getProperty("area.code") + "1988"))
-						|| (number.getFullNumber().startsWith("01801777"))) {
+						|| (number.getIntNumber().startsWith("01801777"))) {
 					label.setIcon(imageSipgate);
 					setToolTipText(JFritz.getMessage("voip_call"));
 				} else if (number.isLocalCall()) {
 					label.setIcon(imageHome);
 					setToolTipText(JFritz.getMessage("local_call"));
-				} else if (number.getFullNumber().startsWith(
+				} else if (number.getIntNumber().startsWith(
 						JFritz.getProperty("country.prefix"))) {
 					label.setIcon(imageWorld);
 					setToolTipText(JFritz.getMessage("int_call"));

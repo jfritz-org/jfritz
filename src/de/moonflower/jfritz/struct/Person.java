@@ -231,7 +231,7 @@ public class Person {
 		Enumeration en = numbers.elements();
 		while (en.hasMoreElements()) {
 			PhoneNumber n = (PhoneNumber) en.nextElement();
-			if (number.equals(n.getFullNumber()))
+			if (number.equals(n.getIntNumber()))
 				return true;
 		}
 		return false;
