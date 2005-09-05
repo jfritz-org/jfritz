@@ -355,23 +355,38 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	public void setCallByCallProviderFilterFromSelection() {
 		Vector filteredProviders = new Vector();
 		try {
+			String provider = "";
 			int rows[] = callerTable.getSelectedRows();
-			for (int i = 0; i < rows.length; i++) {
-				Call call = (Call) jfritz.getCallerlist()
-						.getFilteredCallVector().get(rows[i]);
-				String provider = "";
-				if (call.getPhoneNumber() != null) {
-					provider = call.getPhoneNumber().getCallByCall();
-					if (provider.equals("")) {
+			if (rows.length != 0) { // Filter only selected rows
+				for (int i = 0; i < rows.length; i++) {
+					Call call = (Call) jfritz.getCallerlist()
+							.getFilteredCallVector().get(rows[i]);
+					if (call.getPhoneNumber() != null) {
+						provider = call.getPhoneNumber().getCallByCall();
+						if (provider.equals("")) {
+							provider = "NONE";
+						}
+					} else {
 						provider = "NONE";
 					}
-				} else {
-					provider = "NONE";
+					if (!filteredProviders.contains(provider)) {
+						filteredProviders.add(provider);
+					}
 				}
-				if (!filteredProviders.contains(provider)) {
-					filteredProviders.add(provider);
+			} else { // filter only calls with callbycall predial
+				for (int i = 0; i < jfritz.getCallerlist()
+						.getFilteredCallVector().size(); i++) {
+					Call call = (Call) jfritz.getCallerlist()
+							.getFilteredCallVector().get(i);
+					if (call.getPhoneNumber() != null) {
+						provider = call.getPhoneNumber().getCallByCall();
+					}
+					if (!provider.equals("")) {
+						if (!filteredProviders.contains(provider)) {
+							filteredProviders.add(provider);
+						}
+					}
 				}
-
 			}
 		} catch (Exception e) {
 			System.err.println(e.toString());
@@ -402,7 +417,10 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		case DATEFILTER_LAST_MONTH:
 			from = cal.getTime();
 			to = from;
-			cal.set(Calendar.MONTH, cal.get(Calendar.MONTH)-1); // last month 0=januar, ..., 11=dezember
+			cal.set(Calendar.MONTH, cal.get(Calendar.MONTH) - 1); // last month
+			// 0=januar,
+			// ...,
+			// 11=dezember
 			cal.set(Calendar.DAY_OF_MONTH, 1);
 			from = cal.getTime();
 			cal.set(Calendar.DAY_OF_MONTH, cal
