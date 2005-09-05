@@ -132,15 +132,14 @@ public class Person {
 
 	//TODO Privat & Geschäftlich durch Konstanten ersetzen
 	//private String[] basicTypes = { "home", "mobile", "homezone",
-		//	"business", "other", "fax", "sip" };
+	//	"business", "other", "fax", "sip" };
 	//TODO Sonstiges und Nichtgefundenes
 	//TODO sip != Pager, korrigieren
 	public String toVCard() {
 		String vcard = "";
-		vcard = "BEGIN:vCard\n" +
-				"VERSION:2.1\n" +
-				"FN: " + getFullname()+ "\n" +
-				"ADR;Type=HOME,POSTAL:;;" + getStreet() + ";" + getCity() + ";;" +getPostalCode()+"\n";
+		vcard = "BEGIN:vCard\n" + "VERSION:2.1\n" + "FN: " + getFullname()
+				+ "\n" + "ADR;Type=HOME,POSTAL:;;" + getStreet() + ";"
+				+ getCity() + ";;" + getPostalCode() + "\n";
 		Enumeration en = numbers.elements();
 		while (en.hasMoreElements()) {
 			PhoneNumber n = (PhoneNumber) en.nextElement();
@@ -154,12 +153,12 @@ public class Person {
 				vcard = vcard + "TEL;PAGER:";
 			else if (n.getType().startsWith("fax"))
 				vcard = vcard + "TEL;FAX:";
-			else vcard = vcard + "TEL;DIVERS:";
+			else
+				vcard = vcard + "TEL;DIVERS:";
 			vcard = vcard + n.convertToIntNumber() + "\n";
 		}
-		vcard = vcard +
-		"EMAIL;TYPE=INTERNET,PREF:" + getEmailAddress() + "\n" +
-		"END:vCard\n";
+		vcard = vcard + "EMAIL;TYPE=INTERNET,PREF:" + getEmailAddress() + "\n"
+				+ "END:vCard\n";
 		return vcard;
 	}
 
@@ -231,8 +230,13 @@ public class Person {
 		Enumeration en = numbers.elements();
 		while (en.hasMoreElements()) {
 			PhoneNumber n = (PhoneNumber) en.nextElement();
-			if (number.equals(n.getIntNumber()))
-				return true;
+			if (n.getType().startsWith("main")) { // starts with ...
+				if (number.startsWith(n.getIntNumber()))
+					return true;
+			} else { // equal number
+				if (number.equals(n.getIntNumber()))
+					return true;
+			}
 		}
 		return false;
 	}

@@ -60,7 +60,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		private static final long serialVersionUID = 1;
 
 		private String[] basicTypes = { "home", "mobile", "homezone",
-				"business", "other", "fax", "sip" };
+				"business", "other", "fax", "sip", "main"};
 
 		private PhoneType sel;
 
