@@ -72,6 +72,8 @@ public class CallerList extends AbstractTableModel {
 
 	private Vector unfilteredCallerData;
 
+	private Vector alreadyKnownCalls;
+
 	private int sortColumn = 1;
 
 	private boolean sortDirection = false;
@@ -85,6 +87,7 @@ public class CallerList extends AbstractTableModel {
 		filteredCallerData = new Vector();
 		unfilteredCallerData = new Vector();
 		this.jfritz = jfritz;
+		alreadyKnownCalls = new Vector();
 	}
 
 	/**
@@ -107,7 +110,7 @@ public class CallerList extends AbstractTableModel {
 	 *
 	 */
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		return ((columnIndex == 3) && (((Call) filteredCallerData.get(rowIndex))
+		return ((columnIndex == 4) && (((Call) filteredCallerData.get(rowIndex))
 				.getPhoneNumber() != null));
 	}
 
@@ -191,7 +194,7 @@ public class CallerList extends AbstractTableModel {
 			fos = new FileOutputStream(filename);
 			PrintWriter pw = new PrintWriter(fos);
 			pw
-					.println("\"CallType\";\"Date\";\"Time\";\"Number\";\"Route\";\"Port\";\"Duration\";\"Name\";\"Address\";\"City\"");
+					.println("\"CallType\";\"Date\";\"Time\";\"Number\";\"Route\";\"Port\";\"Duration\";\"Name\";\"Address\";\"City\";\"CallByCall\"");
 			int rows[] = null;
 			if (jfritz != null && jfritz.getJframe() != null) {
 				rows = jfritz.getJframe().getCallerTable().getSelectedRows();
@@ -332,7 +335,7 @@ public class CallerList extends AbstractTableModel {
 
 	public boolean addEntry(Call call) {
 		boolean newEntry = true;
-		Enumeration en = getUnfilteredCallVector().elements();
+		Enumeration en = alreadyKnownCalls.elements();
 		while (en.hasMoreElements()) {
 			Call c = (Call) en.nextElement();
 			String nr1 = "", nr2 = "";
@@ -351,6 +354,7 @@ public class CallerList extends AbstractTableModel {
 					&& (c.getCalltype().toInt() == call.getCalltype().toInt())
 					&& (route1.equals(route2))) {
 				newEntry = false; // We already have this call
+				alreadyKnownCalls.remove(c);
 				break;
 			}
 		}
@@ -368,6 +372,7 @@ public class CallerList extends AbstractTableModel {
 	 * @throws IOException
 	 */
 	public void getNewCalls() throws WrongPasswordException, IOException {
+		alreadyKnownCalls = (Vector) unfilteredCallerData.clone();
 		Vector data = JFritzUtils.retrieveCallersFromFritzBox(JFritz
 				.getProperty("box.address"), Encryption.decrypt(JFritz
 				.getProperty("box.password")), JFritz
@@ -484,7 +489,7 @@ public class CallerList extends AbstractTableModel {
 	 * Sets a value to a specific position
 	 */
 	public void setValueAt(Object object, int rowIndex, int columnIndex) {
-		if (columnIndex == 3) {
+		if (columnIndex == 4) {
 			setPerson((Person) object, rowIndex);
 		}
 		fireTableCellUpdated(rowIndex, columnIndex);
@@ -886,10 +891,8 @@ public class CallerList extends AbstractTableModel {
 			Call call = (Call) en.nextElement();
 			if (call.getPhoneNumber() != null
 					&& person.getStandardTelephoneNumber() != null
-					&& call.getPhoneNumber().getIntNumber()
-							.equals(
-									person.getStandardTelephoneNumber()
-											.getIntNumber())) {
+					&& call.getPhoneNumber().getIntNumber().equals(
+							person.getStandardTelephoneNumber().getIntNumber())) {
 				return call;
 			}
 		}
