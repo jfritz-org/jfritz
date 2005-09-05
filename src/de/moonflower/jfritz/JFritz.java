@@ -48,10 +48,12 @@
  * - Added Callmessage-Callmonitor. See Thread-Nr. 178199 in IPPF
  * - Wait, when no network reachable (On startup, return of standby, ...)
  * - Added context menu to phonebook and callerlist
- * - New Callfilter: Route, Fixed call
+ * - New Callfilter: Route, Fixed call, CallByCall
  * - New Datefilter: Right click on date filter button
  * - Display more information in status bar
  * - Export to XML
+ * - Export CallByCall to CSV
+ * - Phonenumber with wildcard support (PhoneNumber-Type "main")
  * - Bugfix: Syslog-Monitor get Callerlist on Restart
  * - Bugfix: Check for double entries in Callerlist
  * - Bugfix: Reverselookup on call
@@ -232,7 +234,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.107 2005/09/02 18:42:53 robotniko Exp $";
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.108 2005/09/05 09:31:05 robotniko Exp $";
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -274,7 +276,7 @@ public final class JFritz {
 
 	private static PhoneBook phonebook;
 
-    private static URL ringSound, callSound;
+	private static URL ringSound, callSound;
 
 	private CallMonitor callMonitor = null;
 
@@ -379,9 +381,9 @@ public final class JFritz {
 	 */
 	private void loadSounds() {
 		ringSound = getClass().getResource(
-					"/de/moonflower/jfritz/resources/sounds/call_in.wav");
+				"/de/moonflower/jfritz/resources/sounds/call_in.wav");
 		callSound = getClass().getResource(
-					"/de/moonflower/jfritz/resources/sounds/call_out.wav");
+				"/de/moonflower/jfritz/resources/sounds/call_out.wav");
 	}
 
 	/**
@@ -664,22 +666,43 @@ public final class JFritz {
 			calledstr = JFritz.getProperty(called, "Unbekannt");
 		}
 
+		PhoneNumber callerPhoneNumber = new PhoneNumber(caller);
 		if (name.equals("Unbekannt") && !caller.equals("Unbekannt")) {
 			Debug.msg("Searchin in local database ...");
-			Person callerperson = phonebook.findPerson(new PhoneNumber(caller));
+			Person callerperson = phonebook.findPerson(callerPhoneNumber);
 			if (callerperson != null) {
 				name = callerperson.getFullname();
 				Debug.msg("Found in local database: " + name);
+				Vector numbers = new Vector();
+				numbers = callerperson.getNumbers();
+				Enumeration en = numbers.elements();
+				while (en.hasMoreElements()) {
+					PhoneNumber checkNumber = (PhoneNumber) en.nextElement();
+					if (checkNumber.getType().startsWith("main")) {
+						String number = checkNumber.getIntNumber();
+						if (callerPhoneNumber.getIntNumber().startsWith(number)) {
+							String prefix = callerPhoneNumber.getIntNumber()
+									.substring(0, number.length());
+							String extension = callerPhoneNumber.getIntNumber()
+									.substring(number.length());
+							if (extension.length() > 0) {
+								caller = prefix + " - " + extension;
+							} else {
+								caller = prefix;
+							}
+						}
+					}
+				}
 			} else {
 				Debug.msg("Searchin on dasoertliche.de ...");
-				Person person = ReverseLookup.lookup(new PhoneNumber(caller));
+				Person person = ReverseLookup.lookup(callerPhoneNumber);
 				if (!person.getFullname().equals("")) {
 					name = person.getFullname();
 					Debug.msg("Found on dasoertliche.de: " + name);
 					Debug.msg("Add person to database");
 					phonebook.addEntry(person);
 					phonebook.fireTableDataChanged();
-
+					caller = callerPhoneNumber.getIntNumber();
 				}
 			}
 		}
