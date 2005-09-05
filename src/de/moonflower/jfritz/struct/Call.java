@@ -148,10 +148,24 @@ public class Call {
 					+ "\"");
 			outString = outString
 					.concat(";\"" + getPerson().getStreet() + "\"");
-			outString = outString.concat(";\"" + getPerson().getPostalCode()
-					+ " " + getPerson().getCity() + "\"");
+			if (getPerson().getPostalCode().equals("")) {
+				outString = outString.concat(";\""
+						+ getPerson().getCity() + "\""); // city might be ""
+			} else if (getPerson().getCity().equals("")) {
+				outString = outString.concat(";\""
+						+ getPerson().getPostalCode() + "\""); // postCode might be ""
+			} else { // postCode AND city != ""
+				outString = outString.concat(";\""
+						+ getPerson().getPostalCode() + " "
+						+ getPerson().getCity() + "\"");
+			}
 		} else
 			outString = outString.concat(";\"\";\"\";\"\"");
+		if (number != null && number.hasCallByCall()) {
+			outString = outString.concat(";\"" + number.getCallByCall() + "\"");
+		} else {
+			outString = outString.concat(";\"\"");
+		}
 
 		return outString;
 	}
