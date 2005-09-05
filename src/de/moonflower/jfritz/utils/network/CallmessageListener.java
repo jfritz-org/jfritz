@@ -12,9 +12,9 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.Debug;
 
 /**
- * Thread, listens on a TCP-Port on YAC Messages Message format:
+ * Thread, listens on a TCP-Port on Callmessage messages format:
  *
- * @CALLname~number or: message
+ * @CALLname (number) or: message
  *
  * @author Robert Palmer
  *
