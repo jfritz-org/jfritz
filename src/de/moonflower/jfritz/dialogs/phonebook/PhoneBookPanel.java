@@ -312,7 +312,13 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			}
 			if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 				File file = fc.getSelectedFile();
-				list.saveToFile(file);
+				if (file.exists()) {
+					if (JOptionPane.showConfirmDialog(this, "Soll die Datei "+file.getName()+ " überschrieben werden?", "Datei überschreiben?", JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
+						list.saveToFile(file);
+					}
+				} else {
+					list.saveToFile(file);
+				}
 			}
 		} else {
 			jfritz.errorMsg("Keine einzige sinnvolle Zeile selektiert!\n\n"
