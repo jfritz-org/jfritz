@@ -125,8 +125,14 @@ public class Call {
 
 		if (route == null)
 			outString = outString.concat(";\"\"");
-		else
-			outString = outString.concat(";\"" + route + "\"");
+		else {
+			String sipRoute= JFritz.getProperty(route);
+			if (sipRoute.equals("")) {
+				outString = outString.concat(";\"" + route + "\"");
+			} else {
+				outString = outString.concat(";\"" + sipRoute + "\"");
+			}
+		}
 
 		if (port.equals("4"))
 			outString = outString.concat(";\"ISDN\"");
