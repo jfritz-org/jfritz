@@ -49,7 +49,9 @@ import de.moonflower.jfritz.dialogs.phonebook.PhoneBookPanel;
 import de.moonflower.jfritz.dialogs.quickdial.QuickDialPanel;
 import de.moonflower.jfritz.dialogs.simple.AddressPasswordDialog;
 import de.moonflower.jfritz.dialogs.stats.StatsDialog;
+import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
@@ -611,6 +613,20 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	public void showConfigDialog() {
 		configDialog = new ConfigDialog(this);
 		if (configDialog.showDialog()) {
+			if (configDialog.getSipModel().getData().size() == 0) { // Noch keine SipProvider eingelesen.
+				try {
+					Vector data = JFritzUtils.retrieveSipProvider(JFritz.getProperty("box.address","192.168.178.1"), JFritz.getProperty("box.password"), new FritzBoxFirmware(JFritz.getProperty("box.firmware")));
+					configDialog.getSipModel().setData(data);
+					configDialog.getSipModel().fireTableDataChanged();
+					jfritz.getCallerlist().fireTableDataChanged();
+				} catch (WrongPasswordException e1) {
+					jfritz.errorMsg("Passwort ungültig!");
+				} catch (IOException e1) {
+					jfritz.errorMsg("FRITZ!Box-Adresse ungültig!");
+				} catch (InvalidFirmwareException e1) {
+					jfritz.errorMsg("Firmware-Erkennung gescheitert!");
+				}
+			}
 			configDialog.storeValues();
 			jfritz.saveProperties();
 			monitorButton.setEnabled((Integer.parseInt(JFritz.getProperty(
