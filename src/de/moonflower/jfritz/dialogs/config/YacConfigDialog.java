@@ -25,112 +25,113 @@ import de.moonflower.jfritz.JFritz;
  * @author Robert Palmer
  *
  */
-public class YacConfigDialog extends JDialog {
+public class YacConfigDialog extends JDialog implements CallMonitorConfigDialog {
 
-	private int exitCode = 0;
+    private int exitCode = 0;
 
-	private JButton cancelButton, okButton;
+    private JButton cancelButton, okButton;
 
-	public static final int APPROVE_OPTION = 1;
+    public static final int APPROVE_OPTION = 1;
 
-	public static final int CANCEL_OPTION = 2;
+    public static final int CANCEL_OPTION = 2;
 
-	private JTextField yacPort;
+    private JTextField yacPort;
 
-	public YacConfigDialog(JDialog parent, JFritz jfritz) {
-		super(parent, true);
-		if (parent != null) {
-			setLocationRelativeTo(parent);
-		}
-		//		this.jfritz = jfritz;
-		initDialog();
-	}
+    public YacConfigDialog(JDialog parent, JFritz jfritz) {
+        super(parent, true);
+        if (parent != null) {
+            setLocationRelativeTo(parent);
+        }
+        //		this.jfritz = jfritz;
+        initDialog();
+    }
 
-	public void initDialog() {
-		setTitle("YacMonitor - Einstellungen");
-		setSize(270, 140);
-		drawDialog();
-		setProperties();
-	}
+    public void initDialog() {
+        setTitle("YacMonitor - Einstellungen");
+        setSize(270, 140);
+        drawDialog();
+        setProperties();
+    }
 
-	private void setProperties() {
-		yacPort.setText(JFritz.getProperty("option.yacport", "10629"));
-	}
+    private void setProperties() {
+        yacPort.setText(JFritz.getProperty("option.yacport", "10629"));
+    }
 
-	private void storeProperties() {
-		JFritz.setProperty("option.yacport", yacPort.getText());
-	}
+    private void storeProperties() {
+        JFritz.setProperty("option.yacport", yacPort.getText());
+    }
 
-	public int showYacConfigDialog() {
-		super.show();
-		return exitCode;
-	}
+    public int showConfigDialog() {
+        super.show();
+        return exitCode;
+    }
 
-	private void drawDialog() {
-		KeyListener keyListener = (new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
-				// Cancel
-				if (e.getKeyCode() == KeyEvent.VK_ESCAPE
-						|| (e.getSource() == cancelButton && e.getKeyCode() == KeyEvent.VK_ENTER)) {
-					exitCode = CANCEL_OPTION;
-					setVisible(false);
-				}
-				// OK
-				if (e.getSource() == okButton
-						&& e.getKeyCode() == KeyEvent.VK_ENTER) {
-					storeProperties();
-					exitCode = APPROVE_OPTION;
-					setVisible(false);
-				}
-			}
-		});
-		ActionListener actionListener = new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Object source = e.getSource();
-				if (source == yacPort || source == okButton) {
-					//OK
-					exitCode = APPROVE_OPTION;
-					storeProperties();
-				} else if (source == cancelButton) {
-					exitCode = CANCEL_OPTION;
-				}
-				// Close Window
-				if (source == yacPort || source == okButton
-						|| source == cancelButton) {
-					setVisible(false);
-				}
-			}
-		};
+    private void drawDialog() {
+        this.setModal(true);
+        KeyListener keyListener = (new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                // Cancel
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE
+                        || (e.getSource() == cancelButton && e.getKeyCode() == KeyEvent.VK_ENTER)) {
+                    exitCode = CANCEL_OPTION;
+                    setVisible(false);
+                }
+                // OK
+                if (e.getSource() == okButton
+                        && e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    storeProperties();
+                    exitCode = APPROVE_OPTION;
+                    setVisible(false);
+                }
+            }
+        });
+        ActionListener actionListener = new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Object source = e.getSource();
+                if (source == yacPort || source == okButton) {
+                    //OK
+                    exitCode = APPROVE_OPTION;
+                    storeProperties();
+                } else if (source == cancelButton) {
+                    exitCode = CANCEL_OPTION;
+                }
+                // Close Window
+                if (source == yacPort || source == okButton
+                        || source == cancelButton) {
+                    setVisible(false);
+                }
+            }
+        };
 
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.insets.top = 5;
-		c.insets.bottom = 5;
-		c.anchor = GridBagConstraints.WEST;
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        c.insets.top = 5;
+        c.insets.bottom = 5;
+        c.anchor = GridBagConstraints.WEST;
 
-		c.gridwidth = 1;
-		c.gridy = 0;
-		JLabel label = new JLabel("YAC-Port: ");
-		panel.add(label, c);
-		yacPort = new JTextField("", 5);
-		panel.add(yacPort, c);
+        c.gridwidth = 1;
+        c.gridy = 0;
+        JLabel label = new JLabel("YAC-Port: ");
+        panel.add(label, c);
+        yacPort = new JTextField("", 5);
+        panel.add(yacPort, c);
 
-		JPanel buttonPanel = new JPanel();
-		okButton = new JButton(JFritz.getMessage("okay"));
-		okButton.setActionCommand("ok_pressed");
-		okButton.addActionListener(actionListener);
-		okButton.addKeyListener(keyListener);
+        JPanel buttonPanel = new JPanel();
+        okButton = new JButton(JFritz.getMessage("okay"));
+        okButton.setActionCommand("ok_pressed");
+        okButton.addActionListener(actionListener);
+        okButton.addKeyListener(keyListener);
 
-		cancelButton = new JButton(JFritz.getMessage("cancel"));
-		cancelButton.setActionCommand("cancel_pressed");
-		cancelButton.addActionListener(actionListener);
-		cancelButton.addKeyListener(keyListener);
+        cancelButton = new JButton(JFritz.getMessage("cancel"));
+        cancelButton.setActionCommand("cancel_pressed");
+        cancelButton.addActionListener(actionListener);
+        cancelButton.addKeyListener(keyListener);
 
-		buttonPanel.add(okButton);
-		buttonPanel.add(cancelButton);
+        buttonPanel.add(okButton);
+        buttonPanel.add(cancelButton);
 
-		getContentPane().add(panel, BorderLayout.CENTER);
-		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
-	}
+        getContentPane().add(panel, BorderLayout.CENTER);
+        getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+    }
 }

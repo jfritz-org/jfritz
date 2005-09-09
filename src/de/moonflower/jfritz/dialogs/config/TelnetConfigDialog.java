@@ -31,7 +31,7 @@ import de.moonflower.jfritz.utils.Encryption;
  * TODO: passwort immer 5 Zeichen lang
  *
  */
-public class TelnetConfigDialog extends JDialog {
+public class TelnetConfigDialog extends JDialog implements CallMonitorConfigDialog{
 
 	private JFritz jfritz;
 
@@ -89,12 +89,13 @@ public class TelnetConfigDialog extends JDialog {
 		JFritz.setProperty("telnet.password",Encryption.encrypt(new String(passwordTextfield.getPassword())));
 	}
 
-	public int showTelnetConfigDialog() {
+	public int showConfigDialog() {
 		super.show();
 		return exitCode;
 	}
 
 	private void drawDialog() {
+	    this.setModal(true);
 		KeyListener keyListener = (new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				// Cancel

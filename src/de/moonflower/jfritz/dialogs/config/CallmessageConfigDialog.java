@@ -25,7 +25,7 @@ import de.moonflower.jfritz.JFritz;
  * @author Robert Palmer
  *
  */
-public class CallmessageConfigDialog extends JDialog {
+public class CallmessageConfigDialog extends JDialog implements CallMonitorConfigDialog{
 
 	private int exitCode = 0;
 
@@ -61,7 +61,7 @@ public class CallmessageConfigDialog extends JDialog {
 		JFritz.setProperty("option.callmessageport", callmessagePort.getText());
 	}
 
-	public int showCallmessageConfigDialog() {
+	public int showConfigDialog() {
 		super.show();
 		return exitCode;
 	}

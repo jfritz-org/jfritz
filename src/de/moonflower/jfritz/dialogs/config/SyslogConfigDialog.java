@@ -38,7 +38,7 @@ import de.moonflower.jfritz.utils.network.Telnet;
  * @author rob
  *
  */
-public class SyslogConfigDialog extends JDialog {
+public class SyslogConfigDialog extends JDialog implements CallMonitorConfigDialog {
 
 	private JFritz jfritz;
 
@@ -115,12 +115,13 @@ public class SyslogConfigDialog extends JDialog {
 				.toString(syslogPassthroughCheckBox.isSelected()));
 	}
 
-	public int showSyslogConfigDialog() {
+	public int showConfigDialog() {
 		super.show();
 		return exitCode;
 	}
 
 	private void drawDialog() {
+	    this.setModal(true);
 		KeyListener keyListener = (new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				// Cancel
