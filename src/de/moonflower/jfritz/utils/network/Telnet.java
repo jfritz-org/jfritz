@@ -64,7 +64,7 @@ public class Telnet {
 				TelnetConfigDialog telnetConfigDialog = new TelnetConfigDialog(
 						jfritz.getJframe(), jfritz);
 				telnetConfigDialog.setModal(true);
-				if (telnetConfigDialog.showTelnetConfigDialog() == TelnetConfigDialog.CANCEL_OPTION) {
+				if (telnetConfigDialog.showConfigDialog() == TelnetConfigDialog.CANCEL_OPTION) {
 					//ABBRUCH
 					return;
 				}
@@ -150,7 +150,7 @@ public class Telnet {
 							TelnetConfigDialog telnetConfigDialog = new TelnetConfigDialog(
 									jfritz.getJframe(), jfritz);
 							telnetConfigDialog.setModal(true);
-							if (telnetConfigDialog.showTelnetConfigDialog() == TelnetConfigDialog.CANCEL_OPTION) {
+							if (telnetConfigDialog.showConfigDialog() == TelnetConfigDialog.CANCEL_OPTION) {
 								//ABBRUCH
 								jfritz.stopCallMonitor();
 								return LOGIN_CANCELED;
@@ -223,7 +223,7 @@ public class Telnet {
 							TelnetConfigDialog telnetConfigDialog = new TelnetConfigDialog(
 									jfritz.getJframe(), jfritz);
 							telnetConfigDialog.setModal(true);
-							if (telnetConfigDialog.showTelnetConfigDialog() == TelnetConfigDialog.CANCEL_OPTION) {
+							if (telnetConfigDialog.showConfigDialog() == TelnetConfigDialog.CANCEL_OPTION) {
 								//ABBRUCH
 								return LOGIN_CANCELED;
 							}
