@@ -233,7 +233,7 @@ public class SyslogListener extends Thread implements CallMonitor {
 	 * @param telnet
 	 *            Telnet connection
 	 */
-	public static void restartTelefonOnFritzBox(Telnet telnet, JFritz jfritz) {
+	public static int restartTelefonOnFritzBox(Telnet telnet, JFritz jfritz) {
 		if (JOptionPane.showConfirmDialog(null,
 				"Der telefond muss neu gestartet werden.\n"
 						+ "Dabei wird ein laufendes Gespräch unterbrochen. "
@@ -258,8 +258,10 @@ public class SyslogListener extends Thread implements CallMonitor {
 			}
 			Debug.msg("telefond restarted");
 			JFritz.setProperty("telefond.laststarted", "syslogMonitor");
+			return JOptionPane.YES_OPTION;
 		} else {
 			jfritz.stopCallMonitor();
+			return JOptionPane.NO_OPTION;
 		}
 	}
 
