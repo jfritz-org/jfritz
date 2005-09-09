@@ -612,6 +612,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 */
 	public void showConfigDialog() {
 		configDialog = new ConfigDialog(this);
+		configDialog.setLocationRelativeTo(this);
 		if (configDialog.showDialog()) {
 			if (configDialog.getSipModel().getData().size() == 0) { // Noch keine SipProvider eingelesen.
 				try {
