@@ -54,6 +54,7 @@
  * - Export to XML
  * - Export CallByCall to CSV
  * - Phonenumber with wildcard support (PhoneNumber-Type "main")
+ * - Start external Program on incoming call
  * - Bugfix: Syslog-Monitor get Callerlist on Restart
  * - Bugfix: Check for double entries in Callerlist
  * - Bugfix: Reverselookup on call
@@ -174,6 +175,7 @@ package de.moonflower.jfritz;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -224,709 +226,734 @@ import de.moonflower.jfritz.dialogs.simple.CallMessageDlg;
  */
 public final class JFritz {
 
-	public final static String PROGRAM_NAME = "JFritz!";
+    public final static String PROGRAM_NAME = "JFritz!";
 
-	public final static String PROGRAM_VERSION = "0.4.3";
+    public final static String PROGRAM_VERSION = "0.4.3";
 
-	public final static String PROGRAM_URL = "http://jfritz.sourceforge.net/";
+    public final static String PROGRAM_URL = "http://jfritz.sourceforge.net/";
 
-	public final static String PROGRAM_SECRET = "jFrItZsEcReT";
+    public final static String PROGRAM_SECRET = "jFrItZsEcReT";
 
-	public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
+    public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.108 2005/09/05 09:31:05 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.109 2005/09/09 14:31:05 robotniko Exp $";
 
-	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
+    public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
-	public final static String PROPERTIES_FILE = "jfritz.properties.xml";
+    public final static String PROPERTIES_FILE = "jfritz.properties.xml";
 
-	public final static String CALLS_FILE = "jfritz.calls.xml";
+    public final static String CALLS_FILE = "jfritz.calls.xml";
 
-	public final static String QUICKDIALS_FILE = "jfritz.quickdials.xml";
+    public final static String QUICKDIALS_FILE = "jfritz.quickdials.xml";
 
-	public final static String PHONEBOOK_FILE = "jfritz.phonebook.xml";
+    public final static String PHONEBOOK_FILE = "jfritz.phonebook.xml";
 
-	public final static String CALLS_CSV_FILE = "calls.csv";
+    public final static String CALLS_CSV_FILE = "calls.csv";
 
-	public final static int SSDP_TIMEOUT = 1000;
+    public final static int SSDP_TIMEOUT = 1000;
 
-	public final static int SSDP_MAX_BOXES = 3;
+    public final static int SSDP_MAX_BOXES = 3;
 
-	public final static boolean DEVEL_VERSION = Integer
-			.parseInt(PROGRAM_VERSION.substring(PROGRAM_VERSION
-					.lastIndexOf(".") + 1)) % 2 == 1;
+    public final static boolean DEVEL_VERSION = Integer
+            .parseInt(PROGRAM_VERSION.substring(PROGRAM_VERSION
+                    .lastIndexOf(".") + 1)) % 2 == 1;
 
-	public static boolean SYSTRAY_SUPPORT = false;
+    public static boolean SYSTRAY_SUPPORT = false;
 
-	private JFritzProperties defaultProperties;
+    private JFritzProperties defaultProperties;
 
-	private static JFritzProperties properties;
+    private static JFritzProperties properties;
 
-	private static ResourceBundle messages;
+    private static ResourceBundle messages;
 
-	private SystemTray systray;
+    private SystemTray systray;
 
-	private JFritzWindow jframe;
+    private JFritzWindow jframe;
 
-	private SSDPdiscoverThread ssdpthread;
+    private SSDPdiscoverThread ssdpthread;
 
-	private CallerList callerlist;
+    private CallerList callerlist;
 
-	private static TrayIcon trayIcon;
+    private static TrayIcon trayIcon;
 
-	private static PhoneBook phonebook;
+    private static PhoneBook phonebook;
 
-	private static URL ringSound, callSound;
+    private static URL ringSound, callSound;
 
-	private CallMonitor callMonitor = null;
+    private CallMonitor callMonitor = null;
 
-	private static String HostOS = "other";
+    private static String HostOS = "other";
 
-	public static final int CALLMONITOR_START = 0;
+    public static final int CALLMONITOR_START = 0;
 
-	public static final int CALLMONITOR_STOP = 1;
+    public static final int CALLMONITOR_STOP = 1;
 
-	/**
-	 * Constructs JFritz object
-	 */
-	public JFritz(boolean fetchCalls, boolean csvExport, String csvFileName,
-			boolean clearList) {
-		loadProperties();
-		loadMessages(new Locale("de", "DE"));
-		loadSounds();
+    /**
+     * Constructs JFritz object
+     */
+    public JFritz(boolean fetchCalls, boolean csvExport, String csvFileName,
+            boolean clearList) {
+        loadProperties();
+        loadMessages(new Locale("de", "DE"));
+        loadSounds();
 
-		String osName = System.getProperty("os.name");
-		Debug.msg("Betriebssystem: " + osName);
-		if (osName.startsWith("Mac OS"))
-			HostOS = "mac";
-		else if (osName.startsWith("Windows"))
-			HostOS = "windows";
-		else if (osName.equals("Linux")) {
-			HostOS = "linux";
-		}
-		Debug.msg("JFritz runs on " + HostOS);
-
-		if (HostOS.equalsIgnoreCase("mac")) {
-			MacHandler macHandler = new MacHandler(this);
-		}
-
-		phonebook = new PhoneBook(this);
-		phonebook.loadFromXMLFile(PHONEBOOK_FILE);
-
-		callerlist = new CallerList(this);
-		callerlist.loadFromXMLFile(CALLS_FILE);
-
-		Debug.msg("Start des commandline parsing");
-		if (fetchCalls) {
-			Debug.msg("Anrufliste wird von Fritz!Box geholt..");
-			try {
-				callerlist.getNewCalls();
-			} catch (WrongPasswordException e) {
-				Debug.err(e.toString());
-			} catch (IOException e) {
-				Debug.err(e.toString());
-			} finally {
-				if (csvExport) {
-					Debug.msg("CSV-Export to " + csvFileName);
-					callerlist.saveToCSVFile(csvFileName, true);
-				}
-				if (clearList) {
-					Debug.msg("Clearing Caller List");
-					callerlist.clearList();
-				}
-				Debug.msg("JFritz! beendet sich nun.");
-				System.exit(0);
-			}
-		}
-		if (csvExport) {
-			Debug.msg("CSV-Export to " + csvFileName);
-			callerlist.saveToCSVFile(csvFileName, true);
-			if (clearList) {
-				Debug.msg("Clearing Caller List");
-				callerlist.clearList();
-			}
-			System.exit(0);
-		}
-		if (clearList) {
-			Debug.msg("Clearing Caller List");
-			callerlist.clearList();
-			System.exit(0);
-		}
-		Debug.msg("Neue Instanz von JFrame");
-		jframe = new JFritzWindow(this);
-
-		Debug.msg("Checke Systray-Support");
-
-		if (checkForSystraySupport()) {
-			try {
-				systray = SystemTray.getDefaultSystemTray();
-				createTrayMenu();
-			} catch (Exception e) {
-				Debug.err(e.toString());
-				SYSTRAY_SUPPORT = false;
-			}
-		}
-
-		Debug.msg("Suche FritzBox über UPNP / SSDP");
-
-		ssdpthread = new SSDPdiscoverThread(this, SSDP_TIMEOUT);
-		ssdpthread.start();
-
-		javax.swing.SwingUtilities.invokeLater(jframe);
-
-	}
-
-	/**
-	 * Loads sounds from resources
-	 */
-	private void loadSounds() {
-		ringSound = getClass().getResource(
-				"/de/moonflower/jfritz/resources/sounds/call_in.wav");
-		callSound = getClass().getResource(
-				"/de/moonflower/jfritz/resources/sounds/call_out.wav");
-	}
-
-	/**
-	 * Checks for systray availability
-	 */
-	private boolean checkForSystraySupport() {
-		String os = System.getProperty("os.name");
-		if (os.equals("Linux") || os.equals("Solaris")
-				|| os.startsWith("Windows")) {
-			SYSTRAY_SUPPORT = true;
-		}
-		return SYSTRAY_SUPPORT;
-	}
-
-	/**
-	 * Main method for starting JFritz!
-	 *
-	 * @param args
-	 *            Program arguments (-h -v ...)
-	 */
-	public static void main(String[] args) {
-		System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION
-				+ " (c) 2005 by " + PROGRAM_AUTHOR);
-		if (DEVEL_VERSION)
-			Debug.on();
-
-		boolean fetchCalls = false;
-		boolean clearList = false;
-		boolean csvExport = false;
-		String csvFileName = "";
-
-		CLIOptions options = new CLIOptions();
-
-		options.addOption('h', "help", null, "This short description");
-		options.addOption('v', "verbose", null, "Turn on debug information");
-		options.addOption('v', "debug", null, "Turn on debug information");
-		options.addOption('s', "systray", null, "Turn on systray support");
-		options.addOption('f', "fetch", null, "Fetch new calls and exit");
-		options.addOption('c', "clear_list", null,
-				"Clears Caller List and exit");
-		options.addOption('e', "export", "filename",
-				"Fetch calls and export to CSV file.");
-		options.addOption('l', "logfile", "filename",
-				"Writes debug messages to logfile");
-
-		Vector foundOptions = options.parseOptions(args);
-		Enumeration en = foundOptions.elements();
-		while (en.hasMoreElements()) {
-			CLIOption option = (CLIOption) en.nextElement();
-
-			switch (option.getShortOption()) {
-			case 'h':
-				System.out.println("Call: java -jar jfritz.jar [Options]");
-				options.printOptions();
-				System.exit(0);
-				break;
-			case 'v':
-				Debug.on();
-				break;
-			case 's':
-				JFritz.SYSTRAY_SUPPORT = true;
-				break;
-			case 'f':
-				fetchCalls = true;
-				break;
-			case 'e':
-				csvExport = true;
-				csvFileName = option.getParameter();
-				if (csvFileName == null) {
-					System.err.println("Parameter not found!");
-					System.exit(0);
-				}
-				break;
-			case 'c':
-				clearList = true;
-				break;
-			case 'l':
-				String logFilename = option.getParameter();
-				if (logFilename == null) {
-					System.err.println("Parameter not found!");
-					System.exit(0);
-				} else {
-					Debug.logToFile(logFilename);
-					break;
-				}
-			default:
-				break;
-			}
-		}
-		new JFritz(fetchCalls, csvExport, csvFileName, clearList);
-	}
-
-	/**
-	 * Creates the tray icon menu
-	 */
-	private void createTrayMenu() {
-		System.setProperty("javax.swing.adjustPopupLocationToFit", "false");
-
-		JPopupMenu menu = new JPopupMenu("JFritz! Menu");
-		JMenuItem menuItem = new JMenuItem(PROGRAM_NAME + " v"
-				+ PROGRAM_VERSION);
-		menuItem.setEnabled(false);
-		menu.add(menuItem);
-		menu.addSeparator();
-		menuItem = new JMenuItem(getMessage("fetchlist"));
-		menuItem.setActionCommand("fetchList");
-		menuItem.addActionListener(jframe);
-		menu.add(menuItem);
-		menuItem = new JMenuItem(getMessage("reverse_lookup"));
-		menuItem.setActionCommand("reverselookup");
-		menuItem.addActionListener(jframe);
-		menu.add(menuItem);
-		menuItem = new JMenuItem(getMessage("config"));
-		menuItem.setActionCommand("config");
-		menuItem.addActionListener(jframe);
-		menu.add(menuItem);
-		menu.addSeparator();
-		menuItem = new JMenuItem(getMessage("prog_exit"));
-		menuItem.setActionCommand("exit");
-		menuItem.addActionListener(jframe);
-		menu.add(menuItem);
-
-		ImageIcon icon = new ImageIcon(
-				JFritz.class
-						.getResource("/de/moonflower/jfritz/resources/images/trayicon.png"));
-
-		trayIcon = new TrayIcon(icon, "JFritz!", menu);
-		trayIcon.setIconAutoSize(false);
-		trayIcon
-				.setCaption(JFritz.PROGRAM_NAME + " v" + JFritz.PROGRAM_VERSION);
-		trayIcon.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				hideShowJFritz();
-			}
-		});
-		systray.addTrayIcon(trayIcon);
-	}
-
-	/**
-	 * Loads resource messages
-	 *
-	 * @param locale
-	 */
-	private void loadMessages(Locale locale) {
-		try {
-			messages = ResourceBundle.getBundle(
-					"de.moonflower.jfritz.resources.jfritz", locale);
-		} catch (MissingResourceException e) {
-			Debug.err("Can't find i18n resource!");
-			JOptionPane.showMessageDialog(null, JFritz.PROGRAM_NAME + " v"
-					+ JFritz.PROGRAM_VERSION
-					+ "\n\nCannot start if there is an '!' in path!");
-			System.exit(0);
-		}
-	}
-
-	/**
-	 * Loads properties from xml files
-	 */
-	public void loadProperties() {
-		defaultProperties = new JFritzProperties();
-		properties = new JFritzProperties(defaultProperties);
-
-		// Default properties
-		defaultProperties.setProperty("box.address", "192.168.178.1");
-		defaultProperties.setProperty("box.password", Encryption.encrypt(""));
-		defaultProperties.setProperty("country.prefix", "00");
-		defaultProperties.setProperty("area.prefix", "0");
-		defaultProperties.setProperty("country.code", "49");
-		defaultProperties.setProperty("area.code", "441");
-		defaultProperties.setProperty("fetch.timer", "5");
-		defaultProperties.setProperty("option.yacport", "10629");
-
-		try {
-			FileInputStream fis = new FileInputStream(JFritz.PROPERTIES_FILE);
-			properties.loadFromXML(fis);
-			fis.close();
-		} catch (FileNotFoundException e) {
-			Debug.err("File " + JFritz.PROPERTIES_FILE
-					+ " not found, using default values");
-		} catch (Exception e) {
-		}
-	}
-
-	/**
-	 * Saves properties to xml files
-	 */
-	public void saveProperties() {
-
-		properties.setProperty("position.left", Integer.toString(jframe
-				.getLocation().x));
-		properties.setProperty("position.top", Integer.toString(jframe
-				.getLocation().y));
-		properties.setProperty("position.width", Integer.toString(jframe
-				.getSize().width));
-		properties.setProperty("position.height", Integer.toString(jframe
-				.getSize().height));
-
-		Enumeration en = jframe.getCallerTable().getColumnModel().getColumns();
-		int i = 0;
-		while (en.hasMoreElements()) {
-			int width = ((TableColumn) en.nextElement()).getWidth();
-			properties.setProperty("column" + i + ".width", Integer
-					.toString(width));
-			i++;
-		}
-
-		try {
-			FileOutputStream fos = new FileOutputStream(JFritz.PROPERTIES_FILE);
-			properties.storeToXML(fos, "Properties for " + JFritz.PROGRAM_NAME
-					+ " v" + JFritz.PROGRAM_VERSION);
-			fos.close();
-		} catch (FileNotFoundException e) {
-		} catch (IOException e) {
-		}
-	}
-
-	/**
-	 * Displays balloon info message
-	 *
-	 * @param msg
-	 *            Message to be displayed
-	 */
-	public static void infoMsg(String msg) {
-		switch (Integer.parseInt(JFritz.getProperty("option.popuptype", "1"))) {
-		case 0: { // No Popup
-			break;
-		}
-		case 1: {
-			MessageDlg msgDialog = new MessageDlg();
-			msgDialog.showMessage(msg);
-			break;
-		}
-		case 2: {
-			trayIcon.displayMessage(JFritz.PROGRAM_NAME, msg,
-					TrayIcon.INFO_MESSAGE_TYPE);
-			break;
-		}
-		}
-	}
-
-	/**
-	 * Display call monitor message
-	 *
-	 * @param caller
-	 *            Caller number
-	 * @param called
-	 *            Called number
-	 */
-	public void callInMsg(String caller, String called) {
-		callInMsg(caller, called, "");
-	}
-
-	/**
-	 * Display call monitor message
-	 *
-	 * @param caller
-	 *            Caller number
-	 * @param called
-	 *            Called number
-	 * @param name
-	 *            Known name (only YAC)
-	 */
-	public void callInMsg(String caller, String called, String name) {
-
-		Debug.msg("Caller: " + caller);
-		Debug.msg("Called: " + called);
-		Debug.msg("Name: " + name);
-
-		String callerstr = "", calledstr = "";
-		if (name.equals("")) {
-			name = "Unbekannt";
-		}
-		if (caller.equals("")) {
-			caller = "Unbekannt";
-		}
-		if (called.equals("")) {
-			calledstr = "Unbekannt";
-		} else {
-			calledstr = JFritz.getProperty(called, "Unbekannt");
-		}
-
-		PhoneNumber callerPhoneNumber = new PhoneNumber(caller);
-		if (name.equals("Unbekannt") && !caller.equals("Unbekannt")) {
-			Debug.msg("Searchin in local database ...");
-			Person callerperson = phonebook.findPerson(callerPhoneNumber);
-			if (callerperson != null) {
-				name = callerperson.getFullname();
-				Debug.msg("Found in local database: " + name);
-				Vector numbers = new Vector();
-				numbers = callerperson.getNumbers();
-				Enumeration en = numbers.elements();
-				while (en.hasMoreElements()) {
-					PhoneNumber checkNumber = (PhoneNumber) en.nextElement();
-					if (checkNumber.getType().startsWith("main")) {
-						String number = checkNumber.getIntNumber();
-						if (callerPhoneNumber.getIntNumber().startsWith(number)) {
-							String prefix = callerPhoneNumber.getIntNumber()
-									.substring(0, number.length());
-							String extension = callerPhoneNumber.getIntNumber()
-									.substring(number.length());
-							if (extension.length() > 0) {
-								caller = prefix + " - " + extension;
-							} else {
-								caller = prefix;
-							}
-						}
-					}
-				}
-			} else {
-				Debug.msg("Searchin on dasoertliche.de ...");
-				Person person = ReverseLookup.lookup(callerPhoneNumber);
-				if (!person.getFullname().equals("")) {
-					name = person.getFullname();
-					Debug.msg("Found on dasoertliche.de: " + name);
-					Debug.msg("Add person to database");
-					phonebook.addEntry(person);
-					phonebook.fireTableDataChanged();
-					caller = callerPhoneNumber.getIntNumber();
-				}
-			}
-		}
-
-		if (name.equals("Unbekannt")) {
-			callerstr = caller;
-		} else {
-			callerstr = caller + " (" + name + ")";
-		}
-
-		Debug.msg("Caller: " + callerstr);
-		Debug.msg("Called: " + calledstr);
-		Debug.msg("Name: " + name);
-
-		switch (Integer.parseInt(JFritz.getProperty("option.popuptype", "1"))) {
-		case 0: { // No Popup
-			break;
-		}
-		case 1: {
-			CallMessageDlg msgDialog = new CallMessageDlg();
-			msgDialog.showMessage(callerstr, calledstr);
-			break;
-		}
-		case 2: {
-			String outstring = JFritz.getMessage("incoming_call") + "\nvon "
-					+ callerstr;
-			if (!calledstr.equals("Unbekannt")) {
-				outstring = outstring + "\nan " + calledstr;
-			}
-			JFritz.infoMsg(outstring);
-			break;
-		}
-		}
-
-		if (JFritzUtils.parseBoolean(JFritz.getProperty("option.playSounds",
-				"true"))) {
-			playSound(ringSound);
-		}
-	}
-
-	/**
-	 * Display call monitor message
-	 *
-	 * @param called
-	 *            Called number
-	 */
-	public static void callOutMsg(String called) {
-		String calledstr = "";
-		Debug.msg("Called: " + called);
-
-		infoMsg("Ausgehender Telefonanruf\n " + "\nan " + calledstr + "!");
-		if (JFritzUtils.parseBoolean(JFritz.getProperty("option.playSounds",
-				"true"))) {
-			playSound(callSound);
-		}
-	}
-
-	/**
-	 * Plays a sound by a given resource URL
-	 *
-	 * @param sound
-	 *            URL of sound to be played
-	 */
-	public static void playSound(URL sound) {
-		try {
-			AudioInputStream ais = AudioSystem.getAudioInputStream(sound);
-			DataLine.Info info = new DataLine.Info(Clip.class, ais.getFormat(),
-					((int) ais.getFrameLength() * ais.getFormat()
-							.getFrameSize()));
-			Clip clip = (Clip) AudioSystem.getLine(info);
-			clip.open(ais);
-			clip.start();
-			while (true) {
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e1) {
-				}
-				if (!clip.isRunning()) {
-					break;
-				}
-			}
-			clip.stop();
-			clip.close();
-		} catch (UnsupportedAudioFileException e) {
-		} catch (IOException e) {
-		} catch (LineUnavailableException e) {
-		}
-	}
-
-	/**
-	 * Displays balloon error message
-	 *
-	 * @param msg
-	 */
-	public void errorMsg(String msg) {
-		Debug.err(msg);
-		if (SYSTRAY_SUPPORT) {
-			trayIcon.displayMessage(JFritz.PROGRAM_NAME, msg,
-					TrayIcon.ERROR_MESSAGE_TYPE);
-		}
-	}
-
-	/**
-	 * @return Returns the callerlist.
-	 */
-	public final CallerList getCallerlist() {
-		return callerlist;
-	}
-
-	/**
-	 * @return Returns the phonebook.
-	 */
-	public final PhoneBook getPhonebook() {
-		return phonebook;
-	}
-
-	/**
-	 * @return Returns the jframe.
-	 */
-	public final JFritzWindow getJframe() {
-		return jframe;
-	}
-
-	/**
-	 * @return Returns the fritzbox devices.
-	 */
-	public final Vector getDevices() {
-		try {
-			ssdpthread.join();
-		} catch (InterruptedException e) {
-		}
-		return ssdpthread.getDevices();
-	}
-
-	/**
-	 * @return Returns an internationalized message.
-	 */
-	public static String getMessage(String msg) {
-		String i18n = "";
-		try {
-			i18n = messages.getString(msg);
-		} catch (MissingResourceException e) {
-			Debug.err("Can't find resource string for " + msg);
-			i18n = msg;
-		}
-		return i18n;
-	}
-
-	/**
-	 *
-	 * @param property
-	 *            Property to get the value from
-	 * @param defaultValue
-	 *            Default value to be returned if property does not exist
-	 * @return Returns value of a specific property
-	 */
-	public static String getProperty(String property, String defaultValue) {
-		return properties.getProperty(property, defaultValue);
-	}
-
-	/**
-	 *
-	 * @param property
-	 *            Property to get the value from
-	 * @return Returns value of a specific property
-	 */
-	public static String getProperty(String property) {
-		return getProperty(property, "");
-	}
-
-	/**
-	 * Sets a property to a specific value
-	 *
-	 * @param property
-	 *            Property to be set
-	 * @param value
-	 *            Value of property
-	 */
-	public static void setProperty(String property, String value) {
-		properties.setProperty(property, value);
-	}
-
-	/**
-	 * Removes a property
-	 *
-	 * @param property
-	 *            Property to be removed
-	 */
-	public static void removeProperty(String property) {
-		properties.remove(property);
-	}
-
-	public void stopCallMonitor() {
-		if (callMonitor != null) {
-			callMonitor.stopCallMonitor();
-			// Let buttons enable start of callMonitor
-			getJframe().setCallMonitorButtons(CALLMONITOR_START);
-			callMonitor = null;
-		}
-	}
-
-	public CallMonitor getCallMonitor() {
-		return callMonitor;
-	}
-
-	public void setCallMonitor(CallMonitor cm) {
-		callMonitor = cm;
-	}
-
-	public static String runsOn() {
-		return HostOS;
-	}
-
-	public void hideShowJFritz() {
-		if (jframe.isVisible()) {
-			Debug.msg("Hide JFritz-Window");
-			jframe.setState(JFrame.ICONIFIED);
-			jframe.setVisible(false);
-		} else {
-			Debug.msg("Show JFritz-Window");
-			jframe.setState(JFrame.NORMAL);
-			jframe.setVisible(true);
-			jframe.toFront();
-		}
-	}
+        String osName = System.getProperty("os.name");
+        Debug.msg("Betriebssystem: " + osName);
+        if (osName.startsWith("Mac OS"))
+            HostOS = "mac";
+        else if (osName.startsWith("Windows"))
+            HostOS = "windows";
+        else if (osName.equals("Linux")) {
+            HostOS = "linux";
+        }
+        Debug.msg("JFritz runs on " + HostOS);
+
+        if (HostOS.equalsIgnoreCase("mac")) {
+            MacHandler macHandler = new MacHandler(this);
+        }
+
+        phonebook = new PhoneBook(this);
+        phonebook.loadFromXMLFile(PHONEBOOK_FILE);
+
+        callerlist = new CallerList(this);
+        callerlist.loadFromXMLFile(CALLS_FILE);
+
+        Debug.msg("Start des commandline parsing");
+        if (fetchCalls) {
+            Debug.msg("Anrufliste wird von Fritz!Box geholt..");
+            try {
+                callerlist.getNewCalls();
+            } catch (WrongPasswordException e) {
+                Debug.err(e.toString());
+            } catch (IOException e) {
+                Debug.err(e.toString());
+            } finally {
+                if (csvExport) {
+                    Debug.msg("CSV-Export to " + csvFileName);
+                    callerlist.saveToCSVFile(csvFileName, true);
+                }
+                if (clearList) {
+                    Debug.msg("Clearing Caller List");
+                    callerlist.clearList();
+                }
+                Debug.msg("JFritz! beendet sich nun.");
+                System.exit(0);
+            }
+        }
+        if (csvExport) {
+            Debug.msg("CSV-Export to " + csvFileName);
+            callerlist.saveToCSVFile(csvFileName, true);
+            if (clearList) {
+                Debug.msg("Clearing Caller List");
+                callerlist.clearList();
+            }
+            System.exit(0);
+        }
+        if (clearList) {
+            Debug.msg("Clearing Caller List");
+            callerlist.clearList();
+            System.exit(0);
+        }
+        Debug.msg("Neue Instanz von JFrame");
+        jframe = new JFritzWindow(this);
+
+        Debug.msg("Checke Systray-Support");
+
+        if (checkForSystraySupport()) {
+            try {
+                systray = SystemTray.getDefaultSystemTray();
+                createTrayMenu();
+            } catch (Exception e) {
+                Debug.err(e.toString());
+                SYSTRAY_SUPPORT = false;
+            }
+        }
+
+        Debug.msg("Suche FritzBox über UPNP / SSDP");
+
+        ssdpthread = new SSDPdiscoverThread(this, SSDP_TIMEOUT);
+        ssdpthread.start();
+
+        javax.swing.SwingUtilities.invokeLater(jframe);
+
+    }
+
+    /**
+     * Loads sounds from resources
+     */
+    private void loadSounds() {
+        ringSound = getClass().getResource(
+                "/de/moonflower/jfritz/resources/sounds/call_in.wav");
+        callSound = getClass().getResource(
+                "/de/moonflower/jfritz/resources/sounds/call_out.wav");
+    }
+
+    /**
+     * Checks for systray availability
+     */
+    private boolean checkForSystraySupport() {
+        String os = System.getProperty("os.name");
+        if (os.equals("Linux") || os.equals("Solaris")
+                || os.startsWith("Windows")) {
+            SYSTRAY_SUPPORT = true;
+        }
+        return SYSTRAY_SUPPORT;
+    }
+
+    /**
+     * Main method for starting JFritz!
+     *
+     * @param args
+     *            Program arguments (-h -v ...)
+     */
+    public static void main(String[] args) {
+        System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION
+                + " (c) 2005 by " + PROGRAM_AUTHOR);
+        if (DEVEL_VERSION)
+            Debug.on();
+
+        boolean fetchCalls = false;
+        boolean clearList = false;
+        boolean csvExport = false;
+        String csvFileName = "";
+
+        CLIOptions options = new CLIOptions();
+
+        options.addOption('h', "help", null, "This short description");
+        options.addOption('v', "verbose", null, "Turn on debug information");
+        options.addOption('v', "debug", null, "Turn on debug information");
+        options.addOption('s', "systray", null, "Turn on systray support");
+        options.addOption('f', "fetch", null, "Fetch new calls and exit");
+        options.addOption('c', "clear_list", null,
+                "Clears Caller List and exit");
+        options.addOption('e', "export", "filename",
+                "Fetch calls and export to CSV file.");
+        options.addOption('l', "logfile", "filename",
+                "Writes debug messages to logfile");
+
+        Vector foundOptions = options.parseOptions(args);
+        Enumeration en = foundOptions.elements();
+        while (en.hasMoreElements()) {
+            CLIOption option = (CLIOption) en.nextElement();
+
+            switch (option.getShortOption()) {
+            case 'h':
+                System.out.println("Call: java -jar jfritz.jar [Options]");
+                options.printOptions();
+                System.exit(0);
+                break;
+            case 'v':
+                Debug.on();
+                break;
+            case 's':
+                JFritz.SYSTRAY_SUPPORT = true;
+                break;
+            case 'f':
+                fetchCalls = true;
+                break;
+            case 'e':
+                csvExport = true;
+                csvFileName = option.getParameter();
+                if (csvFileName == null) {
+                    System.err.println("Parameter not found!");
+                    System.exit(0);
+                }
+                break;
+            case 'c':
+                clearList = true;
+                break;
+            case 'l':
+                String logFilename = option.getParameter();
+                if (logFilename == null) {
+                    System.err.println("Parameter not found!");
+                    System.exit(0);
+                } else {
+                    Debug.logToFile(logFilename);
+                    break;
+                }
+            default:
+                break;
+            }
+        }
+        new JFritz(fetchCalls, csvExport, csvFileName, clearList);
+    }
+
+    /**
+     * Creates the tray icon menu
+     */
+    private void createTrayMenu() {
+        System.setProperty("javax.swing.adjustPopupLocationToFit", "false");
+
+        JPopupMenu menu = new JPopupMenu("JFritz! Menu");
+        JMenuItem menuItem = new JMenuItem(PROGRAM_NAME + " v"
+                + PROGRAM_VERSION);
+        menuItem.setEnabled(false);
+        menu.add(menuItem);
+        menu.addSeparator();
+        menuItem = new JMenuItem(getMessage("fetchlist"));
+        menuItem.setActionCommand("fetchList");
+        menuItem.addActionListener(jframe);
+        menu.add(menuItem);
+        menuItem = new JMenuItem(getMessage("reverse_lookup"));
+        menuItem.setActionCommand("reverselookup");
+        menuItem.addActionListener(jframe);
+        menu.add(menuItem);
+        menuItem = new JMenuItem(getMessage("config"));
+        menuItem.setActionCommand("config");
+        menuItem.addActionListener(jframe);
+        menu.add(menuItem);
+        menu.addSeparator();
+        menuItem = new JMenuItem(getMessage("prog_exit"));
+        menuItem.setActionCommand("exit");
+        menuItem.addActionListener(jframe);
+        menu.add(menuItem);
+
+        ImageIcon icon = new ImageIcon(
+                JFritz.class
+                        .getResource("/de/moonflower/jfritz/resources/images/trayicon.png"));
+
+        trayIcon = new TrayIcon(icon, "JFritz!", menu);
+        trayIcon.setIconAutoSize(false);
+        trayIcon
+                .setCaption(JFritz.PROGRAM_NAME + " v" + JFritz.PROGRAM_VERSION);
+        trayIcon.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                hideShowJFritz();
+            }
+        });
+        systray.addTrayIcon(trayIcon);
+    }
+
+    /**
+     * Loads resource messages
+     *
+     * @param locale
+     */
+    private void loadMessages(Locale locale) {
+        try {
+            messages = ResourceBundle.getBundle(
+                    "de.moonflower.jfritz.resources.jfritz", locale);
+        } catch (MissingResourceException e) {
+            Debug.err("Can't find i18n resource!");
+            JOptionPane.showMessageDialog(null, JFritz.PROGRAM_NAME + " v"
+                    + JFritz.PROGRAM_VERSION
+                    + "\n\nCannot start if there is an '!' in path!");
+            System.exit(0);
+        }
+    }
+
+    /**
+     * Loads properties from xml files
+     */
+    public void loadProperties() {
+        defaultProperties = new JFritzProperties();
+        properties = new JFritzProperties(defaultProperties);
+
+        // Default properties
+        defaultProperties.setProperty("box.address", "192.168.178.1");
+        defaultProperties.setProperty("box.password", Encryption.encrypt(""));
+        defaultProperties.setProperty("country.prefix", "00");
+        defaultProperties.setProperty("area.prefix", "0");
+        defaultProperties.setProperty("country.code", "49");
+        defaultProperties.setProperty("area.code", "441");
+        defaultProperties.setProperty("fetch.timer", "5");
+
+        try {
+            FileInputStream fis = new FileInputStream(JFritz.PROPERTIES_FILE);
+            properties.loadFromXML(fis);
+            fis.close();
+        } catch (FileNotFoundException e) {
+            Debug.err("File " + JFritz.PROPERTIES_FILE
+                    + " not found, using default values");
+        } catch (Exception e) {
+        }
+    }
+
+    /**
+     * Saves properties to xml files
+     */
+    public void saveProperties() {
+
+        properties.setProperty("position.left", Integer.toString(jframe
+                .getLocation().x));
+        properties.setProperty("position.top", Integer.toString(jframe
+                .getLocation().y));
+        properties.setProperty("position.width", Integer.toString(jframe
+                .getSize().width));
+        properties.setProperty("position.height", Integer.toString(jframe
+                .getSize().height));
+
+        Enumeration en = jframe.getCallerTable().getColumnModel().getColumns();
+        int i = 0;
+        while (en.hasMoreElements()) {
+            int width = ((TableColumn) en.nextElement()).getWidth();
+            properties.setProperty("column" + i + ".width", Integer
+                    .toString(width));
+            i++;
+        }
+
+        try {
+            FileOutputStream fos = new FileOutputStream(JFritz.PROPERTIES_FILE);
+            properties.storeToXML(fos, "Properties for " + JFritz.PROGRAM_NAME
+                    + " v" + JFritz.PROGRAM_VERSION);
+            fos.close();
+        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
+        }
+    }
+
+    /**
+     * Displays balloon info message
+     *
+     * @param msg
+     *            Message to be displayed
+     */
+    public static void infoMsg(String msg) {
+        switch (Integer.parseInt(JFritz.getProperty("option.popuptype", "1"))) {
+        case 0: { // No Popup
+            break;
+        }
+        case 1: {
+            MessageDlg msgDialog = new MessageDlg();
+            msgDialog.showMessage(msg);
+            break;
+        }
+        case 2: {
+            trayIcon.displayMessage(JFritz.PROGRAM_NAME, msg,
+                    TrayIcon.INFO_MESSAGE_TYPE);
+            break;
+        }
+        }
+    }
+
+    /**
+     * Display call monitor message
+     *
+     * @param caller
+     *            Caller number
+     * @param called
+     *            Called number
+     */
+    public void callInMsg(String caller, String called) {
+        callInMsg(caller, called, "");
+    }
+
+    /**
+     * Display call monitor message
+     *
+     * @param caller
+     *            Caller number
+     * @param called
+     *            Called number
+     * @param name
+     *            Known name (only YAC)
+     */
+    public void callInMsg(String caller, String called, String name) {
+
+        Debug.msg("Caller: " + caller);
+        Debug.msg("Called: " + called);
+        Debug.msg("Name: " + name);
+
+        String callerstr = "", calledstr = "";
+        if (name.equals("")) {
+            name = "Unbekannt";
+        }
+        if (caller.equals("")) {
+            caller = "Unbekannt";
+        }
+        if (called.equals("")) {
+            calledstr = "Unbekannt";
+        } else {
+            calledstr = JFritz.getProperty(called, "Unbekannt");
+        }
+
+        PhoneNumber callerPhoneNumber = new PhoneNumber(caller);
+        if (name.equals("Unbekannt") && !caller.equals("Unbekannt")) {
+            Debug.msg("Searchin in local database ...");
+            Person callerperson = phonebook.findPerson(callerPhoneNumber);
+            if (callerperson != null) {
+                name = callerperson.getFullname();
+                Debug.msg("Found in local database: " + name);
+                Vector numbers = new Vector();
+                numbers = callerperson.getNumbers();
+                Enumeration en = numbers.elements();
+                while (en.hasMoreElements()) {
+                    PhoneNumber checkNumber = (PhoneNumber) en.nextElement();
+                    if (checkNumber.getType().startsWith("main")) {
+                        String number = checkNumber.getIntNumber();
+                        if (callerPhoneNumber.getIntNumber().startsWith(number)) {
+                            String prefix = callerPhoneNumber.getIntNumber()
+                                    .substring(0, number.length());
+                            String extension = callerPhoneNumber.getIntNumber()
+                                    .substring(number.length());
+                            if (extension.length() > 0) {
+                                caller = prefix + " - " + extension;
+                            } else {
+                                caller = prefix;
+                            }
+                        }
+                    }
+                }
+            } else {
+                Debug.msg("Searchin on dasoertliche.de ...");
+                Person person = ReverseLookup.lookup(callerPhoneNumber);
+                if (!person.getFullname().equals("")) {
+                    name = person.getFullname();
+                    Debug.msg("Found on dasoertliche.de: " + name);
+                    Debug.msg("Add person to database");
+                    phonebook.addEntry(person);
+                    phonebook.fireTableDataChanged();
+                    caller = callerPhoneNumber.getIntNumber();
+                }
+            }
+        }
+
+        if (name.equals("Unbekannt")) {
+            callerstr = caller;
+        } else {
+            callerstr = caller + " (" + name + ")";
+        }
+
+        Debug.msg("Caller: " + callerstr);
+        Debug.msg("Called: " + calledstr);
+        Debug.msg("Name: " + name);
+
+        switch (Integer.parseInt(JFritz.getProperty("option.popuptype", "1"))) {
+        case 0: { // No Popup
+            break;
+        }
+        case 1: {
+            CallMessageDlg msgDialog = new CallMessageDlg();
+            msgDialog.showMessage(callerstr, calledstr);
+            break;
+        }
+        case 2: {
+            String outstring = JFritz.getMessage("incoming_call") + "\nvon "
+                    + callerstr;
+            if (!calledstr.equals("Unbekannt")) {
+                outstring = outstring + "\nan " + calledstr;
+            }
+            JFritz.infoMsg(outstring);
+            break;
+        }
+        }
+
+        if (JFritzUtils.parseBoolean(JFritz.getProperty("option.playSounds",
+                "true"))) {
+            playSound(ringSound);
+        }
+
+        if (JFritzUtils.parseBoolean(JFritz.getProperty(
+                "option.startExternProgram", "false"))) {
+            String programString = JFritz.getProperty("option.externProgram",
+                    "");
+            System.err.println(programString);
+            programString = programString.replaceAll("\\\\", "\\\\\\\\"); // Replace \ with \\
+            System.err.println(programString);
+            programString = programString.replaceAll("%Number", caller);
+            programString = programString.replaceAll("%Name", name);
+            programString = programString.replaceAll("%Called", caller);
+            if (programString.equals("")) {
+                Debug.errDlg("Kein externes Programm angegeben"
+                        + programString);
+                return;
+            }
+            Process process = null;
+            try {
+                process = Runtime.getRuntime().exec(programString);
+            } catch (IOException e) {
+                Debug.errDlg("Konnte externes Programm nicht ausführen: "
+                        + programString);
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    /**
+     * Display call monitor message
+     *
+     * @param called
+     *            Called number
+     */
+    public static void callOutMsg(String called) {
+        String calledstr = "";
+        Debug.msg("Called: " + called);
+
+        infoMsg("Ausgehender Telefonanruf\n " + "\nan " + calledstr + "!");
+        if (JFritzUtils.parseBoolean(JFritz.getProperty("option.playSounds",
+                "true"))) {
+            playSound(callSound);
+        }
+    }
+
+    /**
+     * Plays a sound by a given resource URL
+     *
+     * @param sound
+     *            URL of sound to be played
+     */
+    public static void playSound(URL sound) {
+        try {
+            AudioInputStream ais = AudioSystem.getAudioInputStream(sound);
+            DataLine.Info info = new DataLine.Info(Clip.class, ais.getFormat(),
+                    ((int) ais.getFrameLength() * ais.getFormat()
+                            .getFrameSize()));
+            Clip clip = (Clip) AudioSystem.getLine(info);
+            clip.open(ais);
+            clip.start();
+            while (true) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e1) {
+                }
+                if (!clip.isRunning()) {
+                    break;
+                }
+            }
+            clip.stop();
+            clip.close();
+        } catch (UnsupportedAudioFileException e) {
+        } catch (IOException e) {
+        } catch (LineUnavailableException e) {
+        }
+    }
+
+    /**
+     * Displays balloon error message
+     *
+     * @param msg
+     */
+    public void errorMsg(String msg) {
+        Debug.err(msg);
+        if (SYSTRAY_SUPPORT) {
+            trayIcon.displayMessage(JFritz.PROGRAM_NAME, msg,
+                    TrayIcon.ERROR_MESSAGE_TYPE);
+        }
+    }
+
+    /**
+     * @return Returns the callerlist.
+     */
+    public final CallerList getCallerlist() {
+        return callerlist;
+    }
+
+    /**
+     * @return Returns the phonebook.
+     */
+    public final PhoneBook getPhonebook() {
+        return phonebook;
+    }
+
+    /**
+     * @return Returns the jframe.
+     */
+    public final JFritzWindow getJframe() {
+        return jframe;
+    }
+
+    /**
+     * @return Returns the fritzbox devices.
+     */
+    public final Vector getDevices() {
+        try {
+            ssdpthread.join();
+        } catch (InterruptedException e) {
+        }
+        return ssdpthread.getDevices();
+    }
+
+    /**
+     * @return Returns an internationalized message.
+     */
+    public static String getMessage(String msg) {
+        String i18n = "";
+        try {
+            i18n = messages.getString(msg);
+        } catch (MissingResourceException e) {
+            Debug.err("Can't find resource string for " + msg);
+            i18n = msg;
+        }
+        return i18n;
+    }
+
+    /**
+     *
+     * @param property
+     *            Property to get the value from
+     * @param defaultValue
+     *            Default value to be returned if property does not exist
+     * @return Returns value of a specific property
+     */
+    public static String getProperty(String property, String defaultValue) {
+        return properties.getProperty(property, defaultValue);
+    }
+
+    /**
+     *
+     * @param property
+     *            Property to get the value from
+     * @return Returns value of a specific property
+     */
+    public static String getProperty(String property) {
+        return getProperty(property, "");
+    }
+
+    /**
+     * Sets a property to a specific value
+     *
+     * @param property
+     *            Property to be set
+     * @param value
+     *            Value of property
+     */
+    public static void setProperty(String property, String value) {
+        properties.setProperty(property, value);
+    }
+
+    /**
+     * Removes a property
+     *
+     * @param property
+     *            Property to be removed
+     */
+    public static void removeProperty(String property) {
+        properties.remove(property);
+    }
+
+    public void stopCallMonitor() {
+        if (callMonitor != null) {
+            callMonitor.stopCallMonitor();
+            // Let buttons enable start of callMonitor
+            getJframe().setCallMonitorButtons(CALLMONITOR_START);
+            callMonitor = null;
+        }
+    }
+
+    public CallMonitor getCallMonitor() {
+        return callMonitor;
+    }
+
+    public void setCallMonitor(CallMonitor cm) {
+        callMonitor = cm;
+    }
+
+    public static String runsOn() {
+        return HostOS;
+    }
+
+    public void hideShowJFritz() {
+        if (jframe.isVisible()) {
+            Debug.msg("Hide JFritz-Window");
+            jframe.setState(JFrame.ICONIFIED);
+            jframe.setVisible(false);
+        } else {
+            Debug.msg("Show JFritz-Window");
+            jframe.setState(JFrame.NORMAL);
+            jframe.setVisible(true);
+            jframe.toFront();
+        }
+    }
 
 }
