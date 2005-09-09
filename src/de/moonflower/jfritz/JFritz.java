@@ -236,7 +236,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.109 2005/09/09 14:31:05 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.110 2005/09/09 14:38:53 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -747,9 +747,7 @@ public final class JFritz {
                 "option.startExternProgram", "false"))) {
             String programString = JFritz.getProperty("option.externProgram",
                     "");
-            System.err.println(programString);
             programString = programString.replaceAll("\\\\", "\\\\\\\\"); // Replace \ with \\
-            System.err.println(programString);
             programString = programString.replaceAll("%Number", caller);
             programString = programString.replaceAll("%Name", name);
             programString = programString.replaceAll("%Called", caller);
@@ -759,6 +757,7 @@ public final class JFritz {
                 return;
             }
             Process process = null;
+            Debug.msg("Starte externes Programm: " + programString);
             try {
                 process = Runtime.getRuntime().exec(programString);
             } catch (IOException e) {
