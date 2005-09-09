@@ -511,6 +511,22 @@ public class ConfigDialog extends JDialog {
         }
     }
 
+    private void hideCallMonitorPanel() {
+        startCallMonitorButton.setVisible(false);
+        callMonitorOptionsButton.setVisible(false);
+        callMonitorAfterStartButton.setVisible(false);
+        soundButton.setVisible(false);
+        callMonitorPane.repaint();
+    }
+
+    private void showCallMonitorPanel() {
+        startCallMonitorButton.setVisible(true);
+        callMonitorAfterStartButton.setVisible(true);
+        callMonitorOptionsButton.setVisible(true);
+        soundButton.setVisible(true);
+        callMonitorPane.repaint();
+    }
+
     protected JPanel createCallMonitorPane() {
         final ConfigDialog configDialog = this;
         ActionListener actionListener = new ActionListener() {
@@ -519,52 +535,32 @@ public class ConfigDialog extends JDialog {
                     // Zur Darstellung der gewünschten Einstellungspanels
                     switch (callMonitorCombo.getSelectedIndex()) {
                     case 0: {
-                        startCallMonitorButton.setVisible(false);
-                        callMonitorOptionsButton.setVisible(false);
-                        callMonitorAfterStartButton.setVisible(false);
-                        soundButton.setVisible(false);
-                        callMonitorPane.repaint();
+                        hideCallMonitorPanel();
                         Debug.msg("Kein Anrufmonitor erwünscht");
                         stopAllCallMonitors();
                         break;
                     }
                     case 1: {
-                        startCallMonitorButton.setVisible(true);
-                        callMonitorAfterStartButton.setVisible(true);
-                        callMonitorOptionsButton.setVisible(true);
-                        soundButton.setVisible(true);
-                        callMonitorPane.repaint();
+                        showCallMonitorPanel();
                         Debug.msg("Telnet Anrufmonitor gewählt");
                         stopAllCallMonitors();
                         break;
 
                     }
                     case 2: {
-                        startCallMonitorButton.setVisible(true);
-                        callMonitorAfterStartButton.setVisible(true);
-                        callMonitorOptionsButton.setVisible(true);
-                        soundButton.setVisible(true);
-                        callMonitorPane.repaint();
+                        showCallMonitorPanel();
                         Debug.msg("Syslog Anrufmonitor gewählt");
                         stopAllCallMonitors();
                         break;
                     }
                     case 3: {
-                        startCallMonitorButton.setVisible(true);
-                        callMonitorAfterStartButton.setVisible(true);
-                        callMonitorOptionsButton.setVisible(true);
-                        soundButton.setVisible(true);
-                        callMonitorPane.repaint();
+                        showCallMonitorPanel();
                         Debug.msg("YAC Anrufmonitor gewählt");
                         stopAllCallMonitors();
                         break;
                     }
                     case 4: {
-                        startCallMonitorButton.setVisible(true);
-                        callMonitorAfterStartButton.setVisible(true);
-                        callMonitorOptionsButton.setVisible(true);
-                        soundButton.setVisible(true);
-                        callMonitorPane.repaint();
+                        showCallMonitorPanel();
                         Debug.msg("Callmessage Anrufmonitor gewählt");
                         stopAllCallMonitors();
                         break;
