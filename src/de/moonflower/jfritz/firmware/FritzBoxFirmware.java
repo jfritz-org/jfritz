@@ -113,6 +113,10 @@ public class FritzBoxFirmware {
 			mod = firmware.substring(firmware.indexOf("mod"));
 			firmware = firmware.substring(0, firmware.indexOf("mod"));
 		}
+		else if (firmware.indexOf("-")>0) { // BETA Firmware von AVM
+			mod = firmware.substring(firmware.indexOf("-"));
+			firmware = firmware.substring(0, firmware.indexOf("-"));
+		}
 		String[] parts = firmware.split("\\.");
 		if (parts.length != 3)
 			throw new InvalidFirmwareException("Firmware number crippled");
