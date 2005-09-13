@@ -34,6 +34,9 @@ public class ReverseLookup {
 		} else if (number.isFreeCall()) {
 			newPerson = new Person("", "FreeCall");
 			newPerson.addNumber(number);
+		} else if (number.isSIPNumber()) {
+		    newPerson = new Person ();
+		    newPerson.addNumber(number);
 		} else {
 			newPerson = lookupDasOertliche(number.getAreaNumber());
 		}
