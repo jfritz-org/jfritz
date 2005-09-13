@@ -58,6 +58,7 @@ import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
+import de.moonflower.jfritz.utils.JTablePrint;
 import de.moonflower.jfritz.utils.ReverseLookup;
 import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.SwingWorker;
@@ -358,6 +359,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		item.setActionCommand("reverselookup");
 		item.addActionListener(this);
 		jfritzMenu.add(item);
+
 		item = new JMenuItem(JFritz.getMessage("export_csv"), 'c');
 		item.setActionCommand("export_csv");
 		item.addActionListener(this);
@@ -989,6 +991,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 */
 	public final PhoneBookPanel getPhoneBookPanel() {
 		return phoneBookPanel;
+	}
+
+	/**
+	 * @return Returns the quickDialPanel.
+	 */
+	public final QuickDialPanel getQuickDialPanel() {
+		return quickDialPanel;
 	}
 
 	public void activatePhoneBook() {
