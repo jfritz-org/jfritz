@@ -115,6 +115,7 @@ public class PhoneNumber implements Comparable {
 				|| (number.startsWith("+")) // International number
 				|| isSIPNumber() // SIP Number
 				|| isEmergencyCall() // Emergency
+				|| isQuickDial() // FritzBox QuickDial
 		) {
 			return number;
 		}
@@ -230,7 +231,11 @@ public class PhoneNumber implements Comparable {
 	 * @return True if number is a short quickdial number
 	 */
 	public boolean isQuickDial() {
-		return (number.length() < 3);
+	    if (number.startsWith("**7") || number.length() < 3) {
+	        return true;
+	    } else {
+	        return false;
+	    }
 	}
 
 	/**
