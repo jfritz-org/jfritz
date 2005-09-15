@@ -12,6 +12,8 @@ package de.moonflower.jfritz.dialogs.sip;
 public class SipProvider {
 	private int providerID;
 
+	private boolean active;
+
 	private String providerName, phoneNumber;
 
 	public SipProvider(int providerID, String phoneNumber, String providerName) {
@@ -44,4 +46,13 @@ public class SipProvider {
 	public final int getProviderID() {
 		return providerID;
 	}
+
+	public final void setActive(boolean state) {
+	    active = state;
+	}
+
+	public final boolean isActive() {
+	    return active;
+	}
+
 }

@@ -15,68 +15,74 @@ import javax.swing.table.AbstractTableModel;
  * TODO: I18N
  */
 public class SipProviderTableModel extends AbstractTableModel {
-	private static final long serialVersionUID = 1;
-	private final String columnNames[] = { "ID", "Aktiv", "SIP-Nummer",
-			"Provider" };
+    private static final long serialVersionUID = 1;
 
-	private Vector data;
+    private final String columnNames[] = { "ID", "Aktiv", "SIP-Nummer",
+            "Provider" };
 
-	public SipProviderTableModel() {
-		super();
-		data = new Vector();
-	}
+    private Vector data;
 
-	/**
-	 * @see javax.swing.table.TableModel#getRowCount()
-	 */
-	public int getRowCount() {
-		return data.size();
-	}
+    public SipProviderTableModel() {
+        super();
+        data = new Vector();
+    }
 
-	/**
-	 * @see javax.swing.table.TableModel#getColumnCount()
-	 */
-	public int getColumnCount() {
-		return columnNames.length;
-	}
+    /**
+     * @see javax.swing.table.TableModel#getRowCount()
+     */
+    public int getRowCount() {
+        return data.size();
+    }
 
-	/**
-	 * @see javax.swing.table.TableModel#getValueAt(int, int)
-	 */
-	public Object getValueAt(int rowIndex, int columnIndex) {
-		SipProvider sip = (SipProvider) data.get(rowIndex);
-		switch (columnIndex) {
-		case 0:
-			return Integer.toString(sip.getProviderID());
-		case 2:
-			return sip.getNumber();
-		case 3:
-			return sip.getProvider();
-		default:
-			return "?";
-		}
-	}
+    /**
+     * @see javax.swing.table.TableModel#getColumnCount()
+     */
+    public int getColumnCount() {
+        return columnNames.length;
+    }
 
-	public String getColumnName(int column) {
-		return columnNames[column];
-	}
+    /**
+     * @see javax.swing.table.TableModel#getValueAt(int, int)
+     */
+    public Object getValueAt(int rowIndex, int columnIndex) {
+        SipProvider sip = (SipProvider) data.get(rowIndex);
+        switch (columnIndex) {
+        case 0:
+            return Integer.toString(sip.getProviderID());
+        case 1:
+            if (sip.isActive())
+                return "Ja";
+            else
+                return "Nein";
+        case 2:
+            return sip.getNumber();
+        case 3:
+            return sip.getProvider();
+        default:
+            return "?";
+        }
+    }
 
-	/**
-	 * @return Returns the data.
-	 */
-	public final Vector getData() {
-		return data;
-	}
+    public String getColumnName(int column) {
+        return columnNames[column];
+    }
 
-	/**
-	 * @param data
-	 *            The data to set.
-	 */
-	public final void setData(Vector data) {
-		this.data = data;
-	}
+    /**
+     * @return Returns the data.
+     */
+    public final Vector getData() {
+        return data;
+    }
 
-	public final void addProvider(SipProvider sip) {
-		data.add(sip);
-	}
+    /**
+     * @param data
+     *            The data to set.
+     */
+    public final void setData(Vector data) {
+        this.data = data;
+    }
+
+    public final void addProvider(SipProvider sip) {
+        data.add(sip);
+    }
 }

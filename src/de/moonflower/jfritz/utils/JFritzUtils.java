@@ -91,6 +91,8 @@ public class JFritzUtils {
             + "\\s*<td class=\"c2\">([^<]*)</td>"
             + "\\s*<td class=\"c3\"><script type=\"text/javascript\">document.write\\(ProviderDisplay\\(\"([^\"]*)\"\\)\\);</script></td>";
 
+    final static String PATTERN_SIPPROVIDER_ACTIVE = "<input type=\"hidden\" name=\"sip:settings/sip(\\d)/activated\" value=\"(\\d)\" id=\"uiPostActivsip";
+
     /**
      * Detects type of fritz box by detecting the firmware version
      *
@@ -229,6 +231,22 @@ public class JFritzUtils {
                 Debug.msg("SIP-Provider: " + list.lastElement());
             }
         }
+        p = Pattern.compile(PATTERN_SIPPROVIDER_ACTIVE);
+        m = p.matcher(data);
+        while (m.find()) {
+            Enumeration en = list.elements();
+            while (en.hasMoreElements()) {
+                SipProvider sipProvider = (SipProvider) en.nextElement();
+                if (sipProvider.getProviderID() == Integer.parseInt(m.group(1))) {
+                    if (Integer.parseInt(m.group(2)) == 1) {
+                        sipProvider.setActive(true);
+                    } else {
+                        sipProvider.setActive(false);
+                    }
+                }
+            }
+        }
+
         return list;
     }
 
