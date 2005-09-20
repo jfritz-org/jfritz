@@ -41,7 +41,6 @@
  * JFritz! 0.4.3
  * - CallByCall information is saved (only 010xy and 0100yy)
  * - Added support for MacOSX Application Menu
- * - VCard Export moved from CallerTable to PhoneBook
  * - Telnet: Timeout handling
  * - Telnet-Callmonitor: support for username, password
  * - Syslog-Callmonitor: syslogd and telefond check configurable
@@ -54,10 +53,14 @@
  * - Export to XML
  * - Export CallByCall to CSV
  * - Phonenumber with wildcard support (PhoneNumber-Type "main")
- * - Start external Program on incoming call
+ * - Start external Program on incoming call (%Number, %Name, %Called)
  * - Bugfix: Syslog-Monitor get Callerlist on Restart
  * - Bugfix: Check for double entries in Callerlist
  * - Bugfix: Reverselookup on call
+ *
+ * Internal:
+ * - VCard Export moved from CallerTable to PhoneBook
+ *
  *
  * JFritz! 0.4.2
  * - CallByCall information is saved
@@ -175,7 +178,6 @@ package de.moonflower.jfritz;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -228,15 +230,15 @@ public final class JFritz {
 
     public final static String PROGRAM_NAME = "JFritz!";
 
-    public final static String PROGRAM_VERSION = "0.4.3";
+    public final static String PROGRAM_VERSION = "0.4.4";
 
     public final static String PROGRAM_URL = "http://jfritz.sourceforge.net/";
 
     public final static String PROGRAM_SECRET = "jFrItZsEcReT";
 
-    public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/documentation.php";
+    public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/doc/index.html";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.110 2005/09/09 14:38:53 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.111 2005/09/20 11:32:12 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -750,7 +752,7 @@ public final class JFritz {
             programString = programString.replaceAll("\\\\", "\\\\\\\\"); // Replace \ with \\
             programString = programString.replaceAll("%Number", caller);
             programString = programString.replaceAll("%Name", name);
-            programString = programString.replaceAll("%Called", caller);
+            programString = programString.replaceAll("%Called", called);
             if (programString.equals("")) {
                 Debug.errDlg("Kein externes Programm angegeben"
                         + programString);
