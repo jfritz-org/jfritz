@@ -251,7 +251,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 		JPanel toolbarPanel = new JPanel();
 		toolbarPanel.setLayout(new BorderLayout());
-		toolbarPanel.add(upperToolBar, BorderLayout.NORTH);
+//		Icons sind noch zu groß, deshalb erst einmal auskommentiert
+//		toolbarPanel.add(upperToolBar, BorderLayout.NORTH);
 		toolbarPanel.add(lowerToolBar, BorderLayout.SOUTH);
 
 		return toolbarPanel;
