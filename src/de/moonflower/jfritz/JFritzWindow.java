@@ -360,21 +360,30 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		item.addActionListener(this);
 		jfritzMenu.add(item);
 
+		// Drucken funktioniert schon, aber wir sollten vielleicht eine externe Bibliothek benutzen.
+		// item = new JMenuItem("Drucken");
+		// item.setActionCommand("print_callerlist");
+		// item.addActionListener(this);
+		// item.setEnabled(JFritz.DEVEL_VERSION);
+		// jfritzMenu.add(item);
+
 		item = new JMenuItem(JFritz.getMessage("export_csv"), 'c');
 		item.setActionCommand("export_csv");
 		item.addActionListener(this);
 		exportMenu.add(item);
 
-		item = new JMenuItem(JFritz.getMessage("export_excel"), 'c');
-		item.setActionCommand("export_excel");
-		item.addActionListener(this);
-		item.setEnabled(JFritz.DEVEL_VERSION);
-		exportMenu.add(item);
+// TODO: Können wir von mir aus (Robert) entfernen. In Exel kann man auch CSV-Dateien importieren
+//		item = new JMenuItem(JFritz.getMessage("export_excel"), 'c');
+//		item.setActionCommand("export_excel");
+//		item.addActionListener(this);
+//		item.setEnabled(JFritz.DEVEL_VERSION);
+//		exportMenu.add(item);
 
-		item = new JMenuItem(JFritz.getMessage("export_openoffice"), 'c');
-		item.setActionCommand("export_openoffice");
-		item.addActionListener(this);
-		item.setEnabled(JFritz.DEVEL_VERSION);
+//		 TODO: Können wir von mir aus (Robert) entfernen. In OpenOffice kann man auch CSV-Dateien importieren
+//		item = new JMenuItem(JFritz.getMessage("export_openoffice"), 'c');
+//		item.setActionCommand("export_openoffice");
+//		item.addActionListener(this);
+//		item.setEnabled(JFritz.DEVEL_VERSION);
 		exportMenu.add(item);
 		jfritzMenu.add(exportMenu);
 
@@ -834,6 +843,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			BrowserLaunch.openURL(JFritz.PROGRAM_URL);
 		} else if (e.getActionCommand() == "export_csv")
 			exportCSV();
+//		else if (e.getActionCommand() == "print_callerlist") {
+//		    printCallerList();
+//		}
 		else if (e.getActionCommand() == "config")
 			showConfigDialog();
 		else if (e.getActionCommand() == "callerlist")
@@ -959,6 +971,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			}
 		}
 	}
+//
+//	public void printCallerList() {
+//	    JTablePrint tablePrint = new JTablePrint();
+//	    tablePrint.printJTable(jfritz.getJframe().getCallerTable());
+//	}
 
 	public ImageIcon getImage(String filename) {
 		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(
