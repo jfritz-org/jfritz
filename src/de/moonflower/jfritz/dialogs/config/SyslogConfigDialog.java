@@ -42,13 +42,9 @@ public class SyslogConfigDialog extends JDialog implements CallMonitorConfigDial
 
 	private JFritz jfritz;
 
-	private JLabel userNameLabel;
-
 	private JCheckBox checkSyslog;
 
 	private JCheckBox checkTelefon;
-
-	private JLabel passwordLabel;
 
 	private JButton okButton, cancelButton;
 

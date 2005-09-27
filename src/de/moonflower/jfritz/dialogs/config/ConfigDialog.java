@@ -69,7 +69,7 @@ public class ConfigDialog extends JDialog {
 
     private JFritz jfritz;
 
-    private JComboBox addressCombo, callMonitorCombo, ipAddressComboBox;
+    private JComboBox addressCombo, callMonitorCombo;
 
     private JTextField address, areaCode, countryCode, areaPrefix,
             countryPrefix, externProgramTextField;
@@ -89,7 +89,7 @@ public class ConfigDialog extends JDialog {
             notifyOnCallsButton, confirmOnExitButton, startMinimizedButton,
             timerAfterStartButton, passwordAfterStartButton, soundButton,
             callMonitorAfterStartButton, lookupAfterFetchButton,
-            syslogPassthroughCheckBox, showCallByCallButton, externProgramCheckBox;
+            showCallByCallButton, externProgramCheckBox;
 
     private JPanel callMonitorPane;
 

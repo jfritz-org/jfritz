@@ -33,15 +33,9 @@ import de.moonflower.jfritz.utils.Encryption;
  */
 public class TelnetConfigDialog extends JDialog implements CallMonitorConfigDialog{
 
-	private JFritz jfritz;
-
-	private JLabel userNameLabel;
-
 	private JPasswordField passwordTextfield;
 
 	private JTextField userNameTextfield;
-
-	private JLabel passwordLabel;
 
 	private JButton okButton, cancelButton;
 
@@ -55,7 +49,6 @@ public class TelnetConfigDialog extends JDialog implements CallMonitorConfigDial
 		if (parent != null) {
 			setLocationRelativeTo(parent);
 		}
-		this.jfritz = jfritz;
 		initDialog();
 	}
 
@@ -64,7 +57,6 @@ public class TelnetConfigDialog extends JDialog implements CallMonitorConfigDial
 		if (parent != null) {
 			setLocationRelativeTo(parent);
 		}
-		this.jfritz = jfritz;
 		initDialog();
 	}
 	public void initDialog() {

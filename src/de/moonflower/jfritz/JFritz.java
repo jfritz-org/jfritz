@@ -238,7 +238,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/doc/index.html";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.111 2005/09/20 11:32:12 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.112 2005/09/27 15:27:20 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -758,10 +758,9 @@ public final class JFritz {
                         + programString);
                 return;
             }
-            Process process = null;
             Debug.msg("Starte externes Programm: " + programString);
             try {
-                process = Runtime.getRuntime().exec(programString);
+                Runtime.getRuntime().exec(programString);
             } catch (IOException e) {
                 Debug.errDlg("Konnte externes Programm nicht ausführen: "
                         + programString);
