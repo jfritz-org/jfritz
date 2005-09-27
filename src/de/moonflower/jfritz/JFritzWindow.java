@@ -5,13 +5,13 @@ package de.moonflower.jfritz;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Timer;
@@ -26,7 +26,6 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButtonMenuItem;
@@ -851,7 +850,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		else if (e.getActionCommand() == "callerlist")
 			tabber.setSelectedComponent(callerListPanel);
 		else if (e.getActionCommand() == "phonebook")
-			tabber.setSelectedComponent(phoneBookPanel);
+			activatePhoneBook();
 		else if (e.getActionCommand() == "quickdial")
 			tabber.setSelectedComponent(quickDialPanel);
 		else if (e.getActionCommand() == "stats")
@@ -1018,6 +1017,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	}
 
 	public void activatePhoneBook() {
+	    Rectangle rect = phoneBookPanel.getPhoneBookTable().getCellRect(phoneBookPanel.getPhoneBookTable().getSelectedRow(), 0, true);
+	    phoneBookPanel.getPhoneBookTable().scrollRectToVisible(rect);
 		tabber.setSelectedComponent(phoneBookPanel);
 	}
 
