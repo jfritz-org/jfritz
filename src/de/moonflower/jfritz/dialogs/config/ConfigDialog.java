@@ -326,7 +326,6 @@ public class ConfigDialog extends JDialog {
         c.gridy = 2;
         label = new JLabel("FRITZ!Box: ");
         boxpane.add(label, c);
-        address = new JTextField("", 16);
 
         addressCombo = new JComboBox();
         Enumeration en = devices.elements();
@@ -343,12 +342,14 @@ public class ConfigDialog extends JDialog {
         label = new JLabel("IP-Addresse: ");
         boxpane.add(label, c);
         address = new JTextField("", 16);
+        address.setMinimumSize(new Dimension(200,20));
         boxpane.add(address, c);
 
         c.gridy = 4;
         label = new JLabel("Passwort: ");
         boxpane.add(label, c);
         pass = new JPasswordField("", 16);
+        pass.setMinimumSize(new Dimension(200,20));
         boxpane.add(pass, c);
 
         c.gridy = 5;
@@ -674,6 +675,7 @@ public class ConfigDialog extends JDialog {
         pane.add(externProgramCheckBox, c);
 
         externProgramTextField = new JTextField("", 40);
+        externProgramTextField.setMinimumSize(new Dimension(300,20));
         c.gridy = 4;
         pane.add(externProgramTextField, c);
 
