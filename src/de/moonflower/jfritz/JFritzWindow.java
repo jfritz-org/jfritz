@@ -626,11 +626,12 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		if (configDialog.showDialog()) {
 			configDialog.storeValues();
 			jfritz.saveProperties();
-			if (configDialog.getSipModel().getData().size() == 0) { // Noch keine SipProvider eingelesen.
+			if (jfritz.getSIPProviderTableModel().getProviderList().size() == 0) { // Noch keine SipProvider eingelesen.
 				try {
 					Vector data = JFritzUtils.retrieveSipProvider(JFritz.getProperty("box.address","192.168.178.1"), JFritz.getProperty("box.password"), new FritzBoxFirmware(JFritz.getProperty("box.firmware")));
-					configDialog.getSipModel().setData(data);
-					configDialog.getSipModel().fireTableDataChanged();
+					jfritz.getSIPProviderTableModel().setProviderList(data);
+					jfritz.getSIPProviderTableModel().fireTableDataChanged();
+					jfritz.getSIPProviderTableModel().saveToXMLFile(JFritz.SIPPROVIDER_FILE);
 					jfritz.getCallerlist().fireTableDataChanged();
 				} catch (WrongPasswordException e1) {
 					jfritz.errorMsg("Passwort ungültig!");

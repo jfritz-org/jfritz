@@ -48,7 +48,6 @@ import javax.swing.JRadioButton;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
-import de.moonflower.jfritz.dialogs.sip.SipProviderTableModel;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
@@ -96,8 +95,6 @@ public class ConfigDialog extends JDialog {
     private JLabel boxtypeLabel, macLabel, timerLabel;
 
     private FritzBoxFirmware firmware;
-
-    private SipProviderTableModel sipmodel;
 
     private boolean pressed_OK = false;
 
@@ -213,15 +210,6 @@ public class ConfigDialog extends JDialog {
         } catch (InvalidFirmwareException e) {
         }
         setBoxTypeLabel();
-        for (int i = 0; i < 10; i++) {
-            String sipstr = JFritz.getProperty("SIP" + i);
-            if (sipstr != null && sipstr.length() > 0) {
-                String[] parts = sipstr.split("@");
-                SipProvider sip = new SipProvider(i, parts[0], parts[1]);
-                sipmodel.addProvider(sip);
-            }
-        }
-        // TODO: Set SIP active state AND set SIP registered state
     }
 
     /**
@@ -296,11 +284,7 @@ public class ConfigDialog extends JDialog {
             JFritz.removeProperty("box.firmware");
         }
 
-        Enumeration en = sipmodel.getData().elements();
-        while (en.hasMoreElements()) {
-            SipProvider sip = (SipProvider) en.nextElement();
-            JFritz.setProperty("SIP" + sip.getProviderID(), sip.toString());
-        }
+        jfritz.getSIPProviderTableModel().saveToXMLFile(JFritz.SIPPROVIDER_FILE);
     }
 
     protected JPanel createBoxPane(ActionListener actionListener) {
@@ -411,8 +395,7 @@ public class ConfigDialog extends JDialog {
         c.anchor = GridBagConstraints.WEST;
 
         JPanel sipButtonPane = new JPanel();
-        sipmodel = new SipProviderTableModel();
-        JTable siptable = new JTable(sipmodel) {
+        JTable siptable = new JTable(jfritz.getSIPProviderTableModel()) {
             private static final long serialVersionUID = 1;
 
             public Component prepareRenderer(TableCellRenderer renderer,
@@ -805,8 +788,8 @@ public class ConfigDialog extends JDialog {
                     try {
                         Vector data = JFritzUtils.retrieveSipProvider(address
                                 .getText(), password, firmware);
-                        sipmodel.setData(data);
-                        sipmodel.fireTableDataChanged();
+                        jfritz.getSIPProviderTableModel().setProviderList(data);
+                        jfritz.getSIPProviderTableModel().fireTableDataChanged();
                         jfritz.getCallerlist().fireTableDataChanged();
 
                     } catch (WrongPasswordException e1) {
@@ -896,9 +879,5 @@ public class ConfigDialog extends JDialog {
             startCallMonitorButton.setSelected(true);
             jfritz.getJframe().getMonitorButton().setSelected(true);
         }
-    }
-
-    public SipProviderTableModel getSipModel() {
-        return sipmodel;
     }
 }

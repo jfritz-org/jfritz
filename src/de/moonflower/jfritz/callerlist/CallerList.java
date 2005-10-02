@@ -35,6 +35,7 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
@@ -470,11 +471,14 @@ public class CallerList extends AbstractTableModel {
 			return call.getPort();
 		case 6:
 			if (call.getRoute().startsWith("SIP")) {
-				String sipstr = JFritz.getProperty(call.getRoute());
-				if (sipstr != null) {
-					return sipstr;
-				} else
-					return call.getRoute();
+			    Enumeration en = jfritz.getSIPProviderTableModel().getProviderList().elements();
+			    while (en.hasMoreElements()) {
+			        SipProvider sipProvider = (SipProvider) en.nextElement();
+			        if (sipProvider.getProviderID() == Integer.parseInt(call.getRoute().substring(3))) {
+			            return sipProvider.toString();
+			        }
+			    }
+			    return call.getRoute();
 			}
 			return call.getRoute();
 		case 7:

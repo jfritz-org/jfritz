@@ -221,6 +221,7 @@ import de.moonflower.jfritz.utils.ReverseLookup;
 import de.moonflower.jfritz.utils.network.SSDPdiscoverThread;
 import de.moonflower.jfritz.utils.network.CallMonitor;
 import de.moonflower.jfritz.dialogs.simple.CallMessageDlg;
+import de.moonflower.jfritz.dialogs.sip.SipProviderTableModel;
 
 /**
  * @author Arno Willig
@@ -238,7 +239,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/doc/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.113 2005/10/02 12:18:19 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.114 2005/10/02 15:16:10 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -249,6 +250,8 @@ public final class JFritz {
     public final static String QUICKDIALS_FILE = "jfritz.quickdials.xml";
 
     public final static String PHONEBOOK_FILE = "jfritz.phonebook.xml";
+
+    public final static String SIPPROVIDER_FILE = "jfritz.sipprovider.xml";
 
     public final static String CALLS_CSV_FILE = "calls.csv";
 
@@ -280,6 +283,8 @@ public final class JFritz {
 
     private static PhoneBook phonebook;
 
+    private static SipProviderTableModel sipprovider;
+
     private static URL ringSound, callSound;
 
     private CallMonitor callMonitor = null;
@@ -296,6 +301,7 @@ public final class JFritz {
     public JFritz(boolean fetchCalls, boolean csvExport, String csvFileName,
             boolean clearList) {
         loadProperties();
+        clearUnnecesseryProperties();
         loadMessages(new Locale("de", "DE"));
         loadSounds();
 
@@ -311,7 +317,7 @@ public final class JFritz {
         Debug.msg("JFritz runs on " + HostOS);
 
         if (HostOS.equalsIgnoreCase("mac")) {
-            MacHandler macHandler = new MacHandler(this);
+            new MacHandler(this);
         }
 
         phonebook = new PhoneBook(this);
@@ -319,6 +325,9 @@ public final class JFritz {
 
         callerlist = new CallerList(this);
         callerlist.loadFromXMLFile(CALLS_FILE);
+
+        sipprovider = new SipProviderTableModel();
+        sipprovider.loadFromXMLFile(SIPPROVIDER_FILE);
 
         Debug.msg("Start des commandline parsing");
         if (fetchCalls) {
@@ -378,6 +387,12 @@ public final class JFritz {
 
         javax.swing.SwingUtilities.invokeLater(jframe);
 
+    }
+
+    public void clearUnnecesseryProperties() {
+        for (int i=0; i<10; i++) {
+            JFritz.removeProperty("SIP"+i);
+        }
     }
 
     /**
@@ -954,6 +969,10 @@ public final class JFritz {
             jframe.setVisible(true);
             jframe.toFront();
         }
+    }
+
+    public SipProviderTableModel getSIPProviderTableModel() {
+        return sipprovider;
     }
 
 }
