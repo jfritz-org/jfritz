@@ -230,15 +230,15 @@ public final class JFritz {
 
     public final static String PROGRAM_NAME = "JFritz!";
 
-    public final static String PROGRAM_VERSION = "0.4.4";
+    public final static String PROGRAM_VERSION = "0.4.5";
 
     public final static String PROGRAM_URL = "http://jfritz.sourceforge.net/";
 
     public final static String PROGRAM_SECRET = "jFrItZsEcReT";
 
-    public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/doc/index.html";
+    public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/doc/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.112 2005/09/27 15:27:20 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.113 2005/10/02 12:18:19 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
