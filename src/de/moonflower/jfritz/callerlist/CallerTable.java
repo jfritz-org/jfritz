@@ -166,6 +166,12 @@ public class CallerTable extends JTable {
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
 				"column7.width", "60")));
 
+		col = getColumnModel().getColumn(8);
+		col.setHeaderValue("Kosten");
+		headerTips.setToolTip(col, "Angefallene Kosten");
+		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
+				"column8.width", "60")));
+
 		getTableHeader().addMouseMotionListener(headerTips);
 	}
 
