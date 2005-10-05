@@ -62,6 +62,8 @@ public class PhoneBookTable extends JTable {
 				new CallTypeDateCellRenderer());
 		getColumnModel().getColumn(0).setMinWidth(50);
 		getColumnModel().getColumn(0).setMaxWidth(50);
+		getTableHeader().addMouseListener(new ColumnHeaderListener(getModel()));
+
 	}
 
 	public Component prepareRenderer(TableCellRenderer renderer, int rowIndex,
