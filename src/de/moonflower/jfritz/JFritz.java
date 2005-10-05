@@ -39,6 +39,7 @@
  * JFritz! 0.4.5
  * - Unterstützung für FRITZ!Box Firmware .85
  * - Kostenabrechnung hinzugefügt
+ * - Unterstützung für Freiminuten
  * - Suche über UPNP/SSDP abschaltbar
  * - Adressbuch nun nach allen Spalten sortierbar
  * - Bugfix: Firmware konnte nicht erkannt werden
@@ -251,7 +252,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/doc/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.116 2005/10/05 10:07:50 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.117 2005/10/05 21:24:13 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -335,11 +336,11 @@ public final class JFritz {
         phonebook = new PhoneBook(this);
         phonebook.loadFromXMLFile(PHONEBOOK_FILE);
 
-        callerlist = new CallerList(this);
-        callerlist.loadFromXMLFile(CALLS_FILE);
-
         sipprovider = new SipProviderTableModel();
         sipprovider.loadFromXMLFile(SIPPROVIDER_FILE);
+
+        callerlist = new CallerList(this);
+        callerlist.loadFromXMLFile(CALLS_FILE);
 
         Debug.msg("Start des commandline parsing");
         if (fetchCalls) {
