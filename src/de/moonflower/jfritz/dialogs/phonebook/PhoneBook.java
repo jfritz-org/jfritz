@@ -56,9 +56,64 @@ public class PhoneBook extends AbstractTableModel {
 			"address", "city", "last_call" };
 
 	private Vector filteredPersons;
+
 	private Vector unfilteredPersons;
 
 	private JFritz jfritz;
+
+	private int sortColumn = 1;
+
+	private boolean sortDirection = true;
+
+	/**
+	 * Sort table model rows by a specific column and direction
+	 *
+	 * @param col
+	 *            Index of column to be sorted by
+	 * @param asc
+	 *            Order of sorting
+	 */
+	public void sortAllFilteredRowsBy(int col, boolean asc) {
+		//		Debug.msg("Sorting column " + col + " " + asc);
+		Collections.sort(filteredPersons, new ColumnSorter(col, asc));
+		fireTableDataChanged();
+//		fireTableStructureChanged();
+	}
+
+	/**
+	 * Sort table model rows by a specific column. The direction is determined
+	 * automatically.
+	 *
+	 * @param col
+	 *            Index of column to be sorted by
+	 */
+	public void sortAllFilteredRowsBy(int col) {
+		if ((sortColumn == col) && (sortDirection == true)) {
+			sortDirection = false;
+		} else {
+			sortColumn = col;
+			sortDirection = true;
+		}
+		sortAllFilteredRowsBy(sortColumn, sortDirection);
+	}
+
+	/**
+	 * Sort table model rows automatically.
+	 *
+	 */
+	public void sortAllFilteredRows() {
+		sortAllFilteredRowsBy(sortColumn, sortDirection);
+	}
+
+	public void sortAllUnfilteredRows() {
+		Debug.msg("Sorting unfiltered data");
+		Collections.sort(unfilteredPersons, new ColumnSorter(1, true));
+		// Resort filtered data
+		Collections.sort(filteredPersons, new ColumnSorter(sortColumn,
+				sortDirection));
+		updateFilter();
+		fireTableStructureChanged();
+	}
 
 	/**
 	 * This comparator is used to sort vectors of data
@@ -79,9 +134,29 @@ public class PhoneBook extends AbstractTableModel {
 			Person v2 = (Person) b;
 			switch (colIndex) {
 			case 0:
+				o1 = Boolean.toString(v1.isPrivateEntry());
+				o2 = Boolean.toString(v2.isPrivateEntry());
+				break;
+			case 1:
 				o1 = v1.getFullname().toString();
 				o2 = v2.getFullname().toString();
 				break;
+			case 2:
+			    o1 = v1.getStandardTelephoneNumber().toString();
+			    o2 = v2.getStandardTelephoneNumber().toString();
+			    break;
+			case 3:
+			    o1 = v1.getStreet();
+			    o2 = v2.getStreet();
+			    break;
+			case 4:
+			    o1 = v1.getPostalCode() + v1.getCity();
+			    o2 = v2.getPostalCode() + v1.getCity();
+			    break;
+			case 5:
+			    o1 = jfritz.getCallerlist().findLastCall(v1);
+			    o2 = jfritz.getCallerlist().findLastCall(v2);
+			    break;
 			default:
 				o1 = v1.getFullname().toString();
 				o2 = v2.getFullname().toString();
@@ -116,18 +191,6 @@ public class PhoneBook extends AbstractTableModel {
 					return o2.toString().compareTo(o1.toString());
 				}
 			}
-		}
-
-		public String format(String s, int places) {
-			int j = places - s.length();
-			if (j > 0) {
-				StringBuffer sb = null;
-				sb = new StringBuffer(j);
-				for (int k = 0; k < j; k++)
-					sb.append(' ');
-				return sb.toString() + s;
-			} else
-				return s;
 		}
 	}
 
@@ -186,14 +249,6 @@ public class PhoneBook extends AbstractTableModel {
 				fireTableDataChanged();
 			}
 		}
-	}
-
-	/**
-	 * Sorts phonebook alphabetically
-	 */
-	public synchronized void sort() {
-		Collections.sort(unfilteredPersons, new ColumnSorter(0, true));
-		this.fireTableDataChanged();
 	}
 
 	/**
@@ -452,11 +507,11 @@ public class PhoneBook extends AbstractTableModel {
 				}
 			}
 			filteredPersons = newFilteredPersons;
-			sort();
+			sortAllFilteredRows();
 		}
 		else {
 			filteredPersons = unfilteredPersons;
-			sort();
+			sortAllFilteredRows();
 		}
 	}
 }
