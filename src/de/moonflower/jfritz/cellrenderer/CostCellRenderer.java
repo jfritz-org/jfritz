@@ -28,8 +28,11 @@ public class CostCellRenderer extends DefaultTableCellRenderer {
 		if (value != null) {
 		    DecimalFormat df = new DecimalFormat( "0.00" );
 		    double costs = Double.parseDouble(value.toString());
-		    if (costs < 0) {
+		    if (costs == -1) {
 		        label.setText("Unbekannt");
+		    }
+		    else if (costs == -2){
+		        label.setText("Freiminuten");
 		    }
 		    else {
 			    String costString = df.format(costs );
