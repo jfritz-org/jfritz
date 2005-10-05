@@ -31,7 +31,7 @@ public class Call {
 
     private int duration;
 
-    private double kosten = -1;
+    private double cost= -1;
 
     public Call(JFritz jfritz, CallType calltype, Date calldate,
             PhoneNumber number, String port, String route, int duration) {
@@ -227,68 +227,19 @@ public class Call {
         return toCSV();
     }
 
+    /**
+     * Returns cost of call
+     * @return cost
+     */
     public double getCost() {
-            if (calltype.toInt() == 3) { // Nur abgehende Gespräche berechnen
-                if (number.isEmergencyCall() || number.isFreeCall()
-                        || number.isSIPNumber()) {
-                    kosten = 0;
-                    return 0;
-                }
-                if (route.startsWith("SIP")) {
-                    SipProvider sipProvider = null;
+        return cost;
+    }
 
-                    for (int i = 0; i < jfritz.getSIPProviderTableModel()
-                            .getProviderList().size(); i++) {
-                        sipProvider = (SipProvider) jfritz
-                                .getSIPProviderTableModel().getProviderList()
-                                .get(i);
-
-                        if (sipProvider.getProviderID() == Integer
-                                .parseInt(route.substring(3))) {
-                            break;
-                        } else {
-                            sipProvider = null;
-                        }
-                    }
-
-                    if (sipProvider != null) {
-                        int takt1;
-                        int takt2;
-                        double kostenProMinute;
-                        if (number.isMobile()) {
-                            takt1 = sipProvider.getMobileTakt1();
-                            takt2 = sipProvider.getMobileTakt2();
-                            kostenProMinute = sipProvider.getMobileKosten();
-                        } else {
-                            takt1 = sipProvider.getFestnetzTakt1();
-                            takt2 = sipProvider.getFestnetzTakt2();
-                            kostenProMinute = sipProvider.getFestnetzKosten();
-                        }
-                        double kostenProTakt1 = ((double) takt1 / 60)
-                                * kostenProMinute;
-                        int restZeit = duration - takt1;
-                        double kostenProTakt2 = ((double) takt2 / 60)
-                                * kostenProMinute;
-                        kosten = 1 * kostenProTakt1; // 1. Minute voll abrechnen
-
-                        if (restZeit > 0) { // weitere Minuten berechnen
-                            int zuBerechnendeTakte;
-                            if (restZeit % takt2 == 0) { // Restzeit geht genau auf
-                                zuBerechnendeTakte = (restZeit / takt2);
-                            } else {
-                                zuBerechnendeTakte = (restZeit / takt2) + 1; // aufrunden
-                            }
-                            kosten = kosten + zuBerechnendeTakte
-                                    * kostenProTakt2;
-                        }
-                        return kosten;
-                    }
-                } // Es wurde kein (oder unbekannter) VoIP-Provider benutzt => unbekannte Kosten
-                kosten = -1;
-                return -1;
-            } else {	// Ankommende oder verpasse Anrufe => keine Kosten
-                kosten = 0;
-                return 0;
-            }
+    /**
+     * Set cost of call
+     * @param cost The cost of call
+     */
+    public void setCost(double cost) {
+        this.cost = cost;
     }
 }
