@@ -21,9 +21,14 @@ public class SIPFileXMLHandler extends DefaultHandler {
 
 	String chars, providerName, phoneNumber;
 
-	boolean active;
+	boolean active = false;
 
 	int providerID;
+
+	int startDate = 1, festnetzTakt1 = 60, festnetzTakt2 = 60, festnetzFreiminuten = 0,
+		mobileTakt1 = 60, mobileTakt2 = 60, mobileFreiminuten = 0;
+
+	double festnetzKosten = 1.5, mobileKosten = 23;
 
 	SipProviderTableModel tableModel;
 
@@ -72,10 +77,39 @@ public class SIPFileXMLHandler extends DefaultHandler {
 			phoneNumber = chars;
 		} else if (qName.equals("active")) {
 			active = JFritzUtils.parseBoolean(chars);
+		} else if (qName.equals("startdate")) {
+			startDate = Integer.parseInt(chars);
+		} else if (qName.equals("festnetztakt1")) {
+			festnetzTakt1 = Integer.parseInt(chars);
+		} else if (qName.equals("festnetztakt2")) {
+			festnetzTakt2 = Integer.parseInt(chars);
+		} else if (qName.equals("festnetzkosten")) {
+			festnetzKosten = Double.parseDouble(chars);
+		} else if (qName.equals("festnetzfreiminuten")) {
+			festnetzFreiminuten = Integer.parseInt(chars);
+		} else if (qName.equals("mobiletakt1")) {
+			mobileTakt1 = Integer.parseInt(chars);
+		} else if (qName.equals("mobiletakt2")) {
+			mobileTakt2 = Integer.parseInt(chars);
+		} else if (qName.equals("mobilekosten")) {
+			mobileKosten = Double.parseDouble(chars);
+		} else if (qName.equals("mobilefreiminuten")) {
+			mobileFreiminuten = Integer.parseInt(chars);
 		} else if (qName.equals("entry")) {
 
 			if (tableModel != null) { // Add an entry to the callerlist
-			    tableModel.addProvider(new SipProvider(providerID, phoneNumber, providerName, active));
+			    SipProvider sipProvider = new SipProvider(providerID, phoneNumber, providerName);
+			    sipProvider.setActive(active);
+			    sipProvider.setStartDate(startDate);
+			    sipProvider.setFestnetzTakt1(festnetzTakt1);
+			    sipProvider.setFestnetzTakt2(festnetzTakt2);
+			    sipProvider.setFestnetzKosten(festnetzKosten);
+			    sipProvider.setFestnetzFreiminuten(festnetzFreiminuten);
+			    sipProvider.setMobileTakt1(mobileTakt1);
+			    sipProvider.setMobileTakt2(mobileTakt2);
+			    sipProvider.setMobileKosten(mobileKosten);
+			    sipProvider.setMobileFreiminuten(mobileFreiminuten);
+			    tableModel.addProvider(sipProvider);
 			}
 
 		}
