@@ -15,8 +15,10 @@ import java.io.IOException;
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.io.UnsupportedEncodingException;
@@ -154,8 +156,8 @@ public class PhoneBook extends AbstractTableModel {
 			    o2 = v2.getPostalCode() + v1.getCity();
 			    break;
 			case 5:
-			    o1 = jfritz.getCallerlist().findLastCall(v1);
-			    o2 = jfritz.getCallerlist().findLastCall(v2);
+			    o1 = jfritz.getCallerlist().findLastCall(v1).getCalldate();
+			    o2 = jfritz.getCallerlist().findLastCall(v2).getCalldate();
 			    break;
 			default:
 				o1 = v1.getFullname().toString();
