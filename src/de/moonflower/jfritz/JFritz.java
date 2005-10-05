@@ -40,7 +40,8 @@
  * - Unterstützung für FRITZ!Box Firmware .85
  * - Kostenabrechnung hinzugefügt
  * - Suche über UPNP/SSDP abschaltbar
- * - Bugfix: Firmware konnte nicht erkannt werden.
+ * - Adressbuch nun nach allen Spalten sortierbar
+ * - Bugfix: Firmware konnte nicht erkannt werden
  * - Bugfix: Spaltenbreite wurde nicht korrekt gespeichert
  *
  * Internal:
@@ -250,7 +251,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/doc/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.115 2005/10/05 09:08:22 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.116 2005/10/05 10:07:50 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
