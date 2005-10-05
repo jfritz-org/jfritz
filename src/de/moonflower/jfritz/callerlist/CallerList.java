@@ -633,6 +633,16 @@ public class CallerList extends AbstractTableModel {
 				else
 					o2 = null;
 				break;
+			case 8:
+			    if (v1.getCost() > v2.getCost()) {
+			        o1 = "1";
+			        o2 = "0";
+			    }
+			    else {
+			        o1 = "0";
+			        o2 = "1";
+			    }
+			    break;
 			default:
 				o1 = v1.getCalldate();
 				o2 = v2.getCalldate();
