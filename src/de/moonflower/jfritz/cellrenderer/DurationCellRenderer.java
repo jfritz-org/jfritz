@@ -32,7 +32,7 @@ public class DurationCellRenderer extends DefaultTableCellRenderer {
 			// setToolTipText(value.toString());
 
 			label.setText(durationStr);
-			label.setHorizontalAlignment(JLabel.RIGHT);
+			label.setHorizontalAlignment(JLabel.CENTER);
 		}
 		return label;
 	}
