@@ -5,118 +5,145 @@
  */
 package de.moonflower.jfritz.dialogs.sip;
 
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Enumeration;
+import java.util.Vector;
+
+import de.moonflower.jfritz.struct.Call;
+
 /**
  * @author rob
  *
  */
 public class SipProvider {
 
-	private int providerID;
+    private int providerID;
 
-	private boolean active;
+    private boolean active;
 
-	private String providerName, phoneNumber;
+    private String providerName, phoneNumber;
 
-	private int startDate, festnetzTakt1, festnetzTakt2, festnetzFreiminuten,
-				mobileTakt1, mobileTakt2, mobileFreiminuten;
+    private int startDate, festnetzTakt1, festnetzTakt2, festnetzFreiminuten,
+            mobileTakt1, mobileTakt2, mobileFreiminuten;
 
-	private double festnetzKosten, mobileKosten;
+    private double festnetzKosten, mobileKosten;
 
-	public SipProvider(int providerID, String phoneNumber, String providerName) {
-		this.providerID = providerID;
-		this.providerName = providerName;
-		this.phoneNumber = phoneNumber;
-		active = false;
-		startDate = 1;
-		festnetzTakt1 = 60;
-		festnetzTakt2 = 60;
-		festnetzKosten = 1.5;
-		festnetzFreiminuten = 0;
-		mobileTakt1 = 60;
-		mobileTakt2 = 60;
-		mobileKosten = 23.0;
-		mobileFreiminuten = 0;
-	}
+    private double totalCosts = 0;
 
-	/**
-	 * @return Returns phone number
-	 */
-	public final String getNumber() {
-		return phoneNumber;
-	}
+    private double nochFestnetzFreiminuten = 0, nochMobileFreiminuten = 0;
 
-	/**
-	 * @return Returns name of sip-provider or IP
-	 */
-	public final String getProvider() {
-		return providerName;
-	}
+    Vector calls;
 
-	public String toString() {
-		return phoneNumber + "@" + providerName;
-	}
+    public SipProvider(int providerID, String phoneNumber, String providerName) {
+        calls = new Vector();
+        this.providerID = providerID;
+        this.providerName = providerName;
+        this.phoneNumber = phoneNumber;
+        active = false;
+        startDate = 1;
+        festnetzTakt1 = 60;
+        festnetzTakt2 = 60;
+        festnetzKosten = 1.5;
+        festnetzFreiminuten = 0;
+        mobileTakt1 = 60;
+        mobileTakt2 = 60;
+        mobileKosten = 23.0;
+        mobileFreiminuten = 0;
+    }
 
-	/**
-	 * @return Returns the providerID.
-	 */
-	public final int getProviderID() {
-		return providerID;
-	}
+    /**
+     * @return Returns phone number
+     */
+    public final String getNumber() {
+        return phoneNumber;
+    }
 
-	/**
-	 * Set VoIP-Provider active state
-	 * @param state
-	 */
-	public final void setActive(boolean state) {
-	    active = state;
-	}
+    /**
+     * @return Returns name of sip-provider or IP
+     */
+    public final String getProvider() {
+        return providerName;
+    }
 
-	/**
-	 *
-	 * @return VoIP-Provider active state
-	 */
-	public final boolean isActive() {
-	    return active;
-	}
+    public String toString() {
+        return phoneNumber + "@" + providerName;
+    }
 
-	/**
-	 * Set start date of month
-	 * @param date
-	 */
-	public final void setStartDate(int date) {
-	    startDate = date;
-	}
+    /**
+     * @return Returns the providerID.
+     */
+    public final int getProviderID() {
+        return providerID;
+    }
 
-	/**
-	 *
-	 * @return Returns start date of month
-	 */
-	public final int getStartDate() {
-	    return startDate;
-	}
+    /**
+     * Set VoIP-Provider active state
+     *
+     * @param state
+     */
+    public final void setActive(boolean state) {
+        active = state;
+    }
 
-	/**
-	 * @return Returns XML String
-	 */
-	public String toXML() {
-		String sep = System.getProperty("line.separator", "\n");
-		String output = "";
-		output = ("<entry id=\"" + providerID + "\">" + sep);
-		output = output + ("\t<name>" + providerName + "</name>" + sep);
-		output = output + ("\t<number>" + phoneNumber + "</number>" + sep);
-		output = output + ("\t<active>" + active + "</active>" + sep);
-		output = output + ("\t<startdate>" + startDate + "</startdate>" + sep);
-		output = output + ("\t<festnetztakt1>" + festnetzTakt1 + "</festnetztakt1>" + sep);
-		output = output + ("\t<festnetztakt2>" + festnetzTakt2 + "</festnetztakt2>" + sep);
-		output = output + ("\t<festnetzkosten>" + festnetzKosten + "</festnetzkosten>" + sep);
-		output = output + ("\t<festnetzfreiminuten>" + festnetzFreiminuten + "</festnetzfreiminuten>" + sep);
-		output = output + ("\t<mobiletakt1>" + mobileTakt1 + "</mobiletakt1>" + sep);
-		output = output + ("\t<mobiletakt2>" + mobileTakt2 + "</mobiletakt2>" + sep);
-		output = output + ("\t<mobilekosten>" + mobileKosten + "</mobilekosten>" + sep);
-		output = output + ("\t<mobilefreiminuten>" + mobileFreiminuten + "</mobilefreiminuten>" + sep);
-		output = output + ("</entry>");
-		return output;
-	}
+    /**
+     *
+     * @return VoIP-Provider active state
+     */
+    public final boolean isActive() {
+        return active;
+    }
+
+    /**
+     * Set start date of month
+     *
+     * @param date
+     */
+    public final void setStartDate(int date) {
+        startDate = date;
+    }
+
+    /**
+     *
+     * @return Returns start date of month
+     */
+    public final int getStartDate() {
+        return startDate;
+    }
+
+    /**
+     * @return Returns XML String
+     */
+    public String toXML() {
+        String sep = System.getProperty("line.separator", "\n");
+        String output = "";
+        output = ("<entry id=\"" + providerID + "\">" + sep);
+        output = output + ("\t<name>" + providerName + "</name>" + sep);
+        output = output + ("\t<number>" + phoneNumber + "</number>" + sep);
+        output = output + ("\t<active>" + active + "</active>" + sep);
+        output = output + ("\t<startdate>" + startDate + "</startdate>" + sep);
+        output = output
+                + ("\t<festnetztakt1>" + festnetzTakt1 + "</festnetztakt1>" + sep);
+        output = output
+                + ("\t<festnetztakt2>" + festnetzTakt2 + "</festnetztakt2>" + sep);
+        output = output
+                + ("\t<festnetzkosten>" + festnetzKosten + "</festnetzkosten>" + sep);
+        output = output
+                + ("\t<festnetzfreiminuten>" + festnetzFreiminuten
+                        + "</festnetzfreiminuten>" + sep);
+        output = output
+                + ("\t<mobiletakt1>" + mobileTakt1 + "</mobiletakt1>" + sep);
+        output = output
+                + ("\t<mobiletakt2>" + mobileTakt2 + "</mobiletakt2>" + sep);
+        output = output
+                + ("\t<mobilekosten>" + mobileKosten + "</mobilekosten>" + sep);
+        output = output
+                + ("\t<mobilefreiminuten>" + mobileFreiminuten
+                        + "</mobilefreiminuten>" + sep);
+        output = output + ("</entry>");
+        return output;
+    }
 
     /**
      * @return Returns Festnetztaktung in der ersten Minute
@@ -124,20 +151,25 @@ public class SipProvider {
     public int getFestnetzTakt1() {
         return festnetzTakt1;
     }
+
     /**
-     * @param festnetzTakt1 Setze Festnetztaktung in der ersten Minute
+     * @param festnetzTakt1
+     *            Setze Festnetztaktung in der ersten Minute
      */
     public void setFestnetzTakt1(int festnetzTakt1) {
         this.festnetzTakt1 = festnetzTakt1;
     }
+
     /**
      * @return Returns Festnetztaktung ab der zweiten Minute
      */
     public int getFestnetzTakt2() {
         return festnetzTakt2;
     }
+
     /**
-     * @param festnetzTakt2 Setze Festnetztaktung ab der zweiten Minute
+     * @param festnetzTakt2
+     *            Setze Festnetztaktung ab der zweiten Minute
      */
     public void setFestnetzTakt2(int festnetzTakt2) {
         this.festnetzTakt2 = festnetzTakt2;
@@ -151,7 +183,8 @@ public class SipProvider {
     }
 
     /**
-     * @param festnetzKosten Setze Kosten für ein Festnetzgespräch in cent pro Minute
+     * @param festnetzKosten
+     *            Setze Kosten für ein Festnetzgespräch in cent pro Minute
      */
     public void setFestnetzKosten(double festnetzKosten) {
         this.festnetzKosten = festnetzKosten;
@@ -165,57 +198,254 @@ public class SipProvider {
     }
 
     /**
-     * @param festnetzFreiminuten Setze Freiminuten ins Festnetz
+     * @param festnetzFreiminuten
+     *            Setze Freiminuten ins Festnetz
      */
     public void setFestnetzFreiminuten(int festnetzFreiminuten) {
         this.festnetzFreiminuten = festnetzFreiminuten;
     }
+
     /**
      * @return Returns Freiminuten ins Mobilfunknetz.
      */
     public int getMobileFreiminuten() {
         return mobileFreiminuten;
     }
+
     /**
-     * @param mobileFreiminuten Setze Freiminuten ins Mobilfunknetz.
+     * @param mobileFreiminuten
+     *            Setze Freiminuten ins Mobilfunknetz.
      */
     public void setMobileFreiminuten(int mobileFreiminuten) {
         this.mobileFreiminuten = mobileFreiminuten;
     }
+
     /**
      * @return Returns Kosten für ein Mobilfunkgespräch.
      */
     public double getMobileKosten() {
         return mobileKosten;
     }
+
     /**
-     * @param mobileKosten Setze Kosten für ein Mpbilfunkgespräch.
+     * @param mobileKosten
+     *            Setze Kosten für ein Mpbilfunkgespräch.
      */
     public void setMobileKosten(double mobileKosten) {
         this.mobileKosten = mobileKosten;
     }
+
     /**
      * @return Returns Mobilfunktaktung in der ersten Minute.
      */
     public int getMobileTakt1() {
         return mobileTakt1;
     }
+
     /**
-     * @param mobileTakt1 Setze Mobilfunktaktung in der ersten Minute.
+     * @param mobileTakt1
+     *            Setze Mobilfunktaktung in der ersten Minute.
      */
     public void setMobileTakt1(int mobileTakt1) {
         this.mobileTakt1 = mobileTakt1;
     }
+
     /**
      * @return Returns Mobilfunktaktung ab der zweiten Minute.
      */
     public int getMobileTakt2() {
         return mobileTakt2;
     }
+
     /**
-     * @param mobileTakt2 Mobilfunktaktung ab der zweiten Minute.
+     * @param mobileTakt2
+     *            Mobilfunktaktung ab der zweiten Minute.
      */
     public void setMobileTakt2(int mobileTakt2) {
         this.mobileTakt2 = mobileTakt2;
+    }
+
+    /**
+     * Berechnet die Kosten für den Anruf. Dabei werden auch Freiminuten
+     * berücksichtigt.
+     *
+     * @param call
+     */
+    public void calculateCost(Call call) {
+        int takt1;
+        int takt2;
+        double kostenProMinute;
+        double freiMinuten;
+        if (call.getPhoneNumber().isMobile()) {
+            takt1 = mobileTakt1;
+            takt2 = mobileTakt2;
+            kostenProMinute = mobileKosten;
+            freiMinuten = nochMobileFreiminuten;
+        } else {
+            takt1 = festnetzTakt1;
+            takt2 = festnetzTakt2;
+            kostenProMinute = festnetzKosten;
+            freiMinuten = nochFestnetzFreiminuten;
+        }
+        double kostenProTakt1 = ((double) takt1 / 60) * kostenProMinute;
+        int restZeit = call.getDuration() - takt1;
+        double kostenProTakt2 = ((double) takt2 / 60) * kostenProMinute;
+
+        double freitakte = freiMinuten * 60 / takt1;
+        if (freitakte < 0) {
+            freitakte = 0;
+        }
+        double kosten = 0;
+        if (freitakte < 1) {
+            kosten = 1 * kostenProTakt1; // 1. Minute voll abrechnen
+        } else {
+            // erste Minute von Freiminuten abgedeckt => keine Kosten
+            if (restZeit > 0) {
+                kosten = 0;
+            } else
+                kosten = -2;
+            freiMinuten -= takt1 / 60; // Freiminuten um diesen Takt erniedrigen
+        }
+
+        if (restZeit > 0) { // weitere Minuten berechnen
+            int zuBerechnendeTakte;
+            if (restZeit % takt2 == 0) { // Restzeit geht genau auf
+                zuBerechnendeTakte = (restZeit / takt2);
+            } else {
+                zuBerechnendeTakte = (restZeit / takt2) + 1; // aufrunden
+            }
+            freitakte = freiMinuten * 60 / takt2;
+            if (freitakte < 0) {
+                freitakte = 0;
+            }
+            if (freitakte >= zuBerechnendeTakte) {
+                // alle Minuten von Freiminuten abgedeckt => Freigespräch
+                kosten = -2;
+                freiMinuten -= zuBerechnendeTakte * takt2 / 60;
+            } else {
+                zuBerechnendeTakte -= freitakte;
+                kosten = kosten + zuBerechnendeTakte * kostenProTakt2;
+                freiMinuten -= freitakte * takt2 / 60;
+            }
+        }
+        // restliche Freiminuten abspeichern
+        if (call.getPhoneNumber().isMobile()) {
+            nochMobileFreiminuten = freiMinuten;
+        } else {
+            nochFestnetzFreiminuten = freiMinuten;
+        }
+
+        totalCosts += kosten;
+
+        // Kosten für den Anruf setzen
+        call.setCost(kosten);
+
+    }
+
+    /**
+     * Calculates costs of all calls in SipProvider specific CallerList
+     *
+     */
+    public void calculateCosts() {
+        totalCosts = 0;
+        // sortieren nach Datum
+        Collections.sort(calls, new ColumnSorter());
+        int lastMonth = 0;
+        int lastDate = 0;
+        Enumeration en = calls.elements();
+        while (en.hasMoreElements()) {
+            Call call = (Call) en.nextElement();
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(call.getCalldate());
+
+            int currMonth = calendar.get(Calendar.MONTH);
+            int currDate = calendar.get(Calendar.DAY_OF_MONTH);
+
+            if ((lastDate < startDate && lastDate < currDate && currDate >= startDate)
+                    || (lastDate < startDate && currDate < startDate && currMonth > lastMonth)
+                    || (lastDate >= startDate && currDate >= startDate && currMonth > lastMonth)
+                    || (lastDate >= startDate && lastDate > currDate
+                            && currDate < startDate && currMonth > lastMonth + 1)) {
+
+                // Neuer Abrechnungsmonat angefangen
+                // Setze Freiminuten auf Maximum
+
+                nochFestnetzFreiminuten = festnetzFreiminuten;
+                nochMobileFreiminuten = mobileFreiminuten;
+                lastMonth = currMonth;
+                lastDate = currDate;
+            }
+            calculateCost(call);
+        }
+    }
+
+    /**
+     * Adds a call to the SipProvider specific CallerList
+     *
+     * @param call
+     */
+    public void addCall(Call call) {
+        calls.add(call);
+    }
+
+    /**
+     * Clears SipProvider specific CallerList
+     *
+     */
+    public void clearCalls() {
+        calls.clear();
+    }
+
+    /**
+     * This comparator is used to sort vectors of data
+     */
+    public class ColumnSorter implements Comparator {
+
+        public int compare(Object a, Object b) {
+            Object o1, o2;
+            Call v1 = (Call) a;
+            Call v2 = (Call) b;
+
+            o1 = v1.getCalldate();
+            o2 = v2.getCalldate();
+
+            // Sort nulls so they appear last, regardless
+            // of sort order
+            if (o1 == null && o2 == null) {
+                return 0;
+            } else if (o1 == null) {
+                return 1;
+            } else if (o2 == null) {
+                return -1;
+            } else if (o1 instanceof Comparable) {
+                return ((Comparable) o1).compareTo(o2);
+            } else {
+                return o1.toString().compareTo(o2.toString());
+            }
+        }
+    }
+
+    /**
+     * For statistics
+     * @return Total call costs
+     */
+    public double getTotalCosts() {
+        return totalCosts;
+    }
+
+    /**
+     * For statistics and warn
+     * @return Restliche Freiminuten ins Festnetz
+     */
+    public double getRestFestnetzFreiminuten() {
+        return nochFestnetzFreiminuten;
+    }
+
+    /**
+     * For statistics and warn
+     * @return Restliche Freiminuten ins Mobilfunknetz
+     */
+    public double getRestMobileFreiminuten() {
+        return nochMobileFreiminuten;
     }
 }
