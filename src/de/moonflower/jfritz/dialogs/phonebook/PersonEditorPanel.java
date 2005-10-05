@@ -56,7 +56,7 @@ public class PersonEditorPanel extends JComponent {
 						if (p.okPressed()) {
 							editor.getJfritz().getPhonebook().saveToXMLFile(
 									JFritz.PHONEBOOK_FILE);
-							editor.getJfritz().getPhonebook().sort();
+							editor.getJfritz().getPhonebook().sortAllFilteredRows();
 						}
 					}
 					p.dispose();

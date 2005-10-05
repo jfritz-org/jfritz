@@ -587,7 +587,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		person.setCity(tfCity.getText());
 		person.setEmailAddress(tfEmail.getText());
 		hasChanged = false;
-		jfritz.getPhonebook().sort();
+		jfritz.getPhonebook().sortAllFilteredRows();
 
 		return person;
 	}
