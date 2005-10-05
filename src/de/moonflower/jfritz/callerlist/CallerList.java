@@ -195,7 +195,7 @@ public class CallerList extends AbstractTableModel {
 			fos = new FileOutputStream(filename);
 			PrintWriter pw = new PrintWriter(fos);
 			pw
-					.println("\"CallType\";\"Date\";\"Time\";\"Number\";\"Route\";\"Port\";\"Duration\";\"Name\";\"Address\";\"City\";\"CallByCall\"");
+					.println("\"CallType\";\"Date\";\"Time\";\"Number\";\"Route\";\"Port\";\"Duration\";\"Name\";\"Address\";\"City\";\"CallByCall\";\"Kosten\"");
 			int rows[] = null;
 			if (jfritz != null && jfritz.getJframe() != null) {
 				rows = jfritz.getJframe().getCallerTable().getSelectedRows();
@@ -441,8 +441,8 @@ public class CallerList extends AbstractTableModel {
 	 * @see javax.swing.table.TableModel#getColumnCount()
 	 */
 	public int getColumnCount() {
-		// 8 Columns on the Table
-		return 8;
+		// 9 Columns on the Table
+		return 9;
 	}
 
 	/**
@@ -483,6 +483,8 @@ public class CallerList extends AbstractTableModel {
 			return call.getRoute();
 		case 7:
 			return Integer.toString(call.getDuration());
+		case 8:
+		    return Double.toString(call.getCost());
 
 		default:
 			throw new IllegalArgumentException("Invalid column: " + columnIndex);
@@ -873,6 +875,20 @@ public class CallerList extends AbstractTableModel {
 		while (en.hasMoreElements()) {
 			Call call = (Call) en.nextElement();
 			total += call.getDuration();
+		}
+		return total;
+	}
+
+	/**
+	 * @return Total costs of all (filtered) calls
+	 */
+	public int getTotalCosts() {
+		Enumeration en = getFilteredCallVector().elements();
+		int total = 0;
+		while (en.hasMoreElements()) {
+			Call call = (Call) en.nextElement();
+			if (call.getCost() > 0) // Negative Kosten => unbekannte kosten
+			    total += call.getCost();
 		}
 		return total;
 	}
