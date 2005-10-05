@@ -171,6 +171,7 @@ public class JFritzProperties extends Properties {
 			if (entry.hasAttribute("key")) {
 				Node n = entry.getFirstChild();
 				String val = (n == null) ? "" : n.getNodeValue();
+//				Debug.msg("Load properties: " + entry.getAttribute("key") + " = " + val);
 				props.setProperty(entry.getAttribute("key"), val);
 			}
 		}
@@ -202,6 +203,7 @@ public class JFritzProperties extends Properties {
 			Element entry = (Element) properties.appendChild(doc
 					.createElement("entry"));
 			entry.setAttribute("key", key);
+//			Debug.msg("Save properties: " + key + " = " + props.getProperty(key));
 			entry.appendChild(doc.createTextNode(props.getProperty(key)));
 		}
 		emitDocument(doc, os, encoding);
