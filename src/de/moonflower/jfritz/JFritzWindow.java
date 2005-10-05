@@ -910,7 +910,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * Exports caller list as CSV
 	 */
 	public void exportCSV() {
-		JFileChooser fc = new JFileChooser();
+		JFileChooser fc = new JFileChooser(JFritz.getProperty("options.exportCSVpath",null));
 		fc.setDialogTitle(JFritz.getMessage("export_csv"));
 		fc.setDialogType(JFileChooser.SAVE_DIALOG);
 		fc.setSelectedFile(new File(JFritz.CALLS_CSV_FILE));
@@ -925,6 +925,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			}
 		});
 		if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+		    String path = fc.getSelectedFile().getPath();
+		    path = path.substring(0,path.length()-fc.getSelectedFile().getName().length());
+		    JFritz.setProperty("options.exportCSVpath", path);
 			File file = fc.getSelectedFile();
 			if (file.exists()) {
 				if (JOptionPane.showConfirmDialog(this, "Soll die Datei "
@@ -944,7 +947,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * Exports caller list as XML
 	 */
 	public void exportXML() {
-		JFileChooser fc = new JFileChooser();
+		JFileChooser fc = new JFileChooser(JFritz.getProperty("options.exportXMLpath",null));
 		fc.setDialogTitle("Exportiere Anrufliste als XML-Datei");
 		fc.setDialogType(JFileChooser.SAVE_DIALOG);
 		fc.setSelectedFile(new File(JFritz.CALLS_FILE));
@@ -959,6 +962,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			}
 		});
 		if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+		    String path = fc.getSelectedFile().getPath();
+		    path = path.substring(0,path.length()-fc.getSelectedFile().getName().length());
+		    JFritz.setProperty("options.exportXMLpath", path);
 			File file = fc.getSelectedFile();
 			if (file.exists()) {
 				if (JOptionPane.showConfirmDialog(this, "Soll die Datei "
