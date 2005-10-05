@@ -21,6 +21,7 @@ import javax.swing.table.TableColumn;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.cellrenderer.CallByCallCellRenderer;
 import de.moonflower.jfritz.cellrenderer.CallTypeCellRenderer;
+import de.moonflower.jfritz.cellrenderer.CostCellRenderer;
 import de.moonflower.jfritz.cellrenderer.DateCellRenderer;
 import de.moonflower.jfritz.cellrenderer.DurationCellRenderer;
 import de.moonflower.jfritz.cellrenderer.NumberCellRenderer;
@@ -169,6 +170,7 @@ public class CallerTable extends JTable {
 		col = getColumnModel().getColumn(8);
 		col.setHeaderValue("Kosten");
 		headerTips.setToolTip(col, "Angefallene Kosten");
+		col.setCellRenderer(new CostCellRenderer());
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
 				"column8.width", "60")));
 
