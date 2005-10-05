@@ -18,6 +18,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -88,7 +90,7 @@ public class ConfigDialog extends JDialog {
             notifyOnCallsButton, confirmOnExitButton, startMinimizedButton,
             timerAfterStartButton, passwordAfterStartButton, soundButton,
             callMonitorAfterStartButton, lookupAfterFetchButton,
-            showCallByCallButton, externProgramCheckBox;
+            showCallByCallButton, externProgramCheckBox, searchWithSSDP;
 
     private JPanel callMonitorPane;
 
@@ -102,6 +104,8 @@ public class ConfigDialog extends JDialog {
 
     private JRadioButton popupNoButton, popupDialogButton, popupTrayButton;
 
+    private ConfigDialog configDialog;
+
     public ConfigDialog(Frame parent) {
         super(parent, true);
         if (parent != null) {
@@ -112,6 +116,7 @@ public class ConfigDialog extends JDialog {
         devices = jfritz.getDevices();
         drawDialog();
         setValues();
+        configDialog = this;
     }
 
     public boolean okPressed() {
@@ -136,8 +141,8 @@ public class ConfigDialog extends JDialog {
                 .getProperty("option.startMinimized", "false")));
         soundButton.setSelected(JFritzUtils.parseBoolean(JFritz.getProperty(
                 "option.playSounds", "true")));
-        externProgramCheckBox.setSelected(JFritzUtils.parseBoolean(JFritz.getProperty(
-                "option.startExternProgram", "false")));
+        externProgramCheckBox.setSelected(JFritzUtils.parseBoolean(JFritz
+                .getProperty("option.startExternProgram", "false")));
         externProgramTextField.setText(JFritz.getProperty(
                 "option.externProgram", ""));
 
@@ -198,13 +203,17 @@ public class ConfigDialog extends JDialog {
         timerSlider.setValue(Integer
                 .parseInt(JFritz.getProperty("fetch.timer")));
 
-        for (int i = 0; i < devices.size(); i++) {
-            SSDPPacket p = (SSDPPacket) devices.get(i);
-            if (p.getIP().getHostAddress().equals(address.getText())) {
-                addressCombo.setSelectedIndex(i);
+        searchWithSSDP.setSelected(JFritzUtils.parseBoolean(JFritz.getProperty(
+                "option.useSSDP", "true")));
+
+        if (devices != null) {
+            for (int i = 0; i < devices.size(); i++) {
+                SSDPPacket p = (SSDPPacket) devices.get(i);
+                if (p.getIP().getHostAddress().equals(address.getText())) {
+                    addressCombo.setSelectedIndex(i);
+                }
             }
         }
-
         try {
             firmware = new FritzBoxFirmware(JFritz.getProperty("box.firmware"));
         } catch (InvalidFirmwareException e) {
@@ -221,6 +230,8 @@ public class ConfigDialog extends JDialog {
             areaCode.setText(areaCode.getText().substring(
                     areaPrefix.getText().length()));
 
+        JFritz.setProperty("option.useSSDP", Boolean.toString(searchWithSSDP
+                .isSelected()));
         JFritz.setProperty("option.notifyOnCalls", Boolean
                 .toString(notifyOnCallsButton.isSelected()));
         JFritz.setProperty("option.fetchAfterStart", Boolean
@@ -235,8 +246,10 @@ public class ConfigDialog extends JDialog {
                 .toString(startMinimizedButton.isSelected()));
         JFritz.setProperty("option.playSounds", Boolean.toString(soundButton
                 .isSelected()));
-        JFritz.setProperty("option.startExternProgram", Boolean.toString(externProgramCheckBox.isSelected()));
-        JFritz.setProperty("option.externProgram", externProgramTextField.getText());
+        JFritz.setProperty("option.startExternProgram", Boolean
+                .toString(externProgramCheckBox.isSelected()));
+        JFritz.setProperty("option.externProgram", externProgramTextField
+                .getText());
 
         JFritz.setProperty("option.startcallmonitor", Boolean
                 .toString(startCallMonitorButton.isSelected()));
@@ -284,7 +297,8 @@ public class ConfigDialog extends JDialog {
             JFritz.removeProperty("box.firmware");
         }
 
-        jfritz.getSIPProviderTableModel().saveToXMLFile(JFritz.SIPPROVIDER_FILE);
+        jfritz.getSIPProviderTableModel()
+                .saveToXMLFile(JFritz.SIPPROVIDER_FILE);
     }
 
     protected JPanel createBoxPane(ActionListener actionListener) {
@@ -312,10 +326,12 @@ public class ConfigDialog extends JDialog {
         boxpane.add(label, c);
 
         addressCombo = new JComboBox();
-        Enumeration en = devices.elements();
-        while (en.hasMoreElements()) {
-            SSDPPacket p = (SSDPPacket) en.nextElement();
-            addressCombo.addItem(p.getShortName());
+        if (devices != null) {
+            Enumeration en = devices.elements();
+            while (en.hasMoreElements()) {
+                SSDPPacket p = (SSDPPacket) en.nextElement();
+                addressCombo.addItem(p.getShortName());
+            }
         }
 
         addressCombo.setActionCommand("addresscombo");
@@ -326,14 +342,14 @@ public class ConfigDialog extends JDialog {
         label = new JLabel("IP-Addresse: ");
         boxpane.add(label, c);
         address = new JTextField("", 16);
-        address.setMinimumSize(new Dimension(200,20));
+        address.setMinimumSize(new Dimension(200, 20));
         boxpane.add(address, c);
 
         c.gridy = 4;
         label = new JLabel("Passwort: ");
         boxpane.add(label, c);
         pass = new JPasswordField("", 16);
-        pass.setMinimumSize(new Dimension(200,20));
+        pass.setMinimumSize(new Dimension(200, 20));
         boxpane.add(pass, c);
 
         c.gridy = 5;
@@ -395,7 +411,7 @@ public class ConfigDialog extends JDialog {
         c.anchor = GridBagConstraints.WEST;
 
         JPanel sipButtonPane = new JPanel();
-        JTable siptable = new JTable(jfritz.getSIPProviderTableModel()) {
+        final JTable siptable = new JTable(jfritz.getSIPProviderTableModel()) {
             private static final long serialVersionUID = 1;
 
             public Component prepareRenderer(TableCellRenderer renderer,
@@ -425,6 +441,23 @@ public class ConfigDialog extends JDialog {
         siptable.getColumnModel().getColumn(1).setMinWidth(40);
         siptable.getColumnModel().getColumn(1).setMaxWidth(40);
         siptable.setSize(200, 200);
+        siptable.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() > 1) {
+                    if (siptable.getSelectedRowCount() > 0) {
+                        SipConfigDialog sipConfigDialog = new SipConfigDialog(
+                                configDialog, (SipProvider) jfritz
+                                        .getSIPProviderTableModel()
+                                        .getProviderList().get(
+                                                siptable.getSelectedRow()));
+                        if (sipConfigDialog.showDialog()) { // Save properties
+                            sipConfigDialog.storeValues();
+                            jfritz.getCallerlist().fireTableDataChanged();
+                        }
+                    }
+                }
+            }
+        });
         JButton b1 = new JButton("Von der Box holen");
         b1.setActionCommand("fetchSIP");
         b1.addActionListener(actionListener);
@@ -460,6 +493,10 @@ public class ConfigDialog extends JDialog {
 
         confirmOnExitButton = new JCheckBox("Bei Beenden nachfragen");
         otherpane.add(confirmOnExitButton);
+
+        searchWithSSDP = new JCheckBox("FRITZ!Box per UPNP / SSDP suchen");
+        otherpane.add(searchWithSSDP);
+
         return otherpane;
     }
 
@@ -658,7 +695,7 @@ public class ConfigDialog extends JDialog {
         pane.add(externProgramCheckBox, c);
 
         externProgramTextField = new JTextField("", 40);
-        externProgramTextField.setMinimumSize(new Dimension(300,20));
+        externProgramTextField.setMinimumSize(new Dimension(300, 20));
         c.gridy = 4;
         pane.add(externProgramTextField, c);
 
@@ -789,7 +826,8 @@ public class ConfigDialog extends JDialog {
                         Vector data = JFritzUtils.retrieveSipProvider(address
                                 .getText(), password, firmware);
                         jfritz.getSIPProviderTableModel().setProviderList(data);
-                        jfritz.getSIPProviderTableModel().fireTableDataChanged();
+                        jfritz.getSIPProviderTableModel()
+                                .fireTableDataChanged();
                         jfritz.getCallerlist().fireTableDataChanged();
 
                     } catch (WrongPasswordException e1) {
