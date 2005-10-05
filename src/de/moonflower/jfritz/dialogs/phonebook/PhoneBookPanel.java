@@ -282,7 +282,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	 */
 	public void exportVCard() {
 		VCardList list = new VCardList();
-		JFileChooser fc = new JFileChooser();
+		JFileChooser fc = new JFileChooser(JFritz.getProperty("options.exportVCARDpath",null));
 		fc.setDialogTitle(JFritz.getMessage("export_vcard"));
 		fc.setDialogType(JFileChooser.SAVE_DIALOG);
 		fc.setFileFilter(new FileFilter() {
@@ -311,6 +311,9 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 				fc.setSelectedFile(new File("jfritz.vcf"));
 			}
 			if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+			    String path = fc.getSelectedFile().getPath();
+			    path = path.substring(0,path.length()-fc.getSelectedFile().getName().length());
+			    JFritz.setProperty("options.exportVCARDpath", path);
 				File file = fc.getSelectedFile();
 				if (file.exists()) {
 					if (JOptionPane.showConfirmDialog(this, "Soll die Datei "+file.getName()+ " überschrieben werden?", "Datei überschreiben?", JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
