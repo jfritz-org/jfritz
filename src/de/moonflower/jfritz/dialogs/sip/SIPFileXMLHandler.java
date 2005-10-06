@@ -26,7 +26,7 @@ public class SIPFileXMLHandler extends DefaultHandler {
 	int providerID;
 
 	int startDate = 1, festnetzTakt1 = 60, festnetzTakt2 = 60, festnetzFreiminuten = 0,
-		mobileTakt1 = 60, mobileTakt2 = 60, mobileFreiminuten = 0;
+		mobileTakt1 = 60, mobileTakt2 = 60, mobileFreiminuten = 0, warnFreiminuten = -1;
 
 	double festnetzKosten = 1.5, mobileKosten = 23;
 
@@ -95,6 +95,8 @@ public class SIPFileXMLHandler extends DefaultHandler {
 			mobileKosten = Double.parseDouble(chars);
 		} else if (qName.equals("mobilefreiminuten")) {
 			mobileFreiminuten = Integer.parseInt(chars);
+		} else if (qName.equals("warnfreiminuten")) {
+			warnFreiminuten = Integer.parseInt(chars);
 		} else if (qName.equals("entry")) {
 
 			if (tableModel != null) { // Add an entry to the callerlist
@@ -109,6 +111,7 @@ public class SIPFileXMLHandler extends DefaultHandler {
 			    sipProvider.setMobileTakt2(mobileTakt2);
 			    sipProvider.setMobileKosten(mobileKosten);
 			    sipProvider.setMobileFreiminuten(mobileFreiminuten);
+			    sipProvider.setWarnFreiminuten(warnFreiminuten);
 			    tableModel.addProvider(sipProvider);
 			}
 

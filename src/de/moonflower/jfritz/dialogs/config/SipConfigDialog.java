@@ -34,7 +34,7 @@ import de.moonflower.jfritz.utils.Debug;
  */
 public class SipConfigDialog extends JDialog {
 
-//    private JFritz jfritz;
+    //    private JFritz jfritz;
 
     private JComboBox startDatum;
 
@@ -53,7 +53,7 @@ public class SipConfigDialog extends JDialog {
     public SipConfigDialog(JDialog parent, SipProvider sipProvider) {
         super(parent, true);
         setLocationRelativeTo(parent);
-//        jfritz = ((ConfigDialog) parent).getJfritz();
+        //        jfritz = ((ConfigDialog) parent).getJfritz();
         setTitle("Edit Sip-Provider");
         this.sipProvider = sipProvider;
         drawDialog();
@@ -64,13 +64,15 @@ public class SipConfigDialog extends JDialog {
         try {
             Integer.parseInt(festnetzTakt1.getText());
         } catch (NumberFormatException nfe) {
-            Debug.errDlg("Der Festnetztakt für die erste Minute wurde falsch eingegeben.");
+            Debug
+                    .errDlg("Der Festnetztakt für die erste Minute wurde falsch eingegeben.");
             return false;
         }
         try {
             Integer.parseInt(festnetzTakt2.getText());
         } catch (NumberFormatException nfe) {
-            Debug.errDlg("Der Festnetztakt ab der zweiten Minute wurde falsch eingegeben.");
+            Debug
+                    .errDlg("Der Festnetztakt ab der zweiten Minute wurde falsch eingegeben.");
             return false;
         }
         try {
@@ -78,7 +80,8 @@ public class SipConfigDialog extends JDialog {
                     .replaceAll(",", "."));
             Double.parseDouble(festnetzKosten.getText());
         } catch (NumberFormatException nfe) {
-            Debug.errDlg("Die Festnetzkosten wurden falsch eingegeben.\nBitte in der Art 1.5 eingeben.");
+            Debug
+                    .errDlg("Die Festnetzkosten wurden falsch eingegeben.\nBitte in der Art 1.5 eingeben.");
             return false;
         }
         try {
@@ -87,30 +90,38 @@ public class SipConfigDialog extends JDialog {
             Debug.errDlg("Die Festnetzfreiminuten wurden falsch eingegeben.");
             return false;
         }
-        if ((Integer.parseInt(festnetzTakt1.getText()) % 60 != 0) || (Integer.parseInt(festnetzTakt2.getText()) % 60 != 0)) {
-            Debug.errDlg("Die FritzBox rechnet nur Minutengenau ab,\ndeshalb wird der von Ihnen eingegebene Takt auf die nächst höhere Minute gerundet.");
-            if (Integer.parseInt(festnetzTakt1.getText()) % 60 != 0) festnetzTakt1.setText(Integer.toString(((Integer.parseInt(festnetzTakt1.getText())/60)+1)*60));
-            if (Integer.parseInt(festnetzTakt2.getText()) % 60 != 0) festnetzTakt2.setText(Integer.toString(((Integer.parseInt(festnetzTakt2.getText())/60)+1)*60));
+        if ((Integer.parseInt(festnetzTakt1.getText()) % 60 != 0)
+                || (Integer.parseInt(festnetzTakt2.getText()) % 60 != 0)) {
+            Debug
+                    .errDlg("Die FritzBox rechnet nur Minutengenau ab,\ndeshalb wird der von Ihnen eingegebene Takt auf die nächst höhere Minute gerundet.");
+            if (Integer.parseInt(festnetzTakt1.getText()) % 60 != 0)
+                festnetzTakt1.setText(Integer.toString(((Integer
+                        .parseInt(festnetzTakt1.getText()) / 60) + 1) * 60));
+            if (Integer.parseInt(festnetzTakt2.getText()) % 60 != 0)
+                festnetzTakt2.setText(Integer.toString(((Integer
+                        .parseInt(festnetzTakt2.getText()) / 60) + 1) * 60));
             return false;
         }
         try {
             Integer.parseInt(mobilTakt1.getText());
         } catch (NumberFormatException nfe) {
-            Debug.errDlg("Der Mobilfunktakt für die erste Minute wurde falsch eingegeben.");
+            Debug
+                    .errDlg("Der Mobilfunktakt für die erste Minute wurde falsch eingegeben.");
             return false;
         }
         try {
             Integer.parseInt(mobilTakt2.getText());
         } catch (NumberFormatException nfe) {
-            Debug.errDlg("Der Mobilfunktakt ab der zweiten Minute wurde falsch eingegeben.");
+            Debug
+                    .errDlg("Der Mobilfunktakt ab der zweiten Minute wurde falsch eingegeben.");
             return false;
         }
         try {
-            mobilKosten.setText(mobilKosten.getText()
-                    .replaceAll(",", "."));
+            mobilKosten.setText(mobilKosten.getText().replaceAll(",", "."));
             Double.parseDouble(mobilKosten.getText());
         } catch (NumberFormatException nfe) {
-            Debug.errDlg("Die Mobilfunkkosten wurden falsch eingegeben.\nBitte in der Art 1.5 eingeben.");
+            Debug
+                    .errDlg("Die Mobilfunkkosten wurden falsch eingegeben.\nBitte in der Art 1.5 eingeben.");
             return false;
         }
         try {
@@ -119,10 +130,16 @@ public class SipConfigDialog extends JDialog {
             Debug.errDlg("Die Mobilfunkfreiminuten wurden falsch eingegeben.");
             return false;
         }
-        if ((Integer.parseInt(mobilTakt1.getText()) % 60 != 0) || (Integer.parseInt(mobilTakt2.getText()) % 60 != 0)) {
-            Debug.errDlg("Die FritzBox rechnet nur Minutengenau ab,\ndeshalb wird der von Ihnen eingegebene Takt auf die nächst höhere Minute gerundet.");
-            if (Integer.parseInt(mobilTakt1.getText()) % 60 != 0) mobilTakt1.setText(Integer.toString(((Integer.parseInt(mobilTakt1.getText())/60)+1)*60));
-            if (Integer.parseInt(mobilTakt2.getText()) % 60 != 0) mobilTakt2.setText(Integer.toString(((Integer.parseInt(mobilTakt2.getText())/60)+1)*60));
+        if ((Integer.parseInt(mobilTakt1.getText()) % 60 != 0)
+                || (Integer.parseInt(mobilTakt2.getText()) % 60 != 0)) {
+            Debug
+                    .errDlg("Die FritzBox rechnet nur Minutengenau ab,\ndeshalb wird der von Ihnen eingegebene Takt auf die nächst höhere Minute gerundet.");
+            if (Integer.parseInt(mobilTakt1.getText()) % 60 != 0)
+                mobilTakt1.setText(Integer.toString(((Integer
+                        .parseInt(mobilTakt1.getText()) / 60) + 1) * 60));
+            if (Integer.parseInt(mobilTakt2.getText()) % 60 != 0)
+                mobilTakt2.setText(Integer.toString(((Integer
+                        .parseInt(mobilTakt2.getText()) / 60) + 1) * 60));
             return false;
         }
         return true;
@@ -136,12 +153,23 @@ public class SipConfigDialog extends JDialog {
         startDatum.setSelectedIndex(sipProvider.getStartDate() - 1);
         festnetzTakt1.setText(Integer.toString(sipProvider.getFestnetzTakt1()));
         festnetzTakt2.setText(Integer.toString(sipProvider.getFestnetzTakt2()));
-        festnetzKosten.setText(Double.toString(sipProvider.getFestnetzKosten()));
-        festnetzFreiminuten.setText(Integer.toString(sipProvider.getFestnetzFreiminuten()));
+        festnetzKosten
+                .setText(Double.toString(sipProvider.getFestnetzKosten()));
+        festnetzFreiminuten.setText(Integer.toString(sipProvider
+                .getFestnetzFreiminuten()));
         mobilTakt1.setText(Integer.toString(sipProvider.getMobileTakt1()));
         mobilTakt2.setText(Integer.toString(sipProvider.getMobileTakt2()));
         mobilKosten.setText(Double.toString(sipProvider.getMobileKosten()));
-        mobilFreiminuten.setText(Integer.toString(sipProvider.getMobileFreiminuten()));
+        mobilFreiminuten.setText(Integer.toString(sipProvider
+                .getMobileFreiminuten()));
+        if (sipProvider.getWarnFreiminuten() < 0) {
+            warnFreiminutenCheckBox.setSelected(false);
+            warnFreiminutenTextField.setText("0");
+        } else {
+            warnFreiminutenCheckBox.setSelected(true);
+            warnFreiminutenTextField.setText(Integer.toString(sipProvider
+                    .getWarnFreiminuten()));
+        }
     }
 
     /**
@@ -152,12 +180,22 @@ public class SipConfigDialog extends JDialog {
         sipProvider.setStartDate(startDatum.getSelectedIndex() + 1);
         sipProvider.setFestnetzTakt1(Integer.parseInt(festnetzTakt1.getText()));
         sipProvider.setFestnetzTakt2(Integer.parseInt(festnetzTakt2.getText()));
-        sipProvider.setFestnetzKosten(Double.parseDouble(festnetzKosten.getText()));
-        sipProvider.setFestnetzFreiminuten(Integer.parseInt(festnetzFreiminuten.getText()));
+        sipProvider.setFestnetzKosten(Double.parseDouble(festnetzKosten
+                .getText()));
+        sipProvider.setFestnetzFreiminuten(Integer.parseInt(festnetzFreiminuten
+                .getText()));
         sipProvider.setMobileTakt1(Integer.parseInt(mobilTakt1.getText()));
         sipProvider.setMobileTakt2(Integer.parseInt(mobilTakt2.getText()));
         sipProvider.setMobileKosten(Double.parseDouble(mobilKosten.getText()));
-        sipProvider.setMobileFreiminuten(Integer.parseInt(mobilFreiminuten.getText()));
+        sipProvider.setMobileFreiminuten(Integer.parseInt(mobilFreiminuten
+                .getText()));
+        if (warnFreiminutenCheckBox.isSelected()) {
+            sipProvider.setWarnFreiminuten(Integer
+                    .parseInt(warnFreiminutenTextField.getText()));
+        } else { // Keine Warnung
+            sipProvider.setWarnFreiminuten(-1);
+        }
+
     }
 
     public boolean showDialog() {
