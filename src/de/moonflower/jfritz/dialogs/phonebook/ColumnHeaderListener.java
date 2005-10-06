@@ -58,15 +58,7 @@ public class ColumnHeaderListener extends MouseAdapter {
 			}
 
 		} else {
-/**			// Disable editing
-			try {
-				list.getJfritz().getJframe().getCallerTable().getCellEditor()
-						.cancelCellEditing();
-			} catch (NullPointerException e) {
-			}
-**/			list.sortAllFilteredRowsBy(mColIndex);
-			list.fireTableDataChanged();
-
+			list.sortAllFilteredRowsBy(mColIndex);
 		}
 	}
 }

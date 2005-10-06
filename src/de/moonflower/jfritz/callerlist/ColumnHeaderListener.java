@@ -65,8 +65,6 @@ public class ColumnHeaderListener extends MouseAdapter {
 			} catch (NullPointerException e) {
 			}
 			list.sortAllFilteredRowsBy(mColIndex);
-			list.fireTableDataChanged();
-
 		}
 	}
 }
