@@ -252,7 +252,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/doc/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.118 2005/10/06 11:47:40 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.119 2005/10/06 17:27:08 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -333,16 +333,6 @@ public final class JFritz {
             new MacHandler(this);
         }
 
-        if (checkForSystraySupport()) {
-            try {
-                systray = SystemTray.getDefaultSystemTray();
-                createTrayMenu();
-            } catch (Exception e) {
-                Debug.err(e.toString());
-                SYSTRAY_SUPPORT = false;
-            }
-        }
-
         phonebook = new PhoneBook(this);
         phonebook.loadFromXMLFile(PHONEBOOK_FILE);
 
@@ -393,6 +383,15 @@ public final class JFritz {
         jframe = new JFritzWindow(this);
 
         Debug.msg("Checke Systray-Support");
+        if (checkForSystraySupport()) {
+            try {
+                systray = SystemTray.getDefaultSystemTray();
+                createTrayMenu();
+            } catch (Exception e) {
+                Debug.err(e.toString());
+                SYSTRAY_SUPPORT = false;
+            }
+        }
 
         if (JFritzUtils.parseBoolean(JFritz.getProperty("option.useSSDP", "true"))) {
             Debug.msg("Suche FritzBox über UPNP / SSDP");
