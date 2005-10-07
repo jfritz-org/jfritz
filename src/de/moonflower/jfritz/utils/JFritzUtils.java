@@ -97,7 +97,8 @@ public class JFritzUtils {
             //			+ "\\s*<td
             // class=\"c2\">([\\(]*[\\w*\\s*]*[\\)]*[\\w*\\s*]*)</td>"
             + "\\s*<td class=\"c2\">([^<]*)</td>"
-            + "\\s*<td class=\"c3\"><script type=\"text/javascript\">document.write\\(ProviderDisplay\\(\"([^\"]*)\"\\)\\);</script></td>";
+            + "\\s*<td class=\"c3\"><script type=\"text/javascript\">document.write\\(ProviderDisplay\\(\"([^\"]*)\"\\)\\);</script></td>"
+			+ "\\s*<td class=\"c6\"><script type=\"text/javascript\">document.write\\(AuswahlDisplay\\(\"([^\"]*)\"\\)\\);</script></td>";
 
     final static String PATTERN_SIPPROVIDER_ACTIVE = "<input type=\"hidden\" name=\"sip:settings/sip(\\d)/activated\" value=\"(\\d)\" id=\"uiPostActivsip";
 
@@ -234,7 +235,7 @@ public class JFritzUtils {
         Matcher m = p.matcher(data);
         while (m.find()) {
             if (!(m.group(4).equals(""))) {
-                list.add(new SipProvider(Integer.parseInt(m.group(1)), m
+                list.add(new SipProvider(Integer.parseInt(m.group(5)), m
                         .group(3), m.group(4)));
                 Debug.msg("SIP-Provider: " + list.lastElement());
             }
