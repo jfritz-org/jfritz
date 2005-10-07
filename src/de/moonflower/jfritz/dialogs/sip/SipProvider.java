@@ -83,6 +83,14 @@ public class SipProvider {
     }
 
     /**
+     *
+     * @param providerID The providerID to set.
+     */
+    public void setProviderID(int providerID) {
+        this.providerID = providerID;
+    }
+
+    /**
      * Set VoIP-Provider active state
      *
      * @param state
