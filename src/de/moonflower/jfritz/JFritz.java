@@ -44,6 +44,7 @@
  * - Adressbuch nun nach allen Spalten sortierbar
  * - Bugfix: Firmware konnte nicht erkannt werden
  * - Bugfix: Spaltenbreite wurde nicht korrekt gespeichert
+ * - Bugfix: Falsche SIP-ID bei gelöschten Einträgen.
  *
  * Internal:
  * - SipProvider-Informationen werden nicht mehr in den
@@ -252,7 +253,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/doc/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.119 2005/10/06 17:27:08 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.120 2005/10/07 11:09:56 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
