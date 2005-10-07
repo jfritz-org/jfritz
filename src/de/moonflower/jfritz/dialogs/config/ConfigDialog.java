@@ -825,7 +825,7 @@ public class ConfigDialog extends JDialog {
                     try {
                         Vector data = JFritzUtils.retrieveSipProvider(address
                                 .getText(), password, firmware);
-                        jfritz.getSIPProviderTableModel().setProviderList(data);
+                        jfritz.getSIPProviderTableModel().updateProviderList(data);
                         jfritz.getSIPProviderTableModel()
                                 .fireTableDataChanged();
                         jfritz.getCallerlist().fireTableDataChanged();

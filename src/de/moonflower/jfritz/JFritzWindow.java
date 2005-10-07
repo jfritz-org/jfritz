@@ -630,7 +630,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			if (jfritz.getSIPProviderTableModel().getProviderList().size() == 0) { // Noch keine SipProvider eingelesen.
 				try {
 					Vector data = JFritzUtils.retrieveSipProvider(JFritz.getProperty("box.address","192.168.178.1"), JFritz.getProperty("box.password"), new FritzBoxFirmware(JFritz.getProperty("box.firmware")));
-					jfritz.getSIPProviderTableModel().setProviderList(data);
+					jfritz.getSIPProviderTableModel().updateProviderList(data);
 					jfritz.getSIPProviderTableModel().fireTableDataChanged();
 					jfritz.getSIPProviderTableModel().saveToXMLFile(JFritz.SIPPROVIDER_FILE);
 					jfritz.getCallerlist().fireTableDataChanged();
