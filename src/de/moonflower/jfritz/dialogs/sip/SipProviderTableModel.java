@@ -11,6 +11,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -108,11 +110,37 @@ public class SipProviderTableModel extends AbstractTableModel {
     }
 
     /**
+     * Updates SIP-Provider list
      * @param providerList
-     *            The providerList to set.
+     *            The providerList to update.
      */
-    public final void setProviderList(Vector providerList) {
-        this.providerList = providerList;
+    public final void updateProviderList(Vector newProviderList) {
+        Vector newProviderVector = new Vector();
+        if (providerList.size() == 0) { // Empty providerList
+            providerList = newProviderList;
+        } else {
+            Enumeration en1 = newProviderList.elements(); // neue Provider
+            while (en1.hasMoreElements()) {
+                SipProvider sip1 = (SipProvider) en1.nextElement();
+                boolean found =  false;
+                for (int i=0; i < providerList.size(); i++) {
+                    SipProvider sip2 = (SipProvider) providerList.get(i);
+                    if (sip1.toString().equals(sip2.toString())) {
+                        // Provider existiert schon
+                        // Active-Status und ProviderID anpassen und zur neuen Liste hinzufügen
+                        found = true;
+                        sip2.setActive(sip1.isActive());
+                        sip2.setProviderID(sip1.getProviderID());
+                        newProviderVector.add(sip2);
+                    }
+                }
+                if (!found) {
+                    newProviderVector.add(sip1);
+                }
+            }
+            providerList = newProviderVector;
+            sortAllRowsBy(0);
+        }
     }
 
     public final void addProvider(SipProvider sip) {
@@ -200,6 +228,7 @@ public class SipProviderTableModel extends AbstractTableModel {
 
 			reader.setContentHandler(new SIPFileXMLHandler(this));
 			reader.parse(new InputSource(new FileInputStream(filename)));
+			sortAllRowsBy(0);
 
 		} catch (ParserConfigurationException e) {
 			Debug.err("Error with ParserConfiguration!");
@@ -217,6 +246,70 @@ public class SipProviderTableModel extends AbstractTableModel {
 			}
 		} catch (IOException e) {
 			Debug.err("Could not read " + filename + "!");
+		}
+	}
+
+	public void sortAllRowsBy(int col) {
+	    Collections.sort(providerList, new ColumnSorter(col, true));
+		fireTableDataChanged();
+	}
+
+	/**
+	 * This comparator is used to sort vectors of data
+	 */
+	public class ColumnSorter implements Comparator {
+		int colIndex;
+
+		boolean ascending;
+
+		ColumnSorter(int colIndex, boolean ascending) {
+			this.colIndex = colIndex;
+			this.ascending = ascending;
+		}
+
+		public int compare(Object a, Object b) {
+			Object o1, o2;
+			SipProvider v1 = (SipProvider) a;
+			SipProvider v2 = (SipProvider) b;
+			switch (colIndex) {
+			case 0:
+			    if (v1.getProviderID() > v2.getProviderID()) {
+			        return 1;
+			    } else return 0;
+			default:
+			    o1 = null;
+				o2 = null;
+			}
+
+			// Treat empty strings like nulls
+			if (o1 instanceof String && ((String) o1).trim().length() == 0) {
+				o1 = null;
+			}
+			if (o2 instanceof String && ((String) o2).trim().length() == 0) {
+				o2 = null;
+			}
+
+			// Sort nulls so they appear last, regardless
+			// of sort order
+			if (o1 == null && o2 == null) {
+				return 0;
+			} else if (o1 == null) {
+				return 1;
+			} else if (o2 == null) {
+				return -1;
+			} else if (o1 instanceof Comparable) {
+				if (ascending) {
+					return ((Comparable) o1).compareTo(o2);
+				} else {
+					return ((Comparable) o2).compareTo(o1);
+				}
+			} else {
+				if (ascending) {
+					return o1.toString().compareTo(o2.toString());
+				} else {
+					return o2.toString().compareTo(o1.toString());
+				}
+			}
 		}
 	}
 }
