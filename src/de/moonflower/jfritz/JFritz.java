@@ -47,6 +47,7 @@
  * - Bugfix: Firmware konnte nicht erkannt werden
  * - Bugfix: Spaltenbreite wurde nicht korrekt gespeichert
  * - Bugfix: Falsche SIP-ID bei gelöschten Einträgen.
+ * - Bugfix: Wenn Kurzwahl unbekannt war, wurde eine falsche Rufnummer angezeigt.
  *
  * Internal:
  * - SipProvider-Informationen werden nicht mehr in den
@@ -255,7 +256,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/doc/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.121 2005/10/08 10:10:00 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.122 2005/10/08 19:53:42 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
