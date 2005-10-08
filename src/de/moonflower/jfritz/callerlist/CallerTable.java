@@ -133,6 +133,7 @@ public class CallerTable extends JTable {
 		col.setHeaderValue(JFritz.getMessage("number"));
 		col.setCellRenderer(new NumberCellRenderer());
 		headerTips.setToolTip(col, JFritz.getMessage("number_desc"));
+		col.setCellEditor(new CallCellEditor((CallerList) getModel()));
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
 				"column3.width", "128")));
 
