@@ -156,7 +156,7 @@ public class JFritzUtils {
 
         // DEBUG: Test other versions
         if (false) {
-            String filename = "anrufliste.html";
+            String filename = "anrufliste 86.html";
             Debug.msg("Debug mode: Loading " + filename);
             try {
                 data = "";
@@ -218,6 +218,24 @@ public class JFritzUtils {
                 + URLEncoder.encode(box_password, "ISO-8859-1");
         String urlstr = "http://" + box_address + "/cgi-bin/webcm";
         String data = fetchDataFromURL(urlstr, postdata);
+
+        // DEBUG: Test other versions
+        if (false) {
+            String filename = "sipProvider 86.html";
+            Debug.msg("Debug mode: Loading " + filename);
+            try {
+                data = "";
+                String thisLine;
+                BufferedReader in = new BufferedReader(new FileReader(filename));
+                while ((thisLine = in.readLine()) != null) {
+                    data += thisLine;
+                }
+                in.close();
+            } catch (IOException e) {
+                Debug.err("File not found: " + filename);
+            }
+        }
+
         Vector list = parseSipProvider(data);
         return list;
     }
