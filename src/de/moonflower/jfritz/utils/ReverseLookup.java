@@ -34,7 +34,7 @@ public class ReverseLookup {
 		} else if (number.isFreeCall()) {
 			newPerson = new Person("", "FreeCall");
 			newPerson.addNumber(number);
-		} else if (number.isSIPNumber()) {
+		} else if (number.isSIPNumber() || number.isQuickDial()) {
 		    newPerson = new Person ();
 		    newPerson.addNumber(number);
 		} else {
