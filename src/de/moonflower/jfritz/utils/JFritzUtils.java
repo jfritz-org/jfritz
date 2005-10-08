@@ -10,6 +10,7 @@ import java.io.DataOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -56,6 +57,8 @@ public class JFritzUtils {
 
     final static String POSTDATA_CLEAR = "&var%3Alang=de&var%3Apagename=foncalls&var%3Amenu=fon&telcfg%3Asettings/ClearJournal=1";
 
+    final static String POSTDATA_CALL = "&login:command/password=$PASSWORT&telcfg:settings/UseClickToDial=1&telcfg:command/Dial=$NUMMER&telcfg:settings/DialPort=$NEBENSTELLE";
+
     final static String PATTERN_LIST_OLD = "<tr class=\"Dialoglist\">"
             + "\\s*<td class=\"c1\"><script type=\"text/javascript\">document.write\\(uiCallSymbol\\(\"(\\d)\"\\)\\);</script></td>"
             + "\\s*<td class=\"c3\">(\\d\\d\\.\\d\\d\\.\\d\\d \\d\\d:\\d\\d)</td>"
@@ -98,7 +101,7 @@ public class JFritzUtils {
             // class=\"c2\">([\\(]*[\\w*\\s*]*[\\)]*[\\w*\\s*]*)</td>"
             + "\\s*<td class=\"c2\">([^<]*)</td>"
             + "\\s*<td class=\"c3\"><script type=\"text/javascript\">document.write\\(ProviderDisplay\\(\"([^\"]*)\"\\)\\);</script></td>"
-			+ "\\s*<td class=\"c6\"><script type=\"text/javascript\">document.write\\(AuswahlDisplay\\(\"([^\"]*)\"\\)\\);</script></td>";
+            + "\\s*<td class=\"c6\"><script type=\"text/javascript\">document.write\\(AuswahlDisplay\\(\"([^\"]*)\"\\)\\);</script></td>";
 
     final static String PATTERN_SIPPROVIDER_ACTIVE = "<input type=\"hidden\" name=\"sip:settings/sip(\\d)/activated\" value=\"(\\d)\" id=\"uiPostActivsip";
 
@@ -429,7 +432,7 @@ public class JFritzUtils {
                         route = "SIP" + routeStrings[0]; // VoIP-Nummer
                     } else
                         Debug.err("Fehler in parseCallerData: Konnte Route nicht auflösen: "
-                                    + m.group(5));
+                                        + m.group(5));
                     String[] durationStrings = m.group(6).split(":");
                     duration = Integer.parseInt(durationStrings[0]) * 3600
                             + Integer.parseInt(durationStrings[1]) * 60;
@@ -548,6 +551,68 @@ public class JFritzUtils {
         out = out.replaceAll(">", "&#62;");
         out = out.replaceAll("\"", "&#34;");
         return out;
+    }
+
+    public static void doCall(String number, String port,
+            FritzBoxFirmware firmware) {
+        String data = "";
+        try {
+            String passwort = Encryption.decrypt(JFritz.getProperty(
+                    "box.password", Encryption.encrypt("")));
+            number = number.replaceAll(
+                    "\\+", "00");
+
+            String portStr = "";
+            if (port.equals("Fon 1")) {
+                portStr = "1";
+            } else if (port.equals("Fon 2")) {
+                portStr = "2";
+            } else if (port.equals("Fon 3")) {
+                portStr = "3";
+            } else if (port.equals("ISDN Alle")) {
+                portStr = "50";
+            } else if (port.equals("ISDN 1")) {
+                portStr = "51";
+            } else if (port.equals("ISDN 2")) {
+                portStr = "52";
+            } else if (port.equals("ISDN 3")) {
+                portStr = "53";
+            } else if (port.equals("ISDN 4")) {
+                portStr = "54";
+            } else if (port.equals("ISDN 5")) {
+                portStr = "55";
+            } else if (port.equals("ISDN 6")) {
+                portStr = "56";
+            } else if (port.equals("ISDN 7")) {
+                portStr = "57";
+            } else if (port.equals("ISDN 8")) {
+                portStr = "58";
+            } else if (port.equals("ISDN 9")) {
+                portStr = "59";
+            }
+
+            String postdata = POSTDATA_CALL.replaceAll("\\$PASSWORT",
+                    URLEncoder.encode(passwort, "ISO-8859-1"));
+            postdata = postdata.replaceAll("\\$NUMMER", number);
+            postdata = postdata.replaceAll("\\$NEBENSTELLE", portStr);
+
+            postdata = firmware.getAccessMethod() + postdata;
+
+            String urlstr = "http://"
+                    + JFritz.getProperty("box.address", "fritz.box")
+                    + "/cgi-bin/webcm";
+            data = fetchDataFromURL(urlstr, postdata);
+            System.out.println("PASSWORT: " + passwort);
+            System.out.println("Nummer: " + number);
+            System.out.println("Port: " + portStr);
+
+            System.out.println(urlstr + "?" + postdata);
+            System.out.println(data);
+        } catch (UnsupportedEncodingException uee) {
+        } catch (WrongPasswordException wpe) {
+        } catch (IOException ioe) {
+        }
+
     }
 
 }
