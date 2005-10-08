@@ -42,6 +42,8 @@
  * - Unterstützung für Freiminuten
  * - Suche über UPNP/SSDP abschaltbar
  * - Adressbuch nun nach allen Spalten sortierbar
+ * - Beim Export merkt sich JFritz! die Verzeichnisse
+ * - Anrufen aus der Anrufliste heraus (noch nicht getestet)
  * - Bugfix: Firmware konnte nicht erkannt werden
  * - Bugfix: Spaltenbreite wurde nicht korrekt gespeichert
  * - Bugfix: Falsche SIP-ID bei gelöschten Einträgen.
@@ -253,7 +255,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/doc/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.120 2005/10/07 11:09:56 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.121 2005/10/08 10:10:00 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
