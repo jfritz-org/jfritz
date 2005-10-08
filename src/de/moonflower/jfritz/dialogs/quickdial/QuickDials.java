@@ -139,12 +139,11 @@ public class QuickDials extends AbstractTableModel {
 	public void getQuickDialDataFromFritzBox() {
 		try {
 			quickDials = JFritzUtils.retrieveQuickDialsFromFritzBox(this,
-					JFritz.getProperty("box.address"), Encryption
-							.decrypt(JFritz.getProperty("box.password")),
 					JFritzUtils.detectBoxType(JFritz
 							.getProperty("box.firmware"), JFritz
 							.getProperty("box.address"), Encryption.decrypt(JFritz
 							.getProperty("box.password"))));
+			fireTableDataChanged();
 		} catch (WrongPasswordException e) {
 			Debug.err("getQuickDialData: Wrong password");
 		} catch (IOException e) {
