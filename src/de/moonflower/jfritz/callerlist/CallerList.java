@@ -111,8 +111,11 @@ public class CallerList extends AbstractTableModel {
      *
      */
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return ((columnIndex == 4) && (((Call) filteredCallerData.get(rowIndex))
-                .getPhoneNumber() != null));
+        switch (columnIndex) {
+        case 3: return true;
+        case 4: return ((Call) filteredCallerData.get(rowIndex)).getPhoneNumber() != null;
+        default: return false;
+        }
     }
 
     /**
