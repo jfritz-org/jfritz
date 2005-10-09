@@ -200,7 +200,8 @@ public class SipConfigDialog extends JDialog {
 
     public boolean showDialog() {
         ok_pressed = false;
-        super.show();
+//        super.show();
+        super.setVisible(true);
         if (ok_pressed)
             return true;
         else

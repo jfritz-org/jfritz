@@ -62,7 +62,8 @@ public class CallmessageConfigDialog extends JDialog implements CallMonitorConfi
 	}
 
 	public int showConfigDialog() {
-		super.show();
+//		super.show();
+		super.setVisible(true);
 		return exitCode;
 	}
 

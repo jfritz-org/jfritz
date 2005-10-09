@@ -112,7 +112,8 @@ public class SyslogConfigDialog extends JDialog implements CallMonitorConfigDial
 	}
 
 	public int showConfigDialog() {
-		super.show();
+//		super.show();
+		super.setVisible(true);
 		return exitCode;
 	}
 

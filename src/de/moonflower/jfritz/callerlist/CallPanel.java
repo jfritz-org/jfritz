@@ -48,7 +48,8 @@ public class CallPanel extends JComponent {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() > 1) {
 					CallDialog p = new CallDialog(jfritz, number);
-					p.show();
+					p.setVisible(true);
+//					p.show();
 					p.dispose();
 				}
 			}

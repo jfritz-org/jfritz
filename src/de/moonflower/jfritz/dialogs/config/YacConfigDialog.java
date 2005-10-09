@@ -62,7 +62,8 @@ public class YacConfigDialog extends JDialog implements CallMonitorConfigDialog 
     }
 
     public int showConfigDialog() {
-        super.show();
+//        super.show();
+        super.setVisible(true);
         return exitCode;
     }
 
