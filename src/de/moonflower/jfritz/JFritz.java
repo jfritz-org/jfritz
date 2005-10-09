@@ -256,7 +256,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/doc/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.122 2005/10/08 19:53:42 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.123 2005/10/09 08:45:24 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -398,7 +398,7 @@ public final class JFritz {
         }
 
         if (JFritzUtils.parseBoolean(JFritz.getProperty("option.useSSDP", "true"))) {
-            Debug.msg("Suche FritzBox über UPNP / SSDP");
+            Debug.msg("Suche FritzBox über UPnP / SSDP");
 
             ssdpthread = new SSDPdiscoverThread(this, SSDP_TIMEOUT);
             ssdpthread.start();
