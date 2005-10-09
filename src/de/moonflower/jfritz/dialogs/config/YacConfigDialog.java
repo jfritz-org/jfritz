@@ -27,7 +27,13 @@ import de.moonflower.jfritz.JFritz;
  */
 public class YacConfigDialog extends JDialog implements CallMonitorConfigDialog {
 
-    private int exitCode = 0;
+	/**
+	 * This avoids compiler warnings
+	 * I don't know what it's for yet
+	 */
+	private static final long serialVersionUID = -1652211517806640671L;
+
+	private int exitCode = 0;
 
     private JButton cancelButton, okButton;
 

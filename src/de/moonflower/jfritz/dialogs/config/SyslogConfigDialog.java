@@ -40,6 +40,12 @@ import de.moonflower.jfritz.utils.network.Telnet;
  */
 public class SyslogConfigDialog extends JDialog implements CallMonitorConfigDialog {
 
+	/**
+	 * This avoid compiler warnings
+	 * I don't know what it's for yet
+	 */
+	private static final long serialVersionUID = 1262373999715869093L;
+
 	private JFritz jfritz;
 
 	private JCheckBox checkSyslog;

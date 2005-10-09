@@ -36,7 +36,13 @@ public class SipConfigDialog extends JDialog {
 
     //    private JFritz jfritz;
 
-    private JComboBox startDatum;
+	/**
+	 * This avoids compiler warnings
+	 * I don't know what it's for yet
+	 */
+	private static final long serialVersionUID = 523526251509572465L;
+
+	private JComboBox startDatum;
 
     private JCheckBox warnFreiminutenCheckBox;
 

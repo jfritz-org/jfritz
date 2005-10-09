@@ -27,6 +27,12 @@ import de.moonflower.jfritz.JFritz;
  */
 public class CallmessageConfigDialog extends JDialog implements CallMonitorConfigDialog{
 
+	/**
+	 * This avoids compiler warnings
+	 * I don't know what it's for yet
+	 */
+	private static final long serialVersionUID = -8662130877265779872L;
+
 	private int exitCode = 0;
 
 	private JButton cancelButton, okButton;

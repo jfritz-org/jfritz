@@ -33,6 +33,12 @@ import de.moonflower.jfritz.utils.Encryption;
  */
 public class TelnetConfigDialog extends JDialog implements CallMonitorConfigDialog{
 
+	/**
+	 * This avoids compiler warnings
+	 * I don't know what it's for yet
+	 */
+	private static final long serialVersionUID = 8494982860518260908L;
+
 	private JPasswordField passwordTextfield;
 
 	private JTextField userNameTextfield;
@@ -82,7 +88,7 @@ public class TelnetConfigDialog extends JDialog implements CallMonitorConfigDial
 	}
 
 	public int showConfigDialog() {
-		super.show();
+//		super.show();
 		super.setVisible(true);
 		return exitCode;
 	}
