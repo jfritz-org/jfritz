@@ -59,8 +59,7 @@ public class SipConfigDialog extends JDialog {
     public SipConfigDialog(JDialog parent, SipProvider sipProvider) {
         super(parent, true);
         setLocationRelativeTo(parent);
-        //        jfritz = ((ConfigDialog) parent).getJfritz();
-        setTitle("Edit Sip-Provider");
+        setTitle("Edit Sip-Provider: " + sipProvider.toString());
         this.sipProvider = sipProvider;
         drawDialog();
         setValues();
@@ -321,7 +320,7 @@ public class SipConfigDialog extends JDialog {
         label = new JLabel("ab 2. Min");
         panel.add(label, c);
         c.gridx = 4;
-        label = new JLabel("in cent / min");
+        label = new JLabel("in Cent / min");
         panel.add(label, c);
         c.gridx = 5;
         label = new JLabel("Freiminuten");
