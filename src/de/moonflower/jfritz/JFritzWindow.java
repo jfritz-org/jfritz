@@ -41,6 +41,10 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.TableColumnModel;
 
+import org.jfree.report.JFreeReport;
+import org.jfree.report.ReportProcessingException;
+import org.jfree.report.modules.gui.base.PreviewFrame;
+
 import de.moonflower.jfritz.callerlist.CallerListPanel;
 import de.moonflower.jfritz.callerlist.CallerTable;
 import de.moonflower.jfritz.dialogs.config.ConfigDialog;
@@ -360,12 +364,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		item.addActionListener(this);
 		jfritzMenu.add(item);
 
-		// Drucken funktioniert schon, aber wir sollten vielleicht eine externe Bibliothek benutzen.
-		// item = new JMenuItem("Drucken");
-		// item.setActionCommand("print_callerlist");
-		// item.addActionListener(this);
-		// item.setEnabled(JFritz.DEVEL_VERSION);
-		// jfritzMenu.add(item);
+		item = new JMenuItem("Drucken");
+		item.setActionCommand("print_callerlist");
+		item.addActionListener(this);
+		item.setEnabled(JFritz.DEVEL_VERSION);
+		jfritzMenu.add(item);
 
 		item = new JMenuItem(JFritz.getMessage("export_csv"), 'c');
 		item.setActionCommand("export_csv");
@@ -629,7 +632,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			jfritz.saveProperties();
 			if (jfritz.getSIPProviderTableModel().getProviderList().size() == 0) { // Noch keine SipProvider eingelesen.
 				try {
-					Vector data = JFritzUtils.retrieveSipProvider(JFritz.getProperty("box.address","192.168.178.1"), JFritz.getProperty("box.password"), new FritzBoxFirmware(JFritz.getProperty("box.firmware")));
+					Vector data = JFritzUtils.retrieveSipProvider(JFritz.getProperty("box.address","192.168.178.1"), Encryption.decrypt(JFritz.getProperty("box.password")), new FritzBoxFirmware(JFritz.getProperty("box.firmware")));
 					jfritz.getSIPProviderTableModel().updateProviderList(data);
 					jfritz.getSIPProviderTableModel().fireTableDataChanged();
 					jfritz.getSIPProviderTableModel().saveToXMLFile(JFritz.SIPPROVIDER_FILE);
@@ -845,9 +848,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			BrowserLaunch.openURL(JFritz.PROGRAM_URL);
 		} else if (e.getActionCommand() == "export_csv")
 			exportCSV();
-//		else if (e.getActionCommand() == "print_callerlist") {
-//		    printCallerList();
-//		}
+		else if (e.getActionCommand() == "print_callerlist") {
+		    printCallerList();
+		}
 		else if (e.getActionCommand() == "config")
 			showConfigDialog();
 		else if (e.getActionCommand() == "callerlist")
@@ -980,11 +983,20 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		}
 	}
 //
-//	public void printCallerList() {
-//	    JTablePrint tablePrint = new JTablePrint();
-//	    tablePrint.printJTable(jfritz.getJframe().getCallerTable());
-//	}
-
+	public void printCallerList() {
+        JFreeReport report = jfritz.createReportDefinition();
+        report.setData(jfritz.getCallerlist());
+        try
+        {
+        PreviewFrame preview = new PreviewFrame(report);
+        preview.pack();
+        preview.setVisible(true);
+        }
+        catch (ReportProcessingException e)
+        {
+        Debug.err("Failed to generate report " + e);
+        }
+	}
 	public ImageIcon getImage(String filename) {
 		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
