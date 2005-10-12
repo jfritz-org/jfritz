@@ -14,7 +14,7 @@ import de.moonflower.jfritz.utils.Debug;
 /**
  * Thread, listens on a TCP-Port on Callmessage messages format:
  *
- * @CALLname (number) or: message
+ * @name (number) or: message
  *
  * @author Robert Palmer
  *
