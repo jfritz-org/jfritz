@@ -38,6 +38,7 @@
  *
  * JFritz! 0.4.5
  * - Unterstützung für FRITZ!Box Firmware .85
+ * - Unterstützung für FRITZ!Box Firmware .87
  * - Kostenabrechnung hinzugefügt
  * - Unterstützung für Freiminuten
  * - Suche über UPNP/SSDP abschaltbar
@@ -45,6 +46,7 @@
  * - Beim Export merkt sich JFritz! die Verzeichnisse
  * - Anrufen aus der Anrufliste heraus (noch nicht getestet)
  * - Drucken der Anrufliste (und Export nach Excel, RTF, PDF, CSV, ...)
+ * - Neue Kommandozeilenoption -n: Schaltet die Tray-Unterstützung aus
  * - Bugfix: Firmware konnte beim ersten Start nicht erkannt werden
  * - Bugfix: Spaltenbreite wurde nicht korrekt gespeichert
  * - Bugfix: Falsche SIP-ID bei gelöschten Einträgen.
@@ -237,11 +239,14 @@ import org.jfree.report.JFreeReport;
 import org.jfree.report.PageHeader;
 import org.jfree.report.ShapeElement;
 import org.jfree.report.SimplePageDefinition;
+import org.jfree.report.TextElement;
 import org.jfree.report.elementfactory.DateFieldElementFactory;
 import org.jfree.report.elementfactory.ImageFieldElementFactory;
+import org.jfree.report.elementfactory.LabelElementFactory;
 import org.jfree.report.elementfactory.StaticShapeElementFactory;
 import org.jfree.report.elementfactory.TextFieldElementFactory;
 import org.jfree.report.function.AbstractExpression;
+import org.jfree.report.style.FontDefinition;
 
 import de.moonflower.jfritz.callerlist.CallerList;
 import de.moonflower.jfritz.dialogs.phonebook.PhoneBook;
@@ -278,7 +283,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/doc/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.124 2005/10/12 18:48:58 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.125 2005/10/23 08:19:11 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -303,6 +308,8 @@ public final class JFritz {
                     .lastIndexOf(".") + 1)) % 2 == 1;
 
     public static boolean SYSTRAY_SUPPORT = false;
+
+    public static boolean checkSystray = true;
 
     private JFritzProperties defaultProperties;
 
@@ -451,6 +458,7 @@ public final class JFritz {
      * Checks for systray availability
      */
     private boolean checkForSystraySupport() {
+        if (!checkSystray) return false;
         String os = System.getProperty("os.name");
         if (os.equals("Linux") || os.equals("Solaris")
                 || os.startsWith("Windows")) {
@@ -482,6 +490,7 @@ public final class JFritz {
         options.addOption('v', "verbose", null, "Turn on debug information");
         options.addOption('v', "debug", null, "Turn on debug information");
         options.addOption('s', "systray", null, "Turn on systray support");
+        options.addOption('n', "nosystray", null, "Turn off systray support");
         options.addOption('f', "fetch", null, "Fetch new calls and exit");
         options.addOption('c', "clear_list", null,
                 "Clears Caller List and exit");
@@ -530,6 +539,8 @@ public final class JFritz {
                     Debug.logToFile(logFilename);
                     break;
                 }
+            case 'n':
+                checkSystray = false;
             default:
                 break;
             }
@@ -1035,9 +1046,13 @@ public final class JFritz {
         return sipprovider;
     }
 
-    private PageHeader createPageHeader() {
+    private PageHeader createPageHeader(float pageWidth) {
         PageHeader pageHeader = new PageHeader();
-        pageHeader.setName("Hallo");
+        pageHeader.setName("PageHeader");
+
+        FontDefinition headerFont = new FontDefinition("Arial", 16, true, false, false, false);
+        TextElement jfritzLabel = LabelElementFactory.createLabelElement("JFritz", new Rectangle2D.Float(0,0,pageWidth,40), Color.BLACK, ElementAlignment.CENTER, ElementAlignment.MIDDLE, headerFont, "JFritz! - Anrufliste");
+        pageHeader.addElement(jfritzLabel);
         pageHeader.setVisible(true);
         return pageHeader;
     }
@@ -1077,7 +1092,7 @@ public final class JFritz {
                 createDINA4PaperLandscape());
         report.setPageDefinition(pageDefinition);
 
-        report.setPageHeader(createPageHeader());
+        report.setPageHeader(createPageHeader(report.getPageDefinition().getWidth()));
 
         TextFieldElementFactory factory;
 
@@ -1139,7 +1154,7 @@ public final class JFritz {
         factory.setMaximumSize(new Dimension(100, 14));
         factory.setColor(Color.black);
         factory.setHorizontalAlignment(ElementAlignment.CENTER);
-        factory.setVerticalAlignment(ElementAlignment.CENTER);
+        factory.setVerticalAlignment(ElementAlignment.MIDDLE);
         factory.setNullString("-");
         factory.setFieldname(callerlist.getColumnName(1));
         report.getItemBand().addElement(factory.createElement());
@@ -1164,7 +1179,7 @@ public final class JFritz {
             factory.setMinimumSize(new Dimension(columnWidth, 14));
             factory.setColor(Color.black);
             factory.setHorizontalAlignment(ElementAlignment.CENTER);
-            factory.setVerticalAlignment(ElementAlignment.CENTER);
+            factory.setVerticalAlignment(ElementAlignment.MIDDLE);
             factory.setNullString(" ");
             factory.setFieldname(callerlist.getColumnName(2));
             report.getItemBand().addElement(factory.createElement());
@@ -1199,7 +1214,7 @@ public final class JFritz {
         factory.setMinimumSize(new Dimension(columnWidth, 14));
         factory.setColor(Color.black);
         factory.setHorizontalAlignment(ElementAlignment.CENTER);
-        factory.setVerticalAlignment(ElementAlignment.CENTER);
+        factory.setVerticalAlignment(ElementAlignment.MIDDLE);
         factory.setNullString(" ");
         factory.setFieldname("print_cost");
         report.getItemBand().addElement(factory.createElement());
@@ -1232,7 +1247,7 @@ public final class JFritz {
         factory.setMinimumSize(new Dimension(columnWidth, 14));
         factory.setColor(Color.black);
         factory.setHorizontalAlignment(ElementAlignment.CENTER);
-        factory.setVerticalAlignment(ElementAlignment.CENTER);
+        factory.setVerticalAlignment(ElementAlignment.MIDDLE);
         factory.setNullString(" ");
         factory.setFieldname("print_duration");
         report.getItemBand().addElement(factory.createElement());
@@ -1264,7 +1279,7 @@ public final class JFritz {
         factory.setMinimumSize(new Dimension(columnWidth, 14));
         factory.setColor(Color.black);
         factory.setHorizontalAlignment(ElementAlignment.CENTER);
-        factory.setVerticalAlignment(ElementAlignment.CENTER);
+        factory.setVerticalAlignment(ElementAlignment.MIDDLE);
         factory.setNullString(" ");
         factory.setFieldname("print_route");
         report.getItemBand().addElement(factory.createElement());
@@ -1309,7 +1324,7 @@ public final class JFritz {
         factory.setMinimumSize(new Dimension(columnWidth, 14));
         factory.setColor(Color.black);
         factory.setHorizontalAlignment(ElementAlignment.CENTER);
-        factory.setVerticalAlignment(ElementAlignment.CENTER);
+        factory.setVerticalAlignment(ElementAlignment.MIDDLE);
         factory.setNullString(" ");
         factory.setFieldname("print_port");
         report.getItemBand().addElement(factory.createElement());
@@ -1337,7 +1352,7 @@ public final class JFritz {
         factory.setMinimumSize(new Dimension(columnWidth, 14));
         factory.setColor(Color.black);
         factory.setHorizontalAlignment(ElementAlignment.CENTER);
-        factory.setVerticalAlignment(ElementAlignment.CENTER);
+        factory.setVerticalAlignment(ElementAlignment.MIDDLE);
         factory.setNullString(" ");
         factory.setFieldname(callerlist.getColumnName(3));
         report.getItemBand().addElement(factory.createElement());
@@ -1368,7 +1383,7 @@ public final class JFritz {
         factory.setMinimumSize(new Dimension(columnWidth, 14));
         factory.setColor(Color.black);
         factory.setHorizontalAlignment(ElementAlignment.CENTER);
-        factory.setVerticalAlignment(ElementAlignment.CENTER);
+        factory.setVerticalAlignment(ElementAlignment.MIDDLE);
         factory.setNullString(" ");
         factory.setFieldname("print_personname");
         report.getItemBand().addElement(factory.createElement());

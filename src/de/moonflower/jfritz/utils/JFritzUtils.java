@@ -78,12 +78,20 @@ public class JFritzUtils {
             + "\\s*</tr>";
 
     final static String PATTERN_LIST_85 = "<tr class=\"Dialoglist\">"
-            + "\\s*<td class=\"c1\"><script type=\"text/javascript\">document.write\\(uiCallSymbol\\(\"(\\d)\"\\)\\);</script></td>"
-            + "\\s*<td class=\"c3\">(\\d\\d\\.\\d\\d\\.\\d\\d \\d\\d:\\d\\d)</td>"
-            + "\\s*<td class=\"c4\"><script type=\"text/javascript\">document.write\\(uiRufnummerDisplay\\(\"([^\"\\)\\);]*)\"\\)\\);</script></td>"
-            + "\\s*<td class=\"c5\"><script type=\"text/javascript\">document.write\\(uiPortDisplay\\(\"(\\d*)\"\\)\\);</script></td>"
-            + "\\s*<td class=\"c7\"><script type=\"text/javascript\">document.write\\(uiRouteDisplay\\(([^\\)\\)]*)\\)\\);</script></td>"
-            + "\\s*<td class=\"c6\">([^<]*)</td>" + "\\s*</tr>";
+        + "\\s*<td class=\"c1\"><script type=\"text/javascript\">document.write\\(uiCallSymbol\\(\"(\\d)\"\\)\\);</script></td>"
+        + "\\s*<td class=\"c3\">(\\d\\d\\.\\d\\d\\.\\d\\d \\d\\d:\\d\\d)</td>"
+        + "\\s*<td class=\"c4\"><script type=\"text/javascript\">document.write\\(uiRufnummerDisplay\\(\"([^\"\\)\\);]*)\"\\)\\);</script></td>"
+        + "\\s*<td class=\"c5\"><script type=\"text/javascript\">document.write\\(uiPortDisplay\\(\"(\\d*)\"\\)\\);</script></td>"
+        + "\\s*<td class=\"c7\"><script type=\"text/javascript\">document.write\\(uiRouteDisplay\\(([^\\)\\)]*)\\)\\);</script></td>"
+        + "\\s*<td class=\"c6\">([^<]*)</td>" + "\\s*</tr>";
+
+    final static String PATTERN_LIST_87 = "<tr class=\"Dialoglist\">"
+        + "\\s*<td class=\"c1\"><nobr><script type=\"text/javascript\">document.write\\(uiCallSymbol\\(\"(\\d)\"\\)\\);</script></nobr></td>"
+        + "\\s*<td class=\"c3\"><nobr>(\\d\\d\\.\\d\\d\\.\\d\\d \\d\\d:\\d\\d)</nobr></td>"
+        + "\\s*<td class=\"c4\"><nobr><script type=\"text/javascript\">document.write\\(uiRufnummerDisplay\\(\"([^\"\\)\\);]*)\"\\)\\);</script></nobr></td>"
+        + "\\s*<td class=\"c5\"><nobr><script type=\"text/javascript\">document.write\\(uiPortDisplay\\(\"(\\d*)\"\\)\\);</script></nobr></td>"
+        + "\\s*<td class=\"c7\"><nobr><script type=\"text/javascript\">document.write\\(uiRouteDisplay\\(([^\\)\\)]*)\\)\\);</script></nobr></td>"
+        + "\\s*<td class=\"c6\"><nobr>([^<]*)</nobr></td>" + "\\s*</tr>";
 
     final static String PATTERN_QUICKDIAL = "<tr class=\"Dialoglist\">"
             + "\\s*<td style=\"text-align: center;\">(\\d*)</td>"
@@ -120,7 +128,7 @@ public class JFritzUtils {
         try {
             fw = new FritzBoxFirmware(firmware);
             // FIXME: Debug
-            //fw = new FritzBoxFirmware("14.03.85");
+            //fw = new FritzBoxFirmware("14.03.87");
             Debug.msg("Using Firmware: " + fw + " (" + fw.getBoxName() + ")");
         } catch (InvalidFirmwareException e) {
             fw = FritzBoxFirmware.detectFirmwareVersion(box_address,
@@ -156,7 +164,7 @@ public class JFritzUtils {
 
         // DEBUG: Test other versions
         if (false) {
-            String filename = "anrufliste 86.html";
+            String filename = "../Firmware 87/Anrufliste.html";
             Debug.msg("Debug mode: Loading " + filename);
             try {
                 data = "";
@@ -422,11 +430,14 @@ public class JFritzUtils {
                 + firmware.getMinorFirmwareVersion());
         if (firmware.getMinorFirmwareVersion() < 42)
             p = Pattern.compile(PATTERN_LIST_OLD);
-        else if ((firmware.getMinorFirmwareVersion() > 42)
+        else if ((firmware.getMinorFirmwareVersion() >= 42)
                 && (firmware.getMinorFirmwareVersion() < 85))
             p = Pattern.compile(PATTERN_LIST_42);
-        else
+        else if ((firmware.getMinorFirmwareVersion() >= 85)
+                && (firmware.getMinorFirmwareVersion() < 87))
             p = Pattern.compile(PATTERN_LIST_85);
+        else
+            p = Pattern.compile(PATTERN_LIST_87);
 
         Matcher m = p.matcher(data);
 
