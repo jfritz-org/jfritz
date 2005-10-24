@@ -19,6 +19,8 @@ public class PhoneNumber implements Comparable {
 	private String callbycall = "";
 
 	private String type = "";
+	// type values : "home", "mobile", "homezone",
+	// "business", "other", "fax", "sip" };
 
 	static HashMap mobileMap;
 
