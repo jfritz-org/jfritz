@@ -54,7 +54,7 @@ public class ImportOutlookContacts extends JDialog implements ActionListener, Ru
     public ImportOutlookContacts(JFritz jfritz) {
         super(jfritz.getJframe(), "Aus Outlook importieren");
         outlookElements = new Vector();
-        contactPics = "resources/images/contacts/";
+//        contactPics = "resources/images/contacts/";
         this.jfritz = jfritz;
     }
 
