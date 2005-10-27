@@ -54,6 +54,7 @@ public class PrintCallerList {
     }
 
     private void createColumnWidths() {
+        Debug.msg("Create Columns");
         int columnCount = jfritz.getCallerlist().getColumnCount();
         columnWidth = new int[columnCount];
         columnStart = new int[columnCount];
@@ -107,9 +108,9 @@ public class PrintCallerList {
         // Spaltenbreite Rufnummer Name
         columnStart[4] = startPos + columnWidth[3];
         columnWidth[4] = columnStart[5] - columnStart[4];
-        System.err.println("RestWidth: " + restWidth);
+        Debug.msg("RestWidth: " + restWidth);
         for (int i = 0; i < columnCount; i++) {
-            System.err.println("Spalte " + i + ": " + columnStart[i]
+            Debug.msg("Spalte " + i + ": " + columnStart[i]
                     + " Breite " + columnWidth[i]);
         }
     }
@@ -123,7 +124,7 @@ public class PrintCallerList {
         TextElement label = LabelElementFactory.createLabelElement("JFritz",
                 new Rectangle2D.Float(0, 0, pageWidth, 40), Color.BLACK,
                 ElementAlignment.CENTER, ElementAlignment.MIDDLE, font,
-                "JFritz! - Anrufliste");
+                "JFritz - Anrufliste");
         pageHeader.addElement(label);
 
         font = new FontDefinition("Arial", 8, true, false, false, false);
@@ -184,7 +185,7 @@ public class PrintCallerList {
 
     public JFreeReport createReportDefinition() {
         report = new JFreeReport();
-        report.setName("JFritz!  -  FRITZ!Box Anrufliste");
+        report.setName("JFritz-Anrufliste");
 
         SimplePageDefinition pageDefinition = new SimplePageDefinition(
                 createDINA4PaperLandscape());
@@ -430,6 +431,7 @@ public class PrintCallerList {
     }
 
     public void print() {
+        Debug.msg("Start report creation");
         JFreeReport report = createReportDefinition();
         report.setData(jfritz.getCallerlist());
         try {
