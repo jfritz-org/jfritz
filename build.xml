@@ -56,7 +56,7 @@
 	        <bottom>
 	            <![CDATA[<i>Copyright &#169; 2005 All Rights Reserved.</i>]]>
 	        </bottom>
-	        <tag name="todo" scope="all" description="To do:"/>
+<!--	    	<tag name="todo" description="To do:" scope="all" />  -->
 	    </javadoc>
 	</target>
 
