@@ -187,8 +187,6 @@ public class JFritzUtils {
 
     /**
      *
-     * @param box_address
-     * @param box_password
      * @param firmware
      * @return Vector of QuickDial objects
      * @throws WrongPasswordException
