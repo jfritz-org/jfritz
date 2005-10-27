@@ -85,18 +85,23 @@ public class CallmessageListener extends Thread implements CallMonitor {
 					msg = msg.substring(1); // Entferne @
 					String name = "";
 					String number = "";
-					String splitted[] = msg.split(" ", 2);
+					String msn = "";
+					String splitted[] = msg.split(" ", 3);
 
-					if (splitted.length == 0) {
-						Debug.msg("Split length 0");
-						Debug.msg(splitted[0]);
-					} else if (splitted.length == 1) {
+					if (splitted.length == 1) {
 						Debug.msg("Split length 1");
 						name = splitted[0];
 					} else if (splitted.length == 2) {
 						Debug.msg("Split length 2");
 						name = splitted[0];
 						number = splitted[1];
+						number = number.replaceAll("\\(", "");
+						number = number.replaceAll("\\)", "");
+					} else if (splitted.length == 3) {
+						Debug.msg("Split length 3");
+						name = splitted[0];
+						number = splitted[1];
+						msn = splitted[2];
 						number = number.replaceAll("\\(", "");
 						number = number.replaceAll("\\)", "");
 					}
@@ -106,7 +111,7 @@ public class CallmessageListener extends Thread implements CallMonitor {
 					if (number.equals("Keine Rufnummer übermittelt")) {
 						number = "";
 					}
-					jfritz.callInMsg(number, "", name);
+					jfritz.callInMsg(number, msn, name);
 				} else {
 					// Message
 					JFritz.infoMsg(JFritz.getMessage("yac_message") + ":\n"
