@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jardesc>
-<jar path="/home/akw/src/jar/jfritz.jar"/>
+<jar path="jfritz.jar"/>
 <options buildIfNeeded="true" compress="true" descriptionLocation="/jfritz/jfritz.jardesc" exportErrors="true" exportWarnings="true" overwrite="true" saveDescription="true" useSourceFolders="false"/>
 <manifest generateManifest="false" mainClassHandleIdentifier="=jfritz/src&lt;de.moonflower.jfritz{JFritz.java[JFritz" manifestLocation="/jfritz/jfritz.manifest" manifestVersion="1.0" reuseManifest="true" saveManifest="true" usesManifest="true">
 <sealing sealJar="false">
@@ -9,9 +9,6 @@
 </sealing>
 </manifest>
 <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-<!--
-<folder path="/jfritz/lib" />
--->
 <javaElement handleIdentifier="=jfritz/src"/>
 </selectedElements>
 </jardesc>
