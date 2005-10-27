@@ -1,55 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project default="javadoc">
+<project default="jar">
 	<property name="src" value="src"/>
 	<property name="doc" value="doc"/>
 	<property name="build" value="bin"/>
 	<property name="dist" value="dist"/>
+	<property name="lib" value="lib"/>
+	<property name="ant.project.name" value = "JFritz! Documentation"/>
+
+	<!-- compiler flags -->
+	<property name="javac.debug" value="true"/>
+	<property name="javac.optimize" value="false"/>
+
+	<!-- include all jars in lib to classpath -->
+	<path id="classpath">
+		<fileset dir="${lib}">
+        	<include name="**/*.jar"/>
+    	</fileset>
+	</path>
 
 	<target name="compile">
 		<mkdir dir="${build}"/>
-		<javac srcdir="${src}" destdir="${build}"/>
+		<javac srcdir="${src}" destdir="${build}"  classpathref="classpath" debug="${javac.debug}"	optimize="${javac.optimize}"/>
+
+		<!-- copy ressource-files -->
+		<copy todir="${build}/de/moonflower/jfritz/resources"><fileset dir="${src}/de/moonflower/jfritz/resources"></fileset></copy>
+
+		<!-- copy lib files -->
+		<copy todir="${dist}/${lib}">
+			<fileset dir="${lib}">
+				<exclude name="**/*.java"/>
+	      	</fileset>
+	    </copy>
+		<copy file="jacob.dll" todir="${dist}"/>
 	</target>
 
 	<target name="jar" depends="compile">
 		<mkdir dir="${dist}"/>
-		<jar jarfile="${dist}/jfritz.jar" basedir="${build}"/>
+		<jar jarfile="${dist}/jfritz.jar" basedir="${build}" index="false" manifest="jfritz.manifest"/>
 	</target>
 
-	<target name="lib-jar" description="makes the thirdparty jar">
-		<jar update="no" index="yes" jarfile="lib/jdic.jar">
-			<zipgroupfileset refid= "classpath-fileset"/>
-		</jar>
-		<jar update="no" index="yes" jarfile="lib/jacob.jar">
-			<zipgroupfileset refid= "classpath-fileset"/>
-		</jar>
-		<jar update="no" index="yes" jarfile="lib/jfreereport-0.8.6-2.jar">
-			<zipgroupfileset refid= "classpath-fileset"/>
-		</jar>
-		<jar update="no" index="yes" jarfile="lib/jcommon-1.0.0.0-rc1-cvs.jar">
-			<zipgroupfileset refid= "classpath-fileset"/>
-		</jar>
-		<jar update="no" index="yes" jarfile="lib/poi-2.5.1-final-20040804.jar">
-			<zipgroupfileset refid= "classpath-fileset"/>
-		</jar>
-		<jar update="no" index="yes" jarfile="lib/bsf-2.3.0.jar">
-			<zipgroupfileset refid= "classpath-fileset"/>
-		</jar>
-		<jar update="no" index="yes" jarfile="lib/bsh-1.3.0.jar">
-			<zipgroupfileset refid= "classpath-fileset"/>
-		</jar>
-		<jar update="no" index="yes" jarfile="lib/itext-1.3.4.jar">
-			<zipgroupfileset refid= "classpath-fileset"/>
-		</jar>
-		<jar update="no" index="yes" jarfile="lib/pixie-0.8.4.jar">
-			<zipgroupfileset refid= "classpath-fileset"/>
-		</jar>
+	<target name="javadoc" depends="compile,javadoc-init" description="Generate JavaDocs.">
+	    <javadoc destdir="${doc}"
+	    	access="public"
+	    	author="true"
+	    	version="true"
+	    	use="true"
+	    	windowtitle="${ant.project.name}"
+	    	sourcepath="${src}"
+	    	source="1.4"
+	    	packagenames="de.moonflower.jfritz.*"
+	    	classpath="lib"
+	    	splitindex="true"
+	    	verbose="false">
+	        <doctitle><![CDATA[<h1>${ant.project.name}</h1>]]></doctitle>
+	        <bottom>
+	            <![CDATA[<i>Copyright &#169; 2005 All Rights Reserved.</i>]]>
+	        </bottom>
+	        <tag name="todo" scope="all" description="To do:"/>
+	    </javadoc>
 	</target>
 
-	<target name="javadoc">
-		<javadoc access="public" author="true" classpath="${build}" destdir="${doc}" doctitle="JFritz! Documentation" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="de.moonflower.jfritz,de.moonflower.jfritz.upnp" source="1.4" sourcepath="src" splitindex="true" use="true" version="true"/>
+	<target name="javadoc-init">
+	    <mkdir dir="${doc}"/>
 	</target>
 
-	<target name="doc-archive" depends="javadoc">
+	<target name="javadoc-clean">
+	    <delete dir="${doc}"/>
+	</target>
+
+	<target name="javadoc-archive" depends="javadoc">
 		<mkdir dir="${dist}"/>
 		<tar tarfile="${dist}/jfritz-javadoc.tar" basedir="${doc}" />
 		<gzip src="${dist}/jfritz-javadoc.tar" zipfile="${dist}/jfritz-javadoc.tar.gz"/>
