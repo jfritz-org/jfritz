@@ -36,7 +36,7 @@ public class MacHandler {
 
 			System.setProperty("apple.laf.useScreenMenuBar", "true");
 			System.setProperty("com.apple.mrj.application.apple.menu.about.name",
-					"JFritz!");
+					"JFritz");
 			System.setProperty("com.apple.mrj.application.growbox.intrudes",
 					"false");
 

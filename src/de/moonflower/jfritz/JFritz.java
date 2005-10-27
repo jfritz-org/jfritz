@@ -1,6 +1,6 @@
 /**
  *
- * JFritz!
+ * JFritz
  * http://jfritz.sourceforge.net/
  *
  *
@@ -36,14 +36,14 @@
 
  * CHANGELOG:
  *
- * JFritz! 0.4.5
+ * JFritz 0.4.5
  * - Unterstützung für FRITZ!Box Firmware .85
  * - Unterstützung für FRITZ!Box Firmware .87
  * - Kostenabrechnung hinzugefügt
  * - Unterstützung für Freiminuten
  * - Suche über UPNP/SSDP abschaltbar
  * - Adressbuch nun nach allen Spalten sortierbar
- * - Beim Export merkt sich JFritz! die Verzeichnisse
+ * - Beim Export merkt sich JFritz die Verzeichnisse
  * - Anrufen aus der Anrufliste heraus (noch nicht getestet)
  * - Drucken der Anrufliste (und Export nach Excel, RTF, PDF, CSV, ...)
  * - Neue Kommandozeilenoption -n: Schaltet die Tray-Unterstützung aus
@@ -59,7 +59,7 @@
  *   gespeichert.
  * - Zugriff auf SipProvider über jfritz.getSIPProviderTableModel()
  *
- * JFritz! 0.4.3
+ * JFritz 0.4.3
  * - CallByCall information is saved (only 010xy and 0100yy)
  * - Added support for MacOSX Application Menu
  * - Telnet: Timeout handling
@@ -83,7 +83,7 @@
  * - VCard Export moved from CallerTable to PhoneBook
  *
  *
- * JFritz! 0.4.2
+ * JFritz 0.4.2
  * - CallByCall information is saved
  * - Added Phonebookfilter (Private Phonebook)
  * - Callerlist deleteable
@@ -100,7 +100,7 @@
  * - Bugfix: Phonebook XML-Saving fixed (UTF-8 coding)
  *
  *
- * JFritz! 0.4.0
+ * JFritz 0.4.0
  * - Systray minimizes JFrame
  * - Mobile filter inverted
  * - Removed participant support in favour of person
@@ -119,14 +119,14 @@
  * - Restructured packages
  *
  *
- * JFritz! 0.3.6
+ * JFritz 0.3.6
  * - New mobile phone filter feature
  * - Systray support for Linux/Solaris/Windows
  * - Systray ballon messages for Linux/Solaris/Windows
  * - Browser opening on Unix platforms
  * - Bugfix: Call with same timestamp are collected
  *
- * JFritz! 0.3.4
+ * JFritz 0.3.4
  * - New search filter feature
  * - New date and date range filter feature
  * - Sorting of columns by clicking on column headers
@@ -139,7 +139,7 @@
  * - Bugfix: Save-Dialog on export functions
  * - Code rearrangement
  *
- * JFritz! 0.3.2:
+ * JFritz 0.3.2:
  * - Saves and restores window position/size
  * - Saves and restores width of table columns
  * - CallTypeFilter works now (thanks to robotniko)
@@ -147,11 +147,11 @@
  * - Added filter for calls without displayed number
  * - Total duration of calls now displayed in status bar
  *
- * JFritz! 0.3.0: Major release
+ * JFritz 0.3.0: Major release
  * - Compatibility for JRE 1.4.2
  * - Severel bugfixes
  *
- * JFritz! 0.2.8:
+ * JFritz 0.2.8:
  * - Bugfix: Firmware detection had nasty bug
  * - Bugfix: Firmware detection detects modded firmware properly
  * - Bugfix: RegExps adapted for modded firmware
@@ -159,7 +159,7 @@
  * - Notify users whenn calls have been retrieved
  * - CSV Export
  *
- * JFritz! 0.2.6:
+ * JFritz 0.2.6:
  * - Several bugfixes
  * - Support for Fritz!Boxes with modified firmware
  * - Improved config dialog
@@ -167,19 +167,19 @@
  * - Initial support für SIP-Provider
  * - Firmware/SIP-Provider are saved in config file
  *
- * JFritz! 0.2.4:
+ * JFritz 0.2.4:
  * - Several bugfixes
  * - Improventsment on number resolution
  * - Optimized Reverse Lookup
  *
- * JFritz! 0.2.2:
+ * JFritz 0.2.2:
  * - FRITZ!Box FON WLAN works again and is detected automatically.
  * - Target MSN is displayed
  * - Bugfixes for Reverse Lookup (Mobile phone numbers are filtered now)
  * - Nice icons for calltypes (Regular call, Area call, Mobile call)
  * - Several small bugfixes
  *
- * JFritz! 0.2.0: Major release
+ * JFritz 0.2.0: Major release
  * - Improved GUI, arranged colours for win32 platform
  * - New ToolBar with nice icons
  * - Bugfix: Not all calls had been retrieved from box
@@ -187,11 +187,11 @@
  * - Automatic box detection (does not yet work perfectly)
  * - Internal class restructuring
  *
- * JFritz! 0.1.6:
+ * JFritz 0.1.6:
  * - Calls are now saved in XML format
  * - Support for Fritz!Box 7050
  *
- * JFritz! 0.1.0:
+ * JFritz 0.1.0:
  * - Initial version
  */
 
@@ -252,7 +252,7 @@ import de.moonflower.jfritz.dialogs.sip.SipProviderTableModel;
  */
 public final class JFritz {
 
-    public final static String PROGRAM_NAME = "JFritz!";
+    public final static String PROGRAM_NAME = "JFritz";
 
     public final static String PROGRAM_VERSION = "0.4.5";
 
@@ -262,7 +262,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/doc/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.127 2005/10/27 07:02:10 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.128 2005/10/27 14:35:06 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -372,7 +372,7 @@ public final class JFritz {
                     Debug.msg("Clearing Caller List");
                     callerlist.clearList();
                 }
-                Debug.msg("JFritz! beendet sich nun.");
+                Debug.msg("JFritz beendet sich nun.");
                 System.exit(0);
             }
         }
@@ -448,7 +448,7 @@ public final class JFritz {
     }
 
     /**
-     * Main method for starting JFritz!
+     * Main method for starting JFritz
      *
      * @param args
      *            Program arguments (-h -v ...)
@@ -534,7 +534,7 @@ public final class JFritz {
     private void createTrayMenu() {
         System.setProperty("javax.swing.adjustPopupLocationToFit", "false");
 
-        JPopupMenu menu = new JPopupMenu("JFritz! Menu");
+        JPopupMenu menu = new JPopupMenu("JFritz Menu");
         JMenuItem menuItem = new JMenuItem(PROGRAM_NAME + " v"
                 + PROGRAM_VERSION);
         menuItem.setEnabled(false);
@@ -562,7 +562,7 @@ public final class JFritz {
                 JFritz.class
                         .getResource("/de/moonflower/jfritz/resources/images/trayicon.png"));
 
-        trayIcon = new TrayIcon(icon, "JFritz!", menu);
+        trayIcon = new TrayIcon(icon, "JFritz", menu);
         trayIcon.setIconAutoSize(false);
         trayIcon
                 .setCaption(JFritz.PROGRAM_NAME + " v" + JFritz.PROGRAM_VERSION);
