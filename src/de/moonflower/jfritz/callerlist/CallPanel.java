@@ -87,7 +87,7 @@ public class CallPanel extends JComponent {
 	}
 
 	/**
-	 * @param person
+	 * @param number
 	 *            The number to set.
 	 */
 	public final void setNumber(PhoneNumber number) {
