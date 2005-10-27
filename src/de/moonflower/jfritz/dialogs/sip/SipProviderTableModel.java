@@ -111,8 +111,8 @@ public class SipProviderTableModel extends AbstractTableModel {
 
     /**
      * Updates SIP-Provider list
-     * @param providerList
-     *            The providerList to update.
+     * @param newProviderList
+     *            The new providerList to update.
      */
     public final void updateProviderList(Vector newProviderList) {
         Vector newProviderVector = new Vector();
