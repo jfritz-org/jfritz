@@ -409,7 +409,7 @@ public class SipProvider {
                 JOptionPane.showMessageDialog(null,
                         "Freiminutenlimit für Festnetzgespräche über die Rufnummer "
                                 + this.toString() + " unterschritten.",
-                        "JFritz! - Warnung", JOptionPane.WARNING_MESSAGE);
+                        "JFritz - Warnung", JOptionPane.WARNING_MESSAGE);
                 JFritz.setProperty("state.warningFreeminutesShown", "true");
             }
             if (mobileFreiminuten > 0
@@ -417,7 +417,7 @@ public class SipProvider {
                 JOptionPane.showMessageDialog(null,
                         "Freiminutenlimit für Mobilfunkgespräche über die Rufnummer "
                                 + this.toString() + " unterschritten.",
-                        "JFritz! - Warnung", JOptionPane.WARNING_MESSAGE);
+                        "JFritz - Warnung", JOptionPane.WARNING_MESSAGE);
                 JFritz.setProperty("state.warningFreeminutesShown", "true");
             }
         }
