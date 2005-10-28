@@ -274,7 +274,7 @@ public class Person {
 	}
 
 	/**
-	 * @return Returns the standard.
+	 * @return Returns the standard Number.
 	 */
 	public final String getStandard() {
 		return standard;
