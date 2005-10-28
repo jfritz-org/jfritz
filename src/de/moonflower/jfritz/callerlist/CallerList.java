@@ -5,12 +5,15 @@
  */
 package de.moonflower.jfritz.callerlist;
 
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -57,14 +60,15 @@ public class CallerList extends AbstractTableModel {
 
     private static final String CALLS_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
             + "<!-- DTD for JFritz calls -->"
-            + "<!ELEMENT calls (commment?,entry*)>"
+            + "<!ELEMENT calls (comment?,entry*)>"
             + "<!ELEMENT comment (#PCDATA)>"
             + "<!ELEMENT date (#PCDATA)>"
             + "<!ELEMENT caller (#PCDATA)>"
             + "<!ELEMENT port (#PCDATA)>"
             + "<!ELEMENT route (#PCDATA)>"
             + "<!ELEMENT duration (#PCDATA)>"
-            + "<!ELEMENT entry (date,caller?,port?,route?,duration?)>"
+            + "<!ELEMENT comment (#PCDATA)>"
+            + "<!ELEMENT entry (date,caller?,port?,route?,duration?,comment?)>"
             + "<!ATTLIST entry calltype (call_in|call_in_failed|call_out) #REQUIRED>";
 
     private JFritz jfritz;
@@ -112,9 +116,14 @@ public class CallerList extends AbstractTableModel {
      */
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         switch (columnIndex) {
-        case 3: return true;
-        case 4: return ((Call) filteredCallerData.get(rowIndex)).getPhoneNumber() != null;
-        default: return false;
+        case 3:
+            return true;
+        case 4:
+            return ((Call) filteredCallerData.get(rowIndex)).getPhoneNumber() != null;
+        case 9:
+            return true;
+        default:
+            return false;
         }
     }
 
@@ -142,15 +151,19 @@ public class CallerList extends AbstractTableModel {
      */
     public void saveToXMLFile(String filename, boolean wholeCallerList) {
         Debug.msg("Saving to file " + filename);
-        FileOutputStream fos;
         try {
-            fos = new FileOutputStream(filename);
-            PrintWriter pw = new PrintWriter(fos);
-            pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-            pw.println("<!DOCTYPE calls SYSTEM \"" + CALLS_DTD_URI + "\">");
-            pw.println("<calls>");
-            pw.println("<comment>Calls for " + JFritz.PROGRAM_NAME + " v"
+            BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(filename), "UTF8"));
+            pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            pw.newLine();
+            pw.write("<!DOCTYPE calls SYSTEM \"" + CALLS_DTD_URI + "\">");
+            pw.newLine();
+            pw.write("<calls>");
+            pw.newLine();
+            pw.write("<comment>Calls for " + JFritz.PROGRAM_NAME + " v"
                     + JFritz.PROGRAM_VERSION + "</comment>");
+            pw.newLine();
+
             int rows[] = null;
             if (jfritz != null && jfritz.getJframe() != null) {
                 rows = jfritz.getJframe().getCallerTable().getSelectedRows();
@@ -159,27 +172,31 @@ public class CallerList extends AbstractTableModel {
                 for (int i = 0; i < rows.length; i++) {
                     Call currentCall = (Call) filteredCallerData
                             .elementAt(rows[i]);
-                    pw.println(currentCall.toXML());
+                    pw.write(currentCall.toXML());
                 }
             } else if (wholeCallerList) { // Export ALL UNFILTERED Calls
                 Enumeration en = unfilteredCallerData.elements();
                 while (en.hasMoreElements()) {
                     Call call = (Call) en.nextElement();
-                    pw.println(call.toXML());
+                    pw.write(call.toXML());
                 }
             } else {// Export ALL FILTERED Calls
                 Enumeration en = filteredCallerData.elements();
                 while (en.hasMoreElements()) {
                     Call call = (Call) en.nextElement();
-                    pw.println(call.toXML());
+                    pw.write(call.toXML());
 
                 }
             }
-            pw.println("</calls>");
+            pw.write("</calls>");
 
             pw.close();
+        } catch (UnsupportedEncodingException e) {
+            Debug.err("UTF-8 wird nicht unterstützt.");
         } catch (FileNotFoundException e) {
             Debug.err("Could not write " + filename + "!");
+        } catch (IOException e) {
+            Debug.err("IOException " + filename);
         }
     }
 
@@ -198,7 +215,7 @@ public class CallerList extends AbstractTableModel {
             fos = new FileOutputStream(filename);
             PrintWriter pw = new PrintWriter(fos);
             pw
-                    .println("\"CallType\";\"Date\";\"Time\";\"Number\";\"Route\";\"Port\";\"Duration\";\"Name\";\"Address\";\"City\";\"CallByCall\";\"Kosten\"");
+                    .println("\"CallType\";\"Date\";\"Time\";\"Number\";\"Route\";\"Port\";\"Duration\";\"Name\";\"Address\";\"City\";\"CallByCall\";\"Costs\";\"Comment\"");
             int rows[] = null;
             if (jfritz != null && jfritz.getJframe() != null) {
                 rows = jfritz.getJframe().getCallerTable().getSelectedRows();
@@ -324,9 +341,10 @@ public class CallerList extends AbstractTableModel {
      * @param duration
      */
     public boolean addEntry(CallType symbol, Date datum, PhoneNumber number,
-            String port, String route, int duration) {
+            String port, String route, int duration, String comment) {
         Call call = new Call(jfritz, symbol, datum, number, port, route,
                 duration);
+        call.setComment(comment);
         return addEntry(call);
     }
 
@@ -444,8 +462,8 @@ public class CallerList extends AbstractTableModel {
      * @see javax.swing.table.TableModel#getColumnCount()
      */
     public int getColumnCount() {
-        // 9 Columns on the Table
-        return 9;
+        // 10 Columns on the Table
+        return 10;
     }
 
     /**
@@ -490,6 +508,8 @@ public class CallerList extends AbstractTableModel {
             return Integer.toString(call.getDuration());
         case 8:
             return Double.toString(call.getCost());
+        case 9:
+            return call.getComment();
 
         default:
             throw new IllegalArgumentException("Invalid column: " + columnIndex);
@@ -1004,7 +1024,7 @@ public class CallerList extends AbstractTableModel {
                         }
                     }
                     if (sipProvider != null) { // Füge Anrufe zur
-                                               // SipProvider-Anrufliste
+                        // SipProvider-Anrufliste
                         sipProvider.addCall(call);
                     }
                 } else {// Es wurde kein (oder unbekannter) VoIP-Provider
