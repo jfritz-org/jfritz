@@ -354,6 +354,7 @@ public class PhoneBook extends AbstractTableModel {
 			pw.newLine();
 			pw.close();
 		  } catch (UnsupportedEncodingException e) {
+		      Debug.err("UTF-8 not supported.");
 			} catch (FileNotFoundException e) {
 				Debug.err("Could not write " + filename + "!");
 		  } catch (IOException e) {
