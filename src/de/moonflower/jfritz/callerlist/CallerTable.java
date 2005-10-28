@@ -187,6 +187,15 @@ public class CallerTable extends JTable {
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
 				"column8.width", "60")));
 
+		col = getColumnModel().getColumn(9);
+		col.setHeaderValue("Kommentar");
+		headerTips.setToolTip(col, "Kommentar");
+		col.setCellEditor(new TextFieldCellEditor());
+		col.setMinWidth(10);
+		col.setMaxWidth(200);
+		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
+				"column9.width", "60")));
+
 		getTableHeader().addMouseMotionListener(headerTips);
 	}
 

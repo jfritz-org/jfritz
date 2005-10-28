@@ -386,6 +386,19 @@ public class PrintCallerList {
         exp.setName("print_cost");
         report.addExpression(exp);
 
+        // Drucke Kommentar
+        exp = new AbstractExpression() {
+            public Object getValue() {
+                Object obj = getDataRow().get(
+                        jfritz.getCallerlist().getColumnName(9));
+                if (obj == null)
+                    return "";
+                return obj.toString();
+            };
+        };
+        exp.setName("print_comment");
+        report.addExpression(exp);
+
         for (int i = 3; i < jfritz.getCallerlist().getColumnCount(); i++) {
             factory = new TextFieldElementFactory();
             factory.setFontSize(fontSize);
@@ -414,6 +427,9 @@ public class PrintCallerList {
                 break;
             case 8:
                 factory.setFieldname("print_cost");
+                break;
+            case 9:
+                factory.setFieldname("print_comment");
                 break;
             default: {
             }
