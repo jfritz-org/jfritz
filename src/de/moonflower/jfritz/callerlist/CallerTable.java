@@ -190,7 +190,7 @@ public class CallerTable extends JTable {
 		col = getColumnModel().getColumn(9);
 		col.setHeaderValue("Kommentar");
 		headerTips.setToolTip(col, "Kommentar");
-		col.setCellEditor(new TextFieldCellEditor());
+		col.setCellEditor(new CommentCellEditor());
 		col.setMinWidth(10);
 		col.setMaxWidth(200);
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
