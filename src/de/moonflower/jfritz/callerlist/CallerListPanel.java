@@ -27,7 +27,6 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
-import javax.swing.table.TableColumnModel;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.struct.Call;
@@ -295,15 +294,6 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 		callerTable.addMouseListener(popupListener);
 
-		// Verstecke CallByCall-Spalte
-		// CallByCall Spalte wird standardmäßig angezeigt, nur noch verstecken
-		// nötig
-		if (!JFritzUtils.parseBoolean(JFritz.getProperty(
-				"option.showCallByCall", "false"))) {
-			TableColumnModel colModel = callerTable.getColumnModel();
-			colModel.removeColumn(colModel.getColumn(2));
-			callByCallButton.setEnabled(false);
-		}
 		return new JScrollPane(callerTable);
 	}
 
