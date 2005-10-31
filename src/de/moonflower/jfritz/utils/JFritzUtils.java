@@ -93,6 +93,14 @@ public class JFritzUtils {
         + "\\s*<td class=\"c7\"><nobr><script type=\"text/javascript\">document.write\\(uiRouteDisplay\\(([^\\)\\)]*)\\)\\);</script></nobr></td>"
         + "\\s*<td class=\"c6\"><nobr>([^<]*)</nobr></td>" + "\\s*</tr>";
 
+    final static String PATTERN_LIST_88 = "<TR\\s*class=Mikrohell>"
+        + "\\s*<TD\\s*class=c1>\\s*<NOBR>\\s*<SCRIPT\\s*type=text/javascript>document.write\\(uiCallSymbol\\(\"(\\d)\"\\)\\);\\s*</SCRIPT>\\s*</NOBR>\\s*</TD>"
+        + "\\s*<TD\\s*class=c3>\\s*<NOBR>\\s*(\\d\\d\\.\\d\\d\\.\\d\\d \\d\\d:\\d\\d)\\s*</NOBR>\\s*</TD>"
+        + "\\s*<TD\\s*class=c4>\\s*<NOBR>\\s*<SCRIPT\\s*type=text/javascript>document.write\\(uiRufnummerDisplay\\(\"([^\"\\)\\);]*)\"\\)\\);\\s*</SCRIPT>\\s*</NOBR>\\s*</TD>"
+        + "\\s*<TD\\s*class=c5>\\s*<NOBR>\\s*<SCRIPT\\s*type=text/javascript>document.write\\(uiPortDisplay\\(\"(\\d*)\"\\)\\);\\s*</SCRIPT>\\s*</NOBR>\\s*</TD>"
+        + "\\s*<TD\\s*class=c7>\\s*<NOBR>\\s*<SCRIPT\\s*type=text/javascript>document.write\\(uiRouteDisplay\\(([^\\)\\)]*)\\)\\);\\s*</SCRIPT>\\s*</NOBR>\\s*</TD>"
+        + "\\s*<TD\\s*class=c6>\\s*<NOBR>\\s*([^<]*)\\s*</NOBR>\\s*</TD>" + "\\s*</TR>";
+
     final static String PATTERN_QUICKDIAL = "<tr class=\"Dialoglist\">"
             + "\\s*<td style=\"text-align: center;\">(\\d*)</td>"
             + "\\s*<td>(\\w*)</td>"
@@ -128,7 +136,7 @@ public class JFritzUtils {
         try {
             fw = new FritzBoxFirmware(firmware);
             // FIXME: Debug
-            //fw = new FritzBoxFirmware("14.03.87");
+            //fw = new FritzBoxFirmware("14.03.88");
             Debug.msg("Using Firmware: " + fw + " (" + fw.getBoxName() + ")");
         } catch (InvalidFirmwareException e) {
             fw = FritzBoxFirmware.detectFirmwareVersion(box_address,
@@ -164,7 +172,7 @@ public class JFritzUtils {
 
         // DEBUG: Test other versions
         if (false) {
-            String filename = "../Firmware 87/Anrufliste.html";
+            String filename = "../Firmware 88/Anrufliste.html";
             Debug.msg("Debug mode: Loading " + filename);
             try {
                 data = "";
@@ -434,8 +442,10 @@ public class JFritzUtils {
         else if ((firmware.getMinorFirmwareVersion() >= 85)
                 && (firmware.getMinorFirmwareVersion() < 87))
             p = Pattern.compile(PATTERN_LIST_85);
-        else
+        else if (firmware.getMinorFirmwareVersion() == 87)
             p = Pattern.compile(PATTERN_LIST_87);
+        else
+            p = Pattern.compile(PATTERN_LIST_88);
 
         Matcher m = p.matcher(data);
 
