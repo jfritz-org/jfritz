@@ -36,12 +36,14 @@
 
  * CHANGELOG:
  *
+ * TODO: Entferne Konfiguration für Kostenabrechnung
+ *
  * JFritz 0.4.5
  * - Unterstützung für FRITZ!Box Firmware .85
  * - Unterstützung für FRITZ!Box Firmware .87
- * - Kostenabrechnung hinzugefügt
- * - Unterstützung für Freiminuten
- * - Suche über UPNP/SSDP abschaltbar
+ * - Kommentarspalte hinzugefügt
+ * - Spalten sind jetzt verschiebbar
+ * - Suche der FritzBox über UPNP/SSDP abschaltbar
  * - Adressbuch nun nach allen Spalten sortierbar
  * - Beim Export merkt sich JFritz die Verzeichnisse
  * - Anrufen aus der Anrufliste heraus (noch nicht getestet)
@@ -59,7 +61,7 @@
  *   gespeichert.
  * - Zugriff auf SipProvider über jfritz.getSIPProviderTableModel()
  *
- * JFritz 0.4.3
+ * JFritz 0.4.4
  * - CallByCall information is saved (only 010xy and 0100yy)
  * - Added support for MacOSX Application Menu
  * - Telnet: Timeout handling
@@ -262,7 +264,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/doc/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.128 2005/10/27 14:35:06 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.129 2005/10/31 16:21:31 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -325,9 +327,8 @@ public final class JFritz {
      */
     public JFritz(boolean fetchCalls, boolean csvExport, String csvFileName,
             boolean clearList) {
-        loadProperties();
-        clearUnnecesseryProperties();
         loadMessages(new Locale("de", "DE"));
+        loadProperties();
         loadSounds();
 
         String osName = System.getProperty("os.name");
@@ -415,12 +416,6 @@ public final class JFritz {
 
         javax.swing.SwingUtilities.invokeLater(jframe);
 
-    }
-
-    public void clearUnnecesseryProperties() {
-        for (int i = 0; i < 10; i++) {
-            JFritz.removeProperty("SIP" + i);
-        }
     }
 
     /**
@@ -593,6 +588,46 @@ public final class JFritz {
     }
 
     /**
+     * Replace old property values with new one
+     * p.e. column0.width => column.type.width
+     *
+     */
+    private void replaceOldProperties() {
+        for (int i = 0; i < 10; i++) {
+            JFritz.removeProperty("SIP" + i);
+        }
+
+        if (properties.contains("column0.width")) {
+            properties.setProperty("column." + getMessage("type") + ".width" , properties.getProperty("column0.width"));
+            JFritz.removeProperty("column0.width");
+        } else if (properties.contains("column1.width")) {
+            properties.setProperty("column." + getMessage("date") + ".width" , properties.getProperty("column1.width"));
+            JFritz.removeProperty("column1.width");
+        } else if (properties.contains("column2.width")) {
+            properties.setProperty("column." + "Call-By-Call" + ".width" , properties.getProperty("column2.width"));
+            JFritz.removeProperty("column2.width");
+        } else if (properties.contains("column3.width")) {
+            properties.setProperty("column." + getMessage("number") + ".width" , properties.getProperty("column3.width"));
+            JFritz.removeProperty("column3.width");
+        } else if (properties.contains("column4.width")) {
+            properties.setProperty("column." + getMessage("participant") + ".width" , properties.getProperty("column4.width"));
+            JFritz.removeProperty("column4.width");
+        } else if (properties.contains("column5.width")) {
+            properties.setProperty("column." + getMessage("port") + ".width" , properties.getProperty("column5.width"));
+            JFritz.removeProperty("column5.width");
+        } else if (properties.contains("column6.width")) {
+            properties.setProperty("column." + getMessage("route") + ".width" , properties.getProperty("column6.width"));
+            JFritz.removeProperty("column6.width");
+        } else if (properties.contains("column7.width")) {
+            properties.setProperty("column." + getMessage("duration") + ".width" , properties.getProperty("column7.width"));
+            JFritz.removeProperty("column7.width");
+        } else if (properties.contains("column8.width")) {
+            properties.setProperty("column." + "Kommentar"+ ".width" , properties.getProperty("column8.width"));
+            JFritz.removeProperty("column8.width");
+        }
+    }
+
+    /**
      * Loads properties from xml files
      */
     public void loadProperties() {
@@ -612,6 +647,7 @@ public final class JFritz {
             FileInputStream fis = new FileInputStream(JFritz.PROPERTIES_FILE);
             properties.loadFromXML(fis);
             fis.close();
+            replaceOldProperties();
         } catch (FileNotFoundException e) {
             Debug.err("File " + JFritz.PROPERTIES_FILE
                     + " not found, using default values");
@@ -639,16 +675,10 @@ public final class JFritz {
         Enumeration en = jframe.getCallerTable().getColumnModel().getColumns();
         int i = 0;
         while (en.hasMoreElements()) {
-            // speichere Dummybreite, wenn CallByCall Spalte ausgeblendet
-            if (i == 2
-                    && !JFritzUtils.parseBoolean(JFritz.getProperty(
-                            "option.showCallByCall", "false"))) {
-                properties.setProperty("column2.width", "60");
-                i++;
-            }
-            int width = ((TableColumn) en.nextElement()).getWidth();
-            properties.setProperty("column" + i + ".width", Integer
-                    .toString(width));
+            TableColumn col = (TableColumn) en.nextElement();
+
+            properties.setProperty("column." + col.getHeaderValue().toString() + ".width",Integer.toString(col.getWidth()));
+            properties.setProperty("column"+i+".name", col.getHeaderValue().toString());
             i++;
         }
 
