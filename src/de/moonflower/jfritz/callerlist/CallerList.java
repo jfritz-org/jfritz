@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumn;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -79,7 +80,7 @@ public class CallerList extends AbstractTableModel {
 
     private Vector alreadyKnownCalls;
 
-    private int sortColumn = 1;
+    private int sortColumn;
 
     private boolean sortDirection = false;
 
@@ -93,6 +94,7 @@ public class CallerList extends AbstractTableModel {
         unfilteredCallerData = new Vector();
         this.jfritz = jfritz;
         alreadyKnownCalls = new Vector();
+        sortColumn = 0;
     }
 
     /**
@@ -115,16 +117,15 @@ public class CallerList extends AbstractTableModel {
      *
      */
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        switch (columnIndex) {
-        case 3:
+        String columnName = getRealColumnName(columnIndex);
+        if (columnName.equals(JFritz.getMessage("number"))) {
             return true;
-        case 4:
+        } else if (columnName.equals(JFritz.getMessage("participant"))) {
             return ((Call) filteredCallerData.get(rowIndex)).getPhoneNumber() != null;
-        case 9:
+        } else if (columnName.equals("Kommentar")) {
             return true;
-        default:
-            return false;
         }
+        return false;
     }
 
     /**
@@ -173,19 +174,21 @@ public class CallerList extends AbstractTableModel {
                     Call currentCall = (Call) filteredCallerData
                             .elementAt(rows[i]);
                     pw.write(currentCall.toXML());
+                    pw.newLine();
                 }
             } else if (wholeCallerList) { // Export ALL UNFILTERED Calls
                 Enumeration en = unfilteredCallerData.elements();
                 while (en.hasMoreElements()) {
                     Call call = (Call) en.nextElement();
                     pw.write(call.toXML());
+                    pw.newLine();
                 }
             } else {// Export ALL FILTERED Calls
                 Enumeration en = filteredCallerData.elements();
                 while (en.hasMoreElements()) {
                     Call call = (Call) en.nextElement();
                     pw.write(call.toXML());
-
+                    pw.newLine();
                 }
             }
             pw.write("</calls>");
@@ -215,7 +218,7 @@ public class CallerList extends AbstractTableModel {
             fos = new FileOutputStream(filename);
             PrintWriter pw = new PrintWriter(fos);
             pw
-                    .println("\"CallType\";\"Date\";\"Time\";\"Number\";\"Route\";\"Port\";\"Duration\";\"Name\";\"Address\";\"City\";\"CallByCall\";\"Costs\";\"Comment\"");
+                    .println("\"CallType\";\"Date\";\"Time\";\"Number\";\"Route\";\"Port\";\"Duration\";\"Name\";\"Address\";\"City\";\"CallByCall\";\"Comment\"");
             int rows[] = null;
             if (jfritz != null && jfritz.getJframe() != null) {
                 rows = jfritz.getJframe().getCallerTable().getSelectedRows();
@@ -462,8 +465,8 @@ public class CallerList extends AbstractTableModel {
      * @see javax.swing.table.TableModel#getColumnCount()
      */
     public int getColumnCount() {
-        // 10 Columns on the Table
-        return 10;
+        // 9 Columns on the Table
+        return 9;
     }
 
     /**
@@ -473,24 +476,23 @@ public class CallerList extends AbstractTableModel {
      */
     public Object getValueAt(int rowIndex, int columnIndex) {
         Call call = (Call) filteredCallerData.get(rowIndex);
-        switch (columnIndex) {
-        case 0:
+        String columnName = getRealColumnName(columnIndex);
+        if (columnName.equals(JFritz.getMessage("type"))) {
             return call.getCalltype();
-        case 1:
+        } else if (columnName.equals(JFritz.getMessage("date"))) {
             return call.getCalldate();
-        case 2: {
-            if (call.getPhoneNumber() != null) {
+        } else if (columnName.equals("Call-By-Call")) {
+            if (call.getPhoneNumber() != null)
                 return call.getPhoneNumber().getCallByCall();
-            } else
+            else
                 return null;
-        }
-        case 3:
+        } else if (columnName.equals(JFritz.getMessage("number"))) {
             return call.getPhoneNumber();
-        case 4:
+        } else if (columnName.equals(JFritz.getMessage("participant"))) {
             return call.getPerson();
-        case 5:
+        } else if (columnName.equals(JFritz.getMessage("port"))) {
             return call.getPort();
-        case 6:
+        } else if (columnName.equals(JFritz.getMessage("route"))) {
             if (call.getRoute().startsWith("SIP")) {
                 Enumeration en = jfritz.getSIPProviderTableModel()
                         .getProviderList().elements();
@@ -504,26 +506,37 @@ public class CallerList extends AbstractTableModel {
                 return call.getRoute();
             }
             return call.getRoute();
-        case 7:
+        } else if (columnName.equals(JFritz.getMessage("duration"))) {
             return Integer.toString(call.getDuration());
-        case 8:
-            return Double.toString(call.getCost());
-        case 9:
+        } else if (columnName.equals("Kommentar")) {
             return call.getComment();
-
-        default:
-            throw new IllegalArgumentException("Invalid column: " + columnIndex);
+            /**
+             * } else if (columnName.equals("Kosten")) { return
+             * Double.toString(call.getCost());
+             */
         }
+
+        // default: return null
+        return null;
     }
 
     /**
      * Sets a value to a specific position
      */
     public void setValueAt(Object object, int rowIndex, int columnIndex) {
-        if (columnIndex == 4) {
+        String columnName = getRealColumnName(columnIndex);
+        if (columnName.equals(JFritz.getMessage("participant"))) {
             setPerson((Person) object, rowIndex);
+        } else if (columnName.equals("Kommentar")) {
+            setComment((String) object, rowIndex);
         }
+
         fireTableCellUpdated(rowIndex, columnIndex);
+    }
+
+    public void setComment(String comment, int rowIndex) {
+        Call call = (Call) filteredCallerData.get(rowIndex);
+        call.setComment(comment);
     }
 
     public void setPerson(Person person, int rowIndex) {
@@ -592,25 +605,28 @@ public class CallerList extends AbstractTableModel {
      * This comparator is used to sort vectors of data
      */
     public class ColumnSorter implements Comparator {
-        int colIndex;
+        int columnIndex;
 
         boolean ascending;
 
-        ColumnSorter(int colIndex, boolean ascending) {
-            this.colIndex = colIndex;
+        ColumnSorter(int columnIndex, boolean ascending) {
+            this.columnIndex = columnIndex;
             this.ascending = ascending;
         }
 
         public int compare(Object a, Object b) {
-            Object o1, o2;
+            Object o1 = null, o2 = null;
             Call v1 = (Call) a;
             Call v2 = (Call) b;
-            switch (colIndex) {
-            case 0:
+            String columnName = getRealColumnName(columnIndex);
+
+            if (columnName.equals(JFritz.getMessage("type"))) {
                 o1 = v1.getCalltype().toString();
                 o2 = v2.getCalltype().toString();
-                break;
-            case 2:
+            } else if (columnName.equals(JFritz.getMessage("date"))) {
+                o1 = v1.getCalldate();
+                o2 = v2.getCalldate();
+            } else if (columnName.equals("Call-By-Call")) {
                 if (v1.getPhoneNumber() != null)
                     o1 = v1.getPhoneNumber().getCallByCall();
                 else
@@ -619,8 +635,7 @@ public class CallerList extends AbstractTableModel {
                     o2 = v2.getPhoneNumber().getCallByCall();
                 else
                     o2 = null;
-                break;
-            case 3:
+            } else if (columnName.equals(JFritz.getMessage("number"))) {
                 if (v1.getPhoneNumber() != null)
                     o1 = v1.getPhoneNumber().getIntNumber();
                 else
@@ -629,8 +644,7 @@ public class CallerList extends AbstractTableModel {
                     o2 = v2.getPhoneNumber().getIntNumber();
                 else
                     o2 = null;
-                break;
-            case 4:
+            } else if (columnName.equals(JFritz.getMessage("participant"))) {
                 if (v1.getPerson() != null)
                     o1 = v1.getPerson().getFullname();
                 else
@@ -639,16 +653,13 @@ public class CallerList extends AbstractTableModel {
                     o2 = v2.getPerson().getFullname();
                 else
                     o2 = null;
-                break;
-            case 5:
+            } else if (columnName.equals(JFritz.getMessage("port"))) {
                 o1 = v1.getPort();
                 o2 = v2.getPort();
-                break;
-            case 6:
+            } else if (columnName.equals(JFritz.getMessage("route"))) {
                 o1 = v1.getRoute();
                 o2 = v2.getRoute();
-                break;
-            case 7:
+            } else if (columnName.equals(JFritz.getMessage("duration"))) {
                 if (v1.getDuration() != 0)
                     o1 = format(Integer.toString(v1.getDuration()), 10);
                 else
@@ -657,17 +668,11 @@ public class CallerList extends AbstractTableModel {
                     o2 = format(Integer.toString(v2.getDuration()), 10);
                 else
                     o2 = null;
-                break;
-            case 8:
-                if (v1.getCost() > v2.getCost()) {
-                    o1 = "1";
-                    o2 = "0";
-                } else {
-                    o1 = "0";
-                    o2 = "1";
-                }
-                break;
-            default:
+            } else if (columnName.equals("Kommentar")) {
+                o1 = v1.getComment();
+                o2 = v2.getComment();
+            } else {
+                // Sort by Date
                 o1 = v1.getCalldate();
                 o2 = v2.getCalldate();
             }
@@ -985,10 +990,17 @@ public class CallerList extends AbstractTableModel {
     }
 
     public void fireTableDataChanged() {
-        calculateCosts();
+        //	Kostenberechnung deaktiviert, weil es zu ungenau ist
+        //  und nur zu Problemen führt
+        //        calculateCosts();
         super.fireTableDataChanged();
     }
 
+    /**
+     * calculateCosts
+     * Deaktiviert, da eh zu ungenau
+     *
+     */
     private void calculateCosts() {
 
         // Lösche Anrufliste der SipProvider
@@ -1046,4 +1058,17 @@ public class CallerList extends AbstractTableModel {
         }
     }
 
+    public String getRealColumnName(int columnIndex) {
+        String columnName = "";
+        if (jfritz != null && jfritz.getJframe() != null) {
+            Enumeration en = jfritz.getJframe().getCallerTable()
+                    .getTableHeader().getColumnModel().getColumns();
+            while (en.hasMoreElements()) {
+                TableColumn col = (TableColumn) en.nextElement();
+                if (col.getModelIndex() == columnIndex)
+                    columnName = col.getHeaderValue().toString();
+            }
+        }
+        return columnName;
+    }
 }
