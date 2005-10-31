@@ -14,6 +14,8 @@ import java.awt.geom.Rectangle2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Paper;
 
+import javax.swing.table.TableColumnModel;
+
 import org.jfree.report.ElementAlignment;
 import org.jfree.report.ImageElement;
 import org.jfree.report.JFreeReport;
@@ -55,63 +57,73 @@ public class PrintCallerList {
 
     private void createColumnWidths() {
         Debug.msg("Create Columns");
-        int columnCount = jfritz.getCallerlist().getColumnCount();
+        int columnCount = jfritz.getJframe().getCallerTable().getColumnCount();
+        int fixedColumnsWidth = 0; // width of all columns except "number" and
+        // "participant"
+        TableColumnModel colModel = jfritz.getJframe().getCallerTable()
+                .getColumnModel();
         columnWidth = new int[columnCount];
         columnStart = new int[columnCount];
+
         for (int i = 0; i < columnCount; i++) {
-            columnWidth[i] = 0;
+            String columnName = colModel.getColumn(i).getHeaderValue()
+                    .toString();
+            if (columnName.equals(JFritz.getMessage("type"))) {
+                // Icon, same Width
+                columnWidth[i] = colModel.getColumn(i).getWidth() - 10;
+                // Minimum size of type-column (icon)
+                if (columnWidth[i] < 20)
+                    columnWidth[i] = 20;
+            } else {
+                // smaller font size: reduce width
+                columnWidth[i] = colModel.getColumn(i).getWidth() - 20;
+            }
             columnStart[i] = 0;
         }
 
-        int startPos = 0;
-        int endPos = (int) report.getPageDefinition().getWidth();
-        int columnOffset = 0;
+        // Rest width for columns "number" and "participant"
+        // ensure, that restWidth >= 150
+        int restWidth = 0;
+        do {
+            fixedColumnsWidth = 0;
+            int columnWithMaxWidth = 0;
+            for (int i = 0; i < columnCount; i++) {
+                String columnName = colModel.getColumn(i).getHeaderValue()
+                .toString();
+                System.err.println(columnName);
+                if (!(columnName.equals(JFritz.getMessage("number")))
+                        && (!columnName.equals(JFritz.getMessage("participant")))) {
+                    if (columnWidth[i] > columnWidth[columnWithMaxWidth]) columnWithMaxWidth = i;
+                    fixedColumnsWidth += columnWidth[i];
+                }
+            }
 
-        // Die ersten Spaltenbreiten bestimmen (für Typ, Datum, CallByCall)
-        for (int i = 0; i < 2; i++) {
-            columnWidth[i] = jfritz.getJframe().getCallerTable()
-                    .getColumnModel().getColumn(i).getWidth();
+            restWidth = (int) report.getPageDefinition().getWidth()
+                    - fixedColumnsWidth;
+
+            // shrink biggest column by 5 pixel
+            if (restWidth < 150) {
+                columnWidth[columnWithMaxWidth] -= 5;
+            }
+
+        } while (restWidth < 150);
+
+        int columnNumberIndex = colModel.getColumnIndex(JFritz
+                .getMessage("number"));
+        double columnNumberWidth = colModel.getColumn(columnNumberIndex)
+                .getWidth();
+        int columnParticipantIndex = colModel.getColumnIndex(JFritz
+                .getMessage("participant"));
+        double columnParticipantWidth = colModel.getColumn(
+                columnParticipantIndex).getWidth();
+
+        columnWidth[columnNumberIndex] = (int) ((columnNumberWidth / (columnNumberWidth + columnParticipantWidth)) * restWidth);
+        columnWidth[columnParticipantIndex] = (int) ((columnParticipantWidth / (columnNumberWidth + columnParticipantWidth)) * restWidth);
+
+        int startPos = 0;
+        for (int i = 0; i < columnCount; i++) {
             columnStart[i] = startPos;
             startPos += columnWidth[i];
-        }
-        if (JFritzUtils.parseBoolean(JFritz.getProperty(
-                "option.showCallByCall", "false"))) {
-            columnWidth[2] = jfritz.getJframe().getCallerTable()
-                    .getColumnModel().getColumn(2).getWidth() - 20;
-            columnStart[2] = startPos;
-            startPos += columnWidth[2];
-        } else {
-            columnOffset = 1;
-        }
-
-        // Die letzen Spaltenbreiten bestimmen (für Kosten, Dauer, Route, Port)
-        for (int i = columnCount - 1; i > 4; i--) {
-            columnWidth[i] = jfritz.getJframe().getCallerTable()
-                    .getColumnModel().getColumn(i - columnOffset).getWidth() - 20;
-            columnStart[i] = endPos - columnWidth[i];
-            endPos -= columnWidth[i];
-        }
-
-        // Spaltenbreiten von Rufnummer und Kontakt dynamisch gestalten
-        int restWidth = endPos - startPos;
-        // Spaltenbreite Rufnummer in Anrufliste
-        int columnWidthNumber = jfritz.getJframe().getCallerTable()
-                .getColumnModel().getColumn(3 - columnOffset).getWidth();
-        // Spaltenbreite Name in Anrufliste
-        int columnWidthName = jfritz.getJframe().getCallerTable()
-                .getColumnModel().getColumn(4 - columnOffset).getWidth();
-
-        // Spaltenbreite Rufnummer Drucken
-        columnWidth[3] = (int) (restWidth * ((float) columnWidthNumber / (float) (columnWidthNumber + columnWidthName)));
-        columnStart[3] = startPos;
-
-        // Spaltenbreite Rufnummer Name
-        columnStart[4] = startPos + columnWidth[3];
-        columnWidth[4] = columnStart[5] - columnStart[4];
-        Debug.msg("RestWidth: " + restWidth);
-        for (int i = 0; i < columnCount; i++) {
-            Debug.msg("Spalte " + i + ": " + columnStart[i]
-                    + " Breite " + columnWidth[i]);
         }
     }
 
@@ -129,24 +141,24 @@ public class PrintCallerList {
 
         font = new FontDefinition("Arial", 8, true, false, false, false);
 
-        for (int i = 0; i < jfritz.getJframe().getCallerTable().getTableHeader().getColumnModel().getColumnCount(); i++) {
-            System.err.println(jfritz.getJframe().getCallerTable().getTableHeader().getColumnModel().getColumn(i).getHeaderValue().toString());
-            int columnOffset = 0;
-            if ((!JFritzUtils.parseBoolean(JFritz.getProperty(
-                    "option.showCallByCall", "false"))) && (i > 1)) {
-                columnOffset = 1;
-            }
+        for (int i = 0; i < jfritz.getJframe().getCallerTable()
+                .getColumnCount(); i++) {
+            System.err.println(jfritz.getJframe().getCallerTable()
+                    .getTableHeader().getColumnModel().getColumn(i)
+                    .getHeaderValue().toString());
             label = LabelElementFactory.createLabelElement(jfritz
                     .getCallerlist().getColumnName(i), new Rectangle2D.Float(
-                    columnStart[i+columnOffset], 50, columnWidth[i+columnOffset], 20), Color.BLACK,
+                    columnStart[i], 50, columnWidth[i], 20), Color.BLACK,
                     ElementAlignment.CENTER, ElementAlignment.MIDDLE, font,
-                    jfritz.getJframe().getCallerTable().getTableHeader().getColumnModel().getColumn(i).getHeaderValue().toString());
-            System.err.println(columnStart[i+columnOffset] + " " + columnWidth[i+columnOffset]);
+                    jfritz.getJframe().getCallerTable().getTableHeader()
+                            .getColumnModel().getColumn(i).getHeaderValue()
+                            .toString());
+            System.err.println(columnStart[i] + " " + columnWidth[i]);
             pageHeader.addElement(label);
             ShapeElement selement = StaticShapeElementFactory
                     .createRectangleShapeElement("back", Color.BLACK,
                             new BasicStroke(0), new Rectangle2D.Float(
-                                    columnStart[i+columnOffset], 50, columnWidth[i+columnOffset], 20),
+                                    columnStart[i], 50, columnWidth[i], 20),
                             true, false);
             pageHeader.addElement(selement);
 
@@ -211,6 +223,9 @@ public class PrintCallerList {
                 getClass().getResource(
                         "/de/moonflower/jfritz/resources/images/callout.png"));
 
+        // Set Font size to 8
+        Integer fontSize = new Integer(8);
+
         AbstractExpression exp = new AbstractExpression() {
             public Object getValue() {
 
@@ -234,62 +249,26 @@ public class PrintCallerList {
         exp.setName("print_type");
         report.addExpression(exp);
 
-        // Set Font size to 8
-        Integer fontSize = new Integer(8);
-        ImageElement imageElement = ImageFieldElementFactory
-                .createImageDataRowElement("Type-Element",
-                        new Rectangle2D.Float(columnStart[0] + 2, 2, 14, 14),
-                        "print_type", true, false);
-        imageElement.setDynamicContent(false);
-        report.getItemBand().addElement(imageElement);
-        ShapeElement selement = StaticShapeElementFactory
-                .createRectangleShapeElement("back", Color.decode("#000000"),
-                        new BasicStroke(0), new Rectangle2D.Float(
-                                columnStart[0], 0, columnWidth[0], 18), true,
-                        false);
-        report.getItemBand().addElement(selement);
+        exp = new AbstractExpression() {
+            public Object getValue() {
+                Object ob = getDataRow().get(
+                        jfritz.getCallerlist().getColumnName(1));
+                return ob;
+            }
+        };
+        exp.setName("print_date");
+        report.addExpression(exp);
 
-        // Drucke Datum
-        factory = new DateFieldElementFactory();
-        factory.setFontSize(fontSize);
-        factory.setName(jfritz.getCallerlist().getColumnName(1));
-        factory.setAbsolutePosition(new Point2D.Float(columnStart[1], 2));
-        factory.setMinimumSize(new Dimension(columnWidth[1], 14));
-        factory.setMaximumSize(new Dimension(100, 14));
-        factory.setColor(Color.black);
-        factory.setHorizontalAlignment(ElementAlignment.CENTER);
-        factory.setVerticalAlignment(ElementAlignment.MIDDLE);
-        factory.setNullString("-");
-        factory.setFieldname(jfritz.getCallerlist().getColumnName(1));
-        report.getItemBand().addElement(factory.createElement());
-        selement = StaticShapeElementFactory.createRectangleShapeElement(
-                "back", Color.BLACK, new BasicStroke(0), new Rectangle2D.Float(
-                        columnStart[1], 0, columnWidth[1], 18), true, false);
-        report.getItemBand().addElement(selement);
+        exp = new AbstractExpression() {
+            public Object getValue() {
+                Object ob = getDataRow().get(
+                        jfritz.getCallerlist().getColumnName(2));
+                return ob;
+            }
+        };
+        exp.setName("print_callbycall");
+        report.addExpression(exp);
 
-        if (JFritzUtils.parseBoolean(JFritz.getProperty(
-                "option.showCallByCall", "false"))) {
-            // Drucke CallByCall
-            factory = new TextFieldElementFactory();
-            factory.setFontSize(fontSize);
-            factory.setName(jfritz.getCallerlist().getColumnName(2));
-            factory.setAbsolutePosition(new Point2D.Float(columnStart[2], 2));
-            factory.setMinimumSize(new Dimension(columnWidth[2], 14));
-            factory.setColor(Color.BLACK);
-            factory.setHorizontalAlignment(ElementAlignment.CENTER);
-            factory.setVerticalAlignment(ElementAlignment.MIDDLE);
-            factory.setNullString(" ");
-            factory.setFieldname(jfritz.getCallerlist().getColumnName(2));
-            report.getItemBand().addElement(factory.createElement());
-            selement = StaticShapeElementFactory
-                    .createRectangleShapeElement("back", Color.BLACK,
-                            new BasicStroke(0), new Rectangle2D.Float(
-                                    columnStart[2], 0, columnWidth[2], 18),
-                            true, false);
-            report.getItemBand().addElement(selement);
-        }
-
-        // Drucke Rufnummer
         exp = new AbstractExpression() {
             public Object getValue() {
                 Object number = getDataRow().get(
@@ -300,7 +279,6 @@ public class PrintCallerList {
         exp.setName("print_number");
         report.addExpression(exp);
 
-        // Drucke Person (Fullname)
         exp = new AbstractExpression() {
             public Object getValue() {
                 Object person = getDataRow().get(
@@ -313,7 +291,6 @@ public class PrintCallerList {
         exp.setName("print_personname");
         report.addExpression(exp);
 
-        // Drucke Port
         exp = new AbstractExpression() {
             public Object getValue() {
                 Object obj = getDataRow().get(
@@ -340,7 +317,6 @@ public class PrintCallerList {
         exp.setName("print_port");
         report.addExpression(exp);
 
-        // Drucke Route
         exp = new AbstractExpression() {
             public Object getValue() {
                 Object obj = getDataRow().get(
@@ -354,7 +330,6 @@ public class PrintCallerList {
         exp.setName("print_route");
         report.addExpression(exp);
 
-        // Drucke Dauer
         exp = new AbstractExpression() {
             public Object getValue() {
                 Object obj = getDataRow().get(
@@ -368,29 +343,10 @@ public class PrintCallerList {
         exp.setName("print_duration");
         report.addExpression(exp);
 
-        // Drucke Kosten
         exp = new AbstractExpression() {
             public Object getValue() {
                 Object obj = getDataRow().get(
                         jfritz.getCallerlist().getColumnName(8));
-                if (obj == null)
-                    return null;
-                if (Double.parseDouble(obj.toString()) == -1) {
-                    return "Unbekannt";
-                } else if (Double.parseDouble(obj.toString()) == -2) {
-                    return "Freiminuten";
-                } else
-                    return obj.toString() + " ct";
-            };
-        };
-        exp.setName("print_cost");
-        report.addExpression(exp);
-
-        // Drucke Kommentar
-        exp = new AbstractExpression() {
-            public Object getValue() {
-                Object obj = getDataRow().get(
-                        jfritz.getCallerlist().getColumnName(9));
                 if (obj == null)
                     return "";
                 return obj.toString();
@@ -399,43 +355,76 @@ public class PrintCallerList {
         exp.setName("print_comment");
         report.addExpression(exp);
 
-        for (int i = 3; i < jfritz.getCallerlist().getColumnCount(); i++) {
-            factory = new TextFieldElementFactory();
-            factory.setFontSize(fontSize);
-            factory.setName(jfritz.getCallerlist().getColumnName(i));
-            factory.setAbsolutePosition(new Point2D.Float(columnStart[i], 2));
-            factory.setMinimumSize(new Dimension(columnWidth[i], 14));
-            factory.setColor(Color.black);
-            factory.setHorizontalAlignment(ElementAlignment.CENTER);
-            factory.setVerticalAlignment(ElementAlignment.MIDDLE);
-            factory.setNullString(" ");
-            switch (i) {
-            case 3:
-                factory.setFieldname("print_number");
-                break;
-            case 4:
-                factory.setFieldname("print_personname");
-                break;
-            case 5:
-                factory.setFieldname("print_port");
-                break;
-            case 6:
-                factory.setFieldname("print_route");
-                break;
-            case 7:
-                factory.setFieldname("print_duration");
-                break;
-            case 8:
-                factory.setFieldname("print_cost");
-                break;
-            case 9:
-                factory.setFieldname("print_comment");
-                break;
-            default: {
+        /**
+         * // Drucke Kosten exp = new AbstractExpression() { public Object
+         * getValue() { Object obj = getDataRow().get(
+         * jfritz.getCallerlist().getColumnName(8)); if (obj == null) return
+         * null; if (Double.parseDouble(obj.toString()) == -1) { return
+         * "Unbekannt"; } else if (Double.parseDouble(obj.toString()) == -2) {
+         * return "Freiminuten"; } else return obj.toString() + " ct"; }; };
+         * exp.setName("print_cost"); report.addExpression(exp);
+         */
+
+        for (int i = 0; i < jfritz.getJframe().getCallerTable()
+                .getColumnCount(); i++) {
+
+            String columnName = jfritz.getJframe().getCallerTable()
+                    .getColumnModel().getColumn(i).getHeaderValue().toString();
+
+            if (columnName.equals(JFritz.getMessage("type"))) {
+                ImageElement imageElement = ImageFieldElementFactory
+                        .createImageDataRowElement("Type-Element",
+                                new Rectangle2D.Float(columnStart[i] + 2, 2,
+                                        14, 14), "print_type", true, false);
+                imageElement.setDynamicContent(false);
+                report.getItemBand().addElement(imageElement);
+            } else if (columnName.equals(JFritz.getMessage("date"))) {
+                factory = new DateFieldElementFactory();
+                factory.setFontSize(fontSize);
+                factory.setName(jfritz.getCallerlist().getColumnName(i));
+                factory
+                        .setAbsolutePosition(new Point2D.Float(columnStart[i],
+                                2));
+                factory.setMinimumSize(new Dimension(columnWidth[i], 14));
+                factory.setMaximumSize(new Dimension(100, 14));
+                factory.setColor(Color.black);
+                factory.setHorizontalAlignment(ElementAlignment.CENTER);
+                factory.setVerticalAlignment(ElementAlignment.MIDDLE);
+                factory.setNullString("-");
+                factory.setFieldname("print_date");
+                report.getItemBand().addElement(factory.createElement());
+            } else {
+                factory = new TextFieldElementFactory();
+                factory.setFontSize(fontSize);
+                factory.setName(jfritz.getCallerlist().getColumnName(i));
+                factory
+                        .setAbsolutePosition(new Point2D.Float(columnStart[i],
+                                2));
+                factory.setMinimumSize(new Dimension(columnWidth[i], 14));
+                factory.setColor(Color.BLACK);
+                factory.setHorizontalAlignment(ElementAlignment.CENTER);
+                factory.setVerticalAlignment(ElementAlignment.MIDDLE);
+                factory.setNullString(" ");
+                if (columnName.equals("Call-By-Call")) {
+                    factory.setFieldname("print_callbycall");
+                } else if (columnName.equals(JFritz.getMessage("number"))) {
+                    factory.setFieldname("print_number");
+                } else if (columnName.equals(JFritz.getMessage("participant"))) {
+                    factory.setFieldname("print_personname");
+                } else if (columnName.equals(JFritz.getMessage("port"))) {
+                    factory.setFieldname("print_port");
+                } else if (columnName.equals(JFritz.getMessage("route"))) {
+                    factory.setFieldname("print_route");
+                } else if (columnName.equals(JFritz.getMessage("duration"))) {
+                    factory.setFieldname("print_duration");
+                } else if (columnName.equals("Kommentar")) {
+                    factory.setFieldname("print_comment");
+                }
+                report.getItemBand().addElement(factory.createElement());
             }
-            }
-            report.getItemBand().addElement(factory.createElement());
-            selement = StaticShapeElementFactory
+
+            // Rand zeichnen
+            ShapeElement selement = StaticShapeElementFactory
                     .createRectangleShapeElement("back", Color
                             .decode("#000000"), new BasicStroke(0),
                             new Rectangle2D.Float(columnStart[i], 0,
