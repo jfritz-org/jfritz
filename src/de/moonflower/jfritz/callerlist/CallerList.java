@@ -94,7 +94,7 @@ public class CallerList extends AbstractTableModel {
         unfilteredCallerData = new Vector();
         this.jfritz = jfritz;
         alreadyKnownCalls = new Vector();
-        sortColumn = 0;
+        sortColumn = 1;
     }
 
     /**
