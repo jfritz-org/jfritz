@@ -12,8 +12,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
-import de.moonflower.jfritz.struct.Call;
-
 /**
  * This deprecated class manages editing of the participant cell in the caller table.
  *
@@ -24,7 +22,6 @@ public class CommentCellEditor extends AbstractCellEditor implements
 		TableCellEditor {
 	private static final long serialVersionUID = 1;
 	private JTextField textField = new JTextField();
-	private Call call;
 
 	/**
 	 * @see javax.swing.table.TableCellEditor#getTableCellEditorComponent(javax.swing.JTable,
@@ -41,7 +38,6 @@ public class CommentCellEditor extends AbstractCellEditor implements
 		if (value != null)
 			strval = value.toString();
 		textField.setText(strval);
-		this.call = (Call) ((CallerList) ((CallerTable) table).getModel()).getFilteredCallVector().get(row);
 
 		// Return the configured component
 		return textField;
@@ -59,7 +55,6 @@ public class CommentCellEditor extends AbstractCellEditor implements
 		if (!isValid(s)) { // Should display an error message at this point
 			return false;
 		}
-		call.setComment(s);
 		return super.stopCellEditing();
 	}
 
