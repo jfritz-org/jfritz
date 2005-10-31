@@ -11,17 +11,17 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Date;
-import java.util.Enumeration;
+
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.cellrenderer.CallByCallCellRenderer;
 import de.moonflower.jfritz.cellrenderer.CallTypeCellRenderer;
-import de.moonflower.jfritz.cellrenderer.CostCellRenderer;
 import de.moonflower.jfritz.cellrenderer.DateCellRenderer;
 import de.moonflower.jfritz.cellrenderer.DurationCellRenderer;
 import de.moonflower.jfritz.cellrenderer.NumberCellRenderer;
@@ -29,6 +29,8 @@ import de.moonflower.jfritz.cellrenderer.PersonCellRenderer;
 import de.moonflower.jfritz.cellrenderer.PortCellRenderer;
 import de.moonflower.jfritz.cellrenderer.RouteCellRenderer;
 import de.moonflower.jfritz.struct.CallType;
+import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
  * Creates table of callers
@@ -74,7 +76,7 @@ public class CallerTable extends JTable {
 		setFocusable(true);
 		setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-		getTableHeader().setReorderingAllowed(false);
+		getTableHeader().setReorderingAllowed(true);
 		getTableHeader().setResizingAllowed(true);
 		getTableHeader().addMouseListener(new ColumnHeaderListener(getModel()));
 
@@ -113,7 +115,7 @@ public class CallerTable extends JTable {
 		col.setMinWidth(10);
 		col.setMaxWidth(60);
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
-				"column0.width", "32")));
+		        "column."+JFritz.getMessage("type")+".width", "32")));
 
 		col = getColumnModel().getColumn(1);
 		col.setHeaderValue(JFritz.getMessage("date"));
@@ -121,7 +123,7 @@ public class CallerTable extends JTable {
 		col.setMinWidth(10);
 		col.setMaxWidth(200);
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
-				"column1.width", "80")));
+		        "column."+JFritz.getMessage("date")+".width", "80")));
 
 		col = getColumnModel().getColumn(2);
 		col.setHeaderValue("Call-By-Call");
@@ -130,7 +132,7 @@ public class CallerTable extends JTable {
 		col.setMinWidth(10);
 		col.setMaxWidth(200);
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
-				"column2.width", "40")));
+		        "column."+"Call-By-Call"+".width", "40")));
 		callByCallColumn = col;
 
 		col = getColumnModel().getColumn(3);
@@ -139,17 +141,16 @@ public class CallerTable extends JTable {
 		headerTips.setToolTip(col, JFritz.getMessage("number_desc"));
 		col.setCellEditor(new CallCellEditor((CallerList) getModel()));
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
-				"column3.width", "100")));
+		        "column."+JFritz.getMessage("number")+".width", "100")));
 
 		col = getColumnModel().getColumn(4);
 		col.setHeaderValue(JFritz.getMessage("participant"));
 		headerTips.setToolTip(col, JFritz.getMessage("participant_desc"));
 		//col.setCellEditor(new TextFieldCellEditor());
 		col.setCellEditor(new PersonCellEditor((CallerList) getModel()));
-
 		col.setCellRenderer(new PersonCellRenderer());
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
-				"column4.width", "100")));
+		        "column."+JFritz.getMessage("participant")+".width", "100")));
 
 		col = getColumnModel().getColumn(5);
 		col.setHeaderValue(JFritz.getMessage("port"));
@@ -158,7 +159,7 @@ public class CallerTable extends JTable {
 		col.setMinWidth(10);
 		col.setMaxWidth(200);
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
-				"column5.width", "60")));
+		        "column."+JFritz.getMessage("port")+".width", "60")));
 
 		col = getColumnModel().getColumn(6);
 		col.setHeaderValue(JFritz.getMessage("route"));
@@ -167,7 +168,7 @@ public class CallerTable extends JTable {
 		col.setMinWidth(10);
 		col.setMaxWidth(400);
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
-				"column6.width", "120")));
+		        "column."+JFritz.getMessage("route")+".width", "120")));
 
 		col = getColumnModel().getColumn(7);
 		col.setHeaderValue(JFritz.getMessage("duration"));
@@ -176,9 +177,20 @@ public class CallerTable extends JTable {
 		col.setMinWidth(10);
 		col.setMaxWidth(200);
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
-				"column7.width", "60")));
+		        "column."+JFritz.getMessage("duration")+".width", "60")));
 
 		col = getColumnModel().getColumn(8);
+		col.setHeaderValue("Kommentar");
+		headerTips.setToolTip(col, "Kommentar");
+		col.setCellEditor(new CommentCellEditor());
+		col.setMinWidth(10);
+		col.setMaxWidth(200);
+		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
+		        "column."+"Kommentar"+".width", "60")));
+
+/**
+ 		// Kostenanzeige entfernt, da eh zu ungenau
+		col = getColumnModel().getColumn(9);
 		col.setHeaderValue("Kosten");
 		headerTips.setToolTip(col, "Angefallene Kosten");
 		col.setCellRenderer(new CostCellRenderer());
@@ -186,15 +198,27 @@ public class CallerTable extends JTable {
 		col.setMaxWidth(200);
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
 				"column8.width", "60")));
+**/
+        if (!JFritzUtils.parseBoolean(JFritz.getProperty(
+                "option.showCallByCall", "false"))) {
+            TableColumnModel colModel = getColumnModel();
+            try {
+                // Try to remove Call-By-Call Column
+                colModel.removeColumn(colModel.getColumn(colModel
+                        .getColumnIndex("Call-By-Call")));
+                Debug.msg("Hiding call-by-call column");
+            } catch (IllegalArgumentException iae) { // No Call-By-Call
+                                                     // column found.
+            }
+        }
 
-		col = getColumnModel().getColumn(9);
-		col.setHeaderValue("Kommentar");
-		headerTips.setToolTip(col, "Kommentar");
-		col.setCellEditor(new CommentCellEditor());
-		col.setMinWidth(10);
-		col.setMaxWidth(200);
-		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
-				"column9.width", "60")));
+		for (int i = 0; i < getColumnCount(); i++) {
+		    String columnName = JFritz.getProperty("column"+i+".name");
+		    if (!columnName.equals("")) {
+		        Debug.msg("Moving column: " + columnName + " from " + getColumnModel().getColumnIndex(columnName) + " to " + i);
+	            moveColumn(getColumnModel().getColumnIndex(columnName), i);
+		    }
+		}
 
 		getTableHeader().addMouseMotionListener(headerTips);
 	}
@@ -211,24 +235,6 @@ public class CallerTable extends JTable {
 			c.setBackground(new Color(204, 204, 255));
 		}
 		return c;
-	}
-
-	/**
-	 * Find a table column by the column model index
-	 *
-	 * @param table
-	 * @param columnModelIndex
-	 * @return column
-	 */
-	public static TableColumn findTableColumn(JTable table, int columnModelIndex) {
-		Enumeration en = table.getColumnModel().getColumns();
-		for (; en.hasMoreElements();) {
-			TableColumn col = (TableColumn) en.nextElement();
-			if (col.getModelIndex() == columnModelIndex) {
-				return col;
-			}
-		}
-		return null;
 	}
 
 	/**
