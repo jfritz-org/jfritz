@@ -42,8 +42,9 @@
  * - Unterstützung für FRITZ!Box Firmware .85
  * - Unterstützung für FRITZ!Box Firmware .87
  * - Unterstützung für FRITZ!Box Firmware .88
+ * - Spalten sind jetzt frei verschiebbar
  * - Kommentarspalte hinzugefügt
- * - Spalten sind jetzt verschiebbar
+ * - Kommentar- und Anschluß-Spalte können ausgeblendet werden
  * - Suche der FritzBox über UPNP/SSDP abschaltbar
  * - Adressbuch nun nach allen Spalten sortierbar
  * - Beim Export merkt sich JFritz die Verzeichnisse
@@ -51,10 +52,11 @@
  * - Drucken der Anrufliste (und Export nach Excel, RTF, PDF, CSV, ...)
  * - Neue Kommandozeilenoption -n: Schaltet die Tray-Unterstützung aus
  * - Direkter Import von Outlook-Kontakten
+ * - Datumsfilter unterstützt nun "Gestern"
  * - Bugfix: Firmware konnte beim ersten Start nicht erkannt werden
  * - Bugfix: Spaltenbreite wurde nicht korrekt gespeichert
- * - Bugfix: Falsche SIP-ID bei gelöschten Einträgen.
- * - Bugfix: Wenn Kurzwahl unbekannt war, wurde eine falsche Rufnummer angezeigt.
+ * - Bugfix: Falsche SIP-ID bei gelöschten Einträgen
+ * - Bugfix: Wenn Kurzwahl unbekannt war, wurde eine falsche Rufnummer angezeigt
  *
  * Internal:
  * - SipProvider-Informationen werden nicht mehr in den
@@ -265,7 +267,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/doc/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.130 2005/11/01 12:22:45 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.131 2005/11/01 15:02:04 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
