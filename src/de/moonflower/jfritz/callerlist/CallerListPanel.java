@@ -50,6 +50,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	private static final int DATEFILTER_LAST_MONTH = 3;
 
+	private static final int DATEFILTER_YESTERDAY = 4;
+
 	private JFritz jfritz;
 
 	private CallerTable callerTable;
@@ -173,6 +175,10 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		JMenuItem menuItem;
 		menuItem = new JMenuItem("Heutiger Tag");
 		menuItem.setActionCommand("setdatefilter_thisday");
+		menuItem.addActionListener(this);
+		datePopupMenu.add(menuItem);
+		menuItem = new JMenuItem("Gestern");
+		menuItem.setActionCommand("setdatefilter_yesterday");
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
 		menuItem = new JMenuItem("Dieser Monat");
@@ -396,6 +402,11 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			from = cal.getTime();
 			to = from;
 			break;
+		case DATEFILTER_YESTERDAY:
+		    cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - 1);
+		    from = cal.getTime();
+			to = from;
+			break;
 		case DATEFILTER_THIS_MONTH:
 			from = cal.getTime();
 			to = from;
@@ -499,6 +510,12 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			JFritz.setProperty("filter.date", Boolean.toString(!dateButton
 					.isSelected()));
 			setDateFilterFromSelection(DATEFILTER_TODAY);
+			jfritz.getCallerlist().fireTableStructureChanged();
+		} else if (e.getActionCommand() == "setdatefilter_yesterday") {
+			dateButton.setSelected(false);
+			JFritz.setProperty("filter.date", Boolean.toString(!dateButton
+					.isSelected()));
+			setDateFilterFromSelection(DATEFILTER_YESTERDAY);
 			jfritz.getCallerlist().fireTableStructureChanged();
 		} else if (e.getActionCommand() == "setdatefilter_thismonth") {
 			dateButton.setSelected(false);
