@@ -205,7 +205,7 @@ public class Call {
         }
 
         // costs
-        outString = outString.concat(";\"" + getCost() + "\"");
+//        outString = outString.concat(";\"" + getCost() + "\"");
 
         // comment
         outString = outString.concat(";\"" + comment + "\"");
