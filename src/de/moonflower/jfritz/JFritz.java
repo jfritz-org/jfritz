@@ -41,6 +41,7 @@
  * JFritz 0.4.5
  * - Unterstützung für FRITZ!Box Firmware .85
  * - Unterstützung für FRITZ!Box Firmware .87
+ * - Unterstützung für FRITZ!Box Firmware .88
  * - Kommentarspalte hinzugefügt
  * - Spalten sind jetzt verschiebbar
  * - Suche der FritzBox über UPNP/SSDP abschaltbar
@@ -264,7 +265,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/doc/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.129 2005/10/31 16:21:31 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.130 2005/11/01 12:22:45 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
