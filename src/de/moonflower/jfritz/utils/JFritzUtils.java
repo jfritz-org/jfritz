@@ -93,13 +93,13 @@ public class JFritzUtils {
         + "\\s*<td class=\"c7\"><nobr><script type=\"text/javascript\">document.write\\(uiRouteDisplay\\(([^\\)\\)]*)\\)\\);</script></nobr></td>"
         + "\\s*<td class=\"c6\"><nobr>([^<]*)</nobr></td>" + "\\s*</tr>";
 
-    final static String PATTERN_LIST_88 = "<TR\\s*class=Mikrohell>"
-        + "\\s*<TD\\s*class=c1>\\s*<NOBR>\\s*<SCRIPT\\s*type=text/javascript>document.write\\(uiCallSymbol\\(\"(\\d)\"\\)\\);\\s*</SCRIPT>\\s*</NOBR>\\s*</TD>"
-        + "\\s*<TD\\s*class=c3>\\s*<NOBR>\\s*(\\d\\d\\.\\d\\d\\.\\d\\d \\d\\d:\\d\\d)\\s*</NOBR>\\s*</TD>"
-        + "\\s*<TD\\s*class=c4>\\s*<NOBR>\\s*<SCRIPT\\s*type=text/javascript>document.write\\(uiRufnummerDisplay\\(\"([^\"\\)\\);]*)\"\\)\\);\\s*</SCRIPT>\\s*</NOBR>\\s*</TD>"
-        + "\\s*<TD\\s*class=c5>\\s*<NOBR>\\s*<SCRIPT\\s*type=text/javascript>document.write\\(uiPortDisplay\\(\"(\\d*)\"\\)\\);\\s*</SCRIPT>\\s*</NOBR>\\s*</TD>"
-        + "\\s*<TD\\s*class=c7>\\s*<NOBR>\\s*<SCRIPT\\s*type=text/javascript>document.write\\(uiRouteDisplay\\(([^\\)\\)]*)\\)\\);\\s*</SCRIPT>\\s*</NOBR>\\s*</TD>"
-        + "\\s*<TD\\s*class=c6>\\s*<NOBR>\\s*([^<]*)\\s*</NOBR>\\s*</TD>" + "\\s*</TR>";
+    final static String PATTERN_LIST_88 = "<tr class=\"Mikrohell\">"
+        + "\\s*<td class=\"c1\"><nobr><script type=\"text/javascript\">document.write\\(uiCallSymbol\\(\"(\\d)\"\\)\\);</script></nobr></td>"
+        + "\\s*<td class=\"c3\"><nobr>(\\d\\d\\.\\d\\d\\.\\d\\d \\d\\d:\\d\\d)</nobr></td>"
+        + "\\s*<td class=\"c4\"><nobr><script type=\"text/javascript\">document.write\\(uiRufnummerDisplay\\(\"([^\"\\)\\);]*)\"\\)\\);</script></nobr></td>"
+        + "\\s*<td class=\"c5\"><nobr><script type=\"text/javascript\">document.write\\(uiPortDisplay\\(\"(\\d*)\"\\)\\);</script></nobr></td>"
+        + "\\s*<td class=\"c7\"><nobr><script type=\"text/javascript\">document.write\\(uiRouteDisplay\\(([^\\)\\)]*)\\)\\);</script></nobr></td>"
+        + "\\s*<td class=\"c6\"><nobr>([^<]*)</nobr></td>" + "\\s*</tr>";
 
     final static String PATTERN_QUICKDIAL = "<tr class=\"Dialoglist\">"
             + "\\s*<td style=\"text-align: center;\">(\\d*)</td>"
@@ -172,7 +172,7 @@ public class JFritzUtils {
 
         // DEBUG: Test other versions
         if (false) {
-            String filename = "../Firmware 88/Anrufliste.html";
+            String filename = "../Firmware 88/Anrufliste2.html";
             Debug.msg("Debug mode: Loading " + filename);
             try {
                 data = "";
@@ -182,6 +182,7 @@ public class JFritzUtils {
                     data += thisLine;
                 }
                 in.close();
+                Debug.msg("\nLoading finisched");
             } catch (IOException e) {
                 Debug.err("File not found: " + filename);
             }
@@ -430,7 +431,6 @@ public class JFritzUtils {
             JFritz jfritz) {
         Vector list = new Vector();
         data = removeDuplicateWhitespace(data);
-        Debug.msg(3, "Parsing data: " + data);
         Pattern p;
         Debug.msg(2, "FirmwareMinorVersion: "
                 + firmware.getMinorFirmwareVersion());
