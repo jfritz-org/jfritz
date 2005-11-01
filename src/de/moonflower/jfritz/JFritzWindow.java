@@ -666,11 +666,12 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
             monitorButton.setEnabled((Integer.parseInt(JFritz.getProperty(
                     "option.callMonitorType", "0")) > 0));
 
-            // Show / hide CallByCall column
             TableColumnModel colModel = jfritz.getJframe().getCallerTable()
                     .getColumnModel();
+
+            // Show / hide CallByCall column
             if (JFritzUtils.parseBoolean(JFritz.getProperty(
-                    "option.showCallByCall", "false"))) {
+                    "option.showCallByCallColumn", "true"))) {
                 try {
                     colModel.getColumnIndex("Call-By-Call");
                 } catch (IllegalArgumentException iae) { // No Call-By-Call
@@ -678,19 +679,61 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                                                          // one
                     colModel.addColumn(jfritz.getJframe().getCallerTable()
                             .getCallByCallColumn());
-                    colModel.moveColumn(colModel.getColumnCount() - 1, 2);
-                    colModel.getColumn(2).setPreferredWidth(
+                    colModel.getColumn(colModel.getColumnCount() - 1).setPreferredWidth(
                             Integer.parseInt(JFritz.getProperty(
-                                    "column2.width", "60")));
-                    getCallerListPanel().getCallByCallButton().setEnabled(true);
+                                    "column.Call-By-Call.width", "50")));
                 }
             } else {
                 try {
                     // Try to remove Call-By-Call Column
                     colModel.removeColumn(colModel.getColumn(colModel
                             .getColumnIndex("Call-By-Call")));
-                    getCallerListPanel().getCallByCallButton()
-                            .setEnabled(false);
+                } catch (IllegalArgumentException iae) { // No Call-By-Call
+                                                         // column found.
+                }
+            }
+            // Show / hide comment column
+            if (JFritzUtils.parseBoolean(JFritz.getProperty(
+                    "option.showCommentColumn", "true"))) {
+                try {
+                    colModel.getColumnIndex("Kommentar");
+                } catch (IllegalArgumentException iae) { // No comment
+                                                         // column found. Add
+                                                         // one
+                    colModel.addColumn(jfritz.getJframe().getCallerTable()
+                            .getCommentColumn());
+                    colModel.getColumn(colModel.getColumnCount() - 1).setPreferredWidth(
+                            Integer.parseInt(JFritz.getProperty(
+                                    "column.Kommentar.width", "50")));
+                }
+            } else {
+                try {
+                    // Try to remove comment column
+                    colModel.removeColumn(colModel.getColumn(colModel
+                            .getColumnIndex("Kommentar")));
+                } catch (IllegalArgumentException iae) { // No Call-By-Call
+                                                         // column found.
+                }
+            }
+            // Show / hide port column
+            if (JFritzUtils.parseBoolean(JFritz.getProperty(
+                    "option.showPortColumn", "true"))) {
+                try {
+                    colModel.getColumnIndex(JFritz.getMessage("port"));
+                } catch (IllegalArgumentException iae) { // No port
+                                                         // column found. Add
+                                                         // one
+                    colModel.addColumn(jfritz.getJframe().getCallerTable()
+                            .getPortColumn());
+                    colModel.getColumn(colModel.getColumnCount() - 1).setPreferredWidth(
+                            Integer.parseInt(JFritz.getProperty(
+                                    "column."+JFritz.getMessage("port")+".width", "50")));
+                }
+            } else {
+                try {
+                    // Try to remove port column
+                    colModel.removeColumn(colModel.getColumn(colModel
+                            .getColumnIndex(JFritz.getMessage("port"))));
                 } catch (IllegalArgumentException iae) { // No Call-By-Call
                                                          // column found.
                 }

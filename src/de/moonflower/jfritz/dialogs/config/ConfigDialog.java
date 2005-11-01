@@ -87,7 +87,8 @@ public class ConfigDialog extends JDialog {
             notifyOnCallsButton, confirmOnExitButton, startMinimizedButton,
             timerAfterStartButton, passwordAfterStartButton, soundButton,
             callMonitorAfterStartButton, lookupAfterFetchButton,
-            showCallByCallButton, externProgramCheckBox, searchWithSSDP;
+            externProgramCheckBox, searchWithSSDP,
+            showCallByCallColumnButton, showCommentColumnButton, showPortColumnButton;
 
     private JPanel callMonitorPane;
 
@@ -177,8 +178,14 @@ public class ConfigDialog extends JDialog {
         lookupAfterFetchButton.setSelected(JFritzUtils.parseBoolean(JFritz
                 .getProperty("option.lookupAfterFetch", "false")));
 
-        showCallByCallButton.setSelected(JFritzUtils.parseBoolean(JFritz
-                .getProperty("option.showCallByCall", "false")));
+        showCallByCallColumnButton.setSelected(JFritzUtils.parseBoolean(JFritz
+                .getProperty("option.showCallByCallColumn", "true")));
+
+        showCommentColumnButton.setSelected(JFritzUtils.parseBoolean(JFritz
+                .getProperty("option.showCommentColumn", "true")));
+
+        showPortColumnButton.setSelected(JFritzUtils.parseBoolean(JFritz
+                .getProperty("option.showPortColumn", "true")));
 
         boolean pwAfterStart = !Encryption.decrypt(
                 JFritz.getProperty("jfritz.password", "")).equals(
@@ -271,8 +278,14 @@ public class ConfigDialog extends JDialog {
         JFritz.setProperty("option.lookupAfterFetch", Boolean
                 .toString(lookupAfterFetchButton.isSelected()));
 
-        JFritz.setProperty("option.showCallByCall", Boolean
-                .toString(showCallByCallButton.isSelected()));
+        JFritz.setProperty("option.showCallByCallColumn", Boolean
+                .toString(showCallByCallColumnButton.isSelected()));
+
+        JFritz.setProperty("option.showCommentColumn", Boolean
+                .toString(showCommentColumnButton.isSelected()));
+
+        JFritz.setProperty("option.showPortColumn", Boolean
+                .toString(showPortColumnButton.isSelected()));
 
         JFritz.setProperty("box.password", Encryption.encrypt(password));
         JFritz.setProperty("box.address", address.getText());
@@ -522,9 +535,19 @@ public class ConfigDialog extends JDialog {
         cPanel.add(lookupAfterFetchButton, c);
 
         c.gridy = 4;
-        showCallByCallButton = new JCheckBox(
-                "Call-By-Call Informationen anzeigen");
-        cPanel.add(showCallByCallButton, c);
+        showCallByCallColumnButton = new JCheckBox(
+                "Call-By-Call-Spalte anzeigen");
+        cPanel.add(showCallByCallColumnButton, c);
+
+        c.gridy = 5;
+        showCommentColumnButton = new JCheckBox(
+                "Kommentar-Spalte anzeigen");
+        cPanel.add(showCommentColumnButton, c);
+
+        c.gridy = 6;
+        showPortColumnButton = new JCheckBox(
+                "Anschluß-Spalte anzeigen");
+        cPanel.add(showPortColumnButton, c);
 
         return cPanel;
     }

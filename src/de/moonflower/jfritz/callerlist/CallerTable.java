@@ -42,6 +42,8 @@ public class CallerTable extends JTable {
 	private JFritz jfritz;
 
 	private TableColumn callByCallColumn = null;
+	private TableColumn commentColumn = null;
+	private TableColumn portColumn = null;
 
 	/**
 	 * Constructs CallerTable
@@ -160,6 +162,7 @@ public class CallerTable extends JTable {
 		col.setMaxWidth(200);
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
 		        "column."+JFritz.getMessage("port")+".width", "60")));
+		portColumn = col;
 
 		col = getColumnModel().getColumn(6);
 		col.setHeaderValue(JFritz.getMessage("route"));
@@ -187,6 +190,7 @@ public class CallerTable extends JTable {
 		col.setMaxWidth(200);
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
 		        "column."+"Kommentar"+".width", "60")));
+		commentColumn = col;
 
 /**
  		// Kostenanzeige entfernt, da eh zu ungenau
@@ -199,9 +203,9 @@ public class CallerTable extends JTable {
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
 				"column8.width", "60")));
 **/
+        TableColumnModel colModel = getColumnModel();
         if (!JFritzUtils.parseBoolean(JFritz.getProperty(
-                "option.showCallByCall", "false"))) {
-            TableColumnModel colModel = getColumnModel();
+                "option.showCallByCallColumn", "true"))) {
             try {
                 // Try to remove Call-By-Call Column
                 colModel.removeColumn(colModel.getColumn(colModel
@@ -212,7 +216,31 @@ public class CallerTable extends JTable {
             }
         }
 
-		for (int i = 0; i < getColumnCount(); i++) {
+        if (!JFritzUtils.parseBoolean(JFritz.getProperty(
+                "option.showCommentColumn", "true"))) {
+            try {
+                // Try to remove comment column
+                colModel.removeColumn(colModel.getColumn(colModel
+                        .getColumnIndex("Kommentar")));
+                Debug.msg("Hiding comment column");
+            } catch (IllegalArgumentException iae) { // No comment
+                                                     // column found.
+            }
+        }
+
+        if (!JFritzUtils.parseBoolean(JFritz.getProperty(
+                "option.showPortColumn", "true"))) {
+            try {
+                // Try to remove port column
+                colModel.removeColumn(colModel.getColumn(colModel
+                        .getColumnIndex(JFritz.getMessage("port"))));
+                Debug.msg("Hiding port column");
+            } catch (IllegalArgumentException iae) { // No port
+                                                     // column found.
+            }
+        }
+
+        for (int i = 0; i < getColumnCount(); i++) {
 		    String columnName = JFritz.getProperty("column"+i+".name");
 		    if (!columnName.equals("")) {
 		        Debug.msg("Moving column: " + columnName + " from " + getColumnModel().getColumnIndex(columnName) + " to " + i);
@@ -249,5 +277,17 @@ public class CallerTable extends JTable {
 	 */
 	public TableColumn getCallByCallColumn() {
 		return callByCallColumn;
+	}
+	/**
+	 * @return Returns the comment column
+	 */
+	public TableColumn getCommentColumn() {
+		return commentColumn;
+	}
+	/**
+	 * @return Returns the port column
+	 */
+	public TableColumn getPortColumn() {
+		return portColumn;
 	}
 }
