@@ -109,12 +109,17 @@ public class JFritzUtils {
             + "\\s*<td style=\"text-align: right;\"><button [^>]*>\\s*<img [^>]*></button></td>"
             + "\\s*</tr>";
 
-    final static String PATTERN_SIPPROVIDER = "<!-- \"(\\d)\" / \"(\\w*)\" -->"
+    final static String PATTERN_SIPPROVIDER_OLD = "<!-- \"(\\d)\" / \"(\\w*)\" -->" // FW <= 37
+        + "\\s*<td class=\"c1\">\\s*<input type=checkbox id=\"uiViewActivsip\\d\""
+        + "\\s*onclick=\"uiOnChangeActivated\\('uiViewActivsip\\d','uiPostActivsip\\d'\\); return true;\">"
+        + "\\s*</td>"
+        + "\\s*<td class=\"c2\">([^<]*)</td>"
+        + "\\s*<td class=\"c3\"><script type=\"text/javascript\">document.write\\(ProviderDisplay\\(\"([^\"]*)\"\\)\\);</script></td>";
+
+    final static String PATTERN_SIPPROVIDER_NEW = "<!-- \"(\\d)\" / \"(\\w*)\" -->" // FW > 37
             + "\\s*<td class=\"c1\">\\s*<input type=checkbox id=\"uiViewActivsip\\d\""
             + "\\s*onclick=\"uiOnChangeActivated\\('uiViewActivsip\\d','uiPostActivsip\\d'\\); return true;\">"
             + "\\s*</td>"
-            //			+ "\\s*<td
-            // class=\"c2\">([\\(]*[\\w*\\s*]*[\\)]*[\\w*\\s*]*)</td>"
             + "\\s*<td class=\"c2\">([^<]*)</td>"
             + "\\s*<td class=\"c3\"><script type=\"text/javascript\">document.write\\(ProviderDisplay\\(\"([^\"]*)\"\\)\\);</script></td>"
             + "\\s*<td class=\"c6\"><script type=\"text/javascript\">document.write\\(AuswahlDisplay\\(\"([^\"]*)\"\\)\\);</script></td>";
@@ -255,7 +260,7 @@ public class JFritzUtils {
             }
         }
 
-        Vector list = parseSipProvider(data);
+        Vector list = parseSipProvider(data, firmware);
         return list;
     }
 
@@ -267,16 +272,22 @@ public class JFritzUtils {
      *            html data
      * @return list of SipProvider objects author robotniko, akw
      */
-    public static Vector parseSipProvider(String data) {
+    public static Vector parseSipProvider(String data, FritzBoxFirmware firmware) {
         Vector list = new Vector();
         data = removeDuplicateWhitespace(data);
         Pattern p;
-        p = Pattern.compile(PATTERN_SIPPROVIDER);
+        if (firmware.getMinorFirmwareVersion() < 42)
+            p = Pattern.compile(PATTERN_SIPPROVIDER_OLD);
+        else p = Pattern.compile(PATTERN_SIPPROVIDER_NEW);
         Matcher m = p.matcher(data);
         while (m.find()) {
             if (!(m.group(4).equals(""))) {
-                list.add(new SipProvider(Integer.parseInt(m.group(5)), m
+                if (firmware.getMinorFirmwareVersion() < 42)
+                    list.add(new SipProvider(Integer.parseInt(m.group(1)), m
+                            .group(3), m.group(4)));
+                else list.add(new SipProvider(Integer.parseInt(m.group(5)), m
                         .group(3), m.group(4)));
+
                 Debug.msg("SIP-Provider: " + list.lastElement());
             }
         }
