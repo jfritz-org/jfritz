@@ -36,7 +36,8 @@
 
  * CHANGELOG:
  *
- * TODO: Entferne Konfiguration für Kostenabrechnung
+ * JFritz 0.4.6
+ * - Anrufen aus der Anrufliste heraus (noch nicht getestet)
  *
  * JFritz 0.4.5
  * - Unterstützung für FRITZ!Box Firmware .85
@@ -48,7 +49,6 @@
  * - Suche der FritzBox über UPNP/SSDP abschaltbar
  * - Adressbuch nun nach allen Spalten sortierbar
  * - Beim Export merkt sich JFritz die Verzeichnisse
- * - Anrufen aus der Anrufliste heraus (noch nicht getestet)
  * - Drucken der Anrufliste (und Export nach Excel, RTF, PDF, CSV, ...)
  * - Neue Kommandozeilenoption -n: Schaltet die Tray-Unterstützung aus
  * - Direkter Import von Outlook-Kontakten
@@ -261,13 +261,13 @@ public final class JFritz {
 
     public final static String PROGRAM_VERSION = "0.4.5";
 
-    public final static String PROGRAM_URL = "http://jfritz.sourceforge.net/";
+    public final static String PROGRAM_URL = "http://www.jfritz.org/";
 
     public final static String PROGRAM_SECRET = "jFrItZsEcReT";
 
     public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/doc/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.131 2005/11/01 15:02:04 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.132 2005/11/02 15:34:10 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -286,10 +286,6 @@ public final class JFritz {
     public final static int SSDP_TIMEOUT = 1000;
 
     public final static int SSDP_MAX_BOXES = 3;
-
-    public final static boolean DEVEL_VERSION = Integer
-            .parseInt(PROGRAM_VERSION.substring(PROGRAM_VERSION
-                    .lastIndexOf(".") + 1)) % 2 == 1;
 
     public static boolean SYSTRAY_SUPPORT = false;
 
@@ -454,8 +450,6 @@ public final class JFritz {
     public static void main(String[] args) {
         System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION
                 + " (c) 2005 by " + PROGRAM_AUTHOR);
-        if (DEVEL_VERSION)
-            Debug.on();
 
         boolean fetchCalls = false;
         boolean clearList = false;
