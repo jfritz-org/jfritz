@@ -365,14 +365,12 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
         item = new JMenuItem("Drucken");
         item.setActionCommand("print_callerlist");
         item.addActionListener(this);
-        item.setEnabled(JFritz.DEVEL_VERSION);
         jfritzMenu.add(item);
 
         if (JFritz.runsOn().startsWith("windows")) {
             item = new JMenuItem("Kontakte aus Outlook importieren");
             item.setActionCommand("import_outlook");
             item.addActionListener(this);
-            item.setEnabled(JFritz.DEVEL_VERSION);
             importMenu.add(item);
             jfritzMenu.add(importMenu);
         }
