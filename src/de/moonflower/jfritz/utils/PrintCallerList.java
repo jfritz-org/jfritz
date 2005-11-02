@@ -87,10 +87,11 @@ public class PrintCallerList {
         do {
             fixedColumnsWidth = 0;
             int columnWithMaxWidth = 0;
+            Debug.msg(columnCount + " Spalten");
             for (int i = 0; i < columnCount; i++) {
                 String columnName = colModel.getColumn(i).getHeaderValue()
                 .toString();
-                System.err.println(columnName);
+                Debug.msg(i + ": " + columnName);
                 if (!(columnName.equals(JFritz.getMessage("number")))
                         && (!columnName.equals(JFritz.getMessage("participant")))) {
                     if (columnWidth[i] > columnWidth[columnWithMaxWidth]) columnWithMaxWidth = i;
@@ -141,19 +142,18 @@ public class PrintCallerList {
 
         font = new FontDefinition("Arial", 8, true, false, false, false);
 
+        String columnName = "";
         for (int i = 0; i < jfritz.getJframe().getCallerTable()
                 .getColumnCount(); i++) {
-            System.err.println(jfritz.getJframe().getCallerTable()
-                    .getTableHeader().getColumnModel().getColumn(i)
-                    .getHeaderValue().toString());
+            columnName  =jfritz.getJframe().getCallerTable()
+            .getTableHeader().getColumnModel().getColumn(i)
+            .getHeaderValue().toString();
             label = LabelElementFactory.createLabelElement(jfritz
                     .getCallerlist().getColumnName(i), new Rectangle2D.Float(
                     columnStart[i], 50, columnWidth[i], 20), Color.BLACK,
                     ElementAlignment.CENTER, ElementAlignment.MIDDLE, font,
-                    jfritz.getJframe().getCallerTable().getTableHeader()
-                            .getColumnModel().getColumn(i).getHeaderValue()
-                            .toString());
-            System.err.println(columnStart[i] + " " + columnWidth[i]);
+                    columnName);
+            Debug.msg("Spalte: " + columnName + " Start: "+columnStart[i] + " Breite: " + columnWidth[i]);
             pageHeader.addElement(label);
             ShapeElement selement = StaticShapeElementFactory
                     .createRectangleShapeElement("back", Color.BLACK,
@@ -253,6 +253,9 @@ public class PrintCallerList {
             public Object getValue() {
                 Object ob = getDataRow().get(
                         jfritz.getCallerlist().getColumnName(1));
+                if (ob == null) {
+                    return "";
+                }
                 return ob;
             }
         };
@@ -263,6 +266,9 @@ public class PrintCallerList {
             public Object getValue() {
                 Object ob = getDataRow().get(
                         jfritz.getCallerlist().getColumnName(2));
+                if (ob == null) {
+                    return "";
+                }
                 return ob;
             }
         };
@@ -273,6 +279,9 @@ public class PrintCallerList {
             public Object getValue() {
                 Object number = getDataRow().get(
                         jfritz.getCallerlist().getColumnName(3));
+                if (number == null) {
+                    return "";
+                }
                 return number.toString();
             };
         };
@@ -284,7 +293,7 @@ public class PrintCallerList {
                 Object person = getDataRow().get(
                         jfritz.getCallerlist().getColumnName(4));
                 if (person == null)
-                    return null;
+                    return "";
                 return ((Person) person).getFullname();
             };
         };
@@ -296,7 +305,7 @@ public class PrintCallerList {
                 Object obj = getDataRow().get(
                         jfritz.getCallerlist().getColumnName(5));
                 if (obj == null)
-                    return null;
+                    return "";
                 String port = (String) obj;
                 String portStr = "";
                 if (port.equals("4"))
@@ -322,7 +331,7 @@ public class PrintCallerList {
                 Object obj = getDataRow().get(
                         jfritz.getCallerlist().getColumnName(6));
                 if (obj == null)
-                    return null;
+                    return "";
                 String route = (String) obj;
                 return route;
             };
@@ -335,7 +344,7 @@ public class PrintCallerList {
                 Object obj = getDataRow().get(
                         jfritz.getCallerlist().getColumnName(7));
                 if (obj == null)
-                    return null;
+                    return "";
                 int duration = Integer.parseInt(obj.toString());
                 return Integer.toString(duration / 60) + " min";
             };
