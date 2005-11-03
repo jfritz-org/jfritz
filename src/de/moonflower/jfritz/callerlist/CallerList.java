@@ -439,7 +439,7 @@ public class CallerList extends AbstractTableModel {
 
         }
         // Clear data on fritz box ?
-        if (JFritz.getProperty("option.deleteAfterFetch", "false").equals(
+        if (newEntries > 0 && JFritz.getProperty("option.deleteAfterFetch", "false").equals(
                 "true")) {
             JFritzUtils.clearListOnFritzBox(JFritz.getProperty("box.address"),
                     JFritz.getProperty("box.password"), JFritzUtils
