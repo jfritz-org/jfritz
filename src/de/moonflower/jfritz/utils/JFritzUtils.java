@@ -85,16 +85,8 @@ public class JFritzUtils {
         + "\\s*<td class=\"c7\"><script type=\"text/javascript\">document.write\\(uiRouteDisplay\\(([^\\)\\)]*)\\)\\);</script></td>"
         + "\\s*<td class=\"c6\">([^<]*)</td>" + "\\s*</tr>";
 
-    final static String PATTERN_LIST_87 = "<tr class=\"Dialoglist\">"
-        + "\\s*<td class=\"c1\"><nobr><script type=\"text/javascript\">document.write\\(uiCallSymbol\\(\"(\\d)\"\\)\\);</script></nobr></td>"
-        + "\\s*<td class=\"c3\"><nobr>(\\d\\d\\.\\d\\d\\.\\d\\d \\d\\d:\\d\\d)</nobr></td>"
-        + "\\s*<td class=\"c4\"><nobr><script type=\"text/javascript\">document.write\\(uiRufnummerDisplay\\(\"([^\"\\)\\);]*)\"\\)\\);</script></nobr></td>"
-        + "\\s*<td class=\"c5\"><nobr><script type=\"text/javascript\">document.write\\(uiPortDisplay\\(\"(\\d*)\"\\)\\);</script></nobr></td>"
-        + "\\s*<td class=\"c7\"><nobr><script type=\"text/javascript\">document.write\\(uiRouteDisplay\\(([^\\)\\)]*)\\)\\);</script></nobr></td>"
-        + "\\s*<td class=\"c6\"><nobr>([^<]*)</nobr></td>" + "\\s*</tr>";
-
-    final static String PATTERN_LIST_88 = "<tr class=\"Mikrohell\">"
-        + "\\s*<td class=\"c1\"><nobr><script type=\"text/javascript\">document.write\\(uiCallSymbol\\(\"(\\d)\"\\)\\);</script></nobr></td>"
+    final static String PATTERN_LIST_87 =
+          "\\s*<td class=\"c1\"><nobr><script type=\"text/javascript\">document.write\\(uiCallSymbol\\(\"(\\d)\"\\)\\);</script></nobr></td>"
         + "\\s*<td class=\"c3\"><nobr>(\\d\\d\\.\\d\\d\\.\\d\\d \\d\\d:\\d\\d)</nobr></td>"
         + "\\s*<td class=\"c4\"><nobr><script type=\"text/javascript\">document.write\\(uiRufnummerDisplay\\(\"([^\"\\)\\);]*)\"\\)\\);</script></nobr></td>"
         + "\\s*<td class=\"c5\"><nobr><script type=\"text/javascript\">document.write\\(uiPortDisplay\\(\"(\\d*)\"\\)\\);</script></nobr></td>"
@@ -453,10 +445,8 @@ public class JFritzUtils {
         else if ((firmware.getMinorFirmwareVersion() >= 85)
                 && (firmware.getMinorFirmwareVersion() < 87))
             p = Pattern.compile(PATTERN_LIST_85);
-        else if (firmware.getMinorFirmwareVersion() == 87)
-            p = Pattern.compile(PATTERN_LIST_87);
         else
-            p = Pattern.compile(PATTERN_LIST_88);
+            p = Pattern.compile(PATTERN_LIST_87);
 
         Matcher m = p.matcher(data);
 
@@ -478,7 +468,9 @@ public class JFritzUtils {
                     String[] routeStrings = m.group(5).split(",");
                     routeStrings[0] = routeStrings[0].replaceAll("\\\"", ""); // Alle " entfernen
                     routeStrings[1] = routeStrings[1].replaceAll("\\\"", ""); // Alle " entfernen
-                    if (routeStrings[1].equals("0")) {
+                    if (routeStrings[1].equals("")) {
+                      route = routeStrings[0]; // (Analoge??) Festnetznummer
+                    } else if (routeStrings[1].equals("0")) {
                         route = routeStrings[0]; // Festnetznummer
                     } else if (routeStrings[1].equals("1")) {
                         route = "SIP" + routeStrings[0]; // VoIP-Nummer
