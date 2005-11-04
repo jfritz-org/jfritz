@@ -255,6 +255,24 @@ public class SipProviderTableModel extends AbstractTableModel {
 	}
 
 	/**
+	 * Get phoneNumber and providerName to corresponding providerID
+	 * @param sipID p.E. SIP0
+	 * @param defaultReturn p.E. SIP0 or 123456
+	 * @return Number of SipProvider (123@sipgate.de)
+	 */
+	public String getSipProvider(String sipID, String defaultReturn) {
+	    if (sipID.startsWith("SIP")) {
+            Enumeration en = providerList.elements();
+            	while (en.hasMoreElements()) {
+            	    SipProvider sipProvider = (SipProvider) en.nextElement();
+            	    if (sipProvider.getProviderID() == Integer.parseInt(sipID.substring(3)))
+            	        return sipProvider.toString();
+            	}
+            	return defaultReturn; // If SipProvider not found
+	    } else return defaultReturn;
+	}
+
+	/**
 	 * This comparator is used to sort vectors of data
 	 */
 	public class ColumnSorter implements Comparator {
