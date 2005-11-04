@@ -494,18 +494,8 @@ public class CallerList extends AbstractTableModel {
         } else if (columnName.equals(JFritz.getMessage("port"))) {
             return call.getPort();
         } else if (columnName.equals(JFritz.getMessage("route"))) {
-            if (call.getRoute().startsWith("SIP")) {
-                Enumeration en = jfritz.getSIPProviderTableModel()
-                        .getProviderList().elements();
-                while (en.hasMoreElements()) {
-                    SipProvider sipProvider = (SipProvider) en.nextElement();
-                    if (sipProvider.getProviderID() == Integer.parseInt(call
-                            .getRoute().substring(3))) {
-                        return sipProvider.toString();
-                    }
-                }
-                return call.getRoute();
-            }
+            if (call.getRoute().startsWith("SIP"))
+                return jfritz.getSIPProviderTableModel().getSipProvider(call.getRoute(), call.getRoute());
             return call.getRoute();
         } else if (columnName.equals(JFritz.getMessage("duration"))) {
             return Integer.toString(call.getDuration());
