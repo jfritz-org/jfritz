@@ -47,7 +47,7 @@
  * - Kommentarspalte hinzugefügt
  * - Kommentar- und Anschluß-Spalte können ausgeblendet werden
  * - Suche der FritzBox über UPNP/SSDP abschaltbar
- * - Adressbuch nun nach allen Spalten sortierbar
+ * - Telefonbuch nun nach allen Spalten sortierbar
  * - Beim Export merkt sich JFritz die Verzeichnisse
  * - Drucken der Anrufliste (und Export nach Excel, RTF, PDF, CSV, ...)
  * - Neue Kommandozeilenoption -n: Schaltet die Tray-Unterstützung aus
@@ -268,7 +268,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/doc/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.133 2005/11/04 13:16:02 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.134 2005/11/04 15:57:53 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
