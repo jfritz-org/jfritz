@@ -75,9 +75,26 @@ public class CallmessageListener extends Thread implements CallMonitor {
 				msg = msg.substring(5, msg.length() - 9);
 				Debug.msg("Got message from callmessageMonitor: " + msg);
 
-				if (msg.startsWith("@")) {
+				 if (msg.startsWith("?")) { // Neer Callmessagemonitor
+				     // Format: ?caller=MSN&called=MSN2
+
+                     msg = msg.substring(1); // Entferne ?
+                     String number = "";
+                     String msn = "";
+                     String splitted[] = msg.split("&");
+
+                     for (int i = 0; i < splitted.length; i++) {
+                          if (splitted[i].startsWith("caller=")) {
+                               number = splitted[i].substring(7);
+                          }
+                          if (splitted[i].startsWith("called=")) {
+                               msn = splitted[i].substring(7);
+                          }
+                     }
+                     jfritz.callInMsg(number, msn, "");
+                } else if (msg.startsWith("@")) { // Alter Callmessagemonitor
 					// Call
-					// Format: @NAME (NUMBER)
+					// Format: @NAME (NUMBER) oder @NAME NUMBER
 					// NAME: Name, ".." or "unbekannt"
 					// NUMBER: Number or "Keine Rufnummer übermittelt"
 					// @unbekannt (01798279574)
