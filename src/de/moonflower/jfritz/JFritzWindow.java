@@ -209,6 +209,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
         getContentPane().add(tabber, BorderLayout.CENTER);
         getContentPane().add(createStatusBar(), BorderLayout.SOUTH);
 
+        jfritz.getCallerlist().fireTableDataChanged();
         jfritz.getCallerlist().fireTableStructureChanged();
         String ask = JFritz.getProperty("jfritz.password", Encryption
                 .encrypt(JFritz.PROGRAM_SECRET + ""));
