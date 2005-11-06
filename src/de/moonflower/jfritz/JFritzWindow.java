@@ -363,7 +363,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
         item.addActionListener(this);
         jfritzMenu.add(item);
 
-        item = new JMenuItem("Drucken");
+        item = new JMenuItem("Anrufliste drucken/speichern");
         item.setActionCommand("print_callerlist");
         item.addActionListener(this);
         jfritzMenu.add(item);
