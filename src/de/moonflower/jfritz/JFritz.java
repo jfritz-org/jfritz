@@ -38,6 +38,7 @@
  *
  * JFritz 0.4.6
  * - Anrufen aus der Anrufliste heraus (noch nicht getestet)
+ * TODO: Checken, ob alle Bibliotheken vorhanden sind
  *
  * JFritz 0.4.5
  * - Unterstützung für FRITZ!Box Firmware .85
@@ -58,6 +59,7 @@
  * - Bugfix: Spaltenbreite wurde nicht korrekt gespeichert
  * - Bugfix: Falsche SIP-ID bei gelöschten Einträgen
  * - Bugfix: Wenn Kurzwahl unbekannt war, wurde eine falsche Rufnummer angezeigt
+ * - Bugfix: Anrufliste wird nur gelöscht, wenn mind. 1 Eintrag abgeholt wurde
  *
  * Internal:
  * - SipProvider-Informationen werden nicht mehr in den
@@ -268,7 +270,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/doc/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.134 2005/11/04 15:57:53 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.135 2005/11/06 18:11:01 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
