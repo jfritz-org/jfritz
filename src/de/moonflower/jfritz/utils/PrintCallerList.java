@@ -227,7 +227,12 @@ public class PrintCallerList {
         Integer fontSize = new Integer(8);
 
         AbstractExpression exp = new AbstractExpression() {
-            public Object getValue() {
+            /**
+			 *
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public Object getValue() {
 
                 Object ob = getDataRow().get(
                         jfritz.getCallerlist().getColumnName(0));
@@ -250,7 +255,12 @@ public class PrintCallerList {
         report.addExpression(exp);
 
         exp = new AbstractExpression() {
-            public Object getValue() {
+            /**
+			 *
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public Object getValue() {
                 Object ob = getDataRow().get(
                         jfritz.getCallerlist().getColumnName(1));
                 if (ob == null) {
@@ -263,7 +273,12 @@ public class PrintCallerList {
         report.addExpression(exp);
 
         exp = new AbstractExpression() {
-            public Object getValue() {
+            /**
+			 *
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public Object getValue() {
                 Object ob = getDataRow().get(
                         jfritz.getCallerlist().getColumnName(2));
                 if (ob == null) {
@@ -276,7 +291,12 @@ public class PrintCallerList {
         report.addExpression(exp);
 
         exp = new AbstractExpression() {
-            public Object getValue() {
+            /**
+			 *
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public Object getValue() {
                 Object number = getDataRow().get(
                         jfritz.getCallerlist().getColumnName(3));
                 if (number == null) {
@@ -289,7 +309,12 @@ public class PrintCallerList {
         report.addExpression(exp);
 
         exp = new AbstractExpression() {
-            public Object getValue() {
+            /**
+			 *
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public Object getValue() {
                 Object person = getDataRow().get(
                         jfritz.getCallerlist().getColumnName(4));
                 if (person == null)
@@ -301,7 +326,12 @@ public class PrintCallerList {
         report.addExpression(exp);
 
         exp = new AbstractExpression() {
-            public Object getValue() {
+            /**
+			 *
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public Object getValue() {
                 Object obj = getDataRow().get(
                         jfritz.getCallerlist().getColumnName(5));
                 if (obj == null)
@@ -327,7 +357,12 @@ public class PrintCallerList {
         report.addExpression(exp);
 
         exp = new AbstractExpression() {
-            public Object getValue() {
+            /**
+			 *
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public Object getValue() {
                 Object obj = getDataRow().get(
                         jfritz.getCallerlist().getColumnName(6));
                 if (obj == null)
@@ -340,7 +375,12 @@ public class PrintCallerList {
         report.addExpression(exp);
 
         exp = new AbstractExpression() {
-            public Object getValue() {
+            /**
+			 *
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public Object getValue() {
                 Object obj = getDataRow().get(
                         jfritz.getCallerlist().getColumnName(7));
                 if (obj == null)
@@ -353,7 +393,12 @@ public class PrintCallerList {
         report.addExpression(exp);
 
         exp = new AbstractExpression() {
-            public Object getValue() {
+            /**
+			 *
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public Object getValue() {
                 Object obj = getDataRow().get(
                         jfritz.getCallerlist().getColumnName(8));
                 if (obj == null)

@@ -24,7 +24,12 @@ import javax.swing.*;
 
 public class ImportOutlookContacts extends JDialog implements ActionListener, Runnable {
 
-    public Dispatch init() {
+    /**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public Dispatch init() {
         outlookElements.addElement("FirstName");
         outlookElements.addElement("LastName");
         outlookElements.addElement("MiddleName");
