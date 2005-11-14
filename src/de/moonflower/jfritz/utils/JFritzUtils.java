@@ -185,6 +185,7 @@ public class JFritzUtils {
             }
         }
         // END OF DEBUG SECTION
+    	// http://192.168.178.1/cgi-bin/webcm?getpage=../html/de/FRITZ!Box_Anrufliste.csv
 
         Vector list = parseCallerData(data, firmware, countryPrefix,
                 countryCode, areaPrefix, areaCode, jfritz);

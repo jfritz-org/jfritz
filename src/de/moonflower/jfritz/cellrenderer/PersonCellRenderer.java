@@ -24,6 +24,7 @@ import de.moonflower.jfritz.struct.Person;
 
 public class PersonCellRenderer extends DefaultTableCellRenderer {
 	private static final long serialVersionUID = 1;
+
 	private final ImageIcon imagePerson;
 
 	public PersonCellRenderer() {
@@ -42,9 +43,18 @@ public class PersonCellRenderer extends DefaultTableCellRenderer {
 
 		if (value != null) {
 			Person person = (Person) value;
-			//setToolTipText(person.getFullname());
+			// setToolTipText(person.getFullname());
 			label.setText(person.getFullname());
-			setToolTipText(person.getFullname()+" | "+person.getStreet()+" | " + person.getPostalCode() + " " + person.getCity());
+			String tooltip = "";
+			if (person.getFullname() != "")
+				tooltip = person.getFullname();
+			if (person.getStreet() != "")
+				tooltip += " | " + person.getStreet();
+			if (person.getCity() != "")
+				tooltip += " | " + person.getCity();
+			if (tooltip == "") tooltip = "Keine Informationen";
+			setToolTipText(tooltip);
+
 			label.setIcon(imagePerson);
 			label.setHorizontalAlignment(JLabel.LEFT);
 		} else {

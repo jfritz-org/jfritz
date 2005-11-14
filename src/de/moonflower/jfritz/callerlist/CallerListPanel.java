@@ -149,7 +149,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		tb.setSelectedIcon(getImage("phone.png"));
 		tb.setActionCommand("filter_fixed");
 		tb.addActionListener(this);
-		tb.setToolTipText("Anrufe ins Festnetz filtern");
+		tb.setToolTipText(JFritz.getMessage("filter_fixed"));
 		tb.setSelected(!JFritzUtils.parseBoolean(JFritz.getProperty(
 				"filter.fixed", "false")));
 		lowerToolBar.add(tb);
@@ -200,7 +200,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		sipButton.setSelectedIcon(getImage("world.png"));
 		sipButton.setActionCommand("filter_sip");
 		sipButton.addActionListener(this);
-		sipButton.setToolTipText("Anrufe nach SIP-Providern filtern");
+		sipButton.setToolTipText(JFritz.getMessage("filter_sip"));
 		sipButton.setSelected(!JFritzUtils.parseBoolean(JFritz.getProperty(
 				"filter.sip", "false")));
 		lowerToolBar.add(sipButton);
@@ -211,7 +211,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		callByCallButton.setActionCommand("filter_callbycall");
 		callByCallButton.addActionListener(this);
 		callByCallButton
-				.setToolTipText("Anrufe nach CallByCall-Providern filtern");
+				.setToolTipText(JFritz.getMessage("filter_callbycall"));
 		callByCallButton.setSelected(!JFritzUtils.parseBoolean(JFritz
 				.getProperty("filter.callbycall", "false")));
 		lowerToolBar.add(callByCallButton);

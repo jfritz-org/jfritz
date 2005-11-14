@@ -397,7 +397,8 @@ public class CallerList extends AbstractTableModel {
      * @throws IOException
      */
     public void getNewCalls() throws WrongPasswordException, IOException {
-        alreadyKnownCalls = (Vector) unfilteredCallerData.clone();
+
+    	alreadyKnownCalls = (Vector) unfilteredCallerData.clone();
         Vector data = JFritzUtils.retrieveCallersFromFritzBox(JFritz
                 .getProperty("box.address"), Encryption.decrypt(JFritz
                 .getProperty("box.password")), JFritz
