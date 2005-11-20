@@ -1133,10 +1133,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                             "23232"))));
             break;
         }
-        case 5: {
-            jfritz.setCallMonitor(new FBoxListener(jfritz));
-            break;
-        }
         }
         monitorButton.setSelected(true);
     }
