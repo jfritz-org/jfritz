@@ -80,10 +80,21 @@ public class PhoneNumber implements Comparable {
 	}
 
 	/**
+	 * Removes whitespaces, ) and ( from number
+	 *
+	 */
+	private void removeUnnecessaryChars() {
+	    number = number.replaceAll("\\(0"," ");
+	    number = number.replaceAll("\\)","");
+	    number = number.replaceAll(" ","");
+	}
+
+	/**
 	 * Cuts call by call provider and converts to international number
 	 *
 	 */
 	public void refactorNumber() {
+	    removeUnnecessaryChars();
 		cutCallByCall();
 		number = convertToIntNumber();
 	}
@@ -92,7 +103,7 @@ public class PhoneNumber implements Comparable {
 	 * Cuts call by call part of number
 	 * @return Number withour call by call part
 	 */
-	public String cutCallByCall() {
+	private void cutCallByCall() {
 		if (number.startsWith("0100")) { // cut 0100yy (y = 0..9)
 			callbycall = number.substring(0,6);
 			number = number.substring(6);
@@ -100,7 +111,6 @@ public class PhoneNumber implements Comparable {
 			callbycall = number.substring(0,5);
 			number = number.substring(5);
 		}
-		return number;
 	}
 
 	/**
