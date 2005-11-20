@@ -62,7 +62,6 @@ import de.moonflower.jfritz.utils.PrintCallerList;
 import de.moonflower.jfritz.utils.ReverseLookup;
 import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.SwingWorker;
-import de.moonflower.jfritz.utils.network.FBoxListener;
 import de.moonflower.jfritz.utils.network.TelnetListener;
 import de.moonflower.jfritz.utils.network.SyslogListener;
 import de.moonflower.jfritz.utils.network.YAClistener;
