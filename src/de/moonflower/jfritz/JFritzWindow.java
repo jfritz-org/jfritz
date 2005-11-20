@@ -62,6 +62,7 @@ import de.moonflower.jfritz.utils.PrintCallerList;
 import de.moonflower.jfritz.utils.ReverseLookup;
 import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.SwingWorker;
+import de.moonflower.jfritz.utils.network.FBoxListener;
 import de.moonflower.jfritz.utils.network.TelnetListener;
 import de.moonflower.jfritz.utils.network.SyslogListener;
 import de.moonflower.jfritz.utils.network.YAClistener;
@@ -126,33 +127,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
         }
         if (JFritz.getProperty("option.autostartcallmonitor", "false").equals(
                 "true")) {
-            switch (Integer.parseInt(JFritz.getProperty(
-                    "option.callMonitorType", "0"))) {
-            case 1: {
-                jfritz.setCallMonitor(new TelnetListener(jfritz));
-                monitorButton.setSelected(true);
-                break;
-            }
-            case 2: {
-                jfritz.setCallMonitor(new SyslogListener(jfritz));
-                monitorButton.setSelected(true);
-                break;
-            }
-            case 3: {
-                jfritz.setCallMonitor(new YAClistener(jfritz,
-                        Integer.parseInt(JFritz.getProperty("option.yacport",
-                                "10629"))));
-                monitorButton.setSelected(true);
-                break;
-            }
-            case 4: {
-                jfritz.setCallMonitor(new CallmessageListener(jfritz, Integer
-                        .parseInt(JFritz.getProperty("option.callmessageport",
-                                "23232"))));
-                monitorButton.setSelected(true);
-                break;
-            }
-            }
+            startChosenCallMonitor();
         }
         setStatus();
     }
@@ -933,34 +908,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
             boolean active = ((JToggleButton) e.getSource()).isSelected();
             if (active) {
                 Debug.msg("start callMonitor");
-                switch (Integer.parseInt(JFritz.getProperty(
-                        "option.callMonitorType", "0"))) {
-                case 0: {
-                    jfritz.errorMsg("Kein Anrufmonitor ausgewählt");
-                    break;
-                }
-                case 1: {
-                    jfritz.setCallMonitor(new TelnetListener(jfritz));
-                    break;
-                }
-                case 2: {
-                    jfritz.setCallMonitor(new SyslogListener(jfritz));
-                    break;
-                }
-                case 3: {
-                    jfritz.setCallMonitor(new YAClistener(jfritz, Integer
-                            .parseInt(JFritz.getProperty("option.yacport",
-                                    "10629"))));
-                    break;
-                }
-                case 4: {
-                    jfritz.setCallMonitor(new CallmessageListener(jfritz,
-                            Integer.parseInt(JFritz.getProperty(
-                                    "option.callmessageport", "23232"))));
-                    monitorButton.setSelected(true);
-                    break;
-                }
-                }
+                startChosenCallMonitor();
             } else {
                 Debug.msg("stop callMonitor");
                 jfritz.stopCallMonitor();
@@ -1160,5 +1108,36 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
     private void importOutlook() {
         Thread thread = new Thread(new ImportOutlookContacts(jfritz));
         thread.start();
+    }
+
+    private void startChosenCallMonitor() {
+        switch (Integer.parseInt(JFritz.getProperty(
+                "option.callMonitorType", "0"))) {
+        case 1: {
+            jfritz.setCallMonitor(new TelnetListener(jfritz));
+            break;
+        }
+        case 2: {
+            jfritz.setCallMonitor(new SyslogListener(jfritz));
+            break;
+        }
+        case 3: {
+            jfritz.setCallMonitor(new YAClistener(jfritz,
+                    Integer.parseInt(JFritz.getProperty("option.yacport",
+                            "10629"))));
+            break;
+        }
+        case 4: {
+            jfritz.setCallMonitor(new CallmessageListener(jfritz, Integer
+                    .parseInt(JFritz.getProperty("option.callmessageport",
+                            "23232"))));
+            break;
+        }
+        case 5: {
+            jfritz.setCallMonitor(new FBoxListener(jfritz));
+            break;
+        }
+        }
+        monitorButton.setSelected(true);
     }
 }
