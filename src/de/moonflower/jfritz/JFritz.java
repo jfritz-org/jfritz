@@ -38,6 +38,11 @@
  *
  * JFritz 0.4.6
  * - Anrufen aus der Anrufliste heraus (noch nicht getestet)
+ * - Reset-Button bei den Filtern deaktiviert alle Filter
+ * - Neuer Filter: Kontextmenü bei "Verpasste Anrufe"-Filter
+ * - Neuer Filter: Kommentarfilter
+ * - Bugfix: Outlook-Import (entfernen von Klammern)
+ * - Bugfix: Anzeigefehler beim Start behoben
  * TODO: Checken, ob alle Bibliotheken vorhanden sind
  *
  * JFritz 0.4.5
@@ -205,7 +210,6 @@
 
 package de.moonflower.jfritz;
 
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -262,7 +266,7 @@ public final class JFritz {
 
     public final static String PROGRAM_NAME = "JFritz";
 
-    public final static String PROGRAM_VERSION = "0.4.5";
+    public final static String PROGRAM_VERSION = "0.4.6a";
 
     public final static String PROGRAM_URL = "http://www.jfritz.org/";
 
@@ -270,7 +274,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/doc/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.135 2005/11/06 18:11:01 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.136 2005/11/21 15:04:08 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -414,7 +418,14 @@ public final class JFritz {
 
             ssdpthread = new SSDPdiscoverThread(this, SSDP_TIMEOUT);
             ssdpthread.start();
+            try {
+                ssdpthread.join();
+            } catch (InterruptedException ie) {
+
+            }
         }
+
+        jframe.checkStartOptions();
 
         javax.swing.SwingUtilities.invokeLater(jframe);
 
@@ -588,8 +599,8 @@ public final class JFritz {
     }
 
     /**
-     * Replace old property values with new one
-     * p.e. column0.width => column.type.width
+     * Replace old property values with new one p.e. column0.width =>
+     * column.type.width
      *
      */
     private void replaceOldProperties() {
@@ -598,31 +609,40 @@ public final class JFritz {
         }
 
         if (properties.contains("column0.width")) {
-            properties.setProperty("column." + getMessage("type") + ".width" , properties.getProperty("column0.width"));
+            properties.setProperty("column." + getMessage("type") + ".width",
+                    properties.getProperty("column0.width"));
             JFritz.removeProperty("column0.width");
         } else if (properties.contains("column1.width")) {
-            properties.setProperty("column." + getMessage("date") + ".width" , properties.getProperty("column1.width"));
+            properties.setProperty("column." + getMessage("date") + ".width",
+                    properties.getProperty("column1.width"));
             JFritz.removeProperty("column1.width");
         } else if (properties.contains("column2.width")) {
-            properties.setProperty("column." + "Call-By-Call" + ".width" , properties.getProperty("column2.width"));
+            properties.setProperty("column." + "Call-By-Call" + ".width",
+                    properties.getProperty("column2.width"));
             JFritz.removeProperty("column2.width");
         } else if (properties.contains("column3.width")) {
-            properties.setProperty("column." + getMessage("number") + ".width" , properties.getProperty("column3.width"));
+            properties.setProperty("column." + getMessage("number") + ".width",
+                    properties.getProperty("column3.width"));
             JFritz.removeProperty("column3.width");
         } else if (properties.contains("column4.width")) {
-            properties.setProperty("column." + getMessage("participant") + ".width" , properties.getProperty("column4.width"));
+            properties.setProperty("column." + getMessage("participant")
+                    + ".width", properties.getProperty("column4.width"));
             JFritz.removeProperty("column4.width");
         } else if (properties.contains("column5.width")) {
-            properties.setProperty("column." + getMessage("port") + ".width" , properties.getProperty("column5.width"));
+            properties.setProperty("column." + getMessage("port") + ".width",
+                    properties.getProperty("column5.width"));
             JFritz.removeProperty("column5.width");
         } else if (properties.contains("column6.width")) {
-            properties.setProperty("column." + getMessage("route") + ".width" , properties.getProperty("column6.width"));
+            properties.setProperty("column." + getMessage("route") + ".width",
+                    properties.getProperty("column6.width"));
             JFritz.removeProperty("column6.width");
         } else if (properties.contains("column7.width")) {
-            properties.setProperty("column." + getMessage("duration") + ".width" , properties.getProperty("column7.width"));
+            properties.setProperty("column." + getMessage("duration")
+                    + ".width", properties.getProperty("column7.width"));
             JFritz.removeProperty("column7.width");
         } else if (properties.contains("column8.width")) {
-            properties.setProperty("column." + "Kommentar"+ ".width" , properties.getProperty("column8.width"));
+            properties.setProperty("column." + "Kommentar" + ".width",
+                    properties.getProperty("column8.width"));
             JFritz.removeProperty("column8.width");
         }
     }
@@ -677,8 +697,10 @@ public final class JFritz {
         while (en.hasMoreElements()) {
             TableColumn col = (TableColumn) en.nextElement();
 
-            properties.setProperty("column." + col.getHeaderValue().toString() + ".width",Integer.toString(col.getWidth()));
-            properties.setProperty("column"+i+".name", col.getHeaderValue().toString());
+            properties.setProperty("column." + col.getHeaderValue().toString()
+                    + ".width", Integer.toString(col.getWidth()));
+            properties.setProperty("column" + i + ".name", col.getHeaderValue()
+                    .toString());
             i++;
         }
 
@@ -753,7 +775,9 @@ public final class JFritz {
         }
         if (called.equals("")) {
             calledstr = "Unbekannt";
-        } else calledstr = getSIPProviderTableModel().getSipProvider(called, called);
+        } else
+            calledstr = getSIPProviderTableModel().getSipProvider(called,
+                    called);
 
         PhoneNumber callerPhoneNumber = new PhoneNumber(caller);
         if (name.equals("Unbekannt") && !caller.equals("Unbekannt")) {
