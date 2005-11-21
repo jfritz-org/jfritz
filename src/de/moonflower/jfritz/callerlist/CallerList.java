@@ -121,9 +121,9 @@ public class CallerList extends AbstractTableModel {
             return ((Call) filteredCallerData.get(rowIndex)).getPhoneNumber() != null;
         } else if (columnName.equals("Kommentar")) {
             return true;
-            //TODO: Aktivieren für "Anrufen aus Anrufliste heraus"
-//          if (columnName.equals(JFritz.getMessage("number"))) {
-//          return true;
+            // TODO: Aktivieren für "Anrufen aus Anrufliste heraus"
+            // if (columnName.equals(JFritz.getMessage("number"))) {
+            // return true;
         }
         return false;
     }
@@ -263,7 +263,8 @@ public class CallerList extends AbstractTableModel {
             // if (!dtd.exists()) dtd.createNewFile();
 
             SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setValidating(false); // FIXME Something wrong with the DTD
+            factory.setValidating(false); // FIXME Something wrong with the
+                                            // DTD
             SAXParser parser = factory.newSAXParser();
             XMLReader reader = parser.getXMLReader();
 
@@ -398,7 +399,7 @@ public class CallerList extends AbstractTableModel {
      */
     public void getNewCalls() throws WrongPasswordException, IOException {
 
-    	alreadyKnownCalls = (Vector) unfilteredCallerData.clone();
+        alreadyKnownCalls = (Vector) unfilteredCallerData.clone();
         Vector data = JFritzUtils.retrieveCallersFromFritzBox(JFritz
                 .getProperty("box.address"), Encryption.decrypt(JFritz
                 .getProperty("box.password")), JFritz
@@ -439,8 +440,9 @@ public class CallerList extends AbstractTableModel {
 
         }
         // Clear data on fritz box ?
-        if (newEntries > 0 && JFritz.getProperty("option.deleteAfterFetch", "false").equals(
-                "true")) {
+        if (newEntries > 0
+                && JFritz.getProperty("option.deleteAfterFetch", "false")
+                        .equals("true")) {
             JFritzUtils.clearListOnFritzBox(JFritz.getProperty("box.address"),
                     JFritz.getProperty("box.password"), JFritzUtils
                             .detectBoxType(JFritz.getProperty("box.firmware"),
@@ -495,7 +497,8 @@ public class CallerList extends AbstractTableModel {
             return call.getPort();
         } else if (columnName.equals(JFritz.getMessage("route"))) {
             if (call.getRoute().startsWith("SIP"))
-                return jfritz.getSIPProviderTableModel().getSipProvider(call.getRoute(), call.getRoute());
+                return jfritz.getSIPProviderTableModel().getSipProvider(
+                        call.getRoute(), call.getRoute());
             return call.getRoute();
         } else if (columnName.equals(JFritz.getMessage("duration"))) {
             return Integer.toString(call.getDuration());
@@ -559,7 +562,7 @@ public class CallerList extends AbstractTableModel {
      *            Order of sorting
      */
     public void sortAllFilteredRowsBy(int col, boolean asc) {
-        //		Debug.msg("Sorting column " + col + " " + asc);
+        // Debug.msg("Sorting column " + col + " " + asc);
         Collections.sort(filteredCallerData, new ColumnSorter(col, asc));
         fireTableDataChanged();
         fireTableStructureChanged();
@@ -735,6 +738,8 @@ public class CallerList extends AbstractTableModel {
                 .getProperty("filter.sip"));
         boolean filterCallByCall = JFritzUtils.parseBoolean(JFritz
                 .getProperty("filter.callbycall"));
+        boolean filterComment = JFritzUtils.parseBoolean(JFritz
+                .getProperty("filter.comment"));
         String filterSearch = JFritz.getProperty("filter.search", "");
         String filterDateFrom = JFritz.getProperty("filter.date_from", "");
         String filterDateTo = JFritz.getProperty("filter.date_to", "");
@@ -748,7 +753,7 @@ public class CallerList extends AbstractTableModel {
         if ((!filterCallIn) && (!filterCallInFailed) && (!filterCallOut)
                 && (!filterNumber) && (!filterDate) && (!filterHandy)
                 && (!filterFixed) && (!filterSip) && (!filterCallByCall)
-                && (filterSearch.length() == 0)) {
+                && (!filterComment) && (filterSearch.length() == 0)) {
             // Use unfiltered data
             filteredCallerData = unfilteredCallerData;
             sortAllFilteredRowsBy(sortColumn, sortDirection);
@@ -807,6 +812,7 @@ public class CallerList extends AbstractTableModel {
                 boolean handyFilterPassed = true;
                 boolean fixedFilterPassed = true;
                 boolean sipFilterPassed = true;
+                boolean commentFilterPassed = true;
 
                 // SearchFilter: Number, Participant, Date
                 String parts[] = filterSearch.split(" ");
@@ -875,8 +881,12 @@ public class CallerList extends AbstractTableModel {
                         && call.getPhoneNumber().isMobile())
                     handyFilterPassed = false;
 
+                if (filterComment && !call.getComment().equals(JFritz.getProperty("filter.comment.text",""))) {
+                    commentFilterPassed = false;
+                }
+
                 if (searchFilterPassed && dateFilterPassed && handyFilterPassed
-                        && fixedFilterPassed && sipFilterPassed)
+                        && fixedFilterPassed && sipFilterPassed && commentFilterPassed)
                     if (!(filterNumber && call.getPhoneNumber() == null)) {
                         if ((!filterCallIn)
                                 && (call.getCalltype().toInt() == CallType.CALLIN))
@@ -981,75 +991,50 @@ public class CallerList extends AbstractTableModel {
     }
 
     public void fireTableDataChanged() {
-        //	Kostenberechnung deaktiviert, weil es zu ungenau ist
-        //  und nur zu Problemen führt
-        //        calculateCosts();
+        // Kostenberechnung deaktiviert, weil es zu ungenau ist
+        // und nur zu Problemen führt
+        // calculateCosts();
         super.fireTableDataChanged();
     }
 
     /**
-     * calculateCosts
-     * Deaktiviert, da eh zu ungenau
+     * calculateCosts Deaktiviert, da eh zu ungenau
      *
      */
-/*
-    private void calculateCosts() {
-
-        // Lösche Anrufliste der SipProvider
-        for (int k = 0; k < jfritz.getSIPProviderTableModel().getProviderList()
-                .size(); k++) {
-            SipProvider sipprovider = (SipProvider) jfritz
-                    .getSIPProviderTableModel().getProviderList().get(k);
-            sipprovider.clearCalls();
-        }
-
-        for (int i = unfilteredCallerData.size(); i > 0; i--) {
-            Call call = (Call) unfilteredCallerData.get(i - 1);
-            if (call.getCalltype().toInt() == 3) { // Nur abgehende Gespräche
-                // berechnen
-                if (call.getPhoneNumber().isEmergencyCall()
-                        || call.getPhoneNumber().isFreeCall()
-                        || call.getPhoneNumber().isSIPNumber()) {
-                    call.setCost(0);
-                } else if (call.getRoute().startsWith("SIP")) {
-                    SipProvider sipProvider = null;
-
-                    for (int j = 0; j < jfritz.getSIPProviderTableModel()
-                            .getProviderList().size(); j++) {
-                        sipProvider = (SipProvider) jfritz
-                                .getSIPProviderTableModel().getProviderList()
-                                .get(j);
-
-                        if (sipProvider.getProviderID() == Integer
-                                .parseInt(call.getRoute().substring(3))) {
-                            break;
-                        } else {
-                            sipProvider = null;
-                        }
-                    }
-                    if (sipProvider != null) { // Füge Anrufe zur
-                        // SipProvider-Anrufliste
-                        sipProvider.addCall(call);
-                    }
-                } else {// Es wurde kein (oder unbekannter) VoIP-Provider
-                    // benutzt => unbekannte Kosten
-                    call.setCost(-1);
-                }
-            } else { // Ankommende oder verpasse Anrufe => keine Kosten
-                call.setCost(0);
-            }
-        }
-
-        // Berechne die Kosten für die Anrufe, die über SipProvider geführt
-        // wurden
-        for (int k = 0; k < jfritz.getSIPProviderTableModel().getProviderList()
-                .size(); k++) {
-            SipProvider sipprovider = (SipProvider) jfritz
-                    .getSIPProviderTableModel().getProviderList().get(k);
-            sipprovider.calculateCosts();
-        }
-    }
-*/
+    /*
+     * private void calculateCosts() {
+     *  // Lösche Anrufliste der SipProvider for (int k = 0; k <
+     * jfritz.getSIPProviderTableModel().getProviderList() .size(); k++) {
+     * SipProvider sipprovider = (SipProvider) jfritz
+     * .getSIPProviderTableModel().getProviderList().get(k);
+     * sipprovider.clearCalls(); }
+     *
+     * for (int i = unfilteredCallerData.size(); i > 0; i--) { Call call =
+     * (Call) unfilteredCallerData.get(i - 1); if (call.getCalltype().toInt() ==
+     * 3) { // Nur abgehende Gespräche // berechnen if
+     * (call.getPhoneNumber().isEmergencyCall() ||
+     * call.getPhoneNumber().isFreeCall() ||
+     * call.getPhoneNumber().isSIPNumber()) { call.setCost(0); } else if
+     * (call.getRoute().startsWith("SIP")) { SipProvider sipProvider = null;
+     *
+     * for (int j = 0; j < jfritz.getSIPProviderTableModel()
+     * .getProviderList().size(); j++) { sipProvider = (SipProvider) jfritz
+     * .getSIPProviderTableModel().getProviderList() .get(j);
+     *
+     * if (sipProvider.getProviderID() == Integer
+     * .parseInt(call.getRoute().substring(3))) { break; } else { sipProvider =
+     * null; } } if (sipProvider != null) { // Füge Anrufe zur //
+     * SipProvider-Anrufliste sipProvider.addCall(call); } } else {// Es wurde
+     * kein (oder unbekannter) VoIP-Provider // benutzt => unbekannte Kosten
+     * call.setCost(-1); } } else { // Ankommende oder verpasse Anrufe => keine
+     * Kosten call.setCost(0); } }
+     *  // Berechne die Kosten für die Anrufe, die über SipProvider geführt //
+     * wurden for (int k = 0; k <
+     * jfritz.getSIPProviderTableModel().getProviderList() .size(); k++) {
+     * SipProvider sipprovider = (SipProvider) jfritz
+     * .getSIPProviderTableModel().getProviderList().get(k);
+     * sipprovider.calculateCosts(); } }
+     */
     public String getRealColumnName(int columnIndex) {
         String columnName = "";
         if (jfritz != null && jfritz.getJframe() != null) {
