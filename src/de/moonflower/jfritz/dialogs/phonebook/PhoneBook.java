@@ -142,8 +142,12 @@ public class PhoneBook extends AbstractTableModel {
 				o2 = v2.getFullname().toString();
 				break;
 			case 2:
-			    o1 = v1.getStandardTelephoneNumber().toString();
-			    o2 = v2.getStandardTelephoneNumber().toString();
+                o1 = "";
+                o2 = "";
+                if (v1.getStandardTelephoneNumber()!= null)
+                    o1 = v1.getStandardTelephoneNumber().toString();
+                if (v2.getStandardTelephoneNumber()!= null)
+                    o2 = v2.getStandardTelephoneNumber().toString();
 			    break;
 			case 3:
 			    o1 = v1.getStreet();
@@ -154,8 +158,12 @@ public class PhoneBook extends AbstractTableModel {
 			    o2 = v2.getPostalCode() + v1.getCity();
 			    break;
 			case 5:
-			    o1 = jfritz.getCallerlist().findLastCall(v1).getCalldate();
-			    o2 = jfritz.getCallerlist().findLastCall(v2).getCalldate();
+                o1 = "";
+                o2 = "";
+                if (jfritz.getCallerlist().findLastCall(v1) != null)
+                    o1 = jfritz.getCallerlist().findLastCall(v1).getCalldate();
+                if (jfritz.getCallerlist().findLastCall(v2) != null)
+                    o2 = jfritz.getCallerlist().findLastCall(v2).getCalldate();
 			    break;
 			default:
 				o1 = v1.getFullname().toString();
