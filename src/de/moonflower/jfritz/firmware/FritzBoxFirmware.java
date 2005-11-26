@@ -112,8 +112,13 @@ public class FritzBoxFirmware {
 		if (firmware.indexOf("mod")>0) {
 			mod = firmware.substring(firmware.indexOf("mod"));
 			firmware = firmware.substring(0, firmware.indexOf("mod"));
-		}
-		else if (firmware.indexOf("-")>0) { // BETA Firmware von AVM
+		} else if (firmware.indexOf("ds-")>0) { // danisahne MOD
+            mod = firmware.substring(firmware.indexOf("ds-"));
+            firmware = firmware.substring(0, firmware.indexOf("ds-"));
+        } else if (firmware.indexOf("m")>0) {
+            mod = firmware.substring(firmware.indexOf("m"));
+            firmware = firmware.substring(0, firmware.indexOf("m"));
+        } else if (firmware.indexOf("-")>0) { // BETA Firmware von AVM
 			mod = firmware.substring(firmware.indexOf("-"));
 			firmware = firmware.substring(0, firmware.indexOf("-"));
 		}
