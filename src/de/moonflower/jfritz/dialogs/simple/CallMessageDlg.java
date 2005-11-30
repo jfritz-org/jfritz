@@ -85,7 +85,6 @@ public class CallMessageDlg extends JDialog implements ActionListener{
 			mainPane.add(toLabel);
 
 			getContentPane().add(mainPane, BorderLayout.CENTER);
-			System.out.println(caller + " " + called);
 
 			setSize(300, 150);
 			setVisible(true);
