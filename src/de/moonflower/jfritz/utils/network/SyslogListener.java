@@ -275,13 +275,11 @@ public class SyslogListener extends Thread implements CallMonitor {
 			ifaces = NetworkInterface.getNetworkInterfaces();
 			while (ifaces.hasMoreElements()) {
 				NetworkInterface ni = (NetworkInterface) ifaces.nextElement();
-				System.out.println(ni.getName() + ":");
 				if (!ni.getName().equals("lo")) {
 					Enumeration addrs = ni.getInetAddresses();
 
 					while (addrs.hasMoreElements()) {
 						InetAddress addr = (InetAddress) addrs.nextElement();
-						System.out.println(" " + addr.getHostAddress());
 
 						addresses.add(addr);
 					}

@@ -36,7 +36,6 @@ public class TextFieldCellEditor extends AbstractCellEditor implements
 		((JTextField) component).setBackground(new Color(127, 255, 255));
 		// Configure the component with the specified value
 		String strval = "";
-		System.out.println(value);
 		if (value != null)
 			strval = value.toString();
 		((JTextField) component).setText(strval);
