@@ -41,6 +41,7 @@
  * - Reset-Button bei den Filtern deaktiviert alle Filter
  * - Neuer Filter: Kontextmenü bei "Verpasste Anrufe"-Filter
  * - Neuer Filter: Kommentarfilter
+ * - Neuer Befehl für "Anrufmonitor - Externes Programm starten": %URLENCODE();
  * - Bugfix: Danisahne-Mod wird richtig erkannt
  * - Bugfix: Outlook-Import (entfernen von Klammern)
  * - Bugfix: Anzeigefehler beim Start behoben
@@ -219,12 +220,16 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -268,7 +273,7 @@ public final class JFritz {
 
     public final static String PROGRAM_NAME = "JFritz";
 
-    public final static String PROGRAM_VERSION = "0.4.6b";
+    public final static String PROGRAM_VERSION = "0.4.6c";
 
     public final static String PROGRAM_URL = "http://www.jfritz.org/";
 
@@ -276,7 +281,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/doc/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.137 2005/11/26 15:28:41 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.138 2005/11/30 18:26:52 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -861,13 +866,33 @@ public final class JFritz {
                 "option.startExternProgram", "false"))) {
             String programString = JFritz.getProperty("option.externProgram",
                     "");
-            programString = programString.replaceAll("\\\\", "\\\\\\\\"); // Replace
-            // \
-            // with
-            // \\
+
             programString = programString.replaceAll("%Number", caller);
             programString = programString.replaceAll("%Name", name);
             programString = programString.replaceAll("%Called", called);
+
+            if (programString.indexOf("%URLENCODE") > -1) {
+                try {
+                    Pattern p;
+                    p = Pattern.compile("%URLENCODE\\(([^;]*)\\);");
+                    Matcher m = p.matcher(programString);
+                    while (m.find()) {
+                        String toReplace = m.group();
+                        toReplace = toReplace.replaceAll("\\\\", "\\\\\\\\");
+                        toReplace = toReplace.replaceAll("\\(", "\\\\(");
+                        toReplace = toReplace.replaceAll("\\)", "\\\\)");
+                        String toEncode = m.group(1);
+                        toEncode = toEncode.replaceAll("\\\\", "\\\\\\\\");
+                        toEncode = toEncode.replaceAll("\\(", "\\\\(");
+                        toEncode = toEncode.replaceAll("\\)", "\\\\)");
+                        programString = programString.replaceAll(toReplace, URLEncoder.encode(toEncode, "ISO-8859-1"));
+                    }
+                } catch (UnsupportedEncodingException uee) {
+                    Debug.err("JFritz.class: UnsupportedEncodingException: "
+                            + uee.toString());
+                }
+            }
+
             if (programString.equals("")) {
                 Debug
                         .errDlg("Kein externes Programm angegeben"
