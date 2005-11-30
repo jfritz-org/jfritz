@@ -110,7 +110,7 @@ public class YAClistener extends Thread implements CallMonitor{
 			serverSocket.close();
 
 		} catch (IOException e) {
-			System.out.println(e);
+			Debug.err(e.toString());
 		}
 	}
 
