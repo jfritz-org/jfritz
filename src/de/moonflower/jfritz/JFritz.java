@@ -35,9 +35,10 @@
  * FeatureRequests: bitte bei Sourceforge nachschauen und dort auch den Status ändern
 
  * CHANGELOG:
+ * - Anrufen aus der Anrufliste heraus (noch nicht getestet)
+ * TODO: Checken, ob alle Bibliotheken vorhanden sind
  *
  * JFritz 0.4.6
- * - Anrufen aus der Anrufliste heraus (noch nicht getestet)
  * - Reset-Button bei den Filtern deaktiviert alle Filter
  * - Neuer Filter: Kontextmenü bei "Verpasste Anrufe"-Filter
  * - Neuer Filter: Kommentarfilter
@@ -46,7 +47,6 @@
  * - Bugfix: Outlook-Import (entfernen von Klammern)
  * - Bugfix: Anzeigefehler beim Start behoben
  * - Bugfix: Sortierfunktion beim Telefonbuch korrigiert
- * TODO: Checken, ob alle Bibliotheken vorhanden sind
  *
  * JFritz 0.4.5
  * - Unterstützung für FRITZ!Box Firmware .85
@@ -281,7 +281,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/doc/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.138 2005/11/30 18:26:52 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.139 2005/12/01 10:19:15 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
