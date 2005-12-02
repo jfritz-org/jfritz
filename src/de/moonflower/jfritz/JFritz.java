@@ -43,6 +43,8 @@
  * - Neuer Filter: Kontextmenü bei "Verpasste Anrufe"-Filter
  * - Neuer Filter: Kommentarfilter
  * - Neuer Befehl für "Anrufmonitor - Externes Programm starten": %URLENCODE();
+ * - Kompatibel zu FritzBox 5010 und 5012
+ * - Automatische Erkennung der Firmware
  * - Bugfix: Danisahne-Mod wird richtig erkannt
  * - Bugfix: Outlook-Import (entfernen von Klammern)
  * - Bugfix: Anzeigefehler beim Start behoben
@@ -251,6 +253,7 @@ import de.moonflower.jfritz.callerlist.CallerList;
 import de.moonflower.jfritz.dialogs.phonebook.PhoneBook;
 import de.moonflower.jfritz.dialogs.simple.MessageDlg;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.CLIOptions;
@@ -273,7 +276,7 @@ public final class JFritz {
 
     public final static String PROGRAM_NAME = "JFritz";
 
-    public final static String PROGRAM_VERSION = "0.4.6c";
+    public final static String PROGRAM_VERSION = "0.4.6";
 
     public final static String PROGRAM_URL = "http://www.jfritz.org/";
 
@@ -281,7 +284,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://jfritz.sourceforge.net/doc/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.139 2005/12/01 10:19:15 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.140 2005/12/02 15:33:05 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -358,6 +361,7 @@ public final class JFritz {
         if (HostOS.equalsIgnoreCase("mac")) {
             new MacHandler(this);
         }
+        autodetectFirmware();
 
         phonebook = new PhoneBook(this);
         phonebook.loadFromXMLFile(PHONEBOOK_FILE);
@@ -882,10 +886,7 @@ public final class JFritz {
                         toReplace = toReplace.replaceAll("\\(", "\\\\(");
                         toReplace = toReplace.replaceAll("\\)", "\\\\)");
                         String toEncode = m.group(1);
-                        toEncode = toEncode.replaceAll("\\\\", "\\\\\\\\");
-                        toEncode = toEncode.replaceAll("\\(", "\\\\(");
-                        toEncode = toEncode.replaceAll("\\)", "\\\\)");
-                        programString = programString.replaceAll(toReplace, URLEncoder.encode(toEncode, "ISO-8859-1"));
+                        programString = programString.replaceAll(toReplace, URLEncoder.encode(toEncode, "UTF-8"));
                     }
                 } catch (UnsupportedEncodingException uee) {
                     Debug.err("JFritz.class: UnsupportedEncodingException: "
@@ -1103,5 +1104,31 @@ public final class JFritz {
 
     public SipProviderTableModel getSIPProviderTableModel() {
         return sipprovider;
+    }
+
+    private void autodetectFirmware() {
+        FritzBoxFirmware firmware;
+        try {
+            firmware = FritzBoxFirmware.detectFirmwareVersion(
+                    JFritz
+                    .getProperty("box.address"),
+            Encryption
+                    .decrypt(JFritz
+                            .getProperty("box.password")));
+
+        } catch (WrongPasswordException e1) {
+            Debug.err("Password wrong!");
+            firmware = null;
+        } catch (IOException e1) {
+            Debug.err("Address wrong!");
+            firmware = null;
+        }
+        if (firmware != null) {
+            Debug.msg("Found FritzBox-Firmware: "+firmware.getFirmwareVersion());
+            JFritz.setProperty("box.firmware", firmware.getFirmwareVersion());
+        } else {
+            Debug.msg("Found no FritzBox-Firmware");
+            JFritz.removeProperty("box.firmware");
+        }
     }
 }
