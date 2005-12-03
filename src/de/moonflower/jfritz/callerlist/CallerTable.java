@@ -115,7 +115,7 @@ public class CallerTable extends JTable {
 		col.setHeaderValue(JFritz.getMessage("type"));
 		headerTips.setToolTip(col, JFritz.getMessage("type_desc"));
 		col.setMinWidth(10);
-		col.setMaxWidth(60);
+		col.setMaxWidth(1600);
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
 		        "column."+JFritz.getMessage("type")+".width", "32")));
 
@@ -123,7 +123,7 @@ public class CallerTable extends JTable {
 		col.setHeaderValue(JFritz.getMessage("date"));
 		headerTips.setToolTip(col, JFritz.getMessage("date_desc"));
 		col.setMinWidth(10);
-		col.setMaxWidth(200);
+		col.setMaxWidth(1600);
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
 		        "column."+JFritz.getMessage("date")+".width", "80")));
 
@@ -132,7 +132,7 @@ public class CallerTable extends JTable {
 		headerTips.setToolTip(col, "Benutzer Call-By-Call Anbieter");
 		col.setCellRenderer(new CallByCallCellRenderer());
 		col.setMinWidth(10);
-		col.setMaxWidth(200);
+		col.setMaxWidth(1600);
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
 		        "column."+"Call-By-Call"+".width", "40")));
 		callByCallColumn = col;
@@ -142,6 +142,8 @@ public class CallerTable extends JTable {
 		col.setCellRenderer(new NumberCellRenderer());
 		headerTips.setToolTip(col, JFritz.getMessage("number_desc"));
 		col.setCellEditor(new CallCellEditor((CallerList) getModel()));
+        col.setMinWidth(10);
+        col.setMaxWidth(1600);
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
 		        "column."+JFritz.getMessage("number")+".width", "100")));
 
@@ -151,6 +153,8 @@ public class CallerTable extends JTable {
 		//col.setCellEditor(new TextFieldCellEditor());
 		col.setCellEditor(new PersonCellEditor((CallerList) getModel()));
 		col.setCellRenderer(new PersonCellRenderer());
+        col.setMinWidth(10);
+        col.setMaxWidth(1600);
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
 		        "column."+JFritz.getMessage("participant")+".width", "100")));
 
@@ -159,7 +163,7 @@ public class CallerTable extends JTable {
 		headerTips.setToolTip(col, JFritz.getMessage("port_desc"));
 		col.setCellRenderer(new PortCellRenderer());
 		col.setMinWidth(10);
-		col.setMaxWidth(200);
+		col.setMaxWidth(1600);
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
 		        "column."+JFritz.getMessage("port")+".width", "60")));
 		portColumn = col;
@@ -169,7 +173,7 @@ public class CallerTable extends JTable {
 		headerTips.setToolTip(col, JFritz.getMessage("route_desc"));
 		col.setCellRenderer(new RouteCellRenderer());
 		col.setMinWidth(10);
-		col.setMaxWidth(400);
+		col.setMaxWidth(1600);
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
 		        "column."+JFritz.getMessage("route")+".width", "120")));
 
@@ -178,7 +182,7 @@ public class CallerTable extends JTable {
 		headerTips.setToolTip(col, JFritz.getMessage("duration_desc"));
 		col.setCellRenderer(new DurationCellRenderer());
 		col.setMinWidth(10);
-		col.setMaxWidth(200);
+		col.setMaxWidth(1600);
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
 		        "column."+JFritz.getMessage("duration")+".width", "60")));
 
@@ -187,7 +191,7 @@ public class CallerTable extends JTable {
 		headerTips.setToolTip(col, "Kommentar");
 		col.setCellEditor(new CommentCellEditor());
 		col.setMinWidth(10);
-		col.setMaxWidth(200);
+		col.setMaxWidth(1600);
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
 		        "column."+"Kommentar"+".width", "60")));
 		commentColumn = col;
