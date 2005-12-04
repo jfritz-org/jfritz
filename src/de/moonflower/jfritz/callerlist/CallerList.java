@@ -962,7 +962,8 @@ public class CallerList extends AbstractTableModel {
     public void clearList() {
         Debug.msg("Clearing caller Table");
         unfilteredCallerData.clear();
-        jfritz.getJframe().getCallerTable().clearSelection();
+        if ((jfritz.getJframe() != null) && jfritz.getJframe().getCallerTable() != null)
+            jfritz.getJframe().getCallerTable().clearSelection();
         saveToXMLFile(JFritz.CALLS_FILE, true);
         fireTableDataChanged();
     }
