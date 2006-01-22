@@ -400,6 +400,19 @@ public class CallerList extends AbstractTableModel {
     public void getNewCalls() throws WrongPasswordException, IOException {
 
         alreadyKnownCalls = (Vector) unfilteredCallerData.clone();
+        Debug.msg("box.address: " + JFritz.getProperty("box.address"));
+        Debug.msg("box.password: " + JFritz.getProperty("box.password"));
+        Debug.msg("box.firmware: " + JFritz.getProperty("box.firmware"));
+/**
+        JFritzUtils.retrieveCSVList(JFritz
+                .getProperty("box.address"), Encryption.decrypt(JFritz
+                .getProperty("box.password")), JFritzUtils.detectBoxType(
+                        JFritz.getProperty("box.firmware"), JFritz
+                                .getProperty("box.address"), Encryption
+                                .decrypt(JFritz.getProperty("box.password"))));
+        Vector data = new Vector();
+**/
+
         Vector data = JFritzUtils.retrieveCallersFromFritzBox(JFritz
                 .getProperty("box.address"), Encryption.decrypt(JFritz
                 .getProperty("box.password")), JFritz
@@ -640,11 +653,11 @@ public class CallerList extends AbstractTableModel {
                     o2 = null;
             } else if (columnName.equals(JFritz.getMessage("participant"))) {
                 if (v1.getPerson() != null)
-                    o1 = v1.getPerson().getFullname();
+                    o1 = v1.getPerson().getFullname().toUpperCase();
                 else
                     o1 = null;
                 if (v2.getPerson() != null)
-                    o2 = v2.getPerson().getFullname();
+                    o2 = v2.getPerson().getFullname().toUpperCase();
                 else
                     o2 = null;
             } else if (columnName.equals(JFritz.getMessage("port"))) {
@@ -663,8 +676,8 @@ public class CallerList extends AbstractTableModel {
                 else
                     o2 = null;
             } else if (columnName.equals("Kommentar")) {
-                o1 = v1.getComment();
-                o2 = v2.getComment();
+                o1 = v1.getComment().toUpperCase();
+                o2 = v2.getComment().toUpperCase();
             } else {
                 // Sort by Date
                 o1 = v1.getCalldate();

@@ -138,8 +138,8 @@ public class PhoneBook extends AbstractTableModel {
 				o2 = Boolean.toString(v2.isPrivateEntry());
 				break;
 			case 1:
-				o1 = v1.getFullname().toString();
-				o2 = v2.getFullname().toString();
+				o1 = v1.getFullname().toString().toUpperCase();
+				o2 = v2.getFullname().toString().toUpperCase();
 				break;
 			case 2:
                 o1 = "";
@@ -150,12 +150,12 @@ public class PhoneBook extends AbstractTableModel {
                     o2 = v2.getStandardTelephoneNumber().toString();
 			    break;
 			case 3:
-			    o1 = v1.getStreet();
-			    o2 = v2.getStreet();
+			    o1 = v1.getStreet().toUpperCase();
+			    o2 = v2.getStreet().toUpperCase();
 			    break;
 			case 4:
-			    o1 = v1.getPostalCode() + v1.getCity();
-			    o2 = v2.getPostalCode() + v1.getCity();
+			    o1 = v1.getPostalCode() + v1.getCity().toUpperCase();
+			    o2 = v2.getPostalCode() + v1.getCity().toUpperCase();
 			    break;
 			case 5:
                 o1 = "";
