@@ -108,13 +108,21 @@ public class JFritzUtils {
         + "\\s*<td class=\"c2\">([^<]*)</td>"
         + "\\s*<td class=\"c3\"><script type=\"text/javascript\">document.write\\(ProviderDisplay\\(\"([^\"]*)\"\\)\\);</script></td>";
 
-    final static String PATTERN_SIPPROVIDER_NEW = "<!-- \"(\\d)\" / \"(\\w*)\" -->" // FW > 37
-            + "\\s*<td class=\"c1\">\\s*<input type=checkbox id=\"uiViewActivsip\\d\""
-            + "\\s*onclick=\"uiOnChangeActivated\\('uiViewActivsip\\d','uiPostActivsip\\d'\\); return true;\">"
-            + "\\s*</td>"
-            + "\\s*<td class=\"c2\">([^<]*)</td>"
-            + "\\s*<td class=\"c3\"><script type=\"text/javascript\">document.write\\(ProviderDisplay\\(\"([^\"]*)\"\\)\\);</script></td>"
-            + "\\s*<td class=\"c6\"><script type=\"text/javascript\">document.write\\(AuswahlDisplay\\(\"([^\"]*)\"\\)\\);</script></td>";
+    final static String PATTERN_SIPPROVIDER_37_91 = "<!-- \"(\\d)\" / \"(\\w*)\" -->" // 37 < FW <= 91
+        + "\\s*<td class=\"c1\">\\s*<input type=checkbox id=\"uiViewActivsip\\d\""
+        + "\\s*onclick=\"uiOnChangeActivated\\('uiViewActivsip\\d','uiPostActivsip\\d'\\); return true;\">"
+        + "\\s*</td>"
+        + "\\s*<td class=\"c2\">([^<]*)</td>"
+        + "\\s*<td class=\"c3\"><script type=\"text/javascript\">document.write\\(ProviderDisplay\\(\"([^\"]*)\"\\)\\);</script></td>"
+        + "\\s*<td class=\"c6\"><script type=\"text/javascript\">document.write\\(AuswahlDisplay\\(\"([^\"]*)\"\\)\\);</script></td>";
+
+    final static String PATTERN_SIPPROVIDER_96 = "<!--\\s*\"(\\d)\"\\s*/\\s*\"(\\w*)\"\\s*/\\s*\"\\w*\"\\s*-->" // FW >= 96
+        + "\\s*<td class=\"c1\">\\s*<input type=checkbox id=\"uiViewActivsip\\d\""
+        + "\\s*onclick=\"uiOnChangeActivated\\('uiViewActivsip\\d','uiPostActivsip\\d'\\); return true;\">"
+        + "\\s*</td>"
+        + "\\s*<td class=\"c2\">([^<]*)</td>"
+        + "\\s*<td class=\"c3\"><script type=\"text/javascript\">document.write\\(ProviderDisplay\\(\"([^\"]*)\"\\)\\);</script></td>"
+        + "\\s*<td class=\"c6\"><script type=\"text/javascript\">document.write\\(AuswahlDisplay\\(\"([^\"]*)\"\\)\\);</script></td>";
 
     final static String PATTERN_SIPPROVIDER_ACTIVE = "<input type=\"hidden\" name=\"sip:settings/sip(\\d)/activated\" value=\"(\\d)\" id=\"uiPostActivsip";
 
@@ -165,11 +173,13 @@ public class JFritzUtils {
         String postdata = firmware.getAccessMethod() + POSTDATA_LIST
                 + URLEncoder.encode(password, "ISO-8859-1");
         String urlstr = "http://" + box_address + "/cgi-bin/webcm";
+        Debug.msg("Postdata: " + postdata);
+        Debug.msg("Urlstr: " + urlstr);
         data = fetchDataFromURL(urlstr, postdata);
 
         // DEBUG: Test other versions
         if (false) {
-            String filename = "../Firmware 88/Anrufliste2.html";
+            String filename = "./GroßeListe/Anrufliste.html";
             Debug.msg("Debug mode: Loading " + filename);
             try {
                 data = "";
@@ -234,11 +244,13 @@ public class JFritzUtils {
         String postdata = firmware.getAccessMethod() + POSTDATA_SIPPROVIDER
                 + URLEncoder.encode(box_password, "ISO-8859-1");
         String urlstr = "http://" + box_address + "/cgi-bin/webcm";
+        Debug.msg("Postdata: " + postdata);
+        Debug.msg("Urlstr: " + urlstr);
         String data = fetchDataFromURL(urlstr, postdata);
 
         // DEBUG: Test other versions
         if (false) {
-            String filename = "sipProvider 86.html";
+            String filename = "./Firmware 96/sipProvider.html";
             Debug.msg("Debug mode: Loading " + filename);
             try {
                 data = "";
@@ -271,9 +283,12 @@ public class JFritzUtils {
         Pattern p;
         if (firmware.getMinorFirmwareVersion() < 42)
             p = Pattern.compile(PATTERN_SIPPROVIDER_OLD);
-        else p = Pattern.compile(PATTERN_SIPPROVIDER_NEW);
+        else if (firmware.getMinorFirmwareVersion() < 96)
+            p = Pattern.compile(PATTERN_SIPPROVIDER_37_91);
+        else p = Pattern.compile(PATTERN_SIPPROVIDER_96);
         Matcher m = p.matcher(data);
         while (m.find()) {
+            System.out.println("FOUND SIP-PROVIDER");
             if (!(m.group(4).equals(""))) {
                 if (firmware.getMinorFirmwareVersion() < 42)
                     list.add(new SipProvider(Integer.parseInt(m.group(1)), m
@@ -386,6 +401,16 @@ public class JFritzUtils {
         String urlstr = "http://" + box_address + "/cgi-bin/webcm";
         String postdata = firmware.getAccessMethod() + POSTDATA_CLEAR;
         fetchDataFromURL(urlstr, postdata);
+    }
+
+    public static void retrieveCSVList(String box_address, String password,
+    FritzBoxFirmware firmware) throws WrongPasswordException,
+    IOException {
+        Debug.msg("Retriece CSV List");
+        String urlstr = "http://" + box_address + "/cgi-bin/webcm";
+        String postdata = "getpage=../html/de/FRITZ!Box_Anrufliste.csv&errorpage=..%2Fhtml%2Fde%2Fmenus%2Fmenu2.html&var%3Alang=de&var%3Apagename=foncalls&var%3Aerrorpagename=foncalls&var%3Amenu=fon&var%3Apagemaster=&time%3Asettings%2Ftime=1136559837%2C-60";
+        String data = fetchDataFromURL(urlstr, postdata);
+        System.err.println(data);
     }
 
     /**
