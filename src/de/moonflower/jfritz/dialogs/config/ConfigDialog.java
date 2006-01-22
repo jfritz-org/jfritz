@@ -304,6 +304,7 @@ public class ConfigDialog extends JDialog {
             JFritz.removeProperty("box.firmware");
         }
 
+        Debug.msg("Saved config");
         jfritz.getSIPProviderTableModel()
                 .saveToXMLFile(JFritz.SIPPROVIDER_FILE);
     }
