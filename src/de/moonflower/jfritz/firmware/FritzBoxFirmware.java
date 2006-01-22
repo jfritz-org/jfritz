@@ -29,9 +29,15 @@ public class FritzBoxFirmware {
 
 	public final static byte BOXTYPE_FRITZBOX_ATA = 11;
 
+    public final static byte BOXTYPE_FRITZBOX_5010 = 23;
+
+    public final static byte BOXTYPE_FRITZBOX_5012 = 25;
+
 	public final static byte BOXTYPE_FRITZBOX_5050 = 12;
 
-	public final static byte BOXTYPE_FRITZBOX_7050 = 14;
+    public final static byte BOXTYPE_FRITZBOX_7050 = 14;
+
+    public final static byte BOXTYPE_FRITZBOX_7170 = 29;
 
 	public final static byte ACCESS_METHOD_POST_0342 = 0;
 
@@ -236,6 +242,12 @@ public class FritzBoxFirmware {
 			return "FRITZ!Box 5050";
 		case 11:
 			return "FRITZ!Box ata";
+        case 23:
+            return "FRITZ!Box 5010";
+        case 25:
+            return "FRITZ!Box 5012";
+        case 29:
+            return "FRITZ!Box 7170";
 		default:
 			return "unknown";
 		}
