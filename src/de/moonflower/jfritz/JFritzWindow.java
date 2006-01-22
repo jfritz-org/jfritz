@@ -830,10 +830,16 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
      *
      */
     public void setStatus() {
+        int duration = jfritz.getCallerlist().getTotalDuration();
+        int hours = duration / 3600;
+        int mins = duration % 3600 / 60;
         String status = jfritz.getCallerlist().getRowCount() + " "
                 + JFritz.getMessage("entries") + ", "
                 + JFritz.getMessage("total_duration") + ": "
-                + (jfritz.getCallerlist().getTotalDuration() / 60) + " min";
+                + hours + "h "
+                + mins + " min "
+                + " (" + duration / 60 + " min)";
+                ;
         //				+ ((double)jfritz.getCallerlist().getTotalCosts() / 100)+ " Euro";
         progressbar.setString(status);
     }
