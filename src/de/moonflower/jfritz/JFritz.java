@@ -38,6 +38,17 @@
  * - Anrufen aus der Anrufliste heraus (noch nicht getestet)
  * TODO: Checken, ob alle Bibliotheken vorhanden sind
  *
+ * JFritz 0.4.7
+ * - New Feature: Variable Programmpriorität (1..10)
+ * - Neuer Kommandozeilenparameter -p5 --priority=5
+ * - Kompatibel zur FRITZ!Box 7170
+ * - Anzeige der Gesamtgesprächsdauer in Stunden und Minuten
+ * - Bugfix: Manche Spalten ließen sich nicht klein genug machen
+ * - Bugfix: Kommandozeilenparameter -c funktionierte nicht mehr
+ * - Bugfix; Outlook-Import
+ * - Bugfix: RESSOURCES: filter_callbycall, filter_sip
+ * - Bugfix: Telefonbuchsortierung
+ *
  * JFritz 0.4.6
  * - Reset-Button bei den Filtern deaktiviert alle Filter
  * - Neuer Filter: Kontextmenü bei "Verpasste Anrufe"-Filter
@@ -276,7 +287,7 @@ public final class JFritz {
 
     public final static String PROGRAM_NAME = "JFritz";
 
-    public final static String PROGRAM_VERSION = "0.4.6";
+    public final static String PROGRAM_VERSION = "0.4.7";
 
     public final static String PROGRAM_URL = "http://www.jfritz.org/";
 
@@ -284,7 +295,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.141 2005/12/02 16:01:18 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.142 2006/01/22 11:10:03 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -350,11 +361,11 @@ public final class JFritz {
         String osName = System.getProperty("os.name");
         Debug.msg("Betriebssystem: " + osName);
         if (osName.startsWith("Mac OS"))
-            HostOS = "mac";
+            HostOS = "Mac";
         else if (osName.startsWith("Windows"))
-            HostOS = "windows";
+            HostOS = "Windows";
         else if (osName.equals("Linux")) {
-            HostOS = "linux";
+            HostOS = "Linux";
         }
         Debug.msg("JFritz runs on " + HostOS);
 
@@ -475,7 +486,7 @@ public final class JFritz {
     public static void main(String[] args) {
         System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION
                 + " (c) 2005 by " + PROGRAM_AUTHOR);
-
+        Thread.currentThread().setPriority(1);
         boolean fetchCalls = false;
         boolean clearList = false;
         boolean csvExport = false;
@@ -495,6 +506,7 @@ public final class JFritz {
                 "Fetch calls and export to CSV file.");
         options.addOption('l', "logfile", "filename",
                 "Writes debug messages to logfile");
+        options.addOption('p',"priority","level","Set program priority [1..10]");
 
         Vector foundOptions = options.parseOptions(args);
         Enumeration en = foundOptions.elements();
@@ -519,7 +531,7 @@ public final class JFritz {
             case 'e':
                 csvExport = true;
                 csvFileName = option.getParameter();
-                if (csvFileName == null) {
+                if (csvFileName == null || csvFileName.equals("")) {
                     System.err.println("Parameter not found!");
                     System.exit(0);
                 }
@@ -529,7 +541,7 @@ public final class JFritz {
                 break;
             case 'l':
                 String logFilename = option.getParameter();
-                if (logFilename == null) {
+                if (logFilename == null || logFilename.equals("")) {
                     System.err.println("Parameter not found!");
                     System.exit(0);
                 } else {
@@ -538,6 +550,25 @@ public final class JFritz {
                 }
             case 'n':
                 checkSystray = false;
+            case 'p':
+                String priority = option.getParameter();
+                if (priority == null || priority.equals("")) {
+                    System.err.println("Parameter not found!");
+                    System.exit(0);
+                } else {
+                    try {
+                    int level = Integer.parseInt(priority);
+                    Thread.currentThread().setPriority(level);
+                    Debug.msg("Set priority to level "+priority);
+                    } catch (NumberFormatException nfe) {
+                        System.err.println("Wrong parameter. Only values from 1 to 10 are allowed.");
+                        System.exit(0);
+                    } catch (IllegalArgumentException iae) {
+                        System.err.println("Wrong parameter. Only values from 1 to 10 are allowed.");
+                        System.exit(0);
+                    }
+                    break;
+                }
             default:
                 break;
             }
