@@ -84,9 +84,9 @@ public class PhoneNumber implements Comparable {
 	 *
 	 */
 	private void removeUnnecessaryChars() {
-	    number = number.replaceAll("\\(0"," ");
+        number = number.replaceAll(" ","");
+	    number = number.replaceAll("\\(","");
 	    number = number.replaceAll("\\)","");
-	    number = number.replaceAll(" ","");
 	}
 
 	/**
