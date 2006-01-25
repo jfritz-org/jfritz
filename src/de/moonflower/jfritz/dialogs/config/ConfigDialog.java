@@ -87,8 +87,8 @@ public class ConfigDialog extends JDialog {
             notifyOnCallsButton, confirmOnExitButton, startMinimizedButton,
             timerAfterStartButton, passwordAfterStartButton, soundButton,
             callMonitorAfterStartButton, lookupAfterFetchButton,
-            externProgramCheckBox, searchWithSSDP,
-            showCallByCallColumnButton, showCommentColumnButton, showPortColumnButton;
+            externProgramCheckBox, searchWithSSDP, showCallByCallColumnButton,
+            showCommentColumnButton, showPortColumnButton;
 
     private JPanel callMonitorPane;
 
@@ -449,26 +449,7 @@ public class ConfigDialog extends JDialog {
         siptable.getColumnModel().getColumn(1).setMinWidth(40);
         siptable.getColumnModel().getColumn(1).setMaxWidth(40);
         siptable.setSize(200, 200);
-/**		// Deaktiviert, da Kostenkalkulation viel zu ungenau
-           siptable.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() > 1) {
-                    if (siptable.getSelectedRowCount() > 0) {
-                        SipConfigDialog sipConfigDialog = new SipConfigDialog(
-                                configDialog, (SipProvider) jfritz
-                                        .getSIPProviderTableModel()
-                                        .getProviderList().get(
-                                                siptable.getSelectedRow()));
-                        if (sipConfigDialog.showDialog()) { // Save properties
-                            sipConfigDialog.storeValues();
-                            jfritz.getCallerlist().fireTableDataChanged();
-                        }
-                    }
-                }
-            }
-        });
-**/
-		JButton b1 = new JButton("Von der Box holen");
+        JButton b1 = new JButton("Von der Box holen");
         b1.setActionCommand("fetchSIP");
         b1.addActionListener(actionListener);
         JButton b2 = new JButton("Auf die Box speichern");
@@ -541,13 +522,11 @@ public class ConfigDialog extends JDialog {
         cPanel.add(showCallByCallColumnButton, c);
 
         c.gridy = 5;
-        showCommentColumnButton = new JCheckBox(
-                "Kommentar-Spalte anzeigen");
+        showCommentColumnButton = new JCheckBox("Kommentar-Spalte anzeigen");
         cPanel.add(showCommentColumnButton, c);
 
         c.gridy = 6;
-        showPortColumnButton = new JCheckBox(
-                "Anschluß-Spalte anzeigen");
+        showPortColumnButton = new JCheckBox("Anschluß-Spalte anzeigen");
         cPanel.add(showPortColumnButton, c);
 
         return cPanel;
@@ -595,24 +574,30 @@ public class ConfigDialog extends JDialog {
                     }
                     case 1: {
                         showCallMonitorPanel();
+                        Debug.msg("FRITZ!Box Anrufmonitor gewählt");
+                        stopAllCallMonitors();
+                        break;
+                    }
+                    case 2: {
+                        showCallMonitorPanel();
                         Debug.msg("Telnet Anrufmonitor gewählt");
                         stopAllCallMonitors();
                         break;
 
                     }
-                    case 2: {
+                    case 3: {
                         showCallMonitorPanel();
                         Debug.msg("Syslog Anrufmonitor gewählt");
                         stopAllCallMonitors();
                         break;
                     }
-                    case 3: {
+                    case 4: {
                         showCallMonitorPanel();
                         Debug.msg("YAC Anrufmonitor gewählt");
                         stopAllCallMonitors();
                         break;
                     }
-                    case 4: {
+                    case 5: {
                         showCallMonitorPanel();
                         Debug.msg("Callmessage Anrufmonitor gewählt");
                         stopAllCallMonitors();
@@ -623,6 +608,9 @@ public class ConfigDialog extends JDialog {
                     // Aktion des StartCallMonitorButtons
                     JFritz.setProperty("option.callMonitorType", String
                             .valueOf(callMonitorCombo.getSelectedIndex()));
+                    JFritz.setProperty("box.password", Encryption
+                            .encrypt(password));
+                    JFritz.setProperty("box.address", address.getText());
                     jfritz.getJframe().switchMonitorButton();
                     if (startCallMonitorButton.isSelected()) {
                         setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
@@ -634,18 +622,22 @@ public class ConfigDialog extends JDialog {
                     CallMonitorConfigDialog callMonitorConfigDialog = null;
                     switch (callMonitorCombo.getSelectedIndex()) {
                     case 1:
-                        callMonitorConfigDialog = new TelnetConfigDialog(
+                        callMonitorConfigDialog = new FRITZBOXConfigDialog(
                                 configDialog, jfritz);
                         break;
                     case 2:
-                        callMonitorConfigDialog = new SyslogConfigDialog(
+                        callMonitorConfigDialog = new TelnetConfigDialog(
                                 configDialog, jfritz);
                         break;
                     case 3:
-                        callMonitorConfigDialog = new YacConfigDialog(
+                        callMonitorConfigDialog = new SyslogConfigDialog(
                                 configDialog, jfritz);
                         break;
                     case 4:
+                        callMonitorConfigDialog = new YacConfigDialog(
+                                configDialog, jfritz);
+                        break;
+                    case 5:
                         callMonitorConfigDialog = new CallmessageConfigDialog(
                                 configDialog, jfritz);
                         break;
@@ -662,6 +654,7 @@ public class ConfigDialog extends JDialog {
         callMonitorPane.setLayout(new BorderLayout());
         callMonitorCombo = new JComboBox();
         callMonitorCombo.addItem("Kein Anrufmonitor");
+        callMonitorCombo.addItem("FRITZ!Box Anrufmonitor");
         callMonitorCombo.addItem("Telnet Anrufmonitor");
         callMonitorCombo.addItem("Syslog Anrufmonitor");
         callMonitorCombo.addItem("YAC Anrufmonitor");
@@ -845,7 +838,8 @@ public class ConfigDialog extends JDialog {
                     try {
                         Vector data = JFritzUtils.retrieveSipProvider(address
                                 .getText(), password, firmware);
-                        jfritz.getSIPProviderTableModel().updateProviderList(data);
+                        jfritz.getSIPProviderTableModel().updateProviderList(
+                                data);
                         jfritz.getSIPProviderTableModel()
                                 .fireTableDataChanged();
                         jfritz.getCallerlist().fireTableDataChanged();
@@ -937,5 +931,9 @@ public class ConfigDialog extends JDialog {
             startCallMonitorButton.setSelected(true);
             jfritz.getJframe().getMonitorButton().setSelected(true);
         }
+    }
+
+    public FritzBoxFirmware getFirmware() {
+        return firmware;
     }
 }
