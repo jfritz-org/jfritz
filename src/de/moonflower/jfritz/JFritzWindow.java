@@ -62,6 +62,7 @@ import de.moonflower.jfritz.utils.PrintCallerList;
 import de.moonflower.jfritz.utils.ReverseLookup;
 import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.SwingWorker;
+import de.moonflower.jfritz.utils.network.FBoxListener;
 import de.moonflower.jfritz.utils.network.TelnetListener;
 import de.moonflower.jfritz.utils.network.SyslogListener;
 import de.moonflower.jfritz.utils.network.YAClistener;
@@ -323,7 +324,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
             menu_text = "Ablage";
 
         JMenu jfritzMenu = new JMenu(menu_text);
-        //JMenu editMenu = new JMenu(JFritz.getMessage("edit_menu"));
+        // JMenu editMenu = new JMenu(JFritz.getMessage("edit_menu"));
         JMenu optionsMenu = new JMenu(JFritz.getMessage("options_menu"));
         JMenu helpMenu = new JMenu(JFritz.getMessage("help_menu"));
         JMenu lnfMenu = new JMenu(JFritz.getMessage("lnf_menu"));
@@ -345,7 +346,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
         item.addActionListener(this);
         jfritzMenu.add(item);
 
-        if (JFritz.runsOn().startsWith("windows")) {
+        if (JFritz.runsOn().startsWith("Windows")) {
             item = new JMenuItem("Kontakte aus Outlook importieren");
             item.setActionCommand("import_outlook");
             item.addActionListener(this);
@@ -358,28 +359,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
         item.addActionListener(this);
         exportMenu.add(item);
 
-        // TODO: Können wir von mir aus (Robert) entfernen. In Exel kann man
-        // auch CSV-Dateien importieren
-        //		item = new JMenuItem(JFritz.getMessage("export_excel"), 'c');
-        //		item.setActionCommand("export_excel");
-        //		item.addActionListener(this);
-        //		item.setEnabled(JFritz.DEVEL_VERSION);
-        //		exportMenu.add(item);
-
-        //		 TODO: Können wir von mir aus (Robert) entfernen. In OpenOffice kann
-        // man auch CSV-Dateien importieren
-        //		item = new JMenuItem(JFritz.getMessage("export_openoffice"), 'c');
-        //		item.setActionCommand("export_openoffice");
-        //		item.addActionListener(this);
-        //		item.setEnabled(JFritz.DEVEL_VERSION);
-        exportMenu.add(item);
         jfritzMenu.add(exportMenu);
 
         if (JFritz.runsOn() != "mac") {
             jfritzMenu.add(new JSeparator());
             item = new JMenuItem(JFritz.getMessage("prog_exit"), 'x');
-            //item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
-            //		ActionEvent.ALT_MASK));
+            // item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
+            // ActionEvent.ALT_MASK));
             item.setActionCommand("exit");
             item.addActionListener(this);
             jfritzMenu.add(item);
@@ -388,7 +374,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
         item = new JMenuItem(JFritz.getMessage("help_content"), 'h');
         item.setActionCommand("help");
         item.addActionListener(this);
-        //		item.setEnabled(JFritz.DEVEL_VERSION);
         helpMenu.add(item);
         item = new JMenuItem(JFritz.getMessage("jfritz_website"), 'w');
         item.setActionCommand("website");
@@ -586,7 +571,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                 public void finished() {
                     setBusy(false);
                     isretrieving = false;
-                    //int rows = jfritz.getCallerlist().getRowCount();
+                    // int rows = jfritz.getCallerlist().getRowCount();
                     setStatus();
                 }
             };
@@ -651,13 +636,15 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                 try {
                     colModel.getColumnIndex("Call-By-Call");
                 } catch (IllegalArgumentException iae) { // No Call-By-Call
-                                                         // column found. Add
-                                                         // one
+                    // column found. Add
+                    // one
                     colModel.addColumn(jfritz.getJframe().getCallerTable()
                             .getCallByCallColumn());
-                    colModel.getColumn(colModel.getColumnCount() - 1).setPreferredWidth(
-                            Integer.parseInt(JFritz.getProperty(
-                                    "column.Call-By-Call.width", "50")));
+                    colModel
+                            .getColumn(colModel.getColumnCount() - 1)
+                            .setPreferredWidth(
+                                    Integer.parseInt(JFritz.getProperty(
+                                            "column.Call-By-Call.width", "50")));
                 }
             } else {
                 try {
@@ -665,7 +652,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                     colModel.removeColumn(colModel.getColumn(colModel
                             .getColumnIndex("Call-By-Call")));
                 } catch (IllegalArgumentException iae) { // No Call-By-Call
-                                                         // column found.
+                    // column found.
                 }
             }
             // Show / hide comment column
@@ -674,13 +661,14 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                 try {
                     colModel.getColumnIndex("Kommentar");
                 } catch (IllegalArgumentException iae) { // No comment
-                                                         // column found. Add
-                                                         // one
+                    									 // column found. Add
+                    									 // one
                     colModel.addColumn(jfritz.getJframe().getCallerTable()
                             .getCommentColumn());
-                    colModel.getColumn(colModel.getColumnCount() - 1).setPreferredWidth(
-                            Integer.parseInt(JFritz.getProperty(
-                                    "column.Kommentar.width", "50")));
+                    colModel.getColumn(colModel.getColumnCount() - 1)
+                            .setPreferredWidth(
+                                    Integer.parseInt(JFritz.getProperty(
+                                            "column.Kommentar.width", "50")));
                 }
             } else {
                 try {
@@ -688,7 +676,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                     colModel.removeColumn(colModel.getColumn(colModel
                             .getColumnIndex("Kommentar")));
                 } catch (IllegalArgumentException iae) { // No Call-By-Call
-                                                         // column found.
+                    									 // column found.
                 }
             }
             // Show / hide port column
@@ -697,13 +685,16 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                 try {
                     colModel.getColumnIndex(JFritz.getMessage("port"));
                 } catch (IllegalArgumentException iae) { // No port
-                                                         // column found. Add
-                                                         // one
+                    									 // column found. Add
+                    									 // one
                     colModel.addColumn(jfritz.getJframe().getCallerTable()
                             .getPortColumn());
-                    colModel.getColumn(colModel.getColumnCount() - 1).setPreferredWidth(
-                            Integer.parseInt(JFritz.getProperty(
-                                    "column."+JFritz.getMessage("port")+".width", "50")));
+                    colModel.getColumn(colModel.getColumnCount() - 1)
+                            .setPreferredWidth(
+                                    Integer.parseInt(JFritz.getProperty(
+                                            "column."
+                                                    + JFritz.getMessage("port")
+                                                    + ".width", "50")));
                 }
             } else {
                 try {
@@ -711,7 +702,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                     colModel.removeColumn(colModel.getColumn(colModel
                             .getColumnIndex(JFritz.getMessage("port"))));
                 } catch (IllegalArgumentException iae) { // No Call-By-Call
-                                                         // column found.
+                    									 // column found.
                 }
             }
         }
@@ -835,12 +826,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
         int mins = duration % 3600 / 60;
         String status = jfritz.getCallerlist().getRowCount() + " "
                 + JFritz.getMessage("entries") + ", "
-                + JFritz.getMessage("total_duration") + ": "
-                + hours + "h "
-                + mins + " min "
-                + " (" + duration / 60 + " min)";
-                ;
-        //				+ ((double)jfritz.getCallerlist().getTotalCosts() / 100)+ " Euro";
+                + JFritz.getMessage("total_duration") + ": " + hours + "h "
+                + mins + " min " + " (" + duration / 60 + " min)";
+        ;
+        // + ((double)jfritz.getCallerlist().getTotalCosts() / 100)+ " Euro";
         progressbar.setString(status);
     }
 
@@ -1119,29 +1108,57 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
     }
 
     private void startChosenCallMonitor() {
-        switch (Integer.parseInt(JFritz.getProperty(
-                "option.callMonitorType", "0"))) {
+        switch (Integer.parseInt(JFritz.getProperty("option.callMonitorType",
+                "0"))) {
         case 1: {
-            jfritz.setCallMonitor(new TelnetListener(jfritz));
+            try {
+                if (JFritzUtils.detectBoxType(
+                        "",
+                        JFritz.getProperty("box.address"),
+                        Encryption.decrypt(JFritz.getProperty("box.password",
+                                ""))).getMinorFirmwareVersion() < 96) {
+                    Debug
+                            .errDlg("Dieser Anrufmonitor funktioniert nur ab Firmware xx.03.96");
+                    monitorButton.setSelected(false);
+                    this.setCallMonitorButtons(JFritz.CALLMONITOR_START);
+                } else {
+                    jfritz.setCallMonitor(new FBoxListener(jfritz));
+                    this.setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
+                }
+            } catch (WrongPasswordException e) {
+                jfritz.getJframe().setStatus(
+                        JFritz.getMessage("password_wrong"));
+                String password = jfritz.getJframe().showPasswordDialog(
+                        Encryption.decrypt(JFritz.getProperty("box.password",
+                                "")));
+                if (password != null) { // Dialog not canceled
+                    JFritz.setProperty("box.password", Encryption
+                            .encrypt(password));
+                }
+            } catch (IOException e) {
+                Debug.err("Konnte Box nicht erkennen.");
+            }
             break;
         }
         case 2: {
-            jfritz.setCallMonitor(new SyslogListener(jfritz));
+            jfritz.setCallMonitor(new TelnetListener(jfritz));
             break;
         }
         case 3: {
-            jfritz.setCallMonitor(new YAClistener(jfritz,
-                    Integer.parseInt(JFritz.getProperty("option.yacport",
-                            "10629"))));
+            jfritz.setCallMonitor(new SyslogListener(jfritz));
             break;
         }
         case 4: {
+            jfritz.setCallMonitor(new YAClistener(jfritz, Integer
+                    .parseInt(JFritz.getProperty("option.yacport", "10629"))));
+            break;
+        }
+        case 5: {
             jfritz.setCallMonitor(new CallmessageListener(jfritz, Integer
                     .parseInt(JFritz.getProperty("option.callmessageport",
                             "23232"))));
             break;
         }
         }
-        monitorButton.setSelected(true);
     }
 }
