@@ -113,12 +113,21 @@ public class Debug {
 		}
 	}
 
-	/**
+    /**
+     * Show Dialog with message
+     * @param message
+     */
+    public static void msgDlg(String message) {
+        msg(message);
+        JOptionPane.showMessageDialog(null, message, "Information", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    /**
 	 * Show error Dialog with message
 	 * @param message
 	 */
 	public static void errDlg(String message) {
 		err(message);
-		JOptionPane.showMessageDialog(null, message);
+        JOptionPane.showMessageDialog(null, message, "Fehler", JOptionPane.ERROR_MESSAGE);
 	}
 }
