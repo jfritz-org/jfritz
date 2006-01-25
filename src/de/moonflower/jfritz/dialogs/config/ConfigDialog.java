@@ -88,7 +88,8 @@ public class ConfigDialog extends JDialog {
             timerAfterStartButton, passwordAfterStartButton, soundButton,
             callMonitorAfterStartButton, lookupAfterFetchButton,
             externProgramCheckBox, searchWithSSDP, showCallByCallColumnButton,
-            showCommentColumnButton, showPortColumnButton;
+            showCommentColumnButton, showPortColumnButton,
+            minimizeInsteadOfClose;
 
     private JPanel callMonitorPane;
 
@@ -134,6 +135,8 @@ public class ConfigDialog extends JDialog {
                 .getProperty("option.confirmOnExit", "true")));
         startMinimizedButton.setSelected(JFritzUtils.parseBoolean(JFritz
                 .getProperty("option.startMinimized", "false")));
+        minimizeInsteadOfClose.setSelected(JFritzUtils.parseBoolean(JFritz
+                .getProperty("option.minimize", "false")));
         soundButton.setSelected(JFritzUtils.parseBoolean(JFritz.getProperty(
                 "option.playSounds", "true")));
         externProgramCheckBox.setSelected(JFritzUtils.parseBoolean(JFritz
@@ -245,8 +248,11 @@ public class ConfigDialog extends JDialog {
                 .toString(confirmOnExitButton.isSelected()));
         JFritz.setProperty("option.startMinimized", Boolean
                 .toString(startMinimizedButton.isSelected()));
+        JFritz.setProperty("option.minimize", Boolean
+                .toString(minimizeInsteadOfClose.isSelected()));
         JFritz.setProperty("option.playSounds", Boolean.toString(soundButton
                 .isSelected()));
+
         JFritz.setProperty("option.startExternProgram", Boolean
                 .toString(externProgramCheckBox.isSelected()));
         JFritz.setProperty("option.externProgram", externProgramTextField
@@ -463,7 +469,7 @@ public class ConfigDialog extends JDialog {
         return sippane;
     }
 
-    protected JPanel createOtherPane() {
+protected JPanel createOtherPane() {
         JPanel otherpane = new JPanel();
 
         otherpane.setLayout(new BoxLayout(otherpane, BoxLayout.Y_AXIS));
@@ -488,10 +494,11 @@ public class ConfigDialog extends JDialog {
         searchWithSSDP = new JCheckBox("FRITZ!Box per UPnP / SSDP suchen");
         otherpane.add(searchWithSSDP);
 
-        return otherpane;
-    }
+        minimizeInsteadOfClose = new JCheckBox("Bei Klick auf X: Minimieren statt schließen");
+        otherpane.add(minimizeInsteadOfClose);
 
-    protected JPanel createCallerListPane() {
+        return otherpane;
+    }    protected JPanel createCallerListPane() {
         JPanel cPanel = new JPanel();
 
         cPanel.setLayout(new GridBagLayout());
