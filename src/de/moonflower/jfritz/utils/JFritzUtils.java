@@ -288,7 +288,7 @@ public class JFritzUtils {
         else p = Pattern.compile(PATTERN_SIPPROVIDER_96);
         Matcher m = p.matcher(data);
         while (m.find()) {
-            System.out.println("FOUND SIP-PROVIDER");
+            Debug.msg("FOUND SIP-PROVIDER");
             if (!(m.group(4).equals(""))) {
                 if (firmware.getMinorFirmwareVersion() < 42)
                     list.add(new SipProvider(Integer.parseInt(m.group(1)), m
@@ -617,7 +617,7 @@ public class JFritzUtils {
             data = fetchDataFromURL(urlstr, postdata);
         } catch (Exception e) {
         }
-        System.out.println("DATA: " + data.trim());
+        Debug.msg("DATA: " + data.trim());
         return "";
     }
 
