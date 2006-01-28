@@ -22,14 +22,15 @@ import javax.swing.*;
 // Referenced classes of package de.waghoo.fbf:
 //            fbfParams, fbfContactTree, fbf_tool
 
-public class ImportOutlookContacts extends JDialog implements ActionListener, Runnable {
+public class ImportOutlookContacts extends JDialog implements ActionListener,
+        Runnable {
 
     /**
-	 *
-	 */
-	private static final long serialVersionUID = 1L;
+     *
+     */
+    private static final long serialVersionUID = 1L;
 
-	public Dispatch init() {
+    public Dispatch init() {
         outlookElements.addElement("FirstName");
         outlookElements.addElement("LastName");
         outlookElements.addElement("MiddleName");
@@ -38,8 +39,16 @@ public class ImportOutlookContacts extends JDialog implements ActionListener, Ru
         outlookElements.addElement("HomeAddressPostalCode");
         outlookElements.addElement("HomeAddressCity");
         outlookElements.addElement("BusinessTelephoneNumber");
+        outlookElements.addElement("Business2TelephoneNumber");
         outlookElements.addElement("HomeTelephoneNumber");
+        outlookElements.addElement("Home2TelephoneNumber");
+        outlookElements.addElement("PrimaryTelephoneNumber");
         outlookElements.addElement("MobileTelephoneNumber");
+        outlookElements.addElement("CarTelephoneNumber");
+        outlookElements.addElement("RadioTelephoneNumber");
+        outlookElements.addElement("CallbackTelephoneNumber");
+        outlookElements.addElement("AssistantTelephoneNumber");
+        outlookElements.addElement("CompanyMainTelephoneNumber");
         outlookElements.addElement("OtherTelephoneNumber");
         outlookElements.addElement("Categories");
         ActiveXComponent ol = new ActiveXComponent("Outlook.Application");
@@ -59,7 +68,7 @@ public class ImportOutlookContacts extends JDialog implements ActionListener, Ru
     public ImportOutlookContacts(JFritz jfritz) {
         super(jfritz.getJframe(), "Aus Outlook importieren");
         outlookElements = new Vector();
-//        contactPics = "resources/images/contacts/";
+        // contactPics = "resources/images/contacts/";
         this.jfritz = jfritz;
     }
 
@@ -103,9 +112,17 @@ public class ImportOutlookContacts extends JDialog implements ActionListener, Ru
                     }
                     if (!strValue.equals("")
                             && ((strName.equals("BusinessTelephoneNumber")
+                                    || strName.equals("Business2TelephoneNumber")
                                     || strName.equals("HomeTelephoneNumber")
-                                    || strName.equals("MobileTelephoneNumber") || strName
-                                    .equals("OtherTelephoneNumber")))) {
+                                    || strName.equals("Home2TelephoneNumber")
+                                    || strName.equals("MobileTelephoneNumber")
+                                    || strName.equals("CarTelephoneNumber")
+                                    || strName.equals("RadioTelephoneNumber")
+                                    || strName.equals("PrimaryTelephoneNumber")
+                                    || strName.equals("CallbackTelephoneNumber")
+                                    || strName.equals("AssistantTelephoneNumber")
+                                    || strName.equals("CompanyMainTelephoneNumber")
+                                    || strName.equals("OtherTelephoneNumber")))) {
                         hasTel = true;
                     }
                     /**
@@ -129,6 +146,12 @@ public class ImportOutlookContacts extends JDialog implements ActionListener, Ru
                     } else if (strName.equals("HomeTelephoneNumber")
                             && (!strValue.equals(""))) {
                         newContact.addNumber(new PhoneNumber(strValue, "home"));
+                    } else if (strName.equals("Home2TelephoneNumber")
+                            && (!strValue.equals(""))) {
+                        newContact.addNumber(new PhoneNumber(strValue, "home"));
+                    } else if (strName.equals("PrimaryTelephoneNumber")
+                            && (!strValue.equals(""))) {
+                        newContact.addNumber(new PhoneNumber(strValue, "home"));
                     } else if (strName.equals("MobileTelephoneNumber")
                             && (!strValue.equals(""))) {
                         newContact
@@ -137,6 +160,30 @@ public class ImportOutlookContacts extends JDialog implements ActionListener, Ru
                             && (!strValue.equals(""))) {
                         newContact.addNumber(new PhoneNumber(strValue,
                                 "business"));
+                    } else if (strName.equals("Business2TelephoneNumber")
+                            && (!strValue.equals(""))) {
+                        newContact.addNumber(new PhoneNumber(strValue,
+                                "business"));
+                    } else if (strName.equals("RadioTelephoneNumber")
+                            && (!strValue.equals(""))) {
+                        newContact
+                                .addNumber(new PhoneNumber(strValue, "other"));
+                    } else if (strName.equals("CarTelephoneNumber")
+                            && (!strValue.equals(""))) {
+                        newContact
+                                .addNumber(new PhoneNumber(strValue, "other"));
+                    } else if (strName.equals("CallbackTelephoneNumber")
+                            && (!strValue.equals(""))) {
+                        newContact
+                                .addNumber(new PhoneNumber(strValue, "other"));
+                    } else if (strName.equals("AssistantTelephoneNumber")
+                            && (!strValue.equals(""))) {
+                        newContact
+                                .addNumber(new PhoneNumber(strValue, "other"));
+                    } else if (strName.equals("CompanyMainTelephoneNumber")
+                            && (!strValue.equals(""))) {
+                        newContact
+                                .addNumber(new PhoneNumber(strValue, "other"));
                     } else if (strName.equals("OtherTelephoneNumber")
                             && (!strValue.equals(""))) {
                         newContact
@@ -186,7 +233,7 @@ public class ImportOutlookContacts extends JDialog implements ActionListener, Ru
 
     private Vector outlookElements;
 
-//    private String contactPics;
+    // private String contactPics;
 
     final int olFolderContacts = 10;
 
