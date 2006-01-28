@@ -3,9 +3,12 @@ package de.moonflower.jfritz.utils.network;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
+import de.moonflower.jfritz.utils.Debug;
 
 /*
  * Created on 22.05.2005
@@ -18,142 +21,157 @@ import de.moonflower.jfritz.firmware.FritzBoxFirmware;
  */
 public class SSDPPacket {
 
-	final static String SSDP_ADDRESS = "239.255.255.250";
+    final static String SSDP_ADDRESS = "239.255.255.250";
 
-	final static String SSDP_DISCOVER = "M-SEARCH * HTTP/1.1\r\nST: upnp:rootdevice\r\n"
-			+ "MX: 10\r\nMAN: \"ssdp:discover\"\r\nHOST: 239.255.255.250:1900\r\n\r\n";
+    final static String SSDP_DISCOVER = "M-SEARCH * HTTP/1.1\r\nST: upnp:rootdevice\r\n"
+            + "MX: 10\r\nMAN: \"ssdp:discover\"\r\nHOST: 239.255.255.250:1900\r\n\r\n";
 
-	private DatagramPacket udpPacket;
+    // watZZ2BLACK UPnP/1.0 AVM FRITZ!Box Fon WLAN 7050 14.03.101
+    // 00:04:0E:A2:B1:7B
+    final static String PATTERN_MAC = "\\w\\w:\\w\\w:\\w\\w:\\w\\w:\\w\\w:\\w\\w";
+    final static String PATTERN_FIRMWARE = "\\d\\d\\.\\d\\d\\.\\d\\d*";
 
-	private String server = "", location = "", cachecontrol = "", ext = "",
-			st = "", usn = "";
+    private DatagramPacket udpPacket;
 
-	/**
-	 * creates a SSDPPacket from a DatagramPacket
-	 *
-	 * TODO: Vielleicht noch Prüfen, ob das Paket korrekt ist, ansonsten eine
-	 * Exception werfen.
-	 */
-	public SSDPPacket(DatagramPacket packet) {
-		this.udpPacket = packet;
-		String[] data = new String(packet.getData()).split("\r\n");
-		for (int i = 0; i < data.length; i++) {
-			if (data[i].startsWith("SERVER:"))
-				server = data[i].substring(7).trim();
-			else if (data[i].startsWith("LOCATION:"))
-				location = data[i].substring(9).trim();
-			else if (data[i].startsWith("CACHE-CONTROL:"))
-				cachecontrol = data[i].substring(15).trim();
-			else if (data[i].startsWith("EXT:"))
-				ext = data[i].substring(4).trim();
-			else if (data[i].startsWith("ST:"))
-				st = data[i].substring(3).trim();
-			else if (data[i].startsWith("USN:"))
-				usn = data[i].substring(4).trim();
-		}
-	}
+    private String server = "", location = "", cachecontrol = "", ext = "",
+            st = "", usn = "";
 
-	/**
-	 *
-	 * @return InetAdress of SSDP multicast
-	 */
-	public static InetAddress getSSDPAddress() {
-		try {
-			return InetAddress.getByName(SSDP_ADDRESS);
-		} catch (UnknownHostException e) {
-			return null;
-		}
-	}
+    /**
+     * creates a SSDPPacket from a DatagramPacket
+     *
+     * TODO: Vielleicht noch Prüfen, ob das Paket korrekt ist, ansonsten eine
+     * Exception werfen.
+     */
+    public SSDPPacket(DatagramPacket packet) {
+        this.udpPacket = packet;
+        String[] data = new String(packet.getData()).split("\r\n");
+        for (int i = 0; i < data.length; i++) {
+            if (data[i].startsWith("SERVER:"))
+                server = data[i].substring(7).trim();
+            else if (data[i].startsWith("LOCATION:"))
+                location = data[i].substring(9).trim();
+            else if (data[i].startsWith("CACHE-CONTROL:"))
+                cachecontrol = data[i].substring(15).trim();
+            else if (data[i].startsWith("EXT:"))
+                ext = data[i].substring(4).trim();
+            else if (data[i].startsWith("ST:"))
+                st = data[i].substring(3).trim();
+            else if (data[i].startsWith("USN:"))
+                usn = data[i].substring(4).trim();
+        }
+    }
 
-	/**
-	 *
-	 * @return DatagramPacket for SSDP:Discover
-	 */
-	public static DatagramPacket getSSDPDiscoverPacket() {
-		return new DatagramPacket(SSDP_DISCOVER.getBytes(), SSDP_DISCOVER
-				.length(), getSSDPAddress(), 1900);
-	}
+    /**
+     *
+     * @return InetAdress of SSDP multicast
+     */
+    public static InetAddress getSSDPAddress() {
+        try {
+            return InetAddress.getByName(SSDP_ADDRESS);
+        } catch (UnknownHostException e) {
+            return null;
+        }
+    }
 
-	/**
-	 * @return Returns the cachecontrol.
-	 */
-	public final String getCachecontrol() {
-		return cachecontrol;
-	}
+    /**
+     *
+     * @return DatagramPacket for SSDP:Discover
+     */
+    public static DatagramPacket getSSDPDiscoverPacket() {
+        return new DatagramPacket(SSDP_DISCOVER.getBytes(), SSDP_DISCOVER
+                .length(), getSSDPAddress(), 1900);
+    }
 
-	/**
-	 * @return Returns the ext.
-	 */
-	public final String getExt() {
-		return ext;
-	}
+    /**
+     * @return Returns the cachecontrol.
+     */
+    public final String getCachecontrol() {
+        return cachecontrol;
+    }
 
-	/**
-	 * @return Returns the location.
-	 */
-	public final String getLocation() {
-		return location;
-	}
+    /**
+     * @return Returns the ext.
+     */
+    public final String getExt() {
+        return ext;
+    }
 
-	/**
-	 * @return Returns the server.
-	 */
-	public final String getServer() {
-		return server;
-	}
+    /**
+     * @return Returns the location.
+     */
+    public final String getLocation() {
+        return location;
+    }
 
-	/**
-	 * @return Returns the st.
-	 */
-	public final String getSt() {
-		return st;
-	}
+    /**
+     * @return Returns the server.
+     */
+    public final String getServer() {
+        return server;
+    }
 
-	/**
-	 * @return Returns the usn.
-	 */
-	public final String getUsn() {
-		return usn;
-	}
+    /**
+     * @return Returns the st.
+     */
+    public final String getSt() {
+        return st;
+    }
 
-	/**
-	 * @return Returns the packet.
-	 */
-	public final DatagramPacket getUdpPacket() {
-		return udpPacket;
-	}
+    /**
+     * @return Returns the usn.
+     */
+    public final String getUsn() {
+        return usn;
+    }
 
-	/**
-	 * @param packet
-	 *            The packet to set.
-	 */
-	public final void setUdpPacket(DatagramPacket packet) {
-		this.udpPacket = packet;
-	}
+    /**
+     * @return Returns the packet.
+     */
+    public final DatagramPacket getUdpPacket() {
+        return udpPacket;
+    }
 
-	public final InetAddress getIP() {
-		return udpPacket.getAddress();
-	}
+    /**
+     * @param packet
+     *            The packet to set.
+     */
+    public final void setUdpPacket(DatagramPacket packet) {
+        this.udpPacket = packet;
+    }
 
-	public final String getShortName() {
-		String parts[] = getServer().split(" ", 4);
-		String name = parts[3];
-		return name;
-	}
+    public final InetAddress getIP() {
+        return udpPacket.getAddress();
+    }
 
-	public String getMAC() {
-		String parts[] = getServer().split(" ", 2);
-		String mac = parts[0].substring(10);
-		return mac;
-	}
+    public final String getShortName() {
+        String parts[] = getServer().split(" ", 4);
+        String name = parts[3];
+        return name;
+    }
 
-	public FritzBoxFirmware getFirmware() {
-		//String parts[] = getServer().split(" ", 2);
-		String fwstr = getServer().substring(getServer().lastIndexOf(" ") + 1);
-		try {
-			return new FritzBoxFirmware(fwstr);
-		} catch (InvalidFirmwareException e) {
-			return null;
-		}
-	}
+    public String getMAC() {
+        Pattern p = Pattern.compile(PATTERN_MAC);
+        Matcher m = p.matcher(getServer());
+        String mac = "";
+        if (m.find()) {
+            mac = m.group(0);
+        }
+        Debug.msg("SSDP MAC: "+mac);
+        return mac;
+    }
+
+    public FritzBoxFirmware getFirmware() {
+        Pattern p = Pattern.compile(PATTERN_FIRMWARE);
+        Matcher m = p.matcher(getServer());
+        String fwstr = "";
+        if (m.find()) {
+            fwstr = m.group(0);
+        }
+        Debug.msg("SSDP FW: "+fwstr);
+        try {
+            return new FritzBoxFirmware(fwstr);
+        } catch (InvalidFirmwareException e) {
+            return null;
+        }
+    }
 }
