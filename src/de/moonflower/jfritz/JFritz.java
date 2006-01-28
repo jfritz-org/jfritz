@@ -296,7 +296,7 @@ public final class JFritz {
 
     public final static String PROGRAM_NAME = "JFritz";
 
-    public final static String PROGRAM_VERSION = "0.5.0";
+    public final static String PROGRAM_VERSION = "0.5.1";
 
     public final static String PROGRAM_URL = "http://www.jfritz.org/";
 
@@ -304,7 +304,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.144 2006/01/28 12:30:37 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.145 2006/01/28 12:31:08 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
