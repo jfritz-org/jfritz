@@ -54,6 +54,7 @@ public class CallmessageListener extends Thread implements CallMonitor {
 			serverSocket = new ServerSocket(port);
 		} catch (Exception e) {
 			try {
+                Debug.err("Exception occoured");
 				synchronized (this) {
 					wait(5000);
 				}
@@ -62,6 +63,7 @@ public class CallmessageListener extends Thread implements CallMonitor {
 			}
 			jfritz.stopCallMonitor();
 		}
+        Debug.msg("Callmessage-Monitor ready");
 		while (isRunning) {
 			try {
 				// Client-Connection accepten, Extra-Socket öffnen

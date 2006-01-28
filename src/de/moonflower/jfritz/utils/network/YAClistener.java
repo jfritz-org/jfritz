@@ -49,8 +49,9 @@ public class YAClistener extends Thread implements CallMonitor{
 	public void startYACListener() {
 		isRunning = true;
 		try {
-			Debug.msg("Starting YAC listener");
+			Debug.msg("Starting YAC-Monitor");
 			serverSocket = new ServerSocket(port);
+            Debug.msg("YAC-Monitor ready");
 			while (isRunning) {
 				Socket socket = serverSocket.accept();
 				BufferedReader input = new BufferedReader(
