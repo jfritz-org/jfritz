@@ -38,6 +38,14 @@ public class PortCellRenderer extends DefaultTableCellRenderer {
 				portStr = "FON 2";
 			else if (port.equals("2"))
 				portStr = "FON 3";
+            else if (port.equals("32"))
+                portStr = "Daten Fon 1";
+            else if (port.equals("33"))
+                portStr = "Daten Fon 2";
+            else if (port.equals("34"))
+                portStr = "Daten Fon 3";
+            else if (port.equals("36"))
+                portStr = "Daten S0";
 			else if (port.equals(""))
 				portStr = "";
 			else
