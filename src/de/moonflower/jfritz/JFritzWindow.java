@@ -1146,21 +1146,25 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
         }
         case 2: {
             jfritz.setCallMonitor(new TelnetListener(jfritz));
+            this.setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
             break;
         }
         case 3: {
             jfritz.setCallMonitor(new SyslogListener(jfritz));
+            this.setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
             break;
         }
         case 4: {
             jfritz.setCallMonitor(new YAClistener(jfritz, Integer
                     .parseInt(JFritz.getProperty("option.yacport", "10629"))));
+            this.setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
             break;
         }
         case 5: {
             jfritz.setCallMonitor(new CallmessageListener(jfritz, Integer
                     .parseInt(JFritz.getProperty("option.callmessageport",
                             "23232"))));
+            this.setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
             break;
         }
         }
