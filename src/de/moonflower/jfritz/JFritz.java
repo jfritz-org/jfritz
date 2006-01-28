@@ -38,6 +38,11 @@
  * - Anrufen aus der Anrufliste heraus (noch nicht getestet)
  * TODO: Checken, ob alle Bibliotheken vorhanden sind
  *
+ * JFritz 0.5.1
+ * - Priorität auf 5 erhöht
+ * - Kompatibel zur Firmware xx.03.101
+ * - Datenverbindungen werden als solche angezeigt
+ *
  * JFritz 0.5.0
  * - Neuer Anrufmonitor: FRITZ!Box Anrufmonitor
  * - Kompatibel zur Firmware xx.03.99
@@ -299,7 +304,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.143 2006/01/25 21:35:04 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.144 2006/01/28 12:30:37 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -490,7 +495,7 @@ public final class JFritz {
     public static void main(String[] args) {
         System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION
                 + " (c) 2005 by " + PROGRAM_AUTHOR);
-        Thread.currentThread().setPriority(1);
+        Thread.currentThread().setPriority(5);
         boolean fetchCalls = false;
         boolean clearList = false;
         boolean csvExport = false;
