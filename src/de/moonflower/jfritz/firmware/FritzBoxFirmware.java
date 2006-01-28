@@ -57,7 +57,7 @@ public class FritzBoxFirmware {
 
 	private final static String POSTDATA_DETECT_FIRMWARE = "&var%3Alang=de&var%3Amenu=home&var%3Apagename=home&login%3Acommand%2Fpassword=";
 
-	private final static String PATTERN_DETECT_FIRMWARE = "<span class=\"Dialoglabel\">[^<]*</span>(\\d\\d).(\\d\\d).(\\d\\d)([^<]*)";
+	private final static String PATTERN_DETECT_FIRMWARE = "<span class=\"Dialoglabel\">[^<]*</span>(\\d\\d).(\\d\\d).(\\d\\d\\d*)([^<]*)";
 
 	/**
 	 * Firmware Constructor using Bytes
@@ -224,10 +224,13 @@ public class FritzBoxFirmware {
 	 * @return Returns the majorFirmwareVersion.
 	 */
 	public final String getFirmwareVersion() {
-		DecimalFormat df = new DecimalFormat("##,##,##");
-		return df.format(boxtype * 10000 + majorFirmwareVersion * 100
-				+ minorFirmwareVersion)
-				+ modFirmwareVersion;
+        String boxtypeStr = Byte.toString(boxtype);
+        String majorStr = Byte.toString(majorFirmwareVersion);
+        String minorStr = Byte.toString(minorFirmwareVersion);
+        if (boxtypeStr.length() == 1) { boxtypeStr = "0" + boxtypeStr; }
+        if (majorStr.length() == 1) { majorStr = "0" + majorStr; }
+        if (minorStr.length() == 1) { minorStr = "0" + minorStr; }
+        return boxtypeStr + "." + majorStr + "." + minorStr + modFirmwareVersion;
 	}
 
 	public String getBoxName() {
