@@ -7,7 +7,6 @@ package de.moonflower.jfritz.firmware;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.text.DecimalFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
