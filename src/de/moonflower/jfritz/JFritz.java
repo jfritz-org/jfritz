@@ -42,6 +42,7 @@
  * - Priorität auf 5 erhöht
  * - Kompatibel zur Firmware xx.03.101
  * - Datenverbindungen werden als solche angezeigt
+ * - Outlookimport verbessert
  *
  * JFritz 0.5.0
  * - Neuer Anrufmonitor: FRITZ!Box Anrufmonitor
@@ -304,7 +305,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.145 2006/01/28 12:31:08 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.146 2006/01/29 14:17:51 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
