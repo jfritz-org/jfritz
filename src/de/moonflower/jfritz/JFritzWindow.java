@@ -1107,6 +1107,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
     }
 
     private void importOutlook() {
+        Debug.msg("Starte Import von Outlook");
         Thread thread = new Thread(new ImportOutlookContacts(jfritz));
         thread.start();
     }

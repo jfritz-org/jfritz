@@ -73,6 +73,7 @@ public class ImportOutlookContacts extends JDialog implements ActionListener,
     }
 
     public void run() {
+        Debug.msg("Zeige Import-Dialog");
         toFront();
         setSize(400, 500);
         // java.awt.Toolkit tk = getToolkit();
@@ -96,6 +97,7 @@ public class ImportOutlookContacts extends JDialog implements ActionListener,
         getContentPane().add(jPanel);
         setLocationRelativeTo(jfritz.getJframe());
         setVisible(true);
+        Debug.msg("Importiere...");
         for (int i = 1; i <= count; i++) {
             boolean hasTel = false;
             Dispatch item = Dispatch.call(items, "Item", new Integer(i))
@@ -196,7 +198,7 @@ public class ImportOutlookContacts extends JDialog implements ActionListener,
             if (hasTel)
                 jfritz.getPhonebook().addEntry(newContact);
         }
-
+        Debug.msg("Import fertig");
         JButton jButton = new JButton(" OK ");
         jButton.addActionListener(this);
         jButton.setBounds(160, 425, 80, 25);
