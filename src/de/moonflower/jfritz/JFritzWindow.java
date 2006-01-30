@@ -119,6 +119,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
         if (!JFritz.getProperty("option.startMinimized", "false")
                 .equals("true")) {
             setVisible(true);
+        } else {
+            if (!JFritz.SYSTRAY_SUPPORT) setVisible(true);
+            setState(JFrame.ICONIFIED);
         }
         if (JFritz.getProperty("option.timerAfterStart", "false")
                 .equals("true")) {
