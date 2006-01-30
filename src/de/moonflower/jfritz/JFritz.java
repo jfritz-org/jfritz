@@ -37,6 +37,11 @@
  * CHANGELOG:
  * - Anrufen aus der Anrufliste heraus (noch nicht getestet)
  * TODO: Checken, ob alle Bibliotheken vorhanden sind
+ * TODO: Beim neuen Anrufmonitor auf # achten
+ * TODO: Bei den Einstellungen die MAC und IP wegnehmen
+ *
+ * JFritz 0.5.2
+ * - Parameter -n funktioniert wieder
  *
  * JFritz 0.5.1
  * - Priorität auf 5 erhöht
@@ -297,7 +302,7 @@ public final class JFritz {
 
     public final static String PROGRAM_NAME = "JFritz";
 
-    public final static String PROGRAM_VERSION = "0.5.1";
+    public final static String PROGRAM_VERSION = "0.5.2";
 
     public final static String PROGRAM_URL = "http://www.jfritz.org/";
 
@@ -305,7 +310,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.146 2006/01/29 14:17:51 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.147 2006/01/30 19:55:22 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -561,6 +566,7 @@ public final class JFritz {
                 }
             case 'n':
                 checkSystray = false;
+                break;
             case 'p':
                 String priority = option.getParameter();
                 if (priority == null || priority.equals("")) {
@@ -786,8 +792,9 @@ public final class JFritz {
             break;
         }
         case 2: {
-            trayIcon.displayMessage(JFritz.PROGRAM_NAME, msg,
-                    TrayIcon.INFO_MESSAGE_TYPE);
+            if (trayIcon != null)
+                trayIcon.displayMessage(JFritz.PROGRAM_NAME, msg,
+                        TrayIcon.INFO_MESSAGE_TYPE);
             break;
         }
         }
