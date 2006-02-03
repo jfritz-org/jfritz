@@ -43,7 +43,8 @@ public class FRITZBOXConfigDialog extends JDialog implements
 
     public static final int CANCEL_OPTION = 2;
 
-    private JCheckBox monitorIncomingCalls, monitorOutgoingCalls;
+    private JCheckBox monitorIncomingCalls, monitorOutgoingCalls,
+                      fetchAfterDisconnect;
 
     private JTextField ignoreMSN;
 
@@ -70,6 +71,9 @@ public class FRITZBOXConfigDialog extends JDialog implements
         monitorOutgoingCalls.setSelected(JFritzUtils
                 .parseBoolean(JFritz.getProperty(
                         "option.callmonitor.monitorOutgoingCalls", "false")));
+        fetchAfterDisconnect.setSelected(JFritzUtils
+                .parseBoolean(JFritz.getProperty(
+                        "option.callmonitor.fetchAfterDisconnect", "false")));
         ignoreMSN.setText(JFritz.getProperty("option.callmonitor.ignoreMSN",""));
     }
 
@@ -78,6 +82,7 @@ public class FRITZBOXConfigDialog extends JDialog implements
                 .toString(monitorIncomingCalls.isSelected()));
         JFritz.setProperty("option.callmonitor.monitorOutgoingCalls", Boolean
                 .toString(monitorOutgoingCalls.isSelected()));
+        JFritz.setProperty("option.callmonitor.fetchAfterDisconnect", Boolean.toString(fetchAfterDisconnect.isSelected()));
         JFritz.setProperty("option.callmonitor.ignoreMSN", ignoreMSN.getText());
     }
 
@@ -137,9 +142,12 @@ public class FRITZBOXConfigDialog extends JDialog implements
         monitorOutgoingCalls = new JCheckBox("Abgehende Anrufe anzeigen");
         panel.add(monitorOutgoingCalls, c);
         c.gridy = 2;
+        fetchAfterDisconnect = new JCheckBox("Anrufliste nach dem Auflegen abholen");
+        panel.add(fetchAfterDisconnect, c);
+        c.gridy = 3;
         JLabel label = new JLabel("Zu ignorierende MSNs mit ; getrennt");
         panel.add(label, c);
-        c.gridy = 3;
+        c.gridy = 4;
         ignoreMSN = new JTextField("", 20);
         panel.add(ignoreMSN, c);
 

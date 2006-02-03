@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Random;
 
 /**
  * Thread. Connects to FritzBox Port 1012. Captures Callermessages.
@@ -27,11 +28,14 @@ public class FBoxListener extends Thread implements CallMonitor {
 
     private String[] ignoredMSNs;
 
+    private Random zufallszahl;
+
     public FBoxListener(JFritz jfritz) {
         super();
         this.jfritz = jfritz;
         Debug.msg("Starting FBoxListener");
         start();
+        zufallszahl = new Random();
     }
 
     public void run() {
@@ -97,7 +101,7 @@ public class FBoxListener extends Thread implements CallMonitor {
         }
         ignoredMSNs = ignoreMSNString.split(";");
         Debug.msg("Ignored MSNs: ");
-        for (int i=0; i<ignoredMSNs.length; i++) {
+        for (int i = 0; i < ignoredMSNs.length; i++) {
             Debug.msg(ignoredMSNs[i]);
         }
     }
@@ -150,6 +154,16 @@ public class FBoxListener extends Thread implements CallMonitor {
                 }
             if (!ignoreIt)
                 jfritz.callOutMsg(number, provider);
+        } else if (JFritzUtils.parseBoolean(JFritz.getProperty(
+                "option.callmonitor.fetchAfterDisconnect", "true"))
+                && split[1].equals("DISCONNECT")) {
+            try {
+                Thread.sleep(zufallszahl.nextInt(3000));
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            jfritz.getJframe().fetchList();
         }
     }
 
