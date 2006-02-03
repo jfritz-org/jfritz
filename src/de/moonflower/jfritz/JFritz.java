@@ -42,6 +42,9 @@
  *
  * JFritz 0.5.2
  * - Parameter -n funktioniert wieder
+ * - XML-Dateien angepasst. DTDs werden nicht mehr gespeichert. Kann zu Datenverlust kommen
+ * - Kompatibel zur Firmware xx.04.01
+ * - FRITZ!Box-Anrufmonitor: Abholen der Anrufliste nach dem Auflegen
  *
  * JFritz 0.5.1
  * - Priorität auf 5 erhöht
@@ -245,9 +248,7 @@ package de.moonflower.jfritz;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -310,7 +311,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.147 2006/01/30 19:55:22 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.148 2006/02/03 12:18:30 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -725,9 +726,7 @@ public final class JFritz {
         defaultProperties.setProperty("fetch.timer", "5");
 
         try {
-            FileInputStream fis = new FileInputStream(JFritz.PROPERTIES_FILE);
-            properties.loadFromXML(fis);
-            fis.close();
+            properties.loadFromXML(JFritz.PROPERTIES_FILE);
             replaceOldProperties();
         } catch (FileNotFoundException e) {
             Debug.err("File " + JFritz.PROPERTIES_FILE
@@ -766,12 +765,9 @@ public final class JFritz {
         }
 
         try {
-            FileOutputStream fos = new FileOutputStream(JFritz.PROPERTIES_FILE);
-            properties.storeToXML(fos, "Properties for " + JFritz.PROGRAM_NAME
-                    + " v" + JFritz.PROGRAM_VERSION);
-            fos.close();
-        } catch (FileNotFoundException e) {
+            properties.storeToXML(JFritz.PROPERTIES_FILE);
         } catch (IOException e) {
+            Debug.err("Couldn't save Properties");
         }
     }
 
