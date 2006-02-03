@@ -1120,11 +1120,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                 "0"))) {
         case 1: {
             try {
-                if (JFritzUtils.detectBoxType(
-                        "",
-                        JFritz.getProperty("box.address"),
+                FritzBoxFirmware currentFirm = JFritzUtils.detectBoxType("",JFritz.getProperty("box.address"),
                         Encryption.decrypt(JFritz.getProperty("box.password",
-                                ""))).getMinorFirmwareVersion() < 96) {
+                                "")));
+                if (currentFirm.getMajorFirmwareVersion() == 3 && currentFirm.getMinorFirmwareVersion() < 96) {
                     Debug
                             .errDlg("Dieser Anrufmonitor funktioniert nur ab Firmware xx.03.96");
                     monitorButton.setSelected(false);

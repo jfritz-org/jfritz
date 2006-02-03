@@ -197,7 +197,7 @@ public class FritzBoxFirmware {
 	 */
 	public final String getAccessMethod() {
 		int accessMethod;
-		if (minorFirmwareVersion < 42)
+		if (majorFirmwareVersion == 3 && minorFirmwareVersion < 42)
 			accessMethod = ACCESS_METHOD_PRIOR_0342;
 		else
 			accessMethod = ACCESS_METHOD_POST_0342;
