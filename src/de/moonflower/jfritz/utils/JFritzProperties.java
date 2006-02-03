@@ -4,24 +4,23 @@
  */
 package de.moonflower.jfritz.utils;
 
+import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.StringReader;
-import java.util.Iterator;
+import java.io.UnsupportedEncodingException;
+import java.util.Enumeration;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -32,6 +31,9 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLReader;
+
+import de.moonflower.jfritz.JFritz;
 
 /**
  * Backport of JRE 1.5 Properties class to JRE 1.4.2
@@ -68,21 +70,67 @@ public class JFritzProperties extends Properties {
 		super(defaultProperties);
 	}
 
-	public synchronized void loadFromXML(InputStream in) throws IOException {
-		if (in == null)
-			throw new NullPointerException();
-		try {
-			load(this, in);
-		} catch (Exception e) {
-			throw new IOException("Could not load properties!");
-		}
+	public synchronized void loadFromXML(String filename) throws IOException {
+        try {
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            factory.setValidating(false);
+            SAXParser parser = factory.newSAXParser();
+            XMLReader reader = parser.getXMLReader();
+
+            reader.setErrorHandler(new ErrorHandler() {
+                public void error(SAXParseException x) throws SAXException {
+                    // Debug.err(x.toString());
+                    throw x;
+                }
+
+                public void fatalError(SAXParseException x) throws SAXException {
+                    // Debug.err(x.toString());
+                    throw x;
+                }
+
+                public void warning(SAXParseException x) throws SAXException {
+                    // Debug.err(x.toString());
+                    throw x;
+                }
+            });
+            reader.setEntityResolver(new EntityResolver() {
+                public InputSource resolveEntity(String publicId,
+                        String systemId) throws SAXException, IOException {
+                    if (systemId.equals(PROPS_DTD_URI)) {
+                        InputSource is;
+                        is = new InputSource(new StringReader(PROPS_DTD));
+                        is.setSystemId(PROPS_DTD_URI);
+                        return is;
+                    }
+                    throw new SAXException("Invalid system identifier: "
+                            + systemId);
+                }
+
+            });
+            reader.setContentHandler(new PropertiesXMLHandler());
+            reader.parse(new InputSource(new FileInputStream(filename)));
+
+        } catch (ParserConfigurationException e) {
+            Debug.err("Error with ParserConfiguration!");
+        } catch (SAXException e) {
+            Debug.err("Error on parsing " + filename + "!");
+            e.printStackTrace();
+            if (e.getLocalizedMessage().startsWith("Relative URI")
+                    || e.getLocalizedMessage().startsWith(
+                            "Invalid system identifier")) {
+                Debug.err(e.getLocalizedMessage());
+                System.exit(0);
+            }
+        } catch (IOException e) {
+            Debug.err("Could not read " + filename + "!");
+        }
 	}
 
-	public synchronized void storeToXML(OutputStream os, String comment)
+	public synchronized void storeToXML(String filename)
 			throws IOException {
-		if (os == null)
+		if (filename == null)
 			throw new NullPointerException();
-		save(this, os, comment, "UTF-8");
+		save(filename);
 	}
 
 	public synchronized Object setProperty(String key, String value) {
@@ -104,7 +152,7 @@ public class JFritzProperties extends Properties {
 	// ********************* XML Utilities *********************
 	// load, getLoadingDoc, importProperties, save, emitDocument
 
-	public static void load(Properties props, InputStream in)
+	public void load(Properties props, InputStream in)
 			throws IOException, SAXException {
 		Document doc = null;
 		doc = getLoadingDoc(in);
@@ -123,7 +171,7 @@ public class JFritzProperties extends Properties {
 			IOException {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		dbf.setIgnoringElementContentWhitespace(true);
-		dbf.setValidating(true);
+		dbf.setValidating(false);
 		dbf.setCoalescing(true);
 		dbf.setIgnoringComments(true);
 		try {
@@ -177,60 +225,37 @@ public class JFritzProperties extends Properties {
 		}
 	}
 
-	public static void save(Properties props, OutputStream os, String comment,
-			String encoding) throws IOException {
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		DocumentBuilder db = null;
-		try {
-			db = dbf.newDocumentBuilder();
-		} catch (ParserConfigurationException pce) {
-			// FIXME assert(false);
-		}
-		Document doc = db.newDocument();
-		Element properties = (Element) doc.appendChild(doc
-				.createElement("properties"));
+    public void save(String filename) throws IOException {
+        Debug.msg("Saving to file " + filename);
+        try {
+                BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(filename), "UTF8"));
+            pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            pw.newLine();
+//          pw.write("<!DOCTYPE phonebook SYSTEM \"" + PHONEBOOK_DTD_URI
+//                  + "\">");
+//          pw.newLine();
+            pw.write("<properties>");
+            pw.newLine();
+            pw.write("<comment>Properties for " + JFritz.PROGRAM_NAME + " v"
+                    + JFritz.PROGRAM_VERSION + "</comment>");
+            pw.newLine();
 
-		if (comment != null) {
-			Element comments = (Element) properties.appendChild(doc
-					.createElement("comment"));
-			comments.appendChild(doc.createTextNode(comment));
-		}
-
-		Set keys = props.keySet();
-		Iterator i = keys.iterator();
-		while (i.hasNext()) {
-			String key = (String) i.next();
-			Element entry = (Element) properties.appendChild(doc
-					.createElement("entry"));
-			entry.setAttribute("key", key);
-//			Debug.msg("Save properties: " + key + " = " + props.getProperty(key));
-			entry.appendChild(doc.createTextNode(props.getProperty(key)));
-		}
-		emitDocument(doc, os, encoding);
-	}
-
-	static void emitDocument(Document doc, OutputStream os, String encoding)
-			throws IOException {
-		TransformerFactory tf = TransformerFactory.newInstance();
-		Transformer t = null;
-		try {
-			t = tf.newTransformer();
-			t.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, PROPS_DTD_URI);
-			t.setOutputProperty(OutputKeys.INDENT, "yes");
-			t.setOutputProperty(OutputKeys.METHOD, "xml");
-			t.setOutputProperty(OutputKeys.ENCODING, encoding);
-		} catch (TransformerConfigurationException tce) {
-			// FIXME assert(false);
-		}
-		DOMSource doms = new DOMSource(doc);
-		StreamResult sr = new StreamResult(os);
-		try {
-			t.transform(doms, sr);
-		} catch (TransformerException te) {
-			IOException ioe = new IOException();
-			ioe.initCause(te);
-			throw ioe;
-		}
-	}
-
+            Enumeration en = keys();
+            while (en.hasMoreElements()) {
+                String element = en.nextElement().toString();
+                pw.write("<entry key=\"" + element + "\">"+getProperty(element)+"</entry>");
+                pw.newLine();
+            }
+            pw.write("</properties>");
+            pw.newLine();
+            pw.close();
+          } catch (UnsupportedEncodingException e) {
+              Debug.err("UTF-8 not supported.");
+            } catch (FileNotFoundException e) {
+                Debug.err("Could not write " + filename + "!");
+          } catch (IOException e) {
+            Debug.err("IOException " + filename);
+        }
+    }
 }
