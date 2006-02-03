@@ -271,9 +271,9 @@ public class PhoneBook extends AbstractTableModel {
 		            new FileOutputStream(filename), "UTF8"));
 			pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			pw.newLine();
-			pw.write("<!DOCTYPE phonebook SYSTEM \"" + PHONEBOOK_DTD_URI
-					+ "\">");
-			pw.newLine();
+//			pw.write("<!DOCTYPE phonebook SYSTEM \"" + PHONEBOOK_DTD_URI
+//					+ "\">");
+//			pw.newLine();
 			pw.write("<phonebook>");
 			pw.newLine();
 			pw.write("<comment>Phonebook for " + JFritz.PROGRAM_NAME + " v"

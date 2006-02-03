@@ -221,8 +221,8 @@ public class QuickDials extends AbstractTableModel {
 			fos = new FileOutputStream(filename);
 			PrintWriter pw = new PrintWriter(fos);
 			pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			pw.println("<!DOCTYPE quickdials SYSTEM \"" + QUICKDIALS_DTD_URI
-					+ "\">");
+//			pw.println("<!DOCTYPE quickdials SYSTEM \"" + QUICKDIALS_DTD_URI
+//					+ "\">");
 			pw.println("<quickdials>");
 			pw.println("\t<comment>QuickDial list for " + JFritz.PROGRAM_NAME
 					+ " v" + JFritz.PROGRAM_VERSION + "</comment>");

@@ -157,8 +157,8 @@ public class CallerList extends AbstractTableModel {
                     new FileOutputStream(filename), "UTF8"));
             pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             pw.newLine();
-            pw.write("<!DOCTYPE calls SYSTEM \"" + CALLS_DTD_URI + "\">");
-            pw.newLine();
+//            pw.write("<!DOCTYPE calls SYSTEM \"" + CALLS_DTD_URI + "\">");
+//            pw.newLine();
             pw.write("<calls>");
             pw.newLine();
             pw.write("<comment>Calls for " + JFritz.PROGRAM_NAME + " v"

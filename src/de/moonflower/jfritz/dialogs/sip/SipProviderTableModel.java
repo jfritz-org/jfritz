@@ -160,7 +160,7 @@ public class SipProviderTableModel extends AbstractTableModel {
 			fos = new FileOutputStream(filename);
 			PrintWriter pw = new PrintWriter(fos);
 			pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			pw.println("<!DOCTYPE sipprovider SYSTEM \"" + SIP_DTD_URI + "\">");
+//			pw.println("<!DOCTYPE sipprovider SYSTEM \"" + SIP_DTD_URI + "\">");
 			pw.println("<provider>");
 			pw.println("<comment>SIP-Provider for " + JFritz.PROGRAM_NAME + " v"
 					+ JFritz.PROGRAM_VERSION + "</comment>");
