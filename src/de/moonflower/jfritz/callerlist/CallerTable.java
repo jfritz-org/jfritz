@@ -245,7 +245,7 @@ public class CallerTable extends JTable {
         }
 
         for (int i = 0; i < getColumnCount(); i++) {
-		    String columnName = JFritz.getProperty("column"+i+".name");
+		    String columnName = JFritz.getProperty("column"+i+".name","");
 		    if (!columnName.equals("")) {
 		        Debug.msg("Moving column: " + columnName + " from " + getColumnModel().getColumnIndex(columnName) + " to " + i);
 	            moveColumn(getColumnModel().getColumnIndex(columnName), i);
