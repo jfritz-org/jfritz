@@ -123,6 +123,7 @@ public class FBoxListener extends Thread implements CallMonitor {
                 number = "Unbekannt";
             } else
                 number = split[3];
+			if (number.endsWith("#")) number = number.substring(0, number.length()-1);
             if (split[4].equals("")) {
                 provider = "Analog";
             } else
@@ -142,6 +143,7 @@ public class FBoxListener extends Thread implements CallMonitor {
                 number = "Unbekannt";
             } else
                 number = split[5];
+			if (number.endsWith("#")) number = number.substring(0, number.length()-1);
             if (split[4].equals("")) {
                 provider = "Analog";
             } else
