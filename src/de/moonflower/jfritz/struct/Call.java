@@ -168,6 +168,16 @@ public class Call {
             outString = outString.concat(";\"FON2\"");
         else if (port.equals("2"))
             outString = outString.concat(";\"FON3\"");
+        else if (port.equals("32"))
+            outString = outString.concat(";\"DATA\"");
+        else if (port.equals("33"))
+            outString = outString.concat(";\"DATA\"");
+        else if (port.equals("34"))
+            outString = outString.concat(";\"DATA\"");
+        else if (port.equals("35"))
+            outString = outString.concat(";\"DATA\"");
+        else if (port.equals("36"))
+            outString = outString.concat(";\"DATA\"");
         else if (port.equals(""))
             outString = outString.concat(";\"\"");
         else
