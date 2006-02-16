@@ -314,7 +314,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.150 2006/02/16 11:14:41 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.151 2006/02/16 14:18:09 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -897,9 +897,6 @@ public final class JFritz {
             name = searchNameToPhoneNumber(callerstr);
         }
 
-        if (!name.equals("Unbekannt")) {
-            callerstr = callerstr + " (" + name + ")";
-        }
 
         Debug.msg("Caller: " + callerstr);
         Debug.msg("Called: " + calledstr);
@@ -912,6 +909,10 @@ public final class JFritz {
         default: {
             String outstring = JFritz.getMessage("incoming_call") + "\nvon "
                     + callerstr;
+            if (!name.equals("Unbekannt")) {
+                outstring = outstring + " (" + name + ")";
+            }
+
             if (!calledstr.equals("Unbekannt")) {
                 outstring = outstring + "\nan " + calledstr;
             }
