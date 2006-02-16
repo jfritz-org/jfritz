@@ -41,7 +41,6 @@
  * TODO: Bei den Einstellungen die MAC und IP wegnehmen
  *
  * JFritz 0.5.2
- * - Anpassung an englische Firmware (noch nicht commited)
  * - Bugfix-Anrufmonitor: Nummern werden internationalisiert
  *
  * JFritz 0.5.2
@@ -315,7 +314,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.149 2006/02/07 12:57:27 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.150 2006/02/16 11:14:41 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
