@@ -21,11 +21,14 @@ public class ShutdownThread extends Thread {
 		Debug.msg("Starting shutdown thread..");
 
 		if (jfritz.getJframe() != null) {
-			jfritz.getJframe().saveQuickDials();
-			jfritz.getPhonebook().saveToXMLFile(JFritz.PHONEBOOK_FILE);
+			/*
+		  	fritz.getPhonebook().saveToXMLFile(JFritz.PHONEBOOK_FILE);
 			jfritz.getCallerlist().saveToXMLFile(JFritz.CALLS_FILE, true);
+			*/
 
 			jfritz.saveProperties();
+			jfritz.getJframe().saveQuickDials();
+
 			if (jfritz.getCallMonitor() != null) {
 				jfritz.getCallMonitor().stopCallMonitor();
 			}
