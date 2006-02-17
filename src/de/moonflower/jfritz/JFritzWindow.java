@@ -537,7 +537,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
             final SwingWorker worker = new SwingWorker() {
                 public Object construct() {
                     boolean isdone = false;
-                    while (!isdone) {
+					int j = 0;
+					while (!isdone) {
                         setBusy(true);
                         setStatus(JFritz.getMessage("reverse_lookup"));
                         for (int i = 0; i < jfritz.getCallerlist()
@@ -547,7 +548,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                             Call call = (Call) data.get(i);
                             PhoneNumber number = call.getPhoneNumber();
                             if (number != null && (call.getPerson() == null)) {
-                                setStatus(JFritz
+                                j++;
+								setStatus(JFritz
                                         .getMessage("reverse_lookup_for")
                                         + " " + number.getIntNumber() + " ...");
                                 Debug.msg("Reverse lookup for "
@@ -564,10 +566,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
                             }
                         }
-
                         isdone = true;
                     }
-                    jfritz.getPhonebook().saveToXMLFile(JFritz.PHONEBOOK_FILE);
+                    if (j > 0) jfritz.getPhonebook().saveToXMLFile(JFritz.PHONEBOOK_FILE);
                     return null;
                 }
 
