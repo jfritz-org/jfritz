@@ -314,7 +314,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.151 2006/02/16 14:18:09 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.152 2006/02/17 15:24:39 kleinch Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -871,6 +871,7 @@ public final class JFritz {
         Debug.msg("Name: " + name);
 
         String callerstr = "", calledstr = "";
+
         if (!callerInput.startsWith("SIP")) {
             PhoneNumber caller = new PhoneNumber(callerInput);
             if (caller.getIntNumber().equals("")) {
@@ -879,12 +880,12 @@ public final class JFritz {
                 callerstr = caller.getIntNumber();
         }
 
-        if (!calledInput.startsWith("SIP")) {
+		if (!calledInput.startsWith("SIP")) {
             PhoneNumber called = new PhoneNumber(calledInput);
             if (called.getIntNumber().equals("")) {
                 calledstr = "Unbekannt";
             } else
-                calledstr = called.getIntNumber();
+                calledstr = calledInput;
         } else
             calledstr = getSIPProviderTableModel().getSipProvider(calledInput,
                     calledInput);
@@ -897,6 +898,7 @@ public final class JFritz {
             name = searchNameToPhoneNumber(callerstr);
         }
 
+		if (callerstr.startsWith("+49")) callerstr = "0" + callerstr.substring(3);
 
         Debug.msg("Caller: " + callerstr);
         Debug.msg("Called: " + calledstr);
