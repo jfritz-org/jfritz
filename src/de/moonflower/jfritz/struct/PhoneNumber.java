@@ -31,7 +31,7 @@ public class PhoneNumber implements Comparable {
 	 */
 	public PhoneNumber(String number, String type) {
 		this.type = type;
-		this.number = number;
+		if (!number.equalsIgnoreCase("Unbekannt") ) this.number = number;
 		createMobileMap();
 		refactorNumber();
 	}
