@@ -314,7 +314,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.154 2006/02/27 12:01:22 kleinch Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.155 2006/02/27 12:10:17 kleinch Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -999,6 +999,8 @@ public final class JFritz {
         Debug.msg("Provider: " + providerInput);
 
         String calledstr = "", providerstr = "", name = "";
+		String firstname = "", surname = "", company = "";
+
         if (!calledInput.startsWith("SIP")) {
             PhoneNumber called = new PhoneNumber(calledInput);
             if (called.getIntNumber().equals("")) {
@@ -1020,24 +1022,35 @@ public final class JFritz {
                     providerInput, providerInput);
 
         name = searchNameToPhoneNumber(calledstr);
+		String [] nameArray = searchFirstAndLastNameToPhoneNumber(calledstr);
+		firstname = nameArray[0];
+		surname = nameArray[1];
+		company = nameArray[2];
+
+		if (name.equals("")) name = "Unbekannt";
+		if (firstname.equals("") && surname.equals("")) surname = "Unbekannt";
+		if (company.equals("")) company = "Unbekannt";
 
 		if (calledstr.startsWith("+49")) calledstr = "0" + calledstr.substring(3);
 
         infoMsg("Ausgehender Telefonanruf\n " + "\nan " + calledstr + " ("
-                + name + ") " + "über " + providerstr + "!");
+                + name + ") " + "über " + providerstr);
         if (JFritzUtils.parseBoolean(JFritz.getProperty("option.playSounds",
                 "true"))) {
             playSound(callSound);
         }
 
-        if (JFritzUtils.parseBoolean(JFritz.getProperty(
-                "option.startExternProgram", "false")) && false) { //z.Z. noch deaktiviert
+        if (false && JFritzUtils.parseBoolean(JFritz.getProperty(
+                "option.startExternProgram", "false"))) { //z.Z. noch deaktiviert
             String programString = JFritz.getProperty("option.externProgram",
                     "");
 
             programString = programString.replaceAll("%Number", providerstr);
             programString = programString.replaceAll("%Name", name);
             programString = programString.replaceAll("%Called", calledstr);
+			programString = programString.replaceAll("%Firstname", firstname);
+			programString = programString.replaceAll("%Surname", surname);
+			programString = programString.replaceAll("%Company", company);
 
             if (programString.indexOf("%URLENCODE") > -1) {
                 try {
