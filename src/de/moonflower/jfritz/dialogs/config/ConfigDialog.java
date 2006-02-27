@@ -375,12 +375,13 @@ public class ConfigDialog extends JDialog {
         boxtypeLabel = new JLabel();
         boxpane.add(boxtypeLabel, c);
 
-        c.gridy = 6;
-        label = new JLabel("MAC-Addresse: ");
-        boxpane.add(label, c);
+		c.gridy = 6;
+		label = new JLabel("MAC-Addresse: ");
+        //boxpane.add(label, c);
         macLabel = new JLabel();
-        boxpane.add(macLabel, c);
-        return boxpane;
+        //boxpane.add(macLabel, c);
+
+		return boxpane;
     }
 
     protected JPanel createPhonePane() {
