@@ -37,8 +37,13 @@
  * CHANGELOG:
  * - Anrufen aus der Anrufliste heraus (noch nicht getestet)
  * TODO: Checken, ob alle Bibliotheken vorhanden sind
- * TODO: Beim neuen Anrufmonitor auf # achten
- * TODO: Bei den Einstellungen die MAC und IP wegnehmen
+ * TODO: Bei den Einstellungen die IP wegnehmen
+ *
+ * JFritz 0.5.3
+ * - Beim neuen Anrufmonitor auf # achten.
+ * - Callmonitor: Beim Ausführen eines externen Programmes werden %Firstname, %Surname, %Compnay ersetzt.
+ * - Beim Beenden von JFritz keine Speicherung von Calls und Phonebook mehr
+ * - Bei den Einstellungen die MAC weggenommen
  *
  * JFritz 0.5.2
  * - Bugfix-Anrufmonitor: Nummern werden internationalisiert
@@ -314,7 +319,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.155 2006/02/27 12:10:17 kleinch Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.156 2006/02/27 14:49:15 kleinch Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
