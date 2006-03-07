@@ -1118,7 +1118,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
         thread.start();
     }
 
-    private void startChosenCallMonitor() {
+    public void startChosenCallMonitor() {
         switch (Integer.parseInt(JFritz.getProperty("option.callMonitorType",
                 "0"))) {
         case 1: {
