@@ -646,7 +646,7 @@ public class JFritzUtils {
         return "";
     }
 
-    public static String replaceSpecialChars(String input) {
+    public static String convertSpecialChars(String input) {
         // XML Sonderzeichen durch ASCII Codierung ersetzen
         String out = input;
         out = out.replaceAll("&", "&#38;");
@@ -654,6 +654,17 @@ public class JFritzUtils {
         out = out.replaceAll("<", "&#60;");
         out = out.replaceAll(">", "&#62;");
         out = out.replaceAll("\"", "&#34;");
+        return out;
+    }
+
+    public static String deconvertSpecialChars(String input) {
+        // XML Sonderzeichen durch ASCII Codierung ersetzen
+        String out = input;
+        out = out.replaceAll("&#38;", "&");
+        out = out.replaceAll("&#39;", "'");
+        out = out.replaceAll("&#60;", "<");
+        out = out.replaceAll("&#62;", ">");
+        out = out.replaceAll("&#34;", "\"");
         return out;
     }
 
