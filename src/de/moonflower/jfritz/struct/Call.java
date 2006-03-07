@@ -249,7 +249,7 @@ public class Call {
         if (duration > 0)
             output = output + ("\t<duration>" + duration + "</duration>" + sep);
 
-        output = output + ("\t<comment>" + JFritzUtils.replaceSpecialChars(comment) + "</comment>" + sep);
+        output = output + ("\t<comment>" + JFritzUtils.convertSpecialChars(comment) + "</comment>" + sep);
         output = output + ("</entry>");
         return output;
     }

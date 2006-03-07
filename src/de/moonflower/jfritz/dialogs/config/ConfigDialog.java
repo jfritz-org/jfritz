@@ -141,8 +141,8 @@ public class ConfigDialog extends JDialog {
                 "option.playSounds", "true")));
         externProgramCheckBox.setSelected(JFritzUtils.parseBoolean(JFritz
                 .getProperty("option.startExternProgram", "false")));
-        externProgramTextField.setText(JFritz.getProperty(
-                "option.externProgram", ""));
+        externProgramTextField.setText(JFritzUtils.deconvertSpecialChars(JFritz.getProperty(
+                "option.externProgram", "")));
 
         callMonitorCombo.setSelectedIndex(Integer.parseInt(JFritz.getProperty(
                 "option.callMonitorType", "0")));
@@ -255,8 +255,8 @@ public class ConfigDialog extends JDialog {
 
         JFritz.setProperty("option.startExternProgram", Boolean
                 .toString(externProgramCheckBox.isSelected()));
-        JFritz.setProperty("option.externProgram", externProgramTextField
-                .getText());
+        JFritz.setProperty("option.externProgram", JFritzUtils.convertSpecialChars(externProgramTextField
+                .getText()));
 
         JFritz.setProperty("option.startcallmonitor", Boolean
                 .toString(startCallMonitorButton.isSelected()));

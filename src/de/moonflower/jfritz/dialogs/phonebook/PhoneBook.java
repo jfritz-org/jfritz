@@ -288,17 +288,17 @@ public class PhoneBook extends AbstractTableModel {
 					pw.write("\t<name>");
 					pw.newLine();
 					if (current.getFirstName().length() > 0)
-						pw.write("\t\t<firstname>" + JFritzUtils.replaceSpecialChars(current.getFirstName())
+						pw.write("\t\t<firstname>" + JFritzUtils.convertSpecialChars(current.getFirstName())
 								+ "</firstname>");
 					pw.newLine();
 					if (current.getLastName().length() > 0)
-						pw.write("\t\t<lastname>" + JFritzUtils.replaceSpecialChars(current.getLastName())
+						pw.write("\t\t<lastname>" + JFritzUtils.convertSpecialChars(current.getLastName())
 								+ "</lastname>");
 					pw.newLine();
 					pw.write("\t</name>");
 					pw.newLine();
 					if (current.getCompany().length() > 0)
-						pw.write("\t<company>" + JFritzUtils.replaceSpecialChars(current.getCompany())
+						pw.write("\t<company>" + JFritzUtils.convertSpecialChars(current.getCompany())
 								+ "</company>");
 					pw.newLine();
 				}
@@ -309,16 +309,16 @@ public class PhoneBook extends AbstractTableModel {
 					pw.write("\t<address>");
 					pw.newLine();
 					if (current.getStreet().length() > 0)
-						pw.write("\t\t<street>" + JFritzUtils.replaceSpecialChars(current.getStreet())
+						pw.write("\t\t<street>" + JFritzUtils.convertSpecialChars(current.getStreet())
 								+ "</street>");
 					pw.newLine();
 					if (current.getPostalCode().length() > 0)
-						pw.write("\t\t<postcode>" + JFritzUtils.replaceSpecialChars(current.getPostalCode())
+						pw.write("\t\t<postcode>" + JFritzUtils.convertSpecialChars(current.getPostalCode())
 								+ "</postcode>");
 					pw.newLine();
 					if (current.getCity().length() > 0)
 						pw
-						.write("\t\t<city>" + JFritzUtils.replaceSpecialChars(current.getCity())
+						.write("\t\t<city>" + JFritzUtils.convertSpecialChars(current.getCity())
 										+ "</city>");
 					pw.newLine();
 					pw.write("\t</address>");
@@ -332,7 +332,7 @@ public class PhoneBook extends AbstractTableModel {
 				while (en2.hasMoreElements()) {
 					PhoneNumber nr = (PhoneNumber) en2.nextElement();
 					pw.write("\t\t<number type=\"" + nr.getType() + "\">"
-							+ JFritzUtils.replaceSpecialChars(nr.getIntNumber()) + "</number>");
+							+ JFritzUtils.convertSpecialChars(nr.getIntNumber()) + "</number>");
 					pw.newLine();
 
 				}
@@ -343,7 +343,7 @@ public class PhoneBook extends AbstractTableModel {
 					pw.write("\t<internet>");
 					pw.newLine();
 					if (current.getEmailAddress().length() > 0)
-						pw.write("\t\t<email>" + JFritzUtils.replaceSpecialChars(current.getEmailAddress())
+						pw.write("\t\t<email>" + JFritzUtils.convertSpecialChars(current.getEmailAddress())
 								+ "</email>");
 					pw.newLine();
 					pw.write("\t</internet>");
