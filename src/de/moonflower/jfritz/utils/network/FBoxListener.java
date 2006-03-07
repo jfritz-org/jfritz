@@ -39,7 +39,6 @@ public class FBoxListener extends Thread implements CallMonitor {
     }
 
     public void run() {
-        Debug.msg("run()");
         if (connect()) {
             Debug.msg("Connected");
             readOutput();
