@@ -114,7 +114,8 @@ public class ReverseLookup {
 					d.close();
 					Debug.msg("DasOertliche Webpage: " + data);
 					Pattern p = Pattern
-							.compile("<a class=\"blb\" href=\"[^\"]*\">([^<]*)</a>(?:<br>([^<]*))?</td>");
+							.compile("<a\\s*class=\"blb\" href=\"[^\"]*\">([^<]*)</a>(?:<br>([^<]*))?</td>");
+
 					Matcher m = p.matcher(data);
 					// Get name and address
 					if (m.find()) {
