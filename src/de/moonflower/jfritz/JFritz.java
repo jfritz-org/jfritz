@@ -322,7 +322,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.157 2006/03/07 17:54:43 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.158 2006/03/08 17:01:04 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -760,6 +760,7 @@ public final class JFritz {
         removeProperty("state.warningFreeminutesShown"); // don't save
         // warningState
 
+        Debug.msg("Save window position");
         properties.setProperty("position.left", Integer.toString(jframe
                 .getLocation().x));
         properties.setProperty("position.top", Integer.toString(jframe
@@ -769,6 +770,7 @@ public final class JFritz {
         properties.setProperty("position.height", Integer.toString(jframe
                 .getSize().height));
 
+        Debug.msg("Save column widths");
         Enumeration en = jframe.getCallerTable().getColumnModel().getColumns();
         int i = 0;
         while (en.hasMoreElements()) {
@@ -782,6 +784,7 @@ public final class JFritz {
         }
 
         try {
+            Debug.msg("Save other properties");
             properties.storeToXML(JFritz.PROPERTIES_FILE);
         } catch (IOException e) {
             Debug.err("Couldn't save Properties");
