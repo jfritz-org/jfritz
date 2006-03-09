@@ -398,7 +398,6 @@ public class CallerList extends AbstractTableModel {
      * @throws IOException
      */
     public void getNewCalls() throws WrongPasswordException, IOException {
-
         alreadyKnownCalls = (Vector) unfilteredCallerData.clone();
         Debug.msg("box.address: " + JFritz.getProperty("box.address"));
         Debug.msg("box.password: " + JFritz.getProperty("box.password"));
@@ -413,7 +412,7 @@ public class CallerList extends AbstractTableModel {
         Vector data = new Vector();
 **/
 
-        Vector data = JFritzUtils.retrieveCallersFromFritzBox(JFritz
+        Vector data = JFritzUtils.retrieveCSVList(JFritz
                 .getProperty("box.address"), Encryption.decrypt(JFritz
                 .getProperty("box.password")), JFritz
                 .getProperty("country.prefix"), JFritz
@@ -422,8 +421,10 @@ public class CallerList extends AbstractTableModel {
                         .getProperty("area.code"), JFritzUtils.detectBoxType(
                         JFritz.getProperty("box.firmware"), JFritz
                                 .getProperty("box.address"), Encryption
-                                .decrypt(JFritz.getProperty("box.password"))),
-                jfritz);
+                                .decrypt(JFritz.getProperty("box.password"))), jfritz);
+
+        if (data == null) return;
+        Debug.msg(data);
 
         int newEntries = 0;
         for (Enumeration el = data.elements(); el.hasMoreElements();) {
