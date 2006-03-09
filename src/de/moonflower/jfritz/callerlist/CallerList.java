@@ -424,7 +424,7 @@ public class CallerList extends AbstractTableModel {
                                 .decrypt(JFritz.getProperty("box.password"))), jfritz);
 
         if (data == null) return;
-        Debug.msg(data);
+        Debug.msg(data.toString());
 
         int newEntries = 0;
         for (Enumeration el = data.elements(); el.hasMoreElements();) {
