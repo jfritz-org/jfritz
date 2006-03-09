@@ -11,6 +11,7 @@
  * Authors working on the project:
  * 		akw			Arno Willig <akw@thinkwiki.org>
  * 		robotniko	Robert Palmer <robotniko@gmx.de>
+ * 		kleinc		Christian Klein <kleinch@users.sourceforge.net>
  *
  *
  * This tool is free software; you can redistribute it and/or modify it
@@ -324,7 +325,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.160 2006/03/09 14:25:13 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.161 2006/03/09 14:56:34 kleinch Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
