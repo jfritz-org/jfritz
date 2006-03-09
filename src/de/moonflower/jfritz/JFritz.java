@@ -45,6 +45,8 @@
  * - Bei den Einstellungen die MAC weggenommen
  * - Bugfix: Sonderzeichen bei "Externes Programm starten" werden korrekt gespeichert
  * - Watchdog: Anrufmonitor wird nach dem Ruhezustand neu gestartet
+ * - Anrufliste wird per CSV und nicht mehr per Webinterface abgeholt
+ * - Unterstützung für Firmware xx.04.03
  *
  * JFritz 0.5.3
  * - Bugfix-Anrufmonitor: Nummern werden internationalisiert
@@ -322,7 +324,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.158 2006/03/08 17:01:04 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.159 2006/03/09 14:09:56 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
