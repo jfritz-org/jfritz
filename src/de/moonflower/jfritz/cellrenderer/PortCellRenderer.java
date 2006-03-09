@@ -49,10 +49,10 @@ public class PortCellRenderer extends DefaultTableCellRenderer {
 			else if (port.equals(""))
 				portStr = "";
 			else
-				portStr = "Port " + port;
+				portStr = port;
 
 			if (!port.equals(""))
-				setToolTipText("Port " + port);
+				setToolTipText(port);
 
 			label.setText(portStr);
 			label.setHorizontalAlignment(JLabel.CENTER);
