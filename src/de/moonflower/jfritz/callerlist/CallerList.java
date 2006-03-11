@@ -249,6 +249,7 @@ public class CallerList extends AbstractTableModel {
 
     }
 
+
     /**
      * Loads calls from xml file
      *
@@ -1062,4 +1063,66 @@ public class CallerList extends AbstractTableModel {
         }
         return columnName;
     }
+    /**
+     * Copies short phonenumber to clipboard.
+     * If more than one call is selected, the bottom-most one in the CallerList is considered.
+     *
+     * @author Benjamin Schmitt
+     */
+    public void copyNumberToClipboard(){
+        boolean wholeCallerList = false;
+
+    	int rows[] = null;
+        if (jfritz != null && jfritz.getJframe() != null) {
+            rows = jfritz.getJframe().getCallerTable().getSelectedRows();
+        }
+    	if (!wholeCallerList && rows != null && rows.length > 0) {
+            for (int i = 0; i < rows.length; i++) {
+                Call currentCall = (Call) filteredCallerData
+                        .elementAt(rows[i]);
+
+                //copy bottom-most, selected number to clipboard
+                if (currentCall.getPhoneNumber()!=null)
+                    jfritz.copyToClipboard(currentCall.getPhoneNumber().getShortNumber());
+
+            }
+    	}
+    }
+
+    /**
+     * Copies address to clipboard.
+     * If more than one call is selected, the bottom-most one in the CallerList is considered.
+     *
+     * @author Benjamin Schmitt
+     */
+    public void copyAddressToClipboard(){
+        boolean wholeCallerList = false;
+
+    	int rows[] = null;
+        if (jfritz != null && jfritz.getJframe() != null) {
+            rows = jfritz.getJframe().getCallerTable().getSelectedRows();
+        }
+    	if (!wholeCallerList && rows != null && rows.length > 0) {
+            for (int i = 0; i < rows.length; i++) {
+                Call currentCall = (Call) filteredCallerData
+                        .elementAt(rows[i]);
+
+                //create address
+                String separator = System.getProperty("line.separator"); //new String("\r\n");
+                String address = new String(
+                		currentCall.getPerson().getCompany()+separator+
+                		currentCall.getPerson().getFirstName()+" "+
+                		currentCall.getPerson().getLastName()+separator+
+                		currentCall.getPerson().getStreet()+separator+
+                		currentCall.getPerson().getPostalCode()+" "+
+                		currentCall.getPerson().getCity()+separator
+                		);
+
+                //copy bottom-most, selected number to clipboard
+                jfritz.copyToClipboard(address);
+
+            }
+    	}
+    }
+
 }

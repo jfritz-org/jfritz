@@ -1174,5 +1174,25 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
             break;
         }
         }
+
+
     }
+    /**
+     * Copies phonenumber to clipboard by using method copyNumberToClipboard in CallerList.
+     *
+     * @author Benjamin Schmitt
+     */
+    public void copyNumberToClipboard(){
+       	jfritz.getCallerlist().copyNumberToClipboard();
+    }
+
+    /**
+     * Copies address to clipboard by using method copyAddressToClipboard in CallerList.
+     *
+     * @author Benjamin Schmitt
+     */
+    public void copyAddressToClipboard(){
+       	jfritz.getCallerlist().copyAddressToClipboard();
+    }
+
 }

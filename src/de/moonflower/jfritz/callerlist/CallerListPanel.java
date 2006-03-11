@@ -8,6 +8,7 @@ import java.awt.BorderLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
@@ -18,6 +19,7 @@ import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -328,7 +330,23 @@ public class CallerListPanel extends JPanel implements ActionListener,
         menuItem.addActionListener(this);
         menuItem.setEnabled(false);
         callerlistPopupMenu.add(menuItem);
+//Benjamin Schmitt
+        callerlistPopupMenu.addSeparator();
 
+        JMenu clipboardMenu = new JMenu("Zwischenablage");
+        clipboardMenu.setMnemonic(KeyEvent.VK_Z);
+        JMenuItem item = new JMenuItem("Anschrift", KeyEvent.VK_A);
+        item.setActionCommand("clipboard_adress");
+        item.addActionListener(this);
+        clipboardMenu.add(item);
+
+        item = new JMenuItem("Nummer", KeyEvent.VK_N);
+        item.setActionCommand("clipboard_number");
+        item.addActionListener(this);
+        clipboardMenu.add(item);
+
+        callerlistPopupMenu.add(clipboardMenu);
+//END Benjamin Schmitt
         MouseAdapter popupListener = new PopupListener(callerlistPopupMenu);
 
         callerTable.addMouseListener(popupListener);
@@ -630,7 +648,14 @@ public class CallerListPanel extends JPanel implements ActionListener,
             jfritz.getJframe().exportCSV();
         } else if (e.getActionCommand().equals("export_xml")) {
             jfritz.getJframe().exportXML();
+//Benjamin Schmitt
+        } else if (e.getActionCommand().equals("clipboard_number")) {
+    		jfritz.getJframe().copyNumberToClipboard();
+        } else if (e.getActionCommand().equals("clipboard_adress")) {
+    		jfritz.getJframe().copyAddressToClipboard();
+//END Benjamin Schmitt
         }
+
     }
 
     /**
