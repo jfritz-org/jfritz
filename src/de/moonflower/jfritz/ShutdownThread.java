@@ -26,6 +26,8 @@ public class ShutdownThread extends Thread {
 			jfritz.getCallerlist().saveToXMLFile(JFritz.CALLS_FILE, true);
 			*/
 
+			JFritz.setProperty("jfritz.isRunning","false");
+			Debug.msg("Multiple instance lock: release lock.");
 			jfritz.saveProperties();
 			jfritz.getJframe().saveQuickDials();
 
