@@ -228,7 +228,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	 * Removes selected persons from phonebook
 	 *
 	 */
-	private void removeSelectedPersons() {
+	public void removeSelectedPersons() {
 		if (JOptionPane.showConfirmDialog(this,
 				"Markierte Einträge wirklich löschen?", JFritz.PROGRAM_NAME,
 				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {

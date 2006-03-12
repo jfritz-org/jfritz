@@ -28,7 +28,7 @@ public class PhoneBookTable extends JTable {
 	/**
 	 *
 	 */
-	public PhoneBookTable(JFritz jfritz) {
+	public PhoneBookTable(final JFritz jfritz) {
 		this.jfritz = jfritz;
 		setModel(jfritz.getPhonebook());
 		setRowHeight(24);
@@ -49,7 +49,7 @@ public class PhoneBookTable extends JTable {
 				}
 				else if (e.getKeyCode() == KeyEvent.VK_DELETE) {
 					// Delete selected entries
-					((PhoneBook)getModel()).removeEntries();
+					jfritz.getJframe().getPhoneBookPanel().removeSelectedPersons();
 				}
 			}
 		});

@@ -236,29 +236,6 @@ public class PhoneBook extends AbstractTableModel {
 		updateFilter();
 	}
 
-	public void removeEntries() {
-		if (JOptionPane.showConfirmDialog(jfritz.getJframe(), "Wirklich " // TODO
-				// I18N
-				+ JFritz.getMessage("delete_entries") + "?",
-				JFritz.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-			Debug.msg("Removing entries");
-			int row[] = jfritz.getJframe().getPhoneBookPanel().getPhoneBookTable().getSelectedRows();
-			if (row.length > 0) {
-				Vector personsToDelete = new Vector();
-				for (int i = 0; i < row.length; i++) {
-					personsToDelete.add(filteredPersons.get(row[i]));
-				}
-				Enumeration en = personsToDelete.elements();
-				while (en.hasMoreElements()) {
-					unfilteredPersons.remove(en.nextElement());
-				}
-				updateFilter();
-				saveToXMLFile(JFritz.CALLS_FILE);
-				fireTableDataChanged();
-			}
-		}
-	}
-
 	/**
 	 * Saves phonebook to xml file.
 	 *
