@@ -216,13 +216,12 @@ public class JFritzUtils {
             String areaPrefix, String areaCode, FritzBoxFirmware firmware,
             JFritz jfritz) throws WrongPasswordException, IOException {
 
-        String data = "";
         String postdata = firmware.getAccessMethod() + POSTDATA_LIST
                 + URLEncoder.encode(password, "ISO-8859-1");
         String urlstr = "http://" + box_address + "/cgi-bin/webcm";
         Debug.msg("Postdata: " + postdata);
         Debug.msg("Urlstr: " + urlstr);
-        data = fetchDataFromURL(urlstr, postdata);
+        fetchDataFromURL(urlstr, postdata);
     }
 
     /**

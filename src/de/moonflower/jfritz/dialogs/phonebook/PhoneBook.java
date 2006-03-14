@@ -21,7 +21,6 @@ import java.util.Enumeration;
 import java.util.Vector;
 import java.io.UnsupportedEncodingException;
 
-import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
