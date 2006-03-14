@@ -336,7 +336,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.168 2006/03/14 14:40:30 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.169 2006/03/14 14:46:38 kleinch Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -940,6 +940,13 @@ public final class JFritz {
 				name[2] = callerperson.getCompany();
                 Debug.msg("Found on dasoertliche.de: " + name[1] + ", " + name[0]);
                 Debug.msg("Add person to database");
+                phonebook.addEntry(person);
+                phonebook.fireTableDataChanged();
+            } else {
+                person = new Person();
+                person.addNumber(new PhoneNumber(caller));
+                Debug.msg("Found no person");
+                Debug.msg("Add dummy person to database");
                 phonebook.addEntry(person);
                 phonebook.fireTableDataChanged();
             }
