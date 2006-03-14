@@ -124,7 +124,7 @@ public class PhoneNumber implements Comparable {
 		String areaCode = JFritz.getProperty("area.code");
 		String areaPrefix = JFritz.getProperty("area.prefix");
 
-		if ((number.length() < 4) // A valid number??
+		if ((number.length() < 3) // A valid number??
 				|| (number.startsWith("+")) // International number
 				|| isSIPNumber() // SIP Number
 				|| isEmergencyCall() // Emergency
