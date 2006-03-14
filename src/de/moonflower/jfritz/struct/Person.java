@@ -180,26 +180,32 @@ public class Person {
 	}
 
 	public String getFirstName() {
+        if (firstName == null) return "";
 		return firstName;
 	}
 
 	public String getCompany() {
+        if (company == null) return "";
 		return company;
 	}
 
 	public String getLastName() {
+        if (lastName == null) return "";
 		return lastName;
 	}
 
 	public String getStreet() {
+        if (street == null) return "";
 		return street;
 	}
 
 	public String getPostalCode() {
+        if (postalCode == null) return "";
 		return postalCode;
 	}
 
 	public String getCity() {
+        if (city == null) return "";
 		return city;
 	}
 
@@ -242,6 +248,7 @@ public class Person {
 	}
 
 	public String getEmailAddress() {
+        if (emailAddress == null) return "";
 		return emailAddress;
 	}
 
@@ -277,6 +284,7 @@ public class Person {
 	 * @return Returns the standard Number.
 	 */
 	public final String getStandard() {
+        if (standard == null) return "";
 		return standard;
 	}
 
