@@ -332,7 +332,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.163 2006/03/12 14:17:28 little_ben Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.164 2006/03/14 11:14:34 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -516,6 +516,7 @@ public final class JFritz {
             try {
                 systray = SystemTray.getDefaultSystemTray();
                 createTrayMenu();
+
             } catch (Exception e) {
                 Debug.err(e.toString());
                 SYSTRAY_SUPPORT = false;
@@ -1056,7 +1057,7 @@ public final class JFritz {
             } catch (IOException e) {
                 Debug.errDlg("Konnte externes Programm nicht ausführen: "
                         + programString);
-                e.printStackTrace();
+                Debug.err(e.toString());
             }
         }
 
@@ -1158,7 +1159,7 @@ public final class JFritz {
             } catch (IOException e) {
                 Debug.errDlg("Konnte externes Programm nicht ausführen: "
                         + programString);
-                e.printStackTrace();
+                Debug.err(e.toString());
             }
         }
     }

@@ -111,7 +111,7 @@ public class Telnet {
 				}
 			} catch (Exception e) {
 				System.err.println("Error in Class Telnet");
-				e.printStackTrace();
+                Debug.err(e.toString());
 				return;
 			}
 		}
@@ -279,7 +279,7 @@ public class Telnet {
 			out.println(value);
 			out.flush();
 		} catch (Exception e) {
-			e.printStackTrace();
+            Debug.err(e.toString());
 		}
 	}
 
@@ -295,7 +295,7 @@ public class Telnet {
 			String data = readUntil(prompt + " ");
 			return data;
 		} catch (Exception e) {
-			e.printStackTrace();
+            Debug.err(e.toString());
 		}
 		return null;
 	}

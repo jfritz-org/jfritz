@@ -162,7 +162,7 @@ public class FBoxListener extends Thread implements CallMonitor {
                 Thread.sleep(zufallszahl.nextInt(3000));
             } catch (InterruptedException e) {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                Debug.err(e.toString());
             }
             jfritz.getJframe().fetchList();
         }

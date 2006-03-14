@@ -53,7 +53,7 @@ public class UPNPUtils {
 		} catch (SocketTimeoutException e) {
 			Debug.msg("Timeout for SSDP");
 		} catch (SocketException e) {
-			e.printStackTrace();
+            Debug.err(e.toString());
 		} catch (IOException e) {
 			Debug.err(e.toString());
 		}
@@ -114,7 +114,7 @@ public class UPNPUtils {
 				data += str + "\n";
 
 		} catch (IOException e) {
-			e.printStackTrace();
+            Debug.err(e.toString());
 		}
 		return data;
 	}

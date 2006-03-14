@@ -286,7 +286,7 @@ public class SyslogListener extends Thread implements CallMonitor {
 				}
 			}
 		} catch (SocketException e) {
-			e.printStackTrace();
+            Debug.err(e.toString());
 		}
 		return addresses;
 	}

@@ -224,7 +224,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
             // Betriebssystems genommen wird
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Debug.err(ex.toString());
         }
     }
 

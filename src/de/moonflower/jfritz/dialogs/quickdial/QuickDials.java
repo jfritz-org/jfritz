@@ -203,7 +203,7 @@ public class QuickDials extends AbstractTableModel {
 			Debug.err("Error with ParserConfiguration!");
 		} catch (SAXException e) {
 			Debug.err("Error on parsing " + filename + "!");
-			e.printStackTrace();
+            Debug.err(e.toString());
 		} catch (IOException e) {
 			Debug.err("Could not read " + filename + "!");
 		}

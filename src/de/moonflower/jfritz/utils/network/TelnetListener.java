@@ -112,7 +112,7 @@ public class TelnetListener extends Thread implements CallMonitor {
 
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Debug.err(e.toString());
             isRunning = false;
         }
         telnet.disconnect();

@@ -596,7 +596,7 @@ public class JFritzUtils {
                 list.add(new Call(jfritz, symbol, date, number, port, route,
                         duration));
             } catch (ParseException e) {
-                e.printStackTrace();
+                Debug.err(e.toString());
             }
         }
         return list;
@@ -716,7 +716,7 @@ public class JFritzUtils {
                         duration));
 
             } catch (ParseException e) {
-                e.printStackTrace();
+                Debug.err(e.toString());
             }
         }
         return list;

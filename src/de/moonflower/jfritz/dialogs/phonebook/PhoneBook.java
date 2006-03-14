@@ -391,7 +391,7 @@ public class PhoneBook extends AbstractTableModel {
 			Debug.err("Error with ParserConfiguration!");
 		} catch (SAXException e) {
 			Debug.err("Error on parsing " + filename + "!");
-			e.printStackTrace();
+			Debug.err(e.toString());
 			if (e.getLocalizedMessage().startsWith("Relative URI")
 					|| e.getLocalizedMessage().startsWith(
 							"Invalid system identifier")) {

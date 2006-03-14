@@ -59,7 +59,7 @@ public class CallmessageListener extends Thread implements CallMonitor {
 					wait(5000);
 				}
 			} catch (InterruptedException e1) {
-				e1.printStackTrace();
+                Debug.err(e1.toString());
 			}
 			jfritz.stopCallMonitor();
 		}
