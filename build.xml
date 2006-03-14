@@ -6,6 +6,7 @@
 	<property name="dist" value="dist"/>
 	<property name="lib" value="lib"/>
 	<property name="ant.project.name" value = "JFritz! Documentation"/>
+	<property name="jfritzdir" value="C:\Programme\JFritz"/>
 
 	<!-- compiler flags -->
 	<property name="javac.debug" value="true"/>
@@ -83,4 +84,9 @@
 	<target name="update">
 		<cvs command="update"/>
 	</target>
+
+	<target name="copyToFritzDir">
+		<copy file="dist/jfritz.jar" todir="${jfritzdir}"/>
+	</target>
+
 </project>
