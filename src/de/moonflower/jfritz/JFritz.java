@@ -333,7 +333,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.166 2006/03/14 13:42:55 little_ben Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.167 2006/03/14 14:00:53 kleinch Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -912,7 +912,7 @@ public final class JFritz {
     }
 
     private String[] searchFirstAndLastNameToPhoneNumber(String caller) {
-        String name[] = new String[3];
+        String name[] = {"", "", ""};
         PhoneNumber callerPhoneNumber = new PhoneNumber(caller);
         Debug.msg("Searchin in local database ...");
         Person callerperson = phonebook.findPerson(callerPhoneNumber);
