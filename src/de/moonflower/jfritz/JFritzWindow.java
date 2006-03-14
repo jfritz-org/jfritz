@@ -762,8 +762,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                 + "(c) 2005 by " + JFritz.PROGRAM_AUTHOR + "\n\n"
                 + "Developers:\n" + JFritz.PROGRAM_AUTHOR + "\n"
                 + "Robert Palmer <robotniko@gmx.de>\n"
-				+ "Christian Klein <kleinch@users.sourceforge.net>\n\n"
-                + JFritz.PROGRAM_URL
+				+ "Christian Klein <kleinch@users.sourceforge.net>\n"
+				+ "Benjamin Schmitt <little_ben@users.sourceforge.net>\n"
+                + "\n"+JFritz.PROGRAM_URL
                 + "\n\n" + "This tool is developed and released under\n"
                 + "the terms of the GNU General Public License\n\n"
                 + "Long live Free Software!");

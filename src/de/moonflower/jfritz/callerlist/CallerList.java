@@ -1083,8 +1083,16 @@ public class CallerList extends AbstractTableModel {
 
                 //copy bottom-most, selected number to clipboard
                 if (currentCall.getPhoneNumber()!=null)
-                    jfritz.copyToClipboard(currentCall.getPhoneNumber().getShortNumber());
+                {
+	                String callerstr=(currentCall.getPhoneNumber()!=null?currentCall.getPhoneNumber().getIntNumber():"");
 
+	                	if (callerstr.startsWith("+49"))
+	                		callerstr = "0" + callerstr.substring(3);
+	                	jfritz.copyToClipboard(callerstr);
+	                	Debug.msg("CallerList::copyNumberToClipboard: copied "+callerstr);
+                }
+                else
+                 	Debug.msg("CallerList::copyNumberToClipboard: phoneNumber = null - nothing copied!");
             }
     	}
     }
@@ -1096,31 +1104,47 @@ public class CallerList extends AbstractTableModel {
      * @author Benjamin Schmitt
      */
     public void copyAddressToClipboard(){
-        boolean wholeCallerList = false;
 
     	int rows[] = null;
         if (jfritz != null && jfritz.getJframe() != null) {
             rows = jfritz.getJframe().getCallerTable().getSelectedRows();
         }
-    	if (!wholeCallerList && rows != null && rows.length > 0) {
+    	if (rows != null && rows.length > 0) {
             for (int i = 0; i < rows.length; i++) {
                 Call currentCall = (Call) filteredCallerData
                         .elementAt(rows[i]);
 
                 //create address
-                String separator = System.getProperty("line.separator"); //new String("\r\n");
-                String address = new String(
-                		currentCall.getPerson().getCompany()+separator+
-                		currentCall.getPerson().getFirstName()+" "+
-                		currentCall.getPerson().getLastName()+separator+
-                		currentCall.getPerson().getStreet()+separator+
-                		currentCall.getPerson().getPostalCode()+" "+
-                		currentCall.getPerson().getCity()+separator
-                		);
+                String lineSeparator = System.getProperty("line.separator"); //new String("\r\n");
+                String wordSeparator = " "; //used to separate words in one line, e.g. between firstname an surname
 
-                //copy bottom-most, selected number to clipboard
-                jfritz.copyToClipboard(address);
+                if (currentCall.getPerson()!=null)
+                {
+	                String company=(currentCall.getPerson().getCompany()!=null?currentCall.getPerson().getCompany():"");
+	                String firstName=(currentCall.getPerson().getFirstName()!=null?currentCall.getPerson().getFirstName():"");
+	                String lastName=(currentCall.getPerson().getLastName()!=null?currentCall.getPerson().getLastName():"");
+	                String street=(currentCall.getPerson().getStreet()!=null?currentCall.getPerson().getStreet():"");
+	                String postalCode=(currentCall.getPerson().getPostalCode()!=null?currentCall.getPerson().getPostalCode():"");
+	                String city=(currentCall.getPerson().getCity()!=null?currentCall.getPerson().getCity():"");
 
+	                String address = new String(
+	                		(company!=""?company+lineSeparator:"")+
+	                		(firstName!=""?firstName+wordSeparator:"")+
+	                		(lastName!=""?lastName+lineSeparator:"")+
+	                		(street!=""?street+lineSeparator:"")+
+	                		(postalCode!=""?postalCode+wordSeparator:"")+
+	                		(city!=""?city+lineSeparator:"")
+	                		);
+
+	                //copy bottom-most, selected number to clipboard
+	                if (address!=null && (!address.equals("")))
+	                {
+	                	jfritz.copyToClipboard(address);
+	                	Debug.msg("CallerList::copyAddressToClipboard: copied "+address.replaceAll(lineSeparator," - "));
+	                }
+                }
+                else
+                	Debug.msg("CallerList::copyAddressToClipboard: Person = null - nothing copied!");
             }
     	}
     }

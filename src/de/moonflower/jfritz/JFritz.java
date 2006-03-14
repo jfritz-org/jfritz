@@ -333,7 +333,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.165 2006/03/14 11:35:53 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.166 2006/03/14 13:42:55 little_ben Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -1393,8 +1393,11 @@ public final class JFritz {
     public void copyToClipboard(String text){
                 try{
                 	Clipboard systemClip = Toolkit.getDefaultToolkit().getSystemClipboard();
-                	StringSelection stringSelection = new StringSelection(text);
-                	systemClip.setContents(stringSelection, stringSelection);
+                	if (text!=null)
+                	{
+                		StringSelection stringSelection = new StringSelection(text);
+                		systemClip.setContents(stringSelection, stringSelection);
+                	}
                 }catch(IllegalStateException ise)
                 {
                 	Debug.err("Cannot copy "+text+" into clipboard (clipboard not available)");

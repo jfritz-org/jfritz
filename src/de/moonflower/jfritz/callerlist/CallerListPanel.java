@@ -330,23 +330,24 @@ public class CallerListPanel extends JPanel implements ActionListener,
         menuItem.addActionListener(this);
         menuItem.setEnabled(false);
         callerlistPopupMenu.add(menuItem);
-//Benjamin Schmitt
+
         callerlistPopupMenu.addSeparator();
 
         JMenu clipboardMenu = new JMenu("Zwischenablage");
         clipboardMenu.setMnemonic(KeyEvent.VK_Z);
-        JMenuItem item = new JMenuItem("Anschrift", KeyEvent.VK_A);
-        item.setActionCommand("clipboard_adress");
-        item.addActionListener(this);
-        clipboardMenu.add(item);
 
-        item = new JMenuItem("Nummer", KeyEvent.VK_N);
+        JMenuItem item= new JMenuItem("Nummer", KeyEvent.VK_N);
         item.setActionCommand("clipboard_number");
         item.addActionListener(this);
         clipboardMenu.add(item);
 
+        item = new JMenuItem("Anschrift", KeyEvent.VK_A);
+        item.setActionCommand("clipboard_adress");
+        item.addActionListener(this);
+        clipboardMenu.add(item);
+
         callerlistPopupMenu.add(clipboardMenu);
-//END Benjamin Schmitt
+
         MouseAdapter popupListener = new PopupListener(callerlistPopupMenu);
 
         callerTable.addMouseListener(popupListener);
