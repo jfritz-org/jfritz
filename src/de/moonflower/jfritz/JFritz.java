@@ -12,7 +12,7 @@
  * 		akw			Arno Willig <akw@thinkwiki.org>
  * 		robotniko	Robert Palmer <robotniko@gmx.de>
  * 		kleinc		Christian Klein <kleinch@users.sourceforge.net>
- *
+ *      little_ben  Benjamin Schmitt <little_ben@users.sourceforge.net>
  *
  * This tool is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by
@@ -43,6 +43,9 @@
  * - Nummer und Anschrift können aus der Anrufliste heraus in die Zwischenablage kopiert werden
  * - Schutz vor mehrfachen Programmstart
  * - Bugfix: Start auch bei fehlendem Tray
+ * - Bugfix: Anrufmonitor arbeitete bei einem Reverselookup einer nicht im Telefonbuch
+ *           eingetragenen Person nicht mehr
+ * - Bugfix: Eintragen einer über Reverse-Lookup gefundenen Person korrigiert
  *
  * JFritz 0.5.4
  * - Beim neuen Anrufmonitor auf # achten.
@@ -333,7 +336,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.167 2006/03/14 14:00:53 kleinch Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.168 2006/03/14 14:40:30 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -906,6 +909,13 @@ public final class JFritz {
                 Debug.msg("Add person to database");
                 phonebook.addEntry(person);
                 phonebook.fireTableDataChanged();
+            } else {
+                person = new Person();
+                person.addNumber(new PhoneNumber(caller));
+                Debug.msg("Found no person");
+                Debug.msg("Add dummy person to database");
+                phonebook.addEntry(person);
+                phonebook.fireTableDataChanged();
             }
         }
         return name;
@@ -920,7 +930,7 @@ public final class JFritz {
             name[0] = callerperson.getFirstName();
 			name[1] = callerperson.getLastName();
 			name[2] = callerperson.getCompany();
-			Debug.msg("Found on dasoertliche.de: " + name[1] + ", " + name[0]);
+			Debug.msg("Found in local database: " + name[1] + ", " + name[0]);
         } else {
             Debug.msg("Searchin on dasoertliche.de ...");
             Person person = ReverseLookup.lookup(callerPhoneNumber);
