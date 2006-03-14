@@ -42,6 +42,7 @@
  * JFritz 0.5.5
  * - Nummer und Anschrift können aus der Anrufliste heraus in die Zwischenablage kopiert werden
  * - Schutz vor mehrfachen Programmstart
+ * - Bugfix: Start auch bei fehlendem Tray
  *
  * JFritz 0.5.4
  * - Beim neuen Anrufmonitor auf # achten.
@@ -332,7 +333,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.164 2006/03/14 11:14:34 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.165 2006/03/14 11:35:53 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -516,7 +517,9 @@ public final class JFritz {
             try {
                 systray = SystemTray.getDefaultSystemTray();
                 createTrayMenu();
-
+            } catch (UnsatisfiedLinkError ule) {
+                Debug.err(ule.toString());
+                SYSTRAY_SUPPORT = false;
             } catch (Exception e) {
                 Debug.err(e.toString());
                 SYSTRAY_SUPPORT = false;
