@@ -50,6 +50,7 @@ public class FBoxListener extends Thread implements CallMonitor {
             Debug.msg("Trying to connect to "
                     + JFritz.getProperty("box.address") + ":1012");
             clientSocket = new Socket(JFritz.getProperty("box.address"), 1012);
+            clientSocket.setKeepAlive(true);
             return true;
         } catch (UnknownHostException uhe) {
             Debug.msg("Unknown host exception: " + uhe.toString());
