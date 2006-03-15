@@ -9,6 +9,7 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
@@ -21,6 +22,7 @@ import java.util.Vector;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -287,6 +289,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
         button.setToolTipText(JFritz.getMessage("quickdials"));
         mBar.add(button);
 
+        button = new JButton();
+        button.setActionCommand("delete_fritzbox_callerlist");
+        button.addActionListener(this);
+        button.setIcon(getImage("DeleteList.gif"));
+        button.setToolTipText(JFritz.getMessage("delete_fritzbox_callerlist"));
+        mBar.add(button);
+
         mBar.addSeparator();
 
         button = new JButton();
@@ -346,6 +355,12 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
         item = new JMenuItem("Anrufliste drucken/speichern");
         item.setActionCommand("print_callerlist");
+        item.addActionListener(this);
+        jfritzMenu.add(item);
+
+        item = new JMenuItem(JFritz.getMessage("delete_fritzbox_callerlist"));
+        item.setActionCommand("delete_fritzbox_callerlist");
+        item.setMnemonic(KeyEvent.VK_F);
         item.addActionListener(this);
         jfritzMenu.add(item);
 
@@ -463,6 +478,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
      * Fetches list from box
      */
     public void fetchList() {
+    	fetchList(false);
+    }
+
+    /**
+     * Fetches list from box
+     */
+    public void fetchList(final boolean deleteFritzBoxCallerList) {
         if (!isretrieving) { // Prevent multiple clicking
             isretrieving = true;
             tabber.setSelectedComponent(callerListPanel);
@@ -474,7 +496,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                         try {
                             setBusy(true);
                             setStatus(JFritz.getMessage("fetchdata"));
-                            jfritz.getCallerlist().getNewCalls();
+                            jfritz.getCallerlist().getNewCalls(deleteFritzBoxCallerList);
                             isdone = true;
                         } catch (WrongPasswordException e) {
                             setBusy(false);
@@ -910,6 +932,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
             showStatsDialog();
         else if (e.getActionCommand() == "fetchList")
             fetchList();
+        else if (e.getActionCommand() == "delete_fritzbox_callerlist")
+        	deleteFritzBoxCallerList();
         else if (e.getActionCommand() == "fetchTask")
             fetchTask(((JToggleButton) e.getSource()).isSelected());
         else if (e.getActionCommand() == "callMonitor") {
@@ -1196,4 +1220,23 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
        	jfritz.getCallerlist().copyAddressToClipboard();
     }
 
+    /**
+     * Deletes the caller list in Fritz!Box after having actualized it with the JFritz-CallerList.
+     * Method uses JFritzWindow.fetchList(true) to delete the caller list.
+     *
+     * @author Benjamin Schmitt
+     */
+    public void deleteFritzBoxCallerList()
+    {
+    	//TODO:Set focus to Cancel-Button
+    	int answer = JOptionPane.showConfirmDialog(
+    			this,
+    			JFritz.getMessage("delete_fritzbox_callerlist_confirm_msg"),
+    			JFritz.getMessage("delete_fritzbox_callerlist"),
+    			JOptionPane.YES_NO_OPTION
+    			);
+
+    	if (answer==JOptionPane.YES_OPTION)
+    		fetchList(true); //param true indicates that FritzBox-CallerList is to be deleted
+    }
 }
