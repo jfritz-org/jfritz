@@ -337,7 +337,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.170 2006/03/15 00:19:12 little_ben Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.171 2006/03/15 19:06:45 little_ben Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -399,56 +399,68 @@ public final class JFritz {
 
     /**
      * Constructs JFritz object
+     * @author Benjamin Schmitt
      */
     public JFritz(boolean fetchCalls, boolean csvExport, String csvFileName,
-            boolean clearList) {
+            boolean clearList){
+    	this(fetchCalls,csvExport,csvFileName,clearList,true);
+    }
+
+        /**
+     * Constructs JFritz object
+     */
+    public JFritz(boolean fetchCalls, boolean csvExport, String csvFileName,
+            boolean clearList, boolean enableInstanceControl) {
         jfritz = this;
         loadMessages(new Locale("de", "DE"));
         loadProperties();
 
-        //check isRunning and exit or set lock
-        isRunning=(properties.getProperty("jfritz.isRunning","false").equals("true")?true:false);
-        if (!isRunning)
+        if (enableInstanceControl)
         {
-        	Debug.msg("Multiple instance lock: set lock.");
-        	properties.setProperty("jfritz.isRunning","true");
+	        //check isRunning and exit or set lock
+	        isRunning=(properties.getProperty("jfritz.isRunning","false").equals("true")?true:false);
+	        if (!isRunning)
+	        {
+	        	Debug.msg("Multiple instance lock: set lock.");
+	        	properties.setProperty("jfritz.isRunning","true");
+	        }
+	        else
+	        {
+	        	Debug.msg("Multiple instance lock: Another instance is already running.");
+	        	//JOptionPane.showMessageDialog(null,JFritz.PROGRAM_NAME+" kann nicht mehrfach gestartet werden.","Information",JOptionPane.OK_OPTION+JOptionPane.INFORMATION_MESSAGE);
+	        	int answer=JOptionPane.showConfirmDialog(null,
+	        			JFritz.PROGRAM_NAME+" sollte nicht mehrfach gestartet werden!"
+
+	        			+"\n\nHinweis:"
+	        			+"\nSollten Sie diese Meldung sehen, obwohl Sie "+JFritz.PROGRAM_NAME+" nur einmal"
+	        			+"\ngestartet haben, so liegt dies vermutlich daran, dass eine vorige "
+	        			+"\n"+JFritz.PROGRAM_NAME+"-Intstanz unplanmäßig beendet wurde (z.B. durch einen "
+	        			+"\nSystemabsturz). "
+	        			+"\nIn diesem Fall können Sie JFritz mit diesem Dialog starten."
+
+	        			+"\n\nBitte beachten Sie jedoch, dass "+JFritz.PROGRAM_NAME+" NICHT MEHRFACH gestartet "+""
+	        			+"\nwerden sollte, da es sonst zu DATENVERLUST kommen kann."
+
+	        			+"\n\nSoll diese Instanz von "+JFritz.PROGRAM_NAME+" beendet werden?","Information",JOptionPane.YES_NO_OPTION);
+	        	if (answer==JOptionPane.YES_OPTION)
+	        	{
+	            	Debug.msg("Multiple instance lock: User decided to shut down this instance.");
+	        		System.exit(0);
+	        	}
+	        	else
+	        	{
+	        		Debug.msg("Multiple instance lock: User decided NOT to shut down this instance.");
+	        	}
+	        }
+
+	        //saveProperties cannot used here because jframe (and its dimensions) is not yet initilized.
+	        try {
+	            Debug.msg("Save other properties");
+	            properties.storeToXML(JFritz.PROPERTIES_FILE);
+	        } catch (IOException e) {
+	            Debug.err("Couldn't save Properties");
+	        }
         }
-        else
-        {
-        	Debug.msg("Multiple instance lock: Another instance is already running.");
-        	//JOptionPane.showMessageDialog(null,JFritz.PROGRAM_NAME+" kann nicht mehrfach gestartet werden.","Information",JOptionPane.OK_OPTION+JOptionPane.INFORMATION_MESSAGE);
-        	int answer=JOptionPane.showConfirmDialog(null,
-        			JFritz.PROGRAM_NAME+" sollte nicht mehrfach gestartet werden!"
-
-        			+"\n\nHinweis:"
-        			+"\nSollten Sie diese Meldung sehen, obwohl Sie "+JFritz.PROGRAM_NAME+" nur einmal"
-        			+"\ngestartet haben, so liegt dies vermutlich daran, dass eine vorige "
-        			+"\n"+JFritz.PROGRAM_NAME+"-Intstanz unplanmäßig beendet wurde (z.B. durch einen "
-        			+"\nSystemabsturz). "
-        			+"\nIn diesem Fall können Sie JFritz mit diesem Dialog starten."
-
-        			+"\n\nBitte beachten Sie jedoch, dass "+JFritz.PROGRAM_NAME+" NICHT MEHRFACH gestartet "+""
-        			+"\nwerden sollte, da es sonst zu DATENVERLUST kommen kann."
-
-        			+"\n\nSoll diese Instanz von "+JFritz.PROGRAM_NAME+" beendet werden?","Information",JOptionPane.YES_NO_OPTION);
-        	if (answer==JOptionPane.YES_OPTION)
-        	{
-            	Debug.msg("Multiple instance lock: User decided to shut down this instance.");
-        		System.exit(0);
-        	}
-        	else
-        	{
-        		Debug.msg("Multiple instance lock: User decided NOT to shut down this instance.");
-        	}
-        }
-        //saveProperties cannot used here because jframe (and its dimensions) is not yet initilized.
-        try {
-            Debug.msg("Save other properties");
-            properties.storeToXML(JFritz.PROPERTIES_FILE);
-        } catch (IOException e) {
-            Debug.err("Couldn't save Properties");
-        }
-
         loadSounds();
 
         String osName = System.getProperty("os.name");
@@ -588,6 +600,7 @@ public final class JFritz {
         boolean clearList = false;
         boolean csvExport = false;
         String csvFileName = "";
+        boolean enableInstanceControl=true;
 
         CLIOptions options = new CLIOptions();
 
@@ -624,10 +637,12 @@ public final class JFritz {
                 JFritz.SYSTRAY_SUPPORT = true;
                 break;
             case 'f':
-                fetchCalls = true;
+            	enableInstanceControl = false;
+            	fetchCalls = true;
                 break;
             case 'e':
-                csvExport = true;
+            	enableInstanceControl = false;
+            	csvExport = true;
                 csvFileName = option.getParameter();
                 if (csvFileName == null || csvFileName.equals("")) {
                     System.err.println("Parameter not found!");
@@ -635,7 +650,8 @@ public final class JFritz {
                 }
                 break;
             case 'c':
-                clearList = true;
+            	enableInstanceControl = false;
+            	clearList = true;
                 break;
             case 'l':
                 String logFilename = option.getParameter();
@@ -674,7 +690,7 @@ public final class JFritz {
                 break;
             }
         }
-        new JFritz(fetchCalls, csvExport, csvFileName, clearList);
+        new JFritz(fetchCalls, csvExport, csvFileName, clearList, enableInstanceControl);
     }
 
     /**
