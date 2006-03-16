@@ -5,17 +5,19 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.Date;
 
 public class CopyFile {
 
     private File[] entries;
     private FileInputStream[] in;
     private FileOutputStream[] out;
-    private GregorianCalendar cal = new GregorianCalendar();
     private int numberOfFiles;
-    private String directory, fileFormat, time, date, month, year;
+    private String directory, fileFormat;
+    private Date date;
+    SimpleDateFormat df = new SimpleDateFormat( "yyyy.MM.dd_HH.mm.ss" );
 
     private void getFiles() {
         File dir = new File(directory);
@@ -42,20 +44,9 @@ public class CopyFile {
     }
 
     private void createDirectory() {
-        time = cal.get(Calendar.HOUR) + "." + cal.get(Calendar.MINUTE);
-        if (cal.get(Calendar.MINUTE) < 10) {
-            time = cal.get(Calendar.HOUR) + ".0" + cal.get(Calendar.MINUTE);
-        }
-        if (cal.get(Calendar.AM_PM) == 0) {
-            time = time + "_AM";
-        } else {
-            time = time + "_PM";
-        }
-        date = cal.get(Calendar.DATE) + ".";
-        month = cal.get(Calendar.MONTH) + ".";
-        year = cal.get(Calendar.YEAR) + "_";
+        date = Calendar.getInstance().getTime();
 
-        boolean success = (new File("backup"+File.separator+ date + month + year + time))
+        boolean success = (new File("backup"+File.separator + df.format( date )))
                 .mkdirs();
         if (!success) {
             Debug.err("Directory creation failed");
@@ -71,8 +62,7 @@ public class CopyFile {
         for (int i = 0; i < numberOfFiles; i++) {
             try {
                 Debug.msg("Found file to backup: " + entries[i].getName());
-                out[i] = new FileOutputStream("backup" + File.separator + date + month + year
-                        + time + File.separator + entries[i].getName());
+                out[i] = new FileOutputStream("backup" + File.separator + df.format( date ) + File.separator + entries[i].getName());
                 byte[] buf = new byte[4096];
                 int len;
                 while ((len = in[i].read(buf)) > 0) {
