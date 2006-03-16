@@ -41,13 +41,14 @@
  *
  * JFritz 0.5.5
  * - Nummer und Anschrift können aus der Anrufliste heraus in die Zwischenablage kopiert werden
- * - Schutz vor mehrfachem Programmstart (<- was ist mit Kommandozeilenstart?)
+ * - Schutz vor mehrfachem Programmstart (<- was ist mit Kommandozeilenstart?, =>BS: werden berücksichtigt - enableInstanceControl=false)
  * - Löschfunktionalität für Anrufliste der FRITZ!Box (Menü und Toolbar)
  * - Bugfix: Start auch bei fehlendem Tray
  * - Bugfix: Anrufmonitor arbeitete bei einem Reverselookup einer nicht im Telefonbuch
  *           eingetragenen Person nicht mehr
  * - Bugfix: Eintragen einer über Reverse-Lookup gefundenen Person korrigiert
  * - Neuer Kommandozeilenparameter: -d, --delete_on_box, löscht Anrufliste auf der Box und beendet sich dann (kein GUI)
+ * - Bugfix: Bei der Suche nach einer Rufnummer werden vor der Zentrale ggf. vorhandene Durchwahlnummern berücksichtigt
  *
  * JFritz 0.5.4
  * - Beim neuen Anrufmonitor auf # achten.
@@ -339,7 +340,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.173 2006/03/16 11:02:30 kleinch Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.174 2006/03/16 13:57:52 little_ben Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
