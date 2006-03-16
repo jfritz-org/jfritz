@@ -782,7 +782,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                 + JFritzUtils.getVersionFromCVSTag(JFritz.CVS_TAG) + "\n\n"
                 + "(c) 2005 by " + JFritz.PROGRAM_AUTHOR + "\n\n"
                 + "Developers:\n" + JFritz.PROGRAM_AUTHOR + "\n"
-                + "Robert Palmer <robotniko@gmx.de>\n"
+                + "Robert Palmer <robotniko@users.sourceforge.net>\n"
 				+ "Christian Klein <kleinch@users.sourceforge.net>\n"
 				+ "Benjamin Schmitt <little_ben@users.sourceforge.net>\n"
                 + "\n"+JFritz.PROGRAM_URL
