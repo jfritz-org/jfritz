@@ -339,7 +339,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.172 2006/03/15 23:07:53 kleinch Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.173 2006/03/16 11:02:30 kleinch Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -654,6 +654,7 @@ public final class JFritz {
                 }
                 break;
             case 'd':
+				// enableInstanceControl = false; // unnötig, GUI wird nicht gestartet
 				Debug.on();
 				clearCallsOnBox();
                 System.exit(0);
