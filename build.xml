@@ -4,6 +4,7 @@
 	<property name="doc" value="doc"/>
 	<property name="build" value="bin"/>
 	<property name="dist" value="dist"/>
+	<property name="source" value="source"/>
 	<property name="lib" value="lib"/>
 	<property name="ant.project.name" value = "JFritz! Documentation"/>
 	<property name="jfritzdir" value="C:\Programme\JFritz"/>
@@ -87,6 +88,28 @@
 
 	<target name="copyToFritzDir">
 		<copy file="dist/jfritz.jar" todir="${jfritzdir}"/>
+	</target>
+
+	<target name="source">
+		<mkdir dir="${dist}"/>
+		<mkdir dir="${dist}/${source}"/>
+		<mkdir dir="${dist}/${source}/tmp/${src}"/>
+		<mkdir dir="${dist}/${source}/tmp/${src}"/>
+		<copy todir="${dist}/${source}/tmp/${src}">
+			<fileset dir="${src}">
+				<include name="**/*.java"/>
+	      	</fileset>
+	    </copy>
+		<mkdir dir="${dist}/${source}/tmp/${lib}"/>
+		<copy todir="${dist}/${source}/tmp/${lib}">
+			<fileset dir="${lib}">
+				<include name="**/*.jar"/>
+	      	</fileset>
+	    </copy>
+		<copy file="jacob.dll" todir="${dist}/${source}/tmp"/>
+		<copy file="build.xml" todir="${dist}/${source}/tmp"/>
+		<zip zipfile="${dist}/${source}/jfritz-source.zip" basedir="${dist}/${source}/tmp" />
+	    <delete dir="${dist}/${source}/tmp"/>
 	</target>
 
 </project>
