@@ -230,21 +230,24 @@ public class Person {
 	 * Checks if person has telephone number
 	 *
 	 * @param number
+	 * 			the phone number to check as String
+	 * @param considerMain
+	 * 			true, if main number sould be considered
 	 * @return True if person has a phone number
 	 */
-	public boolean hasNumber(String number) {
-		Enumeration en = numbers.elements();
-		while (en.hasMoreElements()) {
-			PhoneNumber n = (PhoneNumber) en.nextElement();
-			if (n.getType().startsWith("main")) { // starts with ...
-				if (number.startsWith(n.getIntNumber()))
-					return true;
-			} else { // equal number
-				if (number.equals(n.getIntNumber()))
-					return true;
+	public boolean hasNumber(String number, boolean considerMain) {
+			Enumeration en = numbers.elements();
+			while (en.hasMoreElements()) {
+				PhoneNumber n = (PhoneNumber) en.nextElement();
+				if ((n.getType().startsWith("main"))&& (considerMain)) { // starts with ...
+					if (number.startsWith(n.getIntNumber()))
+						return true;
+				} else { // equal number
+					if (number.equals(n.getIntNumber()))
+						return true;
+				}
 			}
-		}
-		return false;
+			return false;
 	}
 
 	public String getEmailAddress() {

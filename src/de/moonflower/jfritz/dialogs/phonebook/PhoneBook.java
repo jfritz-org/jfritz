@@ -453,14 +453,27 @@ public class PhoneBook extends AbstractTableModel {
 	}
 
 	public Person findPerson(PhoneNumber number) {
+		return findPerson(number,true);
+	}
+
+	/**
+	 * Finds a person with the given number.
+	 *
+	 * @param number
+	 * 			a String containing the number to search for
+	 * @param considerMain
+	 * 			true, if search for main number (telephone switchboard) shoul be enabled.
+	 * @return the Person having that number or the main number of telephone switchboard in companies, null if no person was found
+	 * @author Benjamin Schmitt (overwriting)
+	 */
+	public Person findPerson(PhoneNumber number, boolean considerMain) {
 		if (number == null)
 			return null;
 		Enumeration en = unfilteredPersons.elements();
 		while (en.hasMoreElements()) {
 			Person p = (Person) en.nextElement();
-			if (p.hasNumber(number.getIntNumber())) {
+			if (p.hasNumber(number.getIntNumber(),considerMain))
 				return p;
-			}
 		}
 		return null;
 	}

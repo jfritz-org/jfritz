@@ -72,10 +72,21 @@ public class Call {
      * @return Returns the person the number belongs to or null.
      */
     public Person getPerson() {
+    	Person retValue = getPerson(false);
+    	if (retValue==null)
+    		retValue = getPerson(true);
+    	return retValue;
+    }
+
+    /**
+     * @return Returns the person the number belongs to or null.
+     */
+    public Person getPerson(boolean considerMain) {
         if (number == null)
             return null;
         else
-            return jfritz.getPhonebook().findPerson(number);
+            return jfritz.getPhonebook().findPerson(number,considerMain);
+
     }
 
     /**
