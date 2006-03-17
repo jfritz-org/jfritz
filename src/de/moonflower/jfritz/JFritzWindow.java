@@ -9,9 +9,9 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
@@ -55,19 +55,21 @@ import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.utils.BrowserLaunch;
+import de.moonflower.jfritz.utils.CopyFile;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
-import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.ImportOutlookContacts;
+import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.PrintCallerList;
 import de.moonflower.jfritz.utils.ReverseLookup;
-import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.SwingWorker;
-import de.moonflower.jfritz.utils.network.FBoxListener;
-import de.moonflower.jfritz.utils.network.TelnetListener;
-import de.moonflower.jfritz.utils.network.SyslogListener;
-import de.moonflower.jfritz.utils.network.YAClistener;
+import de.moonflower.jfritz.utils.DirectoryChooser;
 import de.moonflower.jfritz.utils.network.CallmessageListener;
+import de.moonflower.jfritz.utils.network.FBoxListener;
+import de.moonflower.jfritz.utils.network.SyslogListener;
+import de.moonflower.jfritz.utils.network.TelnetListener;
+import de.moonflower.jfritz.utils.network.YAClistener;
 
 /**
  * This is main window class of JFritz, which creates the GUI.
@@ -295,6 +297,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
         button.setToolTipText(JFritz.getMessage("delete_fritzbox_callerlist"));
         mBar.add(button);
 
+        button = new JButton();
+        button.setActionCommand("backup");
+        button.addActionListener(this);
+        button.setIcon(getImage("Backup.gif"));
+        button.setToolTipText(JFritz.getMessage("backup"));
+        mBar.add(button);
+
         mBar.addSeparator();
 
         button = new JButton();
@@ -360,6 +369,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
         item = new JMenuItem(JFritz.getMessage("delete_fritzbox_callerlist"));
         item.setActionCommand("delete_fritzbox_callerlist");
         item.setMnemonic(KeyEvent.VK_F);
+        item.addActionListener(this);
+        jfritzMenu.add(item);
+
+        item = new JMenuItem(JFritz.getMessage("backup"));
+        item.setActionCommand("backup");
         item.addActionListener(this);
         jfritzMenu.add(item);
 
@@ -933,6 +947,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
             fetchList();
         else if (e.getActionCommand() == "delete_fritzbox_callerlist")
         	deleteFritzBoxCallerList();
+        else if (e.getActionCommand() == "backup")
+        	backupToChoosenDirectory();
         else if (e.getActionCommand() == "fetchTask")
             fetchTask(((JToggleButton) e.getSource()).isSelected());
         else if (e.getActionCommand() == "callMonitor") {
@@ -1237,5 +1253,16 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
     	if (answer==JOptionPane.YES_OPTION)
     		fetchList(true); //param true indicates that FritzBox-CallerList is to be deleted
+    }
+
+    public void backupToChoosenDirectory(){
+        CopyFile backup = new CopyFile();
+        try{
+    	String directory = new DirectoryChooser().getDirectory().toString();
+        backup.copy(".","xml",directory);
+        }
+        catch(NullPointerException e){
+        	Debug.err("No directory choosen for backup!");
+        }
     }
 }
