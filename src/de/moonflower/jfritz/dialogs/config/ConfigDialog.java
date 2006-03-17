@@ -478,6 +478,7 @@ public class ConfigDialog extends JDialog {
     }
 
 protected JPanel createOtherPane() {
+
         JPanel otherpane = new JPanel();
 
         otherpane.setLayout(new BoxLayout(otherpane, BoxLayout.Y_AXIS));
@@ -900,7 +901,8 @@ protected JPanel createOtherPane() {
         tpane.addTab("Anrufliste", createCallerListPane());
         tpane.addTab("Anrufmonitor", createCallMonitorPane());
         tpane.addTab("Nachrichten", createMessagePane());
-        tpane.addTab("Weiteres", createOtherPane());
+        JScrollPane otherPaneScrollable = new JScrollPane(createOtherPane());
+        tpane.addTab("Weiteres", otherPaneScrollable);
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(tpane, BorderLayout.CENTER);
@@ -909,9 +911,9 @@ protected JPanel createOtherPane() {
 
         addKeyListener(keyListener);
 
-        setSize(new Dimension(480, 350));
+        setSize(new Dimension(510, 360));
         setResizable(false);
-        // pack();
+         //pack();
     }
 
     public boolean showDialog() {
