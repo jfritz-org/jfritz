@@ -1255,6 +1255,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
     		fetchList(true); //param true indicates that FritzBox-CallerList is to be deleted
     }
 
+    /**
+     * Creates a backup to a user selected directory
+     *
+     * @author Bastian Schaefer
+     */
     public void backupToChoosenDirectory(){
         CopyFile backup = new CopyFile();
         try{
@@ -1262,7 +1267,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
         backup.copy(".","xml",directory);
         }
         catch(NullPointerException e){
-        	Debug.err("No directory choosen for backup!");
+        	Debug.msg("No directory choosen for backup!");
         }
     }
 }
