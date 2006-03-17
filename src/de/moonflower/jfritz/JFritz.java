@@ -310,22 +310,22 @@ import org.jdesktop.jdic.tray.TrayIcon;
 import de.moonflower.jfritz.callerlist.CallerList;
 import de.moonflower.jfritz.dialogs.phonebook.PhoneBook;
 import de.moonflower.jfritz.dialogs.simple.MessageDlg;
+import de.moonflower.jfritz.dialogs.sip.SipProviderTableModel;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.utils.CLIOption;
 import de.moonflower.jfritz.utils.CLIOptions;
 import de.moonflower.jfritz.utils.CopyFile;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.JFritzUtils;
-import de.moonflower.jfritz.utils.CLIOption;
 import de.moonflower.jfritz.utils.ReverseLookup;
-import de.moonflower.jfritz.utils.network.SSDPdiscoverThread;
 import de.moonflower.jfritz.utils.network.CallMonitor;
-import de.moonflower.jfritz.dialogs.sip.SipProviderTableModel;
+import de.moonflower.jfritz.utils.network.SSDPdiscoverThread;
 
 /**
  * @author Arno Willig
@@ -343,7 +343,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.175 2006/03/16 15:06:21 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.176 2006/03/17 00:57:01 baefer Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 

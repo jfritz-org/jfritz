@@ -44,6 +44,7 @@ import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.utils.CopyFile;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -246,7 +247,6 @@ public class CallerList extends AbstractTableModel {
         } catch (FileNotFoundException e) {
             Debug.err("Could not write " + filename + "!");
         }
-
     }
 
 
@@ -476,6 +476,12 @@ public class CallerList extends AbstractTableModel {
                                     JFritz.getProperty("box.address"),
                                     Encryption.decrypt(JFritz
                                             .getProperty("box.password"))));
+        }
+
+        //Make back-up after fetching the caller list?
+        if (newEntries > 0
+                && JFritzUtils.parseBoolean(JFritz.getProperty("option.createBackupAfterFetch", "false"))) {
+            doBackup();
         }
 
     }
@@ -1160,6 +1166,11 @@ public class CallerList extends AbstractTableModel {
                 	Debug.msg("CallerList::copyAddressToClipboard: Person = null - nothing copied!");
             }
     	}
+    }
+
+    private static void doBackup() {
+        CopyFile backup = new CopyFile();
+        backup.copy(".","xml");
     }
 
 }

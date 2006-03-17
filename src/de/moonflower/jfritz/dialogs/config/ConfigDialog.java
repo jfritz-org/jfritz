@@ -89,7 +89,7 @@ public class ConfigDialog extends JDialog {
             callMonitorAfterStartButton, lookupAfterFetchButton,
             externProgramCheckBox, searchWithSSDP, showCallByCallColumnButton,
             showCommentColumnButton, showPortColumnButton,
-            minimizeInsteadOfClose, createBackup;
+            minimizeInsteadOfClose, createBackup, createBackupAfterFetch;
 
     private JPanel callMonitorPane;
 
@@ -139,6 +139,8 @@ public class ConfigDialog extends JDialog {
                 .getProperty("option.minimize", "false")));
         createBackup.setSelected(JFritzUtils.parseBoolean(JFritz
                 .getProperty("option.createBackup", "false")));
+        createBackupAfterFetch.setSelected(JFritzUtils.parseBoolean(JFritz
+                .getProperty("option.createBackupAfterFetch", "false")));
         soundButton.setSelected(JFritzUtils.parseBoolean(JFritz.getProperty(
                 "option.playSounds", "true")));
         externProgramCheckBox.setSelected(JFritzUtils.parseBoolean(JFritz
@@ -253,6 +255,7 @@ public class ConfigDialog extends JDialog {
         JFritz.setProperty("option.minimize", Boolean
                 .toString(minimizeInsteadOfClose.isSelected()));
         JFritz.setProperty("option.createBackup", Boolean.toString(createBackup.isSelected()));
+        JFritz.setProperty("option.createBackupAfterFetch", Boolean.toString(createBackupAfterFetch.isSelected()));
         JFritz.setProperty("option.playSounds", Boolean.toString(soundButton
                 .isSelected()));
 
@@ -504,6 +507,9 @@ protected JPanel createOtherPane() {
 
         createBackup = new JCheckBox("Sicherungskopien beim Start erstellen");
         otherpane.add(createBackup);
+
+        createBackupAfterFetch = new JCheckBox("Sicherungskopien nach jedem Laden der Anrufliste erstellen");
+        otherpane.add(createBackupAfterFetch);
 
         return otherpane;
     }
