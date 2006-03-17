@@ -15,12 +15,12 @@ public class CopyFile {
     private FileInputStream[] in;
     private FileOutputStream[] out;
     private int numberOfFiles;
-    private String directory, fileFormat;
+    private String sourceDirectory, fileFormat;
     private Date date;
     SimpleDateFormat df = new SimpleDateFormat( "yyyy.MM.dd_HH.mm.ss" );
 
     private void getFiles() {
-        File dir = new File(directory);
+        File dir = new File(sourceDirectory);
         entries = dir.listFiles(new FileFilter() {
             public boolean accept(File arg0) {
                 if (arg0.getName().endsWith(fileFormat))
@@ -53,8 +53,8 @@ public class CopyFile {
         }
     }
 
-    public void copy(String directory, String fileFormat) {
-        this.directory = directory;
+    public void copy(String sourceDirectory, String fileFormat) {
+        this.sourceDirectory = sourceDirectory;
         this.fileFormat = fileFormat;
         getFiles();
         createDirectory();
@@ -63,6 +63,30 @@ public class CopyFile {
             try {
                 Debug.msg("Found file to backup: " + entries[i].getName());
                 out[i] = new FileOutputStream("backup" + File.separator + df.format( date ) + File.separator + entries[i].getName());
+                byte[] buf = new byte[4096];
+                int len;
+                while ((len = in[i].read(buf)) > 0) {
+                    out[i].write(buf, 0, len);
+                }
+                in[i].close();
+                out[i].close();
+            } catch (IOException ex) {
+                Debug.err(ex.toString());
+            } catch (ArrayIndexOutOfBoundsException ex) {
+                Debug.err("No files available");
+            }
+        }
+    }
+
+    public void copy(String sourceDirectory, String fileFormat, String targetDirectory) {
+        this.sourceDirectory = sourceDirectory;
+        this.fileFormat = fileFormat;
+        getFiles();
+        out = new FileOutputStream[numberOfFiles];
+        for (int i = 0; i < numberOfFiles; i++) {
+            try {
+                Debug.msg("Found file to backup: " + entries[i].getName());
+                out[i] = new FileOutputStream( targetDirectory + File.separator + entries[i].getName());
                 byte[] buf = new byte[4096];
                 int len;
                 while ((len = in[i].read(buf)) > 0) {
