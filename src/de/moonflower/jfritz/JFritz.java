@@ -13,6 +13,7 @@
  * 		robotniko	Robert Palmer <robotniko@gmx.de>
  * 		kleinc		Christian Klein <kleinch@users.sourceforge.net>
  *      little_ben  Benjamin Schmitt <little_ben@users.sourceforge.net>
+ *      baefer		Bastian Schaefer <baefer@users.sourceforge.net>
  *
  * This tool is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by
@@ -343,7 +344,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.176 2006/03/17 00:57:01 baefer Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.177 2006/03/17 21:46:21 baefer Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
