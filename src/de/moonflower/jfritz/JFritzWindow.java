@@ -1263,7 +1263,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
     public void backupToChoosenDirectory(){
         CopyFile backup = new CopyFile();
         try{
-    	String directory = new DirectoryChooser().getDirectory().toString();
+    	String directory = new DirectoryChooser().getDirectory(jfritz.getJframe()).toString();
         backup.copy(".","xml",directory);
         }
         catch(NullPointerException e){
