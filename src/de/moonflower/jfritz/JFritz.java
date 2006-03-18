@@ -41,6 +41,9 @@
  * TODO: Checken, ob alle Bibliotheken vorhanden sind
  *
  * JFritz 0.5.6
+ * - Bugfix: tritt der unwahrscheinliche Fall auf, dass kein Tray-Icon angezeigt wird, der User aber früher einmal
+ * 			 (als das Tray-Icon noch verfügbar war) Tray-Messages zu Benachrichtigung ausgewählt hatte, wurde gar kein
+ * 			 Anruf mehr signalisiert. Jetzt wird in diesem Fall auf ein PopUp zurückgegriffen.
  * - Neue Option: Sicherungskopien bei jedem Laden der Anruferliste erstellen
  * - Manuelle Backups erstellen (Menü und Toolbar)
  * - Bugfix: unvollständige Anzeige des Einstellungsdialoges -> Weiteres
@@ -351,7 +354,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.180 2006/03/18 09:57:45 baefer Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.181 2006/03/18 10:56:00 baefer Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -948,6 +951,10 @@ public final class JFritz {
             if (trayIcon != null)
                 trayIcon.displayMessage(JFritz.PROGRAM_NAME, msg,
                         TrayIcon.INFO_MESSAGE_TYPE);
+            else if(trayIcon == null){
+                MessageDlg msgDialog = new MessageDlg();
+                msgDialog.showMessage(msg);
+            }
             break;
         }
         }
