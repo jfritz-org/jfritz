@@ -41,10 +41,10 @@
  * TODO: Checken, ob alle Bibliotheken vorhanden sind
  *
  * JFritz 0.5.6
- * - Option "bei jedem abholen der Liste ein Backup machen" hinzugefügt
- * - Manuelle Backups per Button
- * - Einstellungsdialog -> Weiters -> außer Sichtbarkeits-Bug gefixt
- * - per F5 Anrufliste aktualisieren
+ * - Neue Option: Sicherungskopien bei jedem Laden der Anruferliste erstellen
+ * - Manuelle Backups erstellen (Menü und Toolbar)
+ * - Bugfix: unvollständige Anzeige des Einstellungsdialoges -> Weiteres
+ * - per Funktionstaste "F5" Anrufliste aktualisieren
  * - Bugfix: Speicherung der Kommentare
  *
  * JFritz 0.5.5
@@ -351,7 +351,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.179 2006/03/18 02:03:57 baefer Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.180 2006/03/18 09:57:45 baefer Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
