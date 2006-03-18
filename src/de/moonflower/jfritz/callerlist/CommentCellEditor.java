@@ -76,7 +76,7 @@ public class CommentCellEditor extends AbstractCellEditor implements
 		super.fireEditingCanceled();
 	}
 
-	/*
+	/**
 	 * @see javax.swing.AbstractCellEditor#fireEditingStopped()
 	 */
 	protected void fireEditingStopped() {
