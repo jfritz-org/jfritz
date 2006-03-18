@@ -1288,14 +1288,22 @@ public class JFritzWindow extends JFrame
 		}
 	}
 
+	/**
+	 * Provides easy implementation of a KeyListener. Will add the KeyListener
+	 * to the main Jframe and react without having the Focus.
+	 */
 	public void addKeyListener(int vkey, String listenerString) {
 
 		this.getRootPane().registerKeyboardAction(this, listenerString,
 				keyStroke(vkey), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 	}
 
+	/**
+	 * Provides easy creation of a KeyStroke object without a modifier
+	 * and reaction onKeyReale
+	 */
 	private KeyStroke keyStroke(int vkey) {
-		return KeyStroke.getKeyStroke(vkey, 0, false);
+		return KeyStroke.getKeyStroke(vkey, 0 , false);
 	}
 
 }
