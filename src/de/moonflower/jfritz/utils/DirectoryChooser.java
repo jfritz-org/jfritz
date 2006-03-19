@@ -20,12 +20,12 @@ public class DirectoryChooser  {
 
 		chooser = new JFileChooser();
 		chooser.setApproveButtonText("Speichern");
-		chooser.setCurrentDirectory(new java.io.File(JFritz.getProperty("backup.path", ".")));
+		chooser.setCurrentDirectory(new java.io.File(JFritzUtils.deconvertSpecialChars(JFritz.getProperty("backup.path", "."))));
 		chooser.setDialogTitle(CHOOSER_TITLE);
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
 			Debug.msg("getCurrentDirectory(): " + chooser.getSelectedFile());
-			JFritz.setProperty("backup.path", chooser.getSelectedFile().toString());
+			JFritz.setProperty("backup.path", JFritzUtils.convertSpecialChars(chooser.getSelectedFile().toString()));
 			return chooser.getSelectedFile();
 		} else {
 			return null;

@@ -134,7 +134,7 @@ public class JFritzProperties extends Properties {
 	}
 
 	public synchronized Object setProperty(String key, String value) {
-		return super.setProperty(key, value);
+		return super.setProperty(key, JFritzUtils.convertSpecialChars(JFritzUtils.deconvertSpecialChars(value)));
 	}
 
 	public String getProperty(String key) {
