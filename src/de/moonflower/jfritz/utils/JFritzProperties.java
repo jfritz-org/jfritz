@@ -244,7 +244,7 @@ public class JFritzProperties extends Properties {
             Enumeration en = keys();
             while (en.hasMoreElements()) {
                 String element = en.nextElement().toString();
-                pw.write("<entry key=\"" + element + "\">"+getProperty(element)+"</entry>");
+                pw.write("<entry key=\"" + element + "\">"+JFritzUtils.convertSpecialChars(JFritzUtils.deconvertSpecialChars(getProperty(element)))+"</entry>");
                 pw.newLine();
             }
             pw.write("</properties>");
