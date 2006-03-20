@@ -89,7 +89,7 @@ public class ConfigDialog extends JDialog {
             callMonitorAfterStartButton, lookupAfterFetchButton,
             externProgramCheckBox, searchWithSSDP, showCallByCallColumnButton,
             showCommentColumnButton, showPortColumnButton,
-            minimizeInsteadOfClose, createBackup, createBackupAfterFetch;
+            minimizeInsteadOfClose, createBackup, createBackupAfterFetch, fetchAfterStandby;
 
     private JPanel callMonitorPane;
 
@@ -193,6 +193,9 @@ public class ConfigDialog extends JDialog {
 
         showPortColumnButton.setSelected(JFritzUtils.parseBoolean(JFritz
                 .getProperty("option.showPortColumn", "true")));
+
+        fetchAfterStandby.setSelected(JFritzUtils.parseBoolean(JFritz
+                .getProperty("option.watchdog.fetchAfterStandby", "false")));
 
         boolean pwAfterStart = !Encryption.decrypt(
                 JFritz.getProperty("jfritz.password", "")).equals(
@@ -298,6 +301,9 @@ public class ConfigDialog extends JDialog {
 
         JFritz.setProperty("option.showPortColumn", Boolean
                 .toString(showPortColumnButton.isSelected()));
+
+        JFritz.setProperty("option.watchdog.fetchAfterStandby", Boolean
+                .toString(fetchAfterStandby.isSelected()));
 
         JFritz.setProperty("box.password", Encryption.encrypt(password));
         JFritz.setProperty("box.address", address.getText());
@@ -552,6 +558,10 @@ protected JPanel createOtherPane() {
         c.gridy = 6;
         showPortColumnButton = new JCheckBox("Anschluß-Spalte anzeigen");
         cPanel.add(showPortColumnButton, c);
+
+        c.gridy = 7;
+        fetchAfterStandby = new JCheckBox("Nach Rückkehr aus Standby oder Ruhezustand Anrufliste abholen");
+        cPanel.add(fetchAfterStandby, c);
 
         return cPanel;
     }
