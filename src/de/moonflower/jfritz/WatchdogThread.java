@@ -58,6 +58,7 @@ public class WatchdogThread extends Thread {
                 e.printStackTrace();
             }
             jfritz.getJframe().startChosenCallMonitor();
+			if ( (jfritz.getProperty("option.callmonitor.fetchAfterDisconnect", "true")).equals("true") ) jfritz.getJframe().fetchList();
 
         }
 
