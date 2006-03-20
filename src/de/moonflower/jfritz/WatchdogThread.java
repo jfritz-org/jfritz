@@ -59,10 +59,10 @@ public class WatchdogThread extends Thread {
                 e.printStackTrace();
             }
             jfritz.getJframe().startChosenCallMonitor();
-			if (JFritzUtils.parseBoolean(jfritz.getProperty("option.watchdog.fetchAfterStandby", "false")))
-				jfritz.getJframe().fetchList(JFritzUtils.parseBoolean(jfritz.getProperty("option.callmonitor.fetchAfterDisconnect", "true")));
-        }
 
+			if (JFritzUtils.parseBoolean(jfritz.getProperty("option.watchdog.fetchAfterStandby", "true")))
+				jfritz.getJframe().fetchList(JFritzUtils.parseBoolean(jfritz.getProperty("option.deleteAfterFetch", "true")));
+        }
         setTimestamp();
     }
 
