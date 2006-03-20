@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class WatchdogThread extends Thread {
 
@@ -58,8 +59,8 @@ public class WatchdogThread extends Thread {
                 e.printStackTrace();
             }
             jfritz.getJframe().startChosenCallMonitor();
-			if ( (jfritz.getProperty("option.callmonitor.fetchAfterDisconnect", "true")).equals("true") ) jfritz.getJframe().fetchList();
-
+			if (JFritzUtils.parseBoolean(jfritz.getProperty("option.watchdog.fetchAfterStandby", "true")))
+				jfritz.getJframe().fetchList(JFritzUtils.parseBoolean(jfritz.getProperty("option.callmonitor.fetchAfterDisconnect", "true")));
         }
 
         setTimestamp();
