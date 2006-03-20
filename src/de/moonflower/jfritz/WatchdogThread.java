@@ -60,8 +60,8 @@ public class WatchdogThread extends Thread {
             }
             jfritz.getJframe().startChosenCallMonitor();
 
-			if (JFritzUtils.parseBoolean(jfritz.getProperty("option.watchdog.fetchAfterStandby", "true")))
-				jfritz.getJframe().fetchList(JFritzUtils.parseBoolean(jfritz.getProperty("option.deleteAfterFetch", "true")));
+			if (JFritzUtils.parseBoolean(JFritz.getProperty("option.watchdog.fetchAfterStandby", "true")))
+				jfritz.getJframe().fetchList(JFritzUtils.parseBoolean(JFritz.getProperty("option.deleteAfterFetch", "true")));
         }
         setTimestamp();
     }
