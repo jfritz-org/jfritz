@@ -137,6 +137,16 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 				"filter_private", "false")));
 		toolBar.add(tb);
 
+		toolBar.addSeparator();
+		toolBar.addSeparator();
+
+		JButton importXMLButton = new JButton();
+		importXMLButton.setIcon(getImage("xml_import_kl.png"));
+		importXMLButton.setToolTipText(JFritz.getMessage("phonebook_import"));
+		importXMLButton.setActionCommand("import_xml");
+		importXMLButton.addActionListener(this);
+		toolBar.add(importXMLButton);
+
 		return toolBar;
 	}
 
@@ -218,6 +228,8 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			jfritz.getPhonebook().updateFilter();
 		} else if (e.getActionCommand().equals("export_vcard")) {
 			exportVCard();
+		} else if (e.getActionCommand().equals("import_xml")) {
+			importFromXML ();
 		} else {
 			Debug.msg("Unsupported Command: " + e.getActionCommand());
 		}
@@ -336,6 +348,13 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		jfritz.getJframe().setStatus(entries + " Einträge");
 	}
 
+	public void importFromXML () {
+		JFileChooser fc = new JFileChooser();
+		if (fc.showOpenDialog(jfritz.getJframe()) != JFileChooser.APPROVE_OPTION) return;
+		File file = fc.getSelectedFile();
+		jfritz.getPhonebook().loadFromXMLFile(file.getAbsolutePath());
+		jfritz.getPhonebook().saveToXMLFile(JFritz.PHONEBOOK_FILE);
+	}
 	class PopupListener extends MouseAdapter {
 		public void mouseClicked(MouseEvent e) {
 			if (e.getClickCount() > 1) {
