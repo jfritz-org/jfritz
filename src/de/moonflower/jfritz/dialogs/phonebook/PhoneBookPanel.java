@@ -351,8 +351,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	public void importFromXML () {
 		JFileChooser fc = new JFileChooser();
 		if (fc.showOpenDialog(jfritz.getJframe()) != JFileChooser.APPROVE_OPTION) return;
-		File file = fc.getSelectedFile();
-		jfritz.getPhonebook().loadFromXMLFile(file.getAbsolutePath());
+		jfritz.getPhonebook().loadFromXMLFile(fc.getSelectedFile().getAbsolutePath());
 		jfritz.getPhonebook().saveToXMLFile(JFritz.PHONEBOOK_FILE);
 	}
 	class PopupListener extends MouseAdapter {
