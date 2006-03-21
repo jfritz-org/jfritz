@@ -141,7 +141,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		toolBar.addSeparator();
 
 		JButton importXMLButton = new JButton();
-		importXMLButton.setIcon(getImage("xml_import_kl.png"));
+		importXMLButton.setIcon(getImage("import.gif"));
 		importXMLButton.setToolTipText(JFritz.getMessage("phonebook_import"));
 		importXMLButton.setActionCommand("import_xml");
 		importXMLButton.addActionListener(this);
