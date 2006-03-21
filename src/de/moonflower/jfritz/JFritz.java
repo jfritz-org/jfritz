@@ -41,7 +41,7 @@
  * TODO: Checken, ob alle Bibliotheken vorhanden sind
  *
  * JFritz 0.5.6
- * - Neue Funktion: Telefonbuch importieren
+ * - Neue Option: Telefonbuch importieren
  * - Neue Option: Nach Standby oder Ruhezustand die Anrufliste automatisch abholen
  * - Bugfix: tritt der unwahrscheinliche Fall auf, dass kein Tray-Icon angezeigt wird, der User aber früher einmal
  * 			 (als das Tray-Icon noch verfügbar war) Tray-Messages zu Benachrichtigung ausgewählt hatte, wurde gar kein
@@ -356,7 +356,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.182 2006/03/21 12:03:43 baefer Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.183 2006/03/21 12:32:33 baefer Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 

@@ -908,7 +908,8 @@ protected JPanel createOtherPane() {
         tpane.addTab("FRITZ!Box", createBoxPane(actionListener)); // TODO I18N
         tpane.addTab("Telefon", createPhonePane());
         tpane.addTab("SIP-Nummern", createSipPane(actionListener));
-        tpane.addTab("Anrufliste", createCallerListPane());
+        JScrollPane callerListPaneScrollable = new JScrollPane(createCallerListPane());
+        tpane.addTab("Anrufliste", callerListPaneScrollable);
         tpane.addTab("Anrufmonitor", createCallMonitorPane());
         tpane.addTab("Nachrichten", createMessagePane());
         JScrollPane otherPaneScrollable = new JScrollPane(createOtherPane());
