@@ -484,6 +484,9 @@ public class CallerList extends AbstractTableModel {
             doBackup();
         }
 
+        // Garbage collection. Gibt verwendeten Speicher wieder frei.
+        System.gc();
+
     }
 
     /**
