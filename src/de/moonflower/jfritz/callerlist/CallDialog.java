@@ -57,7 +57,8 @@ public class CallDialog extends JDialog implements ActionListener {
             throws HeadlessException {
         super();
         this.jfritz = jfritz;
-        this.setLocationRelativeTo(jfritz.getJframe());
+        //this.setLocationRelativeTo(jfritz.getJframe());
+        this.setLocation(jfritz.getJframe().getX()+80, jfritz.getJframe().getY()+100);
         this.number = number;
         drawDialog();
     }
