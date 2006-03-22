@@ -133,9 +133,8 @@ public class PhoneNumber implements Comparable {
 			return number;
 		}
 
-		if (number.startsWith(countryCode) && number.length() > 10) {
+		if (number.startsWith(countryCode)) {
 			// International numbers without countryPrefix
-			// (some VOIP numbers) }
 			return "+" + number;
 		}
 		if (number.startsWith(countryPrefix)) { // International call
