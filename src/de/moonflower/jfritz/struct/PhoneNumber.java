@@ -133,7 +133,7 @@ public class PhoneNumber implements Comparable {
 			return number;
 		}
 
-		if (number.startsWith(countryCode)) {
+		if (number.startsWith(countryCode) && number.length() > 7) {
 			// International numbers without countryPrefix
 			return "+" + number;
 		}
