@@ -381,6 +381,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 				return c;
 			}
 		};
+		numberTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 		numberTable.setRowHeight(20);
 		numberTable.setFocusable(false);
 		numberTable.setAutoCreateColumnsFromModel(false);
@@ -582,7 +583,6 @@ public class PersonPanel extends JPanel implements ActionListener,
 	}
 
 	public final Person updatePerson() {
-		numberTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 		person.setPrivateEntry(chkBoxPrivateEntry.isSelected());
 		person.setFirstName(tfFirstName.getText());
 		person.setCompany(tfCompany.getText());
