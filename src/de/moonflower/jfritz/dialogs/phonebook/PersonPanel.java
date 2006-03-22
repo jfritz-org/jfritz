@@ -582,6 +582,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 	}
 
 	public final Person updatePerson() {
+		numberTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 		person.setPrivateEntry(chkBoxPrivateEntry.isSelected());
 		person.setFirstName(tfFirstName.getText());
 		person.setCompany(tfCompany.getText());
@@ -593,7 +594,6 @@ public class PersonPanel extends JPanel implements ActionListener,
 		hasChanged = false;
 		numberHasChanged = false;
 		jfritz.getPhonebook().sortAllFilteredRows();
-
 		return person;
 	}
 
