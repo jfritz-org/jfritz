@@ -32,6 +32,8 @@ import javax.swing.JToolBar;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
+import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.utils.JFritzClipboard;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.ReverseLookup;
 
@@ -644,12 +646,25 @@ public class CallerListPanel extends JPanel
 			jfritz.getJframe().exportCSV();
 		} else if (e.getActionCommand().equals("export_xml")) {
 			jfritz.getJframe().exportXML();
-			// Benjamin Schmitt
 		} else if (e.getActionCommand().equals("clipboard_number")) {
-			jfritz.getJframe().copyNumberToClipboard();
+        	Call call = jfritz.getCallerlist().getSelectedCall();
+        	if (call!=null)
+        	{
+        		PhoneNumber number = call.getPhoneNumber();
+        		if ((number!=null)&&(call!=null))
+        			JFritzClipboard.copy(number.convertToNationalNumber());
+        	}
+			//jfritz.getJframe().copyNumberToClipboard();
 		} else if (e.getActionCommand().equals("clipboard_adress")) {
-			jfritz.getJframe().copyAddressToClipboard();
-			// END Benjamin Schmitt
+        	Call call = jfritz.getCallerlist().getSelectedCall();
+        	if(call!=null)
+        	{
+        		Person person = call.getPerson();
+        		if(person!=null)
+        			JFritzClipboard.copy(person.getAddress());
+        	}
+			//jfritz.getJframe().copyAddressToClipboard();
+
 		}
 
 	}

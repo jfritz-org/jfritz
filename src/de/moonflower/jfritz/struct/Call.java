@@ -82,11 +82,10 @@ public class Call {
      * @return Returns the person the number belongs to or null.
      */
     public Person getPerson(boolean considerMain) {
-        if (number == null)
+        if ((number == null) || (number.equals(new PhoneNumber(""))))
             return null;
         else
-            return jfritz.getPhonebook().findPerson(number,considerMain);
-
+        	return jfritz.getPhonebook().findPerson(number,considerMain);
     }
 
     /**

@@ -306,4 +306,50 @@ public class Person {
 	public boolean isPrivateEntry() {
 		return privateEntry;
 	}
+
+	/**
+	 * Creates the address of that person separated by given separators
+	 * @return the address as String
+	 * @param
+	 * @author Benjamin Schmitt
+	 */
+	public String getAddress()
+	{
+        String lineSeparator = System.getProperty("line.separator"); //new String("\r\n");
+        String wordSeparator = " "; //used to separate words in one line, e.g. between firstname an surname
+        return this.getAddress(lineSeparator,wordSeparator);
+	}
+
+	/**
+	 * Creates the address of that person separated by given separators
+	 * @return the address as String
+	 * @param
+	 * @author Benjamin Schmitt
+	 */
+	public String getAddress(String lineSeparator, String wordSeparator)
+	{
+
+		//TODO: create patterns as params for that function
+        String address ="";
+
+        if (this!=null)
+        {
+            String company=(this.getCompany()!=null?this.getCompany():"");
+            String firstName=(this.getFirstName()!=null?this.getFirstName():"");
+            String lastName=(this.getLastName()!=null?this.getLastName():"");
+            String street=(this.getStreet()!=null?this.getStreet():"");
+            String postalCode=(this.getPostalCode()!=null?this.getPostalCode():"");
+            String city=(this.getCity()!=null?this.getCity():"");
+
+            address= new String(
+            		(company!=""?company+lineSeparator:"")+
+            		(firstName!=""?firstName+wordSeparator:"")+
+            		(lastName!=""?lastName+lineSeparator:"")+
+            		(street!=""?street+lineSeparator:"")+
+            		(postalCode!=""?postalCode+wordSeparator:"")+
+            		(city!=""?city+lineSeparator:"")
+            		);
+        }
+		return address;
+	}
 }

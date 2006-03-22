@@ -7,6 +7,7 @@ package de.moonflower.jfritz.struct;
 import java.util.HashMap;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.utils.Debug;
 
 /**
  * @author Arno Willig
@@ -144,6 +145,23 @@ public class PhoneNumber implements Comparable {
 			return "+" + countryCode + number.substring(areaPrefix.length());
 		}
 		return "+" + countryCode + areaCode + number;
+	}
+
+	/**
+	 * Converts number to national number, if it is a national one.
+	 * @return Returns nationalized number if country code matches, otherwise returns (unchanged) international number.
+	 * @author Benjamin Schmitt
+	 */
+	public String convertToNationalNumber()
+	{
+		String countryCode = JFritz.getProperty("country.code","49");
+		String areaPrefix = JFritz.getProperty("area.prefix","0");
+
+		if (number.startsWith("+"+countryCode))
+    		return areaPrefix + number.substring(3);
+
+		Debug.msg("PhoneNumber.convertToNationalNumber: this is no national number, returning unchanged (international) number");
+		return number;
 	}
 
 	/**

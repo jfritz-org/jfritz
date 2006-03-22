@@ -54,6 +54,7 @@
  * - Bugfix: unvollständige Anzeige des Einstellungsdialoges -> Weiteres
  * - per Funktionstaste "F5" Anrufliste aktualisieren
  * - Bugfix: Speicherung der Kommentare
+ * - INTERN: Bereitstellen von utils.JFritzClipboard und CallerList.getSelectedCall
  *
  * JFritz 0.5.5
  * - Nummer und Anschrift können aus der Anrufliste heraus in die Zwischenablage kopiert werden
@@ -359,7 +360,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.186 2006/03/22 16:49:08 baefer Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.187 2006/03/22 22:46:16 little_ben Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 

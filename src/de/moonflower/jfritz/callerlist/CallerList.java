@@ -1085,95 +1085,23 @@ public class CallerList extends AbstractTableModel {
         }
         return columnName;
     }
-    /**
-     * Copies short phonenumber to clipboard.
-     * If more than one call is selected, the bottom-most one in the CallerList is considered.
-     *
-     * @author Benjamin Schmitt
-     */
-    public void copyNumberToClipboard(){
-        boolean wholeCallerList = false;
-
-    	int rows[] = null;
-        if (jfritz != null && jfritz.getJframe() != null) {
-            rows = jfritz.getJframe().getCallerTable().getSelectedRows();
-        }
-    	if (!wholeCallerList && rows != null && rows.length > 0) {
-            for (int i = 0; i < rows.length; i++) {
-                Call currentCall = (Call) filteredCallerData
-                        .elementAt(rows[i]);
-
-                //copy bottom-most, selected number to clipboard
-                if (currentCall.getPhoneNumber()!=null)
-                {
-	                String callerstr=(currentCall.getPhoneNumber()!=null?currentCall.getPhoneNumber().getIntNumber():"");
-
-	                	if (callerstr.startsWith("+49"))
-	                		callerstr = "0" + callerstr.substring(3);
-	                	jfritz.copyToClipboard(callerstr);
-	                	Debug.msg("CallerList::copyNumberToClipboard: copied "+callerstr);
-                }
-                else
-                 	Debug.msg("CallerList::copyNumberToClipboard: phoneNumber = null - nothing copied!");
-            }
-    	}
-    }
-
-    /**
-     * Copies address to clipboard.
-     * If more than one call is selected, the bottom-most one in the CallerList is considered.
-     *
-     * @author Benjamin Schmitt
-     */
-    public void copyAddressToClipboard(){
-
-    	int rows[] = null;
-        if (jfritz != null && jfritz.getJframe() != null) {
-            rows = jfritz.getJframe().getCallerTable().getSelectedRows();
-        }
-    	if (rows != null && rows.length > 0) {
-            for (int i = 0; i < rows.length; i++) {
-                Call currentCall = (Call) filteredCallerData
-                        .elementAt(rows[i]);
-
-                //create address
-                String lineSeparator = System.getProperty("line.separator"); //new String("\r\n");
-                String wordSeparator = " "; //used to separate words in one line, e.g. between firstname an surname
-
-                if (currentCall.getPerson()!=null)
-                {
-	                String company=(currentCall.getPerson().getCompany()!=null?currentCall.getPerson().getCompany():"");
-	                String firstName=(currentCall.getPerson().getFirstName()!=null?currentCall.getPerson().getFirstName():"");
-	                String lastName=(currentCall.getPerson().getLastName()!=null?currentCall.getPerson().getLastName():"");
-	                String street=(currentCall.getPerson().getStreet()!=null?currentCall.getPerson().getStreet():"");
-	                String postalCode=(currentCall.getPerson().getPostalCode()!=null?currentCall.getPerson().getPostalCode():"");
-	                String city=(currentCall.getPerson().getCity()!=null?currentCall.getPerson().getCity():"");
-
-	                String address = new String(
-	                		(company!=""?company+lineSeparator:"")+
-	                		(firstName!=""?firstName+wordSeparator:"")+
-	                		(lastName!=""?lastName+lineSeparator:"")+
-	                		(street!=""?street+lineSeparator:"")+
-	                		(postalCode!=""?postalCode+wordSeparator:"")+
-	                		(city!=""?city+lineSeparator:"")
-	                		);
-
-	                //copy bottom-most, selected number to clipboard
-	                if (address!=null && (!address.equals("")))
-	                {
-	                	jfritz.copyToClipboard(address);
-	                	Debug.msg("CallerList::copyAddressToClipboard: copied "+address.replaceAll(lineSeparator," - "));
-	                }
-                }
-                else
-                	Debug.msg("CallerList::copyAddressToClipboard: Person = null - nothing copied!");
-            }
-    	}
-    }
 
     private static void doBackup() {
         CopyFile backup = new CopyFile();
         backup.copy(".","xml");
     }
 
+	public Call getSelectedCall()
+	{
+		int rows[]=null;
+        if ((jfritz != null) && (jfritz.getJframe() != null))
+            rows = jfritz.getJframe().getCallerTable().getSelectedRows();
+
+        if (rows != null && rows.length==1)
+        	return (Call)this.filteredCallerData.elementAt(rows[0]);
+    	else
+    		Debug.errDlg("Bitte (nur) einen Anruf markieren.");
+
+		return null;
+	}
 }

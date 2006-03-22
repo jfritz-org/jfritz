@@ -1249,25 +1249,6 @@ public class JFritzWindow extends JFrame
 		}
 
 	}
-	/**
-	 * Copies phonenumber to clipboard by using method copyNumberToClipboard in
-	 * CallerList.
-	 *
-	 * @author Benjamin Schmitt
-	 */
-	public void copyNumberToClipboard() {
-		jfritz.getCallerlist().copyNumberToClipboard();
-	}
-
-	/**
-	 * Copies address to clipboard by using method copyAddressToClipboard in
-	 * CallerList.
-	 *
-	 * @author Benjamin Schmitt
-	 */
-	public void copyAddressToClipboard() {
-		jfritz.getCallerlist().copyAddressToClipboard();
-	}
 
 	/**
 	 * Deletes the caller list in Fritz!Box after having actualized it with the
