@@ -774,6 +774,12 @@ public class CallerListPanel extends JPanel
 				jfritz.getCallerlist().updateFilter();
 				jfritz.getCallerlist().fireTableStructureChanged();
 			}
+			if (search.getText().equals("")){
+				filter = " ";
+				JFritz.setProperty("filter.search", filter);
+				jfritz.getCallerlist().updateFilter();
+				jfritz.getCallerlist().fireTableStructureChanged();
+			}
 		}
 
 	}
