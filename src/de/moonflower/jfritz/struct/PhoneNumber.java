@@ -15,6 +15,8 @@ import de.moonflower.jfritz.utils.Debug;
  */
 public class PhoneNumber implements Comparable {
 
+	private String numberMatcher = "([0-9]|\\+|\\(|\\)| |-|/)+";
+
 	private String number = "";
 
 	private String callbycall = "";
@@ -32,7 +34,7 @@ public class PhoneNumber implements Comparable {
 	 */
 	public PhoneNumber(String number, String type) {
 		this.type = type;
-		if (!number.equalsIgnoreCase("Unbekannt") ) this.number = number;
+		if (number.matches(numberMatcher)) this.number = number;
 		createMobileMap();
 		refactorNumber();
 	}
@@ -51,7 +53,7 @@ public class PhoneNumber implements Comparable {
 	 * @param number Number to be set
 	 */
 	public void setNumber(String number) {
-		this.number = number;
+		if (number.matches(numberMatcher)) this.number = number;
 		refactorNumber();
 	}
 
