@@ -91,12 +91,11 @@ public class NumberCellEditor extends AbstractCellEditor
 	}
 
 	public void keyPressed(KeyEvent arg0) {
-		int code = arg0.getKeyCode();
+		char code = arg0.getKeyChar();
 		if (Character.isLetterOrDigit(code) || code == KeyEvent.VK_BACK_SPACE
 				|| code == KeyEvent.VK_DELETE) {
 			personPanel.firePropertyChange(true);
 		}
-
 	}
 
 	public void keyReleased(KeyEvent arg0) {
