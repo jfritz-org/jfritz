@@ -44,9 +44,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.TableColumnModel;
 
-import de.moonflower.jfritz.callerlist.CallCellEditor;
 import de.moonflower.jfritz.callerlist.CallDialog;
-import de.moonflower.jfritz.callerlist.CallPanel;
 import de.moonflower.jfritz.callerlist.CallerListPanel;
 import de.moonflower.jfritz.callerlist.CallerTable;
 import de.moonflower.jfritz.dialogs.config.ConfigDialog;
@@ -114,8 +112,6 @@ public class JFritzWindow extends JFrame
 	private QuickDialPanel quickDialPanel;
 
 	private ConfigDialog configDialog;
-
-	private FritzBoxFirmware firmware = null;
 
 	/**
 	 * Constructs JFritzWindow
@@ -977,10 +973,9 @@ public class JFritzWindow extends JFrame
 		else if (e.getActionCommand() == "backup")
 			backupToChoosenDirectory();
 		else if (e.getActionCommand() == "call"){
-			CallCellEditor ce = new CallCellEditor(jfritz.getCallerlist());
-			PhoneNumber n = new PhoneNumber("Nummer muss noch von Hand in den Quelltext eingetragen werden");
-			CallDialog c = new CallDialog(jfritz, n);
-			c.setVisible(true);
+			PhoneNumber number = new PhoneNumber("Nummer muss noch von Hand in den Quelltext eingetragen werden");
+			CallDialog callDialog = new CallDialog(jfritz, number);
+			callDialog.setVisible(true);
 		}
 		else if (e.getActionCommand() == "fetchTask")
 			fetchTask(((JToggleButton) e.getSource()).isSelected());
