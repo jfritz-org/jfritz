@@ -276,6 +276,8 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 	private boolean hasChanged = false;
 
+	private boolean numberHasChanged = false;
+
 	private JCheckBox chkBoxPrivateEntry;
 
 	/**
@@ -289,6 +291,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 	}
 
 	private void drawPanel() {
+		numberHasChanged = false;
 		setBorder(BorderFactory.createEmptyBorder(10, 20, 5, 20));
 
 		JPanel buttonPanel = new JPanel();
@@ -403,6 +406,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		DefaultCellEditor comboEditor = new DefaultCellEditor(comboBox);
 		numberTable.getColumnModel().getColumn(0).setCellEditor(checkBoxEditor);
 		numberTable.getColumnModel().getColumn(1).setCellEditor(comboEditor);
+		numberTable.getColumnModel().getColumn(2).setCellEditor(new NumberCellEditor(this)); //TODO
 
 		// Buttons
 		addButton = new JButton();
@@ -587,6 +591,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		person.setCity(tfCity.getText());
 		person.setEmailAddress(tfEmail.getText());
 		hasChanged = false;
+		numberHasChanged = false;
 		jfritz.getPhonebook().sortAllFilteredRows();
 
 		return person;
@@ -600,6 +605,13 @@ public class PersonPanel extends JPanel implements ActionListener,
 	}
 
 	/**
+	 * @return Returns the numberHasChanged.
+	 */
+	public final boolean numberHasChanged() {
+		return numberHasChanged;
+	}
+
+	/**
 	 * @see javax.swing.event.CaretListener#caretUpdate(javax.swing.event.CaretEvent)
 	 */
 	public void caretUpdate(CaretEvent e) {
@@ -610,7 +622,17 @@ public class PersonPanel extends JPanel implements ActionListener,
 				|| !tfStreet.getText().equals(person.getStreet())
 				|| !tfPostalCode.getText().equals(person.getPostalCode())
 				|| !tfCity.getText().equals(person.getCity())
-				|| !tfEmail.getText().equals(person.getEmailAddress());
+				|| !tfEmail.getText().equals(person.getEmailAddress())
+				|| numberHasChanged;
+
+		firePropertyChange("hasChanged", hasChangedOld, hasChanged);
+	}
+
+	public void firePropertyChange(boolean boo){
+		boolean hasChangedOld = hasChanged;
+		hasChanged = boo;
+		numberHasChanged = boo;
+		if(numberHasChanged)
 		firePropertyChange("hasChanged", hasChangedOld, hasChanged);
 	}
 }
