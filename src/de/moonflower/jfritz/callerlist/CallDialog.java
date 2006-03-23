@@ -66,7 +66,7 @@ public class CallDialog extends JDialog implements ActionListener {
     private void drawDialog() {
         super.dialogInit();
         setTitle("Anrufen");
-        this.setAlwaysOnTop(true);
+ //       this.setAlwaysOnTop(true);
         setModal(true);
         getContentPane().setLayout(new BorderLayout());
 
