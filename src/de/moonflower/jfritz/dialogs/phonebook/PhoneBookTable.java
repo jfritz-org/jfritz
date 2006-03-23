@@ -15,6 +15,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.TableCellRenderer;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.callerlist.CallCellEditor;
 import de.moonflower.jfritz.cellrenderer.CallTypeDateCellRenderer;
 
 /**
@@ -62,6 +63,9 @@ public class PhoneBookTable extends JTable {
 				new CallTypeDateCellRenderer());
 		getColumnModel().getColumn(0).setMinWidth(50);
 		getColumnModel().getColumn(0).setMaxWidth(50);
+
+		getColumnModel().getColumn(2).setCellEditor(new CallCellEditor(jfritz));
+
 		getTableHeader().addMouseListener(new ColumnHeaderListener(getModel()));
 
 	}

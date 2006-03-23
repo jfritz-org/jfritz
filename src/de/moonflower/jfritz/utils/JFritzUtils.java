@@ -854,7 +854,6 @@ public class JFritzUtils {
 
     public static void doCall(String number, String port,
             FritzBoxFirmware firmware) {
-        String data = "";
         try {
             String passwort = Encryption.decrypt(JFritz.getProperty(
                     "box.password", Encryption.encrypt("")));
@@ -899,13 +898,7 @@ public class JFritzUtils {
             String urlstr = "http://"
                     + JFritz.getProperty("box.address", "fritz.box")
                     + "/cgi-bin/webcm";
-            data = fetchDataFromURL(urlstr, postdata);
-//            System.out.println("PASSWORT: " + passwort);
-//            System.out.println("Nummer: " + number);
-//            System.out.println("Port: " + portStr);
-//
-//            System.out.println(urlstr + "?" + postdata);
-//            System.out.println(data);
+            fetchDataFromURL(urlstr, postdata);
         } catch (UnsupportedEncodingException uee) {
         } catch (WrongPasswordException wpe) {
         } catch (IOException ioe) {

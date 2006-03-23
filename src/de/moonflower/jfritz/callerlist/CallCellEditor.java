@@ -24,12 +24,10 @@ import de.moonflower.jfritz.struct.PhoneNumber;
 public class CallCellEditor extends AbstractCellEditor implements
 		TableCellEditor {
 	private static final long serialVersionUID = 1;
-	private JFritz jfritz;
 	JComponent component;
 
-	public CallCellEditor(CallerList callerList) {
+	public CallCellEditor(JFritz jfritz) {
 		super();
-		this.jfritz = callerList.getJfritz();
 		component = new CallPanel(this, jfritz);
 	}
 

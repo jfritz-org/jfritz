@@ -97,6 +97,14 @@ public class PhoneBook extends AbstractTableModel {
 	}
 
 	/**
+	 *
+	 */
+	public boolean isCellEditable(int rowIndex, int columnIndex) {
+		return true;
+	}
+
+
+	/**
 	 * Sort table model rows automatically.
 	 *
 	 */
