@@ -66,6 +66,7 @@ public class CallDialog extends JDialog implements ActionListener {
     private void drawDialog() {
         super.dialogInit();
         setTitle("Anrufen");
+        this.setAlwaysOnTop(true);
         setModal(true);
         getContentPane().setLayout(new BorderLayout());
 
@@ -82,7 +83,7 @@ public class CallDialog extends JDialog implements ActionListener {
         c.anchor = GridBagConstraints.WEST;
 
         c.gridy = 1;
-        JLabel label = new JLabel("Nummer die gewählt wird: ");
+        JLabel label = new JLabel("Nummer: ");
         topPane.add(label, c);
         label = new JLabel(number.getShortNumber());
         topPane.add(label, c);
@@ -171,11 +172,11 @@ public class CallDialog extends JDialog implements ActionListener {
         topPane.add(port, c);
 
         // Bottom Pane
-        okButton = new JButton("Wählen");
+        okButton = new JButton("Anrufen");
         okButton.setActionCommand("call");
         okButton.addActionListener(this);
 
-        cancelButton = new JButton("Schließen");
+        cancelButton = new JButton("Abbrechen");
         cancelButton.setActionCommand("close");
         cancelButton.addActionListener(this);
 
@@ -194,6 +195,7 @@ public class CallDialog extends JDialog implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("call")) {
             JFritzUtils.doCall(number.getShortNumber().toString(), port.getSelectedItem().toString(), firmware);
+            setVisible(false);
         } else if (e.getActionCommand().equals("close")) {
             setVisible(false);
         }

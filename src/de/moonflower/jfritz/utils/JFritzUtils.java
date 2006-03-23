@@ -900,12 +900,12 @@ public class JFritzUtils {
                     + JFritz.getProperty("box.address", "fritz.box")
                     + "/cgi-bin/webcm";
             data = fetchDataFromURL(urlstr, postdata);
-            System.out.println("PASSWORT: " + passwort);
-            System.out.println("Nummer: " + number);
-            System.out.println("Port: " + portStr);
-
-            System.out.println(urlstr + "?" + postdata);
-            System.out.println(data);
+//            System.out.println("PASSWORT: " + passwort);
+//            System.out.println("Nummer: " + number);
+//            System.out.println("Port: " + portStr);
+//
+//            System.out.println(urlstr + "?" + postdata);
+//            System.out.println(data);
         } catch (UnsupportedEncodingException uee) {
         } catch (WrongPasswordException wpe) {
         } catch (IOException ioe) {
