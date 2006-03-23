@@ -41,6 +41,7 @@
  * TODO: Checken, ob alle Bibliotheken vorhanden sind
  *
  * JFritz 0.5.6
+ * - Neu: Wahlhilfe
  * - Änderung: Das Durchsuchen der Anruferliste muss nun per [ENTER] gestartet werden.
  * - Bugfix: "Übernehmen" Button im Telefonbuch wird nun anklickbar, wenn man eine Telefonnummer geändert hat.
  * - Bugfix: Sonderzeichen bei "Externes Programm starten" werden korrekt gespeichert
@@ -357,7 +358,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.188 2006/03/22 23:19:59 little_ben Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.189 2006/03/23 12:17:44 baefer Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
