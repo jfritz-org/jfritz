@@ -973,9 +973,12 @@ public class JFritzWindow extends JFrame
 		else if (e.getActionCommand() == "backup")
 			backupToChoosenDirectory();
 		else if (e.getActionCommand() == "call"){
-			PhoneNumber number = new PhoneNumber("Nummer muss noch von Hand in den Quelltext eingetragen werden");
-			CallDialog callDialog = new CallDialog(jfritz, number);
+			try{
+			CallDialog callDialog = new CallDialog(jfritz, jfritz.getCallerlist().getSelectedCall().getPhoneNumber());
 			callDialog.setVisible(true);
+			}catch(NullPointerException ex){
+				Debug.msg("Keine Nummer hinterlegt");
+			}
 		}
 		else if (e.getActionCommand() == "fetchTask")
 			fetchTask(((JToggleButton) e.getSource()).isSelected());
