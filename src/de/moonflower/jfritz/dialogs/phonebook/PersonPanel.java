@@ -381,7 +381,6 @@ public class PersonPanel extends JPanel implements ActionListener,
 				return c;
 			}
 		};
-		numberTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 		numberTable.setRowHeight(20);
 		numberTable.setFocusable(false);
 		numberTable.setAutoCreateColumnsFromModel(false);
@@ -462,6 +461,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 			} else { // Just remove the number
 				person.getNumbers().removeElementAt(row);
 			}
+			firePropertyChange(true);
 		}
 		((NumberTableModel) numberTable.getModel()).fireTableDataChanged();
 		updateAddDelButtons();
@@ -583,6 +583,12 @@ public class PersonPanel extends JPanel implements ActionListener,
 	}
 
 	public final Person updatePerson() {
+	    if (numberTable.isEditing())
+	    {
+	      int row = numberTable.getEditingRow();
+	      int column = numberTable.getEditingColumn();
+	      numberTable.editingStopped (new ChangeEvent (numberTable.getComponentAt(row, column)));
+	    }
 		person.setPrivateEntry(chkBoxPrivateEntry.isSelected());
 		person.setFirstName(tfFirstName.getText());
 		person.setCompany(tfCompany.getText());
