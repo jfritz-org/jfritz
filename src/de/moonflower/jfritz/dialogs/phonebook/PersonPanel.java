@@ -583,12 +583,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 	}
 
 	public final Person updatePerson() {
-	    if (numberTable.isEditing())
-	    {
-	      int row = numberTable.getEditingRow();
-	      int column = numberTable.getEditingColumn();
-	      numberTable.editingStopped (new ChangeEvent (numberTable.getComponentAt(row, column)));
-	    }
+		terminateEditing();
 		person.setPrivateEntry(chkBoxPrivateEntry.isSelected());
 		person.setFirstName(tfFirstName.getText());
 		person.setCompany(tfCompany.getText());
@@ -640,5 +635,14 @@ public class PersonPanel extends JPanel implements ActionListener,
 		numberHasChanged = boo;
 		if(numberHasChanged)
 		firePropertyChange("hasChanged", hasChangedOld, hasChanged);
+	}
+
+	public void terminateEditing(){
+	    if (numberTable.isEditing())
+	    {
+	      int row = numberTable.getEditingRow();
+	      int column = numberTable.getEditingColumn();
+	      numberTable.editingStopped (new ChangeEvent (numberTable.getComponentAt(row, column)));
+	    }
 	}
 }
