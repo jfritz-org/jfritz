@@ -8,18 +8,18 @@ package de.moonflower.jfritz.dialogs.phonebook;
  * TODO: Cellrenderer for PrivateCell
  *
  */
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Vector;
-import java.io.UnsupportedEncodingException;
 
 import javax.swing.table.AbstractTableModel;
 import javax.xml.parsers.ParserConfigurationException;
@@ -100,7 +100,10 @@ public class PhoneBook extends AbstractTableModel {
 	 *
 	 */
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		return true;
+		String columnName = getColumnName(columnIndex);
+		if (columnName.equals(JFritz.getMessage("number")))
+			return true;
+		return false;
 	}
 
 
