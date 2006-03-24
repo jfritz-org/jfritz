@@ -44,7 +44,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.TableColumnModel;
 
-import de.moonflower.jfritz.callerlist.CallDialog;
 import de.moonflower.jfritz.callerlist.CallerListPanel;
 import de.moonflower.jfritz.callerlist.CallerTable;
 import de.moonflower.jfritz.dialogs.config.ConfigDialog;
@@ -267,12 +266,12 @@ public class JFritzWindow extends JFrame
 		mBar.add(fetchButton);
 
 		JButton button = new JButton();
-		button = new JButton();
-		button.setActionCommand("call");
-		button.addActionListener(this);
-		button.setIcon(getImage("Phone.gif"));
-		button.setToolTipText(JFritz.getMessage("call"));
-		mBar.add(button);
+//		button = new JButton();
+//		button.setActionCommand("call");
+//		button.addActionListener(this);
+//		button.setIcon(getImage("Phone.gif"));
+//		button.setToolTipText(JFritz.getMessage("call"));
+//		mBar.add(button);
 
 		taskButton = new JToggleButton();
 		taskButton.setToolTipText(JFritz.getMessage("fetchtask"));
@@ -972,14 +971,14 @@ public class JFritzWindow extends JFrame
 			deleteFritzBoxCallerList();
 		else if (e.getActionCommand() == "backup")
 			backupToChoosenDirectory();
-		else if (e.getActionCommand() == "call"){
-			try{
-			CallDialog callDialog = new CallDialog(jfritz, jfritz.getCallerlist().getSelectedCall().getPhoneNumber());
-			callDialog.setVisible(true);
-			}catch(NullPointerException ex){
-				Debug.msg("Keine Nummer hinterlegt");
-			}
-		}
+//		else if (e.getActionCommand() == "call"){
+//			try{
+//			CallDialog callDialog = new CallDialog(jfritz, jfritz.getCallerlist().getSelectedCall().getPhoneNumber());
+//			callDialog.setVisible(true);
+//			}catch(NullPointerException ex){
+//				Debug.msg("Keine Nummer hinterlegt");
+//			}
+//		}
 		else if (e.getActionCommand() == "fetchTask")
 			fetchTask(((JToggleButton) e.getSource()).isSelected());
 		else if (e.getActionCommand() == "callMonitor") {
