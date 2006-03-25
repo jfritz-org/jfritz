@@ -43,6 +43,7 @@ public class CallerTable extends JTable {
 	private TableColumn callByCallColumn = null;
 	private TableColumn commentColumn = null;
 	private TableColumn portColumn = null;
+	final CallerTable table = this;
 
 	/**
 	 * Constructs CallerTable
@@ -81,7 +82,7 @@ public class CallerTable extends JTable {
 		getTableHeader().setResizingAllowed(true);
 		getTableHeader().addMouseListener(new ColumnHeaderListener(getModel()));
 
-		final CallerTable table = this;
+
 		KeyListener keyListener = (new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {

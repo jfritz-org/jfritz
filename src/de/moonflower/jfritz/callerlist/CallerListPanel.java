@@ -339,14 +339,6 @@ public class CallerListPanel extends JPanel
 		item.addActionListener(this);
 		clipboardMenu.add(item);
 
-		menuItem = new JMenuItem(JFritz.getMessage("select_all"));
-		menuItem.setActionCommand("select_all");
-		menuItem.addActionListener(this);
-		menuItem.setEnabled(false);
-		callerlistPopupMenu.add(menuItem);
-
-		callerlistPopupMenu.addSeparator();
-
 		callerlistPopupMenu.add(clipboardMenu);
 
 		MouseAdapter popupListener = new PopupListener(callerlistPopupMenu);
@@ -672,10 +664,6 @@ public class CallerListPanel extends JPanel
         			JFritzClipboard.copy(person.getAddress());
         	}
 			//jfritz.getJframe().copyAddressToClipboard();
-        	 else if (e.getActionCommand().equals("select_all")) {
-        		 getCallerTable().requestFocus();
-     			getCallerTable().selectAll();
-     		}
 
 		}
 
