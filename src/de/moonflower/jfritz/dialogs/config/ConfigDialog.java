@@ -488,12 +488,12 @@ protected JPanel createOtherPane() {
         JPanel otherpane = new JPanel();
 
         otherpane.setLayout(new BoxLayout(otherpane, BoxLayout.Y_AXIS));
-        timerLabel = new JLabel("Timer (in min): ");
+        timerLabel = new JLabel(JFritz.getMessage("timer_in")+": ");
         otherpane.add(timerLabel);
         otherpane.add(timerSlider);
 
         passwordAfterStartButton = new JCheckBox(
-                "Vor Programmstart Passwort erfragen?");
+        		JFritz.getMessage("ask_for_password_before_start"));
         otherpane.add(passwordAfterStartButton);
 
         timerAfterStartButton = new JCheckBox(
