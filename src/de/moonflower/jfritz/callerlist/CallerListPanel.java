@@ -295,30 +295,30 @@ public class CallerListPanel extends JPanel
 		callerTable = new CallerTable(jfritz);
 		JPopupMenu callerlistPopupMenu = new JPopupMenu();
 		JMenuItem menuItem;
-		menuItem = new JMenuItem("Rückwärtssuche");
+		menuItem = new JMenuItem(JFritz.getMessage("reverse_lookup"));
 		menuItem.setActionCommand("reverselookup");
 		menuItem.addActionListener(this);
 		callerlistPopupMenu.add(menuItem);
 
 		callerlistPopupMenu.addSeparator();
 
-		menuItem = new JMenuItem("CSV Export");
+		menuItem = new JMenuItem(JFritz.getMessage("export_csv"));
 		menuItem.setActionCommand("export_csv");
 		menuItem.addActionListener(this);
 		callerlistPopupMenu.add(menuItem);
 
-		menuItem = new JMenuItem("CSV Import");
+		menuItem = new JMenuItem(JFritz.getMessage("import_csv"));
 		menuItem.setActionCommand("import_csv");
 		menuItem.addActionListener(this);
 		menuItem.setEnabled(false);
 		callerlistPopupMenu.add(menuItem);
 
-		menuItem = new JMenuItem("XML Export");
+		menuItem = new JMenuItem(JFritz.getMessage("export_xml"));
 		menuItem.setActionCommand("export_xml");
 		menuItem.addActionListener(this);
 		callerlistPopupMenu.add(menuItem);
 
-		menuItem = new JMenuItem("XML Import");
+		menuItem = new JMenuItem(JFritz.getMessage("import_xml"));
 		menuItem.setActionCommand("import_xml");
 		menuItem.addActionListener(this);
 		menuItem.setEnabled(false);
@@ -326,21 +326,21 @@ public class CallerListPanel extends JPanel
 
 		callerlistPopupMenu.addSeparator();
 
-		JMenu clipboardMenu = new JMenu("Zwischenablage");
+		JMenu clipboardMenu = new JMenu(JFritz.getMessage("clipboard"));
 		clipboardMenu.setMnemonic(KeyEvent.VK_Z);
 
-		JMenuItem item = new JMenuItem("Nummer", KeyEvent.VK_N);
+		JMenuItem item = new JMenuItem(JFritz.getMessage("number"), KeyEvent.VK_N);
 		item.setActionCommand("clipboard_number");
 		item.addActionListener(this);
 		clipboardMenu.add(item);
 
-		item = new JMenuItem("Anschrift", KeyEvent.VK_A);
+		item = new JMenuItem(JFritz.getMessage("adress"), KeyEvent.VK_A);
 		item.setActionCommand("clipboard_adress");
 		item.addActionListener(this);
 		clipboardMenu.add(item);
 
-		menuItem = new JMenuItem("Alles Markieren");
-		menuItem.setActionCommand("mark_all");
+		menuItem = new JMenuItem(JFritz.getMessage("select_all"));
+		menuItem.setActionCommand("select_all");
 		menuItem.addActionListener(this);
 		menuItem.setEnabled(false);
 		callerlistPopupMenu.add(menuItem);
@@ -672,7 +672,7 @@ public class CallerListPanel extends JPanel
         			JFritzClipboard.copy(person.getAddress());
         	}
 			//jfritz.getJframe().copyAddressToClipboard();
-        	 else if (e.getActionCommand().equals("mark_all")) {
+        	 else if (e.getActionCommand().equals("select_all")) {
         		 getCallerTable().requestFocus();
      			getCallerTable().selectAll();
      		}
