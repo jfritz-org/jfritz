@@ -402,7 +402,7 @@ public class JFritzWindow extends JFrame
 			importMenu.add(item);
 		}
 
-	    item = new JMenuItem(JFritz.getMessage("import_csv"), 'c');
+	    item = new JMenuItem(JFritz.getMessage("import_csv"), 'i');
 	    item.setActionCommand("import_csv");
 	    item.addActionListener(this);
 	    importMenu.add(item);
