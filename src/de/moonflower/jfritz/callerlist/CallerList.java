@@ -5,10 +5,12 @@
  */
 package de.moonflower.jfritz.callerlist;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -71,6 +73,11 @@ public class CallerList extends AbstractTableModel {
             + "<!ELEMENT comment (#PCDATA)>"
             + "<!ELEMENT entry (date,caller?,port?,route?,duration?,comment?)>"
             + "<!ATTLIST entry calltype (call_in|call_in_failed|call_out) #REQUIRED>";
+
+    private final static String PATTERN_CSV = "(,|\\||;)";
+
+    private final static String EXPORT_CSV_FORMAT = "\"CallType\";\"Date\";\"Time\";\"Number\";\"Route\";\"" +
+        "Port\";\"Duration\";\"Name\";\"Address\";\"City\";\"CallByCall\";\"Comment\"";
 
     private JFritz jfritz;
 
@@ -1100,4 +1107,145 @@ public class CallerList extends AbstractTableModel {
 
 		return null;
 	}
+
+	 /**
+	   * @author Brian Jensen
+	   *
+	   * function reads the file and processes it line by line
+	   * using parseCSV() as the parse function
+	   * parses according to the current csv format found in this file
+	   * function also has the ability to 'nicely' handle broken CSV lines
+	   *
+	   * @param filename of the csv file to import from
+	   */
+	  public void importFromCSVFile(String filename){
+	    //Is the performace gain from this really worth it?
+	    //And if there are duplicate calls, only the first one gets filtered out
+	    alreadyKnownCalls = (Vector) unfilteredCallerData.clone();
+	    Debug.msg("Importing from csv file " + filename);
+	    String line = "";
+	    try {
+	      FileReader fr = new FileReader(filename);
+	          BufferedReader br = new BufferedReader(fr);
+
+	          if(!br.readLine().equals(EXPORT_CSV_FORMAT)){
+	              Debug.err("Wrong file type or corrupted file");
+	          }else{
+	            int linesRead = 0;
+	            int newEntries = 0;
+	            while(null != (line = br.readLine())){
+	              linesRead++;
+	              Call c = parseCall(line);
+	              if(c == null)
+	                Debug.msg("Error encountered processing the csv file, continuing");
+	              else if(addEntry(c)){
+	                newEntries++;
+
+	              }
+	            }
+	            Debug.msg(linesRead+" Lines read from csv file "+filename);
+	            Debug.msg(newEntries+" New entries processed");
+
+	            if (newEntries > 0) {
+	              sortAllUnfilteredRows();
+	              saveToXMLFile(JFritz.CALLS_FILE, true);
+	              String msg;
+
+	              if (newEntries == 1) {
+	                msg = JFritz.getMessage("imported_call");
+	              } else {
+	                msg = newEntries + " "+JFritz.getMessage("imported_calls");
+	              }
+	              JFritz.infoMsg(msg);
+
+	            }else{
+	              JFritz.infoMsg(JFritz.getMessage("no_imported_calls"));
+	            }
+
+
+	          }
+
+	          br.close();
+	          } catch (FileNotFoundException e) {
+	              Debug.err("Could not read from " + filename + "!");
+	          } catch(IOException e){
+	            Debug.err("IO Exception reading csv file");
+	          }
+
+	  }
+
+	  /**
+	   * @author Brian Jensen
+	   *
+	   * function first splits the line into substrings, then strips the quotationmarks(do those have to be?)
+	   * creates a call object and a phone book object
+	   *
+	   * @param line contains the line to be processed from a csv file
+	   * @return returns a call object, or null if the csv line is broken
+	   */
+	  public Call parseCall(String line){
+	    String[] field = line.split(PATTERN_CSV);
+	    Call call;
+	    CallType calltype;
+	    Date calldate;
+	    PhoneNumber number;
+
+	    //check if line has correct amount of entries
+	    if(field.length < 12){
+	      Debug.err("Invalid CSV format!");
+	      return null;
+	    }
+
+	    //Strip those damn quotes
+	    for(int i=0; i < 12; i++)
+	      field[i] = field[i].substring(1, field[i].length()-1);
+
+	    //Call type
+	    //Perhaps it would be nice to standardize the calltype and export strings
+	    if(field[0].equals("Incoming")){
+	        calltype = new CallType("call_in");
+	    }else if(field[0].equals("Missed")){
+	      calltype = new CallType("call_in_failed");
+	    }else if(field[0].equals("Outgoing")){
+	      calltype = new CallType("call_out");
+	    }else{
+	      Debug.err("Invalid Call type in CSV file!");
+	      return null;
+	    }
+
+	    //Call date and time
+	    if(field[1] != null && field[2] != null){
+
+	      try{
+	        calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(field[1]+" "+field[2]);
+	      }catch(ParseException e){
+	        Debug.err("Invalid date format in csv file!");
+	        return null;
+	      }
+	    }else{
+	      Debug.err("Invalid CSV file!");
+	      return null;
+	    }
+
+	    //Phone number
+	    if(field[3] != null){
+	      number = new PhoneNumber(field[3]);
+	      number.setCallByCall(field[10]);
+	    }else
+	      number = null;
+
+	    //now make the call object
+	    //TODO: change the order of the Call constructor to fit
+	    //the oder of the csv export function!!!
+	    call = new Call(jfritz, calltype, calldate, number, field[5], field[4],
+	        Integer.parseInt(field[6]));
+
+	    //TODO: perhaps split export function into two functions
+	    //exportCallListCSV() and exportPhoneBookCSV()
+	    //the few entries in the current export format are not complete
+	    //enough to reconstruct the phonebook correctly
+	    call.setComment(field[11]);
+
+	    return call;
+	  }
 }

@@ -400,8 +400,14 @@ public class JFritzWindow extends JFrame
 			item.setActionCommand("import_outlook");
 			item.addActionListener(this);
 			importMenu.add(item);
-			jfritzMenu.add(importMenu);
 		}
+
+	    item = new JMenuItem(JFritz.getMessage("import_csv"), 'c');
+	    item.setActionCommand("import_csv");
+	    item.addActionListener(this);
+	    importMenu.add(item);
+
+	    jfritzMenu.add(importMenu);
 
 		item = new JMenuItem(JFritz.getMessage("export_csv"), 'c');
 		item.setActionCommand("export_csv");
@@ -995,6 +1001,8 @@ public class JFritzWindow extends JFrame
 			reverseLookup();
 		else if (e.getActionCommand() == "F5")
 			fetchList();
+	    else if (e.getActionCommand() == "import_csv")
+	        importCSV();
 		else
 			Debug.err("Unimplemented action: " + e.getActionCommand());
 
@@ -1304,5 +1312,43 @@ public class JFritzWindow extends JFrame
 	private KeyStroke keyStroke(int vkey) {
 		return KeyStroke.getKeyStroke(vkey, 0 , false);
 	}
+
+	  /**
+	   * @author Brian Jensen
+	   *
+	   * opens the import csv dialog
+	   *
+	   *
+	   */
+	  public void importCSV(){
+	    JFileChooser fc = new JFileChooser(JFritz.getProperty(
+	        "options.exportCSVpath", null));
+	    fc.setDialogTitle(JFritz.getMessage("import_csv"));
+	    fc.setDialogType(JFileChooser.OPEN_DIALOG);
+	    fc.setSelectedFile(new File(JFritz.CALLS_CSV_FILE));
+	    fc.setFileFilter(new FileFilter() {
+	      public boolean accept(File f) {
+	        return f.isDirectory()
+	            || f.getName().toLowerCase().endsWith(".csv");
+	      }
+
+	      public String getDescription() {
+	        return "CSV-Dateien";
+	      }
+	    });
+	    if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+	      String path = fc.getSelectedFile().getPath();
+	      path = path.substring(0, path.length()
+	          - fc.getSelectedFile().getName().length());
+	      JFritz.setProperty("options.exportCSVpath", path);
+	      File file = fc.getSelectedFile();
+	      if (!file.exists()) {
+	        JOptionPane.showMessageDialog(this, "Error: File not found", "File Not Found", JOptionPane.ERROR_MESSAGE);
+
+	      }else{
+	        jfritz.getCallerlist().importFromCSVFile(file.getAbsolutePath());
+	      }
+	    }
+	  }
 
 }
