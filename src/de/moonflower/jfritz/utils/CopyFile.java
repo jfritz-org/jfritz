@@ -19,6 +19,10 @@ public class CopyFile {
     private Date date;
     SimpleDateFormat df = new SimpleDateFormat( "yyyy.MM.dd_HH.mm.ss" );
 
+    /**
+     * gets all files with the ending "fileFormat" in directory "sourceDirectory"
+     *
+     */
     private void getFiles() {
         File dir = new File(sourceDirectory);
         entries = dir.listFiles(new FileFilter() {
@@ -43,6 +47,10 @@ public class CopyFile {
 
     }
 
+    /**
+     * creates a directory-structure in the following format: backup/yyyy.MM.dd_HH.mm.ss
+     *
+     */
     private void createDirectory() {
         date = Calendar.getInstance().getTime();
 
@@ -53,6 +61,11 @@ public class CopyFile {
         }
     }
 
+    /**
+     * copies all files, which were fetched with getFiles() to the just
+     * created folder by method createDirectory()
+     *
+     */
     public void copy(String sourceDirectory, String fileFormat) {
         this.sourceDirectory = sourceDirectory;
         this.fileFormat = fileFormat;
@@ -78,6 +91,11 @@ public class CopyFile {
         }
     }
 
+    /**
+     * copies all  files, which were fetched with getFiles() to the
+     * parametric passed folder "targetDirectory"
+     *
+     */
     public void copy(String sourceDirectory, String fileFormat, String targetDirectory) {
         this.sourceDirectory = sourceDirectory;
         this.fileFormat = fileFormat;
