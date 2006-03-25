@@ -334,7 +334,7 @@ public class CallerListPanel extends JPanel
 		item.addActionListener(this);
 		clipboardMenu.add(item);
 
-		item = new JMenuItem(JFritz.getMessage("adress"), KeyEvent.VK_A);
+		item = new JMenuItem(JFritz.getMessage("address"), KeyEvent.VK_A);
 		item.setActionCommand("clipboard_adress");
 		item.addActionListener(this);
 		clipboardMenu.add(item);
