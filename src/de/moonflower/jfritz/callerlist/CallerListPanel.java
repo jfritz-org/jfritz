@@ -310,7 +310,7 @@ public class CallerListPanel extends JPanel
 		menuItem = new JMenuItem(JFritz.getMessage("import_csv"));
 		menuItem.setActionCommand("import_csv");
 		menuItem.addActionListener(this);
-		menuItem.setEnabled(false);
+		menuItem.setEnabled(true);
 		callerlistPopupMenu.add(menuItem);
 
 		menuItem = new JMenuItem(JFritz.getMessage("export_xml"));
@@ -646,6 +646,8 @@ public class CallerListPanel extends JPanel
 			jfritz.getJframe().exportCSV();
 		} else if (e.getActionCommand().equals("export_xml")) {
 			jfritz.getJframe().exportXML();
+		} else if (e.getActionCommand().equals("import_csv")) {
+			jfritz.getJframe().importCSV();
 		} else if (e.getActionCommand().equals("clipboard_number")) {
         	Call call = jfritz.getCallerlist().getSelectedCall();
         	if (call!=null)
