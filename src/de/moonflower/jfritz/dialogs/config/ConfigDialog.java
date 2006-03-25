@@ -344,11 +344,11 @@ public class ConfigDialog extends JDialog {
         JLabel label = new JLabel("");
         label.setIcon(boxicon);
         boxpane.add(label, c);
-        label = new JLabel("FRITZ!Box-Einstellungen");
+        label = new JLabel(JFritz.getMessage("FRITZ!Box_Preferences"));
         boxpane.add(label, c);
 
         c.gridy = 2;
-        label = new JLabel("FRITZ!Box: ");
+        label = new JLabel(JFritz.getMessage("FRITZ!Box")+": ");
         boxpane.add(label, c);
 
         addressCombo = new JComboBox();
@@ -366,21 +366,21 @@ public class ConfigDialog extends JDialog {
         boxpane.add(addressCombo, c);
 
         c.gridy = 3;
-        label = new JLabel("IP-Addresse: ");
+        label = new JLabel(JFritz.getMessage("ip_address")+": ");
         boxpane.add(label, c);
         address = new JTextField("", 16);
         address.setMinimumSize(new Dimension(200, 20));
         boxpane.add(address, c);
 
         c.gridy = 4;
-        label = new JLabel("Passwort: ");
+        label = new JLabel(JFritz.getMessage("password")+": ");
         boxpane.add(label, c);
         pass = new JPasswordField("", 16);
         pass.setMinimumSize(new Dimension(200, 20));
         boxpane.add(pass, c);
 
         c.gridy = 5;
-        boxtypeButton = new JButton("Typ erkennen");
+        boxtypeButton = new JButton(JFritz.getMessage("detect_box_type"));
         boxtypeButton.setActionCommand("detectboxtype");
         boxtypeButton.addActionListener(actionListener);
         boxpane.add(boxtypeButton, c);
@@ -388,7 +388,7 @@ public class ConfigDialog extends JDialog {
         boxpane.add(boxtypeLabel, c);
 
 		c.gridy = 6;
-		label = new JLabel("MAC-Addresse: ");
+		label = new JLabel(JFritz.getMessage("mac_address")+": ");
         //boxpane.add(label, c);
         macLabel = new JLabel();
         //boxpane.add(macLabel, c);
