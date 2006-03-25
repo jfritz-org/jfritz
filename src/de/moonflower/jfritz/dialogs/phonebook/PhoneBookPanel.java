@@ -350,6 +350,16 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 
 	public void importFromXML () {
 		JFileChooser fc = new JFileChooser(JFritz.getProperty("option.phonebook.import_xml_path"));
+		fc.setFileFilter(new FileFilter() {
+			public boolean accept(File f) {
+				return f.isDirectory()
+						|| f.getName().toLowerCase().endsWith(".xml");
+			}
+
+			public String getDescription() {
+				return "XML-Dateien";
+			}
+		});
 		if (fc.showOpenDialog(jfritz.getJframe()) != JFileChooser.APPROVE_OPTION) return;
 		JFritz.setProperty("option.phonebook.import_xml_path", fc.getSelectedFile().getAbsolutePath());
 		jfritz.getPhonebook().loadFromXMLFile(fc.getSelectedFile().getAbsolutePath());
