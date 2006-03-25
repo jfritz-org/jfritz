@@ -74,7 +74,7 @@ public class CallerList extends AbstractTableModel {
             + "<!ELEMENT entry (date,caller?,port?,route?,duration?,comment?)>"
             + "<!ATTLIST entry calltype (call_in|call_in_failed|call_out) #REQUIRED>";
 
-    private final static String PATTERN_CSV = "(,|\\||;)";
+    private final static String PATTERN_CSV = "(\\||;)";
 
     private final static String EXPORT_CSV_FORMAT = "\"CallType\";\"Date\";\"Time\";\"Number\";\"Route\";\"" +
         "Port\";\"Duration\";\"Name\";\"Address\";\"City\";\"CallByCall\";\"Comment\"";
