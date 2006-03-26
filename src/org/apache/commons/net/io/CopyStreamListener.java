@@ -33,7 +33,7 @@ import java.util.EventListener;
  * <p>
  *
  * @author <a href="mailto:savarese@apache.org">Daniel F. Savarese </a>
- * @version $Id: CopyStreamListener.java,v 1.2 2005/06/20 22:01:48 akw Exp $
+ * @version $Id: CopyStreamListener.java,v 1.3 2006/03/26 15:26:39 little_ben Exp $
  */
 public interface CopyStreamListener extends EventListener {
 	/**

@@ -505,22 +505,62 @@ public class PhoneBook extends AbstractTableModel {
 	public void updateFilter() {
 		boolean filter_private = JFritzUtils.parseBoolean(JFritz
 				.getProperty("filter_private"));
-		if (filter_private) {
-			Enumeration en = unfilteredPersons.elements();
-			Vector newFilteredPersons;
-			newFilteredPersons = new Vector();
-			while (en.hasMoreElements()) {
-				Person current = (Person) en.nextElement();
-				if (current.isPrivateEntry()) {
-					newFilteredPersons.add(current);
-				}
-			}
-			filteredPersons = newFilteredPersons;
-			sortAllFilteredRows();
-		}
-		else {
+
+		String filterSearch = JFritz.getProperty("filter.Phonebook.search", "");
+/*        try {
+            jfritz.getJframe().getCallerTable().getCellEditor()
+                    .cancelCellEditing();
+        } catch (NullPointerException e) {
+        }
+*/
+
+        if ((filter_private) || (filterSearch.length() > 0)) {
+    		if (filter_private) {
+    			Enumeration en = unfilteredPersons.elements();
+    			Vector newFilteredPersons;
+    			newFilteredPersons = new Vector();
+    			while (en.hasMoreElements()) {
+    				Person current = (Person) en.nextElement();
+    				if (current.isPrivateEntry()) {
+    					newFilteredPersons.add(current);
+    				}
+    			}
+    			filteredPersons = newFilteredPersons;
+    			sortAllFilteredRows();
+    		}
+    		if(filterSearch.length() > 0)
+    		{
+    			Enumeration en = unfilteredPersons.elements();
+    			Vector newFilteredPersons = new Vector();
+    			while (en.hasMoreElements()) {
+    				Person current = (Person) en.nextElement();
+    				int matchFilter=0;
+                    // SearchFilter: Number, Participant, Date
+                    String parts[] = filterSearch.split(" ");
+                    for (int i = 0; i < parts.length; i++) {
+                        String part = parts[i];
+                        if (part.length() > 0
+                                && ((current == null || current
+                                        .getStandardTelephoneNumber().getAreaNumber().indexOf(
+                                                parts[i]) != -1)
+                                || (current == null || current
+                                        .getFullname().toLowerCase().indexOf(
+                                                part.toLowerCase()) != -1))) {
+                        	matchFilter++;
+                        }
+
+                    }
+                    if (matchFilter==parts.length)
+                    	newFilteredPersons.add(current);
+    			}
+    			filteredPersons = newFilteredPersons;
+    			sortAllFilteredRows();
+    		}
+        }
+        else{
+            // Use unfiltered data
 			filteredPersons = unfilteredPersons;
 			sortAllFilteredRows();
-		}
+        }
 	}
 }

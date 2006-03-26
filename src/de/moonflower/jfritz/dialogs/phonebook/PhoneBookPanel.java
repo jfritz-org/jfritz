@@ -8,6 +8,8 @@ import java.awt.BorderLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
@@ -19,10 +21,12 @@ import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.event.ListSelectionEvent;
@@ -42,7 +46,7 @@ import de.moonflower.jfritz.utils.Debug;
  *
  */
 public class PhoneBookPanel extends JPanel implements ListSelectionListener,
-		PropertyChangeListener, ActionListener {
+		PropertyChangeListener, ActionListener, KeyListener {
 	private static final long serialVersionUID = 1;
 
 	private final int PERSONPANEL_WIDTH = 350;
@@ -55,9 +59,11 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 
 	private JSplitPane splitPane;
 
-	private JButton saveButton, cancelButton;
+	private JButton saveButton, cancelButton, resetButton;
 
 	private JPopupMenu popupMenu;
+
+	private JTextField searchFilter;
 
 	public PhoneBookPanel(JFritz jfritz) {
 		this.jfritz = jfritz;
@@ -125,8 +131,8 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		toolBar.add(exportVCardButton);
 
 		toolBar.addSeparator();
-		toolBar.addSeparator();
-		toolBar.addSeparator();
+		//toolBar.addSeparator();
+		//toolBar.addSeparator();
 
 		JToggleButton tb = new JToggleButton(getImage("addbook_grey.png"), true);
 		tb.setSelectedIcon(getImage("addbook.png"));
@@ -137,7 +143,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 				"filter_private", "false")));
 		toolBar.add(tb);
 
-		toolBar.addSeparator();
+		//toolBar.addSeparator();
 		toolBar.addSeparator();
 
 		JButton importXMLButton = new JButton();
@@ -146,6 +152,20 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		importXMLButton.setActionCommand("import_xml");
 		importXMLButton.addActionListener(this);
 		toolBar.add(importXMLButton);
+
+		toolBar.addSeparator();
+
+		resetButton = new JButton();
+		toolBar.add(new JLabel(JFritz.getMessage("search") + ": "));
+		searchFilter = new JTextField(JFritz.getProperty("filter.Phonebook.search", ""),
+				10);
+		searchFilter.addKeyListener(this);
+		toolBar.add(searchFilter);
+
+		resetButton = new JButton(JFritz.getMessage("clear"));
+		resetButton.setActionCommand("clearFilter");
+		resetButton.addActionListener(this);
+		toolBar.add(resetButton);
 
 		return toolBar;
 	}
@@ -230,6 +250,8 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			exportVCard();
 		} else if (e.getActionCommand().equals("import_xml")) {
 			importFromXML ();
+		} else if (e.getActionCommand() == "clearFilter") {
+			clearAllFilter();
 		} else {
 			Debug.msg("Unsupported Command: " + e.getActionCommand());
 		}
@@ -391,4 +413,46 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			}
 		}
 	}
+
+	public void keyPressed(KeyEvent arg0) {
+		if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
+			String filter = "";
+			JTextField search = (JTextField) arg0.getSource();
+			if (!filter.equals(search.getText())) {
+				filter = search.getText();
+				JFritz.setProperty("filter.Phonebook.search", filter);
+				jfritz.getPhonebook().updateFilter();
+				jfritz.getPhonebook().fireTableDataChanged();
+			}
+			if (search.getText().equals("")){
+				filter = " ";
+				JFritz.setProperty("filter.Phonebook.search", filter);
+				jfritz.getPhonebook().updateFilter();
+				jfritz.getPhonebook().fireTableDataChanged();
+			}
+		}
+
+	}
+
+	public void setSearchFilter(String text) {
+		searchFilter.setText(text);
+	}
+
+	private void clearAllFilter() {
+		setSearchFilter("");
+		JFritz.setProperty("filter.Phonebook.search", "");
+		jfritz.getPhonebook().updateFilter();
+		jfritz.getPhonebook().fireTableDataChanged();
+	}
+
+	public void keyReleased(KeyEvent arg0) {
+		// unnötig
+
+	}
+
+	public void keyTyped(KeyEvent arg0) {
+		// unnötig
+
+	}
+
 }

@@ -24,7 +24,7 @@ import java.io.IOException;
  * responsible for the failure of a copy operation.
  * @see Util
  * @author <a href="mailto:savarese@apache.org">Daniel F. Savarese</a>
- * @version $Id: CopyStreamException.java,v 1.2 2005/07/24 06:18:30 jfahrner Exp $
+ * @version $Id: CopyStreamException.java,v 1.3 2006/03/26 15:26:39 little_ben Exp $
  */
 public class CopyStreamException extends IOException
 {

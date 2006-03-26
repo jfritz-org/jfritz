@@ -58,6 +58,7 @@
  * - Bugfix: Speicherung der Kommentare
  * - INTERN: Bereitstellen von utils.JFritzClipboard und CallerList.getSelectedCall
  * - INTERN: JDIC-Update auf 0.9.1
+ * - Neu: Suchfunktion für Telefonbuch
  *
  * JFritz 0.5.5
  * - Nummer und Anschrift können aus der Anrufliste heraus in die Zwischenablage kopiert werden
@@ -360,7 +361,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.191 2006/03/25 00:40:41 baefer Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.192 2006/03/26 15:26:39 little_ben Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
