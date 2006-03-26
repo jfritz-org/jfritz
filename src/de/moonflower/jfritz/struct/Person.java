@@ -130,11 +130,11 @@ public class Person {
 		return ret;
 	}
 
-	//TODO Privat & Geschäftlich durch Konstanten ersetzen
-	//private String[] basicTypes = { "home", "mobile", "homezone",
-	//	"business", "other", "fax", "sip" };
-	//TODO Sonstiges und Nichtgefundenes
-	//TODO sip != Pager, korrigieren
+	// TODO Privat & Geschäftlich durch Konstanten ersetzen
+	// private String[] basicTypes = { "home", "mobile", "homezone",
+	// "business", "other", "fax", "sip" };
+	// TODO Sonstiges und Nichtgefundenes
+	// TODO sip != Pager, korrigieren
 	public String toVCard() {
 		String vcard = "";
 		vcard = "BEGIN:vCard\n" + "VERSION:2.1\n" + "FN: " + getFullname()
@@ -180,32 +180,38 @@ public class Person {
 	}
 
 	public String getFirstName() {
-        if (firstName == null) return "";
+		if (firstName == null)
+			return "";
 		return firstName;
 	}
 
 	public String getCompany() {
-        if (company == null) return "";
+		if (company == null)
+			return "";
 		return company;
 	}
 
 	public String getLastName() {
-        if (lastName == null) return "";
+		if (lastName == null)
+			return "";
 		return lastName;
 	}
 
 	public String getStreet() {
-        if (street == null) return "";
+		if (street == null)
+			return "";
 		return street;
 	}
 
 	public String getPostalCode() {
-        if (postalCode == null) return "";
+		if (postalCode == null)
+			return "";
 		return postalCode;
 	}
 
 	public String getCity() {
-        if (city == null) return "";
+		if (city == null)
+			return "";
 		return city;
 	}
 
@@ -230,28 +236,31 @@ public class Person {
 	 * Checks if person has telephone number
 	 *
 	 * @param number
-	 * 			the phone number to check as String
+	 *            the phone number to check as String
 	 * @param considerMain
-	 * 			true, if main number sould be considered
+	 *            true, if main number sould be considered
 	 * @return True if person has a phone number
 	 */
 	public boolean hasNumber(String number, boolean considerMain) {
-			Enumeration en = numbers.elements();
-			while (en.hasMoreElements()) {
-				PhoneNumber n = (PhoneNumber) en.nextElement();
-				if ((n.getType().startsWith("main"))&& (considerMain)) { // starts with ...
-					if (number.startsWith(n.getIntNumber()))
-						return true;
-				} else { // equal number
-					if (number.equals(n.getIntNumber()))
-						return true;
-				}
+		Enumeration en = numbers.elements();
+		while (en.hasMoreElements()) {
+			PhoneNumber n = (PhoneNumber) en.nextElement();
+			if ((n.getType().startsWith("main")) && (considerMain)) { // starts
+																		// with
+																		// ...
+				if (number.startsWith(n.getIntNumber()))
+					return true;
+			} else { // equal number
+				if (number.equals(n.getIntNumber()))
+					return true;
 			}
-			return false;
+		}
+		return false;
 	}
 
 	public String getEmailAddress() {
-        if (emailAddress == null) return "";
+		if (emailAddress == null)
+			return "";
 		return emailAddress;
 	}
 
@@ -287,7 +296,8 @@ public class Person {
 	 * @return Returns the standard Number.
 	 */
 	public final String getStandard() {
-        if (standard == null) return "";
+		if (standard == null)
+			return "";
 		return standard;
 	}
 
@@ -309,47 +319,97 @@ public class Person {
 
 	/**
 	 * Creates the address of that person separated by given separators
+	 *
 	 * @return the address as String
 	 * @param
 	 * @author Benjamin Schmitt
 	 */
-	public String getAddress()
-	{
-        String lineSeparator = System.getProperty("line.separator"); //new String("\r\n");
-        String wordSeparator = " "; //used to separate words in one line, e.g. between firstname an surname
-        return this.getAddress(lineSeparator,wordSeparator);
+	public String getAddress() {
+		String lineSeparator = System.getProperty("line.separator"); // new
+																		// String("\r\n");
+		String wordSeparator = " "; // used to separate words in one line, e.g.
+									// between firstname an surname
+		return this.getAddress(lineSeparator, wordSeparator);
 	}
 
 	/**
 	 * Creates the address of that person separated by given separators
+	 *
 	 * @return the address as String
 	 * @param
 	 * @author Benjamin Schmitt
 	 */
-	public String getAddress(String lineSeparator, String wordSeparator)
-	{
+	public String getAddress(String lineSeparator, String wordSeparator) {
 
-		//TODO: create patterns as params for that function
-        String address ="";
+		// TODO: create patterns as params for that function
+		String address = "";
 
-        if (this!=null)
-        {
-            String company=(this.getCompany()!=null?this.getCompany():"");
-            String firstName=(this.getFirstName()!=null?this.getFirstName():"");
-            String lastName=(this.getLastName()!=null?this.getLastName():"");
-            String street=(this.getStreet()!=null?this.getStreet():"");
-            String postalCode=(this.getPostalCode()!=null?this.getPostalCode():"");
-            String city=(this.getCity()!=null?this.getCity():"");
+		if (this != null) {
+			String company = (this.getCompany() != null
+					? this.getCompany()
+					: "");
+			String firstName = (this.getFirstName() != null ? this
+					.getFirstName() : "");
+			String lastName = (this.getLastName() != null
+					? this.getLastName()
+					: "");
+			String street = (this.getStreet() != null ? this.getStreet() : "");
+			String postalCode = (this.getPostalCode() != null ? this
+					.getPostalCode() : "");
+			String city = (this.getCity() != null ? this.getCity() : "");
 
-            address= new String(
-            		(company!=""?company+lineSeparator:"")+
-            		(firstName!=""?firstName+wordSeparator:"")+
-            		(lastName!=""?lastName+lineSeparator:"")+
-            		(street!=""?street+lineSeparator:"")+
-            		(postalCode!=""?postalCode+wordSeparator:"")+
-            		(city!=""?city+lineSeparator:"")
-            		);
-        }
+			address = new String((company != "" ? company + lineSeparator : "")
+					+ (firstName != "" ? firstName + wordSeparator : "")
+					+ (lastName != "" ? lastName + lineSeparator : "")
+					+ (street != "" ? street + lineSeparator : "")
+					+ (postalCode != "" ? postalCode + wordSeparator : "")
+					+ (city != "" ? city + lineSeparator : ""));
+		}
 		return address;
+	}
+
+	/**
+	 * @author Bastian Schaefer
+	 * @return Returns CSV String
+	 */
+	public String toCSV() {
+		String outString = "";
+
+		// private contact?
+		if (privateEntry) {
+			outString = "\"YES\"";
+		} else {
+			outString = "\"NO\"";
+		}
+
+		// last name
+		outString = outString.concat(";\"" + getLastName() + "\"");
+
+		// first name
+		outString = outString.concat(";\"" + getFirstName() + "\"");
+
+		// company
+		outString = outString.concat(";\"" + getCompany() + "\"");
+
+		// Street
+		outString = outString.concat(";\"" + getStreet() + "\"");
+
+		// Postal Code
+		outString = outString.concat(";\"" + getPostalCode() + "\"");
+
+		// city
+		outString = outString.concat(";\"" + getCity() + "\"");
+
+		// email
+		outString = outString.concat(";\"" + getEmailAddress() + "\"");
+
+		// numbers
+		if (getNumbers() == null)
+			outString = outString.concat(";\"\"");
+		else
+			outString = outString.concat(";\"" + getNumbers().toString().replaceAll("\\[|\\]", "") + "\"");
+
+
+		return outString;
 	}
 }

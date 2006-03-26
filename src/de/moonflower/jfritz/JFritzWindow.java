@@ -414,6 +414,11 @@ public class JFritzWindow extends JFrame
 		item.addActionListener(this);
 		exportMenu.add(item);
 
+		item = new JMenuItem(JFritz.getMessage("export_csv_phonebook"), 'c');
+		item.setActionCommand("export_phonebook");
+		item.addActionListener(this);
+		exportMenu.add(item);
+
 		jfritzMenu.add(exportMenu);
 
 		if (JFritz.runsOn() != "mac") {
@@ -956,7 +961,9 @@ public class JFritzWindow extends JFrame
 		} else if (e.getActionCommand() == "website") {
 			BrowserLaunch.openURL(JFritz.PROGRAM_URL);
 		} else if (e.getActionCommand() == "export_csv")
-			exportCSV();
+			exportCallerListToCSV();
+		else if (e.getActionCommand() == "export_phonebook")
+			exportPhoneBookToCSV();
 		else if (e.getActionCommand() == "print_callerlist")
 			printCallerList();
 		else if (e.getActionCommand() == "import_outlook")
@@ -1011,7 +1018,7 @@ public class JFritzWindow extends JFrame
 	/**
 	 * Exports caller list as CSV
 	 */
-	public void exportCSV() {
+	public void exportCallerListToCSV() {
 		JFileChooser fc = new JFileChooser(JFritz.getProperty(
 				"options.exportCSVpath", null));
 		fc.setDialogTitle(JFritz.getMessage("export_csv"));
@@ -1050,7 +1057,7 @@ public class JFritzWindow extends JFrame
 	/**
 	 * Exports caller list as XML
 	 */
-	public void exportXML() {
+	public void exportCallerListToXML() {
 		JFileChooser fc = new JFileChooser(JFritz.getProperty(
 				"options.exportXMLpath", null));
 		fc.setDialogTitle("Exportiere Anrufliste als XML-Datei");
@@ -1081,6 +1088,46 @@ public class JFritzWindow extends JFrame
 				}
 			} else {
 				jfritz.getCallerlist().saveToXMLFile(file.getAbsolutePath(),
+						false);
+			}
+		}
+	}
+
+	/**
+	 * Exports phone book as CSV
+	 * @author Bastian Schaefer
+	 */
+	public void exportPhoneBookToCSV() {
+		JFileChooser fc = new JFileChooser(JFritz.getProperty(
+				"options.exportCSVpathOfPhoneBook", null));
+		fc.setDialogTitle(JFritz.getMessage("export_csv_phonebook"));
+		fc.setDialogType(JFileChooser.SAVE_DIALOG);
+		fc.setSelectedFile(new File(JFritz.PHONEBOOK_CSV_FILE));
+		fc.setFileFilter(new FileFilter() {
+			public boolean accept(File f) {
+				return f.isDirectory()
+						|| f.getName().toLowerCase().endsWith(".csv");
+			}
+
+			public String getDescription() {
+				return "CSV-Dateien";
+			}
+		});
+		if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+			String path = fc.getSelectedFile().getPath();
+			path = path.substring(0, path.length()
+					- fc.getSelectedFile().getName().length());
+			JFritz.setProperty("options.exportCSVpathOfPhoneBook", path);
+			File file = fc.getSelectedFile();
+			if (file.exists()) {
+				if (JOptionPane.showConfirmDialog(this, "Soll die Datei "
+						+ file.getName() + " überschrieben werden?",
+						"Datei überschreiben?", JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
+					jfritz.getPhonebook().saveToCSVFile(
+							file.getAbsolutePath(), false);
+				}
+			} else {
+				jfritz.getPhonebook().saveToCSVFile(file.getAbsolutePath(),
 						false);
 			}
 		}

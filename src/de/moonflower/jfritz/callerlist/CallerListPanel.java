@@ -643,9 +643,9 @@ public class CallerListPanel extends JPanel
 		} else if (e.getActionCommand().equals("reverselookup")) {
 			doReverseLookup();
 		} else if (e.getActionCommand().equals("export_csv")) {
-			jfritz.getJframe().exportCSV();
+			jfritz.getJframe().exportCallerListToCSV();
 		} else if (e.getActionCommand().equals("export_xml")) {
-			jfritz.getJframe().exportXML();
+			jfritz.getJframe().exportCallerListToXML();
 		} else if (e.getActionCommand().equals("import_csv")) {
 			jfritz.getJframe().importCSV();
 		} else if (e.getActionCommand().equals("clipboard_number")) {

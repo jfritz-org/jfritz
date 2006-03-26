@@ -14,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;
@@ -64,6 +65,7 @@ public class PhoneBook extends AbstractTableModel {
 
 	private boolean sortDirection = true;
 
+    private final static String EXPORT_CSV_FORMAT = "\"Private\";\"Last Name\";\"First Name\";\"Company\";\"Street\";\"Postal Code\";\"City\";\"E-Mail\";\"Phone Numbers\"";
 	/**
 	 * Sort table model rows by a specific column and direction
 	 *
@@ -434,6 +436,54 @@ public class PhoneBook extends AbstractTableModel {
 		//throw new IllegalArgumentException("Invalid column: " + columnIndex);
 		}
 	}
+
+
+    /**
+     * Saves PhoneBook to csv file
+     *
+     * @author Bastian Schaefer
+     *
+     * @param filename
+     *            Filename to save to
+     * @param wholePhoneBook
+     *            Save whole phone book or only selected entries
+     */
+    public void saveToCSVFile(String filename, boolean wholePhoneBook) {
+        Debug.msg("Saving phone book to csv file " + filename);
+        FileOutputStream fos;
+        try {
+            fos = new FileOutputStream(filename);
+            PrintWriter pw = new PrintWriter(fos);
+           // pw.println("\"Private\";\"Last Name\";\"First Name\";\"Number\";\"Address\";\"City\"");
+           pw.println(EXPORT_CSV_FORMAT);
+            int rows[] = null;
+            if (jfritz != null && jfritz.getJframe() != null) {
+            	 rows = jfritz.getJframe().getPhoneBookPanel().getPhoneBookTable().getSelectedRows();
+            }
+            if (!wholePhoneBook && rows != null && rows.length > 0) {
+                for (int i = 0; i < rows.length; i++) {
+                    Person currentPerson = (Person) filteredPersons
+                            .elementAt(rows[i]);
+                    pw.println(currentPerson.toCSV());
+                }
+            } else if (wholePhoneBook) { // Export ALL UNFILTERED Calls
+                Enumeration en = getUnfilteredPersons().elements();
+                while (en.hasMoreElements()) {
+                    Person person = (Person) en.nextElement();
+                    pw.println(person.toCSV());
+                }
+            } else { // Export ALL FILTERED Calls
+                Enumeration en = getFilteredPersons().elements();
+                while (en.hasMoreElements()) {
+                    Person person = (Person) en.nextElement();
+                    pw.println(person.toCSV());
+                }
+            }
+            pw.close();
+        } catch (FileNotFoundException e) {
+            Debug.err("Could not write " + filename + "!");
+        }
+    }
 
 	/**
 	 * Returns info about stored Person

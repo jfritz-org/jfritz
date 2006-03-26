@@ -361,7 +361,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.192 2006/03/26 15:26:39 little_ben Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.193 2006/03/26 16:23:00 baefer Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -376,6 +376,8 @@ public final class JFritz {
     public final static String SIPPROVIDER_FILE = "jfritz.sipprovider.xml";
 
     public final static String CALLS_CSV_FILE = "calls.csv";
+
+    public final static String PHONEBOOK_CSV_FILE = "contacts.csv";
 
     public final static int SSDP_TIMEOUT = 1000;
 
