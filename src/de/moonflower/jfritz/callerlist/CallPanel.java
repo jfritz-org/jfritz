@@ -16,6 +16,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 
 /**
@@ -47,7 +48,14 @@ public class CallPanel extends JComponent {
 		input.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() > 1) {
-					CallDialog p = new CallDialog(jfritz, number);
+					Person person = jfritz.getPhonebook().findPerson(number);
+					CallDialog p;
+					if (person!=null)
+					{
+						p = new CallDialog(jfritz,person.getNumbers(),number);
+					}
+					else
+						p = new CallDialog(jfritz, number);
 					p.setVisible(true);
 //					p.show();
 					p.dispose();

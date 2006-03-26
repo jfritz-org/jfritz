@@ -5,6 +5,7 @@
 package de.moonflower.jfritz.callerlist;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -12,6 +13,7 @@ import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -35,7 +37,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 public class CallDialog extends JDialog implements ActionListener {
     private static final long serialVersionUID = 1;
 
-    private PhoneNumber number;
+    private Vector numbers;
 
     private JFritz jfritz;
 
@@ -44,6 +46,29 @@ public class CallDialog extends JDialog implements ActionListener {
     private FritzBoxFirmware firmware = null;
 
     JButton okButton, cancelButton;
+
+    private Object cboNumber;
+
+    private PhoneNumber defaultNumber;
+
+    /**
+     *
+     * @param jfritz
+     *            JFritz object
+     * @param number
+     *            PhoneNumber object
+     * @throws HeadlessException
+     */
+    public CallDialog(JFritz jfritz, Vector numbers, PhoneNumber defaultNumber)
+            throws HeadlessException {
+        super();
+        this.jfritz = jfritz;
+        //this.setLocationRelativeTo(jfritz.getJframe());
+        this.setLocation(jfritz.getJframe().getX()+80, jfritz.getJframe().getY()+100);
+        this.numbers = numbers;
+       	this.defaultNumber = defaultNumber;
+        drawDialog();
+    }
 
     /**
      *
@@ -59,14 +84,16 @@ public class CallDialog extends JDialog implements ActionListener {
         this.jfritz = jfritz;
         //this.setLocationRelativeTo(jfritz.getJframe());
         this.setLocation(jfritz.getJframe().getX()+80, jfritz.getJframe().getY()+100);
-        this.number = number;
+        Vector v = new Vector();
+        v.addElement(number);
+        this.numbers = v;
         drawDialog();
     }
 
     private void drawDialog() {
         super.dialogInit();
         setTitle("Anrufen");
- //       this.setAlwaysOnTop(true);
+ //       this.setAlwaysOnTop(true); //erst ab Java V.5.0 möglich
         setModal(true);
         getContentPane().setLayout(new BorderLayout());
 
@@ -85,9 +112,20 @@ public class CallDialog extends JDialog implements ActionListener {
         c.gridy = 1;
         JLabel label = new JLabel("Nummer: ");
         topPane.add(label, c);
-        label = new JLabel(number.getShortNumber());
-        topPane.add(label, c);
-
+        if (this.numbers.size()==1)
+        {
+        	cboNumber = new JLabel(((PhoneNumber)numbers.elementAt(0)).getShortNumber());
+        }
+        else
+        {
+	        cboNumber = new JComboBox();
+	        for (int i=0;i<this.numbers.size();i++)
+	        {
+	        	((JComboBox) cboNumber).addItem(((PhoneNumber) numbers.elementAt(i)).getShortNumber());
+	        }
+	        ((JComboBox) cboNumber).setSelectedItem(this.defaultNumber.getShortNumber());
+        }
+        topPane.add((Component)cboNumber, c);
         c.gridy = 2;
         label = new JLabel("Nebenstelle: ");
         topPane.add(label, c);
@@ -140,7 +178,8 @@ public class CallDialog extends JDialog implements ActionListener {
             case FritzBoxFirmware.BOXTYPE_FRITZBOX_FON:
                 break;
             case FritzBoxFirmware.BOXTYPE_FRITZBOX_FON_WLAN:
-                break;
+                port.addItem("Analog Alle"); //ggf. kann dies auch für die anderen Boxen gelten?
+            	break;
             case FritzBoxFirmware.BOXTYPE_FRITZBOX_ATA:
                 break;
             case FritzBoxFirmware.BOXTYPE_FRITZBOX_5050: {
@@ -194,8 +233,11 @@ public class CallDialog extends JDialog implements ActionListener {
      */
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("call")) {
-            JFritzUtils.doCall(number.getShortNumber().toString(), port.getSelectedItem().toString(), firmware);
-            setVisible(false);
+        	if(cboNumber.getClass().toString().equals("class javax.swing.JLabel"))
+        		JFritzUtils.doCall(((JLabel)cboNumber).getText(), port.getSelectedItem().toString(), firmware);
+        	if(cboNumber.getClass().toString().equals("class javax.swing.JComboBox"))
+            	JFritzUtils.doCall(((JComboBox)cboNumber).getSelectedItem().toString(), port.getSelectedItem().toString(), firmware);
+             setVisible(false);
         } else if (e.getActionCommand().equals("close")) {
             setVisible(false);
         }

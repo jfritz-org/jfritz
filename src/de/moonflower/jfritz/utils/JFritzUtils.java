@@ -866,6 +866,8 @@ public class JFritzUtils {
                 portStr = "2";
             } else if (port.equals("Fon 3")) {
                 portStr = "3";
+            } else if (port.equals("Analog alle")) {
+                portStr = "9";
             } else if (port.equals("ISDN Alle")) {
                 portStr = "50";
             } else if (port.equals("ISDN 1")) {
