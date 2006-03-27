@@ -69,7 +69,7 @@ public class PhoneBook extends AbstractTableModel {
 
 	private boolean sortDirection = true;
 
-    private final static String EXPORT_CSV_FORMAT = "\"Private\";\"Last Name\";\"First Name\";\"Company\";\"Street\";\"Postal Code\";\"City\";\"E-Mail\";\"Phone Numbers\"";
+    private final static String EXPORT_CSV_FORMAT = "\"Private\";\"Last Name\";\"First Name\";\"Company\";\"Street\";\"ZIP Code\";\"City\";\"E-Mail\";\"Phone Numbers\"";
 	/**
 	 * Sort table model rows by a specific column and direction
 	 *
