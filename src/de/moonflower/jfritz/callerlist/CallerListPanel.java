@@ -284,7 +284,7 @@ public class CallerListPanel extends JPanel
 
 		JPanel toolbarPanel = new JPanel();
 		toolbarPanel.setLayout(new BorderLayout());
-		// Icons sind noch zu groß, deshalb erst einmal auskommentiert
+		// Icons sind noch zu gro?, deshalb erst einmal auskommentiert
 		// toolbarPanel.add(upperToolBar, BorderLayout.NORTH);
 		toolbarPanel.add(lowerToolBar, BorderLayout.SOUTH);
 
@@ -307,8 +307,8 @@ public class CallerListPanel extends JPanel
 		menuItem.addActionListener(this);
 		callerlistPopupMenu.add(menuItem);
 
-		menuItem = new JMenuItem(JFritz.getMessage("import_csv"));
-		menuItem.setActionCommand("import_csv");
+		menuItem = new JMenuItem(JFritz.getMessage("import_callerlist_csv"));
+		menuItem.setActionCommand("import_callerlist_csv");
 		menuItem.addActionListener(this);
 		menuItem.setEnabled(true);
 		callerlistPopupMenu.add(menuItem);
@@ -646,8 +646,8 @@ public class CallerListPanel extends JPanel
 			jfritz.getJframe().exportCallerListToCSV();
 		} else if (e.getActionCommand().equals("export_xml")) {
 			jfritz.getJframe().exportCallerListToXML();
-		} else if (e.getActionCommand().equals("import_csv")) {
-			jfritz.getJframe().importCSV();
+		} else if (e.getActionCommand().equals("import_callerlist_csv")) {
+			jfritz.getJframe().importCallerlistCSV();
 		} else if (e.getActionCommand().equals("clipboard_number")) {
         	Call call = jfritz.getCallerlist().getSelectedCall();
         	if (call!=null)
@@ -696,8 +696,8 @@ public class CallerListPanel extends JPanel
 
 	private void doReverseLookup() {
 		int rows[] = callerTable.getSelectedRows();
-		if (rows.length > 0) { // nur für markierte Einträge ReverseLookup
-			// durchführen
+		if (rows.length > 0) { // nur f?r markierte Eintr?ge ReverseLookup
+			// durchf?hren
 			for (int i = 0; i < rows.length; i++) {
 				Call call = (Call) jfritz.getCallerlist()
 						.getFilteredCallVector().get(rows[i]);
@@ -708,7 +708,7 @@ public class CallerListPanel extends JPanel
 					jfritz.getCallerlist().fireTableDataChanged();
 				}
 			}
-		} else { // Für alle Einträge ReverseLookup durchführen
+		} else { // F?r alle Eintr?ge ReverseLookup durchf?hren
 			jfritz.getJframe().reverseLookup();
 		}
 	}
@@ -777,7 +777,7 @@ public class CallerListPanel extends JPanel
 	}
 
 	public void keyTyped(KeyEvent arg0) {
-		// unnötig
+		// unn?tig
 
 	}
 
@@ -802,7 +802,7 @@ public class CallerListPanel extends JPanel
 	}
 
 	public void keyReleased(KeyEvent arg0) {
-//		 unnötig
+//		 unn?tig
 
 	}
 }
