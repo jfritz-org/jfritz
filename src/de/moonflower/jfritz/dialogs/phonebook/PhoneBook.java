@@ -635,10 +635,14 @@ public class PhoneBook extends AbstractTableModel {
 
 	          int linesRead = 0;
 	          int newEntries = 0;
+	          //read until EOF
 	          while(null != (line = br.readLine())){
 	        	  linesRead++;
 	              Person person = parseContactsThunderbirdCSV(line);
+
+	              //check if person had person had phone number
 	              if(person != null)
+	            	  //check if it was a new person
 	            	  if(addEntry(person))
 	            		  newEntries++;
 
@@ -680,8 +684,10 @@ public class PhoneBook extends AbstractTableModel {
 	 * if no telephone number is found or the format is invalid
 	 * null is returned
 	 * tested with thunderbird version 1.50
+	 * tested with Mozilla suite 1.7.x
 	 *
 	 * Note: This class does NOT check for valid telephone numbers!
+	 * That means contacts could be created without telephone numbers
 	 *
 	 * @param string line is the current line of the csv file
 	 * @return returns a person object if a telephone number can be processed from the datei
@@ -708,7 +714,7 @@ public class PhoneBook extends AbstractTableModel {
 	    //is an email client and stores at least an email addy
 	    //so create a new person object
 	    person = new Person(field[0], field[25], field[1],
-	    		field[11]+field[12], field[15], field[13], field[5]);
+	    		field[11]+field[12], field[15], field[13], field[4]);
 
 	    //TODO: Check for valid numbers, as you can never gurantee
 	    //that users do things properly, could be possible to create
@@ -738,7 +744,5 @@ public class PhoneBook extends AbstractTableModel {
 	    return person;
 
 	}
-
-
 
 }
