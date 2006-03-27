@@ -402,13 +402,18 @@ public class JFritzWindow extends JFrame
 			importMenu.add(item);
 		}
 
-	    item = new JMenuItem(JFritz.getMessage("import_csv"), 'i');
-	    item.setActionCommand("import_csv");
+	    item = new JMenuItem(JFritz.getMessage("import_callerlist_csv"), 'i');
+	    item.setActionCommand("import_callerlist_csv");
 	    item.addActionListener(this);
 	    importMenu.add(item);
 
 	    item = new JMenuItem(JFritz.getMessage("phonebook_import"));
 	    item.setActionCommand("phonebook_import");
+	    item.addActionListener(this);
+	    importMenu.add(item);
+
+	    item = new JMenuItem(JFritz.getMessage("import_contacts_thunderbird_csv"));
+	    item.setActionCommand("import_contacts_thunderbird_csv");
 	    item.addActionListener(this);
 	    importMenu.add(item);
 
@@ -560,7 +565,7 @@ public class JFritzWindow extends JFrame
 							}
 						} catch (IOException e) {
 							// Warten, falls wir von einem Standby aufwachen,
-							// oder das Netzwerk temporär nicht erreichbar ist.
+							// oder das Netzwerk tempor?r nicht erreichbar ist.
 							if (connectionFailures < 5) {
 								Debug.msg("Waiting for FritzBox, retrying ...");
 								connectionFailures++;
@@ -693,9 +698,9 @@ public class JFritzWindow extends JFrame
 							JFritz.SIPPROVIDER_FILE);
 					jfritz.getCallerlist().fireTableDataChanged();
 				} catch (WrongPasswordException e1) {
-					jfritz.errorMsg("Passwort ungültig!");
+					jfritz.errorMsg("Passwort ung?ltig!");
 				} catch (IOException e1) {
-					jfritz.errorMsg("FRITZ!Box-Adresse ungültig!");
+					jfritz.errorMsg("FRITZ!Box-Adresse ung?ltig!");
 				} catch (InvalidFirmwareException e1) {
 					jfritz.errorMsg("Firmware-Erkennung gescheitert!");
 				}
@@ -856,7 +861,7 @@ public class JFritzWindow extends JFrame
 					JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 
 		if (exit) {
-			// Speichern der Daten wird von ShutdownThread durchgeführt
+			// Speichern der Daten wird von ShutdownThread durchgef?hrt
 			System.exit(0);
 		}
 	}
@@ -1013,11 +1018,13 @@ public class JFritzWindow extends JFrame
 			reverseLookup();
 		else if (e.getActionCommand() == "F5")
 			fetchList();
-	    else if (e.getActionCommand() == "import_csv")
-	        importCSV();
+	    else if (e.getActionCommand() == "import_callerlist_csv")
+	        importCallerlistCSV();
 	    else if (e.getActionCommand() == "phonebook_import")
 	    	phoneBookPanel.importFromXML();
-		else
+	    else if (e.getActionCommand() == "import_contacts_thunderbird_csv")
+			importContactsThunderbirdCSV();
+	    else
 			Debug.err("Unimplemented action: " + e.getActionCommand());
 
 	}
@@ -1049,8 +1056,8 @@ public class JFritzWindow extends JFrame
 			File file = fc.getSelectedFile();
 			if (file.exists()) {
 				if (JOptionPane.showConfirmDialog(this, "Soll die Datei "
-						+ file.getName() + " überschrieben werden?",
-						"Datei überschreiben?", JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
+						+ file.getName() + " ?berschrieben werden?",
+						"Datei ?berschreiben?", JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 					jfritz.getCallerlist().saveToCSVFile(
 							file.getAbsolutePath(), false);
 				}
@@ -1088,8 +1095,8 @@ public class JFritzWindow extends JFrame
 			File file = fc.getSelectedFile();
 			if (file.exists()) {
 				if (JOptionPane.showConfirmDialog(this, "Soll die Datei "
-						+ file.getName() + " überschrieben werden?",
-						"Datei überschreiben?", JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
+						+ file.getName() + " ?berschrieben werden?",
+						"Datei ?berschreiben?", JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 					jfritz.getCallerlist().saveToXMLFile(
 							file.getAbsolutePath(), false);
 				}
@@ -1128,8 +1135,8 @@ public class JFritzWindow extends JFrame
 			File file = fc.getSelectedFile();
 			if (file.exists()) {
 				if (JOptionPane.showConfirmDialog(this, "Soll die Datei "
-						+ file.getName() + " überschrieben werden?",
-						"Datei überschreiben?", JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
+						+ file.getName() + " ?berschrieben werden?",
+						"Datei ?berschreiben?", JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 					jfritz.getPhonebook().saveToCSVFile(
 							file.getAbsolutePath(), false);
 				}
@@ -1374,10 +1381,10 @@ public class JFritzWindow extends JFrame
 	   *
 	   *
 	   */
-	  public void importCSV(){
+	  public void importCallerlistCSV(){
 	    JFileChooser fc = new JFileChooser(JFritz.getProperty(
 	        "options.exportCSVpath", null));
-	    fc.setDialogTitle(JFritz.getMessage("import_csv"));
+	    fc.setDialogTitle(JFritz.getMessage("import_callerlist_csv"));
 	    fc.setDialogType(JFileChooser.OPEN_DIALOG);
 	    fc.setSelectedFile(new File(JFritz.CALLS_CSV_FILE));
 	    fc.setFileFilter(new FileFilter() {
@@ -1403,6 +1410,43 @@ public class JFritzWindow extends JFrame
 	        jfritz.getCallerlist().importFromCSVFile(file.getAbsolutePath());
 	      }
 	    }
+	  }
+
+	  /**
+	   * @author Brian Jensen
+	   *
+	   * opens the import thunderbird dialog
+	   *
+	   */
+	  public void importContactsThunderbirdCSV(){
+		  JFileChooser fc = new JFileChooser(JFritz.getProperty(
+				  "options.exportCSVpath", null));
+		  fc.setDialogTitle(JFritz.getMessage("import_contacts_thunderbird_csv"));
+		  fc.setDialogType(JFileChooser.OPEN_DIALOG);
+		  //fc.setSelectedFile(new File(JFritz.CALLS_CSV_FILE));
+		  fc.setFileFilter(new FileFilter() {
+			  public boolean accept(File f) {
+				  return f.isDirectory()
+				  || f.getName().toLowerCase().endsWith(".csv");
+			  }
+
+			  public String getDescription() {
+				  return "CSV files";
+			  }
+		  });
+		  if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+			  String path = fc.getSelectedFile().getPath();
+			  path = path.substring(0, path.length()
+					  - fc.getSelectedFile().getName().length());
+			  //options.import_contacts_thunderbird_CSVpath ???
+			  //JFritz.setProperty("options.exportCSVpath", path);
+			  File file = fc.getSelectedFile();
+			  if (!file.exists()) {
+				  JOptionPane.showMessageDialog(this, "Error: File not found", "File Not Found", JOptionPane.ERROR_MESSAGE);
+			  }else{
+			        jfritz.getPhonebook().importFromThunderbirdCSVfile(file.getAbsolutePath());
+			      }
+			    }
 	  }
 
 }

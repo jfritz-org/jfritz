@@ -8,10 +8,12 @@ package de.moonflower.jfritz.dialogs.phonebook;
  * TODO: Cellrenderer for PrivateCell
  *
  */
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -54,6 +56,8 @@ public class PhoneBook extends AbstractTableModel {
 
 	private final String columnNames[] = { "private_entry", "fullName", "telephoneNumber",
 			"address", "city", "last_call" };
+
+	private static final String PATTERN_THUNDERBRID_CSV = ",";
 
 	private Vector filteredPersons;
 
@@ -228,7 +232,7 @@ public class PhoneBook extends AbstractTableModel {
 		return unfilteredPersons;
 	}
 
-	public void addEntry(Person newPerson) {
+	public boolean addEntry(Person newPerson) {
 		Enumeration en = unfilteredPersons.elements();
 		while (en.hasMoreElements()) {
 			Person p = (Person) en.nextElement();
@@ -236,11 +240,12 @@ public class PhoneBook extends AbstractTableModel {
 			PhoneNumber pn2 = newPerson.getStandardTelephoneNumber();
 			if (pn1 != null && pn2 != null
 					&& pn1.getIntNumber().equals(pn2.getIntNumber())) {
-				return;
+				return false;
 			}
 		}
 		unfilteredPersons.add(newPerson);
 		updateFilter();
+		return true;
 	}
 
 	public void deleteEntry(Person person) {
@@ -613,4 +618,127 @@ public class PhoneBook extends AbstractTableModel {
 			sortAllFilteredRows();
         }
 	}
+
+	/**
+	 * @author Brian Jensen
+	 * function reads the thunderbird csv file line for line
+	 * adding new contacts after each line
+	 *
+	 * @param filename is the path to a valid thunderbird csv file
+	 */
+	public void importFromThunderbirdCSVfile(String filename){
+	    Debug.msg("Importing Thunderbird Contacts from csv file " + filename);
+	    String line = "";
+	    try {
+	      FileReader fr = new FileReader(filename);
+	          BufferedReader br = new BufferedReader(fr);
+
+	          int linesRead = 0;
+	          int newEntries = 0;
+	          while(null != (line = br.readLine())){
+	        	  linesRead++;
+	              Person person = parseContactsThunderbirdCSV(line);
+	              if(person != null)
+	            	  if(addEntry(person))
+	            		  newEntries++;
+
+
+	          }
+
+	          Debug.msg(linesRead+" Lines read from Thunderbird csv file "+filename);
+	          Debug.msg(newEntries+" New contacts processed");
+
+	          if (newEntries > 0) {
+	        	  sortAllUnfilteredRows();
+	              saveToXMLFile(JFritz.PHONEBOOK_FILE);
+	              String msg;
+
+	              if (newEntries == 1) {
+	                msg = JFritz.getMessage("imported_contact");
+	              } else {
+	                msg = newEntries + " "+JFritz.getMessage("imported_contacts");
+	              }
+	              JFritz.infoMsg(msg);
+
+	          }else{
+	        	  JFritz.infoMsg(JFritz.getMessage("no_imported_contacts"));
+	          }
+
+	          br.close();
+
+	    } catch (FileNotFoundException e) {
+	    	Debug.err("Could not read from " + filename + "!");
+	    } catch(IOException e){
+	    	Debug.err("IO Exception reading csv file");
+	    }
+	}
+
+	/**
+	 * @author Brian Jensen
+	 *
+	 * function parses out relevant contact information from a csv file,
+	 * if no telephone number is found or the format is invalid
+	 * null is returned
+	 * tested with thunderbird version 1.50
+	 *
+	 * Note: This class does NOT check for valid telephone numbers!
+	 *
+	 * @param string line is the current line of the csv file
+	 * @return returns a person object if a telephone number can be processed from the datei
+	 */
+	public Person parseContactsThunderbirdCSV(String line){
+	    String[] field = line.split(PATTERN_THUNDERBRID_CSV);
+	    Person person;
+
+	    //check if line has correct amount of entries
+	    if(field.length < 36){
+	      Debug.err("Invalid Thunderbird CSV format!");
+	      return null;
+	    }
+
+	    //check first if the entry even has a phone number
+	    //Debug.msg(field[6]+"   "+field[7]+"   "+field[8]+"   "+field[9]+"   "+field[10]);
+	    if (field[6].equals("") && field[7].equals("") && field[8].equals("") &&
+	    		field[9].equals("") && field[10].equals("")){
+	    	Debug.msg("No phone number present for contact");
+	    	return null;
+	    }
+
+	    //at least a phone number and an email exists because thunderbird
+	    //is an email client and stores at least an email addy
+	    //so create a new person object
+	    person = new Person(field[0], field[25], field[1],
+	    		field[11]+field[12], field[15], field[13], field[5]);
+
+	    //TODO: Check for valid numbers, as you can never gurantee
+	    //that users do things properly, could be possible to create
+	    //contacts in the phonebook with no phone number = useless
+
+	    //Work number
+	    if(!field[6].equals(""))
+	    	person.addNumber(field[6], "business");
+
+	    //home number
+	    if(!field[7].equals(""))
+	    	person.addNumber(field[7], "home");
+
+	    //fax number
+	    if(!field[8].equals(""))
+	    	person.addNumber(field[8], "fax");
+
+	    //pager number
+	    if(!field[9].equals(""))
+	    	person.addNumber(field[9], "other");
+
+	    //Cell phone number
+	    if(!field[10].equals(""))
+	    	person.addNumber(field[10], "mobile");
+
+	    //lets quit while we're still sane and return the person object
+	    return person;
+
+	}
+
+
+
 }
