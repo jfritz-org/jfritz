@@ -1,6 +1,5 @@
-*.xml
 .cvsignore
-jfritz.jar
 bin
 dist
 doc
+.#*

@@ -254,6 +254,102 @@ public class PhoneBook extends AbstractTableModel {
 	}
 
 	/**
+	 * Saves phonebook to BIT FBF Dialer file.
+	 *
+	 * @param filename
+	 */
+	public synchronized void saveToBITFBFDialerFormat(String filename) {
+		Debug.msg("Saving to BIT FBF Dialer file " + filename);
+		try {
+			BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "UTF8"));
+			Enumeration en1 = unfilteredPersons.elements();
+
+			Enumeration en2;
+			Person current;
+			String name;
+
+			String nr, type;
+			PhoneNumber pn;
+
+			while (en1.hasMoreElements()) {
+				current = (Person) en1.nextElement();
+				name = "";
+				if (current.getFullname().length() > 0) {
+					if (current.getLastName().length() > 0) name += current.getLastName();
+					if (current.getLastName().length() > 0 && current.getFirstName().length() > 0) name += ", ";
+					if (current.getFirstName().length() > 0) name += current.getFirstName();
+					if (current.getCompany().length() > 0) name += " (" + current.getCompany() + ")";
+				}
+				else if (current.getCompany().length() > 0) name += current.getCompany();
+
+				if (name.length() > 0) {
+					en2 = current.getNumbers().elements();
+					while (en2.hasMoreElements()) {
+						pn = (PhoneNumber) en2.nextElement();
+						nr = pn.getIntNumber();
+						if (nr.startsWith("+49")) nr = "0" + nr.substring(3, nr.length());
+						type = pn.getType();
+
+						pw.write(nr + "=" + name);
+						pw.newLine();
+					}
+				}
+			}
+			pw.close();
+		} catch (Exception e) {
+			Debug.err("Could not write file!");
+		}
+	}
+
+	/**
+	 * Saves phonebook to BIT FBF Dialer file.
+	 *
+	 * @param filename
+	 */
+	public synchronized void saveToCallMonitorFormat(String filename) {
+		Debug.msg("Saving to Call Monitor file " + filename);
+		try {
+			BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "UTF8"));
+			Enumeration en1 = unfilteredPersons.elements();
+
+			Enumeration en2;
+			Person current;
+			String name;
+
+			String nr, type;
+			PhoneNumber pn;
+
+			while (en1.hasMoreElements()) {
+				current = (Person) en1.nextElement();
+				name = "";
+				if (current.getFullname().length() > 0) {
+					if (current.getLastName().length() > 0) name += current.getLastName();
+					if (current.getLastName().length() > 0 && current.getFirstName().length() > 0) name += ", ";
+					if (current.getFirstName().length() > 0) name += current.getFirstName();
+					if (current.getCompany().length() > 0) name += " (" + current.getCompany() + ")";
+				}
+				else if (current.getCompany().length() > 0) name += current.getCompany();
+
+				if (name.length() > 0 ) {
+					en2 = current.getNumbers().elements();
+					while (en2.hasMoreElements()) {
+						pn = (PhoneNumber) en2.nextElement();
+						nr = pn.getIntNumber();
+						if (nr.startsWith("+49")) nr = "0" + nr.substring(3, nr.length());
+						type = pn.getType();
+
+						pw.write("\"" + name + "\",\"" + nr + "\"");
+						pw.newLine();
+					}
+				}
+			}
+			pw.close();
+		} catch (Exception e) {
+			Debug.err("Could not write file!");
+		}
+	}
+
+	/**
 	 * Saves phonebook to xml file.
 	 *
 	 * @param filename
