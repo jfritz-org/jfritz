@@ -562,6 +562,7 @@ public class PhoneBook extends AbstractTableModel {
 				.getProperty("filter_private"));
 
 		String filterSearch = JFritz.getProperty("filter.Phonebook.search", "");
+
 /*        try {
             jfritz.getJframe().getCallerTable().getCellEditor()
                     .cancelCellEditing();
@@ -569,24 +570,17 @@ public class PhoneBook extends AbstractTableModel {
         }
 */
 
-        if ((filter_private) || (filterSearch.length() > 0)) {
-    		if (filter_private) {
-    			Enumeration en = unfilteredPersons.elements();
-    			Vector newFilteredPersons;
-    			newFilteredPersons = new Vector();
-    			while (en.hasMoreElements()) {
-    				Person current = (Person) en.nextElement();
-    				if (current.isPrivateEntry()) {
-    					newFilteredPersons.add(current);
-    				}
-    			}
-    			filteredPersons = newFilteredPersons;
-    			sortAllFilteredRows();
-    		}
+
+		if ((!filter_private) && (filterSearch.length() == 0))
+		{
+            // Use unfiltered data
+			filteredPersons = unfilteredPersons;
+			sortAllFilteredRows();
+		}else{ //Data got to be filtered
     		if(filterSearch.length() > 0)
     		{
-    			Enumeration en = unfilteredPersons.elements();
     			Vector newFilteredPersons = new Vector();
+    			Enumeration en = unfilteredPersons.elements();
     			while (en.hasMoreElements()) {
     				Person current = (Person) en.nextElement();
     				int matchFilter=0;
@@ -611,12 +605,29 @@ public class PhoneBook extends AbstractTableModel {
     			filteredPersons = newFilteredPersons;
     			sortAllFilteredRows();
     		}
-        }
-        else{
-            // Use unfiltered data
-			filteredPersons = unfilteredPersons;
-			sortAllFilteredRows();
-        }
+
+			if (filter_private) {
+				Enumeration en;
+    			Vector newFilteredPersons = new Vector();
+				if (filterSearch.length() > 0) //Tests if both filters are set
+					en = filteredPersons.elements();
+				else
+					en = unfilteredPersons.elements();
+    			while (en.hasMoreElements()) {
+    				Person current = (Person) en.nextElement();
+    				if (current.isPrivateEntry()) {
+    					newFilteredPersons.add(current);
+    				}
+    			}
+    			filteredPersons = newFilteredPersons;
+    			sortAllFilteredRows();
+    		}
+		}
+
+		if (jfritz!= null)
+			if (jfritz.getJframe() != null)
+				if(jfritz.getJframe().getPhoneBookPanel()!=null)
+					jfritz.getJframe().getPhoneBookPanel().setStatus();
 	}
 
 	/**
