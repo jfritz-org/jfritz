@@ -111,6 +111,10 @@ public class InfoDialog extends JDialog implements ActionListener {
 		return accepted;
 	}
 
+	public boolean isChecked(){
+		return checkBox.isSelected();
+	}
+
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("ok")) {
 			accepted = true;
