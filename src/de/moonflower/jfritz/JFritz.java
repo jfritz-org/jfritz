@@ -14,6 +14,7 @@
  * 		kleinc		Christian Klein <kleinch@users.sourceforge.net>
  *      little_ben  Benjamin Schmitt <little_ben@users.sourceforge.net>
  *      baefer		Bastian Schaefer <baefer@users.sourceforge.net>
+ *      capncrunch	Brian Jensen <capncrunch@users.sourceforge.net>
  *
  * This tool is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by
@@ -31,58 +32,58 @@
  *
  *
  *
- * BUGS: bitte bei Sourceforge nachschauen und dort auch den Status ändern
- * BUG: die Autoerkennung, ob telefond für Syslog richtig läuft hat ein Sicherheitsloch. Nun kann jede IP auf Port 1011 zugreifen.
+ * BUGS: bitte bei Sourceforge nachschauen und dort auch den Status ?ndern
+ * BUG: die Autoerkennung, ob telefond f?r Syslog richtig l?uft hat ein Sicherheitsloch. Nun kann jede IP auf Port 1011 zugreifen.
  *
- * FeatureRequests: bitte bei Sourceforge nachschauen und dort auch den Status ändern
+ * FeatureRequests: bitte bei Sourceforge nachschauen und dort auch den Status ?ndern
 
  * CHANGELOG:
  * TODO: Checken, ob alle Bibliotheken vorhanden sind
  *
  * JFritz 0.5.6
- * - Thunderbird-Kontakte importieren
+ * - Neu: Thunderbird/Mozilla-Kontakte importieren
  * - Neu: Telefonbuch als CSV-Datei exportieren
- * - Neu: Suchfunktion für Telefonbuch
+ * - Neu: Suchfunktion f?r Telefonbuch
  * - Neu: Anruferliste importieren (CSV-Dateien)
  * - Neu: Wahlhilfe
- * - Änderung: Das Durchsuchen der Anruferliste muss nun per [ENTER] gestartet werden.
- * - Bugfix: "Übernehmen" Button im Telefonbuch wird nun anklickbar, wenn man eine Telefonnummer geändert hat.
+ * - ?nderung: Das Durchsuchen der Anruferliste muss nun per [ENTER] gestartet werden.
+ * - Bugfix: "?bernehmen" Button im Telefonbuch wird nun anklickbar, wenn man eine Telefonnummer ge?ndert hat.
  * - Bugfix: Sonderzeichen bei "Externes Programm starten" werden korrekt gespeichert
  * - Neu: (JFritz)Telefonbuch importieren
  * - Neue Option: Nach Standby oder Ruhezustand die Anrufliste automatisch abholen
- * - Bugfix: tritt der unwahrscheinliche Fall auf, dass kein Tray-Icon angezeigt wird, der User aber früher einmal
- * 			 (als das Tray-Icon noch verfügbar war) Tray-Messages zu Benachrichtigung ausgewählt hatte, wurde gar kein
- * 			 Anruf mehr signalisiert. Jetzt wird in diesem Fall auf ein PopUp zurückgegriffen.
+ * - Bugfix: tritt der unwahrscheinliche Fall auf, dass kein Tray-Icon angezeigt wird, der User aber fr?her einmal
+ * 			 (als das Tray-Icon noch verf?gbar war) Tray-Messages zu Benachrichtigung ausgew?hlt hatte, wurde gar kein
+ * 			 Anruf mehr signalisiert. Jetzt wird in diesem Fall auf ein PopUp zur?ckgegriffen.
  * - Neue Option: Sicherungskopien bei jedem Laden der Anruferliste erstellen
- * - Neu: Manuelle Backups erstellen (Menü und Toolbar)
- * - Bugfix: unvollständige Anzeige des Einstellungsdialoges -> Weiteres
+ * - Neu: Manuelle Backups erstellen (Men? und Toolbar)
+ * - Bugfix: unvollst?ndige Anzeige des Einstellungsdialoges -> Weiteres
  * - per Funktionstaste "F5" Anrufliste aktualisieren
  * - Bugfix: Speicherung der Kommentare
  * - INTERN: Bereitstellen von utils.JFritzClipboard und CallerList.getSelectedCall
  * - INTERN: JDIC-Update auf 0.9.1
  *
  * JFritz 0.5.5
- * - Nummer und Anschrift können aus der Anrufliste heraus in die Zwischenablage kopiert werden
- * - Schutz vor mehrfachem Programmstart (<- was ist mit Kommandozeilenstart?, =>BS: werden berücksichtigt - enableInstanceControl=false)
- * - Löschfunktionalität für Anrufliste der FRITZ!Box (Menü und Toolbar)
+ * - Nummer und Anschrift k?nnen aus der Anrufliste heraus in die Zwischenablage kopiert werden
+ * - Schutz vor mehrfachem Programmstart (<- was ist mit Kommandozeilenstart?, =>BS: werden ber?cksichtigt - enableInstanceControl=false)
+ * - L?schfunktionalit?t f?r Anrufliste der FRITZ!Box (Men? und Toolbar)
  * - Bugfix: Start auch bei fehlendem Tray
  * - Bugfix: Anrufmonitor arbeitete bei einem Reverselookup einer nicht im Telefonbuch
  *           eingetragenen Person nicht mehr
- * - Bugfix: Eintragen einer über Reverse-Lookup gefundenen Person korrigiert
- * - Neuer Kommandozeilenparameter: -d, --delete_on_box, löscht Anrufliste auf der Box und beendet sich dann (kein GUI)
+ * - Bugfix: Eintragen einer ?ber Reverse-Lookup gefundenen Person korrigiert
+ * - Neuer Kommandozeilenparameter: -d, --delete_on_box, l?scht Anrufliste auf der Box und beendet sich dann (kein GUI)
  * - Neuer Kommandozeilenparameter: -b, --backup, erstellt eine Sicherungskopie von allen XML-Dateien
  * - Neue Option: Sicherungskopien beim Start erstellen
- * - Bugfix: Bei der Suche nach einer Rufnummer werden vor der Zentrale ggf. vorhandene Durchwahlnummern berücksichtigt
+ * - Bugfix: Bei der Suche nach einer Rufnummer werden vor der Zentrale ggf. vorhandene Durchwahlnummern ber?cksichtigt
  *
  * JFritz 0.5.4
  * - Beim neuen Anrufmonitor auf # achten.
- * - Callmonitor: Beim Ausführen eines externen Programmes werden %Firstname, %Surname, %Compnay ersetzt.
+ * - Callmonitor: Beim Ausf?hren eines externen Programmes werden %Firstname, %Surname, %Compnay ersetzt.
  * - Beim Beenden von JFritz keine Speicherung von Calls und Phonebook mehr
  * - Bei den Einstellungen die MAC weggenommen
  * - Bugfix: Sonderzeichen bei "Externes Programm starten" werden korrekt gespeichert
  * - Watchdog: Anrufmonitor wird nach dem Ruhezustand neu gestartet
  * - Anrufliste wird per CSV und nicht mehr per Webinterface abgeholt
- * - Unterstützung für Firmware xx.04.03
+ * - Unterst?tzung f?r Firmware xx.04.03
  *
  * JFritz 0.5.3
  * - Bugfix-Anrufmonitor: Nummern werden internationalisiert
@@ -94,7 +95,7 @@
  * - FRITZ!Box-Anrufmonitor: Abholen der Anrufliste nach dem Auflegen
  *
  * JFritz 0.5.1
- * - Priorität auf 5 erhöht
+ * - Priorit?t auf 5 erh?ht
  * - Kompatibel zur Firmware xx.03.101
  * - Datenverbindungen werden als solche angezeigt
  * - Outlookimport verbessert
@@ -102,14 +103,14 @@
  * JFritz 0.5.0
  * - Neuer Anrufmonitor: FRITZ!Box Anrufmonitor
  * - Kompatibel zur Firmware xx.03.99
- * - Einstelloption für "minimieren statt schließen"
+ * - Einstelloption f?r "minimieren statt schlie?en"
  *
  * JFritz 0.4.7
- * - New Feature: Variable Programmpriorität (1..10)
+ * - New Feature: Variable Programmpriorit?t (1..10)
  * - Neuer Kommandozeilenparameter -p5 --priority=5
  * - Kompatibel zur FRITZ!Box 7170
- * - Anzeige der Gesamtgesprächsdauer in Stunden und Minuten
- * - Bugfix: Manche Spalten ließen sich nicht klein genug machen
+ * - Anzeige der Gesamtgespr?chsdauer in Stunden und Minuten
+ * - Bugfix: Manche Spalten lie?en sich nicht klein genug machen
  * - Bugfix: Kommandozeilenparameter -c funktionierte nicht mehr
  * - Bugfix: Outlook-Import
  * - Bugfix: RESSOURCES: filter_callbycall, filter_sip
@@ -117,9 +118,9 @@
  *
  * JFritz 0.4.6
  * - Reset-Button bei den Filtern deaktiviert alle Filter
- * - Neuer Filter: Kontextmenü bei "Verpasste Anrufe"-Filter
+ * - Neuer Filter: Kontextmen? bei "Verpasste Anrufe"-Filter
  * - Neuer Filter: Kommentarfilter
- * - Neuer Befehl für "Anrufmonitor - Externes Programm starten": %URLENCODE();
+ * - Neuer Befehl f?r "Anrufmonitor - Externes Programm starten": %URLENCODE();
  * - Kompatibel zu FritzBox 5010 und 5012
  * - Automatische Erkennung der Firmware
  * - Bugfix: Danisahne-Mod wird richtig erkannt
@@ -128,31 +129,31 @@
  * - Bugfix: Sortierfunktion beim Telefonbuch korrigiert
  *
  * JFritz 0.4.5
- * - Unterstützung für FRITZ!Box Firmware .85
- * - Unterstützung für FRITZ!Box Firmware .87
- * - Unterstützung für FRITZ!Box Firmware .88
+ * - Unterst?tzung f?r FRITZ!Box Firmware .85
+ * - Unterst?tzung f?r FRITZ!Box Firmware .87
+ * - Unterst?tzung f?r FRITZ!Box Firmware .88
  * - Spalten sind jetzt frei verschiebbar
- * - Kommentarspalte hinzugefügt
- * - Kommentar- und Anschluß-Spalte können ausgeblendet werden
- * - Suche der FritzBox über UPNP/SSDP abschaltbar
+ * - Kommentarspalte hinzugef?gt
+ * - Kommentar- und Anschlu?-Spalte k?nnen ausgeblendet werden
+ * - Suche der FritzBox ?ber UPNP/SSDP abschaltbar
  * - Telefonbuch nun nach allen Spalten sortierbar
  * - Beim Export merkt sich JFritz die Verzeichnisse
  * - Drucken der Anrufliste (und Export nach Excel, RTF, PDF, CSV, ...)
- * - Neue Kommandozeilenoption -n: Schaltet die Tray-Unterstützung aus
+ * - Neue Kommandozeilenoption -n: Schaltet die Tray-Unterst?tzung aus
  * - Direkter Import von Outlook-Kontakten
- * - Datumsfilter unterstützt nun "Gestern"
- * - Unterstützung für die neue Version des Callmessage-Anrufomitors (http://www.evil-dead.org/traymessage/index.php4)
+ * - Datumsfilter unterst?tzt nun "Gestern"
+ * - Unterst?tzung f?r die neue Version des Callmessage-Anrufomitors (http://www.evil-dead.org/traymessage/index.php4)
  * - Bugfix: Firmware konnte beim ersten Start nicht erkannt werden
  * - Bugfix: Spaltenbreite wurde nicht korrekt gespeichert
- * - Bugfix: Falsche SIP-ID bei gelöschten Einträgen
+ * - Bugfix: Falsche SIP-ID bei gel?schten Eintr?gen
  * - Bugfix: Wenn Kurzwahl unbekannt war, wurde eine falsche Rufnummer angezeigt
- * - Bugfix: Anrufliste wird nur gelöscht, wenn mind. 1 Eintrag abgeholt wurde
+ * - Bugfix: Anrufliste wird nur gel?scht, wenn mind. 1 Eintrag abgeholt wurde
  *
  * Internal:
  * - SipProvider-Informationen werden nicht mehr in den
  * 	 jfritz.properties.xml sondern in jfritz.sipprovider.xml
  *   gespeichert.
- * - Zugriff auf SipProvider über jfritz.getSIPProviderTableModel()
+ * - Zugriff auf SipProvider ?ber jfritz.getSIPProviderTableModel()
  *
  * JFritz 0.4.4
  * - CallByCall information is saved (only 010xy and 0100yy)
@@ -259,7 +260,7 @@
  * - Support for Fritz!Boxes with modified firmware
  * - Improved config dialog
  * - Improved firmware detection
- * - Initial support für SIP-Provider
+ * - Initial support f?r SIP-Provider
  * - Firmware/SIP-Provider are saved in config file
  *
  * JFritz 0.2.4:
@@ -362,7 +363,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.195 2006/03/27 16:28:38 baefer Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.196 2006/03/28 10:22:15 capncrunch Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -424,6 +425,8 @@ public final class JFritz {
 
     private static boolean isRunning = false;
 
+    private static Locale locale;
+
     /**
      * Constructs JFritz object
      * @author Benjamin Schmitt
@@ -439,7 +442,8 @@ public final class JFritz {
     public JFritz(boolean fetchCalls, boolean csvExport, String csvFileName,
             boolean clearList, boolean enableInstanceControl) {
         jfritz = this;
-        loadMessages(new Locale("de", "DE"));
+        //loadMessages(new Locale("de", "DE"));
+        loadMessages(locale);
         loadProperties();
 
         if (JFritzUtils.parseBoolean(properties.getProperty("option.createBackup", "false"))) {
@@ -465,9 +469,9 @@ public final class JFritz {
 	        			+"\n\nHinweis:"
 	        			+"\nSollten Sie diese Meldung sehen, obwohl Sie "+JFritz.PROGRAM_NAME+" nur einmal"
 	        			+"\ngestartet haben, so liegt dies vermutlich daran, dass eine vorige "
-	        			+"\n"+JFritz.PROGRAM_NAME+"-Intstanz unplanmäßig beendet wurde (z.B. durch einen "
+	        			+"\n"+JFritz.PROGRAM_NAME+"-Intstanz unplanm??ig beendet wurde (z.B. durch einen "
 	        			+"\nSystemabsturz). "
-	        			+"\nIn diesem Fall können Sie JFritz mit diesem Dialog starten."
+	        			+"\nIn diesem Fall k?nnen Sie JFritz mit diesem Dialog starten."
 
 	        			+"\n\nBitte beachten Sie jedoch, dass "+JFritz.PROGRAM_NAME+" NICHT MEHRFACH gestartet "+""
 	        			+"\nwerden sollte, da es sonst zu DATENVERLUST kommen kann."
@@ -575,7 +579,7 @@ public final class JFritz {
 
         if (JFritzUtils.parseBoolean(JFritz.getProperty("option.useSSDP",
                 "true"))) {
-            Debug.msg("Suche FritzBox über UPnP / SSDP");
+            Debug.msg("Suche FritzBox ?ber UPnP / SSDP");
 
             ssdpthread = new SSDPdiscoverThread(this, SSDP_TIMEOUT);
             ssdpthread.start();
@@ -620,8 +624,13 @@ public final class JFritz {
     /**
      * Main method for starting JFritz
      *
+     * LAST MODIFIED: Brian Jensen 28.03.06
+     * fixed the broken internationalization
+     * added a new parameter switch: --lang
+     *
      * @param args
      *            Program arguments (-h -v ...)
+     *
      */
     public static void main(String[] args) {
         System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION
@@ -632,7 +641,9 @@ public final class JFritz {
         boolean csvExport = false;
         String csvFileName = "";
         boolean enableInstanceControl=true;
-
+        //TODO: If we ever make different packages for different languages
+        //change the default language here
+        locale = new Locale("de", "DE");
         CLIOptions options = new CLIOptions();
 
         options.addOption('h', "help", null, "This short description");
@@ -652,6 +663,7 @@ public final class JFritz {
                 "Writes debug messages to logfile");
         options.addOption('p', "priority", "level",
                 "Set program priority [1..10]");
+        options.addOption('i',"lang", "language","set the display language, currently supported: german, english");
 
         Vector foundOptions = options.parseOptions(args);
         Enumeration en = foundOptions.elements();
@@ -687,7 +699,7 @@ public final class JFritz {
                 }
                 break;
             case 'd':
-				// enableInstanceControl = false; // unnötig, GUI wird nicht gestartet
+				// enableInstanceControl = false; // unn?tig, GUI wird nicht gestartet
 				Debug.on();
 				clearCallsOnBox();
                 System.exit(0);
@@ -708,6 +720,21 @@ public final class JFritz {
             case 'n':
                 checkSystray = false;
                 break;
+            case 'i':
+            	String language = option.getParameter();
+            	if(language == null){
+            		System.err.println("Invalid language parameter");
+            		System.exit(0);
+            	}else if(language.equals("english")){
+            		locale = new Locale("en", "US");
+            	}else if(language.equals("german")){
+            		locale = new Locale("de", "DE");
+            	}else{
+            		System.err.println("Invalid language parameter");
+            		System.exit(0);
+            	}
+            	break;
+
             case 'p':
                 String priority = option.getParameter();
                 if (priority == null || priority.equals("")) {
@@ -1165,7 +1192,7 @@ public final class JFritz {
             try {
                 Runtime.getRuntime().exec(programString);
             } catch (IOException e) {
-                Debug.errDlg("Konnte externes Programm nicht ausführen: "
+                Debug.errDlg("Konnte externes Programm nicht ausf?hren: "
                         + programString);
                 Debug.err(e.toString());
             }
@@ -1219,7 +1246,7 @@ public final class JFritz {
 		if (calledstr.startsWith("+49")) calledstr = "0" + calledstr.substring(3);
 
         infoMsg("Ausgehender Telefonanruf\n " + "\nan " + calledstr + " ("
-                + name + ") " + "über " + providerstr);
+                + name + ") " + "?ber " + providerstr);
         if (JFritzUtils.parseBoolean(JFritz.getProperty("option.playSounds",
                 "true"))) {
             playSound(callSound);
@@ -1267,7 +1294,7 @@ public final class JFritz {
             try {
                 Runtime.getRuntime().exec(programString);
             } catch (IOException e) {
-                Debug.errDlg("Konnte externes Programm nicht ausführen: "
+                Debug.errDlg("Konnte externes Programm nicht ausf?hren: "
                         + programString);
                 Debug.err(e.toString());
             }

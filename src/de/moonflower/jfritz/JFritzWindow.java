@@ -15,6 +15,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -369,7 +370,9 @@ public class JFritzWindow extends JFrame
 		JMenu importMenu = new JMenu("Importieren...");
 		JMenu exportMenu = new JMenu(JFritz.getMessage("export_menu"));
 		JMenu viewMenu = new JMenu(JFritz.getMessage("view_menu"));
+		JMenu languageMenu = new JMenu(JFritz.getMessage("language_menu"));
 
+		//File menu
 		JMenuItem item = new JMenuItem(JFritz.getMessage("fetchlist"), 'a');
 		item.setActionCommand("fetchList");
 		item.addActionListener(this);
@@ -395,6 +398,7 @@ public class JFritzWindow extends JFrame
 		item.addActionListener(this);
 		jfritzMenu.add(item);
 
+		//import submenu
 		if (JFritz.runsOn().startsWith("Windows")) {
 			item = new JMenuItem("Kontakte aus Outlook importieren");
 			item.setActionCommand("import_outlook");
@@ -419,6 +423,7 @@ public class JFritzWindow extends JFrame
 
 	    jfritzMenu.add(importMenu);
 
+	    //export submenu
 		item = new JMenuItem(JFritz.getMessage("export_csv"), 'c');
 		item.setActionCommand("export_csv");
 		item.addActionListener(this);
@@ -441,6 +446,58 @@ public class JFritzWindow extends JFrame
 			jfritzMenu.add(item);
 		}
 
+		//options menu
+		LookAndFeelInfo[] lnfs = UIManager.getInstalledLookAndFeels();
+		ButtonGroup lnfgroup = new ButtonGroup();
+		for (int i = 0; i < lnfs.length; i++) {
+			JRadioButtonMenuItem rbmi = new JRadioButtonMenuItem(lnfs[i]
+					.getName());
+			lnfMenu.add(rbmi);
+			rbmi.setSelected(UIManager.getLookAndFeel().getClass().getName()
+					.equals(lnfs[i].getClassName()));
+			rbmi.putClientProperty("lnf name", lnfs[i]);
+			rbmi.addItemListener(this);
+			lnfgroup.add(rbmi);
+		}
+		optionsMenu.add(lnfMenu);
+
+		//languages submenu
+		item = new JMenuItem(JFritz.getMessage("german"));
+		item.setActionCommand("german");
+		item.addActionListener(this);
+		languageMenu.add(item);
+
+		item = new JMenuItem(JFritz.getMessage("english"));
+		item.setActionCommand("english");
+		item.addActionListener(this);
+		languageMenu.add(item);
+
+		optionsMenu.add(languageMenu);
+
+		if (JFritz.runsOn() != "mac") {
+			item = new JMenuItem(JFritz.getMessage("config"), 'e');
+			item.setActionCommand("config");
+			item.addActionListener(this);
+			optionsMenu.add(item);
+		}
+
+		//view menu
+		item = new JMenuItem(JFritz.getMessage("callerlist"), null);
+		item.setActionCommand("callerlist");
+		item.addActionListener(this);
+		viewMenu.add(item);
+
+		item = new JMenuItem(JFritz.getMessage("phonebook"), null);
+		item.setActionCommand("phonebook");
+		item.addActionListener(this);
+		viewMenu.add(item);
+
+		item = new JMenuItem(JFritz.getMessage("quickdials"), null);
+		item.setActionCommand("quickdial");
+		item.addActionListener(this);
+		viewMenu.add(item);
+
+		//help menu
 		item = new JMenuItem(JFritz.getMessage("help_content"), 'h');
 		item.setActionCommand("help");
 		item.addActionListener(this);
@@ -457,40 +514,6 @@ public class JFritzWindow extends JFrame
 			item.addActionListener(this);
 			helpMenu.add(item);
 		}
-
-		LookAndFeelInfo[] lnfs = UIManager.getInstalledLookAndFeels();
-		ButtonGroup lnfgroup = new ButtonGroup();
-		for (int i = 0; i < lnfs.length; i++) {
-			JRadioButtonMenuItem rbmi = new JRadioButtonMenuItem(lnfs[i]
-					.getName());
-			lnfMenu.add(rbmi);
-			rbmi.setSelected(UIManager.getLookAndFeel().getClass().getName()
-					.equals(lnfs[i].getClassName()));
-			rbmi.putClientProperty("lnf name", lnfs[i]);
-			rbmi.addItemListener(this);
-			lnfgroup.add(rbmi);
-		}
-		optionsMenu.add(lnfMenu);
-
-		if (JFritz.runsOn() != "mac") {
-			item = new JMenuItem(JFritz.getMessage("config"), 'e');
-			item.setActionCommand("config");
-			item.addActionListener(this);
-			optionsMenu.add(item);
-		}
-
-		item = new JMenuItem(JFritz.getMessage("callerlist"), null);
-		item.setActionCommand("callerlist");
-		item.addActionListener(this);
-		viewMenu.add(item);
-		item = new JMenuItem(JFritz.getMessage("phonebook"), null);
-		item.setActionCommand("phonebook");
-		item.addActionListener(this);
-		viewMenu.add(item);
-		item = new JMenuItem(JFritz.getMessage("quickdials"), null);
-		item.setActionCommand("quickdial");
-		item.addActionListener(this);
-		viewMenu.add(item);
 
 		menu = new JMenuBar();
 		menu.add(jfritzMenu);
@@ -1024,6 +1047,11 @@ public class JFritzWindow extends JFrame
 	    	phoneBookPanel.importFromXML();
 	    else if (e.getActionCommand() == "import_contacts_thunderbird_csv")
 			importContactsThunderbirdCSV();
+	    else if (e.getActionCommand() == "german")
+	    	setLanguage(new Locale("de", "DE"));
+	    else if (e.getActionCommand() == "english")
+	    	setLanguage(new Locale("en", "US"));
+
 	    else
 			Debug.err("Unimplemented action: " + e.getActionCommand());
 
@@ -1447,6 +1475,10 @@ public class JFritzWindow extends JFrame
 			        jfritz.getPhonebook().importFromThunderbirdCSVfile(file.getAbsolutePath());
 			      }
 			    }
+	  }
+
+	  public void setLanguage(Locale locale){
+		  //TODO: change the language on the fly
 	  }
 
 }
