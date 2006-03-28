@@ -367,7 +367,7 @@ public class JFritzWindow extends JFrame
 		JMenu optionsMenu = new JMenu(JFritz.getMessage("options_menu"));
 		JMenu helpMenu = new JMenu(JFritz.getMessage("help_menu"));
 		JMenu lnfMenu = new JMenu(JFritz.getMessage("lnf_menu"));
-		JMenu importMenu = new JMenu("Importieren...");
+		JMenu importMenu = new JMenu(JFritz.getMessage("import_menu"));
 		JMenu exportMenu = new JMenu(JFritz.getMessage("export_menu"));
 		JMenu viewMenu = new JMenu(JFritz.getMessage("view_menu"));
 		JMenu languageMenu = new JMenu(JFritz.getMessage("language_menu"));
@@ -1444,14 +1444,14 @@ public class JFritzWindow extends JFrame
 	   * @author Brian Jensen
 	   *
 	   * opens the import thunderbird dialog
-	   *
+	   * selects a file then passes it on to
+	   * PhoneBook.importFromThunderbirdCSVfile
 	   */
 	  public void importContactsThunderbirdCSV(){
 		  JFileChooser fc = new JFileChooser(JFritz.getProperty(
 				  "options.exportCSVpath", null));
 		  fc.setDialogTitle(JFritz.getMessage("import_contacts_thunderbird_csv"));
 		  fc.setDialogType(JFileChooser.OPEN_DIALOG);
-		  //fc.setSelectedFile(new File(JFritz.CALLS_CSV_FILE));
 		  fc.setFileFilter(new FileFilter() {
 			  public boolean accept(File f) {
 				  return f.isDirectory()
@@ -1479,6 +1479,8 @@ public class JFritzWindow extends JFrame
 
 	  public void setLanguage(Locale locale){
 		  //TODO: change the language on the fly
+		  jfritz.createNewWindow(locale);
+
 	  }
 
 }

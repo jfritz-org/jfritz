@@ -363,7 +363,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.196 2006/03/28 10:22:15 capncrunch Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.197 2006/03/28 16:55:15 capncrunch Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -428,6 +428,148 @@ public final class JFritz {
     private static Locale locale;
 
     /**
+     * Main method for starting JFritz
+     *
+     * LAST MODIFIED: Brian Jensen 28.03.06
+     * fixed the broken internationalization
+     * added a new parameter switch: --lang
+     *
+     * @param args
+     *            Program arguments (-h -v ...)
+     *
+     */
+    public static void main(String[] args) {
+        System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION
+                + " (c) 2005 by " + PROGRAM_AUTHOR);
+        Thread.currentThread().setPriority(5);
+        boolean fetchCalls = false;
+        boolean clearList = false;
+        boolean csvExport = false;
+        String csvFileName = "";
+        boolean enableInstanceControl=true;
+        //TODO: If we ever make different packages for different languages
+        //change the default language here
+        locale = new Locale("de", "DE");
+        CLIOptions options = new CLIOptions();
+
+        options.addOption('h', "help", null, "This short description");
+        options.addOption('v', "verbose", null, "Turn on debug information");
+        options.addOption('v', "debug", null, "Turn on debug information");
+        options.addOption('s', "systray", null, "Turn on systray support");
+        options.addOption('n', "nosystray", null, "Turn off systray support");
+        options.addOption('f', "fetch", null, "Fetch new calls and exit");
+		options.addOption('d', "delete_on_box", null,
+				"Delete callerlist of the Fritz!Box.");
+        options.addOption('b', "backup", null, "Creates a backup of all xml-Files in the directory 'backup'");
+        options.addOption('c', "clear_list", null,
+                "Clears Caller List and exit");
+        options.addOption('e', "export", "filename",
+                "Fetch calls and export to CSV file.");
+        options.addOption('l', "logfile", "filename",
+                "Writes debug messages to logfile");
+        options.addOption('p', "priority", "level",
+                "Set program priority [1..10]");
+        options.addOption('i',"lang", "language","set the display language, currently supported: german, english");
+
+        Vector foundOptions = options.parseOptions(args);
+        Enumeration en = foundOptions.elements();
+        while (en.hasMoreElements()) {
+            CLIOption option = (CLIOption) en.nextElement();
+
+            switch (option.getShortOption()) {
+            case 'h':
+                System.out.println("Call: java -jar jfritz.jar [Options]");
+                options.printOptions();
+                System.exit(0);
+                break;
+            case 'v':
+                Debug.on();
+                break;
+            case 'b':
+                doBackup();
+                break;
+            case 's':
+                JFritz.SYSTRAY_SUPPORT = true;
+                break;
+            case 'f':
+            	enableInstanceControl = false;
+            	fetchCalls = true;
+                break;
+            case 'e':
+            	enableInstanceControl = false;
+            	csvExport = true;
+                csvFileName = option.getParameter();
+                if (csvFileName == null || csvFileName.equals("")) {
+                    System.err.println("Parameter not found!");
+                    System.exit(0);
+                }
+                break;
+            case 'd':
+				// enableInstanceControl = false; // unn?tig, GUI wird nicht gestartet
+				Debug.on();
+				clearCallsOnBox();
+                System.exit(0);
+                break;
+            case 'c':
+            	enableInstanceControl = false;
+            	clearList = true;
+                break;
+            case 'l':
+                String logFilename = option.getParameter();
+                if (logFilename == null || logFilename.equals("")) {
+                    System.err.println("Parameter not found!");
+                    System.exit(0);
+                } else {
+                    Debug.logToFile(logFilename);
+                    break;
+                }
+            case 'n':
+                checkSystray = false;
+                break;
+            case 'i':
+            	String language = option.getParameter();
+            	if(language == null){
+            		System.err.println("Invalid language parameter");
+            		System.exit(0);
+            	}else if(language.equals("english")){
+            		locale = new Locale("en", "US");
+            	}else if(language.equals("german")){
+            		locale = new Locale("de", "DE");
+            	}else{
+            		System.err.println("Invalid language parameter");
+            		System.exit(0);
+            	}
+            	break;
+
+            case 'p':
+                String priority = option.getParameter();
+                if (priority == null || priority.equals("")) {
+                    System.err.println("Parameter not found!");
+                    System.exit(0);
+                } else {
+                    try {
+                        int level = Integer.parseInt(priority);
+                        Thread.currentThread().setPriority(level);
+                        Debug.msg("Set priority to level " + priority);
+                    } catch (NumberFormatException nfe) {
+                        System.err
+                                .println("Wrong parameter. Only values from 1 to 10 are allowed.");
+                        System.exit(0);
+                    } catch (IllegalArgumentException iae) {
+                        System.err
+                                .println("Wrong parameter. Only values from 1 to 10 are allowed.");
+                        System.exit(0);
+                    }
+                    break;
+                }
+            default:
+                break;
+            }
+        }
+        new JFritz(fetchCalls, csvExport, csvFileName, clearList, enableInstanceControl);
+    }
+
+    /**
      * Constructs JFritz object
      * @author Benjamin Schmitt
      */
@@ -436,13 +578,12 @@ public final class JFritz {
     	this(fetchCalls,csvExport,csvFileName,clearList,true);
     }
 
-        /**
+    /**
      * Constructs JFritz object
      */
     public JFritz(boolean fetchCalls, boolean csvExport, String csvFileName,
             boolean clearList, boolean enableInstanceControl) {
         jfritz = this;
-        //loadMessages(new Locale("de", "DE"));
         loadMessages(locale);
         loadProperties();
 
@@ -598,6 +739,51 @@ public final class JFritz {
     }
 
     /**
+     * Loads resource messages
+     *
+     * @param locale
+     */
+    private void loadMessages(Locale locale) {
+        try {
+            messages = ResourceBundle.getBundle(
+                    "de.moonflower.jfritz.resources.jfritz", locale);
+        } catch (MissingResourceException e) {
+            Debug.err("Can't find i18n resource!");
+            JOptionPane.showMessageDialog(null, JFritz.PROGRAM_NAME + " v"
+                    + JFritz.PROGRAM_VERSION
+                    + "\n\nCannot start if there is an '!' in path!");
+            System.exit(0);
+        }
+    }
+
+    /**
+     * Loads properties from xml files
+     */
+    public void loadProperties() {
+        defaultProperties = new JFritzProperties();
+        properties = new JFritzProperties(defaultProperties);
+
+        // Default properties
+        defaultProperties.setProperty("box.address", "192.168.178.1");
+        defaultProperties.setProperty("box.password", Encryption.encrypt(""));
+        defaultProperties.setProperty("country.prefix", "00");
+        defaultProperties.setProperty("area.prefix", "0");
+        defaultProperties.setProperty("country.code", "49");
+        defaultProperties.setProperty("area.code", "441");
+        defaultProperties.setProperty("fetch.timer", "5");
+        defaultProperties.setProperty("jfritz.isRunning", "false");
+
+        try {
+            properties.loadFromXML(JFritz.PROPERTIES_FILE);
+            replaceOldProperties();
+        } catch (FileNotFoundException e) {
+            Debug.err("File " + JFritz.PROPERTIES_FILE
+                    + " not found, using default values");
+        } catch (Exception e) {
+        }
+    }
+
+    /**
      * Loads sounds from resources
      */
     private void loadSounds() {
@@ -621,146 +807,29 @@ public final class JFritz {
         return SYSTRAY_SUPPORT;
     }
 
-    /**
-     * Main method for starting JFritz
-     *
-     * LAST MODIFIED: Brian Jensen 28.03.06
-     * fixed the broken internationalization
-     * added a new parameter switch: --lang
-     *
-     * @param args
-     *            Program arguments (-h -v ...)
-     *
-     */
-    public static void main(String[] args) {
-        System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION
-                + " (c) 2005 by " + PROGRAM_AUTHOR);
-        Thread.currentThread().setPriority(5);
-        boolean fetchCalls = false;
-        boolean clearList = false;
-        boolean csvExport = false;
-        String csvFileName = "";
-        boolean enableInstanceControl=true;
-        //TODO: If we ever make different packages for different languages
-        //change the default language here
-        locale = new Locale("de", "DE");
-        CLIOptions options = new CLIOptions();
+    private void autodetectFirmware() {
+        FritzBoxFirmware firmware;
+        try {
+            firmware = FritzBoxFirmware.detectFirmwareVersion(JFritz
+                    .getProperty("box.address", "192.168.178.1"), Encryption
+                    .decrypt(JFritz.getProperty("box.password", Encryption
+                            .encrypt(""))));
 
-        options.addOption('h', "help", null, "This short description");
-        options.addOption('v', "verbose", null, "Turn on debug information");
-        options.addOption('v', "debug", null, "Turn on debug information");
-        options.addOption('s', "systray", null, "Turn on systray support");
-        options.addOption('n', "nosystray", null, "Turn off systray support");
-        options.addOption('f', "fetch", null, "Fetch new calls and exit");
-		options.addOption('d', "delete_on_box", null,
-				"Delete callerlist of the Fritz!Box.");
-        options.addOption('b', "backup", null, "Creates a backup of all xml-Files in the directory 'backup'");
-        options.addOption('c', "clear_list", null,
-                "Clears Caller List and exit");
-        options.addOption('e', "export", "filename",
-                "Fetch calls and export to CSV file.");
-        options.addOption('l', "logfile", "filename",
-                "Writes debug messages to logfile");
-        options.addOption('p', "priority", "level",
-                "Set program priority [1..10]");
-        options.addOption('i',"lang", "language","set the display language, currently supported: german, english");
-
-        Vector foundOptions = options.parseOptions(args);
-        Enumeration en = foundOptions.elements();
-        while (en.hasMoreElements()) {
-            CLIOption option = (CLIOption) en.nextElement();
-
-            switch (option.getShortOption()) {
-            case 'h':
-                System.out.println("Call: java -jar jfritz.jar [Options]");
-                options.printOptions();
-                System.exit(0);
-                break;
-            case 'v':
-                Debug.on();
-                break;
-            case 'b':
-                doBackup();
-                break;
-            case 's':
-                JFritz.SYSTRAY_SUPPORT = true;
-                break;
-            case 'f':
-            	enableInstanceControl = false;
-            	fetchCalls = true;
-                break;
-            case 'e':
-            	enableInstanceControl = false;
-            	csvExport = true;
-                csvFileName = option.getParameter();
-                if (csvFileName == null || csvFileName.equals("")) {
-                    System.err.println("Parameter not found!");
-                    System.exit(0);
-                }
-                break;
-            case 'd':
-				// enableInstanceControl = false; // unn?tig, GUI wird nicht gestartet
-				Debug.on();
-				clearCallsOnBox();
-                System.exit(0);
-                break;
-            case 'c':
-            	enableInstanceControl = false;
-            	clearList = true;
-                break;
-            case 'l':
-                String logFilename = option.getParameter();
-                if (logFilename == null || logFilename.equals("")) {
-                    System.err.println("Parameter not found!");
-                    System.exit(0);
-                } else {
-                    Debug.logToFile(logFilename);
-                    break;
-                }
-            case 'n':
-                checkSystray = false;
-                break;
-            case 'i':
-            	String language = option.getParameter();
-            	if(language == null){
-            		System.err.println("Invalid language parameter");
-            		System.exit(0);
-            	}else if(language.equals("english")){
-            		locale = new Locale("en", "US");
-            	}else if(language.equals("german")){
-            		locale = new Locale("de", "DE");
-            	}else{
-            		System.err.println("Invalid language parameter");
-            		System.exit(0);
-            	}
-            	break;
-
-            case 'p':
-                String priority = option.getParameter();
-                if (priority == null || priority.equals("")) {
-                    System.err.println("Parameter not found!");
-                    System.exit(0);
-                } else {
-                    try {
-                        int level = Integer.parseInt(priority);
-                        Thread.currentThread().setPriority(level);
-                        Debug.msg("Set priority to level " + priority);
-                    } catch (NumberFormatException nfe) {
-                        System.err
-                                .println("Wrong parameter. Only values from 1 to 10 are allowed.");
-                        System.exit(0);
-                    } catch (IllegalArgumentException iae) {
-                        System.err
-                                .println("Wrong parameter. Only values from 1 to 10 are allowed.");
-                        System.exit(0);
-                    }
-                    break;
-                }
-            default:
-                break;
-            }
+        } catch (WrongPasswordException e1) {
+            Debug.err("Password wrong!");
+            firmware = null;
+        } catch (IOException e1) {
+            Debug.err("Address wrong!");
+            firmware = null;
         }
-        new JFritz(fetchCalls, csvExport, csvFileName, clearList, enableInstanceControl);
+        if (firmware != null) {
+            Debug.msg("Found FritzBox-Firmware: "
+                    + firmware.getFirmwareVersion());
+            JFritz.setProperty("box.firmware", firmware.getFirmwareVersion());
+        } else {
+            Debug.msg("Found no FritzBox-Firmware");
+            JFritz.removeProperty("box.firmware");
+        }
     }
 
     /**
@@ -807,24 +876,6 @@ public final class JFritz {
             }
         });
         systray.addTrayIcon(trayIcon);
-    }
-
-    /**
-     * Loads resource messages
-     *
-     * @param locale
-     */
-    private void loadMessages(Locale locale) {
-        try {
-            messages = ResourceBundle.getBundle(
-                    "de.moonflower.jfritz.resources.jfritz", locale);
-        } catch (MissingResourceException e) {
-            Debug.err("Can't find i18n resource!");
-            JOptionPane.showMessageDialog(null, JFritz.PROGRAM_NAME + " v"
-                    + JFritz.PROGRAM_VERSION
-                    + "\n\nCannot start if there is an '!' in path!");
-            System.exit(0);
-        }
     }
 
     /**
@@ -876,32 +927,7 @@ public final class JFritz {
         }
     }
 
-    /**
-     * Loads properties from xml files
-     */
-    public void loadProperties() {
-        defaultProperties = new JFritzProperties();
-        properties = new JFritzProperties(defaultProperties);
 
-        // Default properties
-        defaultProperties.setProperty("box.address", "192.168.178.1");
-        defaultProperties.setProperty("box.password", Encryption.encrypt(""));
-        defaultProperties.setProperty("country.prefix", "00");
-        defaultProperties.setProperty("area.prefix", "0");
-        defaultProperties.setProperty("country.code", "49");
-        defaultProperties.setProperty("area.code", "441");
-        defaultProperties.setProperty("fetch.timer", "5");
-        defaultProperties.setProperty("jfritz.isRunning", "false");
-
-        try {
-            properties.loadFromXML(JFritz.PROPERTIES_FILE);
-            replaceOldProperties();
-        } catch (FileNotFoundException e) {
-            Debug.err("File " + JFritz.PROPERTIES_FILE
-                    + " not found, using default values");
-        } catch (Exception e) {
-        }
-    }
 
     /**
      *
@@ -1478,31 +1504,6 @@ public final class JFritz {
         return sipprovider;
     }
 
-    private void autodetectFirmware() {
-        FritzBoxFirmware firmware;
-        try {
-            firmware = FritzBoxFirmware.detectFirmwareVersion(JFritz
-                    .getProperty("box.address", "192.168.178.1"), Encryption
-                    .decrypt(JFritz.getProperty("box.password", Encryption
-                            .encrypt(""))));
-
-        } catch (WrongPasswordException e1) {
-            Debug.err("Password wrong!");
-            firmware = null;
-        } catch (IOException e1) {
-            Debug.err("Address wrong!");
-            firmware = null;
-        }
-        if (firmware != null) {
-            Debug.msg("Found FritzBox-Firmware: "
-                    + firmware.getFirmwareVersion());
-            JFritz.setProperty("box.firmware", firmware.getFirmwareVersion());
-        } else {
-            Debug.msg("Found no FritzBox-Firmware");
-            JFritz.removeProperty("box.firmware");
-        }
-    }
-
     /**
      * start timer for watchdog
      *
@@ -1521,6 +1522,13 @@ public final class JFritz {
     private static void doBackup() {
         CopyFile backup = new CopyFile();
         backup.copy(".","xml");
+    }
+
+    public void createNewWindow(Locale l){
+    	/*locale = l;
+    	loadMessages(locale);
+    	jframe.dispose();
+    	this.jframe = new JFritzWindow(this);*/
     }
 
 }
