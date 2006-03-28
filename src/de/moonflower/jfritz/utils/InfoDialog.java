@@ -16,24 +16,30 @@ import javax.swing.JLabel;
 
 import de.moonflower.jfritz.JFritz;
 
+/**
+ * @author Bastian Schaefer
+ *
+ */
+
 public class InfoDialog extends JDialog implements ActionListener {
 
 	private boolean accepted = false;
 
 	private static JFritz jfritz;
 
-	private String infoText;
+	private String infoText, property;
 
 	JButton okButton, cancelButton;
 
 	JCheckBox checkBox;
 
-	public InfoDialog(JFritz jfritz, String infoText) throws HeadlessException {
+	public InfoDialog(JFritz jfritz,String property, String infoText) throws HeadlessException {
 		this.jfritz = jfritz;
 		this.infoText = infoText;
+		this.property= property;
 		this.setLocation(jfritz.getJframe().getX() + 80, jfritz.getJframe()
 				.getY() + 100);
-		if (JFritz.getProperty("legalInfo.telephoneCharges", "false").equals(
+		if (JFritz.getProperty("property", "false").equals(
 				"true")) {
 			accepted = true;
 		} else {
@@ -75,7 +81,7 @@ public class InfoDialog extends JDialog implements ActionListener {
 		checkBox.setActionCommand("call");
 		checkBox.addActionListener(this);
 		checkBox.setSelected(JFritzUtils.parseBoolean(JFritz.getProperty(
-				"legalInfo.telephoneCharges", "false")));
+				"property", "false")));
 		addComponent(c, gbl, checkBox, 0, 4, 2, 1, 1.0, 0, 0, 0, 5, 0);
 
 		setSize(new Dimension(300, 150));
@@ -108,7 +114,7 @@ public class InfoDialog extends JDialog implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("ok")) {
 			accepted = true;
-			JFritz.setProperty("legalInfo.telephoneCharges", Boolean
+			JFritz.setProperty("property", Boolean
 					.toString(checkBox.isSelected()));
 			setVisible(false);
 		} else if (e.getActionCommand().equals("cancel")) {
