@@ -85,6 +85,7 @@ public class InfoDialog extends JDialog implements ActionListener {
 		addComponent(c, gbl, checkBox, 0, 4, 2, 1, 1.0, 0, 0, 0, 5, 0);
 
 		setSize(new Dimension(300, 150));
+		setResizable(false);
 	}
 
 	private void addComponent(Container cont, GridBagLayout gbl, Component c,
