@@ -39,7 +39,7 @@ public class InfoDialog extends JDialog implements ActionListener {
 		this.property= property;
 		this.setLocation(jfritz.getJframe().getX() + 80, jfritz.getJframe()
 				.getY() + 100);
-		if (JFritz.getProperty("property", "false").equals(
+		if (JFritz.getProperty(property, "false").equals(
 				"true")) {
 			accepted = true;
 		} else {
@@ -81,7 +81,7 @@ public class InfoDialog extends JDialog implements ActionListener {
 		checkBox.setActionCommand("call");
 		checkBox.addActionListener(this);
 		checkBox.setSelected(JFritzUtils.parseBoolean(JFritz.getProperty(
-				"property", "false")));
+				property, "false")));
 		addComponent(c, gbl, checkBox, 0, 4, 2, 1, 1.0, 0, 0, 0, 5, 0);
 
 		setSize(new Dimension(300, 150));
@@ -114,7 +114,7 @@ public class InfoDialog extends JDialog implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("ok")) {
 			accepted = true;
-			JFritz.setProperty("property", Boolean
+			JFritz.setProperty(property, Boolean
 					.toString(checkBox.isSelected()));
 			setVisible(false);
 		} else if (e.getActionCommand().equals("cancel")) {

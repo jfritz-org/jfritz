@@ -95,7 +95,7 @@ public class CallDialog extends JDialog implements ActionListener {
 
 	private void drawDialog() {
 		InfoDialog info = new InfoDialog(
-				jfritz,
+				jfritz,"legalInfo.telephoneCharges",
 				"<html><body><font color=\"#FF0000\" size = \"4\"><b>ACHTUNG!</b></font><br>Die Wahlhilfe kann Telefongebühren verursachen!</body></html>");
 		info.setVisible(true);
 		info.dispose();
