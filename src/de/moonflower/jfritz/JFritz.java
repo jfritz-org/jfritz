@@ -51,7 +51,6 @@
  * - Bugfix: Sonderzeichen bei "Externes Programm starten" werden korrekt gespeichert
  * - Neu: (JFritz)Telefonbuch importieren
  * - Neue Option: Nach Standby oder Ruhezustand die Anrufliste automatisch abholen
- * - Neuer Kommandozeilenparameter: 'z' - exportiert das Telefonbuch in BIT FBF Dialer Format und ein einfaches CSV-Format für andere Anwendungen
  * - Bugfix: tritt der unwahrscheinliche Fall auf, dass kein Tray-Icon angezeigt wird, der User aber früher einmal
  * 			 (als das Tray-Icon noch verfügbar war) Tray-Messages zu Benachrichtigung ausgewählt hatte, wurde gar kein
  * 			 Anruf mehr signalisiert. Jetzt wird in diesem Fall auf ein PopUp zurückgegriffen.
@@ -364,7 +363,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.200 2006/03/28 22:31:54 kleinch Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.201 2006/03/29 10:33:58 capncrunch Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -512,7 +511,7 @@ public final class JFritz {
                 }
                 break;
             case 'd':
-				// enableInstanceControl = false; // unnütig, GUI wird nicht gestartet
+				// enableInstanceControl = false; // unnötig, GUI wird nicht gestartet
 				Debug.on();
 				clearCallsOnBox();
                 System.exit(0);
@@ -1543,11 +1542,15 @@ public final class JFritz {
         backup.copy(".","xml");
     }
 
+    /**
+     * @Brian Jensen
+     * This function changes the state of the ResourceBundle object
+     * currently available locales, ("de, "DE") and ("en", "US)
+     * @param l the locale to change the language to
+     */
     public void createNewWindow(Locale l){
-    	/*locale = l;
+    	locale = l;
     	loadMessages(locale);
-    	jframe.dispose();
-    	this.jframe = new JFritzWindow(this);*/
     }
 
 }

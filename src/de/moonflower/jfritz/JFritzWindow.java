@@ -1446,6 +1446,8 @@ public class JFritzWindow extends JFrame
 	   * opens the import thunderbird dialog
 	   * selects a file then passes it on to
 	   * PhoneBook.importFromThunderbirdCSVfile
+	   *
+	   * on return it does a reverse lookup if requested
 	   */
 	  public void importContactsThunderbirdCSV(){
 		  JFileChooser fc = new JFileChooser(JFritz.getProperty(
@@ -1473,10 +1475,23 @@ public class JFritzWindow extends JFrame
 				  JOptionPane.showMessageDialog(this, "Error: File not found", "File Not Found", JOptionPane.ERROR_MESSAGE);
 			  }else{
 			        jfritz.getPhonebook().importFromThunderbirdCSVfile(file.getAbsolutePath());
-			      }
-			    }
+
+			        if (JFritz.getProperty("option.lookupAfterFetch", "false")
+							.equals("true")) {
+						lookupButton.doClick();
+					}
+			  }
+		}
 	  }
 
+	  /**
+	   * @author Brian Jensen
+	   * This function changes the ResourceBundle in the jfritz instance
+	   *
+	   * NOTE:Currently very broken!
+	   *
+	   * @param locale to switch the language to
+	   */
 	  public void setLanguage(Locale locale){
 		  //TODO: change the language on the fly
 		  jfritz.createNewWindow(locale);

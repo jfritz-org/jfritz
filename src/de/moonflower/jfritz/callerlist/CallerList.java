@@ -76,8 +76,10 @@ public class CallerList extends AbstractTableModel {
 
     private final static String PATTERN_CSV = "(\\||;)";
 
-    private final static String EXPORT_CSV_FORMAT = "\"CallType\";\"Date\";\"Time\";\"Number\";\"Route\";\"" +
+    private final static String EXPORT_CSV_FORMAT_JFRITZ = "\"CallType\";\"Date\";\"Time\";\"Number\";\"Route\";\"" +
         "Port\";\"Duration\";\"Name\";\"Address\";\"City\";\"CallByCall\";\"Comment\"";
+
+    private final static String EXPORT_CSV_FORMAT_FRITZBOX = "Typ;Datum;Rufnummer;Nebenstelle;Eigene Rufnummer;Dauer";
 
     private JFritz jfritz;
 
@@ -1113,7 +1115,7 @@ public class CallerList extends AbstractTableModel {
 	   *
 	   * function reads the file and processes it line by line
 	   * using parseCSV() as the parse function
-	   * parses according to the current csv format found in this file
+	   *
 	   * function also has the ability to 'nicely' handle broken CSV lines
 	   *
 	   * @param filename of the csv file to import from
@@ -1124,45 +1126,58 @@ public class CallerList extends AbstractTableModel {
 	    alreadyKnownCalls = (Vector) unfilteredCallerData.clone();
 	    Debug.msg("Importing from csv file " + filename);
 	    String line = "";
+	    boolean isJFritzExport = false; //flag to check which type to parse
+
 	    try {
 	      FileReader fr = new FileReader(filename);
 	          BufferedReader br = new BufferedReader(fr);
+	          line = br.readLine();
+	          if(line.equals(EXPORT_CSV_FORMAT_JFRITZ) || line.equals(EXPORT_CSV_FORMAT_FRITZBOX)){
 
-	          if(!br.readLine().equals(EXPORT_CSV_FORMAT)){
-	              Debug.err("Wrong file type or corrupted file");
+	        	  if(line.equals(EXPORT_CSV_FORMAT_JFRITZ))
+	        			  isJFritzExport = true;
+
+	        	  int linesRead = 0;
+	        	  int newEntries = 0;
+	        	  Call c;
+	        	  while(null != (line = br.readLine())){
+	        		  linesRead++;
+	        		  if(isJFritzExport)
+	        			  c = parseCallJFritzCSV(line);
+	        		  else
+	        			  c = parseCallFritzboxCSV(line);
+
+	        		  if(c == null)
+	        			  Debug.msg("Error encountered processing the csv file, continuing");
+	        		  else if(addEntry(c)){
+	        			  newEntries++;
+
+	        		  }
+	        	  }
+
+	        	  Debug.msg(linesRead+" Lines read from csv file "+filename);
+	        	  Debug.msg(newEntries+" New entries processed");
+
+	        	  if (newEntries > 0) {
+	        		  sortAllUnfilteredRows();
+	        		  saveToXMLFile(JFritz.CALLS_FILE, true);
+	        		  String msg;
+
+	        		  if (newEntries == 1) {
+	        			  msg = JFritz.getMessage("imported_call");
+	        		  } else {
+	        			  msg = newEntries + " "+JFritz.getMessage("imported_calls");
+	        		  }
+
+	        		  JFritz.infoMsg(msg);
+
+	        	  }else{
+	        		  JFritz.infoMsg(JFritz.getMessage("no_imported_calls"));
+	        	  }
+
 	          }else{
-	            int linesRead = 0;
-	            int newEntries = 0;
-	            while(null != (line = br.readLine())){
-	              linesRead++;
-	              Call c = parseCall(line);
-	              if(c == null)
-	                Debug.msg("Error encountered processing the csv file, continuing");
-	              else if(addEntry(c)){
-	                newEntries++;
-
-	              }
-	            }
-	            Debug.msg(linesRead+" Lines read from csv file "+filename);
-	            Debug.msg(newEntries+" New entries processed");
-
-	            if (newEntries > 0) {
-	              sortAllUnfilteredRows();
-	              saveToXMLFile(JFritz.CALLS_FILE, true);
-	              String msg;
-
-	              if (newEntries == 1) {
-	                msg = JFritz.getMessage("imported_call");
-	              } else {
-	                msg = newEntries + " "+JFritz.getMessage("imported_calls");
-	              }
-	              JFritz.infoMsg(msg);
-
-	            }else{
-	              JFritz.infoMsg(JFritz.getMessage("no_imported_calls"));
-	            }
-
-
+	        	  //Invalid file header
+	        	  Debug.err("Wrong file type or corrupted file");
 	          }
 
 	          br.close();
@@ -1179,11 +1194,13 @@ public class CallerList extends AbstractTableModel {
 	   *
 	   * function first splits the line into substrings, then strips the quotationmarks(do those have to be?)
 	   * creates a call object and a phone book object
+	   * functions parses according to the format EXPORT_CSV_FORMAT_JFRITZ
+	   *
 	   *
 	   * @param line contains the line to be processed from a csv file
 	   * @return returns a call object, or null if the csv line is broken
 	   */
-	  public Call parseCall(String line){
+	  public Call parseCallJFritzCSV(String line){
 	    String[] field = line.split(PATTERN_CSV);
 	    Call call;
 	    CallType calltype;
@@ -1248,4 +1265,66 @@ public class CallerList extends AbstractTableModel {
 
 	    return call;
 	  }
+
+	  /**
+	   * @author Brian Jensen
+	   *
+	   * @param line is the current line in the csv file
+	   * @return is call object
+	   */
+	  public Call parseCallFritzboxCSV(String line){
+		  String[] field = line.split(PATTERN_CSV);
+		    Call call;
+		    CallType calltype;
+		    Date calldate;
+		    PhoneNumber number;
+
+		    //check if line has correct amount of entries
+		    if(field.length < 6){
+		      Debug.err("Invalid CSV format!");
+		      return null;
+		    }
+
+		    //Call type
+		    if(field[0].equals("1")){
+		        calltype = new CallType("call_in");
+		    }else if(field[0].equals("2")){
+		      calltype = new CallType("call_in_failed");
+		    }else if(field[0].equals("3")){
+		      calltype = new CallType("call_out");
+		    }else{
+		      Debug.err("Invalid Call type in CSV file!");
+		      return null;
+		    }
+
+		    //Call date and time
+		    if(field[1] != null){
+		    	try{
+			        calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(field[1]);
+			      }catch(ParseException e){
+			        Debug.err("Invalid date format in csv file!");
+			        return null;
+			      }
+		    }else{
+		    	Debug.err("Invalid CSV file!");
+		    	return null;
+		    }
+
+		    //Phone number
+		    if(field[2] != null)
+		      number = new PhoneNumber(field[2]);
+		    else
+		      number = null;
+
+		    //now make the call object
+		    //TODO: change the order of the Call constructor to fit
+		    //the oder of the csv export function!!!
+		    String[] time = field[5].split(":");
+		    call = new Call(jfritz, calltype, calldate, number, field[3], field[4],
+		        Integer.parseInt(time[0])*3600 + Integer.parseInt(time[1])*60);
+
+		    return call;
+
+	  }
+
 }
