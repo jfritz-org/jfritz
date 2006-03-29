@@ -42,28 +42,28 @@
  * CHANGELOG:
  * TODO: Checken, ob alle Bibliotheken vorhanden sind
  *
- * JFritz 0.5.6
+ * JFritz 0.6.0
  * - Neu: Fritzbox Anrufliste als CSV-Datei importieren
  * - Neu: Thunderbird/Mozilla-Kontakte importieren
  * - Neu: Telefonbuch als CSV-Datei exportieren
- * - Neu: Suchfunktion für Telefonbuch
  * - Neu: Anruferliste importieren (CSV-Dateien)
  * - Neu: Wahlhilfe
- * - Änderung: Das Durchsuchen der Anruferliste muss nun per [ENTER] gestartet werden.
- * - Bugfix: "übernehmen" Button im Telefonbuch wird nun anklickbar, wenn man eine Telefonnummer geändert hat.
- * - Bugfix: Sonderzeichen bei "Externes Programm starten" werden korrekt gespeichert
  * - Neu: (JFritz)Telefonbuch importieren (XML)
+ * - Neu: Manuelle Backups erstellen (Menü und Toolbar)
+ * - Neu: per Funktionstaste "F5" Anrufliste aktualisieren
+ * - Neu: Suchfunktion für Telefonbuch
  * - Neue Option: Nach Standby oder Ruhezustand die Anrufliste automatisch abholen
+ * - Neue Option: Sicherungskopien bei jedem Laden der Anruferliste erstellen
+ * - Änderung: Das Durchsuchen der Anruferliste muss nun per [ENTER] gestartet werden.
+ * - Bugfix: "Übernehmen" Button im Telefonbuch wird nun anklickbar, wenn man eine Telefonnummer geändert hat.
+ * - Bugfix: Sonderzeichen bei "Externes Programm starten" werden korrekt gespeichert
  * - Bugfix: tritt der unwahrscheinliche Fall auf, dass kein Tray-Icon angezeigt wird, der User aber früher einmal
  * 			 (als das Tray-Icon noch verfügbar war) Tray-Messages zu Benachrichtigung ausgewählt hatte, wurde gar kein
  * 			 Anruf mehr signalisiert. Jetzt wird in diesem Fall auf ein PopUp zurückgegriffen.
- * - Neue Option: Sicherungskopien bei jedem Laden der Anruferliste erstellen
- * - Neu: Manuelle Backups erstellen (Menü und Toolbar)
  * - Bugfix: unvollständige Anzeige des Einstellungsdialoges -> Weiteres
- * - per Funktionstaste "F5" Anrufliste aktualisieren
  * - Bugfix: Speicherung der Kommentare
  * - INTERN: Bereitstellen von utils.JFritzClipboard und CallerList.getSelectedCall
- * - INTERN: JDIC-Update auf 0.9.1
+ * - INTERN: JDIC-Update auf "JDIC 20050930 Build"
  *
  * JFritz 0.5.5
  * - Nummer und Anschrift können aus der Anrufliste heraus in die Zwischenablage kopiert werden
@@ -359,7 +359,7 @@ public final class JFritz {
 
     public final static String PROGRAM_NAME = "JFritz";
 
-    public final static String PROGRAM_VERSION = "0.5.6";
+    public final static String PROGRAM_VERSION = "0.6.0";
 
     public final static String PROGRAM_URL = "http://www.jfritz.org/";
 
@@ -367,7 +367,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.203 2006/03/29 17:14:04 capncrunch Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.204 2006/03/29 23:39:42 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
