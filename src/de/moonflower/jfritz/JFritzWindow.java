@@ -737,77 +737,57 @@ public class JFritzWindow extends JFrame
 			// Show / hide CallByCall column
 			if (JFritzUtils.parseBoolean(JFritz.getProperty(
 					"option.showCallByCallColumn", "true"))) {
-				try {
-					colModel.getColumnIndex("Call-By-Call");
-				} catch (IllegalArgumentException iae) { // No Call-By-Call
-					// column found. Add
-					// one
-					colModel.addColumn(jfritz.getJframe().getCallerTable()
-							.getCallByCallColumn());
-					colModel
-							.getColumn(colModel.getColumnCount() - 1)
-							.setPreferredWidth(
-									Integer.parseInt(JFritz.getProperty(
-											"column.Call-By-Call.width", "50")));
+					if (getCallerTable().getColumnIndex("callbycall") == -1)
+						{ 	// No Call-By-Call column found. Add one
+							colModel.addColumn(jfritz.getJframe().getCallerTable()
+									.getCallByCallColumn());
+							colModel
+									.getColumn(colModel.getColumnCount() - 1)
+										.setPreferredWidth(
+											Integer.parseInt(JFritz.getProperty(
+												"column.callbycall.width", "50")));
 				}
 			} else {
-				try {
 					// Try to remove Call-By-Call Column
-					colModel.removeColumn(colModel.getColumn(colModel
-							.getColumnIndex("Call-By-Call")));
-				} catch (IllegalArgumentException iae) { // No Call-By-Call
-					// column found.
-				}
+					int columnIndex = getCallerTable().getColumnIndex("callbycall");
+					if (columnIndex != -1)
+						colModel.removeColumn(colModel.getColumn(columnIndex));
 			}
 			// Show / hide comment column
 			if (JFritzUtils.parseBoolean(JFritz.getProperty(
 					"option.showCommentColumn", "true"))) {
-				try {
-					colModel.getColumnIndex("Kommentar");
-				} catch (IllegalArgumentException iae) { // No comment
-					// column found. Add
-					// one
-					colModel.addColumn(jfritz.getJframe().getCallerTable()
+					if (getCallerTable().getColumnIndex("comment") == -1)
+					{	// No comment column found. Addone
+						colModel.addColumn(jfritz.getJframe().getCallerTable()
 							.getCommentColumn());
-					colModel.getColumn(colModel.getColumnCount() - 1)
+						colModel.getColumn(colModel.getColumnCount() - 1)
 							.setPreferredWidth(
 									Integer.parseInt(JFritz.getProperty(
-											"column.Kommentar.width", "50")));
+											"column.comment.width", "50")));
 				}
 			} else {
-				try {
 					// Try to remove comment column
-					colModel.removeColumn(colModel.getColumn(colModel
-							.getColumnIndex("Kommentar")));
-				} catch (IllegalArgumentException iae) { // No Call-By-Call
-					// column found.
-				}
+					int columnIndex = getCallerTable().getColumnIndex("comment");
+					if (columnIndex != -1)
+						colModel.removeColumn(colModel.getColumn(columnIndex));
 			}
 			// Show / hide port column
 			if (JFritzUtils.parseBoolean(JFritz.getProperty(
 					"option.showPortColumn", "true"))) {
-				try {
-					colModel.getColumnIndex(JFritz.getMessage("port"));
-				} catch (IllegalArgumentException iae) { // No port
-					// column found. Add
-					// one
-					colModel.addColumn(jfritz.getJframe().getCallerTable()
+					if (getCallerTable().getColumnIndex("port") == -1)
+					{	// No port column found. Add one
+						colModel.addColumn(jfritz.getJframe().getCallerTable()
 							.getPortColumn());
-					colModel.getColumn(colModel.getColumnCount() - 1)
+						colModel.getColumn(colModel.getColumnCount() - 1)
 							.setPreferredWidth(
 									Integer.parseInt(JFritz.getProperty(
-											"column."
-													+ JFritz.getMessage("port")
-													+ ".width", "50")));
+											"column.port.width", "50")));
 				}
 			} else {
-				try {
 					// Try to remove port column
-					colModel.removeColumn(colModel.getColumn(colModel
-							.getColumnIndex(JFritz.getMessage("port"))));
-				} catch (IllegalArgumentException iae) { // No Call-By-Call
-					// column found.
-				}
+					int columnIndex = getCallerTable().getColumnIndex("port");
+					if (columnIndex != -1)
+						colModel.removeColumn(colModel.getColumn(columnIndex));
 			}
 		}
 		configDialog.dispose();
@@ -1495,7 +1475,6 @@ public class JFritzWindow extends JFrame
 	  public void setLanguage(Locale locale){
 		  //TODO: change the language on the fly
 		  jfritz.createNewWindow(locale);
-
 	  }
 
 }

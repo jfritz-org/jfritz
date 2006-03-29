@@ -91,7 +91,6 @@ public class PrintCallerList {
             for (int i = 0; i < columnCount; i++) {
                 String columnName = colModel.getColumn(i).getHeaderValue()
                 .toString();
-                Debug.msg(i + ": " + columnName);
                 if (!(columnName.equals(JFritz.getMessage("number")))
                         && (!columnName.equals(JFritz.getMessage("participant")))) {
                     if (columnWidth[i] > columnWidth[columnWithMaxWidth]) columnWithMaxWidth = i;
@@ -109,12 +108,10 @@ public class PrintCallerList {
 
         } while (restWidth < 150);
 
-        int columnNumberIndex = colModel.getColumnIndex(JFritz
-                .getMessage("number"));
+        int columnNumberIndex = jfritz.getJframe().getCallerTable().getColumnIndex("number");
         double columnNumberWidth = colModel.getColumn(columnNumberIndex)
                 .getWidth();
-        int columnParticipantIndex = colModel.getColumnIndex(JFritz
-                .getMessage("participant"));
+        int columnParticipantIndex = jfritz.getJframe().getCallerTable().getColumnIndex("participant");
         double columnParticipantWidth = colModel.getColumn(
                 columnParticipantIndex).getWidth();
 
@@ -423,16 +420,16 @@ public class PrintCallerList {
                 .getColumnCount(); i++) {
 
             String columnName = jfritz.getJframe().getCallerTable()
-                    .getColumnModel().getColumn(i).getHeaderValue().toString();
+                    .getColumnModel().getColumn(i).getIdentifier().toString();
 
-            if (columnName.equals(JFritz.getMessage("type"))) {
+            if (columnName.equals("type")) {
                 ImageElement imageElement = ImageFieldElementFactory
                         .createImageDataRowElement("Type-Element",
                                 new Rectangle2D.Float(columnStart[i] + 2, 2,
                                         14, 14), "print_type", true, false);
                 imageElement.setDynamicContent(false);
                 report.getItemBand().addElement(imageElement);
-            } else if (columnName.equals(JFritz.getMessage("date"))) {
+            } else if (columnName.equals("date")) {
                 factory = new DateFieldElementFactory();
                 factory.setFontSize(fontSize);
                 factory.setName(jfritz.getCallerlist().getColumnName(i));
@@ -459,19 +456,19 @@ public class PrintCallerList {
                 factory.setHorizontalAlignment(ElementAlignment.CENTER);
                 factory.setVerticalAlignment(ElementAlignment.MIDDLE);
                 factory.setNullString(" ");
-                if (columnName.equals("Call-By-Call")) {
+                if (columnName.equals("callbycall")) {
                     factory.setFieldname("print_callbycall");
-                } else if (columnName.equals(JFritz.getMessage("number"))) {
+                } else if (columnName.equals("number")) {
                     factory.setFieldname("print_number");
-                } else if (columnName.equals(JFritz.getMessage("participant"))) {
+                } else if (columnName.equals("participant")) {
                     factory.setFieldname("print_personname");
-                } else if (columnName.equals(JFritz.getMessage("port"))) {
+                } else if (columnName.equals("port")) {
                     factory.setFieldname("print_port");
-                } else if (columnName.equals(JFritz.getMessage("route"))) {
+                } else if (columnName.equals("route")) {
                     factory.setFieldname("print_route");
-                } else if (columnName.equals(JFritz.getMessage("duration"))) {
+                } else if (columnName.equals("duration")) {
                     factory.setFieldname("print_duration");
-                } else if (columnName.equals("Kommentar")) {
+                } else if (columnName.equals("comment")) {
                     factory.setFieldname("print_comment");
                 }
                 report.getItemBand().addElement(factory.createElement());
