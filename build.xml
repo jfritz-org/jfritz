@@ -31,9 +31,10 @@
 		<copy todir="${dist}/${lib}">
 			<fileset dir="${lib}">
 				<exclude name="**/*.java"/>
-	      	</fileset>
+				<exclude name="jacob.dll"/>
+	      </fileset>
 	    </copy>
-		<copy file="jacob.dll" todir="${dist}"/>
+		<copy file="lib/jacob.dll" todir="${dist}"/>
 	</target>
 
 	<target name="jar" depends="compile">
