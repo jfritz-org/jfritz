@@ -845,6 +845,7 @@ public class JFritzWindow extends JFrame
 				+ "Christian Klein <kleinch@users.sourceforge.net>\n"
 				+ "Benjamin Schmitt <little_ben@users.sourceforge.net>\n"
 				+ "Bastian Schaefer <baefer@users.sourceforge.net>\n"
+				+ "Brian Jensen <jensen@users.sourceforge.net\n"
 				+ "\n" + JFritz.PROGRAM_URL + "\n\n"
 				+ "This tool is developed and released under\n"
 				+ "the terms of the GNU General Public License\n\n"
@@ -1467,14 +1468,16 @@ public class JFritzWindow extends JFrame
 	  /**
 	   * @author Brian Jensen
 	   * This function changes the ResourceBundle in the jfritz instance
+	   * Then the jfritz object destroys the current window and redraws a new one
 	   *
-	   * NOTE:Currently very broken!
+	   * NOTE: This function is currently experimental
 	   *
 	   * @param locale to switch the language to
 	   */
 	  public void setLanguage(Locale locale){
-		  //TODO: change the language on the fly
 		  jfritz.createNewWindow(locale);
+		  //current window will be destroyed and a new one created
+
 	  }
 
 }

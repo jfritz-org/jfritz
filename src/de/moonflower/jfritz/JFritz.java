@@ -33,14 +33,17 @@
  *
  *
  * BUGS: bitte bei Sourceforge nachschauen und dort auch den Status ändern
+ * BUGS: http://sourceforge.net/tracker/?group_id=138196&atid=741413
  * BUG: die Autoerkennung, ob telefond für Syslog richtig läuft hat ein Sicherheitsloch. Nun kann jede IP auf Port 1011 zugreifen.
  *
  * FeatureRequests: bitte bei Sourceforge nachschauen und dort auch den Status ändern
+ * FeatureRequests: http://sourceforge.net/tracker/?func=browse&group_id=138196&atid=741416
 
  * CHANGELOG:
  * TODO: Checken, ob alle Bibliotheken vorhanden sind
  *
  * JFritz 0.5.6
+ * - Neu: Fritzbox Anrufliste als CSV-Datei importieren
  * - Neu: Thunderbird/Mozilla-Kontakte importieren
  * - Neu: Telefonbuch als CSV-Datei exportieren
  * - Neu: Suchfunktion für Telefonbuch
@@ -49,7 +52,7 @@
  * - Änderung: Das Durchsuchen der Anruferliste muss nun per [ENTER] gestartet werden.
  * - Bugfix: "übernehmen" Button im Telefonbuch wird nun anklickbar, wenn man eine Telefonnummer geändert hat.
  * - Bugfix: Sonderzeichen bei "Externes Programm starten" werden korrekt gespeichert
- * - Neu: (JFritz)Telefonbuch importieren
+ * - Neu: (JFritz)Telefonbuch importieren (XML)
  * - Neue Option: Nach Standby oder Ruhezustand die Anrufliste automatisch abholen
  * - Bugfix: tritt der unwahrscheinliche Fall auf, dass kein Tray-Icon angezeigt wird, der User aber früher einmal
  * 			 (als das Tray-Icon noch verfügbar war) Tray-Messages zu Benachrichtigung ausgewählt hatte, wurde gar kein
@@ -61,7 +64,6 @@
  * - Bugfix: Speicherung der Kommentare
  * - INTERN: Bereitstellen von utils.JFritzClipboard und CallerList.getSelectedCall
  * - INTERN: JDIC-Update auf 0.9.1
- * - INTERN: Bugfix: Internationalisierung repariert. Property-Werte haben sich geändert
  *
  * JFritz 0.5.5
  * - Nummer und Anschrift können aus der Anrufliste heraus in die Zwischenablage kopiert werden
@@ -167,7 +169,8 @@
  * - Added context menu to phonebook and callerlist
  * - New Callfilter: Route, Fixed call, CallByCall
  * - New Datefilter: Right click on date filter button
- * - Display more information in status bar
+ * - Display more information in status barm Zielfon hör ich "Ihre Nummerwird gehalten...". Bitte Einbauen!! Das ist der Hammer!
+
  * - Export to XML
  * - Export CallByCall to CSV
  * - Phonenumber with wildcard support (PhoneNumber-Type "main")
@@ -364,7 +367,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.202 2006/03/29 13:55:07 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.203 2006/03/29 17:14:04 capncrunch Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -512,7 +515,7 @@ public final class JFritz {
                 }
                 break;
             case 'd':
-				// enableInstanceControl = false; // unnötig, GUI wird nicht gestartet
+				// enableInstanceControl = false; // unn?tig, GUI wird nicht gestartet
 				Debug.on();
 				clearCallsOnBox();
                 System.exit(0);
@@ -721,10 +724,10 @@ public final class JFritz {
 			phonebook.saveToCallMonitorFormat("CallMonitor.adr");
 		}
 
-        Debug.msg("Neue Instanz von JFrame");
+        Debug.msg("New instance of JFrame");
         jframe = new JFritzWindow(this);
 
-        Debug.msg("Checke Systray-Support");
+        Debug.msg("Check Systray-Support");
         if (checkForSystraySupport()) {
             try {
                 systray = SystemTray.getDefaultSystemTray();
@@ -932,10 +935,10 @@ public final class JFritz {
             		properties.getProperty("column.Teilnehmer.width"));
             JFritz.removeProperty("column.Teilnehmer.width");
         }
-        if (properties.containsKey("column.Anschluß.width")) {
+        if (properties.containsKey("column.Anschlu?.width")) {
             properties.setProperty("column.port.width",
-                    properties.getProperty("column.Anschluß.width"));
-            JFritz.removeProperty("column.Anschluß.width");
+                    properties.getProperty("column.Anschlu?.width"));
+            JFritz.removeProperty("column.Anschlu?.width");
         }
         if (properties.containsKey("column.MSN.width")) {
             properties.setProperty("column.route.width",
@@ -1555,11 +1558,21 @@ public final class JFritz {
      * @Brian Jensen
      * This function changes the state of the ResourceBundle object
      * currently available locales, ("de, "DE") and ("en", "US)
+     * Then it destroys the old window and redraws a new one with new locale
+     *
      * @param l the locale to change the language to
      */
     public void createNewWindow(Locale l){
     	locale = l;
+    	Debug.msg("Loading new locale");
     	loadMessages(locale);
+
+    	jframe.dispose();
+    	javax.swing.SwingUtilities.invokeLater(jframe);
+    	jframe = new JFritzWindow(this);
+    	javax.swing.SwingUtilities.invokeLater(jframe);
+    	jframe.checkStartOptions();
+
     }
 
 }

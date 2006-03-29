@@ -81,6 +81,9 @@ public class CallerList extends AbstractTableModel {
 
     private final static String EXPORT_CSV_FORMAT_FRITZBOX = "Typ;Datum;Rufnummer;Nebenstelle;Eigene Rufnummer;Dauer";
 
+    //Is the type eyported from a 7170
+    private final static String EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE = "Typ; Datum; Rufnummer; Nebenstelle; Eigene Rufnummer; Dauer";
+
     private JFritz jfritz;
 
     private Vector filteredCallerData;
@@ -204,7 +207,7 @@ public class CallerList extends AbstractTableModel {
 
             pw.close();
         } catch (UnsupportedEncodingException e) {
-            Debug.err("UTF-8 wird nicht unterstützt.");
+            Debug.err("UTF-8 wird nicht unterst?tzt.");
         } catch (FileNotFoundException e) {
             Debug.err("Could not write " + filename + "!");
         } catch (IOException e) {
@@ -321,7 +324,7 @@ public class CallerList extends AbstractTableModel {
                             "Invalid system identifier")) {
                 Debug.err(e.getLocalizedMessage());
                 Debug
-                        .errDlg("STRUKTURÄNDERUNG!\n\nBitte in der Datei jfritz.calls.xml\n "
+                        .errDlg("STRUKTUR?NDERUNG!\n\nBitte in der Datei jfritz.calls.xml\n "
                                 + "die Zeichenkette \"calls.dtd\" durch\n \""
                                 + CALLS_DTD_URI + "\"\n ersetzen!");
                 System.exit(0);
@@ -1034,7 +1037,7 @@ public class CallerList extends AbstractTableModel {
 
     public void fireTableDataChanged() {
         // Kostenberechnung deaktiviert, weil es zu ungenau ist
-        // und nur zu Problemen führt
+        // und nur zu Problemen f?hrt
         // calculateCosts();
         super.fireTableDataChanged();
     }
@@ -1045,7 +1048,7 @@ public class CallerList extends AbstractTableModel {
      */
     /*
      * private void calculateCosts() {
-     *  // Lösche Anrufliste der SipProvider for (int k = 0; k <
+     *  // L?sche Anrufliste der SipProvider for (int k = 0; k <
      * jfritz.getSIPProviderTableModel().getProviderList() .size(); k++) {
      * SipProvider sipprovider = (SipProvider) jfritz
      * .getSIPProviderTableModel().getProviderList().get(k);
@@ -1053,7 +1056,7 @@ public class CallerList extends AbstractTableModel {
      *
      * for (int i = unfilteredCallerData.size(); i > 0; i--) { Call call =
      * (Call) unfilteredCallerData.get(i - 1); if (call.getCalltype().toInt() ==
-     * 3) { // Nur abgehende Gespräche // berechnen if
+     * 3) { // Nur abgehende Gespr?che // berechnen if
      * (call.getPhoneNumber().isEmergencyCall() ||
      * call.getPhoneNumber().isFreeCall() ||
      * call.getPhoneNumber().isSIPNumber()) { call.setCost(0); } else if
@@ -1065,12 +1068,12 @@ public class CallerList extends AbstractTableModel {
      *
      * if (sipProvider.getProviderID() == Integer
      * .parseInt(call.getRoute().substring(3))) { break; } else { sipProvider =
-     * null; } } if (sipProvider != null) { // Füge Anrufe zur //
+     * null; } } if (sipProvider != null) { // F?ge Anrufe zur //
      * SipProvider-Anrufliste sipProvider.addCall(call); } } else {// Es wurde
      * kein (oder unbekannter) VoIP-Provider // benutzt => unbekannte Kosten
      * call.setCost(-1); } } else { // Ankommende oder verpasse Anrufe => keine
      * Kosten call.setCost(0); } }
-     *  // Berechne die Kosten für die Anrufe, die über SipProvider geführt //
+     *  // Berechne die Kosten f?r die Anrufe, die ?ber SipProvider gef?hrt //
      * wurden for (int k = 0; k <
      * jfritz.getSIPProviderTableModel().getProviderList() .size(); k++) {
      * SipProvider sipprovider = (SipProvider) jfritz
@@ -1114,7 +1117,12 @@ public class CallerList extends AbstractTableModel {
 	   * @author Brian Jensen
 	   *
 	   * function reads the file and processes it line by line
-	   * using parseCSV() as the parse function
+	   * using the appropriate parse function based on the structure
+	   *
+	   * currently supported file types:
+	   * JFritz's own export format: EXPORT_CSV_FOMAT_JFRITZ
+	   * Exported files from the fritzbox's web interface: EXPORT_CSV_FORMAT_FRITZBOX
+	   * Exported files from newer boxes (7170) EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE
 	   *
 	   * function also has the ability to 'nicely' handle broken CSV lines
 	   *
@@ -1127,25 +1135,33 @@ public class CallerList extends AbstractTableModel {
 	    Debug.msg("Importing from csv file " + filename);
 	    String line = "";
 	    boolean isJFritzExport = false; //flag to check which type to parse
+	    boolean isNewFirmware = false;  //check if its was exported with a new box
 
 	    try {
 	      FileReader fr = new FileReader(filename);
 	          BufferedReader br = new BufferedReader(fr);
 	          line = br.readLine();
-	          if(line.equals(EXPORT_CSV_FORMAT_JFRITZ) || line.equals(EXPORT_CSV_FORMAT_FRITZBOX)){
+
+	          //check if we have a correct header
+	          if(line.equals(EXPORT_CSV_FORMAT_JFRITZ) || line.equals(EXPORT_CSV_FORMAT_FRITZBOX)
+	        		  || line.equals(EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE)){
 
 	        	  if(line.equals(EXPORT_CSV_FORMAT_JFRITZ))
-	        			  isJFritzExport = true;
+	        		  isJFritzExport = true;
+	        	  else if(line.equals(EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE))
+	        	  		isNewFirmware = true;
 
 	        	  int linesRead = 0;
 	        	  int newEntries = 0;
 	        	  Call c;
 	        	  while(null != (line = br.readLine())){
 	        		  linesRead++;
+
+	        		  //call the apropriate parse function
 	        		  if(isJFritzExport)
 	        			  c = parseCallJFritzCSV(line);
 	        		  else
-	        			  c = parseCallFritzboxCSV(line);
+	        			  c = parseCallFritzboxCSV(line, isNewFirmware);
 
 	        		  if(c == null)
 	        			  Debug.msg("Error encountered processing the csv file, continuing");
@@ -1193,12 +1209,11 @@ public class CallerList extends AbstractTableModel {
 	   * @author Brian Jensen
 	   *
 	   * function first splits the line into substrings, then strips the quotationmarks(do those have to be?)
-	   * creates a call object and a phone book object
 	   * functions parses according to the format EXPORT_CSV_FORMAT_JFRITZ
 	   *
 	   *
 	   * @param line contains the line to be processed from a csv file
-	   * @return returns a call object, or null if the csv line is broken
+	   * @return returns a call object, or null if the csv line is invalid
 	   */
 	  public Call parseCallJFritzCSV(String line){
 	    String[] field = line.split(PATTERN_CSV);
@@ -1253,7 +1268,7 @@ public class CallerList extends AbstractTableModel {
 
 	    //now make the call object
 	    //TODO: change the order of the Call constructor to fit
-	    //the oder of the csv export function!!!
+	    //the oder of the csv export function or vice versa!!!
 	    call = new Call(jfritz, calltype, calldate, number, field[5], field[4],
 	        Integer.parseInt(field[6]));
 
@@ -1268,11 +1283,15 @@ public class CallerList extends AbstractTableModel {
 
 	  /**
 	   * @author Brian Jensen
+	   * function parses a line of a csv file, that was directly exported
+	   * from the Fritzbox web interface
+	   * function parses according to format: EXPORT_CSV_FORMAT_FRITZBOX
+	   * and EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE
 	   *
-	   * @param line is the current line in the csv file
-	   * @return is call object
+	   * @param line contains the line to be processed
+	   * @return is call object, or null if the csv was invalid
 	   */
-	  public Call parseCallFritzboxCSV(String line){
+	  public Call parseCallFritzboxCSV(String line, boolean isNewFirmware){
 		  String[] field = line.split(PATTERN_CSV);
 		    Call call;
 		    CallType calltype;
@@ -1286,11 +1305,15 @@ public class CallerList extends AbstractTableModel {
 		    }
 
 		    //Call type
-		    if(field[0].equals("1")){
+		    //Why would they change the cvs format in the new firmware???
+		    if((field[0].equals("1") && !isNewFirmware)
+		    		|| (field[0].equals("2") && isNewFirmware)){
 		        calltype = new CallType("call_in");
-		    }else if(field[0].equals("2")){
+		    }else if((field[0].equals("2") && !isNewFirmware)
+		    		|| (field[0].equals("3") && isNewFirmware)){
 		      calltype = new CallType("call_in_failed");
-		    }else if(field[0].equals("3")){
+		    }else if((field[0].equals("3") && !isNewFirmware)
+		    		|| (field[0].equals("1") && isNewFirmware)){
 		      calltype = new CallType("call_out");
 		    }else{
 		      Debug.err("Invalid Call type in CSV file!");
@@ -1316,10 +1339,9 @@ public class CallerList extends AbstractTableModel {
 		    else
 		      number = null;
 
-		    //now make the call object
-		    //TODO: change the order of the Call constructor to fit
-		    //the oder of the csv export function!!!
+		    //split the duration into two stings, hours:minutes
 		    String[] time = field[5].split(":");
+		    //make the call object
 		    call = new Call(jfritz, calltype, calldate, number, field[3], field[4],
 		        Integer.parseInt(time[0])*3600 + Integer.parseInt(time[1])*60);
 
