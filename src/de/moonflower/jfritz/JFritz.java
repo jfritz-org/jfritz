@@ -47,7 +47,12 @@
  * - Neu: Thunderbird/Mozilla-Kontakte importieren
  * - Neu: Telefonbuch als CSV-Datei exportieren
  * - Neu: Anruferliste importieren (CSV-Dateien)
- * - Neu: Wahlhilfe
+ * - Neu: Wahlhilfe (<- funktioniert nicht richtig. Es wird immer der Port vom letzten Versuch benutzt
+ *                      Beispiel: ich habe zuletzt ISDN 1 benutzt, will jetzt mit ISDN 2 anrufen, dann wird aber ISDN 1 benutzt.
+ *                      Benutze ich dann die Wahlhilfe erneut, wird ISDN 2 benutzt - egal welchen Port ich einstelle. D.h., benutze
+ *                      ich ständig die gleichen Ports, fällt es nicht weiter auf.
+ *                      Ich denke, das hängt damit zusammen, dass man auf der Weboberfläche erst den Port auswählt, dann übernehmen
+ *                      drückt und dann erst die Nummer anklickt. Diesen Vorgang müsste man in JFritz nachbilden.)
  * - Neu: (JFritz)Telefonbuch importieren (XML)
  * - Neu: Manuelle Backups erstellen (Menü und Toolbar)
  * - Neu: per Funktionstaste "F5" Anrufliste aktualisieren
@@ -367,7 +372,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.204 2006/03/29 23:39:42 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.205 2006/03/30 00:40:59 kleinch Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
