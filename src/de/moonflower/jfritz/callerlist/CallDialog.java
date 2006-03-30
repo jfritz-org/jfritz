@@ -205,6 +205,7 @@ public class CallDialog extends JDialog implements ActionListener {
 						port.addItem("ISDN 7");
 						port.addItem("ISDN 8");
 						port.addItem("ISDN 9");
+						break;
 					}
 					case FritzBoxFirmware.BOXTYPE_FRITZBOX_7050 : {
 						port.addItem("ISDN Alle");
