@@ -642,7 +642,18 @@ public class PersonPanel extends JPanel implements ActionListener,
 	    {
 	      int row = numberTable.getEditingRow();
 	      int column = numberTable.getEditingColumn();
-	      numberTable.editingStopped (new ChangeEvent (numberTable.getComponentAt(row, column)));
+	      numberTable.editingStopped(new ChangeEvent (numberTable.getComponentAt(row, column)));
+	    }
+	}
+
+	public void cancelEditing(){
+		hasChanged = false;
+	    if (numberTable.isEditing())
+	    {
+	      int row = numberTable.getEditingRow();
+	      int column = numberTable.getEditingColumn();
+	      numberHasChanged = false;
+	      numberTable.editingCanceled(new ChangeEvent (numberTable.getComponentAt(row, column)));
 	    }
 	}
 

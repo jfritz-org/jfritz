@@ -204,6 +204,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			if (rows.length == 1) {
 				Person p = ((PhoneBook) phoneBookTable.getModel())
 						.getPersonAt(rows[0]);
+				personPanel.cancelEditing();
 				personPanel.setPerson(p);
 				setStatus();
 			}
@@ -228,6 +229,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	 */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("cancel")) {
+			personPanel.cancelEditing();
 			personPanel.updateGUI();
 		} else if (e.getActionCommand().equals("save")) {
 			personPanel.updatePerson();
