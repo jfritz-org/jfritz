@@ -68,6 +68,7 @@
  * 			 Anruf mehr signalisiert. Jetzt wird in diesem Fall auf ein PopUp zurückgegriffen.
  * - Bugfix: unvollständige Anzeige des Einstellungsdialoges -> Weiteres
  * - Bugfix: Speicherung der Kommentare
+ * - Bugfix: Überschreiben der Rufnummer im Telefonbuch tritt nicht mehr auf
  * - INTERN: Bereitstellen von utils.JFritzClipboard und CallerList.getSelectedCall
  * - INTERN: JDIC-Update auf "JDIC 20050930 Build"
  *
@@ -374,7 +375,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.207 2006/04/05 17:26:03 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.208 2006/04/05 18:38:22 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
