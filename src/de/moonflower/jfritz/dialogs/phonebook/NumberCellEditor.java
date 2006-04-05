@@ -1,7 +1,6 @@
 /**
  *
  * Created on 22.03.2006
- * @author Bastian Schaefer
  */
 package de.moonflower.jfritz.dialogs.phonebook;
 
@@ -18,6 +17,7 @@ import javax.swing.table.TableCellEditor;
  * This deprecated class manages editing of the participant cell in the caller
  * table.
  *
+ *  @author Bastian Schaefer
  */
 public class NumberCellEditor extends AbstractCellEditor
 		implements

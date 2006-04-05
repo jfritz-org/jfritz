@@ -9,6 +9,13 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * This class allows to backup files to a
+ * file structure consisting out of the current date.
+ *
+ *  @author Bastian Schaefer
+ */
+
 public class CopyFile {
 
     private File[] entries;
