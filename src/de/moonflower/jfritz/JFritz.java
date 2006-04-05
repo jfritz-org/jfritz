@@ -362,7 +362,8 @@ import de.moonflower.jfritz.utils.network.SSDPdiscoverThread;
  */
 public final class JFritz {
 
-    public final static String PROGRAM_NAME = "JFritz";
+	//when changing this, don't forget to check the resource bundles!!
+	public final static String PROGRAM_NAME = "JFritz";
 
     public final static String PROGRAM_VERSION = "0.6.0";
 
@@ -372,7 +373,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.205 2006/03/30 00:40:59 kleinch Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.206 2006/04/05 14:34:15 capncrunch Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -627,21 +628,12 @@ public final class JFritz {
 	        else
 	        {
 	        	Debug.msg("Multiple instance lock: Another instance is already running.");
-	        	//JOptionPane.showMessageDialog(null,JFritz.PROGRAM_NAME+" kann nicht mehrfach gestartet werden.","Information",JOptionPane.OK_OPTION+JOptionPane.INFORMATION_MESSAGE);
 	        	int answer=JOptionPane.showConfirmDialog(null,
-	        			JFritz.PROGRAM_NAME+" sollte nicht mehrfach gestartet werden!"
-
-	        			+"\n\nHinweis:"
-	        			+"\nSollten Sie diese Meldung sehen, obwohl Sie "+JFritz.PROGRAM_NAME+" nur einmal"
-	        			+"\ngestartet haben, so liegt dies vermutlich daran, dass eine vorige "
-	        			+"\n"+JFritz.PROGRAM_NAME+"-Intstanz unplanmäßig beendet wurde (z.B. durch einen "
-	        			+"\nSystemabsturz). "
-	        			+"\nIn diesem Fall können Sie JFritz mit diesem Dialog starten."
-
-	        			+"\n\nBitte beachten Sie jedoch, dass "+JFritz.PROGRAM_NAME+" NICHT MEHRFACH gestartet "+""
-	        			+"\nwerden sollte, da es sonst zu DATENVERLUST kommen kann."
-
-	        			+"\n\nSoll diese Instanz von "+JFritz.PROGRAM_NAME+" beendet werden?","Information",JOptionPane.YES_NO_OPTION);
+	        			JFritz.getMessage("lock_error_dialog1")
+	        			+JFritz.getMessage("lock_error_dialog2")
+	        			+JFritz.getMessage("lock_error_dialog3")
+	        			+JFritz.getMessage("lock_error_dialog4"),
+	        			JFritz.getMessage("information"),JOptionPane.YES_NO_OPTION);
 	        	if (answer==JOptionPane.YES_OPTION)
 	        	{
 	            	Debug.msg("Multiple instance lock: User decided to shut down this instance.");
@@ -664,7 +656,7 @@ public final class JFritz {
         loadSounds();
 
         String osName = System.getProperty("os.name");
-        Debug.msg("Betriebssystem: " + osName);
+        Debug.msg("Operating System : " + osName);
         if (osName.startsWith("Mac OS"))
             HostOS = "Mac";
         else if (osName.startsWith("Windows"))
@@ -699,28 +691,28 @@ public final class JFritz {
                 Debug.err(e.toString());
             } finally {
                 if (csvExport) {
-                    Debug.msg("CSV-Export to " + csvFileName);
+                    Debug.msg("Exporting Call list (csv) to " + csvFileName);
                     callerlist.saveToCSVFile(csvFileName, true);
                 }
                 if (clearList) {
-                    Debug.msg("Clearing Caller List");
+                    Debug.msg("Clearing Call List");
                     callerlist.clearList();
                 }
-                Debug.msg("JFritz beendet sich nun.");
+                Debug.msg("JFritz will now terminate");
                 System.exit(0);
             }
         }
         if (csvExport) {
-            Debug.msg("CSV-Export to " + csvFileName);
+            Debug.msg("Exporting Call list (csv) to " + csvFileName);
             callerlist.saveToCSVFile(csvFileName, true);
             if (clearList) {
-                Debug.msg("Clearing Caller List");
+                Debug.msg("Clearing Call List");
                 callerlist.clearList();
             }
             System.exit(0);
         }
         if (clearList) {
-            Debug.msg("Clearing Caller List");
+            Debug.msg("Clearing Call List");
             callerlist.clearList();
             System.exit(0);
         }
@@ -748,7 +740,7 @@ public final class JFritz {
 
         if (JFritzUtils.parseBoolean(JFritz.getProperty("option.useSSDP",
                 "true"))) {
-            Debug.msg("Suche FritzBox über UPnP / SSDP");
+            Debug.msg("Searching for  FritzBox per UPnP / SSDP");
 
             ssdpthread = new SSDPdiscoverThread(this, SSDP_TIMEOUT);
             ssdpthread.start();
@@ -843,7 +835,7 @@ public final class JFritz {
                     .decrypt(JFritz.getProperty("box.password", Encryption
                             .encrypt(""))));
         } catch (WrongPasswordException e1) {
-            Debug.err("Password wrong!");
+            Debug.err("Wrong Password!");
             firmware = null;
         } catch (IOException e1) {
             Debug.err("Address wrong!");
@@ -1154,7 +1146,7 @@ public final class JFritz {
         if (!callerInput.startsWith("SIP")) {
             PhoneNumber caller = new PhoneNumber(callerInput);
             if (caller.getIntNumber().equals("")) {
-                callerstr = "Unbekannt";
+                callerstr = JFritz.getMessage("unknown");
             } else
                 callerstr = caller.getIntNumber();
         }
@@ -1162,7 +1154,7 @@ public final class JFritz {
 		if (!calledInput.startsWith("SIP")) {
             PhoneNumber called = new PhoneNumber(calledInput);
             if (called.getIntNumber().equals("")) {
-                calledstr = "Unbekannt";
+                calledstr = JFritz.getMessage("unknown");
             } else
                 calledstr = calledInput;
         } else
@@ -1176,9 +1168,9 @@ public final class JFritz {
 			surname = nameArray[1];
 			company = nameArray[2];
         }
-		if (name.equals("")) name = "Unbekannt";
-		if (firstname.equals("") && surname.equals("")) surname = "Unbekannt";
-		if (company.equals("")) company = "Unbekannt";
+		if (name.equals("")) name = JFritz.getMessage("unknown");
+		if (firstname.equals("") && surname.equals("")) surname = JFritz.getMessage("unknown");
+		if (company.equals("")) company = JFritz.getMessage("unknown");
 
 		if (callerstr.startsWith("+49")) callerstr = "0" + callerstr.substring(3);
 
@@ -1191,14 +1183,14 @@ public final class JFritz {
             break;
         }
         default: {
-            String outstring = JFritz.getMessage("incoming_call") + "\nvon "
+            String outstring = JFritz.getMessage("incoming_call") + "\n " + JFritz.getMessage("from")
                     + callerstr;
-            if (!name.equals("Unbekannt")) {
+            if (!name.equals(JFritz.getMessage("unknown"))) {
                 outstring = outstring + " (" + name + ")";
             }
 
-            if (!calledstr.equals("Unbekannt")) {
-                outstring = outstring + "\nan " + calledstr;
+            if (!calledstr.equals(JFritz.getMessage("unknown"))) {
+                outstring = outstring + "\n" +JFritz.getMessage("to") + calledstr;
             }
             infoMsg(outstring);
             break;
@@ -1245,15 +1237,15 @@ public final class JFritz {
 
             if (programString.equals("")) {
                 Debug
-                        .errDlg("Kein externes Programm angegeben"
+                        .errDlg(JFritz.getMessage("no_external_program")
                                 + programString);
                 return;
             }
-            Debug.msg("Starte externes Programm: " + programString);
+            Debug.msg("Start external Program: " + programString);
             try {
                 Runtime.getRuntime().exec(programString);
             } catch (IOException e) {
-                Debug.errDlg("Konnte externes Programm nicht ausführen: "
+                Debug.errDlg(JFritz.getMessage("not_external_program_start")
                         + programString);
                 Debug.err(e.toString());
             }
@@ -1277,7 +1269,7 @@ public final class JFritz {
         if (!calledInput.startsWith("SIP")) {
             PhoneNumber called = new PhoneNumber(calledInput);
             if (called.getIntNumber().equals("")) {
-                calledstr = "Unbekannt";
+                calledstr = JFritz.getMessage("unknown");
             } else
                 calledstr = called.getIntNumber();
         }
@@ -1285,7 +1277,7 @@ public final class JFritz {
         if (!providerInput.startsWith("SIP") && !providerInput.startsWith("Analog")) {
             PhoneNumber provider = new PhoneNumber(providerInput);
             if (provider.getIntNumber().equals("")) {
-                providerstr = "Unbekannt";
+                providerstr = JFritz.getMessage("unknown");
             } else
                 providerstr = providerInput;
         } else if (providerInput.equals("Analog")) {
@@ -1300,14 +1292,15 @@ public final class JFritz {
 		surname = nameArray[1];
 		company = nameArray[2];
 
-		if (name.equals("")) name = "Unbekannt";
-		if (firstname.equals("") && surname.equals("")) surname = "Unbekannt";
-		if (company.equals("")) company = "Unbekannt";
+		if (name.equals("")) name = JFritz.getMessage("unknown");
+		if (firstname.equals("") && surname.equals("")) surname = JFritz.getMessage("unknown");
+		if (company.equals("")) company = JFritz.getMessage("unknown");
 
 		if (calledstr.startsWith("+49")) calledstr = "0" + calledstr.substring(3);
 
-        infoMsg("Ausgehender Telefonanruf\n " + "\nan " + calledstr + " ("
-                + name + ") " + "über " + providerstr);
+        infoMsg(JFritz.getMessage("outgoing_call")+"\n\n"
+        		+JFritz.getMessage("to") + calledstr + " ("
+                + name + ") " + JFritz.getMessage("through_provider") + providerstr);
         if (JFritzUtils.parseBoolean(JFritz.getProperty("option.playSounds",
                 "true"))) {
             playSound(callSound);
@@ -1347,15 +1340,15 @@ public final class JFritz {
 
             if (programString.equals("")) {
                 Debug
-                        .errDlg("Kein externes Programm angegeben"
+                        .errDlg(JFritz.getMessage("no_external_program")
                                 + programString);
                 return;
             }
-            Debug.msg("Starte externes Programm: " + programString);
+            Debug.msg("Starting external Program: " + programString);
             try {
                 Runtime.getRuntime().exec(programString);
             } catch (IOException e) {
-                Debug.errDlg("Konnte externes Programm nicht ausführen: "
+                Debug.errDlg(JFritz.getMessage("not_external_program_start")
                         + programString);
                 Debug.err(e.toString());
             }

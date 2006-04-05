@@ -213,12 +213,12 @@ public class JFritzWindow extends JFrame
 				JFritz.PROGRAM_SECRET + Encryption.decrypt(pass))) {
 			String password = showPasswordDialog("");
 			if (password == null) { // PasswordDialog canceled
-				Debug.errDlg("Eingabe abgebrochen");
+				Debug.errDlg(JFritz.getMessage("input_canceled"));
 				Debug.err("Eingabe abgebrochen");
 				System.exit(0);
 			} else if (!password.equals(Encryption.decrypt(pass))) {
-				Debug.errDlg("Falsches Passwort!");
-				Debug.err("Wrong password!");
+				Debug.errDlg(JFritz.getMessage("wrong_password"));
+				Debug.err(JFritz.getMessage("wrong_password"));
 				System.exit(0);
 			}
 		}
@@ -382,7 +382,7 @@ public class JFritzWindow extends JFrame
 		item.addActionListener(this);
 		jfritzMenu.add(item);
 
-		item = new JMenuItem("Anrufliste drucken/speichern");
+		item = new JMenuItem(JFritz.getMessage("print_callerlist"));
 		item.setActionCommand("print_callerlist");
 		item.addActionListener(this);
 		jfritzMenu.add(item);
@@ -400,7 +400,7 @@ public class JFritzWindow extends JFrame
 
 		//import submenu
 		if (JFritz.runsOn().startsWith("Windows")) {
-			item = new JMenuItem("Kontakte aus Outlook importieren");
+			item = new JMenuItem(JFritz.getMessage("import_contacts_outlook"));
 			item.setActionCommand("import_outlook");
 			item.addActionListener(this);
 			importMenu.add(item);
@@ -1064,9 +1064,9 @@ public class JFritzWindow extends JFrame
 			JFritz.setProperty("options.exportCSVpath", path);
 			File file = fc.getSelectedFile();
 			if (file.exists()) {
-				if (JOptionPane.showConfirmDialog(this, "Soll die Datei "
-						+ file.getName() + " ?berschrieben werden?",
-						"Datei ?berschreiben?", JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
+				if (JOptionPane.showConfirmDialog(this, JFritz.getMessage("overwrite_file1")
+						+ file.getName() + " " + JFritz.getMessage("overwrite_file2"),
+						JFritz.getMessage("overwrite_file3"), JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 					jfritz.getCallerlist().saveToCSVFile(
 							file.getAbsolutePath(), false);
 				}
@@ -1103,11 +1103,11 @@ public class JFritzWindow extends JFrame
 			JFritz.setProperty("options.exportXMLpath", path);
 			File file = fc.getSelectedFile();
 			if (file.exists()) {
-				if (JOptionPane.showConfirmDialog(this, "Soll die Datei "
-						+ file.getName() + " ?berschrieben werden?",
-						"Datei ?berschreiben?", JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
+				if (JOptionPane.showConfirmDialog(this, JFritz.getMessage("overwrite_file1")
+						+ file.getName() + " " + JFritz.getMessage("overwrite_file2"),
+						JFritz.getMessage("overwrite_file3"), JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 					jfritz.getCallerlist().saveToXMLFile(
-							file.getAbsolutePath(), false);
+						file.getAbsolutePath(), false);
 				}
 			} else {
 				jfritz.getCallerlist().saveToXMLFile(file.getAbsolutePath(),
@@ -1144,8 +1144,8 @@ public class JFritzWindow extends JFrame
 			File file = fc.getSelectedFile();
 			if (file.exists()) {
 				if (JOptionPane.showConfirmDialog(this, "Soll die Datei "
-						+ file.getName() + " ?berschrieben werden?",
-						"Datei ?berschreiben?", JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
+						+ file.getName() + " Überschrieben werden?",
+						"Datei Überschreiben?", JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 					jfritz.getPhonebook().saveToCSVFile(
 							file.getAbsolutePath(), false);
 				}
@@ -1387,8 +1387,9 @@ public class JFritzWindow extends JFrame
 	   * @author Brian Jensen
 	   *
 	   * opens the import csv dialog
+	   * currently supported types: fritzbox native type and jfritz native type
 	   *
-	   *
+	   * does a reverse lookup on return
 	   */
 	  public void importCallerlistCSV(){
 	    JFileChooser fc = new JFileChooser(JFritz.getProperty(
@@ -1417,6 +1418,11 @@ public class JFritzWindow extends JFrame
 
 	      }else{
 	        jfritz.getCallerlist().importFromCSVFile(file.getAbsolutePath());
+
+	        if (JFritz.getProperty("option.lookupAfterFetch", "false")
+					.equals("true")) {
+				lookupButton.doClick();
+			}
 	      }
 	    }
 	  }
@@ -1426,9 +1432,8 @@ public class JFritzWindow extends JFrame
 	   *
 	   * opens the import thunderbird dialog
 	   * selects a file then passes it on to
-	   * PhoneBook.importFromThunderbirdCSVfile
+	   * PhoneBook.importFromThunderbirdCSVfile()
 	   *
-	   * on return it does a reverse lookup if requested
 	   */
 	  public void importContactsThunderbirdCSV(){
 		  JFileChooser fc = new JFileChooser(JFritz.getProperty(
