@@ -412,4 +412,28 @@ public class Person {
 
 		return outString;
 	}
+
+	/**
+	*	@author: haeusler
+	*	DATE: 02.04.06, added by Brian
+	*   This is part of a fix for the null pointer exceptions
+	*   that are caused by adding a contact when a filter is set
+	**/
+	public boolean matchesKeyword(String s) {
+		if (s == null || s.equals("")) {
+			return true;
+		}
+		if (getFullname().toLowerCase().indexOf(s.toLowerCase()) != -1) {
+			return true;
+		}
+		Enumeration en = numbers.elements();
+		while (en.hasMoreElements()) {
+			PhoneNumber n = (PhoneNumber) en.nextElement();
+			if (n.getAreaNumber().indexOf(s) != -1) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

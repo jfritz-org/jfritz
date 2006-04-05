@@ -222,6 +222,8 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	}
 
 	/**
+     * Added the code from haeusler
+     * DATE: 04.02.06, added by Brian
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent e) {
@@ -232,8 +234,16 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			jfritz.getPhonebook().fireTableDataChanged();
 			jfritz.getPhonebook().saveToXMLFile(JFritz.PHONEBOOK_FILE);
 		} else if (e.getActionCommand().equals("addPerson")) {
-			jfritz.getPhonebook().addEntry(new Person("", " NEU "));
+			Person newPerson = new Person("", " NEU ");
+			jfritz.getPhonebook().addFilterException(newPerson);
+			jfritz.getPhonebook().addEntry(newPerson);
 			jfritz.getPhonebook().fireTableDataChanged();
+			int index = jfritz.getPhonebook().indexOf(newPerson);
+			phoneBookTable.getSelectionModel().setSelectionInterval(index, index);
+			int loc = splitPane.getDividerLocation();
+			if (loc < PERSONPANEL_WIDTH)
+				splitPane.setDividerLocation(PERSONPANEL_WIDTH);
+			personPanel.focusFirstName();
 		} else if (e.getActionCommand().equals("deletePerson")) {
 			removeSelectedPersons();
 		} else if (e.getActionCommand().equals("editPerson")) {
@@ -413,20 +423,22 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			}
 		}
 	}
-
+	/**
+	 *	added code form haeusler
+	 *  DATE: 04.02.06 Brian
+	 *
+	 */
 	public void keyPressed(KeyEvent arg0) {
 		if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
-			String filter = "";
 			JTextField search = (JTextField) arg0.getSource();
-			if (!filter.equals(search.getText())) {
-				filter = search.getText();
+
+			// ignore whitespaces at the beginning and the end
+			String filter = search.getText().trim();
+
+			// only update filter when the search expression has changed
+			if (! filter.equals(JFritz.getProperty("filter.Phonebook.search",""))) {
 				JFritz.setProperty("filter.Phonebook.search", filter);
-				jfritz.getPhonebook().updateFilter();
-				jfritz.getPhonebook().fireTableDataChanged();
-			}
-			if (search.getText().equals("")){
-				filter = " ";
-				JFritz.setProperty("filter.Phonebook.search", filter);
+				jfritz.getPhonebook().clearFilterExceptions();
 				jfritz.getPhonebook().updateFilter();
 				jfritz.getPhonebook().fireTableDataChanged();
 			}
@@ -441,6 +453,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	private void clearAllFilter() {
 		setSearchFilter("");
 		JFritz.setProperty("filter.Phonebook.search", "");
+		jfritz.getPhonebook().clearFilterExceptions();
 		jfritz.getPhonebook().updateFilter();
 		jfritz.getPhonebook().fireTableDataChanged();
 	}

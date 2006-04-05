@@ -63,6 +63,14 @@ public class PhoneBook extends AbstractTableModel {
 
 	private Vector unfilteredPersons;
 
+	/**
+	 * A vector of Persons that will match any search filter.
+	 * In other words: a list of sticky Persons, that will always show up.
+	 * Used to ensure that a newly created Person can be seen by the user,
+	 * even if there is a filter active
+	 */
+	private Vector filterExceptions;
+
 	private JFritz jfritz;
 
 	private int sortColumn = 1;
@@ -222,6 +230,7 @@ public class PhoneBook extends AbstractTableModel {
 		this.jfritz = jfritz;
 		filteredPersons = new Vector();
 		unfilteredPersons = new Vector();
+		filterExceptions = new Vector();
 	}
 
 	public Vector getFilteredPersons() {
@@ -230,6 +239,24 @@ public class PhoneBook extends AbstractTableModel {
 
 	public Vector getUnfilteredPersons() {
 		return unfilteredPersons;
+	}
+
+	/**
+	 * @author haeusler
+     * DATE: 02.04.06
+	 * Adds a Person to the list of filterExceptions.
+	 * @param nonFilteredPerson
+	 * @see #filterExceptions
+	 */
+	public void addFilterException(Person nonFilteredPerson) {
+		filterExceptions.add(nonFilteredPerson);
+	}
+
+	/** Clears the list of filterExceptions.
+	 * @see #filterExceptions
+	 */
+	public void clearFilterExceptions() {
+		filterExceptions.clear();
 	}
 
 	public boolean addEntry(Person newPerson) {
@@ -538,6 +565,15 @@ public class PhoneBook extends AbstractTableModel {
 		}
 	}
 
+	/**
+	 * Returns the index of a Person in the filtered PhoneBook
+	 * @param p
+	 * @return
+	 */
+	public int indexOf(Person p) {
+		return filteredPersons.indexOf(p);
+	}
+
 
     /**
      * Saves PhoneBook to csv file
@@ -654,71 +690,57 @@ public class PhoneBook extends AbstractTableModel {
 	}
 
 	public void updateFilter() {
-		boolean filter_private = JFritzUtils.parseBoolean(JFritz
-				.getProperty("filter_private"));
-
-		String filterSearch = JFritz.getProperty("filter.Phonebook.search", "");
-
 /*        try {
             jfritz.getJframe().getCallerTable().getCellEditor()
                     .cancelCellEditing();
         } catch (NullPointerException e) {
         }
 */
+		boolean filter_private = JFritzUtils.parseBoolean(JFritz
+				.getProperty("filter_private"));
 
+		String filterSearch = JFritz.getProperty("filter.Phonebook.search", "");
+		String keywords[] = filterSearch.split(" ");
 
-		if ((!filter_private) && (filterSearch.length() == 0))
-		{
+		if ((!filter_private) && (keywords.length == 0)) {
             // Use unfiltered data
 			filteredPersons = unfilteredPersons;
-			sortAllFilteredRows();
-		}else{ //Data got to be filtered
-    		if(filterSearch.length() > 0)
-    		{
-    			Vector newFilteredPersons = new Vector();
-    			Enumeration en = unfilteredPersons.elements();
-    			while (en.hasMoreElements()) {
-    				Person current = (Person) en.nextElement();
-    				int matchFilter=0;
-                    // SearchFilter: Number, Participant, Date
-                    String parts[] = filterSearch.split(" ");
-                    for (int i = 0; i < parts.length; i++) {
-                        String part = parts[i];
-                        if (part.length() > 0
-                                && ((current == null || current
-                                        .getStandardTelephoneNumber().getAreaNumber().indexOf(
-                                                parts[i]) != -1)
-                                || (current == null || current
-                                        .getFullname().toLowerCase().indexOf(
-                                                part.toLowerCase()) != -1))) {
-                        	matchFilter++;
-                        }
+		} else {
+			// Data got to be filtered
+			Vector newFilteredPersons = new Vector();
+			Enumeration en = unfilteredPersons.elements();
+			while (en.hasMoreElements()) {
+				Person current = (Person) en.nextElement();
 
+				// check whether this Person should be shown anyway
+				if (filterExceptions.contains(current)) {
+					newFilteredPersons.add(current);
+					continue; // skip to next person in the while-loop
+				}
+
+				boolean match = true;
+
+				// check wether the private filter rules this Person out
+				if (filter_private && (! current.isPrivateEntry())) {
+					match = false;
+				}
+
+				// check the keywords, if there are any
+                for (int i = 0; match && i < keywords.length; i++) {
+                    if (! current.matchesKeyword(keywords[i])) {
+                    	match = false;
                     }
-                    if (matchFilter==parts.length)
-                    	newFilteredPersons.add(current);
-    			}
-    			filteredPersons = newFilteredPersons;
-    			sortAllFilteredRows();
-    		}
+                }
 
-			if (filter_private) {
-				Enumeration en;
-    			Vector newFilteredPersons = new Vector();
-				if (filterSearch.length() > 0) //Tests if both filters are set
-					en = filteredPersons.elements();
-				else
-					en = unfilteredPersons.elements();
-    			while (en.hasMoreElements()) {
-    				Person current = (Person) en.nextElement();
-    				if (current.isPrivateEntry()) {
-    					newFilteredPersons.add(current);
-    				}
-    			}
-    			filteredPersons = newFilteredPersons;
-    			sortAllFilteredRows();
-    		}
+                // if all filter criteria are met, we add the person
+				if (match) {
+					newFilteredPersons.add(current);
+				}
+			}
+			filteredPersons = newFilteredPersons;
 		}
+
+		sortAllFilteredRows();
 
 		if (jfritz!= null)
 			if (jfritz.getJframe() != null)

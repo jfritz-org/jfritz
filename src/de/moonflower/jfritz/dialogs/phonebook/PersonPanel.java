@@ -645,4 +645,14 @@ public class PersonPanel extends JPanel implements ActionListener,
 	      numberTable.editingStopped (new ChangeEvent (numberTable.getComponentAt(row, column)));
 	    }
 	}
+
+	/**
+	*	@author haeusler
+	*	DATE: 02.04.06, added by Brian
+	* 	moves the focus to the JTextField for the first name
+	*/
+	public boolean focusFirstName() {
+		return tfFirstName.requestFocusInWindow();
+	}
+
 }
