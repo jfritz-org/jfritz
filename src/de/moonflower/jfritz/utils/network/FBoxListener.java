@@ -2,7 +2,6 @@ package de.moonflower.jfritz.utils.network;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.Debug;
-import de.moonflower.jfritz.utils.JFritzUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,17 +17,17 @@ import java.util.Random;
  *
  */
 
-public class FBoxListener extends Thread implements CallMonitor {
+public abstract class FBoxListener extends Thread implements CallMonitor {
 
-    private JFritz jfritz;
+    protected JFritz jfritz;
 
-    private BufferedReader in;
+    protected BufferedReader in;
 
-    private Socket clientSocket;
+    protected Socket clientSocket;
 
-    private String[] ignoredMSNs;
+    protected String[] ignoredMSNs;
 
-    private Random zufallszahl;
+    protected Random zufallszahl;
 
     public FBoxListener(JFritz jfritz) {
         super();
@@ -38,14 +37,9 @@ public class FBoxListener extends Thread implements CallMonitor {
         zufallszahl = new Random();
     }
 
-    public void run() {
-        if (connect()) {
-            Debug.msg("Connected");
-            readOutput();
-        }
-    }
+    public abstract void run();
 
-    private boolean connect() {
+    protected boolean connect() {
         try {
             Debug.msg("Trying to connect to "
                     + JFritz.getProperty("box.address") + ":1012");
@@ -78,7 +72,7 @@ public class FBoxListener extends Thread implements CallMonitor {
         return false;
     }
 
-    private void readOutput() {
+    protected void readOutput() {
         try {
             in = new BufferedReader(new InputStreamReader(clientSocket
                     .getInputStream()));
@@ -93,7 +87,7 @@ public class FBoxListener extends Thread implements CallMonitor {
         }
     }
 
-    private void initIgnoreList() {
+    protected void initIgnoreList() {
         String ignoreMSNString = JFritz.getProperty(
                 "option.callmonitor.ignoreMSN", "");
         if (ignoreMSNString.length() > 0 && ignoreMSNString.indexOf(";") == -1) {
@@ -106,68 +100,7 @@ public class FBoxListener extends Thread implements CallMonitor {
         }
     }
 
-    private void parseOutput(String line) {
-        initIgnoreList();
-        Debug.msg("Server: " + line);
-        String number = "";
-        String provider = "";
-        String[] split;
-        split = line.split(";", 7);
-        for (int i = 0; i < split.length; i++) {
-            Debug.msg("Split[" + i + "] = " + split[i]);
-        }
-        if (JFritzUtils.parseBoolean(JFritz.getProperty(
-                "option.callmonitor.monitorIncomingCalls", "true"))
-                && split[1].equals("RING")) {
-            if (split[3].equals("")) {
-                number = "Unbekannt";
-            } else
-                number = split[3];
-			if (number.endsWith("#")) number = number.substring(0, number.length()-1);
-            if (split[4].equals("")) {
-                provider = "Analog";
-            } else
-                provider = split[4];
-            boolean ignoreIt = false;
-            for (int i = 0; i < ignoredMSNs.length; i++)
-                if (provider.equals(ignoredMSNs[i])) {
-                    ignoreIt = true;
-                    break;
-                }
-            if (!ignoreIt)
-                jfritz.callInMsg(number, provider);
-        } else if (JFritzUtils.parseBoolean(JFritz.getProperty(
-                "option.callmonitor.monitorOutgoingCalls", "true"))
-                && split[1].equals("CALL")) {
-            if (split[5].equals("")) {
-                number = "Unbekannt";
-            } else
-                number = split[5];
-			if (number.endsWith("#")) number = number.substring(0, number.length()-1);
-            if (split[4].equals("")) {
-                provider = "Analog";
-            } else
-                provider = split[4];
-            boolean ignoreIt = false;
-            for (int i = 0; i < ignoredMSNs.length; i++)
-                if (provider.equals(ignoredMSNs[i])) {
-                    ignoreIt = true;
-                    break;
-                }
-            if (!ignoreIt)
-                jfritz.callOutMsg(number, provider);
-        } else if (JFritzUtils.parseBoolean(JFritz.getProperty(
-                "option.callmonitor.fetchAfterDisconnect", "true"))
-                && split[1].equals("DISCONNECT")) {
-            try {
-                Thread.sleep(zufallszahl.nextInt(3000));
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                Debug.err(e.toString());
-            }
-            jfritz.getJframe().fetchList();
-        }
-    }
+    protected abstract void parseOutput(String line);
 
     public void stopCallMonitor() {
         Debug.msg("Stopping FBoxListener");
