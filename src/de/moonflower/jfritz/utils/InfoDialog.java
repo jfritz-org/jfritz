@@ -72,13 +72,13 @@ public class InfoDialog extends JDialog implements ActionListener {
 		okButton.addActionListener(this);
 		addComponent(c, gbl, okButton, 0, 3, 1, 1, 1.0, 0, 30, 5, 0, 0);
 
-		cancelButton = new JButton("Abbrechen");
+		cancelButton = new JButton(JFritz.getMessage("cancel"));
 		cancelButton.setActionCommand("cancel");
 		cancelButton.addActionListener(this);
 		addComponent(c, gbl, cancelButton, 1, 3, 1, 1, 1.0, 0, 5, 30, 0, 0);
 
 		// Bottom
-		checkBox = new JCheckBox("Hinweis nie wieder anzeigen.");
+		checkBox = new JCheckBox(JFritz.getMessage("InfoDialog_showAgain"));
 		checkBox.setActionCommand("call");
 		checkBox.addActionListener(this);
 		checkBox.setSelected(JFritzUtils.parseBoolean(JFritz.getProperty(
