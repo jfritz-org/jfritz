@@ -433,6 +433,9 @@ public class Person {
 				return true;
 			}
 		}
+		if (getAddress().toLowerCase().indexOf(s.toLowerCase()) != -1) {
+			return true;
+		}
 		return false;
 	}
 
