@@ -78,7 +78,7 @@ public class InfoDialog extends JDialog implements ActionListener {
 		addComponent(c, gbl, cancelButton, 1, 3, 1, 1, 1.0, 0, 5, 30, 0, 0);
 
 		// Bottom
-		checkBox = new JCheckBox(JFritz.getMessage("InfoDialog_showAgain"));
+		checkBox = new JCheckBox(JFritz.getMessage("infoDialog_showAgain"));
 		checkBox.setActionCommand("call");
 		checkBox.addActionListener(this);
 		checkBox.setSelected(JFritzUtils.parseBoolean(JFritz.getProperty(
