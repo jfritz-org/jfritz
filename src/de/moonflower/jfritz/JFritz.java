@@ -52,7 +52,8 @@
  *                      Benutze ich dann die Wahlhilfe erneut, wird ISDN 2 benutzt - egal welchen Port ich einstelle. D.h., benutze
  *                      ich ständig die gleichen Ports, fällt es nicht weiter auf.
  *                      Ich denke, das hängt damit zusammen, dass man auf der Weboberfläche erst den Port auswählt, dann übernehmen
- *                      drückt und dann erst die Nummer anklickt. Diesen Vorgang müsste man in JFritz nachbilden.)
+ *                      drückt und dann erst die Nummer anklickt. Diesen Vorgang müsste man in JFritz nachbilden.
+ *                   <- Eigentlich sollte es auch mit einem direkten URL-Aufruf funktionieren. Machen andere Tools genau so. (Robert))
  * - Neu: (JFritz)Telefonbuch importieren (XML)
  * - Neu: Manuelle Backups erstellen (Menü und Toolbar)
  * - Neu: per Funktionstaste "F5" Anrufliste aktualisieren
@@ -373,7 +374,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.206 2006/04/05 14:34:15 capncrunch Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.207 2006/04/05 17:26:03 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
