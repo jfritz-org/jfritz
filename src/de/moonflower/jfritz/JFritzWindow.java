@@ -69,7 +69,8 @@ import de.moonflower.jfritz.utils.PrintCallerList;
 import de.moonflower.jfritz.utils.ReverseLookup;
 import de.moonflower.jfritz.utils.SwingWorker;
 import de.moonflower.jfritz.utils.network.CallmessageListener;
-import de.moonflower.jfritz.utils.network.FBoxListener;
+import de.moonflower.jfritz.utils.network.FBoxListenerV1;
+import de.moonflower.jfritz.utils.network.FBoxListenerV3;
 import de.moonflower.jfritz.utils.network.SyslogListener;
 import de.moonflower.jfritz.utils.network.TelnetListener;
 import de.moonflower.jfritz.utils.network.YAClistener;
@@ -1272,8 +1273,9 @@ public class JFritzWindow extends JFrame
 		switch (Integer.parseInt(JFritz.getProperty("option.callMonitorType",
 				"0"))) {
 			case 1 : {
+                FritzBoxFirmware currentFirm;
 				try {
-					FritzBoxFirmware currentFirm = JFritzUtils.detectBoxType(
+					currentFirm = JFritzUtils.detectBoxType(
 							"", JFritz.getProperty("box.address"), Encryption
 									.decrypt(JFritz.getProperty("box.password",
 											"")));
@@ -1284,7 +1286,12 @@ public class JFritzWindow extends JFrame
 						monitorButton.setSelected(false);
 						this.setCallMonitorButtons(JFritz.CALLMONITOR_START);
 					} else {
-						jfritz.setCallMonitor(new FBoxListener(jfritz));
+                        if (currentFirm.getMajorFirmwareVersion()>=4 &&
+                                currentFirm.getMinorFirmwareVersion()>=3) {
+                            jfritz.setCallMonitor(new FBoxListenerV3(jfritz));
+                        } else {
+                            jfritz.setCallMonitor(new FBoxListenerV1(jfritz));
+                        }
 						this.setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
 					}
 				} catch (WrongPasswordException e) {
