@@ -43,6 +43,7 @@
  * TODO: Checken, ob alle Bibliotheken vorhanden sind
  *
  * JFritz 0.6.0
+ * - Neu: Sprache einstellbar ( <- Wahlhilfe im Telefonbuch funktioniert bei englischer Sprache nicht (Bastian))
  * - Neu: Fritzbox Anrufliste als CSV-Datei importieren
  * - Neu: Thunderbird/Mozilla-Kontakte importieren
  * - Neu: Telefonbuch als CSV-Datei exportieren
@@ -376,7 +377,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.209 2006/04/05 19:49:56 kleinch Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.210 2006/04/05 20:33:27 baefer Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
