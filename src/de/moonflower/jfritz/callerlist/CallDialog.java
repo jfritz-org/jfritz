@@ -101,7 +101,7 @@ public class CallDialog extends JDialog implements ActionListener {
 		info.dispose();
 		if (info.isAccepted()) {
 			super.dialogInit();
-			setTitle("Anrufen");
+			setTitle(JFritz.getMessage("call"));
 			// this.setAlwaysOnTop(true); //erst ab Java V.5.0 möglich
 			setModal(true);
 			getContentPane().setLayout(new BorderLayout());
@@ -119,7 +119,7 @@ public class CallDialog extends JDialog implements ActionListener {
 			c.anchor = GridBagConstraints.WEST;
 
 			c.gridy = 1;
-			JLabel label = new JLabel("Nummer: ");
+			JLabel label = new JLabel(JFritz.getMessage("number")+": ");
 			topPane.add(label, c);
 			if (this.numbers.size() == 1) {
 				cboNumber = new JLabel(((PhoneNumber) numbers.elementAt(0))
@@ -135,7 +135,7 @@ public class CallDialog extends JDialog implements ActionListener {
 			}
 			topPane.add((Component) cboNumber, c);
 			c.gridy = 2;
-			label = new JLabel("Nebenstelle: ");
+			label = new JLabel(JFritz.getMessage("extension")+": ");
 			topPane.add(label, c);
 
 			boolean isdone = false;
@@ -224,11 +224,11 @@ public class CallDialog extends JDialog implements ActionListener {
 			topPane.add(port, c);
 
 			// Bottom Pane
-			okButton = new JButton("Anrufen");
+			okButton = new JButton(JFritz.getMessage("call"));
 			okButton.setActionCommand("call");
 			okButton.addActionListener(this);
 
-			cancelButton = new JButton("Abbrechen");
+			cancelButton = new JButton(JFritz.getMessage("cancel"));
 			cancelButton.setActionCommand("close");
 			cancelButton.addActionListener(this);
 

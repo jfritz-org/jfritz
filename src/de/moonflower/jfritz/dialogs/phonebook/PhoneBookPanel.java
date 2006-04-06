@@ -173,15 +173,15 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	public JScrollPane createPhoneBookTable() {
 		popupMenu = new JPopupMenu();
 		JMenuItem menuItem;
-		menuItem = new JMenuItem("Markierte Einträge löschen");
+		menuItem = new JMenuItem(JFritz.getMessage("phonebook_delPerson"));
 		menuItem.setActionCommand("deletePerson");
 		menuItem.addActionListener(this);
 		popupMenu.add(menuItem);
-		menuItem = new JMenuItem("Markierten Eintrag bearbeiten");
+		menuItem = new JMenuItem(JFritz.getMessage("phonebook_editPerson"));
 		menuItem.setActionCommand("editPerson");
 		menuItem.addActionListener(this);
 		popupMenu.add(menuItem);
-		menuItem = new JMenuItem("Als VCard exportieren");
+		menuItem = new JMenuItem(JFritz.getMessage("phonebook_vcardExport"));
 		menuItem.setActionCommand("export_vcard");
 		menuItem.addActionListener(this);
 		popupMenu.add(menuItem);
@@ -209,7 +209,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 				setStatus();
 			}
 			else {
-				jfritz.getJframe().setStatus( rows.length + " Einträge ausgewählt");
+				jfritz.getJframe().setStatus( rows.length + " "+JFritz.getMessage("phonebook_chosenEntries"));
 			}
 		}
 	}
@@ -276,7 +276,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	 */
 	public void removeSelectedPersons() {
 		if (JOptionPane.showConfirmDialog(this,
-				"Markierte Einträge wirklich löschen?", JFritz.PROGRAM_NAME,
+				JFritz.getMessage("delete_entries")+"?", JFritz.PROGRAM_NAME,
 				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 
 			int row[] = jfritz.getJframe().getPhoneBookPanel()
@@ -379,7 +379,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	public void setStatus() {
 		PhoneBook pb = (PhoneBook) phoneBookTable.getModel();
 		int entries = pb.getFilteredPersons().size();
-		jfritz.getJframe().setStatus(entries + " Einträge");
+		jfritz.getJframe().setStatus(entries + " "+JFritz.getMessage("phonebook_chosenEntries"));
 	}
 
 	public void importFromXML () {
