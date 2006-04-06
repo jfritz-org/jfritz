@@ -41,6 +41,9 @@
 
  * CHANGELOG:
  * TODO: Checken, ob alle Bibliotheken vorhanden sind
+ * TODO: Anrufmonitor überprüfen
+ * TODO: Wahlhilfe überprüfen (auch mit englischer Sprache)
+ * TODO: Internationalisierung testen
  *
  * JFritz 0.6.0
  * - Bugfix: Beim Ändern des Look And Feel's werden die Buttons korrekt dargestellt.
@@ -378,7 +381,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.211 2006/04/06 15:11:33 baefer Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.212 2006/04/06 18:10:49 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
