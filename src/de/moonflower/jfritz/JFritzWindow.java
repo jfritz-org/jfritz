@@ -904,6 +904,7 @@ public class JFritzWindow extends JFrame
 				UIManager.setLookAndFeel(info.getClassName());
 				SwingUtilities.updateComponentTreeUI(this);
 				JFritz.setProperty("lookandfeel", info.getClassName());
+				jfritz.refreshWindow();
 			} catch (Exception e) {
 				Debug.err("Unable to set UI " + e.getMessage());
 			}

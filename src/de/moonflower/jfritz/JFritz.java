@@ -43,6 +43,7 @@
  * TODO: Checken, ob alle Bibliotheken vorhanden sind
  *
  * JFritz 0.6.0
+ * - Bugfix: Beim Ändern des Look And Feel's werden die Buttons korrekt dargestellt.
  * - Neu: Sprache einstellbar ( <- Wahlhilfe im Telefonbuch funktioniert bei englischer Sprache nicht (Bastian))
  * - Neu: Fritzbox Anrufliste als CSV-Datei importieren
  * - Neu: Thunderbird/Mozilla-Kontakte importieren
@@ -377,7 +378,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.210 2006/04/05 20:33:27 baefer Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.211 2006/04/06 15:11:33 baefer Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -1569,6 +1570,20 @@ public final class JFritz {
     	Debug.msg("Loading new locale");
     	loadMessages(locale);
 
+    	jframe.dispose();
+    	javax.swing.SwingUtilities.invokeLater(jframe);
+    	jframe = new JFritzWindow(this);
+    	javax.swing.SwingUtilities.invokeLater(jframe);
+    	jframe.checkStartOptions();
+
+    }
+
+    /**
+     * @ Bastian Schaefer
+     *
+     */
+
+    public void refreshWindow(){
     	jframe.dispose();
     	javax.swing.SwingUtilities.invokeLater(jframe);
     	jframe = new JFritzWindow(this);
