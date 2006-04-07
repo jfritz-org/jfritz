@@ -380,7 +380,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.215 2006/04/07 15:12:49 baefer Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.216 2006/04/07 15:44:13 baefer Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -1593,15 +1593,18 @@ public final class JFritz {
     /**
      * @ Bastian Schaefer
      *
+     *	Destroys and repaints the Frame.
+     *
      */
 
     public void refreshWindow(){
-    	jfritz.saveProperties();
     	jframe.dispose();
     	javax.swing.SwingUtilities.invokeLater(jframe);
     	jframe = new JFritzWindow(this);
     	javax.swing.SwingUtilities.invokeLater(jframe);
-    	jframe.checkStartOptions();
+    	jframe.checkOptions();
+    	javax.swing.SwingUtilities.invokeLater(jframe);
+    	jframe.setVisible(true);
 
     }
 

@@ -154,6 +154,23 @@ public class JFritzWindow extends JFrame
 		setStatus();
 	}
 
+
+	public void checkOptions() {
+		if (JFritz.getProperty("option.timerAfterStart", "false")
+				.equals("true")) {
+			taskButton.doClick();
+		}
+		if (JFritz.getProperty("option.fetchAfterStart", "false")
+				.equals("true")) {
+			fetchButton.doClick();
+		}
+		if (JFritz.getProperty("option.autostartcallmonitor", "false").equals(
+				"true")) {
+			startChosenCallMonitor();
+		}
+		setStatus();
+	}
+
 	private void createGUI() {
 		setTitle(JFritz.PROGRAM_NAME);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
