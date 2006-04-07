@@ -5,6 +5,8 @@ package de.moonflower.jfritz;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
+import java.awt.Frame;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -114,6 +116,8 @@ public class JFritzWindow extends JFrame
 
 	private ConfigDialog configDialog;
 
+	private Rectangle maxBounds;
+
 	/**
 	 * Constructs JFritzWindow
 	 *
@@ -122,6 +126,7 @@ public class JFritzWindow extends JFrame
 	public JFritzWindow(JFritz jfritz) {
 		this.jfritz = jfritz;
 		Debug.msg("Create JFritz-GUI");
+		maxBounds = null;
 		createGUI();
 	}
 
@@ -268,12 +273,12 @@ public class JFritzWindow extends JFrame
 		mBar.add(fetchButton);
 
 		JButton button = new JButton();
-//		button = new JButton();
-//		button.setActionCommand("call");
-//		button.addActionListener(this);
-//		button.setIcon(getImage("Phone.gif"));
-//		button.setToolTipText(JFritz.getMessage("call"));
-//		mBar.add(button);
+		// button = new JButton();
+		// button.setActionCommand("call");
+		// button.addActionListener(this);
+		// button.setIcon(getImage("Phone.gif"));
+		// button.setToolTipText(JFritz.getMessage("call"));
+		// mBar.add(button);
 
 		taskButton = new JToggleButton();
 		taskButton.setToolTipText(JFritz.getMessage("fetchtask"));
@@ -373,7 +378,7 @@ public class JFritzWindow extends JFrame
 		JMenu viewMenu = new JMenu(JFritz.getMessage("view_menu"));
 		JMenu languageMenu = new JMenu(JFritz.getMessage("language_menu"));
 
-		//File menu
+		// File menu
 		JMenuItem item = new JMenuItem(JFritz.getMessage("fetchlist"), 'a');
 		item.setActionCommand("fetchList");
 		item.addActionListener(this);
@@ -399,7 +404,7 @@ public class JFritzWindow extends JFrame
 		item.addActionListener(this);
 		jfritzMenu.add(item);
 
-		//import submenu
+		// import submenu
 		if (JFritz.runsOn().startsWith("Windows")) {
 			item = new JMenuItem(JFritz.getMessage("import_contacts_outlook"));
 			item.setActionCommand("import_outlook");
@@ -407,24 +412,25 @@ public class JFritzWindow extends JFrame
 			importMenu.add(item);
 		}
 
-	    item = new JMenuItem(JFritz.getMessage("import_callerlist_csv"), 'i');
-	    item.setActionCommand("import_callerlist_csv");
-	    item.addActionListener(this);
-	    importMenu.add(item);
+		item = new JMenuItem(JFritz.getMessage("import_callerlist_csv"), 'i');
+		item.setActionCommand("import_callerlist_csv");
+		item.addActionListener(this);
+		importMenu.add(item);
 
-	    item = new JMenuItem(JFritz.getMessage("phonebook_import"));
-	    item.setActionCommand("phonebook_import");
-	    item.addActionListener(this);
-	    importMenu.add(item);
+		item = new JMenuItem(JFritz.getMessage("phonebook_import"));
+		item.setActionCommand("phonebook_import");
+		item.addActionListener(this);
+		importMenu.add(item);
 
-	    item = new JMenuItem(JFritz.getMessage("import_contacts_thunderbird_csv"));
-	    item.setActionCommand("import_contacts_thunderbird_csv");
-	    item.addActionListener(this);
-	    importMenu.add(item);
+		item = new JMenuItem(JFritz
+				.getMessage("import_contacts_thunderbird_csv"));
+		item.setActionCommand("import_contacts_thunderbird_csv");
+		item.addActionListener(this);
+		importMenu.add(item);
 
-	    jfritzMenu.add(importMenu);
+		jfritzMenu.add(importMenu);
 
-	    //export submenu
+		// export submenu
 		item = new JMenuItem(JFritz.getMessage("export_csv"), 'c');
 		item.setActionCommand("export_csv");
 		item.addActionListener(this);
@@ -447,7 +453,7 @@ public class JFritzWindow extends JFrame
 			jfritzMenu.add(item);
 		}
 
-		//options menu
+		// options menu
 		LookAndFeelInfo[] lnfs = UIManager.getInstalledLookAndFeels();
 		ButtonGroup lnfgroup = new ButtonGroup();
 		for (int i = 0; i < lnfs.length; i++) {
@@ -462,7 +468,7 @@ public class JFritzWindow extends JFrame
 		}
 		optionsMenu.add(lnfMenu);
 
-		//languages submenu
+		// languages submenu
 		item = new JMenuItem(JFritz.getMessage("german"));
 		item.setActionCommand("german");
 		item.addActionListener(this);
@@ -482,7 +488,7 @@ public class JFritzWindow extends JFrame
 			optionsMenu.add(item);
 		}
 
-		//view menu
+		// view menu
 		item = new JMenuItem(JFritz.getMessage("callerlist"), null);
 		item.setActionCommand("callerlist");
 		item.addActionListener(this);
@@ -498,7 +504,7 @@ public class JFritzWindow extends JFrame
 		item.addActionListener(this);
 		viewMenu.add(item);
 
-		//help menu
+		// help menu
 		item = new JMenuItem(JFritz.getMessage("help_content"), 'h');
 		item.setActionCommand("help");
 		item.addActionListener(this);
@@ -738,57 +744,67 @@ public class JFritzWindow extends JFrame
 			// Show / hide CallByCall column
 			if (JFritzUtils.parseBoolean(JFritz.getProperty(
 					"option.showCallByCallColumn", "true"))) {
-					if (getCallerTable().getColumnIndex("callbycall") == -1)
-						{ 	// No Call-By-Call column found. Add one
-							colModel.addColumn(jfritz.getJframe().getCallerTable()
-									.getCallByCallColumn());
-							colModel
-									.getColumn(colModel.getColumnCount() - 1)
-										.setPreferredWidth(
-											Integer.parseInt(JFritz.getProperty(
-												"column.callbycall.width", "50")));
+				if (getCallerTable().getColumnIndex("callbycall") == -1) { // No
+					// Call-By-Call
+					// column
+					// found.
+					// Add
+					// one
+					colModel.addColumn(jfritz.getJframe().getCallerTable()
+							.getCallByCallColumn());
+					colModel.getColumn(colModel.getColumnCount() - 1)
+							.setPreferredWidth(
+									Integer.parseInt(JFritz.getProperty(
+											"column.callbycall.width", "50")));
 				}
 			} else {
-					// Try to remove Call-By-Call Column
-					int columnIndex = getCallerTable().getColumnIndex("callbycall");
-					if (columnIndex != -1)
-						colModel.removeColumn(colModel.getColumn(columnIndex));
+				// Try to remove Call-By-Call Column
+				int columnIndex = getCallerTable().getColumnIndex("callbycall");
+				if (columnIndex != -1)
+					colModel.removeColumn(colModel.getColumn(columnIndex));
 			}
 			// Show / hide comment column
 			if (JFritzUtils.parseBoolean(JFritz.getProperty(
 					"option.showCommentColumn", "true"))) {
-					if (getCallerTable().getColumnIndex("comment") == -1)
-					{	// No comment column found. Addone
-						colModel.addColumn(jfritz.getJframe().getCallerTable()
+				if (getCallerTable().getColumnIndex("comment") == -1) { // No
+					// comment
+					// column
+					// found.
+					// Addone
+					colModel.addColumn(jfritz.getJframe().getCallerTable()
 							.getCommentColumn());
-						colModel.getColumn(colModel.getColumnCount() - 1)
+					colModel.getColumn(colModel.getColumnCount() - 1)
 							.setPreferredWidth(
 									Integer.parseInt(JFritz.getProperty(
 											"column.comment.width", "50")));
 				}
 			} else {
-					// Try to remove comment column
-					int columnIndex = getCallerTable().getColumnIndex("comment");
-					if (columnIndex != -1)
-						colModel.removeColumn(colModel.getColumn(columnIndex));
+				// Try to remove comment column
+				int columnIndex = getCallerTable().getColumnIndex("comment");
+				if (columnIndex != -1)
+					colModel.removeColumn(colModel.getColumn(columnIndex));
 			}
 			// Show / hide port column
 			if (JFritzUtils.parseBoolean(JFritz.getProperty(
 					"option.showPortColumn", "true"))) {
-					if (getCallerTable().getColumnIndex("port") == -1)
-					{	// No port column found. Add one
-						colModel.addColumn(jfritz.getJframe().getCallerTable()
+				if (getCallerTable().getColumnIndex("port") == -1) { // No
+					// port
+					// column
+					// found.
+					// Add
+					// one
+					colModel.addColumn(jfritz.getJframe().getCallerTable()
 							.getPortColumn());
-						colModel.getColumn(colModel.getColumnCount() - 1)
+					colModel.getColumn(colModel.getColumnCount() - 1)
 							.setPreferredWidth(
 									Integer.parseInt(JFritz.getProperty(
 											"column.port.width", "50")));
 				}
 			} else {
-					// Try to remove port column
-					int columnIndex = getCallerTable().getColumnIndex("port");
-					if (columnIndex != -1)
-						colModel.removeColumn(colModel.getColumn(columnIndex));
+				// Try to remove port column
+				int columnIndex = getCallerTable().getColumnIndex("port");
+				if (columnIndex != -1)
+					colModel.removeColumn(colModel.getColumn(columnIndex));
 			}
 		}
 		configDialog.dispose();
@@ -846,8 +862,8 @@ public class JFritzWindow extends JFrame
 				+ "Christian Klein <kleinch@users.sourceforge.net>\n"
 				+ "Benjamin Schmitt <little_ben@users.sourceforge.net>\n"
 				+ "Bastian Schaefer <baefer@users.sourceforge.net>\n"
-				+ "Brian Jensen <jensen@users.sourceforge.net\n"
-				+ "\n" + JFritz.PROGRAM_URL + "\n\n"
+				+ "Brian Jensen <jensen@users.sourceforge.net\n" + "\n"
+				+ JFritz.PROGRAM_URL + "\n\n"
 				+ "This tool is developed and released under\n"
 				+ "the terms of the GNU General Public License\n\n"
 				+ "Long live Free Software!");
@@ -1000,14 +1016,15 @@ public class JFritzWindow extends JFrame
 			deleteFritzBoxCallerList();
 		else if (e.getActionCommand() == "backup")
 			backupToChoosenDirectory();
-//		else if (e.getActionCommand() == "call"){
-//			try{
-//			CallDialog callDialog = new CallDialog(jfritz, jfritz.getCallerlist().getSelectedCall().getPhoneNumber());
-//			callDialog.setVisible(true);
-//			}catch(NullPointerException ex){
-//				Debug.msg("Keine Nummer hinterlegt");
-//			}
-//		}
+		// else if (e.getActionCommand() == "call"){
+		// try{
+		// CallDialog callDialog = new CallDialog(jfritz,
+		// jfritz.getCallerlist().getSelectedCall().getPhoneNumber());
+		// callDialog.setVisible(true);
+		// }catch(NullPointerException ex){
+		// Debug.msg("Keine Nummer hinterlegt");
+		// }
+		// }
 		else if (e.getActionCommand() == "fetchTask")
 			fetchTask(((JToggleButton) e.getSource()).isSelected());
 		else if (e.getActionCommand() == "callMonitor") {
@@ -1024,18 +1041,18 @@ public class JFritzWindow extends JFrame
 			reverseLookup();
 		else if (e.getActionCommand() == "F5")
 			fetchList();
-	    else if (e.getActionCommand() == "import_callerlist_csv")
-	        importCallerlistCSV();
-	    else if (e.getActionCommand() == "phonebook_import")
-	    	phoneBookPanel.importFromXML();
-	    else if (e.getActionCommand() == "import_contacts_thunderbird_csv")
+		else if (e.getActionCommand() == "import_callerlist_csv")
+			importCallerlistCSV();
+		else if (e.getActionCommand() == "phonebook_import")
+			phoneBookPanel.importFromXML();
+		else if (e.getActionCommand() == "import_contacts_thunderbird_csv")
 			importContactsThunderbirdCSV();
-	    else if (e.getActionCommand() == "german")
-	    	setLanguage(new Locale("de", "DE"));
-	    else if (e.getActionCommand() == "english")
-	    	setLanguage(new Locale("en", "US"));
+		else if (e.getActionCommand() == "german")
+			setLanguage(new Locale("de", "DE"));
+		else if (e.getActionCommand() == "english")
+			setLanguage(new Locale("en", "US"));
 
-	    else
+		else
 			Debug.err("Unimplemented action: " + e.getActionCommand());
 
 	}
@@ -1066,9 +1083,13 @@ public class JFritzWindow extends JFrame
 			JFritz.setProperty("options.exportCSVpath", path);
 			File file = fc.getSelectedFile();
 			if (file.exists()) {
-				if (JOptionPane.showConfirmDialog(this, JFritz.getMessage("overwrite_file1")
-						+ file.getName() + " " + JFritz.getMessage("overwrite_file2"),
-						JFritz.getMessage("overwrite_file3"), JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
+				if (JOptionPane.showConfirmDialog(this, JFritz
+						.getMessage("overwrite_file1")
+						+ file.getName()
+						+ " "
+						+ JFritz.getMessage("overwrite_file2"), JFritz
+						.getMessage("overwrite_file3"),
+						JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 					jfritz.getCallerlist().saveToCSVFile(
 							file.getAbsolutePath(), false);
 				}
@@ -1105,11 +1126,15 @@ public class JFritzWindow extends JFrame
 			JFritz.setProperty("options.exportXMLpath", path);
 			File file = fc.getSelectedFile();
 			if (file.exists()) {
-				if (JOptionPane.showConfirmDialog(this, JFritz.getMessage("overwrite_file1")
-						+ file.getName() + " " + JFritz.getMessage("overwrite_file2"),
-						JFritz.getMessage("overwrite_file3"), JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
+				if (JOptionPane.showConfirmDialog(this, JFritz
+						.getMessage("overwrite_file1")
+						+ file.getName()
+						+ " "
+						+ JFritz.getMessage("overwrite_file2"), JFritz
+						.getMessage("overwrite_file3"),
+						JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 					jfritz.getCallerlist().saveToXMLFile(
-						file.getAbsolutePath(), false);
+							file.getAbsolutePath(), false);
 				}
 			} else {
 				jfritz.getCallerlist().saveToXMLFile(file.getAbsolutePath(),
@@ -1120,6 +1145,7 @@ public class JFritzWindow extends JFrame
 
 	/**
 	 * Exports phone book as CSV
+	 *
 	 * @author Bastian Schaefer
 	 */
 	public void exportPhoneBookToCSV() {
@@ -1148,8 +1174,8 @@ public class JFritzWindow extends JFrame
 				if (JOptionPane.showConfirmDialog(this, "Soll die Datei "
 						+ file.getName() + " Überschrieben werden?",
 						"Datei Überschreiben?", JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
-					jfritz.getPhonebook().saveToCSVFile(
-							file.getAbsolutePath(), false);
+					jfritz.getPhonebook().saveToCSVFile(file.getAbsolutePath(),
+							false);
 				}
 			} else {
 				jfritz.getPhonebook().saveToCSVFile(file.getAbsolutePath(),
@@ -1274,12 +1300,11 @@ public class JFritzWindow extends JFrame
 		switch (Integer.parseInt(JFritz.getProperty("option.callMonitorType",
 				"0"))) {
 			case 1 : {
-                FritzBoxFirmware currentFirm;
+				FritzBoxFirmware currentFirm;
 				try {
-					currentFirm = JFritzUtils.detectBoxType(
-							"", JFritz.getProperty("box.address"), Encryption
-									.decrypt(JFritz.getProperty("box.password",
-											"")));
+					currentFirm = JFritzUtils.detectBoxType("", JFritz
+							.getProperty("box.address"), Encryption
+							.decrypt(JFritz.getProperty("box.password", "")));
 					if (currentFirm.getMajorFirmwareVersion() == 3
 							&& currentFirm.getMinorFirmwareVersion() < 96) {
 						Debug
@@ -1287,12 +1312,12 @@ public class JFritzWindow extends JFrame
 						monitorButton.setSelected(false);
 						this.setCallMonitorButtons(JFritz.CALLMONITOR_START);
 					} else {
-                        if (currentFirm.getMajorFirmwareVersion()>=4 &&
-                                currentFirm.getMinorFirmwareVersion()>=3) {
-                            jfritz.setCallMonitor(new FBoxListenerV3(jfritz));
-                        } else {
-                            jfritz.setCallMonitor(new FBoxListenerV1(jfritz));
-                        }
+						if (currentFirm.getMajorFirmwareVersion() >= 4
+								&& currentFirm.getMinorFirmwareVersion() >= 3) {
+							jfritz.setCallMonitor(new FBoxListenerV3(jfritz));
+						} else {
+							jfritz.setCallMonitor(new FBoxListenerV1(jfritz));
+						}
 						this.setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
 					}
 				} catch (WrongPasswordException e) {
@@ -1354,7 +1379,7 @@ public class JFritzWindow extends JFrame
 
 		if (answer == JOptionPane.YES_OPTION)
 			fetchList(true); // param true indicates that FritzBox-CallerList
-								// is to be deleted
+		// is to be deleted
 	}
 
 	/**
@@ -1384,113 +1409,184 @@ public class JFritzWindow extends JFrame
 	}
 
 	/**
-	 * Provides easy creation of a KeyStroke object without a modifier
-	 * and reaction onKeyReale
+	 * Provides easy creation of a KeyStroke object without a modifier and
+	 * reaction onKeyReale
 	 */
 	private KeyStroke keyStroke(int vkey) {
-		return KeyStroke.getKeyStroke(vkey, 0 , false);
+		return KeyStroke.getKeyStroke(vkey, 0, false);
 	}
 
-	  /**
-	   * @author Brian Jensen
-	   *
-	   * opens the import csv dialog
-	   * currently supported types: fritzbox native type and jfritz native type
-	   *
-	   * does a reverse lookup on return
-	   */
-	  public void importCallerlistCSV(){
-	    JFileChooser fc = new JFileChooser(JFritz.getProperty(
-	        "options.exportCSVpath", null));
-	    fc.setDialogTitle(JFritz.getMessage("import_callerlist_csv"));
-	    fc.setDialogType(JFileChooser.OPEN_DIALOG);
-	    fc.setSelectedFile(new File(JFritz.CALLS_CSV_FILE));
-	    fc.setFileFilter(new FileFilter() {
-	      public boolean accept(File f) {
-	        return f.isDirectory()
-	            || f.getName().toLowerCase().endsWith(".csv");
-	      }
-
-	      public String getDescription() {
-	        return "CSV-Dateien";
-	      }
-	    });
-	    if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-	      String path = fc.getSelectedFile().getPath();
-	      path = path.substring(0, path.length()
-	          - fc.getSelectedFile().getName().length());
-	      JFritz.setProperty("options.exportCSVpath", path);
-	      File file = fc.getSelectedFile();
-	      if (!file.exists()) {
-	        JOptionPane.showMessageDialog(this, "Error: File not found", "File Not Found", JOptionPane.ERROR_MESSAGE);
-
-	      }else{
-	        jfritz.getCallerlist().importFromCSVFile(file.getAbsolutePath());
-
-	        if (JFritz.getProperty("option.lookupAfterFetch", "false")
-					.equals("true")) {
-				lookupButton.doClick();
+	/**
+	 * @author Brian Jensen
+	 *
+	 * opens the import csv dialog currently supported types: fritzbox native
+	 * type and jfritz native type
+	 *
+	 * does a reverse lookup on return
+	 */
+	public void importCallerlistCSV() {
+		JFileChooser fc = new JFileChooser(JFritz.getProperty(
+				"options.exportCSVpath", null));
+		fc.setDialogTitle(JFritz.getMessage("import_callerlist_csv"));
+		fc.setDialogType(JFileChooser.OPEN_DIALOG);
+		fc.setSelectedFile(new File(JFritz.CALLS_CSV_FILE));
+		fc.setFileFilter(new FileFilter() {
+			public boolean accept(File f) {
+				return f.isDirectory()
+						|| f.getName().toLowerCase().endsWith(".csv");
 			}
-	      }
-	    }
-	  }
 
-	  /**
-	   * @author Brian Jensen
-	   *
-	   * opens the import thunderbird dialog
-	   * selects a file then passes it on to
-	   * PhoneBook.importFromThunderbirdCSVfile()
-	   *
-	   */
-	  public void importContactsThunderbirdCSV(){
-		  JFileChooser fc = new JFileChooser(JFritz.getProperty(
-				  "options.exportCSVpath", null));
-		  fc.setDialogTitle(JFritz.getMessage("import_contacts_thunderbird_csv"));
-		  fc.setDialogType(JFileChooser.OPEN_DIALOG);
-		  fc.setFileFilter(new FileFilter() {
-			  public boolean accept(File f) {
-				  return f.isDirectory()
-				  || f.getName().toLowerCase().endsWith(".csv");
-			  }
+			public String getDescription() {
+				return "CSV-Dateien";
+			}
+		});
+		if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+			String path = fc.getSelectedFile().getPath();
+			path = path.substring(0, path.length()
+					- fc.getSelectedFile().getName().length());
+			JFritz.setProperty("options.exportCSVpath", path);
+			File file = fc.getSelectedFile();
+			if (!file.exists()) {
+				JOptionPane.showMessageDialog(this, "Error: File not found",
+						"File Not Found", JOptionPane.ERROR_MESSAGE);
 
-			  public String getDescription() {
-				  return "CSV files";
-			  }
-		  });
-		  if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-			  String path = fc.getSelectedFile().getPath();
-			  path = path.substring(0, path.length()
-					  - fc.getSelectedFile().getName().length());
-			  //options.import_contacts_thunderbird_CSVpath ???
-			  //JFritz.setProperty("options.exportCSVpath", path);
-			  File file = fc.getSelectedFile();
-			  if (!file.exists()) {
-				  JOptionPane.showMessageDialog(this, "Error: File not found", "File Not Found", JOptionPane.ERROR_MESSAGE);
-			  }else{
-			        jfritz.getPhonebook().importFromThunderbirdCSVfile(file.getAbsolutePath());
+			} else {
+				jfritz.getCallerlist()
+						.importFromCSVFile(file.getAbsolutePath());
 
-			        if (JFritz.getProperty("option.lookupAfterFetch", "false")
-							.equals("true")) {
-						lookupButton.doClick();
-					}
-			  }
+				if (JFritz.getProperty("option.lookupAfterFetch", "false")
+						.equals("true")) {
+					lookupButton.doClick();
+				}
+			}
 		}
-	  }
+	}
 
-	  /**
-	   * @author Brian Jensen
-	   * This function changes the ResourceBundle in the jfritz instance
-	   * Then the jfritz object destroys the current window and redraws a new one
-	   *
-	   * NOTE: This function is currently experimental
-	   *
-	   * @param locale to switch the language to
-	   */
-	  public void setLanguage(Locale locale){
-		  jfritz.createNewWindow(locale);
-		  //current window will be destroyed and a new one created
+	/**
+	 * @author Brian Jensen
+	 *
+	 * opens the import thunderbird dialog selects a file then passes it on to
+	 * PhoneBook.importFromThunderbirdCSVfile()
+	 *
+	 */
+	public void importContactsThunderbirdCSV() {
+		JFileChooser fc = new JFileChooser(JFritz.getProperty(
+				"options.exportCSVpath", null));
+		fc.setDialogTitle(JFritz.getMessage("import_contacts_thunderbird_csv"));
+		fc.setDialogType(JFileChooser.OPEN_DIALOG);
+		fc.setFileFilter(new FileFilter() {
+			public boolean accept(File f) {
+				return f.isDirectory()
+						|| f.getName().toLowerCase().endsWith(".csv");
+			}
 
-	  }
+			public String getDescription() {
+				return "CSV files";
+			}
+		});
+		if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+			String path = fc.getSelectedFile().getPath();
+			path = path.substring(0, path.length()
+					- fc.getSelectedFile().getName().length());
+			// options.import_contacts_thunderbird_CSVpath ???
+			// JFritz.setProperty("options.exportCSVpath", path);
+			File file = fc.getSelectedFile();
+			if (!file.exists()) {
+				JOptionPane.showMessageDialog(this, "Error: File not found",
+						"File Not Found", JOptionPane.ERROR_MESSAGE);
+			} else {
+				jfritz.getPhonebook().importFromThunderbirdCSVfile(
+						file.getAbsolutePath());
+
+				if (JFritz.getProperty("option.lookupAfterFetch", "false")
+						.equals("true")) {
+					lookupButton.doClick();
+				}
+			}
+		}
+	}
+
+	/**
+	 * @author Brian Jensen This function changes the ResourceBundle in the
+	 *         jfritz instance Then the jfritz object destroys the current
+	 *         window and redraws a new one
+	 *
+	 * NOTE: This function is currently experimental
+	 *
+	 * @param locale
+	 *            to switch the language to
+	 */
+	public void setLanguage(Locale locale) {
+		jfritz.createNewWindow(locale);
+		// current window will be destroyed and a new one created
+
+	}
+
+	/**
+	 * @author Bastian Schaefer
+	 *
+	 * The following 3 methods (getMaximizedBounds(), setMaximizedBounds()
+	 * and setExtendedState()) are a workaround for the ensuing described bug:
+	 *
+	 *
+	 * release: 5.0 hardware: x86 OSversion: win_xp priority: 4 synopsis:
+	 * decorated and maximized JFrame hides taskbar description: FULL PRODUCT
+	 * VERSION : java version "1.5.0_06" Java(TM) 2 Runtime Environment,
+	 * Standard Edition (build 1.5 Java HotSpot(TM) Client VM (build
+	 * 1.5.0_06-b05, mixed mode)
+	 *
+	 * ADDITIONAL OS VERSION INFORMATION : Microsoft Windows XP [Version
+	 * 5.1.2600]
+	 *
+	 * A DESCRIPTION OF THE PROBLEM : When maximizing an default "look and feel"
+	 * decorated frame, it covers the entire screen even though it should not
+	 * cover the Windows taskbar.
+	 *
+	 * STEPS TO FOLLOW TO REPRODUCE THE PROBLEM : Run this program. Click the
+	 * maximize button.
+	 *
+	 * EXPECTED VERSUS ACTUAL BEHAVIOR : EXPECTED - The frame should be
+	 * maximized, without covering the taskbar. ACTUAL - The taskbar is covered.
+	 *
+	 * REPRODUCIBILITY : This bug can be reproduced always.
+	 *
+	 * ---------- BEGIN SOURCE ----------
+	 * import javax.swing.*; public class
+	 * MaxFrame extends JFrame { public static void main(String[] args) {
+	 * JFrame.setDefaultLookAndFeelDecorated(true);
+	 *
+	 * JFrame f = new JFrame();
+	 *
+	 * f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); f.pack();
+	 * f.setBounds(100, 100, 100, 100); f.setVisible(true); } }
+	 * ---------- END SOURCE ----------
+	 */
+
+	public Rectangle getMaximizedBounds() {
+		return (maxBounds);
+	}
+
+	public synchronized void setMaximizedBounds(Rectangle maxBounds) {
+		this.maxBounds = maxBounds;
+		super.setMaximizedBounds(maxBounds);
+	}
+
+	public synchronized void setExtendedState(int state) {
+		if (maxBounds == null
+				&& (state & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH) {
+			Insets screenInsets = getToolkit().getScreenInsets(
+					getGraphicsConfiguration());
+			Rectangle screenSize = getGraphicsConfiguration().getBounds();
+			Rectangle maxBounds = new Rectangle(screenInsets.left
+					+ screenSize.x, screenInsets.top + screenSize.y,
+					screenSize.x + screenSize.width - screenInsets.right
+							- screenInsets.left, screenSize.y
+							+ screenSize.height - screenInsets.bottom
+							- screenInsets.top);
+			super.setMaximizedBounds(maxBounds);
+		}
+
+		super.setExtendedState(state);
+	}
 
 }
