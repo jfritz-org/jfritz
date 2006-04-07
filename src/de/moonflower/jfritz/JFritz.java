@@ -380,7 +380,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.214 2006/04/07 12:25:32 baefer Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.215 2006/04/07 15:12:49 baefer Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -1582,14 +1582,11 @@ public final class JFritz {
      */
     public void createNewWindow(Locale l){
     	locale = l;
+
     	Debug.msg("Loading new locale");
     	loadMessages(locale);
 
-    	jframe.dispose();
-    	javax.swing.SwingUtilities.invokeLater(jframe);
-    	jframe = new JFritzWindow(this);
-    	javax.swing.SwingUtilities.invokeLater(jframe);
-    	jframe.checkStartOptions();
+    	refreshWindow();
 
     }
 
@@ -1599,6 +1596,7 @@ public final class JFritz {
      */
 
     public void refreshWindow(){
+    	jfritz.saveProperties();
     	jframe.dispose();
     	javax.swing.SwingUtilities.invokeLater(jframe);
     	jframe = new JFritzWindow(this);
