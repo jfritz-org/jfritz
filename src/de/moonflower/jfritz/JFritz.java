@@ -43,6 +43,7 @@
  * TODO: Checken, ob alle Bibliotheken vorhanden sind
  *
  * JFritz 0.6.0
+ * - Bugfix: Beim Metal-LAF werden jetzt immer die Metal-Decorations verwendet.
  * - Bugfix: Beim Ändern des Look And Feel's werden die Buttons korrekt dargestellt.
  * - Neu: Sprache einstellbar ( <- Wahlhilfe im Telefonbuch funktioniert bei englischer Sprache nicht (Bastian))
  * - Neu: Fritzbox Anrufliste als CSV-Datei importieren
@@ -309,7 +310,6 @@ package de.moonflower.jfritz;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -336,6 +336,8 @@ import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.table.TableColumn;
 
 import org.jdesktop.jdic.tray.SystemTray;
@@ -378,7 +380,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.213 2006/04/06 18:57:02 capncrunch Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.214 2006/04/07 12:25:32 baefer Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -733,8 +735,14 @@ public final class JFritz {
 			phonebook.saveToCallMonitorFormat("CallMonitor.adr");
 		}
 
-        Debug.msg("New instance of JFrame");
-        jframe = new JFritzWindow(this);
+
+
+      if(JFritz.getProperty("lookandfeel",UIManager.getSystemLookAndFeelClassName()).endsWith("MetalLookAndFeel")){
+    	  JFrame.setDefaultLookAndFeelDecorated(true);
+      }
+
+      Debug.msg("New instance of JFrame");
+      jframe = new JFritzWindow(this);
 
         Debug.msg("Check Systray-Support");
         if (checkForSystraySupport()) {
