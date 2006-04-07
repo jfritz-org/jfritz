@@ -28,7 +28,7 @@ import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
-import de.moonflower.jfritz.utils.InfoDialog;
+import de.moonflower.jfritz.utils.NoticeDialog;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
@@ -94,7 +94,7 @@ public class CallDialog extends JDialog implements ActionListener {
 	}
 
 	private void drawDialog() {
-		InfoDialog info = new InfoDialog(
+		NoticeDialog info = new NoticeDialog(
 				jfritz,"legalInfo.telephoneCharges",
 				JFritz.getMessage("telefonCharges_Warning"));
 		info.setVisible(true);

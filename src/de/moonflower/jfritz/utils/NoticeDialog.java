@@ -21,7 +21,7 @@ import de.moonflower.jfritz.JFritz;
  *
  */
 
-public class InfoDialog extends JDialog implements ActionListener {
+public class NoticeDialog extends JDialog implements ActionListener {
 	private static final long serialVersionUID = 1;
 
 	private boolean accepted = false;
@@ -34,7 +34,7 @@ public class InfoDialog extends JDialog implements ActionListener {
 
 	JCheckBox checkBox;
 
-	public InfoDialog(JFritz jfritz,String property, String infoText) throws HeadlessException {
+	public NoticeDialog(JFritz jfritz,String property, String infoText) throws HeadlessException {
 //		this.jfritz = jfritz;
 		this.infoText = infoText;
 		this.property= property;
