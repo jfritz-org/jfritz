@@ -745,9 +745,9 @@ public class JFritzWindow extends JFrame
 							JFritz.SIPPROVIDER_FILE);
 					jfritz.getCallerlist().fireTableDataChanged();
 				} catch (WrongPasswordException e1) {
-					jfritz.errorMsg("Passwort ung?ltig!");
+					jfritz.errorMsg("Passwort ungültig!");
 				} catch (IOException e1) {
-					jfritz.errorMsg("FRITZ!Box-Adresse ung?ltig!");
+					jfritz.errorMsg("FRITZ!Box-Adresse ungültig!");
 				} catch (InvalidFirmwareException e1) {
 					jfritz.errorMsg("Firmware-Erkennung gescheitert!");
 				}
