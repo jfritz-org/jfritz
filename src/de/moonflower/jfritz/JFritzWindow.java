@@ -612,7 +612,7 @@ public class JFritzWindow extends JFrame
 							}
 						} catch (IOException e) {
 							// Warten, falls wir von einem Standby aufwachen,
-							// oder das Netzwerk tempor?r nicht erreichbar ist.
+							// oder das Netzwerk temporär nicht erreichbar ist.
 							if (connectionFailures < 5) {
 								Debug.msg("Waiting for FritzBox, retrying ...");
 								connectionFailures++;
@@ -899,7 +899,7 @@ public class JFritzWindow extends JFrame
 					JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 
 		if (exit) {
-			// Speichern der Daten wird von ShutdownThread durchgef?hrt
+			// Speichern der Daten wird von ShutdownThread durchgeführt
 			System.exit(0);
 		}
 	}

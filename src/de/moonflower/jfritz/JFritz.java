@@ -379,7 +379,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.218 2006/04/07 21:09:56 baefer Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.219 2006/04/07 21:17:18 baefer Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -529,7 +529,7 @@ public final class JFritz {
                 }
                 break;
             case 'd':
-				// enableInstanceControl = false; // unn?tig, GUI wird nicht gestartet
+				// enableInstanceControl = false; // ungütig, GUI wird nicht gestartet
 				Debug.on();
 				clearCallsOnBox();
                 System.exit(0);
@@ -951,10 +951,10 @@ public final class JFritz {
             		properties.getProperty("column.Teilnehmer.width"));
             JFritz.removeProperty("column.Teilnehmer.width");
         }
-        if (properties.containsKey("column.Anschlu?.width")) {
+        if (properties.containsKey("column.Anschluß.width")) {
             properties.setProperty("column.port.width",
-                    properties.getProperty("column.Anschlu?.width"));
-            JFritz.removeProperty("column.Anschlu?.width");
+                    properties.getProperty("column.Anschluß.width"));
+            JFritz.removeProperty("column.Anschluß.width");
         }
         if (properties.containsKey("column.MSN.width")) {
             properties.setProperty("column.route.width",
