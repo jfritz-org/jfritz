@@ -25,6 +25,8 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
  * @author Robert Palmer
+ * This class is the config dialog for the call monitor and not for
+ * Jfritz!
  *
  */
 public class FRITZBOXConfigDialog extends JDialog implements
@@ -58,7 +60,7 @@ public class FRITZBOXConfigDialog extends JDialog implements
     }
 
     public void initDialog() {
-        setTitle("FRITZ!Box - Einstellungen");
+        setTitle(JFritz.getMessage("monitor_settings"));
         setSize(270, 240);
         drawDialog();
         setProperties();
@@ -136,16 +138,20 @@ public class FRITZBOXConfigDialog extends JDialog implements
 
         c.gridwidth = 1;
         c.gridy = 0;
-        monitorIncomingCalls = new JCheckBox("Ankommende Anrufe anzeigen");
+        monitorIncomingCalls = new JCheckBox(
+        		JFritz.getMessage("monitor_incoming_calls"));
         panel.add(monitorIncomingCalls, c);
         c.gridy = 1;
-        monitorOutgoingCalls = new JCheckBox("Abgehende Anrufe anzeigen");
+        monitorOutgoingCalls = new JCheckBox("" +
+        		JFritz.getMessage("monitor_outgoing_calls"));
         panel.add(monitorOutgoingCalls, c);
         c.gridy = 2;
-        fetchAfterDisconnect = new JCheckBox("Anrufliste nach dem Auflegen abholen");
+        fetchAfterDisconnect = new JCheckBox(
+        		JFritz.getMessage("monitor_fetch_disconnect"));
         panel.add(fetchAfterDisconnect, c);
         c.gridy = 3;
-        JLabel label = new JLabel("Zu ignorierende MSNs mit ; getrennt");
+        JLabel label = new JLabel(
+        		JFritz.getMessage("monitor_ignore_msns"));
         panel.add(label, c);
         c.gridy = 4;
         ignoreMSN = new JTextField("", 20);
