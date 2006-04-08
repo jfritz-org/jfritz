@@ -405,25 +405,25 @@ public class ConfigDialog extends JDialog {
         c.anchor = GridBagConstraints.WEST;
 
         c.gridy = 1;
-        JLabel label = new JLabel("Ortsvorwahl: ");
+        JLabel label = new JLabel(JFritz.getMessage("area_code"));
         phonepane.add(label, c);
         areaCode = new JTextField("", 6);
         phonepane.add(areaCode, c);
 
         c.gridy = 2;
-        label = new JLabel("Landesvorwahl: ");
+        label = new JLabel(JFritz.getMessage("country_code"));
         phonepane.add(label, c);
         countryCode = new JTextField("", 3);
         phonepane.add(countryCode, c);
 
         c.gridy = 3;
-        label = new JLabel("Orts-Prefix: ");
+        label = new JLabel(JFritz.getMessage("area_prefix"));
         phonepane.add(label, c);
         areaPrefix = new JTextField("", 3);
         phonepane.add(areaPrefix, c);
 
         c.gridy = 4;
-        label = new JLabel("Landes-Prefix: ");
+        label = new JLabel(JFritz.getMessage("country_prefix"));
         phonepane.add(label, c);
         countryPrefix = new JTextField("", 3);
         phonepane.add(countryPrefix, c);
@@ -469,10 +469,10 @@ public class ConfigDialog extends JDialog {
         siptable.getColumnModel().getColumn(1).setMinWidth(40);
         siptable.getColumnModel().getColumn(1).setMaxWidth(40);
         siptable.setSize(200, 200);
-        JButton b1 = new JButton("Von der Box holen");
+        JButton b1 = new JButton(JFritz.getMessage("get_sip_provider_from_box"));
         b1.setActionCommand("fetchSIP");
         b1.addActionListener(actionListener);
-        JButton b2 = new JButton("Auf die Box speichern");
+        JButton b2 = new JButton(JFritz.getMessage("save_sip_provider_on_box"));
         b2.setEnabled(false);
         sipButtonPane.add(b1);
         sipButtonPane.add(b2);
@@ -500,22 +500,28 @@ protected JPanel createOtherPane() {
                 "Nach Programmstart Timer aktivieren");
         otherpane.add(timerAfterStartButton);
 
-        startMinimizedButton = new JCheckBox("Programm minimiert starten");
+        startMinimizedButton = new JCheckBox(
+        		JFritz.getMessage("start_minimized"));
         otherpane.add(startMinimizedButton);
 
-        confirmOnExitButton = new JCheckBox("Bei Beenden nachfragen");
+        confirmOnExitButton = new JCheckBox(
+        		JFritz.getMessage("confirm_on_exit"));
         otherpane.add(confirmOnExitButton);
 
-        searchWithSSDP = new JCheckBox("FRITZ!Box per UPnP / SSDP suchen");
+        searchWithSSDP = new JCheckBox(
+        		JFritz.getMessage("search_with_SSDP"));
         otherpane.add(searchWithSSDP);
 
-        minimizeInsteadOfClose = new JCheckBox("Bei Klick auf X: Minimieren statt schließen");
+        minimizeInsteadOfClose = new JCheckBox(
+        		JFritz.getMessage("minimize_instead_close"));
         otherpane.add(minimizeInsteadOfClose);
 
-        createBackup = new JCheckBox("Sicherungskopien beim Start erstellen");
+        createBackup = new JCheckBox(
+        		JFritz.getMessage("create_backup_start"));
         otherpane.add(createBackup);
 
-        createBackupAfterFetch = new JCheckBox("Sicherungskopien nach jedem Laden der Anrufliste erstellen");
+        createBackupAfterFetch = new JCheckBox(
+        		JFritz.getMessage("create_backup_fetch"));
         otherpane.add(createBackupAfterFetch);
 
         return otherpane;
@@ -529,16 +535,18 @@ protected JPanel createOtherPane() {
         c.anchor = GridBagConstraints.WEST;
 
         c.gridy = 0;
-        fetchAfterStartButton = new JCheckBox("Nach Programmstart Liste holen");
+        fetchAfterStartButton = new JCheckBox(
+        		JFritz.getMessage("fetch_after_start"));
         cPanel.add(fetchAfterStartButton, c);
 
         c.gridy = 1;
         notifyOnCallsButton = new JCheckBox(
-                "Bei neuen Anrufen Fenster in den Vordergrund");
+        		JFritz.getMessage("notify_on_calls"));
         cPanel.add(notifyOnCallsButton, c);
 
         c.gridy = 2;
-        deleteAfterFetchButton = new JCheckBox("Nach Laden auf Box löschen");
+        deleteAfterFetchButton = new JCheckBox(
+        		JFritz.getMessage("delete_after_fetch"));
         cPanel.add(deleteAfterFetchButton, c);
 
         c.gridy = 3;
@@ -548,19 +556,22 @@ protected JPanel createOtherPane() {
 
         c.gridy = 4;
         showCallByCallColumnButton = new JCheckBox(
-                "Call-By-Call-Spalte anzeigen");
+                JFritz.getMessage("show_callbyball_column"));
         cPanel.add(showCallByCallColumnButton, c);
 
         c.gridy = 5;
-        showCommentColumnButton = new JCheckBox("Kommentar-Spalte anzeigen");
+        showCommentColumnButton = new JCheckBox(
+        		JFritz.getMessage("show_comment_column"));
         cPanel.add(showCommentColumnButton, c);
 
         c.gridy = 6;
-        showPortColumnButton = new JCheckBox("Anschluß-Spalte anzeigen");
+        showPortColumnButton = new JCheckBox(
+        		JFritz.getMessage("show_port_column"));
         cPanel.add(showPortColumnButton, c);
 
         c.gridy = 7;
-        fetchAfterStandby = new JCheckBox("Nach Rückkehr aus Standby oder Ruhezustand Anrufliste abholen");
+        fetchAfterStandby = new JCheckBox(
+        		JFritz.getMessage("fetch_after_standby"));
         cPanel.add(fetchAfterStandby, c);
 
         return cPanel;
@@ -602,38 +613,38 @@ protected JPanel createOtherPane() {
                     switch (callMonitorCombo.getSelectedIndex()) {
                     case 0: {
                         hideCallMonitorPanel();
-                        Debug.msg("Kein Anrufmonitor erwünscht");
+                        Debug.msg("Call monitor not wanted");
                         stopAllCallMonitors();
                         break;
                     }
                     case 1: {
                         showCallMonitorPanel();
-                        Debug.msg("FRITZ!Box Anrufmonitor gewählt");
+                        Debug.msg("FRITZ!Box call monitor chosen");
                         stopAllCallMonitors();
                         break;
                     }
                     case 2: {
                         showCallMonitorPanel();
-                        Debug.msg("Telnet Anrufmonitor gewählt");
+                        Debug.msg("Telnet call monitor chosen");
                         stopAllCallMonitors();
                         break;
 
                     }
                     case 3: {
                         showCallMonitorPanel();
-                        Debug.msg("Syslog Anrufmonitor gewählt");
+                        Debug.msg("Syslog call monitor chosen");
                         stopAllCallMonitors();
                         break;
                     }
                     case 4: {
                         showCallMonitorPanel();
-                        Debug.msg("YAC Anrufmonitor gewählt");
+                        Debug.msg("YAC call monitor chosen");
                         stopAllCallMonitors();
                         break;
                     }
                     case 5: {
                         showCallMonitorPanel();
-                        Debug.msg("Callmessage Anrufmonitor gewählt");
+                        Debug.msg("Callmessage call monitor chosen");
                         stopAllCallMonitors();
                         break;
                     }
@@ -687,12 +698,18 @@ protected JPanel createOtherPane() {
         callMonitorPane = new JPanel();
         callMonitorPane.setLayout(new BorderLayout());
         callMonitorCombo = new JComboBox();
-        callMonitorCombo.addItem("Kein Anrufmonitor");
-        callMonitorCombo.addItem("FRITZ!Box Anrufmonitor");
-        callMonitorCombo.addItem("Telnet Anrufmonitor");
-        callMonitorCombo.addItem("Syslog Anrufmonitor");
-        callMonitorCombo.addItem("YAC Anrufmonitor");
-        callMonitorCombo.addItem("Callmessage Anrufmonitor");
+        callMonitorCombo.addItem(
+        		JFritz.getMessage("no_call_monitor"));
+        callMonitorCombo.addItem(
+        		JFritz.getMessage("fritz_call_monitor"));
+        callMonitorCombo.addItem(
+        		JFritz.getMessage("telnet_call_monitor"));
+        callMonitorCombo.addItem(
+        		JFritz.getMessage("syslog_call_monitor"));
+        callMonitorCombo.addItem(
+        		JFritz.getMessage("yac_call_monitor"));
+        callMonitorCombo.addItem(
+        		JFritz.getMessage("callmessage_call_monitor"));
         callMonitorCombo.addActionListener(actionListener);
 
         callMonitorPane.add(callMonitorCombo, BorderLayout.NORTH);
@@ -721,7 +738,8 @@ protected JPanel createOtherPane() {
 
         c.gridx = 2;
         c.gridy = 0;
-        callMonitorOptionsButton = new JButton("Optionen");
+        callMonitorOptionsButton = new JButton(
+        		JFritz.getMessage("config"));
         callMonitorOptionsButton.setActionCommand("startCallMonitorOptions");
         callMonitorOptionsButton.addActionListener(actionListener);
         pane.add(callMonitorOptionsButton, c);
@@ -730,14 +748,16 @@ protected JPanel createOtherPane() {
         c.gridy = 1;
         c.gridwidth = 3;
         callMonitorAfterStartButton = new JCheckBox(
-                "Call-Monitor nach Programmstart automatisch starten?");
+                JFritz.getMessage("call_monitor_prog_start"));
         pane.add(callMonitorAfterStartButton, c);
 
-        soundButton = new JCheckBox("Bei eingehenden Anrufen Sound abspielen");
+        soundButton = new JCheckBox(
+        		JFritz.getMessage("play_sound"));
         c.gridy = 2;
         pane.add(soundButton, c);
 
-        externProgramCheckBox = new JCheckBox("Externes Programm ausführen: ");
+        externProgramCheckBox = new JCheckBox(
+        		JFritz.getMessage("run_external_program"));
         c.gridy = 3;
         pane.add(externProgramCheckBox, c);
 
@@ -756,7 +776,8 @@ protected JPanel createOtherPane() {
         c.anchor = GridBagConstraints.WEST;
 
         c.gridy = 0;
-        JLabel text = new JLabel("Popupfenster für Informationen: ");
+        JLabel text = new JLabel(
+        		JFritz.getMessage("popup_for_information"));
         panel.add(text, c);
 
         ActionListener actionListener = new ActionListener() {
@@ -773,19 +794,22 @@ protected JPanel createOtherPane() {
 
         ButtonGroup popupGroup = new ButtonGroup();
         c.gridy = 1;
-        popupNoButton = new JRadioButton("Keine Popups");
+        popupNoButton = new JRadioButton(
+        		JFritz.getMessage("no_popups"));
         popupNoButton.addActionListener(actionListener);
         popupGroup.add(popupNoButton);
         panel.add(popupNoButton, c);
 
         c.gridy = 2;
-        popupDialogButton = new JRadioButton("Popup Fenster");
+        popupDialogButton = new JRadioButton(
+        		JFritz.getMessage("popup_windows"));
         popupDialogButton.addActionListener(actionListener);
         popupGroup.add(popupDialogButton);
         panel.add(popupDialogButton, c);
 
         c.gridy = 3;
-        popupTrayButton = new JRadioButton("Tray-Nachrichten");
+        popupTrayButton = new JRadioButton(
+        		JFritz.getMessage("tray_messages"));
         popupTrayButton.addActionListener(actionListener);
         popupGroup.add(popupTrayButton);
         panel.add(popupTrayButton, c);
@@ -905,15 +929,15 @@ protected JPanel createOtherPane() {
         cancelButton.setMnemonic(KeyEvent.VK_ESCAPE);
         okcancelpanel.add(cancelButton);
 
-        tpane.addTab("FRITZ!Box", createBoxPane(actionListener)); // TODO I18N
-        tpane.addTab("Telefon", createPhonePane());
-        tpane.addTab("SIP-Nummern", createSipPane(actionListener));
+        tpane.addTab(JFritz.getMessage("FRITZ!Box"), createBoxPane(actionListener));
+        tpane.addTab(JFritz.getMessage("telephone"), createPhonePane());
+        tpane.addTab(JFritz.getMessage("sip_numbers"), createSipPane(actionListener));
         JScrollPane callerListPaneScrollable = new JScrollPane(createCallerListPane());
-        tpane.addTab("Anrufliste", callerListPaneScrollable);
-        tpane.addTab("Anrufmonitor", createCallMonitorPane());
-        tpane.addTab("Nachrichten", createMessagePane());
+        tpane.addTab(JFritz.getMessage("callerlist"), callerListPaneScrollable);
+        tpane.addTab(JFritz.getMessage("callmonitor"), createCallMonitorPane());
+        tpane.addTab(JFritz.getMessage("messages"), createMessagePane());
         JScrollPane otherPaneScrollable = new JScrollPane(createOtherPane());
-        tpane.addTab("Weiteres", otherPaneScrollable);
+        tpane.addTab(JFritz.getMessage("other"), otherPaneScrollable);
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(tpane, BorderLayout.CENTER);

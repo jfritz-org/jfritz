@@ -47,7 +47,6 @@ public class CallPanel extends JComponent {
 		input = new JLabel("  ");
 		input.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
-				System.err.println(e.getSource());
 				if (e.getClickCount() > 1) {
 					Person person = jfritz.getPhonebook().findPerson(number);
 					CallDialog p;

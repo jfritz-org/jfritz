@@ -380,7 +380,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.220 2006/04/08 12:07:23 capncrunch Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.221 2006/04/08 15:56:21 capncrunch Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -447,9 +447,9 @@ public final class JFritz {
     /**
      * Main method for starting JFritz
      *
-     * LAST MODIFIED: Brian Jensen 28.03.06
-     * fixed the broken internationalization
-     * added a new parameter switch: --lang
+     * LAST MODIFIED: Brian Jensen 04.06.06
+     * added option to disable mulitple instance control
+     * added a new parameter switch: -w
      *
      * @param args
      *            Program arguments (-h -v ...)
