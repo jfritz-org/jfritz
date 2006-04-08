@@ -97,6 +97,7 @@ public class CallDialog extends JDialog implements ActionListener {
 		NoticeDialog info = new NoticeDialog(
 				jfritz,"legalInfo.telephoneCharges",
 				JFritz.getMessage("telefonCharges_Warning"));
+
 		info.setVisible(true);
 		info.dispose();
 		if (info.isAccepted()) {

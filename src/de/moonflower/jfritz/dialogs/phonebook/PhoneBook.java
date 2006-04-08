@@ -115,7 +115,8 @@ public class PhoneBook extends AbstractTableModel {
 	 */
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		String columnName = getColumnName(columnIndex);
-		if (columnName.equals(JFritz.getMessage("number")))
+		//If the wahlhilfe doesnt work, check here again!
+		if (columnName.equals(JFritz.getMessage("telephoneNumber")))
 			return true;
 		return false;
 	}

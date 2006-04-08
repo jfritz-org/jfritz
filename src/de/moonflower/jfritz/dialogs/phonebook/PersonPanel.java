@@ -425,7 +425,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		if (person.getNumbers().size() == 1)
 			delButton.setEnabled((false));
 
-		JLabel label = new JLabel("Telefonnummern:", JLabel.LEFT); // TODO: I18N
+		JLabel label = new JLabel(JFritz.getMessage("telephoneNumbers")+":", JLabel.LEFT);
 
 		JPanel numberButtonPanel = new JPanel(new GridLayout(0, 2));
 		JPanel buttonPanel = new JPanel();

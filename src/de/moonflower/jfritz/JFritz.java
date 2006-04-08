@@ -43,6 +43,7 @@
  * TODO: Checken, ob alle Bibliotheken vorhanden sind
  *
  * JFritz 0.6.0
+ * - Bugfix: Wahlhilfe im Telefonbuch funktioniert jetzt bei englischer Sprache (Brian)
  * - Bugfix: Beim Metal-LAF werden jetzt immer die Metal-Decorations verwendet.
  * - Bugfix: Beim Ändern des Look And Feel's werden die Buttons korrekt dargestellt.
  * - Neu: Sprache einstellbar ( <- Wahlhilfe im Telefonbuch funktioniert bei englischer Sprache nicht (Bastian))
@@ -379,7 +380,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.219 2006/04/07 21:17:18 baefer Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.220 2006/04/08 12:07:23 capncrunch Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 

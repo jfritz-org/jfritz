@@ -16,7 +16,13 @@ import de.moonflower.jfritz.struct.PhoneNumber;
 
 
 /**
- * This deprecated class manages editing of the participant cell in the caller table.
+ * This deprecated class managed editing of the participant cell in the caller table.
+ * EDIT: This class is currently only responsible for dealing with the wahlhilfe
+ * This class is used by both phonebooktable and callerlisttable.java
+ * This class works by using Callpanel (it isnt really a panel!?!?) to then call
+ * Calldialog which in turn calls NoticeDialog.java
+ * @see CallDialog.java, CallPanel.java, NoticeDialog.java
+ * Brian Jensen
  *
  * @author Arno Willig
  *
@@ -46,6 +52,7 @@ public class CallCellEditor extends AbstractCellEditor implements
 		if (value == null) {
 		    return null;
 		}
+
 		panel.setNumber(number);
 		panel.setText(number.getShortNumber());
 		// Return the configured component

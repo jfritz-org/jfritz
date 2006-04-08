@@ -370,7 +370,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 				}
 			}
 		} else {
-			jfritz.errorMsg("Keine einzige sinnvolle Zeile selektiert!\n\n"
+			jfritz.errorMsg("Keine einzige sinnvolle Zeile selektiert!\n\n"  //TODO i18n
 					+ "Bitte eine oder mehrere Zeilen auswählen,\n"
 					+ "um die Daten als VCard zu exportieren!");
 		}

@@ -47,9 +47,11 @@ public class CallPanel extends JComponent {
 		input = new JLabel("  ");
 		input.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
+				System.err.println(e.getSource());
 				if (e.getClickCount() > 1) {
 					Person person = jfritz.getPhonebook().findPerson(number);
 					CallDialog p;
+
 					if (person!=null)
 					{
 						p = new CallDialog(jfritz,person.getNumbers(),number);
@@ -62,6 +64,7 @@ public class CallPanel extends JComponent {
 				}
 			}
 		});
+
 		ImageIcon icon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/call.png")));
