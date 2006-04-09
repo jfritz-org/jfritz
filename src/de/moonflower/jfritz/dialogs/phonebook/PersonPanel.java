@@ -66,6 +66,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 		private Vector types;
 
+
 		public PhoneTypeModel() {
 			super();
 			types = new Vector();
@@ -127,6 +128,15 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 		public Object getSelectedItem() {
 			return sel;
+		}
+
+		/**
+		 * @author Bastian Schaefer
+		 *
+		 * @return all available types
+		 */
+		public String[] getBasicTypes(){
+			return basicTypes;
 		}
 
 	}

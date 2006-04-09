@@ -35,6 +35,9 @@ public class Person {
 
 	private Vector numbers;
 
+	private String[] basicTypes = {"home", "mobile", "homezone", "business",
+			"other", "fax", "sip", "main"};
+
 	public Person() {
 		numbers = new Vector();
 	}
@@ -214,7 +217,7 @@ public class Person {
 			return "";
 		return city;
 	}
-
+	// TODO
 	public PhoneNumber getPhoneNumber(String type) {
 		Enumeration en = numbers.elements();
 		while (en.hasMoreElements()) {
@@ -246,8 +249,8 @@ public class Person {
 		while (en.hasMoreElements()) {
 			PhoneNumber n = (PhoneNumber) en.nextElement();
 			if ((n.getType().startsWith("main")) && (considerMain)) { // starts
-																		// with
-																		// ...
+				// with
+				// ...
 				if (number.startsWith(n.getIntNumber()))
 					return true;
 			} else { // equal number
@@ -326,9 +329,9 @@ public class Person {
 	 */
 	public String getAddress() {
 		String lineSeparator = System.getProperty("line.separator"); // new
-																		// String("\r\n");
+		// String("\r\n");
 		String wordSeparator = " "; // used to separate words in one line, e.g.
-									// between firstname an surname
+		// between firstname an surname
 		return this.getAddress(lineSeparator, wordSeparator);
 	}
 
@@ -406,19 +409,28 @@ public class Person {
 		// numbers
 		if (getNumbers() == null)
 			outString = outString.concat(";\"\"");
-		else
-			outString = outString.concat(";\"" + getNumbers().toString().replaceAll("\\[|\\]", "") + "\"");
 
+		else
+			for (int i = 0; i < 8; i++) {
+				try {
+					outString = outString.concat(";\""
+							+ getPhoneNumber(basicTypes[i].replaceAll(" ", ""))
+									.toString().replaceAll("\\[|\\]", "")
+							+ "\"");
+				} catch (NullPointerException ex) {
+					outString = outString.concat(";\"\"");
+				}
+
+			}
 
 		return outString;
 	}
 
 	/**
-	*	@author: haeusler
-	*	DATE: 02.04.06, added by Brian
-	*   This is part of a fix for the null pointer exceptions
-	*   that are caused by adding a contact when a filter is set
-	**/
+	 * @author: haeusler DATE: 02.04.06, added by Brian This is part of a fix
+	 *          for the null pointer exceptions that are caused by adding a
+	 *          contact when a filter is set
+	 */
 	public boolean matchesKeyword(String s) {
 		if (s == null || s.equals("")) {
 			return true;

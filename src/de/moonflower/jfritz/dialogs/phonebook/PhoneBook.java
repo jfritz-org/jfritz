@@ -77,7 +77,7 @@ public class PhoneBook extends AbstractTableModel {
 
 	private boolean sortDirection = true;
 
-    private final static String EXPORT_CSV_FORMAT = "\"Private\";\"Last Name\";\"First Name\";\"Company\";\"Street\";\"ZIP Code\";\"City\";\"E-Mail\";\"Phone Numbers\"";
+    private final static String EXPORT_CSV_FORMAT = "\"Private\";\"Last Name\";\"First Name\";\"Company\";\"Street\";\"ZIP Code\";\"City\";\"E-Mail\";\"Home\";\"Mobile\";\"Homezone\";\"Business\";\"Other\";\"Fax\";\"Sip\";\"Main\"";
 	/**
 	 * Sort table model rows by a specific column and direction
 	 *
@@ -575,7 +575,7 @@ public class PhoneBook extends AbstractTableModel {
 		return filteredPersons.indexOf(p);
 	}
 
-
+	//TODO
     /**
      * Saves PhoneBook to csv file
      *
