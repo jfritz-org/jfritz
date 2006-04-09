@@ -1538,6 +1538,7 @@ public class JFritzWindow extends JFrame
 		jfritz.createNewWindow(locale);
 		// current window will be destroyed and a new one created
 
+		jfritz.refreshTrayMenu();
 	}
 
 	/**
