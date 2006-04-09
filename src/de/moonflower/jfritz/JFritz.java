@@ -40,9 +40,11 @@
  * FeatureRequests: http://sourceforge.net/tracker/?func=browse&group_id=138196&atid=741416
 
  * CHANGELOG:
- * TODO: Checken, ob alle Bibliotheken vorhanden sind
- * TODO: Neue Kurzwahlen von der Beta-FW ins Telefonbuch aufnehmen
+ * (TODO: Checken, ob alle Bibliotheken vorhanden sind)
+ * (TODO: Neue Kurzwahlen von der Beta-FW ins Telefonbuch aufnehmen)
  * TODO: Import der Anrufliste im XML-Format beim Kontextmenü einbauen
+ * TODO: Einstelloption, wie lange die Popups geöffnet bleiben sollen
+ * TODO-Wichtig: Sprache im Tray-Menü nach einem Wechsel der Sprache anpassen.
  *
  * JFritz 0.6.0
  * - Bugfix: Wahlhilfe im Telefonbuch funktioniert jetzt bei englischer Sprache (Brian)
@@ -382,7 +384,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.223 2006/04/09 11:26:24 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.224 2006/04/09 11:42:50 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
