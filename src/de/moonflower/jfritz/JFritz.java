@@ -42,6 +42,7 @@
  * CHANGELOG:
  * TODO: Checken, ob alle Bibliotheken vorhanden sind
  * TODO: Neue Kurzwahlen von der Beta-FW ins Telefonbuch aufnehmen
+ * TODO: Import der Anrufliste im XML-Format beim Kontextmenü einbauen
  *
  * JFritz 0.6.0
  * - Bugfix: Wahlhilfe im Telefonbuch funktioniert jetzt bei englischer Sprache (Brian)
@@ -381,7 +382,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.222 2006/04/09 01:22:55 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.223 2006/04/09 11:26:24 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
