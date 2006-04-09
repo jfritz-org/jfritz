@@ -405,11 +405,6 @@ public class JFritzWindow extends JFrame
 		item.addActionListener(this);
 		jfritzMenu.add(item);
 
-		item = new JMenuItem(JFritz.getMessage("print_callerlist"));
-		item.setActionCommand("print_callerlist");
-		item.addActionListener(this);
-		jfritzMenu.add(item);
-
 		item = new JMenuItem(JFritz.getMessage("delete_fritzbox_callerlist"));
 		item.setActionCommand("delete_fritzbox_callerlist");
 		item.setMnemonic(KeyEvent.VK_F);
@@ -421,13 +416,25 @@ public class JFritzWindow extends JFrame
 		item.addActionListener(this);
 		jfritzMenu.add(item);
 
+		item = new JMenuItem(JFritz.getMessage("print_callerlist"));
+		item.setActionCommand("print_callerlist");
+		item.addActionListener(this);
+		jfritzMenu.add(item);
+
+		// export submenu
+		item = new JMenuItem(JFritz.getMessage("export_csv"), 'c');
+		item.setActionCommand("export_csv");
+		item.addActionListener(this);
+		exportMenu.add(item);
+
+		item = new JMenuItem(JFritz.getMessage("export_csv_phonebook"));
+		item.setActionCommand("export_phonebook");
+		item.addActionListener(this);
+		exportMenu.add(item);
+
+		jfritzMenu.add(exportMenu);
+
 		// import submenu
-		if (JFritz.runsOn().startsWith("Windows")) {
-			item = new JMenuItem(JFritz.getMessage("import_contacts_outlook"));
-			item.setActionCommand("import_outlook");
-			item.addActionListener(this);
-			importMenu.add(item);
-		}
 
 		item = new JMenuItem(JFritz.getMessage("import_callerlist_csv"), 'i');
 		item.setActionCommand("import_callerlist_csv");
@@ -445,20 +452,14 @@ public class JFritzWindow extends JFrame
 		item.addActionListener(this);
 		importMenu.add(item);
 
+		if (JFritz.runsOn().startsWith("Windows")) {
+			item = new JMenuItem(JFritz.getMessage("import_contacts_outlook"));
+			item.setActionCommand("import_outlook");
+			item.addActionListener(this);
+			importMenu.add(item);
+		}
+
 		jfritzMenu.add(importMenu);
-
-		// export submenu
-		item = new JMenuItem(JFritz.getMessage("export_csv"), 'c');
-		item.setActionCommand("export_csv");
-		item.addActionListener(this);
-		exportMenu.add(item);
-
-		item = new JMenuItem(JFritz.getMessage("export_csv_phonebook"));
-		item.setActionCommand("export_phonebook");
-		item.addActionListener(this);
-		exportMenu.add(item);
-
-		jfritzMenu.add(exportMenu);
 
 		if (JFritz.runsOn() != "mac") {
 			jfritzMenu.add(new JSeparator());
