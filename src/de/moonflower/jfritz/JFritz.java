@@ -384,7 +384,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.225 2006/04/09 17:25:27 little_ben Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.226 2006/04/09 18:30:39 little_ben Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -1619,7 +1619,10 @@ public final class JFritz {
      */
     public void refreshTrayMenu()
     {
-    	systray.removeTrayIcon(trayIcon);
-    	this.createTrayMenu();
+    	if (systray!=null && trayIcon!=null)
+    	{
+    		systray.removeTrayIcon(trayIcon);
+    		this.createTrayMenu();
+    	}
     }
 }
