@@ -41,6 +41,7 @@
 
  * CHANGELOG:
  * TODO: Checken, ob alle Bibliotheken vorhanden sind
+ * TODO: Neue Kurzwahlen von der Beta-FW ins Telefonbuch aufnehmen
  *
  * JFritz 0.6.0
  * - Bugfix: Wahlhilfe im Telefonbuch funktioniert jetzt bei englischer Sprache (Brian)
@@ -380,7 +381,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.221 2006/04/08 15:56:21 capncrunch Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.222 2006/04/09 01:22:55 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -489,7 +490,7 @@ public final class JFritz {
                 "Writes debug messages to logfile");
         options.addOption('p', "priority", "level",
                 "Set program priority [1..10]");
-        options.addOption('i',"lang", "language","set the display language, currently supported: german, english");
+        options.addOption('i',"lang", "language","Set the display language, currently supported: german, english");
         options.addOption('w', "without-control", null,
         		"Turns off multiple instance control. DON'T USE, unless you know what your are doing");
 
