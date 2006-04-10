@@ -159,7 +159,7 @@ public class FritzBoxFirmware {
 			data = JFritzUtils.fetchDataFromURL(
 					urlstr,
 					POSTDATA_ACCESS_METHOD[i] + POSTDATA_DETECT_FIRMWARE
-							+ URLEncoder.encode(box_password, "ISO-8859-1")).trim();
+							+ URLEncoder.encode(box_password, "ISO-8859-1"), true).trim();
 			i++;
 		}
 		// Modded firmware: data = "> FRITZ!Box Fon WLAN, <span
