@@ -61,47 +61,6 @@ public class JFritzUtils {
 
     private final static String POSTDATA_CALL = "&login:command/password=$PASSWORT&telcfg:settings/UseClickToDial=1&telcfg:command/Dial=$NUMMER&telcfg:settings/DialPort=$NEBENSTELLE";
 
-    private final static String PATTERN_LIST_OLD = "<tr class=\"Dialoglist\">"
-            + "\\s*<td class=\"c1\"><script type=\"text/javascript\">document.write\\(uiCallSymbol\\(\"(\\d)\"\\)\\);</script></td>"
-            + "\\s*<td class=\"c3\">(\\d\\d\\.\\d\\d\\.\\d\\d \\d\\d:\\d\\d)</td>"
-            + "\\s*<td class=\"c4\"><script type=\"text/javascript\">document.write\\(uiRufnummerDisplay\\(\"([^\"\\)\\);]*)\"\\)\\);</script></td>"
-            + "\\s*<td class=\"c5\"><script type=\"text/javascript\">document.write\\(uiPortDisplay\\(\"(\\d*)\"\\)\\);</script></td>"
-            + "()"
-            + "\\s*<td class=\"c6\"><script type=\"text/javascript\">document.write\\(uiDauerDisplay\\(\"(\\d*)\"\\)\\);</script></td>"
-            + "\\s*</tr>";
-
-    private final static String PATTERN_LIST_42 = "<tr class=\"Dialoglist\">"
-            + "\\s*<td class=\"c1\"><script type=\"text/javascript\">document.write\\(uiCallSymbol\\(\"(\\d)\"\\)\\);</script></td>"
-            + "\\s*<td class=\"c3\">(\\d\\d\\.\\d\\d\\.\\d\\d \\d\\d:\\d\\d)</td>"
-            + "\\s*<td class=\"c4\"><script type=\"text/javascript\">document.write\\(uiRufnummerDisplay\\(\"([^\"\\)\\);]*)\"\\)\\);</script></td>"
-            + "\\s*<td class=\"c5\"><script type=\"text/javascript\">document.write\\(uiPortDisplay\\(\"(\\d*)\"\\)\\);</script></td>"
-            + "\\s*<td class=\"c7\"><script type=\"text/javascript\">document.write\\(uiRouteDisplay\\(\"(\\w*)\"\\)\\);</script></td>"
-            + "\\s*<td class=\"c6\"><script type=\"text/javascript\">document.write\\(uiDauerDisplay\\(\"(\\d*)\"\\)\\);</script></td>"
-            + "\\s*</tr>";
-
-    private final static String PATTERN_LIST_85 = "<tr class=\"Dialoglist\">"
-            + "\\s*<td class=\"c1\"><script type=\"text/javascript\">document.write\\(uiCallSymbol\\(\"(\\d)\"\\)\\);</script></td>"
-            + "\\s*<td class=\"c3\">(\\d\\d\\.\\d\\d\\.\\d\\d \\d\\d:\\d\\d)</td>"
-            + "\\s*<td class=\"c4\"><script type=\"text/javascript\">document.write\\(uiRufnummerDisplay\\(\"([^\"\\)\\);]*)\"\\)\\);</script></td>"
-            + "\\s*<td class=\"c5\"><script type=\"text/javascript\">document.write\\(uiPortDisplay\\(\"(\\d*)\"\\)\\);</script></td>"
-            + "\\s*<td class=\"c7\"><script type=\"text/javascript\">document.write\\(uiRouteDisplay\\(([^\\)\\)]*)\\)\\);</script></td>"
-            + "\\s*<td class=\"c6\">([^<]*)</td>" + "\\s*</tr>";
-
-    private final static String PATTERN_LIST_87 = "\\s*<td class=\"c1\"><nobr><script type=\"text/javascript\">document.write\\(uiCallSymbol\\(\"(\\d)\"\\)\\);</script></nobr></td>"
-            + "\\s*<td class=\"c3\"><nobr>(\\d\\d\\.\\d\\d\\.\\d\\d \\d\\d:\\d\\d)</nobr></td>"
-            + "\\s*<td class=\"c4\"><nobr><script type=\"text/javascript\">document.write\\(uiRufnummerDisplay\\(\"([^\"]*)\"\\)\\);</script></nobr></td>"
-            + "\\s*<td class=\"c5\"><nobr><script type=\"text/javascript\">document.write\\(uiPortDisplay\\(\"(\\d*)\"\\)\\);</script></nobr></td>"
-            + "\\s*<td class=\"c7\"><nobr><script type=\"text/javascript\">document.write\\(uiRouteDisplay\\(([^\\)]*)\\)\\);</script></nobr></td>"
-            + "\\s*<td class=\"c6\"><nobr>([^<]*)</nobr></td>" + "\\s*</tr>";
-
-    private final static String PATTERN_LIST_04_03 = "\\s*<td class=\"c1\"><nobr><script type=\"text/javascript\">document.write\\(uiCallSymbol\\(\"(\\d)\"\\)\\);</script></nobr></td>"
-            + "\\s*<td class=\"c3\"><nobr>(\\d\\d\\.\\d\\d\\.\\d\\d \\d\\d:\\d\\d)</nobr></td>"
-            + "\\s*<td class=\"c8\"><nobr><span title=\"[^>]*\">([^<]*)</span></nobr></td>"
-            + "\\s*<td class=\"c4\"><nobr><script type=\"text/javascript\">document.write\\(uiRufnummerDisplay\\(\"([^\"]*)\"\\)\\);</script></nobr></td>"
-            + "\\s*<td class=\"c5\"><nobr><script type=\"text/javascript\">document.write\\(uiPortDisplay\\(\"(\\d*)\"\\)\\);</script></nobr></td>"
-            + "\\s*<td class=\"c7\"><nobr><script type=\"text/javascript\">document.write\\(uiRouteDisplay\\(([^\\)]*)\\)\\);</script></nobr></td>"
-            + "\\s*<td class=\"c6\"><nobr>([^<]*)</nobr></td>" + "\\s*</tr>";
-
     private final static String PATTERN_LIST_CSV_OLD = "(\\d);(\\d\\d.\\d\\d.\\d\\d \\d\\d:\\d\\d);([^;]*);([^;]*);([^;]*);(\\d:\\d\\d)";
 
     private final static String PATTERN_LIST_CSV_NEW = "(\\d);(\\d\\d.\\d\\d.\\d\\d \\d\\d:\\d\\d);([^;]*);([^;]*);([^;]*);([^;]*);(\\d:\\d\\d)";
@@ -221,7 +180,7 @@ public class JFritzUtils {
         String urlstr = "http://" + box_address + "/cgi-bin/webcm";
         Debug.msg("Postdata: " + postdata);
         Debug.msg("Urlstr: " + urlstr);
-        fetchDataFromURL(urlstr, postdata);
+        fetchDataFromURL(urlstr, postdata, false);
     }
 
     /**
@@ -250,7 +209,7 @@ public class JFritzUtils {
         String urlstr = "http://"
                 + JFritz.getProperty("box.address", "fritz.box")
                 + "/cgi-bin/webcm";
-        String data = fetchDataFromURL(urlstr, postdata);
+        String data = fetchDataFromURL(urlstr, postdata, true);
         return parseQuickDialData(model, data, firmware);
     }
 
@@ -277,7 +236,7 @@ public class JFritzUtils {
         String urlstr = "http://" + box_address + "/cgi-bin/webcm";
         Debug.msg("Postdata: " + postdata);
         Debug.msg("Urlstr: " + urlstr);
-        String data = fetchDataFromURL(urlstr, postdata);
+        String data = fetchDataFromURL(urlstr, postdata, true);
 
         // DEBUG: Test other versions
         if (false) {
@@ -363,7 +322,7 @@ public class JFritzUtils {
      * @throws WrongPasswordException
      * @throws IOException
      */
-    public static String fetchDataFromURL(String urlstr, String postdata)
+    public static String fetchDataFromURL(String urlstr, String postdata, boolean retrieveData)
             throws WrongPasswordException, IOException {
         URL url = null;
         URLConnection urlConn;
@@ -393,31 +352,33 @@ public class JFritzUtils {
                 printout.close();
             }
 
-            BufferedReader d;
+            if (retrieveData) {
+            	BufferedReader d;
 
-            try {
-                // Get response data
-                d = new BufferedReader(new InputStreamReader(urlConn
-                        .getInputStream()));
-                int i = 0;
-                String str;
-                while (null != ((str = HTMLUtil.stripEntities(d.readLine())))) {
-                    // Password seems to be wrong
-                    // if (str.indexOf("FEHLER: Das angegebene Kennwort ") > 0)
-                    if (str.indexOf("FRITZ!Box Anmeldung") > 0)
-                        wrong_pass = true;
-                    // Skip a few lines
-                    // if (i > 778)
-                    data += str;
-                    i++;
-                }
-                d.close();
-            } catch (IOException e1) {
-                throw new IOException("Network unavailable");
-            }
+            	try {
+            		// Get response data
+            		d = new BufferedReader(new InputStreamReader(urlConn
+            				.getInputStream()));
+            		int i = 0;
+            		String str;
+            		while (null != ((str = HTMLUtil.stripEntities(d.readLine())))) {
+            			// Password seems to be wrong
+            			// if (str.indexOf("FEHLER: Das angegebene Kennwort ") > 0)
+            			if (str.indexOf("FRITZ!Box Anmeldung") > 0)
+            				wrong_pass = true;
+            			// Skip a few lines
+            			// if (i > 778)
+            			data += str;
+            			i++;
+            		}
+            		d.close();
+            	} catch (IOException e1) {
+            		throw new IOException("Network unavailable");
+            	}
 
-            if (wrong_pass)
-                throw new WrongPasswordException("Password invalid");
+            	if (wrong_pass)
+            		throw new WrongPasswordException("Password invalid");
+            	}
         }
         return data;
     }
@@ -436,7 +397,7 @@ public class JFritzUtils {
         Debug.msg("Clearing List");
         String urlstr = "http://" + box_address + "/cgi-bin/webcm";
         String postdata = firmware.getAccessMethod() + POSTDATA_CLEAR;
-        fetchDataFromURL(urlstr, postdata);
+        fetchDataFromURL(urlstr, postdata, true);
     }
 
     public static Vector retrieveCSVList(String box_address, String password,
@@ -451,7 +412,7 @@ public class JFritzUtils {
         Debug.msg("Recieve CSV List");
         String urlstr = "http://" + box_address + "/cgi-bin/webcm";
         String postdata = "getpage=../html/de/FRITZ!Box_Anrufliste.csv&errorpage=..%2Fhtml%2Fde%2Fmenus%2Fmenu2.html&var%3Alang=de&var%3Apagename=foncalls&var%3Aerrorpagename=foncalls&var%3Amenu=fon&var%3Apagemaster=&time%3Asettings%2Ftime=1136559837%2C-60";
-        String data = fetchDataFromURL(urlstr, postdata);
+        String data = fetchDataFromURL(urlstr, postdata, true);
         return parseCallerData(data, firmware, countryPrefix, countryCode,
                 areaPrefix, areaCode, jfritz);
     }
@@ -602,126 +563,6 @@ public class JFritzUtils {
     }
 
     /**
-     * Parses html data from the fritz!box's web interface.
-     *
-     * @param data
-     */
-    public static Vector parseCallerData2(String data,
-            FritzBoxFirmware firmware, String countryPrefix,
-            String countryCode, String areaPrefix, String areaCode,
-            JFritz jfritz) {
-        Vector list = new Vector();
-        data = removeDuplicateWhitespace(data);
-        Pattern p;
-        Debug.msg(2, "FirmwareMajorVersion: "
-                + firmware.getMajorFirmwareVersion());
-        Debug.msg(2, "FirmwareMinorVersion: "
-                + firmware.getMinorFirmwareVersion());
-        if (firmware.getMajorFirmwareVersion() == 3
-                && firmware.getMinorFirmwareVersion() < 42) {
-            p = Pattern.compile(PATTERN_LIST_OLD);
-            calllist_indizes[CALLTYPE] = 1;
-            calllist_indizes[DATE] = 2;
-            calllist_indizes[NUMBER] = 3;
-            calllist_indizes[PORT] = 4;
-            calllist_indizes[DURATION] = 5;
-        } else if (firmware.getMajorFirmwareVersion() == 3
-                && (firmware.getMinorFirmwareVersion() >= 42)
-                && (firmware.getMinorFirmwareVersion() < 85)) {
-            p = Pattern.compile(PATTERN_LIST_42);
-            calllist_indizes[CALLTYPE] = 1;
-            calllist_indizes[DATE] = 2;
-            calllist_indizes[NUMBER] = 3;
-            calllist_indizes[PORT] = 4;
-            calllist_indizes[ROUTE] = 5;
-            calllist_indizes[DURATION] = 6;
-        } else if (firmware.getMajorFirmwareVersion() == 3
-                && (firmware.getMinorFirmwareVersion() >= 85)
-                && (firmware.getMinorFirmwareVersion() < 87)) {
-            p = Pattern.compile(PATTERN_LIST_85);
-            calllist_indizes[CALLTYPE] = 1;
-            calllist_indizes[DATE] = 2;
-            calllist_indizes[NUMBER] = 3;
-            calllist_indizes[PORT] = 4;
-            calllist_indizes[ROUTE] = 5;
-            calllist_indizes[DURATION] = 6;
-        } else if ((firmware.getMajorFirmwareVersion() == 3 && firmware
-                .getMinorFirmwareVersion() >= 87)
-                || (firmware.getMajorFirmwareVersion() == 4 && firmware
-                        .getMinorFirmwareVersion() < 3)) {
-            p = Pattern.compile(PATTERN_LIST_87);
-            calllist_indizes[CALLTYPE] = 1;
-            calllist_indizes[DATE] = 2;
-            calllist_indizes[NUMBER] = 3;
-            calllist_indizes[PORT] = 4;
-            calllist_indizes[ROUTE] = 5;
-            calllist_indizes[DURATION] = 6;
-        } else {
-            System.err.println("Neues Pattern");
-            p = Pattern.compile(PATTERN_LIST_04_03);
-            calllist_indizes[CALLTYPE] = 1;
-            calllist_indizes[DATE] = 2;
-            calllist_indizes[NAME] = 3;
-            calllist_indizes[NUMBER] = 4;
-            calllist_indizes[PORT] = 5;
-            calllist_indizes[ROUTE] = 6;
-            calllist_indizes[DURATION] = 7;
-        }
-
-        Matcher m = p.matcher(data);
-        while (m.find()) {
-            try {
-                // TODO: Name ausslesen?
-                CallType symbol = new CallType(Byte.parseByte(m
-                        .group(calllist_indizes[CALLTYPE])));
-                String port = m.group(calllist_indizes[PORT]);
-                PhoneNumber number = createAreaNumber(m
-                        .group(calllist_indizes[NUMBER]), countryPrefix,
-                        countryCode, areaPrefix, areaCode, jfritz);
-                Date date = new SimpleDateFormat("dd.MM.yy HH:mm").parse(m
-                        .group(calllist_indizes[DATE]));
-                String route = "";
-                if (calllist_indizes[ROUTE] != -1) {
-                    String[] routeStrings = m.group(calllist_indizes[ROUTE])
-                            .split(",");
-                    routeStrings[0] = routeStrings[0].replaceAll("\\\"", ""); // Alle
-                    // "
-                    // entfernen
-                    routeStrings[1] = routeStrings[1].replaceAll("\\\"", ""); // Alle
-                    // "
-                    // entfernen
-                    if (routeStrings[1].equals("")) {
-                        route = routeStrings[0]; // (Analoge??)
-                        // Festnetznummer
-                    } else if (routeStrings[1].equals("0")) {
-                        route = routeStrings[0]; // Festnetznummer
-                    } else if (routeStrings[1].equals("1")) {
-                        route = "SIP" + routeStrings[0]; // VoIP-Nummer
-                    } else
-                        Debug
-                                .err("Fehler in parseCallerData: Konnte Route nicht auflösen: "
-                                        + m.group(calllist_indizes[ROUTE]));
-                }
-                String[] durationStrings = m.group(calllist_indizes[DURATION])
-                        .split(":");
-                int duration = 0;
-                if (durationStrings.length == 1) {
-                    duration = Integer.parseInt(durationStrings[0]);
-                } else
-                    duration = Integer.parseInt(durationStrings[0]) * 3600
-                            + Integer.parseInt(durationStrings[1]) * 60;
-
-                list.add(new Call(jfritz, symbol, date, number, port, route,
-                        duration));
-
-            } catch (ParseException e) {
-                Debug.err(e.toString());
-            }
-        }
-        return list;
-    }
-
-    /**
      * creates number with area code prefix
      *
      * @param number
@@ -821,7 +662,7 @@ public class JFritzUtils {
         String postdata = "search=1&vorwahl=" + number;
         String data = "";
         try {
-            data = fetchDataFromURL(urlstr, postdata);
+            data = fetchDataFromURL(urlstr, postdata, true);
         } catch (Exception e) {
         }
         Debug.msg("DATA: " + data.trim());
@@ -900,7 +741,7 @@ public class JFritzUtils {
             String urlstr = "http://"
                     + JFritz.getProperty("box.address", "fritz.box")
                     + "/cgi-bin/webcm";
-            fetchDataFromURL(urlstr, postdata);
+            fetchDataFromURL(urlstr, postdata, true);
         } catch (UnsupportedEncodingException uee) {
         } catch (WrongPasswordException wpe) {
         } catch (IOException ioe) {
