@@ -1013,9 +1013,8 @@ public class CallerList extends AbstractTableModel {
     }
 
     public void removeEntries() {
-        if (JOptionPane.showConfirmDialog(jfritz.getJframe(), "Wirklich " // TODO
-                // I18N
-                + JFritz.getMessage("delete_entries") + "?",
+        if (JOptionPane.showConfirmDialog(jfritz.getJframe(),
+                JFritz.getMessage("really_delete_entries"),
                 JFritz.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             Debug.msg("Removing entries");
             int row[] = jfritz.getJframe().getCallerTable().getSelectedRows();

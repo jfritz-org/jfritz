@@ -260,7 +260,7 @@ public class CallerListPanel extends JPanel
 		lowerToolBar.addSeparator();
 
 		deleteEntriesButton = new JButton();
-		deleteEntriesButton.setToolTipText(JFritz.getMessage("delete_entries"));
+		deleteEntriesButton.setToolTipText(JFritz.getMessage("delete_entries").replaceAll("%N",""));
 		deleteEntriesButton.setActionCommand("delete_entry");
 		deleteEntriesButton.addActionListener(this);
 		deleteEntriesButton.setIcon(getImage("delete.png"));
@@ -274,7 +274,6 @@ public class CallerListPanel extends JPanel
 		searchFilter = new JTextField(JFritz.getProperty("filter.search", ""),
 				10);
 		searchFilter.addKeyListener(this);
-		// TODO
 
 		lowerToolBar.add(searchFilter);
 		button = new JButton(JFritz.getMessage("clear"));
@@ -679,8 +678,7 @@ public class CallerListPanel extends JPanel
 	}
 
 	public void setDeleteEntriesButton(int rows) {
-		deleteEntriesButton.setToolTipText(rows + " "
-				+ JFritz.getMessage("delete_entries"));
+		deleteEntriesButton.setToolTipText(JFritz.getMessage("delete_entries").replaceAll("%N", Integer.toString(rows)));
 		deleteEntriesButton.setEnabled(true);
 	}
 
@@ -690,7 +688,7 @@ public class CallerListPanel extends JPanel
 	}
 
 	public void disableDeleteEntriesButton() {
-		deleteEntriesButton.setToolTipText(JFritz.getMessage("delete_entries"));
+		deleteEntriesButton.setToolTipText(JFritz.getMessage("delete_entries").replaceAll("%N",""));
 		deleteEntriesButton.setEnabled(false);
 	}
 

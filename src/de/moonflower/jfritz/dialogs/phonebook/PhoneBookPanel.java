@@ -276,7 +276,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	 */
 	public void removeSelectedPersons() {
 		if (JOptionPane.showConfirmDialog(this,
-				JFritz.getMessage("delete_entries")+"?", JFritz.PROGRAM_NAME,
+				JFritz.getMessage("delete_entries").replaceAll("%N",""), JFritz.PROGRAM_NAME,
 				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 
 			int row[] = jfritz.getJframe().getPhoneBookPanel()
