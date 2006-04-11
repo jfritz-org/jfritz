@@ -382,7 +382,7 @@ public class JFritzWindow extends JFrame
 	 */
 	public JMenuBar createMenu() {
 		String menu_text = JFritz.PROGRAM_NAME;
-		if (JFritz.runsOn() == "mac")
+		if (JFritz.runsOn().equals("Mac"))
 			menu_text = "Ablage";
 
 		JMenu jfritzMenu = new JMenu(menu_text);
@@ -461,7 +461,7 @@ public class JFritzWindow extends JFrame
 
 		jfritzMenu.add(importMenu);
 
-		if (JFritz.runsOn() != "mac") {
+		if (!JFritz.runsOn().equals("Mac")) {
 			jfritzMenu.add(new JSeparator());
 			item = new JMenuItem(JFritz.getMessage("prog_exit"), 'x');
 			// item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
@@ -499,7 +499,7 @@ public class JFritzWindow extends JFrame
 
 		optionsMenu.add(languageMenu);
 
-		if (JFritz.runsOn() != "mac") {
+		if (!JFritz.runsOn().equals("Mac")) {
 			item = new JMenuItem(JFritz.getMessage("config"), 'e');
 			item.setActionCommand("config");
 			item.addActionListener(this);
@@ -532,7 +532,7 @@ public class JFritzWindow extends JFrame
 		item.addActionListener(this);
 		helpMenu.add(item);
 
-		if (JFritz.runsOn() != "mac") {
+		if (!JFritz.runsOn().equals("Mac")) {
 			helpMenu.add(new JSeparator());
 			item = new JMenuItem(JFritz.getMessage("prog_info"), 'i');
 			item.setActionCommand("about");
