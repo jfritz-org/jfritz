@@ -88,6 +88,7 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 
 		JButton storeButton = new JButton(JFritz.getMessage(
 				"store_to_box"));
+		storeButton.setEnabled(false);
 		storeButton.setActionCommand("storeSIP");
 		storeButton.addActionListener(this);
 
