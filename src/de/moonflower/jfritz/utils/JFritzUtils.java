@@ -339,7 +339,7 @@ public class JFritzUtils {
 
         if (url != null) {
             urlConn = url.openConnection();
-            urlConn.setDoInput(true);
+            urlConn.setDoInput(retrieveData);
             urlConn.setDoOutput(true);
             urlConn.setUseCaches(false);
             // Sending postdata
