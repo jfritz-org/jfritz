@@ -352,24 +352,19 @@ public class JFritzUtils {
                 printout.close();
             }
 
-            if (retrieveData) {
             	BufferedReader d;
 
             	try {
             		// Get response data
             		d = new BufferedReader(new InputStreamReader(urlConn
             				.getInputStream()));
-            		int i = 0;
             		String str;
             		while (null != ((str = HTMLUtil.stripEntities(d.readLine())))) {
             			// Password seems to be wrong
-            			// if (str.indexOf("FEHLER: Das angegebene Kennwort ") > 0)
             			if (str.indexOf("FRITZ!Box Anmeldung") > 0)
             				wrong_pass = true;
-            			// Skip a few lines
-            			// if (i > 778)
-            			data += str;
-            			i++;
+            			if (retrieveData)
+            				data += str;
             		}
             		d.close();
             	} catch (IOException e1) {
@@ -379,7 +374,6 @@ public class JFritzUtils {
             	if (wrong_pass)
             		throw new WrongPasswordException("Password invalid");
             	}
-        }
         return data;
     }
 
