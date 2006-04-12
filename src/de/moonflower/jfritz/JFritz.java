@@ -42,8 +42,12 @@
  * CHANGELOG:
  * (TODO: Checken, ob alle Bibliotheken vorhanden sind)
  * (TODO: Neue Kurzwahlen von der Beta-FW ins Telefonbuch aufnehmen)
- * TODO: Import der Anrufliste im XML-Format beim Kontextmenü einbauen
+ * (TODO: Import der Anrufliste im XML-Format beim Kontextmenü einbauen)
  * TODO: Einstelloption, wie lange die Popups geöffnet bleiben sollen
+ * TODO: Filter für Ports
+ * TODO: Wahl der Sprache sollte gespeichert werden
+ * TODO: Internationalisierung abschließen
+ * TODO: Vergleich auf doppelte Anrufe optimieren (HASH-Tabelle?)
  *
  * JFritz 0.6.0
  * - Bugfix: MAC-Handling funktioniert wieder
@@ -385,7 +389,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.227 2006/04/11 17:39:55 robotniko Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.228 2006/04/12 12:10:21 robotniko Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
