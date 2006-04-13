@@ -50,6 +50,9 @@
  * TODO: Vergleich auf doppelte Anrufe optimieren (HASH-Tabelle?)
  *
  * JFritz 0.6.0
+ * - Neu: Verbesserte Anzeige des aus- und eingehenden Verbindungstyps bei verwendung des JFritz-Anrufmonitors im Format "interne MSN (Leitungsart)", z.B. "1234 (ISDN)" oder "1234 (SIP)" bei eingehenden Anrufen oder "56789 (88sdg4@dus.net)" bei ausgehenden
+ * - Bugfix: Anrufmonitor zeigt ausgehende und eingehende Anrufe im gleichen Format an
+ * - Bugfix: Neues JFritz-Anrufmonitor-Format besser unterstützt, jetzt wieder Anzeige von angerufener MSN
  * - Bugfix: MAC-Handling funktioniert wieder
  * - Bugfix: Wahlhilfe im Telefonbuch funktioniert jetzt bei englischer Sprache (Brian)
  * - Bugfix: Beim Metal-LAF werden jetzt immer die Metal-Decorations verwendet.
@@ -389,7 +392,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/";
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.229 2006/04/13 12:42:54 kleinch Exp $";
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.230 2006/04/13 12:50:38 kleinch Exp $";
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>";
 
@@ -1214,7 +1217,6 @@ public final class JFritz {
 	            if (!name.equals(JFritz.getMessage("unknown"))) {
 	                outstring = outstring + " (" + name + ")";
 	            }
-
 	            if (!calledstr.equals(JFritz.getMessage("unknown"))) {
 	                outstring = outstring + "\n " + JFritz.getMessage("to") + " " + calledstr;
 	            }
