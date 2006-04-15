@@ -195,32 +195,23 @@ public class CallDialog extends JDialog implements ActionListener {
 						break;
 					case FritzBoxFirmware.BOXTYPE_FRITZBOX_ATA :
 						break;
-					case FritzBoxFirmware.BOXTYPE_FRITZBOX_5050 : {
-						port.addItem("ISDN Alle");
-						port.addItem("ISDN 1");
-						port.addItem("ISDN 2");
-						port.addItem("ISDN 3");
-						port.addItem("ISDN 4");
-						port.addItem("ISDN 5");
-						port.addItem("ISDN 6");
-						port.addItem("ISDN 7");
-						port.addItem("ISDN 8");
-						port.addItem("ISDN 9");
-						break;
+					case FritzBoxFirmware.BOXTYPE_FRITZBOX_5050:
+					case FritzBoxFirmware.BOXTYPE_FRITZBOX_7050:
+					case FritzBoxFirmware.BOXTYPE_FRITZBOX_7170:
+						 {
+							 port.addItem("ISDN Alle");
+							 port.addItem("ISDN 1");
+							 port.addItem("ISDN 2");
+							 port.addItem("ISDN 3");
+							 port.addItem("ISDN 4");
+							 port.addItem("ISDN 5");
+							 port.addItem("ISDN 6");
+							 port.addItem("ISDN 7");
+							 port.addItem("ISDN 8");
+							 port.addItem("ISDN 9");
+							 break;
+						 }
 					}
-					case FritzBoxFirmware.BOXTYPE_FRITZBOX_7050 : {
-						port.addItem("ISDN Alle");
-						port.addItem("ISDN 1");
-						port.addItem("ISDN 2");
-						port.addItem("ISDN 3");
-						port.addItem("ISDN 4");
-						port.addItem("ISDN 5");
-						port.addItem("ISDN 6");
-						port.addItem("ISDN 7");
-						port.addItem("ISDN 8");
-						port.addItem("ISDN 9");
-					}
-				}
 			}
 			topPane.add(port, c);
 
