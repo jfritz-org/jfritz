@@ -209,7 +209,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 				setStatus();
 			}
 			else {
-				jfritz.getJframe().setStatus( rows.length + " "+JFritz.getMessage("phonebook_chosenEntries"));
+				jfritz.getJframe().setStatus( JFritz.getMessage("phonebook_chosenEntries").replaceAll("%N", Integer.toString(rows.length)));
 			}
 		}
 	}
@@ -379,7 +379,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	public void setStatus() {
 		PhoneBook pb = (PhoneBook) phoneBookTable.getModel();
 		int entries = pb.getFilteredPersons().size();
-		jfritz.getJframe().setStatus(entries + " "+JFritz.getMessage("phonebook_chosenEntries"));
+		jfritz.getJframe().setStatus(JFritz.getMessage("entries").replaceAll("%N", Integer.toString(entries)));
 	}
 
 	public void importFromXML () {

@@ -169,7 +169,7 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 		} else if (e.getActionCommand() == "storeSIP") {
 			Debug.err("Not yet implemented");
 			JOptionPane.showMessageDialog(null,
-					"Geduld!\n\nFunktion noch nicht implementiert.");
+					JFritz.getMessage("not_implemented"));
 		}
 
 	}
@@ -209,6 +209,6 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 	}
 
 	public void setStatus() {
-		jfritz.getJframe().setStatus(getDataModel().getQuickDials().size() + " Einträge");
+		jfritz.getJframe().setStatus(JFritz.getMessage("entries").replaceAll("%N", Integer.toString(getDataModel().getQuickDials().size())));
 	}
 }

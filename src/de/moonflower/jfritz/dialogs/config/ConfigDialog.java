@@ -884,12 +884,12 @@ protected JPanel createOtherPane() {
                     } catch (WrongPasswordException e1) {
                         Debug.err("Password wrong!");
                         boxtypeLabel.setForeground(Color.RED);
-                        boxtypeLabel.setText("Passwort ungültig!");
+                        boxtypeLabel.setText(JFritz.getMessage("wrong_password"));
                         firmware = null;
                     } catch (IOException e1) {
                         Debug.err("Address wrong!");
                         boxtypeLabel.setForeground(Color.RED);
-                        boxtypeLabel.setText("Box-Adresse ungültig!");
+                        boxtypeLabel.setText(JFritz.getMessage("box_address_wrong"));
                         firmware = null;
                     }
                 } else if (e.getActionCommand().equals("fetchSIP")) {
@@ -903,11 +903,14 @@ protected JPanel createOtherPane() {
                         jfritz.getCallerlist().fireTableDataChanged();
 
                     } catch (WrongPasswordException e1) {
-                        jfritz.errorMsg("Passwort ungültig!");
+                        jfritz.errorMsg(JFritz.getMessage("wrong_password"));
+                        Debug.errDlg(JFritz.getMessage("wrong_password"));
                     } catch (IOException e1) {
-                        jfritz.errorMsg("FRITZ!Box-Adresse ungültig!");
+                        jfritz.errorMsg(JFritz.getMessage("box_address_wrong"));
+                        Debug.errDlg(JFritz.getMessage("box_address_wrong"));
                     } catch (InvalidFirmwareException e1) {
-                        jfritz.errorMsg("Firmware-Erkennung gescheitert!");
+                        jfritz.errorMsg(JFritz.getMessage("unknown_firmware"));
+                        Debug.errDlg(JFritz.getMessage("unknown_firmware"));
                     }
                 }
             }
@@ -963,7 +966,7 @@ protected JPanel createOtherPane() {
                     + firmware.getFirmwareVersion() + ")");
         } else {
             boxtypeLabel.setForeground(Color.RED);
-            boxtypeLabel.setText("unbekannt");
+            boxtypeLabel.setText(JFritz.getMessage("unknown"));
         }
     }
 

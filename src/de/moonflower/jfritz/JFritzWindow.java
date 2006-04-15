@@ -953,8 +953,8 @@ public class JFritzWindow extends JFrame
 		int duration = jfritz.getCallerlist().getTotalDuration();
 		int hours = duration / 3600;
 		int mins = duration % 3600 / 60;
-		String status = jfritz.getCallerlist().getRowCount() + " "
-				+ JFritz.getMessage("entries") + ", "
+		String status =
+				JFritz.getMessage("telephone_entries").replaceAll("%N",Integer.toString(jfritz.getCallerlist().getRowCount())) + ", "
 				+ JFritz.getMessage("total_duration") + ": " + hours + "h "
 				+ mins + " min " + " (" + duration / 60 + " min)";
 		;
