@@ -15,6 +15,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+
+import de.moonflower.jfritz.JFritz;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -36,13 +39,13 @@ public class CallMessageDlg extends JDialog implements ActionListener{
 			timer.schedule(task, 10000);
 
 			if (caller != null) {
-				setTitle("JFritz - Ankommender Anruf");
+				setTitle(JFritz.getMessage("dialog_title_callin")); //$NON-NLS-1$
 			}
 			else {
-				setTitle("JFritz - Abgehender Anruf");
+				setTitle(JFritz.getMessage("dialog_title_callout")); //$NON-NLS-1$
 			}
 
-			JButton closeButton = new JButton("OK");
+			JButton closeButton = new JButton(JFritz.getMessage("okay")); //$NON-NLS-1$
 			closeButton.addActionListener(this);
 			getContentPane().setLayout(new BorderLayout(15, 15));
 			getContentPane().add(closeButton, BorderLayout.SOUTH);
@@ -54,7 +57,7 @@ public class CallMessageDlg extends JDialog implements ActionListener{
 			setLocation(x, y);
 			ImageIcon boxicon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 					getClass().getResource(
-							"/de/moonflower/jfritz/resources/images/callerlist.png")));
+							"/de/moonflower/jfritz/resources/images/callerlist.png"))); //$NON-NLS-1$
 			JLabel label = new JLabel(boxicon);
 			label.setIconTextGap(10);
 			getContentPane().add(label, BorderLayout.WEST);
@@ -65,20 +68,21 @@ public class CallMessageDlg extends JDialog implements ActionListener{
 			JLabel fromLabel;
 			JLabel toLabel;
 			if (caller != null) {
-				headerLabel = new JLabel("Ankommender Anruf");
-				if (caller.equals("")) {
+				headerLabel = new JLabel(JFritz.getMessage("dialog_title_callin"));	//$NON-NLS-1$
+				if (caller.equals("")) { //$NON-NLS-1$
 					fromLabel = new JLabel();
 				}
 				else {
-					fromLabel = new JLabel("von " + caller);
-					toLabel = new JLabel("an " + called);
+					fromLabel = new JLabel(JFritz.getMessage("from") + caller);	//$NON-NLS-1$
+					toLabel = new JLabel(JFritz.getMessage("to") + called);	//$NON-NLS-1$
 				}
-				toLabel = new JLabel("an " + called);
+				toLabel = new JLabel(JFritz.getMessage("through_provider") + called);	//$NON-NLS-1$
 			}
 			else {
-				headerLabel = new JLabel("Abgehender Anruf an");
+				headerLabel = new JLabel(JFritz.getMessage("dialog_title_callout")	//$NON-NLS-1$
+						+ " " + JFritz.getMessage("through_provider")); //$NON-NLS-1$, 	//$NON-NLS-2$
 				fromLabel = new JLabel(called);
-				toLabel = new JLabel("von " + caller);
+				toLabel = new JLabel(JFritz.getMessage("from") + caller);	//$NON-NLS-1$
 			}
 			mainPane.add(headerLabel);
 			mainPane.add(fromLabel);

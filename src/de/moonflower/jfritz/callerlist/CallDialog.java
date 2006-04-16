@@ -95,14 +95,14 @@ public class CallDialog extends JDialog implements ActionListener {
 
 	private void drawDialog() {
 		NoticeDialog info = new NoticeDialog(
-				jfritz,"legalInfo.telephoneCharges",
-				JFritz.getMessage("telefonCharges_Warning"));
+				jfritz,"legalInfo.telephoneCharges", //$NON-NLS-1$
+				JFritz.getMessage("telefonCharges_Warning")); //$NON-NLS-1$
 
 		info.setVisible(true);
 		info.dispose();
 		if (info.isAccepted()) {
 			super.dialogInit();
-			setTitle(JFritz.getMessage("call"));
+			setTitle(JFritz.getMessage("call")); //$NON-NLS-1$
 			// this.setAlwaysOnTop(true); //erst ab Java V.5.0 möglich
 			setModal(true);
 			getContentPane().setLayout(new BorderLayout());
@@ -120,7 +120,7 @@ public class CallDialog extends JDialog implements ActionListener {
 			c.anchor = GridBagConstraints.WEST;
 
 			c.gridy = 1;
-			JLabel label = new JLabel(JFritz.getMessage("number")+": ");
+			JLabel label = new JLabel(JFritz.getMessage("number")+": "); //$NON-NLS-1$,  //$NON-NLS-2$
 			topPane.add(label, c);
 			if (this.numbers.size() == 1) {
 				cboNumber = new JLabel(((PhoneNumber) numbers.elementAt(0))
@@ -136,7 +136,7 @@ public class CallDialog extends JDialog implements ActionListener {
 			}
 			topPane.add((Component) cboNumber, c);
 			c.gridy = 2;
-			label = new JLabel(JFritz.getMessage("extension")+": ");
+			label = new JLabel(JFritz.getMessage("extension")+": "); //$NON-NLS-1$,  //$NON-NLS-2$
 			topPane.add(label, c);
 
 			boolean isdone = false;
@@ -144,71 +144,80 @@ public class CallDialog extends JDialog implements ActionListener {
 			while (!isdone) {
 				try {
 					firmware = JFritzUtils.detectBoxType(JFritz
-							.getProperty("box.firmware"), JFritz
-							.getProperty("box.address"), Encryption
-							.decrypt(JFritz.getProperty("box.password")));
+							.getProperty("box.firmware"), JFritz //$NON-NLS-1$
+							.getProperty("box.address"), Encryption //$NON-NLS-1$
+							.decrypt(JFritz.getProperty("box.password"))); //$NON-NLS-1$
 					isdone = true;
 				} catch (WrongPasswordException e) {
 					jfritz.getJframe().setStatus(
-							JFritz.getMessage("password_wrong"));
+							JFritz.getMessage("password_wrong")); //$NON-NLS-1$
 					String password = jfritz.getJframe().showPasswordDialog(
 							Encryption.decrypt(JFritz.getProperty(
-									"box.password", "")));
+									"box.password", ""))); //$NON-NLS-1$,  //$NON-NLS-2$
 					if (password == null) { // Dialog canceled
 						isdone = true;
 					} else {
-						JFritz.setProperty("box.password", Encryption
+						JFritz.setProperty("box.password", Encryption //$NON-NLS-1$
 								.encrypt(password));
 					}
 				} catch (IOException e) {
 					// Warten, falls wir von einem Standby aufwachen,
 					// oder das Netzwerk temporär nicht erreichbar ist.
 					if (connectionFailures < 5) {
-						Debug.msg("Waiting for FritzBox, retrying ...");
+						Debug.msg("Waiting for FritzBox, retrying ..."); //$NON-NLS-1$
 						connectionFailures++;
 					} else {
-						Debug.msg("Callerlist Box not found");
+						Debug.msg("Callerlist Box not found"); //$NON-NLS-1$
 						String box_address = jfritz.getJframe()
 								.showAddressDialog(
-										JFritz.getProperty("box.address",
-												"fritz.box"));
+										JFritz.getProperty("box.address", //$NON-NLS-1$
+												"fritz.box")); //$NON-NLS-1$
 						if (box_address == null) { // Dialog canceled
 							isdone = true;
 						} else {
-							JFritz.setProperty("box.address", box_address);
+							JFritz.setProperty("box.address", box_address); //$NON-NLS-1$
 						}
 					}
 				}
 			}
 
 			port = new JComboBox();
-			port.addItem("Fon 1");
-			port.addItem("Fon 2");
+			port.addItem("Fon 1"); //$NON-NLS-1$
 			if (firmware != null) {
 				switch (firmware.getBoxType()) {
 					case FritzBoxFirmware.BOXTYPE_FRITZBOX_FON :
+						port.addItem("Fon 2"); //$NON-NLS-1$
 						break;
 					case FritzBoxFirmware.BOXTYPE_FRITZBOX_FON_WLAN :
-						port.addItem("Analog Alle"); // ggf. kann dies auch
-														// für die anderen Boxen
-														// gelten?
+						// ggf. kann dies auch für die anderen Boxen gelten?
+						port.addItem("Fon 2"); //$NON-NLS-1$
+						port.addItem(JFritz.getMessage("analog_telephones_all"));  //$NON-NLS-1$
 						break;
 					case FritzBoxFirmware.BOXTYPE_FRITZBOX_ATA :
+						port.addItem("Fon 2"); //$NON-NLS-1$
+						break;
+					case FritzBoxFirmware.BOXTYPE_FRITZBOX_5010:
+						// die 5010 hat nur einen analogen Anschluss
 						break;
 					case FritzBoxFirmware.BOXTYPE_FRITZBOX_5050:
 					case FritzBoxFirmware.BOXTYPE_FRITZBOX_7050:
 					case FritzBoxFirmware.BOXTYPE_FRITZBOX_7170:
 						 {
-							 port.addItem("ISDN Alle");
-							 port.addItem("ISDN 1");
-							 port.addItem("ISDN 2");
-							 port.addItem("ISDN 3");
-							 port.addItem("ISDN 4");
-							 port.addItem("ISDN 5");
-							 port.addItem("ISDN 6");
-							 port.addItem("ISDN 7");
-							 port.addItem("ISDN 8");
-							 port.addItem("ISDN 9");
+							 port.addItem("Fon 2"); //$NON-NLS-1$
+							 port.addItem("Fon 3"); //$NON-NLS-1$
+						 }
+					case FritzBoxFirmware.BOXTYPE_FRITZBOX_5012:
+						 {
+							 port.addItem("ISDN Alle"); //$NON-NLS-1$
+							 port.addItem("ISDN 1"); //$NON-NLS-1$
+							 port.addItem("ISDN 2"); //$NON-NLS-1$
+							 port.addItem("ISDN 3"); //$NON-NLS-1$
+							 port.addItem("ISDN 4"); //$NON-NLS-1$
+							 port.addItem("ISDN 5"); //$NON-NLS-1$
+							 port.addItem("ISDN 6"); //$NON-NLS-1$
+							 port.addItem("ISDN 7"); //$NON-NLS-1$
+							 port.addItem("ISDN 8"); //$NON-NLS-1$
+							 port.addItem("ISDN 9"); //$NON-NLS-1$
 							 break;
 						 }
 					}
@@ -216,12 +225,12 @@ public class CallDialog extends JDialog implements ActionListener {
 			topPane.add(port, c);
 
 			// Bottom Pane
-			okButton = new JButton(JFritz.getMessage("call"));
-			okButton.setActionCommand("call");
+			okButton = new JButton(JFritz.getMessage("call")); //$NON-NLS-1$
+			okButton.setActionCommand("call"); //$NON-NLS-1$
 			okButton.addActionListener(this);
 
-			cancelButton = new JButton(JFritz.getMessage("cancel"));
-			cancelButton.setActionCommand("close");
+			cancelButton = new JButton(JFritz.getMessage("cancel")); //$NON-NLS-1$
+			cancelButton.setActionCommand("close"); //$NON-NLS-1$
 			cancelButton.addActionListener(this);
 
 			bottomPane.add(okButton);
@@ -239,18 +248,18 @@ public class CallDialog extends JDialog implements ActionListener {
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals("call")) {
+		if (e.getActionCommand().equals("call")) { //$NON-NLS-1$
 			if (cboNumber.getClass().toString().equals(
-					"class javax.swing.JLabel"))
+					"class javax.swing.JLabel")) //$NON-NLS-1$
 				JFritzUtils.doCall(((JLabel) cboNumber).getText(), port
 						.getSelectedItem().toString(), firmware);
 			if (cboNumber.getClass().toString().equals(
-					"class javax.swing.JComboBox"))
+					"class javax.swing.JComboBox")) //$NON-NLS-1$
 				JFritzUtils.doCall(((JComboBox) cboNumber).getSelectedItem()
 						.toString(), port.getSelectedItem().toString(),
 						firmware);
 			setVisible(false);
-		} else if (e.getActionCommand().equals("close")) {
+		} else if (e.getActionCommand().equals("close")) { //$NON-NLS-1$
 			setVisible(false);
 		}
 	}

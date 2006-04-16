@@ -18,7 +18,7 @@ public class ShutdownThread extends Thread {
 
 	public void run() {
 
-		Debug.msg("Starting shutdown thread..");
+		Debug.msg("Starting shutdown thread.."); //$NON-NLS-1$
 
 		if (jfritz.getJframe() != null) {
 			/*
@@ -26,8 +26,8 @@ public class ShutdownThread extends Thread {
 			jfritz.getCallerlist().saveToXMLFile(JFritz.CALLS_FILE, true);
 			*/
 
-			JFritz.setProperty("jfritz.isRunning","false");
-			Debug.msg("Multiple instance lock: release lock.");
+			JFritz.setProperty("jfritz.isRunning","false"); //$NON-NLS-1$, //$NON-NLS-2$
+			Debug.msg("Multiple instance lock: release lock."); //$NON-NLS-1$
 			jfritz.saveProperties();
 			jfritz.getJframe().saveQuickDials();
 
@@ -35,7 +35,7 @@ public class ShutdownThread extends Thread {
 				jfritz.getCallMonitor().stopCallMonitor();
 			}
 		}
-		Debug.msg("Shutdown thread done.");
+		Debug.msg("Shutdown thread done."); //$NON-NLS-1$
 
 	}
 }

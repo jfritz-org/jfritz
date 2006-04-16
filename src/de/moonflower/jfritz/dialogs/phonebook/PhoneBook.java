@@ -44,20 +44,20 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class PhoneBook extends AbstractTableModel {
 	private static final long serialVersionUID = 1;
-	private static final String PHONEBOOK_DTD_URI = "http://jfritz.moonflower.de/dtd/phonebook.dtd";
+	private static final String PHONEBOOK_DTD_URI = "http://jfritz.moonflower.de/dtd/phonebook.dtd"; //$NON-NLS-1$
 
 	// TODO Write correct dtd
-	private static final String PHONEBOOK_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<!-- DTD for JFritz phonebook -->"
-			+ "<!ELEMENT firstname (commment?,entry*)>"
-			+ "<!ELEMENT middlename (#PCDATA)>"
-			+ "<!ELEMENT lastname (#PCDATA)>"
-			+ "<!ELEMENT entry (firstname?,middlename?,lastname?)>";
+	private static final String PHONEBOOK_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" //$NON-NLS-1$
+			+ "<!-- DTD for JFritz phonebook -->" //$NON-NLS-1$
+			+ "<!ELEMENT firstname (commment?,entry*)>" //$NON-NLS-1$
+			+ "<!ELEMENT middlename (#PCDATA)>" //$NON-NLS-1$
+			+ "<!ELEMENT lastname (#PCDATA)>" //$NON-NLS-1$
+			+ "<!ELEMENT entry (firstname?,middlename?,lastname?)>"; //$NON-NLS-1$
 
-	private final String columnNames[] = { "private_entry", "fullName", "telephoneNumber",
-			"address", "city", "last_call" };
+	private final String columnNames[] = { "private_entry", "fullName", "telephoneNumber", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+			"address", "city", "last_call" }; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 
-	private static final String PATTERN_THUNDERBRID_CSV = ",";
+	private static final String PATTERN_THUNDERBRID_CSV = ","; //$NON-NLS-1$
 
 	private Vector filteredPersons;
 
@@ -77,7 +77,7 @@ public class PhoneBook extends AbstractTableModel {
 
 	private boolean sortDirection = true;
 
-    private final static String EXPORT_CSV_FORMAT = "\"Private\";\"Last Name\";\"First Name\";\"Company\";\"Street\";\"ZIP Code\";\"City\";\"E-Mail\";\"Home\";\"Mobile\";\"Homezone\";\"Business\";\"Other\";\"Fax\";\"Sip\";\"Main\"";
+    private final static String EXPORT_CSV_FORMAT = "\"Private\";\"Last Name\";\"First Name\";\"Company\";\"Street\";\"ZIP Code\";\"City\";\"E-Mail\";\"Home\";\"Mobile\";\"Homezone\";\"Business\";\"Other\";\"Fax\";\"Sip\";\"Main\""; //$NON-NLS-1$
 	/**
 	 * Sort table model rows by a specific column and direction
 	 *
@@ -87,10 +87,8 @@ public class PhoneBook extends AbstractTableModel {
 	 *            Order of sorting
 	 */
 	public void sortAllFilteredRowsBy(int col, boolean asc) {
-		//		Debug.msg("Sorting column " + col + " " + asc);
 		Collections.sort(filteredPersons, new ColumnSorter(col, asc));
 		fireTableDataChanged();
-//		fireTableStructureChanged();
 	}
 
 	/**
@@ -116,7 +114,7 @@ public class PhoneBook extends AbstractTableModel {
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		String columnName = getColumnName(columnIndex);
 		//If the wahlhilfe doesnt work, check here again!
-		if (columnName.equals(JFritz.getMessage("telephoneNumber")))
+		if (columnName.equals(JFritz.getMessage("telephoneNumber"))) //$NON-NLS-1$
 			return true;
 		return false;
 	}
@@ -131,7 +129,7 @@ public class PhoneBook extends AbstractTableModel {
 	}
 
 	public void sortAllUnfilteredRows() {
-		Debug.msg("Sorting unfiltered data");
+		Debug.msg("Sorting unfiltered data"); //$NON-NLS-1$
 		Collections.sort(unfilteredPersons, new ColumnSorter(1, true));
 		// Resort filtered data
 		Collections.sort(filteredPersons, new ColumnSorter(sortColumn,
@@ -167,8 +165,8 @@ public class PhoneBook extends AbstractTableModel {
 				o2 = v2.getFullname().toString().toUpperCase();
 				break;
 			case 2:
-                o1 = "";
-                o2 = "";
+                o1 = ""; //$NON-NLS-1$
+                o2 = ""; //$NON-NLS-1$
                 if (v1.getStandardTelephoneNumber()!= null)
                     o1 = v1.getStandardTelephoneNumber().toString();
                 if (v2.getStandardTelephoneNumber()!= null)
@@ -183,8 +181,8 @@ public class PhoneBook extends AbstractTableModel {
 			    o2 = v2.getPostalCode() + v1.getCity().toUpperCase();
 			    break;
 			case 5:
-                o1 = "";
-                o2 = "";
+                o1 = ""; //$NON-NLS-1$
+                o2 = ""; //$NON-NLS-1$
                 if (jfritz.getCallerlist().findLastCall(v1) != null)
                     o1 = jfritz.getCallerlist().findLastCall(v1).getCalldate();
                 if (jfritz.getCallerlist().findLastCall(v2) != null)
@@ -287,9 +285,9 @@ public class PhoneBook extends AbstractTableModel {
 	 * @param filename
 	 */
 	public synchronized void saveToBITFBFDialerFormat(String filename) {
-		Debug.msg("Saving to BIT FBF Dialer file " + filename);
+		Debug.msg("Saving to BIT FBF Dialer file " + filename); //$NON-NLS-1$
 		try {
-			BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "UTF8"));
+			BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "UTF8")); //$NON-NLS-1$
 			Enumeration en1 = unfilteredPersons.elements();
 
 			Enumeration en2;
@@ -301,12 +299,12 @@ public class PhoneBook extends AbstractTableModel {
 
 			while (en1.hasMoreElements()) {
 				current = (Person) en1.nextElement();
-				name = "";
+				name = ""; //$NON-NLS-1$
 				if (current.getFullname().length() > 0) {
 					if (current.getLastName().length() > 0) name += current.getLastName();
-					if (current.getLastName().length() > 0 && current.getFirstName().length() > 0) name += ", ";
+					if (current.getLastName().length() > 0 && current.getFirstName().length() > 0) name += ", "; //$NON-NLS-1$
 					if (current.getFirstName().length() > 0) name += current.getFirstName();
-					if (current.getCompany().length() > 0) name += " (" + current.getCompany() + ")";
+					if (current.getCompany().length() > 0) name += " (" + current.getCompany() + ")";   //$NON-NLS-1$,   //$NON-NLS-2$
 				}
 				else if (current.getCompany().length() > 0) name += current.getCompany();
 
@@ -315,17 +313,17 @@ public class PhoneBook extends AbstractTableModel {
 					while (en2.hasMoreElements()) {
 						pn = (PhoneNumber) en2.nextElement();
 						nr = pn.getIntNumber();
-						if (nr.startsWith("+49")) nr = "0" + nr.substring(3, nr.length());
+						if (nr.startsWith("+49")) nr = "0" + nr.substring(3, nr.length()); //$NON-NLS-1$,  //$NON-NLS-2$
 						type = pn.getType();
 
-						pw.write(nr + "=" + name);
+						pw.write(nr + "=" + name); //$NON-NLS-1$
 						pw.newLine();
 					}
 				}
 			}
 			pw.close();
 		} catch (Exception e) {
-			Debug.err("Could not write file!");
+			Debug.err("Could not write file!"); //$NON-NLS-1$
 		}
 	}
 
@@ -335,9 +333,9 @@ public class PhoneBook extends AbstractTableModel {
 	 * @param filename
 	 */
 	public synchronized void saveToCallMonitorFormat(String filename) {
-		Debug.msg("Saving to Call Monitor file " + filename);
+		Debug.msg("Saving to Call Monitor file " + filename); //$NON-NLS-1$
 		try {
-			BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "UTF8"));
+			BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "UTF8")); //$NON-NLS-1$
 			Enumeration en1 = unfilteredPersons.elements();
 
 			Enumeration en2;
@@ -349,12 +347,12 @@ public class PhoneBook extends AbstractTableModel {
 
 			while (en1.hasMoreElements()) {
 				current = (Person) en1.nextElement();
-				name = "";
+				name = ""; //$NON-NLS-1$
 				if (current.getFullname().length() > 0) {
 					if (current.getLastName().length() > 0) name += current.getLastName();
-					if (current.getLastName().length() > 0 && current.getFirstName().length() > 0) name += ", ";
+					if (current.getLastName().length() > 0 && current.getFirstName().length() > 0) name += ", "; //$NON-NLS-1$
 					if (current.getFirstName().length() > 0) name += current.getFirstName();
-					if (current.getCompany().length() > 0) name += " (" + current.getCompany() + ")";
+					if (current.getCompany().length() > 0) name += " (" + current.getCompany() + ")";  //$NON-NLS-1$,  //$NON-NLS-2$
 				}
 				else if (current.getCompany().length() > 0) name += current.getCompany();
 
@@ -363,17 +361,17 @@ public class PhoneBook extends AbstractTableModel {
 					while (en2.hasMoreElements()) {
 						pn = (PhoneNumber) en2.nextElement();
 						nr = pn.getIntNumber();
-						if (nr.startsWith("+49")) nr = "0" + nr.substring(3, nr.length());
+						if (nr.startsWith("+49")) nr = "0" + nr.substring(3, nr.length()); //$NON-NLS-1$,  //$NON-NLS-2$
 						type = pn.getType();
 
-						pw.write("\"" + name + "\",\"" + nr + "\"");
+						pw.write("\"" + name + "\",\"" + nr + "\""); //$NON-NLS-1$, //$NON-NLS-2$,  //$NON-NLS-3$
 						pw.newLine();
 					}
 				}
 			}
 			pw.close();
 		} catch (Exception e) {
-			Debug.err("Could not write file!");
+			Debug.err("Could not write file!"); //$NON-NLS-1$
 		}
 	}
 
@@ -383,108 +381,102 @@ public class PhoneBook extends AbstractTableModel {
 	 * @param filename
 	 */
 	public synchronized void saveToXMLFile(String filename) {
-		Debug.msg("Saving to file " + filename);
+		Debug.msg("Saving to file " + filename); //$NON-NLS-1$
 		try {
 		        BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
-		            new FileOutputStream(filename), "UTF8"));
-			pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		            new FileOutputStream(filename), "UTF8")); //$NON-NLS-1$
+			pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
 			pw.newLine();
 //			pw.write("<!DOCTYPE phonebook SYSTEM \"" + PHONEBOOK_DTD_URI
 //					+ "\">");
 //			pw.newLine();
-			pw.write("<phonebook>");
+			pw.write("<phonebook>"); //$NON-NLS-1$
 			pw.newLine();
-			pw.write("<comment>Phonebook for " + JFritz.PROGRAM_NAME + " v"
-					+ JFritz.PROGRAM_VERSION + "</comment>");
+			pw.write("<comment>Phonebook for " + JFritz.PROGRAM_NAME + " v" //$NON-NLS-1$,  //$NON-NLS-2$
+					+ JFritz.PROGRAM_VERSION + "</comment>"); //$NON-NLS-1$
 			pw.newLine();
 			Enumeration en = unfilteredPersons.elements();
 			while (en.hasMoreElements()) {
 				Person current = (Person) en.nextElement();
-				pw.write("<entry private=\"" + current.isPrivateEntry() + "\">");
+				pw.write("<entry private=\"" + current.isPrivateEntry() + "\">"); //$NON-NLS-1$,  //$NON-NLS-2$
 				pw.newLine();
 				if (current.getFullname().length() > 0) {
-					pw.write("\t<name>");
+					pw.write("\t<name>"); //$NON-NLS-1$
 					pw.newLine();
 					if (current.getFirstName().length() > 0)
-						pw.write("\t\t<firstname>" + JFritzUtils.convertSpecialChars(current.getFirstName())
-								+ "</firstname>");
+						pw.write("\t\t<firstname>" + JFritzUtils.convertSpecialChars(current.getFirstName()) //$NON-NLS-1$
+								+ "</firstname>"); //$NON-NLS-1$
 					pw.newLine();
 					if (current.getLastName().length() > 0)
-						pw.write("\t\t<lastname>" + JFritzUtils.convertSpecialChars(current.getLastName())
-								+ "</lastname>");
+						pw.write("\t\t<lastname>" + JFritzUtils.convertSpecialChars(current.getLastName()) //$NON-NLS-1$
+								+ "</lastname>"); //$NON-NLS-1$
 					pw.newLine();
-					pw.write("\t</name>");
+					pw.write("\t</name>"); //$NON-NLS-1$
 					pw.newLine();
 					if (current.getCompany().length() > 0)
-						pw.write("\t<company>" + JFritzUtils.convertSpecialChars(current.getCompany())
-								+ "</company>");
+						pw.write("\t<company>" + JFritzUtils.convertSpecialChars(current.getCompany()) //$NON-NLS-1$
+								+ "</company>"); //$NON-NLS-1$
 					pw.newLine();
 				}
 
 				if ((current.getStreet().length() > 0)
 						|| (current.getPostalCode().length() > 0)
 						|| (current.getCity().length() > 0)) {
-					pw.write("\t<address>");
+					pw.write("\t<address>"); //$NON-NLS-1$
 					pw.newLine();
 					if (current.getStreet().length() > 0)
-						pw.write("\t\t<street>" + JFritzUtils.convertSpecialChars(current.getStreet())
-								+ "</street>");
+						pw.write("\t\t<street>" + JFritzUtils.convertSpecialChars(current.getStreet()) //$NON-NLS-1$
+								+ "</street>"); //$NON-NLS-1$
 					pw.newLine();
 					if (current.getPostalCode().length() > 0)
-						pw.write("\t\t<postcode>" + JFritzUtils.convertSpecialChars(current.getPostalCode())
-								+ "</postcode>");
+						pw.write("\t\t<postcode>" + JFritzUtils.convertSpecialChars(current.getPostalCode()) //$NON-NLS-1$
+								+ "</postcode>"); //$NON-NLS-1$
 					pw.newLine();
 					if (current.getCity().length() > 0)
 						pw
-						.write("\t\t<city>" + JFritzUtils.convertSpecialChars(current.getCity())
-										+ "</city>");
+						.write("\t\t<city>" + JFritzUtils.convertSpecialChars(current.getCity()) //$NON-NLS-1$
+										+ "</city>"); //$NON-NLS-1$
 					pw.newLine();
-					pw.write("\t</address>");
+					pw.write("\t</address>"); //$NON-NLS-1$
 					pw.newLine();
 				}
 
-				pw.write("\t<phonenumbers standard=\""
-						+ current.getStandard() + "\">");
+				pw.write("\t<phonenumbers standard=\"" //$NON-NLS-1$
+						+ current.getStandard() + "\">"); //$NON-NLS-1$
 				pw.newLine();
 				Enumeration en2 = current.getNumbers().elements();
 				while (en2.hasMoreElements()) {
 					PhoneNumber nr = (PhoneNumber) en2.nextElement();
-					pw.write("\t\t<number type=\"" + nr.getType() + "\">"
-							+ JFritzUtils.convertSpecialChars(nr.getIntNumber()) + "</number>");
+					pw.write("\t\t<number type=\"" + nr.getType() + "\">" //$NON-NLS-1$,  //$NON-NLS-2$
+							+ JFritzUtils.convertSpecialChars(nr.getIntNumber()) + "</number>"); //$NON-NLS-1$
 					pw.newLine();
 
 				}
-				pw.write("\t</phonenumbers>");
+				pw.write("\t</phonenumbers>"); //$NON-NLS-1$
 				pw.newLine();
 
 				if (current.getEmailAddress().length() > 0) {
-					pw.write("\t<internet>");
+					pw.write("\t<internet>"); //$NON-NLS-1$
 					pw.newLine();
 					if (current.getEmailAddress().length() > 0)
-						pw.write("\t\t<email>" + JFritzUtils.convertSpecialChars(current.getEmailAddress())
-								+ "</email>");
+						pw.write("\t\t<email>" + JFritzUtils.convertSpecialChars(current.getEmailAddress()) //$NON-NLS-1$
+								+ "</email>"); //$NON-NLS-1$
 					pw.newLine();
-					pw.write("\t</internet>");
+					pw.write("\t</internet>"); //$NON-NLS-1$
 					pw.newLine();
 				}
-				/*
-				 * if (current.getCategory().length() > 0) { pw.println("\t
-				 * <categories>"); if (current.getCategory().length() > 0)
-				 * pw.println("\t\t <category>" + current.getCategory() + "
-				 * </category>"); pw.println("\t </categories>"); }
-				 */
-				pw.write("</entry>");
+				pw.write("</entry>"); //$NON-NLS-1$
 				pw.newLine();
 			}
-			pw.write("</phonebook>");
+			pw.write("</phonebook>"); //$NON-NLS-1$
 			pw.newLine();
 			pw.close();
 		  } catch (UnsupportedEncodingException e) {
-		      Debug.err("UTF-8 not supported.");
+		      Debug.err("UTF-8 not supported."); //$NON-NLS-1$
 			} catch (FileNotFoundException e) {
-				Debug.err("Could not write " + filename + "!");
+				Debug.err("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		  } catch (IOException e) {
-		  	Debug.err("IOException " + filename);
+		  	Debug.err("IOException " + filename); //$NON-NLS-1$
 		}
 	}
 
@@ -520,7 +512,7 @@ public class PhoneBook extends AbstractTableModel {
 						is.setSystemId(PHONEBOOK_DTD_URI);
 						return is;
 					}
-					throw new SAXException("Invalid system identifier: "
+					throw new SAXException("Invalid system identifier: " //$NON-NLS-1$
 							+ systemId);
 				}
 
@@ -529,18 +521,18 @@ public class PhoneBook extends AbstractTableModel {
 			reader.parse(new InputSource(new FileInputStream(filename)));
 
 		} catch (ParserConfigurationException e) {
-			Debug.err("Error with ParserConfiguration!");
+			Debug.err("Error with ParserConfiguration!"); //$NON-NLS-1$
 		} catch (SAXException e) {
-			Debug.err("Error on parsing " + filename + "!");
+			Debug.err("Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 			Debug.err(e.toString());
-			if (e.getLocalizedMessage().startsWith("Relative URI")
+			if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
 					|| e.getLocalizedMessage().startsWith(
-							"Invalid system identifier")) {
+							"Invalid system identifier")) { //$NON-NLS-1$
 				Debug.err(e.getLocalizedMessage());
 				System.exit(0);
 			}
 		} catch (IOException e) {
-			Debug.err("Could not read " + filename + "!");
+			Debug.err("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 		updateFilter();
 	}
@@ -548,8 +540,8 @@ public class PhoneBook extends AbstractTableModel {
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		Person person = (Person) filteredPersons.get(rowIndex);
 		switch (columnIndex) {
-		case 0: if (person.isPrivateEntry()) return "YES";
-			 else return "NO";
+		case 0: if (person.isPrivateEntry()) return "YES"; //$NON-NLS-1$
+			 else return "NO"; //$NON-NLS-1$
 		case 1:
 			return person.getFullname();
 		case 2:
@@ -557,11 +549,11 @@ public class PhoneBook extends AbstractTableModel {
 		case 3:
 			return person.getStreet();
 		case 4:
-			return (person.getPostalCode() + " " + person.getCity()).trim();
+			return (person.getPostalCode() + " " + person.getCity()).trim();  //$NON-NLS-1$
 		case 5:
 			return jfritz.getCallerlist().findLastCall(person);
 		default:
-			return "X";
+			return "X"; //$NON-NLS-1$
 		//throw new IllegalArgumentException("Invalid column: " + columnIndex);
 		}
 	}
@@ -587,7 +579,7 @@ public class PhoneBook extends AbstractTableModel {
      *            Save whole phone book or only selected entries
      */
     public void saveToCSVFile(String filename, boolean wholePhoneBook) {
-        Debug.msg("Saving phone book to csv file " + filename);
+        Debug.msg("Saving phone book to csv file " + filename); //$NON-NLS-1$
         FileOutputStream fos;
         try {
             fos = new FileOutputStream(filename);
@@ -619,7 +611,7 @@ public class PhoneBook extends AbstractTableModel {
             }
             pw.close();
         } catch (FileNotFoundException e) {
-            Debug.err("Could not write " + filename + "!");
+            Debug.err("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
         }
     }
 
@@ -698,10 +690,10 @@ public class PhoneBook extends AbstractTableModel {
         }
 */
 		boolean filter_private = JFritzUtils.parseBoolean(JFritz
-				.getProperty("filter_private"));
+				.getProperty("filter_private")); //$NON-NLS-1$
 
-		String filterSearch = JFritz.getProperty("filter.Phonebook.search", "");
-		String keywords[] = filterSearch.split(" ");
+		String filterSearch = JFritz.getProperty("filter.Phonebook.search", ""); //$NON-NLS-1$,  //$NON-NLS-2$
+		String keywords[] = filterSearch.split(" "); //$NON-NLS-1$
 
 		if ((!filter_private) && (keywords.length == 0)) {
             // Use unfiltered data
@@ -757,8 +749,8 @@ public class PhoneBook extends AbstractTableModel {
 	 * @param filename is the path to a valid thunderbird csv file
 	 */
 	public void importFromThunderbirdCSVfile(String filename){
-	    Debug.msg("Importing Thunderbird Contacts from csv file " + filename);
-	    String line = "";
+	    Debug.msg("Importing Thunderbird Contacts from csv file " + filename); //$NON-NLS-1$
+	    String line = "";  //$NON-NLS-1$
 	    try {
 	      FileReader fr = new FileReader(filename);
 	          BufferedReader br = new BufferedReader(fr);
@@ -779,8 +771,8 @@ public class PhoneBook extends AbstractTableModel {
 
 	          }
 
-	          Debug.msg(linesRead+" Lines read from Thunderbird csv file "+filename);
-	          Debug.msg(newEntries+" New contacts processed");
+	          Debug.msg(linesRead+" Lines read from Thunderbird csv file "+filename); //$NON-NLS-1$
+	          Debug.msg(newEntries+" New contacts processed"); //$NON-NLS-1$
 
 	          if (newEntries > 0) {
 	        	  sortAllUnfilteredRows();
@@ -788,22 +780,22 @@ public class PhoneBook extends AbstractTableModel {
 	              String msg;
 
 	              if (newEntries == 1) {
-	                msg = JFritz.getMessage("imported_contact");
+	                msg = JFritz.getMessage("imported_contact"); //$NON-NLS-1$
 	              } else {
-	                msg = newEntries + " "+JFritz.getMessage("imported_contacts");
+	                msg = newEntries + " "+JFritz.getMessage("imported_contacts"); //$NON-NLS-1$,  //$NON-NLS-2$
 	              }
 	              JFritz.infoMsg(msg);
 
 	          }else{
-	        	  JFritz.infoMsg(JFritz.getMessage("no_imported_contacts"));
+	        	  JFritz.infoMsg(JFritz.getMessage("no_imported_contacts")); //$NON-NLS-1$
 	          }
 
 	          br.close();
 
 	    } catch (FileNotFoundException e) {
-	    	Debug.err("Could not read from " + filename + "!");
+	    	Debug.err("Could not read from " + filename + "!"); //$NON-NLS-1$, //$NON-NLS-2$
 	    } catch(IOException e){
-	    	Debug.err("IO Exception reading csv file");
+	    	Debug.err("IO Exception reading csv file"); //$NON-NLS-1$
 	    }
 	}
 
@@ -828,15 +820,15 @@ public class PhoneBook extends AbstractTableModel {
 
 	    //check if line has correct amount of entries
 	    if(field.length < 36){
-	      Debug.err("Invalid Thunderbird CSV format!");
+	      Debug.err("Invalid Thunderbird CSV format!"); //$NON-NLS-1$
 	      return null;
 	    }
 
 	    //check first if the entry even has a phone number
 	    //Debug.msg(field[6]+"   "+field[7]+"   "+field[8]+"   "+field[9]+"   "+field[10]);
-	    if (field[6].equals("") && field[7].equals("") && field[8].equals("") &&
-	    		field[9].equals("") && field[10].equals("")){
-	    	Debug.msg("No phone number present for contact");
+	    if (field[6].equals("") && field[7].equals("") && field[8].equals("") && //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+	    		field[9].equals("") && field[10].equals("")){ //$NON-NLS-1$,  //$NON-NLS-2$
+	    	Debug.msg("No phone number present for contact"); //$NON-NLS-1$
 	    	return null;
 	    }
 
@@ -851,24 +843,24 @@ public class PhoneBook extends AbstractTableModel {
 	    //contacts in the phonebook with no phone number = useless
 
 	    //Work number
-	    if(!field[6].equals(""))
-	    	person.addNumber(field[6], "business");
+	    if(!field[6].equals("")) //$NON-NLS-1$
+	    	person.addNumber(field[6], "business"); //$NON-NLS-1$
 
 	    //home number
-	    if(!field[7].equals(""))
-	    	person.addNumber(field[7], "home");
+	    if(!field[7].equals("")) //$NON-NLS-1$
+	    	person.addNumber(field[7], "home"); //$NON-NLS-1$
 
 	    //fax number
-	    if(!field[8].equals(""))
-	    	person.addNumber(field[8], "fax");
+	    if(!field[8].equals("")) //$NON-NLS-1$
+	    	person.addNumber(field[8], "fax"); //$NON-NLS-1$
 
 	    //pager number
-	    if(!field[9].equals(""))
-	    	person.addNumber(field[9], "other");
+	    if(!field[9].equals("")) //$NON-NLS-1$
+	    	person.addNumber(field[9], "other"); //$NON-NLS-1$
 
 	    //Cell phone number
-	    if(!field[10].equals(""))
-	    	person.addNumber(field[10], "mobile");
+	    if(!field[10].equals("")) //$NON-NLS-1$
+	    	person.addNumber(field[10], "mobile"); //$NON-NLS-1$
 
 	    //lets quit while we're still sane and return the person object
 	    return person;

@@ -48,7 +48,7 @@ public class PersonCellEditor extends AbstractCellEditor implements
 		Person person = (Person) value;
 		// panel.repaint();
 		// Configure the component with the specified value
-		String strval = "";
+		String strval = ""; //$NON-NLS-1$
 		if (value != null) {
 			strval = person.getFullname();
 		} else {

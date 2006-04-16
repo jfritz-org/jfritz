@@ -50,7 +50,7 @@ public class WatchdogThread extends Thread {
             // Computer wahrscheinlich im Ruhezustand gewesen.
             // Starte den Anrufmonitor neu.
 
-            Debug.msg("Watchdog: Restarting call monitor");
+            Debug.msg("Watchdog: Restarting call monitor"); //$NON-NLS-1$
             jfritz.stopCallMonitor();
             try {
                 Thread.sleep(15000);
@@ -60,8 +60,8 @@ public class WatchdogThread extends Thread {
             }
             jfritz.getJframe().startChosenCallMonitor();
 
-			if (JFritzUtils.parseBoolean(JFritz.getProperty("option.watchdog.fetchAfterStandby", "true")))
-				jfritz.getJframe().fetchList(JFritzUtils.parseBoolean(JFritz.getProperty("option.deleteAfterFetch", "true")));
+			if (JFritzUtils.parseBoolean(JFritz.getProperty("option.watchdog.fetchAfterStandby", "true"))) //$NON-NLS-1$, //$NON-NLS-2$
+				jfritz.getJframe().fetchList(JFritzUtils.parseBoolean(JFritz.getProperty("option.deleteAfterFetch", "true"))); //$NON-NLS-1$, //$NON-NLS-2$
         }
         setTimestamp();
     }

@@ -23,10 +23,10 @@ public class OkayButton extends JButton {
 	private static final long serialVersionUID = 1;
 
 	public OkayButton(JFritz jfritz) {
-		setText("Okay");
+		setText(JFritz.getMessage("okay")); //$NON-NLS-1$
 		setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/okay.png"))));
+						"/de/moonflower/jfritz/resources/images/okay.png")))); //$NON-NLS-1$
 	}
 
 }

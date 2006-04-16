@@ -32,13 +32,13 @@ public class CallTypeCellRenderer extends DefaultTableCellRenderer {
 		super();
 		imageCallIn = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/callin.png")));
+						"/de/moonflower/jfritz/resources/images/callin.png"))); //$NON-NLS-1$
 		imageCallInFailed = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/callinfailed.png")));
+						"/de/moonflower/jfritz/resources/images/callinfailed.png"))); //$NON-NLS-1$
 		imageCallOut = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/callout.png")));
+						"/de/moonflower/jfritz/resources/images/callout.png"))); //$NON-NLS-1$
 	}
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) {
@@ -50,7 +50,7 @@ public class CallTypeCellRenderer extends DefaultTableCellRenderer {
 			CallType curType = (CallType) value;
 			setToolTipText(curType.toDescription());
 
-			label.setText("");
+			label.setText(""); //$NON-NLS-1$
 			if (curType.toInt()==CallType.CALLIN) {
 				label.setIcon(imageCallIn);
 			}

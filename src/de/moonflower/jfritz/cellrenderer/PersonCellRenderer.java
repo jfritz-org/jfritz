@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.struct.Person;
 
 /**
@@ -31,7 +32,7 @@ public class PersonCellRenderer extends DefaultTableCellRenderer {
 		super();
 		imagePerson = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/person.png")));
+						"/de/moonflower/jfritz/resources/images/person.png"))); //$NON-NLS-1$
 
 	}
 
@@ -45,21 +46,21 @@ public class PersonCellRenderer extends DefaultTableCellRenderer {
 			Person person = (Person) value;
 			// setToolTipText(person.getFullname());
 			label.setText(person.getFullname());
-			String tooltip = "";
-			if (person.getFullname() != "")
+			String tooltip = ""; //$NON-NLS-1$
+			if (!person.getFullname().equals("")) //$NON-NLS-1$
 				tooltip = person.getFullname();
-			if (person.getStreet() != "")
-				tooltip += " | " + person.getStreet();
-			if (person.getCity() != "")
-				tooltip += " | " + person.getCity();
-			if (tooltip == "") tooltip = "Keine Informationen";
+			if (!person.getStreet().equals("")) //$NON-NLS-1$
+				tooltip += " | " + person.getStreet(); //$NON-NLS-1$
+			if (!person.getCity().equals("")) //$NON-NLS-1$
+				tooltip += " | " + person.getCity(); //$NON-NLS-1$
+			if (tooltip.equals("")) tooltip = JFritz.getMessage("no_information"); //$NON-NLS-1$,  //$NON-NLS-2$
 			setToolTipText(tooltip);
 
 			label.setIcon(imagePerson);
 			label.setHorizontalAlignment(JLabel.LEFT);
 		} else {
 			label.setIcon(null);
-			label.setText("");
+			label.setText(""); //$NON-NLS-1$
 		}
 		return label;
 	}

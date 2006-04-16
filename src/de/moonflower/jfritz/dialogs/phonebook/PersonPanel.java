@@ -59,8 +59,8 @@ public class PersonPanel extends JPanel implements ActionListener,
 			ComboBoxModel {
 		private static final long serialVersionUID = 1;
 
-		private String[] basicTypes = { "home", "mobile", "homezone",
-				"business", "other", "fax", "sip", "main"};
+		private String[] basicTypes = { "home", "mobile", "homezone", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+				"business", "other", "fax", "sip", "main"}; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$ , //$NON-NLS-4$ , //$NON-NLS-5$
 
 		private PhoneType sel;
 
@@ -82,12 +82,12 @@ public class PersonPanel extends JPanel implements ActionListener,
 			Enumeration en = person.getNumbers().elements();
 			while (en.hasMoreElements()) {
 				String type = ((PhoneNumber) en.nextElement()).getType();
-				Pattern p = Pattern.compile("([a-z]*)(\\d*)");
+				Pattern p = Pattern.compile("([a-z]*)(\\d*)"); //$NON-NLS-1$
 				Matcher m = p.matcher(type);
 				if (m.find()) {
 					for (int i = 0; i < typeCount.length; i++) {
 						if (basicTypes[i].equals(m.group(1))) {
-							if (m.group(2).equals("")) {
+							if (m.group(2).equals("")) { //$NON-NLS-1$
 								typeCount[i] = 1;
 							} else if (typeCount[i] < Integer.parseInt(m
 									.group(2))) {
@@ -142,7 +142,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 	}
 
 	private final class NumberTableModel extends AbstractTableModel {
-		private final String columnNames[] = { "Std", "Typ", "Nummer" };
+		private final String columnNames[] = { JFritz.getMessage("standard_short"), JFritz.getMessage("type"), JFritz.getMessage("number") }; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 
 		private static final long serialVersionUID = 1;
 
@@ -182,13 +182,13 @@ public class PersonPanel extends JPanel implements ActionListener,
 						.elementAt(row);
 				switch (column) {
 				case 0:
-					if (p.getType() != "")
+					if (p.getType().equals("")) //$NON-NLS-1$
 						person.setStandard(p.getType());
 					break;
 				case 1:
 					if (isValidType((PhoneType) value, p.getType())) {
 						if (person.getStandard().equals(p.getType())
-								|| person.getStandard().equals("")) {
+								|| person.getStandard().equals("")) { //$NON-NLS-1$
 							person.setStandard(((PhoneType) value).getType());
 						}
 						p.setType(((PhoneType) value).getType());
@@ -306,7 +306,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridLayout(0, 2));
-		JLabel label = new JLabel(JFritz.getMessage("private_entry") + ": ");
+		JLabel label = new JLabel(JFritz.getMessage("private_entry") + ": ");  //$NON-NLS-1$,   //$NON-NLS-2$
 		buttonPanel.add(label);
 		chkBoxPrivateEntry = new JCheckBox();
 		chkBoxPrivateEntry.setSelected(person.isPrivateEntry());
@@ -315,42 +315,42 @@ public class PersonPanel extends JPanel implements ActionListener,
 				boolean oldhasChanged = hasChanged;
 				hasChanged = chkBoxPrivateEntry.isSelected() != person
 						.isPrivateEntry();
-				firePropertyChange("hasChanged", oldhasChanged, hasChanged);
+				firePropertyChange("hasChanged", oldhasChanged, hasChanged); //$NON-NLS-1$
 			}
 		};
 		chkBoxPrivateEntry.addChangeListener(changeListener);
 		buttonPanel.add(chkBoxPrivateEntry);
-		label = new JLabel(JFritz.getMessage("firstName") + ": ");
+		label = new JLabel(JFritz.getMessage("firstName") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		buttonPanel.add(label);
 		tfFirstName = new JTextField(person.getFirstName());
 		tfFirstName.addCaretListener(this);
 		buttonPanel.add(tfFirstName);
-		label = new JLabel(JFritz.getMessage("lastName") + ": ");
+		label = new JLabel(JFritz.getMessage("lastName") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		buttonPanel.add(label);
 		tfLastName = new JTextField(person.getLastName());
 		tfLastName.addCaretListener(this);
 		buttonPanel.add(tfLastName);
-		label = new JLabel(JFritz.getMessage("company") + ": ");
+		label = new JLabel(JFritz.getMessage("company") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		buttonPanel.add(label);
 		tfCompany = new JTextField(person.getCompany());
 		tfCompany.addCaretListener(this);
 		buttonPanel.add(tfCompany);
-		label = new JLabel(JFritz.getMessage("street") + ": ");
+		label = new JLabel(JFritz.getMessage("street") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		buttonPanel.add(label);
 		tfStreet = new JTextField(person.getStreet());
 		tfStreet.addCaretListener(this);
 		buttonPanel.add(tfStreet);
-		label = new JLabel(JFritz.getMessage("postalCode") + ": ");
+		label = new JLabel(JFritz.getMessage("postalCode") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		buttonPanel.add(label);
 		tfPostalCode = new JTextField(person.getPostalCode());
 		tfPostalCode.addCaretListener(this);
 		buttonPanel.add(tfPostalCode);
-		label = new JLabel(JFritz.getMessage("city") + ": ");
+		label = new JLabel(JFritz.getMessage("city") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		buttonPanel.add(label);
 		tfCity = new JTextField(person.getCity());
 		tfCity.addCaretListener(this);
 		buttonPanel.add(tfCity);
-		label = new JLabel(JFritz.getMessage("emailAddress") + ": ");
+		label = new JLabel(JFritz.getMessage("emailAddress") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		buttonPanel.add(label);
 		tfEmail = new JTextField(person.getEmailAddress());
 		tfEmail.addCaretListener(this);
@@ -416,26 +416,26 @@ public class PersonPanel extends JPanel implements ActionListener,
 		DefaultCellEditor comboEditor = new DefaultCellEditor(comboBox);
 		numberTable.getColumnModel().getColumn(0).setCellEditor(checkBoxEditor);
 		numberTable.getColumnModel().getColumn(1).setCellEditor(comboEditor);
-		numberTable.getColumnModel().getColumn(2).setCellEditor(new NumberCellEditor(this)); //TODO
+		numberTable.getColumnModel().getColumn(2).setCellEditor(new NumberCellEditor(this));
 
 		// Buttons
 		addButton = new JButton();
 		delButton = new JButton();
-		addButton.setActionCommand("add");
+		addButton.setActionCommand("add"); //$NON-NLS-1$
 		addButton.addActionListener(this);
 		addButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/add.png"))));
+						"/de/moonflower/jfritz/resources/images/add.png")))); //$NON-NLS-1$
 
-		delButton.setActionCommand("del");
+		delButton.setActionCommand("del"); //$NON-NLS-1$
 		delButton.addActionListener(this);
 		delButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/delete.png"))));
+						"/de/moonflower/jfritz/resources/images/delete.png")))); //$NON-NLS-1$
 		if (person.getNumbers().size() == 1)
 			delButton.setEnabled((false));
 
-		JLabel label = new JLabel(JFritz.getMessage("telephoneNumbers")+":", JLabel.LEFT);
+		JLabel label = new JLabel(JFritz.getMessage("telephoneNumbers")+":", JLabel.LEFT); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		JPanel numberButtonPanel = new JPanel(new GridLayout(0, 2));
 		JPanel buttonPanel = new JPanel();
@@ -457,10 +457,10 @@ public class PersonPanel extends JPanel implements ActionListener,
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals("add")) {
-			person.getNumbers().add(new PhoneNumber("", ""));
+		if (e.getActionCommand().equals("add")) { //$NON-NLS-1$
+			person.getNumbers().add(new PhoneNumber("", "")); //$NON-NLS-1$,  //$NON-NLS-2$
 			typeModel.setTypes();
-		} else if (e.getActionCommand().equals("del")) {
+		} else if (e.getActionCommand().equals("del")) { //$NON-NLS-1$
 			int row = numberTable.getSelectedRow();
 			// Shift standard number if deleted
 			if (person.getStandard().equals(
@@ -497,7 +497,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		boolean addEnabled = true;
 		while (en.hasMoreElements()) {
 			String nr = ((PhoneNumber) en.nextElement()).getIntNumber();
-			if (nr.equals("")) {
+			if (nr.equals("")) { //$NON-NLS-1$
 				addEnabled = false;
 				break;
 			}
@@ -636,7 +636,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 				|| !tfEmail.getText().equals(person.getEmailAddress())
 				|| numberHasChanged;
 
-		firePropertyChange("hasChanged", hasChangedOld, hasChanged);
+		firePropertyChange("hasChanged", hasChangedOld, hasChanged);  //$NON-NLS-1$
 	}
 
 	public void firePropertyChange(boolean boo){
@@ -644,7 +644,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		hasChanged = boo;
 		numberHasChanged = boo;
 		if(numberHasChanged)
-		firePropertyChange("hasChanged", hasChangedOld, hasChanged);
+		firePropertyChange("hasChanged", hasChangedOld, hasChanged); //$NON-NLS-1$
 	}
 
 	public void terminateEditing(){

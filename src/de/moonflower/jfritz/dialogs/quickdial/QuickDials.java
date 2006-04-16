@@ -38,17 +38,17 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  */
 public class QuickDials extends AbstractTableModel {
 	private static final long serialVersionUID = 1;
-	private static final String QUICKDIALS_DTD_URI = "http://jfritz.moonflower.de/dtd/quickdials.dtd";
+	private static final String QUICKDIALS_DTD_URI = "http://jfritz.moonflower.de/dtd/quickdials.dtd";  //$NON-NLS-1$
 
-	private static final String QUICKDIALS_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<!-- DTD for JFritz quickdials -->"
-			+ "<!ELEMENT quickdials (commment?,entry*)>"
-			+ "<!ELEMENT comment (#PCDATA)>"
-			+ "<!ELEMENT entry (number?,vanity?,description?)>"
-			+ "<!ELEMENT number (#PCDATA)>"
-			+ "<!ELEMENT vanity (#PCDATA)>"
-			+ "<!ELEMENT description (#PCDATA)>"
-			+ "<!ATTLIST entry id CDATA #REQUIRED>";
+	private static final String QUICKDIALS_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"  //$NON-NLS-1$
+			+ "<!-- DTD for JFritz quickdials -->"  //$NON-NLS-1$
+			+ "<!ELEMENT quickdials (commment?,entry*)>"  //$NON-NLS-1$
+			+ "<!ELEMENT comment (#PCDATA)>"  //$NON-NLS-1$
+			+ "<!ELEMENT entry (number?,vanity?,description?)>"  //$NON-NLS-1$
+			+ "<!ELEMENT number (#PCDATA)>"  //$NON-NLS-1$
+			+ "<!ELEMENT vanity (#PCDATA)>"  //$NON-NLS-1$
+			+ "<!ELEMENT description (#PCDATA)>"  //$NON-NLS-1$
+			+ "<!ATTLIST entry id CDATA #REQUIRED>";  //$NON-NLS-1$
 
 	JFritz jfritz;
 
@@ -124,13 +124,13 @@ public class QuickDials extends AbstractTableModel {
 	public String getColumnName(int column) {
 		switch (column) {
 		case 0:
-			return JFritz.getMessage("quickdial");
+			return JFritz.getMessage("quickdial");  //$NON-NLS-1$
 		case 1:
-			return JFritz.getMessage("vanity");
+			return JFritz.getMessage("vanity");  //$NON-NLS-1$
 		case 2:
-			return JFritz.getMessage("number");
+			return JFritz.getMessage("number");  //$NON-NLS-1$
 		case 3:
-			return JFritz.getMessage("description");
+			return JFritz.getMessage("description");  //$NON-NLS-1$
 		default:
 			return null;
 		}
@@ -140,14 +140,16 @@ public class QuickDials extends AbstractTableModel {
 		try {
 			quickDials = JFritzUtils.retrieveQuickDialsFromFritzBox(this,
 					JFritzUtils.detectBoxType(JFritz
-							.getProperty("box.firmware"), JFritz
-							.getProperty("box.address"), Encryption.decrypt(JFritz
-							.getProperty("box.password"))));
+							.getProperty("box.firmware"), JFritz  //$NON-NLS-1$
+							.getProperty("box.address"), Encryption.decrypt(JFritz  //$NON-NLS-1$
+							.getProperty("box.password"))));  //$NON-NLS-1$
 			fireTableDataChanged();
 		} catch (WrongPasswordException e) {
-			Debug.err("getQuickDialData: Wrong password");
+			Debug.err("getQuickDialData: Wrong password");  //$NON-NLS-1$
+			Debug.errDlg(JFritz.getMessage("wrong_password")); //$NON-NLS-1$
 		} catch (IOException e) {
-			Debug.err("getQuickDialData: Box not found");
+			Debug.err("getQuickDialData: Box not found");  //$NON-NLS-1$
+            Debug.errDlg(JFritz.getMessage("box_address_wrong")); //$NON-NLS-1$
 		}
 	}
 
@@ -191,7 +193,7 @@ public class QuickDials extends AbstractTableModel {
 						is.setSystemId(QUICKDIALS_DTD_URI);
 						return is;
 					}
-					throw new SAXException("Invalid system identifier: "
+					throw new SAXException("Invalid system identifier: " //$NON-NLS-1$
 							+ systemId);
 				}
 
@@ -200,12 +202,12 @@ public class QuickDials extends AbstractTableModel {
 			reader.parse(new InputSource(new FileInputStream(filename)));
 
 		} catch (ParserConfigurationException e) {
-			Debug.err("Error with ParserConfiguration!");
+			Debug.err("Error with ParserConfiguration!"); //$NON-NLS-1$
 		} catch (SAXException e) {
-			Debug.err("Error on parsing " + filename + "!");
+			Debug.err("Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
             Debug.err(e.toString());
 		} catch (IOException e) {
-			Debug.err("Could not read " + filename + "!");
+			Debug.err("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 
@@ -215,36 +217,36 @@ public class QuickDials extends AbstractTableModel {
 	 * @param filename
 	 */
 	public void saveToXMLFile(String filename) {
-		Debug.msg("Saving to file " + filename);
+		Debug.msg("Saving to file " + filename); //$NON-NLS-1$
 		FileOutputStream fos;
 		try {
 			fos = new FileOutputStream(filename);
 			PrintWriter pw = new PrintWriter(fos);
-			pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+			pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
 //			pw.println("<!DOCTYPE quickdials SYSTEM \"" + QUICKDIALS_DTD_URI
 //					+ "\">");
-			pw.println("<quickdials>");
-			pw.println("\t<comment>QuickDial list for " + JFritz.PROGRAM_NAME
-					+ " v" + JFritz.PROGRAM_VERSION + "</comment>");
+			pw.println("<quickdials>"); //$NON-NLS-1$
+			pw.println("\t<comment>QuickDial list for " + JFritz.PROGRAM_NAME //$NON-NLS-1$
+					+ " v" + JFritz.PROGRAM_VERSION + "</comment>"); //$NON-NLS-1$,  //$NON-NLS-2$
 			Enumeration en = quickDials.elements();
 			while (en.hasMoreElements()) {
 				QuickDial current = (QuickDial) en.nextElement();
-				pw.println("\t<entry id=\"" + current.getQuickdial() + "\">");
-				if (current.getNumber() != "")
-					pw.println("\t\t<number>" + current.getNumber()
-							+ "</number>");
-				if (current.getVanity() != "")
-					pw.println("\t\t<vanity>" + current.getVanity()
-							+ "</vanity>");
-				if (current.getDescription() != "")
-					pw.println("\t\t<description>" + current.getDescription()
-							+ "</description>");
-				pw.println("\t</entry>");
+				pw.println("\t<entry id=\"" + current.getQuickdial() + "\">"); //$NON-NLS-1$,  //$NON-NLS-2$
+				if (current.getNumber() != "") //$NON-NLS-1$
+					pw.println("\t\t<number>" + current.getNumber() //$NON-NLS-1$
+							+ "</number>"); //$NON-NLS-1$
+				if (current.getVanity() != "") //$NON-NLS-1$
+					pw.println("\t\t<vanity>" + current.getVanity() //$NON-NLS-1$
+							+ "</vanity>"); //$NON-NLS-1$
+				if (current.getDescription() != "") //$NON-NLS-1$
+					pw.println("\t\t<description>" + current.getDescription() //$NON-NLS-1$
+							+ "</description>"); //$NON-NLS-1$
+				pw.println("\t</entry>"); //$NON-NLS-1$
 			}
-			pw.println("</quickdials>");
+			pw.println("</quickdials>"); //$NON-NLS-1$
 			pw.close();
 		} catch (FileNotFoundException e) {
-			Debug.err("Could not write " + filename + "!");
+			Debug.err("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 

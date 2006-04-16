@@ -55,58 +55,58 @@ public class PhonebookFileXMLHandler extends DefaultHandler {
 	public void startElement(String namespaceURI, String lName, String qName,
 			Attributes attrs) throws SAXException {
 		String eName = lName;
-		if ("".equals(eName))
+		if ("".equals(eName)) //$NON-NLS-1$
 			eName = qName;
 
-		chars = ""; // Important to clear buffer :)
+		// Important to clear buffer :)
+		chars = ""; //$NON-NLS-1$
 
-		if (eName.equals("entry")) {
-			String privEntry = attrs.getValue("private");
+		if (eName.equals("entry")) { //$NON-NLS-1$
+			String privEntry = attrs.getValue("private"); //$NON-NLS-1$
 			if (privEntry != null) {
-				privateEntry = JFritzUtils.parseBoolean(attrs.getValue("private"));
+				privateEntry = JFritzUtils.parseBoolean(attrs.getValue("private")); //$NON-NLS-1$
 			}
 			else privateEntry = false;
-			firstName = "";
-			company = "";
-			lastName = "";
+			firstName = ""; //$NON-NLS-1$
+			company = ""; //$NON-NLS-1$
+			lastName = ""; //$NON-NLS-1$
 			numbers = new Vector();
-			street = "";
-			postCode = "";
-			city = "";
-			email = "";
-			category = "";
-			type = "home";
-			standard = "home";
-		} else if (eName.equals("phonenumbers")) {
-			standard = attrs.getValue("standard");
-		} else if (eName.equals("number")) {
-			type = attrs.getValue("type");
+			street = ""; //$NON-NLS-1$
+			postCode = ""; //$NON-NLS-1$
+			city = ""; //$NON-NLS-1$
+			email = ""; //$NON-NLS-1$
+			category = ""; //$NON-NLS-1$
+			type = "home"; //$NON-NLS-1$
+			standard = "home"; //$NON-NLS-1$
+		} else if (eName.equals("phonenumbers")) { //$NON-NLS-1$
+			standard = attrs.getValue("standard"); //$NON-NLS-1$
+		} else if (eName.equals("number")) { //$NON-NLS-1$
+			type = attrs.getValue("type"); //$NON-NLS-1$
 			// Debug.msg("STD: "+standard+" TYPE: "+type);
 		}
 	}
 
 	public void endElement(String namespaceURI, String sName, String qName)
 			throws SAXException {
-		if (qName.equals("firstname")) {
+		if (qName.equals("firstname")) { //$NON-NLS-1$
 			firstName = chars;
-		} else if (qName.equals("company")) {
+		} else if (qName.equals("company")) { //$NON-NLS-1$
 			company = chars;
-		} else if (qName.equals("lastname")) {
+		} else if (qName.equals("lastname")) { //$NON-NLS-1$
 			lastName = chars;
-		} else if (qName.equals("number")) {
+		} else if (qName.equals("number")) { //$NON-NLS-1$
 			numbers.add(new PhoneNumber(chars, type));
-			// Debug.msg("Adding nr "+chars+" type "+type+ " std "+standard);
-		} else if (qName.equals("street")) {
+		} else if (qName.equals("street")) { //$NON-NLS-1$
 			street = chars;
-		} else if (qName.equals("postcode")) {
+		} else if (qName.equals("postcode")) { //$NON-NLS-1$
 			postCode = chars;
-		} else if (qName.equals("city")) {
+		} else if (qName.equals("city")) { //$NON-NLS-1$
 			city = chars;
-		} else if (qName.equals("email")) {
+		} else if (qName.equals("email")) { //$NON-NLS-1$
 			email = chars;
-		} else if (qName.equals("category")) {
+		} else if (qName.equals("category")) { //$NON-NLS-1$
 			category = chars;
-		} else if (qName.equals("entry")) {
+		} else if (qName.equals("entry")) { //$NON-NLS-1$
 			Person newPerson = new Person(firstName, company, lastName,
 					street, postCode, city, email);
 

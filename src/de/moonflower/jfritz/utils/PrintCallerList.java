@@ -56,7 +56,7 @@ public class PrintCallerList {
     }
 
     private void createColumnWidths() {
-        Debug.msg("Create Columns");
+        Debug.msg("Create Columns"); //$NON-NLS-1$
         int columnCount = jfritz.getJframe().getCallerTable().getColumnCount();
         int fixedColumnsWidth = 0; // width of all columns except "number" and
         // "participant"
@@ -68,7 +68,7 @@ public class PrintCallerList {
         for (int i = 0; i < columnCount; i++) {
             String columnName = colModel.getColumn(i).getHeaderValue()
                     .toString();
-            if (columnName.equals(JFritz.getMessage("type"))) {
+            if (columnName.equals(JFritz.getMessage("type"))) { //$NON-NLS-1$
                 // Icon, same Width
                 columnWidth[i] = colModel.getColumn(i).getWidth() - 10;
                 // Minimum size of type-column (icon)
@@ -87,12 +87,12 @@ public class PrintCallerList {
         do {
             fixedColumnsWidth = 0;
             int columnWithMaxWidth = 0;
-            Debug.msg(columnCount + " Spalten");
+            Debug.msg(columnCount + " Columns"); //$NON-NLS-1$
             for (int i = 0; i < columnCount; i++) {
                 String columnName = colModel.getColumn(i).getHeaderValue()
                 .toString();
-                if (!(columnName.equals(JFritz.getMessage("number")))
-                        && (!columnName.equals(JFritz.getMessage("participant")))) {
+                if (!(columnName.equals(JFritz.getMessage("number"))) //$NON-NLS-1$
+                        && (!columnName.equals(JFritz.getMessage("participant")))) { //$NON-NLS-1$
                     if (columnWidth[i] > columnWidth[columnWithMaxWidth]) columnWithMaxWidth = i;
                     fixedColumnsWidth += columnWidth[i];
                 }
@@ -108,10 +108,10 @@ public class PrintCallerList {
 
         } while (restWidth < 150);
 
-        int columnNumberIndex = jfritz.getJframe().getCallerTable().getColumnIndex("number");
+        int columnNumberIndex = jfritz.getJframe().getCallerTable().getColumnIndex("number"); //$NON-NLS-1$
         double columnNumberWidth = colModel.getColumn(columnNumberIndex)
                 .getWidth();
-        int columnParticipantIndex = jfritz.getJframe().getCallerTable().getColumnIndex("participant");
+        int columnParticipantIndex = jfritz.getJframe().getCallerTable().getColumnIndex("participant"); //$NON-NLS-1$
         double columnParticipantWidth = colModel.getColumn(
                 columnParticipantIndex).getWidth();
 
@@ -127,19 +127,19 @@ public class PrintCallerList {
 
     private PageHeader createPageHeader(float pageWidth) {
         PageHeader pageHeader = new PageHeader();
-        pageHeader.setName("PageHeader");
+        pageHeader.setName("PageHeader"); //$NON-NLS-1$
 
-        FontDefinition font = new FontDefinition("Arial", 16, true, false,
+        FontDefinition font = new FontDefinition("Arial", 16, true, false, //$NON-NLS-1$
                 false, false);
-        TextElement label = LabelElementFactory.createLabelElement("JFritz",
+        TextElement label = LabelElementFactory.createLabelElement("JFritz", //$NON-NLS-1$
                 new Rectangle2D.Float(0, 0, pageWidth, 40), Color.BLACK,
                 ElementAlignment.CENTER, ElementAlignment.MIDDLE, font,
-                "JFritz - Anrufliste");
+                JFritz.PROGRAM_NAME + " - " + JFritz.getMessage("callerlist")); //$NON-NLS-1$,  //$NON-NLS-2$
         pageHeader.addElement(label);
 
-        font = new FontDefinition("Arial", 8, true, false, false, false);
+        font = new FontDefinition("Arial", 8, true, false, false, false); //$NON-NLS-1$
 
-        String columnName = "";
+        String columnName = ""; //$NON-NLS-1$
         for (int i = 0; i < jfritz.getJframe().getCallerTable()
                 .getColumnCount(); i++) {
             columnName  =jfritz.getJframe().getCallerTable()
@@ -150,10 +150,12 @@ public class PrintCallerList {
                     columnStart[i], 50, columnWidth[i], 20), Color.BLACK,
                     ElementAlignment.CENTER, ElementAlignment.MIDDLE, font,
                     columnName);
-            Debug.msg("Spalte: " + columnName + " Start: "+columnStart[i] + " Breite: " + columnWidth[i]);
+            Debug.msg("Column: " + columnName +  //$NON-NLS-1$
+            		" Start: "+columnStart[i] + //$NON-NLS-1$
+            		" Width: " + columnWidth[i]); //$NON-NLS-1$
             pageHeader.addElement(label);
             ShapeElement selement = StaticShapeElementFactory
-                    .createRectangleShapeElement("back", Color.BLACK,
+                    .createRectangleShapeElement("back", Color.BLACK, //$NON-NLS-1$
                             new BasicStroke(0), new Rectangle2D.Float(
                                     columnStart[i], 50, columnWidth[i], 20),
                             true, false);
@@ -194,7 +196,7 @@ public class PrintCallerList {
 
     public JFreeReport createReportDefinition() {
         report = new JFreeReport();
-        report.setName("JFritz-Anrufliste");
+        report.setName(JFritz.PROGRAM_NAME + "-" + JFritz.getMessage("callerlist")); //$NON-NLS-1$,  //$NON-NLS-2$
 
         SimplePageDefinition pageDefinition = new SimplePageDefinition(
                 createDINA4PaperLandscape());
@@ -209,16 +211,16 @@ public class PrintCallerList {
 
         final Image callInImage = Toolkit.getDefaultToolkit().getImage(
                 getClass().getResource(
-                        "/de/moonflower/jfritz/resources/images/callin.png"));
+                        "/de/moonflower/jfritz/resources/images/callin.png")); //$NON-NLS-1$
         final Image callInFailedImage = Toolkit
                 .getDefaultToolkit()
                 .getImage(
                         getClass()
                                 .getResource(
-                                        "/de/moonflower/jfritz/resources/images/callinfailed.png"));
+                                        "/de/moonflower/jfritz/resources/images/callinfailed.png")); //$NON-NLS-1$
         final Image callOutImage = Toolkit.getDefaultToolkit().getImage(
                 getClass().getResource(
-                        "/de/moonflower/jfritz/resources/images/callout.png"));
+                        "/de/moonflower/jfritz/resources/images/callout.png")); //$NON-NLS-1$
 
         // Set Font size to 8
         Integer fontSize = new Integer(8);
@@ -248,7 +250,7 @@ public class PrintCallerList {
                 }
             };
         };
-        exp.setName("print_type");
+        exp.setName("print_type"); //$NON-NLS-1$
         report.addExpression(exp);
 
         exp = new AbstractExpression() {
@@ -261,12 +263,12 @@ public class PrintCallerList {
                 Object ob = getDataRow().get(
                         jfritz.getCallerlist().getColumnName(1));
                 if (ob == null) {
-                    return "";
+                    return ""; //$NON-NLS-1$
                 }
                 return ob;
             }
         };
-        exp.setName("print_date");
+        exp.setName("print_date"); //$NON-NLS-1$
         report.addExpression(exp);
 
         exp = new AbstractExpression() {
@@ -279,12 +281,12 @@ public class PrintCallerList {
                 Object ob = getDataRow().get(
                         jfritz.getCallerlist().getColumnName(2));
                 if (ob == null) {
-                    return "";
+                    return ""; //$NON-NLS-1$
                 }
                 return ob;
             }
         };
-        exp.setName("print_callbycall");
+        exp.setName("print_callbycall"); //$NON-NLS-1$
         report.addExpression(exp);
 
         exp = new AbstractExpression() {
@@ -297,12 +299,12 @@ public class PrintCallerList {
                 Object number = getDataRow().get(
                         jfritz.getCallerlist().getColumnName(3));
                 if (number == null) {
-                    return "";
+                    return ""; //$NON-NLS-1$
                 }
                 return number.toString();
             };
         };
-        exp.setName("print_number");
+        exp.setName("print_number"); //$NON-NLS-1$
         report.addExpression(exp);
 
         exp = new AbstractExpression() {
@@ -315,11 +317,11 @@ public class PrintCallerList {
                 Object person = getDataRow().get(
                         jfritz.getCallerlist().getColumnName(4));
                 if (person == null)
-                    return "";
+                    return ""; //$NON-NLS-1$
                 return ((Person) person).getFullname();
             };
         };
-        exp.setName("print_personname");
+        exp.setName("print_personname"); //$NON-NLS-1$
         report.addExpression(exp);
 
         exp = new AbstractExpression() {
@@ -332,25 +334,27 @@ public class PrintCallerList {
                 Object obj = getDataRow().get(
                         jfritz.getCallerlist().getColumnName(5));
                 if (obj == null)
-                    return "";
+                    return ""; //$NON-NLS-1$
                 String port = (String) obj;
-                String portStr = "";
-                if (port.equals("4"))
-                    portStr = "ISDN";
-                else if (port.equals("0"))
-                    portStr = "FON 1";
-                else if (port.equals("1"))
-                    portStr = "FON 2";
-                else if (port.equals("2"))
-                    portStr = "FON 3";
-                else if (port.equals(""))
-                    portStr = "";
+                String portStr = ""; //$NON-NLS-1$
+                if (port.equals("4")) //$NON-NLS-1$
+                    portStr = "ISDN"; //$NON-NLS-1$
+                else if (port.equals("36")) //$NON-NLS-1$
+                    portStr = "DATA ISDN"; //$NON-NLS-1$
+                else if (port.equals("0")) //$NON-NLS-1$
+                    portStr = "FON 1"; //$NON-NLS-1$
+                else if (port.equals("1")) //$NON-NLS-1$
+                    portStr = "FON 2"; //$NON-NLS-1$
+                else if (port.equals("2")) //$NON-NLS-1$
+                    portStr = "FON 3"; //$NON-NLS-1$
+                else if (port.equals("")) //$NON-NLS-1$
+                    portStr = ""; //$NON-NLS-1$
                 else
-                    portStr = "Port " + port;
+                    portStr = "Port " + port; //$NON-NLS-1$
                 return portStr;
             };
         };
-        exp.setName("print_port");
+        exp.setName("print_port"); //$NON-NLS-1$
         report.addExpression(exp);
 
         exp = new AbstractExpression() {
@@ -363,12 +367,12 @@ public class PrintCallerList {
                 Object obj = getDataRow().get(
                         jfritz.getCallerlist().getColumnName(6));
                 if (obj == null)
-                    return "";
+                    return ""; //$NON-NLS-1$
                 String route = (String) obj;
                 return route;
             };
         };
-        exp.setName("print_route");
+        exp.setName("print_route"); //$NON-NLS-1$
         report.addExpression(exp);
 
         exp = new AbstractExpression() {
@@ -381,12 +385,12 @@ public class PrintCallerList {
                 Object obj = getDataRow().get(
                         jfritz.getCallerlist().getColumnName(7));
                 if (obj == null)
-                    return "";
+                    return ""; //$NON-NLS-1$
                 int duration = Integer.parseInt(obj.toString());
-                return Integer.toString(duration / 60) + " min";
+                return Integer.toString(duration / 60) + " min"; //$NON-NLS-1$
             };
         };
-        exp.setName("print_duration");
+        exp.setName("print_duration"); //$NON-NLS-1$
         report.addExpression(exp);
 
         exp = new AbstractExpression() {
@@ -399,22 +403,12 @@ public class PrintCallerList {
                 Object obj = getDataRow().get(
                         jfritz.getCallerlist().getColumnName(8));
                 if (obj == null)
-                    return "";
+                    return ""; //$NON-NLS-1$
                 return obj.toString();
             };
         };
-        exp.setName("print_comment");
+        exp.setName("print_comment"); //$NON-NLS-1$
         report.addExpression(exp);
-
-        /**
-         * // Drucke Kosten exp = new AbstractExpression() { public Object
-         * getValue() { Object obj = getDataRow().get(
-         * jfritz.getCallerlist().getColumnName(8)); if (obj == null) return
-         * null; if (Double.parseDouble(obj.toString()) == -1) { return
-         * "Unbekannt"; } else if (Double.parseDouble(obj.toString()) == -2) {
-         * return "Freiminuten"; } else return obj.toString() + " ct"; }; };
-         * exp.setName("print_cost"); report.addExpression(exp);
-         */
 
         for (int i = 0; i < jfritz.getJframe().getCallerTable()
                 .getColumnCount(); i++) {
@@ -422,14 +416,14 @@ public class PrintCallerList {
             String columnName = jfritz.getJframe().getCallerTable()
                     .getColumnModel().getColumn(i).getIdentifier().toString();
 
-            if (columnName.equals("type")) {
+            if (columnName.equals("type")) { //$NON-NLS-1$
                 ImageElement imageElement = ImageFieldElementFactory
-                        .createImageDataRowElement("Type-Element",
+                        .createImageDataRowElement("Type-Element", //$NON-NLS-1$
                                 new Rectangle2D.Float(columnStart[i] + 2, 2,
-                                        14, 14), "print_type", true, false);
+                                        14, 14), "print_type", true, false); //$NON-NLS-1$
                 imageElement.setDynamicContent(false);
                 report.getItemBand().addElement(imageElement);
-            } else if (columnName.equals("date")) {
+            } else if (columnName.equals("date")) { //$NON-NLS-1$
                 factory = new DateFieldElementFactory();
                 factory.setFontSize(fontSize);
                 factory.setName(jfritz.getCallerlist().getColumnName(i));
@@ -441,8 +435,8 @@ public class PrintCallerList {
                 factory.setColor(Color.black);
                 factory.setHorizontalAlignment(ElementAlignment.CENTER);
                 factory.setVerticalAlignment(ElementAlignment.MIDDLE);
-                factory.setNullString("-");
-                factory.setFieldname("print_date");
+                factory.setNullString("-"); //$NON-NLS-1$
+                factory.setFieldname("print_date"); //$NON-NLS-1$
                 report.getItemBand().addElement(factory.createElement());
             } else {
                 factory = new TextFieldElementFactory();
@@ -455,29 +449,29 @@ public class PrintCallerList {
                 factory.setColor(Color.BLACK);
                 factory.setHorizontalAlignment(ElementAlignment.CENTER);
                 factory.setVerticalAlignment(ElementAlignment.MIDDLE);
-                factory.setNullString(" ");
-                if (columnName.equals("callbycall")) {
-                    factory.setFieldname("print_callbycall");
-                } else if (columnName.equals("number")) {
-                    factory.setFieldname("print_number");
-                } else if (columnName.equals("participant")) {
-                    factory.setFieldname("print_personname");
-                } else if (columnName.equals("port")) {
-                    factory.setFieldname("print_port");
-                } else if (columnName.equals("route")) {
-                    factory.setFieldname("print_route");
-                } else if (columnName.equals("duration")) {
-                    factory.setFieldname("print_duration");
-                } else if (columnName.equals("comment")) {
-                    factory.setFieldname("print_comment");
+                factory.setNullString(" "); //$NON-NLS-1$
+                if (columnName.equals("callbycall")) { //$NON-NLS-1$
+                    factory.setFieldname("print_callbycall"); //$NON-NLS-1$
+                } else if (columnName.equals("number")) { //$NON-NLS-1$
+                    factory.setFieldname("print_number"); //$NON-NLS-1$
+                } else if (columnName.equals("participant")) { //$NON-NLS-1$
+                    factory.setFieldname("print_personname"); //$NON-NLS-1$
+                } else if (columnName.equals("port")) { //$NON-NLS-1$
+                    factory.setFieldname("print_port"); //$NON-NLS-1$
+                } else if (columnName.equals("route")) { //$NON-NLS-1$
+                    factory.setFieldname("print_route"); //$NON-NLS-1$
+                } else if (columnName.equals("duration")) { //$NON-NLS-1$
+                    factory.setFieldname("print_duration"); //$NON-NLS-1$
+                } else if (columnName.equals("comment")) { //$NON-NLS-1$
+                    factory.setFieldname("print_comment"); //$NON-NLS-1$
                 }
                 report.getItemBand().addElement(factory.createElement());
             }
 
             // Rand zeichnen
             ShapeElement selement = StaticShapeElementFactory
-                    .createRectangleShapeElement("back", Color
-                            .decode("#000000"), new BasicStroke(0),
+                    .createRectangleShapeElement("back", Color //$NON-NLS-1$
+                            .decode("#000000"), new BasicStroke(0), //$NON-NLS-1$
                             new Rectangle2D.Float(columnStart[i], 0,
                                     columnWidth[i], 18), true, false);
             report.getItemBand().addElement(selement);
@@ -487,7 +481,7 @@ public class PrintCallerList {
     }
 
     public void print() {
-        Debug.msg("Start report creation");
+        Debug.msg("Start report creation"); //$NON-NLS-1$
         JFreeReport report = createReportDefinition();
         report.setData(jfritz.getCallerlist());
         try {
@@ -495,7 +489,7 @@ public class PrintCallerList {
             preview.pack();
             preview.setVisible(true);
         } catch (ReportProcessingException e) {
-            Debug.err("Failed to generate report " + e);
+            Debug.err("Failed to generate report " + e); //$NON-NLS-1$
         }
     }
 }

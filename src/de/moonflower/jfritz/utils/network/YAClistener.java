@@ -49,9 +49,9 @@ public class YAClistener extends Thread implements CallMonitor{
 	public void startYACListener() {
 		isRunning = true;
 		try {
-			Debug.msg("Starting YAC-Monitor");
+			Debug.msg("Starting YAC-Monitor"); //$NON-NLS-1$
 			serverSocket = new ServerSocket(port);
-            Debug.msg("YAC-Monitor ready");
+            Debug.msg("YAC-Monitor ready"); //$NON-NLS-1$
 			while (isRunning) {
 				Socket socket = serverSocket.accept();
 				BufferedReader input = new BufferedReader(
@@ -62,45 +62,45 @@ public class YAClistener extends Thread implements CallMonitor{
 					if (msg == null)
 						break;
 					// parsing incoming DATA
-					Debug.msg("Got YAC-Data: " + msg);
+					Debug.msg("Got YAC-Data: " + msg); //$NON-NLS-1$
 					// if last character is $00, delete it
 					if (msg.length() > 0 && msg.charAt(msg.length() - 1) == 0) {
 						msg = msg.substring(0, msg.length() - 1);
 					}
-					String outputString = "";
-					if (msg.indexOf('~') > -1) {
-						if (msg.startsWith("@CALL")) {
+					String outputString = ""; //$NON-NLS-1$
+					if (msg.indexOf('~') > -1) { //$NON-NLS-1$
+						if (msg.startsWith("@CALL")) { //$NON-NLS-1$
 							msg = msg.substring(5);
-							splitList = msg.split("~");
-							String name = "";
-							String number = "";
+							splitList = msg.split("~"); //$NON-NLS-1$
+							String name = ""; //$NON-NLS-1$
+							String number = ""; //$NON-NLS-1$
 							if (splitList.length == 0) {
-								name = "";
-								number = "";
+								name = ""; //$NON-NLS-1$
+								number = ""; //$NON-NLS-1$
 							}
 							if (splitList.length == 1) {
-								if (!splitList[0].equals("")) {
+								if (!splitList[0].equals("")) { //$NON-NLS-1$
 									name = splitList[0];
-									number = "";
+									number = ""; //$NON-NLS-1$
 								}
 							}
 							if (splitList.length == 2) {
-								if (splitList[0].equals("")) {
-									name = "";
+								if (splitList[0].equals("")) { //$NON-NLS-1$
+									name = ""; //$NON-NLS-1$
 								} else
 									name = splitList[0];
 								number = splitList[1];
 							}
 
-							jfritz.callInMsg(number, "", name);
+							jfritz.callInMsg(number, "", name); //$NON-NLS-1$
 
 						} else {
-							outputString = JFritz.getMessage("yac_message")
-									+ ":\n" + msg;
+							outputString = JFritz.getMessage("yac_message") //$NON-NLS-1$
+									+ ":\n" + msg; //$NON-NLS-1$
 							JFritz.infoMsg(outputString);
 						}
 					} else {
-						outputString = JFritz.getMessage("yac_message") + ":\n"
+						outputString = JFritz.getMessage("yac_message") + ":\n" //$NON-NLS-1$,  //$NON-NLS-2$
 								+ msg;
 						JFritz.infoMsg(outputString);
 					}
@@ -116,12 +116,12 @@ public class YAClistener extends Thread implements CallMonitor{
 	}
 
 	public void stopCallMonitor() {
-		Debug.msg("Stopping YACListener");
+		Debug.msg("Stopping YACListener"); //$NON-NLS-1$
 		try {
 			if (serverSocket != null)
 			serverSocket.close();
 		} catch (IOException e) {
-			Debug.msg("Fehler beim Schliessen des YAC-Sockets");
+			Debug.msg("Fehler beim Schliessen des YAC-Sockets"); //$NON-NLS-1$
 		}
 		isRunning = false;
 	}

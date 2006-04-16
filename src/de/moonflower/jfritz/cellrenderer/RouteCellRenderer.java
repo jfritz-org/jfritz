@@ -29,10 +29,10 @@ public class RouteCellRenderer extends DefaultTableCellRenderer {
 		super();
 		imageSIP = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/world.png")));
+						"/de/moonflower/jfritz/resources/images/world.png"))); //$NON-NLS-1$
 		imagePhone = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/phone.png")));
+						"/de/moonflower/jfritz/resources/images/phone.png"))); //$NON-NLS-1$
 
 	}
 
@@ -46,22 +46,22 @@ public class RouteCellRenderer extends DefaultTableCellRenderer {
 			String routeStr;
 			String route = (String) value;
 
-			if (route.indexOf("@")>=0) {
+			if (route.indexOf("@")>=0) { //$NON-NLS-1$
 				// SIP Call and we know the provider
-				String[] parts = route.split("@");
+				String[] parts = route.split("@"); //$NON-NLS-1$
 				routeStr = parts[0];
-				setToolTipText("Internet-Telefonat: " + route);
+				setToolTipText("Internet-Telefonat: " + route); //$NON-NLS-1$
 				setIcon(imageSIP);
-			} else if (route.indexOf("SIP")>=0) {
+			} else if (route.indexOf("SIP")>=0) { //$NON-NLS-1$
 				// SIP Call but we don't know the provider
 				routeStr = route;
-				setToolTipText("Internet-Telefonat: " + route);
+				setToolTipText("Internet-Telefonat: " + route); //$NON-NLS-1$
 				setIcon(imageSIP);
 			} else {
 				// regular call
 				routeStr = route;
 				setIcon(null);
-				setToolTipText("Festnetz-Telefonat: " + route);
+				setToolTipText("Festnetz-Telefonat: " + route); //$NON-NLS-1$
 				setIcon(imagePhone);
 			}
 

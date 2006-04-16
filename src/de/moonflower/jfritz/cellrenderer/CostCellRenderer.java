@@ -12,6 +12,8 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import de.moonflower.jfritz.JFritz;
+
 /**
  * This is the renderer for the duration display of calls in the table.
  *
@@ -26,17 +28,17 @@ public class CostCellRenderer extends DefaultTableCellRenderer {
 				value, isSelected, hasFocus, row, column);
 
 		if (value != null) {
-		    DecimalFormat df = new DecimalFormat( "0.00" );
+		    DecimalFormat df = new DecimalFormat( "0.00" ); //$NON-NLS-1$
 		    double costs = Double.parseDouble(value.toString());
 		    if (costs == -1) {
-		        label.setText("Unbekannt");
+		        label.setText(JFritz.getMessage("unknown")); //$NON-NLS-1$
 		    }
 		    else if (costs == -2){
-		        label.setText("Freiminuten");
+		        label.setText("Freiminuten"); //$NON-NLS-1$
 		    }
 		    else {
 			    String costString = df.format(costs );
-				label.setText(costString + " ct");
+				label.setText(costString + " ct"); //$NON-NLS-1$
 		    }
 
 			label.setHorizontalAlignment(JLabel.RIGHT);

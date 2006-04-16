@@ -15,6 +15,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+
+import de.moonflower.jfritz.JFritz;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -38,9 +41,9 @@ public class MessageDlg extends JDialog implements ActionListener{
 			// Timeout 10 sec
 			timer.schedule(task, 10000);
 
-			setTitle("JFritz - Info");
+			setTitle(JFritz.getMessage("dialog_title_popup_info")); //$NON-NLS-1$
 
-			JButton closeButton = new JButton("OK");
+			JButton closeButton = new JButton(JFritz.getMessage("okay")); //$NON-NLS-1$
 			closeButton.addActionListener(this);
 			getContentPane().setLayout(new BorderLayout(15, 15));
 			getContentPane().add(closeButton, BorderLayout.SOUTH);
@@ -52,15 +55,15 @@ public class MessageDlg extends JDialog implements ActionListener{
 			setLocation(x, y);
 			ImageIcon boxicon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 					getClass().getResource(
-							"/de/moonflower/jfritz/resources/images/info.png")));
+							"/de/moonflower/jfritz/resources/images/info.png"))); //$NON-NLS-1$
 			JLabel label = new JLabel(boxicon);
 			label.setIconTextGap(10);
 			getContentPane().add(label, BorderLayout.WEST);
 
-			String[] splittedMessage = message.split("\\n");
+			String[] splittedMessage = message.split("\\n"); //$NON-NLS-1$
 			JPanel textPane = new JPanel();
 			textPane.setLayout(new BoxLayout(textPane, BoxLayout.Y_AXIS));
-			JLabel leerZeile = new JLabel(" ");
+			JLabel leerZeile = new JLabel(" "); //$NON-NLS-1$
 			textPane.add(leerZeile);
 			for (int i = 0; i< splittedMessage.length; i++ ) {
 				JLabel tmpLabel = new JLabel(splittedMessage[i]);

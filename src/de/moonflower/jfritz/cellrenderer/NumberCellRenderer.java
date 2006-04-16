@@ -39,34 +39,34 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 		super();
 		imagePhone = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/phone.png")));
+						"/de/moonflower/jfritz/resources/images/phone.png"))); //$NON-NLS-1$
 		imageHandy = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/handy.png")));
+						"/de/moonflower/jfritz/resources/images/handy.png"))); //$NON-NLS-1$
 		imageHome = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/home.png")));
+						"/de/moonflower/jfritz/resources/images/home.png"))); //$NON-NLS-1$
 		imageWorld = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/world.png")));
+						"/de/moonflower/jfritz/resources/images/world.png"))); //$NON-NLS-1$
 		imageD1 = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/d1.png")));
+						"/de/moonflower/jfritz/resources/images/d1.png"))); //$NON-NLS-1$
 		imageD2 = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/d2.png")));
+						"/de/moonflower/jfritz/resources/images/d2.png"))); //$NON-NLS-1$
 		imageO2 = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/o2.png")));
+						"/de/moonflower/jfritz/resources/images/o2.png"))); //$NON-NLS-1$
 		imageEplus = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/eplus.png")));
+						"/de/moonflower/jfritz/resources/images/eplus.png"))); //$NON-NLS-1$
 		imageSipgate = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/sipgate.png")));
+						"/de/moonflower/jfritz/resources/images/sipgate.png"))); //$NON-NLS-1$
 		imageFreeCall = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/freecall.png")));
+						"/de/moonflower/jfritz/resources/images/freecall.png"))); //$NON-NLS-1$
 
 	}
 
@@ -84,19 +84,19 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 			if (number.getIntNumber().length() > 6) {
 				if (number.isMobile()) {
 					String provider = number.getMobileProvider();
-					if (provider.equals(""))
-						provider = "unknown";
+					if (provider.equals("")) //$NON-NLS-1$
+						provider = JFritz.getMessage("unknown"); //$NON-NLS-1$
 
-					setToolTipText(JFritz.getMessage("cellphone_network")
-							+ ": " + provider);
+					setToolTipText(JFritz.getMessage("cellphone_network") //$NON-NLS-1$
+							+ ": " + provider); //$NON-NLS-1$
 					if (showHandyLogos) {
-						if (provider.equals("D1")) {
+						if (provider.equals("D1")) { //$NON-NLS-1$
 							label.setIcon(imageD1);
-						} else if (provider.equals("D2")) {
+						} else if (provider.equals("D2")) { //$NON-NLS-1$
 							label.setIcon(imageD2);
-						} else if (provider.equals("O2")) {
+						} else if (provider.equals("O2")) { //$NON-NLS-1$
 							label.setIcon(imageO2);
-						} else if (provider.equals("E+")) {
+						} else if (provider.equals("E+")) { //$NON-NLS-1$
 							label.setIcon(imageEplus);
 						} else {
 							label.setIcon(imageHandy);
@@ -105,24 +105,24 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 						label.setIcon(imageHandy);
 					}
 				} else if ((number.getIntNumber().startsWith(JFritz
-						.getProperty("area.prefix")
-						+ JFritz.getProperty("area.code") + "1988"))
-						|| (number.getIntNumber().startsWith("01801777"))) {
+						.getProperty("area.prefix") //$NON-NLS-1$
+						+ JFritz.getProperty("area.code") + "1988")) //$NON-NLS-1$,  //$NON-NLS-2$
+						|| (number.getIntNumber().startsWith("01801777"))) { //$NON-NLS-1$
 					label.setIcon(imageSipgate);
-					setToolTipText(JFritz.getMessage("voip_call"));
+					setToolTipText(JFritz.getMessage("voip_call")); //$NON-NLS-1$
 				} else if (number.isLocalCall()) {
 					label.setIcon(imageHome);
-					setToolTipText(JFritz.getMessage("local_call"));
+					setToolTipText(JFritz.getMessage("local_call")); //$NON-NLS-1$
 				} else if (number.getIntNumber().startsWith(
-						JFritz.getProperty("country.prefix"))) {
+						JFritz.getProperty("country.prefix"))) { //$NON-NLS-1$
 					label.setIcon(imageWorld);
-					setToolTipText(JFritz.getMessage("int_call"));
+					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
 				} else if (number.isFreeCall()) {
 					label.setIcon(imageFreeCall);
-					setToolTipText(JFritz.getMessage("freecall"));
+					setToolTipText(JFritz.getMessage("freecall")); //$NON-NLS-1$
 				} else {
 					label.setIcon(imagePhone);
-					setToolTipText(JFritz.getMessage("fixed_network"));
+					setToolTipText(JFritz.getMessage("fixed_network")); //$NON-NLS-1$
 				}
 			} else {
 				label.setIcon(null);

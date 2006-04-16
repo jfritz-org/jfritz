@@ -29,13 +29,13 @@ import de.moonflower.jfritz.utils.*;
  */
 public class SyslogListener extends Thread implements CallMonitor {
 
-	private final String PATTERN_TELEFON_INCOMING = "IncomingCall[^:]*: ID ([^,]*), caller: \"([^\"]*)\" called: \"([^\"]*)\"";
+	private final String PATTERN_TELEFON_INCOMING = "IncomingCall[^:]*: ID ([^,]*), caller: \"([^\"]*)\" called: \"([^\"]*)\""; //$NON-NLS-1$
 
-	private final String PATTERN_TELEFON_OUTGOING = "incoming[^:]*: (\\d\\d) ([^ <-]*) <- (\\d)";
+	private final String PATTERN_TELEFON_OUTGOING = "incoming[^:]*: (\\d\\d) ([^ <-]*) <- (\\d)"; //$NON-NLS-1$
 
-	private final String PATTERN_SYSLOG_RUNNING = "syslogd -R ([^:]*)([^ ]*)";
+	private final String PATTERN_SYSLOG_RUNNING = "syslogd -R ([^:]*)([^ ]*)"; //$NON-NLS-1$
 
-	private final String PATTERN_TELEFON_RUNNING = "telefon a";
+	private final String PATTERN_TELEFON_RUNNING = "telefon a"; //$NON-NLS-1$
 
 	//private final String PATTERN_TELEFON_RUNNING2 = "telefon";
 
@@ -73,61 +73,61 @@ public class SyslogListener extends Thread implements CallMonitor {
 
 		try {
 			if (JFritzUtils.parseBoolean(JFritz.getProperty(
-					"syslog.checkSyslog", "true"))
+					"syslog.checkSyslog", "true")) //$NON-NLS-1$,  //$NON-NLS-2$
 					|| JFritzUtils.parseBoolean(JFritz.getProperty(
-							"syslog.checkTelefon", "true"))) {
+							"syslog.checkTelefon", "true"))) { //$NON-NLS-1$,  //$NON-NLS-2$
 				Telnet telnet = new Telnet(jfritz);
 				telnet.connect();
 				if (telnet.isConnected()) {
 					if (JFritzUtils.parseBoolean(JFritz.getProperty(
-							"syslog.checkSyslog", "true"))) {
-						data = telnet.sendCommand("ps -A | grep syslog");
+							"syslog.checkSyslog", "true"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+						data = telnet.sendCommand("ps -A | grep syslog"); //$NON-NLS-1$
 						p = Pattern.compile(PATTERN_SYSLOG_RUNNING);
 						m = p.matcher(data);
 						if (m.find()) {
 							// m.group(1) = IP
 							// m.group(2) = Port
 							if (m.group(1).equals(
-									JFritz.getProperty("option.syslogclientip",
-											"192.168.178.21"))
-									&& (m.group(2).equals(":4711"))) {
+									JFritz.getProperty("option.syslogclientip", //$NON-NLS-1$
+											"192.168.178.21")) //$NON-NLS-1$
+									&& (m.group(2).equals(":4711"))) { //$NON-NLS-1$
 								Debug
-										.msg("Syslog IS RUNNING PROPERLY on FritzBox");
+										.msg("Syslog IS RUNNING PROPERLY on FritzBox"); //$NON-NLS-1$
 							} else {
 								Debug
-										.msg("Syslog ISN'T RUNNING PROPERLY on FritzBox, RESTARTING SYSLOG");
+										.msg("Syslog ISN'T RUNNING PROPERLY on FritzBox, RESTARTING SYSLOG"); //$NON-NLS-1$
 								restartSyslogOnFritzBox(telnet, JFritz
-										.getProperty("option.syslogclientip",
-												"192.168.178.21"));
+										.getProperty("option.syslogclientip", //$NON-NLS-1$
+												"192.168.178.21")); //$NON-NLS-1$
 							}
 						} else {
 							Debug
-									.msg("Syslog ISN'T RUNNING PROPERLY on FritzBox, RESTARTING SYSLOG");
+									.msg("Syslog ISN'T RUNNING PROPERLY on FritzBox, RESTARTING SYSLOG"); //$NON-NLS-1$
 							restartSyslogOnFritzBox(telnet, JFritz.getProperty(
-									"option.syslogclientip", "192.168.178.21"));
+									"option.syslogclientip", "192.168.178.21")); //$NON-NLS-1$,  //$NON-NLS-2$
 						}
 
-						data = telnet.readUntil("# ");
+						data = telnet.readUntil("# "); //$NON-NLS-1$
 					}
 					if (JFritzUtils.parseBoolean(JFritz.getProperty(
-							"syslog.checkTelefon", "true"))) {
-						data = telnet.sendCommand("ps -A | grep telefon");
+							"syslog.checkTelefon", "true"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+						data = telnet.sendCommand("ps -A | grep telefon"); //$NON-NLS-1$
 						p = Pattern.compile(PATTERN_TELEFON_RUNNING);
 						m = p.matcher(data);
 						if (m.find()) {
 							Debug
-									.msg("Telefon ISN'T RUNNING PROPERLY on FritzBox, RESTARTING TELEFON");
+									.msg("Telefon ISN'T RUNNING PROPERLY on FritzBox, RESTARTING TELEFON"); //$NON-NLS-1$
 							restartTelefonOnFritzBox(telnet, jfritz);
 						} else {
 
-							if (!JFritz.getProperty("telefond.laststarted", "")
-									.equals("syslogMonitor")) {
+							if (!JFritz.getProperty("telefond.laststarted", "") //$NON-NLS-1$,  //$NON-NLS-2$
+									.equals("syslogMonitor")) { //$NON-NLS-1$
 								Debug
-										.msg("Telefon ISN'T RUNNING PROPERLY on FritzBox, RESTARTING TELEFON");
+										.msg("Telefon ISN'T RUNNING PROPERLY on FritzBox, RESTARTING TELEFON"); //$NON-NLS-1$
 								restartTelefonOnFritzBox(telnet, jfritz);
 							} else {
 								Debug
-										.msg("Telefon IS RUNNING PROPERLY on FritzBox");
+										.msg("Telefon IS RUNNING PROPERLY on FritzBox"); //$NON-NLS-1$
 							}
 						}
 					}
@@ -139,14 +139,14 @@ public class SyslogListener extends Thread implements CallMonitor {
 				}
 			}
 			socket = new DatagramSocket(port);
-			Debug.msg("Starting SyslogListener on port " + port);
+			Debug.msg("Starting SyslogListener on port " + port); //$NON-NLS-1$
 			// DatagramSocket passthroughSocket = new
 			// DatagramSocket(SYSLOG_PORT);
 			while (!isInterrupted()) {
 				socket.receive(packet);
 				String msg = new String(log_buffer, 0, packet.getLength(),
-						"UTF-8");
-				Debug.msg("Get Syslogmessage: " + msg);
+						"UTF-8"); //$NON-NLS-1$
+				Debug.msg("Get Syslogmessage: " + msg); //$NON-NLS-1$
 
 				//if (JFritzUtils.parseBoolean(JFritz.getProperty(
 				//		"option.syslogpassthrough", "false"))) {
@@ -160,8 +160,8 @@ public class SyslogListener extends Thread implements CallMonitor {
 					String id = m.group(1);
 					String caller = m.group(2);
 					String called = m.group(3);
-					Debug.msg("NEW INCOMING CALL " + id + ": " + caller
-							+ " -> " + called);
+					Debug.msg("NEW INCOMING CALL " + id + ": " + caller //$NON-NLS-1$,  //$NON-NLS-2$
+							+ " -> " + called); //$NON-NLS-1$
 
 					// POPUP Messages to JFritz
 					jfritz.callInMsg(caller, called);
@@ -170,18 +170,18 @@ public class SyslogListener extends Thread implements CallMonitor {
 				m = p.matcher(msg);
 				if (m.find()) {
 					String called = m.group(2);
-					if (!called.equals("")) {
-						Debug.msg("NEW OUTGOING CALL: " + called);
+					if (!called.equals("")) { //$NON-NLS-1$
+						Debug.msg("NEW OUTGOING CALL: " + called); //$NON-NLS-1$
 						//						JFritz.callOutMsg(called);
 					}
 				}
 			}
 		} catch (SocketException e) {
-			if (!e.toString().equals("java.net.SocketException: socket closed")) {
-				Debug.err("SocketException: " + e);
+			if (!e.toString().equals("java.net.SocketException: socket closed")) { //$NON-NLS-1$
+				Debug.err("SocketException: " + e); //$NON-NLS-1$
 			}
 		} catch (IOException e) {
-			Debug.err("IOException: " + e);
+			Debug.err("IOException: " + e); //$NON-NLS-1$
 		}
 	}
 
@@ -189,7 +189,7 @@ public class SyslogListener extends Thread implements CallMonitor {
 	 * Stops call monitor
 	 */
 	public void stopCallMonitor() {
-		Debug.msg("Stopping SyslogListener");
+		Debug.msg("Stopping SyslogListener"); //$NON-NLS-1$
 		interrupt();
 		if (socket != null) {
 			socket.close();
@@ -206,21 +206,21 @@ public class SyslogListener extends Thread implements CallMonitor {
 	 */
 	public static void restartSyslogOnFritzBox(Telnet telnet, String ip) {
 		int port = 4711;
-		Debug.msg("Starte Syslog auf der FritzBox: syslog -R " + ip + ":"
+		Debug.msg("Start syslogd on FritzBox with: syslog -R " + ip + ":" //$NON-NLS-1$,  //$NON-NLS-2$
 				+ port);
-		telnet.sendCommand("killall syslogd");
+		telnet.sendCommand("killall syslogd"); //$NON-NLS-1$
 		try {
 			sleep(1000);
 		} catch (InterruptedException e) {
 		}
-		telnet.sendCommand("syslogd -R " + ip + ":" + port);
+		telnet.sendCommand("syslogd -R " + ip + ":" + port); //$NON-NLS-1$,  //$NON-NLS-2$
 		try {
 			sleep(1000);
 		} catch (InterruptedException e) {
 		}
-		telnet.readUntil("# ");
+		telnet.readUntil("# "); //$NON-NLS-1$
 		// Stimmt so, dass 2 mal bis PROMPT gelesen wird
-		telnet.readUntil("# ");
+		telnet.readUntil("# "); //$NON-NLS-1$
 		try {
 			sleep(1000);
 		} catch (InterruptedException e) {
@@ -235,29 +235,29 @@ public class SyslogListener extends Thread implements CallMonitor {
 	 */
 	public static int restartTelefonOnFritzBox(Telnet telnet, JFritz jfritz) {
 		if (JOptionPane.showConfirmDialog(null,
-				"Der telefond muss neu gestartet werden.\n"
-						+ "Dabei wird ein laufendes Gespräch unterbrochen. "
-						+ "Die Anrufliste wird vorher gesichert.\n"
-						+ "Soll der telefond neu gestartet werden?",
+				"Der telefond muss neu gestartet werden.\n" //TODO: I18N
+						+ "Dabei wird ein laufendes Gespräch unterbrochen. "//TODO: I18N
+						+ "Die Anrufliste wird vorher gesichert.\n" //TODO: I18N
+						+ "Soll der telefond neu gestartet werden?", //TODO: I18N
 				JFritz.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-			Debug.msg("Get new calls");
+			Debug.msg("Get new calls"); //$NON-NLS-1$
 			jfritz.getJframe().getFetchButton().doClick();
 			try {
 				sleep(5000);
 			} catch (InterruptedException e) {
 			}
-			telnet.sendCommand("killall telefon");
+			telnet.sendCommand("killall telefon"); //$NON-NLS-1$
 			try {
 				sleep(1000);
 			} catch (InterruptedException e) {
 			}
-			telnet.sendCommand("telefon | logger &");
+			telnet.sendCommand("telefon | logger &"); //$NON-NLS-1$
 			try {
 				sleep(1000);
 			} catch (InterruptedException e) {
 			}
-			Debug.msg("telefond restarted");
-			JFritz.setProperty("telefond.laststarted", "syslogMonitor");
+			Debug.msg("telefond restarted"); //$NON-NLS-1$
+			JFritz.setProperty("telefond.laststarted", "syslogMonitor"); //$NON-NLS-1$,  //$NON-NLS-2$
 			return JOptionPane.YES_OPTION;
 		} else {
 			jfritz.stopCallMonitor();
@@ -275,7 +275,7 @@ public class SyslogListener extends Thread implements CallMonitor {
 			ifaces = NetworkInterface.getNetworkInterfaces();
 			while (ifaces.hasMoreElements()) {
 				NetworkInterface ni = (NetworkInterface) ifaces.nextElement();
-				if (!ni.getName().equals("lo")) {
+				if (!ni.getName().equals("lo")) { //$NON-NLS-1$
 					Enumeration addrs = ni.getInetAddresses();
 
 					while (addrs.hasMoreElements()) {

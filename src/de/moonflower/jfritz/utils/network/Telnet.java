@@ -35,7 +35,7 @@ public class Telnet {
 
 	private PrintStream out;
 
-	private final char prompt = '#';
+	private final char prompt = '#'; //$NON-NLS-1$
 
 	private static final int LOGIN_OK = 0;
 
@@ -56,10 +56,10 @@ public class Telnet {
 		boolean isdone = false;
 		int connectionFailures = 0;
 		while (!isdone) {
-			String server = JFritz.getProperty("box.address");
+			String server = JFritz.getProperty("box.address"); //$NON-NLS-1$
 
 			String password;
-			if (JFritz.getProperty("telnet.password", "").equals("")) {
+			if (JFritz.getProperty("telnet.password", "").equals("")) { //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 				// Noch kein Passwort gesetzt. Zeige Einstellungsdialog
 				TelnetConfigDialog telnetConfigDialog = new TelnetConfigDialog(
 						jfritz.getJframe(), jfritz);
@@ -70,14 +70,14 @@ public class Telnet {
 				}
 			}
 
-			String user = JFritz.getProperty("telnet.user", "");
+			String user = JFritz.getProperty("telnet.user", ""); //$NON-NLS-1$,  //$NON-NLS-2$
 			password = Encryption
-					.decrypt(JFritz.getProperty("telnet.password"));
+					.decrypt(JFritz.getProperty("telnet.password")); //$NON-NLS-1$
 			int port = 23;
 			try {
-				Debug.msg("Verbinde mit Telnet ...");
+				Debug.msg("Verbinde mit Telnet ..."); //$NON-NLS-1$
 				if (jfritz.getJframe() != null) {
-					jfritz.getJframe().setStatus("Verbinde mit Telnet ...");
+					jfritz.getJframe().setStatus("Verbinde mit Telnet ..."); //$NON-NLS-1$
 				}
 				telnet.connect(server, port); // Connect to the specified server
 				in = telnet.getInputStream();
@@ -86,31 +86,31 @@ public class Telnet {
 					connected = true;
 				}
 				isdone = true;
-				Debug.msg("Done");
+				Debug.msg("Done"); //$NON-NLS-1$
 			} catch (ConnectException e) { // Connection Timeout
-				Debug.msg("Telnet connection timeout ...");
+				Debug.msg("Telnet connection timeout ..."); //$NON-NLS-1$
 				// Warten, falls wir von einem Standby aufwachen,
 				// oder das Netzwerk temporär nicht erreichbar ist.
 				if (connectionFailures < 5) {
-					Debug.msg("Waiting for FritzBox, retrying ...");
+					Debug.msg("Waiting for FritzBox, retrying ..."); //$NON-NLS-1$
 					connectionFailures++;
 				} else {
-					Debug.msg("FritzBox not found. Get new IP ...");
+					Debug.msg("FritzBox not found. Get new IP ..."); //$NON-NLS-1$
 					jfritz.getJframe().setStatus(
-							JFritz.getMessage("box_not_found"));
-					Debug.err("Address wrong!");
+							JFritz.getMessage("box_not_found")); //$NON-NLS-1$
+					Debug.err("Address wrong!"); //$NON-NLS-1$
 					jfritz.getJframe().setBusy(false);
 					String box_address = jfritz.getJframe().showAddressDialog(
-							JFritz.getProperty("box.address", "fritz.box"));
+							JFritz.getProperty("box.address", "fritz.box")); //$NON-NLS-1$,  //$NON-NLS-2$
 					if (box_address == null) {
 						jfritz.stopCallMonitor();
 						isdone = true;
 					} else {
-						JFritz.setProperty("box.address", box_address);
+						JFritz.setProperty("box.address", box_address); //$NON-NLS-1$
 					}
 				}
 			} catch (Exception e) {
-				System.err.println("Error in Class Telnet");
+				System.err.println("Error in Class Telnet"); //$NON-NLS-1$
                 Debug.err(e.toString());
 				return;
 			}
@@ -126,9 +126,9 @@ public class Telnet {
 
 	private int login(String user, String password) {
 		try {
-			Debug.msg("Login to Telnet");
-			String login = "ogin: ";
-			String passwd = "assword: ";
+			Debug.msg("Login to Telnet"); //$NON-NLS-1$
+			String login = "ogin: "; //$NON-NLS-1$
+			String passwd = "assword: "; //$NON-NLS-1$
 			boolean firstLogin = true;
 			boolean firstPassword = true;
 			char lastCharLogin = login.charAt(login.length() - 1);
@@ -143,7 +143,7 @@ public class Telnet {
 						// mehrmaliges Login mit falschem
 						// Username verhindern
 						if (firstLogin) {
-							Debug.msg("Writing Telnet User: " + user);
+							Debug.msg("Writing Telnet User: " + user); //$NON-NLS-1$
 							write(user);
 							firstLogin = false;
 						} else {
@@ -159,29 +159,29 @@ public class Telnet {
 					}
 					if (sb.toString().endsWith(passwd)) {
 						// schauen, ob WebPasswort abgefragt wird
-						if (sb.toString().endsWith("web password: ")) {
+						if (sb.toString().endsWith("web password: ")) { //$NON-NLS-1$
 							password = Encryption.decrypt(JFritz
-									.getProperty("box.password"));
+									.getProperty("box.password")); //$NON-NLS-1$
 
 							while (true) { // test WebPassword
 								try {
 									FritzBoxFirmware
 											.detectFirmwareVersion(
 													JFritz
-															.getProperty("box.address"),
+															.getProperty("box.address"), //$NON-NLS-1$
 													Encryption
 															.decrypt(JFritz
-																	.getProperty("box.password")));
+																	.getProperty("box.password"))); //$NON-NLS-1$
 									password = Encryption.decrypt(JFritz
-											.getProperty("box.password"));
+											.getProperty("box.password")); //$NON-NLS-1$
 									break; // go on with telnet login
 								} catch (WrongPasswordException e1) {
-									Debug.err("Password wrong!");
+									Debug.err("Password wrong!"); //$NON-NLS-1$
 									jfritz
 											.getJframe()
 											.setStatus(
 													JFritz
-															.getMessage("password_wrong"));
+															.getMessage("password_wrong")); //$NON-NLS-1$
 									jfritz.getJframe().setBusy(false);
 
 									String newPassword = jfritz
@@ -190,22 +190,22 @@ public class Telnet {
 													Encryption
 															.decrypt(JFritz
 																	.getProperty(
-																			"box.password",
-																			"")));
+																			"box.password", //$NON-NLS-1$
+																			""))); //$NON-NLS-1$
 									System.out
-											.println("OLD PASS: "
+											.println("OLD PASS: " //$NON-NLS-1$
 													+ Encryption
 															.decrypt(JFritz
 																	.getProperty(
-																			"box.password",
-																			"")));
+																			"box.password", //$NON-NLS-1$
+																			""))); //$NON-NLS-1$
 									if (newPassword == null) { // Dialog aborted
 										jfritz.stopCallMonitor();
 										return LOGIN_CANCELED;
 									} else {
 										JFritz
 												.setProperty(
-														"box.password",
+														"box.password", //$NON-NLS-1$
 														Encryption
 																.encrypt(newPassword));
 									}
@@ -216,7 +216,7 @@ public class Telnet {
 						// mehrmaliges Login mit falschem
 						// Passwort verhindern
 						if (firstPassword) {
-							Debug.msg("Writing Telnet Password: " + password);
+							Debug.msg("Writing Telnet Password: " + password); //$NON-NLS-1$
 							write(password);
 							firstPassword = false;
 						} else {
@@ -239,7 +239,7 @@ public class Telnet {
 		} catch (Exception e) {
 			Debug.err(e.getMessage());
 		}
-		Debug.msg("Logged into Telnet connection.");
+		Debug.msg("Logged into Telnet connection."); //$NON-NLS-1$
 		return LOGIN_OK;
 	}
 
@@ -292,7 +292,7 @@ public class Telnet {
 	public String sendCommand(String command) {
 		try {
 			write(command);
-			String data = readUntil(prompt + " ");
+			String data = readUntil(prompt + " "); //$NON-NLS-1$
 			return data;
 		} catch (Exception e) {
             Debug.err(e.toString());
@@ -313,7 +313,7 @@ public class Telnet {
 	 *
 	 */
 	public void disconnect() {
-		Debug.msg("Disconnect Telnet connection.");
+		Debug.msg("Disconnect Telnet connection."); //$NON-NLS-1$
 		try {
 			telnet.disconnect();
 			connected = false;

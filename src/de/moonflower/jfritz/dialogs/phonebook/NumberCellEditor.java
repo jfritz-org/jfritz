@@ -42,7 +42,7 @@ public class NumberCellEditor extends AbstractCellEditor
 		}
 		// textField.setBackground(new Color(127, 255, 255));
 		// Configure the component with the specified value
-		String strval = "";
+		String strval = "";  //$NON-NLS-1$
 		if (value != null)
 			strval = value.toString();
 		textField.addKeyListener(this);

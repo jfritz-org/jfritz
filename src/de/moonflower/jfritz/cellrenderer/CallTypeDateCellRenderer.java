@@ -35,17 +35,17 @@ public class CallTypeDateCellRenderer extends DefaultTableCellRenderer {
 		super();
 		imageCallIn = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/callin.png")));
+						"/de/moonflower/jfritz/resources/images/callin.png"))); //$NON-NLS-1$
 		imageCallInFailed = new ImageIcon(
 				Toolkit
 						.getDefaultToolkit()
 						.getImage(
 								getClass()
 										.getResource(
-												"/de/moonflower/jfritz/resources/images/callinfailed.png")));
+												"/de/moonflower/jfritz/resources/images/callinfailed.png"))); //$NON-NLS-1$
 		imageCallOut = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/callout.png")));
+						"/de/moonflower/jfritz/resources/images/callout.png"))); //$NON-NLS-1$
 	}
 
 	public Component getTableCellRendererComponent(JTable table, Object value,
@@ -58,7 +58,7 @@ public class CallTypeDateCellRenderer extends DefaultTableCellRenderer {
 			CallType curType = ((Call) value).getCalltype();
 			Date curDate = ((Call) value).getCalldate();
 			setToolTipText(curType.toDescription());
-			SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+			SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm"); //$NON-NLS-1$
 
 			label.setText(df.format(curDate));
 			if (curType.toInt() == CallType.CALLIN) {

@@ -5,17 +5,10 @@
  */
 package de.moonflower.jfritz.dialogs.sip;
 
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.Enumeration;
 import java.util.Vector;
 
-import javax.swing.JOptionPane;
-
-import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.struct.Call;
-import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
  * @author rob
@@ -72,7 +65,7 @@ public class SipProvider {
     }
 
     public String toString() {
-        return phoneNumber + "@" + providerName;
+        return phoneNumber + "@" + providerName; //$NON-NLS-1$
     }
 
     /**
@@ -128,35 +121,35 @@ public class SipProvider {
      * @return Returns XML String
      */
     public String toXML() {
-        String sep = System.getProperty("line.separator", "\n");
-        String output = "";
-        output = ("<entry id=\"" + providerID + "\">" + sep);
-        output = output + ("\t<name>" + providerName + "</name>" + sep);
-        output = output + ("\t<number>" + phoneNumber + "</number>" + sep);
-        output = output + ("\t<active>" + active + "</active>" + sep);
-        output = output + ("\t<startdate>" + startDate + "</startdate>" + sep);
+        String sep = System.getProperty("line.separator", "\n"); //$NON-NLS-1$,  //$NON-NLS-2$
+        String output = ""; //$NON-NLS-1$
+        output = ("<entry id=\"" + providerID + "\">" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
+        output = output + ("\t<name>" + providerName + "</name>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
+        output = output + ("\t<number>" + phoneNumber + "</number>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
+        output = output + ("\t<active>" + active + "</active>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
+        output = output + ("\t<startdate>" + startDate + "</startdate>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
         output = output
-                + ("\t<festnetztakt1>" + festnetzTakt1 + "</festnetztakt1>" + sep);
+                + ("\t<festnetztakt1>" + festnetzTakt1 + "</festnetztakt1>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
         output = output
-                + ("\t<festnetztakt2>" + festnetzTakt2 + "</festnetztakt2>" + sep);
+                + ("\t<festnetztakt2>" + festnetzTakt2 + "</festnetztakt2>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
         output = output
-                + ("\t<festnetzkosten>" + festnetzKosten + "</festnetzkosten>" + sep);
+                + ("\t<festnetzkosten>" + festnetzKosten + "</festnetzkosten>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
         output = output
-                + ("\t<festnetzfreiminuten>" + festnetzFreiminuten
-                        + "</festnetzfreiminuten>" + sep);
+                + ("\t<festnetzfreiminuten>" + festnetzFreiminuten //$NON-NLS-1$
+                        + "</festnetzfreiminuten>" + sep); //$NON-NLS-1$
         output = output
-                + ("\t<mobiletakt1>" + mobileTakt1 + "</mobiletakt1>" + sep);
+                + ("\t<mobiletakt1>" + mobileTakt1 + "</mobiletakt1>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
         output = output
-                + ("\t<mobiletakt2>" + mobileTakt2 + "</mobiletakt2>" + sep);
+                + ("\t<mobiletakt2>" + mobileTakt2 + "</mobiletakt2>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
         output = output
-                + ("\t<mobilekosten>" + mobileKosten + "</mobilekosten>" + sep);
+                + ("\t<mobilekosten>" + mobileKosten + "</mobilekosten>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
         output = output
-                + ("\t<mobilefreiminuten>" + mobileFreiminuten
-                        + "</mobilefreiminuten>" + sep);
+                + ("\t<mobilefreiminuten>" + mobileFreiminuten //$NON-NLS-1$
+                        + "</mobilefreiminuten>" + sep); //$NON-NLS-1$
         output = output
-                + ("\t<warnfreiminuten>" + warnFreiminuten
-                        + "</warnfreiminuten>" + sep);
-        output = output + ("</entry>");
+                + ("\t<warnfreiminuten>" + warnFreiminuten //$NON-NLS-1$
+                        + "</warnfreiminuten>" + sep); //$NON-NLS-1$
+        output = output + ("</entry>"); //$NON-NLS-1$
         return output;
     }
 
@@ -360,7 +353,7 @@ public class SipProvider {
     /**
      * Calculates costs of all calls in SipProvider specific CallerList
      *
-     */
+     *
     public void calculateCosts() {
         totalCosts = 0;
         // sortieren nach Datum
@@ -399,10 +392,10 @@ public class SipProvider {
      * Checkt, ob Freiminuten unter den Mindestfreiminuten liegen und warnt den
      * Nutzer
      *
-     */
+     *
     private void checkRestFreiminuten() {
         if (!JFritzUtils.parseBoolean(JFritz.getProperty(
-                "state.warningFreeminutesShown", "false"))) {
+                "state.warningFreeminutesShown", "false"))) { //$NON-NLS-1$,  //$NON-NLS-2$
 
             if (festnetzFreiminuten > 0
                     && nochFestnetzFreiminuten <= warnFreiminuten) {
@@ -418,7 +411,7 @@ public class SipProvider {
                         "Freiminutenlimit für Mobilfunkgespräche über die Rufnummer "
                                 + this.toString() + " unterschritten.",
                         "JFritz - Warnung", JOptionPane.WARNING_MESSAGE);
-                JFritz.setProperty("state.warningFreeminutesShown", "true");
+                JFritz.setProperty("state.warningFreeminutesShown", "true"); //$NON-NLS-1$,  //$NON-NLS-2$
             }
         }
     }

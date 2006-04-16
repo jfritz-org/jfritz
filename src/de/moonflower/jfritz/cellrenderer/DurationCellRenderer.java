@@ -27,7 +27,7 @@ public class DurationCellRenderer extends DefaultTableCellRenderer {
 		if (value != null) {
 			int min = Integer.parseInt(value.toString()) / 60;
 			String durationStr;
-			if (min>0) durationStr=min + " min"; else durationStr="";
+			if (min>0) durationStr=min + " min"; else durationStr=""; //$NON-NLS-1$,  //$NON-NLS-2$
 
 			// setToolTipText(value.toString());
 

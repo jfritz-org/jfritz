@@ -71,8 +71,9 @@ public class StatsDialog extends JDialog {
 	 *
 	 */
 	private void getStats() {
-		final String server = "http://"+JFritz.getProperty("box.address")+":49000/upnp/control/WANCommonIFC1";
-		final String urn = "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetAddonInfos";
+		final String server = "http://"+JFritz.getProperty("box.address") //$NON-NLS-1$,  //$NON-NLS-2$
+		+":49000/upnp/control/WANCommonIFC1"; //$NON-NLS-1$
+		final String urn = "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetAddonInfos"; //$NON-NLS-1$
 
 		String xml = UPNPUtils.getSOAPData(server, urn);
 		try {
@@ -97,7 +98,7 @@ public class StatsDialog extends JDialog {
 	private void drawDialog() {
 		super.dialogInit();
 
-		setTitle(JFritz.getMessage("stats"));
+		setTitle(JFritz.getMessage("stats")); //$NON-NLS-1$
 		setModal(true);
 		getContentPane().setLayout(new BorderLayout());
 		JPanel topPane = new JPanel();
@@ -109,7 +110,7 @@ public class StatsDialog extends JDialog {
 
 		KeyListener keyListener = (new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
-				Debug.msg("KEY: " + e);
+				Debug.msg("KEY: " + e); //$NON-NLS-1$
 				if (e.getKeyCode() == KeyEvent.VK_ESCAPE
 						|| (e.getSource() == cancelButton && e.getKeyCode() == KeyEvent.VK_ENTER)) {
 					pressed_OK = false;
@@ -135,20 +136,16 @@ public class StatsDialog extends JDialog {
 			}
 		};
 
-		okButton = new JButton("Okay");
+		okButton = new JButton(JFritz.getMessage("okay")); //$NON-NLS-1$
 		okButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/okay.png"))));
-		cancelButton = new JButton("Abbruch");
-		refreshButton = new JButton("Statistik aktualisieren");
+						"/de/moonflower/jfritz/resources/images/okay.png")))); //$NON-NLS-1$
+		cancelButton = new JButton(JFritz.getMessage("cancel")); //$NON-NLS-1$
+		refreshButton = new JButton(JFritz.getMessage("actualize_statistics")); //$NON-NLS-1$
 		refreshButton
 				.setIcon(new ImageIcon(
-						Toolkit
-								.getDefaultToolkit()
-								.getImage(
-										getClass()
-												.getResource(
-														"/de/moonflower/jfritz/resources/images/modify.png"))));
+						Toolkit.getDefaultToolkit().getImage(getClass()
+								.getResource("/de/moonflower/jfritz/resources/images/modify.png")))); //$NON-NLS-1$
 		topPane.add(refreshButton);
 		okButton.addActionListener(actionListener);
 		okButton.addKeyListener(keyListener);
@@ -197,19 +194,19 @@ public class StatsDialog extends JDialog {
 	public void setAddonInfos(int byteSendRate, int byteReceiveRate,
 			int totalBytesSent, int totalBytesReceived, String dns1, String dns2) {
 		byteSendRateLabel.setText(JFritz.getMessage(
-				"bytessendrate")
-				+ ": " + byteSendRate);
+				"bytessendrate") //$NON-NLS-1$
+				+ ": " + byteSendRate); //$NON-NLS-1$
 		byteReceiveRateLabel.setText(JFritz.getMessage(
-				"bytesreceivedrate")
-				+ ": " + byteReceiveRate);
+				"bytesreceivedrate") //$NON-NLS-1$
+				+ ": " + byteReceiveRate); //$NON-NLS-1$
 		totalBytesSendLabel.setText(JFritz.getMessage(
-				"totaldatasent")
-				+ ": " + (totalBytesSent / 1024) + " KByte");
+				"totaldatasent") //$NON-NLS-1$
+				+ ": " + (totalBytesSent / 1024) + " KByte"); //$NON-NLS-1$,  //$NON-NLS-2$
 		totalBytesReceivedLabel.setText(JFritz.getMessage(
-				"totaldatareceived")
-				+ ": " + (totalBytesReceived / 1024) + " KByte");
-		dns1Label.setText("DNS Server 1: " + dns1);
-		dns2Label.setText("DNS Server 2: " + dns2);
+				"totaldatareceived") //$NON-NLS-1$
+				+ ": " + (totalBytesReceived / 1024) + " KByte"); //$NON-NLS-1$,  //$NON-NLS-2$
+		dns1Label.setText("DNS Server 1: " + dns1); //$NON-NLS-1$
+		dns2Label.setText("DNS Server 2: " + dns2); //$NON-NLS-1$
 	}
 
 }

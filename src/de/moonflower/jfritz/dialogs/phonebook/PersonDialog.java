@@ -52,7 +52,7 @@ public class PersonDialog extends JDialog implements ActionListener {
 
 	private void drawDialog() {
 		super.dialogInit();
-		setTitle("Person editieren");
+		setTitle(JFritz.getMessage("dialog_title_phonebook_edit_person")); //$NON-NLS-1$
 		setModal(true);
 		getContentPane().setLayout(new BorderLayout());
 
@@ -60,19 +60,19 @@ public class PersonDialog extends JDialog implements ActionListener {
 		JPanel bottomPane = new JPanel();
 
 		// Top Pane
-		JLabel label = new JLabel("Person editieren");
+		JLabel label = new JLabel(JFritz.getMessage("dialog_title_phonebook_edit_person")); //$NON-NLS-1$
 		topPane.add(label);
 
 		// Main Pane
 		personPanel = new PersonPanel(jfritz, person);
 
 		// Bottom Pane
-		okButton = new JButton("Okay");
-		okButton.setActionCommand("ok");
+		okButton = new JButton(JFritz.getMessage("okay")); //$NON-NLS-1$
+		okButton.setActionCommand("ok"); //$NON-NLS-1$
 		okButton.addActionListener(this);
 
-		cancelButton = new JButton("Abbruch");
-		cancelButton.setActionCommand("cancel");
+		cancelButton = new JButton(JFritz.getMessage("cancel")); //$NON-NLS-1$
+		cancelButton.setActionCommand("cancel"); //$NON-NLS-1$
 		cancelButton.addActionListener(this);
 
 		bottomPane.add(okButton);
@@ -106,10 +106,10 @@ public class PersonDialog extends JDialog implements ActionListener {
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals("ok")) {
+		if (e.getActionCommand().equals("ok")) { //$NON-NLS-1$
 			pressed_OK = true;
 			setVisible(false);
-		} else if (e.getActionCommand().equals("cancel")) {
+		} else if (e.getActionCommand().equals("cancel")) { //$NON-NLS-1$
 			pressed_OK = false;
 			setVisible(false);
 		}

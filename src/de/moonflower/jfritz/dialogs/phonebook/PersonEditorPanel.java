@@ -43,7 +43,7 @@ public class PersonEditorPanel extends JComponent {
 
 	private void drawPanel() {
 		setLayout(new BorderLayout());
-		input = new JLabel("  ");
+		input = new JLabel("  ");  //$NON-NLS-1$
 		input.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() > 1) {
@@ -65,7 +65,7 @@ public class PersonEditorPanel extends JComponent {
 		});
 		ImageIcon icon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/person.png")));
+						"/de/moonflower/jfritz/resources/images/person.png"))); //$NON-NLS-1$
 
 		input.setFocusable(false);
 		input.setForeground(new Color(127,127,255));

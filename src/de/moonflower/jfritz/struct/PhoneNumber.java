@@ -15,13 +15,13 @@ import de.moonflower.jfritz.utils.Debug;
  */
 public class PhoneNumber implements Comparable {
 
-	private String numberMatcher = "([0-9]|\\+|\\(|\\)| |-|/)+";
+	private String numberMatcher = "([0-9]|\\+|\\(|\\)| |-|/)+";//$NON-NLS-1$
 
-	private String number = "";
+	private String number = "";//$NON-NLS-1$
 
-	private String callbycall = "";
+	private String callbycall = "";//$NON-NLS-1$
 
-	private String type = "";
+	private String type = "";//$NON-NLS-1$
 	// type values : "home", "mobile", "homezone",
 	// "business", "other", "fax", "sip" };
 
@@ -45,7 +45,7 @@ public class PhoneNumber implements Comparable {
 	 * @param fullNumber
 	 */
 	public PhoneNumber(String fullNumber) {
-		this(fullNumber, "");
+		this(fullNumber, "");//$NON-NLS-1$
 	}
 
 	/**
@@ -63,22 +63,22 @@ public class PhoneNumber implements Comparable {
 	private void createMobileMap() {
 		if (mobileMap == null) {
 			mobileMap = new HashMap();
-			mobileMap.put("+49151", "D1");
-			mobileMap.put("+49160", "D1");
-			mobileMap.put("+49170", "D1");
-			mobileMap.put("+49171", "D1");
-			mobileMap.put("+49175", "D1");
-			mobileMap.put("+49152", "D2");
-			mobileMap.put("+49162", "D2");
-			mobileMap.put("+49172", "D2");
-			mobileMap.put("+49173", "D2");
-			mobileMap.put("+49174", "D2");
-			mobileMap.put("+49163", "E+");
-			mobileMap.put("+49177", "E+");
-			mobileMap.put("+49178", "E+");
-			mobileMap.put("+49159", "O2");
-			mobileMap.put("+49176", "O2");
-			mobileMap.put("+49179", "O2");
+			mobileMap.put("+49151", "D1");//$NON-NLS-1$, //$NON-NLS-2$
+			mobileMap.put("+49160", "D1");//$NON-NLS-1$, //$NON-NLS-2$
+			mobileMap.put("+49170", "D1");//$NON-NLS-1$, //$NON-NLS-2$
+			mobileMap.put("+49171", "D1");//$NON-NLS-1$, //$NON-NLS-2$
+			mobileMap.put("+49175", "D1");//$NON-NLS-1$, //$NON-NLS-2$
+			mobileMap.put("+49152", "D2");//$NON-NLS-1$, //$NON-NLS-2$
+			mobileMap.put("+49162", "D2");//$NON-NLS-1$, //$NON-NLS-2$
+			mobileMap.put("+49172", "D2");//$NON-NLS-1$, //$NON-NLS-2$
+			mobileMap.put("+49173", "D2");//$NON-NLS-1$, //$NON-NLS-2$
+			mobileMap.put("+49174", "D2");//$NON-NLS-1$, //$NON-NLS-2$
+			mobileMap.put("+49163", "E+");//$NON-NLS-1$, //$NON-NLS-2$
+			mobileMap.put("+49177", "E+");//$NON-NLS-1$, //$NON-NLS-2$
+			mobileMap.put("+49178", "E+");//$NON-NLS-1$, //$NON-NLS-2$
+			mobileMap.put("+49159", "O2");//$NON-NLS-1$, //$NON-NLS-2$
+			mobileMap.put("+49176", "O2");//$NON-NLS-1$, //$NON-NLS-2$
+			mobileMap.put("+49179", "O2");//$NON-NLS-1$, //$NON-NLS-2$
 		}
 	}
 
@@ -87,10 +87,10 @@ public class PhoneNumber implements Comparable {
 	 *
 	 */
 	private void removeUnnecessaryChars() {
-        number = number.replaceAll(" ","");
-	    number = number.replaceAll("\\(0","");
-	    number = number.replaceAll("\\(","");
-	    number = number.replaceAll("\\)","");
+        number = number.replaceAll(" ","");   //$NON-NLS-1$, //$NON-NLS-2$
+	    number = number.replaceAll("\\(0","");//$NON-NLS-1$, //$NON-NLS-2$
+	    number = number.replaceAll("\\(",""); //$NON-NLS-1$, //$NON-NLS-2$
+	    number = number.replaceAll("\\)",""); //$NON-NLS-1$, //$NON-NLS-2$
 	}
 
 	/**
@@ -108,10 +108,12 @@ public class PhoneNumber implements Comparable {
 	 * @return Number withour call by call part
 	 */
 	private void cutCallByCall() {
-		if (number.startsWith("0100")) { // cut 0100yy (y = 0..9)
+		if (number.startsWith("0100")) {//$NON-NLS-1$
+			// cut 0100yy (y = 0..9)
 			callbycall = number.substring(0,6);
 			number = number.substring(6);
-		} else if (number.startsWith("010")) { // cut 010xx (x = 1..9, y = 0..9)
+		} else if (number.startsWith("010")) {//$NON-NLS-1$
+			// cut 010xx (x = 1..9, y = 0..9)
 			callbycall = number.substring(0,5);
 			number = number.substring(5);
 		}
@@ -122,13 +124,14 @@ public class PhoneNumber implements Comparable {
 	 * @return Returns internationalized number
 	 */
 	public String convertToIntNumber() {
-		String countryCode = JFritz.getProperty("country.code");
-		String countryPrefix = JFritz.getProperty("country.prefix");
-		String areaCode = JFritz.getProperty("area.code");
-		String areaPrefix = JFritz.getProperty("area.prefix");
+		String countryCode = JFritz.getProperty("country.code");//$NON-NLS-1$
+		String countryPrefix = JFritz.getProperty("country.prefix");//$NON-NLS-1$
+		String areaCode = JFritz.getProperty("area.code");//$NON-NLS-1$
+		String areaPrefix = JFritz.getProperty("area.prefix");//$NON-NLS-1$
 
 		if ((number.length() < 3) // A valid number??
-				|| (number.startsWith("+")) // International number
+				|| (number.startsWith("+"))//$NON-NLS-1$
+				// International number
 				|| isSIPNumber() // SIP Number
 				|| isEmergencyCall() // Emergency
 				|| isQuickDial() // FritzBox QuickDial
@@ -138,15 +141,15 @@ public class PhoneNumber implements Comparable {
 
 		if (number.startsWith(countryCode) && number.length() > 7) {
 			// International numbers without countryPrefix
-			return "+" + number;
+			return "+" + number;//$NON-NLS-1$
 		}
 		if (number.startsWith(countryPrefix)) { // International call
-			return "+" + number.substring(countryPrefix.length());
+			return "+" + number.substring(countryPrefix.length());//$NON-NLS-1$
 		}
 		if (number.startsWith(areaPrefix)) {
-			return "+" + countryCode + number.substring(areaPrefix.length());
+			return "+" + countryCode + number.substring(areaPrefix.length());//$NON-NLS-1$
 		}
-		return "+" + countryCode + areaCode + number;
+		return "+" + countryCode + areaCode + number;//$NON-NLS-1$
 	}
 
 	/**
@@ -156,13 +159,13 @@ public class PhoneNumber implements Comparable {
 	 */
 	public String convertToNationalNumber()
 	{
-		String countryCode = JFritz.getProperty("country.code","49");
-		String areaPrefix = JFritz.getProperty("area.prefix","0");
+		String countryCode = JFritz.getProperty("country.code","49");//$NON-NLS-1$, //$NON-NLS-2$
+		String areaPrefix = JFritz.getProperty("area.prefix","0");   //$NON-NLS-1$, //$NON-NLS-2$
 
-		if (number.startsWith("+"+countryCode))
+		if (number.startsWith("+"+countryCode)) //$NON-NLS-1$
     		return areaPrefix + number.substring(3);
 
-		Debug.msg("PhoneNumber.convertToNationalNumber: this is no national number, returning unchanged (international) number");
+		Debug.msg("PhoneNumber.convertToNationalNumber: this is no national number, returning unchanged (international) number"); //$NON-NLS-1$
 		return number;
 	}
 
@@ -190,21 +193,21 @@ public class PhoneNumber implements Comparable {
 	}
 
 	public String getShortNumber() {
-		String countryCode = JFritz.getProperty("country.code");
-		String areaCode = JFritz.getProperty("area.code");
-		String areaPrefix = JFritz.getProperty("area.prefix");
-		if (number.startsWith("+" + countryCode + areaCode))
+		String countryCode = JFritz.getProperty("country.code");//$NON-NLS-1$
+		String areaCode = JFritz.getProperty("area.code"); 		//$NON-NLS-1$
+		String areaPrefix = JFritz.getProperty("area.prefix");  //$NON-NLS-1$
+		if (number.startsWith("+" + countryCode + areaCode)) //$NON-NLS-1$
 			return number.substring(countryCode.length() + areaCode.length()
 					+ 1);
-		if (number.startsWith("+" + countryCode))
+		if (number.startsWith("+" + countryCode)) //$NON-NLS-1$
 			return areaPrefix + number.substring(countryCode.length() + 1);
 		return number;
 	}
 
 	public String getAreaNumber() {
-		String countryCode = JFritz.getProperty("country.code");
-		String areaPrefix = JFritz.getProperty("area.prefix");
-		if (number.startsWith("+" + countryCode))
+		String countryCode = JFritz.getProperty("country.code"); //$NON-NLS-1$
+		String areaPrefix = JFritz.getProperty("area.prefix"); //$NON-NLS-1$
+		if (number.startsWith("+" + countryCode)) //$NON-NLS-1$
 			return areaPrefix + number.substring(countryCode.length() + 1);
 		return number;
 	}
@@ -234,9 +237,9 @@ public class PhoneNumber implements Comparable {
 	 * @return True if number is a FreeCall number
 	 */
 	public boolean isFreeCall() {
-		boolean ret = number.startsWith("0800");
-		if (ret && getType() == "")
-			type = "business";
+		boolean ret = number.startsWith("0800"); //$NON-NLS-1$
+		if (ret && getType().equals("")) //$NON-NLS-1$
+			type = "business"; //$NON-NLS-1$
 		return ret;
 	}
 
@@ -244,18 +247,22 @@ public class PhoneNumber implements Comparable {
 	 * @return True if number is a local number
 	 */
 	public boolean isLocalCall() {
-		String countryCode = JFritz.getProperty("country.code");
-		String areaCode = JFritz.getProperty("area.code");
-		return number.startsWith("+" + countryCode + areaCode);
+		String countryCode = JFritz.getProperty("country.code"); //$NON-NLS-1$
+		String areaCode = JFritz.getProperty("area.code"); //$NON-NLS-1$
+		return number.startsWith("+" + countryCode + areaCode); //$NON-NLS-1$
 	}
 
 	/**
 	 * @return True if number is a SIP number
 	 */
 	public boolean isSIPNumber() {
-		return ((number.indexOf('@') > 0) || number.startsWith("00038") // PurTel
-				|| number.startsWith("555") // SIPGate
-		|| number.startsWith("777") // SIPGate
+		return ((number.indexOf('@') > 0) //$NON-NLS-1$
+				// PurTel
+				|| number.startsWith("00038")  //$NON-NLS-1$
+				// SIPGate
+				|| number.startsWith("555")  //$NON-NLS-1$
+				// SIPGate
+		|| number.startsWith("777") //$NON-NLS-1$
 		);
 	}
 
@@ -263,7 +270,7 @@ public class PhoneNumber implements Comparable {
 	 * @return True if number is a short quickdial number
 	 */
 	public boolean isQuickDial() {
-	    if (number.startsWith("**7") || number.length() < 3) {
+	    if (number.startsWith("**7") || number.length() < 3) { //$NON-NLS-1$
 	        return true;
 	    } else {
 	        return false;
@@ -274,34 +281,30 @@ public class PhoneNumber implements Comparable {
 	 * @return True if number is an emergency number
 	 */
 	public boolean isEmergencyCall() {
-		if (number.equals("110"))
+		if (number.equals("110")) //$NON-NLS-1$
 			return true; // Germany Police
-		else if (number.equals("112"))
+		else if (number.equals("112")) //$NON-NLS-1$
 			return true; // Germany Medical
-		else if (number.equals("116116"))
+		else if (number.equals("116116")) //$NON-NLS-1$
 			return true; // Germany Credit Card
-		else if (number.equals("144"))
+		else if (number.equals("144")) //$NON-NLS-1$
 			return true; // Switzerland Medical
 		return false;
 	}
-
-	// FIXME: This does not work yet ***************
 
 	/**
 	 *
 	 * @return Country code (49 for Germany, 41 for Switzerland)
 	 */
 	public String getCountryCode() {
-		//	return "49";
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/**
 	 * @return Area code
 	 */
 	public String getAreaCode() {
-		//		return "441";
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/**
@@ -309,8 +312,7 @@ public class PhoneNumber implements Comparable {
 	 * @return Local part of number
 	 */
 	public String getLocalPart() {
-		//		return "592904";
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/**
@@ -319,10 +321,10 @@ public class PhoneNumber implements Comparable {
 	 */
 	public String getMobileProvider() {
 		if (number.length() < 5)
-			return "";
+			return ""; //$NON-NLS-1$
 		Object provider = mobileMap.get(number.substring(0, 6));
 		if (provider == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		return mobileMap.get(number.substring(0, 6)).toString();
 	}
 
@@ -334,8 +336,8 @@ public class PhoneNumber implements Comparable {
 		//		return (!provider.equals(""));
 		boolean ret = number.length() > 6
 				&& mobileMap.containsKey(number.substring(0, 6));
-		if (ret && getType() == "")
-			type = "mobile";
+		if (ret && getType().equals("")) //$NON-NLS-1$
+			type = "mobile"; //$NON-NLS-1$
 		return ret;
 	}
 
@@ -369,12 +371,12 @@ public class PhoneNumber implements Comparable {
 	 */
 	public final void setType() {
 		if (isMobile())
-			type = "mobile";
+			type = "mobile"; //$NON-NLS-1$
 		else if (isFreeCall())
-			type = "business";
+			type = "business"; //$NON-NLS-1$
 		else if (isSIPNumber())
-			type = "sip";
+			type = "sip"; //$NON-NLS-1$
 		else
-			type = "home";
+			type = "home"; //$NON-NLS-1$
 	}
 }

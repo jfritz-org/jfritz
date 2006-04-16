@@ -37,7 +37,7 @@ public class CLIOptions {
 		Enumeration en = CLIOptions.elements();
 		while (en.hasMoreElements()) {
 			CLIOption option = (CLIOption) en.nextElement();
-			if (("" + option.getShortOption()).equals(optstr)
+			if (("" + option.getShortOption()).equals(optstr) //$NON-NLS-1$
 					|| option.getLongOption().equals(optstr)) {
 				return option.hasParameter();
 			}
@@ -49,7 +49,7 @@ public class CLIOptions {
 		Enumeration en = CLIOptions.elements();
 		while (en.hasMoreElements()) {
 			CLIOption option = (CLIOption) en.nextElement();
-			String shortOption = "" + option.getShortOption();
+			String shortOption = "" + option.getShortOption(); //$NON-NLS-1$
 			if (shortOption.equals(optstr)
 					|| option.getLongOption().equals(optstr)) {
 				return new CLIOption(option.getShortOption(), option
@@ -63,12 +63,12 @@ public class CLIOptions {
 		Enumeration en = CLIOptions.elements();
 		while (en.hasMoreElements()) {
 			CLIOption option = (CLIOption) en.nextElement();
-			String line = "  -" + option.getShortOption();
+			String line = "  -" + option.getShortOption(); //$NON-NLS-1$
 			if (option.getLongOption().length() > 0)
-				line += ", --" + option.getLongOption();
+				line += ", --" + option.getLongOption(); //$NON-NLS-1$
 			if (option.getParameter() != null)
-				line += "=[" + option.getParameter() + "]";
-			line = paddingString(line, 29, ' ', false);
+				line += "=[" + option.getParameter() + "]"; //$NON-NLS-1$,  //$NON-NLS-2$
+			line = paddingString(line, 29, ' ', false); //$NON-NLS-1$
 			line += option.getDescription();
 			System.out.println(line);
 
@@ -78,18 +78,18 @@ public class CLIOptions {
 	public Vector parseOptions(String[] args) {
 		Vector foundOptions = new Vector();
 		for (int i = 0; i < args.length; i++) {
-			if (args[i].startsWith("--")) {
-				int pos = args[i].indexOf('=');
+			if (args[i].startsWith("--")) { //$NON-NLS-1$
+				int pos = args[i].indexOf('='); //$NON-NLS-1$
 				if (pos > 0) {
 					String option = args[i].substring(2, pos);
 					String parm = args[i].substring(pos + 1);
 					foundOptions.add(findOption(option, parm));
 				} else {
 					String option = args[i].substring(2);
-					String parm = "";
+					String parm = ""; //$NON-NLS-1$
 					foundOptions.add(findOption(option, parm));
 				}
-			} else if (args[i].startsWith("-")) {
+			} else if (args[i].startsWith("-")) { //$NON-NLS-1$
 				int pos = 1;
 				while (pos < args[i].length()) {
 					String option = args[i].substring(pos, pos + 1);
@@ -98,7 +98,7 @@ public class CLIOptions {
 						foundOptions.add(findOption(option, parm));
 						pos = args[i].length();
 					} else {
-						foundOptions.add(findOption(option, ""));
+						foundOptions.add(findOption(option, "")); //$NON-NLS-1$
 						pos++;
 					}
 				}

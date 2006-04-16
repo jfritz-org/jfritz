@@ -49,12 +49,12 @@ public class CallmessageListener extends Thread implements CallMonitor {
 
 	public void startCallmessageListener() {
 		isRunning = true;
-		Debug.msg("Starting Callmessage-Monitor on Port " + port);
+		Debug.msg("Starting Callmessage-Monitor on Port " + port); //$NON-NLS-1$
 		try {
 			serverSocket = new ServerSocket(port);
 		} catch (Exception e) {
 			try {
-                Debug.err("Exception occoured");
+                Debug.err("Exception occoured"); //$NON-NLS-1$
 				synchronized (this) {
 					wait(5000);
 				}
@@ -63,7 +63,7 @@ public class CallmessageListener extends Thread implements CallMonitor {
 			}
 			jfritz.stopCallMonitor();
 		}
-        Debug.msg("Callmessage-Monitor ready");
+        Debug.msg("Callmessage-Monitor ready"); //$NON-NLS-1$
 		while (isRunning) {
 			try {
 				// Client-Connection accepten, Extra-Socket öffnen
@@ -71,30 +71,32 @@ public class CallmessageListener extends Thread implements CallMonitor {
 				// Eingabe lesen
 				BufferedReader input = new BufferedReader(
 						new InputStreamReader(connection.getInputStream(),
-								"ISO-8859-1"));
+								"ISO-8859-1")); //$NON-NLS-1$
 				String msg = input.readLine();
-				msg = URLDecoder.decode(msg, "ISO-8859-1");
+				msg = URLDecoder.decode(msg, "ISO-8859-1"); //$NON-NLS-1$
 				msg = msg.substring(5, msg.length() - 9);
-				Debug.msg("Got message from callmessageMonitor: " + msg);
+				Debug.msg("Got message from callmessageMonitor: " + msg); //$NON-NLS-1$
 
-				 if (msg.startsWith("?")) { // Neer Callmessagemonitor
+				// Neuer CallmessageMonitor
+				 if (msg.startsWith("?")) {  //$NON-NLS-1$
 				     // Format: ?caller=MSN&called=MSN2
 
                      msg = msg.substring(1); // Entferne ?
-                     String number = "";
-                     String msn = "";
-                     String splitted[] = msg.split("&");
+                     String number = "";  //$NON-NLS-1$
+                     String msn = "";  //$NON-NLS-1$
+                     String splitted[] = msg.split("&");  //$NON-NLS-1$
 
                      for (int i = 0; i < splitted.length; i++) {
-                          if (splitted[i].startsWith("caller=")) {
+                          if (splitted[i].startsWith("caller=")) {  //$NON-NLS-1$
                                number = splitted[i].substring(7);
                           }
-                          if (splitted[i].startsWith("called=")) {
+                          if (splitted[i].startsWith("called=")) {  //$NON-NLS-1$
                                msn = splitted[i].substring(7);
                           }
                      }
-                     jfritz.callInMsg(number, msn, "");
-                } else if (msg.startsWith("@")) { // Alter Callmessagemonitor
+                     jfritz.callInMsg(number, msn, "");  //$NON-NLS-1$
+                     // Alter Callmessagemonitor
+                } else if (msg.startsWith("@")) {  //$NON-NLS-1$
 					// Call
 					// Format: @NAME (NUMBER) oder @NAME NUMBER
 					// NAME: Name, ".." or "unbekannt"
@@ -102,54 +104,54 @@ public class CallmessageListener extends Thread implements CallMonitor {
 					// @unbekannt (01798279574)
 					// @.. (Keine Rufnummer ?bermittelt)
 					msg = msg.substring(1); // Entferne @
-					String name = "";
-					String number = "";
-					String msn = "";
-					String splitted[] = msg.split(" ", 3);
+					String name = ""; //$NON-NLS-1$
+					String number = ""; //$NON-NLS-1$
+					String msn = ""; //$NON-NLS-1$
+					String splitted[] = msg.split(" ", 3); //$NON-NLS-1$
 
 					if (splitted.length == 1) {
-						Debug.msg("Split length 1");
+						Debug.msg("Split length 1"); //$NON-NLS-1$
 						name = splitted[0];
 					} else if (splitted.length == 2) {
-						Debug.msg("Split length 2");
+						Debug.msg("Split length 2"); //$NON-NLS-1$
 						name = splitted[0];
 						number = splitted[1];
-						number = number.replaceAll("\\(", "");
-						number = number.replaceAll("\\)", "");
+						number = number.replaceAll("\\(", ""); //$NON-NLS-1$,  //$NON-NLS-2$
+						number = number.replaceAll("\\)", ""); //$NON-NLS-1$,  //$NON-NLS-2$
 					} else if (splitted.length == 3) {
-						Debug.msg("Split length 3");
+						Debug.msg("Split length 3"); //$NON-NLS-1$
 						name = splitted[0];
 						number = splitted[1];
 						msn = splitted[2];
-						number = number.replaceAll("\\(", "");
-						number = number.replaceAll("\\)", "");
+						number = number.replaceAll("\\(", ""); //$NON-NLS-1$,  //$NON-NLS-2$
+						number = number.replaceAll("\\)", ""); //$NON-NLS-1$,  //$NON-NLS-2$
 					}
-					if (name.equals("..") || name.equals("unbekannt")) {
-						name = "";
+					if (name.equals("..") || name.equals("unbekannt")) { //$NON-NLS-1$,  //$NON-NLS-2$
+						name = ""; //$NON-NLS-1$
 					}
-					if (number.equals("Keine Rufnummer übermittelt")) {
-						number = "";
+					if (number.equals("Keine Rufnummer übermittelt")) { //$NON-NLS-1$
+						number = ""; //$NON-NLS-1$
 					}
 					jfritz.callInMsg(number, msn, name);
 				} else {
 					// Message
-					JFritz.infoMsg(JFritz.getMessage("yac_message") + ":\n"
+					JFritz.infoMsg(JFritz.getMessage("yac_message") + ":\n" //$NON-NLS-1$,  //$NON-NLS-2$
 							+ msg);
 				}
 
 				// No Content ausgeben, Client rauswerfen
 				DataOutputStream output = new DataOutputStream(connection
 						.getOutputStream());
-				output.writeBytes("HTTP/1.1 204 No Content");
+				output.writeBytes("HTTP/1.1 204 No Content"); //$NON-NLS-1$
 				connection.close();
 			} catch (SocketException e) {
-				Debug.err("SocketException: " + e);
-				if (!e.toString().equals("java.net.SocketException: socket closed")) {
+				Debug.err("SocketException: " + e); //$NON-NLS-1$
+				if (!e.toString().equals("java.net.SocketException: socket closed")) { //$NON-NLS-1$
 					jfritz.stopCallMonitor();
 				}
 			} catch (Exception e) {
-				JFritz.infoMsg("Exception " + e);
-				Debug.msg("CallmessageListener: Exception " + e);
+				JFritz.infoMsg("Exception " + e); //$NON-NLS-1$
+				Debug.msg("CallmessageListener: Exception " + e); //$NON-NLS-1$
 				jfritz.stopCallMonitor();
 				isRunning = false;
 				//				break;
@@ -158,12 +160,12 @@ public class CallmessageListener extends Thread implements CallMonitor {
 	}
 
 	public void stopCallMonitor() {
-		Debug.msg("Stopping CallmessageListener");
+		Debug.msg("Stopping CallmessageListener"); //$NON-NLS-1$
 		try {
 			if (serverSocket != null)
 				serverSocket.close();
 		} catch (Exception e) {
-			Debug.msg("Fehler beim Schliessen des Sockets");
+			Debug.msg("Error on closing socket"); //$NON-NLS-1$
 		}
 		isRunning = false;
 	}

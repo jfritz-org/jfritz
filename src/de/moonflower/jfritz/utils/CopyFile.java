@@ -24,7 +24,7 @@ public class CopyFile {
     private int numberOfFiles;
     private String sourceDirectory, fileFormat;
     private Date date;
-    SimpleDateFormat df = new SimpleDateFormat( "yyyy.MM.dd_HH.mm.ss" );
+    SimpleDateFormat df = new SimpleDateFormat( "yyyy.MM.dd_HH.mm.ss" ); //$NON-NLS-1$
 
     /**
      * gets all files with the ending "fileFormat" in directory "sourceDirectory"
@@ -61,10 +61,10 @@ public class CopyFile {
     private void createDirectory() {
         date = Calendar.getInstance().getTime();
 
-        boolean success = (new File("backup"+File.separator + df.format( date )))
+        boolean success = (new File("backup"+File.separator + df.format( date ))) //$NON-NLS-1$
                 .mkdirs();
         if (!success) {
-            Debug.err("Directory creation failed");
+            Debug.err("Directory creation failed"); //$NON-NLS-1$
         }
     }
 
@@ -81,8 +81,9 @@ public class CopyFile {
         out = new FileOutputStream[numberOfFiles];
         for (int i = 0; i < numberOfFiles; i++) {
             try {
-                Debug.msg("Found file to backup: " + entries[i].getName());
-                out[i] = new FileOutputStream("backup" + File.separator + df.format( date ) + File.separator + entries[i].getName());
+                Debug.msg("Found file to backup: " + entries[i].getName()); //$NON-NLS-1$
+                out[i] = new FileOutputStream("backup" //$NON-NLS-1$
+                		+ File.separator + df.format( date ) + File.separator + entries[i].getName());
                 byte[] buf = new byte[4096];
                 int len;
                 while ((len = in[i].read(buf)) > 0) {
@@ -93,7 +94,7 @@ public class CopyFile {
             } catch (IOException ex) {
                 Debug.err(ex.toString());
             } catch (ArrayIndexOutOfBoundsException ex) {
-                Debug.err("No files available");
+                Debug.err("No files available"); //$NON-NLS-1$
             }
         }
     }
@@ -110,7 +111,7 @@ public class CopyFile {
         out = new FileOutputStream[numberOfFiles];
         for (int i = 0; i < numberOfFiles; i++) {
             try {
-                Debug.msg("Found file to backup: " + entries[i].getName());
+                Debug.msg("Found file to backup: " + entries[i].getName()); //$NON-NLS-1$
                 out[i] = new FileOutputStream( targetDirectory + File.separator + entries[i].getName());
                 byte[] buf = new byte[4096];
                 int len;
@@ -122,7 +123,7 @@ public class CopyFile {
             } catch (IOException ex) {
                 Debug.err(ex.toString());
             } catch (ArrayIndexOutOfBoundsException ex) {
-                Debug.err("No files available");
+                Debug.err("No files available"); //$NON-NLS-1$
             }
         }
     }

@@ -15,48 +15,48 @@ public class FBoxListenerV3 extends FBoxListener {
 
     public FBoxListenerV3(JFritz jfritz) {
         super(jfritz);
-        Debug.msg("FBoxListener V3");
+        Debug.msg("FBoxListener V3"); //$NON-NLS-1$
     }
 
     public void run() {
         if (super.connect()) {
-            Debug.msg("Connected");
+            Debug.msg("Connected"); //$NON-NLS-1$
             readOutput();
         }
     }
 
     protected void parseOutput(String line) {
         initIgnoreList();
-        Debug.msg("Server: " + line);
-        String number = "";
-        String provider = "";
+        Debug.msg("Server: " + line); //$NON-NLS-1$
+        String number = ""; //$NON-NLS-1$
+        String provider = ""; //$NON-NLS-1$
         String[] split;
-        split = line.split(";", 7);
+        split = line.split(";", 7); //$NON-NLS-1$
         for (int i = 0; i < split.length; i++) {
-            Debug.msg("Split[" + i + "] = " + split[i]);
+            Debug.msg("Split[" + i + "] = " + split[i]); //$NON-NLS-1$,  //$NON-NLS-2$
         }
         if (JFritzUtils.parseBoolean(JFritz.getProperty(
-                "option.callmonitor.monitorIncomingCalls", "true"))
-                && split[1].equals("RING")) {
-            if (split[3].equals("")) {
-                number = JFritz.getMessage("unknown");
+                "option.callmonitor.monitorIncomingCalls", "true")) //$NON-NLS-1$,  //$NON-NLS-2$
+                && split[1].equals("RING")) { //$NON-NLS-1$
+            if (split[3].equals("")) { //$NON-NLS-1$
+                number = JFritz.getMessage("unknown"); //$NON-NLS-1$
             } else
                 number = split[3];
-            if (number.endsWith("#"))
+            if (number.endsWith("#")) //$NON-NLS-1$
                 number = number.substring(0, number.length() - 1);
 
-            if (split[5].equals("POTS")) {
-				if (split[4].equals("")) {
-					provider = JFritz.getMessage("fixed_network");
+            if (split[5].equals("POTS")) { //$NON-NLS-1$
+				if (split[4].equals("")) { //$NON-NLS-1$
+					provider = JFritz.getMessage("fixed_network"); //$NON-NLS-1$
 				}
 				else {
-					provider = split[4] + " (" + JFritz.getMessage("fixed_network") + ")";
+					provider = split[4] + " (" + JFritz.getMessage("fixed_network") + ")"; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 				}
-            } else if (split[5].startsWith("SIP")) {
-				provider = split[4] + " (SIP)";
+            } else if (split[5].startsWith("SIP")) { //$NON-NLS-1$
+				provider = split[4] + " (SIP)"; //$NON-NLS-1$
 
-            }  else if (split[5].equals("ISDN")) {
-				provider = split[4] + " (ISDN)";
+            }  else if (split[5].equals("ISDN")) { //$NON-NLS-1$
+				provider = split[4] + " (ISDN)"; //$NON-NLS-1$
             } else
 				provider = split[4];
 
@@ -69,27 +69,27 @@ public class FBoxListenerV3 extends FBoxListener {
             if (!ignoreIt)
                 jfritz.callInMsg(number, provider);
         } else if (JFritzUtils.parseBoolean(JFritz.getProperty(
-                "option.callmonitor.monitorOutgoingCalls", "true"))
-                && split[1].equals("CALL")) {
-            if (split[5].equals("")) {
-                number = JFritz.getMessage("unknown");
+                "option.callmonitor.monitorOutgoingCalls", "true")) //$NON-NLS-1$,  //$NON-NLS-2$
+                && split[1].equals("CALL")) { //$NON-NLS-1$
+            if (split[5].equals("")) { //$NON-NLS-1$
+                number = JFritz.getMessage("unknown"); //$NON-NLS-1$
             } else
                 number = split[5];
-            if (number.endsWith("#"))
+            if (number.endsWith("#")) //$NON-NLS-1$
                 number = number.substring(0, number.length() - 1);
 
-            if (split[6].equals("POTS")) {
-				if (split[4].equals("")) {
-					provider = JFritz.getMessage("fixed_network");
+            if (split[6].equals("POTS")) { //$NON-NLS-1$
+				if (split[4].equals("")) { //$NON-NLS-1$
+					provider = JFritz.getMessage("fixed_network"); //$NON-NLS-1$
 				}
 				else {
-					provider = split[4] + " (" + JFritz.getMessage("fixed_network") + ")";
+					provider = split[4] + " (" + JFritz.getMessage("fixed_network") + ")"; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 				}
-            } else if (split[6].startsWith("SIP")) {
-				provider = split[4] + " (" + jfritz.getSIPProviderTableModel().getSipProvider(split[6],split[6]) + ")";
+            } else if (split[6].startsWith("SIP")) { //$NON-NLS-1$
+				provider = split[4] + " (" + jfritz.getSIPProviderTableModel().getSipProvider(split[6],split[6]) + ")"; //$NON-NLS-1$,  //$NON-NLS-2$
 
-            }  else if (split[6].equals("ISDN")) {
-				provider = split[4] + " (ISDN)";
+            }  else if (split[6].equals("ISDN")) { //$NON-NLS-1$
+				provider = split[4] + " (ISDN)"; //$NON-NLS-1$
             } else
 				provider = split[4];
 
@@ -102,8 +102,8 @@ public class FBoxListenerV3 extends FBoxListener {
             if (!ignoreIt)
                 jfritz.callOutMsg(number, provider);
         } else if (JFritzUtils.parseBoolean(JFritz.getProperty(
-                "option.callmonitor.fetchAfterDisconnect", "true"))
-                && split[1].equals("DISCONNECT")) {
+                "option.callmonitor.fetchAfterDisconnect", "true")) //$NON-NLS-1$,  //$NON-NLS-2$
+                && split[1].equals("DISCONNECT")) { //$NON-NLS-1$
             try {
                 Thread.sleep(zufallszahl.nextInt(3000));
             } catch (InterruptedException e) {

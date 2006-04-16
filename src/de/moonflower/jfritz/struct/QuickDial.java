@@ -24,7 +24,7 @@ public class QuickDial {
 	public QuickDial(String quickdial, String vanity, String number,
 			String description) {
 		if (description == null)
-			description = "";
+			description = ""; //$NON-NLS-1$
 		this.quickdial = quickdial;
 		this.vanity = vanity;
 		this.number = number;

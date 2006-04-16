@@ -5,6 +5,9 @@
 package de.moonflower.jfritz.utils;
 
 import javax.swing.JOptionPane;
+
+import de.moonflower.jfritz.JFritz;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.text.SimpleDateFormat;
@@ -21,7 +24,7 @@ public class Debug {
 
 	private static int debugLevel;
 	private static boolean logFile = false;
-	private static String logFileName = "";
+	private static String logFileName = ""; //$NON-NLS-1$
 
 	/**
 	 * Turns debug-mode on
@@ -29,7 +32,7 @@ public class Debug {
 	 */
 	public static void on() {
 		Debug.debugLevel = 3;
-		msg("debugging mode has been enabled");
+		msg("debugging mode has been enabled"); //$NON-NLS-1$
 	}
 
 	/**
@@ -40,8 +43,8 @@ public class Debug {
 		Debug.debugLevel = 3;
 		logFile = true;
 		logFileName = fname;
-		logMessage("------------------------------------------");
-		msg("logging to file \""+ fname + "\" has been enabled");
+		logMessage("------------------------------------------"); //$NON-NLS-1$
+		msg("logging to file \""+ fname + "\" has been enabled"); //$NON-NLS-1$,  //$NON-NLS-2$
 	}
 
 	/**
@@ -58,7 +61,7 @@ public class Debug {
 	 */
 	private static String getCurrentTime() {
 		Date now = new java.util.Date();
-		SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+		SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss"); //$NON-NLS-1$
 		return df.format(now);
 	}
 
@@ -69,7 +72,7 @@ public class Debug {
 	 */
 	public static void msg(int level, String message) {
 		if (debugLevel >= level) {
-			message = "(" + getCurrentTime() + ") DEBUG: " + message;
+			message = "(" + getCurrentTime() + ") DEBUG: " + message; //$NON-NLS-1$,  //$NON-NLS-2$
 			System.out.println(message);
 			if (logFile) {
 				logMessage(message);
@@ -82,7 +85,7 @@ public class Debug {
 	 * @param message
 	 */
 	public static void err(String message) {
-		message = "(" + getCurrentTime() + ") ERROR: " + message;
+		message = "(" + getCurrentTime() + ") ERROR: " + message; //$NON-NLS-1$,  //$NON-NLS-2$
 		System.err.println(message);
 		if (logFile) {
 			logMessage(message);
@@ -103,7 +106,7 @@ public class Debug {
 		appendedFile.close();
 		}
 		catch (Exception e) {
-			System.out.println("EXCEPTION when writing to LOGFILE");
+			System.out.println("EXCEPTION when writing to LOGFILE"); //$NON-NLS-1$
 		} finally {                       // always close the file
 			if (appendedFile != null) try {
 				appendedFile.close();
@@ -119,7 +122,7 @@ public class Debug {
      */
     public static void msgDlg(String message) {
         msg(message);
-        JOptionPane.showMessageDialog(null, message, "Information", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, message, JFritz.getMessage("information"), JOptionPane.INFORMATION_MESSAGE); //$NON-NLS-1$
     }
 
     /**
@@ -128,6 +131,6 @@ public class Debug {
 	 */
 	public static void errDlg(String message) {
 		err(message);
-        JOptionPane.showMessageDialog(null, message, "Fehler", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, message, JFritz.getMessage("error"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
 	}
 }

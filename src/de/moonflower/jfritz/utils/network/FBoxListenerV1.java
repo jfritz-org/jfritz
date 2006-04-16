@@ -15,36 +15,36 @@ public class FBoxListenerV1 extends FBoxListener {
 
     public FBoxListenerV1(JFritz jfritz) {
         super(jfritz);
-        Debug.msg("FBoxListener V1");
+        Debug.msg("FBoxListener V1"); //$NON-NLS-1$
     }
 
     public void run() {
         if (super.connect()) {
-            Debug.msg("Connected");
+            Debug.msg("Connected"); //$NON-NLS-1$
             readOutput();
         }
     }
 
     protected void parseOutput(String line) {
         initIgnoreList();
-        Debug.msg("Server: " + line);
-        String number = "";
-        String provider = "";
+        Debug.msg("Server: " + line); //$NON-NLS-1$
+        String number = ""; //$NON-NLS-1$
+        String provider = ""; //$NON-NLS-1$
         String[] split;
-        split = line.split(";", 7);
+        split = line.split(";", 7); //$NON-NLS-1$
         for (int i = 0; i < split.length; i++) {
-            Debug.msg("Split[" + i + "] = " + split[i]);
+            Debug.msg("Split[" + i + "] = " + split[i]); //$NON-NLS-1$,  //$NON-NLS-2$
         }
         if (JFritzUtils.parseBoolean(JFritz.getProperty(
-                "option.callmonitor.monitorIncomingCalls", "true"))
-                && split[1].equals("RING")) {
-            if (split[3].equals("")) {
-                number = "Unbekannt";
+                "option.callmonitor.monitorIncomingCalls", "true")) //$NON-NLS-1$, //$NON-NLS-2$
+                && split[1].equals("RING")) { //$NON-NLS-1$
+            if (split[3].equals("")) { //$NON-NLS-1$
+                number = JFritz.getMessage("unknown"); //$NON-NLS-1$
             } else
                 number = split[3];
-			if (number.endsWith("#")) number = number.substring(0, number.length()-1);
-            if (split[4].equals("")) {
-                provider = "Analog";
+			if (number.endsWith("#")) number = number.substring(0, number.length()-1); //$NON-NLS-1$
+            if (split[4].equals("")) { //$NON-NLS-1$
+                provider = JFritz.getMessage("fixed_network"); //$NON-NLS-1$
             } else
                 provider = split[4];
             provider = jfritz.getSIPProviderTableModel().getSipProvider(
@@ -58,15 +58,15 @@ public class FBoxListenerV1 extends FBoxListener {
             if (!ignoreIt)
                 jfritz.callInMsg(number, provider);
         } else if (JFritzUtils.parseBoolean(JFritz.getProperty(
-                "option.callmonitor.monitorOutgoingCalls", "true"))
-                && split[1].equals("CALL")) {
-            if (split[5].equals("")) {
-                number = "Unbekannt";
+                "option.callmonitor.monitorOutgoingCalls", "true")) //$NON-NLS-1$,  //$NON-NLS-2$
+                && split[1].equals("CALL")) { //$NON-NLS-1$
+            if (split[5].equals("")) { //$NON-NLS-1$
+                number = JFritz.getMessage("unknown"); //$NON-NLS-1$
             } else
                 number = split[5];
-			if (number.endsWith("#")) number = number.substring(0, number.length()-1);
-            if (split[4].equals("")) {
-                provider = "Analog";
+			if (number.endsWith("#")) number = number.substring(0, number.length()-1); //$NON-NLS-1$
+            if (split[4].equals("")) { //$NON-NLS-1$
+                provider = JFritz.getMessage("fixed_network"); //$NON-NLS-1$
             } else
                 provider = split[4];
             provider = jfritz.getSIPProviderTableModel().getSipProvider(
@@ -80,8 +80,8 @@ public class FBoxListenerV1 extends FBoxListener {
             if (!ignoreIt)
                 jfritz.callOutMsg(number, provider);
         } else if (JFritzUtils.parseBoolean(JFritz.getProperty(
-                "option.callmonitor.fetchAfterDisconnect", "true"))
-                && split[1].equals("DISCONNECT")) {
+                "option.callmonitor.fetchAfterDisconnect", "true")) //$NON-NLS-1$,  //$NON-NLS-2$
+                && split[1].equals("DISCONNECT")) { //$NON-NLS-1$
             try {
                 Thread.sleep(zufallszahl.nextInt(3000));
             } catch (InterruptedException e) {

@@ -58,7 +58,8 @@ public class SelectionListener implements ListSelectionListener {
 			for (int i = 0; i < rows.length; i++) {
 				call = (Call) table.getJfritz().getCallerlist().getFilteredCallVector().get(rows[i]);
 				person = call.getPerson();
-				if (person != null && person.getFullname() != "") { // FIXME
+				if (person != null && person.getFullname() != "") { //$NON-NLS-1$
+					// FIXME
 					// person.getVCard
 					list.addVCard(person);
 				}
@@ -87,9 +88,10 @@ public class SelectionListener implements ListSelectionListener {
 						.setDeleteEntryButton();
 				table.getJfritz().getJframe().setStatus();
 			} else if (rows.length > 0) {
-				// Setze Statusbar mit Infos über selectierte Anrufe
-				table.getJfritz().getJframe().setStatus(selectedCalls + " " + JFritz.getMessage("entries") + ", "
-                        + JFritz.getMessage("total_duration") + ": " + (selectedCallsTotalMinutes / 60) + " min");
+				// Setze Statusbar mit Infos über selektierte Anrufe
+				table.getJfritz().getJframe().setStatus(JFritz.getMessage("entries").replaceAll( //$NON-NLS-1$
+						"%N", Integer.toString(selectedCalls)) + ", "  //$NON-NLS-1$,  //$NON-NLS-2$
+                        + JFritz.getMessage("total_duration") + ": " + (selectedCallsTotalMinutes / 60) + " min"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 				if (rows.length == table.getRowCount())
 					table.getJfritz().getJframe().getCallerListPanel()
 							.setDeleteListButton();

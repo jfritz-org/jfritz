@@ -21,20 +21,20 @@ import de.moonflower.jfritz.utils.Debug;
  */
 public class SSDPPacket {
 
-    final static String SSDP_ADDRESS = "239.255.255.250";
+    final static String SSDP_ADDRESS = "239.255.255.250"; //$NON-NLS-1$
 
-    final static String SSDP_DISCOVER = "M-SEARCH * HTTP/1.1\r\nST: upnp:rootdevice\r\n"
-            + "MX: 10\r\nMAN: \"ssdp:discover\"\r\nHOST: 239.255.255.250:1900\r\n\r\n";
+    final static String SSDP_DISCOVER = "M-SEARCH * HTTP/1.1\r\nST: upnp:rootdevice\r\n" //$NON-NLS-1$
+            + "MX: 10\r\nMAN: \"ssdp:discover\"\r\nHOST: 239.255.255.250:1900\r\n\r\n"; //$NON-NLS-1$
 
     // watZZ2BLACK UPnP/1.0 AVM FRITZ!Box Fon WLAN 7050 14.03.101
     // 00:04:0E:A2:B1:7B
-    final static String PATTERN_MAC = "\\w\\w:\\w\\w:\\w\\w:\\w\\w:\\w\\w:\\w\\w";
-    final static String PATTERN_FIRMWARE = "\\d\\d\\.\\d\\d\\.\\d\\d*";
+    final static String PATTERN_MAC = "\\w\\w:\\w\\w:\\w\\w:\\w\\w:\\w\\w:\\w\\w"; //$NON-NLS-1$
+    final static String PATTERN_FIRMWARE = "\\d\\d\\.\\d\\d\\.\\d\\d*"; //$NON-NLS-1$
 
     private DatagramPacket udpPacket;
 
-    private String server = "", location = "", cachecontrol = "", ext = "",
-            st = "", usn = "";
+    private String server = "", location = "", cachecontrol = "", ext = "", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$
+            st = "", usn = ""; //$NON-NLS-1$,  //$NON-NLS-2$
 
     /**
      * creates a SSDPPacket from a DatagramPacket
@@ -44,19 +44,19 @@ public class SSDPPacket {
      */
     public SSDPPacket(DatagramPacket packet) {
         this.udpPacket = packet;
-        String[] data = new String(packet.getData()).split("\r\n");
+        String[] data = new String(packet.getData()).split("\r\n"); //$NON-NLS-1$
         for (int i = 0; i < data.length; i++) {
-            if (data[i].startsWith("SERVER:"))
+            if (data[i].startsWith("SERVER:")) //$NON-NLS-1$
                 server = data[i].substring(7).trim();
-            else if (data[i].startsWith("LOCATION:"))
+            else if (data[i].startsWith("LOCATION:")) //$NON-NLS-1$
                 location = data[i].substring(9).trim();
-            else if (data[i].startsWith("CACHE-CONTROL:"))
+            else if (data[i].startsWith("CACHE-CONTROL:")) //$NON-NLS-1$
                 cachecontrol = data[i].substring(15).trim();
-            else if (data[i].startsWith("EXT:"))
+            else if (data[i].startsWith("EXT:")) //$NON-NLS-1$
                 ext = data[i].substring(4).trim();
-            else if (data[i].startsWith("ST:"))
+            else if (data[i].startsWith("ST:")) //$NON-NLS-1$
                 st = data[i].substring(3).trim();
-            else if (data[i].startsWith("USN:"))
+            else if (data[i].startsWith("USN:")) //$NON-NLS-1$
                 usn = data[i].substring(4).trim();
         }
     }
@@ -144,7 +144,7 @@ public class SSDPPacket {
     }
 
     public final String getShortName() {
-        String parts[] = getServer().split(" ", 4);
+        String parts[] = getServer().split(" ", 4); //$NON-NLS-1$
         String name = parts[3];
         return name;
     }
@@ -152,22 +152,22 @@ public class SSDPPacket {
     public String getMAC() {
         Pattern p = Pattern.compile(PATTERN_MAC);
         Matcher m = p.matcher(getServer());
-        String mac = "";
+        String mac = ""; //$NON-NLS-1$
         if (m.find()) {
             mac = m.group(0);
         }
-        Debug.msg("SSDP MAC: "+mac);
+        Debug.msg("SSDP MAC: "+mac); //$NON-NLS-1$
         return mac;
     }
 
     public FritzBoxFirmware getFirmware() {
         Pattern p = Pattern.compile(PATTERN_FIRMWARE);
         Matcher m = p.matcher(getServer());
-        String fwstr = "";
+        String fwstr = ""; //$NON-NLS-1$
         if (m.find()) {
             fwstr = m.group(0);
         }
-        Debug.msg("SSDP FW: "+fwstr);
+        Debug.msg("SSDP FW: "+fwstr); //$NON-NLS-1$
         try {
             return new FritzBoxFirmware(fwstr);
         } catch (InvalidFirmwareException e) {

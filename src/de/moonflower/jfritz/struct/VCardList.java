@@ -40,7 +40,7 @@ public class VCardList {
 			Person p = (Person) en.nextElement();
 			if (p.getStandardTelephoneNumber().getIntNumber().equals(
 					person.getStandardTelephoneNumber().getIntNumber())
-					|| p.getLastName().equals("")) {
+					|| p.getLastName().equals("")) {  //$NON-NLS-1$
 				found = true;
 				break;
 			}
@@ -71,12 +71,12 @@ public class VCardList {
 			pw.println(toVCardList());
 			pw.close();
 		} catch (FileNotFoundException e) {
-			Debug.err("Could not write " + file.getName() + "!");
+			Debug.err("Could not write " + file.getName() + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 
 	public String toVCardList() {
-		String str = "";
+		String str = ""; //$NON-NLS-1$
 		Enumeration en = list.elements();
 		while (en.hasMoreElements()) {
 			Person p = (Person) en.nextElement();

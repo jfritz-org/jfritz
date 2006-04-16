@@ -35,19 +35,20 @@ public class PropertiesXMLHandler extends DefaultHandler {
     public void startElement(String namespaceURI, String lName, String qName,
             Attributes attrs) throws SAXException {
         String eName = lName;
-        if ("".equals(eName))
+        if ("".equals(eName)) //$NON-NLS-1$
             eName = qName;
 
-        chars = ""; // Important to clear buffer :)
+        // Important to clear buffer :)
+        chars = "";  //$NON-NLS-1$
 
-        if (eName.equals("entry")) {
-            keyEntry = attrs.getValue("key");
+        if (eName.equals("entry")) { //$NON-NLS-1$
+            keyEntry = attrs.getValue("key"); //$NON-NLS-1$
         }
     }
 
     public void endElement(String namespaceURI, String sName, String qName)
             throws SAXException {
-        if (qName.equals("entry")) {
+        if (qName.equals("entry")) { //$NON-NLS-1$
             String value = chars;
             JFritz.setProperty(keyEntry, value);
         }

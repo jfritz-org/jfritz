@@ -28,7 +28,7 @@ public class DateCellRenderer extends DefaultTableCellRenderer {
 				value, isSelected, hasFocus, row, column);
 
 		if (value != null) {
-			SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm");
+			SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm"); //$NON-NLS-1$
 			String datumStr = df.format((Date) value);
 
 			label.setText(datumStr);

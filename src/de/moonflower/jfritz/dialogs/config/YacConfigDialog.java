@@ -53,18 +53,18 @@ public class YacConfigDialog extends JDialog implements CallMonitorConfigDialog 
     }
 
     public void initDialog() {
-        setTitle("YacMonitor - Einstellungen");
+        setTitle(JFritz.getMessage("dialog_title_yac_options")); //$NON-NLS-1$
         setSize(270, 140);
         drawDialog();
         setProperties();
     }
 
     private void setProperties() {
-        yacPort.setText(JFritz.getProperty("option.yacport", "10629"));
+        yacPort.setText(JFritz.getProperty("option.yacport", "10629")); //$NON-NLS-1$,  //$NON-NLS-2$
     }
 
     private void storeProperties() {
-        JFritz.setProperty("option.yacport", yacPort.getText());
+        JFritz.setProperty("option.yacport", yacPort.getText()); //$NON-NLS-1$
     }
 
     public int showConfigDialog() {
@@ -119,19 +119,19 @@ public class YacConfigDialog extends JDialog implements CallMonitorConfigDialog 
 
         c.gridwidth = 1;
         c.gridy = 0;
-        JLabel label = new JLabel("YAC-Port: ");
+        JLabel label = new JLabel("YAC-Port: "); //$NON-NLS-1$
         panel.add(label, c);
-        yacPort = new JTextField("", 5);
+        yacPort = new JTextField("", 5); //$NON-NLS-1$
         panel.add(yacPort, c);
 
         JPanel buttonPanel = new JPanel();
-        okButton = new JButton(JFritz.getMessage("okay"));
-        okButton.setActionCommand("ok_pressed");
+        okButton = new JButton(JFritz.getMessage("okay")); //$NON-NLS-1$
+        okButton.setActionCommand("ok_pressed"); //$NON-NLS-1$
         okButton.addActionListener(actionListener);
         okButton.addKeyListener(keyListener);
 
-        cancelButton = new JButton(JFritz.getMessage("cancel"));
-        cancelButton.setActionCommand("cancel_pressed");
+        cancelButton = new JButton(JFritz.getMessage("cancel")); //$NON-NLS-1$
+        cancelButton.setActionCommand("cancel_pressed"); //$NON-NLS-1$
         cancelButton.addActionListener(actionListener);
         cancelButton.addKeyListener(keyListener);
 

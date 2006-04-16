@@ -49,66 +49,62 @@ import java.net.URLEncoder;
  */
 public class JFritzUtils {
 
-    private final static String POSTDATA_LIST = "&var%3Alang=de&var%3Amenu=fon&var%3Apagename=foncalls&login%3Acommand%2Fpassword=";
+    private final static String POSTDATA_LIST = "&var%3Alang=de&var%3Amenu=fon&var%3Apagename=foncalls&login%3Acommand%2Fpassword="; //$NON-NLS-1$
 
-    private final static String POSTDATA_QUICKDIAL = "&var%3Alang=de&var%3Amenu=fon&var%3Apagename=kurzwahlen&login%3Acommand%2Fpassword=";
+    private final static String POSTDATA_QUICKDIAL = "&var%3Alang=de&var%3Amenu=fon&var%3Apagename=kurzwahlen&login%3Acommand%2Fpassword="; //$NON-NLS-1$
 
-    private final static String POSTDATA_QUICKDIAL_NEW = "&var%3Alang=de&var%3Amenu=fon&var%3Apagename=fonbuch&login%3Acommand%2Fpassword=";
+    private final static String POSTDATA_QUICKDIAL_NEW = "&var%3Alang=de&var%3Amenu=fon&var%3Apagename=fonbuch&login%3Acommand%2Fpassword="; //$NON-NLS-1$
 
-    private final static String POSTDATA_SIPPROVIDER = "&var%3Alang=de&var%3Amenu=fon&var%3Apagename=siplist&login%3Acommand%2Fpassword=";
+    private final static String POSTDATA_SIPPROVIDER = "&var%3Alang=de&var%3Amenu=fon&var%3Apagename=siplist&login%3Acommand%2Fpassword="; //$NON-NLS-1$
 
-    private final static String POSTDATA_CLEAR = "&var%3Alang=de&var%3Apagename=foncalls&var%3Amenu=fon&telcfg%3Asettings/ClearJournal=1";
+    private final static String POSTDATA_CLEAR = "&var%3Alang=de&var%3Apagename=foncalls&var%3Amenu=fon&telcfg%3Asettings/ClearJournal=1"; //$NON-NLS-1$
 
-    private final static String POSTDATA_CALL = "&login:command/password=$PASSWORT&telcfg:settings/UseClickToDial=1&telcfg:command/Dial=$NUMMER&telcfg:settings/DialPort=$NEBENSTELLE";
+    private final static String POSTDATA_CALL = "&login:command/password=$PASSWORT&telcfg:settings/UseClickToDial=1&telcfg:command/Dial=$NUMMER&telcfg:settings/DialPort=$NEBENSTELLE"; //$NON-NLS-1$
 
-    private final static String PATTERN_LIST_CSV_OLD = "(\\d);(\\d\\d.\\d\\d.\\d\\d \\d\\d:\\d\\d);([^;]*);([^;]*);([^;]*);(\\d:\\d\\d)";
+    private final static String PATTERN_LIST_CSV_OLD = "(\\d);(\\d\\d.\\d\\d.\\d\\d \\d\\d:\\d\\d);([^;]*);([^;]*);([^;]*);(\\d:\\d\\d)"; //$NON-NLS-1$
 
-    private final static String PATTERN_LIST_CSV_NEW = "(\\d);(\\d\\d.\\d\\d.\\d\\d \\d\\d:\\d\\d);([^;]*);([^;]*);([^;]*);([^;]*);(\\d:\\d\\d)";
+    private final static String PATTERN_LIST_CSV_NEW = "(\\d);(\\d\\d.\\d\\d.\\d\\d \\d\\d:\\d\\d);([^;]*);([^;]*);([^;]*);([^;]*);(\\d:\\d\\d)"; //$NON-NLS-1$
 
-    private final static String PATTERN_QUICKDIAL = "<tr class=\"Dialoglist\">"
-            + "\\s*<td style=\"text-align: center;\">(\\d*)</td>"
-            + "\\s*<td>(\\w*)</td>"
-            + "\\s*<td>([^<]*)</td>"
-            + "\\s*<td style=\"text-align: right;\"><button [^>]*>\\s*<img [^>]*></button></td>"
-            + "\\s*<td style=\"text-align: right;\"><button [^>]*>\\s*<img [^>]*></button></td>"
-            + "\\s*</tr>";
+    private final static String PATTERN_QUICKDIAL = "<tr class=\"Dialoglist\">" //$NON-NLS-1$
+            + "\\s*<td style=\"text-align: center;\">(\\d*)</td>" //$NON-NLS-1$
+            + "\\s*<td>(\\w*)</td>" //$NON-NLS-1$
+            + "\\s*<td>([^<]*)</td>" //$NON-NLS-1$
+            + "\\s*<td style=\"text-align: right;\"><button [^>]*>\\s*<img [^>]*></button></td>" //$NON-NLS-1$
+            + "\\s*<td style=\"text-align: right;\"><button [^>]*>\\s*<img [^>]*></button></td>" //$NON-NLS-1$
+            + "\\s*</tr>"; //$NON-NLS-1$
 
-    private final static String PATTERN_QUICKDIAL_NEW = "<td class=\"c5\"><span title=\"[^\"]*\">([^<]*)</span></td>"
-            + "\\s*<td class=\"c3\"><span title=\"[^\"]*\">([^<]*)</span></td>"
-            + "\\s*<td class=\"c1\">(\\d*)</td>"
-            + "\\s*<td class=\"c2\"><span title=\"[^\"]*\">([^<]*)";
+    private final static String PATTERN_QUICKDIAL_NEW = "<td class=\"c5\"><span title=\"[^\"]*\">([^<]*)</span></td>" //$NON-NLS-1$
+            + "\\s*<td class=\"c3\"><span title=\"[^\"]*\">([^<]*)</span></td>" //$NON-NLS-1$
+            + "\\s*<td class=\"c1\">(\\d*)</td>" //$NON-NLS-1$
+            + "\\s*<td class=\"c2\"><span title=\"[^\"]*\">([^<]*)"; //$NON-NLS-1$
 
-    private final static String PATTERN_SIPPROVIDER_OLD = "<!-- \"(\\d)\" / \"(\\w*)\" -->" // FW
-            // <=
-            // 37
-            + "\\s*<td class=\"c1\">\\s*<input type=checkbox id=\"uiViewActivsip\\d\""
-            + "\\s*onclick=\"uiOnChangeActivated\\('uiViewActivsip\\d','uiPostActivsip\\d'\\); return true;\">"
-            + "\\s*</td>"
-            + "\\s*<td class=\"c2\">([^<]*)</td>"
-            + "\\s*<td class=\"c3\"><script type=\"text/javascript\">document.write\\(ProviderDisplay\\(\"([^\"]*)\"\\)\\);</script></td>";
+    private final static String PATTERN_SIPPROVIDER_OLD = "<!-- \"(\\d)\" / \"(\\w*)\" -->" //$NON-NLS-1$
+    							// FW <= 37
+            + "\\s*<td class=\"c1\">\\s*<input type=checkbox id=\"uiViewActivsip\\d\"" //$NON-NLS-1$
+            + "\\s*onclick=\"uiOnChangeActivated\\('uiViewActivsip\\d','uiPostActivsip\\d'\\); return true;\">" //$NON-NLS-1$
+            + "\\s*</td>" //$NON-NLS-1$
+            + "\\s*<td class=\"c2\">([^<]*)</td>" //$NON-NLS-1$
+            + "\\s*<td class=\"c3\"><script type=\"text/javascript\">document.write\\(ProviderDisplay\\(\"([^\"]*)\"\\)\\);</script></td>"; //$NON-NLS-1$
 
-    private final static String PATTERN_SIPPROVIDER_37_91 = "<!-- \"(\\d)\" / \"(\\w*)\" -->" // 37 <
-            // FW
-            // <=
-            // 91
-            + "\\s*<td class=\"c1\">\\s*<input type=checkbox id=\"uiViewActivsip\\d\""
-            + "\\s*onclick=\"uiOnChangeActivated\\('uiViewActivsip\\d','uiPostActivsip\\d'\\); return true;\">"
-            + "\\s*</td>"
-            + "\\s*<td class=\"c2\">([^<]*)</td>"
-            + "\\s*<td class=\"c3\"><script type=\"text/javascript\">document.write\\(ProviderDisplay\\(\"([^\"]*)\"\\)\\);</script></td>"
-            + "\\s*<td class=\"c6\"><script type=\"text/javascript\">document.write\\(AuswahlDisplay\\(\"([^\"]*)\"\\)\\);</script></td>";
+    private final static String PATTERN_SIPPROVIDER_37_91 = "<!-- \"(\\d)\" / \"(\\w*)\" -->" //$NON-NLS-1$
+    							// 37 < FW <= 91
+            + "\\s*<td class=\"c1\">\\s*<input type=checkbox id=\"uiViewActivsip\\d\"" //$NON-NLS-1$
+            + "\\s*onclick=\"uiOnChangeActivated\\('uiViewActivsip\\d','uiPostActivsip\\d'\\); return true;\">" //$NON-NLS-1$
+            + "\\s*</td>" //$NON-NLS-1$
+            + "\\s*<td class=\"c2\">([^<]*)</td>" //$NON-NLS-1$
+            + "\\s*<td class=\"c3\"><script type=\"text/javascript\">document.write\\(ProviderDisplay\\(\"([^\"]*)\"\\)\\);</script></td>" //$NON-NLS-1$
+            + "\\s*<td class=\"c6\"><script type=\"text/javascript\">document.write\\(AuswahlDisplay\\(\"([^\"]*)\"\\)\\);</script></td>"; //$NON-NLS-1$
 
-    private final static String PATTERN_SIPPROVIDER_96 = "<!--\\s*\"(\\d)\"\\s*/\\s*\"(\\w*)\"\\s*/\\s*\"\\w*\"\\s*-->" // FW
-            // >=
-            // 96
-            + "\\s*<td class=\"c1\">\\s*<input type=checkbox id=\"uiViewActivsip\\d\""
-            + "\\s*onclick=\"uiOnChangeActivated\\('uiViewActivsip\\d','uiPostActivsip\\d'\\); return true;\">"
-            + "\\s*</td>"
-            + "\\s*<td class=\"c2\">([^<]*)</td>"
-            + "\\s*<td class=\"c3\"><script type=\"text/javascript\">document.write\\(ProviderDisplay\\(\"([^\"]*)\"\\)\\);</script></td>"
-            + "\\s*<td class=\"c6\"><script type=\"text/javascript\">document.write\\(AuswahlDisplay\\(\"([^\"]*)\"\\)\\);</script></td>";
+    private final static String PATTERN_SIPPROVIDER_96 = "<!--\\s*\"(\\d)\"\\s*/\\s*\"(\\w*)\"\\s*/\\s*\"\\w*\"\\s*-->" //$NON-NLS-1$
+    							// FW >= 96
+            + "\\s*<td class=\"c1\">\\s*<input type=checkbox id=\"uiViewActivsip\\d\"" //$NON-NLS-1$
+            + "\\s*onclick=\"uiOnChangeActivated\\('uiViewActivsip\\d','uiPostActivsip\\d'\\); return true;\">" //$NON-NLS-1$
+            + "\\s*</td>" //$NON-NLS-1$
+            + "\\s*<td class=\"c2\">([^<]*)</td>" //$NON-NLS-1$
+            + "\\s*<td class=\"c3\"><script type=\"text/javascript\">document.write\\(ProviderDisplay\\(\"([^\"]*)\"\\)\\);</script></td>" //$NON-NLS-1$
+            + "\\s*<td class=\"c6\"><script type=\"text/javascript\">document.write\\(AuswahlDisplay\\(\"([^\"]*)\"\\)\\);</script></td>"; //$NON-NLS-1$
 
-    private final static String PATTERN_SIPPROVIDER_ACTIVE = "<input type=\"hidden\" name=\"sip:settings/sip(\\d)/activated\" value=\"(\\d)\" id=\"uiPostActivsip";
+    private final static String PATTERN_SIPPROVIDER_ACTIVE = "<input type=\"hidden\" name=\"sip:settings/sip(\\d)/activated\" value=\"(\\d)\" id=\"uiPostActivsip"; //$NON-NLS-1$
 
     private final static int CALLTYPE = 0;
 
@@ -148,11 +144,11 @@ public class JFritzUtils {
             fw = new FritzBoxFirmware(firmware);
             // FIXME: Debug
             // fw = new FritzBoxFirmware("14.03.88");
-            Debug.msg("Using Firmware: " + fw + " (" + fw.getBoxName() + ")");
+            Debug.msg("Using Firmware: " + fw + " (" + fw.getBoxName() + ")"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
         } catch (InvalidFirmwareException e) {
             fw = FritzBoxFirmware.detectFirmwareVersion(box_address,
                     box_password);
-            Debug.msg("Found Firmware: " + fw + " (" + fw.getBoxName() + ")");
+            Debug.msg("Found Firmware: " + fw + " (" + fw.getBoxName() + ")"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 
         }
         return fw;
@@ -176,10 +172,10 @@ public class JFritzUtils {
             JFritz jfritz) throws WrongPasswordException, IOException {
 
         String postdata = firmware.getAccessMethod() + POSTDATA_LIST
-                + URLEncoder.encode(password, "ISO-8859-1");
-        String urlstr = "http://" + box_address + "/cgi-bin/webcm";
-        Debug.msg("Postdata: " + postdata);
-        Debug.msg("Urlstr: " + urlstr);
+                + URLEncoder.encode(password, "ISO-8859-1"); //$NON-NLS-1$
+        String urlstr = "http://" + box_address + "/cgi-bin/webcm"; //$NON-NLS-1$,  //$NON-NLS-2$
+        Debug.msg("Postdata: " + postdata); //$NON-NLS-1$
+        Debug.msg("Urlstr: " + urlstr); //$NON-NLS-1$
         fetchDataFromURL(urlstr, postdata, false);
     }
 
@@ -199,16 +195,16 @@ public class JFritzUtils {
             postdata = firmware.getAccessMethod()
                     + POSTDATA_QUICKDIAL_NEW
                     + URLEncoder.encode(Encryption.decrypt(JFritz
-                            .getProperty("box.password")), "ISO-8859-1");
+                            .getProperty("box.password")), "ISO-8859-1"); //$NON-NLS-1$,  //$NON-NLS-2$
         } else {
             postdata = firmware.getAccessMethod()
                     + POSTDATA_QUICKDIAL
                     + URLEncoder.encode(Encryption.decrypt(JFritz
-                            .getProperty("box.password")), "ISO-8859-1");
+                            .getProperty("box.password")), "ISO-8859-1"); //$NON-NLS-1$,  //$NON-NLS-2$
         }
-        String urlstr = "http://"
-                + JFritz.getProperty("box.address", "fritz.box")
-                + "/cgi-bin/webcm";
+        String urlstr = "http://" //$NON-NLS-1$
+                + JFritz.getProperty("box.address", "fritz.box") //$NON-NLS-1$,  //$NON-NLS-2$
+                + "/cgi-bin/webcm"; //$NON-NLS-1$
         String data = fetchDataFromURL(urlstr, postdata, true);
         return parseQuickDialData(model, data, firmware);
     }
@@ -230,20 +226,20 @@ public class JFritzUtils {
             throws WrongPasswordException, IOException,
             InvalidFirmwareException {
         if (firmware == null)
-            throw new InvalidFirmwareException("No valid firmware");
+            throw new InvalidFirmwareException("No valid firmware"); //$NON-NLS-1$
         String postdata = firmware.getAccessMethod() + POSTDATA_SIPPROVIDER
-                + URLEncoder.encode(box_password, "ISO-8859-1");
-        String urlstr = "http://" + box_address + "/cgi-bin/webcm";
-        Debug.msg("Postdata: " + postdata);
-        Debug.msg("Urlstr: " + urlstr);
+                + URLEncoder.encode(box_password, "ISO-8859-1"); //$NON-NLS-1$
+        String urlstr = "http://" + box_address + "/cgi-bin/webcm"; //$NON-NLS-1$,  //$NON-NLS-2$
+        Debug.msg("Postdata: " + postdata); //$NON-NLS-1$
+        Debug.msg("Urlstr: " + urlstr); //$NON-NLS-1$
         String data = fetchDataFromURL(urlstr, postdata, true);
 
         // DEBUG: Test other versions
         if (false) {
-            String filename = "./Firmware 96/sipProvider.html";
-            Debug.msg("Debug mode: Loading " + filename);
+            String filename = "./Firmware 96/sipProvider.html"; //$NON-NLS-1$
+            Debug.msg("Debug mode: Loading " + filename); //$NON-NLS-1$
             try {
-                data = "";
+                data = ""; //$NON-NLS-1$
                 String thisLine;
                 BufferedReader in = new BufferedReader(new FileReader(filename));
                 while ((thisLine = in.readLine()) != null) {
@@ -251,7 +247,7 @@ public class JFritzUtils {
                 }
                 in.close();
             } catch (IOException e) {
-                Debug.err("File not found: " + filename);
+                Debug.err("File not found: " + filename); //$NON-NLS-1$
             }
         }
 
@@ -281,8 +277,8 @@ public class JFritzUtils {
             p = Pattern.compile(PATTERN_SIPPROVIDER_96);
         Matcher m = p.matcher(data);
         while (m.find()) {
-            Debug.msg("FOUND SIP-PROVIDER");
-            if (!(m.group(4).equals(""))) {
+            Debug.msg("FOUND SIP-PROVIDER"); //$NON-NLS-1$
+            if (!(m.group(4).equals(""))) { //$NON-NLS-1$
                 if (firmware.getMajorFirmwareVersion() == 3
                         && firmware.getMinorFirmwareVersion() < 42)
                     list.add(new SipProvider(Integer.parseInt(m.group(1)), m
@@ -291,7 +287,7 @@ public class JFritzUtils {
                     list.add(new SipProvider(Integer.parseInt(m.group(5)), m
                             .group(3), m.group(4)));
 
-                Debug.msg("SIP-Provider: " + list.lastElement());
+                Debug.msg("SIP-Provider: " + list.lastElement()); //$NON-NLS-1$
             }
         }
         p = Pattern.compile(PATTERN_SIPPROVIDER_ACTIVE);
@@ -327,14 +323,14 @@ public class JFritzUtils {
         URL url = null;
         URLConnection urlConn;
         DataOutputStream printout;
-        String data = "";
+        String data = ""; //$NON-NLS-1$
         boolean wrong_pass = false;
 
         try {
             url = new URL(urlstr);
         } catch (MalformedURLException e) {
-            Debug.err("URL invalid: " + urlstr);
-            throw new WrongPasswordException("URL invalid: " + urlstr);
+            Debug.err("URL invalid: " + urlstr); //$NON-NLS-1$
+            throw new WrongPasswordException("URL invalid: " + urlstr); //$NON-NLS-1$
         }
 
         if (url != null) {
@@ -344,8 +340,8 @@ public class JFritzUtils {
             urlConn.setUseCaches(false);
             // Sending postdata
             if (postdata != null) {
-                urlConn.setRequestProperty("Content-Type",
-                        "application/x-www-form-urlencoded");
+                urlConn.setRequestProperty("Content-Type", //$NON-NLS-1$
+                        "application/x-www-form-urlencoded"); //$NON-NLS-1$
                 printout = new DataOutputStream(urlConn.getOutputStream());
                 printout.writeBytes(postdata);
                 printout.flush();
@@ -361,18 +357,18 @@ public class JFritzUtils {
             		String str;
             		while (null != ((str = HTMLUtil.stripEntities(d.readLine())))) {
             			// Password seems to be wrong
-            			if (str.indexOf("FRITZ!Box Anmeldung") > 0)
+            			if (str.indexOf("FRITZ!Box Anmeldung") > 0) //$NON-NLS-1$
             				wrong_pass = true;
             			if (retrieveData)
             				data += str;
             		}
             		d.close();
             	} catch (IOException e1) {
-            		throw new IOException("Network unavailable");
+            		throw new IOException("Network unavailable"); //$NON-NLS-1$
             	}
 
             	if (wrong_pass)
-            		throw new WrongPasswordException("Password invalid");
+            		throw new WrongPasswordException("Password invalid"); //$NON-NLS-1$
             	}
         return data;
     }
@@ -388,8 +384,8 @@ public class JFritzUtils {
     public static void clearListOnFritzBox(String box_address, String password,
             FritzBoxFirmware firmware) throws WrongPasswordException,
             IOException {
-        Debug.msg("Clearing List");
-        String urlstr = "http://" + box_address + "/cgi-bin/webcm";
+        Debug.msg("Clearing List"); //$NON-NLS-1$
+        String urlstr = "http://" + box_address + "/cgi-bin/webcm"; //$NON-NLS-1$,  //$NON-NLS-2$
         String postdata = firmware.getAccessMethod() + POSTDATA_CLEAR;
         fetchDataFromURL(urlstr, postdata, true);
     }
@@ -399,13 +395,13 @@ public class JFritzUtils {
             String areaCode, FritzBoxFirmware firmware, JFritz jfritz)
             throws WrongPasswordException, IOException {
 
-		Debug.msg("Recieve HTML Callerlist");
+		Debug.msg("Recieve HTML Callerlist"); //$NON-NLS-1$
 		retrieveHTMLCallerList(box_address, password, countryPrefix, countryCode,
 	            			   areaPrefix, areaCode, firmware, jfritz);
 
-        Debug.msg("Recieve CSV List");
-        String urlstr = "http://" + box_address + "/cgi-bin/webcm";
-        String postdata = "getpage=../html/de/FRITZ!Box_Anrufliste.csv&errorpage=..%2Fhtml%2Fde%2Fmenus%2Fmenu2.html&var%3Alang=de&var%3Apagename=foncalls&var%3Aerrorpagename=foncalls&var%3Amenu=fon&var%3Apagemaster=&time%3Asettings%2Ftime=1136559837%2C-60";
+        Debug.msg("Recieve CSV List"); //$NON-NLS-1$
+        String urlstr = "http://" + box_address + "/cgi-bin/webcm"; //$NON-NLS-1$,  //$NON-NLS-2$
+        String postdata = "getpage=../html/de/FRITZ!Box_Anrufliste.csv&errorpage=..%2Fhtml%2Fde%2Fmenus%2Fmenu2.html&var%3Alang=de&var%3Apagename=foncalls&var%3Aerrorpagename=foncalls&var%3Amenu=fon&var%3Apagemaster=&time%3Asettings%2Ftime=1136559837%2C-60"; //$NON-NLS-1$
         String data = fetchDataFromURL(urlstr, postdata, true);
         return parseCallerData(data, firmware, countryPrefix, countryCode,
                 areaPrefix, areaCode, jfritz);
@@ -418,10 +414,10 @@ public class JFritzUtils {
      * @return outputStr
      */
     public static String removeDuplicateWhitespace(String inputStr) {
-        Pattern p = Pattern.compile("\\s+");
+        Pattern p = Pattern.compile("\\s+"); //$NON-NLS-1$
         Matcher matcher = p.matcher(inputStr);
-        String outputStr = matcher.replaceAll(" ");
-        outputStr.replaceAll(">\\s+<", "><");
+        String outputStr = matcher.replaceAll(" "); //$NON-NLS-1$
+        outputStr.replaceAll(">\\s+<", "><"); //$NON-NLS-1$,  //$NON-NLS-2$
         return outputStr;
     }
 
@@ -475,9 +471,9 @@ public class JFritzUtils {
             JFritz jfritz) {
         Vector list = new Vector();
         Pattern p;
-        Debug.msg(2, "FirmwareMajorVersion: "
+        Debug.msg(2, "FirmwareMajorVersion: " //$NON-NLS-1$
                 + firmware.getMajorFirmwareVersion());
-        Debug.msg(2, "FirmwareMinorVersion: "
+        Debug.msg(2, "FirmwareMinorVersion: " //$NON-NLS-1$
                 + firmware.getMinorFirmwareVersion());
         if (firmware.getMajorFirmwareVersion() == 4
                 && firmware.getMinorFirmwareVersion() >= 03) {
@@ -502,44 +498,46 @@ public class JFritzUtils {
         Matcher m = p.matcher(data);
         while (m.find()) {
             try {
-                Debug.msg("Found new call: " + m.group(0));
+                Debug.msg("Found new call: " + m.group(0)); //$NON-NLS-1$
 
                 CallType symbol = new CallType(Byte.parseByte(m
                         .group(calllist_indizes[CALLTYPE])));
                 String port = m.group(calllist_indizes[PORT]);
-                if (port.equals("FON 1")) {
-                    port = "0";
-                } else if (port.equals("FON 2")) {
-                    port = "1";
-                } else if (port.equals("FON 3")) {
-                    port = "2";
-                } else if (port.equals("FON S0")) {
-                    port = "4";
+                if (port.equals("FON 1")) { //$NON-NLS-1$
+                    port = "0"; //$NON-NLS-1$
+                } else if (port.equals("FON 2")) { //$NON-NLS-1$
+                    port = "1"; //$NON-NLS-1$
+                } else if (port.equals("FON 3")) { //$NON-NLS-1$
+                    port = "2"; //$NON-NLS-1$
+                } else if (port.equals("FON S0")) { //$NON-NLS-1$
+                    port = "4"; //$NON-NLS-1$
+                } else if (port.equals("DATA S0")) { //$NON-NLS-1$
+                    port = "36"; //$NON-NLS-1$
                 }
 
                 PhoneNumber number = createAreaNumber(m
                         .group(calllist_indizes[NUMBER]), countryPrefix,
                         countryCode, areaPrefix, areaCode, jfritz);
-                Date date = new SimpleDateFormat("dd.MM.yy HH:mm").parse(m
+                Date date = new SimpleDateFormat("dd.MM.yy HH:mm").parse(m //$NON-NLS-1$
                         .group(calllist_indizes[DATE]));
-                String route = "";
+                String route = ""; //$NON-NLS-1$
                 if (calllist_indizes[ROUTE] != -1) {
                     route = m.group(calllist_indizes[ROUTE]);
-                    if (route.startsWith("Internet: ")) {
+                    if (route.startsWith("Internet: ")) { //$NON-NLS-1$
                         Enumeration en = jfritz.getSIPProviderTableModel()
                                 .getProviderList().elements();
                         while (en.hasMoreElements()) {
                             SipProvider sipProvider = (SipProvider) en
                                     .nextElement();
                             if (sipProvider.getNumber().equals(route.substring(10))) {
-                                route = "SIP" + sipProvider.getProviderID();
+                                route = "SIP" + sipProvider.getProviderID(); //$NON-NLS-1$
                                 break;
                             }
                         }
                     }
                 }
                 String[] durationStrings = m.group(calllist_indizes[DURATION])
-                        .split(":");
+                        .split(":"); //$NON-NLS-1$
                 int duration = 0;
                 if (durationStrings.length == 1) {
                     duration = Integer.parseInt(durationStrings[0]);
@@ -569,16 +567,17 @@ public class JFritzUtils {
             String countryPrefix, String countryCode, String areaPrefix,
             String areaCode, JFritz jfritz) {
         PhoneNumber phoneNumber;
-        if (!number.equals("")) {
+        if (!number.equals("")) { //$NON-NLS-1$
             if (number.length() < 3) { // Short Number (maybe internal)
                 phoneNumber = new PhoneNumber(number);
                 return phoneNumber;
             }
-            if (number.startsWith("**7")) // QuickDial
+            if (number.startsWith("**7")) //$NON-NLS-1$
+            	// QuickDial
             {
                 int count = 5;
-                Debug.msg("Kurzwahl entdeckt: " + number
-                        + "! Ersetze Kurzwahl mit zugehöriger Nummer.");
+                Debug.msg("Quickdial: " + number //$NON-NLS-1$
+                        + "! Replace quickdial with number."); //$NON-NLS-1$
                 while (count > 0) {
                     count--;
                     // replace QuickDial with
@@ -597,13 +596,13 @@ public class JFritzUtils {
                         if (quickDialNumber.equals(quickDial.getQuickdial())) {
                             number = null;
                             phoneNumber = new PhoneNumber(quickDial.getNumber());
-                            Debug.msg("Kurzwahl gefunden. Nummer: "
+                            Debug.msg("Quickdial. Number: " //$NON-NLS-1$
                                     + phoneNumber.getFullNumber());
                             return phoneNumber;
                         }
                     }
                     Debug
-                            .msg("Kurzwahl NICHT gefunden. Aktualisiere Kurzwahl-Liste");
+                            .msg("No quickdial found. Actualize quickdial-list"); //$NON-NLS-1$
                     ((QuickDials) jfritz.getJframe().getQuickDialPanel()
                             .getDataModel()).getQuickDialDataFromFritzBox();
                 }
@@ -638,52 +637,52 @@ public class JFritzUtils {
      * @return String with version and date of CVS Id-Tag
      */
     public static String getVersionFromCVSTag(String tag) {
-        String[] parts = tag.split(" ");
-        return "CVS v" + parts[2] + " (" + parts[3] + ")";
+        String[] parts = tag.split(" "); //$NON-NLS-1$
+        return "CVS v" + parts[2] + " (" + parts[3] + ")"; //$NON-NLS-1$, //$NON-NLS-2$,  //$NON-NLS-3$
     }
 
     public static boolean parseBoolean(String input) {
-        if (input != null && input.equalsIgnoreCase("true"))
+        if (input != null && input.equalsIgnoreCase("true")) //$NON-NLS-1$
             return true;
         else
             return false;
     }
 
     public static String lookupAreaCode(String number) {
-        Debug.msg("Looking up " + number + "...");
+        Debug.msg("Looking up " + number + "..."); //$NON-NLS-1$,  //$NON-NLS-2$
         // FIXME: Does not work (Cookies)
-        String urlstr = "http://www.vorwahl.de/national.php";
-        String postdata = "search=1&vorwahl=" + number;
-        String data = "";
+        String urlstr = "http://www.vorwahl.de/national.php"; //$NON-NLS-1$
+        String postdata = "search=1&vorwahl=" + number; //$NON-NLS-1$
+        String data = ""; //$NON-NLS-1$
         try {
             data = fetchDataFromURL(urlstr, postdata, true);
         } catch (Exception e) {
         }
-        Debug.msg("DATA: " + data.trim());
-        return "";
+        Debug.msg("DATA: " + data.trim()); //$NON-NLS-1$
+        return ""; //$NON-NLS-1$
     }
 
     public static String convertSpecialChars(String input) {
         // XML Sonderzeichen durch ASCII Codierung ersetzen
         String out = input;
-        out = out.replaceAll("&", "&#38;");
-        out = out.replaceAll("'", "&#39;");
-        out = out.replaceAll("<", "&#60;");
-        out = out.replaceAll(">", "&#62;");
-        out = out.replaceAll("\"", "&#34;");
-        out = out.replaceAll("=", "&#61;");
+        out = out.replaceAll("&", "&#38;"); //$NON-NLS-1$,  //$NON-NLS-2$
+        out = out.replaceAll("'", "&#39;"); //$NON-NLS-1$,  //$NON-NLS-2$
+        out = out.replaceAll("<", "&#60;"); //$NON-NLS-1$,  //$NON-NLS-2$
+        out = out.replaceAll(">", "&#62;"); //$NON-NLS-1$,  //$NON-NLS-2$
+        out = out.replaceAll("\"", "&#34;"); //$NON-NLS-1$,  //$NON-NLS-2$
+        out = out.replaceAll("=", "&#61;"); //$NON-NLS-1$,  //$NON-NLS-2$
         return out;
     }
 
     public static String deconvertSpecialChars(String input) {
         // XML Sonderzeichen durch ASCII Codierung ersetzen
         String out = input;
-        out = out.replaceAll("&#38;", "&");
-        out = out.replaceAll("&#39;", "'");
-        out = out.replaceAll("&#60;", "<");
-        out = out.replaceAll("&#62;", ">");
-        out = out.replaceAll("&#61;", "=");
-        out = out.replaceAll("&#34;", "\"");
+        out = out.replaceAll("&#38;", "&"); //$NON-NLS-1$,  //$NON-NLS-2$
+        out = out.replaceAll("&#39;", "'"); //$NON-NLS-1$,  //$NON-NLS-2$
+        out = out.replaceAll("&#60;", "<"); //$NON-NLS-1$,  //$NON-NLS-2$
+        out = out.replaceAll("&#62;", ">"); //$NON-NLS-1$,  //$NON-NLS-2$
+        out = out.replaceAll("&#61;", "="); //$NON-NLS-1$,  //$NON-NLS-2$
+        out = out.replaceAll("&#34;", "\""); //$NON-NLS-1$,  //$NON-NLS-2$
         return out;
     }
 
@@ -691,50 +690,50 @@ public class JFritzUtils {
             FritzBoxFirmware firmware) {
         try {
             String passwort = Encryption.decrypt(JFritz.getProperty(
-                    "box.password", Encryption.encrypt("")));
-            number = number.replaceAll("\\+", "00");
+                    "box.password", Encryption.encrypt(""))); //$NON-NLS-1$,  //$NON-NLS-2$
+            number = number.replaceAll("\\+", "00"); //$NON-NLS-1$,  //$NON-NLS-2$
 
-            String portStr = "";
-            if (port.equals("Fon 1")) {
-                portStr = "1";
-            } else if (port.equals("Fon 2")) {
-                portStr = "2";
-            } else if (port.equals("Fon 3")) {
-                portStr = "3";
-            } else if (port.equals("Analog alle")) {
-                portStr = "9";
-            } else if (port.equals("ISDN Alle")) {
-                portStr = "50";
-            } else if (port.equals("ISDN 1")) {
-                portStr = "51";
-            } else if (port.equals("ISDN 2")) {
-                portStr = "52";
-            } else if (port.equals("ISDN 3")) {
-                portStr = "53";
-            } else if (port.equals("ISDN 4")) {
-                portStr = "54";
-            } else if (port.equals("ISDN 5")) {
-                portStr = "55";
-            } else if (port.equals("ISDN 6")) {
-                portStr = "56";
-            } else if (port.equals("ISDN 7")) {
-                portStr = "57";
-            } else if (port.equals("ISDN 8")) {
-                portStr = "58";
-            } else if (port.equals("ISDN 9")) {
-                portStr = "59";
+            String portStr = ""; //$NON-NLS-1$
+            if (port.equals("Fon 1")) { //$NON-NLS-1$
+                portStr = "1"; //$NON-NLS-1$
+            } else if (port.equals("Fon 2")) { //$NON-NLS-1$
+                portStr = "2"; //$NON-NLS-1$
+            } else if (port.equals("Fon 3")) { //$NON-NLS-1$
+                portStr = "3"; //$NON-NLS-1$
+            } else if (port.equals(JFritz.getMessage("analoge_telephones_all"))) { //$NON-NLS-1$
+                portStr = "9"; //$NON-NLS-1$
+            } else if (port.equals("ISDN Alle")) { //$NON-NLS-1$
+                portStr = "50"; //$NON-NLS-1$
+            } else if (port.equals("ISDN 1")) { //$NON-NLS-1$
+                portStr = "51"; //$NON-NLS-1$
+            } else if (port.equals("ISDN 2")) { //$NON-NLS-1$
+                portStr = "52"; //$NON-NLS-1$
+            } else if (port.equals("ISDN 3")) { //$NON-NLS-1$
+                portStr = "53"; //$NON-NLS-1$
+            } else if (port.equals("ISDN 4")) { //$NON-NLS-1$
+                portStr = "54"; //$NON-NLS-1$
+            } else if (port.equals("ISDN 5")) { //$NON-NLS-1$
+                portStr = "55"; //$NON-NLS-1$
+            } else if (port.equals("ISDN 6")) { //$NON-NLS-1$
+                portStr = "56"; //$NON-NLS-1$
+            } else if (port.equals("ISDN 7")) { //$NON-NLS-1$
+                portStr = "57"; //$NON-NLS-1$
+            } else if (port.equals("ISDN 8")) { //$NON-NLS-1$
+                portStr = "58"; //$NON-NLS-1$
+            } else if (port.equals("ISDN 9")) { //$NON-NLS-1$
+                portStr = "59"; //$NON-NLS-1$
             }
 
-            String postdata = POSTDATA_CALL.replaceAll("\\$PASSWORT",
-                    URLEncoder.encode(passwort, "ISO-8859-1"));
-            postdata = postdata.replaceAll("\\$NUMMER", number);
-            postdata = postdata.replaceAll("\\$NEBENSTELLE", portStr);
+            String postdata = POSTDATA_CALL.replaceAll("\\$PASSWORT", //$NON-NLS-1$
+                    URLEncoder.encode(passwort, "ISO-8859-1")); //$NON-NLS-1$
+            postdata = postdata.replaceAll("\\$NUMMER", number); //$NON-NLS-1$
+            postdata = postdata.replaceAll("\\$NEBENSTELLE", portStr); //$NON-NLS-1$
 
             postdata = firmware.getAccessMethod() + postdata;
 
-            String urlstr = "http://"
-                    + JFritz.getProperty("box.address", "fritz.box")
-                    + "/cgi-bin/webcm";
+            String urlstr = "http://" //$NON-NLS-1$
+                    + JFritz.getProperty("box.address", "fritz.box") //$NON-NLS-1$, //$NON-NLS-2$
+                    + "/cgi-bin/webcm"; //$NON-NLS-1$
             fetchDataFromURL(urlstr, postdata, true);
         } catch (UnsupportedEncodingException uee) {
         } catch (WrongPasswordException wpe) {

@@ -49,17 +49,18 @@ public class CallFileXMLHandler extends DefaultHandler {
 	public void startElement(String namespaceURI, String lName, String qName,
 			Attributes attrs) throws SAXException {
 		String eName = lName;
-		if ("".equals(eName))
+		if ("".equals(eName)) //$NON-NLS-1$
 			eName = qName;
 
-		chars = ""; // Important to clear buffer :)
+		//	Important to clear buffer :)
+		chars = "";  //$NON-NLS-1$
 
-		if (eName.equals("entry")) {
-			port = "";
-			route = "";
-			caller = "";
-			callbycall = "";
-			comment = "";
+		if (eName.equals("entry")) { //$NON-NLS-1$
+			port = ""; //$NON-NLS-1$
+			route = ""; //$NON-NLS-1$
+			caller = ""; //$NON-NLS-1$
+			callbycall = ""; //$NON-NLS-1$
+			comment = ""; //$NON-NLS-1$
 			duration = 0;
 			calldate = null;
 			calltype = null;
@@ -67,11 +68,11 @@ public class CallFileXMLHandler extends DefaultHandler {
 		if (attrs != null) {
 			for (int i = 0; i < attrs.getLength(); i++) {
 				String aName = attrs.getLocalName(i); // Attr name
-				if ("".equals(aName))
+				if ("".equals(aName)) //$NON-NLS-1$
 					aName = attrs.getQName(i);
-				if (eName.equals("entry") && aName.equals("calltype")) {
+				if (eName.equals("entry") && aName.equals("calltype")) { //$NON-NLS-1$,  //$NON-NLS-2$
 					calltype = new CallType(attrs.getValue(i));
-				} else if (eName.equals("caller") && aName.equals("callbycall")) {
+				} else if (eName.equals("caller") && aName.equals("callbycall")) { //$NON-NLS-1$,  //$NON-NLS-2$
 					callbycall = attrs.getValue(i);
 				}
 			}
@@ -80,27 +81,27 @@ public class CallFileXMLHandler extends DefaultHandler {
 
 	public void endElement(String namespaceURI, String sName, String qName)
 			throws SAXException {
-		SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+		SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm"); //$NON-NLS-1$
 
-		if (qName.equals("duration")) {
+		if (qName.equals("duration")) { //$NON-NLS-1$
 			duration = Integer.parseInt(chars);
-		} else if (qName.equals("port")) {
+		} else if (qName.equals("port")) { //$NON-NLS-1$
 			port = chars;
-		} else if (qName.equals("route")) {
+		} else if (qName.equals("route")) { //$NON-NLS-1$
 			route = chars;
-		} else if (qName.equals("caller")) {
+		} else if (qName.equals("caller")) { //$NON-NLS-1$
 			caller = chars;
-		} else if (qName.equals("comment")) {
+		} else if (qName.equals("comment")) { //$NON-NLS-1$
 			comment = chars;
-		} else if (qName.equals("date")) {
+		} else if (qName.equals("date")) { //$NON-NLS-1$
 			try {
-				calldate = df.parse(chars.replaceAll("\"", ""));
+				calldate = df.parse(chars.replaceAll("\"", "")); //$NON-NLS-1$,  //$NON-NLS-2$
 			} catch (ParseException e) {
-				Debug.err("Date problem:  " + chars);
+				Debug.err("Date problem:  " + chars); //$NON-NLS-1$
 				System.exit(0);
 				calldate = null;
 			}
-		} else if (qName.equals("entry")) {
+		} else if (qName.equals("entry")) { //$NON-NLS-1$
 
 			if (callerlist != null) { // Add an entry to the callerlist
 				PhoneNumber number = null;

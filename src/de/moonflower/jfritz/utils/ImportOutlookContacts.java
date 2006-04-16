@@ -19,8 +19,6 @@ import java.util.Enumeration;
 import java.util.Vector;
 import javax.swing.*;
 
-// Referenced classes of package de.waghoo.fbf:
-//            fbfParams, fbfContactTree, fbf_tool
 
 public class ImportOutlookContacts extends JDialog implements ActionListener,
         Runnable {
@@ -31,64 +29,62 @@ public class ImportOutlookContacts extends JDialog implements ActionListener,
     private static final long serialVersionUID = 1L;
 
     public Dispatch init() {
-        outlookElements.addElement("FirstName");
-        outlookElements.addElement("LastName");
-        outlookElements.addElement("MiddleName");
-        outlookElements.addElement("FullName");
-        outlookElements.addElement("HomeAddressStreet");
-        outlookElements.addElement("HomeAddressPostalCode");
-        outlookElements.addElement("HomeAddressCity");
-        outlookElements.addElement("BusinessTelephoneNumber");
-        outlookElements.addElement("Business2TelephoneNumber");
-        outlookElements.addElement("HomeTelephoneNumber");
-        outlookElements.addElement("Home2TelephoneNumber");
-        outlookElements.addElement("PrimaryTelephoneNumber");
-        outlookElements.addElement("MobileTelephoneNumber");
-        outlookElements.addElement("CarTelephoneNumber");
-        outlookElements.addElement("RadioTelephoneNumber");
-        outlookElements.addElement("CallbackTelephoneNumber");
-        outlookElements.addElement("AssistantTelephoneNumber");
-        outlookElements.addElement("CompanyMainTelephoneNumber");
-        outlookElements.addElement("OtherTelephoneNumber");
-        outlookElements.addElement("Categories");
-        ActiveXComponent ol = new ActiveXComponent("Outlook.Application");
-        // Dispatch dsp = new Dispatch();
+        outlookElements.addElement("FirstName"); //$NON-NLS-1$
+        outlookElements.addElement("LastName"); //$NON-NLS-1$
+        outlookElements.addElement("MiddleName"); //$NON-NLS-1$
+        outlookElements.addElement("FullName"); //$NON-NLS-1$
+        outlookElements.addElement("HomeAddressStreet"); //$NON-NLS-1$
+        outlookElements.addElement("HomeAddressPostalCode"); //$NON-NLS-1$
+        outlookElements.addElement("HomeAddressCity"); //$NON-NLS-1$
+        outlookElements.addElement("BusinessTelephoneNumber"); //$NON-NLS-1$
+        outlookElements.addElement("Business2TelephoneNumber"); //$NON-NLS-1$
+        outlookElements.addElement("HomeTelephoneNumber"); //$NON-NLS-1$
+        outlookElements.addElement("Home2TelephoneNumber"); //$NON-NLS-1$
+        outlookElements.addElement("PrimaryTelephoneNumber"); //$NON-NLS-1$
+        outlookElements.addElement("MobileTelephoneNumber"); //$NON-NLS-1$
+        outlookElements.addElement("CarTelephoneNumber"); //$NON-NLS-1$
+        outlookElements.addElement("RadioTelephoneNumber"); //$NON-NLS-1$
+        outlookElements.addElement("CallbackTelephoneNumber"); //$NON-NLS-1$
+        outlookElements.addElement("AssistantTelephoneNumber"); //$NON-NLS-1$
+        outlookElements.addElement("CompanyMainTelephoneNumber"); //$NON-NLS-1$
+        outlookElements.addElement("OtherTelephoneNumber"); //$NON-NLS-1$
+        outlookElements.addElement("Categories"); //$NON-NLS-1$
+        ActiveXComponent ol = new ActiveXComponent("Outlook.Application"); //$NON-NLS-1$
         Dispatch olo = ol.getObject();
-        String olVersion = Dispatch.get(olo, "Version").toString();
-        if (olVersion.startsWith("11")) {
-            outlookElements.addElement("HasPicture");
+        String olVersion = Dispatch.get(olo, "Version").toString(); //$NON-NLS-1$
+        if (olVersion.startsWith("11")) { //$NON-NLS-1$
+            outlookElements.addElement("HasPicture"); //$NON-NLS-1$
         }
-        Dispatch myNamespace = Dispatch.call(olo, "GetNamespace", "MAPI")
+        Dispatch myNamespace = Dispatch.call(olo, "GetNamespace", "MAPI") //$NON-NLS-1$,  //$NON-NLS-2$
                 .toDispatch();
-        Dispatch myFolder = Dispatch.call(myNamespace, "GetDefaultFolder",
+        Dispatch myFolder = Dispatch.call(myNamespace, "GetDefaultFolder", //$NON-NLS-1$
                 new Integer(10)).toDispatch();
         return myFolder;
     }
 
     public ImportOutlookContacts(JFritz jfritz) {
-        super(jfritz.getJframe(), "Aus Outlook importieren");
+        super(jfritz.getJframe(), JFritz.getMessage("import_contacts_outlook")); //$NON-NLS-1$
         outlookElements = new Vector();
         // contactPics = "resources/images/contacts/";
         this.jfritz = jfritz;
     }
 
     public void run() {
-        Debug.msg("Zeige Import-Dialog");
+        Debug.msg("Show Outlook-Import-Dialog"); //$NON-NLS-1$
         toFront();
         setSize(400, 500);
-        // java.awt.Toolkit tk = getToolkit();
         this.getContentPane().setLayout(null);
         setBackground(Color.white);
         JPanel jPanel = new JPanel();
         jPanel.setBounds(0, 0, 400, 500);
         jPanel.setLayout(null);
-        JLabel jLab = new JLabel("Outlook-Kontakte werden importiert");
+        JLabel jLab = new JLabel(JFritz.getMessage("importing_outlook_contacts")); //$NON-NLS-1$
         jLab.setFont(new Font(null, 1, 22));
         jLab.setBounds(10, 0, 380, 80);
         jPanel.add(jLab);
         Dispatch myFolder = init();
-        Dispatch items = Dispatch.get(myFolder, "Items").toDispatch();
-        int count = Dispatch.call(items, "Count").toInt();
+        Dispatch items = Dispatch.get(myFolder, "Items").toDispatch(); //$NON-NLS-1$
+        int count = Dispatch.call(items, "Count").toInt(); //$NON-NLS-1$
         JPanel jPan = new JPanel(new GridLayout(count, 1));
         jPan.setBackground(Color.white);
         JScrollPane jsp = new JScrollPane(jPan);
@@ -97,10 +93,10 @@ public class ImportOutlookContacts extends JDialog implements ActionListener,
         getContentPane().add(jPanel);
         setLocationRelativeTo(jfritz.getJframe());
         setVisible(true);
-        Debug.msg("Importiere...");
+        Debug.msg("Importing..."); //$NON-NLS-1$
         for (int i = 1; i <= count; i++) {
             boolean hasTel = false;
-            Dispatch item = Dispatch.call(items, "Item", new Integer(i))
+            Dispatch item = Dispatch.call(items, "Item", new Integer(i)) //$NON-NLS-1$
                     .toDispatch();
             Person newContact = new Person();
             for (oElements = outlookElements.elements(); oElements
@@ -108,23 +104,23 @@ public class ImportOutlookContacts extends JDialog implements ActionListener,
                 try {
                     String strName = oElements.nextElement().toString();
                     String strValue = Dispatch.get(item, strName).toString();
-                    if (strName.equals("FullName")) {
-                        jPan.add(new JLabel("  " + strValue));
+                    if (strName.equals("FullName")) { //$NON-NLS-1$
+                        jPan.add(new JLabel("  " + strValue)); //$NON-NLS-1$
                         jPan.updateUI();
                     }
-                    if (!strValue.equals("")
-                            && ((strName.equals("BusinessTelephoneNumber")
-                                    || strName.equals("Business2TelephoneNumber")
-                                    || strName.equals("HomeTelephoneNumber")
-                                    || strName.equals("Home2TelephoneNumber")
-                                    || strName.equals("MobileTelephoneNumber")
-                                    || strName.equals("CarTelephoneNumber")
-                                    || strName.equals("RadioTelephoneNumber")
-                                    || strName.equals("PrimaryTelephoneNumber")
-                                    || strName.equals("CallbackTelephoneNumber")
-                                    || strName.equals("AssistantTelephoneNumber")
-                                    || strName.equals("CompanyMainTelephoneNumber")
-                                    || strName.equals("OtherTelephoneNumber")))) {
+                    if (!strValue.equals("") //$NON-NLS-1$
+                            && ((strName.equals("BusinessTelephoneNumber") 			 //$NON-NLS-1$
+                                    || strName.equals("Business2TelephoneNumber") 	 //$NON-NLS-1$
+                                    || strName.equals("HomeTelephoneNumber")  		 //$NON-NLS-1$
+                                    || strName.equals("Home2TelephoneNumber") 		 //$NON-NLS-1$
+                                    || strName.equals("MobileTelephoneNumber") 		 //$NON-NLS-1$
+                                    || strName.equals("CarTelephoneNumber") 		 //$NON-NLS-1$
+                                    || strName.equals("RadioTelephoneNumber") 		 //$NON-NLS-1$
+                                    || strName.equals("PrimaryTelephoneNumber")  	 //$NON-NLS-1$
+                                    || strName.equals("CallbackTelephoneNumber")  	 //$NON-NLS-1$
+                                    || strName.equals("AssistantTelephoneNumber")  	 //$NON-NLS-1$
+                                    || strName.equals("CompanyMainTelephoneNumber")  //$NON-NLS-1$
+                                    || strName.equals("OtherTelephoneNumber")))) {   //$NON-NLS-1$
                         hasTel = true;
                     }
                     /**
@@ -133,63 +129,63 @@ public class ImportOutlookContacts extends JDialog implements ActionListener,
                      * Element("Picture")) .addContent(new
                      * Text(getContactPic(item))));
                      */
-                    if (strName.equals("FirstName")) {
+                    if (strName.equals("FirstName")) {  				//$NON-NLS-1$
                         newContact.setFirstName(strValue);
-                    } else if (strName.equals("LastName")) {
+                    } else if (strName.equals("LastName")) {			//$NON-NLS-1$
                         newContact.setLastName(strValue);
-                    } else if (strName.equals("MiddleName")) {
+                    } else if (strName.equals("MiddleName")) { 			//$NON-NLS-1$
                         newContact.setCompany(strValue);
-                    } else if (strName.equals("HomeAddressStreet")) {
+                    } else if (strName.equals("HomeAddressStreet")) {   //$NON-NLS-1$
                         newContact.setStreet(strValue);
-                    } else if (strName.equals("HomeAddressPostalCode")) {
+                    } else if (strName.equals("HomeAddressPostalCode")) { //$NON-NLS-1$
                         newContact.setPostalCode(strValue);
-                    } else if (strName.equals("HomeAddressCity")) {
+                    } else if (strName.equals("HomeAddressCity")) { //$NON-NLS-1$
                         newContact.setCity(strValue);
-                    } else if (strName.equals("HomeTelephoneNumber")
-                            && (!strValue.equals(""))) {
-                        newContact.addNumber(new PhoneNumber(strValue, "home"));
-                    } else if (strName.equals("Home2TelephoneNumber")
-                            && (!strValue.equals(""))) {
-                        newContact.addNumber(new PhoneNumber(strValue, "home"));
-                    } else if (strName.equals("PrimaryTelephoneNumber")
-                            && (!strValue.equals(""))) {
-                        newContact.addNumber(new PhoneNumber(strValue, "home"));
-                    } else if (strName.equals("MobileTelephoneNumber")
-                            && (!strValue.equals(""))) {
+                    } else if (strName.equals("HomeTelephoneNumber") //$NON-NLS-1$
+                            && (!strValue.equals(""))) { //$NON-NLS-1$
+                        newContact.addNumber(new PhoneNumber(strValue, "home")); //$NON-NLS-1$
+                    } else if (strName.equals("Home2TelephoneNumber") //$NON-NLS-1$
+                            && (!strValue.equals(""))) { //$NON-NLS-1$
+                        newContact.addNumber(new PhoneNumber(strValue, "home")); //$NON-NLS-1$
+                    } else if (strName.equals("PrimaryTelephoneNumber") //$NON-NLS-1$
+                            && (!strValue.equals(""))) { //$NON-NLS-1$
+                        newContact.addNumber(new PhoneNumber(strValue, "home")); //$NON-NLS-1$
+                    } else if (strName.equals("MobileTelephoneNumber") //$NON-NLS-1$
+                            && (!strValue.equals(""))) { //$NON-NLS-1$
                         newContact
-                                .addNumber(new PhoneNumber(strValue, "mobile"));
-                    } else if (strName.equals("BusinessTelephoneNumber")
-                            && (!strValue.equals(""))) {
+                                .addNumber(new PhoneNumber(strValue, "mobile")); //$NON-NLS-1$
+                    } else if (strName.equals("BusinessTelephoneNumber") //$NON-NLS-1$
+                            && (!strValue.equals(""))) { //$NON-NLS-1$
                         newContact.addNumber(new PhoneNumber(strValue,
-                                "business"));
-                    } else if (strName.equals("Business2TelephoneNumber")
-                            && (!strValue.equals(""))) {
+                                "business")); //$NON-NLS-1$
+                    } else if (strName.equals("Business2TelephoneNumber") //$NON-NLS-1$
+                            && (!strValue.equals(""))) { //$NON-NLS-1$
                         newContact.addNumber(new PhoneNumber(strValue,
-                                "business"));
-                    } else if (strName.equals("RadioTelephoneNumber")
-                            && (!strValue.equals(""))) {
+                                "business")); //$NON-NLS-1$
+                    } else if (strName.equals("RadioTelephoneNumber") //$NON-NLS-1$
+                            && (!strValue.equals(""))) { //$NON-NLS-1$
                         newContact
-                                .addNumber(new PhoneNumber(strValue, "other"));
-                    } else if (strName.equals("CarTelephoneNumber")
-                            && (!strValue.equals(""))) {
+                                .addNumber(new PhoneNumber(strValue, "other")); //$NON-NLS-1$
+                    } else if (strName.equals("CarTelephoneNumber") //$NON-NLS-1$
+                            && (!strValue.equals(""))) { //$NON-NLS-1$
                         newContact
-                                .addNumber(new PhoneNumber(strValue, "other"));
-                    } else if (strName.equals("CallbackTelephoneNumber")
-                            && (!strValue.equals(""))) {
+                                .addNumber(new PhoneNumber(strValue, "other")); //$NON-NLS-1$
+                    } else if (strName.equals("CallbackTelephoneNumber") //$NON-NLS-1$
+                            && (!strValue.equals(""))) { //$NON-NLS-1$
                         newContact
-                                .addNumber(new PhoneNumber(strValue, "other"));
-                    } else if (strName.equals("AssistantTelephoneNumber")
-                            && (!strValue.equals(""))) {
+                                .addNumber(new PhoneNumber(strValue, "other")); //$NON-NLS-1$
+                    } else if (strName.equals("AssistantTelephoneNumber") //$NON-NLS-1$
+                            && (!strValue.equals(""))) { //$NON-NLS-1$
                         newContact
-                                .addNumber(new PhoneNumber(strValue, "other"));
-                    } else if (strName.equals("CompanyMainTelephoneNumber")
-                            && (!strValue.equals(""))) {
+                                .addNumber(new PhoneNumber(strValue, "other")); //$NON-NLS-1$
+                    } else if (strName.equals("CompanyMainTelephoneNumber") //$NON-NLS-1$
+                            && (!strValue.equals(""))) { //$NON-NLS-1$
                         newContact
-                                .addNumber(new PhoneNumber(strValue, "other"));
-                    } else if (strName.equals("OtherTelephoneNumber")
-                            && (!strValue.equals(""))) {
+                                .addNumber(new PhoneNumber(strValue, "other")); //$NON-NLS-1$
+                    } else if (strName.equals("OtherTelephoneNumber") //$NON-NLS-1$
+                            && (!strValue.equals(""))) { //$NON-NLS-1$
                         newContact
-                                .addNumber(new PhoneNumber(strValue, "other"));
+                                .addNumber(new PhoneNumber(strValue, "other")); //$NON-NLS-1$
                     }
 
                 } catch (Exception exception1) {
@@ -198,8 +194,8 @@ public class ImportOutlookContacts extends JDialog implements ActionListener,
             if (hasTel)
                 jfritz.getPhonebook().addEntry(newContact);
         }
-        Debug.msg("Import fertig");
-        JButton jButton = new JButton(" OK ");
+        Debug.msg("Import done"); //$NON-NLS-1$
+        JButton jButton = new JButton(JFritz.getMessage("okay")); //$NON-NLS-1$
         jButton.addActionListener(this);
         jButton.setBounds(160, 425, 80, 25);
         jPanel.add(jButton);
@@ -207,24 +203,7 @@ public class ImportOutlookContacts extends JDialog implements ActionListener,
     }
 
     public String getContactPic(Dispatch item) {
-        return "";
-        /**
-         * ROB Dispatch att = Dispatch.get(item, "Attachments").toDispatch();
-         * int attCnt = Dispatch.get(att, "Count").toInt(); String AttName =
-         * null; for (int x = 1; x <= attCnt; x++) { Dispatch attItem =
-         * Dispatch.call(att, "Item", new Integer(x)) .toDispatch(); AttName =
-         * Dispatch.get(attItem, "FileName").toString(); if
-         * (AttName.equals("ContactPicture.jpg")) { //Class self = getClass();
-         * Dispatch.call(attItem, "SaveasFile", (new StringBuilder(String
-         * .valueOf(fPar.thisPath))).append(contactPics).append(
-         * Dispatch.get(item, "FullName").toString()).append(
-         * ".jpg").toString()); } }
-         *
-         * //Class self = getClass(); return (new
-         * StringBuilder(String.valueOf(fPar.thisPath))).append(
-         * contactPics).append(Dispatch.get(item, "FullName").toString())
-         * .toString();
-         */
+        return ""; //$NON-NLS-1$
     }
 
     public void actionPerformed(ActionEvent actionevent) {
@@ -234,8 +213,6 @@ public class ImportOutlookContacts extends JDialog implements ActionListener,
     private Enumeration oElements;
 
     private Vector outlookElements;
-
-    // private String contactPics;
 
     final int olFolderContacts = 10;
 

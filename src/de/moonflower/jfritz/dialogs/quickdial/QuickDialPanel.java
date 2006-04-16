@@ -66,30 +66,30 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 		JToolBar toolBar = new JToolBar();
 		toolBar.setFloatable(true);
 
-		addButton = new JButton(JFritz.getMessage("new_quickdial"));
-		addButton.setActionCommand("addSIP");
+		addButton = new JButton(JFritz.getMessage("new_quickdial"));  //$NON-NLS-1$
+		addButton.setActionCommand("addSIP");  //$NON-NLS-1$
 		addButton.addActionListener(this);
 		addButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/add.png"))));
+						"/de/moonflower/jfritz/resources/images/add.png"))));  //$NON-NLS-1$
 
 		delButton = new JButton(JFritz.getMessage(
-				"delete_quickdial"));
-		delButton.setActionCommand("deleteSIP");
+				"delete_quickdial"));  //$NON-NLS-1$
+		delButton.setActionCommand("deleteSIP");  //$NON-NLS-1$
 		delButton.addActionListener(this);
 		delButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/delete.png"))));
+						"/de/moonflower/jfritz/resources/images/delete.png"))));  //$NON-NLS-1$
 
 		JButton fetchButton = new JButton(JFritz.getMessage(
-				"fetch_from_box"));
-		fetchButton.setActionCommand("fetchSIP");
+				"fetch_from_box"));  //$NON-NLS-1$
+		fetchButton.setActionCommand("fetchSIP");  //$NON-NLS-1$
 		fetchButton.addActionListener(this);
 
 		JButton storeButton = new JButton(JFritz.getMessage(
-				"store_to_box"));
+				"store_to_box"));  //$NON-NLS-1$
 		storeButton.setEnabled(false);
-		storeButton.setActionCommand("storeSIP");
+		storeButton.setActionCommand("storeSIP");  //$NON-NLS-1$
 		storeButton.addActionListener(this);
 
 		toolBar.add(addButton);
@@ -153,23 +153,23 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 	 */
 	public void actionPerformed(ActionEvent e) {
 
-		if (e.getActionCommand() == "deleteSIP") {
+		if (e.getActionCommand().equals("deleteSIP")) {  //$NON-NLS-1$
 			int row = quickdialtable.getSelectedRow();
 			if (row >= 0) {
 				dataModel.remove(row);
 				dataModel.fireTableRowsDeleted(row, row);
 			}
-		} else if (e.getActionCommand() == "addSIP") {
-			dataModel.addEntry(new QuickDial("99", "?", "?", "?"));
+		} else if (e.getActionCommand().equals("addSIP")) {  //$NON-NLS-1$
+			dataModel.addEntry(new QuickDial("99", "?", "?", "?"));  //$NON-NLS-1$,   //$NON-NLS-2$,   //$NON-NLS-3$,   //$NON-NLS-4$
 			dataModel.fireTableDataChanged();
 			updateButtons();
-		} else if (e.getActionCommand() == "fetchSIP") {
+		} else if (e.getActionCommand().equals("fetchSIP")) {  //$NON-NLS-1$
 			dataModel.getQuickDialDataFromFritzBox();
 			dataModel.fireTableDataChanged();
-		} else if (e.getActionCommand() == "storeSIP") {
-			Debug.err("Not yet implemented");
+		} else if (e.getActionCommand().equals("storeSIP")) {  //$NON-NLS-1$
+			Debug.err("Not yet implemented");  //$NON-NLS-1$
 			JOptionPane.showMessageDialog(null,
-					JFritz.getMessage("not_implemented"));
+					JFritz.getMessage("not_implemented"));  //$NON-NLS-1$
 		}
 
 	}
@@ -200,7 +200,7 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 		boolean addEnabled = true;
 		while (en.hasMoreElements()) {
 			String nr = ((QuickDial) en.nextElement()).getQuickdial();
-			if (nr.equals("99") || (nr.equals(""))) {
+			if (nr.equals("99") || (nr.equals(""))) { //$NON-NLS-1$,  //$NON-NLS-2$
 				addEnabled = false;
 				break;
 			}
@@ -209,6 +209,7 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 	}
 
 	public void setStatus() {
-		jfritz.getJframe().setStatus(JFritz.getMessage("entries").replaceAll("%N", Integer.toString(getDataModel().getQuickDials().size())));
+		jfritz.getJframe().setStatus(JFritz.getMessage("entries").  //$NON-NLS-1$
+				replaceAll("%N", Integer.toString(getDataModel().getQuickDials().size())));  //$NON-NLS-1$
 	}
 }

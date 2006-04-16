@@ -32,7 +32,7 @@ public abstract class FBoxListener extends Thread implements CallMonitor {
     public FBoxListener(JFritz jfritz) {
         super();
         this.jfritz = jfritz;
-        Debug.msg("Starting FBoxListener");
+        Debug.msg("Starting FBoxListener"); //$NON-NLS-1$
         start();
         zufallszahl = new Random();
     }
@@ -41,32 +41,20 @@ public abstract class FBoxListener extends Thread implements CallMonitor {
 
     protected boolean connect() {
         try {
-            Debug.msg("Trying to connect to "
-                    + JFritz.getProperty("box.address") + ":1012");
-            clientSocket = new Socket(JFritz.getProperty("box.address"), 1012);
+            Debug.msg("Trying to connect to " //$NON-NLS-1$
+                    + JFritz.getProperty("box.address") + ":1012"); //$NON-NLS-1$,  //$NON-NLS-2$
+            clientSocket = new Socket(JFritz.getProperty("box.address"), 1012); //$NON-NLS-1$
             clientSocket.setKeepAlive(true);
             return true;
         } catch (UnknownHostException uhe) {
-            Debug.msg("Unknown host exception: " + uhe.toString());
-            Debug
-                    .errDlg("Konnte keine Verbindung zu "
-                            + JFritz.getProperty("box.address")
-                            + ":1012"
-                            + " aufnehmen. \n"
-                            + "\n"
-                            + "Aktivieren Sie den Anrufmonitor, indem Sie am Telefon #96*5* wählen.\n"
-                            + "Es sollte ein Bestätigungston kommen.");
+            Debug.msg("Unknown host exception: " + uhe.toString()); //$NON-NLS-1$
+            Debug.errDlg(JFritz.getMessage("error_fritzbox_callmonitor_no_connection"). //$NON-NLS-1$
+            		replaceAll("%A", JFritz.getProperty("box.address"))); //$NON-NLS-1$,  //$NON-NLS-2$
             jfritz.stopCallMonitor();
         } catch (IOException ioe) {
-            Debug.msg("IO exception: " + ioe.toString());
-            Debug
-                    .errDlg("Konnte keine Verbindung zu "
-                            + JFritz.getProperty("box.address")
-                            + ":1012"
-                            + " aufnehmen. \n"
-                            + "\n"
-                            + "Aktivieren Sie den Anrufmonitor, indem Sie am Telefon #96*5* wählen.\n"
-                            + "Es sollte ein Bestätigungston kommen.");
+            Debug.msg("IO exception: " + ioe.toString()); //$NON-NLS-1$
+            Debug.errDlg(JFritz.getMessage("error_fritzbox_callmonitor_no_connection"). //$NON-NLS-1$
+            		replaceAll("%A", JFritz.getProperty("box.address"))); //$NON-NLS-1$,  //$NON-NLS-2$
             jfritz.stopCallMonitor();
         }
         return false;
@@ -83,18 +71,18 @@ public abstract class FBoxListener extends Thread implements CallMonitor {
                 parseOutput(currentLine);
             }
         } catch (IOException ioe) {
-            Debug.msg("IO exception: " + ioe.toString());
+            Debug.msg("IO exception: " + ioe.toString()); //$NON-NLS-1$
         }
     }
 
     protected void initIgnoreList() {
         String ignoreMSNString = JFritz.getProperty(
-                "option.callmonitor.ignoreMSN", "");
-        if (ignoreMSNString.length() > 0 && ignoreMSNString.indexOf(";") == -1) {
-            ignoreMSNString = ignoreMSNString + ";";
+                "option.callmonitor.ignoreMSN", ""); //$NON-NLS-1$,  //$NON-NLS-2$
+        if (ignoreMSNString.length() > 0 && ignoreMSNString.indexOf(";") == -1) { //$NON-NLS-1$
+            ignoreMSNString = ignoreMSNString + ";"; //$NON-NLS-1$
         }
-        ignoredMSNs = ignoreMSNString.split(";");
-        Debug.msg("Ignored MSNs: ");
+        ignoredMSNs = ignoreMSNString.split(";"); //$NON-NLS-1$
+        Debug.msg("Ignored MSNs: "); //$NON-NLS-1$
         for (int i = 0; i < ignoredMSNs.length; i++) {
             Debug.msg(ignoredMSNs[i]);
         }
@@ -103,13 +91,13 @@ public abstract class FBoxListener extends Thread implements CallMonitor {
     protected abstract void parseOutput(String line);
 
     public void stopCallMonitor() {
-        Debug.msg("Stopping FBoxListener");
+        Debug.msg("Stopping FBoxListener"); //$NON-NLS-1$
         try {
             if (clientSocket != null)
                 clientSocket.close();
             this.interrupt();
         } catch (IOException e) {
-            System.out.println(e);
+            System.err.println(e);
         }
     }
 }

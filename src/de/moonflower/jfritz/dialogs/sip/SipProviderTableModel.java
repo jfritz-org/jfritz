@@ -38,22 +38,22 @@ import de.moonflower.jfritz.utils.Debug;
  */
 public class SipProviderTableModel extends AbstractTableModel {
 
-    private static final String SIP_DTD_URI = "http://jfritz.moonflower.de/dtd/sip.dtd";
+    private static final String SIP_DTD_URI = "http://jfritz.moonflower.de/dtd/sip.dtd"; //$NON-NLS-1$
 
-	private static final String SIP_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-		    + "<!-- DTD for JFritz sip provider -->"
-			+ "<!ELEMENT provider (commment?,entry*)>"
-			+ "<!ELEMENT comment (#PCDATA)>"
-			+ "<!ELEMENT name (#PCDATA)>"
-			+ "<!ELEMENT number (#PCDATA)>"
-			+ "<!ELEMENT active (#PCDATA)>"
-			+ "<!ELEMENT entry (name,number,active?)>"
-			+ "<!ATTLIST entry id CDATA #REQUIRED>";
+	private static final String SIP_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" //$NON-NLS-1$
+		    + "<!-- DTD for JFritz sip provider -->" //$NON-NLS-1$
+			+ "<!ELEMENT provider (commment?,entry*)>" //$NON-NLS-1$
+			+ "<!ELEMENT comment (#PCDATA)>" //$NON-NLS-1$
+			+ "<!ELEMENT name (#PCDATA)>" //$NON-NLS-1$
+			+ "<!ELEMENT number (#PCDATA)>" //$NON-NLS-1$
+			+ "<!ELEMENT active (#PCDATA)>" //$NON-NLS-1$
+			+ "<!ELEMENT entry (name,number,active?)>" //$NON-NLS-1$
+			+ "<!ATTLIST entry id CDATA #REQUIRED>"; //$NON-NLS-1$
 
     private static final long serialVersionUID = 1;
 
-    private final String columnNames[] = { "ID", "Aktiv", "SIP-Nummer",
-            "Provider" };
+    private final String columnNames[] = { JFritz.getMessage("id"), JFritz.getMessage("active"), //$NON-NLS-1$,  //$NON-NLS-2$
+    		JFritz.getMessage("sip_numbers"), JFritz.getMessage("provider") }; //$NON-NLS-1$,  //$NON-NLS-2$
 
     private Vector providerList;
 
@@ -86,15 +86,15 @@ public class SipProviderTableModel extends AbstractTableModel {
             return Integer.toString(sip.getProviderID());
         case 1:
             if (sip.isActive())
-                return "Ja";
+                return JFritz.getMessage("yes"); //$NON-NLS-1$
             else
-                return "Nein";
+                return JFritz.getMessage("no"); //$NON-NLS-1$
         case 2:
             return sip.getNumber();
         case 3:
             return sip.getProvider();
         default:
-            return "?";
+            return "?"; //$NON-NLS-1$
         }
     }
 
@@ -154,26 +154,25 @@ public class SipProviderTableModel extends AbstractTableModel {
 	 *            Filename to save to
 	 */
 	public void saveToXMLFile(String filename) {
-		Debug.msg("Saving to file " + filename);
+		Debug.msg("Saving to file " + filename); //$NON-NLS-1$
 		FileOutputStream fos;
 		try {
 			fos = new FileOutputStream(filename);
 			PrintWriter pw = new PrintWriter(fos);
-			pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-//			pw.println("<!DOCTYPE sipprovider SYSTEM \"" + SIP_DTD_URI + "\">");
-			pw.println("<provider>");
-			pw.println("<comment>SIP-Provider for " + JFritz.PROGRAM_NAME + " v"
-					+ JFritz.PROGRAM_VERSION + "</comment>");
+			pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
+			pw.println("<provider>"); //$NON-NLS-1$
+			pw.println("<comment>SIP-Provider for " + JFritz.PROGRAM_NAME + " v" //$NON-NLS-1$,  //$NON-NLS-2$
+					+ JFritz.PROGRAM_VERSION + "</comment>"); //$NON-NLS-1$
 
 			Enumeration en = providerList.elements();
 				while (en.hasMoreElements()) {
 					SipProvider provider = (SipProvider) en.nextElement();
 					pw.println(provider.toXML());
 				}
-			pw.println("</provider>");
+			pw.println("</provider>"); //$NON-NLS-1$
 			pw.close();
 		} catch (FileNotFoundException e) {
-			Debug.err("Could not write " + filename + "!");
+			Debug.err("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 
@@ -214,13 +213,13 @@ public class SipProviderTableModel extends AbstractTableModel {
 				public InputSource resolveEntity(String publicId,
 						String systemId) throws SAXException, IOException {
 					if (systemId.equals(SIP_DTD_URI)
-							|| systemId.equals("sip.dtd")) {
+							|| systemId.equals("sip.dtd")) { //$NON-NLS-1$
 						InputSource is;
 						is = new InputSource(new StringReader(SIP_DTD));
 						is.setSystemId(SIP_DTD_URI);
 						return is;
 					}
-					throw new SAXException("Invalid system identifier: "
+					throw new SAXException("Invalid system identifier: " //$NON-NLS-1$
 							+ systemId);
 				}
 
@@ -231,21 +230,21 @@ public class SipProviderTableModel extends AbstractTableModel {
 			sortAllRowsBy(0);
 
 		} catch (ParserConfigurationException e) {
-			Debug.err("Error with ParserConfiguration!");
+			Debug.err("Error with ParserConfiguration!"); //$NON-NLS-1$
 		} catch (SAXException e) {
-			Debug.err("Error on parsing " + filename + "!" + e);
-			if (e.getLocalizedMessage().startsWith("Relative URI")
+			Debug.err("Error on parsing " + filename + "!" + e); //$NON-NLS-1$,  //$NON-NLS-2$
+			if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
 					|| e.getLocalizedMessage().startsWith(
-							"Invalid system identifier")) {
+							"Invalid system identifier")) { //$NON-NLS-1$
 				Debug.err(e.getLocalizedMessage());
 				Debug
-						.errDlg("STRUKTURÄNDERUNG!\n\nBitte in der Datei jfritz.sipprovider.xml\n "
-								+ "die Zeichenkette \"sip.dtd\" durch\n \""
-								+ SIP_DTD_URI + "\"\n ersetzen!");
+						.errDlg("STRUKTURÄNDERUNG!\n\nBitte in der Datei jfritz.sipprovider.xml\n " //$NON-NLS-1$
+								+ "die Zeichenkette \"sip.dtd\" durch\n \"" //$NON-NLS-1$
+								+ SIP_DTD_URI + "\"\n ersetzen!"); //$NON-NLS-1$
 				System.exit(0);
 			}
 		} catch (IOException e) {
-			Debug.err("Could not read " + filename + "!");
+			Debug.err("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 
@@ -261,7 +260,7 @@ public class SipProviderTableModel extends AbstractTableModel {
 	 * @return Number of SipProvider (123@sipgate.de)
 	 */
 	public String getSipProvider(String sipID, String defaultReturn) {
-	    if (sipID.startsWith("SIP")) {
+	    if (sipID.startsWith("SIP")) { //$NON-NLS-1$
             Enumeration en = providerList.elements();
             	while (en.hasMoreElements()) {
             	    SipProvider sipProvider = (SipProvider) en.nextElement();

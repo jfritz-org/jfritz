@@ -34,7 +34,7 @@ public class Call {
 
     private double cost= -1;
 
-    private String comment = "";
+    private String comment = ""; //$NON-NLS-1$
 
     public Call(JFritz jfritz, CallType calltype, Date calldate,
             PhoneNumber number, String port, String route, int duration) {
@@ -82,7 +82,7 @@ public class Call {
      * @return Returns the person the number belongs to or null.
      */
     public Person getPerson(boolean considerMain) {
-        if ((number == null) || (number.equals(new PhoneNumber(""))))
+        if ((number == null) || (number.equals(new PhoneNumber("")))) //$NON-NLS-1$
             return null;
         else
         	return jfritz.getPhonebook().findPerson(number,considerMain);
@@ -113,44 +113,44 @@ public class Call {
      * @return Returns CSV String
      */
     public String toCSV() {
-        SimpleDateFormat date = new SimpleDateFormat("dd.MM.yyyy");
-        SimpleDateFormat time = new SimpleDateFormat("HH:mm");
-        String outString = "";
+        SimpleDateFormat date = new SimpleDateFormat("dd.MM.yyyy"); //$NON-NLS-1$
+        SimpleDateFormat time = new SimpleDateFormat("HH:mm"); //$NON-NLS-1$
+        String outString = ""; //$NON-NLS-1$
 
         // type
         switch (calltype.toInt()) {
         case 1: {
-            outString = "\"Incoming\"";
+            outString = "\"Incoming\""; //$NON-NLS-1$
             break;
         }
         case 2: {
-            outString = "\"Missed\"";
+            outString = "\"Missed\""; //$NON-NLS-1$
             break;
         }
         case 3: {
-            outString = "\"Outgoing\"";
+            outString = "\"Outgoing\""; //$NON-NLS-1$
             break;
         }
         }
 
         // date
-        outString = outString.concat(";\"" + date.format(calldate) + "\"");
+        outString = outString.concat(";\"" + date.format(calldate) + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 
         // time
-        outString = outString.concat(";\"" + time.format(calldate) + "\"");
+        outString = outString.concat(";\"" + time.format(calldate) + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 
         // number
         if (number == null)
-            outString = outString.concat(";\"\"");
+            outString = outString.concat(";\"\""); //$NON-NLS-1$
         else
-            outString = outString.concat(";\"" + number + "\"");
+            outString = outString.concat(";\"" + number + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 
         // route
         if (route == null)
-            outString = outString.concat(";\"\"");
+            outString = outString.concat(";\"\""); //$NON-NLS-1$
         else {
-            String sipRoute = "";
-            if (route.startsWith("SIP")) {
+            String sipRoute = ""; //$NON-NLS-1$
+            if (route.startsWith("SIP")) { //$NON-NLS-1$
                 Enumeration en = jfritz.getSIPProviderTableModel()
                         .getProviderList().elements();
                 while (en.hasMoreElements()) {
@@ -162,73 +162,70 @@ public class Call {
                 }
             }
 
-            if (sipRoute.equals("")) {
-                outString = outString.concat(";\"" + route + "\"");
+            if (sipRoute.equals("")) { //$NON-NLS-1$
+                outString = outString.concat(";\"" + route + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
             } else {
-                outString = outString.concat(";\"" + sipRoute + "\"");
+                outString = outString.concat(";\"" + sipRoute + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
             }
         }
 
         // port
-        if (port.equals("4"))
-            outString = outString.concat(";\"ISDN\"");
-        else if (port.equals("0"))
-            outString = outString.concat(";\"FON1\"");
-        else if (port.equals("1"))
-            outString = outString.concat(";\"FON2\"");
-        else if (port.equals("2"))
-            outString = outString.concat(";\"FON3\"");
-        else if (port.equals("32"))
-            outString = outString.concat(";\"DATA\"");
-        else if (port.equals("33"))
-            outString = outString.concat(";\"DATA\"");
-        else if (port.equals("34"))
-            outString = outString.concat(";\"DATA\"");
-        else if (port.equals("35"))
-            outString = outString.concat(";\"DATA\"");
-        else if (port.equals("36"))
-            outString = outString.concat(";\"DATA\"");
-        else if (port.equals(""))
-            outString = outString.concat(";\"\"");
+        if (port.equals("4")) //$NON-NLS-1$
+            outString = outString.concat(";\"ISDN\""); //$NON-NLS-1$
+        else if (port.equals("0")) //$NON-NLS-1$
+            outString = outString.concat(";\"FON1\""); //$NON-NLS-1$
+        else if (port.equals("1")) //$NON-NLS-1$
+            outString = outString.concat(";\"FON2\""); //$NON-NLS-1$
+        else if (port.equals("2")) //$NON-NLS-1$
+            outString = outString.concat(";\"FON3\""); //$NON-NLS-1$
+        else if (port.equals("32")) //$NON-NLS-1$
+            outString = outString.concat(";\"DATA\""); //$NON-NLS-1$
+        else if (port.equals("33")) //$NON-NLS-1$
+            outString = outString.concat(";\"DATA\""); //$NON-NLS-1$
+        else if (port.equals("34")) //$NON-NLS-1$
+            outString = outString.concat(";\"DATA\""); //$NON-NLS-1$
+        else if (port.equals("35")) //$NON-NLS-1$
+            outString = outString.concat(";\"DATA\""); //$NON-NLS-1$
+        else if (port.equals("36")) //$NON-NLS-1$
+            outString = outString.concat(";\"DATA\""); //$NON-NLS-1$
+        else if (port.equals("")) //$NON-NLS-1$
+            outString = outString.concat(";\"\""); //$NON-NLS-1$
         else
-            outString = outString.concat(";\"" + port + "\"");
+            outString = outString.concat(";\"" + port + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 
         // duration
-        outString = outString.concat(";\"" + duration + "\"");
+        outString = outString.concat(";\"" + duration + "\""); //$NON-NLS-1$, //$NON-NLS-2$
 
         // address
         if (getPerson() != null) {
-            outString = outString.concat(";\"" + getPerson().getFullname()
-                    + "\"");
+            outString = outString.concat(";\"" + getPerson().getFullname() //$NON-NLS-1$
+                    + "\""); //$NON-NLS-1$
             outString = outString
-                    .concat(";\"" + getPerson().getStreet() + "\"");
-            if (getPerson().getPostalCode().equals("")) {
-                outString = outString.concat(";\"" + getPerson().getCity()
-                        + "\""); // city might be ""
-            } else if (getPerson().getCity().equals("")) {
-                outString = outString.concat(";\""
-                        + getPerson().getPostalCode() + "\""); // postCode might
-                											   // be ""
+                    .concat(";\"" + getPerson().getStreet() + "\""); //$NON-NLS-1$, //$NON-NLS-2$
+            if (getPerson().getPostalCode().equals("")) { //$NON-NLS-1$
+                outString = outString.concat(";\"" + getPerson().getCity() //$NON-NLS-1$
+                        + "\""); // city might be "" //$NON-NLS-1$
+            } else if (getPerson().getCity().equals("")) { //$NON-NLS-1$
+                outString = outString.concat(";\"" //$NON-NLS-1$
+                        + getPerson().getPostalCode() + "\""); //$NON-NLS-1$
+                // postCode might be ""
             } else { // postCode AND city != ""
-                outString = outString.concat(";\""
-                        + getPerson().getPostalCode() + " "
-                        + getPerson().getCity() + "\"");
+                outString = outString.concat(";\"" //$NON-NLS-1$
+                        + getPerson().getPostalCode() + " " //$NON-NLS-1$
+                        + getPerson().getCity() + "\""); //$NON-NLS-1$
             }
         } else
-            outString = outString.concat(";\"\";\"\";\"\"");
+            outString = outString.concat(";\"\";\"\";\"\""); //$NON-NLS-1$
 
         // CallByCall
         if (number != null && number.hasCallByCall()) {
-            outString = outString.concat(";\"" + number.getCallByCall() + "\"");
+            outString = outString.concat(";\"" + number.getCallByCall() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
         } else {
-            outString = outString.concat(";\"\"");
+            outString = outString.concat(";\"\""); //$NON-NLS-1$
         }
 
-        // costs
-//        outString = outString.concat(";\"" + getCost() + "\"");
-
         // comment
-        outString = outString.concat(";\"" + comment + "\"");
+        outString = outString.concat(";\"" + comment + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 
         return outString;
     }
@@ -237,30 +234,30 @@ public class Call {
      * @return Returns XML String
      */
     public String toXML() {
-        String sep = System.getProperty("line.separator", "\n");
-        String output = "";
-        SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-        output = ("<entry calltype=\"" + calltype.toString() + "\">" + sep);
-        output = output + ("\t<date>" + df.format(calldate) + "</date>" + sep);
+        String sep = System.getProperty("line.separator", "\n"); //$NON-NLS-1$,  //$NON-NLS-2$
+        String output = ""; //$NON-NLS-1$
+        SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm"); //$NON-NLS-1$
+        output = ("<entry calltype=\"" + calltype.toString() + "\">" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
+        output = output + ("\t<date>" + df.format(calldate) + "</date>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
         if (number != null) {
             if (number.getCallByCall().length() > 0) {
                 output = output
-                        + ("\t<caller callbycall=\"" + number.getCallByCall()
-                                + "\">" + number.getIntNumber() + "</caller>" + sep);
+                        + ("\t<caller callbycall=\"" + number.getCallByCall() //$NON-NLS-1$
+                                + "\">" + number.getIntNumber() + "</caller>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
             } else {
                 output = output
-                        + ("\t<caller>" + number.getIntNumber() + "</caller>" + sep);
+                        + ("\t<caller>" + number.getIntNumber() + "</caller>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
             }
         }
-        if (!port.equals(""))
-            output = output + ("\t<port>" + port + "</port>" + sep);
-        if (!route.equals(""))
-            output = output + ("\t<route>" + route + "</route>" + sep);
+        if (!port.equals("")) //$NON-NLS-1$
+            output = output + ("\t<port>" + port + "</port>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
+        if (!route.equals("")) //$NON-NLS-1$
+            output = output + ("\t<route>" + route + "</route>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
         if (duration > 0)
-            output = output + ("\t<duration>" + duration + "</duration>" + sep);
+            output = output + ("\t<duration>" + duration + "</duration>" + sep); //$NON-NLS-1$, //$NON-NLS-2$
 
-        output = output + ("\t<comment>" + JFritzUtils.convertSpecialChars(comment) + "</comment>" + sep);
-        output = output + ("</entry>");
+        output = output + ("\t<comment>" + JFritzUtils.convertSpecialChars(comment) + "</comment>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
+        output = output + ("</entry>"); //$NON-NLS-1$
         return output;
     }
 

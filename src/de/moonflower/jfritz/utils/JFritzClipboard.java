@@ -4,6 +4,8 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 
+import de.moonflower.jfritz.JFritz;
+
 public class JFritzClipboard{
 
 	Clipboard systemClip = null;
@@ -28,25 +30,25 @@ public class JFritzClipboard{
 
     protected void setContents(String text){
 		try{
-        	if ((text!=null) && (!text.equals("")))
+        	if ((text!=null) && (!text.equals(""))) //$NON-NLS-1$
         	{
             	StringSelection stringSelection = new StringSelection(text);
         		systemClip.setContents(stringSelection, stringSelection);
-        		Debug.msg("JFritzClipboard.copy: "+text);
+        		Debug.msg("JFritzClipboard.copy: "+text); //$NON-NLS-1$
         	}
         }catch(IllegalStateException ise)
         {
-        	Debug.err("Cannot copy "+text+" into clipboard (clipboard not available)");
-        	Debug.errDlg("Die Zwischenablage ist nicht verfügbar!");
+        	Debug.err("Cannot copy "+text+" into clipboard (clipboard not available)"); //$NON-NLS-1$,  //$NON-NLS-2$
+        	Debug.errDlg(JFritz.getMessage("error_clipboard_not_available")); //$NON-NLS-1$
         }
     }
 
     private static boolean runTest()
     {
     	try{
-    		JFritzClipboard.copy("Text to be copied into systems clipboard.");
+    		JFritzClipboard.copy("Text to be copied into systems clipboard."); //$NON-NLS-1$
     		JFritzClipboard.copy(null);
-    		JFritzClipboard.copy("");
+    		JFritzClipboard.copy(""); //$NON-NLS-1$
     		return true;
     	}catch(Exception e)
     	{
@@ -58,8 +60,8 @@ public class JFritzClipboard{
     {
     	//Run test via console from <project>\bin with
     	//"java de.moonflower.jfritz.utils.JFritzClipboard"
-    	System.out.print("\tTesting JFritzClipboard:\t");
-    	System.out.println(JFritzClipboard.runTest()?"OK":"Error");
+    	System.out.print("\tTesting JFritzClipboard:\t"); //$NON-NLS-1$
+    	System.out.println(JFritzClipboard.runTest()?"OK":"Error"); //$NON-NLS-1$,  //$NON-NLS-2$
     }
 
 

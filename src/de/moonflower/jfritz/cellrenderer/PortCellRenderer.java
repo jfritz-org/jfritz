@@ -30,28 +30,28 @@ public class PortCellRenderer extends DefaultTableCellRenderer {
 			String portStr;
 			String port = (String) value;
 
-			if (port.equals("4"))
-				portStr = "ISDN";
-			else if (port.equals("0"))
-				portStr = "FON 1";
-			else if (port.equals("1"))
-				portStr = "FON 2";
-			else if (port.equals("2"))
-				portStr = "FON 3";
-            else if (port.equals("32"))
-                portStr = "Daten Fon 1";
-            else if (port.equals("33"))
-                portStr = "Daten Fon 2";
-            else if (port.equals("34"))
-                portStr = "Daten Fon 3";
-            else if (port.equals("36"))
-                portStr = "Daten S0";
-			else if (port.equals(""))
-				portStr = "";
+			if (port.equals("4")) //$NON-NLS-1$
+				portStr = "ISDN"; //$NON-NLS-1$
+			else if (port.equals("0")) //$NON-NLS-1$
+				portStr = "FON 1"; //$NON-NLS-1$
+			else if (port.equals("1")) //$NON-NLS-1$
+				portStr = "FON 2"; //$NON-NLS-1$
+			else if (port.equals("2")) //$NON-NLS-1$
+				portStr = "FON 3"; //$NON-NLS-1$
+            else if (port.equals("32")) //$NON-NLS-1$
+                portStr = "Daten Fon 1";     //$NON-NLS-1$
+            else if (port.equals("33")) //$NON-NLS-1$
+                portStr = "Daten Fon 2";        //$NON-NLS-1$
+            else if (port.equals("34")) //$NON-NLS-1$
+                portStr = "Daten Fon 3";       //$NON-NLS-1$
+            else if (port.equals("36")) //$NON-NLS-1$
+                portStr = "Daten S0"; //$NON-NLS-1$
+			else if (port.equals("")) //$NON-NLS-1$
+				portStr = ""; //$NON-NLS-1$
 			else
 				portStr = port;
 
-			if (!port.equals(""))
+			if (!port.equals("")) //$NON-NLS-1$
 				setToolTipText(port);
 
 			label.setText(portStr);

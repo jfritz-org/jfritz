@@ -5,6 +5,8 @@
  */
 package de.moonflower.jfritz.struct;
 
+import de.moonflower.jfritz.JFritz;
+
 
 /**
  * This class defines the call types "Call In", "Call In Failed" and "Call out".
@@ -16,9 +18,9 @@ public class CallType {
 	public static final byte CALLIN = 1;
 	public static final byte CALLIN_FAILED = 2;
 	public static final byte CALLOUT = 3;
-	public static final String CALLIN_STR = "call_in";
-	public static final String CALLIN_FAILED_STR = "call_in_failed";
-	public static final String CALLOUT_STR = "call_out";
+	public static final String CALLIN_STR = "call_in"; //$NON-NLS-1$
+	public static final String CALLIN_FAILED_STR = "call_in_failed"; //$NON-NLS-1$
+	public static final String CALLOUT_STR = "call_out"; //$NON-NLS-1$
 
 	public byte calltype;
 
@@ -39,13 +41,13 @@ public class CallType {
 		return calltype;
 	}
 
-	public String toDescription() { // TODO: I18N
+	public String toDescription() {
 		if (calltype == CALLIN)
-			return "Eingehender Anruf";
+			return JFritz.getMessage("incoming_call"); //$NON-NLS-1$
 		else if (calltype == CALLIN_FAILED)
-			return "Eingehender Anruf in Abwesenheit";
+			return JFritz.getMessage("missed_call"); //$NON-NLS-1$
 		else
-			return "Ausgehender Anruf";
+			return JFritz.getMessage("outgoing_call"); //$NON-NLS-1$
 	}
 
 	public String toString() {

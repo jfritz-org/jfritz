@@ -53,18 +53,18 @@ public class CallmessageConfigDialog extends JDialog implements CallMonitorConfi
 	}
 
 	public void initDialog() {
-		setTitle("Callmessage - Einstellungen");
+		setTitle(JFritz.getMessage("dialog_title_callmessage_options")); //$NON-NLS-1$
 		setSize(270, 140);
 		drawDialog();
 		setProperties();
 	}
 
 	private void setProperties() {
-		callmessagePort.setText(JFritz.getProperty("option.callmessageport", "23232"));
+		callmessagePort.setText(JFritz.getProperty("option.callmessageport", "23232")); //$NON-NLS-1$,  //$NON-NLS-2$
 	}
 
 	private void storeProperties() {
-		JFritz.setProperty("option.callmessageport", callmessagePort.getText());
+		JFritz.setProperty("option.callmessageport", callmessagePort.getText()); //$NON-NLS-1$
 	}
 
 	public int showConfigDialog() {
@@ -118,19 +118,19 @@ public class CallmessageConfigDialog extends JDialog implements CallMonitorConfi
 
 		c.gridwidth = 1;
 		c.gridy = 0;
-		JLabel label = new JLabel("Callmessage-Port: ");
+		JLabel label = new JLabel("Callmessage-Port: "); //$NON-NLS-1$
 		panel.add(label, c);
-		callmessagePort = new JTextField("", 5);
+		callmessagePort = new JTextField("", 5); //$NON-NLS-1$
 		panel.add(callmessagePort, c);
 
 		JPanel buttonPanel = new JPanel();
-		okButton = new JButton(JFritz.getMessage("okay"));
-		okButton.setActionCommand("ok_pressed");
+		okButton = new JButton(JFritz.getMessage("okay")); //$NON-NLS-1$
+		okButton.setActionCommand("ok_pressed"); //$NON-NLS-1$
 		okButton.addActionListener(actionListener);
 		okButton.addKeyListener(keyListener);
 
-		cancelButton = new JButton(JFritz.getMessage("cancel"));
-		cancelButton.setActionCommand("cancel_pressed");
+		cancelButton = new JButton(JFritz.getMessage("cancel")); //$NON-NLS-1$
+		cancelButton.setActionCommand("cancel_pressed"); //$NON-NLS-1$
 		cancelButton.addActionListener(actionListener);
 		cancelButton.addKeyListener(keyListener);
 

@@ -59,30 +59,30 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 public class CallerList extends AbstractTableModel {
     private static final long serialVersionUID = 1;
 
-    private static final String CALLS_DTD_URI = "http://jfritz.moonflower.de/dtd/calls.dtd";
+    private static final String CALLS_DTD_URI = "http://jfritz.moonflower.de/dtd/calls.dtd"; //$NON-NLS-1$
 
-    private static final String CALLS_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-            + "<!-- DTD for JFritz calls -->"
-            + "<!ELEMENT calls (comment?,entry*)>"
-            + "<!ELEMENT comment (#PCDATA)>"
-            + "<!ELEMENT date (#PCDATA)>"
-            + "<!ELEMENT caller (#PCDATA)>"
-            + "<!ELEMENT port (#PCDATA)>"
-            + "<!ELEMENT route (#PCDATA)>"
-            + "<!ELEMENT duration (#PCDATA)>"
-            + "<!ELEMENT comment (#PCDATA)>"
-            + "<!ELEMENT entry (date,caller?,port?,route?,duration?,comment?)>"
-            + "<!ATTLIST entry calltype (call_in|call_in_failed|call_out) #REQUIRED>";
+    private static final String CALLS_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" //$NON-NLS-1$
+            + "<!-- DTD for JFritz calls -->" //$NON-NLS-1$
+            + "<!ELEMENT calls (comment?,entry*)>" //$NON-NLS-1$
+            + "<!ELEMENT comment (#PCDATA)>" //$NON-NLS-1$
+            + "<!ELEMENT date (#PCDATA)>" //$NON-NLS-1$
+            + "<!ELEMENT caller (#PCDATA)>" //$NON-NLS-1$
+            + "<!ELEMENT port (#PCDATA)>" //$NON-NLS-1$
+            + "<!ELEMENT route (#PCDATA)>" //$NON-NLS-1$
+            + "<!ELEMENT duration (#PCDATA)>" //$NON-NLS-1$
+            + "<!ELEMENT comment (#PCDATA)>" //$NON-NLS-1$
+            + "<!ELEMENT entry (date,caller?,port?,route?,duration?,comment?)>" //$NON-NLS-1$
+            + "<!ATTLIST entry calltype (call_in|call_in_failed|call_out) #REQUIRED>"; //$NON-NLS-1$
 
-    private final static String PATTERN_CSV = "(\\||;)";
+    private final static String PATTERN_CSV = "(\\||;)"; //$NON-NLS-1$
 
-    private final static String EXPORT_CSV_FORMAT_JFRITZ = "\"CallType\";\"Date\";\"Time\";\"Number\";\"Route\";\"" +
-        "Port\";\"Duration\";\"Name\";\"Address\";\"City\";\"CallByCall\";\"Comment\"";
+    private final static String EXPORT_CSV_FORMAT_JFRITZ = "\"CallType\";\"Date\";\"Time\";\"Number\";\"Route\";\"" + //$NON-NLS-1$
+        "Port\";\"Duration\";\"Name\";\"Address\";\"City\";\"CallByCall\";\"Comment\""; //$NON-NLS-1$
 
-    private final static String EXPORT_CSV_FORMAT_FRITZBOX = "Typ;Datum;Rufnummer;Nebenstelle;Eigene Rufnummer;Dauer";
+    private final static String EXPORT_CSV_FORMAT_FRITZBOX = "Typ;Datum;Rufnummer;Nebenstelle;Eigene Rufnummer;Dauer"; //$NON-NLS-1$
 
     //Is the type eyported from a 7170
-    private final static String EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE = "Typ; Datum; Rufnummer; Nebenstelle; Eigene Rufnummer; Dauer";
+    private final static String EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE = "Typ; Datum; Rufnummer; Nebenstelle; Eigene Rufnummer; Dauer"; //$NON-NLS-1$
 
     private JFritz jfritz;
 
@@ -130,11 +130,11 @@ public class CallerList extends AbstractTableModel {
      */
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         String columnName = getRealColumnName(columnIndex);
-        if (columnName.equals("participant")) {
+        if (columnName.equals("participant")) { //$NON-NLS-1$
             return ((Call) filteredCallerData.get(rowIndex)).getPhoneNumber() != null;
-        } else if (columnName.equals("comment")) {
+        } else if (columnName.equals("comment")) { //$NON-NLS-1$
             return true;
-        } else if (columnName.equals("number")) {
+        } else if (columnName.equals("number")) { //$NON-NLS-1$
         	return true;
         }
         return false;
@@ -163,18 +163,18 @@ public class CallerList extends AbstractTableModel {
      *            Save whole caller list or only selected entries
      */
     public void saveToXMLFile(String filename, boolean wholeCallerList) {
-        Debug.msg("Saving to file " + filename);
+        Debug.msg("Saving to file " + filename); //$NON-NLS-1$
         try {
             BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(filename), "UTF8"));
-            pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+                    new FileOutputStream(filename), "UTF8")); //$NON-NLS-1$
+            pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
             pw.newLine();
 //            pw.write("<!DOCTYPE calls SYSTEM \"" + CALLS_DTD_URI + "\">");
 //            pw.newLine();
-            pw.write("<calls>");
+            pw.write("<calls>"); //$NON-NLS-1$
             pw.newLine();
-            pw.write("<comment>Calls for " + JFritz.PROGRAM_NAME + " v"
-                    + JFritz.PROGRAM_VERSION + "</comment>");
+            pw.write("<comment>Calls for " + JFritz.PROGRAM_NAME + " v" //$NON-NLS-1$,  //$NON-NLS-2$
+                    + JFritz.PROGRAM_VERSION + "</comment>"); //$NON-NLS-1$
             pw.newLine();
 
             int rows[] = null;
@@ -203,15 +203,15 @@ public class CallerList extends AbstractTableModel {
                     pw.newLine();
                 }
             }
-            pw.write("</calls>");
+            pw.write("</calls>"); //$NON-NLS-1$
 
             pw.close();
         } catch (UnsupportedEncodingException e) {
-            Debug.err("UTF-8 wird nicht unterst?tzt.");
+            Debug.err("UTF-8 not supported"); //$NON-NLS-1$
         } catch (FileNotFoundException e) {
-            Debug.err("Could not write " + filename + "!");
+            Debug.err("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
         } catch (IOException e) {
-            Debug.err("IOException " + filename);
+            Debug.err("IOException " + filename); //$NON-NLS-1$
         }
     }
 
@@ -224,13 +224,13 @@ public class CallerList extends AbstractTableModel {
      *            Save whole caller list or only selected entries
      */
     public void saveToCSVFile(String filename, boolean wholeCallerList) {
-        Debug.msg("Saving to csv file " + filename);
+        Debug.msg("Saving to csv file " + filename); //$NON-NLS-1$
         FileOutputStream fos;
         try {
             fos = new FileOutputStream(filename);
             PrintWriter pw = new PrintWriter(fos);
             pw
-                    .println("\"CallType\";\"Date\";\"Time\";\"Number\";\"Route\";\"Port\";\"Duration\";\"Name\";\"Address\";\"City\";\"CallByCall\";\"Comment\"");
+                    .println("\"CallType\";\"Date\";\"Time\";\"Number\";\"Route\";\"Port\";\"Duration\";\"Name\";\"Address\";\"City\";\"CallByCall\";\"Comment\""); //$NON-NLS-1$
             int rows[] = null;
             if (jfritz != null && jfritz.getJframe() != null) {
                 rows = jfritz.getJframe().getCallerTable().getSelectedRows();
@@ -256,7 +256,7 @@ public class CallerList extends AbstractTableModel {
             }
             pw.close();
         } catch (FileNotFoundException e) {
-            Debug.err("Could not write " + filename + "!");
+            Debug.err("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
         }
     }
 
@@ -300,13 +300,13 @@ public class CallerList extends AbstractTableModel {
                 public InputSource resolveEntity(String publicId,
                         String systemId) throws SAXException, IOException {
                     if (systemId.equals(CALLS_DTD_URI)
-                            || systemId.equals("calls.dtd")) {
+                            || systemId.equals("calls.dtd")) { //$NON-NLS-1$
                         InputSource is;
                         is = new InputSource(new StringReader(CALLS_DTD));
                         is.setSystemId(CALLS_DTD_URI);
                         return is;
                     }
-                    throw new SAXException("Invalid system identifier: "
+                    throw new SAXException("Invalid system identifier: " //$NON-NLS-1$
                             + systemId);
                 }
 
@@ -316,21 +316,21 @@ public class CallerList extends AbstractTableModel {
             sortAllUnfilteredRows();
 
         } catch (ParserConfigurationException e) {
-            Debug.err("Error with ParserConfiguration!");
+            Debug.err("Error with ParserConfiguration!"); //$NON-NLS-1$
         } catch (SAXException e) {
-            Debug.err("Error on parsing " + filename + "!");
-            if (e.getLocalizedMessage().startsWith("Relative URI")
+            Debug.err("Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+            if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
                     || e.getLocalizedMessage().startsWith(
-                            "Invalid system identifier")) {
+                            "Invalid system identifier")) { //$NON-NLS-1$
                 Debug.err(e.getLocalizedMessage());
                 Debug
-                        .errDlg("STRUKTURÄNDERUNG!\n\nBitte in der Datei jfritz.calls.xml\n "
-                                + "die Zeichenkette \"calls.dtd\" durch\n \""
-                                + CALLS_DTD_URI + "\"\n ersetzen!");
+                        .errDlg("STRUKTURÄNDERUNG!\n\nBitte in der Datei jfritz.calls.xml\n " //$NON-NLS-1$
+                                + "die Zeichenkette \"calls.dtd\" durch\n \"" //$NON-NLS-1$
+                                + CALLS_DTD_URI + "\"\n ersetzen!"); //$NON-NLS-1$
                 System.exit(0);
             }
         } catch (IOException e) {
-            Debug.err("Could not read " + filename + "!");
+            Debug.err("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
         }
     }
 
@@ -341,9 +341,9 @@ public class CallerList extends AbstractTableModel {
      * @return outputStr
      */
     public static String removeDuplicateWhitespace(String inputStr) {
-        Pattern p = Pattern.compile("\\s+");
+        Pattern p = Pattern.compile("\\s+"); //$NON-NLS-1$
         Matcher matcher = p.matcher(inputStr);
-        return matcher.replaceAll(" ");
+        return matcher.replaceAll(" "); //$NON-NLS-1$
     }
 
     /**
@@ -376,12 +376,12 @@ public class CallerList extends AbstractTableModel {
         Enumeration en = alreadyKnownCalls.elements();
         while (en.hasMoreElements()) {
             Call c = (Call) en.nextElement();
-            String nr1 = "", nr2 = "";
+            String nr1 = "", nr2 = ""; //$NON-NLS-1$,  //$NON-NLS-2$
             if (c.getPhoneNumber() != null)
                 nr1 = c.getPhoneNumber().getFullNumber();
             if (call.getPhoneNumber() != null)
                 nr2 = call.getPhoneNumber().getFullNumber();
-            String route1 = "", route2 = "";
+            String route1 = "", route2 = ""; //$NON-NLS-1$,  //$NON-NLS-2$
             if (c.getRoute() != null)
                 route1 = c.getRoute();
             if (call.getRoute() != null)
@@ -422,9 +422,9 @@ public class CallerList extends AbstractTableModel {
      */
     public void getNewCalls(boolean deleteFritzBoxCallerList) throws WrongPasswordException, IOException {
         alreadyKnownCalls = (Vector) unfilteredCallerData.clone();
-        Debug.msg("box.address: " + JFritz.getProperty("box.address"));
-        Debug.msg("box.password: " + JFritz.getProperty("box.password"));
-        Debug.msg("box.firmware: " + JFritz.getProperty("box.firmware"));
+        Debug.msg("box.address: " + JFritz.getProperty("box.address")); //$NON-NLS-1$,  //$NON-NLS-2$
+        Debug.msg("box.password: " + JFritz.getProperty("box.password")); //$NON-NLS-1$,  //$NON-NLS-2$
+        Debug.msg("box.firmware: " + JFritz.getProperty("box.firmware")); //$NON-NLS-1$,  //$NON-NLS-2$
 /**
         JFritzUtils.retrieveCSVList(JFritz
                 .getProperty("box.address"), Encryption.decrypt(JFritz
@@ -436,15 +436,15 @@ public class CallerList extends AbstractTableModel {
 **/
 
         Vector data = JFritzUtils.retrieveCSVList(JFritz
-                .getProperty("box.address"), Encryption.decrypt(JFritz
-                .getProperty("box.password")), JFritz
-                .getProperty("country.prefix"), JFritz
-                .getProperty("country.code"),
-                JFritz.getProperty("area.prefix"), JFritz
-                        .getProperty("area.code"), JFritzUtils.detectBoxType(
-                        JFritz.getProperty("box.firmware"), JFritz
-                                .getProperty("box.address"), Encryption
-                                .decrypt(JFritz.getProperty("box.password"))), jfritz);
+                .getProperty("box.address"), Encryption.decrypt(JFritz //$NON-NLS-1$
+                .getProperty("box.password")), JFritz //$NON-NLS-1$
+                .getProperty("country.prefix"), JFritz //$NON-NLS-1$
+                .getProperty("country.code"), //$NON-NLS-1$
+                JFritz.getProperty("area.prefix"), JFritz //$NON-NLS-1$
+                        .getProperty("area.code"), JFritzUtils.detectBoxType( //$NON-NLS-1$
+                        JFritz.getProperty("box.firmware"), JFritz //$NON-NLS-1$
+                                .getProperty("box.address"), Encryption //$NON-NLS-1$
+                                .decrypt(JFritz.getProperty("box.password"))), jfritz); //$NON-NLS-1$
 
         if (data == null) return;
         Debug.msg(data.toString());
@@ -457,7 +457,7 @@ public class CallerList extends AbstractTableModel {
         }
 
         // Notify user?
-        if ((JFritz.getProperty("option.notifyOnCalls", "true").equals("true"))
+        if ((JFritz.getProperty("option.notifyOnCalls", "true").equals("true")) //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
                 && (newEntries > 0)) {
             jfritz.getJframe().setVisible(true);
             jfritz.getJframe().toFront();
@@ -468,9 +468,9 @@ public class CallerList extends AbstractTableModel {
             String msg;
             // TODO: I18N
             if (newEntries == 1) {
-                msg = "Ein neuer Anruf empfangen!";
+                msg = JFritz.getMessage("new_call"); //$NON-NLS-1$
             } else {
-                msg = newEntries + " neue Anrufe empfangen!";
+                msg = JFritz.getMessage("new_calls").replaceAll("%N", Integer.toString(newEntries)); //$NON-NLS-1$,  //$NON-NLS-2$
             }
             JFritz.infoMsg(msg);
 
@@ -478,20 +478,20 @@ public class CallerList extends AbstractTableModel {
         // Clear data on fritz box ?
         // deleteFritzBoxCallerList=true indicates that list should be deleted in any case
         if ((newEntries > 0
-                && JFritz.getProperty("option.deleteAfterFetch", "false")
-                        .equals("true"))
+                && JFritz.getProperty("option.deleteAfterFetch", "false") //$NON-NLS-1$,  //$NON-NLS-2$
+                        .equals("true"))  //$NON-NLS-1$
            || deleteFritzBoxCallerList) {
-            JFritzUtils.clearListOnFritzBox(JFritz.getProperty("box.address"),
-                    JFritz.getProperty("box.password"), JFritzUtils
-                            .detectBoxType(JFritz.getProperty("box.firmware"),
-                                    JFritz.getProperty("box.address"),
+            JFritzUtils.clearListOnFritzBox(JFritz.getProperty("box.address"), //$NON-NLS-1$
+                    JFritz.getProperty("box.password"), JFritzUtils //$NON-NLS-1$
+                            .detectBoxType(JFritz.getProperty("box.firmware"), //$NON-NLS-1$
+                                    JFritz.getProperty("box.address"), //$NON-NLS-1$
                                     Encryption.decrypt(JFritz
-                                            .getProperty("box.password"))));
+                                            .getProperty("box.password")))); //$NON-NLS-1$
         }
 
         //Make back-up after fetching the caller list?
         if (newEntries > 0
-                && JFritzUtils.parseBoolean(JFritz.getProperty("option.createBackupAfterFetch", "false"))) {
+                && JFritzUtils.parseBoolean(JFritz.getProperty("option.createBackupAfterFetch", "false"))) { //$NON-NLS-1$,  //$NON-NLS-2$
             doBackup();
         }
 
@@ -524,29 +524,29 @@ public class CallerList extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         Call call = (Call) filteredCallerData.get(rowIndex);
         String columnName = getRealColumnName(columnIndex);
-        if (columnName.equals("type")) {
+        if (columnName.equals("type")) { //$NON-NLS-1$
             return call.getCalltype();
-        } else if (columnName.equals("date")) {
+        } else if (columnName.equals("date")) { //$NON-NLS-1$
             return call.getCalldate();
-        } else if (columnName.equals("callbycall")) {
+        } else if (columnName.equals("callbycall")) { //$NON-NLS-1$
             if (call.getPhoneNumber() != null)
                 return call.getPhoneNumber().getCallByCall();
             else
                 return null;
-        } else if (columnName.equals("number")) {
+        } else if (columnName.equals("number")) { //$NON-NLS-1$
             return call.getPhoneNumber();
-        } else if (columnName.equals("participant")) {
+        } else if (columnName.equals("participant")) { //$NON-NLS-1$
             return call.getPerson();
-        } else if (columnName.equals("port")) {
+        } else if (columnName.equals("port")) { //$NON-NLS-1$
             return call.getPort();
-        } else if (columnName.equals("route")) {
-            if (call.getRoute().startsWith("SIP"))
+        } else if (columnName.equals("route")) { //$NON-NLS-1$
+            if (call.getRoute().startsWith("SIP")) //$NON-NLS-1$
                 return jfritz.getSIPProviderTableModel().getSipProvider(
                         call.getRoute(), call.getRoute());
             return call.getRoute();
-        } else if (columnName.equals("duration")) {
+        } else if (columnName.equals("duration")) { //$NON-NLS-1$
             return Integer.toString(call.getDuration());
-        } else if (columnName.equals("comment")) {
+        } else if (columnName.equals("comment")) { //$NON-NLS-1$
             return call.getComment();
             /**
              * } else if (columnName.equals("Kosten")) { return
@@ -563,9 +563,9 @@ public class CallerList extends AbstractTableModel {
      */
     public void setValueAt(Object object, int rowIndex, int columnIndex) {
         String columnName = getRealColumnName(columnIndex);
-        if (columnName.equals("participant")) {
+        if (columnName.equals("participant")) { //$NON-NLS-1$
             setPerson((Person) object, rowIndex);
-        } else if (columnName.equals("comment")) {
+        } else if (columnName.equals("comment")) { //$NON-NLS-1$
             setComment((String) object, rowIndex);
         }
 
@@ -583,7 +583,7 @@ public class CallerList extends AbstractTableModel {
         if (call.getPhoneNumber() != null) { // no empty numbers
             if (person == null) {
                 Debug
-                        .err("Callerlist.setPerson():  IMPLEMENT ME (remove person)");
+                        .err("Callerlist.setPerson():  IMPLEMENT ME (remove person)"); //$NON-NLS-1$
             } else {
                 if (call.getPerson() == null) {
                     if (!person.isEmpty())
@@ -630,7 +630,7 @@ public class CallerList extends AbstractTableModel {
     }
 
     public void sortAllUnfilteredRows() {
-        Debug.msg("Sorting unfiltered data");
+        Debug.msg("Sorting unfiltered data"); //$NON-NLS-1$
         Collections.sort(unfilteredCallerData, new ColumnSorter(1, false));
         // Resort filtered data
         Collections.sort(filteredCallerData, new ColumnSorter(sortColumn,
@@ -658,13 +658,13 @@ public class CallerList extends AbstractTableModel {
             Call v2 = (Call) b;
             String columnName = getRealColumnName(columnIndex);
 
-            if (columnName.equals("type")) {
+            if (columnName.equals("type")) { //$NON-NLS-1$
                 o1 = v1.getCalltype().toString();
                 o2 = v2.getCalltype().toString();
-            } else if (columnName.equals("date")) {
+            } else if (columnName.equals("date")) { //$NON-NLS-1$
                 o1 = v1.getCalldate();
                 o2 = v2.getCalldate();
-            } else if (columnName.equals("callbycall")) {
+            } else if (columnName.equals("callbycall")) { //$NON-NLS-1$
                 if (v1.getPhoneNumber() != null)
                     o1 = v1.getPhoneNumber().getCallByCall();
                 else
@@ -673,7 +673,7 @@ public class CallerList extends AbstractTableModel {
                     o2 = v2.getPhoneNumber().getCallByCall();
                 else
                     o2 = null;
-            } else if (columnName.equals("number")) {
+            } else if (columnName.equals("number")) { //$NON-NLS-1$
                 if (v1.getPhoneNumber() != null)
                     o1 = v1.getPhoneNumber().getIntNumber();
                 else
@@ -682,7 +682,7 @@ public class CallerList extends AbstractTableModel {
                     o2 = v2.getPhoneNumber().getIntNumber();
                 else
                     o2 = null;
-            } else if (columnName.equals("participant")) {
+            } else if (columnName.equals("participant")) { //$NON-NLS-1$
                 if (v1.getPerson() != null)
                     o1 = v1.getPerson().getFullname().toUpperCase();
                 else
@@ -691,13 +691,13 @@ public class CallerList extends AbstractTableModel {
                     o2 = v2.getPerson().getFullname().toUpperCase();
                 else
                     o2 = null;
-            } else if (columnName.equals("port")) {
+            } else if (columnName.equals("port")) { //$NON-NLS-1$
                 o1 = v1.getPort();
                 o2 = v2.getPort();
-            } else if (columnName.equals("route")) {
+            } else if (columnName.equals("route")) { //$NON-NLS-1$
                 o1 = v1.getRoute();
                 o2 = v2.getRoute();
-            } else if (columnName.equals("duration")) {
+            } else if (columnName.equals("duration")) { //$NON-NLS-1$
                 if (v1.getDuration() != 0)
                     o1 = format(Integer.toString(v1.getDuration()), 10);
                 else
@@ -706,7 +706,7 @@ public class CallerList extends AbstractTableModel {
                     o2 = format(Integer.toString(v2.getDuration()), 10);
                 else
                     o2 = null;
-            } else if (columnName.equals("comment")) {
+            } else if (columnName.equals("comment")) { //$NON-NLS-1$
                 o1 = v1.getComment().toUpperCase();
                 o2 = v2.getComment().toUpperCase();
             } else {
@@ -765,28 +765,28 @@ public class CallerList extends AbstractTableModel {
      */
     public void updateFilter() {
         boolean filterCallIn = JFritzUtils.parseBoolean(JFritz
-                .getProperty("filter.callin"));
+                .getProperty("filter.callin")); //$NON-NLS-1$
         boolean filterCallInFailed = JFritzUtils.parseBoolean(JFritz
-                .getProperty("filter.callinfailed"));
+                .getProperty("filter.callinfailed")); //$NON-NLS-1$
         boolean filterCallOut = JFritzUtils.parseBoolean(JFritz
-                .getProperty("filter.callout"));
+                .getProperty("filter.callout")); //$NON-NLS-1$
         boolean filterNumber = JFritzUtils.parseBoolean(JFritz
-                .getProperty("filter.number"));
+                .getProperty("filter.number")); //$NON-NLS-1$
         boolean filterFixed = JFritzUtils.parseBoolean(JFritz
-                .getProperty("filter.fixed"));
+                .getProperty("filter.fixed")); //$NON-NLS-1$
         boolean filterHandy = JFritzUtils.parseBoolean(JFritz
-                .getProperty("filter.handy"));
+                .getProperty("filter.handy")); //$NON-NLS-1$
         boolean filterDate = JFritzUtils.parseBoolean(JFritz
-                .getProperty("filter.date"));
+                .getProperty("filter.date")); //$NON-NLS-1$
         boolean filterSip = JFritzUtils.parseBoolean(JFritz
-                .getProperty("filter.sip"));
+                .getProperty("filter.sip")); //$NON-NLS-1$
         boolean filterCallByCall = JFritzUtils.parseBoolean(JFritz
-                .getProperty("filter.callbycall"));
+                .getProperty("filter.callbycall")); //$NON-NLS-1$
         boolean filterComment = JFritzUtils.parseBoolean(JFritz
-                .getProperty("filter.comment"));
-        String filterSearch = JFritz.getProperty("filter.search", "");
-        String filterDateFrom = JFritz.getProperty("filter.date_from", "");
-        String filterDateTo = JFritz.getProperty("filter.date_to", "");
+                .getProperty("filter.comment")); //$NON-NLS-1$
+        String filterSearch = JFritz.getProperty("filter.search", ""); //$NON-NLS-1$,  //$NON-NLS-2$
+        String filterDateFrom = JFritz.getProperty("filter.date_from", ""); //$NON-NLS-1$,  //$NON-NLS-2$
+        String filterDateTo = JFritz.getProperty("filter.date_to", ""); //$NON-NLS-1$,  //$NON-NLS-2$
 
         try {
             jfritz.getJframe().getCallerTable().getCellEditor()
@@ -804,14 +804,14 @@ public class CallerList extends AbstractTableModel {
         } else { // Data got to be filtered
             Vector filteredSipProviders = new Vector();
             if (filterSip) {
-                String providers = JFritz.getProperty("filter.sipProvider",
-                        "[]");
-                if (providers.equals("[]")) { // No entries selected
+                String providers = JFritz.getProperty("filter.sipProvider", //$NON-NLS-1$
+                        "[]"); //$NON-NLS-1$
+                if (providers.equals("[]")) { // No entries selected //$NON-NLS-1$
                     filterSip = false;
                 }
-                providers = providers.replaceAll("\\[", "");
-                providers = providers.replaceAll("\\]", "");
-                String[] providerEntries = providers.split(",");
+                providers = providers.replaceAll("\\[", ""); //$NON-NLS-1$,  //$NON-NLS-2$
+                providers = providers.replaceAll("\\]", ""); //$NON-NLS-1$,  //$NON-NLS-2$
+                String[] providerEntries = providers.split(","); //$NON-NLS-1$
                 for (int i = 0; i < providerEntries.length; i++) {
                     if (providerEntries[i].length() > 0) {
                         if (providerEntries[i].charAt(0) == 32) { // delete
@@ -827,13 +827,15 @@ public class CallerList extends AbstractTableModel {
             Vector filteredCallByCallProviders = new Vector();
             if (filterCallByCall) {
                 String providers = JFritz.getProperty(
-                        "filter.callbycallProvider", "[]");
-                if (providers.equals("[]")) { // No entries selected
+                        "filter.callbycallProvider", "[]"); //$NON-NLS-1$,  //$NON-NLS-2$
+
+                // No entries selected
+                if (providers.equals("[]")) {  //$NON-NLS-1$
                     filterCallByCall = false;
                 }
-                providers = providers.replaceAll("\\[", "");
-                providers = providers.replaceAll("\\]", "");
-                String[] providerEntries = providers.split(",");
+                providers = providers.replaceAll("\\[", ""); //$NON-NLS-1$,  //$NON-NLS-2$
+                providers = providers.replaceAll("\\]", ""); //$NON-NLS-1$,  //$NON-NLS-2$
+                String[] providerEntries = providers.split(","); //$NON-NLS-1$
                 for (int i = 0; i < providerEntries.length; i++) {
                     if (providerEntries[i].length() > 0) {
                         if (providerEntries[i].charAt(0) == 32) { // delete
@@ -859,7 +861,7 @@ public class CallerList extends AbstractTableModel {
                 boolean commentFilterPassed = true;
 
                 // SearchFilter: Number, Participant, Date
-                String parts[] = filterSearch.split(" ");
+                String parts[] = filterSearch.split(" "); //$NON-NLS-1$
                 for (int i = 0; i < parts.length; i++) {
                     String part = parts[i];
                     if (part.length() > 0
@@ -876,8 +878,8 @@ public class CallerList extends AbstractTableModel {
 
                 if (filterSip) {
                     String route = call.getRoute();
-                    if (route.equals("")) {
-                        route = "FIXEDLINE";
+                    if (route.equals("")) { //$NON-NLS-1$
+                        route = "FIXEDLINE"; //$NON-NLS-1$
                     }
                     if (!filteredSipProviders.contains(route)) {
                         searchFilterPassed = false;
@@ -888,15 +890,15 @@ public class CallerList extends AbstractTableModel {
                     if (call.getPhoneNumber() != null) {
                         String callbycallprovider = call.getPhoneNumber()
                                 .getCallByCall();
-                        if (callbycallprovider.equals("")) {
-                            callbycallprovider = "NONE";
+                        if (callbycallprovider.equals("")) { //$NON-NLS-1$
+                            callbycallprovider = "NONE"; //$NON-NLS-1$
                         }
                         if (!filteredCallByCallProviders
                                 .contains(callbycallprovider)) {
                             searchFilterPassed = false;
                         }
                     } else { // Hide calls without number
-                        if (!filteredCallByCallProviders.contains("NONE")) {
+                        if (!filteredCallByCallProviders.contains("NONE")) { //$NON-NLS-1$
                             searchFilterPassed = false;
                         }
                     }
@@ -905,13 +907,13 @@ public class CallerList extends AbstractTableModel {
                 try {
                     if (filterDate
                             && !(call.getCalldate().after(
-                                    new SimpleDateFormat("dd.MM.yy")
+                                    new SimpleDateFormat("dd.MM.yy") //$NON-NLS-1$
                                             .parse(filterDateFrom)) && call
                                     .getCalldate().before(
                                             new SimpleDateFormat(
-                                                    "dd.MM.yy HH:mm")
+                                                    "dd.MM.yy HH:mm") //$NON-NLS-1$
                                                     .parse(filterDateTo
-                                                            + " 23:59")))) {
+                                                            + " 23:59")))) { //$NON-NLS-1$
                         dateFilterPassed = false;
                     }
                 } catch (ParseException e1) {
@@ -925,7 +927,7 @@ public class CallerList extends AbstractTableModel {
                         && call.getPhoneNumber().isMobile())
                     handyFilterPassed = false;
 
-                if (filterComment && !call.getComment().equals(JFritz.getProperty("filter.comment.text",""))) {
+                if (filterComment && !call.getComment().equals(JFritz.getProperty("filter.comment.text",""))) { //$NON-NLS-1$,  //$NON-NLS-2$
                     commentFilterPassed = false;
                 }
 
@@ -1004,7 +1006,7 @@ public class CallerList extends AbstractTableModel {
     }
 
     public void clearList() {
-        Debug.msg("Clearing caller Table");
+        Debug.msg("Clearing caller Table"); //$NON-NLS-1$
         unfilteredCallerData.clear();
         if ((jfritz.getJframe() != null) && jfritz.getJframe().getCallerTable() != null)
             jfritz.getJframe().getCallerTable().clearSelection();
@@ -1014,9 +1016,9 @@ public class CallerList extends AbstractTableModel {
 
     public void removeEntries() {
         if (JOptionPane.showConfirmDialog(jfritz.getJframe(),
-                JFritz.getMessage("really_delete_entries"),
+                JFritz.getMessage("really_delete_entries"), //$NON-NLS-1$
                 JFritz.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-            Debug.msg("Removing entries");
+            Debug.msg("Removing entries"); //$NON-NLS-1$
             int row[] = jfritz.getJframe().getCallerTable().getSelectedRows();
             if (row.length > 0) {
                 Vector personsToDelete = new Vector();
@@ -1035,52 +1037,11 @@ public class CallerList extends AbstractTableModel {
     }
 
     public void fireTableDataChanged() {
-        // Kostenberechnung deaktiviert, weil es zu ungenau ist
-        // und nur zu Problemen führt
-        // calculateCosts();
         super.fireTableDataChanged();
     }
 
-    /**
-     * calculateCosts Deaktiviert, da eh zu ungenau
-     *
-     */
-    /*
-     * private void calculateCosts() {
-     *  // Lösche Anrufliste der SipProvider for (int k = 0; k <
-     * jfritz.getSIPProviderTableModel().getProviderList() .size(); k++) {
-     * SipProvider sipprovider = (SipProvider) jfritz
-     * .getSIPProviderTableModel().getProviderList().get(k);
-     * sipprovider.clearCalls(); }
-     *
-     * for (int i = unfilteredCallerData.size(); i > 0; i--) { Call call =
-     * (Call) unfilteredCallerData.get(i - 1); if (call.getCalltype().toInt() ==
-     * 3) { // Nur abgehende Gespräche // berechnen if
-     * (call.getPhoneNumber().isEmergencyCall() ||
-     * call.getPhoneNumber().isFreeCall() ||
-     * call.getPhoneNumber().isSIPNumber()) { call.setCost(0); } else if
-     * (call.getRoute().startsWith("SIP")) { SipProvider sipProvider = null;
-     *
-     * for (int j = 0; j < jfritz.getSIPProviderTableModel()
-     * .getProviderList().size(); j++) { sipProvider = (SipProvider) jfritz
-     * .getSIPProviderTableModel().getProviderList() .get(j);
-     *
-     * if (sipProvider.getProviderID() == Integer
-     * .parseInt(call.getRoute().substring(3))) { break; } else { sipProvider =
-     * null; } } if (sipProvider != null) { // F?ge Anrufe zur //
-     * SipProvider-Anrufliste sipProvider.addCall(call); } } else {// Es wurde
-     * kein (oder unbekannter) VoIP-Provider // benutzt => unbekannte Kosten
-     * call.setCost(-1); } } else { // Ankommende oder verpasse Anrufe => keine
-     * Kosten call.setCost(0); } }
-     *  // Berechne die Kosten für die Anrufe, die über SipProvider geführt //
-     * wurden for (int k = 0; k <
-     * jfritz.getSIPProviderTableModel().getProviderList() .size(); k++) {
-     * SipProvider sipprovider = (SipProvider) jfritz
-     * .getSIPProviderTableModel().getProviderList().get(k);
-     * sipprovider.calculateCosts(); } }
-     */
     public String getRealColumnName(int columnIndex) {
-        String columnName = "";
+        String columnName = ""; //$NON-NLS-1$
         if (jfritz != null && jfritz.getJframe() != null) {
             Enumeration en = jfritz.getJframe().getCallerTable()
                     .getTableHeader().getColumnModel().getColumns();
@@ -1095,7 +1056,7 @@ public class CallerList extends AbstractTableModel {
 
     private static void doBackup() {
         CopyFile backup = new CopyFile();
-        backup.copy(".","xml");
+        backup.copy(".","xml"); //$NON-NLS-1$,  //$NON-NLS-2$
     }
 
 	public Call getSelectedCall()
@@ -1107,7 +1068,7 @@ public class CallerList extends AbstractTableModel {
         if (rows != null && rows.length==1)
         	return (Call)this.filteredCallerData.elementAt(rows[0]);
     	else
-    		Debug.errDlg("Bitte (nur) einen Anruf markieren.");
+    		Debug.errDlg(JFritz.getMessage("error_choose_one_call")); //$NON-NLS-1$
 
 		return null;
 	}
@@ -1131,8 +1092,8 @@ public class CallerList extends AbstractTableModel {
 	    //Is the performace gain from this really worth it?
 	    //And if there are duplicate calls, only the first one gets filtered out
 	    alreadyKnownCalls = (Vector) unfilteredCallerData.clone();
-	    Debug.msg("Importing from csv file " + filename);
-	    String line = "";
+	    Debug.msg("Importing from csv file " + filename); //$NON-NLS-1$
+	    String line = ""; //$NON-NLS-1$
 	    boolean isJFritzExport = false; //flag to check which type to parse
 	    boolean isNewFirmware = false;  //check if its was exported with a new box
 
@@ -1163,15 +1124,15 @@ public class CallerList extends AbstractTableModel {
 	        			  c = parseCallFritzboxCSV(line, isNewFirmware);
 
 	        		  if(c == null)
-	        			  Debug.msg("Error encountered processing the csv file, continuing");
+	        			  Debug.msg("Error encountered processing the csv file, continuing"); //$NON-NLS-1$
 	        		  else if(addEntry(c)){
 	        			  newEntries++;
 
 	        		  }
 	        	  }
 
-	        	  Debug.msg(linesRead+" Lines read from csv file "+filename);
-	        	  Debug.msg(newEntries+" New entries processed");
+	        	  Debug.msg(linesRead+" lines read from csv file "+filename); //$NON-NLS-1$
+	        	  Debug.msg(newEntries+" new entries processed"); //$NON-NLS-1$
 
 	        	  if (newEntries > 0) {
 	        		  sortAllUnfilteredRows();
@@ -1179,27 +1140,27 @@ public class CallerList extends AbstractTableModel {
 	        		  String msg;
 
 	        		  if (newEntries == 1) {
-	        			  msg = JFritz.getMessage("imported_call");
+	        			  msg = JFritz.getMessage("imported_call"); //$NON-NLS-1$
 	        		  } else {
-	        			  msg = newEntries + " "+JFritz.getMessage("imported_calls");
+	        			  msg = JFritz.getMessage("imported_calls").replaceAll("%N",Integer.toString(newEntries)); //$NON-NLS-1$, //$NON-NLS-2$
 	        		  }
 
 	        		  JFritz.infoMsg(msg);
 
 	        	  }else{
-	        		  JFritz.infoMsg(JFritz.getMessage("no_imported_calls"));
+	        		  JFritz.infoMsg(JFritz.getMessage("no_imported_calls")); //$NON-NLS-1$
 	        	  }
 
 	          }else{
 	        	  //Invalid file header
-	        	  Debug.err("Wrong file type or corrupted file");
+	        	  Debug.err("Wrong file type or corrupted file"); //$NON-NLS-1$
 	          }
 
 	          br.close();
 	          } catch (FileNotFoundException e) {
-	              Debug.err("Could not read from " + filename + "!");
+	              Debug.err("Could not read from " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 	          } catch(IOException e){
-	            Debug.err("IO Exception reading csv file");
+	            Debug.err("IO Exception reading csv file"); //$NON-NLS-1$
 	          }
 
 	  }
@@ -1223,7 +1184,7 @@ public class CallerList extends AbstractTableModel {
 
 	    //check if line has correct amount of entries
 	    if(field.length < 12){
-	      Debug.err("Invalid CSV format!");
+	      Debug.err("Invalid CSV format!"); //$NON-NLS-1$
 	      return null;
 	    }
 
@@ -1233,14 +1194,14 @@ public class CallerList extends AbstractTableModel {
 
 	    //Call type
 	    //Perhaps it would be nice to standardize the calltype and export strings
-	    if(field[0].equals("Incoming")){
-	        calltype = new CallType("call_in");
-	    }else if(field[0].equals("Missed")){
-	      calltype = new CallType("call_in_failed");
-	    }else if(field[0].equals("Outgoing")){
-	      calltype = new CallType("call_out");
+	    if(field[0].equals("Incoming")){ //$NON-NLS-1$
+	        calltype = new CallType("call_in"); //$NON-NLS-1$
+	    }else if(field[0].equals("Missed")){ //$NON-NLS-1$
+	      calltype = new CallType("call_in_failed"); //$NON-NLS-1$
+	    }else if(field[0].equals("Outgoing")){ //$NON-NLS-1$
+	      calltype = new CallType("call_out"); //$NON-NLS-1$
 	    }else{
-	      Debug.err("Invalid Call type in CSV file!");
+	      Debug.err("Invalid Call type in CSV file!"); //$NON-NLS-1$
 	      return null;
 	    }
 
@@ -1248,13 +1209,13 @@ public class CallerList extends AbstractTableModel {
 	    if(field[1] != null && field[2] != null){
 
 	      try{
-	        calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(field[1]+" "+field[2]);
+	        calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(field[1]+" "+field[2]); //$NON-NLS-1$,  //$NON-NLS-2$
 	      }catch(ParseException e){
-	        Debug.err("Invalid date format in csv file!");
+	        Debug.err("Invalid date format in csv file!"); //$NON-NLS-1$
 	        return null;
 	      }
 	    }else{
-	      Debug.err("Invalid CSV file!");
+	      Debug.err("Invalid CSV file!"); //$NON-NLS-1$
 	      return null;
 	    }
 
@@ -1299,36 +1260,36 @@ public class CallerList extends AbstractTableModel {
 
 		    //check if line has correct amount of entries
 		    if(field.length < 6){
-		      Debug.err("Invalid CSV format!");
+		      Debug.err("Invalid CSV format!"); //$NON-NLS-1$
 		      return null;
 		    }
 
 		    //Call type
 		    //Why would they change the cvs format in the new firmware???
-		    if((field[0].equals("1") && !isNewFirmware)
-		    		|| (field[0].equals("2") && isNewFirmware)){
-		        calltype = new CallType("call_in");
-		    }else if((field[0].equals("2") && !isNewFirmware)
-		    		|| (field[0].equals("3") && isNewFirmware)){
-		      calltype = new CallType("call_in_failed");
-		    }else if((field[0].equals("3") && !isNewFirmware)
-		    		|| (field[0].equals("1") && isNewFirmware)){
-		      calltype = new CallType("call_out");
+		    if((field[0].equals("1") && !isNewFirmware) //$NON-NLS-1$
+		    		|| (field[0].equals("2") && isNewFirmware)){ //$NON-NLS-1$
+		        calltype = new CallType("call_in"); //$NON-NLS-1$
+		    }else if((field[0].equals("2") && !isNewFirmware) //$NON-NLS-1$
+		    		|| (field[0].equals("3") && isNewFirmware)){ //$NON-NLS-1$
+		      calltype = new CallType("call_in_failed"); //$NON-NLS-1$
+		    }else if((field[0].equals("3") && !isNewFirmware) //$NON-NLS-1$
+		    		|| (field[0].equals("1") && isNewFirmware)){ //$NON-NLS-1$
+		      calltype = new CallType("call_out"); //$NON-NLS-1$
 		    }else{
-		      Debug.err("Invalid Call type in CSV file!");
+		      Debug.err("Invalid Call type in CSV file!"); //$NON-NLS-1$
 		      return null;
 		    }
 
 		    //Call date and time
 		    if(field[1] != null){
 		    	try{
-			        calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(field[1]);
+			        calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(field[1]); //$NON-NLS-1$
 			      }catch(ParseException e){
-			        Debug.err("Invalid date format in csv file!");
+			        Debug.err("Invalid date format in csv file!"); //$NON-NLS-1$
 			        return null;
 			      }
 		    }else{
-		    	Debug.err("Invalid CSV file!");
+		    	Debug.err("Invalid CSV file!"); //$NON-NLS-1$
 		    	return null;
 		    }
 
@@ -1339,7 +1300,7 @@ public class CallerList extends AbstractTableModel {
 		      number = null;
 
 		    //split the duration into two stings, hours:minutes
-		    String[] time = field[5].split(":");
+		    String[] time = field[5].split(":"); //$NON-NLS-1$
 		    //make the call object
 		    call = new Call(jfritz, calltype, calldate, number, field[3], field[4],
 		        Integer.parseInt(time[0])*3600 + Integer.parseInt(time[1])*60);

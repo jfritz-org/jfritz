@@ -17,26 +17,26 @@ public class Person {
 
 	private boolean privateEntry = false;
 
-	private String firstName = "";
+	private String firstName = ""; //$NON-NLS-1$
 
-	private String lastName = "";
+	private String lastName = ""; //$NON-NLS-1$
 
-	private String company = "";
+	private String company = ""; //$NON-NLS-1$
 
-	private String street = "";
+	private String street = ""; //$NON-NLS-1$
 
-	private String postalCode = "";
+	private String postalCode = ""; //$NON-NLS-1$
 
-	private String city = "";
+	private String city = ""; //$NON-NLS-1$
 
-	private String standard = "";
+	private String standard = ""; //$NON-NLS-1$
 
-	private String emailAddress = "";
+	private String emailAddress = ""; //$NON-NLS-1$
 
 	private Vector numbers;
 
-	private String[] basicTypes = {"home", "mobile", "homezone", "business",
-			"other", "fax", "sip", "main"};
+	private String[] basicTypes = {"home", "mobile", "homezone", "business", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$
+			"other", "fax", "sip", "main"}; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$
 
 	public Person() {
 		numbers = new Vector();
@@ -107,13 +107,13 @@ public class Person {
 	}
 
 	public boolean isEmpty() {
-		return getFullname().equals("") && numbers.size() < 2;
+		return getFullname().equals("") && numbers.size() < 2; //$NON-NLS-1$
 	}
 
 	public String getFullname() {
 		String ret;
 		if ((lastName == null) && (firstName == null)) {
-			ret = "";
+			ret = "";  //$NON-NLS-1$
 		} else if (lastName == null)
 			ret = firstName;
 		else if (firstName == null)
@@ -123,10 +123,10 @@ public class Person {
 		} else if (firstName.length() == 0) {
 			ret = lastName;
 		} else
-			ret = (lastName + ", " + firstName).trim();
+			ret = (lastName + ", " + firstName).trim(); //$NON-NLS-1$
 		if ((company != null) && (company.length() > 0)) {
 			if (ret.length() > 0)
-				ret += " (" + company + ")";
+				ret += " (" + company + ")"; //$NON-NLS-1$,  //$NON-NLS-2$
 			else
 				ret = company;
 		}
@@ -139,29 +139,31 @@ public class Person {
 	// TODO Sonstiges und Nichtgefundenes
 	// TODO sip != Pager, korrigieren
 	public String toVCard() {
-		String vcard = "";
-		vcard = "BEGIN:vCard\n" + "VERSION:2.1\n" + "FN: " + getFullname()
-				+ "\n" + "ADR;Type=HOME,POSTAL:;;" + getStreet() + ";"
-				+ getCity() + ";;" + getPostalCode() + "\n";
+		String vcard = "";  //$NON-NLS-1$
+		vcard = "BEGIN:vCard\n" //$NON-NLS-1$
+				+ "VERSION:2.1\n" //$NON-NLS-1$
+				+ "FN: " + getFullname() //$NON-NLS-1$
+				+ "\n" + "ADR;Type=HOME,POSTAL:;;" + getStreet() + ";" //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+				+ getCity() + ";;" + getPostalCode() + "\n"; //$NON-NLS-1$,  //$NON-NLS-2$
 		Enumeration en = numbers.elements();
 		while (en.hasMoreElements()) {
 			PhoneNumber n = (PhoneNumber) en.nextElement();
-			if (n.getType().startsWith("home"))
-				vcard = vcard + "TEL;TYPE=VOICE,HOME:";
-			else if (n.getType().startsWith("business"))
-				vcard = vcard + "TEL;TYPE=VOICE,WORK:";
-			else if (n.getType().startsWith("mobile"))
-				vcard = vcard + "TEL;CELL:";
-			else if (n.getType().startsWith("sip"))
-				vcard = vcard + "TEL;PAGER:";
-			else if (n.getType().startsWith("fax"))
-				vcard = vcard + "TEL;FAX:";
+			if (n.getType().startsWith("home")) //$NON-NLS-1$
+				vcard = vcard + "TEL;TYPE=VOICE,HOME:"; //$NON-NLS-1$
+			else if (n.getType().startsWith("business")) //$NON-NLS-1$
+				vcard = vcard + "TEL;TYPE=VOICE,WORK:"; //$NON-NLS-1$
+			else if (n.getType().startsWith("mobile")) //$NON-NLS-1$
+				vcard = vcard + "TEL;CELL:"; //$NON-NLS-1$
+			else if (n.getType().startsWith("sip")) //$NON-NLS-1$
+				vcard = vcard + "TEL;PAGER:"; //$NON-NLS-1$
+			else if (n.getType().startsWith("fax")) //$NON-NLS-1$
+				vcard = vcard + "TEL;FAX:"; //$NON-NLS-1$
 			else
-				vcard = vcard + "TEL;DIVERS:";
-			vcard = vcard + n.convertToIntNumber() + "\n";
+				vcard = vcard + "TEL;DIVERS:"; //$NON-NLS-1$
+			vcard = vcard + n.convertToIntNumber() + "\n"; //$NON-NLS-1$
 		}
-		vcard = vcard + "EMAIL;TYPE=INTERNET,PREF:" + getEmailAddress() + "\n"
-				+ "END:vCard\n";
+		vcard = vcard + "EMAIL;TYPE=INTERNET,PREF:" + getEmailAddress() + "\n" //$NON-NLS-1$, //$NON-NLS-2$
+				+ "END:vCard\n"; //$NON-NLS-1$
 		return vcard;
 	}
 
@@ -178,43 +180,43 @@ public class Person {
 			pw.println(toVCard());
 			pw.close();
 		} catch (FileNotFoundException e) {
-			Debug.err("Could not write " + file.getName() + "!");
+			Debug.err("Could not write " + file.getName() + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 
 	public String getFirstName() {
 		if (firstName == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		return firstName;
 	}
 
 	public String getCompany() {
 		if (company == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		return company;
 	}
 
 	public String getLastName() {
 		if (lastName == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		return lastName;
 	}
 
 	public String getStreet() {
 		if (street == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		return street;
 	}
 
 	public String getPostalCode() {
 		if (postalCode == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		return postalCode;
 	}
 
 	public String getCity() {
 		if (city == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		return city;
 	}
 	// TODO
@@ -248,9 +250,8 @@ public class Person {
 		Enumeration en = numbers.elements();
 		while (en.hasMoreElements()) {
 			PhoneNumber n = (PhoneNumber) en.nextElement();
-			if ((n.getType().startsWith("main")) && (considerMain)) { // starts
-				// with
-				// ...
+			if ((n.getType().startsWith("main")) && (considerMain)) { //$NON-NLS-1$
+				// starts with ...
 				if (number.startsWith(n.getIntNumber()))
 					return true;
 			} else { // equal number
@@ -263,7 +264,7 @@ public class Person {
 
 	public String getEmailAddress() {
 		if (emailAddress == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		return emailAddress;
 	}
 
@@ -300,7 +301,7 @@ public class Person {
 	 */
 	public final String getStandard() {
 		if (standard == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		return standard;
 	}
 
@@ -328,9 +329,9 @@ public class Person {
 	 * @author Benjamin Schmitt
 	 */
 	public String getAddress() {
-		String lineSeparator = System.getProperty("line.separator"); // new
-		// String("\r\n");
-		String wordSeparator = " "; // used to separate words in one line, e.g.
+		String lineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
+		String wordSeparator = " "; //$NON-NLS-1$
+		// used to separate words in one line, e.g.
 		// between firstname an surname
 		return this.getAddress(lineSeparator, wordSeparator);
 	}
@@ -345,28 +346,28 @@ public class Person {
 	public String getAddress(String lineSeparator, String wordSeparator) {
 
 		// TODO: create patterns as params for that function
-		String address = "";
+		String address = ""; //$NON-NLS-1$
 
 		if (this != null) {
 			String company = (this.getCompany() != null
 					? this.getCompany()
-					: "");
+					: ""); //$NON-NLS-1$
 			String firstName = (this.getFirstName() != null ? this
-					.getFirstName() : "");
+					.getFirstName() : ""); //$NON-NLS-1$
 			String lastName = (this.getLastName() != null
 					? this.getLastName()
-					: "");
-			String street = (this.getStreet() != null ? this.getStreet() : "");
+					: ""); //$NON-NLS-1$
+			String street = (this.getStreet() != null ? this.getStreet() : ""); //$NON-NLS-1$
 			String postalCode = (this.getPostalCode() != null ? this
-					.getPostalCode() : "");
-			String city = (this.getCity() != null ? this.getCity() : "");
+					.getPostalCode() : ""); //$NON-NLS-1$
+			String city = (this.getCity() != null ? this.getCity() : ""); //$NON-NLS-1$
 
-			address = new String((company != "" ? company + lineSeparator : "")
-					+ (firstName != "" ? firstName + wordSeparator : "")
-					+ (lastName != "" ? lastName + lineSeparator : "")
-					+ (street != "" ? street + lineSeparator : "")
-					+ (postalCode != "" ? postalCode + wordSeparator : "")
-					+ (city != "" ? city + lineSeparator : ""));
+			address = new String((company != "" ? company + lineSeparator : "") //$NON-NLS-1$,  //$NON-NLS-2$
+					+ (firstName != "" ? firstName + wordSeparator : "") //$NON-NLS-1$,  //$NON-NLS-2$
+					+ (lastName != "" ? lastName + lineSeparator : "") //$NON-NLS-1$,  //$NON-NLS-2$
+					+ (street != "" ? street + lineSeparator : "") //$NON-NLS-1$,  //$NON-NLS-2$
+					+ (postalCode != "" ? postalCode + wordSeparator : "") //$NON-NLS-1$,  //$NON-NLS-2$
+					+ (city != "" ? city + lineSeparator : "")); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 		return address;
 	}
@@ -376,49 +377,49 @@ public class Person {
 	 * @return Returns CSV String
 	 */
 	public String toCSV() {
-		String outString = "";
+		String outString = ""; //$NON-NLS-1$
 
 		// private contact?
 		if (privateEntry) {
-			outString = "\"YES\"";
+			outString = "\"YES\""; //$NON-NLS-1$
 		} else {
-			outString = "\"NO\"";
+			outString = "\"NO\""; //$NON-NLS-1$
 		}
 
 		// last name
-		outString = outString.concat(";\"" + getLastName() + "\"");
+		outString = outString.concat(";\"" + getLastName() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		// first name
-		outString = outString.concat(";\"" + getFirstName() + "\"");
+		outString = outString.concat(";\"" + getFirstName() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		// company
-		outString = outString.concat(";\"" + getCompany() + "\"");
+		outString = outString.concat(";\"" + getCompany() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		// Street
-		outString = outString.concat(";\"" + getStreet() + "\"");
+		outString = outString.concat(";\"" + getStreet() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		// Postal Code
-		outString = outString.concat(";\"" + getPostalCode() + "\"");
+		outString = outString.concat(";\"" + getPostalCode() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		// city
-		outString = outString.concat(";\"" + getCity() + "\"");
+		outString = outString.concat(";\"" + getCity() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		// email
-		outString = outString.concat(";\"" + getEmailAddress() + "\"");
+		outString = outString.concat(";\"" + getEmailAddress() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		// numbers
 		if (getNumbers() == null)
-			outString = outString.concat(";\"\"");
+			outString = outString.concat(";\"\""); //$NON-NLS-1$
 
 		else
 			for (int i = 0; i < 8; i++) {
 				try {
-					outString = outString.concat(";\""
-							+ getPhoneNumber(basicTypes[i].replaceAll(" ", ""))
-									.toString().replaceAll("\\[|\\]", "")
-							+ "\"");
+					outString = outString.concat(";\""//$NON-NLS-1$
+							+ getPhoneNumber(basicTypes[i].replaceAll(" ", ""))//$NON-NLS-1$, //$NON-NLS-2$
+									.toString().replaceAll("\\[|\\]", "")//$NON-NLS-1$, //$NON-NLS-2$
+							+ "\"");//$NON-NLS-1$
 				} catch (NullPointerException ex) {
-					outString = outString.concat(";\"\"");
+					outString = outString.concat(";\"\"");//$NON-NLS-1$
 				}
 
 			}
@@ -432,7 +433,7 @@ public class Person {
 	 *          contact when a filter is set
 	 */
 	public boolean matchesKeyword(String s) {
-		if (s == null || s.equals("")) {
+		if (s == null || s.equals("")) {//$NON-NLS-1$
 			return true;
 		}
 		if (getFullname().toLowerCase().indexOf(s.toLowerCase()) != -1) {

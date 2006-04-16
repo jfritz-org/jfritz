@@ -10,6 +10,7 @@ import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -51,12 +52,12 @@ public class FritzBoxFirmware {
 	private String modFirmwareVersion;
 
 	private final static String[] POSTDATA_ACCESS_METHOD = {
-			"getpage=../html/de/menus/menu2.html",
-			"getpage=../html/menus/menu2.html" };
+			"getpage=../html/de/menus/menu2.html", //$NON-NLS-1$
+			"getpage=../html/menus/menu2.html" }; //$NON-NLS-1$
 
-	private final static String POSTDATA_DETECT_FIRMWARE = "&var%3Alang=de&var%3Amenu=home&var%3Apagename=home&login%3Acommand%2Fpassword=";
+	private final static String POSTDATA_DETECT_FIRMWARE = "&var%3Alang=de&var%3Amenu=home&var%3Apagename=home&login%3Acommand%2Fpassword="; //$NON-NLS-1$
 
-	private final static String PATTERN_DETECT_FIRMWARE = "<span class=\"Dialoglabel\">[^<]*</span>(\\d\\d).(\\d\\d).(\\d\\d\\d*)([^<]*)";
+	private final static String PATTERN_DETECT_FIRMWARE = "<span class=\"Dialoglabel\">[^<]*</span>(\\d\\d).(\\d\\d).(\\d\\d\\d*)([^<]*)"; //$NON-NLS-1$
 
 	/**
 	 * Firmware Constructor using Bytes
@@ -70,7 +71,7 @@ public class FritzBoxFirmware {
 		this.boxtype = boxtype;
 		this.majorFirmwareVersion = majorFirmwareVersion;
 		this.minorFirmwareVersion = minorFirmwareVersion;
-		this.modFirmwareVersion = "";
+		this.modFirmwareVersion = ""; //$NON-NLS-1$
 	}
 
 	/**
@@ -85,7 +86,7 @@ public class FritzBoxFirmware {
 		this.boxtype = Byte.parseByte(boxtype);
 		this.majorFirmwareVersion = Byte.parseByte(majorFirmwareVersion);
 		this.minorFirmwareVersion = Byte.parseByte(minorFirmwareVersion);
-		this.modFirmwareVersion = "";
+		this.modFirmwareVersion = ""; //$NON-NLS-1$
 	}
 
 	/**
@@ -111,25 +112,27 @@ public class FritzBoxFirmware {
 	 *            Firmware string like '14.06.37'
 	 */
 	public FritzBoxFirmware(String firmware) throws InvalidFirmwareException {
-		String mod = "";
+		String mod = ""; //$NON-NLS-1$
 		if (firmware == null)
-			throw new InvalidFirmwareException("No firmware found");
-		if (firmware.indexOf("mod")>0) {
-			mod = firmware.substring(firmware.indexOf("mod"));
-			firmware = firmware.substring(0, firmware.indexOf("mod"));
-		} else if (firmware.indexOf("ds-")>0) { // danisahne MOD
-            mod = firmware.substring(firmware.indexOf("ds-"));
-            firmware = firmware.substring(0, firmware.indexOf("ds-"));
-        } else if (firmware.indexOf("m")>0) {
-            mod = firmware.substring(firmware.indexOf("m"));
-            firmware = firmware.substring(0, firmware.indexOf("m"));
-        } else if (firmware.indexOf("-")>0) { // BETA Firmware von AVM
-			mod = firmware.substring(firmware.indexOf("-"));
-			firmware = firmware.substring(0, firmware.indexOf("-"));
+			throw new InvalidFirmwareException("No firmware found"); //$NON-NLS-1$
+		if (firmware.indexOf("mod")>0) { //$NON-NLS-1$
+			mod = firmware.substring(firmware.indexOf("mod")); //$NON-NLS-1$
+			firmware = firmware.substring(0, firmware.indexOf("mod")); //$NON-NLS-1$
+		} else if (firmware.indexOf("ds-")>0) {  //$NON-NLS-1$
+			// danisahne MOD
+            mod = firmware.substring(firmware.indexOf("ds-")); //$NON-NLS-1$
+            firmware = firmware.substring(0, firmware.indexOf("ds-")); //$NON-NLS-1$
+        } else if (firmware.indexOf("m")>0) { //$NON-NLS-1$
+            mod = firmware.substring(firmware.indexOf("m")); //$NON-NLS-1$
+            firmware = firmware.substring(0, firmware.indexOf("m")); //$NON-NLS-1$
+        } else if (firmware.indexOf("-")>0) { //$NON-NLS-1$
+        	// BETA Firmware von AVM
+			mod = firmware.substring(firmware.indexOf("-")); //$NON-NLS-1$
+			firmware = firmware.substring(0, firmware.indexOf("-")); //$NON-NLS-1$
 		}
-		String[] parts = firmware.split("\\.");
+		String[] parts = firmware.split("\\."); //$NON-NLS-1$
 		if (parts.length != 3)
-			throw new InvalidFirmwareException("Firmware number crippled");
+			throw new InvalidFirmwareException("Firmware number crippled"); //$NON-NLS-1$
 
 		this.boxtype = Byte.parseByte(parts[0]);
 		this.majorFirmwareVersion = Byte.parseByte(parts[1]);
@@ -149,9 +152,9 @@ public class FritzBoxFirmware {
 	 */
 	public static FritzBoxFirmware detectFirmwareVersion(String box_address,
 			String box_password) throws WrongPasswordException, IOException {
-		final String urlstr = "http://" + box_address + "/cgi-bin/webcm";
+		final String urlstr = "http://" + box_address + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
 
-		String data = "";
+		String data = ""; //$NON-NLS-1$
 		int i = 0;
 
 		// Try postdata's until code is found
@@ -159,7 +162,7 @@ public class FritzBoxFirmware {
 			data = JFritzUtils.fetchDataFromURL(
 					urlstr,
 					POSTDATA_ACCESS_METHOD[i] + POSTDATA_DETECT_FIRMWARE
-							+ URLEncoder.encode(box_password, "ISO-8859-1"), true).trim();
+							+ URLEncoder.encode(box_password, "ISO-8859-1"), true).trim(); //$NON-NLS-1$
 			i++;
 		}
 		// Modded firmware: data = "> FRITZ!Box Fon WLAN, <span
@@ -175,9 +178,9 @@ public class FritzBoxFirmware {
 			return new FritzBoxFirmware(boxtypeString, majorFirmwareVersion,
 					minorFirmwareVersion, modFirmwareVersion);
 		} else {
-			System.err.println("detectFirmwareVersion: Password wrong?");
+			System.err.println("detectFirmwareVersion: Password wrong?"); //$NON-NLS-1$
 			throw new WrongPasswordException(
-					"Could not detect FRITZ!Box firmware version.");
+					"Could not detect FRITZ!Box firmware version."); //$NON-NLS-1$
 		}
 	}
 
@@ -226,32 +229,32 @@ public class FritzBoxFirmware {
         String boxtypeStr = Byte.toString(boxtype);
         String majorStr = Byte.toString(majorFirmwareVersion);
         String minorStr = Byte.toString(minorFirmwareVersion);
-        if (boxtypeStr.length() == 1) { boxtypeStr = "0" + boxtypeStr; }
-        if (majorStr.length() == 1) { majorStr = "0" + majorStr; }
-        if (minorStr.length() == 1) { minorStr = "0" + minorStr; }
-        return boxtypeStr + "." + majorStr + "." + minorStr + modFirmwareVersion;
+        if (boxtypeStr.length() == 1) { boxtypeStr = "0" + boxtypeStr; } //$NON-NLS-1$
+        if (majorStr.length() == 1) { majorStr = "0" + majorStr; } //$NON-NLS-1$
+        if (minorStr.length() == 1) { minorStr = "0" + minorStr; } //$NON-NLS-1$
+        return boxtypeStr + "." + majorStr + "." + minorStr + modFirmwareVersion; //$NON-NLS-1$,  //$NON-NLS-2$
 	}
 
 	public String getBoxName() {
 		switch (boxtype) {
 		case 6:
-			return "FRITZ!Box Fon";
+			return "FRITZ!Box Fon"; //$NON-NLS-1$
 		case 8:
-			return "FRITZ!Box Fon WLAN";
+			return "FRITZ!Box Fon WLAN"; //$NON-NLS-1$
 		case 14:
-			return "FRITZ!Box 7050";
+			return "FRITZ!Box 7050"; //$NON-NLS-1$
 		case 12:
-			return "FRITZ!Box 5050";
+			return "FRITZ!Box 5050"; //$NON-NLS-1$
 		case 11:
-			return "FRITZ!Box ata";
+			return "FRITZ!Box ata"; //$NON-NLS-1$
         case 23:
-            return "FRITZ!Box 5010";
+            return "FRITZ!Box 5010"; //$NON-NLS-1$
         case 25:
-            return "FRITZ!Box 5012";
+            return "FRITZ!Box 5012"; //$NON-NLS-1$
         case 29:
-            return "FRITZ!Box 7170";
+            return "FRITZ!Box 7170"; //$NON-NLS-1$
 		default:
-			return "unknown";
+			return JFritz.getMessage("unknown"); //$NON-NLS-1$
 		}
 	}
 

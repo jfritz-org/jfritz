@@ -39,23 +39,24 @@ public class QuickDialXMLHandler extends DefaultHandler {
 	public void startElement(String namespaceURI, String lName, String qName,
 			Attributes attrs) throws SAXException {
 		String eName = lName;
-		if ("".equals(eName))
+		if ("".equals(eName)) //$NON-NLS-1$
 			eName = qName;
 
-		chars = ""; // Important to clear buffer :)
+		// Important to clear buffer :)
+		chars = "";  //$NON-NLS-1$
 
-		if (eName.equals("entry")) {
-			id = "";
-			number = "";
-			vanity = "";
-			description = "";
+		if (eName.equals("entry")) { //$NON-NLS-1$
+			id = ""; //$NON-NLS-1$
+			number = ""; //$NON-NLS-1$
+			vanity = ""; //$NON-NLS-1$
+			description = ""; //$NON-NLS-1$
 		}
 		if (attrs != null) {
 			for (int i = 0; i < attrs.getLength(); i++) {
 				String aName = attrs.getLocalName(i); // Attr name
-				if ("".equals(aName))
+				if ("".equals(aName)) //$NON-NLS-1$
 					aName = attrs.getQName(i);
-				if (eName.equals("entry") && aName.equals("id")) {
+				if (eName.equals("entry") && aName.equals("id")) { //$NON-NLS-1$,  //$NON-NLS-2$
 					id = attrs.getValue(i);
 				}
 			}
@@ -64,15 +65,18 @@ public class QuickDialXMLHandler extends DefaultHandler {
 
 	public void endElement(String namespaceURI, String sName, String qName)
 			throws SAXException {
-		if (qName.equals("number")) {
+		if (qName.equals("number")) { //$NON-NLS-1$
 			number = chars;
-		} else if (qName.equals("vanity")) {
+		} else if (qName.equals("vanity")) { //$NON-NLS-1$
 			vanity = chars;
-		} else if (qName.equals("description")) {
+		} else if (qName.equals("description")) { //$NON-NLS-1$
 			description = chars;
-		} else if (qName.equals("entry")) {
+		} else if (qName.equals("entry")) { //$NON-NLS-1$
 			if (dataModel != null) { // Add an entry to the dataModel
-				Debug.msg("QuickDial: "+id+", "+number+", "+vanity+", "+description);
+				Debug.msg("QuickDial: "+id+ //$NON-NLS-1$
+						", "+number+ //$NON-NLS-1$
+						", "+vanity+ //$NON-NLS-1$
+						", "+description); //$NON-NLS-1$
 				dataModel.addEntry(new QuickDial(id, vanity, number, description));
 			}
 		}

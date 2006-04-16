@@ -14,45 +14,51 @@ package de.moonflower.jfritz.utils;
 import java.lang.reflect.Method;
 import javax.swing.JOptionPane;
 
+import de.moonflower.jfritz.JFritz;
+
 /**
  * Opens browser with an URL
  *
  */
 public class BrowserLaunch {
 
-private static final String errMsg = "Error attempting to launch web browser";
+private static final String errMsg = JFritz.getMessage("error_browser_not_started"); //$NON-NLS-1$
 
 /**
  * Open new browser with an url
  * @param url
  */
 public static void openURL(String url) {
-   String osName = System.getProperty("os.name");
+   String osName = System.getProperty("os.name"); //$NON-NLS-1$
    try {
-      if (osName.startsWith("Mac OS")) {
-         Class macUtils = Class.forName("com.apple.mrj.MRJFileUtils");
-         Method openURL = macUtils.getDeclaredMethod("openURL",
+      if (osName.startsWith("Mac OS")) { //$NON-NLS-1$
+         Class macUtils = Class.forName("com.apple.mrj.MRJFileUtils"); //$NON-NLS-1$
+         Method openURL = macUtils.getDeclaredMethod("openURL", //$NON-NLS-1$
             new Class[] {String.class});
          openURL.invoke(null, new Object[] {url});
          }
-      else if (osName.startsWith("Windows"))
-         Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
+      else if (osName.startsWith("Windows")) //$NON-NLS-1$
+         Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url); //$NON-NLS-1$
       else { //assume Unix or Linux
          String[] browsers = {
-            "firefox", "opera", "konqueror", "mozilla", "netscape" };
+            "firefox", //$NON-NLS-1$
+            "opera", //$NON-NLS-1$
+            "konqueror", //$NON-NLS-1$
+            "mozilla", //$NON-NLS-1$
+            "netscape" }; //$NON-NLS-1$
          String browser = null;
          for (int count = 0; count < browsers.length && browser == null; count++)
             if (Runtime.getRuntime().exec(
-                  new String[] {"which", browsers[count]}).waitFor() == 0)
+                  new String[] {"which", browsers[count]}).waitFor() == 0) //$NON-NLS-1$
                browser = browsers[count];
          if (browser == null)
-            throw new Exception("Could not find web browser.");
+            throw new Exception(JFritz.getMessage("error_browser_not_found")); //$NON-NLS-1$
          else
             Runtime.getRuntime().exec(new String[] {browser, url});
          }
       }
    catch (Exception e) {
-      JOptionPane.showMessageDialog(null, errMsg + ":\n" + e.getLocalizedMessage());
+      JOptionPane.showMessageDialog(null, errMsg + ":\n" + e.getLocalizedMessage()); //$NON-NLS-1$
       }
    }
 

@@ -22,6 +22,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import de.moonflower.jfritz.JFritz;
+
 /**
  * Simple dialog for Fritz!Box address and password input.
  * TODO: I18N
@@ -81,12 +83,12 @@ public class AddressPasswordDialog extends JDialog {
 	}
 
 	protected void drawDialog() {
-		pass = new JPasswordField("", 20);
-		address = new JTextField("", 20);
-		okButton = new JButton("Okay");
-		cancelButton = new JButton("Abbruch");
-		passLabel = new JLabel("Passwort: ");
-		addressLabel = new JLabel("Fritz!Box-Addresse: ");
+		pass = new JPasswordField("", 20); //$NON-NLS-1$
+		address = new JTextField("", 20); //$NON-NLS-1$
+		okButton = new JButton(JFritz.getMessage("okay")); //$NON-NLS-1$
+		cancelButton = new JButton(JFritz.getMessage("cancel")); //$NON-NLS-1$
+		passLabel = new JLabel(JFritz.getMessage("password")); //$NON-NLS-1$
+		addressLabel = new JLabel(JFritz.getMessage("ip_address")); //$NON-NLS-1$
 
 		super.dialogInit();
 
@@ -124,7 +126,7 @@ public class AddressPasswordDialog extends JDialog {
 		c.anchor = GridBagConstraints.EAST;
 		c.gridy = 1;
 		if (isPasswordDlg) {
-			setTitle("Passwort eingeben");
+			setTitle(JFritz.getMessage("dialog_title_password_dialog")); //$NON-NLS-1$
 			gridbag.setConstraints(passLabel, c);
 			pane.add(passLabel);
 			gridbag.setConstraints(pass, c);
@@ -132,7 +134,7 @@ public class AddressPasswordDialog extends JDialog {
 			pass.addKeyListener(keyListener);
 			pane.add(pass);
 		} else {
-			setTitle("Adresse eingeben");
+			setTitle(JFritz.getMessage("dialog_title_ipaddress_dialog")); //$NON-NLS-1$
 			gridbag.setConstraints(addressLabel, c);
 			pane.add(addressLabel);
 			gridbag.setConstraints(address, c);

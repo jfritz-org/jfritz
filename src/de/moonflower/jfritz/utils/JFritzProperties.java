@@ -43,21 +43,21 @@ import de.moonflower.jfritz.JFritz;
  */
 public class JFritzProperties extends Properties {
 	private static final long serialVersionUID = 1;
-	private static final String PROPS_DTD_URI = "http://java.sun.com/dtd/properties.dtd";
+	private static final String PROPS_DTD_URI = "http://java.sun.com/dtd/properties.dtd"; //$NON-NLS-1$
 
-	private static final String PROPS_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<!-- DTD for properties -->"
-			+ "<!ELEMENT properties ( comment?, entry* ) >"
-			+ "<!ATTLIST properties"
-			+ " version CDATA #FIXED \"1.0\">"
-			+ "<!ELEMENT comment (#PCDATA) >"
-			+ "<!ELEMENT entry (#PCDATA) >"
-			+ "<!ATTLIST entry " + " key CDATA #REQUIRED>";
+	private static final String PROPS_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" //$NON-NLS-1$
+			+ "<!-- DTD for properties -->" //$NON-NLS-1$
+			+ "<!ELEMENT properties ( comment?, entry* ) >" //$NON-NLS-1$
+			+ "<!ATTLIST properties" //$NON-NLS-1$
+			+ " version CDATA #FIXED \"1.0\">" //$NON-NLS-1$
+			+ "<!ELEMENT comment (#PCDATA) >" //$NON-NLS-1$
+			+ "<!ELEMENT entry (#PCDATA) >" //$NON-NLS-1$
+			+ "<!ATTLIST entry " + " key CDATA #REQUIRED>"; //$NON-NLS-1$,  //$NON-NLS-2$
 
 	/**
 	 * Version number for the format of exported properties files.
 	 */
-	private static final String EXTERNAL_XML_VERSION = "1.0";
+	private static final String EXTERNAL_XML_VERSION = "1.0"; //$NON-NLS-1$
 
 	/**
 	 *
@@ -102,7 +102,7 @@ public class JFritzProperties extends Properties {
                         is.setSystemId(PROPS_DTD_URI);
                         return is;
                     }
-                    throw new SAXException("Invalid system identifier: "
+                    throw new SAXException("Invalid system identifier: " //$NON-NLS-1$
                             + systemId);
                 }
 
@@ -111,18 +111,18 @@ public class JFritzProperties extends Properties {
             reader.parse(new InputSource(new FileInputStream(filename)));
 
         } catch (ParserConfigurationException e) {
-            Debug.err("Error with ParserConfiguration!");
+            Debug.err("Error with ParserConfiguration!"); //$NON-NLS-1$
         } catch (SAXException e) {
-            Debug.err("Error on parsing " + filename + "!");
+            Debug.err("Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
             Debug.err(e.toString());
-            if (e.getLocalizedMessage().startsWith("Relative URI")
+            if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
                     || e.getLocalizedMessage().startsWith(
-                            "Invalid system identifier")) {
+                            "Invalid system identifier")) { //$NON-NLS-1$
                 Debug.err(e.getLocalizedMessage());
                 System.exit(0);
             }
         } catch (IOException e) {
-            Debug.err("Could not read " + filename + "!");
+            Debug.err("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
         }
 	}
 
@@ -157,13 +157,13 @@ public class JFritzProperties extends Properties {
 		Document doc = null;
 		doc = getLoadingDoc(in);
 		Element propertiesElement = (Element) doc.getChildNodes().item(1);
-		String xmlVersion = propertiesElement.getAttribute("version");
+		String xmlVersion = propertiesElement.getAttribute("version"); //$NON-NLS-1$
 		if (xmlVersion.compareTo(EXTERNAL_XML_VERSION) > 0)
-			throw new SAXException("Exported Properties file format version "
+			throw new SAXException("Exported Properties file format version " //$NON-NLS-1$
 					+ xmlVersion
-					+ " is not supported. This java installation can read"
-					+ " versions " + EXTERNAL_XML_VERSION + " or older. You"
-					+ " may need to install a newer version of JDK.");
+					+ " is not supported. This java installation can read" //$NON-NLS-1$
+					+ " versions " + EXTERNAL_XML_VERSION + " or older. You" //$NON-NLS-1$,  //$NON-NLS-2$
+					+ " may need to install a newer version of JDK."); //$NON-NLS-1$
 		importProperties(props, propertiesElement);
 	}
 
@@ -185,7 +185,7 @@ public class JFritzProperties extends Properties {
 				is.setSystemId(PROPS_DTD_URI);
 				return is;
 			}
-			throw new SAXException("Invalid system identifier: " + sid);
+			throw new SAXException("Invalid system identifier: " + sid); //$NON-NLS-1$
 		}
 			});
 			db.setErrorHandler(new ErrorHandler() {
@@ -213,49 +213,49 @@ public class JFritzProperties extends Properties {
 		NodeList entries = propertiesElement.getChildNodes();
 		int numEntries = entries.getLength();
 		int start = numEntries > 0
-				&& entries.item(0).getNodeName().equals("comment") ? 1 : 0;
+				&& entries.item(0).getNodeName().equals("comment") ? 1 : 0; //$NON-NLS-1$
 		for (int i = start; i < numEntries; i++) {
 			Element entry = (Element) entries.item(i);
-			if (entry.hasAttribute("key")) {
+			if (entry.hasAttribute("key")) { //$NON-NLS-1$
 				Node n = entry.getFirstChild();
-				String val = (n == null) ? "" : n.getNodeValue();
-//				Debug.msg("Load properties: " + entry.getAttribute("key") + " = " + val);
-				props.setProperty(entry.getAttribute("key"), val);
+				String val = (n == null) ? "" : n.getNodeValue(); //$NON-NLS-1$
+				props.setProperty(entry.getAttribute("key"), val); //$NON-NLS-1$
 			}
 		}
 	}
 
     public void save(String filename) throws IOException {
-        Debug.msg("Saving to file " + filename);
+        Debug.msg("Saving to file " + filename); //$NON-NLS-1$
         try {
                 BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(filename), "UTF8"));
-            pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+                    new FileOutputStream(filename), "UTF8")); //$NON-NLS-1$
+            pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
             pw.newLine();
-//          pw.write("<!DOCTYPE phonebook SYSTEM \"" + PHONEBOOK_DTD_URI
-//                  + "\">");
-//          pw.newLine();
-            pw.write("<properties>");
+            pw.write("<properties>"); //$NON-NLS-1$
             pw.newLine();
-            pw.write("<comment>Properties for " + JFritz.PROGRAM_NAME + " v"
-                    + JFritz.PROGRAM_VERSION + "</comment>");
+            pw.write("<comment>Properties for " + JFritz.PROGRAM_NAME + " v" //$NON-NLS-1$,  //$NON-NLS-2$
+                    + JFritz.PROGRAM_VERSION + "</comment>"); //$NON-NLS-1$
             pw.newLine();
 
             Enumeration en = keys();
             while (en.hasMoreElements()) {
                 String element = en.nextElement().toString();
-                pw.write("<entry key=\"" + element + "\">"+JFritzUtils.convertSpecialChars(JFritzUtils.deconvertSpecialChars(getProperty(element)))+"</entry>");
+                pw.write("<entry key=\"" + element + //$NON-NLS-1$
+                		"\">" //$NON-NLS-1$
+                		+JFritzUtils.convertSpecialChars(
+                				JFritzUtils.deconvertSpecialChars(
+                						getProperty(element)))+"</entry>"); //$NON-NLS-1$
                 pw.newLine();
             }
-            pw.write("</properties>");
+            pw.write("</properties>"); //$NON-NLS-1$
             pw.newLine();
             pw.close();
           } catch (UnsupportedEncodingException e) {
-              Debug.err("UTF-8 not supported.");
+              Debug.err("UTF-8 not supported."); //$NON-NLS-1$
             } catch (FileNotFoundException e) {
-                Debug.err("Could not write " + filename + "!");
+                Debug.err("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
           } catch (IOException e) {
-            Debug.err("IOException " + filename);
+            Debug.err("IOException " + filename); //$NON-NLS-1$
         }
     }
 }

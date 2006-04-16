@@ -51,7 +51,7 @@ public class UPNPUtils {
 			}
 			socket.close();
 		} catch (SocketTimeoutException e) {
-			Debug.msg("Timeout for SSDP");
+			Debug.msg("Timeout for SSDP"); //$NON-NLS-1$
 		} catch (SocketException e) {
             Debug.err(e.toString());
 		} catch (IOException e) {
@@ -66,8 +66,8 @@ public class UPNPUtils {
 		Enumeration en = devices.elements();
 		while (en.hasMoreElements()) {
 			SSDPPacket p = (SSDPPacket) en.nextElement();
-			if (p.getServer().toLowerCase().indexOf("avm fritz!box") > 0) {
-				Debug.msg("Box found at " + p.getIP().toString() + ": "
+			if (p.getServer().toLowerCase().indexOf("avm fritz!box") > 0) { //$NON-NLS-1$
+				Debug.msg("Box found at " + p.getIP().toString() + ": " //$NON-NLS-1$,  //$NON-NLS-2$
 						+ p.getServer());
 				fritzboxes.add(p);
 			}
@@ -88,7 +88,7 @@ public class UPNPUtils {
 		// Uptime and Connection:
 		// urn:schemas-upnp-org:service:WANIPConnection:1#GetStatusInfo
 
-		String data = "";
+		String data = ""; //$NON-NLS-1$
 
 		try {
 			URL u = new URL(url);
@@ -97,9 +97,9 @@ public class UPNPUtils {
 			uc.setDoOutput(true);
 			uc.setDoInput(true);
 			uc
-					.setRequestProperty("Content-Type",
-							"text/xml; charset=\"utf-8\"");
-			uc.setRequestProperty("SOAPAction", urn);
+					.setRequestProperty("Content-Type", //$NON-NLS-1$
+							"text/xml; charset=\"utf-8\""); //$NON-NLS-1$
+			uc.setRequestProperty("SOAPAction", urn); //$NON-NLS-1$
 
 			DataOutputStream printout = new DataOutputStream(uc
 					.getOutputStream());
@@ -111,7 +111,7 @@ public class UPNPUtils {
 
 			String str;
 			while (null != ((str = d.readLine())))
-				data += str + "\n";
+				data += str + "\n"; //$NON-NLS-1$
 
 		} catch (IOException e) {
             Debug.err(e.toString());

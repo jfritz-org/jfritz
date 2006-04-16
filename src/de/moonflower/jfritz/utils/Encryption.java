@@ -20,7 +20,7 @@ import javax.crypto.spec.DESKeySpec;
  *
  */
 public class Encryption {
-	private static final String KEY_STRING = "193-155-248-97-234-56-100-241";
+	private static final String KEY_STRING = "193-155-248-97-234-56-100-241"; //$NON-NLS-1$
 
 	public static String encrypt(String source) {
 		try {
@@ -28,7 +28,7 @@ public class Encryption {
 			Key key = getKey();
 
 			// Create the cipher
-			Cipher desCipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
+			Cipher desCipher = Cipher.getInstance("DES/ECB/PKCS5Padding"); //$NON-NLS-1$
 
 			// Initialize the cipher for encryption
 			desCipher.init(Cipher.ENCRYPT_MODE, key);
@@ -49,7 +49,7 @@ public class Encryption {
 
 	public static String generateKey() {
 		try {
-			KeyGenerator keygen = KeyGenerator.getInstance("DES");
+			KeyGenerator keygen = KeyGenerator.getInstance("DES"); //$NON-NLS-1$
 			SecretKey desKey = keygen.generateKey();
 			byte[] bytes = desKey.getEncoded();
 			return getString(bytes);
@@ -67,7 +67,7 @@ public class Encryption {
 			Key key = getKey();
 
 			// Create the cipher
-			Cipher desCipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
+			Cipher desCipher = Cipher.getInstance("DES/ECB/PKCS5Padding"); //$NON-NLS-1$
 
 			// Encrypt the cleartext
 			byte[] ciphertext = getBytes(source);
@@ -90,7 +90,7 @@ public class Encryption {
 		try {
 			byte[] bytes = getBytes(KEY_STRING);
 			DESKeySpec pass = new DESKeySpec(bytes);
-			SecretKeyFactory skf = SecretKeyFactory.getInstance("DES");
+			SecretKeyFactory skf = SecretKeyFactory.getInstance("DES"); //$NON-NLS-1$
 			SecretKey s = skf.generateSecret(pass);
 			return s;
 		} catch (Exception e) {
@@ -110,7 +110,7 @@ public class Encryption {
 			return false;
 		}
 
-		StringTokenizer st = new StringTokenizer(text, "-", false);
+		StringTokenizer st = new StringTokenizer(text, "-", false); //$NON-NLS-1$
 		while (st.hasMoreTokens()) {
 			String token = st.nextToken();
 			if (token.length() > 3) {
@@ -136,7 +136,7 @@ public class Encryption {
 			byte b = bytes[i];
 			sb.append((int) (0x00FF & b));
 			if (i + 1 < bytes.length) {
-				sb.append("-");
+				sb.append("-"); //$NON-NLS-1$
 			}
 		}
 		return sb.toString();
@@ -144,7 +144,7 @@ public class Encryption {
 
 	private static byte[] getBytes(String str) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		StringTokenizer st = new StringTokenizer(str, "-", false);
+		StringTokenizer st = new StringTokenizer(str, "-", false); //$NON-NLS-1$
 		while (st.hasMoreTokens()) {
 			int i = Integer.parseInt(st.nextToken());
 			bos.write((byte) i);
