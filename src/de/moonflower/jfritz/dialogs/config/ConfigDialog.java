@@ -617,8 +617,7 @@ public class ConfigDialog extends JDialog {
 		languageCombo = new JComboBox();
 		c.fill = GridBagConstraints.HORIZONTAL;
 		File file = new File("lang");
-		FilenameFilter props = new StartEndFilenameFilter("jfritz",
-				"properties");
+		FilenameFilter props = new StartEndFilenameFilter("jfritz","properties");//$NON-NLS-1$,  //$NON-NLS-2$
 		String[] list = file.list(props);
 		for (int i = 0; i < list.length; i++) {
 			languageCombo.addItem(list[i].substring(list[i].indexOf("_") + 1,
