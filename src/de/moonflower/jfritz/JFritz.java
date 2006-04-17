@@ -392,7 +392,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.235 2006/04/17 14:37:55 baefer Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.236 2006/04/17 22:55:36 baefer Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -803,7 +803,7 @@ public final class JFritz {
     private void loadMessages(Locale locale) {
         try {
             messages = ResourceBundle.getBundle(
-                    "de.moonflower.jfritz.resources.jfritz", locale);//$NON-NLS-1$
+                    "jfritz", locale);//$NON-NLS-1$
         } catch (MissingResourceException e) {
             Debug.err("Can't find i18n resource!");//$NON-NLS-1$
             JOptionPane.showMessageDialog(null, JFritz.PROGRAM_NAME + " v"//$NON-NLS-1$

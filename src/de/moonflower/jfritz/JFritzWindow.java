@@ -393,7 +393,6 @@ public class JFritzWindow extends JFrame
 		JMenu importMenu = new JMenu(JFritz.getMessage("import_menu")); //$NON-NLS-1$
 		JMenu exportMenu = new JMenu(JFritz.getMessage("export_menu")); //$NON-NLS-1$
 		JMenu viewMenu = new JMenu(JFritz.getMessage("view_menu")); //$NON-NLS-1$
-		JMenu languageMenu = new JMenu(JFritz.getMessage("language_menu")); //$NON-NLS-1$
 
 		// File menu
 		JMenuItem item = new JMenuItem(JFritz.getMessage("fetchlist"), 'a'); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -486,18 +485,6 @@ public class JFritzWindow extends JFrame
 		}
 		optionsMenu.add(lnfMenu);
 
-		// languages submenu
-		item = new JMenuItem(JFritz.getMessage("german")); //$NON-NLS-1$
-		item.setActionCommand("german"); //$NON-NLS-1$
-		item.addActionListener(this);
-		languageMenu.add(item);
-
-		item = new JMenuItem(JFritz.getMessage("english")); //$NON-NLS-1$
-		item.setActionCommand("english"); //$NON-NLS-1$
-		item.addActionListener(this);
-		languageMenu.add(item);
-
-		optionsMenu.add(languageMenu);
 
 		if (!JFritz.runsOn().equals("Mac")) { //$NON-NLS-1$
 			item = new JMenuItem(JFritz.getMessage("config"), 'e'); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -1050,14 +1037,6 @@ public class JFritzWindow extends JFrame
 			phoneBookPanel.importFromXML();
 		else if (e.getActionCommand().equals("import_contacts_thunderbird_csv")) //$NON-NLS-1$
 			importContactsThunderbirdCSV();
-		else if (e.getActionCommand().equals("german")){ //$NON-NLS-1$
-			setLanguage(new Locale("de", "DE")); //$NON-NLS-1$,  //$NON-NLS-2$
-			JFritz.setProperty("locale","de_DE"); //$NON-NLS-1$,  //$NON-NLS-2$
-		}
-		else if (e.getActionCommand().equals("english")){ //$NON-NLS-1$
-			setLanguage(new Locale("en", "US")); //$NON-NLS-1$,  //$NON-NLS-2$
-			JFritz.setProperty("locale","en_US"); //$NON-NLS-1$,  //$NON-NLS-2$
-		}
 		else if (e.getActionCommand().equals("showhide")) {
 			setVisible(!isVisible());
 		}

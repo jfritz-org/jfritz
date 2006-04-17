@@ -18,32 +18,35 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.Locale;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.JToggleButton;
-import javax.swing.ButtonGroup;
-import javax.swing.JRadioButton;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
@@ -63,11 +66,14 @@ import de.moonflower.jfritz.utils.network.SSDPPacket;
  * TODO: A lot of I18N..
  */
 public class ConfigDialog extends JDialog {
+
+	public static boolean refreshWindow;
+
     private static final long serialVersionUID = 1;
 
     private JFritz jfritz;
 
-    private JComboBox addressCombo, callMonitorCombo;
+    private JComboBox addressCombo, callMonitorCombo, languageCombo;
 
     private JTextField address, areaCode, countryCode, areaPrefix,
             countryPrefix, externProgramTextField;
@@ -150,6 +156,8 @@ public class ConfigDialog extends JDialog {
 
         callMonitorCombo.setSelectedIndex(Integer.parseInt(JFritz.getProperty(
                 "option.callMonitorType", "0"))); //$NON-NLS-1$,  //$NON-NLS-2$
+
+        languageCombo.setSelectedItem(JFritz.getProperty("locale","de_DE"));
 
         if (jfritz.getCallMonitor() == null) {
             startCallMonitorButton.setSelected(false);
@@ -321,6 +329,12 @@ public class ConfigDialog extends JDialog {
         } else {
             JFritz.removeProperty("box.firmware"); //$NON-NLS-1$
         }
+
+        if(!JFritz.getProperty("locale","de_DE").equals(languageCombo.getSelectedItem().toString())){ //$NON-NLS-1$ //$NON-NLS-2$
+       	JFritz.setProperty("locale",languageCombo.getSelectedItem().toString()); //$NON-NLS-1$
+       	jfritz.getJframe().setLanguage(new Locale(languageCombo.getSelectedItem().toString()));
+        }
+
 
         Debug.msg("Saved config"); //$NON-NLS-1$
         jfritz.getSIPProviderTableModel()
@@ -575,6 +589,38 @@ protected JPanel createOtherPane() {
         cPanel.add(fetchAfterStandby, c);
 
         return cPanel;
+    }
+
+    protected JPanel createLocalePane(ActionListener actionListener) {
+    	JPanel localePane = new JPanel();
+    	localePane.setLayout(new GridBagLayout());
+    	localePane.setBorder(BorderFactory.createEmptyBorder(10, 20, 5, 20));
+        GridBagConstraints c = new GridBagConstraints();
+        c.insets.top = 5;
+        c.insets.bottom = 5;
+        c.insets.left = 5;
+        c.anchor = GridBagConstraints.WEST;
+
+        JLabel label = new JLabel(""); //$NON-NLS-1$
+        c.gridy = 2;
+        label = new JLabel(JFritz.getMessage("language")+": "); //$NON-NLS-1$,  //$NON-NLS-2$
+        localePane.add(label, c);
+
+        languageCombo = new JComboBox();
+		c.fill = GridBagConstraints.HORIZONTAL;
+		File file = new File("lang");
+		String[] list = file.list();
+		for (int i = 0; i < list.length; i++) {
+			languageCombo.addItem(list[i].substring(list[i].indexOf("_") + 1, list[i].indexOf(".")));
+		}
+		languageCombo.setActionCommand("languageCombo"); //$NON-NLS-1$
+		languageCombo.addActionListener(actionListener);
+        localePane.add(languageCombo, c);
+
+
+
+
+    	return localePane;
     }
 
     protected void stopAllCallMonitors() {
@@ -941,6 +987,7 @@ protected JPanel createOtherPane() {
         tpane.addTab(JFritz.getMessage("messages"), createMessagePane()); //$NON-NLS-1$
         JScrollPane otherPaneScrollable = new JScrollPane(createOtherPane()); //$NON-NLS-1$
         tpane.addTab(JFritz.getMessage("other"), otherPaneScrollable); //$NON-NLS-1$
+        tpane.addTab(JFritz.getMessage("language"),createLocalePane(actionListener));
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(tpane, BorderLayout.CENTER);
