@@ -45,7 +45,6 @@
  * (TODO: Import der Anrufliste im XML-Format beim Kontextmenü einbauen)
  * TODO: Einstelloption, wie lange die Popups geöffnet bleiben sollen
  * TODO: Filter für Ports
- * TODO: Wahl der Sprache sollte gespeichert werden
  * TODO: Internationalisierung abschließen
  * TODO: Vergleich auf doppelte Anrufe optimieren (HASH-Tabelle?)
  *
@@ -393,7 +392,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.233 2006/04/17 14:13:22 baefer Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.234 2006/04/17 14:29:19 baefer Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
