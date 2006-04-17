@@ -1052,11 +1052,11 @@ public class JFritzWindow extends JFrame
 			importContactsThunderbirdCSV();
 		else if (e.getActionCommand().equals("german")){ //$NON-NLS-1$
 			setLanguage(new Locale("de", "DE")); //$NON-NLS-1$,  //$NON-NLS-2$
-			JFritz.setProperty("locale","de_DE");
+			JFritz.setProperty("locale","de_DE"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 		else if (e.getActionCommand().equals("english")){ //$NON-NLS-1$
 			setLanguage(new Locale("en", "US")); //$NON-NLS-1$,  //$NON-NLS-2$
-			JFritz.setProperty("locale","en_US");
+			JFritz.setProperty("locale","en_US"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 		else if (e.getActionCommand().equals("showhide")) {
 			setVisible(!isVisible());

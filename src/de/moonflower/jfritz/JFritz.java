@@ -392,7 +392,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.234 2006/04/17 14:29:19 baefer Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.235 2006/04/17 14:37:55 baefer Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -641,7 +641,7 @@ public final class JFritz {
             boolean clearList, boolean enableInstanceControl, boolean writeForeignFormats) {
         jfritz = this;
         loadProperties();
-        loadMessages(new Locale(JFritz.getProperty("locale","de_DE")));
+        loadMessages(new Locale(JFritz.getProperty("locale","de_DE"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
         if (JFritzUtils.parseBoolean(properties.getProperty("option.createBackup", "false"))) { //$NON-NLS-1$,  //$NON-NLS-2$
             doBackup();
