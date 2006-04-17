@@ -19,6 +19,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Locale;
@@ -33,7 +34,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
@@ -56,6 +56,7 @@ import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
+import de.moonflower.jfritz.utils.OnlyExt;
 import de.moonflower.jfritz.utils.network.SSDPPacket;
 
 /**
@@ -609,7 +610,14 @@ protected JPanel createOtherPane() {
         languageCombo = new JComboBox();
 		c.fill = GridBagConstraints.HORIZONTAL;
 		File file = new File("lang");
-		String[] list = file.list();
+		FilenameFilter props = new OnlyExt("properties");
+		String[] list = file.list(props);
+//		String files[] = new String[list.length];
+//		for (int i = 0; i < list.length; i++) {
+//			if(file.isFile()){
+//				files[i] = list[i];
+//			}
+//		}
 		for (int i = 0; i < list.length; i++) {
 			languageCombo.addItem(list[i].substring(list[i].indexOf("_") + 1, list[i].indexOf(".")));
 		}
