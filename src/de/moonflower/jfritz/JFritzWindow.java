@@ -1054,7 +1054,9 @@ public class JFritzWindow extends JFrame
 			setLanguage(new Locale("de", "DE")); //$NON-NLS-1$,  //$NON-NLS-2$
 		else if (e.getActionCommand().equals("english")) //$NON-NLS-1$
 			setLanguage(new Locale("en", "US")); //$NON-NLS-1$,  //$NON-NLS-2$
-
+		else if (e.getActionCommand().equals("showhide")) {
+			setVisible(!isVisible());
+		}
 		else
 			Debug.err("Unimplemented action: " + e.getActionCommand()); //$NON-NLS-1$
 	}

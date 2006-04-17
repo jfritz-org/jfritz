@@ -392,7 +392,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.231 2006/04/16 22:32:28 robotniko Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.232 2006/04/17 12:36:26 robotniko Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -897,7 +897,8 @@ public final class JFritz {
         JPopupMenu menu = new JPopupMenu("JFritz Menu"); //$NON-NLS-1$
         JMenuItem menuItem = new JMenuItem(PROGRAM_NAME + " v" //$NON-NLS-1$
                 + PROGRAM_VERSION);
-        menuItem.setEnabled(false);
+        menuItem.setActionCommand("showhide");
+        menuItem.addActionListener(jframe);
         menu.add(menuItem);
         menu.addSeparator();
         menuItem = new JMenuItem(getMessage("fetchlist")); //$NON-NLS-1$
