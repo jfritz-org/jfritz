@@ -1050,10 +1050,14 @@ public class JFritzWindow extends JFrame
 			phoneBookPanel.importFromXML();
 		else if (e.getActionCommand().equals("import_contacts_thunderbird_csv")) //$NON-NLS-1$
 			importContactsThunderbirdCSV();
-		else if (e.getActionCommand().equals("german")) //$NON-NLS-1$
+		else if (e.getActionCommand().equals("german")){ //$NON-NLS-1$
 			setLanguage(new Locale("de", "DE")); //$NON-NLS-1$,  //$NON-NLS-2$
-		else if (e.getActionCommand().equals("english")) //$NON-NLS-1$
+			JFritz.setProperty("locale","de_DE");
+		}
+		else if (e.getActionCommand().equals("english")){ //$NON-NLS-1$
 			setLanguage(new Locale("en", "US")); //$NON-NLS-1$,  //$NON-NLS-2$
+			JFritz.setProperty("locale","en_US");
+		}
 		else if (e.getActionCommand().equals("showhide")) {
 			setVisible(!isVisible());
 		}

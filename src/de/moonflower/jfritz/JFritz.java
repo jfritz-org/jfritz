@@ -50,6 +50,7 @@
  * TODO: Vergleich auf doppelte Anrufe optimieren (HASH-Tabelle?)
  *
  * JFritz 0.6.0
+ * - Bugfix: Spracheinstellungen werden gespeichert.
  * - Neu: Verbesserte Anzeige des aus- und eingehenden Verbindungstyps bei verwendung des JFritz-Anrufmonitors im Format "interne MSN (Leitungsart)", z.B. "1234 (ISDN)" oder "1234 (SIP)" bei eingehenden Anrufen oder "56789 (88sdg4@dus.net)" bei ausgehenden
  * - Bugfix: Anrufmonitor zeigt ausgehende und eingehende Anrufe im gleichen Format an
  * - Bugfix: Neues JFritz-Anrufmonitor-Format besser unterstützt, jetzt wieder Anzeige von angerufener MSN
@@ -392,7 +393,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.232 2006/04/17 12:36:26 robotniko Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.233 2006/04/17 14:13:22 baefer Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -640,8 +641,8 @@ public final class JFritz {
     public JFritz(boolean fetchCalls, boolean csvExport, String csvFileName,
             boolean clearList, boolean enableInstanceControl, boolean writeForeignFormats) {
         jfritz = this;
-        loadMessages(locale);
         loadProperties();
+        loadMessages(new Locale(JFritz.getProperty("locale","de_DE")));
 
         if (JFritzUtils.parseBoolean(properties.getProperty("option.createBackup", "false"))) { //$NON-NLS-1$,  //$NON-NLS-2$
             doBackup();
@@ -1602,7 +1603,7 @@ public final class JFritz {
     /**
      * @ Bastian Schaefer
      *
-     *	Destroys and repaints the Frame.
+     *	Destroys and repaints the Main Frame.
      *
      */
 
