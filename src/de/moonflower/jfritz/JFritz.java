@@ -393,7 +393,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.237 2006/04/17 23:33:52 baefer Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.238 2006/04/18 10:03:02 baefer Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -422,6 +422,8 @@ public final class JFritz {
     private JFritzProperties defaultProperties;
 
     private static JFritzProperties properties;
+
+    private static ResourceBundle localeMeanings;
 
     private static ResourceBundle messages;
 
@@ -643,6 +645,7 @@ public final class JFritz {
         jfritz = this;
         loadProperties();
         loadMessages(new Locale(JFritz.getProperty("locale","de_DE"))); //$NON-NLS-1$,  //$NON-NLS-2$
+        loadLocaleMeanings(new Locale("int_INT"));
 
         if (JFritzUtils.parseBoolean(properties.getProperty("option.createBackup", "false"))) { //$NON-NLS-1$,  //$NON-NLS-2$
             doBackup();
@@ -813,6 +816,21 @@ public final class JFritz {
             System.exit(0);
         }
     }
+
+    /**
+     * Loads resource messages
+     *
+     * @param locale
+     */
+    private void loadLocaleMeanings(Locale locale) {
+        try {
+            localeMeanings = ResourceBundle.getBundle(
+                    "languages", locale);//$NON-NLS-1$
+        } catch (MissingResourceException e) {
+            Debug.err("Can't find locale Meanings resource!");//$NON-NLS-1$
+        }
+    }
+
 
     /**
      * Loads properties from xml files
@@ -1481,6 +1499,20 @@ public final class JFritz {
     }
 
     /**
+     * @return Returns something.
+     */
+    public static String getLocaleMeaning(String msg) {
+        String localeMeaning = ""; //$NON-NLS-1$
+        try {
+        	localeMeaning = localeMeanings.getString(msg);
+        } catch (MissingResourceException e) {
+            Debug.err("Can't find resource string for " + msg); //$NON-NLS-1$
+            localeMeaning = msg;
+        }
+        return localeMeaning;
+    }
+
+    /**
      *
      * @param property
      *            Property to get the value from
@@ -1501,6 +1533,7 @@ public final class JFritz {
     public static String getProperty(String property) {
         return getProperty(property, ""); //$NON-NLS-1$
     }
+
 
     /**
      * Sets a property to a specific value

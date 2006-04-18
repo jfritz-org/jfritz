@@ -83,6 +83,8 @@ public class ConfigDialog extends JDialog {
 
 	private String password = ""; //$NON-NLS-1$
 
+	String localeList[];
+
 	private JSlider timerSlider;
 
 	private JButton okButton, cancelButton, boxtypeButton,
@@ -159,7 +161,7 @@ public class ConfigDialog extends JDialog {
 		callMonitorCombo.setSelectedIndex(Integer.parseInt(JFritz.getProperty(
 				"option.callMonitorType", "0"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		languageCombo.setSelectedItem(JFritz.getProperty("locale", "de_DE"));
+		languageCombo.setSelectedItem(JFritz.getLocaleMeaning(JFritz.getProperty("locale", "de_DE")));
 
 		if (jfritz.getCallMonitor() == null) {
 			startCallMonitorButton.setSelected(false);
@@ -338,13 +340,13 @@ public class ConfigDialog extends JDialog {
 			JFritz.removeProperty("box.firmware"); //$NON-NLS-1$
 		}
 
-		if (!JFritz
-				.getProperty("locale", "de_DE").equals(languageCombo.getSelectedItem().toString())) { //$NON-NLS-1$ //$NON-NLS-2$
+		if (!JFritz	.getProperty("locale", "de_DE").equals(localeList[languageCombo.getSelectedIndex()])) { //$NON-NLS-1$ //$NON-NLS-2$
 			JFritz.setProperty(
-					"locale", languageCombo.getSelectedItem().toString()); //$NON-NLS-1$
+					"locale", localeList[languageCombo.getSelectedIndex()]); //$NON-NLS-1$
 			jfritz.getJframe().setLanguage(
-					new Locale(languageCombo.getSelectedItem().toString()));
+					new Locale(localeList[languageCombo.getSelectedIndex()]));
 		}
+
 
 		Debug.msg("Saved config"); //$NON-NLS-1$
 		jfritz.getSIPProviderTableModel()
@@ -619,9 +621,10 @@ public class ConfigDialog extends JDialog {
 		File file = new File("lang");
 		FilenameFilter props = new StartEndFilenameFilter("jfritz","properties");//$NON-NLS-1$,  //$NON-NLS-2$
 		String[] list = file.list(props);
+		localeList= new String[list.length];
 		for (int i = 0; i < list.length; i++) {
-			languageCombo.addItem(list[i].substring(list[i].indexOf("_") + 1,
-					list[i].indexOf(".")));
+			localeList[i] = list[i].substring(list[i].indexOf("_") + 1,list[i].indexOf("."));
+			languageCombo.addItem(JFritz.getLocaleMeaning(localeList[i]));
 		}
 		languageCombo.setActionCommand("languageCombo"); //$NON-NLS-1$
 		languageCombo.addActionListener(actionListener);
