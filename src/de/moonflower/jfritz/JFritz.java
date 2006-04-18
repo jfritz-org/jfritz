@@ -47,6 +47,7 @@
  * TODO: Filter für Ports
  * TODO: Internationalisierung abschließen
  * TODO: Vergleich auf doppelte Anrufe optimieren (HASH-Tabelle?)
+ * TODO: Language-Files checken, ob tatsächlich alle Werte benötigt werden
  *
  * JFritz 0.6.0
  * - Neu: Sprache einstellbar ( <- Wahlhilfe im Telefonbuch funktioniert bei englischer Sprache nicht (Bastian)
@@ -393,7 +394,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.239 2006/04/18 11:50:14 baefer Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.240 2006/04/18 13:34:52 baefer Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
