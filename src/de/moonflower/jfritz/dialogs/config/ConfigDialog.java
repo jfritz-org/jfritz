@@ -81,7 +81,7 @@ public class ConfigDialog extends JDialog {
 
 	private JPasswordField pass;
 
-	private String password = ""; //$NON-NLS-1$
+	private String password = "", loc; //$NON-NLS-1$
 
 	String localeList[];
 
@@ -343,8 +343,9 @@ public class ConfigDialog extends JDialog {
 		if (!JFritz	.getProperty("locale", "de_DE").equals(localeList[languageCombo.getSelectedIndex()])) { //$NON-NLS-1$ //$NON-NLS-2$
 			JFritz.setProperty(
 					"locale", localeList[languageCombo.getSelectedIndex()]); //$NON-NLS-1$
+			loc = localeList[languageCombo.getSelectedIndex()];
 			jfritz.getJframe().setLanguage(
-					new Locale(localeList[languageCombo.getSelectedIndex()]));
+					new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_")+1, loc.length())));
 		}
 
 

@@ -394,7 +394,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.240 2006/04/18 13:34:52 baefer Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.241 2006/04/18 18:03:04 baefer Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -646,7 +646,7 @@ public final class JFritz {
         jfritz = this;
         loadProperties();
         loadMessages(new Locale(JFritz.getProperty("locale","de_DE"))); //$NON-NLS-1$,  //$NON-NLS-2$
-        loadLocaleMeanings(new Locale("int_INT"));
+        loadLocaleMeanings(new Locale("int","INT"));
 
         if (JFritzUtils.parseBoolean(properties.getProperty("option.createBackup", "false"))) { //$NON-NLS-1$,  //$NON-NLS-2$
             doBackup();
@@ -1500,7 +1500,7 @@ public final class JFritz {
     }
 
     /**
-     * @return Returns something.
+     * @return Returns the meanings of a locale abbreviation.
      */
     public static String getLocaleMeaning(String msg) {
         String localeMeaning = ""; //$NON-NLS-1$
