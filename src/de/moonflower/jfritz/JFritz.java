@@ -393,7 +393,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.238 2006/04/18 10:03:02 baefer Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.239 2006/04/18 11:50:14 baefer Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -818,7 +818,7 @@ public final class JFritz {
     }
 
     /**
-     * Loads resource messages
+     * Loads locale meanings
      *
      * @param locale
      */
@@ -1504,9 +1504,16 @@ public final class JFritz {
     public static String getLocaleMeaning(String msg) {
         String localeMeaning = ""; //$NON-NLS-1$
         try {
+        	if(!localeMeanings.getString(msg).equals("")){
         	localeMeaning = localeMeanings.getString(msg);
+        	}else{
+        		localeMeaning = msg;
+        	}
         } catch (MissingResourceException e) {
             Debug.err("Can't find resource string for " + msg); //$NON-NLS-1$
+            localeMeaning = msg;
+        } catch (NullPointerException e){
+            Debug.err("Can't find locale Meanings file"); //$NON-NLS-1$
             localeMeaning = msg;
         }
         return localeMeaning;

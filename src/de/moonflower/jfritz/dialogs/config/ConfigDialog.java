@@ -618,12 +618,12 @@ public class ConfigDialog extends JDialog {
 
 		languageCombo = new JComboBox();
 		c.fill = GridBagConstraints.HORIZONTAL;
-		File file = new File("lang");
+		File file = new File("lang");//$NON-NLS-1$
 		FilenameFilter props = new StartEndFilenameFilter("jfritz","properties");//$NON-NLS-1$,  //$NON-NLS-2$
 		String[] list = file.list(props);
 		localeList= new String[list.length];
 		for (int i = 0; i < list.length; i++) {
-			localeList[i] = list[i].substring(list[i].indexOf("_") + 1,list[i].indexOf("."));
+			localeList[i] = list[i].substring(list[i].indexOf("_") + 1,list[i].indexOf("."));//$NON-NLS-1$,  //$NON-NLS-2$
 			languageCombo.addItem(JFritz.getLocaleMeaning(localeList[i]));
 		}
 		languageCombo.setActionCommand("languageCombo"); //$NON-NLS-1$
