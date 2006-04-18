@@ -101,6 +101,8 @@
 
 	<target name="copyToFritzDir">
 		<copy file="dist/jfritz.jar" todir="${jfritzdir}"/>
+		<mkdir dir="${jfritzdir}/lang"/>
+		<copy todir="${jfritzdir}/lang"><fileset dir="lang"></fileset></copy>
 	</target>
 
 	<target name="source">
