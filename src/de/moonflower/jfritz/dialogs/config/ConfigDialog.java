@@ -627,6 +627,7 @@ public class ConfigDialog extends JDialog {
 			languageCombo.addItem(JFritz.getLocaleMeaning(localeList[i]));
 		}
 		languageCombo.setActionCommand("languageCombo"); //$NON-NLS-1$
+		languageCombo.setMaximumRowCount(8);
 		languageCombo.addActionListener(actionListener);
 		localePane.add(languageCombo, c);
 
