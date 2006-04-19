@@ -2,7 +2,9 @@ package de.moonflower.jfritz.utils;
 
 import java.io.File;
 import java.io.FilenameFilter;
-
+/**
+ *  @author Bastian Schaefer
+ */
 public class StartEndFilenameFilter implements FilenameFilter {
 	String ext;
 	String start;
