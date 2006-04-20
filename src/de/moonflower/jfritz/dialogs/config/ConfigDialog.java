@@ -113,6 +113,8 @@ public class ConfigDialog extends JDialog {
 
 	private JRadioButton popupNoButton, popupDialogButton, popupTrayButton;
 
+    static final String FILESEP = System.getProperty("file.separator");
+
 	public ConfigDialog(Frame parent) {
 		super(parent, true);
 		if (parent != null) {
@@ -617,16 +619,26 @@ public class ConfigDialog extends JDialog {
 		label = new JLabel(JFritz.getMessage("language") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		localePane.add(label, c);
 
-		languageCombo = new JComboBox();
-		c.fill = GridBagConstraints.HORIZONTAL;
 		File file = new File("lang");//$NON-NLS-1$
 		FilenameFilter props = new StartEndFilenameFilter("jfritz","properties");//$NON-NLS-1$,  //$NON-NLS-2$
 		String[] list = file.list(props);
 		localeList= new String[list.length];
+
+		ImageIcon[]  images = new ImageIcon[list.length];
+
 		for (int i = 0; i < list.length; i++) {
 			localeList[i] = list[i].substring(list[i].indexOf("_") + 1,list[i].indexOf("."));//$NON-NLS-1$,  //$NON-NLS-2$
-			languageCombo.addItem(JFritz.getLocaleMeaning(localeList[i]));
+			images[i] = new ImageIcon("lang"+FILESEP+"flags"+FILESEP+localeList[i].substring(localeList[i].indexOf("_")+1, localeList[i].length()) + ".gif");
+			images[i].setDescription(JFritz.getLocaleMeaning(localeList[i]));
 		}
+
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+
+		languageCombo = new JComboBox(images);
+		languageComboBoxRenderer renderer = new languageComboBoxRenderer();
+
+		languageCombo.setRenderer(renderer);
 		languageCombo.setActionCommand("languageCombo"); //$NON-NLS-1$
 		languageCombo.setMaximumRowCount(8);
 		languageCombo.addActionListener(actionListener);
