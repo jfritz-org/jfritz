@@ -163,7 +163,12 @@ public class ConfigDialog extends JDialog {
 		callMonitorCombo.setSelectedIndex(Integer.parseInt(JFritz.getProperty(
 				"option.callMonitorType", "0"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-	//	languageCombo.setSelectedItem(JFritz.getLocaleMeaning(JFritz.getProperty("locale", "de_DE"))); //TODO
+		int index = 0;
+		String loc = JFritz.getProperty("locale", "de_DE");
+		for (int a = 0; a < localeList.length; a++) {
+			if (localeList[a].equals(loc)) index = a;
+		}
+		languageCombo.setSelectedIndex(index);
 
 		if (jfritz.getCallMonitor() == null) {
 			startCallMonitorButton.setSelected(false);
@@ -342,9 +347,9 @@ public class ConfigDialog extends JDialog {
 			JFritz.removeProperty("box.firmware"); //$NON-NLS-1$
 		}
 
-		if (!JFritz	.getProperty("locale", "de_DE").equals(localeList[languageCombo.getSelectedIndex()])) { //$NON-NLS-1$ //$NON-NLS-2$
-//			JFritz.setProperty(//TODO
-//					"locale", localeList[languageCombo.getSelectedIndex()]); //$NON-NLS-1$
+		if (!JFritz.getProperty("locale", "de_DE").equals(localeList[languageCombo.getSelectedIndex()])) { //$NON-NLS-1$ //$NON-NLS-2$
+			JFritz.setProperty(//TODO
+					"locale", localeList[languageCombo.getSelectedIndex()]); //$NON-NLS-1$
 			loc = localeList[languageCombo.getSelectedIndex()];
 			jfritz.getJframe().setLanguage(
 					new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_")+1, loc.length())));
