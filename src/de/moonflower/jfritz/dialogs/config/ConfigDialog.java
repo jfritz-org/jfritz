@@ -633,7 +633,7 @@ public class ConfigDialog extends JDialog {
 
 		for (int i = 0; i < list.length; i++) {
 			localeList[i] = list[i].substring(list[i].indexOf("_") + 1,list[i].indexOf("."));//$NON-NLS-1$,  //$NON-NLS-2$
-			images[i] = new ImageIcon("lang"+FILESEP+"flags"+FILESEP+localeList[i].substring(localeList[i].indexOf("_")+1, localeList[i].length()) + ".gif");
+			images[i] = new ImageIcon("lang"+FILESEP+"flags"+FILESEP+localeList[i].substring(localeList[i].indexOf("_")+1, localeList[i].length()) + ".gif");//$NON-NLS-1$,  //$NON-NLS-2$ //$NON-NLS-3$,  //$NON-NLS-4$
 			images[i].setDescription(JFritz.getLocaleMeaning(localeList[i]));
 		}
 
