@@ -348,7 +348,7 @@ public class ConfigDialog extends JDialog {
 		}
 
 		if (!JFritz.getProperty("locale", "de_DE").equals(localeList[languageCombo.getSelectedIndex()])) { //$NON-NLS-1$ //$NON-NLS-2$
-			JFritz.setProperty(//TODO
+			JFritz.setProperty(
 					"locale", localeList[languageCombo.getSelectedIndex()]); //$NON-NLS-1$
 			loc = localeList[languageCombo.getSelectedIndex()];
 			jfritz.getJframe().setLanguage(
