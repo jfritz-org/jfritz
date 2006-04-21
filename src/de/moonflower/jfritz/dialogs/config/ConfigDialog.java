@@ -642,6 +642,7 @@ public class ConfigDialog extends JDialog {
 
 		languageCombo = new JComboBox(images);
 		languageComboBoxRenderer renderer = new languageComboBoxRenderer();
+		renderer.setPreferredSize(new Dimension(180, 15));
 
 		languageCombo.setRenderer(renderer);
 		languageCombo.setActionCommand("languageCombo"); //$NON-NLS-1$
