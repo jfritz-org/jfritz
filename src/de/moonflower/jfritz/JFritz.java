@@ -50,6 +50,7 @@
  * TODO: Language-Files checken, ob tatsächlich alle Werte benötigt werden
  *
  * JFritz 0.6.0
+ * - Bugfix: Alle internationalen Gespräche werden jetzt erkannt.
  * - Neu: Sprache einstellbar ( <- Wahlhilfe im Telefonbuch funktioniert bei englischer Sprache nicht (Bastian)
  * 								<- TrayMenu angepasst (Benjamin)
  * 								<- komplett geändert, Sprachfiles werden jetzt dynamisch erkannt und können in den Einstellungen ausgewählt werden. (Bastian))
@@ -394,7 +395,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.242 2006/04/20 18:59:19 baefer Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.243 2006/04/25 16:49:00 baefer Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
