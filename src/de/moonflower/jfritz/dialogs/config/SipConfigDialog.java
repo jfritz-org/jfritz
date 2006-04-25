@@ -328,7 +328,7 @@ public class SipConfigDialog extends JDialog {
 
         c.gridy = 5;
         c.gridx = 1;
-        label = new JLabel("Festnetz: ");
+        label = new JLabel(JFritz.getMessage("fixed_line_network")+": ");
         panel.add(label, c);
         c.gridx = 2;
         festnetzTakt1 = new JTextField("60", 4);
