@@ -119,7 +119,7 @@ public class YacConfigDialog extends JDialog implements CallMonitorConfigDialog 
 
         c.gridwidth = 1;
         c.gridy = 0;
-        JLabel label = new JLabel("YAC-Port: "); //$NON-NLS-1$
+        JLabel label = new JLabel(JFritz.getMessage("yac_port")+": "); //$NON-NLS-1$
         panel.add(label, c);
         yacPort = new JTextField("", 5); //$NON-NLS-1$
         panel.add(yacPort, c);

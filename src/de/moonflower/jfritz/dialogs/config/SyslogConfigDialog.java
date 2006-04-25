@@ -202,7 +202,7 @@ public class SyslogConfigDialog extends JDialog implements CallMonitorConfigDial
 
 		c.gridx = 0;
 		c.gridy = 1;
-		JLabel ipAddressLabel = new JLabel("Lokale IP-Adresse: "); //$NON-NLS-1$
+		JLabel ipAddressLabel = new JLabel(JFritz.getMessage("local_ip")+": "); //$NON-NLS-1$
 		panel.add(ipAddressLabel, c);
 
 		c.gridx = 1;
@@ -230,7 +230,7 @@ public class SyslogConfigDialog extends JDialog implements CallMonitorConfigDial
 		c.gridx = 0;
 		c.gridy = 2;
 		c.gridwidth = 2;
-		syslogPassthroughCheckBox = new JCheckBox("Syslog-passthrough?"); //$NON-NLS-1$
+		syslogPassthroughCheckBox = new JCheckBox(JFritz.getMessage("syslog_passthrough"+"?")); //$NON-NLS-1$
 		panel.add(syslogPassthroughCheckBox, c);
 
 		c.gridy = 3;

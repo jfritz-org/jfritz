@@ -138,14 +138,14 @@ public class TelnetConfigDialog extends JDialog implements CallMonitorConfigDial
 
 		c.gridwidth = 1;
 		c.gridy = 0;
-		JLabel telnetUserLabel = new JLabel("Telnet user: "); //$NON-NLS-1$
+		JLabel telnetUserLabel = new JLabel(JFritz.getMessage("telnet_user")+": "); //$NON-NLS-1$
 		telnetPanel.add(telnetUserLabel, c);
 		userNameTextfield = new JTextField("", 12); //$NON-NLS-1$
 		userNameTextfield.addKeyListener(keyListener);
 		telnetPanel.add(userNameTextfield, c);
 
 		c.gridy = 1;
-		JLabel telnetPasswordLabel = new JLabel("Telnet password: "); //$NON-NLS-1$
+		JLabel telnetPasswordLabel = new JLabel(JFritz.getMessage("telnet_password")+": "); //$NON-NLS-1$
 		telnetPanel.add(telnetPasswordLabel, c);
 		passwordTextfield = new JPasswordField("", 12); //$NON-NLS-1$
 		passwordTextfield.addKeyListener(keyListener);

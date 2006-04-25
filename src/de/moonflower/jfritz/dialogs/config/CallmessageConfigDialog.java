@@ -118,7 +118,7 @@ public class CallmessageConfigDialog extends JDialog implements CallMonitorConfi
 
 		c.gridwidth = 1;
 		c.gridy = 0;
-		JLabel label = new JLabel("Callmessage-Port: "); //$NON-NLS-1$
+		JLabel label = new JLabel(JFritz.getMessage("callmessage_port")+": "); //$NON-NLS-1$
 		panel.add(label, c);
 		callmessagePort = new JTextField("", 5); //$NON-NLS-1$
 		panel.add(callmessagePort, c);
