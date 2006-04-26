@@ -15,11 +15,11 @@
 	<property name="javac.optimize" value="false"/>
 
 	 <!-- include all jars in lib to classpath -->
-	     <path id="classpath">
-	          <fileset dir="${lib}">
-	             <include name="**/*.jar"/>
-	         </fileset>
-	     </path>
+	 <path id="classpath">
+	 	<fileset dir="${lib}">
+	   	<include name="**/*.jar"/>
+	 	</fileset>
+	 </path>
 
 
 	<target name="compile">
@@ -101,6 +101,7 @@
 
 	<target name="copyToFritzDir">
 		<copy file="dist/jfritz.jar" todir="${jfritzdir}"/>
+		<copy file="dist/jacob.dll" todir="${jfritzdir}"/>
 		<mkdir dir="${jfritzdir}/lang"/>
 		<copy todir="${jfritzdir}/lang"><fileset dir="lang"></fileset></copy>
 	</target>
