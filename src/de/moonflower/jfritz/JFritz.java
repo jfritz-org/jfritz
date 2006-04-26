@@ -49,6 +49,7 @@
  * TODO: Internationalisierung abschließen
  * TODO: Vergleich auf doppelte Anrufe optimieren (HASH-Tabelle?)
  * TODO: Language-Files checken, ob tatsächlich alle Werte benötigt werden
+ * TODO: Sonderzeichen werden in den Balloontips unter Windows nicht korrekt angezeigt. Scheint ein Windowsproblem zu sein. Lösung/Workaround noch nicht gefunden.
  *
  * JFritz 0.6.0
  * - Neue Strings:
@@ -397,7 +398,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.245 2006/04/26 18:22:31 baefer Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.246 2006/04/26 18:39:42 baefer Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
