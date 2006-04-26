@@ -395,7 +395,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.243 2006/04/25 16:49:00 baefer Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.244 2006/04/26 15:10:38 baefer Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -1488,11 +1488,16 @@ public final class JFritz {
 
     /**
      * @return Returns an internationalized message.
+     * Last modified: 26.04.06 by Bastian
      */
     public static String getMessage(String msg) {
         String i18n = ""; //$NON-NLS-1$
         try {
-            i18n = messages.getString(msg);
+        	if(!messages.getString(msg).equals("")){
+        		i18n = messages.getString(msg);
+            	}else{
+            		i18n = msg;
+            	}
         } catch (MissingResourceException e) {
             Debug.err("Can't find resource string for " + msg); //$NON-NLS-1$
             i18n = msg;
