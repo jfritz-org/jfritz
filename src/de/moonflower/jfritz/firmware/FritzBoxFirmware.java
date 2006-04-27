@@ -57,7 +57,7 @@ public class FritzBoxFirmware {
 
 	private final static String POSTDATA_DETECT_FIRMWARE = "&var%3Alang=de&var%3Amenu=home&var%3Apagename=home&login%3Acommand%2Fpassword="; //$NON-NLS-1$
 
-	private final static String PATTERN_DETECT_FIRMWARE = "<span class=\"Dialoglabel\">[^<]*</span>(\\d\\d).(\\d\\d).(\\d\\d\\d*)([^<]*)"; //$NON-NLS-1$
+	private final static String PATTERN_DETECT_FIRMWARE = "Firmware-Version[^\\d]*(\\d\\d).(\\d\\d).(\\d\\d\\d*)([^<]*)"; //$NON-NLS-1$
 
 	/**
 	 * Firmware Constructor using Bytes
