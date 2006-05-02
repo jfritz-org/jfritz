@@ -53,6 +53,7 @@
  *
  * JFritz 0.6.0
  * - Neue Strings:
+ * - Neuer Kommandozeilenparameter: -w, deaktiviert die Kontrolle von mehrfachen Instanzen
  * - Bugfix: Alle internationalen Gespräche werden jetzt erkannt.
  * - Neu: Sprache einstellbar ( <- Wahlhilfe im Telefonbuch funktioniert bei englischer Sprache nicht (Bastian)
  * 								<- TrayMenu angepasst (Benjamin)
@@ -398,7 +399,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.248 2006/05/01 18:57:03 baefer Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.249 2006/05/02 20:11:50 baefer Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
