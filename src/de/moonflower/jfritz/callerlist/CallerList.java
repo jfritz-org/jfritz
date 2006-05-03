@@ -10,7 +10,6 @@ import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -41,6 +40,7 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
@@ -82,15 +82,24 @@ public class CallerList extends AbstractTableModel {
     private final static String EXPORT_CSV_FORMAT_FRITZBOX = "Typ;Datum;Rufnummer;Nebenstelle;Eigene Rufnummer;Dauer"; //$NON-NLS-1$
 
     //Is the type eyported from a 7170
-    private final static String EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE = "Typ; Datum; Rufnummer; Nebenstelle; Eigene Rufnummer; Dauer"; //$NON-NLS-1$
+    private final static String EXPORT_CSV_FORMAT_FRITZBOX_PUSHSERVICE = "Typ; Datum; Rufnummer; Nebenstelle; Eigene Rufnummer; Dauer"; //$NON-NLS-1$
+
+    //is the type exported from the new firmware
+    private final static String EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE = "Typ;Datum;Name;Rufnummer;Nebenstelle;Eigene Rufnummer;Dauer";
+
+    //english firmware, unknown version
+    private final static String EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH = "Typ;Date;Number;Extension;Outgoing Caller ID;Duration";
 
     private JFritz jfritz;
 
+    //call list used to display entries in the table, can be sorted by other criteria
     private Vector filteredCallerData;
 
+    //internal call list, sorted descending by date
     private Vector unfilteredCallerData;
 
-    private Vector alreadyKnownCalls;
+    //temp vector for adding in new calls
+    private Vector newCalls;
 
     private int sortColumn;
 
@@ -98,14 +107,24 @@ public class CallerList extends AbstractTableModel {
 
     /**
      * CallerList Constructor
+     * new contrustor, using binary sizes
+     * NOTE:filteredCallerData = unfilteredCallerData is forbidden!!
+     * use filteredCallerData = unfilteredCallerData.clone() instead
+     *
+     * @author Brian Jensen
      *
      * @param jfritz
      */
     public CallerList(JFritz jfritz) {
+        //Powers of 2 always have better performance
+    	unfilteredCallerData = new Vector(256);
         filteredCallerData = new Vector();
-        unfilteredCallerData = new Vector();
+
+        //lets see if my new method works better
+        newCalls = new Vector(32);
+
         this.jfritz = jfritz;
-        alreadyKnownCalls = new Vector();
+
         sortColumn = 1;
     }
 
@@ -126,7 +145,7 @@ public class CallerList extends AbstractTableModel {
     }
 
     /**
-     *
+     * Is used for the clickability!
      */
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         String columnName = getRealColumnName(columnIndex);
@@ -313,7 +332,10 @@ public class CallerList extends AbstractTableModel {
             });
             reader.setContentHandler(new CallFileXMLHandler(this));
             reader.parse(new InputSource(new FileInputStream(filename)));
-            sortAllUnfilteredRows();
+
+            //Synchronise the call vectors
+            fireUpdateCallVector();
+
 
         } catch (ParserConfigurationException e) {
             Debug.err("Error with ParserConfiguration!"); //$NON-NLS-1$
@@ -365,42 +387,135 @@ public class CallerList extends AbstractTableModel {
     }
 
     /**
-     * adds new Call to CallerList
+     * Adds an entry to the call list
+     * this function calls contains(Call newCall) to test
+     * if the given call is contained in the list
+     * the function then adds the entry to newCalls if appropriate
      *
-     * @param call
-     * @return true if call was added successfully
+     * Note: After all import processes make sure to call fireUpdateCallVector()
+     *
+     *
+     * @author Brian Jensen
      */
+     public boolean addEntry(Call call) {
 
-    public boolean addEntry(Call call) {
-        boolean newEntry = true;
-        Enumeration en = alreadyKnownCalls.elements();
-        while (en.hasMoreElements()) {
-            Call c = (Call) en.nextElement();
-            String nr1 = "", nr2 = ""; //$NON-NLS-1$,  //$NON-NLS-2$
-            if (c.getPhoneNumber() != null)
-                nr1 = c.getPhoneNumber().getFullNumber();
-            if (call.getPhoneNumber() != null)
-                nr2 = call.getPhoneNumber().getFullNumber();
-            String route1 = "", route2 = ""; //$NON-NLS-1$,  //$NON-NLS-2$
-            if (c.getRoute() != null)
-                route1 = c.getRoute();
-            if (call.getRoute() != null)
-                route2 = call.getRoute();
-            if (c.getCalldate().equals(call.getCalldate()) && (nr1).equals(nr2)
-                    && (c.getPort().equals(call.getPort()))
-                    && (c.getDuration() == call.getDuration())
-                    && (c.getCalltype().toInt() == call.getCalltype().toInt())
-                    && (route1.equals(route2))) {
-                newEntry = false; // We already have this call
-                alreadyKnownCalls.remove(c);
-                break;
-            }
+    	if(contains(call)) {
+    		return false;
+        }else{				//add a new enty to the call list
+        	newCalls.add(call);
+        	return true;
         }
+    }
 
-        if (newEntry) { // Add new entry to table model
-            unfilteredCallerData.add(call);
-        }
-        return newEntry;
+     /**
+      * This function tests if the given call (not the call object!!!)
+      * is contained in the call list
+      *
+      * This new method is using a binary search algorithm, that means
+      * unfilteredCallerData has to be sorted ascending by date or it won't work
+      *
+      *
+      * @author Brian Jensen
+      *
+      **/
+     public boolean contains(Call newCall){
+    	 int left, right, middle;
+    	 left = 0;
+    	 right = unfilteredCallerData.size() -1;
+
+    	 while(left <= right){
+    		 middle = ((right-left)/2)+left;
+
+    		 if(unfilteredCallerData.isEmpty())
+    			 return false;
+
+    		 Call c = (Call) unfilteredCallerData.elementAt(middle);
+    		 int Compare = newCall.getCalldate().compareTo(c.getCalldate());
+
+    		 //check if the date is before or after the current element in the vector
+    		 //Note: change the values here to fit the current sorting method
+    		 if(Compare > 0)
+    			 right = middle-1;
+    		 else if(Compare < 0)
+    			 left = middle+1;
+    		 else{
+    	        	//if we are here, then the dates match
+    	        	//lets check if everything else matches
+    	        	if(c.equals(newCall))
+    	        		return true;
+    	        	else{
+    	        		//two calls, same date, different values...
+    	        		//this is really a performance killer...
+    	        		int tmpMiddle = middle -1;
+
+    	        		//Yikes! Don't forget to stay in the array bounds
+    	        		if(tmpMiddle >= 0){
+    	        		  		c = (Call) unfilteredCallerData.elementAt(tmpMiddle);
+
+    	        		  		//search left as long as the dates still match
+    	        		  		while(c.getCalldate().equals(newCall.getCalldate())){
+
+    	        		  			//check if equal
+    	        		  			if(c.equals(newCall))
+    	        		  				return true;
+
+    	        		  			//make sure we stay in the array bounds
+    	        		  			if(tmpMiddle > 0)
+    	        		  				c = (Call) unfilteredCallerData.elementAt(--tmpMiddle);
+    	        		  			else
+    	        		  				break;
+    	        		  		}
+    	        		}
+
+    	        		if(tmpMiddle < unfilteredCallerData.size()){
+    	        			c = (Call) unfilteredCallerData.elementAt(middle+1);
+    	        			tmpMiddle = middle +1;
+
+    	        			//search right as long as the dates still match
+    	        			while(c.getCalldate().equals(newCall.getCalldate())){
+
+    	        				//check if equal
+    	        				if(c.equals(newCall))
+    	        					return true;
+
+    	        				//make sure to stay in the array bounds
+    	        				if(tmpMiddle < (unfilteredCallerData.size() -1))
+    	        					c = (Call) unfilteredCallerData.elementAt(++tmpMiddle);
+    	        				else
+    	        					break;
+    	        			}
+
+    	        		}
+
+    	        		//No matching calls found with the same date
+    	        		return false;
+
+    	        	}
+    	        }
+     	 }
+
+    	 //we exited the loop => no matching date found
+    	 return false;
+
+     }
+
+
+    /**
+     * This method synchronises the main call vector with
+     * with the recently added calls per addEntry(Call call)
+     *
+     * NOTE: This method must be called after any calls have been added
+     * but should not be called until done importing all calls
+     *
+     * @author Brian Jensen
+     *
+     */
+    public void fireUpdateCallVector(){
+    	//update the call list and then sort it
+    	unfilteredCallerData.addAll(newCalls);
+    	newCalls.clear();
+    	sortAllUnfilteredRows();
+
     }
 
     /**
@@ -412,8 +527,15 @@ public class CallerList extends AbstractTableModel {
     public void getNewCalls() throws WrongPasswordException, IOException {
     	getNewCalls(false);
     }
+
     /**
      * Retrieves data from FRITZ!Box
+     * Function calls JFritzUtils.retrieveCSVList(...) which reads the HTML page
+     * from the box then reads the csv-file in and passes it on to
+     * CallerList.importFromCSVFile(BufferedReader br) which then parses all the entries
+     * makes backups and deletes entries from the box as appropriate     *
+     *
+     * @author Brian Jensen
      *
      * @param deleteFritzBoxCallerList
      * 				true indicates that fritzbox callerlist should be deleted without considering number of entries or config
@@ -421,65 +543,33 @@ public class CallerList extends AbstractTableModel {
      * @throws IOException
      */
     public void getNewCalls(boolean deleteFritzBoxCallerList) throws WrongPasswordException, IOException {
-        alreadyKnownCalls = (Vector) unfilteredCallerData.clone();
-        Debug.msg("box.address: " + JFritz.getProperty("box.address")); //$NON-NLS-1$,  //$NON-NLS-2$
-        Debug.msg("box.password: " + JFritz.getProperty("box.password")); //$NON-NLS-1$,  //$NON-NLS-2$
-        Debug.msg("box.firmware: " + JFritz.getProperty("box.firmware")); //$NON-NLS-1$,  //$NON-NLS-2$
-/**
-        JFritzUtils.retrieveCSVList(JFritz
+
+        Debug.msg("box.address: " + JFritz.getProperty("box.address"));
+        Debug.msg("box.password: " + JFritz.getProperty("box.password"));
+        Debug.msg("box.firmware: " + JFritz.getProperty("box.firmware"));
+
+        boolean newEntries = JFritzUtils.retrieveCSVList(JFritz
                 .getProperty("box.address"), Encryption.decrypt(JFritz
-                .getProperty("box.password")), JFritzUtils.detectBoxType(
+                .getProperty("box.password")), JFritz
+                .getProperty("country.prefix"), JFritz
+                .getProperty("country.code"),
+                JFritz.getProperty("area.prefix"), JFritz
+                        .getProperty("area.code"), JFritzUtils.detectBoxType(
                         JFritz.getProperty("box.firmware"), JFritz
                                 .getProperty("box.address"), Encryption
-                                .decrypt(JFritz.getProperty("box.password"))));
-        Vector data = new Vector();
-**/
+                                .decrypt(JFritz.getProperty("box.password"))), jfritz);
 
-        Vector data = JFritzUtils.retrieveCSVList(JFritz
-                .getProperty("box.address"), Encryption.decrypt(JFritz //$NON-NLS-1$
-                .getProperty("box.password")), JFritz //$NON-NLS-1$
-                .getProperty("country.prefix"), JFritz //$NON-NLS-1$
-                .getProperty("country.code"), //$NON-NLS-1$
-                JFritz.getProperty("area.prefix"), JFritz //$NON-NLS-1$
-                        .getProperty("area.code"), JFritzUtils.detectBoxType( //$NON-NLS-1$
-                        JFritz.getProperty("box.firmware"), JFritz //$NON-NLS-1$
-                                .getProperty("box.address"), Encryption //$NON-NLS-1$
-                                .decrypt(JFritz.getProperty("box.password"))), jfritz); //$NON-NLS-1$
-
-        if (data == null) return;
-        Debug.msg(data.toString());
-
-        int newEntries = 0;
-        for (Enumeration el = data.elements(); el.hasMoreElements();) {
-            boolean newEntry = addEntry((Call) el.nextElement());
-            if (newEntry)
-                newEntries++;
-        }
 
         // Notify user?
-        if ((JFritz.getProperty("option.notifyOnCalls", "true").equals("true")) //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-                && (newEntries > 0)) {
+        if ((JFritz.getProperty("option.notifyOnCalls", "true").equals("true"))
+                && newEntries ) {
             jfritz.getJframe().setVisible(true);
             jfritz.getJframe().toFront();
         }
-        if (newEntries > 0) {
-			sortAllUnfilteredRows();
-			saveToXMLFile(JFritz.CALLS_FILE, true);
-            String msg;
-            // TODO: I18N
-            if (newEntries == 1) {
-                msg = JFritz.getMessage("new_call"); //$NON-NLS-1$
-            } else {
-                msg = JFritz.getMessage("new_calls").replaceAll("%N", Integer.toString(newEntries)); //$NON-NLS-1$,  //$NON-NLS-2$
-            }
-            JFritz.infoMsg(msg);
 
-        }
-        // Clear data on fritz box ?
-        // deleteFritzBoxCallerList=true indicates that list should be deleted in any case
-        if ((newEntries > 0
-                && JFritz.getProperty("option.deleteAfterFetch", "false") //$NON-NLS-1$,  //$NON-NLS-2$
-                        .equals("true"))  //$NON-NLS-1$
+        if ((newEntries
+                && JFritz.getProperty("option.deleteAfterFetch", "false")
+                        .equals("true"))
            || deleteFritzBoxCallerList) {
             JFritzUtils.clearListOnFritzBox(JFritz.getProperty("box.address"), //$NON-NLS-1$
                     JFritz.getProperty("box.password"), JFritzUtils //$NON-NLS-1$
@@ -490,8 +580,8 @@ public class CallerList extends AbstractTableModel {
         }
 
         //Make back-up after fetching the caller list?
-        if (newEntries > 0
-                && JFritzUtils.parseBoolean(JFritz.getProperty("option.createBackupAfterFetch", "false"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+        if (newEntries
+                && JFritzUtils.parseBoolean(JFritz.getProperty("option.createBackupAfterFetch", "false"))) {
             doBackup();
         }
 
@@ -607,7 +697,9 @@ public class CallerList extends AbstractTableModel {
      */
     public void sortAllFilteredRowsBy(int col, boolean asc) {
         // Debug.msg("Sorting column " + col + " " + asc);
-        Collections.sort(filteredCallerData, new ColumnSorter(col, asc));
+
+    	Debug.msg("Sorting all filtered Rows");
+    	Collections.sort(filteredCallerData, new ColumnSorter(col, asc));
         fireTableDataChanged();
         fireTableStructureChanged();
     }
@@ -620,7 +712,7 @@ public class CallerList extends AbstractTableModel {
      *            Index of column to be sorted by
      */
     public void sortAllFilteredRowsBy(int col) {
-        if ((sortColumn == col) && (sortDirection == false)) {
+    	if ((sortColumn == col) && (sortDirection == false)) {
             sortDirection = true;
         } else {
             sortColumn = col;
@@ -653,7 +745,7 @@ public class CallerList extends AbstractTableModel {
         }
 
         public int compare(Object a, Object b) {
-            Object o1 = null, o2 = null;
+            Object o1 = null, o2 = null;fireTableDataChanged();
             Call v1 = (Call) a;
             Call v2 = (Call) b;
             String columnName = getRealColumnName(columnIndex);
@@ -764,6 +856,8 @@ public class CallerList extends AbstractTableModel {
      * Updates the call filter.
      */
     public void updateFilter() {
+    	Debug.msg("updating the filter");
+
         boolean filterCallIn = JFritzUtils.parseBoolean(JFritz
                 .getProperty("filter.callin")); //$NON-NLS-1$
         boolean filterCallInFailed = JFritzUtils.parseBoolean(JFritz
@@ -783,10 +877,11 @@ public class CallerList extends AbstractTableModel {
         boolean filterCallByCall = JFritzUtils.parseBoolean(JFritz
                 .getProperty("filter.callbycall")); //$NON-NLS-1$
         boolean filterComment = JFritzUtils.parseBoolean(JFritz
-                .getProperty("filter.comment")); //$NON-NLS-1$
+                .getProperty("filter.comment")); //fireTableDataChanged();$NON-NLS-1$
         String filterSearch = JFritz.getProperty("filter.search", ""); //$NON-NLS-1$,  //$NON-NLS-2$
         String filterDateFrom = JFritz.getProperty("filter.date_from", ""); //$NON-NLS-1$,  //$NON-NLS-2$
         String filterDateTo = JFritz.getProperty("filter.date_to", ""); //$NON-NLS-1$,  //$NON-NLS-2$
+
 
         try {
             jfritz.getJframe().getCallerTable().getCellEditor()
@@ -798,8 +893,9 @@ public class CallerList extends AbstractTableModel {
                 && (!filterNumber) && (!filterDate) && (!filterHandy)
                 && (!filterFixed) && (!filterSip) && (!filterCallByCall)
                 && (!filterComment) && (filterSearch.length() == 0)) {
-            // Use unfiltered data
-            filteredCallerData = unfilteredCallerData;
+
+        	// Use unfiltered data
+            filteredCallerData =  (Vector) unfilteredCallerData.clone();
             sortAllFilteredRowsBy(sortColumn, sortDirection);
         } else { // Data got to be filtered
             Vector filteredSipProviders = new Vector();
@@ -1076,43 +1172,52 @@ public class CallerList extends AbstractTableModel {
 	 /**
 	   * @author Brian Jensen
 	   *
-	   * function reads the file and processes it line by line
+	   * function reads the stream line by line using a buffered reader and
 	   * using the appropriate parse function based on the structure
 	   *
 	   * currently supported file types:
 	   * JFritz's own export format: EXPORT_CSV_FOMAT_JFRITZ
 	   * Exported files from the fritzbox's web interface: EXPORT_CSV_FORMAT_FRITZBOX
-	   * Exported files from newer boxes (7170) EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE
+	   * Exported files from fritzbox's Push service EXPORT_CSV_FORMAT_FRITZBOX_PUSHSERVICE
+	   * Exported files from the new fritzbox's new Firmware EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE
+	   * Exported files from the fritzbox's web interface: EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH (english firmware)
+	   *
 	   *
 	   * function also has the ability to 'nicely' handle broken CSV lines
 	   *
+	   * NOTE: As is standard the caller must close the input stream on exit!
+	   *
 	   * @param filename of the csv file to import from
 	   */
-	  public void importFromCSVFile(String filename){
-	    //Is the performace gain from this really worth it?
-	    //And if there are duplicate calls, only the first one gets filtered out
-	    alreadyKnownCalls = (Vector) unfilteredCallerData.clone();
-	    Debug.msg("Importing from csv file " + filename); //$NON-NLS-1$
-	    String line = ""; //$NON-NLS-1$
-	    boolean isJFritzExport = false; //flag to check which type to parse
-	    boolean isNewFirmware = false;  //check if its was exported with a new box
+	  public boolean importFromCSVFile(BufferedReader br){
+
+	    String line = "";
+	    boolean isJFritzExport = false; //flags to check which type to parse
+	    boolean isPushFile = false;
+	    boolean isNewFirmware = false;
+	    boolean isEnglishFirmware = false;
+	    int newEntries = 0;
 
 	    try {
-	      FileReader fr = new FileReader(filename);
-	          BufferedReader br = new BufferedReader(fr);
 	          line = br.readLine();
 
 	          //check if we have a correct header
 	          if(line.equals(EXPORT_CSV_FORMAT_JFRITZ) || line.equals(EXPORT_CSV_FORMAT_FRITZBOX)
-	        		  || line.equals(EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE)){
+	        		  || line.equals(EXPORT_CSV_FORMAT_FRITZBOX_PUSHSERVICE)
+	        		  || line.equals(EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE)
+	        		  || line.equals(EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH)){
 
+	        	  //check which kind of a file it is
 	        	  if(line.equals(EXPORT_CSV_FORMAT_JFRITZ))
 	        		  isJFritzExport = true;
+	        	  else if(line.equals(EXPORT_CSV_FORMAT_FRITZBOX_PUSHSERVICE))
+	        	  		isPushFile = true;
 	        	  else if(line.equals(EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE))
-	        	  		isNewFirmware = true;
+	        		  	isNewFirmware = true;
+	        	  else if(line.equals(EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH))
+	        		  	isEnglishFirmware = true;
 
 	        	  int linesRead = 0;
-	        	  int newEntries = 0;
 	        	  Call c;
 	        	  while(null != (line = br.readLine())){
 	        		  linesRead++;
@@ -1120,23 +1225,34 @@ public class CallerList extends AbstractTableModel {
 	        		  //call the apropriate parse function
 	        		  if(isJFritzExport)
 	        			  c = parseCallJFritzCSV(line);
+	        		  else if(isNewFirmware)
+	        			  c = parseCallFritzboxNewCSV(line);
+	        		  else if(isEnglishFirmware)
+	        			  c = parseCallFritzboxEnglishCSV(line);
 	        		  else
-	        			  c = parseCallFritzboxCSV(line, isNewFirmware);
+	        			  c = parseCallFritzboxCSV(line, isPushFile);
 
-	        		  if(c == null)
-	        			  Debug.msg("Error encountered processing the csv file, continuing"); //$NON-NLS-1$
+					  if(c == null)
+	        			  Debug.msg("Error encountered processing the csv file, continuing");
 	        		  else if(addEntry(c)){
 	        			  newEntries++;
 
 	        		  }
 	        	  }
 
-	        	  Debug.msg(linesRead+" lines read from csv file "+filename); //$NON-NLS-1$
-	        	  Debug.msg(newEntries+" new entries processed"); //$NON-NLS-1$
+	        	  Debug.msg(linesRead+" Lines read from csv file ");
+	        	  Debug.msg(newEntries+" New entries processed");
 
-	        	  if (newEntries > 0) {
-	        		  sortAllUnfilteredRows();
+        		  fireUpdateCallVector();
+
+        		  	if (newEntries > 0) {
+
+	        		  //uncomment these in case the import function is broken
+	        		  //for(int i=0; i < unfilteredCallerData.size(); i++)
+	        		  //	  System.out.println(unfilteredCallerData.elementAt(i).toString());
+
 	        		  saveToXMLFile(JFritz.CALLS_FILE, true);
+
 	        		  String msg;
 
 	        		  if (newEntries == 1) {
@@ -1148,7 +1264,7 @@ public class CallerList extends AbstractTableModel {
 	        		  JFritz.infoMsg(msg);
 
 	        	  }else{
-	        		  JFritz.infoMsg(JFritz.getMessage("no_imported_calls")); //$NON-NLS-1$
+	        		  //JFritz.infoMsg(JFritz.getMessage("no_imported_calls")); //$NON-NLS-1$
 	        	  }
 
 	          }else{
@@ -1156,12 +1272,18 @@ public class CallerList extends AbstractTableModel {
 	        	  Debug.err("Wrong file type or corrupted file"); //$NON-NLS-1$
 	          }
 
-	          br.close();
+	          //NOTE: the caller must close the stream!
+
 	          } catch (FileNotFoundException e) {
-	              Debug.err("Could not read from " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+	              Debug.err("Could not read from File!");
 	          } catch(IOException e){
 	            Debug.err("IO Exception reading csv file"); //$NON-NLS-1$
 	          }
+
+	          if(newEntries > 0)
+	        	  return true;
+	          else
+	        	  return false;
 
 	  }
 
@@ -1219,8 +1341,37 @@ public class CallerList extends AbstractTableModel {
 	      return null;
 	    }
 
+	    //change the port to fit the jfritz naming convention
+	    if (field[5].equals("FON1")) {
+          field[5] = "0";
+      } else if (field[5].equals("FON2")) {
+          field[5] = "1";
+      } else if (field[5].equals("FON3")) {
+          field[5] = "2";
+      } else if (field[5].equals("Durchwahl")){
+      	field[5] = "3";
+      } else if (field[5].equals("ISDN")) {
+          field[5] = "4";
+      } else if (field[5].equals("DATA")){
+      	field[5] = "36";
+      }
+
+	    //Parse the SIP Provider and save it correctly
+	    if (field[4].startsWith("Internet: ")) {
+          Enumeration en = jfritz.getSIPProviderTableModel()
+                  .getProviderList().elements();
+          while (en.hasMoreElements()) {
+              SipProvider sipProvider = (SipProvider) en
+                      .nextElement();
+              if (sipProvider.getNumber().equals(field[4].substring(10))) {
+                  field[4] = "SIP" + sipProvider.getProviderID();
+                  break;
+              }
+          }
+      }
+
 	    //Phone number
-	    if(field[3] != null){
+	    if(!field[3].equals("")){
 	      number = new PhoneNumber(field[3]);
 	      number.setCallByCall(field[10]);
 	    }else
@@ -1244,14 +1395,15 @@ public class CallerList extends AbstractTableModel {
 	  /**
 	   * @author Brian Jensen
 	   * function parses a line of a csv file, that was directly exported
-	   * from the Fritzbox web interface
+	   * from the Fritzbox web interface, either directly or through jfritz
+	   *
 	   * function parses according to format: EXPORT_CSV_FORMAT_FRITZBOX
-	   * and EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE
+	   * and EXPORT_CSV_FORMAT_FRITZBOX_PUSHSERVICE
 	   *
 	   * @param line contains the line to be processed
 	   * @return is call object, or null if the csv was invalid
 	   */
-	  public Call parseCallFritzboxCSV(String line, boolean isNewFirmware){
+	  public Call parseCallFritzboxCSV(String line, boolean isPushFile){
 		  String[] field = line.split(PATTERN_CSV);
 		    Call call;
 		    CallType calltype;
@@ -1259,21 +1411,22 @@ public class CallerList extends AbstractTableModel {
 		    PhoneNumber number;
 
 		    //check if line has correct amount of entries
-		    if(field.length < 6){
-		      Debug.err("Invalid CSV format!"); //$NON-NLS-1$
-		      return null;
-		    }
+		    if(field.length != 6){
+		    	Debug.err("Invalid CSV format.)");		//if you find an error here, its not because
+		    	return null;						//jfritz is broken, the fritz box exports things
+		    }								//with an extra empty line for whatever reason
+
 
 		    //Call type
-		    //Why would they change the cvs format in the new firmware???
-		    if((field[0].equals("1") && !isNewFirmware) //$NON-NLS-1$
-		    		|| (field[0].equals("2") && isNewFirmware)){ //$NON-NLS-1$
+		    //Why would they change the cvs format in the Push???
+		    if((field[0].equals("1") && !isPushFile) //$NON-NLS-1$
+		    		|| (field[0].equals("2") && isPushFile)){ //$NON-NLS-1$
 		        calltype = new CallType("call_in"); //$NON-NLS-1$
-		    }else if((field[0].equals("2") && !isNewFirmware) //$NON-NLS-1$
-		    		|| (field[0].equals("3") && isNewFirmware)){ //$NON-NLS-1$
+		    }else if((field[0].equals("2") && !isPushFile) //$NON-NLS-1$
+		    		|| (field[0].equals("3") && isPushFile)){ //$NON-NLS-1$
 		      calltype = new CallType("call_in_failed"); //$NON-NLS-1$
-		    }else if((field[0].equals("3") && !isNewFirmware) //$NON-NLS-1$
-		    		|| (field[0].equals("1") && isNewFirmware)){ //$NON-NLS-1$
+		    }else if((field[0].equals("3") && !isPushFile) //$NON-NLS-1$
+		    		|| (field[0].equals("1") && isPushFile)){ //$NON-NLS-1$
 		      calltype = new CallType("call_out"); //$NON-NLS-1$
 		    }else{
 		      Debug.err("Invalid Call type in CSV file!"); //$NON-NLS-1$
@@ -1294,14 +1447,44 @@ public class CallerList extends AbstractTableModel {
 		    }
 
 		    //Phone number
-		    if(field[2] != null)
+		    if(!field[2].equals(""))
 		      number = new PhoneNumber(field[2]);
 		    else
 		      number = null;
 
 		    //split the duration into two stings, hours:minutes
-		    String[] time = field[5].split(":"); //$NON-NLS-1$
-		    //make the call object
+		    String[] time = field[5].split(":");
+
+		    //change the port to fit the jfritz naming convention
+		    if (field[3].equals("FON 1")) {
+              field[3] = "0";
+          } else if (field[3].equals("FON 2")) {
+              field[3] = "1";
+          } else if (field[3].equals("FON 3")) {
+              field[3] = "2";
+          } else if (field[3].equals("Durchwahl")){
+          	field[3] = "3";
+          } else if (field[3].equals("FON S0")) {
+              field[3] = "4";
+          } else if (field[3].equals("DATA S0")){
+          	field[3] = "36";
+          }
+
+		    //Parse the SIP Provider and save it correctly
+		    if (field[4].startsWith("Internet: ")) {
+              Enumeration en = jfritz.getSIPProviderTableModel()
+                      .getProviderList().elements();
+              while (en.hasMoreElements()) {
+                  SipProvider sipProvider = (SipProvider) en
+                          .nextElement();
+                  if (sipProvider.getNumber().equals(field[4].substring(10))) {
+                      field[4] = "SIP" + sipProvider.getProviderID();
+                      break;
+                  }
+              }
+          }
+
+		    //make the call object and exit
 		    call = new Call(jfritz, calltype, calldate, number, field[3], field[4],
 		        Integer.parseInt(time[0])*3600 + Integer.parseInt(time[1])*60);
 
@@ -1309,4 +1492,204 @@ public class CallerList extends AbstractTableModel {
 
 	  }
 
+	  /**
+	   * @author KCh
+	   * function parses a line of a csv file, that was directly exported
+	   * from the Fritzbox web interface with BETA FW or with
+	   * a fritzbox with the new firmware >= XX.04.05
+	   *
+	   *
+	   * @param line contains the line to be processed
+	   * @return is call object, or null if the csv was invalid
+	   */
+	  public Call parseCallFritzboxNewCSV(String line){
+		    String[] field = line.split(PATTERN_CSV);
+		    Call call;
+		    CallType calltype;
+		    Date calldate;
+		    PhoneNumber number;
+
+		    //check if line has correct amount of entries
+		    if(field.length != 7){
+		      Debug.err("Invalid CSV format!");
+		      return null;
+		    }
+
+
+		    //Call type
+		    if((field[0].equals("1"))){
+		        calltype = new CallType("call_in");
+		    }else if((field[0].equals("2"))){
+		      calltype = new CallType("call_in_failed");
+		    }else if((field[0].equals("3"))){
+		      calltype = new CallType("call_out");
+		    }else{
+		      Debug.err("Invalid Call type in CSV file!"); //$NON-NLS-1$
+		      return null;
+		    }
+
+		    //Call date and time
+		    if(field[1] != null){
+		    	try{
+			        calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(field[1]); //$NON-NLS-1$
+			      }catch(ParseException e){
+			        Debug.err("Invalid date format in csv file!"); //$NON-NLS-1$
+			        return null;
+			      }
+		    }else{
+		    	Debug.err("Invalid CSV file!"); //$NON-NLS-1$
+		    	return null;
+		    }
+
+		    //Phone number
+		    if(!field[3].equals(""))
+		      number = new PhoneNumber(field[3]);
+		    else
+		      number = null;
+
+		    //split the duration into two stings, hours:minutes
+		    String[] time = field[6].split(":");
+		    //make the call object
+
+		    //change the port to fit the jfritz naming convention
+		    if (field[4].equals("FON 1")) {
+              field[4] = "0";
+          } else if (field[4].equals("FON 2")) {
+              field[4] = "1";
+          } else if (field[4].equals("FON 3")) {
+              field[4] = "2";
+          } else if (field[4].equals("Durchwahl")){
+          	field[4] = "3";
+          } else if (field[4].equals("FON S0")) {
+              field[4] = "4";
+          } else if (field[4].equals("DATA S0")){
+          	field[4] = "36";
+          }
+
+		    //Parse the SIP Provider and save it correctly
+		    if (field[5].startsWith("Internet: ")) {
+              Enumeration en = jfritz.getSIPProviderTableModel()
+                      .getProviderList().elements();
+              while (en.hasMoreElements()) {
+                  SipProvider sipProvider = (SipProvider) en
+                          .nextElement();
+                  if (sipProvider.getNumber().equals(field[5].substring(10))) {
+                      field[5] = "SIP" + sipProvider.getProviderID();
+                      break;
+                  }
+              }
+          }
+
+		    //make the call object and exit
+		    call = new Call(jfritz, calltype, calldate, number, field[4], field[5],
+		        Integer.parseInt(time[0])*3600 + Integer.parseInt(time[1])*60);
+
+		    return call;
+
+	  }
+
+	  /**
+	   * @author Brian Jensen
+	   * function parses a line of a csv file, that was directly exported
+	   * from the Fritzbox web interface, either directly or through jfritz
+	   *
+	   * function parses according to format: EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH
+	   * this is the format exported by boxes with english firmwar (unkown version)
+	   *
+	   * Note: This function has yet to be tested!
+	   *
+	   * @param line contains the line to be processed
+	   * @return is call object, or null if the csv was invalid
+	   *
+	   */
+	  public Call parseCallFritzboxEnglishCSV(String line){
+		  String[] field = line.split(PATTERN_CSV);
+		  //leave this in here in case the push file is different, like with the german firmware
+		  boolean isPushFile = false;
+		  Call call;
+		  CallType calltype;
+		  Date calldate;
+		  PhoneNumber number;
+
+		  //check if line has correct amount of entries
+		  if(field.length != 6){
+		    	Debug.err("Invalid CSV format");		//if you find an error here, its not because
+		    	return null;						//jfritz is broken, the fritz box exports things
+		    }								//with an extra empty line for whatever reason
+
+
+		    //Call type
+		    //Why would they change the cvs format in the Push file???
+		    if((field[0].equals("1") && !isPushFile) //$NON-NLS-1$
+		    		|| (field[0].equals("2") && isPushFile)){ //$NON-NLS-1$
+		        calltype = new CallType("call_in"); //$NON-NLS-1$
+		    }else if((field[0].equals("2") && !isPushFile) //$NON-NLS-1$
+		    		|| (field[0].equals("3") && isPushFile)){ //$NON-NLS-1$
+		      calltype = new CallType("call_in_failed"); //$NON-NLS-1$
+		    }else if((field[0].equals("3") && !isPushFile) //$NON-NLS-1$
+		    		|| (field[0].equals("1") && isPushFile)){ //$NON-NLS-1$
+		      calltype = new CallType("call_out"); //$NON-NLS-1$
+		    }else{
+		      Debug.err("Invalid Call type in CSV file!"); //$NON-NLS-1$
+		      return null;
+		    }
+
+		    //Call date and time
+		    if(field[1] != null){
+		    	try{
+			        calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(field[1]); //$NON-NLS-1$
+			      }catch(ParseException e){
+			        Debug.err("Invalid date format in csv file!"); //$NON-NLS-1$
+			        return null;
+			      }
+		    }else{
+		    	Debug.err("Invalid CSV file!"); //$NON-NLS-1$
+		    	return null;
+		    }
+
+		    //Phone number
+		    if(!field[2].equals(""))
+		      number = new PhoneNumber(field[2]);
+		    else
+		      number = null;
+
+		    //split the duration into two stings, hours:minutes
+		    String[] time = field[5].split(":");
+
+		    //change the port to fit the jfritz naming convention
+		    if (field[3].equals("FON 1")) {
+              field[3] = "0";
+          } else if (field[3].equals("FON 2")) {
+              field[3] = "1";
+          } else if (field[3].equals("FON 3")) {
+              field[3] = "2";
+          } else if (field[3].equals("Durchwahl")){
+          	field[3] = "3";
+          } else if (field[3].equals("FON S0")) {
+              field[3] = "4";
+          } else if (field[3].equals("DATA S0")){
+          	field[3] = "36";
+          }
+
+		    //Parse the SIP Provider and save it correctly
+		    if (field[4].startsWith("Internet: ")) {
+              Enumeration en = jfritz.getSIPProviderTableModel()
+                      .getProviderList().elements();
+              while (en.hasMoreElements()) {
+                  SipProvider sipProvider = (SipProvider) en
+                          .nextElement();
+                  if (sipProvider.getNumber().equals(field[4].substring(10))) {
+                      field[4] = "SIP" + sipProvider.getProviderID();
+                      break;
+                  }
+              }
+          }
+
+		    //make the call object and exit
+		    call = new Call(jfritz, calltype, calldate, number, field[3], field[4],
+		        Integer.parseInt(time[0])*3600 + Integer.parseInt(time[1])*60);
+
+		    return call;
+
+	  }
 }

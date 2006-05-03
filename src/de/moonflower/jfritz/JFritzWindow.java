@@ -15,7 +15,10 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Timer;
@@ -1432,13 +1435,26 @@ public class JFritzWindow extends JFrame
 						JFritz.getMessage("dialog_title_file_not_found"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
 
 			} else {
-				jfritz.getCallerlist()
-						.importFromCSVFile(file.getAbsolutePath());
 
-				if (JFritz.getProperty("option.lookupAfterFetch", "false") //$NON-NLS-1$,  //$NON-NLS-2$
-						.equals("true")) { //$NON-NLS-1$
-					lookupButton.doClick();
+				try{
+					FileReader fr = new FileReader(file.getAbsolutePath());
+					BufferedReader br = new BufferedReader(fr);
+					jfritz.getCallerlist().importFromCSVFile(br);
+
+					br.close();
+
+					if (JFritz.getProperty("option.lookupAfterFetch", "false")
+							.equals("true")) {
+						lookupButton.doClick();
+					}
+
+				}catch(FileNotFoundException e){
+					Debug.err("File not found!");
+				}catch(IOException e){
+					Debug.err("IO Excetion reading file!");
 				}
+
+
 			}
 		}
 	}
