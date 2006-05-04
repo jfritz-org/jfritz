@@ -1232,12 +1232,13 @@ public class CallerList extends AbstractTableModel {
 	        		  else
 	        			  c = parseCallFritzboxCSV(line, isPushFile);
 
-					  if(c == null)
-	        			  Debug.msg("Error encountered processing the csv file, continuing");
-	        		  else if(addEntry(c)){
-	        			  newEntries++;
+					  if(c == null){
+	        			  if(!line.equals(""))
+	        				  Debug.err("Broken entry: "+line);
 
-	        		  }
+					  }else if(addEntry(c)){
+	        			  newEntries++;
+					  }
 	        	  }
 
 	        	  Debug.msg(linesRead+" Lines read from csv file ");
@@ -1306,8 +1307,9 @@ public class CallerList extends AbstractTableModel {
 
 	    //check if line has correct amount of entries
 	    if(field.length < 12){
-	      Debug.err("Invalid CSV format!"); //$NON-NLS-1$
-	      return null;
+	    	if(field.length != 1)
+	    		Debug.err("Invalid CSV format, incorrect number of fields!"); //$NON-NLS-1$
+	    	return null;
 	    }
 
 	    //Strip those damn quotes
@@ -1323,7 +1325,7 @@ public class CallerList extends AbstractTableModel {
 	    }else if(field[0].equals("Outgoing")){ //$NON-NLS-1$
 	      calltype = new CallType("call_out"); //$NON-NLS-1$
 	    }else{
-	      Debug.err("Invalid Call type in CSV file!"); //$NON-NLS-1$
+	      Debug.err("Invalid Call type in CSV entry!"); //$NON-NLS-1$
 	      return null;
 	    }
 
@@ -1333,11 +1335,11 @@ public class CallerList extends AbstractTableModel {
 	      try{
 	        calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(field[1]+" "+field[2]); //$NON-NLS-1$,  //$NON-NLS-2$
 	      }catch(ParseException e){
-	        Debug.err("Invalid date format in csv file!"); //$NON-NLS-1$
+	        Debug.err("Invalid date format in csv entry!"); //$NON-NLS-1$
 	        return null;
 	      }
 	    }else{
-	      Debug.err("Invalid CSV file!"); //$NON-NLS-1$
+	      Debug.err("Invalid date format in csv entry!"); //$NON-NLS-1$
 	      return null;
 	    }
 
@@ -1412,10 +1414,10 @@ public class CallerList extends AbstractTableModel {
 
 		    //check if line has correct amount of entries
 		    if(field.length != 6){
-		    	Debug.err("Invalid CSV format.)");		//if you find an error here, its not because
+		    	if(field.length != 1)
+		    		Debug.err("Invalid CSV format, incorrect number of fields!");		//if you find an error here, its not because
 		    	return null;						//jfritz is broken, the fritz box exports things
 		    }								//with an extra empty line for whatever reason
-
 
 		    //Call type
 		    //Why would they change the cvs format in the Push???
@@ -1429,7 +1431,7 @@ public class CallerList extends AbstractTableModel {
 		    		|| (field[0].equals("1") && isPushFile)){ //$NON-NLS-1$
 		      calltype = new CallType("call_out"); //$NON-NLS-1$
 		    }else{
-		      Debug.err("Invalid Call type in CSV file!"); //$NON-NLS-1$
+		      Debug.err("Invalid Call type in CSV entry!"); //$NON-NLS-1$
 		      return null;
 		    }
 
@@ -1438,11 +1440,11 @@ public class CallerList extends AbstractTableModel {
 		    	try{
 			        calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(field[1]); //$NON-NLS-1$
 			      }catch(ParseException e){
-			        Debug.err("Invalid date format in csv file!"); //$NON-NLS-1$
+			        Debug.err("Invalid date format in csv entry!"); //$NON-NLS-1$
 			        return null;
 			      }
 		    }else{
-		    	Debug.err("Invalid CSV file!"); //$NON-NLS-1$
+		    	Debug.err("Invalid date format in csv entry!"); //$NON-NLS-1$
 		    	return null;
 		    }
 
@@ -1511,8 +1513,9 @@ public class CallerList extends AbstractTableModel {
 
 		    //check if line has correct amount of entries
 		    if(field.length != 7){
-		      Debug.err("Invalid CSV format!");
-		      return null;
+		    	if(field.length != 1)
+		    		Debug.err("Invalid CSV format, incorrect number fields!");
+		    	return null;
 		    }
 
 
@@ -1524,7 +1527,7 @@ public class CallerList extends AbstractTableModel {
 		    }else if((field[0].equals("3"))){
 		      calltype = new CallType("call_out");
 		    }else{
-		      Debug.err("Invalid Call type in CSV file!"); //$NON-NLS-1$
+		      Debug.err("Invalid Call type in CSV entry!"); //$NON-NLS-1$
 		      return null;
 		    }
 
@@ -1533,11 +1536,11 @@ public class CallerList extends AbstractTableModel {
 		    	try{
 			        calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(field[1]); //$NON-NLS-1$
 			      }catch(ParseException e){
-			        Debug.err("Invalid date format in csv file!"); //$NON-NLS-1$
+			        Debug.err("Invalid date format in csv entry!"); //$NON-NLS-1$
 			        return null;
 			      }
 		    }else{
-		    	Debug.err("Invalid CSV file!"); //$NON-NLS-1$
+		    	Debug.err("Invalid date format in csv entry!"); //$NON-NLS-1$
 		    	return null;
 		    }
 
@@ -1613,10 +1616,10 @@ public class CallerList extends AbstractTableModel {
 
 		  //check if line has correct amount of entries
 		  if(field.length != 6){
-		    	Debug.err("Invalid CSV format");		//if you find an error here, its not because
+		    	if(field.length != 1)
+		    		Debug.err("Invalid CSV format, incorrect number of fields");		//if you find an error here, its not because
 		    	return null;						//jfritz is broken, the fritz box exports things
 		    }								//with an extra empty line for whatever reason
-
 
 		    //Call type
 		    //Why would they change the cvs format in the Push file???
@@ -1630,7 +1633,7 @@ public class CallerList extends AbstractTableModel {
 		    		|| (field[0].equals("1") && isPushFile)){ //$NON-NLS-1$
 		      calltype = new CallType("call_out"); //$NON-NLS-1$
 		    }else{
-		      Debug.err("Invalid Call type in CSV file!"); //$NON-NLS-1$
+		      Debug.err("Invalid Call type in CSV entry!"); //$NON-NLS-1$
 		      return null;
 		    }
 
@@ -1639,11 +1642,11 @@ public class CallerList extends AbstractTableModel {
 		    	try{
 			        calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(field[1]); //$NON-NLS-1$
 			      }catch(ParseException e){
-			        Debug.err("Invalid date format in csv file!"); //$NON-NLS-1$
+			        Debug.err("Invalid date format in csv entry!"); //$NON-NLS-1$
 			        return null;
 			      }
 		    }else{
-		    	Debug.err("Invalid CSV file!"); //$NON-NLS-1$
+		    	Debug.err("Invalid date format in csv entry!"); //$NON-NLS-1$
 		    	return null;
 		    }
 
