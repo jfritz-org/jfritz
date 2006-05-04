@@ -47,7 +47,6 @@
  * TODO: Einstelloption, wie lange die Popups geöffnet bleiben sollen
  * TODO: Filter für Ports
  * TODO: Internationalisierung abschließen
- * TODO: Vergleich auf doppelte Anrufe optimieren (HASH-Tabelle?)
  * TODO: Language-Files checken, ob tatsächlich alle Werte benötigt werden
  * TODO: Sonderzeichen werden in den Balloontips unter Windows nicht korrekt angezeigt. Scheint ein Windowsproblem zu sein. Lösung/Workaround noch nicht gefunden.
  *
@@ -399,7 +398,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.249 2006/05/02 20:11:50 baefer Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.250 2006/05/04 17:20:14 robotniko Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
