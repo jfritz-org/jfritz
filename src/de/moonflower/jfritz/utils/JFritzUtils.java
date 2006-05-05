@@ -80,6 +80,8 @@ public class JFritzUtils {
             + "\\s*<td class=\"c1\">(\\d*)</td>" //$NON-NLS-1$
             + "\\s*<td class=\"c2\"><span title=\"[^\"]*\">([^<]*)"; //$NON-NLS-1$
 
+    private final static String PATTERN_QUICKDIAL_BETA = "<script type=\"text/javascript\">document.write\\(TrFon\\(\"[^\"]*\", \"([^\"]*)\", \"([^\"]*)\", \"([^\"]*)\", \"([^\"]*)\"\\)\\);</script>";
+
     private final static String PATTERN_SIPPROVIDER_OLD = "<!-- \"(\\d)\" / \"(\\w*)\" -->" //$NON-NLS-1$
     							// FW <= 37
             + "\\s*<td class=\"c1\">\\s*<input type=checkbox id=\"uiViewActivsip\\d\"" //$NON-NLS-1$
@@ -567,13 +569,22 @@ public class JFritzUtils {
         data = removeDuplicateWhitespace(data);
         Pattern p;
         if (firmware.getMajorFirmwareVersion() == 4
-                && firmware.getMinorFirmwareVersion() >= 3) {
+                && firmware.getMinorFirmwareVersion() >= 3 && firmware.getMinorFirmwareVersion() < 5) {
             p = Pattern.compile(PATTERN_QUICKDIAL_NEW);
-            quickdial_indizes[NAME] = 3;
+            quickdial_indizes[NAME] = 1;
             quickdial_indizes[QUICKDIAL] = 3;
             quickdial_indizes[VANITY] = 4;
             quickdial_indizes[NUMBER] = 2;
-        } else {
+        }
+        else if (firmware.getMajorFirmwareVersion() == 4
+                    && firmware.getMinorFirmwareVersion() >= 5) {
+        	p = Pattern.compile(PATTERN_QUICKDIAL_BETA);
+            quickdial_indizes[NAME] = 1;
+            quickdial_indizes[QUICKDIAL] = 3;
+            quickdial_indizes[VANITY] = 4;
+            quickdial_indizes[NUMBER] = 2;
+        }
+        else {
             p = Pattern.compile(PATTERN_QUICKDIAL);
             quickdial_indizes[QUICKDIAL] = 1;
             quickdial_indizes[VANITY] = 2;
