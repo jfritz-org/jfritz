@@ -1041,13 +1041,7 @@ public class JFritzWindow extends JFrame
 		else if (e.getActionCommand().equals("import_contacts_thunderbird_csv")) //$NON-NLS-1$
 			importContactsThunderbirdCSV();
 		else if (e.getActionCommand().equals("showhide")) {
-			if ( this.getState() == JFrame.ICONIFIED )
-			{
-				setState(JFrame.NORMAL);
-				setVisible(true);
-			}
-			else
-				setVisible(!isVisible());
+			jfritz.hideShowJFritz();
 		}
 		else
 			Debug.err("Unimplemented action: " + e.getActionCommand()); //$NON-NLS-1$
