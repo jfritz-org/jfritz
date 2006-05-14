@@ -112,7 +112,9 @@ public class ReverseLookup {
 						i++;
 					}
 					d.close();
-					Debug.msg("DasOertliche Webpage: " + data); //$NON-NLS-1$
+					Debug.msg("Begin processing responce from dasoertliche.de");
+					//This just makes the debug output unreadable!
+					//Debug.msg("DasOertliche Webpage: " + data); //$NON-NLS-1$
 					Pattern p = Pattern
 							.compile("<a\\s*class=\"blb\" href=\"[^\"]*\">([^<]*)</a>(?:<br>([^<]*))?</td>"); //$NON-NLS-1$
 

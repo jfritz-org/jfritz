@@ -8,8 +8,8 @@ import javax.swing.JOptionPane;
 
 import de.moonflower.jfritz.JFritz;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -17,33 +17,59 @@ import java.util.Date;
  * Write debug messages to STDOUT or FILE.
  * Show Error-Dialog with a special message
  *
+ * 14.05.06 Added support for redirecting System.out and System.err
+ * Now all exceptions are also included in the debug file
+ * Brian Jensen
+ *
  * @author Arno Willig
  *
  */
 public class Debug {
 
 	private static int debugLevel;
+	private static boolean verboseMode = false;
 	private static boolean logFile = false;
-	private static String logFileName = ""; //$NON-NLS-1$
+	private static PrintStream fileRedirecter, originalOut;
+
 
 	/**
 	 * Turns debug-mode on
 	 *
 	 */
 	public static void on() {
+		verboseMode = true;
 		Debug.debugLevel = 3;
 		msg("debugging mode has been enabled"); //$NON-NLS-1$
+
 	}
 
 	/**
+	 * This function works by redirecting System.out and System.err to fname
+	 * The original console stream is saved as originalout
+	 * 15.05.06 Brian Jensen
+	 *
 	 * Turn on logging mode to file
 	 * @param fname Filename to log into
 	 */
 	public static void logToFile(String fname) {
 		Debug.debugLevel = 3;
 		logFile = true;
-		logFileName = fname;
-		logMessage("------------------------------------------"); //$NON-NLS-1$
+		//Save the original outputstream so we can write to the console too!
+		originalOut = System.out;
+
+		try {
+			//setup the redirection of Sysem.out and System.err
+			FileOutputStream tmpOutputStream = new FileOutputStream(fname);
+			fileRedirecter = new PrintStream(tmpOutputStream);
+			System.setOut(fileRedirecter);
+			System.setErr(fileRedirecter);
+ 		}
+
+		catch (Exception e) {
+			System.out.println("EXCEPTION when writing to LOGFILE"); //$NON-NLS-1$
+		}
+
+		fileRedirecter.println("------------------------------------------"); //$NON-NLS-1$
 		msg("logging to file \""+ fname + "\" has been enabled"); //$NON-NLS-1$,  //$NON-NLS-2$
 	}
 
@@ -74,8 +100,11 @@ public class Debug {
 		if (debugLevel >= level) {
 			message = "(" + getCurrentTime() + ") DEBUG: " + message; //$NON-NLS-1$,  //$NON-NLS-2$
 			System.out.println(message);
-			if (logFile) {
-				logMessage(message);
+
+			//if both verbose mode and logging enabled, make sure output
+			//still lands on the console as well!
+			if (logFile && verboseMode) {
+				originalOut.println(message);
 			}
 		}
 	}
@@ -87,16 +116,21 @@ public class Debug {
 	public static void err(String message) {
 		message = "(" + getCurrentTime() + ") ERROR: " + message; //$NON-NLS-1$,  //$NON-NLS-2$
 		System.err.println(message);
-		if (logFile) {
-			logMessage(message);
+
+		//if both verbose mode and logging enabled, make sure output
+		//still lands on the console as well!
+		if (logFile && verboseMode) {
+			originalOut.println(message);
 		}
 	}
+
 
 	/**
 	 * Write message to logfile
 	 * @param message
-	 */
+
 	private static void logMessage(String message) {
+
 		BufferedWriter appendedFile = null;
 		try {
 		appendedFile = new BufferedWriter(new FileWriter(logFileName, true));
@@ -114,7 +148,9 @@ public class Debug {
 			    // just ignore it
 			}
 		}
+
 	}
+	*/
 
     /**
      * Show Dialog with message
