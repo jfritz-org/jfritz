@@ -52,6 +52,7 @@
  *
  * JFritz 0.6.1
  * - Neue Strings:
+ * - Bugfix: Standardtelefonnummern können wieder geändert werden
  * - Neu: Logfiles werden jetzt mittels Stream redirection geschrieben (heißt auch die Exceptions werden in den Logfiles aufgenommen :) )
  * - Bugfix: Kurzwahlen werden weider korrekt abgeholt
  *
@@ -403,7 +404,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.252 2006/05/14 15:37:48 capncrunch Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.253 2006/05/16 21:28:33 capncrunch Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 

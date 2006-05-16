@@ -182,7 +182,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 						.elementAt(row);
 				switch (column) {
 				case 0:
-					if (p.getType().equals("")) //$NON-NLS-1$
+					if (!p.getType().equals("")) //$NON-NLS-1$
 						person.setStandard(p.getType());
 					break;
 				case 1:
