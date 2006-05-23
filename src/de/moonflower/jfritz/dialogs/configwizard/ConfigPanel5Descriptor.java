@@ -1,0 +1,40 @@
+package de.moonflower.jfritz.dialogs.configwizard;
+
+import javax.swing.JPanel;
+
+import com.nexes.wizard.*;
+
+import de.moonflower.jfritz.JFritz;
+/**
+ * @author Brian Jensen
+ *
+ * This is the  descriptor for the call monitor panel
+ *
+ * @see http://java.sun.com/developer/technicalArticles/GUI/swing/wizard/index.html
+ *
+ */
+public class ConfigPanel5Descriptor extends WizardPanelDescriptor {
+
+	  public static final String IDENTIFIER = "MONITOR_PANEL";
+
+	  public JPanel configpanel5;
+
+	   public ConfigPanel5Descriptor(JFritz jfritz) {
+			configpanel5 = new ConfigPanel5(jfritz);
+			setPanelDescriptorIdentifier(IDENTIFIER);
+		    setPanelComponent(configpanel5);
+	    }
+
+	    public Object getNextPanelDescriptor() {
+	        return FINISH;
+	    }
+
+	    public Object getBackPanelDescriptor() {
+	        return ConfigPanel4Descriptor.IDENTIFIER;
+	    }
+
+	    public void aboutToDisplayPanel() {
+
+	    }
+
+}

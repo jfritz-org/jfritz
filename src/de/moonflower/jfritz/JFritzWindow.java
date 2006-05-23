@@ -488,6 +488,10 @@ public class JFritzWindow extends JFrame
 		}
 		optionsMenu.add(lnfMenu);
 
+		item = new JMenuItem("JFritz Configuration Wizard", null); //$NON-NLS-1$
+		item.setActionCommand("configwizard"); //$NON-NLS-1$
+		item.addActionListener(this);
+		optionsMenu.add(item);
 
 		if (!JFritz.runsOn().equals("Mac")) { //$NON-NLS-1$
 			item = new JMenuItem(JFritz.getMessage("config"), 'e'); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -1042,7 +1046,8 @@ public class JFritzWindow extends JFrame
 			importContactsThunderbirdCSV();
 		else if (e.getActionCommand().equals("showhide")) {
 			jfritz.hideShowJFritz();
-		}
+		}else if (e.getActionCommand().equals("configwizard"))
+			jfritz.showConfigWizard();
 		else
 			Debug.err("Unimplemented action: " + e.getActionCommand()); //$NON-NLS-1$
 	}

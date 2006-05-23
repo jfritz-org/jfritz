@@ -64,7 +64,7 @@ import de.moonflower.jfritz.utils.network.SSDPPacket;
  *
  * @author Arno Willig
  *
- * TODO: A lot of I18N..
+ *
  */
 public class ConfigDialog extends JDialog {
 

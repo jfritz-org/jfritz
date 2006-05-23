@@ -11,6 +11,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/bsh-1.3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/itext-1.3.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/pixie-0.8.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/wizard.jar" />
 	<classpathentry kind="lib" path="lang"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

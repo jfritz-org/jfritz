@@ -7,7 +7,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
-class languageComboBoxRenderer extends JLabel implements ListCellRenderer {
+public class languageComboBoxRenderer extends JLabel implements ListCellRenderer {
 	public languageComboBoxRenderer() {
 		setOpaque(true);
 		setHorizontalAlignment(LEFT);
