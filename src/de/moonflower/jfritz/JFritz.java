@@ -52,6 +52,8 @@
  *
  * JFritz 0.6.1
  * - Neue Strings:
+ * - Bugfix: Problem mit dem Holen der Anrufliste behoben
+ * - Bugfix: Nebenstellenbezeichnungen und Route können jetzt Sonderzeichen enthalten
  * - Neu: Konfigurationswizard für Erstbenutzer
  * - Bugfix: Standardtelefonnummern können wieder geändert werden
  * - Neu: Logfiles werden jetzt mittels Stream redirection geschrieben (heißt auch die Exceptions werden in den Logfiles aufgenommen :) )
@@ -406,7 +408,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.254 2006/05/23 13:02:26 capncrunch Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.255 2006/05/30 21:56:08 capncrunch Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 

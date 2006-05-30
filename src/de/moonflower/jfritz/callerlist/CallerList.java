@@ -467,9 +467,10 @@ public class CallerList extends AbstractTableModel {
     	        		  		}
     	        		}
 
+
+	        			tmpMiddle = middle +1;
     	        		if(tmpMiddle < unfilteredCallerData.size()){
-    	        			c = (Call) unfilteredCallerData.elementAt(middle+1);
-    	        			tmpMiddle = middle +1;
+    	        			c = (Call) unfilteredCallerData.elementAt(tmpMiddle);
 
     	        			//search right as long as the dates still match
     	        			while(c.getCalldate().equals(newCall.getCalldate())){

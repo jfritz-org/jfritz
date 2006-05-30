@@ -255,9 +255,9 @@ public class Call {
             }
         }
         if (!port.equals("")) //$NON-NLS-1$
-            output = output + ("\t<port>" + port + "</port>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
+            output = output + ("\t<port>" + JFritzUtils.convertSpecialChars(port) + "</port>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
         if (!route.equals("")) //$NON-NLS-1$
-            output = output + ("\t<route>" + route + "</route>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
+            output = output + ("\t<route>" + JFritzUtils.convertSpecialChars(route) + "</route>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
         if (duration > 0)
             output = output + ("\t<duration>" + duration + "</duration>" + sep); //$NON-NLS-1$, //$NON-NLS-2$
 
