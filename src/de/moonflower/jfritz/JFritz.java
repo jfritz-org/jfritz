@@ -55,12 +55,15 @@
  *		delete_duplicate_phonebook_entries
  *		delete_duplicate_phonebook_entries_confirm_msg
  *		delete_duplicate_phonebook_entries_inform_msg
+ * - Neu: Konfigurationswizard für Erstbenutzer
+ * - Neu: Logfiles werden jetzt mittels Stream redirection geschrieben (heißt auch die Exceptions werden in den Logfiles aufgenommen :) )
+ * - Neu: Entfernen doppelter Einträge beim Telefonbuch
+ * - Neu: Automatisches Scrollen zum selektierten Telefonbucheintrag
+ * - Bugfix: Kurzwahlen werden weider korrekt abgeholt
+ * - Bugfix: Standardtelefonnummern können wieder geändert werden
  * - Bugfix: Problem mit dem Holen der Anrufliste behoben
  * - Bugfix: Nebenstellenbezeichnungen und Route können jetzt Sonderzeichen enthalten
- * - Neu: Konfigurationswizard für Erstbenutzer
- * - Bugfix: Standardtelefonnummern können wieder geändert werden
- * - Neu: Logfiles werden jetzt mittels Stream redirection geschrieben (heißt auch die Exceptions werden in den Logfiles aufgenommen :) )
- * - Bugfix: Kurzwahlen werden weider korrekt abgeholt
+ * - Bugfix: Anzeige eines analogen Anrufs beim Anrufmonitor
  *
  * JFritz 0.6.0
  * - Neue Strings:
@@ -411,7 +414,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.256 2006/06/10 11:21:20 robotniko Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.257 2006/06/10 19:23:28 robotniko Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
