@@ -25,10 +25,10 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.struct.QuickDial;
 import de.moonflower.jfritz.utils.Debug;
-import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
@@ -137,19 +137,24 @@ public class QuickDials extends AbstractTableModel {
 	}
 
 	public void getQuickDialDataFromFritzBox() {
+
+		if (JFritz.getFirmware() == null)
+			if (JFritzUtils.checkValidFirmware(jfritz) == false) {
+				return;
+			}
 		try {
 			quickDials = JFritzUtils.retrieveQuickDialsFromFritzBox(this,
-					JFritzUtils.detectBoxType(JFritz
-							.getProperty("box.firmware"), JFritz  //$NON-NLS-1$
-							.getProperty("box.address"), Encryption.decrypt(JFritz  //$NON-NLS-1$
-							.getProperty("box.password"))));  //$NON-NLS-1$
+					JFritz.getFirmware()); //$NON-NLS-1$
 			fireTableDataChanged();
 		} catch (WrongPasswordException e) {
-			Debug.err("getQuickDialData: Wrong password");  //$NON-NLS-1$
+			Debug.err("getQuickDialData: Wrong password"); //$NON-NLS-1$
 			Debug.errDlg(JFritz.getMessage("wrong_password")); //$NON-NLS-1$
 		} catch (IOException e) {
-			Debug.err("getQuickDialData: Box not found");  //$NON-NLS-1$
-            Debug.errDlg(JFritz.getMessage("box_address_wrong")); //$NON-NLS-1$
+			Debug.err("getQuickDialData: Box not found"); //$NON-NLS-1$
+			Debug.errDlg(JFritz.getMessage("box_address_wrong")); //$NON-NLS-1$
+		} catch (InvalidFirmwareException e) {
+			Debug.err("getQuickDialData: Invalid firmware"); //$NON-NLS-1$
+			Debug.errDlg(JFritz.getMessage("box_address_wrong")); //$NON-NLS-1$
 		}
 	}
 

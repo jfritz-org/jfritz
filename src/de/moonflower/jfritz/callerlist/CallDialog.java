@@ -12,7 +12,6 @@ import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -23,11 +22,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.struct.PhoneNumber;
-import de.moonflower.jfritz.utils.Debug;
-import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.NoticeDialog;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
@@ -138,48 +134,6 @@ public class CallDialog extends JDialog implements ActionListener {
 			c.gridy = 2;
 			label = new JLabel(JFritz.getMessage("extension")+": "); //$NON-NLS-1$,  //$NON-NLS-2$
 			topPane.add(label, c);
-
-			boolean isdone = false;
-			int connectionFailures = 0;
-			while (!isdone) {
-				try {
-					firmware = JFritzUtils.detectBoxType(JFritz
-							.getProperty("box.firmware"), JFritz //$NON-NLS-1$
-							.getProperty("box.address"), Encryption //$NON-NLS-1$
-							.decrypt(JFritz.getProperty("box.password"))); //$NON-NLS-1$
-					isdone = true;
-				} catch (WrongPasswordException e) {
-					jfritz.getJframe().setStatus(
-							JFritz.getMessage("password_wrong")); //$NON-NLS-1$
-					String password = jfritz.getJframe().showPasswordDialog(
-							Encryption.decrypt(JFritz.getProperty(
-									"box.password", ""))); //$NON-NLS-1$,  //$NON-NLS-2$
-					if (password == null) { // Dialog canceled
-						isdone = true;
-					} else {
-						JFritz.setProperty("box.password", Encryption //$NON-NLS-1$
-								.encrypt(password));
-					}
-				} catch (IOException e) {
-					// Warten, falls wir von einem Standby aufwachen,
-					// oder das Netzwerk temporär nicht erreichbar ist.
-					if (connectionFailures < 5) {
-						Debug.msg("Waiting for FritzBox, retrying ..."); //$NON-NLS-1$
-						connectionFailures++;
-					} else {
-						Debug.msg("Callerlist Box not found"); //$NON-NLS-1$
-						String box_address = jfritz.getJframe()
-								.showAddressDialog(
-										JFritz.getProperty("box.address", //$NON-NLS-1$
-												"fritz.box")); //$NON-NLS-1$
-						if (box_address == null) { // Dialog canceled
-							isdone = true;
-						} else {
-							JFritz.setProperty("box.address", box_address); //$NON-NLS-1$
-						}
-					}
-				}
-			}
 
 			port = new JComboBox();
 			port.addItem("Fon 1"); //$NON-NLS-1$

@@ -737,8 +737,7 @@ public class JFritzWindow extends JFrame
 							.getProperty("box.address", "192.168.178.1"), //$NON-NLS-1$,  //$NON-NLS-2$
 							Encryption.decrypt(JFritz
 									.getProperty("box.password")), //$NON-NLS-1$
-							new FritzBoxFirmware(JFritz
-									.getProperty("box.firmware"))); //$NON-NLS-1$
+							JFritz.getFirmware()); //$NON-NLS-1$
 					jfritz.getSIPProviderTableModel().updateProviderList(data);
 					jfritz.getSIPProviderTableModel().fireTableDataChanged();
 					jfritz.getSIPProviderTableModel().saveToXMLFile(
@@ -1298,10 +1297,7 @@ public class JFritzWindow extends JFrame
 				"0"))) { //$NON-NLS-1$
 			case 1 : {
 				FritzBoxFirmware currentFirm;
-				try {
-					currentFirm = JFritzUtils.detectBoxType("", JFritz //$NON-NLS-1$
-							.getProperty("box.address"), Encryption //$NON-NLS-1$
-							.decrypt(JFritz.getProperty("box.password", ""))); //$NON-NLS-1$,  //$NON-NLS-2$
+					currentFirm = JFritz.getFirmware();
 					if (currentFirm.getMajorFirmwareVersion() == 3
 							&& currentFirm.getMinorFirmwareVersion() < 96) {
 						Debug.errDlg(JFritz.getMessage("callmonitor_error_wrong_firmware")); //$NON-NLS-1$
@@ -1316,19 +1312,6 @@ public class JFritzWindow extends JFrame
 						}
 						this.setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
 					}
-				} catch (WrongPasswordException e) {
-					jfritz.getJframe().setStatus(
-							JFritz.getMessage("password_wrong")); //$NON-NLS-1$
-					String password = jfritz.getJframe().showPasswordDialog(
-							Encryption.decrypt(JFritz.getProperty(
-									"box.password", ""))); //$NON-NLS-1$,  //$NON-NLS-2$
-					if (password != null) { // Dialog not canceled
-						JFritz.setProperty("box.password", Encryption //$NON-NLS-1$
-								.encrypt(password));
-					}
-				} catch (IOException e) {
-					Debug.err("Could not detect box."); //$NON-NLS-1$
-				}
 				break;
 			}
 			case 2 : {

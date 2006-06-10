@@ -18,6 +18,7 @@ import javax.swing.JLabel;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
  *
@@ -49,17 +50,20 @@ public class CallPanel extends JComponent {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() > 1) {
 					Person person = jfritz.getPhonebook().findPerson(number);
-					CallDialog p;
-
-					if (person!=null)
+					if (JFritzUtils.checkValidFirmware(jfritz))
 					{
-						p = new CallDialog(jfritz,person.getNumbers(),number);
+						CallDialog p;
+
+						if (person!=null)
+						{
+							p = new CallDialog(jfritz,person.getNumbers(),number);
+						}
+						else
+							p = new CallDialog(jfritz, number);
+						p.setVisible(true);
+						//					p.show();
+						p.dispose();
 					}
-					else
-						p = new CallDialog(jfritz, number);
-					p.setVisible(true);
-//					p.show();
-					p.dispose();
 				}
 			}
 		});

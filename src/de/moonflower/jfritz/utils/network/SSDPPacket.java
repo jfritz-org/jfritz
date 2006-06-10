@@ -1,5 +1,6 @@
 package de.moonflower.jfritz.utils.network;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -7,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
+import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.utils.Debug;
 
@@ -169,8 +171,12 @@ public class SSDPPacket {
         }
         Debug.msg("SSDP FW: "+fwstr); //$NON-NLS-1$
         try {
-            return new FritzBoxFirmware(fwstr);
+            return FritzBoxFirmware.detectFirmwareVersion(this.getIP().toString().substring(1), "");
+        } catch (WrongPasswordException wpe) {
+            return null;
         } catch (InvalidFirmwareException e) {
+            return null;
+        } catch (IOException ioe) {
             return null;
         }
     }

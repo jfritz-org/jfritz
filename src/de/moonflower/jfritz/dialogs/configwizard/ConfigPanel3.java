@@ -16,6 +16,7 @@ import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.network.SSDPPacket;
+
 /**
  * @author Brian Jensen
  *
@@ -24,19 +25,19 @@ import de.moonflower.jfritz.utils.network.SSDPPacket;
  * @see http://java.sun.com/developer/technicalArticles/GUI/swing/wizard/index.html
  *
  */
-public class ConfigPanel3 extends JPanel implements ActionListener{
+public class ConfigPanel3 extends JPanel implements ActionListener {
 
-    private static final long serialVersionUID = 1;
+	private static final long serialVersionUID = 1;
 
-    public JComboBox addressCombo;
+	public JComboBox addressCombo;
 
-    public JTextField address;
+	public JTextField address;
 
-    public JPasswordField pass;
+	public JPasswordField pass;
 
-    public JButton boxtypeButton;
+	public JButton boxtypeButton;
 
-    private JLabel boxtypeLabel;
+	private JLabel boxtypeLabel;
 
 	public Vector devices;
 
@@ -44,9 +45,9 @@ public class ConfigPanel3 extends JPanel implements ActionListener{
 
 	public FritzBoxFirmware firmware;
 
-    public ConfigPanel3(JFritz jfritz){
+	public ConfigPanel3(JFritz jfritz) {
 
-    	//draw the panel
+		// draw the panel
 		JPanel boxpane = new JPanel();
 		boxpane.setLayout(new GridBagLayout());
 		boxpane.setBorder(BorderFactory.createEmptyBorder(10, 20, 5, 20));
@@ -73,7 +74,7 @@ public class ConfigPanel3 extends JPanel implements ActionListener{
 		addressCombo = new JComboBox();
 		c.fill = GridBagConstraints.HORIZONTAL;
 
-		//initialize the drop down box
+		// initialize the drop down box
 		devices = jfritz.getDevices();
 		if (devices != null) {
 			Enumeration en = devices.elements();
@@ -109,7 +110,7 @@ public class ConfigPanel3 extends JPanel implements ActionListener{
 		boxtypeLabel = new JLabel();
 		boxpane.add(boxtypeLabel, c);
 
-		//initialize the rest of the values
+		// initialize the rest of the values
 		pass.setText(Encryption.decrypt(JFritz.getProperty("box.password"))); //$NON-NLS-1$
 		password = Encryption.decrypt(JFritz.getProperty("box.password")); //$NON-NLS-1$
 		address.setText(JFritz.getProperty("box.address", "192.168.178.1")); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -122,15 +123,12 @@ public class ConfigPanel3 extends JPanel implements ActionListener{
 				}
 			}
 		}
-		try {
-			firmware = new FritzBoxFirmware(JFritz.getProperty("box.firmware")); //$NON-NLS-1$
-		} catch (InvalidFirmwareException e) {
-		}
+		firmware = JFritz.getFirmware(); //$NON-NLS-1$
 		setBoxTypeLabel();
 
 		add(boxpane, BorderLayout.CENTER);
 
-    }
+	}
 
 	public void actionPerformed(ActionEvent e) {
 
@@ -145,37 +143,41 @@ public class ConfigPanel3 extends JPanel implements ActionListener{
 
 		} else if (e.getActionCommand().equals("detectboxtype")) { //$NON-NLS-1$
 			try {
-				firmware = FritzBoxFirmware.detectFirmwareVersion(
-						address.getText(), password);
+				firmware = FritzBoxFirmware.detectFirmwareVersion(address
+						.getText(), password);
 
 				// firmware = new FritzBoxFirmware("14", "1", "35");
 				setBoxTypeLabel();
 			} catch (WrongPasswordException e1) {
 				Debug.err("Password wrong!"); //$NON-NLS-1$
 				boxtypeLabel.setForeground(Color.RED);
-				boxtypeLabel.setText(JFritz
-						.getMessage("wrong_password")); //$NON-NLS-1$
+				boxtypeLabel.setText(JFritz.getMessage("wrong_password")); //$NON-NLS-1$
+				firmware = null;
+			} catch (InvalidFirmwareException ife) {
+				Debug.err("Invalid firmware detected"); //$NON-NLS-1$
+				boxtypeLabel.setForeground(Color.RED);
+				boxtypeLabel.setText(JFritz.getMessage("box_address_wrong")); //$NON-NLS-1$
 				firmware = null;
 			} catch (IOException e1) {
 				Debug.err("Address wrong!"); //$NON-NLS-1$
 				boxtypeLabel.setForeground(Color.RED);
-				boxtypeLabel.setText(JFritz
-						.getMessage("box_address_wrong")); //$NON-NLS-1$
+				boxtypeLabel.setText(JFritz.getMessage("box_address_wrong")); //$NON-NLS-1$
 				firmware = null;
 			}
-
+			// firmware = new FritzBoxFirmware("14", "1", "35");
+			setBoxTypeLabel();
 		}
 	}
 
 	public void setBoxTypeLabel() {
-			if (firmware != null) {
-				boxtypeLabel.setForeground(Color.BLUE);
-				boxtypeLabel.setText(firmware.getBoxName() + " (" //$NON-NLS-1$
-						+ firmware.getFirmwareVersion() + ")"); //$NON-NLS-1$
-			} else {
-				boxtypeLabel.setForeground(Color.RED);
-				boxtypeLabel.setText(JFritz.getMessage("unknown")); //$NON-NLS-1$
-			}
+		if (firmware != null) {
+			boxtypeLabel.setForeground(Color.BLUE);
+			boxtypeLabel.setText(firmware.getBoxName() + " (" //$NON-NLS-1$
+					+ firmware.getFirmwareVersion() + ")"); //$NON-NLS-1$
+		} else {
+			boxtypeLabel.setForeground(Color.RED);
+			boxtypeLabel.setText(JFritz.getMessage("unknown")); //$NON-NLS-1$
 		}
+	}
 
 }

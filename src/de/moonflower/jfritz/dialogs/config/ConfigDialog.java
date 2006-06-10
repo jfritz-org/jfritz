@@ -64,7 +64,6 @@ import de.moonflower.jfritz.utils.network.SSDPPacket;
  *
  * @author Arno Willig
  *
- *
  */
 public class ConfigDialog extends JDialog {
 
@@ -105,7 +104,7 @@ public class ConfigDialog extends JDialog {
 
 	private JLabel boxtypeLabel, macLabel, timerLabel;
 
-	private FritzBoxFirmware firmware;
+	private FritzBoxFirmware firmware = null;
 
 	private boolean pressed_OK = false;
 
@@ -244,10 +243,7 @@ public class ConfigDialog extends JDialog {
 				}
 			}
 		}
-		try {
-			firmware = new FritzBoxFirmware(JFritz.getProperty("box.firmware")); //$NON-NLS-1$
-		} catch (InvalidFirmwareException e) {
-		}
+		firmware = JFritz.getFirmware(); //$NON-NLS-1$
 		setBoxTypeLabel();
 	}
 
@@ -341,11 +337,7 @@ public class ConfigDialog extends JDialog {
 		JFritz.setProperty("fetch.timer", Integer.toString(timerSlider //$NON-NLS-1$
 				.getValue()));
 
-		if (firmware != null) {
-			JFritz.setProperty("box.firmware", firmware.getFirmwareVersion()); //$NON-NLS-1$
-		} else {
-			JFritz.removeProperty("box.firmware"); //$NON-NLS-1$
-		}
+		JFritz.setFirmware(firmware);
 
 		if (!JFritz.getProperty("locale", "de_DE").equals(localeList[languageCombo.getSelectedIndex()])) { //$NON-NLS-1$ //$NON-NLS-2$
 			JFritz.setProperty(
@@ -951,6 +943,12 @@ public class ConfigDialog extends JDialog {
 						boxtypeLabel.setForeground(Color.RED);
 						boxtypeLabel.setText(JFritz
 								.getMessage("wrong_password")); //$NON-NLS-1$
+						firmware = null;
+					} catch (InvalidFirmwareException ife) {
+						Debug.err("Invalid firmware detected"); //$NON-NLS-1$
+						boxtypeLabel.setForeground(Color.RED);
+						boxtypeLabel.setText(JFritz
+								.getMessage("box_address_wrong")); //$NON-NLS-1$
 						firmware = null;
 					} catch (IOException e1) {
 						Debug.err("Address wrong!"); //$NON-NLS-1$

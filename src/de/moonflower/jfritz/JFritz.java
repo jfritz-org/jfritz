@@ -59,6 +59,8 @@
  * - Neu: Logfiles werden jetzt mittels Stream redirection geschrieben (heißt auch die Exceptions werden in den Logfiles aufgenommen :) )
  * - Neu: Entfernen doppelter Einträge beim Telefonbuch
  * - Neu: Automatisches Scrollen zum selektierten Telefonbucheintrag
+ * - Neu: Englische Firmware wird unterstützt
+ * - Intern: Firmware wird beim Start erkannt und in JFritz.firmware gespeichert. Zugriff nicht mehr über JFritz.getProperties("box.firmware") sondern über JFritz.getFirmware()
  * - Bugfix: Kurzwahlen werden weider korrekt abgeholt
  * - Bugfix: Standardtelefonnummern können wieder geändert werden
  * - Bugfix: Problem mit dem Holen der Anrufliste behoben
@@ -406,7 +408,7 @@ public final class JFritz {
 	//when changing this, don't forget to check the resource bundles!!
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-    public final static String PROGRAM_VERSION = "0.6.0"; //$NON-NLS-1$
+    public final static String PROGRAM_VERSION = "0.6.1"; //$NON-NLS-1$
 
     public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -414,7 +416,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.257 2006/06/10 19:23:28 robotniko Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.258 2006/06/10 22:43:13 robotniko Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -479,6 +481,8 @@ public final class JFritz {
     private static boolean isRunning = false;
 
     private static Locale locale;
+
+    private static FritzBoxFirmware firmware = null;
 
     /**
      * Main method for starting JFritz
@@ -807,7 +811,7 @@ public final class JFritz {
      *
      * @param locale
      */
-    public static void loadMessages(Locale locale) {
+    private void loadMessages(Locale locale) {
         try {
             messages = ResourceBundle.getBundle(
                     "jfritz", locale);//$NON-NLS-1$
@@ -888,7 +892,6 @@ public final class JFritz {
     }
 
     private void autodetectFirmware() {
-        FritzBoxFirmware firmware;
         try {
             firmware = FritzBoxFirmware.detectFirmwareVersion(JFritz
                     .getProperty("box.address", "192.168.178.1"), Encryption //$NON-NLS-1$,  //$NON-NLS-2$
@@ -900,14 +903,15 @@ public final class JFritz {
         } catch (IOException e1) {
             Debug.err("Address wrong!"); //$NON-NLS-1$
             firmware = null;
+        } catch (InvalidFirmwareException ife) {
+        	Debug.err("Invalid firmware");
+        	firmware = null;
         }
         if (firmware != null) {
             Debug.msg("Found FritzBox-Firmware: " //$NON-NLS-1$
                     + firmware.getFirmwareVersion());
-            JFritz.setProperty("box.firmware", firmware.getFirmwareVersion()); //$NON-NLS-1$
         } else {
             Debug.msg("Found no FritzBox-Firmware"); //$NON-NLS-1$
-            JFritz.removeProperty("box.firmware"); //$NON-NLS-1$
         }
     }
 
@@ -1032,14 +1036,13 @@ public final class JFritz {
 			Debug.err("Exception: " + e.toString()); //$NON-NLS-1$
         }
 		try {
-			JFritzUtils.clearListOnFritzBox(properties.getProperty("box.address"), Encryption.decrypt(properties.getProperty("box.password")), new FritzBoxFirmware(properties.getProperty("box.firmware")));  //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+			JFritzUtils.clearListOnFritzBox(properties.getProperty("box.address"), Encryption.decrypt(properties.getProperty("box.password")), firmware);  //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 			Debug.msg("Clearing done"); //$NON-NLS-1$
 		} catch (WrongPasswordException e) {
 			Debug.err("Wrong password, can not delete callerlist on Box."); //$NON-NLS-1$
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			Debug.err("IOException while deleting callerlist on box (wrong IP-address?)."); //$NON-NLS-1$
-		} catch (InvalidFirmwareException e) {
-			Debug.err("Invalid firmware, can not delete callerlist on Box."); //$NON-NLS-1$
 		}
     }
 
@@ -1682,6 +1685,24 @@ public final class JFritz {
     }
 
     /**
+     * Returns current firmware version
+     * @return firmware
+     */
+    public static FritzBoxFirmware getFirmware()
+    {
+    	return firmware;
+    }
+
+    /**
+     * Set current firmware version
+     * @param fw
+     */
+    public static void setFirmware(FritzBoxFirmware fw)
+    {
+    	firmware = fw;
+    }
+
+    /**
      * @author Brian Jensen
      * This creates and then display the config wizard
      *
@@ -1691,6 +1712,4 @@ public final class JFritz {
     	wizard.showWizard();
 
     }
-
-
 }

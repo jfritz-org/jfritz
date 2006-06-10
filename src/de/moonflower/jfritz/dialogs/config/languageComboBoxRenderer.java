@@ -8,6 +8,7 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
 public class languageComboBoxRenderer extends JLabel implements ListCellRenderer {
+	private static final long serialVersionUID = -1992780721039481940L;
 	public languageComboBoxRenderer() {
 		setOpaque(true);
 		setHorizontalAlignment(LEFT);
