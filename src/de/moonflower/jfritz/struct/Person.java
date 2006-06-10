@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 
 import de.moonflower.jfritz.utils.Debug;
@@ -450,6 +452,52 @@ public class Person {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Checks wether the current object supersedes a given one.
+	 *
+	 * @param p data object which is checked for redundancy
+	 * @return true iff p contains only redundant information
+	 */
+	public boolean supersedes(Person p) {
+		// Person data is checked
+		if (firstName.indexOf(p.firstName) == -1)
+			return false;
+		if (lastName.indexOf(p.lastName) == -1)
+			return false;
+		if (company.indexOf(p.company) == -1)
+			return false;
+		if (street.indexOf(p.street) == -1)
+			return false;
+		if (postalCode.indexOf(p.postalCode) == -1)
+			return false;
+		if (city.indexOf(p.city) == -1)
+			return false;
+		if (emailAddress.indexOf(p.emailAddress) == -1)
+			return false;
+
+		// Ensuring that this person has more numbers
+		if (numbers.size() < p.numbers.size())
+			return false;
+
+		// Creating a set of this person's numbers
+		Enumeration ownNumberEnum = numbers.elements();
+		Set ownNumberSet = new HashSet();
+		while (ownNumberEnum.hasMoreElements()) {
+			PhoneNumber n = (PhoneNumber) ownNumberEnum.nextElement();
+			ownNumberSet.add(n.getIntNumber());
+		}
+
+		// Checking wether this person's numbers are a real superset
+		Enumeration otherNumberEnum = p.numbers.elements();
+		while (otherNumberEnum.hasMoreElements()) {
+			PhoneNumber n = (PhoneNumber) otherNumberEnum.nextElement();
+			if (! ownNumberSet.contains(n.getIntNumber()))
+				return false;
+		}
+
+		return true;
 	}
 
 }
