@@ -5,12 +5,15 @@
  */
 package de.moonflower.jfritz.callerlist;
 
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.util.Vector;
 
 import javax.swing.JTable;
+import javax.swing.JViewport;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -81,6 +84,14 @@ public class SelectionListener implements ListSelectionListener {
 						pt.getSelectionModel().setSelectionInterval(i, i);
 						table.getJfritz().getJframe().getPhoneBookPanel()
 								.showPersonPanel();
+
+						// assuring that the newly selected row in the phonebook is visible
+						JViewport viewport = (JViewport)pt.getParent();
+						Rectangle rect = pt.getCellRect(i, 0, true);
+						Point vp = viewport.getViewPosition();
+						rect.setLocation(rect.x-vp.x, rect.y-vp.y);
+						viewport.scrollRectToVisible(rect);
+
 						break;
 					}
 				}
