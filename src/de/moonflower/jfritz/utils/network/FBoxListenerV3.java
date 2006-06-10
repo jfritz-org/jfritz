@@ -62,10 +62,11 @@ public class FBoxListenerV3 extends FBoxListener {
 
             boolean ignoreIt = false;
             for (int i = 0; i < ignoredMSNs.length; i++)
-                if (split[4].equals(ignoredMSNs[i])) {
-                    ignoreIt = true;
-                    break;
-                }
+            	if (!ignoredMSNs[i].equals(""))
+            		if (split[4].equals(ignoredMSNs[i])) {
+            			ignoreIt = true;
+            			break;
+            			}
             if (!ignoreIt)
                 jfritz.callInMsg(number, provider);
         } else if (JFritzUtils.parseBoolean(JFritz.getProperty(
@@ -95,9 +96,10 @@ public class FBoxListenerV3 extends FBoxListener {
 
             boolean ignoreIt = false;
             for (int i = 0; i < ignoredMSNs.length; i++)
-                if (split[4].equals(ignoredMSNs[i])) {
-                    ignoreIt = true;
-                    break;
+            	if (!ignoredMSNs[i].equals(""))
+            		if (split[4].equals(ignoredMSNs[i])) {
+            			ignoreIt = true;
+            			break;
                 }
             if (!ignoreIt)
                 jfritz.callOutMsg(number, provider);
