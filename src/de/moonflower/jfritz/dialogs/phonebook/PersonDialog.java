@@ -83,6 +83,8 @@ public class PersonDialog extends JDialog implements ActionListener {
 		getContentPane().add(bottomPane, BorderLayout.SOUTH);
 		setSize(new Dimension(350, 400));
 
+		//sets the center (x/y) of Edit dialog to center of JFritz frame
+		this.setLocationRelativeTo(jfritz.getJframe());
 	}
 
 	public boolean okPressed() {
