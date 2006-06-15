@@ -98,8 +98,8 @@ public class PersonDialog extends JDialog implements ActionListener,KeyListener 
 				 cancelButton.doClick();
 			}
 		};
-		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeKeyStroke, "ESCAPE");
-		getRootPane().getActionMap().put("ESCAPE", escapeAction);
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeKeyStroke, "ESCAPE"); //$NON-NLS-1$
+		getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
 
 		getContentPane().add(topPane, BorderLayout.NORTH);
 		getContentPane().add(personPanel, BorderLayout.CENTER);
