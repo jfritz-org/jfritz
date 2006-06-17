@@ -1350,11 +1350,17 @@ public class JFritzWindow extends JFrame
 	 * @author Benjamin Schmitt
 	 */
 	public void deleteFritzBoxCallerList() {
-		// TODO:Set focus to Cancel-Button
-		int answer = JOptionPane.showConfirmDialog(this, JFritz
-				.getMessage("delete_fritzbox_callerlist_confirm_msg"), JFritz //$NON-NLS-1$
-				.getMessage("delete_fritzbox_callerlist"), //$NON-NLS-1$
-				JOptionPane.YES_NO_OPTION);
+		// options-object needed to set focus to no-button
+        Object[] options = {JFritz.getMessage("yes"), //$NON-NLS-1$
+        		JFritz.getMessage("no")}; //$NON-NLS-1$
+		int answer = JOptionPane.showOptionDialog(this,
+				JFritz.getMessage("delete_fritzbox_callerlist_confirm_msg"),  //$NON-NLS-1$
+				JFritz.getMessage("delete_fritzbox_callerlist"), //$NON-NLS-1$
+				JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[1]);
 
 		if (answer == JOptionPane.YES_OPTION)
 			fetchList(true); // param true indicates that FritzBox-CallerList

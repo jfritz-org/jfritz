@@ -46,13 +46,15 @@ public class PersonDialog extends JDialog implements ActionListener  {
 	 * @throws HeadlessException
 	 */
 	public PersonDialog(JFritz jfritz, Person person) throws HeadlessException {
-		super();
+		super(jfritz.getJframe()); // parent needed for Dialog's icon
 		this.jfritz = jfritz;
 		this.person = new Person(person);
 		if (this.person == null)
 			person = new Person();
-		this.setLocationRelativeTo(jfritz.getJframe());
 		drawDialog();
+		//centers PersonDialog in JFritz application window
+		//needs to be called after drawDialog (Dialog needs size)
+		this.setLocationRelativeTo(jfritz.getJframe());
 	}
 
 	private void drawDialog() {
@@ -104,9 +106,6 @@ public class PersonDialog extends JDialog implements ActionListener  {
 		getContentPane().add(personPanel, BorderLayout.CENTER);
 		getContentPane().add(bottomPane, BorderLayout.SOUTH);
 		setSize(new Dimension(350, 400));
-
-		//sets the center (x/y) of Edit dialog to center of JFritz frame
-		this.setLocationRelativeTo(jfritz.getJframe());
 	}
 
 	public boolean okPressed() {
