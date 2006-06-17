@@ -865,7 +865,7 @@ public class JFritzUtils {
 				portStr = "2"; //$NON-NLS-1$
 			} else if (port.equals("Fon 3")) { //$NON-NLS-1$
 				portStr = "3"; //$NON-NLS-1$
-			} else if (port.equals(JFritz.getMessage("analoge_telephones_all"))) { //$NON-NLS-1$
+			} else if (port.equals(JFritz.getMessage("analog_telephones_all"))) { //$NON-NLS-1$
 				portStr = "9"; //$NON-NLS-1$
 			} else if (port.equals("ISDN Alle")) { //$NON-NLS-1$
 				portStr = "50"; //$NON-NLS-1$
