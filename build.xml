@@ -7,7 +7,7 @@
 	<property name="source" value="source"/>
 	<property name="lib" value="lib"/>
 	<property name="ant.project.name" value = "JFritz! Documentation"/>
-	<property name="jfritzdir" value="C:\Programme\JFritz"/>
+	<property name="jfritzdir" value="D:\Programme\JFritz"/>
 	<property name="lang" value="lang"/>
 
 	<!-- compiler flags -->

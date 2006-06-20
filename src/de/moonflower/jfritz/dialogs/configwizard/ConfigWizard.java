@@ -111,6 +111,7 @@ public class ConfigWizard {
        				JFritz.removeProperty("box.firmware"); //$NON-NLS-1$
        			}
 
+      			jfritz.getFritzBox().detectFirmware();
       			jfritz.saveProperties();
 
        			break;

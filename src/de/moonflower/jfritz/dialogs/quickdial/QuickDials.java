@@ -138,13 +138,12 @@ public class QuickDials extends AbstractTableModel {
 
 	public void getQuickDialDataFromFritzBox() {
 
-		if (JFritz.getFirmware() == null)
-			if (JFritzUtils.checkValidFirmware(jfritz) == false) {
+		if (jfritz.getFritzBox().getFirmware() == null)
+			if (jfritz.getFritzBox().checkValidFirmware() == false) {
 				return;
 			}
 		try {
-			quickDials = JFritzUtils.retrieveQuickDialsFromFritzBox(this,
-					JFritz.getFirmware()); //$NON-NLS-1$
+			quickDials = jfritz.getFritzBox().retrieveQuickDialsFromFritzBox(this); //$NON-NLS-1$
 			fireTableDataChanged();
 		} catch (WrongPasswordException e) {
 			Debug.err("getQuickDialData: Wrong password"); //$NON-NLS-1$

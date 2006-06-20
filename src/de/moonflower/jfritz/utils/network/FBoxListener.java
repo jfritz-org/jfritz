@@ -42,19 +42,19 @@ public abstract class FBoxListener extends Thread implements CallMonitor {
     protected boolean connect() {
         try {
             Debug.msg("Trying to connect to " //$NON-NLS-1$
-                    + JFritz.getProperty("box.address") + ":1012"); //$NON-NLS-1$,  //$NON-NLS-2$
-            clientSocket = new Socket(JFritz.getProperty("box.address"), 1012); //$NON-NLS-1$
+                    + jfritz.getFritzBox().getAddress() + ":1012"); //$NON-NLS-1$,  //$NON-NLS-2$
+            clientSocket = new Socket(jfritz.getFritzBox().getAddress(), 1012); //$NON-NLS-1$
             clientSocket.setKeepAlive(true);
             return true;
         } catch (UnknownHostException uhe) {
             Debug.msg("Unknown host exception: " + uhe.toString()); //$NON-NLS-1$
             Debug.errDlg(JFritz.getMessage("error_fritzbox_callmonitor_no_connection"). //$NON-NLS-1$
-            		replaceAll("%A", JFritz.getProperty("box.address"))); //$NON-NLS-1$,  //$NON-NLS-2$
+            		replaceAll("%A", jfritz.getFritzBox().getAddress())); //$NON-NLS-1$,  //$NON-NLS-2$
             jfritz.stopCallMonitor();
         } catch (IOException ioe) {
             Debug.msg("IO exception: " + ioe.toString()); //$NON-NLS-1$
             Debug.errDlg(JFritz.getMessage("error_fritzbox_callmonitor_no_connection"). //$NON-NLS-1$
-            		replaceAll("%A", JFritz.getProperty("box.address"))); //$NON-NLS-1$,  //$NON-NLS-2$
+            		replaceAll("%A", jfritz.getFritzBox().getAddress())); //$NON-NLS-1$,  //$NON-NLS-2$
             jfritz.stopCallMonitor();
         }
         return false;

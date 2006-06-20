@@ -120,10 +120,10 @@ public class ConfigPanel3 extends JPanel implements ActionListener {
 		boxpane.add(boxtypeLabel, c);
 
 		// initialize the rest of the values
-		pass.setText(Encryption.decrypt(JFritz.getProperty("box.password"))); //$NON-NLS-1$
-		password = Encryption.decrypt(JFritz.getProperty("box.password")); //$NON-NLS-1$
-		address.setText(JFritz.getProperty("box.address", "192.168.178.1")); //$NON-NLS-1$,  //$NON-NLS-2$
-		port.setText(JFritz.getProperty("box.port", "80")); //$NON-NLS-1$,  //$NON-NLS-2$
+		pass.setText(jfritz.getFritzBox().getPassword()); //$NON-NLS-1$
+		password = jfritz.getFritzBox().getPassword(); //$NON-NLS-1$
+		address.setText(jfritz.getFritzBox().getAddress()); //$NON-NLS-1$,  //$NON-NLS-2$
+		port.setText(jfritz.getFritzBox().getPort()); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		if (devices != null) {
 			for (int i = 0; i < devices.size(); i++) {
@@ -133,7 +133,7 @@ public class ConfigPanel3 extends JPanel implements ActionListener {
 				}
 			}
 		}
-		firmware = JFritz.getFirmware(); //$NON-NLS-1$
+		firmware = jfritz.getFritzBox().getFirmware(); //$NON-NLS-1$
 		setBoxTypeLabel();
 
 		add(boxpane, BorderLayout.CENTER);

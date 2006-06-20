@@ -545,22 +545,16 @@ public class CallerList extends AbstractTableModel {
 	public void getNewCalls(boolean deleteFritzBoxCallerList)
 			throws WrongPasswordException, IOException {
 
-		if (JFritzUtils.checkValidFirmware(jfritz)) {
+		if (jfritz.getFritzBox().checkValidFirmware()) {
 
-			Debug.msg("box.address: " + JFritz.getProperty("box.address"));
-			Debug.msg("box.password: " + JFritz.getProperty("box.password"));
+			Debug.msg("box.address: " + jfritz.getFritzBox().getAddress());
+			Debug.msg("box.port: " + jfritz.getFritzBox().getPort());
+			Debug.msg("box.password: " + jfritz.getFritzBox().getPassword());
 			Debug.msg("box.firmware: "
-					+ JFritz.getFirmware().getFirmwareVersion() + " "
-					+ JFritz.getFirmware().getLanguage());
+					+ jfritz.getFritzBox().getFirmware().getFirmwareVersion() + " "
+					+ jfritz.getFritzBox().getFirmware().getLanguage());
 
-			boolean newEntries = JFritzUtils.retrieveCSVList(JFritz
-					.getProperty("box.address","fritz.box"), Encryption.decrypt(JFritz
-					.getProperty("box.password")), JFritz
-					.getProperty("box.port", "80"), JFritz
-					.getProperty("country.prefix"), JFritz
-					.getProperty("country.code"), JFritz
-					.getProperty("area.prefix"), JFritz
-					.getProperty("area.code"), JFritz.getFirmware(), jfritz);
+			boolean newEntries = jfritz.getFritzBox().retrieveCSVList();
 
 			// Notify user?
 			if ((JFritz.getProperty("option.notifyOnCalls", "true")
@@ -573,12 +567,7 @@ public class CallerList extends AbstractTableModel {
 			if ((newEntries && JFritz.getProperty("option.deleteAfterFetch",
 					"false").equals("true"))
 					|| deleteFritzBoxCallerList) {
-				JFritzUtils
-						.clearListOnFritzBox(
-								JFritz.getProperty("box.address"), //$NON-NLS-1$
-								JFritz.getProperty("box.password"),//$NON-NLS-1$
-								JFritz.getProperty("box.port"),//$NON-NLS-1$
-								JFritz.getFirmware());
+				jfritz.getFritzBox().clearListOnFritzBox();
 			}
 
 			// Make back-up after fetching the caller list?

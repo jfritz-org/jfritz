@@ -73,6 +73,7 @@
  * - Bugfix: Wahlhilfe: Anwahl aller analogen Telefone konnte nicht gehen -> Tippfehler in JFritzUtils: JFritz.getMessage("analoge_telephones_all") -> korrigiert in JFritz.getMessage("analog_telephones_all")
  * - Neu: Default-Button bei Rückfrage 'Box-Anruferliste löschen' geändert auf 'Nein'
  * - Neu: Berücksichtigung der Metal-Decorations bei Dialogen
+ * - Intern: Funktionen, die mit der Kommunikation mit der FritzBox zu tun hatten, in eine neue Klasse FritzBox exportiert.
  *
  * JFritz 0.6.0
  * - Neue Strings:
@@ -391,9 +392,8 @@ import de.moonflower.jfritz.dialogs.configwizard.ConfigWizard;
 import de.moonflower.jfritz.dialogs.phonebook.PhoneBook;
 import de.moonflower.jfritz.dialogs.simple.MessageDlg;
 import de.moonflower.jfritz.dialogs.sip.SipProviderTableModel;
-import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
-import de.moonflower.jfritz.firmware.FritzBoxFirmware;
+import de.moonflower.jfritz.struct.FritzBox;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.CLIOption;
@@ -424,7 +424,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.263 2006/06/20 15:44:19 robotniko Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.264 2006/06/20 17:46:57 robotniko Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -490,7 +490,7 @@ public final class JFritz {
 
     private static Locale locale;
 
-    private static FritzBoxFirmware firmware = null;
+    private static FritzBox fritzBox;
 
     /**
      * Main method for starting JFritz
@@ -719,7 +719,11 @@ public final class JFritz {
         if (HostOS.equals("Mac")) { //$NON-NLS-1$
             new MacHandler(this);
         }
-        autodetectFirmware();
+
+        fritzBox = new FritzBox(JFritz
+                .getProperty("box.address", "192.168.178.1"), Encryption //$NON-NLS-1$,  //$NON-NLS-2$
+                .decrypt(JFritz.getProperty("box.password", Encryption //$NON-NLS-1$
+                        .encrypt(""))), JFritz.getProperty("box.port","80"), this); //$NON-NLS-1$
 
         phonebook = new PhoneBook(this);
         phonebook.loadFromXMLFile(PHONEBOOK_FILE);
@@ -859,6 +863,7 @@ public final class JFritz {
         // Default properties
         defaultProperties.setProperty("box.address", "192.168.178.1");//$NON-NLS-1$, //$NON-NLS-2$
         defaultProperties.setProperty("box.password", Encryption.encrypt(""));//$NON-NLS-1$, //$NON-NLS-2$
+        defaultProperties.setProperty("box.port", "80");//$NON-NLS-1$, //$NON-NLS-2$
         defaultProperties.setProperty("country.prefix", "00");//$NON-NLS-1$, //$NON-NLS-2$
         defaultProperties.setProperty("area.prefix", "0");//$NON-NLS-1$, //$NON-NLS-2$
         defaultProperties.setProperty("country.code", "49");//$NON-NLS-1$, //$NON-NLS-2$
@@ -898,30 +903,6 @@ public final class JFritz {
             SYSTRAY_SUPPORT = true;
         }
         return SYSTRAY_SUPPORT;
-    }
-
-    private void autodetectFirmware() {
-        try {
-            firmware = FritzBoxFirmware.detectFirmwareVersion(JFritz
-                    .getProperty("box.address", "192.168.178.1"), Encryption //$NON-NLS-1$,  //$NON-NLS-2$
-                    .decrypt(JFritz.getProperty("box.password", Encryption //$NON-NLS-1$
-                            .encrypt(""))), JFritz.getProperty("box.port","80")); //$NON-NLS-1$
-        } catch (WrongPasswordException e1) {
-            Debug.err("Wrong Password!"); //$NON-NLS-1$
-            firmware = null;
-        } catch (IOException e1) {
-            Debug.err("Address wrong!"); //$NON-NLS-1$
-            firmware = null;
-        } catch (InvalidFirmwareException ife) {
-        	Debug.err("Invalid firmware");
-        	firmware = null;
-        }
-        if (firmware != null) {
-            Debug.msg("Found FritzBox-Firmware: " //$NON-NLS-1$
-                    + firmware.getFirmwareVersion());
-        } else {
-            Debug.msg("Found no FritzBox-Firmware"); //$NON-NLS-1$
-        }
     }
 
     /**
@@ -1045,7 +1026,7 @@ public final class JFritz {
 			Debug.err("Exception: " + e.toString()); //$NON-NLS-1$
         }
 		try {
-			JFritzUtils.clearListOnFritzBox(properties.getProperty("box.address"), Encryption.decrypt(properties.getProperty("box.password")), JFritz.getProperty("box.port", "80"), firmware);  //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+			fritzBox.clearListOnFritzBox();
 			Debug.msg("Clearing done"); //$NON-NLS-1$
 		} catch (WrongPasswordException e) {
 			Debug.err("Wrong password, can not delete callerlist on Box."); //$NON-NLS-1$
@@ -1694,21 +1675,11 @@ public final class JFritz {
     }
 
     /**
-     * Returns current firmware version
-     * @return firmware
+     * Returns reference on current FritzBox-class
+     * @return
      */
-    public static FritzBoxFirmware getFirmware()
-    {
-    	return firmware;
-    }
-
-    /**
-     * Set current firmware version
-     * @param fw
-     */
-    public static void setFirmware(FritzBoxFirmware fw)
-    {
-    	firmware = fw;
+    public FritzBox getFritzBox() {
+    	return fritzBox;
     }
 
     /**

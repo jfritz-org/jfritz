@@ -50,7 +50,7 @@ public class CallPanel extends JComponent {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() > 1) {
 					Person person = jfritz.getPhonebook().findPerson(number);
-					if (JFritzUtils.checkValidFirmware(jfritz))
+					if (jfritz.getFritzBox().checkValidFirmware())
 					{
 						CallDialog p;
 

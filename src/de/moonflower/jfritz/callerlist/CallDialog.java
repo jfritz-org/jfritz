@@ -205,13 +205,12 @@ public class CallDialog extends JDialog implements ActionListener {
 		if (e.getActionCommand().equals("call")) { //$NON-NLS-1$
 			if (cboNumber.getClass().toString().equals(
 					"class javax.swing.JLabel")) //$NON-NLS-1$
-				JFritzUtils.doCall(((JLabel) cboNumber).getText(), port
-						.getSelectedItem().toString(), firmware);
+				jfritz.getFritzBox().doCall(((JLabel) cboNumber).getText(), port
+						.getSelectedItem().toString());
 			if (cboNumber.getClass().toString().equals(
 					"class javax.swing.JComboBox")) //$NON-NLS-1$
-				JFritzUtils.doCall(((JComboBox) cboNumber).getSelectedItem()
-						.toString(), port.getSelectedItem().toString(),
-						firmware);
+				jfritz.getFritzBox().doCall(((JComboBox) cboNumber).getSelectedItem()
+						.toString(), port.getSelectedItem().toString());
 			setVisible(false);
 		} else if (e.getActionCommand().equals("close")) { //$NON-NLS-1$
 			setVisible(false);

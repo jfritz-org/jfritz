@@ -71,7 +71,7 @@ public class StatsDialog extends JDialog {
 	 *
 	 */
 	private void getStats() {
-		final String server = "http://"+JFritz.getProperty("box.address") //$NON-NLS-1$,  //$NON-NLS-2$
+		final String server = "http://"+jfritz.getFritzBox().getAddress() //$NON-NLS-1$
 		+":49000/upnp/control/WANCommonIFC1"; //$NON-NLS-1$
 		final String urn = "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetAddonInfos"; //$NON-NLS-1$
 
