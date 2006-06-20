@@ -171,7 +171,7 @@ public class SSDPPacket {
         }
         Debug.msg("SSDP FW: "+fwstr); //$NON-NLS-1$
         try {
-            return FritzBoxFirmware.detectFirmwareVersion(this.getIP().toString().substring(1), "");
+            return FritzBoxFirmware.detectFirmwareVersion(this.getIP().toString().substring(1), "", "80");
         } catch (WrongPasswordException wpe) {
             return null;
         } catch (InvalidFirmwareException e) {

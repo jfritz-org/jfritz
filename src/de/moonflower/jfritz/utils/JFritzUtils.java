@@ -139,32 +139,6 @@ public class JFritzUtils {
 	private static int[] quickdial_indizes = { -1, -1, -1, -1 };
 
 	/**
-	 * retrieves vector of caller data from the fritz box
-	 *
-	 * @param box_address
-	 * @param password
-	 * @param countryPrefix
-	 * @param areaPrefix
-	 * @param areaCode
-	 * @return Vector of caller data
-	 * @throws WrongPasswordException
-	 * @throws IOException
-	 */
-	public static void retrieveHTMLCallerList(String box_address,
-			String password, String countryPrefix, String countryCode,
-			String areaPrefix, String areaCode, FritzBoxFirmware firmware,
-			JFritz jfritz) throws WrongPasswordException, IOException {
-
-		String postdata = firmware.getAccessMethod()
-				+ POSTDATA_LIST.replaceAll("\\$LANG", firmware.getLanguage())
-				+ URLEncoder.encode(password, "ISO-8859-1"); //$NON-NLS-1$
-		String urlstr = "http://" + box_address + "/cgi-bin/webcm"; //$NON-NLS-1$,  //$NON-NLS-2$
-		Debug.msg("Postdata: " + postdata); //$NON-NLS-1$
-		Debug.msg("Urlstr: " + urlstr); //$NON-NLS-1$
-		fetchDataFromURL(urlstr, postdata, false);
-	}
-
-	/**
 	 *
 	 * @param firmware
 	 * @return Vector of QuickDial objects
@@ -193,6 +167,7 @@ public class JFritzUtils {
 		}
 		String urlstr = "http://" //$NON-NLS-1$
 				+ JFritz.getProperty("box.address", "fritz.box") //$NON-NLS-1$,  //$NON-NLS-2$
+				+ JFritz.getProperty("box.port", "80") //$NON-NLS-1$,  //$NON-NLS-2$
 				+ "/cgi-bin/webcm"; //$NON-NLS-1$
 		String data = fetchDataFromURL(urlstr, postdata, true);
 		return parseQuickDialData(model, data, firmware);
@@ -211,7 +186,7 @@ public class JFritzUtils {
 	 * @throws InvalidFirmwareException
 	 */
 	public static Vector retrieveSipProvider(String box_address,
-			String box_password, FritzBoxFirmware firmware)
+			String box_password, String box_port, FritzBoxFirmware firmware)
 			throws WrongPasswordException, IOException,
 			InvalidFirmwareException {
 		if (firmware == null)
@@ -220,7 +195,7 @@ public class JFritzUtils {
 				+ POSTDATA_SIPPROVIDER.replaceAll("\\$LANG", firmware
 						.getLanguage())
 				+ URLEncoder.encode(box_password, "ISO-8859-1"); //$NON-NLS-1$
-		String urlstr = "http://" + box_address + "/cgi-bin/webcm"; //$NON-NLS-1$,  //$NON-NLS-2$
+		String urlstr = "http://" + box_address + ":" + box_port + "/cgi-bin/webcm"; //$NON-NLS-1$,  //$NON-NLS-2$
 		Debug.msg("Postdata: " + postdata); //$NON-NLS-1$
 		Debug.msg("Urlstr: " + urlstr); //$NON-NLS-1$
 		String data = fetchDataFromURL(urlstr, postdata, true);
@@ -374,11 +349,11 @@ public class JFritzUtils {
 	 * @throws IOException
 	 * @throws WrongPasswordException
 	 */
-	public static void clearListOnFritzBox(String box_address, String password,
+	public static void clearListOnFritzBox(String box_address, String password, String port,
 			FritzBoxFirmware firmware) throws WrongPasswordException,
 			IOException {
 		Debug.msg("Clearing List"); //$NON-NLS-1$
-		String urlstr = "http://" + box_address + "/cgi-bin/webcm"; //$NON-NLS-1$,  //$NON-NLS-2$
+		String urlstr = "http://" + box_address + ":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$,  //$NON-NLS-2$
 		String postdata = firmware.getAccessMethod()
 				+ POSTDATA_CLEAR.replaceAll("\\$LANG", firmware.getLanguage());
 		fetchDataFromURL(urlstr, postdata, true);
@@ -409,7 +384,7 @@ public class JFritzUtils {
 	 * @throws IOException
 	 */
 
-	public static boolean retrieveCSVList(String box_address, String password,
+	public static boolean retrieveCSVList(String box_address, String password, String box_port,
 			String countryPrefix, String countryCode, String areaPrefix,
 			String areaCode, FritzBoxFirmware firmware, JFritz jfritz)
 			throws WrongPasswordException, IOException {
@@ -428,7 +403,7 @@ public class JFritzUtils {
 		String postdata = firmware.getAccessMethod()
 				+ POSTDATA_LIST.replaceAll("\\$LANG", firmware.getLanguage())
 				+ URLEncoder.encode(password, "ISO-8859-1");
-		String urlstr = "http://" + box_address + "/cgi-bin/webcm";
+		String urlstr = "http://" + box_address +":" + box_port + "/cgi-bin/webcm";
 
 		Debug.msg("Urlstr: " + urlstr);
 		Debug.msg("Postdata: " + postdata);
@@ -480,7 +455,7 @@ public class JFritzUtils {
 		// The list should be updated now
 		// Get the csv file for processing
 		Debug.msg("Retrieving the CSV list from the box");
-		urlstr = "http://" + box_address + "/cgi-bin/webcm";
+		urlstr = "http://" + box_address + ":" + box_port + "/cgi-bin/webcm";
 
 		try {
 			url = new URL(urlstr);
@@ -844,6 +819,7 @@ public class JFritzUtils {
 
 			String urlstr = "http://" //$NON-NLS-1$
 					+ JFritz.getProperty("box.address", "fritz.box") //$NON-NLS-1$, //$NON-NLS-2$
+					+ JFritz.getProperty("box.port", "80")
 					+ "/cgi-bin/webcm"; //$NON-NLS-1$
 			fetchDataFromURL(urlstr, postdata, true);
 		} catch (UnsupportedEncodingException uee) {
@@ -896,6 +872,7 @@ public class JFritzUtils {
 
 			String urlstr = "http://" //$NON-NLS-1$
 					+ JFritz.getProperty("box.address", "fritz.box") //$NON-NLS-1$, //$NON-NLS-2$
+					+ JFritz.getProperty("box.port", "80")
 					+ "/cgi-bin/webcm"; //$NON-NLS-1$
 			fetchDataFromURL(urlstr, postdata, true);
 		} catch (UnsupportedEncodingException uee) {
@@ -913,7 +890,7 @@ public class JFritzUtils {
 								JFritz.getProperty("box.address",
 										"192.168.178.1"), Encryption
 										.decrypt(JFritz
-												.getProperty("box.password"))));
+												.getProperty("box.password")), JFritz.getProperty("box.port","80")));
 				return true;
 			} catch (WrongPasswordException e) {
 				String password = jfritz.getJframe().showPasswordDialog("");

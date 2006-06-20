@@ -181,8 +181,8 @@ public class FritzBoxFirmware {
 	 * @throws IOException
 	 */
 	public static FritzBoxFirmware detectFirmwareVersion(String box_address,
-			String box_password) throws WrongPasswordException, IOException, InvalidFirmwareException {
-		final String urlstr = "http://" + box_address + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
+			String box_password, String port) throws WrongPasswordException, IOException, InvalidFirmwareException {
+		final String urlstr = "http://" + box_address +":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
 
 		String data = ""; //$NON-NLS-1$
 		String language = "de";

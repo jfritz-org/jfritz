@@ -43,6 +43,8 @@ public class ConfigPanel3 extends JPanel implements ActionListener {
 
 	public String password;
 
+	public JTextField port;
+
 	public FritzBoxFirmware firmware;
 
 	public ConfigPanel3(JFritz jfritz) {
@@ -103,6 +105,13 @@ public class ConfigPanel3 extends JPanel implements ActionListener {
 		boxpane.add(pass, c);
 
 		c.gridy = 5;
+		label = new JLabel(JFritz.getMessage("box.port") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		boxpane.add(label, c);
+		port = new JTextField("", 16); //$NON-NLS-1$
+		port.setMinimumSize(new Dimension(200, 20));
+		boxpane.add(port, c);
+
+		c.gridy = 6;
 		boxtypeButton = new JButton(JFritz.getMessage("detect_box_type")); //$NON-NLS-1$
 		boxtypeButton.setActionCommand("detectboxtype"); //$NON-NLS-1$
 		boxtypeButton.addActionListener(this);
@@ -114,6 +123,7 @@ public class ConfigPanel3 extends JPanel implements ActionListener {
 		pass.setText(Encryption.decrypt(JFritz.getProperty("box.password"))); //$NON-NLS-1$
 		password = Encryption.decrypt(JFritz.getProperty("box.password")); //$NON-NLS-1$
 		address.setText(JFritz.getProperty("box.address", "192.168.178.1")); //$NON-NLS-1$,  //$NON-NLS-2$
+		port.setText(JFritz.getProperty("box.port", "80")); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		if (devices != null) {
 			for (int i = 0; i < devices.size(); i++) {
@@ -144,7 +154,7 @@ public class ConfigPanel3 extends JPanel implements ActionListener {
 		} else if (e.getActionCommand().equals("detectboxtype")) { //$NON-NLS-1$
 			try {
 				firmware = FritzBoxFirmware.detectFirmwareVersion(address
-						.getText(), password);
+						.getText(), password, port.getText());
 
 				// firmware = new FritzBoxFirmware("14", "1", "35");
 				setBoxTypeLabel();

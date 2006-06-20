@@ -65,7 +65,7 @@ public class Telnet {
 						jfritz.getJframe(), jfritz);
 				telnetConfigDialog.setModal(true);
 				if (telnetConfigDialog.showConfigDialog() == TelnetConfigDialog.CANCEL_OPTION) {
-					//ABBRUCH
+					// ABBRUCH
 					return;
 				}
 			}
@@ -79,7 +79,8 @@ public class Telnet {
 				if (jfritz.getJframe() != null) {
 					jfritz.getJframe().setStatus("Verbinde mit Telnet ..."); //$NON-NLS-1$
 				}
-				telnet.connect(server, port); // Connect to the specified server
+				telnet.connect(server, port); // Connect to the specified
+												// server
 				in = telnet.getInputStream();
 				out = new PrintStream(telnet.getOutputStream());
 				if (login(user, password) == LOGIN_OK) {
@@ -111,7 +112,7 @@ public class Telnet {
 				}
 			} catch (Exception e) {
 				System.err.println("Error in Class Telnet"); //$NON-NLS-1$
-                Debug.err(e.toString());
+				Debug.err(e.toString());
 				return;
 			}
 		}
@@ -151,7 +152,7 @@ public class Telnet {
 									jfritz.getJframe(), jfritz);
 							telnetConfigDialog.setModal(true);
 							if (telnetConfigDialog.showConfigDialog() == TelnetConfigDialog.CANCEL_OPTION) {
-								//ABBRUCH
+								// ABBRUCH
 								jfritz.stopCallMonitor();
 								return LOGIN_CANCELED;
 							}
@@ -171,7 +172,9 @@ public class Telnet {
 															.getProperty("box.address"), //$NON-NLS-1$
 													Encryption
 															.decrypt(JFritz
-																	.getProperty("box.password"))); //$NON-NLS-1$
+																	.getProperty("box.password")), //$NON-NLS-1$
+													JFritz.getProperty("box.port","80")//$NON-NLS-1$, //$NON-NLS-2$
+											);
 									password = Encryption.decrypt(JFritz
 											.getProperty("box.password")); //$NON-NLS-1$
 									break; // go on with telnet login
@@ -192,14 +195,13 @@ public class Telnet {
 																	.getProperty(
 																			"box.password", //$NON-NLS-1$
 																			""))); //$NON-NLS-1$
-									System.out
-											.println("OLD PASS: " //$NON-NLS-1$
-													+ Encryption
-															.decrypt(JFritz
-																	.getProperty(
-																			"box.password", //$NON-NLS-1$
-																			""))); //$NON-NLS-1$
-									if (newPassword == null) { // Dialog aborted
+									System.out.println("OLD PASS: " //$NON-NLS-1$
+											+ Encryption.decrypt(JFritz
+													.getProperty(
+															"box.password", //$NON-NLS-1$
+															""))); //$NON-NLS-1$
+									if (newPassword == null) { // Dialog
+																// aborted
 										jfritz.stopCallMonitor();
 										return LOGIN_CANCELED;
 									} else {
@@ -224,7 +226,7 @@ public class Telnet {
 									jfritz.getJframe(), jfritz);
 							telnetConfigDialog.setModal(true);
 							if (telnetConfigDialog.showConfigDialog() == TelnetConfigDialog.CANCEL_OPTION) {
-								//ABBRUCH
+								// ABBRUCH
 								return LOGIN_CANCELED;
 							}
 						}
@@ -279,7 +281,7 @@ public class Telnet {
 			out.println(value);
 			out.flush();
 		} catch (Exception e) {
-            Debug.err(e.toString());
+			Debug.err(e.toString());
 		}
 	}
 
@@ -295,7 +297,7 @@ public class Telnet {
 			String data = readUntil(prompt + " "); //$NON-NLS-1$
 			return data;
 		} catch (Exception e) {
-            Debug.err(e.toString());
+			Debug.err(e.toString());
 		}
 		return null;
 	}

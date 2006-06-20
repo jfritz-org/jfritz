@@ -554,8 +554,9 @@ public class CallerList extends AbstractTableModel {
 					+ JFritz.getFirmware().getLanguage());
 
 			boolean newEntries = JFritzUtils.retrieveCSVList(JFritz
-					.getProperty("box.address"), Encryption.decrypt(JFritz
+					.getProperty("box.address","fritz.box"), Encryption.decrypt(JFritz
 					.getProperty("box.password")), JFritz
+					.getProperty("box.port", "80"), JFritz
 					.getProperty("country.prefix"), JFritz
 					.getProperty("country.code"), JFritz
 					.getProperty("area.prefix"), JFritz
@@ -575,7 +576,9 @@ public class CallerList extends AbstractTableModel {
 				JFritzUtils
 						.clearListOnFritzBox(
 								JFritz.getProperty("box.address"), //$NON-NLS-1$
-								JFritz.getProperty("box.password"), JFritz.getFirmware()); //$NON-NLS-1$
+								JFritz.getProperty("box.password"),//$NON-NLS-1$
+								JFritz.getProperty("box.port"),//$NON-NLS-1$
+								JFritz.getFirmware());
 			}
 
 			// Make back-up after fetching the caller list?

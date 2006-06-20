@@ -55,6 +55,8 @@
  *		delete_duplicate_phonebook_entries
  *		delete_duplicate_phonebook_entries_confirm_msg
  *		delete_duplicate_phonebook_entries_inform_msg
+ *		box.port
+ * - Neu: Port einstellbar
  * - Neu: Konfigurationswizard für Erstbenutzer
  * - Neu: Logfiles werden jetzt mittels Stream redirection geschrieben (heißt auch die Exceptions werden in den Logfiles aufgenommen :) )
  * - Neu: Entfernen doppelter Einträge beim Telefonbuch
@@ -414,7 +416,7 @@ public final class JFritz {
 	//when changing this, don't forget to check the resource bundles!!
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-    public final static String PROGRAM_VERSION = "0.6.1"; //$NON-NLS-1$
+    public final static String PROGRAM_VERSION = "0.6.1-port"; //$NON-NLS-1$
 
     public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -422,7 +424,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.262 2006/06/17 15:27:30 little_ben Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.263 2006/06/20 15:44:19 robotniko Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -903,7 +905,7 @@ public final class JFritz {
             firmware = FritzBoxFirmware.detectFirmwareVersion(JFritz
                     .getProperty("box.address", "192.168.178.1"), Encryption //$NON-NLS-1$,  //$NON-NLS-2$
                     .decrypt(JFritz.getProperty("box.password", Encryption //$NON-NLS-1$
-                            .encrypt("")))); //$NON-NLS-1$
+                            .encrypt(""))), JFritz.getProperty("box.port","80")); //$NON-NLS-1$
         } catch (WrongPasswordException e1) {
             Debug.err("Wrong Password!"); //$NON-NLS-1$
             firmware = null;
@@ -1043,7 +1045,7 @@ public final class JFritz {
 			Debug.err("Exception: " + e.toString()); //$NON-NLS-1$
         }
 		try {
-			JFritzUtils.clearListOnFritzBox(properties.getProperty("box.address"), Encryption.decrypt(properties.getProperty("box.password")), firmware);  //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+			JFritzUtils.clearListOnFritzBox(properties.getProperty("box.address"), Encryption.decrypt(properties.getProperty("box.password")), JFritz.getProperty("box.port", "80"), firmware);  //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 			Debug.msg("Clearing done"); //$NON-NLS-1$
 		} catch (WrongPasswordException e) {
 			Debug.err("Wrong password, can not delete callerlist on Box."); //$NON-NLS-1$

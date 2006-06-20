@@ -376,9 +376,10 @@ public class Person {
 
 	/**
 	 * @author Bastian Schaefer
+	 * @param separator Separator for using in CSV-files
 	 * @return Returns CSV String
 	 */
-	public String toCSV() {
+	public String toCSV(char separator) {
 		String outString = ""; //$NON-NLS-1$
 
 		// private contact?
@@ -389,39 +390,39 @@ public class Person {
 		}
 
 		// last name
-		outString = outString.concat(";\"" + getLastName() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+		outString = outString.concat(separator+"\"" + getLastName() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		// first name
-		outString = outString.concat(";\"" + getFirstName() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+		outString = outString.concat(separator+"\"" + getFirstName() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		// company
-		outString = outString.concat(";\"" + getCompany() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+		outString = outString.concat(separator+"\"" + getCompany() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		// Street
-		outString = outString.concat(";\"" + getStreet() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+		outString = outString.concat(separator+"\"" + getStreet() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		// Postal Code
-		outString = outString.concat(";\"" + getPostalCode() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+		outString = outString.concat(separator+"\"" + getPostalCode() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		// city
-		outString = outString.concat(";\"" + getCity() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+		outString = outString.concat(separator+"\"" + getCity() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		// email
-		outString = outString.concat(";\"" + getEmailAddress() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+		outString = outString.concat(separator+"\"" + getEmailAddress() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		// numbers
 		if (getNumbers() == null)
-			outString = outString.concat(";\"\""); //$NON-NLS-1$
+			outString = outString.concat(separator+"\"\""); //$NON-NLS-1$
 
 		else
 			for (int i = 0; i < 8; i++) {
 				try {
-					outString = outString.concat(";\""//$NON-NLS-1$
+					outString = outString.concat(separator+"\""//$NON-NLS-1$
 							+ getPhoneNumber(basicTypes[i].replaceAll(" ", ""))//$NON-NLS-1$, //$NON-NLS-2$
 									.toString().replaceAll("\\[|\\]", "")//$NON-NLS-1$, //$NON-NLS-2$
 							+ "\"");//$NON-NLS-1$
 				} catch (NullPointerException ex) {
-					outString = outString.concat(";\"\"");//$NON-NLS-1$
+					outString = outString.concat(separator+"\"\"");//$NON-NLS-1$
 				}
 
 			}

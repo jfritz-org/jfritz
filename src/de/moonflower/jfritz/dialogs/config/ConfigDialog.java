@@ -76,7 +76,7 @@ public class ConfigDialog extends JDialog {
 	private JComboBox addressCombo, callMonitorCombo, languageCombo;
 
 	private JTextField address, areaCode, countryCode, areaPrefix,
-			countryPrefix, externProgramTextField;
+			countryPrefix, externProgramTextField, port;
 
 	private JPasswordField pass;
 
@@ -224,6 +224,7 @@ public class ConfigDialog extends JDialog {
 
 		pass.setText(Encryption.decrypt(JFritz.getProperty("box.password"))); //$NON-NLS-1$
 		password = Encryption.decrypt(JFritz.getProperty("box.password")); //$NON-NLS-1$
+		port.setText(JFritz.getProperty("box.port","80")); //$NON-NLS-1$,  //$NON-NLS-2$
 		address.setText(JFritz.getProperty("box.address", "192.168.178.1")); //$NON-NLS-1$,  //$NON-NLS-2$
 		areaCode.setText(JFritz.getProperty("area.code")); //$NON-NLS-1$
 		countryCode.setText(JFritz.getProperty("country.code")); //$NON-NLS-1$
@@ -328,6 +329,7 @@ public class ConfigDialog extends JDialog {
 
 		JFritz.setProperty("box.password", Encryption.encrypt(password)); //$NON-NLS-1$
 		JFritz.setProperty("box.address", address.getText()); //$NON-NLS-1$
+		JFritz.setProperty("box.port", port.getText()); //$NON-NLS-1$
 		JFritz.setProperty("area.code", areaCode.getText()); //$NON-NLS-1$
 		JFritz.setProperty("country.code", countryCode.getText()); //$NON-NLS-1$
 		JFritz.setProperty("area.prefix", areaPrefix.getText()); //$NON-NLS-1$
@@ -406,6 +408,13 @@ public class ConfigDialog extends JDialog {
 		boxpane.add(pass, c);
 
 		c.gridy = 5;
+		label = new JLabel(JFritz.getMessage("box.port") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		boxpane.add(label, c);
+		port = new JTextField("", 16); //$NON-NLS-1$
+		port.setMinimumSize(new Dimension(200, 20));
+		boxpane.add(port, c);
+
+		c.gridy = 6;
 		boxtypeButton = new JButton(JFritz.getMessage("detect_box_type")); //$NON-NLS-1$
 		boxtypeButton.setActionCommand("detectboxtype"); //$NON-NLS-1$
 		boxtypeButton.addActionListener(actionListener);
@@ -413,7 +422,7 @@ public class ConfigDialog extends JDialog {
 		boxtypeLabel = new JLabel();
 		boxpane.add(boxtypeLabel, c);
 
-		c.gridy = 6;
+		c.gridy = 7;
 		label = new JLabel(JFritz.getMessage("mac_address") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		// boxpane.add(label, c);
 		macLabel = new JLabel();
@@ -934,7 +943,7 @@ public class ConfigDialog extends JDialog {
 				} else if (e.getActionCommand().equals("detectboxtype")) { //$NON-NLS-1$
 					try {
 						firmware = FritzBoxFirmware.detectFirmwareVersion(
-								address.getText(), password);
+								address.getText(), password, port.getText());
 
 						// firmware = new FritzBoxFirmware("14", "1", "35");
 						setBoxTypeLabel();
@@ -960,7 +969,7 @@ public class ConfigDialog extends JDialog {
 				} else if (e.getActionCommand().equals("fetchSIP")) { //$NON-NLS-1$
 					try {
 						Vector data = JFritzUtils.retrieveSipProvider(address
-								.getText(), password, firmware);
+								.getText(), password, port.getText(), firmware);
 						jfritz.getSIPProviderTableModel().updateProviderList(
 								data);
 						jfritz.getSIPProviderTableModel()

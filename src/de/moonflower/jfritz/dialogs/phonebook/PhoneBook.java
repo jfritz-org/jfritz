@@ -77,7 +77,6 @@ public class PhoneBook extends AbstractTableModel {
 
 	private boolean sortDirection = true;
 
-    private final static String EXPORT_CSV_FORMAT = "\"Private\";\"Last Name\";\"First Name\";\"Company\";\"Street\";\"ZIP Code\";\"City\";\"E-Mail\";\"Home\";\"Mobile\";\"Homezone\";\"Business\";\"Other\";\"Fax\";\"Sip\";\"Main\""; //$NON-NLS-1$
 	/**
 	 * Sort table model rows by a specific column and direction
 	 *
@@ -567,7 +566,9 @@ public class PhoneBook extends AbstractTableModel {
 		return filteredPersons.indexOf(p);
 	}
 
-	//TODO
+    private String getCSVHeader(char separator) {
+    	return "\"Private\""+separator+"\"Last Name\""+separator+"\"First Name\""+separator+"\"Company\""+separator+"\"Street\""+separator+"\"ZIP Code\""+separator+"\"City\""+separator+"\"E-Mail\""+separator+"\"Home\""+separator+"\"Mobile\""+separator+"\"Homezone\""+separator+"\"Business\""+separator+"\"Other\""+separator+"\"Fax\""+separator+"\"Sip\""+separator+"\"Main\""; //$NON-NLS-1$
+    }
     /**
      * Saves PhoneBook to csv file
      *
@@ -578,14 +579,14 @@ public class PhoneBook extends AbstractTableModel {
      * @param wholePhoneBook
      *            Save whole phone book or only selected entries
      */
-    public void saveToCSVFile(String filename, boolean wholePhoneBook) {
+    public void saveToCSVFile(String filename, boolean wholePhoneBook, char separator) {
         Debug.msg("Saving phone book to csv file " + filename); //$NON-NLS-1$
         FileOutputStream fos;
         try {
             fos = new FileOutputStream(filename);
             PrintWriter pw = new PrintWriter(fos);
            // pw.println("\"Private\";\"Last Name\";\"First Name\";\"Number\";\"Address\";\"City\"");
-           pw.println(EXPORT_CSV_FORMAT);
+           pw.println(getCSVHeader(separator));
             int rows[] = null;
             if (jfritz != null && jfritz.getJframe() != null) {
             	 rows = jfritz.getJframe().getPhoneBookPanel().getPhoneBookTable().getSelectedRows();
@@ -594,19 +595,19 @@ public class PhoneBook extends AbstractTableModel {
                 for (int i = 0; i < rows.length; i++) {
                     Person currentPerson = (Person) filteredPersons
                             .elementAt(rows[i]);
-                    pw.println(currentPerson.toCSV());
+                    pw.println(currentPerson.toCSV(separator));
                 }
             } else if (wholePhoneBook) { // Export ALL UNFILTERED Calls
                 Enumeration en = getUnfilteredPersons().elements();
                 while (en.hasMoreElements()) {
                     Person person = (Person) en.nextElement();
-                    pw.println(person.toCSV());
+                    pw.println(person.toCSV(separator));
                 }
             } else { // Export ALL FILTERED Calls
                 Enumeration en = getFilteredPersons().elements();
                 while (en.hasMoreElements()) {
                     Person person = (Person) en.nextElement();
-                    pw.println(person.toCSV());
+                    pw.println(person.toCSV(separator));
                 }
             }
             pw.close();
