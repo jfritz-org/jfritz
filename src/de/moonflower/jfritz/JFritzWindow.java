@@ -235,13 +235,13 @@ public class JFritzWindow extends JFrame
 				.encrypt(JFritz.PROGRAM_SECRET + "")); //$NON-NLS-1$
 		String pass = jfritz.getFritzBox().getPassword();
 		if (!Encryption.decrypt(ask).equals(
-				JFritz.PROGRAM_SECRET + Encryption.decrypt(pass))) {
+				JFritz.PROGRAM_SECRET + pass)) {
 			String password = showPasswordDialog(""); //$NON-NLS-1$
 			if (password == null) { // PasswordDialog canceled
 				Debug.errDlg(JFritz.getMessage("input_canceled")); //$NON-NLS-1$
 				Debug.err("Eingabe abgebrochen"); //$NON-NLS-1$
 				System.exit(0);
-			} else if (!password.equals(Encryption.decrypt(pass))) {
+			} else if (!password.equals(pass)) {
 				Debug.errDlg(JFritz.getMessage("wrong_password")); //$NON-NLS-1$
 				Debug.err(JFritz.getMessage("wrong_password")); //$NON-NLS-1$
 				System.exit(0);
