@@ -20,6 +20,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
@@ -39,6 +40,8 @@ public class CallDialog extends JDialog implements ActionListener {
 	private JFritz jfritz;
 
 	private JComboBox port;
+
+	private JTextField number;
 
 	private FritzBoxFirmware firmware = null;
 
@@ -116,21 +119,15 @@ public class CallDialog extends JDialog implements ActionListener {
 			c.anchor = GridBagConstraints.WEST;
 
 			c.gridy = 1;
+
 			JLabel label = new JLabel(JFritz.getMessage("number")+": "); //$NON-NLS-1$,  //$NON-NLS-2$
 			topPane.add(label, c);
-			if (this.numbers.size() == 1) {
-				cboNumber = new JLabel(((PhoneNumber) numbers.elementAt(0))
-						.getShortNumber());
-			} else {
-				cboNumber = new JComboBox();
-				for (int i = 0; i < this.numbers.size(); i++) {
-					((JComboBox) cboNumber).addItem(((PhoneNumber) numbers
-							.elementAt(i)).getShortNumber());
-				}
-				((JComboBox) cboNumber).setSelectedItem(this.defaultNumber
-						.getShortNumber());
-			}
-			topPane.add((Component) cboNumber, c);
+
+			//make the number editable
+			number = new JTextField( ((PhoneNumber) numbers.elementAt(0)).getShortNumber());
+			c.fill = GridBagConstraints.REMAINDER;
+			topPane.add(number, c);
+
 			c.gridy = 2;
 			label = new JLabel(JFritz.getMessage("extension")+": "); //$NON-NLS-1$,  //$NON-NLS-2$
 			topPane.add(label, c);
@@ -203,14 +200,10 @@ public class CallDialog extends JDialog implements ActionListener {
 	 */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("call")) { //$NON-NLS-1$
-			if (cboNumber.getClass().toString().equals(
-					"class javax.swing.JLabel")) //$NON-NLS-1$
-				jfritz.getFritzBox().doCall(((JLabel) cboNumber).getText(), port
-						.getSelectedItem().toString());
-			if (cboNumber.getClass().toString().equals(
-					"class javax.swing.JComboBox")) //$NON-NLS-1$
-				jfritz.getFritzBox().doCall(((JComboBox) cboNumber).getSelectedItem()
-						.toString(), port.getSelectedItem().toString());
+
+			if(!number.getText().equals(""))
+				jfritz.getFritzBox().doCall(number.getText(), port.getSelectedItem().toString());
+
 			setVisible(false);
 		} else if (e.getActionCommand().equals("close")) { //$NON-NLS-1$
 			setVisible(false);
