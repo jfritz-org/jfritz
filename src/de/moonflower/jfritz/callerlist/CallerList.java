@@ -1378,7 +1378,7 @@ public class CallerList extends AbstractTableModel {
 
 		// Phone number
 		if (!field[3].equals("")) {
-			number = new PhoneNumber(field[3]);
+			number = new PhoneNumber(field[3], jfritz);
 			number.setCallByCall(field[10]);
 		} else
 			number = null;
@@ -1455,7 +1455,7 @@ public class CallerList extends AbstractTableModel {
 
 		// Phone number
 		if (!field[2].equals(""))
-			number = new PhoneNumber(field[2]);
+			number = new PhoneNumber(field[2], jfritz);
 		else
 			number = null;
 
@@ -1550,7 +1550,7 @@ public class CallerList extends AbstractTableModel {
 
 		// Phone number
 		if (!field[3].equals(""))
-			number = new PhoneNumber(field[3]);
+			number = new PhoneNumber(field[3], jfritz);
 		else
 			number = null;
 
@@ -1659,7 +1659,7 @@ public class CallerList extends AbstractTableModel {
 
 		// Phone number
 		if (!field[2].equals(""))
-			number = new PhoneNumber(field[2]);
+			number = new PhoneNumber(field[2], jfritz);
 		else
 			number = null;
 

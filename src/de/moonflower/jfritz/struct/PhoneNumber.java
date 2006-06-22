@@ -4,10 +4,13 @@
  */
 package de.moonflower.jfritz.struct;
 
+import java.util.Enumeration;
 import java.util.HashMap;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.dialogs.quickdial.QuickDials;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
  * @author Arno Willig
@@ -15,7 +18,7 @@ import de.moonflower.jfritz.utils.Debug;
  */
 public class PhoneNumber implements Comparable {
 
-	private String numberMatcher = "([0-9]|\\+|\\(|\\)| |-|/)+";//$NON-NLS-1$
+	private String numberMatcher = "([0-9]|\\+|\\(|\\)| |-|/)+|\\**";//$NON-NLS-1$
 
 	private String number = "";//$NON-NLS-1$
 
@@ -46,6 +49,21 @@ public class PhoneNumber implements Comparable {
 	 */
 	public PhoneNumber(String fullNumber) {
 		this(fullNumber, "");//$NON-NLS-1$
+	}
+	/**
+	 * This constructor should be used if the number
+	 *  may be a quickdial and needs to be resolved!
+	 *
+	 * @author Brian Jensen
+	 *
+	 * @param fullNumber
+	 * @param jfritz
+	 */
+	public PhoneNumber(String fullNumber, JFritz jfritz) {
+		this.type = "";
+		if (number.matches(numberMatcher)) this.number = fullNumber;
+		createMobileMap();
+		refactorNumber(jfritz);
 	}
 
 	/**
@@ -99,7 +117,23 @@ public class PhoneNumber implements Comparable {
 	 */
 	public void refactorNumber() {
 	    removeUnnecessaryChars();
-		cutCallByCall();
+	    cutCallByCall();
+		number = convertToIntNumber();
+
+	}
+
+	/**
+	 * Method cuts unnecessary characters from the number, resolves quickdials, and
+	 * cuts the call by from the number
+	 *
+	 * @author Brian Jensen
+	 *
+	 * @param jf, a referenz to the current jfritz instance
+	 */
+	public void refactorNumber(JFritz jf) {
+	    removeUnnecessaryChars();
+		convertQuickDial(jf);
+	    cutCallByCall();
 		number = convertToIntNumber();
 	}
 
@@ -121,6 +155,9 @@ public class PhoneNumber implements Comparable {
 
 	/**
 	 * Converts number to international number
+	 *
+	 * @TODO: This function may need to be redone, if number parsing is misbehaving
+	 *
 	 * @return Returns internationalized number
 	 */
 	public String convertToIntNumber() {
@@ -137,18 +174,19 @@ public class PhoneNumber implements Comparable {
 				|| isQuickDial() // FritzBox QuickDial
 		) {
 			return number;
-		}
+		}else	if (number.startsWith(countryPrefix))  // International call
+			return "+" + number.substring(countryPrefix.length());//$NON-NLS-1$
 
-		if (number.startsWith(countryCode) && number.length() > 7) {
+		else if (number.startsWith(areaPrefix))
+			return "+" + countryCode + number.substring(areaPrefix.length());//$NON-NLS-1$
+
+
+		else if (number.startsWith(countryCode) && number.length() > 7)
 			// International numbers without countryPrefix
 			return "+" + number;//$NON-NLS-1$
-		}
-		if (number.startsWith(countryPrefix)) { // International call
-			return "+" + number.substring(countryPrefix.length());//$NON-NLS-1$
-		}
-		if (number.startsWith(areaPrefix)) {
-			return "+" + countryCode + number.substring(areaPrefix.length());//$NON-NLS-1$
-		}
+
+		//if its not any internationl call, or a national call (in germany you can't dial
+		// a national number using the internation prefix), then its a local call
 		return "+" + countryCode + areaCode + number;//$NON-NLS-1$
 	}
 
@@ -181,7 +219,10 @@ public class PhoneNumber implements Comparable {
 	 * @return the international number
 	 */
 	public String getIntNumber() {
-		return number;
+		if(number.startsWith("*"))
+			return JFritzUtils.convertSpecialChars(number);
+		else
+			return number;
 	}
 
 	/**
@@ -379,4 +420,50 @@ public class PhoneNumber implements Comparable {
 		else
 			type = "home"; //$NON-NLS-1$
 	}
+
+	/**
+	 * This function resolves incoming Quickdials to their appropriate
+	 * full number, if one is not found the Quickdial is left unchanged
+	 *
+	 * @author Brian Jensen
+	 *
+	 *
+	 * @param jf is a referenz to the current jfritz instance
+	 */
+	public void convertQuickDial(JFritz jf){
+
+		if (number.startsWith("**7")) //$NON-NLS-1$
+        	// QuickDial
+        {
+            Debug.msg("Quickdial: " + number //$NON-NLS-1$
+                    + ", searching for the full number"); //$NON-NLS-1$
+
+          	// replace QuickDial with
+            // QuickDial-Entry
+            String quickDialNumber = number.substring(3);
+            if (jf.getJframe().getQuickDialPanel().getDataModel()
+                    .getQuickDials().size() == 0) {
+
+            	// get QuickDials from FritzBox
+            	Debug.msg("No Quickdials present in JFritz, retrieving the list from the box");
+            	jf.getJframe().getQuickDialPanel().getDataModel()
+            	.getQuickDialDataFromFritzBox();
+            }
+            Enumeration en = jf.getJframe().getQuickDialPanel()
+            	.getDataModel().getQuickDials().elements();
+            while (en.hasMoreElements()) {
+            	QuickDial quickDial = (QuickDial) en.nextElement();
+            	if (quickDialNumber.equals(quickDial.getQuickdial())) {
+            		number = quickDial.getNumber();
+            		Debug.msg("Quickdial resolved. Number: " //$NON-NLS-1$
+            				+ number.toString());
+            	}
+            }
+
+            if(number.startsWith("**7"))
+            	Debug.msg("No quickdial found. Refresh your quickdial list"); //$NON-NLS-1$
+
+        }
+	}
+
 }
