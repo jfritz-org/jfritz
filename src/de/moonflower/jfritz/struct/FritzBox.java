@@ -643,8 +643,9 @@ public class FritzBox {
 			} else if (port.equals("ISDN 9")) { //$NON-NLS-1$
 				portStr = "59"; //$NON-NLS-1$
 			}
-
-			String postdata = POSTDATA_CALL.replaceAll("\\$NUMMER", number); //$NON-NLS-1$
+            String postdata = POSTDATA_CALL.replaceAll("\\$PASSWORT", //$NON-NLS-1$
+                    URLEncoder.encode(box_password, "ISO-8859-1"));
+			postdata = postdata.replaceAll("\\$NUMMER", number); //$NON-NLS-1$
 			postdata = postdata.replaceAll("\\$NEBENSTELLE", portStr); //$NON-NLS-1$
 
 			postdata = firmware.getAccessMethod() + postdata;
