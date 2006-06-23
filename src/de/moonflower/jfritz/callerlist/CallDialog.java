@@ -26,7 +26,6 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.NoticeDialog;
-import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
  * @author Robert Palmer
@@ -134,6 +133,7 @@ public class CallDialog extends JDialog implements ActionListener {
 
 			port = new JComboBox();
 			port.addItem("Fon 1"); //$NON-NLS-1$
+            firmware = jfritz.getFritzBox().getFirmware();
 			if (firmware != null) {
 				switch (firmware.getBoxType()) {
 					case FritzBoxFirmware.BOXTYPE_FRITZBOX_FON :
