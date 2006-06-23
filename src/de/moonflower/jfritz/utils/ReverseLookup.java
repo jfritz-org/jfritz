@@ -27,11 +27,12 @@ public class ReverseLookup {
 
 	public static Person lookup(PhoneNumber number) {
 		Person newPerson;
-		if (number.isMobile()) {
+/**		if (number.isMobile()) {
 			newPerson = new Person();
 			newPerson.addNumber(number);
 			Debug.msg("Adding mobile " + number.getIntNumber()); //$NON-NLS-1$
-		} else if (number.isFreeCall()) {
+		} else **/
+        if (number.isFreeCall()) {
 			newPerson = new Person("", "FreeCall"); //$NON-NLS-1$,  //$NON-NLS-2$
 			newPerson.addNumber(number);
 		} else if (number.isSIPNumber() || number.isQuickDial()) {
