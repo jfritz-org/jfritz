@@ -29,7 +29,6 @@ import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.struct.QuickDial;
 import de.moonflower.jfritz.utils.Debug;
-import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
  * Table model for QuickDials
