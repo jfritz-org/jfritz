@@ -56,6 +56,7 @@
  *		delete_duplicate_phonebook_entries_confirm_msg
  *		delete_duplicate_phonebook_entries_inform_msg
  *		box.port
+ * - Neu: Wählhilfe merkt sich den zuletzt benutzen Port
  * - Neu: JFritz kann jetzt beliebige Nummer mit der Wahlhilfe wählen (noch nicht ausführlich getestet, z.B. funktionieren auch die Tastencode?)
  * - Bugfix: Kurzwahlen werden jetzt korrekt geparst beim Abholen der Anrufliste
  * - Neu: Port einstellbar
@@ -426,7 +427,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.266 2006/06/22 22:55:02 capncrunch Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.267 2006/06/23 09:48:37 robotniko Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 

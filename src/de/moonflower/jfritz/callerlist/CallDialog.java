@@ -5,7 +5,6 @@
 package de.moonflower.jfritz.callerlist;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -46,8 +45,6 @@ public class CallDialog extends JDialog implements ActionListener {
 
 	JButton okButton, cancelButton;
 
-	private Object cboNumber;
-
 	private PhoneNumber defaultNumber;
 
 	/**
@@ -62,7 +59,6 @@ public class CallDialog extends JDialog implements ActionListener {
 			throws HeadlessException {
 		super();
 		this.jfritz = jfritz;
-		// this.setLocationRelativeTo(jfritz.getJframe());
 		this.setLocation(jfritz.getJframe().getX() + 80, jfritz.getJframe()
 				.getY() + 100);
 		this.numbers = numbers;
@@ -88,6 +84,7 @@ public class CallDialog extends JDialog implements ActionListener {
 		Vector v = new Vector();
 		v.addElement(number);
 		this.numbers = v;
+        this.defaultNumber = number;
 		drawDialog();
 	}
 
@@ -123,8 +120,9 @@ public class CallDialog extends JDialog implements ActionListener {
 			topPane.add(label, c);
 
 			//make the number editable
-			number = new JTextField( ((PhoneNumber) numbers.elementAt(0)).getShortNumber());
+			number = new JTextField(defaultNumber.getShortNumber());
 			c.fill = GridBagConstraints.REMAINDER;
+            number.setPreferredSize(new Dimension(100, 20));
 			topPane.add(number, c);
 
 			c.gridy = 2;
@@ -173,6 +171,7 @@ public class CallDialog extends JDialog implements ActionListener {
 						 }
 					}
 			}
+            port.setPreferredSize(new Dimension(100, 20));
 			topPane.add(port, c);
 
 			// Bottom Pane
@@ -186,6 +185,8 @@ public class CallDialog extends JDialog implements ActionListener {
 
 			bottomPane.add(okButton);
 			bottomPane.add(cancelButton);
+
+            port.setSelectedIndex(Integer.parseInt(JFritz.getProperty("calldialog.lastport", "0")));
 
 			getContentPane().add(topPane, BorderLayout.NORTH);
 			getContentPane().add(bottomPane, BorderLayout.SOUTH);
@@ -201,11 +202,14 @@ public class CallDialog extends JDialog implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("call")) { //$NON-NLS-1$
 
+            JFritz.setProperty("calldialog.lastport", Integer.toString(port.getSelectedIndex()));
+
 			if(!number.getText().equals(""))
 				jfritz.getFritzBox().doCall(number.getText(), port.getSelectedItem().toString());
 
 			setVisible(false);
 		} else if (e.getActionCommand().equals("close")) { //$NON-NLS-1$
+            JFritz.setProperty("calldialog.lastport", Integer.toString(port.getSelectedIndex()));
 			setVisible(false);
 		}
 	}
