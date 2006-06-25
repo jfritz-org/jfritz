@@ -53,6 +53,12 @@ public class CallPanel extends JComponent {
 					{
 						CallDialog p;
 
+						/* opens CallDialog with:
+						 * 1) an editable JTextField if callee has only one number
+						 * 2) an editable JComboBox if callee has more than one numbers
+						 * 2a) if method is used from callerlist -> select used number as default
+						 * 2b) if method is used from phonebook -> select standard number as default
+						 */
 						if (person!=null)
 						{
 							p = new CallDialog(jfritz,person.getNumbers(),number);
