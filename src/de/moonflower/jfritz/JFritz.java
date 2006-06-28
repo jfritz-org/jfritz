@@ -422,7 +422,7 @@ public final class JFritz {
 	//when changing this, don't forget to check the resource bundles!!
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-    public final static String PROGRAM_VERSION = "0.6.1-port"; //$NON-NLS-1$
+    public final static String PROGRAM_VERSION = "0.6.1"; //$NON-NLS-1$
 
     public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -430,7 +430,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.269 2006/06/25 14:55:26 little_ben Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.270 2006/06/28 22:21:02 robotniko Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
