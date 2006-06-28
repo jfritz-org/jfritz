@@ -70,7 +70,8 @@ public class JFritzProperties extends Properties {
 		super(defaultProperties);
 	}
 
-	public synchronized void loadFromXML(String filename) throws IOException {
+	public synchronized void loadFromXML(String filename) throws IOException,
+			FileNotFoundException {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setValidating(false);
@@ -123,6 +124,9 @@ public class JFritzProperties extends Properties {
             }
         } catch (IOException e) {
             Debug.err("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+
+            //make sure that we jfritz.java knows to show the config wizard
+            throw new FileNotFoundException();
         }
 	}
 

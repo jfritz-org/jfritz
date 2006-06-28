@@ -31,24 +31,29 @@ public class ConfigPanel2 extends JPanel{
 		//draw the panel
 		JPanel phonepane = new JPanel();
 		phonepane.setLayout(new GridBagLayout());
+		phonepane.setBorder(BorderFactory.createEmptyBorder(30, 20, 30, 20));
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets.top = 5;
 		c.insets.bottom = 5;
 		c.anchor = GridBagConstraints.LINE_START;
 
 		c.gridy = 1;
-		JLabel label = new JLabel(JFritz.getMessage("area_code")); //$NON-NLS-1$
+		JLabel label = new JLabel(JFritz.getMessage("telephone"));
+		phonepane.add(label, c);
+
+		c.gridy = 2;
+		label = new JLabel(JFritz.getMessage("area_code")); //$NON-NLS-1$
 		phonepane.add(label, c);
 		areaCode = new JTextField("", 6); //$NON-NLS-1$
 		phonepane.add(areaCode, c);
 
-		c.gridy = 2;
+		c.gridy = 3;
 		label = new JLabel(JFritz.getMessage("country_code")); //$NON-NLS-1$
 		phonepane.add(label, c);
 		countryCode = new JTextField("", 3); //$NON-NLS-1$
 		phonepane.add(countryCode, c);
 
-		c.gridy = 3;
+		c.gridy = 4;
 		label = new JLabel(JFritz.getMessage("area_prefix")); //$NON-NLS-1$
 		phonepane.add(label, c);
 		areaPrefix = new JTextField("", 3); //$NON-NLS-1$

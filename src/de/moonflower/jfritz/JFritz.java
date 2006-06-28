@@ -56,6 +56,12 @@
  *		delete_duplicate_phonebook_entries_confirm_msg
  *		delete_duplicate_phonebook_entries_inform_msg
  *		box.port
+ *		config_wizard_info1
+ *		config_wizard_info2
+ *		config_wizard_info3
+ *		config_wizard_info4
+ *		config_wizard
+ *
  * - Neu: Rückwärtssuche auch für Handynummern
  * - Neu: Wählhilfe merkt sich den zuletzt benutzen Port
  * - Neu: JFritz kann jetzt beliebige Nummer mit der Wahlhilfe wählen (noch nicht ausführlich getestet, z.B. funktionieren auch die Tastencode?)
@@ -430,7 +436,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.270 2006/06/28 22:21:02 robotniko Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.271 2006/06/28 22:58:15 capncrunch Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -495,6 +501,8 @@ public final class JFritz {
     private static boolean isRunning = false;
 
     private static Locale locale;
+
+    private boolean showConfWizard = false;
 
     private static FritzBox fritzBox;
 
@@ -818,6 +826,11 @@ public final class JFritz {
             }
         }
 
+        if(showConfWizard){
+            Debug.msg("Presenting user with the configuration dialog");
+            showConfigWizard();
+        }
+
         jframe.checkStartOptions();
 
         javax.swing.SwingUtilities.invokeLater(jframe);
@@ -882,7 +895,8 @@ public final class JFritz {
             replaceOldProperties();
         } catch (FileNotFoundException e) {
             Debug.err("File " + JFritz.PROPERTIES_FILE //$NON-NLS-1$
-                    + " not found, using default values"); //$NON-NLS-1$
+                    + " not readable => showing config wizard"); //$NON-NLS-1$
+           showConfWizard = true;
         } catch (Exception e) {
         }
     }

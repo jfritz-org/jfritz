@@ -4,6 +4,8 @@ import java.awt.*;
 
 import javax.swing.*;
 
+import de.moonflower.jfritz.JFritz;
+
 /**
  *
  * @author Brian Jensen
@@ -38,19 +40,19 @@ public class ConfigPanel1 extends JPanel{
 
 			c.gridy = 2;
 			c.anchor = GridBagConstraints.LINE_START;
-			label = new JLabel("This wizard will assist you in configuring the most important");
+			label = new JLabel(JFritz.getMessage("config_wizard_info1"));
 			configPanel1.add(label, c);
 
 			c.gridy = 3;
-			label = new JLabel("settings in JFritz. More options are available in the");
+			label = new JLabel(JFritz.getMessage("config_wizard_info2"));
 			configPanel1.add(label, c);
 
 			c.gridy = 4;
-			label = new JLabel("configuration dialog. Make sure to fill out all fields");
+			label = new JLabel(JFritz.getMessage("config_wizard_info3"));
 			configPanel1.add(label, c);
 
 			c.gridy = 5;
-			label = new JLabel("correctly or JFritz will not function properly.");
+			label = new JLabel(JFritz.getMessage("config_wizard_info4"));
 			configPanel1.add(label, c);
 
 			add(configPanel1);

@@ -30,6 +30,7 @@ public class ConfigPanel4 extends JPanel {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
+		setBorder(BorderFactory.createEmptyBorder(50, 20, 50, 20));
 		c.anchor = GridBagConstraints.WEST;
 
 		c.gridy = 0;

@@ -7,6 +7,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
@@ -44,6 +45,7 @@ public class ConfigPanel5 extends JPanel implements ActionListener{
 
 		callMonitorPane = new JPanel();
 		callMonitorPane.setLayout(new BorderLayout());
+		setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 		callMonitorCombo = new JComboBox();
 		callMonitorCombo.addItem(JFritz.getMessage("no_call_monitor")); //$NON-NLS-1$
 		callMonitorCombo.addItem(JFritz.getMessage("fritz_call_monitor")); //$NON-NLS-1$

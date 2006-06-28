@@ -8,6 +8,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.dialogs.quickdial.QuickDials;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
@@ -36,7 +37,8 @@ public class PhoneNumber implements Comparable {
 	 */
 	public PhoneNumber(String number, String type) {
 		this.type = type;
-		if (number.matches(numberMatcher)) this.number = number;
+		//if (number.matches(numberMatcher)) this.number = number;
+		this.number = number;
 		createMobileMap();
 		refactorNumber();
 	}
@@ -60,7 +62,8 @@ public class PhoneNumber implements Comparable {
 	 */
 	public PhoneNumber(String fullNumber, JFritz jfritz) {
 		this.type = "";
-		if (number.matches(numberMatcher)) this.number = fullNumber;
+		//if (number.matches(numberMatcher)) this.number = fullNumber;
+		if (fullNumber != null) this.number = fullNumber;
 		createMobileMap();
 		refactorNumber(jfritz);
 	}

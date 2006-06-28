@@ -33,7 +33,7 @@ public class ConfigWizard {
 		Debug.msg("Create JFritz config wizard");
 
 		wizard = new Wizard();
-        wizard.getDialog().setTitle("JFritz configuration wizard");
+        wizard.getDialog().setTitle(JFritz.getMessage("config_wizard"));
 
         //initialize the wizard with the correct order of the panels
         WizardPanelDescriptor descriptor1 = new ConfigPanel1Descriptor();
