@@ -196,6 +196,10 @@ public class ImportOutlookContacts extends JDialog implements ActionListener,
         }
         Debug.msg("Import done"); //$NON-NLS-1$
         JButton jButton = new JButton(JFritz.getMessage("okay")); //$NON-NLS-1$
+
+        //set default confirm button (Enter)
+        this.getRootPane().setDefaultButton(jButton);
+
         jButton.addActionListener(this);
         jButton.setBounds(160, 425, 80, 25);
         jPanel.add(jButton);

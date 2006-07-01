@@ -13,16 +13,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
@@ -58,11 +62,11 @@ public class SipConfigDialog extends JDialog {
 
     public SipConfigDialog(JDialog parent, SipProvider sipProvider) {
         super(parent, true);
-        setLocationRelativeTo(parent);
         setTitle("Edit Sip-Provider: " + sipProvider.toString());
         this.sipProvider = sipProvider;
         drawDialog();
         setValues();
+        setLocationRelativeTo(parent);
     }
 
     public boolean checkValues() {
@@ -254,6 +258,23 @@ public class SipConfigDialog extends JDialog {
         cancelButton.addActionListener(actionListener);
         cancelButton.setMnemonic(KeyEvent.VK_ESCAPE);
         okcancelpanel.add(cancelButton);
+
+        //set default confirm button (Enter)
+        getRootPane().setDefaultButton(okButton);
+
+        //set default close button (ESC)
+        KeyStroke escapeKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+        Action escapeAction = new AbstractAction()
+        {
+            private static final long serialVersionUID = 3L;
+
+            public void actionPerformed(ActionEvent e)
+            {
+                 cancelButton.doClick();
+            }
+        };
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeKeyStroke, "ESCAPE"); //$NON-NLS-1$
+        getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
 
         tpane.addTab("Kosten", createKostenPanel());
 

@@ -25,6 +25,8 @@ import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Vector;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -32,6 +34,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -43,6 +46,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -117,13 +121,17 @@ public class ConfigDialog extends JDialog {
 	public ConfigDialog(Frame parent) {
 		super(parent, true);
 		if (parent != null) {
-			setLocationRelativeTo(parent);
+			//setLocationRelativeTo(parent);
 			jfritz = ((JFritzWindow) parent).getJFritz();
 		}
 		setTitle(JFritz.getMessage("config")); //$NON-NLS-1$
 		devices = jfritz.getDevices();
 		drawDialog();
 		setValues();
+		if (parent != null) {
+			setLocationRelativeTo(parent);
+		}
+
 	}
 
 	public boolean okPressed() {
@@ -1009,6 +1017,23 @@ public class ConfigDialog extends JDialog {
 		cancelButton.addKeyListener(keyListener);
 		cancelButton.setMnemonic(KeyEvent.VK_ESCAPE);
 		okcancelpanel.add(cancelButton);
+
+        //set default confirm button (Enter)
+        getRootPane().setDefaultButton(okButton);
+
+        //set default close button (ESC)
+        KeyStroke escapeKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+        Action escapeAction = new AbstractAction()
+        {
+            private static final long serialVersionUID = 3L;
+
+            public void actionPerformed(ActionEvent e)
+            {
+                 cancelButton.doClick();
+            }
+        };
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeKeyStroke, "ESCAPE"); //$NON-NLS-1$
+        getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
 
 		tpane.addTab(
 				JFritz.getMessage("FRITZ!Box"), createBoxPane(actionListener)); //$NON-NLS-1$

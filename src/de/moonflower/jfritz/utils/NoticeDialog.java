@@ -8,11 +8,16 @@ import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.KeyStroke;
 
 import de.moonflower.jfritz.JFritz;
 
@@ -35,18 +40,19 @@ public class NoticeDialog extends JDialog implements ActionListener {
 	JCheckBox checkBox;
 
 	public NoticeDialog(JFritz jfritz,String property, String infoText) throws HeadlessException {
+		super(jfritz.getJframe());
 //		this.jfritz = jfritz;
 		this.infoText = infoText;
 		this.property= property;
-		this.setLocation(jfritz.getJframe().getX() + 80, jfritz.getJframe()
-				.getY() + 100);
+		//this.setLocation(jfritz.getJframe().getX() + 80, jfritz.getJframe().getY() + 100);
+
 		if (JFritz.getProperty(property, "false").equals( //$NON-NLS-1$
 				"true")) { //$NON-NLS-1$
 			accepted = true;
 		} else {
 			drawDialog();
 		}
-
+		this.setLocationRelativeTo(jfritz.getJframe());
 	}
 
 	public void drawDialog() {
@@ -76,6 +82,23 @@ public class NoticeDialog extends JDialog implements ActionListener {
 		cancelButton.setActionCommand("cancel"); //$NON-NLS-1$
 		cancelButton.addActionListener(this);
 		addComponent(c, gbl, cancelButton, 1, 3, 1, 1, 1.0, 0, 5, 30, 0, 0);
+
+        //set default confirm button (Enter)
+        getRootPane().setDefaultButton(okButton);
+
+        //set default close button (ESC)
+        KeyStroke escapeKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+        Action escapeAction = new AbstractAction()
+        {
+            private static final long serialVersionUID = 3L;
+
+            public void actionPerformed(ActionEvent e)
+            {
+                 cancelButton.doClick();
+            }
+        };
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeKeyStroke, "ESCAPE"); //$NON-NLS-1$
+        getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
 
 		// Bottom
 		checkBox = new JCheckBox(JFritz.getMessage("infoDialog_showAgain")); //$NON-NLS-1$

@@ -67,11 +67,11 @@ public class CallDialog extends JDialog implements ActionListener {
 			throws HeadlessException {
 		super(jfritz.getJframe()); //sets icon to JFritz' one
 		this.jfritz = jfritz;
-		this.setLocation(jfritz.getJframe().getX() + 80, jfritz.getJframe()
-				.getY() + 100);
+		//this.setLocation(jfritz.getJframe().getX() + 80, jfritz.getJframe().getY() + 100);
 		this.numbers = numbers;
 		this.defaultNumber = defaultNumber;
 		drawDialog();
+		this.setLocationRelativeTo(jfritz.getJframe());
 	}
 
 	/**
@@ -88,13 +88,13 @@ public class CallDialog extends JDialog implements ActionListener {
 		super(jfritz.getJframe()); //sets icon to JFritz' one
 		this.jfritz = jfritz;
 		// this.setLocationRelativeTo(jfritz.getJframe());
-		this.setLocation(jfritz.getJframe().getX() + 80, jfritz.getJframe()
-				.getY() + 100);
+		//this.setLocation(jfritz.getJframe().getX() + 80, jfritz.getJframe().getY() + 100);
 		Vector v = new Vector();
 		v.addElement(number);
 		this.numbers = v;
         this.defaultNumber = number; //does not really need, but to be complete
 		drawDialog();
+		this.setLocationRelativeTo(jfritz.getJframe());
 	}
 
 	private void drawDialog() {

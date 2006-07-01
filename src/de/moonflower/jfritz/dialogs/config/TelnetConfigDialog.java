@@ -13,6 +13,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -20,6 +23,7 @@ import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
+import javax.swing.KeyStroke;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.Encryption;
@@ -58,10 +62,11 @@ public class TelnetConfigDialog extends JDialog implements CallMonitorConfigDial
 
 	public TelnetConfigDialog(JDialog parent, JFritz jfritz) {
 		super(parent, true);
+		initDialog();
 		if (parent != null) {
 			setLocationRelativeTo(parent);
 		}
-		initDialog();
+
 	}
 	public void initDialog() {
 		setTitle(JFritz.getMessage("dialog_title_telnet_options")); //$NON-NLS-1$
@@ -161,6 +166,23 @@ public class TelnetConfigDialog extends JDialog implements CallMonitorConfigDial
 		cancelButton.setActionCommand("cancel_pressed"); //$NON-NLS-1$
 		cancelButton.addActionListener(actionListener);
 		cancelButton.addKeyListener(keyListener);
+
+        //set default confirm button (Enter)
+        getRootPane().setDefaultButton(okButton);
+
+        //set default close button (ESC)
+        KeyStroke escapeKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+        Action escapeAction = new AbstractAction()
+        {
+            private static final long serialVersionUID = 3L;
+
+            public void actionPerformed(ActionEvent e)
+            {
+                 cancelButton.doClick();
+            }
+        };
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeKeyStroke, "ESCAPE"); //$NON-NLS-1$
+        getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
 
 		buttonPanel.add(okButton);
 		buttonPanel.add(cancelButton);

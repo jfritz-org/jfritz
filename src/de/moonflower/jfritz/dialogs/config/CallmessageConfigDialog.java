@@ -13,11 +13,15 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 
 import de.moonflower.jfritz.JFritz;
 
@@ -45,11 +49,11 @@ public class CallmessageConfigDialog extends JDialog implements CallMonitorConfi
 
 	public CallmessageConfigDialog(JDialog parent, JFritz jfritz) {
 		super(parent, true);
+		//		this.jfritz = jfritz;
+		initDialog();
 		if (parent != null) {
 			setLocationRelativeTo(parent);
 		}
-		//		this.jfritz = jfritz;
-		initDialog();
 	}
 
 	public void initDialog() {
@@ -134,10 +138,28 @@ public class CallmessageConfigDialog extends JDialog implements CallMonitorConfi
 		cancelButton.addActionListener(actionListener);
 		cancelButton.addKeyListener(keyListener);
 
-		buttonPanel.add(okButton);
-		buttonPanel.add(cancelButton);
+        //set default confirm button (Enter)
+        getRootPane().setDefaultButton(okButton);
+
+        //set default close button (ESC)
+        KeyStroke escapeKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+        Action escapeAction = new AbstractAction()
+        {
+            private static final long serialVersionUID = 3L;
+
+            public void actionPerformed(ActionEvent e)
+            {
+                 cancelButton.doClick();
+            }
+        };
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeKeyStroke, "ESCAPE"); //$NON-NLS-1$
+        getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
 
 		getContentPane().add(panel, BorderLayout.CENTER);
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+
+		buttonPanel.add(okButton);
+		buttonPanel.add(cancelButton);
+
 	}
 }
