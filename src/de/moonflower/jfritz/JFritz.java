@@ -453,7 +453,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.272 2006/07/01 08:54:39 little_ben Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.273 2006/07/03 22:13:12 capncrunch Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -1725,7 +1725,7 @@ public final class JFritz {
      *
      */
     public void showConfigWizard(){
-    	ConfigWizard wizard = new ConfigWizard(jfritz);
+    	ConfigWizard wizard = new ConfigWizard(jfritz, jframe);
     	wizard.showWizard();
 
     }

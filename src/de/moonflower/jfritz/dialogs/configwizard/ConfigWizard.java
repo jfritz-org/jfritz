@@ -1,11 +1,16 @@
 package de.moonflower.jfritz.dialogs.configwizard;
 
+import java.awt.Frame;
+import javax.swing.*;
+import java.util.Locale;
+
 import com.nexes.wizard.*;
 
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.JFritz;
+
 /**
  *
  * @author Brian Jensen
@@ -16,7 +21,6 @@ import de.moonflower.jfritz.JFritz;
  *
  * @see http://java.sun.com/developer/technicalArticles/GUI/swing/wizard/index.html
  *
- * TODO: some i18n, but not too much ;-)
  *
  */
 public class ConfigWizard {
@@ -27,13 +31,18 @@ public class ConfigWizard {
 
 	private WizardPanelDescriptor descriptor2, descriptor3, descriptor4, descriptor5;
 
-	public ConfigWizard(JFritz jf){
+	public ConfigWizard(JFritz jf, Frame parent){
 
 		jfritz = jf;
-		Debug.msg("Create JFritz config wizard");
+		Debug.msg("asking the user for the language");
+		askLanguage(parent);
 
+		Debug.msg("Create JFritz config wizard");
 		wizard = new Wizard();
         wizard.getDialog().setTitle(JFritz.getMessage("config_wizard"));
+
+        if(parent != null)
+        	wizard.getDialog().setLocationRelativeTo(jfritz.getJframe());
 
         //initialize the wizard with the correct order of the panels
         WizardPanelDescriptor descriptor1 = new ConfigPanel1Descriptor();
@@ -55,7 +64,12 @@ public class ConfigWizard {
         wizard.setCurrentPanel(ConfigPanel1Descriptor.IDENTIFIER);
 
 	}
-
+	/**
+	 * This function shows the wizard then stores the values if finish is clicked
+	 *
+	 * @author Brian Jensen
+	 *
+	 */
 	public void showWizard(){
 
 		//possible return values: 0 finish clicked, 1 cancel clicked, 2 error...
@@ -124,6 +138,48 @@ public class ConfigWizard {
 
 
        }
+
+	}
+
+	/**
+	 * This dialog changes the language used in jfritz
+	 * It is called before the initial creation of the real wizard,
+	 * so that the wizard will be displayed in the proper language
+	 *
+	 * @author Brian Jensen
+	 *
+	 * @param parent
+	 */
+	public void askLanguage(Frame parent){
+
+		wizard = new Wizard();
+	    wizard.getDialog().setTitle(JFritz.getMessage("config_wizard"));
+
+	    if(parent != null)
+	       	wizard.getDialog().setLocationRelativeTo(parent);
+
+	    WizardPanelDescriptor descriptorLang = new ConfigPanelLangDescriptor();
+        wizard.registerWizardPanel(ConfigPanelLangDescriptor.IDENTIFIER, descriptorLang);
+
+        wizard.setCurrentPanel(ConfigPanelLangDescriptor.IDENTIFIER);
+
+		int ret = wizard.showModalDialog();
+		//only change the language if finish was selected
+		if(ret == 0){
+
+			//get the components from the wizardpanel
+			JComboBox languageCombo = ((ConfigPanelLang)descriptorLang.getPanelComponent()).languageCombo;
+			String[] localeList = ((ConfigPanelLang)descriptorLang.getPanelComponent()).localeList;
+
+			//This code is real ugly, i should get around to cleaning it up!
+			if (!JFritz.getProperty("locale", "de_DE").equals(localeList[languageCombo.getSelectedIndex()])) { //$NON-NLS-1$ //$NON-NLS-2$
+				JFritz.setProperty(
+						"locale", localeList[languageCombo.getSelectedIndex()]); //$NON-NLS-1$
+				String loc = localeList[languageCombo.getSelectedIndex()];
+				jfritz.getJframe().setLanguage(
+						new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_")+1, loc.length())));
+			}
+		}
 
 	}
 
