@@ -633,7 +633,13 @@ public class ConfigDialog extends JDialog {
 		label = new JLabel(JFritz.getMessage("language") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		localePane.add(label, c);
 
-		File file = new File("lang");//$NON-NLS-1$
+		//This is fix so jfritz can be run from any directory
+		String langPath = System.getProperty("user.dir")+FILESEP+
+		System.getProperty("java.class.path");
+		langPath = langPath.substring(0, langPath.indexOf("jfritz.jar")) + "lang";
+		Debug.msg(langPath);
+		File file = new File(langPath);
+
 		FilenameFilter props = new StartEndFilenameFilter("jfritz","properties");//$NON-NLS-1$,  //$NON-NLS-2$
 		String[] list = file.list(props);
 		localeList= new String[list.length];

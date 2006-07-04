@@ -49,23 +49,28 @@ public class ConfigPanelLang extends JPanel{
 		label = new JLabel(JFritz.getMessage("language") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		localePane.add(label, c);
 
-		File file = new File("lang");//$NON-NLS-1$
+
+
+		//Fix so that jfritz can be run from any directroy
+		String langPath = System.getProperty("user.dir")+FILESEP+
+			System.getProperty("java.class.path");
+		langPath = langPath.substring(0, langPath.indexOf("jfritz.jar")) + "lang";
+		System.out.println(langPath);
+		File file = new File(langPath);
+
 		FilenameFilter props = new StartEndFilenameFilter("jfritz","properties");//$NON-NLS-1$,  //$NON-NLS-2$
 		String[] list = file.list(props);
 		localeList= new String[list.length];
 
 		ImageIcon[]  images = new ImageIcon[list.length];
 
-		//TODO: this code has to be changed so that jfritz can run from any dir
 		for (int i = 0; i < list.length; i++) {
 			localeList[i] = list[i].substring(list[i].indexOf("_") + 1,list[i].indexOf("."));//$NON-NLS-1$,  //$NON-NLS-2$
 			images[i] = new ImageIcon("lang"+FILESEP+"flags"+FILESEP+localeList[i].substring(localeList[i].indexOf("_")+1, localeList[i].length()) + ".gif");//$NON-NLS-1$,  //$NON-NLS-2$ //$NON-NLS-3$,  //$NON-NLS-4$
 			images[i].setDescription(JFritz.getLocaleMeaning(localeList[i]));
 		}
 
-
 		c.fill = GridBagConstraints.HORIZONTAL;
-
 		languageCombo = new JComboBox(images);
 		languageComboBoxRenderer renderer = new languageComboBoxRenderer();
 		renderer.setPreferredSize(new Dimension(180, 15));
