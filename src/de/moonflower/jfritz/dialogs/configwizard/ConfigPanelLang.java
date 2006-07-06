@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.dialogs.config.languageComboBoxRenderer;
+import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.StartEndFilenameFilter;
 
 /**
@@ -32,6 +33,7 @@ public class ConfigPanelLang extends JPanel{
     public JComboBox languageCombo;
 
     static final String FILESEP = System.getProperty("file.separator");
+    final String langID = FILESEP + "lang";
 
     public ConfigPanelLang(){
 
@@ -51,13 +53,7 @@ public class ConfigPanelLang extends JPanel{
 
 
 
-		//Fix so that jfritz can be run from any directroy
-		String langPath = System.getProperty("user.dir")+FILESEP+
-			System.getProperty("java.class.path");
-		langPath = langPath.substring(0, langPath.indexOf("jfritz.jar")) + "lang";
-		System.out.println(langPath);
-		File file = new File(langPath);
-
+		File file = new File(JFritzUtils.getFullPath(langID));
 		FilenameFilter props = new StartEndFilenameFilter("jfritz","properties");//$NON-NLS-1$,  //$NON-NLS-2$
 		String[] list = file.list(props);
 		localeList= new String[list.length];

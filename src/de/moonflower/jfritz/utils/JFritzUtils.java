@@ -7,6 +7,7 @@ package de.moonflower.jfritz.utils;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -26,6 +27,10 @@ import de.moonflower.jfritz.utils.HTMLUtil;
  *
  */
 public class JFritzUtils {
+
+    static final String FILESEP = System.getProperty("file.separator");			//$NON-NLS-1$
+    static final String PATHSEP = System.getProperty("path.separator");			//$NON-NLS-1$
+	static final String binID = FILESEP + "jfritz.jar";								//$NON-NLS-1$
 
 
 	/**
@@ -163,6 +168,42 @@ public class JFritzUtils {
 		out = out.replaceAll("&#34;", "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 		return out;
 	}
+
+	/**
+	 * This function searches through the class path for the given subdirectory
+	 * and if it is not found then the full path to the jfritz binary is generated
+	 * This function assumes jfritz.jar and the subdirectory and in the same dir
+	 *
+	 * @param subDir the subdirectory in the jfritz.jar dir
+	 * @return full path or the classpath entry to the subdirectory
+	 */
+	public static String getFullPath(String subDir){
+
+		Debug.msg("Subdirectory: "+ subDir);
+		String[] classPath = System.getProperty("java.class.path").split(PATHSEP);	//$NON-NLS-1$
+		String userDir = System.getProperty("user.dir");							//$NON-NLS-1$
+		if (userDir.endsWith(FILESEP))
+			userDir = userDir.substring(0, userDir.length() - 1);
+
+		String binDir = null;
+		String langDir = null;
+
+		for (int i = 0; i < classPath.length; i++) {
+			if (classPath[i].endsWith(binID))
+				binDir = classPath[i].substring(0, classPath[i].length() - binID.length());
+			else if (classPath[i].endsWith(subDir))
+				langDir = classPath[i];
+		}
+
+		if (langDir == null) {
+			langDir = (binDir != null) ? binDir + subDir : userDir + subDir;
+		}
+
+		Debug.msg("full path: " + langDir);											//$NON-NLS-1$
+
+		return langDir;
+	}
+
 
 
 }

@@ -117,8 +117,6 @@ public class ConfigDialog extends JDialog {
 	private JRadioButton popupNoButton, popupDialogButton, popupTrayButton;
 
     static final String FILESEP = System.getProperty("file.separator");			//$NON-NLS-1$
-    static final String PATHSEP = System.getProperty("path.separator");			//$NON-NLS-1$
-	final String binID = FILESEP + "jfritz.jar";								//$NON-NLS-1$
 	final String langID = FILESEP + "lang";										//$NON-NLS-1$
 
 	public ConfigDialog(Frame parent) {
@@ -636,30 +634,8 @@ public class ConfigDialog extends JDialog {
 		label = new JLabel(JFritz.getMessage("language") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		localePane.add(label, c);
 
-		String[] classPath = System.getProperty("java.class.path").split(PATHSEP);	//$NON-NLS-1$
-		String userDir = System.getProperty("user.dir");							//$NON-NLS-1$
-		if (userDir.endsWith(FILESEP))
-			userDir = userDir.substring(0, userDir.length() - 1);
 
-		String binDir = null;
-		String langDir = null;
-
-		for (int i = 0; i < classPath.length; i++) {
-			if (classPath[i].endsWith(binID))
-				binDir = classPath[i].substring(0, classPath[i].length() - binID.length());
-			else if (classPath[i].endsWith(langID))
-				langDir = classPath[i];
-		}
-
-		Debug.msg("userDir=" + userDir);											//$NON-NLS-1$
-		Debug.msg("binDir=" + binDir);												//$NON-NLS-1$
-
-		if (langDir == null) {
-			langDir = (binDir != null) ? binDir + langID : userDir + langID;
-		}
-
-		Debug.msg("langDir=" + langDir);											//$NON-NLS-1$
-		File file = new File(langDir);
+		File file = new File(JFritzUtils.getFullPath(langID));
 
 		FilenameFilter props = new StartEndFilenameFilter("jfritz","properties");//$NON-NLS-1$,  //$NON-NLS-2$
 		String[] list = file.list(props);
