@@ -33,13 +33,14 @@ public class MessageDlg extends JDialog implements ActionListener{
 		 * Show popup dialog with text: message
 		 * @param message
 		 */
-		public void showMessage (String message) {
+		public void showMessage (String message, long delay) {
 			toFront();
 			Timer timer = new Timer();
 			HideTimer task = new HideTimer(this);
 
-			// Timeout 10 sec
-			timer.schedule(task, 10000);
+			//if the delay is <=0 then dont close the dialog
+			if(delay > 0)
+				timer.schedule(task, delay);
 
 			setTitle(JFritz.getMessage("dialog_title_popup_info")); //$NON-NLS-1$
 

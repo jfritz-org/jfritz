@@ -61,7 +61,9 @@
  *		config_wizard_info3
  *		config_wizard_info4
  *		config_wizard
+ *		popup_delay
  *
+ * - Neu: Zeit, bis Popup-Nachrichten ausgeblendet sind, einstellbar gemacht (Zeit von 0 bedeutet nie schließen) SF-Request Nr: [1340678] [1518330]
  * - Bugfix: JFritz kann jetzt von einem beliebigen Verzeichnis aus aufgerufen (bestätigt unter Linx. Windows?? Mac??)
  * - Neu: Rückwärtssuche auch für Handynummern
  * - Neu: Wählhilfe merkt sich den zuletzt benutzen Port
@@ -454,9 +456,13 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.275 2006/07/06 19:13:01 capncrunch Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.276 2006/07/06 23:15:55 capncrunch Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
+
+    public final static String USER_DIR = System.getProperty("user.dir");
+
+    public final static String SAVE_DIR = USER_DIR;
 
     public final static String PROPERTIES_FILE = "jfritz.properties.xml"; //$NON-NLS-1$
 
@@ -1124,7 +1130,8 @@ public final class JFritz {
         }
         case 1: {
             MessageDlg msgDialog = new MessageDlg();
-            msgDialog.showMessage(msg);
+            msgDialog.showMessage(msg, Long.parseLong(
+            		JFritz.getProperty("option.popupDelay", "10")) * 1000);
             break;
         }
         case 2: {
@@ -1133,7 +1140,8 @@ public final class JFritz {
                         TrayIcon.INFO_MESSAGE_TYPE);
             else if(trayIcon == null){
                 MessageDlg msgDialog = new MessageDlg();
-                msgDialog.showMessage(msg);
+                msgDialog.showMessage(msg, Long.parseLong(
+                		JFritz.getProperty("option.popupDelay", "10")) * 1000);
             }
             break;
         }

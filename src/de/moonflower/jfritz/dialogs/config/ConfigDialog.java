@@ -80,7 +80,7 @@ public class ConfigDialog extends JDialog {
 	private JComboBox addressCombo, callMonitorCombo, languageCombo;
 
 	private JTextField address, areaCode, countryCode, areaPrefix,
-			countryPrefix, externProgramTextField, port;
+			countryPrefix, externProgramTextField, port, popupDelay;
 
 	private JPasswordField pass;
 
@@ -208,6 +208,8 @@ public class ConfigDialog extends JDialog {
 				break;
 			}
 		}
+
+		popupDelay.setText(JFritz.getProperty("option.popupDelay", "10"));
 
 		lookupAfterFetchButton.setSelected(JFritzUtils.parseBoolean(JFritz
 				.getProperty("option.lookupAfterFetch", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -358,6 +360,7 @@ public class ConfigDialog extends JDialog {
 					new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_")+1, loc.length())));
 		}
 
+		JFritz.setProperty("option.popupDelay", popupDelay.getText());
 
 		Debug.msg("Saved config"); //$NON-NLS-1$
 		jfritz.getSIPProviderTableModel()
@@ -861,14 +864,23 @@ public class ConfigDialog extends JDialog {
 		JLabel text = new JLabel(JFritz.getMessage("popup_for_information")); //$NON-NLS-1$
 		panel.add(text, c);
 
+		final JLabel delayLbl = new JLabel(JFritz.getMessage("popup_delay"));
+
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (popupNoButton.isSelected()) {
 					JFritz.setProperty("option.popuptype", "0"); //$NON-NLS-1$,  //$NON-NLS-2$
+					delayLbl.setVisible(false);
+					popupDelay.setVisible(false);
+
 				} else if (popupDialogButton.isSelected()) {
 					JFritz.setProperty("option.popuptype", "1"); //$NON-NLS-1$,  //$NON-NLS-2$
+					delayLbl.setVisible(true);
+					popupDelay.setVisible(true);
 				} else {
 					JFritz.setProperty("option.popuptype", "2"); //$NON-NLS-1$,  //$NON-NLS-2$
+					delayLbl.setVisible(false);
+					popupDelay.setVisible(false);
 				}
 			}
 		};
@@ -891,6 +903,16 @@ public class ConfigDialog extends JDialog {
 		popupTrayButton.addActionListener(actionListener);
 		popupGroup.add(popupTrayButton);
 		panel.add(popupTrayButton, c);
+
+		c.gridy = 4;
+		c.insets.top = 10;
+		popupDelay = new JTextField();
+		popupDelay.setPreferredSize(new Dimension(30, 20));
+		panel.add(delayLbl, c);
+		c.gridx = 1;
+		c.insets.left = 15;
+		panel.add(popupDelay, c);
+
 
 		return panel;
 	}
