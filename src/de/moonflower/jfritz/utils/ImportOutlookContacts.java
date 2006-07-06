@@ -94,6 +94,7 @@ public class ImportOutlookContacts extends JDialog implements ActionListener,
         setLocationRelativeTo(jfritz.getJframe());
         setVisible(true);
         Debug.msg("Importing..."); //$NON-NLS-1$
+        int entriesImported = 0;
         for (int i = 1; i <= count; i++) {
             boolean hasTel = false;
             Dispatch item = Dispatch.call(items, "Item", new Integer(i)) //$NON-NLS-1$
@@ -191,10 +192,15 @@ public class ImportOutlookContacts extends JDialog implements ActionListener,
                 } catch (Exception exception1) {
                 }
 
-            if (hasTel)
+            if (hasTel) {
                 jfritz.getPhonebook().addEntry(newContact);
+                entriesImported++;
+            }
         }
-        Debug.msg("Import done"); //$NON-NLS-1$
+        if (entriesImported > 0) {
+        	jfritz.getPhonebook().saveToXMLFile(JFritz.PHONEBOOK_FILE);
+        }
+        Debug.msg("Import done, " + entriesImported + " entries imported"); //$NON-NLS-1$,	//$NON-NLS-2$
         JButton jButton = new JButton(JFritz.getMessage("okay")); //$NON-NLS-1$
 
         //set default confirm button (Enter)

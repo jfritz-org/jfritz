@@ -22,6 +22,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.table.AbstractTableModel;
@@ -870,30 +873,34 @@ public class PhoneBook extends AbstractTableModel {
 
 	/**
 	 * Removes redundant entries from the phonebook.
-	 * It checks for every entry, if it supersedes another entry.
+	 * It checks for every pair of entries,
+	 * if one entry supersedes another entry.
 	 *
 	 * @see de.moonflower.jfritz.struct.Person#supersedes(Person)
 	 * @return the number of removed entries
 	 */
-	public int deleteDuplicateEntries() {
-		Vector redundantEntries = new Vector();
+	public synchronized int deleteDuplicateEntries() {
+		Set redundantEntries = new HashSet();
 
-		Enumeration enOuter = unfilteredPersons.elements();
-		while (enOuter.hasMoreElements()) {
-			Person currentOuter = (Person) enOuter.nextElement();
-
-			Enumeration enInner = unfilteredPersons.elements();
-			while (enInner.hasMoreElements()) {
-				Person currentInner = (Person) enInner.nextElement();
-				if (currentOuter != currentInner && currentOuter.supersedes(currentInner))
-					redundantEntries.add(currentInner);
+		synchronized (unfilteredPersons) {
+			int size = unfilteredPersons.size();
+			for (int i = 0; i < size; i++) {
+				Person currentOuter = (Person) unfilteredPersons.elementAt(i);
+				for (int j = i+1; j < size; j++) {
+					Person currentInner = (Person) unfilteredPersons.elementAt(j);
+					if (currentOuter.supersedes(currentInner)) {
+						redundantEntries.add(currentInner);
+					} else if (currentInner.supersedes(currentOuter)) {
+						redundantEntries.add(currentOuter);
+					}
+				}
 			}
-		}
 
-		Enumeration en = redundantEntries.elements();
-		while (en.hasMoreElements()) {
-			Person p = (Person) en.nextElement();
-			deleteEntry(p);
+			Iterator iterator = redundantEntries.iterator();
+			while (iterator.hasNext()) {
+				Person p = (Person) iterator.next();
+				deleteEntry(p);
+			}
 		}
 
 		if (redundantEntries.size() > 0) {
