@@ -63,8 +63,10 @@
  *		config_wizard
  *		popup_delay
  *
+ * - Bugfix: Die Sprachauswahlbox zeigt jetzt auch unter Linux Flaggen-Icons an.
+ * - Bugfix: Das Telefonbuch wird nach einem erfolgreichen Outlook-Import sofort gespeichert. SF-Tracker [ 1503185 ]
  * - Neu: Zeit, bis Popup-Nachrichten ausgeblendet sind, einstellbar gemacht (Zeit von 0 bedeutet nie schließen) SF-Request Nr: [1340678] [1518330]
- * - Bugfix: JFritz kann jetzt von einem beliebigen Verzeichnis aus aufgerufen (bestätigt unter Linx. Windows?? Mac??)
+ * - Bugfix: JFritz kann jetzt von einem beliebigen Verzeichnis aus aufgerufen (bestätigt unter Linux, Windows, Mac??)
  * - Neu: Rückwärtssuche auch für Handynummern
  * - Neu: Wählhilfe merkt sich den zuletzt benutzen Port
  * - Neu: JFritz kann jetzt beliebige Nummer mit der Wahlhilfe wählen (noch nicht ausführlich getestet, z.B. funktionieren auch die Tastencode?)
@@ -76,7 +78,7 @@
  * - Neu: Automatisches Scrollen zum selektierten Telefonbucheintrag
  * - Neu: Englische Firmware wird unterstützt
  * - Intern: Firmware wird beim Start erkannt und in JFritz.firmware gespeichert. Zugriff nicht mehr über JFritz.getProperties("box.firmware") sondern über JFritz.getFirmware()
- * - Bugfix: Kurzwahlen werden weider korrekt abgeholt
+ * - Bugfix: Kurzwahlen werden wieder korrekt abgeholt
  * - Bugfix: Standardtelefonnummern können wieder geändert werden
  * - Bugfix: Problem mit dem Holen der Anrufliste behoben
  * - Bugfix: Nebenstellenbezeichnungen und Route können jetzt Sonderzeichen enthalten
@@ -456,7 +458,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.276 2006/07/06 23:15:55 capncrunch Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.277 2006/07/08 14:53:20 haeusler Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 

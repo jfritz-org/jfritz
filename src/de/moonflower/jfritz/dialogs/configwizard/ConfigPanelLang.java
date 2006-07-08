@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.dialogs.config.languageComboBoxRenderer;
+import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.StartEndFilenameFilter;
 
@@ -62,7 +63,13 @@ public class ConfigPanelLang extends JPanel{
 
 		for (int i = 0; i < list.length; i++) {
 			localeList[i] = list[i].substring(list[i].indexOf("_") + 1,list[i].indexOf("."));//$NON-NLS-1$,  //$NON-NLS-2$
-			images[i] = new ImageIcon("lang"+FILESEP+"flags"+FILESEP+localeList[i].substring(localeList[i].indexOf("_")+1, localeList[i].length()) + ".gif");//$NON-NLS-1$,  //$NON-NLS-2$ //$NON-NLS-3$,  //$NON-NLS-4$
+			String imagePath =
+			     "lang" + FILESEP + "flags" + FILESEP +						//$NON-NLS-1$,  //$NON-NLS-2$
+			     localeList[i].substring(localeList[i].indexOf("_")+1,
+			         localeList[i].length()).toLowerCase() + ".gif";		//$NON-NLS-1$
+			Debug.msg("Found resources for locale '" + localeList[i] +		//$NON-NLS-1$
+			     "', loading flag image '" + imagePath + "'");				//$NON-NLS-1$,  //$NON-NLS-2$
+			images[i] = new ImageIcon(imagePath);
 			images[i].setDescription(JFritz.getLocaleMeaning(localeList[i]));
 		}
 
