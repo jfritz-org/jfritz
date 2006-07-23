@@ -44,7 +44,6 @@
  * (TODO: Checken, ob alle Bibliotheken vorhanden sind)
  * (TODO: Neue Kurzwahlen von der Beta-FW ins Telefonbuch aufnehmen)
  * (TODO: Import der Anrufliste im XML-Format beim Kontextmenü einbauen)
- * TODO: Einstelloption, wie lange die Popups geöffnet bleiben sollen
  * TODO: Filter für Ports
  * TODO: Internationalisierung abschließen
  * TODO: Language-Files checken, ob tatsächlich alle Werte benötigt werden
@@ -52,6 +51,8 @@
  *
  * JFritz 0.6.1
  * - Neue Strings:
+ *		browse
+ *		save_directory
  *		delete_duplicate_phonebook_entries
  *		delete_duplicate_phonebook_entries_confirm_msg
  *		delete_duplicate_phonebook_entries_inform_msg
@@ -63,6 +64,7 @@
  *		config_wizard
  *		popup_delay
  *
+ * - Neu: Der Speicherordner kann jetzt frei gewählt werden, bleibt nach dem Beenden erhalten. SF-Tracker [1248965]
  * - Bugfix: Die Sprachauswahlbox zeigt jetzt auch unter Linux Flaggen-Icons an.
  * - Bugfix: Das Telefonbuch wird nach einem erfolgreichen Outlook-Import sofort gespeichert. SF-Tracker [ 1503185 ]
  * - Neu: Zeit, bis Popup-Nachrichten ausgeblendet sind, einstellbar gemacht (Zeit von 0 bedeutet nie schließen) SF-Request Nr: [1340678] [1518330]
@@ -463,7 +465,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.278 2006/07/23 00:32:42 capncrunch Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.279 2006/07/23 11:11:31 capncrunch Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 

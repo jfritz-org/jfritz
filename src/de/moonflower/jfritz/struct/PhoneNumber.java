@@ -8,7 +8,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.dialogs.quickdial.QuickDials;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 

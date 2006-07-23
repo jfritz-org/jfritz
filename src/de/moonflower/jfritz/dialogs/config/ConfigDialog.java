@@ -52,7 +52,6 @@ import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.table.TableCellRenderer;
 
 import de.moonflower.jfritz.JFritz;
@@ -578,12 +577,12 @@ public class ConfigDialog extends JDialog {
 				.getMessage("create_backup_fetch")); //$NON-NLS-1$
 		otherpane.add(createBackupAfterFetch);
 
-		//TODO:
+		//FIXME: This does not display correctly
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridx = 0;
 		gbc.gridy = 1;
 
-		JLabel label = new JLabel("Save Directory");
+		JLabel label = new JLabel(JFritz.getMessage("save_directory"));
 		otherpane.add(label, gbc);
 
 		save_location = new JTextField(JFritz.SAVE_DIR);
@@ -593,7 +592,7 @@ public class ConfigDialog extends JDialog {
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser(JFritz.SAVE_DIR);
-				fc.setDialogTitle(JFritz.getMessage("save_location")); //$NON-NLS-1$
+				fc.setDialogTitle(JFritz.getMessage("save_directory")); //$NON-NLS-1$
 				fc.setDialogType(JFileChooser.SAVE_DIALOG);
 
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -609,7 +608,7 @@ public class ConfigDialog extends JDialog {
 			}
 		};
 
-		JButton browseButton = new JButton("Browse");
+		JButton browseButton = new JButton(JFritz.getMessage("browse"));
 		browseButton.addActionListener(actionListener);
 		gbc.gridx = 2;
 		otherpane.add(browseButton, gbc);
