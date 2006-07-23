@@ -780,7 +780,7 @@ public class PhoneBook extends AbstractTableModel {
 
 	          if (newEntries > 0) {
 	        	  sortAllUnfilteredRows();
-	              saveToXMLFile(JFritz.PHONEBOOK_FILE);
+	              saveToXMLFile(JFritz.SAVE_DIR + JFritz.PHONEBOOK_FILE);
 	              String msg;
 
 	              if (newEntries == 1) {
@@ -904,7 +904,7 @@ public class PhoneBook extends AbstractTableModel {
 		}
 
 		if (redundantEntries.size() > 0) {
-			saveToXMLFile(JFritz.PHONEBOOK_FILE);
+			saveToXMLFile(JFritz.SAVE_DIR + JFritz.PHONEBOOK_FILE);
 			updateFilter();
 		}
 

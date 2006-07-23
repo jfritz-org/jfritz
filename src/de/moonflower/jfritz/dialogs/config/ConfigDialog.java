@@ -36,7 +36,9 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
@@ -50,6 +52,7 @@ import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.TableCellRenderer;
 
 import de.moonflower.jfritz.JFritz;
@@ -80,7 +83,8 @@ public class ConfigDialog extends JDialog {
 	private JComboBox addressCombo, callMonitorCombo, languageCombo;
 
 	private JTextField address, areaCode, countryCode, areaPrefix,
-			countryPrefix, externProgramTextField, port, popupDelay;
+			countryPrefix, externProgramTextField, port, popupDelay,
+			save_location;
 
 	private JPasswordField pass;
 
@@ -264,6 +268,9 @@ public class ConfigDialog extends JDialog {
 	 */
 	public void storeValues() {
 		// Remove leading "0" from areaCode
+		JFritz.SAVE_DIR = save_location.getText();
+		jfritz.writeSaveDir();
+
 		if (areaCode.getText().startsWith(areaPrefix.getText()))
 			areaCode.setText(areaCode.getText().substring(
 					areaPrefix.getText().length()));
@@ -362,9 +369,11 @@ public class ConfigDialog extends JDialog {
 
 		JFritz.setProperty("option.popupDelay", popupDelay.getText());
 
+
+
 		Debug.msg("Saved config"); //$NON-NLS-1$
 		jfritz.getSIPProviderTableModel()
-				.saveToXMLFile(JFritz.SIPPROVIDER_FILE);
+				.saveToXMLFile(JFritz.SAVE_DIR + JFritz.SIPPROVIDER_FILE);
 	}
 
 	protected JPanel createBoxPane(ActionListener actionListener) {
@@ -568,6 +577,43 @@ public class ConfigDialog extends JDialog {
 		createBackupAfterFetch = new JCheckBox(JFritz
 				.getMessage("create_backup_fetch")); //$NON-NLS-1$
 		otherpane.add(createBackupAfterFetch);
+
+		//TODO:
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+
+		JLabel label = new JLabel("Save Directory");
+		otherpane.add(label, gbc);
+
+		save_location = new JTextField(JFritz.SAVE_DIR);
+		gbc.gridx = 1;
+		otherpane.add(save_location, gbc);
+
+		ActionListener actionListener = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser(JFritz.SAVE_DIR);
+				fc.setDialogTitle(JFritz.getMessage("save_location")); //$NON-NLS-1$
+				fc.setDialogType(JFileChooser.SAVE_DIALOG);
+
+				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				if (fc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+					File file = fc.getSelectedFile();
+					if (!file.exists()) {
+						JOptionPane.showMessageDialog(null, JFritz.getMessage("file_not_found"), //$NON-NLS-1$
+								JFritz.getMessage("dialog_title_file_not_found"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+					} else {
+						save_location.setText(file.getAbsolutePath());
+					}
+				}
+			}
+		};
+
+		JButton browseButton = new JButton("Browse");
+		browseButton.addActionListener(actionListener);
+		gbc.gridx = 2;
+		otherpane.add(browseButton, gbc);
+
 
 		return otherpane;
 	}

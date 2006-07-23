@@ -388,6 +388,11 @@ package de.moonflower.jfritz;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -458,13 +463,18 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.277 2006/07/08 14:53:20 haeusler Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.278 2006/07/23 00:32:42 capncrunch Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
-    public final static String USER_DIR = System.getProperty("user.dir");
+    public final static String USER_DIR = System.getProperty("user.home")
+    	+ File.separator + ".jfritz";
 
-    public final static String SAVE_DIR = USER_DIR;
+    public final static String USER_JFRITZ_FILE = "jfritz.txt";
+
+    public static String SAVE_DIR = System.getProperty("user.dir") + File.separator;
+
+    public static String SAVE_DIR_TEXT = "Save_Directory=";
 
     public final static String PROPERTIES_FILE = "jfritz.properties.xml"; //$NON-NLS-1$
 
@@ -699,6 +709,9 @@ public final class JFritz {
             boolean clearList, boolean enableInstanceControl, boolean writeForeignFormats) {
         jfritz = this;
 
+        loadSaveDir();
+        Debug.msg("Save Dir: "+ SAVE_DIR);
+
         loadProperties();
         loadMessages(new Locale(JFritz.getProperty("locale","de_DE"))); //$NON-NLS-1$,  //$NON-NLS-2$
         loadLocaleMeanings(new Locale("int","INT"));
@@ -767,13 +780,13 @@ public final class JFritz {
                         .encrypt(""))), JFritz.getProperty("box.port","80"), this); //$NON-NLS-1$
 
         phonebook = new PhoneBook(this);
-        phonebook.loadFromXMLFile(PHONEBOOK_FILE);
+        phonebook.loadFromXMLFile(SAVE_DIR + PHONEBOOK_FILE);
 
         sipprovider = new SipProviderTableModel();
         sipprovider.loadFromXMLFile(SIPPROVIDER_FILE);
 
         callerlist = new CallerList(this);
-        callerlist.loadFromXMLFile(CALLS_FILE);
+        callerlist.loadFromXMLFile(SAVE_DIR + CALLS_FILE);
 
         Debug.msg("Start commandline parsing"); //$NON-NLS-1$
         if (fetchCalls) {
@@ -918,10 +931,10 @@ public final class JFritz {
         defaultProperties.setProperty("jfritz.isRunning", "false");//$NON-NLS-1$, //$NON-NLS-2$
 
         try {
-            properties.loadFromXML(JFritz.PROPERTIES_FILE);
+            properties.loadFromXML(SAVE_DIR + JFritz.PROPERTIES_FILE);
             replaceOldProperties();
         } catch (FileNotFoundException e) {
-            Debug.err("File " + JFritz.PROPERTIES_FILE //$NON-NLS-1$
+            Debug.err("File " + SAVE_DIR + JFritz.PROPERTIES_FILE //$NON-NLS-1$
                     + " not readable => showing config wizard"); //$NON-NLS-1$
            showConfWizard = true;
         } catch (Exception e) {
@@ -1113,7 +1126,7 @@ public final class JFritz {
 
         try {
             Debug.msg("Save other properties"); //$NON-NLS-1$
-            properties.storeToXML(JFritz.PROPERTIES_FILE);
+            properties.storeToXML(JFritz.SAVE_DIR + JFritz.PROPERTIES_FILE);
         } catch (IOException e) {
             Debug.err("Couldn't save Properties"); //$NON-NLS-1$
         }
@@ -1741,5 +1754,74 @@ public final class JFritz {
     	wizard.showWizard();
 
     }
+
+    /**
+     * Funktion reads the user specified save location from a simple text file
+     * If any error occurs the function bails out and uses the current directory
+     * as the save dir, as the functionality was in JFritz < 0.6.0
+     *
+     * @author Brian Jensen
+     *
+     */
+    public void loadSaveDir(){
+        try{
+        	BufferedReader br = new BufferedReader(new FileReader(
+        	        USER_DIR + File.separator + USER_JFRITZ_FILE));
+        	String[] entries = br.readLine().split("=");
+        	if(!entries[1].equals("")){
+        		SAVE_DIR = entries[1];
+        		File file = new File(SAVE_DIR);
+        		if(!file.isDirectory())
+        			SAVE_DIR = System.getProperty("user.dir") + File.separator;
+        		else if(!SAVE_DIR.endsWith(File.separator))
+        			SAVE_DIR = SAVE_DIR + File.separator;
+        	}
+
+        }catch(Exception e){
+        	Debug.msg("Error processing the user save location, using defaults");
+        	//If something happens, just bail out and use the standard dir
+        }
+    }
+
+    /**
+     * This function writes a file $HOME/.jfritz/jfritz.txt, which contains the
+     * location of the folder containing jfritz's data
+     * If the dir $HOME/.jfritz does not exist, it is created
+     * if the save location isnt a directory, then the default save directory is used
+     *
+     * @author Brian Jensen
+     *
+     */
+    public void writeSaveDir(){
+    	try{
+
+    		//if $HOME/.jfritz doesn't exist create it
+    		File file = new File(USER_DIR);
+    		if(!file.isDirectory() && !file.isFile())
+    			file.mkdir();
+
+    		BufferedWriter bw = new BufferedWriter(new FileWriter(
+    				USER_DIR + File.separator + USER_JFRITZ_FILE, false));
+
+    		//make sure the user didn't screw something up
+    		if(!SAVE_DIR.endsWith(File.separator))
+    			SAVE_DIR = SAVE_DIR + File.separator;
+
+    		file = new File(SAVE_DIR);
+    		if(!file.isDirectory())
+        		SAVE_DIR = System.getProperty("user.dir") + File.separator;
+
+    		bw.write(SAVE_DIR_TEXT + SAVE_DIR);
+    		bw.newLine();
+    		bw.close();
+    		Debug.msg("Successfully wrote save dir to disk");
+
+    	}catch(Exception e){
+    		Debug.err("Error writing save dir to disk, reverting back to default save dir");
+    		SAVE_DIR = System.getProperty("user.dir") + File.separator;
+    		//if there was an error, bail out and revert to the default save location
+    	}
+    }
+
 
 }

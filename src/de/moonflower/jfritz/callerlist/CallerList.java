@@ -1102,7 +1102,7 @@ public class CallerList extends AbstractTableModel {
 		if ((jfritz.getJframe() != null)
 				&& jfritz.getJframe().getCallerTable() != null)
 			jfritz.getJframe().getCallerTable().clearSelection();
-		saveToXMLFile(JFritz.CALLS_FILE, true);
+		saveToXMLFile(JFritz.SAVE_DIR + JFritz.CALLS_FILE, true);
 		fireTableDataChanged();
 	}
 
@@ -1121,7 +1121,7 @@ public class CallerList extends AbstractTableModel {
 				while (en.hasMoreElements()) {
 					unfilteredCallerData.remove(en.nextElement());
 				}
-				saveToXMLFile(JFritz.CALLS_FILE, true);
+				saveToXMLFile(JFritz.SAVE_DIR + JFritz.CALLS_FILE, true);
 				updateFilter();
 				fireTableDataChanged();
 			}
@@ -1251,7 +1251,7 @@ public class CallerList extends AbstractTableModel {
 					// for(int i=0; i < unfilteredCallerData.size(); i++)
 					// System.out.println(unfilteredCallerData.elementAt(i).toString());
 
-					saveToXMLFile(JFritz.CALLS_FILE, true);
+					saveToXMLFile(JFritz.SAVE_DIR + JFritz.CALLS_FILE, true);
 
 					String msg;
 
