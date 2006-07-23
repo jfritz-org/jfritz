@@ -7,9 +7,6 @@ package de.moonflower.jfritz.callerlist;
 
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.util.Vector;
 
 import javax.swing.JTable;
@@ -21,7 +18,6 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.dialogs.phonebook.PhoneBookTable;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.VCardList;
 
 /**
  * Listener class for copying phone numbers to clipboard
@@ -51,8 +47,6 @@ public class SelectionListener implements ListSelectionListener {
 	 */
 	public void valueChanged(ListSelectionEvent e) {
 		if (!e.getValueIsAdjusting()) {
-			VCardList list = new VCardList();
-			Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
 			Person person = null;
 			Call call = null;
 			int rows[] = table.getSelectedRows();
@@ -60,17 +54,8 @@ public class SelectionListener implements ListSelectionListener {
 			selectedCallsTotalMinutes = 0;
 			for (int i = 0; i < rows.length; i++) {
 				call = (Call) table.getJfritz().getCallerlist().getFilteredCallVector().get(rows[i]);
-				person = call.getPerson();
-				if (person != null && person.getFullname() != "") { //$NON-NLS-1$
-					// FIXME
-					// person.getVCard
-					list.addVCard(person);
-				}
 				selectedCallsTotalMinutes += call.getDuration();
 			}
-
-			StringSelection cont = new StringSelection(list.toVCardList());
-			clip.setContents(cont, null);
 
 			if (rows.length == 1) {
 				// table.getJfritz().getJframe().getPhoneBookPanel().getPersonPanel().setPerson(person);
