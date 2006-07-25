@@ -31,10 +31,14 @@ public class ConfigWizard {
 
 	private WizardPanelDescriptor descriptor2, descriptor3, descriptor4, descriptor5;
 
+	private boolean canceled = false;
+
 	public ConfigWizard(JFritz jf, Frame parent){
 
 		jfritz = jf;
 		Debug.msg("asking the user for the language");
+
+		//if user clicked cancel on the language dialog, return back to jfritz
 		askLanguage(parent);
 
 		Debug.msg("Create JFritz config wizard");
@@ -70,6 +74,9 @@ public class ConfigWizard {
 	 *
 	 */
 	public void showWizard(){
+
+		if(canceled)
+			return;
 
 		//possible return values: 0 finish clicked, 1 cancel clicked, 2 error...
        int ret = wizard.showModalDialog();
@@ -178,7 +185,9 @@ public class ConfigWizard {
 				jfritz.getJframe().setLanguage(
 						new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_")+1, loc.length())));
 			}
-		}
+
+		}else
+			canceled =  true;
 
 	}
 

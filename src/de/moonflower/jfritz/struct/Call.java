@@ -47,6 +47,14 @@ public class Call {
         if(this.number != null && this.number.toString().equals("") )
         	this.number = null;
 
+        //check if the call is an incoming call with a dial out prefix
+        else if(calltype.toInt() == CallType.CALLIN && Boolean.parseBoolean(
+        		JFritz.getProperty("option.activateDialPrefix")) &&
+        		this.number.toString().startsWith(JFritz.getProperty(
+        		"dial.prefix", " ")) )
+        	this.number = new PhoneNumber(number.toString()
+        			.substring(JFritz.getProperty("dial.prefix").length()));
+
         this.route = route;
         this.port = port;
         this.duration = duration;
