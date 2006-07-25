@@ -83,7 +83,7 @@ public class ConfigDialog extends JDialog {
 
 	private JTextField address, areaCode, countryCode, areaPrefix,
 			countryPrefix, externProgramTextField, port, popupDelay,
-			save_location;
+			save_location, dialPrefix;
 
 	private JPasswordField pass;
 
@@ -105,7 +105,7 @@ public class ConfigDialog extends JDialog {
 			externProgramCheckBox, searchWithSSDP, showCallByCallColumnButton,
 			showCommentColumnButton, showPortColumnButton,
 			minimizeInsteadOfClose, createBackup, createBackupAfterFetch,
-			fetchAfterStandby;
+			fetchAfterStandby, activateDialPrefix;
 
 	private JPanel callMonitorPane;
 
@@ -170,6 +170,9 @@ public class ConfigDialog extends JDialog {
 				.getProperty("option.startExternProgram", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 		externProgramTextField.setText(JFritzUtils.deconvertSpecialChars(JFritz
 				.getProperty("option.externProgram", ""))); //$NON-NLS-1$,  //$NON-NLS-2$
+        activateDialPrefix.setSelected(JFritzUtils.parseBoolean(JFritz.getProperty(
+                "option.activateDialPrefix", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+
 
 		callMonitorCombo.setSelectedIndex(Integer.parseInt(JFritz.getProperty(
 				"option.callMonitorType", "0"))); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -242,7 +245,8 @@ public class ConfigDialog extends JDialog {
 		port.setText(jfritz.getFritzBox().getPort());
 		areaCode.setText(JFritz.getProperty("area.code")); //$NON-NLS-1$
 		countryCode.setText(JFritz.getProperty("country.code")); //$NON-NLS-1$
-		areaPrefix.setText(JFritz.getProperty("area.prefix")); //$NON-NLS-1$
+        areaPrefix.setText(JFritz.getProperty("area.prefix")); //$NON-NLS-1$
+        dialPrefix.setText(JFritz.getProperty("dial.prefix")); //$NON-NLS-1$
 		countryPrefix.setText(JFritz.getProperty("country.prefix")); //$NON-NLS-1$
 		timerSlider.setValue(Integer
 				.parseInt(JFritz.getProperty("fetch.timer"))); //$NON-NLS-1$
@@ -293,7 +297,7 @@ public class ConfigDialog extends JDialog {
 		JFritz
 				.setProperty(
 						"option.createBackup", Boolean.toString(createBackup.isSelected())); //$NON-NLS-1$
-		JFritz
+        JFritz
 				.setProperty(
 						"option.createBackupAfterFetch", Boolean.toString(createBackupAfterFetch.isSelected())); //$NON-NLS-1$
 		JFritz.setProperty("option.playSounds", Boolean.toString(soundButton //$NON-NLS-1$
@@ -312,6 +316,10 @@ public class ConfigDialog extends JDialog {
 				.toString(callMonitorAfterStartButton.isSelected()));
 		JFritz.setProperty("option.callMonitorType", String //$NON-NLS-1$
 				.valueOf(callMonitorCombo.getSelectedIndex()));
+        JFritz
+        .setProperty(
+                "option.activateDialPrefix", Boolean.toString(activateDialPrefix.isSelected())); //$NON-NLS-1$
+
 
 		// Set Popup Messages Type
 		if (popupNoButton.isSelected()) {
@@ -350,6 +358,7 @@ public class ConfigDialog extends JDialog {
 		JFritz.setProperty("area.code", areaCode.getText()); //$NON-NLS-1$
 		JFritz.setProperty("country.code", countryCode.getText()); //$NON-NLS-1$
 		JFritz.setProperty("area.prefix", areaPrefix.getText()); //$NON-NLS-1$
+        JFritz.setProperty("dial.prefix", dialPrefix.getText()); //$NON-NLS-1$
 		JFritz.setProperty("country.prefix", countryPrefix.getText()); //$NON-NLS-1$
 		if (timerSlider.getValue() < 3)
 			timerSlider.setValue(3);
@@ -482,6 +491,13 @@ public class ConfigDialog extends JDialog {
 		phonepane.add(label, c);
 		countryPrefix = new JTextField("", 3); //$NON-NLS-1$
 		phonepane.add(countryPrefix, c);
+
+        c.gridy = 5;
+        activateDialPrefix = new JCheckBox(JFritz.getMessage("dial_prefix")); //$NON-NLS-1$
+        phonepane.add(activateDialPrefix, c);
+        dialPrefix = new JTextField("", 3); //$NON-NLS-1$
+        phonepane.add(dialPrefix, c);
+
 		return phonepane;
 	}
 
