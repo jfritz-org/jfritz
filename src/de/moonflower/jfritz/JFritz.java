@@ -64,6 +64,7 @@
  *		config_wizard
  *		popup_delay
  *
+ * - Neu: Anrufe mit einer AKZ werden jetzt richtig verarbeitet.
  * - Neu: Der Speicherordner kann jetzt frei gewhlt werden, bleibt nach dem Beenden erhalten. SF-Tracker [1248965]
  * - Bugfix: Die Sprachauswahlbox zeigt jetzt auch unter Linux Flaggen-Icons an.
  * - Bugfix: Das Telefonbuch wird nach einem erfolgreichen Outlook-Import sofort gespeichert. SF-Tracker [ 1503185 ]
@@ -81,14 +82,14 @@
  * - Neu: Englische Firmware wird untersttzt
  * - Intern: Firmware wird beim Start erkannt und in JFritz.firmware gespeichert. Zugriff nicht mehr ber JFritz.getProperties("box.firmware") sondern ber JFritz.getFirmware()
  * - Bugfix: Kurzwahlen werden wieder korrekt abgeholt
- * - Bugfix: Standardtelefonnummern können wieder gendert werden
+ * - Bugfix: Standardtelefonnummern knnen wieder gendert werden
  * - Bugfix: Problem mit dem Holen der Anrufliste behoben
- * - Bugfix: Nebenstellenbezeichnungen und Route können jetzt Sonderzeichen enthalten
+ * - Bugfix: Nebenstellenbezeichnungen und Route knnen jetzt Sonderzeichen enthalten
  * - Bugfix: Anzeige eines analogen Anrufs beim Anrufmonitor
  * - Bugfix: PersonDialog ("Person editieren") wird nun mittig zum JFritz.JFrame angezeigt - SF.net-Request:[1503523] Adress-/Telefonbuch
  * - Neu: Default- und Close-Button fr PersonDialog ("Person editieren"), Icon (JFritz) gesetzt
  * - Bugfix: Wahlhilfe: Anwahl aller analogen Telefone konnte nicht gehen -> Tippfehler in JFritzUtils: JFritz.getMessage("analoge_telephones_all") -> korrigiert in JFritz.getMessage("analog_telephones_all")
- * - Neu: Default-Button bei Rckfrage 'Box-Anruferliste löschen' gendert auf 'Nein'
+ * - Neu: Default-Button bei Rckfrage 'Box-Anruferliste lschen' gendert auf 'Nein'
  * - Neu: Bercksichtigung der Metal-Decorations bei Dialogen
  * - Intern: Funktionen, die mit der Kommunikation mit der FritzBox zu tun hatten, in eine neue Klasse FritzBox exportiert.
  * - Intern: CallDialog: Auswahl der Nummern wiederhergestellt, editierbare JComboBox/JTextField (je nach Anzahl vorhandener Nummern)
@@ -465,7 +466,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.280 2006/07/25 17:10:20 capncrunch Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.281 2006/07/27 18:18:50 capncrunch Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
