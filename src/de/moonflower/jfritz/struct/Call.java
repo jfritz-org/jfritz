@@ -49,7 +49,7 @@ public class Call {
 
         //check if the call is an incoming call with a dial out prefix
         else if(calltype.toInt() == CallType.CALLIN && Boolean.valueOf(
-        		JFritz.getProperty("option.activateDialPrefix")) &&
+        		JFritz.getProperty("option.activateDialPrefix")).booleanValue() &&
         		this.number.toString().startsWith(JFritz.getProperty(
         		"dial.prefix", " ")) )
         	this.number = new PhoneNumber(number.toString()

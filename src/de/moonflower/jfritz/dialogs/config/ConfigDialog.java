@@ -594,16 +594,14 @@ public class ConfigDialog extends JDialog {
 		otherpane.add(createBackupAfterFetch);
 
 		//FIXME: This does not display correctly
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.gridx = 0;
-		gbc.gridy = 1;
+		JPanel panel = new JPanel();
 
 		JLabel label = new JLabel(JFritz.getMessage("save_directory"));
-		otherpane.add(label, gbc);
+		panel.add(label);
 
 		save_location = new JTextField(JFritz.SAVE_DIR);
-		gbc.gridx = 1;
-		otherpane.add(save_location, gbc);
+		save_location.setPreferredSize(new Dimension(200, 20));
+		panel.add(save_location);
 
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -626,8 +624,9 @@ public class ConfigDialog extends JDialog {
 
 		JButton browseButton = new JButton(JFritz.getMessage("browse"));
 		browseButton.addActionListener(actionListener);
-		gbc.gridx = 2;
-		otherpane.add(browseButton, gbc);
+
+		panel.add(browseButton);
+		otherpane.add(panel);
 
 
 		return otherpane;
