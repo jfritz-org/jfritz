@@ -63,7 +63,9 @@
  *		config_wizard_info4
  *		config_wizard
  *		popup_delay
+ *      dial_prefix
  *
+ * - Neu: Dummy-Telefonbucheinträge werden gelöscht, falls ein Eintrag mit derselben Nummer existiert
  * - Neu: Anrufe mit einer AKZ werden jetzt richtig verarbeitet.
  * - Neu: Der Speicherordner kann jetzt frei gewhlt werden, bleibt nach dem Beenden erhalten. SF-Tracker [1248965]
  * - Bugfix: Die Sprachauswahlbox zeigt jetzt auch unter Linux Flaggen-Icons an.
@@ -466,7 +468,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.281 2006/07/27 18:18:50 capncrunch Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.282 2006/07/27 22:42:03 robotniko Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 

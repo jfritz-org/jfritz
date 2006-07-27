@@ -664,13 +664,34 @@ public class PhoneBook extends AbstractTableModel {
 	public Person findPerson(PhoneNumber number, boolean considerMain) {
 		if (number == null)
 			return null;
+        Vector foundPersons = new Vector();
 		Enumeration en = unfilteredPersons.elements();
 		while (en.hasMoreElements()) {
 			Person p = (Person) en.nextElement();
 			if (p.hasNumber(number.getIntNumber(),considerMain))
-				return p;
+                foundPersons.add(p);
 		}
-		return null;
+        if ( foundPersons.size() == 0)
+            return null;
+        else if ( foundPersons.size() == 1 ) {
+            return (Person) foundPersons.get(0);
+        }
+        else {
+            // delete all dummy entries for this number and return first element of foundPersons
+            for ( int i=0; i<foundPersons.size(); i++) {
+                Person p = (Person) foundPersons.get(i);
+                if (p.getFullname().equals("") && p.getNumbers().size() == 1
+                        && p.getAddress().equals("") && p.getCity().equals("")
+                        && p.getCompany().equals("") && p.getEmailAddress().equals("")
+                        && p.getPostalCode().equals("") && p.getStreet().equals("")) {
+                    // dummy entry, delete it from database
+                    foundPersons.removeElement(p);
+                    unfilteredPersons.removeElement(p);
+                    this.saveToXMLFile(JFritz.PHONEBOOK_FILE);
+                }
+            }
+            return (Person) foundPersons.get(0);
+        }
 	}
 
 	/**
