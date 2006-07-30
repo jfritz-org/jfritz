@@ -56,13 +56,20 @@ public class PhoneNumber implements Comparable {
 	 *
 	 * @author Brian Jensen
 	 *
-	 * @param fullNumber
+	 * @param fullNumber the telephone number in raw format
 	 * @param jfritz
+	 * @param parseDialOut, a boolean value representing if a Dial out prefix needs to be parsed
 	 */
-	public PhoneNumber(String fullNumber, JFritz jfritz) {
+	public PhoneNumber(String fullNumber, JFritz jfritz, boolean parseDialOut) {
 		this.type = "";
 		//if (number.matches(numberMatcher)) this.number = fullNumber;
 		if (fullNumber != null) this.number = fullNumber;
+
+		if (parseDialOut && this.number.startsWith(JFritz.getProperty(
+        		"dial.prefix", " ")) ){
+        	this.number = number.substring(JFritz.getProperty("dial.prefix").length());
+        	Debug.msg("Parsed the dial out prefix, new number: "+this.number);
+		}
 		createMobileMap();
 		refactorNumber(jfritz);
 	}
@@ -166,6 +173,8 @@ public class PhoneNumber implements Comparable {
 		String countryPrefix = JFritz.getProperty("country.prefix");//$NON-NLS-1$
 		String areaCode = JFritz.getProperty("area.code");//$NON-NLS-1$
 		String areaPrefix = JFritz.getProperty("area.prefix");//$NON-NLS-1$
+
+
 
 		if ((number.length() < 3) // A valid number??
 				|| (number.startsWith("+"))//$NON-NLS-1$
@@ -441,7 +450,9 @@ public class PhoneNumber implements Comparable {
 
           	// replace QuickDial with
             // QuickDial-Entry
-            String quickDialNumber = number.substring(3);
+            String quickDialNumber = number.substring(3, 5);
+            Debug.msg("Quickdail number: "+quickDialNumber);
+
             if (jf.getJframe().getQuickDialPanel().getDataModel()
                     .getQuickDials().size() == 0) {
 
