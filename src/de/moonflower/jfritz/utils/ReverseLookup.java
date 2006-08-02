@@ -26,6 +26,11 @@ import de.moonflower.jfritz.utils.ReverseLookupSwitzerland;
  */
 public class ReverseLookup {
 
+	public static final String SWITZERLAND_CODE = "+41";
+
+	public static final String ITALY_CODE = "+39";
+
+
 	public static Person lookup(PhoneNumber number) {
 		Person newPerson;
 /**		if (number.isMobile()) {
@@ -40,8 +45,10 @@ public class ReverseLookup {
 		    newPerson = new Person ();
 		    newPerson.addNumber(number);
 		} else {
-			if(number.convertToIntNumber().startsWith("+41"))
+			if(number.convertToIntNumber().startsWith(SWITZERLAND_CODE))
 				newPerson = ReverseLookupSwitzerland.lookup(number.getAreaNumber());
+			else if(number.convertToIntNumber().startsWith(ITALY_CODE))
+				newPerson = ReverseLookupItaly.lookup(number.getAreaNumber());
 			else
 				newPerson = lookupDasOertliche(number.getAreaNumber());
 		}
