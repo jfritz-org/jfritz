@@ -470,7 +470,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.286 2006/08/02 21:29:52 capncrunch Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.287 2006/08/03 18:01:57 little_ben Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -1385,8 +1385,8 @@ public final class JFritz {
 		calledstr = calledInput;
         if (!calledInput.startsWith("SIP")) { //$NON-NLS-1$
             PhoneNumber called = new PhoneNumber(calledInput, jfritz,
-            		Boolean.valueOf(JFritz.getProperty("option.activateDialPrefix"))
-            		&& !providerInput.contains("@"));
+            		JFritz.getProperty("option.activateDialPrefix").toLowerCase().equals("true")
+            		&& (!(providerInput.indexOf("@")>0)));
             if (!called.getIntNumber().equals("")) //$NON-NLS-1$
 				calledstr = called.getIntNumber();
         }

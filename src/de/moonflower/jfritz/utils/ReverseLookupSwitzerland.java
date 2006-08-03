@@ -26,7 +26,7 @@ public final class ReverseLookupSwitzerland {
 	public final static String SEARCH_URL="http://tel.search.ch/result.html?tel=";
 
 	public static Person lookup(String number){
-		Boolean intNumber = false;
+		boolean intNumber = false;
 
 		if(number.startsWith("+")){
 			number = number.substring(1);

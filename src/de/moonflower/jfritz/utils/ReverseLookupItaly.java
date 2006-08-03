@@ -16,7 +16,7 @@ public class ReverseLookupItaly {
 public final static String SEARCH_URL="http://www.paginebianche.it/execute.cgi?btt=1&tl=2&tr=106&tc=&cb=&x=0&y=0&qs=";
 
 	public static Person lookup(String number){
-		Boolean intNumber = false;
+		boolean intNumber = false;
 
 		if(number.startsWith("+")){
 			number = number.substring(3);
