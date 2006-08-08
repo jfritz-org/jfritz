@@ -10,22 +10,38 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.moonflower.jfritz.struct.Person;
-
+/**
+ * Class for looking up Italian phone numbers
+ * Search engine used is www.paginebianche.it
+ *
+ * Created: 03.08.06
+ *
+ * @author Brian Jensen
+ *
+ */
 public class ReverseLookupItaly {
 
 public final static String SEARCH_URL="http://www.paginebianche.it/execute.cgi?btt=1&tl=2&tr=106&tc=&cb=&x=0&y=0&qs=";
 
+	/**
+	 * This function performs the reverse lookup
+	 *
+	 * @author Brian Jensen
+	 * @param number in area format to be looked
+	 *
+	 * @return a Person object created using the data collected from the site
+	 */
 	public static Person lookup(String number){
-		boolean intNumber = false;
+		String searchNumber = number;
 
 		if(number.startsWith("+")){
-			number = number.substring(3);
-			number = "0" + number;
-			intNumber = true;
+			searchNumber = number.substring(3);
+			if(!searchNumber.startsWith("0"))
+				searchNumber = "0" + searchNumber;
 		}
-		Debug.msg("Italy reverselookup number: "+number);
+		Debug.msg("Italy reverselookup number: "+searchNumber);
 
-		String urlstr = SEARCH_URL + number;
+		String urlstr = SEARCH_URL + searchNumber;
 		Debug.msg("URL: "+urlstr);
 		Person newPerson;
 
@@ -90,11 +106,13 @@ public final static String SEARCH_URL="http://www.paginebianche.it/execute.cgi?b
 					}
 					d.close();
 					Debug.msg("Begin processing responce from www.paginebianche.it");
-					Pattern pName = Pattern
+					Pattern pMain = Pattern
 							.compile("<td class=\"dati\"><span [^>]*>([^<]*)</span><br>([0-9]*)&nbsp;([^&]*)[^-]*-([^<]*)<"); //$NON-NLS-1$
+					Pattern pSecondary = Pattern
+							.compile("<td class=\"dati\"><!--LOGO--><a [^>]*><img [^>]*></a><a class=\"AInserzionista\"[^>]*>([^<]*) </a><br><font [^>]*>([0-9]*)&nbsp;([^&]*)[^-]*-([^<]*)<");
 
 					//parse Data
-					Matcher mData = pName.matcher(data);
+					Matcher mData = pMain.matcher(data);
 					if (mData.find()) {
 						lastname = mData.group(1).trim();
 						Debug.msg("Last name: " + lastname);
@@ -105,6 +123,17 @@ public final static String SEARCH_URL="http://www.paginebianche.it/execute.cgi?b
 						street = mData.group(4).trim();
 						Debug.msg("Street: "+ street);
 
+						//don't run the reg ex unless necessary
+					}else if((mData = pSecondary.matcher(data)).find()){
+						Debug.msg("Found secondary match");
+						lastname = mData.group(1).trim();
+						Debug.msg("Last name: " + lastname);
+						zipCode = mData.group(2).trim();
+						Debug.msg("Zip code: "+ zipCode);
+						city = mData.group(3).trim();
+						Debug.msg("City: "+ city);
+						street = mData.group(4).trim();
+						Debug.msg("Street: "+ street);
 					}
 
 				} catch (IOException e1) {
@@ -116,8 +145,6 @@ public final static String SEARCH_URL="http://www.paginebianche.it/execute.cgi?b
 		}
 
 		newPerson = new Person(firstname, "", lastname, street, zipCode, city, "");
-		if(intNumber)
-			number = "+39" + number.substring(1);
 
 		newPerson.addNumber(number, "home"); //$NON-NLS-1$
 

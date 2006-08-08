@@ -382,6 +382,8 @@ public class ConfigDialog extends JDialog {
 		Debug.msg("Saved config"); //$NON-NLS-1$
 		jfritz.getSIPProviderTableModel()
 				.saveToXMLFile(JFritz.SAVE_DIR + JFritz.SIPPROVIDER_FILE);
+		jfritz.getCallerlist().saveToXMLFile(JFritz.SAVE_DIR+JFritz.CALLS_FILE, true);
+		jfritz.getPhonebook().saveToXMLFile(JFritz.SAVE_DIR+JFritz.PHONEBOOK_FILE);
 	}
 
 	protected JPanel createBoxPane(ActionListener actionListener) {

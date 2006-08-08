@@ -65,6 +65,7 @@
  *		popup_delay
  *      dial_prefix
  *
+ * - Neu: Neuer Kommandozeilenparameter: -r, führt eine Rückwärtssuche aus und beendet sich
  * - Neu: Rückwärtssuche für Italien über www.paginebianche.it, wird automatisch aufgerufen
  * - Neu: Rückwärtssuche für die Schweiz über tel.search.ch, JFritz ruft automatisch die richtige Rückwärtssuche auf.
  * - Neu: Dummy-Telefonbucheinträge werden gelöscht, falls ein Eintrag mit derselben Nummer existiert
@@ -439,6 +440,7 @@ import de.moonflower.jfritz.dialogs.phonebook.PhoneBook;
 import de.moonflower.jfritz.dialogs.simple.MessageDlg;
 import de.moonflower.jfritz.dialogs.sip.SipProviderTableModel;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.FritzBox;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
@@ -470,7 +472,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.287 2006/08/03 18:01:57 little_ben Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.288 2006/08/08 20:29:41 capncrunch Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -547,6 +549,8 @@ public final class JFritz {
 
     private boolean showConfWizard = false;
 
+    private static boolean doReverseLookup = false;
+
     private static FritzBox fritzBox;
 
     /**
@@ -564,6 +568,9 @@ public final class JFritz {
         System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION //$NON-NLS-1$
                 + " (c) 2005 by " + PROGRAM_AUTHOR); //$NON-NLS-1$
         Thread.currentThread().setPriority(5);
+        loadSaveDir();
+        Debug.msg("Save Dir: "+ SAVE_DIR);
+
         boolean fetchCalls = false;
         boolean clearList = false;
         boolean csvExport = false;
@@ -596,7 +603,7 @@ public final class JFritz {
                 "Set program priority [1..10]"); //$NON-NLS-1$
         options.addOption('w', "without-control", null, //$NON-NLS-1$,  //$NON-NLS-2$
         		"Turns off multiple instance control. DON'T USE, unless you know what your are doing"); //$NON-NLS-1$
-
+        options.addOption('r', "reverse lookup", null, "Do a reverse lookup and exit. Can be used together with -e -f and -z");
         Vector foundOptions = options.parseOptions(args);
         Enumeration en = foundOptions.elements();
         while (en.hasMoreElements()) {
@@ -660,6 +667,9 @@ public final class JFritz {
             	System.err.println("Turning off Multiple instance control!"); //$NON-NLS-1$
             	System.err.println("You were warned! Data loss may occur."); //$NON-NLS-1$
             	break;
+            case 'r':
+            	doReverseLookup = true;
+            	break;
 
             case 'p': //$NON-NLS-1$
                 String priority = option.getParameter();
@@ -715,9 +725,6 @@ public final class JFritz {
     public JFritz(boolean fetchCalls, boolean csvExport, String csvFileName,
             boolean clearList, boolean enableInstanceControl, boolean writeForeignFormats) {
         jfritz = this;
-
-        loadSaveDir();
-        Debug.msg("Save Dir: "+ SAVE_DIR);
 
         loadProperties();
         loadMessages(new Locale(JFritz.getProperty("locale","de_DE"))); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -814,6 +821,9 @@ public final class JFritz {
                     callerlist.clearList();
                 }
                 Debug.msg("JFritz will now terminate"); //$NON-NLS-1$
+                if(doReverseLookup)
+                	reverseLookup();
+
                 System.exit(0);
             }
         }
@@ -824,6 +834,9 @@ public final class JFritz {
                 Debug.msg("Clearing Call List"); //$NON-NLS-1$
                 callerlist.clearList();
             }
+            if(doReverseLookup)
+            	reverseLookup();
+
             System.exit(0);
         }
         if (clearList) {
@@ -832,6 +845,9 @@ public final class JFritz {
             System.exit(0);
         }
 		if (writeForeignFormats) {
+			if(doReverseLookup)
+				reverseLookup();
+
 			phonebook.saveToBITFBFDialerFormat("bitbook.dat"); //$NON-NLS-1$
 			phonebook.saveToCallMonitorFormat("CallMonitor.adr"); //$NON-NLS-1$
 		}
@@ -860,7 +876,7 @@ public final class JFritz {
             }
         }
 
-        if (JFritzUtils.parseBoolean(JFritz.getProperty("option.useSSDP",//$NON-NLS-1$
+         if (JFritzUtils.parseBoolean(JFritz.getProperty("option.useSSDP",//$NON-NLS-1$
                 "true"))) {//$NON-NLS-1$
             Debug.msg("Searching for  FritzBox per UPnP / SSDP");//$NON-NLS-1$
 
@@ -872,6 +888,7 @@ public final class JFritz {
 
             }
         }
+
 
         if(showConfWizard){
             Debug.msg("Presenting user with the configuration dialog");
@@ -1772,7 +1789,7 @@ public final class JFritz {
      * @author Brian Jensen
      *
      */
-    public void loadSaveDir(){
+    public static void loadSaveDir(){
         try{
         	BufferedReader br = new BufferedReader(new FileReader(
         	        USER_DIR + File.separator + USER_JFRITZ_FILE));
@@ -1832,5 +1849,36 @@ public final class JFritz {
     	}
     }
 
+    private void reverseLookup(){
+    	Debug.msg("Doing reverse Lookup");
+    	int j = 0;
+    	for (int i = 0; i < getCallerlist()
+				.getRowCount(); i++) {
+    		Vector data = getCallerlist()
+				.getFilteredCallVector();
+    		Call call = (Call) data.get(i);
+    		PhoneNumber number = call.getPhoneNumber();
+    		if (number != null && (call.getPerson() == null)) {
+    			j++;
 
+    			Debug.msg("Reverse lookup for " //$NON-NLS-1$
+    					+ number.getIntNumber());
+
+    			Person newPerson = ReverseLookup.lookup(number);
+    			if (newPerson != null) {
+    				getPhonebook().addEntry(newPerson);
+    				getPhonebook().fireTableDataChanged();
+    				getCallerlist().fireTableDataChanged();
+    			}
+
+    		}
+    	}
+
+
+    	if (j > 0)
+    		getPhonebook().saveToXMLFile(JFritz.SAVE_DIR + JFritz.PHONEBOOK_FILE);
+
+    }
 }
+
+

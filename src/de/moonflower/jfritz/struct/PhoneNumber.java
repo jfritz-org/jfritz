@@ -8,6 +8,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.struct.countryspecific.*;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
@@ -26,6 +27,11 @@ public class PhoneNumber implements Comparable {
 	private String type = "";//$NON-NLS-1$
 	// type values : "home", "mobile", "homezone",
 	// "business", "other", "fax", "sip" };
+
+	public static String SWITZERLAND_CODE = "41",
+						 ITALY_CODE = "39",
+						 GERMANY_CODE="49",
+						 AUSTRIA_CODE="43";
 
 	static HashMap mobileMap;
 
@@ -63,7 +69,7 @@ public class PhoneNumber implements Comparable {
 	public PhoneNumber(String fullNumber, JFritz jfritz, boolean parseDialOut) {
 		this.type = "";
 		//if (number.matches(numberMatcher)) this.number = fullNumber;
-		if (fullNumber != null) this.number = fullNumber;
+		if (fullNumber != null && !fullNumber.equals("Unbekannt")) this.number = fullNumber;
 
 		if (parseDialOut && this.number.startsWith(JFritz.getProperty(
         		"dial.prefix", " ")) ){
@@ -141,8 +147,20 @@ public class PhoneNumber implements Comparable {
 	public void refactorNumber(JFritz jf) {
 	    removeUnnecessaryChars();
 		convertQuickDial(jf);
+
+		/* Part of the i18n work, don't delete
+		if(JFritz.getProperty("country.code","49").equals("41")){
+	    	callbycall = PhoneNumberSwitzerland.getCallbyCall(number);
+	    	number = number.substring(callbycall.length());
+	    	number  = convertToIntNumber();
+	    }else{
+	    	cutCallByCall();
+	    	number = convertToIntNumber();
+	    }*/
+
 	    cutCallByCall();
-		number = convertToIntNumber();
+    	number = convertToIntNumber();
+
 	}
 
 	/**
@@ -256,8 +274,8 @@ public class PhoneNumber implements Comparable {
 	}
 
 	public String getAreaNumber() {
-		String countryCode = JFritz.getProperty("country.code"); //$NON-NLS-1$
-		String areaPrefix = JFritz.getProperty("area.prefix"); //$NON-NLS-1$
+		String countryCode = JFritz.getProperty("country.code", "49"); //$NON-NLS-1$
+		String areaPrefix = JFritz.getProperty("area.prefix", "0"); //$NON-NLS-1$
 		if (number.startsWith("+" + countryCode)) //$NON-NLS-1$
 			return areaPrefix + number.substring(countryCode.length() + 1);
 		return number;
@@ -385,11 +403,16 @@ public class PhoneNumber implements Comparable {
 	public boolean isMobile() {
 		//		String provider = ReverseLookup.getMobileProvider(getFullNumber());
 		//		return (!provider.equals(""));
-		boolean ret = number.length() > 6
+		if(number.startsWith("+"+SWITZERLAND_CODE) && JFritz.getProperty("country.code", "49").equals(SWITZERLAND_CODE))
+			return PhoneNumberSwitzerland.isMobile(getAreaNumber());
+		else{
+			boolean ret = number.length() > 6
 				&& mobileMap.containsKey(number.substring(0, 6));
-		if (ret && getType().equals("")) //$NON-NLS-1$
-			type = "mobile"; //$NON-NLS-1$
-		return ret;
+			if (ret && getType().equals("")) //$NON-NLS-1$
+				type = "mobile"; //$NON-NLS-1$
+			return ret;
+		}
+
 	}
 
 	/**

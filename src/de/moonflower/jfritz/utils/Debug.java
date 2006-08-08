@@ -59,7 +59,7 @@ public class Debug {
 
 		try {
 			//setup the redirection of Sysem.out and System.err
-			FileOutputStream tmpOutputStream = new FileOutputStream(fname);
+			FileOutputStream tmpOutputStream = new FileOutputStream(JFritz.SAVE_DIR+fname);
 			fileRedirecter = new PrintStream(tmpOutputStream);
 			System.setOut(fileRedirecter);
 			System.setErr(fileRedirecter);

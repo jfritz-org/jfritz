@@ -12,11 +12,12 @@ import java.util.regex.Pattern;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
+
 /**
  * This class is responsible for doing reverse lookups for swiss numbers
  *
  * The search engine used is: http://tel.search.ch
- * A big thanks to them for creating an easy to parse web response
+ * A big thanks to them for creating an easy to parse web page
  *
  * @author Brian Jensen
  *
@@ -25,8 +26,16 @@ public final class ReverseLookupSwitzerland {
 
 	public final static String SEARCH_URL="http://tel.search.ch/result.html?tel=";
 
+	/**
+	 * This function performs the reverse lookup
+	 *
+	 * @author Brian Jensen
+	 * @param number in area format to be looked up
+	 *
+	 * @return a person object created using the data from the site
+	 */
 	public static Person lookup(String number){
-		boolean intNumber = false;
+		Boolean intNumber = false;
 
 		if(number.startsWith("+")){
 			number = number.substring(1);
