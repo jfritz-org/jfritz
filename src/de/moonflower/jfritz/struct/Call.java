@@ -12,6 +12,7 @@ import java.util.Enumeration;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.utils.JFritzUtils;
+import de.moonflower.jfritz.utils.Debug;
 
 /**
  * @author Arno Willig
@@ -48,6 +49,20 @@ public class Call {
         	this.number = null;
 
         this.route = route;
+//      Parse the SIP Provider and save it correctly
+		if (this.route.startsWith("Internet: ")) {
+			Enumeration en = jfritz.getSIPProviderTableModel()
+					.getProviderList().elements();
+			while (en.hasMoreElements()) {
+				SipProvider sipProvider = (SipProvider) en.nextElement();
+				if (sipProvider.getNumber().equals(this.route.substring(10))) {
+					this.route = "SIP" + sipProvider.getProviderID();
+					break;
+				}
+			}
+		}
+
+
         this.port = port;
         this.duration = duration;
     }
@@ -154,7 +169,21 @@ public class Call {
         if (route == null)
             outString = outString.concat(";\"\""); //$NON-NLS-1$
         else {
-            String sipRoute = ""; //$NON-NLS-1$
+            //String sipRoute = ""; //$NON-NLS-1$
+            String convertedRoute = route;
+        	if(route.startsWith("SIP")){
+        			Enumeration en = jfritz.getSIPProviderTableModel()
+        			.getProviderList().elements();
+        		while (en.hasMoreElements()) {
+        			SipProvider sipProvider = (SipProvider) en.nextElement();
+        			if (route.substring(3).equals(String.valueOf(sipProvider.getProviderID()))) {
+        				convertedRoute = "Internet: " + sipProvider.getNumber();
+        				break;
+        			}
+        		}
+            }
+
+            /* This is the old format
             if (route.startsWith("SIP")) { //$NON-NLS-1$
                 Enumeration en = jfritz.getSIPProviderTableModel()
                         .getProviderList().elements();
@@ -171,7 +200,10 @@ public class Call {
                 outString = outString.concat(";\"" + route + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
             } else {
                 outString = outString.concat(";\"" + sipRoute + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
-            }
+            }*/
+
+        	outString = outString.concat(";\"" + convertedRoute + "\"");
+
         }
 
         // port
@@ -256,9 +288,21 @@ public class Call {
         }
         if (!port.equals("")) //$NON-NLS-1$
             output = output + ("\t<port>" + JFritzUtils.convertSpecialChars(port) + "</port>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
-        if (!route.equals("")) //$NON-NLS-1$
-            output = output + ("\t<route>" + JFritzUtils.convertSpecialChars(route) + "</route>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
-        if (duration > 0)
+        if (!route.equals("")){ //$NON-NLS-1$
+            String convertedRoute = route;
+        	if(route.startsWith("SIP")){
+        			Enumeration en = jfritz.getSIPProviderTableModel()
+        			.getProviderList().elements();
+        		while (en.hasMoreElements()) {
+        			SipProvider sipProvider = (SipProvider) en.nextElement();
+        			if (route.substring(3).equals(String.valueOf(sipProvider.getProviderID()))) {
+        				convertedRoute = "Internet: " + sipProvider.getNumber();
+        				break;
+        			}
+        		}
+            }
+        	output = output + ("\t<route>" + JFritzUtils.convertSpecialChars(convertedRoute) + "</route>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
+        }if (duration > 0)
             output = output + ("\t<duration>" + duration + "</duration>" + sep); //$NON-NLS-1$, //$NON-NLS-2$
 
         output = output + ("\t<comment>" + JFritzUtils.convertSpecialChars(comment) + "</comment>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$

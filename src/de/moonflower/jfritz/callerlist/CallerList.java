@@ -1362,19 +1362,6 @@ public class CallerList extends AbstractTableModel {
 			field[5] = "36";
 		}
 
-		// Parse the SIP Provider and save it correctly
-		if (field[4].startsWith("Internet: ")) {
-			Enumeration en = jfritz.getSIPProviderTableModel()
-					.getProviderList().elements();
-			while (en.hasMoreElements()) {
-				SipProvider sipProvider = (SipProvider) en.nextElement();
-				if (sipProvider.getNumber().equals(field[4].substring(10))) {
-					field[4] = "SIP" + sipProvider.getProviderID();
-					break;
-				}
-			}
-		}
-
 		// Phone number
 		if (!field[3].equals("")) {
 			number = new PhoneNumber(field[3]);
@@ -1479,19 +1466,6 @@ public class CallerList extends AbstractTableModel {
 			field[3] = "36";
 		}
 
-		// Parse the SIP Provider and save it correctly
-		if (field[4].startsWith("Internet: ")) {
-			Enumeration en = jfritz.getSIPProviderTableModel()
-					.getProviderList().elements();
-			while (en.hasMoreElements()) {
-				SipProvider sipProvider = (SipProvider) en.nextElement();
-				if (sipProvider.getNumber().equals(field[4].substring(10))) {
-					field[4] = "SIP" + sipProvider.getProviderID();
-					break;
-				}
-			}
-		}
-
 		// make the call object and exit
 		call = new Call(jfritz, calltype, calldate, number, field[3], field[4],
 				Integer.parseInt(time[0]) * 3600 + Integer.parseInt(time[1])
@@ -1576,19 +1550,6 @@ public class CallerList extends AbstractTableModel {
 			field[4] = "4";
 		} else if (field[4].equals("DATA S0")) {
 			field[4] = "36";
-		}
-
-		// Parse the SIP Provider and save it correctly
-		if (field[5].startsWith("Internet: ")) {
-			Enumeration en = jfritz.getSIPProviderTableModel()
-					.getProviderList().elements();
-			while (en.hasMoreElements()) {
-				SipProvider sipProvider = (SipProvider) en.nextElement();
-				if (sipProvider.getNumber().equals(field[5].substring(10))) {
-					field[5] = "SIP" + sipProvider.getProviderID();
-					break;
-				}
-			}
 		}
 
 		// make the call object and exit
@@ -1687,19 +1648,6 @@ public class CallerList extends AbstractTableModel {
 			field[3] = "4";
 		} else if (field[3].equals("DATA S0")) {
 			field[3] = "36";
-		}
-
-		// Parse the SIP Provider and save it correctly
-		if (field[4].startsWith("Internet: ")) {
-			Enumeration en = jfritz.getSIPProviderTableModel()
-					.getProviderList().elements();
-			while (en.hasMoreElements()) {
-				SipProvider sipProvider = (SipProvider) en.nextElement();
-				if (sipProvider.getNumber().equals(field[4].substring(10))) {
-					field[4] = "SIP" + sipProvider.getProviderID();
-					break;
-				}
-			}
 		}
 
 		// make the call object and exit

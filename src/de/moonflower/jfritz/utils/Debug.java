@@ -70,7 +70,7 @@ public class Debug {
 		}
 
 		fileRedirecter.println("------------------------------------------"); //$NON-NLS-1$
-		msg("logging to file \""+ fname + "\" has been enabled"); //$NON-NLS-1$,  //$NON-NLS-2$
+		msg("logging to file \""+ JFritz.SAVE_DIR + fname + "\" has been enabled"); //$NON-NLS-1$,  //$NON-NLS-2$
 	}
 
 	/**

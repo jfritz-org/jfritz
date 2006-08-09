@@ -65,6 +65,7 @@
  *		popup_delay
  *      dial_prefix
  *
+ * _ Bugfix: SIP-Routen behalten ihre historische Zuordnung
  * - Neu: Neuer Kommandozeilenparameter: -r, führt eine Rückwärtssuche aus und beendet sich
  * - Neu: Rückwärtssuche für Italien über www.paginebianche.it, wird automatisch aufgerufen
  * - Neu: Rückwärtssuche für die Schweiz über tel.search.ch, JFritz ruft automatisch die richtige Rückwärtssuche auf.
@@ -472,7 +473,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.288 2006/08/08 20:29:41 capncrunch Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.289 2006/08/09 09:29:46 capncrunch Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
