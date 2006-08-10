@@ -86,7 +86,7 @@ public final class ReverseLookupNetherlands {
 						header += headerName + ": " + headerValue + " | "; //$NON-NLS-1$,  //$NON-NLS-2$
 					}
 					System.out.println(header);
-					Debug.msg("Header of tel.search.ch: " + header); //$NON-NLS-1$
+					Debug.msg("Header of http://www.gebeld.nl/content.asp?zoek=numm: " + header); //$NON-NLS-1$
 					Debug.msg("CHARSET : " + charSet); //$NON-NLS-1$
 
 					// Get used Charset
@@ -109,7 +109,7 @@ public final class ReverseLookupNetherlands {
 					}
 					d.close();
 					System.out.println(data);
-					Debug.msg("Begin processing responce from tel.search.ch");
+					Debug.msg("Begin processing responce from http://www.gebeld.nl/content.asp?zoek=numm");
 
 					Pattern pName = Pattern
 							.compile("<td><font size=\"2\" face=\"Verdana, Arial, Helvetica, sans-serif\">([^<]*)</font></td></tr>"); //$NON-NLS-1$
