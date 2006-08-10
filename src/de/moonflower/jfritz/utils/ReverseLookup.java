@@ -40,6 +40,8 @@ public class ReverseLookup {
 
 	public static final String GREATBRITAIN_CODE = "+44";
 
+	public static final String NETHERLANDS_CODE = "+31";
+
 	public static final String RUSSIA_CODE = "+7";
 
 	public static final String SPAIN_CODE = "+34";
@@ -71,9 +73,11 @@ public class ReverseLookup {
 				newPerson = ReverseLookupItaly.lookup(number.getAreaNumber());
 			else if(number.convertToIntNumber().startsWith(GERMANY_CODE))
 				newPerson = ReverseLookupGermany.lookup(number.getAreaNumber());
-			else
+			else if(number.convertToIntNumber().startsWith(NETHERLANDS_CODE))
+				newPerson = ReverseLookupNetherlands.lookup(number.getAreaNumber());
+			else{
 				newPerson = new Person ();
-				newPerson.addNumber(number.getAreaNumber(), "home");
+				newPerson.addNumber(number.getAreaNumber(), "home");}
 		}
 		return newPerson;
 	}
