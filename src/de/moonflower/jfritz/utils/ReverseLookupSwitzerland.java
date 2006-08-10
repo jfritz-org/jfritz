@@ -35,7 +35,7 @@ public final class ReverseLookupSwitzerland {
 	 * @return a person object created using the data from the site
 	 */
 	public static Person lookup(String number){
-		Boolean intNumber = false;
+		boolean intNumber = false;
 
 		if(number.startsWith("+")){
 			number = number.substring(1);
