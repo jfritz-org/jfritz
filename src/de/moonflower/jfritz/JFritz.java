@@ -473,7 +473,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.289 2006/08/09 09:29:46 capncrunch Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.290 2006/08/10 18:28:30 capncrunch Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -798,7 +798,7 @@ public final class JFritz {
         phonebook.loadFromXMLFile(SAVE_DIR + PHONEBOOK_FILE);
 
         sipprovider = new SipProviderTableModel();
-        sipprovider.loadFromXMLFile(SIPPROVIDER_FILE);
+        sipprovider.loadFromXMLFile(SAVE_DIR+SIPPROVIDER_FILE);
 
         callerlist = new CallerList(this);
         callerlist.loadFromXMLFile(SAVE_DIR + CALLS_FILE);
