@@ -1,7 +1,3 @@
-/*
- * Created on 29.07.2005
- *
- */
 package de.moonflower.jfritz;
 
 import javax.swing.SwingUtilities;
