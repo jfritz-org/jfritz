@@ -133,11 +133,12 @@ public final class ReverseLookupNetherlands {
 					Matcher mAddress = pAddress.matcher(data);
 					if(mAddress.find()){
 						System.out.println(mAddress);
-						street = mAddress.group(1).trim().replace("&nbsp;"," ");
+						street = mAddress.group(1).trim().replaceAll("&nbsp;"," ");
+						System.out.println("street: "+street);
 						Debug.msg("Street: "+street);
 						zipCode  = mAddress.group(2).trim().substring(mAddress.group(2).indexOf(";")+1);
 						Debug.msg("Zip Code: "+ zipCode);
-						city = mAddress.group(2).trim().substring(0,mAddress.group(2).indexOf(";")).replace("&nbsp","");
+						city = mAddress.group(2).trim().substring(0,mAddress.group(2).indexOf(";")).replaceAll("&nbsp","");
 						Debug.msg("City: "+city);
 					}
 
