@@ -32,7 +32,7 @@ public class ReverseLookup {
 
 	public static final String CANADA_CODE = "+1";
 
-	public static final String FANCE_CODE = "+33";
+	public static final String FRANCE_CODE = "+33";
 
 	public static final String ITALY_CODE = "+39";
 
@@ -75,6 +75,8 @@ public class ReverseLookup {
 				newPerson = ReverseLookupGermany.lookup(number.getAreaNumber());
 			else if(number.convertToIntNumber().startsWith(NETHERLANDS_CODE))
 				newPerson = ReverseLookupNetherlands.lookup(number.getAreaNumber());
+			else if(number.convertToIntNumber().startsWith(FRANCE_CODE))
+				newPerson = ReverseLookupFrance.lookup(number.getAreaNumber());
 			else{
 				newPerson = new Person ();
 				newPerson.addNumber(number.getAreaNumber(), "home");}
