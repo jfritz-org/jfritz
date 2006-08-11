@@ -28,10 +28,33 @@ public class PhoneNumber implements Comparable {
 	// type values : "home", "mobile", "homezone",
 	// "business", "other", "fax", "sip" };
 
-	public static String SWITZERLAND_CODE = "41",
-						 ITALY_CODE = "39",
-						 GERMANY_CODE="49",
-						 AUSTRIA_CODE="43";
+	//Please keep these in alphabetical order
+	public static String AUSTRIA_CODE="+43",
+	 					 BELGIUM_CODE="+32",
+	 					 CHINA_CODE="+86",
+	 					 CZECH_CODE="+420",
+	 					 DENMARK_CODE="+45",
+	 					 FINLAND_CODE="+358",
+	 					 FRANCE_CODE="+33",
+	 					 GERMANY_CODE="+49",
+	 					 GREATBRITAIN_CODE="+44",
+	 					 HOLLAND_CODE="+31",
+	 					 HUNGARY_CODE="+36",
+	 					 IRELAND_CODE="+353",
+	 					 ITALY_CODE = "+39",
+	 					 JAPAN_CODE="+81",
+	 					 LUXEMBOURG_CODE="+352",
+	 					 NORWAY_CODE="+47",
+	 					 POLAND_CODE="+48",
+	 					 PORTUGAL_CODE="+351",
+	 					 RUSSIA_CODE="+7",
+	 					 SLOVAKIA_CODE="+421",
+	 					 SPAIN_CODE="+34",
+	 					 SWEDEN_CODE="+46",
+	 					 SWITZERLAND_CODE = "+41",
+	 					 TURKEY_CODE="+80",
+	 					 UKRAINE_CODE="+380",
+	 					 USA_CODE="+1";
 
 	static HashMap mobileMap;
 
@@ -206,16 +229,16 @@ public class PhoneNumber implements Comparable {
 			return "+" + number.substring(countryPrefix.length());//$NON-NLS-1$
 
 		else if (number.startsWith(areaPrefix))
-			return "+" + countryCode + number.substring(areaPrefix.length());//$NON-NLS-1$
+			return countryCode + number.substring(areaPrefix.length());//$NON-NLS-1$
 
 
-		else if (number.startsWith(countryCode) && number.length() > 7)
+		else if (number.startsWith(countryCode.substring(1)) && number.length() > 7)
 			// International numbers without countryPrefix
 			return "+" + number;//$NON-NLS-1$
 
 		//if its not any internationl call, or a national call (in germany you can't dial
 		// a national number using the internation prefix), then its a local call
-		return "+" + countryCode + areaCode + number;//$NON-NLS-1$
+		return countryCode + areaCode + number;//$NON-NLS-1$
 	}
 
 	/**
@@ -228,7 +251,7 @@ public class PhoneNumber implements Comparable {
 		String countryCode = JFritz.getProperty("country.code","49");//$NON-NLS-1$, //$NON-NLS-2$
 		String areaPrefix = JFritz.getProperty("area.prefix","0");   //$NON-NLS-1$, //$NON-NLS-2$
 
-		if (number.startsWith("+"+countryCode)) //$NON-NLS-1$
+		if (number.startsWith(countryCode)) //$NON-NLS-1$
     		return areaPrefix + number.substring(3);
 
 		Debug.msg("PhoneNumber.convertToNationalNumber: this is no national number, returning unchanged (international) number"); //$NON-NLS-1$
@@ -262,22 +285,22 @@ public class PhoneNumber implements Comparable {
 	}
 
 	public String getShortNumber() {
-		String countryCode = JFritz.getProperty("country.code");//$NON-NLS-1$
+		String countryCode = JFritz.getProperty("country.code", "+49");//$NON-NLS-1$
 		String areaCode = JFritz.getProperty("area.code"); 		//$NON-NLS-1$
 		String areaPrefix = JFritz.getProperty("area.prefix");  //$NON-NLS-1$
-		if (number.startsWith("+" + countryCode + areaCode)) //$NON-NLS-1$
-			return number.substring(countryCode.length() + areaCode.length()
-					+ 1);
-		if (number.startsWith("+" + countryCode)) //$NON-NLS-1$
-			return areaPrefix + number.substring(countryCode.length() + 1);
+		if (number.startsWith(countryCode + areaCode)) //$NON-NLS-1$
+			return number.substring(countryCode.length() + areaCode.length());
+
+		else if (number.startsWith(countryCode)) //$NON-NLS-1$
+			return areaPrefix + number.substring(countryCode.length());
 		return number;
 	}
 
 	public String getAreaNumber() {
-		String countryCode = JFritz.getProperty("country.code", "49"); //$NON-NLS-1$
+		String countryCode = JFritz.getProperty("country.code", "+49"); //$NON-NLS-1$
 		String areaPrefix = JFritz.getProperty("area.prefix", "0"); //$NON-NLS-1$
-		if (number.startsWith("+" + countryCode)) //$NON-NLS-1$
-			return areaPrefix + number.substring(countryCode.length() + 1);
+		if (number.startsWith(countryCode)) //$NON-NLS-1$
+			return areaPrefix + number.substring(countryCode.length());
 		return number;
 	}
 
@@ -318,7 +341,7 @@ public class PhoneNumber implements Comparable {
 	public boolean isLocalCall() {
 		String countryCode = JFritz.getProperty("country.code"); //$NON-NLS-1$
 		String areaCode = JFritz.getProperty("area.code"); //$NON-NLS-1$
-		return number.startsWith("+" + countryCode + areaCode); //$NON-NLS-1$
+		return number.startsWith(countryCode + areaCode); //$NON-NLS-1$
 	}
 
 	/**

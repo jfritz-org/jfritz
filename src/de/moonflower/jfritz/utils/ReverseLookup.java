@@ -26,33 +26,6 @@ import de.moonflower.jfritz.utils.ReverseLookupSwitzerland;
  */
 public class ReverseLookup {
 
-	//Sort the following COUNTRY_CODE list alphabetically
-
-	public static final String AUSTRIA_CODE = "+43";
-
-	public static final String CANADA_CODE = "+1";
-
-	public static final String FRANCE_CODE = "+33";
-
-	public static final String ITALY_CODE = "+39";
-
-	public static final String GERMANY_CODE = "+49";
-
-	public static final String GREATBRITAIN_CODE = "+44";
-
-	public static final String NETHERLANDS_CODE = "+31";
-
-	public static final String RUSSIA_CODE = "+7";
-
-	public static final String SPAIN_CODE = "+34";
-
-	public static final String SWITZERLAND_CODE = "+41";
-
-	public static final String USA_CODE = "+1";
-
-
-
-
 	public static Person lookup(PhoneNumber number) {
 		Person newPerson;
 /**		if (number.isMobile()) {
@@ -67,15 +40,15 @@ public class ReverseLookup {
 		    newPerson = new Person ();
 		    newPerson.addNumber(number);
 		} else {
-			if(number.convertToIntNumber().startsWith(SWITZERLAND_CODE))
+			if(number.convertToIntNumber().startsWith(PhoneNumber.SWITZERLAND_CODE))
 				newPerson = ReverseLookupSwitzerland.lookup(number.getAreaNumber());
-			else if(number.convertToIntNumber().startsWith(ITALY_CODE))
+			else if(number.convertToIntNumber().startsWith(PhoneNumber.ITALY_CODE))
 				newPerson = ReverseLookupItaly.lookup(number.getAreaNumber());
-			else if(number.convertToIntNumber().startsWith(GERMANY_CODE))
+			else if(number.convertToIntNumber().startsWith(PhoneNumber.GERMANY_CODE))
 				newPerson = ReverseLookupGermany.lookup(number.getAreaNumber());
-			else if(number.convertToIntNumber().startsWith(NETHERLANDS_CODE))
+			else if(number.convertToIntNumber().startsWith(PhoneNumber.HOLLAND_CODE))
 				newPerson = ReverseLookupNetherlands.lookup(number.getAreaNumber());
-			else if(number.convertToIntNumber().startsWith(FRANCE_CODE))
+			else if(number.convertToIntNumber().startsWith(PhoneNumber.FRANCE_CODE))
 				newPerson = ReverseLookupFrance.lookup(number.getAreaNumber());
 			else{
 				newPerson = new Person ();

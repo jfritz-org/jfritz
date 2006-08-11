@@ -65,6 +65,7 @@
  *		popup_delay
  *      dial_prefix
  *
+ * - Neu: Flaggen werden bei bekannten Ländervorwählen angezeigt anstelle vom Weltkugel, für bekannte Länder siehe PhoneNumber.java
  * _ Bugfix: SIP-Routen behalten ihre historische Zuordnung
  * - Neu: Neuer Kommandozeilenparameter: -r, führt eine Rückwärtssuche aus und beendet sich
  * - Neu: Rückwärtssuche für Frankreich über http://www.annuaireinverse.com, wird automatisch aufgerufen
@@ -475,7 +476,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.292 2006/08/11 13:04:58 baefer Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.293 2006/08/11 19:22:20 capncrunch Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -572,7 +573,6 @@ public final class JFritz {
                 + " (c) 2005 by " + PROGRAM_AUTHOR); //$NON-NLS-1$
         Thread.currentThread().setPriority(5);
         loadSaveDir();
-        Debug.msg("Save Dir: "+ SAVE_DIR);
 
         boolean fetchCalls = false;
         boolean clearList = false;
@@ -729,6 +729,7 @@ public final class JFritz {
             boolean clearList, boolean enableInstanceControl, boolean writeForeignFormats) {
         jfritz = this;
 
+        Debug.msg("Save Dir: "+SAVE_DIR);
         loadProperties();
         loadMessages(new Locale(JFritz.getProperty("locale","de_DE"))); //$NON-NLS-1$,  //$NON-NLS-2$
         loadLocaleMeanings(new Locale("int","INT"));
@@ -736,6 +737,10 @@ public final class JFritz {
         if (JFritzUtils.parseBoolean(properties.getProperty("option.createBackup", "false"))) { //$NON-NLS-1$,  //$NON-NLS-2$
             doBackup();
         }
+
+        //make sure there is a plus on the country code, or else the number scheme won't work
+        if(!JFritz.getProperty("country.code").startsWith("+"))
+        	JFritz.setProperty("country.code", "+" + JFritz.getProperty("country.code"));
 
         if (enableInstanceControl)
         {
@@ -952,7 +957,7 @@ public final class JFritz {
         defaultProperties.setProperty("box.port", "80");//$NON-NLS-1$, //$NON-NLS-2$
         defaultProperties.setProperty("country.prefix", "00");//$NON-NLS-1$, //$NON-NLS-2$
         defaultProperties.setProperty("area.prefix", "0");//$NON-NLS-1$, //$NON-NLS-2$
-        defaultProperties.setProperty("country.code", "49");//$NON-NLS-1$, //$NON-NLS-2$
+        defaultProperties.setProperty("country.code", "+49");//$NON-NLS-1$, //$NON-NLS-2$
         defaultProperties.setProperty("area.code", "441");//$NON-NLS-1$, //$NON-NLS-2$
         defaultProperties.setProperty("fetch.timer", "5");//$NON-NLS-1$, //$NON-NLS-2$
         defaultProperties.setProperty("jfritz.isRunning", "false");//$NON-NLS-1$, //$NON-NLS-2$
@@ -1883,5 +1888,4 @@ public final class JFritz {
 
     }
 }
-
 

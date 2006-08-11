@@ -14,7 +14,7 @@ import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
 
 /**
- * This class is responsible for doing reverse lookups for swiss numbers
+ * This class is responsible for doing reverse lookups for dutch numbers
  *
  * The search engine used is: http://www.gebeld.nl/content.asp?zoek=numm
  * A big thanks to them for creating an easy to parse web page

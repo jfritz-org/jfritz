@@ -270,10 +270,14 @@ public class ConfigDialog extends JDialog {
 	 * Stores values in dialog components to programm properties
 	 */
 	public void storeValues() {
-		// Remove leading "0" from areaCode
-		JFritz.SAVE_DIR = save_location.getText();
-		jfritz.writeSaveDir();
 
+		//only write the save dir to disk if the user changed something
+		if(!save_location.getText().equals(JFritz.SAVE_DIR)){
+			JFritz.SAVE_DIR = save_location.getText();
+			jfritz.writeSaveDir();
+		}
+
+		//		 Remove leading "0" from areaCode
 		if (areaCode.getText().startsWith(areaPrefix.getText()))
 			areaCode.setText(areaCode.getText().substring(
 					areaPrefix.getText().length()));
@@ -356,6 +360,12 @@ public class ConfigDialog extends JDialog {
 		JFritz.setProperty("box.address", address.getText()); //$NON-NLS-1$
 		JFritz.setProperty("box.port", port.getText()); //$NON-NLS-1$
 		JFritz.setProperty("area.code", areaCode.getText()); //$NON-NLS-1$
+
+		//Phone stuff here
+		//make sure country code has a plus on it
+		if(!countryCode.getText().startsWith("+"))
+			countryCode.setText("+"+countryCode.getText());
+
 		JFritz.setProperty("country.code", countryCode.getText()); //$NON-NLS-1$
 		JFritz.setProperty("area.prefix", areaPrefix.getText()); //$NON-NLS-1$
         JFritz.setProperty("dial.prefix", dialPrefix.getText()); //$NON-NLS-1$
@@ -453,8 +463,8 @@ public class ConfigDialog extends JDialog {
 		boxtypeLabel = new JLabel();
 		boxpane.add(boxtypeLabel, c);
 
-		c.gridy = 7;
-		label = new JLabel(JFritz.getMessage("mac_address") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		//c.gridy = 7;
+		//label = new JLabel(JFritz.getMessage("mac_address") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		// boxpane.add(label, c);
 		macLabel = new JLabel();
 		// boxpane.add(macLabel, c);
@@ -699,9 +709,8 @@ public class ConfigDialog extends JDialog {
 		label = new JLabel(JFritz.getMessage("language") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		localePane.add(label, c);
 
-
-		File file = new File(JFritzUtils.getFullPath(langID));
-
+		String lang = JFritzUtils.getFullPath(langID);
+		File file = new File(lang);
 		FilenameFilter props = new StartEndFilenameFilter("jfritz","properties");//$NON-NLS-1$,  //$NON-NLS-2$
 		String[] list = file.list(props);
 		localeList= new String[list.length];
@@ -711,7 +720,7 @@ public class ConfigDialog extends JDialog {
 		for (int i = 0; i < list.length; i++) {
 			localeList[i] = list[i].substring(list[i].indexOf("_") + 1,list[i].indexOf("."));//$NON-NLS-1$,  //$NON-NLS-2$
 			String imagePath =
-			     "lang" + FILESEP + "flags" + FILESEP +						//$NON-NLS-1$,  //$NON-NLS-2$
+			     lang + FILESEP + "flags" + FILESEP +						//$NON-NLS-1$,  //$NON-NLS-2$
 			     localeList[i].substring(localeList[i].indexOf("_")+1,
 			         localeList[i].length()).toLowerCase() + ".gif";		//$NON-NLS-1$
 			Debug.msg("Found resources for locale '" + localeList[i] +		//$NON-NLS-1$

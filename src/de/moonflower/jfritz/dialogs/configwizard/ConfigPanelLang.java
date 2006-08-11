@@ -53,8 +53,8 @@ public class ConfigPanelLang extends JPanel{
 		localePane.add(label, c);
 
 
-
-		File file = new File(JFritzUtils.getFullPath(langID));
+		String lang = JFritzUtils.getFullPath(langID);
+		File file = new File(lang);
 		FilenameFilter props = new StartEndFilenameFilter("jfritz","properties");//$NON-NLS-1$,  //$NON-NLS-2$
 		String[] list = file.list(props);
 		localeList= new String[list.length];
@@ -64,7 +64,7 @@ public class ConfigPanelLang extends JPanel{
 		for (int i = 0; i < list.length; i++) {
 			localeList[i] = list[i].substring(list[i].indexOf("_") + 1,list[i].indexOf("."));//$NON-NLS-1$,  //$NON-NLS-2$
 			String imagePath =
-			     "lang" + FILESEP + "flags" + FILESEP +						//$NON-NLS-1$,  //$NON-NLS-2$
+			     lang + FILESEP + "flags" + FILESEP +						//$NON-NLS-1$,  //$NON-NLS-2$
 			     localeList[i].substring(localeList[i].indexOf("_")+1,
 			         localeList[i].length()).toLowerCase() + ".gif";		//$NON-NLS-1$
 			Debug.msg("Found resources for locale '" + localeList[i] +		//$NON-NLS-1$
