@@ -56,7 +56,7 @@ public class Call {
 			while (en.hasMoreElements()) {
 				SipProvider sipProvider = (SipProvider) en.nextElement();
 				if (sipProvider.getNumber().equals(this.route.substring(10))) {
-					this.route = "SIP" + sipProvider.getProviderID();
+					this.route = sipProvider.toString();
 					break;
 				}
 			}
