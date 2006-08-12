@@ -73,7 +73,7 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/freecall.png"))); //$NON-NLS-1$
 
-		String lang = JFritzUtils.getFullPath("lang");
+		String lang = JFritzUtils.getFullPath(FILESEP + "lang");
 
 		//Please keep these in alphabetical order
 
