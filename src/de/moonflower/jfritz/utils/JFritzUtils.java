@@ -189,26 +189,30 @@ public class JFritzUtils {
 		String binDir = null;
 		String langDir = null;
 
-		for (int i = 0; i < classPath.length; i++) {
-			if (classPath[i].endsWith(binID)){
-				binDir = classPath[i].substring(0, classPath[i].length() - binID.length() +1);
-				break;
-			}else if (classPath[i].endsWith(subDir))
-				langDir = classPath[i];
-		}
+		if(classPath != null && classPath.length > 0){
+			for (int i = 0; i < classPath.length; i++) {
+				if (classPath[i].endsWith(binID)){
+					binDir = classPath[i].substring(0, classPath[i].length() - binID.length() +1);
+					break;
+				}else if (classPath[i].endsWith(subDir))
+					langDir = classPath[i];
+			}
 
-		if (langDir == null) {
-			if(binDir != null)
-				if(binDir.startsWith(FILESEP))
-					langDir = binDir + subDir;
+			if (langDir == null) {
+				if(binDir != null)
+					if(binDir.startsWith(FILESEP))
+						langDir = binDir + subDir;
+					else
+						langDir = userDir + binDir + subDir;
 				else
-					langDir = userDir + binDir + subDir;
-			else
-				langDir = userDir + subDir;
+					langDir = userDir + subDir;
 
-			//langDir = (binDir != null) ? userDir + binDir + subDir : userDir + subDir;
+				//langDir = (binDir != null) ? userDir + binDir + subDir : userDir + subDir;
+			}
+
+		}else{
+			langDir = userDir + subDir;
 		}
-
 		Debug.msg("full path: " + langDir);											//$NON-NLS-1$
 
 		return langDir;
