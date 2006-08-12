@@ -173,7 +173,6 @@ public class JFritzUtils {
 	 * and if it is not found then the full path to the jfritz binary is generated
 	 * This function assumes jfritz.jar and the subdirectory and in the same dir
 	 *
-	 * @author Brian Jensen
 	 * @param subDir the subdirectory in the jfritz.jar dir
 	 * @return full path or the classpath entry to the subdirectory
 	 */
@@ -182,37 +181,23 @@ public class JFritzUtils {
 		Debug.msg("Subdirectory: "+ subDir);
 		String[] classPath = System.getProperty("java.class.path").split(PATHSEP);	//$NON-NLS-1$
 		String userDir = System.getProperty("user.dir");							//$NON-NLS-1$
-
-		if (!userDir.endsWith(FILESEP))
-			userDir = userDir + FILESEP;
+		if (userDir.endsWith(FILESEP))
+			userDir = userDir.substring(0, userDir.length() - 1);
 
 		String binDir = null;
 		String langDir = null;
 
-		if(classPath != null && classPath.length > 0){
-			for (int i = 0; i < classPath.length; i++) {
-				if (classPath[i].endsWith(binID)){
-					binDir = classPath[i].substring(0, classPath[i].length() - binID.length() +1);
-					break;
-				}else if (classPath[i].endsWith(subDir))
-					langDir = classPath[i];
-			}
-
-			if (langDir == null) {
-				if(binDir != null)
-					if(binDir.startsWith(FILESEP))
-						langDir = binDir + subDir;
-					else
-						langDir = userDir + binDir + subDir;
-				else
-					langDir = userDir + subDir;
-
-				//langDir = (binDir != null) ? userDir + binDir + subDir : userDir + subDir;
-			}
-
-		}else{
-			langDir = userDir + subDir;
+		for (int i = 0; i < classPath.length; i++) {
+			if (classPath[i].endsWith(binID))
+				binDir = classPath[i].substring(0, classPath[i].length() - binID.length());
+			else if (classPath[i].endsWith(subDir))
+				langDir = classPath[i];
 		}
+
+		if (langDir == null) {
+			langDir = (binDir != null) ? binDir + subDir : userDir + subDir;
+		}
+
 		Debug.msg("full path: " + langDir);											//$NON-NLS-1$
 
 		return langDir;
