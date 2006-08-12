@@ -204,6 +204,9 @@ public class PhoneNumber implements Comparable {
 
 	/**
 	 * Converts number to international number
+	 *  Internation numbers have the following format in jfritz
+	 *  (+)(Country Code)(Area Code)(Local number)
+	 *
 	 *
 	 * @TODO: This function may need to be redone, if number parsing is misbehaving
 	 *

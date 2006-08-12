@@ -46,6 +46,9 @@ import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.struct.PhoneType;
 
 /**
+ * This class is used in the phone book to edit individual entries
+ *
+ *
  * @author Arno Willig
  *
  */
