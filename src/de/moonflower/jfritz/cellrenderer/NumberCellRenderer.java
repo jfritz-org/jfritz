@@ -133,7 +133,7 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) {
 
-		String countryCode = JFritz.getProperty("country.code", "49");
+		String countryCode = JFritz.getProperty("country.code", "+49");
 
 		JLabel label = (JLabel) super.getTableCellRendererComponent(table,
 				value, isSelected, hasFocus, row, column);

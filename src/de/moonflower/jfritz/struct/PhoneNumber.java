@@ -251,7 +251,7 @@ public class PhoneNumber implements Comparable {
 	 */
 	public String convertToNationalNumber()
 	{
-		String countryCode = JFritz.getProperty("country.code","49");//$NON-NLS-1$, //$NON-NLS-2$
+		String countryCode = JFritz.getProperty("country.code","+49");//$NON-NLS-1$, //$NON-NLS-2$
 		String areaPrefix = JFritz.getProperty("area.prefix","0");   //$NON-NLS-1$, //$NON-NLS-2$
 
 		if (number.startsWith(countryCode)) //$NON-NLS-1$
@@ -429,7 +429,7 @@ public class PhoneNumber implements Comparable {
 	public boolean isMobile() {
 		//		String provider = ReverseLookup.getMobileProvider(getFullNumber());
 		//		return (!provider.equals(""));
-		if(number.startsWith("+"+SWITZERLAND_CODE) && JFritz.getProperty("country.code", "49").equals(SWITZERLAND_CODE))
+		if(number.startsWith("+"+SWITZERLAND_CODE) && JFritz.getProperty("country.code", "+49").equals(SWITZERLAND_CODE))
 			return PhoneNumberSwitzerland.isMobile(getAreaNumber());
 		else{
 			boolean ret = number.length() > 6
