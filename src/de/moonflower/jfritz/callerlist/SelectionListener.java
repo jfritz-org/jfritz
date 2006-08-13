@@ -63,6 +63,7 @@ public class SelectionListener implements ListSelectionListener {
 						.getPhoneBookPanel().getPhoneBookTable();
 				Vector persons = table.getJfritz().getPhonebook()
 						.getFilteredPersons();
+				person = call.getPerson();
 				for (int i = 0; i < persons.size(); i++) {
 					Person p = (Person) persons.get(i);
 					if (p == person) {
