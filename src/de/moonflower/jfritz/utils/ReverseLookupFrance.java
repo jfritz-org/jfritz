@@ -117,7 +117,7 @@ public final class ReverseLookupFrance {
 					//parse Name
 					Matcher mName = pName.matcher(data);
 					if (mName.find()) {
-						if(mName.group(1).trim().contains(" ")){
+						if(mName.group(1).trim().indexOf(" ")>-1){
 						String[] results = mName.group(1).trim().replaceAll("\\s+"," ").split("\\s",2);
 
 						lastname = results[0];
