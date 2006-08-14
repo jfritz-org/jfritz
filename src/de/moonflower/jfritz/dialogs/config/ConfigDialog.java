@@ -324,8 +324,9 @@ public class ConfigDialog extends JDialog {
         JFritz
         .setProperty(
                 "option.activateDialPrefix", Boolean.toString(activateDialPrefix.isSelected())); //$NON-NLS-1$
-		JFritz.setProperty("option.checkNewVersionAfterStart", String //$NON-NLS-1$
-				.valueOf(callMonitorCombo.getSelectedIndex()));
+        JFritz
+		.setProperty(
+				"option.checkNewVersionAfterStart", Boolean.toString(checkNewVersionAfterStart.isSelected())); //$NON-NLS-1$
 
 
 
