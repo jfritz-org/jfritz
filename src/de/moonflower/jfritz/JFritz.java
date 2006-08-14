@@ -403,9 +403,9 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -465,1427 +465,1455 @@ import de.moonflower.jfritz.utils.network.SSDPdiscoverThread;
  */
 public final class JFritz {
 
-	//when changing this, don't forget to check the resource bundles!!
+	// when changing this, don't forget to check the resource bundles!!
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-    public final static String PROGRAM_VERSION = "0.6.1"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.6.1"; //$NON-NLS-1$
 
-    public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
+	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
-    public final static String PROGRAM_SECRET = "jFrItZsEcReT"; //$NON-NLS-1$
+	public final static String PROGRAM_SECRET = "jFrItZsEcReT"; //$NON-NLS-1$
 
-    public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
+	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.293 2006/08/11 19:22:20 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.294 2006/08/14 23:45:09 baefer Exp $"; //$NON-NLS-1$
 
-    public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
+	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
-    public final static String USER_DIR = System.getProperty("user.home")
-    	+ File.separator + ".jfritz";
+	public final static String USER_DIR = System.getProperty("user.home")
+			+ File.separator + ".jfritz";
 
-    public final static String USER_JFRITZ_FILE = "jfritz.txt";
+	public final static String USER_JFRITZ_FILE = "jfritz.txt";
 
-    public static String SAVE_DIR = System.getProperty("user.dir") + File.separator;
+	public static String SAVE_DIR = System.getProperty("user.dir")
+			+ File.separator;
 
-    public static String SAVE_DIR_TEXT = "Save_Directory=";
+	public static String SAVE_DIR_TEXT = "Save_Directory=";
 
-    public final static String PROPERTIES_FILE = "jfritz.properties.xml"; //$NON-NLS-1$
+	public final static String PROPERTIES_FILE = "jfritz.properties.xml"; //$NON-NLS-1$
 
-    public final static String CALLS_FILE = "jfritz.calls.xml"; //$NON-NLS-1$
+	public final static String CALLS_FILE = "jfritz.calls.xml"; //$NON-NLS-1$
 
-    public final static String QUICKDIALS_FILE = "jfritz.quickdials.xml"; //$NON-NLS-1$
+	public final static String QUICKDIALS_FILE = "jfritz.quickdials.xml"; //$NON-NLS-1$
 
-    public final static String PHONEBOOK_FILE = "jfritz.phonebook.xml"; //$NON-NLS-1$
+	public final static String PHONEBOOK_FILE = "jfritz.phonebook.xml"; //$NON-NLS-1$
 
-    public final static String SIPPROVIDER_FILE = "jfritz.sipprovider.xml"; //$NON-NLS-1$
+	public final static String SIPPROVIDER_FILE = "jfritz.sipprovider.xml"; //$NON-NLS-1$
 
-    public final static String CALLS_CSV_FILE = "calls.csv"; //$NON-NLS-1$
+	public final static String CALLS_CSV_FILE = "calls.csv"; //$NON-NLS-1$
 
-    public final static String PHONEBOOK_CSV_FILE = "contacts.csv"; //$NON-NLS-1$
+	public final static String PHONEBOOK_CSV_FILE = "contacts.csv"; //$NON-NLS-1$
 
-    public final static int SSDP_TIMEOUT = 1000;
+	public final static int SSDP_TIMEOUT = 1000;
 
-    public final static int SSDP_MAX_BOXES = 3;
+	public final static int SSDP_MAX_BOXES = 3;
 
-    public static boolean SYSTRAY_SUPPORT = false;
+	public static boolean SYSTRAY_SUPPORT = false;
 
-    public static boolean checkSystray = true;
+	public static boolean checkSystray = true;
 
-    private JFritzProperties defaultProperties;
+	private JFritzProperties defaultProperties;
 
-    private static JFritzProperties properties;
+	private static JFritzProperties properties;
 
-    private static ResourceBundle localeMeanings;
+	private static ResourceBundle localeMeanings;
 
-    private static ResourceBundle messages;
+	private static ResourceBundle messages;
 
-    private SystemTray systray;
+	private SystemTray systray;
 
-    private JFritzWindow jframe;
+	private JFritzWindow jframe;
 
-    private SSDPdiscoverThread ssdpthread;
+	private SSDPdiscoverThread ssdpthread;
 
-    private CallerList callerlist;
+	private CallerList callerlist;
 
-    private static TrayIcon trayIcon;
+	private static TrayIcon trayIcon;
 
-    private static PhoneBook phonebook;
+	private static PhoneBook phonebook;
 
-    private static SipProviderTableModel sipprovider;
+	private static SipProviderTableModel sipprovider;
 
-    private static URL ringSound, callSound;
+	private static URL ringSound, callSound;
 
-    private CallMonitor callMonitor = null;
+	private CallMonitor callMonitor = null;
 
-    private static String HostOS = "other"; //$NON-NLS-1$
+	private static String HostOS = "other"; //$NON-NLS-1$
 
-    public static final int CALLMONITOR_START = 0;
+	public static final int CALLMONITOR_START = 0;
 
-    public static final int CALLMONITOR_STOP = 1;
+	public static final int CALLMONITOR_STOP = 1;
 
-    private static JFritz jfritz;
+	private static JFritz jfritz;
 
-    private static WatchdogThread watchdog;
+	private static WatchdogThread watchdog;
 
-    private static boolean isRunning = false;
+	private static boolean isRunning = false;
 
-    private static Locale locale;
+	private static Locale locale;
 
-    private boolean showConfWizard = false;
+	private boolean showConfWizard = false;
 
-    private static boolean doReverseLookup = false;
+	private static boolean doReverseLookup = false;
 
-    private static FritzBox fritzBox;
+	private static FritzBox fritzBox;
 
-    /**
-     * Main method for starting JFritz
-     *
-     * LAST MODIFIED: Brian Jensen 04.06.06
-     * added option to disable mulitple instance control
-     * added a new parameter switch: -w
-     *
-     * @param args
-     *            Program arguments (-h -v ...)
-     *
-     */
-    public static void main(String[] args) {
-        System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION //$NON-NLS-1$
-                + " (c) 2005 by " + PROGRAM_AUTHOR); //$NON-NLS-1$
-        Thread.currentThread().setPriority(5);
-        loadSaveDir();
+	/**
+	 * Main method for starting JFritz
+	 *
+	 * LAST MODIFIED: Brian Jensen 04.06.06 added option to disable mulitple
+	 * instance control added a new parameter switch: -w
+	 *
+	 * @param args
+	 *            Program arguments (-h -v ...)
+	 *
+	 */
+	public static void main(String[] args) {
+		System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION //$NON-NLS-1$
+				+ " (c) 2005 by " + PROGRAM_AUTHOR); //$NON-NLS-1$
+		Thread.currentThread().setPriority(5);
+		loadSaveDir();
 
-        boolean fetchCalls = false;
-        boolean clearList = false;
-        boolean csvExport = false;
+		boolean fetchCalls = false;
+		boolean clearList = false;
+		boolean csvExport = false;
 		boolean foreign = false;
-        String csvFileName = ""; //$NON-NLS-1$
-        boolean enableInstanceControl = true;
+		String csvFileName = ""; //$NON-NLS-1$
+		boolean enableInstanceControl = true;
 
-        //TODO: If we ever make different packages for different languages
-        //change the default language here
-        locale = new Locale("de", "DE"); //$NON-NLS-1$,  //$NON-NLS-2$
-        CLIOptions options = new CLIOptions();
+		// TODO: If we ever make different packages for different languages
+		// change the default language here
+		locale = new Locale("de", "DE"); //$NON-NLS-1$,  //$NON-NLS-2$
+		CLIOptions options = new CLIOptions();
 
-        options.addOption('h', "help", null, "This short description"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-        options.addOption('v', "verbose", null, "Turn on debug information"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-        options.addOption('s', "systray", null, "Turn on systray support"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-        options.addOption('n', "nosystray", null, "Turn off systray support"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-        options.addOption('f', "fetch", null, "Fetch new calls and exit"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+		options.addOption('h', "help", null, "This short description"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+		options.addOption('v', "verbose", null, "Turn on debug information"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+		options.addOption('s', "systray", null, "Turn on systray support"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+		options.addOption('n', "nosystray", null, "Turn off systray support"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+		options.addOption('f', "fetch", null, "Fetch new calls and exit"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 		options.addOption('d', "delete_on_box", null, //$NON-NLS-1$,  //$NON-NLS-2$
 				"Delete callerlist of the Fritz!Box."); //$NON-NLS-1$
-        options.addOption('b', "backup", null, "Creates a backup of all xml-Files in the directory 'backup'"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-        options.addOption('c', "clear_list", null, //$NON-NLS-1$,  //$NON-NLS-2$
-                "Clears Caller List and exit"); //$NON-NLS-1$
-        options.addOption('e', "export", "filename",  //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-                "Fetch calls and export to CSV file."); //$NON-NLS-1$
-        options.addOption('z', "exportForeign", null, //$NON-NLS-1$,  //$NON-NLS-2$
-				"Write phonebooks compatible to BIT FBF Dialer and some other callmonitors."); //$NON-NLS-1$
-        options.addOption('l', "logfile", "filename", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-                "Writes debug messages to logfile"); //$NON-NLS-1$,
-        options.addOption('p', "priority", "level", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-                "Set program priority [1..10]"); //$NON-NLS-1$
-        options.addOption('w', "without-control", null, //$NON-NLS-1$,  //$NON-NLS-2$
-        		"Turns off multiple instance control. DON'T USE, unless you know what your are doing"); //$NON-NLS-1$
-        options.addOption('r', "reverse lookup", null, "Do a reverse lookup and exit. Can be used together with -e -f and -z");
-        Vector foundOptions = options.parseOptions(args);
-        Enumeration en = foundOptions.elements();
-        while (en.hasMoreElements()) {
-            CLIOption option = (CLIOption) en.nextElement();
+		options
+				.addOption(
+						'b',
+						"backup", null, "Creates a backup of all xml-Files in the directory 'backup'"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+		options.addOption('c', "clear_list", null, //$NON-NLS-1$,  //$NON-NLS-2$
+				"Clears Caller List and exit"); //$NON-NLS-1$
+		options.addOption('e', "export", "filename", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+				"Fetch calls and export to CSV file."); //$NON-NLS-1$
+		options
+				.addOption('z', "exportForeign", null, //$NON-NLS-1$,  //$NON-NLS-2$
+						"Write phonebooks compatible to BIT FBF Dialer and some other callmonitors."); //$NON-NLS-1$
+		options.addOption('l', "logfile", "filename", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+				"Writes debug messages to logfile"); //$NON-NLS-1$,
+		options.addOption('p', "priority", "level", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+				"Set program priority [1..10]"); //$NON-NLS-1$
+		options
+				.addOption(
+						'w',
+						"without-control", null, //$NON-NLS-1$,  //$NON-NLS-2$
+						"Turns off multiple instance control. DON'T USE, unless you know what your are doing"); //$NON-NLS-1$
+		options
+				.addOption('r', "reverse lookup", null,
+						"Do a reverse lookup and exit. Can be used together with -e -f and -z");
+		Vector foundOptions = options.parseOptions(args);
+		Enumeration en = foundOptions.elements();
+		while (en.hasMoreElements()) {
+			CLIOption option = (CLIOption) en.nextElement();
 
-            switch (option.getShortOption()) {
-            case 'h': //$NON-NLS-1$
-                System.out.println("Usage: java -jar jfritz.jar [Options]"); //$NON-NLS-1$
-                options.printOptions();
-                System.exit(0);
-                break;
-            case 'v': //$NON-NLS-1$
-                Debug.on();
-                break;
-            case 'b': //$NON-NLS-1$
-                doBackup();
-                break;
-            case 's': //$NON-NLS-1$
-                JFritz.SYSTRAY_SUPPORT = true;
-                break;
-            case 'z':
-            	foreign = true;
-                break;
-            case 'f':
-            	enableInstanceControl = false;
-            	fetchCalls = true;
-                break;
-            case 'e':
-            	enableInstanceControl = false;
-            	csvExport = true;
-                csvFileName = option.getParameter();
-                if (csvFileName == null || csvFileName.equals("")) { //$NON-NLS-1$
-                    System.err.println(JFritz.getMessage("parameter_not_found")); //$NON-NLS-1$
-                    System.exit(0);
-                }
-                break;
-            case 'd': //$NON-NLS-1$
-				// enableInstanceControl = false; // ungütig, GUI wird nicht gestartet
-				Debug.on();
-				clearCallsOnBox();
-                System.exit(0);
-                break;
-            case 'c': //$NON-NLS-1$
-            	enableInstanceControl = false;
-            	clearList = true;
-                break;
-            case 'l': //$NON-NLS-1$
-                String logFilename = option.getParameter();
-                if (logFilename == null || logFilename.equals("")) { //$NON-NLS-1$
-                    System.err.println(JFritz.getMessage("parameter_not_found")); //$NON-NLS-1$
-                    System.exit(0);
-                } else {
-                    Debug.logToFile(logFilename);
-                    break;
-                }
-            case 'n': //$NON-NLS-1$
-                checkSystray = false;
-                break;
-            case 'w': //$NON-NLS-1$
-            	enableInstanceControl = false;
-            	System.err.println("Turning off Multiple instance control!"); //$NON-NLS-1$
-            	System.err.println("You were warned! Data loss may occur."); //$NON-NLS-1$
-            	break;
-            case 'r':
-            	doReverseLookup = true;
-            	break;
+			switch (option.getShortOption()) {
+				case 'h' : //$NON-NLS-1$
+					System.out.println("Usage: java -jar jfritz.jar [Options]"); //$NON-NLS-1$
+					options.printOptions();
+					System.exit(0);
+					break;
+				case 'v' : //$NON-NLS-1$
+					Debug.on();
+					break;
+				case 'b' : //$NON-NLS-1$
+					doBackup();
+					break;
+				case 's' : //$NON-NLS-1$
+					JFritz.SYSTRAY_SUPPORT = true;
+					break;
+				case 'z' :
+					foreign = true;
+					break;
+				case 'f' :
+					enableInstanceControl = false;
+					fetchCalls = true;
+					break;
+				case 'e' :
+					enableInstanceControl = false;
+					csvExport = true;
+					csvFileName = option.getParameter();
+					if (csvFileName == null || csvFileName.equals("")) { //$NON-NLS-1$
+						System.err.println(JFritz
+								.getMessage("parameter_not_found")); //$NON-NLS-1$
+						System.exit(0);
+					}
+					break;
+				case 'd' : //$NON-NLS-1$
+					// enableInstanceControl = false; // ungütig, GUI wird nicht
+					// gestartet
+					Debug.on();
+					clearCallsOnBox();
+					System.exit(0);
+					break;
+				case 'c' : //$NON-NLS-1$
+					enableInstanceControl = false;
+					clearList = true;
+					break;
+				case 'l' : //$NON-NLS-1$
+					String logFilename = option.getParameter();
+					if (logFilename == null || logFilename.equals("")) { //$NON-NLS-1$
+						System.err.println(JFritz
+								.getMessage("parameter_not_found")); //$NON-NLS-1$
+						System.exit(0);
+					} else {
+						Debug.logToFile(logFilename);
+						break;
+					}
+				case 'n' : //$NON-NLS-1$
+					checkSystray = false;
+					break;
+				case 'w' : //$NON-NLS-1$
+					enableInstanceControl = false;
+					System.err
+							.println("Turning off Multiple instance control!"); //$NON-NLS-1$
+					System.err.println("You were warned! Data loss may occur."); //$NON-NLS-1$
+					break;
+				case 'r' :
+					doReverseLookup = true;
+					break;
 
-            case 'p': //$NON-NLS-1$
-                String priority = option.getParameter();
-                if (priority == null || priority.equals("")) { //$NON-NLS-1$
-                    System.err.println(JFritz.getMessage("parameter_not_found")); //$NON-NLS-1$
-                    System.exit(0);
-                } else {
-                    try {
-                        int level = Integer.parseInt(priority);
-                        Thread.currentThread().setPriority(level);
-                        Debug.msg("Set priority to level " + priority); //$NON-NLS-1$
-                    } catch (NumberFormatException nfe) {
-                        System.err
-                                .println(JFritz.getMessage("parameter_wrong_priority")); //$NON-NLS-1$
-                        System.exit(0);
-                    } catch (IllegalArgumentException iae) {
-                        System.err
-                                .println(JFritz.getMessage("parameter_wrong_priority")); //$NON-NLS-1$
-                        System.exit(0);
-                    }
-                    break;
-                }
-            default:
-                break;
-            }
-        }
+				case 'p' : //$NON-NLS-1$
+					String priority = option.getParameter();
+					if (priority == null || priority.equals("")) { //$NON-NLS-1$
+						System.err.println(JFritz
+								.getMessage("parameter_not_found")); //$NON-NLS-1$
+						System.exit(0);
+					} else {
+						try {
+							int level = Integer.parseInt(priority);
+							Thread.currentThread().setPriority(level);
+							Debug.msg("Set priority to level " + priority); //$NON-NLS-1$
+						} catch (NumberFormatException nfe) {
+							System.err.println(JFritz
+									.getMessage("parameter_wrong_priority")); //$NON-NLS-1$
+							System.exit(0);
+						} catch (IllegalArgumentException iae) {
+							System.err.println(JFritz
+									.getMessage("parameter_wrong_priority")); //$NON-NLS-1$
+							System.exit(0);
+						}
+						break;
+					}
+				default :
+					break;
+			}
+		}
 
-        new JFritz(fetchCalls, csvExport, csvFileName, clearList, enableInstanceControl, foreign);
+		new JFritz(fetchCalls, csvExport, csvFileName, clearList,
+				enableInstanceControl, foreign);
 
-    }
+	}
 
-    /**
-     * Constructs JFritz object
-     */
-    public JFritz(boolean fetchCalls, boolean csvExport, String csvFileName,
-            boolean clearList, boolean enableInstanceControl) {
-		this(fetchCalls,csvExport,csvFileName,clearList,enableInstanceControl,false);
-    }
+	/**
+	 * Constructs JFritz object
+	 */
+	public JFritz(boolean fetchCalls, boolean csvExport, String csvFileName,
+			boolean clearList, boolean enableInstanceControl) {
+		this(fetchCalls, csvExport, csvFileName, clearList,
+				enableInstanceControl, false);
+	}
 
+	/**
+	 * Constructs JFritz object
+	 *
+	 * @author Benjamin Schmitt
+	 */
+	public JFritz(boolean fetchCalls, boolean csvExport, String csvFileName,
+			boolean clearList) {
+		this(fetchCalls, csvExport, csvFileName, clearList, true, false);
+	}
 
-    /**
-     * Constructs JFritz object
-     * @author Benjamin Schmitt
-     */
-    public JFritz(boolean fetchCalls, boolean csvExport, String csvFileName,
-            boolean clearList){
-    	this(fetchCalls,csvExport,csvFileName,clearList,true,false);
-    }
+	/**
+	 * Constructs JFritz object
+	 */
+	public JFritz(boolean fetchCalls, boolean csvExport, String csvFileName,
+			boolean clearList, boolean enableInstanceControl,
+			boolean writeForeignFormats) {
+		jfritz = this;
 
-    /**
-     * Constructs JFritz object
-     */
-    public JFritz(boolean fetchCalls, boolean csvExport, String csvFileName,
-            boolean clearList, boolean enableInstanceControl, boolean writeForeignFormats) {
-        jfritz = this;
+		Debug.msg("Save Dir: " + SAVE_DIR);
+		loadProperties();
+		loadMessages(new Locale(JFritz.getProperty("locale", "de_DE"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		loadLocaleMeanings(new Locale("int", "INT"));
 
-        Debug.msg("Save Dir: "+SAVE_DIR);
-        loadProperties();
-        loadMessages(new Locale(JFritz.getProperty("locale","de_DE"))); //$NON-NLS-1$,  //$NON-NLS-2$
-        loadLocaleMeanings(new Locale("int","INT"));
+		if (JFritzUtils.parseBoolean(properties.getProperty(
+				"option.createBackup", "false"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+			doBackup();
+		}
 
-        if (JFritzUtils.parseBoolean(properties.getProperty("option.createBackup", "false"))) { //$NON-NLS-1$,  //$NON-NLS-2$
-            doBackup();
-        }
+		// make sure there is a plus on the country code, or else the number
+		// scheme won't work
+		if (!JFritz.getProperty("country.code").startsWith("+"))
+			JFritz.setProperty("country.code", "+"
+					+ JFritz.getProperty("country.code"));
 
-        //make sure there is a plus on the country code, or else the number scheme won't work
-        if(!JFritz.getProperty("country.code").startsWith("+"))
-        	JFritz.setProperty("country.code", "+" + JFritz.getProperty("country.code"));
+		if (enableInstanceControl) {
+			// check isRunning and exit or set lock
+			isRunning = (properties
+					.getProperty("jfritz.isRunning", "false").equals("true") ? true : false); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+			if (!isRunning) {
+				Debug.msg("Multiple instance lock: set lock."); //$NON-NLS-1$
+				properties.setProperty("jfritz.isRunning", "true"); //$NON-NLS-1$,  //$NON-NLS-2$
+			} else {
+				Debug
+						.msg("Multiple instance lock: Another instance is already running."); //$NON-NLS-1$
+				int answer = JOptionPane
+						.showConfirmDialog(
+								null,
+								JFritz.getMessage("lock_error_dialog1") //$NON-NLS-1$
+										+ JFritz
+												.getMessage("lock_error_dialog2") //$NON-NLS-1$
+										+ JFritz
+												.getMessage("lock_error_dialog3") //$NON-NLS-1$
+										+ JFritz
+												.getMessage("lock_error_dialog4"), //$NON-NLS-1$
+								JFritz.getMessage("information"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
+				if (answer == JOptionPane.YES_OPTION) {
+					Debug
+							.msg("Multiple instance lock: User decided to shut down this instance."); //$NON-NLS-1$
+					System.exit(0);
+				} else {
+					Debug
+							.msg("Multiple instance lock: User decided NOT to shut down this instance."); //$NON-NLS-1$
+				}
+			}
 
-        if (enableInstanceControl)
-        {
-	        //check isRunning and exit or set lock
-	        isRunning=(properties.getProperty("jfritz.isRunning","false").equals("true")?true:false); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-	        if (!isRunning)
-	        {
-	        	Debug.msg("Multiple instance lock: set lock."); //$NON-NLS-1$
-	        	properties.setProperty("jfritz.isRunning","true"); //$NON-NLS-1$,  //$NON-NLS-2$
-	        }
-	        else
-	        {
-	        	Debug.msg("Multiple instance lock: Another instance is already running."); //$NON-NLS-1$
-	        	int answer=JOptionPane.showConfirmDialog(null,
-	        			JFritz.getMessage("lock_error_dialog1") //$NON-NLS-1$
-	        			+JFritz.getMessage("lock_error_dialog2") //$NON-NLS-1$
-	        			+JFritz.getMessage("lock_error_dialog3") //$NON-NLS-1$
-	        			+JFritz.getMessage("lock_error_dialog4"), //$NON-NLS-1$
-	        			JFritz.getMessage("information"),JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
-	        	if (answer==JOptionPane.YES_OPTION)
-	        	{
-	            	Debug.msg("Multiple instance lock: User decided to shut down this instance.");  //$NON-NLS-1$
-	        		System.exit(0);
-	        	}
-	        	else
-	        	{
-	        		Debug.msg("Multiple instance lock: User decided NOT to shut down this instance."); //$NON-NLS-1$
-	        	}
-	        }
+			// saveProperties cannot used here because jframe (and its
+			// dimensions) is not yet initilized.
+			try {
+				Debug.msg("Save other properties"); //$NON-NLS-1$
+				properties.storeToXML(JFritz.PROPERTIES_FILE);
+			} catch (IOException e) {
+				Debug.err("Couldn't save Properties"); //$NON-NLS-1$
+			}
+		}
+		loadSounds();
 
-	        //saveProperties cannot used here because jframe (and its dimensions) is not yet initilized.
-	        try {
-	            Debug.msg("Save other properties"); //$NON-NLS-1$
-	            properties.storeToXML(JFritz.PROPERTIES_FILE);
-	        } catch (IOException e) {
-	            Debug.err("Couldn't save Properties"); //$NON-NLS-1$
-	        }
-        }
-        loadSounds();
+		String osName = System.getProperty("os.name"); //$NON-NLS-1$
+		Debug.msg("Operating System : " + osName); //$NON-NLS-1$
+		if (osName.toLowerCase().startsWith("mac os")) //$NON-NLS-1$
+			HostOS = "Mac"; //$NON-NLS-1$
+		else if (osName.startsWith("Windows")) //$NON-NLS-1$
+			HostOS = "Windows"; //$NON-NLS-1$
+		else if (osName.equals("Linux")) { //$NON-NLS-1$
+			HostOS = "Linux"; //$NON-NLS-1$
+		}
+		Debug.msg("JFritz runs on " + HostOS); //$NON-NLS-1$
 
-        String osName = System.getProperty("os.name"); //$NON-NLS-1$
-        Debug.msg("Operating System : " + osName); //$NON-NLS-1$
-        if (osName.toLowerCase().startsWith("mac os")) //$NON-NLS-1$
-            HostOS = "Mac"; //$NON-NLS-1$
-        else if (osName.startsWith("Windows")) //$NON-NLS-1$
-            HostOS = "Windows"; //$NON-NLS-1$
-        else if (osName.equals("Linux")) { //$NON-NLS-1$
-            HostOS = "Linux"; //$NON-NLS-1$
-        }
-        Debug.msg("JFritz runs on " + HostOS); //$NON-NLS-1$
+		if (HostOS.equals("Mac")) { //$NON-NLS-1$
+			new MacHandler(this);
+		}
 
-        if (HostOS.equals("Mac")) { //$NON-NLS-1$
-            new MacHandler(this);
-        }
+		fritzBox = new FritzBox(
+				JFritz.getProperty("box.address", "192.168.178.1"), Encryption //$NON-NLS-1$,  //$NON-NLS-2$
+						.decrypt(JFritz.getProperty("box.password", Encryption //$NON-NLS-1$
+								.encrypt(""))), JFritz.getProperty("box.port", "80"), this); //$NON-NLS-1$
 
-        fritzBox = new FritzBox(JFritz
-                .getProperty("box.address", "192.168.178.1"), Encryption //$NON-NLS-1$,  //$NON-NLS-2$
-                .decrypt(JFritz.getProperty("box.password", Encryption //$NON-NLS-1$
-                        .encrypt(""))), JFritz.getProperty("box.port","80"), this); //$NON-NLS-1$
+		phonebook = new PhoneBook(this);
+		phonebook.loadFromXMLFile(SAVE_DIR + PHONEBOOK_FILE);
 
-        phonebook = new PhoneBook(this);
-        phonebook.loadFromXMLFile(SAVE_DIR + PHONEBOOK_FILE);
+		sipprovider = new SipProviderTableModel();
+		sipprovider.loadFromXMLFile(SAVE_DIR + SIPPROVIDER_FILE);
 
-        sipprovider = new SipProviderTableModel();
-        sipprovider.loadFromXMLFile(SAVE_DIR+SIPPROVIDER_FILE);
+		callerlist = new CallerList(this);
+		callerlist.loadFromXMLFile(SAVE_DIR + CALLS_FILE);
 
-        callerlist = new CallerList(this);
-        callerlist.loadFromXMLFile(SAVE_DIR + CALLS_FILE);
+		Debug.msg("Start commandline parsing"); //$NON-NLS-1$
+		if (fetchCalls) {
+			Debug.msg("Fetch caller list ..."); //$NON-NLS-1$
+			try {
+				callerlist.getNewCalls();
+			} catch (WrongPasswordException e) {
+				Debug.err(e.toString());
+			} catch (IOException e) {
+				Debug.err(e.toString());
+			} finally {
+				if (csvExport) {
+					Debug.msg("Exporting Call list (csv) to " + csvFileName); //$NON-NLS-1$
+					callerlist.saveToCSVFile(csvFileName, true);
+				}
+				if (clearList) {
+					Debug.msg("Clearing Call List"); //$NON-NLS-1$
+					callerlist.clearList();
+				}
+				Debug.msg("JFritz will now terminate"); //$NON-NLS-1$
+				if (doReverseLookup)
+					reverseLookup();
 
-        Debug.msg("Start commandline parsing"); //$NON-NLS-1$
-        if (fetchCalls) {
-            Debug.msg("Fetch caller list ..."); //$NON-NLS-1$
-            try {
-                callerlist.getNewCalls();
-            } catch (WrongPasswordException e) {
-                Debug.err(e.toString());
-            } catch (IOException e) {
-                Debug.err(e.toString());
-            } finally {
-                if (csvExport) {
-                    Debug.msg("Exporting Call list (csv) to " + csvFileName); //$NON-NLS-1$
-                    callerlist.saveToCSVFile(csvFileName, true);
-                }
-                if (clearList) {
-                    Debug.msg("Clearing Call List"); //$NON-NLS-1$
-                    callerlist.clearList();
-                }
-                Debug.msg("JFritz will now terminate"); //$NON-NLS-1$
-                if(doReverseLookup)
-                	reverseLookup();
+				System.exit(0);
+			}
+		}
+		if (csvExport) {
+			Debug.msg("Exporting Call list (csv) to " + csvFileName); //$NON-NLS-1$
+			callerlist.saveToCSVFile(csvFileName, true);
+			if (clearList) {
+				Debug.msg("Clearing Call List"); //$NON-NLS-1$
+				callerlist.clearList();
+			}
+			if (doReverseLookup)
+				reverseLookup();
 
-                System.exit(0);
-            }
-        }
-        if (csvExport) {
-            Debug.msg("Exporting Call list (csv) to " + csvFileName); //$NON-NLS-1$
-            callerlist.saveToCSVFile(csvFileName, true);
-            if (clearList) {
-                Debug.msg("Clearing Call List"); //$NON-NLS-1$
-                callerlist.clearList();
-            }
-            if(doReverseLookup)
-            	reverseLookup();
-
-            System.exit(0);
-        }
-        if (clearList) {
-            Debug.msg("Clearing Call List"); //$NON-NLS-1$
-            callerlist.clearList();
-            System.exit(0);
-        }
+			System.exit(0);
+		}
+		if (clearList) {
+			Debug.msg("Clearing Call List"); //$NON-NLS-1$
+			callerlist.clearList();
+			System.exit(0);
+		}
 		if (writeForeignFormats) {
-			if(doReverseLookup)
+			if (doReverseLookup)
 				reverseLookup();
 
 			phonebook.saveToBITFBFDialerFormat("bitbook.dat"); //$NON-NLS-1$
 			phonebook.saveToCallMonitorFormat("CallMonitor.adr"); //$NON-NLS-1$
 		}
 
+		if (JFritz
+				.getProperty(
+						"lookandfeel", UIManager.getSystemLookAndFeelClassName()).endsWith("MetalLookAndFeel")) { //$NON-NLS-1$,  //$NON-NLS-2$
+			JFrame.setDefaultLookAndFeelDecorated(true);
+			JDialog.setDefaultLookAndFeelDecorated(true); // uses L&F
+															// decorations for
+															// dialogs
+		}
 
+		Debug.msg("New instance of JFrame"); //$NON-NLS-1$
+		jframe = new JFritzWindow(this);
 
-      if(JFritz.getProperty("lookandfeel",UIManager.getSystemLookAndFeelClassName()).endsWith("MetalLookAndFeel")){ //$NON-NLS-1$,  //$NON-NLS-2$
-    	  JFrame.setDefaultLookAndFeelDecorated(true);
-    	  JDialog.setDefaultLookAndFeelDecorated(true); //uses L&F decorations for dialogs
-      }
+		if (checkForSystraySupport()) {
+			Debug.msg("Check Systray-Support"); //$NON-NLS-1$
+			try {
+				systray = SystemTray.getDefaultSystemTray();
+				createTrayMenu();
+			} catch (UnsatisfiedLinkError ule) {
+				Debug.err(ule.toString());
+				SYSTRAY_SUPPORT = false;
+			} catch (Exception e) {
+				Debug.err(e.toString());
+				SYSTRAY_SUPPORT = false;
+			}
+		}
 
-      Debug.msg("New instance of JFrame"); //$NON-NLS-1$
-      jframe = new JFritzWindow(this);
+		if (JFritzUtils.parseBoolean(JFritz.getProperty("option.useSSDP",//$NON-NLS-1$
+				"true"))) {//$NON-NLS-1$
+			Debug.msg("Searching for  FritzBox per UPnP / SSDP");//$NON-NLS-1$
 
-        if (checkForSystraySupport()) {
-            Debug.msg("Check Systray-Support"); //$NON-NLS-1$
-            try {
-                systray = SystemTray.getDefaultSystemTray();
-                createTrayMenu();
-            } catch (UnsatisfiedLinkError ule) {
-                Debug.err(ule.toString());
-                SYSTRAY_SUPPORT = false;
-            } catch (Exception e) {
-                Debug.err(e.toString());
-                SYSTRAY_SUPPORT = false;
-            }
-        }
+			ssdpthread = new SSDPdiscoverThread(this, SSDP_TIMEOUT);
+			ssdpthread.start();
+			try {
+				ssdpthread.join();
+			} catch (InterruptedException ie) {
 
-         if (JFritzUtils.parseBoolean(JFritz.getProperty("option.useSSDP",//$NON-NLS-1$
-                "true"))) {//$NON-NLS-1$
-            Debug.msg("Searching for  FritzBox per UPnP / SSDP");//$NON-NLS-1$
+			}
+		}
 
-            ssdpthread = new SSDPdiscoverThread(this, SSDP_TIMEOUT);
-            ssdpthread.start();
-            try {
-                ssdpthread.join();
-            } catch (InterruptedException ie) {
+		if (showConfWizard) {
+			Debug.msg("Presenting user with the configuration dialog");
+			showConfigWizard();
+		}
 
-            }
-        }
+		if (!showConfWizard
+				&& JFritzUtils.parseBoolean(JFritz.getProperty(
+						"option.checkNewVersionAfterStart",//$NON-NLS-1$
+						"true"))) {//$NON-NLS-1$
+			if (JFritzUtils.checkForNewVersion()) {
+				JOptionPane.showMessageDialog(this.getJframe(),getMessage("new_version_text"), getMessage("new_version"), JOptionPane.INFORMATION_MESSAGE);
+			}
+		}
+		jframe.checkStartOptions();
 
+		javax.swing.SwingUtilities.invokeLater(jframe);
 
-        if(showConfWizard){
-            Debug.msg("Presenting user with the configuration dialog");
-            showConfigWizard();
-        }
+		startWatchdog();
+	}
 
-        jframe.checkStartOptions();
+	/**
+	 * Loads resource messages
+	 *
+	 * @param locale
+	 */
+	private void loadMessages(Locale locale) {
+		try {
+			messages = ResourceBundle.getBundle("jfritz", locale);//$NON-NLS-1$
+		} catch (MissingResourceException e) {
+			Debug
+					.err("Can't find i18n resource! (\"jfritz_" + locale + ".properties\")");//$NON-NLS-1$
+			JOptionPane.showMessageDialog(null, JFritz.PROGRAM_NAME + " v"//$NON-NLS-1$
+					+ JFritz.PROGRAM_VERSION
+					+ "\n\nCannot find the language file \"jfritz_" + locale
+					+ ".properties\"!" + "\nProgram will exit!");//$NON-NLS-1$
+			System.exit(0);
+		}
+	}
 
-        javax.swing.SwingUtilities.invokeLater(jframe);
+	/**
+	 * Loads locale meanings
+	 *
+	 * @param locale
+	 */
+	private void loadLocaleMeanings(Locale locale) {
+		try {
+			localeMeanings = ResourceBundle.getBundle("languages", locale);//$NON-NLS-1$
+		} catch (MissingResourceException e) {
+			Debug.err("Can't find locale Meanings resource!");//$NON-NLS-1$
+		}
+	}
 
-        startWatchdog();
-    }
+	/**
+	 * Loads properties from xml files
+	 */
+	public void loadProperties() {
+		defaultProperties = new JFritzProperties();
+		properties = new JFritzProperties(defaultProperties);
 
-    /**
-     * Loads resource messages
-     *
-     * @param locale
-     */
-    private void loadMessages(Locale locale) {
-        try {
-            messages = ResourceBundle.getBundle(
-                    "jfritz", locale);//$NON-NLS-1$
-        } catch (MissingResourceException e) {
-            Debug.err("Can't find i18n resource! (\"jfritz_"+locale+".properties\")");//$NON-NLS-1$
-            JOptionPane.showMessageDialog(null, JFritz.PROGRAM_NAME + " v"//$NON-NLS-1$
-                    + JFritz.PROGRAM_VERSION
-                    + "\n\nCannot find the language file \"jfritz_"+locale+".properties\"!"
-                    + "\nProgram will exit!");//$NON-NLS-1$
-            System.exit(0);
-        }
-    }
+		// Default properties
+		defaultProperties.setProperty("box.address", "192.168.178.1");//$NON-NLS-1$, //$NON-NLS-2$
+		defaultProperties.setProperty("box.password", Encryption.encrypt(""));//$NON-NLS-1$, //$NON-NLS-2$
+		defaultProperties.setProperty("box.port", "80");//$NON-NLS-1$, //$NON-NLS-2$
+		defaultProperties.setProperty("country.prefix", "00");//$NON-NLS-1$, //$NON-NLS-2$
+		defaultProperties.setProperty("area.prefix", "0");//$NON-NLS-1$, //$NON-NLS-2$
+		defaultProperties.setProperty("country.code", "+49");//$NON-NLS-1$, //$NON-NLS-2$
+		defaultProperties.setProperty("area.code", "441");//$NON-NLS-1$, //$NON-NLS-2$
+		defaultProperties.setProperty("fetch.timer", "5");//$NON-NLS-1$, //$NON-NLS-2$
+		defaultProperties.setProperty("jfritz.isRunning", "false");//$NON-NLS-1$, //$NON-NLS-2$
 
-    /**
-     * Loads locale meanings
-     *
-     * @param locale
-     */
-    private void loadLocaleMeanings(Locale locale) {
-        try {
-            localeMeanings = ResourceBundle.getBundle(
-                    "languages", locale);//$NON-NLS-1$
-        } catch (MissingResourceException e) {
-            Debug.err("Can't find locale Meanings resource!");//$NON-NLS-1$
-        }
-    }
+		try {
+			properties.loadFromXML(SAVE_DIR + JFritz.PROPERTIES_FILE);
+			replaceOldProperties();
+		} catch (FileNotFoundException e) {
+			Debug.err("File " + SAVE_DIR + JFritz.PROPERTIES_FILE //$NON-NLS-1$
+					+ " not readable => showing config wizard"); //$NON-NLS-1$
+			showConfWizard = true;
+		} catch (Exception e) {
+		}
+	}
 
+	/**
+	 * Loads sounds from resources
+	 */
+	private void loadSounds() {
+		ringSound = getClass().getResource(
+				"/de/moonflower/jfritz/resources/sounds/call_in.wav"); //$NON-NLS-1$
+		callSound = getClass().getResource(
+				"/de/moonflower/jfritz/resources/sounds/call_out.wav"); //$NON-NLS-1$
+	}
 
-    /**
-     * Loads properties from xml files
-     */
-    public void loadProperties() {
-        defaultProperties = new JFritzProperties();
-        properties = new JFritzProperties(defaultProperties);
+	/**
+	 * Checks for systray availability
+	 */
+	private boolean checkForSystraySupport() {
+		if (!checkSystray)
+			return false;
+		String os = System.getProperty("os.name"); //$NON-NLS-1$
+		if (os.equals("Linux") || os.equals("Solaris") //$NON-NLS-1$,  //$NON-NLS-2$
+				|| os.startsWith("Windows")) { //$NON-NLS-1$
+			SYSTRAY_SUPPORT = true;
+		}
+		return SYSTRAY_SUPPORT;
+	}
 
-        // Default properties
-        defaultProperties.setProperty("box.address", "192.168.178.1");//$NON-NLS-1$, //$NON-NLS-2$
-        defaultProperties.setProperty("box.password", Encryption.encrypt(""));//$NON-NLS-1$, //$NON-NLS-2$
-        defaultProperties.setProperty("box.port", "80");//$NON-NLS-1$, //$NON-NLS-2$
-        defaultProperties.setProperty("country.prefix", "00");//$NON-NLS-1$, //$NON-NLS-2$
-        defaultProperties.setProperty("area.prefix", "0");//$NON-NLS-1$, //$NON-NLS-2$
-        defaultProperties.setProperty("country.code", "+49");//$NON-NLS-1$, //$NON-NLS-2$
-        defaultProperties.setProperty("area.code", "441");//$NON-NLS-1$, //$NON-NLS-2$
-        defaultProperties.setProperty("fetch.timer", "5");//$NON-NLS-1$, //$NON-NLS-2$
-        defaultProperties.setProperty("jfritz.isRunning", "false");//$NON-NLS-1$, //$NON-NLS-2$
+	/**
+	 * Creates the tray icon menu
+	 */
+	private void createTrayMenu() {
+		System.setProperty("javax.swing.adjustPopupLocationToFit", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
 
-        try {
-            properties.loadFromXML(SAVE_DIR + JFritz.PROPERTIES_FILE);
-            replaceOldProperties();
-        } catch (FileNotFoundException e) {
-            Debug.err("File " + SAVE_DIR + JFritz.PROPERTIES_FILE //$NON-NLS-1$
-                    + " not readable => showing config wizard"); //$NON-NLS-1$
-           showConfWizard = true;
-        } catch (Exception e) {
-        }
-    }
+		JPopupMenu menu = new JPopupMenu("JFritz Menu"); //$NON-NLS-1$
+		JMenuItem menuItem = new JMenuItem(PROGRAM_NAME + " v" //$NON-NLS-1$
+				+ PROGRAM_VERSION);
+		menuItem.setActionCommand("showhide");
+		menuItem.addActionListener(jframe);
+		menu.add(menuItem);
+		menu.addSeparator();
+		menuItem = new JMenuItem(getMessage("fetchlist")); //$NON-NLS-1$
+		menuItem.setActionCommand("fetchList"); //$NON-NLS-1$
+		menuItem.addActionListener(jframe);
+		menu.add(menuItem);
+		menuItem = new JMenuItem(getMessage("reverse_lookup")); //$NON-NLS-1$
+		menuItem.setActionCommand("reverselookup"); //$NON-NLS-1$
+		menuItem.addActionListener(jframe);
+		menu.add(menuItem);
+		menuItem = new JMenuItem(getMessage("config")); //$NON-NLS-1$
+		menuItem.setActionCommand("config"); //$NON-NLS-1$
+		menuItem.addActionListener(jframe);
+		menu.add(menuItem);
+		menu.addSeparator();
+		menuItem = new JMenuItem(getMessage("prog_exit")); //$NON-NLS-1$
+		menuItem.setActionCommand("exit"); //$NON-NLS-1$
+		menuItem.addActionListener(jframe);
+		menu.add(menuItem);
 
-    /**
-     * Loads sounds from resources
-     */
-    private void loadSounds() {
-        ringSound = getClass().getResource(
-                "/de/moonflower/jfritz/resources/sounds/call_in.wav"); //$NON-NLS-1$
-        callSound = getClass().getResource(
-                "/de/moonflower/jfritz/resources/sounds/call_out.wav"); //$NON-NLS-1$
-    }
+		ImageIcon icon = new ImageIcon(
+				JFritz.class
+						.getResource("/de/moonflower/jfritz/resources/images/trayicon.png")); //$NON-NLS-1$
 
-    /**
-     * Checks for systray availability
-     */
-    private boolean checkForSystraySupport() {
-        if (!checkSystray)
-            return false;
-        String os = System.getProperty("os.name"); //$NON-NLS-1$
-        if (os.equals("Linux") || os.equals("Solaris") //$NON-NLS-1$,  //$NON-NLS-2$
-                || os.startsWith("Windows")) { //$NON-NLS-1$
-            SYSTRAY_SUPPORT = true;
-        }
-        return SYSTRAY_SUPPORT;
-    }
+		trayIcon = new TrayIcon(icon, JFritz.PROGRAM_NAME, menu); //$NON-NLS-1$
+		trayIcon.setIconAutoSize(false);
+		trayIcon
+				.setCaption(JFritz.PROGRAM_NAME + " v" + JFritz.PROGRAM_VERSION); //$NON-NLS-1$
+		trayIcon.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				hideShowJFritz();
+			}
+		});
+		systray.addTrayIcon(trayIcon);
+	}
 
-    /**
-     * Creates the tray icon menu
-     */
-    private void createTrayMenu() {
-        System.setProperty("javax.swing.adjustPopupLocationToFit", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
+	/**
+	 * Replace old property values with new one p.e. column0.width =>
+	 * column.type.width
+	 *
+	 */
+	private void replaceOldProperties() {
+		for (int i = 0; i < 10; i++) {
+			JFritz.removeProperty("SIP" + i); //$NON-NLS-1$
+		}
 
-        JPopupMenu menu = new JPopupMenu("JFritz Menu"); //$NON-NLS-1$
-        JMenuItem menuItem = new JMenuItem(PROGRAM_NAME + " v" //$NON-NLS-1$
-                + PROGRAM_VERSION);
-        menuItem.setActionCommand("showhide");
-        menuItem.addActionListener(jframe);
-        menu.add(menuItem);
-        menu.addSeparator();
-        menuItem = new JMenuItem(getMessage("fetchlist")); //$NON-NLS-1$
-        menuItem.setActionCommand("fetchList"); //$NON-NLS-1$
-        menuItem.addActionListener(jframe);
-        menu.add(menuItem);
-        menuItem = new JMenuItem(getMessage("reverse_lookup")); //$NON-NLS-1$
-        menuItem.setActionCommand("reverselookup"); //$NON-NLS-1$
-        menuItem.addActionListener(jframe);
-        menu.add(menuItem);
-        menuItem = new JMenuItem(getMessage("config")); //$NON-NLS-1$
-        menuItem.setActionCommand("config"); //$NON-NLS-1$
-        menuItem.addActionListener(jframe);
-        menu.add(menuItem);
-        menu.addSeparator();
-        menuItem = new JMenuItem(getMessage("prog_exit")); //$NON-NLS-1$
-        menuItem.setActionCommand("exit"); //$NON-NLS-1$
-        menuItem.addActionListener(jframe);
-        menu.add(menuItem);
+		if (properties.containsKey("column.Typ.width")) { //$NON-NLS-1$
+			properties.setProperty("column.type.width", //$NON-NLS-1$
+					properties.getProperty("column.Typ.width")); //$NON-NLS-1$
+			JFritz.removeProperty("column.Typ.width"); //$NON-NLS-1$
+		}
+		if (properties.containsKey("column.Zeitpunkt.width")) { //$NON-NLS-1$
+			properties.setProperty("column.date.width", //$NON-NLS-1$
+					properties.getProperty("column.Zeitpunkt.width")); //$NON-NLS-1$
+			JFritz.removeProperty("column.Zeitpunkt.width"); //$NON-NLS-1$
+		}
+		if (properties.containsKey("column.Call-By-Call.width")) { //$NON-NLS-1$
+			properties.setProperty("column.callbycall.width", //$NON-NLS-1$
+					properties.getProperty("column.Call-By-Call.width")); //$NON-NLS-1$
+			JFritz.removeProperty("column.Call-By-Call.width"); //$NON-NLS-1$
+		}
+		if (properties.containsKey("column.Rufnummer.width")) { //$NON-NLS-1$
+			properties.setProperty("column.number.width", //$NON-NLS-1$
+					properties.getProperty("column.Rufnummer.width")); //$NON-NLS-1$
+			JFritz.removeProperty("column.Rufnummer.width"); //$NON-NLS-1$
+		}
+		if (properties.containsKey("column.Teilnehmer.width")) { //$NON-NLS-1$
+			properties.setProperty("column.participant.width", //$NON-NLS-1$
+					properties.getProperty("column.Teilnehmer.width")); //$NON-NLS-1$
+			JFritz.removeProperty("column.Teilnehmer.width"); //$NON-NLS-1$
+		}
+		if (properties.containsKey("column.Anschluß.width")) { //$NON-NLS-1$
+			properties.setProperty("column.port.width", //$NON-NLS-1$
+					properties.getProperty("column.Anschluß.width")); //$NON-NLS-1$
+			JFritz.removeProperty("column.Anschluß.width"); //$NON-NLS-1$
+		}
+		if (properties.containsKey("column.MSN.width")) { //$NON-NLS-1$
+			properties.setProperty("column.route.width", //$NON-NLS-1$
+					properties.getProperty("column.MSN.width")); //$NON-NLS-1$
+			JFritz.removeProperty("column.MSN.width"); //$NON-NLS-1$
+		}
+		if (properties.containsKey("column.Dauer.width")) { //$NON-NLS-1$
+			properties.setProperty("column.duration.width", //$NON-NLS-1$
+					properties.getProperty("column.Dauer.width")); //$NON-NLS-1$
+			JFritz.removeProperty("column.Dauer.width"); //$NON-NLS-1$
+		}
+		if (properties.containsKey("column.Kommentar.width")) { //$NON-NLS-1$
+			properties.setProperty("column.comment.width", //$NON-NLS-1$
+					properties.getProperty("column.Kommentar.width")); //$NON-NLS-1$
+			JFritz.removeProperty("column.Kommentar.width"); //$NON-NLS-1$
+		}
+	}
 
-        ImageIcon icon = new ImageIcon(
-                JFritz.class
-                        .getResource("/de/moonflower/jfritz/resources/images/trayicon.png")); //$NON-NLS-1$
-
-        trayIcon = new TrayIcon(icon, JFritz.PROGRAM_NAME , menu); //$NON-NLS-1$
-        trayIcon.setIconAutoSize(false);
-        trayIcon
-                .setCaption(JFritz.PROGRAM_NAME + " v" + JFritz.PROGRAM_VERSION); //$NON-NLS-1$
-        trayIcon.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                hideShowJFritz();
-            }
-        });
-        systray.addTrayIcon(trayIcon);
-    }
-
-    /**
-     * Replace old property values with new one p.e. column0.width =>
-     * column.type.width
-     *
-     */
-    private void replaceOldProperties() {
-        for (int i = 0; i < 10; i++) {
-            JFritz.removeProperty("SIP" + i); //$NON-NLS-1$
-        }
-
-        if (properties.containsKey("column.Typ.width")) { //$NON-NLS-1$
-            properties.setProperty("column.type.width", //$NON-NLS-1$
-                    properties.getProperty("column.Typ.width")); //$NON-NLS-1$
-            JFritz.removeProperty("column.Typ.width"); //$NON-NLS-1$
-        }
-        if (properties.containsKey("column.Zeitpunkt.width")) { //$NON-NLS-1$
-            properties.setProperty("column.date.width", //$NON-NLS-1$
-                    properties.getProperty("column.Zeitpunkt.width")); //$NON-NLS-1$
-            JFritz.removeProperty("column.Zeitpunkt.width"); //$NON-NLS-1$
-        }
-        if (properties.containsKey("column.Call-By-Call.width")) { //$NON-NLS-1$
-            properties.setProperty("column.callbycall.width", //$NON-NLS-1$
-                    properties.getProperty("column.Call-By-Call.width")); //$NON-NLS-1$
-            JFritz.removeProperty("column.Call-By-Call.width"); //$NON-NLS-1$
-        }
-        if (properties.containsKey("column.Rufnummer.width")) { //$NON-NLS-1$
-            properties.setProperty("column.number.width", //$NON-NLS-1$
-                    properties.getProperty("column.Rufnummer.width")); //$NON-NLS-1$
-            JFritz.removeProperty("column.Rufnummer.width"); //$NON-NLS-1$
-        }
-        if (properties.containsKey("column.Teilnehmer.width")) { //$NON-NLS-1$
-            properties.setProperty("column.participant.width",  //$NON-NLS-1$
-            		properties.getProperty("column.Teilnehmer.width")); //$NON-NLS-1$
-            JFritz.removeProperty("column.Teilnehmer.width"); //$NON-NLS-1$
-        }
-        if (properties.containsKey("column.Anschluß.width")) { //$NON-NLS-1$
-            properties.setProperty("column.port.width", //$NON-NLS-1$
-                    properties.getProperty("column.Anschluß.width")); //$NON-NLS-1$
-            JFritz.removeProperty("column.Anschluß.width"); //$NON-NLS-1$
-        }
-        if (properties.containsKey("column.MSN.width")) { //$NON-NLS-1$
-            properties.setProperty("column.route.width", //$NON-NLS-1$
-                    properties.getProperty("column.MSN.width")); //$NON-NLS-1$
-            JFritz.removeProperty("column.MSN.width"); //$NON-NLS-1$
-        }
-        if (properties.containsKey("column.Dauer.width")) { //$NON-NLS-1$
-            properties.setProperty("column.duration.width",  //$NON-NLS-1$
-            		properties.getProperty("column.Dauer.width")); //$NON-NLS-1$
-            JFritz.removeProperty("column.Dauer.width"); //$NON-NLS-1$
-        }
-        if (properties.containsKey("column.Kommentar.width")) { //$NON-NLS-1$
-            properties.setProperty("column.comment.width", //$NON-NLS-1$
-                    properties.getProperty("column.Kommentar.width")); //$NON-NLS-1$
-            JFritz.removeProperty("column.Kommentar.width"); //$NON-NLS-1$
-        }
-    }
-
-
-
-    /**
-     *
-     */
-    public static void clearCallsOnBox() {
+	/**
+	 *
+	 */
+	public static void clearCallsOnBox() {
 		Debug.msg("Clearing callerlist on box."); //$NON-NLS-1$
 		properties = new JFritzProperties();
-        try {
+		try {
 			properties.loadFromXML(JFritz.PROPERTIES_FILE);
-        } catch (FileNotFoundException e) {
-            Debug.err("File " + JFritz.PROPERTIES_FILE //$NON-NLS-1$
-                    + " not found, using default values"); //$NON-NLS-1$
-        } catch (Exception e) {
+		} catch (FileNotFoundException e) {
+			Debug.err("File " + JFritz.PROPERTIES_FILE //$NON-NLS-1$
+					+ " not found, using default values"); //$NON-NLS-1$
+		} catch (Exception e) {
 			Debug.err("Exception: " + e.toString()); //$NON-NLS-1$
-        }
+		}
 		try {
 			fritzBox.clearListOnFritzBox();
 			Debug.msg("Clearing done"); //$NON-NLS-1$
 		} catch (WrongPasswordException e) {
 			Debug.err("Wrong password, can not delete callerlist on Box."); //$NON-NLS-1$
+		} catch (IOException e) {
+			Debug
+					.err("IOException while deleting callerlist on box (wrong IP-address?)."); //$NON-NLS-1$
 		}
-		catch (IOException e) {
-			Debug.err("IOException while deleting callerlist on box (wrong IP-address?)."); //$NON-NLS-1$
+	}
+
+	/**
+	 * Saves properties to xml files
+	 */
+	public void saveProperties() {
+
+		Debug.msg("Save window position"); //$NON-NLS-1$
+		properties.setProperty("position.left", Integer.toString(jframe //$NON-NLS-1$
+				.getLocation().x));
+		properties.setProperty("position.top", Integer.toString(jframe //$NON-NLS-1$
+				.getLocation().y));
+		properties.setProperty("position.width", Integer.toString(jframe //$NON-NLS-1$
+				.getSize().width));
+		properties.setProperty("position.height", Integer.toString(jframe //$NON-NLS-1$
+				.getSize().height));
+
+		Debug.msg("Save column widths"); //$NON-NLS-1$
+		Enumeration en = jframe.getCallerTable().getColumnModel().getColumns();
+		int i = 0;
+		while (en.hasMoreElements()) {
+			TableColumn col = (TableColumn) en.nextElement();
+
+			properties.setProperty("column." + col.getIdentifier().toString() //$NON-NLS-1$
+					+ ".width", Integer.toString(col.getWidth())); //$NON-NLS-1$
+			properties.setProperty("column" + i + ".name", col.getIdentifier() //$NON-NLS-1$,  //$NON-NLS-2$
+					.toString());
+			i++;
 		}
-    }
 
-    /**
-     * Saves properties to xml files
-     */
-    public void saveProperties() {
+		try {
+			Debug.msg("Save other properties"); //$NON-NLS-1$
+			properties.storeToXML(JFritz.SAVE_DIR + JFritz.PROPERTIES_FILE);
+		} catch (IOException e) {
+			Debug.err("Couldn't save Properties"); //$NON-NLS-1$
+		}
+	}
 
-        Debug.msg("Save window position"); //$NON-NLS-1$
-        properties.setProperty("position.left", Integer.toString(jframe //$NON-NLS-1$
-                .getLocation().x));
-        properties.setProperty("position.top", Integer.toString(jframe //$NON-NLS-1$
-                .getLocation().y));
-        properties.setProperty("position.width", Integer.toString(jframe //$NON-NLS-1$
-                .getSize().width));
-        properties.setProperty("position.height", Integer.toString(jframe //$NON-NLS-1$
-                .getSize().height));
+	/**
+	 * Displays balloon info message
+	 *
+	 * @param msg
+	 *            Message to be displayed
+	 */
+	public static void infoMsg(String msg) {
+		switch (Integer.parseInt(JFritz.getProperty("option.popuptype", "1"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+			case 0 : { // No Popup
+				break;
+			}
+			case 1 : {
+				MessageDlg msgDialog = new MessageDlg();
+				msgDialog.showMessage(msg, Long.parseLong(JFritz.getProperty(
+						"option.popupDelay", "10")) * 1000);
+				break;
+			}
+			case 2 : {
+				if (trayIcon != null)
+					trayIcon.displayMessage(JFritz.PROGRAM_NAME, msg,
+							TrayIcon.INFO_MESSAGE_TYPE);
+				else if (trayIcon == null) {
+					MessageDlg msgDialog = new MessageDlg();
+					msgDialog.showMessage(msg, Long.parseLong(JFritz
+							.getProperty("option.popupDelay", "10")) * 1000);
+				}
+				break;
+			}
+		}
+	}
 
-        Debug.msg("Save column widths"); //$NON-NLS-1$
-        Enumeration en = jframe.getCallerTable().getColumnModel().getColumns();
-        int i = 0;
-        while (en.hasMoreElements()) {
-            TableColumn col = (TableColumn) en.nextElement();
+	/**
+	 * Display call monitor message
+	 *
+	 * @param caller
+	 *            Caller number
+	 * @param called
+	 *            Called number
+	 */
+	public void callInMsg(String caller, String called) {
+		callInMsg(caller, called, ""); //$NON-NLS-1$
+	}
 
-            properties.setProperty("column." + col.getIdentifier().toString() //$NON-NLS-1$
-                    + ".width", Integer.toString(col.getWidth())); //$NON-NLS-1$
-            properties.setProperty("column" + i + ".name", col.getIdentifier() //$NON-NLS-1$,  //$NON-NLS-2$
-                    .toString());
-            i++;
-        }
+	private String searchNameToPhoneNumber(String caller) {
+		String name = ""; //$NON-NLS-1$
+		PhoneNumber callerPhoneNumber = new PhoneNumber(caller);
+		Debug.msg("Searchin in local database ..."); //$NON-NLS-1$
+		Person callerperson = phonebook.findPerson(callerPhoneNumber);
+		if (callerperson != null) {
+			name = callerperson.getFullname();
+			Debug.msg("Found in local database: " + name); //$NON-NLS-1$
+		} else {
+			Debug.msg("Searchin on dasoertliche.de ..."); //$NON-NLS-1$
+			Person person = ReverseLookup.lookup(callerPhoneNumber);
+			if (!person.getFullname().equals("")) { //$NON-NLS-1$
+				name = person.getFullname();
+				Debug.msg("Found on dasoertliche.de: " + name); //$NON-NLS-1$
+				Debug.msg("Add person to database"); //$NON-NLS-1$
+				phonebook.addEntry(person);
+				phonebook.fireTableDataChanged();
+			} else {
+				person = new Person();
+				person.addNumber(new PhoneNumber(caller));
+				Debug.msg("Found no person"); //$NON-NLS-1$
+				Debug.msg("Add dummy person to database"); //$NON-NLS-1$
+				phonebook.addEntry(person);
+				phonebook.fireTableDataChanged();
+			}
+		}
+		return name;
+	}
 
-        try {
-            Debug.msg("Save other properties"); //$NON-NLS-1$
-            properties.storeToXML(JFritz.SAVE_DIR + JFritz.PROPERTIES_FILE);
-        } catch (IOException e) {
-            Debug.err("Couldn't save Properties"); //$NON-NLS-1$
-        }
-    }
-
-    /**
-     * Displays balloon info message
-     *
-     * @param msg
-     *            Message to be displayed
-     */
-    public static void infoMsg(String msg) {
-        switch (Integer.parseInt(JFritz.getProperty("option.popuptype", "1"))) { //$NON-NLS-1$,  //$NON-NLS-2$
-        case 0: { // No Popup
-            break;
-        }
-        case 1: {
-            MessageDlg msgDialog = new MessageDlg();
-            msgDialog.showMessage(msg, Long.parseLong(
-            		JFritz.getProperty("option.popupDelay", "10")) * 1000);
-            break;
-        }
-        case 2: {
-            if (trayIcon != null)
-                trayIcon.displayMessage(JFritz.PROGRAM_NAME, msg,
-                        TrayIcon.INFO_MESSAGE_TYPE);
-            else if(trayIcon == null){
-                MessageDlg msgDialog = new MessageDlg();
-                msgDialog.showMessage(msg, Long.parseLong(
-                		JFritz.getProperty("option.popupDelay", "10")) * 1000);
-            }
-            break;
-        }
-        }
-    }
-
-    /**
-     * Display call monitor message
-     *
-     * @param caller
-     *            Caller number
-     * @param called
-     *            Called number
-     */
-    public void callInMsg(String caller, String called) {
-        callInMsg(caller, called, ""); //$NON-NLS-1$
-    }
-
-    private String searchNameToPhoneNumber(String caller) {
-        String name = ""; //$NON-NLS-1$
-        PhoneNumber callerPhoneNumber = new PhoneNumber(caller);
-        Debug.msg("Searchin in local database ..."); //$NON-NLS-1$
-        Person callerperson = phonebook.findPerson(callerPhoneNumber);
-        if (callerperson != null) {
-            name = callerperson.getFullname();
-            Debug.msg("Found in local database: " + name); //$NON-NLS-1$
-        } else {
-            Debug.msg("Searchin on dasoertliche.de ..."); //$NON-NLS-1$
-            Person person = ReverseLookup.lookup(callerPhoneNumber);
-            if (!person.getFullname().equals("")) { //$NON-NLS-1$
-                name = person.getFullname();
-                Debug.msg("Found on dasoertliche.de: " + name); //$NON-NLS-1$
-                Debug.msg("Add person to database"); //$NON-NLS-1$
-                phonebook.addEntry(person);
-                phonebook.fireTableDataChanged();
-            } else {
-                person = new Person();
-                person.addNumber(new PhoneNumber(caller));
-                Debug.msg("Found no person"); //$NON-NLS-1$
-                Debug.msg("Add dummy person to database"); //$NON-NLS-1$
-                phonebook.addEntry(person);
-                phonebook.fireTableDataChanged();
-            }
-        }
-        return name;
-    }
-
-    private String[] searchFirstAndLastNameToPhoneNumber(String caller) {
-        String name[] = {"", "", ""}; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-        PhoneNumber callerPhoneNumber = new PhoneNumber(caller);
-        Debug.msg("Searching in local database ..."); //$NON-NLS-1$
-        Person callerperson = phonebook.findPerson(callerPhoneNumber);
-        if (callerperson != null) {
-            name[0] = callerperson.getFirstName();
+	private String[] searchFirstAndLastNameToPhoneNumber(String caller) {
+		String name[] = {"", "", ""}; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+		PhoneNumber callerPhoneNumber = new PhoneNumber(caller);
+		Debug.msg("Searching in local database ..."); //$NON-NLS-1$
+		Person callerperson = phonebook.findPerson(callerPhoneNumber);
+		if (callerperson != null) {
+			name[0] = callerperson.getFirstName();
 			name[1] = callerperson.getLastName();
 			name[2] = callerperson.getCompany();
 			Debug.msg("Found in local database: " + name[1] + ", " + name[0]); //$NON-NLS-1$,  //$NON-NLS-2$
-        } else {
-            Debug.msg("Searching on dasoertliche.de ..."); //$NON-NLS-1$
-            Person person = ReverseLookup.lookup(callerPhoneNumber);
-            if (!person.getFullname().equals("")) { //$NON-NLS-1$
+		} else {
+			Debug.msg("Searching on dasoertliche.de ..."); //$NON-NLS-1$
+			Person person = ReverseLookup.lookup(callerPhoneNumber);
+			if (!person.getFullname().equals("")) { //$NON-NLS-1$
 				name[0] = callerperson.getFirstName();
 				name[1] = callerperson.getLastName();
 				name[2] = callerperson.getCompany();
-                Debug.msg("Found on dasoertliche.de: " + name[1] + ", " + name[0]); //$NON-NLS-1$,  //$NON-NLS-2$
-                Debug.msg("Add person to database"); //$NON-NLS-1$
-                phonebook.addEntry(person);
-                phonebook.fireTableDataChanged();
-            } else {
-                person = new Person();
-                person.addNumber(new PhoneNumber(caller));
-                Debug.msg("Found no person"); //$NON-NLS-1$
-                Debug.msg("Add dummy person to database"); //$NON-NLS-1$
-                phonebook.addEntry(person);
-                phonebook.fireTableDataChanged();
-            }
-        }
-        return name;
-    }
+				Debug
+						.msg("Found on dasoertliche.de: " + name[1] + ", " + name[0]); //$NON-NLS-1$,  //$NON-NLS-2$
+				Debug.msg("Add person to database"); //$NON-NLS-1$
+				phonebook.addEntry(person);
+				phonebook.fireTableDataChanged();
+			} else {
+				person = new Person();
+				person.addNumber(new PhoneNumber(caller));
+				Debug.msg("Found no person"); //$NON-NLS-1$
+				Debug.msg("Add dummy person to database"); //$NON-NLS-1$
+				phonebook.addEntry(person);
+				phonebook.fireTableDataChanged();
+			}
+		}
+		return name;
+	}
 
-    /**
-     * Display call monitor message
-     *
-     * @param caller
-     *            Caller number
-     * @param called
-     *            Called number
-     * @param name
-     *            Known name (only YAC)
-     */
-    public void callInMsg(String callerInput, String calledInput, String name) {
+	/**
+	 * Display call monitor message
+	 *
+	 * @param caller
+	 *            Caller number
+	 * @param called
+	 *            Called number
+	 * @param name
+	 *            Known name (only YAC)
+	 */
+	public void callInMsg(String callerInput, String calledInput, String name) {
 
-        Debug.msg("Caller: " + callerInput); //$NON-NLS-1$
-        Debug.msg("Called: " + calledInput); //$NON-NLS-1$
-        Debug.msg("Name: " + name); //$NON-NLS-1$
+		Debug.msg("Caller: " + callerInput); //$NON-NLS-1$
+		Debug.msg("Called: " + calledInput); //$NON-NLS-1$
+		Debug.msg("Name: " + name); //$NON-NLS-1$
 
-        String callerstr = "", calledstr = ""; //$NON-NLS-1$,  //$NON-NLS-2$
+		String callerstr = "", calledstr = ""; //$NON-NLS-1$,  //$NON-NLS-2$
 		String firstname = "", surname = "", company = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 
 		callerstr = calledInput;
-        if (!callerInput.startsWith("SIP")) { //$NON-NLS-1$
-            PhoneNumber caller = new PhoneNumber(callerInput);
-            if (caller.getIntNumber().equals("")) { //$NON-NLS-1$
-                callerstr = JFritz.getMessage("unknown"); //$NON-NLS-1$
-            } else
-                callerstr = caller.getIntNumber();
-        }
+		if (!callerInput.startsWith("SIP")) { //$NON-NLS-1$
+			PhoneNumber caller = new PhoneNumber(callerInput);
+			if (caller.getIntNumber().equals("")) { //$NON-NLS-1$
+				callerstr = JFritz.getMessage("unknown"); //$NON-NLS-1$
+			} else
+				callerstr = caller.getIntNumber();
+		}
 
 		calledstr = calledInput;
 		if (calledInput.startsWith("SIP")) //$NON-NLS-1$
 			calledstr = getSIPProviderTableModel().getSipProvider(calledInput,
-                    calledInput);
+					calledInput);
 
-
-        if (name.equals("") && !callerstr.equals(JFritz.getMessage("unknown"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+		if (name.equals("") && !callerstr.equals(JFritz.getMessage("unknown"))) { //$NON-NLS-1$,  //$NON-NLS-2$
 			name = searchNameToPhoneNumber(callerstr);
-			String [] nameArray = searchFirstAndLastNameToPhoneNumber(callerstr);
+			String[] nameArray = searchFirstAndLastNameToPhoneNumber(callerstr);
 			firstname = nameArray[0];
 			surname = nameArray[1];
 			company = nameArray[2];
-        }
-		if (name.equals("")) name = JFritz.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$
-		if (firstname.equals("") && surname.equals("")) surname = JFritz.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-		if (company.equals("")) company = JFritz.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$
+		}
+		if (name.equals(""))name = JFritz.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$
+		if (firstname.equals("") && surname.equals(""))surname = JFritz.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+		if (company.equals(""))company = JFritz.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		if (callerstr.startsWith("+49")) callerstr = "0" + callerstr.substring(3); //$NON-NLS-1$,  //$NON-NLS-2$
+		if (callerstr.startsWith("+49"))callerstr = "0" + callerstr.substring(3); //$NON-NLS-1$,  //$NON-NLS-2$
 
-        Debug.msg("Caller: " + callerstr); //$NON-NLS-1$
-        Debug.msg("Called: " + calledstr); //$NON-NLS-1$
-        Debug.msg("Name: " + name); //$NON-NLS-1$
+		Debug.msg("Caller: " + callerstr); //$NON-NLS-1$
+		Debug.msg("Called: " + calledstr); //$NON-NLS-1$
+		Debug.msg("Name: " + name); //$NON-NLS-1$
 
-        switch (Integer.parseInt(JFritz.getProperty("option.popuptype", "1"))) { //$NON-NLS-1$,  //$NON-NLS-2$
-	        case 0: { // No Popup
-	            break;
-	        }
-	        default: {
-	            String outstring = JFritz.getMessage("incoming_call") + "\n " + JFritz.getMessage("from") //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-	                    + " " + callerstr; //$NON-NLS-1$
-	            if (!name.equals(JFritz.getMessage("unknown"))) { //$NON-NLS-1$
-	                outstring = outstring + " (" + name + ")"; //$NON-NLS-1$,  //$NON-NLS-2$
-	            }
-	            if (!calledstr.equals(JFritz.getMessage("unknown"))) { //$NON-NLS-1$
-	                outstring = outstring + "\n " + JFritz.getMessage("to") + " " + calledstr; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-	            }
-	            infoMsg(outstring);
-	            break;
+		switch (Integer.parseInt(JFritz.getProperty("option.popuptype", "1"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+			case 0 : { // No Popup
+				break;
+			}
+			default : {
+				String outstring = JFritz.getMessage("incoming_call") + "\n " + JFritz.getMessage("from") //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+						+ " " + callerstr; //$NON-NLS-1$
+				if (!name.equals(JFritz.getMessage("unknown"))) { //$NON-NLS-1$
+					outstring = outstring + " (" + name + ")"; //$NON-NLS-1$,  //$NON-NLS-2$
+				}
+				if (!calledstr.equals(JFritz.getMessage("unknown"))) { //$NON-NLS-1$
+					outstring = outstring
+							+ "\n " + JFritz.getMessage("to") + " " + calledstr; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+				}
+				infoMsg(outstring);
+				break;
 
-	        }
-        }
+			}
+		}
 
-        if (JFritzUtils.parseBoolean(JFritz.getProperty("option.playSounds", //$NON-NLS-1$
-                "true"))) { //$NON-NLS-1$
-            playSound(ringSound);
-        }
+		if (JFritzUtils.parseBoolean(JFritz.getProperty("option.playSounds", //$NON-NLS-1$
+				"true"))) { //$NON-NLS-1$
+			playSound(ringSound);
+		}
 
-        if (JFritzUtils.parseBoolean(JFritz.getProperty(
-                "option.startExternProgram", "false"))) { //$NON-NLS-1$,  //$NON-NLS-2$
-            String programString = JFritzUtils.deconvertSpecialChars(JFritz.getProperty("option.externProgram", //$NON-NLS-1$
-                    "")); //$NON-NLS-1$
+		if (JFritzUtils.parseBoolean(JFritz.getProperty(
+				"option.startExternProgram", "false"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+			String programString = JFritzUtils.deconvertSpecialChars(JFritz
+					.getProperty("option.externProgram", //$NON-NLS-1$
+							"")); //$NON-NLS-1$
 
-            programString = programString.replaceAll("%Number", callerstr); //$NON-NLS-1$
-            programString = programString.replaceAll("%Name", name); //$NON-NLS-1$
-            programString = programString.replaceAll("%Called", calledstr); //$NON-NLS-1$
+			programString = programString.replaceAll("%Number", callerstr); //$NON-NLS-1$
+			programString = programString.replaceAll("%Name", name); //$NON-NLS-1$
+			programString = programString.replaceAll("%Called", calledstr); //$NON-NLS-1$
 			programString = programString.replaceAll("%Firstname", firstname); //$NON-NLS-1$
 			programString = programString.replaceAll("%Surname", surname); //$NON-NLS-1$
 			programString = programString.replaceAll("%Company", company); //$NON-NLS-1$
 
-            if (programString.indexOf("%URLENCODE") > -1) { //$NON-NLS-1$
-                try {
-                    Pattern p;
-                    p = Pattern.compile("%URLENCODE\\(([^;]*)\\);"); //$NON-NLS-1$
-                    Matcher m = p.matcher(programString);
-                    while (m.find()) {
-                        String toReplace = m.group();
-                        toReplace = toReplace.replaceAll("\\\\", "\\\\\\\\"); //$NON-NLS-1$,  //$NON-NLS-2$
-                        toReplace = toReplace.replaceAll("\\(", "\\\\("); //$NON-NLS-1$, //$NON-NLS-2$
-                        toReplace = toReplace.replaceAll("\\)", "\\\\)"); //$NON-NLS-1$, //$NON-NLS-2$
-                        String toEncode = m.group(1);
-                        programString = programString.replaceAll(toReplace,
-                                URLEncoder.encode(toEncode, "UTF-8")); //$NON-NLS-1$
-                    }
-                } catch (UnsupportedEncodingException uee) {
-                    Debug.err("JFritz.class: UnsupportedEncodingException: " //$NON-NLS-1$
-                            + uee.toString());
-                }
-            }
+			if (programString.indexOf("%URLENCODE") > -1) { //$NON-NLS-1$
+				try {
+					Pattern p;
+					p = Pattern.compile("%URLENCODE\\(([^;]*)\\);"); //$NON-NLS-1$
+					Matcher m = p.matcher(programString);
+					while (m.find()) {
+						String toReplace = m.group();
+						toReplace = toReplace.replaceAll("\\\\", "\\\\\\\\"); //$NON-NLS-1$,  //$NON-NLS-2$
+						toReplace = toReplace.replaceAll("\\(", "\\\\("); //$NON-NLS-1$, //$NON-NLS-2$
+						toReplace = toReplace.replaceAll("\\)", "\\\\)"); //$NON-NLS-1$, //$NON-NLS-2$
+						String toEncode = m.group(1);
+						programString = programString.replaceAll(toReplace,
+								URLEncoder.encode(toEncode, "UTF-8")); //$NON-NLS-1$
+					}
+				} catch (UnsupportedEncodingException uee) {
+					Debug.err("JFritz.class: UnsupportedEncodingException: " //$NON-NLS-1$
+							+ uee.toString());
+				}
+			}
 
-            if (programString.equals("")) { //$NON-NLS-1$
-                Debug
-                        .errDlg(JFritz.getMessage("no_external_program") //$NON-NLS-1$
-                                + programString);
-                return;
-            }
-            Debug.msg("Start external Program: " + programString); //$NON-NLS-1$
-            try {
-                Runtime.getRuntime().exec(programString);
-            } catch (IOException e) {
-                Debug.errDlg(JFritz.getMessage("not_external_program_start") //$NON-NLS-1$
-                        + programString);
-                Debug.err(e.toString());
-            }
-        }
+			if (programString.equals("")) { //$NON-NLS-1$
+				Debug.errDlg(JFritz.getMessage("no_external_program") //$NON-NLS-1$
+						+ programString);
+				return;
+			}
+			Debug.msg("Start external Program: " + programString); //$NON-NLS-1$
+			try {
+				Runtime.getRuntime().exec(programString);
+			} catch (IOException e) {
+				Debug.errDlg(JFritz.getMessage("not_external_program_start") //$NON-NLS-1$
+						+ programString);
+				Debug.err(e.toString());
+			}
+		}
 
-    }
+	}
 
-    /**
-     * Display call monitor message
-     *
-     * @param called
-     *            Called number
-     */
-    public void callOutMsg(String calledInput, String providerInput) {
-        Debug.msg("Called: " + calledInput); //$NON-NLS-1$
-        Debug.msg("Provider: " + providerInput); //$NON-NLS-1$
+	/**
+	 * Display call monitor message
+	 *
+	 * @param called
+	 *            Called number
+	 */
+	public void callOutMsg(String calledInput, String providerInput) {
+		Debug.msg("Called: " + calledInput); //$NON-NLS-1$
+		Debug.msg("Provider: " + providerInput); //$NON-NLS-1$
 
-        String calledstr = "", providerstr = "", name = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+		String calledstr = "", providerstr = "", name = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 		String firstname = "", surname = "", company = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 
 		calledstr = calledInput;
-        if (!calledInput.startsWith("SIP")) { //$NON-NLS-1$
-            PhoneNumber called = new PhoneNumber(calledInput, jfritz,
-            		JFritz.getProperty("option.activateDialPrefix").toLowerCase().equals("true")
-            		&& (!(providerInput.indexOf("@")>0)));
-            if (!called.getIntNumber().equals("")) //$NON-NLS-1$
+		if (!calledInput.startsWith("SIP")) { //$NON-NLS-1$
+			PhoneNumber called = new PhoneNumber(calledInput, jfritz, JFritz
+					.getProperty("option.activateDialPrefix").toLowerCase()
+					.equals("true")
+					&& (!(providerInput.indexOf("@") > 0)));
+			if (!called.getIntNumber().equals("")) //$NON-NLS-1$
 				calledstr = called.getIntNumber();
-        }
+		}
 
 		providerstr = providerInput;
-        if (providerInput.startsWith("SIP")) //$NON-NLS-1$
+		if (providerInput.startsWith("SIP")) //$NON-NLS-1$
 			providerstr = getSIPProviderTableModel().getSipProvider(
-                    providerInput, providerInput);
+					providerInput, providerInput);
 
-        name = searchNameToPhoneNumber(calledstr);
-		String [] nameArray = searchFirstAndLastNameToPhoneNumber(calledstr);
+		name = searchNameToPhoneNumber(calledstr);
+		String[] nameArray = searchFirstAndLastNameToPhoneNumber(calledstr);
 		firstname = nameArray[0];
 		surname = nameArray[1];
 		company = nameArray[2];
 
-		if (name.equals("")) name = JFritz.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$
-		if (firstname.equals("") && surname.equals("")) surname = JFritz.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-		if (company.equals("")) company = JFritz.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$
+		if (name.equals(""))name = JFritz.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$
+		if (firstname.equals("") && surname.equals(""))surname = JFritz.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+		if (company.equals(""))company = JFritz.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		if (calledstr.startsWith("+49")) calledstr = "0" + calledstr.substring(3); //$NON-NLS-1$,  //$NON-NLS-2$
+		if (calledstr.startsWith("+49"))calledstr = "0" + calledstr.substring(3); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		String outstring = JFritz.getMessage("outgoing_call")+"\n " //$NON-NLS-1$,  //$NON-NLS-2$
-		                   + JFritz.getMessage("to") +  " " + calledstr; //$NON-NLS-1$,  //$NON-NLS-2$
-		if (!name.equals(JFritz.getMessage("unknown"))) outstring += " (" + name + ")\n "; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-		else  outstring += "\n "; //$NON-NLS-1$
+		String outstring = JFritz.getMessage("outgoing_call") + "\n " //$NON-NLS-1$,  //$NON-NLS-2$
+				+ JFritz.getMessage("to") + " " + calledstr; //$NON-NLS-1$,  //$NON-NLS-2$
+		if (!name.equals(JFritz.getMessage("unknown")))outstring += " (" + name + ")\n "; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+		else
+			outstring += "\n "; //$NON-NLS-1$
 		outstring += JFritz.getMessage("through_provider") + " " + providerstr; //$NON-NLS-1$,  //$NON-NLS-2$
 
-        infoMsg(outstring);
+		infoMsg(outstring);
 
-        if (JFritzUtils.parseBoolean(JFritz.getProperty("option.playSounds", //$NON-NLS-1$
-                "true"))) { //$NON-NLS-1$
-            playSound(callSound);
-        }
+		if (JFritzUtils.parseBoolean(JFritz.getProperty("option.playSounds", //$NON-NLS-1$
+				"true"))) { //$NON-NLS-1$
+			playSound(callSound);
+		}
 
-        // z.Z. noch deaktiviert
-        if (false && JFritzUtils.parseBoolean(JFritz.getProperty(
-                "option.startExternProgram", "false"))) {  //$NON-NLS-1$,  //$NON-NLS-2$
-            String programString = JFritz.getProperty("option.externProgram", //$NON-NLS-1$
-                    ""); //$NON-NLS-1$
+		// z.Z. noch deaktiviert
+		if (false && JFritzUtils.parseBoolean(JFritz.getProperty(
+				"option.startExternProgram", "false"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+			String programString = JFritz.getProperty("option.externProgram", //$NON-NLS-1$
+					""); //$NON-NLS-1$
 
-            programString = programString.replaceAll("%Number", providerstr); //$NON-NLS-1$
-            programString = programString.replaceAll("%Name", name); //$NON-NLS-1$
-            programString = programString.replaceAll("%Called", calledstr); //$NON-NLS-1$
+			programString = programString.replaceAll("%Number", providerstr); //$NON-NLS-1$
+			programString = programString.replaceAll("%Name", name); //$NON-NLS-1$
+			programString = programString.replaceAll("%Called", calledstr); //$NON-NLS-1$
 			programString = programString.replaceAll("%Firstname", firstname); //$NON-NLS-1$
 			programString = programString.replaceAll("%Surname", surname); //$NON-NLS-1$
 			programString = programString.replaceAll("%Company", company); //$NON-NLS-1$
 
-            if (programString.indexOf("%URLENCODE") > -1) { //$NON-NLS-1$
-                try {
-                    Pattern p;
-                    p = Pattern.compile("%URLENCODE\\(([^;]*)\\);"); //$NON-NLS-1$
-                    Matcher m = p.matcher(programString);
-                    while (m.find()) {
-                        String toReplace = m.group();
-                        toReplace = toReplace.replaceAll("\\\\", "\\\\\\\\"); //$NON-NLS-1$,  //$NON-NLS-2$
-                        toReplace = toReplace.replaceAll("\\(", "\\\\("); //$NON-NLS-1$,  //$NON-NLS-2$
-                        toReplace = toReplace.replaceAll("\\)", "\\\\)"); //$NON-NLS-1$,  //$NON-NLS-2$
-                        String toEncode = m.group(1);
-                        programString = programString.replaceAll(toReplace,
-                                URLEncoder.encode(toEncode, "UTF-8")); //$NON-NLS-1$
-                    }
-                } catch (UnsupportedEncodingException uee) {
-                    Debug.err("JFritz.class: UnsupportedEncodingException: " //$NON-NLS-1$
-                            + uee.toString());
-                }
-            }
+			if (programString.indexOf("%URLENCODE") > -1) { //$NON-NLS-1$
+				try {
+					Pattern p;
+					p = Pattern.compile("%URLENCODE\\(([^;]*)\\);"); //$NON-NLS-1$
+					Matcher m = p.matcher(programString);
+					while (m.find()) {
+						String toReplace = m.group();
+						toReplace = toReplace.replaceAll("\\\\", "\\\\\\\\"); //$NON-NLS-1$,  //$NON-NLS-2$
+						toReplace = toReplace.replaceAll("\\(", "\\\\("); //$NON-NLS-1$,  //$NON-NLS-2$
+						toReplace = toReplace.replaceAll("\\)", "\\\\)"); //$NON-NLS-1$,  //$NON-NLS-2$
+						String toEncode = m.group(1);
+						programString = programString.replaceAll(toReplace,
+								URLEncoder.encode(toEncode, "UTF-8")); //$NON-NLS-1$
+					}
+				} catch (UnsupportedEncodingException uee) {
+					Debug.err("JFritz.class: UnsupportedEncodingException: " //$NON-NLS-1$
+							+ uee.toString());
+				}
+			}
 
-            if (programString.equals("")) { //$NON-NLS-1$
-                Debug
-                        .errDlg(JFritz.getMessage("no_external_program") //$NON-NLS-1$
-                                + programString);
-                return;
-            }
-            Debug.msg("Starting external Program: " + programString); //$NON-NLS-1$
-            try {
-                Runtime.getRuntime().exec(programString);
-            } catch (IOException e) {
-                Debug.errDlg(JFritz.getMessage("not_external_program_start") //$NON-NLS-1$
-                        + programString);
-                Debug.err(e.toString());
-            }
-        }
-    }
+			if (programString.equals("")) { //$NON-NLS-1$
+				Debug.errDlg(JFritz.getMessage("no_external_program") //$NON-NLS-1$
+						+ programString);
+				return;
+			}
+			Debug.msg("Starting external Program: " + programString); //$NON-NLS-1$
+			try {
+				Runtime.getRuntime().exec(programString);
+			} catch (IOException e) {
+				Debug.errDlg(JFritz.getMessage("not_external_program_start") //$NON-NLS-1$
+						+ programString);
+				Debug.err(e.toString());
+			}
+		}
+	}
 
-    /**
-     * Plays a sound by a given resource URL
-     *
-     * @param sound
-     *            URL of sound to be played
-     */
-    public static void playSound(URL sound) {
-        try {
-            AudioInputStream ais = AudioSystem.getAudioInputStream(sound);
-            DataLine.Info info = new DataLine.Info(Clip.class, ais.getFormat(),
-                    ((int) ais.getFrameLength() * ais.getFormat()
-                            .getFrameSize()));
-            Clip clip = (Clip) AudioSystem.getLine(info);
-            clip.open(ais);
-            clip.start();
-            while (true) {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e1) {
-                }
-                if (!clip.isRunning()) {
-                    break;
-                }
-            }
-            clip.stop();
-            clip.close();
-        } catch (UnsupportedAudioFileException e) {
-        } catch (IOException e) {
-        } catch (LineUnavailableException e) {
-        }
-    }
+	/**
+	 * Plays a sound by a given resource URL
+	 *
+	 * @param sound
+	 *            URL of sound to be played
+	 */
+	public static void playSound(URL sound) {
+		try {
+			AudioInputStream ais = AudioSystem.getAudioInputStream(sound);
+			DataLine.Info info = new DataLine.Info(Clip.class, ais.getFormat(),
+					((int) ais.getFrameLength() * ais.getFormat()
+							.getFrameSize()));
+			Clip clip = (Clip) AudioSystem.getLine(info);
+			clip.open(ais);
+			clip.start();
+			while (true) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e1) {
+				}
+				if (!clip.isRunning()) {
+					break;
+				}
+			}
+			clip.stop();
+			clip.close();
+		} catch (UnsupportedAudioFileException e) {
+		} catch (IOException e) {
+		} catch (LineUnavailableException e) {
+		}
+	}
 
-    /**
-     * Displays balloon error message
-     *
-     * @param msg
-     */
-    public void errorMsg(String msg) {
-        Debug.err(msg);
-        if (SYSTRAY_SUPPORT) {
-            trayIcon.displayMessage(JFritz.PROGRAM_NAME, msg,
-                    TrayIcon.ERROR_MESSAGE_TYPE);
-        }
-    }
+	/**
+	 * Displays balloon error message
+	 *
+	 * @param msg
+	 */
+	public void errorMsg(String msg) {
+		Debug.err(msg);
+		if (SYSTRAY_SUPPORT) {
+			trayIcon.displayMessage(JFritz.PROGRAM_NAME, msg,
+					TrayIcon.ERROR_MESSAGE_TYPE);
+		}
+	}
 
-    /**
-     * @return Returns the callerlist.
-     */
-    public final CallerList getCallerlist() {
-        return callerlist;
-    }
+	/**
+	 * @return Returns the callerlist.
+	 */
+	public final CallerList getCallerlist() {
+		return callerlist;
+	}
 
-    /**
-     * @return Returns the phonebook.
-     */
-    public final PhoneBook getPhonebook() {
-        return phonebook;
-    }
+	/**
+	 * @return Returns the phonebook.
+	 */
+	public final PhoneBook getPhonebook() {
+		return phonebook;
+	}
 
-    /**
-     * @return Returns the jframe.
-     */
-    public final JFritzWindow getJframe() {
-        return jframe;
-    }
+	/**
+	 * @return Returns the jframe.
+	 */
+	public final JFritzWindow getJframe() {
+		return jframe;
+	}
 
-    /**
-     * @return Returns the fritzbox devices.
-     */
-    public final Vector getDevices() {
-        if (JFritzUtils.parseBoolean(JFritz.getProperty("option.useSSDP", //$NON-NLS-1$
-                "true"))) { //$NON-NLS-1$
-            try {
-                ssdpthread.join();
-            } catch (InterruptedException e) {
-            }
-            return ssdpthread.getDevices();
-        } else
-            return null;
-    }
+	/**
+	 * @return Returns the fritzbox devices.
+	 */
+	public final Vector getDevices() {
+		if (JFritzUtils.parseBoolean(JFritz.getProperty("option.useSSDP", //$NON-NLS-1$
+				"true"))) { //$NON-NLS-1$
+			try {
+				ssdpthread.join();
+			} catch (InterruptedException e) {
+			}
+			return ssdpthread.getDevices();
+		} else
+			return null;
+	}
 
-    /**
-     * @return Returns an internationalized message.
-     * Last modified: 26.04.06 by Bastian
-     */
-    public static String getMessage(String msg) {
-        String i18n = ""; //$NON-NLS-1$
-        try {
-        	if(!messages.getString(msg).equals("")){
-        		i18n = messages.getString(msg);
-            	}else{
-            		i18n = msg;
-            	}
-        } catch (MissingResourceException e) {
-            Debug.err("Can't find resource string for " + msg); //$NON-NLS-1$
-            i18n = msg;
-        }
-        return i18n;
-    }
+	/**
+	 * @return Returns an internationalized message. Last modified: 26.04.06 by
+	 *         Bastian
+	 */
+	public static String getMessage(String msg) {
+		String i18n = ""; //$NON-NLS-1$
+		try {
+			if (!messages.getString(msg).equals("")) {
+				i18n = messages.getString(msg);
+			} else {
+				i18n = msg;
+			}
+		} catch (MissingResourceException e) {
+			Debug.err("Can't find resource string for " + msg); //$NON-NLS-1$
+			i18n = msg;
+		}
+		return i18n;
+	}
 
-    /**
-     * @return Returns the meanings of a locale abbreviation.
-     */
-    public static String getLocaleMeaning(String msg) {
-        String localeMeaning = ""; //$NON-NLS-1$
-        try {
-        	if(!localeMeanings.getString(msg).equals("")){
-        	localeMeaning = localeMeanings.getString(msg);
-        	}else{
-        		localeMeaning = msg;
-        	}
-        } catch (MissingResourceException e) {
-            Debug.err("Can't find resource string for " + msg); //$NON-NLS-1$
-            localeMeaning = msg;
-        } catch (NullPointerException e){
-            Debug.err("Can't find locale Meanings file"); //$NON-NLS-1$
-            localeMeaning = msg;
-        }
-        return localeMeaning;
-    }
+	/**
+	 * @return Returns the meanings of a locale abbreviation.
+	 */
+	public static String getLocaleMeaning(String msg) {
+		String localeMeaning = ""; //$NON-NLS-1$
+		try {
+			if (!localeMeanings.getString(msg).equals("")) {
+				localeMeaning = localeMeanings.getString(msg);
+			} else {
+				localeMeaning = msg;
+			}
+		} catch (MissingResourceException e) {
+			Debug.err("Can't find resource string for " + msg); //$NON-NLS-1$
+			localeMeaning = msg;
+		} catch (NullPointerException e) {
+			Debug.err("Can't find locale Meanings file"); //$NON-NLS-1$
+			localeMeaning = msg;
+		}
+		return localeMeaning;
+	}
 
-    /**
-     *
-     * @param property
-     *            Property to get the value from
-     * @param defaultValue
-     *            Default value to be returned if property does not exist
-     * @return Returns value of a specific property
-     */
-    public static String getProperty(String property, String defaultValue) {
-        return properties.getProperty(property, defaultValue);
-    }
+	/**
+	 *
+	 * @param property
+	 *            Property to get the value from
+	 * @param defaultValue
+	 *            Default value to be returned if property does not exist
+	 * @return Returns value of a specific property
+	 */
+	public static String getProperty(String property, String defaultValue) {
+		return properties.getProperty(property, defaultValue);
+	}
 
-    /**
-     *
-     * @param property
-     *            Property to get the value from
-     * @return Returns value of a specific property
-     */
-    public static String getProperty(String property) {
-        return getProperty(property, ""); //$NON-NLS-1$
-    }
+	/**
+	 *
+	 * @param property
+	 *            Property to get the value from
+	 * @return Returns value of a specific property
+	 */
+	public static String getProperty(String property) {
+		return getProperty(property, ""); //$NON-NLS-1$
+	}
 
+	/**
+	 * Sets a property to a specific value
+	 *
+	 * @param property
+	 *            Property to be set
+	 * @param value
+	 *            Value of property
+	 */
+	public static void setProperty(String property, String value) {
+		properties.setProperty(property, value);
+	}
 
-    /**
-     * Sets a property to a specific value
-     *
-     * @param property
-     *            Property to be set
-     * @param value
-     *            Value of property
-     */
-    public static void setProperty(String property, String value) {
-        properties.setProperty(property, value);
-    }
+	/**
+	 * Removes a property
+	 *
+	 * @param property
+	 *            Property to be removed
+	 */
+	public static void removeProperty(String property) {
+		properties.remove(property);
+	}
 
-    /**
-     * Removes a property
-     *
-     * @param property
-     *            Property to be removed
-     */
-    public static void removeProperty(String property) {
-        properties.remove(property);
-    }
+	public void stopCallMonitor() {
+		if (callMonitor != null) {
+			callMonitor.stopCallMonitor();
+			// Let buttons enable start of callMonitor
+			getJframe().setCallMonitorButtons(CALLMONITOR_START);
+			callMonitor = null;
+		}
+	}
 
-    public void stopCallMonitor() {
-        if (callMonitor != null) {
-            callMonitor.stopCallMonitor();
-            // Let buttons enable start of callMonitor
-            getJframe().setCallMonitorButtons(CALLMONITOR_START);
-            callMonitor = null;
-        }
-    }
+	public CallMonitor getCallMonitor() {
+		return callMonitor;
+	}
 
-    public CallMonitor getCallMonitor() {
-        return callMonitor;
-    }
+	public void setCallMonitor(CallMonitor cm) {
+		callMonitor = cm;
+	}
 
-    public void setCallMonitor(CallMonitor cm) {
-        callMonitor = cm;
-    }
+	public static String runsOn() {
+		return HostOS;
+	}
 
-    public static String runsOn() {
-        return HostOS;
-    }
+	public void hideShowJFritz() {
+		if (jframe.isVisible()) {
+			Debug.msg("Hide JFritz-Window"); //$NON-NLS-1$
+			jframe.setState(JFrame.ICONIFIED);
+			jframe.setVisible(false);
+		} else {
+			Debug.msg("Show JFritz-Window"); //$NON-NLS-1$
+			jframe.setState(JFrame.NORMAL);
+			jframe.setVisible(true);
+			jframe.toFront();
+		}
+	}
 
-    public void hideShowJFritz() {
-        if (jframe.isVisible()) {
-            Debug.msg("Hide JFritz-Window"); //$NON-NLS-1$
-            jframe.setState(JFrame.ICONIFIED);
-            jframe.setVisible(false);
-        } else {
-            Debug.msg("Show JFritz-Window"); //$NON-NLS-1$
-            jframe.setState(JFrame.NORMAL);
-            jframe.setVisible(true);
-            jframe.toFront();
-        }
-    }
+	public SipProviderTableModel getSIPProviderTableModel() {
+		return sipprovider;
+	}
 
-    public SipProviderTableModel getSIPProviderTableModel() {
-        return sipprovider;
-    }
+	/**
+	 * start timer for watchdog
+	 *
+	 */
+	private void startWatchdog() {
+		Timer timer = new Timer();
+		watchdog = new WatchdogThread(jfritz, 1);
+		timer.schedule(new TimerTask() {
+			public void run() {
+				watchdog.run();
+			}
+		}, 5000, 1 * 60000);
+		Debug.msg("Watchdog enabled"); //$NON-NLS-1$
+	}
 
-    /**
-     * start timer for watchdog
-     *
-     */
-    private void startWatchdog() {
-            Timer timer = new Timer();
-            watchdog = new WatchdogThread(jfritz, 1);
-            timer.schedule(new TimerTask() {
-                        public void run() {
-                            watchdog.run();
-                        }
-                    }, 5000, 1*60000);
-            Debug.msg("Watchdog enabled"); //$NON-NLS-1$
-    }
+	private static void doBackup() {
+		CopyFile backup = new CopyFile();
+		backup.copy(".", "xml"); //$NON-NLS-1$,  //$NON-NLS-2$
+	}
 
-    private static void doBackup() {
-        CopyFile backup = new CopyFile();
-        backup.copy(".","xml"); //$NON-NLS-1$,  //$NON-NLS-2$
-    }
+	/**
+	 * @Brian Jensen This function changes the state of the ResourceBundle
+	 *        object currently available locales: see lang subdirectory Then it
+	 *        destroys the old window and redraws a new one with new locale
+	 *
+	 * @param l
+	 *            the locale to change the language to
+	 */
+	public void createNewWindow(Locale l) {
+		locale = l;
 
-    /**
-     * @Brian Jensen
-     * This function changes the state of the ResourceBundle object
-     * currently available locales: see lang subdirectory
-     * Then it destroys the old window and redraws a new one with new locale
-     *
-     * @param l the locale to change the language to
-     */
-    public void createNewWindow(Locale l){
-    	locale = l;
+		Debug.msg("Loading new locale"); //$NON-NLS-1$
+		loadMessages(locale);
 
-    	Debug.msg("Loading new locale"); //$NON-NLS-1$
-    	loadMessages(locale);
+		refreshWindow();
 
-    	refreshWindow();
+	}
 
-    }
+	/**
+	 * @ Bastian Schaefer
+	 *
+	 * Destroys and repaints the Main Frame.
+	 *
+	 */
 
-    /**
-     * @ Bastian Schaefer
-     *
-     *	Destroys and repaints the Main Frame.
-     *
-     */
+	public void refreshWindow() {
+		jfritz.saveProperties();
+		jframe.dispose();
+		javax.swing.SwingUtilities.invokeLater(jframe);
+		jframe = new JFritzWindow(this);
+		javax.swing.SwingUtilities.invokeLater(jframe);
+		jframe.checkOptions();
+		javax.swing.SwingUtilities.invokeLater(jframe);
+		jframe.setVisible(true);
 
-    public void refreshWindow(){
-    	jfritz.saveProperties();
-    	jframe.dispose();
-    	javax.swing.SwingUtilities.invokeLater(jframe);
-    	jframe = new JFritzWindow(this);
-    	javax.swing.SwingUtilities.invokeLater(jframe);
-    	jframe.checkOptions();
-    	javax.swing.SwingUtilities.invokeLater(jframe);
-    	jframe.setVisible(true);
+	}
 
-    }
+	/**
+	 * Deletes actual systemtray and creates a new one.
+	 *
+	 * @author Benjamin Schmitt
+	 */
+	public void refreshTrayMenu() {
+		if (systray != null && trayIcon != null) {
+			systray.removeTrayIcon(trayIcon);
+			this.createTrayMenu();
+		}
+	}
 
-    /**
-     *	Deletes actual systemtray and creates a new one.
-     * @author Benjamin Schmitt
-     */
-    public void refreshTrayMenu()
-    {
-    	if (systray!=null && trayIcon!=null)
-    	{
-    		systray.removeTrayIcon(trayIcon);
-    		this.createTrayMenu();
-    	}
-    }
+	/**
+	 * Returns reference on current FritzBox-class
+	 *
+	 * @return
+	 */
+	public FritzBox getFritzBox() {
+		return fritzBox;
+	}
 
-    /**
-     * Returns reference on current FritzBox-class
-     * @return
-     */
-    public FritzBox getFritzBox() {
-    	return fritzBox;
-    }
+	/**
+	 * @author Brian Jensen This creates and then display the config wizard
+	 *
+	 */
+	public void showConfigWizard() {
+		ConfigWizard wizard = new ConfigWizard(jfritz, jframe);
+		wizard.showWizard();
 
-    /**
-     * @author Brian Jensen
-     * This creates and then display the config wizard
-     *
-     */
-    public void showConfigWizard(){
-    	ConfigWizard wizard = new ConfigWizard(jfritz, jframe);
-    	wizard.showWizard();
+	}
 
-    }
+	/**
+	 * Funktion reads the user specified save location from a simple text file
+	 * If any error occurs the function bails out and uses the current directory
+	 * as the save dir, as the functionality was in JFritz < 0.6.0
+	 *
+	 * @author Brian Jensen
+	 *
+	 */
+	public static void loadSaveDir() {
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(USER_DIR
+					+ File.separator + USER_JFRITZ_FILE));
+			String[] entries = br.readLine().split("=");
+			if (!entries[1].equals("")) {
+				SAVE_DIR = entries[1];
+				File file = new File(SAVE_DIR);
+				if (!file.isDirectory())
+					SAVE_DIR = System.getProperty("user.dir") + File.separator;
+				else if (!SAVE_DIR.endsWith(File.separator))
+					SAVE_DIR = SAVE_DIR + File.separator;
+			}
 
-    /**
-     * Funktion reads the user specified save location from a simple text file
-     * If any error occurs the function bails out and uses the current directory
-     * as the save dir, as the functionality was in JFritz < 0.6.0
-     *
-     * @author Brian Jensen
-     *
-     */
-    public static void loadSaveDir(){
-        try{
-        	BufferedReader br = new BufferedReader(new FileReader(
-        	        USER_DIR + File.separator + USER_JFRITZ_FILE));
-        	String[] entries = br.readLine().split("=");
-        	if(!entries[1].equals("")){
-        		SAVE_DIR = entries[1];
-        		File file = new File(SAVE_DIR);
-        		if(!file.isDirectory())
-        			SAVE_DIR = System.getProperty("user.dir") + File.separator;
-        		else if(!SAVE_DIR.endsWith(File.separator))
-        			SAVE_DIR = SAVE_DIR + File.separator;
-        	}
+		} catch (Exception e) {
+			Debug
+					.msg("Error processing the user save location, using defaults");
+			// If something happens, just bail out and use the standard dir
+		}
+	}
 
-        }catch(Exception e){
-        	Debug.msg("Error processing the user save location, using defaults");
-        	//If something happens, just bail out and use the standard dir
-        }
-    }
+	/**
+	 * This function writes a file $HOME/.jfritz/jfritz.txt, which contains the
+	 * location of the folder containing jfritz's data If the dir $HOME/.jfritz
+	 * does not exist, it is created if the save location isnt a directory, then
+	 * the default save directory is used
+	 *
+	 * @author Brian Jensen
+	 *
+	 */
+	public void writeSaveDir() {
+		try {
 
-    /**
-     * This function writes a file $HOME/.jfritz/jfritz.txt, which contains the
-     * location of the folder containing jfritz's data
-     * If the dir $HOME/.jfritz does not exist, it is created
-     * if the save location isnt a directory, then the default save directory is used
-     *
-     * @author Brian Jensen
-     *
-     */
-    public void writeSaveDir(){
-    	try{
+			// if $HOME/.jfritz doesn't exist create it
+			File file = new File(USER_DIR);
+			if (!file.isDirectory() && !file.isFile())
+				file.mkdir();
 
-    		//if $HOME/.jfritz doesn't exist create it
-    		File file = new File(USER_DIR);
-    		if(!file.isDirectory() && !file.isFile())
-    			file.mkdir();
+			BufferedWriter bw = new BufferedWriter(new FileWriter(USER_DIR
+					+ File.separator + USER_JFRITZ_FILE, false));
 
-    		BufferedWriter bw = new BufferedWriter(new FileWriter(
-    				USER_DIR + File.separator + USER_JFRITZ_FILE, false));
+			// make sure the user didn't screw something up
+			if (!SAVE_DIR.endsWith(File.separator))
+				SAVE_DIR = SAVE_DIR + File.separator;
 
-    		//make sure the user didn't screw something up
-    		if(!SAVE_DIR.endsWith(File.separator))
-    			SAVE_DIR = SAVE_DIR + File.separator;
+			file = new File(SAVE_DIR);
+			if (!file.isDirectory())
+				SAVE_DIR = System.getProperty("user.dir") + File.separator;
 
-    		file = new File(SAVE_DIR);
-    		if(!file.isDirectory())
-        		SAVE_DIR = System.getProperty("user.dir") + File.separator;
+			bw.write(SAVE_DIR_TEXT + SAVE_DIR);
+			bw.newLine();
+			bw.close();
+			Debug.msg("Successfully wrote save dir to disk");
 
-    		bw.write(SAVE_DIR_TEXT + SAVE_DIR);
-    		bw.newLine();
-    		bw.close();
-    		Debug.msg("Successfully wrote save dir to disk");
+		} catch (Exception e) {
+			Debug
+					.err("Error writing save dir to disk, reverting back to default save dir");
+			SAVE_DIR = System.getProperty("user.dir") + File.separator;
+			// if there was an error, bail out and revert to the default save
+			// location
+		}
+	}
 
-    	}catch(Exception e){
-    		Debug.err("Error writing save dir to disk, reverting back to default save dir");
-    		SAVE_DIR = System.getProperty("user.dir") + File.separator;
-    		//if there was an error, bail out and revert to the default save location
-    	}
-    }
+	private void reverseLookup() {
+		Debug.msg("Doing reverse Lookup");
+		int j = 0;
+		for (int i = 0; i < getCallerlist().getRowCount(); i++) {
+			Vector data = getCallerlist().getFilteredCallVector();
+			Call call = (Call) data.get(i);
+			PhoneNumber number = call.getPhoneNumber();
+			if (number != null && (call.getPerson() == null)) {
+				j++;
 
-    private void reverseLookup(){
-    	Debug.msg("Doing reverse Lookup");
-    	int j = 0;
-    	for (int i = 0; i < getCallerlist()
-				.getRowCount(); i++) {
-    		Vector data = getCallerlist()
-				.getFilteredCallVector();
-    		Call call = (Call) data.get(i);
-    		PhoneNumber number = call.getPhoneNumber();
-    		if (number != null && (call.getPerson() == null)) {
-    			j++;
+				Debug.msg("Reverse lookup for " //$NON-NLS-1$
+						+ number.getIntNumber());
 
-    			Debug.msg("Reverse lookup for " //$NON-NLS-1$
-    					+ number.getIntNumber());
+				Person newPerson = ReverseLookup.lookup(number);
+				if (newPerson != null) {
+					getPhonebook().addEntry(newPerson);
+					getPhonebook().fireTableDataChanged();
+					getCallerlist().fireTableDataChanged();
+				}
 
-    			Person newPerson = ReverseLookup.lookup(number);
-    			if (newPerson != null) {
-    				getPhonebook().addEntry(newPerson);
-    				getPhonebook().fireTableDataChanged();
-    				getCallerlist().fireTableDataChanged();
-    			}
+			}
+		}
 
-    		}
-    	}
+		if (j > 0)
+			getPhonebook().saveToXMLFile(
+					JFritz.SAVE_DIR + JFritz.PHONEBOOK_FILE);
 
-
-    	if (j > 0)
-    		getPhonebook().saveToXMLFile(JFritz.SAVE_DIR + JFritz.PHONEBOOK_FILE);
-
-    }
+	}
 }
-

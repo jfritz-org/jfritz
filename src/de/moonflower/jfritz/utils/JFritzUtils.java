@@ -15,8 +15,8 @@ import java.net.URLConnection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
-import de.moonflower.jfritz.utils.HTMLUtil;
 
 /**
  * Static class for data retrieval from the fritz box
@@ -30,6 +30,7 @@ public class JFritzUtils {
     public static final String FILESEP = System.getProperty("file.separator");			//$NON-NLS-1$
     public static final String PATHSEP = System.getProperty("path.separator");			//$NON-NLS-1$
 	public static final String binID = FILESEP + "jfritz.jar";								//$NON-NLS-1$
+	public static final String versionFile = "http://www.blubb.txt";
 
 	/**
 	 * This constant can be used to search for the lang-directory.
@@ -221,6 +222,12 @@ public class JFritzUtils {
 		return langDir;
 	}
 
+	/*
+	 * This function capitalizes Strings
+	 * example:
+	 * hello, this is a test.
+	 * ->Hello, This IS A Test.
+	 */
     public static String capitalize( String str ) {
      StringBuffer strBuf = new StringBuffer();
      char ch;       // One of the characters in str.
@@ -237,5 +244,79 @@ public class JFritzUtils {
      }
      return strBuf.toString();
   }
+
+   public static boolean checkForNewVersion(){
+		URL url = null;
+		String data = ""; //$NON-NLS-1$
+
+		String urlstr = "http://www.jfritz.org/update/current.txt "; //$NON-NLS-1$
+		try {
+			url = new URL(urlstr);
+			if (url != null) {
+
+				URLConnection con;
+				try {
+					con = url.openConnection();
+
+					String header = ""; //$NON-NLS-1$
+					String charSet = ""; //$NON-NLS-1$
+					for (int i = 0;; i++) {
+						String headerName = con.getHeaderFieldKey(i);
+						String headerValue = con.getHeaderField(i);
+
+						if (headerName == null && headerValue == null) {
+							// No more headers
+							break;
+						}
+						if ("content-type".equalsIgnoreCase(headerName)) { //$NON-NLS-1$
+							String[] split = headerValue.split(" ", 2); //$NON-NLS-1$
+							for (int j = 0; j < split.length; j++) {
+								split[j] = split[j].replaceAll(";", ""); //$NON-NLS-1$,  //$NON-NLS-2$
+								if (split[j].toLowerCase().startsWith(
+										"charset=")) { //$NON-NLS-1$
+									String[] charsetSplit = split[j].split("="); //$NON-NLS-1$
+									charSet = charsetSplit[1];
+								}
+							}
+						}
+						header += headerName + ": " + headerValue + " | "; //$NON-NLS-1$,  //$NON-NLS-2$
+					}
+					Debug.msg("Header of Version file: " + header); //$NON-NLS-1$
+					Debug.msg("CHARSET : " + charSet); //$NON-NLS-1$
+
+					// Get used Charset
+					BufferedReader d;
+					if (charSet.equals("")) { //$NON-NLS-1$
+						d = new BufferedReader(new InputStreamReader(con
+								.getInputStream(), "ISO-8859-1")); //$NON-NLS-1$
+					} else {
+						d = new BufferedReader(new InputStreamReader(con
+								.getInputStream(), charSet));
+					}
+					int i = 0;
+					String str = ""; //$NON-NLS-1$
+
+					// Get response data
+					while ((i < 700) && (null != ((str = d.readLine())))) {
+						data += str;
+						i++;
+					}
+					d.close();
+					Debug.msg("Begin processing Version File");
+
+					if(Integer.valueOf(data.replaceAll("\\.","")).compareTo(Integer.valueOf(JFritz.PROGRAM_VERSION.replaceAll("\\.",""))) > 0){
+						return true;
+					}
+
+				} catch (IOException e1) {
+					Debug.err("Error while retrieving " + urlstr); //$NON-NLS-1$
+				}
+			}
+		} catch (MalformedURLException e) {
+			Debug.err("URL invalid: " + urlstr); //$NON-NLS-1$
+		}
+		return false;
+
+   }
 
 }
