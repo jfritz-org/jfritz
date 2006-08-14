@@ -221,4 +221,21 @@ public class JFritzUtils {
 		return langDir;
 	}
 
+    public static String capitalize( String str ) {
+     StringBuffer strBuf = new StringBuffer();
+     char ch;       // One of the characters in str.
+     char prevCh;   // The character that comes before ch in the string.
+     int i;         // A position in str, from 0 to str.length()-1.
+     prevCh = '.';  // Prime the loop with any non-letter character.
+     for ( i = 0;  i < str.length();  i++ ) {
+        ch = str.charAt(i);
+        if ( Character.isLetter(ch)  &&  ! Character.isLetter(prevCh) )
+        	strBuf.append( Character.toUpperCase(ch) );
+        else
+        	strBuf.append(ch);
+        prevCh = ch;  // prevCh for next iteration is ch.
+     }
+     return strBuf.toString();
+  }
+
 }

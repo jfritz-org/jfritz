@@ -6,9 +6,11 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
@@ -135,11 +137,11 @@ public final class ReverseLookupFrance {
 					//parse Street, zip code and city
 					Matcher mAddress = pAddress.matcher(data);
 					if(mAddress.find()){
-						street = mAddress.group(1).trim();
+						street = JFritzUtils.capitalize(mAddress.group(1).trim().toLowerCase());
 						Debug.msg("Street: "+street);
 						zipCode  = mAddress.group(2).trim().split("\\s",2)[0];
 						Debug.msg("Zip Code: "+ zipCode);
-						city = mAddress.group(2).trim().split("\\s",2)[1];
+						city = JFritzUtils.capitalize(mAddress.group(2).trim().split("\\s",2)[1].toLowerCase());
 						Debug.msg("City: "+city);
 					}
 
