@@ -33,9 +33,6 @@ public class ConfigPanelLang extends JPanel{
 
     public JComboBox languageCombo;
 
-    static final String FILESEP = System.getProperty("file.separator");
-    final String langID = FILESEP + "lang";
-
     public ConfigPanelLang(){
 
     	JPanel localePane = new JPanel();
@@ -53,7 +50,7 @@ public class ConfigPanelLang extends JPanel{
 		localePane.add(label, c);
 
 
-		String lang = JFritzUtils.getFullPath(langID);
+		String lang = JFritzUtils.getFullPath(JFritzUtils.langID);
 		File file = new File(lang);
 		FilenameFilter props = new StartEndFilenameFilter("jfritz","properties");//$NON-NLS-1$,  //$NON-NLS-2$
 		String[] list = file.list(props);
@@ -64,11 +61,11 @@ public class ConfigPanelLang extends JPanel{
 		for (int i = 0; i < list.length; i++) {
 			localeList[i] = list[i].substring(list[i].indexOf("_") + 1,list[i].indexOf("."));//$NON-NLS-1$,  //$NON-NLS-2$
 			String imagePath =
-			     lang + FILESEP + "flags" + FILESEP +						//$NON-NLS-1$,  //$NON-NLS-2$
+			     lang + JFritzUtils.FILESEP + "flags" + JFritzUtils.FILESEP +	//$NON-NLS-1$,  //$NON-NLS-2$
 			     localeList[i].substring(localeList[i].indexOf("_")+1,
-			         localeList[i].length()).toLowerCase() + ".gif";		//$NON-NLS-1$
-			Debug.msg("Found resources for locale '" + localeList[i] +		//$NON-NLS-1$
-			     "', loading flag image '" + imagePath + "'");				//$NON-NLS-1$,  //$NON-NLS-2$
+			         localeList[i].length()).toLowerCase() + ".gif";			//$NON-NLS-1$
+			Debug.msg("Found resources for locale '" + localeList[i] +			//$NON-NLS-1$
+			     "', loading flag image '" + imagePath + "'");					//$NON-NLS-1$,  //$NON-NLS-2$
 			images[i] = new ImageIcon(imagePath);
 			images[i].setDescription(JFritz.getLocaleMeaning(localeList[i]));
 		}
@@ -86,6 +83,6 @@ public class ConfigPanelLang extends JPanel{
 
 		add(localePane);
 
-	    }
+	}
 
 }

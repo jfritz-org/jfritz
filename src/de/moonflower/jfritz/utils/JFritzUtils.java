@@ -27,10 +27,15 @@ import de.moonflower.jfritz.utils.HTMLUtil;
  */
 public class JFritzUtils {
 
-    static final String FILESEP = System.getProperty("file.separator");			//$NON-NLS-1$
-    static final String PATHSEP = System.getProperty("path.separator");			//$NON-NLS-1$
-	static final String binID = FILESEP + "jfritz.jar";								//$NON-NLS-1$
+    public static final String FILESEP = System.getProperty("file.separator");			//$NON-NLS-1$
+    public static final String PATHSEP = System.getProperty("path.separator");			//$NON-NLS-1$
+	public static final String binID = FILESEP + "jfritz.jar";								//$NON-NLS-1$
 
+	/**
+	 * This constant can be used to search for the lang-directory.
+	 * @see #getFullPath(String)
+	 */
+    public static final String langID = FILESEP + "lang";
 
 	/**
 	 * fetches html data from url using POST requests
@@ -169,12 +174,23 @@ public class JFritzUtils {
 	}
 
 	/**
-	 * This function searches through the class path for the given subdirectory
-	 * and if it is not found then the full path to the jfritz binary is generated
-	 * This function assumes jfritz.jar and the subdirectory and in the same dir
+	 * This function tries to guess the full path for the given subdirectory.<br />
 	 *
-	 * @param subDir the subdirectory in the jfritz.jar dir
-	 * @return full path or the classpath entry to the subdirectory
+	 * <ol>
+	 * <li>It searches for the directory in the class path.</li>
+	 * <li>If it does not find it there, it assumes that jfritz.jar and
+	 *     the subdirectory are in the same dir.</li>
+	 * <li>If for some reason it fails to generate the full path to the
+	 *     jfritz binary, it assumes that the subdirectory is in the
+	 *     current working directory.</li>
+	 * </ol>
+	 *
+	 * @param subDir the subdirectory to search for.
+	 *               The directory must start with are leading file separator and
+	 *               must not end with a file separator (e.g. "/lang" for Linux)
+	 *               It's best to use the predefined constants of this class.
+	 * @return the full path to the subdirectory
+	 * @see #langID
 	 */
 	public static String getFullPath(String subDir){
 
@@ -195,14 +211,12 @@ public class JFritzUtils {
 		}
 
 		if (langDir == null) {
-			langDir = (binDir != null) ? binDir + subDir : userDir + FILESEP + subDir;
+			langDir = (binDir != null) ? binDir + subDir : userDir + subDir;
 		}
 
 		Debug.msg("full path: " + langDir);											//$NON-NLS-1$
 
 		return langDir;
 	}
-
-
 
 }
