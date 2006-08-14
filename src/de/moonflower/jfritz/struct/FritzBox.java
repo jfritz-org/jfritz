@@ -456,7 +456,7 @@ public class FritzBox {
 
 				// pass it on to the import function
 
-				Debug.msg("Recieved response, begin processin call list");
+				Debug.msg("Received response, begin processing call list");
 				newEntries = jfritz.getCallerlist().importFromCSVFile(reader);
 				Debug.msg("Finished processing response");
 
