@@ -174,7 +174,8 @@ public class JFritzUtils {
 	}
 
 	/**
-	 * This function tries to guess the full path for the given subdirectory.<br />
+	 * This function tries to guess the full path for the given
+	 * subdirectory.<br />
 	 *
 	 * <ol>
 	 * <li>It searches for the directory in the class path.</li>
@@ -186,8 +187,9 @@ public class JFritzUtils {
 	 * </ol>
 	 *
 	 * @param subDir the subdirectory to search for.
-	 *               The directory must start with are leading file separator and
-	 *               must not end with a file separator (e.g. "/lang" for Linux)
+	 *               The directory must start with a leading file separator
+	 *               and must not end with a file separator (e.g. "/lang"
+	 *               for Linux).
 	 *               It's best to use the predefined constants of this class.
 	 * @return the full path to the subdirectory
 	 * @see #langID
