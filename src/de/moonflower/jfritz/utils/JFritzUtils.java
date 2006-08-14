@@ -249,7 +249,7 @@ public class JFritzUtils {
 		URL url = null;
 		String data = ""; //$NON-NLS-1$
 
-		String urlstr = "http://www.jfritz.org/update/current.txt "; //$NON-NLS-1$
+		String urlstr = "http://www.jfritz.org/update/current.txt"; //$NON-NLS-1$
 		try {
 			url = new URL(urlstr);
 			if (url != null) {
