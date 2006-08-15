@@ -71,6 +71,7 @@
  *		popup_delay
  *      dial_prefix
  *
+ * - Neu: Meldung bei neuer JFritz-Version
  * - Neu: Flaggen werden bei bekannten Ländervorwählen angezeigt anstelle vom Weltkugel, für bekannte Länder siehe PhoneNumber.java
  * _ Bugfix: SIP-Routen behalten ihre historische Zuordnung
  * - Neu: Neuer Kommandozeilenparameter: -r, führt eine Rückwärtssuche aus und beendet sich
@@ -484,7 +485,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.295 2006/08/15 00:09:47 baefer Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.296 2006/08/15 00:12:33 baefer Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
