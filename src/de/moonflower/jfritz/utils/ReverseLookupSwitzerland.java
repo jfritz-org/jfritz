@@ -109,14 +109,19 @@ public final class ReverseLookupSwitzerland {
 					Debug.msg("Begin processing responce from tel.search.ch");
 
 					Pattern pName = Pattern
-							.compile("<div class=\"rname\"><a[^>]*>([^<]*)</a></div>"); //$NON-NLS-1$
+							.compile("<div class=\"rname\">(\\s*<h4>)?<a[^>]*>([^<]*)</a>(</h4>)?"); //$NON-NLS-1$
 					Pattern pAddress = Pattern
 						.compile("<div class=\"raddr\">([^<,]*),\\s*([0-9]*)([^<]*)</div>"); //$NON-NLS-1$
 
 					//parse Name
 					Matcher mName = pName.matcher(data);
 					if (mName.find()) {
-						String[] results = mName.group(1).trim().split(",");
+						String[] results;
+
+						if(mName.group(1).indexOf("<h4>") > 0)
+							results = mName.group(2).trim().split(",");
+						else
+							results = mName.group(1).trim().split(",");
 
 						lastname = results[0];
 						Debug.msg("Last name: " + lastname);
