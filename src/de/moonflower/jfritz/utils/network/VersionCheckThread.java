@@ -25,9 +25,11 @@ import de.moonflower.jfritz.utils.Debug;
 public class VersionCheckThread implements Runnable {
 
 	private JFritz jfritz;
+	boolean informNoNewVersion;
 
-	public VersionCheckThread(JFritz jf){
+	public VersionCheckThread(JFritz jf, boolean informNoNewVersion){
 		jfritz = jf;
+		this.informNoNewVersion = informNoNewVersion;
 	}
 
 	public void run(){
@@ -43,6 +45,8 @@ public class VersionCheckThread implements Runnable {
 				options[0]); // default button title
 			if (ok == JOptionPane.YES_OPTION)
 			BrowserLaunch.openURL(JFritz.PROGRAM_URL + "#download");
+		}else if(informNoNewVersion == true){
+			JOptionPane.showMessageDialog(jfritz.getJframe(),JFritz.getMessage("no_new_version_found"),"JFritz",JOptionPane.INFORMATION_MESSAGE);
 		}
 
 		Debug.msg("CheckVersionThread exiting..");

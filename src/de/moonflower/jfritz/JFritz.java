@@ -54,6 +54,9 @@
  * 	new_version
  * 	new_version_text
  *  check_for_new_version_after_start
+ *  no_new_version_found
+ * -TODO:
+ * 	-Menüeintrag ->Versioncheck
  *
  * JFritz 0.6.1
  * - Neue Strings:
@@ -485,7 +488,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.300 2006/08/15 14:08:35 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.301 2006/08/15 14:37:50 baefer Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -941,7 +944,7 @@ public final class JFritz {
 				&& JFritzUtils.parseBoolean(JFritz.getProperty(
 						"option.checkNewVersionAfterStart",//$NON-NLS-1$
 						"true"))) {//$NON-NLS-1$
-			VersionCheckThread vct = new VersionCheckThread(this);
+			VersionCheckThread vct = new VersionCheckThread(this,false);
 			vct.run();
 		}
 		jframe.checkStartOptions();
