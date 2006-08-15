@@ -51,9 +51,10 @@ public static void openURL(String url) {
             if (Runtime.getRuntime().exec(
                   new String[] {"which", browsers[count]}).waitFor() == 0) //$NON-NLS-1$
                browser = browsers[count];
-         if (browser == null)
+         if (browser == null){
+        	Debug.err("No browser found!");
             throw new Exception(JFritz.getMessage("error_browser_not_found")); //$NON-NLS-1$
-         else
+         }else
             Runtime.getRuntime().exec(new String[] {browser, url});
          }
       }
