@@ -456,7 +456,6 @@ import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.FritzBox;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
-import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.CLIOption;
 import de.moonflower.jfritz.utils.CLIOptions;
 import de.moonflower.jfritz.utils.CopyFile;
@@ -466,6 +465,7 @@ import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.ReverseLookup;
 import de.moonflower.jfritz.utils.network.CallMonitor;
+import de.moonflower.jfritz.utils.network.VersionCheckThread;
 import de.moonflower.jfritz.utils.network.SSDPdiscoverThread;
 
 /**
@@ -485,7 +485,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.299 2006/08/15 13:34:23 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.300 2006/08/15 14:08:35 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -936,22 +936,13 @@ public final class JFritz {
 			showConfigWizard();
 		}
 
+		//check the version and display a message if newer version is available
 		if (!showConfWizard
 				&& JFritzUtils.parseBoolean(JFritz.getProperty(
 						"option.checkNewVersionAfterStart",//$NON-NLS-1$
-						"false"))) {//$NON-NLS-1$
-			if (JFritzUtils.checkForNewVersion()) {
-				Object[] options = {getMessage("yes"), getMessage("no")};
-				int ok = JOptionPane.showOptionDialog(this.getJframe(),
-						getMessage("new_version_text"),
-						getMessage("new_version"), JOptionPane.YES_NO_OPTION,
-						JOptionPane.INFORMATION_MESSAGE, null, // don't use a
-																// custom Icon
-						options, // the titles of buttons
-						options[0]); // default button title
-				if (ok == JOptionPane.YES_OPTION)
-					BrowserLaunch.openURL(JFritz.PROGRAM_URL + "#download");
-			}
+						"true"))) {//$NON-NLS-1$
+			VersionCheckThread vct = new VersionCheckThread(this);
+			vct.run();
 		}
 		jframe.checkStartOptions();
 
