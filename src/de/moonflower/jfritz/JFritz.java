@@ -484,7 +484,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.297 2006/08/15 10:18:14 baefer Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.298 2006/08/15 11:24:25 baefer Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -938,7 +938,7 @@ public final class JFritz {
 		if (!showConfWizard
 				&& JFritzUtils.parseBoolean(JFritz.getProperty(
 						"option.checkNewVersionAfterStart",//$NON-NLS-1$
-						"true"))) {//$NON-NLS-1$
+						"false"))) {//$NON-NLS-1$
 			if (JFritzUtils.checkForNewVersion()) {
 				Object[] options = {getMessage("yes"), getMessage("no")};
 				int ok = JOptionPane.showOptionDialog(this.getJframe(),

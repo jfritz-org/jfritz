@@ -148,7 +148,7 @@ public class ConfigDialog extends JDialog {
 	public void setValues() {
 		notifyOnCallsButton.setSelected(JFritzUtils.parseBoolean(JFritz
 				.getProperty("option.notifyOnCalls"))); //$NON-NLS-1$
-		checkNewVersionAfterStart.setSelected(JFritzUtils.parseBoolean(JFritz.getProperty("option.checkNewVersionAfterStart" , "true")));//$NON-NLS-1$, //§NON-NLS-2$
+		checkNewVersionAfterStart.setSelected(JFritzUtils.parseBoolean(JFritz.getProperty("option.checkNewVersionAfterStart" , "false")));//$NON-NLS-1$, //§NON-NLS-2$
 		fetchAfterStartButton.setSelected(JFritzUtils.parseBoolean(JFritz
 				.getProperty("option.fetchAfterStart"))); //$NON-NLS-1$
 		timerAfterStartButton.setSelected(JFritzUtils.parseBoolean(JFritz
