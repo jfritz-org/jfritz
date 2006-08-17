@@ -131,6 +131,13 @@ public class ConfigWizard {
        				JFritz.removeProperty("box.firmware"); //$NON-NLS-1$
        			}
 
+       			JFritz.setProperty("dial.prefix",
+       					((ConfigPanel2)descriptor2.getPanelComponent()).dialPrefix.getText()); //$NON-NLS-1$
+       			JFritz
+       	        .setProperty(
+       	                "option.activateDialPrefix", Boolean.toString(
+       	                		((ConfigPanel2)descriptor2.getPanelComponent()).activateDialPrefix.isSelected())); //$NON-NLS-1$
+
       			jfritz.getFritzBox().detectFirmware();
       			jfritz.saveProperties();
 

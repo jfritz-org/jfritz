@@ -5,6 +5,7 @@ import java.awt.*;
 import javax.swing.*;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
  * @author Brian Jensen
@@ -26,6 +27,10 @@ public class ConfigPanel2 extends JPanel{
 
     public JTextField countryPrefix;
 
+    public JCheckBox activateDialPrefix;
+
+    public JTextField dialPrefix;
+
 	public ConfigPanel2(){
 
 		//draw the panel
@@ -37,39 +42,44 @@ public class ConfigPanel2 extends JPanel{
 		c.insets.bottom = 5;
 		c.anchor = GridBagConstraints.LINE_START;
 
-		c.gridy = 1;
-		JLabel label = new JLabel(JFritz.getMessage("telephone"));
-		phonepane.add(label, c);
-
 		c.gridy = 2;
-		label = new JLabel(JFritz.getMessage("area_code")); //$NON-NLS-1$
+		JLabel label = new JLabel(JFritz.getMessage("area_code")); //$NON-NLS-1$
 		phonepane.add(label, c);
 		areaCode = new JTextField("", 6); //$NON-NLS-1$
 		phonepane.add(areaCode, c);
 
-		c.gridy = 3;
+		c.gridy = 1;
 		label = new JLabel(JFritz.getMessage("country_code")); //$NON-NLS-1$
 		phonepane.add(label, c);
 		countryCode = new JTextField("", 3); //$NON-NLS-1$
 		phonepane.add(countryCode, c);
 
-		c.gridy = 4;
+		c.gridy = 3;
 		label = new JLabel(JFritz.getMessage("area_prefix")); //$NON-NLS-1$
 		phonepane.add(label, c);
 		areaPrefix = new JTextField("", 3); //$NON-NLS-1$
 		phonepane.add(areaPrefix, c);
 
-		c.gridy = GridBagConstraints.REMAINDER;
+		c.gridy = 0;
 		label = new JLabel(JFritz.getMessage("country_prefix")); //$NON-NLS-1$
 		phonepane.add(label, c);
 		countryPrefix = new JTextField("", 3); //$NON-NLS-1$
 		phonepane.add(countryPrefix, c);
+
+        c.gridy = 4;
+        activateDialPrefix = new JCheckBox(JFritz.getMessage("dial_prefix")); //$NON-NLS-1$
+        phonepane.add(activateDialPrefix, c);
+        dialPrefix = new JTextField("", 3); //$NON-NLS-1$
+        phonepane.add(dialPrefix, c);
 
 		//initialize the panel to correct values
     	areaCode.setText(JFritz.getProperty("area.code")); //$NON-NLS-1$
 		countryCode.setText(JFritz.getProperty("country.code")); //$NON-NLS-1$
 		areaPrefix.setText(JFritz.getProperty("area.prefix")); //$NON-NLS-1$
 		countryPrefix.setText(JFritz.getProperty("country.prefix")); //$NON-NLS-1$
+		dialPrefix.setText(JFritz.getProperty("dial.prefix")); //$NON-NLS-1$
+		activateDialPrefix.setSelected(JFritzUtils.parseBoolean(JFritz.getProperty(
+                "option.activateDialPrefix", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		add(phonepane);
 
