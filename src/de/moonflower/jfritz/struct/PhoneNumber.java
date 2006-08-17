@@ -52,7 +52,7 @@ public class PhoneNumber implements Comparable {
 	 					 SPAIN_CODE="+34",
 	 					 SWEDEN_CODE="+46",
 	 					 SWITZERLAND_CODE = "+41",
-	 					 TURKEY_CODE="+80",
+	 					 TURKEY_CODE="+90",
 	 					 UKRAINE_CODE="+380",
 	 					 USA_CODE="+1";
 
