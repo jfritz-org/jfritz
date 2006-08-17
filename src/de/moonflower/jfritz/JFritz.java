@@ -76,7 +76,7 @@
  *
  * - Neu: Meldung bei neuer JFritz-Version
  * - Neu: Flaggen werden bei bekannten Ländervorwählen angezeigt anstelle vom Weltkugel, für bekannte Länder siehe PhoneNumber.java
- * _ Bugfix: SIP-Routen behalten ihre historische Zuordnung
+ * - Bugfix: SIP-Routen behalten ihre historische Zuordnung
  * - Neu: Neuer Kommandozeilenparameter: -r, führt eine Rückwärtssuche aus und beendet sich
  * - Neu: Rückwärtssuche für Frankreich über http://www.annuaireinverse.com, wird automatisch aufgerufen
  * - Neu: Rückwärtssuche für die Niederlande über http://www.gebeld.nl/content.asp?zoek=numm, wird automatisch aufgerufen
@@ -488,7 +488,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.301 2006/08/15 14:37:50 baefer Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.302 2006/08/17 16:45:36 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
