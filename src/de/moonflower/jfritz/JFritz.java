@@ -488,7 +488,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.302 2006/08/17 16:45:36 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.303 2006/08/17 17:12:08 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -809,7 +809,7 @@ public final class JFritz {
 			// dimensions) is not yet initilized.
 			try {
 				Debug.msg("Save other properties"); //$NON-NLS-1$
-				properties.storeToXML(JFritz.PROPERTIES_FILE);
+				properties.storeToXML(JFritz.SAVE_DIR + JFritz.PROPERTIES_FILE);
 			} catch (IOException e) {
 				Debug.err("Couldn't save Properties"); //$NON-NLS-1$
 			}
