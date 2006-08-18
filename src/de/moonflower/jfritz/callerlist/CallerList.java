@@ -83,6 +83,9 @@ public class CallerList extends AbstractTableModel {
 	// Is the type eyported from a 7170
 	private final static String EXPORT_CSV_FORMAT_FRITZBOX_PUSHSERVICE = "Typ; Datum; Rufnummer; Nebenstelle; Eigene Rufnummer; Dauer"; //$NON-NLS-1$
 
+	//is the type exported from a 7170 with a >= XX.04.12
+	private final static String EXPORT_CSV_FORMAT_PUSHSERVICE_NEW = "Typ; Datum; Name; Rufnummer; Nebenstelle; Eigene Rufnummer; Dauer";
+
 	// is the type exported from the new firmware
 	private final static String EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE = "Typ;Datum;Name;Rufnummer;Nebenstelle;Eigene Rufnummer;Dauer";
 
@@ -1204,14 +1207,16 @@ public class CallerList extends AbstractTableModel {
 					|| line.equals(EXPORT_CSV_FORMAT_FRITZBOX)
 					|| line.equals(EXPORT_CSV_FORMAT_FRITZBOX_PUSHSERVICE)
 					|| line.equals(EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE)
-					|| line.equals(EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH)) {
+					|| line.equals(EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH)
+					|| line.equals(EXPORT_CSV_FORMAT_PUSHSERVICE_NEW)) {
 
 				// check which kind of a file it is
 				if (line.equals(EXPORT_CSV_FORMAT_JFRITZ))
 					isJFritzExport = true;
 				else if (line.equals(EXPORT_CSV_FORMAT_FRITZBOX_PUSHSERVICE))
 					isPushFile = true;
-				else if (line.equals(EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE))
+				else if (line.equals(EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE)
+						|| line.equals(EXPORT_CSV_FORMAT_PUSHSERVICE_NEW))
 					isNewFirmware = true;
 				else if (line.equals(EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH))
 					isEnglishFirmware = true;
@@ -1221,7 +1226,7 @@ public class CallerList extends AbstractTableModel {
 				while (null != (line = br.readLine())) {
 					linesRead++;
 
-					// call the apropriate parse function
+					// call the appropriate parse function
 					if (isJFritzExport)
 						c = parseCallJFritzCSV(line);
 					else if (isNewFirmware)
@@ -1411,7 +1416,7 @@ public class CallerList extends AbstractTableModel {
 		} // with an extra empty line for whatever reason
 
 		// Call type
-		// Why would they change the cvs format in the Push???
+		// Why would they change the cvs format in the Push service???
 		if ((field[0].equals("1") && !isPushFile) //$NON-NLS-1$
 				|| (field[0].equals("2") && isPushFile)) { //$NON-NLS-1$
 			calltype = new CallType("call_in"); //$NON-NLS-1$
