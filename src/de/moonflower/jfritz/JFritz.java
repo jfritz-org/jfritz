@@ -55,6 +55,9 @@
  * 	new_version_text
  *  check_for_new_version_after_start
  *  no_new_version_found
+ *
+ * - Neu: Rückwärtssuche für die USA über www.whitepages.com, danke an Reiner Gebhardt
+ *
  * -TODO:
  * 	-Menüeintrag ->Versioncheck
  *
@@ -488,7 +491,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.303 2006/08/17 17:12:08 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.304 2006/08/19 19:35:03 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
