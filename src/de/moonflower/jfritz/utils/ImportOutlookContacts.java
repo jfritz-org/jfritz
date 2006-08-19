@@ -198,7 +198,7 @@ public class ImportOutlookContacts extends JDialog implements ActionListener,
             }
         }
         if (entriesImported > 0) {
-        	jfritz.getPhonebook().saveToXMLFile(JFritz.PHONEBOOK_FILE);
+        	jfritz.getPhonebook().saveToXMLFile(JFritz.SAVE_DIR + JFritz.PHONEBOOK_FILE);
         }
         Debug.msg("Import done, " + entriesImported + " entries imported"); //$NON-NLS-1$,	//$NON-NLS-2$
         JButton jButton = new JButton(JFritz.getMessage("okay")); //$NON-NLS-1$
