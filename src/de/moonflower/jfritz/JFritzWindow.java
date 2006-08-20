@@ -142,19 +142,7 @@ public class JFritzWindow extends JFrame
 				setVisible(true);
 			setState(JFrame.ICONIFIED);
 		}
-		if (JFritz.getProperty("option.timerAfterStart", "false") //$NON-NLS-1$,  //$NON-NLS-2$
-				.equals("true")) { //$NON-NLS-1$
-			taskButton.doClick();
-		}
-		if (JFritz.getProperty("option.fetchAfterStart", "false") //$NON-NLS-1$,  //$NON-NLS-2$
-				.equals("true")) { //$NON-NLS-1$
-			fetchButton.doClick();
-		}
-		if (JFritz.getProperty("option.autostartcallmonitor", "false").equals( //$NON-NLS-1$,  //$NON-NLS-2$
-				"true")) { //$NON-NLS-1$
-			startChosenCallMonitor();
-		}
-		setStatus();
+        checkOptions();
 	}
 
 

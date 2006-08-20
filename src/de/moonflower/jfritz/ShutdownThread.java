@@ -3,6 +3,8 @@
  */
 package de.moonflower.jfritz;
 
+import java.io.File;
+
 import de.moonflower.jfritz.utils.Debug;
 
 /**
@@ -21,13 +23,14 @@ public class ShutdownThread extends Thread {
 		Debug.msg("Starting shutdown thread.."); //$NON-NLS-1$
 
 		if (jfritz.getJframe() != null) {
-			/*
-		  	fritz.getPhonebook().saveToXMLFile(JFritz.PHONEBOOK_FILE);
-			jfritz.getCallerlist().saveToXMLFile(JFritz.CALLS_FILE, true);
-			*/
-
-			JFritz.setProperty("jfritz.isRunning","false"); //$NON-NLS-1$, //$NON-NLS-2$
-			Debug.msg("Multiple instance lock: release lock."); //$NON-NLS-1$
+            if (JFritz.isInstanceControlEnabled()) {
+                File f = new File( JFritz.SAVE_DIR + JFritz.LOCK_FILE );
+                if ( f.exists() )
+                    {
+                        f.delete();
+                    }
+                Debug.msg("Multiple instance lock: release lock."); //$NON-NLS-1$
+            }
 			jfritz.saveProperties();
 			jfritz.getJframe().saveQuickDials();
 

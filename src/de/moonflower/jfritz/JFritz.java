@@ -77,6 +77,7 @@
  *		popup_delay
  *      dial_prefix
  *
+ * - Intern: Multiple-Instance-Lock nun Dateibasiert und nicht mehr als Property. (JFritz.LOCK_FILE)
  * - Neu: Meldung bei neuer JFritz-Version
  * - Neu: Flaggen werden bei bekannten Ländervorwählen angezeigt anstelle vom Weltkugel, für bekannte Länder siehe PhoneNumber.java
  * - Bugfix: SIP-Routen behalten ihre historische Zuordnung
@@ -491,7 +492,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.304 2006/08/19 19:35:03 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.305 2006/08/20 08:30:22 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -518,6 +519,8 @@ public final class JFritz {
 	public final static String CALLS_CSV_FILE = "calls.csv"; //$NON-NLS-1$
 
 	public final static String PHONEBOOK_CSV_FILE = "contacts.csv"; //$NON-NLS-1$
+
+    public final static String LOCK_FILE = ".lock"; //$NON-NLS-1$
 
 	public final static int SSDP_TIMEOUT = 1000;
 
@@ -573,6 +576,8 @@ public final class JFritz {
 
 	private static FritzBox fritzBox;
 
+    private static boolean enableInstanceControl = true;
+
 	/**
 	 * Main method for starting JFritz
 	 *
@@ -594,7 +599,6 @@ public final class JFritz {
 		boolean csvExport = false;
 		boolean foreign = false;
 		String csvFileName = ""; //$NON-NLS-1$
-		boolean enableInstanceControl = true;
 
 		// TODO: If we ever make different packages for different languages
 		// change the default language here
@@ -629,7 +633,7 @@ public final class JFritz {
 						"without-control", null, //$NON-NLS-1$,  //$NON-NLS-2$
 						"Turns off multiple instance control. DON'T USE, unless you know what your are doing"); //$NON-NLS-1$
 		options
-				.addOption('r', "reverse lookup", null,
+				.addOption('r', "reverse-lookup", null,
 						"Do a reverse lookup and exit. Can be used together with -e -f and -z");
 		Vector foundOptions = options.parseOptions(args);
 		Enumeration en = foundOptions.elements();
@@ -699,6 +703,7 @@ public final class JFritz {
 					System.err.println("You were warned! Data loss may occur."); //$NON-NLS-1$
 					break;
 				case 'r' :
+                    enableInstanceControl = false;
 					doReverseLookup = true;
 					break;
 
@@ -730,17 +735,8 @@ public final class JFritz {
 		}
 
 		new JFritz(fetchCalls, csvExport, csvFileName, clearList,
-				enableInstanceControl, foreign);
+				foreign);
 
-	}
-
-	/**
-	 * Constructs JFritz object
-	 */
-	public JFritz(boolean fetchCalls, boolean csvExport, String csvFileName,
-			boolean clearList, boolean enableInstanceControl) {
-		this(fetchCalls, csvExport, csvFileName, clearList,
-				enableInstanceControl, false);
 	}
 
 	/**
@@ -750,14 +746,14 @@ public final class JFritz {
 	 */
 	public JFritz(boolean fetchCalls, boolean csvExport, String csvFileName,
 			boolean clearList) {
-		this(fetchCalls, csvExport, csvFileName, clearList, true, false);
+		this(fetchCalls, csvExport, csvFileName, clearList, false);
 	}
 
 	/**
 	 * Constructs JFritz object
 	 */
 	public JFritz(boolean fetchCalls, boolean csvExport, String csvFileName,
-			boolean clearList, boolean enableInstanceControl,
+			boolean clearList,
 			boolean writeForeignFormats) {
 		jfritz = this;
 
@@ -779,11 +775,16 @@ public final class JFritz {
 
 		if (enableInstanceControl) {
 			// check isRunning and exit or set lock
-			isRunning = (properties
-					.getProperty("jfritz.isRunning", "false").equals("true") ? true : false); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+            File f = new File( JFritz.SAVE_DIR + JFritz.LOCK_FILE );
+            isRunning = f.exists();
+
 			if (!isRunning) {
 				Debug.msg("Multiple instance lock: set lock."); //$NON-NLS-1$
-				properties.setProperty("jfritz.isRunning", "true"); //$NON-NLS-1$,  //$NON-NLS-2$
+                try {
+                    f.createNewFile();
+                } catch (IOException e) {
+                    Debug.err("Could not set instance lock");
+                }
 			} else {
 				Debug
 						.msg("Multiple instance lock: Another instance is already running."); //$NON-NLS-1$
@@ -806,15 +807,6 @@ public final class JFritz {
 					Debug
 							.msg("Multiple instance lock: User decided NOT to shut down this instance."); //$NON-NLS-1$
 				}
-			}
-
-			// saveProperties cannot used here because jframe (and its
-			// dimensions) is not yet initilized.
-			try {
-				Debug.msg("Save other properties"); //$NON-NLS-1$
-				properties.storeToXML(JFritz.SAVE_DIR + JFritz.PROPERTIES_FILE);
-			} catch (IOException e) {
-				Debug.err("Couldn't save Properties"); //$NON-NLS-1$
 			}
 		}
 		loadSounds();
@@ -897,6 +889,12 @@ public final class JFritz {
 			phonebook.saveToBITFBFDialerFormat("bitbook.dat"); //$NON-NLS-1$
 			phonebook.saveToCallMonitorFormat("CallMonitor.adr"); //$NON-NLS-1$
 		}
+
+        if (doReverseLookup)
+        {
+            reverseLookup();
+            System.exit(0);
+        }
 
 		if (JFritz
 				.getProperty(
@@ -1005,7 +1003,6 @@ public final class JFritz {
 		defaultProperties.setProperty("country.code", "+49");//$NON-NLS-1$, //$NON-NLS-2$
 		defaultProperties.setProperty("area.code", "441");//$NON-NLS-1$, //$NON-NLS-2$
 		defaultProperties.setProperty("fetch.timer", "5");//$NON-NLS-1$, //$NON-NLS-2$
-		defaultProperties.setProperty("jfritz.isRunning", "false");//$NON-NLS-1$, //$NON-NLS-2$
 
 		try {
 			properties.loadFromXML(SAVE_DIR + JFritz.PROPERTIES_FILE);
@@ -1931,4 +1928,8 @@ public final class JFritz {
 					JFritz.SAVE_DIR + JFritz.PHONEBOOK_FILE);
 
 	}
+
+    public static boolean isInstanceControlEnabled() {
+        return enableInstanceControl;
+    }
 }
