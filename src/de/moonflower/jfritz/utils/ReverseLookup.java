@@ -8,6 +8,11 @@ package de.moonflower.jfritz.utils;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.ReverseLookupSwitzerland;
+import de.moonflower.jfritz.utils.ReverseLookupFrance;
+import de.moonflower.jfritz.utils.ReverseLookupGermany;
+import de.moonflower.jfritz.utils.ReverseLookupItaly;
+import de.moonflower.jfritz.utils.ReverseLookupNetherlands;
+import de.moonflower.jfritz.utils.ReverseLookupUnitedStates;
 /**
  * Class for telephone number reverse lookup using "dasoertliche.de"
  *
@@ -40,6 +45,8 @@ public class ReverseLookup {
 				newPerson = ReverseLookupNetherlands.lookup(number.getAreaNumber());
 			else if(number.convertToIntNumber().startsWith(PhoneNumber.FRANCE_CODE))
 				newPerson = ReverseLookupFrance.lookup(number.getAreaNumber());
+			else if(number.convertToIntNumber().startsWith(PhoneNumber.USA_CODE))
+				newPerson = ReverseLookupUnitedStates.lookup(number.getAreaNumber());
 			else{
 				newPerson = new Person ();
 				newPerson.addNumber(number.getAreaNumber(), "home");}
