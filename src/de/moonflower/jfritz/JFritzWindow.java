@@ -78,6 +78,7 @@ import de.moonflower.jfritz.utils.network.FBoxListenerV1;
 import de.moonflower.jfritz.utils.network.FBoxListenerV3;
 import de.moonflower.jfritz.utils.network.SyslogListener;
 import de.moonflower.jfritz.utils.network.TelnetListener;
+import de.moonflower.jfritz.utils.network.VersionCheckThread;
 import de.moonflower.jfritz.utils.network.YAClistener;
 
 /**
@@ -515,6 +516,10 @@ public class JFritzWindow extends JFrame
 		helpMenu.add(item);
 		item = new JMenuItem(JFritz.getMessage("jfritz_website"), 'w'); //$NON-NLS-1$,  //$NON-NLS-2$
 		item.setActionCommand("website"); //$NON-NLS-1$
+		item.addActionListener(this);
+		helpMenu.add(item);
+		item = new JMenuItem(JFritz.getMessage("update_JFritz"), 'w'); //$NON-NLS-1$,  //$NON-NLS-2$
+		item.setActionCommand("update"); //$NON-NLS-1$
 		item.addActionListener(this);
 		helpMenu.add(item);
 
@@ -986,7 +991,10 @@ public class JFritzWindow extends JFrame
 			BrowserLaunch.openURL(JFritz.PROGRAM_URL);
 		} else if (e.getActionCommand().equals("export_csv")) //$NON-NLS-1$
 			exportCallerListToCSV();
-		else if (e.getActionCommand().equals("export_phonebook")) //$NON-NLS-1$
+		else if (e.getActionCommand().equals("update")){ //$NON-NLS-1$
+			VersionCheckThread vct = new VersionCheckThread(jfritz,true);
+			vct.run();
+		}else if (e.getActionCommand().equals("export_phonebook")) //$NON-NLS-1$
 			exportPhoneBookToCSV();
 		else if (e.getActionCommand().equals("print_callerlist")) //$NON-NLS-1$
 			printCallerList();

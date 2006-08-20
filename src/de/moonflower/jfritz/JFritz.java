@@ -55,11 +55,10 @@
  * 	new_version_text
  *  check_for_new_version_after_start
  *  no_new_version_found
+ *  update_JFritz
  *
  * - Neu: Rückwärtssuche für die USA über www.whitepages.com, danke an Reiner Gebhardt
- *
- * -TODO:
- * 	-Menüeintrag ->Versioncheck
+ * - Neu: Menüeintrag ->JFritz aktualisieren
  *
  * JFritz 0.6.1
  * - Neue Strings:
@@ -492,7 +491,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.305 2006/08/20 08:30:22 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.306 2006/08/20 17:46:33 baefer Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
