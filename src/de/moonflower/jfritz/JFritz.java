@@ -39,7 +39,6 @@
  * FeatureRequests: bitte bei Sourceforge nachschauen und dort auch den Status ändern
  * FeatureRequests: http://sourceforge.net/tracker/?func=browse&group_id=138196&atid=741416
 
- * CHANGELOG:
  *
  * (TODO: Checken, ob alle Bibliotheken vorhanden sind)
  * (TODO: Neue Kurzwahlen von der Beta-FW ins Telefonbuch aufnehmen)
@@ -48,8 +47,52 @@
  * TODO: Internationalisierung abschließen
  * TODO: Language-Files checken, ob tatsächlich alle Werte benötigt werden
  * TODO: Sonderzeichen werden in den Balloontips unter Windows nicht korrekt angezeigt. Scheint ein Windowsproblem zu sein. Lösung/Workaround noch nicht gefunden.
+ * TODO: Wenn Box unerreichbar, dann x mal versuchen, sie zu erreichen. X konfigurierbar machen.
+ * TODO: Bibliotheken auch für 64-Bit kompilieren
+ *
+ * Roadmap:
+ * JFritz 1.0
+ * - SQL-Anbindung (SF [ 1515305 ])
+ * - LDAP-Anbindung
+ * - Name für die Nebenstellen aus der Weboberfläche auslesen und zuweisen (SF [ 1498487 ])
+ * - Popup und Tray-Message für Anrufmonitor anpassbar machen (Name, Nummer, Adresse, Nebenstelle, Stadt, "von Arbeit", "von SIP", anderer Text)
+ * - Statistikfunktionen
+ * - Webverkehr über Proxy
+ * - Datumsfilter konfigurierbar gestalten (SF [ 1498488 ])
+ * - Vollständiger Outlook-Support (SF [ 1498489 ])
+ * - Visualisierung der aktuellen Gespräche (Frei, Nummer, Name, Dauer des Gesprächs ...)
+ * - Falls Ort per ReverseLookup nicht gefunden wird, soll anhand einer Tabelle der passende Ort zu einer Vorwahl eingetragen werden (SF [ 1315144 ])
+ * - Mehrere FritzBoxen abfragen (SF [ 1515855 ])
+ * - WAN IP beim Tray-Icon anzeigen lassen ?
+ * - Anrufmonitor: Foto des Anrufenden (SF [ 1498303 ])
+ * - Anrufmonitor: Anrufmonitor mächtiger machen (Aktionen nur für best. Nummern, verschiedene Aktionen) (SF [ 1525107 ])
+ * - Registrierstatus der VoIP-Provider (SF [ 1315159 ])
+ * - Netzwerkfunktionen (Client/Server) (SF [ 1485417 ])
+ * - Synchronisierung von JFritz Telefonbuch und FritzBox Telefonbuch (SF [ 1494436 ])
+ * - Portierung auf SWT ? (SF [ 1471202 ])
+ * - Skinns (SF [ 1471202 ])
+ * - Einstellen der Farben, Symbolleisten, Schriftart (SF [ 1458892 ])
+ * - Einstellen der Landes- und Ortsvorwahlen pro SIP-Account und nicht nur global (SF [ 1438932 ])
+ * - CSV-Export nicht nur mit ";", sondern auch mit "TAB", "SPACE" und "," (SF [ 1509248 ])
+ * - Spalte "Privatkontakt" in CSV-Liste hinzufügen (SF [ 1480617 ])
+ * - Kostenberechnung ? Ich bin dagegen
+ * - Unterstützung für das Adressbuch von Lotus Notes (SF [ 1445456 ])
+ * - Bild / Rufton / Farbe eines bestimmten Anrufers
+ *
+ * CHANGELOG:
  *
  * Jfritz 0.6.2
+ * TODO:
+ * - Suche im Telefonbuch auch nach 00Landeskennzahl (00 durch + ersetzen)
+ * - Deutsche Rufnummern per Suche finden (+49 und 49 klappt nicht)
+ * - Markieren der Zeilen per STRG auch in der "Teilnehmer"-Spalte
+ * - Ändern der Standardrufnummer per Häckchen führt nicht zur Speicherung, erst wenn man noch ein Datum ändert
+ * - Datumsfilter "aktueller-Tag" sollte auch immer den aktuellen Tag anzeigen. (SF [ 1530172 ])
+ * - Filter für Nebenstelle (Port) kombiniert mit eingetragenem Namen in der Weboberfläche
+ * - Copy & Paste für Spalteneinträge (in Anrufliste, Telefonbuch und Kurzwahlliste)
+ * - Importierte Rufnummern auf Sonderzeichen ( -, /, (, ) ) überprüfen
+ * TODO-ENDE
+ *
  * - Neue Strings:
  * 	new_version
  * 	new_version_text
@@ -491,7 +534,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.307 2006/08/20 17:49:33 baefer Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.308 2006/08/21 15:08:21 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
