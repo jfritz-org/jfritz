@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project default="jar">
+	<property name="version" value="0.6.1"/>
 	<property name="src" value="src"/>
 	<property name="doc" value="doc"/>
 	<property name="build" value="bin"/>
@@ -9,6 +10,7 @@
 	<property name="ant.project.name" value = "JFritz! Documentation"/>
 	<property name="jfritzdir" value="D:\Programme\JFritz"/>
 	<property name="lang" value="lang"/>
+	<property name="release" value="release"/>
 
 	<!-- compiler flags -->
 	<property name="javac.debug" value="true"/>
@@ -128,4 +130,74 @@
 	    <delete dir="${dist}/${source}/tmp"/>
 	</target>
 
+	<target name="release-linux" depends="jar">
+		<delete dir="${release}/linux"/>
+		<mkdir dir="${release}"/>
+		<mkdir dir="${release}/linux"/>
+		<tar tarfile="${release}/linux/jfritz-${version}.tar" basedir="${dist}"/>
+		<gzip src="${release}/linux/jfritz-${version}.tar" zipfile="${release}/linux/jfritz-${version}.tar.gz"/>
+		<delete file="${release}/linux/jfritz-${version}.tar"/>
+	</target>
+
+	<target name="release-mac" depends="jar">
+		<delete dir="${release}/mac"/>
+		<mkdir dir="${release}"/>
+		<mkdir dir="${release}/mac"/>
+		<mkdir dir="${release}/mac/tmp"/>
+
+		<!-- copy mac-files to release directory -->
+		<copy todir="${release}/mac/tmp">
+			<fileset dir="../Release/MAC"></fileset>
+		</copy>
+
+		<!-- modify mac-files -->
+		<move file="${release}/mac/tmp/__MACOSX/jfritz-VERSION" tofile="${release}/mac/tmp/__MACOSX/jfritz-${version}"/>
+		<move file="${release}/mac/tmp/jfritz-VERSION" tofile="${release}/mac/tmp/jfritz-${version}"/>
+
+		<!-- copy new jfritz-files to mac directory -->
+		<copy file="${dist}/JFritz-Handbuch.pdf" todir="${release}/mac/tmp/jfritz-${version}"/>
+		<copy todir="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java">
+			<fileset dir="${dist}"></fileset>
+		</copy>
+		<delete file="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java/JFritz-Handbuch.pdf"/>
+		<delete file="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java/jacob.dll"/>
+		<delete file="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java/lib/jacob.jar"/>
+		<delete dir="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java/lib/windows"/>
+		<delete dir="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java/lib/sunos"/>
+		<delete dir="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java/lib/linux"/>
+
+		<!-- zip mac directorys and delete temporary files -->
+		<zip zipfile="${release}/mac/jfritz-${version}-MAC.zip" basedir="${release}/mac/tmp" />
+		<delete dir="${release}/mac/tmp"/>
+
+	</target>
+
+	<target name="release-win" depends="jar">
+		<delete dir="${release}/win"/>
+		<mkdir dir="${release}"/>
+		<mkdir dir="${release}/win"/>
+		<mkdir dir="${release}/win/tmp"/>
+
+		<!-- copy win-files to release directory -->
+		<copy todir="${release}/win/tmp">
+			<fileset dir="../Release/WIN"></fileset>
+		</copy>
+
+		<!-- copy new jfritz-files to win directory -->
+		<copy todir="${release}/win/tmp/binaries">
+			<fileset dir="${dist}"></fileset>
+		</copy>
+
+		<!-- generate setup-file -->
+		<exec executable="D:\Programme\InnoSe~1\ISCC.exe">
+			<arg value="${release}/win/tmp/jfritz.iss"/>
+		</exec>
+
+		<!-- zip setup-file and delete temporary files-->
+		<zip zipfile="${release}/win/jfritz-${version}-Win.zip" basedir="${release}/win/tmp/Output" />
+		<delete dir="${release}/win/tmp"/>
+	</target>
+
+	<target name="release-all" depends="release-linux, release-mac, release-win">
+	</target>
 </project>
