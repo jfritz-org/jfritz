@@ -52,6 +52,9 @@
  *
  * Roadmap:
  * JFritz 1.0
+ *
+ * - CSV-Export anpassbar machen (wie bei Thunderbird).
+ * - Internationalisierung abschließen, drunter Flaggencode optimieren (Nummer <-> flaggenfile Zuordnung in einer Hashmap ablegen).
  * - SQL-Anbindung (SF [ 1515305 ])
  * - LDAP-Anbindung
  * - Name für die Nebenstellen aus der Weboberfläche auslesen und zuweisen (SF [ 1498487 ])
@@ -62,21 +65,23 @@
  * - Vollständiger Outlook-Support (SF [ 1498489 ])
  * - Visualisierung der aktuellen Gespräche (Frei, Nummer, Name, Dauer des Gesprächs ...)
  * - Falls Ort per ReverseLookup nicht gefunden wird, soll anhand einer Tabelle der passende Ort zu einer Vorwahl eingetragen werden (SF [ 1315144 ])
- * - Mehrere FritzBoxen abfragen (SF [ 1515855 ])
+ * - Mehrere FritzBoxen abfragen (SF [ 1515855 ]) Dafür sollten wir alle zugriffe auf die Box in eigene Threads unterbringen.
+ * 						Dann würde JFritz sich beim Hochfahren nicht so lange verzögern, wenn die Box nicht erreichbar ist.
  * - WAN IP beim Tray-Icon anzeigen lassen ?
  * - Anrufmonitor: Foto des Anrufenden (SF [ 1498303 ])
  * - Anrufmonitor: Anrufmonitor mächtiger machen (Aktionen nur für best. Nummern, verschiedene Aktionen) (SF [ 1525107 ])
  * - Registrierstatus der VoIP-Provider (SF [ 1315159 ])
- * - Netzwerkfunktionen (Client/Server) (SF [ 1485417 ])
+ * - Netzwerkfunktionen (Client/Server) (SF [ 1485417 ]) Das wird das allerschwierigste von allen, und am meisten Planung benötigen.
  * - Synchronisierung von JFritz Telefonbuch und FritzBox Telefonbuch (SF [ 1494436 ])
- * - Portierung auf SWT ? (SF [ 1471202 ])
+ * - Portierung auf SWT ? (SF [ 1471202 ]) (Kostet mehr Zeit als es wert ist, Jeder kann die 1.6 runterladen)
  * - Skinns (SF [ 1471202 ])
  * - Einstellen der Farben, Symbolleisten, Schriftart (SF [ 1458892 ])
  * - Einstellen der Landes- und Ortsvorwahlen pro SIP-Account und nicht nur global (SF [ 1438932 ])
  * - CSV-Export nicht nur mit ";", sondern auch mit "TAB", "SPACE" und "," (SF [ 1509248 ])
  * - Spalte "Privatkontakt" in CSV-Liste hinzufügen (SF [ 1480617 ])
- * - Kostenberechnung ? Ich bin dagegen
- * - Unterstützung für das Adressbuch von Lotus Notes (SF [ 1445456 ])
+ * - Kostenberechnung ? Ich bin dagegen (Bin auch dagegen, Brian)
+ * - Unterstützung für das Adressbuch von Lotus Notes (SF [ 1445456 ]) (Ich bin dagegen, denn man bräuchte nochmal so ne Plugin wie bei Outlook,
+ * 						nur ich schätze es gibt gar keins => wir müssten eine schreiben.
  * - Bild / Rufton / Farbe eines bestimmten Anrufers
  *
  * CHANGELOG:
@@ -534,7 +539,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.308 2006/08/21 15:08:21 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.309 2006/08/21 18:22:55 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
