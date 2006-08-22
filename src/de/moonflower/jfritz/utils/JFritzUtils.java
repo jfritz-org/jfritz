@@ -30,7 +30,6 @@ public class JFritzUtils {
     public static final String FILESEP = System.getProperty("file.separator");			//$NON-NLS-1$
     public static final String PATHSEP = System.getProperty("path.separator");			//$NON-NLS-1$
 	public static final String binID = FILESEP + "jfritz.jar";								//$NON-NLS-1$
-	public static final String versionFile = "http://www.blubb.txt";
 
 	/**
 	 * This constant can be used to search for the lang-directory.
