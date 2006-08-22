@@ -540,7 +540,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.310 2006/08/22 13:52:05 baefer Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.311 2006/08/22 16:24:14 baefer Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -992,7 +992,7 @@ public final class JFritz {
 		if (!showConfWizard
 				&& JFritzUtils.parseBoolean(JFritz.getProperty(
 						"option.checkNewVersionAfterStart",//$NON-NLS-1$
-						"true"))) {//$NON-NLS-1$
+						"false"))) {//$NON-NLS-1$
 			VersionCheckThread vct = new VersionCheckThread(this,false);
 			vct.run();
 		}
