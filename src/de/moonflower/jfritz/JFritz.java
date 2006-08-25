@@ -49,9 +49,12 @@
  * TODO: Sonderzeichen werden in den Balloontips unter Windows nicht korrekt angezeigt. Scheint ein Windowsproblem zu sein. Lösung/Workaround noch nicht gefunden.
  * TODO: Wenn Box unerreichbar, dann x mal versuchen, sie zu erreichen. X konfigurierbar machen.
  * TODO: Bibliotheken auch für 64-Bit kompilieren
+ * TODO: JFritz.ico mitliefern
+ * TODO: Linux-Startscript mitliefern
  *
  * Roadmap:
  * JFritz 1.0
+ * - Plugins (Mögliche Plugins: Drucken, Anrufmonitor)
  * - Einstellungen-Seiten überarbeiten.
  * - Einige Icons auslagern - unterschiedliche Icon-Packs
  * - Sounddateien auslagern - unterschiedliche Sound-Packs
@@ -543,7 +546,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.312 2006/08/24 10:37:15 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.313 2006/08/25 11:52:14 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
