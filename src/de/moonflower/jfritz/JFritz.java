@@ -54,11 +54,14 @@
  *
  * Roadmap:
  * JFritz 1.0
+ *
+ * - Einige ausgewählte Statisken über die DSL benutzung, damit JFritz eine komplette Lösung für die Fritz!Box anbietet.
  * - Plugins (Mögliche Plugins: Drucken, Anrufmonitor)
- * - Einstellungen-Seiten überarbeiten.
+ * - Einstellungen-Seiten überarbeiten.		Größe veränderbar machen!
  * - Einige Icons auslagern - unterschiedliche Icon-Packs
- * - Sounddateien auslagern - unterschiedliche Sound-Packs
+ * - Sounddateien auslagern - unterschiedliche Sound-Packs (gute Ideen, Brian)
  * - umstieg auf Mustang, damit verbunden jdic rauswerfen und nur noch Java-interne Bibliotheken nutzen
+ * 					Gut, dann können wir endlich diese ganze String.indexOf('@') > 0 rausschmeißen :)
  * - CSV-Export anpassbar machen (wie bei Thunderbird).
  * - Internationalisierung abschließen, drunter Flaggencode optimieren (Nummer <-> flaggenfile Zuordnung in einer Hashmap ablegen).
  * - SQL-Anbindung (SF [ 1515305 ])
@@ -546,7 +549,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.313 2006/08/25 11:52:14 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.314 2006/08/26 18:02:48 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
