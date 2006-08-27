@@ -1,4 +1,4 @@
-package de.moonflower.jfritz.utils;
+package de.moonflower.jfritz.utils.reverselookup;
 
 import java.io.BufferedReader;
 import java.io.IOException;

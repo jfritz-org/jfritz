@@ -3,16 +3,16 @@
  * Created on 05.05.2005
  *
  */
-package de.moonflower.jfritz.utils;
+package de.moonflower.jfritz.utils.reverselookup;
 
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
-import de.moonflower.jfritz.utils.ReverseLookupSwitzerland;
-import de.moonflower.jfritz.utils.ReverseLookupFrance;
-import de.moonflower.jfritz.utils.ReverseLookupGermany;
-import de.moonflower.jfritz.utils.ReverseLookupItaly;
-import de.moonflower.jfritz.utils.ReverseLookupNetherlands;
-import de.moonflower.jfritz.utils.ReverseLookupUnitedStates;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookupSwitzerland;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookupFrance;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookupGermany;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookupItaly;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookupNetherlands;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookupUnitedStates;
 /**
  * Class for telephone number reverse lookup using "dasoertliche.de"
  *

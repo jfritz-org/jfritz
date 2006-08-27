@@ -71,7 +71,7 @@ import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.ImportOutlookContacts;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.PrintCallerList;
-import de.moonflower.jfritz.utils.ReverseLookup;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 import de.moonflower.jfritz.utils.SwingWorker;
 import de.moonflower.jfritz.utils.network.CallmessageListener;
 import de.moonflower.jfritz.utils.network.FBoxListenerV1;

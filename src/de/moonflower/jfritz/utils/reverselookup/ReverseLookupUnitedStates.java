@@ -1,4 +1,4 @@
-package de.moonflower.jfritz.utils;
+package de.moonflower.jfritz.utils.reverselookup;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,21 +10,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
 
 /**
  * This class is responsible for doing reverse lookups for swiss numbers
  *
- * The search engine used is: http://tel.search.ch
+ * The search engine used is: http://www.whitepages.com
  * A big thanks to them for creating an easy to parse web page
  *
  * @author Brian Jensen
  *
  */
-public final class ReverseLookupSwitzerland {
+public final class ReverseLookupUnitedStates {
 
-	public final static String SEARCH_URL="http://tel.search.ch/result.html?tel=";
+	public final static String SEARCH_URL="http://www.whitepages.com/search/ReversePhone?phone=";
 
 	/**
 	 * This function performs the reverse lookup
@@ -38,10 +37,10 @@ public final class ReverseLookupSwitzerland {
 		boolean intNumber = false;
 
 		if(number.startsWith("+")){
-			number = number.substring(1);
+			number = number.substring(2);
 			intNumber = true;
 		}
-		Debug.msg("Switzerland reverselookup number: "+number);
+		Debug.msg("USA reverselookup number: "+number);
 
 		String urlstr = SEARCH_URL + number;
 		Person newPerson;
@@ -58,9 +57,12 @@ public final class ReverseLookupSwitzerland {
 			if (url != null) {
 
 				URLConnection con;
+			//	con.setRequestProperty("user-agent","Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)");
+
+
 				try {
 					con = url.openConnection();
-
+					con.setRequestProperty("user-agent","Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)");
 					String header = ""; //$NON-NLS-1$
 					String charSet = ""; //$NON-NLS-1$
 					for (int i = 0;; i++) {
@@ -71,7 +73,7 @@ public final class ReverseLookupSwitzerland {
 							// No more headers
 							break;
 						}
-						if ("content-type".equalsIgnoreCase(headerName)) { //$NON-NLS-1$
+						if ("Content-Type".equalsIgnoreCase(headerName)) { //$NON-NLS-1$
 							String[] split = headerValue.split(" ", 2); //$NON-NLS-1$
 							for (int j = 0; j < split.length; j++) {
 								split[j] = split[j].replaceAll(";", ""); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -84,7 +86,7 @@ public final class ReverseLookupSwitzerland {
 						}
 						header += headerName + ": " + headerValue + " | "; //$NON-NLS-1$,  //$NON-NLS-2$
 					}
-					Debug.msg("Header of tel.search.ch: " + header); //$NON-NLS-1$
+					Debug.msg("Header of whitepages.com: " + header); //$NON-NLS-1$
 					Debug.msg("CHARSET : " + charSet); //$NON-NLS-1$
 
 					// Get used Charset
@@ -106,39 +108,31 @@ public final class ReverseLookupSwitzerland {
 						i++;
 					}
 					d.close();
-					Debug.msg("Begin processing responce from tel.search.ch");
-
+					Debug.msg("Begin processing responce from whitepages.com");
+			        //Debug.msg("DATA:"+data);
 					Pattern pName = Pattern
-							.compile("<div class=\"rname\">(\\s*<h4>)?<a[^>]*>([^<]*)</a>(</h4>)?"); //$NON-NLS-1$
+									.compile("lname=([^<]*)&amp;fname=([^<]*)&amp;h_street="); //$NON-NLS-1$
 					Pattern pAddress = Pattern
-						.compile("<div class=\"raddr\">([^<,]*),\\s*([0-9]*)([^<]*)</div>"); //$NON-NLS-1$
+								.compile("h_street=([^<]*)&amp;h_city=([^<]*)&amp;h_state=([^<]*)&amp;h_zip=([^<]*)&amp;h_country"); //$NON-NLS-1$
+
 
 					//parse Name
 					Matcher mName = pName.matcher(data);
 					if (mName.find()) {
-						String[] results;
-
-						if(mName.group(1).indexOf("<h4>") > 0)
-							results = mName.group(2).trim().split(",");
-						else
-							results = mName.group(1).trim().split(",");
-
-						lastname = results[0];
+						lastname = replaceChar(mName.group(1).trim());
 						Debug.msg("Last name: " + lastname);
-						if(results.length > 1)
-							firstname = results[1];
-
+						firstname = replaceChar(mName.group(2).trim());
 						Debug.msg("First name: " + firstname);
 					}
 
 					//parse Street, zip code and city
 					Matcher mAddress = pAddress.matcher(data);
 					if(mAddress.find()){
-						street = mAddress.group(1).trim();
+					    street = replaceChar(mAddress.group(1).trim());
 						Debug.msg("Street: "+street);
-						zipCode  = mAddress.group(2).trim();
+						zipCode  =replaceChar(mAddress.group(3).trim()+" "+mAddress.group(4).trim());
 						Debug.msg("Zip Code: "+ zipCode);
-						city = mAddress.group(3).trim();
+						city = replaceChar(mAddress.group(2).trim());
 						Debug.msg("City: "+city);
 					}
 
@@ -152,7 +146,7 @@ public final class ReverseLookupSwitzerland {
 
 		newPerson = new Person(firstname, "", lastname, street, zipCode, city, "");
 		if(intNumber)
-			number = "+" + number;
+			number = "+1" + number;
 
 		newPerson.addNumber(number, "home"); //$NON-NLS-1$
 
@@ -160,5 +154,51 @@ public final class ReverseLookupSwitzerland {
 		return newPerson;
 
 	}
+	public static String replaceChar ( String text ){
+	// Hier gibt es noch Optimierungsbedarf
+
+		 if ( text == null )
+               return null;
+
+         if ( text.indexOf( '%' ) < 0 )
+            // are no entities, nothing to do
+            return text;
+
+         int originalTextLength = text.length();
+         StringBuffer sb = new StringBuffer( originalTextLength );
+         for ( int i = 0; i < originalTextLength; i++ )
+           {
+            int whereProz = text.indexOf( '%', i );
+            if ( whereProz < 0 ){
+            	// no more %, we are done
+            	// append all remaining text
+            	sb.append( text.substring( i ) );
+            	break;
+            }else{
+            	// append all text to left of next &
+            	sb.append( text.substring( i, whereProz ) );
+            	// avoid reprocessing those chars
+            	i = whereProz;
+            	// text.charAt(i) is an %
+            	// possEntity has lead % stripped.
+
+            	String possEntity="";
+            	if ( i +3 <= originalTextLength ){
+            		possEntity = text.substring( i + 1,i + 3  );
+            		possEntity=possEntity.toUpperCase(); }
+                  	i= i + 2;
+                  	char t=0;
+
+                  	if (possEntity.length()==2)
+                  		t=(char)Integer.parseInt( possEntity,16 );
+
+                  	if ( t != 0 )
+                  		sb.append( t );
+
+              } // end else
+           } // end for
+          // if result is not shorter, we did not do anything. Saves RAM.
+         return ( sb.length() == originalTextLength ) ? text : sb.toString();
+    } // end replaceChar
 
 }

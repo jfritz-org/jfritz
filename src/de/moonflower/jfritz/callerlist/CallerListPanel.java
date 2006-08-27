@@ -35,7 +35,7 @@ import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.JFritzClipboard;
 import de.moonflower.jfritz.utils.JFritzUtils;
-import de.moonflower.jfritz.utils.ReverseLookup;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 
 /**
  * @author Arno Willig
