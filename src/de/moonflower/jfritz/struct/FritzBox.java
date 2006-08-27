@@ -221,6 +221,8 @@ public class FritzBox {
 						data += str;
 				}
 				d.close();
+
+
 			} catch (IOException e1) {
 				throw new IOException("Network unavailable"); //$NON-NLS-1$
 			}
@@ -228,6 +230,7 @@ public class FritzBox {
 			if (wrong_pass)
 				throw new WrongPasswordException("Password invalid"); //$NON-NLS-1$
 		}
+
 		return data;
 	}
 

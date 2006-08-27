@@ -195,7 +195,7 @@ public class FritzBoxFirmware {
 				data = JFritzUtils.fetchDataFromURL(
 						urlstr,
 						POSTDATA_ACCESS_METHOD[i] + POSTDATA_DETECT_FIRMWARE[j]
-							+ URLEncoder.encode(box_password, "ISO-8859-1"), true).trim(); //$NON-NLS-1$
+			 				+ URLEncoder.encode(box_password, "ISO-8859-1"), true).trim(); //$NON-NLS-1$
 
 				Pattern p = Pattern.compile(PATTERN_DETECT_LANGUAGE_DE);
 				Matcher m = p.matcher(data);
