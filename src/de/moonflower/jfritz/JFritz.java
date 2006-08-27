@@ -55,6 +55,10 @@
  * Roadmap:
  * JFritz 1.0
  *
+ * - Style-Sheet für die Anzeige der Anrufliste als HTML
+ * - Import vom Tool Fritzinfo (http://www.ip-phone-forum.de/showthread.php?t=101090)
+ * - Button zum Löschen der Anrufliste
+ * - Begrenzen der Anzeige der Anrufe in der Anrufliste (z.B. maximal 100 Einträge)
  * - Einige ausgewählte Statisken über die DSL benutzung, damit JFritz eine komplette Lösung für die Fritz!Box anbietet.
  * - Plugins (Mögliche Plugins: Drucken, Anrufmonitor)
  * - Einstellungen-Seiten überarbeiten.		Größe veränderbar machen!
@@ -62,6 +66,8 @@
  * - Sounddateien auslagern - unterschiedliche Sound-Packs (gute Ideen, Brian)
  * - umstieg auf Mustang, damit verbunden jdic rauswerfen und nur noch Java-interne Bibliotheken nutzen
  * 					Gut, dann können wir endlich diese ganze String.indexOf('@') > 0 rausschmeißen :)
+ *                  Das würde aber heissen, dass wir nicht mehr zu Java 1.4 kompatibel sind. Einige Plattformen (wie MAC) werden
+ *                      bestimmt noch über längere Zeit kein Java SE 6 anbieten. -- Rob
  * - CSV-Export anpassbar machen (wie bei Thunderbird).
  * - Internationalisierung abschließen, drunter Flaggencode optimieren (Nummer <-> flaggenfile Zuordnung in einer Hashmap ablegen).
  * - SQL-Anbindung (SF [ 1515305 ])
@@ -78,7 +84,7 @@
  * 						Dann würde JFritz sich beim Hochfahren nicht so lange verzögern, wenn die Box nicht erreichbar ist.
  * - WAN IP beim Tray-Icon anzeigen lassen ?
  * - Anrufmonitor: Foto des Anrufenden (SF [ 1498303 ])
- * - Anrufmonitor: Anrufmonitor mächtiger machen (Aktionen nur für best. Nummern, verschiedene Aktionen) (SF [ 1525107 ])
+ * - Anrufmonitor: Anrufmonitor mächtiger machen (Aktionen nur für best. Nummern, verschiedene Aktionen, Log der Anrufe, Notizen zu einem laufenden Anruf) (SF [ 1525107 ])
  * - Registrierstatus der VoIP-Provider (SF [ 1315159 ])
  * - Netzwerkfunktionen (Client/Server) (SF [ 1485417 ]) Das wird das allerschwierigste von allen, und am meisten Planung benötigen.
  * - Synchronisierung von JFritz Telefonbuch und FritzBox Telefonbuch (SF [ 1494436 ])
@@ -549,7 +555,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.314 2006/08/26 18:02:48 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.315 2006/08/27 10:54:01 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
