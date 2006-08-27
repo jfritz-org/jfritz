@@ -1,17 +1,20 @@
 package de.moonflower.jfritz.utils.reverselookup;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
  * This class is responsible for doing reverse lookups for german numbers
@@ -25,6 +28,10 @@ import de.moonflower.jfritz.utils.Debug;
 public final class ReverseLookupGermany {
 
 	public final static String SEARCH_URL="http://tel.search.ch/result.html?tel=";
+
+	public final static String VORWAHLEN_HEADER = "Vorwahl;Ortsnetz";
+
+	private static HashMap numberMap;
 
 	/**
 	 * This function performs the reverse lookup
@@ -160,6 +167,10 @@ public final class ReverseLookupGermany {
 							}
 						}
 
+						//use the area code table if city isnt found
+						if(city.equals(""))
+							city = getCity(number);
+
 						Debug.msg("Firstname: " + firstname); //$NON-NLS-1$
 						Debug.msg("Lastname: " + lastname); //$NON-NLS-1$
 						Debug.msg("Company: " + company); //$NON-NLS-1$
@@ -183,9 +194,77 @@ public final class ReverseLookupGermany {
 		} catch (MalformedURLException e) {
 			Debug.err("URL invalid: " + urlstr); //$NON-NLS-1$
 		}
-		newPerson = new Person();
+
+		//try to lookup the city in the area code table
+		String city = getCity(number);
+		newPerson = new Person("["+city+"]", "", "", "", "", city, "");
+
 		newPerson.addNumber(number, "home"); //$NON-NLS-1$
 		return newPerson;
 	}
 
+	/**
+	 * This function attemps to fill the hashmap numberMap up with the data found
+	 * in number/Vorwahlen.csv
+	 * The funtion uses the area codes listed in the file as keys and the cities as values
+	 *
+	 *
+	 * @author Brian Jensen
+	 *
+	 */
+	public static void loadAreaCodes(){
+		Debug.msg("Loading the german number to city list");
+		numberMap = new HashMap(5300);
+		try{
+			FileReader fr = new FileReader(JFritzUtils.getFullPath("/number") +"/Vorwahlen.csv");
+			BufferedReader br = new BufferedReader(fr);
+			String line;
+			String[] entries;
+			int lines = 0;
+
+			//Load the keys and values quick and dirty
+			if(br.readLine().equals(VORWAHLEN_HEADER)){
+				while (null != (line = br.readLine())) {
+					lines++;
+					entries = line.split(";");
+					if(entries.length == 2)
+						//number is the key, city is the value
+						numberMap.put(entries[0], entries[1]);
+
+				}
+			}
+
+			Debug.msg(lines + " Lines read from vorwahlen.csv");
+			Debug.msg("numberMap size: "+numberMap.size());
+
+		}catch(Exception e){
+			Debug.msg(e.toString());
+		}
+
+	}
+
+	/**
+	 * This function determines the city to a particular number
+	 * The hashmap does not have to initialised in order to call this function
+	 *
+	 *
+	 * @param number in area format e.g. starting with "0"
+	 * @return the city found or "" if nothing was found
+	 */
+
+	public static String getCity(String number){
+
+		Debug.msg("Looking up city in numberMap: "+number);
+		String city = "";
+		if(number.startsWith("0") && numberMap != null){
+			if(numberMap.containsKey(number.substring(0, 3)))
+				city = (String) numberMap.get(number.substring(0,3));
+			else if(numberMap.containsKey(number.substring(0,4)))
+				city = (String) numberMap.get(number.substring(0,4));
+			else if(numberMap.containsKey(number.substring(0,5)))
+				city = (String) numberMap.get(number.substring(0,5));
+		}
+
+		return city;
+	}
 }

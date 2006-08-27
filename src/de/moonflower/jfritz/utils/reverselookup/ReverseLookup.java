@@ -7,6 +7,7 @@ package de.moonflower.jfritz.utils.reverselookup;
 
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupSwitzerland;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupFrance;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupGermany;
@@ -14,14 +15,17 @@ import de.moonflower.jfritz.utils.reverselookup.ReverseLookupItaly;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupNetherlands;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupUnitedStates;
 /**
- * Class for telephone number reverse lookup using "dasoertliche.de"
+ * Class for telephone number reverse lookup using various search engines
  *
  * @author Arno Willig
  *
  */
 public class ReverseLookup {
 
+	private static boolean loadedGermanyAreaCodes = false;
+
 	public static Person lookup(PhoneNumber number) {
+
 		Person newPerson;
 /**		if (number.isMobile()) {
 			newPerson = new Person();
