@@ -197,7 +197,7 @@ public final class ReverseLookupGermany {
 
 		//try to lookup the city in the area code table
 		String city = getCity(number);
-		newPerson = new Person("["+city+"]", "", "", "", "", city, "");
+		newPerson = new Person("", "", "", "", "", city, "");
 
 		newPerson.addNumber(number, "home"); //$NON-NLS-1$
 		return newPerson;
@@ -216,7 +216,7 @@ public final class ReverseLookupGermany {
 		Debug.msg("Loading the german number to city list");
 		numberMap = new HashMap(5300);
 		try{
-			FileReader fr = new FileReader(JFritzUtils.getFullPath("/number") +"/Vorwahlen.csv");
+			FileReader fr = new FileReader(JFritzUtils.getFullPath("/number") +"/germany/Vorwahlen.csv");
 			BufferedReader br = new BufferedReader(fr);
 			String line;
 			String[] entries;

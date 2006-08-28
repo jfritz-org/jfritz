@@ -44,8 +44,13 @@ public class PersonCellRenderer extends DefaultTableCellRenderer {
 
 		if (value != null) {
 			Person person = (Person) value;
-			// setToolTipText(person.getFullname());
-			label.setText(person.getFullname());
+
+			if(person.getFullname().equals("")){
+				if(!person.getCity().equals(""))
+					label.setText("["+person.getCity()+"]");
+			}else
+				label.setText(person.getFullname());
+
 			String tooltip = ""; //$NON-NLS-1$
 			if (!person.getFullname().equals("")) //$NON-NLS-1$
 				tooltip = person.getFullname();

@@ -557,7 +557,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.317 2006/08/27 16:08:22 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.318 2006/08/28 13:22:24 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -891,7 +891,7 @@ public final class JFritz {
 			new MacHandler(this);
 		}
 
-		//loads the area code city mapping from number/Vorwahlen.csv
+		//loads the area code city mapping from number/germany/Vorwahlen.csv
 		ReverseLookupGermany.loadAreaCodes();
 
 		fritzBox = new FritzBox(
