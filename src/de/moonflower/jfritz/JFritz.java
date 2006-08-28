@@ -98,6 +98,7 @@
  * 						nur ich schätze es gibt gar keins => wir müssten eine schreiben.
  * - Bild / Rufton / Farbe eines bestimmten Anrufers
  *
+ *
  * CHANGELOG:
  *
  * Jfritz 0.6.2
@@ -557,7 +558,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.318 2006/08/28 13:22:24 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.319 2006/08/28 13:43:49 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
