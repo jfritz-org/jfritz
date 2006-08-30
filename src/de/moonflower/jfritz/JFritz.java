@@ -121,7 +121,9 @@
  *  no_new_version_found
  *  update_JFritz
  *
- * - Neu: Falls Ort per ReverseLookup nicht gefunden wird, wird anhand einer Tabelle der passende Ort zu einer Vorwahl eingetragen werden (SF [ 1315144 ])
+ * _ New: Falls Ort per ReverseLookup nicht gefunden wird, wird anhand einer Tabelle der passende Ort zu einer Vorwahl eingetragen werden (Österreich)
+ * _ Bugfix: Rückwärtssuche für Österreich über dasoertliche.de wieder eingebaut
+ * - Neu: Falls Ort per ReverseLookup nicht gefunden wird, wird anhand einer Tabelle der passende Ort zu einer Vorwahl eingetragen werden Deutschland (SF [ 1315144 ])
  * _ Bugfix: Jetzt werden IP-Addressen von den Boxen in der Einstellungen angezeigt. Man kann jetzt Fehlerfrei zwei boxes im gleichen Netz haben.
  * - Neu: Rückwärtssuche für die USA über www.whitepages.com, danke an Reiner Gebhardt
  * - Neu: Menüeintrag ->JFritz aktualisieren
@@ -536,7 +538,6 @@ import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
-import de.moonflower.jfritz.utils.reverselookup.ReverseLookupGermany;
 import de.moonflower.jfritz.utils.network.CallMonitor;
 import de.moonflower.jfritz.utils.network.VersionCheckThread;
 import de.moonflower.jfritz.utils.network.SSDPdiscoverThread;
@@ -558,7 +559,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.319 2006/08/28 13:43:49 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.320 2006/08/30 12:21:47 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -892,8 +893,8 @@ public final class JFritz {
 			new MacHandler(this);
 		}
 
-		//loads the area code city mapping from number/germany/Vorwahlen.csv
-		ReverseLookupGermany.loadAreaCodes();
+		//loads various country specific number settings and tables
+		loadNumberSettings();
 
 		fritzBox = new FritzBox(
 				JFritz.getProperty("box.address", "192.168.178.1"), Encryption //$NON-NLS-1$,  //$NON-NLS-2$
@@ -2001,4 +2002,12 @@ public final class JFritz {
     public static boolean isInstanceControlEnabled() {
         return enableInstanceControl;
     }
+
+    public void loadNumberSettings(){
+    	//load the different area code -> city mappings
+    	ReverseLookup.loadAreaCodes();
+    }
+
+
+
 }

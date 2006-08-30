@@ -7,13 +7,13 @@ package de.moonflower.jfritz.utils.reverselookup;
 
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
-import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupSwitzerland;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupFrance;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupGermany;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupItaly;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupNetherlands;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupUnitedStates;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookupAustria;
 /**
  * Class for telephone number reverse lookup using various search engines
  *
@@ -21,8 +21,6 @@ import de.moonflower.jfritz.utils.reverselookup.ReverseLookupUnitedStates;
  *
  */
 public class ReverseLookup {
-
-	private static boolean loadedGermanyAreaCodes = false;
 
 	public static Person lookup(PhoneNumber number) {
 
@@ -51,11 +49,23 @@ public class ReverseLookup {
 				newPerson = ReverseLookupFrance.lookup(number.getAreaNumber());
 			else if(number.convertToIntNumber().startsWith(PhoneNumber.USA_CODE))
 				newPerson = ReverseLookupUnitedStates.lookup(number.getAreaNumber());
+			else if(number.convertToIntNumber().startsWith(PhoneNumber.AUSTRIA_CODE))
+				newPerson = ReverseLookupAustria.lookup(number.getAreaNumber());
 			else{
 				newPerson = new Person ();
 				newPerson.addNumber(number.getAreaNumber(), "home");}
 		}
 		return newPerson;
+	}
+
+	public static void loadAreaCodes(){
+
+		//loads the area code city mappings
+		ReverseLookupGermany.loadAreaCodes();
+		ReverseLookupAustria.loadAreaCodes();
+		ReverseLookupNetherlands.loadAreaCodes();
+
+
 	}
 
 }

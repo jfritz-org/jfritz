@@ -1,17 +1,20 @@
 package de.moonflower.jfritz.utils.reverselookup;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
  * This class is responsible for doing reverse lookups for dutch numbers
@@ -25,6 +28,10 @@ import de.moonflower.jfritz.utils.Debug;
 public final class ReverseLookupNetherlands {
 
 	public final static String SEARCH_URL="http://www.gebeld.nl/content.asp?zapp=zapp&land=Nederland&zoek=numm&searchfield1=fullnumber&searchfield2=&queryfield1=";
+
+	public final static String FILE_HEADER = "Number;City";
+
+	private static HashMap numberMap;
 
 	/**
 	 * This function performs the reverse lookup
@@ -153,5 +160,71 @@ public final class ReverseLookupNetherlands {
 		return newPerson;
 
 	}
+
+	/**
+	 * This function attemps to fill the hashmap numberMap up with the data found
+	 * in number/holland/areacodes_holland.csv
+	 * The funtion uses the area codes listed in the file as keys and the cities as values
+	 *
+	 *
+	 * @author Brian Jensen
+	 *
+	 */
+	public static void loadAreaCodes(){
+		Debug.msg("Loading the holland number to city list");
+		numberMap = new HashMap(256);
+		try{
+			FileReader fr = new FileReader(JFritzUtils.getFullPath("/number") +"/holland/areacodes_holland.csv");
+			BufferedReader br = new BufferedReader(fr);
+			String line;
+			String[] entries;
+			int lines = 0;
+
+			//Load the keys and values quick and dirty
+			if(br.readLine().equals(FILE_HEADER)){
+				while (null != (line = br.readLine())) {
+					lines++;
+					entries = line.split(";");
+					if(entries.length == 2)
+						//number is the key, city is the value
+						numberMap.put(entries[0], entries[1]);
+
+				}
+			}
+
+			Debug.msg(lines + " Lines read from areacodes_holland.csv");
+			Debug.msg("numberMap size: "+numberMap.size());
+
+		}catch(Exception e){
+			Debug.msg(e.toString());
+		}
+
+	}
+
+	/**
+	 * This function determines the city to a particular number
+	 * The hashmap does not have to initialised in order to call this function
+	 *
+	 *
+	 * @param number in area format e.g. starting with "0"
+	 * @return the city found or "" if nothing was found
+	 */
+
+	public static String getCity(String number){
+
+		Debug.msg("Looking up city in numberMap: "+number);
+		String city = "";
+		if(number.startsWith("0") && numberMap != null){
+			if(numberMap.containsKey(number.substring(0, 3)))
+				city = (String) numberMap.get(number.substring(0,3));
+			else if(numberMap.containsKey(number.substring(0,4)))
+				city = (String) numberMap.get(number.substring(0,4));
+			else if(numberMap.containsKey(number.substring(0,5)))
+				city = (String) numberMap.get(number.substring(0,5));
+		}
+
+		return city;
+	}
+
 
 }

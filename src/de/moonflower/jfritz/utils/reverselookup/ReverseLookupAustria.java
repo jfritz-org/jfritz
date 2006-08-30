@@ -17,19 +17,17 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
- * This class is responsible for doing reverse lookups for german numbers
+ * This class is responsible for doing reverse lookups for austrian numbers
  *
  * The search engine used is: http://www.dasoertliche.de
- * A big thanks to them for creating an easy to parse web page
+ * There is no reverse lookup sepcifically for austria, so dasoertliche is used
  *
- *
+ * @author Brian Jensen
  *
  */
-public final class ReverseLookupGermany {
+public final class ReverseLookupAustria {
 
-	public final static String SEARCH_URL="http://tel.search.ch/result.html?tel=";
-
-	public final static String FILE_HEADER = "Vorwahl;Ortsnetz";
+	public final static String VORWAHLEN_HEADER = "Number;City";
 
 	private static HashMap numberMap;
 
@@ -205,7 +203,7 @@ public final class ReverseLookupGermany {
 
 	/**
 	 * This function attemps to fill the hashmap numberMap up with the data found
-	 * in number/Vorwahlen.csv
+	 * in number/austria/areacodes_austria.csv
 	 * The funtion uses the area codes listed in the file as keys and the cities as values
 	 *
 	 *
@@ -213,17 +211,17 @@ public final class ReverseLookupGermany {
 	 *
 	 */
 	public static void loadAreaCodes(){
-		Debug.msg("Loading the german number to city list");
-		numberMap = new HashMap(5300);
+		Debug.msg("Loading the austrian number to city list");
+		numberMap = new HashMap(1200);
 		try{
-			FileReader fr = new FileReader(JFritzUtils.getFullPath("/number") +"/germany/areacodes_germany.csv");
+			FileReader fr = new FileReader(JFritzUtils.getFullPath("/number") +"/austria/areacodes_austria.csv");
 			BufferedReader br = new BufferedReader(fr);
 			String line;
 			String[] entries;
 			int lines = 0;
 
 			//Load the keys and values quick and dirty
-			if(br.readLine().equals(FILE_HEADER)){
+			if(br.readLine().equals(VORWAHLEN_HEADER)){
 				while (null != (line = br.readLine())) {
 					lines++;
 					entries = line.split(";");
@@ -234,7 +232,7 @@ public final class ReverseLookupGermany {
 				}
 			}
 
-			Debug.msg(lines + " Lines read from areacodes_germany.csv");
+			Debug.msg(lines + " Lines read from areacodes_austria.csv");
 			Debug.msg("numberMap size: "+numberMap.size());
 
 		}catch(Exception e){

@@ -48,6 +48,8 @@ public class PersonCellRenderer extends DefaultTableCellRenderer {
 			if(person.getFullname().equals("")){
 				if(!person.getCity().equals(""))
 					label.setText("["+person.getCity()+"]");
+				else
+					label.setText("");
 			}else
 				label.setText(person.getFullname());
 
