@@ -55,6 +55,7 @@
  * Roadmap:
  * JFritz 1.0
  *
+ * - Tastaturkürzel für Aktionen sollen editierbar sein
  * - Style-Sheet für die Anzeige der Anrufliste als HTML
  * - Import vom Tool Fritzinfo (http://www.ip-phone-forum.de/showthread.php?t=101090)
  * - Button zum Löschen der Anrufliste
@@ -559,7 +560,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.320 2006/08/30 12:21:47 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.321 2006/08/31 10:36:24 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
