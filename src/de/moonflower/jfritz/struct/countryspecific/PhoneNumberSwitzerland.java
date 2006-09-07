@@ -1,6 +1,5 @@
 package de.moonflower.jfritz.struct.countryspecific;
 
-import de.moonflower.jfritz.JFritz;
 /**
  * Class to work with Swiss phone numbers
  *

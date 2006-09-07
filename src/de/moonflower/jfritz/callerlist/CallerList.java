@@ -40,7 +40,8 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.dialogs.sip.SipProvider;
+import de.moonflower.jfritz.callerlist.filter.DateFilter;
+import de.moonflower.jfritz.callerlist.filter.SipFilter;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
@@ -108,6 +109,10 @@ public class CallerList extends AbstractTableModel {
 
 	private boolean sortDirection = false;
 
+    private DateFilter dateFilter;
+
+    private SipFilter sipFilter;
+
 	/**
 	 * CallerList Constructor new contrustor, using binary sizes
 	 * NOTE:filteredCallerData = unfilteredCallerData is forbidden!! use
@@ -128,6 +133,8 @@ public class CallerList extends AbstractTableModel {
 		this.jfritz = jfritz;
 
 		sortColumn = 1;
+        dateFilter = new DateFilter(jfritz);
+        sipFilter = new SipFilter(jfritz);
 	}
 
 	/**
@@ -874,8 +881,6 @@ public class CallerList extends AbstractTableModel {
 		boolean filterComment = JFritzUtils.parseBoolean(JFritz
 				.getProperty("filter.comment")); // fireTableDataChanged();$NON-NLS-1$
 		String filterSearch = JFritz.getProperty("filter.search", ""); //$NON-NLS-1$,  //$NON-NLS-2$
-		String filterDateFrom = JFritz.getProperty("filter.date_from", ""); //$NON-NLS-1$,  //$NON-NLS-2$
-		String filterDateTo = JFritz.getProperty("filter.date_to", ""); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		try {
 			jfritz.getJframe().getCallerTable().getCellEditor()
@@ -892,28 +897,6 @@ public class CallerList extends AbstractTableModel {
 			filteredCallerData = (Vector) unfilteredCallerData.clone();
 			sortAllFilteredRowsBy(sortColumn, sortDirection);
 		} else { // Data got to be filtered
-			Vector filteredSipProviders = new Vector();
-			if (filterSip) {
-				String providers = JFritz.getProperty("filter.sipProvider", //$NON-NLS-1$
-						"[]"); //$NON-NLS-1$
-				if (providers.equals("[]")) { // No entries selected
-					// //$NON-NLS-1$
-					filterSip = false;
-				}
-				providers = providers.replaceAll("\\[", ""); //$NON-NLS-1$,  //$NON-NLS-2$
-				providers = providers.replaceAll("\\]", ""); //$NON-NLS-1$,  //$NON-NLS-2$
-				String[] providerEntries = providers.split(","); //$NON-NLS-1$
-				for (int i = 0; i < providerEntries.length; i++) {
-					if (providerEntries[i].length() > 0) {
-						if (providerEntries[i].charAt(0) == 32) { // delete
-							// first SPACE
-							providerEntries[i] = providerEntries[i]
-									.substring(1);
-						}
-					}
-					filteredSipProviders.add(providerEntries[i]);
-				}
-			}
 
 			Vector filteredCallByCallProviders = new Vector();
 			if (filterCallByCall) {
@@ -968,13 +951,7 @@ public class CallerList extends AbstractTableModel {
 				}
 
 				if (filterSip) {
-					String route = call.getRoute();
-					if (route.equals("")) { //$NON-NLS-1$
-						route = "FIXEDLINE"; //$NON-NLS-1$
-					}
-					if (!filteredSipProviders.contains(route)) {
-						searchFilterPassed = false;
-					}
+                    sipFilterPassed = sipFilter.filterPassed(call);
 				}
 
 				if (filterCallByCall) {
@@ -995,19 +972,8 @@ public class CallerList extends AbstractTableModel {
 					}
 				}
 
-				try {
-					if (filterDate
-							&& !(call.getCalldate().after(
-									new SimpleDateFormat("dd.MM.yy") //$NON-NLS-1$
-											.parse(filterDateFrom)) && call
-									.getCalldate().before(
-											new SimpleDateFormat(
-													"dd.MM.yy HH:mm") //$NON-NLS-1$
-													.parse(filterDateTo
-															+ " 23:59")))) { //$NON-NLS-1$
-						dateFilterPassed = false;
-					}
-				} catch (ParseException e1) {
+				if (filterDate) {
+                       dateFilterPassed = jfritz.getCallerlist().getDateFilter().filterPassed(call);
 				}
 
 				if (filterFixed && call.getPhoneNumber() != null
@@ -1663,4 +1629,12 @@ public class CallerList extends AbstractTableModel {
 		return call;
 
 	}
+
+    public DateFilter getDateFilter() {
+        return dateFilter;
+    }
+
+    public SipFilter getSipFilter() {
+        return sipFilter;
+    }
 }

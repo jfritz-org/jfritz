@@ -12,7 +12,6 @@ import java.util.Enumeration;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.utils.JFritzUtils;
-import de.moonflower.jfritz.utils.Debug;
 
 /**
  * @author Arno Willig

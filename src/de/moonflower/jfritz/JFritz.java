@@ -115,12 +115,10 @@
  * - Deutsche Rufnummern per Suche finden (+49 und 49 klappt nicht)
  * - Markieren der Zeilen per STRG auch in der "Teilnehmer"-Spalte
  * - Ändern der Standardrufnummer per Häckchen führt nicht zur Speicherung, erst wenn man noch ein Datum ändert
- * - Datumsfilter "aktueller-Tag" sollte auch immer den aktuellen Tag anzeigen. (SF [ 1530172 ])
  * - Filter für Nebenstelle (Port) kombiniert mit eingetragenem Namen in der Weboberfläche
  * - Copy & Paste für Spalteneinträge (in Anrufliste, Telefonbuch und Kurzwahlliste)
  * - Importierte Rufnummern auf Sonderzeichen ( -, /, (, ) ) überprüfen
  * - Durchwahlnummern vor Zentrale-Nummern bei der Anzeige bevorzugen (sollte eigentlich gehen, aber scheint einen Bug zu haben)
- * - Internationaler FreeCall 00800 (http://www.ip-phone-forum.de/showthread.php?t=111645)
  * - Schnittstelle zu externen Inverssuche-Programmen
  * - Bug: Neue Telefonnummern in PersonDialog der Anrufliste werden nicht gespeichert
  * - Bug: Importieren von Thunderbird-Einträgen (es werden nur die ersten 5 Felder der CSV-Datei erkannt)
@@ -133,12 +131,15 @@
  *  no_new_version_found
  *  update_JFritz
  *
- * _ New: Falls Ort per ReverseLookup nicht gefunden wird, wird anhand einer Tabelle der passende Ort zu einer Vorwahl eingetragen werden (Österreich)
- * _ Bugfix: Rückwärtssuche für Österreich über dasoertliche.de wieder eingebaut
+ * - New: Falls Ort per ReverseLookup nicht gefunden wird, wird anhand einer Tabelle der passende Ort zu einer Vorwahl eingetragen werden (Österreich)
+ * - Bugfix: Rückwärtssuche für Österreich über dasoertliche.de wieder eingebaut
  * - Neu: Falls Ort per ReverseLookup nicht gefunden wird, wird anhand einer Tabelle der passende Ort zu einer Vorwahl eingetragen werden Deutschland (SF [ 1315144 ])
- * _ Bugfix: Jetzt werden IP-Addressen von den Boxen in der Einstellungen angezeigt. Man kann jetzt Fehlerfrei zwei boxes im gleichen Netz haben.
+ * - Bugfix: Jetzt werden IP-Addressen von den Boxen in der Einstellungen angezeigt. Man kann jetzt Fehlerfrei zwei boxes im gleichen Netz haben.
  * - Neu: Rückwärtssuche für die USA über www.whitepages.com, danke an Reiner Gebhardt
  * - Neu: Menüeintrag ->JFritz aktualisieren
+ * - Internationaler FreeCall 00800 (http://www.ip-phone-forum.de/showthread.php?t=111645)
+ * - Datumsfilter "aktueller-Tag" sollte auch immer den aktuellen Tag anzeigen. (SF [ 1530172 ])
+ * - INTERN: Filter der Anrufliste in neues Package. Abstrakte Klasse CallFilter
  *
  * JFritz 0.6.1
  * - Neue Strings:
@@ -571,7 +572,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.324 2006/09/07 16:38:48 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.325 2006/09/07 20:32:17 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 

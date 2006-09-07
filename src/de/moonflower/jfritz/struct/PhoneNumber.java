@@ -54,7 +54,8 @@ public class PhoneNumber implements Comparable {
 	 					 SWITZERLAND_CODE = "+41",
 	 					 TURKEY_CODE="+90",
 	 					 UKRAINE_CODE="+380",
-	 					 USA_CODE="+1";
+	 					 USA_CODE="+1",
+                         INT_FREECALL="+800";
 
 	static HashMap mobileMap;
 
@@ -332,7 +333,7 @@ public class PhoneNumber implements Comparable {
 	 * @return True if number is a FreeCall number
 	 */
 	public boolean isFreeCall() {
-		boolean ret = number.startsWith("0800"); //$NON-NLS-1$
+		boolean ret = number.startsWith("0800") || number.startsWith(INT_FREECALL); //$NON-NLS-1$
 		if (ret && getType().equals("")) //$NON-NLS-1$
 			type = "business"; //$NON-NLS-1$
 		return ret;
