@@ -34,7 +34,6 @@
  *
  * BUGS: bitte bei Sourceforge nachschauen und dort auch den Status ändern
  * BUGS: http://sourceforge.net/tracker/?group_id=138196&atid=741413
- * BUG: die Autoerkennung, ob telefond für Syslog richtig läuft hat ein Sicherheitsloch. Nun kann jede IP auf Port 1011 zugreifen.
  *
  * FeatureRequests: bitte bei Sourceforge nachschauen und dort auch den Status ändern
  * FeatureRequests: http://sourceforge.net/tracker/?func=browse&group_id=138196&atid=741416
@@ -43,18 +42,16 @@
  * (TODO: Checken, ob alle Bibliotheken vorhanden sind)
  * (TODO: Neue Kurzwahlen von der Beta-FW ins Telefonbuch aufnehmen)
  * (TODO: Import der Anrufliste im XML-Format beim Kontextmenü einbauen)
- * TODO: Filter für Ports
- * TODO: Internationalisierung abschließen
  * TODO: Language-Files checken, ob tatsächlich alle Werte benötigt werden
  * TODO: Sonderzeichen werden in den Balloontips unter Windows nicht korrekt angezeigt. Scheint ein Windowsproblem zu sein. Lösung/Workaround noch nicht gefunden.
- * TODO: Wenn Box unerreichbar, dann x mal versuchen, sie zu erreichen. X konfigurierbar machen.
- * TODO: Bibliotheken auch für 64-Bit kompilieren
  * TODO: JFritz.ico mitliefern
  * TODO: Linux-Startscript mitliefern
  *
  * Roadmap:
  * JFritz 1.0
  *
+ * - 64-bit Unterstützung
+ * - Automatisches Update auf neue Version
  * - Signalisieren der neu eingegangenen Anrufe im Tray (blinken, oder Zahl)
  * - Anzeige des letzten Telefonats nicht nur abhängig von der Standardnummer und anzeige der gesprochenen Minuten pro Telefonbucheintrag
  * - JFritz-Fenster maximiert wiederherstellen
@@ -104,19 +101,18 @@
  * 						nur ich schätze es gibt gar keins => wir müssten eine schreiben.
  * - Bild / Rufton / Farbe eines bestimmten Anrufers
  * - "Verbindungsgerät" in "MSN/Rufnummer" ändern
- * - Selektieren der Zeilen auch im Feld "Teilnehmer"
  * - Analoge Rufnummer aus der FritzBox auslesen
  * - Export des gesamten Adressbuchs als VCard (http://www.ip-phone-forum.de/showthread.php?t=106758)
  * - Kommentarspalte im Telefonbuch
  * - Exportieren/Anzeige der Anrufliste nach Monaten getrennt
- * - Schnittstelle zu externen Inverssuche-Programmen
- * - Internationaler FreeCall 00800 (http://www.ip-phone-forum.de/showthread.php?t=111645)
- * - Bug: Eingabe der IP-Nummer nach Ruhezustand
+ *
  *
  * CHANGELOG:
  *
  * Jfritz 0.6.2
  * TODO:
+ * - Alle Zugriffe auf FritzBox in eigenen Threads
+ * - Bug: Eingabe der IP-Nummer nach Ruhezustand
  * - Suche im Telefonbuch auch nach 00Landeskennzahl (00 durch + ersetzen)
  * - Deutsche Rufnummern per Suche finden (+49 und 49 klappt nicht)
  * - Markieren der Zeilen per STRG auch in der "Teilnehmer"-Spalte
@@ -126,6 +122,10 @@
  * - Copy & Paste für Spalteneinträge (in Anrufliste, Telefonbuch und Kurzwahlliste)
  * - Importierte Rufnummern auf Sonderzeichen ( -, /, (, ) ) überprüfen
  * - Durchwahlnummern vor Zentrale-Nummern bei der Anzeige bevorzugen (sollte eigentlich gehen, aber scheint einen Bug zu haben)
+ * - Internationaler FreeCall 00800 (http://www.ip-phone-forum.de/showthread.php?t=111645)
+ * - Schnittstelle zu externen Inverssuche-Programmen
+ * - Bug: Neue Telefonnummern in PersonDialog der Anrufliste werden nicht gespeichert
+ * - Bug: Importieren von Thunderbird-Einträgen (es werden nur die ersten 5 Felder der CSV-Datei erkannt)
  * TODO-ENDE
  *
  * - Neue Strings:
@@ -573,7 +573,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.322 2006/09/03 14:03:49 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.323 2006/09/07 16:00:12 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
