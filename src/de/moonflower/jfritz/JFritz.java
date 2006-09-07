@@ -51,7 +51,6 @@
  * JFritz 1.0
  * Bewertung - Feature
  * rob
- * 10 - JFritz-Fenster maximiert wiederherstellen
  * 10 - Fehlermeldung an den Benutzer, wenn Daten nicht auf Festplatte gespeichert werden können. (Vielleicht schon implementiert -- Rob)
  * 10 - "Verbindungsgerät" in "MSN/Rufnummer" ändern
  * 10 - Kommentarspalte im Telefonbuch
@@ -131,7 +130,8 @@
  *  no_new_version_found
  *  update_JFritz
  *
- * - New: Falls Ort per ReverseLookup nicht gefunden wird, wird anhand einer Tabelle der passende Ort zu einer Vorwahl eingetragen werden (Österreich)
+ * - Neu: JFritz-Fenster wird nun korrekt wiederhergestellt (maximiert...)
+ * - Neu: Falls Ort per ReverseLookup nicht gefunden wird, wird anhand einer Tabelle der passende Ort zu einer Vorwahl eingetragen werden (Österreich)
  * - Bugfix: Rückwärtssuche für Österreich über dasoertliche.de wieder eingebaut
  * - Neu: Falls Ort per ReverseLookup nicht gefunden wird, wird anhand einer Tabelle der passende Ort zu einer Vorwahl eingetragen werden Deutschland (SF [ 1315144 ])
  * - Bugfix: Jetzt werden IP-Addressen von den Boxen in der Einstellungen angezeigt. Man kann jetzt Fehlerfrei zwei boxes im gleichen Netz haben.
@@ -572,7 +572,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.325 2006/09/07 20:32:17 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.326 2006/09/07 21:45:01 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -657,6 +657,8 @@ public final class JFritz {
 	private static FritzBox fritzBox;
 
     private static boolean enableInstanceControl = true;
+
+    private static int oldFrameState; // saves old frame state to restore old state
 
 	/**
 	 * Main method for starting JFritz
@@ -1257,6 +1259,7 @@ public final class JFritz {
 	public void saveProperties() {
 
 		Debug.msg("Save window position"); //$NON-NLS-1$
+
 		properties.setProperty("position.left", Integer.toString(jframe //$NON-NLS-1$
 				.getLocation().x));
 		properties.setProperty("position.top", Integer.toString(jframe //$NON-NLS-1$
@@ -1808,15 +1811,17 @@ public final class JFritz {
 	}
 
 	public void hideShowJFritz() {
+        System.err.println("Old frame state: " + oldFrameState);
 		if (jframe.isVisible()) {
+            oldFrameState = jframe.getExtendedState();
 			Debug.msg("Hide JFritz-Window"); //$NON-NLS-1$
-			jframe.setState(JFrame.ICONIFIED);
+			jframe.setExtendedState(JFrame.ICONIFIED);
 			jframe.setVisible(false);
 		} else {
 			Debug.msg("Show JFritz-Window"); //$NON-NLS-1$
-			jframe.setState(JFrame.NORMAL);
 			jframe.setVisible(true);
 			jframe.toFront();
+            jframe.setExtendedState(oldFrameState);
 		}
 	}
 
