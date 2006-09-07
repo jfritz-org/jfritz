@@ -15,7 +15,6 @@ import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -369,50 +368,6 @@ public class CallerListPanel extends JPanel implements ActionListener,
         }
     }
 
-    public void setCallByCallProviderFilterFromSelection() {
-        Vector filteredProviders = new Vector();
-        try {
-            String provider = ""; //$NON-NLS-1$
-            int rows[] = callerTable.getSelectedRows();
-            if (rows.length != 0) { // Filter only selected rows
-                for (int i = 0; i < rows.length; i++) {
-                    Call call = (Call) jfritz.getCallerlist()
-                            .getFilteredCallVector().get(rows[i]);
-                    if (call.getPhoneNumber() != null) {
-                        provider = call.getPhoneNumber().getCallByCall();
-                        if (provider.equals("")) { //$NON-NLS-1$
-                            provider = "NONE"; //$NON-NLS-1$
-                        }
-                    } else {
-                        provider = "NONE"; //$NON-NLS-1$
-                    }
-                    if (!filteredProviders.contains(provider)) {
-                        filteredProviders.add(provider);
-                    }
-                }
-            } else { // filter only calls with callbycall predial
-                for (int i = 0; i < jfritz.getCallerlist()
-                        .getFilteredCallVector().size(); i++) {
-                    Call call = (Call) jfritz.getCallerlist()
-                            .getFilteredCallVector().get(i);
-                    if (call.getPhoneNumber() != null) {
-                        provider = call.getPhoneNumber().getCallByCall();
-                    }
-                    if (!provider.equals("")) { //$NON-NLS-1$
-                        if (!filteredProviders.contains(provider)) {
-                            filteredProviders.add(provider);
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            System.err.println(e.toString());
-        }
-        JFritz.setProperty("filter.callbycallProvider", filteredProviders //$NON-NLS-1$
-                .toString());
-        jfritz.getCallerlist().updateFilter();
-    }
-
     private void setMissedFilter(int filterType) {
         Date from = null;
         Date to = null;
@@ -536,12 +491,12 @@ public class CallerListPanel extends JPanel implements ActionListener,
         } else if (e.getActionCommand() == "filter_sip") { //$NON-NLS-1$
             JFritz.setProperty("filter.sip", Boolean //$NON-NLS-1$
                     .toString(!((JToggleButton) e.getSource()).isSelected()));
-            jfritz.getCallerlist().getSipFilter().setFilter(0);
+            jfritz.getCallerlist().getSipFilter().setFilter(0); // Parameter wird nicht interpretiert
             jfritz.getCallerlist().fireTableStructureChanged();
         } else if (e.getActionCommand() == "filter_callbycall") { //$NON-NLS-1$
             JFritz.setProperty("filter.callbycall", Boolean //$NON-NLS-1$
                     .toString(!((JToggleButton) e.getSource()).isSelected()));
-            setCallByCallProviderFilterFromSelection();
+            jfritz.getCallerlist().getCallByCallFilter().setFilter(0); // Parameter wird nicht interpretiert
             jfritz.getCallerlist().fireTableStructureChanged();
         } else if (e.getActionCommand() == "clearFilter") { //$NON-NLS-1$
             clearAllFilter();

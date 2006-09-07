@@ -34,7 +34,6 @@ public class SipFilter extends CallFilter {
     }
 
     public boolean filterPassed(Call currentCall) {
-        System.out.println(filteredSipProviders.size());
         if ( filteredSipProviders.size() != 0 ) {
             String route = currentCall.getRoute();
             if (route.equals("")) { //$NON-NLS-1$
