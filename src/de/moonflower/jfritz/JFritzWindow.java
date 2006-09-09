@@ -193,8 +193,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
         int windowState = Integer.parseInt(JFritz.getProperty("window.state",
                 Integer.toString(JFrame.NORMAL)));
-        System.err.println(windowState);
-        System.err.println(JFrame.NORMAL);
         setLocation(x, y);
         setSize(w, h);
         setExtendedState(windowState);

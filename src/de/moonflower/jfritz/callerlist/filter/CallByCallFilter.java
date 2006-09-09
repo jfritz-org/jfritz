@@ -35,7 +35,6 @@ public class CallByCallFilter extends CallFilter {
     }
 
     public boolean filterPassed(Call currentCall) {
-        System.err.println(filteredCallByCallProviders);
         if (currentCall.getPhoneNumber() != null) {
             String callbycallprovider = currentCall.getPhoneNumber()
                     .getCallByCall();
