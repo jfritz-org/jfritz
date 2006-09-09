@@ -918,10 +918,12 @@ public class CallerList extends AbstractTableModel {
 				String parts[] = filterSearch.split(" "); //$NON-NLS-1$
 				for (int i = 0; i < parts.length; i++) {
 					String part = parts[i];
+
 					if (part.length() > 0
 							&& (call.getPhoneNumber() == null || call
-									.getPhoneNumber().getAreaNumber().indexOf(
+									.getPhoneNumber().getIntNumber().indexOf(
 											parts[i]) == -1)
+                            && (call.getPhoneNumber() == null || call.getPhoneNumber().getCallByCall().indexOf(parts[i]) == -1)
 							&& (call.getPerson() == null || call.getPerson()
 									.getFullname().toLowerCase().indexOf(
 											part.toLowerCase()) == -1)) {

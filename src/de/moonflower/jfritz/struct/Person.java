@@ -445,7 +445,12 @@ public class Person {
 		Enumeration en = numbers.elements();
 		while (en.hasMoreElements()) {
 			PhoneNumber n = (PhoneNumber) en.nextElement();
-			if (n.getAreaNumber().indexOf(s) != -1) {
+
+            if ( s.startsWith("+")) {
+                if (n.getIntNumber().indexOf(s) != -1) {
+                    return true;
+                }
+            } else if (n.getAreaNumber().indexOf(s) != -1) {
 				return true;
 			}
 		}
