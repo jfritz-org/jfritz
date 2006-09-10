@@ -573,7 +573,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.329 2006/09/10 11:55:41 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.330 2006/09/10 19:55:23 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -1040,6 +1040,49 @@ public final class JFritz {
 
 		startWatchdog();
 	}
+
+	/**
+	 * This constructor is used for JUnit based testing suites
+	 * Only the default settings are loaded for this jfritz object
+	 *
+	 * @author brian jensen
+	 */
+	public JFritz(){
+		jfritz = this;
+
+		loadProperties();
+		loadMessages(new Locale(JFritz.getProperty("locale", "de_DE"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		loadLocaleMeanings(new Locale("int", "INT"));
+
+
+		// make sure there is a plus on the country code, or else the number
+		// scheme won't work
+		if (!JFritz.getProperty("country.code").startsWith("+"))
+			JFritz.setProperty("country.code", "+"
+					+ JFritz.getProperty("country.code"));
+
+
+		//loadSounds();
+
+		//loads various country specific number settings and tables
+		loadNumberSettings();
+
+		//fritzBox = new FritzBox(
+		//		JFritz.getProperty("box.address", "192.168.178.1"), Encryption //$NON-NLS-1$,  //$NON-NLS-2$
+		//				.decrypt(JFritz.getProperty("box.password", Encryption //$NON-NLS-1$
+		//						.encrypt(""))), JFritz.getProperty("box.port", "80"), this); //$NON-NLS-1$
+
+		phonebook = new PhoneBook(this);
+		//phonebook.loadFromXMLFile(SAVE_DIR + PHONEBOOK_FILE);
+
+		sipprovider = new SipProviderTableModel();
+		//sipprovider.loadFromXMLFile(SAVE_DIR + SIPPROVIDER_FILE);
+
+		callerlist = new CallerList(this);
+		//callerlist.loadFromXMLFile(SAVE_DIR + CALLS_FILE);
+
+	}
+
 
 	/**
 	 * Loads resource messages
