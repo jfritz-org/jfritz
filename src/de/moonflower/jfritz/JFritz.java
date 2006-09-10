@@ -50,58 +50,59 @@
  * Roadmap:
  * JFritz 1.0
  * Bewertung - Feature
- * rob
- * 10 - Fehlermeldung an den Benutzer, wenn Daten nicht auf Festplatte gespeichert werden können. (Vielleicht schon implementiert -- Rob)
- * 10 - "Verbindungsgerät" in "MSN/Rufnummer" ändern
- * 10 - Kommentarspalte im Telefonbuch
- * 10 - Webverkehr über Proxy
- * 10 - Einstellen der Landes- und Ortsvorwahlen pro SIP-Account und nicht nur global (SF [ 1438932 ])
- * 9 - Export des gesamten Adressbuchs als VCard (http://www.ip-phone-forum.de/showthread.php?t=106758)
- * 9 - Einstellungen-Seiten überarbeiten.       Größe veränderbar machen!
- * 9 - Name für die Nebenstellen aus der Weboberfläche auslesen und zuweisen (SF [ 1498487 ])
- * 9 - Vollständiger Outlook-Support (SF [ 1498489 ])
- * 8 - Analoge Rufnummer aus der FritzBox auslesen
- * 8 - Automatisches Update auf neue Version
- * 7 - Einige Icons auslagern - unterschiedliche Icon-Packs
- * 7 - Sounddateien auslagern - unterschiedliche Sound-Packs (gute Ideen, Brian)
- * 7 - Popup und Tray-Message für Anrufmonitor anpassbar machen (Name, Nummer, Adresse, Nebenstelle, Stadt, "von Arbeit", "von SIP", anderer Text, Größe des Popups)
- * 7 - CSV-Export nicht nur mit ";", sondern auch mit "TAB", "SPACE" und "," (SF [ 1509248 ])
- * 6 - Synchronisierung von JFritz Telefonbuch und FritzBox Telefonbuch (SF [ 1494436 ])
- * 6 - Datumsfilter konfigurierbar gestalten (SF [ 1498488 ])
- * 6 - Internationalisierung abschließen, drunter Flaggencode optimieren (Nummer <-> flaggenfile Zuordnung in einer Hashmap ablegen).
- * 5 - Anrufmonitor: Anrufmonitor mächtiger machen (Aktionen nur für best. Nummern, verschiedene Aktionen, Log der Anrufe, Notizen zu einem laufenden Anruf) (SF [ 1525107 ])
- * 5 - Signalisieren der neu eingegangenen Anrufe im Tray (blinken, oder Zahl)
- * 5 - Button zum Löschen der Anrufliste
- * 5 - Mehrere FritzBoxen abfragen (SF [ 1515855 ]) Dafür sollten wir alle zugriffe auf die Box in eigene Threads unterbringen.
+ * rob - brian
+ * 10 - 10 - Fehlermeldung an den Benutzer, wenn Daten nicht auf Festplatte gespeichert werden können. (Vielleicht schon implementiert -- Rob)
+ * 10 - 9 - "Verbindungsgerät" in "MSN/Rufnummer" ändern
+ * 10 - 10 - Kommentarspalte im Telefonbuch
+ * 10 - 7 - Webverkehr über Proxy (Was für Proxys sind gemeint: Socks 4 /5, oder HTTP(S)?)
+ * 10 - 10 - Einstellen der Landes- und Ortsvorwahlen pro SIP-Account und nicht nur global (SF [ 1438932 ])
+ * 9 -  8 - Export des gesamten Adressbuchs als VCard (http://www.ip-phone-forum.de/showthread.php?t=106758)
+ * 9 -  9 - Einstellungen-Seiten überarbeiten.       Größe veränderbar machen!
+ * 9 -  9 - Name für die Nebenstellen aus der Weboberfläche auslesen und zuweisen (SF [ 1498487 ])
+ * 9 -  7 - Vollständiger Outlook-Support (SF [ 1498489 ])
+ * 8 -  8 - Analoge Rufnummer aus der FritzBox auslesen
+ * 8 -  9 - Automatisches Update auf neue Version
+ * 7 -  7 - Einige Icons auslagern - unterschiedliche Icon-Packs
+ * 7 -  7 - Sounddateien auslagern - unterschiedliche Sound-Packs (gute Ideen, Brian)
+ * 7 -  7 - Popup und Tray-Message für Anrufmonitor anpassbar machen (Name, Nummer, Adresse, Nebenstelle, Stadt, "von Arbeit", "von SIP", anderer Text, Größe des Popups)
+ * 7 -  5 - CSV-Export nicht nur mit ";", sondern auch mit "TAB", "SPACE" und "," (SF [ 1509248 ])
+ * 6 -  8 - Synchronisierung von JFritz Telefonbuch und FritzBox Telefonbuch (SF [ 1494436 ])
+ * 6 -  8 - Datumsfilter konfigurierbar gestalten (SF [ 1498488 ])
+ * 6 -  6 - Internationalisierung abschließen, drunter Flaggencode optimieren (Nummer <-> flaggenfile Zuordnung in einer Hashmap ablegen).
+ * 5 -  5 - Anrufmonitor: Anrufmonitor mächtiger machen (Aktionen nur für best. Nummern, verschiedene Aktionen, Log der Anrufe, Notizen zu einem laufenden Anruf) (SF [ 1525107 ])
+ * 5 -  5 - Signalisieren der neu eingegangenen Anrufe im Tray (blinken, oder Zahl)
+ * 5 -  5 - Button zum Löschen der Anrufliste
+ * 5 -  7 - Mehrere FritzBoxen abfragen (SF [ 1515855 ]) Dafür sollten wir alle zugriffe auf die Box in eigene Threads unterbringen.
  *                      Dann würde JFritz sich beim Hochfahren nicht so lange verzögern, wenn die Box nicht erreichbar ist.
- * 4 - Visualisierung der aktuellen Gespräche (Frei, Nummer, Name, Dauer des Gesprächs ...)
- * 4 - Plugins (Mögliche Plugins: Drucken, Anrufmonitor)
- * 4 - Import vom Tool Fritzinfo (http://www.ip-phone-forum.de/showthread.php?t=101090)
- * 4 - Begrenzen der Anzeige der Anrufe in der Anrufliste (z.B. maximal 100 Einträge)
- * 4 - CSV-Export anpassbar machen (wie bei Thunderbird).
- * 4 - Registrierstatus der VoIP-Provider (SF [ 1315159 ])
- * 4 - Einstellen der Farben, Symbolleisten, Schriftart, -größe (SF [ 1458892 ])
- * 4 - Exportieren/Anzeige der Anrufliste nach Monaten getrennt
- * 3 - SQL-Anbindung (SF [ 1515305 ])
- * 3 - Anzeige des letzten Telefonats nicht nur abhängig von der Standardnummer und anzeige der gesprochenen Minuten pro Telefonbucheintrag
- * 3 - Tastaturkürzel für Aktionen sollen editierbar sein
- * 3 - Netzwerkfunktionen (Client/Server) (SF [ 1485417 ]) Das wird das allerschwierigste von allen, und am meisten Planung benötigen.
- * 3 - Spalte "Privatkontakt" in CSV-Liste hinzufügen (SF [ 1480617 ])
- * 2 - 64-bit Unterstützung
- * 1 - LDAP-Anbindung
- * 1 - SMS Benachrichtigung (Über Festnetzgateway)
- * 1 - Style-Sheet für die Anzeige der Anrufliste als HTML
- * 1 - Einige ausgewählte Statisken über die DSL benutzung, damit JFritz eine komplette Lösung für die Fritz!Box anbietet.
- * 1 - umstieg auf Mustang, damit verbunden jdic rauswerfen und nur noch Java-interne Bibliotheken nutzen
+ * 4 -  5 - Visualisierung der aktuellen Gespräche (Frei, Nummer, Name, Dauer des Gesprächs ...)
+ * 4 -  4 - Plugins (Mögliche Plugins: Drucken, Anrufmonitor)
+ * 4 -  2 - Import vom Tool Fritzinfo (http://www.ip-phone-forum.de/showthread.php?t=101090)
+ * 4 -  4 - Begrenzen der Anzeige der Anrufe in der Anrufliste (z.B. maximal 100 Einträge)
+ * 4 -  4 - CSV-Export anpassbar machen (wie bei Thunderbird).
+ * 4 -  4 - Registrierstatus der VoIP-Provider (SF [ 1315159 ])
+ * 4 -  1 - Einstellen der Farben, Symbolleisten, Schriftart, -größe (SF [ 1458892 ])
+ * 4 -  3 - Exportieren/Anzeige der Anrufliste nach Monaten getrennt
+ * 3 -  2 - SQL-Anbindung (SF [ 1515305 ])
+ * 3 -  3 - Anzeige des letzten Telefonats nicht nur abhängig von der Standardnummer und anzeige der gesprochenen Minuten pro Telefonbucheintrag
+ * 3 -  2 - Tastaturkürzel für Aktionen sollen editierbar sein
+ * 3 -  2 - Netzwerkfunktionen (Client/Server) (SF [ 1485417 ]) Das wird das allerschwierigste von allen, und am meisten Planung benötigen.
+ * 3 -  2 - Spalte "Privatkontakt" in CSV-Liste hinzufügen (SF [ 1480617 ])
+ * 2 -  2 - 64-bit Unterstützung
+ * 1 -  1 - LDAP-Anbindung
+ * 1 -  1 - SMS Benachrichtigung (Über Festnetzgateway)
+ * 1 -  1 - Style-Sheet für die Anzeige der Anrufliste als HTML
+ * 1 -  1 - Einige ausgewählte Statisken über die DSL benutzung, damit JFritz eine komplette Lösung für die Fritz!Box anbietet.
+ * 1 -  1 - umstieg auf Mustang, damit verbunden jdic rauswerfen und nur noch Java-interne Bibliotheken nutzen
  * 					Gut, dann können wir endlich diese ganze String.indexOf('@') > 0 rausschmeißen :)
  *                  Das würde aber heissen, dass wir nicht mehr zu Java 1.4 kompatibel sind. Einige Plattformen (wie MAC) werden
  *                      bestimmt noch über längere Zeit kein Java SE 6 anbieten. -- Rob
- * 1 - Statistikfunktionen
- * 1 - WAN IP beim Tray-Icon anzeigen lassen ?
- * 1 - Skinns (SF [ 1471202 ])
- * 1 - Unterstützung für das Adressbuch von Lotus Notes (SF [ 1445456 ]) (Ich bin dagegen, denn man bräuchte nochmal so ne Plugin wie bei Outlook,
+ * 1 -  1 - Statistikfunktionen
+ * 1 -  1 - WAN IP beim Tray-Icon anzeigen lassen ?
+ * 1 -  1 - Skinns (SF [ 1471202 ])
+ * 1 - (-1) - Unterstützung für das Adressbuch von Lotus Notes (SF [ 1445456 ]) (Ich bin dagegen, denn man bräuchte nochmal so ne Plugin wie bei Outlook,
  * 						nur ich schätze es gibt gar keins => wir müssten eine schreiben.
- * 1 - Bild / Rufton / Farbe eines bestimmten Anrufers
+ * 						Habe das programm bei mir in der Arbeit, und ich hasse es. Ich werde nicht mehr Zeit als notwendig ist damit verbringen.
+ * 1 -  1 - Bild / Rufton / Farbe eines bestimmten Anrufers
  *
  *
  * CHANGELOG:
@@ -572,7 +573,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.328 2006/09/09 10:18:03 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.329 2006/09/10 11:55:41 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
