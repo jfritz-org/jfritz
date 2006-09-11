@@ -14,7 +14,6 @@ import javax.swing.table.TableCellEditor;
 
 import de.moonflower.jfritz.JFritz;
 
-
 /**
  * This deprecated class manages editing of the participant cell in the caller table.
  *
@@ -24,12 +23,7 @@ import de.moonflower.jfritz.JFritz;
 public class CommentCellEditor extends AbstractCellEditor implements
 		TableCellEditor {
 	private static final long serialVersionUID = 1;
-	private JFritz jfritz;
     private JTextField textField = new JTextField();
-
-    public CommentCellEditor(JFritz jfritz) {
-        this.jfritz = jfritz;
-    }
 
 	/**
 	 * @see javax.swing.table.TableCellEditor#getTableCellEditorComponent(javax.swing.JTable,
@@ -81,7 +75,7 @@ public class CommentCellEditor extends AbstractCellEditor implements
 	 */
 	protected void fireEditingStopped() {
 		super.fireEditingStopped();
-        jfritz.getCallerlist().saveToXMLFile(JFritz.SAVE_DIR + JFritz.CALLS_FILE, true);
+        JFritz.getCallerlist().saveToXMLFile(JFritz.SAVE_DIR + JFritz.CALLS_FILE, true);
 	}
 
 }

@@ -38,7 +38,6 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  */
 public class CallerTable extends JTable {
 	private static final long serialVersionUID = 1;
-	private JFritz jfritz;
 
 	private TableColumn callByCallColumn = null;
 	private TableColumn commentColumn = null;
@@ -48,11 +47,9 @@ public class CallerTable extends JTable {
 	/**
 	 * Constructs CallerTable
 	 *
-	 * @param jfritz JFritz object
 	 */
-	public CallerTable(JFritz jfritz) {
-		super(jfritz.getCallerlist());
-        this.jfritz = jfritz;
+	public CallerTable() {
+		super(JFritz.getCallerlist());
 		setTableProperties();
 		createColumns();
 	}
@@ -88,7 +85,7 @@ public class CallerTable extends JTable {
 				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					// clear selection
 					table.clearSelection();
-					jfritz.getJframe().setStatus();
+					JFritz.getJframe().setStatus();
 				}
 				else if (e.getKeyCode() == KeyEvent.VK_DELETE) {
 					// Delete selected entries
@@ -145,7 +142,7 @@ public class CallerTable extends JTable {
 		col.setHeaderValue(JFritz.getMessage("number")); //$NON-NLS-1$
 		col.setCellRenderer(new NumberCellRenderer());
 		headerTips.setToolTip(col, JFritz.getMessage("number_desc")); //$NON-NLS-1$
-		col.setCellEditor(new CallCellEditor(jfritz));
+		col.setCellEditor(new CallCellEditor());
         col.setMinWidth(10);
         col.setMaxWidth(1600);
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
@@ -198,7 +195,7 @@ public class CallerTable extends JTable {
 		col.setIdentifier("comment"); //$NON-NLS-1$
 		col.setHeaderValue(JFritz.getMessage("comment")); //$NON-NLS-1$
 		headerTips.setToolTip(col, JFritz.getMessage("comment_desc")); //$NON-NLS-1$
-		col.setCellEditor(new CommentCellEditor(jfritz));
+		col.setCellEditor(new CommentCellEditor());
 		col.setMinWidth(10);
 		col.setMaxWidth(1600);
 		col.setPreferredWidth(Integer.parseInt(JFritz.getProperty(
@@ -266,13 +263,6 @@ public class CallerTable extends JTable {
 			c.setBackground(new Color(204, 204, 255));
 		}
 		return c;
-	}
-
-	/**
-	 * @return Returns the jfritz.
-	 */
-	public final JFritz getJfritz() {
-		return jfritz;
 	}
 
 	/**

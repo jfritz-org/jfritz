@@ -25,26 +25,23 @@ import de.moonflower.jfritz.JFritz;
  */
 public class ConfigWizard {
 
-	private JFritz jfritz;
-
 	private Wizard wizard;
 
 	private WizardPanelDescriptor descriptor2, descriptor3, descriptor4, descriptor5;
 
 	private boolean canceled = false;
 
-	public ConfigWizard(JFritz jf, Frame parent){
+	public ConfigWizard(Frame parent){
 
-		jfritz = jf;
 		Debug.msg("asking the user for the language");
 
 		//if user clicked cancel on the language dialog, return back to jfritz
 		askLanguage(parent);
 
 		Debug.msg("Create JFritz config wizard");
-		wizard = new Wizard(jfritz.getJframe());
+		wizard = new Wizard(JFritz.getJframe());
         wizard.getDialog().setTitle(JFritz.getMessage("config_wizard"));
-       	wizard.getDialog().setLocationRelativeTo(jfritz.getJframe());
+       	wizard.getDialog().setLocationRelativeTo(JFritz.getJframe());
 
 
         //initialize the wizard with the correct order of the panels
@@ -54,13 +51,13 @@ public class ConfigWizard {
         descriptor2 = new ConfigPanel2Descriptor();
         wizard.registerWizardPanel(ConfigPanel2Descriptor.IDENTIFIER, descriptor2);
 
-        descriptor3 = new ConfigPanel3Descriptor(jfritz);
+        descriptor3 = new ConfigPanel3Descriptor();
         wizard.registerWizardPanel(ConfigPanel3Descriptor.IDENTIFIER, descriptor3);
 
-        descriptor4 = new ConfigPanel4Descriptor(jfritz);
+        descriptor4 = new ConfigPanel4Descriptor();
         wizard.registerWizardPanel(ConfigPanel4Descriptor.IDENTIFIER, descriptor4);
 
-        descriptor5 = new ConfigPanel5Descriptor(jfritz);
+        descriptor5 = new ConfigPanel5Descriptor();
         wizard.registerWizardPanel(ConfigPanel5Descriptor.IDENTIFIER, descriptor5);
 
         //set the first panel to be displayed
@@ -138,8 +135,8 @@ public class ConfigWizard {
        	                "option.activateDialPrefix", Boolean.toString(
        	                		((ConfigPanel2)descriptor2.getPanelComponent()).activateDialPrefix.isSelected())); //$NON-NLS-1$
 
-      			jfritz.getFritzBox().detectFirmware();
-      			jfritz.saveProperties();
+      			JFritz.getFritzBox().detectFirmware();
+      			JFritz.saveProperties();
 
        			break;
        		case 1:
@@ -189,7 +186,7 @@ public class ConfigWizard {
 				JFritz.setProperty(
 						"locale", localeList[languageCombo.getSelectedIndex()]); //$NON-NLS-1$
 				String loc = localeList[languageCombo.getSelectedIndex()];
-				jfritz.getJframe().setLanguage(
+				JFritz.getJframe().setLanguage(
 						new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_")+1, loc.length())));
 			}
 

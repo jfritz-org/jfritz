@@ -26,17 +26,14 @@ public class TelnetListener extends Thread implements CallMonitor {
 
     private boolean isRunning = false;
 
-    private JFritz jfritz;
-
-    public TelnetListener(JFritz jfritz) {
+    public TelnetListener() {
         super();
-        this.jfritz = jfritz;
         start();
 
     }
 
     public void run() {
-        telnet = new Telnet(jfritz);
+        telnet = new Telnet();
         Debug.msg("Starting TelnetListener"); //$NON-NLS-1$
         telnet.connect();
         if (telnet.isConnected()) {
@@ -48,14 +45,14 @@ public class TelnetListener extends Thread implements CallMonitor {
                                     + "Dabei wird ein laufendes Gespräch unterbrochen. Die Anrufliste wird vorher gesichert.\n" // TODO: I18N
                                     + "Soll der telefond neu gestartet werden?", // TODO: I18N
                             JFritz.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                jfritz.getJframe().getFetchButton().doClick();
+                JFritz.getJframe().getFetchButton().doClick();
                 restartTelefonDaemon();
                 parseOutput();
             } else {
-                jfritz.stopCallMonitor();
+                JFritz.stopCallMonitor();
             }
         } else
-            jfritz.stopCallMonitor();
+            JFritz.stopCallMonitor();
 
     }
 
@@ -93,7 +90,7 @@ public class TelnetListener extends Thread implements CallMonitor {
                     Debug.msg("NEW CALL " + id + ": " + caller + " -> " //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
                             + called);
 
-                    jfritz.callInMsg(caller, called);
+                    callMonitoring.displayCallInMsg(caller, called);
                     if (!isRunning)
                         break;
                 }

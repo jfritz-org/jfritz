@@ -41,8 +41,6 @@ public class CallDialog extends JDialog implements ActionListener {
 
 	private Vector numbers;
 
-	private JFritz jfritz;
-
 	private JComboBox port;
 
 	private FritzBoxFirmware firmware = null;
@@ -63,15 +61,14 @@ public class CallDialog extends JDialog implements ActionListener {
 	 *            String containig the default number to select in JComboBox
 	 * @throws HeadlessException
 	 */
-	public CallDialog(JFritz jfritz, Vector numbers, PhoneNumber defaultNumber)
+	public CallDialog(Vector numbers, PhoneNumber defaultNumber)
 			throws HeadlessException {
-		super(jfritz.getJframe()); //sets icon to JFritz' one
-		this.jfritz = jfritz;
-		//this.setLocation(jfritz.getJframe().getX() + 80, jfritz.getJframe().getY() + 100);
+		super(JFritz.getJframe()); //sets icon to JFritz' one
+		//this.setLocation(JFritz.getJframe().getX() + 80, JFritz.getJframe().getY() + 100);
 		this.numbers = numbers;
 		this.defaultNumber = defaultNumber;
 		drawDialog();
-		this.setLocationRelativeTo(jfritz.getJframe());
+		this.setLocationRelativeTo(JFritz.getJframe());
 	}
 
 	/**
@@ -83,23 +80,22 @@ public class CallDialog extends JDialog implements ActionListener {
 	 *            PhoneNumber object
 	 * @throws HeadlessException
 	 */
-	public CallDialog(JFritz jfritz, PhoneNumber number)
+	public CallDialog(PhoneNumber number)
 			throws HeadlessException {
-		super(jfritz.getJframe()); //sets icon to JFritz' one
-		this.jfritz = jfritz;
-		// this.setLocationRelativeTo(jfritz.getJframe());
-		//this.setLocation(jfritz.getJframe().getX() + 80, jfritz.getJframe().getY() + 100);
+		super(JFritz.getJframe()); //sets icon to JFritz' one
+		// this.setLocationRelativeTo(JFritz.getJframe());
+		//this.setLocation(JFritz.getJframe().getX() + 80, JFritz.getJframe().getY() + 100);
 		Vector v = new Vector();
 		v.addElement(number);
 		this.numbers = v;
         this.defaultNumber = number; //does not really need, but to be complete
 		drawDialog();
-		this.setLocationRelativeTo(jfritz.getJframe());
+		this.setLocationRelativeTo(JFritz.getJframe());
 	}
 
 	private void drawDialog() {
 		NoticeDialog info = new NoticeDialog(
-				jfritz,"legalInfo.telephoneCharges", //$NON-NLS-1$
+                "legalInfo.telephoneCharges", //$NON-NLS-1$
 				JFritz.getMessage("telefonCharges_Warning")); //$NON-NLS-1$
 
 		info.setVisible(true);
@@ -151,7 +147,7 @@ public class CallDialog extends JDialog implements ActionListener {
 
 			port = new JComboBox();
 			port.addItem("Fon 1"); //$NON-NLS-1$
-            firmware = jfritz.getFritzBox().getFirmware();
+            firmware = JFritz.getFritzBox().getFirmware();
 			if (firmware != null) {
 				switch (firmware.getBoxType()) {
 					case FritzBoxFirmware.BOXTYPE_FRITZBOX_FON :
@@ -242,18 +238,18 @@ public class CallDialog extends JDialog implements ActionListener {
             JFritz.setProperty("calldialog.lastport", Integer.toString(port.getSelectedIndex()));
 
 //			if(!number.getText().equals(""))
-//				jfritz.getFritzBox().doCall(number.getText(), port.getSelectedItem().toString());
+//				JFritz.getFritzBox().doCall(number.getText(), port.getSelectedItem().toString());
 
 			if (cboNumber.getClass().toString().equals(
 					"class javax.swing.JTextField")) //$NON-NLS-1$
 			{
-				jfritz.getFritzBox().doCall(((JTextField) cboNumber).getText(), port.getSelectedItem().toString());
+				JFritz.getFritzBox().doCall(((JTextField) cboNumber).getText(), port.getSelectedItem().toString());
 				//JOptionPane.showMessageDialog(null,"JTextField: "+((JTextField) cboNumber).getText());
 			}
 			if (cboNumber.getClass().toString().equals(
 					"class javax.swing.JComboBox")) //$NON-NLS-1$
 			{
-				jfritz.getFritzBox().doCall(((JComboBox) cboNumber).getSelectedItem().toString(), port.getSelectedItem().toString());
+				JFritz.getFritzBox().doCall(((JComboBox) cboNumber).getSelectedItem().toString(), port.getSelectedItem().toString());
 				//JOptionPane.showMessageDialog(null,"JComboBox: "+((JComboBox) cboNumber).getSelectedItem().toString());
 			}
 

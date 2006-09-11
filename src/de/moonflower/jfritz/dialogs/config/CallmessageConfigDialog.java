@@ -47,7 +47,7 @@ public class CallmessageConfigDialog extends JDialog implements CallMonitorConfi
 
 	private JTextField callmessagePort;
 
-	public CallmessageConfigDialog(JDialog parent, JFritz jfritz) {
+	public CallmessageConfigDialog(JDialog parent) {
 		super(parent, true);
 		//		this.jfritz = jfritz;
 		initDialog();

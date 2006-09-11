@@ -172,7 +172,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
         setTitle(JFritz.PROGRAM_NAME);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setDefaultLookAndFeel();
-        ShutdownThread shutdownThread = new ShutdownThread(jfritz);
+        ShutdownThread shutdownThread = new ShutdownThread();
         Runtime.getRuntime().addShutdownHook(shutdownThread);
 
         addKeyListener(KeyEvent.VK_F5, "F5"); //$NON-NLS-1$
@@ -196,9 +196,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
         setLocation(x, y);
         setSize(w, h);
         setExtendedState(windowState);
-        callerListPanel = new CallerListPanel(jfritz);
-        phoneBookPanel = new PhoneBookPanel(jfritz);
-        quickDialPanel = new QuickDialPanel(jfritz);
+        callerListPanel = new CallerListPanel();
+        phoneBookPanel = new PhoneBookPanel();
+        quickDialPanel = new QuickDialPanel();
 
         tabber = new JTabbedPane(JTabbedPane.BOTTOM);
         tabber.addTab(JFritz.getMessage("callerlist"), callerListPanel); //$NON-NLS-1$
@@ -226,11 +226,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
         getContentPane().add(tabber, BorderLayout.CENTER);
         getContentPane().add(createStatusBar(), BorderLayout.SOUTH);
 
-        jfritz.getCallerlist().fireTableDataChanged();
-        jfritz.getCallerlist().fireTableStructureChanged();
+        JFritz.getCallerlist().fireTableDataChanged();
+        JFritz.getCallerlist().fireTableStructureChanged();
         String ask = JFritz.getProperty("jfritz.password", Encryption //$NON-NLS-1$
                 .encrypt(JFritz.PROGRAM_SECRET + "")); //$NON-NLS-1$
-        String pass = jfritz.getFritzBox().getPassword();
+        String pass = JFritz.getFritzBox().getPassword();
         if (!Encryption.decrypt(ask).equals(JFritz.PROGRAM_SECRET + pass)) {
             String password = showPasswordDialog(""); //$NON-NLS-1$
             if (password == null) { // PasswordDialog canceled
@@ -560,7 +560,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
                 public void run() {
                     Debug.msg("Running FetchListTask.."); //$NON-NLS-1$
-                    jfritz.getJframe().fetchList();
+                    JFritz.getJframe().fetchList();
                 }
 
             }, 5000, Integer.parseInt(JFritz.getProperty("fetch.timer", //$NON-NLS-1$
@@ -594,20 +594,20 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                         try {
                             setBusy(true);
                             setStatus(JFritz.getMessage("fetchdata")); //$NON-NLS-1$
-                            jfritz.getCallerlist().getNewCalls(
+                            JFritz.getCallerlist().getNewCalls(
                                     deleteFritzBoxCallerList);
                             isdone = true;
                         } catch (WrongPasswordException e) {
                             setBusy(false);
                             setStatus(JFritz.getMessage("password_wrong")); //$NON-NLS-1$
-                            String password = showPasswordDialog(jfritz
+                            String password = showPasswordDialog(JFritz
                                     .getFritzBox().getPassword()); //$NON-NLS-1$
                             if (password == null) { // Dialog canceled
                                 isdone = true;
                             } else {
                                 JFritz.setProperty("box.password", Encryption //$NON-NLS-1$
                                         .encrypt(password));
-                                jfritz.getFritzBox().detectFirmware();
+                                JFritz.getFritzBox().detectFirmware();
                             }
                         } catch (IOException e) {
                             // Warten, falls wir von einem Standby aufwachen,
@@ -619,14 +619,14 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                                 Debug.msg("Callerlist Box not found"); //$NON-NLS-1$
                                 setBusy(false);
                                 setStatus(JFritz.getMessage("box_not_found")); //$NON-NLS-1$
-                                String box_address = showAddressDialog(jfritz
+                                String box_address = showAddressDialog(JFritz
                                         .getFritzBox().getAddress()); //$NON-NLS-1$
                                 if (box_address == null) { // Dialog canceled
                                     isdone = true;
                                 } else {
                                     JFritz.setProperty("box.address", //$NON-NLS-1$
                                             box_address);
-                                    jfritz.getFritzBox().detectFirmware();
+                                    JFritz.getFritzBox().detectFirmware();
                                 }
                             }
                         }
@@ -637,7 +637,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                 public void finished() {
                     setBusy(false);
                     setStatus();
-                    jfritz.getCallerlist().fireTableStructureChanged();
+                    JFritz.getCallerlist().fireTableStructureChanged();
                     isretrieving = false;
                     if (JFritz.getProperty("option.lookupAfterFetch", "false") //$NON-NLS-1$,  //$NON-NLS-2$
                             .equals("true")) { //$NON-NLS-1$
@@ -663,9 +663,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                     while (!isdone) {
                         setBusy(true);
                         setStatus(JFritz.getMessage("reverse_lookup")); //$NON-NLS-1$
-                        for (int i = 0; i < jfritz.getCallerlist()
+                        for (int i = 0; i < JFritz.getCallerlist()
                                 .getRowCount(); i++) {
-                            Vector data = jfritz.getCallerlist()
+                            Vector data = JFritz.getCallerlist()
                                     .getFilteredCallVector();
                             Call call = (Call) data.get(i);
                             PhoneNumber number = call.getPhoneNumber();
@@ -679,10 +679,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
                                 Person newPerson = ReverseLookup.lookup(number);
                                 if (newPerson != null) {
-                                    jfritz.getPhonebook().addEntry(newPerson);
-                                    jfritz.getPhonebook()
+                                    JFritz.getPhonebook().addEntry(newPerson);
+                                    JFritz.getPhonebook()
                                             .fireTableDataChanged();
-                                    jfritz.getCallerlist()
+                                    JFritz.getCallerlist()
                                             .fireTableDataChanged();
                                 }
 
@@ -691,7 +691,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                         isdone = true;
                     }
                     if (j > 0)
-                        jfritz.getPhonebook().saveToXMLFile(
+                        JFritz.getPhonebook().saveToXMLFile(
                                 JFritz.SAVE_DIR + JFritz.PHONEBOOK_FILE);
                     return null;
                 }
@@ -699,7 +699,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                 public void finished() {
                     setBusy(false);
                     isretrieving = false;
-                    // int rows = jfritz.getCallerlist().getRowCount();
+                    // int rows = JFritz.getCallerlist().getRowCount();
                     setStatus();
                 }
             };
@@ -727,33 +727,33 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
         configDialog.setLocationRelativeTo(this);
         if (configDialog.showDialog()) {
             configDialog.storeValues();
-            jfritz.saveProperties();
-            if (jfritz.getSIPProviderTableModel().getProviderList().size() == 0) { // Noch
+            JFritz.saveProperties();
+            if (JFritz.getSIPProviderTableModel().getProviderList().size() == 0) { // Noch
                 // keine
                 // SipProvider
                 // eingelesen.
                 try {
-                    Vector data = jfritz.getFritzBox().retrieveSipProvider();
-                    jfritz.getSIPProviderTableModel().updateProviderList(data);
-                    jfritz.getSIPProviderTableModel().fireTableDataChanged();
-                    jfritz.getSIPProviderTableModel().saveToXMLFile(
+                    Vector data = JFritz.getFritzBox().retrieveSipProvider();
+                    JFritz.getSIPProviderTableModel().updateProviderList(data);
+                    JFritz.getSIPProviderTableModel().fireTableDataChanged();
+                    JFritz.getSIPProviderTableModel().saveToXMLFile(
                             JFritz.SAVE_DIR + JFritz.SIPPROVIDER_FILE);
-                    jfritz.getCallerlist().fireTableDataChanged();
+                    JFritz.getCallerlist().fireTableDataChanged();
                 } catch (WrongPasswordException e1) {
-                    jfritz.errorMsg(JFritz.getMessage("wrong_password")); //$NON-NLS-1$
+                    JFritz.errorMsg(JFritz.getMessage("wrong_password")); //$NON-NLS-1$
                     Debug.errDlg(JFritz.getMessage("wrong_password")); //$NON-NLS-1$
                 } catch (IOException e1) {
-                    jfritz.errorMsg(JFritz.getMessage("box_address_wrong")); //$NON-NLS-1$
+                    JFritz.errorMsg(JFritz.getMessage("box_address_wrong")); //$NON-NLS-1$
                     Debug.errDlg(JFritz.getMessage("box_address_wrong")); //$NON-NLS-1$
                 } catch (InvalidFirmwareException e1) {
-                    jfritz.errorMsg(JFritz.getMessage("unknown_firmware")); //$NON-NLS-1$
+                    JFritz.errorMsg(JFritz.getMessage("unknown_firmware")); //$NON-NLS-1$
                     Debug.errDlg(JFritz.getMessage("unknown_firmware")); //$NON-NLS-1$
                 }
             }
             monitorButton.setEnabled((Integer.parseInt(JFritz.getProperty(
                     "option.callMonitorType", "0")) > 0)); //$NON-NLS-1$,  //$NON-NLS-2$
 
-            TableColumnModel colModel = jfritz.getJframe().getCallerTable()
+            TableColumnModel colModel = JFritz.getJframe().getCallerTable()
                     .getColumnModel();
 
             // Show / hide CallByCall column
@@ -762,7 +762,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
                 // No Call-by-call column found. Add one
                 if (getCallerTable().getColumnIndex("callbycall") == -1) { //$NON-NLS-1$
-                    colModel.addColumn(jfritz.getJframe().getCallerTable()
+                    colModel.addColumn(JFritz.getJframe().getCallerTable()
                             .getCallByCallColumn());
                     colModel.getColumn(colModel.getColumnCount() - 1)
                             .setPreferredWidth(
@@ -781,7 +781,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
                 // No comment column found. Add one
                 if (getCallerTable().getColumnIndex("comment") == -1) { //$NON-NLS-1$
-                    colModel.addColumn(jfritz.getJframe().getCallerTable()
+                    colModel.addColumn(JFritz.getJframe().getCallerTable()
                             .getCommentColumn());
                     colModel.getColumn(colModel.getColumnCount() - 1)
                             .setPreferredWidth(
@@ -800,7 +800,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
                 // No port column found. Add one
                 if (getCallerTable().getColumnIndex("port") == -1) { //$NON-NLS-1$
-                    colModel.addColumn(jfritz.getJframe().getCallerTable()
+                    colModel.addColumn(JFritz.getJframe().getCallerTable()
                             .getPortColumn());
                     colModel.getColumn(colModel.getColumnCount() - 1)
                             .setPreferredWidth(
@@ -939,11 +939,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
      *
      */
     public void setStatus() {
-        int duration = jfritz.getCallerlist().getTotalDuration();
+        int duration = JFritz.getCallerlist().getTotalDuration();
         int hours = duration / 3600;
         int mins = duration % 3600 / 60;
         String status = JFritz
-                .getMessage("telephone_entries").replaceAll("%N", Integer.toString(jfritz.getCallerlist().getRowCount())) + ", " //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+                .getMessage("telephone_entries").replaceAll("%N", Integer.toString(JFritz.getCallerlist().getRowCount())) + ", " //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
                 + JFritz.getMessage("total_duration") + ": " + hours + "h " //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
                 + mins + " min " + " (" + duration / 60 + " min)"; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
         ;
@@ -1001,7 +1001,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
         } else if (e.getActionCommand().equals("export_csv")) //$NON-NLS-1$
             exportCallerListToCSV();
         else if (e.getActionCommand().equals("update")) { //$NON-NLS-1$
-            VersionCheckThread vct = new VersionCheckThread(jfritz, true);
+            VersionCheckThread vct = new VersionCheckThread(true);
             vct.run();
         } else if (e.getActionCommand().equals("export_phonebook")) //$NON-NLS-1$
             exportPhoneBookToCSV();
@@ -1037,7 +1037,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                 startChosenCallMonitor();
             } else {
                 Debug.msg("Stop callMonitor"); //$NON-NLS-1$
-                jfritz.stopCallMonitor();
+                JFritz.stopCallMonitor();
             }
 
         } else if (e.getActionCommand().equals("reverselookup")) //$NON-NLS-1$
@@ -1051,9 +1051,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
         else if (e.getActionCommand().equals("import_contacts_thunderbird_csv")) //$NON-NLS-1$
             importContactsThunderbirdCSV();
         else if (e.getActionCommand().equals("showhide")) {
-            jfritz.hideShowJFritz();
+            JFritz.hideShowJFritz();
         } else if (e.getActionCommand().equals("configwizard"))
-            jfritz.showConfigWizard();
+            JFritz.showConfigWizard();
         else
             Debug.err("Unimplemented action: " + e.getActionCommand()); //$NON-NLS-1$
     }
@@ -1088,11 +1088,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                         "overwrite_file").replaceAll("%F", file.getName()), //$NON-NLS-1$, //$NON-NLS-2$
                         JFritz.getMessage("dialog_title_overwrite_file"), //$NON-NLS-1$
                         JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
-                    jfritz.getCallerlist().saveToCSVFile(
+                    JFritz.getCallerlist().saveToCSVFile(
                             file.getAbsolutePath(), false);
                 }
             } else {
-                jfritz.getCallerlist().saveToCSVFile(file.getAbsolutePath(),
+                JFritz.getCallerlist().saveToCSVFile(file.getAbsolutePath(),
                         false);
             }
         }
@@ -1129,11 +1129,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                         "overwrite_file").replaceAll("%F", file.getName()), //$NON-NLS-1$, //$NON-NLS-2$
                         JFritz.getMessage("dialog_title_overwrite_file"), //$NON-NLS-1$
                         JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
-                    jfritz.getCallerlist().saveToXMLFile(
+                    JFritz.getCallerlist().saveToXMLFile(
                             file.getAbsolutePath(), false);
                 }
             } else {
-                jfritz.getCallerlist().saveToXMLFile(file.getAbsolutePath(),
+                JFritz.getCallerlist().saveToXMLFile(file.getAbsolutePath(),
                         false);
             }
         }
@@ -1171,11 +1171,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                         "overwrite_file").replaceAll("%F", file.getName()), //$NON-NLS-1$, //$NON-NLS-2$
                         JFritz.getMessage("dialog_title_overwrite_file"), //$NON-NLS-1$
                         JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
-                    jfritz.getPhonebook().saveToCSVFile(file.getAbsolutePath(),
+                    JFritz.getPhonebook().saveToCSVFile(file.getAbsolutePath(),
                             false, ';');
                 }
             } else {
-                jfritz.getPhonebook().saveToCSVFile(file.getAbsolutePath(),
+                JFritz.getPhonebook().saveToCSVFile(file.getAbsolutePath(),
                         false, ';');
             }
         }
@@ -1183,7 +1183,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
     //
     public void printCallerList() {
-        PrintCallerList printCallerList = new PrintCallerList(jfritz);
+        PrintCallerList printCallerList = new PrintCallerList();
         printCallerList.print();
     }
 
@@ -1275,7 +1275,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
             if (configDialog != null) {
                 configDialog.setCallMonitorButtons(option);
             } else {
-                jfritz.getJframe().getMonitorButton().setSelected(false);
+                JFritz.getJframe().getMonitorButton().setSelected(false);
             }
             break;
         }
@@ -1283,7 +1283,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
             if (configDialog != null) {
                 configDialog.setCallMonitorButtons(option);
             } else {
-                jfritz.getJframe().getMonitorButton().setSelected(true);
+                JFritz.getJframe().getMonitorButton().setSelected(true);
             }
             break;
         }
@@ -1293,7 +1293,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
     private void importOutlook() {
         Debug.msg("Starte Import von Outlook"); //$NON-NLS-1$
-        Thread thread = new Thread(new ImportOutlookContacts(jfritz));
+        Thread thread = new Thread(new ImportOutlookContacts());
         thread.start();
     }
 
@@ -1301,8 +1301,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
         switch (Integer.parseInt(JFritz.getProperty("option.callMonitorType", //$NON-NLS-1$
                 "0"))) { //$NON-NLS-1$
         case 1: {
-            if (jfritz.getFritzBox().checkValidFirmware()) {
-                FritzBoxFirmware currentFirm = jfritz.getFritzBox()
+            if (JFritz.getFritzBox().checkValidFirmware()) {
+                FritzBoxFirmware currentFirm = JFritz.getFritzBox()
                         .getFirmware();
                 if (currentFirm.getMajorFirmwareVersion() == 3
                         && currentFirm.getMinorFirmwareVersion() < 96) {
@@ -1313,9 +1313,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                 } else {
                     if (currentFirm.getMajorFirmwareVersion() >= 4
                             && currentFirm.getMinorFirmwareVersion() >= 3) {
-                        jfritz.setCallMonitor(new FBoxListenerV3(jfritz));
+                        JFritz.setCallMonitor(new FBoxListenerV3(jfritz));
                     } else {
-                        jfritz.setCallMonitor(new FBoxListenerV1(jfritz));
+                        JFritz.setCallMonitor(new FBoxListenerV1(jfritz));
                     }
                     this.setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
                 }
@@ -1323,24 +1323,24 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
             break;
         }
         case 2: {
-            jfritz.setCallMonitor(new TelnetListener(jfritz));
+            JFritz.setCallMonitor(new TelnetListener());
             this.setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
             break;
         }
         case 3: {
-            jfritz.setCallMonitor(new SyslogListener(jfritz));
+            JFritz.setCallMonitor(new SyslogListener());
             this.setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
             break;
         }
         case 4: {
-            jfritz.setCallMonitor(new YAClistener(jfritz, Integer
+            JFritz.setCallMonitor(new YAClistener(Integer
                     .parseInt(JFritz.getProperty("option.yacport", //$NON-NLS-1$
                             "10629")))); //$NON-NLS-1$
             this.setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
             break;
         }
         case 5: {
-            jfritz.setCallMonitor(new CallmessageListener(jfritz, Integer
+            JFritz.setCallMonitor(new CallmessageListener(Integer
                     .parseInt(JFritz.getProperty("option.callmessageport", //$NON-NLS-1$
                             "23232")))); //$NON-NLS-1$
             this.setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
@@ -1388,7 +1388,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                         JOptionPane.YES_NO_OPTION);
 
         if (answer == JOptionPane.YES_OPTION) {
-            int removedEntries = getJFritz().getPhonebook()
+            int removedEntries = JFritz.getPhonebook()
                     .deleteDuplicateEntries();
             JOptionPane.showMessageDialog(this, JFritz.getMessage(
                     "delete_duplicate_phonebook_entries_inform_msg") //$NON-NLS-1$
@@ -1407,7 +1407,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
         CopyFile backup = new CopyFile();
         try {
             String directory = new DirectoryChooser().getDirectory(
-                    jfritz.getJframe()).toString();
+                    JFritz.getJframe()).toString();
             backup.copy(".", "xml", directory); //$NON-NLS-1$,  //$NON-NLS-2$
         } catch (NullPointerException e) {
             Debug.msg("No directory choosen for backup!"); //$NON-NLS-1$
@@ -1475,7 +1475,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                 try {
                     FileReader fr = new FileReader(file.getAbsolutePath());
                     BufferedReader br = new BufferedReader(fr);
-                    jfritz.getCallerlist().importFromCSVFile(br);
+                    JFritz.getCallerlist().importFromCSVFile(br);
 
                     br.close();
 
@@ -1531,7 +1531,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                                 JFritz
                                         .getMessage("dialog_title_file_not_found"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             } else {
-                jfritz.getPhonebook().importFromThunderbirdCSVfile(
+                JFritz.getPhonebook().importFromThunderbirdCSVfile(
                         file.getAbsolutePath());
 
                 if (JFritz.getProperty("option.lookupAfterFetch", "false") //$NON-NLS-1$,  //$NON-NLS-2$
@@ -1556,7 +1556,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
         jfritz.createNewWindow(locale);
         // current window will be destroyed and a new one created
 
-        jfritz.refreshTrayMenu();
+        JFritz.refreshTrayMenu();
     }
 
     /**

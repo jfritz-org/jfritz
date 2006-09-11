@@ -37,11 +37,7 @@ public class ConfigPanel5 extends JPanel implements ActionListener{
 
 	public JTextField externProgramTextField;
 
-	public JFritz jfritz;
-
-	public ConfigPanel5(JFritz jfritz) {
-
-		this.jfritz = jfritz;
+	public ConfigPanel5() {
 
 		callMonitorPane = new JPanel();
 		callMonitorPane.setLayout(new BorderLayout());

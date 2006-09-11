@@ -29,7 +29,6 @@ import de.moonflower.jfritz.struct.Person;
  */
 public class PersonDialog extends JDialog implements ActionListener  {
 	private static final long serialVersionUID = 1;
-	private JFritz jfritz;
 
 	private Person person;
 
@@ -45,16 +44,15 @@ public class PersonDialog extends JDialog implements ActionListener  {
 	 * @param person Person object
 	 * @throws HeadlessException
 	 */
-	public PersonDialog(JFritz jfritz, Person person) throws HeadlessException {
-		super(jfritz.getJframe()); // parent needed for Dialog's icon
-		this.jfritz = jfritz;
+	public PersonDialog(Person person) throws HeadlessException {
+		super(JFritz.getJframe()); // parent needed for Dialog's icon
 		this.person = new Person(person);
 		if (this.person == null)
 			person = new Person();
 		drawDialog();
 		//centers PersonDialog in JFritz application window
 		//needs to be called after drawDialog (Dialog needs size)
-		this.setLocationRelativeTo(jfritz.getJframe());
+		this.setLocationRelativeTo(JFritz.getJframe());
 	}
 
 	private void drawDialog() {
@@ -71,7 +69,7 @@ public class PersonDialog extends JDialog implements ActionListener  {
 		topPane.add(label);
 
 		// Main Pane
-		personPanel = new PersonPanel(jfritz, person);
+		personPanel = new PersonPanel(person);
 
 		// Bottom Pane
 		okButton = new JButton(JFritz.getMessage("okay")); //$NON-NLS-1$

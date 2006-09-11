@@ -29,16 +29,13 @@ public class CallPanel extends JComponent {
 
 	private PhoneNumber number;
 
-	private JFritz jfritz;
-
 	private JLabel input;
 
 	/**
 	 *
 	 */
-	public CallPanel(CallCellEditor editor, JFritz jfritz) {
+	public CallPanel(CallCellEditor editor) {
 		super();
-		this.jfritz = jfritz;
 		drawPanel();
 	}
 
@@ -48,8 +45,8 @@ public class CallPanel extends JComponent {
 		input.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() > 1) {
-					Person person = jfritz.getPhonebook().findPerson(number);
-					if (jfritz.getFritzBox().checkValidFirmware())
+					Person person = JFritz.getPhonebook().findPerson(number);
+					if (JFritz.getFritzBox().checkValidFirmware())
 					{
 						CallDialog p;
 
@@ -61,10 +58,10 @@ public class CallPanel extends JComponent {
 						 */
 						if (person!=null)
 						{
-							p = new CallDialog(jfritz,person.getNumbers(),number);
+							p = new CallDialog(person.getNumbers(),number);
 						}
 						else
-							p = new CallDialog(jfritz, number);
+							p = new CallDialog(number);
 						p.setVisible(true);
 						//					p.show();
 						p.dispose();

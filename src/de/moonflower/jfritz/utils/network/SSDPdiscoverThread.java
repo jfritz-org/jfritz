@@ -34,12 +34,12 @@ public class SSDPdiscoverThread extends Thread {
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
-		jfritz.getJframe().setStatus(JFritz.getMessage("detect_boxes")); //$NON-NLS-1$
-		jfritz.getJframe().setBusy(true);
+		JFritz.getJframe().setStatus(JFritz.getMessage("detect_boxes")); //$NON-NLS-1$
+		JFritz.getJframe().setBusy(true);
 
 		devices = UPNPUtils.SSDP_discoverFritzBoxes(timeout);
-		jfritz.getJframe().setBusy(false);
-		jfritz.getJframe().setStatus();
+		JFritz.getJframe().setBusy(false);
+		JFritz.getJframe().setStatus();
 	}
 
 	/**

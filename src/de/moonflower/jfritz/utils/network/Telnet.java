@@ -25,8 +25,6 @@ import org.apache.commons.net.telnet.*;
  */
 public class Telnet {
 
-	private JFritz jfritz;
-
 	private boolean connected = false;
 
 	private TelnetClient telnet;
@@ -41,8 +39,7 @@ public class Telnet {
 
 	private static final int LOGIN_CANCELED = 1;
 
-	public Telnet(JFritz jfritz) {
-		this.jfritz = jfritz;
+	public Telnet() {
 		telnet = new TelnetClient();
 	}
 
@@ -56,13 +53,13 @@ public class Telnet {
 		boolean isdone = false;
 		int connectionFailures = 0;
 		while (!isdone) {
-			String server = jfritz.getFritzBox().getAddress(); //$NON-NLS-1$
+			String server = JFritz.getFritzBox().getAddress(); //$NON-NLS-1$
 
 			String password;
 			if (JFritz.getProperty("telnet.password", "").equals("")) { //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 				// Noch kein Passwort gesetzt. Zeige Einstellungsdialog
 				TelnetConfigDialog telnetConfigDialog = new TelnetConfigDialog(
-						jfritz.getJframe(), jfritz);
+						JFritz.getJframe());
 				telnetConfigDialog.setModal(true);
 				if (telnetConfigDialog.showConfigDialog() == TelnetConfigDialog.CANCEL_OPTION) {
 					// ABBRUCH
@@ -76,8 +73,8 @@ public class Telnet {
 			int port = 23;
 			try {
 				Debug.msg("Verbinde mit Telnet ..."); //$NON-NLS-1$
-				if (jfritz.getJframe() != null) {
-					jfritz.getJframe().setStatus("Verbinde mit Telnet ..."); //$NON-NLS-1$
+				if (JFritz.getJframe() != null) {
+					JFritz.getJframe().setStatus("Verbinde mit Telnet ..."); //$NON-NLS-1$
 				}
 				telnet.connect(server, port); // Connect to the specified
 												// server
@@ -97,18 +94,18 @@ public class Telnet {
 					connectionFailures++;
 				} else {
 					Debug.msg("FritzBox not found. Get new IP ..."); //$NON-NLS-1$
-					jfritz.getJframe().setStatus(
+					JFritz.getJframe().setStatus(
 							JFritz.getMessage("box_not_found")); //$NON-NLS-1$
 					Debug.err("Address wrong!"); //$NON-NLS-1$
-					jfritz.getJframe().setBusy(false);
-					String box_address = jfritz.getJframe().showAddressDialog(
-							jfritz.getFritzBox().getAddress()); //$NON-NLS-1$,  //$NON-NLS-2$
+					JFritz.getJframe().setBusy(false);
+					String box_address = JFritz.getJframe().showAddressDialog(
+							JFritz.getFritzBox().getAddress()); //$NON-NLS-1$,  //$NON-NLS-2$
 					if (box_address == null) {
-						jfritz.stopCallMonitor();
+						JFritz.stopCallMonitor();
 						isdone = true;
 					} else {
 						JFritz.setProperty("box.address", box_address); //$NON-NLS-1$
-						jfritz.getFritzBox().detectFirmware();
+						JFritz.getFritzBox().detectFirmware();
 					}
 				}
 			} catch (Exception e) {
@@ -150,11 +147,11 @@ public class Telnet {
 							firstLogin = false;
 						} else {
 							TelnetConfigDialog telnetConfigDialog = new TelnetConfigDialog(
-									jfritz.getJframe(), jfritz);
+									JFritz.getJframe());
 							telnetConfigDialog.setModal(true);
 							if (telnetConfigDialog.showConfigDialog() == TelnetConfigDialog.CANCEL_OPTION) {
 								// ABBRUCH
-								jfritz.stopCallMonitor();
+								JFritz.stopCallMonitor();
 								return LOGIN_CANCELED;
 							}
 						}
@@ -162,41 +159,40 @@ public class Telnet {
 					if (sb.toString().endsWith(passwd)) {
 						// schauen, ob WebPasswort abgefragt wird
 						if (sb.toString().endsWith("web password: ")) { //$NON-NLS-1$
-							password = jfritz.getFritzBox().getPassword(); //$NON-NLS-1$
+							password = JFritz.getFritzBox().getPassword(); //$NON-NLS-1$
 
 							while (true) { // test WebPassword
 								try {
 									FritzBoxFirmware
 											.detectFirmwareVersion(
-													jfritz.getFritzBox().getAddress(),
-													jfritz.getFritzBox().getPassword(),
-													jfritz.getFritzBox().getPort()
+													JFritz.getFritzBox().getAddress(),
+													JFritz.getFritzBox().getPassword(),
+													JFritz.getFritzBox().getPort()
 											);
-									password = jfritz.getFritzBox().getPassword(); //$NON-NLS-1$
+									password = JFritz.getFritzBox().getPassword(); //$NON-NLS-1$
 									break; // go on with telnet login
 								} catch (WrongPasswordException e1) {
 									Debug.err("Password wrong!"); //$NON-NLS-1$
-									jfritz
-											.getJframe()
+									JFritz.getJframe()
 											.setStatus(
 													JFritz
 															.getMessage("password_wrong")); //$NON-NLS-1$
-									jfritz.getJframe().setBusy(false);
+									JFritz.getJframe().setBusy(false);
 
-									String newPassword = jfritz
+									String newPassword = JFritz
 											.getJframe()
-											.showPasswordDialog(jfritz.getFritzBox().getPassword()); //$NON-NLS-1$
+											.showPasswordDialog(JFritz.getFritzBox().getPassword()); //$NON-NLS-1$
 									Debug.msg("OLD PASS: " //$NON-NLS-1$
-											+ jfritz.getFritzBox().getPassword());
+											+ JFritz.getFritzBox().getPassword());
 									if (newPassword == null) { // Dialog
 																// aborted
-										jfritz.stopCallMonitor();
+										JFritz.stopCallMonitor();
 										return LOGIN_CANCELED;
 									} else {
 										JFritz.setProperty(
 											"box.password", //$NON-NLS-1$
 											Encryption.encrypt(newPassword));
-										jfritz.getFritzBox().detectFirmware();
+										JFritz.getFritzBox().detectFirmware();
 									}
 								}
 							}
@@ -210,7 +206,7 @@ public class Telnet {
 							firstPassword = false;
 						} else {
 							TelnetConfigDialog telnetConfigDialog = new TelnetConfigDialog(
-									jfritz.getJframe(), jfritz);
+									JFritz.getJframe());
 							telnetConfigDialog.setModal(true);
 							if (telnetConfigDialog.showConfigDialog() == TelnetConfigDialog.CANCEL_OPTION) {
 								// ABBRUCH

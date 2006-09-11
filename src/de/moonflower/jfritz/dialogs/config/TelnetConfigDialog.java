@@ -52,7 +52,7 @@ public class TelnetConfigDialog extends JDialog implements CallMonitorConfigDial
 	public static final int APPROVE_OPTION = 1;
 	public static final int CANCEL_OPTION = 2;
 
-	public TelnetConfigDialog(JFrame parent, JFritz jfritz) {
+	public TelnetConfigDialog(JFrame parent) {
 		super(parent, true);
 		if (parent != null) {
 			setLocationRelativeTo(parent);
@@ -60,7 +60,7 @@ public class TelnetConfigDialog extends JDialog implements CallMonitorConfigDial
 		initDialog();
 	}
 
-	public TelnetConfigDialog(JDialog parent, JFritz jfritz) {
+	public TelnetConfigDialog(JDialog parent) {
 		super(parent, true);
 		initDialog();
 		if (parent != null) {

@@ -24,20 +24,16 @@ public class YAClistener extends Thread implements CallMonitor{
 
 	private int port;
 
-	private JFritz jfritz;
-
 	private ServerSocket serverSocket;
 
-	public YAClistener(JFritz jfritz) {
+	public YAClistener() {
 		super();
-		this.jfritz = jfritz;
 		start();
 		port = 10629;
 	}
 
-	public YAClistener(JFritz jfritz, int port) {
+	public YAClistener(int port) {
 		super();
-		this.jfritz = jfritz;
 		start();
 		this.port = port;
 	}
@@ -92,7 +88,7 @@ public class YAClistener extends Thread implements CallMonitor{
 								number = splitList[1];
 							}
 
-							jfritz.callInMsg(number, "", name); //$NON-NLS-1$
+							callMonitoring.displayCallInMsg(number, "", name); //$NON-NLS-1$
 
 						} else {
 							outputString = JFritz.getMessage("yac_message") //$NON-NLS-1$

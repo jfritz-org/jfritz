@@ -90,7 +90,7 @@ public class PhoneNumber implements Comparable {
 	 * @param jfritz
 	 * @param parseDialOut, a boolean value representing if a Dial out prefix needs to be parsed
 	 */
-	public PhoneNumber(String fullNumber, JFritz jfritz, boolean parseDialOut) {
+	public PhoneNumber(String fullNumber, boolean parseDialOut) {
 		this.type = "";
 		//if (number.matches(numberMatcher)) this.number = fullNumber;
 		if (fullNumber != null && !fullNumber.equals("Unbekannt")) this.number = fullNumber;
@@ -101,7 +101,7 @@ public class PhoneNumber implements Comparable {
         	Debug.msg("Parsed the dial out prefix, new number: "+this.number);
 		}
 		createMobileMap();
-		refactorNumber(jfritz);
+		refactorNumber();
 	}
 
 	/**
@@ -149,41 +149,29 @@ public class PhoneNumber implements Comparable {
 	    number = number.replaceAll("\\)",""); //$NON-NLS-1$, //$NON-NLS-2$
 	}
 
-	/**
-	 * Cuts call by call provider and converts to international number
-	 *
-	 */
+    /**
+     * Method cuts unnecessary characters from the number, resolves quickdials, and
+     * cuts the call by from the number
+     *
+     * @author Brian Jensen
+     *
+     */
 	public void refactorNumber() {
 	    removeUnnecessaryChars();
-	    cutCallByCall();
+        convertQuickDial();
+
+        /* Part of the i18n work, don't delete
+        if(JFritz.getProperty("country.code","49").equals("41")){
+            callbycall = PhoneNumberSwitzerland.getCallbyCall(number);
+            number = number.substring(callbycall.length());
+            number  = convertToIntNumber();
+        }else{
+            cutCallByCall();
+            number = convertToIntNumber();
+        }*/
+
+        cutCallByCall();
 		number = convertToIntNumber();
-
-	}
-
-	/**
-	 * Method cuts unnecessary characters from the number, resolves quickdials, and
-	 * cuts the call by from the number
-	 *
-	 * @author Brian Jensen
-	 *
-	 * @param jf, a referenz to the current jfritz instance
-	 */
-	public void refactorNumber(JFritz jf) {
-	    removeUnnecessaryChars();
-		convertQuickDial(jf);
-
-		/* Part of the i18n work, don't delete
-		if(JFritz.getProperty("country.code","49").equals("41")){
-	    	callbycall = PhoneNumberSwitzerland.getCallbyCall(number);
-	    	number = number.substring(callbycall.length());
-	    	number  = convertToIntNumber();
-	    }else{
-	    	cutCallByCall();
-	    	number = convertToIntNumber();
-	    }*/
-
-	    cutCallByCall();
-    	number = convertToIntNumber();
 
 	}
 
@@ -490,7 +478,7 @@ public class PhoneNumber implements Comparable {
 	 *
 	 * @param jf is a referenz to the current jfritz instance
 	 */
-	public void convertQuickDial(JFritz jf){
+	public void convertQuickDial(){
 
 		if (number.startsWith("**7")) //$NON-NLS-1$
         	// QuickDial
@@ -503,15 +491,15 @@ public class PhoneNumber implements Comparable {
             String quickDialNumber = number.substring(3, 5);
             Debug.msg("Quickdail number: "+quickDialNumber);
 
-            if (jf.getJframe().getQuickDialPanel().getDataModel()
+            if (JFritz.getJframe().getQuickDialPanel().getDataModel()
                     .getQuickDials().size() == 0) {
 
             	// get QuickDials from FritzBox
             	Debug.msg("No Quickdials present in JFritz, retrieving the list from the box");
-            	jf.getJframe().getQuickDialPanel().getDataModel()
+            	JFritz.getJframe().getQuickDialPanel().getDataModel()
             	.getQuickDialDataFromFritzBox();
             }
-            Enumeration en = jf.getJframe().getQuickDialPanel()
+            Enumeration en = JFritz.getJframe().getQuickDialPanel()
             	.getDataModel().getQuickDials().elements();
             while (en.hasMoreElements()) {
             	QuickDial quickDial = (QuickDial) en.nextElement();

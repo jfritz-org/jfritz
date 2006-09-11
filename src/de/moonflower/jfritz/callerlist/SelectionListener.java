@@ -53,22 +53,22 @@ public class SelectionListener implements ListSelectionListener {
 			selectedCalls = rows.length;
 			selectedCallsTotalMinutes = 0;
 			for (int i = 0; i < rows.length; i++) {
-				call = (Call) table.getJfritz().getCallerlist().getFilteredCallVector().get(rows[i]);
+				call = (Call) JFritz.getCallerlist().getFilteredCallVector().get(rows[i]);
 				selectedCallsTotalMinutes += call.getDuration();
 			}
 
 			if (rows.length == 1) {
 				// table.getJfritz().getJframe().getPhoneBookPanel().getPersonPanel().setPerson(person);
-				PhoneBookTable pt = table.getJfritz().getJframe()
+				PhoneBookTable pt = JFritz.getJframe()
 						.getPhoneBookPanel().getPhoneBookTable();
-				Vector persons = table.getJfritz().getPhonebook()
+				Vector persons = JFritz.getPhonebook()
 						.getFilteredPersons();
 				person = call.getPerson();
 				for (int i = 0; i < persons.size(); i++) {
 					Person p = (Person) persons.get(i);
 					if (p == person) {
 						pt.getSelectionModel().setSelectionInterval(i, i);
-						table.getJfritz().getJframe().getPhoneBookPanel()
+						JFritz.getJframe().getPhoneBookPanel()
 								.showPersonPanel();
 
 						// assuring that the newly selected row in the phonebook is visible
@@ -81,22 +81,22 @@ public class SelectionListener implements ListSelectionListener {
 						break;
 					}
 				}
-				table.getJfritz().getJframe().getCallerListPanel()
+				JFritz.getJframe().getCallerListPanel()
 						.setDeleteEntryButton();
-				table.getJfritz().getJframe().setStatus();
+				JFritz.getJframe().setStatus();
 			} else if (rows.length > 0) {
 				// Setze Statusbar mit Infos über selektierte Anrufe
-				table.getJfritz().getJframe().setStatus(JFritz.getMessage("entries").replaceAll( //$NON-NLS-1$
+				JFritz.getJframe().setStatus(JFritz.getMessage("entries").replaceAll( //$NON-NLS-1$
 						"%N", Integer.toString(selectedCalls)) + ", "  //$NON-NLS-1$,  //$NON-NLS-2$
                         + JFritz.getMessage("total_duration") + ": " + (selectedCallsTotalMinutes / 60) + " min"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 				if (rows.length == table.getRowCount())
-					table.getJfritz().getJframe().getCallerListPanel()
+					JFritz.getJframe().getCallerListPanel()
 							.setDeleteListButton();
 				else
-					table.getJfritz().getJframe().getCallerListPanel()
+					JFritz.getJframe().getCallerListPanel()
 							.setDeleteEntriesButton(rows.length);
 			} else {
-				table.getJfritz().getJframe().getCallerListPanel()
+				JFritz.getJframe().getCallerListPanel()
 						.disableDeleteEntriesButton();
 			}
 		}

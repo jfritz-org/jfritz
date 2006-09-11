@@ -2,7 +2,6 @@ package de.moonflower.jfritz.dialogs.configwizard;
 
 import com.nexes.wizard.*;
 
-import de.moonflower.jfritz.JFritz;
 /**
  * @author Brian Jensen
  *
@@ -15,8 +14,8 @@ public class ConfigPanel4Descriptor extends WizardPanelDescriptor {
 
 	  public static final String IDENTIFIER = "MESSAGES_PANEL";
 
-	   public ConfigPanel4Descriptor(JFritz jfritz) {
-	        super(IDENTIFIER, new ConfigPanel4(jfritz));
+	   public ConfigPanel4Descriptor() {
+	        super(IDENTIFIER, new ConfigPanel4());
 	    }
 
 	    public Object getNextPanelDescriptor() {

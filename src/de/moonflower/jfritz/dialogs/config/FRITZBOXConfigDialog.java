@@ -54,7 +54,7 @@ public class FRITZBOXConfigDialog extends JDialog implements
 
     private JTextField ignoreMSN;
 
-    public FRITZBOXConfigDialog(JDialog parent, JFritz jfritz) {
+    public FRITZBOXConfigDialog(JDialog parent) {
         super(parent, true);
         // this.jfritz = jfritz;
         initDialog();

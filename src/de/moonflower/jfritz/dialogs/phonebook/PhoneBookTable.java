@@ -24,14 +24,12 @@ import de.moonflower.jfritz.cellrenderer.CallTypeDateCellRenderer;
  */
 public class PhoneBookTable extends JTable {
 	private static final long serialVersionUID = 1;
-	private final JFritz jfritz;
 
 	/**
 	 *
 	 */
-	public PhoneBookTable(final JFritz jfritz) {
-		this.jfritz = jfritz;
-		setModel(jfritz.getPhonebook());
+	public PhoneBookTable() {
+		setModel(JFritz.getPhonebook());
 		setRowHeight(24);
 		setFocusable(false);
 		setAutoCreateColumnsFromModel(true);
@@ -46,11 +44,11 @@ public class PhoneBookTable extends JTable {
 				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					// remove selection
 					table.clearSelection();
-					table.jfritz.getJframe().getPhoneBookPanel().setStatus();
+					JFritz.getJframe().getPhoneBookPanel().setStatus();
 				}
 				else if (e.getKeyCode() == KeyEvent.VK_DELETE) {
 					// Delete selected entries
-					jfritz.getJframe().getPhoneBookPanel().removeSelectedPersons();
+					JFritz.getJframe().getPhoneBookPanel().removeSelectedPersons();
 				}
 			}
 		});
@@ -64,7 +62,7 @@ public class PhoneBookTable extends JTable {
 		getColumnModel().getColumn(0).setMinWidth(50);
 		getColumnModel().getColumn(0).setMaxWidth(50);
 
-		getColumnModel().getColumn(2).setCellEditor(new CallCellEditor(jfritz));
+		getColumnModel().getColumn(2).setCellEditor(new CallCellEditor());
 
 		getTableHeader().addMouseListener(new ColumnHeaderListener(getModel()));
 

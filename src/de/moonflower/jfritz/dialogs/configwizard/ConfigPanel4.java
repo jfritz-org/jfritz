@@ -23,9 +23,7 @@ public class ConfigPanel4 extends JPanel {
 
     public JRadioButton popupNoButton, popupDialogButton, popupTrayButton;
 
-    public JFritz jfritz;
-
-	public ConfigPanel4(JFritz jfritz){
+	public ConfigPanel4(){
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());

@@ -4,7 +4,6 @@ import javax.swing.JPanel;
 
 import com.nexes.wizard.*;
 
-import de.moonflower.jfritz.JFritz;
 /**
  * @author Brian Jensen
  *
@@ -19,8 +18,8 @@ public class ConfigPanel5Descriptor extends WizardPanelDescriptor {
 
 	  public JPanel configpanel5;
 
-	   public ConfigPanel5Descriptor(JFritz jfritz) {
-			configpanel5 = new ConfigPanel5(jfritz);
+	   public ConfigPanel5Descriptor() {
+			configpanel5 = new ConfigPanel5();
 			setPanelDescriptorIdentifier(IDENTIFIER);
 		    setPanelComponent(configpanel5);
 	    }

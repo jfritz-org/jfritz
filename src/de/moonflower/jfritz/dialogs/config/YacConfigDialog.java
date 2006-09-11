@@ -47,9 +47,8 @@ public class YacConfigDialog extends JDialog implements CallMonitorConfigDialog 
 
     private JTextField yacPort;
 
-    public YacConfigDialog(JDialog parent, JFritz jfritz) {
+    public YacConfigDialog(JDialog parent) {
         super(parent, true);
-        //		this.jfritz = jfritz;
         initDialog();
         if (parent != null) {
             setLocationRelativeTo(parent);

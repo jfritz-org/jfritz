@@ -100,8 +100,6 @@ public class FritzBox {
 
 	private String box_port;
 
-	private JFritz jfritz;
-
 	private static int[] quickdial_indizes = { -1, -1, -1, -1 };
 
 	private final static int VANITY = 0;
@@ -112,11 +110,10 @@ public class FritzBox {
 
 	private final static int NUMBER = 3;
 
-	public FritzBox ( String address, String password, String port, JFritz jfritz) {
+	public FritzBox ( String address, String password, String port) {
 		box_address = address;
 		box_password = password;
 		box_port = port;
-		this.jfritz = jfritz;
 		detectFirmware();
 	}
 
@@ -460,7 +457,7 @@ public class FritzBox {
 				// pass it on to the import function
 
 				Debug.msg("Received response, begin processing call list");
-				newEntries = jfritz.getCallerlist().importFromCSVFile(reader);
+				newEntries = JFritz.getCallerlist().importFromCSVFile(reader);
 				Debug.msg("Finished processing response");
 
 				// close the reader and the cocket connection
@@ -566,21 +563,21 @@ public class FritzBox {
 								box_port);
 				return true;
 			} catch (WrongPasswordException e) {
-				String new_box_password = jfritz.getJframe().showPasswordDialog("");
+				String new_box_password = JFritz.getJframe().showPasswordDialog("");
 				if (new_box_password == null) // Canceled dialog
 					return false;
 				else {
 					box_password = new_box_password;
 				}
 			} catch (InvalidFirmwareException e) {
-				String new_box_address = jfritz.getJframe().showAddressDialog(box_address);
+				String new_box_address = JFritz.getJframe().showAddressDialog(box_address);
 				if (new_box_address == null) { // Dialog canceled
 					return false;
 				} else {
 					box_address = new_box_address;
 				}
 			} catch (IOException e) {
-				String new_box_address = jfritz.getJframe().showAddressDialog(box_address);
+				String new_box_address = JFritz.getJframe().showAddressDialog(box_address);
 				if (new_box_address == null) { // Dialog canceled
 					return false;
 				} else {

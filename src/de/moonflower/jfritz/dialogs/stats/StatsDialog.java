@@ -48,7 +48,6 @@ import de.moonflower.jfritz.utils.network.UPNPUtils;
  */
 public class StatsDialog extends JDialog {
 	private static final long serialVersionUID = 1;
-	JFritz jfritz;
 
 	JButton okButton, cancelButton, refreshButton;
 
@@ -63,10 +62,6 @@ public class StatsDialog extends JDialog {
 	 */
 	public StatsDialog(JFritzWindow owner) throws HeadlessException {
 		super(owner, true);
-		if (owner != null) {
-			//setLocationRelativeTo(owner);
-			this.jfritz = owner.getJFritz();
-		}
 		drawDialog();
 		getStats();
 
@@ -79,7 +74,7 @@ public class StatsDialog extends JDialog {
 	 *
 	 */
 	private void getStats() {
-		final String server = "http://"+jfritz.getFritzBox().getAddress() //$NON-NLS-1$
+		final String server = "http://"+JFritz.getFritzBox().getAddress() //$NON-NLS-1$
 		+":49000/upnp/control/WANCommonIFC1"; //$NON-NLS-1$
 		final String urn = "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetAddonInfos"; //$NON-NLS-1$
 

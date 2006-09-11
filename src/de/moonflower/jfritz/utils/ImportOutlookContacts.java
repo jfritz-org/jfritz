@@ -62,11 +62,10 @@ public class ImportOutlookContacts extends JDialog implements ActionListener,
         return myFolder;
     }
 
-    public ImportOutlookContacts(JFritz jfritz) {
-        super(jfritz.getJframe(), JFritz.getMessage("import_contacts_outlook")); //$NON-NLS-1$
+    public ImportOutlookContacts() {
+        super(JFritz.getJframe(), JFritz.getMessage("import_contacts_outlook")); //$NON-NLS-1$
         outlookElements = new Vector();
         // contactPics = "resources/images/contacts/";
-        this.jfritz = jfritz;
     }
 
     public void run() {
@@ -91,7 +90,7 @@ public class ImportOutlookContacts extends JDialog implements ActionListener,
         jsp.setBounds(20, 80, 350, 325);
         jPanel.add(jsp);
         getContentPane().add(jPanel);
-        setLocationRelativeTo(jfritz.getJframe());
+        setLocationRelativeTo(JFritz.getJframe());
         setVisible(true);
         Debug.msg("Importing..."); //$NON-NLS-1$
         int entriesImported = 0;
@@ -193,12 +192,12 @@ public class ImportOutlookContacts extends JDialog implements ActionListener,
                 }
 
             if (hasTel) {
-                jfritz.getPhonebook().addEntry(newContact);
+                JFritz.getPhonebook().addEntry(newContact);
                 entriesImported++;
             }
         }
         if (entriesImported > 0) {
-        	jfritz.getPhonebook().saveToXMLFile(JFritz.SAVE_DIR + JFritz.PHONEBOOK_FILE);
+            JFritz.getPhonebook().saveToXMLFile(JFritz.SAVE_DIR + JFritz.PHONEBOOK_FILE);
         }
         Debug.msg("Import done, " + entriesImported + " entries imported"); //$NON-NLS-1$,	//$NON-NLS-2$
         JButton jButton = new JButton(JFritz.getMessage("okay")); //$NON-NLS-1$
@@ -225,6 +224,4 @@ public class ImportOutlookContacts extends JDialog implements ActionListener,
     private Vector outlookElements;
 
     final int olFolderContacts = 10;
-
-    private JFritz jfritz;
 }

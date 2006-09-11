@@ -14,27 +14,23 @@ public class WatchdogThread extends Thread {
 
     private int interval = 1;
 
-    private JFritz jfritz;
-
     private Date now, lastTimestamp;
 
     private Calendar cal;
 
     /**
      *
-     * @param jfritz
      * @param interval
      *            in minutes
      */
-    public WatchdogThread(JFritz jfritz, int interval) {
+    public WatchdogThread(int interval) {
         cal = Calendar.getInstance();
-        this.jfritz = jfritz;
         this.interval = interval;
         lastTimestamp = cal.getTime();
     }
 
     public void run() {
-        if (jfritz.getJframe().getMonitorButton().isSelected()) {
+        if (JFritz.getJframe().getMonitorButton().isSelected()) {
 //            Debug.msg("Watchdog: Check call monitor state");
             checkCallmonitor();
 //            Debug.msg("Watchdog: Check done");
@@ -51,17 +47,17 @@ public class WatchdogThread extends Thread {
             // Starte den Anrufmonitor neu.
 
             Debug.msg("Watchdog: Restarting call monitor"); //$NON-NLS-1$
-            jfritz.stopCallMonitor();
+            JFritz.stopCallMonitor();
             try {
                 Thread.sleep(15000);
             } catch (InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            jfritz.getJframe().startChosenCallMonitor();
+            JFritz.getJframe().startChosenCallMonitor();
 
 			if (JFritzUtils.parseBoolean(JFritz.getProperty("option.watchdog.fetchAfterStandby", "true"))) //$NON-NLS-1$, //$NON-NLS-2$
-				jfritz.getJframe().fetchList(JFritzUtils.parseBoolean(JFritz.getProperty("option.deleteAfterFetch", "true"))); //$NON-NLS-1$, //$NON-NLS-2$
+                JFritz.getJframe().fetchList(JFritzUtils.parseBoolean(JFritz.getProperty("option.deleteAfterFetch", "true"))); //$NON-NLS-1$, //$NON-NLS-2$
         }
         setTimestamp();
     }

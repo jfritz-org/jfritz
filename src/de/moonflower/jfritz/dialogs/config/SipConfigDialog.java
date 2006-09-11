@@ -38,8 +38,6 @@ import de.moonflower.jfritz.utils.Debug;
  */
 public class SipConfigDialog extends JDialog {
 
-    //    private JFritz jfritz;
-
 	/**
 	 * This avoids compiler warnings
 	 * I don't know what it's for yet

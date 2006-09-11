@@ -12,17 +12,11 @@ import de.moonflower.jfritz.utils.Debug;
  */
 public class ShutdownThread extends Thread {
 
-	private JFritz jfritz;
-
-	public ShutdownThread(JFritz jfritz) {
-		this.jfritz = jfritz;
-	}
-
 	public void run() {
 
 		Debug.msg("Starting shutdown thread.."); //$NON-NLS-1$
 
-		if (jfritz.getJframe() != null) {
+		if (JFritz.getJframe() != null) {
             if (JFritz.isInstanceControlEnabled()) {
                 File f = new File( JFritz.SAVE_DIR + JFritz.LOCK_FILE );
                 if ( f.exists() )
@@ -31,11 +25,11 @@ public class ShutdownThread extends Thread {
                     }
                 Debug.msg("Multiple instance lock: release lock."); //$NON-NLS-1$
             }
-			jfritz.saveProperties();
-			jfritz.getJframe().saveQuickDials();
+			JFritz.saveProperties();
+            JFritz.getJframe().saveQuickDials();
 
-			if (jfritz.getCallMonitor() != null) {
-				jfritz.getCallMonitor().stopCallMonitor();
+			if (JFritz.getCallMonitor() != null) {
+                JFritz.getCallMonitor().stopCallMonitor();
 			}
 		}
 		Debug.msg("Shutdown thread done."); //$NON-NLS-1$

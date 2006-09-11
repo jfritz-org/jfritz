@@ -12,7 +12,6 @@ import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
-import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.dialogs.phonebook.PersonEditorPanel;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
@@ -76,12 +75,5 @@ public class PersonCellEditor extends AbstractCellEditor implements
 		//Person p = (Person) getCellEditorValue();
 		// Not valid: return false;
 		return super.stopCellEditing();
-	}
-
-	/**
-	 * @return Returns the jfritz.
-	 */
-	public final JFritz getJfritz() {
-		return callerlist.getJfritz();
 	}
 }

@@ -13,8 +13,7 @@ public class CallByCallFilter extends CallFilter {
 
     private Vector filteredCallByCallProviders = new Vector();
 
-    public CallByCallFilter(JFritz jfritz) {
-        super(jfritz);
+    public CallByCallFilter() {
             String providers = JFritz.getProperty(
                     "filter.callbycallProvider", "[]"); //$NON-NLS-1$,  //$NON-NLS-2$
 
@@ -57,10 +56,10 @@ public class CallByCallFilter extends CallFilter {
         filteredCallByCallProviders.clear();
         try {
             String provider = ""; //$NON-NLS-1$
-            int rows[] = jfritz.getJframe().getCallerTable().getSelectedRows();
+            int rows[] = JFritz.getJframe().getCallerTable().getSelectedRows();
             if (rows.length != 0) { // Filter only selected rows
                 for (int i = 0; i < rows.length; i++) {
-                    Call call = (Call) jfritz.getCallerlist()
+                    Call call = (Call) JFritz.getCallerlist()
                             .getFilteredCallVector().get(rows[i]);
                     if (call.getPhoneNumber() != null) {
                         provider = call.getPhoneNumber().getCallByCall();
@@ -75,9 +74,9 @@ public class CallByCallFilter extends CallFilter {
                     }
                 }
             } else { // filter only calls with callbycall predial
-                for (int i = 0; i < jfritz.getCallerlist()
+                for (int i = 0; i < JFritz.getCallerlist()
                         .getFilteredCallVector().size(); i++) {
-                    Call call = (Call) jfritz.getCallerlist()
+                    Call call = (Call) JFritz.getCallerlist()
                             .getFilteredCallVector().get(i);
                     if (call.getPhoneNumber() != null) {
                         provider = call.getPhoneNumber().getCallByCall();
@@ -94,7 +93,7 @@ public class CallByCallFilter extends CallFilter {
         }
         JFritz.setProperty("filter.callbycallProvider", filteredCallByCallProviders //$NON-NLS-1$
                 .toString());
-        jfritz.getCallerlist().updateFilter();
+        JFritz.getCallerlist().updateFilter();
     }
 
 }

@@ -31,7 +31,6 @@ public class NoticeDialog extends JDialog implements ActionListener {
 
 	private boolean accepted = false;
 
-//	private static JFritz jfritz;
 
 	private String infoText, property;
 
@@ -39,8 +38,8 @@ public class NoticeDialog extends JDialog implements ActionListener {
 
 	JCheckBox checkBox;
 
-	public NoticeDialog(JFritz jfritz,String property, String infoText) throws HeadlessException {
-		super(jfritz.getJframe());
+	public NoticeDialog(String property, String infoText) throws HeadlessException {
+		super(JFritz.getJframe());
 //		this.jfritz = jfritz;
 		this.infoText = infoText;
 		this.property= property;
@@ -52,7 +51,7 @@ public class NoticeDialog extends JDialog implements ActionListener {
 		} else {
 			drawDialog();
 		}
-		this.setLocationRelativeTo(jfritz.getJframe());
+		this.setLocationRelativeTo(JFritz.getJframe());
 	}
 
 	public void drawDialog() {

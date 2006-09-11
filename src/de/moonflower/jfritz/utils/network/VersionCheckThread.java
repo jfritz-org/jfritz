@@ -24,11 +24,9 @@ import de.moonflower.jfritz.utils.Debug;
  */
 public class VersionCheckThread implements Runnable {
 
-	private JFritz jfritz;
 	boolean informNoNewVersion;
 
-	public VersionCheckThread(JFritz jf, boolean informNoNewVersion){
-		jfritz = jf;
+	public VersionCheckThread(boolean informNoNewVersion){
 		this.informNoNewVersion = informNoNewVersion;
 	}
 
@@ -36,7 +34,7 @@ public class VersionCheckThread implements Runnable {
 
 		if(checkForNewVersion()){
 			Object[] options = {JFritz.getMessage("yes"), JFritz.getMessage("no")};
-			int ok = JOptionPane.showOptionDialog(jfritz.getJframe(),
+			int ok = JOptionPane.showOptionDialog(JFritz.getJframe(),
 					JFritz.getMessage("new_version_text"),
 					JFritz.getMessage("new_version"), JOptionPane.YES_NO_OPTION,
 					JOptionPane.INFORMATION_MESSAGE, null, // don't use a
@@ -46,7 +44,7 @@ public class VersionCheckThread implements Runnable {
 			if (ok == JOptionPane.YES_OPTION)
 			BrowserLaunch.openURL(JFritz.PROGRAM_URL + "#download");
 		}else if(informNoNewVersion == true){
-			JOptionPane.showMessageDialog(jfritz.getJframe(),JFritz.getMessage("no_new_version_found"),"JFritz",JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(JFritz.getJframe(),JFritz.getMessage("no_new_version_found"),"JFritz",JOptionPane.INFORMATION_MESSAGE);
 		}
 
 		Debug.msg("CheckVersionThread exiting..");

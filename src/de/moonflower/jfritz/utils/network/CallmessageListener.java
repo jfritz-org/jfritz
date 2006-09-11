@@ -25,20 +25,16 @@ public class CallmessageListener extends Thread implements CallMonitor {
 
 	private int port;
 
-	private JFritz jfritz;
-
 	private ServerSocket serverSocket;
 
-	public CallmessageListener(JFritz jfritz) {
+	public CallmessageListener() {
 		super();
-		this.jfritz = jfritz;
 		start();
 		port = 23232;
 	}
 
-	public CallmessageListener(JFritz jfritz, int port) {
+	public CallmessageListener(int port) {
 		super();
-		this.jfritz = jfritz;
 		start();
 		this.port = port;
 	}
@@ -61,7 +57,7 @@ public class CallmessageListener extends Thread implements CallMonitor {
 			} catch (InterruptedException e1) {
                 Debug.err(e1.toString());
 			}
-			jfritz.stopCallMonitor();
+			JFritz.stopCallMonitor();
 		}
         Debug.msg("Callmessage-Monitor ready"); //$NON-NLS-1$
 		while (isRunning) {
@@ -94,7 +90,7 @@ public class CallmessageListener extends Thread implements CallMonitor {
                                msn = splitted[i].substring(7);
                           }
                      }
-                     jfritz.callInMsg(number, msn, "");  //$NON-NLS-1$
+                     callMonitoring.displayCallInMsg(number, msn, "");  //$NON-NLS-1$
                      // Alter Callmessagemonitor
                 } else if (msg.startsWith("@")) {  //$NON-NLS-1$
 					// Call
@@ -132,7 +128,7 @@ public class CallmessageListener extends Thread implements CallMonitor {
 					if (number.equals("Keine Rufnummer übermittelt")) { //$NON-NLS-1$
 						number = ""; //$NON-NLS-1$
 					}
-					jfritz.callInMsg(number, msn, name);
+					callMonitoring.displayCallInMsg(number, msn, name);
 				} else {
 					// Message
 					JFritz.infoMsg(JFritz.getMessage("yac_message") + ":\n" //$NON-NLS-1$,  //$NON-NLS-2$
@@ -147,12 +143,12 @@ public class CallmessageListener extends Thread implements CallMonitor {
 			} catch (SocketException e) {
 				Debug.err("SocketException: " + e); //$NON-NLS-1$
 				if (!e.toString().equals("java.net.SocketException: socket closed")) { //$NON-NLS-1$
-					jfritz.stopCallMonitor();
+					JFritz.stopCallMonitor();
 				}
 			} catch (Exception e) {
 				JFritz.infoMsg("Exception " + e); //$NON-NLS-1$
 				Debug.msg("CallmessageListener: Exception " + e); //$NON-NLS-1$
-				jfritz.stopCallMonitor();
+				JFritz.stopCallMonitor();
 				isRunning = false;
 				//				break;
 			}

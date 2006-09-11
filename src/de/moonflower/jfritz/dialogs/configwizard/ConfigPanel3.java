@@ -46,7 +46,7 @@ public class ConfigPanel3 extends JPanel implements ActionListener {
 
 	public FritzBoxFirmware firmware;
 
-	public ConfigPanel3(JFritz jfritz) {
+	public ConfigPanel3() {
 
 		// draw the panel
 		JPanel boxpane = new JPanel();
@@ -76,7 +76,7 @@ public class ConfigPanel3 extends JPanel implements ActionListener {
 		c.fill = GridBagConstraints.HORIZONTAL;
 
 		// initialize the drop down box
-		devices = jfritz.getDevices();
+		devices = JFritz.getDevices();
 		if (devices != null) {
 			Enumeration en = devices.elements();
 			while (en.hasMoreElements()) {
@@ -119,10 +119,10 @@ public class ConfigPanel3 extends JPanel implements ActionListener {
 		boxpane.add(boxtypeLabel, c);
 
 		// initialize the rest of the values
-		pass.setText(jfritz.getFritzBox().getPassword()); //$NON-NLS-1$
-		password = jfritz.getFritzBox().getPassword(); //$NON-NLS-1$
-		address.setText(jfritz.getFritzBox().getAddress()); //$NON-NLS-1$,  //$NON-NLS-2$
-		port.setText(jfritz.getFritzBox().getPort()); //$NON-NLS-1$,  //$NON-NLS-2$
+		pass.setText(JFritz.getFritzBox().getPassword()); //$NON-NLS-1$
+		password = JFritz.getFritzBox().getPassword(); //$NON-NLS-1$
+		address.setText(JFritz.getFritzBox().getAddress()); //$NON-NLS-1$,  //$NON-NLS-2$
+		port.setText(JFritz.getFritzBox().getPort()); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		if (devices != null) {
 			for (int i = 0; i < devices.size(); i++) {
@@ -132,7 +132,7 @@ public class ConfigPanel3 extends JPanel implements ActionListener {
 				}
 			}
 		}
-		firmware = jfritz.getFritzBox().getFirmware(); //$NON-NLS-1$
+		firmware = JFritz.getFritzBox().getFirmware(); //$NON-NLS-1$
 		setBoxTypeLabel();
 
 		add(boxpane, BorderLayout.CENTER);

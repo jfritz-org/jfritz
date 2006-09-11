@@ -47,7 +47,7 @@ public class FBoxListenerV1 extends FBoxListener {
                 provider = JFritz.getMessage("fixed_network"); //$NON-NLS-1$
             } else
                 provider = split[4];
-            provider = jfritz.getSIPProviderTableModel().getSipProvider(
+            provider = JFritz.getSIPProviderTableModel().getSipProvider(
                     provider, provider);
             boolean ignoreIt = false;
             for (int i = 0; i < ignoredMSNs.length; i++)
@@ -56,7 +56,7 @@ public class FBoxListenerV1 extends FBoxListener {
                     break;
                 }
             if (!ignoreIt)
-                jfritz.callInMsg(number, provider);
+                callMonitoring.displayCallInMsg(number, provider);
         } else if (JFritzUtils.parseBoolean(JFritz.getProperty(
                 "option.callmonitor.monitorOutgoingCalls", "true")) //$NON-NLS-1$,  //$NON-NLS-2$
                 && split[1].equals("CALL")) { //$NON-NLS-1$
@@ -69,7 +69,7 @@ public class FBoxListenerV1 extends FBoxListener {
                 provider = JFritz.getMessage("fixed_network"); //$NON-NLS-1$
             } else
                 provider = split[4];
-            provider = jfritz.getSIPProviderTableModel().getSipProvider(
+            provider = JFritz.getSIPProviderTableModel().getSipProvider(
                     provider, provider);
             boolean ignoreIt = false;
             for (int i = 0; i < ignoredMSNs.length; i++)
@@ -78,7 +78,7 @@ public class FBoxListenerV1 extends FBoxListener {
                     break;
                 }
             if (!ignoreIt)
-                jfritz.callOutMsg(number, provider);
+                callMonitoring.displayCallOutMsg(number, provider);
         } else if (JFritzUtils.parseBoolean(JFritz.getProperty(
                 "option.callmonitor.fetchAfterDisconnect", "true")) //$NON-NLS-1$,  //$NON-NLS-2$
                 && split[1].equals("DISCONNECT")) { //$NON-NLS-1$
@@ -88,7 +88,7 @@ public class FBoxListenerV1 extends FBoxListener {
                 // TODO Auto-generated catch block
                 Debug.err(e.toString());
             }
-            jfritz.getJframe().fetchList();
+            JFritz.getJframe().fetchList();
         }
     }
 }

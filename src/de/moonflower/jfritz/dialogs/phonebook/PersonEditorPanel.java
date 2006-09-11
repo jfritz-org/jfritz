@@ -47,16 +47,15 @@ public class PersonEditorPanel extends JComponent {
 		input.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() > 1) {
-					PersonDialog p = new PersonDialog(editor.getJfritz(),
-							person);
+					PersonDialog p = new PersonDialog(person);
 					if (p.showDialog()) {
 						person = p.getPerson();
 						input.setText(person.getFullname());
 						editor.stopCellEditing();
 						if (p.okPressed()) {
-							editor.getJfritz().getPhonebook().saveToXMLFile(JFritz.SAVE_DIR +
+							JFritz.getPhonebook().saveToXMLFile(JFritz.SAVE_DIR +
 									JFritz.PHONEBOOK_FILE);
-							editor.getJfritz().getPhonebook().sortAllFilteredRows();
+							JFritz.getPhonebook().sortAllFilteredRows();
 						}
 					}
 					p.dispose();

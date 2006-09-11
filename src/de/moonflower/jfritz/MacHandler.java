@@ -103,7 +103,7 @@ public class MacHandler {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						Debug.msg("MAC Application Menu: Show Exit Dialog"); //$NON-NLS-1$
-						jfritz.getJframe().showExitDialog();
+                        JFritz.getJframe().showExitDialog();
 					}
 				});
 				throw new IllegalStateException("Let the quit handler do it"); //$NON-NLS-1$
@@ -111,10 +111,10 @@ public class MacHandler {
 
 			else if (method.getName().equalsIgnoreCase("handleAbout")) { //$NON-NLS-1$
 				Debug.msg("MAC Application Menu: Show About Dialog"); //$NON-NLS-1$
-				jfritz.getJframe().showAboutDialog();
+                JFritz.getJframe().showAboutDialog();
 			} else if (method.getName().equalsIgnoreCase("handlePrefs")) { //$NON-NLS-1$
 				Debug.msg("MAC Application Menu: Show Prefs Dialog"); //$NON-NLS-1$
-				jfritz.getJframe().showConfigDialog();
+                JFritz.getJframe().showConfigDialog();
 			}
 			return null;
 		}

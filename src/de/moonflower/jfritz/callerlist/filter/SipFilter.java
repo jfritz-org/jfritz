@@ -13,9 +13,7 @@ public class SipFilter extends CallFilter {
 
     private Vector filteredSipProviders = new Vector();
 
-    public SipFilter(JFritz jfritz) {
-        super(jfritz);
-
+    public SipFilter() {
         filteredSipProviders.clear();
         String providers = JFritz.getProperty("filter.sipProvider", //$NON-NLS-1$
                 "[]"); //$NON-NLS-1$
@@ -51,9 +49,9 @@ public class SipFilter extends CallFilter {
 
         filteredSipProviders.clear();
         try {
-            int rows[] = jfritz.getJframe().getCallerTable().getSelectedRows();
+            int rows[] = JFritz.getJframe().getCallerTable().getSelectedRows();
             for (int i = 0; i < rows.length; i++) {
-                Call call = (Call) jfritz.getCallerlist()
+                Call call = (Call) JFritz.getCallerlist()
                         .getFilteredCallVector().get(rows[i]);
                 String route = call.getRoute();
                 if (route.equals("")) { //$NON-NLS-1$
@@ -68,7 +66,7 @@ public class SipFilter extends CallFilter {
         }
         JFritz.setProperty(
                 "filter.sipProvider", filteredSipProviders.toString()); //$NON-NLS-1$
-        jfritz.getCallerlist().updateFilter();
+        JFritz.getCallerlist().updateFilter();
     }
 
 }

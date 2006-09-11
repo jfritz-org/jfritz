@@ -55,7 +55,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.table.TableCellRenderer;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
@@ -76,8 +75,6 @@ public class ConfigDialog extends JDialog {
 	public static boolean refreshWindow;
 
 	private static final long serialVersionUID = 1;
-
-	private JFritz jfritz;
 
 	private JComboBox addressCombo, callMonitorCombo, languageCombo;
 
@@ -124,12 +121,8 @@ public class ConfigDialog extends JDialog {
 
 	public ConfigDialog(Frame parent) {
 		super(parent, true);
-		if (parent != null) {
-			//setLocationRelativeTo(parent);
-			jfritz = ((JFritzWindow) parent).getJFritz();
-		}
 		setTitle(JFritz.getMessage("config")); //$NON-NLS-1$
-		devices = jfritz.getDevices();
+		devices = JFritz.getDevices();
 		drawDialog();
 		setValues();
 		if (parent != null) {
@@ -185,7 +178,7 @@ public class ConfigDialog extends JDialog {
 		}
 		languageCombo.setSelectedIndex(index);
 
-		if (jfritz.getCallMonitor() == null) {
+		if (JFritz.getCallMonitor() == null) {
 			startCallMonitorButton.setSelected(false);
 		} else {
 			startCallMonitorButton.setSelected(true);
@@ -240,10 +233,10 @@ public class ConfigDialog extends JDialog {
 								""))); //$NON-NLS-1$
 		passwordAfterStartButton.setSelected(pwAfterStart);
 
-		pass.setText(jfritz.getFritzBox().getPassword()); //$NON-NLS-1$
-		password = jfritz.getFritzBox().getPassword();
-		address.setText(jfritz.getFritzBox().getAddress());
-		port.setText(jfritz.getFritzBox().getPort());
+		pass.setText(JFritz.getFritzBox().getPassword()); //$NON-NLS-1$
+		password = JFritz.getFritzBox().getPassword();
+		address.setText(JFritz.getFritzBox().getAddress());
+		port.setText(JFritz.getFritzBox().getPort());
 		areaCode.setText(JFritz.getProperty("area.code")); //$NON-NLS-1$
 		countryCode.setText(JFritz.getProperty("country.code")); //$NON-NLS-1$
         areaPrefix.setText(JFritz.getProperty("area.prefix")); //$NON-NLS-1$
@@ -272,7 +265,7 @@ public class ConfigDialog extends JDialog {
 			}
 		}
 
-		firmware = jfritz.getFritzBox().getFirmware(); //$NON-NLS-1$
+		firmware = JFritz.getFritzBox().getFirmware(); //$NON-NLS-1$
 		setBoxTypeLabel();
 	}
 
@@ -284,7 +277,7 @@ public class ConfigDialog extends JDialog {
 		//only write the save dir to disk if the user changed something
 		if(!save_location.getText().equals(JFritz.SAVE_DIR)){
 			JFritz.SAVE_DIR = save_location.getText();
-			jfritz.writeSaveDir();
+			JFritz.writeSaveDir();
 		}
 
 		//		 Remove leading "0" from areaCode
@@ -389,13 +382,13 @@ public class ConfigDialog extends JDialog {
 		JFritz.setProperty("fetch.timer", Integer.toString(timerSlider //$NON-NLS-1$
 				.getValue()));
 
-		jfritz.getFritzBox().detectFirmware();
+		JFritz.getFritzBox().detectFirmware();
 
 		if (!JFritz.getProperty("locale", "de_DE").equals(localeList[languageCombo.getSelectedIndex()])) { //$NON-NLS-1$ //$NON-NLS-2$
 			JFritz.setProperty(
 					"locale", localeList[languageCombo.getSelectedIndex()]); //$NON-NLS-1$
 			loc = localeList[languageCombo.getSelectedIndex()];
-			jfritz.getJframe().setLanguage(
+			JFritz.getJframe().setLanguage(
 					new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_")+1, loc.length())));
 		}
 
@@ -404,10 +397,10 @@ public class ConfigDialog extends JDialog {
 
 
 		Debug.msg("Saved config"); //$NON-NLS-1$
-		jfritz.getSIPProviderTableModel()
+		JFritz.getSIPProviderTableModel()
 				.saveToXMLFile(JFritz.SAVE_DIR + JFritz.SIPPROVIDER_FILE);
-		jfritz.getCallerlist().saveToXMLFile(JFritz.SAVE_DIR+JFritz.CALLS_FILE, true);
-		jfritz.getPhonebook().saveToXMLFile(JFritz.SAVE_DIR+JFritz.PHONEBOOK_FILE);
+		JFritz.getCallerlist().saveToXMLFile(JFritz.SAVE_DIR+JFritz.CALLS_FILE, true);
+		JFritz.getPhonebook().saveToXMLFile(JFritz.SAVE_DIR+JFritz.PHONEBOOK_FILE);
 	}
 
 	protected JPanel createBoxPane(ActionListener actionListener) {
@@ -444,14 +437,14 @@ public class ConfigDialog extends JDialog {
 				SSDPPacket p = (SSDPPacket) en.nextElement();
 				//addressCombo.addItem(p.getShortName());
 				addressCombo.addItem(p.getIP().getHostAddress());
-				if(p.getIP().getHostAddress().equals(jfritz.getFritzBox().getAddress()))
+				if(p.getIP().getHostAddress().equals(JFritz.getFritzBox().getAddress()))
 					boxAddressAdded = true;
 			}
 		}
 
 		//make sure the stored address is listed
 		if(!boxAddressAdded)
-			addressCombo.addItem(jfritz.getFritzBox().getAddress());
+			addressCombo.addItem(JFritz.getFritzBox().getAddress());
 
 		addressCombo.setActionCommand("addresscombo"); //$NON-NLS-1$
 		addressCombo.addActionListener(actionListener);
@@ -545,7 +538,7 @@ public class ConfigDialog extends JDialog {
 		c.anchor = GridBagConstraints.WEST;
 
 		JPanel sipButtonPane = new JPanel();
-		final JTable siptable = new JTable(jfritz.getSIPProviderTableModel()) {
+		final JTable siptable = new JTable(JFritz.getSIPProviderTableModel()) {
 			private static final long serialVersionUID = 1;
 
 			public Component prepareRenderer(TableCellRenderer renderer,
@@ -776,7 +769,7 @@ public class ConfigDialog extends JDialog {
 	protected void stopAllCallMonitors() {
 		if (startCallMonitorButton.isSelected()) {
 			setCallMonitorButtons(JFritz.CALLMONITOR_START);
-			jfritz.stopCallMonitor();
+			JFritz.stopCallMonitor();
 		}
 	}
 
@@ -852,8 +845,8 @@ public class ConfigDialog extends JDialog {
 					JFritz.setProperty("box.password", Encryption //$NON-NLS-1$
 							.encrypt(password));
 					JFritz.setProperty("box.address", address.getText()); //$NON-NLS-1$
-					jfritz.getFritzBox().detectFirmware();
-					jfritz.getJframe().switchMonitorButton();
+					JFritz.getFritzBox().detectFirmware();
+					JFritz.getJframe().switchMonitorButton();
 					if (startCallMonitorButton.isSelected()) {
 						setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
 					} else {
@@ -865,23 +858,23 @@ public class ConfigDialog extends JDialog {
 					switch (callMonitorCombo.getSelectedIndex()) {
 						case 1 :
 							callMonitorConfigDialog = new FRITZBOXConfigDialog(
-									configDialog, jfritz);
+									configDialog);
 							break;
 						case 2 :
 							callMonitorConfigDialog = new TelnetConfigDialog(
-									configDialog, jfritz);
+									configDialog);
 							break;
 						case 3 :
 							callMonitorConfigDialog = new SyslogConfigDialog(
-									configDialog, jfritz);
+									configDialog);
 							break;
 						case 4 :
 							callMonitorConfigDialog = new YacConfigDialog(
-									configDialog, jfritz);
+									configDialog);
 							break;
 						case 5 :
 							callMonitorConfigDialog = new CallmessageConfigDialog(
-									configDialog, jfritz);
+									configDialog);
 							break;
 					}
 					if (callMonitorConfigDialog != null) {
@@ -1110,22 +1103,22 @@ public class ConfigDialog extends JDialog {
 						JFritz.setProperty("box.password", Encryption.encrypt(password)); //$NON-NLS-1$
 						JFritz.setProperty("box.address", address.getText()); //$NON-NLS-1$
 						JFritz.setProperty("box.port", port.getText()); //$NON-NLS-1$
-						jfritz.getFritzBox().detectFirmware();
-						Vector data = jfritz.getFritzBox().retrieveSipProvider();
-						jfritz.getSIPProviderTableModel().updateProviderList(
+						JFritz.getFritzBox().detectFirmware();
+						Vector data = JFritz.getFritzBox().retrieveSipProvider();
+						JFritz.getSIPProviderTableModel().updateProviderList(
 								data);
-						jfritz.getSIPProviderTableModel()
+						JFritz.getSIPProviderTableModel()
 								.fireTableDataChanged();
-						jfritz.getCallerlist().fireTableDataChanged();
+						JFritz.getCallerlist().fireTableDataChanged();
 
 					} catch (WrongPasswordException e1) {
-						jfritz.errorMsg(JFritz.getMessage("wrong_password")); //$NON-NLS-1$
+						JFritz.errorMsg(JFritz.getMessage("wrong_password")); //$NON-NLS-1$
 						Debug.errDlg(JFritz.getMessage("wrong_password")); //$NON-NLS-1$
 					} catch (IOException e1) {
-						jfritz.errorMsg(JFritz.getMessage("box_address_wrong")); //$NON-NLS-1$
+						JFritz.errorMsg(JFritz.getMessage("box_address_wrong")); //$NON-NLS-1$
 						Debug.errDlg(JFritz.getMessage("box_address_wrong")); //$NON-NLS-1$
 					} catch (InvalidFirmwareException e1) {
-						jfritz.errorMsg(JFritz.getMessage("unknown_firmware")); //$NON-NLS-1$
+						JFritz.errorMsg(JFritz.getMessage("unknown_firmware")); //$NON-NLS-1$
 						Debug.errDlg(JFritz.getMessage("unknown_firmware")); //$NON-NLS-1$
 					}
 				}
@@ -1210,13 +1203,6 @@ public class ConfigDialog extends JDialog {
 	}
 
 	/**
-	 * @return Returns the jfritz object.
-	 */
-	public final JFritz getJfritz() {
-		return jfritz;
-	}
-
-	/**
 	 * Let startCallMonitorButtons start or stop callMonitor Changes caption of
 	 * buttons and their status
 	 *
@@ -1228,12 +1214,12 @@ public class ConfigDialog extends JDialog {
 			startCallMonitorButton.setText(JFritz
 					.getMessage("start_call_monitor")); //$NON-NLS-1$
 			startCallMonitorButton.setSelected(false);
-			jfritz.getJframe().getMonitorButton().setSelected(false);
+			JFritz.getJframe().getMonitorButton().setSelected(false);
 		} else if (option == JFritz.CALLMONITOR_STOP) {
 			startCallMonitorButton.setText(JFritz
 					.getMessage("stop_call_monitor")); //$NON-NLS-1$
 			startCallMonitorButton.setSelected(true);
-			jfritz.getJframe().getMonitorButton().setSelected(true);
+			JFritz.getJframe().getMonitorButton().setSelected(true);
 		}
 	}
 

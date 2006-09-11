@@ -74,8 +74,6 @@ public class PhoneBook extends AbstractTableModel {
 	 */
 	private Vector filterExceptions;
 
-	private JFritz jfritz;
-
 	private int sortColumn = 1;
 
 	private boolean sortDirection = true;
@@ -185,10 +183,10 @@ public class PhoneBook extends AbstractTableModel {
 			case 5:
                 o1 = ""; //$NON-NLS-1$
                 o2 = ""; //$NON-NLS-1$
-                if (jfritz.getCallerlist().findLastCall(v1) != null)
-                    o1 = jfritz.getCallerlist().findLastCall(v1).getCalldate();
-                if (jfritz.getCallerlist().findLastCall(v2) != null)
-                    o2 = jfritz.getCallerlist().findLastCall(v2).getCalldate();
+                if (JFritz.getCallerlist().findLastCall(v1) != null)
+                    o1 = JFritz.getCallerlist().findLastCall(v1).getCalldate();
+                if (JFritz.getCallerlist().findLastCall(v2) != null)
+                    o2 = JFritz.getCallerlist().findLastCall(v2).getCalldate();
 			    break;
 			default:
 				o1 = v1.getFullname().toString();
@@ -227,8 +225,7 @@ public class PhoneBook extends AbstractTableModel {
 		}
 	}
 
-	public PhoneBook(JFritz jfritz) {
-		this.jfritz = jfritz;
+	public PhoneBook() {
 		filteredPersons = new Vector();
 		unfilteredPersons = new Vector();
 		filterExceptions = new Vector();
@@ -553,7 +550,7 @@ public class PhoneBook extends AbstractTableModel {
 		case 4:
 			return (person.getPostalCode() + " " + person.getCity()).trim();  //$NON-NLS-1$
 		case 5:
-			return jfritz.getCallerlist().findLastCall(person);
+			return JFritz.getCallerlist().findLastCall(person);
 		default:
 			return "X"; //$NON-NLS-1$
 		//throw new IllegalArgumentException("Invalid column: " + columnIndex);
@@ -591,8 +588,8 @@ public class PhoneBook extends AbstractTableModel {
            // pw.println("\"Private\";\"Last Name\";\"First Name\";\"Number\";\"Address\";\"City\"");
            pw.println(getCSVHeader(separator));
             int rows[] = null;
-            if (jfritz != null && jfritz.getJframe() != null) {
-            	 rows = jfritz.getJframe().getPhoneBookPanel().getPhoneBookTable().getSelectedRows();
+            if ( JFritz.getJframe() != null) {
+            	 rows = JFritz.getJframe().getPhoneBookPanel().getPhoneBookTable().getSelectedRows();
             }
             if (!wholePhoneBook && rows != null && rows.length > 0) {
                 for (int i = 0; i < rows.length; i++) {
@@ -709,7 +706,7 @@ public class PhoneBook extends AbstractTableModel {
 
 	public void updateFilter() {
 /*        try {
-            jfritz.getJframe().getCallerTable().getCellEditor()
+            JFritz.getJframe().getCallerTable().getCellEditor()
                     .cancelCellEditing();
         } catch (NullPointerException e) {
         }
@@ -760,10 +757,9 @@ public class PhoneBook extends AbstractTableModel {
 
 		sortAllFilteredRows();
 
-		if (jfritz!= null)
-			if (jfritz.getJframe() != null)
-				if(jfritz.getJframe().getPhoneBookPanel()!=null)
-					jfritz.getJframe().getPhoneBookPanel().setStatus();
+		if (JFritz.getJframe() != null)
+			if(JFritz.getJframe().getPhoneBookPanel()!=null)
+				JFritz.getJframe().getPhoneBookPanel().setStatus();
 	}
 
 	/**

@@ -10,6 +10,8 @@ package de.moonflower.jfritz.utils.network;
  */
 public interface CallMonitor {
 
+    public CallMonitoring callMonitoring = new CallMonitoring();
+
 	public void stopCallMonitor();
 
 }

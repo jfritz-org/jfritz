@@ -276,8 +276,6 @@ public class PersonPanel extends JPanel implements ActionListener,
 		}
 	}
 
-	private JFritz jfritz;
-
 	private Person person;
 
 	private JTextField tfFirstName, tfCompany, tfLastName, tfStreet,
@@ -296,9 +294,8 @@ public class PersonPanel extends JPanel implements ActionListener,
 	/**
 	 *
 	 */
-	public PersonPanel(JFritz jfritz, Person person) {
+	public PersonPanel(Person person) {
 		super();
-		this.jfritz = jfritz;
 		this.person = person;
 		drawPanel();
 	}
@@ -607,7 +604,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		person.setEmailAddress(tfEmail.getText());
 		hasChanged = false;
 		numberHasChanged = false;
-		jfritz.getPhonebook().sortAllFilteredRows();
+		JFritz.getPhonebook().sortAllFilteredRows();
 		return person;
 	}
 

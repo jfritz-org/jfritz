@@ -21,12 +21,15 @@ public abstract class FBoxListener extends Thread implements CallMonitor {
 
     protected JFritz jfritz;
 
+    // Liest den TCP-Strom ein
     protected BufferedReader in;
 
     protected Socket clientSocket;
 
+    // MSN, die von dem Anrufmonitor ignoriert werden
     protected String[] ignoredMSNs;
 
+    // wird benutzt, um X Sekunden lang zu warten
     protected Random zufallszahl;
 
     public FBoxListener(JFritz jfritz) {
@@ -42,20 +45,20 @@ public abstract class FBoxListener extends Thread implements CallMonitor {
     protected boolean connect() {
         try {
             Debug.msg("Trying to connect to " //$NON-NLS-1$
-                    + jfritz.getFritzBox().getAddress() + ":1012"); //$NON-NLS-1$,  //$NON-NLS-2$
-            clientSocket = new Socket(jfritz.getFritzBox().getAddress(), 1012); //$NON-NLS-1$
+                    + JFritz.getFritzBox().getAddress() + ":1012"); //$NON-NLS-1$,  //$NON-NLS-2$
+            clientSocket = new Socket(JFritz.getFritzBox().getAddress(), 1012); //$NON-NLS-1$
             clientSocket.setKeepAlive(true);
             return true;
         } catch (UnknownHostException uhe) {
             Debug.msg("Unknown host exception: " + uhe.toString()); //$NON-NLS-1$
             Debug.errDlg(JFritz.getMessage("error_fritzbox_callmonitor_no_connection"). //$NON-NLS-1$
-            		replaceAll("%A", jfritz.getFritzBox().getAddress())); //$NON-NLS-1$,  //$NON-NLS-2$
-            jfritz.stopCallMonitor();
+            		replaceAll("%A", JFritz.getFritzBox().getAddress())); //$NON-NLS-1$,  //$NON-NLS-2$
+            JFritz.stopCallMonitor();
         } catch (IOException ioe) {
             Debug.msg("IO exception: " + ioe.toString()); //$NON-NLS-1$
             Debug.errDlg(JFritz.getMessage("error_fritzbox_callmonitor_no_connection"). //$NON-NLS-1$
-            		replaceAll("%A", jfritz.getFritzBox().getAddress())); //$NON-NLS-1$,  //$NON-NLS-2$
-            jfritz.stopCallMonitor();
+            		replaceAll("%A", JFritz.getFritzBox().getAddress())); //$NON-NLS-1$,  //$NON-NLS-2$
+            JFritz.stopCallMonitor();
         }
         return false;
     }

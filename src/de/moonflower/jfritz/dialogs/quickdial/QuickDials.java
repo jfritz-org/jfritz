@@ -49,16 +49,13 @@ public class QuickDials extends AbstractTableModel {
 			+ "<!ELEMENT description (#PCDATA)>"  //$NON-NLS-1$
 			+ "<!ATTLIST entry id CDATA #REQUIRED>";  //$NON-NLS-1$
 
-	JFritz jfritz;
-
 	Vector quickDials;
 
 	/**
 	 *
 	 */
-	public QuickDials(JFritz jfritz) {
+	public QuickDials() {
 		super();
-		this.jfritz = jfritz;
 		quickDials = new Vector();
 	}
 
@@ -137,12 +134,12 @@ public class QuickDials extends AbstractTableModel {
 
 	public void getQuickDialDataFromFritzBox() {
 
-		if (jfritz.getFritzBox().getFirmware() == null)
-			if (jfritz.getFritzBox().checkValidFirmware() == false) {
+		if (JFritz.getFritzBox().getFirmware() == null)
+			if (JFritz.getFritzBox().checkValidFirmware() == false) {
 				return;
 			}
 		try {
-			quickDials = jfritz.getFritzBox().retrieveQuickDialsFromFritzBox(this); //$NON-NLS-1$
+			quickDials = JFritz.getFritzBox().retrieveQuickDialsFromFritzBox(this); //$NON-NLS-1$
 			fireTableDataChanged();
 		} catch (WrongPasswordException e) {
 			Debug.err("getQuickDialData: Wrong password"); //$NON-NLS-1$

@@ -4,16 +4,9 @@
  */
 package de.moonflower.jfritz.callerlist.filter;
 
-import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.struct.Call;
 
 public abstract class CallFilter {
-
-    JFritz jfritz;
-
-    public CallFilter(JFritz jfritz) {
-        this.jfritz = jfritz;
-    }
 
     public abstract boolean filterPassed(Call currentCall);
 

@@ -50,8 +50,6 @@ public class SyslogConfigDialog extends JDialog implements CallMonitorConfigDial
 	 */
 	private static final long serialVersionUID = 1262373999715869093L;
 
-	private JFritz jfritz;
-
 	private JCheckBox checkSyslog;
 
 	private JCheckBox checkTelefon;
@@ -68,25 +66,21 @@ public class SyslogConfigDialog extends JDialog implements CallMonitorConfigDial
 
 	public static final int CANCEL_OPTION = 2;
 
-	public SyslogConfigDialog(JFrame parent, JFritz jfritz) {
-		super(parent, true);
-		this.jfritz = jfritz;
-		initDialog();
-		if (parent != null) {
-			setLocationRelativeTo(parent);
-		}
+    public SyslogConfigDialog(JDialog parent) {
+        super(parent, true);
+        initDialog();
+        if (parent != null) {
+            setLocationRelativeTo(parent);
+        }
+    }
 
-	}
-
-	public SyslogConfigDialog(JDialog parent, JFritz jfritz) {
-		super(parent, true);
-		this.jfritz = jfritz;
-		initDialog();
-		if (parent != null) {
-			setLocationRelativeTo(parent);
-		}
-
-	}
+    public SyslogConfigDialog(JFrame parent) {
+        super(parent, true);
+        initDialog();
+        if (parent != null) {
+            setLocationRelativeTo(parent);
+        }
+    }
 
 	public void initDialog() {
 		setTitle(JFritz.getMessage("dialog_title_syslog_options")); //$NON-NLS-1$
@@ -163,7 +157,7 @@ public class SyslogConfigDialog extends JDialog implements CallMonitorConfigDial
 					setVisible(false);
 				}
 				if (e.getActionCommand().equals("restartSyslog")) { //$NON-NLS-1$
-					Telnet telnet = new Telnet(jfritz);
+					Telnet telnet = new Telnet();
 					telnet.connect();
 					if (telnet.isConnected()) {
 						SyslogListener.restartSyslogOnFritzBox(telnet, JFritz
@@ -179,10 +173,10 @@ public class SyslogConfigDialog extends JDialog implements CallMonitorConfigDial
 					}
 				}
 				if (e.getActionCommand().equals("restartTelefon")) { //$NON-NLS-1$
-					Telnet telnet = new Telnet(jfritz);
+					Telnet telnet = new Telnet();
 					telnet.connect();
 					if (telnet.isConnected()) {
-						if (SyslogListener.restartTelefonOnFritzBox(telnet, jfritz) == JOptionPane.YES_OPTION) {
+						if (SyslogListener.restartTelefonOnFritzBox(telnet) == JOptionPane.YES_OPTION) {
 							JFritz.infoMsg(JFritz.getMessage("telefond_restart_successfully")); //$NON-NLS-1$
 							Debug.msg("Telefond restarted successfully"); //$NON-NLS-1$
 						} else {
