@@ -221,7 +221,7 @@ public class Person {
 			return ""; //$NON-NLS-1$
 		return city;
 	}
-	// TODO
+
 	public PhoneNumber getPhoneNumber(String type) {
 		Enumeration en = numbers.elements();
 		while (en.hasMoreElements()) {

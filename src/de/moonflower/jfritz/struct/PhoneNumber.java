@@ -87,7 +87,6 @@ public class PhoneNumber implements Comparable {
 	 * @author Brian Jensen
 	 *
 	 * @param fullNumber the telephone number in raw format
-	 * @param jfritz
 	 * @param parseDialOut, a boolean value representing if a Dial out prefix needs to be parsed
 	 */
 	public PhoneNumber(String fullNumber, boolean parseDialOut) {
@@ -475,9 +474,7 @@ public class PhoneNumber implements Comparable {
 	 *
 	 * @author Brian Jensen
 	 *
-	 *
-	 * @param jf is a referenz to the current jfritz instance
-	 */
+   	 */
 	public void convertQuickDial(){
 
 		if (number.startsWith("**7")) //$NON-NLS-1$

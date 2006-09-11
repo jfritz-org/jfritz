@@ -181,7 +181,7 @@ public class Call {
 
             /* This is the old format
             if (route.startsWith("SIP")) { //$NON-NLS-1$
-                Enumeration en = jfritz.getSIPProviderTableModel()
+                Enumeration en = JFritz.getSIPProviderTableModel()
                         .getProviderList().elements();
                 while (en.hasMoreElements()) {
                     SipProvider sipProvider = (SipProvider) en.nextElement();

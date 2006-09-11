@@ -14,8 +14,6 @@ import de.moonflower.jfritz.JFritz;
  */
 public class SSDPdiscoverThread extends Thread {
 
-	JFritz jfritz;
-
 	int timeout;
 
 	Vector devices;
@@ -25,8 +23,7 @@ public class SSDPdiscoverThread extends Thread {
 	 *
 	 * @param timeout
 	 */
-	public SSDPdiscoverThread(JFritz jfritz, int timeout) {
-		this.jfritz = jfritz;
+	public SSDPdiscoverThread(int timeout) {
 		this.timeout = timeout;
 	}
 

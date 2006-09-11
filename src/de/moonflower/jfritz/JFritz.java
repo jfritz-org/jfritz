@@ -571,7 +571,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.334 2006/09/11 23:02:22 robotniko Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.335 2006/09/11 23:09:48 robotniko Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -900,7 +900,7 @@ public final class JFritz {
         Debug.msg("JFritz runs on " + HostOS); //$NON-NLS-1$
 
         if (HostOS.equals("Mac")) { //$NON-NLS-1$
-            new MacHandler(this);
+            new MacHandler();
         }
 
         // loads various country specific number settings and tables
@@ -1005,7 +1005,7 @@ public final class JFritz {
                 "true"))) {//$NON-NLS-1$
             Debug.msg("Searching for  FritzBox per UPnP / SSDP");//$NON-NLS-1$
 
-            ssdpthread = new SSDPdiscoverThread(this, SSDP_TIMEOUT);
+            ssdpthread = new SSDPdiscoverThread(SSDP_TIMEOUT);
             ssdpthread.start();
             try {
                 ssdpthread.join();

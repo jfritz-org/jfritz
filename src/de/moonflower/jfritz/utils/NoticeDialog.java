@@ -40,10 +40,8 @@ public class NoticeDialog extends JDialog implements ActionListener {
 
 	public NoticeDialog(String property, String infoText) throws HeadlessException {
 		super(JFritz.getJframe());
-//		this.jfritz = jfritz;
 		this.infoText = infoText;
 		this.property= property;
-		//this.setLocation(jfritz.getJframe().getX() + 80, jfritz.getJframe().getY() + 100);
 
 		if (JFritz.getProperty(property, "false").equals( //$NON-NLS-1$
 				"true")) { //$NON-NLS-1$

@@ -22,7 +22,7 @@ public class OkayButton extends JButton {
 	 */
 	private static final long serialVersionUID = 1;
 
-	public OkayButton(JFritz jfritz) {
+	public OkayButton() {
 		setText(JFritz.getMessage("okay")); //$NON-NLS-1$
 		setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(

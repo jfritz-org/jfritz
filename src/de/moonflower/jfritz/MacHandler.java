@@ -13,17 +13,14 @@ import de.moonflower.jfritz.utils.Debug;
  * Handles events thrown by MacOSX's Application Menubar (Quit, About, Prefs)
  */
 public class MacHandler {
-	JFritz jfritz;
 
 	/**
 	 * Register quit-, about-, prefsHandler
 	 *
-	 * @param jfritz
 	 *            An instance of JFritz
 	 */
-	public MacHandler(JFritz jfritz) {
+	public MacHandler() {
 		try {
-			this.jfritz = jfritz;
 
 			// @Jochen: Vielleicht kannst du hier noch Code einfügen, so dass
 			// JFritz unter dem MAC hübscher aussieht, auch wenn man nicht die
