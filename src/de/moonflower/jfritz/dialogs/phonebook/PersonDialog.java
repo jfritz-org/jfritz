@@ -40,7 +40,6 @@ public class PersonDialog extends JDialog implements ActionListener  {
 
 	/**
 	 *
-	 * @param jfritz JFritz object
 	 * @param person Person object
 	 * @throws HeadlessException
 	 */

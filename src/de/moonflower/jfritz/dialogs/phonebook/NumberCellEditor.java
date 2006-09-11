@@ -84,11 +84,6 @@ public class NumberCellEditor extends AbstractCellEditor
 		super.fireEditingStopped();
 	}
 
-	public void keyTyped(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
 	public void keyPressed(KeyEvent arg0) {
 		char code = arg0.getKeyChar();
 		if (Character.isLetterOrDigit(code) || code == KeyEvent.VK_BACK_SPACE
@@ -101,5 +96,10 @@ public class NumberCellEditor extends AbstractCellEditor
 		// TODO Auto-generated method stub
 
 	}
+
+    public void keyTyped(KeyEvent arg0) {
+        // TODO Auto-generated method stub
+
+    }
 
 }

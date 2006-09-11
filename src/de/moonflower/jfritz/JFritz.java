@@ -355,7 +355,7 @@
  * - SipProvider-Informationen werden nicht mehr in den
  * 	 jfritz.properties.xml sondern in jfritz.sipprovider.xml
  *   gespeichert.
- * - Zugriff auf SipProvider über jfritz.getSIPProviderTableModel()
+ * - Zugriff auf SipProvider über JFritz.getSIPProviderTableModel()
  *
  * JFritz 0.4.4
  * - CallByCall information is saved (only 010xy and 0100yy)
@@ -571,7 +571,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.333 2006/09/11 22:41:33 robotniko Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.334 2006/09/11 23:02:22 robotniko Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -917,7 +917,7 @@ public final class JFritz {
         sipprovider = new SipProviderTableModel();
         sipprovider.loadFromXMLFile(SAVE_DIR + SIPPROVIDER_FILE);
 
-        callerlist = new CallerList(this);
+        callerlist = new CallerList();
         callerlist.loadFromXMLFile(SAVE_DIR + CALLS_FILE);
 
         Debug.msg("Start commandline parsing"); //$NON-NLS-1$
@@ -985,7 +985,7 @@ public final class JFritz {
         }
 
         Debug.msg("New instance of JFrame"); //$NON-NLS-1$
-        jframe = new JFritzWindow(this);
+        jframe = new JFritzWindow();
 
         if (checkForSystraySupport()) {
             Debug.msg("Check Systray-Support"); //$NON-NLS-1$
@@ -1068,7 +1068,7 @@ public final class JFritz {
         sipprovider = new SipProviderTableModel();
         // sipprovider.loadFromXMLFile(SAVE_DIR + SIPPROVIDER_FILE);
 
-        callerlist = new CallerList(this);
+        callerlist = new CallerList();
         // callerlist.loadFromXMLFile(SAVE_DIR + CALLS_FILE);
 
     }
@@ -1586,7 +1586,7 @@ public final class JFritz {
      * @param l
      *            the locale to change the language to
      */
-    public void createNewWindow(Locale l) {
+    public static void createNewWindow(Locale l) {
         locale = l;
 
         Debug.msg("Loading new locale"); //$NON-NLS-1$
@@ -1603,11 +1603,11 @@ public final class JFritz {
      *
      */
 
-    public void refreshWindow() {
+    public static void refreshWindow() {
         saveProperties();
         jframe.dispose();
         javax.swing.SwingUtilities.invokeLater(jframe);
-        jframe = new JFritzWindow(this);
+        jframe = new JFritzWindow();
         javax.swing.SwingUtilities.invokeLater(jframe);
         jframe.checkOptions();
         javax.swing.SwingUtilities.invokeLater(jframe);

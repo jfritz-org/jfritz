@@ -56,7 +56,6 @@ public class FRITZBOXConfigDialog extends JDialog implements
 
     public FRITZBOXConfigDialog(JDialog parent) {
         super(parent, true);
-        // this.jfritz = jfritz;
         initDialog();
         if (parent != null) {
             setLocationRelativeTo(parent);

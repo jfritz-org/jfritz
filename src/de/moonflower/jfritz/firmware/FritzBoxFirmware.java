@@ -256,9 +256,6 @@ public class FritzBoxFirmware {
 	/**
 	 * @return Returns the access method string.
 	 *
-	 * TODO: Später noch die Major-Version mit einbeziehen, falls es mit neueren
-	 * Versionen nicht klappen sollte
-	 *
 	 */
 	public final String getAccessMethod() {
 		int accessMethod;

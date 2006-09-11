@@ -19,8 +19,6 @@ import java.util.Random;
 
 public abstract class FBoxListener extends Thread implements CallMonitor {
 
-    protected JFritz jfritz;
-
     // Liest den TCP-Strom ein
     protected BufferedReader in;
 
@@ -32,9 +30,8 @@ public abstract class FBoxListener extends Thread implements CallMonitor {
     // wird benutzt, um X Sekunden lang zu warten
     protected Random zufallszahl;
 
-    public FBoxListener(JFritz jfritz) {
+    public FBoxListener() {
         super();
-        this.jfritz = jfritz;
         Debug.msg("Starting FBoxListener"); //$NON-NLS-1$
         start();
         zufallszahl = new Random();

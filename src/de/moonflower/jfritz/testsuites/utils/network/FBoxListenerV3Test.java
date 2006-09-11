@@ -18,7 +18,7 @@ public class FBoxListenerV3Test extends TestCase {
 
     private FBoxListenerV3 fBox;
 
-    private JFritz jfritz;
+    public JFritz jfritz;
 
     public FBoxListenerV3Test() {
         jfritz = new JFritz();
@@ -26,7 +26,7 @@ public class FBoxListenerV3Test extends TestCase {
 
     public void setUp() throws Exception {
         super.setUp();
-        fBox = new FBoxListenerV3(jfritz);
+        fBox = new FBoxListenerV3();
     }
 
     public void tearDown() throws Exception {

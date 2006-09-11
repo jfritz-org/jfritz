@@ -19,8 +19,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class FBoxListenerV3 extends FBoxListener {
 
-    public FBoxListenerV3(JFritz jfritz) {
-        super(jfritz);
+    public FBoxListenerV3() {
         Debug.msg("FBoxListener V3"); //$NON-NLS-1$
     }
 

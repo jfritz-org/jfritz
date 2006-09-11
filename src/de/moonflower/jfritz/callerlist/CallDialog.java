@@ -53,8 +53,6 @@ public class CallDialog extends JDialog implements ActionListener {
 	/**
 	 * This Constructor initializes the CallDialog with a set of numbers and a default number.
 	 * If Vector contains more than one number CallDialog will present the numbers of the vector in an editable JComboBox with the defaultNumber selected as default.
-	 * @param jfritz
-	 *            JFritz object
 	 * @param numbers
 	 *            Vector of PhoneNumbers (e.g. from Person.getNumbers())
 	 * @param defaultNumber
@@ -74,8 +72,6 @@ public class CallDialog extends JDialog implements ActionListener {
 	/**
 	 * This Constructor initializes the CallDialog with a one number and sets this to the defaultNumber.
 	 * Due to having only one number in Vector CallDialog will present this number in an editable JTextField.
-	 * @param jfritz
-	 *            JFritz object
 	 * @param number
 	 *            PhoneNumber object
 	 * @throws HeadlessException
