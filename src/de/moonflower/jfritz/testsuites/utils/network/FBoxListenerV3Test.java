@@ -14,14 +14,14 @@ import de.moonflower.jfritz.utils.network.CallMonitor;
 import de.moonflower.jfritz.utils.network.FBoxListenerV3;
 import junit.framework.TestCase;
 
-public class TestCase_FBoxListenerV3 extends TestCase {
+public class FBoxListenerV3Test extends TestCase {
 
     private FBoxListenerV3 fBox;
 
     private JFritz jfritz;
 
-    public TestCase_FBoxListenerV3() {
-        jfritz = new JFritz(false, false, "", false, false, false);
+    public FBoxListenerV3Test() {
+        jfritz = new JFritz();
     }
 
     public void setUp() throws Exception {
