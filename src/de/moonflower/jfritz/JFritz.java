@@ -572,7 +572,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.331 2006/09/11 22:14:10 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.332 2006/09/11 22:17:34 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -1550,7 +1550,6 @@ public final class JFritz {
 	}
 
 	public static void hideShowJFritz() {
-        System.err.println("Old frame state: " + oldFrameState);
 		if (jframe.isVisible()) {
             oldFrameState = jframe.getExtendedState();
 			Debug.msg("Hide JFritz-Window"); //$NON-NLS-1$

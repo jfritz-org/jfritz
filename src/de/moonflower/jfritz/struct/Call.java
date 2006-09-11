@@ -229,8 +229,6 @@ public class Call {
         // duration
         outString = outString.concat(";\"" + duration + "\""); //$NON-NLS-1$, //$NON-NLS-2$
 
-        System.err.println("Hallo");
-
         // address
         if (getPerson() != null) {
             outString = outString.concat(";\"" + getPerson().getFullname() //$NON-NLS-1$
