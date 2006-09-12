@@ -31,8 +31,7 @@ public class FBoxListenerV3 extends FBoxListener {
     }
 
     public void parseOutput(String line) {
-        parseOutput(line, JFritzUtils.parseBoolean(JFritz.getProperty(
-                "option.callmonitor.fetchAfterDisconnect", "false")));
+        parseOutput(line, true);
     }
 
     public void parseOutput(String line, boolean interactWithJFritz) {
@@ -79,13 +78,12 @@ public class FBoxListenerV3 extends FBoxListener {
                         }
 
             try {
-                Call currentCall = new Call(new CallType(CallType.CALLOUT),new SimpleDateFormat("dd.MM.yy HH:mm:ss").parse(split[0]), new PhoneNumber(number), "0", provider, 0);
+                Call currentCall = new Call(new CallType(CallType.CALLIN),new SimpleDateFormat("dd.MM.yy HH:mm:ss").parse(split[0]), new PhoneNumber(number), "0", provider, 0);
                 CallMonitor.callMonitoring.addNewCall(Integer.parseInt(split[2]), currentCall);
             } catch (ParseException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-
 
             if (!ignoreIt && interactWithJFritz)
                 callMonitoring.displayCallInMsg(number, provider);
@@ -118,7 +116,7 @@ public class FBoxListenerV3 extends FBoxListener {
                 provider = split[4];
 
             try {
-                Call currentCall = new Call(new CallType(CallType.CALLIN),new SimpleDateFormat("dd.MM.yy HH:mm:ss").parse(split[0]), new PhoneNumber(number), split[3], provider, 0);
+                Call currentCall = new Call(new CallType(CallType.CALLOUT),new SimpleDateFormat("dd.MM.yy HH:mm:ss").parse(split[0]), new PhoneNumber(number), split[3], provider, 0);
                 CallMonitor.callMonitoring.addNewCall(Integer.parseInt(split[2]), currentCall);
             } catch (ParseException e) {
                 System.err.println("FBoxListenerV3: Could not convert call" + e);
@@ -141,8 +139,33 @@ public class FBoxListenerV3 extends FBoxListener {
                 // TODO Auto-generated catch block
                 Debug.err(e.toString());
             }
-            if (interactWithJFritz) //$NON-NLS-1$,  //$NON-NLS-2$
+/**
+ * TODO: ENABLE this
+            if (JFritzUtils.parseBoolean(JFritz.getProperty(
+                    "option.callmonitor.fetchAfterDisconnect", "false"))) //$NON-NLS-1$,  //$NON-NLS-2$
                     JFritz.getJframe().fetchList();
+**/
+        } else if (split[1].equals("CONNECT")) {
+            int callId = Integer.parseInt(split[2]);
+            String port = split[3];
+            if (split[4].equals("")) { //$NON-NLS-1$
+                number = JFritz.getMessage("unknown"); //$NON-NLS-1$
+            } else
+                number = split[4];
+            if (number.endsWith("#")) //$NON-NLS-1$
+                number = number.substring(0, number.length() - 1);
+
+            Call call = CallMonitor.callMonitoring.getCall(callId);
+            PhoneNumber pn = new PhoneNumber(number);
+            if ( pn.getIntNumber().equals(call.getPhoneNumber().getIntNumber())) {
+                try {
+                    CallMonitor.callMonitoring.getCall(callId).setCalldate(new SimpleDateFormat("dd.MM.yy HH:mm:ss").parse(split[0]));
+                    CallMonitor.callMonitoring.getCall(callId).setPort(port);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                CallMonitor.callMonitoring.establishCall(callId);
+            }
         }
     }
 }

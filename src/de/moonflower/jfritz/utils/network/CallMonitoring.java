@@ -44,11 +44,16 @@ public class CallMonitoring {
         pendingCalls.put(new Integer(id), call);
     }
 
-    // Transferiert den Anruf von der Liste der "schwebenden" Anrufe in die Liste der etablierten Anrufe
+    /**
+     *  Transferiert den Anruf von der Liste der "schwebenden" Anrufe in die Liste der etablierten Anrufe
+     *  @param id, call id
+     */
     public void establishCall(int id) {
-        if (pendingCalls.keySet().contains(new Integer(id))) {
-            establishedCalls.put(new Integer(id), pendingCalls.get(new Integer(
+        Integer callID = new Integer(id);
+        if (pendingCalls.keySet().contains(callID)) {
+            establishedCalls.put(callID, pendingCalls.get(new Integer(
                     id)));
+            pendingCalls.remove(callID);
         }
     }
 

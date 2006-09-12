@@ -374,7 +374,19 @@ public class Call {
 
     }
 
+    /**
+     * Set the port
+     * @param newPort
+     */
+    public void setPort(String newPort) {
+        port = newPort;
+    }
 
-
+    /**
+     * Set call date
+     */
+    public void setCalldate(Date calldate) {
+        this.calldate = calldate;
+    }
 
 }
