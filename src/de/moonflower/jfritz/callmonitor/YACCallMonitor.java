@@ -88,7 +88,8 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 								number = splitList[1];
 							}
 
-							callMonitoring.displayCallInMsg(number, "", name); //$NON-NLS-1$
+                            // TODO: Add call to CallMonitorList and show message if number is not in ignore list
+                            //JFritz.getCallMonitorList().displayCallInMsg(number, "", name); //$NON-NLS-1$
 
 						} else {
 							outputString = JFritz.getMessage("yac_message") //$NON-NLS-1$

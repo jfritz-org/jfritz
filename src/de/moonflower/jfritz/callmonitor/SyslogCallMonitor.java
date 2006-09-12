@@ -162,7 +162,8 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 							+ " -> " + called); //$NON-NLS-1$
 
 					// POPUP Messages to JFritz
-					callMonitoring.displayCallInMsg(caller, called);
+                    // TODO: Add call to CallMonitorList and show message if number is not in ignore list
+                    //JFritz.getCallMonitorList().displayCallInMsg(caller, called);
 				}
 				p = Pattern.compile(PATTERN_TELEFON_OUTGOING);
 				m = p.matcher(msg);

@@ -90,7 +90,8 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
                                msn = splitted[i].substring(7);
                           }
                      }
-                     callMonitoring.displayCallInMsg(number, msn, "");  //$NON-NLS-1$
+                     // TODO: add Call to CallMonitorList and display it only, if number is not in ignoreMSN-List
+                     //JFritz.getCallMonitorList().displayCallInMsg(number, msn, "");  //$NON-NLS-1$
                      // Alter Callmessagemonitor
                 } else if (msg.startsWith("@")) {  //$NON-NLS-1$
 					// Call
@@ -128,7 +129,8 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
 					if (number.equals("Keine Rufnummer übermittelt")) { //$NON-NLS-1$
 						number = ""; //$NON-NLS-1$
 					}
-					callMonitoring.displayCallInMsg(number, msn, name);
+                    // TODO: add Call to CallMonitorList and display it only, if number is not in ignoreMSN-List
+					//JFritz.getCallMonitorList().displayCallInMsg(number, msn, name);
 				} else {
 					// Message
 					JFritz.infoMsg(JFritz.getMessage("yac_message") + ":\n" //$NON-NLS-1$,  //$NON-NLS-2$

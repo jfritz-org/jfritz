@@ -389,4 +389,11 @@ public class Call {
         this.calldate = calldate;
     }
 
+    /**
+     * Set duration of call
+     * @param duration
+     */
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
 }

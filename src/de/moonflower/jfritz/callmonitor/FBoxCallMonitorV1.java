@@ -25,7 +25,6 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
     }
 
     protected void parseOutput(String line) {
-        initIgnoreList();
         Debug.msg("Server: " + line); //$NON-NLS-1$
         String number = ""; //$NON-NLS-1$
         String provider = ""; //$NON-NLS-1$
@@ -48,14 +47,9 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
                 provider = split[4];
             provider = JFritz.getSIPProviderTableModel().getSipProvider(
                     provider, provider);
-            boolean ignoreIt = false;
-            for (int i = 0; i < ignoredMSNs.length; i++)
-                if (provider.equals(ignoredMSNs[i])) {
-                    ignoreIt = true;
-                    break;
-                }
-            if (!ignoreIt)
-                callMonitoring.displayCallInMsg(number, provider);
+            // TODO: add Call to CallMonitorList and display it only, if number is not in ignoreMSN-List
+//            if (!ignoreIt)
+//                JFritz.getCallMonitorList().displayCallInMsg(number, provider);
         } else if (JFritzUtils.parseBoolean(JFritz.getProperty(
                 "option.callmonitor.monitorOutgoingCalls", "true")) //$NON-NLS-1$,  //$NON-NLS-2$
                 && split[1].equals("CALL")) { //$NON-NLS-1$
@@ -70,24 +64,9 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
                 provider = split[4];
             provider = JFritz.getSIPProviderTableModel().getSipProvider(
                     provider, provider);
-            boolean ignoreIt = false;
-            for (int i = 0; i < ignoredMSNs.length; i++)
-                if (provider.equals(ignoredMSNs[i])) {
-                    ignoreIt = true;
-                    break;
-                }
-            if (!ignoreIt)
-                callMonitoring.displayCallOutMsg(number, provider);
-        } else if (JFritzUtils.parseBoolean(JFritz.getProperty(
-                "option.callmonitor.fetchAfterDisconnect", "true")) //$NON-NLS-1$,  //$NON-NLS-2$
-                && split[1].equals("DISCONNECT")) { //$NON-NLS-1$
-            try {
-                Thread.sleep(zufallszahl.nextInt(3000));
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                Debug.err(e.toString());
-            }
-            JFritz.getJframe().fetchList();
+            // TODO: add Call to CallMonitorList and display it only, if number is not in ignoreMSN-List
+            //if (!ignoreIt)
+            //    JFritz.getCallMonitorList().displayCallOutMsg(number, provider);
         }
     }
 }

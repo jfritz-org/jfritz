@@ -90,7 +90,8 @@ public class TelnetCallMonitor extends Thread implements CallMonitorInterface {
                     Debug.msg("NEW CALL " + id + ": " + caller + " -> " //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
                             + called);
 
-                    callMonitoring.displayCallInMsg(caller, called);
+                    // TODO: Add call to CallMonitorList and show message if number is not in ignore list
+                    //JFritz.getCallMonitorList().displayCallInMsg(caller, called);
                     if (!isRunning)
                         break;
                 }

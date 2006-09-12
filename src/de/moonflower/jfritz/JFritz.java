@@ -31,7 +31,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  *
- *
  * BUGS: bitte bei Sourceforge nachschauen und dort auch den Status ändern
  * BUGS: http://sourceforge.net/tracker/?group_id=138196&atid=741413
  *
@@ -144,6 +143,9 @@
  * - INTERN: Statische Methoden in JFritz.java => keine jfritz-Referenzen in den anderen Klassen notwendig
  * - INTERN: Diverse JUnit-TestCases
  * - INTERN: Neue Klasse CallMonitoring, die alle aktuellen Anrufe verwaltet und die Anrufinformation auf den Bildschirm bringt
+ * - INTERN: Anrufmonitore in neues Package callmonitor gepackt und umbenannt
+ * - INTERN: Anzeige der Anrufe, die vom Anrufmonitor erkannt werden, über Listener. Abholen der Anrufliste nach dem Gesprächsende nun über den DisconnectMonitor
+ * - TODO: Andere Anrufmonitore noch an die neuen Listener anpassen und TestCases schreiben
  *
  * JFritz 0.6.1
  * - Neue Strings:
@@ -534,6 +536,9 @@ import org.jdesktop.jdic.tray.TrayIcon;
 
 import de.moonflower.jfritz.callerlist.CallerList;
 import de.moonflower.jfritz.callmonitor.CallMonitorInterface;
+import de.moonflower.jfritz.callmonitor.CallMonitorList;
+import de.moonflower.jfritz.callmonitor.DisconnectMonitor;
+import de.moonflower.jfritz.callmonitor.DisplayCallsMonitor;
 import de.moonflower.jfritz.dialogs.configwizard.ConfigWizard;
 import de.moonflower.jfritz.dialogs.phonebook.PhoneBook;
 import de.moonflower.jfritz.dialogs.simple.MessageDlg;
@@ -571,7 +576,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.336 2006/09/12 19:23:42 robotniko Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.337 2006/09/12 22:48:34 robotniko Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -656,6 +661,9 @@ public final class JFritz {
     private static boolean enableInstanceControl = true;
 
     private static int oldFrameState; // saves old frame state to restore old
+
+    public static CallMonitorList callMonitorList;
+
 
     // state
 
@@ -919,6 +927,10 @@ public final class JFritz {
 
         callerlist = new CallerList();
         callerlist.loadFromXMLFile(SAVE_DIR + CALLS_FILE);
+
+        callMonitorList = new CallMonitorList();
+        callMonitorList.addEventListener(new DisplayCallsMonitor());
+        callMonitorList.addEventListener(new DisconnectMonitor());
 
         Debug.msg("Start commandline parsing"); //$NON-NLS-1$
         if (fetchCalls) {
@@ -1761,6 +1773,10 @@ public final class JFritz {
 
     public static URL getCallSound() {
         return callSound;
+    }
+
+    public static CallMonitorList getCallMonitorList() {
+        return callMonitorList;
     }
 
 }

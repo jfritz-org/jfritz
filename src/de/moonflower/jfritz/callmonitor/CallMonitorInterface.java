@@ -11,8 +11,6 @@ package de.moonflower.jfritz.callmonitor;
  */
 public interface CallMonitorInterface {
 
-    public CallMonitor callMonitoring = new CallMonitor();
-
 	public void stopCallMonitor();
 
 }

@@ -24,9 +24,6 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
 
     protected Socket clientSocket;
 
-    // MSN, die von dem Anrufmonitor ignoriert werden
-    protected String[] ignoredMSNs;
-
     // wird benutzt, um X Sekunden lang zu warten
     protected Random zufallszahl;
 
@@ -72,19 +69,6 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
             }
         } catch (IOException ioe) {
             Debug.msg("IO exception: " + ioe.toString()); //$NON-NLS-1$
-        }
-    }
-
-    protected void initIgnoreList() {
-        String ignoreMSNString = JFritz.getProperty(
-                "option.callmonitor.ignoreMSN", ""); //$NON-NLS-1$,  //$NON-NLS-2$
-        if (ignoreMSNString.length() > 0 && ignoreMSNString.indexOf(";") == -1) { //$NON-NLS-1$
-            ignoreMSNString = ignoreMSNString + ";"; //$NON-NLS-1$
-        }
-        ignoredMSNs = ignoreMSNString.split(";"); //$NON-NLS-1$
-        Debug.msg("Ignored MSNs: "); //$NON-NLS-1$
-        for (int i = 0; i < ignoredMSNs.length; i++) {
-            Debug.msg(ignoredMSNs[i]);
         }
     }
 

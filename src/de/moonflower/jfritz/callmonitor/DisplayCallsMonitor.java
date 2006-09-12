@@ -1,5 +1,5 @@
 /*
- * Created on 10.09.2006
+ * Created on 12.09.2006
  *
  */
 package de.moonflower.jfritz.callmonitor;
@@ -7,7 +7,6 @@ package de.moonflower.jfritz.callmonitor;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,81 +18,20 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 
-/**
- * Diese Klasse enthält eine Liste aller initialiesierter und etablierter Anrufe.
- * Sie wird von den Anrufmonitoren verwendet, um Anrufe anzuzeigen.
- *
- * @author Robert Palmer
- *
- */
-public class CallMonitor {
+public class DisplayCallsMonitor extends CallMonitorListenerAdaptor {
 
-    public static int PENDING = 0;
-    public static int ESTABLISHED = 1;
-    public static int NONE = 2;
-
-    // Ankommende oder abgehende Anrufe, bei denen noch keine Verbindung
-    // zustandegekommen ist
-    private HashMap pendingCalls = new HashMap();
-
-    // Anrufe, bei denen schon eine Verbindung besteht
-    private HashMap establishedCalls = new HashMap();
-
-    // Fügt den Anruf call in die Liste der "schwebenden" Anrufe ein
-    public void addNewCall(int id, Call call) {
-        pendingCalls.put(new Integer(id), call);
+    public void pendingCallOut(Call call) {
+        displayCallOutMsg(call.getPhoneNumber().getAreaNumber(), call.getRoute());
     }
 
-    /**
-     *  Transferiert den Anruf von der Liste der "schwebenden" Anrufe in die Liste der etablierten Anrufe
-     *  @param id, call id
-     */
-    public void establishCall(int id) {
-        Integer callID = new Integer(id);
-        if (pendingCalls.keySet().contains(callID)) {
-            establishedCalls.put(callID, pendingCalls.get(new Integer(
-                    id)));
-            pendingCalls.remove(callID);
-        }
+    public void pendingCallIn(Call call) {
+        displayCallInMsg(call.getPhoneNumber().getAreaNumber(), call.getRoute());
     }
 
-    // Entfernt den Anruf aus einer der beiden Listen
-    public void removeCall(int id) {
-        if (pendingCalls.keySet().contains(new Integer(id))) {
-            pendingCalls.remove(new Integer(id));
-        }
-        if (establishedCalls.keySet().contains(new Integer(id))) {
-            establishedCalls.remove(new Integer(id));
-        }
+    public void endOfCall(Call call) {
+//        Debug.msg("Anruf beendet. Dauer des Anrufs: " + call.getDuration() + " Sekunden);
     }
 
-    // Liefert den Status des Anrufs zurück (pending, established, none)
-    public int getCallState(int id) {
-        if (pendingCalls.keySet().contains(new Integer(id))) {
-            return PENDING;
-        } else if (establishedCalls.keySet().contains(new Integer(id))) {
-            return ESTABLISHED;
-        } else return NONE;
-    }
-
-    // Liefert die Daten des Anrufs
-    public Call getCall(int id) {
-        if ( getCallState(id) == PENDING ) {
-            return (Call) pendingCalls.get(new Integer(id));
-        } else if ( getCallState(id) == ESTABLISHED ) {
-            return (Call) establishedCalls.get(new Integer(id));
-        } else return null;
-    }
-
-    // Anzahl "schwebender" Anrufe
-    public int getPendingSize() {
-        return pendingCalls.size();
-    }
-
-    // Anzahl der etablierten Anrufe
-    public int getEstablishedSize() {
-        return establishedCalls.size();
-    }
     /**
      * Display call monitor message
      *
