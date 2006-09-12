@@ -63,7 +63,6 @@ public class CallerTable extends JTable {
 		// FIXME setDefaultRenderer(Person.class, new PersonCellRenderer());
 		// FIXME setDefaultRenderer(PhoneNumber.class, new
 		// NumberCellRenderer(jfritz));
-		// TODO: Create classes for Number, Port and Duration
 		// setDefaultRenderer(Port.class, new PortCellRenderer());
 		// setDefaultRenderer(Duration.class, new DurationCellRenderer());
 

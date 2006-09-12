@@ -30,7 +30,6 @@ import de.moonflower.jfritz.JFritz;
 
 /**
  * Simple dialog for Fritz!Box address and password input.
- * TODO: I18N
  *
  * @author Arno Willig
  */

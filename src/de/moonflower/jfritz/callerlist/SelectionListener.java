@@ -20,11 +20,9 @@ import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 
 /**
- * Listener class for copying phone numbers to clipboard
  * Displays status information about selected calls
  *
  * @author Arno Willig
- * TODO: Es kopiert aber nicht die Nummern, sondern die vCard ins clipboard
  *
  */
 public class SelectionListener implements ListSelectionListener {

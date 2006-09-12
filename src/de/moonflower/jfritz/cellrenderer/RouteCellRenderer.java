@@ -20,7 +20,6 @@ import de.moonflower.jfritz.JFritz;
  *
  * @author Arno Willig
  *
- * TODO: I18N
  */
 
 public class RouteCellRenderer extends DefaultTableCellRenderer {

@@ -51,8 +51,7 @@ public class WatchdogThread extends Thread {
             try {
                 Thread.sleep(15000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                Debug.err("Watchdog-Error: " + e);
             }
             JFritz.getJframe().startChosenCallMonitor();
 

@@ -34,7 +34,6 @@ import de.moonflower.jfritz.utils.Debug;
 /**
  * @author Arno Willig
  *
- * TODO: I18N
  */
 public class SipProviderTableModel extends AbstractTableModel {
 
@@ -238,7 +237,7 @@ public class SipProviderTableModel extends AbstractTableModel {
 							"Invalid system identifier")) { //$NON-NLS-1$
 				Debug.err(e.getLocalizedMessage());
 				Debug
-						.errDlg("STRUKTURÄNDERUNG!\n\nBitte in der Datei jfritz.sipprovider.xml\n " //$NON-NLS-1$
+						.err("STRUKTURÄNDERUNG!\n\nBitte in der Datei jfritz.sipprovider.xml\n " //$NON-NLS-1$
 								+ "die Zeichenkette \"sip.dtd\" durch\n \"" //$NON-NLS-1$
 								+ SIP_DTD_URI + "\"\n ersetzen!"); //$NON-NLS-1$
 				System.exit(0);
