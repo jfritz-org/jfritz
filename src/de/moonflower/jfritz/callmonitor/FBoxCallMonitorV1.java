@@ -1,4 +1,4 @@
-package de.moonflower.jfritz.utils.network;
+package de.moonflower.jfritz.callmonitor;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.Debug;
@@ -11,9 +11,9 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  *
  */
 
-public class FBoxListenerV1 extends FBoxListener {
+public class FBoxCallMonitorV1 extends FBoxCallMonitor {
 
-    public FBoxListenerV1() {
+    public FBoxCallMonitorV1() {
         Debug.msg("FBoxListener V1"); //$NON-NLS-1$
     }
 

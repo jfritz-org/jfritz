@@ -1,4 +1,4 @@
-package de.moonflower.jfritz.utils.network;
+package de.moonflower.jfritz.callmonitor;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.Debug;
@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
  *
  */
 
-public class TelnetListener extends Thread implements CallMonitor {
+public class TelnetCallMonitor extends Thread implements CallMonitorInterface {
 
     // IncomingCall: ID 0, caller: "017623352711" called: "592904"
     // IncomingCall from NT: ID 0, caller: "592904" called: "1815212"
@@ -26,7 +26,7 @@ public class TelnetListener extends Thread implements CallMonitor {
 
     private boolean isRunning = false;
 
-    public TelnetListener() {
+    public TelnetCallMonitor() {
         super();
         start();
 

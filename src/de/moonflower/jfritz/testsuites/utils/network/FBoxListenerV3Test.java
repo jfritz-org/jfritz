@@ -8,16 +8,16 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.callmonitor.CallMonitorInterface;
+import de.moonflower.jfritz.callmonitor.CallMonitor;
+import de.moonflower.jfritz.callmonitor.FBoxCallMonitorV3;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
-import de.moonflower.jfritz.utils.network.CallMonitor;
-import de.moonflower.jfritz.utils.network.CallMonitoring;
-import de.moonflower.jfritz.utils.network.FBoxListenerV3;
 import junit.framework.TestCase;
 
 public class FBoxListenerV3Test extends TestCase {
 
-    private FBoxListenerV3 fBox;
+    private FBoxCallMonitorV3 fBox;
 
     public JFritz jfritz;
 
@@ -27,7 +27,7 @@ public class FBoxListenerV3Test extends TestCase {
 
     public void setUp() throws Exception {
         super.setUp();
-        fBox = new FBoxListenerV3();
+        fBox = new FBoxCallMonitorV3();
     }
 
     public void tearDown() throws Exception {
@@ -47,9 +47,9 @@ public class FBoxListenerV3Test extends TestCase {
      */
     public void testIncomingCall() {
         fBox.parseOutput("09.09.06 15:59:41;CALL;0;0;1234567;01237654321;SIP0", false);
-        assertEquals(CallMonitoring.PENDING, CallMonitor.callMonitoring.getCallState(0));
+        assertEquals(CallMonitor.PENDING, CallMonitorInterface.callMonitoring.getCallState(0));
 
-        Call call = CallMonitor.callMonitoring.getCall(0);
+        Call call = CallMonitorInterface.callMonitoring.getCall(0);
 
         try {
             assertEquals(call.getCalldate(), new SimpleDateFormat("dd.MM.yy HH:mm:ss").parse("09.09.06 15:59:41"));
@@ -74,9 +74,9 @@ public class FBoxListenerV3Test extends TestCase {
      */
     public void testIncomingCallWithSemicolon() {
         fBox.parseOutput("09.09.06 15:59:41;CALL;0;0;1234567;01237654321;SIP0;", false);
-        assertEquals(CallMonitoring.PENDING, CallMonitor.callMonitoring.getCallState(0));
+        assertEquals(CallMonitor.PENDING, CallMonitorInterface.callMonitoring.getCallState(0));
 
-        Call call = CallMonitor.callMonitoring.getCall(0);
+        Call call = CallMonitorInterface.callMonitoring.getCall(0);
 
         try {
             assertEquals(call.getCalldate(), new SimpleDateFormat("dd.MM.yy HH:mm:ss").parse("09.09.06 15:59:41"));
@@ -100,8 +100,8 @@ public class FBoxListenerV3Test extends TestCase {
      */
     public void testOutgoingCall() {
         fBox.parseOutput("09.09.06 16:03:55;RING;2;01781231234;4271960;POTS", false);
-        assertEquals(CallMonitoring.PENDING, CallMonitor.callMonitoring.getCallState(2));
-        Call call = CallMonitor.callMonitoring.getCall(2);
+        assertEquals(CallMonitor.PENDING, CallMonitorInterface.callMonitoring.getCallState(2));
+        Call call = CallMonitorInterface.callMonitoring.getCall(2);
         try {
             assertEquals(call.getCalldate(), new SimpleDateFormat("dd.MM.yy HH:mm:ss").parse("09.09.06 16:03:55"));
             assertEquals(call.getCalltype().toString(), CallType.CALLIN_STR);
@@ -123,8 +123,8 @@ public class FBoxListenerV3Test extends TestCase {
      */
     public void testOutgoingCallWithSemicolon() {
         fBox.parseOutput("09.09.06 16:03:55;RING;2;01781231234;4271960;POTS;", false);
-        assertEquals(CallMonitoring.PENDING, CallMonitor.callMonitoring.getCallState(2));
-        Call call = CallMonitor.callMonitoring.getCall(2);
+        assertEquals(CallMonitor.PENDING, CallMonitorInterface.callMonitoring.getCallState(2));
+        Call call = CallMonitorInterface.callMonitoring.getCall(2);
         try {
             assertEquals(call.getCalldate(), new SimpleDateFormat("dd.MM.yy HH:mm:ss").parse("09.09.06 16:03:55"));
             assertEquals(call.getCalltype().toString(), CallType.CALLIN_STR);
@@ -147,12 +147,12 @@ public class FBoxListenerV3Test extends TestCase {
      */
     public void testEstablishIncomingCall() {
         fBox.parseOutput("09.09.06 16:03:00;RING;2;01781231234;4271960;POTS;", false);
-        assertEquals(CallMonitoring.PENDING, CallMonitor.callMonitoring.getCallState(2));
+        assertEquals(CallMonitor.PENDING, CallMonitorInterface.callMonitoring.getCallState(2));
 
         fBox.parseOutput("09.09.06 16:03:10;CONNECT;2;4;01781231234;");
-        assertEquals(CallMonitoring.ESTABLISHED, CallMonitor.callMonitoring.getCallState(2));
+        assertEquals(CallMonitor.ESTABLISHED, CallMonitorInterface.callMonitoring.getCallState(2));
 
-        Call call = CallMonitor.callMonitoring.getCall(2);
+        Call call = CallMonitorInterface.callMonitoring.getCall(2);
         try {
             assertEquals(call.getCalldate(), new SimpleDateFormat("dd.MM.yy HH:mm:ss").parse("09.09.06 16:03:10"));
             assertEquals(call.getCalltype().toString(), CallType.CALLIN_STR);
@@ -163,7 +163,7 @@ public class FBoxListenerV3Test extends TestCase {
             e.printStackTrace();
         }
         fBox.parseOutput("09.09.06 16:05:00;DISCONNECT;2;110;");
-        assertEquals(CallMonitoring.NONE, CallMonitor.callMonitoring.getCallState(2));
+        assertEquals(CallMonitor.NONE, CallMonitorInterface.callMonitoring.getCallState(2));
     }
 
     /**
@@ -178,12 +178,12 @@ public class FBoxListenerV3Test extends TestCase {
      */
     public void testEstablishOutgoingCall() {
         fBox.parseOutput("09.09.06 16:03:00;CALL;2;4;4271960;01781231234;POTS;", false);
-        assertEquals(CallMonitoring.PENDING, CallMonitor.callMonitoring.getCallState(2));
+        assertEquals(CallMonitor.PENDING, CallMonitorInterface.callMonitoring.getCallState(2));
 
         fBox.parseOutput("09.09.06 16:03:10;CONNECT;2;4;01781231234;");
-        assertEquals(CallMonitoring.ESTABLISHED, CallMonitor.callMonitoring.getCallState(2));
+        assertEquals(CallMonitor.ESTABLISHED, CallMonitorInterface.callMonitoring.getCallState(2));
 
-        Call call = CallMonitor.callMonitoring.getCall(2);
+        Call call = CallMonitorInterface.callMonitoring.getCall(2);
         try {
             assertEquals(call.getCalldate(), new SimpleDateFormat("dd.MM.yy HH:mm:ss").parse("09.09.06 16:03:10"));
             assertEquals(call.getCalltype().toString(), CallType.CALLOUT_STR);
@@ -194,7 +194,7 @@ public class FBoxListenerV3Test extends TestCase {
             e.printStackTrace();
         }
         fBox.parseOutput("09.09.06 16:05:00;DISCONNECT;2;110;");
-        assertEquals(CallMonitoring.NONE, CallMonitor.callMonitoring.getCallState(2));
+        assertEquals(CallMonitor.NONE, CallMonitorInterface.callMonitoring.getCallState(2));
     }
 
     /**
@@ -209,19 +209,19 @@ public class FBoxListenerV3Test extends TestCase {
      */
     public void testParseMultipleCalls() {
         fBox.parseOutput("09.09.06 15:59:41;CALL;0;0;1234567;01237654321;SIP0", false);
-        assertEquals(CallMonitoring.PENDING, CallMonitor.callMonitoring.getCallState(0));
+        assertEquals(CallMonitor.PENDING, CallMonitorInterface.callMonitoring.getCallState(0));
 
         fBox.parseOutput("13.04.03 09:10:13;CALL;1;4;7654321;01231234567;ISDN", false);
-        assertEquals(CallMonitoring.PENDING, CallMonitor.callMonitoring.getCallState(1));
+        assertEquals(CallMonitor.PENDING, CallMonitorInterface.callMonitoring.getCallState(1));
 
         fBox.parseOutput("13.04.03 09:10:13;CONNECT;1;4;01231234567;", false);
-        assertEquals(CallMonitoring.ESTABLISHED, CallMonitor.callMonitoring.getCallState(1));
+        assertEquals(CallMonitor.ESTABLISHED, CallMonitorInterface.callMonitoring.getCallState(1));
 
         fBox.parseOutput("09.09.06 16:03:55;RING;2;01781231234;4271960;POTS", false);
-        assertEquals(CallMonitoring.PENDING, CallMonitor.callMonitoring.getCallState(2));
+        assertEquals(CallMonitor.PENDING, CallMonitorInterface.callMonitoring.getCallState(2));
 
 
-        Call call = CallMonitor.callMonitoring.getCall(0);
+        Call call = CallMonitorInterface.callMonitoring.getCall(0);
 
         try {
             assertEquals(call.getCalldate(), new SimpleDateFormat("dd.MM.yy HH:mm:ss").parse("09.09.06 15:59:41"));
@@ -233,7 +233,7 @@ public class FBoxListenerV3Test extends TestCase {
             e.printStackTrace();
         }
 
-        call = CallMonitor.callMonitoring.getCall(1);
+        call = CallMonitorInterface.callMonitoring.getCall(1);
         try {
             assertEquals(call.getCalldate(), new SimpleDateFormat("dd.MM.yy HH:mm:ss").parse("13.04.03 09:10:13"));
             assertEquals(call.getCalltype().toString(), CallType.CALLOUT_STR);
@@ -244,7 +244,7 @@ public class FBoxListenerV3Test extends TestCase {
             e.printStackTrace();
         }
 
-        call = CallMonitor.callMonitoring.getCall(2);
+        call = CallMonitorInterface.callMonitoring.getCall(2);
         try {
             assertEquals(call.getCalldate(), new SimpleDateFormat("dd.MM.yy HH:mm:ss").parse("09.09.06 16:03:55"));
             assertEquals(call.getCalltype().toString(), CallType.CALLIN_STR);
@@ -255,11 +255,11 @@ public class FBoxListenerV3Test extends TestCase {
         }
 
         fBox.parseOutput("09.09.06 16:03:08;DISCONNECT;0;156;", false);
-        assertEquals(CallMonitor.callMonitoring.getPendingSize(), 1);
+        assertEquals(CallMonitorInterface.callMonitoring.getPendingSize(), 1);
         fBox.parseOutput("13.04.03 09:40:13;DISCONNECT;2;310;", false);
-        assertEquals(CallMonitor.callMonitoring.getPendingSize(), 0);
+        assertEquals(CallMonitorInterface.callMonitoring.getPendingSize(), 0);
         fBox.parseOutput("13.04.03 09:40:13;DISCONNECT;1;960;", false);
-        assertEquals(CallMonitor.callMonitoring.getPendingSize(), 0);
+        assertEquals(CallMonitorInterface.callMonitoring.getPendingSize(), 0);
     }
 
 }

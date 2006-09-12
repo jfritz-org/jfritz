@@ -10,7 +10,6 @@ import java.awt.Component;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.Date;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -27,7 +26,6 @@ import de.moonflower.jfritz.cellrenderer.NumberCellRenderer;
 import de.moonflower.jfritz.cellrenderer.PersonCellRenderer;
 import de.moonflower.jfritz.cellrenderer.PortCellRenderer;
 import de.moonflower.jfritz.cellrenderer.RouteCellRenderer;
-import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 

@@ -2,7 +2,7 @@
  * Created on 24.05.2005
  *
  */
-package de.moonflower.jfritz.utils.network;
+package de.moonflower.jfritz.callmonitor;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -19,6 +19,7 @@ import javax.swing.JOptionPane;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.*;
+import de.moonflower.jfritz.utils.network.Telnet;
 
 /**
  * Thread. Logon on FritzBox via Telnet. Restart syslogd and telefond on
@@ -27,7 +28,7 @@ import de.moonflower.jfritz.utils.*;
  * @author Arno Willig
  *
  */
-public class SyslogListener extends Thread implements CallMonitor {
+public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 
 	private final String PATTERN_TELEFON_INCOMING = "IncomingCall[^:]*: ID ([^,]*), caller: \"([^\"]*)\" called: \"([^\"]*)\""; //$NON-NLS-1$
 
@@ -43,7 +44,7 @@ public class SyslogListener extends Thread implements CallMonitor {
 
 	private DatagramSocket socket = null;
 
-	public SyslogListener() {
+	public SyslogCallMonitor() {
 		super();
 		start();
 	}

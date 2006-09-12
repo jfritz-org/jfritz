@@ -1,4 +1,4 @@
-package de.moonflower.jfritz.utils.network;
+package de.moonflower.jfritz.callmonitor;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,9 +17,9 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  *
  */
 
-public class FBoxListenerV3 extends FBoxListener {
+public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 
-    public FBoxListenerV3() {
+    public FBoxCallMonitorV3() {
         Debug.msg("FBoxListener V3"); //$NON-NLS-1$
     }
 
@@ -79,7 +79,7 @@ public class FBoxListenerV3 extends FBoxListener {
 
             try {
                 Call currentCall = new Call(new CallType(CallType.CALLIN),new SimpleDateFormat("dd.MM.yy HH:mm:ss").parse(split[0]), new PhoneNumber(number), "0", provider, 0);
-                CallMonitor.callMonitoring.addNewCall(Integer.parseInt(split[2]), currentCall);
+                CallMonitorInterface.callMonitoring.addNewCall(Integer.parseInt(split[2]), currentCall);
             } catch (ParseException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -117,7 +117,7 @@ public class FBoxListenerV3 extends FBoxListener {
 
             try {
                 Call currentCall = new Call(new CallType(CallType.CALLOUT),new SimpleDateFormat("dd.MM.yy HH:mm:ss").parse(split[0]), new PhoneNumber(number), split[3], provider, 0);
-                CallMonitor.callMonitoring.addNewCall(Integer.parseInt(split[2]), currentCall);
+                CallMonitorInterface.callMonitoring.addNewCall(Integer.parseInt(split[2]), currentCall);
             } catch (ParseException e) {
                 System.err.println("FBoxListenerV3: Could not convert call" + e);
             }
@@ -133,7 +133,7 @@ public class FBoxListenerV3 extends FBoxListener {
                 callMonitoring.displayCallOutMsg(number, provider);
         } else if (split[1].equals("DISCONNECT")) { //$NON-NLS-1$
             try {
-                CallMonitor.callMonitoring.removeCall(Integer.parseInt(split[2]));
+                CallMonitorInterface.callMonitoring.removeCall(Integer.parseInt(split[2]));
                 Thread.sleep(zufallszahl.nextInt(3000));
             } catch (InterruptedException e) {
                 // TODO Auto-generated catch block
@@ -155,16 +155,16 @@ public class FBoxListenerV3 extends FBoxListener {
             if (number.endsWith("#")) //$NON-NLS-1$
                 number = number.substring(0, number.length() - 1);
 
-            Call call = CallMonitor.callMonitoring.getCall(callId);
+            Call call = CallMonitorInterface.callMonitoring.getCall(callId);
             PhoneNumber pn = new PhoneNumber(number);
             if ( pn.getIntNumber().equals(call.getPhoneNumber().getIntNumber())) {
                 try {
-                    CallMonitor.callMonitoring.getCall(callId).setCalldate(new SimpleDateFormat("dd.MM.yy HH:mm:ss").parse(split[0]));
-                    CallMonitor.callMonitoring.getCall(callId).setPort(port);
+                    CallMonitorInterface.callMonitoring.getCall(callId).setCalldate(new SimpleDateFormat("dd.MM.yy HH:mm:ss").parse(split[0]));
+                    CallMonitorInterface.callMonitoring.getCall(callId).setPort(port);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                CallMonitor.callMonitoring.establishCall(callId);
+                CallMonitorInterface.callMonitoring.establishCall(callId);
             }
         }
     }

@@ -2,7 +2,7 @@
  * Created on 10.09.2006
  *
  */
-package de.moonflower.jfritz.utils.network;
+package de.moonflower.jfritz.callmonitor;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -26,7 +26,7 @@ import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
  * @author Robert Palmer
  *
  */
-public class CallMonitoring {
+public class CallMonitor {
 
     public static int PENDING = 0;
     public static int ESTABLISHED = 1;

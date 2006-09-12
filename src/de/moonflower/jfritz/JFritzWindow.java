@@ -53,6 +53,12 @@ import javax.swing.table.TableColumnModel;
 
 import de.moonflower.jfritz.callerlist.CallerListPanel;
 import de.moonflower.jfritz.callerlist.CallerTable;
+import de.moonflower.jfritz.callmonitor.CallmessageCallMonitor;
+import de.moonflower.jfritz.callmonitor.FBoxCallMonitorV1;
+import de.moonflower.jfritz.callmonitor.FBoxCallMonitorV3;
+import de.moonflower.jfritz.callmonitor.SyslogCallMonitor;
+import de.moonflower.jfritz.callmonitor.TelnetCallMonitor;
+import de.moonflower.jfritz.callmonitor.YACCallMonitor;
 import de.moonflower.jfritz.dialogs.config.ConfigDialog;
 import de.moonflower.jfritz.dialogs.phonebook.PhoneBookPanel;
 import de.moonflower.jfritz.dialogs.quickdial.QuickDialPanel;
@@ -74,13 +80,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.PrintCallerList;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 import de.moonflower.jfritz.utils.SwingWorker;
-import de.moonflower.jfritz.utils.network.CallmessageListener;
-import de.moonflower.jfritz.utils.network.FBoxListenerV1;
-import de.moonflower.jfritz.utils.network.FBoxListenerV3;
-import de.moonflower.jfritz.utils.network.SyslogListener;
-import de.moonflower.jfritz.utils.network.TelnetListener;
 import de.moonflower.jfritz.utils.network.VersionCheckThread;
-import de.moonflower.jfritz.utils.network.YAClistener;
 
 /**
  * This is main window class of JFritz, which creates the GUI.
@@ -1303,9 +1303,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                 } else {
                     if (currentFirm.getMajorFirmwareVersion() >= 4
                             && currentFirm.getMinorFirmwareVersion() >= 3) {
-                        JFritz.setCallMonitor(new FBoxListenerV3());
+                        JFritz.setCallMonitor(new FBoxCallMonitorV3());
                     } else {
-                        JFritz.setCallMonitor(new FBoxListenerV1());
+                        JFritz.setCallMonitor(new FBoxCallMonitorV1());
                     }
                     this.setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
                 }
@@ -1313,24 +1313,24 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
             break;
         }
         case 2: {
-            JFritz.setCallMonitor(new TelnetListener());
+            JFritz.setCallMonitor(new TelnetCallMonitor());
             this.setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
             break;
         }
         case 3: {
-            JFritz.setCallMonitor(new SyslogListener());
+            JFritz.setCallMonitor(new SyslogCallMonitor());
             this.setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
             break;
         }
         case 4: {
-            JFritz.setCallMonitor(new YAClistener(Integer
+            JFritz.setCallMonitor(new YACCallMonitor(Integer
                     .parseInt(JFritz.getProperty("option.yacport", //$NON-NLS-1$
                             "10629")))); //$NON-NLS-1$
             this.setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
             break;
         }
         case 5: {
-            JFritz.setCallMonitor(new CallmessageListener(Integer
+            JFritz.setCallMonitor(new CallmessageCallMonitor(Integer
                     .parseInt(JFritz.getProperty("option.callmessageport", //$NON-NLS-1$
                             "23232")))); //$NON-NLS-1$
             this.setCallMonitorButtons(JFritz.CALLMONITOR_STOP);

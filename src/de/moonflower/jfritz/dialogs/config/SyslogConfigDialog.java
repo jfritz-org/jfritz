@@ -30,9 +30,9 @@ import javax.swing.JCheckBox;
 import javax.swing.KeyStroke;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.callmonitor.SyslogCallMonitor;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
-import de.moonflower.jfritz.utils.network.SyslogListener;
 import de.moonflower.jfritz.utils.network.Telnet;
 
 /**
@@ -160,7 +160,7 @@ public class SyslogConfigDialog extends JDialog implements CallMonitorConfigDial
 					Telnet telnet = new Telnet();
 					telnet.connect();
 					if (telnet.isConnected()) {
-						SyslogListener.restartSyslogOnFritzBox(telnet, JFritz
+						SyslogCallMonitor.restartSyslogOnFritzBox(telnet, JFritz
 								.getProperty("option.syslogclientip", //$NON-NLS-1$
 										"192.168.178.21")); //$NON-NLS-1$
 						telnet.disconnect();
@@ -176,7 +176,7 @@ public class SyslogConfigDialog extends JDialog implements CallMonitorConfigDial
 					Telnet telnet = new Telnet();
 					telnet.connect();
 					if (telnet.isConnected()) {
-						if (SyslogListener.restartTelefonOnFritzBox(telnet) == JOptionPane.YES_OPTION) {
+						if (SyslogCallMonitor.restartTelefonOnFritzBox(telnet) == JOptionPane.YES_OPTION) {
 							JFritz.infoMsg(JFritz.getMessage("telefond_restart_successfully")); //$NON-NLS-1$
 							Debug.msg("Telefond restarted successfully"); //$NON-NLS-1$
 						} else {
@@ -209,7 +209,7 @@ public class SyslogConfigDialog extends JDialog implements CallMonitorConfigDial
 		c.gridy = 1;
 		ipAddressComboBox = new JComboBox();
 		Vector ipAddresses = new Vector();
-		ipAddresses = SyslogListener.getIP();
+		ipAddresses = SyslogCallMonitor.getIP();
 		Enumeration en = ipAddresses.elements();
 		while (en.hasMoreElements()) {
 			InetAddress ad = (InetAddress) en.nextElement();

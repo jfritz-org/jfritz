@@ -1,4 +1,4 @@
-package de.moonflower.jfritz.utils.network;
+package de.moonflower.jfritz.callmonitor;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -19,7 +19,7 @@ import de.moonflower.jfritz.utils.Debug;
  * @author Robert Palmer
  *
  */
-public class CallmessageListener extends Thread implements CallMonitor {
+public class CallmessageCallMonitor extends Thread implements CallMonitorInterface {
 
 	private boolean isRunning = false;
 
@@ -27,13 +27,13 @@ public class CallmessageListener extends Thread implements CallMonitor {
 
 	private ServerSocket serverSocket;
 
-	public CallmessageListener() {
+	public CallmessageCallMonitor() {
 		super();
 		start();
 		port = 23232;
 	}
 
-	public CallmessageListener(int port) {
+	public CallmessageCallMonitor(int port) {
 		super();
 		start();
 		this.port = port;

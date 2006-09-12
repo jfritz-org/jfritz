@@ -1,4 +1,4 @@
-package de.moonflower.jfritz.utils.network;
+package de.moonflower.jfritz.callmonitor;
 
 
 
@@ -18,7 +18,7 @@ import de.moonflower.jfritz.utils.Debug;
  * @author Robert Palmer
  *
  */
-public class YAClistener extends Thread implements CallMonitor{
+public class YACCallMonitor extends Thread implements CallMonitorInterface{
 
 	private boolean isRunning = false;
 
@@ -26,13 +26,13 @@ public class YAClistener extends Thread implements CallMonitor{
 
 	private ServerSocket serverSocket;
 
-	public YAClistener() {
+	public YACCallMonitor() {
 		super();
 		start();
 		port = 10629;
 	}
 
-	public YAClistener(int port) {
+	public YACCallMonitor(int port) {
 		super();
 		start();
 		this.port = port;

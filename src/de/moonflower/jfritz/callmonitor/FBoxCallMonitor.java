@@ -1,4 +1,4 @@
-package de.moonflower.jfritz.utils.network;
+package de.moonflower.jfritz.callmonitor;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.Debug;
@@ -17,7 +17,7 @@ import java.util.Random;
  *
  */
 
-public abstract class FBoxListener extends Thread implements CallMonitor {
+public abstract class FBoxCallMonitor extends Thread implements CallMonitorInterface {
 
     // Liest den TCP-Strom ein
     protected BufferedReader in;
@@ -30,7 +30,7 @@ public abstract class FBoxListener extends Thread implements CallMonitor {
     // wird benutzt, um X Sekunden lang zu warten
     protected Random zufallszahl;
 
-    public FBoxListener() {
+    public FBoxCallMonitor() {
         super();
         Debug.msg("Starting FBoxListener"); //$NON-NLS-1$
         start();
