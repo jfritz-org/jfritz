@@ -58,14 +58,6 @@ public class CallerTable extends JTable {
 	 * sets some properties of the CallerTable
 	 */
 	private void setTableProperties() {
-		setDefaultRenderer(CallType.class, new CallTypeCellRenderer());
-		setDefaultRenderer(Date.class, new DateCellRenderer());
-		// FIXME setDefaultRenderer(Person.class, new PersonCellRenderer());
-		// FIXME setDefaultRenderer(PhoneNumber.class, new
-		// NumberCellRenderer(jfritz));
-		// setDefaultRenderer(Port.class, new PortCellRenderer());
-		// setDefaultRenderer(Duration.class, new DurationCellRenderer());
-
 		setRowHeight(24);
 		setAutoCreateColumnsFromModel(false);
 		setColumnSelectionAllowed(false);
@@ -110,6 +102,7 @@ public class CallerTable extends JTable {
 		TableColumn col = getColumnModel().getColumn(0);
 		col.setIdentifier("type"); //$NON-NLS-1$
 		col.setHeaderValue(JFritz.getMessage("type")); //$NON-NLS-1$
+        col.setCellRenderer(new CallTypeCellRenderer());
 		headerTips.setToolTip(col, JFritz.getMessage("type_desc")); //$NON-NLS-1$
 		col.setMinWidth(10);
 		col.setMaxWidth(1600);
@@ -119,6 +112,7 @@ public class CallerTable extends JTable {
 		col = getColumnModel().getColumn(1);
 		col.setIdentifier("date"); //$NON-NLS-1$
 		col.setHeaderValue(JFritz.getMessage("date")); //$NON-NLS-1$
+        col.setCellRenderer(new DateCellRenderer());
 		headerTips.setToolTip(col, JFritz.getMessage("date_desc")); //$NON-NLS-1$
 		col.setMinWidth(10);
 		col.setMaxWidth(1600);

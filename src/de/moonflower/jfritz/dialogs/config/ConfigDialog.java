@@ -625,7 +625,6 @@ public class ConfigDialog extends JDialog {
 				.getMessage("create_backup_fetch")); //$NON-NLS-1$
 		otherpane.add(createBackupAfterFetch);
 
-		//FIXME: This does not display correctly
 		JPanel panel = new JPanel();
 
 		JLabel label = new JLabel(JFritz.getMessage("save_directory"));

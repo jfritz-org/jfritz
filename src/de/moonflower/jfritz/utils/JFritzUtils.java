@@ -135,20 +135,6 @@ public class JFritzUtils {
 			return false;
 	}
 
-	public static String lookupAreaCode(String number) {
-		Debug.msg("Looking up " + number + "..."); //$NON-NLS-1$,  //$NON-NLS-2$
-		// FIXME: Does not work (Cookies)
-		String urlstr = "http://www.vorwahl.de/national.php"; //$NON-NLS-1$
-		String postdata = "search=1&vorwahl=" + number; //$NON-NLS-1$
-		String data = ""; //$NON-NLS-1$
-		try {
-			data = fetchDataFromURL(urlstr, postdata, true);
-		} catch (Exception e) {
-		}
-		Debug.msg("DATA: " + data.trim()); //$NON-NLS-1$
-		return ""; //$NON-NLS-1$
-	}
-
 	public static String convertSpecialChars(String input) {
 		// XML Sonderzeichen durch ASCII Codierung ersetzen
 		String out = input;
