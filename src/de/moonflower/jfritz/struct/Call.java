@@ -18,6 +18,14 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  */
 public class Call {
 
+    public static int ROUTE_UNDEFINED = 0;
+
+    public static int ROUTE_POTS = 1;
+
+    public static int ROUTE_ISDN = 2;
+
+    public static int ROUTE_SIP = 3;
+
     private CallType calltype;
 
     private Date calldate;
@@ -25,6 +33,8 @@ public class Call {
     private PhoneNumber number;
 
     private String route;
+
+    private int route_type;
 
     private String port;
 
@@ -35,32 +45,39 @@ public class Call {
     private String comment = ""; //$NON-NLS-1$
 
     public Call(CallType calltype, Date calldate,
-            PhoneNumber number, String port, String route, int duration) {
+            PhoneNumber number, String port, String route, int duration, int route_type) {
         this.calltype = calltype;
         this.calldate = calldate;
         this.number = number;
 
         //fix so that an empty number doesnt get linked to an empty entry in the telephone book
         if(this.number != null && this.number.toString().equals("") )
-        	this.number = null;
+            this.number = null;
 
         this.route = route;
 //      Parse the SIP Provider and save it correctly
-		if (this.route.startsWith("Internet: ")) {
-			Enumeration en = JFritz.getSIPProviderTableModel()
-					.getProviderList().elements();
-			while (en.hasMoreElements()) {
-				SipProvider sipProvider = (SipProvider) en.nextElement();
-				if (sipProvider.getNumber().equals(this.route.substring(10))) {
-					this.route = sipProvider.toString();
-					break;
-				}
-			}
-		}
+        if (this.route.startsWith("Internet: ")) {
+            Enumeration en = JFritz.getSIPProviderTableModel()
+                    .getProviderList().elements();
+            while (en.hasMoreElements()) {
+                SipProvider sipProvider = (SipProvider) en.nextElement();
+                if (sipProvider.getNumber().equals(this.route.substring(10))) {
+                    this.route = sipProvider.toString();
+                    break;
+                }
+            }
+        }
 
 
         this.port = port;
         this.duration = duration;
+
+        this.route_type = route_type;
+    }
+
+    public Call(CallType calltype, Date calldate,
+            PhoneNumber number, String port, String route, int duration) {
+        this(calltype, calldate, number, port, route, duration, ROUTE_UNDEFINED);
     }
 
     /**
@@ -395,5 +412,13 @@ public class Call {
      */
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    /**
+     * Returns the type (UNDEFINED, POTS, ISDN, SIP) of route
+     * @return type of route
+     */
+    public int getRouteType() {
+        return route_type;
     }
 }

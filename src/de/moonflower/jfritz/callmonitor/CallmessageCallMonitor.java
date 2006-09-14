@@ -27,10 +27,11 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
 
 	private ServerSocket serverSocket;
 
+    DisplayCallsMonitor dcm;
+
 	public CallmessageCallMonitor() {
-		super();
+		this(23232);
 		start();
-		port = 23232;
 	}
 
 	public CallmessageCallMonitor(int port) {
@@ -91,7 +92,7 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
                           }
                      }
                      // TODO: add Call to CallMonitorList and display it only, if number is not in ignoreMSN-List
-                     //JFritz.getCallMonitorList().displayCallInMsg(number, msn, "");  //$NON-NLS-1$
+                     dcm.displayCallInMsg(number, msn, "");  //$NON-NLS-1$
                      // Alter Callmessagemonitor
                 } else if (msg.startsWith("@")) {  //$NON-NLS-1$
 					// Call
@@ -130,6 +131,7 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
 						number = ""; //$NON-NLS-1$
 					}
                     // TODO: add Call to CallMonitorList and display it only, if number is not in ignoreMSN-List
+                    dcm.displayCallInMsg(number, msn, "");  //$NON-NLS-1$
 					//JFritz.getCallMonitorList().displayCallInMsg(number, msn, name);
 				} else {
 					// Message

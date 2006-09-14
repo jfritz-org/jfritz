@@ -5,6 +5,8 @@
  */
 package de.moonflower.jfritz.firmware;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.regex.Matcher;
@@ -66,6 +68,8 @@ public class FritzBoxFirmware {
 			"&var%3Alang=en&var%3Amenu=home&var%3Apagename=home&login%3Acommand%2Fpassword="}; //$NON-NLS-1$
 
 	private final static String PATTERN_DETECT_FIRMWARE = "Firmware[-| ]Version[^\\d]*(\\d\\d).(\\d\\d).(\\d\\d\\d*)([^<]*)"; //$NON-NLS-1$
+
+    private final static String PATTERN_DETECT_FIRMWARE_LABOR = "Labor[-| ]Version[^\\d]*(\\d\\d).(\\d\\d).(\\d\\d\\d*)([^<]*)"; //$NON-NLS-1$
 
 	private final static String PATTERN_DETECT_LANGUAGE_DE = "Telefonie";
 
@@ -197,6 +201,22 @@ public class FritzBoxFirmware {
 						POSTDATA_ACCESS_METHOD[i] + POSTDATA_DETECT_FIRMWARE[j]
 			 				+ URLEncoder.encode(box_password, "ISO-8859-1"), true).trim(); //$NON-NLS-1$
 
+                if (false) {
+                    String filename = "c://Labor-Firmware.txt"; //$NON-NLS-1$
+                    Debug.msg("Debug mode: Loading " + filename); //$NON-NLS-1$
+                    try {
+                        data = ""; //$NON-NLS-1$
+                        String thisLine;
+                        BufferedReader in = new BufferedReader(new FileReader(filename));
+                        while ((thisLine = in.readLine()) != null) {
+                            data += thisLine;
+                        }
+                        in.close();
+                    } catch (IOException e) {
+                        Debug.err("File not found: " + filename); //$NON-NLS-1$
+                    }
+                }
+
 				Pattern p = Pattern.compile(PATTERN_DETECT_LANGUAGE_DE);
 				Matcher m = p.matcher(data);
 				if (m.find()) {
@@ -224,8 +244,8 @@ public class FritzBoxFirmware {
 		// Modded firmware: data = "> FRITZ!Box Fon WLAN, <span
 		// class=\"Dialoglabel\">Modified-Firmware </span>08.03.37mod-0.55
 		// \n</div>";
-		Pattern p = Pattern.compile(PATTERN_DETECT_FIRMWARE);
-		Matcher m = p.matcher(data);
+		Pattern normalFirmware = Pattern.compile(PATTERN_DETECT_FIRMWARE);
+		Matcher m = normalFirmware.matcher(data);
 		if (m.find()) {
 			String boxtypeString = m.group(1);
 			String majorFirmwareVersion = m.group(2);
@@ -240,9 +260,26 @@ public class FritzBoxFirmware {
 			return new FritzBoxFirmware(boxtypeString, majorFirmwareVersion,
 					minorFirmwareVersion, modFirmwareVersion, language);
 		} else {
+            Pattern laborFirmware = Pattern.compile(PATTERN_DETECT_FIRMWARE_LABOR);
+            m = laborFirmware.matcher(data);
+            if (m.find()) {
+                String boxtypeString = m.group(1);
+                String majorFirmwareVersion = m.group(2);
+                String minorFirmwareVersion = m.group(3);
+                String modFirmwareVersion = m.group(4).trim();
+                Debug.msg("Detected Firmware: " +
+                        boxtypeString + "." +
+                        majorFirmwareVersion + "." +
+                        minorFirmwareVersion +
+                        modFirmwareVersion + " " +
+                        language);
+                return new FritzBoxFirmware(boxtypeString, majorFirmwareVersion,
+                        minorFirmwareVersion, modFirmwareVersion, language);
+            } else {
 			System.err.println("detectFirmwareVersion: Password wrong?"); //$NON-NLS-1$
 			throw new WrongPasswordException(
 					"Could not detect FRITZ!Box firmware version."); //$NON-NLS-1$
+            }
 		}
 	}
 

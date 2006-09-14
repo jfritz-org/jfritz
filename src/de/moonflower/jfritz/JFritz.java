@@ -119,6 +119,7 @@
  * - Schnittstelle zu externen Inverssuche-Programmen
  * - Bug: Neue Telefonnummern in PersonDialog der Anrufliste werden nicht gespeichert
  * - Bug: Importieren von Thunderbird-Einträgen (es werden nur die ersten 5 Felder der CSV-Datei erkannt)
+ * - Andere Anrufmonitore noch an die neuen Listener anpassen und TestCases schreiben
  * TODO-ENDE
  *
  * - Neue Strings:
@@ -145,7 +146,7 @@
  * - INTERN: Neue Klasse CallMonitoring, die alle aktuellen Anrufe verwaltet und die Anrufinformation auf den Bildschirm bringt
  * - INTERN: Anrufmonitore in neues Package callmonitor gepackt und umbenannt
  * - INTERN: Anzeige der Anrufe, die vom Anrufmonitor erkannt werden, über Listener. Abholen der Anrufliste nach dem Gesprächsende nun über den DisconnectMonitor
- * - TODO: Andere Anrufmonitore noch an die neuen Listener anpassen und TestCases schreiben
+ * - Neu: Unterstützung für die "Labor-Firmware"
  *
  * JFritz 0.6.1
  * - Neue Strings:
@@ -576,7 +577,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.337 2006/09/12 22:48:34 robotniko Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.338 2006/09/14 20:56:29 robotniko Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -663,7 +664,6 @@ public final class JFritz {
     private static int oldFrameState; // saves old frame state to restore old
 
     public static CallMonitorList callMonitorList;
-
 
     // state
 

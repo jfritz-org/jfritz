@@ -38,6 +38,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
         Debug.msg("Server: " + line); //$NON-NLS-1$
         String number = ""; //$NON-NLS-1$
         String provider = ""; //$NON-NLS-1$
+        int route_type = Call.ROUTE_UNDEFINED;
         String[] split;
         split = line.split(";", 7); //$NON-NLS-1$
         for (int i = 0; i < split.length; i++) {
@@ -55,38 +56,28 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 
             // Neues Ausgabeformat
             if (split[5].equals("POTS")) { //$NON-NLS-1$
+                route_type = Call.ROUTE_POTS;
                 if (split[4].equals("")) { //$NON-NLS-1$
                     provider = JFritz.getMessage("fixed_network"); //$NON-NLS-1$
                 } else {
                     provider = split[4];
                 }
             } else if (split[5].startsWith("SIP")) { //$NON-NLS-1$
+                route_type = Call.ROUTE_SIP;
                 provider = JFritz.getSIPProviderTableModel().getSipProvider(
                         split[5], split[5]);
 
             } else if (split[5].equals("ISDN")) { //$NON-NLS-1$
+                route_type = Call.ROUTE_ISDN;
                 provider = split[4];
             } else
                 provider = split[4];
 
-            // Altes Ausgabeformat
-            /**
-             * if (split[5].equals("POTS")) { //$NON-NLS-1$ if
-             * (split[4].equals("")) { //$NON-NLS-1$ provider =
-             * JFritz.getMessage("fixed_network"); //$NON-NLS-1$ } else {
-             * provider = split[4] + " (" + JFritz.getMessage("fixed_network") +
-             * ")"; //$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$ } } else if
-             * (split[5].startsWith("SIP")) { //$NON-NLS-1$ provider = split[4] + " (" +
-             * JFritz.getSIPProviderTableModel().getSipProvider(split[5],split[5]) +
-             * ")"; //$NON-NLS-1$, //$NON-NLS-2$ } else if
-             * (split[5].equals("ISDN")) { //$NON-NLS-1$ provider = split[4] + "
-             * (ISDN)"; //$NON-NLS-1$ } else provider = split[4];
-             */
             try {
                 Call currentCall = new Call(new CallType(CallType.CALLIN),
                         new SimpleDateFormat("dd.MM.yy HH:mm:ss")
                                 .parse(split[0]), new PhoneNumber(number), "0",
-                        provider, 0);
+                        provider, 0, route_type);
                 JFritz.getCallMonitorList().addNewCall(
                         Integer.parseInt(split[2]), currentCall);
             } catch (ParseException e) {
@@ -95,6 +86,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
         } else if (JFritzUtils.parseBoolean(JFritz.getProperty(
                 "option.callmonitor.monitorOutgoingCalls", "true")) //$NON-NLS-1$,  //$NON-NLS-2$
                 && split[1].equals("CALL")) { //$NON-NLS-1$
+
             if (split[5].equals("")) { //$NON-NLS-1$
                 number = JFritz.getMessage("unknown"); //$NON-NLS-1$
             } else
@@ -108,38 +100,28 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 
             // Neues Ausgabeformat
             if (split[6].equals("POTS")) { //$NON-NLS-1$
+                route_type = Call.ROUTE_POTS;
                 if (split[4].equals("")) { //$NON-NLS-1$
                     provider = JFritz.getMessage("fixed_network"); //$NON-NLS-1$
                 } else {
                     provider = split[4];
                 }
             } else if (split[6].startsWith("SIP")) { //$NON-NLS-1$
+                route_type = Call.ROUTE_SIP;
                 provider = JFritz.getSIPProviderTableModel().getSipProvider(
                         split[6], split[6]);
 
             } else if (split[6].equals("ISDN")) { //$NON-NLS-1$
+                route_type = Call.ROUTE_ISDN;
                 provider = split[4];
             } else
                 provider = split[4];
 
-            // Altes Ausgabeformat
-            /**
-             * if (split[6].equals("POTS")) { //$NON-NLS-1$ if
-             * (split[4].equals("")) { //$NON-NLS-1$ provider =
-             * JFritz.getMessage("fixed_network"); //$NON-NLS-1$ } else {
-             * provider = split[4] + " (" + JFritz.getMessage("fixed_network") +
-             * ")"; //$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$ } } else if
-             * (split[6].startsWith("SIP")) { //$NON-NLS-1$ provider = split[4] + " (" +
-             * JFritz.getSIPProviderTableModel().getSipProvider(split[6],split[6]) +
-             * ")"; //$NON-NLS-1$, //$NON-NLS-2$ } else if
-             * (split[6].equals("ISDN")) { //$NON-NLS-1$ provider = split[4] + "
-             * (ISDN)"; //$NON-NLS-1$ } else provider = split[4];
-             */
             try {
                 Call currentCall = new Call(new CallType(CallType.CALLOUT),
                         new SimpleDateFormat("dd.MM.yy HH:mm:ss")
                                 .parse(split[0]), new PhoneNumber(number),
-                        split[3], provider, 0);
+                        split[3], provider, 0, route_type);
                 JFritz.getCallMonitorList().addNewCall(
                         Integer.parseInt(split[2]), currentCall);
             } catch (ParseException e) {
