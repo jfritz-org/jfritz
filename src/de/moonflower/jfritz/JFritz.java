@@ -120,6 +120,11 @@
  * - Bug: Neue Telefonnummern in PersonDialog der Anrufliste werden nicht gespeichert
  * - Bug: Importieren von Thunderbird-Einträgen (es werden nur die ersten 5 Felder der CSV-Datei erkannt)
  * - Andere Anrufmonitore noch an die neuen Listener anpassen und TestCases schreiben
+ * - Kurzwahlliste sortierbar und Spaltenreihenfolge änderbar
+ * - Wahlhilfe: Immer mit Ortsvorwahl wählen (vor allem bei der Schweiz)
+ * - Bug "Doppelt erfasste Anrufe" behoben?
+ * - http://www.ip-phone-forum.de/showthread.php?t=112348
+ * - 0900 Nummern werden nicht korrekt erkannt http://www.ip-phone-forum.de/showthread.php?t=114325
  * TODO-ENDE
  *
  * - Neue Strings:
@@ -577,7 +582,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.338 2006/09/14 20:56:29 robotniko Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.339 2006/09/17 11:03:54 robotniko Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
