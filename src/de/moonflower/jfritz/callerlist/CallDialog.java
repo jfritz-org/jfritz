@@ -122,18 +122,18 @@ public class CallDialog extends JDialog implements ActionListener {
 
 			//make the number editable
 			if (this.numbers.size() == 1) { // if only one number -> use editable JTextField
-				cboNumber = new JTextField(((PhoneNumber) numbers.elementAt(0)).getShortNumber());
+				cboNumber = new JTextField(((PhoneNumber) numbers.elementAt(0)).getAreaNumber());
 				((JTextField)cboNumber).setPreferredSize(new Dimension(100, 20));
 			} else {// if more then one number -> use editable JComboBox
 				cboNumber = new JComboBox();
 				for (int i = 0; i < this.numbers.size(); i++) {
 					((JComboBox) cboNumber).addItem(((PhoneNumber) numbers
-							.elementAt(i)).getShortNumber());
+							.elementAt(i)).getAreaNumber());
 				}
 
 				//choose defaultNumber as initial value of JComboBox
 				((JComboBox) cboNumber).setSelectedItem(this.defaultNumber
-						.getShortNumber());
+						.getAreaNumber());
 				((JComboBox) cboNumber).setEditable(true);
 			}
 			topPane.add((Component) cboNumber, c);
