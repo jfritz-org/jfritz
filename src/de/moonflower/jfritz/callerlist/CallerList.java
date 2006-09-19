@@ -1127,7 +1127,10 @@ public class CallerList extends AbstractTableModel {
         try {
             line = br.readLine();
             Debug.msg("CSV-Header: " + line);
-
+            if(line == null){
+                Debug.err("File empty"); //$NON-NLS-1$
+                return false;
+            }
             // check if we have a correct header
             if (line.equals(EXPORT_CSV_FORMAT_JFRITZ)
                     || line.equals(EXPORT_CSV_FORMAT_FRITZBOX)

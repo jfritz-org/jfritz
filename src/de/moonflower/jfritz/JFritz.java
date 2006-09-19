@@ -583,7 +583,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.342 2006/09/19 15:59:43 marc0815 Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.343 2006/09/19 17:14:04 marc0815 Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -1674,8 +1674,9 @@ public final class JFritz {
      *
      */
     public static void loadSaveDir() {
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(USER_DIR
+    	BufferedReader br=null;
+    	try {
+            br = new BufferedReader(new FileReader(USER_DIR
                     + File.separator + USER_JFRITZ_FILE));
             String[] entries = br.readLine().split("=");
             if (!entries[1].equals("")) {
@@ -1687,10 +1688,18 @@ public final class JFritz {
                     SAVE_DIR = SAVE_DIR + File.separator;
             }
 
-        } catch (Exception e) {
+        } catch (FileNotFoundException e) {
             Debug
-                    .msg("Error processing the user save location, using defaults");
+                    .msg("Error processing the user save location(File not found), using defaults");
             // If something happens, just bail out and use the standard dir
+        }catch(IOException ioe){
+            Debug.msg("Error processing the user save location, using defaults");
+        }finally{
+        	try{
+        		br.close();
+        	}catch(IOException ioe){
+                Debug.msg("Error closing stream");
+        	}
         }
     }
 

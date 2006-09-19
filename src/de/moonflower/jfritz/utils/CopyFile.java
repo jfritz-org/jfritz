@@ -124,6 +124,13 @@ public class CopyFile {
                 Debug.err(ex.toString());
             } catch (ArrayIndexOutOfBoundsException ex) {
                 Debug.err("No files available"); //$NON-NLS-1$
+            }finally{
+            	try{
+            		in[i].close();
+            		out[i].close();
+            	}catch(IOException e){
+                    Debug.err("exception closing a stream"); //$NON-NLS-1$
+            	}
             }
         }
     }
