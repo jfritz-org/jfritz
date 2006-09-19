@@ -58,7 +58,7 @@ public class ImportOutlookContacts extends JDialog implements ActionListener,
         Dispatch myNamespace = Dispatch.call(olo, "GetNamespace", "MAPI") //$NON-NLS-1$,  //$NON-NLS-2$
                 .toDispatch();
         Dispatch myFolder = Dispatch.call(myNamespace, "GetDefaultFolder", //$NON-NLS-1$
-                new Integer(10)).toDispatch();
+                Integer.valueOf(10)).toDispatch();
         return myFolder;
     }
 
@@ -96,7 +96,7 @@ public class ImportOutlookContacts extends JDialog implements ActionListener,
         int entriesImported = 0;
         for (int i = 1; i <= count; i++) {
             boolean hasTel = false;
-            Dispatch item = Dispatch.call(items, "Item", new Integer(i)) //$NON-NLS-1$
+            Dispatch item = Dispatch.call(items, "Item", Integer.valueOf(i)) //$NON-NLS-1$
                     .toDispatch();
             Person newContact = new Person();
             for (oElements = outlookElements.elements(); oElements

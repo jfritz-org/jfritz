@@ -62,7 +62,7 @@ public class Encryption {
 	public static String decrypt(String source) {
 		try {
 			if (source == null)
-				source = new String();
+				source = "";
 			// Get our secret key
 			Key key = getKey();
 

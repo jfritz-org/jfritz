@@ -603,8 +603,11 @@ public class FritzBox {
 					+ "/cgi-bin/webcm"; //$NON-NLS-1$
 			fetchDataFromURL(urlstr, postdata, true);
 		} catch (UnsupportedEncodingException uee) {
+			//TODO handle Exceptions
 		} catch (WrongPasswordException wpe) {
+			//TODO handle Exceptions
 		} catch (IOException ioe) {
+			//TODO handle Exceptions
 		}
 	}
 

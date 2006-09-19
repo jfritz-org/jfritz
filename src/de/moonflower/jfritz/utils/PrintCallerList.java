@@ -217,7 +217,7 @@ public class PrintCallerList {
                         "/de/moonflower/jfritz/resources/images/callout.png")); //$NON-NLS-1$
 
         // Set Font size to 8
-        Integer fontSize = new Integer(8);
+        Integer fontSize = Integer.valueOf(8);
 
         AbstractExpression exp = new AbstractExpression() {
             /**

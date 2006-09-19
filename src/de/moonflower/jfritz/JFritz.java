@@ -583,7 +583,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.341 2006/09/17 14:19:50 robotniko Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.342 2006/09/19 15:59:43 marc0815 Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -1148,7 +1148,8 @@ public final class JFritz {
                     + " not readable => showing config wizard"); //$NON-NLS-1$
             showConfWizard = true;
         } catch (Exception e) {
-        }
+			//TODO handle Exceptions
+       }
     }
 
     /**

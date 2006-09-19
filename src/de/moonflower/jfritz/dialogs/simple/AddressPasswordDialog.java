@@ -63,11 +63,11 @@ public class AddressPasswordDialog extends JDialog {
 	}
 
 	public String getPass() {
-		return new String(pass.getPassword());
+		return String.valueOf(pass.getPassword());
 	}
 
 	public String getAddress() {
-		return new String(address.getText());
+		return address.getText();
 	}
 
 	public boolean okPressed() {

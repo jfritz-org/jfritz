@@ -329,11 +329,11 @@ public class SipProvider {
             if (freitakte >= zuBerechnendeTakte) {
                 // alle Minuten von Freiminuten abgedeckt => Freigespräch
                 kosten = -2;
-                freiMinuten -= zuBerechnendeTakte * takt2 / 60;
+                freiMinuten -= zuBerechnendeTakte * takt2 / 60.0;
             } else {
                 zuBerechnendeTakte -= freitakte;
                 kosten = kosten + zuBerechnendeTakte * kostenProTakt2;
-                freiMinuten -= freitakte * takt2 / 60;
+                freiMinuten -= freitakte * takt2 / 60.0;
             }
         }
         // restliche Freiminuten abspeichern

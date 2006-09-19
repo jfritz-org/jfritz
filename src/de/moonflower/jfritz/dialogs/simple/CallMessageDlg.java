@@ -82,6 +82,7 @@ public class CallMessageDlg extends JDialog implements ActionListener{
 				headerLabel = new JLabel(JFritz.getMessage("dialog_title_callout")	//$NON-NLS-1$
 						+ " " + JFritz.getMessage("through_provider")); //$NON-NLS-1$, 	//$NON-NLS-2$
 				fromLabel = new JLabel(called);
+				//TODO caller == null maybe insert a message saying could not find caller or something
 				toLabel = new JLabel(JFritz.getMessage("from") + caller);	//$NON-NLS-1$
 			}
 			mainPane.add(headerLabel);

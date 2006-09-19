@@ -29,7 +29,7 @@ public class PhoneNumber implements Comparable {
 	// "business", "other", "fax", "sip" };
 
 	//Please keep these in alphabetical order
-	public static String AUSTRIA_CODE="+43",
+	public static final String AUSTRIA_CODE="+43",
 	 					 BELGIUM_CODE="+32",
 	 					 CHINA_CODE="+86",
 	 					 CZECH_CODE="+420",
@@ -503,7 +503,7 @@ public class PhoneNumber implements Comparable {
             	if (quickDialNumber.equals(quickDial.getQuickdial())) {
             		number = quickDial.getNumber();
             		Debug.msg("Quickdial resolved. Number: " //$NON-NLS-1$
-            				+ number.toString());
+            				+ number);
             	}
             }
 

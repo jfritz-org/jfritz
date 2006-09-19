@@ -164,7 +164,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			switch (columnIndex) {
 			case 0:
-				return new Boolean(((PhoneNumber) person.getNumbers()
+				return Boolean.valueOf(((PhoneNumber) person.getNumbers()
 						.elementAt(rowIndex)).getType().equals(
 						person.getStandard()));
 			case 1:

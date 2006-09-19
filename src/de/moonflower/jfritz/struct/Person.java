@@ -364,12 +364,12 @@ public class Person {
 					.getPostalCode() : ""); //$NON-NLS-1$
 			String city = (this.getCity() != null ? this.getCity() : ""); //$NON-NLS-1$
 
-			address = new String((company != "" ? company + lineSeparator : "") //$NON-NLS-1$,  //$NON-NLS-2$
+			address = (company != "" ? company + lineSeparator : "") //$NON-NLS-1$,  //$NON-NLS-2$
 					+ (firstName != "" ? firstName + wordSeparator : "") //$NON-NLS-1$,  //$NON-NLS-2$
 					+ (lastName != "" ? lastName + lineSeparator : "") //$NON-NLS-1$,  //$NON-NLS-2$
 					+ (street != "" ? street + lineSeparator : "") //$NON-NLS-1$,  //$NON-NLS-2$
 					+ (postalCode != "" ? postalCode + wordSeparator : "") //$NON-NLS-1$,  //$NON-NLS-2$
-					+ (city != "" ? city + lineSeparator : "")); //$NON-NLS-1$,  //$NON-NLS-2$
+					+ (city != "" ? city + lineSeparator : ""); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 		return address;
 	}

@@ -18,13 +18,13 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  */
 public class Call {
 
-    public static int ROUTE_UNDEFINED = 0;
+    public final static int ROUTE_UNDEFINED = 0;
 
-    public static int ROUTE_POTS = 1;
+    public final static int ROUTE_POTS = 1;
 
-    public static int ROUTE_ISDN = 2;
+    public final static int ROUTE_ISDN = 2;
 
-    public static int ROUTE_SIP = 3;
+    public final static int ROUTE_SIP = 3;
 
     private CallType calltype;
 
@@ -366,30 +366,45 @@ public class Call {
      * @param call, the call value to be compared with
      * @return a boolean value indicating if this call equals the call given as parameter
      */
-    public boolean equals(Call call){
-
+    public boolean equals(Object call){
+    	Call call2;
+    	if (!(call instanceof Call)){
+    		return false;
+    	}
+    	call2 = (Call)call;
     	//prepare the two objects for comparing
     	String nr1 = "", nr2 = ""; //$NON-NLS-1$,  //$NON-NLS-2$
     	if (this.getPhoneNumber() != null)
     		nr1 = this.getPhoneNumber().getFullNumber();
-    	if (call.getPhoneNumber() != null)
-    		nr2 = call.getPhoneNumber().getFullNumber();
+    	if (call2.getPhoneNumber() != null)
+    		nr2 = call2.getPhoneNumber().getFullNumber();
     	String route1 = "", route2 = ""; //$NON-NLS-1$,  //$NON-NLS-2$
     	if (this.getRoute() != null)
     		route1 = this.getRoute();
-    	if (call.getRoute() != null)
-    		route2 = call.getRoute();
+    	if (call2.getRoute() != null)
+    		route2 = call2.getRoute();
 
     	if ((nr1).equals(nr2)
-            && (this.getPort().equals(call.getPort()))
-            && (this.getDuration() == call.getDuration())
-            && (this.getCalltype().toInt() == call.getCalltype().toInt())
+            && (this.getPort().equals(call2.getPort()))
+            && (this.getDuration() == call2.getDuration())
+            && (this.getCalltype().toInt() == call2.getCalltype().toInt())
             && (route1.equals(route2)))
     		return true;
     	else
     		return false;
 
     }
+
+   public int hashCode() {
+    	String s ="";
+    	s += this.getPhoneNumber().getFullNumber();
+    	s += this.getPort();
+    	s += this.getDuration();
+    	s += this.getCalltype().toInt();
+    	s += this.getRoute();
+    	return s.hashCode();
+    }
+
 
     /**
      * Set the port
