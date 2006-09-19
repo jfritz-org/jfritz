@@ -260,7 +260,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			exportVCard();
 		} else if (e.getActionCommand().equals("import_xml")) { //$NON-NLS-1$
 			importFromXML ();
-		} else if (e.getActionCommand() == "clearFilter") { //$NON-NLS-1$
+		} else if (e.getActionCommand().equals("clearFilter")) { //$NON-NLS-1$
 			clearAllFilter();
 		} else {
 			Debug.msg("Unsupported Command: " + e.getActionCommand()); //$NON-NLS-1$
@@ -343,7 +343,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		int rows[] = getPhoneBookTable().getSelectedRows();
 		for (int i = 0; i < rows.length; i++) {
 			Person person = (Person) JFritz.getPhonebook().getPersonAt(rows[i]);
-			if (person != null && person.getFullname() != "") { //$NON-NLS-1$
+			if (person != null && !person.getFullname().equals("")) { //$NON-NLS-1$
 				list.addVCard(person);
 			}
 		}

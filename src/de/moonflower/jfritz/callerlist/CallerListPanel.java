@@ -436,68 +436,68 @@ public class CallerListPanel extends JPanel implements ActionListener,
                     .toString(!calloutFilterButton.isSelected()));
             JFritz.getCallerlist().updateFilter();
             JFritz.getCallerlist().fireTableStructureChanged();
-        } else if (e.getActionCommand() == "filter_number") { //$NON-NLS-1$
+        } else if (e.getActionCommand().equals("filter_number")) { //$NON-NLS-1$
             JFritz.setProperty("filter.number", Boolean //$NON-NLS-1$
                     .toString(!((JToggleButton) e.getSource()).isSelected()));
             JFritz.getCallerlist().updateFilter();
             JFritz.getCallerlist().fireTableStructureChanged();
-        } else if (e.getActionCommand() == "filter_fixed") { //$NON-NLS-1$
+        } else if (e.getActionCommand().equals("filter_fixed")) { //$NON-NLS-1$
             JFritz.setProperty("filter.fixed", Boolean //$NON-NLS-1$
                     .toString(!((JToggleButton) e.getSource()).isSelected()));
             JFritz.getCallerlist().updateFilter();
             JFritz.getCallerlist().fireTableStructureChanged();
-        } else if (e.getActionCommand() == "filter_handy") { //$NON-NLS-1$
+        } else if (e.getActionCommand().equals("filter_handy")) { //$NON-NLS-1$
             JFritz.setProperty("filter.handy", Boolean //$NON-NLS-1$
                     .toString(!((JToggleButton) e.getSource()).isSelected()));
             JFritz.getCallerlist().updateFilter();
             JFritz.getCallerlist().fireTableStructureChanged();
-        } else if (e.getActionCommand() == "filter_date") { //$NON-NLS-1$
+        } else if (e.getActionCommand().equals("filter_date")) { //$NON-NLS-1$
             JFritz.setProperty("filter.date", Boolean //$NON-NLS-1$
                     .toString(!dateFilterButton.isSelected()));
             JFritz.getCallerlist().getDateFilter().setFilter(DateFilter.DATEFILTER_SELECTION);
             setDateFilterText();
             JFritz.getCallerlist().fireTableStructureChanged();
-        } else if (e.getActionCommand() == "setdatefilter_thisday") { //$NON-NLS-1$
+        } else if (e.getActionCommand().equals("setdatefilter_thisday")) { //$NON-NLS-1$
             dateFilterButton.setSelected(false);
             JFritz.setProperty("filter.date", Boolean //$NON-NLS-1$
                     .toString(!dateFilterButton.isSelected()));
             JFritz.getCallerlist().getDateFilter().setFilter(DateFilter.DATEFILTER_TODAY);
             setDateFilterText();
             JFritz.getCallerlist().fireTableStructureChanged();
-        } else if (e.getActionCommand() == "setdatefilter_yesterday") { //$NON-NLS-1$
+        } else if (e.getActionCommand().equals("setdatefilter_yesterday")) { //$NON-NLS-1$
             dateFilterButton.setSelected(false);
             JFritz.setProperty("filter.date", Boolean //$NON-NLS-1$
                     .toString(!dateFilterButton.isSelected()));
             JFritz.getCallerlist().getDateFilter().setFilter(DateFilter.DATEFILTER_YESTERDAY);
             setDateFilterText();
             JFritz.getCallerlist().fireTableStructureChanged();
-        } else if (e.getActionCommand() == "setdatefilter_thismonth") { //$NON-NLS-1$
+        } else if (e.getActionCommand().equals("setdatefilter_thismonth")) { //$NON-NLS-1$
             dateFilterButton.setSelected(false);
             JFritz.setProperty("filter.date", Boolean //$NON-NLS-1$
                     .toString(!dateFilterButton.isSelected()));
             JFritz.getCallerlist().getDateFilter().setFilter(DateFilter.DATEFILTER_THIS_MONTH);
             setDateFilterText();
             JFritz.getCallerlist().fireTableStructureChanged();
-        } else if (e.getActionCommand() == "setdatefilter_lastmonth") { //$NON-NLS-1$
+        } else if (e.getActionCommand().equals("setdatefilter_lastmonth")) { //$NON-NLS-1$
             dateFilterButton.setSelected(false);
             JFritz.setProperty("filter.date", Boolean //$NON-NLS-1$
                     .toString(!dateFilterButton.isSelected()));
             JFritz.getCallerlist().getDateFilter().setFilter(DateFilter.DATEFILTER_LAST_MONTH);
             setDateFilterText();
             JFritz.getCallerlist().fireTableStructureChanged();
-        } else if (e.getActionCommand() == "filter_sip") { //$NON-NLS-1$
+        } else if (e.getActionCommand().equals("filter_sip")) { //$NON-NLS-1$
             JFritz.setProperty("filter.sip", Boolean //$NON-NLS-1$
                     .toString(!((JToggleButton) e.getSource()).isSelected()));
             JFritz.getCallerlist().getSipFilter().setFilter(0); // Parameter wird nicht interpretiert
             JFritz.getCallerlist().fireTableStructureChanged();
-        } else if (e.getActionCommand() == "filter_callbycall") { //$NON-NLS-1$
+        } else if (e.getActionCommand().equals("filter_callbycall")) { //$NON-NLS-1$
             JFritz.setProperty("filter.callbycall", Boolean //$NON-NLS-1$
                     .toString(!((JToggleButton) e.getSource()).isSelected()));
             JFritz.getCallerlist().getCallByCallFilter().setFilter(0); // Parameter wird nicht interpretiert
             JFritz.getCallerlist().fireTableStructureChanged();
-        } else if (e.getActionCommand() == "clearFilter") { //$NON-NLS-1$
+        } else if (e.getActionCommand().equals("clearFilter")) { //$NON-NLS-1$
             clearAllFilter();
-        } else if (e.getActionCommand() == "delete_entry") { //$NON-NLS-1$
+        } else if (e.getActionCommand() .equals("delete_entry")) { //$NON-NLS-1$
             JFritz.getCallerlist().removeEntries();
         } else if (e.getActionCommand().equals("reverselookup")) { //$NON-NLS-1$
             doReverseLookup();

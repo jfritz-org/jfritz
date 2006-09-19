@@ -348,29 +348,23 @@ public class Person {
 	public String getAddress(String lineSeparator, String wordSeparator) {
 
 		// TODO: create patterns as params for that function
+
+		if (this == null) {return "";}//$NON-NLS-1$
 		String address = ""; //$NON-NLS-1$
 
-		if (this != null) {
-			String company = (this.getCompany() != null
-					? this.getCompany()
-					: ""); //$NON-NLS-1$
-			String firstName = (this.getFirstName() != null ? this
-					.getFirstName() : ""); //$NON-NLS-1$
-			String lastName = (this.getLastName() != null
-					? this.getLastName()
-					: ""); //$NON-NLS-1$
-			String street = (this.getStreet() != null ? this.getStreet() : ""); //$NON-NLS-1$
-			String postalCode = (this.getPostalCode() != null ? this
-					.getPostalCode() : ""); //$NON-NLS-1$
-			String city = (this.getCity() != null ? this.getCity() : ""); //$NON-NLS-1$
+		String company = this.getCompany();
+		String firstName = this.getFirstName();
+		String lastName = this.getLastName();
+		String street = this.getStreet();
+		String postalCode = this.getPostalCode();
+		String city = this.getCity();
 
-			address = (company != "" ? company + lineSeparator : "") //$NON-NLS-1$,  //$NON-NLS-2$
-					+ (firstName != "" ? firstName + wordSeparator : "") //$NON-NLS-1$,  //$NON-NLS-2$
-					+ (lastName != "" ? lastName + lineSeparator : "") //$NON-NLS-1$,  //$NON-NLS-2$
-					+ (street != "" ? street + lineSeparator : "") //$NON-NLS-1$,  //$NON-NLS-2$
-					+ (postalCode != "" ? postalCode + wordSeparator : "") //$NON-NLS-1$,  //$NON-NLS-2$
-					+ (city != "" ? city + lineSeparator : ""); //$NON-NLS-1$,  //$NON-NLS-2$
-		}
+		address = (!company.equals("") ? company + lineSeparator : "") //$NON-NLS-1$,  //$NON-NLS-2$
+				+ (!firstName.equals("") ? firstName + wordSeparator : "") //$NON-NLS-1$,  //$NON-NLS-2$
+				+ (!lastName.equals("") ? lastName + lineSeparator : "") //$NON-NLS-1$,  //$NON-NLS-2$
+				+ (!street.equals("") ? street + lineSeparator : "") //$NON-NLS-1$,  //$NON-NLS-2$
+				+ (!postalCode.equals("") ? postalCode + wordSeparator : "") //$NON-NLS-1$,  //$NON-NLS-2$
+				+ (!city.equals("") ? city + lineSeparator : ""); //$NON-NLS-1$,  //$NON-NLS-2$
 		return address;
 	}
 

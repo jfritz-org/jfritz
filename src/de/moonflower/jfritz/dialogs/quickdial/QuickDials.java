@@ -232,13 +232,13 @@ public class QuickDials extends AbstractTableModel {
 			while (en.hasMoreElements()) {
 				QuickDial current = (QuickDial) en.nextElement();
 				pw.println("\t<entry id=\"" + current.getQuickdial() + "\">"); //$NON-NLS-1$,  //$NON-NLS-2$
-				if (current.getNumber() != "") //$NON-NLS-1$
+				if (!current.getNumber().equals("")) //$NON-NLS-1$
 					pw.println("\t\t<number>" + current.getNumber() //$NON-NLS-1$
 							+ "</number>"); //$NON-NLS-1$
-				if (current.getVanity() != "") //$NON-NLS-1$
+				if (!current.getVanity().equals("")) //$NON-NLS-1$
 					pw.println("\t\t<vanity>" + current.getVanity() //$NON-NLS-1$
 							+ "</vanity>"); //$NON-NLS-1$
-				if (current.getDescription() != "") //$NON-NLS-1$
+				if (!current.getDescription().equals("")) //$NON-NLS-1$
 					pw.println("\t\t<description>" + current.getDescription() //$NON-NLS-1$
 							+ "</description>"); //$NON-NLS-1$
 				pw.println("\t</entry>"); //$NON-NLS-1$

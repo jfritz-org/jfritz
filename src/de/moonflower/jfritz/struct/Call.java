@@ -259,7 +259,7 @@ public class Call {
                 outString = outString.concat(";\"" //$NON-NLS-1$
                         + getPerson().getPostalCode() + "\""); //$NON-NLS-1$
                 // postCode might be ""
-            } else { // postCode AND city != ""
+            } else { // postCode AND city !equals("")
                 outString = outString.concat(";\"" //$NON-NLS-1$
                         + getPerson().getPostalCode() + " " //$NON-NLS-1$
                         + getPerson().getCity() + "\""); //$NON-NLS-1$
