@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre1.5.0_06"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/Java 1.4.2"/>
 	<classpathentry exported="true" kind="lib" path="lib/jdic.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jacob.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jfreereport-0.8.6-2.jar"/>
