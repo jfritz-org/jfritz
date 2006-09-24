@@ -161,8 +161,8 @@ public class PhoneBook extends AbstractTableModel {
 				o2 = Boolean.toString(v2.isPrivateEntry());
 				break;
 			case 1:
-				o1 = v1.getFullname().toString().toUpperCase();
-				o2 = v2.getFullname().toString().toUpperCase();
+				o1 = v1.getFullname().toUpperCase();
+				o2 = v2.getFullname().toUpperCase();
 				break;
 			case 2:
                 o1 = ""; //$NON-NLS-1$

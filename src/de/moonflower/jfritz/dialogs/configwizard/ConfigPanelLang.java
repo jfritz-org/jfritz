@@ -44,7 +44,7 @@ public class ConfigPanelLang extends JPanel{
 		c.insets.left = 5;
 		c.anchor = GridBagConstraints.WEST;
 
-		JLabel label = new JLabel(""); //$NON-NLS-1$
+		JLabel label;
 		c.gridy = 2;
 		label = new JLabel(JFritz.getMessage("language") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		localePane.add(label, c);

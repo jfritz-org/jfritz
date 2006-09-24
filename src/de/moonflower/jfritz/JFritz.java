@@ -584,7 +584,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.344 2006/09/23 10:37:08 robotniko Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.345 2006/09/24 19:02:43 marc0815 Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -1146,10 +1146,12 @@ public final class JFritz {
             replaceOldProperties();
         } catch (FileNotFoundException e) {
             Debug.err("File " + SAVE_DIR + JFritz.PROPERTIES_FILE //$NON-NLS-1$
+                    + " not found => showing config wizard"); //$NON-NLS-1$
+            showConfWizard = true;
+        } catch (IOException ioe) {
+            Debug.err("File " + SAVE_DIR + JFritz.PROPERTIES_FILE //$NON-NLS-1$
                     + " not readable => showing config wizard"); //$NON-NLS-1$
             showConfWizard = true;
-        } catch (Exception e) {
-			//TODO handle Exceptions
        }
     }
 
