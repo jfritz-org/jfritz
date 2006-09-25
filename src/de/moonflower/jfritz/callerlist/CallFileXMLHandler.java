@@ -98,8 +98,10 @@ public class CallFileXMLHandler extends DefaultHandler {
 				calldate = df.parse(chars.replaceAll("\"", "")); //$NON-NLS-1$,  //$NON-NLS-2$
 			} catch (ParseException e) {
 				Debug.err("Date problem:  " + chars); //$NON-NLS-1$
-				System.exit(0);
+				Debug.errDlg("Date problem");
 				calldate = null;
+				//TODO geht das so? System.exit(0); einfach raus
+				return;
 			}
 		} else if (qName.equals("entry")) { //$NON-NLS-1$
 

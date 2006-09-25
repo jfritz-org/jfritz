@@ -64,8 +64,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 		private String[] basicTypes = { "home", "mobile", "homezone", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 				"business", "other", "fax", "sip", "main"}; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$ , //$NON-NLS-4$ , //$NON-NLS-5$
-
-		private PhoneType sel;
+		private transient PhoneType sel;
 
 		private Vector types;
 

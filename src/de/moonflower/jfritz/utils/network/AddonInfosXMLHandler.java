@@ -46,9 +46,10 @@ public class AddonInfosXMLHandler extends DefaultHandler {
 
 	public void startElement(String namespaceURI, String lName, String qName,
 			Attributes attrs) throws SAXException {
-		String eName = lName;
-		if ("".equals(eName)) //$NON-NLS-1$
-			eName = qName;
+//		String eName = lName;
+		//FIXME this makes no sense to me
+//		if ("".equals(eName)) //$NON-NLS-1$
+	//		eName = qName;
 
 		// Important to clear buffer :)
 		chars = "";  //$NON-NLS-1$

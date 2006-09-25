@@ -752,7 +752,7 @@ public class ConfigDialog extends JDialog {
 		c.fill = GridBagConstraints.HORIZONTAL;
 
 		languageCombo = new JComboBox(images);
-		languageComboBoxRenderer renderer = new languageComboBoxRenderer();
+		LanguageComboBoxRenderer renderer = new LanguageComboBoxRenderer();
 		renderer.setPreferredSize(new Dimension(180, 15));
 
 		languageCombo.setRenderer(renderer);

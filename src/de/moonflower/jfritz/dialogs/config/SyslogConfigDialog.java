@@ -208,8 +208,7 @@ public class SyslogConfigDialog extends JDialog implements CallMonitorConfigDial
 		c.gridx = 1;
 		c.gridy = 1;
 		ipAddressComboBox = new JComboBox();
-		Vector ipAddresses = new Vector();
-		ipAddresses = SyslogCallMonitor.getIP();
+		Vector ipAddresses = SyslogCallMonitor.getIP();
 		Enumeration en = ipAddresses.elements();
 		while (en.hasMoreElements()) {
 			InetAddress ad = (InetAddress) en.nextElement();

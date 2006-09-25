@@ -25,11 +25,11 @@ import de.moonflower.jfritz.utils.Debug;
  **/
 public class CallMonitorList {
 
-    public static int PENDING = 0;
+    public final static int PENDING = 0;
 
-    public static int ESTABLISHED = 1;
+    public final static int ESTABLISHED = 1;
 
-    public static int NONE = 2;
+    public final static int NONE = 2;
 
     // MSN, die von dem Anrufmonitor ignoriert werden
     protected String[] ignoredMSNs;

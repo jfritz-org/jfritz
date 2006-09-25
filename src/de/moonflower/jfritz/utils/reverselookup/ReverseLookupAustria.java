@@ -212,8 +212,8 @@ public final class ReverseLookupAustria {
 	public static void loadAreaCodes(){
 		Debug.msg("Loading the austrian number to city list");
 		numberMap = new HashMap(1200);
-		BufferedReader br=null;
-		FileReader fr=null;
+		BufferedReader br = null;
+		FileReader fr = null;
 		try{
 			fr = new FileReader(JFritzUtils.getFullPath("/number") +"/austria/areacodes_austria.csv");
 			br = new BufferedReader(fr);
@@ -240,10 +240,10 @@ public final class ReverseLookupAustria {
 			Debug.msg(e.toString());
 		}finally{
 			try{
-				if(br!=null)
-					br.close();
 				if(fr!=null)
 					fr.close();
+				if(br!=null)
+					br.close();
 			}catch (IOException ioe){
 				Debug.msg("error closing stream"+ioe.toString());
 			}

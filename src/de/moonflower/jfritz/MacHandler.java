@@ -41,7 +41,7 @@ public class MacHandler {
 			Class MRJApplicationUtils = Class
 					.forName("com.apple.mrj.MRJApplicationUtils"); //$NON-NLS-1$
 
-			myInvocationHandler invocationHandler = new myInvocationHandler();
+			MyInvocationHandler invocationHandler = new MyInvocationHandler();
 
 			// Array of arguments for calling method
 			Object argslist[] = new Object[1];
@@ -91,7 +91,7 @@ public class MacHandler {
 	 *
 	 * @author rob
 	 */
-	public class myInvocationHandler implements InvocationHandler {
+	public class MyInvocationHandler implements InvocationHandler {
 
 		public Object invoke(Object proxy, Method method, Object[] args)
 				throws Throwable {

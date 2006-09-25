@@ -122,8 +122,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
      * Constructs JFritzWindow
      *
      * @param jfritz
+     * @throws WrongPasswordException
      */
-    public JFritzWindow() {
+    public JFritzWindow() throws WrongPasswordException {
         Debug.msg("Create JFritz-GUI"); //$NON-NLS-1$
         maxBounds = null;
         createGUI();
@@ -165,7 +166,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
         setStatus();
     }
 
-    private void createGUI() {
+    private void createGUI() throws WrongPasswordException {
         setTitle(JFritz.PROGRAM_NAME);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setDefaultLookAndFeel();
@@ -233,11 +234,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
             if (password == null) { // PasswordDialog canceled
                 Debug.errDlg(JFritz.getMessage("input_canceled")); //$NON-NLS-1$
                 Debug.err("Eingabe abgebrochen"); //$NON-NLS-1$
-                System.exit(0);
+                throw new WrongPasswordException();
             } else if (!password.equals(pass)) {
                 Debug.errDlg(JFritz.getMessage("wrong_password")); //$NON-NLS-1$
                 Debug.err(JFritz.getMessage("wrong_password")); //$NON-NLS-1$
-                System.exit(0);
+                throw new WrongPasswordException();
             }
         }
 
@@ -1507,9 +1508,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
             }
         });
         if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            String path = fc.getSelectedFile().getPath();
-            path = path.substring(0, path.length()
-                    - fc.getSelectedFile().getName().length());
+ //FIXME
+ //           String path = fc.getSelectedFile().getPath();
+ //           path = path.substring(0, path.length()
+ //                   - fc.getSelectedFile().getName().length());
             // options.import_contacts_thunderbird_CSVpath ???
             // JFritz.setProperty("options.exportCSVpath", path);
             File file = fc.getSelectedFile();

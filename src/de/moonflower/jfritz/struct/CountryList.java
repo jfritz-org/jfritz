@@ -19,6 +19,7 @@ public class CountryList {
 	 *
 	 */
 	public CountryList() {
+		list = new Vector();
 		list.add(new Country("Deutschland", "DE", "+49", "00", "0")); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$,  //$NON-NLS-5$
 		list.add(new Country("Österreich", "A", "+43", "00", "0")); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$,  //$NON-NLS-5$
 		list.add(new Country("Schweiz", "CH", "+41", "00", "0")); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$,  //$NON-NLS-5$

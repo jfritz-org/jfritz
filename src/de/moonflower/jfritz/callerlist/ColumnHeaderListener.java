@@ -54,9 +54,9 @@ public class ColumnHeaderListener extends MouseAdapter {
 			// vColIndex is the column head closest to the click
 
 			// vLeftColIndex is the column head to the left of the click
-			int vLeftColIndex = vColIndex;
+//			int vLeftColIndex = vColIndex;
 			if (evt.getX() < headerRect.x) {
-				vLeftColIndex--;
+//				vLeftColIndex--;
 			}
 
 		} else {

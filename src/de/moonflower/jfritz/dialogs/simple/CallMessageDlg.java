@@ -74,8 +74,10 @@ public class CallMessageDlg extends JDialog implements ActionListener{
 				}
 				else {
 					fromLabel = new JLabel(JFritz.getMessage("from") + caller);	//$NON-NLS-1$
-					toLabel = new JLabel(JFritz.getMessage("to") + called);	//$NON-NLS-1$
+//FIXME toLabel is overwritten in the next line
+		//			toLabel = new JLabel(JFritz.getMessage("to") + called);	//$NON-NLS-1$
 				}
+
 				toLabel = new JLabel(JFritz.getMessage("through_provider") + called);	//$NON-NLS-1$
 			}
 			else {
@@ -83,7 +85,8 @@ public class CallMessageDlg extends JDialog implements ActionListener{
 						+ " " + JFritz.getMessage("through_provider")); //$NON-NLS-1$, 	//$NON-NLS-2$
 				fromLabel = new JLabel(called);
 				//TODO caller == null maybe insert a message saying could not find caller or something
-				toLabel = new JLabel(JFritz.getMessage("from") + caller);	//$NON-NLS-1$
+//				toLabel = new JLabel(JFritz.getMessage("from") + caller);	//$NON-NLS-1$
+				toLabel = new JLabel(JFritz.getMessage("from")+JFritz.getMessage("unknown"));	//$NON-NLS-1$
 			}
 			mainPane.add(headerLabel);
 			mainPane.add(fromLabel);

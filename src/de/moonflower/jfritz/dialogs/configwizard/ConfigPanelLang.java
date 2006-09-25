@@ -13,7 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.dialogs.config.languageComboBoxRenderer;
+import de.moonflower.jfritz.dialogs.config.LanguageComboBoxRenderer;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.StartEndFilenameFilter;
@@ -72,7 +72,7 @@ public class ConfigPanelLang extends JPanel{
 
 		c.fill = GridBagConstraints.HORIZONTAL;
 		languageCombo = new JComboBox(images);
-		languageComboBoxRenderer renderer = new languageComboBoxRenderer();
+		LanguageComboBoxRenderer renderer = new LanguageComboBoxRenderer();
 		renderer.setPreferredSize(new Dimension(180, 15));
 
 		languageCombo.setRenderer(renderer);

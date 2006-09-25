@@ -46,8 +46,6 @@ public class PersonDialog extends JDialog implements ActionListener  {
 	public PersonDialog(Person person) throws HeadlessException {
 		super(JFritz.getJframe()); // parent needed for Dialog's icon
 		this.person = new Person(person);
-		if (this.person == null)
-			person = new Person();
 		drawDialog();
 		//centers PersonDialog in JFritz application window
 		//needs to be called after drawDialog (Dialog needs size)

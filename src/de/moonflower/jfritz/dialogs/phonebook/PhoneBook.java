@@ -189,8 +189,8 @@ public class PhoneBook extends AbstractTableModel {
                     o2 = JFritz.getCallerlist().findLastCall(v2).getCalldate();
 			    break;
 			default:
-				o1 = v1.getFullname().toString();
-				o2 = v2.getFullname().toString();
+				o1 = v1.getFullname();
+				o2 = v2.getFullname();
 			}
 
 			// Treat empty strings like nulls
@@ -528,7 +528,9 @@ public class PhoneBook extends AbstractTableModel {
 					|| e.getLocalizedMessage().startsWith(
 							"Invalid system identifier")) { //$NON-NLS-1$
 				Debug.err(e.getLocalizedMessage());
-				System.exit(0);
+
+				Debug.errDlg("Error on paring "+ filename);
+				//System.exit(0);
 			}
 		} catch (IOException e) {
 			Debug.err("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$

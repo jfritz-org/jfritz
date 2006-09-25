@@ -89,7 +89,8 @@ public class UPNPUtils {
 		// urn:schemas-upnp-org:service:WANIPConnection:1#GetStatusInfo
 
 		String data = ""; //$NON-NLS-1$
-
+		BufferedReader d = null;
+		DataOutputStream printout = null;
 		try {
 			URL u = new URL(url);
 			URLConnection uc = u.openConnection();
@@ -101,12 +102,12 @@ public class UPNPUtils {
 							"text/xml; charset=\"utf-8\""); //$NON-NLS-1$
 			uc.setRequestProperty("SOAPAction", urn); //$NON-NLS-1$
 
-			DataOutputStream printout = new DataOutputStream(uc
+			printout = new DataOutputStream(uc
 					.getOutputStream());
 			printout.close();
 
 			//InputStream in = uc.getInputStream();
-			BufferedReader d = new BufferedReader(new InputStreamReader(uc
+			d = new BufferedReader(new InputStreamReader(uc
 					.getInputStream()));
 
 			String str;
@@ -115,6 +116,19 @@ public class UPNPUtils {
 
 		} catch (IOException e) {
             Debug.err(e.toString());
+		}finally{
+			try{
+				if(d!=null)
+					d.close();
+			}catch(IOException ioe){
+				Debug.err("Error closing Stream");
+			}
+			try{
+				if(printout!=null)
+					printout.close();
+			}catch(IOException ioe){
+				Debug.err("Error closing Stream");
+			}
 		}
 		return data;
 	}

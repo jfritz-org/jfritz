@@ -28,7 +28,7 @@ public class PersonEditorPanel extends JComponent {
 
 	private PersonCellEditor editor;
 
-	private Person person;
+	private transient Person person;
 
 	private JLabel input;
 

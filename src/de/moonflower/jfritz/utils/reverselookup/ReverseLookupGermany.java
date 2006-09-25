@@ -214,15 +214,20 @@ public final class ReverseLookupGermany {
 	public static void loadAreaCodes(){
 		Debug.msg("Loading the german number to city list");
 		numberMap = new HashMap(5300);
+		BufferedReader br = null;
+		FileReader fr = null;
 		try{
-			FileReader fr = new FileReader(JFritzUtils.getFullPath("/number") +"/germany/areacodes_germany.csv");
-			BufferedReader br = new BufferedReader(fr);
+			fr = new FileReader(JFritzUtils.getFullPath("/number") +"/germany/areacodes_germany.csv");
+			br = new BufferedReader(fr);
 			String line;
 			String[] entries;
 			int lines = 0;
-
+			String l = br.readLine();
+			if(l==null){
+				Debug.errDlg("File "+JFritzUtils.getFullPath("/number") +"/germany/areacodes_germany.csv"+" empty");
+			}
 			//Load the keys and values quick and dirty
-			if(br.readLine().equals(FILE_HEADER)){
+			if(l.equals(FILE_HEADER)){
 				while (null != (line = br.readLine())) {
 					lines++;
 					entries = line.split(";");
@@ -238,7 +243,17 @@ public final class ReverseLookupGermany {
 
 		}catch(Exception e){
 			Debug.msg(e.toString());
+		}finally{
+			try{
+				if(fr!=null)
+					fr.close();
+				if(br!=null)
+					br.close();
+			}catch (IOException ioe){
+				Debug.msg("error closing stream"+ioe.toString());
+			}
 		}
+
 
 	}
 

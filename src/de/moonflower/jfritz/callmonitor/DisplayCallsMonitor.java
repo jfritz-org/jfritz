@@ -87,10 +87,9 @@ public class DisplayCallsMonitor extends CallMonitorListenerAdaptor {
             Debug.msg("Searching on dasoertliche.de ..."); //$NON-NLS-1$
             Person person = ReverseLookup.lookup(callerPhoneNumber);
             if (!person.getFullname().equals("")) { //$NON-NLS-1$
-            	//FIXME callerperson == null
-                name[0] = callerperson.getFirstName();
-                name[1] = callerperson.getLastName();
-                name[2] = callerperson.getCompany();
+                name[0] = person.getFirstName();
+                name[1] = person.getLastName();
+                name[2] = person.getCompany();
                 Debug
                         .msg("Found on dasoertliche.de: " + name[1] + ", " + name[0]); //$NON-NLS-1$,  //$NON-NLS-2$
                 Debug.msg("Add person to database"); //$NON-NLS-1$
