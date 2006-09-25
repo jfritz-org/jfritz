@@ -584,7 +584,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.348 2006/09/25 20:25:49 robotniko Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.349 2006/09/25 21:34:29 marc0815 Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -1592,7 +1592,7 @@ public final class JFritz {
         watchdog = new WatchdogThread(1);
         timer.schedule(new TimerTask() {
             public void run() {
-                watchdog.start();
+                watchdog.run();
             }
         }, 5000, 1 * 60000);
         Debug.msg("Watchdog enabled"); //$NON-NLS-1$
