@@ -67,9 +67,7 @@ public class FritzBoxFirmware {
 			"&var%3Alang=de&var%3Amenu=home&var%3Apagename=home&login%3Acommand%2Fpassword=", //$NON-NLS-1$
 			"&var%3Alang=en&var%3Amenu=home&var%3Apagename=home&login%3Acommand%2Fpassword="}; //$NON-NLS-1$
 
-	private final static String PATTERN_DETECT_FIRMWARE = "Firmware[-| ]Version[^\\d]*(\\d\\d).(\\d\\d).(\\d\\d\\d*)([^<]*)"; //$NON-NLS-1$
-
-    private final static String PATTERN_DETECT_FIRMWARE_LABOR = "Labor[-| ]Version[^\\d]*(\\d\\d).(\\d\\d).(\\d\\d\\d*)([^<]*)"; //$NON-NLS-1$
+	private final static String PATTERN_DETECT_FIRMWARE = "[Firmware|Labor][-| ][V|v]ersion[^\\d]*(\\d\\d).(\\d\\d).(\\d\\d\\d*)([^<]*)"; //$NON-NLS-1$
 
 	private final static String PATTERN_DETECT_LANGUAGE_DE = "Telefonie";
 
@@ -260,26 +258,9 @@ public class FritzBoxFirmware {
 			return new FritzBoxFirmware(boxtypeString, majorFirmwareVersion,
 					minorFirmwareVersion, modFirmwareVersion, language);
 		} else {
-            Pattern laborFirmware = Pattern.compile(PATTERN_DETECT_FIRMWARE_LABOR);
-            m = laborFirmware.matcher(data);
-            if (m.find()) {
-                String boxtypeString = m.group(1);
-                String majorFirmwareVersion = m.group(2);
-                String minorFirmwareVersion = m.group(3);
-                String modFirmwareVersion = m.group(4).trim();
-                Debug.msg("Detected Firmware: " +
-                        boxtypeString + "." +
-                        majorFirmwareVersion + "." +
-                        minorFirmwareVersion +
-                        modFirmwareVersion + " " +
-                        language);
-                return new FritzBoxFirmware(boxtypeString, majorFirmwareVersion,
-                        minorFirmwareVersion, modFirmwareVersion, language);
-            } else {
 			System.err.println("detectFirmwareVersion: Password wrong?"); //$NON-NLS-1$
 			throw new WrongPasswordException(
 					"Could not detect FRITZ!Box firmware version."); //$NON-NLS-1$
-            }
 		}
 	}
 

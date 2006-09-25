@@ -94,6 +94,8 @@ public class CallerList extends AbstractTableModel {
     // english firmware, unknown version
     private final static String EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH = "Typ;Date;Number;Extension;Outgoing Caller ID;Duration";
 
+    private final static String EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH_NEW = "Typ;Date;Name;Number;Extension;Outgoing Caller ID;Duration";
+
     // call list used to display entries in the table, can be sorted by other
     // criteria
     private Vector filteredCallerData;
@@ -1122,6 +1124,7 @@ public class CallerList extends AbstractTableModel {
         boolean isPushFile = false;
         boolean isNewFirmware = false;
         boolean isEnglishFirmware = false;
+        boolean isNewEnglishFirmware = false;
         int newEntries = 0;
 
         try {
@@ -1143,6 +1146,7 @@ public class CallerList extends AbstractTableModel {
                     || line.equals(EXPORT_CSV_FORMAT_FRITZBOX_PUSHSERVICE)
                     || line.equals(EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE)
                     || line.equals(EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH)
+                    || line.equals(EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH_NEW)
                     || line.equals(EXPORT_CSV_FORMAT_PUSHSERVICE_NEW)) {
 
                 // check which kind of a file it is
@@ -1155,6 +1159,9 @@ public class CallerList extends AbstractTableModel {
                     isNewFirmware = true;
                 else if (line.equals(EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH))
                     isEnglishFirmware = true;
+                else if (line.equals(EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH_NEW))
+                    isNewEnglishFirmware = true;
+
 
                 int linesRead = 0;
                 Call c;
@@ -1168,6 +1175,8 @@ public class CallerList extends AbstractTableModel {
                         c = parseCallFritzboxNewCSV(line, separator);
                     else if (isEnglishFirmware)
                         c = parseCallFritzboxEnglishCSV(line, separator);
+                    else if (isNewEnglishFirmware)
+                        c = parseCallFritzboxNewEnglishCSV(line, separator);
                     else
                         c = parseCallFritzboxCSV(line, isPushFile, separator);
 
@@ -1600,6 +1609,106 @@ public class CallerList extends AbstractTableModel {
 
         // make the call object and exit
         call = new Call(calltype, calldate, number, field[3], field[4], Integer
+                .parseInt(time[0])
+                * 3600 + Integer.parseInt(time[1]) * 60);
+
+        return call;
+
+    }
+
+    /**
+     * @author Brian Jensen function parses a line of a csv file, that was
+     *         directly exported from the Fritzbox web interface, either
+     *         directly or through jfritz
+     *
+     * function parses according to format: EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH_NEW
+     * this is the format exported by boxes with english firmware (xx.04.20)
+     *
+     * Note: This function has yet to be tested!
+     *
+     * @param line
+     *            contains the line to be processed
+     * @return is call object, or null if the csv was invalid
+     *
+     */
+    public Call parseCallFritzboxNewEnglishCSV(String line, String separator) {
+        String[] field = line.split(separator);
+        // leave this in here in case the push file is different, like with the
+        // german firmware
+        boolean isPushFile = false;
+        Call call;
+        CallType calltype;
+        Date calldate;
+        PhoneNumber number;
+
+        // check if line has correct amount of entries
+        if (field.length != 7) {
+            if (field.length != 1)
+                Debug.err("Invalid CSV format, incorrect number of fields"); // if
+            return null; // jfritz is broken, the fritz box exports things
+        } // with an extra empty line for whatever reason
+
+        // Call type
+        // Why would they change the cvs format in the Push file???
+        if ((field[0].equals("1") && !isPushFile) //$NON-NLS-1$
+                || (field[0].equals("2") && isPushFile)) { //$NON-NLS-1$
+            calltype = new CallType("call_in"); //$NON-NLS-1$
+        } else if ((field[0].equals("2") && !isPushFile) //$NON-NLS-1$
+                || (field[0].equals("3") && isPushFile)) { //$NON-NLS-1$
+            calltype = new CallType("call_in_failed"); //$NON-NLS-1$
+        } else if ((field[0].equals("3") && !isPushFile) //$NON-NLS-1$
+                || (field[0].equals("1") && isPushFile)) { //$NON-NLS-1$
+            calltype = new CallType("call_out"); //$NON-NLS-1$
+        } else {
+            Debug.err("Invalid Call type in CSV entry!"); //$NON-NLS-1$
+            return null;
+        }
+
+        // Call date and time
+        if (field[1] != null) {
+            try {
+                calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(field[1]); //$NON-NLS-1$
+            } catch (ParseException e) {
+                Debug.err("Invalid date format in csv entry!"); //$NON-NLS-1$
+                return null;
+            }
+        } else {
+            Debug.err("Invalid date format in csv entry!"); //$NON-NLS-1$
+            return null;
+        }
+
+        // Name
+        // field[2]
+
+        // Phone number
+        if (!field[3].equals(""))
+            number = new PhoneNumber(field[3], JFritz.getProperty(
+                    "option.activateDialPrefix").toLowerCase().equals("true")
+                    && (calltype.toInt() == CallType.CALLOUT)
+                    && !field[5].startsWith("Internet"));
+        else
+            number = null;
+
+        // split the duration into two stings, hours:minutes
+        String[] time = field[6].split(":");
+
+        // change the port to fit the jfritz naming convention
+        if (field[4].equals("FON 1")) {
+            field[4] = "0";
+        } else if (field[4].equals("FON 2")) {
+            field[4] = "1";
+        } else if (field[4].equals("FON 3")) {
+            field[4] = "2";
+        } else if (field[4].equals("Durchwahl")) {
+            field[4] = "3";
+        } else if (field[4].equals("FON S0")) {
+            field[4] = "4";
+        } else if (field[4].equals("DATA S0")) {
+            field[4] = "36";
+        }
+
+        // make the call object and exit
+        call = new Call(calltype, calldate, number, field[4], field[5], Integer
                 .parseInt(time[0])
                 * 3600 + Integer.parseInt(time[1]) * 60);
 

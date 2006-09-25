@@ -153,7 +153,7 @@
  * - Neu: Unterstützung für die "Labor-Firmware" (Firmwareerkennung und CSV-Import)
  * - Neu: Automatisches Update von JFritz auf neue Version. TODO: Checken, ob es auch mit .so und .dll funktioniert TODO: Am Ende der Update-Prozedur JFritz nicht beenden, sondern neu starten. Blos wie?
  * - Wahlhilfe: Immer mit Ortsvorwahl wählen (getShortNumber in getAreaNumber verändert)
- *
+ * - Neu: Unterstützung für neue englische Firmware xx.04.20
  *
  * JFritz 0.6.1
  * - Neue Strings:
@@ -584,7 +584,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.347 2006/09/25 16:20:15 marc0815 Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.348 2006/09/25 20:25:49 robotniko Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
