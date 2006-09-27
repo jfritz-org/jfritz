@@ -3,6 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="tests"/>
 	<classpathentry kind="lib" path="lang"/>
+	<classpathentry sourcepath="ECLIPSE_HOME/plugins/org.eclipse.jdt.source_3.1.1/src/org.junit_3.8.1/junitsrc.zip" kind="var" path="JUNIT_HOME/junit.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jdic.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jacob.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jfreereport-0.8.6-2.jar"/>
@@ -13,7 +14,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/itext-1.3.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/pixie-0.8.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/wizard.jar"/>
-	<classpathentry sourcepath="ECLIPSE_HOME/plugins/org.eclipse.jdt.source_3.1.1/src/org.junit_3.8.1/junitsrc.zip" kind="var" path="JUNIT_HOME/junit.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/Java 1.4.2"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
