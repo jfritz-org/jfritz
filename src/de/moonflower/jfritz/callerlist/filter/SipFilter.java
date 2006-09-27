@@ -14,6 +14,7 @@ public class SipFilter extends CallFilter {
     private Vector filteredSipProviders = new Vector();
 
     public SipFilter() {
+    	super("filter.sip");
         filteredSipProviders.clear();
         String providers = JFritz.getProperty("filter.sipProvider", //$NON-NLS-1$
                 "[]"); //$NON-NLS-1$
@@ -31,7 +32,7 @@ public class SipFilter extends CallFilter {
         }
     }
 
-    public boolean filterPassed(Call currentCall) {
+    public boolean passFilterIntern(Call currentCall) {
         if ( filteredSipProviders.size() != 0 ) {
             String route = currentCall.getRoute();
             if (route.equals("")) { //$NON-NLS-1$

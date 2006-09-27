@@ -14,6 +14,7 @@ public class CallByCallFilter extends CallFilter {
     private Vector filteredCallByCallProviders = new Vector();
 
     public CallByCallFilter() {
+    	super("filter.callbycall");
             String providers = JFritz.getProperty(
                     "filter.callbycallProvider", "[]"); //$NON-NLS-1$,  //$NON-NLS-2$
 
@@ -33,7 +34,8 @@ public class CallByCallFilter extends CallFilter {
 
     }
 
-    public boolean filterPassed(Call currentCall) {
+    public boolean passFilterIntern(Call currentCall) {
+    	if (filerIsDisabled())return true;
         if (currentCall.getPhoneNumber() != null) {
             String callbycallprovider = currentCall.getPhoneNumber()
                     .getCallByCall();

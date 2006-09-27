@@ -7,5 +7,9 @@ jfritz.phonebook.xml
 jfritz.properties.xml
 jfritz.quickdials.xml
 jfritz.sipprovider.xml
+.cvsignore
+.classpath
+.project
 .*
 backup
+ivy.xml

@@ -17,10 +17,14 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,6 +45,7 @@ import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.callerlist.filter.CallByCallFilter;
+import de.moonflower.jfritz.callerlist.filter.CallFilter;
 import de.moonflower.jfritz.callerlist.filter.DateFilter;
 import de.moonflower.jfritz.callerlist.filter.SipFilter;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
@@ -107,6 +112,8 @@ public class CallerList extends AbstractTableModel {
     private Vector newCalls;
 
     private int sortColumn;
+
+    private Vector filters;
 
     private boolean sortDirection = false;
 
@@ -931,15 +938,15 @@ public class CallerList extends AbstractTableModel {
                 }
 
                 if (filterSip) {
-                    sipFilterPassed = sipFilter.filterPassed(call);
+                    sipFilterPassed = sipFilter.passFilter(call);
                 }
 
                 if (filterCallByCall) {
-                    searchFilterPassed = callByCallFilter.filterPassed(call);
+                    searchFilterPassed = callByCallFilter.passFilter(call);
                 }
 
                 if (filterDate) {
-                    dateFilterPassed = dateFilter.filterPassed(call);
+                    dateFilterPassed = dateFilter.passFilter(call);
                 }
 
                 if (filterFixed && call.getPhoneNumber() != null
@@ -1727,4 +1734,43 @@ public class CallerList extends AbstractTableModel {
     public CallByCallFilter getCallByCallFilter() {
         return callByCallFilter;
     }
+    /**
+	 * adds a Filter to sort out some calls
+     * @param cf the CallFilter which should be applied
+     * @param name the name of the Filter
+     */
+    public void addFilter(CallFilter cf){
+    	filters.add(cf);
+    	updateFilteredData();
+    }
+	/**
+	 * removes a Filter
+	 * @param name the name of the Filter
+	 * @return the Filter
+	 */
+    public boolean removeFilter(CallFilter cf){
+    	boolean o =filters.remove(cf);
+    	updateFilteredData();
+    	return o;
+    }
+
+	private void updateFilteredData() {
+        Vector filteredData;
+        filteredData = new Vector();
+        Enumeration en = unfilteredCallerData.elements();
+        Call call;
+        CallFilter f;
+        while (en.hasMoreElements()) {
+            call = (Call) en.nextElement();
+            for(int i=0; i< filters.size();i++){
+        		f = (CallFilter)filters.elementAt(i);
+        		if(!f.passFilter(call))break;
+        	}
+            filteredData.add(call);
+        }
+        filteredCallerData = filteredData;
+        sortAllFilteredRowsBy(sortColumn, sortDirection);
+        if (JFritz.getJframe() != null)
+        	JFritz.getJframe().setStatus();
+	}
 }

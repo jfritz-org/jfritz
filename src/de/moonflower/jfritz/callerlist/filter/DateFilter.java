@@ -36,13 +36,14 @@ public class DateFilter extends CallFilter {
     private String filterToDate = null;
 
     public DateFilter() {
+    	super("filter.date");
             filterFromDate = JFritz.getProperty("filter.date_from", new SimpleDateFormat("dd.MM.yy").format(Calendar.getInstance().getTime()));
             filterToDate = JFritz.getProperty("filter.date_to", new SimpleDateFormat("dd.MM.yy").format(Calendar.getInstance().getTime()));
             filterType = Integer.parseInt(JFritz.getProperty("filter.date_type", "0")); //$NON-NLS-1$ $NON-NLS-2$
     }
 
-    public boolean filterPassed(Call currentCall) {
-        try {
+    public boolean passFilterIntern(Call currentCall) {
+       try {
             if (currentCall.getCalldate().after(
                     new SimpleDateFormat("dd.MM.yy") //$NON-NLS-1$
                             .parse(filterFromDate))

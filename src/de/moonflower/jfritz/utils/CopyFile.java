@@ -15,7 +15,6 @@ import java.util.Date;
  *
  *  @author Bastian Schaefer
  */
-//FIXME
 public class CopyFile {
 
     private File[] entries;
