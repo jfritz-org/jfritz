@@ -1,203 +1,324 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project default="jar">
-	<property name="version" value="0.6.1"/>
-	<property name="src" value="src"/>
-	<property name="doc" value="doc"/>
-	<property name="build" value="bin"/>
-	<property name="dist" value="dist"/>
-	<property name="source" value="source"/>
-	<property name="lib" value="lib"/>
-	<property name="ant.project.name" value = "JFritz! Documentation"/>
-	<property name="jfritzdir" value="D:\Programme\JFritz"/>
-	<property name="lang" value="lang"/>
-	<property name="release" value="release"/>
+<project name="JFritz" default="build" basedir=".">
+
+	<property name="app.name" value="JFritz" />
+	<property name="version" value="0.6.2" />
 
 	<!-- compiler flags -->
-	<property name="javac.debug" value="true"/>
-	<property name="javac.optimize" value="false"/>
+	<property name="javac.debug" value="true" />
+	<property name="javac.optimize" value="false" />
 
-	 <!-- include all jars in lib to classpath -->
-	 <path id="classpath">
-	 	<fileset dir="${lib}">
-	   	<include name="**/*.jar"/>
-	 	</fileset>
-	 </path>
+	<!-- directory properties -->
+	<property name="home" value="ant" />
+	<property name="src" value="src" />
+	<property name="unittests" value="tests" />
+	<property name="lib" value="lib" />
+	<property name="lang" value="lang" />
+
+	<!-- build properties -->
+	<property name="build" value="${home}/build" />
+	<property name="build.classes" value="${build}/classes" />
+	<property name="build.unittests" value="${build}/unittests" />
+	<property name="build.unittests.reports" value="${build.unittests}/reports" />
+
+	<!-- java doc properties -->
+	<property name="doc" value="${home}/doc" />
+
+	<!-- release properties -->
+	<property name="dist" value="${home}/dist" />
+	<property name="archive" value="${home}/archiv" />
+	<property name="javadoc-archive" value="${archive}/javadoc" />
+	<property name="source-archive" value="${archive}/source" />
+	<property name="binaries-archive" value="${archive}/binaries" />
+	<property name="release" value="${home}/release" />
+	<property name="jfritzdir" value="D:\Programme\JFritz" />
 
 
-	<target name="compile">
-		<mkdir dir="${build}"/>
-		<javac srcdir="${src}" destdir="${build}"  classpathref="classpath" debug="${javac.debug}"	optimize="${javac.optimize}"/>
+	<!-- include all jars in lib to classpath -->
+	<path id="build.classpath">
+		<fileset dir="${lib}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
 
-		<!-- copy ressource-files -->
-		<copy todir="${build}/de/moonflower/jfritz/resources"><fileset dir="${src}/de/moonflower/jfritz/resources"></fileset></copy>
+	<path id="test.classpath">
+		<path refid="build.classpath" />
+		<pathelement location="${build.classes}" />
+		<pathelement location="${build.unittests}" />
+		<fileset dir="${build}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+
+	<target name="init" description="Show startup informations">
+		<echo message="ant version:   ${ant.version}" />
+		<echo message="java version:  ${ant.java.version}" />
+		<echo message="" />
+		<echo message="   ---------------------------------------------------------------" />
+		<echo message="   project home:		${home}" />
+		<echo message="   project build:  	${build}" />
+		<echo message="   project source:	${src}" />
+		<echo message="   ---------------------------------------------------------------" />
+		<echo message="" />
+		<echo message="Building ${app.name}..." />
+	</target>
+
+	<target name="compile" depends="init" description="Compile the source tree">
+		<mkdir dir="${build}" />
+		<mkdir dir="${build.classes}" />
+		<javac srcdir="${src}" destdir="${build.classes}" classpathref="build.classpath" debug="${javac.debug}" optimize="${javac.optimize}" />
+	</target>
+
+	<target name="build" depends="jar" description="Generates runnable version of JFritz in directory dist">
+
+		<mkdir dir="${dist}" />
 
 		<!-- copy lib files -->
 		<copy todir="${dist}/${lib}">
 			<fileset dir="${lib}">
-				<exclude name="**/*.java"/>
-				<exclude name="jacob.dll"/>
-	      </fileset>
-	    </copy>
-		<copy file="lib/jacob.dll" todir="${dist}"/>
+				<exclude name="**/*.java" />
+				<exclude name="jacob.dll" />
+			</fileset>
+		</copy>
+		<copy file="lib/jacob.dll" todir="${dist}" />
 
 		<!-- copy lang files -->
-		<copy todir="${dist}/lang"><fileset dir="lang"></fileset></copy>
+		<copy todir="${dist}/lang">
+			<fileset dir="lang">
+			</fileset>
+		</copy>
+
+		<!-- copy all jar files -->
+		<copy todir="${dist}">
+			<fileset dir="${build}">
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>
 
 	</target>
 
+	<target name="jar" depends="compile" description="Generates jar files">
+		<!-- copy ressource-files -->
+		<copy todir="${build.classes}/de/moonflower/jfritz/resources">
+			<fileset dir="${src}/de/moonflower/jfritz/resources" />
+		</copy>
 
-	<target name="jar" depends="compile">
-		<mkdir dir="${dist}"/>
-		<jar jarfile="${dist}/jfritz.jar" basedir="${build}" index="false">
-		    <manifest>
-		      <attribute name="Main-Class" value="de.moonflower.jfritz.JFritz"/>
-		      <attribute name="Class-Path" value="${lib}/jdic.jar ${lib}/jfreereport-0.8.6-2.jar ${lib}/jcommon-1.0.0-rc1-cvs.jar ${lib}/itext-1.3.4.jar ${lib}/bsh-1.3.0.jar ${lib}/bsf-2.3.0.jar ${lib}/poi-2.5.1-final-20040804.jar ${lib}/jacob.jar ${lang}/ ${lib}/wizard.jar"/>
-		    </manifest>
+		<jar jarfile="${build}/jfritz.jar" update="yes">
+			<fileset dir="${build.classes}">
+				<include name="**/*.*" />
+				<exclude name="**/de/moonflower/jfritz/firmware/*.*" />
+				<exclude name="**/de/moonflower/jfritz/utils/reverselookup/*.*" />
+			</fileset>
+			<manifest>
+				<attribute name="Main-Class" value="de.moonflower.jfritz.JFritz" />
+				<attribute name="Class-Path" value="./fritzbox.jar ./reverselookup.jar ${lib}/jdic.jar ${lib}/jfreereport-0.8.6-2.jar ${lib}/jcommon-1.0.0-rc1-cvs.jar ${lib}/itext-1.3.4.jar ${lib}/bsh-1.3.0.jar ${lib}/bsf-2.3.0.jar ${lib}/poi-2.5.1-final-20040804.jar ${lib}/jacob.jar ${lang}/ ${lib}/wizard.jar" />
+			</manifest>
 		</jar>
-	</target>
 
-	<target name="javadoc" depends="compile,javadoc-init" description="Generate JavaDocs.">
-	    <javadoc destdir="${doc}"
-	    	access="public"
-	    	author="true"
-	    	version="true"
-	    	use="true"
-	    	windowtitle="${ant.project.name}"
-	    	sourcepath="${src}"
-	    	source="1.4"
-	    	packagenames="de.moonflower.jfritz.*"
-	    	classpath="lib"
-	    	splitindex="true"
-	    	verbose="false">
-	        <doctitle><![CDATA[<h1>${ant.project.name}</h1>]]></doctitle>
-	        <bottom>
-	            <![CDATA[<i>Copyright &#169; 2005 All Rights Reserved.</i>]]>
-	        </bottom>
-<!--	    	<tag name="todo" description="To do:" scope="all" />  -->
-	    </javadoc>
-	</target>
+		<jar jarfile="${build}/fritzbox.jar" update="yes">
+			<fileset dir="${build.classes}">
+				<include name="**/de/moonflower/jfritz/firmware/*.class" />
+			</fileset>
+		</jar>
 
-	<target name="javadoc-init">
-	    <mkdir dir="${doc}"/>
-	</target>
-
-	<target name="javadoc-clean">
-	    <delete dir="${doc}"/>
-	</target>
-
-	<target name="javadoc-archive" depends="javadoc">
-		<mkdir dir="${dist}"/>
-		<tar tarfile="${dist}/jfritz-javadoc.tar" basedir="${doc}" />
-		<gzip src="${dist}/jfritz-javadoc.tar" zipfile="${dist}/jfritz-javadoc.tar.gz"/>
-		<delete file="${dist}/jfritz-javadoc.tar"/>
-	</target>
-
-	<target name="clean">
-		<delete dir="${build}"/>
-		<delete dir="${dist}"/>
-	</target>
-
-	<target name="update">
-		<cvs command="update"/>
-	</target>
-
-	<target name="copyToFritzDir">
-		<copy file="dist/jfritz.jar" todir="${jfritzdir}"/>
-		<copy file="dist/jacob.dll" todir="${jfritzdir}"/>
-		<mkdir dir="${jfritzdir}/lang"/>
-		<copy todir="${jfritzdir}/lang"><fileset dir="lang"></fileset></copy>
-	</target>
-
-	<target name="source">
-		<mkdir dir="${dist}"/>
-		<mkdir dir="${dist}/${source}"/>
-		<mkdir dir="${dist}/${source}/tmp/${src}"/>
-		<mkdir dir="${dist}/${source}/tmp/${src}"/>
-		<copy todir="${dist}/${source}/tmp/${src}">
-			<fileset dir="${src}">
-				<include name="**/*.java"/>
-	      	</fileset>
-	    </copy>
-		<mkdir dir="${dist}/${source}/tmp/${lib}"/>
-		<copy todir="${dist}/${source}/tmp/${lib}">
-			<fileset dir="${lib}">
-				<include name="**/*.jar"/>
-	      	</fileset>
-	    </copy>
-		<copy file="jacob.dll" todir="${dist}/${source}/tmp"/>
-		<copy file="build.xml" todir="${dist}/${source}/tmp"/>
-		<zip zipfile="${dist}/${source}/jfritz-source.zip" basedir="${dist}/${source}/tmp" />
-	    <delete dir="${dist}/${source}/tmp"/>
-	</target>
-
-	<target name="release-linux" depends="jar">
-		<delete dir="${release}/linux"/>
-		<mkdir dir="${release}"/>
-		<mkdir dir="${release}/linux"/>
-		<tar tarfile="${release}/linux/jfritz-${version}.tar" basedir="${dist}"/>
-		<gzip src="${release}/linux/jfritz-${version}.tar" zipfile="${release}/linux/jfritz-${version}.tar.gz"/>
-		<delete file="${release}/linux/jfritz-${version}.tar"/>
-	</target>
-
-	<target name="release-mac" depends="jar">
-		<delete dir="${release}/mac"/>
-		<mkdir dir="${release}"/>
-		<mkdir dir="${release}/mac"/>
-		<mkdir dir="${release}/mac/tmp"/>
-
-		<!-- copy mac-files to release directory -->
-		<copy todir="${release}/mac/tmp">
-			<fileset dir="../Release/MAC"></fileset>
-		</copy>
-
-		<!-- modify mac-files -->
-		<move file="${release}/mac/tmp/__MACOSX/jfritz-VERSION" tofile="${release}/mac/tmp/__MACOSX/jfritz-${version}"/>
-		<move file="${release}/mac/tmp/jfritz-VERSION" tofile="${release}/mac/tmp/jfritz-${version}"/>
-
-		<!-- copy new jfritz-files to mac directory -->
-		<copy file="${dist}/JFritz-Handbuch.pdf" todir="${release}/mac/tmp/jfritz-${version}"/>
-		<copy todir="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java">
-			<fileset dir="${dist}"></fileset>
-		</copy>
-		<delete file="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java/JFritz-Handbuch.pdf"/>
-		<delete file="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java/jacob.dll"/>
-		<delete file="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java/lib/jacob.jar"/>
-		<delete dir="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java/lib/windows"/>
-		<delete dir="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java/lib/sunos"/>
-		<delete dir="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java/lib/linux"/>
-
-		<!-- zip mac directorys and delete temporary files -->
-		<zip zipfile="${release}/mac/jfritz-${version}-MAC.zip" basedir="${release}/mac/tmp" />
-		<delete dir="${release}/mac/tmp"/>
+		<jar jarfile="${build}/reverselookup.jar" update="yes">
+			<fileset dir="${build.classes}">
+				<include name="**/de/moonflower/jfritz/utils/reverselookup/*.class" />
+			</fileset>
+		</jar>
 
 	</target>
 
-	<target name="release-win" depends="jar">
-		<delete dir="${release}/win"/>
-		<mkdir dir="${release}"/>
-		<mkdir dir="${release}/win"/>
-		<mkdir dir="${release}/win/tmp"/>
+	<target name="javadoc" depends="javadoc-clean,init" description="Generate Javadoc">
+		<mkdir dir="${doc}" />
+		<javadoc packagenames="de.moonflower.jfritz.*,com.*,org.*" access="public" source="1.4" splitindex="true" sourcepath="${src}" destdir="${doc}" author="true" version="true" use="true" windowtitle="${app.name} API" verbose="false" bottom="Copyright (c) 2005 Robert Palmer. Enjoy ${app.name}!">
+			<doctitle>
+				<![CDATA[<h1>${app.name}</h1>]]>
+			</doctitle>
+		<classpath refid="build.classpath" />
+	</javadoc>
+</target>
 
-		<!-- copy win-files to release directory -->
-		<copy todir="${release}/win/tmp">
-			<fileset dir="../Release/WIN"></fileset>
-		</copy>
+<target name="javadoc-clean" description="Cleans Javadoc">
+	<delete dir="${doc}" />
+</target>
 
-		<!-- copy new jfritz-files to win directory -->
-		<copy todir="${release}/win/tmp/binaries">
-			<fileset dir="${dist}"></fileset>
-		</copy>
+<target name="javadoc-archive" depends="archive-init, javadoc" description="Geneartes Javadoc archive">
+	<mkdir dir="${javadoc-archive}" />
 
-		<!-- generate setup-file -->
-		<exec executable="D:\Programme\InnoSe~1\ISCC.exe">
-			<arg value="${release}/win/tmp/jfritz.iss"/>
-		</exec>
+	<tar tarfile="${javadoc-archive}/jfritz-${version}-javadoc.tar" basedir="${doc}" />
+	<gzip src="${javadoc-archive}/jfritz-${version}-javadoc.tar" zipfile="${javadoc-archive}/jfritz-${version}-javadoc.tar.gz" />
+	<delete file="${javadoc-archive}/jfritz-${version}-javadoc.tar" />
+</target>
 
-		<!-- zip setup-file and delete temporary files-->
-		<zip zipfile="${release}/win/jfritz-${version}-Win.zip" basedir="${release}/win/tmp/Output" />
-		<delete dir="${release}/win/tmp"/>
-	</target>
+<target name="archive-init" description="Initializes archive directory">
+	<mkdir dir="${archive}" />
+</target>
 
-	<target name="release-all" depends="release-linux, release-mac, release-win">
-	</target>
+<target name="clean" description="Cleans build, dist, doc and archive directories">
+	<delete dir="${build}" />
+	<delete dir="${doc}" />
+	<delete dir="${dist}" />
+	<delete dir="${archive}" />
+</target>
+
+<target name="update" description="Calls 'cvs update'-command">
+	<cvs command="update" />
+</target>
+
+<target name="copyToFritzDir" depends="build" description="Copy files to JFritz installation directory">
+	<mkdir dir="${jfritzdir}" />
+	<!-- copy all jar files -->
+	<copy todir="${jfritzdir}">
+		<fileset dir="${build}">
+			<include name="**/*.jar" />
+		</fileset>
+	</copy>
+	<copy file="dist/jacob.dll" todir="${jfritzdir}" />
+	<mkdir dir="${jfritzdir}/lang" />
+	<copy todir="${jfritzdir}/lang">
+		<fileset dir="lang">
+		</fileset>
+	</copy>
+	<mkdir dir="${jfritzdir}/lib" />
+	<copy todir="${jfritzdir}/lib">
+		<fileset dir="lib">
+		</fileset>
+	</copy>
+</target>
+
+<target name="source-archive" depends="archive-init, build" description="Generates source archive">
+	<mkdir dir="${source-archive}" />
+
+	<copy todir="${source-archive}/tmp/${src}">
+		<fileset dir="${src}">
+			<include name="**/*.java" />
+		</fileset>
+	</copy>
+	<copy todir="${source-archive}/tmp/${lib}">
+		<fileset dir="${lib}">
+			<include name="**/*.jar" />
+		</fileset>
+	</copy>
+	<copy todir="${source-archive}/tmp/${lang}">
+		<fileset dir="${lang}" />
+	</copy>
+	<copy file="${lib}/jacob.dll" todir="${source-archive}/tmp" />
+	<copy file="build.xml" todir="${source-archive}/tmp" />
+	<zip zipfile="${source-archive}/jfritz-${version}-source.zip" basedir="${source-archive}/tmp" />
+	<delete dir="${source-archive}/tmp" />
+</target>
+
+<target name="archive" depends="archive-init, build, source-archive, javadoc-archive" description="Generates javadoc-, source- and binary-archives">
+	<copy todir="${binaries-archive}/tmp">
+		<fileset dir="${dist}" />
+	</copy>
+	<zip zipfile="${binaries-archive}/jfritz-${version}.zip" basedir="${binaries-archive}/tmp" />
+	<delete dir="${binaries-archive}/tmp" />
+</target>
+
+<target name="release-linux" depends="build">
+	<delete dir="${release}/linux" />
+	<mkdir dir="${release}" />
+	<mkdir dir="${release}/linux" />
+	<tar tarfile="${release}/linux/jfritz-${version}.tar" basedir="${dist}" />
+	<gzip src="${release}/linux/jfritz-${version}.tar" zipfile="${release}/linux/jfritz-${version}.tar.gz" />
+	<delete file="${release}/linux/jfritz-${version}.tar" />
+</target>
+
+<target name="release-mac" depends="build">
+	<delete dir="${release}/mac" />
+	<mkdir dir="${release}" />
+	<mkdir dir="${release}/mac" />
+	<mkdir dir="${release}/mac/tmp" />
+
+	<!-- copy mac-files to release directory -->
+	<copy todir="${release}/mac/tmp">
+		<fileset dir="../Release/MAC">
+		</fileset>
+	</copy>
+
+	<!-- modify mac-files -->
+	<move file="${release}/mac/tmp/__MACOSX/jfritz-VERSION" tofile="${release}/mac/tmp/__MACOSX/jfritz-${version}" />
+	<move file="${release}/mac/tmp/jfritz-VERSION" tofile="${release}/mac/tmp/jfritz-${version}" />
+
+	<!-- copy new jfritz-files to mac directory -->
+	<copy file="${dist}/JFritz-Handbuch.pdf" todir="${release}/mac/tmp/jfritz-${version}" />
+	<copy todir="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java">
+		<fileset dir="${dist}">
+		</fileset>
+	</copy>
+	<delete file="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java/JFritz-Handbuch.pdf" />
+	<delete file="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java/jacob.dll" />
+	<delete file="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java/lib/jacob.jar" />
+	<delete dir="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java/lib/windows" />
+	<delete dir="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java/lib/sunos" />
+	<delete dir="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java/lib/linux" />
+
+	<!-- zip mac directorys and delete temporary files -->
+	<zip zipfile="${release}/mac/jfritz-${version}-MAC.zip" basedir="${release}/mac/tmp" />
+	<delete dir="${release}/mac/tmp" />
+
+</target>
+
+<target name="release-win" depends="build">
+	<delete dir="${release}/win" />
+	<mkdir dir="${release}" />
+	<mkdir dir="${release}/win" />
+	<mkdir dir="${release}/win/tmp" />
+
+	<!-- copy win-files to release directory -->
+	<copy todir="${release}/win/tmp">
+		<fileset dir="../Release/WIN">
+		</fileset>
+	</copy>
+
+	<!-- copy new jfritz-files to win directory -->
+	<copy todir="${release}/win/tmp/binaries">
+		<fileset dir="${dist}">
+		</fileset>
+	</copy>
+
+	<!-- generate setup-file -->
+	<exec executable="D:\Programme\InnoSe~1\ISCC.exe">
+		<arg value="${release}/win/tmp/jfritz.iss" />
+	</exec>
+
+	<!-- zip setup-file and delete temporary files-->
+	<zip zipfile="${release}/win/jfritz-${version}-Win.zip" basedir="${release}/win/tmp/Output" />
+	<delete dir="${release}/win/tmp" />
+</target>
+
+<target name="release-all" depends="release-linux, release-mac, release-win">
+</target>
+
+<target name="junit" depends="compile" description="Runs all test cases and generate report">
+	<mkdir dir="${build.unittests}" />
+	<mkdir dir="${build.unittests.reports}" />
+	<mkdir dir="${build.unittests.reports}/html" />
+	<javac debug="${debug}" deprecation="on" srcdir="${unittests}" destdir="${build.unittests}" includes="**/*.java">
+		<classpath refid="test.classpath" />
+	</javac>
+
+	<classpath refid="test.classpath" />
+	<junit fork="yes" printsummary="on" filtertrace="on" haltonfailure="no" showoutput="yes">
+		<classpath refid="test.classpath" />
+		<formatter type="plain" usefile="false" />
+		<formatter type="xml" extension=".xml" usefile="true" />
+		<batchtest todir="${build.unittests.reports}">
+			<fileset dir="${build.unittests}">
+				<include name="**/*Test*.class" />
+				<exclude name="**/AllTests.class" />
+			</fileset>
+		</batchtest>
+	</junit>
+
+	<junitreport todir="${build.unittests.reports}/html">
+		<fileset dir="${build.unittests.reports}">
+			<include name="TEST-*.xml" />
+		</fileset>
+		<report format="frames" todir="${build.unittests.reports}/html" />
+	</junitreport>
+</target>
 </project>

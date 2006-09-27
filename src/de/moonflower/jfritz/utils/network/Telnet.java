@@ -15,7 +15,7 @@ import de.moonflower.jfritz.dialogs.config.TelnetConfigDialog;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 
-import org.apache.commons.net.telnet.*;
+import org.apache.commons.net.telnet.TelnetClient;
 
 /**
  * Manages Telnetfunctions: Connect, Login, Disconnect, sendCommand
