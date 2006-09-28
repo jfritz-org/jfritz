@@ -916,6 +916,7 @@ public class CallerList extends AbstractTableModel {
                 boolean fixedFilterPassed = true;
                 boolean sipFilterPassed = true;
                 boolean commentFilterPassed = true;
+                boolean callByCallFilterPassed = true;
 
                 // SearchFilter: Number, Participant, Date
                 String parts[] = filterSearch.split(" "); //$NON-NLS-1$
@@ -942,7 +943,7 @@ public class CallerList extends AbstractTableModel {
                 }
 
                 if (filterCallByCall) {
-                    searchFilterPassed = callByCallFilter.passFilter(call);
+                    callByCallFilterPassed = callByCallFilter.passFilter(call);
                 }
 
                 if (filterDate) {
@@ -965,7 +966,7 @@ public class CallerList extends AbstractTableModel {
 
                 if (searchFilterPassed && dateFilterPassed && handyFilterPassed
                         && fixedFilterPassed && sipFilterPassed
-                        && commentFilterPassed)
+                        && commentFilterPassed && callByCallFilterPassed)
                     if (!(filterNumber && call.getPhoneNumber() == null)) {
                         if ((!filterCallIn)
                                 && (call.getCalltype().toInt() == CallType.CALLIN))
