@@ -53,11 +53,11 @@ public class DisplayCallsMonitor extends CallMonitorListenerAdaptor {
             name = callerperson.getFullname();
             Debug.msg("Found in local database: " + name); //$NON-NLS-1$
         } else {
-            Debug.msg("Searchin on dasoertliche.de ..."); //$NON-NLS-1$
+            Debug.msg("Searchin on dastelefonbuch.de ..."); //$NON-NLS-1$
             Person person = ReverseLookup.lookup(callerPhoneNumber);
             if (!person.getFullname().equals("")) { //$NON-NLS-1$
                 name = person.getFullname();
-                Debug.msg("Found on dasoertliche.de: " + name); //$NON-NLS-1$
+                Debug.msg("Found on dastelefonbuch.de: " + name); //$NON-NLS-1$
                 Debug.msg("Add person to database"); //$NON-NLS-1$
                 JFritz.getPhonebook().addEntry(person);
                 JFritz.getPhonebook().fireTableDataChanged();
@@ -84,14 +84,14 @@ public class DisplayCallsMonitor extends CallMonitorListenerAdaptor {
             name[2] = callerperson.getCompany();
             Debug.msg("Found in local database: " + name[1] + ", " + name[0]); //$NON-NLS-1$,  //$NON-NLS-2$
         } else {
-            Debug.msg("Searching on dasoertliche.de ..."); //$NON-NLS-1$
+            Debug.msg("Searching on dastelefonbuch.de ..."); //$NON-NLS-1$
             Person person = ReverseLookup.lookup(callerPhoneNumber);
             if (!person.getFullname().equals("")) { //$NON-NLS-1$
                 name[0] = person.getFirstName();
                 name[1] = person.getLastName();
                 name[2] = person.getCompany();
                 Debug
-                        .msg("Found on dasoertliche.de: " + name[1] + ", " + name[0]); //$NON-NLS-1$,  //$NON-NLS-2$
+                        .msg("Found on dastelefonbuch.de: " + name[1] + ", " + name[0]); //$NON-NLS-1$,  //$NON-NLS-2$
                 Debug.msg("Add person to database"); //$NON-NLS-1$
                 JFritz.getPhonebook().addEntry(person);
                 JFritz.getPhonebook().fireTableDataChanged();

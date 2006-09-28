@@ -18,7 +18,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 /**
  * This class is responsible for doing reverse lookups for german numbers
  *
- * The search engine used is: http://www.dasoertliche.de
+ * The search engine used is: http://dastelefonbuch.de
  * A big thanks to them for creating an easy to parse web page
  *
  *
@@ -26,7 +26,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  */
 public final class ReverseLookupGermany {
 
-	public final static String SEARCH_URL="http://tel.search.ch/result.html?tel=";
+	public final static String SEARCH_URL="http://www.tao.dastelefonbuch.de/?sourceid=Mozilla-search&cmd=search&kw=";
 
 	public final static String FILE_HEADER = "Vorwahl;Ortsnetz";
 
@@ -41,7 +41,7 @@ public final class ReverseLookupGermany {
 	 * @return a person object created using the data from the site
 	 */
 	/**
-	 * Static method for looking up entries from "dasoertliche"
+	 * Static method for looking up entries from "dastelefonbuch.de"
 	 *
 	 * @param number
 	 * @return name
@@ -55,8 +55,8 @@ public final class ReverseLookupGermany {
 		String data = ""; //$NON-NLS-1$
 		Person newPerson;
 
-		String urlstr = "http://www.dasoertliche.de/DB4Web/es/oetb2suche/home.htm?main=Antwort&s=2&kw_invers=" //$NON-NLS-1$
-				+ number;
+		String urlstr = SEARCH_URL + number;
+
 		try {
 			url = new URL(urlstr);
 			if (url != null) {
@@ -88,7 +88,7 @@ public final class ReverseLookupGermany {
 						}
 						header += headerName + ": " + headerValue + " | "; //$NON-NLS-1$,  //$NON-NLS-2$
 					}
-					Debug.msg("Header of dasoertliche.de: " + header); //$NON-NLS-1$
+					Debug.msg("Header of dastelefonbuch.de: " + header); //$NON-NLS-1$
 					Debug.msg("CHARSET : " + charSet); //$NON-NLS-1$
 
 					// Get used Charset
@@ -100,20 +100,31 @@ public final class ReverseLookupGermany {
 						d = new BufferedReader(new InputStreamReader(con
 								.getInputStream(), charSet));
 					}
-					int i = 0;
-					String str = ""; //$NON-NLS-1$
 
 					// Get response data
-					while ((i < 700) && (null != ((str = d.readLine())))) {
-						data += str;
-						i++;
+					boolean flg_found_start = false;
+					boolean flg_found_end   = false;
+					String str = ""; //$NON-NLS-1$
+
+					while ((flg_found_end == false) && (null != ((str = d.readLine())))) {
+						// Search for starttag
+						if (flg_found_start == false
+								&& str.contains("<!-- ****** Treffer Einträge ****** -->"))
+							flg_found_start = true;
+
+						if (flg_found_start == true) {
+							data += str;
+							// Seach for endtag
+							if (str.contains("<!-- ****** Ende Treffer Einträge ****** -->"))
+								flg_found_end = true;
+						}
 					}
 					d.close();
-					Debug.msg("Begin processing responce from dasoertliche.de");
+					Debug.msg("Begin processing responce from dastelefonbuch.de");
 					//This just makes the debug output unreadable!
-					//Debug.msg("DasOertliche Webpage: " + data); //$NON-NLS-1$
+					//Debug.msg("dastelefonbuch.de Webpage: " + data); //$NON-NLS-1$
 					Pattern p = Pattern
-							.compile("<a\\s*class=\"blb\" href=\"[^\"]*\">([^<]*)</a>(?:<br>([^<]*))?</td>"); //$NON-NLS-1$
+							.compile("title=\\\"([^<]*)\\\">[^\"]*[^>]*>([^<]*)?[^\"]*.*title=\\\"([^<]*)\\\">([^-*]*)"); //$NON-NLS-1$
 
 					Matcher m = p.matcher(data);
 					// Get name and address
@@ -148,15 +159,12 @@ public final class ReverseLookupGermany {
 						if (m.group(2) != null) { // there is an address
 							String line2 = m.group(2).trim();
 							Debug.msg(3, "Pattern2: " + line2); //$NON-NLS-1$
-							split = line2.split(", ", 2); //$NON-NLS-1$
-							String zipcity = ""; //$NON-NLS-1$
-							if (split.length > 1) {
-								address = split[0].trim();
-								zipcity = split[1].trim();
-							} else {
-								zipcity = split[0].trim();
-								address = ""; //$NON-NLS-1$
-							}
+							address = line2.trim();
+						}
+						if (m.group(3) != null) { // there is a zipcity
+							String line3 = m.group(3).trim();
+							Debug.msg(3, "Pattern3: " + line3); //$NON-NLS-1$
+							String zipcity = line3.replace("\t", ""); //$NON-NLS-1$
 							split = zipcity.split(" ", 2); //$NON-NLS-1$
 							if (split.length > 1) {
 								zipcode = split[0].trim();

@@ -178,7 +178,7 @@ public class PhoneBook extends AbstractTableModel {
 			    break;
 			case 4:
 			    o1 = v1.getPostalCode() + v1.getCity().toUpperCase();
-			    o2 = v2.getPostalCode() + v1.getCity().toUpperCase();
+			    o2 = v2.getPostalCode() + v2.getCity().toUpperCase();
 			    break;
 			case 5:
                 o1 = ""; //$NON-NLS-1$
