@@ -38,6 +38,7 @@ import de.moonflower.jfritz.callerlist.filter.DateFilter;
 import de.moonflower.jfritz.callerlist.filter.FixedFilter;
 import de.moonflower.jfritz.callerlist.filter.HandyFilter;
 import de.moonflower.jfritz.callerlist.filter.NoNumberFilter;
+import de.moonflower.jfritz.callerlist.filter.SearchFilter;
 import de.moonflower.jfritz.callerlist.filter.SipFilter;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
@@ -70,7 +71,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	private JButton deleteEntriesButton;
 
-	private JTextField searchFilter;
+	private JTextField searchFilterTextField;
 
 	private CallByCallFilter callByCallFilter;
 
@@ -89,6 +90,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	private HandyFilter handyFilter;
 
 	private SipFilter sipFilter;
+
+	private SearchFilter searchFilter;
 
 	// private FixedFilter fixedFilter;
 
@@ -292,11 +295,11 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		lowerToolBar.addSeparator();
 
 		lowerToolBar.add(new JLabel(JFritz.getMessage("search") + ": ")); //$NON-NLS-1$,  //$NON-NLS-2$
-		searchFilter = new JTextField(JFritz.getProperty("filter.search", ""), //$NON-NLS-1$,  //$NON-NLS-2$
+		searchFilterTextField = new JTextField(JFritz.getProperty("filter.search", ""), //$NON-NLS-1$,  //$NON-NLS-2$
 				10);
-		searchFilter.addKeyListener(this);
+		searchFilterTextField.addKeyListener(this);
 
-		lowerToolBar.add(searchFilter);
+		lowerToolBar.add(searchFilterTextField);
 		button = new JButton(JFritz.getMessage("clear")); //$NON-NLS-1$
 		button.setActionCommand("clearFilter"); //$NON-NLS-1$
 		button.addActionListener(this);
@@ -376,7 +379,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	}
 
 	public void setSearchFilter(String text) {
-		searchFilter.setText(text);
+		searchFilterTextField.setText(text);
 	}
 
 	public void setDateFilterText() {
@@ -554,14 +557,11 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			return;
 		}
 		if (e.getActionCommand().equals("filter_sip")) { //$NON-NLS-1$
-			Debug.err("tes1");
 			if (!sipFilterButton.isSelected()) {
-				Debug.err("tes2");
 				sipFilter = new SipFilter(callerList.getSelectedOrSipProviders());
 				callerList.addFilter(sipFilter);
 			} else
 				callerList.removeFilter(sipFilter);
-			Debug.err("tes3");
 			return;
 		}
 		if (e.getActionCommand().equals("filter_callbycall")) { //$NON-NLS-1$
@@ -745,20 +745,19 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	public void keyPressed(KeyEvent arg0) {
 		if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
-			String filter = ""; //$NON-NLS-1$
-			JTextField search = (JTextField) arg0.getSource();
-			if (!filter.equals(search.getText())) {
-				filter = search.getText();
-				JFritz.setProperty("filter.search", filter); //$NON-NLS-1$
-				callerList.updateFilter();
-				callerList.fireTableStructureChanged();
+			callerList.removeFilter(searchFilter);// remove old filter first
+			String str = ""; //$NON-NLS-1$
+			JTextField search = (JTextField) arg0.getSource(); // FIXME
+			str = search.getText();
+			Debug.msg(str);
+			if (str.equals("")) {
+				// add no filter
+			} else {
+				searchFilter = new SearchFilter(str);
+				callerList.addFilter(searchFilter);
 			}
-			if (search.getText().equals("")) { //$NON-NLS-1$
-				filter = " "; //$NON-NLS-1$
-				JFritz.setProperty("filter.search", filter); //$NON-NLS-1$
-				callerList.updateFilter();
-				callerList.fireTableStructureChanged();
-			}
+			return;
+
 		}
 
 	}
