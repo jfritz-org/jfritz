@@ -224,7 +224,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		dateFilterButton.setToolTipText(JFritz.getMessage("filter_date")); //$NON-NLS-1$
 		dateFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
 				.getProperty("filter.date", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		callerList.getDateFilter().updateDateFilter();
+//		callerList.getDateFilter().updateDateFilter();
 		setDateFilterText();
 		JPopupMenu datePopupMenu = new JPopupMenu();
 		menuItem = new JMenuItem(JFritz.getMessage("date_filter_today")); //$NON-NLS-1$
@@ -401,6 +401,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	}
 
 	private void setMissedFilter(int filterType) {
+		//FIXME
 		Date from = null;
 		Date to = null;
 		JFritz.setProperty("filter.callin", "true"); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -425,7 +426,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			JFritz.setProperty("filter.date_from", fromstr); //$NON-NLS-1$
 			JFritz.setProperty("filter.date_to", tostr); //$NON-NLS-1$
 			JFritz.setProperty("filter.date", "true"); //$NON-NLS-1$,  //$NON-NLS-2$
-			callerList.getDateFilter().updateDateFilter();
+//			callerList.getDateFilter().updateDateFilter();
 			setDateFilterText();
 			break;
 		}
@@ -511,8 +512,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		if (e.getActionCommand().equals("filter_date")) { //$NON-NLS-1$
 			JFritz.setProperty("filter.date", Boolean //$NON-NLS-1$
 					.toString(!dateFilterButton.isSelected()));
-			callerList.getDateFilter().setFilter(
-					DateFilter.DATEFILTER_SELECTION);
+//			callerList.getDateFilter().setFilter(
+//					DateFilter.DATEFILTER_SELECTION);
 			setDateFilterText();
 			callerList.fireTableStructureChanged();
 			return;
@@ -521,7 +522,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			dateFilterButton.setSelected(false);
 			JFritz.setProperty("filter.date", Boolean //$NON-NLS-1$
 					.toString(!dateFilterButton.isSelected()));
-			callerList.getDateFilter().setFilter(DateFilter.DATEFILTER_TODAY);
+//			callerList.getDateFilter().setFilter(DateFilter.DATEFILTER_TODAY);
 			setDateFilterText();
 			callerList.fireTableStructureChanged();
 			return;
@@ -530,8 +531,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			dateFilterButton.setSelected(false);
 			JFritz.setProperty("filter.date", Boolean //$NON-NLS-1$
 					.toString(!dateFilterButton.isSelected()));
-			callerList.getDateFilter().setFilter(
-					DateFilter.DATEFILTER_YESTERDAY);
+//			callerList.getDateFilter().setFilter(
+//					DateFilter.DATEFILTER_YESTERDAY);
 			setDateFilterText();
 			callerList.fireTableStructureChanged();
 			return;
@@ -540,8 +541,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			dateFilterButton.setSelected(false);
 			JFritz.setProperty("filter.date", Boolean //$NON-NLS-1$
 					.toString(!dateFilterButton.isSelected()));
-			callerList.getDateFilter().setFilter(
-					DateFilter.DATEFILTER_THIS_MONTH);
+//			callerList.getDateFilter().setFilter(
+//					DateFilter.DATEFILTER_THIS_MONTH);
 			setDateFilterText();
 			callerList.fireTableStructureChanged();
 			return;
@@ -550,8 +551,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			dateFilterButton.setSelected(false);
 			JFritz.setProperty("filter.date", Boolean //$NON-NLS-1$
 					.toString(!dateFilterButton.isSelected()));
-			callerList.getDateFilter().setFilter(
-					DateFilter.DATEFILTER_LAST_MONTH);
+//			callerList.getDateFilter().setFilter(
+//					DateFilter.DATEFILTER_LAST_MONTH);
 			setDateFilterText();
 			callerList.fireTableStructureChanged();
 			return;
@@ -626,8 +627,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	public void actionPerformed(ActionEvent e) {
 		handleAction(e);
 		// callerList.updateFilter();
-		callerList.updateFilteredData();
-		callerList.fireTableStructureChanged();
+		callerList.update();
 	}
 
 	public void setDeleteListButton() {
@@ -710,6 +710,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	}
 
 	private void clearAllFilter() {
+		//FIXME
 		setSearchFilter(""); //$NON-NLS-1$
 		JFritz.setProperty("filter.search", ""); //$NON-NLS-1$,  //$NON-NLS-2$
 		JFritz.setProperty("filter.callin", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -725,7 +726,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		JFritz.setProperty("filter.handy", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
 		handyFilterButton.setSelected(true);
 		JFritz.setProperty("filter.date", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
-		callerList.getDateFilter().updateDateFilter();
+//		callerList.getDateFilter().updateDateFilter();
 		setDateFilterText();
 		dateFilterButton.setSelected(true);
 		JFritz.setProperty("filter.sip", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -756,6 +757,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 				searchFilter = new SearchFilter(str);
 				callerList.addFilter(searchFilter);
 			}
+			callerList.update();
 			return;
 
 		}
