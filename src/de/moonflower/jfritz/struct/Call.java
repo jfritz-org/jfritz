@@ -18,13 +18,9 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  */
 public class Call {
 
-    public final static int ROUTE_UNDEFINED = 0;
+    public final static int ROUTE_FIXED_NETWORK = 0;
 
-    public final static int ROUTE_POTS = 1;
-
-    public final static int ROUTE_ISDN = 2;
-
-    public final static int ROUTE_SIP = 3;
+    public final static int ROUTE_SIP = 1;
 
     private CallType calltype;
 
@@ -46,7 +42,9 @@ public class Call {
 
     public Call(CallType calltype, Date calldate,
             PhoneNumber number, String port, String route, int duration, int route_type) {
-        this.calltype = calltype;
+        this.route_type = route_type;
+
+    	this.calltype = calltype;
         this.calldate = calldate;
         this.number = number;
 
@@ -63,6 +61,7 @@ public class Call {
                 SipProvider sipProvider = (SipProvider) en.nextElement();
                 if (sipProvider.getNumber().equals(this.route.substring(10))) {
                     this.route = sipProvider.toString();
+                    this.route_type = ROUTE_SIP;
                     break;
                 }
             }
@@ -71,13 +70,11 @@ public class Call {
 
         this.port = port;
         this.duration = duration;
-
-        this.route_type = route_type;
     }
 
     public Call(CallType calltype, Date calldate,
             PhoneNumber number, String port, String route, int duration) {
-        this(calltype, calldate, number, port, route, duration, ROUTE_UNDEFINED);
+        this(calltype, calldate, number, port, route, duration, ROUTE_FIXED_NETWORK);
     }
 
     /**

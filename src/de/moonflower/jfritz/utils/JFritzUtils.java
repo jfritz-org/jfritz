@@ -15,7 +15,6 @@ import java.net.URLConnection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 
 /**
@@ -228,50 +227,6 @@ public class JFritzUtils {
 			prevCh = ch; // prevCh for next iteration is ch.
 		}
 		return strBuf.toString();
-	}
-
-   public static boolean checkForNewVersion() {
-		URL url = null;
-		String data = ""; //$NON-NLS-1$
-
-		String urlstr = "http://www.jfritz.org/update/current.txt"; //$NON-NLS-1$
-
-		try {
-			url = new URL(urlstr);
-			if (url != null) {
-
-				URLConnection con;
-				try {
-					con = url.openConnection();
-					BufferedReader d = new BufferedReader(
-							new InputStreamReader(con.getInputStream()));
-					int i = 0;
-					String str = ""; //$NON-NLS-1$
-
-					// Get response data
-					while ((i < 700) && (null != ((str = d.readLine())))) {
-						data += str;
-						i++;
-					}
-					d.close();
-					Debug.msg("Begin processing Version File");
-
-					if (Integer.valueOf(data.replaceAll("\\.", "")).compareTo(
-							Integer.valueOf(JFritz.PROGRAM_VERSION.replaceAll(
-									"\\.", ""))) > 0) {
-						return true;
-					}
-
-				} catch (IOException e1) {
-					Debug
-							.err("Error while retrieving " + urlstr + " (possibly no connection to the internet)"); //$NON-NLS-1$
-				}
-			}
-		} catch (MalformedURLException e) {
-			Debug.err("URL invalid: " + urlstr); //$NON-NLS-1$
-		}
-		return false;
-
 	}
 
 }

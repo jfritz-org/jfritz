@@ -38,7 +38,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
         Debug.msg("Server: " + line); //$NON-NLS-1$
         String number = ""; //$NON-NLS-1$
         String provider = ""; //$NON-NLS-1$
-        int route_type = Call.ROUTE_UNDEFINED;
+        int route_type = Call.ROUTE_FIXED_NETWORK;
         String[] split;
         split = line.split(";", 7); //$NON-NLS-1$
         for (int i = 0; i < split.length; i++) {
@@ -56,7 +56,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 
             // Neues Ausgabeformat
             if (split[5].equals("POTS")) { //$NON-NLS-1$
-                route_type = Call.ROUTE_POTS;
+                route_type = Call.ROUTE_FIXED_NETWORK;
                 if (split[4].equals("")) { //$NON-NLS-1$
                     provider = JFritz.getMessage("fixed_network"); //$NON-NLS-1$
                 } else {
@@ -68,7 +68,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
                         split[5], split[5]);
 
             } else if (split[5].equals("ISDN")) { //$NON-NLS-1$
-                route_type = Call.ROUTE_ISDN;
+                route_type = Call.ROUTE_FIXED_NETWORK;
                 provider = split[4];
             } else
                 provider = split[4];
@@ -100,7 +100,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 
             // Neues Ausgabeformat
             if (split[6].equals("POTS")) { //$NON-NLS-1$
-                route_type = Call.ROUTE_POTS;
+                route_type = Call.ROUTE_FIXED_NETWORK;
                 if (split[4].equals("")) { //$NON-NLS-1$
                     provider = JFritz.getMessage("fixed_network"); //$NON-NLS-1$
                 } else {
@@ -112,7 +112,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
                         split[6], split[6]);
 
             } else if (split[6].equals("ISDN")) { //$NON-NLS-1$
-                route_type = Call.ROUTE_ISDN;
+                route_type = Call.ROUTE_FIXED_NETWORK;
                 provider = split[4];
             } else
                 provider = split[4];
