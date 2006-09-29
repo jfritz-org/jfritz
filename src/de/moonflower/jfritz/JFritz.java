@@ -586,7 +586,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.351 2006/09/28 19:54:47 robotniko Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.352 2006/09/29 12:00:28 marc0815 Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
@@ -1429,7 +1429,7 @@ public final class JFritz {
     /**
      * @return Returns the callerlist.
      */
-    public static final CallerList getCallerlist() {
+    public static final CallerList getCallerList() {
         return callerlist;
     }
 
@@ -1771,8 +1771,8 @@ public final class JFritz {
     private static void reverseLookup() {
         Debug.msg("Doing reverse Lookup");
         int j = 0;
-        for (int i = 0; i < getCallerlist().getRowCount(); i++) {
-            Vector data = getCallerlist().getFilteredCallVector();
+        for (int i = 0; i < getCallerList().getRowCount(); i++) {
+            Vector data = getCallerList().getFilteredCallVector();
             Call call = (Call) data.get(i);
             PhoneNumber number = call.getPhoneNumber();
             if (number != null && (call.getPerson() == null)) {
@@ -1785,7 +1785,7 @@ public final class JFritz {
                 if (newPerson != null) {
                     getPhonebook().addEntry(newPerson);
                     getPhonebook().fireTableDataChanged();
-                    getCallerlist().fireTableDataChanged();
+                    getCallerList().fireTableDataChanged();
                 }
 
             }

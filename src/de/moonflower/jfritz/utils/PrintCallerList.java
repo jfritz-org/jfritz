@@ -140,7 +140,7 @@ public class PrintCallerList {
             .getTableHeader().getColumnModel().getColumn(i)
             .getHeaderValue().toString();
             label = LabelElementFactory.createLabelElement(JFritz
-                    .getCallerlist().getColumnName(i), new Rectangle2D.Float(
+                    .getCallerList().getColumnName(i), new Rectangle2D.Float(
                     columnStart[i], 50, columnWidth[i], 20), Color.BLACK,
                     ElementAlignment.CENTER, ElementAlignment.MIDDLE, font,
                     columnName);
@@ -228,7 +228,7 @@ public class PrintCallerList {
 			public Object getValue() {
 
                 Object ob = getDataRow().get(
-                        JFritz.getCallerlist().getColumnName(0));
+                        JFritz.getCallerList().getColumnName(0));
                 if (ob == null)
                     return null;
                 CallType callType = (CallType) ob;
@@ -255,7 +255,7 @@ public class PrintCallerList {
 
 			public Object getValue() {
                 Object ob = getDataRow().get(
-                        JFritz.getCallerlist().getColumnName(1));
+                        JFritz.getCallerList().getColumnName(1));
                 if (ob == null) {
                     return ""; //$NON-NLS-1$
                 }
@@ -273,7 +273,7 @@ public class PrintCallerList {
 
 			public Object getValue() {
                 Object ob = getDataRow().get(
-                        JFritz.getCallerlist().getColumnName(2));
+                        JFritz.getCallerList().getColumnName(2));
                 if (ob == null) {
                     return ""; //$NON-NLS-1$
                 }
@@ -291,7 +291,7 @@ public class PrintCallerList {
 
 			public Object getValue() {
                 Object number = getDataRow().get(
-                        JFritz.getCallerlist().getColumnName(3));
+                        JFritz.getCallerList().getColumnName(3));
                 if (number == null) {
                     return ""; //$NON-NLS-1$
                 }
@@ -309,7 +309,7 @@ public class PrintCallerList {
 
 			public Object getValue() {
                 Object person = getDataRow().get(
-                        JFritz.getCallerlist().getColumnName(4));
+                        JFritz.getCallerList().getColumnName(4));
                 if (person == null)
                     return ""; //$NON-NLS-1$
                 return ((Person) person).getFullname();
@@ -326,7 +326,7 @@ public class PrintCallerList {
 
 			public Object getValue() {
                 Object obj = getDataRow().get(
-                        JFritz.getCallerlist().getColumnName(5));
+                        JFritz.getCallerList().getColumnName(5));
                 if (obj == null)
                     return ""; //$NON-NLS-1$
                 String port = (String) obj;
@@ -359,7 +359,7 @@ public class PrintCallerList {
 
 			public Object getValue() {
                 Object obj = getDataRow().get(
-                        JFritz.getCallerlist().getColumnName(6));
+                        JFritz.getCallerList().getColumnName(6));
                 if (obj == null)
                     return ""; //$NON-NLS-1$
                 String route = (String) obj;
@@ -377,7 +377,7 @@ public class PrintCallerList {
 
 			public Object getValue() {
                 Object obj = getDataRow().get(
-                        JFritz.getCallerlist().getColumnName(7));
+                        JFritz.getCallerList().getColumnName(7));
                 if (obj == null)
                     return ""; //$NON-NLS-1$
                 int duration = Integer.parseInt(obj.toString());
@@ -395,7 +395,7 @@ public class PrintCallerList {
 
 			public Object getValue() {
                 Object obj = getDataRow().get(
-                        JFritz.getCallerlist().getColumnName(8));
+                        JFritz.getCallerList().getColumnName(8));
                 if (obj == null)
                     return ""; //$NON-NLS-1$
                 return obj.toString();
@@ -420,7 +420,7 @@ public class PrintCallerList {
             } else if (columnName.equals("date")) { //$NON-NLS-1$
                 factory = new DateFieldElementFactory();
                 factory.setFontSize(fontSize);
-                factory.setName(JFritz.getCallerlist().getColumnName(i));
+                factory.setName(JFritz.getCallerList().getColumnName(i));
                 factory
                         .setAbsolutePosition(new Point2D.Float(columnStart[i],
                                 2));
@@ -435,7 +435,7 @@ public class PrintCallerList {
             } else {
                 factory = new TextFieldElementFactory();
                 factory.setFontSize(fontSize);
-                factory.setName(JFritz.getCallerlist().getColumnName(i));
+                factory.setName(JFritz.getCallerList().getColumnName(i));
                 factory
                         .setAbsolutePosition(new Point2D.Float(columnStart[i],
                                 2));
@@ -477,7 +477,7 @@ public class PrintCallerList {
     public void print() {
         Debug.msg("Start report creation"); //$NON-NLS-1$
         JFreeReport report = createReportDefinition();
-        report.setData(JFritz.getCallerlist());
+        report.setData(JFritz.getCallerList());
         try {
             PreviewFrame preview = new PreviewFrame(report);
             preview.pack();

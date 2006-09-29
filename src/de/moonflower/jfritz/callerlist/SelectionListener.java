@@ -51,7 +51,7 @@ public class SelectionListener implements ListSelectionListener {
 			selectedCalls = rows.length;
 			selectedCallsTotalMinutes = 0;
 			for (int i = 0; i < rows.length; i++) {
-				call = (Call) JFritz.getCallerlist().getFilteredCallVector().get(rows[i]);
+				call = (Call) JFritz.getCallerList().getFilteredCallVector().get(rows[i]);
 				selectedCallsTotalMinutes += call.getDuration();
 			}
 

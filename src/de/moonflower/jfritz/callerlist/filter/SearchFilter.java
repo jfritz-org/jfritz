@@ -5,10 +5,12 @@ import de.moonflower.jfritz.struct.Call;
 
 public class SearchFilter extends CallFilter {
 	SearchFilter(String name) {
-		super("filter.search");
 		// TODO Auto-generated constructor stub
 	}
-	public boolean passFilterIntern(Call currentCall) {
+	//TODO also, folgendes problem: wenn man im suchfeld nach 0800 sucht, findet er es nicht, da er bisher nur die internationale nummer durchsucht. also sucht er in 49800...
+//	somit kann noch nicht nach vorwahlen gesucht werden. man müsste noch in .getPhoneNumber().getAreaNumber() suchen
+
+	public boolean passFilter(Call currentCall) {
 		String filterSearch = JFritz.getProperty("filter.search", ""); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		String parts[] = filterSearch.split(" "); //$NON-NLS-1$

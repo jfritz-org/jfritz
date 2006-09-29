@@ -2,11 +2,11 @@ package de.moonflower.jfritz.callerlist.filter;
 
 import de.moonflower.jfritz.struct.Call;
 
-public class CommentFilter extends CallFilter {
+public class NoNumberFilter extends CallFilter {
 
 	public boolean passFilter(Call currentCall) {
 
-		if (!currentCall.getComment().equals(""))
+		if (currentCall.getPhoneNumber() == null)
 			return false;
 		return true;
 	}

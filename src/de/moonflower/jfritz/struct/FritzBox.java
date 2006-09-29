@@ -457,7 +457,7 @@ public class FritzBox {
 				// pass it on to the import function
 
 				Debug.msg("Received response, begin processing call list");
-				newEntries = JFritz.getCallerlist().importFromCSVFile(reader);
+				newEntries = JFritz.getCallerList().importFromCSVFile(reader);
 				Debug.msg("Finished processing response");
 
 				// close the reader and the cocket connection

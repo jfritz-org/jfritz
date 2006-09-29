@@ -181,7 +181,7 @@ public class Call {
         else {
             //String sipRoute = ""; //$NON-NLS-1$
             String convertedRoute = route;
-        	if(route.startsWith("SIP")){
+        	if(route.startsWith("SIP")){ // FIXME old code
         			Enumeration en = JFritz.getSIPProviderTableModel()
         			.getProviderList().elements();
         		while (en.hasMoreElements()) {

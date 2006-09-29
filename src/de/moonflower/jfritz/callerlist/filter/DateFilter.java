@@ -36,13 +36,12 @@ public class DateFilter extends CallFilter {
     private String filterToDate = null;
 
     public DateFilter() {
-    	super("filter.date");
             filterFromDate = JFritz.getProperty("filter.date_from", new SimpleDateFormat("dd.MM.yy").format(Calendar.getInstance().getTime()));
             filterToDate = JFritz.getProperty("filter.date_to", new SimpleDateFormat("dd.MM.yy").format(Calendar.getInstance().getTime()));
             filterType = Integer.parseInt(JFritz.getProperty("filter.date_type", "0")); //$NON-NLS-1$ $NON-NLS-2$
     }
 
-    public boolean passFilterIntern(Call currentCall) {
+    public boolean passFilter(Call currentCall) {
        try {
             if (currentCall.getCalldate().after(
                     new SimpleDateFormat("dd.MM.yy") //$NON-NLS-1$
@@ -73,7 +72,7 @@ public class DateFilter extends CallFilter {
                 int rows[] = JFritz.getJframe().getCallerTable()
                         .getSelectedRows();
                 for (int i = 0; i < rows.length; i++) {
-                    Call call = (Call) JFritz.getCallerlist()
+                    Call call = (Call) JFritz.getCallerList()
                             .getFilteredCallVector().get(rows[i]);
 
                     if (to == null || call.getCalldate().after(to))
@@ -92,7 +91,7 @@ public class DateFilter extends CallFilter {
         }
         }
         updateDateFilter();
-        JFritz.getCallerlist().updateFilter();
+        JFritz.getCallerList().updateFilter();
     }
 
     public void updateDateFilter() {

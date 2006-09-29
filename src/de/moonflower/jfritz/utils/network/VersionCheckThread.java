@@ -63,6 +63,7 @@ public class VersionCheckThread implements Runnable {
                         options, // the titles of buttons
                         options[0]); // default button title
                 if (ok == JOptionPane.YES_OPTION) {
+                	;
                 }
             }
         } else if (informNoNewVersion == true) {

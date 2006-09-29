@@ -13,9 +13,9 @@ public class CallByCallFilter extends CallFilter {
 
     private Vector filteredCallByCallProviders = new Vector();
 
-    public CallByCallFilter() {
-    	super("filter.callbycall");
-            String providers = JFritz.getProperty(
+    public CallByCallFilter(Vector providers) {
+
+    	/*String providers = JFritz.getProperty(
                     "filter.callbycallProvider", "[]"); //$NON-NLS-1$,  //$NON-NLS-2$
 
             providers = providers.replaceAll("\\[", ""); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -31,19 +31,19 @@ public class CallByCallFilter extends CallFilter {
                 }
                 filteredCallByCallProviders.add(providerEntries[i]);
             }
-
+          */
+    	filteredCallByCallProviders = providers;
     }
 
-    public boolean passFilterIntern(Call currentCall) {
-    	if (filerIsDisabled())return true;
+    public boolean passFilter(Call currentCall) {
         if (currentCall.getPhoneNumber() != null) {
-            String callbycallprovider = currentCall.getPhoneNumber()
+            String currentProvider = currentCall.getPhoneNumber()
                     .getCallByCall();
-            if (callbycallprovider.equals("")) { //$NON-NLS-1$
-                callbycallprovider = "NONE"; //$NON-NLS-1$
+            if (currentProvider.equals("")) { //$NON-NLS-1$
+                currentProvider = "NONE"; //$NON-NLS-1$
             }
             if (!filteredCallByCallProviders
-                    .contains(callbycallprovider)) {
+                    .contains(currentProvider)) {
                 return false;
             }
         } else { // Hide calls without number
@@ -53,49 +53,4 @@ public class CallByCallFilter extends CallFilter {
         }
         return true;
     }
-
-    public void setFilter(int filter) {
-        filteredCallByCallProviders.clear();
-        try {
-            String provider = ""; //$NON-NLS-1$
-            int rows[] = JFritz.getJframe().getCallerTable().getSelectedRows();
-            if (rows.length != 0) { // Filter only selected rows
-                for (int i = 0; i < rows.length; i++) {
-                    Call call = (Call) JFritz.getCallerlist()
-                            .getFilteredCallVector().get(rows[i]);
-                    if (call.getPhoneNumber() != null) {
-                        provider = call.getPhoneNumber().getCallByCall();
-                        if (provider.equals("")) { //$NON-NLS-1$
-                            provider = "NONE"; //$NON-NLS-1$
-                        }
-                    } else {
-                        provider = "NONE"; //$NON-NLS-1$
-                    }
-                    if (!filteredCallByCallProviders.contains(provider)) {
-                        filteredCallByCallProviders.add(provider);
-                    }
-                }
-            } else { // filter only calls with callbycall predial
-                for (int i = 0; i < JFritz.getCallerlist()
-                        .getFilteredCallVector().size(); i++) {
-                    Call call = (Call) JFritz.getCallerlist()
-                            .getFilteredCallVector().get(i);
-                    if (call.getPhoneNumber() != null) {
-                        provider = call.getPhoneNumber().getCallByCall();
-                    }
-                    if (!provider.equals("")) { //$NON-NLS-1$
-                        if (!filteredCallByCallProviders.contains(provider)) {
-                            filteredCallByCallProviders.add(provider);
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            System.err.println(e.toString());
-        }
-        JFritz.setProperty("filter.callbycallProvider", filteredCallByCallProviders //$NON-NLS-1$
-                .toString());
-        JFritz.getCallerlist().updateFilter();
-    }
-
 }

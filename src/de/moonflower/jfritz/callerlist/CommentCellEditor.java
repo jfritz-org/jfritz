@@ -75,7 +75,7 @@ public class CommentCellEditor extends AbstractCellEditor implements
 	 */
 	protected void fireEditingStopped() {
 		super.fireEditingStopped();
-        JFritz.getCallerlist().saveToXMLFile(JFritz.SAVE_DIR + JFritz.CALLS_FILE, true);
+        JFritz.getCallerList().saveToXMLFile(JFritz.SAVE_DIR + JFritz.CALLS_FILE, true);
 	}
 
 }

@@ -183,10 +183,10 @@ public class PhoneBook extends AbstractTableModel {
 			case 5:
                 o1 = ""; //$NON-NLS-1$
                 o2 = ""; //$NON-NLS-1$
-                if (JFritz.getCallerlist().findLastCall(v1) != null)
-                    o1 = JFritz.getCallerlist().findLastCall(v1).getCalldate();
-                if (JFritz.getCallerlist().findLastCall(v2) != null)
-                    o2 = JFritz.getCallerlist().findLastCall(v2).getCalldate();
+                if (JFritz.getCallerList().findLastCall(v1) != null)
+                    o1 = JFritz.getCallerList().findLastCall(v1).getCalldate();
+                if (JFritz.getCallerList().findLastCall(v2) != null)
+                    o2 = JFritz.getCallerList().findLastCall(v2).getCalldate();
 			    break;
 			default:
 				o1 = v1.getFullname();
@@ -552,7 +552,7 @@ public class PhoneBook extends AbstractTableModel {
 		case 4:
 			return (person.getPostalCode() + " " + person.getCity()).trim();  //$NON-NLS-1$
 		case 5:
-			return JFritz.getCallerlist().findLastCall(person);
+			return JFritz.getCallerList().findLastCall(person);
 		default:
 			return "X"; //$NON-NLS-1$
 		//throw new IllegalArgumentException("Invalid column: " + columnIndex);
