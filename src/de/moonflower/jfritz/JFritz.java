@@ -151,7 +151,7 @@
  * - INTERN: Anrufmonitore in neues Package callmonitor gepackt und umbenannt
  * - INTERN: Anzeige der Anrufe, die vom Anrufmonitor erkannt werden, über Listener. Abholen der Anrufliste nach dem Gesprächsende nun über den DisconnectMonitor
  * - Neu: Unterstützung für die "Labor-Firmware" (Firmwareerkennung und CSV-Import)
- * - Neu: Automatisches Update von JFritz auf neue Version. TODO: Checken, ob es auch mit .so und .dll funktioniert TODO: Am Ende der Update-Prozedur JFritz nicht beenden, sondern neu starten. Blos wie?
+ * - Neu: Automatisches Update von JFritz auf neue Version. TODO: Checken, ob es auch mit .so und .dll funktioniert TODO: Am Ende der Update-Prozedur JFritz nicht beenden, sondern neu starten. Blos wie? (mittles eines kleinen zusätlichen programmes, welches die files ersetzt und jfritz neu startet. datenaustausch der programme evtl per kommandozeile. (bastia))
  * - Wahlhilfe: Immer mit Ortsvorwahl wählen (getShortNumber in getAreaNumber verändert)
  * - Neu: Unterstützung für neue englische Firmware xx.04.20
  * - INTERN: Buildfile überarbeitet. TODO: release und junit anpassen
@@ -586,7 +586,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.352 2006/09/29 12:00:28 marc0815 Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.353 2006/09/30 15:34:03 baefer Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 
