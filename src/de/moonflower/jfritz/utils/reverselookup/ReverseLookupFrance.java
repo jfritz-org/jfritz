@@ -25,11 +25,8 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  */
 public final class ReverseLookupFrance {
 
-
-	//public final static String SEARCH_URL_PRENUMBER="http://82.230.162.47:8099/V3_94/Methode_Get/RN.asp?RN=";
 	public final static String SEARCH_URL_PRENUMBER="http://www.annuaireinverse.com/G118012/home.asp?RN=";
-	public final static String SEARCH_URL_POSTNUMBER="&CO=RN&ND=118012&NS=0&FR=118012&PAGE=1&NBR_L_P=10&TRI=&ORD_TRI=&FILTRE=ALL&m=recherche&sm=rep&action.x=0&action.y=0&action=RECHERCHER";
-	//public final static String SEARCH_URL_POSTNUMBER="&ND=118012&NS=118012&FR=118012&PAGE=1&NBR_L_P=10&TRI=&ORD_TRI=&FILTRE=ALL";
+	public final static String SEARCH_URL_POSTNUMBER="&CO=RN&FR=118012&sm=rep";
 
 	/**
 	 * This function performs the reverse lookup
