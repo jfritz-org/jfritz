@@ -156,6 +156,7 @@
  * - Neu: Unterstützung für neue englische Firmware xx.04.20
  * - INTERN: Buildfile überarbeitet. TODO: release und junit anpassen
  * - Neu: Rückwärtssuche nicht mehr über DasOertliche.de sondern über dastelefonbuch.de
+ * - Bugifx: Französische Rückwärtssuche funktioniert wieder
  *
  * JFritz 0.6.1
  * - Neue Strings:
@@ -586,7 +587,7 @@ public final class JFritz {
 
     public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
 
-    public final static String CVS_TAG = "$Id: JFritz.java,v 1.353 2006/09/30 15:34:03 baefer Exp $"; //$NON-NLS-1$
+    public final static String CVS_TAG = "$Id: JFritz.java,v 1.354 2006/09/30 16:11:52 baefer Exp $"; //$NON-NLS-1$
 
     public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
 

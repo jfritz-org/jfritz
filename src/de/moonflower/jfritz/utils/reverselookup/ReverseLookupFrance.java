@@ -25,8 +25,11 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  */
 public final class ReverseLookupFrance {
 
-	public final static String SEARCH_URL_PRENUMBER="http://82.230.162.47:8099/V3_94/Methode_Get/RN.asp?RN=";
-	public final static String SEARCH_URL_POSTNUMBER="&ND=118012&NS=118012&FR=118012&PAGE=1&NBR_L_P=10&TRI=&ORD_TRI=&FILTRE=ALL";
+
+	//public final static String SEARCH_URL_PRENUMBER="http://82.230.162.47:8099/V3_94/Methode_Get/RN.asp?RN=";
+	public final static String SEARCH_URL_PRENUMBER="http://www.annuaireinverse.com/G118012/home.asp?RN=";
+	public final static String SEARCH_URL_POSTNUMBER="&CO=RN&ND=118012&NS=0&FR=118012&PAGE=1&NBR_L_P=10&TRI=&ORD_TRI=&FILTRE=ALL&m=recherche&sm=rep&action.x=0&action.y=0&action=RECHERCHER";
+	//public final static String SEARCH_URL_POSTNUMBER="&ND=118012&NS=118012&FR=118012&PAGE=1&NBR_L_P=10&TRI=&ORD_TRI=&FILTRE=ALL";
 
 	/**
 	 * This function performs the reverse lookup
@@ -43,7 +46,7 @@ public final class ReverseLookupFrance {
 			number = number.substring(1);
 			intNumber = true;
 		}
-		Debug.msg("Switzerland reverselookup number: "+number);
+		Debug.msg("France reverselookup number: "+number);
 
 		String urlstr = SEARCH_URL_PRENUMBER + number + SEARCH_URL_POSTNUMBER;
 		Person newPerson;
@@ -111,7 +114,7 @@ public final class ReverseLookupFrance {
 					Debug.msg("Begin processing responce from http://www.annuaireinverse.com");
 
 					Pattern pName = Pattern
-							.compile("HEIGHT=\"5\"><FONT CLASS=\"ctexte\">([^<]*)"); //$NON-NLS-1$
+							.compile("<TD HEIGHT=\"15\" BGCOLOR=\"#ABEEFB\"  ><FONT CLASS=\"ctexte\">&nbsp;([^<]*)"); //$NON-NLS-1$
 					Pattern pAddress = Pattern
 						.compile("<TD HEIGHT=\"35\" VALIGN=\"TOP\"><FONT CLASS=\"copytexte\">([^<]*)<br />([^<]*)"); //$NON-NLS-1$
 
