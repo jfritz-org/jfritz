@@ -9,8 +9,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import com.toedter.calendar.JDateChooser;
+
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.struct.Call;
+import de.moonflower.jfritz.utils.Debug;
 
 /**
  * Date filter for call list
@@ -18,7 +21,7 @@ import de.moonflower.jfritz.struct.Call;
  * @author Robert Palmer
  */
 public class DateFilter extends CallFilter {
-
+    public JDateChooser d;
     public static final int DATEFILTER_SELECTION = 0;
 
     public static final int DATEFILTER_TODAY = 1;
@@ -31,11 +34,12 @@ public class DateFilter extends CallFilter {
 
     private int filterType = 0;
 
-    private String filterFromDate = null;
+    private String filterFromDate;
 
-    private String filterToDate = null;
+    private String filterToDate;
 
-    public DateFilter() {
+//    public DateFilter(Date from, Date to) {
+        public DateFilter() {
             filterFromDate = JFritz.getProperty("filter.date_from", new SimpleDateFormat("dd.MM.yy").format(Calendar.getInstance().getTime()));
             filterToDate = JFritz.getProperty("filter.date_to", new SimpleDateFormat("dd.MM.yy").format(Calendar.getInstance().getTime()));
             filterType = Integer.parseInt(JFritz.getProperty("filter.date_type", "0")); //$NON-NLS-1$ $NON-NLS-2$
@@ -56,7 +60,7 @@ public class DateFilter extends CallFilter {
             } else
                 return false;
         } catch (ParseException e) {
-            e.printStackTrace();
+            Debug.err("Problems parsing a date"+ e.toString());
             return false;
         }
     }
@@ -85,7 +89,7 @@ public class DateFilter extends CallFilter {
                 filterToDate = new SimpleDateFormat("dd.MM.yy").format(to);
 
             } catch (Exception e) {
-                System.err.println(e.toString());
+                Debug.err(e.toString());
             }
             break;
         }

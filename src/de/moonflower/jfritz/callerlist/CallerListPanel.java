@@ -5,6 +5,7 @@
 package de.moonflower.jfritz.callerlist;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,6 +28,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+
+import com.toedter.calendar.JDateChooser;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.callerlist.filter.CallByCallFilter;
@@ -52,8 +55,41 @@ import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
  * @author Arno Willig
  *
  */
+
+// TODO write and read the Properties one time at creation and disposion
 public class CallerListPanel extends JPanel implements ActionListener,
 		KeyListener {
+	class PopupListener extends MouseAdapter {
+		JPopupMenu popupMenu;
+
+		PopupListener(JPopupMenu popupMenu) {
+			super();
+			this.popupMenu = popupMenu;
+		}
+
+		private void maybeShowPopup(MouseEvent e) {
+			if (e.isPopupTrigger()) {
+				popupMenu.show(e.getComponent(), e.getX(), e.getY());
+			}
+		}
+
+		public void mouseClicked(MouseEvent e) {
+
+			if (e.getClickCount() > 1
+					&& e.getComponent().getClass() != JToggleButton.class) {
+				JFritz.getJframe().activatePhoneBook();
+			}
+		}
+
+		public void mousePressed(MouseEvent e) {
+			maybeShowPopup(e);
+		}
+
+		public void mouseReleased(MouseEvent e) {
+			maybeShowPopup(e);
+		}
+	}
+
 	private static final long serialVersionUID = 1;
 
 	private static final int MISSED_FILTER_WITHOUT_COMMENTS = 0;
@@ -67,7 +103,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	private JToggleButton dateFilterButton, callByCallFilterButton,
 			callInFilterButton, calloutFilterButton, callInFailedFilterButton,
 			numberFilterButton, fixedFilterButton, handyFilterButton,
-			sipFilterButton, commentFilterButton;
+			sipFilterButton, commentFilterButton, searchFilterButton;
 
 	private JButton deleteEntriesButton;
 
@@ -93,7 +129,15 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	private SearchFilter searchFilter;
 
+	private JDateChooser startDateChooser;
+
+	private Component endDateChooser;
+
+	private DateFilter dateFilter;
+
 	// private FixedFilter fixedFilter;
+
+	private JLabel searchLabel;
 
 	public CallerListPanel(CallerList callerList) {
 		super();
@@ -103,215 +147,43 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		add(createCallerListTable(), BorderLayout.CENTER);
 	}
 
-	public JPanel createToolBar() {
-		JToolBar upperToolBar = new JToolBar();
-		upperToolBar.setFloatable(true);
-		JToolBar lowerToolBar = new JToolBar();
-		lowerToolBar.setFloatable(true);
+	/**
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	public void actionPerformed(ActionEvent e) {
+		handleAction(e);
+		// callerList.updateFilter();
+		callerList.update();
+	}
 
-		JButton button = new JButton();
-		button.setActionCommand("export_csv"); //$NON-NLS-1$
-		button.addActionListener(this);
-		button.setIcon(getImage("csv_export.png")); //$NON-NLS-1$
-		button.setToolTipText(JFritz.getMessage("export_csv")); //$NON-NLS-1$
-		upperToolBar.add(button);
-
-		button = new JButton();
-		button.setActionCommand("import_csv"); //$NON-NLS-1$
-		button.addActionListener(this);
-		button.setIcon(getImage("csv_import.png")); //$NON-NLS-1$
-		button.setToolTipText("CSV-Datei importieren"); //$NON-NLS-1$
-		button.setEnabled(false);
-		upperToolBar.add(button);
-
-		button = new JButton();
-		button.setActionCommand("export_xml"); //$NON-NLS-1$
-		button.addActionListener(this);
-		button.setIcon(getImage("xml_export.png")); //$NON-NLS-1$
-		button.setToolTipText("XML-Datei exportieren"); //$NON-NLS-1$
-		upperToolBar.add(button);
-
-		button = new JButton();
-		button.setActionCommand("import_xml"); //$NON-NLS-1$
-		button.addActionListener(this);
-		button.setIcon(getImage("xml_import.png")); //$NON-NLS-1$
-		button.setToolTipText("XML-Datei importieren"); //$NON-NLS-1$
-		button.setEnabled(false);
-		upperToolBar.add(button);
-
-		upperToolBar.addSeparator();
-
-		callInFilterButton = new JToggleButton(getImage("callin_grey.png"), //$NON-NLS-1$
-				true);
-		callInFilterButton.setSelectedIcon(getImage("callin.png")); //$NON-NLS-1$
-		callInFilterButton.setActionCommand("filter_callin"); //$NON-NLS-1$
-		callInFilterButton.addActionListener(this);
-		callInFilterButton.setToolTipText(JFritz.getMessage("filter_callin")); //$NON-NLS-1$
-		callInFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
-				.getProperty("filter.callin", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		lowerToolBar.add(callInFilterButton);
-
-		callInFailedFilterButton = new JToggleButton(
-				getImage("callinfailed_grey.png"), true); //$NON-NLS-1$
-		callInFailedFilterButton.setSelectedIcon(getImage("callinfailed.png")); //$NON-NLS-1$
-		callInFailedFilterButton.setActionCommand("filter_callinfailed"); //$NON-NLS-1$
-		callInFailedFilterButton.addActionListener(this);
-		callInFailedFilterButton.setToolTipText(JFritz
-				.getMessage("filter_callinfailed")); //$NON-NLS-1$
-		callInFailedFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
-				.getProperty("filter.callinfailed", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
-
-		JPopupMenu missedPopupMenu = new JPopupMenu();
-		JMenuItem menuItem;
-		menuItem = new JMenuItem(JFritz
-				.getMessage("missed_calls_without_comments_last_week")); //$NON-NLS-1$
-		menuItem
-				.setActionCommand("filter_callinfailed_allWithoutCommentLastWeek"); //$NON-NLS-1$
-		menuItem.addActionListener(this);
-		missedPopupMenu.add(menuItem);
-		menuItem = new JMenuItem(JFritz
-				.getMessage("missed_calls_without_comments")); //$NON-NLS-1$
-		menuItem.setActionCommand("filter_callinfailed_allWithoutComment"); //$NON-NLS-1$
-		menuItem.addActionListener(this);
-		missedPopupMenu.add(menuItem);
-		MouseAdapter popupListener = new PopupListener(missedPopupMenu);
-		callInFailedFilterButton.addMouseListener(popupListener);
-		lowerToolBar.add(callInFailedFilterButton);
-
-		calloutFilterButton = new JToggleButton(getImage("callout_grey.png"), //$NON-NLS-1$
-				true);
-		calloutFilterButton.setSelectedIcon(getImage("callout.png")); //$NON-NLS-1$
-		calloutFilterButton.setActionCommand("filter_callout"); //$NON-NLS-1$
-		calloutFilterButton.addActionListener(this);
-		calloutFilterButton.setToolTipText(JFritz.getMessage("filter_callout")); //$NON-NLS-1$
-		calloutFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
-				.getProperty("filter.callout", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		lowerToolBar.add(calloutFilterButton);
-
-		numberFilterButton = new JToggleButton(
-				getImage("phone_nonumber_grey.png"), true); //$NON-NLS-1$
-		numberFilterButton.setSelectedIcon(getImage("phone_nonumber.png")); //$NON-NLS-1$
-		numberFilterButton.setActionCommand("filter_number"); //$NON-NLS-1$
-		numberFilterButton.addActionListener(this);
-		numberFilterButton.setToolTipText(JFritz.getMessage("filter_number")); //$NON-NLS-1$
-		numberFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
-				.getProperty("filter.number", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		lowerToolBar.add(numberFilterButton);
-
-		fixedFilterButton = new JToggleButton(getImage("phone_grey.png"), true); //$NON-NLS-1$
-		fixedFilterButton.setSelectedIcon(getImage("phone.png")); //$NON-NLS-1$
-		fixedFilterButton.setActionCommand("filter_fixed"); //$NON-NLS-1$
-		fixedFilterButton.addActionListener(this);
-		fixedFilterButton.setToolTipText(JFritz.getMessage("filter_fixed")); //$NON-NLS-1$
-		fixedFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
-				.getProperty("filter.fixed", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		lowerToolBar.add(fixedFilterButton);
-
-		handyFilterButton = new JToggleButton(getImage("handy_grey.png"), true); //$NON-NLS-1$
-		handyFilterButton.setSelectedIcon(getImage("handy.png")); //$NON-NLS-1$
-		handyFilterButton.setActionCommand("filter_handy"); //$NON-NLS-1$
-		handyFilterButton.addActionListener(this);
-		handyFilterButton.setToolTipText(JFritz.getMessage("filter_handy")); //$NON-NLS-1$
-		handyFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
-				.getProperty("filter.handy", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		lowerToolBar.add(handyFilterButton);
-
-		dateFilterButton = new JToggleButton(getImage("calendar_grey.png"), //$NON-NLS-1$
-				true);
-		dateFilterButton.setSelectedIcon(getImage("calendar.png")); //$NON-NLS-1$
-		dateFilterButton.setActionCommand("filter_date"); //$NON-NLS-1$
-		dateFilterButton.addActionListener(this);
-		dateFilterButton.setToolTipText(JFritz.getMessage("filter_date")); //$NON-NLS-1$
-		dateFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
-				.getProperty("filter.date", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
-//		callerList.getDateFilter().updateDateFilter();
+	private void clearAllFilter() {
+		// FIXME
+		setSearchFilter(""); //$NON-NLS-1$
+		JFritz.setProperty("filter.search", ""); //$NON-NLS-1$,  //$NON-NLS-2$
+		JFritz.setProperty("filter.callin", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
+		callInFilterButton.setSelected(true);
+		JFritz.setProperty("filter.callout", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
+		calloutFilterButton.setSelected(true);
+		JFritz.setProperty("filter.callinfailed", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
+		callInFailedFilterButton.setSelected(true);
+		JFritz.setProperty("filter.number", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
+		numberFilterButton.setSelected(true);
+		JFritz.setProperty("filter.fixed", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
+		fixedFilterButton.setSelected(true);
+		JFritz.setProperty("filter.handy", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
+		handyFilterButton.setSelected(true);
+		JFritz.setProperty("filter.date", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
+		// callerList.getDateFilter().updateDateFilter();
 		setDateFilterText();
-		JPopupMenu datePopupMenu = new JPopupMenu();
-		menuItem = new JMenuItem(JFritz.getMessage("date_filter_today")); //$NON-NLS-1$
-		menuItem.setActionCommand("setdatefilter_thisday"); //$NON-NLS-1$
-		menuItem.addActionListener(this);
-		datePopupMenu.add(menuItem);
-		menuItem = new JMenuItem(JFritz.getMessage("date_filter_yesterday")); //$NON-NLS-1$
-		menuItem.setActionCommand("setdatefilter_yesterday"); //$NON-NLS-1$
-		menuItem.addActionListener(this);
-		datePopupMenu.add(menuItem);
-		menuItem = new JMenuItem(JFritz.getMessage("date_filter_this_month")); //$NON-NLS-1$
-		menuItem.setActionCommand("setdatefilter_thismonth"); //$NON-NLS-1$
-		menuItem.addActionListener(this);
-		datePopupMenu.add(menuItem);
-		menuItem = new JMenuItem(JFritz.getMessage("date_filter_last_month")); //$NON-NLS-1$
-		menuItem.setActionCommand("setdatefilter_lastmonth"); //$NON-NLS-1$
-		menuItem.addActionListener(this);
-		datePopupMenu.add(menuItem);
-		popupListener = new PopupListener(datePopupMenu);
-
-		dateFilterButton.addMouseListener(popupListener);
-
-		lowerToolBar.add(dateFilterButton);
-
-		sipFilterButton = new JToggleButton(getImage("world_grey.png"), true); //$NON-NLS-1$
-		sipFilterButton.setSelectedIcon(getImage("world.png")); //$NON-NLS-1$
-		sipFilterButton.setActionCommand("filter_sip"); //$NON-NLS-1$
-		sipFilterButton.addActionListener(this);
-		sipFilterButton.setToolTipText(JFritz.getMessage("filter_sip")); //$NON-NLS-1$
-		sipFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
-				.getProperty("filter.sip", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		lowerToolBar.add(sipFilterButton);
-
-		callByCallFilterButton = new JToggleButton(
-				getImage("callbycall_grey.png"), true); //$NON-NLS-1$
-		callByCallFilterButton.setSelectedIcon(getImage("callbycall.png")); //$NON-NLS-1$
-		callByCallFilterButton.setActionCommand("filter_callbycall"); //$NON-NLS-1$
-		callByCallFilterButton.addActionListener(this);
-		callByCallFilterButton.setToolTipText(JFritz
-				.getMessage("filter_callbycall")); //$NON-NLS-1$
-		callByCallFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
-				.getProperty("filter.callbycall", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		lowerToolBar.add(callByCallFilterButton);
-
-		commentFilterButton = new JToggleButton(getImage("commentFilter.png"), //$NON-NLS-1$
-				true);
-		commentFilterButton.setSelectedIcon(getImage("commentFilter.png")); //$NON-NLS-1$
-		commentFilterButton.setActionCommand("filter_comment"); //$NON-NLS-1$
-		commentFilterButton.addActionListener(this);
-		commentFilterButton.setToolTipText(JFritz.getMessage("filter_comment")); //$NON-NLS-1$
-		commentFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
-				.getProperty("filter.comment", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		lowerToolBar.add(commentFilterButton);
-
-		lowerToolBar.addSeparator();
-		lowerToolBar.addSeparator();
-
-		deleteEntriesButton = new JButton();
-		deleteEntriesButton.setToolTipText(JFritz
-				.getMessage("delete_entries").replaceAll("%N", "")); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-		deleteEntriesButton.setActionCommand("delete_entry"); //$NON-NLS-1$
-		deleteEntriesButton.addActionListener(this);
-		deleteEntriesButton.setIcon(getImage("delete.png")); //$NON-NLS-1$
-		deleteEntriesButton.setFocusPainted(false);
-		deleteEntriesButton.setEnabled(false);
-		lowerToolBar.add(deleteEntriesButton);
-
-		lowerToolBar.addSeparator();
-
-		lowerToolBar.add(new JLabel(JFritz.getMessage("search") + ": ")); //$NON-NLS-1$,  //$NON-NLS-2$
-		searchFilterTextField = new JTextField(JFritz.getProperty("filter.search", ""), //$NON-NLS-1$,  //$NON-NLS-2$
-				10);
-		searchFilterTextField.addKeyListener(this);
-
-		lowerToolBar.add(searchFilterTextField);
-		button = new JButton(JFritz.getMessage("clear")); //$NON-NLS-1$
-		button.setActionCommand("clearFilter"); //$NON-NLS-1$
-		button.addActionListener(this);
-		lowerToolBar.add(button);
-
-		JPanel toolbarPanel = new JPanel();
-		toolbarPanel.setLayout(new BorderLayout());
-		// Icons sind noch zu groß, deshalb erst einmal auskommentiert
-		// toolbarPanel.add(upperToolBar, BorderLayout.NORTH);
-		toolbarPanel.add(lowerToolBar, BorderLayout.SOUTH);
-
-		return toolbarPanel;
+		dateFilterButton.setSelected(true);
+		JFritz.setProperty("filter.sip", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
+		sipFilterButton.setSelected(true);
+		JFritz.setProperty("filter.callbycall", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
+		callByCallFilterButton.setSelected(true);
+		JFritz.setProperty("filter.comment", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
+		commentFilterButton.setSelected(true);
+		callerList.updateFilter();
+		callerList.fireTableStructureChanged();
 	}
 
 	public JScrollPane createCallerListTable() {
@@ -372,281 +244,238 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		return new JScrollPane(callerTable);
 	}
 
-	public ImageIcon getImage(String filename) {
-		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/" + filename))); //$NON-NLS-1$
-	}
+	public JPanel createToolBar() {
+		JToolBar upperToolBar = new JToolBar();
+		upperToolBar.setFloatable(true);
+		JToolBar lowerToolBar = new JToolBar();
+		lowerToolBar.setFloatable(true);
 
-	public void setSearchFilter(String text) {
-		searchFilterTextField.setText(text);
-	}
+		JButton resetFiltersButton = new JButton();
+		resetFiltersButton.setActionCommand("export_csv"); //$NON-NLS-1$
+		resetFiltersButton.addActionListener(this);
+		resetFiltersButton.setIcon(getImage("csv_export.png")); //$NON-NLS-1$
+		resetFiltersButton.setToolTipText(JFritz.getMessage("export_csv")); //$NON-NLS-1$
+		upperToolBar.add(resetFiltersButton);
 
-	public void setDateFilterText() {
-		if (JFritzUtils.parseBoolean(JFritz.getProperty("filter.date"))) { //$NON-NLS-1$
-			dateFilterButton.setSelected(false);
+		resetFiltersButton = new JButton();
+		resetFiltersButton.setActionCommand("import_csv"); //$NON-NLS-1$
+		resetFiltersButton.addActionListener(this);
+		resetFiltersButton.setIcon(getImage("csv_import.png")); //$NON-NLS-1$
+		resetFiltersButton.setToolTipText("CSV-Datei importieren"); //$NON-NLS-1$
+		resetFiltersButton.setEnabled(false);
+		upperToolBar.add(resetFiltersButton);
 
-			if (JFritz.getProperty("filter.date_from").equals( //$NON-NLS-1$
-					JFritz.getProperty("filter.date_to"))) { //$NON-NLS-1$
-				dateFilterButton
-						.setText(JFritz.getProperty("filter.date_from")); //$NON-NLS-1$
-			} else {
-				dateFilterButton.setText(JFritz.getProperty("filter.date_from") //$NON-NLS-1$
-						+ " - " + JFritz.getProperty("filter.date_to")); //$NON-NLS-1$,  //$NON-NLS-2$
-			}
-		} else {
-			dateFilterButton.setSelected(true);
-			dateFilterButton.setText(""); //$NON-NLS-1$
-		}
-	}
+		resetFiltersButton = new JButton();
+		resetFiltersButton.setActionCommand("export_xml"); //$NON-NLS-1$
+		resetFiltersButton.addActionListener(this);
+		resetFiltersButton.setIcon(getImage("xml_export.png")); //$NON-NLS-1$
+		resetFiltersButton.setToolTipText("XML-Datei exportieren"); //$NON-NLS-1$
+		upperToolBar.add(resetFiltersButton);
 
-	private void setMissedFilter(int filterType) {
-		//FIXME
-		Date from = null;
-		Date to = null;
-		JFritz.setProperty("filter.callin", "true"); //$NON-NLS-1$,  //$NON-NLS-2$
-		callInFilterButton.setSelected(false);
-		JFritz.setProperty("filter.callout", "true"); //$NON-NLS-1$,  //$NON-NLS-2$
-		calloutFilterButton.setSelected(false);
-		JFritz.setProperty("filter.calloutmissed", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
-		callInFailedFilterButton.setSelected(true);
-		JFritz.setProperty("filter.comment", "true"); //$NON-NLS-1$,  //$NON-NLS-2$
-		JFritz.setProperty("filter.comment.text", ""); //$NON-NLS-1$,  //$NON-NLS-2$
-		commentFilterButton.setSelected(false);
-		switch (filterType) {
-		case MISSED_FILTER_WITHOUT_COMMENTS:
-			break;
-		case MISSED_FILTER_WITHOUT_COMMENTS_LAST_WEEK: {
-			Calendar cal = Calendar.getInstance();
-			to = cal.getTime();
-			cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - 7);
-			from = cal.getTime();
-			String fromstr = new SimpleDateFormat("dd.MM.yy").format(from); //$NON-NLS-1$
-			String tostr = new SimpleDateFormat("dd.MM.yy").format(to); //$NON-NLS-1$
-			JFritz.setProperty("filter.date_from", fromstr); //$NON-NLS-1$
-			JFritz.setProperty("filter.date_to", tostr); //$NON-NLS-1$
-			JFritz.setProperty("filter.date", "true"); //$NON-NLS-1$,  //$NON-NLS-2$
-//			callerList.getDateFilter().updateDateFilter();
-			setDateFilterText();
-			break;
-		}
-		}
-		callerList.updateFilter();
-	}
+		resetFiltersButton = new JButton();
+		resetFiltersButton.setActionCommand("import_xml"); //$NON-NLS-1$
+		resetFiltersButton.addActionListener(this);
+		resetFiltersButton.setIcon(getImage("xml_import.png")); //$NON-NLS-1$
+		resetFiltersButton.setToolTipText("XML-Datei importieren"); //$NON-NLS-1$
+		resetFiltersButton.setEnabled(false);
+		upperToolBar.add(resetFiltersButton);
 
-	public CallerTable getCallerTable() {
-		return callerTable;
-	}
+		upperToolBar.addSeparator();
 
-	private void handleAction(ActionEvent e) {
-		if (e.getActionCommand().equals("filter_callin")) { //$NON-NLS-1$
-			if (!callInFilterButton.isSelected()) {
-				callInFilter = new CallInFilter();
-				callerList.addFilter(callInFilter);
-			} else
-				callerList.removeFilter(callInFilter);
-			return;
-		}
-		if (e.getActionCommand().equals("filter_callinfailed")) { //$NON-NLS-1$
-			if (!callInFailedFilterButton.isSelected()) {
-				callInFailedFilter = new CallInFailedFilter();
-				callerList.addFilter(callInFailedFilter);
-			} else
-				callerList.removeFilter(callInFailedFilter);
+		callInFilterButton = new JToggleButton(getImage("callin_grey.png"), //$NON-NLS-1$
+				true);
+		callInFilterButton.setSelectedIcon(getImage("callin.png")); //$NON-NLS-1$
+		callInFilterButton.setActionCommand("filter_callin"); //$NON-NLS-1$
+		callInFilterButton.addActionListener(this);
+		callInFilterButton.setToolTipText(JFritz.getMessage("filter_callin")); //$NON-NLS-1$
+		callInFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
+				.getProperty("filter.callin", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-			return;
-		}
-		if (e.getActionCommand().equals("filter_callout")) { //$NON-NLS-1$
-			if (!calloutFilterButton.isSelected()) {
-				callOutFilter = new CallOutFilter();
-				callerList.addFilter(callOutFilter);
-			} else
-				callerList.removeFilter(callOutFilter);
+		callInFailedFilterButton = new JToggleButton(
+				getImage("callinfailed_grey.png"), true); //$NON-NLS-1$
+		callInFailedFilterButton.setSelectedIcon(getImage("callinfailed.png")); //$NON-NLS-1$
+		callInFailedFilterButton.setActionCommand("filter_callinfailed"); //$NON-NLS-1$
+		callInFailedFilterButton.addActionListener(this);
+		callInFailedFilterButton.setToolTipText(JFritz
+				.getMessage("filter_callinfailed")); //$NON-NLS-1$
+		callInFailedFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
+				.getProperty("filter.callinfailed", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-			return;
-		}
-		if (e.getActionCommand().equals("filter_comment")) { //$NON-NLS-1$
-			if (!commentFilterButton.isSelected()) {
-				commentFilter = new CommentFilter();
-				callerList.addFilter(commentFilter);
-			} else
-				callerList.removeFilter(commentFilter);
-			return;
-		}
-		if (e.getActionCommand()
-				.equals("filter_callinfailed_allWithoutComment")) { //$NON-NLS-1$
-			setMissedFilter(MISSED_FILTER_WITHOUT_COMMENTS);
-			callerList.fireTableStructureChanged();
-			return;
-		}
-		if (e.getActionCommand().equals(
-				"filter_callinfailed_allWithoutCommentLastWeek")) { //$NON-NLS-1$
-			setMissedFilter(MISSED_FILTER_WITHOUT_COMMENTS_LAST_WEEK);
-			callerList.fireTableStructureChanged();
-			return;
-		}
-		if (e.getActionCommand().equals("filter_number")) { //$NON-NLS-1$
-			if (!numberFilterButton.isSelected()) {
-				noNumberFilter = new NoNumberFilter();
-				callerList.addFilter(noNumberFilter);
-			} else
-				callerList.removeFilter(noNumberFilter);
-			return;
-		}
-		if (e.getActionCommand().equals("filter_fixed")) { //$NON-NLS-1$
-			if (!fixedFilterButton.isSelected()) {
-				fixedFilter = new FixedFilter();
-				callerList.addFilter(fixedFilter);
-			} else
-				callerList.removeFilter(fixedFilter);
-			return;
-		}
-		if (e.getActionCommand().equals("filter_handy")) { //$NON-NLS-1$
-			if (!handyFilterButton.isSelected()) {
-				handyFilter = new HandyFilter();
-				callerList.addFilter(handyFilter);
-			} else
-				callerList.removeFilter(handyFilter);
-			return;
-		}
-		if (e.getActionCommand().equals("filter_date")) { //$NON-NLS-1$
-			JFritz.setProperty("filter.date", Boolean //$NON-NLS-1$
-					.toString(!dateFilterButton.isSelected()));
-//			callerList.getDateFilter().setFilter(
-//					DateFilter.DATEFILTER_SELECTION);
-			setDateFilterText();
-			callerList.fireTableStructureChanged();
-			return;
-		}
-		if (e.getActionCommand().equals("setdatefilter_thisday")) { //$NON-NLS-1$
-			dateFilterButton.setSelected(false);
-			JFritz.setProperty("filter.date", Boolean //$NON-NLS-1$
-					.toString(!dateFilterButton.isSelected()));
-//			callerList.getDateFilter().setFilter(DateFilter.DATEFILTER_TODAY);
-			setDateFilterText();
-			callerList.fireTableStructureChanged();
-			return;
-		}
-		if (e.getActionCommand().equals("setdatefilter_yesterday")) { //$NON-NLS-1$
-			dateFilterButton.setSelected(false);
-			JFritz.setProperty("filter.date", Boolean //$NON-NLS-1$
-					.toString(!dateFilterButton.isSelected()));
-//			callerList.getDateFilter().setFilter(
-//					DateFilter.DATEFILTER_YESTERDAY);
-			setDateFilterText();
-			callerList.fireTableStructureChanged();
-			return;
-		}
-		if (e.getActionCommand().equals("setdatefilter_thismonth")) { //$NON-NLS-1$
-			dateFilterButton.setSelected(false);
-			JFritz.setProperty("filter.date", Boolean //$NON-NLS-1$
-					.toString(!dateFilterButton.isSelected()));
-//			callerList.getDateFilter().setFilter(
-//					DateFilter.DATEFILTER_THIS_MONTH);
-			setDateFilterText();
-			callerList.fireTableStructureChanged();
-			return;
-		}
-		if (e.getActionCommand().equals("setdatefilter_lastmonth")) { //$NON-NLS-1$
-			dateFilterButton.setSelected(false);
-			JFritz.setProperty("filter.date", Boolean //$NON-NLS-1$
-					.toString(!dateFilterButton.isSelected()));
-//			callerList.getDateFilter().setFilter(
-//					DateFilter.DATEFILTER_LAST_MONTH);
-			setDateFilterText();
-			callerList.fireTableStructureChanged();
-			return;
-		}
-		if (e.getActionCommand().equals("filter_sip")) { //$NON-NLS-1$
-			if (!sipFilterButton.isSelected()) {
-				sipFilter = new SipFilter(callerList.getSelectedOrSipProviders());
-				callerList.addFilter(sipFilter);
-			} else
-				callerList.removeFilter(sipFilter);
-			return;
-		}
-		if (e.getActionCommand().equals("filter_callbycall")) { //$NON-NLS-1$
-			if (!callByCallFilterButton.isSelected()) {
-				callByCallFilter = new CallByCallFilter(callerList.getSelectedCbCProviders());
-				callerList.addFilter(callByCallFilter);
-			} else {
-				callerList.removeFilter(callByCallFilter);
-			}
-			return;
-		}
-		if (e.getActionCommand().equals("clearFilter")) { //$NON-NLS-1$
-			clearAllFilter();
-			return;
-		}
-		if (e.getActionCommand().equals("delete_entry")) { //$NON-NLS-1$
-			callerList.removeEntries();
-			return;
-		}
-		if (e.getActionCommand().equals("reverselookup")) { //$NON-NLS-1$
-			doReverseLookup();
-			return;
-		}
-		if (e.getActionCommand().equals("export_csv")) { //$NON-NLS-1$
-			JFritz.getJframe().exportCallerListToCSV();
-			return;
-		}
-		if (e.getActionCommand().equals("export_xml")) { //$NON-NLS-1$
-			JFritz.getJframe().exportCallerListToXML();
-			return;
-		}
-		if (e.getActionCommand().equals("import_callerlist_csv")) { //$NON-NLS-1$
-			JFritz.getJframe().importCallerlistCSV();
-			return;
-		}
-		if (e.getActionCommand().equals("clipboard_number")) { //$NON-NLS-1$
-			Call call = callerList.getSelectedCall();
-			if (call != null) {
-				PhoneNumber number = call.getPhoneNumber();
-				if ((number != null) && (call != null))
-					JFritzClipboard.copy(number.convertToNationalNumber());
-			}
-			// JFritz.getJframe().copyNumberToClipboard();
-			return;
-		}
-		if (e.getActionCommand().equals("clipboard_adress")) { //$NON-NLS-1$
-			Call call = callerList.getSelectedCall();
-			if (call != null) {
-				Person person = call.getPerson();
-				if (person != null)
-					JFritzClipboard.copy(person.getAddress());
-			}
-			// JFritz.getJframe().copyAddressToClipboard();
+		JPopupMenu missedPopupMenu = new JPopupMenu();
+		JMenuItem menuItem;
+		menuItem = new JMenuItem(JFritz
+				.getMessage("missed_calls_without_comments_last_week")); //$NON-NLS-1$
+		menuItem
+				.setActionCommand("filter_callinfailed_allWithoutCommentLastWeek"); //$NON-NLS-1$
+		menuItem.addActionListener(this);
+		missedPopupMenu.add(menuItem);
+		menuItem = new JMenuItem(JFritz
+				.getMessage("missed_calls_without_comments")); //$NON-NLS-1$
+		menuItem.setActionCommand("filter_callinfailed_allWithoutComment"); //$NON-NLS-1$
+		menuItem.addActionListener(this);
+		missedPopupMenu.add(menuItem);
+		MouseAdapter popupListener = new PopupListener(missedPopupMenu);
+		callInFailedFilterButton.addMouseListener(popupListener);
 
-		}
+		calloutFilterButton = new JToggleButton(getImage("callout_grey.png"), //$NON-NLS-1$
+				true);
+		calloutFilterButton.setSelectedIcon(getImage("callout.png")); //$NON-NLS-1$
+		calloutFilterButton.setActionCommand("filter_callout"); //$NON-NLS-1$
+		calloutFilterButton.addActionListener(this);
+		calloutFilterButton.setToolTipText(JFritz.getMessage("filter_callout")); //$NON-NLS-1$
+		calloutFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
+				.getProperty("filter.callout", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-	}
+		numberFilterButton = new JToggleButton(
+				getImage("phone_nonumber_grey.png"), true); //$NON-NLS-1$
+		numberFilterButton.setSelectedIcon(getImage("phone_nonumber.png")); //$NON-NLS-1$
+		numberFilterButton.setActionCommand("filter_number"); //$NON-NLS-1$
+		numberFilterButton.addActionListener(this);
+		numberFilterButton.setToolTipText(JFritz.getMessage("filter_number")); //$NON-NLS-1$
+		numberFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
+				.getProperty("filter.number", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-	/**
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 */
-	public void actionPerformed(ActionEvent e) {
-		handleAction(e);
-		// callerList.updateFilter();
-		callerList.update();
-	}
+		fixedFilterButton = new JToggleButton(getImage("phone_grey.png"), true); //$NON-NLS-1$
+		fixedFilterButton.setSelectedIcon(getImage("phone.png")); //$NON-NLS-1$
+		fixedFilterButton.setActionCommand("filter_fixed"); //$NON-NLS-1$
+		fixedFilterButton.addActionListener(this);
+		fixedFilterButton.setToolTipText(JFritz.getMessage("filter_fixed")); //$NON-NLS-1$
+		fixedFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
+				.getProperty("filter.fixed", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-	public void setDeleteListButton() {
-		deleteEntriesButton.setToolTipText(JFritz.getMessage("delete_list")); //$NON-NLS-1$
-		// clearList-Icon to big, so use std. delete.png
-		// deleteEntriesButton.setIcon(getImage("clearList.png"));
-		deleteEntriesButton.setEnabled(true);
-	}
+		handyFilterButton = new JToggleButton(getImage("handy_grey.png"), true); //$NON-NLS-1$
+		handyFilterButton.setSelectedIcon(getImage("handy.png")); //$NON-NLS-1$
+		handyFilterButton.setActionCommand("filter_handy"); //$NON-NLS-1$
+		handyFilterButton.addActionListener(this);
+		handyFilterButton.setToolTipText(JFritz.getMessage("filter_handy")); //$NON-NLS-1$
+		handyFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
+				.getProperty("filter.handy", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-	public void setDeleteEntriesButton(int rows) {
-		deleteEntriesButton
-				.setToolTipText(JFritz
-						.getMessage("delete_entries").replaceAll("%N", Integer.toString(rows))); //$NON-NLS-1$,  //$NON-NLS-2$
-		deleteEntriesButton.setEnabled(true);
-	}
+		dateFilterButton = new JToggleButton(getImage("calendar_grey.png"), //$NON-NLS-1$
+				true);
+		dateFilterButton.setSelectedIcon(getImage("calendar.png")); //$NON-NLS-1$
+		dateFilterButton.setActionCommand("filter_date"); //$NON-NLS-1$
+		dateFilterButton.addActionListener(this);
+		dateFilterButton.setToolTipText(JFritz.getMessage("filter_date")); //$NON-NLS-1$
+		dateFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
+				.getProperty("filter.date", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		// callerList.getDateFilter().updateDateFilter()
 
-	public void setDeleteEntryButton() {
-		deleteEntriesButton.setToolTipText(JFritz.getMessage("delete_entry")); //$NON-NLS-1$
-		deleteEntriesButton.setEnabled(true);
+		setDateFilterText();
+		JPopupMenu datePopupMenu = new JPopupMenu();
+		menuItem = new JMenuItem(JFritz.getMessage("date_filter_today")); //$NON-NLS-1$
+		menuItem.setActionCommand("setdatefilter_thisday"); //$NON-NLS-1$
+		menuItem.addActionListener(this);
+		datePopupMenu.add(menuItem);
+		menuItem = new JMenuItem(JFritz.getMessage("date_filter_yesterday")); //$NON-NLS-1$
+		menuItem.setActionCommand("setdatefilter_yesterday"); //$NON-NLS-1$
+		menuItem.addActionListener(this);
+		datePopupMenu.add(menuItem);
+		menuItem = new JMenuItem(JFritz.getMessage("date_filter_this_month")); //$NON-NLS-1$
+		menuItem.setActionCommand("setdatefilter_thismonth"); //$NON-NLS-1$
+		menuItem.addActionListener(this);
+		datePopupMenu.add(menuItem);
+		menuItem = new JMenuItem(JFritz.getMessage("date_filter_last_month")); //$NON-NLS-1$
+		menuItem.setActionCommand("setdatefilter_lastmonth"); //$NON-NLS-1$
+		menuItem.addActionListener(this);
+		datePopupMenu.add(menuItem);
+		popupListener = new PopupListener(datePopupMenu);
+
+		dateFilterButton.addMouseListener(popupListener);
+
+		startDateChooser = new JDateChooser();
+		startDateChooser.setVisible(false);
+		endDateChooser = new JDateChooser();
+		endDateChooser.setVisible(false);
+
+		sipFilterButton = new JToggleButton(getImage("world_grey.png"), true); //$NON-NLS-1$
+		sipFilterButton.setSelectedIcon(getImage("world.png")); //$NON-NLS-1$
+		sipFilterButton.setActionCommand("filter_sip"); //$NON-NLS-1$
+		sipFilterButton.addActionListener(this);
+		sipFilterButton.setToolTipText(JFritz.getMessage("filter_sip")); //$NON-NLS-1$
+		sipFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
+				.getProperty("filter.sip", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+
+		callByCallFilterButton = new JToggleButton(
+				getImage("callbycall_grey.png"), true); //$NON-NLS-1$
+		callByCallFilterButton.setSelectedIcon(getImage("callbycall.png")); //$NON-NLS-1$
+		callByCallFilterButton.setActionCommand("filter_callbycall"); //$NON-NLS-1$
+		callByCallFilterButton.addActionListener(this);
+		callByCallFilterButton.setToolTipText(JFritz
+				.getMessage("filter_callbycall")); //$NON-NLS-1$
+		callByCallFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
+				.getProperty("filter.callbycall", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+
+		commentFilterButton = new JToggleButton(getImage("commentFilter.png"), //$NON-NLS-1$
+				true);
+		commentFilterButton.setSelectedIcon(getImage("commentFilter.png")); //$NON-NLS-1$
+		commentFilterButton.setActionCommand("filter_comment"); //$NON-NLS-1$
+		commentFilterButton.addActionListener(this);
+		commentFilterButton.setToolTipText(JFritz.getMessage("filter_comment")); //$NON-NLS-1$
+		commentFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
+				.getProperty("filter.comment", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+
+		searchFilterButton = new JToggleButton(getImage("searchfilter.png"), //$NON-NLS-1$
+				true);
+		searchFilterButton.setSelectedIcon(getImage("searchfilter.png")); //$NON-NLS-1$
+		searchFilterButton.setActionCommand("filter_search"); //$NON-NLS-1$
+		searchFilterButton.addActionListener(this);
+		searchFilterButton.setToolTipText(JFritz.getMessage("filter_search")); //$NON-NLS-1$
+		searchFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
+				.getProperty("filter.search", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+
+		deleteEntriesButton = new JButton();
+		deleteEntriesButton.setToolTipText(JFritz
+				.getMessage("delete_entries").replaceAll("%N", "")); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+		deleteEntriesButton.setActionCommand("delete_entry"); //$NON-NLS-1$
+		deleteEntriesButton.addActionListener(this);
+		deleteEntriesButton.setIcon(getImage("delete.png")); //$NON-NLS-1$
+		deleteEntriesButton.setFocusPainted(false);
+		deleteEntriesButton.setEnabled(false);
+
+		searchLabel = new JLabel(JFritz.getMessage("search") + ": ");//$NON-NLS-1$,  //$NON-NLS-2$
+		searchLabel.setVisible(false);
+		searchFilterTextField = new JTextField(JFritz.getProperty(
+				"filter.search", ""), //$NON-NLS-1$,  //$NON-NLS-2$
+				10);
+		searchFilterTextField.addKeyListener(this);
+		searchFilterTextField.setVisible(false);
+
+		resetFiltersButton = new JButton(JFritz.getMessage("clear")); //$NON-NLS-1$
+		resetFiltersButton.setActionCommand("clearFilter"); //$NON-NLS-1$
+		resetFiltersButton.addActionListener(this);
+
+		JPanel toolbarPanel = new JPanel();
+		toolbarPanel.setLayout(new BorderLayout());
+		// Icons sind noch zu groß, deshalb erst einmal auskommentiert
+		// toolbarPanel.add(upperToolBar, BorderLayout.NORTH);
+
+		/** **********add all Buttons and stuff to the lowerToolbar************** */
+		lowerToolBar.add(callInFilterButton);
+		lowerToolBar.add(callInFailedFilterButton);
+		lowerToolBar.add(calloutFilterButton);
+		lowerToolBar.add(numberFilterButton);
+		lowerToolBar.add(fixedFilterButton);
+		lowerToolBar.add(handyFilterButton);
+		lowerToolBar.add(sipFilterButton);
+		lowerToolBar.add(callByCallFilterButton);
+		lowerToolBar.add(commentFilterButton);
+		lowerToolBar.addSeparator();
+		lowerToolBar.add(dateFilterButton);
+		lowerToolBar.add(startDateChooser);
+		lowerToolBar.add(endDateChooser);
+		lowerToolBar.addSeparator();
+		lowerToolBar.add(searchFilterButton);
+		lowerToolBar.add(searchLabel);
+		lowerToolBar.add(searchFilterTextField);
+		lowerToolBar.addSeparator();
+		lowerToolBar.add(resetFiltersButton);
+		lowerToolBar.addSeparator();
+		lowerToolBar.addSeparator();
+		lowerToolBar.add(deleteEntriesButton);
+		toolbarPanel.add(lowerToolBar, BorderLayout.SOUTH);
+
+		return toolbarPanel;
 	}
 
 	public void disableDeleteEntriesButton() {
@@ -674,73 +503,222 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		}
 	}
 
-	class PopupListener extends MouseAdapter {
-		JPopupMenu popupMenu;
-
-		PopupListener(JPopupMenu popupMenu) {
-			super();
-			this.popupMenu = popupMenu;
-		}
-
-		public void mouseClicked(MouseEvent e) {
-
-			if (e.getClickCount() > 1
-					&& e.getComponent().getClass() != JToggleButton.class) {
-				JFritz.getJframe().activatePhoneBook();
-			}
-		}
-
-		public void mousePressed(MouseEvent e) {
-			maybeShowPopup(e);
-		}
-
-		public void mouseReleased(MouseEvent e) {
-			maybeShowPopup(e);
-		}
-
-		private void maybeShowPopup(MouseEvent e) {
-			if (e.isPopupTrigger()) {
-				popupMenu.show(e.getComponent(), e.getX(), e.getY());
-			}
-		}
-	}
-
 	public JToggleButton getCallByCallButton() {
 		return callByCallFilterButton;
 	}
 
-	private void clearAllFilter() {
-		//FIXME
-		setSearchFilter(""); //$NON-NLS-1$
-		JFritz.setProperty("filter.search", ""); //$NON-NLS-1$,  //$NON-NLS-2$
-		JFritz.setProperty("filter.callin", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
-		callInFilterButton.setSelected(true);
-		JFritz.setProperty("filter.callout", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
-		calloutFilterButton.setSelected(true);
-		JFritz.setProperty("filter.callinfailed", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
-		callInFailedFilterButton.setSelected(true);
-		JFritz.setProperty("filter.number", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
-		numberFilterButton.setSelected(true);
-		JFritz.setProperty("filter.fixed", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
-		fixedFilterButton.setSelected(true);
-		JFritz.setProperty("filter.handy", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
-		handyFilterButton.setSelected(true);
-		JFritz.setProperty("filter.date", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
-//		callerList.getDateFilter().updateDateFilter();
-		setDateFilterText();
-		dateFilterButton.setSelected(true);
-		JFritz.setProperty("filter.sip", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
-		sipFilterButton.setSelected(true);
-		JFritz.setProperty("filter.callbycall", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
-		callByCallFilterButton.setSelected(true);
-		JFritz.setProperty("filter.comment", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
-		commentFilterButton.setSelected(true);
-		callerList.updateFilter();
-		callerList.fireTableStructureChanged();
+	public CallerList getCallerList() {
+		return callerList;
 	}
 
-	public void keyTyped(KeyEvent arg0) {
-		// unnötig
+	public CallerTable getCallerTable() {
+		return callerTable;
+	}
+
+	public ImageIcon getImage(String filename) {
+		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource(
+						"/de/moonflower/jfritz/resources/images/" + filename))); //$NON-NLS-1$
+	}
+
+	// TODO make int constants instaed of strings and use switch
+	private void handleAction(ActionEvent e) {
+		String command = e.getActionCommand();
+		if (e.getActionCommand().equals("filter_callin")) { //$NON-NLS-1$
+			if (!callInFilterButton.isSelected()) {
+				callInFilter = new CallInFilter();
+				callerList.addFilter(callInFilter);
+			} else
+				callerList.removeFilter(callInFilter);
+			return;
+		}
+		if (command.equals("filter_callinfailed")) { //$NON-NLS-1$
+			if (!callInFailedFilterButton.isSelected()) {
+				callInFailedFilter = new CallInFailedFilter();
+				callerList.addFilter(callInFailedFilter);
+			} else
+				callerList.removeFilter(callInFailedFilter);
+
+			return;
+		}
+		if (command.equals("filter_callout")) { //$NON-NLS-1$
+			if (!calloutFilterButton.isSelected()) {
+				callOutFilter = new CallOutFilter();
+				callerList.addFilter(callOutFilter);
+			} else
+				callerList.removeFilter(callOutFilter);
+
+			return;
+		}
+		if (e.getActionCommand().equals("filter_comment")) { //$NON-NLS-1$
+			if (!commentFilterButton.isSelected()) {
+				commentFilter = new CommentFilter();
+				callerList.addFilter(commentFilter);
+			} else
+				callerList.removeFilter(commentFilter);
+			return;
+		}
+		if (command.equals("filter_callinfailed_allWithoutComment")) { //$NON-NLS-1$
+			setMissedFilter(MISSED_FILTER_WITHOUT_COMMENTS);
+			callerList.fireTableStructureChanged();
+			return;
+		}
+		if (command.equals("filter_callinfailed_allWithoutCommentLastWeek")) { //$NON-NLS-1$
+			setMissedFilter(MISSED_FILTER_WITHOUT_COMMENTS_LAST_WEEK);
+			callerList.fireTableStructureChanged();
+			return;
+		}
+		if (command.equals("filter_number")) { //$NON-NLS-1$
+			if (!numberFilterButton.isSelected()) {
+				noNumberFilter = new NoNumberFilter();
+				callerList.addFilter(noNumberFilter);
+			} else
+				callerList.removeFilter(noNumberFilter);
+			return;
+		}
+		if (command.equals("filter_fixed")) { //$NON-NLS-1$
+			if (!fixedFilterButton.isSelected()) {
+				fixedFilter = new FixedFilter();
+				callerList.addFilter(fixedFilter);
+			} else
+				callerList.removeFilter(fixedFilter);
+			return;
+		}
+		if (command.equals("filter_handy")) { //$NON-NLS-1$
+			if (!handyFilterButton.isSelected()) {
+				handyFilter = new HandyFilter();
+				callerList.addFilter(handyFilter);
+			} else
+				callerList.removeFilter(handyFilter);
+			return;
+		}
+		if (command.equals("filter_date")) { //$NON-NLS-1$
+			if (!dateFilterButton.isSelected()) {
+				dateFilter = new DateFilter();
+				callerList.addFilter(dateFilter);
+				startDateChooser.setVisible(true);
+				endDateChooser.setVisible(true);
+
+			} else {
+				startDateChooser.setVisible(false);
+				endDateChooser.setVisible(false);
+				callerList.removeFilter(dateFilter);
+			}
+			return;
+		}
+
+		if (command.equals("filter_search")) {
+			if (searchFilterButton.isSelected()) {
+				searchFilterTextField.setVisible(false);
+				searchLabel.setVisible(false);
+			} else {
+				searchFilterTextField.setVisible(true);
+				searchLabel.setVisible(true);
+			}
+		}
+
+		if (command.equals("setdatefilter_thisday")) { //$NON-NLS-1$
+			dateFilterButton.setSelected(false);
+			JFritz.setProperty("filter.date", Boolean //$NON-NLS-1$
+					.toString(!dateFilterButton.isSelected()));
+			// callerList.getDateFilter().setFilter(DateFilter.DATEFILTER_TODAY);
+			setDateFilterText();
+			callerList.fireTableStructureChanged();
+			return;
+		}
+		if (command.equals("setdatefilter_yesterday")) { //$NON-NLS-1$
+			dateFilterButton.setSelected(false);
+			JFritz.setProperty("filter.date", Boolean //$NON-NLS-1$
+					.toString(!dateFilterButton.isSelected()));
+			// callerList.getDateFilter().setFilter(
+			// DateFilter.DATEFILTER_YESTERDAY);
+			setDateFilterText();
+			callerList.fireTableStructureChanged();
+			return;
+		}
+		if (command.equals("setdatefilter_thismonth")) { //$NON-NLS-1$
+			dateFilterButton.setSelected(false);
+			JFritz.setProperty("filter.date", Boolean //$NON-NLS-1$
+					.toString(!dateFilterButton.isSelected()));
+			// callerList.getDateFilter().setFilter(
+			// DateFilter.DATEFILTER_THIS_MONTH);
+			setDateFilterText();
+			callerList.fireTableStructureChanged();
+			return;
+		}
+		if (command.equals("setdatefilter_lastmonth")) { //$NON-NLS-1$
+			dateFilterButton.setSelected(false);
+			JFritz.setProperty("filter.date", Boolean //$NON-NLS-1$
+					.toString(!dateFilterButton.isSelected()));
+			// callerList.getDateFilter().setFilter(
+			// DateFilter.DATEFILTER_LAST_MONTH);
+			setDateFilterText();
+			callerList.fireTableStructureChanged();
+			return;
+		}
+		if (command.equals("filter_sip")) { //$NON-NLS-1$
+			if (!sipFilterButton.isSelected()) {
+				sipFilter = new SipFilter(callerList
+						.getSelectedOrSipProviders());
+				callerList.addFilter(sipFilter);
+			} else
+				callerList.removeFilter(sipFilter);
+			return;
+		}
+		if (command.equals("filter_callbycall")) { //$NON-NLS-1$
+			if (!callByCallFilterButton.isSelected()) {
+				callByCallFilter = new CallByCallFilter(callerList
+						.getSelectedCbCProviders());
+				callerList.addFilter(callByCallFilter);
+			} else {
+				callerList.removeFilter(callByCallFilter);
+			}
+			return;
+		}
+		if (command.equals("clearFilter")) { //$NON-NLS-1$
+			clearAllFilter();
+			return;
+		}
+		if (command.equals("delete_entry")) { //$NON-NLS-1$
+			callerList.removeEntries();
+			return;
+		}
+		if (command.equals("reverselookup")) { //$NON-NLS-1$
+			doReverseLookup();
+			return;
+		}
+		if (command.equals("export_csv")) { //$NON-NLS-1$
+			JFritz.getJframe().exportCallerListToCSV();
+			return;
+		}
+		if (command.equals("export_xml")) { //$NON-NLS-1$
+			JFritz.getJframe().exportCallerListToXML();
+			return;
+		}
+		if (command.equals("import_callerlist_csv")) { //$NON-NLS-1$
+			JFritz.getJframe().importCallerlistCSV();
+			return;
+		}
+		if (command.equals("clipboard_number")) { //$NON-NLS-1$
+			Call call = callerList.getSelectedCall();
+			if (call != null) {
+				PhoneNumber number = call.getPhoneNumber();
+				if ((number != null) && (call != null))
+					JFritzClipboard.copy(number.convertToNationalNumber());
+			}
+			// JFritz.getJframe().copyNumberToClipboard();
+			return;
+		}
+		if (command.equals("clipboard_adress")) { //$NON-NLS-1$
+			Call call = callerList.getSelectedCall();
+			if (call != null) {
+				Person person = call.getPerson();
+				if (person != null)
+					JFritzClipboard.copy(person.getAddress());
+			}
+			// JFritz.getJframe().copyAddressToClipboard();
+
+		}
 
 	}
 
@@ -769,11 +747,86 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	}
 
-	public CallerList getCallerList() {
-		return callerList;
+	public void keyTyped(KeyEvent arg0) {
+		// unnötig
+
 	}
 
 	public void setCallerList(CallerList callerList) {
 		this.callerList = callerList;
+	}
+
+	public void setDateFilterText() {
+		/*
+		 * if (JFritzUtils.parseBoolean(JFritz.getProperty("filter.date"))) {
+		 * //$NON-NLS-1$ dateFilterButton.setSelected(false);
+		 *
+		 * if (JFritz.getProperty("filter.date_from").equals( //$NON-NLS-1$
+		 * JFritz.getProperty("filter.date_to"))) { //$NON-NLS-1$
+		 * dateFilterButton .setText(JFritz.getProperty("filter.date_from"));
+		 * //$NON-NLS-1$ } else {
+		 * dateFilterButton.setText(JFritz.getProperty("filter.date_from")
+		 * //$NON-NLS-1$ + " - " + JFritz.getProperty("filter.date_to"));
+		 * //$NON-NLS-1$, //$NON-NLS-2$ } } else {
+		 * dateFilterButton.setSelected(true); dateFilterButton.setText("");
+		 * //$NON-NLS-1$ }
+		 */
+	}
+
+	public void setDeleteEntriesButton(int rows) {
+		deleteEntriesButton
+				.setToolTipText(JFritz
+						.getMessage("delete_entries").replaceAll("%N", Integer.toString(rows))); //$NON-NLS-1$,  //$NON-NLS-2$
+		deleteEntriesButton.setEnabled(true);
+	}
+
+	public void setDeleteEntryButton() {
+		deleteEntriesButton.setToolTipText(JFritz.getMessage("delete_entry")); //$NON-NLS-1$
+		deleteEntriesButton.setEnabled(true);
+	}
+
+	public void setDeleteListButton() {
+		deleteEntriesButton.setToolTipText(JFritz.getMessage("delete_list")); //$NON-NLS-1$
+		// clearList-Icon to big, so use std. delete.png
+		// deleteEntriesButton.setIcon(getImage("clearList.png"));
+		deleteEntriesButton.setEnabled(true);
+	}
+
+	private void setMissedFilter(int filterType) {
+		// FIXME
+		Date from = null;
+		Date to = null;
+		JFritz.setProperty("filter.callin", "true"); //$NON-NLS-1$,  //$NON-NLS-2$
+		callInFilterButton.setSelected(false);
+		JFritz.setProperty("filter.callout", "true"); //$NON-NLS-1$,  //$NON-NLS-2$
+		calloutFilterButton.setSelected(false);
+		JFritz.setProperty("filter.calloutmissed", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
+		callInFailedFilterButton.setSelected(true);
+		JFritz.setProperty("filter.comment", "true"); //$NON-NLS-1$,  //$NON-NLS-2$
+		JFritz.setProperty("filter.comment.text", ""); //$NON-NLS-1$,  //$NON-NLS-2$
+		commentFilterButton.setSelected(false);
+		switch (filterType) {
+		case MISSED_FILTER_WITHOUT_COMMENTS:
+			break;
+		case MISSED_FILTER_WITHOUT_COMMENTS_LAST_WEEK: {
+			Calendar cal = Calendar.getInstance();
+			to = cal.getTime();
+			cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - 7);
+			from = cal.getTime();
+			String fromstr = new SimpleDateFormat("dd.MM.yy").format(from); //$NON-NLS-1$
+			String tostr = new SimpleDateFormat("dd.MM.yy").format(to); //$NON-NLS-1$
+			JFritz.setProperty("filter.date_from", fromstr); //$NON-NLS-1$
+			JFritz.setProperty("filter.date_to", tostr); //$NON-NLS-1$
+			JFritz.setProperty("filter.date", "true"); //$NON-NLS-1$,  //$NON-NLS-2$
+			// callerList.getDateFilter().updateDateFilter();
+			setDateFilterText();
+			break;
+		}
+		}
+		callerList.updateFilter();
+	}
+
+	public void setSearchFilter(String text) {
+		searchFilterTextField.setText(text);
 	}
 }
