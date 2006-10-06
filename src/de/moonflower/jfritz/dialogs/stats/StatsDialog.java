@@ -37,6 +37,7 @@ import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.network.AddonInfosXMLHandler;
 import de.moonflower.jfritz.utils.network.UPNPUtils;
@@ -101,7 +102,7 @@ public class StatsDialog extends JDialog {
 	private void drawDialog() {
 		super.dialogInit();
 
-		setTitle(JFritz.getMessage("stats")); //$NON-NLS-1$
+		setTitle(Main.getMessage("stats")); //$NON-NLS-1$
 		setModal(true);
 		getContentPane().setLayout(new BorderLayout());
 		JPanel topPane = new JPanel();
@@ -139,12 +140,12 @@ public class StatsDialog extends JDialog {
 			}
 		};
 
-		okButton = new JButton(JFritz.getMessage("okay")); //$NON-NLS-1$
+		okButton = new JButton(Main.getMessage("okay")); //$NON-NLS-1$
 		okButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/okay.png")))); //$NON-NLS-1$
-		cancelButton = new JButton(JFritz.getMessage("cancel")); //$NON-NLS-1$
-		refreshButton = new JButton(JFritz.getMessage("actualize_statistics")); //$NON-NLS-1$
+		cancelButton = new JButton(Main.getMessage("cancel")); //$NON-NLS-1$
+		refreshButton = new JButton(Main.getMessage("actualize_statistics")); //$NON-NLS-1$
 		refreshButton
 				.setIcon(new ImageIcon(
 						Toolkit.getDefaultToolkit().getImage(getClass()
@@ -213,16 +214,16 @@ public class StatsDialog extends JDialog {
 
 	public void setAddonInfos(int byteSendRate, int byteReceiveRate,
 			int totalBytesSent, int totalBytesReceived, String dns1, String dns2) {
-		byteSendRateLabel.setText(JFritz.getMessage(
+		byteSendRateLabel.setText(Main.getMessage(
 				"bytessendrate") //$NON-NLS-1$
 				+ ": " + byteSendRate); //$NON-NLS-1$
-		byteReceiveRateLabel.setText(JFritz.getMessage(
+		byteReceiveRateLabel.setText(Main.getMessage(
 				"bytesreceivedrate") //$NON-NLS-1$
 				+ ": " + byteReceiveRate); //$NON-NLS-1$
-		totalBytesSendLabel.setText(JFritz.getMessage(
+		totalBytesSendLabel.setText(Main.getMessage(
 				"totaldatasent") //$NON-NLS-1$
 				+ ": " + (totalBytesSent / 1024) + " KByte"); //$NON-NLS-1$,  //$NON-NLS-2$
-		totalBytesReceivedLabel.setText(JFritz.getMessage(
+		totalBytesReceivedLabel.setText(Main.getMessage(
 				"totaldatareceived") //$NON-NLS-1$
 				+ ": " + (totalBytesReceived / 1024) + " KByte"); //$NON-NLS-1$,  //$NON-NLS-2$
 		dns1Label.setText("DNS Server 1: " + dns1); //$NON-NLS-1$

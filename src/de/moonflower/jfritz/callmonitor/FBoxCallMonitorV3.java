@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.PhoneNumber;
@@ -44,11 +45,11 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
         for (int i = 0; i < split.length; i++) {
             Debug.msg("Split[" + i + "] = " + split[i]); //$NON-NLS-1$,  //$NON-NLS-2$
         }
-        if (JFritzUtils.parseBoolean(JFritz.getProperty(
+        if (JFritzUtils.parseBoolean(Main.getProperty(
                 "option.callmonitor.monitorIncomingCalls", "true")) //$NON-NLS-1$,  //$NON-NLS-2$
                 && split[1].equals("RING")) { //$NON-NLS-1$
             if (split[3].equals("")) { //$NON-NLS-1$
-                number = JFritz.getMessage("unknown"); //$NON-NLS-1$
+                number = Main.getMessage("unknown"); //$NON-NLS-1$
             } else
                 number = split[3];
             if (number.endsWith("#")) //$NON-NLS-1$
@@ -58,7 +59,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
             if (split[5].equals("POTS")) { //$NON-NLS-1$
                 route_type = Call.ROUTE_FIXED_NETWORK;
                 if (split[4].equals("")) { //$NON-NLS-1$
-                    provider = JFritz.getMessage("fixed_network"); //$NON-NLS-1$
+                    provider = Main.getMessage("fixed_network"); //$NON-NLS-1$
                 } else {
                     provider = split[4];
                 }
@@ -83,12 +84,12 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-        } else if (JFritzUtils.parseBoolean(JFritz.getProperty(
+        } else if (JFritzUtils.parseBoolean(Main.getProperty(
                 "option.callmonitor.monitorOutgoingCalls", "true")) //$NON-NLS-1$,  //$NON-NLS-2$
                 && split[1].equals("CALL")) { //$NON-NLS-1$
 
             if (split[5].equals("")) { //$NON-NLS-1$
-                number = JFritz.getMessage("unknown"); //$NON-NLS-1$
+                number = Main.getMessage("unknown"); //$NON-NLS-1$
             } else
                 number = split[5];
             if (number.endsWith("#")) //$NON-NLS-1$
@@ -102,7 +103,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
             if (split[6].equals("POTS")) { //$NON-NLS-1$
                 route_type = Call.ROUTE_FIXED_NETWORK;
                 if (split[4].equals("")) { //$NON-NLS-1$
-                    provider = JFritz.getMessage("fixed_network"); //$NON-NLS-1$
+                    provider = Main.getMessage("fixed_network"); //$NON-NLS-1$
                 } else {
                     provider = split[4];
                 }
@@ -147,7 +148,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
             int callId = Integer.parseInt(split[2]);
             String port = split[3];
             if (split[4].equals("")) { //$NON-NLS-1$
-                number = JFritz.getMessage("unknown"); //$NON-NLS-1$
+                number = Main.getMessage("unknown"); //$NON-NLS-1$
             } else
                 number = split[4];
             if (number.endsWith("#")) //$NON-NLS-1$

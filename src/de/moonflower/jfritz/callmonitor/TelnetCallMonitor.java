@@ -1,6 +1,7 @@
 package de.moonflower.jfritz.callmonitor;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.network.Telnet;
 
@@ -44,7 +45,7 @@ public class TelnetCallMonitor extends Thread implements CallMonitorInterface {
                             "Der telefond muss neu gestartet werden.\n" // TODO: I18N
                                     + "Dabei wird ein laufendes Gespräch unterbrochen. Die Anrufliste wird vorher gesichert.\n" // TODO: I18N
                                     + "Soll der telefond neu gestartet werden?", // TODO: I18N
-                            JFritz.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                                    Main.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 JFritz.getJframe().getFetchButton().doClick();
                 restartTelefonDaemon();
                 parseOutput();
@@ -72,7 +73,7 @@ public class TelnetCallMonitor extends Thread implements CallMonitorInterface {
             Debug.err("Fehler beim Schlafen: " + e); //$NON-NLS-1$
         }
         Debug.msg("Telefon Daemon restarted."); //$NON-NLS-1$
-        JFritz.setProperty("telefond.laststarted", "telnetMonitor"); //$NON-NLS-1$,  //$NON-NLS-2$
+        Main.setProperty("telefond.laststarted", "telnetMonitor"); //$NON-NLS-1$,  //$NON-NLS-2$
     }
 
     public void parseOutput() {

@@ -109,13 +109,13 @@ public final class ReverseLookupGermany {
 					while ((flg_found_end == false) && (null != ((str = d.readLine())))) {
 						// Search for starttag
 						if (flg_found_start == false
-								&& str.contains("<!-- ****** Treffer Einträge ****** -->"))
+								&& (str.indexOf("<!-- ****** Treffer Einträge ****** -->")!=-1))
 							flg_found_start = true;
 
 						if (flg_found_start == true) {
 							data += str;
 							// Seach for endtag
-							if (str.contains("<!-- ****** Ende Treffer Einträge ****** -->"))
+							if (str.indexOf("<!-- ****** Ende Treffer Einträge ****** -->")!=-1)
 								flg_found_end = true;
 						}
 					}
@@ -164,7 +164,7 @@ public final class ReverseLookupGermany {
 						if (m.group(3) != null) { // there is a zipcity
 							String line3 = m.group(3).trim();
 							Debug.msg(3, "Pattern3: " + line3); //$NON-NLS-1$
-							String zipcity = line3.replace("\t", ""); //$NON-NLS-1$
+							String zipcity = line3.replaceAll("\t", ""); //$NON-NLS-1$
 							split = zipcity.split(" ", 2); //$NON-NLS-1$
 							if (split.length > 1) {
 								zipcode = split[0].trim();

@@ -34,6 +34,7 @@ import org.jfree.report.modules.gui.base.PreviewFrame;
 import org.jfree.report.style.FontDefinition;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.Person;
 
@@ -62,7 +63,7 @@ public class PrintCallerList {
         for (int i = 0; i < columnCount; i++) {
             String columnName = colModel.getColumn(i).getHeaderValue()
                     .toString();
-            if (columnName.equals(JFritz.getMessage("type"))) { //$NON-NLS-1$
+            if (columnName.equals(Main.getMessage("type"))) { //$NON-NLS-1$
                 // Icon, same Width
                 columnWidth[i] = colModel.getColumn(i).getWidth() - 10;
                 // Minimum size of type-column (icon)
@@ -85,8 +86,8 @@ public class PrintCallerList {
             for (int i = 0; i < columnCount; i++) {
                 String columnName = colModel.getColumn(i).getHeaderValue()
                 .toString();
-                if (!(columnName.equals(JFritz.getMessage("number"))) //$NON-NLS-1$
-                        && (!columnName.equals(JFritz.getMessage("participant")))) { //$NON-NLS-1$
+                if (!(columnName.equals(Main.getMessage("number"))) //$NON-NLS-1$
+                        && (!columnName.equals(Main.getMessage("participant")))) { //$NON-NLS-1$
                     if (columnWidth[i] > columnWidth[columnWithMaxWidth]) columnWithMaxWidth = i;
                     fixedColumnsWidth += columnWidth[i];
                 }
@@ -128,7 +129,7 @@ public class PrintCallerList {
         TextElement label = LabelElementFactory.createLabelElement("JFritz", //$NON-NLS-1$
                 new Rectangle2D.Float(0, 0, pageWidth, 40), Color.BLACK,
                 ElementAlignment.CENTER, ElementAlignment.MIDDLE, font,
-                JFritz.PROGRAM_NAME + " - " + JFritz.getMessage("callerlist")); //$NON-NLS-1$,  //$NON-NLS-2$
+                Main.PROGRAM_NAME + " - " + Main.getMessage("callerlist")); //$NON-NLS-1$,  //$NON-NLS-2$
         pageHeader.addElement(label);
 
         font = new FontDefinition("Arial", 8, true, false, false, false); //$NON-NLS-1$
@@ -190,7 +191,7 @@ public class PrintCallerList {
 
     public JFreeReport createReportDefinition() {
         report = new JFreeReport();
-        report.setName(JFritz.PROGRAM_NAME + "-" + JFritz.getMessage("callerlist")); //$NON-NLS-1$,  //$NON-NLS-2$
+        report.setName(Main.PROGRAM_NAME + "-" + Main.getMessage("callerlist")); //$NON-NLS-1$,  //$NON-NLS-2$
 
         SimplePageDefinition pageDefinition = new SimplePageDefinition(
                 createDINA4PaperLandscape());

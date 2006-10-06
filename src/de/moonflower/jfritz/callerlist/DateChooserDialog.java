@@ -1,9 +1,6 @@
 package de.moonflower.jfritz.callerlist;
 
-import java.util.Date;
-
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
 import com.toedter.calendar.JDateChooser;

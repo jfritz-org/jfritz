@@ -12,7 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 
 /**
  * This is the renderer for the duration display of calls in the table.
@@ -31,7 +31,7 @@ public class CostCellRenderer extends DefaultTableCellRenderer {
 		    DecimalFormat df = new DecimalFormat( "0.00" ); //$NON-NLS-1$
 		    double costs = Double.parseDouble(value.toString());
 		    if (costs == -1) {
-		        label.setText(JFritz.getMessage("unknown")); //$NON-NLS-1$
+		        label.setText(Main.getMessage("unknown")); //$NON-NLS-1$
 		    }
 		    else if (costs == -2){
 		        label.setText("Freiminuten"); //$NON-NLS-1$

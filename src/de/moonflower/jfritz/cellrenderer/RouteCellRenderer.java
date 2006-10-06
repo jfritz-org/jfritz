@@ -13,7 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 
 /**
  * This renderer shows a callport in the specified way.
@@ -51,18 +51,18 @@ public class RouteCellRenderer extends DefaultTableCellRenderer {
 				// SIP Call and we know the provider
 				String[] parts = route.split("@"); //$NON-NLS-1$
 				routeStr = parts[0];
-				setToolTipText(JFritz.getMessage("internet_call")+" " + route); //$NON-NLS-1$
+				setToolTipText(Main.getMessage("internet_call")+" " + route); //$NON-NLS-1$
 				setIcon(imageSIP);
 			} else if (route.indexOf("SIP")>=0) { //$NON-NLS-1$
 				// SIP Call but we don't know the provider
 				routeStr = route;
-				setToolTipText(JFritz.getMessage("internet_call")+" " + route); //$NON-NLS-1$
+				setToolTipText(Main.getMessage("internet_call")+" " + route); //$NON-NLS-1$
 				setIcon(imageSIP);
 			} else {
 				// regular call
 				routeStr = route;
 				setIcon(null);
-				setToolTipText(JFritz.getMessage("fixed_line_network_call")+" " + route); //$NON-NLS-1$
+				setToolTipText(Main.getMessage("fixed_line_network_call")+" " + route); //$NON-NLS-1$
 				setIcon(imagePhone);
 			}
 

@@ -16,7 +16,7 @@ import javax.swing.JDialog;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
-import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -42,9 +42,9 @@ public class MessageDlg extends JDialog implements ActionListener{
 			if(delay > 0)
 				timer.schedule(task, delay);
 
-			setTitle(JFritz.getMessage("dialog_title_popup_info")); //$NON-NLS-1$
+			setTitle(Main.getMessage("dialog_title_popup_info")); //$NON-NLS-1$
 
-			JButton closeButton = new JButton(JFritz.getMessage("okay")); //$NON-NLS-1$
+			JButton closeButton = new JButton(Main.getMessage("okay")); //$NON-NLS-1$
 			closeButton.addActionListener(this);
 			getContentPane().setLayout(new BorderLayout(15, 15));
 			getContentPane().add(closeButton, BorderLayout.SOUTH);

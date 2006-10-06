@@ -55,6 +55,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.table.TableCellRenderer;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
@@ -121,7 +122,7 @@ public class ConfigDialog extends JDialog {
 
 	public ConfigDialog(Frame parent) {
 		super(parent, true);
-		setTitle(JFritz.getMessage("config")); //$NON-NLS-1$
+		setTitle(Main.getMessage("config")); //$NON-NLS-1$
 		devices = JFritz.getDevices();
 		drawDialog();
 		setValues();
@@ -139,40 +140,30 @@ public class ConfigDialog extends JDialog {
 	 * Sets properties to dialog components
 	 */
 	public void setValues() {
-		notifyOnCallsButton.setSelected(JFritzUtils.parseBoolean(JFritz
-				.getProperty("option.notifyOnCalls"))); //$NON-NLS-1$
-		checkNewVersionAfterStart.setSelected(JFritzUtils.parseBoolean(JFritz.getProperty("option.checkNewVersionAfterStart" , "false")));//$NON-NLS-1$, //§NON-NLS-2$
-		fetchAfterStartButton.setSelected(JFritzUtils.parseBoolean(JFritz
-				.getProperty("option.fetchAfterStart"))); //$NON-NLS-1$
-		timerAfterStartButton.setSelected(JFritzUtils.parseBoolean(JFritz
-				.getProperty("option.timerAfterStart"))); //$NON-NLS-1$
-		deleteAfterFetchButton.setSelected(JFritzUtils.parseBoolean(JFritz
-				.getProperty("option.deleteAfterFetch"))); //$NON-NLS-1$
-		confirmOnExitButton.setSelected(JFritzUtils.parseBoolean(JFritz
-				.getProperty("option.confirmOnExit", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		startMinimizedButton.setSelected(JFritzUtils.parseBoolean(JFritz
-				.getProperty("option.startMinimized", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		minimizeInsteadOfClose.setSelected(JFritzUtils.parseBoolean(JFritz
-				.getProperty("option.minimize", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		createBackup.setSelected(JFritzUtils.parseBoolean(JFritz.getProperty(
+		notifyOnCallsButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.notifyOnCalls"))); //$NON-NLS-1$
+		checkNewVersionAfterStart.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.checkNewVersionAfterStart" , "false")));//$NON-NLS-1$, //§NON-NLS-2$
+		fetchAfterStartButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.fetchAfterStart"))); //$NON-NLS-1$
+		timerAfterStartButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.timerAfterStart"))); //$NON-NLS-1$
+		deleteAfterFetchButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.deleteAfterFetch"))); //$NON-NLS-1$
+		confirmOnExitButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.confirmOnExit", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		startMinimizedButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.startMinimized", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		minimizeInsteadOfClose.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.minimize", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		createBackup.setSelected(JFritzUtils.parseBoolean(Main.getProperty(
 				"option.createBackup", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		createBackupAfterFetch.setSelected(JFritzUtils.parseBoolean(JFritz
-				.getProperty("option.createBackupAfterFetch", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		soundButton.setSelected(JFritzUtils.parseBoolean(JFritz.getProperty(
+		createBackupAfterFetch.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.createBackupAfterFetch", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		soundButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty(
 				"option.playSounds", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		externProgramCheckBox.setSelected(JFritzUtils.parseBoolean(JFritz
-				.getProperty("option.startExternProgram", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		externProgramTextField.setText(JFritzUtils.deconvertSpecialChars(JFritz
-				.getProperty("option.externProgram", ""))); //$NON-NLS-1$,  //$NON-NLS-2$
-        activateDialPrefix.setSelected(JFritzUtils.parseBoolean(JFritz.getProperty(
+		externProgramCheckBox.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.startExternProgram", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		externProgramTextField.setText(JFritzUtils.deconvertSpecialChars(Main.getProperty("option.externProgram", ""))); //$NON-NLS-1$,  //$NON-NLS-2$
+        activateDialPrefix.setSelected(JFritzUtils.parseBoolean(Main.getProperty(
                 "option.activateDialPrefix", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 
-		callMonitorCombo.setSelectedIndex(Integer.parseInt(JFritz.getProperty(
+		callMonitorCombo.setSelectedIndex(Integer.parseInt(Main.getProperty(
 				"option.callMonitorType", "0"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		int index = 0;
-		String loc = JFritz.getProperty("locale", "de_DE");
+		String loc = Main.getProperty("locale", "de_DE");
 		for (int a = 0; a < localeList.length; a++) {
 			if (localeList[a].equals(loc)) index = a;
 		}
@@ -183,18 +174,17 @@ public class ConfigDialog extends JDialog {
 		} else {
 			startCallMonitorButton.setSelected(true);
 		}
-		callMonitorAfterStartButton.setSelected(JFritzUtils.parseBoolean(JFritz
-				.getProperty("option.autostartcallmonitor", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		callMonitorAfterStartButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.autostartcallmonitor", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 		if (startCallMonitorButton.isSelected()) {
 			setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
 		} else {
 			setCallMonitorButtons(JFritz.CALLMONITOR_START);
 		}
 
-		if (!JFritz.SYSTRAY_SUPPORT) {
+		if (!Main.SYSTRAY_SUPPORT) {
 			popupTrayButton.setVisible(false);
 		}
-		switch (Integer.parseInt(JFritz.getProperty("option.popuptype", "1"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+		switch (Integer.parseInt(Main.getProperty("option.popuptype", "1"))) { //$NON-NLS-1$,  //$NON-NLS-2$
 			case 0 : {
 				popupNoButton.setSelected(true);
 				break;
@@ -209,27 +199,22 @@ public class ConfigDialog extends JDialog {
 			}
 		}
 
-		popupDelay.setText(JFritz.getProperty("option.popupDelay", "10"));
+		popupDelay.setText(Main.getProperty("option.popupDelay", "10"));
 
-		lookupAfterFetchButton.setSelected(JFritzUtils.parseBoolean(JFritz
-				.getProperty("option.lookupAfterFetch", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		lookupAfterFetchButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.lookupAfterFetch", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		showCallByCallColumnButton.setSelected(JFritzUtils.parseBoolean(JFritz
-				.getProperty("option.showCallByCallColumn", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		showCallByCallColumnButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.showCallByCallColumn", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		showCommentColumnButton.setSelected(JFritzUtils.parseBoolean(JFritz
-				.getProperty("option.showCommentColumn", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		showCommentColumnButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.showCommentColumn", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		showPortColumnButton.setSelected(JFritzUtils.parseBoolean(JFritz
-				.getProperty("option.showPortColumn", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		showPortColumnButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.showPortColumn", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		fetchAfterStandby.setSelected(JFritzUtils.parseBoolean(JFritz
-				.getProperty("option.watchdog.fetchAfterStandby", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		fetchAfterStandby.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.watchdog.fetchAfterStandby", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		boolean pwAfterStart = !Encryption.decrypt(
-				JFritz.getProperty("jfritz.password", "")).equals( //$NON-NLS-1$,  //$NON-NLS-2$
+				Main.getProperty("jfritz.password", "")).equals( //$NON-NLS-1$,  //$NON-NLS-2$
 				JFritz.PROGRAM_SECRET
-						+ Encryption.decrypt(JFritz.getProperty("box.password", //$NON-NLS-1$
+						+ Encryption.decrypt(Main.getProperty("box.password", //$NON-NLS-1$
 								""))); //$NON-NLS-1$
 		passwordAfterStartButton.setSelected(pwAfterStart);
 
@@ -237,15 +222,15 @@ public class ConfigDialog extends JDialog {
 		password = JFritz.getFritzBox().getPassword();
 		address.setText(JFritz.getFritzBox().getAddress());
 		port.setText(JFritz.getFritzBox().getPort());
-		areaCode.setText(JFritz.getProperty("area.code")); //$NON-NLS-1$
-		countryCode.setText(JFritz.getProperty("country.code")); //$NON-NLS-1$
-        areaPrefix.setText(JFritz.getProperty("area.prefix")); //$NON-NLS-1$
-        dialPrefix.setText(JFritz.getProperty("dial.prefix")); //$NON-NLS-1$
-		countryPrefix.setText(JFritz.getProperty("country.prefix")); //$NON-NLS-1$
+		areaCode.setText(Main.getProperty("area.code")); //$NON-NLS-1$
+		countryCode.setText(Main.getProperty("country.code")); //$NON-NLS-1$
+        areaPrefix.setText(Main.getProperty("area.prefix")); //$NON-NLS-1$
+        dialPrefix.setText(Main.getProperty("dial.prefix")); //$NON-NLS-1$
+		countryPrefix.setText(Main.getProperty("country.prefix")); //$NON-NLS-1$
 		timerSlider.setValue(Integer
-				.parseInt(JFritz.getProperty("fetch.timer"))); //$NON-NLS-1$
+				.parseInt(Main.getProperty("fetch.timer"))); //$NON-NLS-1$
 
-		searchWithSSDP.setSelected(JFritzUtils.parseBoolean(JFritz.getProperty(
+		searchWithSSDP.setSelected(JFritzUtils.parseBoolean(Main.getProperty(
 				"option.useSSDP", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		//Buggy code
@@ -275,8 +260,8 @@ public class ConfigDialog extends JDialog {
 	public void storeValues() {
 
 		//only write the save dir to disk if the user changed something
-		if(!save_location.getText().equals(JFritz.SAVE_DIR)){
-			JFritz.SAVE_DIR = save_location.getText();
+		if(!save_location.getText().equals(Main.SAVE_DIR)){
+			Main.SAVE_DIR = save_location.getText();
 			JFritz.writeSaveDir();
 		}
 
@@ -285,122 +270,117 @@ public class ConfigDialog extends JDialog {
 			areaCode.setText(areaCode.getText().substring(
 					areaPrefix.getText().length()));
 
-		JFritz.setProperty("option.useSSDP", Boolean.toString(searchWithSSDP //$NON-NLS-1$
+		Main.setProperty("option.useSSDP", Boolean.toString(searchWithSSDP //$NON-NLS-1$
 				.isSelected()));
-		JFritz.setProperty("option.notifyOnCalls", Boolean //$NON-NLS-1$
+		Main.setProperty("option.notifyOnCalls", Boolean //$NON-NLS-1$
 				.toString(notifyOnCallsButton.isSelected()));
-		JFritz.setProperty("option.fetchAfterStart", Boolean //$NON-NLS-1$
+		Main.setProperty("option.fetchAfterStart", Boolean //$NON-NLS-1$
 				.toString(fetchAfterStartButton.isSelected()));
-		JFritz.setProperty("option.timerAfterStart", Boolean //$NON-NLS-1$
+		Main.setProperty("option.timerAfterStart", Boolean //$NON-NLS-1$
 				.toString(timerAfterStartButton.isSelected()));
-		JFritz.setProperty("option.deleteAfterFetch", Boolean //$NON-NLS-1$
+		Main.setProperty("option.deleteAfterFetch", Boolean //$NON-NLS-1$
 				.toString(deleteAfterFetchButton.isSelected()));
-		JFritz.setProperty("option.confirmOnExit", Boolean //$NON-NLS-1$
+		Main.setProperty("option.confirmOnExit", Boolean //$NON-NLS-1$
 				.toString(confirmOnExitButton.isSelected()));
-		JFritz.setProperty("option.startMinimized", Boolean //$NON-NLS-1$
+		Main.setProperty("option.startMinimized", Boolean //$NON-NLS-1$
 				.toString(startMinimizedButton.isSelected()));
-		JFritz.setProperty("option.minimize", Boolean //$NON-NLS-1$
+		Main.setProperty("option.minimize", Boolean //$NON-NLS-1$
 				.toString(minimizeInsteadOfClose.isSelected()));
-		JFritz
-				.setProperty(
+		Main.setProperty(
 						"option.createBackup", Boolean.toString(createBackup.isSelected())); //$NON-NLS-1$
-        JFritz
-				.setProperty(
+		Main.setProperty(
 						"option.createBackupAfterFetch", Boolean.toString(createBackupAfterFetch.isSelected())); //$NON-NLS-1$
-		JFritz.setProperty("option.playSounds", Boolean.toString(soundButton //$NON-NLS-1$
+		Main.setProperty("option.playSounds", Boolean.toString(soundButton //$NON-NLS-1$
 				.isSelected()));
 
-		JFritz.setProperty("option.startExternProgram", Boolean //$NON-NLS-1$
+		Main.setProperty("option.startExternProgram", Boolean //$NON-NLS-1$
 				.toString(externProgramCheckBox.isSelected()));
-		JFritz
-				.setProperty(
+		Main.setProperty(
 						"option.externProgram", JFritzUtils.convertSpecialChars(externProgramTextField //$NON-NLS-1$
 										.getText()));
 
-		JFritz.setProperty("option.startcallmonitor", Boolean //$NON-NLS-1$
+		Main.setProperty("option.startcallmonitor", Boolean //$NON-NLS-1$
 				.toString(startCallMonitorButton.isSelected()));
-		JFritz.setProperty("option.autostartcallmonitor", Boolean //$NON-NLS-1$
+		Main.setProperty("option.autostartcallmonitor", Boolean //$NON-NLS-1$
 				.toString(callMonitorAfterStartButton.isSelected()));
-		JFritz.setProperty("option.callMonitorType", String //$NON-NLS-1$
+		Main.setProperty("option.callMonitorType", String //$NON-NLS-1$
 				.valueOf(callMonitorCombo.getSelectedIndex()));
-        JFritz
-        .setProperty(
+		Main.setProperty(
                 "option.activateDialPrefix", Boolean.toString(activateDialPrefix.isSelected())); //$NON-NLS-1$
-        JFritz
-		.setProperty(
+		Main.setProperty(
 				"option.checkNewVersionAfterStart", Boolean.toString(checkNewVersionAfterStart.isSelected())); //$NON-NLS-1$
 
 
 
 		// Set Popup Messages Type
 		if (popupNoButton.isSelected()) {
-			JFritz.setProperty("option.popuptype", "0"); //$NON-NLS-1$, //$NON-NLS-2$
+			Main.setProperty("option.popuptype", "0"); //$NON-NLS-1$, //$NON-NLS-2$
 		} else if (popupDialogButton.isSelected()) {
-			JFritz.setProperty("option.popuptype", "1"); //$NON-NLS-1$, //$NON-NLS-2$
+			Main.setProperty("option.popuptype", "1"); //$NON-NLS-1$, //$NON-NLS-2$
 		} else {
-			JFritz.setProperty("option.popuptype", "2"); //$NON-NLS-1$, //$NON-NLS-2$
+			Main.setProperty("option.popuptype", "2"); //$NON-NLS-1$, //$NON-NLS-2$
 		}
 
 		if (!passwordAfterStartButton.isSelected()) {
-			JFritz.setProperty("jfritz.password", Encryption //$NON-NLS-1$
+			Main.setProperty("jfritz.password", Encryption //$NON-NLS-1$
 					.encrypt(JFritz.PROGRAM_SECRET + password));
 		} else {
-			JFritz.removeProperty("jfritz.password"); //$NON-NLS-1$
+			Main.removeProperty("jfritz.password"); //$NON-NLS-1$
 		}
 
-		JFritz.setProperty("option.lookupAfterFetch", Boolean //$NON-NLS-1$
+		Main.setProperty("option.lookupAfterFetch", Boolean //$NON-NLS-1$
 				.toString(lookupAfterFetchButton.isSelected()));
 
-		JFritz.setProperty("option.showCallByCallColumn", Boolean //$NON-NLS-1$
+		Main.setProperty("option.showCallByCallColumn", Boolean //$NON-NLS-1$
 				.toString(showCallByCallColumnButton.isSelected()));
 
-		JFritz.setProperty("option.showCommentColumn", Boolean //$NON-NLS-1$
+		Main.setProperty("option.showCommentColumn", Boolean //$NON-NLS-1$
 				.toString(showCommentColumnButton.isSelected()));
 
-		JFritz.setProperty("option.showPortColumn", Boolean //$NON-NLS-1$
+		Main.setProperty("option.showPortColumn", Boolean //$NON-NLS-1$
 				.toString(showPortColumnButton.isSelected()));
 
-		JFritz.setProperty("option.watchdog.fetchAfterStandby", Boolean //$NON-NLS-1$
+		Main.setProperty("option.watchdog.fetchAfterStandby", Boolean //$NON-NLS-1$
 				.toString(fetchAfterStandby.isSelected()));
 
-		JFritz.setProperty("box.password", Encryption.encrypt(password)); //$NON-NLS-1$
-		JFritz.setProperty("box.address", address.getText()); //$NON-NLS-1$
-		JFritz.setProperty("box.port", port.getText()); //$NON-NLS-1$
-		JFritz.setProperty("area.code", areaCode.getText()); //$NON-NLS-1$
+		Main.setProperty("box.password", Encryption.encrypt(password)); //$NON-NLS-1$
+		Main.setProperty("box.address", address.getText()); //$NON-NLS-1$
+		Main.setProperty("box.port", port.getText()); //$NON-NLS-1$
+		Main.setProperty("area.code", areaCode.getText()); //$NON-NLS-1$
 
 		//Phone stuff here
 		//make sure country code has a plus on it
 		if(!countryCode.getText().startsWith("+"))
 			countryCode.setText("+"+countryCode.getText());
 
-		JFritz.setProperty("country.code", countryCode.getText()); //$NON-NLS-1$
-		JFritz.setProperty("area.prefix", areaPrefix.getText()); //$NON-NLS-1$
-        JFritz.setProperty("dial.prefix", dialPrefix.getText()); //$NON-NLS-1$
-		JFritz.setProperty("country.prefix", countryPrefix.getText()); //$NON-NLS-1$
+		Main.setProperty("country.code", countryCode.getText()); //$NON-NLS-1$
+		Main.setProperty("area.prefix", areaPrefix.getText()); //$NON-NLS-1$
+        Main.setProperty("dial.prefix", dialPrefix.getText()); //$NON-NLS-1$
+		Main.setProperty("country.prefix", countryPrefix.getText()); //$NON-NLS-1$
 		if (timerSlider.getValue() < 3)
 			timerSlider.setValue(3);
-		JFritz.setProperty("fetch.timer", Integer.toString(timerSlider //$NON-NLS-1$
+		Main.setProperty("fetch.timer", Integer.toString(timerSlider //$NON-NLS-1$
 				.getValue()));
 
 		JFritz.getFritzBox().detectFirmware();
 
-		if (!JFritz.getProperty("locale", "de_DE").equals(localeList[languageCombo.getSelectedIndex()])) { //$NON-NLS-1$ //$NON-NLS-2$
-			JFritz.setProperty(
+		if (!Main.getProperty("locale", "de_DE").equals(localeList[languageCombo.getSelectedIndex()])) { //$NON-NLS-1$ //$NON-NLS-2$
+			Main.setProperty(
 					"locale", localeList[languageCombo.getSelectedIndex()]); //$NON-NLS-1$
 			loc = localeList[languageCombo.getSelectedIndex()];
 			JFritz.getJframe().setLanguage(
 					new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_")+1, loc.length())));
 		}
 
-		JFritz.setProperty("option.popupDelay", popupDelay.getText());
+		Main.setProperty("option.popupDelay", popupDelay.getText());
 
 
 
 		Debug.msg("Saved config"); //$NON-NLS-1$
 		JFritz.getSIPProviderTableModel()
-				.saveToXMLFile(JFritz.SAVE_DIR + JFritz.SIPPROVIDER_FILE);
-		JFritz.getCallerList().saveToXMLFile(JFritz.SAVE_DIR+JFritz.CALLS_FILE, true);
-		JFritz.getPhonebook().saveToXMLFile(JFritz.SAVE_DIR+JFritz.PHONEBOOK_FILE);
+				.saveToXMLFile(Main.SAVE_DIR + JFritz.SIPPROVIDER_FILE);
+		JFritz.getCallerList().saveToXMLFile(Main.SAVE_DIR+JFritz.CALLS_FILE, true);
+		JFritz.getPhonebook().saveToXMLFile(Main.SAVE_DIR+JFritz.PHONEBOOK_FILE);
 	}
 
 	protected JPanel createBoxPane(ActionListener actionListener) {
@@ -420,11 +400,11 @@ public class ConfigDialog extends JDialog {
 		JLabel label = new JLabel(""); //$NON-NLS-1$
 		label.setIcon(boxicon);
 		boxpane.add(label, c);
-		label = new JLabel(JFritz.getMessage("FRITZ!Box_Preferences")); //$NON-NLS-1$
+		label = new JLabel(Main.getMessage("FRITZ!Box_Preferences")); //$NON-NLS-1$
 		boxpane.add(label, c);
 
 		c.gridy = 2;
-		label = new JLabel(JFritz.getMessage("FRITZ!Box") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		label = new JLabel(Main.getMessage("FRITZ!Box") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		boxpane.add(label, c);
 
 		addressCombo = new JComboBox();
@@ -451,28 +431,28 @@ public class ConfigDialog extends JDialog {
 		boxpane.add(addressCombo, c);
 
 		c.gridy = 3;
-		label = new JLabel(JFritz.getMessage("ip_address") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		label = new JLabel(Main.getMessage("ip_address") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		boxpane.add(label, c);
 		address = new JTextField("", 16); //$NON-NLS-1$
 		address.setMinimumSize(new Dimension(200, 20));
 		boxpane.add(address, c);
 
 		c.gridy = 4;
-		label = new JLabel(JFritz.getMessage("password") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		label = new JLabel(Main.getMessage("password") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		boxpane.add(label, c);
 		pass = new JPasswordField("", 16); //$NON-NLS-1$
 		pass.setMinimumSize(new Dimension(200, 20));
 		boxpane.add(pass, c);
 
 		c.gridy = 5;
-		label = new JLabel(JFritz.getMessage("box.port") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		label = new JLabel(Main.getMessage("box.port") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		boxpane.add(label, c);
 		port = new JTextField("", 16); //$NON-NLS-1$
 		port.setMinimumSize(new Dimension(200, 20));
 		boxpane.add(port, c);
 
 		c.gridy = 6;
-		boxtypeButton = new JButton(JFritz.getMessage("detect_box_type")); //$NON-NLS-1$
+		boxtypeButton = new JButton(Main.getMessage("detect_box_type")); //$NON-NLS-1$
 		boxtypeButton.setActionCommand("detectboxtype"); //$NON-NLS-1$
 		boxtypeButton.addActionListener(actionListener);
 		boxpane.add(boxtypeButton, c);
@@ -480,7 +460,7 @@ public class ConfigDialog extends JDialog {
 		boxpane.add(boxtypeLabel, c);
 
 		//c.gridy = 7;
-		//label = new JLabel(JFritz.getMessage("mac_address") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		//label = new JLabel(Main.getMessage("mac_address") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		// boxpane.add(label, c);
 		macLabel = new JLabel();
 		// boxpane.add(macLabel, c);
@@ -497,31 +477,31 @@ public class ConfigDialog extends JDialog {
 		c.anchor = GridBagConstraints.WEST;
 
 		c.gridy = 1;
-		JLabel label = new JLabel(JFritz.getMessage("area_code")); //$NON-NLS-1$
+		JLabel label = new JLabel(Main.getMessage("area_code")); //$NON-NLS-1$
 		phonepane.add(label, c);
 		areaCode = new JTextField("", 6); //$NON-NLS-1$
 		phonepane.add(areaCode, c);
 
 		c.gridy = 2;
-		label = new JLabel(JFritz.getMessage("country_code")); //$NON-NLS-1$
+		label = new JLabel(Main.getMessage("country_code")); //$NON-NLS-1$
 		phonepane.add(label, c);
 		countryCode = new JTextField("", 3); //$NON-NLS-1$
 		phonepane.add(countryCode, c);
 
 		c.gridy = 3;
-		label = new JLabel(JFritz.getMessage("area_prefix")); //$NON-NLS-1$
+		label = new JLabel(Main.getMessage("area_prefix")); //$NON-NLS-1$
 		phonepane.add(label, c);
 		areaPrefix = new JTextField("", 3); //$NON-NLS-1$
 		phonepane.add(areaPrefix, c);
 
 		c.gridy = 4;
-		label = new JLabel(JFritz.getMessage("country_prefix")); //$NON-NLS-1$
+		label = new JLabel(Main.getMessage("country_prefix")); //$NON-NLS-1$
 		phonepane.add(label, c);
 		countryPrefix = new JTextField("", 3); //$NON-NLS-1$
 		phonepane.add(countryPrefix, c);
 
         c.gridy = 5;
-        activateDialPrefix = new JCheckBox(JFritz.getMessage("dial_prefix")); //$NON-NLS-1$
+        activateDialPrefix = new JCheckBox(Main.getMessage("dial_prefix")); //$NON-NLS-1$
         phonepane.add(activateDialPrefix, c);
         dialPrefix = new JTextField("", 3); //$NON-NLS-1$
         phonepane.add(dialPrefix, c);
@@ -568,10 +548,10 @@ public class ConfigDialog extends JDialog {
 		siptable.getColumnModel().getColumn(1).setMinWidth(40);
 		siptable.getColumnModel().getColumn(1).setMaxWidth(40);
 		siptable.setSize(200, 200);
-		JButton b1 = new JButton(JFritz.getMessage("get_sip_provider_from_box")); //$NON-NLS-1$
+		JButton b1 = new JButton(Main.getMessage("get_sip_provider_from_box")); //$NON-NLS-1$
 		b1.setActionCommand("fetchSIP"); //$NON-NLS-1$
 		b1.addActionListener(actionListener);
-		JButton b2 = new JButton(JFritz.getMessage("save_sip_provider_on_box")); //$NON-NLS-1$
+		JButton b2 = new JButton(Main.getMessage("save_sip_provider_on_box")); //$NON-NLS-1$
 		b2.setEnabled(false);
 		sipButtonPane.add(b1);
 		sipButtonPane.add(b2);
@@ -587,65 +567,58 @@ public class ConfigDialog extends JDialog {
 		JPanel otherpane = new JPanel();
 
 		otherpane.setLayout(new BoxLayout(otherpane, BoxLayout.Y_AXIS));
-		timerLabel = new JLabel(JFritz.getMessage("timer_in") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		timerLabel = new JLabel(Main.getMessage("timer_in") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		otherpane.add(timerLabel);
 		otherpane.add(timerSlider);
 
-		checkNewVersionAfterStart = new JCheckBox(JFritz
-				.getMessage("check_for_new_version_after_start")); //$NON-NLS-1$
+		checkNewVersionAfterStart = new JCheckBox(Main.getMessage("check_for_new_version_after_start")); //$NON-NLS-1$
 		otherpane.add(checkNewVersionAfterStart);
 
-		passwordAfterStartButton = new JCheckBox(JFritz
-				.getMessage("ask_for_password_before_start")); //$NON-NLS-1$
+		passwordAfterStartButton = new JCheckBox(Main.getMessage("ask_for_password_before_start")); //$NON-NLS-1$
 		otherpane.add(passwordAfterStartButton);
 
-		timerAfterStartButton = new JCheckBox(JFritz
-				.getMessage("get_timer_after")); //$NON-NLS-1$
+		timerAfterStartButton = new JCheckBox(Main.getMessage("get_timer_after")); //$NON-NLS-1$
 		otherpane.add(timerAfterStartButton);
 
-		startMinimizedButton = new JCheckBox(JFritz
-				.getMessage("start_minimized")); //$NON-NLS-1$
+		startMinimizedButton = new JCheckBox(Main.getMessage("start_minimized")); //$NON-NLS-1$
 		otherpane.add(startMinimizedButton);
 
-		confirmOnExitButton = new JCheckBox(JFritz
-				.getMessage("confirm_on_exit")); //$NON-NLS-1$
+		confirmOnExitButton = new JCheckBox(Main.getMessage("confirm_on_exit")); //$NON-NLS-1$
 		otherpane.add(confirmOnExitButton);
 
-		searchWithSSDP = new JCheckBox(JFritz.getMessage("search_with_SSDP")); //$NON-NLS-1$
+		searchWithSSDP = new JCheckBox(Main.getMessage("search_with_SSDP")); //$NON-NLS-1$
 		otherpane.add(searchWithSSDP);
 
-		minimizeInsteadOfClose = new JCheckBox(JFritz
-				.getMessage("minimize_instead_close")); //$NON-NLS-1$
+		minimizeInsteadOfClose = new JCheckBox(Main.getMessage("minimize_instead_close")); //$NON-NLS-1$
 		otherpane.add(minimizeInsteadOfClose);
 
-		createBackup = new JCheckBox(JFritz.getMessage("create_backup_start")); //$NON-NLS-1$
+		createBackup = new JCheckBox(Main.getMessage("create_backup_start")); //$NON-NLS-1$
 		otherpane.add(createBackup);
 
-		createBackupAfterFetch = new JCheckBox(JFritz
-				.getMessage("create_backup_fetch")); //$NON-NLS-1$
+		createBackupAfterFetch = new JCheckBox(Main.getMessage("create_backup_fetch")); //$NON-NLS-1$
 		otherpane.add(createBackupAfterFetch);
 
 		JPanel panel = new JPanel();
 
-		JLabel label = new JLabel(JFritz.getMessage("save_directory"));
+		JLabel label = new JLabel(Main.getMessage("save_directory"));
 		panel.add(label);
 
-		save_location = new JTextField(JFritz.SAVE_DIR);
+		save_location = new JTextField(Main.SAVE_DIR);
 		save_location.setPreferredSize(new Dimension(200, 20));
 		panel.add(save_location);
 
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser fc = new JFileChooser(JFritz.SAVE_DIR);
-				fc.setDialogTitle(JFritz.getMessage("save_directory")); //$NON-NLS-1$
+				JFileChooser fc = new JFileChooser(Main.SAVE_DIR);
+				fc.setDialogTitle(Main.getMessage("save_directory")); //$NON-NLS-1$
 				fc.setDialogType(JFileChooser.SAVE_DIALOG);
 
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				if (fc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
 					File file = fc.getSelectedFile();
 					if (!file.exists()) {
-						JOptionPane.showMessageDialog(null, JFritz.getMessage("file_not_found"), //$NON-NLS-1$
-								JFritz.getMessage("dialog_title_file_not_found"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+						JOptionPane.showMessageDialog(null, Main.getMessage("file_not_found"), //$NON-NLS-1$
+								Main.getMessage("dialog_title_file_not_found"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
 					} else {
 						save_location.setText(file.getAbsolutePath());
 					}
@@ -653,7 +626,7 @@ public class ConfigDialog extends JDialog {
 			}
 		};
 
-		JButton browseButton = new JButton(JFritz.getMessage("browse"));
+		JButton browseButton = new JButton(Main.getMessage("browse"));
 		browseButton.addActionListener(actionListener);
 
 		panel.add(browseButton);
@@ -671,43 +644,35 @@ public class ConfigDialog extends JDialog {
 		c.anchor = GridBagConstraints.WEST;
 
 		c.gridy = 0;
-		fetchAfterStartButton = new JCheckBox(JFritz
-				.getMessage("fetch_after_start")); //$NON-NLS-1$
+		fetchAfterStartButton = new JCheckBox(Main.getMessage("fetch_after_start")); //$NON-NLS-1$
 		cPanel.add(fetchAfterStartButton, c);
 
 		c.gridy = 1;
-		notifyOnCallsButton = new JCheckBox(JFritz
-				.getMessage("notify_on_calls")); //$NON-NLS-1$
+		notifyOnCallsButton = new JCheckBox(Main.getMessage("notify_on_calls")); //$NON-NLS-1$
 		cPanel.add(notifyOnCallsButton, c);
 
 		c.gridy = 2;
-		deleteAfterFetchButton = new JCheckBox(JFritz
-				.getMessage("delete_after_fetch")); //$NON-NLS-1$
+		deleteAfterFetchButton = new JCheckBox(Main.getMessage("delete_after_fetch")); //$NON-NLS-1$
 		cPanel.add(deleteAfterFetchButton, c);
 
 		c.gridy = 3;
-		lookupAfterFetchButton = new JCheckBox(JFritz
-				.getMessage("lookup_after_fetch")); //$NON-NLS-1$
+		lookupAfterFetchButton = new JCheckBox(Main.getMessage("lookup_after_fetch")); //$NON-NLS-1$
 		cPanel.add(lookupAfterFetchButton, c);
 
 		c.gridy = 4;
-		showCallByCallColumnButton = new JCheckBox(JFritz
-				.getMessage("show_callbyball_column")); //$NON-NLS-1$
+		showCallByCallColumnButton = new JCheckBox(Main.getMessage("show_callbyball_column")); //$NON-NLS-1$
 		cPanel.add(showCallByCallColumnButton, c);
 
 		c.gridy = 5;
-		showCommentColumnButton = new JCheckBox(JFritz
-				.getMessage("show_comment_column")); //$NON-NLS-1$
+		showCommentColumnButton = new JCheckBox(Main.getMessage("show_comment_column")); //$NON-NLS-1$
 		cPanel.add(showCommentColumnButton, c);
 
 		c.gridy = 6;
-		showPortColumnButton = new JCheckBox(JFritz
-				.getMessage("show_port_column")); //$NON-NLS-1$
+		showPortColumnButton = new JCheckBox(Main.getMessage("show_port_column")); //$NON-NLS-1$
 		cPanel.add(showPortColumnButton, c);
 
 		c.gridy = 7;
-		fetchAfterStandby = new JCheckBox(JFritz
-				.getMessage("fetch_after_standby")); //$NON-NLS-1$
+		fetchAfterStandby = new JCheckBox(Main.getMessage("fetch_after_standby")); //$NON-NLS-1$
 		cPanel.add(fetchAfterStandby, c);
 
 		return cPanel;
@@ -725,7 +690,7 @@ public class ConfigDialog extends JDialog {
 
 		JLabel label;
 		c.gridy = 2;
-		label = new JLabel(JFritz.getMessage("language") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		label = new JLabel(Main.getMessage("language") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		localePane.add(label, c);
 
 		String lang = JFritzUtils.getFullPath(langID);
@@ -745,7 +710,7 @@ public class ConfigDialog extends JDialog {
 			Debug.msg("Found resources for locale '" + localeList[i] +		//$NON-NLS-1$
 			     "', loading flag image '" + imagePath + "'");				//$NON-NLS-1$,  //$NON-NLS-2$
 			images[i] = new ImageIcon(imagePath);
-			images[i].setDescription(JFritz.getLocaleMeaning(localeList[i]));
+			images[i].setDescription(Main.getLocaleMeaning(localeList[i]));
 		}
 
 
@@ -839,11 +804,11 @@ public class ConfigDialog extends JDialog {
 					}
 				} else if ("startCallMonitor".equals(e.getActionCommand())) { //$NON-NLS-1$
 					// Aktion des StartCallMonitorButtons
-					JFritz.setProperty("option.callMonitorType", String //$NON-NLS-1$
+					Main.setProperty("option.callMonitorType", String //$NON-NLS-1$
 							.valueOf(callMonitorCombo.getSelectedIndex()));
-					JFritz.setProperty("box.password", Encryption //$NON-NLS-1$
+					Main.setProperty("box.password", Encryption //$NON-NLS-1$
 							.encrypt(password));
-					JFritz.setProperty("box.address", address.getText()); //$NON-NLS-1$
+					Main.setProperty("box.address", address.getText()); //$NON-NLS-1$
 					JFritz.getFritzBox().detectFirmware();
 					JFritz.getJframe().switchMonitorButton();
 					if (startCallMonitorButton.isSelected()) {
@@ -887,12 +852,12 @@ public class ConfigDialog extends JDialog {
 		callMonitorPane = new JPanel();
 		callMonitorPane.setLayout(new BorderLayout());
 		callMonitorCombo = new JComboBox();
-		callMonitorCombo.addItem(JFritz.getMessage("no_call_monitor")); //$NON-NLS-1$
-		callMonitorCombo.addItem(JFritz.getMessage("fritz_call_monitor")); //$NON-NLS-1$
-		callMonitorCombo.addItem(JFritz.getMessage("telnet_call_monitor")); //$NON-NLS-1$
-		callMonitorCombo.addItem(JFritz.getMessage("syslog_call_monitor")); //$NON-NLS-1$
-		callMonitorCombo.addItem(JFritz.getMessage("yac_call_monitor")); //$NON-NLS-1$
-		callMonitorCombo.addItem(JFritz.getMessage("callmessage_call_monitor")); //$NON-NLS-1$
+		callMonitorCombo.addItem(Main.getMessage("no_call_monitor")); //$NON-NLS-1$
+		callMonitorCombo.addItem(Main.getMessage("fritz_call_monitor")); //$NON-NLS-1$
+		callMonitorCombo.addItem(Main.getMessage("telnet_call_monitor")); //$NON-NLS-1$
+		callMonitorCombo.addItem(Main.getMessage("syslog_call_monitor")); //$NON-NLS-1$
+		callMonitorCombo.addItem(Main.getMessage("yac_call_monitor")); //$NON-NLS-1$
+		callMonitorCombo.addItem(Main.getMessage("callmessage_call_monitor")); //$NON-NLS-1$
 		callMonitorCombo.addActionListener(actionListener);
 
 		callMonitorPane.add(callMonitorCombo, BorderLayout.NORTH);
@@ -921,7 +886,7 @@ public class ConfigDialog extends JDialog {
 
 		c.gridx = 2;
 		c.gridy = 0;
-		callMonitorOptionsButton = new JButton(JFritz.getMessage("config")); //$NON-NLS-1$
+		callMonitorOptionsButton = new JButton(Main.getMessage("config")); //$NON-NLS-1$
 		callMonitorOptionsButton.setActionCommand("startCallMonitorOptions"); //$NON-NLS-1$
 		callMonitorOptionsButton.addActionListener(actionListener);
 		pane.add(callMonitorOptionsButton, c);
@@ -929,16 +894,14 @@ public class ConfigDialog extends JDialog {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.gridwidth = 3;
-		callMonitorAfterStartButton = new JCheckBox(JFritz
-				.getMessage("call_monitor_prog_start")); //$NON-NLS-1$
+		callMonitorAfterStartButton = new JCheckBox(Main.getMessage("call_monitor_prog_start")); //$NON-NLS-1$
 		pane.add(callMonitorAfterStartButton, c);
 
-		soundButton = new JCheckBox(JFritz.getMessage("play_sound")); //$NON-NLS-1$
+		soundButton = new JCheckBox(Main.getMessage("play_sound")); //$NON-NLS-1$
 		c.gridy = 2;
 		pane.add(soundButton, c);
 
-		externProgramCheckBox = new JCheckBox(JFritz
-				.getMessage("run_external_program")); //$NON-NLS-1$
+		externProgramCheckBox = new JCheckBox(Main.getMessage("run_external_program")); //$NON-NLS-1$
 		c.gridy = 3;
 		pane.add(externProgramCheckBox, c);
 
@@ -957,24 +920,24 @@ public class ConfigDialog extends JDialog {
 		c.anchor = GridBagConstraints.WEST;
 
 		c.gridy = 0;
-		JLabel text = new JLabel(JFritz.getMessage("popup_for_information")); //$NON-NLS-1$
+		JLabel text = new JLabel(Main.getMessage("popup_for_information")); //$NON-NLS-1$
 		panel.add(text, c);
 
-		final JLabel delayLbl = new JLabel(JFritz.getMessage("popup_delay"));
+		final JLabel delayLbl = new JLabel(Main.getMessage("popup_delay"));
 
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (popupNoButton.isSelected()) {
-					JFritz.setProperty("option.popuptype", "0"); //$NON-NLS-1$,  //$NON-NLS-2$
+					Main.setProperty("option.popuptype", "0"); //$NON-NLS-1$,  //$NON-NLS-2$
 					delayLbl.setVisible(false);
 					popupDelay.setVisible(false);
 
 				} else if (popupDialogButton.isSelected()) {
-					JFritz.setProperty("option.popuptype", "1"); //$NON-NLS-1$,  //$NON-NLS-2$
+					Main.setProperty("option.popuptype", "1"); //$NON-NLS-1$,  //$NON-NLS-2$
 					delayLbl.setVisible(true);
 					popupDelay.setVisible(true);
 				} else {
-					JFritz.setProperty("option.popuptype", "2"); //$NON-NLS-1$,  //$NON-NLS-2$
+					Main.setProperty("option.popuptype", "2"); //$NON-NLS-1$,  //$NON-NLS-2$
 					delayLbl.setVisible(false);
 					popupDelay.setVisible(false);
 				}
@@ -983,19 +946,19 @@ public class ConfigDialog extends JDialog {
 
 		ButtonGroup popupGroup = new ButtonGroup();
 		c.gridy = 1;
-		popupNoButton = new JRadioButton(JFritz.getMessage("no_popups")); //$NON-NLS-1$
+		popupNoButton = new JRadioButton(Main.getMessage("no_popups")); //$NON-NLS-1$
 		popupNoButton.addActionListener(actionListener);
 		popupGroup.add(popupNoButton);
 		panel.add(popupNoButton, c);
 
 		c.gridy = 2;
-		popupDialogButton = new JRadioButton(JFritz.getMessage("popup_windows")); //$NON-NLS-1$
+		popupDialogButton = new JRadioButton(Main.getMessage("popup_windows")); //$NON-NLS-1$
 		popupDialogButton.addActionListener(actionListener);
 		popupGroup.add(popupDialogButton);
 		panel.add(popupDialogButton, c);
 
 		c.gridy = 3;
-		popupTrayButton = new JRadioButton(JFritz.getMessage("tray_messages")); //$NON-NLS-1$
+		popupTrayButton = new JRadioButton(Main.getMessage("tray_messages")); //$NON-NLS-1$
 		popupTrayButton.addActionListener(actionListener);
 		popupGroup.add(popupTrayButton);
 		panel.add(popupTrayButton, c);
@@ -1020,11 +983,11 @@ public class ConfigDialog extends JDialog {
 
 		tpane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-		okButton = new JButton(JFritz.getMessage("okay")); //$NON-NLS-1$
+		okButton = new JButton(Main.getMessage("okay")); //$NON-NLS-1$
 		okButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/okay.png")))); //$NON-NLS-1$
-		cancelButton = new JButton(JFritz.getMessage("cancel")); //$NON-NLS-1$
+		cancelButton = new JButton(Main.getMessage("cancel")); //$NON-NLS-1$
 		timerSlider = new JSlider(0, 120, 30);
 		timerSlider.setPaintTicks(true);
 		timerSlider.setMinorTickSpacing(10);
@@ -1035,7 +998,7 @@ public class ConfigDialog extends JDialog {
 				if (timerSlider.getValue() < 3)
 					timerSlider.setValue(3);
 				timerLabel
-						.setText(JFritz.getMessage("timer")+": " + timerSlider.getValue() +" "+ JFritz.getMessage("abbreviation_minutes")); //$NON-NLS-1$,  //$NON-NLS-2$
+						.setText(Main.getMessage("timer")+": " + timerSlider.getValue() +" "+ Main.getMessage("abbreviation_minutes")); //$NON-NLS-1$,  //$NON-NLS-2$
 			}
 
 		});
@@ -1081,27 +1044,24 @@ public class ConfigDialog extends JDialog {
 					} catch (WrongPasswordException e1) {
 						Debug.err("Password wrong!"); //$NON-NLS-1$
 						boxtypeLabel.setForeground(Color.RED);
-						boxtypeLabel.setText(JFritz
-								.getMessage("wrong_password")); //$NON-NLS-1$
+						boxtypeLabel.setText(Main.getMessage("wrong_password")); //$NON-NLS-1$
 						firmware = null;
 					} catch (InvalidFirmwareException ife) {
 						Debug.err("Invalid firmware detected"); //$NON-NLS-1$
 						boxtypeLabel.setForeground(Color.RED);
-						boxtypeLabel.setText(JFritz
-								.getMessage("box_address_wrong")); //$NON-NLS-1$
+						boxtypeLabel.setText(Main.getMessage("box_address_wrong")); //$NON-NLS-1$
 						firmware = null;
 					} catch (IOException e1) {
 						Debug.err("Address wrong!"); //$NON-NLS-1$
 						boxtypeLabel.setForeground(Color.RED);
-						boxtypeLabel.setText(JFritz
-								.getMessage("box_address_wrong")); //$NON-NLS-1$
+						boxtypeLabel.setText(Main.getMessage("box_address_wrong")); //$NON-NLS-1$
 						firmware = null;
 					}
 				} else if (e.getActionCommand().equals("fetchSIP")) { //$NON-NLS-1$
 					try {
-						JFritz.setProperty("box.password", Encryption.encrypt(password)); //$NON-NLS-1$
-						JFritz.setProperty("box.address", address.getText()); //$NON-NLS-1$
-						JFritz.setProperty("box.port", port.getText()); //$NON-NLS-1$
+						Main.setProperty("box.password", Encryption.encrypt(password)); //$NON-NLS-1$
+						Main.setProperty("box.address", address.getText()); //$NON-NLS-1$
+						Main.setProperty("box.port", port.getText()); //$NON-NLS-1$
 						JFritz.getFritzBox().detectFirmware();
 						Vector data = JFritz.getFritzBox().retrieveSipProvider();
 						JFritz.getSIPProviderTableModel().updateProviderList(
@@ -1111,14 +1071,14 @@ public class ConfigDialog extends JDialog {
 						JFritz.getCallerList().fireTableDataChanged();
 
 					} catch (WrongPasswordException e1) {
-						JFritz.errorMsg(JFritz.getMessage("wrong_password")); //$NON-NLS-1$
-						Debug.errDlg(JFritz.getMessage("wrong_password")); //$NON-NLS-1$
+						JFritz.errorMsg(Main.getMessage("wrong_password")); //$NON-NLS-1$
+						Debug.errDlg(Main.getMessage("wrong_password")); //$NON-NLS-1$
 					} catch (IOException e1) {
-						JFritz.errorMsg(JFritz.getMessage("box_address_wrong")); //$NON-NLS-1$
-						Debug.errDlg(JFritz.getMessage("box_address_wrong")); //$NON-NLS-1$
+						JFritz.errorMsg(Main.getMessage("box_address_wrong")); //$NON-NLS-1$
+						Debug.errDlg(Main.getMessage("box_address_wrong")); //$NON-NLS-1$
 					} catch (InvalidFirmwareException e1) {
-						JFritz.errorMsg(JFritz.getMessage("unknown_firmware")); //$NON-NLS-1$
-						Debug.errDlg(JFritz.getMessage("unknown_firmware")); //$NON-NLS-1$
+						JFritz.errorMsg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
+						Debug.errDlg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
 					}
 				}
 			}
@@ -1158,19 +1118,19 @@ public class ConfigDialog extends JDialog {
         getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
 
 		tpane.addTab(
-				JFritz.getMessage("FRITZ!Box"), createBoxPane(actionListener)); //$NON-NLS-1$
-		tpane.addTab(JFritz.getMessage("telephone"), createPhonePane()); //$NON-NLS-1$
+				Main.getMessage("FRITZ!Box"), createBoxPane(actionListener)); //$NON-NLS-1$
+		tpane.addTab(Main.getMessage("telephone"), createPhonePane()); //$NON-NLS-1$
 		tpane
 				.addTab(
-						JFritz.getMessage("sip_numbers"), createSipPane(actionListener)); //$NON-NLS-1$
+						Main.getMessage("sip_numbers"), createSipPane(actionListener)); //$NON-NLS-1$
 		JScrollPane callerListPaneScrollable = new JScrollPane(
 				createCallerListPane());
-		tpane.addTab(JFritz.getMessage("callerlist"), callerListPaneScrollable); //$NON-NLS-1$
-		tpane.addTab(JFritz.getMessage("callmonitor"), createCallMonitorPane()); //$NON-NLS-1$
-		tpane.addTab(JFritz.getMessage("messages"), createMessagePane()); //$NON-NLS-1$
+		tpane.addTab(Main.getMessage("callerlist"), callerListPaneScrollable); //$NON-NLS-1$
+		tpane.addTab(Main.getMessage("callmonitor"), createCallMonitorPane()); //$NON-NLS-1$
+		tpane.addTab(Main.getMessage("messages"), createMessagePane()); //$NON-NLS-1$
 		JScrollPane otherPaneScrollable = new JScrollPane(createOtherPane()); //$NON-NLS-1$
-		tpane.addTab(JFritz.getMessage("other"), otherPaneScrollable); //$NON-NLS-1$
-		tpane.addTab(JFritz.getMessage("language"),
+		tpane.addTab(Main.getMessage("other"), otherPaneScrollable); //$NON-NLS-1$
+		tpane.addTab(Main.getMessage("language"),
 				createLocalePane(actionListener));
 
 		getContentPane().setLayout(new BorderLayout());
@@ -1197,7 +1157,7 @@ public class ConfigDialog extends JDialog {
 					+ firmware.getFirmwareVersion() + ")"); //$NON-NLS-1$
 		} else {
 			boxtypeLabel.setForeground(Color.RED);
-			boxtypeLabel.setText(JFritz.getMessage("unknown")); //$NON-NLS-1$
+			boxtypeLabel.setText(Main.getMessage("unknown")); //$NON-NLS-1$
 		}
 	}
 
@@ -1210,13 +1170,11 @@ public class ConfigDialog extends JDialog {
 	 */
 	public void setCallMonitorButtons(int option) {
 		if (option == JFritz.CALLMONITOR_START) {
-			startCallMonitorButton.setText(JFritz
-					.getMessage("start_call_monitor")); //$NON-NLS-1$
+			startCallMonitorButton.setText(Main.getMessage("start_call_monitor")); //$NON-NLS-1$
 			startCallMonitorButton.setSelected(false);
 			JFritz.getJframe().getMonitorButton().setSelected(false);
 		} else if (option == JFritz.CALLMONITOR_STOP) {
-			startCallMonitorButton.setText(JFritz
-					.getMessage("stop_call_monitor")); //$NON-NLS-1$
+			startCallMonitorButton.setText(Main.getMessage("stop_call_monitor")); //$NON-NLS-1$
 			startCallMonitorButton.setSelected(true);
 			JFritz.getJframe().getMonitorButton().setSelected(true);
 		}

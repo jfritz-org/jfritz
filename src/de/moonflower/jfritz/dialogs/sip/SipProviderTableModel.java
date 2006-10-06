@@ -28,7 +28,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
-import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.utils.Debug;
 
 /**
@@ -51,8 +51,8 @@ public class SipProviderTableModel extends AbstractTableModel {
 
     private static final long serialVersionUID = 1;
 
-    private final String columnNames[] = { JFritz.getMessage("id"), JFritz.getMessage("active"), //$NON-NLS-1$,  //$NON-NLS-2$
-    		JFritz.getMessage("sip_numbers"), JFritz.getMessage("provider") }; //$NON-NLS-1$,  //$NON-NLS-2$
+    private final String columnNames[] = { Main.getMessage("id"), Main.getMessage("active"), //$NON-NLS-1$,  //$NON-NLS-2$
+    		Main.getMessage("sip_numbers"), Main.getMessage("provider") }; //$NON-NLS-1$,  //$NON-NLS-2$
 
     private Vector providerList;
 
@@ -85,9 +85,9 @@ public class SipProviderTableModel extends AbstractTableModel {
             return Integer.toString(sip.getProviderID());
         case 1:
             if (sip.isActive())
-                return JFritz.getMessage("yes"); //$NON-NLS-1$
+                return Main.getMessage("yes"); //$NON-NLS-1$
             else
-                return JFritz.getMessage("no"); //$NON-NLS-1$
+                return Main.getMessage("no"); //$NON-NLS-1$
         case 2:
             return sip.getNumber();
         case 3:
@@ -160,8 +160,8 @@ public class SipProviderTableModel extends AbstractTableModel {
 			PrintWriter pw = new PrintWriter(fos);
 			pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
 			pw.println("<provider>"); //$NON-NLS-1$
-			pw.println("<comment>SIP-Provider for " + JFritz.PROGRAM_NAME + " v" //$NON-NLS-1$,  //$NON-NLS-2$
-					+ JFritz.PROGRAM_VERSION + "</comment>"); //$NON-NLS-1$
+			pw.println("<comment>SIP-Provider for " + Main.PROGRAM_NAME + " v" //$NON-NLS-1$,  //$NON-NLS-2$
+					+ Main.PROGRAM_VERSION + "</comment>"); //$NON-NLS-1$
 
 			Enumeration en = providerList.elements();
 				while (en.hasMoreElements()) {

@@ -13,7 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.Person;
 
 /**
@@ -60,7 +60,7 @@ public class PersonCellRenderer extends DefaultTableCellRenderer {
 				tooltip += " | " + person.getStreet(); //$NON-NLS-1$
 			if (!person.getCity().equals("")) //$NON-NLS-1$
 				tooltip += " | " + person.getCity(); //$NON-NLS-1$
-			if (tooltip.equals("")) tooltip = JFritz.getMessage("no_information"); //$NON-NLS-1$,  //$NON-NLS-2$
+			if (tooltip.equals("")) tooltip = Main.getMessage("no_information"); //$NON-NLS-1$,  //$NON-NLS-2$
 			setToolTipText(tooltip);
 
 			label.setIcon(imagePerson);

@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 /**
  * @author Brian Jensen
  *
@@ -32,44 +33,44 @@ public class ConfigPanel4 extends JPanel {
 		c.anchor = GridBagConstraints.WEST;
 
 		c.gridy = 0;
-		JLabel text = new JLabel(JFritz.getMessage("popup_for_information")); //$NON-NLS-1$
+		JLabel text = new JLabel(Main.getMessage("popup_for_information")); //$NON-NLS-1$
 		panel.add(text, c);
 
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (popupNoButton.isSelected()) {
-					JFritz.setProperty("option.popuptype", "0"); //$NON-NLS-1$,  //$NON-NLS-2$
+					Main.setProperty("option.popuptype", "0"); //$NON-NLS-1$,  //$NON-NLS-2$
 				} else if (popupDialogButton.isSelected()) {
-					JFritz.setProperty("option.popuptype", "1"); //$NON-NLS-1$,  //$NON-NLS-2$
+					Main.setProperty("option.popuptype", "1"); //$NON-NLS-1$,  //$NON-NLS-2$
 				} else {
-					JFritz.setProperty("option.popuptype", "2"); //$NON-NLS-1$,  //$NON-NLS-2$
+					Main.setProperty("option.popuptype", "2"); //$NON-NLS-1$,  //$NON-NLS-2$
 				}
 			}
 		};
 
 		ButtonGroup popupGroup = new ButtonGroup();
 		c.gridy = 1;
-		popupNoButton = new JRadioButton(JFritz.getMessage("no_popups")); //$NON-NLS-1$
+		popupNoButton = new JRadioButton(Main.getMessage("no_popups")); //$NON-NLS-1$
 		popupNoButton.addActionListener(actionListener);
 		popupGroup.add(popupNoButton);
 		panel.add(popupNoButton, c);
 
 		c.gridy = 2;
-		popupDialogButton = new JRadioButton(JFritz.getMessage("popup_windows")); //$NON-NLS-1$
+		popupDialogButton = new JRadioButton(Main.getMessage("popup_windows")); //$NON-NLS-1$
 		popupDialogButton.addActionListener(actionListener);
 		popupGroup.add(popupDialogButton);
 		panel.add(popupDialogButton, c);
 
 		c.gridy = 3;
-		popupTrayButton = new JRadioButton(JFritz.getMessage("tray_messages")); //$NON-NLS-1$
+		popupTrayButton = new JRadioButton(Main.getMessage("tray_messages")); //$NON-NLS-1$
 		popupTrayButton.addActionListener(actionListener);
 		popupGroup.add(popupTrayButton);
 		panel.add(popupTrayButton, c);
 
-		if (!JFritz.SYSTRAY_SUPPORT) {
+		if (!Main.SYSTRAY_SUPPORT) {
 			popupTrayButton.setVisible(false);
 		}
-		switch (Integer.parseInt(JFritz.getProperty("option.popuptype", "1"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+		switch (Integer.parseInt(Main.getProperty("option.popuptype", "1"))) { //$NON-NLS-1$,  //$NON-NLS-2$
 			case 0 : {
 				popupNoButton.setSelected(true);
 				break;

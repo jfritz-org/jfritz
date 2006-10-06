@@ -18,6 +18,7 @@ import javax.swing.JLabel;
 import de.moonflower.jfritz.callerlist.PersonCellEditor;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 
 /**
  * @author Arno Willig
@@ -53,7 +54,7 @@ public class PersonEditorPanel extends JComponent {
 						input.setText(person.getFullname());
 						editor.stopCellEditing();
 						if (p.okPressed()) {
-							JFritz.getPhonebook().saveToXMLFile(JFritz.SAVE_DIR +
+							JFritz.getPhonebook().saveToXMLFile(Main.SAVE_DIR +
 									JFritz.PHONEBOOK_FILE);
 							JFritz.getPhonebook().sortAllFilteredRows();
 						}

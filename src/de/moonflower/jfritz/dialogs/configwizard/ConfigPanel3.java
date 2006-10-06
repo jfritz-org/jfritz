@@ -10,6 +10,7 @@ import java.util.Vector;
 import javax.swing.*;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
@@ -65,11 +66,11 @@ public class ConfigPanel3 extends JPanel implements ActionListener {
 		JLabel label = new JLabel(""); //$NON-NLS-1$
 		label.setIcon(boxicon);
 		boxpane.add(label, c);
-		label = new JLabel(JFritz.getMessage("FRITZ!Box_Preferences")); //$NON-NLS-1$
+		label = new JLabel(Main.getMessage("FRITZ!Box_Preferences")); //$NON-NLS-1$
 		boxpane.add(label, c);
 
 		c.gridy = 2;
-		label = new JLabel(JFritz.getMessage("FRITZ!Box") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		label = new JLabel(Main.getMessage("FRITZ!Box") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		boxpane.add(label, c);
 
 		addressCombo = new JComboBox();
@@ -90,28 +91,28 @@ public class ConfigPanel3 extends JPanel implements ActionListener {
 		boxpane.add(addressCombo, c);
 
 		c.gridy = 3;
-		label = new JLabel(JFritz.getMessage("ip_address") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		label = new JLabel(Main.getMessage("ip_address") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		boxpane.add(label, c);
 		address = new JTextField("", 16); //$NON-NLS-1$
 		address.setMinimumSize(new Dimension(200, 20));
 		boxpane.add(address, c);
 
 		c.gridy = 4;
-		label = new JLabel(JFritz.getMessage("password") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		label = new JLabel(Main.getMessage("password") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		boxpane.add(label, c);
 		pass = new JPasswordField("", 16); //$NON-NLS-1$
 		pass.setMinimumSize(new Dimension(200, 20));
 		boxpane.add(pass, c);
 
 		c.gridy = 5;
-		label = new JLabel(JFritz.getMessage("box.port") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		label = new JLabel(Main.getMessage("box.port") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		boxpane.add(label, c);
 		port = new JTextField("", 16); //$NON-NLS-1$
 		port.setMinimumSize(new Dimension(200, 20));
 		boxpane.add(port, c);
 
 		c.gridy = 6;
-		boxtypeButton = new JButton(JFritz.getMessage("detect_box_type")); //$NON-NLS-1$
+		boxtypeButton = new JButton(Main.getMessage("detect_box_type")); //$NON-NLS-1$
 		boxtypeButton.setActionCommand("detectboxtype"); //$NON-NLS-1$
 		boxtypeButton.addActionListener(this);
 		boxpane.add(boxtypeButton, c);
@@ -160,17 +161,17 @@ public class ConfigPanel3 extends JPanel implements ActionListener {
 			} catch (WrongPasswordException e1) {
 				Debug.err("Password wrong!"); //$NON-NLS-1$
 				boxtypeLabel.setForeground(Color.RED);
-				boxtypeLabel.setText(JFritz.getMessage("wrong_password")); //$NON-NLS-1$
+				boxtypeLabel.setText(Main.getMessage("wrong_password")); //$NON-NLS-1$
 				firmware = null;
 			} catch (InvalidFirmwareException ife) {
 				Debug.err("Invalid firmware detected"); //$NON-NLS-1$
 				boxtypeLabel.setForeground(Color.RED);
-				boxtypeLabel.setText(JFritz.getMessage("box_address_wrong")); //$NON-NLS-1$
+				boxtypeLabel.setText(Main.getMessage("box_address_wrong")); //$NON-NLS-1$
 				firmware = null;
 			} catch (IOException e1) {
 				Debug.err("Address wrong!"); //$NON-NLS-1$
 				boxtypeLabel.setForeground(Color.RED);
-				boxtypeLabel.setText(JFritz.getMessage("box_address_wrong")); //$NON-NLS-1$
+				boxtypeLabel.setText(Main.getMessage("box_address_wrong")); //$NON-NLS-1$
 				firmware = null;
 			}
 			// firmware = new FritzBoxFirmware("14", "1", "35");
@@ -185,7 +186,7 @@ public class ConfigPanel3 extends JPanel implements ActionListener {
 					+ firmware.getFirmwareVersion() + ")"); //$NON-NLS-1$
 		} else {
 			boxtypeLabel.setForeground(Color.RED);
-			boxtypeLabel.setText(JFritz.getMessage("unknown")); //$NON-NLS-1$
+			boxtypeLabel.setText(Main.getMessage("unknown")); //$NON-NLS-1$
 		}
 	}
 

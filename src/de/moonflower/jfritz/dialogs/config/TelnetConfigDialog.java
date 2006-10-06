@@ -25,7 +25,7 @@ import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.KeyStroke;
 
-import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.utils.Encryption;
 
 
@@ -69,25 +69,25 @@ public class TelnetConfigDialog extends JDialog implements CallMonitorConfigDial
 
 	}
 	public void initDialog() {
-		setTitle(JFritz.getMessage("dialog_title_telnet_options")); //$NON-NLS-1$
+		setTitle(Main.getMessage("dialog_title_telnet_options")); //$NON-NLS-1$
 		setSize(270, 140);
 		drawDialog();
 		setProperties();
 	}
 
 	private void setProperties() {
-		userNameTextfield.setText(JFritz.getProperty("telnet.user", "")); //$NON-NLS-1$,  //$NON-NLS-2$
-		if (JFritz.getProperty("telnet.password").equals("")) { //$NON-NLS-1$,  //$NON-NLS-2$
+		userNameTextfield.setText(Main.getProperty("telnet.user", "")); //$NON-NLS-1$,  //$NON-NLS-2$
+		if (Main.getProperty("telnet.password").equals("")) { //$NON-NLS-1$,  //$NON-NLS-2$
 			passwordTextfield.setText(""); //$NON-NLS-1$
 		}
 		else {
-			passwordTextfield.setText(Encryption.decrypt(JFritz.getProperty("telnet.password",""))); //$NON-NLS-1$,  //$NON-NLS-2$
+			passwordTextfield.setText(Encryption.decrypt(Main.getProperty("telnet.password",""))); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 
 	private void storeProperties() {
-		JFritz.setProperty("telnet.user",userNameTextfield.getText()); //$NON-NLS-1$
-		JFritz.setProperty("telnet.password",Encryption.encrypt(new String(passwordTextfield.getPassword()))); //$NON-NLS-1$
+		Main.setProperty("telnet.user",userNameTextfield.getText()); //$NON-NLS-1$
+		Main.setProperty("telnet.password",Encryption.encrypt(new String(passwordTextfield.getPassword()))); //$NON-NLS-1$
 	}
 
 	public int showConfigDialog() {
@@ -143,26 +143,26 @@ public class TelnetConfigDialog extends JDialog implements CallMonitorConfigDial
 
 		c.gridwidth = 1;
 		c.gridy = 0;
-		JLabel telnetUserLabel = new JLabel(JFritz.getMessage("telnet_user")+": "); //$NON-NLS-1$
+		JLabel telnetUserLabel = new JLabel(Main.getMessage("telnet_user")+": "); //$NON-NLS-1$
 		telnetPanel.add(telnetUserLabel, c);
 		userNameTextfield = new JTextField("", 12); //$NON-NLS-1$
 		userNameTextfield.addKeyListener(keyListener);
 		telnetPanel.add(userNameTextfield, c);
 
 		c.gridy = 1;
-		JLabel telnetPasswordLabel = new JLabel(JFritz.getMessage("telnet_password")+": "); //$NON-NLS-1$
+		JLabel telnetPasswordLabel = new JLabel(Main.getMessage("telnet_password")+": "); //$NON-NLS-1$
 		telnetPanel.add(telnetPasswordLabel, c);
 		passwordTextfield = new JPasswordField("", 12); //$NON-NLS-1$
 		passwordTextfield.addKeyListener(keyListener);
 		telnetPanel.add(passwordTextfield, c);
 
 		JPanel buttonPanel = new JPanel();
-		okButton = new JButton(JFritz.getMessage("okay")); //$NON-NLS-1$
+		okButton = new JButton(Main.getMessage("okay")); //$NON-NLS-1$
 		okButton.setActionCommand("ok_pressed"); //$NON-NLS-1$
 		okButton.addActionListener(actionListener);
 		okButton.addKeyListener(keyListener);
 
-		cancelButton = new JButton(JFritz.getMessage("cancel")); //$NON-NLS-1$
+		cancelButton = new JButton(Main.getMessage("cancel")); //$NON-NLS-1$
 		cancelButton.setActionCommand("cancel_pressed"); //$NON-NLS-1$
 		cancelButton.addActionListener(actionListener);
 		cancelButton.addKeyListener(keyListener);

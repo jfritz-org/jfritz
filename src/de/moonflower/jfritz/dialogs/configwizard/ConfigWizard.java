@@ -10,6 +10,7 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 
 /**
  *
@@ -40,7 +41,7 @@ public class ConfigWizard {
 
 		Debug.msg("Create JFritz config wizard");
 		wizard = new Wizard(JFritz.getJframe());
-        wizard.getDialog().setTitle(JFritz.getMessage("config_wizard"));
+        wizard.getDialog().setTitle(Main.getMessage("config_wizard"));
        	wizard.getDialog().setLocationRelativeTo(JFritz.getJframe());
 
 
@@ -84,59 +85,58 @@ public class ConfigWizard {
        			Debug.msg("Finished clicked, saving settings");
 
        			//save the various settings
-       			JFritz.setProperty("option.playSounds", Boolean.toString(
+       			Main.setProperty("option.playSounds", Boolean.toString(
        					(((ConfigPanel5)descriptor5.getPanelComponent()).soundButton //$NON-NLS-1$
        					.isSelected())));
-       			JFritz.setProperty("option.startExternProgram", Boolean //$NON-NLS-1$
+       			Main.setProperty("option.startExternProgram", Boolean //$NON-NLS-1$
        					.toString(
        					(((ConfigPanel5)descriptor5.getPanelComponent()).externProgramCheckBox.isSelected())));
-       			JFritz.setProperty(
+       			Main.setProperty(
        					"option.externProgram", JFritzUtils.convertSpecialChars(
        					(((ConfigPanel5)descriptor5.getPanelComponent()).externProgramTextField //$NON-NLS-1$
        					.getText())));
-       			JFritz.setProperty("option.callMonitorType", String //$NON-NLS-1$
+       			Main.setProperty("option.callMonitorType", String //$NON-NLS-1$
        					.valueOf((((ConfigPanel5)descriptor5.getPanelComponent()).callMonitorCombo
        					.getSelectedIndex())));
 
        			// Set Popup Messages Type
        			if ( ((ConfigPanel4)descriptor4.getPanelComponent()).popupNoButton.isSelected() ) {
-       				JFritz.setProperty("option.popuptype", "0"); //$NON-NLS-1$, //$NON-NLS-2$
+       				Main.setProperty("option.popuptype", "0"); //$NON-NLS-1$, //$NON-NLS-2$
        			} else if (((ConfigPanel4)descriptor4.getPanelComponent()).popupDialogButton.isSelected()) {
-       				JFritz.setProperty("option.popuptype", "1"); //$NON-NLS-1$, //$NON-NLS-2$
+       				Main.setProperty("option.popuptype", "1"); //$NON-NLS-1$, //$NON-NLS-2$
        			} else {
-       				JFritz.setProperty("option.popuptype", "2"); //$NON-NLS-1$, //$NON-NLS-2$
+       				Main.setProperty("option.popuptype", "2"); //$NON-NLS-1$, //$NON-NLS-2$
        			}
 
-       			JFritz.setProperty("box.password", Encryption.encrypt(
+       			Main.setProperty("box.password", Encryption.encrypt(
        					((ConfigPanel3)descriptor3.getPanelComponent()).password)); //$NON-NLS-1$
 
-       			JFritz.setProperty("box.address",
+       			Main.setProperty("box.address",
        					((ConfigPanel3)descriptor3.getPanelComponent()).address.getText()); //$NON-NLS-1$
-       			JFritz.setProperty("area.code",
+       			Main.setProperty("area.code",
        					((ConfigPanel2)descriptor2.getPanelComponent()).areaCode.getText()); //$NON-NLS-1$
-       			JFritz.setProperty("country.code",
+       			Main.setProperty("country.code",
        					((ConfigPanel2)descriptor2.getPanelComponent()).countryCode.getText()); //$NON-NLS-1$
-       			JFritz.setProperty("area.prefix",
+       			Main.setProperty("area.prefix",
        					((ConfigPanel2)descriptor2.getPanelComponent()).areaPrefix.getText()); //$NON-NLS-1$
-       			JFritz.setProperty("country.prefix",
+       			Main.setProperty("country.prefix",
        					((ConfigPanel2)descriptor2.getPanelComponent()).countryPrefix.getText()); //$NON-NLS-1$
 
       			if (((ConfigPanel3)descriptor3.getPanelComponent()).firmware != null) {
-       				JFritz.setProperty("box.firmware",
+       				Main.setProperty("box.firmware",
        						((ConfigPanel3)descriptor3.getPanelComponent()).firmware.getFirmwareVersion()); //$NON-NLS-1$
        			} else {
-       				JFritz.removeProperty("box.firmware"); //$NON-NLS-1$
+       				Main.removeProperty("box.firmware"); //$NON-NLS-1$
        			}
 
-       			JFritz.setProperty("dial.prefix",
+       			Main.setProperty("dial.prefix",
        					((ConfigPanel2)descriptor2.getPanelComponent()).dialPrefix.getText()); //$NON-NLS-1$
-       			JFritz
-       	        .setProperty(
+       			Main.setProperty(
        	                "option.activateDialPrefix", Boolean.toString(
        	                		((ConfigPanel2)descriptor2.getPanelComponent()).activateDialPrefix.isSelected())); //$NON-NLS-1$
 
       			JFritz.getFritzBox().detectFirmware();
-      			JFritz.saveProperties();
+      			Main.saveProperties();
 
        			break;
        		case 1:
@@ -163,7 +163,7 @@ public class ConfigWizard {
 	public void askLanguage(Frame parent){
 
 		wizard = new Wizard();
-	    wizard.getDialog().setTitle(JFritz.getMessage("config_wizard"));
+	    wizard.getDialog().setTitle(Main.getMessage("config_wizard"));
 
 	    if(parent != null)
 	       	wizard.getDialog().setLocationRelativeTo(parent);
@@ -182,8 +182,8 @@ public class ConfigWizard {
 			String[] localeList = ((ConfigPanelLang)descriptorLang.getPanelComponent()).localeList;
 
 			//This code is real ugly, i should get around to cleaning it up!
-			if (!JFritz.getProperty("locale", "de_DE").equals(localeList[languageCombo.getSelectedIndex()])) { //$NON-NLS-1$ //$NON-NLS-2$
-				JFritz.setProperty(
+			if (!Main.getProperty("locale", "de_DE").equals(localeList[languageCombo.getSelectedIndex()])) { //$NON-NLS-1$ //$NON-NLS-2$
+				Main.setProperty(
 						"locale", localeList[languageCombo.getSelectedIndex()]); //$NON-NLS-1$
 				String loc = localeList[languageCombo.getSelectedIndex()];
 				JFritz.getJframe().setLanguage(

@@ -17,15 +17,15 @@ public class ShutdownThread extends Thread {
 		Debug.msg("Starting shutdown thread.."); //$NON-NLS-1$
 
 		if (JFritz.getJframe() != null) {
-            if (JFritz.isInstanceControlEnabled()) {
-                File f = new File( JFritz.SAVE_DIR + JFritz.LOCK_FILE );
+            if (Main.isInstanceControlEnabled()) {
+                File f = new File( Main.SAVE_DIR + Main.LOCK_FILE );
                 if ( f.exists() )
                     {
                         f.delete();
                     }
                 Debug.msg("Multiple instance lock: release lock."); //$NON-NLS-1$
             }
-			JFritz.saveProperties();
+            Main.saveProperties();
             JFritz.getJframe().saveQuickDials();
 
 			if (JFritz.getCallMonitor() != null) {

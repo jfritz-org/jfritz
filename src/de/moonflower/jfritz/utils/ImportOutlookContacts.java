@@ -9,6 +9,7 @@ import com.jacob.activeX.ActiveXComponent;
 import com.jacob.com.Dispatch;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 
@@ -63,7 +64,7 @@ public class ImportOutlookContacts extends JDialog implements ActionListener,
     }
 
     public ImportOutlookContacts() {
-        super(JFritz.getJframe(), JFritz.getMessage("import_contacts_outlook")); //$NON-NLS-1$
+        super(JFritz.getJframe(), Main.getMessage("import_contacts_outlook")); //$NON-NLS-1$
         outlookElements = new Vector();
         // contactPics = "resources/images/contacts/";
     }
@@ -77,7 +78,7 @@ public class ImportOutlookContacts extends JDialog implements ActionListener,
         JPanel jPanel = new JPanel();
         jPanel.setBounds(0, 0, 400, 500);
         jPanel.setLayout(null);
-        JLabel jLab = new JLabel(JFritz.getMessage("importing_outlook_contacts")); //$NON-NLS-1$
+        JLabel jLab = new JLabel(Main.getMessage("importing_outlook_contacts")); //$NON-NLS-1$
         jLab.setFont(new Font(null, 1, 22));
         jLab.setBounds(10, 0, 380, 80);
         jPanel.add(jLab);
@@ -197,10 +198,10 @@ public class ImportOutlookContacts extends JDialog implements ActionListener,
             }
         }
         if (entriesImported > 0) {
-            JFritz.getPhonebook().saveToXMLFile(JFritz.SAVE_DIR + JFritz.PHONEBOOK_FILE);
+            JFritz.getPhonebook().saveToXMLFile(Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
         }
         Debug.msg("Import done, " + entriesImported + " entries imported"); //$NON-NLS-1$,	//$NON-NLS-2$
-        JButton jButton = new JButton(JFritz.getMessage("okay")); //$NON-NLS-1$
+        JButton jButton = new JButton(Main.getMessage("okay")); //$NON-NLS-1$
 
         //set default confirm button (Enter)
         this.getRootPane().setDefaultButton(jButton);

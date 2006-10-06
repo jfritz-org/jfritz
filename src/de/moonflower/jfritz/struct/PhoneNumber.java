@@ -8,6 +8,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.countryspecific.*;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -94,9 +95,9 @@ public class PhoneNumber implements Comparable {
 		//if (number.matches(numberMatcher)) this.number = fullNumber;
 		if (fullNumber != null && !fullNumber.equals("Unbekannt")) this.number = fullNumber;
 
-		if (parseDialOut && this.number.startsWith(JFritz.getProperty(
+		if (parseDialOut && this.number.startsWith(Main.getProperty(
         		"dial.prefix", " ")) ){
-        	this.number = number.substring(JFritz.getProperty("dial.prefix").length());
+        	this.number = number.substring(Main.getProperty("dial.prefix").length());
         	Debug.msg("Parsed the dial out prefix, new number: "+this.number);
 		}
 		createMobileMap();
@@ -160,7 +161,7 @@ public class PhoneNumber implements Comparable {
         convertQuickDial();
 
         /* Part of the i18n work, don't delete
-        if(JFritz.getProperty("country.code","49").equals("41")){
+        if(Main.getProperty("country.code","49").equals("41")){
             callbycall = PhoneNumberSwitzerland.getCallbyCall(number);
             number = number.substring(callbycall.length());
             number  = convertToIntNumber();
@@ -201,10 +202,10 @@ public class PhoneNumber implements Comparable {
 	 * @return Returns internationalized number
 	 */
 	public String convertToIntNumber() {
-		String countryCode = JFritz.getProperty("country.code");//$NON-NLS-1$
-		String countryPrefix = JFritz.getProperty("country.prefix");//$NON-NLS-1$
-		String areaCode = JFritz.getProperty("area.code");//$NON-NLS-1$
-		String areaPrefix = JFritz.getProperty("area.prefix");//$NON-NLS-1$
+		String countryCode = Main.getProperty("country.code");//$NON-NLS-1$
+		String countryPrefix = Main.getProperty("country.prefix");//$NON-NLS-1$
+		String areaCode = Main.getProperty("area.code");//$NON-NLS-1$
+		String areaPrefix = Main.getProperty("area.prefix");//$NON-NLS-1$
 
 
 
@@ -239,8 +240,8 @@ public class PhoneNumber implements Comparable {
 	 */
 	public String convertToNationalNumber()
 	{
-		String countryCode = JFritz.getProperty("country.code","+49");//$NON-NLS-1$, //$NON-NLS-2$
-		String areaPrefix = JFritz.getProperty("area.prefix","0");   //$NON-NLS-1$, //$NON-NLS-2$
+		String countryCode = Main.getProperty("country.code","+49");//$NON-NLS-1$, //$NON-NLS-2$
+		String areaPrefix = Main.getProperty("area.prefix","0");   //$NON-NLS-1$, //$NON-NLS-2$
 
 		if (number.startsWith(countryCode)) //$NON-NLS-1$
     		return areaPrefix + number.substring(3);
@@ -276,9 +277,9 @@ public class PhoneNumber implements Comparable {
 	}
 
 	public String getShortNumber() {
-		String countryCode = JFritz.getProperty("country.code", "+49");//$NON-NLS-1$
-		String areaCode = JFritz.getProperty("area.code"); 		//$NON-NLS-1$
-		String areaPrefix = JFritz.getProperty("area.prefix");  //$NON-NLS-1$
+		String countryCode = Main.getProperty("country.code", "+49");//$NON-NLS-1$
+		String areaCode = Main.getProperty("area.code"); 		//$NON-NLS-1$
+		String areaPrefix = Main.getProperty("area.prefix");  //$NON-NLS-1$
 		if (number.startsWith(countryCode + areaCode)) //$NON-NLS-1$
 			return number.substring(countryCode.length() + areaCode.length());
 
@@ -288,8 +289,8 @@ public class PhoneNumber implements Comparable {
 	}
 
 	public String getAreaNumber() {
-		String countryCode = JFritz.getProperty("country.code", "+49"); //$NON-NLS-1$
-		String areaPrefix = JFritz.getProperty("area.prefix", "0"); //$NON-NLS-1$
+		String countryCode = Main.getProperty("country.code", "+49"); //$NON-NLS-1$
+		String areaPrefix = Main.getProperty("area.prefix", "0"); //$NON-NLS-1$
 		if (number.startsWith(countryCode)) //$NON-NLS-1$
 			return areaPrefix + number.substring(countryCode.length());
 		return number;
@@ -330,8 +331,8 @@ public class PhoneNumber implements Comparable {
 	 * @return True if number is a local number
 	 */
 	public boolean isLocalCall() {
-		String countryCode = JFritz.getProperty("country.code"); //$NON-NLS-1$
-		String areaCode = JFritz.getProperty("area.code"); //$NON-NLS-1$
+		String countryCode = Main.getProperty("country.code"); //$NON-NLS-1$
+		String areaCode = Main.getProperty("area.code"); //$NON-NLS-1$
 		return number.startsWith(countryCode + areaCode); //$NON-NLS-1$
 	}
 
@@ -417,7 +418,7 @@ public class PhoneNumber implements Comparable {
 	public boolean isMobile() {
 		//		String provider = ReverseLookup.getMobileProvider(getFullNumber());
 		//		return (!provider.equals(""));
-		if(number.startsWith("+"+SWITZERLAND_CODE) && JFritz.getProperty("country.code", "+49").equals(SWITZERLAND_CODE))
+		if(number.startsWith("+"+SWITZERLAND_CODE) && Main.getProperty("country.code", "+49").equals(SWITZERLAND_CODE))
 			return PhoneNumberSwitzerland.isMobile(getAreaNumber());
 		else{
 			boolean ret = number.length() > 6

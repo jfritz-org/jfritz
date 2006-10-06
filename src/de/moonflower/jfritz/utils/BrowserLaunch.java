@@ -14,7 +14,7 @@ package de.moonflower.jfritz.utils;
 import java.lang.reflect.Method;
 import javax.swing.JOptionPane;
 
-import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 
 /**
  * Opens browser with an URL
@@ -22,7 +22,7 @@ import de.moonflower.jfritz.JFritz;
  */
 public class BrowserLaunch {
 
-private static final String errMsg = JFritz.getMessage("error_browser_not_started"); //$NON-NLS-1$
+private static final String errMsg = Main.getMessage("error_browser_not_started"); //$NON-NLS-1$
 
 /**
  * Open new browser with an url
@@ -53,7 +53,7 @@ public static void openURL(String url) {
                browser = browsers[count];
          if (browser == null){
         	Debug.err("No browser found!");
-            throw new Exception(JFritz.getMessage("error_browser_not_found")); //$NON-NLS-1$
+            throw new Exception(Main.getMessage("error_browser_not_found")); //$NON-NLS-1$
          }else
             Runtime.getRuntime().exec(new String[] {browser, url});
          }

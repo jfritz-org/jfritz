@@ -41,6 +41,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.struct.PhoneType;
@@ -144,7 +145,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 	}
 
 	private final class NumberTableModel extends AbstractTableModel {
-		private final String columnNames[] = { JFritz.getMessage("standard_short"), JFritz.getMessage("type"), JFritz.getMessage("number") }; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+		private final String columnNames[] = { Main.getMessage("standard_short"), Main.getMessage("type"), Main.getMessage("number") }; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 
 		private static final long serialVersionUID = 1;
 
@@ -305,7 +306,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridLayout(0, 2));
-		JLabel label = new JLabel(JFritz.getMessage("private_entry") + ": ");  //$NON-NLS-1$,   //$NON-NLS-2$
+		JLabel label = new JLabel(Main.getMessage("private_entry") + ": ");  //$NON-NLS-1$,   //$NON-NLS-2$
 		buttonPanel.add(label);
 		chkBoxPrivateEntry = new JCheckBox();
 		chkBoxPrivateEntry.setSelected(person.isPrivateEntry());
@@ -319,37 +320,37 @@ public class PersonPanel extends JPanel implements ActionListener,
 		};
 		chkBoxPrivateEntry.addChangeListener(changeListener);
 		buttonPanel.add(chkBoxPrivateEntry);
-		label = new JLabel(JFritz.getMessage("firstName") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		label = new JLabel(Main.getMessage("firstName") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		buttonPanel.add(label);
 		tfFirstName = new JTextField(person.getFirstName());
 		tfFirstName.addCaretListener(this);
 		buttonPanel.add(tfFirstName);
-		label = new JLabel(JFritz.getMessage("lastName") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		label = new JLabel(Main.getMessage("lastName") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		buttonPanel.add(label);
 		tfLastName = new JTextField(person.getLastName());
 		tfLastName.addCaretListener(this);
 		buttonPanel.add(tfLastName);
-		label = new JLabel(JFritz.getMessage("company") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		label = new JLabel(Main.getMessage("company") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		buttonPanel.add(label);
 		tfCompany = new JTextField(person.getCompany());
 		tfCompany.addCaretListener(this);
 		buttonPanel.add(tfCompany);
-		label = new JLabel(JFritz.getMessage("street") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		label = new JLabel(Main.getMessage("street") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		buttonPanel.add(label);
 		tfStreet = new JTextField(person.getStreet());
 		tfStreet.addCaretListener(this);
 		buttonPanel.add(tfStreet);
-		label = new JLabel(JFritz.getMessage("postalCode") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		label = new JLabel(Main.getMessage("postalCode") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		buttonPanel.add(label);
 		tfPostalCode = new JTextField(person.getPostalCode());
 		tfPostalCode.addCaretListener(this);
 		buttonPanel.add(tfPostalCode);
-		label = new JLabel(JFritz.getMessage("city") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		label = new JLabel(Main.getMessage("city") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		buttonPanel.add(label);
 		tfCity = new JTextField(person.getCity());
 		tfCity.addCaretListener(this);
 		buttonPanel.add(tfCity);
-		label = new JLabel(JFritz.getMessage("emailAddress") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		label = new JLabel(Main.getMessage("emailAddress") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		buttonPanel.add(label);
 		tfEmail = new JTextField(person.getEmailAddress());
 		tfEmail.addCaretListener(this);
@@ -434,7 +435,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		if (person.getNumbers().size() == 1)
 			delButton.setEnabled((false));
 
-		JLabel label = new JLabel(JFritz.getMessage("telephoneNumbers")+":", JLabel.LEFT); //$NON-NLS-1$,  //$NON-NLS-2$
+		JLabel label = new JLabel(Main.getMessage("telephoneNumbers")+":", JLabel.LEFT); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		JPanel numberButtonPanel = new JPanel(new GridLayout(0, 2));
 		JPanel buttonPanel = new JPanel();

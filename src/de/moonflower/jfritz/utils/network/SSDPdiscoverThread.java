@@ -7,6 +7,7 @@ package de.moonflower.jfritz.utils.network;
 import java.util.Vector;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 
 /**
  * @author Arno Willig
@@ -31,7 +32,7 @@ public class SSDPdiscoverThread extends Thread {
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
-		JFritz.getJframe().setStatus(JFritz.getMessage("detect_boxes")); //$NON-NLS-1$
+		JFritz.getJframe().setStatus(Main.getMessage("detect_boxes")); //$NON-NLS-1$
 		JFritz.getJframe().setBusy(true);
 
 		devices = UPNPUtils.SSDP_discoverFritzBoxes(timeout);

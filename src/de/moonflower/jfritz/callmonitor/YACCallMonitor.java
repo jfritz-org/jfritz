@@ -1,7 +1,5 @@
 package de.moonflower.jfritz.callmonitor;
 
-
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,6 +7,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.utils.Debug;
 
 /**
@@ -92,12 +91,12 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
                             //JFritz.getCallMonitorList().displayCallInMsg(number, "", name); //$NON-NLS-1$
 
 						} else {
-							outputString = JFritz.getMessage("yac_message") //$NON-NLS-1$
+							outputString = Main.getMessage("yac_message") //$NON-NLS-1$
 									+ ":\n" + msg; //$NON-NLS-1$
 							JFritz.infoMsg(outputString);
 						}
 					} else {
-						outputString = JFritz.getMessage("yac_message") + ":\n" //$NON-NLS-1$,  //$NON-NLS-2$
+						outputString = Main.getMessage("yac_message") + ":\n" //$NON-NLS-1$,  //$NON-NLS-2$
 								+ msg;
 						JFritz.infoMsg(outputString);
 					}

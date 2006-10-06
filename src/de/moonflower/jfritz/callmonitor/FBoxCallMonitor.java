@@ -1,6 +1,7 @@
 package de.moonflower.jfritz.callmonitor;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.utils.Debug;
 
 import java.io.BufferedReader;
@@ -45,12 +46,12 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
             return true;
         } catch (UnknownHostException uhe) {
             Debug.msg("Unknown host exception: " + uhe.toString()); //$NON-NLS-1$
-            Debug.errDlg(JFritz.getMessage("error_fritzbox_callmonitor_no_connection"). //$NON-NLS-1$
+            Debug.errDlg(Main.getMessage("error_fritzbox_callmonitor_no_connection"). //$NON-NLS-1$
             		replaceAll("%A", JFritz.getFritzBox().getAddress())); //$NON-NLS-1$,  //$NON-NLS-2$
             JFritz.stopCallMonitor();
         } catch (IOException ioe) {
             Debug.msg("IO exception: " + ioe.toString()); //$NON-NLS-1$
-            Debug.errDlg(JFritz.getMessage("error_fritzbox_callmonitor_no_connection"). //$NON-NLS-1$
+            Debug.errDlg(Main.getMessage("error_fritzbox_callmonitor_no_connection"). //$NON-NLS-1$
             		replaceAll("%A", JFritz.getFritzBox().getAddress())); //$NON-NLS-1$,  //$NON-NLS-2$
             JFritz.stopCallMonitor();
         }

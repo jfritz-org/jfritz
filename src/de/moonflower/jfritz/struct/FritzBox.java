@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.dialogs.quickdial.QuickDials;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
@@ -123,19 +124,19 @@ public class FritzBox {
 	 */
 	public void detectFirmware() {
 		try {
-			box_address = JFritz.getProperty("box.address");
-			box_password = Encryption.decrypt(JFritz.getProperty("box.password"));
-			box_port = JFritz.getProperty("box.port");
+			box_address = Main.getProperty("box.address");
+			box_password = Encryption.decrypt(Main.getProperty("box.password"));
+			box_port = Main.getProperty("box.port");
 			firmware = FritzBoxFirmware.detectFirmwareVersion(
 					box_address,
 					box_password,
 					box_port);
 		} catch (WrongPasswordException e) {
-			Debug.msg(JFritz.getMessage("wrong_password"));
+			Debug.msg(Main.getMessage("wrong_password"));
 		} catch (InvalidFirmwareException e) {
-			Debug.msg(JFritz.getMessage("box_address_wrong"));
+			Debug.msg(Main.getMessage("box_address_wrong"));
 		} catch (IOException e) {
-			Debug.msg(JFritz.getMessage("box_address_wrong"));
+			Debug.msg(Main.getMessage("box_address_wrong"));
 		}
 	}
 
@@ -623,7 +624,7 @@ public class FritzBox {
 				portStr = "2"; //$NON-NLS-1$
 			} else if (port.equals("Fon 3")) { //$NON-NLS-1$
 				portStr = "3"; //$NON-NLS-1$
-			} else if (port.equals(JFritz.getMessage("analog_telephones_all"))) { //$NON-NLS-1$
+			} else if (port.equals(Main.getMessage("analog_telephones_all"))) { //$NON-NLS-1$
 				portStr = "9"; //$NON-NLS-1$
 			} else if (port.equals("ISDN Alle")) { //$NON-NLS-1$
 				portStr = "50"; //$NON-NLS-1$

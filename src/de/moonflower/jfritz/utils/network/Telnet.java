@@ -9,6 +9,7 @@ import java.io.PrintStream;
 import java.net.ConnectException;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.dialogs.config.TelnetConfigDialog;
@@ -56,7 +57,7 @@ public class Telnet {
 			String server = JFritz.getFritzBox().getAddress(); //$NON-NLS-1$
 
 			String password;
-			if (JFritz.getProperty("telnet.password", "").equals("")) { //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+			if (Main.getProperty("telnet.password", "").equals("")) { //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 				// Noch kein Passwort gesetzt. Zeige Einstellungsdialog
 				TelnetConfigDialog telnetConfigDialog = new TelnetConfigDialog(
 						JFritz.getJframe());
@@ -67,9 +68,9 @@ public class Telnet {
 				}
 			}
 
-			String user = JFritz.getProperty("telnet.user", ""); //$NON-NLS-1$,  //$NON-NLS-2$
+			String user = Main.getProperty("telnet.user", ""); //$NON-NLS-1$,  //$NON-NLS-2$
 			password = Encryption
-					.decrypt(JFritz.getProperty("telnet.password")); //$NON-NLS-1$
+					.decrypt(Main.getProperty("telnet.password")); //$NON-NLS-1$
 			int port = 23;
 			try {
 				Debug.msg("Verbinde mit Telnet ..."); //$NON-NLS-1$
@@ -95,7 +96,7 @@ public class Telnet {
 				} else {
 					Debug.msg("FritzBox not found. Get new IP ..."); //$NON-NLS-1$
 					JFritz.getJframe().setStatus(
-							JFritz.getMessage("box_not_found")); //$NON-NLS-1$
+							Main.getMessage("box_not_found")); //$NON-NLS-1$
 					Debug.err("Address wrong!"); //$NON-NLS-1$
 					JFritz.getJframe().setBusy(false);
 					String box_address = JFritz.getJframe().showAddressDialog(
@@ -104,7 +105,7 @@ public class Telnet {
 						JFritz.stopCallMonitor();
 						isdone = true;
 					} else {
-						JFritz.setProperty("box.address", box_address); //$NON-NLS-1$
+						Main.setProperty("box.address", box_address); //$NON-NLS-1$
 						JFritz.getFritzBox().detectFirmware();
 					}
 				}
@@ -175,8 +176,7 @@ public class Telnet {
 									Debug.err("Password wrong!"); //$NON-NLS-1$
 									JFritz.getJframe()
 											.setStatus(
-													JFritz
-															.getMessage("password_wrong")); //$NON-NLS-1$
+													Main.getMessage("password_wrong")); //$NON-NLS-1$
 									JFritz.getJframe().setBusy(false);
 
 									String newPassword = JFritz
@@ -189,7 +189,7 @@ public class Telnet {
 										JFritz.stopCallMonitor();
 										return LOGIN_CANCELED;
 									} else {
-										JFritz.setProperty(
+										Main.setProperty(
 											"box.password", //$NON-NLS-1$
 											Encryption.encrypt(newPassword));
 										JFritz.getFritzBox().detectFirmware();

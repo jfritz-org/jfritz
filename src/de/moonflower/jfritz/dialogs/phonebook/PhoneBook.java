@@ -40,6 +40,7 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
@@ -114,7 +115,7 @@ public class PhoneBook extends AbstractTableModel {
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		String columnName = getColumnName(columnIndex);
 		//If the wahlhilfe doesnt work, check here again!
-		if (columnName.equals(JFritz.getMessage("telephoneNumber"))) //$NON-NLS-1$
+		if (columnName.equals(Main.getMessage("telephoneNumber"))) //$NON-NLS-1$
 			return true;
 		return false;
 	}
@@ -391,8 +392,8 @@ public class PhoneBook extends AbstractTableModel {
 //			pw.newLine();
 			pw.write("<phonebook>"); //$NON-NLS-1$
 			pw.newLine();
-			pw.write("<comment>Phonebook for " + JFritz.PROGRAM_NAME + " v" //$NON-NLS-1$,  //$NON-NLS-2$
-					+ JFritz.PROGRAM_VERSION + "</comment>"); //$NON-NLS-1$
+			pw.write("<comment>Phonebook for " + Main.PROGRAM_NAME + " v" //$NON-NLS-1$,  //$NON-NLS-2$
+					+ Main.PROGRAM_VERSION + "</comment>"); //$NON-NLS-1$
 			pw.newLine();
 			Enumeration en = unfilteredPersons.elements();
 			while (en.hasMoreElements()) {
@@ -640,7 +641,7 @@ public class PhoneBook extends AbstractTableModel {
 
 	public String getColumnName(int column) {
 		try {
-			return JFritz.getMessage(columnNames[column]);
+			return Main.getMessage(columnNames[column]);
 		} catch (Exception e) {
 			return columnNames[column];
 		}
@@ -713,10 +714,9 @@ public class PhoneBook extends AbstractTableModel {
         } catch (NullPointerException e) {
         }
 */
-		boolean filter_private = JFritzUtils.parseBoolean(JFritz
-				.getProperty("filter_private")); //$NON-NLS-1$
+		boolean filter_private = JFritzUtils.parseBoolean(Main.getProperty("filter_private")); //$NON-NLS-1$
 
-		String filterSearch = JFritz.getProperty("filter.Phonebook.search", ""); //$NON-NLS-1$,  //$NON-NLS-2$
+		String filterSearch = Main.getProperty("filter.Phonebook.search", ""); //$NON-NLS-1$,  //$NON-NLS-2$
 		String keywords[] = filterSearch.split(" "); //$NON-NLS-1$
 
 		if ((!filter_private) && (keywords.length == 0)) {
@@ -799,18 +799,18 @@ public class PhoneBook extends AbstractTableModel {
 
 	          if (newEntries > 0) {
 	        	  sortAllUnfilteredRows();
-	              saveToXMLFile(JFritz.SAVE_DIR + JFritz.PHONEBOOK_FILE);
+	              saveToXMLFile(Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
 	              String msg;
 
 	              if (newEntries == 1) {
-	                msg = JFritz.getMessage("imported_contact"); //$NON-NLS-1$
+	                msg = Main.getMessage("imported_contact"); //$NON-NLS-1$
 	              } else {
-	                msg = newEntries + " "+JFritz.getMessage("imported_contacts"); //$NON-NLS-1$,  //$NON-NLS-2$
+	                msg = newEntries + " "+Main.getMessage("imported_contacts"); //$NON-NLS-1$,  //$NON-NLS-2$
 	              }
 	              JFritz.infoMsg(msg);
 
 	          }else{
-	        	  JFritz.infoMsg(JFritz.getMessage("no_imported_contacts")); //$NON-NLS-1$
+	        	  JFritz.infoMsg(Main.getMessage("no_imported_contacts")); //$NON-NLS-1$
 	          }
 
 	          br.close();
@@ -923,7 +923,7 @@ public class PhoneBook extends AbstractTableModel {
 		}
 
 		if (redundantEntries.size() > 0) {
-			saveToXMLFile(JFritz.SAVE_DIR + JFritz.PHONEBOOK_FILE);
+			saveToXMLFile(Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
 			updateFilter();
 		}
 

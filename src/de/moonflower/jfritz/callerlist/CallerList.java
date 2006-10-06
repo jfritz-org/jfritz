@@ -40,6 +40,7 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.filter.CallByCallFilter;
 import de.moonflower.jfritz.callerlist.filter.CallFilter;
 import de.moonflower.jfritz.callerlist.filter.DateFilter;
@@ -205,8 +206,8 @@ public class CallerList extends AbstractTableModel {
 			// pw.newLine();
 			pw.write("<calls>"); //$NON-NLS-1$
 			pw.newLine();
-			pw.write("<comment>Calls for " + JFritz.PROGRAM_NAME + " v" //$NON-NLS-1$,  //$NON-NLS-2$
-					+ JFritz.PROGRAM_VERSION + "</comment>"); //$NON-NLS-1$
+			pw.write("<comment>Calls for " + Main.PROGRAM_NAME + " v" //$NON-NLS-1$,  //$NON-NLS-2$
+					+ Main.PROGRAM_VERSION + "</comment>"); //$NON-NLS-1$
 			pw.newLine();
 
 			int rows[] = null;
@@ -569,14 +570,14 @@ public class CallerList extends AbstractTableModel {
 			boolean newEntries = JFritz.getFritzBox().retrieveCSVList();
 
 			// Notify user?
-			if ((JFritz.getProperty("option.notifyOnCalls", "true")
+			if ((Main.getProperty("option.notifyOnCalls", "true")
 					.equals("true"))
 					&& newEntries) {
 				JFritz.getJframe().setVisible(true);
 				JFritz.getJframe().toFront();
 			}
 
-			if ((newEntries && JFritz.getProperty("option.deleteAfterFetch",
+			if ((newEntries && Main.getProperty("option.deleteAfterFetch",
 					"false").equals("true"))
 					|| deleteFritzBoxCallerList) {
 				JFritz.getFritzBox().clearListOnFritzBox();
@@ -584,7 +585,7 @@ public class CallerList extends AbstractTableModel {
 
 			// Make back-up after fetching the caller list?
 			if (newEntries
-					&& JFritzUtils.parseBoolean(JFritz.getProperty(
+					&& JFritzUtils.parseBoolean(Main.getProperty(
 							"option.createBackupAfterFetch", "false"))) {
 				doBackup();
 			}
@@ -863,27 +864,17 @@ public class CallerList extends AbstractTableModel {
     public void updateFilter() {
         Debug.msg("updating the filter");
 
-        boolean filterCallIn = JFritzUtils.parseBoolean(JFritz
-                .getProperty("filter.callin")); //$NON-NLS-1$
-        boolean filterCallInFailed = JFritzUtils.parseBoolean(JFritz
-                .getProperty("filter.callinfailed")); //$NON-NLS-1$
-        boolean filterCallOut = JFritzUtils.parseBoolean(JFritz
-                .getProperty("filter.callout")); //$NON-NLS-1$
-        boolean filterNumber = JFritzUtils.parseBoolean(JFritz
-                .getProperty("filter.number")); //$NON-NLS-1$
-        boolean filterFixed = JFritzUtils.parseBoolean(JFritz
-                .getProperty("filter.fixed")); //$NON-NLS-1$
-        boolean filterHandy = JFritzUtils.parseBoolean(JFritz
-                .getProperty("filter.handy")); //$NON-NLS-1$
-        boolean filterDate = JFritzUtils.parseBoolean(JFritz
-                .getProperty("filter.date")); //$NON-NLS-1$
-        boolean filterSip = JFritzUtils.parseBoolean(JFritz
-                .getProperty("filter.sip")); //$NON-NLS-1$
-        boolean filterCallByCall = JFritzUtils.parseBoolean(JFritz
-                .getProperty("filter.callbycall")); //$NON-NLS-1$
-        boolean filterComment = JFritzUtils.parseBoolean(JFritz
-                .getProperty("filter.comment")); // fireTableDataChanged();$NON-NLS-1$
-        String filterSearch = JFritz.getProperty("filter.search", ""); //$NON-NLS-1$,  //$NON-NLS-2$
+        boolean filterCallIn = JFritzUtils.parseBoolean(Main.getProperty("filter.callin")); //$NON-NLS-1$
+        boolean filterCallInFailed = JFritzUtils.parseBoolean(Main.getProperty("filter.callinfailed")); //$NON-NLS-1$
+        boolean filterCallOut = JFritzUtils.parseBoolean(Main.getProperty("filter.callout")); //$NON-NLS-1$
+        boolean filterNumber = JFritzUtils.parseBoolean(Main.getProperty("filter.number")); //$NON-NLS-1$
+        boolean filterFixed = JFritzUtils.parseBoolean(Main.getProperty("filter.fixed")); //$NON-NLS-1$
+        boolean filterHandy = JFritzUtils.parseBoolean(Main.getProperty("filter.handy")); //$NON-NLS-1$
+        boolean filterDate = JFritzUtils.parseBoolean(Main.getProperty("filter.date")); //$NON-NLS-1$
+        boolean filterSip = JFritzUtils.parseBoolean(Main.getProperty("filter.sip")); //$NON-NLS-1$
+        boolean filterCallByCall = JFritzUtils.parseBoolean(Main.getProperty("filter.callbycall")); //$NON-NLS-1$
+        boolean filterComment = JFritzUtils.parseBoolean(Main.getProperty("filter.comment")); // fireTableDataChanged();$NON-NLS-1$
+        String filterSearch = Main.getProperty("filter.search", ""); //$NON-NLS-1$,  //$NON-NLS-2$
 
         try {
             JFritz.getJframe().getCallerTable().getCellEditor()
@@ -956,7 +947,7 @@ public class CallerList extends AbstractTableModel {
 
                 if (filterComment
                         && !call.getComment().equals(
-                                JFritz.getProperty("filter.comment.text", ""))) { //$NON-NLS-1$,  //$NON-NLS-2$
+                                Main.getProperty("filter.comment.text", ""))) { //$NON-NLS-1$,  //$NON-NLS-2$
                     commentFilterPassed = false;
                 }
 
@@ -1037,14 +1028,13 @@ public class CallerList extends AbstractTableModel {
 		if ((JFritz.getJframe() != null)
 				&& JFritz.getJframe().getCallerTable() != null)
 			JFritz.getJframe().getCallerTable().clearSelection();
-		saveToXMLFile(JFritz.SAVE_DIR + JFritz.CALLS_FILE, true);
+		saveToXMLFile(Main.SAVE_DIR + JFritz.CALLS_FILE, true);
 		fireTableDataChanged();
 	}
 
 	public void removeEntries() {
-		if (JOptionPane.showConfirmDialog(JFritz.getJframe(), JFritz
-				.getMessage("really_delete_entries"), //$NON-NLS-1$
-				JFritz.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+		if (JOptionPane.showConfirmDialog(JFritz.getJframe(), Main.getMessage("really_delete_entries"), //$NON-NLS-1$
+				Main.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 			Debug.msg("Removing entries"); //$NON-NLS-1$
 			int row[] = JFritz.getJframe().getCallerTable().getSelectedRows();
 			if (row.length > 0) {
@@ -1056,7 +1046,7 @@ public class CallerList extends AbstractTableModel {
 				while (en.hasMoreElements()) {
 					unfilteredCallerData.remove(en.nextElement());
 				}
-				saveToXMLFile(JFritz.SAVE_DIR + JFritz.CALLS_FILE, true);
+				saveToXMLFile(Main.SAVE_DIR + JFritz.CALLS_FILE, true);
 				updateFilter();
 				fireTableDataChanged();
 			}
@@ -1094,7 +1084,7 @@ public class CallerList extends AbstractTableModel {
 		if (rows != null && rows.length == 1)
 			return (Call) this.filteredCallerData.elementAt(rows[0]);
 		else
-			Debug.errDlg(JFritz.getMessage("error_choose_one_call")); //$NON-NLS-1$
+			Debug.errDlg(Main.getMessage("error_choose_one_call")); //$NON-NLS-1$
 
 		return null;
 	}
@@ -1203,15 +1193,14 @@ public class CallerList extends AbstractTableModel {
 					// for(int i=0; i < unfilteredCallerData.size(); i++)
 					// System.out.println(unfilteredCallerData.elementAt(i).toString());
 
-					saveToXMLFile(JFritz.SAVE_DIR + JFritz.CALLS_FILE, true);
+					saveToXMLFile(Main.SAVE_DIR + JFritz.CALLS_FILE, true);
 
 					String msg;
 
 					if (newEntries == 1) {
-						msg = JFritz.getMessage("imported_call"); //$NON-NLS-1$
+						msg = Main.getMessage("imported_call"); //$NON-NLS-1$
 					} else {
-						msg = JFritz
-								.getMessage("imported_calls").replaceAll("%N", Integer.toString(newEntries)); //$NON-NLS-1$, //$NON-NLS-2$
+						msg = Main.getMessage("imported_calls").replaceAll("%N", Integer.toString(newEntries)); //$NON-NLS-1$, //$NON-NLS-2$
 					}
 
 					JFritz.infoMsg(msg);
@@ -1402,7 +1391,7 @@ public class CallerList extends AbstractTableModel {
 
 		// Phone number
 		if (!field[2].equals(""))
-			number = new PhoneNumber(field[2], JFritz.getProperty(
+			number = new PhoneNumber(field[2], Main.getProperty(
 					"option.activateDialPrefix").toLowerCase().equals("true")
 					&& (calltype.toInt() == CallType.CALLOUT)
 					&& !field[4].startsWith("Internet"));
@@ -1487,7 +1476,7 @@ public class CallerList extends AbstractTableModel {
 
 		// Phone number
 		if (!field[3].equals(""))
-			number = new PhoneNumber(field[3], JFritz.getProperty(
+			number = new PhoneNumber(field[3], Main.getProperty(
 					"option.activateDialPrefix").toLowerCase().equals("true")
 					&& (calltype.toInt() == CallType.CALLOUT)
 					&& !field[5].startsWith("Internet"));
@@ -1586,7 +1575,7 @@ public class CallerList extends AbstractTableModel {
 
 		// Phone number
 		if (!field[2].equals(""))
-			number = new PhoneNumber(field[2], JFritz.getProperty(
+			number = new PhoneNumber(field[2], Main.getProperty(
 					"option.activateDialPrefix").toLowerCase().equals("true")
 					&& (calltype.toInt() == CallType.CALLOUT)
 					&& !field[4].startsWith("Internet"));
@@ -1687,7 +1676,7 @@ public class CallerList extends AbstractTableModel {
 
 		// Phone number
 		if (!field[3].equals(""))
-			number = new PhoneNumber(field[3], JFritz.getProperty(
+			number = new PhoneNumber(field[3], Main.getProperty(
 					"option.activateDialPrefix").toLowerCase().equals("true")
 					&& (calltype.toInt() == CallType.CALLOUT)
 					&& !field[5].startsWith("Internet"));
@@ -1857,7 +1846,7 @@ public class CallerList extends AbstractTableModel {
 //				 Debug.msg("route:"+route);
 //				 Debug.msg("callrouteType:"+call.getRouteType());
 //				if (call.getRouteType() == Call.ROUTE_SIP) {
-				if (route.contains("@")) {
+				if (route.indexOf("@")!=-1) {
 
 					// TODO check this after Robert fixed the getRouteType
 					// method

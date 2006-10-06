@@ -27,6 +27,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellRenderer;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.QuickDial;
 import de.moonflower.jfritz.utils.Debug;
 
@@ -55,7 +56,7 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 				updateButtons();
 			}
 		});
-		dataModel.loadFromXMLFile(JFritz.SAVE_DIR + JFritz.QUICKDIALS_FILE);
+		dataModel.loadFromXMLFile(Main.SAVE_DIR + JFritz.QUICKDIALS_FILE);
 		add(createQuickDialToolBar(), BorderLayout.NORTH);
 		add(createQuickDialTable(), BorderLayout.CENTER);
 	}
@@ -64,14 +65,14 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 		JToolBar toolBar = new JToolBar();
 		toolBar.setFloatable(true);
 
-		addButton = new JButton(JFritz.getMessage("new_quickdial"));  //$NON-NLS-1$
+		addButton = new JButton(Main.getMessage("new_quickdial"));  //$NON-NLS-1$
 		addButton.setActionCommand("addSIP");  //$NON-NLS-1$
 		addButton.addActionListener(this);
 		addButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/add.png"))));  //$NON-NLS-1$
 
-		delButton = new JButton(JFritz.getMessage(
+		delButton = new JButton(Main.getMessage(
 				"delete_quickdial"));  //$NON-NLS-1$
 		delButton.setActionCommand("deleteSIP");  //$NON-NLS-1$
 		delButton.addActionListener(this);
@@ -79,12 +80,12 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/delete.png"))));  //$NON-NLS-1$
 
-		JButton fetchButton = new JButton(JFritz.getMessage(
+		JButton fetchButton = new JButton(Main.getMessage(
 				"fetch_from_box"));  //$NON-NLS-1$
 		fetchButton.setActionCommand("fetchSIP");  //$NON-NLS-1$
 		fetchButton.addActionListener(this);
 
-		JButton storeButton = new JButton(JFritz.getMessage(
+		JButton storeButton = new JButton(Main.getMessage(
 				"store_to_box"));  //$NON-NLS-1$
 		storeButton.setEnabled(false);
 		storeButton.setActionCommand("storeSIP");  //$NON-NLS-1$
@@ -167,7 +168,7 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 		} else if (e.getActionCommand().equals("storeSIP")) {  //$NON-NLS-1$
 			Debug.err("Not yet implemented");  //$NON-NLS-1$
 			JOptionPane.showMessageDialog(null,
-					JFritz.getMessage("not_implemented"));  //$NON-NLS-1$
+					Main.getMessage("not_implemented"));  //$NON-NLS-1$
 		}
 
 	}
@@ -207,7 +208,7 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 	}
 
 	public void setStatus() {
-		JFritz.getJframe().setStatus(JFritz.getMessage("entries").  //$NON-NLS-1$
+		JFritz.getJframe().setStatus(Main.getMessage("entries").  //$NON-NLS-1$
 				replaceAll("%N", Integer.toString(getDataModel().getQuickDials().size())));  //$NON-NLS-1$
 	}
 }

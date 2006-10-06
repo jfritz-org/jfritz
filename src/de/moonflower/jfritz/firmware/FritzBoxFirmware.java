@@ -12,7 +12,7 @@ import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.utils.Debug;
@@ -333,7 +333,7 @@ public class FritzBoxFirmware {
         case 29:
             return "FRITZ!Box 7170"; //$NON-NLS-1$
 		default:
-			return JFritz.getMessage("unknown"); //$NON-NLS-1$
+			return Main.getMessage("unknown"); //$NON-NLS-1$
 		}
 	}
 

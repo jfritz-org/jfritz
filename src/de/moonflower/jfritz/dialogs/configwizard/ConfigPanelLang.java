@@ -12,7 +12,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.dialogs.config.LanguageComboBoxRenderer;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -46,7 +46,7 @@ public class ConfigPanelLang extends JPanel{
 
 		JLabel label;
 		c.gridy = 2;
-		label = new JLabel(JFritz.getMessage("language") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		label = new JLabel(Main.getMessage("language") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		localePane.add(label, c);
 
 
@@ -67,7 +67,7 @@ public class ConfigPanelLang extends JPanel{
 			Debug.msg("Found resources for locale '" + localeList[i] +			//$NON-NLS-1$
 			     "', loading flag image '" + imagePath + "'");					//$NON-NLS-1$,  //$NON-NLS-2$
 			images[i] = new ImageIcon(imagePath);
-			images[i].setDescription(JFritz.getLocaleMeaning(localeList[i]));
+			images[i].setDescription(Main.getLocaleMeaning(localeList[i]));
 		}
 
 		c.fill = GridBagConstraints.HORIZONTAL;

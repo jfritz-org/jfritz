@@ -6,7 +6,6 @@ package de.moonflower.jfritz.callerlist.filter;
 
 import java.util.Vector;
 
-import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.struct.Call;
 
 public class CallByCallFilter extends CallFilter {

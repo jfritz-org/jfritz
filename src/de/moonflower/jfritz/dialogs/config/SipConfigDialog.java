@@ -28,7 +28,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
-import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.utils.Debug;
 
@@ -222,11 +222,11 @@ public class SipConfigDialog extends JDialog {
 
         tpane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        okButton = new JButton(JFritz.getMessage("okay"));
+        okButton = new JButton(Main.getMessage("okay"));
         okButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
                 getClass().getResource(
                         "/de/moonflower/jfritz/resources/images/okay.png"))));
-        cancelButton = new JButton(JFritz.getMessage("cancel"));
+        cancelButton = new JButton(Main.getMessage("cancel"));
 
         ActionListener actionListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -347,7 +347,7 @@ public class SipConfigDialog extends JDialog {
 
         c.gridy = 5;
         c.gridx = 1;
-        label = new JLabel(JFritz.getMessage("fixed_network")+": ");
+        label = new JLabel(Main.getMessage("fixed_network")+": ");
         panel.add(label, c);
         c.gridx = 2;
         festnetzTakt1 = new JTextField("60", 4);

@@ -12,6 +12,7 @@ import java.util.Date;
 import com.toedter.calendar.JDateChooser;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.utils.Debug;
 
@@ -40,9 +41,9 @@ public class DateFilter extends CallFilter {
 
 //    public DateFilter(Date from, Date to) {
         public DateFilter() {
-            filterFromDate = JFritz.getProperty("filter.date_from", new SimpleDateFormat("dd.MM.yy").format(Calendar.getInstance().getTime()));
-            filterToDate = JFritz.getProperty("filter.date_to", new SimpleDateFormat("dd.MM.yy").format(Calendar.getInstance().getTime()));
-            filterType = Integer.parseInt(JFritz.getProperty("filter.date_type", "0")); //$NON-NLS-1$ $NON-NLS-2$
+            filterFromDate = Main.getProperty("filter.date_from", new SimpleDateFormat("dd.MM.yy").format(Calendar.getInstance().getTime()));
+            filterToDate = Main.getProperty("filter.date_to", new SimpleDateFormat("dd.MM.yy").format(Calendar.getInstance().getTime()));
+            filterType = Integer.parseInt(Main.getProperty("filter.date_type", "0")); //$NON-NLS-1$ $NON-NLS-2$
     }
 
     public boolean passFilter(Call currentCall) {
@@ -69,7 +70,7 @@ public class DateFilter extends CallFilter {
         Date from = null;
         Date to = null;
         filterType = datefilter;
-        JFritz.setProperty("filter.date_type", Integer.toString(filterType)); //$NON-NLS-1$
+        Main.setProperty("filter.date_type", Integer.toString(filterType)); //$NON-NLS-1$
         switch (datefilter) {
         case DATEFILTER_SELECTION: {
             try {
@@ -145,8 +146,8 @@ public class DateFilter extends CallFilter {
         }
         }
 
-        JFritz.setProperty("filter.date_from", filterFromDate); //$NON-NLS-1$ $NON-NLS-2$
-        JFritz.setProperty("filter.date_to", filterToDate); //$NON-NLS-1$ $NON-NLS-2$
+        Main.setProperty("filter.date_from", filterFromDate); //$NON-NLS-1$ $NON-NLS-2$
+        Main.setProperty("filter.date_to", filterToDate); //$NON-NLS-1$ $NON-NLS-2$
     }
 
 }

@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.Person;
 
 /**
@@ -54,7 +55,7 @@ public class PersonDialog extends JDialog implements ActionListener  {
 
 	private void drawDialog() {
 		super.dialogInit();
-		setTitle(JFritz.getMessage("dialog_title_phonebook_edit_person")); //$NON-NLS-1$
+		setTitle(Main.getMessage("dialog_title_phonebook_edit_person")); //$NON-NLS-1$
 		setModal(true);
 		getContentPane().setLayout(new BorderLayout());
 
@@ -62,18 +63,18 @@ public class PersonDialog extends JDialog implements ActionListener  {
 		JPanel bottomPane = new JPanel();
 
 		// Top Pane
-		JLabel label = new JLabel(JFritz.getMessage("dialog_title_phonebook_edit_person")); //$NON-NLS-1$
+		JLabel label = new JLabel(Main.getMessage("dialog_title_phonebook_edit_person")); //$NON-NLS-1$
 		topPane.add(label);
 
 		// Main Pane
 		personPanel = new PersonPanel(person);
 
 		// Bottom Pane
-		okButton = new JButton(JFritz.getMessage("okay")); //$NON-NLS-1$
+		okButton = new JButton(Main.getMessage("okay")); //$NON-NLS-1$
 		okButton.setActionCommand("ok"); //$NON-NLS-1$
 		okButton.addActionListener(this);
 
-		cancelButton = new JButton(JFritz.getMessage("cancel")); //$NON-NLS-1$
+		cancelButton = new JButton(Main.getMessage("cancel")); //$NON-NLS-1$
 		cancelButton.setActionCommand("cancel"); //$NON-NLS-1$
 		cancelButton.addActionListener(this);
 

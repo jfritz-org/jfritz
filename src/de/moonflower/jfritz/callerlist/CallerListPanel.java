@@ -32,6 +32,7 @@ import javax.swing.JToolBar;
 import com.toedter.calendar.JDateChooser;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.filter.CallByCallFilter;
 import de.moonflower.jfritz.callerlist.filter.CallInFailedFilter;
 import de.moonflower.jfritz.callerlist.filter.CallInFilter;
@@ -159,28 +160,28 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	private void clearAllFilter() {
 		// FIXME
 		setSearchFilter(""); //$NON-NLS-1$
-		JFritz.setProperty("filter.search", ""); //$NON-NLS-1$,  //$NON-NLS-2$
-		JFritz.setProperty("filter.callin", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
+		Main.setProperty("filter.search", ""); //$NON-NLS-1$,  //$NON-NLS-2$
+		Main.setProperty("filter.callin", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
 		callInFilterButton.setSelected(true);
-		JFritz.setProperty("filter.callout", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
+		Main.setProperty("filter.callout", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
 		calloutFilterButton.setSelected(true);
-		JFritz.setProperty("filter.callinfailed", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
+		Main.setProperty("filter.callinfailed", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
 		callInFailedFilterButton.setSelected(true);
-		JFritz.setProperty("filter.number", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
+		Main.setProperty("filter.number", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
 		numberFilterButton.setSelected(true);
-		JFritz.setProperty("filter.fixed", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
+		Main.setProperty("filter.fixed", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
 		fixedFilterButton.setSelected(true);
-		JFritz.setProperty("filter.handy", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
+		Main.setProperty("filter.handy", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
 		handyFilterButton.setSelected(true);
-		JFritz.setProperty("filter.date", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
+		Main.setProperty("filter.date", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
 		// callerList.getDateFilter().updateDateFilter();
 		setDateFilterText();
 		dateFilterButton.setSelected(true);
-		JFritz.setProperty("filter.sip", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
+		Main.setProperty("filter.sip", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
 		sipFilterButton.setSelected(true);
-		JFritz.setProperty("filter.callbycall", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
+		Main.setProperty("filter.callbycall", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
 		callByCallFilterButton.setSelected(true);
-		JFritz.setProperty("filter.comment", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
+		Main.setProperty("filter.comment", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
 		commentFilterButton.setSelected(true);
 		callerList.updateFilter();
 		callerList.fireTableStructureChanged();
@@ -190,30 +191,30 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		callerTable = new CallerTable();
 		JPopupMenu callerlistPopupMenu = new JPopupMenu();
 		JMenuItem menuItem;
-		menuItem = new JMenuItem(JFritz.getMessage("reverse_lookup")); //$NON-NLS-1$
+		menuItem = new JMenuItem(Main.getMessage("reverse_lookup")); //$NON-NLS-1$
 		menuItem.setActionCommand("reverselookup"); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		callerlistPopupMenu.add(menuItem);
 
 		callerlistPopupMenu.addSeparator();
 
-		menuItem = new JMenuItem(JFritz.getMessage("export_csv")); //$NON-NLS-1$
+		menuItem = new JMenuItem(Main.getMessage("export_csv")); //$NON-NLS-1$
 		menuItem.setActionCommand("export_csv"); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		callerlistPopupMenu.add(menuItem);
 
-		menuItem = new JMenuItem(JFritz.getMessage("import_callerlist_csv")); //$NON-NLS-1$
+		menuItem = new JMenuItem(Main.getMessage("import_callerlist_csv")); //$NON-NLS-1$
 		menuItem.setActionCommand("import_callerlist_csv"); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		menuItem.setEnabled(true);
 		callerlistPopupMenu.add(menuItem);
 
-		menuItem = new JMenuItem(JFritz.getMessage("export_xml")); //$NON-NLS-1$
+		menuItem = new JMenuItem(Main.getMessage("export_xml")); //$NON-NLS-1$
 		menuItem.setActionCommand("export_xml"); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		callerlistPopupMenu.add(menuItem);
 
-		menuItem = new JMenuItem(JFritz.getMessage("import_xml")); //$NON-NLS-1$
+		menuItem = new JMenuItem(Main.getMessage("import_xml")); //$NON-NLS-1$
 		menuItem.setActionCommand("import_xml"); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		menuItem.setEnabled(false);
@@ -221,16 +222,16 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 		callerlistPopupMenu.addSeparator();
 
-		JMenu clipboardMenu = new JMenu(JFritz.getMessage("clipboard")); //$NON-NLS-1$
+		JMenu clipboardMenu = new JMenu(Main.getMessage("clipboard")); //$NON-NLS-1$
 		clipboardMenu.setMnemonic(KeyEvent.VK_Z);
 
 		JMenuItem item = new JMenuItem(
-				JFritz.getMessage("number"), KeyEvent.VK_N); //$NON-NLS-1$
+				Main.getMessage("number"), KeyEvent.VK_N); //$NON-NLS-1$
 		item.setActionCommand("clipboard_number"); //$NON-NLS-1$
 		item.addActionListener(this);
 		clipboardMenu.add(item);
 
-		item = new JMenuItem(JFritz.getMessage("address"), KeyEvent.VK_A); //$NON-NLS-1$
+		item = new JMenuItem(Main.getMessage("address"), KeyEvent.VK_A); //$NON-NLS-1$
 		item.setActionCommand("clipboard_adress"); //$NON-NLS-1$
 		item.addActionListener(this);
 		clipboardMenu.add(item);
@@ -254,7 +255,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		resetFiltersButton.setActionCommand("export_csv"); //$NON-NLS-1$
 		resetFiltersButton.addActionListener(this);
 		resetFiltersButton.setIcon(getImage("csv_export.png")); //$NON-NLS-1$
-		resetFiltersButton.setToolTipText(JFritz.getMessage("export_csv")); //$NON-NLS-1$
+		resetFiltersButton.setToolTipText(Main.getMessage("export_csv")); //$NON-NLS-1$
 		upperToolBar.add(resetFiltersButton);
 
 		resetFiltersButton = new JButton();
@@ -287,30 +288,25 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		callInFilterButton.setSelectedIcon(getImage("callin.png")); //$NON-NLS-1$
 		callInFilterButton.setActionCommand("filter_callin"); //$NON-NLS-1$
 		callInFilterButton.addActionListener(this);
-		callInFilterButton.setToolTipText(JFritz.getMessage("filter_callin")); //$NON-NLS-1$
-		callInFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
-				.getProperty("filter.callin", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		callInFilterButton.setToolTipText(Main.getMessage("filter_callin")); //$NON-NLS-1$
+		callInFilterButton.setSelected(!JFritzUtils.parseBoolean(Main.getProperty("filter.callin", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		callInFailedFilterButton = new JToggleButton(
 				getImage("callinfailed_grey.png"), true); //$NON-NLS-1$
 		callInFailedFilterButton.setSelectedIcon(getImage("callinfailed.png")); //$NON-NLS-1$
 		callInFailedFilterButton.setActionCommand("filter_callinfailed"); //$NON-NLS-1$
 		callInFailedFilterButton.addActionListener(this);
-		callInFailedFilterButton.setToolTipText(JFritz
-				.getMessage("filter_callinfailed")); //$NON-NLS-1$
-		callInFailedFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
-				.getProperty("filter.callinfailed", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		callInFailedFilterButton.setToolTipText(Main.getMessage("filter_callinfailed")); //$NON-NLS-1$
+		callInFailedFilterButton.setSelected(!JFritzUtils.parseBoolean(Main.getProperty("filter.callinfailed", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		JPopupMenu missedPopupMenu = new JPopupMenu();
 		JMenuItem menuItem;
-		menuItem = new JMenuItem(JFritz
-				.getMessage("missed_calls_without_comments_last_week")); //$NON-NLS-1$
+		menuItem = new JMenuItem(Main.getMessage("missed_calls_without_comments_last_week")); //$NON-NLS-1$
 		menuItem
 				.setActionCommand("filter_callinfailed_allWithoutCommentLastWeek"); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		missedPopupMenu.add(menuItem);
-		menuItem = new JMenuItem(JFritz
-				.getMessage("missed_calls_without_comments")); //$NON-NLS-1$
+		menuItem = new JMenuItem(Main.getMessage("missed_calls_without_comments")); //$NON-NLS-1$
 		menuItem.setActionCommand("filter_callinfailed_allWithoutComment"); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		missedPopupMenu.add(menuItem);
@@ -322,60 +318,55 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		calloutFilterButton.setSelectedIcon(getImage("callout.png")); //$NON-NLS-1$
 		calloutFilterButton.setActionCommand("filter_callout"); //$NON-NLS-1$
 		calloutFilterButton.addActionListener(this);
-		calloutFilterButton.setToolTipText(JFritz.getMessage("filter_callout")); //$NON-NLS-1$
-		calloutFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
-				.getProperty("filter.callout", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		calloutFilterButton.setToolTipText(Main.getMessage("filter_callout")); //$NON-NLS-1$
+		calloutFilterButton.setSelected(!JFritzUtils.parseBoolean(Main.getProperty("filter.callout", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		numberFilterButton = new JToggleButton(
 				getImage("phone_nonumber_grey.png"), true); //$NON-NLS-1$
 		numberFilterButton.setSelectedIcon(getImage("phone_nonumber.png")); //$NON-NLS-1$
 		numberFilterButton.setActionCommand("filter_number"); //$NON-NLS-1$
 		numberFilterButton.addActionListener(this);
-		numberFilterButton.setToolTipText(JFritz.getMessage("filter_number")); //$NON-NLS-1$
-		numberFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
-				.getProperty("filter.number", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		numberFilterButton.setToolTipText(Main.getMessage("filter_number")); //$NON-NLS-1$
+		numberFilterButton.setSelected(!JFritzUtils.parseBoolean(Main.getProperty("filter.number", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		fixedFilterButton = new JToggleButton(getImage("phone_grey.png"), true); //$NON-NLS-1$
 		fixedFilterButton.setSelectedIcon(getImage("phone.png")); //$NON-NLS-1$
 		fixedFilterButton.setActionCommand("filter_fixed"); //$NON-NLS-1$
 		fixedFilterButton.addActionListener(this);
-		fixedFilterButton.setToolTipText(JFritz.getMessage("filter_fixed")); //$NON-NLS-1$
-		fixedFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
-				.getProperty("filter.fixed", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		fixedFilterButton.setToolTipText(Main.getMessage("filter_fixed")); //$NON-NLS-1$
+		fixedFilterButton.setSelected(!JFritzUtils.parseBoolean(Main.getProperty("filter.fixed", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		handyFilterButton = new JToggleButton(getImage("handy_grey.png"), true); //$NON-NLS-1$
 		handyFilterButton.setSelectedIcon(getImage("handy.png")); //$NON-NLS-1$
 		handyFilterButton.setActionCommand("filter_handy"); //$NON-NLS-1$
 		handyFilterButton.addActionListener(this);
-		handyFilterButton.setToolTipText(JFritz.getMessage("filter_handy")); //$NON-NLS-1$
-		handyFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
-				.getProperty("filter.handy", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		handyFilterButton.setToolTipText(Main.getMessage("filter_handy")); //$NON-NLS-1$
+		handyFilterButton.setSelected(!JFritzUtils.parseBoolean(Main.getProperty("filter.handy", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		dateFilterButton = new JToggleButton(getImage("calendar_grey.png"), //$NON-NLS-1$
 				true);
 		dateFilterButton.setSelectedIcon(getImage("calendar.png")); //$NON-NLS-1$
 		dateFilterButton.setActionCommand("filter_date"); //$NON-NLS-1$
 		dateFilterButton.addActionListener(this);
-		dateFilterButton.setToolTipText(JFritz.getMessage("filter_date")); //$NON-NLS-1$
-		dateFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
-				.getProperty("filter.date", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		dateFilterButton.setToolTipText(Main.getMessage("filter_date")); //$NON-NLS-1$
+		dateFilterButton.setSelected(!JFritzUtils.parseBoolean(Main.getProperty("filter.date", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 		// callerList.getDateFilter().updateDateFilter()
 
 		setDateFilterText();
 		JPopupMenu datePopupMenu = new JPopupMenu();
-		menuItem = new JMenuItem(JFritz.getMessage("date_filter_today")); //$NON-NLS-1$
+		menuItem = new JMenuItem(Main.getMessage("date_filter_today")); //$NON-NLS-1$
 		menuItem.setActionCommand("setdatefilter_thisday"); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
-		menuItem = new JMenuItem(JFritz.getMessage("date_filter_yesterday")); //$NON-NLS-1$
+		menuItem = new JMenuItem(Main.getMessage("date_filter_yesterday")); //$NON-NLS-1$
 		menuItem.setActionCommand("setdatefilter_yesterday"); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
-		menuItem = new JMenuItem(JFritz.getMessage("date_filter_this_month")); //$NON-NLS-1$
+		menuItem = new JMenuItem(Main.getMessage("date_filter_this_month")); //$NON-NLS-1$
 		menuItem.setActionCommand("setdatefilter_thismonth"); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
-		menuItem = new JMenuItem(JFritz.getMessage("date_filter_last_month")); //$NON-NLS-1$
+		menuItem = new JMenuItem(Main.getMessage("date_filter_last_month")); //$NON-NLS-1$
 		menuItem.setActionCommand("setdatefilter_lastmonth"); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
@@ -392,56 +383,50 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		sipFilterButton.setSelectedIcon(getImage("world.png")); //$NON-NLS-1$
 		sipFilterButton.setActionCommand("filter_sip"); //$NON-NLS-1$
 		sipFilterButton.addActionListener(this);
-		sipFilterButton.setToolTipText(JFritz.getMessage("filter_sip")); //$NON-NLS-1$
-		sipFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
-				.getProperty("filter.sip", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		sipFilterButton.setToolTipText(Main.getMessage("filter_sip")); //$NON-NLS-1$
+		sipFilterButton.setSelected(!JFritzUtils.parseBoolean(Main.getProperty("filter.sip", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		callByCallFilterButton = new JToggleButton(
 				getImage("callbycall_grey.png"), true); //$NON-NLS-1$
 		callByCallFilterButton.setSelectedIcon(getImage("callbycall.png")); //$NON-NLS-1$
 		callByCallFilterButton.setActionCommand("filter_callbycall"); //$NON-NLS-1$
 		callByCallFilterButton.addActionListener(this);
-		callByCallFilterButton.setToolTipText(JFritz
-				.getMessage("filter_callbycall")); //$NON-NLS-1$
-		callByCallFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
-				.getProperty("filter.callbycall", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		callByCallFilterButton.setToolTipText(Main.getMessage("filter_callbycall")); //$NON-NLS-1$
+		callByCallFilterButton.setSelected(!JFritzUtils.parseBoolean(Main.getProperty("filter.callbycall", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		commentFilterButton = new JToggleButton(getImage("commentFilter.png"), //$NON-NLS-1$
 				true);
 		commentFilterButton.setSelectedIcon(getImage("commentFilter.png")); //$NON-NLS-1$
 		commentFilterButton.setActionCommand("filter_comment"); //$NON-NLS-1$
 		commentFilterButton.addActionListener(this);
-		commentFilterButton.setToolTipText(JFritz.getMessage("filter_comment")); //$NON-NLS-1$
-		commentFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
-				.getProperty("filter.comment", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		commentFilterButton.setToolTipText(Main.getMessage("filter_comment")); //$NON-NLS-1$
+		commentFilterButton.setSelected(!JFritzUtils.parseBoolean(Main.getProperty("filter.comment", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		searchFilterButton = new JToggleButton(getImage("searchfilter.png"), //$NON-NLS-1$
 				true);
 		searchFilterButton.setSelectedIcon(getImage("searchfilter.png")); //$NON-NLS-1$
 		searchFilterButton.setActionCommand("filter_search"); //$NON-NLS-1$
 		searchFilterButton.addActionListener(this);
-		searchFilterButton.setToolTipText(JFritz.getMessage("filter_search")); //$NON-NLS-1$
-		searchFilterButton.setSelected(!JFritzUtils.parseBoolean(JFritz
-				.getProperty("filter.search", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		searchFilterButton.setToolTipText(Main.getMessage("filter_search")); //$NON-NLS-1$
+		searchFilterButton.setSelected(!JFritzUtils.parseBoolean(Main.getProperty("filter.search", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		deleteEntriesButton = new JButton();
-		deleteEntriesButton.setToolTipText(JFritz
-				.getMessage("delete_entries").replaceAll("%N", "")); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+		deleteEntriesButton.setToolTipText(Main.getMessage("delete_entries").replaceAll("%N", "")); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 		deleteEntriesButton.setActionCommand("delete_entry"); //$NON-NLS-1$
 		deleteEntriesButton.addActionListener(this);
 		deleteEntriesButton.setIcon(getImage("delete.png")); //$NON-NLS-1$
 		deleteEntriesButton.setFocusPainted(false);
 		deleteEntriesButton.setEnabled(false);
 
-		searchLabel = new JLabel(JFritz.getMessage("search") + ": ");//$NON-NLS-1$,  //$NON-NLS-2$
+		searchLabel = new JLabel(Main.getMessage("search") + ": ");//$NON-NLS-1$,  //$NON-NLS-2$
 		searchLabel.setVisible(false);
-		searchFilterTextField = new JTextField(JFritz.getProperty(
+		searchFilterTextField = new JTextField(Main.getProperty(
 				"filter.search", ""), //$NON-NLS-1$,  //$NON-NLS-2$
 				10);
 		searchFilterTextField.addKeyListener(this);
 		searchFilterTextField.setVisible(false);
 
-		resetFiltersButton = new JButton(JFritz.getMessage("clear")); //$NON-NLS-1$
+		resetFiltersButton = new JButton(Main.getMessage("clear")); //$NON-NLS-1$
 		resetFiltersButton.setActionCommand("clearFilter"); //$NON-NLS-1$
 		resetFiltersButton.addActionListener(this);
 
@@ -479,8 +464,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	}
 
 	public void disableDeleteEntriesButton() {
-		deleteEntriesButton.setToolTipText(JFritz
-				.getMessage("delete_entries").replaceAll("%N", "")); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+		deleteEntriesButton.setToolTipText(Main.getMessage("delete_entries").replaceAll("%N", "")); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 		deleteEntriesButton.setEnabled(false);
 	}
 
@@ -619,7 +603,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 		if (command.equals("setdatefilter_thisday")) { //$NON-NLS-1$
 			dateFilterButton.setSelected(false);
-			JFritz.setProperty("filter.date", Boolean //$NON-NLS-1$
+			Main.setProperty("filter.date", Boolean //$NON-NLS-1$
 					.toString(!dateFilterButton.isSelected()));
 			// callerList.getDateFilter().setFilter(DateFilter.DATEFILTER_TODAY);
 			setDateFilterText();
@@ -628,7 +612,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		}
 		if (command.equals("setdatefilter_yesterday")) { //$NON-NLS-1$
 			dateFilterButton.setSelected(false);
-			JFritz.setProperty("filter.date", Boolean //$NON-NLS-1$
+			Main.setProperty("filter.date", Boolean //$NON-NLS-1$
 					.toString(!dateFilterButton.isSelected()));
 			// callerList.getDateFilter().setFilter(
 			// DateFilter.DATEFILTER_YESTERDAY);
@@ -638,7 +622,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		}
 		if (command.equals("setdatefilter_thismonth")) { //$NON-NLS-1$
 			dateFilterButton.setSelected(false);
-			JFritz.setProperty("filter.date", Boolean //$NON-NLS-1$
+			Main.setProperty("filter.date", Boolean //$NON-NLS-1$
 					.toString(!dateFilterButton.isSelected()));
 			// callerList.getDateFilter().setFilter(
 			// DateFilter.DATEFILTER_THIS_MONTH);
@@ -648,7 +632,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		}
 		if (command.equals("setdatefilter_lastmonth")) { //$NON-NLS-1$
 			dateFilterButton.setSelected(false);
-			JFritz.setProperty("filter.date", Boolean //$NON-NLS-1$
+			Main.setProperty("filter.date", Boolean //$NON-NLS-1$
 					.toString(!dateFilterButton.isSelected()));
 			// callerList.getDateFilter().setFilter(
 			// DateFilter.DATEFILTER_LAST_MONTH);
@@ -775,18 +759,17 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	public void setDeleteEntriesButton(int rows) {
 		deleteEntriesButton
-				.setToolTipText(JFritz
-						.getMessage("delete_entries").replaceAll("%N", Integer.toString(rows))); //$NON-NLS-1$,  //$NON-NLS-2$
+				.setToolTipText(Main.getMessage("delete_entries").replaceAll("%N", Integer.toString(rows))); //$NON-NLS-1$,  //$NON-NLS-2$
 		deleteEntriesButton.setEnabled(true);
 	}
 
 	public void setDeleteEntryButton() {
-		deleteEntriesButton.setToolTipText(JFritz.getMessage("delete_entry")); //$NON-NLS-1$
+		deleteEntriesButton.setToolTipText(Main.getMessage("delete_entry")); //$NON-NLS-1$
 		deleteEntriesButton.setEnabled(true);
 	}
 
 	public void setDeleteListButton() {
-		deleteEntriesButton.setToolTipText(JFritz.getMessage("delete_list")); //$NON-NLS-1$
+		deleteEntriesButton.setToolTipText(Main.getMessage("delete_list")); //$NON-NLS-1$
 		// clearList-Icon to big, so use std. delete.png
 		// deleteEntriesButton.setIcon(getImage("clearList.png"));
 		deleteEntriesButton.setEnabled(true);
@@ -796,14 +779,14 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		// FIXME
 		Date from = null;
 		Date to = null;
-		JFritz.setProperty("filter.callin", "true"); //$NON-NLS-1$,  //$NON-NLS-2$
+		Main.setProperty("filter.callin", "true"); //$NON-NLS-1$,  //$NON-NLS-2$
 		callInFilterButton.setSelected(false);
-		JFritz.setProperty("filter.callout", "true"); //$NON-NLS-1$,  //$NON-NLS-2$
+		Main.setProperty("filter.callout", "true"); //$NON-NLS-1$,  //$NON-NLS-2$
 		calloutFilterButton.setSelected(false);
-		JFritz.setProperty("filter.calloutmissed", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
+		Main.setProperty("filter.calloutmissed", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
 		callInFailedFilterButton.setSelected(true);
-		JFritz.setProperty("filter.comment", "true"); //$NON-NLS-1$,  //$NON-NLS-2$
-		JFritz.setProperty("filter.comment.text", ""); //$NON-NLS-1$,  //$NON-NLS-2$
+		Main.setProperty("filter.comment", "true"); //$NON-NLS-1$,  //$NON-NLS-2$
+		Main.setProperty("filter.comment.text", ""); //$NON-NLS-1$,  //$NON-NLS-2$
 		commentFilterButton.setSelected(false);
 		switch (filterType) {
 		case MISSED_FILTER_WITHOUT_COMMENTS:
@@ -815,9 +798,9 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			from = cal.getTime();
 			String fromstr = new SimpleDateFormat("dd.MM.yy").format(from); //$NON-NLS-1$
 			String tostr = new SimpleDateFormat("dd.MM.yy").format(to); //$NON-NLS-1$
-			JFritz.setProperty("filter.date_from", fromstr); //$NON-NLS-1$
-			JFritz.setProperty("filter.date_to", tostr); //$NON-NLS-1$
-			JFritz.setProperty("filter.date", "true"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Main.setProperty("filter.date_from", fromstr); //$NON-NLS-1$
+			Main.setProperty("filter.date_to", tostr); //$NON-NLS-1$
+			Main.setProperty("filter.date", "true"); //$NON-NLS-1$,  //$NON-NLS-2$
 			// callerList.getDateFilter().updateDateFilter();
 			setDateFilterText();
 			break;

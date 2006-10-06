@@ -25,26 +25,26 @@ public class SearchFilter extends CallFilter {
 			String part = parts[i];
 			phoneNumber = currentCall.getPhoneNumber();
 			if (phoneNumber != null
-					&& phoneNumber.getIntNumber().contains(part))
+					&& phoneNumber.getIntNumber().indexOf(part)!=-1)
 				return true;
 
 			if (phoneNumber != null
-					&& phoneNumber.getCallByCall().contains(part))
+					&& phoneNumber.getCallByCall().indexOf(part)!=-1)
 				return true;
 
 			person = currentCall.getPerson();
 			if (person != null
-					&& person.getFullname().toLowerCase().contains(part))
+					&& person.getFullname().toLowerCase().indexOf(part)!=-1)
 				return true;
 
 			comment = currentCall.getComment();
-			if (comment != null && comment.toLowerCase().contains(part))
+			if (comment != null && comment.toLowerCase().indexOf(part)!=-1)
 				return true;
 
 			if (phoneNumber != null) {
 				areaNumber = phoneNumber.getAreaNumber();
 
-				if (areaNumber != null && areaNumber.contains(part))
+				if (areaNumber != null && areaNumber.indexOf(part)!=-1)
 					return true;
 			}
 		}

@@ -20,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.KeyStroke;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 
 /**
  * @author Bastian Schaefer
@@ -43,7 +44,7 @@ public class NoticeDialog extends JDialog implements ActionListener {
 		this.infoText = infoText;
 		this.property= property;
 
-		if (JFritz.getProperty(property, "false").equals( //$NON-NLS-1$
+		if (Main.getProperty(property, "false").equals( //$NON-NLS-1$
 				"true")) { //$NON-NLS-1$
 			accepted = true;
 		} else {
@@ -54,7 +55,7 @@ public class NoticeDialog extends JDialog implements ActionListener {
 
 	public void drawDialog() {
 		super.dialogInit();
-		setTitle(JFritz.getMessage("information")); //$NON-NLS-1$
+		setTitle(Main.getMessage("information")); //$NON-NLS-1$
 
 		Container c = getContentPane();
 		GridBagLayout gbl = new GridBagLayout();
@@ -70,12 +71,12 @@ public class NoticeDialog extends JDialog implements ActionListener {
 		addComponent(c, gbl, label, 0, 0, 2, 3, 1.0, 1.0, 0, 0, 0, 0);
 
 		// Center
-		okButton = new JButton(JFritz.getMessage("okay")); //$NON-NLS-1$
+		okButton = new JButton(Main.getMessage("okay")); //$NON-NLS-1$
 		okButton.setActionCommand("ok"); //$NON-NLS-1$
 		okButton.addActionListener(this);
 		addComponent(c, gbl, okButton, 0, 3, 1, 1, 1.0, 0, 30, 5, 0, 0);
 
-		cancelButton = new JButton(JFritz.getMessage("cancel")); //$NON-NLS-1$
+		cancelButton = new JButton(Main.getMessage("cancel")); //$NON-NLS-1$
 		cancelButton.setActionCommand("cancel"); //$NON-NLS-1$
 		cancelButton.addActionListener(this);
 		addComponent(c, gbl, cancelButton, 1, 3, 1, 1, 1.0, 0, 5, 30, 0, 0);
@@ -98,10 +99,10 @@ public class NoticeDialog extends JDialog implements ActionListener {
         getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
 
 		// Bottom
-		checkBox = new JCheckBox(JFritz.getMessage("infoDialog_showAgain")); //$NON-NLS-1$
+		checkBox = new JCheckBox(Main.getMessage("infoDialog_showAgain")); //$NON-NLS-1$
 		checkBox.setActionCommand("call"); //$NON-NLS-1$
 		checkBox.addActionListener(this);
-		checkBox.setSelected(JFritzUtils.parseBoolean(JFritz.getProperty(
+		checkBox.setSelected(JFritzUtils.parseBoolean(Main.getProperty(
 				property, "false"))); //$NON-NLS-1$
 		addComponent(c, gbl, checkBox, 0, 4, 2, 1, 1.0, 0, 0, 0, 5, 0);
 
@@ -140,7 +141,7 @@ public class NoticeDialog extends JDialog implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("ok")) { //$NON-NLS-1$
 			accepted = true;
-			JFritz.setProperty(property, Boolean
+			Main.setProperty(property, Boolean
 					.toString(checkBox.isSelected()));
 			setVisible(false);
 		} else if (e.getActionCommand().equals("cancel")) { //$NON-NLS-1$

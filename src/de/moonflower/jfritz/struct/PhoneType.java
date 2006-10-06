@@ -8,7 +8,7 @@ import java.util.MissingResourceException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 
 /**
  * @author Arno Willig
@@ -31,10 +31,10 @@ public class PhoneType {
 			Pattern p = Pattern.compile("([a-z]*)(\\d*)"); //$NON-NLS-1$
 			Matcher m = p.matcher(type);
 			if (m.find()) {
-				return JFritz.getMessage("phone_" + m.group(1)) + " " //$NON-NLS-1$,  //$NON-NLS-2$
+				return Main.getMessage("phone_" + m.group(1)) + " " //$NON-NLS-1$,  //$NON-NLS-2$
 						+ m.group(2);
 			} else {
-				return JFritz.getMessage("phone_" + type); //$NON-NLS-1$
+				return Main.getMessage("phone_" + type); //$NON-NLS-1$
 
 			}
 		} catch (MissingResourceException e) {

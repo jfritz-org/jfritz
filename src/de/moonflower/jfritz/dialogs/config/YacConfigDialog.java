@@ -23,7 +23,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
-import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 
 /**
  * @author Robert Palmer
@@ -56,18 +56,18 @@ public class YacConfigDialog extends JDialog implements CallMonitorConfigDialog 
     }
 
     public void initDialog() {
-        setTitle(JFritz.getMessage("dialog_title_yac_options")); //$NON-NLS-1$
+        setTitle(Main.getMessage("dialog_title_yac_options")); //$NON-NLS-1$
         setSize(270, 140);
         drawDialog();
         setProperties();
     }
 
     private void setProperties() {
-        yacPort.setText(JFritz.getProperty("option.yacport", "10629")); //$NON-NLS-1$,  //$NON-NLS-2$
+        yacPort.setText(Main.getProperty("option.yacport", "10629")); //$NON-NLS-1$,  //$NON-NLS-2$
     }
 
     private void storeProperties() {
-        JFritz.setProperty("option.yacport", yacPort.getText()); //$NON-NLS-1$
+        Main.setProperty("option.yacport", yacPort.getText()); //$NON-NLS-1$
     }
 
     public int showConfigDialog() {
@@ -122,18 +122,18 @@ public class YacConfigDialog extends JDialog implements CallMonitorConfigDialog 
 
         c.gridwidth = 1;
         c.gridy = 0;
-        JLabel label = new JLabel(JFritz.getMessage("yac_port")+": "); //$NON-NLS-1$
+        JLabel label = new JLabel(Main.getMessage("yac_port")+": "); //$NON-NLS-1$
         panel.add(label, c);
         yacPort = new JTextField("", 5); //$NON-NLS-1$
         panel.add(yacPort, c);
 
         JPanel buttonPanel = new JPanel();
-        okButton = new JButton(JFritz.getMessage("okay")); //$NON-NLS-1$
+        okButton = new JButton(Main.getMessage("okay")); //$NON-NLS-1$
         okButton.setActionCommand("ok_pressed"); //$NON-NLS-1$
         okButton.addActionListener(actionListener);
         okButton.addKeyListener(keyListener);
 
-        cancelButton = new JButton(JFritz.getMessage("cancel")); //$NON-NLS-1$
+        cancelButton = new JButton(Main.getMessage("cancel")); //$NON-NLS-1$
         cancelButton.setActionCommand("cancel_pressed"); //$NON-NLS-1$
         cancelButton.addActionListener(actionListener);
         cancelButton.addKeyListener(keyListener);

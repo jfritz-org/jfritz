@@ -5,7 +5,7 @@
  */
 package de.moonflower.jfritz.struct;
 
-import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 
 
 /**
@@ -43,11 +43,11 @@ public class CallType {
 
 	public String toDescription() {
 		if (calltype == CALLIN)
-			return JFritz.getMessage("incoming_call"); //$NON-NLS-1$
+			return Main.getMessage("incoming_call"); //$NON-NLS-1$
 		else if (calltype == CALLIN_FAILED)
-			return JFritz.getMessage("missed_call"); //$NON-NLS-1$
+			return Main.getMessage("missed_call"); //$NON-NLS-1$
 		else
-			return JFritz.getMessage("outgoing_call"); //$NON-NLS-1$
+			return Main.getMessage("outgoing_call"); //$NON-NLS-1$
 	}
 
 	public String toString() {

@@ -30,6 +30,7 @@ import javax.swing.JCheckBox;
 import javax.swing.KeyStroke;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callmonitor.SyslogCallMonitor;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -83,7 +84,7 @@ public class SyslogConfigDialog extends JDialog implements CallMonitorConfigDial
     }
 
 	public void initDialog() {
-		setTitle(JFritz.getMessage("dialog_title_syslog_options")); //$NON-NLS-1$
+		setTitle(Main.getMessage("dialog_title_syslog_options")); //$NON-NLS-1$
 		setSize(270, 300);
 		drawDialog();
 		setProperties();
@@ -93,27 +94,26 @@ public class SyslogConfigDialog extends JDialog implements CallMonitorConfigDial
 	}
 
 	private void setProperties() {
-		checkSyslog.setSelected(JFritzUtils.parseBoolean(JFritz.getProperty(
+		checkSyslog.setSelected(JFritzUtils.parseBoolean(Main.getProperty(
 				"syslog.checkSyslog", "true")));//$NON-NLS-1$,  //$NON-NLS-2$
-		checkTelefon.setSelected(JFritzUtils.parseBoolean(JFritz.getProperty(
+		checkTelefon.setSelected(JFritzUtils.parseBoolean(Main.getProperty(
 				"syslog.checkTelefon", "true")));//$NON-NLS-1$,  //$NON-NLS-2$
-		ipAddressComboBox.setSelectedItem(JFritz.getProperty(
+		ipAddressComboBox.setSelectedItem(Main.getProperty(
 				"option.syslogclientip", "192.168.178.21"));//$NON-NLS-1$,  //$NON-NLS-2$
-		syslogPassthroughCheckBox.setSelected(JFritzUtils.parseBoolean(JFritz
-				.getProperty("option.syslogpassthrough", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		syslogPassthroughCheckBox.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.syslogpassthrough", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 		// Anhand von Problemen mit dem Passthrough ist diese Checkbox erst
 		// einmal deaktiviert
 		syslogPassthroughCheckBox.setEnabled(false);
 	}
 
 	private void storeProperties() {
-		JFritz.setProperty("syslog.checkSyslog", Boolean.toString(checkSyslog //$NON-NLS-1$
+		Main.setProperty("syslog.checkSyslog", Boolean.toString(checkSyslog //$NON-NLS-1$
 				.isSelected()));
-		JFritz.setProperty("syslog.checkTelefon", Boolean.toString(checkTelefon //$NON-NLS-1$
+		Main.setProperty("syslog.checkTelefon", Boolean.toString(checkTelefon //$NON-NLS-1$
 				.isSelected()));
-		JFritz.setProperty("option.syslogclientip", ipAddressComboBox //$NON-NLS-1$
+		Main.setProperty("option.syslogclientip", ipAddressComboBox //$NON-NLS-1$
 				.getSelectedItem().toString());
-		JFritz.setProperty("option.syslogpassthrough", Boolean //$NON-NLS-1$
+		Main.setProperty("option.syslogpassthrough", Boolean //$NON-NLS-1$
 				.toString(syslogPassthroughCheckBox.isSelected()));
 	}
 
@@ -160,8 +160,7 @@ public class SyslogConfigDialog extends JDialog implements CallMonitorConfigDial
 					Telnet telnet = new Telnet();
 					telnet.connect();
 					if (telnet.isConnected()) {
-						SyslogCallMonitor.restartSyslogOnFritzBox(telnet, JFritz
-								.getProperty("option.syslogclientip", //$NON-NLS-1$
+						SyslogCallMonitor.restartSyslogOnFritzBox(telnet, Main.getProperty("option.syslogclientip", //$NON-NLS-1$
 										"192.168.178.21")); //$NON-NLS-1$
 						telnet.disconnect();
 						JFritz.infoMsg("Syslogd erfolgreich gestartet"); //$NON-NLS-1$
@@ -177,16 +176,16 @@ public class SyslogConfigDialog extends JDialog implements CallMonitorConfigDial
 					telnet.connect();
 					if (telnet.isConnected()) {
 						if (SyslogCallMonitor.restartTelefonOnFritzBox(telnet) == JOptionPane.YES_OPTION) {
-							JFritz.infoMsg(JFritz.getMessage("telefond_restart_successfully")); //$NON-NLS-1$
+							JFritz.infoMsg(Main.getMessage("telefond_restart_successfully")); //$NON-NLS-1$
 							Debug.msg("Telefond restarted successfully"); //$NON-NLS-1$
 						} else {
-							JFritz.infoMsg(JFritz.getMessage("telefond_restart_failed")); //$NON-NLS-1$
+							JFritz.infoMsg(Main.getMessage("telefond_restart_failed")); //$NON-NLS-1$
 							Debug.msg("Telefond not restarted"); //$NON-NLS-1$
 						}
 						telnet.disconnect();
 					}
 					else {
-						JFritz.infoMsg(JFritz.getMessage("telnet_connection_error")); //$NON-NLS-1$
+						JFritz.infoMsg(Main.getMessage("telnet_connection_error")); //$NON-NLS-1$
 						Debug.msg("Connection failure"); //$NON-NLS-1$
 					}
 				}
@@ -202,7 +201,7 @@ public class SyslogConfigDialog extends JDialog implements CallMonitorConfigDial
 
 		c.gridx = 0;
 		c.gridy = 1;
-		JLabel ipAddressLabel = new JLabel(JFritz.getMessage("local_ip")+": "); //$NON-NLS-1$
+		JLabel ipAddressLabel = new JLabel(Main.getMessage("local_ip")+": "); //$NON-NLS-1$
 		panel.add(ipAddressLabel, c);
 
 		c.gridx = 1;
@@ -220,7 +219,7 @@ public class SyslogConfigDialog extends JDialog implements CallMonitorConfigDial
 		ipAddressComboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Debug.msg(ipAddressComboBox.getSelectedItem().toString());
-				JFritz.setProperty("option.syslogclientip", ipAddressComboBox //$NON-NLS-1$
+				Main.setProperty("option.syslogclientip", ipAddressComboBox //$NON-NLS-1$
 						.getSelectedItem().toString());
 			}
 		});
@@ -229,44 +228,44 @@ public class SyslogConfigDialog extends JDialog implements CallMonitorConfigDial
 		c.gridx = 0;
 		c.gridy = 2;
 		c.gridwidth = 2;
-		syslogPassthroughCheckBox = new JCheckBox(JFritz.getMessage("syslog_passthrough"+"?")); //$NON-NLS-1$
+		syslogPassthroughCheckBox = new JCheckBox(Main.getMessage("syslog_passthrough"+"?")); //$NON-NLS-1$
 		panel.add(syslogPassthroughCheckBox, c);
 
 		c.gridy = 3;
-		checkSyslog = new JCheckBox(JFritz.getMessage("check_syslogd")); //$NON-NLS-1$
+		checkSyslog = new JCheckBox(Main.getMessage("check_syslogd")); //$NON-NLS-1$
 		checkSyslog
-				.setToolTipText(JFritz.getMessage("check_syslogd_desc")); //$NON-NLS-1$
+				.setToolTipText(Main.getMessage("check_syslogd_desc")); //$NON-NLS-1$
 		panel.add(checkSyslog, c);
 
 		c.gridy = 4;
-		checkTelefon = new JCheckBox(JFritz.getMessage("check_telefond")); //$NON-NLS-1$
+		checkTelefon = new JCheckBox(Main.getMessage("check_telefond")); //$NON-NLS-1$
 		checkTelefon
-		.setToolTipText(JFritz.getMessage("check_telefond_desc")); //$NON-NLS-1$
+		.setToolTipText(Main.getMessage("check_telefond_desc")); //$NON-NLS-1$
 		panel.add(checkTelefon, c);
 
 		c.gridy = 5;
-		JButton restartSyslog = new JButton(JFritz.getMessage("restart_syslogd")); //$NON-NLS-1$
+		JButton restartSyslog = new JButton(Main.getMessage("restart_syslogd")); //$NON-NLS-1$
 		restartSyslog.setActionCommand("restartSyslog"); //$NON-NLS-1$
 		restartSyslog.addActionListener(actionListener);
 		restartSyslog
-		.setToolTipText(JFritz.getMessage("restart_syslogd_desc")); //$NON-NLS-1$
+		.setToolTipText(Main.getMessage("restart_syslogd_desc")); //$NON-NLS-1$
 		panel.add(restartSyslog, c);
 
 		c.gridy = 6;
-		JButton restartTelefon = new JButton(JFritz.getMessage("restart_telefond")); //$NON-NLS-1$
+		JButton restartTelefon = new JButton(Main.getMessage("restart_telefond")); //$NON-NLS-1$
 		restartTelefon.setActionCommand("restartTelefon"); //$NON-NLS-1$
 		restartTelefon.addActionListener(actionListener);
 		restartTelefon
-		.setToolTipText(JFritz.getMessage("restart_telefond_desc")); //$NON-NLS-1$
+		.setToolTipText(Main.getMessage("restart_telefond_desc")); //$NON-NLS-1$
 		panel.add(restartTelefon, c);
 
 		JPanel buttonPanel = new JPanel();
-		okButton = new JButton(JFritz.getMessage("okay")); //$NON-NLS-1$
+		okButton = new JButton(Main.getMessage("okay")); //$NON-NLS-1$
 		okButton.setActionCommand("ok_pressed"); //$NON-NLS-1$
 		okButton.addActionListener(actionListener);
 		okButton.addKeyListener(keyListener);
 
-		cancelButton = new JButton(JFritz.getMessage("cancel")); //$NON-NLS-1$
+		cancelButton = new JButton(Main.getMessage("cancel")); //$NON-NLS-1$
 		cancelButton.setActionCommand("cancel_pressed"); //$NON-NLS-1$
 		cancelButton.addActionListener(actionListener);
 		cancelButton.addKeyListener(keyListener);

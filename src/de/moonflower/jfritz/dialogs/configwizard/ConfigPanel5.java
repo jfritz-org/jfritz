@@ -13,8 +13,7 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-
-import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 /**
@@ -43,12 +42,12 @@ public class ConfigPanel5 extends JPanel implements ActionListener{
 		callMonitorPane.setLayout(new BorderLayout());
 		setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 		callMonitorCombo = new JComboBox();
-		callMonitorCombo.addItem(JFritz.getMessage("no_call_monitor")); //$NON-NLS-1$
-		callMonitorCombo.addItem(JFritz.getMessage("fritz_call_monitor")); //$NON-NLS-1$
-		callMonitorCombo.addItem(JFritz.getMessage("telnet_call_monitor")); //$NON-NLS-1$
-		callMonitorCombo.addItem(JFritz.getMessage("syslog_call_monitor")); //$NON-NLS-1$
-		callMonitorCombo.addItem(JFritz.getMessage("yac_call_monitor")); //$NON-NLS-1$
-		callMonitorCombo.addItem(JFritz.getMessage("callmessage_call_monitor")); //$NON-NLS-1$
+		callMonitorCombo.addItem(Main.getMessage("no_call_monitor")); //$NON-NLS-1$
+		callMonitorCombo.addItem(Main.getMessage("fritz_call_monitor")); //$NON-NLS-1$
+		callMonitorCombo.addItem(Main.getMessage("telnet_call_monitor")); //$NON-NLS-1$
+		callMonitorCombo.addItem(Main.getMessage("syslog_call_monitor")); //$NON-NLS-1$
+		callMonitorCombo.addItem(Main.getMessage("yac_call_monitor")); //$NON-NLS-1$
+		callMonitorCombo.addItem(Main.getMessage("callmessage_call_monitor")); //$NON-NLS-1$
 		callMonitorCombo.addActionListener(this);
 
 		callMonitorPane.add(callMonitorCombo, BorderLayout.NORTH);
@@ -67,16 +66,14 @@ public class ConfigPanel5 extends JPanel implements ActionListener{
 		c.gridx = 0;
 		c.gridy = 1;
 		c.gridwidth = 3;
-		callMonitorAfterStartButton = new JCheckBox(JFritz
-				.getMessage("call_monitor_prog_start")); //$NON-NLS-1$
+		callMonitorAfterStartButton = new JCheckBox(Main.getMessage("call_monitor_prog_start")); //$NON-NLS-1$
 		pane.add(callMonitorAfterStartButton, c);
 
-		soundButton = new JCheckBox(JFritz.getMessage("play_sound")); //$NON-NLS-1$
+		soundButton = new JCheckBox(Main.getMessage("play_sound")); //$NON-NLS-1$
 		c.gridy = 2;
 		pane.add(soundButton, c);
 
-		externProgramCheckBox = new JCheckBox(JFritz
-				.getMessage("run_external_program")); //$NON-NLS-1$
+		externProgramCheckBox = new JCheckBox(Main.getMessage("run_external_program")); //$NON-NLS-1$
 		c.gridy = 3;
 		pane.add(externProgramCheckBox, c);
 
@@ -87,16 +84,13 @@ public class ConfigPanel5 extends JPanel implements ActionListener{
 
 		add(callMonitorPane);
 
-		callMonitorCombo.setSelectedIndex(Integer.parseInt(JFritz.getProperty(
+		callMonitorCombo.setSelectedIndex(Integer.parseInt(Main.getProperty(
 				"option.callMonitorType", "0"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		callMonitorAfterStartButton.setSelected(JFritzUtils.parseBoolean(JFritz
-				.getProperty("option.autostartcallmonitor", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		soundButton.setSelected(JFritzUtils.parseBoolean(JFritz.getProperty(
+		callMonitorAfterStartButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.autostartcallmonitor", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		soundButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty(
 				"option.playSounds", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		externProgramCheckBox.setSelected(JFritzUtils.parseBoolean(JFritz
-				.getProperty("option.startExternProgram", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		externProgramTextField.setText(JFritzUtils.deconvertSpecialChars(JFritz
-				.getProperty("option.externProgram", ""))); //$NON-NLS-1$,  //$NON-NLS-2$
+		externProgramCheckBox.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.startExternProgram", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		externProgramTextField.setText(JFritzUtils.deconvertSpecialChars(Main.getProperty("option.externProgram", ""))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 	}
 

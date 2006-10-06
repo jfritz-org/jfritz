@@ -4,7 +4,7 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 
-import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 
 public class JFritzClipboard{
 
@@ -39,7 +39,7 @@ public class JFritzClipboard{
         }catch(IllegalStateException ise)
         {
         	Debug.err("Cannot copy "+text+" into clipboard (clipboard not available)"); //$NON-NLS-1$,  //$NON-NLS-2$
-        	Debug.errDlg(JFritz.getMessage("error_clipboard_not_available")); //$NON-NLS-1$
+        	Debug.errDlg(Main.getMessage("error_clipboard_not_available")); //$NON-NLS-1$
         }
     }
 

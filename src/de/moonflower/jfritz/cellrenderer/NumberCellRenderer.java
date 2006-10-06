@@ -13,7 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.JFritzUtils;
 /**
@@ -133,7 +133,7 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) {
 
-		String countryCode = JFritz.getProperty("country.code", "+49");
+		String countryCode = Main.getProperty("country.code", "+49");
 
 		JLabel label = (JLabel) super.getTableCellRendererComponent(table,
 				value, isSelected, hasFocus, row, column);
@@ -147,9 +147,9 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 				if (number.isMobile()) {
 					String provider = number.getMobileProvider();
 					if (provider.equals("")) //$NON-NLS-1$
-						provider = JFritz.getMessage("unknown"); //$NON-NLS-1$
+						provider = Main.getMessage("unknown"); //$NON-NLS-1$
 
-					setToolTipText(JFritz.getMessage("cellphone_network") //$NON-NLS-1$
+					setToolTipText(Main.getMessage("cellphone_network") //$NON-NLS-1$
 							+ ": " + provider); //$NON-NLS-1$
 					if (showHandyLogos) {
 						if (provider.equals("D1")) { //$NON-NLS-1$
@@ -166,163 +166,162 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 					} else {
 						label.setIcon(imageHandy);
 					}
-				} else if ((number.getIntNumber().startsWith(JFritz
-						.getProperty("area.prefix") //$NON-NLS-1$
-						+ JFritz.getProperty("area.code") + "1988")) //$NON-NLS-1$,  //$NON-NLS-2$
+				} else if ((number.getIntNumber().startsWith(Main.getProperty("area.prefix") //$NON-NLS-1$
+						+ Main.getProperty("area.code") + "1988")) //$NON-NLS-1$,  //$NON-NLS-2$
 						|| (number.getIntNumber().startsWith("01801777"))) { //$NON-NLS-1$
 					label.setIcon(imageSipgate);
-					setToolTipText(JFritz.getMessage("voip_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("voip_call")); //$NON-NLS-1$
 				} else if (number.isLocalCall()) {
 					label.setIcon(imageHome);
-					setToolTipText(JFritz.getMessage("local_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("local_call")); //$NON-NLS-1$
 				} else if (number.getIntNumber().startsWith(countryCode)){
 					label.setIcon(imagePhone);
-					setToolTipText(JFritz.getMessage("fixed_network")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("fixed_network")); //$NON-NLS-1$
 
 					//Please keep these in alphabetical order
 				} else if(number.getIntNumber().startsWith(PhoneNumber.AUSTRIA_CODE)
 						&& !countryCode.equals(PhoneNumber.AUSTRIA_CODE)){
 					label.setIcon(imageAT);
-					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
 
 				} else if(number.getIntNumber().startsWith(PhoneNumber.BELGIUM_CODE)
 						&& !countryCode.equals(PhoneNumber.BELGIUM_CODE)){
 					label.setIcon(imageBE);
-					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
 
 				} else if(number.getIntNumber().startsWith(PhoneNumber.CHINA_CODE)
 						&& !countryCode.equals(PhoneNumber.CHINA_CODE)){
 					label.setIcon(imageCN);
-					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
 
 				} else if(number.getIntNumber().startsWith(PhoneNumber.CZECH_CODE)
 						&& !countryCode.equals(PhoneNumber.CZECH_CODE)){
 					label.setIcon(imageCZ);
-					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
 
 				} else if(number.getIntNumber().startsWith(PhoneNumber.DENMARK_CODE)
 						&& !countryCode.equals(PhoneNumber.DENMARK_CODE)){
 					label.setIcon(imageDK);
-					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
 
 				} else if(number.getIntNumber().startsWith(PhoneNumber.FINLAND_CODE)
 						&& !countryCode.equals(PhoneNumber.FINLAND_CODE)){
 					label.setIcon(imageFI);
-					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
 
 				} else if(number.getIntNumber().startsWith(PhoneNumber.FRANCE_CODE)
 						&& !countryCode.equals(PhoneNumber.FRANCE_CODE)){
 					label.setIcon(imageFR);
-					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
 
 				} else if(number.getIntNumber().startsWith(PhoneNumber.GERMANY_CODE)
 						&& !countryCode.equals(PhoneNumber.GERMANY_CODE)){
 					label.setIcon(imageDE);
-					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
 
 				} else if(number.getIntNumber().startsWith(PhoneNumber.GREATBRITAIN_CODE)
 						&& !countryCode.equals(PhoneNumber.GREATBRITAIN_CODE)){
 					label.setIcon(imageGB);
-					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
 
 				} else if(number.getIntNumber().startsWith(PhoneNumber.HOLLAND_CODE)
 						&& !countryCode.equals(PhoneNumber.HOLLAND_CODE)){
 					label.setIcon(imageNL);
-					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
 
 				} else if(number.getIntNumber().startsWith(PhoneNumber.HUNGARY_CODE)
 						&& !countryCode.equals(PhoneNumber.HUNGARY_CODE)){
 					label.setIcon(imageHU);
-					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
 
 				} else if(number.getIntNumber().startsWith(PhoneNumber.IRELAND_CODE)
 						&& !countryCode.equals(PhoneNumber.IRELAND_CODE)){
 					label.setIcon(imageIE);
-					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
 
 				} else if(number.getIntNumber().startsWith(PhoneNumber.ITALY_CODE)
 						&& !countryCode.equals(PhoneNumber.ITALY_CODE)){
 					label.setIcon(imageIT);
-					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
 
 				} else if(number.getIntNumber().startsWith(PhoneNumber.JAPAN_CODE)
 						&& !countryCode.equals(PhoneNumber.JAPAN_CODE)){
 					label.setIcon(imageJP);
-					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
 
 				} else if(number.getIntNumber().startsWith(PhoneNumber.LUXEMBOURG_CODE)
 						&& !countryCode.equals(PhoneNumber.LUXEMBOURG_CODE)){
 					label.setIcon(imageLU);
-					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
 
 				} else if(number.getIntNumber().startsWith(PhoneNumber.NORWAY_CODE)
 						&& !countryCode.equals(PhoneNumber.NORWAY_CODE)){
 					label.setIcon(imageNO);
-					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
 
 				} else if(number.getIntNumber().startsWith(PhoneNumber.POLAND_CODE)
 						&& !countryCode.equals(PhoneNumber.POLAND_CODE)){
 					label.setIcon(imagePL);
-					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
 
 				} else if(number.getIntNumber().startsWith(PhoneNumber.PORTUGAL_CODE)
 						&& !countryCode.equals(PhoneNumber.PORTUGAL_CODE)){
 					label.setIcon(imagePT);
-					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
 
 				} else if(number.getIntNumber().startsWith(PhoneNumber.RUSSIA_CODE)
 						&& !countryCode.equals(PhoneNumber.RUSSIA_CODE)){
 					label.setIcon(imageRU);
-					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
 
 				} else if(number.getIntNumber().startsWith(PhoneNumber.SLOVAKIA_CODE)
 						&& !countryCode.equals(PhoneNumber.SLOVAKIA_CODE)){
 					label.setIcon(imageSK);
-					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
 
 				} else if(number.getIntNumber().startsWith(PhoneNumber.SPAIN_CODE)
 						&& !countryCode.equals(PhoneNumber.SPAIN_CODE)){
 					label.setIcon(imageES);
-					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
 
 				} else if(number.getIntNumber().startsWith(PhoneNumber.SWEDEN_CODE)
 						&& !countryCode.equals(PhoneNumber.SWEDEN_CODE)){
 					label.setIcon(imageSE);
-					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
 
 				} else if(number.getIntNumber().startsWith(PhoneNumber.SWITZERLAND_CODE)
 						&& !countryCode.equals(PhoneNumber.SWITZERLAND_CODE)){
 					label.setIcon(imageCH);
-					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
 
 				} else if(number.getIntNumber().startsWith(PhoneNumber.TURKEY_CODE)
 						&& !countryCode.equals(PhoneNumber.TURKEY_CODE)){
 					label.setIcon(imageTR);
-					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
 
 				} else if(number.getIntNumber().startsWith(PhoneNumber.UKRAINE_CODE)
 						&& !countryCode.equals(PhoneNumber.UKRAINE_CODE)){
 					label.setIcon(imageUA);
-					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
 
 				} else if(number.getIntNumber().startsWith(PhoneNumber.USA_CODE)
 						&& !countryCode.equals(PhoneNumber.USA_CODE)){
 					label.setIcon(imageUS);
-					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
 
 				}else if (
-						(number.getIntNumber().startsWith(JFritz.getProperty("country.prefix"))
+						(number.getIntNumber().startsWith(Main.getProperty("country.prefix"))
 							||
 							(number.getIntNumber().startsWith("+"))
 						&& !(number.getIntNumber().startsWith(countryCode)))) { //$NON-NLS-1$
 					label.setIcon(imageWorld);
-					setToolTipText(JFritz.getMessage("int_call")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
 				} else if (number.isFreeCall()) {
 					label.setIcon(imageFreeCall);
-					setToolTipText(JFritz.getMessage("freecall")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("freecall")); //$NON-NLS-1$
 				} else {
 					label.setIcon(imagePhone);
-					setToolTipText(JFritz.getMessage("fixed_network")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("fixed_network")); //$NON-NLS-1$
 				}
 			} else {
 				label.setIcon(null);

@@ -16,7 +16,7 @@ import javax.swing.JDialog;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
-import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -39,13 +39,13 @@ public class CallMessageDlg extends JDialog implements ActionListener{
 			timer.schedule(task, 10000);
 
 			if (caller != null) {
-				setTitle(JFritz.getMessage("dialog_title_callin")); //$NON-NLS-1$
+				setTitle(Main.getMessage("dialog_title_callin")); //$NON-NLS-1$
 			}
 			else {
-				setTitle(JFritz.getMessage("dialog_title_callout")); //$NON-NLS-1$
+				setTitle(Main.getMessage("dialog_title_callout")); //$NON-NLS-1$
 			}
 
-			JButton closeButton = new JButton(JFritz.getMessage("okay")); //$NON-NLS-1$
+			JButton closeButton = new JButton(Main.getMessage("okay")); //$NON-NLS-1$
 			closeButton.addActionListener(this);
 			getContentPane().setLayout(new BorderLayout(15, 15));
 			getContentPane().add(closeButton, BorderLayout.SOUTH);
@@ -68,25 +68,25 @@ public class CallMessageDlg extends JDialog implements ActionListener{
 			JLabel fromLabel;
 			JLabel toLabel;
 			if (caller != null) {
-				headerLabel = new JLabel(JFritz.getMessage("dialog_title_callin"));	//$NON-NLS-1$
+				headerLabel = new JLabel(Main.getMessage("dialog_title_callin"));	//$NON-NLS-1$
 				if (caller.equals("")) { //$NON-NLS-1$
 					fromLabel = new JLabel();
 				}
 				else {
-					fromLabel = new JLabel(JFritz.getMessage("from") + caller);	//$NON-NLS-1$
+					fromLabel = new JLabel(Main.getMessage("from") + caller);	//$NON-NLS-1$
 //FIXME toLabel is overwritten in the next line
-		//			toLabel = new JLabel(JFritz.getMessage("to") + called);	//$NON-NLS-1$
+		//			toLabel = new JLabel(Main.getMessage("to") + called);	//$NON-NLS-1$
 				}
 
-				toLabel = new JLabel(JFritz.getMessage("through_provider") + called);	//$NON-NLS-1$
+				toLabel = new JLabel(Main.getMessage("through_provider") + called);	//$NON-NLS-1$
 			}
 			else {
-				headerLabel = new JLabel(JFritz.getMessage("dialog_title_callout")	//$NON-NLS-1$
-						+ " " + JFritz.getMessage("through_provider")); //$NON-NLS-1$, 	//$NON-NLS-2$
+				headerLabel = new JLabel(Main.getMessage("dialog_title_callout")	//$NON-NLS-1$
+						+ " " + Main.getMessage("through_provider")); //$NON-NLS-1$, 	//$NON-NLS-2$
 				fromLabel = new JLabel(called);
 				//TODO caller == null maybe insert a message saying could not find caller or something
-//				toLabel = new JLabel(JFritz.getMessage("from") + caller);	//$NON-NLS-1$
-				toLabel = new JLabel(JFritz.getMessage("from")+JFritz.getMessage("unknown"));	//$NON-NLS-1$
+//				toLabel = new JLabel(Main.getMessage("from") + caller);	//$NON-NLS-1$
+				toLabel = new JLabel(Main.getMessage("from")+Main.getMessage("unknown"));	//$NON-NLS-1$
 			}
 			mainPane.add(headerLabel);
 			mainPane.add(fromLabel);

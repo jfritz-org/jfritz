@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.utils.*;
 import de.moonflower.jfritz.utils.network.Telnet;
 
@@ -70,14 +71,14 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 				log_buffer.length);
 
 		try {
-			if (JFritzUtils.parseBoolean(JFritz.getProperty(
+			if (JFritzUtils.parseBoolean(Main.getProperty(
 					"syslog.checkSyslog", "true")) //$NON-NLS-1$,  //$NON-NLS-2$
-					|| JFritzUtils.parseBoolean(JFritz.getProperty(
+					|| JFritzUtils.parseBoolean(Main.getProperty(
 							"syslog.checkTelefon", "true"))) { //$NON-NLS-1$,  //$NON-NLS-2$
 				Telnet telnet = new Telnet();
 				telnet.connect();
 				if (telnet.isConnected()) {
-					if (JFritzUtils.parseBoolean(JFritz.getProperty(
+					if (JFritzUtils.parseBoolean(Main.getProperty(
 							"syslog.checkSyslog", "true"))) { //$NON-NLS-1$,  //$NON-NLS-2$
 						data = telnet.sendCommand("ps -A | grep syslog"); //$NON-NLS-1$
 						p = Pattern.compile(PATTERN_SYSLOG_RUNNING);
@@ -86,7 +87,7 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 							// m.group(1) = IP
 							// m.group(2) = Port
 							if (m.group(1).equals(
-									JFritz.getProperty("option.syslogclientip", //$NON-NLS-1$
+									Main.getProperty("option.syslogclientip", //$NON-NLS-1$
 											"192.168.178.21")) //$NON-NLS-1$
 									&& (m.group(2).equals(":4711"))) { //$NON-NLS-1$
 								Debug
@@ -94,20 +95,19 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 							} else {
 								Debug
 										.msg("Syslog ISN'T RUNNING PROPERLY on FritzBox, RESTARTING SYSLOG"); //$NON-NLS-1$
-								restartSyslogOnFritzBox(telnet, JFritz
-										.getProperty("option.syslogclientip", //$NON-NLS-1$
+								restartSyslogOnFritzBox(telnet, Main.getProperty("option.syslogclientip", //$NON-NLS-1$
 												"192.168.178.21")); //$NON-NLS-1$
 							}
 						} else {
 							Debug
 									.msg("Syslog ISN'T RUNNING PROPERLY on FritzBox, RESTARTING SYSLOG"); //$NON-NLS-1$
-							restartSyslogOnFritzBox(telnet, JFritz.getProperty(
+							restartSyslogOnFritzBox(telnet, Main.getProperty(
 									"option.syslogclientip", "192.168.178.21")); //$NON-NLS-1$,  //$NON-NLS-2$
 						}
 
 						data = telnet.readUntil("# "); //$NON-NLS-1$
 					}
-					if (JFritzUtils.parseBoolean(JFritz.getProperty(
+					if (JFritzUtils.parseBoolean(Main.getProperty(
 							"syslog.checkTelefon", "true"))) { //$NON-NLS-1$,  //$NON-NLS-2$
 						data = telnet.sendCommand("ps -A | grep telefon"); //$NON-NLS-1$
 						p = Pattern.compile(PATTERN_TELEFON_RUNNING);
@@ -118,7 +118,7 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 							restartTelefonOnFritzBox(telnet);
 						} else {
 
-							if (!JFritz.getProperty("telefond.laststarted", "") //$NON-NLS-1$,  //$NON-NLS-2$
+							if (!Main.getProperty("telefond.laststarted", "") //$NON-NLS-1$,  //$NON-NLS-2$
 									.equals("syslogMonitor")) { //$NON-NLS-1$
 								Debug
 										.msg("Telefon ISN'T RUNNING PROPERLY on FritzBox, RESTARTING TELEFON"); //$NON-NLS-1$
@@ -146,7 +146,7 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 						"UTF-8"); //$NON-NLS-1$
 				Debug.msg("Get Syslogmessage: " + msg); //$NON-NLS-1$
 
-				//if (JFritzUtils.parseBoolean(JFritz.getProperty(
+				//if (JFritzUtils.parseBoolean(Main.getProperty(
 				//		"option.syslogpassthrough", "false"))) {
 				//  	passthroughSocket.send(packet);
 				//	    Debug.msg("SendSyslogmessage: " + msg);
@@ -238,7 +238,7 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 						+ "Dabei wird ein laufendes Gespräch unterbrochen. "//TODO: I18N
 						+ "Die Anrufliste wird vorher gesichert.\n" //TODO: I18N
 						+ "Soll der telefond neu gestartet werden?", //TODO: I18N
-				JFritz.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+						Main.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 			Debug.msg("Get new calls"); //$NON-NLS-1$
 			JFritz.getJframe().getFetchButton().doClick();
 			try {
@@ -256,7 +256,7 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 			} catch (InterruptedException e) {
 			}
 			Debug.msg("telefond restarted"); //$NON-NLS-1$
-			JFritz.setProperty("telefond.laststarted", "syslogMonitor"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Main.setProperty("telefond.laststarted", "syslogMonitor"); //$NON-NLS-1$,  //$NON-NLS-2$
 			return JOptionPane.YES_OPTION;
 		} else {
 			JFritz.stopCallMonitor();

@@ -9,6 +9,7 @@ import java.net.URLDecoder;
 import java.io.DataOutputStream;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.utils.Debug;
 
 /**
@@ -135,7 +136,7 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
 					//JFritz.getCallMonitorList().displayCallInMsg(number, msn, name);
 				} else {
 					// Message
-					JFritz.infoMsg(JFritz.getMessage("yac_message") + ":\n" //$NON-NLS-1$,  //$NON-NLS-2$
+					JFritz.infoMsg(Main.getMessage("yac_message") + ":\n" //$NON-NLS-1$,  //$NON-NLS-2$
 							+ msg);
 				}
 

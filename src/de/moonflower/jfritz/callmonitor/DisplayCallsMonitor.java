@@ -11,6 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
@@ -130,7 +131,7 @@ public class DisplayCallsMonitor extends CallMonitorListenerAdaptor {
         if (!callerInput.startsWith("SIP")) { //$NON-NLS-1$
             PhoneNumber caller = new PhoneNumber(callerInput);
             if (caller.getIntNumber().equals("")) { //$NON-NLS-1$
-                callerstr = JFritz.getMessage("unknown"); //$NON-NLS-1$
+                callerstr = Main.getMessage("unknown"); //$NON-NLS-1$
             } else
                 callerstr = caller.getIntNumber();
         }
@@ -140,16 +141,16 @@ public class DisplayCallsMonitor extends CallMonitorListenerAdaptor {
             calledstr = JFritz.getSIPProviderTableModel().getSipProvider(calledInput,
                     calledInput);
 
-        if (name.equals("") && !callerstr.equals(JFritz.getMessage("unknown"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+        if (name.equals("") && !callerstr.equals(Main.getMessage("unknown"))) { //$NON-NLS-1$,  //$NON-NLS-2$
             name = searchNameToPhoneNumber(callerstr);
             String[] nameArray = searchFirstAndLastNameToPhoneNumber(callerstr);
             firstname = nameArray[0];
             surname = nameArray[1];
             company = nameArray[2];
         }
-        if (name.equals(""))name = JFritz.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$
-        if (firstname.equals("") && surname.equals(""))surname = JFritz.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-        if (company.equals(""))company = JFritz.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$
+        if (name.equals(""))name = Main.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$
+        if (firstname.equals("") && surname.equals(""))surname = Main.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+        if (company.equals(""))company = Main.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$
 
         if (callerstr.startsWith("+49"))callerstr = "0" + callerstr.substring(3); //$NON-NLS-1$,  //$NON-NLS-2$
 
@@ -157,19 +158,19 @@ public class DisplayCallsMonitor extends CallMonitorListenerAdaptor {
         Debug.msg("Called: " + calledstr); //$NON-NLS-1$
         Debug.msg("Name: " + name); //$NON-NLS-1$
 
-        switch (Integer.parseInt(JFritz.getProperty("option.popuptype", "1"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+        switch (Integer.parseInt(Main.getProperty("option.popuptype", "1"))) { //$NON-NLS-1$,  //$NON-NLS-2$
             case 0 : { // No Popup
                 break;
             }
             default : {
-                String outstring = JFritz.getMessage("incoming_call") + "\n " + JFritz.getMessage("from") //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+                String outstring = Main.getMessage("incoming_call") + "\n " + Main.getMessage("from") //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
                         + " " + callerstr; //$NON-NLS-1$
-                if (!name.equals(JFritz.getMessage("unknown"))) { //$NON-NLS-1$
+                if (!name.equals(Main.getMessage("unknown"))) { //$NON-NLS-1$
                     outstring = outstring + " (" + name + ")"; //$NON-NLS-1$,  //$NON-NLS-2$
                 }
-                if (!calledstr.equals(JFritz.getMessage("unknown"))) { //$NON-NLS-1$
+                if (!calledstr.equals(Main.getMessage("unknown"))) { //$NON-NLS-1$
                     outstring = outstring
-                            + "\n " + JFritz.getMessage("to") + " " + calledstr; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+                            + "\n " + Main.getMessage("to") + " " + calledstr; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
                 }
                 JFritz.infoMsg(outstring);
                 break;
@@ -177,15 +178,14 @@ public class DisplayCallsMonitor extends CallMonitorListenerAdaptor {
             }
         }
 
-        if (JFritzUtils.parseBoolean(JFritz.getProperty("option.playSounds", //$NON-NLS-1$
+        if (JFritzUtils.parseBoolean(Main.getProperty("option.playSounds", //$NON-NLS-1$
                 "true"))) { //$NON-NLS-1$
             JFritz.playSound(JFritz.getRingSound());
         }
 
-        if (JFritzUtils.parseBoolean(JFritz.getProperty(
+        if (JFritzUtils.parseBoolean(Main.getProperty(
                 "option.startExternProgram", "false"))) { //$NON-NLS-1$,  //$NON-NLS-2$
-            String programString = JFritzUtils.deconvertSpecialChars(JFritz
-                    .getProperty("option.externProgram", //$NON-NLS-1$
+            String programString = JFritzUtils.deconvertSpecialChars(Main.getProperty("option.externProgram", //$NON-NLS-1$
                             "")); //$NON-NLS-1$
 
             programString = programString.replaceAll("%Number", callerstr); //$NON-NLS-1$
@@ -216,7 +216,7 @@ public class DisplayCallsMonitor extends CallMonitorListenerAdaptor {
             }
 
             if (programString.equals("")) { //$NON-NLS-1$
-                Debug.errDlg(JFritz.getMessage("no_external_program") //$NON-NLS-1$
+                Debug.errDlg(Main.getMessage("no_external_program") //$NON-NLS-1$
                         + programString);
                 return;
             }
@@ -224,7 +224,7 @@ public class DisplayCallsMonitor extends CallMonitorListenerAdaptor {
             try {
                 Runtime.getRuntime().exec(programString);
             } catch (IOException e) {
-                Debug.errDlg(JFritz.getMessage("not_external_program_start") //$NON-NLS-1$
+                Debug.errDlg(Main.getMessage("not_external_program_start") //$NON-NLS-1$
                         + programString);
                 Debug.err(e.toString());
             }
@@ -247,8 +247,7 @@ public class DisplayCallsMonitor extends CallMonitorListenerAdaptor {
 
         calledstr = calledInput;
         if (!calledInput.startsWith("SIP")) { //$NON-NLS-1$
-            PhoneNumber called = new PhoneNumber(calledInput, JFritz
-                    .getProperty("option.activateDialPrefix").toLowerCase()
+            PhoneNumber called = new PhoneNumber(calledInput, Main.getProperty("option.activateDialPrefix").toLowerCase()
                     .equals("true")
                     && (!(providerInput.indexOf("@") > 0)));
             if (!called.getIntNumber().equals("")) //$NON-NLS-1$
@@ -266,30 +265,30 @@ public class DisplayCallsMonitor extends CallMonitorListenerAdaptor {
         surname = nameArray[1];
         company = nameArray[2];
 
-        if (name.equals(""))name = JFritz.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$
-        if (firstname.equals("") && surname.equals(""))surname = JFritz.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-        if (company.equals(""))company = JFritz.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$
+        if (name.equals(""))name = Main.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$
+        if (firstname.equals("") && surname.equals(""))surname = Main.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+        if (company.equals(""))company = Main.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$
 
         if (calledstr.startsWith("+49"))calledstr = "0" + calledstr.substring(3); //$NON-NLS-1$,  //$NON-NLS-2$
 
-        String outstring = JFritz.getMessage("outgoing_call") + "\n " //$NON-NLS-1$,  //$NON-NLS-2$
-                + JFritz.getMessage("to") + " " + calledstr; //$NON-NLS-1$,  //$NON-NLS-2$
-        if (!name.equals(JFritz.getMessage("unknown")))outstring += " (" + name + ")\n "; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+        String outstring = Main.getMessage("outgoing_call") + "\n " //$NON-NLS-1$,  //$NON-NLS-2$
+                + Main.getMessage("to") + " " + calledstr; //$NON-NLS-1$,  //$NON-NLS-2$
+        if (!name.equals(Main.getMessage("unknown")))outstring += " (" + name + ")\n "; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
         else
             outstring += "\n "; //$NON-NLS-1$
-        outstring += JFritz.getMessage("through_provider") + " " + providerstr; //$NON-NLS-1$,  //$NON-NLS-2$
+        outstring += Main.getMessage("through_provider") + " " + providerstr; //$NON-NLS-1$,  //$NON-NLS-2$
 
         JFritz.infoMsg(outstring);
 
-        if (JFritzUtils.parseBoolean(JFritz.getProperty("option.playSounds", //$NON-NLS-1$
+        if (JFritzUtils.parseBoolean(Main.getProperty("option.playSounds", //$NON-NLS-1$
                 "true"))) { //$NON-NLS-1$
             JFritz.playSound(JFritz.getCallSound());
         }
 
         // z.Z. noch deaktiviert
-        if (false && JFritzUtils.parseBoolean(JFritz.getProperty(
+        if (false && JFritzUtils.parseBoolean(Main.getProperty(
                 "option.startExternProgram", "false"))) { //$NON-NLS-1$,  //$NON-NLS-2$
-            String programString = JFritz.getProperty("option.externProgram", //$NON-NLS-1$
+            String programString = Main.getProperty("option.externProgram", //$NON-NLS-1$
                     ""); //$NON-NLS-1$
 
             programString = programString.replaceAll("%Number", providerstr); //$NON-NLS-1$
@@ -320,7 +319,7 @@ public class DisplayCallsMonitor extends CallMonitorListenerAdaptor {
             }
 
             if (programString.equals("")) { //$NON-NLS-1$
-                Debug.errDlg(JFritz.getMessage("no_external_program") //$NON-NLS-1$
+                Debug.errDlg(Main.getMessage("no_external_program") //$NON-NLS-1$
                         + programString);
                 return;
             }
@@ -328,7 +327,7 @@ public class DisplayCallsMonitor extends CallMonitorListenerAdaptor {
             try {
                 Runtime.getRuntime().exec(programString);
             } catch (IOException e) {
-                Debug.errDlg(JFritz.getMessage("not_external_program_start") //$NON-NLS-1$
+                Debug.errDlg(Main.getMessage("not_external_program_start") //$NON-NLS-1$
                         + programString);
                 Debug.err(e.toString());
             }

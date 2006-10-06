@@ -25,6 +25,7 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.struct.QuickDial;
@@ -120,13 +121,13 @@ public class QuickDials extends AbstractTableModel {
 	public String getColumnName(int column) {
 		switch (column) {
 		case 0:
-			return JFritz.getMessage("quickdial");  //$NON-NLS-1$
+			return Main.getMessage("quickdial");  //$NON-NLS-1$
 		case 1:
-			return JFritz.getMessage("vanity");  //$NON-NLS-1$
+			return Main.getMessage("vanity");  //$NON-NLS-1$
 		case 2:
-			return JFritz.getMessage("number");  //$NON-NLS-1$
+			return Main.getMessage("number");  //$NON-NLS-1$
 		case 3:
-			return JFritz.getMessage("description");  //$NON-NLS-1$
+			return Main.getMessage("description");  //$NON-NLS-1$
 		default:
 			return null;
 		}
@@ -143,13 +144,13 @@ public class QuickDials extends AbstractTableModel {
 			fireTableDataChanged();
 		} catch (WrongPasswordException e) {
 			Debug.err("getQuickDialData: Wrong password"); //$NON-NLS-1$
-			Debug.errDlg(JFritz.getMessage("wrong_password")); //$NON-NLS-1$
+			Debug.errDlg(Main.getMessage("wrong_password")); //$NON-NLS-1$
 		} catch (IOException e) {
 			Debug.err("getQuickDialData: Box not found"); //$NON-NLS-1$
-			Debug.errDlg(JFritz.getMessage("box_address_wrong")); //$NON-NLS-1$
+			Debug.errDlg(Main.getMessage("box_address_wrong")); //$NON-NLS-1$
 		} catch (InvalidFirmwareException e) {
 			Debug.err("getQuickDialData: Invalid firmware"); //$NON-NLS-1$
-			Debug.errDlg(JFritz.getMessage("box_address_wrong")); //$NON-NLS-1$
+			Debug.errDlg(Main.getMessage("box_address_wrong")); //$NON-NLS-1$
 		}
 	}
 
@@ -226,8 +227,8 @@ public class QuickDials extends AbstractTableModel {
 //			pw.println("<!DOCTYPE quickdials SYSTEM \"" + QUICKDIALS_DTD_URI
 //					+ "\">");
 			pw.println("<quickdials>"); //$NON-NLS-1$
-			pw.println("\t<comment>QuickDial list for " + JFritz.PROGRAM_NAME //$NON-NLS-1$
-					+ " v" + JFritz.PROGRAM_VERSION + "</comment>"); //$NON-NLS-1$,  //$NON-NLS-2$
+			pw.println("\t<comment>QuickDial list for " + Main.PROGRAM_NAME //$NON-NLS-1$
+					+ " v" + Main.PROGRAM_VERSION + "</comment>"); //$NON-NLS-1$,  //$NON-NLS-2$
 			Enumeration en = quickDials.elements();
 			while (en.hasMoreElements()) {
 				QuickDial current = (QuickDial) en.nextElement();

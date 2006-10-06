@@ -4,7 +4,7 @@ import java.awt.*;
 
 import javax.swing.*;
 
-import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 
 /**
  *
@@ -40,19 +40,19 @@ public class ConfigPanel1 extends JPanel{
 
 			c.gridy = 2;
 			c.anchor = GridBagConstraints.LINE_START;
-			label = new JLabel(JFritz.getMessage("config_wizard_info1"));
+			label = new JLabel(Main.getMessage("config_wizard_info1"));
 			configPanel1.add(label, c);
 
 			c.gridy = 3;
-			label = new JLabel(JFritz.getMessage("config_wizard_info2"));
+			label = new JLabel(Main.getMessage("config_wizard_info2"));
 			configPanel1.add(label, c);
 
 			c.gridy = 4;
-			label = new JLabel(JFritz.getMessage("config_wizard_info3"));
+			label = new JLabel(Main.getMessage("config_wizard_info3"));
 			configPanel1.add(label, c);
 
 			c.gridy = 5;
-			label = new JLabel(JFritz.getMessage("config_wizard_info4"));
+			label = new JLabel(Main.getMessage("config_wizard_info4"));
 			configPanel1.add(label, c);
 
 			add(configPanel1);

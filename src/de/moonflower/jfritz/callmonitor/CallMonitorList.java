@@ -7,7 +7,7 @@ package de.moonflower.jfritz.callmonitor;
 import java.util.HashMap;
 import java.util.Vector;
 
-import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.utils.Debug;
@@ -216,7 +216,7 @@ public class CallMonitorList {
     }
 
     protected void initIgnoreList() {
-        String ignoreMSNString = JFritz.getProperty(
+        String ignoreMSNString = Main.getProperty(
                 "option.callmonitor.ignoreMSN", ""); //$NON-NLS-1$,  //$NON-NLS-2$
         if (ignoreMSNString.length() > 0 && ignoreMSNString.indexOf(";") == -1) { //$NON-NLS-1$
             ignoreMSNString = ignoreMSNString + ";"; //$NON-NLS-1$
