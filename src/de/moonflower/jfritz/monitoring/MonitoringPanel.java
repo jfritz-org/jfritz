@@ -28,6 +28,8 @@ import de.moonflower.jfritz.monitoring.UpdateInternetTask;
  * Class for displaying monitoring information like current internet
  * or phone usage
  *
+ * Class uses jfreechart to display internet usage as chart
+ *
  * @author brian jensen
  *
  */
@@ -45,6 +47,12 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 
 	private Timer timer;
 
+	private static int count = 0;
+
+	/**
+	 * Creates the two monitoring sub panels and initializes everything
+	 *
+	 */
 	public MonitoringPanel(){
 		setLayout(new BorderLayout());
 
@@ -65,7 +73,11 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 		add(enableInetMonitoring, BorderLayout.SOUTH);
 
 	}
-
+	/**
+	 * This creates the internet panel, which is the top half of the monitoring tab
+	 *
+	 * @return the internet panel
+	 */
 	public JPanel createInternetPanel(){
 		JPanel inetPanel = new JPanel();
 		inetPanel.setLayout(new BorderLayout());
@@ -91,9 +103,18 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 
 		inetPanel.add(cp, BorderLayout.CENTER);
 
+		//we don't want to draw the chart every single time
+		inSeries.setNotify(false);
+		outSeries.setNotify(false);
+
 		return inetPanel;
 	}
 
+	/**
+	 * TODO
+	 *
+	 * @return
+	 */
 	private JPanel createPhonePanel(){
 		JPanel phonePanel = new JPanel();
 		phonePanel.setLayout(new BorderLayout());
@@ -103,17 +124,31 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 
 	}
 
+	/**
+	 * This function updates the internet monitor with current values
+	 * on every 6th update, the graphic is redrawn
+	 *
+	 * @param in, the current amount of incoming bytes
+	 * @param out, the current amout of outgoing bytes
+	 */
 	public void updateInternetUsage(String in, String out){
 
 		inSeries.add(System.currentTimeMillis(), (Double.parseDouble(in)/1024) );
 		outSeries.add(System.currentTimeMillis(), (Double.parseDouble(out)/1024));
 
-		if(inSeries.getItemCount() >  45){
+		if(inSeries.getItemCount() >  145){
 			inSeries.remove(0);
 			outSeries.remove(0);
 		}
 
-		collection.seriesChanged(new SeriesChangeEvent(inSeries));
+		count++;
+
+		if(count > 5){
+			outSeries.setNotify(true);
+			inSeries.fireSeriesChanged();
+			outSeries.setNotify(false);
+			count = 0;
+		}
 
 	}
 
@@ -135,11 +170,16 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 
 	}
 
+	/**
+	 * This function sets up the timer for automatic updates
+	 * of the current internet status
+	 *
+	 */
 	private void setTimer(){
 		//Create timer for updating the values
 		timer = new Timer();
 		UpdateInternetTask task = new UpdateInternetTask(this);
-		timer.schedule(task, 1000, 2000);
+		timer.schedule(task, 1000, 850);
 	}
 
 }

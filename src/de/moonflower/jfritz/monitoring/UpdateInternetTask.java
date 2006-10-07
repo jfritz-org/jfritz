@@ -6,7 +6,16 @@ import java.util.TimerTask;
 
 import de.moonflower.jfritz.JFritz;
 
-
+/**
+ * This class is called automatically by the scheduler,
+ * it parses the current internet activity using the SOAP Backend
+ * on the box. Then is calls monitoringPanel.updateInternetUsage(..)
+ * to update the panel
+ *
+ *
+ * @author Brian Jensen
+ *
+ */
 public class UpdateInternetTask extends TimerTask {
 
 	private MonitoringPanel monitoringPanel;
