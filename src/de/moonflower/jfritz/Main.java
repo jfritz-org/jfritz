@@ -133,6 +133,7 @@
  *  no_new_version_found
  *  update_JFritz
  *
+ * - Neu: MonitoringPanel hinzugefügt, soll Internetverbindung und derzeit geführten Anrufen überwachen
  * - Suchfeld in Anrufliste umfasst nun auch die Call-By-Call vorwahlen
  * - Bugfix: Suche nach Rufnummern im internationalen Format
  * - Neu: JFritz-Fenster wird nun korrekt wiederhergestellt (maximiert...). Neues Property: window.state
@@ -588,7 +589,7 @@ public class Main {
 	public static void main(String[] args) {
 		System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION //$NON-NLS-1$
 				+ " (c) 2005 by " + PROGRAM_AUTHOR); //$NON-NLS-1$
-		Thread.currentThread().setPriority(5);
+ 		Thread.currentThread().setPriority(5);
 
 		CLIOptions options = new CLIOptions();
 

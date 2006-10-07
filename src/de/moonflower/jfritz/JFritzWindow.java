@@ -67,6 +67,8 @@ import de.moonflower.jfritz.dialogs.stats.StatsDialog;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
+import de.moonflower.jfritz.monitoring.MonitoringPanel;
+
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
@@ -113,6 +115,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
     private PhoneBookPanel phoneBookPanel;
 
     private QuickDialPanel quickDialPanel;
+
+    private MonitoringPanel monitoringPanel;
 
     private ConfigDialog configDialog;
 
@@ -197,11 +201,14 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
         callerListPanel = new CallerListPanel(JFritz.getCallerList());
         phoneBookPanel = new PhoneBookPanel();
         quickDialPanel = new QuickDialPanel();
+        //New code here, remove if problematic
+        monitoringPanel = new MonitoringPanel();
 
         tabber = new JTabbedPane(JTabbedPane.BOTTOM);
         tabber.addTab(Main.getMessage("callerlist"), callerListPanel); //$NON-NLS-1$
         tabber.addTab(Main.getMessage("phonebook"), phoneBookPanel); //$NON-NLS-1$
         tabber.addTab(Main.getMessage("quickdials"), quickDialPanel); //$NON-NLS-1$
+        tabber.addTab(Main.getMessage("monitoring"), monitoringPanel);
         tabber.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 if (tabber.getTitleAt(tabber.getSelectedIndex()).equals(
@@ -213,6 +220,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
                 } else if (tabber.getTitleAt(tabber.getSelectedIndex()).equals(
                         Main.getMessage("quickdials"))) { //$NON-NLS-1$
                     quickDialPanel.setStatus();
+                } else if (tabber.getTitleAt(tabber.getSelectedIndex()).equals(
+                		Main.getMessage("monitoring"))){
+                	monitoringPanel.setStatus();
                 }
             }
         });

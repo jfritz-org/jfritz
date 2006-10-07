@@ -26,6 +26,7 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.HTMLUtil;
 import de.moonflower.jfritz.utils.JFritzUtils;
+import de.moonflower.jfritz.utils.network.UPNPUtils;
 
 public class FritzBox {
 
@@ -44,6 +45,10 @@ public class FritzBox {
 	private static String POSTDATA_LOGIN = "&login:command/password=$PASSWORT"; //$NON-NLS-1$
 
 	private static String POSTDATA_CALL = "&login:command/password=$PASSWORT&telcfg:settings/UseClickToDial=1&telcfg:settings/DialPort=$NEBENSTELLE&telcfg:command/Dial=$NUMMER"; //$NON-NLS-1$
+
+	private static String URL_INTERNET_STATS = ":49000/upnp/control/WANCommonIFC1";  //$NON-NLS-1$
+
+	private static String URN_INTERNET_STATS = "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetAddonInfos"; //$NON-NLS-1$
 
 	private final static String CSV_FILE_EN = "FRITZ!Box_Calllist.csv";
 
@@ -688,4 +693,11 @@ public class FritzBox {
 	public String getPort() {
 		return box_port;
 	}
+
+	public String getInternetStats(){
+
+		return UPNPUtils.getSOAPData("http://" + getAddress() + URL_INTERNET_STATS, URN_INTERNET_STATS);
+	}
+
+
 }
