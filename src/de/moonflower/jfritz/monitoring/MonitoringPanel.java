@@ -7,10 +7,20 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.chart.ChartPanel;
 import org.jfree.data.general.SeriesChangeEvent;
-import org.jfree.chart.axis.*;
 import org.jfree.chart.plot.*;
+import org.jfree.chart.renderer.xy.XYAreaRenderer;
+import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.labels.StandardXYToolTipGenerator;
+import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.NumberAxis;
+
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -18,7 +28,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Timer;
+
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
@@ -39,7 +52,7 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 
 	private XYSeries inSeries, outSeries;
 
-	private XYSeriesCollection collection;
+	private XYSeriesCollection collectionIn, collectionOut;
 
 	private JFreeChart inetChart;
 
@@ -88,10 +101,52 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 		outSeries = new XYSeries("Out");
 		outSeries.add(System.currentTimeMillis(), 0.0);
 
-		collection = new XYSeriesCollection();
-		collection.addSeries(inSeries);
-		collection.addSeries(outSeries);
+		collectionIn = new XYSeriesCollection();
+		collectionIn.addSeries(inSeries);
 
+		collectionOut = new XYSeriesCollection();
+		collectionOut.addSeries(outSeries);
+
+
+		//create the filled chart plot
+		XYDataset data1 = collectionIn;
+		XYItemRenderer renderer1 = new XYAreaRenderer(XYAreaRenderer.AREA);
+		renderer1.setToolTipGenerator(
+				new StandardXYToolTipGenerator(
+		                StandardXYToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT,
+		                new SimpleDateFormat("yy"), new DecimalFormat("0.0")
+		        )
+		);
+
+		//setup the other chart options
+		DateAxis domainAxis = new DateAxis();
+		domainAxis.setTickLabelsVisible(false);
+		domainAxis.setTickMarksVisible(false);
+		ValueAxis rangeAxis = new NumberAxis("KB\\s");
+		renderer1.setPaint(Color.GREEN);
+		XYPlot plot = new XYPlot(data1, domainAxis, rangeAxis, renderer1);
+
+		//create the line chart plot
+		XYDataset data2 = collectionOut;
+		XYItemRenderer renderer2 = new StandardXYItemRenderer();
+		renderer2.setToolTipGenerator(
+	            new StandardXYToolTipGenerator(
+	                StandardXYToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT,
+	                new SimpleDateFormat("yy"), new DecimalFormat("0.0")
+	            )
+	    );
+
+		plot.setDataset(1, data2);
+		plot.setRenderer(1, renderer2);
+		plot.setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
+
+		//finally create the chart object and post it to the panel
+		inetChart =  new JFreeChart("Internet Usage", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
+		inetChart.setAntiAlias(true);
+		ChartPanel cp = new ChartPanel(inetChart);
+		inetPanel.add(cp, BorderLayout.CENTER);
+
+		/*Old code don't delete quite yet...
 		inetChart  = ChartFactory.createXYLineChart("Internet Usage", "", "KB/s", collection,
 				PlotOrientation.VERTICAL, true, true, false);
 
@@ -102,6 +157,7 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 		cp.setSize(this.getWidth(), (this.getHeight()/2));
 
 		inetPanel.add(cp, BorderLayout.CENTER);
+		*/
 
 		//we don't want to draw the chart every single time
 		inSeries.setNotify(false);
