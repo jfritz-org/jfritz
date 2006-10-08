@@ -7,6 +7,7 @@ import java.net.UnknownHostException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
@@ -171,7 +172,7 @@ public class SSDPPacket {
         }
         Debug.msg("SSDP FW: "+fwstr); //$NON-NLS-1$
         try {
-            return FritzBoxFirmware.detectFirmwareVersion(this.getIP().toString().substring(1), "", "80");
+            return FritzBoxFirmware.detectFirmwareVersion(this.getIP().toString().substring(1), "", Main.getProperty("box.port", "80"));
         } catch (WrongPasswordException wpe) {
             return null;
         } catch (InvalidFirmwareException e) {
