@@ -132,13 +132,15 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	private JDateChooser startDateChooser;
 
-	private Component endDateChooser;
+	private JDateChooser endDateChooser;
 
 	private DateFilter dateFilter;
 
 	// private FixedFilter fixedFilter;
 
 	private JLabel searchLabel;
+
+	private JButton applyFilterButton;
 
 	public CallerListPanel(CallerList callerList) {
 		super();
@@ -375,8 +377,10 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		dateFilterButton.addMouseListener(popupListener);
 
 		startDateChooser = new JDateChooser();
+		startDateChooser.setDate(Calendar.getInstance().getTime());
 		startDateChooser.setVisible(false);
 		endDateChooser = new JDateChooser();
+		endDateChooser.setDate(Calendar.getInstance().getTime());
 		endDateChooser.setVisible(false);
 
 		sipFilterButton = new JToggleButton(getImage("world_grey.png"), true); //$NON-NLS-1$
@@ -418,6 +422,14 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		deleteEntriesButton.setFocusPainted(false);
 		deleteEntriesButton.setEnabled(false);
 
+		applyFilterButton = new JButton();
+		//FIXME make a message for this Tooltip
+		//applyFilterButton.setToolTipText(Main.getMessage("apply_filters").replaceAll("%N", "")); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+		applyFilterButton.setActionCommand("apply_filter"); //$NON-NLS-1$
+		applyFilterButton.addActionListener(this);
+		applyFilterButton.setIcon(getImage("apply_filter.png")); //$NON-NLS-1$
+		applyFilterButton.setFocusPainted(false);
+
 		searchLabel = new JLabel(Main.getMessage("search") + ": ");//$NON-NLS-1$,  //$NON-NLS-2$
 		searchLabel.setVisible(false);
 		searchFilterTextField = new JTextField(Main.getProperty(
@@ -454,6 +466,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		lowerToolBar.add(searchLabel);
 		lowerToolBar.add(searchFilterTextField);
 		lowerToolBar.addSeparator();
+		lowerToolBar.add(applyFilterButton);
 		lowerToolBar.add(resetFiltersButton);
 		lowerToolBar.addSeparator();
 		lowerToolBar.addSeparator();
@@ -576,10 +589,22 @@ public class CallerListPanel extends JPanel implements ActionListener,
 				callerList.removeFilter(handyFilter);
 			return;
 		}
+
+		if (command.equals("filter_search")) {
+			if (searchFilterButton.isSelected()) {
+				searchFilterTextField.setVisible(false);
+				searchLabel.setVisible(false);
+			} else {
+				searchFilterTextField.setVisible(true);
+				searchLabel.setVisible(true);
+			}
+			return;
+		}
+
 		if (command.equals("filter_date")) { //$NON-NLS-1$
 			if (!dateFilterButton.isSelected()) {
-				dateFilter = new DateFilter();
-				callerList.addFilter(dateFilter);
+				//dateFilter = new DateFilter(startDateChooser.getDate(), endDateChooser.getDate());
+				//callerList.addFilter(dateFilter);
 				startDateChooser.setVisible(true);
 				endDateChooser.setVisible(true);
 
@@ -591,54 +616,63 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			return;
 		}
 
-		if (command.equals("filter_search")) {
-			if (searchFilterButton.isSelected()) {
-				searchFilterTextField.setVisible(false);
-				searchLabel.setVisible(false);
-			} else {
-				searchFilterTextField.setVisible(true);
-				searchLabel.setVisible(true);
-			}
-		}
-
 		if (command.equals("setdatefilter_thisday")) { //$NON-NLS-1$
+			callerList.removeFilter(dateFilter);
 			dateFilterButton.setSelected(false);
-			Main.setProperty("filter.date", Boolean //$NON-NLS-1$
-					.toString(!dateFilterButton.isSelected()));
-			// callerList.getDateFilter().setFilter(DateFilter.DATEFILTER_TODAY);
-			setDateFilterText();
-			callerList.fireTableStructureChanged();
-			return;
+			Date today = Calendar.getInstance().getTime();
+			dateFilter = new DateFilter(today, today);
+			callerList.addFilter(dateFilter);
+			startDateChooser.setDate(today);
+			endDateChooser.setDate(today);
+			startDateChooser.setVisible(true);
+			endDateChooser.setVisible(true);
 		}
 		if (command.equals("setdatefilter_yesterday")) { //$NON-NLS-1$
+			callerList.removeFilter(dateFilter);
 			dateFilterButton.setSelected(false);
-			Main.setProperty("filter.date", Boolean //$NON-NLS-1$
-					.toString(!dateFilterButton.isSelected()));
-			// callerList.getDateFilter().setFilter(
-			// DateFilter.DATEFILTER_YESTERDAY);
-			setDateFilterText();
-			callerList.fireTableStructureChanged();
-			return;
+			Calendar cal = Calendar.getInstance();
+			Date today = cal.getTime();
+			cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - 1);
+			Date yesterday = cal.getTime();
+			dateFilter = new DateFilter(yesterday, today);
+			callerList.addFilter(dateFilter);
+			startDateChooser.setDate(yesterday);
+			endDateChooser.setDate(today);
+			startDateChooser.setVisible(true);
+			endDateChooser.setVisible(true);
 		}
 		if (command.equals("setdatefilter_thismonth")) { //$NON-NLS-1$
+			callerList.removeFilter(dateFilter);
 			dateFilterButton.setSelected(false);
-			Main.setProperty("filter.date", Boolean //$NON-NLS-1$
-					.toString(!dateFilterButton.isSelected()));
-			// callerList.getDateFilter().setFilter(
-			// DateFilter.DATEFILTER_THIS_MONTH);
-			setDateFilterText();
-			callerList.fireTableStructureChanged();
-			return;
+			Calendar cal = Calendar.getInstance();
+			cal.set(Calendar.DAY_OF_MONTH, 1);
+			Date start = cal.getTime();
+			cal.set(Calendar.DAY_OF_MONTH, cal
+                    .getActualMaximum(Calendar.DAY_OF_MONTH));
+			Date end = cal.getTime();
+			dateFilter = new DateFilter(start, end);
+			callerList.addFilter(dateFilter);
+			startDateChooser.setDate(start);
+			endDateChooser.setDate(end);
+			startDateChooser.setVisible(true);
+			endDateChooser.setVisible(true);
 		}
 		if (command.equals("setdatefilter_lastmonth")) { //$NON-NLS-1$
+			callerList.removeFilter(dateFilter);
 			dateFilterButton.setSelected(false);
-			Main.setProperty("filter.date", Boolean //$NON-NLS-1$
-					.toString(!dateFilterButton.isSelected()));
-			// callerList.getDateFilter().setFilter(
-			// DateFilter.DATEFILTER_LAST_MONTH);
-			setDateFilterText();
-			callerList.fireTableStructureChanged();
-			return;
+			Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.MONTH, cal.get(Calendar.MONTH) - 1); // last
+            cal.set(Calendar.DAY_OF_MONTH, 1);
+			Date start = cal.getTime();
+	        cal.set(Calendar.DAY_OF_MONTH, cal
+	                    .getActualMaximum(Calendar.DAY_OF_MONTH));
+	 		Date end = cal.getTime();
+			dateFilter = new DateFilter(start, end);
+			callerList.addFilter(dateFilter);
+			startDateChooser.setDate(start);
+			endDateChooser.setDate(end);
+			startDateChooser.setVisible(true);
+			endDateChooser.setVisible(true);
 		}
 		if (command.equals("filter_sip")) { //$NON-NLS-1$
 			if (!sipFilterButton.isSelected()) {
@@ -703,15 +737,29 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			// JFritz.getJframe().copyAddressToClipboard();
 
 		}
+		if(command.equals("apply_filter")){
+			//TODO checken, ob sich der search filter geändert hat
+			callerList.removeFilter(dateFilter);
+			dateFilter = new DateFilter(startDateChooser.getDate(), endDateChooser.getDate());
+			callerList.addFilter(dateFilter);
+			callerList.removeFilter(searchFilter);
+			String str = searchFilterTextField.getText();
+			Debug.msg(str);
+			if (str.equals("")) {
+				// add no filter
+			} else {
+				searchFilter = new SearchFilter(str);
+				callerList.addFilter(searchFilter);
+			}
+
+		}
 
 	}
 
 	public void keyPressed(KeyEvent arg0) {
 		if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
 			callerList.removeFilter(searchFilter);// remove old filter first
-			String str = ""; //$NON-NLS-1$
-			JTextField search = (JTextField) arg0.getSource(); // FIXME
-			str = search.getText();
+			String str = searchFilterTextField.getText();
 			Debug.msg(str);
 			if (str.equals("")) {
 				// add no filter

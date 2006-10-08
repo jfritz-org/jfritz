@@ -35,37 +35,30 @@ public class DateFilter extends CallFilter {
 
     private int filterType = 0;
 
-    private String filterFromDate;
+    private Date filterFromDate;
 
-    private String filterToDate;
+    private Date filterToDate;
 
 //    public DateFilter(Date from, Date to) {
-        public DateFilter() {
-            filterFromDate = Main.getProperty("filter.date_from", new SimpleDateFormat("dd.MM.yy").format(Calendar.getInstance().getTime()));
-            filterToDate = Main.getProperty("filter.date_to", new SimpleDateFormat("dd.MM.yy").format(Calendar.getInstance().getTime()));
-            filterType = Integer.parseInt(Main.getProperty("filter.date_type", "0")); //$NON-NLS-1$ $NON-NLS-2$
+        public DateFilter(Date from, Date to) {
+        	//TODO uhrzeit ändern
+        	//TODO status updaten
+            //filterFromDate = Main.getProperty("filter.date_from", new SimpleDateFormat("dd.MM.yy").format(Calendar.getInstance().getTime()));
+           // filterToDate = Main.getProperty("filter.date_to", new SimpleDateFormat("dd.MM.yy").format(Calendar.getInstance().getTime()));
+           // filterType = Integer.parseInt(Main.getProperty("filter.date_type", "0")); //$NON-NLS-1$ $NON-NLS-2$
+        	filterFromDate = from;
+        	filterToDate = to;
     }
 
     public boolean passFilter(Call currentCall) {
-       try {
-            if (currentCall.getCalldate().after(
-                    new SimpleDateFormat("dd.MM.yy") //$NON-NLS-1$
-                            .parse(filterFromDate))
+            if (currentCall.getCalldate().after(filterFromDate)
                 && currentCall
-                    .getCalldate().before(
-                            new SimpleDateFormat(
-                                    "dd.MM.yy HH:mm") //$NON-NLS-1$
-                                    .parse(filterToDate
-                                            + " 23:59"))) { //$NON-NLS-1$
+                    .getCalldate().before(filterToDate)) {
                 return true;
             } else
                 return false;
-        } catch (ParseException e) {
-            Debug.err("Problems parsing a date"+ e.toString());
-            return false;
-        }
     }
-
+/*
     public void setFilter(int datefilter) {
         Date from = null;
         Date to = null;
@@ -86,8 +79,8 @@ public class DateFilter extends CallFilter {
                     if (from == null || call.getCalldate().before(from))
                         from = call.getCalldate();
                 }
-                filterFromDate = new SimpleDateFormat("dd.MM.yy").format(from);
-                filterToDate = new SimpleDateFormat("dd.MM.yy").format(to);
+                filterFromDate = from;
+                filterToDate = to;
 
             } catch (Exception e) {
                 Debug.err(e.toString());
@@ -149,5 +142,5 @@ public class DateFilter extends CallFilter {
         Main.setProperty("filter.date_from", filterFromDate); //$NON-NLS-1$ $NON-NLS-2$
         Main.setProperty("filter.date_to", filterToDate); //$NON-NLS-1$ $NON-NLS-2$
     }
-
+*/
 }

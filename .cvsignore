@@ -13,3 +13,4 @@ jfritz.sipprovider.xml
 .*
 backup
 ivy.xml
+*.classpath

@@ -114,11 +114,11 @@ public class CallerList extends AbstractTableModel {
 
 	private boolean sortDirection = false;
 
-	private DateFilter dateFilter;
+	//private DateFilter dateFilter;
 
-	private SipFilter sipFilter;
+	//private SipFilter sipFilter;
 
-	private CallByCallFilter callByCallFilter;
+	//private CallByCallFilter callByCallFilter;
 
 	/**
 	 * CallerList Constructor new contrustor, using binary sizes
@@ -137,9 +137,9 @@ public class CallerList extends AbstractTableModel {
 		newCalls = new Vector(32);
 
 		sortColumn = 1;
-		dateFilter = new DateFilter();
-		sipFilter = new SipFilter(getSelectedOrSipProviders());
-		callByCallFilter = new CallByCallFilter(getSelectedCbCProviders());
+		//dateFilter = new DateFilter();
+		//sipFilter = new SipFilter(getSelectedOrSipProviders());
+		//callByCallFilter = new CallByCallFilter(getSelectedCbCProviders());
 	}
 
 	/**
@@ -926,15 +926,15 @@ public class CallerList extends AbstractTableModel {
                 }
 
                 if (filterSip) {
-                    sipFilterPassed = sipFilter.passFilter(call);
+  //                  sipFilterPassed = sipFilter.passFilter(call);
                 }
 
                 if (filterCallByCall) {
-                    callByCallFilterPassed = callByCallFilter.passFilter(call);
+ //                   callByCallFilterPassed = callByCallFilter.passFilter(call);
                 }
 
                 if (filterDate) {
-                    dateFilterPassed = dateFilter.passFilter(call);
+ //                   dateFilterPassed = dateFilter.passFilter(call);
                 }
 
                 if (filterFixed && call.getPhoneNumber() != null
