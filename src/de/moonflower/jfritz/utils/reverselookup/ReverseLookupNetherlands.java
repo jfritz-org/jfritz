@@ -165,6 +165,7 @@ public final class ReverseLookupNetherlands {
 	 * in number/holland/areacodes_holland.csv
 	 * The funtion uses the area codes listed in the file as keys and the cities as values
 	 *
+	 * @deprecated This function is not currently used
 	 *
 	 * @author Brian Jensen
 	 *
@@ -204,6 +205,7 @@ public final class ReverseLookupNetherlands {
 	 * This function determines the city to a particular number
 	 * The hashmap does not have to initialised in order to call this function
 	 *
+	 * @deprecated This function is not used right now
 	 *
 	 * @param number in area format e.g. starting with "0"
 	 * @return the city found or "" if nothing was found

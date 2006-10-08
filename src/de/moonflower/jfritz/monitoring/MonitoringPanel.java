@@ -21,6 +21,8 @@ import org.jfree.chart.axis.NumberAxis;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GradientPaint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -73,18 +75,6 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 		add(createInternetPanel(), BorderLayout.NORTH);
 		//TODO: Phone usage panel here!
 
-		enableInetMonitoring = new JToggleButton(Main.getMessage("enable_inet_monitoring"));
-		enableInetMonitoring.setActionCommand("toggleInetMonitoring");
-		enableInetMonitoring.addActionListener(this);
-		if(Main.getProperty("inet.monitoring", "false").equals("true")){
-			enableInetMonitoring.setSelected(true);
-			setTimer();
-		}else{
-			enableInetMonitoring.setSelected(false);
-		}
-
-		add(enableInetMonitoring, BorderLayout.SOUTH);
-
 	}
 	/**
 	 * This creates the internet panel, which is the top half of the monitoring tab
@@ -95,6 +85,8 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 		JPanel inetPanel = new JPanel();
 		inetPanel.setLayout(new BorderLayout());
 
+		//initialize the data series, domain is time
+		//range is the kb/s value
 		inSeries = new XYSeries("In");
 		inSeries.add(System.currentTimeMillis(), 0.0);
 
@@ -118,12 +110,13 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 		        )
 		);
 
-		//setup the other chart options
+		//setup the other chart options including gradient fill color
 		DateAxis domainAxis = new DateAxis();
 		domainAxis.setTickLabelsVisible(false);
 		domainAxis.setTickMarksVisible(false);
 		ValueAxis rangeAxis = new NumberAxis("KB\\s");
-		renderer1.setPaint(Color.GREEN);
+		renderer1.setPaint(new GradientPaint(0,0, new Color(0, 175, 30), 0, 275,
+				new Color(220, 250, 220), false));
 		XYPlot plot = new XYPlot(data1, domainAxis, rangeAxis, renderer1);
 
 		//create the line chart plot
@@ -136,6 +129,7 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 	            )
 	    );
 
+		//Add the new data set to the first plot
 		plot.setDataset(1, data2);
 		plot.setRenderer(1, renderer2);
 		plot.setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
@@ -144,22 +138,24 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 		inetChart =  new JFreeChart("Internet Usage", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
 		inetChart.setAntiAlias(true);
 		ChartPanel cp = new ChartPanel(inetChart);
+		cp.setPreferredSize(new Dimension(500, 250));
 		inetPanel.add(cp, BorderLayout.CENTER);
 
-		/*Old code don't delete quite yet...
-		inetChart  = ChartFactory.createXYLineChart("Internet Usage", "", "KB/s", collection,
-				PlotOrientation.VERTICAL, true, true, false);
+		//setup the monitoring toggle button
+		enableInetMonitoring = new JToggleButton(Main.getMessage("enable_inet_monitoring"));
+		enableInetMonitoring.setActionCommand("toggleInetMonitoring");
+		enableInetMonitoring.addActionListener(this);
+		enableInetMonitoring.setSize(new Dimension(200,30));
+		if(Main.getProperty("inet.monitoring", "false").equals("true")){
+			enableInetMonitoring.setSelected(true);
+			setTimer();
+		}else{
+			enableInetMonitoring.setSelected(false);
+		}
 
-		inetChart.getXYPlot().getDomainAxis().setTickLabelsVisible(false);
+		inetPanel.add(enableInetMonitoring, BorderLayout.SOUTH);
 
-		inetPanel.setSize(this.getWidth(), (this.getHeight()/2));
-		ChartPanel cp = new ChartPanel(inetChart);
-		cp.setSize(this.getWidth(), (this.getHeight()/2));
-
-		inetPanel.add(cp, BorderLayout.CENTER);
-		*/
-
-		//we don't want to draw the chart every single time
+		//we don't want to draw the chart every single update time
 		inSeries.setNotify(false);
 		outSeries.setNotify(false);
 
@@ -182,7 +178,7 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 
 	/**
 	 * This function updates the internet monitor with current values
-	 * on every 6th update, the graphic is redrawn
+	 * on every 6th update (~5.7 Seconds), the graphic is redrawn
 	 *
 	 * @param in, the current amount of incoming bytes
 	 * @param out, the current amout of outgoing bytes
@@ -192,7 +188,7 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 		inSeries.add(System.currentTimeMillis(), (Double.parseDouble(in)/1024) );
 		outSeries.add(System.currentTimeMillis(), (Double.parseDouble(out)/1024));
 
-		if(inSeries.getItemCount() >  145){
+		if(inSeries.getItemCount() >  200){
 			inSeries.remove(0);
 			outSeries.remove(0);
 		}
@@ -235,7 +231,7 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 		//Create timer for updating the values
 		timer = new Timer();
 		UpdateInternetTask task = new UpdateInternetTask(this);
-		timer.schedule(task, 1000, 850);
+		timer.schedule(task, 1000, 950);
 	}
 
 }

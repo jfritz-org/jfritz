@@ -63,7 +63,7 @@ public class ReverseLookup {
 		//loads the area code city mappings
 		ReverseLookupGermany.loadAreaCodes();
 		ReverseLookupAustria.loadAreaCodes();
-		ReverseLookupNetherlands.loadAreaCodes();
+		//ReverseLookupNetherlands.loadAreaCodes();
 
 
 	}
