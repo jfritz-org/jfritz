@@ -29,7 +29,7 @@ public class PhoneNumber implements Comparable {
 	// type values : "home", "mobile", "homezone",
 	// "business", "other", "fax", "sip" };
 
-	//Please keep these in alphabetical order
+	//Please keep these in alphabetical order!!!
 	public static final String AUSTRIA_CODE="+43",
 	 					 BELGIUM_CODE="+32",
 	 					 CHINA_CODE="+86",
@@ -61,6 +61,8 @@ public class PhoneNumber implements Comparable {
 	static HashMap mobileMap;
 
 	/**
+	 * @deprecated use the other constructor from now on
+	 *
 	 * Constructs a PhoneNumber with a special type
 	 * @param number Phone number
 	 * @param type Type of number
@@ -224,10 +226,11 @@ public class PhoneNumber implements Comparable {
 		else if (number.startsWith(areaPrefix))
 			return countryCode + number.substring(areaPrefix.length());//$NON-NLS-1$
 
-
+		/* this case should never happen!!!
 		else if (number.startsWith(countryCode.substring(1)) && number.length() > 7)
 			// International numbers without countryPrefix
 			return "+" + number;//$NON-NLS-1$
+		*/
 
 		//if its not any internationl call, or a national call (in germany you can't dial
 		// a national number using the internation prefix), then its a local call

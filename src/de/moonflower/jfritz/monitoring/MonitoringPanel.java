@@ -1,30 +1,27 @@
 package de.moonflower.jfritz.monitoring;
 
-import org.jfree.data.xy.XYSeries;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.chart.ChartPanel;
-import org.jfree.data.general.SeriesChangeEvent;
-import org.jfree.chart.plot.*;
-import org.jfree.chart.renderer.xy.XYAreaRenderer;
-import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
-import org.jfree.data.xy.XYDataset;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.chart.axis.ValueAxis;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.labels.StandardXYToolTipGenerator;
+import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
+import org.jfree.chart.renderer.xy.XYAreaRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.plot.DatasetRenderingOrder;
 
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GradientPaint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.GradientPaint;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -115,7 +112,7 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 		domainAxis.setTickLabelsVisible(false);
 		domainAxis.setTickMarksVisible(false);
 		ValueAxis rangeAxis = new NumberAxis("KB\\s");
-		renderer1.setPaint(new GradientPaint(0,0, new Color(0, 175, 30), 0, 275,
+		renderer1.setPaint(new GradientPaint(0,0, new Color(0, 175, 30), 0, 240,
 				new Color(220, 250, 220), false));
 		XYPlot plot = new XYPlot(data1, domainAxis, rangeAxis, renderer1);
 
@@ -135,13 +132,13 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 		plot.setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
 
 		//finally create the chart object and post it to the panel
-		inetChart =  new JFreeChart("Internet Usage", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
+		inetChart =  new JFreeChart(Main.getMessage("inet_usgage"), JFreeChart.DEFAULT_TITLE_FONT, plot, true);
 		inetChart.setAntiAlias(true);
 		ChartPanel cp = new ChartPanel(inetChart);
-		cp.setPreferredSize(new Dimension(500, 250));
+		cp.setPreferredSize(new Dimension(500, 200));
 		inetPanel.add(cp, BorderLayout.CENTER);
 
-		//setup the monitoring toggle button
+		 //setup the monitoring toggle button
 		enableInetMonitoring = new JToggleButton(Main.getMessage("enable_inet_monitoring"));
 		enableInetMonitoring.setActionCommand("toggleInetMonitoring");
 		enableInetMonitoring.addActionListener(this);

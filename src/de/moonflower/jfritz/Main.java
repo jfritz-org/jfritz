@@ -132,7 +132,12 @@
  *  check_for_new_version_after_start
  *  no_new_version_found
  *  update_JFritz
+ *  enable_inet_monitoring
+ *  monitoring
+ *  inet_usgage
  *
+ * - Bugfix: örtliche Nummer, die mit 49 beginnen, werden jetzt richtig verarbeitet
+ * - Bugfix: Callmonitor schreibt die Ortsvorwahl vor unbekannten Rufnummern nicht mehr
  * - Neu: MonitoringPanel hinzugefügt, soll Internetverbindung und derzeit geführten Anrufen überwachen
  * - Suchfeld in Anrufliste umfasst nun auch die Call-By-Call vorwahlen
  * - Bugfix: Suche nach Rufnummern im internationalen Format

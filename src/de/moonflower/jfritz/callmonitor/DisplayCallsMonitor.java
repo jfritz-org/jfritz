@@ -129,7 +129,7 @@ public class DisplayCallsMonitor extends CallMonitorListenerAdaptor {
 
         callerstr = calledInput;
         if (!callerInput.startsWith("SIP")) { //$NON-NLS-1$
-            PhoneNumber caller = new PhoneNumber(callerInput);
+            PhoneNumber caller = new PhoneNumber(callerInput, false);
             if (caller.getIntNumber().equals("")) { //$NON-NLS-1$
                 callerstr = Main.getMessage("unknown"); //$NON-NLS-1$
             } else
