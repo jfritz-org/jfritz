@@ -129,6 +129,7 @@ public class PhoneNumber implements Comparable {
 			mobileMap.put("+49172", "D2");//$NON-NLS-1$, //$NON-NLS-2$
 			mobileMap.put("+49173", "D2");//$NON-NLS-1$, //$NON-NLS-2$
 			mobileMap.put("+49174", "D2");//$NON-NLS-1$, //$NON-NLS-2$
+			mobileMap.put("+49157", "E+");//$NON-NLS-1$, //$NON-NLS-2$
 			mobileMap.put("+49163", "E+");//$NON-NLS-1$, //$NON-NLS-2$
 			mobileMap.put("+49177", "E+");//$NON-NLS-1$, //$NON-NLS-2$
 			mobileMap.put("+49178", "E+");//$NON-NLS-1$, //$NON-NLS-2$
