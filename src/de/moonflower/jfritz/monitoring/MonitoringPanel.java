@@ -18,14 +18,20 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.GradientPaint;
 
+import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JToggleButton;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.TableCellRenderer;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -34,6 +40,7 @@ import java.util.Timer;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.monitoring.CurrentCallsTable;
 import de.moonflower.jfritz.monitoring.UpdateInternetTask;
 
 /**
@@ -60,6 +67,8 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 	private Timer timer;
 
 	private static int count = 0;
+
+	private CurrentCallsTable currentCallsTable;
 
 	/**
 	 * Creates the two monitoring sub panels and initializes everything
@@ -112,7 +121,7 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 		domainAxis.setTickLabelsVisible(false);
 		domainAxis.setTickMarksVisible(false);
 		ValueAxis rangeAxis = new NumberAxis("KB\\s");
-		renderer1.setPaint(new GradientPaint(0,0, new Color(0, 175, 30), 0, 240,
+		renderer1.setPaint(new GradientPaint(0,0, new Color(0, 175, 30), 0, 215,
 				new Color(220, 250, 220), false));
 		XYPlot plot = new XYPlot(data1, domainAxis, rangeAxis, renderer1);
 
@@ -135,7 +144,7 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 		inetChart =  new JFreeChart(Main.getMessage("inet_usgage"), JFreeChart.DEFAULT_TITLE_FONT, plot, true);
 		inetChart.setAntiAlias(true);
 		ChartPanel cp = new ChartPanel(inetChart);
-		cp.setPreferredSize(new Dimension(500, 200));
+		cp.setPreferredSize(new Dimension(500, 175));
 		inetPanel.add(cp, BorderLayout.CENTER);
 
 		 //setup the monitoring toggle button
@@ -167,8 +176,73 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 	private JPanel createPhonePanel(){
 		JPanel phonePanel = new JPanel();
 		phonePanel.setLayout(new BorderLayout());
+		phonePanel.setBorder(new EmptyBorder(0,0,20,0));
 
-		phonePanel.add(new JLabel("This is where the phone monitor should go"), BorderLayout.CENTER);
+		currentCallsTable = new CurrentCallsTable();
+
+		final JTable currentCalls = new JTable(currentCallsTable) {
+			private static final long serialVersionUID = 1;
+
+			public Component prepareRenderer(TableCellRenderer renderer,
+					int rowIndex, int vColIndex) {
+				Component c = super.prepareRenderer(renderer, rowIndex,
+						vColIndex);
+				if (rowIndex % 2 == 0 && !isCellSelected(rowIndex, vColIndex)) {
+					c.setBackground(new Color(255, 255, 200));
+				} else if (!isCellSelected(rowIndex, vColIndex)) {
+					// If not shaded, match the table's background
+					c.setBackground(getBackground());
+				} else {
+					c.setBackground(new Color(204, 204, 255));
+				}
+				return c;
+			}
+		};
+
+		currentCalls.setRowHeight(24);
+		currentCalls.setAutoCreateColumnsFromModel(true);
+
+		/*
+		currentCalls.setFocusable(false);
+		currentCalls.setColumnSelectionAllowed(false);
+		currentCalls.setCellSelectionEnabled(false);
+		currentCalls.setRowSelectionAllowed(true);
+		currentCalls.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+		*/
+
+		currentCalls.getColumnModel().getColumn(0).setMinWidth(20);
+		currentCalls.getColumnModel().getColumn(0).setMaxWidth(50);
+
+		currentCalls.getColumnModel().getColumn(1).setMinWidth(20);
+		//currentCalls.getColumnModel().getColumn(1).setMaxWidth(90);
+
+		currentCalls.getColumnModel().getColumn(2).setMinWidth(20);
+		currentCalls.getColumnModel().getColumn(2).setMaxWidth(90);
+
+		currentCalls.getColumnModel().getColumn(3).setMinWidth(20);
+		currentCalls.getColumnModel().getColumn(3).setMaxWidth(130);
+
+		currentCalls.getColumnModel().getColumn(4).setMinWidth(20);
+		//currentCalls.getColumnModel().getColumn(4).setMaxWidth(140);
+
+		currentCalls.getColumnModel().getColumn(5).setMinWidth(20);
+		currentCalls.getColumnModel().getColumn(5).setMaxWidth(90);
+
+		currentCalls.getColumnModel().getColumn(6).setMinWidth(20);
+		//currentCalls.getColumnModel().getColumn(6).setMaxWidth(200);
+
+		currentCalls.setSize(500, 150);
+
+		JLabel label = new JLabel("Calls in progress");
+		label.setBorder(new EmptyBorder(10,10,10,10));
+		JPanel centeredPanel = new JPanel();
+		centeredPanel.add(label, BorderLayout.CENTER);
+		phonePanel.add(centeredPanel, BorderLayout.NORTH);
+
+		phonePanel.add(new JScrollPane(currentCalls), BorderLayout.CENTER);
+		phonePanel.setPreferredSize(new Dimension(500, 183));
+
 		return phonePanel;
 
 	}
