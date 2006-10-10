@@ -24,8 +24,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.GradientPaint;
 
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JLabel;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -140,7 +143,7 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 		plot.setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
 
 		//finally create the chart object and post it to the panel
-		inetChart =  new JFreeChart(Main.getMessage("inet_usgage"), JFreeChart.DEFAULT_TITLE_FONT, plot, true);
+		inetChart =  new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
 		inetChart.setAntiAlias(true);
 		ChartPanel cp = new ChartPanel(inetChart);
 		cp.setPreferredSize(new Dimension(500, 175));
@@ -157,8 +160,16 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 		}else{
 			enableInetMonitoring.setSelected(false);
 		}
-
 		inetPanel.add(enableInetMonitoring, BorderLayout.SOUTH);
+
+		//create the border for the panel
+		Border lowerEtched = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
+		TitledBorder title = BorderFactory.createTitledBorder(
+			       lowerEtched, Main.getMessage("inet_usgage"));
+		title.setTitleJustification(TitledBorder.CENTER);
+		Border upperPanelBorder = BorderFactory.createCompoundBorder(
+				title, new EmptyBorder(15,0,0,0));
+		inetPanel.setBorder(upperPanelBorder);
 
 		//we don't want to draw the chart every single update time
 		inSeries.setNotify(false);
@@ -233,14 +244,23 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 
 		currentCalls.setSize(500, 150);
 
-		JLabel label = new JLabel("Calls in progress");
-		label.setBorder(new EmptyBorder(10,10,10,10));
-		JPanel centeredPanel = new JPanel();
-		centeredPanel.add(label, BorderLayout.CENTER);
-		phonePanel.add(centeredPanel, BorderLayout.NORTH);
+		//JLabel label = new JLabel("Calls in progress");
+		//label.setBorder(new EmptyBorder(10,10,10,10));
+		//JPanel centeredPanel = new JPanel();
+		//centeredPanel.add(label, BorderLayout.CENTER);
+		//phonePanel.add(centeredPanel, BorderLayout.NORTH);
+
+		//create the Border
+		Border lowerEtched = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
+		TitledBorder title = BorderFactory.createTitledBorder(
+			       lowerEtched, "Calls in Progress");
+		title.setTitleJustification(TitledBorder.CENTER);
+		Border lowerPanelBorder = BorderFactory.createCompoundBorder(
+				title, new EmptyBorder(15,0,5,0));
+		phonePanel.setBorder(lowerPanelBorder);
 
 		phonePanel.add(new JScrollPane(currentCalls), BorderLayout.CENTER);
-		phonePanel.setPreferredSize(new Dimension(500, 183));
+		phonePanel.setPreferredSize(new Dimension(500, 164));
 
 		return phonePanel;
 
@@ -301,7 +321,7 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 		//Create timer for updating the values
 		timer = new Timer();
 		UpdateInternetTask task = new UpdateInternetTask(this);
-		timer.schedule(task, 1000, 950);
+		timer.schedule(task, 1000, 975);
 	}
 
 }
