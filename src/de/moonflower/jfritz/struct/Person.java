@@ -96,7 +96,9 @@ public class Person {
 	}
 
 	public void addNumber(String number, String type) {
-		addNumber(new PhoneNumber(number, type));
+		PhoneNumber pn = new PhoneNumber(number);
+		pn.setType(type);
+		addNumber(pn);
 	}
 
 	public Vector getNumbers() {

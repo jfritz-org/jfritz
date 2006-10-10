@@ -528,6 +528,7 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
+import de.moonflower.jfritz.autoupdate.VersionCheckThread;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.struct.FritzBox;
 import de.moonflower.jfritz.utils.CLIOption;
@@ -537,7 +538,6 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.JFritzUtils;
-import de.moonflower.jfritz.utils.network.VersionCheckThread;
 
 public class Main {
 

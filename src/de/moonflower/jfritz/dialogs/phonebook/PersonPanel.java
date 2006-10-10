@@ -458,7 +458,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 	 */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("add")) { //$NON-NLS-1$
-			person.getNumbers().add(new PhoneNumber("", "")); //$NON-NLS-1$,  //$NON-NLS-2$
+			person.getNumbers().add(new PhoneNumber("")); //$NON-NLS-1$,  //$NON-NLS-2$
 			typeModel.setTypes();
 		} else if (e.getActionCommand().equals("del")) { //$NON-NLS-1$
 			int row = numberTable.getSelectedRow();

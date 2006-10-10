@@ -76,7 +76,7 @@ public class PhoneNumber implements Comparable {
 	}
 
 	/**
-	 * Constructs a PhoneNumber withput a type
+	 * Constructs a PhoneNumber without a type
 	 *
 	 * @param fullNumber
 	 */

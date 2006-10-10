@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 /**
  * @author Brian Jensen

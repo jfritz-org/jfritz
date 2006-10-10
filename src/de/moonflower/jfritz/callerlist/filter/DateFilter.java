@@ -4,17 +4,10 @@
  */
 package de.moonflower.jfritz.callerlist.filter;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+
 import java.util.Date;
-
 import com.toedter.calendar.JDateChooser;
-
-import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.Call;
-import de.moonflower.jfritz.utils.Debug;
 
 /**
  * Date filter for call list

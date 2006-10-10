@@ -1,4 +1,4 @@
-package de.moonflower.jfritz.utils.network;
+package de.moonflower.jfritz.autoupdate;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -18,7 +18,6 @@ import javax.swing.JOptionPane;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
-import de.moonflower.jfritz.autoupdate.UpdateFile;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
