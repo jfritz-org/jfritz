@@ -1015,6 +1015,18 @@ public class Main {
 	}
 
 	/**
+	 * Sets a property to a specific value
+	 *
+	 * @param property
+	 *            Property to be set
+	 * @param value
+	 *            Value of property
+	 */
+	public static void setProperty(String property, boolean value) {
+		properties.setProperty(property, String.valueOf(value));
+	}
+
+	/**
 	 * Removes a property
 	 *
 	 * @param property

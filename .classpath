@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="tests"/>
 	<classpathentry kind="lib" path="lang"/>
-	<classpathentry sourcepath="ECLIPSE_HOME/plugins/org.eclipse.jdt.source_3.1.1/src/org.junit_3.8.1/junitsrc.zip" kind="var" path="JUNIT_HOME/junit.jar"/>
+	<classpathentry kind="var" path="JUNIT_HOME/junit.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jdic.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jacob.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jfreereport-0.8.6-2.jar"/>

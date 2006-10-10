@@ -12,6 +12,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Calendar;
@@ -19,6 +21,7 @@ import java.util.Date;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -28,6 +31,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -56,12 +60,15 @@ import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 
 /**
  * @author Arno Willig
- *
+ * @author marc
  */
 
+//TODO evtl start und enddate richtig setzten, wenn man einen datefilter aktiviert und
+//zeilen selektiert hat
 //TODO write and read the Properties one time at creation and disposion
 public class CallerListPanel extends JPanel implements ActionListener,
 KeyListener, PropertyChangeListener {
+
 	class PopupListener extends MouseAdapter {
 		JPopupMenu popupMenu;
 
@@ -78,8 +85,8 @@ KeyListener, PropertyChangeListener {
 
 		public void mouseClicked(MouseEvent e) {
 
-			if (e.getClickCount() > 1
-					&& e.getComponent().getClass() != JToggleButton.class) {
+			if ((e.getClickCount() > 1)
+					&& (e.getComponent().getClass() != JToggleButton.class)) {
 				JFritz.getJframe().activatePhoneBook();
 			}
 		}
@@ -93,14 +100,44 @@ KeyListener, PropertyChangeListener {
 		}
 	}
 
+	private static final String FILTER_CALLIN = "filter_callin";
+
+	private static final String FILTER_CALLOUT = "filter_callout";
+
+	private static final String FILTER_NUMBER = "filter_number";
+
+	private static final String FILTER_FIXED = "filter_fixed";
+
+	private static final String FILTER_HANDY = "filter_handy";
+
+	private static final String FILTER_DATE = "filter_date";
+
+	private static final String FILTER_SIP = "filter_sip";
+
+	private static final String FILTER_CALLBYCALL = "filter_callbycall";
+
+	private static final String FILTER_COMMENT = "filter_comment";
+
+	private static final String DELETE_ENTRIES = "delete_entries";
+
+	private static final String DELETE_ENTRY = "delete_entry";
+
+	private static final String FALSE = "false";
+
+	private static final String FILTER_SEARCH = "filter.search";
+
+	public static final String FILTER_CALLINFAILED = "filter.callinfailed";
+
 	private static final long serialVersionUID = 1;
+
+	private static final String FILTER_SEARCH_TEXT = null;
 
 	private CallerTable callerTable;
 
 	private CallerList callerList;
 
 	private JToggleButton dateFilterButton, callByCallFilterButton,
-	callInFilterButton, calloutFilterButton, callInFailedFilterButton,
+	callInFilterButton, callOutFilterButton, callInFailedFilterButton,
 	numberFilterButton, fixedFilterButton, handyFilterButton,
 	sipFilterButton, commentFilterButton, searchFilterButton;
 
@@ -140,13 +177,36 @@ KeyListener, PropertyChangeListener {
 
 	private JButton applyFilterButton;
 
-	public CallerListPanel(CallerList callerList) {
+	private WindowAdapter wl;
+	private JFrame parent;
+	public CallerListPanel(CallerList callerList, JFrame parent) {
 		super();
+		this.parent = parent;
 		this.callerList = callerList;
 		setLayout(new BorderLayout());
 		add(createToolBar(), BorderLayout.NORTH);
 		add(createCallerListTable(), BorderLayout.CENTER);
+		//FIXME warum klappt das nicht?
+		wl = new WindowAdapter() {
+			public void windowClosing(WindowEvent evt) {
+				cleanup();
+				Debug.msg("adsdoofdoofdoofasdf");
+			}
+		};
+		Debug.msg(parent.toString());
+	//	parent.addWindowListener(wl);
 	}
+	public void addNotify() {
+        super.addNotify();
+        System.out.println("addNotify");
+        parent.addWindowListener(wl);
+    }
+
+    public void removeNotify() {
+        super.removeNotify();
+        System.out.println("removeNotify");
+        parent.removeWindowListener(wl);
+    }
 
 	/**
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -157,12 +217,16 @@ KeyListener, PropertyChangeListener {
 		callerList.update();
 	}
 
+	protected void cleanup() {
+		System.out.println("cleanup called");
+	}
+
 	/*
 	 * disable all filters and hide the search and date stuff
 	 */
 	private void clearAllFilter() {
 		callInFilterButton.setSelected(true);
-		calloutFilterButton.setSelected(true);
+		callOutFilterButton.setSelected(true);
 		callInFailedFilterButton.setSelected(true);
 		numberFilterButton.setSelected(true);
 		fixedFilterButton.setSelected(true);
@@ -278,21 +342,17 @@ KeyListener, PropertyChangeListener {
 		callInFilterButton = new JToggleButton(getImage("callin_grey.png"), //$NON-NLS-1$
 				true);
 		callInFilterButton.setSelectedIcon(getImage("callin.png")); //$NON-NLS-1$
-		callInFilterButton.setActionCommand("filter_callin"); //$NON-NLS-1$
+		callInFilterButton.setActionCommand(FILTER_CALLIN);
 		callInFilterButton.addActionListener(this);
-		callInFilterButton.setToolTipText(Main.getMessage("filter_callin")); //$NON-NLS-1$
-		callInFilterButton.setSelected(!JFritzUtils.parseBoolean(Main
-				.getProperty("filter.callin", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		callInFilterButton.setToolTipText(Main.getMessage(FILTER_CALLIN)); //$NON-NLS-1$
 
 		callInFailedFilterButton = new JToggleButton(
 				getImage("callinfailed_grey.png"), true); //$NON-NLS-1$
 		callInFailedFilterButton.setSelectedIcon(getImage("callinfailed.png")); //$NON-NLS-1$
-		callInFailedFilterButton.setActionCommand("filter_callinfailed"); //$NON-NLS-1$
+		callInFailedFilterButton.setActionCommand(FILTER_CALLINFAILED);
 		callInFailedFilterButton.addActionListener(this);
 		callInFailedFilterButton.setToolTipText(Main
 				.getMessage("filter_callinfailed")); //$NON-NLS-1$
-		callInFailedFilterButton.setSelected(!JFritzUtils.parseBoolean(Main
-				.getProperty("filter.callinfailed", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		JPopupMenu missedPopupMenu = new JPopupMenu();
 		JMenuItem menuItem;
@@ -310,48 +370,38 @@ KeyListener, PropertyChangeListener {
 		MouseAdapter popupListener = new PopupListener(missedPopupMenu);
 		callInFailedFilterButton.addMouseListener(popupListener);
 
-		calloutFilterButton = new JToggleButton(getImage("callout_grey.png"), //$NON-NLS-1$
+		callOutFilterButton = new JToggleButton(getImage("callout_grey.png"), //$NON-NLS-1$
 				true);
-		calloutFilterButton.setSelectedIcon(getImage("callout.png")); //$NON-NLS-1$
-		calloutFilterButton.setActionCommand("filter_callout"); //$NON-NLS-1$
-		calloutFilterButton.addActionListener(this);
-		calloutFilterButton.setToolTipText(Main.getMessage("filter_callout")); //$NON-NLS-1$
-		calloutFilterButton.setSelected(!JFritzUtils.parseBoolean(Main
-				.getProperty("filter.callout", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		callOutFilterButton.setSelectedIcon(getImage("callout.png")); //$NON-NLS-1$
+		callOutFilterButton.setActionCommand(FILTER_CALLOUT); //$NON-NLS-1$
+		callOutFilterButton.addActionListener(this);
+		callOutFilterButton.setToolTipText(Main.getMessage(FILTER_CALLOUT));
 
 		numberFilterButton = new JToggleButton(
 				getImage("phone_nonumber_grey.png"), true); //$NON-NLS-1$
 		numberFilterButton.setSelectedIcon(getImage("phone_nonumber.png")); //$NON-NLS-1$
-		numberFilterButton.setActionCommand("filter_number"); //$NON-NLS-1$
+		numberFilterButton.setActionCommand(FILTER_NUMBER);
 		numberFilterButton.addActionListener(this);
-		numberFilterButton.setToolTipText(Main.getMessage("filter_number")); //$NON-NLS-1$
-		numberFilterButton.setSelected(!JFritzUtils.parseBoolean(Main
-				.getProperty("filter.number", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		numberFilterButton.setToolTipText(Main.getMessage(FILTER_NUMBER)); //$NON-NLS-1$
 
 		fixedFilterButton = new JToggleButton(getImage("phone_grey.png"), true); //$NON-NLS-1$
 		fixedFilterButton.setSelectedIcon(getImage("phone.png")); //$NON-NLS-1$
-		fixedFilterButton.setActionCommand("filter_fixed"); //$NON-NLS-1$
+		fixedFilterButton.setActionCommand(FILTER_FIXED);
 		fixedFilterButton.addActionListener(this);
-		fixedFilterButton.setToolTipText(Main.getMessage("filter_fixed")); //$NON-NLS-1$
-		fixedFilterButton.setSelected(!JFritzUtils.parseBoolean(Main
-				.getProperty("filter.fixed", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		fixedFilterButton.setToolTipText(Main.getMessage(FILTER_FIXED)); //$NON-NLS-1$
 
 		handyFilterButton = new JToggleButton(getImage("handy_grey.png"), true); //$NON-NLS-1$
 		handyFilterButton.setSelectedIcon(getImage("handy.png")); //$NON-NLS-1$
-		handyFilterButton.setActionCommand("filter_handy"); //$NON-NLS-1$
+		handyFilterButton.setActionCommand(FILTER_HANDY);
 		handyFilterButton.addActionListener(this);
-		handyFilterButton.setToolTipText(Main.getMessage("filter_handy")); //$NON-NLS-1$
-		handyFilterButton.setSelected(!JFritzUtils.parseBoolean(Main
-				.getProperty("filter.handy", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		handyFilterButton.setToolTipText(Main.getMessage(FILTER_HANDY)); //$NON-NLS-1$
 
 		dateFilterButton = new JToggleButton(getImage("calendar_grey.png"), //$NON-NLS-1$
 				true);
 		dateFilterButton.setSelectedIcon(getImage("calendar.png")); //$NON-NLS-1$
-		dateFilterButton.setActionCommand("filter_date"); //$NON-NLS-1$
+		dateFilterButton.setActionCommand(FILTER_DATE); //$NON-NLS-1$
 		dateFilterButton.addActionListener(this);
-		dateFilterButton.setToolTipText(Main.getMessage("filter_date")); //$NON-NLS-1$
-		dateFilterButton.setSelected(!JFritzUtils.parseBoolean(Main
-				.getProperty("filter.date", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		dateFilterButton.setToolTipText(Main.getMessage(FILTER_DATE));
 		// callerList.getDateFilter().updateDateFilter()
 
 		setDateFilterText();
@@ -387,44 +437,37 @@ KeyListener, PropertyChangeListener {
 
 		sipFilterButton = new JToggleButton(getImage("world_grey.png"), true); //$NON-NLS-1$
 		sipFilterButton.setSelectedIcon(getImage("world.png")); //$NON-NLS-1$
-		sipFilterButton.setActionCommand("filter_sip"); //$NON-NLS-1$
+		sipFilterButton.setActionCommand(FILTER_SIP); //$NON-NLS-1$
 		sipFilterButton.addActionListener(this);
-		sipFilterButton.setToolTipText(Main.getMessage("filter_sip")); //$NON-NLS-1$
-		sipFilterButton.setSelected(!JFritzUtils.parseBoolean(Main.getProperty(
-				"filter.sip", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		sipFilterButton.setToolTipText(Main.getMessage(FILTER_SIP)); //$NON-NLS-1$
 
 		callByCallFilterButton = new JToggleButton(
 				getImage("callbycall_grey.png"), true); //$NON-NLS-1$
 		callByCallFilterButton.setSelectedIcon(getImage("callbycall.png")); //$NON-NLS-1$
-		callByCallFilterButton.setActionCommand("filter_callbycall"); //$NON-NLS-1$
+		callByCallFilterButton.setActionCommand(FILTER_CALLBYCALL); //$NON-NLS-1$
 		callByCallFilterButton.addActionListener(this);
 		callByCallFilterButton.setToolTipText(Main
-				.getMessage("filter_callbycall")); //$NON-NLS-1$
-		callByCallFilterButton.setSelected(!JFritzUtils.parseBoolean(Main
-				.getProperty("filter.callbycall", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+				.getMessage(FILTER_CALLBYCALL)); //$NON-NLS-1$
 
 		commentFilterButton = new JToggleButton(getImage("commentFilter.png"), //$NON-NLS-1$
 				true);
 		commentFilterButton.setSelectedIcon(getImage("commentFilter.png")); //$NON-NLS-1$
-		commentFilterButton.setActionCommand("filter_comment"); //$NON-NLS-1$
+		commentFilterButton.setActionCommand(FILTER_COMMENT); //$NON-NLS-1$
 		commentFilterButton.addActionListener(this);
-		commentFilterButton.setToolTipText(Main.getMessage("filter_comment")); //$NON-NLS-1$
-		commentFilterButton.setSelected(!JFritzUtils.parseBoolean(Main
-				.getProperty("filter.comment", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		commentFilterButton.setToolTipText(Main.getMessage(FILTER_COMMENT)); //$NON-NLS-1$
 
 		searchFilterButton = new JToggleButton(getImage("searchfilter.png"), //$NON-NLS-1$
 				true);
 		searchFilterButton.setSelectedIcon(getImage("searchfilter.png")); //$NON-NLS-1$
-		searchFilterButton.setActionCommand("filter_search"); //$NON-NLS-1$
+		searchFilterButton.setActionCommand(FILTER_SEARCH); //$NON-NLS-1$
 		searchFilterButton.addActionListener(this);
-		searchFilterButton.setToolTipText(Main.getMessage("filter_search")); //$NON-NLS-1$
-		searchFilterButton.setSelected(!JFritzUtils.parseBoolean(Main
-				.getProperty("filter.search", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		searchFilterButton.setToolTipText(Main.getMessage(FILTER_SEARCH)); //$NON-NLS-1$
+		searchFilterTextField = new JTextField(10);
 
 		deleteEntriesButton = new JButton();
-		deleteEntriesButton.setToolTipText(Main
-				.getMessage("delete_entries").replaceAll("%N", "")); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-		deleteEntriesButton.setActionCommand("delete_entry"); //$NON-NLS-1$
+		deleteEntriesButton.setToolTipText(Main.getMessage(DELETE_ENTRIES)
+				.replaceAll("%N", "")); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+		deleteEntriesButton.setActionCommand(DELETE_ENTRY); //$NON-NLS-1$
 		deleteEntriesButton.addActionListener(this);
 		deleteEntriesButton.setIcon(getImage("delete.png")); //$NON-NLS-1$
 		deleteEntriesButton.setFocusPainted(false);
@@ -441,9 +484,6 @@ KeyListener, PropertyChangeListener {
 
 		searchLabel = new JLabel(Main.getMessage("search") + ": ");//$NON-NLS-1$,  //$NON-NLS-2$
 		searchLabel.setVisible(false);
-		searchFilterTextField = new JTextField(Main.getProperty(
-				"filter.search", ""), //$NON-NLS-1$,  //$NON-NLS-2$
-				10);
 		searchFilterTextField.addKeyListener(this);
 		searchFilterTextField.setVisible(false);
 
@@ -459,7 +499,7 @@ KeyListener, PropertyChangeListener {
 		/** **********add all Buttons and stuff to the lowerToolbar************** */
 		lowerToolBar.add(callInFilterButton);
 		lowerToolBar.add(callInFailedFilterButton);
-		lowerToolBar.add(calloutFilterButton);
+		lowerToolBar.add(callOutFilterButton);
 		lowerToolBar.add(numberFilterButton);
 		lowerToolBar.add(fixedFilterButton);
 		lowerToolBar.add(handyFilterButton);
@@ -481,16 +521,17 @@ KeyListener, PropertyChangeListener {
 		lowerToolBar.addSeparator();
 		lowerToolBar.add(deleteEntriesButton);
 		toolbarPanel.add(lowerToolBar, BorderLayout.SOUTH);
-
+		readButtonStatus();
 		return toolbarPanel;
 	}
 
 	public void disableDeleteEntriesButton() {
-		deleteEntriesButton.setToolTipText(Main
-				.getMessage("delete_entries").replaceAll("%N", "")); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+		deleteEntriesButton.setToolTipText(Main.getMessage(DELETE_ENTRIES)
+				.replaceAll("%N", "")); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 		deleteEntriesButton.setEnabled(false);
 	}
 
+	//TODO reverseLookup nach Phonebook verschieben
 	private void doReverseLookup() {
 		int rows[] = callerTable.getSelectedRows();
 		if (rows.length > 0) { // nur für markierte Einträge ReverseLookup
@@ -510,13 +551,13 @@ KeyListener, PropertyChangeListener {
 		}
 	}
 
-	public JToggleButton getCallByCallButton() {
-		return callByCallFilterButton;
-	}
-
 	public CallerList getCallerList() {
 		return callerList;
 	}
+
+	//public JToggleButton getCallByCallButton() {
+	//	return callByCallFilterButton;
+	//}
 
 	public CallerTable getCallerTable() {
 		return callerTable;
@@ -528,163 +569,43 @@ KeyListener, PropertyChangeListener {
 						"/de/moonflower/jfritz/resources/images/" + filename))); //$NON-NLS-1$
 	}
 
-	// TODO make int constants instaed of strings and use switch
 	private void handleAction(String command) {
-		if (command.equals("filter_callin")) { //$NON-NLS-1$
-			if (!callInFilterButton.isSelected()) {
-				callInFilter = new CallInFilter();
-				callerList.addFilter(callInFilter);
-			} else
-				callerList.removeFilter(callInFilter);
+		if (command.equals(FILTER_CALLIN)) { //$NON-NLS-1$
+			syncCallInFilterWithButton();
 			return;
 		}
 		if (command.equals("filter_callinfailed")) { //$NON-NLS-1$
-			if (!callInFailedFilterButton.isSelected()) {
-				callInFailedFilter = new CallInFailedFilter();
-				callerList.addFilter(callInFailedFilter);
-			} else
-				callerList.removeFilter(callInFailedFilter);
-
+			syncCallInFailedFilterWithButton();
 			return;
 		}
-		if (command.equals("filter_callout")) { //$NON-NLS-1$
-			if (!calloutFilterButton.isSelected()) {
-				callOutFilter = new CallOutFilter();
-				callerList.addFilter(callOutFilter);
-			} else
-				callerList.removeFilter(callOutFilter);
-
+		if (command.equals(FILTER_CALLOUT)) { //$NON-NLS-1$
+			syncCallOutFilterWithButton();
 			return;
 		}
-		if (command.equals("filter_comment")) { //$NON-NLS-1$
-			if (!commentFilterButton.isSelected()) {
-				commentFilter = new CommentFilter();
-				callerList.addFilter(commentFilter);
-			} else
-				callerList.removeFilter(commentFilter);
+		if (command.equals(FILTER_COMMENT)) { //$NON-NLS-1$
+			syncCommentFilterWithButton();
 			return;
 		}
-		if (command.equals("filter_callinfailed_allWithoutComment")) { //$NON-NLS-1$
-			if (!callInFailedFilterButton.isSelected())
-				callInFailedFilterButton.doClick();
-			if (callInFilterButton.isSelected())
-				callInFilterButton.doClick();
-			if (calloutFilterButton.isSelected())
-				calloutFilterButton.doClick();
-			if (!sipFilterButton.isSelected())
-				sipFilterButton.doClick();
-			if (!handyFilterButton.isSelected())
-				handyFilterButton.doClick();
-			if (!dateFilterButton.isSelected())
-				dateFilterButton.doClick();
-			if (!searchFilterButton.isSelected())
-				searchFilterButton.doClick();
-			if (!callByCallFilterButton.isSelected())
-				callByCallFilterButton.doClick();
-			if (commentFilterButton.isSelected())
-				commentFilterButton.doClick();
-			if (!fixedFilterButton.isSelected())
-				fixedFilterButton.doClick();
-			if (!numberFilterButton.isSelected())
-				numberFilterButton.doClick();
-			callerList.removeFilter(commentFilter);
-			commentFilter = new NoCommentFilter();
-			callerList.addFilter(commentFilter);
-			return;
-
-		}
-		if (command.equals("filter_callinfailed_allWithoutCommentLastWeek")) { //$NON-NLS-1$
-			if (!callInFailedFilterButton.isSelected())
-				callInFailedFilterButton.doClick();
-			if (callInFilterButton.isSelected())
-				callInFilterButton.doClick();
-			if (calloutFilterButton.isSelected())
-				calloutFilterButton.doClick();
-			if (!sipFilterButton.isSelected())
-				sipFilterButton.doClick();
-			if (!handyFilterButton.isSelected())
-				handyFilterButton.doClick();
-			if (!dateFilterButton.isSelected())
-				dateFilterButton.doClick();
-			if (!searchFilterButton.isSelected())
-				searchFilterButton.doClick();
-			if (!callByCallFilterButton.isSelected())
-				callByCallFilterButton.doClick();
-			if (commentFilterButton.isSelected())
-				commentFilterButton.doClick();
-			if (!fixedFilterButton.isSelected())
-				fixedFilterButton.doClick();
-			if (!numberFilterButton.isSelected())
-				numberFilterButton.doClick();
-			callerList.removeFilter(commentFilter);
-			commentFilter = new NoCommentFilter();
-			callerList.addFilter(commentFilter);
-
-			// dateFilter stuff for last week
-			callerList.removeFilter(dateFilter);
-			dateFilterButton.setSelected(false);
-			Calendar cal = Calendar.getInstance();
-			Date today = cal.getTime();
-			cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - 7);
-			Date yesterday = cal.getTime();
-			dateFilter = new DateFilter(yesterday, today);
-			callerList.addFilter(dateFilter);
-			startDateChooser.setDate(yesterday);
-			endDateChooser.setDate(today);
-			startDateChooser.setVisible(true);
-			endDateChooser.setVisible(true);
-
+		if (command.equals(FILTER_NUMBER)) { //$NON-NLS-1$
+			syncNumberFilterWithButton();
 			return;
 		}
-		if (command.equals("filter_number")) { //$NON-NLS-1$
-			if (!numberFilterButton.isSelected()) {
-				noNumberFilter = new NoNumberFilter();
-				callerList.addFilter(noNumberFilter);
-			} else
-				callerList.removeFilter(noNumberFilter);
+		if (command.equals(FILTER_FIXED)) { //$NON-NLS-1$
+			syncFixedFilterWithButton();
 			return;
 		}
-		if (command.equals("filter_fixed")) { //$NON-NLS-1$
-			if (!fixedFilterButton.isSelected()) {
-				fixedFilter = new FixedFilter();
-				callerList.addFilter(fixedFilter);
-			} else
-				callerList.removeFilter(fixedFilter);
-			return;
-		}
-		if (command.equals("filter_handy")) { //$NON-NLS-1$
-			if (!handyFilterButton.isSelected()) {
-				handyFilter = new HandyFilter();
-				callerList.addFilter(handyFilter);
-			} else
-				callerList.removeFilter(handyFilter);
+		if (command.equals(FILTER_HANDY)) { //$NON-NLS-1$
+			syncHandyFilterWithButton();
 			return;
 		}
 
-		if (command.equals("filter_search")) {
-			if (searchFilterButton.isSelected()) {
-				searchFilterTextField.setVisible(false);
-				searchLabel.setVisible(false);
-			} else {
-				searchFilterTextField.setVisible(true);
-				searchLabel.setVisible(true);
-			}
+		if (command.equals(FILTER_SEARCH)) {
+			syncSearchFilterWithButton();
 			return;
 		}
 
-		if (command.equals("filter_date")) { //$NON-NLS-1$
-			if (!dateFilterButton.isSelected()) {
-				// dateFilter = new DateFilter(startDateChooser.getDate(),
-				// endDateChooser.getDate());
-				// callerList.addFilter(dateFilter);
-				startDateChooser.setVisible(true);
-				endDateChooser.setVisible(true);
-
-			} else {
-				startDateChooser.setVisible(false);
-				endDateChooser.setVisible(false);
-				callerList.removeFilter(dateFilter);
-			}
+		if (command.equals(FILTER_DATE)) { //$NON-NLS-1$
+			syncDateFilterWithButton();
 			return;
 		}
 
@@ -746,30 +667,113 @@ KeyListener, PropertyChangeListener {
 			startDateChooser.setVisible(true);
 			endDateChooser.setVisible(true);
 		}
-		if (command.equals("filter_sip")) { //$NON-NLS-1$
+		if (command.equals("filter_callinfailed_allWithoutComment")) { //$NON-NLS-1$
+			if (!callInFailedFilterButton.isSelected()) {
+				callInFailedFilterButton.doClick();
+			}
+			if (callInFilterButton.isSelected()) {
+				callInFilterButton.doClick();
+			}
+			if (callOutFilterButton.isSelected()) {
+				callOutFilterButton.doClick();
+			}
 			if (!sipFilterButton.isSelected()) {
-				sipFilter = new SipFilter(callerList
-						.getSelectedOrSipProviders());
-				callerList.addFilter(sipFilter);
-			} else
-				callerList.removeFilter(sipFilter);
+				sipFilterButton.doClick();
+			}
+			if (!handyFilterButton.isSelected()) {
+				handyFilterButton.doClick();
+			}
+			if (!dateFilterButton.isSelected()) {
+				dateFilterButton.doClick();
+			}
+			if (!searchFilterButton.isSelected()) {
+				searchFilterButton.doClick();
+			}
+			if (!callByCallFilterButton.isSelected()) {
+				callByCallFilterButton.doClick();
+			}
+			if (commentFilterButton.isSelected()) {
+				commentFilterButton.doClick();
+			}
+			if (!fixedFilterButton.isSelected()) {
+				fixedFilterButton.doClick();
+			}
+			if (!numberFilterButton.isSelected()) {
+				numberFilterButton.doClick();
+			}
+			callerList.removeFilter(commentFilter);
+			commentFilter = new NoCommentFilter();
+			callerList.addFilter(commentFilter);
+			return;
+
+		}
+		if (command.equals("filter_callinfailed_allWithoutCommentLastWeek")) { //$NON-NLS-1$
+			if (!callInFailedFilterButton.isSelected()) {
+				callInFailedFilterButton.doClick();
+			}
+			if (callInFilterButton.isSelected()) {
+				callInFilterButton.doClick();
+			}
+			if (callOutFilterButton.isSelected()) {
+				callOutFilterButton.doClick();
+			}
+			if (!sipFilterButton.isSelected()) {
+				sipFilterButton.doClick();
+			}
+			if (!handyFilterButton.isSelected()) {
+				handyFilterButton.doClick();
+			}
+			if (!dateFilterButton.isSelected()) {
+				dateFilterButton.doClick();
+			}
+			if (!searchFilterButton.isSelected()) {
+				searchFilterButton.doClick();
+			}
+			if (!callByCallFilterButton.isSelected()) {
+				callByCallFilterButton.doClick();
+			}
+			if (commentFilterButton.isSelected()) {
+				commentFilterButton.doClick();
+			}
+			if (!fixedFilterButton.isSelected()) {
+				fixedFilterButton.doClick();
+			}
+			if (!numberFilterButton.isSelected()) {
+				numberFilterButton.doClick();
+			}
+			callerList.removeFilter(commentFilter);
+			commentFilter = new NoCommentFilter();
+			callerList.addFilter(commentFilter);
+
+			// dateFilter stuff for last week
+			callerList.removeFilter(dateFilter);
+			dateFilterButton.setSelected(false);
+			Calendar cal = Calendar.getInstance();
+			Date today = cal.getTime();
+			cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - 7);
+			Date yesterday = cal.getTime();
+			dateFilter = new DateFilter(yesterday, today);
+			callerList.addFilter(dateFilter);
+			startDateChooser.setDate(yesterday);
+			endDateChooser.setDate(today);
+			startDateChooser.setVisible(true);
+			endDateChooser.setVisible(true);
+
 			return;
 		}
-		if (command.equals("filter_callbycall")) { //$NON-NLS-1$
-			if (!callByCallFilterButton.isSelected()) {
-				callByCallFilter = new CallByCallFilter(callerList
-						.getSelectedCbCProviders());
-				callerList.addFilter(callByCallFilter);
-			} else {
-				callerList.removeFilter(callByCallFilter);
-			}
+		if (command.equals(FILTER_SIP)) { //$NON-NLS-1$
+			syncSipFilterWithButton();
+			return;
+		}
+		if (command.equals(FILTER_CALLBYCALL)) { //$NON-NLS-1$
+			syncCallByCallFilterWithButton();
 			return;
 		}
 		if (command.equals("clearFilter")) { //$NON-NLS-1$
 			clearAllFilter();
 			return;
 		}
-		if (command.equals("delete_entry")) { //$NON-NLS-1$
+		if (command.equals(DELETE_ENTRY)) { //$NON-NLS-1$
 			callerList.removeEntries();
 			return;
 		}
@@ -793,8 +797,9 @@ KeyListener, PropertyChangeListener {
 			Call call = callerList.getSelectedCall();
 			if (call != null) {
 				PhoneNumber number = call.getPhoneNumber();
-				if ((number != null) && (call != null))
+				if ((number != null) && (call != null)) {
 					JFritzClipboard.copy(number.convertToNationalNumber());
+				}
 			}
 			// JFritz.getJframe().copyNumberToClipboard();
 			return;
@@ -803,8 +808,9 @@ KeyListener, PropertyChangeListener {
 			Call call = callerList.getSelectedCall();
 			if (call != null) {
 				Person person = call.getPerson();
-				if (person != null)
+				if (person != null) {
 					JFritzClipboard.copy(person.getAddress());
+				}
 			}
 			// JFritz.getJframe().copyAddressToClipboard();
 
@@ -860,6 +866,68 @@ KeyListener, PropertyChangeListener {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 *      invoced from the JDateChoose components
+	 */
+	public void propertyChange(PropertyChangeEvent evt) {
+		handleAction("apply_filter");
+		callerList.update();
+	}
+
+	private void readButtonStatus() {
+		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_COMMENT, FALSE))) {
+			commentFilterButton.setSelected(true);
+			syncCommentFilterWithButton();
+		}
+		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_DATE, FALSE))) {
+			dateFilterButton.setSelected(true);
+			syncDateFilterWithButton();
+		}
+		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_SIP, FALSE))) {
+			sipFilterButton.setSelected(true);
+			syncSipFilterWithButton();
+		}
+		if (!JFritzUtils.parseBoolean(Main
+				.getProperty(FILTER_CALLBYCALL, FALSE))) {
+			callByCallFilterButton.setSelected(true);
+			syncCallByCallFilterWithButton();
+		}
+		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_CALLOUT, FALSE))) {
+			callOutFilterButton.setSelected(true);
+			syncCallOutFilterWithButton();
+		}
+		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_NUMBER, FALSE))) {
+			numberFilterButton.setSelected(true);
+			syncNumberFilterWithButton();
+		}
+		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_FIXED, FALSE))) {
+			fixedFilterButton.setSelected(true);
+			syncFixedFilterWithButton();
+		}
+		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_HANDY, FALSE))) {
+			handyFilterButton.setSelected(true);
+			syncHandyFilterWithButton();
+		}
+		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_CALLIN, FALSE))) {
+			callInFilterButton.setSelected(true);
+			syncCallInFilterWithButton();
+		}
+		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_CALLINFAILED,
+				FALSE))) {
+			callInFailedFilterButton.setSelected(true);
+			syncCallInFailedFilterWithButton();
+		}
+		//searchFilterTextField.setText(Main.getProperty(FILTER_SEARCH_TEXT, ""));
+		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_SEARCH, FALSE))) {
+			searchFilterButton.setSelected(true);
+			syncSearchFilterWithButton();
+		}
+		callerList.update();
+	}
+
 	public void setCallerList(CallerList callerList) {
 		this.callerList = callerList;
 	}
@@ -882,14 +950,13 @@ KeyListener, PropertyChangeListener {
 	}
 
 	public void setDeleteEntriesButton(int rows) {
-		deleteEntriesButton
-		.setToolTipText(Main
-				.getMessage("delete_entries").replaceAll("%N", Integer.toString(rows))); //$NON-NLS-1$,  //$NON-NLS-2$
+		deleteEntriesButton.setToolTipText(Main.getMessage(DELETE_ENTRIES)
+				.replaceAll("%N", Integer.toString(rows))); //$NON-NLS-1$,  //$NON-NLS-2$
 		deleteEntriesButton.setEnabled(true);
 	}
 
 	public void setDeleteEntryButton() {
-		deleteEntriesButton.setToolTipText(Main.getMessage("delete_entry")); //$NON-NLS-1$
+		deleteEntriesButton.setToolTipText(Main.getMessage(DELETE_ENTRY)); //$NON-NLS-1$
 		deleteEntriesButton.setEnabled(true);
 	}
 
@@ -900,14 +967,129 @@ KeyListener, PropertyChangeListener {
 		deleteEntriesButton.setEnabled(true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
-	 *      invoced from the JDateChoose components
-	 */
-	public void propertyChange(PropertyChangeEvent evt) {
-		handleAction("apply_filter");
-		callerList.update();
+	private void syncCallByCallFilterWithButton() {
+		if (!callByCallFilterButton.isSelected()) {
+			callByCallFilter = new CallByCallFilter(callerList
+					.getSelectedCbCProviders());
+			callerList.addFilter(callByCallFilter);
+		} else {
+			callerList.removeFilter(callByCallFilter);
+		}
 	}
+
+	private void syncCallInFailedFilterWithButton() {
+		if (!callInFailedFilterButton.isSelected()) {
+			callInFailedFilter = new CallInFailedFilter();
+			callerList.addFilter(callInFailedFilter);
+		} else {
+			callerList.removeFilter(callInFailedFilter);
+		}
+	}
+
+	private void syncCallInFilterWithButton() {
+		if (!callInFilterButton.isSelected()) {
+			callInFilter = new CallInFilter();
+			callerList.addFilter(callInFilter);
+		} else {
+			callerList.removeFilter(callInFilter);
+		}
+	}
+
+	private void syncCallOutFilterWithButton() {
+		if (!callOutFilterButton.isSelected()) {
+			callOutFilter = new CallOutFilter();
+			callerList.addFilter(callOutFilter);
+		} else {
+			callerList.removeFilter(callOutFilter);
+		}
+	}
+
+	private void syncCommentFilterWithButton() {
+		if (!commentFilterButton.isSelected()) {
+			commentFilter = new CommentFilter();
+			callerList.addFilter(commentFilter);
+		} else {
+			callerList.removeFilter(commentFilter);
+		}
+	}
+
+	private void syncDateFilterWithButton() {
+		if (!dateFilterButton.isSelected()) {
+			// dateFilter = new DateFilter(startDateChooser.getDate(),
+			// endDateChooser.getDate());
+			// callerList.addFilter(dateFilter);
+			startDateChooser.setVisible(true);
+			endDateChooser.setVisible(true);
+
+		} else {
+			startDateChooser.setVisible(false);
+			endDateChooser.setVisible(false);
+			callerList.removeFilter(dateFilter);
+		}
+	}
+
+	private void syncFixedFilterWithButton() {
+		if (!fixedFilterButton.isSelected()) {
+			fixedFilter = new FixedFilter();
+			callerList.addFilter(fixedFilter);
+		} else {
+			callerList.removeFilter(fixedFilter);
+		}
+	}
+
+	private void syncHandyFilterWithButton() {
+		if (!handyFilterButton.isSelected()) {
+			handyFilter = new HandyFilter();
+			callerList.addFilter(handyFilter);
+		} else {
+			callerList.removeFilter(handyFilter);
+		}
+	}
+
+	private void syncNumberFilterWithButton() {
+		if (!numberFilterButton.isSelected()) {
+			noNumberFilter = new NoNumberFilter();
+			callerList.addFilter(noNumberFilter);
+		} else {
+			callerList.removeFilter(noNumberFilter);
+		}
+	}
+
+	private void syncSearchFilterWithButton() {
+		if (searchFilterButton.isSelected()) {
+			searchFilterTextField.setVisible(false);
+			searchLabel.setVisible(false);
+		} else {
+			searchFilterTextField.setVisible(true);
+			searchLabel.setVisible(true);
+		}
+	}
+
+	private void syncSipFilterWithButton() {
+		if (!sipFilterButton.isSelected()) {
+			sipFilter = new SipFilter(callerList.getSelectedOrSipProviders());
+			callerList.addFilter(sipFilter);
+		} else {
+			callerList.removeFilter(sipFilter);
+		}
+	}
+
+	public void writeButtonStatus() {
+		Main.setProperty(FILTER_SEARCH_TEXT, searchFilterTextField.getText());
+		Main.setProperty(FILTER_SEARCH, searchFilterButton.isSelected());
+		Main.setProperty(FILTER_COMMENT, commentFilterButton.isSelected());
+		Main.setProperty(FILTER_DATE, dateFilterButton.isSelected());
+		Main.setProperty(FILTER_SIP, sipFilterButton.isSelected());
+		Main
+		.setProperty(FILTER_CALLBYCALL, callByCallFilterButton
+				.isSelected());
+		Main.setProperty(FILTER_CALLOUT, callOutFilterButton.isSelected());
+		Main.setProperty(FILTER_NUMBER, numberFilterButton.isSelected());
+		Main.setProperty(FILTER_FIXED, fixedFilterButton.isSelected());
+		Main.setProperty(FILTER_HANDY, handyFilterButton.isSelected());
+		Main.setProperty(FILTER_CALLIN, callInFilterButton.isSelected());
+		Main.setProperty(FILTER_CALLINFAILED, callInFailedFilterButton
+				.isSelected());
+	}
+
 }

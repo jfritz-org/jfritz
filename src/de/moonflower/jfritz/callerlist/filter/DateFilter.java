@@ -4,7 +4,6 @@
  */
 package de.moonflower.jfritz.callerlist.filter;
 
-
 import java.util.Date;
 import com.toedter.calendar.JDateChooser;
 import de.moonflower.jfritz.struct.Call;
@@ -16,29 +15,13 @@ import de.moonflower.jfritz.struct.Call;
  */
 public class DateFilter extends CallFilter {
     public JDateChooser d;
-    public static final int DATEFILTER_SELECTION = 0;
-
-    public static final int DATEFILTER_TODAY = 1;
-
-    public static final int DATEFILTER_THIS_MONTH = 2;
-
-    public static final int DATEFILTER_LAST_MONTH = 3;
-
-    public static final int DATEFILTER_YESTERDAY = 4;
-
-    private int filterType = 0;
-
     private Date filterFromDate;
-
     private Date filterToDate;
 
 //    public DateFilter(Date from, Date to) {
         public DateFilter(Date from, Date to) {
         	//TODO uhrzeit ändern
         	//TODO status updaten
-            //filterFromDate = Main.getProperty("filter.date_from", new SimpleDateFormat("dd.MM.yy").format(Calendar.getInstance().getTime()));
-           // filterToDate = Main.getProperty("filter.date_to", new SimpleDateFormat("dd.MM.yy").format(Calendar.getInstance().getTime()));
-           // filterType = Integer.parseInt(Main.getProperty("filter.date_type", "0")); //$NON-NLS-1$ $NON-NLS-2$
         	filterFromDate = from;
         	filterToDate = to;
     }
