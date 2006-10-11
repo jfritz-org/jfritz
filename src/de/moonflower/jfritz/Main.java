@@ -792,6 +792,9 @@ public class Main {
 			}
 		}
 		JFritz.createJFrame(showConfWizard);
+		//TODO sollten wir das programm nicht hier beenden?
+		//while(!shutdown){sleep oder sowas
+		//Debug.msg("ENDEN---main.java---DNEND");
 	}
 
 	/**

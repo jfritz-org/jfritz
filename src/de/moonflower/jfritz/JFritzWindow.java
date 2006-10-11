@@ -14,7 +14,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
 import java.io.BufferedReader;
@@ -173,8 +172,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
     private void createGUI() throws WrongPasswordException {
         setTitle(Main.PROGRAM_NAME);
-//        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
        ///////////////////////////////  test code
+/*
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         WindowAdapter wl = new WindowAdapter() {
@@ -183,7 +183,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			}
 		};
        addWindowListener(wl);
-       ////////////////////////////////////////////
+  */     ////////////////////////////////////////////
         setDefaultLookAndFeel();
         ShutdownThread shutdownThread = new ShutdownThread();
         Runtime.getRuntime().addShutdownHook(shutdownThread);
@@ -895,44 +895,48 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
     /**
      * Shows the exit dialog
      */
-    public void showExitDialog() {
-        boolean exit = true;
+    public boolean showExitDialog() {
+		boolean exit = true;
 
-        if (JFritzUtils.parseBoolean(Main.getProperty("option.confirmOnExit", //$NON-NLS-1$
-                "false"))) //$NON-NLS-1$
-            exit = JOptionPane.showConfirmDialog(this, Main.getMessage("really_quit"), Main.PROGRAM_NAME, //$NON-NLS-1$
-                    JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+		if (JFritzUtils.parseBoolean(Main.getProperty("option.confirmOnExit", //$NON-NLS-1$
+				"false"))) { //$NON-NLS-1$
+			exit = JOptionPane.showConfirmDialog(this, Main
+					.getMessage("really_quit"), Main.PROGRAM_NAME, //$NON-NLS-1$
+					JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 
-        if (exit) {
-            // Speichern der Daten wird von ShutdownThread durchgeführt
-            System.exit(0);
-        }
-    }
+			return exit;
+		}
+		return true; // no dialog so we exit
+	}
 
     /**
-     * Listener for window events
-     */
+	 * Listener for window events
+	 */
     protected void processWindowEvent(WindowEvent e) {
-        if (e.getID() == WindowEvent.WINDOW_CLOSING) {
-            if (JFritzUtils.parseBoolean(Main.getProperty("option.minimize", //$NON-NLS-1$
-                    "false"))) { //$NON-NLS-1$
-                setExtendedState(JFrame.ICONIFIED);
-            } else
-                showExitDialog();
-        } else if (e.getID() == WindowEvent.WINDOW_ICONIFIED) {
-            setExtendedState(JFrame.ICONIFIED);
-            if (Main.SYSTRAY_SUPPORT)
-                setVisible(false);
-        } else {
-            super.processWindowEvent(e);
-        }
-    }
+		if (e.getID() == WindowEvent.WINDOW_CLOSING) {
+			// FIXME dont just quit let other windowlisteners reakt on this
+			// event
+			if (JFritzUtils.parseBoolean(Main.getProperty("option.minimize", //$NON-NLS-1$
+					"false"))) { //$NON-NLS-1$
+				setExtendedState(JFrame.ICONIFIED);
+			} else
+				if(showExitDialog()){
+					super.processWindowEvent(e); // so we quit
+				}
+		} else if (e.getID() == WindowEvent.WINDOW_ICONIFIED) {
+			setExtendedState(JFrame.ICONIFIED);
+			if (Main.SYSTRAY_SUPPORT)
+				setVisible(false);
+		} else {
+			super.processWindowEvent(e);
+		}
+	}
 
     /**
-     * ItemListener for LookAndFeel Menu
-     *
-     * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
-     */
+	 * ItemListener for LookAndFeel Menu
+	 *
+	 * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
+	 */
     public void itemStateChanged(ItemEvent ie) {
         JRadioButtonMenuItem rbmi = (JRadioButtonMenuItem) ie.getSource();
         if (rbmi.isSelected()) {

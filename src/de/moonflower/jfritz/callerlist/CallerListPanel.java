@@ -31,8 +31,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import javax.swing.SwingUtilities;
-
 import com.toedter.calendar.JDateChooser;
 
 import de.moonflower.jfritz.JFritz;
@@ -65,7 +63,7 @@ import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 
 //TODO evtl start und enddate richtig setzten, wenn man einen datefilter aktiviert und
 //zeilen selektiert hat
-//TODO write and read the Properties one time at creation and disposion
+//TODO delete button
 public class CallerListPanel extends JPanel implements ActionListener,
 KeyListener, PropertyChangeListener {
 
@@ -100,41 +98,55 @@ KeyListener, PropertyChangeListener {
 		}
 	}
 
-	private static final String FILTER_CALLIN = "filter_callin";
-
-	private static final String FILTER_CALLOUT = "filter_callout";
-
-	private static final String FILTER_NUMBER = "filter_number";
-
-	private static final String FILTER_FIXED = "filter_fixed";
-
-	private static final String FILTER_HANDY = "filter_handy";
-
-	private static final String FILTER_DATE = "filter_date";
-
-	private static final String FILTER_SIP = "filter_sip";
-
-	private static final String FILTER_CALLBYCALL = "filter_callbycall";
-
-	private static final String FILTER_COMMENT = "filter_comment";
-
 	private static final String DELETE_ENTRIES = "delete_entries";
 
 	private static final String DELETE_ENTRY = "delete_entry";
 
 	private static final String FALSE = "false";
 
-	private static final String FILTER_SEARCH = "filter.search";
+	private static final String FILTER_CALLBYCALL = "filter_callbycall";
 
-	public static final String FILTER_CALLINFAILED = "filter.callinfailed";
+	private static final String FILTER_CALLIN = "filter_callin";
+
+	public static final String FILTER_CALLINFAILED = "filter_callinfailed";
+
+	private static final String FILTER_CALLOUT = "filter_callout";
+
+	private static final String FILTER_COMMENT = "filter_comment";
+
+	private static final String FILTER_DATE = "filter_date";
+
+	private static final String FILTER_FIXED = "filter_fixed";
+
+	private static final String FILTER_HANDY = "filter_handy";
+
+	private static final String FILTER_NUMBER = "filter_number";
+
+	private static final String FILTER_SEARCH = "filter_search";
+
+	private static final String FILTER_SEARCH_TEXT = "filter_search.text";
+
+	private static final String FILTER_SIP = "filter_sip";
 
 	private static final long serialVersionUID = 1;
 
-	private static final String FILTER_SEARCH_TEXT = null;
+	private JButton applyFilterButton;
+
+	private CallByCallFilter callByCallFilter;
+
+	private CallerList callerList;
 
 	private CallerTable callerTable;
 
-	private CallerList callerList;
+	private CallInFailedFilter callInFailedFilter;
+
+	private CallInFilter callInFilter;
+
+	private CallOutFilter callOutFilter;
+
+	private CallFilter commentFilter;
+
+	private DateFilter dateFilter;
 
 	private JToggleButton dateFilterButton, callByCallFilterButton,
 	callInFilterButton, callOutFilterButton, callInFailedFilterButton,
@@ -143,70 +155,40 @@ KeyListener, PropertyChangeListener {
 
 	private JButton deleteEntriesButton;
 
-	private JTextField searchFilterTextField;
-
-	private CallByCallFilter callByCallFilter;
-
-	private CallInFilter callInFilter;
-
-	private CallInFailedFilter callInFailedFilter;
-
-	private CallOutFilter callOutFilter;
-
-	private CallFilter commentFilter;
-
-	private NoNumberFilter noNumberFilter;
+	private JDateChooser endDateChooser;
 
 	private FixedFilter fixedFilter;
 
 	private HandyFilter handyFilter;
 
-	private SipFilter sipFilter;
+	private NoNumberFilter noNumberFilter;
 
 	private SearchFilter searchFilter;
 
-	private JDateChooser startDateChooser;
-
-	private JDateChooser endDateChooser;
-
-	private DateFilter dateFilter;
-
-	// private FixedFilter fixedFilter;
+	private JTextField searchFilterTextField;
 
 	private JLabel searchLabel;
 
-	private JButton applyFilterButton;
+	// private FixedFilter fixedFilter;
+
+	private SipFilter sipFilter;
+
+	private JDateChooser startDateChooser;
 
 	private WindowAdapter wl;
-	private JFrame parent;
 	public CallerListPanel(CallerList callerList, JFrame parent) {
 		super();
-		this.parent = parent;
 		this.callerList = callerList;
 		setLayout(new BorderLayout());
 		add(createToolBar(), BorderLayout.NORTH);
 		add(createCallerListTable(), BorderLayout.CENTER);
-		//FIXME warum klappt das nicht?
 		wl = new WindowAdapter() {
 			public void windowClosing(WindowEvent evt) {
-				cleanup();
-				Debug.msg("adsdoofdoofdoofasdf");
+				writeButtonStatus();
 			}
 		};
-		Debug.msg(parent.toString());
-	//	parent.addWindowListener(wl);
+		parent.addWindowListener(wl);
 	}
-	public void addNotify() {
-        super.addNotify();
-        System.out.println("addNotify");
-        parent.addWindowListener(wl);
-    }
-
-    public void removeNotify() {
-        super.removeNotify();
-        System.out.println("removeNotify");
-        parent.removeWindowListener(wl);
-    }
 
 	/**
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -217,9 +199,6 @@ KeyListener, PropertyChangeListener {
 		callerList.update();
 	}
 
-	protected void cleanup() {
-		System.out.println("cleanup called");
-	}
 
 	/*
 	 * disable all filters and hide the search and date stuff
@@ -235,6 +214,7 @@ KeyListener, PropertyChangeListener {
 		startDateChooser.setVisible(false);
 		endDateChooser.setVisible(false);
 		searchFilterTextField.setVisible(false);
+		searchFilterTextField.setText("");
 		searchLabel.setVisible(false);
 		searchFilterButton.setSelected(true);
 		sipFilterButton.setSelected(true);
@@ -352,7 +332,7 @@ KeyListener, PropertyChangeListener {
 		callInFailedFilterButton.setActionCommand(FILTER_CALLINFAILED);
 		callInFailedFilterButton.addActionListener(this);
 		callInFailedFilterButton.setToolTipText(Main
-				.getMessage("filter_callinfailed")); //$NON-NLS-1$
+				.getMessage(FILTER_CALLINFAILED)); //$NON-NLS-1$
 
 		JPopupMenu missedPopupMenu = new JPopupMenu();
 		JMenuItem menuItem;
@@ -458,6 +438,7 @@ KeyListener, PropertyChangeListener {
 
 		searchFilterButton = new JToggleButton(getImage("searchfilter.png"), //$NON-NLS-1$
 				true);
+		// TODO make a grey image and change this
 		searchFilterButton.setSelectedIcon(getImage("searchfilter.png")); //$NON-NLS-1$
 		searchFilterButton.setActionCommand(FILTER_SEARCH); //$NON-NLS-1$
 		searchFilterButton.addActionListener(this);
@@ -574,7 +555,7 @@ KeyListener, PropertyChangeListener {
 			syncCallInFilterWithButton();
 			return;
 		}
-		if (command.equals("filter_callinfailed")) { //$NON-NLS-1$
+		if (command.equals(FILTER_CALLINFAILED)) { //$NON-NLS-1$
 			syncCallInFailedFilterWithButton();
 			return;
 		}
@@ -878,53 +859,77 @@ KeyListener, PropertyChangeListener {
 	}
 
 	private void readButtonStatus() {
-		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_COMMENT, FALSE))) {
+		callInFilterButton.setSelected(false);
+		callOutFilterButton.setSelected(false);
+		callInFailedFilterButton.setSelected(false);
+		numberFilterButton.setSelected(false);
+		fixedFilterButton.setSelected(false);
+		handyFilterButton.setSelected(false);
+		dateFilterButton.setSelected(false);
+		searchFilterButton.setSelected(false);
+		sipFilterButton.setSelected(false);
+		callByCallFilterButton.setSelected(false);
+		commentFilterButton.setSelected(false);
+// no more filters now set the other stuff
+		searchFilterTextField.setVisible(true);
+		searchLabel.setVisible(true);
+		startDateChooser.setVisible(true);
+		endDateChooser.setVisible(true);
+
+		Debug.msg("reading Buttons");
+		if (JFritzUtils.parseBoolean(Main.getProperty(FILTER_COMMENT, FALSE))) {
 			commentFilterButton.setSelected(true);
-			syncCommentFilterWithButton();
 		}
-		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_DATE, FALSE))) {
+
+		if (JFritzUtils.parseBoolean(Main.getProperty(FILTER_DATE, FALSE))) {
 			dateFilterButton.setSelected(true);
-			syncDateFilterWithButton();
+			startDateChooser.setVisible(false);
+			endDateChooser.setVisible(false);
+
 		}
-		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_SIP, FALSE))) {
+		if (JFritzUtils.parseBoolean(Main.getProperty(FILTER_SIP, FALSE))) {
 			sipFilterButton.setSelected(true);
-			syncSipFilterWithButton();
 		}
-		if (!JFritzUtils.parseBoolean(Main
+		if (JFritzUtils.parseBoolean(Main
 				.getProperty(FILTER_CALLBYCALL, FALSE))) {
 			callByCallFilterButton.setSelected(true);
-			syncCallByCallFilterWithButton();
 		}
-		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_CALLOUT, FALSE))) {
+		if (JFritzUtils.parseBoolean(Main.getProperty(FILTER_CALLOUT, FALSE))) {
 			callOutFilterButton.setSelected(true);
-			syncCallOutFilterWithButton();
 		}
-		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_NUMBER, FALSE))) {
+		if (JFritzUtils.parseBoolean(Main.getProperty(FILTER_NUMBER, FALSE))) {
 			numberFilterButton.setSelected(true);
-			syncNumberFilterWithButton();
 		}
-		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_FIXED, FALSE))) {
+		if (JFritzUtils.parseBoolean(Main.getProperty(FILTER_FIXED, FALSE))) {
 			fixedFilterButton.setSelected(true);
-			syncFixedFilterWithButton();
 		}
-		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_HANDY, FALSE))) {
+		if (JFritzUtils.parseBoolean(Main.getProperty(FILTER_HANDY, FALSE))) {
 			handyFilterButton.setSelected(true);
-			syncHandyFilterWithButton();
 		}
-		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_CALLIN, FALSE))) {
+		if (JFritzUtils.parseBoolean(Main.getProperty(FILTER_CALLIN, FALSE))) {
 			callInFilterButton.setSelected(true);
-			syncCallInFilterWithButton();
 		}
-		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_CALLINFAILED,
+		if (JFritzUtils.parseBoolean(Main.getProperty(FILTER_CALLINFAILED,
 				FALSE))) {
 			callInFailedFilterButton.setSelected(true);
-			syncCallInFailedFilterWithButton();
 		}
-		//searchFilterTextField.setText(Main.getProperty(FILTER_SEARCH_TEXT, ""));
-		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_SEARCH, FALSE))) {
+		searchFilterTextField.setText(Main.getProperty(FILTER_SEARCH_TEXT, ""));
+		if (JFritzUtils.parseBoolean(Main.getProperty(FILTER_SEARCH, FALSE))) {
 			searchFilterButton.setSelected(true);
-			syncSearchFilterWithButton();
+			searchFilterTextField.setVisible(false);
+			searchLabel.setVisible(false);
 		}
+		syncSearchFilterWithButton();
+		syncCallInFailedFilterWithButton();
+		syncCallInFilterWithButton();
+		syncHandyFilterWithButton();
+		syncFixedFilterWithButton();
+		syncNumberFilterWithButton();
+		syncCallOutFilterWithButton();
+		syncCallByCallFilterWithButton();
+		syncDateFilterWithButton();
+		syncCommentFilterWithButton();
+		syncSipFilterWithButton();
 		callerList.update();
 	}
 
@@ -1075,6 +1080,7 @@ KeyListener, PropertyChangeListener {
 	}
 
 	public void writeButtonStatus() {
+		Debug.msg("writing Buttons");
 		Main.setProperty(FILTER_SEARCH_TEXT, searchFilterTextField.getText());
 		Main.setProperty(FILTER_SEARCH, searchFilterButton.isSelected());
 		Main.setProperty(FILTER_COMMENT, commentFilterButton.isSelected());
