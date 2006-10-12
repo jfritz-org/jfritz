@@ -20,11 +20,21 @@ public class DateFilter extends CallFilter {
 
 //    public DateFilter(Date from, Date to) {
         public DateFilter(Date from, Date to) {
-        	//TODO uhrzeit ändern
+        	// make sure from is not after to
+        	if(from.after(to)){
+        		Date temp = from;
+        		from = to;
+        		to = temp;
+        	}
+//        	Debug.msg(from.toLocaleString());
+//        	Debug.msg(to.toLocaleString());
         	//TODO status updaten
         	filterFromDate = from;
         	filterToDate = to;
+
     }
+
+
 
     public boolean passFilter(Call currentCall) {
             if (currentCall.getCalldate().after(filterFromDate)

@@ -16,6 +16,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -129,6 +132,10 @@ KeyListener, PropertyChangeListener {
 	private static final String FILTER_SIP = "filter_sip";
 
 	private static final long serialVersionUID = 1;
+
+	private static final String FILTER_DATE_END = "FILTER_DATE_END";
+
+	private static final String FILTER_DATE_START = "FILTER_DATE_START";
 
 	private JButton applyFilterButton;
 
@@ -384,7 +391,7 @@ KeyListener, PropertyChangeListener {
 		dateFilterButton.setToolTipText(Main.getMessage(FILTER_DATE));
 		// callerList.getDateFilter().updateDateFilter()
 
-		setDateFilterText();
+		setDateFilterText();//TODO das hier mal anschauen
 		JPopupMenu datePopupMenu = new JPopupMenu();
 		menuItem = new JMenuItem(Main.getMessage("date_filter_today")); //$NON-NLS-1$
 		menuItem.setActionCommand("setdatefilter_thisday"); //$NON-NLS-1$
@@ -593,11 +600,14 @@ KeyListener, PropertyChangeListener {
 		if (command.equals("setdatefilter_thisday")) { //$NON-NLS-1$
 			callerList.removeFilter(dateFilter);
 			dateFilterButton.setSelected(false);
-			Date today = Calendar.getInstance().getTime();
-			dateFilter = new DateFilter(today, today);
+			Date start = Calendar.getInstance().getTime();
+			Date end = Calendar.getInstance().getTime();
+			setStartOfDay(start);
+			setEndOfDay(end);
+			dateFilter = new DateFilter(start, end);
 			callerList.addFilter(dateFilter);
-			startDateChooser.setDate(today);
-			endDateChooser.setDate(today);
+			startDateChooser.setDate(start);
+			endDateChooser.setDate(end);
 			startDateChooser.setVisible(true);
 			endDateChooser.setVisible(true);
 		}
@@ -605,13 +615,15 @@ KeyListener, PropertyChangeListener {
 			callerList.removeFilter(dateFilter);
 			dateFilterButton.setSelected(false);
 			Calendar cal = Calendar.getInstance();
-			Date today = cal.getTime();
+			Date start = cal.getTime();
 			cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - 1);
-			Date yesterday = cal.getTime();
-			dateFilter = new DateFilter(yesterday, today);
+			Date end = cal.getTime();
+			setStartOfDay(start);
+			setEndOfDay(end);
+			dateFilter = new DateFilter(start, end);
 			callerList.addFilter(dateFilter);
-			startDateChooser.setDate(yesterday);
-			endDateChooser.setDate(today);
+			startDateChooser.setDate(start);
+			endDateChooser.setDate(end);
 			startDateChooser.setVisible(true);
 			endDateChooser.setVisible(true);
 		}
@@ -624,6 +636,8 @@ KeyListener, PropertyChangeListener {
 			cal.set(Calendar.DAY_OF_MONTH, cal
 					.getActualMaximum(Calendar.DAY_OF_MONTH));
 			Date end = cal.getTime();
+			setStartOfDay(start);
+			setEndOfDay(end);
 			dateFilter = new DateFilter(start, end);
 			callerList.addFilter(dateFilter);
 			startDateChooser.setDate(start);
@@ -641,6 +655,8 @@ KeyListener, PropertyChangeListener {
 			cal.set(Calendar.DAY_OF_MONTH, cal
 					.getActualMaximum(Calendar.DAY_OF_MONTH));
 			Date end = cal.getTime();
+			setStartOfDay(start);
+			setEndOfDay(end);
 			dateFilter = new DateFilter(start, end);
 			callerList.addFilter(dateFilter);
 			startDateChooser.setDate(start);
@@ -730,13 +746,15 @@ KeyListener, PropertyChangeListener {
 			callerList.removeFilter(dateFilter);
 			dateFilterButton.setSelected(false);
 			Calendar cal = Calendar.getInstance();
-			Date today = cal.getTime();
+			Date start = cal.getTime();
 			cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - 7);
-			Date yesterday = cal.getTime();
-			dateFilter = new DateFilter(yesterday, today);
+			Date end = cal.getTime();
+			setStartOfDay(start);
+			setEndOfDay(end);
+			dateFilter = new DateFilter(end, start);
 			callerList.addFilter(dateFilter);
-			startDateChooser.setDate(yesterday);
-			endDateChooser.setDate(today);
+			startDateChooser.setDate(end);
+			endDateChooser.setDate(start);
 			startDateChooser.setVisible(true);
 			endDateChooser.setVisible(true);
 
@@ -800,8 +818,8 @@ KeyListener, PropertyChangeListener {
 			// TODO checken, ob sich der search filter geändert hat
 			if (!dateFilterButton.isSelected()) {
 				callerList.removeFilter(dateFilter);
-				dateFilter = new DateFilter(startDateChooser.getDate(),
-						endDateChooser.getDate());
+				dateFilter = new DateFilter(setStartOfDay(startDateChooser.getDate()),
+						setEndOfDay(endDateChooser.getDate()));
 				callerList.addFilter(dateFilter);
 			}
 			if (!searchFilterButton.isSelected()) {
@@ -859,63 +877,79 @@ KeyListener, PropertyChangeListener {
 	}
 
 	private void readButtonStatus() {
-		callInFilterButton.setSelected(false);
-		callOutFilterButton.setSelected(false);
-		callInFailedFilterButton.setSelected(false);
-		numberFilterButton.setSelected(false);
-		fixedFilterButton.setSelected(false);
-		handyFilterButton.setSelected(false);
-		dateFilterButton.setSelected(false);
-		searchFilterButton.setSelected(false);
-		sipFilterButton.setSelected(false);
-		callByCallFilterButton.setSelected(false);
-		commentFilterButton.setSelected(false);
+		callInFilterButton.setSelected(true);
+		callOutFilterButton.setSelected(true);
+		callInFailedFilterButton.setSelected(true);
+		numberFilterButton.setSelected(true);
+		fixedFilterButton.setSelected(true);
+		handyFilterButton.setSelected(true);
+		dateFilterButton.setSelected(true);
+		searchFilterButton.setSelected(true);
+		sipFilterButton.setSelected(true);
+		callByCallFilterButton.setSelected(true);
+		commentFilterButton.setSelected(true);
 // no more filters now set the other stuff
-		searchFilterTextField.setVisible(true);
-		searchLabel.setVisible(true);
-		startDateChooser.setVisible(true);
-		endDateChooser.setVisible(true);
+		searchFilterTextField.setVisible(false);
+		searchLabel.setVisible(false);
+		startDateChooser.setVisible(false);
+		endDateChooser.setVisible(false);
 
 		Debug.msg("reading Buttons");
-		if (JFritzUtils.parseBoolean(Main.getProperty(FILTER_COMMENT, FALSE))) {
-			commentFilterButton.setSelected(true);
+		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_COMMENT, FALSE))) {
+			commentFilterButton.setSelected(false);
 		}
 
-		if (JFritzUtils.parseBoolean(Main.getProperty(FILTER_DATE, FALSE))) {
-			dateFilterButton.setSelected(true);
+		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_DATE, FALSE))) {
+			dateFilterButton.setSelected(false);
 			startDateChooser.setVisible(false);
 			endDateChooser.setVisible(false);
+		}
 
+		DateFormat df  = new SimpleDateFormat("dd.MM.yy HH:mm");
+
+		Date start = new Date();
+		Date end =new Date();
+		try {
+			start = df.parse(Main.getProperty(FILTER_DATE_START, "11.11.11 11:11"));
+			end = df.parse(Main.getProperty(FILTER_DATE_END, "11.11.11 11:11"));
+		} catch (ParseException e) {
+			Debug
+					.err("error parsing date while loading dates from main properties "
+							+ e.toString());
 		}
-		if (JFritzUtils.parseBoolean(Main.getProperty(FILTER_SIP, FALSE))) {
-			sipFilterButton.setSelected(true);
+
+
+		startDateChooser.setDate(start);
+		endDateChooser.setDate(end);
+		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_SIP, FALSE))) {
+			sipFilterButton.setSelected(false);
 		}
-		if (JFritzUtils.parseBoolean(Main
+		if (!JFritzUtils.parseBoolean(Main
 				.getProperty(FILTER_CALLBYCALL, FALSE))) {
-			callByCallFilterButton.setSelected(true);
+			callByCallFilterButton.setSelected(false);
 		}
-		if (JFritzUtils.parseBoolean(Main.getProperty(FILTER_CALLOUT, FALSE))) {
-			callOutFilterButton.setSelected(true);
+		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_CALLOUT, FALSE))) {
+			callOutFilterButton.setSelected(false);
 		}
-		if (JFritzUtils.parseBoolean(Main.getProperty(FILTER_NUMBER, FALSE))) {
-			numberFilterButton.setSelected(true);
+		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_NUMBER, FALSE))) {
+			numberFilterButton.setSelected(false);
 		}
-		if (JFritzUtils.parseBoolean(Main.getProperty(FILTER_FIXED, FALSE))) {
-			fixedFilterButton.setSelected(true);
+		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_FIXED, FALSE))) {
+			fixedFilterButton.setSelected(false);
 		}
-		if (JFritzUtils.parseBoolean(Main.getProperty(FILTER_HANDY, FALSE))) {
-			handyFilterButton.setSelected(true);
+		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_HANDY, FALSE))) {
+			handyFilterButton.setSelected(false);
 		}
-		if (JFritzUtils.parseBoolean(Main.getProperty(FILTER_CALLIN, FALSE))) {
-			callInFilterButton.setSelected(true);
+		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_CALLIN, FALSE))) {
+			callInFilterButton.setSelected(false);
 		}
-		if (JFritzUtils.parseBoolean(Main.getProperty(FILTER_CALLINFAILED,
+		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_CALLINFAILED,
 				FALSE))) {
-			callInFailedFilterButton.setSelected(true);
+			callInFailedFilterButton.setSelected(false);
 		}
 		searchFilterTextField.setText(Main.getProperty(FILTER_SEARCH_TEXT, ""));
-		if (JFritzUtils.parseBoolean(Main.getProperty(FILTER_SEARCH, FALSE))) {
-			searchFilterButton.setSelected(true);
+		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_SEARCH, FALSE))) {
+			searchFilterButton.setSelected(false);
 			searchFilterTextField.setVisible(false);
 			searchLabel.setVisible(false);
 		}
@@ -973,109 +1007,100 @@ KeyListener, PropertyChangeListener {
 	}
 
 	private void syncCallByCallFilterWithButton() {
+		callerList.removeFilter(callByCallFilter);
 		if (!callByCallFilterButton.isSelected()) {
 			callByCallFilter = new CallByCallFilter(callerList
 					.getSelectedCbCProviders());
 			callerList.addFilter(callByCallFilter);
-		} else {
-			callerList.removeFilter(callByCallFilter);
 		}
 	}
 
 	private void syncCallInFailedFilterWithButton() {
+		callerList.removeFilter(callInFailedFilter);
 		if (!callInFailedFilterButton.isSelected()) {
 			callInFailedFilter = new CallInFailedFilter();
 			callerList.addFilter(callInFailedFilter);
-		} else {
-			callerList.removeFilter(callInFailedFilter);
 		}
 	}
 
 	private void syncCallInFilterWithButton() {
+		callerList.removeFilter(callInFilter);
 		if (!callInFilterButton.isSelected()) {
 			callInFilter = new CallInFilter();
 			callerList.addFilter(callInFilter);
-		} else {
-			callerList.removeFilter(callInFilter);
 		}
 	}
 
 	private void syncCallOutFilterWithButton() {
+		callerList.removeFilter(callOutFilter);
 		if (!callOutFilterButton.isSelected()) {
 			callOutFilter = new CallOutFilter();
 			callerList.addFilter(callOutFilter);
-		} else {
-			callerList.removeFilter(callOutFilter);
 		}
 	}
 
 	private void syncCommentFilterWithButton() {
+		callerList.removeFilter(commentFilter);
 		if (!commentFilterButton.isSelected()) {
 			commentFilter = new CommentFilter();
 			callerList.addFilter(commentFilter);
-		} else {
-			callerList.removeFilter(commentFilter);
 		}
 	}
 
 	private void syncDateFilterWithButton() {
+		startDateChooser.setVisible(false);
+		endDateChooser.setVisible(false);
+		callerList.removeFilter(dateFilter);
 		if (!dateFilterButton.isSelected()) {
-			// dateFilter = new DateFilter(startDateChooser.getDate(),
-			// endDateChooser.getDate());
-			// callerList.addFilter(dateFilter);
+			dateFilter = new DateFilter(setStartOfDay(startDateChooser.getDate()),
+					setEndOfDay(endDateChooser.getDate()));
+			callerList.addFilter(dateFilter);
 			startDateChooser.setVisible(true);
 			endDateChooser.setVisible(true);
-
-		} else {
-			startDateChooser.setVisible(false);
-			endDateChooser.setVisible(false);
-			callerList.removeFilter(dateFilter);
 		}
 	}
 
 	private void syncFixedFilterWithButton() {
+		callerList.removeFilter(fixedFilter);
 		if (!fixedFilterButton.isSelected()) {
 			fixedFilter = new FixedFilter();
 			callerList.addFilter(fixedFilter);
-		} else {
-			callerList.removeFilter(fixedFilter);
 		}
 	}
 
 	private void syncHandyFilterWithButton() {
+		callerList.removeFilter(handyFilter);
 		if (!handyFilterButton.isSelected()) {
 			handyFilter = new HandyFilter();
 			callerList.addFilter(handyFilter);
-		} else {
-			callerList.removeFilter(handyFilter);
 		}
 	}
 
 	private void syncNumberFilterWithButton() {
+		callerList.removeFilter(noNumberFilter);
 		if (!numberFilterButton.isSelected()) {
 			noNumberFilter = new NoNumberFilter();
 			callerList.addFilter(noNumberFilter);
-		} else {
-			callerList.removeFilter(noNumberFilter);
 		}
 	}
 
 	private void syncSearchFilterWithButton() {
-		if (searchFilterButton.isSelected()) {
-			searchFilterTextField.setVisible(false);
-			searchLabel.setVisible(false);
-		} else {
+		callerList.removeFilter(searchFilter);
+		searchFilterTextField.setVisible(false);
+		searchLabel.setVisible(false);
+		if (!searchFilterButton.isSelected()) {
 			searchFilterTextField.setVisible(true);
 			searchLabel.setVisible(true);
+			searchFilter = new SearchFilter(searchFilterTextField.getText());
+			callerList.addFilter(searchFilter);
 		}
 	}
 
 	private void syncSipFilterWithButton() {
+		callerList.removeFilter(sipFilter);
 		if (!sipFilterButton.isSelected()) {
 			sipFilter = new SipFilter(callerList.getSelectedOrSipProviders());
 			callerList.addFilter(sipFilter);
-		} else {
-			callerList.removeFilter(sipFilter);
 		}
 	}
 
@@ -1085,6 +1110,13 @@ KeyListener, PropertyChangeListener {
 		Main.setProperty(FILTER_SEARCH, searchFilterButton.isSelected());
 		Main.setProperty(FILTER_COMMENT, commentFilterButton.isSelected());
 		Main.setProperty(FILTER_DATE, dateFilterButton.isSelected());
+		DateFormat df  = new SimpleDateFormat("dd.MM.yy HH:mm");
+		Date start = startDateChooser.getDate();
+		Date end = endDateChooser.getDate();
+
+		Main.setProperty(FILTER_DATE_START, df.format(start));
+		Main.setProperty(FILTER_DATE_END, df.format(end));
+
 		Main.setProperty(FILTER_SIP, sipFilterButton.isSelected());
 		Main
 		.setProperty(FILTER_CALLBYCALL, callByCallFilterButton
@@ -1098,4 +1130,21 @@ KeyListener, PropertyChangeListener {
 				.isSelected());
 	}
 
+	private Date setStartOfDay(Date d) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(d);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		return cal.getTime();
+	}
+
+	private Date setEndOfDay(Date d) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(d);
+		cal.set(Calendar.HOUR_OF_DAY, 23);
+		cal.set(Calendar.MINUTE, 59);
+		cal.set(Calendar.SECOND, 59);
+		return cal.getTime();
+	}
 }
