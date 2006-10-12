@@ -64,7 +64,8 @@ import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
  * @author marc
  */
 
-//TODO evtl start und enddate richtig setzten, wenn man einen datefilter aktiviert und
+//TODO evtl start und enddate richtig setzten, wenn man einen datefilter
+//aktiviert und
 //zeilen selektiert hat
 //TODO delete button
 public class CallerListPanel extends JPanel implements ActionListener,
@@ -183,6 +184,7 @@ KeyListener, PropertyChangeListener {
 	private JDateChooser startDateChooser;
 
 	private WindowAdapter wl;
+
 	public CallerListPanel(CallerList callerList, JFrame parent) {
 		super();
 		this.callerList = callerList;
@@ -205,7 +207,6 @@ KeyListener, PropertyChangeListener {
 		// callerList.updateFilter();
 		callerList.update();
 	}
-
 
 	/*
 	 * disable all filters and hide the search and date stuff
@@ -331,7 +332,7 @@ KeyListener, PropertyChangeListener {
 		callInFilterButton.setSelectedIcon(getImage("callin.png")); //$NON-NLS-1$
 		callInFilterButton.setActionCommand(FILTER_CALLIN);
 		callInFilterButton.addActionListener(this);
-		callInFilterButton.setToolTipText(Main.getMessage(FILTER_CALLIN)); //$NON-NLS-1$
+		callInFilterButton.setToolTipText(Main.getMessage(FILTER_CALLIN));
 
 		callInFailedFilterButton = new JToggleButton(
 				getImage("callinfailed_grey.png"), true); //$NON-NLS-1$
@@ -339,7 +340,7 @@ KeyListener, PropertyChangeListener {
 		callInFailedFilterButton.setActionCommand(FILTER_CALLINFAILED);
 		callInFailedFilterButton.addActionListener(this);
 		callInFailedFilterButton.setToolTipText(Main
-				.getMessage(FILTER_CALLINFAILED)); //$NON-NLS-1$
+				.getMessage(FILTER_CALLINFAILED));
 
 		JPopupMenu missedPopupMenu = new JPopupMenu();
 		JMenuItem menuItem;
@@ -360,7 +361,7 @@ KeyListener, PropertyChangeListener {
 		callOutFilterButton = new JToggleButton(getImage("callout_grey.png"), //$NON-NLS-1$
 				true);
 		callOutFilterButton.setSelectedIcon(getImage("callout.png")); //$NON-NLS-1$
-		callOutFilterButton.setActionCommand(FILTER_CALLOUT); //$NON-NLS-1$
+		callOutFilterButton.setActionCommand(FILTER_CALLOUT);
 		callOutFilterButton.addActionListener(this);
 		callOutFilterButton.setToolTipText(Main.getMessage(FILTER_CALLOUT));
 
@@ -369,29 +370,29 @@ KeyListener, PropertyChangeListener {
 		numberFilterButton.setSelectedIcon(getImage("phone_nonumber.png")); //$NON-NLS-1$
 		numberFilterButton.setActionCommand(FILTER_NUMBER);
 		numberFilterButton.addActionListener(this);
-		numberFilterButton.setToolTipText(Main.getMessage(FILTER_NUMBER)); //$NON-NLS-1$
+		numberFilterButton.setToolTipText(Main.getMessage(FILTER_NUMBER));
 
 		fixedFilterButton = new JToggleButton(getImage("phone_grey.png"), true); //$NON-NLS-1$
 		fixedFilterButton.setSelectedIcon(getImage("phone.png")); //$NON-NLS-1$
 		fixedFilterButton.setActionCommand(FILTER_FIXED);
 		fixedFilterButton.addActionListener(this);
-		fixedFilterButton.setToolTipText(Main.getMessage(FILTER_FIXED)); //$NON-NLS-1$
+		fixedFilterButton.setToolTipText(Main.getMessage(FILTER_FIXED));
 
 		handyFilterButton = new JToggleButton(getImage("handy_grey.png"), true); //$NON-NLS-1$
 		handyFilterButton.setSelectedIcon(getImage("handy.png")); //$NON-NLS-1$
 		handyFilterButton.setActionCommand(FILTER_HANDY);
 		handyFilterButton.addActionListener(this);
-		handyFilterButton.setToolTipText(Main.getMessage(FILTER_HANDY)); //$NON-NLS-1$
+		handyFilterButton.setToolTipText(Main.getMessage(FILTER_HANDY));
 
 		dateFilterButton = new JToggleButton(getImage("calendar_grey.png"), //$NON-NLS-1$
 				true);
 		dateFilterButton.setSelectedIcon(getImage("calendar.png")); //$NON-NLS-1$
-		dateFilterButton.setActionCommand(FILTER_DATE); //$NON-NLS-1$
+		dateFilterButton.setActionCommand(FILTER_DATE);
 		dateFilterButton.addActionListener(this);
 		dateFilterButton.setToolTipText(Main.getMessage(FILTER_DATE));
 		// callerList.getDateFilter().updateDateFilter()
 
-		setDateFilterText();//TODO das hier mal anschauen
+		setDateFilterText();// TODO das hier mal anschauen
 		JPopupMenu datePopupMenu = new JPopupMenu();
 		menuItem = new JMenuItem(Main.getMessage("date_filter_today")); //$NON-NLS-1$
 		menuItem.setActionCommand("setdatefilter_thisday"); //$NON-NLS-1$
@@ -414,7 +415,6 @@ KeyListener, PropertyChangeListener {
 		dateFilterButton.addMouseListener(popupListener);
 
 		startDateChooser = new JDateChooser();
-		startDateChooser.setDate(Calendar.getInstance().getTime());
 		startDateChooser.setVisible(false);
 		startDateChooser.addPropertyChangeListener("date", this);
 		endDateChooser = new JDateChooser();
@@ -424,38 +424,38 @@ KeyListener, PropertyChangeListener {
 
 		sipFilterButton = new JToggleButton(getImage("world_grey.png"), true); //$NON-NLS-1$
 		sipFilterButton.setSelectedIcon(getImage("world.png")); //$NON-NLS-1$
-		sipFilterButton.setActionCommand(FILTER_SIP); //$NON-NLS-1$
+		sipFilterButton.setActionCommand(FILTER_SIP);
 		sipFilterButton.addActionListener(this);
-		sipFilterButton.setToolTipText(Main.getMessage(FILTER_SIP)); //$NON-NLS-1$
+		sipFilterButton.setToolTipText(Main.getMessage(FILTER_SIP));
 
 		callByCallFilterButton = new JToggleButton(
 				getImage("callbycall_grey.png"), true); //$NON-NLS-1$
 		callByCallFilterButton.setSelectedIcon(getImage("callbycall.png")); //$NON-NLS-1$
-		callByCallFilterButton.setActionCommand(FILTER_CALLBYCALL); //$NON-NLS-1$
+		callByCallFilterButton.setActionCommand(FILTER_CALLBYCALL);
 		callByCallFilterButton.addActionListener(this);
 		callByCallFilterButton.setToolTipText(Main
-				.getMessage(FILTER_CALLBYCALL)); //$NON-NLS-1$
+				.getMessage(FILTER_CALLBYCALL));
 
 		commentFilterButton = new JToggleButton(getImage("commentFilter.png"), //$NON-NLS-1$
 				true);
 		commentFilterButton.setSelectedIcon(getImage("commentFilter.png")); //$NON-NLS-1$
-		commentFilterButton.setActionCommand(FILTER_COMMENT); //$NON-NLS-1$
+		commentFilterButton.setActionCommand(FILTER_COMMENT);
 		commentFilterButton.addActionListener(this);
-		commentFilterButton.setToolTipText(Main.getMessage(FILTER_COMMENT)); //$NON-NLS-1$
+		commentFilterButton.setToolTipText(Main.getMessage(FILTER_COMMENT));
 
 		searchFilterButton = new JToggleButton(getImage("searchfilter.png"), //$NON-NLS-1$
 				true);
 		// TODO make a grey image and change this
 		searchFilterButton.setSelectedIcon(getImage("searchfilter.png")); //$NON-NLS-1$
-		searchFilterButton.setActionCommand(FILTER_SEARCH); //$NON-NLS-1$
+		searchFilterButton.setActionCommand(FILTER_SEARCH);
 		searchFilterButton.addActionListener(this);
-		searchFilterButton.setToolTipText(Main.getMessage(FILTER_SEARCH)); //$NON-NLS-1$
+		searchFilterButton.setToolTipText(Main.getMessage(FILTER_SEARCH));
 		searchFilterTextField = new JTextField(10);
 
 		deleteEntriesButton = new JButton();
 		deleteEntriesButton.setToolTipText(Main.getMessage(DELETE_ENTRIES)
-				.replaceAll("%N", "")); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-		deleteEntriesButton.setActionCommand(DELETE_ENTRY); //$NON-NLS-1$
+				.replaceAll("%N", "")); //$NON-NLS-1$,  //$NON-NLS-2$,
+		deleteEntriesButton.setActionCommand(DELETE_ENTRY);
 		deleteEntriesButton.addActionListener(this);
 		deleteEntriesButton.setIcon(getImage("delete.png")); //$NON-NLS-1$
 		deleteEntriesButton.setFocusPainted(false);
@@ -515,11 +515,11 @@ KeyListener, PropertyChangeListener {
 
 	public void disableDeleteEntriesButton() {
 		deleteEntriesButton.setToolTipText(Main.getMessage(DELETE_ENTRIES)
-				.replaceAll("%N", "")); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+				.replaceAll("%N", "")); //$NON-NLS-1$,  //$NON-NLS-2$,
 		deleteEntriesButton.setEnabled(false);
 	}
 
-	//TODO reverseLookup nach Phonebook verschieben
+	// TODO reverseLookup nach Phonebook verschieben
 	private void doReverseLookup() {
 		int rows[] = callerTable.getSelectedRows();
 		if (rows.length > 0) { // nur für markierte Einträge ReverseLookup
@@ -543,9 +543,9 @@ KeyListener, PropertyChangeListener {
 		return callerList;
 	}
 
-	//public JToggleButton getCallByCallButton() {
-	//	return callByCallFilterButton;
-	//}
+	// public JToggleButton getCallByCallButton() {
+	// return callByCallFilterButton;
+	// }
 
 	public CallerTable getCallerTable() {
 		return callerTable;
@@ -558,31 +558,31 @@ KeyListener, PropertyChangeListener {
 	}
 
 	private void handleAction(String command) {
-		if (command.equals(FILTER_CALLIN)) { //$NON-NLS-1$
+		if (command.equals(FILTER_CALLIN)) {
 			syncCallInFilterWithButton();
 			return;
 		}
-		if (command.equals(FILTER_CALLINFAILED)) { //$NON-NLS-1$
+		if (command.equals(FILTER_CALLINFAILED)) {
 			syncCallInFailedFilterWithButton();
 			return;
 		}
-		if (command.equals(FILTER_CALLOUT)) { //$NON-NLS-1$
+		if (command.equals(FILTER_CALLOUT)) {
 			syncCallOutFilterWithButton();
 			return;
 		}
-		if (command.equals(FILTER_COMMENT)) { //$NON-NLS-1$
+		if (command.equals(FILTER_COMMENT)) {
 			syncCommentFilterWithButton();
 			return;
 		}
-		if (command.equals(FILTER_NUMBER)) { //$NON-NLS-1$
+		if (command.equals(FILTER_NUMBER)) {
 			syncNumberFilterWithButton();
 			return;
 		}
-		if (command.equals(FILTER_FIXED)) { //$NON-NLS-1$
+		if (command.equals(FILTER_FIXED)) {
 			syncFixedFilterWithButton();
 			return;
 		}
-		if (command.equals(FILTER_HANDY)) { //$NON-NLS-1$
+		if (command.equals(FILTER_HANDY)) {
 			syncHandyFilterWithButton();
 			return;
 		}
@@ -592,7 +592,7 @@ KeyListener, PropertyChangeListener {
 			return;
 		}
 
-		if (command.equals(FILTER_DATE)) { //$NON-NLS-1$
+		if (command.equals(FILTER_DATE)) {
 			syncDateFilterWithButton();
 			return;
 		}
@@ -760,11 +760,11 @@ KeyListener, PropertyChangeListener {
 
 			return;
 		}
-		if (command.equals(FILTER_SIP)) { //$NON-NLS-1$
+		if (command.equals(FILTER_SIP)) {
 			syncSipFilterWithButton();
 			return;
 		}
-		if (command.equals(FILTER_CALLBYCALL)) { //$NON-NLS-1$
+		if (command.equals(FILTER_CALLBYCALL)) {
 			syncCallByCallFilterWithButton();
 			return;
 		}
@@ -772,7 +772,7 @@ KeyListener, PropertyChangeListener {
 			clearAllFilter();
 			return;
 		}
-		if (command.equals(DELETE_ENTRY)) { //$NON-NLS-1$
+		if (command.equals(DELETE_ENTRY)) {
 			callerList.removeEntries();
 			return;
 		}
@@ -818,8 +818,8 @@ KeyListener, PropertyChangeListener {
 			// TODO checken, ob sich der search filter geändert hat
 			if (!dateFilterButton.isSelected()) {
 				callerList.removeFilter(dateFilter);
-				dateFilter = new DateFilter(setStartOfDay(startDateChooser.getDate()),
-						setEndOfDay(endDateChooser.getDate()));
+				dateFilter = new DateFilter(setStartOfDay(startDateChooser
+						.getDate()), setEndOfDay(endDateChooser.getDate()));
 				callerList.addFilter(dateFilter);
 			}
 			if (!searchFilterButton.isSelected()) {
@@ -888,7 +888,7 @@ KeyListener, PropertyChangeListener {
 		sipFilterButton.setSelected(true);
 		callByCallFilterButton.setSelected(true);
 		commentFilterButton.setSelected(true);
-// no more filters now set the other stuff
+		// no more filters now set the other stuff
 		searchFilterTextField.setVisible(false);
 		searchLabel.setVisible(false);
 		startDateChooser.setVisible(false);
@@ -905,22 +905,24 @@ KeyListener, PropertyChangeListener {
 			endDateChooser.setVisible(false);
 		}
 
-		DateFormat df  = new SimpleDateFormat("dd.MM.yy HH:mm");
+		DateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm");
 
 		Date start = new Date();
-		Date end =new Date();
+		Date end = new Date();
 		try {
-			start = df.parse(Main.getProperty(FILTER_DATE_START, "11.11.11 11:11"));
+			start = df.parse(Main.getProperty(FILTER_DATE_START,
+			"11.11.11 11:11"));
 			end = df.parse(Main.getProperty(FILTER_DATE_END, "11.11.11 11:11"));
+			startDateChooser.setDate(start);
+			endDateChooser.setDate(end);
 		} catch (ParseException e) {
+			startDateChooser.setDate(Calendar.getInstance().getTime());
+			endDateChooser.setDate(Calendar.getInstance().getTime());
 			Debug
-					.err("error parsing date while loading dates from main properties "
-							+ e.toString());
+			.err("error parsing date while loading dates from main properties "
+					+ e.toString());
 		}
 
-
-		startDateChooser.setDate(start);
-		endDateChooser.setDate(end);
 		if (!JFritzUtils.parseBoolean(Main.getProperty(FILTER_SIP, FALSE))) {
 			sipFilterButton.setSelected(false);
 		}
@@ -990,12 +992,12 @@ KeyListener, PropertyChangeListener {
 
 	public void setDeleteEntriesButton(int rows) {
 		deleteEntriesButton.setToolTipText(Main.getMessage(DELETE_ENTRIES)
-				.replaceAll("%N", Integer.toString(rows))); //$NON-NLS-1$,  //$NON-NLS-2$
+				.replaceAll("%N", Integer.toString(rows))); //$NON-NLS-1$,
 		deleteEntriesButton.setEnabled(true);
 	}
 
 	public void setDeleteEntryButton() {
-		deleteEntriesButton.setToolTipText(Main.getMessage(DELETE_ENTRY)); //$NON-NLS-1$
+		deleteEntriesButton.setToolTipText(Main.getMessage(DELETE_ENTRY));
 		deleteEntriesButton.setEnabled(true);
 	}
 
@@ -1052,8 +1054,8 @@ KeyListener, PropertyChangeListener {
 		endDateChooser.setVisible(false);
 		callerList.removeFilter(dateFilter);
 		if (!dateFilterButton.isSelected()) {
-			dateFilter = new DateFilter(setStartOfDay(startDateChooser.getDate()),
-					setEndOfDay(endDateChooser.getDate()));
+			dateFilter = new DateFilter(setStartOfDay(startDateChooser
+					.getDate()), setEndOfDay(endDateChooser.getDate()));
 			callerList.addFilter(dateFilter);
 			startDateChooser.setVisible(true);
 			endDateChooser.setVisible(true);
@@ -1110,7 +1112,7 @@ KeyListener, PropertyChangeListener {
 		Main.setProperty(FILTER_SEARCH, searchFilterButton.isSelected());
 		Main.setProperty(FILTER_COMMENT, commentFilterButton.isSelected());
 		Main.setProperty(FILTER_DATE, dateFilterButton.isSelected());
-		DateFormat df  = new SimpleDateFormat("dd.MM.yy HH:mm");
+		DateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm");
 		Date start = startDateChooser.getDate();
 		Date end = endDateChooser.getDate();
 
