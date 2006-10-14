@@ -49,7 +49,7 @@ import de.moonflower.jfritz.monitoring.UpdateInternetTask;
  * Class for displaying monitoring information like current internet
  * or phone usage
  *
- * Class uses jfreechart to display internet usage as chart
+ * Class uses jfreechart to display internet usage as filled line chart
  *
  * @author brian jensen
  *
@@ -81,11 +81,11 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 
 		add(createPhonePanel(), BorderLayout.SOUTH);
 		add(createInternetPanel(), BorderLayout.NORTH);
-		//TODO: Phone usage panel here!
 
 	}
+
 	/**
-	 * This creates the internet panel, which is the top half of the monitoring tab
+	 * This creates the internet panel, which is the top half of the monitoring panel
 	 *
 	 * @return the internet panel
 	 */
@@ -212,15 +212,6 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 		currentCalls.setRowHeight(24);
 		currentCalls.setAutoCreateColumnsFromModel(true);
 
-		/*
-		currentCalls.setFocusable(false);
-		currentCalls.setColumnSelectionAllowed(false);
-		currentCalls.setCellSelectionEnabled(false);
-		currentCalls.setRowSelectionAllowed(true);
-		currentCalls.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-		*/
-
 		currentCalls.getColumnModel().getColumn(0).setMinWidth(20);
 		currentCalls.getColumnModel().getColumn(0).setMaxWidth(50);
 
@@ -243,12 +234,6 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 		//currentCalls.getColumnModel().getColumn(6).setMaxWidth(200);
 
 		currentCalls.setSize(500, 150);
-
-		//JLabel label = new JLabel("Calls in progress");
-		//label.setBorder(new EmptyBorder(10,10,10,10));
-		//JPanel centeredPanel = new JPanel();
-		//centeredPanel.add(label, BorderLayout.CENTER);
-		//phonePanel.add(centeredPanel, BorderLayout.NORTH);
 
 		//create the Border
 		Border lowerEtched = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
