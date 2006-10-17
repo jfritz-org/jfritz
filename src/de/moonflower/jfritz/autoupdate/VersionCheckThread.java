@@ -3,11 +3,15 @@ package de.moonflower.jfritz.autoupdate;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -24,9 +28,9 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 /**
  * Dieser Thread überprüft, ob eine neue JFritz Version verfügbar ist
  *
- * Ist eine neue Version verfügbar, werden die neuen Dateien heruntergeladen und
- * die alten Dateien werden gelöscht bzw. mit den neuen Versionen überschrieben
- *
+ * Ist eine neue Version verfügbar, werden die neuen Dateien in den
+ * update-Ordner heruntergeladen und eine Datei deletefiles erstellt, in der die
+ * zu löschenden Dateien und Ordner drinstehen
  *
  * @author Bastian Schaefer
  *
@@ -53,21 +57,21 @@ public class VersionCheckThread implements Runnable {
 
 	private boolean informNoNewVersion;
 
-	private String jfritzHomedir;
+	private String updateDirectory;
 
 	private int updateFileSize;
 
+	private AutoUpdateGUI auGui;
+
 	public VersionCheckThread(boolean informNoNewVersion) {
 		this.informNoNewVersion = informNoNewVersion;
-		jfritzHomedir = JFritzUtils.getFullPath(".update");
-		jfritzHomedir = jfritzHomedir.substring(0, jfritzHomedir.length() - 7);
+		updateDirectory = Main.getHomeDirectory() + JFritzUtils.FILESEP + "update";
 	}
 
 	public void run() {
 		updateFileSize = 0;
 		if (checkForNewVersion()) {
-			Object[] options = { Main.getMessage("yes"),
-					Main.getMessage("no") };
+			Object[] options = { Main.getMessage("yes"), Main.getMessage("no") };
 			int ok = JOptionPane.showOptionDialog(JFritz.getJframe(), Main
 					.getMessage("new_version_text"), Main
 					.getMessage("new_version"), JOptionPane.YES_NO_OPTION,
@@ -80,6 +84,8 @@ public class VersionCheckThread implements Runnable {
 				getLocalFiles();
 				analyseRemoteFiles();
 				analyseLocalFiles();
+				auGui = new AutoUpdateGUI();
+				auGui.setVisible(true);
 				processUpdateList();
 
 				// Ask for restarting JFritz
@@ -92,6 +98,7 @@ public class VersionCheckThread implements Runnable {
 						options[0]); // default button title
 				if (ok == JOptionPane.YES_OPTION) {
 					// TODO: restart JFritz;
+					Main.exit(0);
 				}
 			}
 		} else if (informNoNewVersion == true) {
@@ -133,9 +140,9 @@ public class VersionCheckThread implements Runnable {
 							.replaceAll("\\.", "").replaceFirst("\\|", "\\.");
 
 					// Format local version as 0.621
-					String localVersion = Main.PROGRAM_VERSION
-							.replaceFirst("\\.", "\\|").replaceAll("\\.", "")
-							.replaceFirst("\\|", "\\.");
+					String localVersion = Main.PROGRAM_VERSION.replaceFirst(
+							"\\.", "\\|").replaceAll("\\.", "").replaceFirst(
+							"\\|", "\\.");
 
 					if (Double.valueOf(remoteVersion).compareTo(
 							Double.valueOf(localVersion)) > 0) {
@@ -208,7 +215,7 @@ public class VersionCheckThread implements Runnable {
 		try {
 			Debug.msg("CheckVersionThread: getting local files...");
 
-			File localVersionFile = new File(jfritzHomedir
+			File localVersionFile = new File(Main.getHomeDirectory()
 					+ System.getProperty("file.separator") + "current.txt");
 
 			BufferedReader pw = new BufferedReader(new InputStreamReader(
@@ -263,54 +270,60 @@ public class VersionCheckThread implements Runnable {
 	/**
 	 * Analysiert die locale Dateiliste
 	 *
-	 * Löscht alle nicht mehr benötigten Dateien/Ordner von der Festplatte
+	 * Nicht mehr benötigte Dateien werden in die "deletefiles"-Datei
+	 * geschrieben, sodass diese beim nächsten Start von JFritz gelöscht werden
 	 *
 	 */
 	private void analyseLocalFiles() {
-		for (int i = 0; i < localFiles.size(); i++) {
-			UpdateFile currentLocalFile = (UpdateFile) localFiles.get(i);
-			if (!remoteFiles.contains(currentLocalFile)) {
-				deleteFile(currentLocalFile.getName());
+		System.err.println(updateDirectory);
+		File updateDir = new File(updateDirectory);
+		updateDir.mkdir();
+		File deleteFile = new File(updateDirectory
+				+ System.getProperty("file.separator") + "deletefiles");
+		deleteFile.delete();
+		try {
+			deleteFile.createNewFile();
+		} catch (IOException e1) {
+			System.err.println("Could not create version file: "
+					+ deleteFile.getAbsolutePath());
+		}
+
+		try {
+			BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
+					new FileOutputStream(deleteFile), "UTF8"));
+			for (int i = 0; i < localFiles.size(); i++) {
+				UpdateFile currentLocalFile = (UpdateFile) localFiles.get(i);
+				if (!remoteFiles.contains(currentLocalFile)) {
+					pw.write(currentLocalFile.getName());
+				}
 			}
+			pw.flush();
+			pw.close();
+		} catch (UnsupportedEncodingException e1) {
+			System.err.println("Could not write file with UTF8 encoding");
+		} catch (FileNotFoundException e1) {
+			System.err.println("Could not find file " + deleteFile);
+		} catch (IOException e) {
+			System.err.println("Could not write to file " + deleteFile);
 		}
 	}
 
 	private void processUpdateList() {
+		int totalSize = 0;
+		for (int i = 0; i < updateFiles.size(); i++) {
+			UpdateFile currentFile = (UpdateFile) updateFiles.get(i);
+			totalSize += currentFile.getSize();
+		}
+		auGui.setTotalProgress(0);
+		auGui.setTotalSize(totalSize);
 		for (int i = 0; i < updateFiles.size(); i++) {
 			UpdateFile currentFile = (UpdateFile) updateFiles.get(i);
 			Debug.msg("Update file " + currentFile.getName());
-			deleteFile(currentFile.getName());
+			auGui.setCurrentFile(currentFile.getName());
+			auGui.setCurrentFileProgress(0);
+			auGui.setCurrentFileSize(currentFile.getSize());
+			downloadFile(currentFile.getName());
 		}
-	}
-
-	private void deleteFile(String fileName) {
-		if (fileName.endsWith(".zip")) {
-			// Es ist ein Verzeichnis. Lösche das Verzeichnis
-			String dirName = fileName.substring(0, fileName.length() - 4);
-			Debug.msg("Deleting directory " + jfritzHomedir
-					+ System.getProperty("file.separator") + dirName);
-			File dir = new File(jfritzHomedir
-					+ System.getProperty("file.separator") + dirName);
-			deleteTree(dir);
-		} else {
-			Debug.msg("Deleting file " + jfritzHomedir
-					+ System.getProperty("file.separator") + fileName);
-			File file = new File(jfritzHomedir
-					+ System.getProperty("file.separator") + fileName);
-			file.delete();
-		}
-	}
-
-	private static void deleteTree(File path) {
-		File[] fileList = path.listFiles();
-		for (int i = 0; i < fileList.length; i++) {
-			File file = fileList[i];
-			if (file.isDirectory())
-				deleteTree(file);
-			System.err.println("Deleting file: " + file.getAbsolutePath());
-			file.delete();
-		}
-		path.delete();
 	}
 
 	private void downloadFile(String fileName) {
@@ -318,6 +331,7 @@ public class VersionCheckThread implements Runnable {
 
 		String urlstr = "http://www.jfritz.org/update/" + newJFritzVersion
 				+ "/" + fileName;
+		int position = 0;
 		try {
 			Debug.msg("CheckVersionThread: Download new file from " + urlstr);
 			url = new URL(urlstr);
@@ -326,19 +340,26 @@ public class VersionCheckThread implements Runnable {
 			BufferedInputStream in = new BufferedInputStream(conn
 					.getInputStream());
 			BufferedOutputStream out = new BufferedOutputStream(
-					new FileOutputStream(jfritzHomedir + JFritzUtils.FILESEP
+					new FileOutputStream(updateDirectory + JFritzUtils.FILESEP
 							+ fileName));
 
 			int i = in.read();
 			while (i != -1) {
 				out.write(i);
 				i = in.read();
+				position += 1;
+				if ( position % 100 == 0) {
+					auGui.setCurrentFileProgress(position);
+					auGui.setTotalProgress(auGui.getTotalProgress()+100);
+				}
 			}
+			auGui.setCurrentFileProgress(position);
+			auGui.setTotalProgress(auGui.getTotalProgress()+100);
 			in.close();
 			out.flush();
 			out.close();
 			Debug.msg("CheckVersionThread: Saved file " + fileName + " to "
-					+ jfritzHomedir + JFritzUtils.FILESEP + fileName);
+					+ updateDirectory + JFritzUtils.FILESEP + fileName);
 		} catch (Exception e) {
 			Debug.err("CheckVersionThread: Error (" + e.toString() + ")");
 		}

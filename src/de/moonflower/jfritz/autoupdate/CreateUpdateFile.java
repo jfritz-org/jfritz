@@ -75,7 +75,8 @@ public class CreateUpdateFile {
 			System.err.println("Could not find file " + versionFile);
 		} catch (IOException e) {
 			System.err.println("Could not write to file " + versionFile);
-		}	}
+		}
+	}
 
 	private void setUpdateFiles() {
 		File updateFile = new File(targetDirectory.getAbsolutePath()

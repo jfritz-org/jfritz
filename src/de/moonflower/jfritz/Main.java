@@ -135,6 +135,9 @@
  *  enable_inet_monitoring
  *  monitoring
  *  inet_usgage
+ *  autoupdate_title
+ *  autoupdate_current_file
+ *  autoupdate_overall_file
  *
  * - Bugfix: örtliche Nummer, die mit 49 beginnen, werden jetzt richtig verarbeitet
  * - Bugfix: Callmonitor schreibt die Ortsvorwahl vor unbekannten Rufnummern nicht mehr
@@ -581,22 +584,25 @@ public class Main {
 
 	private static boolean checkSystray = true;
 
-	/**
-	 * Main method for starting JFritz
-	 *
-	 * LAST MODIFIED: Brian Jensen 04.06.06 added option to disable mulitple
-	 * instance control added a new parameter switch: -w
-	 *
-	 * @param args
-	 *            Program arguments (-h -v ...)
-	 *
-	 */
-	public static void main(String[] args) {
+	private static String jfritzHomedir;
+
+	private CLIOptions options;
+
+	public Main(String[] args) {
 		System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION //$NON-NLS-1$
 				+ " (c) 2005 by " + PROGRAM_AUTHOR); //$NON-NLS-1$
- 		Thread.currentThread().setPriority(5);
+		Thread.currentThread().setPriority(5);
 
-		CLIOptions options = new CLIOptions();
+		jfritzHomedir = JFritzUtils.getFullPath(".update");
+		jfritzHomedir = jfritzHomedir.substring(0, jfritzHomedir.length() - 7);
+	}
+
+	/**
+	 * Initialisiert die erlaubten Kommandozeilenparameter
+	 *
+	 */
+	private void initiateCLIParameters() {
+		options = new CLIOptions();
 
 		options.addOption('h', "help", null, "This short description"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 		CLIOption verboseOption = new CLIOption('v', "verbose", null,
@@ -613,16 +619,30 @@ public class Main {
 				"Clears Caller List and exit"); //$NON-NLS-1$
 		options.addOption('e', "export", "filename", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 				"Fetch calls and export to CSV file."); //$NON-NLS-1$
-		options.addOption('z', "exportForeign", null, //$NON-NLS-1$,  //$NON-NLS-2$
+		options
+				.addOption('z', "exportForeign", null, //$NON-NLS-1$,  //$NON-NLS-2$
 						"Write phonebooks compatible to BIT FBF Dialer and some other callmonitors."); //$NON-NLS-1$
 		options.addOption('l', "logfile", "filename", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 				"Writes debug messages to logfile"); //$NON-NLS-1$,
 		options.addOption('p', "priority", "level", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 				"Set program priority [1..10]"); //$NON-NLS-1$
-		options.addOption('w', "without-control", null, //$NON-NLS-1$,  //$NON-NLS-2$
+		options
+				.addOption(
+						'w',
+						"without-control", null, //$NON-NLS-1$,  //$NON-NLS-2$
 						"Turns off multiple instance control. DON'T USE, unless you know what your are doing"); //$NON-NLS-1$
-		options.addOption('r', "reverse-lookup", null,
+		options
+				.addOption('r', "reverse-lookup", null,
 						"Do a reverse lookup and exit. Can be used together with -e -f and -z");
+	}
+
+	/**
+	 * Überprüft, ob die -h, -v oder -l Startparameter gesetzt sind
+	 *
+	 * @param args
+	 *            Kommandozeilenargumente
+	 */
+	private void checkDebugParameters(String[] args) {
 		Vector foundOptions = options.parseOptions(args);
 
 		// Checke den help, verbose/debug und log-to-file parameter
@@ -650,30 +670,20 @@ public class Main {
 				}
 			}
 		}
+	}
 
-		// Weitere Initialisierung
-		loadSaveDir();
-
-		loadProperties();
-		loadMessages(new Locale(getProperty("locale", "de_DE"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		loadLocaleMeanings(new Locale("int", "INT"));
-
+	/**
+	 * Überprüft die weiteren Kommandozeilenparameter
+	 *
+	 * @param args
+	 *            Kommandozeilenargumente
+	 */
+	private void checkCLIParameters(String[] args) {
 		boolean shutdown = false;
-
-		// check the version and display a message if newer version is
-		// available
-		if (JFritzUtils.parseBoolean(Main.getProperty(
-				"option.checkNewVersionAfterStart",//$NON-NLS-1$
-				"false"))) {//$NON-NLS-1$
-			VersionCheckThread vct = new VersionCheckThread(false);
-			vct.run();
-		}
-
-		new JFritz();
-
 		Debug.msg("Start commandline parsing"); //$NON-NLS-1$
 		// Checke alle weiteren Parameter
-		en = foundOptions.elements();
+		Vector foundOptions = options.parseOptions(args);
+		Enumeration en = foundOptions.elements();
 		while (en.hasMoreElements()) {
 			CLIOption option = (CLIOption) en.nextElement();
 
@@ -762,7 +772,14 @@ public class Main {
 		if (shutdown) {
 			exit(0);
 		}
+	}
 
+	/**
+	 * Ist die Mehrfachstart-Überprüfung aktiv, so wird ein Dialog angezeigt mit
+	 * dem der User JFritz sicher beenden kann
+	 *
+	 */
+	private void checkInstanceControl() {
 		if (enableInstanceControl) {
 			// check isRunning and exit or set lock
 			File f = new File(SAVE_DIR + LOCK_FILE);
@@ -776,7 +793,8 @@ public class Main {
 					Debug.err("Could not set instance lock");
 				}
 			} else {
-				Debug.msg("Multiple instance lock: Another instance is already running."); //$NON-NLS-1$
+				Debug
+						.msg("Multiple instance lock: Another instance is already running."); //$NON-NLS-1$
 				int answer = JOptionPane.showConfirmDialog(null,
 						getMessage("lock_error_dialog1") //$NON-NLS-1$
 								+ getMessage("lock_error_dialog2") //$NON-NLS-1$
@@ -784,17 +802,57 @@ public class Main {
 								+ getMessage("lock_error_dialog4"), //$NON-NLS-1$
 						getMessage("information"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
 				if (answer == JOptionPane.YES_OPTION) {
-					Debug.msg("Multiple instance lock: User decided to shut down this instance."); //$NON-NLS-1$
+					Debug
+							.msg("Multiple instance lock: User decided to shut down this instance."); //$NON-NLS-1$
 					exit(0);
 				} else {
-					Debug.msg("Multiple instance lock: User decided NOT to shut down this instance."); //$NON-NLS-1$
+					Debug
+							.msg("Multiple instance lock: User decided NOT to shut down this instance."); //$NON-NLS-1$
 				}
 			}
 		}
+	}
+
+	/**
+	 * Main method for starting JFritz
+	 *
+	 * LAST MODIFIED: Brian Jensen 04.06.06 added option to disable mulitple
+	 * instance control added a new parameter switch: -w
+	 *
+	 * @param args
+	 *            Program arguments (-h -v ...)
+	 *
+	 */
+	public static void main(String[] args) {
+		Main main = new Main(args);
+		main.initiateCLIParameters();
+		main.checkDebugParameters(args);
+
+		// Weitere Initialisierung
+		loadSaveDir();
+
+		loadProperties();
+		loadMessages(new Locale(getProperty("locale", "de_DE"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		loadLocaleMeanings(new Locale("int", "INT"));
+
+		// check the version and display a message if newer version is
+		// available
+		if (JFritzUtils.parseBoolean(Main.getProperty(
+				"option.checkNewVersionAfterStart",//$NON-NLS-1$
+				"false"))) {//$NON-NLS-1$
+			VersionCheckThread vct = new VersionCheckThread(false);
+			vct.run();
+		}
+
+		new JFritz();
+
+		main.checkCLIParameters(args);
+		main.checkInstanceControl();
+
 		JFritz.createJFrame(showConfWizard);
-		//TODO sollten wir das programm nicht hier beenden?
-		//while(!shutdown){sleep oder sowas
-		//Debug.msg("ENDEN---main.java---DNEND");
+		// TODO sollten wir das programm nicht hier beenden?
+		// while(!shutdown){sleep oder sowas
+		// Debug.msg("ENDEN---main.java---DNEND");
 	}
 
 	/**
@@ -878,7 +936,7 @@ public class Main {
 		}
 	}
 
-	private static void exit(int i) {
+	public static void exit(int i) {
 		// TODO maybe some cleanup is needed
 		System.exit(i);
 	}
@@ -1127,6 +1185,10 @@ public class Main {
 			SYSTRAY_SUPPORT = true;
 		}
 		return SYSTRAY_SUPPORT;
+	}
+
+	public static String getHomeDirectory() {
+		return jfritzHomedir;
 	}
 
 }
