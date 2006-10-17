@@ -914,8 +914,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 */
     protected void processWindowEvent(WindowEvent e) {
 		if (e.getID() == WindowEvent.WINDOW_CLOSING) {
-			// FIXME dont just quit let other windowlisteners reakt on this
-			// event
 			if (JFritzUtils.parseBoolean(Main.getProperty("option.minimize", //$NON-NLS-1$
 					"false"))) { //$NON-NLS-1$
 				setExtendedState(JFrame.ICONIFIED);

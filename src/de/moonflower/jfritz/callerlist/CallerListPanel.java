@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -55,6 +56,7 @@ import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.ThreeStateButton;
 import de.moonflower.jfritz.utils.JFritzClipboard;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
@@ -292,8 +294,8 @@ KeyListener, PropertyChangeListener {
 	public JPanel createToolBar() {
 		JToolBar upperToolBar = new JToolBar();
 		upperToolBar.setFloatable(true);
-		JToolBar lowerToolBar = new JToolBar();
-		lowerToolBar.setFloatable(true);
+		JToolBar lowerToolbar = new JToolBar();
+		lowerToolbar.setFloatable(true);
 
 		JButton resetFiltersButton = new JButton();
 		resetFiltersButton.setActionCommand("export_csv"); //$NON-NLS-1$
@@ -446,7 +448,7 @@ KeyListener, PropertyChangeListener {
 		searchFilterButton = new JToggleButton(getImage("searchfilter.png"), //$NON-NLS-1$
 				true);
 		// TODO make a grey image and change this
-		searchFilterButton.setSelectedIcon(getImage("searchfilter.png")); //$NON-NLS-1$
+		//searchFilterButton.setSelectedIcon(getImage("searchfilter.png")); //$NON-NLS-1$
 		searchFilterButton.setActionCommand(FILTER_SEARCH);
 		searchFilterButton.addActionListener(this);
 		searchFilterButton.setToolTipText(Main.getMessage(FILTER_SEARCH));
@@ -461,14 +463,13 @@ KeyListener, PropertyChangeListener {
 		deleteEntriesButton.setFocusPainted(false);
 		deleteEntriesButton.setEnabled(false);
 
-		applyFilterButton = new JButton();
-		// FIXME make a message for this Tooltip
+		//applyFilterButton = new JButton();
 		// applyFilterButton.setToolTipText(Main.getMessage("apply_filters").replaceAll("%N",
 		// "")); //$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$
-		applyFilterButton.setActionCommand("apply_filter"); //$NON-NLS-1$
-		applyFilterButton.addActionListener(this);
-		applyFilterButton.setIcon(getImage("apply_filter.png")); //$NON-NLS-1$
-		applyFilterButton.setVisible(false);
+		//applyFilterButton.setActionCommand("apply_filter"); //$NON-NLS-1$
+		//applyFilterButton.addActionListener(this);
+		//applyFilterButton.setIcon(getImage("apply_filter.png")); //$NON-NLS-1$
+		//applyFilterButton.setVisible(false);
 
 		searchLabel = new JLabel(Main.getMessage("search") + ": ");//$NON-NLS-1$,  //$NON-NLS-2$
 		searchLabel.setVisible(false);
@@ -478,6 +479,7 @@ KeyListener, PropertyChangeListener {
 		resetFiltersButton = new JButton(Main.getMessage("clear")); //$NON-NLS-1$
 		resetFiltersButton.setActionCommand("clearFilter"); //$NON-NLS-1$
 		resetFiltersButton.addActionListener(this);
+	//	ThreeStateButton testButton = new ThreeStateButton(getImage("searchfilter.png"));
 
 		JPanel toolbarPanel = new JPanel();
 		toolbarPanel.setLayout(new BorderLayout());
@@ -485,30 +487,31 @@ KeyListener, PropertyChangeListener {
 		// toolbarPanel.add(upperToolBar, BorderLayout.NORTH);
 
 		/** **********add all Buttons and stuff to the lowerToolbar************** */
-		lowerToolBar.add(callInFilterButton);
-		lowerToolBar.add(callInFailedFilterButton);
-		lowerToolBar.add(callOutFilterButton);
-		lowerToolBar.add(numberFilterButton);
-		lowerToolBar.add(fixedFilterButton);
-		lowerToolBar.add(handyFilterButton);
-		lowerToolBar.add(sipFilterButton);
-		lowerToolBar.add(callByCallFilterButton);
-		lowerToolBar.add(commentFilterButton);
-		lowerToolBar.addSeparator();
-		lowerToolBar.add(dateFilterButton);
-		lowerToolBar.add(startDateChooser);
-		lowerToolBar.add(endDateChooser);
-		lowerToolBar.addSeparator();
-		lowerToolBar.add(searchFilterButton);
-		lowerToolBar.add(searchLabel);
-		lowerToolBar.add(searchFilterTextField);
-		lowerToolBar.addSeparator();
-		lowerToolBar.add(applyFilterButton);
-		lowerToolBar.add(resetFiltersButton);
-		lowerToolBar.addSeparator();
-		lowerToolBar.addSeparator();
-		lowerToolBar.add(deleteEntriesButton);
-		toolbarPanel.add(lowerToolBar, BorderLayout.SOUTH);
+//		lowerToolbar.add(testButton);
+		lowerToolbar.add(callInFilterButton);
+		lowerToolbar.add(callInFailedFilterButton);
+		lowerToolbar.add(callOutFilterButton);
+		lowerToolbar.add(numberFilterButton);
+		lowerToolbar.add(fixedFilterButton);
+		lowerToolbar.add(handyFilterButton);
+		lowerToolbar.add(sipFilterButton);
+		lowerToolbar.add(callByCallFilterButton);
+		lowerToolbar.add(commentFilterButton);
+		lowerToolbar.addSeparator();
+		lowerToolbar.add(dateFilterButton);
+		lowerToolbar.add(startDateChooser);
+		lowerToolbar.add(endDateChooser);
+		lowerToolbar.addSeparator();
+		lowerToolbar.add(searchFilterButton);
+		lowerToolbar.add(searchLabel);
+		lowerToolbar.add(searchFilterTextField);
+		lowerToolbar.addSeparator();
+//		lowerToolbar.add(applyFilterButton);
+		lowerToolbar.add(resetFiltersButton);
+		lowerToolbar.addSeparator();
+		lowerToolbar.addSeparator();
+		lowerToolbar.add(deleteEntriesButton);
+		toolbarPanel.add(lowerToolbar, BorderLayout.SOUTH);
 		readButtonStatus();
 		return toolbarPanel;
 	}
@@ -558,8 +561,10 @@ KeyListener, PropertyChangeListener {
 	}
 
 	private void handleAction(String command) {
+	//	int[] rows = callerTable.getSelectedRows();
+	//	if(rows.length ==0){
 		if (command.equals(FILTER_CALLIN)) {
-			syncCallInFilterWithButton();
+				syncCallInFilterWithButton();
 			return;
 		}
 		if (command.equals(FILTER_CALLINFAILED)) {
