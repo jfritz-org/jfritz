@@ -229,4 +229,12 @@ public class JFritzUtils {
 		return strBuf.toString();
 	}
 
+	public static int parseInt(String property) {
+		try {
+			return Integer.parseInt(property);
+		} catch (NumberFormatException nfe) {
+			Debug.msg("error converting Int returning 0 instead");
+		}
+		return 0;
+	}
 }
