@@ -854,7 +854,7 @@ KeyListener, PropertyChangeListener {
 
 		Debug.msg("reading Buttons");
 		int state;
-		state = Integer.parseInt(Main.getProperty(FILTER_COMMENT, "0"));
+		state = JFritzUtils.parseInt(Main.getProperty(FILTER_COMMENT, "0"));
 		commentFilterButton.setState(state);
 		state = JFritzUtils.parseInt(Main.getProperty(FILTER_DATE, "0"));
 		dateFilterButton.setState(state);
