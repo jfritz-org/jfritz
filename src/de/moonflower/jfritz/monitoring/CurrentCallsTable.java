@@ -4,11 +4,12 @@ import java.util.Vector;
 
 import javax.swing.table.AbstractTableModel;
 
+import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callmonitor.CallMonitorListener;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
-
+import de.moonflower.jfritz.utils.Debug;
 
 public class CurrentCallsTable extends AbstractTableModel implements
 	CallMonitorListener {
@@ -24,6 +25,7 @@ public class CurrentCallsTable extends AbstractTableModel implements
 
     public CurrentCallsTable(){
     	currentCalls = new Vector(4);
+    	JFritz.getCallMonitorList().addEventListener(this);
     }
 
 	public int getColumnCount() {
@@ -41,18 +43,18 @@ public class CurrentCallsTable extends AbstractTableModel implements
 	public Object getValueAt(int arg0, int arg1) {
 		if(currentCalls.size() <= arg0)
 			return null;
-		Call call = (Call) currentCalls.get(arg0 -1);
+		Call call = (Call) currentCalls.get(arg0);
 		switch (arg1){
-			case 1: return call.getCalltype();
-			case 2: return call.getCalldate();
-			case 3: if(call.getPhoneNumber() != null)
+			case 0: return call.getCalltype();
+			case 1: return call.getCalldate();
+			case 2: if(call.getPhoneNumber() != null)
 						return call.getPhoneNumber().getCallByCall();
 					return null;
-			case 4: return call.getPhoneNumber();
-			case 5: return call.getPerson();
-			case 6: return call.getPort();
-			case 7: return call.getRoute();
-			case 8: return null;
+			case 3: return call.getPhoneNumber();
+			case 4: return call.getPerson();
+			case 5: return call.getPort();
+			case 6: return call.getRoute();
+			case 7: return null;
 		}
 
 		//default junk, so code compiles cleanly
@@ -67,6 +69,7 @@ public class CurrentCallsTable extends AbstractTableModel implements
      * Method part of the interface CallMonitorListener
      */
     public void pendingCallIn(Call call){
+    	Debug.msg("pendingCallIn was called");
     	//Nothing here for now
     }
 
@@ -74,6 +77,7 @@ public class CurrentCallsTable extends AbstractTableModel implements
      * Method part of the interface CallMonitorListener
      */
     public void establishedCallIn(Call call){
+    	Debug.msg("establishedCallIn was called");
     	currentCalls.add(call);
     	fireTableDataChanged();
 
@@ -83,6 +87,7 @@ public class CurrentCallsTable extends AbstractTableModel implements
      * Method part of the interface CallMonitorListener
      */
     public void pendingCallOut(Call call){
+    	Debug.msg("pendingCallOut was called");
     	//Nothing here for now
     }
 
@@ -90,6 +95,7 @@ public class CurrentCallsTable extends AbstractTableModel implements
      * Method part of the interface CallMonitorListener
      */
     public void establishedCallOut(Call call){
+    	Debug.msg("establishedCallOut was called");
     	currentCalls.add(call);
     	fireTableDataChanged();
     }

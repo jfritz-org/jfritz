@@ -91,6 +91,13 @@ public class CallMonitorList {
             Debug.msg("CallMonitorList: Establishing call");
             establishedCalls.put(callID, pendingCalls.get(new Integer(id)));
             pendingCalls.remove(callID);
+            Call call = (Call) establishedCalls.get(callID);
+
+            //notify the listeners of an established call
+            if(call.getCalltype().equals(CallType.CALLIN_STR))
+            	this.invokeIncomingCallEstablished(call);
+            else
+            	this.invokeOutgoingCallEstablished(call);
         }
     }
 
@@ -178,6 +185,31 @@ public class CallMonitorList {
         Debug.msg("CallMonitorList: Removing event listener " + cml.toString());
         listeners.remove(cml);
     }
+
+    /**
+     * Throw incoming call event for listeners
+     *
+     * @param call
+     */
+    public void invokeIncomingCallEstablished(Call call) {
+        Debug.msg("CallMonitorList: Invoking incoming call established");
+        for (int i = 0; i < listeners.size(); i++) {
+            ((CallMonitorListener) listeners.get(i)).establishedCallIn(call);
+        }
+    }
+
+    /**
+     * Throw outgoing call event for listeners
+     *
+     * @param call
+     */
+    public void invokeOutgoingCallEstablished(Call call) {
+        Debug.msg("CallMonitorList: Invoking outgoing call established");
+        for (int i = 0; i < listeners.size(); i++) {
+            ((CallMonitorListener) listeners.get(i)).establishedCallOut(call);
+        }
+    }
+
 
     /**
      * Throw incoming call event for listeners
