@@ -8,7 +8,7 @@ public class CallOutFilter extends CallFilter {
 	public CallOutFilter() {
 	}
 
-	public boolean passFilter(Call currentCall) {
-		return (currentCall.getCalltype().toInt() != CallType.CALLOUT);
+	public boolean passInternFilter(Call currentCall) {
+		return (currentCall.getCalltype().toInt() == CallType.CALLOUT);
 	}
 }

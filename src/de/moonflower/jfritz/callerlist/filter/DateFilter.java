@@ -36,7 +36,7 @@ public class DateFilter extends CallFilter {
 
 
 
-    public boolean passFilter(Call currentCall) {
+    public boolean passInternFilter(Call currentCall) {
             if (currentCall.getCalldate().after(filterFromDate)
                 && currentCall
                     .getCalldate().before(filterToDate)) {

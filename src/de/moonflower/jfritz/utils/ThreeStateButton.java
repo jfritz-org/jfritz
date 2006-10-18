@@ -3,7 +3,6 @@ package de.moonflower.jfritz.utils;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.color.ColorSpace;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -22,11 +21,12 @@ import javax.swing.UIManager;
 public class ThreeStateButton extends JButton implements ActionListener {
 	private int state;
 
-	public static final int SELECTED = 0;
+	public static final int NOTHING = 0;
 
-	public static final int SELECTED_NOT = 1;
+	public static final int SELECTED = 2;
 
-	public static final int NOTHING = 2;
+	public static final int INVERTED = 1;
+
 
 	private Icon[] icons = new Icon[3];
 
@@ -40,11 +40,17 @@ public class ThreeStateButton extends JButton implements ActionListener {
 	 */
 	public ThreeStateButton(ImageIcon image) {
 		super(image);
-		state = SELECTED;
-		icons[SELECTED] = image;
+		state = NOTHING;
+		icons[NOTHING] = image;
 		addActionListener(this);
 	}
+	/**
+	 *@depreceated use setState(int state) with SELECTED
+	 */
 
+	public void setSelected(boolean b){
+		super.setSelected(b);
+	}
 	/**
 	 *
 	 * @param image
@@ -53,8 +59,8 @@ public class ThreeStateButton extends JButton implements ActionListener {
 	 */
 	public ThreeStateButton(ImageIcon image, ImageIcon cross, ImageIcon grey) {
 		this(image);
-		icons[SELECTED_NOT] = cross;
-		icons[NOTHING] = grey;
+		icons[INVERTED] = cross;
+		icons[SELECTED] = grey;
 	}
 
 	/**
@@ -70,8 +76,10 @@ public class ThreeStateButton extends JButton implements ActionListener {
 	 */
 	private static ImageIcon crossIcon(Icon imageIcon, int width, int height) {
 		Image i1 = ((ImageIcon) imageIcon).getImage();
-		Image image = new BufferedImage(width, height, ColorSpace.TYPE_3CLR);
+		Image image = new BufferedImage(width, height,
+				BufferedImage.TYPE_INT_ARGB);
 		Graphics g = image.getGraphics();
+
 		g.drawImage(i1, 0, 0, null);
 		g.setColor(new Color(255, 0, 0));
 		g.drawLine(0, 0, width - 1, height - 1);
@@ -108,8 +116,8 @@ public class ThreeStateButton extends JButton implements ActionListener {
 	 * result = new ImageIcon(image); return result; }
 	 */
 
-	private void nextState() {
-		state = (state + 1) % 3;
+	private int getNextState() {
+		return (state + 1) % 3;
 		/*
 		 * if (state == SELECTED) state = SELECTED_NOT; else if (state ==
 		 * SELECTED_NOT) state = NOTHING; else if (state == NOTHING) state =
@@ -136,11 +144,11 @@ public class ThreeStateButton extends JButton implements ActionListener {
 	}
 
 	public Icon getSelectedNotIcon() {
-		return icons[SELECTED_NOT];
+		return icons[INVERTED];
 	}
 
 	public void setSelectedNotIcon(ImageIcon selectedNotIcon) {
-		icons[SELECTED_NOT] = selectedNotIcon;
+		icons[INVERTED] = selectedNotIcon;
 	}
 
 	public int getState() {
@@ -151,24 +159,39 @@ public class ThreeStateButton extends JButton implements ActionListener {
 		this.state = state;
 	}
 
-	public void actionPerformed(ActionEvent e) {
-
-		nextState();
-		Debug.msg("state: " + state);
-		setIcon(getCurrentIcon());
+	// we need to be faster than all other Listeners
+	protected void fireActionPerformed(ActionEvent event){
+		state = getNextState();
+		Debug.msg("state: " + stateToString(state));
+		setIcon(getCurrentIcon()); // dont use icons[state] we need to load some icons first
+		super.fireActionPerformed(event);
 	}
 
+	public void actionPerformed(ActionEvent e) {
+		//nothing to do we did all work in protected void fireActionPerformed(ActionEvent event){
+		// but we have to be sure the ActionListenerList is not empty
+	}
+
+	private String stateToString(int state){
+		if(state==SELECTED)
+			return "SELECTED";
+		if(state==INVERTED)
+			return "SELECTED_NOT";
+		if(state==NOTHING)
+			return "NOTHING";
+		return "No known state chosen this must be an error";
+	}
 	private Icon getCurrentIcon() {
 		// lazy loading here, because you cant get the images in the
 		// constructor, i think the look and deel is not set yet, so we cant get
 		// the
 		// greyIcon
-		if (icons[NOTHING] == null) {
-			icons[NOTHING] = greyIcon(icons[SELECTED]);
+		if (icons[SELECTED] == null) {
+			icons[SELECTED] = greyIcon(icons[NOTHING]);
 		}
-		if (icons[SELECTED_NOT] == null) {
-			icons[SELECTED_NOT] = crossIcon(icons[SELECTED], icons[SELECTED]
-			                                                       .getIconWidth(), icons[SELECTED].getIconHeight());
+		if (icons[INVERTED] == null) {
+			icons[INVERTED] = crossIcon(icons[NOTHING], icons[NOTHING]
+					.getIconWidth(), icons[NOTHING].getIconHeight());
 		}
 		return icons[state];
 	}

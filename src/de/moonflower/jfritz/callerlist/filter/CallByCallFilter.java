@@ -13,43 +13,25 @@ public class CallByCallFilter extends CallFilter {
     private Vector filteredCallByCallProviders = new Vector();
 
     public CallByCallFilter(Vector providers) {
-
-    	/*String providers = JFritz.getProperty(
-                    "filter.callbycallProvider", "[]"); //$NON-NLS-1$,  //$NON-NLS-2$
-
-            providers = providers.replaceAll("\\[", ""); //$NON-NLS-1$,  //$NON-NLS-2$
-            providers = providers.replaceAll("\\]", ""); //$NON-NLS-1$,  //$NON-NLS-2$
-            String[] providerEntries = providers.split(","); //$NON-NLS-1$
-            for (int i = 0; i < providerEntries.length; i++) {
-                if (providerEntries[i].length() > 0) {
-                    if (providerEntries[i].charAt(0) == 32) { // delete
-                        // first SPACE
-                        providerEntries[i] = providerEntries[i]
-                                .substring(1);
-                    }
-                }
-                filteredCallByCallProviders.add(providerEntries[i]);
-            }
-          */
     	filteredCallByCallProviders = providers;
     }
 
-    public boolean passFilter(Call currentCall) {
+    public boolean passInternFilter(Call currentCall) {
         if (currentCall.getPhoneNumber() != null) {
             String currentProvider = currentCall.getPhoneNumber()
                     .getCallByCall();
             if (currentProvider.equals("")) { //$NON-NLS-1$
                 currentProvider = "NONE"; //$NON-NLS-1$
             }
-            if (!filteredCallByCallProviders
+            if (filteredCallByCallProviders
                     .contains(currentProvider)) {
-                return false;
+                return true;
             }
         } else { // Hide calls without number
-            if (!filteredCallByCallProviders.contains("NONE")) { //$NON-NLS-1$
-                return false;
+            if (filteredCallByCallProviders.contains("NONE")) { //$NON-NLS-1$
+                return true;
             }
         }
-        return true;
+        return false;
     }
 }

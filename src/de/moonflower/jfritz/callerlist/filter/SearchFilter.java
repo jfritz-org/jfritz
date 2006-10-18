@@ -20,7 +20,7 @@ public class SearchFilter extends CallFilter {
 	//TODO reguläre Ausdrücke zulassen wird dann aber wohl super langsam
 
 
-	public boolean passFilter(Call currentCall) {
+	public boolean passInternFilter(Call currentCall) {
 		for (int i = 0; i < parts.length; i++) {
 			String part = parts[i];
 			phoneNumber = currentCall.getPhoneNumber();

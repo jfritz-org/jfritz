@@ -2,9 +2,9 @@ package de.moonflower.jfritz.callerlist.filter;
 
 import de.moonflower.jfritz.struct.Call;
 
-public class NoNumberFilter extends CallFilter {
+public class AnonymFilter extends CallFilter {
 
-	public boolean passFilter(Call currentCall) {
+	public boolean passInternFilter(Call currentCall) {
 
 		if (currentCall.getPhoneNumber() == null)
 			return false;

@@ -4,10 +4,10 @@ import de.moonflower.jfritz.struct.Call;
 
 public class CommentFilter extends CallFilter {
 
-	public boolean passFilter(Call currentCall) {
+	public boolean passInternFilter(Call currentCall) {
 
-		if (!currentCall.getComment().equals(""))
-			return true;
-		return false;
+		if (currentCall.getComment().equals(""))
+			return false;
+		return true;
 	}
 }

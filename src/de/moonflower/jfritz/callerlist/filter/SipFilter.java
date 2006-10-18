@@ -16,7 +16,7 @@ public class SipFilter extends CallFilter {
 		this.filteredSipProviders = providers;
 	}
 
-	public boolean passFilter(Call currentCall) {
+	public boolean passInternFilter(Call currentCall) {
 
 		if (filteredSipProviders.size() == 0)
 			return true;
