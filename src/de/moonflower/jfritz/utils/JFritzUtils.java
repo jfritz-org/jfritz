@@ -12,6 +12,8 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -132,6 +134,24 @@ public class JFritzUtils {
 			return true;
 		else
 			return false;
+	}
+
+	public static Date setStartOfDay(Date d) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(d);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		return cal.getTime();
+	}
+
+	public static Date setEndOfDay(Date d) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(d);
+		cal.set(Calendar.HOUR_OF_DAY, 23);
+		cal.set(Calendar.MINUTE, 59);
+		cal.set(Calendar.SECOND, 59);
+		return cal.getTime();
 	}
 
 	public static String convertSpecialChars(String input) {

@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
 import javax.swing.Icon;
@@ -18,7 +17,7 @@ import javax.swing.UIManager;
  * @author marc
  *
  */
-public class ThreeStateButton extends JButton implements ActionListener {
+public class ThreeStateButton extends JButton {
 	private int state;
 
 	public static final int NOTHING = 0;
@@ -26,7 +25,6 @@ public class ThreeStateButton extends JButton implements ActionListener {
 	public static final int SELECTED = 2;
 
 	public static final int INVERTED = 1;
-
 
 	private Icon[] icons = new Icon[3];
 
@@ -42,7 +40,7 @@ public class ThreeStateButton extends JButton implements ActionListener {
 		super(image);
 		state = NOTHING;
 		icons[NOTHING] = image;
-		addActionListener(this);
+		//addActionListener(this);
 	}
 	/**
 	 *@depreceated use setState(int state) with SELECTED
@@ -162,15 +160,15 @@ public class ThreeStateButton extends JButton implements ActionListener {
 	// we need to be faster than all other Listeners
 	protected void fireActionPerformed(ActionEvent event){
 		state = getNextState();
-		Debug.msg("state: " + stateToString(state));
+//		Debug.msg("state: " + stateToString(state));
 		setIcon(getCurrentIcon()); // dont use icons[state] we need to load some icons first
 		super.fireActionPerformed(event);
 	}
 
-	public void actionPerformed(ActionEvent e) {
+//	public void actionPerformed(ActionEvent e) {
 		//nothing to do we did all work in protected void fireActionPerformed(ActionEvent event){
 		// but we have to be sure the ActionListenerList is not empty
-	}
+//	}
 
 	private String stateToString(int state){
 		if(state==SELECTED)
@@ -180,6 +178,10 @@ public class ThreeStateButton extends JButton implements ActionListener {
 		if(state==NOTHING)
 			return "NOTHING";
 		return "No known state chosen this must be an error";
+	}
+
+	public String toString(){
+		return super.toString()+ "\n state:"+ stateToString(state);
 	}
 	private Icon getCurrentIcon() {
 		// lazy loading here, because you cant get the images in the
