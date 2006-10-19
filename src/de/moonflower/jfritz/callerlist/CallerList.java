@@ -1802,7 +1802,10 @@ public class CallerList extends AbstractTableModel {
 		}
 		return callByCallProviders;
 	}
-
+/**
+ *
+ * @return all CallByCallProviders
+ */
 	public Vector getCbCProviders() {
 		Vector callByCallProviders = new Vector();
 		String provider = ""; //$NON-NLS-1$
@@ -1868,26 +1871,31 @@ public class CallerList extends AbstractTableModel {
 	 *
 	 * @return the providers
 	 */
-	public Vector getSelectedOrSipProviders(int[] rows) {
+	public Vector getSipProviders(int[] rows) {
 		Vector sipProviders = new Vector();
 		for (int i = 0; i < rows.length; i++) {
 			Call call = (Call) this.getFilteredCallVector().get(rows[i]);
 			String route = call.getRoute();
-			if (route.equals("")) { //$NON-NLS-1$
-				route = "FIXEDLINE"; //$NON-NLS-1$
-			}
-			if (!sipProviders.contains(route)) {
-				sipProviders.add(route);
+			if (call.getRouteType() == Call.ROUTE_SIP){
+				if (route.equals("")) { //$NON-NLS-1$
+					route = "FIXEDLINE"; //$NON-NLS-1$
+				}
+				if (!sipProviders.contains(route)) {
+					sipProviders.add(route);
+				}
 			}
 		}
 		return sipProviders;
 	}
-
-	public Vector getSelectedOrSipProviders() {
+/**
+ *
+ * @return all SipProviders of the callertable
+ */
+	public Vector getSipProviders() {
 		Vector sipProviders = new Vector();
 
-		for (int i = 0; i < getUnfilteredCallVector().size(); i++) {
-			Call call = (Call) this.getUnfilteredCallVector().get(i);
+		for (int i = 0; i < getFilteredCallVector().size(); i++) {
+			Call call = (Call) this.getFilteredCallVector().get(i);
 			String route = call.getRoute();
 
 			if (route.equals("")) { //$NON-NLS-1$
@@ -1895,8 +1903,8 @@ public class CallerList extends AbstractTableModel {
 			}
 			//		 Debug.msg("route:"+route);
 			//		 Debug.msg("callrouteType:"+call.getRouteType());
-			//		if (call.getRouteType() == Call.ROUTE_SIP) {
-			if (route.indexOf("@") != -1) {
+					if (call.getRouteType() == Call.ROUTE_SIP) {
+			//if (route.indexOf("@") != -1) {
 
 				// TODO check this after Robert fixed the getRouteType
 				// method

@@ -1,8 +1,10 @@
-package de.moonflower.jfritz.utils;
+package de.moonflower.jfritz.utils.threeStateButton;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.MediaTracker;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 
@@ -11,13 +13,15 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.UIManager;
 
+import de.moonflower.jfritz.utils.Debug;
+
 /**
  * A Button with 3 states for the FilterButtons of the CallerListpanel
  *
  * @author marc
  *
  */
-public class ThreeStateButton extends JButton {
+public class ThreeStateButton3 extends JButton {
 	private int state;
 
 	public static final int NOTHING = 0;
@@ -36,10 +40,14 @@ public class ThreeStateButton extends JButton {
 	 *            created from this image for the NOTHING state and a crossed
 	 *            for the SELECTED_NOT state
 	 */
-	public ThreeStateButton(ImageIcon image) {
+	public ThreeStateButton3(ImageIcon image) {
 		super(image);
 		state = NOTHING;
 		icons[NOTHING] = image;
+		icons[SELECTED] = starIcon(icons[NOTHING],icons[NOTHING].getIconWidth(), icons[NOTHING].getIconHeight());
+		icons[INVERTED] = crossIcon(icons[NOTHING], icons[NOTHING]
+				.getIconWidth(), icons[NOTHING].getIconHeight());
+
 		//addActionListener(this);
 	}
 	/**
@@ -55,7 +63,7 @@ public class ThreeStateButton extends JButton {
 	 * @param cross
 	 * @param grey
 	 */
-	public ThreeStateButton(ImageIcon image, ImageIcon cross, ImageIcon grey) {
+	public ThreeStateButton3(ImageIcon image, ImageIcon cross, ImageIcon grey) {
 		this(image);
 		icons[INVERTED] = cross;
 		icons[SELECTED] = grey;
@@ -97,11 +105,43 @@ public class ThreeStateButton extends JButton {
 	 * @param icon
 	 * @return the disabled icon
 	 */
-	private Icon greyIcon(Icon icon) {
+/*	private Icon greyIcon(Icon icon) {
 		Icon result = UIManager.getLookAndFeel().getDisabledIcon(this, icon);
 		return result;
 	}
+	*/
+	private Icon starIcon(Icon imageIcon, int width, int height){
+			Image i1 = ((ImageIcon) imageIcon).getImage();
+			Image image = new BufferedImage(width, height,
+					BufferedImage.TYPE_INT_ARGB);
+			Graphics g = image.getGraphics();
+			g.drawImage(i1, 0, 0, null);
 
+			java.net.URL imageURL = ThreeStateButton3.class.getResource("images/stern3.gif");
+			Image star;
+			if (imageURL != null) {
+
+				MediaTracker mediaTracker = new MediaTracker(this);
+				mediaTracker.addImage(image, 0);
+				try
+				{
+					mediaTracker.waitForID(0);
+					Toolkit toolkit = Toolkit.getDefaultToolkit();
+					star = toolkit.getImage(imageURL);
+					g.drawImage(star,0,0,null);
+					//Debug.msg("image loaded: "+star.toString());
+				}
+				catch (InterruptedException ie)
+				{
+					Debug.err("error loading images/stern2.gif"+ie);
+				}
+			}else{
+				Debug.err("images/stern2.gif not found for ThreeStateButton");
+			}
+			ImageIcon result = new ImageIcon(image);
+			return result;
+
+	}
 	/*
 	 * private ImageIcon composeIcons(ImageIcon src1, ImageIcon src2){
 	 * //BufferedImage src2 = new
@@ -155,13 +195,15 @@ public class ThreeStateButton extends JButton {
 
 	public void setState(int state) {
 		this.state = state;
+		setIcon(icons[state]);
 	}
 
 	// we need to be faster than all other Listeners
 	protected void fireActionPerformed(ActionEvent event){
 		state = getNextState();
 //		Debug.msg("state: " + stateToString(state));
-		setIcon(getCurrentIcon()); // dont use icons[state] we need to load some icons first
+		//setIcon(getCurrentIcon()); // dont use icons[state] we need to load some icons first
+		setIcon(icons[state]);
 		super.fireActionPerformed(event);
 	}
 
@@ -183,13 +225,15 @@ public class ThreeStateButton extends JButton {
 	public String toString(){
 		return super.toString()+ "\n state:"+ stateToString(state);
 	}
+	/*
 	private Icon getCurrentIcon() {
 		// lazy loading here, because you cant get the images in the
 		// constructor, i think the look and deel is not set yet, so we cant get
 		// the
 		// greyIcon
 		if (icons[SELECTED] == null) {
-			icons[SELECTED] = greyIcon(icons[NOTHING]);
+			//icons[SELECTED] = greyIcon(icons[NOTHING]);
+			icons[SELECTED] = starIcon(icons[NOTHING],icons[NOTHING].getIconWidth(), icons[NOTHING].getIconHeight());
 		}
 		if (icons[INVERTED] == null) {
 			icons[INVERTED] = crossIcon(icons[NOTHING], icons[NOTHING]
@@ -197,5 +241,5 @@ public class ThreeStateButton extends JButton {
 		}
 		return icons[state];
 	}
-
+*/
 }

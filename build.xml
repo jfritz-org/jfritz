@@ -99,6 +99,10 @@
 	</target>
 
 	<target name="jar" depends="compile" description="Generates jar files">
+		<!-- copy ThreeStateButton ressource-files -->
+		<copy todir="${build.classes}/de/moonflower/jfritz/utils/ThreeStateButton/images">
+			<fileset dir="${src}/de/moonflower/jfritz/utils/ThreeStateButton/images" />
+		</copy>
 		<!-- copy ressource-files -->
 		<copy todir="${build.classes}/de/moonflower/jfritz/resources">
 			<fileset dir="${src}/de/moonflower/jfritz/resources" />

@@ -41,6 +41,10 @@ public class CallType {
 		return calltype;
 	}
 
+	public int getCallType(){
+		return calltype;
+	}
+
 	public String toDescription() {
 		if (calltype == CALLIN)
 			return Main.getMessage("incoming_call"); //$NON-NLS-1$
