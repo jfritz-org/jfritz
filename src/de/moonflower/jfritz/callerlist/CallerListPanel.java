@@ -142,9 +142,32 @@ KeyListener, PropertyChangeListener {
 
 	private CallerTable callerTable;
 
-	private CallFilter callByCallFilter, callInFailedFilter, callInFilter,
-	callOutFilter, commentFilter, dateFilter, handyFilter, fixedFilter,
-	searchFilter, sipFilter, anonymFilter;
+	private CallFilter[] filter;
+
+	private static final int callByCall = 0;
+
+	private static final int callInFailed = 1;
+
+	private static final int callIn = 2;
+
+	private static final int callOut = 3;
+
+	private static final int comment = 4;
+
+	private static final int handy = 5;
+
+	private static final int fixed = 6;
+
+	private static final int sip = 7;
+
+	private static final int anonym = 8;
+
+	private static final int date = 9;
+
+	private static final int search = 10;
+
+	private static final int FILTERCOUNT = 11;
+
 
 	private ThreeStateButton dateFilterButton, callByCallFilterButton,
 	callInFilterButton, callOutFilterButton, callInFailedFilterButton,
@@ -181,50 +204,51 @@ KeyListener, PropertyChangeListener {
 	}
 
 	private void createFilters(CallerList callerList) {
-		callByCallFilter = createCallByCallFilter(callerList);
-		callerList.addFilter(callByCallFilter);
-		callInFailedFilter = new CallInFailedFilter();
-		callerList.addFilter(callInFailedFilter);
-		callInFilter = new CallInFilter();
-		callerList.addFilter(callInFilter);
-		callOutFilter = new CallOutFilter();
-		callerList.addFilter(callOutFilter);
-		commentFilter = new CommentFilter();
-		callerList.addFilter(commentFilter);
-		dateFilter = new DateFilter(new Date(), new Date());
-		callerList.addFilter(dateFilter);
-		anonymFilter = new AnonymFilter();
-		callerList.addFilter(anonymFilter);
-		fixedFilter = new FixedFilter();
-		callerList.addFilter(fixedFilter);
-		handyFilter = new HandyFilter();
-		callerList.addFilter(handyFilter);
-		searchFilter = new SearchFilter("");
-		callerList.addFilter(searchFilter);
-		sipFilter = createSipFilter(callerList);
-		callerList.addFilter(sipFilter);
+		filter = new CallFilter[FILTERCOUNT];
+		filter[callByCall] = createCallByCallFilter(callerList);
+		callerList.addFilter(filter[callByCall]);
+		filter[callInFailed] = new CallInFailedFilter();
+		callerList.addFilter(filter[callInFailed]);
+		filter[callIn] = new CallInFilter();
+		callerList.addFilter(filter[callIn]);
+		filter[callOut] = new CallOutFilter();
+		callerList.addFilter(filter[callOut]);
+		filter[comment] = new CommentFilter();
+		callerList.addFilter(filter[comment]);
+		filter[anonym] = new AnonymFilter();
+		callerList.addFilter(filter[anonym]);
+		filter[fixed] = new FixedFilter();
+		callerList.addFilter(filter[fixed]);
+		filter[handy] = new HandyFilter();
+		callerList.addFilter(filter[handy]);
+		filter[sip] = createSipFilter(callerList);
+		callerList.addFilter(filter[sip]);
+		filter[date] = new DateFilter(new Date(), new Date());
+		callerList.addFilter(filter[date]);
+		filter[search] = new SearchFilter("");
+		callerList.addFilter(filter[search]);
 	}
 
 	private SipFilter createSipFilter(CallerList callerList) {
 		SipFilter filter;
-		if (callerTable.getSelectedRowCount()!=0){
+		if (callerTable !=null && callerTable.getSelectedRowCount()!=0){
 			filter = new SipFilter(callerList
 				.getSelectedOrSipProviders(callerTable.getSelectedRows()));
 		}else{
 			filter = new SipFilter(callerList
-					.getSelectedOrSipProviders(callerTable.getRowCount()));
+					.getSelectedOrSipProviders());
 		}
 		return filter;
 	}
 
 	private CallByCallFilter createCallByCallFilter(CallerList callerList) {
 		CallByCallFilter filter;
-		if (callerTable.getSelectedRowCount()!=0){
+		if (callerTable !=null && callerTable.getSelectedRowCount()!=0){
 			filter = new CallByCallFilter(callerList
 				.getCbCProviders(callerTable.getSelectedRows()));
 		}else{
 			filter = new CallByCallFilter(callerList
-					.getCbCProviders(callerTable.getRowCount()));
+					.getCbCProviders());
 		}
 		return filter;
 	}
@@ -569,31 +593,31 @@ KeyListener, PropertyChangeListener {
 		// int[] rows = callerTable.getSelectedRows();
 		// if(rows.length ==0){
 		if (command.equals(FILTER_CALLIN)) {
-			syncFilterWithButton(callInFilter, callInFilterButton);
+			syncFilterWithButton(filter[callIn], callInFilterButton);
 			return;
 		}
 		if (command.equals(FILTER_CALLINFAILED)) {
-			syncFilterWithButton(callInFailedFilter, callInFailedFilterButton);
+			syncFilterWithButton(filter[callInFailed], callInFailedFilterButton);
 			return;
 		}
 		if (command.equals(FILTER_CALLOUT)) {
-			syncFilterWithButton(callOutFilter, callOutFilterButton);
+			syncFilterWithButton(filter[callOut], callOutFilterButton);
 			return;
 		}
 		if (command.equals(FILTER_COMMENT)) {
-			syncFilterWithButton(commentFilter, commentFilterButton);
+			syncFilterWithButton(filter[comment], commentFilterButton);
 			return;
 		}
 		if (command.equals(FILTER_ANONYM)) {
-			syncFilterWithButton(anonymFilter, anonymFilterButton);
+			syncFilterWithButton(filter[anonym], anonymFilterButton);
 			return;
 		}
 		if (command.equals(FILTER_FIXED)) {
-			syncFilterWithButton(fixedFilter, fixedFilterButton);
+			syncFilterWithButton(filter[fixed], fixedFilterButton);
 			return;
 		}
 		if (command.equals(FILTER_HANDY)) {
-			syncFilterWithButton(handyFilter, handyFilterButton);
+			syncFilterWithButton(filter[handy], handyFilterButton);
 			return;
 		}
 
@@ -601,58 +625,58 @@ KeyListener, PropertyChangeListener {
 			if (searchFilterButton.getState() == ThreeStateButton.NOTHING) {
 				searchFilterTextField.setVisible(false);
 				searchLabel.setVisible(false);
-				searchFilter.setEnabled(false);
+				filter[search].setEnabled(false);
 			} else {
 				searchFilterTextField.setVisible(true);
 				searchLabel.setVisible(true);
-				callerList.removeFilter(searchFilter);
-				searchFilter = new SearchFilter(searchFilterTextField.getText());
+				callerList.removeFilter(filter[search]);
+				filter[search] = new SearchFilter(searchFilterTextField.getText());
 				// do nothing
 				// if(searchFilterButton.getState()==ThreeStateButton.SELECTED)
 				if (searchFilterButton.getState() == ThreeStateButton.INVERTED) {
-					searchFilter.setInvert(true);
+					filter[search].setInvert(true);
 				}
-				callerList.addFilter(searchFilter);
+				callerList.addFilter(filter[search]);
 			}
 
 			return;
 		}
 
 		if (command.equals(FILTER_DATE)) {
-			syncFilterWithButton(dateFilter, dateFilterButton);
+			syncFilterWithButton(filter[date], dateFilterButton);
 			if (dateFilterButton.getState() == ThreeStateButton.NOTHING) {
 				startDateChooser.setVisible(false);
 				endDateChooser.setVisible(false);
 			} else {
-				callerList.removeFilter(dateFilter);
-				dateFilter = new DateFilter(startDateChooser.getDate(),
+				callerList.removeFilter(filter[date]);
+				filter[date] = new DateFilter(startDateChooser.getDate(),
 						endDateChooser.getDate());
 				startDateChooser.setVisible(true);
 				endDateChooser.setVisible(true);
 				if (dateFilterButton.getState() == ThreeStateButton.INVERTED) {
-					dateFilter.setInvert(true);
+					filter[date].setInvert(true);
 				}
-				callerList.addFilter(dateFilter);
+				callerList.addFilter(filter[date]);
 			}
 			return;
 		}
 
 		if (command.equals("setdatefilter_thisday")) { //$NON-NLS-1$
-			callerList.removeFilter(dateFilter);
+			callerList.removeFilter(filter[date]);
 			dateFilterButton.setSelected(false);
 			Date start = Calendar.getInstance().getTime();
 			Date end = Calendar.getInstance().getTime();
 			JFritzUtils.setStartOfDay(start);
 			JFritzUtils.setEndOfDay(end);
-			dateFilter = new DateFilter(start, end);
-			callerList.addFilter(dateFilter);
+			filter[date] = new DateFilter(start, end);
+			callerList.addFilter(filter[date]);
 			startDateChooser.setDate(start);
 			endDateChooser.setDate(end);
 			startDateChooser.setVisible(true);
 			endDateChooser.setVisible(true);
 		}
 		if (command.equals("setdatefilter_yesterday")) { //$NON-NLS-1$
-			callerList.removeFilter(dateFilter);
+			callerList.removeFilter(filter[date]);
 			dateFilterButton.setSelected(false);
 			Calendar cal = Calendar.getInstance();
 			Date start = cal.getTime();
@@ -660,15 +684,15 @@ KeyListener, PropertyChangeListener {
 			Date end = cal.getTime();
 			JFritzUtils.setStartOfDay(start);
 			JFritzUtils.setEndOfDay(end);
-			dateFilter = new DateFilter(start, end);
-			callerList.addFilter(dateFilter);
+			filter[date] = new DateFilter(start, end);
+			callerList.addFilter(filter[date]);
 			startDateChooser.setDate(start);
 			endDateChooser.setDate(end);
 			startDateChooser.setVisible(true);
 			endDateChooser.setVisible(true);
 		}
 		if (command.equals("setdatefilter_thismonth")) { //$NON-NLS-1$
-			callerList.removeFilter(dateFilter);
+			callerList.removeFilter(filter[date]);
 			dateFilterButton.setSelected(false);
 			Calendar cal = Calendar.getInstance();
 			cal.set(Calendar.DAY_OF_MONTH, 1);
@@ -678,7 +702,7 @@ KeyListener, PropertyChangeListener {
 			Date end = cal.getTime();
 			JFritzUtils.setStartOfDay(start);
 			JFritzUtils.setEndOfDay(end);
-			dateFilter = new DateFilter(start, end);
+			filter[date] = new DateFilter(start, end);
 			// callerList.addFilter(dateFilter);
 			startDateChooser.setDate(start);
 			endDateChooser.setDate(end);
@@ -686,7 +710,7 @@ KeyListener, PropertyChangeListener {
 			endDateChooser.setVisible(true);
 		}
 		if (command.equals("setdatefilter_lastmonth")) { //$NON-NLS-1$
-			callerList.removeFilter(dateFilter);
+			callerList.removeFilter(filter[date]);
 			dateFilterButton.setSelected(false);
 			Calendar cal = Calendar.getInstance();
 			cal.set(Calendar.MONTH, cal.get(Calendar.MONTH) - 1); // last
@@ -697,8 +721,8 @@ KeyListener, PropertyChangeListener {
 			Date end = cal.getTime();
 			JFritzUtils.setStartOfDay(start);
 			JFritzUtils.setEndOfDay(end);
-			dateFilter = new DateFilter(start, end);
-			callerList.addFilter(dateFilter);
+			filter[date] = new DateFilter(start, end);
+			callerList.addFilter(filter[date]);
 			startDateChooser.setDate(start);
 			endDateChooser.setDate(end);
 			startDateChooser.setVisible(true);
@@ -716,15 +740,15 @@ KeyListener, PropertyChangeListener {
 			callInFailedFilterButton.setState(ThreeStateButton.SELECTED);
 			commentFilterButton.setState(ThreeStateButton.INVERTED);
 			// dateFilter stuff for last week
-			callerList.removeFilter(dateFilter);
+			callerList.removeFilter(filter[date]);
 			Calendar cal = Calendar.getInstance();
 			Date start = cal.getTime();
 			cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - 7);
 			Date end = cal.getTime();
 			JFritzUtils.setStartOfDay(start);
 			JFritzUtils.setEndOfDay(end);
-			dateFilter = new DateFilter(end, start);
-			callerList.addFilter(dateFilter);
+			filter[date] = new DateFilter(end, start);
+			callerList.addFilter(filter[date]);
 			startDateChooser.setDate(end);
 			endDateChooser.setDate(start);
 			startDateChooser.setVisible(true);
@@ -733,13 +757,13 @@ KeyListener, PropertyChangeListener {
 			return;
 		}
 		if (command.equals(FILTER_SIP)) {
-			sipFilter = createSipFilter(callerList);
-			syncFilterWithButton(sipFilter, sipFilterButton);
+			filter[sip] = createSipFilter(callerList);
+			syncFilterWithButton(filter[sip], sipFilterButton);
 			return;
 		}
 		if (command.equals(FILTER_CALLBYCALL)) {
-			callByCallFilter = createCallByCallFilter(callerList);
-			syncFilterWithButton(callByCallFilter, callByCallFilterButton);
+			filter[callByCall] = createCallByCallFilter(callerList);
+			syncFilterWithButton(filter[callByCall], callByCallFilterButton);
 			return;
 		}
 		if (command.equals("clearFilter")) { //$NON-NLS-1$
@@ -875,17 +899,18 @@ KeyListener, PropertyChangeListener {
 	 *
 	 */
 	private void syncAllFilters() {
-		syncFilterWithButton(callInFilter, callInFilterButton);
-		syncFilterWithButton(callInFailedFilter, callInFailedFilterButton);
-		syncFilterWithButton(callOutFilter, callOutFilterButton);
-		syncFilterWithButton(commentFilter, commentFilterButton);
-		syncFilterWithButton(anonymFilter, anonymFilterButton);
-		syncFilterWithButton(fixedFilter, fixedFilterButton);
-		syncFilterWithButton(handyFilter, handyFilterButton);
-		syncFilterWithButton(searchFilter, searchFilterButton);
-		syncFilterWithButton(dateFilter, dateFilterButton);
-		syncFilterWithButton(sipFilter, sipFilterButton);
-		syncFilterWithButton(callByCallFilter, callByCallFilterButton);
+		syncFilterWithButton(filter[callIn], callInFilterButton);
+		syncFilterWithButton(filter[callInFailed], callInFailedFilterButton);
+		syncFilterWithButton(filter[callOut], callOutFilterButton);
+		syncFilterWithButton(filter[comment], commentFilterButton);
+		syncFilterWithButton(filter[anonym], anonymFilterButton);
+		syncFilterWithButton(filter[fixed], fixedFilterButton);
+		syncFilterWithButton(filter[handy], handyFilterButton);
+		syncFilterWithButton(filter[date], dateFilterButton);
+		syncFilterWithButton(filter[sip], sipFilterButton);
+		syncFilterWithButton(filter[callByCall], callByCallFilterButton);
+		syncFilterWithButton(filter[search], searchFilterButton);
+
 		if (searchFilterButton.getState() == ThreeStateButton.NOTHING) {
 			searchFilterTextField.setVisible(false);
 			searchLabel.setVisible(false);

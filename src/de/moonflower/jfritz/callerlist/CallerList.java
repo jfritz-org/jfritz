@@ -1803,10 +1803,10 @@ public class CallerList extends AbstractTableModel {
 		return callByCallProviders;
 	}
 
-	public Vector getCbCProviders(int length) {
+	public Vector getCbCProviders() {
 		Vector callByCallProviders = new Vector();
 		String provider = ""; //$NON-NLS-1$
-		for (int i = 0; i < length; i++) {
+		for (int i = 0; i < getFilteredCallVector().size(); i++) {
 			Call call = (Call) getFilteredCallVector().get(i);
 			if (call.getPhoneNumber() != null) {
 				provider = call.getPhoneNumber().getCallByCall();
@@ -1883,7 +1883,7 @@ public class CallerList extends AbstractTableModel {
 		return sipProviders;
 	}
 
-	public Vector getSelectedOrSipProviders(int length) {
+	public Vector getSelectedOrSipProviders() {
 		Vector sipProviders = new Vector();
 
 		for (int i = 0; i < getUnfilteredCallVector().size(); i++) {
