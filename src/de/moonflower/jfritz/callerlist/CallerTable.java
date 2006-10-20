@@ -35,6 +35,8 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  *
  * @author Arno Willig
  */
+//FIXME Breiten der Spalten gehen verloren
+
 public class CallerTable extends JTable {
 	private static final long serialVersionUID = 1;
 

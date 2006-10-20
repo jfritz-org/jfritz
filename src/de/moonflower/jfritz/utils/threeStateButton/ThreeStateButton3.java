@@ -52,9 +52,8 @@ public class ThreeStateButton3 extends JButton implements ImageObserver {
 	}
 
 	/**
-	 *@depreceated use setState(int state) with SELECTED
+	 *@deprecated use setState(int state) with SELECTED
 	 */
-
 	public void setSelected(boolean b) {
 		super.setSelected(b);
 	}

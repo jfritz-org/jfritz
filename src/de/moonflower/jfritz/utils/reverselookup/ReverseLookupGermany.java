@@ -278,15 +278,47 @@ public final class ReverseLookupGermany {
 
 		Debug.msg("Looking up city in numberMap: "+number);
 		String city = "";
+		int l = number.length();
 		if(number.startsWith("0") && numberMap != null){
-			if(numberMap.containsKey(number.substring(0, 3)))
+			if(l>=3 && numberMap.containsKey(number.substring(0, 3)))
 				city = (String) numberMap.get(number.substring(0,3));
-			else if(numberMap.containsKey(number.substring(0,4)))
+			else if(l>=4 && numberMap.containsKey(number.substring(0,4)))
 				city = (String) numberMap.get(number.substring(0,4));
-			else if(numberMap.containsKey(number.substring(0,5)))
+			else if(l>=5 && numberMap.containsKey(number.substring(0,5)))
 				city = (String) numberMap.get(number.substring(0,5));
 		}
 
 		return city;
 	}
+
+	/*
+	 * (13:30:37) DEBUG: Looking up 09187959984...
+(13:30:37) DEBUG: Header of dastelefonbuch.de: null: HTTP/1.1 200 OK | Set-Cookie: JSESSIONID=9F5FFEABEBE4C7A488D51EF63F1A9E9E; Path=/ | Content-Type: text/html;charset=ISO-8859-1 | Transfer-Encoding: chunked | Date: Fri, 20 Oct 2006 11:27:35 GMT | Server: Apache-Coyote/1.1 |
+(13:30:37) DEBUG: CHARSET :
+(13:30:38) DEBUG: Begin processing responce from dastelefonbuch.de
+(13:30:38) DEBUG: Pattern1: Deinlein Albert
+(13:30:38) DEBUG: * Albert*-1
+(13:30:38) DEBUG: Pattern2: Klosterbergstr. 1
+(13:30:38) DEBUG: Pattern3: 90518 Altdorf
+(13:30:38) DEBUG: Firstname: Albert
+(13:30:38) DEBUG: Lastname: Deinlein
+(13:30:38) DEBUG: Company:
+(13:30:38) DEBUG: Address: Klosterbergstr. 1
+(13:30:38) DEBUG: ZipCode: 90518
+(13:30:38) DEBUG: City: Altdorf
+(13:30:38) DEBUG: Reverse lookup for +49111
+(13:30:38) DEBUG: Looking up 0111...
+(13:30:38) DEBUG: Header of dastelefonbuch.de: null: HTTP/1.1 200 OK | Set-Cookie: JSESSIONID=E8FE144AD451DDB55CA171FE8D0A41F5; Path=/ | Content-Type: text/html;charset=ISO-8859-1 | Transfer-Encoding: chunked | Date: Fri, 20 Oct 2006 11:27:35 GMT | Server: Apache-Coyote/1.1 |
+(13:30:38) DEBUG: CHARSET :
+Exception in thread "Thread-7" java.lang.StringIndexOutOfBoundsException: String index out of range: 5
+	at java.lang.String.substring(Unknown Source)
+	at de.moonflower.jfritz.utils.reverselookup.ReverseLookupGermany.getCity(ReverseLookupGermany.java:286)
+	at de.moonflower.jfritz.utils.reverselookup.ReverseLookupGermany.lookup(ReverseLookupGermany.java:206)
+	at de.moonflower.jfritz.utils.reverselookup.ReverseLookup.lookup(ReverseLookup.java:46)
+	at de.moonflower.jfritz.JFritzWindow$5.construct(JFritzWindow.java:697)
+	at de.moonflower.jfritz.utils.SwingWorker$2.run(SwingWorker.java:112)(13:30:38) DEBUG: Begin processing responce from dastelefonbuch.de
+(13:30:38) DEBUG: Looking up city in numberMap: 0111
+
+	at java.lang.Thread.run(Unknown Source)
+	 */
 }

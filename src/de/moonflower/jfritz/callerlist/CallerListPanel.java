@@ -25,7 +25,6 @@ import java.util.Date;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -38,6 +37,7 @@ import javax.swing.JToolBar;
 import com.toedter.calendar.JDateChooser;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.filter.CallByCallFilter;
 import de.moonflower.jfritz.callerlist.filter.CallFilter;
@@ -138,6 +138,14 @@ KeyListener, PropertyChangeListener {
 
 	private static final String FILTER_DATE_START = "FILTER_DATE_START";
 
+	private static final String THIS_DAY = "date_filter_today";
+	private static final String LAST_DAY = "date_filter_yesterday";
+	private static final String THIS_WEEK = "date_filter_this_week";
+	private static final String LAST_WEEK = "date_filter_last_week";
+	private static final String THIS_MONTH = "date_filter_this_month";
+	private static final String LAST_MONTH = "date_filter_last_month";
+
+	private String dateSpecialSaveString;
 	private CallerList callerList;
 
 	private CallerTable callerTable;
@@ -168,6 +176,9 @@ KeyListener, PropertyChangeListener {
 
 	private static final int FILTERCOUNT = 11;
 
+	private static final String FILTER_DATE_SPECIAL = "DATE_SPECIAL";
+
+
 
 	private ThreeStateButton3 dateFilterButton, callByCallFilterButton,
 	callInFilterButton, callOutFilterButton, callInFailedFilterButton,
@@ -188,8 +199,11 @@ KeyListener, PropertyChangeListener {
 
 	private WindowAdapter wl;
 
-	public CallerListPanel(CallerList callerList, JFrame parent) {
+	private JFritzWindow parentFrame;
+
+	public CallerListPanel(CallerList callerList, JFritzWindow parent) {
 		super();
+		parentFrame = parent;
 		this.callerList = callerList;
 		createFilters(callerList);
 		setLayout(new BorderLayout());
@@ -260,6 +274,7 @@ KeyListener, PropertyChangeListener {
 		handleAction(e.getActionCommand());
 		// callerList.updateFilter();
 		callerList.update();
+		parentFrame.setStatus();
 	}
 
 	/*
@@ -283,6 +298,7 @@ KeyListener, PropertyChangeListener {
 		commentFilterButton.setState(ThreeStateButton3.NOTHING);
 		syncAllFilters();
 		callerList.update();
+		parentFrame.setStatus();
 	}
 
 	public JScrollPane createCallerListTable() {
@@ -436,20 +452,29 @@ KeyListener, PropertyChangeListener {
 		dateFilterButton.setToolTipText(Main.getMessage(FILTER_DATE));
 
 		JPopupMenu datePopupMenu = new JPopupMenu();
-		menuItem = new JMenuItem(Main.getMessage("date_filter_today")); //$NON-NLS-1$
-		menuItem.setActionCommand("setdatefilter_thisday"); //$NON-NLS-1$
+		menuItem = new JMenuItem(Main.getMessage(THIS_DAY)); //$NON-NLS-1$
+		menuItem.setActionCommand(THIS_DAY); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
-		menuItem = new JMenuItem(Main.getMessage("date_filter_yesterday")); //$NON-NLS-1$
-		menuItem.setActionCommand("setdatefilter_yesterday"); //$NON-NLS-1$
+		menuItem = new JMenuItem(Main.getMessage(LAST_DAY)); //$NON-NLS-1$
+		menuItem.setActionCommand(LAST_DAY); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
-		menuItem = new JMenuItem(Main.getMessage("date_filter_this_month")); //$NON-NLS-1$
-		menuItem.setActionCommand("setdatefilter_thismonth"); //$NON-NLS-1$
+		menuItem = new JMenuItem(Main.getMessage(THIS_WEEK)); //$NON-NLS-1$
+		menuItem.setActionCommand(THIS_WEEK); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
-		menuItem = new JMenuItem(Main.getMessage("date_filter_last_month")); //$NON-NLS-1$
-		menuItem.setActionCommand("setdatefilter_lastmonth"); //$NON-NLS-1$
+		menuItem = new JMenuItem(Main.getMessage(LAST_WEEK)); //$NON-NLS-1$
+		menuItem.setActionCommand(LAST_WEEK); //$NON-NLS-1$
+		menuItem.addActionListener(this);
+		datePopupMenu.add(menuItem);
+
+		menuItem = new JMenuItem(Main.getMessage(THIS_MONTH)); //$NON-NLS-1$
+		menuItem.setActionCommand(THIS_MONTH); //$NON-NLS-1$
+		menuItem.addActionListener(this);
+		datePopupMenu.add(menuItem);
+		menuItem = new JMenuItem(Main.getMessage(LAST_MONTH)); //$NON-NLS-1$
+		menuItem.setActionCommand(LAST_MONTH); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
 		popupListener = new PopupListener(datePopupMenu);
@@ -658,75 +683,34 @@ KeyListener, PropertyChangeListener {
 				}
 				callerList.addFilter(filter[date]);
 			}
+			dateSpecialSaveString ="";
 			return;
 		}
 
-		if (command.equals("setdatefilter_thisday")) { //$NON-NLS-1$
-			callerList.removeFilter(filter[date]);
-			dateFilterButton.setSelected(false);
-			Date start = Calendar.getInstance().getTime();
-			Date end = Calendar.getInstance().getTime();
-			JFritzUtils.setStartOfDay(start);
-			JFritzUtils.setEndOfDay(end);
-			filter[date] = new DateFilter(start, end);
-			callerList.addFilter(filter[date]);
-			startDateChooser.setDate(start);
-			endDateChooser.setDate(end);
-			startDateChooser.setVisible(true);
-			endDateChooser.setVisible(true);
+		if (command.equals(THIS_DAY)) { //$NON-NLS-1$
+			setThisDayFilter();
+			return;
 		}
-		if (command.equals("setdatefilter_yesterday")) { //$NON-NLS-1$
-			callerList.removeFilter(filter[date]);
-			dateFilterButton.setSelected(false);
-			Calendar cal = Calendar.getInstance();
-			Date end = cal.getTime();
-			cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - 1);
-			Date start = cal.getTime();
-			JFritzUtils.setStartOfDay(start);
-			JFritzUtils.setEndOfDay(end);
-			filter[date] = new DateFilter(start, end);
-			callerList.addFilter(filter[date]);
-			startDateChooser.setDate(start);
-			endDateChooser.setDate(end);
-			startDateChooser.setVisible(true);
-			endDateChooser.setVisible(true);
+		if (command.equals(LAST_DAY)) { //$NON-NLS-1$
+			setLastDayFilter();
+			return;
 		}
-		if (command.equals("setdatefilter_thismonth")) { //$NON-NLS-1$
-			callerList.removeFilter(filter[date]);
-			dateFilterButton.setSelected(false);
-			Calendar cal = Calendar.getInstance();
-			cal.set(Calendar.DAY_OF_MONTH, 1);
-			Date start = cal.getTime();
-			cal.set(Calendar.DAY_OF_MONTH, cal
-					.getActualMaximum(Calendar.DAY_OF_MONTH));
-			Date end = cal.getTime();
-			JFritzUtils.setStartOfDay(start);
-			JFritzUtils.setEndOfDay(end);
-			filter[date] = new DateFilter(start, end);
-			callerList.addFilter(filter[date]);
-			startDateChooser.setDate(start);
-			endDateChooser.setDate(end);
-			startDateChooser.setVisible(true);
-			endDateChooser.setVisible(true);
+		if (command.equals(THIS_WEEK)) { //$NON-NLS-1$
+			setThisWeekFilter();
+			return;
 		}
-		if (command.equals("setdatefilter_lastmonth")) { //$NON-NLS-1$
-			callerList.removeFilter(filter[date]);
-			dateFilterButton.setSelected(false);
-			Calendar cal = Calendar.getInstance();
-			cal.set(Calendar.MONTH, cal.get(Calendar.MONTH) - 1); // last
-			cal.set(Calendar.DAY_OF_MONTH, 1);
-			Date start = cal.getTime();
-			cal.set(Calendar.DAY_OF_MONTH, cal
-					.getActualMaximum(Calendar.DAY_OF_MONTH));
-			Date end = cal.getTime();
-			JFritzUtils.setStartOfDay(start);
-			JFritzUtils.setEndOfDay(end);
-			filter[date] = new DateFilter(start, end);
-			callerList.addFilter(filter[date]);
-			startDateChooser.setDate(start);
-			endDateChooser.setDate(end);
-			startDateChooser.setVisible(true);
-			endDateChooser.setVisible(true);
+		if (command.equals(LAST_WEEK)) { //$NON-NLS-1$
+			setLastWeekFilter();
+			return;
+		}
+
+		if (command.equals(THIS_MONTH)) { //$NON-NLS-1$
+			setThisMonthFilter();
+			return;
+		}
+		if (command.equals(LAST_MONTH)) { //$NON-NLS-1$
+			setLastMonthFilter();
+			return;
 		}
 		if (command.equals("filter_callinfailed_allWithoutComment")) { //$NON-NLS-1$
 			clearAllFilter();
@@ -812,12 +796,151 @@ KeyListener, PropertyChangeListener {
 			// JFritz.getJframe().copyAddressToClipboard();
 
 		}
+		Debug.err("unknown command: "+command);
+	}
+	/**
+	 * sets the start and endDateChoose to the appropriate values
+	 * and set em visible
+	 */
+	private void setLastMonthFilter() {
+		callerList.removeFilter(filter[date]);
+		dateFilterButton.setState(ThreeStateButton3.SELECTED);
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.MONTH, cal.get(Calendar.MONTH) - 1); // last
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		Date start = cal.getTime();
+		cal.set(Calendar.DAY_OF_MONTH, cal
+				.getActualMaximum(Calendar.DAY_OF_MONTH));
+		Date end = cal.getTime();
+		JFritzUtils.setStartOfDay(start);
+		JFritzUtils.setEndOfDay(end);
+		filter[date] = new DateFilter(start, end);
+		callerList.addFilter(filter[date]);
+		startDateChooser.setDate(start);
+		endDateChooser.setDate(end);
+		startDateChooser.setVisible(true);
+		endDateChooser.setVisible(true);
+		dateSpecialSaveString = LAST_MONTH;
+	}
+	/**
+	 * sets the start and endDateChoose to the appropriate values
+	 * and set em visible
+	 */
+
+	private void setThisMonthFilter() {
+		callerList.removeFilter(filter[date]);
+		dateFilterButton.setState(ThreeStateButton3.SELECTED);
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		Date start = cal.getTime();
+		cal.set(Calendar.DAY_OF_MONTH, cal
+				.getActualMaximum(Calendar.DAY_OF_MONTH));
+		Date end = cal.getTime();
+		JFritzUtils.setStartOfDay(start);
+		JFritzUtils.setEndOfDay(end);
+		filter[date] = new DateFilter(start, end);
+		callerList.addFilter(filter[date]);
+		startDateChooser.setDate(start);
+		endDateChooser.setDate(end);
+		startDateChooser.setVisible(true);
+		endDateChooser.setVisible(true);
+		dateSpecialSaveString = THIS_MONTH;
+	}
+
+	/**
+	 * sets the start and endDateChoose to the appropriate values
+	 * and set em visible
+	 */
+	private void setLastDayFilter() {
+		callerList.removeFilter(filter[date]);
+		dateFilterButton.setState(ThreeStateButton3.SELECTED);
+		Calendar cal = Calendar.getInstance();
+		Date end = cal.getTime();
+		cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - 1);
+		Date start = cal.getTime();
+		JFritzUtils.setStartOfDay(start);
+		JFritzUtils.setEndOfDay(end);
+		filter[date] = new DateFilter(start, end);
+		callerList.addFilter(filter[date]);
+		startDateChooser.setDate(start);
+		endDateChooser.setDate(end);
+		startDateChooser.setVisible(true);
+		endDateChooser.setVisible(true);
+		dateSpecialSaveString = LAST_DAY;
+	}
+
+	/**
+	 * sets the start and endDateChoose to the appropriate values
+	 * and set em visible
+	 */
+	private void setThisWeekFilter() {
+		callerList.removeFilter(filter[date]);
+		dateFilterButton.setState(ThreeStateButton3.SELECTED);
+		Calendar cal = Calendar.getInstance();
+		int daysPastMonday = (Calendar.DAY_OF_WEEK +(7-Calendar.MONDAY) )%7; //
+		cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - daysPastMonday);
+		Date start = cal.getTime();
+		cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) +7);
+		Date end = cal.getTime();
+		JFritzUtils.setStartOfDay(start);
+		JFritzUtils.setEndOfDay(end);
+		filter[date] = new DateFilter(start, end);
+		callerList.addFilter(filter[date]);
+		startDateChooser.setDate(start);
+		endDateChooser.setDate(end);
+		startDateChooser.setVisible(true);
+		endDateChooser.setVisible(true);
+		dateSpecialSaveString = LAST_WEEK;
+	}
+	/**
+	 * sets the start and endDateChoose to the appropriate values
+	 * and set em visible
+	 */
+	private void setLastWeekFilter() {
+		callerList.removeFilter(filter[date]);
+		dateFilterButton.setState(ThreeStateButton3.SELECTED);
+		Calendar cal = Calendar.getInstance();
+		int daysPastMonday = (Calendar.DAY_OF_WEEK +(7-Calendar.MONDAY) )%7; //
+		cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - daysPastMonday);
+		Date end = cal.getTime();
+		cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - 7);
+		Date start = cal.getTime();
+		JFritzUtils.setStartOfDay(start);
+		JFritzUtils.setEndOfDay(end);
+		filter[date] = new DateFilter(start, end);
+		callerList.addFilter(filter[date]);
+		startDateChooser.setDate(start);
+		endDateChooser.setDate(end);
+		startDateChooser.setVisible(true);
+		endDateChooser.setVisible(true);
+		dateSpecialSaveString = LAST_WEEK;
+	}
+
+	/**
+	 * sets the start and endDateChoose to the appropriate values
+	 * and set em visible
+	 */
+	private void setThisDayFilter() {
+		callerList.removeFilter(filter[date]);
+		dateFilterButton.setState(ThreeStateButton3.SELECTED);
+		Date start = Calendar.getInstance().getTime();
+		Date end = Calendar.getInstance().getTime();
+		JFritzUtils.setStartOfDay(start);
+		JFritzUtils.setEndOfDay(end);
+		filter[date] = new DateFilter(start, end);
+		callerList.addFilter(filter[date]);
+		startDateChooser.setDate(start);
+		endDateChooser.setDate(end);
+		startDateChooser.setVisible(true);
+		endDateChooser.setVisible(true);
+		dateSpecialSaveString = THIS_DAY;
 	}
 
 	public void keyPressed(KeyEvent arg0) {
 		if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
 			handleAction(FILTER_SEARCH);
 			callerList.update();
+			parentFrame.setStatus();
 			return;
 
 		}
@@ -841,58 +964,9 @@ KeyListener, PropertyChangeListener {
 	public void propertyChange(PropertyChangeEvent evt) {
 		handleAction(FILTER_DATE);
 		callerList.update();
+		parentFrame.setStatus();
 	}
 
-	/**
-	 * read the status of the Buttons from the Main Properties
-	 */
-	private void readButtonStatus() {
-		Debug.msg("reading Buttons");
-		int state;
-		state = JFritzUtils.parseInt(Main.getProperty(FILTER_COMMENT, "0"));
-		commentFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getProperty(FILTER_DATE, "0"));
-		dateFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getProperty(FILTER_SIP, "0"));
-		sipFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getProperty(FILTER_CALLBYCALL, "0"));
-		callByCallFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getProperty(FILTER_CALLOUT, "0"));
-		callOutFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getProperty(FILTER_ANONYM, "0"));
-		anonymFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getProperty(FILTER_FIXED, "0"));
-		fixedFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getProperty(FILTER_HANDY, "0"));
-		handyFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getProperty(FILTER_CALLIN, "0"));
-		callInFilterButton.setState(state);
-		state = JFritzUtils
-		.parseInt(Main.getProperty(FILTER_CALLINFAILED, "0"));
-		callInFailedFilterButton.setState(state);
-		searchFilterTextField.setText(Main.getProperty(FILTER_SEARCH_TEXT, ""));
-		state = JFritzUtils.parseInt(Main.getProperty(FILTER_SEARCH, "0"));
-		searchFilterButton.setState(state);
-
-		DateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm");
-		Date start = new Date();
-		Date end = new Date();
-		try {
-			start = df.parse(Main.getProperty(FILTER_DATE_START,
-			"11.11.11 11:11"));
-			end = df.parse(Main.getProperty(FILTER_DATE_END, "11.11.11 11:11"));
-			startDateChooser.setDate(start);
-			endDateChooser.setDate(end);
-		} catch (ParseException e) {
-			startDateChooser.setDate(Calendar.getInstance().getTime());
-			endDateChooser.setDate(Calendar.getInstance().getTime());
-			Debug
-			.err("error parsing date while loading dates from main properties "
-					+ e.toString());
-		}
-		syncAllFilters();
-		callerList.update();
-	}
 
 	/**
 	 * syncronises all Filters with the states represented by the Buttons
@@ -990,7 +1064,7 @@ KeyListener, PropertyChangeListener {
 
 		Main.setProperty(FILTER_DATE_START, df.format(start));
 		Main.setProperty(FILTER_DATE_END, df.format(end));
-
+		Main.setProperty(FILTER_DATE_SPECIAL, dateSpecialSaveString);
 		Main.setProperty(FILTER_SIP, "" + sipFilterButton.getState());
 		Main.setProperty(FILTER_CALLBYCALL, ""
 				+ callByCallFilterButton.getState());
@@ -1001,6 +1075,72 @@ KeyListener, PropertyChangeListener {
 		Main.setProperty(FILTER_CALLIN, "" + callInFilterButton.getState());
 		Main.setProperty(FILTER_CALLINFAILED, ""
 				+ callInFailedFilterButton.getState());
+	}
+	/**
+	 * read the status of the Buttons from the Main Properties
+	 */
+	private void readButtonStatus() {
+		Debug.msg("reading Buttons");
+		int state;
+		state = JFritzUtils.parseInt(Main.getProperty(FILTER_COMMENT, "0"));
+		commentFilterButton.setState(state);
+		state = JFritzUtils.parseInt(Main.getProperty(FILTER_DATE, "0"));
+		dateFilterButton.setState(state);
+		state = JFritzUtils.parseInt(Main.getProperty(FILTER_SIP, "0"));
+		sipFilterButton.setState(state);
+		state = JFritzUtils.parseInt(Main.getProperty(FILTER_CALLBYCALL, "0"));
+		callByCallFilterButton.setState(state);
+		state = JFritzUtils.parseInt(Main.getProperty(FILTER_CALLOUT, "0"));
+		callOutFilterButton.setState(state);
+		state = JFritzUtils.parseInt(Main.getProperty(FILTER_ANONYM, "0"));
+		anonymFilterButton.setState(state);
+		state = JFritzUtils.parseInt(Main.getProperty(FILTER_FIXED, "0"));
+		fixedFilterButton.setState(state);
+		state = JFritzUtils.parseInt(Main.getProperty(FILTER_HANDY, "0"));
+		handyFilterButton.setState(state);
+		state = JFritzUtils.parseInt(Main.getProperty(FILTER_CALLIN, "0"));
+		callInFilterButton.setState(state);
+		state = JFritzUtils
+		.parseInt(Main.getProperty(FILTER_CALLINFAILED, "0"));
+		callInFailedFilterButton.setState(state);
+		searchFilterTextField.setText(Main.getProperty(FILTER_SEARCH_TEXT, ""));
+		state = JFritzUtils.parseInt(Main.getProperty(FILTER_SEARCH, "0"));
+		searchFilterButton.setState(state);
+
+		DateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm");
+		Date start = new Date();
+		Date end = new Date();
+		try {
+			start = df.parse(Main.getProperty(FILTER_DATE_START,
+			"11.11.11 11:11"));
+			end = df.parse(Main.getProperty(FILTER_DATE_END, "11.11.11 11:11"));
+			startDateChooser.setDate(start);
+			endDateChooser.setDate(end);
+		} catch (ParseException e) {
+			startDateChooser.setDate(Calendar.getInstance().getTime());
+			endDateChooser.setDate(Calendar.getInstance().getTime());
+			Debug
+			.err("error parsing date while loading dates from main properties "
+					+ e.toString());
+		}
+		dateSpecialSaveString = Main.getProperty(FILTER_DATE_SPECIAL,"");
+		Debug.msg(dateSpecialSaveString);
+		if(dateSpecialSaveString.equals(THIS_DAY)){
+			setThisDayFilter();
+		}else if(dateSpecialSaveString.equals(LAST_DAY)){
+			setLastDayFilter();
+		}else if(dateSpecialSaveString.equals(THIS_WEEK)){
+			setThisWeekFilter();
+		}else if(dateSpecialSaveString.equals(LAST_WEEK)){
+			setLastWeekFilter();
+		}else if(dateSpecialSaveString.equals(THIS_MONTH)){
+			setThisMonthFilter();
+		}else if(dateSpecialSaveString.equals(LAST_MONTH)){
+			setLastMonthFilter();
+		}
+		syncAllFilters();
+		callerList.update();
+		parentFrame.setStatus();
 	}
 
 }
