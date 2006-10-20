@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
+import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.Debug;
 
 /**
@@ -36,6 +37,8 @@ public class Person {
 	private String emailAddress = ""; //$NON-NLS-1$
 
 	private Vector numbers;
+
+	private transient Call lastCall; //TODO lastCallaktualisiern bei anruf
 
 	private String[] basicTypes = {"home", "mobile", "homezone", "business", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$
 			"other", "fax", "sip", "main"}; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$
@@ -500,6 +503,14 @@ public class Person {
 		}
 
 		return true;
+	}
+
+	public Call getLastCall() {
+		return lastCall;
+	}
+
+	public void setLastCall(Call lastCall) {
+		this.lastCall = lastCall;
 	}
 
 }

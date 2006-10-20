@@ -67,7 +67,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/wiki/Kategorie:Hilfe"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.356 2006/10/20 17:09:29 marc0815 Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.357 2006/10/20 22:17:58 marc0815 Exp $"; //$NON-NLS-1$
 
 	public final static String CALLS_FILE = "jfritz.calls.xml"; //$NON-NLS-1$
 
@@ -163,15 +163,15 @@ public final class JFritz {
 				.getProperty("box.address", "192.168.178.1"), Encryption //$NON-NLS-1$,  //$NON-NLS-2$
 				.decrypt(Main.getProperty("box.password", Encryption //$NON-NLS-1$
 						.encrypt(""))), Main.getProperty("box.port", "80")); //$NON-NLS-1$
-
-		phonebook = new PhoneBook();
-		phonebook.loadFromXMLFile(Main.SAVE_DIR + PHONEBOOK_FILE);
-
 		sipprovider = new SipProviderTableModel();
 		sipprovider.loadFromXMLFile(Main.SAVE_DIR + SIPPROVIDER_FILE);
 
 		callerlist = new CallerList();
 		callerlist.loadFromXMLFile(Main.SAVE_DIR + CALLS_FILE);
+
+		phonebook = new PhoneBook();
+		phonebook.loadFromXMLFile(Main.SAVE_DIR + PHONEBOOK_FILE);
+
 
 		callMonitorList = new CallMonitorList();
 		callMonitorList.addEventListener(new DisplayCallsMonitor());

@@ -1871,10 +1871,12 @@ public class CallerList extends AbstractTableModel {
 			if (route.equals("")) { //$NON-NLS-1$
 				route = "FIXEDLINE"; //$NON-NLS-1$
 			}
+			else{ //test
 			if (!sipProviders.contains(route)) {
 				sipProviders.add(route);
 			}
 //		}
+			}
 	}
 /**
  *
