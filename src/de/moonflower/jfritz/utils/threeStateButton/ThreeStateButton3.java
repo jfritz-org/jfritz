@@ -7,12 +7,11 @@ import java.awt.MediaTracker;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.UIManager;
-
 import de.moonflower.jfritz.utils.Debug;
 
 /**
@@ -21,7 +20,7 @@ import de.moonflower.jfritz.utils.Debug;
  * @author marc
  *
  */
-public class ThreeStateButton3 extends JButton {
+public class ThreeStateButton3 extends JButton implements ImageObserver {
 	private int state;
 
 	public static final int NOTHING = 0;
@@ -44,19 +43,22 @@ public class ThreeStateButton3 extends JButton {
 		super(image);
 		state = NOTHING;
 		icons[NOTHING] = image;
-		icons[SELECTED] = starIcon(icons[NOTHING],icons[NOTHING].getIconWidth(), icons[NOTHING].getIconHeight());
+		icons[SELECTED] = starIcon(icons[NOTHING], icons[NOTHING]
+		                                                 .getIconWidth(), icons[NOTHING].getIconHeight());
 		icons[INVERTED] = crossIcon(icons[NOTHING], icons[NOTHING]
-				.getIconWidth(), icons[NOTHING].getIconHeight());
+		                                                  .getIconWidth(), icons[NOTHING].getIconHeight());
 
 		//addActionListener(this);
 	}
+
 	/**
 	 *@depreceated use setState(int state) with SELECTED
 	 */
 
-	public void setSelected(boolean b){
+	public void setSelected(boolean b) {
 		super.setSelected(b);
 	}
+
 	/**
 	 *
 	 * @param image
@@ -105,43 +107,41 @@ public class ThreeStateButton3 extends JButton {
 	 * @param icon
 	 * @return the disabled icon
 	 */
-/*	private Icon greyIcon(Icon icon) {
-		Icon result = UIManager.getLookAndFeel().getDisabledIcon(this, icon);
-		return result;
-	}
-	*/
-	private Icon starIcon(Icon imageIcon, int width, int height){
-			Image i1 = ((ImageIcon) imageIcon).getImage();
-			Image image = new BufferedImage(width, height,
-					BufferedImage.TYPE_INT_ARGB);
-			Graphics g = image.getGraphics();
-			g.drawImage(i1, 0, 0, null);
+	/*	private Icon greyIcon(Icon icon) {
+	 Icon result = UIManager.getLookAndFeel().getDisabledIcon(this, icon);
+	 return result;
+	 }
+	 */
+	private Icon starIcon(Icon imageIcon, int width, int height) {
+		Image i1 = ((ImageIcon) imageIcon).getImage();
+		Image image = new BufferedImage(width, height,
+				BufferedImage.TYPE_INT_ARGB);
+		Graphics g = image.getGraphics();
+		g.drawImage(i1, 0, 0, null);
 
-			java.net.URL imageURL = ThreeStateButton3.class.getResource("images/stern3.gif");
-			Image star;
-			if (imageURL != null) {
-
-				MediaTracker mediaTracker = new MediaTracker(this);
-				mediaTracker.addImage(image, 0);
-				try
-				{
-					mediaTracker.waitForID(0);
-					Toolkit toolkit = Toolkit.getDefaultToolkit();
-					star = toolkit.getImage(imageURL);
-					g.drawImage(star,0,0,null);
-					//Debug.msg("image loaded: "+star.toString());
-				}
-				catch (InterruptedException ie)
-				{
-					Debug.err("error loading images/stern2.gif"+ie);
-				}
-			}else{
-				Debug.err("images/stern2.gif not found for ThreeStateButton");
+		java.net.URL imageURL = ThreeStateButton3.class
+		.getResource("images/stern3.gif");
+		Image star;
+		if (imageURL != null) {
+			MediaTracker mediaTracker = new MediaTracker(this);
+			try {
+				Toolkit toolkit = Toolkit.getDefaultToolkit();
+				star = toolkit.getImage(imageURL);
+				mediaTracker.addImage(star, 1);
+				mediaTracker.waitForID(1);
+				g.drawImage(star, 0, 0, this);
+				//Debug.msg("image loaded: "+star.toString());
+			} catch (InterruptedException ie) {
+				Debug.err("error loading images/stern2.gif" + ie);
 			}
-			ImageIcon result = new ImageIcon(image);
-			return result;
+		} else {
+			Debug.err("images/stern2.gif not found for ThreeStateButton");
+		}
+		ImageIcon result = new ImageIcon(image);
+		return result;
 
 	}
+
 	/*
 	 * private ImageIcon composeIcons(ImageIcon src1, ImageIcon src2){
 	 * //BufferedImage src2 = new
@@ -199,47 +199,50 @@ public class ThreeStateButton3 extends JButton {
 	}
 
 	// we need to be faster than all other Listeners
-	protected void fireActionPerformed(ActionEvent event){
+	protected void fireActionPerformed(ActionEvent event) {
 		state = getNextState();
-//		Debug.msg("state: " + stateToString(state));
+		//		Debug.msg("state: " + stateToString(state));
 		//setIcon(getCurrentIcon()); // dont use icons[state] we need to load some icons first
 		setIcon(icons[state]);
 		super.fireActionPerformed(event);
 	}
 
-//	public void actionPerformed(ActionEvent e) {
-		//nothing to do we did all work in protected void fireActionPerformed(ActionEvent event){
-		// but we have to be sure the ActionListenerList is not empty
-//	}
+	//	public void actionPerformed(ActionEvent e) {
+	//nothing to do we did all work in protected void fireActionPerformed(ActionEvent event){
+	// but we have to be sure the ActionListenerList is not empty
+	//	}
 
-	private String stateToString(int state){
-		if(state==SELECTED)
+	private String stateToString(int state) {
+		if (state == SELECTED) {
 			return "SELECTED";
-		if(state==INVERTED)
+		}
+		if (state == INVERTED) {
 			return "SELECTED_NOT";
-		if(state==NOTHING)
+		}
+		if (state == NOTHING) {
 			return "NOTHING";
+		}
 		return "No known state chosen this must be an error";
 	}
 
-	public String toString(){
-		return super.toString()+ "\n state:"+ stateToString(state);
+	public String toString() {
+		return super.toString() + "\n state:" + stateToString(state);
 	}
 	/*
-	private Icon getCurrentIcon() {
-		// lazy loading here, because you cant get the images in the
-		// constructor, i think the look and deel is not set yet, so we cant get
-		// the
-		// greyIcon
-		if (icons[SELECTED] == null) {
-			//icons[SELECTED] = greyIcon(icons[NOTHING]);
-			icons[SELECTED] = starIcon(icons[NOTHING],icons[NOTHING].getIconWidth(), icons[NOTHING].getIconHeight());
-		}
-		if (icons[INVERTED] == null) {
-			icons[INVERTED] = crossIcon(icons[NOTHING], icons[NOTHING]
-					.getIconWidth(), icons[NOTHING].getIconHeight());
-		}
-		return icons[state];
-	}
-*/
+	 private Icon getCurrentIcon() {
+	 // lazy loading here, because you cant get the images in the
+	 // constructor, i think the look and deel is not set yet, so we cant get
+	 // the
+	 // greyIcon
+	 if (icons[SELECTED] == null) {
+	 //icons[SELECTED] = greyIcon(icons[NOTHING]);
+	 icons[SELECTED] = starIcon(icons[NOTHING],icons[NOTHING].getIconWidth(), icons[NOTHING].getIconHeight());
+	 }
+	 if (icons[INVERTED] == null) {
+	 icons[INVERTED] = crossIcon(icons[NOTHING], icons[NOTHING]
+	 .getIconWidth(), icons[NOTHING].getIconHeight());
+	 }
+	 return icons[state];
+	 }
+	 */
 }
