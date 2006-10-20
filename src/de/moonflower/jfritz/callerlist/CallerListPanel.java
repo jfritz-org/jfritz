@@ -414,7 +414,7 @@ KeyListener, PropertyChangeListener {
 		callOutFilterButton.setToolTipText(Main.getMessage(FILTER_CALLOUT));
 
 		anonymFilterButton = new ThreeStateButton3(
-				getImageIcon("phone_nonumber.png")); //$NON-NLS-1$
+				getImageIcon("mask.gif")); //$NON-NLS-1$
 		anonymFilterButton.setActionCommand(FILTER_ANONYM);
 		anonymFilterButton.addActionListener(this);
 		anonymFilterButton.setToolTipText(Main.getMessage(FILTER_ANONYM));
@@ -679,9 +679,9 @@ KeyListener, PropertyChangeListener {
 			callerList.removeFilter(filter[date]);
 			dateFilterButton.setSelected(false);
 			Calendar cal = Calendar.getInstance();
-			Date start = cal.getTime();
-			cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - 1);
 			Date end = cal.getTime();
+			cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - 1);
+			Date start = cal.getTime();
 			JFritzUtils.setStartOfDay(start);
 			JFritzUtils.setEndOfDay(end);
 			filter[date] = new DateFilter(start, end);
