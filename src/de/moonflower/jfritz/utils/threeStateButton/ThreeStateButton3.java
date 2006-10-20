@@ -154,7 +154,7 @@ public class ThreeStateButton3 extends JButton implements ImageObserver {
 	 */
 
 	private int getNextState() {
-		return (state + 1) % 3;
+		return (state + 2) % 3;
 		/*
 		 * if (state == SELECTED) state = SELECTED_NOT; else if (state ==
 		 * SELECTED_NOT) state = NOTHING; else if (state == NOTHING) state =
@@ -200,6 +200,8 @@ public class ThreeStateButton3 extends JButton implements ImageObserver {
 	// we need to be faster than all other Listeners
 	protected void fireActionPerformed(ActionEvent event) {
 		state = getNextState();
+		//Debug.msg("action!");
+
 		//		Debug.msg("state: " + stateToString(state));
 		//setIcon(getCurrentIcon()); // dont use icons[state] we need to load some icons first
 		setIcon(icons[state]);

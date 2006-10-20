@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.swing.CellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -242,16 +243,20 @@ KeyListener, PropertyChangeListener {
 		filter[search] = new SearchFilter("");
 		callerList.addFilter(filter[search]);
 	}
-
+//TODO kontextmenue für sip und cbc filter, in dem alle provider
+	// angezeigt werden
 	private SipFilter createSipFilter(CallerList callerList) {
 		SipFilter filter;
 		if (callerTable !=null && callerTable.getSelectedRowCount()!=0){
 			filter = new SipFilter(callerList
 				.getSipProviders(callerTable.getSelectedRows()));
+			Debug.msg("callerTable.getSelectedRowCount()!=0");
 		}else{
 			filter = new SipFilter(callerList
 					.getSipProviders());
+			Debug.msg("callerTable.getSelectedRowCount()==0");
 		}
+		Debug.msg("filter: "+filter.toString());
 		return filter;
 	}
 
@@ -264,6 +269,7 @@ KeyListener, PropertyChangeListener {
 			filter = new CallByCallFilter(callerList
 					.getCbCProviders());
 		}
+		Debug.msg("filter: "+filter.toString());
 		return filter;
 	}
 
@@ -271,6 +277,7 @@ KeyListener, PropertyChangeListener {
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent e) {
+
 		handleAction(e.getActionCommand());
 		// callerList.updateFilter();
 		callerList.update();
@@ -615,8 +622,12 @@ KeyListener, PropertyChangeListener {
 	}
 
 	private void handleAction(String command) {
-		// int[] rows = callerTable.getSelectedRows();
-		// if(rows.length ==0){
+		if(callerTable!=null){
+			CellEditor ce = callerTable.getCellEditor();
+			if(ce!=null){
+				ce.cancelCellEditing();
+			}
+		}
 		if (command.equals(FILTER_CALLIN)) {
 			syncFilterWithButton(filter[callIn], callInFilterButton);
 			return;
@@ -741,12 +752,18 @@ KeyListener, PropertyChangeListener {
 			return;
 		}
 		if (command.equals(FILTER_SIP)) {
+
+			callerList.removeFilter(filter[sip]);
 			filter[sip] = createSipFilter(callerList);
+			callerList.addFilter(filter[sip]);
+
 			syncFilterWithButton(filter[sip], sipFilterButton);
 			return;
 		}
 		if (command.equals(FILTER_CALLBYCALL)) {
+			callerList.removeFilter(filter[callByCall]);
 			filter[callByCall] = createCallByCallFilter(callerList);
+			callerList.addFilter(filter[callByCall]);
 			syncFilterWithButton(filter[callByCall], callByCallFilterButton);
 			return;
 		}
@@ -1107,24 +1124,8 @@ KeyListener, PropertyChangeListener {
 		state = JFritzUtils.parseInt(Main.getProperty(FILTER_SEARCH, "0"));
 		searchFilterButton.setState(state);
 
-		DateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm");
-		Date start = new Date();
-		Date end = new Date();
-		try {
-			start = df.parse(Main.getProperty(FILTER_DATE_START,
-			"11.11.11 11:11"));
-			end = df.parse(Main.getProperty(FILTER_DATE_END, "11.11.11 11:11"));
-			startDateChooser.setDate(start);
-			endDateChooser.setDate(end);
-		} catch (ParseException e) {
-			startDateChooser.setDate(Calendar.getInstance().getTime());
-			endDateChooser.setDate(Calendar.getInstance().getTime());
-			Debug
-			.err("error parsing date while loading dates from main properties "
-					+ e.toString());
-		}
 		dateSpecialSaveString = Main.getProperty(FILTER_DATE_SPECIAL,"");
-		Debug.msg(dateSpecialSaveString);
+//		Debug.msg(dateSpecialSaveString);
 		if(dateSpecialSaveString.equals(THIS_DAY)){
 			setThisDayFilter();
 		}else if(dateSpecialSaveString.equals(LAST_DAY)){
@@ -1137,6 +1138,23 @@ KeyListener, PropertyChangeListener {
 			setThisMonthFilter();
 		}else if(dateSpecialSaveString.equals(LAST_MONTH)){
 			setLastMonthFilter();
+		}else{ // read data
+			DateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm");
+			Date start = new Date();
+			Date end = new Date();
+			try {
+				start = df.parse(Main.getProperty(FILTER_DATE_START,
+				"11.11.11 11:11"));
+				end = df.parse(Main.getProperty(FILTER_DATE_END, "11.11.11 11:11"));
+				startDateChooser.setDate(start); // durch setDate wird über den
+				endDateChooser.setDate(end); // PropertyListener update aufgerufen
+			} catch (ParseException e) {
+				startDateChooser.setDate(Calendar.getInstance().getTime());
+				endDateChooser.setDate(Calendar.getInstance().getTime());
+				Debug
+				.err("error parsing date while loading dates from main properties "
+						+ e.toString());
+			}
 		}
 		syncAllFilters();
 		callerList.update();

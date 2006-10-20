@@ -65,9 +65,9 @@ public final class JFritz {
 
 	public final static String PROGRAM_SECRET = "jFrItZsEcReT"; //$NON-NLS-1$
 
-	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/hilfe/"; //$NON-NLS-1$
+	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/wiki/Kategorie:Hilfe"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.355 2006/10/06 16:28:11 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.356 2006/10/20 17:09:29 marc0815 Exp $"; //$NON-NLS-1$
 
 	public final static String CALLS_FILE = "jfritz.calls.xml"; //$NON-NLS-1$
 

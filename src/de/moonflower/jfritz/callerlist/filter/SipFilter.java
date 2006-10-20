@@ -29,5 +29,12 @@ public class SipFilter extends CallFilter {
 			else
 				return false;
 	}
+    public String toString(){
+    	String result="";
+    	for(int i =0; i<filteredSipProviders.size();i++){
+    		result +=" "+filteredSipProviders.elementAt(i);
+    	}
+    	return result;
+    }
 
 }

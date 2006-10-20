@@ -1751,12 +1751,6 @@ public class CallerList extends AbstractTableModel {
 	 */
 	public Vector filterData(Vector src) {
 		Vector result = new Vector();
-		try {// FIXME callerlist ->callertable
-			JFritz.getJframe().getCallerTable().getCellEditor()
-			.cancelCellEditing();
-		} catch (NullPointerException e) {
-		}
-
 		Debug.msg("updating filtered Data");
 		Enumeration en = src.elements();
 		Call call;
@@ -1785,22 +1779,24 @@ public class CallerList extends AbstractTableModel {
 	 */
 	public Vector getCbCProviders(int[] rows) {
 		Vector callByCallProviders = new Vector();
-		String provider = ""; //$NON-NLS-1$
 		for (int i = 0; i < rows.length; i++) {
 			Call call = (Call) getFilteredCallVector().get(rows[i]);
-			if (call.getPhoneNumber() != null) {
-				provider = call.getPhoneNumber().getCallByCall();
-				if (provider.equals("")) { //$NON-NLS-1$
-					provider = "NONE"; //$NON-NLS-1$
-				}
-			} else {
-				provider = "NONE"; //$NON-NLS-1$
-			}
-			if (!callByCallProviders.contains(provider)) {
-				callByCallProviders.add(provider);
-			}
+			addIfCbCProvider(callByCallProviders, call);
 		}
 		return callByCallProviders;
+	}
+
+	private void addIfCbCProvider(Vector callByCallProviders, Call call) {
+		String provider="";
+		if (call.getPhoneNumber() != null) {
+			provider = call.getPhoneNumber().getCallByCall();
+			if (provider.equals("")) { //$NON-NLS-1$
+				provider = "NONE"; //$NON-NLS-1$
+			}
+		}
+		if (!callByCallProviders.contains(provider)) {
+			callByCallProviders.add(provider);
+		}
 	}
 /**
  *
@@ -1808,20 +1804,9 @@ public class CallerList extends AbstractTableModel {
  */
 	public Vector getCbCProviders() {
 		Vector callByCallProviders = new Vector();
-		String provider = ""; //$NON-NLS-1$
 		for (int i = 0; i < getFilteredCallVector().size(); i++) {
-			Call call = (Call) getFilteredCallVector().get(i);
-			if (call.getPhoneNumber() != null) {
-				provider = call.getPhoneNumber().getCallByCall();
-				if (provider.equals("")) { //$NON-NLS-1$
-					provider = "NONE"; //$NON-NLS-1$
-				}
-			} else {
-				provider = "NONE"; //$NON-NLS-1$
-			}
-			if (!callByCallProviders.contains(provider)) {
-				callByCallProviders.add(provider);
-			}
+			Call call = (Call) getUnfilteredCallVector().get(i);
+			addIfCbCProvider(callByCallProviders, call);
 		}
 		return callByCallProviders;
 	}
@@ -1875,17 +1860,21 @@ public class CallerList extends AbstractTableModel {
 		Vector sipProviders = new Vector();
 		for (int i = 0; i < rows.length; i++) {
 			Call call = (Call) this.getFilteredCallVector().get(rows[i]);
-			String route = call.getRoute();
-			if (call.getRouteType() == Call.ROUTE_SIP){
-				if (route.equals("")) { //$NON-NLS-1$
-					route = "FIXEDLINE"; //$NON-NLS-1$
-				}
-				if (!sipProviders.contains(route)) {
-					sipProviders.add(route);
-				}
-			}
+			addIfSipProvider(sipProviders, call);
 		}
 		return sipProviders;
+	}
+
+	private void addIfSipProvider(Vector sipProviders, Call call) {
+		String route = call.getRoute();
+//		if (call.getRouteType() == Call.ROUTE_SIP){
+			if (route.equals("")) { //$NON-NLS-1$
+				route = "FIXEDLINE"; //$NON-NLS-1$
+			}
+			if (!sipProviders.contains(route)) {
+				sipProviders.add(route);
+			}
+//		}
 	}
 /**
  *
@@ -1893,26 +1882,11 @@ public class CallerList extends AbstractTableModel {
  */
 	public Vector getSipProviders() {
 		Vector sipProviders = new Vector();
-
 		for (int i = 0; i < getFilteredCallVector().size(); i++) {
-			Call call = (Call) this.getFilteredCallVector().get(i);
-			String route = call.getRoute();
-
-			if (route.equals("")) { //$NON-NLS-1$
-				route = "FIXEDLINE"; //$NON-NLS-1$
-			}
+			Call call = (Call) this.getUnfilteredCallVector().get(i);
 			//		 Debug.msg("route:"+route);
 			//		 Debug.msg("callrouteType:"+call.getRouteType());
-					if (call.getRouteType() == Call.ROUTE_SIP) {
-			//if (route.indexOf("@") != -1) {
-
-				// TODO check this after Robert fixed the getRouteType
-				// method
-				if (!sipProviders.contains(route)) {
-					// Debug.msg(route);
-					sipProviders.add(route);
-				}
-			}
+			addIfSipProvider(sipProviders, call);
 		}
 		return sipProviders;
 	}
