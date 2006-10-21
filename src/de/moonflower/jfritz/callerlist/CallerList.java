@@ -708,7 +708,7 @@ public class CallerList extends AbstractTableModel {
 	public void sortAllFilteredRowsBy(int col, boolean asc) {
 		// Debug.msg("Sorting column " + col + " " + asc);
 
-		Debug.msg("Sorting all filtered Rows");
+		Debug.msg("Sorting all filtered Rows by:" + col);
 		Collections.sort(filteredCallerData, new ColumnSorter(col, asc));
 		fireTableDataChanged();
 		fireTableStructureChanged();
@@ -756,66 +756,66 @@ public class CallerList extends AbstractTableModel {
 
 		public int compare(Object a, Object b) {
 			Object o1 = null, o2 = null;
-			fireTableDataChanged();
-			Call v1 = (Call) a;
-			Call v2 = (Call) b;
+			fireTableDataChanged(); //FIXME was soll das hier?
+			Call call1 = (Call) a;
+			Call call2 = (Call) b;
 			String columnName = getRealColumnName(columnIndex);
 
 			if (columnName.equals("type")) { //$NON-NLS-1$
-				o1 = v1.getCalltype().toString();
-				o2 = v2.getCalltype().toString();
+				o1 = call1.getCalltype().toString();
+				o2 = call2.getCalltype().toString();
 			} else if (columnName.equals("date")) { //$NON-NLS-1$
-				o1 = v1.getCalldate();
-				o2 = v2.getCalldate();
+				o1 = call1.getCalldate();
+				o2 = call2.getCalldate();
 			} else if (columnName.equals("callbycall")) { //$NON-NLS-1$
-				if (v1.getPhoneNumber() != null)
-					o1 = v1.getPhoneNumber().getCallByCall();
+				if (call1.getPhoneNumber() != null)
+					o1 = call1.getPhoneNumber().getCallByCall();
 				else
 					o1 = null;
-				if (v2.getPhoneNumber() != null)
-					o2 = v2.getPhoneNumber().getCallByCall();
+				if (call2.getPhoneNumber() != null)
+					o2 = call2.getPhoneNumber().getCallByCall();
 				else
 					o2 = null;
 			} else if (columnName.equals("number")) { //$NON-NLS-1$
-				if (v1.getPhoneNumber() != null)
-					o1 = v1.getPhoneNumber().getIntNumber();
+				if (call1.getPhoneNumber() != null)
+					o1 = call1.getPhoneNumber().getIntNumber();
 				else
 					o1 = null;
-				if (v2.getPhoneNumber() != null)
-					o2 = v2.getPhoneNumber().getIntNumber();
+				if (call2.getPhoneNumber() != null)
+					o2 = call2.getPhoneNumber().getIntNumber();
 				else
 					o2 = null;
 			} else if (columnName.equals("participant")) { //$NON-NLS-1$
-				if (v1.getPerson() != null)
-					o1 = v1.getPerson().getFullname().toUpperCase();
+				if (call1.getPerson() != null)
+					o1 = call1.getPerson().getFullname().toUpperCase();
 				else
 					o1 = null;
-				if (v2.getPerson() != null)
-					o2 = v2.getPerson().getFullname().toUpperCase();
+				if (call2.getPerson() != null)
+					o2 = call2.getPerson().getFullname().toUpperCase();
 				else
 					o2 = null;
 			} else if (columnName.equals("port")) { //$NON-NLS-1$
-				o1 = v1.getPort();
-				o2 = v2.getPort();
+				o1 = call1.getPort();
+				o2 = call2.getPort();
 			} else if (columnName.equals("route")) { //$NON-NLS-1$
-				o1 = v1.getRoute();
-				o2 = v2.getRoute();
+				o1 = call1.getRoute();
+				o2 = call2.getRoute();
 			} else if (columnName.equals("duration")) { //$NON-NLS-1$
-				if (v1.getDuration() != 0)
-					o1 = format(Integer.toString(v1.getDuration()), 10);
+				if (call1.getDuration() != 0)
+					o1 = format(Integer.toString(call1.getDuration()), 10);
 				else
 					o1 = null;
-				if (v2.getDuration() != 0)
-					o2 = format(Integer.toString(v2.getDuration()), 10);
+				if (call2.getDuration() != 0)
+					o2 = format(Integer.toString(call2.getDuration()), 10);
 				else
 					o2 = null;
 			} else if (columnName.equals("comment")) { //$NON-NLS-1$
-				o1 = v1.getComment().toUpperCase();
-				o2 = v2.getComment().toUpperCase();
+				o1 = call1.getComment().toUpperCase();
+				o2 = call2.getComment().toUpperCase();
 			} else {
 				// Sort by Date
-				o1 = v1.getCalldate();
-				o2 = v2.getCalldate();
+				o1 = call1.getCalldate();
+				o2 = call2.getCalldate();
 			}
 
 			// Treat empty strings like nulls
@@ -1043,7 +1043,7 @@ public class CallerList extends AbstractTableModel {
 				.getMessage("really_delete_entries"), //$NON-NLS-1$
 				Main.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 			Debug.msg("Removing entries"); //$NON-NLS-1$
-			int row[] = JFritz.getJframe().getCallerTable().getSelectedRows();
+			int row[] = JFritz.getJframe().getCallerTable().getSelectedRows(); //FIXME
 			if (row.length > 0) {
 				Vector personsToDelete = new Vector();
 				for (int i = 0; i < row.length; i++) {
@@ -1051,7 +1051,11 @@ public class CallerList extends AbstractTableModel {
 				}
 				Enumeration en = personsToDelete.elements();
 				while (en.hasMoreElements()) {
-					unfilteredCallerData.remove(en.nextElement());
+					Call call = (Call)en.nextElement();
+					unfilteredCallerData.remove(call);
+					Person p = call.getPerson();
+					Call lastCall = JFritz.getCallerList().findLastCall(p);
+					JFritz.getPhonebook().setLastCall(p, lastCall);
 				}
 				saveToXMLFile(Main.SAVE_DIR + JFritz.CALLS_FILE, true);
 				//updateFilter();

@@ -38,6 +38,8 @@ public class Call {
 
     private double cost= -1;
 
+    private Person cachePerson;
+
     private String comment = ""; //$NON-NLS-1$
 
     public Call(CallType calltype, Date calldate,
@@ -102,9 +104,11 @@ public class Call {
      * @return Returns the person the number belongs to or null.
      */
     public Person getPerson() {
+    	if(cachePerson!=null){return cachePerson;}
     	Person retValue = getPerson(false);
     	if (retValue==null)
     		retValue = getPerson(true);
+    	cachePerson = retValue;
     	return retValue;
     }
 
