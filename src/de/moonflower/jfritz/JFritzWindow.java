@@ -1019,7 +1019,6 @@ ItemListener {
 	public void actionPerformed(ActionEvent e) {
 		Debug.msg("Action " + e.getActionCommand()); //$NON-NLS-1$
 		if (e.getActionCommand().equals("exit")) {
-//			showExitDialog();
 			WindowEvent we = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
 			processWindowEvent(we);
 		} else if (e.getActionCommand().equals("about")) {

@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -135,9 +134,6 @@ public class CallerList extends AbstractTableModel {
 		newCalls = new Vector(32);
 
 		sortColumn = 1;
-		//dateFilter = new DateFilter();
-		//sipFilter = new SipFilter(getSelectedOrSipProviders());
-		//callByCallFilter = new CallByCallFilter(getSelectedCbCProviders());
 	}
 
 	/**
@@ -862,123 +858,6 @@ public class CallerList extends AbstractTableModel {
 		}
 	}
 
-	// ************************************************************************************************************
-	/**
-	 * Updates the call filter.
-	 */
-	/*
-	 public void updateFilter() {
-	 Debug.msg("updating the filter");
-
-	 boolean filterCallIn = JFritzUtils.parseBoolean(Main.getProperty("filter.callin")); //$NON-NLS-1$
-	 boolean filterCallInFailed = JFritzUtils.parseBoolean(Main.getProperty("filter.callinfailed")); //$NON-NLS-1$
-	 boolean filterCallOut = JFritzUtils.parseBoolean(Main.getProperty("filter.callout")); //$NON-NLS-1$
-	 boolean filterNumber = JFritzUtils.parseBoolean(Main.getProperty("filter.number")); //$NON-NLS-1$
-	 boolean filterFixed = JFritzUtils.parseBoolean(Main.getProperty("filter.fixed")); //$NON-NLS-1$
-	 boolean filterHandy = JFritzUtils.parseBoolean(Main.getProperty("filter.handy")); //$NON-NLS-1$
-	 boolean filterDate = JFritzUtils.parseBoolean(Main.getProperty("filter.date")); //$NON-NLS-1$
-	 boolean filterSip = JFritzUtils.parseBoolean(Main.getProperty("filter.sip")); //$NON-NLS-1$
-	 boolean filterCallByCall = JFritzUtils.parseBoolean(Main.getProperty("filter.callbycall")); //$NON-NLS-1$
-	 boolean filterComment = JFritzUtils.parseBoolean(Main.getProperty("filter.comment")); // fireTableDataChanged();$NON-NLS-1$
-	 String filterSearch = Main.getProperty("filter.search", ""); //$NON-NLS-1$,  //$NON-NLS-2$
-
-	 try {
-	 JFritz.getJframe().getCallerTable().getCellEditor()
-	 .cancelCellEditing();
-	 } catch (NullPointerException e) {
-	 }
-
-	 if ((!filterCallIn) && (!filterCallInFailed) && (!filterCallOut)
-	 && (!filterNumber) && (!filterDate) && (!filterHandy)
-	 && (!filterFixed) && (!filterSip) && (!filterCallByCall)
-	 && (!filterComment) && (filterSearch.length() == 0)) {
-
-	 // Use unfiltered data
-	 filteredCallerData = (Vector) unfilteredCallerData.clone();
-	 sortAllFilteredRowsBy(sortColumn, sortDirection);
-	 } else { // Data got to be filtered
-
-	 Vector filteredcallerdata;
-	 filteredcallerdata = new Vector();
-	 Enumeration en = unfilteredCallerData.elements();
-	 while (en.hasMoreElements()) {
-	 Call call = (Call) en.nextElement();
-	 boolean dateFilterPassed = true;
-	 boolean searchFilterPassed = true;
-	 boolean handyFilterPassed = true;
-	 boolean fixedFilterPassed = true;
-	 boolean sipFilterPassed = true;
-	 boolean commentFilterPassed = true;
-	 boolean callByCallFilterPassed = true;
-
-	 // SearchFilter: Number, Participant, Date
-	 String parts[] = filterSearch.split(" "); //$NON-NLS-1$
-	 for (int i = 0; i < parts.length; i++) {
-	 String part = parts[i];
-
-	 if (part.length() > 0
-	 && (call.getPhoneNumber() == null || call
-	 .getPhoneNumber().getIntNumber().indexOf(
-	 parts[i]) == -1)
-	 && (call.getPhoneNumber() == null || call
-	 .getPhoneNumber().getCallByCall().indexOf(
-	 parts[i]) == -1)
-	 && (call.getPerson() == null || call.getPerson()
-	 .getFullname().toLowerCase().indexOf(
-	 part.toLowerCase()) == -1)) {
-	 searchFilterPassed = false;
-	 break;
-	 }
-	 }
-
-	 if (filterSip) {
-	 //                  sipFilterPassed = sipFilter.passFilter(call);
-	 }
-
-	 if (filterCallByCall) {
-	 //                   callByCallFilterPassed = callByCallFilter.passFilter(call);
-	 }
-
-	 if (filterDate) {
-	 //                   dateFilterPassed = dateFilter.passFilter(call);
-	 }
-
-	 if (filterFixed && call.getPhoneNumber() != null
-	 && !call.getPhoneNumber().isMobile())
-	 fixedFilterPassed = false;
-
-	 if (filterHandy && call.getPhoneNumber() != null
-	 && call.getPhoneNumber().isMobile())
-	 handyFilterPassed = false;
-
-	 if (filterComment
-	 && !call.getComment().equals(
-	 Main.getProperty("filter.comment.text", ""))) { //$NON-NLS-1$,  //$NON-NLS-2$
-	 commentFilterPassed = false;
-	 }
-
-	 if (searchFilterPassed && dateFilterPassed && handyFilterPassed
-	 && fixedFilterPassed && sipFilterPassed
-	 && commentFilterPassed && callByCallFilterPassed)
-	 if (!(filterNumber && call.getPhoneNumber() == null)) {
-	 if ((!filterCallIn)
-	 && (call.getCalltype().toInt() == CallType.CALLIN))
-	 filteredcallerdata.add(call);
-	 else if ((!filterCallInFailed)
-	 && (call.getCalltype().toInt() == CallType.CALLIN_FAILED))
-	 filteredcallerdata.add(call);
-	 else if ((!filterCallOut)
-	 && (call.getCalltype().toInt() == CallType.CALLOUT))
-	 filteredcallerdata.add(call);
-	 }
-	 }
-	 filteredCallerData = filteredcallerdata;
-	 sortAllFilteredRowsBy(sortColumn, sortDirection);
-	 }
-	 if (JFritz.getJframe() != null)
-	 JFritz.getJframe().setStatus();
-	 }
-	 */
 	/**
 	 * @return Total duration of all (filtered) calls
 	 */
@@ -1746,7 +1625,6 @@ public class CallerList extends AbstractTableModel {
 	 */
 	public void addFilter(CallFilter cf) {
 		filters.add(cf);
-		//		filteredCallerData = filterData(filteredCallerData);
 		//maybe we can save some time and not recalculate the old filters
 	}
 
@@ -1836,44 +1714,6 @@ public class CallerList extends AbstractTableModel {
 		return callByCallProviders;
 	}
 
-	/*
-	 * 	public Vector getSelectedCbCProviders(int[] rows) {
-	 Vector filteredCallByCallProviders = new Vector();
-	 String provider = ""; //$NON-NLS-1$
-	 if (JFritz.getJframe() != null)
-	 rows = JFritz.getJframe().getCallerTable().getSelectedRows();
-	 if (rows.length != 0) { // Filter only selected rows
-	 for (int i = 0; i < rows.length; i++) {
-	 Call call = (Call) getFilteredCallVector().get(rows[i]);
-	 if (call.getPhoneNumber() != null) {
-	 provider = call.getPhoneNumber().getCallByCall();
-	 if (provider.equals("")) { //$NON-NLS-1$
-	 provider = "NONE"; //$NON-NLS-1$
-	 }
-	 } else {
-	 provider = "NONE"; //$NON-NLS-1$
-	 }
-	 if (!filteredCallByCallProviders.contains(provider)) {
-	 filteredCallByCallProviders.add(provider);
-	 }
-	 }
-	 } else { // filter only calls with callbycall predial
-	 for (int i = 0; i < getUnfilteredCallVector().size(); i++) {
-	 Call call = (Call) getUnfilteredCallVector().get(i);
-	 if (call.getPhoneNumber() != null) {
-	 provider = call.getPhoneNumber().getCallByCall();
-	 }
-	 if (!provider.equals("")) { //$NON-NLS-1$
-	 if (!filteredCallByCallProviders.contains(provider)) {
-	 filteredCallByCallProviders.add(provider);
-	 }
-	 }
-	 }
-	 }
-	 return filteredCallByCallProviders;
-	 }
-
-	 */
 
 	/**
 	 * returns all selected Providers if no rows are selected return all SIP

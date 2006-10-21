@@ -243,8 +243,6 @@ KeyListener, PropertyChangeListener {
 		filter[search] = new SearchFilter("");
 		callerList.addFilter(filter[search]);
 	}
-//TODO kontextmenue für sip und cbc filter, in dem alle provider
-	// angezeigt werden
 	private SipFilter createSipFilter(CallerList callerList) {
 		SipFilter filter;
 		if (callerTable !=null && callerTable.getSelectedRowCount()!=0){
@@ -279,7 +277,6 @@ KeyListener, PropertyChangeListener {
 	public void actionPerformed(ActionEvent e) {
 
 		handleAction(e.getActionCommand());
-		// callerList.updateFilter();
 		callerList.update();
 		parentFrame.setStatus();
 	}
@@ -539,8 +536,6 @@ KeyListener, PropertyChangeListener {
 		resetFiltersButton = new JButton(Main.getMessage("clear")); //$NON-NLS-1$
 		resetFiltersButton.setActionCommand("clearFilter"); //$NON-NLS-1$
 		resetFiltersButton.addActionListener(this);
-		// ThreeStateButton testButton = new
-		// ThreeStateButton(getImage("searchfilter.png"));
 
 		JPanel toolbarPanel = new JPanel();
 		toolbarPanel.setLayout(new BorderLayout());
@@ -548,7 +543,6 @@ KeyListener, PropertyChangeListener {
 		// toolbarPanel.add(upperToolBar, BorderLayout.NORTH);
 
 		/** **********add all Buttons and stuff to the lowerToolbar************** */
-		// lowerToolbar.add(testButton);
 		lowerToolbar.add(callInFilterButton);
 		lowerToolbar.add(callInFailedFilterButton);
 		lowerToolbar.add(callOutFilterButton);
@@ -584,7 +578,6 @@ KeyListener, PropertyChangeListener {
 
 	// TODO reverseLookup verschieben
 	private void doReverseLookup(int[] rows) {
-		//int rows[] = callerTable.getSelectedRows();
 		if (rows.length > 0) { // nur für markierte Einträge ReverseLookup
 			// durchführen
 			for (int i = 0; i < rows.length; i++) {
