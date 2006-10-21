@@ -38,7 +38,7 @@ public class Person {
 
 	private Vector numbers;
 
-	private transient Call lastCall; //TODO lastCallaktualisiern bei anruf und beim abholen der Liste
+	private transient Call lastCall; //TODO lastCallaktualisiern beim löschen von calls
 
 	private String[] basicTypes = {"home", "mobile", "homezone", "business", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$
 			"other", "fax", "sip", "main"}; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$
