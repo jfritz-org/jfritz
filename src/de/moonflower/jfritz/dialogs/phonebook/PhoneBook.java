@@ -70,6 +70,7 @@ public class PhoneBook extends AbstractTableModel {
 
 	private Vector unfilteredPersons;
 
+	private boolean allCallsCalculated = false;
 	/**
 	 * A vector of Persons that will match any search filter. In other words: a
 	 * list of sticky Persons, that will always show up. Used to ensure that a
@@ -91,18 +92,14 @@ public class PhoneBook extends AbstractTableModel {
 	 *            Order of sorting
 	 */
 	public void sortAllFilteredRowsBy(int col, boolean asc) {
-		long t1 = System.currentTimeMillis();
 		if(col == 5){
-			Debug.msg("calculating last calls");
-			calculateAllLastCalls();
+			if(!allCallsCalculated){
+				calculateAllLastCalls();
+				allCallsCalculated = true;
+			}
 		}
-		long t2 = System.currentTimeMillis();
-		Debug.msg("sorting...");
 		Collections.sort(filteredPersons, new ColumnSorter(col, asc));
-		long t3 = System.currentTimeMillis();
-		Debug.msg("...done");
-		Debug.msg("last calls: "+(t2-t1) + "ms sorting: "+(t3-t2)+"ms");
-
+		//Debug.msg("last calls: "+(t2-t1) + "ms sorting: "+(t3-t2)+"ms");
 		fireTableDataChanged();
 	}
 
@@ -278,7 +275,9 @@ public class PhoneBook extends AbstractTableModel {
 	public void clearFilterExceptions() {
 		filterExceptions.clear();
 	}
-
+/*
+ * inherited from AbstractTableModel
+ */
 	public boolean addEntry(Person newPerson) {
 		Enumeration en = unfilteredPersons.elements();
 		while (en.hasMoreElements()) {
@@ -294,6 +293,11 @@ public class PhoneBook extends AbstractTableModel {
 		unfilteredPersons.add(newPerson);
 		//updateFilter();
 		return true;
+	}
+	public void setLastCall(Person p ,Call c){
+		int index = unfilteredPersons.indexOf(p);
+		((Person)unfilteredPersons.get(index)).setLastCall(c);
+		fireTableDataChanged();
 	}
 
 	public void deleteEntry(Person person) {
@@ -601,6 +605,7 @@ public class PhoneBook extends AbstractTableModel {
 			Debug.err("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 		calculateAllLastCalls();
+		allCallsCalculated = true;
 		updateFilter();
 	}
 
@@ -784,8 +789,11 @@ public class PhoneBook extends AbstractTableModel {
 	 * Addressbook, and write it to person.lastCall to speed up sorting
 	 */
 	public void calculateAllLastCalls(){
+		/*
+		JFritz.getCallerList().calculateAllLastCalls(unfilteredPersons);
+		too slow
+		*/
 		Person current;
-		//TODO funktion nach callerList verschieben und alle Berechnung auf einmal machen
 		for (int i = 0; i < unfilteredPersons.size(); i++) {
 			current = (Person)unfilteredPersons.get(i);
 			if(JFritz.getCallerList()!=null){

@@ -25,7 +25,7 @@ public class CurrentCallsTable extends AbstractTableModel implements
 
     public CurrentCallsTable(){
     	currentCalls = new Vector(4);
-    	JFritz.getCallMonitorList().addEventListener(this);
+    	JFritz.getCallMonitorList().addCallMonitorListener(this);
     }
 
 	public int getColumnCount() {

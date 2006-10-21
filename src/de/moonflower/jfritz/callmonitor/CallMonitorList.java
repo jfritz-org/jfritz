@@ -170,7 +170,7 @@ public class CallMonitorList {
      * @param cml,
      *            new CallMonitorListener
      */
-    public void addEventListener(CallMonitorListener cml) {
+    public void addCallMonitorListener(CallMonitorListener cml) {
         Debug.msg("CallMonitorList: Added new event listener " + cml.toString());
         listeners.add(cml);
     }
@@ -181,7 +181,7 @@ public class CallMonitorList {
      * @param cml,
      *            CallMonitorListener to remove
      */
-    public void removeEventListener(CallMonitorListener cml) {
+    public void removeCallMonitorListener(CallMonitorListener cml) {
         Debug.msg("CallMonitorList: Removing event listener " + cml.toString());
         listeners.remove(cml);
     }

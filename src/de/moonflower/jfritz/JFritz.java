@@ -67,7 +67,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/wiki/Kategorie:Hilfe"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.357 2006/10/20 22:17:58 marc0815 Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.358 2006/10/21 12:10:15 marc0815 Exp $"; //$NON-NLS-1$
 
 	public final static String CALLS_FILE = "jfritz.calls.xml"; //$NON-NLS-1$
 
@@ -174,8 +174,8 @@ public final class JFritz {
 
 
 		callMonitorList = new CallMonitorList();
-		callMonitorList.addEventListener(new DisplayCallsMonitor());
-		callMonitorList.addEventListener(new DisconnectMonitor());
+		callMonitorList.addCallMonitorListener(new DisplayCallsMonitor());
+		callMonitorList.addCallMonitorListener(new DisconnectMonitor());
 
 		if (Main
 				.getProperty(

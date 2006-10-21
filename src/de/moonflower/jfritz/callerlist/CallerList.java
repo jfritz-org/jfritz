@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -409,6 +410,12 @@ public class CallerList extends AbstractTableModel {
 		if (contains(call)) {
 			return false;
 		} else { // add a new enty to the call list
+			Person p = call.getPerson();
+			if(p!= null){
+				if(p.getLastCall().getCalldate().before(call.getCalldate())){
+					JFritz.getPhonebook().setLastCall(p, call);
+					}
+			}
 			newCalls.add(call);
 			return true;
 		}
@@ -1176,7 +1183,6 @@ public class CallerList extends AbstractTableModel {
 					if (c == null) {
 						if (!line.equals(""))
 							Debug.err("Broken entry: " + line);
-
 					} else if (addEntry(c)) {
 						newEntries++;
 					}
@@ -1710,7 +1716,21 @@ public class CallerList extends AbstractTableModel {
 		return call;
 
 	}
-
+	/* too slow
+	public void calculateAllLastCalls(Vector unfilteredPersons){
+		for (Iterator iter = unfilteredCallerData.iterator(); iter.hasNext();) {
+			Call element = (Call) iter.next();
+			Person p = element.getPerson();
+			Date lastOfList;
+			if(unfilteredPersons.contains(p)){
+				lastOfList = element.getCalldate();
+				if(p.getLastCall().getCalldate().before(lastOfList)){
+					p.getLastCall().setCalldate(lastOfList);
+				}
+			}
+		}
+	}
+*/
 	/**
 	 * adds a Filter to sort out some calls
 	 *
