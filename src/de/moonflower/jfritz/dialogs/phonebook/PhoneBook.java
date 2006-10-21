@@ -41,6 +41,7 @@ import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.callerlist.CallerList;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
@@ -70,6 +71,7 @@ public class PhoneBook extends AbstractTableModel {
 
 	private Vector unfilteredPersons;
 
+	private CallerList callerList;
 	private boolean allCallsCalculated = false;
 	/**
 	 * A vector of Persons that will match any search filter. In other words: a
@@ -82,6 +84,12 @@ public class PhoneBook extends AbstractTableModel {
 	private int sortColumn = 1;
 
 	private boolean sortDirection = true;
+
+	public PhoneBook() {
+		filteredPersons = new Vector();
+		unfilteredPersons = new Vector();
+		filterExceptions = new Vector();
+	}
 
 	/**
 	 * Sort table model rows by a specific column and direction
@@ -243,11 +251,6 @@ public class PhoneBook extends AbstractTableModel {
 		}
 	}
 
-	public PhoneBook() {
-		filteredPersons = new Vector();
-		unfilteredPersons = new Vector();
-		filterExceptions = new Vector();
-	}
 
 	public Vector getFilteredPersons() {
 		return filteredPersons;
@@ -789,6 +792,7 @@ public class PhoneBook extends AbstractTableModel {
 	 * Addressbook, and write it to person.lastCall to speed up sorting
 	 */
 	public void calculateAllLastCalls(){
+		Debug.msg("calculating lastCall for allPersons in the phonebook");
 		/*
 		JFritz.getCallerList().calculateAllLastCalls(unfilteredPersons);
 		too slow
@@ -1046,6 +1050,11 @@ public class PhoneBook extends AbstractTableModel {
 		}
 
 		return redundantEntries.size();
+	}
+
+	public void setCallerList(CallerList list) {
+		this.callerList = list;
+
 	}
 
 }

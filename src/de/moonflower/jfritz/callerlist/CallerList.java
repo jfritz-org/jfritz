@@ -42,6 +42,7 @@ import org.xml.sax.XMLReader;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.filter.CallFilter;
+import de.moonflower.jfritz.dialogs.phonebook.PhoneBook;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
@@ -110,6 +111,8 @@ public class CallerList extends AbstractTableModel {
 	private Vector filters;
 
 	private boolean sortDirection = false;
+
+	private PhoneBook phonebook;
 
 	//private DateFilter dateFilter;
 
@@ -704,7 +707,7 @@ public class CallerList extends AbstractTableModel {
 	public void sortAllFilteredRowsBy(int col, boolean asc) {
 		// Debug.msg("Sorting column " + col + " " + asc);
 
-		Debug.msg("Sorting all filtered Rows by:" + col);
+//		Debug.msg("Sorting all filtered Rows by:" + col);
 		Collections.sort(filteredCallerData, new ColumnSorter(col, asc));
 		fireTableDataChanged();
 		fireTableStructureChanged();
@@ -1762,5 +1765,10 @@ public class CallerList extends AbstractTableModel {
 		filteredCallerData = filterData(unfilteredCallerData);
 		sortAllFilteredRowsBy(sortColumn, sortDirection);
 		fireTableDataChanged();
+	}
+
+	public void setPhoneBook(PhoneBook phonebook) {
+		this.phonebook = phonebook;
+
 	}
 }

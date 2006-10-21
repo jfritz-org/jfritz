@@ -62,13 +62,9 @@ import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 import de.moonflower.jfritz.utils.threeStateButton.ThreeStateButton3;
 
 /**
- * @author Arno Willig
+ * @ex-author Arno Willig
  * @author marc
  */
-
-//TODO evtl start und enddate richtig setzten, wenn man einen datefilter
-//aktiviert und
-//zeilen selektiert hat
 
 //TODO delete button
 public class CallerListPanel extends JPanel implements ActionListener,
@@ -177,7 +173,7 @@ KeyListener, PropertyChangeListener {
 
 	private static final int FILTERCOUNT = 11;
 
-	private static final String FILTER_DATE_SPECIAL = "DATE_SPECIAL";
+	private static final String FILTER_DATE_SPECIAL = "date_filter_special";
 
 
 
@@ -248,13 +244,10 @@ KeyListener, PropertyChangeListener {
 		if (callerTable !=null && callerTable.getSelectedRowCount()!=0){
 			filter = new SipFilter(callerList
 				.getSipProviders(callerTable.getSelectedRows()));
-			Debug.msg("callerTable.getSelectedRowCount()!=0");
 		}else{
 			filter = new SipFilter(callerList
 					.getSipProviders());
-			Debug.msg("callerTable.getSelectedRowCount()==0");
 		}
-		Debug.msg("filter: "+filter.toString());
 		return filter;
 	}
 
@@ -267,7 +260,6 @@ KeyListener, PropertyChangeListener {
 			filter = new CallByCallFilter(callerList
 					.getCbCProviders());
 		}
-		Debug.msg("filter: "+filter.toString());
 		return filter;
 	}
 
@@ -1079,16 +1071,13 @@ KeyListener, PropertyChangeListener {
 		if (button.getState() == ThreeStateButton3.SELECTED) {
 			filter.setEnabled(true);
 			filter.setInvert(false);
-//			Debug.msg("sel");
 		}
 		if (button.getState() == ThreeStateButton3.INVERTED) {
 			filter.setEnabled(true);
 			filter.setInvert(true);
-//			Debug.msg("sel not");
 		}
 		if (button.getState() == ThreeStateButton3.NOTHING) {
 			filter.setEnabled(false);
-//			Debug.msg("nothing");
 		}
 	}
 
