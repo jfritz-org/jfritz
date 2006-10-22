@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1731,6 +1732,18 @@ public class CallerList extends AbstractTableModel {
 			addIfSipProvider(sipProviders, call);
 		}
 		return sipProviders;
+	}
+
+	public void findAllPersons(){
+		if(phonebook==null)Debug.err("set phonebook first!");
+		if(!phonebook.getAllLastCallsSearched())Debug.err("searchAllLastCalls in the phonebook first");
+		Call call;
+		Person person;
+		for (int i =0; i<unfilteredCallerData.size(); i++){
+			call = (Call)unfilteredCallerData.get(i);
+			person = phonebook.findPerson(call);
+			call.setPerson(person);
+		}
 	}
 
 	private void addIfSipProvider(Vector sipProviders, Call call) {

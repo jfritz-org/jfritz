@@ -67,7 +67,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/wiki/Kategorie:Hilfe"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.359 2006/10/21 20:43:03 marc0815 Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.360 2006/10/22 16:58:54 marc0815 Exp $"; //$NON-NLS-1$
 
 	public final static String CALLS_FILE = "jfritz.calls.xml"; //$NON-NLS-1$
 
@@ -174,7 +174,8 @@ public final class JFritz {
 
 		callerlist.setPhoneBook(phonebook);
 		phonebook.setCallerList(callerlist);
-
+		phonebook.findAllLastCalls();
+		callerlist.findAllPersons();
 
 
 		callMonitorList = new CallMonitorList();
@@ -272,7 +273,8 @@ public final class JFritz {
 		// phonebook.loadFromXMLFile(SAVE_DIR + PHONEBOOK_FILE);
 		phonebook.setCallerList(callerlist);
 		callerlist.setPhoneBook(phonebook);
-
+		phonebook.findAllLastCalls();
+		callerlist.findAllPersons();
 	}
 
 	/**

@@ -72,7 +72,7 @@ public class PhoneBook extends AbstractTableModel {
 	private Vector unfilteredPersons;
 
 	private CallerList callerList;
-	private boolean allCallsCalculated = false;
+	private boolean allLastCallsSearched = false;
 	/**
 	 * A vector of Persons that will match any search filter. In other words: a
 	 * list of sticky Persons, that will always show up. Used to ensure that a
@@ -101,9 +101,9 @@ public class PhoneBook extends AbstractTableModel {
 	 */
 	public void sortAllFilteredRowsBy(int col, boolean asc) {
 		if(col == 5){
-			if(!allCallsCalculated){
-				calculateAllLastCalls();
-				allCallsCalculated = true;
+			if(!allLastCallsSearched){
+				findAllLastCalls();
+				allLastCallsSearched = true;
 			}
 		}
 		Collections.sort(filteredPersons, new ColumnSorter(col, asc));
@@ -607,8 +607,7 @@ public class PhoneBook extends AbstractTableModel {
 		} catch (IOException e) {
 			Debug.err("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
-		calculateAllLastCalls();
-		allCallsCalculated = true;
+		allLastCallsSearched = true;
 		updateFilter();
 	}
 
@@ -736,7 +735,9 @@ public class PhoneBook extends AbstractTableModel {
 	public Person findPerson(PhoneNumber number) {
 		return findPerson(number, true);
 	}
-
+	public Person findPerson(Call call){
+		return findPerson(call.getPhoneNumber(), true);
+	}
 
 	/**
 	 * Finds a person with the given number.
@@ -791,19 +792,24 @@ public class PhoneBook extends AbstractTableModel {
 	 * searches for the last call for every Person in the
 	 * Addressbook, and write it to person.lastCall to speed up sorting
 	 */
-	public void calculateAllLastCalls(){
+	public void findAllLastCalls(){
 		Debug.msg("calculating lastCall for allPersons in the phonebook");
+		if(callerList==null){ Debug.err("setCallerList first!");}
 		/*
 		JFritz.getCallerList().calculateAllLastCalls(unfilteredPersons);
 		too slow
 		*/
 		Person current;
+		Call call;
 		for (int i = 0; i < unfilteredPersons.size(); i++) {
 			current = (Person)unfilteredPersons.get(i);
-			if(JFritz.getCallerList()!=null){
-				current.setLastCall(JFritz.getCallerList().findLastCall(current));
+			call = callerList.findLastCall(current);
+			if(call!=null){
+				call.setPerson(current); // wichtig, sonst stht da noch null drinn und den Fehler findet man dann niemals
 			}
+			current.setLastCall(call);
 		}
+		fireTableDataChanged();
 	}
 
 	/**
@@ -1055,6 +1061,10 @@ public class PhoneBook extends AbstractTableModel {
 	public void setCallerList(CallerList list) {
 		this.callerList = list;
 
+	}
+
+	public boolean getAllLastCallsSearched() {
+		return allLastCallsSearched;
 	}
 
 }
