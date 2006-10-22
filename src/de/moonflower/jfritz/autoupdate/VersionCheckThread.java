@@ -38,10 +38,10 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 public class VersionCheckThread implements Runnable {
 
 	// URL zu der Datei, die die Versionsinformationen enthält
-	private static final String versionURL = "http://www.jfritz.org/update/current.txt";
+	private static final String versionURL = "http://update.jfritz.org/current.txt";
 
 	// URL zu der Datei, die die Informationen über die neuen Dateien enthält
-	private static final String remoteFilesURL = "http://www.jfritz.org/update/update.txt";
+	private static final String remoteFilesURL = "http://update.jfritz.org/update.txt";
 
 	// Enthält die neue Versionsnummer
 	private String newJFritzVersion = "";
