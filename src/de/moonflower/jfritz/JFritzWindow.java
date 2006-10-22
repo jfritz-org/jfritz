@@ -212,7 +212,7 @@ ItemListener {
 		setSize(w, h);
 		setExtendedState(windowState);
 		callerListPanel = new CallerListPanel(JFritz.getCallerList(), this);
-		phoneBookPanel = new PhoneBookPanel(JFritz.getPhonebook(), this);
+		phoneBookPanel = new PhoneBookPanel(JFritz.getPhonebook(), this,Main.SAVE_DIR, new Locale(Main.getProperty("locale", "de_DE")));
 		quickDialPanel = new QuickDialPanel();
 		//New code here, remove if problematic
 		monitoringPanel = new MonitoringPanel();
