@@ -39,7 +39,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
-import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.CallerList;
 import de.moonflower.jfritz.struct.Call;
@@ -70,7 +69,7 @@ public class PhoneBook extends AbstractTableModel {
 	private Vector filteredPersons;
 
 	private Vector unfilteredPersons;
-
+	private String fileLocation;
 	private CallerList callerList;
 	private boolean allLastCallsSearched = false;
 	/**
@@ -85,7 +84,8 @@ public class PhoneBook extends AbstractTableModel {
 
 	private boolean sortDirection = true;
 
-	public PhoneBook() {
+	public PhoneBook(String fileLocation) {
+		this.fileLocation = fileLocation;
 		filteredPersons = new Vector();
 		unfilteredPersons = new Vector();
 		filterExceptions = new Vector();
@@ -253,7 +253,7 @@ public class PhoneBook extends AbstractTableModel {
 
 
 	public Vector getFilteredPersons() {
-		return filteredPersons;
+		return filteredPersons; //TODO maybe clone()?
 	}
 
 	public Vector getUnfilteredPersons() {
@@ -662,8 +662,9 @@ public class PhoneBook extends AbstractTableModel {
 	 *            Filename to save to
 	 * @param wholePhoneBook
 	 *            Save whole phone book or only selected entries
+	 *            @deprecated
 	 */
-	public void saveToCSVFile(String filename, boolean wholePhoneBook,
+/*	public void saveToCSVFile(String filename, boolean wholePhoneBook,
 			char separator) {
 		Debug.msg("Saving phone book to csv file " + filename); //$NON-NLS-1$
 		FileOutputStream fos;
@@ -674,10 +675,12 @@ public class PhoneBook extends AbstractTableModel {
 			// Name\";\"Number\";\"Address\";\"City\"");
 			pw.println(getCSVHeader(separator));
 			int rows[] = null;
+
 			if (JFritz.getJframe() != null) {
 				rows = JFritz.getJframe().getPhoneBookPanel()
 						.getPhoneBookTable().getSelectedRows();
 			}
+
 			if (!wholePhoneBook && (rows != null) && (rows.length > 0)) {
 				for (int i = 0; i < rows.length; i++) {
 					Person currentPerson = (Person) filteredPersons
@@ -702,7 +705,37 @@ public class PhoneBook extends AbstractTableModel {
 			Debug.err("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
+*/	/**
+	 * Saves PhoneBook to csv file
+	 *
+	 * @author Bastian Schaefer
+	 *
+	 * @param filename
+	 *            Filename to save to
+	 * @param wholePhoneBook
+	 *            Save whole phone book or only selected entries
+	 */
+	public void saveToCSVFile(String filename, int[] rows,
+			char separator) {
+		Debug.msg("Saving phone book to csv file " + filename); //$NON-NLS-1$
+		FileOutputStream fos;
+		try {
+			fos = new FileOutputStream(filename);
+			PrintWriter pw = new PrintWriter(fos);
+			// pw.println("\"Private\";\"Last Name\";\"First
+			// Name\";\"Number\";\"Address\";\"City\"");
+			pw.println(getCSVHeader(separator));
 
+				for (int i = 0; i < rows.length; i++) {
+					Person currentPerson = (Person) filteredPersons
+							.elementAt(rows[i]);
+					pw.println(currentPerson.toCSV(separator));
+				}
+			pw.close();
+		} catch (FileNotFoundException e) {
+			Debug.err("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+		}
+	}
 	/**
 	 * Returns info about stored Person
 	 *
@@ -781,7 +814,7 @@ public class PhoneBook extends AbstractTableModel {
 					// dummy entry, delete it from database
 					foundPersons.removeElement(p);
 					unfilteredPersons.removeElement(p);
-					this.saveToXMLFile(JFritz.PHONEBOOK_FILE);
+					this.saveToXMLFile(fileLocation);
 				}
 			}
 			return (Person) foundPersons.get(0);
@@ -876,11 +909,13 @@ public class PhoneBook extends AbstractTableModel {
 
 		sortAllFilteredRows();
 
+		/*//FIXME checken, ob das jetzt echt nicht mehr gebraucht wird
 		if (JFritz.getJframe() != null) {
 			if (JFritz.getJframe().getPhoneBookPanel() != null) {
 				JFritz.getJframe().getPhoneBookPanel().setStatus();
 			}
 		}
+	*/
 	}
 
 	/**
@@ -890,9 +925,10 @@ public class PhoneBook extends AbstractTableModel {
 	 * @param filename
 	 *            is the path to a valid thunderbird csv file
 	 */
-	public void importFromThunderbirdCSVfile(String filename) {
+	public String importFromThunderbirdCSVfile(String filename) {
 		Debug.msg("Importing Thunderbird Contacts from csv file " + filename); //$NON-NLS-1$
 		String line = ""; //$NON-NLS-1$
+		String message;
 		try {
 			FileReader fr = new FileReader(filename);
 			BufferedReader br = new BufferedReader(fr);
@@ -920,7 +956,7 @@ public class PhoneBook extends AbstractTableModel {
 
 			if (newEntries > 0) {
 				sortAllUnfilteredRows();
-				saveToXMLFile(Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
+				saveToXMLFile(Main.SAVE_DIR + fileLocation);
 				String msg;
 
 				if (newEntries == 1) {
@@ -929,19 +965,22 @@ public class PhoneBook extends AbstractTableModel {
 					msg = newEntries
 							+ " " + Main.getMessage("imported_contacts"); //$NON-NLS-1$,  //$NON-NLS-2$
 				}
-				JFritz.infoMsg(msg);
+				message = msg;
 
 			} else {
-				JFritz.infoMsg(Main.getMessage("no_imported_contacts")); //$NON-NLS-1$
+				message = Main.getMessage("no_imported_contacts"); //$NON-NLS-1$
 			}
 
 			br.close();
 
 		} catch (FileNotFoundException e) {
+			message = "Could not read from " + filename + "!";
 			Debug.err("Could not read from " + filename + "!"); //$NON-NLS-1$, //$NON-NLS-2$
 		} catch (IOException e) {
+			message = "IO Exception reading csv file";
 			Debug.err("IO Exception reading csv file"); //$NON-NLS-1$
 		}
+		return message;
 	}
 
 	/**
@@ -1051,7 +1090,7 @@ public class PhoneBook extends AbstractTableModel {
 		}
 
 		if (redundantEntries.size() > 0) {
-			saveToXMLFile(Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
+			saveToXMLFile(Main.SAVE_DIR + fileLocation);
 			updateFilter();
 		}
 

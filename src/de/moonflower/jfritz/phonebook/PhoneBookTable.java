@@ -28,8 +28,10 @@ public class PhoneBookTable extends JTable {
 	/**
 	 *
 	 */
-	public PhoneBookTable() {
-		setModel(JFritz.getPhonebook());
+	private PhoneBook phonebook;
+	public PhoneBookTable(PhoneBook book) {
+		this.phonebook = book;
+		setModel(phonebook);
 		setRowHeight(24);
 		setFocusable(false);
 		setAutoCreateColumnsFromModel(true);

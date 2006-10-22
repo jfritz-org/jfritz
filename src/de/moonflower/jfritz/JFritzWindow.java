@@ -212,7 +212,7 @@ ItemListener {
 		setSize(w, h);
 		setExtendedState(windowState);
 		callerListPanel = new CallerListPanel(JFritz.getCallerList(), this);
-		phoneBookPanel = new PhoneBookPanel();
+		phoneBookPanel = new PhoneBookPanel(JFritz.getPhonebook(), this);
 		quickDialPanel = new QuickDialPanel();
 		//New code here, remove if problematic
 		monitoringPanel = new MonitoringPanel();
@@ -1204,11 +1204,11 @@ ItemListener {
 				Main.getMessage("dialog_title_overwrite_file"), //$NON-NLS-1$
 				JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 					JFritz.getPhonebook().saveToCSVFile(file.getAbsolutePath(),
-							false, ';');
+							phoneBookPanel.getPhoneBookTable().getSelectedRows(), ';');
 				}
 			} else {
 				JFritz.getPhonebook().saveToCSVFile(file.getAbsolutePath(),
-						false, ';');
+						phoneBookPanel.getPhoneBookTable().getSelectedRows(), ';');
 			}
 		}
 	}
@@ -1555,8 +1555,9 @@ ItemListener {
 						Main.getMessage("file_not_found"), //$NON-NLS-1$
 						Main.getMessage("dialog_title_file_not_found"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
 			} else {
-				JFritz.getPhonebook().importFromThunderbirdCSVfile(
+				String msg = JFritz.getPhonebook().importFromThunderbirdCSVfile(
 						file.getAbsolutePath());
+				JFritz.infoMsg(msg);
 
 				if (Main.getProperty("option.lookupAfterFetch", "false") //$NON-NLS-1$,  //$NON-NLS-2$
 						.equals("true")) { //$NON-NLS-1$
