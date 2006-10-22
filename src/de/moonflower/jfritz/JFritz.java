@@ -40,10 +40,10 @@ import de.moonflower.jfritz.callmonitor.CallMonitorList;
 import de.moonflower.jfritz.callmonitor.DisconnectMonitor;
 import de.moonflower.jfritz.callmonitor.DisplayCallsMonitor;
 import de.moonflower.jfritz.dialogs.configwizard.ConfigWizard;
-import de.moonflower.jfritz.dialogs.phonebook.PhoneBook;
 import de.moonflower.jfritz.dialogs.simple.MessageDlg;
 import de.moonflower.jfritz.dialogs.sip.SipProviderTableModel;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.phonebook.PhoneBook;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.FritzBox;
 import de.moonflower.jfritz.struct.Person;
@@ -67,7 +67,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/wiki/Kategorie:Hilfe"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.360 2006/10/22 16:58:54 marc0815 Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.361 2006/10/22 17:19:05 marc0815 Exp $"; //$NON-NLS-1$
 
 	public final static String CALLS_FILE = "jfritz.calls.xml"; //$NON-NLS-1$
 

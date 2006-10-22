@@ -1,4 +1,4 @@
-package de.moonflower.jfritz.dialogs.phonebook;
+package de.moonflower.jfritz.phonebook;
 
 /**
  * This is the phonebook
@@ -292,7 +292,7 @@ public class PhoneBook extends AbstractTableModel {
 				return false;
 			}
 		}
-		newPerson.setLastCall(JFritz.getCallerList().findLastCall(newPerson));
+		newPerson.setLastCall(callerList.findLastCall(newPerson));
 		unfilteredPersons.add(newPerson);
 		//updateFilter();
 		return true;

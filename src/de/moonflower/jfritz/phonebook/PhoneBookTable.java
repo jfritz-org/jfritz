@@ -2,7 +2,7 @@
  * Created on 05.06.2005
  *
  */
-package de.moonflower.jfritz.dialogs.phonebook;
+package de.moonflower.jfritz.phonebook;
 
 import java.awt.Color;
 import java.awt.Component;

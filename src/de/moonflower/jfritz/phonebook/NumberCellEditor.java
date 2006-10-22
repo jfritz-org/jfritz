@@ -2,7 +2,7 @@
  *
  * Created on 22.03.2006
  */
-package de.moonflower.jfritz.dialogs.phonebook;
+package de.moonflower.jfritz.phonebook;
 
 import java.awt.Component;
 import java.awt.event.KeyEvent;

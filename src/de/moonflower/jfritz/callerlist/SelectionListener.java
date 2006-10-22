@@ -16,7 +16,7 @@ import javax.swing.event.ListSelectionListener;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
-import de.moonflower.jfritz.dialogs.phonebook.PhoneBookTable;
+import de.moonflower.jfritz.phonebook.PhoneBookTable;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 

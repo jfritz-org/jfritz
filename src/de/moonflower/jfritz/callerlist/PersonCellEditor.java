@@ -12,7 +12,7 @@ import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
-import de.moonflower.jfritz.dialogs.phonebook.PersonEditorPanel;
+import de.moonflower.jfritz.phonebook.PersonEditorPanel;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 
