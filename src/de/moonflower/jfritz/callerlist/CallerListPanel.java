@@ -882,8 +882,8 @@ KeyListener, PropertyChangeListener {
 	private void setLastDayFilter() {
 		dateFilterButton.setState(ThreeStateButton3.SELECTED);
 		Calendar cal = Calendar.getInstance();
-		Date end = cal.getTime();
 		cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - 1);
+		Date end = cal.getTime();
 		Date start = cal.getTime();
 		JFritzUtils.setStartOfDay(start);
 		JFritzUtils.setEndOfDay(end);
