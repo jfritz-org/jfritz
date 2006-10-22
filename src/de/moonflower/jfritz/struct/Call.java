@@ -173,11 +173,13 @@ public class Call {
 		if (person != null) {
 			return person;
 		}
+		/*
 		if ((number == null) || (number.equals(new PhoneNumber("")))) //$NON-NLS-1$
 			return null;
 		else if (JFritz.getPhonebook() != null) { //FIXME das die klasse call von Jfritz.phonbook anhängt isr nicht gut
 			return JFritz.getPhonebook().findPerson(number, considerMain);
 		}
+		*/
 		return null;
 	}
 
