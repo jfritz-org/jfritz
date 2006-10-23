@@ -1734,6 +1734,9 @@ public class CallerList extends AbstractTableModel {
 	}
 
 	public void findAllPersons(){
+		//TODO updaten wenn neue call oder personen oder rufnummern hinzukommen
+		// oder alte gelöscht werden
+		Debug.msg("searching all Persons for the CallerList...");
 		if(phonebook==null)Debug.err("set phonebook first!");
 		if(!phonebook.getAllLastCallsSearched())Debug.err("searchAllLastCalls in the phonebook first");
 		Call call;
@@ -1743,6 +1746,7 @@ public class CallerList extends AbstractTableModel {
 			person = phonebook.findPerson(call);
 			call.setPerson(person);
 		}
+		Debug.msg("...done");
 	}
 
 	private void addIfSipProvider(Vector sipProviders, Call call) {

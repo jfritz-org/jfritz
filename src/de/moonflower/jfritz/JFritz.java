@@ -67,7 +67,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/wiki/Kategorie:Hilfe"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.363 2006/10/22 20:07:39 marc0815 Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.364 2006/10/23 22:27:26 marc0815 Exp $"; //$NON-NLS-1$
 
 	public final static String CALLS_FILE = "jfritz.calls.xml"; //$NON-NLS-1$
 
@@ -572,7 +572,7 @@ public final class JFritz {
 		}
 	}
 
-	private static void exit(int i) {
+	public static void exit(int i) {
 		// TODO maybe some cleanup is needed
 		System.exit(i);
 	}

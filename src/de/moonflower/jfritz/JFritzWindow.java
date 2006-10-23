@@ -1019,8 +1019,7 @@ ItemListener {
 	public void actionPerformed(ActionEvent e) {
 		Debug.msg("Action " + e.getActionCommand()); //$NON-NLS-1$
 		if (e.getActionCommand().equals("exit")) {
-			WindowEvent we = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
-			processWindowEvent(we);
+			JFritz.exit(0);
 		} else if (e.getActionCommand().equals("about")) {
 			showAboutDialog();
 		} else if (e.getActionCommand().equals("help")) { //$NON-NLS-1$
@@ -1177,6 +1176,9 @@ ItemListener {
 	 * @author Bastian Schaefer
 	 */
 	public void exportPhoneBookToCSV() {
+		//FIXME selbst wenn die callerlist aktiviert ist können im
+		// phonebook einträge ausgewählt sein, dann werden nur diese
+		// exportiert, das kann für verwirrung sorgen.
 		JFileChooser fc = new JFileChooser(Main.getProperty(
 				"options.exportCSVpathOfPhoneBook", null)); //$NON-NLS-1$
 		fc.setDialogTitle(Main.getMessage("export_csv_phonebook")); //$NON-NLS-1$

@@ -22,6 +22,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Vector;
 
 import javax.swing.CellEditor;
 import javax.swing.ImageIcon;
@@ -225,7 +226,7 @@ KeyListener, PropertyChangeListener {
  */
 	private void createFilters(CallerList callerList) {
 		filter = new CallFilter[FILTERCOUNT];
-		filter[callByCall] = createCallByCallFilter(callerList);
+		filter[callByCall] = new CallByCallFilter(getCallByCallProvider(callerList));
 		callerList.addFilter(filter[callByCall]);
 		filter[callInFailed] = new CallInFailedFilter();
 		callerList.addFilter(filter[callInFailed]);
@@ -241,7 +242,7 @@ KeyListener, PropertyChangeListener {
 		callerList.addFilter(filter[fixed]);
 		filter[handy] = new HandyFilter();
 		callerList.addFilter(filter[handy]);
-		filter[sip] = createSipFilter(callerList);
+		filter[sip] = new SipFilter (getSipProvider(callerList));
 		callerList.addFilter(filter[sip]);
 		filter[date] = new DateFilter(new Date(), new Date());
 		callerList.addFilter(filter[date]);
@@ -253,16 +254,15 @@ KeyListener, PropertyChangeListener {
 	 * @param callerList the callerlist to retrieve the SIPProviders
 	 * @return the createdFilter
 	 */
-	private SipFilter createSipFilter(CallerList callerList) {
-		SipFilter filter;
+	private Vector getSipProvider(CallerList callerList) {
+		Vector provider;
 		if (callerTable !=null && callerTable.getSelectedRowCount()!=0){
-			filter = new SipFilter(callerList
-				.getSipProviders(callerTable.getSelectedRows()));
+			provider = callerList
+				.getSipProviders(callerTable.getSelectedRows());
 		}else{
-			filter = new SipFilter(callerList
-					.getSipProviders());
+			provider = callerList.getSipProviders();
 		}
-		return filter;
+		return provider;
 	}
 	/**
 	 * creates a CallByCallfilter using  only the selected CallByCallProviders or all CallByCallProviders, if none is selected
@@ -270,16 +270,16 @@ KeyListener, PropertyChangeListener {
 	 * @return the createdFilter
 	 */
 
-	private CallByCallFilter createCallByCallFilter(CallerList callerList) {
-		CallByCallFilter filter;
+	private Vector getCallByCallProvider(CallerList callerList) {
+		Vector provider;
 		if (callerTable !=null && callerTable.getSelectedRowCount()!=0){
-			filter = new CallByCallFilter(callerList
-				.getCbCProviders(callerTable.getSelectedRows()));
+			provider = callerList
+				.getCbCProviders(callerTable.getSelectedRows());
 		}else{
-			filter = new CallByCallFilter(callerList
-					.getCbCProviders());
+			provider = callerList
+					.getCbCProviders();
 		}
-		return filter;
+		return provider;
 	}
 
 /**
@@ -704,9 +704,7 @@ KeyListener, PropertyChangeListener {
 			} else {
 				searchFilterTextField.setVisible(true);
 				searchLabel.setVisible(true);
-				callerList.removeFilter(filter[search]);
-				filter[search] = new SearchFilter(searchFilterTextField.getText());
-				callerList.addFilter(filter[search]);
+				((SearchFilter)filter[search]).setSearchString(searchFilterTextField.getText());
 				// do nothing
 				// if(searchFilterButton.getState()==ThreeStateButton.SELECTED)
 				if (searchFilterButton.getState() == ThreeStateButton3.INVERTED) {
@@ -745,11 +743,8 @@ KeyListener, PropertyChangeListener {
 					startDateChooser.setDate(JFritzUtils.setStartOfDay(startDateChooser.getDate()));
 					endDateChooser.setDate(JFritzUtils.setEndOfDay(endDateChooser.getDate()));
 				}
-				callerList.removeFilter(filter[date]);
-				filter[date] = new DateFilter(startDateChooser.getDate(),
-					endDateChooser.getDate());
-				callerList.addFilter(filter[date]);
-
+				((DateFilter)filter[date]).setStartDate(startDateChooser.getDate());
+				((DateFilter)filter[date]).setEndDate(endDateChooser.getDate());
 				if (dateFilterButton.getState() == ThreeStateButton3.INVERTED) {
 					filter[date].setInvert(true);
 				}
@@ -804,9 +799,8 @@ KeyListener, PropertyChangeListener {
 			JFritzUtils.setStartOfDay(start);
 			JFritzUtils.setEndOfDay(end);
 
-			callerList.removeFilter(filter[date]);
-			filter[date] = new DateFilter(end, start);
-			callerList.addFilter(filter[date]);
+			((DateFilter)filter[date]).setStartDate(start);
+			((DateFilter)filter[date]).setEndDate(end);
 
 			startDateChooser.setDate(end);
 			endDateChooser.setDate(start);
@@ -816,17 +810,12 @@ KeyListener, PropertyChangeListener {
 			return;
 		}
 		if (command.equals(FILTER_SIP)) {
-			callerList.removeFilter(filter[sip]);
-			filter[sip] = createSipFilter(callerList);
-			callerList.addFilter(filter[sip]);
-
+			((SipFilter)filter[sip]).setProvider(getSipProvider(callerList));
 			syncFilterWithButton(filter[sip], sipFilterButton);
 			return;
 		}
 		if (command.equals(FILTER_CALLBYCALL)) {
-			callerList.removeFilter(filter[callByCall]);
-			filter[callByCall] = createCallByCallFilter(callerList);
-			callerList.addFilter(filter[callByCall]);
+			((CallByCallFilter)filter[callByCall]).setCallbyCallProvider(getCallByCallProvider(callerList));
 			syncFilterWithButton(filter[callByCall], callByCallFilterButton);
 			return;
 		}
@@ -894,9 +883,8 @@ KeyListener, PropertyChangeListener {
 		JFritzUtils.setStartOfDay(start);
 		JFritzUtils.setEndOfDay(end);
 
-		callerList.removeFilter(filter[date]);
-		filter[date] = new DateFilter(start, end);
-		callerList.addFilter(filter[date]);
+		((DateFilter)filter[date]).setStartDate(start);
+		((DateFilter)filter[date]).setEndDate(end);
 
 		startDateChooser.setDate(start);
 		endDateChooser.setDate(end);
@@ -920,9 +908,8 @@ KeyListener, PropertyChangeListener {
 		JFritzUtils.setStartOfDay(start);
 		JFritzUtils.setEndOfDay(end);
 
-		callerList.removeFilter(filter[date]);
-		filter[date] = new DateFilter(start, end);
-		callerList.addFilter(filter[date]);
+		((DateFilter)filter[date]).setStartDate(start);
+		((DateFilter)filter[date]).setEndDate(end);
 
 		startDateChooser.setDate(start);
 		endDateChooser.setDate(end);
@@ -944,9 +931,8 @@ KeyListener, PropertyChangeListener {
 		JFritzUtils.setStartOfDay(start);
 		JFritzUtils.setEndOfDay(end);
 
-		callerList.removeFilter(filter[date]);
-		filter[date] = new DateFilter(start, end);
-		callerList.addFilter(filter[date]);
+		((DateFilter)filter[date]).setStartDate(start);
+		((DateFilter)filter[date]).setEndDate(end);
 
 		startDateChooser.setDate(start);
 		endDateChooser.setDate(end);
@@ -970,9 +956,8 @@ KeyListener, PropertyChangeListener {
 		JFritzUtils.setStartOfDay(start);
 		JFritzUtils.setEndOfDay(end);
 
-		callerList.removeFilter(filter[date]);
-		filter[date] = new DateFilter(start, end);
-		callerList.addFilter(filter[date]);
+		((DateFilter)filter[date]).setStartDate(start);
+		((DateFilter)filter[date]).setEndDate(end);
 
 		startDateChooser.setDate(start);
 		endDateChooser.setDate(end);
@@ -995,9 +980,8 @@ KeyListener, PropertyChangeListener {
 		JFritzUtils.setStartOfDay(start);
 		JFritzUtils.setEndOfDay(end);
 
-		callerList.removeFilter(filter[date]);
-		filter[date] = new DateFilter(start, end);
-		callerList.addFilter(filter[date]);
+		((DateFilter)filter[date]).setStartDate(start);
+		((DateFilter)filter[date]).setEndDate(end);
 
 		startDateChooser.setDate(start);
 		endDateChooser.setDate(end);
@@ -1017,9 +1001,8 @@ KeyListener, PropertyChangeListener {
 		JFritzUtils.setStartOfDay(start);
 		JFritzUtils.setEndOfDay(end);
 
-		callerList.removeFilter(filter[date]);
-		filter[date] = new DateFilter(start, end);
-		callerList.addFilter(filter[date]);
+		((DateFilter)filter[date]).setStartDate(start);
+		((DateFilter)filter[date]).setEndDate(end);
 
 		startDateChooser.setDate(start);
 		endDateChooser.setDate(end);

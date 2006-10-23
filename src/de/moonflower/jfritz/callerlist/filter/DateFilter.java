@@ -20,7 +20,6 @@ public class DateFilter extends CallFilter {
 
 	private Date endDate;
 
-	//    public DateFilter(Date from, Date to) {
 	public DateFilter(Date from, Date to) {
 		// make sure from is not after to
 		if (from.after(to)) {

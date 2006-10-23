@@ -29,12 +29,22 @@ public class SipFilter extends CallFilter {
 			else
 				return false;
 	}
-    public String toString(){
+
+    public void setFilteredSipProviders(Vector filteredSipProviders) {
+		this.filteredSipProviders = filteredSipProviders;
+	}
+
+	public String toString(){
     	String result="";
     	for(int i =0; i<filteredSipProviders.size();i++){
     		result +=" "+filteredSipProviders.elementAt(i);
     	}
     	return result;
     }
+
+	public void setProvider(Vector sipProvider) {
+		this.filteredSipProviders = sipProvider;
+
+	}
 
 }

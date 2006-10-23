@@ -100,12 +100,6 @@ public class PhoneBook extends AbstractTableModel {
 	 *            Order of sorting
 	 */
 	public void sortAllFilteredRowsBy(int col, boolean asc) {
-		if(col == 5){
-			if(!allLastCallsSearched){
-				findAllLastCalls();
-				allLastCallsSearched = true;
-			}
-		}
 		Collections.sort(filteredPersons, new ColumnSorter(col, asc));
 		//Debug.msg("last calls: "+(t2-t1) + "ms sorting: "+(t3-t2)+"ms");
 		fireTableDataChanged();
@@ -705,19 +699,18 @@ public class PhoneBook extends AbstractTableModel {
 			Debug.err("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
-*/	/**
+*/
+	/**
 	 * Saves PhoneBook to csv file
 	 *
 	 * @author Bastian Schaefer
 	 *
 	 * @param filename
 	 *            Filename to save to
-	 * @param wholePhoneBook
-	 *            Save whole phone book or only selected entries
+	 *            Save whole phone book
 	 */
-	public void saveToCSVFile(String filename, int[] rows,
-			char separator) {
-		Debug.msg("Saving phone book to csv file " + filename); //$NON-NLS-1$
+	public void saveToCSVFile(String filename, char separator) {
+		Debug.msg("Saving phone book("+unfilteredPersons.size()+" lines) to csv file " + filename); //$NON-NLS-1$
 		FileOutputStream fos;
 		try {
 			fos = new FileOutputStream(filename);
@@ -725,7 +718,44 @@ public class PhoneBook extends AbstractTableModel {
 			// pw.println("\"Private\";\"Last Name\";\"First
 			// Name\";\"Number\";\"Address\";\"City\"");
 			pw.println(getCSVHeader(separator));
+				//wenn man das komplette buch speichern will
+			// unfilteredPersons durchsuchen
+				for (int i = 0; i < unfilteredPersons.size(); i++) {
+					Person currentPerson = (Person) unfilteredPersons
+							.elementAt(i);
+					pw.println(currentPerson.toCSV(separator));
+				}
+			pw.close();
+		} catch (FileNotFoundException e) {
+			Debug.err("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+		}
 
+	}
+	/**
+	 * Saves PhoneBook to csv file
+	 *
+	 * @author Bastian Schaefer
+	 *
+	 * @param filename
+	 *            Filename to save to
+	 *            Save phone book only selected entries
+	 */
+	public void saveToCSVFile(String filename, int[] rows,
+			char separator) {
+		if(rows.length ==0){
+			saveToCSVFile(filename, separator);
+			return;
+		}
+		Debug.msg("Saving phone book("+rows.length+" lines) to csv file " + filename); //$NON-NLS-1$
+		FileOutputStream fos;
+		try {
+			fos = new FileOutputStream(filename);
+			PrintWriter pw = new PrintWriter(fos);
+			// pw.println("\"Private\";\"Last Name\";\"First
+			// Name\";\"Number\";\"Address\";\"City\"");
+			pw.println(getCSVHeader(separator));
+				// wenn man nicht das komplette buch speichern will
+			// muss man filteredPersons durchsuchen
 				for (int i = 0; i < rows.length; i++) {
 					Person currentPerson = (Person) filteredPersons
 							.elementAt(rows[i]);
@@ -826,6 +856,8 @@ public class PhoneBook extends AbstractTableModel {
 	 * Addressbook, and write it to person.lastCall to speed up sorting
 	 */
 	public void findAllLastCalls(){
+		//TODO updaten wenn neue call oder personen oder rufnummern hinzukommen
+		// oder alte gelöscht werden
 		Debug.msg("searching lastCall for allPersons in the phonebook....");
 		if(callerList==null){ Debug.err("setCallerList first!");}
 		/*

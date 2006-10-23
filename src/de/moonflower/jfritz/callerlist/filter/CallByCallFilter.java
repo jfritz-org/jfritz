@@ -41,4 +41,9 @@ public class CallByCallFilter extends CallFilter {
     	}
     	return result;
     }
+
+	public void setCallbyCallProvider(Vector callByCallProvider) {
+		filteredCallByCallProviders = callByCallProvider;
+
+	}
 }
