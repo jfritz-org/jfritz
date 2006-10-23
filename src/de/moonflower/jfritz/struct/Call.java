@@ -120,7 +120,7 @@ public class Call {
 	 * @return Returns the calldate.
 	 */
 	public Date getCalldate() {
-		return calldate;
+		return new Date(calldate.getTime()); //FIXME mal checken, wo man das noch alles so machen sollte
 	}
 
 	/**

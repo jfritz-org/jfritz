@@ -65,7 +65,7 @@ import de.moonflower.jfritz.utils.threeStateButton.ThreeStateButton3;
  * @ex-author Arno Willig
  * @author marc
  */
-
+//TODO dateFilter zeieln selektieren datum uhrzeit setzen durchsuchen
 //TODO delete button
 public class CallerListPanel extends JPanel implements ActionListener,
 KeyListener, PropertyChangeListener {
@@ -197,6 +197,12 @@ KeyListener, PropertyChangeListener {
 	private WindowAdapter wl;
 
 	private JFritzWindow parentFrame;
+/**
+ * A callerListPanel is a view for a callerlist, it has its own resourceBundle to get the localized strings
+ * for its components. The components are a Toolbar and a table. th callerListPanel has a callerList, the model for this view @see CallerList
+ * @param callerList the model
+ * @param parent the parent frame to display some messages and set the status bar
+ */
 
 	public CallerListPanel(CallerList callerList, JFritzWindow parent) {
 		super();
@@ -213,7 +219,10 @@ KeyListener, PropertyChangeListener {
 		};
 		parent.addWindowListener(wl);
 	}
-
+/**
+ * creates all filters and stores them in the array
+ * @param callerList the model
+ */
 	private void createFilters(CallerList callerList) {
 		filter = new CallFilter[FILTERCOUNT];
 		filter[callByCall] = createCallByCallFilter(callerList);
@@ -239,6 +248,11 @@ KeyListener, PropertyChangeListener {
 		filter[search] = new SearchFilter("");
 		callerList.addFilter(filter[search]);
 	}
+	/**
+	 * creates a SIPfilter using  only the selected SIPProviders or all SIPProviders, if none is selected
+	 * @param callerList the callerlist to retrieve the SIPProviders
+	 * @return the createdFilter
+	 */
 	private SipFilter createSipFilter(CallerList callerList) {
 		SipFilter filter;
 		if (callerTable !=null && callerTable.getSelectedRowCount()!=0){
@@ -250,6 +264,11 @@ KeyListener, PropertyChangeListener {
 		}
 		return filter;
 	}
+	/**
+	 * creates a CallByCallfilter using  only the selected CallByCallProviders or all CallByCallProviders, if none is selected
+	 * @param callerList the callerlist to retrieve the CallByCallProviders
+	 * @return the createdFilter
+	 */
 
 	private CallByCallFilter createCallByCallFilter(CallerList callerList) {
 		CallByCallFilter filter;
@@ -263,17 +282,16 @@ KeyListener, PropertyChangeListener {
 		return filter;
 	}
 
-	/**
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 */
+/**
+ * some buttons are clicked. @see ActionListener
+ */
 	public void actionPerformed(ActionEvent e) {
-
 		handleAction(e.getActionCommand());
 		callerList.update();
 		parentFrame.setStatus();
 	}
 
-	/*
+	/**
 	 * disable all filters and hide the search and date stuff
 	 */
 	private void clearAllFilter() {
@@ -298,6 +316,10 @@ KeyListener, PropertyChangeListener {
 		parentFrame.setStatus();
 	}
 
+/**
+ * create gui
+ * @return a scrollPane with the callerListTable
+ */
 	public JScrollPane createCallerListTable() {
 		callerTable = new CallerTable();
 		JPopupMenu callerlistPopupMenu = new JPopupMenu();
@@ -355,6 +377,10 @@ KeyListener, PropertyChangeListener {
 		return new JScrollPane(callerTable);
 	}
 
+	/**
+	 * create gui
+	 * @return the toolbar
+	 */
 	public JPanel createToolBar() {
 		JToolBar upperToolBar = new JToolBar();
 		upperToolBar.setFloatable(true);
@@ -562,6 +588,10 @@ KeyListener, PropertyChangeListener {
 		return toolbarPanel;
 	}
 
+	/**
+	 * Disables the delete button, and changes its tooltext
+	 *
+	 */
 	public void disableDeleteEntriesButton() {
 		deleteEntriesButton.setToolTipText(Main.getMessage(DELETE_ENTRIES)
 				.replaceAll("%N", "")); //$NON-NLS-1$,  //$NON-NLS-2$,
@@ -569,7 +599,12 @@ KeyListener, PropertyChangeListener {
 	}
 
 	// TODO reverseLookup verschieben
-	private void doReverseLookup(int[] rows) {
+	/**
+	 * does reverse lookup (find the name and address for a given phone number
+	 * @param rows the rows, wich are selected for reverse lookup
+	 */
+//TODO nach phonebook verschieben
+	public void doReverseLookup(int[] rows) {
 		if (rows.length > 0) { // nur für markierte Einträge ReverseLookup
 			// durchführen
 			for (int i = 0; i < rows.length; i++) {
@@ -587,6 +622,7 @@ KeyListener, PropertyChangeListener {
 		}
 	}
 
+
 	public CallerList getCallerList() {
 		return callerList;
 	}
@@ -595,18 +631,35 @@ KeyListener, PropertyChangeListener {
 		return callerTable;
 	}
 
+/**
+ * get a imageIcon from a given filename
+ * @param filename the name of the file
+ * @return the imageIcon
+ */
 	public ImageIcon getImageIcon(String filename) {
 		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/" + filename))); //$NON-NLS-1$
 	}
+	/**
+	 *
+	* get a image from a given filename
+ * @param filename the name of the file
+ * @return the image
+  */
 
 	public Image getImage(String filename) {
 		return Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/" + filename)); //$NON-NLS-1$
 	}
-
+/**
+ * the control
+ * this method is called, if the user pushed buttons or changes dates or the search filter
+ * for command use the constants <code> <br>FILTER_CALLIN, <br>FILTER_CALLOUT,<br>FILTER_COMMENT<br>...
+ * </code>
+ * @param command
+ */
 	private void handleAction(String command) {
 		if(callerTable!=null){
 			CellEditor ce = callerTable.getCellEditor();
@@ -669,9 +722,9 @@ KeyListener, PropertyChangeListener {
 			if (dateFilterButton.getState() == ThreeStateButton3.NOTHING) {
 				startDateChooser.setVisible(false);
 				endDateChooser.setVisible(false);
-			} else {
-				//es sind Zeilen selektiert, also start und endDatum aus ihnen bestimmen
+			} else { //selected or inverted check if some rows are selected
 				if(callerTable != null && callerTable.getSelectedRowCount()!=0){
+					// some rows are selected so the the date according to the selected rows
 					int[] rows = callerTable.getSelectedRows();
 					// min und max bestimmen
 					Date min =  ((Call) callerList.getFilteredCallVector().get(rows[0])).getCalldate();
@@ -681,7 +734,10 @@ KeyListener, PropertyChangeListener {
 						current = ((Call) callerList.getFilteredCallVector().get(rows[i])).getCalldate();
 						if(current.before(min)){min = current;}
 						if(current.after(max)){max = current;}
+						Debug.msg("currentDate: "+current);
 					}
+					Debug.msg("minDate: "+min);
+					Debug.msg("maxDate: "+max);
 
 					startDateChooser.setDate(min);
 					endDateChooser.setDate(max);
@@ -971,6 +1027,9 @@ KeyListener, PropertyChangeListener {
 		endDateChooser.setVisible(true);
 		dateSpecialSaveString = THIS_DAY;
 	}
+	/**
+	 * (KeyListener) for the searchButton TextField
+	 */
 
 	public void keyPressed(KeyEvent arg0) {
 		if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -982,20 +1041,21 @@ KeyListener, PropertyChangeListener {
 		}
 
 	}
+	/**
+	 * (KeyListener) for the searchButton TextField
+	 */
 
 	public void keyReleased(KeyEvent arg0) {
-		// unnötig
-
 	}
-
+/**
+ 	 * (KeyListener) for the searchButton TextField
+ */
 	public void keyTyped(KeyEvent arg0) {
-		// unnötig
-
 	}
 
 	/**
 	 * to react on the change events of the Datechoosers
-	 *
+	 * PropertyChangedListener
 	 */
 	public void propertyChange(PropertyChangeEvent evt) {
 		handleAction(FILTER_DATE);
@@ -1041,17 +1101,23 @@ KeyListener, PropertyChangeListener {
 		this.callerList = callerList;
 	}
 
+	/**
+	 * enables the delete button and changes the tooltip
+	 * @param rows the rows, wich are selected
+	 */
+	//TODO auf eine funktion kürzen
 	public void setDeleteEntriesButton(int rows) {
 		deleteEntriesButton.setToolTipText(Main.getMessage(DELETE_ENTRIES)
 				.replaceAll("%N", Integer.toString(rows))); //$NON-NLS-1$,
 		deleteEntriesButton.setEnabled(true);
 	}
 
+	//TODO auf eine funktion kürzen
 	public void setDeleteEntryButton() {
 		deleteEntriesButton.setToolTipText(Main.getMessage(DELETE_ENTRY));
 		deleteEntriesButton.setEnabled(true);
 	}
-
+	//TODO auf eine funktion kürzen
 	public void setDeleteListButton() {
 		deleteEntriesButton.setToolTipText(Main.getMessage("delete_list")); //$NON-NLS-1$
 		// clearList-Icon to big, so use std. delete.png

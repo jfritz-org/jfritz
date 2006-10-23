@@ -13,12 +13,15 @@ public class SearchFilter extends CallFilter {
 	String areaNumber;
 
 	public SearchFilter(String s) {
-		parts = s.toLowerCase().split(" "); // TODO change to
-		// toLowercase(locale)
+		setSearchString(s);
 	}
 
 	//TODO reguläre Ausdrücke zulassen wird dann aber wohl super langsam
 
+	public void setSearchString(String s){
+		parts = s.toLowerCase().split(" "); // TODO change to
+		// toLowercase(locale)
+	}
 
 	public boolean passInternFilter(Call currentCall) {
 		for (int i = 0; i < parts.length; i++) {

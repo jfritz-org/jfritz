@@ -826,7 +826,7 @@ public class PhoneBook extends AbstractTableModel {
 	 * Addressbook, and write it to person.lastCall to speed up sorting
 	 */
 	public void findAllLastCalls(){
-		Debug.msg("calculating lastCall for allPersons in the phonebook");
+		Debug.msg("searching lastCall for allPersons in the phonebook....");
 		if(callerList==null){ Debug.err("setCallerList first!");}
 		/*
 		JFritz.getCallerList().calculateAllLastCalls(unfilteredPersons);
@@ -842,6 +842,7 @@ public class PhoneBook extends AbstractTableModel {
 			}
 			current.setLastCall(call);
 		}
+		Debug.msg("...done");
 		fireTableDataChanged();
 	}
 
