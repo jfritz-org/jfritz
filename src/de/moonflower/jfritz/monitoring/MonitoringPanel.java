@@ -42,6 +42,7 @@ import java.util.Timer;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.cellrenderer.*;
 import de.moonflower.jfritz.monitoring.CurrentCallsTable;
 import de.moonflower.jfritz.monitoring.UpdateInternetTask;
 
@@ -214,24 +215,32 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 
 		currentCalls.getColumnModel().getColumn(0).setMinWidth(20);
 		currentCalls.getColumnModel().getColumn(0).setMaxWidth(50);
+		currentCalls.getColumnModel().getColumn(0).setCellRenderer(new CallTypeCellRenderer());
 
 		currentCalls.getColumnModel().getColumn(1).setMinWidth(20);
 		//currentCalls.getColumnModel().getColumn(1).setMaxWidth(90);
+		currentCalls.getColumnModel().getColumn(1).setCellRenderer(new DateCellRenderer());
 
 		currentCalls.getColumnModel().getColumn(2).setMinWidth(20);
 		currentCalls.getColumnModel().getColumn(2).setMaxWidth(90);
+		currentCalls.getColumnModel().getColumn(2).setCellRenderer(new CallByCallCellRenderer());
 
 		currentCalls.getColumnModel().getColumn(3).setMinWidth(20);
 		currentCalls.getColumnModel().getColumn(3).setMaxWidth(130);
+		currentCalls.getColumnModel().getColumn(4).setCellRenderer(new NumberCellRenderer());
 
 		currentCalls.getColumnModel().getColumn(4).setMinWidth(20);
 		//currentCalls.getColumnModel().getColumn(4).setMaxWidth(140);
+		currentCalls.getColumnModel().getColumn(4).setCellRenderer(new PersonCellRenderer());
+
 
 		currentCalls.getColumnModel().getColumn(5).setMinWidth(20);
 		currentCalls.getColumnModel().getColumn(5).setMaxWidth(90);
+		currentCalls.getColumnModel().getColumn(5).setCellRenderer(new PortCellRenderer());
 
 		currentCalls.getColumnModel().getColumn(6).setMinWidth(20);
 		//currentCalls.getColumnModel().getColumn(6).setMaxWidth(200);
+		currentCalls.getColumnModel().getColumn(6).setCellRenderer(new RouteCellRenderer());
 
 		currentCalls.setSize(500, 150);
 
