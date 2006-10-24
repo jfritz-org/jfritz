@@ -590,8 +590,12 @@ public class Main {
 
 	private static String jfritzHomedir;
 
-	private CLIOptions options;
+	private static JFritz jfritz;
 
+	private CLIOptions options;
+	Boolean isRunning;
+	String mutex = "";
+	private Thread myThread;
 	public Main(String[] args) {
 		System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION //$NON-NLS-1$
 				+ " (c) 2005 by " + PROGRAM_AUTHOR); //$NON-NLS-1$
@@ -599,6 +603,28 @@ public class Main {
 
 		jfritzHomedir = JFritzUtils.getFullPath(".update");
 		jfritzHomedir = jfritzHomedir.substring(0, jfritzHomedir.length() - 7);
+		//testcode----------------
+		/*
+		myThread = new Thread(){public void run(){
+
+			isRunning = new Boolean(true);
+			synchronized (mutex) {
+				while(isRunning.booleanValue()){
+					try {
+						Debug.msg("start waiting");
+						mutex.wait();
+						Debug.msg("end waiting");
+					} catch (InterruptedException e) {
+						//e.printStackTrace();
+					}
+				}
+
+			}
+
+		}};
+		myThread.start();
+		*/
+		//testcode--------------------
 	}
 
 	/**
@@ -632,12 +658,12 @@ public class Main {
 			vct.run();
 		}
 
-		new JFritz();
+		jfritz = new JFritz(main);
 
 		main.checkCLIParameters(args);
 		main.checkInstanceControl();
 
-		JFritz.createJFrame(showConfWizard);
+		jfritz.createJFrame(showConfWizard);
 		// TODO sollten wir das programm nicht hier beenden?
 		// while(!shutdown){sleep oder sowas
 		//Debug.msg("ENDEN---main.java---DNEND");
@@ -700,7 +726,7 @@ public class Main {
 			case 'h': //$NON-NLS-1$
 				System.out.println("Usage: java -jar jfritz.jar [Options]"); //$NON-NLS-1$
 				options.printOptions();
-				System.exit(0);
+				exit(0);
 				break;
 			case 'v': //$NON-NLS-1$
 				Debug.on();
@@ -709,7 +735,7 @@ public class Main {
 				String logFilename = option.getParameter();
 				if (logFilename == null || logFilename.equals("")) { //$NON-NLS-1$
 					System.err.println(getMessage("parameter_not_found")); //$NON-NLS-1$
-					System.exit(0);
+					exit(0);
 				} else {
 					Debug.logToFile(logFilename);
 					break;
@@ -762,7 +788,7 @@ public class Main {
 				String csvFileName = option.getParameter();
 				if (csvFileName == null || csvFileName.equals("")) { //$NON-NLS-1$
 					System.err.println(getMessage("parameter_not_found")); //$NON-NLS-1$
-					System.exit(0);
+					exit(0);
 				}
 				Debug.msg("Exporting Call list (csv) to " + csvFileName); //$NON-NLS-1$
 				JFritz.getCallerList().saveToCSVFile(csvFileName, true);
@@ -793,7 +819,7 @@ public class Main {
 				String priority = option.getParameter();
 				if (priority == null || priority.equals("")) { //$NON-NLS-1$
 					System.err.println(getMessage("parameter_not_found")); //$NON-NLS-1$
-					System.exit(0);
+					exit(0);
 				} else {
 					try {
 						int level = Integer.parseInt(priority);
@@ -802,11 +828,11 @@ public class Main {
 					} catch (NumberFormatException nfe) {
 						System.err
 								.println(getMessage("parameter_wrong_priority")); //$NON-NLS-1$
-						System.exit(0);
+						exit(0);
 					} catch (IllegalArgumentException iae) {
 						System.err
 								.println(getMessage("parameter_wrong_priority")); //$NON-NLS-1$
-						System.exit(0);
+						exit(0);
 					}
 					break;
 				}
@@ -982,7 +1008,15 @@ public class Main {
 		}
 	}
 
-	public static void exit(int i) {
+	public void exit(int i) {
+		/*
+		isRunning = new Boolean(false);
+		synchronized(mutex){
+			mutex.notify();
+		}
+		jfritz.dispose();
+		*/
+		//notifyAll();
 		// TODO maybe some cleanup is needed
 		System.exit(i);
 	}
@@ -1235,6 +1269,9 @@ public class Main {
 
 	public static String getHomeDirectory() {
 		return jfritzHomedir;
+	}
+	public JFritz getJfritz() {
+		return jfritz;
 	}
 
 }

@@ -14,12 +14,15 @@ import de.moonflower.jfritz.utils.Debug;
  */
 public class MacHandler {
 
+	private JFritz jfritz;
+
 	/**
 	 * Register quit-, about-, prefsHandler
 	 *
 	 *            An instance of JFritz
 	 */
-	public MacHandler() {
+	public MacHandler(JFritz jfritz) {
+		this.jfritz = jfritz;
 		try {
 
 			// @Jochen: Vielleicht kannst du hier noch Code einfügen, so dass
@@ -100,7 +103,7 @@ public class MacHandler {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						Debug.msg("MAC Application Menu: Show Exit Dialog"); //$NON-NLS-1$
-						JFritz.maybeExit(0);
+						jfritz.maybeExit(0);
 
 					}
 				});

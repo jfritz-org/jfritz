@@ -221,6 +221,9 @@ KeyListener, PropertyChangeListener {
 		};
 		parent.addWindowListener(wl);
 	}
+	public void dispose(){
+		Debug.msg("dispose");
+	}
 /**
  * creates all filters and stores them in the array
  * @param callerList the model

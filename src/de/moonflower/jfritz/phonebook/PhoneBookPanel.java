@@ -109,8 +109,8 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 
 			JOptionPane.showMessageDialog(null, "PhonebookPanel"
 					+ "\n\nCannot find the language file \"jfritz_" + locale
-					+ ".properties\"!" + "\nProgram will exit!");//$NON-NLS-1$
-			System.exit(0); //FIXME
+					+ ".properties\"!" + "\nstrange things can happen!");//$NON-NLS-1$
+			//System.exit(0); //FIXME
 		}
 
 

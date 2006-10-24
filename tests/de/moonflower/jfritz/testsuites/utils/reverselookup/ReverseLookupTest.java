@@ -3,6 +3,7 @@ package de.moonflower.jfritz.testsuites.utils.reverselookup;
 import junit.framework.TestCase;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.*;
 import de.moonflower.jfritz.utils.reverselookup.*;
 
@@ -18,7 +19,7 @@ public class ReverseLookupTest extends TestCase {
 	public JFritz jfritz;
 
 	public void setUp(){
-		jfritz = new JFritz();
+		jfritz = new Main(new String[0]).getJfritz();
 	}
 
 	/**

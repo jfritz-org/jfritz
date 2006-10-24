@@ -98,7 +98,8 @@ public class VersionCheckThread implements Runnable {
 						options[0]); // default button title
 				if (ok == JOptionPane.YES_OPTION) {
 					// TODO: restart JFritz;
-					Main.exit(0);
+					//Main.exit(0);
+					System.exit(0); //FIXME later
 				}
 			}
 		} else if (informNoNewVersion == true) {

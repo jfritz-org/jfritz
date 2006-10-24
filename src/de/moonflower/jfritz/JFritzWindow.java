@@ -123,13 +123,16 @@ ItemListener {
 
 	private Rectangle maxBounds;
 
+	private JFritz jFritz;
+
 	/**
 	 * Constructs JFritzWindow
 	 *
 	 * @param jfritz
 	 * @throws WrongPasswordException
 	 */
-	public JFritzWindow() throws WrongPasswordException {
+	public JFritzWindow(JFritz jfritz) throws WrongPasswordException {
+		this.jFritz = jfritz;
 		Debug.msg("Create JFritz-GUI"); //$NON-NLS-1$
 		maxBounds = null;
 		createGUI();
@@ -174,7 +177,7 @@ ItemListener {
 
 	private void createGUI() throws WrongPasswordException {
 		setTitle(Main.PROGRAM_NAME);
-		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		// we want to react on closing
 		///////////////////////////////  test code
 		/*
@@ -906,14 +909,14 @@ ItemListener {
 	 * Listener for window events
 	 */
 	protected void processWindowEvent(WindowEvent e) {
+		super.processWindowEvent(e);
 		if (e.getID() == WindowEvent.WINDOW_CLOSING) {
 			if (JFritzUtils.parseBoolean(Main.getProperty("option.minimize", //$NON-NLS-1$
 			"false"))) { //$NON-NLS-1$
 				setExtendedState(Frame.ICONIFIED);
 			} else{
-				JFritz.maybeExit(0); //TODO checken ob es probleme gibt, weil exit->dispose->postWindowEvent(WindowEvent.WINDOW_CLOSED);
+				jFritz.maybeExit(0); //TODO checken ob es probleme gibt, weil exit->dispose->postWindowEvent(WindowEvent.WINDOW_CLOSED);
 			}
-
 		} else if (e.getID() == WindowEvent.WINDOW_ICONIFIED) {
 			setExtendedState(Frame.ICONIFIED);
 			if (Main.SYSTRAY_SUPPORT) {
@@ -938,7 +941,7 @@ ItemListener {
 				UIManager.setLookAndFeel(info.getClassName());
 				SwingUtilities.updateComponentTreeUI(this);
 				Main.setProperty("lookandfeel", info.getClassName()); //$NON-NLS-1$
-				JFritz.refreshWindow();
+				jFritz.refreshWindow();
 			} catch (Exception e) {
 				Debug.err("Unable to set UI " + e.getMessage()); //$NON-NLS-1$
 			}
@@ -1005,7 +1008,7 @@ ItemListener {
 	public void actionPerformed(ActionEvent e) {
 		Debug.msg("Action " + e.getActionCommand()); //$NON-NLS-1$
 		if (e.getActionCommand().equals("exit")) {
-			JFritz.maybeExit(0);
+			jFritz.maybeExit(0);
 		} else if (e.getActionCommand().equals("about")) {
 			showAboutDialog();
 		} else if (e.getActionCommand().equals("help")) { //$NON-NLS-1$
@@ -1566,7 +1569,7 @@ ItemListener {
 	 *            to switch the language to
 	 */
 	public void setLanguage(Locale locale) {
-		JFritz.createNewWindow(locale);
+		jFritz.createNewWindow(locale);
 		// current window will be destroyed and a new one created
 
 		JFritz.refreshTrayMenu();

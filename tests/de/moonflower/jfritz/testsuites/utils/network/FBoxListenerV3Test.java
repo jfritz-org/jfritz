@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callmonitor.CallMonitorList;
 import de.moonflower.jfritz.callmonitor.FBoxCallMonitorV3;
 import de.moonflower.jfritz.struct.Call;
@@ -21,7 +22,7 @@ public class FBoxListenerV3Test extends TestCase {
     public JFritz jfritz;
 
     public FBoxListenerV3Test() {
-        jfritz = new JFritz();
+        jfritz = new Main(new String[0]).getJfritz();
     }
 
     public void setUp() throws Exception {

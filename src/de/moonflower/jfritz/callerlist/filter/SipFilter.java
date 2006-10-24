@@ -10,40 +10,36 @@ import de.moonflower.jfritz.struct.Call;
 
 public class SipFilter extends CallFilter {
 
-	private Vector filteredSipProviders = new Vector();
+	private Vector sipProviders = new Vector();
 
 	public SipFilter(Vector providers) {
-		this.filteredSipProviders = providers;
+		this.sipProviders = providers;
 	}
 
 	public boolean passInternFilter(Call currentCall) {
 
-		if (filteredSipProviders.size() == 0)
+		if (sipProviders.size() == 0)
 			return true;
 			String route = currentCall.getRoute();
 			if (route.equals("")) { //$NON-NLS-1$
 				route = "FIXEDLINE"; //$NON-NLS-1$
 			}
-			if (filteredSipProviders.contains(route))
+			if (sipProviders.contains(route))
 				return true;
 			else
 				return false;
 	}
 
-    public void setFilteredSipProviders(Vector filteredSipProviders) {
-		this.filteredSipProviders = filteredSipProviders;
-	}
-
 	public String toString(){
     	String result="";
-    	for(int i =0; i<filteredSipProviders.size();i++){
-    		result +=" "+filteredSipProviders.elementAt(i);
+    	for(int i =0; i<sipProviders.size();i++){
+    		result +=" "+sipProviders.elementAt(i);
     	}
     	return result;
     }
 
 	public void setProvider(Vector sipProvider) {
-		this.filteredSipProviders = sipProvider;
+		this.sipProviders = sipProvider;
 
 	}
 

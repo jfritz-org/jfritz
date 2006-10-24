@@ -69,7 +69,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/wiki/Kategorie:Hilfe"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.366 2006/10/24 19:58:24 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.367 2006/10/24 22:32:18 marc0815 Exp $"; //$NON-NLS-1$
 
 	public final static String CALLS_FILE = "jfritz.calls.xml"; //$NON-NLS-1$
 
@@ -123,11 +123,13 @@ public final class JFritz {
 
 	private static JFritzProperties windowProperties;
 
+	private Main main;
+
 	/**
 	 * Constructs JFritz object
 	 */
-	public JFritz() {
-
+	public JFritz(Main main) {
+		this.main = main;
 		windowProperties = new JFritzProperties();
 
 		if (JFritzUtils.parseBoolean(Main.getProperty(
@@ -155,7 +157,7 @@ public final class JFritz {
 		Debug.msg("JFritz runs on " + HostOS); //$NON-NLS-1$
 
 		if (HostOS.equals("Mac")) { //$NON-NLS-1$
-			new MacHandler();
+			new MacHandler(this);
 		}
 
 		// loads various country specific number settings and tables
@@ -193,10 +195,10 @@ public final class JFritz {
 		}
 	}
 
-	public static void createJFrame(boolean showConfWizard) {
+	public void createJFrame(boolean showConfWizard) {
 		Debug.msg("New instance of JFrame"); //$NON-NLS-1$
 		try {
-			jframe = new JFritzWindow();
+			jframe = new JFritzWindow(this);
 		} catch (WrongPasswordException wpe) {
 			exit(0);
 		}
@@ -510,7 +512,7 @@ public final class JFritz {
 	 * @param l
 	 *            the locale to change the language to
 	 */
-	public static void createNewWindow(Locale l) {
+	public void createNewWindow(Locale l) {
 		Debug.msg("Loading new locale"); //$NON-NLS-1$
 		Main.loadMessages(l);
 
@@ -525,12 +527,12 @@ public final class JFritz {
 	 *
 	 */
 
-	public static void refreshWindow() {
+	public void refreshWindow() {
 		saveWindowProperties();
 		jframe.dispose();
 		javax.swing.SwingUtilities.invokeLater(jframe);
 		try {
-			jframe = new JFritzWindow();
+			jframe = new JFritzWindow(this);
 		} catch (WrongPasswordException wpe) {
 			exit(0);
 		}
@@ -579,32 +581,34 @@ public final class JFritz {
  * shows the exit Dialog and either returns or exits
  * @param i exit status.
  */
-	public static void maybeExit(int i) {
-		if(showExitDialog()){exit(0);}
+	public void maybeExit(int i) {
+		if (!JFritzUtils.parseBoolean(Main.getProperty("option.confirmOnExit", //$NON-NLS-1$
+		"false"))) { //$NON-NLS-1$
+			exit(0);
+			}
+		boolean exit = showExitDialog();
+		if(exit){exit(0);}
+
 	}
 	/**
 	 * clean up and exit
 	 * @param i exit status.
 	 */
-	public static void exit(int i) {
+	private void exit(int i) {
 		// TODO maybe some more cleanup is needed
 		jframe.dispose();
-		System.exit(i);
+		main.exit(i);
 	}
 	/**
 	 * Shows the exit dialog
 	 */
 	private static boolean showExitDialog() {
 		boolean exit = true;
-		if (JFritzUtils.parseBoolean(Main.getProperty("option.confirmOnExit", //$NON-NLS-1$
-		"false"))) { //$NON-NLS-1$
 			exit = JOptionPane.showConfirmDialog(jframe, Main
 					.getMessage("really_quit"), Main.PROGRAM_NAME, //$NON-NLS-1$
 					JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 
 			return exit;
-		}
-		return true; // no dialog so we exit
 	}
 
 	/**
