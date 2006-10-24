@@ -262,7 +262,7 @@ public class ConfigDialog extends JDialog {
 		//only write the save dir to disk if the user changed something
 		if(!save_location.getText().equals(Main.SAVE_DIR)){
 			Main.SAVE_DIR = save_location.getText();
-			JFritz.writeSaveDir();
+			Main.writeSaveDir();
 		}
 
 		//		 Remove leading "0" from areaCode
