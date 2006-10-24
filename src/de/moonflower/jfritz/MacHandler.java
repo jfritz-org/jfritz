@@ -100,7 +100,8 @@ public class MacHandler {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						Debug.msg("MAC Application Menu: Show Exit Dialog"); //$NON-NLS-1$
-						JFritz.getJframe().showExitDialog();
+						JFritz.maybeExit(0);
+
 					}
 				});
 				throw new IllegalStateException("Let the quit handler do it"); //$NON-NLS-1$

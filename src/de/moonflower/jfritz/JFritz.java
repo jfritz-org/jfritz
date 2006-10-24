@@ -27,12 +27,14 @@ import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.UIManager;
 import javax.swing.table.TableColumn;
 
 import org.jdesktop.jdic.tray.SystemTray;
 import org.jdesktop.jdic.tray.TrayIcon;
+import org.jfree.report.function.ShowElementByNameFunction;
 
 import de.moonflower.jfritz.callerlist.CallerList;
 import de.moonflower.jfritz.callmonitor.CallMonitorInterface;
@@ -67,7 +69,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/wiki/Kategorie:Hilfe"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.364 2006/10/23 22:27:26 marc0815 Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.365 2006/10/24 19:13:58 marc0815 Exp $"; //$NON-NLS-1$
 
 	public final static String CALLS_FILE = "jfritz.calls.xml"; //$NON-NLS-1$
 
@@ -571,10 +573,36 @@ public final class JFritz {
 			Debug.err("Couldn't save Properties"); //$NON-NLS-1$
 		}
 	}
-
+/**
+ * shows the exit Dialog and either returns or exits
+ * @param i exit status.
+ */
+	public static void maybeExit(int i) {
+		if(showExitDialog()){exit(0);}
+	}
+	/**
+	 * clean up and exit
+	 * @param i exit status.
+	 */
 	public static void exit(int i) {
-		// TODO maybe some cleanup is needed
+		// TODO maybe some more cleanup is needed
+		jframe.dispose();
 		System.exit(i);
+	}
+	/**
+	 * Shows the exit dialog
+	 */
+	private static boolean showExitDialog() {
+		boolean exit = true;
+		if (JFritzUtils.parseBoolean(Main.getProperty("option.confirmOnExit", //$NON-NLS-1$
+		"false"))) { //$NON-NLS-1$
+			exit = JOptionPane.showConfirmDialog(jframe, Main
+					.getMessage("really_quit"), Main.PROGRAM_NAME, //$NON-NLS-1$
+					JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+
+			return exit;
+		}
+		return true; // no dialog so we exit
 	}
 
 	/**

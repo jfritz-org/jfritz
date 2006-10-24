@@ -215,6 +215,7 @@ KeyListener, PropertyChangeListener {
 		add(createCallerListTable(), BorderLayout.CENTER);
 		wl = new WindowAdapter() {
 			public void windowClosing(WindowEvent evt) {
+				Debug.msg("parent window is closing. writing button status for CallerListPanel");
 				writeButtonStatus();
 			}
 		};

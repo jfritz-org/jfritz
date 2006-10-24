@@ -174,7 +174,8 @@ ItemListener {
 
 	private void createGUI() throws WrongPasswordException {
 		setTitle(Main.PROGRAM_NAME);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		// we want to react on closing
 		///////////////////////////////  test code
 		/*
 		 setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -900,22 +901,6 @@ ItemListener {
 				+ "Long live Free Software!"); //$NON-NLS-1$
 	}
 
-	/**
-	 * Shows the exit dialog
-	 */
-	public boolean showExitDialog() {
-		boolean exit = true;
-
-		if (JFritzUtils.parseBoolean(Main.getProperty("option.confirmOnExit", //$NON-NLS-1$
-		"false"))) { //$NON-NLS-1$
-			exit = JOptionPane.showConfirmDialog(this, Main
-					.getMessage("really_quit"), Main.PROGRAM_NAME, //$NON-NLS-1$
-					JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
-
-			return exit;
-		}
-		return true; // no dialog so we exit
-	}
 
 	/**
 	 * Listener for window events
@@ -925,9 +910,10 @@ ItemListener {
 			if (JFritzUtils.parseBoolean(Main.getProperty("option.minimize", //$NON-NLS-1$
 			"false"))) { //$NON-NLS-1$
 				setExtendedState(Frame.ICONIFIED);
-			} else if (showExitDialog()) {
-				super.processWindowEvent(e); // so we quit
+			} else{
+				JFritz.maybeExit(0); //TODO checken ob es probleme gibt, weil exit->dispose->postWindowEvent(WindowEvent.WINDOW_CLOSED);
 			}
+
 		} else if (e.getID() == WindowEvent.WINDOW_ICONIFIED) {
 			setExtendedState(Frame.ICONIFIED);
 			if (Main.SYSTRAY_SUPPORT) {
