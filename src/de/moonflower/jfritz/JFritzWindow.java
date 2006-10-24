@@ -1005,7 +1005,7 @@ ItemListener {
 	public void actionPerformed(ActionEvent e) {
 		Debug.msg("Action " + e.getActionCommand()); //$NON-NLS-1$
 		if (e.getActionCommand().equals("exit")) {
-			JFritz.exit(0);
+			JFritz.maybeExit(0);
 		} else if (e.getActionCommand().equals("about")) {
 			showAboutDialog();
 		} else if (e.getActionCommand().equals("help")) { //$NON-NLS-1$
