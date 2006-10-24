@@ -49,10 +49,9 @@ public class ConfigPanelLang extends JPanel{
 		label = new JLabel(Main.getMessage("language") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		localePane.add(label, c);
 
-
 		String lang = JFritzUtils.getFullPath(JFritzUtils.langID);
 		File file = new File(lang);
-		FilenameFilter props = new StartEndFilenameFilter("jfritz","properties");//$NON-NLS-1$,  //$NON-NLS-2$
+		FilenameFilter props = new StartEndFilenameFilter("jfritz_","properties");//$NON-NLS-1$,  //$NON-NLS-2$
 		String[] list = file.list(props);
 		localeList= new String[list.length];
 
@@ -71,6 +70,7 @@ public class ConfigPanelLang extends JPanel{
 		}
 
 		c.fill = GridBagConstraints.HORIZONTAL;
+
 		languageCombo = new JComboBox(images);
 		LanguageComboBoxRenderer renderer = new LanguageComboBoxRenderer();
 		renderer.setPreferredSize(new Dimension(180, 15));
