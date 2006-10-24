@@ -129,6 +129,11 @@ public class JFritzUtils {
 		return "CVS v" + parts[2] + " (" + parts[3] + ")"; //$NON-NLS-1$, //$NON-NLS-2$,  //$NON-NLS-3$
 	}
 
+	/**
+	 * Wandelt einen String in einen boolean-Wert um
+	 * @param input
+	 * @return boolean value of input
+	 */
 	public static boolean parseBoolean(String input) {
 		if (input != null && input.equalsIgnoreCase("true")) //$NON-NLS-1$
 			return true;
