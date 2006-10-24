@@ -138,6 +138,8 @@
  *  autoupdate_title
  *  autoupdate_current_file
  *  autoupdate_overall_file
+ *  date_filter_this_week
+ *  date_filter_last_week
  *
  * - Bugfix: örtliche Nummer, die mit 49 beginnen, werden jetzt richtig verarbeitet
  * - Bugfix: Callmonitor schreibt die Ortsvorwahl vor unbekannten Rufnummern nicht mehr
@@ -263,7 +265,7 @@
  * - Neu: Wahlhilfe (<- funktioniert nicht richtig. Es wird immer der Port vom letzten Versuch benutzt
  *                      Beispiel: ich habe zuletzt ISDN 1 benutzt, will jetzt mit ISDN 2 anrufen, dann wird aber ISDN 1 benutzt.
  *                      Benutze ich dann die Wahlhilfe erneut, wird ISDN 2 benutzt - egal welchen Port ich einstelle. D.h., benutze
- *                      ich ständig die gleichen Ports, fllt es nicht weiter auf.
+ *                      ich ständig die gleichen Ports, fällt es nicht weiter auf.
  *                      Ich denke, das hängt damit zusammen, dass man auf der Weboberfläche erst den Port auswählt, dann übernehmen
  *                      drückt und dann erst die Nummer anklickt. Diesen Vorgang müsste man in JFritz nachbilden.  (KCh)
  *                   <- Eigentlich sollte es auch mit einem direkten URL-Aufruf funktionieren. Machen andere Tools genau so. (Robert)
@@ -519,9 +521,11 @@
 package de.moonflower.jfritz;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Locale;
@@ -595,6 +599,48 @@ public class Main {
 
 		jfritzHomedir = JFritzUtils.getFullPath(".update");
 		jfritzHomedir = jfritzHomedir.substring(0, jfritzHomedir.length() - 7);
+	}
+
+	/**
+	 * Main method for starting JFritz
+	 *
+	 * LAST MODIFIED: Brian Jensen 04.06.06 added option to disable mulitple
+	 * instance control added a new parameter switch: -w
+	 *
+	 * @param args
+	 *            Program arguments (-h -v ...)
+	 *
+	 */
+	public static void main(String[] args) {
+		Main main = new Main(args);
+		main.initiateCLIParameters();
+		main.checkDebugParameters(args);
+
+		// Weitere Initialisierung
+		loadSaveDir();
+
+		loadProperties();
+		loadMessages(new Locale(getProperty("locale", "de_DE"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		loadLocaleMeanings(new Locale("int", "INT"));
+
+		// check the version and display a message if newer version is
+		// available
+		if (JFritzUtils.parseBoolean(Main.getProperty(
+				"option.checkNewVersionAfterStart",//$NON-NLS-1$
+				"false"))) {//$NON-NLS-1$
+			VersionCheckThread vct = new VersionCheckThread(false);
+			vct.run();
+		}
+
+		new JFritz();
+
+		main.checkCLIParameters(args);
+		main.checkInstanceControl();
+
+		JFritz.createJFrame(showConfWizard);
+		// TODO sollten wir das programm nicht hier beenden?
+		// while(!shutdown){sleep oder sowas
+		//Debug.msg("ENDEN---main.java---DNEND");
 	}
 
 	/**
@@ -814,45 +860,45 @@ public class Main {
 	}
 
 	/**
-	 * Main method for starting JFritz
+	 * This function writes a file $HOME/.jfritz/jfritz.txt, which contains the
+	 * location of the folder containing jfritz's data If the dir $HOME/.jfritz
+	 * does not exist, it is created if the save location isnt a directory, then
+	 * the default save directory is used
 	 *
-	 * LAST MODIFIED: Brian Jensen 04.06.06 added option to disable mulitple
-	 * instance control added a new parameter switch: -w
-	 *
-	 * @param args
-	 *            Program arguments (-h -v ...)
+	 * @author Brian Jensen
 	 *
 	 */
-	public static void main(String[] args) {
-		Main main = new Main(args);
-		main.initiateCLIParameters();
-		main.checkDebugParameters(args);
+	public static void writeSaveDir() {
+		try {
 
-		// Weitere Initialisierung
-		loadSaveDir();
+			// if $HOME/.jfritz doesn't exist create it
+			File file = new File(USER_DIR);
+			if (!file.isDirectory() && !file.isFile())
+				file.mkdir();
 
-		loadProperties();
-		loadMessages(new Locale(getProperty("locale", "de_DE"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		loadLocaleMeanings(new Locale("int", "INT"));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(USER_DIR
+					+ File.separator + USER_JFRITZ_FILE, false));
 
-		// check the version and display a message if newer version is
-		// available
-		if (JFritzUtils.parseBoolean(Main.getProperty(
-				"option.checkNewVersionAfterStart",//$NON-NLS-1$
-				"false"))) {//$NON-NLS-1$
-			VersionCheckThread vct = new VersionCheckThread(false);
-			vct.run();
+			// make sure the user didn't screw something up
+			if (!SAVE_DIR.endsWith(File.separator))
+				SAVE_DIR = SAVE_DIR + File.separator;
+
+			file = new File(SAVE_DIR);
+			if (!file.isDirectory())
+				SAVE_DIR = System.getProperty("user.dir") + File.separator;
+
+			bw.write(SAVE_DIR_TEXT + SAVE_DIR);
+			bw.newLine();
+			bw.close();
+			Debug.msg("Successfully wrote save dir to disk");
+
+		} catch (Exception e) {
+			Debug
+					.err("Error writing save dir to disk, reverting back to default save dir");
+			SAVE_DIR = System.getProperty("user.dir") + File.separator;
+			// if there was an error, bail out and revert to the default save
+			// location
 		}
-
-		new JFritz();
-
-		main.checkCLIParameters(args);
-		main.checkInstanceControl();
-
-		JFritz.createJFrame(showConfWizard);
-		// TODO sollten wir das programm nicht hier beenden?
-		// while(!shutdown){sleep oder sowas
-		// Debug.msg("ENDEN---main.java---DNEND");
 	}
 
 	/**
