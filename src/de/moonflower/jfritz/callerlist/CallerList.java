@@ -25,7 +25,6 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.xml.parsers.ParserConfigurationException;
@@ -431,7 +430,7 @@ public class CallerList extends AbstractTableModel {
 	 *
 	 */
 	public boolean contains(Call newCall) {
-		Debug.msg("contains!");
+	//	Debug.msg("contains!");
 		int left, right, middle;
 		left = 0;
 		right = unfilteredCallerData.size() - 1;
@@ -1776,7 +1775,7 @@ public class CallerList extends AbstractTableModel {
 			} else {
 				if (call.getPerson() == null) {
 					if (!person.isEmpty())
-						JFritz.getPhonebook().addEntry(person);
+						phonebook.addEntry(person);
 				} else if (!call.getPerson().equals(person)) {
 					call.getPerson().copyFrom(person);
 				}
