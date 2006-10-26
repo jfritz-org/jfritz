@@ -6,6 +6,7 @@ package de.moonflower.jfritz;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -69,7 +70,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/wiki/Kategorie:Hilfe"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.367 2006/10/24 22:32:18 marc0815 Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.368 2006/10/26 21:38:53 marc0815 Exp $"; //$NON-NLS-1$
 
 	public final static String CALLS_FILE = "jfritz.calls.xml"; //$NON-NLS-1$
 
@@ -595,6 +596,7 @@ public final class JFritz {
 	 * @param i exit status.
 	 */
 	private void exit(int i) {
+
 		// TODO maybe some more cleanup is needed
 		jframe.dispose();
 		main.exit(i);

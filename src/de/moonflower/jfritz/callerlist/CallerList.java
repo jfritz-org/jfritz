@@ -1669,7 +1669,12 @@ public class CallerList extends AbstractTableModel {
 		}
 		return callByCallProviders;
 	}
-
+	/**
+	 * Adds a route to the CbCProviders Vector, if the route is a CbCProvider
+	 * @param callByCallProviders the Vector of CbCProviders
+	 * @param call the call with the route, if it is a route to a CbCProvider it will be added
+	 */
+	//FIXME
 	private void addIfCbCProvider(Vector callByCallProviders, Call call) {
 		String provider = "";
 		if (call.getPhoneNumber() != null) {
@@ -1729,8 +1734,14 @@ public class CallerList extends AbstractTableModel {
 		Debug.msg("...done");
 	}
 
+/**
+ * Adds a route to the sipProviders Vector, if the route is a sipProvider
+ * @param sipProviders the Vector of sipProviders
+ * @param call the call with the route, if it is a route to a sipProvider it will be added
+ */
 	private void addIfSipProvider(Vector sipProviders, Call call) {
 		String route = call.getRoute();
+		//FIXME
 		// if (call.getRouteType() == Call.ROUTE_SIP){
 		if (route.equals("")) { //$NON-NLS-1$
 			route = "FIXEDLINE"; //$NON-NLS-1$

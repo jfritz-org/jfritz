@@ -1009,6 +1009,7 @@ ItemListener {
 	public void actionPerformed(ActionEvent e) {
 		Debug.msg("Action " + e.getActionCommand()); //$NON-NLS-1$
 		if (e.getActionCommand().equals("exit")) {
+			processWindowEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 			jFritz.maybeExit(0);
 		} else if (e.getActionCommand().equals("about")) {
 			showAboutDialog();
