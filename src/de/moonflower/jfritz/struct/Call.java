@@ -9,6 +9,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
 
+import sun.net.ProgressListener;
+
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -42,6 +44,12 @@ public class Call {
 
 	private String comment = ""; //$NON-NLS-1$
 
+	public Call(CallType calltype, Date calldate, PhoneNumber number,
+			String port, String route, int duration, String comment) {
+		this (calltype, calldate, number,
+				port,  route,  duration);
+		this.comment = comment;
+	}
 	public Call(CallType calltype, Date calldate, PhoneNumber number,
 			String port, String route, int duration) {
 		this(calltype, calldate, number, port, route, duration,

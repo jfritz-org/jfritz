@@ -299,6 +299,9 @@ public class PhoneBook extends AbstractTableModel {
 
 	public void deleteEntry(Person person) {
 		unfilteredPersons.remove(person);
+		Call call = callerList.findLastCall(person);
+		Person newPerson = findPerson(call);
+		callerList.setPerson(newPerson, call);
 		updateFilter();
 	}
 
@@ -864,15 +867,16 @@ public class PhoneBook extends AbstractTableModel {
 		JFritz.getCallerList().calculateAllLastCalls(unfilteredPersons);
 		too slow
 		*/
-		Person current;
+		Person person;
 		Call call;
 		for (int i = 0; i < unfilteredPersons.size(); i++) {
-			current = (Person)unfilteredPersons.get(i);
-			call = callerList.findLastCall(current);
+			person = (Person)unfilteredPersons.get(i);
+			call = callerList.findLastCall(person);
 			if(call!=null){
-				call.setPerson(current); // wichtig, sonst stht da noch null drinn und den Fehler findet man dann niemals
+				// wichtig, sonst stht da noch null drinn und den Fehler findet man dann niemals
+				callerList.setPerson(person, call);
 			}
-			current.setLastCall(call);
+			person.setLastCall(call);
 		}
 		Debug.msg("...done");
 		fireTableDataChanged();
@@ -1138,5 +1142,6 @@ public class PhoneBook extends AbstractTableModel {
 	public boolean getAllLastCallsSearched() {
 		return allLastCallsSearched;
 	}
+
 
 }

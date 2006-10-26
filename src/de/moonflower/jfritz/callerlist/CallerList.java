@@ -114,12 +114,6 @@ public class CallerList extends AbstractTableModel {
 
 	private PhoneBook phonebook;
 
-	//private DateFilter dateFilter;
-
-	//private SipFilter sipFilter;
-
-	//private CallByCallFilter callByCallFilter;
-
 	/**
 	 * CallerList Constructor new contrustor, using binary sizes
 	 * NOTE:filteredCallerData = unfilteredCallerData is forbidden!! use
@@ -389,8 +383,7 @@ public class CallerList extends AbstractTableModel {
 	 */
 	public boolean addEntry(CallType symbol, Date datum, PhoneNumber number,
 			String port, String route, int duration, String comment) {
-		Call call = new Call(symbol, datum, number, port, route, duration);
-		call.setComment(comment);
+		Call call = new Call(symbol, datum, number, port, route, duration, comment);
 		return addEntry(call);
 	}
 
@@ -405,19 +398,19 @@ public class CallerList extends AbstractTableModel {
 	 * @author Brian Jensen
 	 */
 	public boolean addEntry(Call call) {
-
 		if (contains(call)) {
 			return false;
-		} else { // add a new enty to the call list
-			Person p = call.getPerson();
-			if(p!= null){
-				if(p.getLastCall().getCalldate().before(call.getCalldate())){
-					JFritz.getPhonebook().setLastCall(p, call);
-					}
+		} // add a new enty to the call list
+		Person p = phonebook.findPerson(call.getPhoneNumber());
+		call.setPerson(p);
+		if(p!= null){
+			if(p.getLastCall().getCalldate().before(call.getCalldate())){
+				phonebook.setLastCall(p, call);
 			}
-			newCalls.add(call);
-			return true;
 		}
+		newCalls.add(call);
+		return true;
+
 	}
 
 	/**
@@ -678,22 +671,7 @@ public class CallerList extends AbstractTableModel {
 
 	public void setPerson(Person person, int rowIndex) {
 		Call call = (Call) filteredCallerData.get(rowIndex);
-
-		if (call.getPhoneNumber() != null) { // no empty numbers
-			if (person == null) {
-				Debug
-				.err("Callerlist.setPerson():  IMPLEMENT ME (remove person)"); //$NON-NLS-1$
-			} else {
-				if (call.getPerson() == null) {
-					if (!person.isEmpty())
-						JFritz.getPhonebook().addEntry(person);
-				} else if (!call.getPerson().equals(person)) {
-					call.getPerson().copyFrom(person);
-				}
-			}
-			fireTableDataChanged();
-		}
-
+		setPerson(person, call);
 	}
 
 	/**
@@ -920,32 +898,24 @@ public class CallerList extends AbstractTableModel {
 		fireTableDataChanged();
 	}
 
-	public void removeEntries() {
-		if (JOptionPane.showConfirmDialog(JFritz.getJframe(), Main
-				.getMessage("really_delete_entries"), //$NON-NLS-1$
-				Main.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-			Debug.msg("Removing entries"); //$NON-NLS-1$
-			int row[] = JFritz.getJframe().getCallerTable().getSelectedRows(); //FIXME
-			if (row.length > 0) {
-				Vector personsToDelete = new Vector();
-				for (int i = 0; i < row.length; i++) {
-					personsToDelete.add(filteredCallerData.get(row[i]));
-				}
-				Enumeration en = personsToDelete.elements();
-				while (en.hasMoreElements()) {
-					Call call = (Call)en.nextElement();
-					unfilteredCallerData.remove(call);
-					Person p = call.getPerson();
-					Call lastCall = JFritz.getCallerList().findLastCall(p);
-					JFritz.getPhonebook().setLastCall(p, lastCall);
-				}
-				saveToXMLFile(Main.SAVE_DIR + JFritz.CALLS_FILE, true);
-				//updateFilter();
-				update();
-				fireTableDataChanged();
+	public void removeEntries(int[] rows) {
+		if (rows.length > 0) {
+			Call call;
+			for (int i = 0; i < rows.length; i++) {
+				call = (Call)filteredCallerData.get(rows[i]);
+				unfilteredCallerData.remove(call);
+				Debug.msg("removing "+call);
+				Person p = call.getPerson();
+				Call lastCall = findLastCall(p);
+				phonebook.setLastCall(p, lastCall);
 			}
+			saveToXMLFile(Main.SAVE_DIR + JFritz.CALLS_FILE, true);
+			//updateFilter();
+			update();
+			fireTableDataChanged();
 		}
 	}
+
 
 	public void fireTableDataChanged() {
 		super.fireTableDataChanged();
@@ -1785,6 +1755,24 @@ public class CallerList extends AbstractTableModel {
 
 	public void setPhoneBook(PhoneBook phonebook) {
 		this.phonebook = phonebook;
+
+	}
+
+	public void setPerson(Person person, Call call) {
+		if (call.getPhoneNumber() != null) { // no empty numbers
+			if (person == null) {
+				Debug
+				.err("Callerlist.setPerson():  IMPLEMENT ME (remove person)"); //$NON-NLS-1$
+			} else {
+				if (call.getPerson() == null) {
+					if (!person.isEmpty())
+						JFritz.getPhonebook().addEntry(person);
+				} else if (!call.getPerson().equals(person)) {
+					call.getPerson().copyFrom(person);
+				}
+			}
+			fireTableDataChanged();
+		}
 
 	}
 }

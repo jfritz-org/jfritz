@@ -49,8 +49,8 @@ public class CallerTable extends JTable {
 	 * Constructs CallerTable
 	 *
 	 */
-	public CallerTable() {
-		super(JFritz.getCallerList());
+	public CallerTable(CallerList list) {
+		super(list);
 		setTableProperties();
 		createColumns();
 	}
@@ -81,7 +81,7 @@ public class CallerTable extends JTable {
 				}
 				else if (e.getKeyCode() == KeyEvent.VK_DELETE) {
 					// Delete selected entries
-					((CallerList)getModel()).removeEntries();
+					((CallerList)getModel()).removeEntries(getSelectedRows());
 				}
 			}
 		});

@@ -30,6 +30,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -325,7 +326,7 @@ KeyListener, PropertyChangeListener {
  * @return a scrollPane with the callerListTable
  */
 	public JScrollPane createCallerListTable() {
-		callerTable = new CallerTable();
+		callerTable = new CallerTable(callerList);
 		JPopupMenu callerlistPopupMenu = new JPopupMenu();
 		JMenuItem menuItem;
 		menuItem = new JMenuItem(Main.getMessage("reverse_lookup")); //$NON-NLS-1$
@@ -828,7 +829,14 @@ KeyListener, PropertyChangeListener {
 			return;
 		}
 		if (command.equals(DELETE_ENTRY)) {
-			callerList.removeEntries();
+			if (JOptionPane.showConfirmDialog(parentFrame, Main
+					.getMessage("really_delete_entries"), //$NON-NLS-1$
+					Main.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+			{
+				Debug.msg("Removing entries"); //$NON-NLS-1$
+				int rows[] = callerTable.getSelectedRows();
+				callerList.removeEntries(rows);
+			}
 			return;
 		}
 		if (command.equals("reverselookup")) { //$NON-NLS-1$

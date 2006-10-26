@@ -569,6 +569,7 @@ ItemListener {
 		menu.add(optionsMenu);
 		menu.add(viewMenu);
 		menu.add(helpMenu);
+		menu.setVisible(true);
 		return menu;
 	}
 
