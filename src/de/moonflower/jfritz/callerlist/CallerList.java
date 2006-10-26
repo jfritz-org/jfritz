@@ -398,8 +398,7 @@ public class CallerList extends AbstractTableModel {
 	 * @author Brian Jensen
 	 */
 	public boolean addEntry(Call call) {
-		// TODO try this
-		// unfilteredCallerData.contains(call);
+		// if( unfilteredCallerData.contains(call))return false;
 		if (contains(call)) {
 			return false;
 		} // add a new enty to the call list
@@ -430,7 +429,7 @@ public class CallerList extends AbstractTableModel {
 	 *
 	 */
 	public boolean contains(Call newCall) {
-	//	Debug.msg("contains!");
+		// Debug.msg("contains!");
 		int left, right, middle;
 		left = 0;
 		right = unfilteredCallerData.size() - 1;
@@ -988,7 +987,8 @@ public class CallerList extends AbstractTableModel {
 	 *            of the csv file to import from
 	 */
 	public boolean importFromCSVFile(BufferedReader br) {
-
+		long t1, t2;
+		t1 = System.currentTimeMillis();
 		String line = "";
 		boolean isJFritzExport = false; // flags to check which type to parse
 		boolean isPushFile = false;
@@ -1098,7 +1098,8 @@ public class CallerList extends AbstractTableModel {
 		} catch (IOException e) {
 			Debug.err("IO Exception reading csv file"); //$NON-NLS-1$
 		}
-
+		t2 = System.currentTimeMillis();
+		Debug.msg("Time used to import CSV-File: " + (t2 - t1) + "ms");
 		if (newEntries > 0)
 			return true;
 		else

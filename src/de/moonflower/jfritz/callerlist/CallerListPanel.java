@@ -67,10 +67,9 @@ import de.moonflower.jfritz.utils.threeStateButton.ThreeStateButton3;
  * @ex-author Arno Willig
  * @author marc
  */
-//TODO dateFilter zeieln selektieren datum uhrzeit setzen durchsuchen
-//TODO delete button
+// TODO delete button
 public class CallerListPanel extends JPanel implements ActionListener,
-KeyListener, PropertyChangeListener {
+		KeyListener, PropertyChangeListener {
 
 	class PopupListener extends MouseAdapter {
 		JPopupMenu popupMenu;
@@ -138,13 +137,19 @@ KeyListener, PropertyChangeListener {
 	private static final String FILTER_DATE_START = "FILTER_DATE_START";
 
 	private static final String THIS_DAY = "date_filter_today";
+
 	private static final String LAST_DAY = "date_filter_yesterday";
+
 	private static final String THIS_WEEK = "date_filter_this_week";
+
 	private static final String LAST_WEEK = "date_filter_last_week";
+
 	private static final String THIS_MONTH = "date_filter_this_month";
+
 	private static final String LAST_MONTH = "date_filter_last_month";
 
 	private String dateSpecialSaveString;
+
 	private CallerList callerList;
 
 	private CallerTable callerTable;
@@ -177,12 +182,10 @@ KeyListener, PropertyChangeListener {
 
 	private static final String FILTER_DATE_SPECIAL = "date_filter_special";
 
-
-
 	private ThreeStateButton3 dateFilterButton, callByCallFilterButton,
-	callInFilterButton, callOutFilterButton, callInFailedFilterButton,
-	anonymFilterButton, fixedFilterButton, handyFilterButton,
-	sipFilterButton, commentFilterButton, searchFilterButton;
+			callInFilterButton, callOutFilterButton, callInFailedFilterButton,
+			anonymFilterButton, fixedFilterButton, handyFilterButton,
+			sipFilterButton, commentFilterButton, searchFilterButton;
 
 	private JButton deleteEntriesButton;
 
@@ -199,12 +202,20 @@ KeyListener, PropertyChangeListener {
 	private WindowAdapter wl;
 
 	private JFritzWindow parentFrame;
-/**
- * A callerListPanel is a view for a callerlist, it has its own resourceBundle to get the localized strings
- * for its components. The components are a Toolbar and a table. th callerListPanel has a callerList, the model for this view @see CallerList
- * @param callerList the model
- * @param parent the parent frame to display some messages and set the status bar
- */
+
+	/**
+	 * A callerListPanel is a view for a callerlist, it has its own
+	 * resourceBundle to get the localized strings for its components. The
+	 * components are a Toolbar and a table. th callerListPanel has a
+	 * callerList, the model for this view
+	 *
+	 * @see CallerList
+	 * @param callerList
+	 *            the model
+	 * @param parent
+	 *            the parent frame to display some messages and set the status
+	 *            bar
+	 */
 
 	public CallerListPanel(CallerList callerList, JFritzWindow parent) {
 		super();
@@ -216,22 +227,28 @@ KeyListener, PropertyChangeListener {
 		add(createCallerListTable(), BorderLayout.CENTER);
 		wl = new WindowAdapter() {
 			public void windowClosing(WindowEvent evt) {
-				Debug.msg("parent window is closing. writing button status for CallerListPanel");
+				Debug
+						.msg("parent window is closing. writing button status for CallerListPanel");
 				writeButtonStatus();
 			}
 		};
 		parent.addWindowListener(wl);
 	}
-	public void dispose(){
+
+	public void dispose() {
 		Debug.msg("dispose");
 	}
-/**
- * creates all filters and stores them in the array
- * @param callerList the model
- */
+
+	/**
+	 * creates all filters and stores them in the array
+	 *
+	 * @param callerList
+	 *            the model
+	 */
 	private void createFilters(CallerList callerList) {
 		filter = new CallFilter[FILTERCOUNT];
-		filter[callByCall] = new CallByCallFilter(getCallByCallProvider(callerList));
+		filter[callByCall] = new CallByCallFilter(
+				getCallByCallProvider(callerList));
 		callerList.addFilter(filter[callByCall]);
 		filter[callInFailed] = new CallInFailedFilter();
 		callerList.addFilter(filter[callInFailed]);
@@ -247,49 +264,58 @@ KeyListener, PropertyChangeListener {
 		callerList.addFilter(filter[fixed]);
 		filter[handy] = new HandyFilter();
 		callerList.addFilter(filter[handy]);
-		filter[sip] = new SipFilter (getSipProvider(callerList));
+		filter[sip] = new SipFilter(getSipProvider(callerList));
 		callerList.addFilter(filter[sip]);
 		filter[date] = new DateFilter(new Date(), new Date());
 		callerList.addFilter(filter[date]);
 		filter[search] = new SearchFilter("");
 		callerList.addFilter(filter[search]);
 	}
+
 	/**
-	 * creates a SIPfilter using  only the selected SIPProviders or all SIPProviders, if none is selected
-	 * @param callerList the callerlist to retrieve the SIPProviders
+	 * creates a SIPfilter using only the selected SIPProviders or all
+	 * SIPProviders, if none is selected
+	 *
+	 * @param callerList
+	 *            the callerlist to retrieve the SIPProviders
 	 * @return the createdFilter
 	 */
 	private Vector getSipProvider(CallerList callerList) {
 		Vector provider;
-		if (callerTable !=null && callerTable.getSelectedRowCount()!=0){
+		if ((callerTable != null) && (callerTable.getSelectedRowCount() != 0)) {
 			provider = callerList
-				.getSipProviders(callerTable.getSelectedRows());
-		}else{
+					.getSipProviders(callerTable.getSelectedRows());
+		} else {
 			provider = callerList.getSipProviders();
 		}
 		return provider;
 	}
+
 	/**
-	 * creates a CallByCallfilter using  only the selected CallByCallProviders or all CallByCallProviders, if none is selected
-	 * @param callerList the callerlist to retrieve the CallByCallProviders
+	 * creates a CallByCallfilter using only the selected CallByCallProviders or
+	 * all CallByCallProviders, if none is selected
+	 *
+	 * @param callerList
+	 *            the callerlist to retrieve the CallByCallProviders
 	 * @return the createdFilter
 	 */
 
 	private Vector getCallByCallProvider(CallerList callerList) {
 		Vector provider;
-		if (callerTable !=null && callerTable.getSelectedRowCount()!=0){
+		if ((callerTable != null) && (callerTable.getSelectedRowCount() != 0)) {
 			provider = callerList
-				.getCbCProviders(callerTable.getSelectedRows());
-		}else{
-			provider = callerList
-					.getCbCProviders();
+					.getCbCProviders(callerTable.getSelectedRows());
+		} else {
+			provider = callerList.getCbCProviders();
 		}
 		return provider;
 	}
 
-/**
- * some buttons are clicked. @see ActionListener
- */
+	/**
+	 * some buttons are clicked.
+	 *
+	 * @see ActionListener
+	 */
 	public void actionPerformed(ActionEvent e) {
 		handleAction(e.getActionCommand());
 		callerList.update();
@@ -321,12 +347,13 @@ KeyListener, PropertyChangeListener {
 		parentFrame.setStatus();
 	}
 
-/**
- * create gui
- * @return a scrollPane with the callerListTable
- */
+	/**
+	 * create gui
+	 *
+	 * @return a scrollPane with the callerListTable
+	 */
 	public JScrollPane createCallerListTable() {
-		callerTable = new CallerTable(callerList);
+		callerTable = new CallerTable(parentFrame, callerList);
 		JPopupMenu callerlistPopupMenu = new JPopupMenu();
 		JMenuItem menuItem;
 		menuItem = new JMenuItem(Main.getMessage("reverse_lookup")); //$NON-NLS-1$
@@ -384,6 +411,7 @@ KeyListener, PropertyChangeListener {
 
 	/**
 	 * create gui
+	 *
 	 * @return the toolbar
 	 */
 	public JPanel createToolBar() {
@@ -441,7 +469,7 @@ KeyListener, PropertyChangeListener {
 		menuItem = new JMenuItem(Main
 				.getMessage("missed_calls_without_comments_last_week")); //$NON-NLS-1$
 		menuItem
-		.setActionCommand("filter_callinfailed_allWithoutCommentLastWeek"); //$NON-NLS-1$
+				.setActionCommand("filter_callinfailed_allWithoutCommentLastWeek"); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		missedPopupMenu.add(menuItem);
 		menuItem = new JMenuItem(Main
@@ -457,8 +485,7 @@ KeyListener, PropertyChangeListener {
 		callOutFilterButton.addActionListener(this);
 		callOutFilterButton.setToolTipText(Main.getMessage(FILTER_CALLOUT));
 
-		anonymFilterButton = new ThreeStateButton3(
-				getImageIcon("mask.gif")); //$NON-NLS-1$
+		anonymFilterButton = new ThreeStateButton3(getImageIcon("mask.gif")); //$NON-NLS-1$
 		anonymFilterButton.setActionCommand(FILTER_ANONYM);
 		anonymFilterButton.addActionListener(this);
 		anonymFilterButton.setToolTipText(Main.getMessage(FILTER_ANONYM));
@@ -480,29 +507,29 @@ KeyListener, PropertyChangeListener {
 		dateFilterButton.setToolTipText(Main.getMessage(FILTER_DATE));
 
 		JPopupMenu datePopupMenu = new JPopupMenu();
-		menuItem = new JMenuItem(Main.getMessage(THIS_DAY)); //$NON-NLS-1$
-		menuItem.setActionCommand(THIS_DAY); //$NON-NLS-1$
+		menuItem = new JMenuItem(Main.getMessage(THIS_DAY));
+		menuItem.setActionCommand(THIS_DAY);
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
-		menuItem = new JMenuItem(Main.getMessage(LAST_DAY)); //$NON-NLS-1$
-		menuItem.setActionCommand(LAST_DAY); //$NON-NLS-1$
+		menuItem = new JMenuItem(Main.getMessage(LAST_DAY));
+		menuItem.setActionCommand(LAST_DAY);
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
-		menuItem = new JMenuItem(Main.getMessage(THIS_WEEK)); //$NON-NLS-1$
-		menuItem.setActionCommand(THIS_WEEK); //$NON-NLS-1$
+		menuItem = new JMenuItem(Main.getMessage(THIS_WEEK));
+		menuItem.setActionCommand(THIS_WEEK);
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
-		menuItem = new JMenuItem(Main.getMessage(LAST_WEEK)); //$NON-NLS-1$
-		menuItem.setActionCommand(LAST_WEEK); //$NON-NLS-1$
+		menuItem = new JMenuItem(Main.getMessage(LAST_WEEK));
+		menuItem.setActionCommand(LAST_WEEK);
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
 
-		menuItem = new JMenuItem(Main.getMessage(THIS_MONTH)); //$NON-NLS-1$
-		menuItem.setActionCommand(THIS_MONTH); //$NON-NLS-1$
+		menuItem = new JMenuItem(Main.getMessage(THIS_MONTH));
+		menuItem.setActionCommand(THIS_MONTH);
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
-		menuItem = new JMenuItem(Main.getMessage(LAST_MONTH)); //$NON-NLS-1$
-		menuItem.setActionCommand(LAST_MONTH); //$NON-NLS-1$
+		menuItem = new JMenuItem(Main.getMessage(LAST_MONTH));
+		menuItem.setActionCommand(LAST_MONTH);
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
 		popupListener = new PopupListener(datePopupMenu);
@@ -606,9 +633,11 @@ KeyListener, PropertyChangeListener {
 	// TODO reverseLookup verschieben
 	/**
 	 * does reverse lookup (find the name and address for a given phone number
-	 * @param rows the rows, wich are selected for reverse lookup
+	 *
+	 * @param rows
+	 *            the rows, wich are selected for reverse lookup
 	 */
-//TODO nach phonebook verschieben
+	// TODO nach phonebook verschieben
 	public void doReverseLookup(int[] rows) {
 		if (rows.length > 0) { // nur für markierte Einträge ReverseLookup
 			// durchführen
@@ -627,7 +656,6 @@ KeyListener, PropertyChangeListener {
 		}
 	}
 
-
 	public CallerList getCallerList() {
 		return callerList;
 	}
@@ -636,39 +664,46 @@ KeyListener, PropertyChangeListener {
 		return callerTable;
 	}
 
-/**
- * get a imageIcon from a given filename
- * @param filename the name of the file
- * @return the imageIcon
- */
+	/**
+	 * get a imageIcon from a given filename
+	 *
+	 * @param filename
+	 *            the name of the file
+	 * @return the imageIcon
+	 */
 	public ImageIcon getImageIcon(String filename) {
 		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/" + filename))); //$NON-NLS-1$
 	}
+
 	/**
 	 *
-	* get a image from a given filename
- * @param filename the name of the file
- * @return the image
-  */
+	 * get a image from a given filename
+	 *
+	 * @param filename
+	 *            the name of the file
+	 * @return the image
+	 */
 
 	public Image getImage(String filename) {
 		return Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/" + filename)); //$NON-NLS-1$
 	}
-/**
- * the control
- * this method is called, if the user pushed buttons or changes dates or the search filter
- * for command use the constants <code> <br>FILTER_CALLIN, <br>FILTER_CALLOUT,<br>FILTER_COMMENT<br>...
- * </code>
- * @param command
- */
+
+	/**
+	 * the control this method is called, if the user pushed buttons or changes
+	 * dates or the search filter for command use the constants
+	 * <code> <br>FILTER_CALLIN, <br>FILTER_CALLOUT,<br>FILTER_COMMENT<br>...
+	 * </code>
+	 *
+	 * @param command
+	 */
 	private void handleAction(String command) {
-		if(callerTable!=null){
+		if (callerTable != null) {
 			CellEditor ce = callerTable.getCellEditor();
-			if(ce!=null){
+			if (ce != null) {
 				ce.cancelCellEditing();
 			}
 		}
@@ -709,7 +744,8 @@ KeyListener, PropertyChangeListener {
 			} else {
 				searchFilterTextField.setVisible(true);
 				searchLabel.setVisible(true);
-				((SearchFilter)filter[search]).setSearchString(searchFilterTextField.getText());
+				((SearchFilter) filter[search])
+						.setSearchString(searchFilterTextField.getText());
 				// do nothing
 				// if(searchFilterButton.getState()==ThreeStateButton.SELECTED)
 				if (searchFilterButton.getState() == ThreeStateButton3.INVERTED) {
@@ -725,63 +761,77 @@ KeyListener, PropertyChangeListener {
 			if (dateFilterButton.getState() == ThreeStateButton3.NOTHING) {
 				startDateChooser.setVisible(false);
 				endDateChooser.setVisible(false);
-			} else { //selected or inverted check if some rows are selected
-				if(callerTable != null && callerTable.getSelectedRowCount()!=0){
-					// some rows are selected so the the date according to the selected rows
+			} else { // selected or inverted check if some rows are selected
+				if ((callerTable != null)
+						&& (callerTable.getSelectedRowCount() != 0)) {
+					// some rows are selected so the the date according to the
+					// selected rows
 					int[] rows = callerTable.getSelectedRows();
 					// min und max bestimmen
-					Date min =  ((Call) callerList.getFilteredCallVector().get(rows[0])).getCalldate();
-					Date max =  ((Call) callerList.getFilteredCallVector().get(rows[0])).getCalldate();
+					Date min = ((Call) callerList.getFilteredCallVector().get(
+							rows[0])).getCalldate();
+					Date max = ((Call) callerList.getFilteredCallVector().get(
+							rows[0])).getCalldate();
 					Date current;
-					for(int i =0; i< rows.length; i++){
-						current = ((Call) callerList.getFilteredCallVector().get(rows[i])).getCalldate();
-						if(current.before(min)){min = current;}
-						if(current.after(max)){max = current;}
-						Debug.msg("currentDate: "+current);
+					for (int i = 0; i < rows.length; i++) {
+						current = ((Call) callerList.getFilteredCallVector()
+								.get(rows[i])).getCalldate();
+						if (current.before(min)) {
+							min = current;
+						}
+						if (current.after(max)) {
+							max = current;
+						}
+						Debug.msg("currentDate: " + current);
 					}
-					Debug.msg("minDate: "+min);
-					Debug.msg("maxDate: "+max);
+					Debug.msg("minDate: " + min);
+					Debug.msg("maxDate: " + max);
 
 					startDateChooser.setDate(min);
 					endDateChooser.setDate(max);
-				}else{//no rows selected so we only have the days and set the hours to min and max
-					startDateChooser.setDate(JFritzUtils.setStartOfDay(startDateChooser.getDate()));
-					endDateChooser.setDate(JFritzUtils.setEndOfDay(endDateChooser.getDate()));
+				} else {// no rows selected so we only have the days and set the
+						// hours to min and max
+					startDateChooser.setDate(JFritzUtils
+							.setStartOfDay(startDateChooser.getDate()));
+					endDateChooser.setDate(JFritzUtils
+							.setEndOfDay(endDateChooser.getDate()));
 				}
-				((DateFilter)filter[date]).setStartDate(startDateChooser.getDate());
-				((DateFilter)filter[date]).setEndDate(endDateChooser.getDate());
+				((DateFilter) filter[date]).setStartDate(startDateChooser
+						.getDate());
+				((DateFilter) filter[date])
+						.setEndDate(endDateChooser.getDate());
 				if (dateFilterButton.getState() == ThreeStateButton3.INVERTED) {
 					filter[date].setInvert(true);
 				}
 				startDateChooser.setVisible(true);
 				endDateChooser.setVisible(true);
 			}
-			dateSpecialSaveString ="";
+			dateSpecialSaveString = "";
 			return;
 		}
 
-		if (command.equals(THIS_DAY)) { //$NON-NLS-1$
+		if (command.equals(THIS_DAY)) {
 			setThisDayFilter();
 			return;
 		}
-		if (command.equals(LAST_DAY)) { //$NON-NLS-1$
+		if (command.equals(LAST_DAY)) {
 			setLastDayFilter();
 			return;
 		}
-		if (command.equals(THIS_WEEK)) { //$NON-NLS-1$
+		if (command.equals(THIS_WEEK)) {
 			setThisWeekFilter();
 			return;
 		}
-		if (command.equals(LAST_WEEK)) { //$NON-NLS-1$
+		if (command.equals(LAST_WEEK)) {
 			setLastWeekFilter();
 			return;
 		}
 
-		if (command.equals(THIS_MONTH)) { //$NON-NLS-1$
+		if (command.equals(THIS_MONTH)) {
 			setThisMonthFilter();
 			return;
 		}
-		if (command.equals(LAST_MONTH)) { //$NON-NLS-1$
+		if (command.equals(LAST_MONTH)) {
 			setLastMonthFilter();
 			return;
 		}
@@ -804,8 +854,8 @@ KeyListener, PropertyChangeListener {
 			JFritzUtils.setStartOfDay(start);
 			JFritzUtils.setEndOfDay(end);
 
-			((DateFilter)filter[date]).setStartDate(start);
-			((DateFilter)filter[date]).setEndDate(end);
+			((DateFilter) filter[date]).setStartDate(start);
+			((DateFilter) filter[date]).setEndDate(end);
 
 			startDateChooser.setDate(end);
 			endDateChooser.setDate(start);
@@ -815,12 +865,13 @@ KeyListener, PropertyChangeListener {
 			return;
 		}
 		if (command.equals(FILTER_SIP)) {
-			((SipFilter)filter[sip]).setProvider(getSipProvider(callerList));
+			((SipFilter) filter[sip]).setProvider(getSipProvider(callerList));
 			syncFilterWithButton(filter[sip], sipFilterButton);
 			return;
 		}
 		if (command.equals(FILTER_CALLBYCALL)) {
-			((CallByCallFilter)filter[callByCall]).setCallbyCallProvider(getCallByCallProvider(callerList));
+			((CallByCallFilter) filter[callByCall])
+					.setCallbyCallProvider(getCallByCallProvider(callerList));
 			syncFilterWithButton(filter[callByCall], callByCallFilterButton);
 			return;
 		}
@@ -831,8 +882,7 @@ KeyListener, PropertyChangeListener {
 		if (command.equals(DELETE_ENTRY)) {
 			if (JOptionPane.showConfirmDialog(parentFrame, Main
 					.getMessage("really_delete_entries"), //$NON-NLS-1$
-					Main.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
-			{
+					Main.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 				Debug.msg("Removing entries"); //$NON-NLS-1$
 				int rows[] = callerTable.getSelectedRows();
 				callerList.removeEntries(rows);
@@ -877,11 +927,12 @@ KeyListener, PropertyChangeListener {
 			// JFritz.getJframe().copyAddressToClipboard();
 
 		}
-		Debug.err("unknown command: "+command);
+		Debug.err("unknown command: " + command);
 	}
+
 	/**
-	 * sets the start and endDateChoose to the appropriate values
-	 * and set em visible
+	 * sets the start and endDateChoose to the appropriate values and set em
+	 * visible
 	 */
 	private void setLastMonthFilter() {
 		dateFilterButton.setState(ThreeStateButton3.SELECTED);
@@ -895,8 +946,8 @@ KeyListener, PropertyChangeListener {
 		JFritzUtils.setStartOfDay(start);
 		JFritzUtils.setEndOfDay(end);
 
-		((DateFilter)filter[date]).setStartDate(start);
-		((DateFilter)filter[date]).setEndDate(end);
+		((DateFilter) filter[date]).setStartDate(start);
+		((DateFilter) filter[date]).setEndDate(end);
 
 		startDateChooser.setDate(start);
 		endDateChooser.setDate(end);
@@ -904,9 +955,10 @@ KeyListener, PropertyChangeListener {
 		endDateChooser.setVisible(true);
 		dateSpecialSaveString = LAST_MONTH;
 	}
+
 	/**
-	 * sets the start and endDateChoose to the appropriate values
-	 * and set em visible
+	 * sets the start and endDateChoose to the appropriate values and set em
+	 * visible
 	 */
 
 	private void setThisMonthFilter() {
@@ -920,8 +972,8 @@ KeyListener, PropertyChangeListener {
 		JFritzUtils.setStartOfDay(start);
 		JFritzUtils.setEndOfDay(end);
 
-		((DateFilter)filter[date]).setStartDate(start);
-		((DateFilter)filter[date]).setEndDate(end);
+		((DateFilter) filter[date]).setStartDate(start);
+		((DateFilter) filter[date]).setEndDate(end);
 
 		startDateChooser.setDate(start);
 		endDateChooser.setDate(end);
@@ -931,8 +983,8 @@ KeyListener, PropertyChangeListener {
 	}
 
 	/**
-	 * sets the start and endDateChoose to the appropriate values
-	 * and set em visible
+	 * sets the start and endDateChoose to the appropriate values and set em
+	 * visible
 	 */
 	private void setLastDayFilter() {
 		dateFilterButton.setState(ThreeStateButton3.SELECTED);
@@ -943,8 +995,8 @@ KeyListener, PropertyChangeListener {
 		JFritzUtils.setStartOfDay(start);
 		JFritzUtils.setEndOfDay(end);
 
-		((DateFilter)filter[date]).setStartDate(start);
-		((DateFilter)filter[date]).setEndDate(end);
+		((DateFilter) filter[date]).setStartDate(start);
+		((DateFilter) filter[date]).setEndDate(end);
 
 		startDateChooser.setDate(start);
 		endDateChooser.setDate(end);
@@ -954,22 +1006,23 @@ KeyListener, PropertyChangeListener {
 	}
 
 	/**
-	 * sets the start and endDateChoose to the appropriate values
-	 * and set em visible
+	 * sets the start and endDateChoose to the appropriate values and set em
+	 * visible
 	 */
 	private void setThisWeekFilter() {
 		dateFilterButton.setState(ThreeStateButton3.SELECTED);
 		Calendar cal = Calendar.getInstance();
-		int daysPastMonday = (Calendar.DAY_OF_WEEK +(7-Calendar.MONDAY) )%7; //
-		cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - daysPastMonday);
+		int daysPastMonday = (Calendar.DAY_OF_WEEK + (7 - Calendar.MONDAY)) % 7; //
+		cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH)
+				- daysPastMonday);
 		Date start = cal.getTime();
-		cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) +7);
+		cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) + 7);
 		Date end = cal.getTime();
 		JFritzUtils.setStartOfDay(start);
 		JFritzUtils.setEndOfDay(end);
 
-		((DateFilter)filter[date]).setStartDate(start);
-		((DateFilter)filter[date]).setEndDate(end);
+		((DateFilter) filter[date]).setStartDate(start);
+		((DateFilter) filter[date]).setEndDate(end);
 
 		startDateChooser.setDate(start);
 		endDateChooser.setDate(end);
@@ -977,23 +1030,25 @@ KeyListener, PropertyChangeListener {
 		endDateChooser.setVisible(true);
 		dateSpecialSaveString = LAST_WEEK;
 	}
+
 	/**
-	 * sets the start and endDateChoose to the appropriate values
-	 * and set em visible
+	 * sets the start and endDateChoose to the appropriate values and set em
+	 * visible
 	 */
 	private void setLastWeekFilter() {
 		dateFilterButton.setState(ThreeStateButton3.SELECTED);
 		Calendar cal = Calendar.getInstance();
-		int daysPastMonday = (Calendar.DAY_OF_WEEK +(7-Calendar.MONDAY) )%7; //
-		cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - daysPastMonday);
+		int daysPastMonday = (Calendar.DAY_OF_WEEK + (7 - Calendar.MONDAY)) % 7; //
+		cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH)
+				- daysPastMonday);
 		Date end = cal.getTime();
 		cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - 7);
 		Date start = cal.getTime();
 		JFritzUtils.setStartOfDay(start);
 		JFritzUtils.setEndOfDay(end);
 
-		((DateFilter)filter[date]).setStartDate(start);
-		((DateFilter)filter[date]).setEndDate(end);
+		((DateFilter) filter[date]).setStartDate(start);
+		((DateFilter) filter[date]).setEndDate(end);
 
 		startDateChooser.setDate(start);
 		endDateChooser.setDate(end);
@@ -1003,8 +1058,8 @@ KeyListener, PropertyChangeListener {
 	}
 
 	/**
-	 * sets the start and endDateChoose to the appropriate values
-	 * and set em visible
+	 * sets the start and endDateChoose to the appropriate values and set em
+	 * visible
 	 */
 	private void setThisDayFilter() {
 		dateFilterButton.setState(ThreeStateButton3.SELECTED);
@@ -1013,8 +1068,8 @@ KeyListener, PropertyChangeListener {
 		JFritzUtils.setStartOfDay(start);
 		JFritzUtils.setEndOfDay(end);
 
-		((DateFilter)filter[date]).setStartDate(start);
-		((DateFilter)filter[date]).setEndDate(end);
+		((DateFilter) filter[date]).setStartDate(start);
+		((DateFilter) filter[date]).setEndDate(end);
 
 		startDateChooser.setDate(start);
 		endDateChooser.setDate(end);
@@ -1022,6 +1077,7 @@ KeyListener, PropertyChangeListener {
 		endDateChooser.setVisible(true);
 		dateSpecialSaveString = THIS_DAY;
 	}
+
 	/**
 	 * (KeyListener) for the searchButton TextField
 	 */
@@ -1036,28 +1092,28 @@ KeyListener, PropertyChangeListener {
 		}
 
 	}
+
 	/**
 	 * (KeyListener) for the searchButton TextField
 	 */
 
 	public void keyReleased(KeyEvent arg0) {
 	}
-/**
- 	 * (KeyListener) for the searchButton TextField
- */
+
+	/**
+	 * (KeyListener) for the searchButton TextField
+	 */
 	public void keyTyped(KeyEvent arg0) {
 	}
 
 	/**
-	 * to react on the change events of the Datechoosers
-	 * PropertyChangedListener
+	 * to react on the change events of the Datechoosers PropertyChangedListener
 	 */
 	public void propertyChange(PropertyChangeEvent evt) {
 		handleAction(FILTER_DATE);
 		callerList.update();
 		parentFrame.setStatus();
 	}
-
 
 	/**
 	 * syncronises all Filters with the states represented by the Buttons
@@ -1098,21 +1154,24 @@ KeyListener, PropertyChangeListener {
 
 	/**
 	 * enables the delete button and changes the tooltip
-	 * @param rows the rows, wich are selected
+	 *
+	 * @param rows
+	 *            the rows, wich are selected
 	 */
-	//TODO auf eine funktion kürzen
+	// TODO auf eine funktion kürzen
 	public void setDeleteEntriesButton(int rows) {
 		deleteEntriesButton.setToolTipText(Main.getMessage(DELETE_ENTRIES)
 				.replaceAll("%N", Integer.toString(rows))); //$NON-NLS-1$,
 		deleteEntriesButton.setEnabled(true);
 	}
 
-	//TODO auf eine funktion kürzen
+	// TODO auf eine funktion kürzen
 	public void setDeleteEntryButton() {
 		deleteEntriesButton.setToolTipText(Main.getMessage(DELETE_ENTRY));
 		deleteEntriesButton.setEnabled(true);
 	}
-	//TODO auf eine funktion kürzen
+
+	// TODO auf eine funktion kürzen
 	public void setDeleteListButton() {
 		deleteEntriesButton.setToolTipText(Main.getMessage("delete_list")); //$NON-NLS-1$
 		// clearList-Icon to big, so use std. delete.png
@@ -1128,7 +1187,8 @@ KeyListener, PropertyChangeListener {
 	 * @param button
 	 *            the button his status will be read
 	 */
-	private void syncFilterWithButton(CallFilter filter, ThreeStateButton3 button) {
+	private void syncFilterWithButton(CallFilter filter,
+			ThreeStateButton3 button) {
 		if (button.getState() == ThreeStateButton3.SELECTED) {
 			filter.setEnabled(true);
 			filter.setInvert(false);
@@ -1170,6 +1230,7 @@ KeyListener, PropertyChangeListener {
 		Main.setProperty(FILTER_CALLINFAILED, ""
 				+ callInFailedFilterButton.getState());
 	}
+
 	/**
 	 * read the status of the Buttons from the Main Properties
 	 */
@@ -1195,41 +1256,44 @@ KeyListener, PropertyChangeListener {
 		state = JFritzUtils.parseInt(Main.getProperty(FILTER_CALLIN, "0"));
 		callInFilterButton.setState(state);
 		state = JFritzUtils
-		.parseInt(Main.getProperty(FILTER_CALLINFAILED, "0"));
+				.parseInt(Main.getProperty(FILTER_CALLINFAILED, "0"));
 		callInFailedFilterButton.setState(state);
 		searchFilterTextField.setText(Main.getProperty(FILTER_SEARCH_TEXT, ""));
 		state = JFritzUtils.parseInt(Main.getProperty(FILTER_SEARCH, "0"));
 		searchFilterButton.setState(state);
-		dateSpecialSaveString = Main.getProperty(FILTER_DATE_SPECIAL," ");
-//		Debug.msg(dateSpecialSaveString);
-		if(dateSpecialSaveString.equals(THIS_DAY)){
+		dateSpecialSaveString = Main.getProperty(FILTER_DATE_SPECIAL, " ");
+		// Debug.msg(dateSpecialSaveString);
+		if (dateSpecialSaveString.equals(THIS_DAY)) {
 			setThisDayFilter();
-		}else if(dateSpecialSaveString.equals(LAST_DAY)){
+		} else if (dateSpecialSaveString.equals(LAST_DAY)) {
 			setLastDayFilter();
-		}else if(dateSpecialSaveString.equals(THIS_WEEK)){
+		} else if (dateSpecialSaveString.equals(THIS_WEEK)) {
 			setThisWeekFilter();
-		}else if(dateSpecialSaveString.equals(LAST_WEEK)){
+		} else if (dateSpecialSaveString.equals(LAST_WEEK)) {
 			setLastWeekFilter();
-		}else if(dateSpecialSaveString.equals(THIS_MONTH)){
+		} else if (dateSpecialSaveString.equals(THIS_MONTH)) {
 			setThisMonthFilter();
-		}else if(dateSpecialSaveString.equals(LAST_MONTH)){
+		} else if (dateSpecialSaveString.equals(LAST_MONTH)) {
 			setLastMonthFilter();
-		}else{ // read data
+		} else { // read data
 			DateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm");
 			Date start = new Date();
 			Date end = new Date();
 			try {
 				start = df.parse(Main.getProperty(FILTER_DATE_START,
-				"11.11.11 11:11"));
-				end = df.parse(Main.getProperty(FILTER_DATE_END, "11.11.11 11:11"));
-				startDateChooser.setDate(start); // durch setDate wird über den
-				endDateChooser.setDate(end); // PropertyListener update aufgerufen
+						"11.11.11 11:11"));
+				end = df.parse(Main.getProperty(FILTER_DATE_END,
+						"11.11.11 11:11"));
+				startDateChooser.setDate(start); // durch setDate wird über
+													// den
+				endDateChooser.setDate(end); // PropertyListener update
+												// aufgerufen
 			} catch (ParseException e) {
 				startDateChooser.setDate(Calendar.getInstance().getTime());
 				endDateChooser.setDate(Calendar.getInstance().getTime());
 				Debug
-				.err("error parsing date while loading dates from main properties "
-						+ e.toString());
+						.err("error parsing date while loading dates from main properties "
+								+ e.toString());
 			}
 		}
 		syncAllFilters();
