@@ -46,7 +46,7 @@ import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
-
+//TODO beim hinzufügen von Nummern lastCall und call.Person aktualisieren
 public class PhoneBook extends AbstractTableModel {
 	private static final long serialVersionUID = 1;
 

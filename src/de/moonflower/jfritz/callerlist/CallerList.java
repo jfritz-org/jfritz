@@ -919,8 +919,13 @@ public class CallerList extends AbstractTableModel {
 				unfilteredCallerData.remove(call);
 				Debug.msg("removing " + call);
 				Person p = call.getPerson();
-				Call lastCall = findLastCall(p);
-				phonebook.setLastCall(p, lastCall);
+				if (p != null) {
+					if (call.equals(p.getLastCall())) {
+						// this was the LastCall of the Person
+						phonebook.setLastCall(p, findLastCall(p));
+					}
+				}
+
 			}
 			saveToXMLFile(Main.SAVE_DIR + JFritz.CALLS_FILE, true);
 			update();

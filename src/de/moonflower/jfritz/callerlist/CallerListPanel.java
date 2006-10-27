@@ -644,7 +644,10 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			for (int i = 0; i < rows.length; i++) {
 				Call call = (Call) callerList.getFilteredCallVector().get(
 						rows[i]);
-				Person newPerson = ReverseLookup.lookup(call.getPhoneNumber());
+				Person newPerson = null;
+				if(call.getPhoneNumber()!=null){
+					newPerson = ReverseLookup.lookup(call.getPhoneNumber());
+				}
 				if (newPerson != null) {
 					JFritz.getPhonebook().addEntry(newPerson);
 					JFritz.getPhonebook().fireTableDataChanged();

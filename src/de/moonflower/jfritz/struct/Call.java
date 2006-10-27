@@ -8,9 +8,6 @@ package de.moonflower.jfritz.struct;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
-
-import sun.net.ProgressListener;
-
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.utils.JFritzUtils;
