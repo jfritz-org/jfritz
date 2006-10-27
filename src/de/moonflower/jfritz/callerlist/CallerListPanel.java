@@ -403,7 +403,6 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		callerlistPopupMenu.add(clipboardMenu);
 
 		MouseAdapter popupListener = new PopupListener(callerlistPopupMenu);
-
 		callerTable.addMouseListener(popupListener);
 
 		return new JScrollPane(callerTable);

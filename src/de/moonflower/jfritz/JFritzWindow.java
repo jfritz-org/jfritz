@@ -79,7 +79,7 @@ import de.moonflower.jfritz.utils.CopyFile;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.DirectoryChooser;
 import de.moonflower.jfritz.utils.Encryption;
-import de.moonflower.jfritz.utils.ImportOutlookContacts;
+import de.moonflower.jfritz.utils.ImportOutlookContactsDialog;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.PrintCallerList;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
@@ -1311,7 +1311,7 @@ ItemListener {
 
 	private void importOutlook() {
 		Debug.msg("Starte Import von Outlook"); //$NON-NLS-1$
-		Thread thread = new Thread(new ImportOutlookContacts());
+		Thread thread = new Thread(new ImportOutlookContactsDialog(this));
 		thread.start();
 	}
 

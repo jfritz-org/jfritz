@@ -27,7 +27,8 @@ import java.util.TimerTask;
  * @author rob
  */
 
-public class CallMessageDlg extends JDialog implements ActionListener{
+public class CallMessageDlg {}
+/*extends JDialog implements ActionListener{
 	private static final long serialVersionUID = 1;
 		public void showMessage (String caller, String called) {
 			toFront();
@@ -101,7 +102,7 @@ public class CallMessageDlg extends JDialog implements ActionListener{
 		/**
 		 * Hide dialog after OK-Button pressed
 		 */
-		public void actionPerformed(ActionEvent e) {
+/*	public void actionPerformed(ActionEvent e) {
 			setVisible(false);
 		}
 
@@ -109,7 +110,7 @@ public class CallMessageDlg extends JDialog implements ActionListener{
 		 * Hide dialog after timeout
 		 * @author rob
 		 */
-		private class HideTimer extends TimerTask {
+/*		private class HideTimer extends TimerTask {
 			private CallMessageDlg msgDialog;
 
 			public HideTimer(CallMessageDlg msgDialog) {
@@ -118,8 +119,9 @@ public class CallMessageDlg extends JDialog implements ActionListener{
 
 			public void run() {
 				msgDialog.setVisible(false);
+				msgDialog.dispose();
 			}
 		}
 }
-
+*/
 

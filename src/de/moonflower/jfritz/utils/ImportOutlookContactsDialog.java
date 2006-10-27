@@ -21,7 +21,7 @@ import java.util.Vector;
 import javax.swing.*;
 
 
-public class ImportOutlookContacts extends JDialog implements ActionListener,
+public class ImportOutlookContactsDialog extends JDialog implements ActionListener,
         Runnable {
 
     /**
@@ -63,8 +63,8 @@ public class ImportOutlookContacts extends JDialog implements ActionListener,
         return myFolder;
     }
 
-    public ImportOutlookContacts() {
-        super(JFritz.getJframe(), Main.getMessage("import_contacts_outlook")); //$NON-NLS-1$
+    public ImportOutlookContactsDialog(JFrame parent) {
+        super(parent, Main.getMessage("import_contacts_outlook")); //$NON-NLS-1$
         outlookElements = new Vector();
         // contactPics = "resources/images/contacts/";
     }

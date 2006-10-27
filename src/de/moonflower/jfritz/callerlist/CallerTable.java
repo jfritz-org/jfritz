@@ -284,7 +284,7 @@ public class CallerTable extends JTable {
 		TableColumnModel colModel = getColumnModel();
 		for (int i = 0; i < colModel.getColumnCount(); i++) {
 			TableColumn col = getColumnModel().getColumn(i);
-			Main.setProperty("" + col.getIdentifier(), ""
+			Main.setProperty("column." + col.getIdentifier()+".width", ""
 					+ col.getPreferredWidth());
 		}
 		try {
@@ -294,13 +294,13 @@ public class CallerTable extends JTable {
 			Main.setProperty("option.showCallByCallColumn", "" + FALSE);
 		}
 		try {
-			colModel.getColumnIndex("callbycall");
+			colModel.getColumnIndex("comment");
 			Main.setProperty("option.showCommentColumn", "" + TRUE);
 		} catch (IllegalArgumentException iae) {
 			Main.setProperty("option.showCommentColumn", "" + FALSE);
 		}
 		try {
-			colModel.getColumnIndex("callbycall");
+			colModel.getColumnIndex("port");
 			Main.setProperty("option.showPortColumn", "" + TRUE);
 		} catch (IllegalArgumentException iae) {
 			Main.setProperty("option.showPortColumn", "" + FALSE);

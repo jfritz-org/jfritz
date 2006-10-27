@@ -33,7 +33,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  * Jfritz!
  *
  */
-public class FRITZBOXConfigDialog extends JDialog implements
+public class FRITZBOXConfigDialog extends
         CallMonitorConfigDialog {
 
     /**

@@ -140,6 +140,7 @@
  *  autoupdate_overall_file
  *  date_filter_this_week
  *  date_filter_last_week
+ *  filter_search
  *
  * - Bugfix: örtliche Nummer, die mit 49 beginnen, werden jetzt richtig verarbeitet
  * - Bugfix: Callmonitor schreibt die Ortsvorwahl vor unbekannten Rufnummern nicht mehr
@@ -1014,11 +1015,12 @@ public class Main {
 		synchronized(mutex){
 			mutex.notify();
 		}
-		jfritz.dispose();
+
 		*/
 		//notifyAll();
 		// TODO maybe some cleanup is needed
-		System.exit(i);
+		Debug.msg("Main.exit("+i+")");
+		//System.exit(i);
 	}
 
 	/**

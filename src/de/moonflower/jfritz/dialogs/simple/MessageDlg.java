@@ -96,6 +96,7 @@ public class MessageDlg extends JDialog implements ActionListener{
 
 			public void run() {
 				msgDialog.setVisible(false);
+				msgDialog.dispose();
 			}
 		}
 }

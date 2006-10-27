@@ -300,8 +300,10 @@ public class PhoneBook extends AbstractTableModel {
 	public void deleteEntry(Person person) {
 		unfilteredPersons.remove(person);
 		Call call = callerList.findLastCall(person);
-		Person newPerson = findPerson(call);
-		callerList.setPerson(newPerson, call);
+		if(call != null){
+			Person newPerson = findPerson(call);
+			callerList.setPerson(newPerson, call);
+		}
 		updateFilter();
 	}
 

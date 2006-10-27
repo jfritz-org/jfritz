@@ -33,7 +33,7 @@ import de.moonflower.jfritz.utils.Encryption;
  * @author rob
  *
  */
-public class TelnetConfigDialog extends JDialog implements CallMonitorConfigDialog{
+public class TelnetConfigDialog extends CallMonitorConfigDialog{
 
 	/**
 	 * This avoids compiler warnings

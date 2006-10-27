@@ -64,8 +64,10 @@ public class Telnet {
 				telnetConfigDialog.setModal(true);
 				if (telnetConfigDialog.showConfigDialog() == TelnetConfigDialog.CANCEL_OPTION) {
 					// ABBRUCH
+					telnetConfigDialog.dispose();
 					return;
 				}
+				telnetConfigDialog.dispose();
 			}
 
 			String user = Main.getProperty("telnet.user", ""); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -153,8 +155,10 @@ public class Telnet {
 							if (telnetConfigDialog.showConfigDialog() == TelnetConfigDialog.CANCEL_OPTION) {
 								// ABBRUCH
 								JFritz.stopCallMonitor();
+								telnetConfigDialog.dispose();
 								return LOGIN_CANCELED;
 							}
+							telnetConfigDialog.dispose();
 						}
 					}
 					if (sb.toString().endsWith(passwd)) {
@@ -210,8 +214,10 @@ public class Telnet {
 							telnetConfigDialog.setModal(true);
 							if (telnetConfigDialog.showConfigDialog() == TelnetConfigDialog.CANCEL_OPTION) {
 								// ABBRUCH
+								telnetConfigDialog.dispose();
 								return LOGIN_CANCELED;
 							}
+							telnetConfigDialog.dispose();
 						}
 					}
 					if (ch == prompt) {

@@ -40,6 +40,10 @@ public class DialogDisposeTest implements ActionListener {
 
 	private JButton disposeTestDialogButton;
 
+	private JButton dialog_not_showButton;
+
+	private JButton selfDisposerButton;
+
 	DialogDisposeTest() {
 		testFrame = new JFrame();
 		JPanel p = new JPanel();
@@ -51,6 +55,14 @@ public class DialogDisposeTest implements ActionListener {
 		dialogNullButton = new JButton("dialog_null");
 		dialogNullButton.addActionListener(this);
 		dialogNullButton.setActionCommand("dialog_null");
+
+		selfDisposerButton = new JButton("selfDisposer");
+		selfDisposerButton.addActionListener(this);
+		selfDisposerButton.setActionCommand("selfDisposer");
+
+		dialog_not_showButton = new JButton("dialog_not_show");
+		dialog_not_showButton.addActionListener(this);
+		dialog_not_showButton.setActionCommand("dialog_not_show");
 
 		optionDialogNullButton = new JButton("option_dialog_null");
 		optionDialogNullButton.addActionListener(this);
@@ -71,6 +83,8 @@ public class DialogDisposeTest implements ActionListener {
 		p.add(dialogButton);
 		p.add(hideButton);
 		p.add(dialogNullButton);
+		p.add(selfDisposerButton);
+		p.add(dialog_not_showButton);
 		p.add(optionDialogNullButton);
 		p.add(disposeTestDialogButton);
 		p.add(disposeButton);
@@ -89,11 +103,29 @@ public class DialogDisposeTest implements ActionListener {
 			testDialog = new JDialog();
 			testDialog.setVisible(true);
 		}
+		if (e.getActionCommand().equals("dialog_not_show")) {
+			testDialog = new JDialog();
+			//testDialog.setVisible(true);  wenn man einmal setVisible(true) gemacht hat muss man dispose() machen
+			//testDialog.setVisible(false);
+		}
+
 
 		if (e.getActionCommand().equals("dispose")) {
 			System.out.println("disposing");
 			testFrame.dispose();
 		}
+		if (e.getActionCommand().equals("selfDisposer")) {
+			testDialog = new JDialog();
+			JButton b = new JButton("dispose");
+			b.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent e) {
+					testDialog.dispose();
+				}
+			});
+			testDialog.add(b);
+			testDialog.setVisible(true);
+		}
+
 		if (e.getActionCommand().equals("hide")) {
 			System.out.println("hiding");
 			testFrame.setVisible(false);

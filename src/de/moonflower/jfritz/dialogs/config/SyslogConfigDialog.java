@@ -43,7 +43,7 @@ import de.moonflower.jfritz.utils.network.Telnet;
  * @author rob
  *
  */
-public class SyslogConfigDialog extends JDialog implements CallMonitorConfigDialog {
+public class SyslogConfigDialog extends CallMonitorConfigDialog {
 
 	/**
 	 * This avoid compiler warnings

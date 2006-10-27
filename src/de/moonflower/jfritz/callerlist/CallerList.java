@@ -429,6 +429,23 @@ public class CallerList extends AbstractTableModel {
 	 *
 	 */
 	public boolean contains(Call newCall) {
+		Vector unfilteredCallerData = (Vector)this.unfilteredCallerData.clone();
+		// find index for date collumn
+		int indexOfDate = -1;
+		for(int i=0; i<getColumnCount(); i++){
+			String columnName = getRealColumnName(i);
+			if(columnName.equals("date")){
+				indexOfDate = i;
+			}
+		}
+
+		if(sortColumn!=indexOfDate && indexOfDate!=-1){
+			Debug.err("unfilteredCallerData not sorted sorting! (will be slow)");
+//			  This new method is using a binary search algorithm, that means
+	//		  unfilteredCallerData has to be sorted ascending by date or it won't work
+
+			Collections.sort(unfilteredCallerData, new ColumnSorter(indexOfDate, true));
+		}
 		// Debug.msg("contains!");
 		int left, right, middle;
 		left = 0;
@@ -937,7 +954,7 @@ public class CallerList extends AbstractTableModel {
 		super.fireTableDataChanged();
 	}
 
-	public String getRealColumnName(int columnIndex) {
+	public String getRealColumnName(int columnIndex) { //FIXME
 		String columnName = ""; //$NON-NLS-1$
 		if (JFritz.getJframe() != null) {
 			Enumeration en = JFritz.getJframe().getCallerTable()

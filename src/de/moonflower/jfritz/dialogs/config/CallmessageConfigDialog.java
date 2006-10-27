@@ -29,7 +29,7 @@ import de.moonflower.jfritz.Main;
  * @author Robert Palmer
  *
  */
-public class CallmessageConfigDialog extends JDialog implements CallMonitorConfigDialog{
+public class CallmessageConfigDialog extends CallMonitorConfigDialog{
 
 	/**
 	 * This avoids compiler warnings
