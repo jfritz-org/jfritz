@@ -44,6 +44,7 @@
  * TODO: Sonderzeichen werden in den Balloontips unter Windows nicht korrekt angezeigt. Scheint ein Windowsproblem zu sein. Lösung/Workaround noch nicht gefunden.
  * TODO: JFritz.ico mitliefern
  * TODO: Linux-Startscript mitliefern
+ * TODO: LANG/jfritz.properties bei einem neuen Release aktuell halten
  *
  * Roadmap:
  * JFritz 1.0
@@ -123,24 +124,22 @@
  * - http://www.ip-phone-forum.de/showthread.php?t=112348
  * - 0900 Nummern werden nicht korrekt erkannt http://www.ip-phone-forum.de/showthread.php?t=114325 => Liste mit Call-By-Call Vorwahlen
  * - Überprüfen, geht wohl nicht mehr: Rückwärtssuche für Österreich über dasoertliche.de wieder eingebaut
+ * - Wizard-Panels und ConfigDialog-Pannels zusammenführen
+ * - Update-Thread aus JFritz heraus verfügbar machen
+ * - Connection-Timeout für ReverseLookup setzen
+ * - Vor dem Release noch den installDirectory-Pfad in JFritzUpdate auf "." anpassen
  * TODO-ENDE
  *
  * - Neue Strings:
- * 	new_version
- * 	new_version_text
- *  new_version_quit
  *  check_for_new_version_after_start
- *  no_new_version_found
  *  update_JFritz
  *  enable_inet_monitoring
  *  monitoring
- *  inet_usgage
- *  autoupdate_title
- *  autoupdate_current_file
- *  autoupdate_overall_file
+ *  inet_usage
  *  date_filter_this_week
  *  date_filter_last_week
  *  filter_search
+ *  Alle Strings in der Datei update.properties
  *
  * - Bugfix: örtliche Nummer, die mit 49 beginnen, werden jetzt richtig verarbeitet
  * - Bugfix: Callmonitor schreibt die Ortsvorwahl vor unbekannten Rufnummern nicht mehr
@@ -169,6 +168,8 @@
  * - Neu: Rückwärtssuche nicht mehr über DasOertliche.de sondern über dastelefonbuch.de
  * - Bugifx: Französische Rückwärtssuche funktioniert wieder
  * - Intern: JFritz.java aufgespalten in Main.java und JFritz.java
+ * - Autoupdate von JFritz
+ * - Nur noch mit Java 1.5 kompatibel
  *
  * JFritz 0.6.1
  * - Neue Strings:
@@ -536,7 +537,6 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
-import de.moonflower.jfritz.autoupdate.VersionCheckThread;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.struct.FritzBox;
 import de.moonflower.jfritz.utils.CLIOption;
@@ -649,15 +649,6 @@ public class Main {
 		loadProperties();
 		loadMessages(new Locale(getProperty("locale", "de_DE"))); //$NON-NLS-1$,  //$NON-NLS-2$
 		loadLocaleMeanings(new Locale("int", "INT"));
-
-		// check the version and display a message if newer version is
-		// available
-		if (JFritzUtils.parseBoolean(Main.getProperty(
-				"option.checkNewVersionAfterStart",//$NON-NLS-1$
-				"false"))) {//$NON-NLS-1$
-			VersionCheckThread vct = new VersionCheckThread(false);
-			vct.run();
-		}
 
 		jfritz = new JFritz(main);
 
@@ -1020,7 +1011,7 @@ public class Main {
 		//notifyAll();
 		// TODO maybe some cleanup is needed
 		Debug.msg("Main.exit("+i+")");
-		//System.exit(i);
+		System.exit(i);
 	}
 
 	/**

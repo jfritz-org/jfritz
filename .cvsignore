@@ -16,3 +16,5 @@ backup
 ivy.xml
 *.classpath
 build-release.xml
+update
+*.jar

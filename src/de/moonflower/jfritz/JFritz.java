@@ -6,10 +6,7 @@ package de.moonflower.jfritz;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
@@ -35,7 +32,6 @@ import javax.swing.table.TableColumn;
 
 import org.jdesktop.jdic.tray.SystemTray;
 import org.jdesktop.jdic.tray.TrayIcon;
-import org.jfree.report.function.ShowElementByNameFunction;
 
 import de.moonflower.jfritz.callerlist.CallerList;
 import de.moonflower.jfritz.callmonitor.CallMonitorInterface;
@@ -70,7 +66,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/wiki/Kategorie:Hilfe"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.369 2006/10/27 13:12:15 marc0815 Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.370 2006/10/31 20:42:41 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String CALLS_FILE = "jfritz.calls.xml"; //$NON-NLS-1$
 
@@ -596,8 +592,12 @@ public final class JFritz {
 	 * @param i exit status.
 	 */
 	private void exit(int i) {
+		Debug.msg("Shut down JFritz");
 
 		// TODO maybe some more cleanup is needed
+		if ( callMonitor != null)
+			stopCallMonitor();
+
 		Debug.msg("disposing jframe");
 		jframe.dispose();
 		main.exit(i);

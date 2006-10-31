@@ -33,8 +33,8 @@ public class UPNPUtils {
 	 * @param timeout
 	 * @return Vector of SSDPPackets
 	 */
-	public static Vector SSDP_discoverDevices(int timeout) {
-		Vector devices = new Vector();
+	public static Vector<SSDPPacket> SSDP_discoverDevices(int timeout) {
+		Vector<SSDPPacket> devices = new Vector<SSDPPacket>();
 		try {
 			DatagramSocket socket = new DatagramSocket();
 			socket.setSoTimeout(timeout);
@@ -61,11 +61,11 @@ public class UPNPUtils {
 	}
 
 	public static Vector SSDP_discoverFritzBoxes(int timeout) {
-		Vector devices = SSDP_discoverDevices(timeout);
-		Vector fritzboxes = new Vector();
-		Enumeration en = devices.elements();
+		Vector<SSDPPacket> devices = SSDP_discoverDevices(timeout);
+		Vector<SSDPPacket> fritzboxes = new Vector<SSDPPacket>();
+		Enumeration<SSDPPacket> en = devices.elements();
 		while (en.hasMoreElements()) {
-			SSDPPacket p = (SSDPPacket) en.nextElement();
+			SSDPPacket p = en.nextElement();
 			if (p.getServer().toLowerCase().indexOf("avm fritz!box") > 0) { //$NON-NLS-1$
 				Debug.msg("Box found at " + p.getIP().toString() + ": " //$NON-NLS-1$,  //$NON-NLS-2$
 						+ p.getServer());
@@ -94,6 +94,9 @@ public class UPNPUtils {
 		try {
 			URL u = new URL(url);
 			URLConnection uc = u.openConnection();
+
+			// 5 Sekunden-Timeout für Verbindungsaufbau
+			uc.setConnectTimeout(5000);
 
 			uc.setDoOutput(true);
 			uc.setDoInput(true);

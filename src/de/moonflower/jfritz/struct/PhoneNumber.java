@@ -58,7 +58,7 @@ public class PhoneNumber implements Comparable {
 	 					 USA_CODE="+1",
                          INT_FREECALL="+800";
 
-	static HashMap mobileMap;
+	static HashMap<String, String> mobileMap;
 
 	/**
 	 * @deprecated use the other constructor from now on
@@ -120,7 +120,7 @@ public class PhoneNumber implements Comparable {
 	 */
 	private void createMobileMap() {
 		if (mobileMap == null) {
-			mobileMap = new HashMap();
+			mobileMap = new HashMap<String, String>();
 			mobileMap.put("+49151", "D1");//$NON-NLS-1$, //$NON-NLS-2$
 			mobileMap.put("+49160", "D1");//$NON-NLS-1$, //$NON-NLS-2$
 			mobileMap.put("+49170", "D1");//$NON-NLS-1$, //$NON-NLS-2$

@@ -28,7 +28,7 @@ public final class ReverseLookupAustria {
 
 	public final static String VORWAHLEN_HEADER = "Number;City";
 
-	private static HashMap numberMap;
+	private static HashMap<String, String> numberMap;
 
 	/**
 	 * This function performs the reverse lookup
@@ -62,6 +62,8 @@ public final class ReverseLookupAustria {
 				URLConnection con;
 				try {
 					con = url.openConnection();
+					// 5 Sekunden-Timeout für Verbindungsaufbau
+					con.setConnectTimeout(5000);
 
 					String header = ""; //$NON-NLS-1$
 					String charSet = ""; //$NON-NLS-1$
@@ -211,7 +213,7 @@ public final class ReverseLookupAustria {
 	 */
 	public static void loadAreaCodes(){
 		Debug.msg("Loading the austrian number to city list");
-		numberMap = new HashMap(1200);
+		numberMap = new HashMap<String, String>(1200);
 		BufferedReader br = null;
 		FileReader fr = null;
 		try{
@@ -265,11 +267,11 @@ public final class ReverseLookupAustria {
 		String city = "";
 		if(number.startsWith("0") && numberMap != null){
 			if(numberMap.containsKey(number.substring(0, 3)))
-				city = (String) numberMap.get(number.substring(0,3));
+				city = numberMap.get(number.substring(0,3));
 			else if(numberMap.containsKey(number.substring(0,4)))
-				city = (String) numberMap.get(number.substring(0,4));
+				city = numberMap.get(number.substring(0,4));
 			else if(numberMap.containsKey(number.substring(0,5)))
-				city = (String) numberMap.get(number.substring(0,5));
+				city = numberMap.get(number.substring(0,5));
 		}
 
 		return city;

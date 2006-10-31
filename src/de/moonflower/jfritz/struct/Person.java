@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
-import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.Debug;
 
 /**

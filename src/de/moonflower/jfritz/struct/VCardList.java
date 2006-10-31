@@ -23,10 +23,10 @@ import de.moonflower.jfritz.utils.Debug;
 
 public class VCardList {
 
-	Vector list;
+	Vector<Person> list;
 
 	public VCardList() {
-		list = new Vector();
+		list = new Vector<Person>();
 	}
 
 	/**
@@ -55,7 +55,7 @@ public class VCardList {
 	}
 
 	public Person getPerson(int i) {
-		return (Person) list.get(i);
+		return list.get(i);
 	}
 
 	/**
@@ -77,9 +77,9 @@ public class VCardList {
 
 	public String toVCardList() {
 		String str = ""; //$NON-NLS-1$
-		Enumeration en = list.elements();
+		Enumeration<Person> en = list.elements();
 		while (en.hasMoreElements()) {
-			Person p = (Person) en.nextElement();
+			Person p = en.nextElement();
 			str += p.toVCard();
 		}
 		return str;

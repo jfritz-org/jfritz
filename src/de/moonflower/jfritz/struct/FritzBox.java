@@ -196,6 +196,8 @@ public class FritzBox {
 
 		if (url != null) {
 			urlConn = url.openConnection();
+			// 5 Sekunden-Timeout für Verbindungsaufbau
+			urlConn.setConnectTimeout(5000);
 			urlConn.setDoInput(true);
 			urlConn.setDoOutput(true);
 			urlConn.setUseCaches(false);
@@ -383,6 +385,9 @@ public class FritzBox {
 
 		if (url != null) {
 			urlConn = url.openConnection();
+			// 5 Sekunden-Timeout für Verbindungsaufbau
+			urlConn.setConnectTimeout(5000);
+
 			urlConn.setDoInput(true);
 			urlConn.setDoOutput(true);
 			urlConn.setUseCaches(false);

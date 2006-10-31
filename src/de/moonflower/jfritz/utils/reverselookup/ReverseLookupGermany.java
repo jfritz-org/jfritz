@@ -30,7 +30,7 @@ public final class ReverseLookupGermany {
 
 	public final static String FILE_HEADER = "Vorwahl;Ortsnetz";
 
-	private static HashMap numberMap;
+	private static HashMap<String, String> numberMap;
 
 	/**
 	 * This function performs the reverse lookup
@@ -64,6 +64,8 @@ public final class ReverseLookupGermany {
 				URLConnection con;
 				try {
 					con = url.openConnection();
+					// 5 Sekunden-Timeout für Verbindungsaufbau
+					con.setConnectTimeout(5000);
 
 					String header = ""; //$NON-NLS-1$
 					String charSet = ""; //$NON-NLS-1$
@@ -221,7 +223,7 @@ public final class ReverseLookupGermany {
 	 */
 	public static void loadAreaCodes(){
 		Debug.msg("Loading the german number to city list");
-		numberMap = new HashMap(5300);
+		numberMap = new HashMap<String, String>(5300);
 		BufferedReader br = null;
 		FileReader fr = null;
 		try{
@@ -281,11 +283,11 @@ public final class ReverseLookupGermany {
 		int l = number.length();
 		if(number.startsWith("0") && numberMap != null){
 			if(l>=3 && numberMap.containsKey(number.substring(0, 3)))
-				city = (String) numberMap.get(number.substring(0,3));
+				city = numberMap.get(number.substring(0,3));
 			else if(l>=4 && numberMap.containsKey(number.substring(0,4)))
-				city = (String) numberMap.get(number.substring(0,4));
+				city = numberMap.get(number.substring(0,4));
 			else if(l>=5 && numberMap.containsKey(number.substring(0,5)))
-				city = (String) numberMap.get(number.substring(0,5));
+				city = numberMap.get(number.substring(0,5));
 		}
 
 		return city;

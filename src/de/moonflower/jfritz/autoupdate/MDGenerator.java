@@ -1,6 +1,7 @@
 package de.moonflower.jfritz.autoupdate;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.security.MessageDigest;
 
 public class MDGenerator {

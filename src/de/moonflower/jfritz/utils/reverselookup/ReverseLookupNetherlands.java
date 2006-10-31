@@ -30,7 +30,7 @@ public final class ReverseLookupNetherlands {
 
 	public final static String FILE_HEADER = "Number;City";
 
-	private static HashMap numberMap;
+	private static HashMap<String, String> numberMap;
 
 	/**
 	 * This function performs the reverse lookup
@@ -172,7 +172,7 @@ public final class ReverseLookupNetherlands {
 	 */
 	public static void loadAreaCodes(){
 		Debug.msg("Loading the holland number to city list");
-		numberMap = new HashMap(256);
+		numberMap = new HashMap<String,String>(256);
 		try{
 			FileReader fr = new FileReader(JFritzUtils.getFullPath("/number") +"/holland/areacodes_holland.csv");
 			BufferedReader br = new BufferedReader(fr);
@@ -217,11 +217,11 @@ public final class ReverseLookupNetherlands {
 		String city = "";
 		if(number.startsWith("0") && numberMap != null){
 			if(numberMap.containsKey(number.substring(0, 3)))
-				city = (String) numberMap.get(number.substring(0,3));
+				city = numberMap.get(number.substring(0,3));
 			else if(numberMap.containsKey(number.substring(0,4)))
-				city = (String) numberMap.get(number.substring(0,4));
+				city = numberMap.get(number.substring(0,4));
 			else if(numberMap.containsKey(number.substring(0,5)))
-				city = (String) numberMap.get(number.substring(0,5));
+				city = numberMap.get(number.substring(0,5));
 		}
 
 		return city;

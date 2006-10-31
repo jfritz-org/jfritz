@@ -12,13 +12,15 @@ import java.util.Vector;
 
 public class CreateUpdateFile {
 
+	private final static String className = "(CreateUpdateFile) ";
+
 	File targetDirectory;
 
 	String version = "";
 
 	String versionFile = "";
 
-	Vector dirs = new Vector();
+	Vector<Directory> dirs = new Vector<Directory>();
 
 	public void setToDir(String targetDir) {
 		targetDirectory = new File(targetDir);
@@ -60,7 +62,7 @@ public class CreateUpdateFile {
 		try {
 			versionFile.createNewFile();
 		} catch (IOException e1) {
-			System.err.println("Could not create version file: "
+			System.err.println(className + "Could not create version file: "
 					+ versionFile.getAbsolutePath());
 		}
 
@@ -70,11 +72,11 @@ public class CreateUpdateFile {
 			pw.write(version);
 			pw.close();
 		} catch (UnsupportedEncodingException e1) {
-			System.err.println("Could not write file with UTF8 encoding");
+			System.err.println(className + "Could not write file with UTF8 encoding");
 		} catch (FileNotFoundException e1) {
-			System.err.println("Could not find file " + versionFile);
+			System.err.println(className + "Could not find file " + versionFile);
 		} catch (IOException e) {
-			System.err.println("Could not write to file " + versionFile);
+			System.err.println(className + "Could not write to file " + versionFile);
 		}
 	}
 
@@ -85,14 +87,14 @@ public class CreateUpdateFile {
 		try {
 			updateFile.createNewFile();
 		} catch (IOException e1) {
-			System.err.println("Could not create update file: "
+			System.err.println(className + "Could not create update file: "
 					+ updateFile.getAbsolutePath());
 		}
 		try {
 			BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(updateFile), "UTF8"));
-			for (Iterator it = dirs.iterator(); it.hasNext();) {
-				Directory dir = (Directory) it.next();
+			for (Iterator<Directory> it = dirs.iterator(); it.hasNext();) {
+				Directory dir = it.next();
 
 				File[] entries = new File(dir.getDirectory()).listFiles();
 				for (int j = 0; j < entries.length; j++) {
@@ -106,10 +108,10 @@ public class CreateUpdateFile {
 						}
 					} catch (Exception e) {
 						System.err
-								.println("Could not create message digest for file \""
+								.println(className + "Could not create message digest for file \""
 										+ entries[j].getName() + "\"");
 					}
-					System.out.println("File: " + entries[j].getName() + " ("
+					System.out.println(className + "File: " + entries[j].getName() + " ("
 							+ fileDigest + ")");
 					pw.write(entries[j].getName() + ";" + fileDigest + ";"
 							+ entries[j].length());
@@ -119,16 +121,16 @@ public class CreateUpdateFile {
 			}
 			pw.close();
 		} catch (UnsupportedEncodingException e1) {
-			System.err.println("Could not write file with UTF8 encoding");
+			System.err.println(className + "Could not write file with UTF8 encoding");
 		} catch (FileNotFoundException e1) {
-			System.err.println("Could not find file " + updateFile);
+			System.err.println(className + "Could not find file " + updateFile);
 		} catch (IOException e) {
-			System.err.println("Could not write to file " + updateFile);
+			System.err.println(className + "Could not write to file " + updateFile);
 		}
 	}
 
 	public void execute() {
-		System.out.println("Target directory: "
+		System.out.println(className + "Target directory: "
 				+ targetDirectory.getAbsolutePath());
 		setVersion();
 		setUpdateFiles();
