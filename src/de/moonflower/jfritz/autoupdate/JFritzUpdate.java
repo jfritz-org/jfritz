@@ -73,6 +73,7 @@ public class JFritzUpdate {
 						if (downloadFilesThread.wasInterrupted()) {
 							cleanupUpdateDirectory();
 						}
+						update.setProgramVersion(downloadFilesThread.getNewVersion());
 						auGui.dispose();
 					} catch (InterruptedException e) {
 						System.err.println(className

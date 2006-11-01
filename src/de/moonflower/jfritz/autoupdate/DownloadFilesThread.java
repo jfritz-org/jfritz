@@ -431,4 +431,12 @@ public class DownloadFilesThread extends Thread {
 		}
 		downloadFile("", updateFile);
 	}
+
+	/**
+	 * Liefert die neue Versionsnummer zurück
+	 * @return
+	 */
+	public String getNewVersion() {
+		return newVersion;
+	}
 }
