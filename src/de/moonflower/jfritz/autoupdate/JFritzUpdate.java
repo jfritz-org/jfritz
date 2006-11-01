@@ -40,16 +40,17 @@ public class JFritzUpdate {
 		}
 	}
 
-	public void updateJFritz() {
-		Update update = new Update(propertiesDirectory);
-		update.loadSettings();
-
+	/**
+	 * Lädt die aktuelle Version runter, sofern eine vorhanden ist
+	 *
+	 * @param update
+	 */
+	public void downloadNewFiles(Update update) {
 		try {
 			// Überprüfe auf neue Version
 			CheckVersionThread checkVersionThread = new CheckVersionThread(
 					update.getProgramVersion(), updateURL, versionFile);
-			if (update.doUpdateOnStart())
-				checkVersionThread.start();
+			checkVersionThread.start();
 
 			// Warte, bis der Thread beendet ist
 			checkVersionThread.join();
@@ -90,7 +91,13 @@ public class JFritzUpdate {
 			System.err.println(className
 					+ "CheckNewVersion-Thread has been interrupted");
 		}
+	}
 
+	/**
+	 * Führt ein Update der Dateien aus.
+	 *
+	 */
+	public void updateFiles() {
 		ProcessUpdateFolderThread updateFolderThread = new ProcessUpdateFolderThread(
 				updateDirectory, updateFile, installDirectory, deleteListFile,
 				directoriesZipedAsFilesEndWith);
@@ -106,6 +113,24 @@ public class JFritzUpdate {
 		}
 		if (updateFolderThread.wasUpdateSuccessfull())
 			AutoUpdateGUI.showUpdateSuccessfulMessage();
+	}
+
+	/**
+	 * Liefert das Verzeichnis, in dem die Einstellungen für das Update
+	 * gespeichert werden
+	 *
+	 * @return
+	 */
+	public String getPropertiesDirectory() {
+		return propertiesDirectory;
+	}
+
+	private void updateJFritz() {
+		Update update = new Update(propertiesDirectory);
+		update.loadSettings();
+		if (update.getUpdateOnStart())
+			downloadNewFiles(update);
+		updateFiles();
 
 		update.saveSettings();
 		// TODO: Frage nach einem restart
@@ -125,7 +150,7 @@ public class JFritzUpdate {
 	 * Löscht alle Dateien im Update-Verzeichnis ausser der updateFile
 	 *
 	 */
-	public void cleanupUpdateDirectory() {
+	private void cleanupUpdateDirectory() {
 		System.out.println(className + "Cleaning up update directory");
 		File upDir = new File(updateDirectory);
 		UpdateUtils.deleteTreeWithoutFile(upDir, updateFile);
@@ -139,11 +164,18 @@ public class JFritzUpdate {
 		startJFritz(args);
 	}
 
-	public static void startJFritz(String[] args) {
+	/**
+	 * Startet eine Instanz von JFritz aus der Datei jfritz-internals.jar
+	 *
+	 * @param args
+	 *            Die Kommandozeilenparameter
+	 */
+	private static void startJFritz(String[] args) {
 		File jfritzJAR = new File("jfritz-internals.jar");
 
 		if (!jfritzJAR.exists()) {
-			JOptionPane.showMessageDialog(null, UpdateLocale.getMessage("wrongWorkingDirectory"), UpdateLocale
+			JOptionPane.showMessageDialog(null, UpdateLocale
+					.getMessage("wrongWorkingDirectory"), UpdateLocale
 					.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
 			throw new RuntimeException(
 					"Wrong working directory! Could not find jfritz-internals.jar.");
@@ -153,13 +185,14 @@ public class JFritzUpdate {
 		Object[] arguments = new Object[] { args };
 
 		try {
-			final URL jfritzInternalsJARurl = new URL("file", "localhost", jfritzJAR
-					.getAbsolutePath());
+			final URL jfritzInternalsJARurl = new URL("file", "localhost",
+					jfritzJAR.getAbsolutePath());
 			URLClassLoader loader = new URLClassLoader(
 					new URL[] { jfritzInternalsJARurl });
 			final Class jfritzInternalsJAR = loader
 					.loadClass("de.moonflower.jfritz.Main");
-			Method mainMethod = jfritzInternalsJAR.getMethod("main", parameterTypes);
+			Method mainMethod = jfritzInternalsJAR.getMethod("main",
+					parameterTypes);
 			mainMethod.invoke(args, arguments);
 		} catch (MalformedURLException e) {
 			System.err.println(className + "ERROR: malformed URL");
@@ -168,7 +201,8 @@ public class JFritzUpdate {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			System.err.println(className + "ERROR: class not found");
-			JOptionPane.showMessageDialog(null, UpdateLocale.getMessage("wrongWorkingDirectory"), UpdateLocale
+			JOptionPane.showMessageDialog(null, UpdateLocale
+					.getMessage("wrongWorkingDirectory"), UpdateLocale
 					.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		} catch (NoSuchMethodException e) {
@@ -181,7 +215,8 @@ public class JFritzUpdate {
 			System.err.println(className + "ERROR: illegal access exception");
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			System.err.println(className + "ERROR: invocation target exception");
+			System.err
+					.println(className + "ERROR: invocation target exception");
 			e.printStackTrace();
 		}
 	}

@@ -52,7 +52,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.TableColumnModel;
 
-import de.moonflower.jfritz.autoupdate.CheckVersionThread;
+import de.moonflower.jfritz.autoupdate.JFritzUpdate;
+import de.moonflower.jfritz.autoupdate.Update;
 import de.moonflower.jfritz.callerlist.CallerListPanel;
 import de.moonflower.jfritz.callerlist.CallerTable;
 import de.moonflower.jfritz.callmonitor.CallmessageCallMonitor;
@@ -1020,8 +1021,12 @@ ItemListener {
 		} else if (e.getActionCommand().equals("export_csv")) {
 			exportCallerListToCSV();
 		} else if (e.getActionCommand().equals("update")) { //$NON-NLS-1$
-//			CheckVersionThread vct = new CheckVersionThread(true, true);
-//			vct.start();
+			JFritzUpdate jfritzUpdate = new JFritzUpdate(true);
+			Update update = new Update(jfritzUpdate.getPropertiesDirectory());
+			update.loadSettings();
+			update.setProgramVersion(Main.PROGRAM_VERSION);
+			jfritzUpdate.downloadNewFiles(update);
+			update.saveSettings();
 		} else if (e.getActionCommand().equals("export_phonebook")) {
 			exportPhoneBookToCSV();
 		} else if (e.getActionCommand().equals("print_callerlist")) {

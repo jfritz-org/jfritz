@@ -537,6 +537,8 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
+import de.moonflower.jfritz.autoupdate.JFritzUpdate;
+import de.moonflower.jfritz.autoupdate.Update;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.struct.FritzBox;
 import de.moonflower.jfritz.utils.CLIOption;
@@ -594,9 +596,13 @@ public class Main {
 	private static JFritz jfritz;
 
 	private CLIOptions options;
+
 	Boolean isRunning;
+
 	String mutex = "";
+
 	private Thread myThread;
+
 	public Main(String[] args) {
 		System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION //$NON-NLS-1$
 				+ " (c) 2005 by " + PROGRAM_AUTHOR); //$NON-NLS-1$
@@ -604,28 +610,20 @@ public class Main {
 
 		jfritzHomedir = JFritzUtils.getFullPath(".update");
 		jfritzHomedir = jfritzHomedir.substring(0, jfritzHomedir.length() - 7);
-		//testcode----------------
+
+		// testcode----------------
 		/*
-		myThread = new Thread(){public void run(){
-
-			isRunning = new Boolean(true);
-			synchronized (mutex) {
-				while(isRunning.booleanValue()){
-					try {
-						Debug.msg("start waiting");
-						mutex.wait();
-						Debug.msg("end waiting");
-					} catch (InterruptedException e) {
-						//e.printStackTrace();
-					}
-				}
-
-			}
-
-		}};
-		myThread.start();
-		*/
-		//testcode--------------------
+		 * myThread = new Thread(){public void run(){
+		 *
+		 * isRunning = new Boolean(true); synchronized (mutex) {
+		 * while(isRunning.booleanValue()){ try { Debug.msg("start waiting");
+		 * mutex.wait(); Debug.msg("end waiting"); } catch (InterruptedException
+		 * e) { //e.printStackTrace(); } }
+		 *  }
+		 *
+		 * }}; myThread.start();
+		 */
+		// testcode--------------------
 	}
 
 	/**
@@ -650,6 +648,8 @@ public class Main {
 		loadMessages(new Locale(getProperty("locale", "de_DE"))); //$NON-NLS-1$,  //$NON-NLS-2$
 		loadLocaleMeanings(new Locale("int", "INT"));
 
+		saveUpdateProperties();
+
 		jfritz = new JFritz(main);
 
 		main.checkCLIParameters(args);
@@ -658,7 +658,7 @@ public class Main {
 		jfritz.createJFrame(showConfWizard);
 		// TODO sollten wir das programm nicht hier beenden?
 		// while(!shutdown){sleep oder sowas
-		//Debug.msg("ENDEN---main.java---DNEND");
+		// Debug.msg("ENDEN---main.java---DNEND");
 	}
 
 	/**
@@ -1002,15 +1002,12 @@ public class Main {
 
 	public void exit(int i) {
 		/*
-		isRunning = new Boolean(false);
-		synchronized(mutex){
-			mutex.notify();
-		}
-
-		*/
-		//notifyAll();
+		 * isRunning = new Boolean(false); synchronized(mutex){ mutex.notify(); }
+		 *
+		 */
+		// notifyAll();
 		// TODO maybe some cleanup is needed
-		Debug.msg("Main.exit("+i+")");
+		Debug.msg("Main.exit(" + i + ")");
 		System.exit(i);
 	}
 
@@ -1263,8 +1260,24 @@ public class Main {
 	public static String getHomeDirectory() {
 		return jfritzHomedir;
 	}
+
 	public JFritz getJfritz() {
 		return jfritz;
+	}
+
+	/**
+	 * Speichert die Einstellungen für das automatische Update von JFritz
+	 *
+	 */
+	public static void saveUpdateProperties() {
+		JFritzUpdate jfritzUpdate = new JFritzUpdate(false);
+		Update update = new Update(jfritzUpdate.getPropertiesDirectory());
+		update.loadSettings();
+		update.setProgramVersion(PROGRAM_VERSION);
+		update.setLocale(getProperty("locale", "de_DE"));
+		update.setUpdateOnStart(JFritzUtils.parseBoolean(Main.getProperty(
+				"option.checkNewVersionAfterStart", "false")));
+		update.saveSettings();
 	}
 
 }
