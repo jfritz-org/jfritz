@@ -64,6 +64,17 @@
 		<echo message="Building ${app.name}..." />
 	</target>
 
+	<target name="update" description="Calls 'cvs update'-command">
+		<cvs command="update" />
+	</target>
+
+	<target name="clean" description="Cleans build, dist, doc and archive directories">
+		<delete dir="${build}" />
+		<delete dir="${doc}" />
+		<delete dir="${dist}" />
+		<delete dir="${archive}" />
+	</target>
+
 	<target name="compile" depends="init" description="Compile the source tree">
 		<mkdir dir="${build}" />
 		<mkdir dir="${build.classes}" />
@@ -144,120 +155,109 @@
 
 	</target>
 
+	<target name="junit" depends="compile" description="Runs all test cases and generate report">
+		<mkdir dir="${build.unittests}" />
+		<mkdir dir="${build.unittests.reports}" />
+		<mkdir dir="${build.unittests.reports}/html" />
+		<javac debug="${debug}" deprecation="on" srcdir="${unittests}" destdir="${build.unittests}" includes="**/*.java">
+			<classpath refid="test.classpath" />
+		</javac>
+
+		<classpath refid="test.classpath" />
+		<junit fork="yes" printsummary="on" filtertrace="on" haltonfailure="no" showoutput="yes">
+			<classpath refid="test.classpath" />
+			<formatter type="plain" usefile="false" />
+			<formatter type="xml" extension=".xml" usefile="true" />
+			<batchtest todir="${build.unittests.reports}">
+				<fileset dir="${build.unittests}">
+					<include name="**/*Test*.class" />
+					<exclude name="**/AllTests.class" />
+				</fileset>
+			</batchtest>
+		</junit>
+
+		<junitreport todir="${build.unittests.reports}/html">
+			<fileset dir="${build.unittests.reports}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${build.unittests.reports}/html" />
+		</junitreport>
+	</target>
+
+	<target name="javadoc-clean" description="Cleans Javadoc">
+		<delete dir="${doc}" />
+	</target>
+
 	<target name="javadoc" depends="javadoc-clean,init" description="Generate Javadoc">
 		<mkdir dir="${doc}" />
 		<javadoc packagenames="de.moonflower.jfritz.*,com.*,org.*" access="public" source="1.5" splitindex="true" sourcepath="${src}" destdir="${doc}" author="true" version="true" use="true" windowtitle="${app.name} API" verbose="false" bottom="Copyright (c) 2005 Robert Palmer. Enjoy ${app.name}!">
 			<doctitle>
-				<![CDATA[<h1>${app.name}</h1>]]>
-			</doctitle>
-		<classpath refid="build.classpath" />
-	</javadoc>
-</target>
+				<![CDATA[<h1>${app.name}</h1>]]></doctitle>
+			<classpath refid="build.classpath" />
+		</javadoc>
+	</target>
 
-<target name="javadoc-clean" description="Cleans Javadoc">
-	<delete dir="${doc}" />
-</target>
+	<target name="archive-init" description="Initializes archive directory">
+		<mkdir dir="${archive}" />
+	</target>
 
-<target name="javadoc-archive" depends="archive-init, javadoc" description="Geneartes Javadoc archive">
-	<mkdir dir="${javadoc-archive}" />
+	<target name="source-archive" depends="archive-init, build" description="Generates source archive">
+		<mkdir dir="${source-archive}" />
 
-	<tar tarfile="${javadoc-archive}/jfritz-${version}-javadoc.tar" basedir="${doc}" />
-	<gzip src="${javadoc-archive}/jfritz-${version}-javadoc.tar" zipfile="${javadoc-archive}/jfritz-${version}-javadoc.tar.gz" />
-	<delete file="${javadoc-archive}/jfritz-${version}-javadoc.tar" />
-</target>
-
-<target name="archive-init" description="Initializes archive directory">
-	<mkdir dir="${archive}" />
-</target>
-
-<target name="clean" description="Cleans build, dist, doc and archive directories">
-	<delete dir="${build}" />
-	<delete dir="${doc}" />
-	<delete dir="${dist}" />
-	<delete dir="${archive}" />
-</target>
-
-<target name="update" description="Calls 'cvs update'-command">
-	<cvs command="update" />
-</target>
-
-<target name="copyToFritzDir" depends="build" description="Copy files to JFritz installation directory">
-	<mkdir dir="${jfritzdir}" />
-	<!-- copy all jar files -->
-	<copy todir="${jfritzdir}">
-		<fileset dir="${build}">
-			<include name="**/*.jar" />
-		</fileset>
-	</copy>
-	<copy file="dist/jacob.dll" todir="${jfritzdir}" />
-	<mkdir dir="${jfritzdir}/lang" />
-	<copy todir="${jfritzdir}/lang">
-		<fileset dir="lang">
-		</fileset>
-	</copy>
-	<mkdir dir="${jfritzdir}/lib" />
-	<copy todir="${jfritzdir}/lib">
-		<fileset dir="lib">
-		</fileset>
-	</copy>
-</target>
-
-<target name="source-archive" depends="archive-init, build" description="Generates source archive">
-	<mkdir dir="${source-archive}" />
-
-	<copy todir="${source-archive}/tmp/${src}">
-		<fileset dir="${src}">
-			<include name="**/*.java" />
-		</fileset>
-	</copy>
-	<copy todir="${source-archive}/tmp/${lib}">
-		<fileset dir="${lib}">
-			<include name="**/*.jar" />
-		</fileset>
-	</copy>
-	<copy todir="${source-archive}/tmp/${lang}">
-		<fileset dir="${lang}" />
-	</copy>
-	<copy file="${lib}/jacob.dll" todir="${source-archive}/tmp" />
-	<copy file="build.xml" todir="${source-archive}/tmp" />
-	<zip zipfile="${source-archive}/jfritz-${version}-source.zip" basedir="${source-archive}/tmp" />
-	<delete dir="${source-archive}/tmp" />
-</target>
-
-<target name="archive" depends="archive-init, build, source-archive, javadoc-archive" description="Generates javadoc-, source- and binary-archives">
-	<copy todir="${binaries-archive}/tmp">
-		<fileset dir="${dist}" />
-	</copy>
-	<zip zipfile="${binaries-archive}/jfritz-${version}.zip" basedir="${binaries-archive}/tmp" />
-	<delete dir="${binaries-archive}/tmp" />
-</target>
-
-<target name="junit" depends="compile" description="Runs all test cases and generate report">
-	<mkdir dir="${build.unittests}" />
-	<mkdir dir="${build.unittests.reports}" />
-	<mkdir dir="${build.unittests.reports}/html" />
-	<javac debug="${debug}" deprecation="on" srcdir="${unittests}" destdir="${build.unittests}" includes="**/*.java">
-		<classpath refid="test.classpath" />
-	</javac>
-
-	<classpath refid="test.classpath" />
-	<junit fork="yes" printsummary="on" filtertrace="on" haltonfailure="no" showoutput="yes">
-		<classpath refid="test.classpath" />
-		<formatter type="plain" usefile="false" />
-		<formatter type="xml" extension=".xml" usefile="true" />
-		<batchtest todir="${build.unittests.reports}">
-			<fileset dir="${build.unittests}">
-				<include name="**/*Test*.class" />
-				<exclude name="**/AllTests.class" />
+		<copy todir="${source-archive}/tmp/${src}">
+			<fileset dir="${src}">
+				<include name="**/*.java" />
 			</fileset>
-		</batchtest>
-	</junit>
+		</copy>
+		<copy todir="${source-archive}/tmp/${lib}">
+			<fileset dir="${lib}">
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>
+		<copy todir="${source-archive}/tmp/${lang}">
+			<fileset dir="${lang}" />
+		</copy>
+		<copy file="${lib}/jacob.dll" todir="${source-archive}/tmp" />
+		<copy file="build.xml" todir="${source-archive}/tmp" />
+		<zip zipfile="${source-archive}/jfritz-${version}-source.zip" basedir="${source-archive}/tmp" />
+		<delete dir="${source-archive}/tmp" />
+	</target>
 
-	<junitreport todir="${build.unittests.reports}/html">
-		<fileset dir="${build.unittests.reports}">
-			<include name="TEST-*.xml" />
-		</fileset>
-		<report format="frames" todir="${build.unittests.reports}/html" />
-	</junitreport>
-</target>
+	<target name="javadoc-archive" depends="archive-init, javadoc" description="Geneartes Javadoc archive">
+		<mkdir dir="${javadoc-archive}" />
+
+		<tar tarfile="${javadoc-archive}/jfritz-${version}-javadoc.tar" basedir="${doc}" />
+		<gzip src="${javadoc-archive}/jfritz-${version}-javadoc.tar" zipfile="${javadoc-archive}/jfritz-${version}-javadoc.tar.gz" />
+		<delete file="${javadoc-archive}/jfritz-${version}-javadoc.tar" />
+	</target>
+
+	<target name="archive" depends="archive-init, build, source-archive, javadoc-archive" description="Generates javadoc-, source- and binary-archives">
+		<copy todir="${binaries-archive}/tmp">
+			<fileset dir="${dist}" />
+		</copy>
+		<zip zipfile="${binaries-archive}/jfritz-${version}.zip" basedir="${binaries-archive}/tmp" />
+		<delete dir="${binaries-archive}/tmp" />
+	</target>
+
+	<target name="copyToFritzDir" depends="build" description="Copy files to JFritz installation directory">
+		<mkdir dir="${jfritzdir}" />
+		<!-- copy all jar files -->
+		<copy todir="${jfritzdir}">
+			<fileset dir="${build}">
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>
+		<copy file="dist/jacob.dll" todir="${jfritzdir}" />
+		<mkdir dir="${jfritzdir}/lang" />
+		<copy todir="${jfritzdir}/lang">
+			<fileset dir="lang">
+			</fileset>
+		</copy>
+		<mkdir dir="${jfritzdir}/lib" />
+		<copy todir="${jfritzdir}/lib">
+			<fileset dir="lib">
+			</fileset>
+		</copy>
+	</target>
+
 </project>
