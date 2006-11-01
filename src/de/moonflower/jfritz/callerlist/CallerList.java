@@ -1701,12 +1701,12 @@ public class CallerList extends AbstractTableModel {
 		String provider = "";
 		if (call.getPhoneNumber() != null) {
 			provider = call.getPhoneNumber().getCallByCall();
-			if (provider.equals("")) { //$NON-NLS-1$
-				provider = "NONE"; //$NON-NLS-1$
+//			Debug.msg("call.getPhoneNumber().getCallByCall(): "+ call.getPhoneNumber().getCallByCall());
+			if (!provider.equals("")) { //$NON-NLS-1$
+				if (!callByCallProviders.contains(provider)) {
+					callByCallProviders.add(provider);
+				}
 			}
-		}
-		if (!callByCallProviders.contains(provider)) {
-			callByCallProviders.add(provider);
 		}
 	}
 
@@ -1716,7 +1716,7 @@ public class CallerList extends AbstractTableModel {
 	 */
 	public Vector getCbCProviders() {
 		Vector callByCallProviders = new Vector();
-		for (int i = 0; i < getFilteredCallVector().size(); i++) {
+		for (int i = 0; i < getUnfilteredCallVector().size(); i++) {
 			Call call = (Call) getUnfilteredCallVector().get(i);
 			addIfCbCProvider(callByCallProviders, call);
 		}
@@ -1763,15 +1763,13 @@ public class CallerList extends AbstractTableModel {
  */
 	private void addIfSipProvider(Vector sipProviders, Call call) {
 		String route = call.getRoute();
-		//FIXME
-		// if (call.getRouteType() == Call.ROUTE_SIP){
-		if (route.equals("")) { //$NON-NLS-1$
-			route = "FIXEDLINE"; //$NON-NLS-1$
-		} else { // test
-			if (!sipProviders.contains(route)) {
-				sipProviders.add(route);
+		//if (call.getRouteType() == Call.ROUTE_SIP){
+		if(route.contains("@")){ //FIXME workaround
+			if (!route.equals("")) { //$NON-NLS-1$
+				if (!sipProviders.contains(route)) {
+					sipProviders.add(route);
+				}
 			}
-			// }
 		}
 	}
 
@@ -1781,7 +1779,7 @@ public class CallerList extends AbstractTableModel {
 	 */
 	public Vector getSipProviders() {
 		Vector sipProviders = new Vector();
-		for (int i = 0; i < getFilteredCallVector().size(); i++) {
+		for (int i = 0; i < getUnfilteredCallVector().size(); i++) {
 			Call call = (Call) this.getUnfilteredCallVector().get(i);
 			// Debug.msg("route:"+route);
 			// Debug.msg("callrouteType:"+call.getRouteType());

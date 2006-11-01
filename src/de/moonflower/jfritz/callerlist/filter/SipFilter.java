@@ -7,6 +7,7 @@ package de.moonflower.jfritz.callerlist.filter;
 import java.util.Vector;
 
 import de.moonflower.jfritz.struct.Call;
+import de.moonflower.jfritz.utils.Debug;
 
 public class SipFilter extends CallFilter {
 
@@ -21,8 +22,9 @@ public class SipFilter extends CallFilter {
 		if (sipProviders.size() == 0)
 			return true;
 			String route = currentCall.getRoute();
+//			Debug.msg("route: "+route);
 			if (route.equals("")) { //$NON-NLS-1$
-				route = "FIXEDLINE"; //$NON-NLS-1$
+				return false;
 			}
 			if (sipProviders.contains(route))
 				return true;

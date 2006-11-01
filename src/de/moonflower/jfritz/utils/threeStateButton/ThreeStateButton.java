@@ -20,17 +20,16 @@ import de.moonflower.jfritz.utils.Debug;
  * @author marc
  *
  */
-public class ThreeStateButton3 extends JButton implements ImageObserver {
+public class ThreeStateButton extends JButton implements ImageObserver {
 	private int state;
 
 	public static final int NOTHING = 0;
-
-	public static final int SELECTED = 2;
-
 	public static final int INVERTED = 1;
+	public static final int SELECTED = 2;
 
 	private Icon[] icons = new Icon[3];
 
+	private String[] toolTipText = new String[3];
 	/**
 	 * Creates a Button with 3 images for the 3 states
 	 *
@@ -39,7 +38,7 @@ public class ThreeStateButton3 extends JButton implements ImageObserver {
 	 *            created from this image for the NOTHING state and a crossed
 	 *            for the SELECTED_NOT state
 	 */
-	public ThreeStateButton3(ImageIcon image) {
+	public ThreeStateButton(ImageIcon image) {
 		super(image);
 		state = NOTHING;
 		icons[NOTHING] = image;
@@ -50,7 +49,36 @@ public class ThreeStateButton3 extends JButton implements ImageObserver {
 
 		//addActionListener(this);
 	}
+	/**
+	 *
+	 * @param state should be one of <code>NOTHING, SELECTED, INVERTED </code>
+	 * @param text the ToolTipText wich will appear in this state
+	 */
+	public void setToolTipText(int state, String text){
+		toolTipText[state] = text;
+		if(this.state == state){
+			setToolTipText(text);
+		}
+	}
 
+/**
+ *
+ * @param nothing ToolTipText for the NOTHING state
+ * @param selected ToolTipText for the SELECTED state
+ * @param inverted ToolTipText for the INVERTED state
+ */
+	public void setToolTipText(String nothing, String selected, String inverted){
+		setToolTipText(NOTHING, nothing);
+		setToolTipText(SELECTED, selected);
+		setToolTipText(INVERTED, inverted);
+	}
+
+	/**
+	 * @deprecated
+	 */
+	public void setToolTipText(String s){
+		super.setToolTipText(s);
+	}
 	/**
 	 *@deprecated use setState(int state) with SELECTED
 	 */
@@ -64,7 +92,7 @@ public class ThreeStateButton3 extends JButton implements ImageObserver {
 	 * @param cross
 	 * @param grey
 	 */
-	public ThreeStateButton3(ImageIcon image, ImageIcon cross, ImageIcon grey) {
+	public ThreeStateButton(ImageIcon image, ImageIcon cross, ImageIcon grey) {
 		this(image);
 		icons[INVERTED] = cross;
 		icons[SELECTED] = grey;
@@ -118,7 +146,7 @@ public class ThreeStateButton3 extends JButton implements ImageObserver {
 		Graphics g = image.getGraphics();
 		g.drawImage(i1, 0, 0, null);
 
-		java.net.URL imageURL = ThreeStateButton3.class
+		java.net.URL imageURL = ThreeStateButton.class
 		.getResource("images/stern3.gif");
 		Image star;
 		if (imageURL != null) {
@@ -195,6 +223,7 @@ public class ThreeStateButton3 extends JButton implements ImageObserver {
 	public void setState(int state) {
 		this.state = state;
 		setIcon(icons[state]);
+		setToolTipText(toolTipText[state]);
 	}
 
 	// we need to be faster than all other Listeners

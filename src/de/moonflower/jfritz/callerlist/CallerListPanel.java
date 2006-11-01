@@ -62,7 +62,7 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.JFritzClipboard;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
-import de.moonflower.jfritz.utils.threeStateButton.ThreeStateButton3;
+import de.moonflower.jfritz.utils.threeStateButton.ThreeStateButton;
 
 /**
  * @ex-author Arno Willig
@@ -89,7 +89,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		public void mouseClicked(MouseEvent e) {
 			// FIXME Listener in den table einbauen
 			if ((e.getClickCount() > 1)
-					&& (e.getComponent().getClass() != ThreeStateButton3.class)) {
+					&& (e.getComponent().getClass() != ThreeStateButton.class)) {
 				JFritz.getJframe().activatePhoneBook();
 			}
 		}
@@ -108,8 +108,10 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	private static final String DELETE_ENTRY = "delete_entry";
 
 	private static final String FILTER_CALLBYCALL = "filter_callbycall";
-
-	private static final String FILTER_CALLIN = "filter_callin";
+	private static final String FILTER_CALLIN ="filter_callin";
+	private static final String FILTER_CALLIN_NOTHING = "filter_callin_show_all";
+	private static final String FILTER_CALLIN_SELECTED = "filter_callin_show_selected";
+	private static final String FILTER_CALLIN_INVERTED = "filter_callin_show_inverted";
 
 	public static final String FILTER_CALLINFAILED = "filter_callinfailed";
 
@@ -183,7 +185,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	private static final String FILTER_DATE_SPECIAL = "date_filter_special";
 
-	private ThreeStateButton3 dateFilterButton, callByCallFilterButton,
+	private ThreeStateButton dateFilterButton, callByCallFilterButton,
 			callInFilterButton, callOutFilterButton, callInFailedFilterButton,
 			anonymFilterButton, fixedFilterButton, handyFilterButton,
 			sipFilterButton, commentFilterButton, searchFilterButton;
@@ -314,21 +316,21 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 * disable all filters and hide the search and date stuff
 	 */
 	private void clearAllFilter() {
-		callInFilterButton.setState(ThreeStateButton3.NOTHING);
-		callOutFilterButton.setState(ThreeStateButton3.NOTHING);
-		callInFailedFilterButton.setState(ThreeStateButton3.NOTHING);
-		anonymFilterButton.setState(ThreeStateButton3.NOTHING);
-		fixedFilterButton.setState(ThreeStateButton3.NOTHING);
-		handyFilterButton.setState(ThreeStateButton3.NOTHING);
-		dateFilterButton.setState(ThreeStateButton3.NOTHING);
-		searchFilterButton.setState(ThreeStateButton3.NOTHING);
+		callInFilterButton.setState(ThreeStateButton.NOTHING);
+		callOutFilterButton.setState(ThreeStateButton.NOTHING);
+		callInFailedFilterButton.setState(ThreeStateButton.NOTHING);
+		anonymFilterButton.setState(ThreeStateButton.NOTHING);
+		fixedFilterButton.setState(ThreeStateButton.NOTHING);
+		handyFilterButton.setState(ThreeStateButton.NOTHING);
+		dateFilterButton.setState(ThreeStateButton.NOTHING);
+		searchFilterButton.setState(ThreeStateButton.NOTHING);
 		searchFilterTextField.setVisible(false);
 		startDateChooser.setVisible(false);
 		endDateChooser.setVisible(false);
 		searchLabel.setVisible(false);
-		sipFilterButton.setState(ThreeStateButton3.NOTHING);
-		callByCallFilterButton.setState(ThreeStateButton3.NOTHING);
-		commentFilterButton.setState(ThreeStateButton3.NOTHING);
+		sipFilterButton.setState(ThreeStateButton.NOTHING);
+		callByCallFilterButton.setState(ThreeStateButton.NOTHING);
+		commentFilterButton.setState(ThreeStateButton.NOTHING);
 		dateSpecialSaveString = " ";
 		syncAllFilters();
 		callerList.update();
@@ -439,12 +441,12 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 		upperToolBar.addSeparator();
 
-		callInFilterButton = new ThreeStateButton3(getImageIcon("callin.png"));
-		callInFilterButton.setActionCommand(FILTER_CALLIN);
+		callInFilterButton = new ThreeStateButton(getImageIcon("callin.png"));
+		callInFilterButton.setActionCommand(FILTER_CALLIN_NOTHING);
 		callInFilterButton.addActionListener(this);
-		callInFilterButton.setToolTipText(Main.getMessage(FILTER_CALLIN));
+		callInFilterButton.setToolTipText(Main.getMessage(FILTER_CALLIN_NOTHING));
 
-		callInFailedFilterButton = new ThreeStateButton3(
+		callInFailedFilterButton = new ThreeStateButton(
 				getImageIcon("callinfailed.png")); //$NON-NLS-1$
 		callInFailedFilterButton.setActionCommand(FILTER_CALLINFAILED);
 		callInFailedFilterButton.addActionListener(this);
@@ -467,27 +469,27 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		MouseAdapter popupListener = new PopupListener(missedPopupMenu);
 		callInFailedFilterButton.addMouseListener(popupListener);
 
-		callOutFilterButton = new ThreeStateButton3(getImageIcon("callout.png"));
+		callOutFilterButton = new ThreeStateButton(getImageIcon("callout.png"));
 		callOutFilterButton.setActionCommand(FILTER_CALLOUT);
 		callOutFilterButton.addActionListener(this);
 		callOutFilterButton.setToolTipText(Main.getMessage(FILTER_CALLOUT));
 
-		anonymFilterButton = new ThreeStateButton3(getImageIcon("mask.gif")); //$NON-NLS-1$
+		anonymFilterButton = new ThreeStateButton(getImageIcon("mask.gif")); //$NON-NLS-1$
 		anonymFilterButton.setActionCommand(FILTER_ANONYM);
 		anonymFilterButton.addActionListener(this);
 		anonymFilterButton.setToolTipText(Main.getMessage(FILTER_ANONYM));
 
-		fixedFilterButton = new ThreeStateButton3(getImageIcon("phone.png")); //$NON-NLS-1$
+		fixedFilterButton = new ThreeStateButton(getImageIcon("phone.png")); //$NON-NLS-1$
 		fixedFilterButton.setActionCommand(FILTER_FIXED);
 		fixedFilterButton.addActionListener(this);
 		fixedFilterButton.setToolTipText(Main.getMessage(FILTER_FIXED));
 
-		handyFilterButton = new ThreeStateButton3(getImageIcon("handy.png")); //$NON-NLS-1$
+		handyFilterButton = new ThreeStateButton(getImageIcon("handy.png")); //$NON-NLS-1$
 		handyFilterButton.setActionCommand(FILTER_HANDY);
 		handyFilterButton.addActionListener(this);
 		handyFilterButton.setToolTipText(Main.getMessage(FILTER_HANDY));
 
-		dateFilterButton = new ThreeStateButton3(getImageIcon("calendar.png")); //$NON-NLS-1$
+		dateFilterButton = new ThreeStateButton(getImageIcon("calendar.png")); //$NON-NLS-1$
 
 		dateFilterButton.setActionCommand(FILTER_DATE);
 		dateFilterButton.addActionListener(this);
@@ -531,25 +533,25 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		endDateChooser.setVisible(false);
 		endDateChooser.addPropertyChangeListener("date", this);
 
-		sipFilterButton = new ThreeStateButton3(getImageIcon("world.png")); //$NON-NLS-1$
+		sipFilterButton = new ThreeStateButton(getImageIcon("world.png")); //$NON-NLS-1$
 		sipFilterButton.setActionCommand(FILTER_SIP);
 		sipFilterButton.addActionListener(this);
 		sipFilterButton.setToolTipText(Main.getMessage(FILTER_SIP));
 
-		callByCallFilterButton = new ThreeStateButton3(
+		callByCallFilterButton = new ThreeStateButton(
 				getImageIcon("callbycall.png")); //$NON-NLS-1$
 		callByCallFilterButton.setActionCommand(FILTER_CALLBYCALL);
 		callByCallFilterButton.addActionListener(this);
 		callByCallFilterButton.setToolTipText(Main
 				.getMessage(FILTER_CALLBYCALL));
 
-		commentFilterButton = new ThreeStateButton3(
+		commentFilterButton = new ThreeStateButton(
 				getImageIcon("commentFilter.png"));
 		commentFilterButton.setActionCommand(FILTER_COMMENT);
 		commentFilterButton.addActionListener(this);
 		commentFilterButton.setToolTipText(Main.getMessage(FILTER_COMMENT));
 
-		searchFilterButton = new ThreeStateButton3(
+		searchFilterButton = new ThreeStateButton(
 				getImageIcon("searchfilter.png"));
 		searchFilterButton.setActionCommand(FILTER_SEARCH);
 		searchFilterButton.addActionListener(this);
@@ -707,7 +709,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 				ce.cancelCellEditing();
 			}
 		}
-		if (command.equals(FILTER_CALLIN)) {
+		if (command.equals(FILTER_CALLIN_NOTHING)) {
 			syncFilterWithButton(filter[callIn], callInFilterButton);
 			return;
 		}
@@ -737,7 +739,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		}
 
 		if (command.equals(FILTER_SEARCH)) {
-			if (searchFilterButton.getState() == ThreeStateButton3.NOTHING) {
+			if (searchFilterButton.getState() == ThreeStateButton.NOTHING) {
 				searchFilterTextField.setVisible(false);
 				searchLabel.setVisible(false);
 				filter[search].setEnabled(false);
@@ -748,7 +750,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 						.setSearchString(searchFilterTextField.getText());
 				// do nothing
 				// if(searchFilterButton.getState()==ThreeStateButton.SELECTED)
-				if (searchFilterButton.getState() == ThreeStateButton3.INVERTED) {
+				if (searchFilterButton.getState() == ThreeStateButton.INVERTED) {
 					filter[search].setInvert(true);
 				}
 			}
@@ -758,7 +760,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 		if (command.equals(FILTER_DATE)) {
 			syncFilterWithButton(filter[date], dateFilterButton);
-			if (dateFilterButton.getState() == ThreeStateButton3.NOTHING) {
+			if (dateFilterButton.getState() == ThreeStateButton.NOTHING) {
 				startDateChooser.setVisible(false);
 				endDateChooser.setVisible(false);
 			} else { // selected or inverted check if some rows are selected
@@ -800,7 +802,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 						.getDate());
 				((DateFilter) filter[date])
 						.setEndDate(endDateChooser.getDate());
-				if (dateFilterButton.getState() == ThreeStateButton3.INVERTED) {
+				if (dateFilterButton.getState() == ThreeStateButton.INVERTED) {
 					filter[date].setInvert(true);
 				}
 				startDateChooser.setVisible(true);
@@ -837,15 +839,15 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		}
 		if (command.equals("filter_callinfailed_allWithoutComment")) { //$NON-NLS-1$
 			clearAllFilter();
-			callInFailedFilterButton.setState(ThreeStateButton3.SELECTED);
-			commentFilterButton.setState(ThreeStateButton3.INVERTED);
+			callInFailedFilterButton.setState(ThreeStateButton.SELECTED);
+			commentFilterButton.setState(ThreeStateButton.INVERTED);
 			syncAllFilters();
 			return;
 		}
 		if (command.equals("filter_callinfailed_allWithoutCommentLastWeek")) { //$NON-NLS-1$
 			clearAllFilter();
-			callInFailedFilterButton.setState(ThreeStateButton3.SELECTED);
-			commentFilterButton.setState(ThreeStateButton3.INVERTED);
+			callInFailedFilterButton.setState(ThreeStateButton.SELECTED);
+			commentFilterButton.setState(ThreeStateButton.INVERTED);
 			// dateFilter stuff for last week
 			Calendar cal = Calendar.getInstance();
 			Date start = cal.getTime();
@@ -935,7 +937,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 * visible
 	 */
 	private void setLastMonthFilter() {
-		dateFilterButton.setState(ThreeStateButton3.SELECTED);
+		dateFilterButton.setState(ThreeStateButton.SELECTED);
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.MONTH, cal.get(Calendar.MONTH) - 1); // last
 		cal.set(Calendar.DAY_OF_MONTH, 1);
@@ -962,7 +964,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 */
 
 	private void setThisMonthFilter() {
-		dateFilterButton.setState(ThreeStateButton3.SELECTED);
+		dateFilterButton.setState(ThreeStateButton.SELECTED);
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 		Date start = cal.getTime();
@@ -987,7 +989,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 * visible
 	 */
 	private void setLastDayFilter() {
-		dateFilterButton.setState(ThreeStateButton3.SELECTED);
+		dateFilterButton.setState(ThreeStateButton.SELECTED);
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - 1);
 		Date end = cal.getTime();
@@ -1010,7 +1012,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 * visible
 	 */
 	private void setThisWeekFilter() {
-		dateFilterButton.setState(ThreeStateButton3.SELECTED);
+		dateFilterButton.setState(ThreeStateButton.SELECTED);
 		Calendar cal = Calendar.getInstance();
 		int daysPastMonday = (Calendar.DAY_OF_WEEK + (7 - Calendar.MONDAY)) % 7; //
 		cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH)
@@ -1036,7 +1038,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 * visible
 	 */
 	private void setLastWeekFilter() {
-		dateFilterButton.setState(ThreeStateButton3.SELECTED);
+		dateFilterButton.setState(ThreeStateButton.SELECTED);
 		Calendar cal = Calendar.getInstance();
 		int daysPastMonday = (Calendar.DAY_OF_WEEK + (7 - Calendar.MONDAY)) % 7; //
 		cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH)
@@ -1062,7 +1064,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 * visible
 	 */
 	private void setThisDayFilter() {
-		dateFilterButton.setState(ThreeStateButton3.SELECTED);
+		dateFilterButton.setState(ThreeStateButton.SELECTED);
 		Date start = Calendar.getInstance().getTime();
 		Date end = Calendar.getInstance().getTime();
 		JFritzUtils.setStartOfDay(start);
@@ -1132,14 +1134,14 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		syncFilterWithButton(filter[callByCall], callByCallFilterButton);
 		syncFilterWithButton(filter[search], searchFilterButton);
 
-		if (searchFilterButton.getState() == ThreeStateButton3.NOTHING) {
+		if (searchFilterButton.getState() == ThreeStateButton.NOTHING) {
 			searchFilterTextField.setVisible(false);
 			searchLabel.setVisible(false);
 		} else {
 			searchFilterTextField.setVisible(true);
 			searchLabel.setVisible(true);
 		}
-		if (dateFilterButton.getState() == ThreeStateButton3.NOTHING) {
+		if (dateFilterButton.getState() == ThreeStateButton.NOTHING) {
 			startDateChooser.setVisible(false);
 			endDateChooser.setVisible(false);
 		} else {
@@ -1188,16 +1190,16 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 *            the button his status will be read
 	 */
 	private void syncFilterWithButton(CallFilter filter,
-			ThreeStateButton3 button) {
-		if (button.getState() == ThreeStateButton3.SELECTED) {
+			ThreeStateButton button) {
+		if (button.getState() == ThreeStateButton.SELECTED) {
 			filter.setEnabled(true);
 			filter.setInvert(false);
 		}
-		if (button.getState() == ThreeStateButton3.INVERTED) {
+		if (button.getState() == ThreeStateButton.INVERTED) {
 			filter.setEnabled(true);
 			filter.setInvert(true);
 		}
-		if (button.getState() == ThreeStateButton3.NOTHING) {
+		if (button.getState() == ThreeStateButton.NOTHING) {
 			filter.setEnabled(false);
 		}
 	}
@@ -1226,7 +1228,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		Main.setProperty(FILTER_ANONYM, "" + anonymFilterButton.getState());
 		Main.setProperty(FILTER_FIXED, "" + fixedFilterButton.getState());
 		Main.setProperty(FILTER_HANDY, "" + handyFilterButton.getState());
-		Main.setProperty(FILTER_CALLIN, "" + callInFilterButton.getState());
+		Main.setProperty(FILTER_CALLIN_NOTHING, "" + callInFilterButton.getState());
 		Main.setProperty(FILTER_CALLINFAILED, ""
 				+ callInFailedFilterButton.getState());
 	}
@@ -1253,7 +1255,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		fixedFilterButton.setState(state);
 		state = JFritzUtils.parseInt(Main.getProperty(FILTER_HANDY, "0"));
 		handyFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getProperty(FILTER_CALLIN, "0"));
+		state = JFritzUtils.parseInt(Main.getProperty(FILTER_CALLIN_NOTHING, "0"));
 		callInFilterButton.setState(state);
 		state = JFritzUtils
 				.parseInt(Main.getProperty(FILTER_CALLINFAILED, "0"));

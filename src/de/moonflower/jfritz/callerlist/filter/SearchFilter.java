@@ -3,7 +3,6 @@ package de.moonflower.jfritz.callerlist.filter;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
-import de.moonflower.jfritz.utils.Debug;
 
 public class SearchFilter extends CallFilter {
 	// ist schneller als lokale variablen

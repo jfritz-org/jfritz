@@ -7,6 +7,7 @@ package de.moonflower.jfritz.callerlist.filter;
 import java.util.Vector;
 
 import de.moonflower.jfritz.struct.Call;
+import de.moonflower.jfritz.utils.Debug;
 
 public class CallByCallFilter extends CallFilter {
 
@@ -20,15 +21,12 @@ public class CallByCallFilter extends CallFilter {
         if (currentCall.getPhoneNumber() != null) {
             String currentProvider = currentCall.getPhoneNumber()
                     .getCallByCall();
+//            Debug.msg("currentProvider: "+currentProvider);
             if (currentProvider.equals("")) { //$NON-NLS-1$
-                currentProvider = "NONE"; //$NON-NLS-1$
+                return false;
             }
             if (filteredCallByCallProviders
                     .contains(currentProvider)) {
-                return true;
-            }
-        } else { // Hide calls without number
-            if (filteredCallByCallProviders.contains("NONE")) { //$NON-NLS-1$
                 return true;
             }
         }
