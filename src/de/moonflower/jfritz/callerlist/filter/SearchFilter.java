@@ -3,14 +3,17 @@ package de.moonflower.jfritz.callerlist.filter;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.utils.Debug;
 
 public class SearchFilter extends CallFilter {
 	// ist schneller als lokale variablen
-	String parts[];
-	PhoneNumber phoneNumber;
-	Person person;
-	String comment;
-	String areaNumber;
+	private String parts[];
+
+	private PhoneNumber phoneNumber;	//only for speedUp
+	private Person person;				//only for speedUp
+	private String comment;				//only for speedUp
+	private String areaNumber;			//only for speedUp
+	private String part;				//only for speedUp
 
 	public SearchFilter(String s) {
 		setSearchString(s);
@@ -20,34 +23,35 @@ public class SearchFilter extends CallFilter {
 
 	public void setSearchString(String s){
 		parts = s.toLowerCase().split(" "); // TODO change to
+		Debug.msg("setting searchFilter to "+s);
 		// toLowercase(locale)
 	}
 
 	public boolean passInternFilter(Call currentCall) {
 		for (int i = 0; i < parts.length; i++) {
-			String part = parts[i];
+			part = parts[i];
 			phoneNumber = currentCall.getPhoneNumber();
 			if (phoneNumber != null
-					&& phoneNumber.getIntNumber().indexOf(part)!=-1)
+					&& phoneNumber.getIntNumber().contains(part))
 				return true;
 
 			if (phoneNumber != null
-					&& phoneNumber.getCallByCall().indexOf(part)!=-1)
+					&& phoneNumber.getCallByCall().contains(part))
 				return true;
 
 			person = currentCall.getPerson();
 			if (person != null
-					&& person.getFullname().toLowerCase().indexOf(part)!=-1)
+					&& person.getFullname().toLowerCase().contains(part))
 				return true;
 
 			comment = currentCall.getComment();
-			if (comment != null && comment.toLowerCase().indexOf(part)!=-1)
+			if (comment != null && comment.toLowerCase().contains(part))
 				return true;
 
 			if (phoneNumber != null) {
 				areaNumber = phoneNumber.getAreaNumber();
 
-				if (areaNumber != null && areaNumber.indexOf(part)!=-1)
+				if (areaNumber != null && areaNumber.contains(part))
 					return true;
 			}
 		}

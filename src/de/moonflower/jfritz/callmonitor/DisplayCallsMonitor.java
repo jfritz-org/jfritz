@@ -19,7 +19,7 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 
-public class DisplayCallsMonitor extends CallMonitorListenerAdaptor {
+public class DisplayCallsMonitor extends CallMonitorAdaptor {
 
     public void pendingCallOut(Call call) {
         displayCallOutMsg(call.getPhoneNumber().getAreaNumber(), call.getRoute());

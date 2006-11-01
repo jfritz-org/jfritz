@@ -27,6 +27,7 @@ import java.util.Vector;
 import javax.swing.CellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -201,7 +202,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	private WindowAdapter wl;
 
-	private JFritzWindow parentFrame;
+	private JFrame parentFrame;
 
 	/**
 	 * A callerListPanel is a view for a callerlist, it has its own
@@ -217,7 +218,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 *            bar
 	 */
 
-	public CallerListPanel(CallerList callerList, JFritzWindow parent) {
+	public CallerListPanel(CallerList callerList, JFrame parent) {
 		super();
 		parentFrame = parent;
 		this.callerList = callerList;
@@ -235,9 +236,6 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		parent.addWindowListener(wl);
 	}
 
-	public void dispose() {
-		Debug.msg("dispose");
-	}
 
 	/**
 	 * creates all filters and stores them in the array
@@ -311,16 +309,6 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		return provider;
 	}
 
-	/**
-	 * some buttons are clicked.
-	 *
-	 * @see ActionListener
-	 */
-	public void actionPerformed(ActionEvent e) {
-		handleAction(e.getActionCommand());
-		callerList.update();
-		parentFrame.setStatus();
-	}
 
 	/**
 	 * disable all filters and hide the search and date stuff
@@ -344,7 +332,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		dateSpecialSaveString = " ";
 		syncAllFilters();
 		callerList.update();
-		parentFrame.setStatus();
+		((JFritzWindow) parentFrame).setStatus();
 	}
 
 	/**
@@ -692,6 +680,16 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		return Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/" + filename)); //$NON-NLS-1$
+	}
+	/**
+	 * some buttons are clicked.
+	 *
+	 * @see ActionListener
+	 */
+	public void actionPerformed(ActionEvent e) {
+		handleAction(e.getActionCommand());
+		callerList.update();
+		((JFritzWindow) parentFrame).setStatus();// FIXME make a StatusChangedListener
 	}
 
 	/**
@@ -1088,7 +1086,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
 			handleAction(FILTER_SEARCH);
 			callerList.update();
-			parentFrame.setStatus();
+			((JFritzWindow) parentFrame).setStatus();
 			return;
 
 		}
@@ -1114,7 +1112,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	public void propertyChange(PropertyChangeEvent evt) {
 		handleAction(FILTER_DATE);
 		callerList.update();
-		parentFrame.setStatus();
+		((JFritzWindow) parentFrame).setStatus();
 	}
 
 	/**
@@ -1300,7 +1298,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		}
 		syncAllFilters();
 		callerList.update();
-		parentFrame.setStatus();
+		((JFritzWindow) parentFrame).setStatus();
 	}
 
 }

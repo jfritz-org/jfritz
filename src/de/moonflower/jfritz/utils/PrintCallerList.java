@@ -243,7 +243,7 @@ public class PrintCallerList {
                 default:
                     return null;
                 }
-            };
+            }
         };
         exp.setName("print_type"); //$NON-NLS-1$
         report.addExpression(exp);
@@ -297,7 +297,7 @@ public class PrintCallerList {
                     return ""; //$NON-NLS-1$
                 }
                 return number.toString();
-            };
+            }
         };
         exp.setName("print_number"); //$NON-NLS-1$
         report.addExpression(exp);
@@ -314,7 +314,7 @@ public class PrintCallerList {
                 if (person == null)
                     return ""; //$NON-NLS-1$
                 return ((Person) person).getFullname();
-            };
+            }
         };
         exp.setName("print_personname"); //$NON-NLS-1$
         report.addExpression(exp);
@@ -347,7 +347,7 @@ public class PrintCallerList {
                 else
                     portStr = "Port " + port; //$NON-NLS-1$
                 return portStr;
-            };
+            }
         };
         exp.setName("print_port"); //$NON-NLS-1$
         report.addExpression(exp);
@@ -365,7 +365,7 @@ public class PrintCallerList {
                     return ""; //$NON-NLS-1$
                 String route = (String) obj;
                 return route;
-            };
+            }
         };
         exp.setName("print_route"); //$NON-NLS-1$
         report.addExpression(exp);
@@ -383,7 +383,7 @@ public class PrintCallerList {
                     return ""; //$NON-NLS-1$
                 int duration = Integer.parseInt(obj.toString());
                 return Integer.toString(duration / 60) + " min"; //$NON-NLS-1$
-            };
+            }
         };
         exp.setName("print_duration"); //$NON-NLS-1$
         report.addExpression(exp);
@@ -400,7 +400,7 @@ public class PrintCallerList {
                 if (obj == null)
                     return ""; //$NON-NLS-1$
                 return obj.toString();
-            };
+            }
         };
         exp.setName("print_comment"); //$NON-NLS-1$
         report.addExpression(exp);

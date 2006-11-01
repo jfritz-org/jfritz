@@ -911,13 +911,16 @@ ItemListener {
 	 * Listener for window events
 	 */
 	protected void processWindowEvent(WindowEvent e) {
-		super.processWindowEvent(e);
+
 		if (e.getID() == WindowEvent.WINDOW_CLOSING) {
 			if (JFritzUtils.parseBoolean(Main.getProperty("option.minimize", //$NON-NLS-1$
 			"false"))) { //$NON-NLS-1$
 				setExtendedState(Frame.ICONIFIED);
 			} else{
-				jFritz.maybeExit(0); //TODO checken ob es probleme gibt, weil exit->dispose->postWindowEvent(WindowEvent.WINDOW_CLOSED);
+				if(jFritz.showExitDialog()){
+					super.processWindowEvent(e);
+					jFritz.exit(0);
+				}
 			}
 		} else if (e.getID() == WindowEvent.WINDOW_ICONIFIED) {
 			setExtendedState(Frame.ICONIFIED);
@@ -1010,8 +1013,10 @@ ItemListener {
 	public void actionPerformed(ActionEvent e) {
 		Debug.msg("Action " + e.getActionCommand()); //$NON-NLS-1$
 		if (e.getActionCommand().equals("exit")) {
-			processWindowEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-			jFritz.maybeExit(0);
+			if(jFritz.showExitDialog()){
+				super.processWindowEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+			jFritz.exit(0);
+			}
 		} else if (e.getActionCommand().equals("about")) {
 			showAboutDialog();
 		} else if (e.getActionCommand().equals("help")) { //$NON-NLS-1$

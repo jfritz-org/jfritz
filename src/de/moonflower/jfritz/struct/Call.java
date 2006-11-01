@@ -8,12 +8,12 @@ package de.moonflower.jfritz.struct;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
+
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
- * @author Arno Willig
  */
 public class Call {
 
@@ -42,17 +42,10 @@ public class Call {
 	private String comment = ""; //$NON-NLS-1$
 
 	public Call(CallType calltype, Date calldate, PhoneNumber number,
-			String port, String route, int duration, String comment) {
-		this (calltype, calldate, number,
-				port,  route,  duration);
-		this.comment = comment;
-	}
-	public Call(CallType calltype, Date calldate, PhoneNumber number,
 			String port, String route, int duration) {
 		this(calltype, calldate, number, port, route, duration,
 				ROUTE_FIXED_NETWORK);
 	}
-
 	public Call(CallType calltype, Date calldate, PhoneNumber number,
 			String port, String route, int duration, int route_type) {
 		this.route_type = route_type;
@@ -62,8 +55,9 @@ public class Call {
 		this.number = number;
 
 		//fix so that an empty number doesnt get linked to an empty entry in the telephone book
-		if (this.number != null && this.number.toString().equals(""))
+		if ((this.number != null) && this.number.toString().equals("")) {
 			this.number = null;
+		}
 
 		this.route = route;
 		//      Parse the SIP Provider and save it correctly
@@ -84,6 +78,13 @@ public class Call {
 		this.duration = duration;
 	}
 
+	public Call(CallType calltype, Date calldate, PhoneNumber number,
+			String port, String route, int duration, String comment) {
+		this (calltype, calldate, number,
+				port,  route,  duration);
+		this.comment = comment;
+	}
+
 	/**
 	 * This function compares the contents of the current call object
 	 * with the contents of the parameter call object
@@ -101,23 +102,28 @@ public class Call {
 		call2 = (Call) call;
 		//prepare the two objects for comparing
 		String nr1 = "", nr2 = ""; //$NON-NLS-1$,  //$NON-NLS-2$
-		if (this.getPhoneNumber() != null)
+		if (this.getPhoneNumber() != null) {
 			nr1 = this.getPhoneNumber().getFullNumber();
-		if (call2.getPhoneNumber() != null)
+		}
+		if (call2.getPhoneNumber() != null) {
 			nr2 = call2.getPhoneNumber().getFullNumber();
+		}
 		String route1 = "", route2 = ""; //$NON-NLS-1$,  //$NON-NLS-2$
-		if (this.getRoute() != null)
+		if (this.getRoute() != null) {
 			route1 = this.getRoute();
-		if (call2.getRoute() != null)
+		}
+		if (call2.getRoute() != null) {
 			route2 = call2.getRoute();
+		}
 
 		if ((nr1).equals(nr2) && (this.getPort().equals(call2.getPort()))
 				&& (this.getDuration() == call2.getDuration())
 				&& (this.getCalltype().toInt() == call2.getCalltype().toInt())
-				&& (route1.equals(route2)))
+				&& (route1.equals(route2))) {
 			return true;
-		else
+		} else {
 			return false;
+		}
 
 	}
 
@@ -160,32 +166,12 @@ public class Call {
 	/**
 	 * @return Returns the person the number belongs to or null.
 	 */
-	public Person getPerson() { //FIXME wenn alle update stimmen das hier ändern
-		if (person != null) {
-			return person;
-		}
-		Person retValue = getPerson(false);
-		if (retValue == null)
-			retValue = getPerson(true);
-		person = retValue;
-		return retValue;
-	}
-
-	/**
-	 * @return Returns the person the number belongs to or null.
-	 */
-	public Person getPerson(boolean considerMain) {
-		if (person != null) {
-			return person;
-		}
-		/*
-		if ((number == null) || (number.equals(new PhoneNumber("")))) //$NON-NLS-1$
+	public Person getPerson() {
+		if(person == null) {
 			return null;
-		else if (JFritz.getPhonebook() != null) { //FIXME das die klasse call von Jfritz.phonbook anhängt isr nicht gut
-			return JFritz.getPhonebook().findPerson(number, considerMain);
+		} else {
+			return person;
 		}
-		*/
-		return null;
 	}
 
 	/**
@@ -301,15 +287,16 @@ public class Call {
 		outString = outString.concat(";\"" + time.format(calldate) + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		// number
-		if (number == null)
+		if (number == null) {
 			outString = outString.concat(";\"\""); //$NON-NLS-1$
-		else
+		} else {
 			outString = outString.concat(";\"" + number + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+		}
 
 		// route
-		if (route == null)
+		if (route == null) {
 			outString = outString.concat(";\"\""); //$NON-NLS-1$
-		else {
+		} else {
 			//String sipRoute = ""; //$NON-NLS-1$
 			String convertedRoute = route;
 			if (route.startsWith("SIP")) { // FIXME old code
@@ -349,28 +336,29 @@ public class Call {
 		}
 
 		// port
-		if (port.equals("4")) //$NON-NLS-1$
+		if (port.equals("4")) {
 			outString = outString.concat(";\"ISDN\""); //$NON-NLS-1$
-		else if (port.equals("0")) //$NON-NLS-1$
+		} else if (port.equals("0")) {
 			outString = outString.concat(";\"FON1\""); //$NON-NLS-1$
-		else if (port.equals("1")) //$NON-NLS-1$
+		} else if (port.equals("1")) {
 			outString = outString.concat(";\"FON2\""); //$NON-NLS-1$
-		else if (port.equals("2")) //$NON-NLS-1$
+		} else if (port.equals("2")) {
 			outString = outString.concat(";\"FON3\""); //$NON-NLS-1$
-		else if (port.equals("32")) //$NON-NLS-1$
+		} else if (port.equals("32")) {
 			outString = outString.concat(";\"DATA\""); //$NON-NLS-1$
-		else if (port.equals("33")) //$NON-NLS-1$
+		} else if (port.equals("33")) {
 			outString = outString.concat(";\"DATA\""); //$NON-NLS-1$
-		else if (port.equals("34")) //$NON-NLS-1$
+		} else if (port.equals("34")) {
 			outString = outString.concat(";\"DATA\""); //$NON-NLS-1$
-		else if (port.equals("35")) //$NON-NLS-1$
+		} else if (port.equals("35")) {
 			outString = outString.concat(";\"DATA\""); //$NON-NLS-1$
-		else if (port.equals("36")) //$NON-NLS-1$
+		} else if (port.equals("36")) {
 			outString = outString.concat(";\"DATA\""); //$NON-NLS-1$
-		else if (port.equals("")) //$NON-NLS-1$
+		} else if (port.equals("")) {
 			outString = outString.concat(";\"\""); //$NON-NLS-1$
-		else
+		} else {
 			outString = outString.concat(";\"" + port + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+		}
 
 		// duration
 		outString = outString.concat(";\"" + duration + "\""); //$NON-NLS-1$, //$NON-NLS-2$
@@ -393,11 +381,12 @@ public class Call {
 						+ getPerson().getPostalCode() + " " //$NON-NLS-1$
 						+ getPerson().getCity() + "\""); //$NON-NLS-1$
 			}
-		} else
+		} else {
 			outString = outString.concat(";\"\";\"\";\"\""); //$NON-NLS-1$
+		}
 
 		// CallByCall
-		if (number != null && number.hasCallByCall()) {
+		if ((number != null) && number.hasCallByCall()) {
 			outString = outString.concat(";\"" + number.getCallByCall() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 		} else {
 			outString = outString.concat(";\"\""); //$NON-NLS-1$
@@ -432,9 +421,11 @@ public class Call {
 				+ ("\t<caller>" + number.getIntNumber() + "</caller>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
 			}
 		}
-		if (!port.equals("")) //$NON-NLS-1$
+		if (!port.equals("")) {
 			output = output
 			+ ("\t<port>" + JFritzUtils.convertSpecialChars(port) + "</port>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
+		}
+
 		if (!route.equals("")) { //$NON-NLS-1$
 			String convertedRoute = route;
 			if (route.startsWith("SIP")) {
@@ -452,8 +443,9 @@ public class Call {
 			output = output
 			+ ("\t<route>" + JFritzUtils.convertSpecialChars(convertedRoute) + "</route>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
-		if (duration > 0)
+		if (duration > 0) {
 			output = output + ("\t<duration>" + duration + "</duration>" + sep); //$NON-NLS-1$, //$NON-NLS-2$
+		}
 
 		output = output
 		+ ("\t<comment>" + JFritzUtils.convertSpecialChars(comment) + "</comment>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$

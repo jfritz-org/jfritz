@@ -10,7 +10,7 @@ import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
-public class DisconnectMonitor extends CallMonitorListenerAdaptor {
+public class DisconnectMonitor extends CallMonitorAdaptor {
 
     public void endOfCall(Call call) {
         if (JFritzUtils.parseBoolean(Main.getProperty(

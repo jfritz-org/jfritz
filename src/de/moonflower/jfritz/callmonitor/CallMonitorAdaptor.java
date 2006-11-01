@@ -6,7 +6,7 @@ package de.moonflower.jfritz.callmonitor;
 
 import de.moonflower.jfritz.struct.Call;
 
-public class CallMonitorListenerAdaptor implements CallMonitorListener{
+public class CallMonitorAdaptor implements CallMonitorListener{
 
     public void pendingCallIn(Call call) {
     }
