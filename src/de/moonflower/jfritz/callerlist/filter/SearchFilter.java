@@ -23,7 +23,7 @@ public class SearchFilter extends CallFilter {
 
 	public void setSearchString(String s){
 		parts = s.toLowerCase().split(" "); // TODO change to
-		Debug.msg("setting searchFilter to "+s);
+		//Debug.msg("setting searchFilter to "+s);
 		// toLowercase(locale)
 	}
 

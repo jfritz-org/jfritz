@@ -247,11 +247,12 @@ ItemListener {
 
 		// Adding gui components
 		setJMenuBar(createMenu());
+
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(createMainToolBar(), BorderLayout.NORTH);
 		getContentPane().add(tabber, BorderLayout.CENTER);
 		getContentPane().add(createStatusBar(), BorderLayout.SOUTH);
-
+		pack();
 		JFritz.getCallerList().fireTableDataChanged();
 		JFritz.getCallerList().fireTableStructureChanged();
 		String ask = Main.getProperty("jfritz.password", Encryption //$NON-NLS-1$
