@@ -21,7 +21,6 @@ import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Vector;
 
@@ -29,7 +28,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -40,8 +38,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
@@ -58,12 +54,10 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
-import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.StartEndFilenameFilter;
-import de.moonflower.jfritz.utils.network.SSDPPacket;
 
 /**
  * JDialog for JFritz configuration.
@@ -77,21 +71,17 @@ public class ConfigDialog extends JDialog {
 
 	private static final long serialVersionUID = 1;
 
-	private JComboBox addressCombo, callMonitorCombo, languageCombo;
+	private JComboBox callMonitorCombo, languageCombo;
 
-	private JTextField address, areaCode, countryCode, areaPrefix,
-			countryPrefix, externProgramTextField, port, popupDelay,
-			save_location, dialPrefix;
+	private JTextField externProgramTextField, save_location;
 
-	private JPasswordField pass;
-
-	private String password = "", loc; //$NON-NLS-1$
+	private String loc; //$NON-NLS-1$
 
 	String localeList[];
 
 	private JSlider timerSlider;
 
-	private JButton okButton, cancelButton, boxtypeButton,
+	private JButton okButton, cancelButton,
 			callMonitorOptionsButton;
 
 	private JToggleButton startCallMonitorButton;
@@ -103,19 +93,17 @@ public class ConfigDialog extends JDialog {
 			externProgramCheckBox, searchWithSSDP, showCallByCallColumnButton,
 			showCommentColumnButton, showPortColumnButton,
 			minimizeInsteadOfClose, createBackup, createBackupAfterFetch,
-			fetchAfterStandby, activateDialPrefix, checkNewVersionAfterStart;
+			fetchAfterStandby, checkNewVersionAfterStart;
 
 	private JPanel callMonitorPane;
 
-	private JLabel boxtypeLabel, macLabel, timerLabel;
+	private PhonePanel phonePanel;
+	private FritzBoxPanel fritzBoxPanel;
+	private MessagePanel messagePanel;
 
-	private FritzBoxFirmware firmware = null;
+	private JLabel timerLabel;
 
 	private boolean pressed_OK = false;
-
-	private Vector devices;
-
-	private JRadioButton popupNoButton, popupDialogButton, popupTrayButton;
 
     static final String FILESEP = System.getProperty("file.separator");			//$NON-NLS-1$
 	final String langID = FILESEP + "lang";										//$NON-NLS-1$
@@ -123,7 +111,11 @@ public class ConfigDialog extends JDialog {
 	public ConfigDialog(Frame parent) {
 		super(parent, true);
 		setTitle(Main.getMessage("config")); //$NON-NLS-1$
-		devices = JFritz.getDevices();
+
+		phonePanel = new PhonePanel();
+		fritzBoxPanel = new FritzBoxPanel();
+		messagePanel = new MessagePanel();
+
 		drawDialog();
 		setValues();
 		if (parent != null) {
@@ -140,6 +132,10 @@ public class ConfigDialog extends JDialog {
 	 * Sets properties to dialog components
 	 */
 	public void setValues() {
+		fritzBoxPanel.loadSettings();
+		phonePanel.loadSettings();
+		messagePanel.loadSettings();
+
 		notifyOnCallsButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.notifyOnCalls"))); //$NON-NLS-1$
 		checkNewVersionAfterStart.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.checkNewVersionAfterStart" , "false")));//$NON-NLS-1$, //§NON-NLS-2$
 		fetchAfterStartButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.fetchAfterStart"))); //$NON-NLS-1$
@@ -155,9 +151,6 @@ public class ConfigDialog extends JDialog {
 				"option.playSounds", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
 		externProgramCheckBox.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.startExternProgram", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 		externProgramTextField.setText(JFritzUtils.deconvertSpecialChars(Main.getProperty("option.externProgram", ""))); //$NON-NLS-1$,  //$NON-NLS-2$
-        activateDialPrefix.setSelected(JFritzUtils.parseBoolean(Main.getProperty(
-                "option.activateDialPrefix", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
-
 
 		callMonitorCombo.setSelectedIndex(Integer.parseInt(Main.getProperty(
 				"option.callMonitorType", "0"))); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -181,26 +174,6 @@ public class ConfigDialog extends JDialog {
 			setCallMonitorButtons(JFritz.CALLMONITOR_START);
 		}
 
-		if (!Main.SYSTRAY_SUPPORT) {
-			popupTrayButton.setVisible(false);
-		}
-		switch (Integer.parseInt(Main.getProperty("option.popuptype", "1"))) { //$NON-NLS-1$,  //$NON-NLS-2$
-			case 0 : {
-				popupNoButton.setSelected(true);
-				break;
-			}
-			case 1 : {
-				popupDialogButton.setSelected(true);
-				break;
-			}
-			case 2 : {
-				popupTrayButton.setSelected(true);
-				break;
-			}
-		}
-
-		popupDelay.setText(Main.getProperty("option.popupDelay", "10"));
-
 		lookupAfterFetchButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.lookupAfterFetch", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		showCallByCallColumnButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.showCallByCallColumn", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -218,15 +191,6 @@ public class ConfigDialog extends JDialog {
 								""))); //$NON-NLS-1$
 		passwordAfterStartButton.setSelected(pwAfterStart);
 
-		pass.setText(JFritz.getFritzBox().getPassword()); //$NON-NLS-1$
-		password = JFritz.getFritzBox().getPassword();
-		address.setText(JFritz.getFritzBox().getAddress());
-		port.setText(JFritz.getFritzBox().getPort());
-		areaCode.setText(Main.getProperty("area.code")); //$NON-NLS-1$
-		countryCode.setText(Main.getProperty("country.code")); //$NON-NLS-1$
-        areaPrefix.setText(Main.getProperty("area.prefix")); //$NON-NLS-1$
-        dialPrefix.setText(Main.getProperty("dial.prefix")); //$NON-NLS-1$
-		countryPrefix.setText(Main.getProperty("country.prefix")); //$NON-NLS-1$
 		timerSlider.setValue(Integer
 				.parseInt(Main.getProperty("fetch.timer"))); //$NON-NLS-1$
 
@@ -242,33 +206,21 @@ public class ConfigDialog extends JDialog {
 				}
 			}
 		}*/
-
-		for(int i=0; i < addressCombo.getItemCount() - 1; i++){
-			if(addressCombo.getItemAt(i).equals(address.getText())){
-				addressCombo.setSelectedIndex(i);
-				break;
-			}
-		}
-
-		firmware = JFritz.getFritzBox().getFirmware(); //$NON-NLS-1$
-		setBoxTypeLabel();
 	}
 
 	/**
 	 * Stores values in dialog components to programm properties
 	 */
 	public void storeValues() {
+		phonePanel.saveSettings();
+		fritzBoxPanel.saveSettings();
+		messagePanel.saveSettings();
 
 		//only write the save dir to disk if the user changed something
 		if(!save_location.getText().equals(Main.SAVE_DIR)){
 			Main.SAVE_DIR = save_location.getText();
 			Main.writeSaveDir();
 		}
-
-		//		 Remove leading "0" from areaCode
-		if (areaCode.getText().startsWith(areaPrefix.getText()))
-			areaCode.setText(areaCode.getText().substring(
-					areaPrefix.getText().length()));
 
 		Main.setProperty("option.useSSDP", Boolean.toString(searchWithSSDP //$NON-NLS-1$
 				.isSelected()));
@@ -306,22 +258,11 @@ public class ConfigDialog extends JDialog {
 		Main.setProperty("option.callMonitorType", String //$NON-NLS-1$
 				.valueOf(callMonitorCombo.getSelectedIndex()));
 		Main.setProperty(
-                "option.activateDialPrefix", Boolean.toString(activateDialPrefix.isSelected())); //$NON-NLS-1$
-		Main.setProperty(
 				"option.checkNewVersionAfterStart", Boolean.toString(checkNewVersionAfterStart.isSelected())); //$NON-NLS-1$
-
-		// Set Popup Messages Type
-		if (popupNoButton.isSelected()) {
-			Main.setProperty("option.popuptype", "0"); //$NON-NLS-1$, //$NON-NLS-2$
-		} else if (popupDialogButton.isSelected()) {
-			Main.setProperty("option.popuptype", "1"); //$NON-NLS-1$, //$NON-NLS-2$
-		} else {
-			Main.setProperty("option.popuptype", "2"); //$NON-NLS-1$, //$NON-NLS-2$
-		}
 
 		if (!passwordAfterStartButton.isSelected()) {
 			Main.setProperty("jfritz.password", Encryption //$NON-NLS-1$
-					.encrypt(JFritz.PROGRAM_SECRET + password));
+					.encrypt(JFritz.PROGRAM_SECRET + fritzBoxPanel.getPassword()));
 		} else {
 			Main.removeProperty("jfritz.password"); //$NON-NLS-1$
 		}
@@ -341,20 +282,6 @@ public class ConfigDialog extends JDialog {
 		Main.setProperty("option.watchdog.fetchAfterStandby", Boolean //$NON-NLS-1$
 				.toString(fetchAfterStandby.isSelected()));
 
-		Main.setProperty("box.password", Encryption.encrypt(password)); //$NON-NLS-1$
-		Main.setProperty("box.address", address.getText()); //$NON-NLS-1$
-		Main.setProperty("box.port", port.getText()); //$NON-NLS-1$
-		Main.setProperty("area.code", areaCode.getText()); //$NON-NLS-1$
-
-		//Phone stuff here
-		//make sure country code has a plus on it
-		if(!countryCode.getText().startsWith("+"))
-			countryCode.setText("+"+countryCode.getText());
-
-		Main.setProperty("country.code", countryCode.getText()); //$NON-NLS-1$
-		Main.setProperty("area.prefix", areaPrefix.getText()); //$NON-NLS-1$
-        Main.setProperty("dial.prefix", dialPrefix.getText()); //$NON-NLS-1$
-		Main.setProperty("country.prefix", countryPrefix.getText()); //$NON-NLS-1$
 		if (timerSlider.getValue() < 3)
 			timerSlider.setValue(3);
 		Main.setProperty("fetch.timer", Integer.toString(timerSlider //$NON-NLS-1$
@@ -370,9 +297,6 @@ public class ConfigDialog extends JDialog {
 					new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_")+1, loc.length())));
 		}
 
-		Main.setProperty("option.popupDelay", popupDelay.getText());
-
-
 
 		Debug.msg("Saved config"); //$NON-NLS-1$
 		JFritz.getSIPProviderTableModel()
@@ -380,132 +304,6 @@ public class ConfigDialog extends JDialog {
 		JFritz.getCallerList().saveToXMLFile(Main.SAVE_DIR+JFritz.CALLS_FILE, true);
 		JFritz.getPhonebook().saveToXMLFile(Main.SAVE_DIR+JFritz.PHONEBOOK_FILE);
         Main.saveUpdateProperties();
-	}
-
-	protected JPanel createBoxPane(ActionListener actionListener) {
-		JPanel boxpane = new JPanel();
-		boxpane.setLayout(new GridBagLayout());
-		boxpane.setBorder(BorderFactory.createEmptyBorder(10, 20, 5, 20));
-		GridBagConstraints c = new GridBagConstraints();
-		c.insets.top = 5;
-		c.insets.bottom = 5;
-		c.insets.left = 5;
-		c.anchor = GridBagConstraints.WEST;
-
-		c.gridy = 1;
-		ImageIcon boxicon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/fritzbox.png"))); //$NON-NLS-1$
-		JLabel label = new JLabel(""); //$NON-NLS-1$
-		label.setIcon(boxicon);
-		boxpane.add(label, c);
-		label = new JLabel(Main.getMessage("FRITZ!Box_Preferences")); //$NON-NLS-1$
-		boxpane.add(label, c);
-
-		c.gridy = 2;
-		label = new JLabel(Main.getMessage("FRITZ!Box") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		boxpane.add(label, c);
-
-		addressCombo = new JComboBox();
-		c.fill = GridBagConstraints.HORIZONTAL;
-		boolean boxAddressAdded = false;
-
-		if (devices != null) {
-			Enumeration en = devices.elements();
-			while (en.hasMoreElements()) {
-				SSDPPacket p = (SSDPPacket) en.nextElement();
-				//addressCombo.addItem(p.getShortName());
-				addressCombo.addItem(p.getIP().getHostAddress());
-				if(p.getIP().getHostAddress().equals(JFritz.getFritzBox().getAddress()))
-					boxAddressAdded = true;
-			}
-		}
-
-		//make sure the stored address is listed
-		if(!boxAddressAdded)
-			addressCombo.addItem(JFritz.getFritzBox().getAddress());
-
-		addressCombo.setActionCommand("addresscombo"); //$NON-NLS-1$
-		addressCombo.addActionListener(actionListener);
-		boxpane.add(addressCombo, c);
-
-		c.gridy = 3;
-		label = new JLabel(Main.getMessage("ip_address") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		boxpane.add(label, c);
-		address = new JTextField("", 16); //$NON-NLS-1$
-		address.setMinimumSize(new Dimension(200, 20));
-		boxpane.add(address, c);
-
-		c.gridy = 4;
-		label = new JLabel(Main.getMessage("password") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		boxpane.add(label, c);
-		pass = new JPasswordField("", 16); //$NON-NLS-1$
-		pass.setMinimumSize(new Dimension(200, 20));
-		boxpane.add(pass, c);
-
-		c.gridy = 5;
-		label = new JLabel(Main.getMessage("box.port") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		boxpane.add(label, c);
-		port = new JTextField("", 16); //$NON-NLS-1$
-		port.setMinimumSize(new Dimension(200, 20));
-		boxpane.add(port, c);
-
-		c.gridy = 6;
-		boxtypeButton = new JButton(Main.getMessage("detect_box_type")); //$NON-NLS-1$
-		boxtypeButton.setActionCommand("detectboxtype"); //$NON-NLS-1$
-		boxtypeButton.addActionListener(actionListener);
-		boxpane.add(boxtypeButton, c);
-		boxtypeLabel = new JLabel();
-		boxpane.add(boxtypeLabel, c);
-
-		//c.gridy = 7;
-		//label = new JLabel(Main.getMessage("mac_address") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		// boxpane.add(label, c);
-		macLabel = new JLabel();
-		// boxpane.add(macLabel, c);
-
-		return boxpane;
-	}
-
-	protected JPanel createPhonePane() {
-		JPanel phonepane = new JPanel();
-		phonepane.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.insets.top = 5;
-		c.insets.bottom = 5;
-		c.anchor = GridBagConstraints.WEST;
-
-		c.gridy = 1;
-		JLabel label = new JLabel(Main.getMessage("area_code")); //$NON-NLS-1$
-		phonepane.add(label, c);
-		areaCode = new JTextField("", 6); //$NON-NLS-1$
-		phonepane.add(areaCode, c);
-
-		c.gridy = 2;
-		label = new JLabel(Main.getMessage("country_code")); //$NON-NLS-1$
-		phonepane.add(label, c);
-		countryCode = new JTextField("", 3); //$NON-NLS-1$
-		phonepane.add(countryCode, c);
-
-		c.gridy = 3;
-		label = new JLabel(Main.getMessage("area_prefix")); //$NON-NLS-1$
-		phonepane.add(label, c);
-		areaPrefix = new JTextField("", 3); //$NON-NLS-1$
-		phonepane.add(areaPrefix, c);
-
-		c.gridy = 4;
-		label = new JLabel(Main.getMessage("country_prefix")); //$NON-NLS-1$
-		phonepane.add(label, c);
-		countryPrefix = new JTextField("", 3); //$NON-NLS-1$
-		phonepane.add(countryPrefix, c);
-
-        c.gridy = 5;
-        activateDialPrefix = new JCheckBox(Main.getMessage("dial_prefix")); //$NON-NLS-1$
-        phonepane.add(activateDialPrefix, c);
-        dialPrefix = new JTextField("", 3); //$NON-NLS-1$
-        phonepane.add(dialPrefix, c);
-
-		return phonepane;
 	}
 
 	protected JPanel createSipPane(ActionListener actionListener) {
@@ -805,9 +603,6 @@ public class ConfigDialog extends JDialog {
 					// Aktion des StartCallMonitorButtons
 					Main.setProperty("option.callMonitorType", String //$NON-NLS-1$
 							.valueOf(callMonitorCombo.getSelectedIndex()));
-					Main.setProperty("box.password", Encryption //$NON-NLS-1$
-							.encrypt(password));
-					Main.setProperty("box.address", address.getText()); //$NON-NLS-1$
 					JFritz.getFritzBox().detectFirmware();
 					JFritz.getJframe().switchMonitorButton();
 					if (startCallMonitorButton.isSelected()) {
@@ -913,69 +708,6 @@ public class ConfigDialog extends JDialog {
 		return callMonitorPane;
 	}
 
-	protected JPanel createMessagePane() {
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.anchor = GridBagConstraints.WEST;
-
-		c.gridy = 0;
-		JLabel text = new JLabel(Main.getMessage("popup_for_information")); //$NON-NLS-1$
-		panel.add(text, c);
-
-		final JLabel delayLbl = new JLabel(Main.getMessage("popup_delay"));
-
-		ActionListener actionListener = new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (popupNoButton.isSelected()) {
-					Main.setProperty("option.popuptype", "0"); //$NON-NLS-1$,  //$NON-NLS-2$
-					delayLbl.setVisible(false);
-					popupDelay.setVisible(false);
-
-				} else if (popupDialogButton.isSelected()) {
-					Main.setProperty("option.popuptype", "1"); //$NON-NLS-1$,  //$NON-NLS-2$
-					delayLbl.setVisible(true);
-					popupDelay.setVisible(true);
-				} else {
-					Main.setProperty("option.popuptype", "2"); //$NON-NLS-1$,  //$NON-NLS-2$
-					delayLbl.setVisible(false);
-					popupDelay.setVisible(false);
-				}
-			}
-		};
-
-		ButtonGroup popupGroup = new ButtonGroup();
-		c.gridy = 1;
-		popupNoButton = new JRadioButton(Main.getMessage("no_popups")); //$NON-NLS-1$
-		popupNoButton.addActionListener(actionListener);
-		popupGroup.add(popupNoButton);
-		panel.add(popupNoButton, c);
-
-		c.gridy = 2;
-		popupDialogButton = new JRadioButton(Main.getMessage("popup_windows")); //$NON-NLS-1$
-		popupDialogButton.addActionListener(actionListener);
-		popupGroup.add(popupDialogButton);
-		panel.add(popupDialogButton, c);
-
-		c.gridy = 3;
-		popupTrayButton = new JRadioButton(Main.getMessage("tray_messages")); //$NON-NLS-1$
-		popupTrayButton.addActionListener(actionListener);
-		popupGroup.add(popupTrayButton);
-		panel.add(popupTrayButton, c);
-
-		c.gridy = 4;
-		c.insets.top = 10;
-		popupDelay = new JTextField();
-		popupDelay.setPreferredSize(new Dimension(30, 20));
-		panel.add(delayLbl, c);
-		c.gridx = 1;
-		c.insets.left = 15;
-		panel.add(popupDelay, c);
-
-
-		return panel;
-	}
-
 	protected void drawDialog() {
 
 		// Create JTabbedPane
@@ -1021,47 +753,12 @@ public class ConfigDialog extends JDialog {
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Object source = e.getSource();
-				password = new String(pass.getPassword());
-				pressed_OK = (source == pass || source == okButton);
-				if (source == pass || source == okButton
+				pressed_OK = (source == okButton);
+				if (source == okButton
 						|| source == cancelButton) {
 					ConfigDialog.this.setVisible(false);
-				} else if (e.getActionCommand().equals("addresscombo")) { //$NON-NLS-1$
-					int i = addressCombo.getSelectedIndex();
-
-					SSDPPacket dev = (SSDPPacket) devices.get(i);
-					address.setText(dev.getIP().getHostAddress());
-					firmware = dev.getFirmware();
-					setBoxTypeLabel();
-					macLabel.setText(dev.getMAC());
-				} else if (e.getActionCommand().equals("detectboxtype")) { //$NON-NLS-1$
-					try {
-						firmware = FritzBoxFirmware.detectFirmwareVersion(
-								address.getText(), password, port.getText());
-
-						// firmware = new FritzBoxFirmware("14", "1", "35");
-						setBoxTypeLabel();
-					} catch (WrongPasswordException e1) {
-						Debug.err("Password wrong!"); //$NON-NLS-1$
-						boxtypeLabel.setForeground(Color.RED);
-						boxtypeLabel.setText(Main.getMessage("wrong_password")); //$NON-NLS-1$
-						firmware = null;
-					} catch (InvalidFirmwareException ife) {
-						Debug.err("Invalid firmware detected"); //$NON-NLS-1$
-						boxtypeLabel.setForeground(Color.RED);
-						boxtypeLabel.setText(Main.getMessage("box_address_wrong")); //$NON-NLS-1$
-						firmware = null;
-					} catch (IOException e1) {
-						Debug.err("Address wrong!"); //$NON-NLS-1$
-						boxtypeLabel.setForeground(Color.RED);
-						boxtypeLabel.setText(Main.getMessage("box_address_wrong")); //$NON-NLS-1$
-						firmware = null;
-					}
 				} else if (e.getActionCommand().equals("fetchSIP")) { //$NON-NLS-1$
 					try {
-						Main.setProperty("box.password", Encryption.encrypt(password)); //$NON-NLS-1$
-						Main.setProperty("box.address", address.getText()); //$NON-NLS-1$
-						Main.setProperty("box.port", port.getText()); //$NON-NLS-1$
 						JFritz.getFritzBox().detectFirmware();
 						Vector data = JFritz.getFritzBox().retrieveSipProvider();
 						JFritz.getSIPProviderTableModel().updateProviderList(
@@ -1118,8 +815,8 @@ public class ConfigDialog extends JDialog {
         getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
 
 		tpane.addTab(
-				Main.getMessage("FRITZ!Box"), createBoxPane(actionListener)); //$NON-NLS-1$
-		tpane.addTab(Main.getMessage("telephone"), createPhonePane()); //$NON-NLS-1$
+				Main.getMessage("FRITZ!Box"), fritzBoxPanel); //$NON-NLS-1$
+		tpane.addTab(Main.getMessage("telephone"), phonePanel); //$NON-NLS-1$
 		tpane
 				.addTab(
 						Main.getMessage("sip_numbers"), createSipPane(actionListener)); //$NON-NLS-1$
@@ -1127,7 +824,7 @@ public class ConfigDialog extends JDialog {
 				createCallerListPane());
 		tpane.addTab(Main.getMessage("callerlist"), callerListPaneScrollable); //$NON-NLS-1$
 		tpane.addTab(Main.getMessage("callmonitor"), createCallMonitorPane()); //$NON-NLS-1$
-		tpane.addTab(Main.getMessage("messages"), createMessagePane()); //$NON-NLS-1$
+		tpane.addTab(Main.getMessage("messages"), messagePanel); //$NON-NLS-1$
 		JScrollPane otherPaneScrollable = new JScrollPane(createOtherPane()); //$NON-NLS-1$
 		tpane.addTab(Main.getMessage("other"), otherPaneScrollable); //$NON-NLS-1$
 		tpane.addTab(Main.getMessage("language"),
@@ -1150,17 +847,6 @@ public class ConfigDialog extends JDialog {
 		return okPressed();
 	}
 
-	public void setBoxTypeLabel() {
-		if (firmware != null) {
-			boxtypeLabel.setForeground(Color.BLUE);
-			boxtypeLabel.setText(firmware.getBoxName() + " (" //$NON-NLS-1$
-					+ firmware.getFirmwareVersion() + ")"); //$NON-NLS-1$
-		} else {
-			boxtypeLabel.setForeground(Color.RED);
-			boxtypeLabel.setText(Main.getMessage("unknown")); //$NON-NLS-1$
-		}
-	}
-
 	/**
 	 * Let startCallMonitorButtons start or stop callMonitor Changes caption of
 	 * buttons and their status
@@ -1178,9 +864,5 @@ public class ConfigDialog extends JDialog {
 			startCallMonitorButton.setSelected(true);
 			JFritz.getJframe().getMonitorButton().setSelected(true);
 		}
-	}
-
-	public FritzBoxFirmware getFirmware() {
-		return firmware;
 	}
 }

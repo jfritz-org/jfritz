@@ -1,6 +1,8 @@
 package de.moonflower.jfritz.dialogs.configwizard;
 
+
 import com.nexes.wizard.*;
+import de.moonflower.jfritz.dialogs.config.MessagePanel;
 
 /**
  * @author Brian Jensen
@@ -10,12 +12,17 @@ import com.nexes.wizard.*;
  * @see http://java.sun.com/developer/technicalArticles/GUI/swing/wizard/index.html
  *
  */
-public class ConfigPanel4Descriptor extends WizardPanelDescriptor {
+public class MessagePanelDescriptor extends WizardPanelDescriptor {
 
 	  public static final String IDENTIFIER = "MESSAGES_PANEL";
 
-	   public ConfigPanel4Descriptor() {
-	        super(IDENTIFIER, new ConfigPanel4());
+	  MessagePanel messagePanel;
+
+	   public MessagePanelDescriptor() {
+			messagePanel = new MessagePanel();
+			messagePanel.loadSettings();
+			setPanelDescriptorIdentifier(IDENTIFIER);
+		    setPanelComponent(messagePanel);
 	    }
 
 	    public Object getNextPanelDescriptor() {
@@ -23,6 +30,6 @@ public class ConfigPanel4Descriptor extends WizardPanelDescriptor {
 	    }
 
 	    public Object getBackPanelDescriptor() {
-	        return ConfigPanel3Descriptor.IDENTIFIER;
+	        return FritzBoxPanelDescriptor.IDENTIFIER;
 	    }
 }

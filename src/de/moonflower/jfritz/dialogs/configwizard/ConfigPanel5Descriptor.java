@@ -29,7 +29,7 @@ public class ConfigPanel5Descriptor extends WizardPanelDescriptor {
 	    }
 
 	    public Object getBackPanelDescriptor() {
-	        return ConfigPanel4Descriptor.IDENTIFIER;
+	        return MessagePanelDescriptor.IDENTIFIER;
 	    }
 
 	    public void aboutToDisplayPanel() {

@@ -6,8 +6,10 @@ import java.util.Locale;
 
 import com.nexes.wizard.*;
 
+import de.moonflower.jfritz.dialogs.config.FritzBoxPanel;
+import de.moonflower.jfritz.dialogs.config.MessagePanel;
+import de.moonflower.jfritz.dialogs.config.PhonePanel;
 import de.moonflower.jfritz.utils.Debug;
-import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
@@ -49,14 +51,14 @@ public class ConfigWizard {
         WizardPanelDescriptor descriptor1 = new ConfigPanel1Descriptor();
         wizard.registerWizardPanel(ConfigPanel1Descriptor.IDENTIFIER, descriptor1);
 
-        descriptor2 = new ConfigPanel2Descriptor();
-        wizard.registerWizardPanel(ConfigPanel2Descriptor.IDENTIFIER, descriptor2);
+        descriptor2 = new PhonePanelDescriptor();
+        wizard.registerWizardPanel(PhonePanelDescriptor.IDENTIFIER, descriptor2);
 
-        descriptor3 = new ConfigPanel3Descriptor();
-        wizard.registerWizardPanel(ConfigPanel3Descriptor.IDENTIFIER, descriptor3);
+        descriptor3 = new FritzBoxPanelDescriptor();
+        wizard.registerWizardPanel(FritzBoxPanelDescriptor.IDENTIFIER, descriptor3);
 
-        descriptor4 = new ConfigPanel4Descriptor();
-        wizard.registerWizardPanel(ConfigPanel4Descriptor.IDENTIFIER, descriptor4);
+        descriptor4 = new MessagePanelDescriptor();
+        wizard.registerWizardPanel(MessagePanelDescriptor.IDENTIFIER, descriptor4);
 
         descriptor5 = new ConfigPanel5Descriptor();
         wizard.registerWizardPanel(ConfigPanel5Descriptor.IDENTIFIER, descriptor5);
@@ -99,41 +101,11 @@ public class ConfigWizard {
        					.valueOf((((ConfigPanel5)descriptor5.getPanelComponent()).callMonitorCombo
        					.getSelectedIndex())));
 
-       			// Set Popup Messages Type
-       			if ( ((ConfigPanel4)descriptor4.getPanelComponent()).popupNoButton.isSelected() ) {
-       				Main.setProperty("option.popuptype", "0"); //$NON-NLS-1$, //$NON-NLS-2$
-       			} else if (((ConfigPanel4)descriptor4.getPanelComponent()).popupDialogButton.isSelected()) {
-       				Main.setProperty("option.popuptype", "1"); //$NON-NLS-1$, //$NON-NLS-2$
-       			} else {
-       				Main.setProperty("option.popuptype", "2"); //$NON-NLS-1$, //$NON-NLS-2$
-       			}
 
-       			Main.setProperty("box.password", Encryption.encrypt(
-       					((ConfigPanel3)descriptor3.getPanelComponent()).password)); //$NON-NLS-1$
 
-       			Main.setProperty("box.address",
-       					((ConfigPanel3)descriptor3.getPanelComponent()).address.getText()); //$NON-NLS-1$
-       			Main.setProperty("area.code",
-       					((ConfigPanel2)descriptor2.getPanelComponent()).areaCode.getText()); //$NON-NLS-1$
-       			Main.setProperty("country.code",
-       					((ConfigPanel2)descriptor2.getPanelComponent()).countryCode.getText()); //$NON-NLS-1$
-       			Main.setProperty("area.prefix",
-       					((ConfigPanel2)descriptor2.getPanelComponent()).areaPrefix.getText()); //$NON-NLS-1$
-       			Main.setProperty("country.prefix",
-       					((ConfigPanel2)descriptor2.getPanelComponent()).countryPrefix.getText()); //$NON-NLS-1$
-
-      			if (((ConfigPanel3)descriptor3.getPanelComponent()).firmware != null) {
-       				Main.setProperty("box.firmware",
-       						((ConfigPanel3)descriptor3.getPanelComponent()).firmware.getFirmwareVersion()); //$NON-NLS-1$
-       			} else {
-       				Main.removeProperty("box.firmware"); //$NON-NLS-1$
-       			}
-
-       			Main.setProperty("dial.prefix",
-       					((ConfigPanel2)descriptor2.getPanelComponent()).dialPrefix.getText()); //$NON-NLS-1$
-       			Main.setProperty(
-       	                "option.activateDialPrefix", Boolean.toString(
-       	                		((ConfigPanel2)descriptor2.getPanelComponent()).activateDialPrefix.isSelected())); //$NON-NLS-1$
+       			((PhonePanel)descriptor2.getPanelComponent()).saveSettings();
+       			((FritzBoxPanel)descriptor3.getPanelComponent()).saveSettings();
+       			((MessagePanel)descriptor4.getPanelComponent()).saveSettings();
 
       			JFritz.getFritzBox().detectFirmware();
       			Main.saveProperties();
