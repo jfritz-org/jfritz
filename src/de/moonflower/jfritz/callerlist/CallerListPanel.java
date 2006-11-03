@@ -619,34 +619,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		deleteEntriesButton.setEnabled(false);
 	}
 
-	// TODO reverseLookup verschieben
-	/**
-	 * does reverse lookup (find the name and address for a given phone number
-	 *
-	 * @param rows
-	 *            the rows, wich are selected for reverse lookup
-	 */
-	// TODO nach phonebook verschieben
-	public void doReverseLookup(int[] rows) {
-		if (rows.length > 0) { // nur für markierte Einträge ReverseLookup
-			// durchführen
-			for (int i = 0; i < rows.length; i++) {
-				Call call = (Call) callerList.getFilteredCallVector().get(
-						rows[i]);
-				Person newPerson = null;
-				if(call.getPhoneNumber()!=null){
-					newPerson = ReverseLookup.lookup(call.getPhoneNumber());
-				}
-				if (newPerson != null) {
-					JFritz.getPhonebook().addEntry(newPerson);
-					JFritz.getPhonebook().fireTableDataChanged();
-					callerList.fireTableDataChanged();
-				}
-			}
-		} else { // Für alle Einträge ReverseLookup durchführen
-			JFritz.getJframe().reverseLookup();
-		}
-	}
+
 
 	public CallerList getCallerList() {
 		return callerList;
@@ -892,7 +865,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			return;
 		}
 		if (command.equals("reverselookup")) { //$NON-NLS-1$
-			doReverseLookup(callerTable.getSelectedRows());
+			callerList.doReverseLookup(callerTable.getSelectedRows());
 			return;
 		}
 		if (command.equals("export_csv")) { //$NON-NLS-1$

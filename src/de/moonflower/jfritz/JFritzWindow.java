@@ -706,7 +706,7 @@ ItemListener {
 
 								Person newPerson = ReverseLookup.lookup(number);
 								if (newPerson != null) {
-									JFritz.getPhonebook().addEntry(newPerson);
+									JFritz.getPhonebook().addEntry(newPerson); //FIXME assure only one Thread at a time accesses the phonebook
 									JFritz.getPhonebook()
 									.fireTableDataChanged();
 									JFritz.getCallerList()

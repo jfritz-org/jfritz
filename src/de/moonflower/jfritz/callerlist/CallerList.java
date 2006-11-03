@@ -50,6 +50,7 @@ import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.CopyFile;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 
 /**
  * This class manages the caller list.
@@ -1792,6 +1793,35 @@ public class CallerList extends AbstractTableModel {
 		filteredCallerData = filterData(unfilteredCallerData);
 		sortAllFilteredRowsBy(sortColumn, sortDirection);
 		fireTableDataChanged();
+	}
+	/**
+	 * does reverse lookup (find the name and address for a given phone number
+	 *
+	 * @param rows
+	 *            the rows, wich are selected for reverse lookup
+	 */
+	public void doReverseLookup(int[] rows) {
+		if (rows.length > 0) { // nur für markierte Einträge ReverseLookup
+			// durchführen
+			for (int i = 0; i < rows.length; i++) {
+				Call call = (Call) getFilteredCallVector().get(
+						rows[i]);
+				Person newPerson = null;
+				if(call.getPhoneNumber()!=null){ //We have a Number
+					if(call.getPerson().getFullname().equals("")){	//and we have no name for this number
+						//TODO maybe add Person.isDummy()
+						newPerson = ReverseLookup.lookup(call.getPhoneNumber());
+					}
+				}
+				if (newPerson != null) {
+					phonebook.addEntry(newPerson);
+					phonebook.fireTableDataChanged();
+					fireTableDataChanged();
+				}
+			}
+		} else { // Für alle Einträge ReverseLookup durchführen
+			JFritz.getJframe().reverseLookup();
+		}
 	}
 
 	public void setPhoneBook(PhoneBook phonebook) {

@@ -39,6 +39,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
+import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.CallerList;
 import de.moonflower.jfritz.struct.Call;
@@ -46,6 +47,7 @@ import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 //TODO beim hinzufügen von Nummern lastCall und call.Person aktualisieren
 public class PhoneBook extends AbstractTableModel {
 	private static final long serialVersionUID = 1;
@@ -263,7 +265,34 @@ public class PhoneBook extends AbstractTableModel {
 	public void addFilterException(Person nonFilteredPerson) {
 		filterExceptions.add(nonFilteredPerson);
 	}
-
+	/**
+	 * does reverse lookup (find the name and address for a given phone number
+	 *
+	 * @param rows
+	 *            the rows, wich are selected for reverse lookup
+	 */
+	public void doReverseLookup(int[] rows) {
+		if (rows.length > 0) { // nur für markierte Einträge ReverseLookup
+			// durchführen
+			for (int i = 0; i < rows.length; i++) {
+				Person person = (Person) getFilteredPersons().get(rows[i]);
+				Person newPerson = null;
+				PhoneNumber homeNumber = person.getPhoneNumber("home");
+				if(homeNumber!=null){ //We have a Number
+					if(person.getFullname().equals("")){	//and we have no name for this number
+						newPerson = ReverseLookup.lookup(homeNumber);
+					}
+				}
+				if (newPerson != null) {
+					addEntry(newPerson);
+					fireTableDataChanged();
+					callerList.fireTableDataChanged();
+				}
+			}
+		} else { // Für alle Einträge ReverseLookup durchführen
+			JFritz.getJframe().reverseLookup();
+		}
+	}
 	/**
 	 * Clears the list of filterExceptions.
 	 *
