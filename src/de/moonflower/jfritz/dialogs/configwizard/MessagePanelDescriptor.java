@@ -26,7 +26,7 @@ public class MessagePanelDescriptor extends WizardPanelDescriptor {
 	    }
 
 	    public Object getNextPanelDescriptor() {
-	        return ConfigPanel5Descriptor.IDENTIFIER;
+	        return CallMonitorPanelDescriptor.IDENTIFIER;
 	    }
 
 	    public Object getBackPanelDescriptor() {

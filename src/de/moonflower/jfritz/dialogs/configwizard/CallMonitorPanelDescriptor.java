@@ -1,8 +1,8 @@
 package de.moonflower.jfritz.dialogs.configwizard;
 
-import javax.swing.JPanel;
-
 import com.nexes.wizard.*;
+
+import de.moonflower.jfritz.dialogs.config.CallMonitorPanel;
 
 /**
  * @author Brian Jensen
@@ -12,16 +12,17 @@ import com.nexes.wizard.*;
  * @see http://java.sun.com/developer/technicalArticles/GUI/swing/wizard/index.html
  *
  */
-public class ConfigPanel5Descriptor extends WizardPanelDescriptor {
+public class CallMonitorPanelDescriptor extends WizardPanelDescriptor {
 
 	  public static final String IDENTIFIER = "MONITOR_PANEL";
 
-	  public JPanel configpanel5;
+	  public CallMonitorPanel callMonitorPanel;
 
-	   public ConfigPanel5Descriptor() {
-			configpanel5 = new ConfigPanel5();
+	   public CallMonitorPanelDescriptor() {
+			callMonitorPanel = new CallMonitorPanel(null, false); //TODO: nicht null, sondern ein richtiges Fenster
+			callMonitorPanel.loadSettings();
 			setPanelDescriptorIdentifier(IDENTIFIER);
-		    setPanelComponent(configpanel5);
+		    setPanelComponent(callMonitorPanel);
 	    }
 
 	    public Object getNextPanelDescriptor() {

@@ -6,11 +6,11 @@ import java.util.Locale;
 
 import com.nexes.wizard.*;
 
+import de.moonflower.jfritz.dialogs.config.CallMonitorPanel;
 import de.moonflower.jfritz.dialogs.config.FritzBoxPanel;
 import de.moonflower.jfritz.dialogs.config.MessagePanel;
 import de.moonflower.jfritz.dialogs.config.PhonePanel;
 import de.moonflower.jfritz.utils.Debug;
-import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 
@@ -60,8 +60,8 @@ public class ConfigWizard {
         descriptor4 = new MessagePanelDescriptor();
         wizard.registerWizardPanel(MessagePanelDescriptor.IDENTIFIER, descriptor4);
 
-        descriptor5 = new ConfigPanel5Descriptor();
-        wizard.registerWizardPanel(ConfigPanel5Descriptor.IDENTIFIER, descriptor5);
+        descriptor5 = new CallMonitorPanelDescriptor();
+        wizard.registerWizardPanel(CallMonitorPanelDescriptor.IDENTIFIER, descriptor5);
 
         //set the first panel to be displayed
         wizard.setCurrentPanel(ConfigPanel1Descriptor.IDENTIFIER);
@@ -86,26 +86,10 @@ public class ConfigWizard {
        		case 0:
        			Debug.msg("Finished clicked, saving settings");
 
-       			//save the various settings
-       			Main.setProperty("option.playSounds", Boolean.toString(
-       					(((ConfigPanel5)descriptor5.getPanelComponent()).soundButton //$NON-NLS-1$
-       					.isSelected())));
-       			Main.setProperty("option.startExternProgram", Boolean //$NON-NLS-1$
-       					.toString(
-       					(((ConfigPanel5)descriptor5.getPanelComponent()).externProgramCheckBox.isSelected())));
-       			Main.setProperty(
-       					"option.externProgram", JFritzUtils.convertSpecialChars(
-       					(((ConfigPanel5)descriptor5.getPanelComponent()).externProgramTextField //$NON-NLS-1$
-       					.getText())));
-       			Main.setProperty("option.callMonitorType", String //$NON-NLS-1$
-       					.valueOf((((ConfigPanel5)descriptor5.getPanelComponent()).callMonitorCombo
-       					.getSelectedIndex())));
-
-
-
        			((PhonePanel)descriptor2.getPanelComponent()).saveSettings();
        			((FritzBoxPanel)descriptor3.getPanelComponent()).saveSettings();
        			((MessagePanel)descriptor4.getPanelComponent()).saveSettings();
+       			((CallMonitorPanel)descriptor5.getPanelComponent()).saveSettings();
 
       			JFritz.getFritzBox().detectFirmware();
       			Main.saveProperties();
