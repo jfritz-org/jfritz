@@ -16,7 +16,7 @@ import javax.swing.JTextField;
 
 import de.moonflower.jfritz.Main;
 
-public class MessagePanel extends JPanel implements ConfigPanel {
+public class ConfigPanelMessage extends JPanel implements ConfigPanel {
 
 	private static final long serialVersionUID = -630145657490186844L;
 
@@ -26,7 +26,7 @@ public class MessagePanel extends JPanel implements ConfigPanel {
 	private JTextField popupDelay;
 	private JLabel delayLbl;
 
-	public MessagePanel() {
+	public ConfigPanelMessage() {
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		setBorder(BorderFactory.createEmptyBorder(50, 20, 50, 20));

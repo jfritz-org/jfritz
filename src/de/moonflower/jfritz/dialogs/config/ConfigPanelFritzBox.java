@@ -29,7 +29,7 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.network.SSDPPacket;
 
-public class FritzBoxPanel extends JPanel implements ActionListener,
+public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 		ConfigPanel {
 
 	/**
@@ -55,7 +55,7 @@ public class FritzBoxPanel extends JPanel implements ActionListener,
 
 	private FritzBoxFirmware firmware;
 
-	public FritzBoxPanel() {
+	public ConfigPanelFritzBox() {
 		setLayout(new GridBagLayout());
 		setBorder(BorderFactory.createEmptyBorder(10, 20, 5, 20));
 		GridBagConstraints c = new GridBagConstraints();

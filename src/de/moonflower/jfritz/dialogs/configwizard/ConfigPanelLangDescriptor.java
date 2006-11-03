@@ -2,6 +2,8 @@ package de.moonflower.jfritz.dialogs.configwizard;
 
 import com.nexes.wizard.WizardPanelDescriptor;
 
+import de.moonflower.jfritz.dialogs.config.ConfigPanelLang;
+
 /**
  * This is the descriptor class for ConfigPanelLang
  *
@@ -16,6 +18,7 @@ public static final String IDENTIFIER = "LANG_PANEL";
 
 	public ConfigPanelLangDescriptor() {
 		configpanellang = new ConfigPanelLang();
+		configpanellang.loadSettings();
 		setPanelDescriptorIdentifier(IDENTIFIER);
 	    setPanelComponent(configpanellang);
 

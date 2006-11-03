@@ -11,7 +11,7 @@ import javax.swing.JTextField;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
-public class PhonePanel extends JPanel implements ConfigPanel{
+public class ConfigPanelPhone extends JPanel implements ConfigPanel{
 
 	/**
 	 *
@@ -22,7 +22,7 @@ public class PhonePanel extends JPanel implements ConfigPanel{
 
 	private JCheckBox activateDialPrefix;
 
-	public PhonePanel() {
+	public ConfigPanelPhone() {
 			setLayout(new GridBagLayout());
 			GridBagConstraints c = new GridBagConstraints();
 			c.insets.top = 5;

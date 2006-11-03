@@ -23,7 +23,7 @@ public class ConfigPanel1Descriptor extends WizardPanelDescriptor {
 	}
 
 	public Object getNextPanelDescriptor() {
-		return PhonePanelDescriptor.IDENTIFIER;
+		return ConfigPanelPhoneDescriptor.IDENTIFIER;
 	}
 
 	public Object getBackPanelDescriptor() {

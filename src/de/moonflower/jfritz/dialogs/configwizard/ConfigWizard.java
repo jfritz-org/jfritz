@@ -6,10 +6,11 @@ import java.util.Locale;
 
 import com.nexes.wizard.*;
 
-import de.moonflower.jfritz.dialogs.config.CallMonitorPanel;
-import de.moonflower.jfritz.dialogs.config.FritzBoxPanel;
-import de.moonflower.jfritz.dialogs.config.MessagePanel;
-import de.moonflower.jfritz.dialogs.config.PhonePanel;
+import de.moonflower.jfritz.dialogs.config.ConfigPanelCallMonitor;
+import de.moonflower.jfritz.dialogs.config.ConfigPanelLang;
+import de.moonflower.jfritz.dialogs.config.ConfigPanelFritzBox;
+import de.moonflower.jfritz.dialogs.config.ConfigPanelMessage;
+import de.moonflower.jfritz.dialogs.config.ConfigPanelPhone;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
@@ -51,17 +52,17 @@ public class ConfigWizard {
         WizardPanelDescriptor descriptor1 = new ConfigPanel1Descriptor();
         wizard.registerWizardPanel(ConfigPanel1Descriptor.IDENTIFIER, descriptor1);
 
-        descriptor2 = new PhonePanelDescriptor();
-        wizard.registerWizardPanel(PhonePanelDescriptor.IDENTIFIER, descriptor2);
+        descriptor2 = new ConfigPanelPhoneDescriptor();
+        wizard.registerWizardPanel(ConfigPanelPhoneDescriptor.IDENTIFIER, descriptor2);
 
-        descriptor3 = new FritzBoxPanelDescriptor();
-        wizard.registerWizardPanel(FritzBoxPanelDescriptor.IDENTIFIER, descriptor3);
+        descriptor3 = new ConfigPanelFritzBoxDescriptor();
+        wizard.registerWizardPanel(ConfigPanelFritzBoxDescriptor.IDENTIFIER, descriptor3);
 
-        descriptor4 = new MessagePanelDescriptor();
-        wizard.registerWizardPanel(MessagePanelDescriptor.IDENTIFIER, descriptor4);
+        descriptor4 = new ConfigPanelMessageDescriptor();
+        wizard.registerWizardPanel(ConfigPanelMessageDescriptor.IDENTIFIER, descriptor4);
 
-        descriptor5 = new CallMonitorPanelDescriptor();
-        wizard.registerWizardPanel(CallMonitorPanelDescriptor.IDENTIFIER, descriptor5);
+        descriptor5 = new ConfigPanelCallMonitorDescriptor();
+        wizard.registerWizardPanel(ConfigPanelCallMonitorDescriptor.IDENTIFIER, descriptor5);
 
         //set the first panel to be displayed
         wizard.setCurrentPanel(ConfigPanel1Descriptor.IDENTIFIER);
@@ -86,10 +87,10 @@ public class ConfigWizard {
        		case 0:
        			Debug.msg("Finished clicked, saving settings");
 
-       			((PhonePanel)descriptor2.getPanelComponent()).saveSettings();
-       			((FritzBoxPanel)descriptor3.getPanelComponent()).saveSettings();
-       			((MessagePanel)descriptor4.getPanelComponent()).saveSettings();
-       			((CallMonitorPanel)descriptor5.getPanelComponent()).saveSettings();
+       			((ConfigPanelPhone)descriptor2.getPanelComponent()).saveSettings();
+       			((ConfigPanelFritzBox)descriptor3.getPanelComponent()).saveSettings();
+       			((ConfigPanelMessage)descriptor4.getPanelComponent()).saveSettings();
+       			((ConfigPanelCallMonitor)descriptor5.getPanelComponent()).saveSettings();
 
       			JFritz.getFritzBox().detectFirmware();
       			Main.saveProperties();

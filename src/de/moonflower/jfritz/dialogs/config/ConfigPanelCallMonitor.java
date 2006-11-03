@@ -21,7 +21,7 @@ import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
-public class CallMonitorPanel extends JPanel implements ActionListener,
+public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 		ConfigPanel {
 
 	private static final long serialVersionUID = 7267124419351267208L;
@@ -41,7 +41,7 @@ public class CallMonitorPanel extends JPanel implements ActionListener,
 
 	private boolean showButtons;
 
-	public CallMonitorPanel(JDialog parent, boolean showButtons) {
+	public ConfigPanelCallMonitor(JDialog parent, boolean showButtons) {
 		this.parent = parent;
 		this.showButtons = showButtons;
 

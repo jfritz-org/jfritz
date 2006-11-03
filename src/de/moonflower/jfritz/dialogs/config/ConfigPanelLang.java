@@ -1,10 +1,11 @@
-package de.moonflower.jfritz.dialogs.configwizard;
+package de.moonflower.jfritz.dialogs.config;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.Locale;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -12,8 +13,8 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
-import de.moonflower.jfritz.dialogs.config.LanguageComboBoxRenderer;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.StartEndFilenameFilter;
@@ -25,7 +26,7 @@ import de.moonflower.jfritz.utils.StartEndFilenameFilter;
  * @author Brian Jensen
  *
  */
-public class ConfigPanelLang extends JPanel{
+public class ConfigPanelLang extends JPanel implements ConfigPanel{
 
     private static final long serialVersionUID = 1;
 
@@ -35,9 +36,8 @@ public class ConfigPanelLang extends JPanel{
 
     public ConfigPanelLang(){
 
-    	JPanel localePane = new JPanel();
-		localePane.setLayout(new GridBagLayout());
-		localePane.setBorder(BorderFactory.createEmptyBorder(10, 20, 5, 20));
+		setLayout(new GridBagLayout());
+		setBorder(BorderFactory.createEmptyBorder(10, 20, 5, 20));
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets.top = 5;
 		c.insets.bottom = 5;
@@ -47,7 +47,7 @@ public class ConfigPanelLang extends JPanel{
 		JLabel label;
 		c.gridy = 2;
 		label = new JLabel(Main.getMessage("language") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		localePane.add(label, c);
+		add(label, c);
 
 		String lang = JFritzUtils.getFullPath(JFritzUtils.langID);
 		File file = new File(lang);
@@ -79,10 +79,25 @@ public class ConfigPanelLang extends JPanel{
 		languageCombo.setActionCommand("languageCombo"); //$NON-NLS-1$
 		languageCombo.setMaximumRowCount(8);
 
-		localePane.add(languageCombo, c);
-
-		add(localePane);
-
+		add(languageCombo, c);
 	}
 
+	public void loadSettings() {
+		int index = 0;
+		String loc = Main.getProperty("locale", "de_DE");
+		for (int a = 0; a < localeList.length; a++) {
+			if (localeList[a].equals(loc)) index = a;
+		}
+		languageCombo.setSelectedIndex(index);
+	}
+
+	public void saveSettings() {
+		if (!Main.getProperty("locale", "de_DE").equals(localeList[languageCombo.getSelectedIndex()])) { //$NON-NLS-1$ //$NON-NLS-2$
+			Main.setProperty(
+					"locale", localeList[languageCombo.getSelectedIndex()]); //$NON-NLS-1$
+			String loc = localeList[languageCombo.getSelectedIndex()];
+			JFritz.getJframe().setLanguage(
+					new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_")+1, loc.length())));
+		}
+	}
 }

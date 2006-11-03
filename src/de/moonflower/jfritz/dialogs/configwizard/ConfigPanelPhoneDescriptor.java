@@ -2,7 +2,7 @@ package de.moonflower.jfritz.dialogs.configwizard;
 
 import com.nexes.wizard.*;
 
-import de.moonflower.jfritz.dialogs.config.PhonePanel;
+import de.moonflower.jfritz.dialogs.config.ConfigPanelPhone;
 
 /**
  * @author Brian Jensen
@@ -12,21 +12,21 @@ import de.moonflower.jfritz.dialogs.config.PhonePanel;
  * @see http://java.sun.com/developer/technicalArticles/GUI/swing/wizard/index.html
  *
  */
-public class PhonePanelDescriptor extends WizardPanelDescriptor{
+public class ConfigPanelPhoneDescriptor extends WizardPanelDescriptor{
 
 	  public static final String IDENTIFIER = "PHONE_PANEL";
 
-	  public PhonePanel phonePanel;
+	  public ConfigPanelPhone phonePanel;
 
-	   public PhonePanelDescriptor() {
-			phonePanel = new PhonePanel();
+	   public ConfigPanelPhoneDescriptor() {
+			phonePanel = new ConfigPanelPhone();
 			phonePanel.loadSettings();
 			setPanelDescriptorIdentifier(IDENTIFIER);
 		    setPanelComponent(phonePanel);
 	    }
 
 	    public Object getNextPanelDescriptor() {
-	        return FritzBoxPanelDescriptor.IDENTIFIER;
+	        return ConfigPanelFritzBoxDescriptor.IDENTIFIER;
 	    }
 
 	    public Object getBackPanelDescriptor() {
