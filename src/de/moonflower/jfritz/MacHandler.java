@@ -2,10 +2,12 @@ package de.moonflower.jfritz;
 
 import javax.swing.SwingUtilities;
 
+import java.awt.event.WindowEvent;
 import java.lang.reflect.*;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
  * @author rob
@@ -103,8 +105,7 @@ public class MacHandler {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						Debug.msg("MAC Application Menu: Show Exit Dialog"); //$NON-NLS-1$
-						//jfritz.maybeExit(0);
-						jfritz.exit(0); //TODO schauen, ob man nicht ein Windowevent an JFritzWindow schicken kann
+						jfritz.maybeExit(0);
 					}
 				});
 				throw new IllegalStateException("Let the quit handler do it"); //$NON-NLS-1$

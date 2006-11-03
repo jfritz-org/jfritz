@@ -125,9 +125,9 @@
  * - 0900 Nummern werden nicht korrekt erkannt http://www.ip-phone-forum.de/showthread.php?t=114325 => Liste mit Call-By-Call Vorwahlen
  * - Überprüfen, geht wohl nicht mehr: Rückwärtssuche für Österreich über dasoertliche.de wieder eingebaut
  * - Wizard-Panels und ConfigDialog-Pannels zusammenführen
- * - Update-Thread aus JFritz heraus verfügbar machen
  * - Connection-Timeout für ReverseLookup setzen
  * - Vor dem Release noch den installDirectory-Pfad in JFritzUpdate auf "." anpassen
+ * - Autostart des Call-Monitors beim Start von JFritz reparieren
  * TODO-ENDE
  *
  * - Neue Strings:
@@ -170,6 +170,8 @@
  * - Intern: JFritz.java aufgespalten in Main.java und JFritz.java
  * - Autoupdate von JFritz
  * - Nur noch mit Java 1.5 kompatibel
+ * - Fenstergröße, -position und -status wird nun korrekt wiederhergestellt
+ * - Spaltengröße und -reihenfolge korrekt wiederhergestellt
  *
  * JFritz 0.6.1
  * - Neue Strings:
@@ -573,8 +575,6 @@ public class Main {
 
 	public final static String PROPERTIES_FILE = "jfritz.properties.xml"; //$NON-NLS-1$
 
-	public final static String WINDOW_PROPERTIES_FILE = "jfritz.window.properties.xml"; //$NON-NLS-1$
-
 	public static boolean SYSTRAY_SUPPORT = false;
 
 	private static JFritzProperties defaultProperties;
@@ -601,8 +601,6 @@ public class Main {
 
 	String mutex = "";
 
-	private Thread myThread;
-
 	public Main(String[] args) {
 		System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION //$NON-NLS-1$
 				+ " (c) 2005 by " + PROGRAM_AUTHOR); //$NON-NLS-1$
@@ -610,20 +608,6 @@ public class Main {
 
 		jfritzHomedir = JFritzUtils.getFullPath(".update");
 		jfritzHomedir = jfritzHomedir.substring(0, jfritzHomedir.length() - 7);
-
-		// testcode----------------
-		/*
-		 * myThread = new Thread(){public void run(){
-		 *
-		 * isRunning = new Boolean(true); synchronized (mutex) {
-		 * while(isRunning.booleanValue()){ try { Debug.msg("start waiting");
-		 * mutex.wait(); Debug.msg("end waiting"); } catch (InterruptedException
-		 * e) { //e.printStackTrace(); } }
-		 *  }
-		 *
-		 * }}; myThread.start();
-		 */
-		// testcode--------------------
 	}
 
 	/**

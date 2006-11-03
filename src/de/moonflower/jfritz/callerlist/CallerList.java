@@ -430,22 +430,26 @@ public class CallerList extends AbstractTableModel {
 	 *
 	 */
 	public boolean contains(Call newCall) {
-		Vector unfilteredCallerData = (Vector)this.unfilteredCallerData.clone();
+		Vector unfilteredCallerData = (Vector) this.unfilteredCallerData
+				.clone();
 		// find index for date collumn
 		int indexOfDate = -1;
-		for(int i=0; i<getColumnCount(); i++){
+		for (int i = 0; i < getColumnCount(); i++) {
 			String columnName = getRealColumnName(i);
-			if(columnName.equals("date")){
+			if (columnName.equals("date")) {
 				indexOfDate = i;
 			}
 		}
 
-		if(sortColumn!=indexOfDate && indexOfDate!=-1){
-			Debug.err("unfilteredCallerData not sorted sorting! (will be slow)");
-//			  This new method is using a binary search algorithm, that means
-	//		  unfilteredCallerData has to be sorted ascending by date or it won't work
+		if (sortColumn != indexOfDate && indexOfDate != -1) {
+			Debug
+					.err("unfilteredCallerData not sorted sorting! (will be slow)");
+			// This new method is using a binary search algorithm, that means
+			// unfilteredCallerData has to be sorted ascending by date or it
+			// won't work
 
-			Collections.sort(unfilteredCallerData, new ColumnSorter(indexOfDate, true));
+			Collections.sort(unfilteredCallerData, new ColumnSorter(
+					indexOfDate, true));
 		}
 		// Debug.msg("contains!");
 		int left, right, middle;
@@ -955,7 +959,7 @@ public class CallerList extends AbstractTableModel {
 		super.fireTableDataChanged();
 	}
 
-	public String getRealColumnName(int columnIndex) { //FIXME
+	public String getRealColumnName(int columnIndex) { // FIXME
 		String columnName = ""; //$NON-NLS-1$
 		if (JFritz.getJframe() != null) {
 			Enumeration en = JFritz.getJframe().getCallerTable()
@@ -1692,12 +1696,17 @@ public class CallerList extends AbstractTableModel {
 		}
 		return callByCallProviders;
 	}
+
 	/**
 	 * Adds a route to the CbCProviders Vector, if the route is a CbCProvider
-	 * @param callByCallProviders the Vector of CbCProviders
-	 * @param call the call with the route, if it is a route to a CbCProvider it will be added
+	 *
+	 * @param callByCallProviders
+	 *            the Vector of CbCProviders
+	 * @param call
+	 *            the call with the route, if it is a route to a CbCProvider it
+	 *            will be added
 	 */
-	//FIXME
+	// FIXME
 	private void addIfCbCProvider(Vector callByCallProviders, Call call) {
 		String provider = "";
 		if (call.getPhoneNumber() != null) {
@@ -1725,16 +1734,41 @@ public class CallerList extends AbstractTableModel {
 	}
 
 	/**
-	 * returns all selected Providers if no rows are selected return all SIP
-	 * Providers
+	 * returns all selected Providers
 	 *
 	 * @return the providers
 	 */
-	public Vector getSipProviders(int[] rows) {
-		Vector sipProviders = new Vector();
+	public Vector getSelectedProviders(int[] rows) {
+		Vector selectedProviders = new Vector();
 		for (int i = 0; i < rows.length; i++) {
 			Call call = (Call) this.getFilteredCallVector().get(rows[i]);
-			addIfSipProvider(sipProviders, call);
+			if (!call.getRoute().equals("")) {
+				if (!selectedProviders.contains(call.getRoute())) {
+					selectedProviders.add(call.getRoute());
+				}
+			}
+		}
+		return selectedProviders;
+	}
+
+	/**
+	 *
+	 * @return all SipProviders of the callertable
+	 */
+	public Vector getAllSipProviders() {
+		Vector sipProviders = new Vector();
+		for (int i = 0; i < getFilteredCallVector().size(); i++) {
+			Call call = (Call) this.getFilteredCallVector().get(i);
+			// Debug.msg("route:"+route);
+			// Debug.msg("callrouteType:"+call.getRouteType());
+			if (!call.getRoute().equals("")) {
+
+				if (call.getRouteType() == Call.ROUTE_SIP) {
+					if (!sipProviders.contains(call.getRoute())) {
+						sipProviders.add(call.getRoute());
+					}
+				}
+			}
 		}
 		return sipProviders;
 	}
@@ -1755,38 +1789,6 @@ public class CallerList extends AbstractTableModel {
 			call.setPerson(person);
 		}
 		Debug.msg("...done");
-	}
-
-/**
- * Adds a route to the sipProviders Vector, if the route is a sipProvider
- * @param sipProviders the Vector of sipProviders
- * @param call the call with the route, if it is a route to a sipProvider it will be added
- */
-	private void addIfSipProvider(Vector sipProviders, Call call) {
-		String route = call.getRoute();
-		//if (call.getRouteType() == Call.ROUTE_SIP){
-		if(route.contains("@")){ //FIXME workaround
-			if (!route.equals("")) { //$NON-NLS-1$
-				if (!sipProviders.contains(route)) {
-					sipProviders.add(route);
-				}
-			}
-		}
-	}
-
-	/**
-	 *
-	 * @return all SipProviders of the callertable
-	 */
-	public Vector getSipProviders() {
-		Vector sipProviders = new Vector();
-		for (int i = 0; i < getUnfilteredCallVector().size(); i++) {
-			Call call = (Call) this.getUnfilteredCallVector().get(i);
-			// Debug.msg("route:"+route);
-			// Debug.msg("callrouteType:"+call.getRouteType());
-			addIfSipProvider(sipProviders, call);
-		}
-		return sipProviders;
 	}
 
 	public void update() {

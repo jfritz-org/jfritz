@@ -10,11 +10,10 @@ import java.awt.Component;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import javax.swing.JFrame;
+
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -23,6 +22,7 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.cellrenderer.CallByCallCellRenderer;
 import de.moonflower.jfritz.cellrenderer.CallTypeCellRenderer;
+import de.moonflower.jfritz.cellrenderer.CommentCellRenderer;
 import de.moonflower.jfritz.cellrenderer.DateCellRenderer;
 import de.moonflower.jfritz.cellrenderer.DurationCellRenderer;
 import de.moonflower.jfritz.cellrenderer.NumberCellRenderer;
@@ -36,7 +36,6 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  * Creates table of callers
  *
  */
-//FIXME Breiten der Spalten gehen verloren
 public class CallerTable extends JTable {
 	private static final long serialVersionUID = 1;
 
@@ -52,27 +51,17 @@ public class CallerTable extends JTable {
 
 	private TableColumn portColumn = null;
 
+	private ColumnHeaderToolTips headerTips;
+
 	final CallerTable table = this;
-
-	private JFrame parentFrame;
-
-	private WindowAdapter wl;
 
 	/**
 	 * Constructs CallerTable
 	 *
 	 */
-	public CallerTable(JFrame parentFrame, CallerList list) {
+	public CallerTable(CallerList list) {
 		super(list);
-		this.parentFrame = parentFrame;
-		wl = new WindowAdapter() {
-			public void windowClosing(WindowEvent evt) {
-				Debug
-						.msg("parent window is closing. writing table width for CallerTable");
-				writeColumnStatus();
-			}
-		};
-		this.parentFrame.addWindowListener(wl);
+		headerTips = new ColumnHeaderToolTips();
 		setTableProperties();
 		createColumns();
 	}
@@ -113,149 +102,70 @@ public class CallerTable extends JTable {
 	}
 
 	/**
+	 * Erstellt eine Spalte mit dem Namen columnName an der Position i mit dem
+	 * Standard-Renderer renderer und liefert eine Referenz auf das erstellte
+	 * Spalten-Objekt
+	 *
+	 * @param position
+	 *            Spaltenposition
+	 * @param columnName
+	 *            Spaltenname
+	 * @param renderer
+	 *            Spalten-Renderer
+	 * @return Referenz auf erstelltes Spalten-Objekt
+	 */
+	private TableColumn createColumn(int position, String columnName,
+			DefaultTableCellRenderer renderer) {
+		TableColumn col = getColumnModel().getColumn(position);
+		col.setIdentifier(columnName); //$NON-NLS-1$
+		col.setHeaderValue(Main.getMessage(columnName)); //$NON-NLS-1$
+		col.setCellRenderer(renderer);
+		headerTips.setToolTip(col, Main.getMessage(columnName + "_desc")); //$NON-NLS-1$
+		col.setMinWidth(10);
+		col.setMaxWidth(1600);
+		col.setPreferredWidth(Integer.parseInt(Main.getProperty(
+				"column." + columnName + ".width", "70"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		return col;
+	}
+
+	/**
 	 * Creates the columns of the CallerTable
 	 *
 	 * @param messages
 	 */
 	private void createColumns() {
-		ColumnHeaderToolTips headerTips = new ColumnHeaderToolTips();
 
-		TableColumn col = getColumnModel().getColumn(0);
-		col.setIdentifier("type"); //$NON-NLS-1$
-		col.setHeaderValue(Main.getMessage("type")); //$NON-NLS-1$
-		col.setCellRenderer(new CallTypeCellRenderer());
-		headerTips.setToolTip(col, Main.getMessage("type_desc")); //$NON-NLS-1$
-		col.setMinWidth(10);
-		col.setMaxWidth(1600);
-		col.setPreferredWidth(Integer.parseInt(Main.getProperty(
-				"column.type.width", "32"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		createColumn(0, "type", new CallTypeCellRenderer());
 
-		col = getColumnModel().getColumn(1);
-		col.setIdentifier("date"); //$NON-NLS-1$
-		col.setHeaderValue(Main.getMessage("date")); //$NON-NLS-1$
-		col.setCellRenderer(new DateCellRenderer());
-		headerTips.setToolTip(col, Main.getMessage("date_desc")); //$NON-NLS-1$
-		col.setMinWidth(10);
-		col.setMaxWidth(1600);
-		col.setPreferredWidth(Integer.parseInt(Main.getProperty(
-				"column.date.width", "80"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		createColumn(1, "date", new DateCellRenderer());
 
-		col = getColumnModel().getColumn(2);
-		col.setIdentifier("callbycall"); //$NON-NLS-1$
-		col.setHeaderValue(Main.getMessage("callbycall")); //$NON-NLS-1$
-		headerTips.setToolTip(col, Main.getMessage("callbycall_desc")); //$NON-NLS-1$
-		col.setCellRenderer(new CallByCallCellRenderer());
-		col.setMinWidth(10);
-		col.setMaxWidth(1600);
-		col.setPreferredWidth(Integer.parseInt(Main.getProperty(
-				"column.callbycall.width", "40"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		callByCallColumn = col;
+		callByCallColumn = createColumn(2, "callbycall",
+				new CallByCallCellRenderer());
 
-		col = getColumnModel().getColumn(3);
-		col.setIdentifier("number"); //$NON-NLS-1$
-		col.setHeaderValue(Main.getMessage("number")); //$NON-NLS-1$
-		col.setCellRenderer(new NumberCellRenderer());
-		headerTips.setToolTip(col, Main.getMessage("number_desc")); //$NON-NLS-1$
-		col.setCellEditor(new CallCellEditor());
-		col.setMinWidth(10);
-		col.setMaxWidth(1600);
-		col.setPreferredWidth(Integer.parseInt(Main.getProperty(
-				"column.number.width", "100"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		TableColumn numberColumn = createColumn(3, "number",
+				new NumberCellRenderer());
+		numberColumn.setCellEditor(new CallCellEditor());
 
-		col = getColumnModel().getColumn(4);
-		col.setIdentifier("participant"); //$NON-NLS-1$
-		col.setHeaderValue(Main.getMessage("participant")); //$NON-NLS-1$
-		headerTips.setToolTip(col, Main.getMessage("participant_desc")); //$NON-NLS-1$
-		//col.setCellEditor(new TextFieldCellEditor());
-		col.setCellEditor(new PersonCellEditor((CallerList) getModel()));
-		col.setCellRenderer(new PersonCellRenderer());
-		col.setMinWidth(10);
-		col.setMaxWidth(1600);
-		col.setPreferredWidth(Integer.parseInt(Main.getProperty(
-				"column.participant.width", "100"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		TableColumn participantColumn = createColumn(4, "participant",
+				new PersonCellRenderer());
+		participantColumn.setCellEditor(new PersonCellEditor(
+				(CallerList) getModel()));
 
-		col = getColumnModel().getColumn(5);
-		col.setIdentifier("port"); //$NON-NLS-1$
-		col.setHeaderValue(Main.getMessage("port")); //$NON-NLS-1$
-		headerTips.setToolTip(col, Main.getMessage("port_desc")); //$NON-NLS-1$
-		col.setCellRenderer(new PortCellRenderer());
-		col.setMinWidth(10);
-		col.setMaxWidth(1600);
-		col.setPreferredWidth(Integer.parseInt(Main.getProperty(
-				"column.port.width", "60"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		portColumn = col;
+		portColumn = createColumn(5, "port", new PortCellRenderer());
 
-		col = getColumnModel().getColumn(6);
-		col.setIdentifier("route"); //$NON-NLS-1$
-		col.setHeaderValue(Main.getMessage("route")); //$NON-NLS-1$
-		headerTips.setToolTip(col, Main.getMessage("route_desc")); //$NON-NLS-1$
-		col.setCellRenderer(new RouteCellRenderer());
-		col.setMinWidth(10);
-		col.setMaxWidth(1600);
-		col.setPreferredWidth(Integer.parseInt(Main.getProperty(
-				"column.route.width", "120"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		createColumn(6, "route", new RouteCellRenderer());
 
-		col = getColumnModel().getColumn(7);
-		col.setIdentifier("duration"); //$NON-NLS-1$
-		col.setHeaderValue(Main.getMessage("duration")); //$NON-NLS-1$
-		headerTips.setToolTip(col, Main.getMessage("duration_desc")); //$NON-NLS-1$
-		col.setCellRenderer(new DurationCellRenderer());
-		col.setMinWidth(10);
-		col.setMaxWidth(1600);
-		col.setPreferredWidth(Integer.parseInt(Main.getProperty(
-				"column.duration.width", "60"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		createColumn(7, "duration", new DurationCellRenderer());
 
-		col = getColumnModel().getColumn(8);
-		col.setIdentifier("comment"); //$NON-NLS-1$
-		col.setHeaderValue(Main.getMessage("comment")); //$NON-NLS-1$
-		headerTips.setToolTip(col, Main.getMessage("comment_desc")); //$NON-NLS-1$
-		col.setCellEditor(new CommentCellEditor());
-		col.setMinWidth(10);
-		col.setMaxWidth(1600);
-		col.setPreferredWidth(Integer.parseInt(Main.getProperty(
-				"column.comment.width", "60"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		commentColumn = col;
+		commentColumn = createColumn(8, "comment", new CommentCellRenderer());
+		commentColumn.setCellEditor(new CommentCellEditor());
 
-		TableColumnModel colModel = getColumnModel();
-		if (!JFritzUtils.parseBoolean(Main.getProperty(
-				"option.showCallByCallColumn", "true"))) { //$NON-NLS-1$, //$NON-NLS-2$
-			try {
-				// Try to remove Call-By-Call Column
-				colModel.removeColumn(colModel.getColumn(colModel
-						.getColumnIndex("callbycall"))); //$NON-NLS-1$
-				Debug.msg("Hiding call-by-call column"); //$NON-NLS-1$
-			} catch (IllegalArgumentException iae) { // No Call-By-Call
-				// column found.
-			}
-		}
-
-		if (!JFritzUtils.parseBoolean(Main.getProperty(
-				"option.showCommentColumn", "true"))) { //$NON-NLS-1$,  //$NON-NLS-2$
-			try {
-				// Try to remove comment column
-				colModel.removeColumn(colModel.getColumn(colModel
-						.getColumnIndex("comment"))); //$NON-NLS-1$
-				Debug.msg("Hiding comment column"); //$NON-NLS-1$
-			} catch (IllegalArgumentException iae) { // No comment
-				// column found.
-			}
-		}
-
-		if (!JFritzUtils.parseBoolean(Main.getProperty(
-				"option.showPortColumn", "true"))) { //$NON-NLS-1$,  //$NON-NLS-2$
-			try {
-				// Try to remove port column
-				colModel.removeColumn(colModel.getColumn(colModel
-						.getColumnIndex("port"))); //$NON-NLS-1$
-				Debug.msg("Hiding port column"); //$NON-NLS-1$
-			} catch (IllegalArgumentException iae) { // No port
-				// column found.
-			}
-		}
+		showHideColumns();
 
 		for (int i = 0; i < getColumnCount(); i++) {
 			String columnName = Main.getProperty("column" + i + ".name", ""); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-			//Debug.msg("column"+i+".name: "+Main.getProperty("column"+i+".name",""));
+			// Debug.msg("column"+i+".name:
+			// "+Main.getProperty("column"+i+".name",""));
 			if (!columnName.equals("")) { //$NON-NLS-1$
 				if (getColumnIndex(columnName) != -1) {
 					moveColumn(getColumnIndex(columnName), i);
@@ -280,11 +190,11 @@ public class CallerTable extends JTable {
 		return c;
 	}
 
-	private void writeColumnStatus() {
+	public void saveColumnStatus() {
 		TableColumnModel colModel = getColumnModel();
 		for (int i = 0; i < colModel.getColumnCount(); i++) {
 			TableColumn col = getColumnModel().getColumn(i);
-			Main.setProperty("column." + col.getIdentifier()+".width", ""
+			Main.setProperty("column." + col.getIdentifier() + ".width", ""
 					+ col.getPreferredWidth());
 		}
 		try {
@@ -310,49 +220,27 @@ public class CallerTable extends JTable {
 			try {
 				Main.setProperty("" + "column" + i + ".name", ""
 						+ colModel.getColumn(i).getIdentifier());
-				//Debug.msg(""+"column"+i+".name"+""+colModel.getColumn(i).getIdentifier());
+				// Debug.msg("" + "column" + i + ".name" + "="+
+				// colModel.getColumn(i).getIdentifier());
 			} catch (IllegalArgumentException iae) {
 				Main.setProperty("column" + i + ".name", "");
 			} catch (ArrayIndexOutOfBoundsException aioobe) {
 				Main.setProperty("column" + i + ".name", "");
 			}
 		}/*
-		 String columnName = Main.getProperty("column"+i+".name",""); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-		 if (!columnName.equals("")) { //$NON-NLS-1$
-		 if (getColumnIndex(columnName) != -1) {
-		 moveColumn(getColumnIndex(columnName), i);
-		 }
-		 }
-
-		 */
-
-	}
-
-	/**
-	 * @return Returns the callByCall column
-	 */
-	public TableColumn getCallByCallColumn() {
-		return callByCallColumn;
-	}
-
-	/**
-	 * @return Returns the comment column
-	 */
-	public TableColumn getCommentColumn() {
-		return commentColumn;
-	}
-
-	/**
-	 * @return Returns the port column
-	 */
-	public TableColumn getPortColumn() {
-		return portColumn;
+			 * String columnName = Main.getProperty("column"+i+".name","");
+			 * //$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$ if
+			 * (!columnName.equals("")) { //$NON-NLS-1$ if
+			 * (getColumnIndex(columnName) != -1) {
+			 * moveColumn(getColumnIndex(columnName), i); } }
+			 *
+			 */
 	}
 
 	/**
 	 *
-	 * Bestimmt die Spaltennummer zu einer bestimmten SpaltenID
-	 * SpaltenID = type, duration, port, participant etc.
+	 * Bestimmt die Spaltennummer zu einer bestimmten SpaltenID SpaltenID =
+	 * type, duration, port, participant etc.
 	 *
 	 */
 	public int getColumnIndex(String columnIdentifier) {
@@ -364,5 +252,86 @@ public class CallerTable extends JTable {
 			}
 		}
 		return -1;
+	}
+
+	/**
+	 * Existiert die Spalte mit dem Namen columnName?
+	 *
+	 * @param columnName
+	 * @return true, wenn Spalte existiert
+	 */
+	public boolean columnExists(String columnName) {
+		TableColumnModel colModel = getColumnModel();
+		try {
+			colModel.getColumnIndex(columnName);
+			// column found
+			return true;
+		} catch (IllegalArgumentException iae) {
+			// No column found
+			return false;
+		}
+	}
+
+	/**
+	 * Fügt die Spalte column mit dem Namen columnName ein
+	 *
+	 * @param columnName
+	 * @param column
+	 */
+	private void showColumn(String columnName, TableColumn column) {
+		TableColumnModel colModel = getColumnModel();
+		if (!columnExists(columnName)) {
+			colModel.addColumn(column);
+			Debug.msg("Showing " + columnName + " column"); //$NON-NLS-1$
+			colModel.getColumn(getColumnCount() - 1).setPreferredWidth(
+					Integer.parseInt(Main.getProperty(
+							"column." + columnName + ".width", "50"))); //$NON-NLS-1$, //$NON-NLS-2$
+		}
+	}
+
+	/**
+	 * Versteckt die Spalte column mit dem Namen columnName
+	 *
+	 * @param columnName
+	 */
+	private void hideColumn(String columnName) {
+		TableColumnModel colModel = getColumnModel();
+		if (columnExists(columnName)) {
+			try {
+				// Try to remove Call-By-Call Column
+				colModel.removeColumn(colModel.getColumn(colModel
+						.getColumnIndex(columnName))); //$NON-NLS-1$
+				Debug.msg("Hiding " + columnName + " column"); //$NON-NLS-1$
+			} catch (IllegalArgumentException iae) {
+				// No CbC-Column found
+			}
+		}
+	}
+
+	/**
+	 * Blendet die Spalten ein oder aus
+	 *
+	 */
+	public void showHideColumns() {
+		if (!JFritzUtils.parseBoolean(Main.getProperty(
+				"option.showCallByCallColumn", "true"))) { //$NON-NLS-1$, //$NON-NLS-2$
+			hideColumn("callbycall");
+		} else {
+			showColumn("callbycall", callByCallColumn);
+		}
+
+		if (!JFritzUtils.parseBoolean(Main.getProperty(
+				"option.showCommentColumn", "true"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+			hideColumn("comment");
+		} else {
+			showColumn("comment", commentColumn);
+		}
+
+		if (!JFritzUtils.parseBoolean(Main.getProperty(
+				"option.showPortColumn", "true"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+			hideColumn("port");
+		} else {
+			showColumn("port", portColumn);
+		}
 	}
 }

@@ -108,7 +108,7 @@ public class JFritzProperties extends Properties {
                 }
 
             });
-            reader.setContentHandler(new PropertiesXMLHandler());
+            reader.setContentHandler(new PropertiesXMLHandler(this));
             reader.parse(new InputSource(new FileInputStream(filename)));
 
         } catch (ParserConfigurationException e) {

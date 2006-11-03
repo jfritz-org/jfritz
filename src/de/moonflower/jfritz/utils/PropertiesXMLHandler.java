@@ -9,8 +9,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import de.moonflower.jfritz.Main;
-
 /**
  * XML Handler for reading the call file
  *
@@ -22,8 +20,11 @@ public class PropertiesXMLHandler extends DefaultHandler {
 
     private String keyEntry;
 
-    public PropertiesXMLHandler() {
+    private JFritzProperties properties;
+
+    public PropertiesXMLHandler(JFritzProperties properties) {
         super();
+        this.properties = properties;
     }
 
     public void startDocument() throws SAXException {
@@ -50,7 +51,7 @@ public class PropertiesXMLHandler extends DefaultHandler {
             throws SAXException {
         if (qName.equals("entry")) { //$NON-NLS-1$
             String value = chars;
-            Main.setProperty(keyEntry, value);
+            properties.setProperty(keyEntry, value);
         }
     }
 

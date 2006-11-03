@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -28,7 +27,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.UIManager;
-import javax.swing.table.TableColumn;
 
 import org.jdesktop.jdic.tray.SystemTray;
 import org.jdesktop.jdic.tray.TrayIcon;
@@ -49,7 +47,6 @@ import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
-import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 import de.moonflower.jfritz.utils.network.SSDPdiscoverThread;
@@ -66,7 +63,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/wiki/Kategorie:Hilfe"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.371 2006/11/01 09:40:39 marc0815 Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.372 2006/11/03 16:45:28 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String CALLS_FILE = "jfritz.calls.xml"; //$NON-NLS-1$
 
@@ -118,8 +115,6 @@ public final class JFritz {
 
 	public static CallMonitorList callMonitorList;
 
-	private static JFritzProperties windowProperties;
-
 	private Main main;
 
 	/**
@@ -127,7 +122,6 @@ public final class JFritz {
 	 */
 	public JFritz(Main main) {
 		this.main = main;
-		windowProperties = new JFritzProperties();
 
 		if (JFritzUtils.parseBoolean(Main.getProperty(
 				"option.createBackup", "false"))) { //$NON-NLS-1$,  //$NON-NLS-2$
@@ -176,7 +170,6 @@ public final class JFritz {
 		callerlist.loadFromXMLFile(Main.SAVE_DIR + CALLS_FILE);
 		phonebook.findAllLastCalls();
 		callerlist.findAllPersons();
-
 
 		callMonitorList = new CallMonitorList();
 		callMonitorList.addCallMonitorListener(new DisplayCallsMonitor());
@@ -525,7 +518,7 @@ public final class JFritz {
 	 */
 
 	public void refreshWindow() {
-		saveWindowProperties();
+		jframe.saveWindowProperties();
 		jframe.dispose();
 		javax.swing.SwingUtilities.invokeLater(jframe);
 		try {
@@ -540,79 +533,48 @@ public final class JFritz {
 
 	}
 
-	public static void saveWindowProperties() {
-		Debug.msg("Save window position"); //$NON-NLS-1$
-
-		windowProperties.setProperty("position.left", Integer.toString(jframe //$NON-NLS-1$
-				.getLocation().x));
-		windowProperties.setProperty("position.top", Integer.toString(jframe //$NON-NLS-1$
-				.getLocation().y));
-		windowProperties.setProperty("position.width", Integer.toString(jframe //$NON-NLS-1$
-				.getSize().width));
-		windowProperties.setProperty("position.height", Integer.toString(jframe //$NON-NLS-1$
-				.getSize().height));
-
-		Debug.msg("Save column widths"); //$NON-NLS-1$
-		Enumeration en = jframe.getCallerTable().getColumnModel().getColumns();
-		int i = 0;
-		while (en.hasMoreElements()) {
-			TableColumn col = (TableColumn) en.nextElement();
-
-			windowProperties.setProperty(
-					"column." + col.getIdentifier().toString() //$NON-NLS-1$
-							+ ".width", Integer.toString(col.getWidth())); //$NON-NLS-1$
-			windowProperties.setProperty(
-					"column" + i + ".name", col.getIdentifier() //$NON-NLS-1$,  //$NON-NLS-2$
-							.toString());
-			i++;
+	void maybeExit(int i) {
+		boolean exit = true;
+		if (JFritzUtils.parseBoolean(Main.getProperty(
+				"option.confirmOnExit", "false"))) { //$NON-NLS-1$ $NON-NLS-2$
+			exit = showExitDialog();
 		}
-		try {
-			Debug.msg("Save window properties"); //$NON-NLS-1$
-			windowProperties.storeToXML(Main.SAVE_DIR
-					+ Main.WINDOW_PROPERTIES_FILE);
-		} catch (IOException e) {
-			Debug.err("Couldn't save Properties"); //$NON-NLS-1$
-		}
-	}
-/**
- * shows the exit Dialog and either returns or exits
- * @param i exit status.
- */
-/*	public void maybeExit(int i) {
-		if (!JFritzUtils.parseBoolean(Main.getProperty("option.confirmOnExit", //$NON-NLS-1$
-		"false"))) { //$NON-NLS-1$
+		if (exit) {
 			exit(0);
-			}
-		boolean exit = showExitDialog();
-		if(exit){exit(0);}
-
+		}
 	}
-*/
+
 	/**
 	 * clean up and exit
-	 * @param i exit status.
+	 *
+	 * @param i
+	 *            exit status.
 	 */
 	void exit(int i) {
 		Debug.msg("Shut down JFritz");
 
 		// TODO maybe some more cleanup is needed
-		if(callMonitor!=null){
+		jframe.saveProperties();
+
+		if (callMonitor != null) {
 			callMonitor.stopCallMonitor();
 		}
 		Debug.msg("disposing jframe");
-		jframe.dispose();
+		if (jframe != null)
+			jframe.dispose();
 		main.exit(i);
 	}
+
 	/**
 	 * Shows the exit dialog
 	 */
 	boolean showExitDialog() {
 		boolean exit = true;
-			exit = JOptionPane.showConfirmDialog(jframe, Main
-					.getMessage("really_quit"), Main.PROGRAM_NAME, //$NON-NLS-1$
-					JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+		exit = JOptionPane.showConfirmDialog(jframe, Main
+				.getMessage("really_quit"), Main.PROGRAM_NAME, //$NON-NLS-1$
+				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 
-			return exit;
+		return exit;
 	}
 
 	/**

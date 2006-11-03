@@ -43,56 +43,54 @@ public class Call {
 
 	public Call(CallType calltype, Date calldate, PhoneNumber number,
 			String port, String route, int duration) {
-		this(calltype, calldate, number, port, route, duration,
-				ROUTE_FIXED_NETWORK);
-	}
-	public Call(CallType calltype, Date calldate, PhoneNumber number,
-			String port, String route, int duration, int route_type) {
-		this.route_type = route_type;
-
 		this.calltype = calltype;
 		this.calldate = calldate;
 		this.number = number;
 
-		//fix so that an empty number doesnt get linked to an empty entry in the telephone book
+		// fix so that an empty number doesnt get linked to an empty entry in
+		// the telephone book
 		if ((this.number != null) && this.number.toString().equals("")) {
 			this.number = null;
 		}
 
-		this.route = route;
-		//      Parse the SIP Provider and save it correctly
-		if (this.route.startsWith("Internet: ")) {
-			Enumeration en = JFritz.getSIPProviderTableModel()
-			.getProviderList().elements();
-			while (en.hasMoreElements()) {
-				SipProvider sipProvider = (SipProvider) en.nextElement();
-				if (sipProvider.getNumber().equals(this.route.substring(10))) {
-					this.route = sipProvider.toString();
-					this.route_type = ROUTE_SIP;
-					break;
-				}
+		this.route_type = ROUTE_FIXED_NETWORK;
+		// Parse the SIP Provider and save it correctly
+		if (route.startsWith("Internet: ")) {
+			route = route.substring(10);
+		}
+
+		Enumeration en = JFritz.getSIPProviderTableModel().getProviderList()
+				.elements();
+		while (en.hasMoreElements()) {
+			SipProvider sipProvider = (SipProvider) en.nextElement();
+			if (sipProvider.getNumber().equals(route)) {
+				route = sipProvider.toString();
+				this.route_type = ROUTE_SIP;
+				break;
 			}
 		}
 
+		this.route = route;
 		this.port = port;
 		this.duration = duration;
 	}
 
 	public Call(CallType calltype, Date calldate, PhoneNumber number,
 			String port, String route, int duration, String comment) {
-		this (calltype, calldate, number,
-				port,  route,  duration);
+		this(calltype, calldate, number, port, route, duration);
 		this.comment = comment;
 	}
 
 	/**
-	 * This function compares the contents of the current call object
-	 * with the contents of the parameter call object
+	 * This function compares the contents of the current call object with the
+	 * contents of the parameter call object
 	 *
 	 * @author Brian Jensen
 	 *
-	 * @param call, the call value to be compared with
-	 * @return a boolean value indicating if this call equals the call given as parameter
+	 * @param call,
+	 *            the call value to be compared with
+	 * @return a boolean value indicating if this call equals the call given as
+	 *         parameter
 	 */
 	public boolean equals(Object call) {
 		Call call2;
@@ -100,7 +98,7 @@ public class Call {
 			return false;
 		}
 		call2 = (Call) call;
-		//prepare the two objects for comparing
+		// prepare the two objects for comparing
 		String nr1 = "", nr2 = ""; //$NON-NLS-1$,  //$NON-NLS-2$
 		if (this.getPhoneNumber() != null) {
 			nr1 = this.getPhoneNumber().getFullNumber();
@@ -131,7 +129,8 @@ public class Call {
 	 * @return Returns the calldate.
 	 */
 	public Date getCalldate() {
-		return new Date(calldate.getTime()); //FIXME mal checken, wo man das noch alles so machen sollte
+		return new Date(calldate.getTime()); // FIXME mal checken, wo man das
+												// noch alles so machen sollte
 	}
 
 	/**
@@ -150,6 +149,7 @@ public class Call {
 
 	/**
 	 * Returns cost of call
+	 *
 	 * @return cost
 	 */
 	public double getCost() {
@@ -167,7 +167,7 @@ public class Call {
 	 * @return Returns the person the number belongs to or null.
 	 */
 	public Person getPerson() {
-		if(person == null) {
+		if (person == null) {
 			return null;
 		} else {
 			return person;
@@ -197,6 +197,7 @@ public class Call {
 
 	/**
 	 * Returns the type (UNDEFINED, POTS, ISDN, SIP) of route
+	 *
 	 * @return type of route
 	 */
 	public int getRouteType() {
@@ -221,7 +222,8 @@ public class Call {
 	}
 
 	/**
-	 * @param comment The comment to set.
+	 * @param comment
+	 *            The comment to set.
 	 */
 	public void setComment(String comment) {
 		this.comment = comment;
@@ -229,7 +231,9 @@ public class Call {
 
 	/**
 	 * Set cost of call
-	 * @param cost The cost of call
+	 *
+	 * @param cost
+	 *            The cost of call
 	 */
 	public void setCost(double cost) {
 		this.cost = cost;
@@ -237,6 +241,7 @@ public class Call {
 
 	/**
 	 * Set duration of call
+	 *
 	 * @param duration
 	 */
 	public void setDuration(int duration) {
@@ -250,6 +255,7 @@ public class Call {
 
 	/**
 	 * Set the port
+	 *
 	 * @param newPort
 	 */
 	public void setPort(String newPort) {
@@ -297,11 +303,11 @@ public class Call {
 		if (route == null) {
 			outString = outString.concat(";\"\""); //$NON-NLS-1$
 		} else {
-			//String sipRoute = ""; //$NON-NLS-1$
+			// String sipRoute = ""; //$NON-NLS-1$
 			String convertedRoute = route;
 			if (route.startsWith("SIP")) { // FIXME old code
 				Enumeration en = JFritz.getSIPProviderTableModel()
-				.getProviderList().elements();
+						.getProviderList().elements();
 				while (en.hasMoreElements()) {
 					SipProvider sipProvider = (SipProvider) en.nextElement();
 					if (route.substring(3).equals(
@@ -312,24 +318,19 @@ public class Call {
 				}
 			}
 
-			/* This is the old format
-			 if (route.startsWith("SIP")) { //$NON-NLS-1$
-			 Enumeration en = JFritz.getSIPProviderTableModel()
-			 .getProviderList().elements();
-			 while (en.hasMoreElements()) {
-			 SipProvider sipProvider = (SipProvider) en.nextElement();
-			 if (sipProvider.getProviderID() == Integer.parseInt(route
-			 .substring(3))) {
-			 sipRoute = sipProvider.toString();
-			 }
-			 }
-			 }
-
-			 if (sipRoute.equals("")) { //$NON-NLS-1$
-			 outString = outString.concat(";\"" + route + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
-			 } else {
-			 outString = outString.concat(";\"" + sipRoute + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
-			 }*/
+			/*
+			 * This is the old format if (route.startsWith("SIP")) {
+			 * //$NON-NLS-1$ Enumeration en = JFritz.getSIPProviderTableModel()
+			 * .getProviderList().elements(); while (en.hasMoreElements()) {
+			 * SipProvider sipProvider = (SipProvider) en.nextElement(); if
+			 * (sipProvider.getProviderID() == Integer.parseInt(route
+			 * .substring(3))) { sipRoute = sipProvider.toString(); } } }
+			 *
+			 * if (sipRoute.equals("")) { //$NON-NLS-1$ outString =
+			 * outString.concat(";\"" + route + "\""); //$NON-NLS-1$,
+			 * //$NON-NLS-2$ } else { outString = outString.concat(";\"" +
+			 * sipRoute + "\""); //$NON-NLS-1$, //$NON-NLS-2$ }
+			 */
 
 			outString = outString.concat(";\"" + convertedRoute + "\"");
 
@@ -368,7 +369,7 @@ public class Call {
 			outString = outString.concat(";\"" + getPerson().getFullname() //$NON-NLS-1$
 					+ "\""); //$NON-NLS-1$
 			outString = outString
-			.concat(";\"" + getPerson().getStreet() + "\""); //$NON-NLS-1$, //$NON-NLS-2$
+					.concat(";\"" + getPerson().getStreet() + "\""); //$NON-NLS-1$, //$NON-NLS-2$
 			if (getPerson().getPostalCode().equals("")) { //$NON-NLS-1$
 				outString = outString.concat(";\"" + getPerson().getCity() //$NON-NLS-1$
 						+ "\""); // city might be "" //$NON-NLS-1$
@@ -414,23 +415,23 @@ public class Call {
 		if (number != null) {
 			if (number.getCallByCall().length() > 0) {
 				output = output
-				+ ("\t<caller callbycall=\"" + number.getCallByCall() //$NON-NLS-1$
-						+ "\">" + number.getIntNumber() + "</caller>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
+						+ ("\t<caller callbycall=\"" + number.getCallByCall() //$NON-NLS-1$
+								+ "\">" + number.getIntNumber() + "</caller>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
 			} else {
 				output = output
-				+ ("\t<caller>" + number.getIntNumber() + "</caller>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
+						+ ("\t<caller>" + number.getIntNumber() + "</caller>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
 			}
 		}
 		if (!port.equals("")) {
 			output = output
-			+ ("\t<port>" + JFritzUtils.convertSpecialChars(port) + "</port>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
+					+ ("\t<port>" + JFritzUtils.convertSpecialChars(port) + "</port>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 
 		if (!route.equals("")) { //$NON-NLS-1$
 			String convertedRoute = route;
 			if (route.startsWith("SIP")) {
 				Enumeration en = JFritz.getSIPProviderTableModel()
-				.getProviderList().elements();
+						.getProviderList().elements();
 				while (en.hasMoreElements()) {
 					SipProvider sipProvider = (SipProvider) en.nextElement();
 					if (route.substring(3).equals(
@@ -441,14 +442,14 @@ public class Call {
 				}
 			}
 			output = output
-			+ ("\t<route>" + JFritzUtils.convertSpecialChars(convertedRoute) + "</route>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
+					+ ("\t<route>" + JFritzUtils.convertSpecialChars(convertedRoute) + "</route>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 		if (duration > 0) {
 			output = output + ("\t<duration>" + duration + "</duration>" + sep); //$NON-NLS-1$, //$NON-NLS-2$
 		}
 
 		output = output
-		+ ("\t<comment>" + JFritzUtils.convertSpecialChars(comment) + "</comment>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
+				+ ("\t<comment>" + JFritzUtils.convertSpecialChars(comment) + "</comment>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
 		output = output + ("</entry>"); //$NON-NLS-1$
 		return output;
 	}

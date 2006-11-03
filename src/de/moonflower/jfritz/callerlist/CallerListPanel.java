@@ -13,8 +13,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DateFormat;
@@ -61,14 +59,12 @@ import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.JFritzClipboard;
-import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 import de.moonflower.jfritz.utils.threeStateButton.ThreeStateButton;
 
 /**
  * @ex-author Arno Willig
  * @author marc
  */
-// TODO delete button
 public class CallerListPanel extends JPanel implements ActionListener,
 		KeyListener, PropertyChangeListener {
 
@@ -202,8 +198,6 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	private JDateChooser startDateChooser;
 
-	private WindowAdapter wl;
-
 	private JFrame parentFrame;
 
 	/**
@@ -228,14 +222,6 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		setLayout(new BorderLayout());
 		add(createToolBar(), BorderLayout.NORTH);
 		add(createCallerListTable(), BorderLayout.CENTER);
-		wl = new WindowAdapter() {
-			public void windowClosing(WindowEvent evt) {
-				Debug
-						.msg("parent window is closing. writing button status for CallerListPanel");
-				writeButtonStatus();
-			}
-		};
-		parent.addWindowListener(wl);
 	}
 
 
@@ -284,9 +270,9 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		Vector provider;
 		if ((callerTable != null) && (callerTable.getSelectedRowCount() != 0)) {
 			provider = callerList
-					.getSipProviders(callerTable.getSelectedRows());
+					.getSelectedProviders(callerTable.getSelectedRows());
 		} else {
-			provider = callerList.getSipProviders();
+			provider = callerList.getAllSipProviders();
 		}
 		return provider;
 	}
@@ -343,7 +329,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 * @return a scrollPane with the callerListTable
 	 */
 	public JScrollPane createCallerListTable() {
-		callerTable = new CallerTable(parentFrame, callerList);
+		callerTable = new CallerTable(callerList);
 		JPopupMenu callerlistPopupMenu = new JPopupMenu();
 		JMenuItem menuItem;
 		menuItem = new JMenuItem(Main.getMessage("reverse_lookup")); //$NON-NLS-1$
@@ -605,7 +591,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		lowerToolbar.addSeparator();
 		lowerToolbar.add(deleteEntriesButton);
 		toolbarPanel.add(lowerToolbar, BorderLayout.SOUTH);
-		readButtonStatus();
+		loadButtonStatus();
 		return toolbarPanel;
 	}
 
@@ -1178,10 +1164,10 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	}
 
 	/**
-	 * writes the Button status to the Main Properties
+	 * save the Button status to the Main Properties
 	 *
 	 */
-	public void writeButtonStatus() {
+	private void saveButtonStatus() {
 		Debug.msg("writing Buttons");
 		Main.setProperty(FILTER_SEARCH_TEXT, searchFilterTextField.getText());
 		Main.setProperty(FILTER_SEARCH, "" + searchFilterButton.getState());
@@ -1207,9 +1193,9 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	}
 
 	/**
-	 * read the status of the Buttons from the Main Properties
+	 * load the status of the Buttons from the Main Properties
 	 */
-	private void readButtonStatus() {
+	private void loadButtonStatus() {
 		Debug.msg("reading Buttons");
 		int state;
 		state = JFritzUtils.parseInt(Main.getProperty(FILTER_COMMENT, "0"));
@@ -1274,6 +1260,23 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		syncAllFilters();
 		callerList.update();
 		((JFritzWindow) parentFrame).setStatus();
+	}
+
+	/**
+	 * Speichert alle Properties, die zum CallerListPanel gehören.
+	 *
+	 */
+	public void saveProperties() {
+		saveButtonStatus();
+		callerTable.saveColumnStatus();
+	}
+
+	/**
+	 * Zeigt bzw. versteckt die Spalten je nach Einstellung vom Benutzer
+	 *
+	 */
+	public void showHideColumns() {
+		callerTable.showHideColumns();
 	}
 
 }
