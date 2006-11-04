@@ -223,7 +223,9 @@ public class ThreeStateButton extends JButton implements ImageObserver {
 	public void setState(int state) {
 		this.state = state;
 		setIcon(icons[state]);
-		setToolTipText(toolTipText[state]);
+		if(toolTipText[state]!= null){
+			setToolTipText(toolTipText[state]);
+		}
 	}
 
 	// we need to be faster than all other Listeners

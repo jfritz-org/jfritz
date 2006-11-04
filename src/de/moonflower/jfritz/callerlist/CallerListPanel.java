@@ -85,7 +85,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		public void mouseClicked(MouseEvent e) {
 			// FIXME Listener in den table einbauen
 			if ((e.getClickCount() > 1)
-					&& (e.getComponent().getClass() != ThreeStateButton.class)) {
+					&& (e.getComponent().getClass() == CallerTable.class)) {
 				JFritz.getJframe().activatePhoneBook();
 			}
 		}
@@ -703,12 +703,15 @@ public class CallerListPanel extends JPanel implements ActionListener,
 				searchLabel.setVisible(false);
 				filter[search].setEnabled(false);
 			} else {
+				filter[search].setEnabled(true);
 				searchFilterTextField.setVisible(true);
 				searchLabel.setVisible(true);
 				((SearchFilter) filter[search])
 						.setSearchString(searchFilterTextField.getText());
 				// do nothing
-				// if(searchFilterButton.getState()==ThreeStateButton.SELECTED)
+				if(searchFilterButton.getState()==ThreeStateButton.SELECTED){
+					filter[search].setInvert(false);
+				}
 				if (searchFilterButton.getState() == ThreeStateButton.INVERTED) {
 					filter[search].setInvert(true);
 				}
@@ -1081,18 +1084,6 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 *
 	 */
 	private void syncAllFilters() {
-		syncFilterWithButton(filter[callIn], callInFilterButton);
-		syncFilterWithButton(filter[callInFailed], callInFailedFilterButton);
-		syncFilterWithButton(filter[callOut], callOutFilterButton);
-		syncFilterWithButton(filter[comment], commentFilterButton);
-		syncFilterWithButton(filter[anonym], anonymFilterButton);
-		syncFilterWithButton(filter[fixed], fixedFilterButton);
-		syncFilterWithButton(filter[handy], handyFilterButton);
-		syncFilterWithButton(filter[date], dateFilterButton);
-		syncFilterWithButton(filter[sip], sipFilterButton);
-		syncFilterWithButton(filter[callByCall], callByCallFilterButton);
-		syncFilterWithButton(filter[search], searchFilterButton);
-
 		if (searchFilterButton.getState() == ThreeStateButton.NOTHING) {
 			searchFilterTextField.setVisible(false);
 			searchLabel.setVisible(false);
@@ -1107,6 +1098,21 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			startDateChooser.setVisible(true);
 			endDateChooser.setVisible(true);
 		}
+		((DateFilter)filter[date]).setStartDate(startDateChooser.getDate());
+		((DateFilter)filter[date]).setEndDate(endDateChooser.getDate());
+		((SearchFilter)filter[search]).setSearchString(searchFilterTextField.getText());
+		syncFilterWithButton(filter[callIn], callInFilterButton);
+		syncFilterWithButton(filter[callInFailed], callInFailedFilterButton);
+		syncFilterWithButton(filter[callOut], callOutFilterButton);
+		syncFilterWithButton(filter[comment], commentFilterButton);
+		syncFilterWithButton(filter[anonym], anonymFilterButton);
+		syncFilterWithButton(filter[fixed], fixedFilterButton);
+		syncFilterWithButton(filter[handy], handyFilterButton);
+		syncFilterWithButton(filter[date], dateFilterButton);
+		syncFilterWithButton(filter[sip], sipFilterButton);
+		syncFilterWithButton(filter[callByCall], callByCallFilterButton);
+		syncFilterWithButton(filter[search], searchFilterButton);
+
 	}
 
 	public void setCallerList(CallerList callerList) {
@@ -1220,6 +1226,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 				.parseInt(Main.getProperty(FILTER_CALLINFAILED, "0"));
 		callInFailedFilterButton.setState(state);
 		searchFilterTextField.setText(Main.getProperty(FILTER_SEARCH_TEXT, ""));
+
 		state = JFritzUtils.parseInt(Main.getProperty(FILTER_SEARCH, "0"));
 		searchFilterButton.setState(state);
 		dateSpecialSaveString = Main.getProperty(FILTER_DATE_SPECIAL, " ");
