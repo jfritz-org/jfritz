@@ -53,6 +53,7 @@ import de.moonflower.jfritz.callerlist.filter.HandyFilter;
 import de.moonflower.jfritz.callerlist.filter.AnonymFilter;
 import de.moonflower.jfritz.callerlist.filter.SearchFilter;
 import de.moonflower.jfritz.callerlist.filter.SipFilter;
+import de.moonflower.jfritz.phonebook.PhoneBookPanel;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
@@ -197,7 +198,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	// private FixedFilter fixedFilter;
 
 	private JDateChooser startDateChooser;
-
+	private PhoneBookPanel phoneBookPanel;
 	private JFrame parentFrame;
 
 	/**
@@ -224,6 +225,14 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		add(createCallerListTable(), BorderLayout.CENTER);
 	}
 
+	public void setPhoneBookPanel(PhoneBookPanel phoneBookPanel){
+		this.phoneBookPanel = phoneBookPanel;
+		if(phoneBookPanel==null){
+			callerTable.setPhoneBookTable(null);
+		}else{
+			callerTable.setPhoneBookTable(phoneBookPanel.getPhoneBookTable());
+		}
+	}
 
 	/**
 	 * creates all filters and stores them in the array
@@ -234,7 +243,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	private void createFilters(CallerList callerList) {
 		filter = new CallFilter[FILTERCOUNT];
 		filter[callByCall] = new CallByCallFilter(
-				getCallByCallProvider(callerList));
+				getSelectedCallByCallProvider(callerList));
 		callerList.addFilter(filter[callByCall]);
 		filter[callInFailed] = new CallInFailedFilter();
 		callerList.addFilter(filter[callInFailed]);
@@ -250,7 +259,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		callerList.addFilter(filter[fixed]);
 		filter[handy] = new HandyFilter();
 		callerList.addFilter(filter[handy]);
-		filter[sip] = new SipFilter(getSipProvider(callerList));
+		filter[sip] = new SipFilter(getSelectedSipProvider(callerList));
 		callerList.addFilter(filter[sip]);
 		filter[date] = new DateFilter(new Date(), new Date());
 		callerList.addFilter(filter[date]);
@@ -259,14 +268,14 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	}
 
 	/**
-	 * creates a SIPfilter using only the selected SIPProviders or all
+	 * creates a SIPfilter using only the selected SIPProviders or <b>all</b>
 	 * SIPProviders, if none is selected
 	 *
 	 * @param callerList
 	 *            the callerlist to retrieve the SIPProviders
 	 * @return the createdFilter
 	 */
-	private Vector getSipProvider(CallerList callerList) {
+	private Vector getSelectedSipProvider(CallerList callerList) {
 		Vector provider;
 		if ((callerTable != null) && (callerTable.getSelectedRowCount() != 0)) {
 			provider = callerList
@@ -286,7 +295,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 * @return the createdFilter
 	 */
 
-	private Vector getCallByCallProvider(CallerList callerList) {
+	private Vector getSelectedCallByCallProvider(CallerList callerList) {
 		Vector provider;
 		if ((callerTable != null) && (callerTable.getSelectedRowCount() != 0)) {
 			provider = callerList
@@ -329,7 +338,12 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 * @return a scrollPane with the callerListTable
 	 */
 	public JScrollPane createCallerListTable() {
-		callerTable = new CallerTable(callerList);
+		callerTable = new CallerTable(this, callerList);
+		if(phoneBookPanel==null){
+			callerTable.setPhoneBookTable(null);
+		}else{
+			callerTable.setPhoneBookTable(phoneBookPanel.getPhoneBookTable());
+		}
 		JPopupMenu callerlistPopupMenu = new JPopupMenu();
 		JMenuItem menuItem;
 		menuItem = new JMenuItem(Main.getMessage("reverse_lookup")); //$NON-NLS-1$
@@ -595,17 +609,6 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		return toolbarPanel;
 	}
 
-	/**
-	 * Disables the delete button, and changes its tooltext
-	 *
-	 */
-	public void disableDeleteEntriesButton() {
-		deleteEntriesButton.setToolTipText(Main.getMessage(DELETE_ENTRIES)
-				.replaceAll("%N", "")); //$NON-NLS-1$,  //$NON-NLS-2$,
-		deleteEntriesButton.setEnabled(false);
-	}
-
-
 
 	public CallerList getCallerList() {
 		return callerList;
@@ -829,13 +832,13 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			return;
 		}
 		if (command.equals(FILTER_SIP)) {
-			((SipFilter) filter[sip]).setProvider(getSipProvider(callerList));
+			((SipFilter) filter[sip]).setProvider(getSelectedSipProvider(callerList));
 			syncFilterWithButton(filter[sip], sipFilterButton);
 			return;
 		}
 		if (command.equals(FILTER_CALLBYCALL)) {
 			((CallByCallFilter) filter[callByCall])
-					.setCallbyCallProvider(getCallByCallProvider(callerList));
+					.setCallbyCallProvider(getSelectedCallByCallProvider(callerList));
 			syncFilterWithButton(filter[callByCall], callByCallFilterButton);
 			return;
 		}
@@ -1120,30 +1123,25 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	}
 
 	/**
-	 * enables the delete button and changes the tooltip
+	 * enables/disables the delete button and changes the tooltip
 	 *
 	 * @param rows
 	 *            the rows, wich are selected
 	 */
-	// TODO auf eine funktion kürzen
 	public void setDeleteEntriesButton(int rows) {
-		deleteEntriesButton.setToolTipText(Main.getMessage(DELETE_ENTRIES)
-				.replaceAll("%N", Integer.toString(rows))); //$NON-NLS-1$,
-		deleteEntriesButton.setEnabled(true);
-	}
-
-	// TODO auf eine funktion kürzen
-	public void setDeleteEntryButton() {
-		deleteEntriesButton.setToolTipText(Main.getMessage(DELETE_ENTRY));
-		deleteEntriesButton.setEnabled(true);
-	}
-
-	// TODO auf eine funktion kürzen
-	public void setDeleteListButton() {
-		deleteEntriesButton.setToolTipText(Main.getMessage("delete_list")); //$NON-NLS-1$
-		// clearList-Icon to big, so use std. delete.png
-		// deleteEntriesButton.setIcon(getImage("clearList.png"));
-		deleteEntriesButton.setEnabled(true);
+		if(rows==0){
+			deleteEntriesButton.setToolTipText(Main.getMessage(DELETE_ENTRIES)
+					.replaceAll("%N", "")); //$NON-NLS-1$,  //$NON-NLS-2$,
+			deleteEntriesButton.setEnabled(false);
+		}
+		else if(rows ==1){
+			deleteEntriesButton.setToolTipText(Main.getMessage(DELETE_ENTRY));
+			deleteEntriesButton.setEnabled(true);
+		}else{
+			deleteEntriesButton.setToolTipText(Main.getMessage(DELETE_ENTRIES)
+					.replaceAll("%N", Integer.toString(rows))); //$NON-NLS-1$,
+			deleteEntriesButton.setEnabled(true);
+		}
 	}
 
 	/**
@@ -1284,6 +1282,10 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 */
 	public void showHideColumns() {
 		callerTable.showHideColumns();
+	}
+
+	public PhoneBookPanel getPhoneBookPanel() {
+		return phoneBookPanel;
 	}
 
 }

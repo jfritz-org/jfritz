@@ -10,9 +10,9 @@ import java.awt.Component;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -29,6 +29,8 @@ import de.moonflower.jfritz.cellrenderer.NumberCellRenderer;
 import de.moonflower.jfritz.cellrenderer.PersonCellRenderer;
 import de.moonflower.jfritz.cellrenderer.PortCellRenderer;
 import de.moonflower.jfritz.cellrenderer.RouteCellRenderer;
+import de.moonflower.jfritz.phonebook.PhoneBookTable;
+import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
@@ -55,15 +57,45 @@ public class CallerTable extends JTable {
 
 	final CallerTable table = this;
 
+	private CallerList callerList;
+
+	private PhoneBookTable phoneBookTable; //to change the selected Person, if someone selects a call
+
+	private CallerListPanel parentPanel;
+
 	/**
 	 * Constructs CallerTable
 	 *
 	 */
-	public CallerTable(CallerList list) {
+	public CallerTable(CallerListPanel parentPanel, CallerList list) {
 		super(list);
+		this.parentPanel = parentPanel;
+		this.callerList = list;
 		headerTips = new ColumnHeaderToolTips();
 		setTableProperties();
 		createColumns();
+	}
+
+	public CallerTable(CallerListPanel parentPanel, PhoneBookTable phoneBookTable, CallerList list) {
+		this(parentPanel, list);
+		this.phoneBookTable = phoneBookTable;
+	}
+
+	public PhoneBookTable getPhoneBookTable() {
+		return phoneBookTable;
+	}
+
+
+	public CallerListPanel getParentPanel() {
+		return parentPanel;
+	}
+
+	public void setParentPanel(CallerListPanel parentPanel) {
+		this.parentPanel = parentPanel;
+	}
+
+	public void setPhoneBookTable(PhoneBookTable phoneBookTable) {
+		this.phoneBookTable = phoneBookTable;
 	}
 
 	/**
@@ -97,8 +129,7 @@ public class CallerTable extends JTable {
 
 		addKeyListener(keyListener);
 
-		SelectionListener listener = new SelectionListener(this);
-		getSelectionModel().addListSelectionListener(listener);
+
 	}
 
 	/**
@@ -117,8 +148,8 @@ public class CallerTable extends JTable {
 	private TableColumn createColumn(int position, String columnName,
 			DefaultTableCellRenderer renderer) {
 		TableColumn col = getColumnModel().getColumn(position);
-		col.setIdentifier(columnName); //$NON-NLS-1$
-		col.setHeaderValue(Main.getMessage(columnName)); //$NON-NLS-1$
+		col.setIdentifier(columnName);
+		col.setHeaderValue(Main.getMessage(columnName));
 		col.setCellRenderer(renderer);
 		headerTips.setToolTip(col, Main.getMessage(columnName + "_desc")); //$NON-NLS-1$
 		col.setMinWidth(10);
@@ -188,6 +219,36 @@ public class CallerTable extends JTable {
 			c.setBackground(new Color(204, 204, 255));
 		}
 		return c;
+	}
+
+	public void valueChanged(ListSelectionEvent e) {
+		super.valueChanged(e);
+		// make sure we get the last selectionEvent
+		if (!e.getValueIsAdjusting()) {
+			Call call = null;
+			int rows[] = getSelectedRows();
+			int selectedCalls = rows.length;
+			double selectedCallsTotalMinutes = 0;
+
+			for (int i = 0; i < rows.length; i++) { // sum the durations
+				call = (Call) callerList.getFilteredCallVector().get(rows[i]);
+				selectedCallsTotalMinutes += call.getDuration();
+			}
+			parentPanel.setDeleteEntriesButton(selectedCalls);
+			if (rows.length == 1) { // set the selection in the phonebook to the person of the selected call
+				// table.getJfritz().getJframe().getPhoneBookPanel().getPersonPanel().setPerson(person);
+				if(phoneBookTable != null){
+					call =(Call) callerList.getFilteredCallVector().get(rows[0]);
+					phoneBookTable.showAndSelectPerson(call.getPerson());
+				}
+				JFritz.getJframe().setStatus(); //'normaler' status
+			} else if (rows.length > 0) {
+				// Setze Statusbar mit Infos über selektierte Anrufe
+				JFritz.getJframe().setStatus(Main.getMessage("entries").replaceAll( //$NON-NLS-1$
+						"%N", Integer.toString(selectedCalls)) + ", "  //$NON-NLS-1$,  //$NON-NLS-2$
+                        + Main.getMessage("total_duration") + ": " + (selectedCallsTotalMinutes / 60) + " min"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+			}
+		}
 	}
 
 	public void saveColumnStatus() {
@@ -300,7 +361,7 @@ public class CallerTable extends JTable {
 			try {
 				// Try to remove Call-By-Call Column
 				colModel.removeColumn(colModel.getColumn(colModel
-						.getColumnIndex(columnName))); //$NON-NLS-1$
+						.getColumnIndex(columnName)));
 				Debug.msg("Hiding " + columnName + " column"); //$NON-NLS-1$
 			} catch (IllegalArgumentException iae) {
 				// No CbC-Column found

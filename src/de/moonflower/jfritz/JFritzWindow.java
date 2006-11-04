@@ -202,6 +202,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		callerListPanel = new CallerListPanel(JFritz.getCallerList(), this);
 		phoneBookPanel = new PhoneBookPanel(JFritz.getPhonebook(), this,
 				Main.SAVE_DIR, new Locale(Main.getProperty("locale", "de_DE")));
+		callerListPanel.setPhoneBookPanel(phoneBookPanel);
+		phoneBookPanel.setCallerListPanel(callerListPanel);
 		quickDialPanel = new QuickDialPanel();
 		// New code here, remove if problematic
 		monitoringPanel = new MonitoringPanel();
@@ -1646,6 +1648,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		// phoneBookPanel
 		// quickDialPanel
 		// monitoringPanel
+	}
+
+	public PhoneBookPanel getPhonebookPanel() {
+
+		return phoneBookPanel;
 	}
 
 }

@@ -41,6 +41,7 @@ import javax.swing.JMenuItem;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.callerlist.CallerListPanel;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.VCardList;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -98,6 +99,8 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	private PhoneBook phonebook;
 	private String mainSaveDir;
 	private ResourceBundle messages;
+
+	private CallerListPanel callerListPanel;
 
 	public PhoneBookPanel(PhoneBook phonebook, JFritzWindow parentFrame, String mainSaveDir, Locale locale) {
 		this.mainSaveDir = mainSaveDir;
@@ -196,7 +199,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		//Add listener to components that can bring up popup menus.
 		MouseAdapter popupListener = new PopupListener();
 
-		phoneBookTable = new PhoneBookTable(phonebook);
+		phoneBookTable = new PhoneBookTable(this, phonebook);
 		phoneBookTable.getSelectionModel().addListSelectionListener(this);
 		phoneBookTable.addMouseListener(popupListener);
 		return new JScrollPane(phoneBookTable);
@@ -491,6 +494,11 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		editPanel.add(personPanel, BorderLayout.CENTER);
 		editPanel.add(editButtonPanel, BorderLayout.SOUTH);
 		return editPanel;
+	}
+
+	public void setCallerListPanel(CallerListPanel callerListPanel) {
+		this.callerListPanel = callerListPanel;
+
 	}
 
 }
