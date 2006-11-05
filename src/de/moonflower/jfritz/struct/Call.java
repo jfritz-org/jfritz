@@ -366,22 +366,22 @@ public class Call {
 		outString = outString.concat(";\"" + duration + "\""); //$NON-NLS-1$, //$NON-NLS-2$
 
 		// address
-		if (getPerson() != null) {
-			outString = outString.concat(";\"" + getPerson().getFullname() //$NON-NLS-1$
+		if (person != null) {
+			outString = outString.concat(";\"" + person.getFullname() //$NON-NLS-1$
 					+ "\""); //$NON-NLS-1$
 			outString = outString
-					.concat(";\"" + getPerson().getStreet() + "\""); //$NON-NLS-1$, //$NON-NLS-2$
-			if (getPerson().getPostalCode().equals("")) { //$NON-NLS-1$
-				outString = outString.concat(";\"" + getPerson().getCity() //$NON-NLS-1$
+					.concat(";\"" + person.getStreet() + "\""); //$NON-NLS-1$, //$NON-NLS-2$
+			if (person.getPostalCode().equals("")) { //$NON-NLS-1$
+				outString = outString.concat(";\"" + person.getCity() //$NON-NLS-1$
 						+ "\""); // city might be "" //$NON-NLS-1$
-			} else if (getPerson().getCity().equals("")) { //$NON-NLS-1$
+			} else if (person.getCity().equals("")) { //$NON-NLS-1$
 				outString = outString.concat(";\"" //$NON-NLS-1$
-						+ getPerson().getPostalCode() + "\""); //$NON-NLS-1$
+						+ person.getPostalCode() + "\""); //$NON-NLS-1$
 				// postCode might be ""
 			} else { // postCode AND city !equals("")
 				outString = outString.concat(";\"" //$NON-NLS-1$
-						+ getPerson().getPostalCode() + " " //$NON-NLS-1$
-						+ getPerson().getCity() + "\""); //$NON-NLS-1$
+						+ person.getPostalCode() + " " //$NON-NLS-1$
+						+ person.getCity() + "\""); //$NON-NLS-1$
 			}
 		} else {
 			outString = outString.concat(";\"\";\"\";\"\""); //$NON-NLS-1$
