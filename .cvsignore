@@ -2,11 +2,7 @@ bin
 dist
 doc
 ant
-jfritz.calls.xml
-jfritz.phonebook.xml
-jfritz.properties.xml
-jfritz.quickdials.xml
-jfritz.sipprovider.xml
+jfritz.*.xml
 *.zip
 .cvsignore
 .classpath

@@ -147,7 +147,7 @@ public class ThreeStateButton extends JButton implements ImageObserver {
 		g.drawImage(i1, 0, 0, null);
 
 		java.net.URL imageURL = ThreeStateButton.class
-		.getResource("images/stern3.gif");
+		.getResource("images/stern.gif");
 		Image star;
 		if (imageURL != null) {
 			MediaTracker mediaTracker = new MediaTracker(this);
@@ -159,10 +159,10 @@ public class ThreeStateButton extends JButton implements ImageObserver {
 				g.drawImage(star, 0, 0, this);
 				//Debug.msg("image loaded: "+star.toString());
 			} catch (InterruptedException ie) {
-				Debug.err("error loading images/stern2.gif" + ie);
+				Debug.err("error loading images/stern.gif" + ie);
 			}
 		} else {
-			Debug.err("images/stern2.gif not found for ThreeStateButton");
+			Debug.err("images/stern.gif not found for ThreeStateButton");
 		}
 		ImageIcon result = new ImageIcon(image);
 		return result;
