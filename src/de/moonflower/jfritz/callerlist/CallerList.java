@@ -1756,7 +1756,6 @@ public class CallerList extends AbstractTableModel {
 			// Debug.msg("route:"+route);
 			// Debug.msg("callrouteType:"+call.getRouteType());
 			if (!call.getRoute().equals("")) {
-
 				if (call.getRouteType() == Call.ROUTE_SIP) {
 					if (!sipProviders.contains(call.getRoute())) {
 						sipProviders.add(call.getRoute());

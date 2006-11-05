@@ -7,7 +7,6 @@ package de.moonflower.jfritz.callerlist.filter;
 import java.util.Vector;
 
 import de.moonflower.jfritz.struct.Call;
-import de.moonflower.jfritz.utils.Debug;
 
 public class SipFilter extends CallFilter {
 

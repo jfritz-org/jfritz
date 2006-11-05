@@ -46,6 +46,7 @@ public class Call {
 		this.calltype = calltype;
 		this.calldate = calldate;
 		this.number = number;
+		this.route = route;
 
 		// fix so that an empty number doesnt get linked to an empty entry in
 		// the telephone book
@@ -53,24 +54,24 @@ public class Call {
 			this.number = null;
 		}
 
-		this.route_type = ROUTE_FIXED_NETWORK;
 		// Parse the SIP Provider and save it correctly
-		if (route.startsWith("Internet: ")) {
-			route = route.substring(10);
-		}
-
-		Enumeration en = JFritz.getSIPProviderTableModel().getProviderList()
-				.elements();
-		while (en.hasMoreElements()) {
-			SipProvider sipProvider = (SipProvider) en.nextElement();
-			if (sipProvider.getNumber().equals(route)) {
-				route = sipProvider.toString();
-				this.route_type = ROUTE_SIP;
-				break;
+		if ( route.contains("@")) {
+			this.route_type = ROUTE_SIP;
+		} else if (this.route.startsWith("Internet: ")) {
+			Enumeration en = JFritz.getSIPProviderTableModel()
+			.getProviderList().elements();
+			while (en.hasMoreElements()) {
+				SipProvider sipProvider = (SipProvider) en.nextElement();
+				if (sipProvider.getNumber().equals(this.route.substring(10))) {
+					this.route = sipProvider.toString();
+					this.route_type = ROUTE_SIP;
+					break;
+				}
 			}
+		} else {
+			route_type = ROUTE_FIXED_NETWORK;
 		}
 
-		this.route = route;
 		this.port = port;
 		this.duration = duration;
 	}
