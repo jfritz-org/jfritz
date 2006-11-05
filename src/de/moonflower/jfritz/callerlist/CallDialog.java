@@ -40,7 +40,7 @@ import de.moonflower.jfritz.utils.NoticeDialog;
 public class CallDialog extends JDialog implements ActionListener {
 	private static final long serialVersionUID = 1;
 
-	private Vector numbers;
+	private Vector<PhoneNumber> numbers;
 
 	private JComboBox port;
 
@@ -60,7 +60,7 @@ public class CallDialog extends JDialog implements ActionListener {
 	 *            String containig the default number to select in JComboBox
 	 * @throws HeadlessException
 	 */
-	public CallDialog(Vector numbers, PhoneNumber defaultNumber)
+	public CallDialog(Vector<PhoneNumber> numbers, PhoneNumber defaultNumber)
 			throws HeadlessException {
 		super(JFritz.getJframe()); //sets icon to JFritz' one
 		//this.setLocation(JFritz.getJframe().getX() + 80, JFritz.getJframe().getY() + 100);
@@ -82,7 +82,7 @@ public class CallDialog extends JDialog implements ActionListener {
 		super(JFritz.getJframe()); //sets icon to JFritz' one
 		// this.setLocationRelativeTo(JFritz.getJframe());
 		//this.setLocation(JFritz.getJframe().getX() + 80, JFritz.getJframe().getY() + 100);
-		Vector v = new Vector();
+		Vector<PhoneNumber> v = new Vector<PhoneNumber>();
 		v.addElement(number);
 		this.numbers = v;
         this.defaultNumber = number; //does not really need, but to be complete
@@ -123,12 +123,12 @@ public class CallDialog extends JDialog implements ActionListener {
 
 			//make the number editable
 			if (this.numbers.size() == 1) { // if only one number -> use editable JTextField
-				cboNumber = new JTextField(((PhoneNumber) numbers.elementAt(0)).getAreaNumber());
+				cboNumber = new JTextField((numbers.elementAt(0)).getAreaNumber());
 				((JTextField)cboNumber).setPreferredSize(new Dimension(100, 20));
 			} else {// if more then one number -> use editable JComboBox
 				cboNumber = new JComboBox();
 				for (int i = 0; i < this.numbers.size(); i++) {
-					((JComboBox) cboNumber).addItem(((PhoneNumber) numbers
+					((JComboBox) cboNumber).addItem((numbers
 							.elementAt(i)).getAreaNumber());
 				}
 

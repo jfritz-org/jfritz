@@ -98,17 +98,17 @@ public class CallerList extends AbstractTableModel {
 
 	// call list used to display entries in the table, can be sorted by other
 	// criteria
-	private Vector filteredCallerData;
+	private Vector<Call> filteredCallerData;
 
 	// internal call list, sorted descending by date
-	private Vector unfilteredCallerData;
+	private Vector<Call> unfilteredCallerData;
 
 	// temp vector for adding in new calls
-	private Vector newCalls;
+	private Vector<Call> newCalls;
 
 	private int sortColumn;
 
-	private Vector filters;
+	private Vector<CallFilter> filters;
 
 	private boolean sortDirection = false;
 
@@ -124,21 +124,13 @@ public class CallerList extends AbstractTableModel {
 	 */
 	public CallerList() {
 		// Powers of 2 always have better performance
-		unfilteredCallerData = new Vector(256);
-		filteredCallerData = new Vector();
-		filters = new Vector();
+		unfilteredCallerData = new Vector<Call>(256);
+		filteredCallerData = new Vector<Call>();
+		filters = new Vector<CallFilter>();
 		// lets see if my new method works better
-		newCalls = new Vector(32);
+		newCalls = new Vector<Call>(32);
 
 		sortColumn = 1;
-	}
-
-	/**
-	 *
-	 * @return Unfiltered Vector of Calls
-	 */
-	public Vector getUnfilteredCallVector() {
-		return unfilteredCallerData;
 	}
 
 	/**
@@ -155,7 +147,7 @@ public class CallerList extends AbstractTableModel {
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		String columnName = getRealColumnName(columnIndex);
 		if (columnName.equals("participant")) { //$NON-NLS-1$
-			return ((Call) filteredCallerData.get(rowIndex)).getPhoneNumber() != null;
+			return (filteredCallerData.get(rowIndex)).getPhoneNumber() != null;
 		} else if (columnName.equals("comment")) { //$NON-NLS-1$
 			return true;
 		} else if (columnName.equals("number")) { //$NON-NLS-1$
@@ -168,6 +160,7 @@ public class CallerList extends AbstractTableModel {
 	 * @param columnIndex
 	 * @return class of column
 	 */
+	@SuppressWarnings("unchecked")
 	public Class getColumnClass(int columnIndex) {
 		Object o = getValueAt(0, columnIndex);
 		if (o == null) {
@@ -207,22 +200,22 @@ public class CallerList extends AbstractTableModel {
 			}
 			if (!wholeCallerList && rows != null && rows.length > 0) {
 				for (int i = 0; i < rows.length; i++) {
-					Call currentCall = (Call) filteredCallerData
+					Call currentCall = filteredCallerData
 							.elementAt(rows[i]);
 					pw.write(currentCall.toXML());
 					pw.newLine();
 				}
 			} else if (wholeCallerList) { // Export ALL UNFILTERED Calls
-				Enumeration en = unfilteredCallerData.elements();
+				Enumeration<Call> en = unfilteredCallerData.elements();
 				while (en.hasMoreElements()) {
-					Call call = (Call) en.nextElement();
+					Call call = en.nextElement();
 					pw.write(call.toXML());
 					pw.newLine();
 				}
 			} else {// Export ALL FILTERED Calls
-				Enumeration en = filteredCallerData.elements();
+				Enumeration<Call> en = filteredCallerData.elements();
 				while (en.hasMoreElements()) {
-					Call call = (Call) en.nextElement();
+					Call call = en.nextElement();
 					pw.write(call.toXML());
 					pw.newLine();
 				}
@@ -261,20 +254,20 @@ public class CallerList extends AbstractTableModel {
 			}
 			if (!wholeCallerList && rows != null && rows.length > 0) {
 				for (int i = 0; i < rows.length; i++) {
-					Call currentCall = (Call) filteredCallerData
+					Call currentCall = filteredCallerData
 							.elementAt(rows[i]);
 					pw.println(currentCall.toCSV());
 				}
 			} else if (wholeCallerList) { // Export ALL UNFILTERED Calls
-				Enumeration en = getUnfilteredCallVector().elements();
+				Enumeration<Call> en = unfilteredCallerData.elements();
 				while (en.hasMoreElements()) {
-					Call call = (Call) en.nextElement();
+					Call call = en.nextElement();
 					pw.println(call.toCSV());
 				}
 			} else { // Export ALL FILTERED Calls
-				Enumeration en = getFilteredCallVector().elements();
+				Enumeration<Call> en = filteredCallerData.elements();
 				while (en.hasMoreElements()) {
-					Call call = (Call) en.nextElement();
+					Call call = en.nextElement();
 					pw.println(call.toCSV());
 				}
 			}
@@ -430,7 +423,7 @@ public class CallerList extends AbstractTableModel {
 	 *
 	 */
 	public boolean contains(Call newCall) {
-		Vector unfilteredCallerData = (Vector) this.unfilteredCallerData
+		Vector<Call> unfilteredCallerData = (Vector) this.unfilteredCallerData
 				.clone();
 		// find index for date collumn
 		int indexOfDate = -1;
@@ -462,7 +455,7 @@ public class CallerList extends AbstractTableModel {
 			if (unfilteredCallerData.isEmpty())
 				return false;
 
-			Call c = (Call) unfilteredCallerData.elementAt(middle);
+			Call c = unfilteredCallerData.elementAt(middle);
 			int Compare = newCall.getCalldate().compareTo(c.getCalldate());
 
 			// check if the date is before or after the current element in the
@@ -484,7 +477,7 @@ public class CallerList extends AbstractTableModel {
 
 					// Yikes! Don't forget to stay in the array bounds
 					if (tmpMiddle >= 0) {
-						c = (Call) unfilteredCallerData.elementAt(tmpMiddle);
+						c = unfilteredCallerData.elementAt(tmpMiddle);
 
 						// search left as long as the dates still match
 						while (c.getCalldate().equals(newCall.getCalldate())) {
@@ -495,7 +488,7 @@ public class CallerList extends AbstractTableModel {
 
 							// make sure we stay in the array bounds
 							if (tmpMiddle > 0)
-								c = (Call) unfilteredCallerData
+								c = unfilteredCallerData
 										.elementAt(--tmpMiddle);
 							else
 								break;
@@ -504,7 +497,7 @@ public class CallerList extends AbstractTableModel {
 
 					tmpMiddle = middle + 1;
 					if (tmpMiddle < unfilteredCallerData.size()) {
-						c = (Call) unfilteredCallerData.elementAt(middle + 1);
+						c = unfilteredCallerData.elementAt(middle + 1);
 
 						// search right as long as the dates still match
 						while (c.getCalldate().equals(newCall.getCalldate())) {
@@ -515,7 +508,7 @@ public class CallerList extends AbstractTableModel {
 
 							// make sure to stay in the array bounds
 							if (tmpMiddle < (unfilteredCallerData.size() - 1))
-								c = (Call) unfilteredCallerData
+								c = unfilteredCallerData
 										.elementAt(++tmpMiddle);
 							else
 								break;
@@ -641,7 +634,7 @@ public class CallerList extends AbstractTableModel {
 	 * @return the value at a specific position
 	 */
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Call call = (Call) filteredCallerData.get(rowIndex);
+		Call call = filteredCallerData.get(rowIndex);
 		String columnName = getRealColumnName(columnIndex);
 		if (columnName.equals("type")) { //$NON-NLS-1$
 			return call.getCalltype();
@@ -693,12 +686,12 @@ public class CallerList extends AbstractTableModel {
 	}
 
 	public void setComment(String comment, int rowIndex) {
-		Call call = (Call) filteredCallerData.get(rowIndex);
+		Call call = filteredCallerData.get(rowIndex);
 		call.setComment(comment);
 	}
 
 	public void setPerson(Person person, int rowIndex) {
-		Call call = (Call) filteredCallerData.get(rowIndex);
+		Call call = filteredCallerData.get(rowIndex);
 		setPerson(person, call);
 	}
 
@@ -871,10 +864,10 @@ public class CallerList extends AbstractTableModel {
 	 * @return Total duration of all (filtered) calls
 	 */
 	public int getTotalDuration() {
-		Enumeration en = getFilteredCallVector().elements();
+		Enumeration<Call> en = filteredCallerData.elements();
 		int total = 0;
 		while (en.hasMoreElements()) {
-			Call call = (Call) en.nextElement();
+			Call call = en.nextElement();
 			total += call.getDuration();
 		}
 		return total;
@@ -884,10 +877,10 @@ public class CallerList extends AbstractTableModel {
 	 * @return Total costs of all filtered calls
 	 */
 	public int getTotalCosts() {
-		Enumeration en = getFilteredCallVector().elements();
+		Enumeration<Call> en = filteredCallerData.elements();
 		int total = 0;
 		while (en.hasMoreElements()) {
-			Call call = (Call) en.nextElement();
+			Call call = en.nextElement();
 			if (call.getCost() > 0) // Negative Kosten => unbekannte kosten
 				total += call.getCost();
 		}
@@ -901,9 +894,9 @@ public class CallerList extends AbstractTableModel {
 	public Call findLastCall(Person person) {
 		Vector numbers = person.getNumbers();
 		if (numbers.size() > 0) {
-			Enumeration en = unfilteredCallerData.elements();
+			Enumeration<Call> en = unfilteredCallerData.elements();
 			while (en.hasMoreElements()) {
-				Call call = (Call) en.nextElement();
+				Call call = en.nextElement();
 				if (call.getPhoneNumber() != null) {
 					for (int i = 0; i < numbers.size(); i++) {
 						if (call.getPhoneNumber().getIntNumber().equals(
@@ -938,7 +931,7 @@ public class CallerList extends AbstractTableModel {
 		if (rows.length > 0) {
 			Call call;
 			for (int i = 0; i < rows.length; i++) {
-				call = (Call) filteredCallerData.get(rows[i]);
+				call = filteredCallerData.get(rows[i]);
 				unfilteredCallerData.remove(call);
 				Debug.msg("removing " + call);
 				Person p = call.getPerson();
@@ -985,7 +978,7 @@ public class CallerList extends AbstractTableModel {
 			rows = JFritz.getJframe().getCallerTable().getSelectedRows();
 
 		if (rows != null && rows.length == 1)
-			return (Call) this.filteredCallerData.elementAt(rows[0]);
+			return this.filteredCallerData.elementAt(rows[0]);
 		else
 			Debug.errDlg(Main.getMessage("error_choose_one_call")); //$NON-NLS-1$
 
@@ -1661,17 +1654,17 @@ public class CallerList extends AbstractTableModel {
 	 * Filters the unfilteredData and writes it to filtered Data all added
 	 * Filters are used
 	 */
-	public Vector filterData(Vector src) {
-		Vector result = new Vector();
+	public Vector<Call> filterData(Vector<Call> src) {
+		Vector<Call> result = new Vector<Call>();
 		Debug.msg("updating filtered Data");
-		Enumeration en = src.elements();
+		Enumeration<Call> en = src.elements();
 		Call call;
 		CallFilter f;
 		int i;
 		while (en.hasMoreElements()) {
-			call = (Call) en.nextElement();
+			call = en.nextElement();
 			for (i = 0; i < filters.size(); i++) {
-				f = (CallFilter) filters.elementAt(i);
+				f = filters.elementAt(i);
 				if (!f.passFilter(call))
 					break;
 			}// only add if we passed all filters
@@ -1692,7 +1685,7 @@ public class CallerList extends AbstractTableModel {
 	public Vector getCbCProviders(int[] rows) {
 		Vector callByCallProviders = new Vector();
 		for (int i = 0; i < rows.length; i++) {
-			Call call = (Call) getFilteredCallVector().get(rows[i]);
+			Call call = filteredCallerData.get(rows[i]);
 			addIfCbCProvider(callByCallProviders, call);
 		}
 		return callByCallProviders;
@@ -1727,8 +1720,8 @@ public class CallerList extends AbstractTableModel {
 	 */
 	public Vector getCbCProviders() {
 		Vector callByCallProviders = new Vector();
-		for (int i = 0; i < getUnfilteredCallVector().size(); i++) {
-			Call call = (Call) getUnfilteredCallVector().get(i);
+		for (int i = 0; i < unfilteredCallerData.size(); i++) {
+			Call call = unfilteredCallerData.get(i);
 			addIfCbCProvider(callByCallProviders, call);
 		}
 		return callByCallProviders;
@@ -1742,7 +1735,7 @@ public class CallerList extends AbstractTableModel {
 	public Vector getSelectedProviders(int[] rows) {
 		Vector selectedProviders = new Vector();
 		for (int i = 0; i < rows.length; i++) {
-			Call call = (Call) this.getFilteredCallVector().get(rows[i]);
+			Call call = filteredCallerData.get(rows[i]);
 			if (!call.getRoute().equals("")) {
 				if (!selectedProviders.contains(call.getRoute())) {
 					selectedProviders.add(call.getRoute());
@@ -1758,8 +1751,8 @@ public class CallerList extends AbstractTableModel {
 	 */
 	public Vector getAllSipProviders() {
 		Vector sipProviders = new Vector();
-		for (int i = 0; i < getFilteredCallVector().size(); i++) {
-			Call call = (Call) this.getFilteredCallVector().get(i);
+		for (int i = 0; i < filteredCallerData.size(); i++) {
+			Call call = filteredCallerData.get(i);
 			// Debug.msg("route:"+route);
 			// Debug.msg("callrouteType:"+call.getRouteType());
 			if (!call.getRoute().equals("")) {
@@ -1785,7 +1778,7 @@ public class CallerList extends AbstractTableModel {
 		Call call;
 		Person person;
 		for (int i = 0; i < unfilteredCallerData.size(); i++) {
-			call = (Call) unfilteredCallerData.get(i);
+			call = unfilteredCallerData.get(i);
 			person = phonebook.findPerson(call);
 			call.setPerson(person);
 		}
@@ -1807,7 +1800,7 @@ public class CallerList extends AbstractTableModel {
 		if (rows.length > 0) { // nur für markierte Einträge ReverseLookup
 			// durchführen
 			for (int i = 0; i < rows.length; i++) {
-				Call call = (Call) getFilteredCallVector().get(
+				Call call = filteredCallerData.get(
 						rows[i]);
 				Person newPerson = null;
 				if(call.getPhoneNumber()!=null){ //We have a Number

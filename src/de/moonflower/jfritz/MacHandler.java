@@ -2,12 +2,10 @@ package de.moonflower.jfritz;
 
 import javax.swing.SwingUtilities;
 
-import java.awt.event.WindowEvent;
 import java.lang.reflect.*;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.Debug;
-import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
  * @author rob
@@ -26,11 +24,6 @@ public class MacHandler {
 	public MacHandler(JFritz jfritz) {
 		this.jfritz = jfritz;
 		try {
-
-			// @Jochen: Vielleicht kannst du hier noch Code einfügen, so dass
-			// JFritz unter dem MAC hübscher aussieht, auch wenn man nicht die
-			// extra MAC-Version nimmt. Ich habe da schon mal drei Beispiele
-			// reingemacht
 
 			System.setProperty("apple.laf.useScreenMenuBar", "true");  //$NON-NLS-1$,  //$NON-NLS-2$
 			System
