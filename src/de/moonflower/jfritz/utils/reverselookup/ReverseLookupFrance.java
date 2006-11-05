@@ -50,6 +50,7 @@ public final class ReverseLookupFrance {
 
 		String firstname = "",
 				lastname = "",
+				company = "",
 				street = "", //$NON-NLS-1$
 				zipCode = "", //$NON-NLS-1$
 				city = ""; 	  //$NON-NLS-1$;
@@ -112,6 +113,8 @@ public final class ReverseLookupFrance {
 
 					Pattern pName = Pattern
 							.compile("<TD HEIGHT=\"15\" BGCOLOR=\"#ABEEFB\"  ><FONT CLASS=\"ctexte\">&nbsp;([^<]*)"); //$NON-NLS-1$
+					Pattern pCompany = Pattern
+							.compile("<TD HEIGHT=\"15\"  bgcolor=#FFD92A  ><FONT CLASS=\"ctexte\">&nbsp;([^<]*)");
 					Pattern pAddress = Pattern
 						.compile("<TD HEIGHT=\"35\" VALIGN=\"TOP\"><FONT CLASS=\"copytexte\">([^<]*)<br />([^<]*)"); //$NON-NLS-1$
 
@@ -133,6 +136,15 @@ public final class ReverseLookupFrance {
 							lastname = mName.group(1).trim();
 					}
 
+					Matcher mCompany = pCompany.matcher(data);
+					if ( mCompany.find()) {
+						company = mCompany.group(1);
+						while ( company.endsWith(" ")) {
+							company = company.substring(0, company.length()-1);
+						}
+						Debug.msg("Company: " + company);
+					}
+
 					//parse Street, zip code and city
 					Matcher mAddress = pAddress.matcher(data);
 					if(mAddress.find()){
@@ -152,7 +164,7 @@ public final class ReverseLookupFrance {
 			Debug.err("URL invalid: " + urlstr); //$NON-NLS-1$
 		}
 
-		newPerson = new Person(firstname, "", lastname, street, zipCode, city, "");
+		newPerson = new Person(firstname, company, lastname, street, zipCode, city, "");
 		if(intNumber)
 			number = "+" + number;
 
