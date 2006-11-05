@@ -72,7 +72,6 @@ import de.moonflower.jfritz.monitoring.MonitoringPanel;
 import de.moonflower.jfritz.phonebook.PhoneBookPanel;
 
 import de.moonflower.jfritz.struct.Call;
-import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.CopyFile;
@@ -83,7 +82,6 @@ import de.moonflower.jfritz.utils.ImportOutlookContactsDialog;
 import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.PrintCallerList;
-import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 import de.moonflower.jfritz.utils.SwingWorker;
 
 /**
@@ -688,48 +686,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			final SwingWorker worker = new SwingWorker() {
 				public Object construct() {
 					boolean isdone = false;
-					int j = 0;
 					while (!isdone) {
 						setBusy(true);
 						setStatus(Main.getMessage("reverse_lookup")); //$NON-NLS-1$
-						for (int i = 0; i < JFritz.getCallerList()
-								.getRowCount(); i++) {
-							Vector data = JFritz.getCallerList()
-									.getFilteredCallVector();
-							Call call = (Call) data.get(i);
-							PhoneNumber number = call.getPhoneNumber();
-							if ((number != null) && (call.getPerson() == null)) {
-								j++;
-								setStatus(Main.getMessage("reverse_lookup_for") //$NON-NLS-1$
-										+ " " + number.getIntNumber() + " ..."); //$NON-NLS-1$,  //$NON-NLS-2$
-								Debug.msg("Reverse lookup for " //$NON-NLS-1$
-										+ number.getIntNumber());
-
-								Person newPerson = ReverseLookup.lookup(number);
-								if (newPerson != null) {
-									JFritz.getPhonebook().addEntry(newPerson); // FIXME
-									// assure
-									// only
-									// one
-									// Thread
-									// at a
-									// time
-									// accesses
-									// the
-									// phonebook
-									JFritz.getPhonebook()
-											.fireTableDataChanged();
-									JFritz.getCallerList()
-											.fireTableDataChanged();
-								}
-
-							}
-						}
+						JFritz.getCallerList().reverseLookupCalls(JFritz.getCallerList().getFilteredCallVector());
 						isdone = true;
-					}
-					if (j > 0) {
-						JFritz.getPhonebook().saveToXMLFile(
-								Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
 					}
 					return null;
 				}
@@ -1604,7 +1565,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	public void loadWindowProperties() {
 		try {
-			windowProperties.loadFromXML(Main.SAVE_DIR + WINDOW_PROPERTIES_FILE);
+			windowProperties
+					.loadFromXML(Main.SAVE_DIR + WINDOW_PROPERTIES_FILE);
 		} catch (FileNotFoundException e) {
 			Debug.err("File " + Main.SAVE_DIR + WINDOW_PROPERTIES_FILE //$NON-NLS-1$
 					+ " not found, using default values"); //$NON-NLS-1$
@@ -1625,8 +1587,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		windowProperties.setProperty(
 				"position.height", Integer.toString(this.getHeight()));//$NON-NLS-1$
 
-		windowProperties.setProperty("window.state", Integer
-				.toString(this.getExtendedState()));
+		windowProperties.setProperty("window.state", Integer.toString(this
+				.getExtendedState()));
 
 		try {
 			Debug.msg("Save window properties"); //$NON-NLS-1$

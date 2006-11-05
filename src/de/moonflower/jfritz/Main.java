@@ -128,6 +128,7 @@
  * - Connection-Timeout für ReverseLookup setzen
  * - Vor dem Release noch den installDirectory-Pfad in JFritzUpdate auf "." anpassen
  * - Autostart des Call-Monitors beim Start von JFritz reparieren
+ * - PhoneBook: beim hinzufügen, entfernen und löschen von einträgen den peronen-cache bei den calls aktualisieren
  * TODO-ENDE
  *
  * - Neue Strings:
@@ -167,6 +168,7 @@
  * - INTERN: Buildfile überarbeitet. TODO: release und junit anpassen
  * - Neu: Rückwärtssuche nicht mehr über DasOertliche.de sondern über dastelefonbuch.de
  * - Bugifx: Französische Rückwärtssuche funktioniert wieder
+ * - Neu: Französische Rückwärtssuche nun auch mit Firmenname
  * - Intern: JFritz.java aufgespalten in Main.java und JFritz.java
  * - Autoupdate von JFritz
  * - Nur noch mit Java 1.5 kompatibel
@@ -757,7 +759,7 @@ public class Main {
 				}
 				break;
 			case 'r':
-				JFritz.reverseLookup();
+				JFritz.getCallerList().reverseLookupCalls(JFritz.getCallerList().getUnfilteredCallVector());
 				shutdown = true;
 				break;
 			case 'e':

@@ -39,7 +39,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
-import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.CallerList;
 import de.moonflower.jfritz.struct.Call;
@@ -47,8 +46,8 @@ import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
-import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
-//TODO beim hinzufügen von Nummern lastCall und call.Person aktualisieren
+
+// TODO: beim updaten von personendaten / nummern noch den lastcall und die person im cache der anrufliste aktualisieren
 public class PhoneBook extends AbstractTableModel {
 	private static final long serialVersionUID = 1;
 
@@ -252,10 +251,6 @@ public class PhoneBook extends AbstractTableModel {
 		return filteredPersons; //TODO maybe clone()?
 	}
 
-	public Vector getUnfilteredPersons() {
-		return unfilteredPersons;
-	}
-
 	/**
 	 * @author haeusler DATE: 02.04.06 Adds a Person to the list of
 	 *         filterExceptions.
@@ -266,6 +261,7 @@ public class PhoneBook extends AbstractTableModel {
 		filterExceptions.add(nonFilteredPerson);
 	}
 	/**
+	 * TODO: wird noch nicht benutzt
 	 * does reverse lookup (find the name and address for a given phone number
 	 *
 	 * @param rows
@@ -274,25 +270,28 @@ public class PhoneBook extends AbstractTableModel {
 	public void doReverseLookup(int[] rows) {
 		if (rows.length > 0) { // nur für markierte Einträge ReverseLookup
 			// durchführen
+			Vector<PhoneNumber> numbers = new Vector<PhoneNumber>();
 			for (int i = 0; i < rows.length; i++) {
 				Person person = (Person) getFilteredPersons().get(rows[i]);
-				Person newPerson = null;
-				PhoneNumber homeNumber = person.getPhoneNumber("home");
-				if(homeNumber!=null){ //We have a Number
-					if(person.getFullname().equals("")){	//and we have no name for this number
-						newPerson = ReverseLookup.lookup(homeNumber);
-					}
-				}
-				if (newPerson != null) {
-					addEntry(newPerson);
-					fireTableDataChanged();
-					callerList.fireTableDataChanged();
-				}
+				callerList.reverseLookup(person.getNumbers());
 			}
 		} else { // Für alle Einträge ReverseLookup durchführen
-			JFritz.getJframe().reverseLookup();
+			reverseLookupPersons(filteredPersons);
 		}
 	}
+
+	/**
+	 * Does a reverse lookup on all calls
+	 * @param calls, calls to do reverse lookup on
+	 */
+	public void reverseLookupPersons(Vector<Person> persons) {
+		Debug.msg("Doing reverse Lookup");
+		for (int i = 0; i < persons.size(); i++) {
+			Person person = persons.get(i);
+			callerList.reverseLookup(person.getNumbers());
+		}
+	}
+
 	/**
 	 * Clears the list of filterExceptions.
 	 *
@@ -306,10 +305,10 @@ public class PhoneBook extends AbstractTableModel {
  */
 	public boolean addEntry(Person newPerson) {
 		Enumeration en = unfilteredPersons.elements();
+		PhoneNumber pn1 = newPerson.getStandardTelephoneNumber();
 		while (en.hasMoreElements()) {
 			Person p = (Person) en.nextElement();
-			PhoneNumber pn1 = p.getStandardTelephoneNumber();
-			PhoneNumber pn2 = newPerson.getStandardTelephoneNumber();
+			PhoneNumber pn2 = p.getStandardTelephoneNumber();
 			if ((pn1 != null) && (pn2 != null)
 					&& pn1.getIntNumber().equals(pn2.getIntNumber())) {
 				return false;
@@ -317,9 +316,11 @@ public class PhoneBook extends AbstractTableModel {
 		}
 		newPerson.setLastCall(callerList.findLastCall(newPerson));
 		unfilteredPersons.add(newPerson);
-		//updateFilter();
+		callerList.updatePersonInCalls(newPerson, newPerson.getNumbers());
+		updateFilter();
 		return true;
 	}
+
 	public void setLastCall(Person p ,Call c){
 		int index = unfilteredPersons.indexOf(p);
 		((Person)unfilteredPersons.get(index)).setLastCall(c);
@@ -329,10 +330,12 @@ public class PhoneBook extends AbstractTableModel {
 	public void deleteEntry(Person person) {
 		unfilteredPersons.remove(person);
 		Call call = callerList.findLastCall(person);
+		Person newPerson = null;
 		if(call != null){
-			Person newPerson = findPerson(call);
+			newPerson = findPerson(call);
 			callerList.setPerson(newPerson, call);
 		}
+		callerList.updatePersonInCalls(newPerson, person.getNumbers());
 		updateFilter();
 	}
 
