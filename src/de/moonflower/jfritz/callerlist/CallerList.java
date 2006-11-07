@@ -431,9 +431,6 @@ public class CallerList extends AbstractTableModel {
 	 *
 	 */
 	public boolean contains(Call newCall) {
-		Vector<Call> unfilteredCallerData = (Vector) this.unfilteredCallerData
-		.clone();
-
 		int left, right, middle;
 		left = 0;
 		right = unfilteredCallerData.size() - 1;
@@ -749,7 +746,11 @@ public class CallerList extends AbstractTableModel {
 
 		public int compare(Object a, Object b) {
 			Object o1 = null, o2 = null;
-			fireTableDataChanged(); // FIXME was soll das hier?
+
+			if ( !(a instanceof Call) || !(b instanceof Call) ) {
+				return 0;
+			}
+
 			Call call1 = (Call) a;
 			Call call2 = (Call) b;
 			String columnName = getRealColumnName(columnIndex);
@@ -1653,7 +1654,7 @@ public class CallerList extends AbstractTableModel {
 	 */
 	public Vector<Call> filterData(Vector<Call> src) {
 		Vector<Call> result = new Vector<Call>();
-		Debug.msg("updating filtered Data");
+//		Debug.msg("updating filtered Data");
 		Enumeration<Call> en = src.elements();
 		Call call;
 		CallFilter f;
@@ -1800,7 +1801,6 @@ public class CallerList extends AbstractTableModel {
 			Vector<PhoneNumber> numbers = new Vector<PhoneNumber>();
 			for (int i = 0; i < rows.length; i++) {
 				Call call = filteredCallerData.get(rows[i]);
-				Person newPerson = null;
 				if (call.getPhoneNumber() != null) {
 					numbers.add(call.getPhoneNumber());
 					}
