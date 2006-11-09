@@ -15,7 +15,7 @@ import de.moonflower.jfritz.utils.Debug;
  * @author rob
  *
  */
-public class Person {
+public class Person implements Cloneable{
 
 	private boolean privateEntry = false;
 
@@ -510,6 +510,10 @@ public class Person {
 
 	public void setLastCall(Call lastCall) {
 		this.lastCall = lastCall;
+	}
+
+	public Person clone() {
+		return new Person(this);
 	}
 
 }

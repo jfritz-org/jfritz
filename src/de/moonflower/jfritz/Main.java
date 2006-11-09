@@ -140,6 +140,7 @@
  *  date_filter_this_week
  *  date_filter_last_week
  *  filter_search
+ *  undo
  *  Alle Strings in der Datei update.properties
  *
  * - Bugfix: örtliche Nummer, die mit 49 beginnen, werden jetzt richtig verarbeitet

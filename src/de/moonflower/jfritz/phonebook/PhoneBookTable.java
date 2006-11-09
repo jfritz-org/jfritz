@@ -6,14 +6,11 @@ package de.moonflower.jfritz.phonebook;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import javax.swing.JTable;
-import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableCellRenderer;
 
@@ -62,16 +59,15 @@ public class PhoneBookTable extends JTable implements KeyListener{
 
 	}
 
+	// TODO: Select row
 	public void showAndSelectRow(int row){
 
+		getSelectionModel().clearSelection();
 		getSelectionModel().setSelectionInterval(row, row);
 		parentPanel.showPersonPanel();
 		// assuring that the newly selected row in the phonebook is visible
-		JViewport viewport = (JViewport)getParent();
 		Rectangle rect = getCellRect(row, 0, true);
-		Point vp = viewport.getViewPosition();
-		rect.setLocation(rect.x-vp.x, rect.y-vp.y);
-		viewport.scrollRectToVisible(rect);
+		scrollRectToVisible(rect);
 
 	}
 

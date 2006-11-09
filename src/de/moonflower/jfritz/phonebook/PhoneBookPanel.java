@@ -12,8 +12,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.Enumeration;
 import java.util.Locale;
@@ -41,7 +39,6 @@ import javax.swing.JMenuItem;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.Main;
-import de.moonflower.jfritz.callerlist.CallerListPanel;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.VCardList;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -52,7 +49,7 @@ import de.moonflower.jfritz.utils.Debug;
  *
  */
 public class PhoneBookPanel extends JPanel implements ListSelectionListener,
-		PropertyChangeListener, ActionListener, KeyListener {
+		ActionListener, KeyListener {
 	class PopupListener extends MouseAdapter {
 		public void mouseClicked(MouseEvent e) {
 			if (e.getClickCount() > 1) {
@@ -90,20 +87,16 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 
 	private JSplitPane splitPane;
 
-	private JButton saveButton, cancelButton, resetButton;
+	private JButton resetButton;
 
 	private JPopupMenu popupMenu;
 	private JTextField searchFilter;
 	private JFritzWindow parentFrame;
 
 	private PhoneBook phonebook;
-	private String mainSaveDir;
 	private ResourceBundle messages;
 
-	private CallerListPanel callerListPanel;
-
-	public PhoneBookPanel(PhoneBook phonebook, JFritzWindow parentFrame, String mainSaveDir, Locale locale) {
-		this.mainSaveDir = mainSaveDir;
+	public PhoneBookPanel(PhoneBook phonebook, JFritzWindow parentFrame, Locale locale) {
 		try {
 			this.messages = ResourceBundle.getBundle("jfritz", locale);//$NON-NLS-1$
 		} catch (MissingResourceException e) {
@@ -138,14 +131,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals("cancel")) { //$NON-NLS-1$
-			personPanel.cancelEditing();
-			personPanel.updateGUI();
-		} else if (e.getActionCommand().equals("save")) { //$NON-NLS-1$
-			personPanel.updatePerson();
-            phonebook.fireTableDataChanged();
-			phonebook.saveToXMLFile(mainSaveDir + JFritz.PHONEBOOK_FILE);
-		} else if (e.getActionCommand().equals("addPerson")) { //$NON-NLS-1$
+		if (e.getActionCommand().equals("addPerson")) { //$NON-NLS-1$
 			Person newPerson = new Person("", messages.getString("new")); //$NON-NLS-1$,  //$NON-NLS-2$
 			phonebook.addFilterException(newPerson);
 			phonebook.addEntry(newPerson);
@@ -177,7 +163,6 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		} else {
 			Debug.msg("Unsupported Command: " + e.getActionCommand()); //$NON-NLS-1$
 		}
-		propertyChange(null);
 	}
 
 	public JScrollPane createPhoneBookTable() {
@@ -396,14 +381,6 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	}
 
 	/**
-	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
-	 */
-	public void propertyChange(PropertyChangeEvent evt) {
-		saveButton.setEnabled(personPanel.hasChanged());
-		cancelButton.setEnabled(personPanel.hasChanged());
-	}
-
-	/**
 	 * Removes selected persons from phonebook
 	 *
 	 */
@@ -478,27 +455,9 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	 */
 	private JPanel createEditPanel() {
 		JPanel editPanel = new JPanel(new BorderLayout());
-		JPanel editButtonPanel = new JPanel();
-		saveButton = new JButton(messages.getString("accept")); //$NON-NLS-1$
-		saveButton.setActionCommand("save"); //$NON-NLS-1$
-		saveButton.addActionListener(this);
-		saveButton.setIcon(getImage("okay.png")); //$NON-NLS-1$
-		cancelButton = new JButton(messages.getString("reset")); //$NON-NLS-1$
-		cancelButton.setActionCommand("cancel"); //$NON-NLS-1$
-		cancelButton.addActionListener(this);
-		editButtonPanel.add(saveButton);
-		editButtonPanel.add(cancelButton);
 
-		personPanel = new PersonPanel(new Person());
-		personPanel.addPropertyChangeListener("hasChanged", this); //$NON-NLS-1$
+		personPanel = new PersonPanel(new Person(), phonebook);
 		editPanel.add(personPanel, BorderLayout.CENTER);
-		editPanel.add(editButtonPanel, BorderLayout.SOUTH);
 		return editPanel;
 	}
-
-	public void setCallerListPanel(CallerListPanel callerListPanel) {
-		this.callerListPanel = callerListPanel;
-
-	}
-
 }

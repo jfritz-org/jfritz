@@ -14,12 +14,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Enumeration;
 import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -37,14 +33,12 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
-import de.moonflower.jfritz.struct.PhoneType;
 
 /**
  * This class is used in the phone book to edit individual entries
@@ -52,6 +46,9 @@ import de.moonflower.jfritz.struct.PhoneType;
  *
  * @author Arno Willig
  *
+ * TODO: Änderung des Typs einer Rufnummer soll Undo-Button aktivieren
+ * TODO: Auf Tasten reagieren
+ * TODO: Default-Button
  */
 public class PersonPanel extends JPanel implements ActionListener,
 		ListSelectionListener, CaretListener {
@@ -59,231 +56,18 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 	PhoneTypeModel typeModel;
 
-	private final class PhoneTypeModel extends AbstractListModel implements
-			ComboBoxModel {
-		private static final long serialVersionUID = 1;
+	private Person originalPerson;
 
-		private String[] basicTypes = { "home", "mobile", "homezone", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-				"business", "other", "fax", "sip", "main"}; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$ , //$NON-NLS-4$ , //$NON-NLS-5$
-		private transient PhoneType sel;
-
-		private Vector types;
-
-
-		public PhoneTypeModel() {
-			super();
-			types = new Vector();
-			setTypes();
-		}
-
-		public void setTypes() {
-			types.clear();
-			int[] typeCount = new int[basicTypes.length];
-			for (int i = 0; i < typeCount.length; i++)
-				typeCount[i] = 0;
-
-			Enumeration en = person.getNumbers().elements();
-			while (en.hasMoreElements()) {
-				String type = ((PhoneNumber) en.nextElement()).getType();
-				Pattern p = Pattern.compile("([a-z]*)(\\d*)"); //$NON-NLS-1$
-				Matcher m = p.matcher(type);
-				if (m.find()) {
-					for (int i = 0; i < typeCount.length; i++) {
-						if (basicTypes[i].equals(m.group(1))) {
-							if (m.group(2).equals("")) { //$NON-NLS-1$
-								typeCount[i] = 1;
-							} else if (typeCount[i] < Integer.parseInt(m
-									.group(2))) {
-								typeCount[i] = Integer.parseInt(m.group(2));
-							}
-							break;
-						}
-					}
-				}
-			}
-			for (int i = 0; i < typeCount.length; i++) {
-				if (typeCount[i] == 0) {
-					types.add(new PhoneType(basicTypes[i]));
-				} else {
-					types
-							.add(new PhoneType(basicTypes[i]
-									+ (typeCount[i] + 1)));
-				}
-			}
-			fireContentsChanged(this, 0, types.size() - 1);
-		}
-
-		public Vector getTypes() {
-			return types;
-		}
-
-		public int getSize() {
-			return types.size();
-		}
-
-		public Object getElementAt(int index) {
-			return types.get(index);
-		}
-
-		public void setSelectedItem(Object anItem) {
-			sel = (PhoneType) anItem;
-		}
-
-		public Object getSelectedItem() {
-			return sel;
-		}
-
-		/**
-		 * @author Bastian Schaefer
-		 *
-		 * @return all available types
-		 */
-		public String[] getBasicTypes(){
-			return basicTypes;
-		}
-
-	}
-
-	private final class NumberTableModel extends AbstractTableModel {
-		private final String columnNames[] = { Main.getMessage("standard_short"), Main.getMessage("type"), Main.getMessage("number") }; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-
-		private static final long serialVersionUID = 1;
-
-		public int getRowCount() {
-			return person.getNumbers().size();
-		}
-
-		public int getColumnCount() {
-			return 3;
-		}
-
-		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			return true;
-		}
-
-		public Object getValueAt(int rowIndex, int columnIndex) {
-			switch (columnIndex) {
-			case 0:
-				return Boolean.valueOf(((PhoneNumber) person.getNumbers()
-						.elementAt(rowIndex)).getType().equals(
-						person.getStandard()));
-			case 1:
-				return new PhoneType(((PhoneNumber) person.getNumbers()
-						.elementAt(rowIndex)).getType());
-			case 2:
-				return ((PhoneNumber) person.getNumbers().elementAt(rowIndex))
-						.getIntNumber();
-			default:
-				return null;
-
-			}
-		}
-
-		public void setValueAt(Object value, int row, int column) {
-			if (row < person.getNumbers().size()) {
-				PhoneNumber p = (PhoneNumber) person.getNumbers()
-						.elementAt(row);
-				switch (column) {
-				case 0:
-					if (!p.getType().equals("")) //$NON-NLS-1$
-						person.setStandard(p.getType());
-					break;
-				case 1:
-					if (isValidType((PhoneType) value, p.getType())) {
-						if (person.getStandard().equals(p.getType())
-								|| person.getStandard().equals("")) { //$NON-NLS-1$
-							person.setStandard(((PhoneType) value).getType());
-						}
-						p.setType(((PhoneType) value).getType());
-					}
-					break;
-				case 2:
-					if (isValidNumber((String) value, p.getIntNumber())) {
-						p.setNumber((String) value);
-					}
-				default:
-				}
-				fireTableDataChanged();
-			}
-		}
-
-		protected boolean isValidNumber(String value, String oldvalue) {
-			if (value.equals(oldvalue))
-				return true;
-			Enumeration en = person.getNumbers().elements();
-			while (en.hasMoreElements()) {
-				String nr = ((PhoneNumber) en.nextElement()).getIntNumber();
-				if (value.equals(nr))
-					return false;
-			}
-			return true;
-		}
-
-		protected boolean isValidType(PhoneType value, String oldvalue) {
-			if (value == null)
-				return false;
-			if (value.getType().equals(oldvalue))
-				return true;
-
-			for (int i = 0; i < typeModel.getSize(); i++) {
-				if (value.getType().equals(
-						((PhoneType) typeModel.getElementAt(i)).getType())) {
-					Enumeration en = person.getNumbers().elements();
-					while (en.hasMoreElements()) {
-						String type = ((PhoneNumber) en.nextElement())
-								.getType();
-						if (value.getType().equals(type))
-							return false;
-					}
-					return true;
-				}
-			}
-			return false;
-		}
-
-		/**
-		 * @return Returns the column names
-		 */
-		public String getColumnName(int column) {
-			return columnNames[column];
-		}
-	}
-
-	private class CheckBoxRenderer extends JCheckBox implements
-			TableCellRenderer {
-		private static final long serialVersionUID = 1;
-
-		public CheckBoxRenderer() {
-			setHorizontalAlignment(JLabel.CENTER);
-		}
-
-		/**
-		 * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable,
-		 *      java.lang.Object, boolean, boolean, int, int)
-		 */
-		public Component getTableCellRendererComponent(JTable table,
-				Object value, boolean isSelected, boolean hasFocus, int row,
-				int column) {
-			if (isSelected) {
-				setForeground(table.getSelectionForeground());
-				setBackground(table.getSelectionBackground());
-			} else {
-				setForeground(table.getForeground());
-				setBackground(table.getBackground());
-			}
-			setSelected((value != null && ((Boolean) value).booleanValue()));
-			return this;
-		}
-	}
-
-	private Person person;
+	private Person clonedPerson;
 
 	private JTextField tfFirstName, tfCompany, tfLastName, tfStreet,
 			tfPostalCode, tfCity, tfEmail;
 
-	private JButton addButton, delButton;
+	private JButton addButton, delButton, okButton, cancelButton, undoButton;
 
 	private JTable numberTable;
+
+	private JComboBox numberTypesComboBox;
 
 	private boolean hasChanged = false;
 
@@ -291,77 +75,112 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 	private JCheckBox chkBoxPrivateEntry;
 
+	private PhoneBook phoneBook;
+
+	private Vector<ActionListener> actionListener;
+
 	/**
 	 *
 	 */
-	public PersonPanel(Person person) {
+	public PersonPanel(Person person, PhoneBook phoneBook) {
 		super();
-		this.person = person;
-		drawPanel();
+		this.originalPerson = person;
+		this.clonedPerson = person.clone();
+		this.phoneBook = phoneBook;
+		actionListener = new Vector<ActionListener>();
+		createPanel();
+		setPerson(person);
 	}
 
-	private void drawPanel() {
-		numberHasChanged = false;
+	private void createPanel() {
 		setBorder(BorderFactory.createEmptyBorder(10, 20, 5, 20));
 
-		JPanel buttonPanel = new JPanel();
-		buttonPanel.setLayout(new GridLayout(0, 2));
-		JLabel label = new JLabel(Main.getMessage("private_entry") + ": ");  //$NON-NLS-1$,   //$NON-NLS-2$
-		buttonPanel.add(label);
+		JPanel configPanel = new JPanel();
+		configPanel.setLayout(new GridLayout(0, 2));
+		JLabel label = new JLabel(Main.getMessage("private_entry") + ": "); //$NON-NLS-1$,   //$NON-NLS-2$
+		configPanel.add(label);
+
 		chkBoxPrivateEntry = new JCheckBox();
-		chkBoxPrivateEntry.setSelected(person.isPrivateEntry());
 		ChangeListener changeListener = new ChangeListener() {
 			public void stateChanged(ChangeEvent changeEvent) {
-				boolean oldhasChanged = hasChanged;
-				hasChanged = chkBoxPrivateEntry.isSelected() != person
+				hasChanged = chkBoxPrivateEntry.isSelected() != originalPerson
 						.isPrivateEntry();
-				firePropertyChange("hasChanged", oldhasChanged, hasChanged); //$NON-NLS-1$
+				firePropertyChange();
 			}
 		};
 		chkBoxPrivateEntry.addChangeListener(changeListener);
-		buttonPanel.add(chkBoxPrivateEntry);
+		configPanel.add(chkBoxPrivateEntry);
+
 		label = new JLabel(Main.getMessage("firstName") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		buttonPanel.add(label);
-		tfFirstName = new JTextField(person.getFirstName());
+		configPanel.add(label);
+		tfFirstName = new JTextField();
 		tfFirstName.addCaretListener(this);
-		buttonPanel.add(tfFirstName);
+		configPanel.add(tfFirstName);
+
 		label = new JLabel(Main.getMessage("lastName") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		buttonPanel.add(label);
-		tfLastName = new JTextField(person.getLastName());
+		configPanel.add(label);
+		tfLastName = new JTextField();
 		tfLastName.addCaretListener(this);
-		buttonPanel.add(tfLastName);
+		configPanel.add(tfLastName);
+
 		label = new JLabel(Main.getMessage("company") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		buttonPanel.add(label);
-		tfCompany = new JTextField(person.getCompany());
+		configPanel.add(label);
+		tfCompany = new JTextField();
 		tfCompany.addCaretListener(this);
-		buttonPanel.add(tfCompany);
+		configPanel.add(tfCompany);
+
 		label = new JLabel(Main.getMessage("street") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		buttonPanel.add(label);
-		tfStreet = new JTextField(person.getStreet());
+		configPanel.add(label);
+		tfStreet = new JTextField();
 		tfStreet.addCaretListener(this);
-		buttonPanel.add(tfStreet);
+		configPanel.add(tfStreet);
+
 		label = new JLabel(Main.getMessage("postalCode") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		buttonPanel.add(label);
-		tfPostalCode = new JTextField(person.getPostalCode());
+		configPanel.add(label);
+		tfPostalCode = new JTextField();
 		tfPostalCode.addCaretListener(this);
-		buttonPanel.add(tfPostalCode);
+		configPanel.add(tfPostalCode);
+
 		label = new JLabel(Main.getMessage("city") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		buttonPanel.add(label);
-		tfCity = new JTextField(person.getCity());
+		configPanel.add(label);
+		tfCity = new JTextField();
 		tfCity.addCaretListener(this);
-		buttonPanel.add(tfCity);
+		configPanel.add(tfCity);
+
 		label = new JLabel(Main.getMessage("emailAddress") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		buttonPanel.add(label);
-		tfEmail = new JTextField(person.getEmailAddress());
+		configPanel.add(label);
+		tfEmail = new JTextField();
 		tfEmail.addCaretListener(this);
-		buttonPanel.add(tfEmail);
+		configPanel.add(tfEmail);
 
 		JPanel numberPanel = createNumberPanel();
 		numberPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
+		JPanel buttonPanel = new JPanel();
+
+		okButton = new JButton(Main.getMessage("okay")); //$NON-NLS-1$
+		okButton.setActionCommand("ok"); //$NON-NLS-1$
+		okButton.setIcon(getImage("okay.png")); //$NON-NLS-1$
+		okButton.addActionListener(this);
+
+		cancelButton = new JButton(Main.getMessage("cancel")); //$NON-NLS-1$
+		cancelButton.setActionCommand("cancel"); //$NON-NLS-1$
+		cancelButton.addActionListener(this);
+
+		undoButton = new JButton(Main.getMessage("undo")); //$NON-NLS-1$
+		undoButton.setActionCommand("undo"); //$NON-NLS-1$
+		undoButton.addActionListener(this);
+		undoButton.setEnabled(false);
+
+		buttonPanel.add(okButton);
+		buttonPanel.add(cancelButton);
+		buttonPanel.add(undoButton);
+
 		setLayout(new BorderLayout());
-		add(buttonPanel, BorderLayout.NORTH);
+		add(configPanel, BorderLayout.NORTH);
 		add(numberPanel, BorderLayout.CENTER);
+		add(buttonPanel, BorderLayout.SOUTH);
+
 		setPreferredSize(new Dimension(350, -1));
 		setMinimumSize(new Dimension(350, 0));
 		setMaximumSize(new Dimension(350, 0));
@@ -372,8 +191,8 @@ public class PersonPanel extends JPanel implements ActionListener,
 	 */
 	private JPanel createNumberPanel() {
 		JPanel numberPanel = new JPanel(new BorderLayout());
-		NumberTableModel numberModel = new NumberTableModel();
-		typeModel = new PhoneTypeModel();
+		typeModel = new PhoneTypeModel(clonedPerson);
+		NumberTableModel numberModel = new NumberTableModel(clonedPerson, typeModel);
 		numberTable = new JTable(numberModel) {
 			private static final long serialVersionUID = 1;
 
@@ -409,14 +228,17 @@ public class PersonPanel extends JPanel implements ActionListener,
 		// Editors
 		JCheckBox checkBox = new JCheckBox();
 		checkBox.setHorizontalAlignment(JLabel.CENTER);
-		JComboBox comboBox = new JComboBox(typeModel);
 
-		comboBox.setEditable(false);
+		numberTypesComboBox = new JComboBox(typeModel);
+		numberTypesComboBox.setEditable(false);
+
 		DefaultCellEditor checkBoxEditor = new DefaultCellEditor(checkBox);
-		DefaultCellEditor comboEditor = new DefaultCellEditor(comboBox);
+		DefaultCellEditor comboEditor = new DefaultCellEditor(numberTypesComboBox);
+
 		numberTable.getColumnModel().getColumn(0).setCellEditor(checkBoxEditor);
 		numberTable.getColumnModel().getColumn(1).setCellEditor(comboEditor);
-		numberTable.getColumnModel().getColumn(2).setCellEditor(new NumberCellEditor(this));
+		numberTable.getColumnModel().getColumn(2).setCellEditor(
+				new NumberCellEditor(this));
 
 		// Buttons
 		addButton = new JButton();
@@ -432,10 +254,11 @@ public class PersonPanel extends JPanel implements ActionListener,
 		delButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/delete.png")))); //$NON-NLS-1$
-		if (person.getNumbers().size() == 1)
+		if (clonedPerson.getNumbers().size() == 1)
 			delButton.setEnabled((false));
 
-		JLabel label = new JLabel(Main.getMessage("telephoneNumbers")+":", JLabel.LEFT); //$NON-NLS-1$,  //$NON-NLS-2$
+		JLabel label = new JLabel(
+				Main.getMessage("telephoneNumbers") + ":", JLabel.LEFT); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		JPanel numberButtonPanel = new JPanel(new GridLayout(0, 2));
 		JPanel buttonPanel = new JPanel();
@@ -458,23 +281,47 @@ public class PersonPanel extends JPanel implements ActionListener,
 	 */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("add")) { //$NON-NLS-1$
-			person.getNumbers().add(new PhoneNumber("")); //$NON-NLS-1$,  //$NON-NLS-2$
+			clonedPerson.getNumbers().add(new PhoneNumber("")); //$NON-NLS-1$,  //$NON-NLS-2$
 			typeModel.setTypes();
+			numberHasChanged = true;
+			firePropertyChange();
 		} else if (e.getActionCommand().equals("del")) { //$NON-NLS-1$
 			int row = numberTable.getSelectedRow();
 			// Shift standard number if deleted
-			if (person.getStandard().equals(
-					((PhoneNumber) person.getNumbers().get(row)).getType())) {
-				person.getNumbers().removeElementAt(row);
-				person.setStandard(((PhoneNumber) person.getNumbers().get(0))
+			if (clonedPerson.getStandard().equals(
+					((PhoneNumber) clonedPerson.getNumbers().get(row)).getType())) {
+				clonedPerson.getNumbers().removeElementAt(row);
+				clonedPerson.setStandard(((PhoneNumber) clonedPerson.getNumbers().get(0))
 						.getType());
 			} else { // Just remove the number
-				person.getNumbers().removeElementAt(row);
+				clonedPerson.getNumbers().removeElementAt(row);
 			}
-			firePropertyChange(true);
+			numberHasChanged = true;
+			firePropertyChange();
+		} else if (e.getActionCommand().equals("undo")) { //$NON-NLS-1$
+			this.setPerson(originalPerson);
+			hasChanged = false;
+			numberHasChanged = false;
+			firePropertyChange();
+		} else if (e.getActionCommand().equals("ok")) {
+			updatePerson();
+			phoneBook.sortAllFilteredRows();
+			phoneBook.updateFilter();
+			phoneBook.saveToXMLFile(Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
+			JFritz.getJframe().getPhoneBookPanel().getPhoneBookTable().showAndSelectPerson(originalPerson);
+			Enumeration<ActionListener> en = actionListener.elements();
+			while ( en.hasMoreElements()) {
+				ActionListener al = en.nextElement();
+				al.actionPerformed(e);
+			}
+		} else if (e.getActionCommand().equals("cancel")) {
+			this.setPerson(originalPerson);
+			Enumeration<ActionListener> en = actionListener.elements();
+			while ( en.hasMoreElements()) {
+				ActionListener al = en.nextElement();
+				al.actionPerformed(e);
+			}
 		}
-		((NumberTableModel) numberTable.getModel()).fireTableDataChanged();
-		updateAddDelButtons();
 	}
 
 	/**
@@ -491,9 +338,9 @@ public class PersonPanel extends JPanel implements ActionListener,
 	 */
 	private void updateAddDelButtons() {
 		delButton.setEnabled(numberTable.getSelectedRow() > -1
-				&& person.getNumbers().size() > 1);
+				&& clonedPerson.getNumbers().size() > 1);
 
-		Enumeration en = person.getNumbers().elements();
+		Enumeration en = clonedPerson.getNumbers().elements();
 		boolean addEnabled = true;
 		while (en.hasMoreElements()) {
 			String nr = ((PhoneNumber) en.nextElement()).getIntNumber();
@@ -506,11 +353,8 @@ public class PersonPanel extends JPanel implements ActionListener,
 		typeModel.setTypes();
 	}
 
-	/**
-	 * @return Returns the person.
-	 */
-	public final Person getPerson() {
-		return person;
+	private void updateUndoButton() {
+		undoButton.setEnabled(hasChanged || numberHasChanged);
 	}
 
 	/**
@@ -575,37 +419,55 @@ public class PersonPanel extends JPanel implements ActionListener,
 	 *            The person to set.
 	 */
 	public final void setPerson(Person person) {
-		this.person = person;
+		this.cancelEditing();
+		this.originalPerson = person;
+		clonedPerson = originalPerson.clone();
+		numberHasChanged = false;
+		hasChanged = false;
 		updateGUI();
 	}
 
+	/**
+	 * Updates display of GUI
+	 *
+	 */
 	public final void updateGUI() {
-		chkBoxPrivateEntry.setSelected(person.isPrivateEntry());
-		tfFirstName.setText(person.getFirstName());
-		tfCompany.setText(person.getCompany());
-		tfLastName.setText(person.getLastName());
-		tfStreet.setText(person.getStreet());
-		tfPostalCode.setText(person.getPostalCode());
-		tfCity.setText(person.getCity());
-		tfEmail.setText(person.getEmailAddress());
-		((NumberTableModel) numberTable.getModel()).fireTableDataChanged();
+		chkBoxPrivateEntry.setSelected(clonedPerson.isPrivateEntry());
+		tfFirstName.setText(clonedPerson.getFirstName());
+		tfCompany.setText(clonedPerson.getCompany());
+		tfLastName.setText(clonedPerson.getLastName());
+		tfStreet.setText(clonedPerson.getStreet());
+		tfPostalCode.setText(clonedPerson.getPostalCode());
+		tfCity.setText(clonedPerson.getCity());
+		tfEmail.setText(clonedPerson.getEmailAddress());
+
+		typeModel = new PhoneTypeModel(clonedPerson);
 		typeModel.setTypes();
+		numberTypesComboBox.setModel(typeModel);
+		((NumberTableModel) numberTable.getModel()).setTypeModel(typeModel);
+		((NumberTableModel) numberTable.getModel()).setPerson(clonedPerson);
+
+		updateAddDelButtons();
+		updateUndoButton();
 	}
 
 	public final Person updatePerson() {
 		terminateEditing();
-		person.setPrivateEntry(chkBoxPrivateEntry.isSelected());
-		person.setFirstName(tfFirstName.getText());
-		person.setCompany(tfCompany.getText());
-		person.setLastName(tfLastName.getText());
-		person.setStreet(tfStreet.getText());
-		person.setPostalCode(tfPostalCode.getText());
-		person.setCity(tfCity.getText());
-		person.setEmailAddress(tfEmail.getText());
+		originalPerson.setPrivateEntry(chkBoxPrivateEntry.isSelected());
+		originalPerson.setFirstName(tfFirstName.getText());
+		originalPerson.setCompany(tfCompany.getText());
+		originalPerson.setLastName(tfLastName.getText());
+		originalPerson.setStreet(tfStreet.getText());
+		originalPerson.setPostalCode(tfPostalCode.getText());
+		originalPerson.setCity(tfCity.getText());
+		originalPerson.setEmailAddress(tfEmail.getText());
+
+		originalPerson.setNumbers((Vector<PhoneNumber>)clonedPerson.getNumbers().clone(), clonedPerson.getStandard());
+
 		hasChanged = false;
 		numberHasChanged = false;
-		JFritz.getPhonebook().sortAllFilteredRows();
-		return person;
+
+		return originalPerson;
 	}
 
 	/**
@@ -616,64 +478,94 @@ public class PersonPanel extends JPanel implements ActionListener,
 	}
 
 	/**
-	 * @return Returns the numberHasChanged.
-	 */
-	public final boolean numberHasChanged() {
-		return numberHasChanged;
-	}
-
-	/**
 	 * @see javax.swing.event.CaretListener#caretUpdate(javax.swing.event.CaretEvent)
 	 */
 	public void caretUpdate(CaretEvent e) {
-		boolean hasChangedOld = hasChanged;
-		hasChanged = !tfFirstName.getText().equals(person.getFirstName())
-				|| !tfCompany.getText().equals(person.getCompany())
-				|| !tfLastName.getText().equals(person.getLastName())
-				|| !tfStreet.getText().equals(person.getStreet())
-				|| !tfPostalCode.getText().equals(person.getPostalCode())
-				|| !tfCity.getText().equals(person.getCity())
-				|| !tfEmail.getText().equals(person.getEmailAddress())
+		hasChanged = !tfFirstName.getText().equals(originalPerson.getFirstName())
+				|| !tfCompany.getText().equals(originalPerson.getCompany())
+				|| !tfLastName.getText().equals(originalPerson.getLastName())
+				|| !tfStreet.getText().equals(originalPerson.getStreet())
+				|| !tfPostalCode.getText().equals(originalPerson.getPostalCode())
+				|| !tfCity.getText().equals(originalPerson.getCity())
+				|| !tfEmail.getText().equals(originalPerson.getEmailAddress())
 				|| numberHasChanged;
 
-		firePropertyChange("hasChanged", hasChangedOld, hasChanged);  //$NON-NLS-1$
+		firePropertyChange();
 	}
 
-	public void firePropertyChange(boolean boo){
-		boolean hasChangedOld = hasChanged;
-		hasChanged = boo;
-		numberHasChanged = boo;
-		if(numberHasChanged)
-		firePropertyChange("hasChanged", hasChangedOld, hasChanged); //$NON-NLS-1$
+	public void firePropertyChange() {
+		// TODO: enable undo, ok, cancel buttons
+		if (numberHasChanged) {
+			((NumberTableModel) numberTable.getModel()).fireTableDataChanged();
+		}
+		updateAddDelButtons();
+		updateUndoButton();
 	}
 
-	public void terminateEditing(){
-	    if (numberTable.isEditing())
-	    {
-	      int row = numberTable.getEditingRow();
-	      int column = numberTable.getEditingColumn();
-	      numberTable.editingStopped(new ChangeEvent (numberTable.getComponentAt(row, column)));
-	    }
+	public void terminateEditing() {
+		if (numberTable.isEditing()) {
+			int row = numberTable.getEditingRow();
+			int column = numberTable.getEditingColumn();
+			numberTable.editingStopped(new ChangeEvent(numberTable
+					.getComponentAt(row, column)));
+		}
 	}
 
-	public void cancelEditing(){
+	public void cancelEditing() {
 		hasChanged = false;
-	    if (numberTable.isEditing())
-	    {
-	      int row = numberTable.getEditingRow();
-	      int column = numberTable.getEditingColumn();
-	      numberHasChanged = false;
-	      numberTable.editingCanceled(new ChangeEvent (numberTable.getComponentAt(row, column)));
-	    }
+		if (numberTable.isEditing()) {
+			int row = numberTable.getEditingRow();
+			int column = numberTable.getEditingColumn();
+			numberHasChanged = false;
+			numberTable.editingCanceled(new ChangeEvent(numberTable
+					.getComponentAt(row, column)));
+		}
 	}
 
 	/**
-	*	@author haeusler
-	*	DATE: 02.04.06, added by Brian
-	* 	moves the focus to the JTextField for the first name
-	*/
+	 * @author haeusler DATE: 02.04.06, added by Brian moves the focus to the
+	 *         JTextField for the first name
+	 */
 	public boolean focusFirstName() {
 		return tfFirstName.requestFocusInWindow();
+	}
+
+	/**
+	 * Get an image from file
+	 *
+	 * @param filename
+	 * @return a image
+	 */
+	public ImageIcon getImage(String filename) {
+		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource(
+						"/de/moonflower/jfritz/resources/images/" + filename))); //$NON-NLS-1$
+	}
+
+	/**
+	 * Set numberHasChanged
+	 * @param numberHasChanged
+	 */
+	public void setNumberHasChanged(boolean numberHasChanged) {
+		this.numberHasChanged = numberHasChanged;
+	}
+
+	/**
+	 * Adds an button-listener
+	 * @param listener
+	 */
+	public void addActionListener(ActionListener listener) {
+		if (!actionListener.contains(listener) )
+			actionListener.add(listener);
+	}
+
+	/**
+	 * Removes an button-listener
+	 * @param listener
+	 */
+	public void removeButtonListener(ActionListener listener) {
+		if (actionListener.contains(listener))
+			actionListener.remove(listener);
 	}
 
 }

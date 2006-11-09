@@ -2,7 +2,7 @@
  * Created on 03.06.2005
  *
  */
-package de.moonflower.jfritz.phonebook;
+package de.moonflower.jfritz.callerlist;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -11,14 +11,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.AbstractCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import de.moonflower.jfritz.callerlist.PersonCellEditor;
+import de.moonflower.jfritz.phonebook.PersonDialog;
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.Main;
 
 /**
  * @author Arno Willig
@@ -27,18 +26,21 @@ import de.moonflower.jfritz.Main;
 public class PersonEditorPanel extends JComponent {
 	private static final long serialVersionUID = 1;
 
-	private PersonCellEditor editor;
+	private CallerList callerList;
 
-	private transient Person person;
+	private Person person;
+
+	private AbstractCellEditor cellEditor;
 
 	private JLabel input;
 
 	/**
 	 *
 	 */
-	public PersonEditorPanel(PersonCellEditor editor) {
+	public PersonEditorPanel(AbstractCellEditor cellEditor, CallerList callerList) {
 		super();
-		this.editor = editor;
+		this.callerList = callerList;
+		this.cellEditor = cellEditor;
 		drawPanel();
 	}
 
@@ -48,17 +50,10 @@ public class PersonEditorPanel extends JComponent {
 		input.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() > 1) {
-					PersonDialog p = new PersonDialog(person);
-					if (p.showDialog()) {
-						person = p.getPerson();
-						input.setText(person.getFullname());
-						editor.stopCellEditing();
-						if (p.okPressed()) {
-							JFritz.getPhonebook().saveToXMLFile(Main.SAVE_DIR +
-									JFritz.PHONEBOOK_FILE);
-							JFritz.getPhonebook().sortAllFilteredRows();
-						}
-					}
+					PersonDialog p = new PersonDialog(callerList.getPhoneBook(), person);
+					p.showDialog();
+					cellEditor.stopCellEditing();
+					callerList.update();
 					p.dispose();
 				}
 			}

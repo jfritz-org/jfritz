@@ -47,7 +47,6 @@ import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
-// TODO: beim updaten von personendaten / nummern noch den lastcall und die person im cache der anrufliste aktualisieren
 public class PhoneBook extends AbstractTableModel {
 	private static final long serialVersionUID = 1;
 
@@ -845,7 +844,7 @@ public class PhoneBook extends AbstractTableModel {
 	 * @param number
 	 *            a String containing the number to search for
 	 * @param considerMain
-	 *            true, if search for main number (telephone switchboard) shoul
+	 *            true, if search for main number (telephone switchboard) should
 	 *            be enabled.
 	 * @return the Person having that number or the main number of telephone
 	 *         switchboard in companies, null if no person was found

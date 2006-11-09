@@ -1890,4 +1890,8 @@ public class CallerList extends AbstractTableModel {
 		}
 		update();
 	}
+
+	public PhoneBook getPhoneBook() {
+		return phonebook;
+	}
 }

@@ -14,3 +14,4 @@ ivy.xml
 build-release.xml
 update
 *.jar
+temp
