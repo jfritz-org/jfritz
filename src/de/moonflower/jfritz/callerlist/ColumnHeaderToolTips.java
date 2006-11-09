@@ -26,7 +26,7 @@ public class ColumnHeaderToolTips extends MouseMotionAdapter {
     TableColumn curCol;
 
     // Maps TableColumn objects to tooltips
-    Map tips = new HashMap();
+    Map<TableColumn, String> tips = new HashMap<TableColumn, String>();
 
     // If tooltip is null, removes any tooltip text.
     public void setToolTip(TableColumn col, String tooltip) {
@@ -50,7 +50,7 @@ public class ColumnHeaderToolTips extends MouseMotionAdapter {
         }
 
         if (col != curCol) {
-            header.setToolTipText((String)tips.get(col));
+            header.setToolTipText(tips.get(col));
             curCol = col;
         }
     }

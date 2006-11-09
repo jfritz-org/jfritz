@@ -27,7 +27,7 @@ public class PhonebookFileXMLHandler extends DefaultHandler {
 	String firstName, company, lastName, type, standard, email, street,
 			postCode, city, category;
 
-	Vector numbers;
+	Vector<PhoneNumber> numbers;
 
 	String chars;
 
@@ -70,7 +70,7 @@ public class PhonebookFileXMLHandler extends DefaultHandler {
 			firstName = ""; //$NON-NLS-1$
 			company = ""; //$NON-NLS-1$
 			lastName = ""; //$NON-NLS-1$
-			numbers = new Vector();
+			numbers = new Vector<PhoneNumber>();
 			street = ""; //$NON-NLS-1$
 			postCode = ""; //$NON-NLS-1$
 			city = ""; //$NON-NLS-1$

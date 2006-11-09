@@ -4,7 +4,11 @@ import javax.swing.SpinnerListModel;
 import javax.swing.SpinnerModel;
 
 public class CyclingSpinnerListModel extends SpinnerListModel {
-    Object firstValue, lastValue;
+    /**
+	 *
+	 */
+	private static final long serialVersionUID = 7183081432653701672L;
+	Object firstValue, lastValue;
     SpinnerModel linkedModel = null;
 
     public CyclingSpinnerListModel(Object[] values) {

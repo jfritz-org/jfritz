@@ -35,7 +35,7 @@ public class Person implements Cloneable{
 
 	private String emailAddress = ""; //$NON-NLS-1$
 
-	private Vector numbers;
+	private Vector<PhoneNumber> numbers;
 
 	private Call lastCall; //TODO lastCallaktualisiern beim löschen von calls
 
@@ -43,7 +43,7 @@ public class Person implements Cloneable{
 			"other", "fax", "sip", "main"}; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$
 
 	public Person() {
-		numbers = new Vector();
+		numbers = new Vector<PhoneNumber>();
 	}
 
 	public Person(String firstName, String company, String lastName,
@@ -84,7 +84,7 @@ public class Person implements Cloneable{
 		emailAddress = person.getEmailAddress();
 		standard = person.getStandard();
 		numbers.clear();
-		Enumeration en = person.getNumbers().elements();
+		Enumeration<PhoneNumber> en = person.getNumbers().elements();
 		while (en.hasMoreElements()) {
 			numbers.add(en.nextElement());
 		}
@@ -103,11 +103,11 @@ public class Person implements Cloneable{
 		addNumber(pn);
 	}
 
-	public Vector getNumbers() {
+	public Vector<PhoneNumber> getNumbers() {
 		return numbers;
 	}
 
-	public void setNumbers(Vector numbers, String std) {
+	public void setNumbers(Vector<PhoneNumber> numbers, String std) {
 		this.numbers = numbers;
 		this.standard = std;
 	}
@@ -151,9 +151,9 @@ public class Person implements Cloneable{
 				+ "FN: " + getFullname() //$NON-NLS-1$
 				+ "\n" + "ADR;Type=HOME,POSTAL:;;" + getStreet() + ";" //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 				+ getCity() + ";;" + getPostalCode() + "\n"; //$NON-NLS-1$,  //$NON-NLS-2$
-		Enumeration en = numbers.elements();
+		Enumeration<PhoneNumber> en = numbers.elements();
 		while (en.hasMoreElements()) {
-			PhoneNumber n = (PhoneNumber) en.nextElement();
+			PhoneNumber n = en.nextElement();
 			if (n.getType().startsWith("home")) //$NON-NLS-1$
 				vcard = vcard + "TEL;TYPE=VOICE,HOME:"; //$NON-NLS-1$
 			else if (n.getType().startsWith("business")) //$NON-NLS-1$
@@ -227,9 +227,9 @@ public class Person implements Cloneable{
 	}
 
 	public PhoneNumber getPhoneNumber(String type) {
-		Enumeration en = numbers.elements();
+		Enumeration<PhoneNumber> en = numbers.elements();
 		while (en.hasMoreElements()) {
-			PhoneNumber n = (PhoneNumber) en.nextElement();
+			PhoneNumber n = en.nextElement();
 			if (n.getType().equals(type))
 				return n;
 		}
@@ -253,9 +253,9 @@ public class Person implements Cloneable{
 	 * @return True if person has a phone number
 	 */
 	public boolean hasNumber(String number, boolean considerMain) {
-		Enumeration en = numbers.elements();
+		Enumeration<PhoneNumber> en = numbers.elements();
 		while (en.hasMoreElements()) {
-			PhoneNumber n = (PhoneNumber) en.nextElement();
+			PhoneNumber n = en.nextElement();
 			if ((n.getType().startsWith("main")) && (considerMain)) { //$NON-NLS-1$
 				// starts with ...
 				if (number.startsWith(n.getIntNumber()))
@@ -440,9 +440,9 @@ public class Person implements Cloneable{
 		if (getFullname().toLowerCase().indexOf(s.toLowerCase()) != -1) {
 			return true;
 		}
-		Enumeration en = numbers.elements();
+		Enumeration<PhoneNumber> en = numbers.elements();
 		while (en.hasMoreElements()) {
-			PhoneNumber n = (PhoneNumber) en.nextElement();
+			PhoneNumber n = en.nextElement();
 
             if ( s.startsWith("+")) {
                 if (n.getIntNumber().indexOf(s) != -1) {
@@ -486,10 +486,10 @@ public class Person implements Cloneable{
 			return false;
 
 		// Creating a set of this person's numbers
-		Enumeration ownNumberEnum = numbers.elements();
-		Set ownNumberSet = new HashSet();
+		Enumeration<PhoneNumber> ownNumberEnum = numbers.elements();
+		Set<String> ownNumberSet = new HashSet<String>();
 		while (ownNumberEnum.hasMoreElements()) {
-			PhoneNumber n = (PhoneNumber) ownNumberEnum.nextElement();
+			PhoneNumber n = ownNumberEnum.nextElement();
 			ownNumberSet.add(n.getIntNumber());
 		}
 

@@ -13,13 +13,13 @@ import java.util.Vector;
  */
 public class CountryList {
 
-	private static Vector list;
+	private static Vector<Country> list;
 
 	/**
 	 *
 	 */
 	public CountryList() {
-		list = new Vector();
+		list = new Vector<Country>();
 		list.add(new Country("Deutschland", "DE", "+49", "00", "0")); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$,  //$NON-NLS-5$
 		list.add(new Country("Österreich", "A", "+43", "00", "0")); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$,  //$NON-NLS-5$
 		list.add(new Country("Schweiz", "CH", "+41", "00", "0")); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$,  //$NON-NLS-5$
@@ -27,7 +27,7 @@ public class CountryList {
 		list.add(new Country("USA", "US", "+1", "011", "1")); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$,  //$NON-NLS-5$
 	}
 
-	public static Vector getList() {
+	public static Vector<Country> getList() {
 		return list;
 	}
 

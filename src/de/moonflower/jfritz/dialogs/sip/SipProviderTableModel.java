@@ -54,11 +54,11 @@ public class SipProviderTableModel extends AbstractTableModel {
     private final String columnNames[] = { Main.getMessage("id"), Main.getMessage("active"), //$NON-NLS-1$,  //$NON-NLS-2$
     		Main.getMessage("sip_numbers"), Main.getMessage("provider") }; //$NON-NLS-1$,  //$NON-NLS-2$
 
-    private Vector providerList;
+    private Vector<SipProvider> providerList;
 
     public SipProviderTableModel() {
         super();
-        providerList = new Vector();
+        providerList = new Vector<SipProvider>();
     }
 
     /**
@@ -79,7 +79,7 @@ public class SipProviderTableModel extends AbstractTableModel {
      * @see javax.swing.table.TableModel#getValueAt(int, int)
      */
     public Object getValueAt(int rowIndex, int columnIndex) {
-        SipProvider sip = (SipProvider) providerList.get(rowIndex);
+        SipProvider sip = providerList.get(rowIndex);
         switch (columnIndex) {
         case 0:
             return Integer.toString(sip.getProviderID());
@@ -104,7 +104,7 @@ public class SipProviderTableModel extends AbstractTableModel {
     /**
      * @return Returns the providerList.
      */
-    public final Vector getProviderList() {
+    public final Vector<SipProvider> getProviderList() {
         return providerList;
     }
 
@@ -113,17 +113,17 @@ public class SipProviderTableModel extends AbstractTableModel {
      * @param newProviderList
      *            The new providerList to update.
      */
-    public final void updateProviderList(Vector newProviderList) {
-        Vector newProviderVector = new Vector();
+    public final void updateProviderList(Vector<SipProvider> newProviderList) {
+        Vector<SipProvider> newProviderVector = new Vector<SipProvider>();
         if (providerList.size() == 0) { // Empty providerList
             providerList = newProviderList;
         } else {
-            Enumeration en1 = newProviderList.elements(); // neue Provider
+            Enumeration<SipProvider> en1 = newProviderList.elements(); // neue Provider
             while (en1.hasMoreElements()) {
-                SipProvider sip1 = (SipProvider) en1.nextElement();
+                SipProvider sip1 = en1.nextElement();
                 boolean found =  false;
                 for (int i=0; i < providerList.size(); i++) {
-                    SipProvider sip2 = (SipProvider) providerList.get(i);
+                    SipProvider sip2 = providerList.get(i);
                     if (sip1.toString().equals(sip2.toString())) {
                         // Provider existiert schon
                         // Active-Status und ProviderID anpassen und zur neuen Liste hinzufügen
@@ -163,9 +163,9 @@ public class SipProviderTableModel extends AbstractTableModel {
 			pw.println("<comment>SIP-Provider for " + Main.PROGRAM_NAME + " v" //$NON-NLS-1$,  //$NON-NLS-2$
 					+ Main.PROGRAM_VERSION + "</comment>"); //$NON-NLS-1$
 
-			Enumeration en = providerList.elements();
+			Enumeration<SipProvider> en = providerList.elements();
 				while (en.hasMoreElements()) {
-					SipProvider provider = (SipProvider) en.nextElement();
+					SipProvider provider = en.nextElement();
 					pw.println(provider.toXML());
 				}
 			pw.println("</provider>"); //$NON-NLS-1$
@@ -251,7 +251,7 @@ public class SipProviderTableModel extends AbstractTableModel {
 	}
 
 	public void sortAllRowsBy(int col) {
-	    Collections.sort(providerList, new ColumnSorter(col, true));
+	    Collections.sort(providerList, new ColumnSorter<SipProvider>(col, true));
 		fireTableDataChanged();
 	}
 
@@ -263,9 +263,9 @@ public class SipProviderTableModel extends AbstractTableModel {
 	 */
 	public String getSipProvider(String sipID, String defaultReturn) {
 	    if (sipID.startsWith("SIP")) { //$NON-NLS-1$
-            Enumeration en = providerList.elements();
+            Enumeration<SipProvider> en = providerList.elements();
             	while (en.hasMoreElements()) {
-            	    SipProvider sipProvider = (SipProvider) en.nextElement();
+            	    SipProvider sipProvider = en.nextElement();
             	    if (sipProvider.getProviderID() == Integer.parseInt(sipID.substring(3)))
             	        return sipProvider.toString();
             	}
@@ -276,7 +276,7 @@ public class SipProviderTableModel extends AbstractTableModel {
 	/**
 	 * This comparator is used to sort vectors of data
 	 */
-	public class ColumnSorter implements Comparator {
+	public class ColumnSorter<T extends SipProvider> implements Comparator<SipProvider> {
 		int colIndex;
 
 		boolean ascending;
@@ -286,10 +286,16 @@ public class SipProviderTableModel extends AbstractTableModel {
 			this.ascending = ascending;
 		}
 
-		public int compare(Object a, Object b) {
+	/*	public int compare(Object a, Object b) {
 			Object o1, o2;
 			SipProvider v1 = (SipProvider) a;
 			SipProvider v2 = (SipProvider) b;
+			return compare(v1,v2);
+		}
+		*/
+//FIXME
+		public int compare(SipProvider v1, SipProvider v2){
+			Object o1, o2;
 			switch (colIndex) {
 			case 0:
 			    if (v1.getProviderID() > v2.getProviderID()) {

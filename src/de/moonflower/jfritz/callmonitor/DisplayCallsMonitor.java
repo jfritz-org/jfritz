@@ -55,21 +55,21 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
             Debug.msg("Found in local database: " + name); //$NON-NLS-1$
         } else {
             Debug.msg("Searchin on dastelefonbuch.de ..."); //$NON-NLS-1$
-            Person person = ReverseLookup.lookup(callerPhoneNumber);
+            //ReverseLookup.lookup(callerPhoneNumber, JFritz.getPhonebook());
+
+            Person person = ReverseLookup.busyLookup(callerPhoneNumber);
+
             if (!person.getFullname().equals("")) { //$NON-NLS-1$
                 name = person.getFullname();
                 Debug.msg("Found on dastelefonbuch.de: " + name); //$NON-NLS-1$
                 Debug.msg("Add person to database"); //$NON-NLS-1$
-                JFritz.getPhonebook().addEntry(person);
-                JFritz.getPhonebook().fireTableDataChanged();
             } else {
-                person = new Person();
-                person.addNumber(new PhoneNumber(caller));
                 Debug.msg("Found no person"); //$NON-NLS-1$
                 Debug.msg("Add dummy person to database"); //$NON-NLS-1$
-                JFritz.getPhonebook().addEntry(person);
-                JFritz.getPhonebook().fireTableDataChanged();
             }
+            JFritz.getPhonebook().addEntry(person);
+            JFritz.getPhonebook().fireTableDataChanged();
+
         }
         return name;
     }
@@ -86,7 +86,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
             Debug.msg("Found in local database: " + name[1] + ", " + name[0]); //$NON-NLS-1$,  //$NON-NLS-2$
         } else {
             Debug.msg("Searching on dastelefonbuch.de ..."); //$NON-NLS-1$
-            Person person = ReverseLookup.lookup(callerPhoneNumber);
+            Person person = ReverseLookup.busyLookup(callerPhoneNumber);
             if (!person.getFullname().equals("")) { //$NON-NLS-1$
                 name[0] = person.getFirstName();
                 name[1] = person.getLastName();

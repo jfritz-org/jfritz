@@ -267,9 +267,9 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 	/**
 	 * @return Returns vector of local IPs
 	 */
-	public static Vector getIP() {
+	public static Vector<InetAddress> getIP() {
 		Enumeration ifaces;
-		Vector addresses = new Vector();
+		Vector<InetAddress> addresses = new Vector<InetAddress>();
 		try {
 			ifaces = NetworkInterface.getNetworkInterfaces();
 			while (ifaces.hasMoreElements()) {

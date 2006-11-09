@@ -64,6 +64,7 @@ import de.moonflower.jfritz.callmonitor.YACCallMonitor;
 import de.moonflower.jfritz.dialogs.config.ConfigDialog;
 import de.moonflower.jfritz.dialogs.quickdial.QuickDialPanel;
 import de.moonflower.jfritz.dialogs.simple.AddressPasswordDialog;
+import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.dialogs.stats.StatsDialog;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
@@ -728,7 +729,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				// SipProvider
 				// eingelesen.
 				try {
-					Vector data = JFritz.getFritzBox().retrieveSipProvider();
+					Vector<SipProvider> data = JFritz.getFritzBox().retrieveSipProvider();
 					JFritz.getSIPProviderTableModel().updateProviderList(data);
 					JFritz.getSIPProviderTableModel().fireTableDataChanged();
 					JFritz.getSIPProviderTableModel().saveToXMLFile(

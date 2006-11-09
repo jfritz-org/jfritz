@@ -46,8 +46,11 @@ import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
+import de.moonflower.jfritz.utils.reverselookup.LookupObserver;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 
-public class PhoneBook extends AbstractTableModel {
+// TODO: beim updaten von personendaten / nummern noch den lastcall und die person im cache der anrufliste aktualisieren
+public class PhoneBook extends AbstractTableModel implements LookupObserver {
 	private static final long serialVersionUID = 1;
 
 	private static final String PHONEBOOK_DTD_URI = "http://jfritz.moonflower.de/dtd/phonebook.dtd"; //$NON-NLS-1$
@@ -66,9 +69,9 @@ public class PhoneBook extends AbstractTableModel {
 
 	private static final String PATTERN_THUNDERBRID_CSV = ","; //$NON-NLS-1$
 
-	private Vector filteredPersons;
+	private Vector<Person> filteredPersons;
 
-	private Vector unfilteredPersons;
+	private Vector<Person> unfilteredPersons;
 	private String fileLocation;
 	private CallerList callerList;
 	private boolean allLastCallsSearched = false;
@@ -78,7 +81,7 @@ public class PhoneBook extends AbstractTableModel {
 	 * newly created Person can be seen by the user, even if there is a filter
 	 * active
 	 */
-	private Vector filterExceptions;
+	private Vector<Person> filterExceptions;
 
 	private int sortColumn = 1;
 
@@ -86,9 +89,9 @@ public class PhoneBook extends AbstractTableModel {
 
 	public PhoneBook(String fileLocation) {
 		this.fileLocation = fileLocation;
-		filteredPersons = new Vector();
-		unfilteredPersons = new Vector();
-		filterExceptions = new Vector();
+		filteredPersons = new Vector<Person>();
+		unfilteredPersons = new Vector<Person>();
+		filterExceptions = new Vector<Person>();
 	}
 
 	/**
@@ -155,7 +158,7 @@ public class PhoneBook extends AbstractTableModel {
 	/**
 	 * This comparator is used to sort vectors of data
 	 */
-	public class ColumnSorter implements Comparator {
+	public class ColumnSorter implements Comparator<Person> {
 		int colIndex;
 
 		boolean ascending;
@@ -165,10 +168,15 @@ public class PhoneBook extends AbstractTableModel {
 			this.ascending = ascending;
 		}
 
-		public int compare(Object a, Object b) {
-			Object o1, o2;
+/*		public int compare(Object a, Object b) {
 			Person p1 = (Person) a;
 			Person p2 = (Person) b;
+			return compare (p1,p2);
+		}
+		*/
+//FIXME
+		public int compare(Person p1, Person p2) {
+			Object o1, o2;
 			switch (colIndex) {
 			case 0:
 				o1 = Boolean.toString(p1.isPrivateEntry());
@@ -246,8 +254,8 @@ public class PhoneBook extends AbstractTableModel {
 	}
 
 
-	public Vector getFilteredPersons() {
-		return filteredPersons; //TODO maybe clone()?
+	public Vector<Person> getFilteredPersons() {
+		return filteredPersons;
 	}
 
 	/**
@@ -271,12 +279,18 @@ public class PhoneBook extends AbstractTableModel {
 			// durchführen
 			Vector<PhoneNumber> numbers = new Vector<PhoneNumber>();
 			for (int i = 0; i < rows.length; i++) {
-				Person person = (Person) getFilteredPersons().get(rows[i]);
-				callerList.reverseLookup(person.getNumbers());
+				Person person = getFilteredPersons().get(rows[i]);
+				numbers.addAll(person.getNumbers());
 			}
+			ReverseLookup.lookup(numbers, this);
 		} else { // Für alle Einträge ReverseLookup durchführen
 			reverseLookupPersons(filteredPersons);
 		}
+	}
+
+	public void personsFound(Vector persons) {
+		addEntrys(persons);
+
 	}
 
 	/**
@@ -299,14 +313,22 @@ public class PhoneBook extends AbstractTableModel {
 	public void clearFilterExceptions() {
 		filterExceptions.clear();
 	}
+
+	public void addEntrys(Vector persons) {
+		for (Iterator iter = persons.iterator(); iter.hasNext();) {
+			Person element = (Person) iter.next();
+			addEntry(element);
+		}
+	}
+
 /*
  * inherited from AbstractTableModel
  */
 	public boolean addEntry(Person newPerson) {
-		Enumeration en = unfilteredPersons.elements();
+		Enumeration<Person> en = unfilteredPersons.elements();
 		PhoneNumber pn1 = newPerson.getStandardTelephoneNumber();
 		while (en.hasMoreElements()) {
-			Person p = (Person) en.nextElement();
+			Person p = en.nextElement();
 			PhoneNumber pn2 = p.getStandardTelephoneNumber();
 			if ((pn1 != null) && (pn2 != null)
 					&& pn1.getIntNumber().equals(pn2.getIntNumber())) {
@@ -322,7 +344,7 @@ public class PhoneBook extends AbstractTableModel {
 
 	public void setLastCall(Person p ,Call c){
 		int index = unfilteredPersons.indexOf(p);
-		((Person)unfilteredPersons.get(index)).setLastCall(c);
+		unfilteredPersons.get(index).setLastCall(c);
 		fireTableDataChanged();
 	}
 
@@ -348,17 +370,17 @@ public class PhoneBook extends AbstractTableModel {
 		try {
 			BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(filename), "UTF8")); //$NON-NLS-1$
-			Enumeration en1 = unfilteredPersons.elements();
+			Enumeration<Person> en1 = unfilteredPersons.elements();
 
 			Enumeration en2;
 			Person current;
 			String name;
 
-			String nr, type;
+			String nr;//, type;
 			PhoneNumber pn;
 
 			while (en1.hasMoreElements()) {
-				current = (Person) en1.nextElement();
+				current = en1.nextElement();
 				name = ""; //$NON-NLS-1$
 				if (current.getFullname().length() > 0) {
 					if (current.getLastName().length() > 0) {
@@ -386,7 +408,7 @@ public class PhoneBook extends AbstractTableModel {
 						if (nr.startsWith("+49")) {
 							nr = "0" + nr.substring(3, nr.length()); //$NON-NLS-1$,  //$NON-NLS-2$
 						}
-						type = pn.getType();
+//						type = pn.getType();
 
 						pw.write(nr + "=" + name); //$NON-NLS-1$
 						pw.newLine();
@@ -409,17 +431,17 @@ public class PhoneBook extends AbstractTableModel {
 		try {
 			BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(filename), "UTF8")); //$NON-NLS-1$
-			Enumeration en1 = unfilteredPersons.elements();
+			Enumeration<Person> en1 = unfilteredPersons.elements();
 
 			Enumeration en2;
 			Person current;
 			String name;
 
-			String nr, type;
+			String nr;//, type;
 			PhoneNumber pn;
 
 			while (en1.hasMoreElements()) {
-				current = (Person) en1.nextElement();
+				current = en1.nextElement();
 				name = ""; //$NON-NLS-1$
 				if (current.getFullname().length() > 0) {
 					if (current.getLastName().length() > 0) {
@@ -447,7 +469,7 @@ public class PhoneBook extends AbstractTableModel {
 						if (nr.startsWith("+49")) {
 							nr = "0" + nr.substring(3, nr.length()); //$NON-NLS-1$,  //$NON-NLS-2$
 						}
-						type = pn.getType();
+//						type = pn.getType();
 
 						pw.write("\"" + name + "\",\"" + nr + "\""); //$NON-NLS-1$, //$NON-NLS-2$,  //$NON-NLS-3$
 						pw.newLine();
@@ -480,9 +502,9 @@ public class PhoneBook extends AbstractTableModel {
 			pw.write("<comment>Phonebook for " + Main.PROGRAM_NAME + " v" //$NON-NLS-1$,  //$NON-NLS-2$
 					+ Main.PROGRAM_VERSION + "</comment>"); //$NON-NLS-1$
 			pw.newLine();
-			Enumeration en = unfilteredPersons.elements();
+			Enumeration<Person> en = unfilteredPersons.elements();
 			while (en.hasMoreElements()) {
-				Person current = (Person) en.nextElement();
+				Person current = en.nextElement();
 				pw
 						.write("<entry private=\"" + current.isPrivateEntry() + "\">"); //$NON-NLS-1$,  //$NON-NLS-2$
 				pw.newLine();
@@ -642,7 +664,7 @@ public class PhoneBook extends AbstractTableModel {
 	}
 
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Person person = (Person) filteredPersons.get(rowIndex);
+		Person person = filteredPersons.get(rowIndex);
 		switch (columnIndex) {
 		case 0:
 			if (person.isPrivateEntry()) {
@@ -757,7 +779,7 @@ public class PhoneBook extends AbstractTableModel {
 				//wenn man das komplette buch speichern will
 			// unfilteredPersons durchsuchen
 				for (int i = 0; i < unfilteredPersons.size(); i++) {
-					Person currentPerson = (Person) unfilteredPersons
+					Person currentPerson = unfilteredPersons
 							.elementAt(i);
 					pw.println(currentPerson.toCSV(separator));
 				}
@@ -793,7 +815,7 @@ public class PhoneBook extends AbstractTableModel {
 				// wenn man nicht das komplette buch speichern will
 			// muss man filteredPersons durchsuchen
 				for (int i = 0; i < rows.length; i++) {
-					Person currentPerson = (Person) filteredPersons
+					Person currentPerson = filteredPersons
 							.elementAt(rows[i]);
 					pw.println(currentPerson.toCSV(separator));
 				}
@@ -809,7 +831,7 @@ public class PhoneBook extends AbstractTableModel {
 	 */
 	public Person getPersonAt(int rowIndex) {
 		if (rowIndex >= 0) {
-			return (Person) filteredPersons.get(rowIndex);
+			return filteredPersons.get(rowIndex);
 		} else {
 			return null;
 		}
@@ -844,7 +866,7 @@ public class PhoneBook extends AbstractTableModel {
 	 * @param number
 	 *            a String containing the number to search for
 	 * @param considerMain
-	 *            true, if search for main number (telephone switchboard) should
+	 *            true, if search for main number (telephone switchboard) shoul
 	 *            be enabled.
 	 * @return the Person having that number or the main number of telephone
 	 *         switchboard in companies, null if no person was found
@@ -854,10 +876,10 @@ public class PhoneBook extends AbstractTableModel {
 		if (number == null) {
 			return null;
 		}
-		Vector foundPersons = new Vector();
-		Enumeration en = unfilteredPersons.elements();
+		Vector<Person> foundPersons = new Vector<Person>();
+		Enumeration<Person> en = unfilteredPersons.elements();
 		while (en.hasMoreElements()) {
-			Person p = (Person) en.nextElement();
+			Person p = en.nextElement();
 			if (p.hasNumber(number.getIntNumber(), considerMain)) {
 				foundPersons.add(p);
 			}
@@ -865,12 +887,12 @@ public class PhoneBook extends AbstractTableModel {
 		if (foundPersons.size() == 0) {
 			return null;
 		} else if (foundPersons.size() == 1) {
-			return (Person) foundPersons.get(0);
+			return foundPersons.get(0);
 		} else {
 			// delete all dummy entries for this number and return first element
 			// of foundPersons
 			for (int i = 0; i < foundPersons.size(); i++) {
-				Person p = (Person) foundPersons.get(i);
+				Person p = foundPersons.get(i);
 				if (p.getFullname().equals("") && (p.getNumbers().size() == 1)
 						&& p.getAddress().equals("") && p.getCity().equals("")
 						&& p.getCompany().equals("")
@@ -883,7 +905,7 @@ public class PhoneBook extends AbstractTableModel {
 					this.saveToXMLFile(fileLocation);
 				}
 			}
-			return (Person) foundPersons.get(0);
+			return foundPersons.get(0);
 		}
 	}
 
@@ -903,7 +925,7 @@ public class PhoneBook extends AbstractTableModel {
 		Person person;
 		Call call;
 		for (int i = 0; i < unfilteredPersons.size(); i++) {
-			person = (Person)unfilteredPersons.get(i);
+			person = unfilteredPersons.get(i);
 			call = callerList.findLastCall(person);
 			if(call!=null){
 				// wichtig, sonst stht da noch null drinn und den Fehler findet man dann niemals
@@ -919,7 +941,7 @@ public class PhoneBook extends AbstractTableModel {
 	 * @param columnIndex
 	 * @return class of column
 	 */
-	public Class getColumnClass(int columnIndex) {
+	public Class<? extends Object> getColumnClass(int columnIndex) {
 		Object o = getValueAt(0, columnIndex);
 		if (o == null) {
 			return Object.class;
@@ -944,10 +966,10 @@ public class PhoneBook extends AbstractTableModel {
 			filteredPersons = unfilteredPersons;
 		} else {
 			// Data got to be filtered
-			Vector newFilteredPersons = new Vector();
-			Enumeration en = unfilteredPersons.elements();
+			Vector<Person> newFilteredPersons = new Vector<Person>();
+			Enumeration<Person> en = unfilteredPersons.elements();
 			while (en.hasMoreElements()) {
-				Person current = (Person) en.nextElement();
+				Person current = en.nextElement();
 
 				// check whether this Person should be shown anyway
 				if (filterExceptions.contains(current)) {
@@ -1135,14 +1157,14 @@ public class PhoneBook extends AbstractTableModel {
 	 * @return the number of removed entries
 	 */
 	public synchronized int deleteDuplicateEntries() {
-		Set redundantEntries = new HashSet();
+		Set<Person> redundantEntries = new HashSet<Person>();
 
 		synchronized (unfilteredPersons) {
 			int size = unfilteredPersons.size();
 			for (int i = 0; i < size; i++) {
-				Person currentOuter = (Person) unfilteredPersons.elementAt(i);
+				Person currentOuter = unfilteredPersons.elementAt(i);
 				for (int j = i + 1; j < size; j++) {
-					Person currentInner = (Person) unfilteredPersons
+					Person currentInner = unfilteredPersons
 							.elementAt(j);
 					if (currentOuter.supersedes(currentInner)) {
 						redundantEntries.add(currentInner);
@@ -1152,9 +1174,9 @@ public class PhoneBook extends AbstractTableModel {
 				}
 			}
 
-			Iterator iterator = redundantEntries.iterator();
+			Iterator<Person> iterator = redundantEntries.iterator();
 			while (iterator.hasNext()) {
-				Person p = (Person) iterator.next();
+				Person p = iterator.next();
 				deleteEntry(p);
 			}
 		}
@@ -1175,6 +1197,8 @@ public class PhoneBook extends AbstractTableModel {
 	public boolean getAllLastCallsSearched() {
 		return allLastCallsSearched;
 	}
+
+
 
 
 }

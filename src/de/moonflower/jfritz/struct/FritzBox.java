@@ -248,7 +248,7 @@ public class FritzBox {
 	 *             author robotniko
 	 * @throws InvalidFirmwareException
 	 */
-	public Vector retrieveSipProvider()
+	public Vector<SipProvider> retrieveSipProvider()
 			throws WrongPasswordException, IOException,
 			InvalidFirmwareException {
 		if (firmware == null)
@@ -279,7 +279,7 @@ public class FritzBox {
 			}
 		}
 
-		Vector list = parseSipProvider(data, firmware);
+		Vector<SipProvider> list = parseSipProvider(data, firmware);
 		return list;
 	}
 
@@ -291,8 +291,8 @@ public class FritzBox {
 	 *            html data
 	 * @return list of SipProvider objects author robotniko, akw
 	 */
-	public Vector parseSipProvider(String data, FritzBoxFirmware firmware) {
-		Vector list = new Vector();
+	public Vector<SipProvider> parseSipProvider(String data, FritzBoxFirmware firmware) {
+		Vector<SipProvider> list = new Vector<SipProvider>();
 		data = JFritzUtils.removeDuplicateWhitespace(data);
 		Pattern p;
 		if (firmware.getMajorFirmwareVersion() == 3
@@ -321,9 +321,9 @@ public class FritzBox {
 		p = Pattern.compile(PATTERN_SIPPROVIDER_ACTIVE);
 		m = p.matcher(data);
 		while (m.find()) {
-			Enumeration en = list.elements();
+			Enumeration<SipProvider> en = list.elements();
 			while (en.hasMoreElements()) {
-				SipProvider sipProvider = (SipProvider) en.nextElement();
+				SipProvider sipProvider = en.nextElement();
 				if (sipProvider.getProviderID() == Integer.parseInt(m.group(1))) {
 					if (Integer.parseInt(m.group(2)) == 1) {
 						sipProvider.setActive(true);
@@ -494,7 +494,7 @@ public class FritzBox {
 	 * @throws IOException
 	 * @throws InvalidFirmwareException
 	 */
-	public Vector retrieveQuickDialsFromFritzBox(QuickDials model) throws WrongPasswordException,
+	public Vector<QuickDial> retrieveQuickDialsFromFritzBox(QuickDials model) throws WrongPasswordException,
 			IOException, InvalidFirmwareException {
 
 		String postdata;
@@ -525,9 +525,9 @@ public class FritzBox {
 	 * @param firmware
 	 * @return list of QuickDial objects
 	 */
-	public Vector parseQuickDialData(QuickDials model, String data,
+	public Vector<QuickDial> parseQuickDialData(QuickDials model, String data,
 			FritzBoxFirmware firmware) {
-		Vector list = new Vector();
+		Vector<QuickDial> list = new Vector<QuickDial>();
 		data = JFritzUtils.removeDuplicateWhitespace(data);
 		Pattern p;
 		if (firmware.getMajorFirmwareVersion() == 4

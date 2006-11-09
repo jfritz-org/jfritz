@@ -36,14 +36,14 @@ public class CallMonitorList {
 
     // Dieser Vektor enthält alle Klassen, die auf Anruf-Events reagieren
     // sollen.
-    private Vector listeners = new Vector();
+    private Vector<CallMonitorListener> listeners = new Vector<CallMonitorListener>();
 
     // Ankommende oder abgehende Anrufe, bei denen noch keine Verbindung
     // zustandegekommen ist
-    private HashMap pendingCalls = new HashMap();
+    private HashMap<Integer, Call> pendingCalls = new HashMap<Integer, Call>();
 
     // Anrufe, bei denen schon eine Verbindung besteht
-    private HashMap establishedCalls = new HashMap();
+    private HashMap<Integer, Call> establishedCalls = new HashMap<Integer, Call>();
 
     /**
      * Fügt den Anruf call in die Liste der "schwebenden" Anrufe ein
@@ -91,7 +91,7 @@ public class CallMonitorList {
             Debug.msg("CallMonitorList: Establishing call");
             establishedCalls.put(callID, pendingCalls.get(new Integer(id)));
             pendingCalls.remove(callID);
-            Call call = (Call) establishedCalls.get(callID);
+            Call call = establishedCalls.get(callID);
 
             //notify the listeners of an established call
             if(call.getCalltype().equals(CallType.CALLIN_STR))
@@ -143,9 +143,9 @@ public class CallMonitorList {
      */
     public Call getCall(int id) {
         if (getCallState(id) == PENDING) {
-            return (Call) pendingCalls.get(new Integer(id));
+            return pendingCalls.get(new Integer(id));
         } else if (getCallState(id) == ESTABLISHED) {
-            return (Call) establishedCalls.get(new Integer(id));
+            return establishedCalls.get(new Integer(id));
         } else
             return null;
     }
@@ -194,7 +194,7 @@ public class CallMonitorList {
     public void invokeIncomingCallEstablished(Call call) {
         Debug.msg("CallMonitorList: Invoking incoming call established");
         for (int i = 0; i < listeners.size(); i++) {
-            ((CallMonitorListener) listeners.get(i)).establishedCallIn(call);
+            listeners.get(i).establishedCallIn(call);
         }
     }
 
@@ -206,7 +206,7 @@ public class CallMonitorList {
     public void invokeOutgoingCallEstablished(Call call) {
         Debug.msg("CallMonitorList: Invoking outgoing call established");
         for (int i = 0; i < listeners.size(); i++) {
-            ((CallMonitorListener) listeners.get(i)).establishedCallOut(call);
+            listeners.get(i).establishedCallOut(call);
         }
     }
 
@@ -219,7 +219,7 @@ public class CallMonitorList {
     public void invokeIncomingCall(Call call) {
         Debug.msg("CallMonitorList: Invoking incoming call");
         for (int i = 0; i < listeners.size(); i++) {
-            ((CallMonitorListener) listeners.get(i)).pendingCallIn(call);
+            listeners.get(i).pendingCallIn(call);
         }
     }
 
@@ -231,7 +231,7 @@ public class CallMonitorList {
     public void invokeOutgoingCall(Call call) {
         Debug.msg("CallMonitorList: Invoking outgoing call");
         for (int i = 0; i < listeners.size(); i++) {
-            ((CallMonitorListener) listeners.get(i)).pendingCallOut(call);
+            listeners.get(i).pendingCallOut(call);
         }
     }
 
@@ -243,7 +243,7 @@ public class CallMonitorList {
     public void invokeDisconnectCall(Call call) {
        Debug.msg("CallMonitorList: Invoking disconnect call");
         for (int i = 0; i < listeners.size(); i++) {
-            ((CallMonitorListener) listeners.get(i)).endOfCall(call);
+            listeners.get(i).endOfCall(call);
         }
     }
 

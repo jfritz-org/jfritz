@@ -65,7 +65,7 @@ public class ImportOutlookContactsDialog extends JDialog implements ActionListen
 
     public ImportOutlookContactsDialog(JFrame parent) {
         super(parent, Main.getMessage("import_contacts_outlook")); //$NON-NLS-1$
-        outlookElements = new Vector();
+        outlookElements = new Vector<String>();
         // contactPics = "resources/images/contacts/";
     }
 
@@ -220,9 +220,9 @@ public class ImportOutlookContactsDialog extends JDialog implements ActionListen
         dispose();
     }
 
-    private Enumeration oElements;
+    private Enumeration<String> oElements;
 
-    private Vector outlookElements;
+    private Vector<String> outlookElements;
 
     final int olFolderContacts = 10;
 }

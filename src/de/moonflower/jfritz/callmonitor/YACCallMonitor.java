@@ -67,24 +67,25 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 						if (msg.startsWith("@CALL")) { //$NON-NLS-1$
 							msg = msg.substring(5);
 							splitList = msg.split("~"); //$NON-NLS-1$
-							String name = ""; //$NON-NLS-1$
-							String number = ""; //$NON-NLS-1$
+//							String name = ""; //$NON-NLS-1$
+//							String number = ""; //$NON-NLS-1$
 							if (splitList.length == 0) {
-								name = ""; //$NON-NLS-1$
-								number = ""; //$NON-NLS-1$
+//								name = ""; //$NON-NLS-1$
+//								number = ""; //$NON-NLS-1$
 							}
 							if (splitList.length == 1) {
 								if (!splitList[0].equals("")) { //$NON-NLS-1$
-									name = splitList[0];
-									number = ""; //$NON-NLS-1$
+//									name = splitList[0];
+//									number = ""; //$NON-NLS-1$
 								}
 							}
 							if (splitList.length == 2) {
 								if (splitList[0].equals("")) { //$NON-NLS-1$
-									name = ""; //$NON-NLS-1$
-								} else
-									name = splitList[0];
-								number = splitList[1];
+//									name = ""; //$NON-NLS-1$
+								} else{
+//									name = splitList[0];
+//								number = splitList[1];
+								}
 							}
 
                             // TODO: Add call to CallMonitorList and show message if number is not in ignore list

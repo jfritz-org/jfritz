@@ -107,7 +107,6 @@ final class TelnetInputStream extends BufferedInputStream implements Runnable
     {
         int ch;
 
-_loop:
         while (true)
         {
             // Exit only when we reach end of stream.
@@ -127,7 +126,6 @@ _loop:
             __client._spyRead(ch);
             /* Code Section added for supporting spystreams (end)*/
 
-_mainSwitch:
             switch (__receiveState)
             {
 

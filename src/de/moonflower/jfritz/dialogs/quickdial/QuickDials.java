@@ -50,14 +50,14 @@ public class QuickDials extends AbstractTableModel {
 			+ "<!ELEMENT description (#PCDATA)>"  //$NON-NLS-1$
 			+ "<!ATTLIST entry id CDATA #REQUIRED>";  //$NON-NLS-1$
 
-	Vector quickDials;
+	Vector<QuickDial> quickDials;
 
 	/**
 	 *
 	 */
 	public QuickDials() {
 		super();
-		quickDials = new Vector();
+		quickDials = new Vector<QuickDial>();
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class QuickDials extends AbstractTableModel {
 	 * @see javax.swing.table.TableModel#getValueAt(int, int)
 	 */
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		QuickDial quick = (QuickDial) quickDials.get(rowIndex);
+		QuickDial quick = quickDials.get(rowIndex);
 		switch (columnIndex) {
 		case 0:
 			return quick.getQuickdial();
@@ -98,7 +98,7 @@ public class QuickDials extends AbstractTableModel {
 	 */
 	public void setValueAt(Object object, int rowIndex, int columnIndex) {
 		if (rowIndex < getRowCount()) {
-			QuickDial dial = (QuickDial) quickDials.get(rowIndex);
+			QuickDial dial = quickDials.get(rowIndex);
 
 			switch (columnIndex) {
 			case 0:
@@ -229,9 +229,9 @@ public class QuickDials extends AbstractTableModel {
 			pw.println("<quickdials>"); //$NON-NLS-1$
 			pw.println("\t<comment>QuickDial list for " + Main.PROGRAM_NAME //$NON-NLS-1$
 					+ " v" + Main.PROGRAM_VERSION + "</comment>"); //$NON-NLS-1$,  //$NON-NLS-2$
-			Enumeration en = quickDials.elements();
+			Enumeration<QuickDial> en = quickDials.elements();
 			while (en.hasMoreElements()) {
-				QuickDial current = (QuickDial) en.nextElement();
+				QuickDial current = en.nextElement();
 				pw.println("\t<entry id=\"" + current.getQuickdial() + "\">"); //$NON-NLS-1$,  //$NON-NLS-2$
 				if (!current.getNumber().equals("")) //$NON-NLS-1$
 					pw.println("\t\t<number>" + current.getNumber() //$NON-NLS-1$
@@ -252,9 +252,9 @@ public class QuickDials extends AbstractTableModel {
 	}
 
 	public String getDescriptionFromNumber(String number) {
-		Enumeration en = quickDials.elements();
+		Enumeration<QuickDial> en = quickDials.elements();
 		while (en.hasMoreElements()) {
-			QuickDial q = (QuickDial) en.nextElement();
+			QuickDial q = en.nextElement();
 			if (q.getNumber().equals(number))
 				return q.getDescription();
 		}
@@ -264,7 +264,7 @@ public class QuickDials extends AbstractTableModel {
 	/**
 	 * @return Returns the quickDials.
 	 */
-	public final Vector getQuickDials() {
+	public final Vector<QuickDial> getQuickDials() {
 		return quickDials;
 	}
 }

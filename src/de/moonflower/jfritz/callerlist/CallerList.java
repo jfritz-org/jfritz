@@ -50,6 +50,7 @@ import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.CopyFile;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
+import de.moonflower.jfritz.utils.reverselookup.LookupObserver;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 
 /**
@@ -57,7 +58,7 @@ import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
  *
  * @author Arno Willig
  */
-public class CallerList extends AbstractTableModel {
+public class CallerList extends AbstractTableModel implements LookupObserver {
 	private static final long serialVersionUID = 1;
 
 	private static final String CALLS_DTD_URI = "http://jfritz.moonflower.de/dtd/calls.dtd"; //$NON-NLS-1$
@@ -137,7 +138,7 @@ public class CallerList extends AbstractTableModel {
 	 *
 	 * @return Unfiltered Vector of Calls
 	 */
-	public Vector getUnfilteredCallVector() {
+	public Vector<Call> getUnfilteredCallVector() {
 		return unfilteredCallerData;
 	}
 
@@ -146,7 +147,7 @@ public class CallerList extends AbstractTableModel {
 	 *
 	 * @return Filtered Vector of Calls
 	 */
-	public Vector getFilteredCallVector() {
+	public Vector<Call> getFilteredCallVector() {
 		return filteredCallerData;
 	}
 
@@ -691,7 +692,7 @@ public class CallerList extends AbstractTableModel {
 		// Debug.msg("Sorting column " + col + " " + asc);
 
 		// Debug.msg("Sorting all filtered Rows by:" + col);
-		Collections.sort(filteredCallerData, new ColumnSorter(col, asc));
+		Collections.sort(filteredCallerData, new ColumnSorter<Call>(col, asc));
 		fireTableDataChanged();
 		fireTableStructureChanged();
 	}
@@ -723,9 +724,9 @@ public class CallerList extends AbstractTableModel {
 			}
 		}
 
-		Collections.sort(unfilteredCallerData, new ColumnSorter(indexOfDate, false));
+		Collections.sort(unfilteredCallerData, new ColumnSorter<Call>(indexOfDate, false));
 		// Resort filtered data
-		Collections.sort(filteredCallerData, new ColumnSorter(sortColumn,
+		Collections.sort(filteredCallerData, new ColumnSorter<Call>(sortColumn,
 				sortDirection));
 		// updateFilter(); //TODO überlegen ob man das noch braucht
 		fireTableStructureChanged();
@@ -734,7 +735,7 @@ public class CallerList extends AbstractTableModel {
 	/**
 	 * This comparator is used to sort vectors of data
 	 */
-	public class ColumnSorter implements Comparator {
+	public class ColumnSorter<T extends Call> implements Comparator<Call> {
 		int columnIndex;
 
 		boolean ascending;
@@ -744,8 +745,8 @@ public class CallerList extends AbstractTableModel {
 			this.ascending = ascending;
 		}
 
-		public int compare(Object a, Object b) {
-			Object o1 = null, o2 = null;
+
+		public int compare2(Object a, Object b) {
 
 			if ( !(a instanceof Call) || !(b instanceof Call) ) {
 				return 0;
@@ -753,6 +754,11 @@ public class CallerList extends AbstractTableModel {
 
 			Call call1 = (Call) a;
 			Call call2 = (Call) b;
+			return compare(call1, call2);
+		}
+		//FIXME
+		public int compare(Call call1, Call call2) {
+			Object o1 = null, o2 = null;
 			String columnName = getRealColumnName(columnIndex);
 
 			if (columnName.equals("type")) { //$NON-NLS-1$
@@ -854,6 +860,7 @@ public class CallerList extends AbstractTableModel {
 			} else
 				return s;
 		}
+
 	}
 
 	/**
@@ -1680,8 +1687,8 @@ public class CallerList extends AbstractTableModel {
 	 *
 	 * @return the providers
 	 */
-	public Vector getCbCProviders(int[] rows) {
-		Vector callByCallProviders = new Vector();
+	public Vector<String> getCbCProviders(int[] rows) {
+		Vector<String> callByCallProviders = new Vector<String>();
 		for (int i = 0; i < rows.length; i++) {
 			Call call = filteredCallerData.get(rows[i]);
 			addIfCbCProvider(callByCallProviders, call);
@@ -1699,7 +1706,7 @@ public class CallerList extends AbstractTableModel {
 	 *            will be added
 	 */
 	// FIXME
-	private void addIfCbCProvider(Vector callByCallProviders, Call call) {
+	private void addIfCbCProvider(Vector<String> callByCallProviders, Call call) {
 		String provider = "";
 		if (call.getPhoneNumber() != null) {
 			provider = call.getPhoneNumber().getCallByCall();
@@ -1717,8 +1724,8 @@ public class CallerList extends AbstractTableModel {
 	 *
 	 * @return all CallByCallProviders
 	 */
-	public Vector getCbCProviders() {
-		Vector callByCallProviders = new Vector();
+	public Vector<String> getCbCProviders() {
+		Vector<String> callByCallProviders = new Vector<String>();
 		for (int i = 0; i < unfilteredCallerData.size(); i++) {
 			Call call = unfilteredCallerData.get(i);
 			addIfCbCProvider(callByCallProviders, call);
@@ -1731,8 +1738,8 @@ public class CallerList extends AbstractTableModel {
 	 *
 	 * @return the providers
 	 */
-	public Vector getSelectedProviders(int[] rows) {
-		Vector selectedProviders = new Vector();
+	public Vector<String> getSelectedProviders(int[] rows) {
+		Vector<String> selectedProviders = new Vector<String>();
 		for (int i = 0; i < rows.length; i++) {
 			Call call = filteredCallerData.get(rows[i]);
 			if (!call.getRoute().equals("")) {
@@ -1748,8 +1755,8 @@ public class CallerList extends AbstractTableModel {
 	 *
 	 * @return all SipProviders of the callertable
 	 */
-	public Vector getAllSipProviders() {
-		Vector sipProviders = new Vector();
+	public Vector<String> getAllSipProviders() {
+		Vector<String> sipProviders = new Vector<String>();
 		for (int i = 0; i < filteredCallerData.size(); i++) {
 			Call call = filteredCallerData.get(i);
 			// Debug.msg("route:"+route);
@@ -1815,25 +1822,24 @@ public class CallerList extends AbstractTableModel {
 	 * Does a reverse lookup for all numbers in vector "numbers"
 	 * @param numbers, a vector of numbers to do reverse lookup on
 	 */
-	public void reverseLookup(Vector<PhoneNumber> numbers) {
-		int j = 0;
-		Enumeration<PhoneNumber> en = numbers.elements();
-		while ( en.hasMoreElements() ) {
-			PhoneNumber number = en.nextElement();
-			Debug.msg("Reverse lookup for " //$NON-NLS-1$
-					+ number.getIntNumber());
-			Person newPerson = ReverseLookup.lookup(number);
-			if (newPerson != null) {
-				j++;
-				phonebook.addEntry(newPerson);
-				phonebook.fireTableDataChanged();
-				this.fireTableDataChanged();
-			}
-		}
+	public boolean reverseLookup(Vector<PhoneNumber> numbers) {
+		Debug.msg("Reverse lookup for " //$NON-NLS-1$
+				+ numbers.size()+"numbers");
 
-		if (j > 0)
-			phonebook.saveToXMLFile(Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
+		return ReverseLookup.lookup(numbers, this);
 	}
+/**
+ *
+ */
+	public void personsFound(Vector persons) {
+		if (persons != null) {
+			phonebook.addEntrys(persons);
+			phonebook.fireTableDataChanged();
+			this.fireTableDataChanged();
+			phonebook.saveToXMLFile(Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
+		}
+	}
+
 
 	/**
 	 * Does a reverse lookup on all calls
@@ -1890,6 +1896,8 @@ public class CallerList extends AbstractTableModel {
 		}
 		update();
 	}
+
+
 
 	public PhoneBook getPhoneBook() {
 		return phonebook;

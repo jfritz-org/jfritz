@@ -16,7 +16,7 @@ public class HTMLUtil {
     /**
      * allows lookup by entity name, to get the corresponding char.
      */
-    private static HashMap entityToChar;
+    private static HashMap<String, Character> entityToChar;
 
     /**
      * Longest an entity can be {@value #LONGEST_ENTITY}, at least in our
@@ -543,7 +543,7 @@ public class HTMLUtil {
             9830 /* &diams; */,
 
         };
-        entityToChar = new HashMap( 511 );
+        entityToChar = new HashMap<String, Character>( 511 );
         for ( int i = 0; i < entityKeys.length; i++ )
             {
             entityToChar.put( entityKeys[ i ],
@@ -562,9 +562,9 @@ public class HTMLUtil {
      */
     public static char entityToChar ( String entity )
         {
-        Character code = (Character)entityToChar.get( entity );
+        Character code = entityToChar.get( entity );
         if ( code != null ) { return code.charValue(); }
-        code = (Character)entityToChar.get( entity.toLowerCase() );
+        code = entityToChar.get( entity.toLowerCase() );
         if ( code != null ) { return code.charValue(); }
         // check at least have &#1;
         if ( entity.length() < 2 ) return 0;

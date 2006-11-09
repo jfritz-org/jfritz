@@ -8,7 +8,6 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callmonitor.CallMonitorListener;
 import de.moonflower.jfritz.struct.Call;
-import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.utils.Debug;
 
 public class CurrentCallsTable extends AbstractTableModel implements
@@ -21,10 +20,10 @@ public class CurrentCallsTable extends AbstractTableModel implements
     		Main.getMessage("name"),	Main.getMessage("port"),
     		Main.getMessage("route"), Main.getMessage("comment")};
 
-    private Vector currentCalls;
+    private Vector<Call> currentCalls;
 
     public CurrentCallsTable(){
-    	currentCalls = new Vector(4);
+    	currentCalls = new Vector<Call>(4);
     	JFritz.getCallMonitorList().addCallMonitorListener(this);
     }
 
@@ -43,7 +42,7 @@ public class CurrentCallsTable extends AbstractTableModel implements
 	public Object getValueAt(int arg0, int arg1) {
 		if(currentCalls.size() <= arg0)
 			return null;
-		Call call = (Call) currentCalls.get(arg0);
+		Call call = currentCalls.get(arg0);
 		switch (arg1){
 			case 0: return call.getCalltype();
 			case 1: return call.getCalldate();
@@ -109,7 +108,7 @@ public class CurrentCallsTable extends AbstractTableModel implements
     public void endOfCall(Call call){
     	//search through the table for the call and remove it
     	for(int i=0; i < currentCalls.size(); i++){
-    		if(((Call)currentCalls.get(i)).equals(call)){
+    		if(currentCalls.get(i).equals(call)){
     			currentCalls.remove(i);
     			fireTableDataChanged();
     			//fireTableRowsDeleted(i,i);

@@ -32,10 +32,10 @@ public class SipProvider {
 
     private double nochFestnetzFreiminuten = 0, nochMobileFreiminuten = 0;
 
-    Vector calls;
+    Vector<Call> calls;
 
     public SipProvider(int providerID, String phoneNumber, String providerName) {
-        calls = new Vector();
+        calls = new Vector<Call>();
         this.providerID = providerID;
         this.providerName = providerName;
         this.phoneNumber = phoneNumber;

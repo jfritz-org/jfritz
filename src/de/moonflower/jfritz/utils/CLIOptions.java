@@ -13,10 +13,10 @@ import java.util.Vector;
  */
 public class CLIOptions {
 
-	Vector CLIOptions;
+	Vector<CLIOption> CLIOptions;
 
 	public CLIOptions() {
-		CLIOptions = new Vector();
+		CLIOptions = new Vector<CLIOption>();
 	}
 
 	/**
@@ -38,9 +38,9 @@ public class CLIOptions {
 	}
 
 	public boolean hasParameter(String optstr) {
-		Enumeration en = CLIOptions.elements();
+		Enumeration<CLIOption> en = CLIOptions.elements();
 		while (en.hasMoreElements()) {
-			CLIOption option = (CLIOption) en.nextElement();
+			CLIOption option = en.nextElement();
 			if (("" + option.getShortOption()).equals(optstr) //$NON-NLS-1$
 					|| option.getLongOption().equals(optstr)) {
 				return option.hasParameter();
@@ -50,9 +50,9 @@ public class CLIOptions {
 	}
 
 	public CLIOption findOption(String optstr, String parm) {
-		Enumeration en = CLIOptions.elements();
+		Enumeration<CLIOption> en = CLIOptions.elements();
 		while (en.hasMoreElements()) {
-			CLIOption option = (CLIOption) en.nextElement();
+			CLIOption option = en.nextElement();
 			String shortOption = "" + option.getShortOption(); //$NON-NLS-1$
 			if (shortOption.equals(optstr)
 					|| option.getLongOption().equals(optstr)) {
@@ -64,9 +64,9 @@ public class CLIOptions {
 	}
 
 	public void printOptions() {
-		Enumeration en = CLIOptions.elements();
+		Enumeration<CLIOption> en = CLIOptions.elements();
 		while (en.hasMoreElements()) {
-			CLIOption option = (CLIOption) en.nextElement();
+			CLIOption option = en.nextElement();
 			String line = "  -" + option.getShortOption(); //$NON-NLS-1$
 			if (option.getLongOption().length() > 0)
 				line += ", --" + option.getLongOption(); //$NON-NLS-1$
@@ -79,8 +79,8 @@ public class CLIOptions {
 		}
 	}
 
-	public Vector parseOptions(String[] args) {
-		Vector foundOptions = new Vector();
+	public Vector<CLIOption> parseOptions(String[] args) {
+		Vector<CLIOption> foundOptions = new Vector<CLIOption>();
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].startsWith("--")) { //$NON-NLS-1$
 				int pos = args[i].indexOf('='); //$NON-NLS-1$
