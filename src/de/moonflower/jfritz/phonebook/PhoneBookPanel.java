@@ -393,7 +393,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			int row[] = getPhoneBookTable().getSelectedRows();
 			if (row.length > 0) {
 				// Markierte Einträge löschen
-				Vector personsToDelete = new Vector();
+				Vector<Person> personsToDelete = new Vector<Person>();
 				for (int i = 0; i < row.length; i++) {
 					personsToDelete.add(phonebook
 							.getFilteredPersons().get(row[i]));

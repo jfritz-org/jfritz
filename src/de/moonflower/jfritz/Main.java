@@ -116,7 +116,6 @@
  * - Importierte Rufnummern auf Sonderzeichen ( -, /, (, ) ) überprüfen
  * - Durchwahlnummern vor Zentrale-Nummern bei der Anzeige bevorzugen (sollte eigentlich gehen, aber scheint einen Bug zu haben)
  * - Schnittstelle zu externen Inverssuche-Programmen
- * - Bug: Neue Telefonnummern in PersonDialog der Anrufliste werden nicht gespeichert
  * - Bug: Importieren von Thunderbird-Einträgen (es werden nur die ersten 5 Felder der CSV-Datei erkannt)
  * - Andere Anrufmonitore noch an die neuen Listener anpassen und TestCases schreiben
  * - Kurzwahlliste sortierbar und Spaltenreihenfolge änderbar
@@ -124,11 +123,8 @@
  * - http://www.ip-phone-forum.de/showthread.php?t=112348
  * - 0900 Nummern werden nicht korrekt erkannt http://www.ip-phone-forum.de/showthread.php?t=114325 => Liste mit Call-By-Call Vorwahlen
  * - Überprüfen, geht wohl nicht mehr: Rückwärtssuche für Österreich über dasoertliche.de wieder eingebaut
- * - Wizard-Panels und ConfigDialog-Pannels zusammenführen
  * - Connection-Timeout für ReverseLookup setzen
  * - Vor dem Release noch den installDirectory-Pfad in JFritzUpdate auf "." anpassen
- * - Autostart des Call-Monitors beim Start von JFritz reparieren
- * - PhoneBook: beim hinzufügen, entfernen und löschen von einträgen den peronen-cache bei den calls aktualisieren
  * TODO-ENDE
  *
  * - Neue Strings:
@@ -175,6 +171,7 @@
  * - Nur noch mit Java 1.5 kompatibel
  * - Fenstergröße, -position und -status wird nun korrekt wiederhergestellt
  * - Spaltengröße und -reihenfolge korrekt wiederhergestellt
+ * - Bugfix: Telefonnummern werden nun korrekt gespeichert
  *
  * JFritz 0.6.1
  * - Neue Strings:

@@ -46,9 +46,13 @@ import de.moonflower.jfritz.struct.PhoneNumber;
  *
  * @author Arno Willig
  *
- * TODO: Änderung des Typs einer Rufnummer soll Undo-Button aktivieren
+ * TODO: Änderung des Typs einer Rufnummer soll Undo-Button aktivieren TODO:
+ * Änderung der Standard-Rufnummer soll Undo-Button aktivieren
+ *
  * TODO: Auf Tasten reagieren
- * TODO: Default-Button
+ *
+ * TODO: Default-Button TODO: Überprüfen, ob Undo-Button auch die Rufnummern,
+ * Rufnummerntyp und Standardrufnummer korrekt zurücksetzt
  */
 public class PersonPanel extends JPanel implements ActionListener,
 		ListSelectionListener, CaretListener {
@@ -192,7 +196,8 @@ public class PersonPanel extends JPanel implements ActionListener,
 	private JPanel createNumberPanel() {
 		JPanel numberPanel = new JPanel(new BorderLayout());
 		typeModel = new PhoneTypeModel(clonedPerson);
-		NumberTableModel numberModel = new NumberTableModel(clonedPerson, typeModel);
+		NumberTableModel numberModel = new NumberTableModel(clonedPerson,
+				typeModel);
 		numberTable = new JTable(numberModel) {
 			private static final long serialVersionUID = 1;
 
@@ -233,7 +238,8 @@ public class PersonPanel extends JPanel implements ActionListener,
 		numberTypesComboBox.setEditable(false);
 
 		DefaultCellEditor checkBoxEditor = new DefaultCellEditor(checkBox);
-		DefaultCellEditor comboEditor = new DefaultCellEditor(numberTypesComboBox);
+		DefaultCellEditor comboEditor = new DefaultCellEditor(
+				numberTypesComboBox);
 
 		numberTable.getColumnModel().getColumn(0).setCellEditor(checkBoxEditor);
 		numberTable.getColumnModel().getColumn(1).setCellEditor(comboEditor);
@@ -289,10 +295,11 @@ public class PersonPanel extends JPanel implements ActionListener,
 			int row = numberTable.getSelectedRow();
 			// Shift standard number if deleted
 			if (clonedPerson.getStandard().equals(
-					((PhoneNumber) clonedPerson.getNumbers().get(row)).getType())) {
+					((PhoneNumber) clonedPerson.getNumbers().get(row))
+							.getType())) {
 				clonedPerson.getNumbers().removeElementAt(row);
-				clonedPerson.setStandard(((PhoneNumber) clonedPerson.getNumbers().get(0))
-						.getType());
+				clonedPerson.setStandard(((PhoneNumber) clonedPerson
+						.getNumbers().get(0)).getType());
 			} else { // Just remove the number
 				clonedPerson.getNumbers().removeElementAt(row);
 			}
@@ -308,16 +315,17 @@ public class PersonPanel extends JPanel implements ActionListener,
 			phoneBook.sortAllFilteredRows();
 			phoneBook.updateFilter();
 			phoneBook.saveToXMLFile(Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
-			JFritz.getJframe().getPhoneBookPanel().getPhoneBookTable().showAndSelectPerson(originalPerson);
+			JFritz.getJframe().getPhoneBookPanel().getPhoneBookTable()
+					.showAndSelectPerson(originalPerson);
 			Enumeration<ActionListener> en = actionListener.elements();
-			while ( en.hasMoreElements()) {
+			while (en.hasMoreElements()) {
 				ActionListener al = en.nextElement();
 				al.actionPerformed(e);
 			}
 		} else if (e.getActionCommand().equals("cancel")) {
 			this.setPerson(originalPerson);
 			Enumeration<ActionListener> en = actionListener.elements();
-			while ( en.hasMoreElements()) {
+			while (en.hasMoreElements()) {
 				ActionListener al = en.nextElement();
 				al.actionPerformed(e);
 			}
@@ -462,7 +470,8 @@ public class PersonPanel extends JPanel implements ActionListener,
 		originalPerson.setCity(tfCity.getText());
 		originalPerson.setEmailAddress(tfEmail.getText());
 
-		originalPerson.setNumbers((Vector<PhoneNumber>)clonedPerson.getNumbers().clone(), clonedPerson.getStandard());
+		originalPerson.setNumbers((Vector<PhoneNumber>) clonedPerson
+				.getNumbers().clone(), clonedPerson.getStandard());
 
 		hasChanged = false;
 		numberHasChanged = false;
@@ -481,11 +490,13 @@ public class PersonPanel extends JPanel implements ActionListener,
 	 * @see javax.swing.event.CaretListener#caretUpdate(javax.swing.event.CaretEvent)
 	 */
 	public void caretUpdate(CaretEvent e) {
-		hasChanged = !tfFirstName.getText().equals(originalPerson.getFirstName())
+		hasChanged = !tfFirstName.getText().equals(
+				originalPerson.getFirstName())
 				|| !tfCompany.getText().equals(originalPerson.getCompany())
 				|| !tfLastName.getText().equals(originalPerson.getLastName())
 				|| !tfStreet.getText().equals(originalPerson.getStreet())
-				|| !tfPostalCode.getText().equals(originalPerson.getPostalCode())
+				|| !tfPostalCode.getText().equals(
+						originalPerson.getPostalCode())
 				|| !tfCity.getText().equals(originalPerson.getCity())
 				|| !tfEmail.getText().equals(originalPerson.getEmailAddress())
 				|| numberHasChanged;
@@ -494,7 +505,6 @@ public class PersonPanel extends JPanel implements ActionListener,
 	}
 
 	public void firePropertyChange() {
-		// TODO: enable undo, ok, cancel buttons
 		if (numberHasChanged) {
 			((NumberTableModel) numberTable.getModel()).fireTableDataChanged();
 		}
@@ -544,6 +554,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 	/**
 	 * Set numberHasChanged
+	 *
 	 * @param numberHasChanged
 	 */
 	public void setNumberHasChanged(boolean numberHasChanged) {
@@ -552,15 +563,17 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 	/**
 	 * Adds an button-listener
+	 *
 	 * @param listener
 	 */
 	public void addActionListener(ActionListener listener) {
-		if (!actionListener.contains(listener) )
+		if (!actionListener.contains(listener))
 			actionListener.add(listener);
 	}
 
 	/**
 	 * Removes an button-listener
+	 *
 	 * @param listener
 	 */
 	public void removeButtonListener(ActionListener listener) {

@@ -60,7 +60,7 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/wiki/Kategorie:Hilfe"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.373 2006/11/05 04:47:44 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: JFritz.java,v 1.374 2006/11/09 02:24:18 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String CALLS_FILE = "jfritz.calls.xml"; //$NON-NLS-1$
 
@@ -97,10 +97,6 @@ public final class JFritz {
 	private static CallMonitorInterface callMonitor = null;
 
 	private static String HostOS = "other"; //$NON-NLS-1$
-
-	public static final int CALLMONITOR_START = 0;
-
-	public static final int CALLMONITOR_STOP = 1;
 
 	private static WatchdogThread watchdog;
 
@@ -441,7 +437,7 @@ public final class JFritz {
 		if (callMonitor != null) {
 			callMonitor.stopCallMonitor();
 			// Let buttons enable start of callMonitor
-			getJframe().setCallMonitorButtons(CALLMONITOR_START);
+			getJframe().setCallMonitorButtonPushed(false);
 			callMonitor = null;
 		}
 	}

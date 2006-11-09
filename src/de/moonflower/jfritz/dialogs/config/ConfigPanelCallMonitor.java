@@ -137,12 +137,8 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 		}
 		callMonitorAfterStartButton.setSelected(JFritzUtils.parseBoolean(Main
 				.getProperty("option.autostartcallmonitor", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		if (startCallMonitorButton.isSelected()) {
-			setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
-		} else {
-			setCallMonitorButtons(JFritz.CALLMONITOR_START);
-		}
 
+		setCallMonitorButtonPushed(startCallMonitorButton.isSelected());
 	}
 
 	public void saveSettings() {
@@ -197,7 +193,7 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 
 	protected void stopAllCallMonitors() {
 		if (startCallMonitorButton.isSelected()) {
-			setCallMonitorButtons(JFritz.CALLMONITOR_START);
+			setCallMonitorButtonPushed(false);
 			JFritz.stopCallMonitor();
 		}
 	}
@@ -255,11 +251,8 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 			Main.setProperty("option.callmonitorStarted", Boolean //$NON-NLS-1$
 					.toString(startCallMonitorButton.isSelected()));
 
-			if (startCallMonitorButton.isSelected()) {
-				setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
-			} else {
-				setCallMonitorButtons(JFritz.CALLMONITOR_START);
-			}
+			setCallMonitorButtonPushed(startCallMonitorButton.isSelected());
+
 		} else if ("startCallMonitorOptions".equals(e //$NON-NLS-1$
 				.getActionCommand())) {
 			CallMonitorConfigDialog callMonitorConfigDialog = null;
@@ -295,17 +288,17 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 	 * @param option
 	 *            CALLMONITOR_START or CALLMONITOR_STOP
 	 */
-	public void setCallMonitorButtons(int option) {
-		if (option == JFritz.CALLMONITOR_START) {
-			startCallMonitorButton.setText(Main
-					.getMessage("start_call_monitor")); //$NON-NLS-1$
-			startCallMonitorButton.setSelected(false);
-			JFritz.getJframe().getMonitorButton().setSelected(false);
-		} else if (option == JFritz.CALLMONITOR_STOP) {
+	public void setCallMonitorButtonPushed(boolean isPushed) {
+		if (isPushed) {
 			startCallMonitorButton
 					.setText(Main.getMessage("stop_call_monitor")); //$NON-NLS-1$
 			startCallMonitorButton.setSelected(true);
 			JFritz.getJframe().getMonitorButton().setSelected(true);
+		} else {
+			startCallMonitorButton.setText(Main
+					.getMessage("start_call_monitor")); //$NON-NLS-1$
+			startCallMonitorButton.setSelected(false);
+			JFritz.getJframe().getMonitorButton().setSelected(false);
 		}
 	}
 }

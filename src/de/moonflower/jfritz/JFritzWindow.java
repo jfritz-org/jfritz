@@ -197,7 +197,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 												"/de/moonflower/jfritz/resources/images/trayicon.png"))); //$NON-NLS-1$
 
 		callerListPanel = new CallerListPanel(JFritz.getCallerList(), this);
-		phoneBookPanel = new PhoneBookPanel(JFritz.getPhonebook(), this, new Locale(Main.getProperty("locale", "de_DE")));
+		phoneBookPanel = new PhoneBookPanel(JFritz.getPhonebook(), this,
+				new Locale(Main.getProperty("locale", "de_DE")));
 		callerListPanel.setPhoneBookPanel(phoneBookPanel);
 		quickDialPanel = new QuickDialPanel();
 		// New code here, remove if problematic
@@ -580,15 +581,17 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		if (enabled) {
 			timer = new Timer();
 
+			int interval = Integer.parseInt(Main.getProperty("fetch.timer", //$NON-NLS-1$
+					"3")) * 60000;
+
 			timer.schedule(new TimerTask() {
 
 				public void run() {
 					Debug.msg("Running FetchListTask.."); //$NON-NLS-1$
-					JFritz.getJframe().fetchList();
+					fetchList();
 				}
 
-			}, 5000, Integer.parseInt(Main.getProperty("fetch.timer", //$NON-NLS-1$
-					"3")) * 60000); //$NON-NLS-1$
+			}, interval, interval); //$NON-NLS-1$
 			Debug.msg("Timer enabled"); //$NON-NLS-1$
 		} else {
 			timer.cancel();
@@ -686,7 +689,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					while (!isdone) {
 						setBusy(true);
 						setStatus(Main.getMessage("reverse_lookup")); //$NON-NLS-1$
-						JFritz.getCallerList().reverseLookupCalls(JFritz.getCallerList().getFilteredCallVector());
+						JFritz.getCallerList().reverseLookupCalls(
+								JFritz.getCallerList().getFilteredCallVector());
 						isdone = true;
 					}
 					return null;
@@ -729,7 +733,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				// SipProvider
 				// eingelesen.
 				try {
-					Vector<SipProvider> data = JFritz.getFritzBox().retrieveSipProvider();
+					Vector<SipProvider> data = JFritz.getFritzBox()
+							.retrieveSipProvider();
 					JFritz.getSIPProviderTableModel().updateProviderList(data);
 					JFritz.getSIPProviderTableModel().fireTableDataChanged();
 					JFritz.getSIPProviderTableModel().saveToXMLFile(
@@ -1200,18 +1205,15 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 *            CALLMONITOR_START or CALLMONITOR_STOP
 	 */
 
-	public void setCallMonitorButtons(int option) {
-		Main.setProperty("option.callmonitorStarted", Integer.toString(option));
+	public void setCallMonitorButtonPushed(boolean isPushed) {
+		Main.setProperty("option.callmonitorStarted", Boolean
+				.toString(isPushed));
+		monitorButton.setSelected(isPushed);
 
 		/**
 		 * switch (option) { case JFritz.CALLMONITOR_START: {
-		 *
-		 * if (configDialog != null) {
-		 * configDialog.setCallMonitorButtons(option); } else {
-		 * JFritz.getJframe().getMonitorButton().setSelected(false); } break; }
-		 * case JFritz.CALLMONITOR_STOP: { if (configDialog != null) {
-		 * configDialog.setCallMonitorButtons(option); } else {
-		 * JFritz.getJframe().getMonitorButton().setSelected(true); } break; } }
+		 * monitorButton.setSelected(false); break; } case
+		 * JFritz.CALLMONITOR_STOP: { monitorButton.setSelected(true); } }
 		 */
 	}
 
@@ -1240,7 +1242,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					Debug.errDlg(Main
 							.getMessage("callmonitor_error_wrong_firmware")); //$NON-NLS-1$
 					monitorButton.setSelected(false);
-					this.setCallMonitorButtons(JFritz.CALLMONITOR_START);
+					setCallMonitorButtonPushed(true);
 				} else {
 					if ((currentFirm.getMajorFirmwareVersion() >= 4)
 							&& (currentFirm.getMinorFirmwareVersion() >= 3)) {
@@ -1248,33 +1250,33 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					} else {
 						JFritz.setCallMonitor(new FBoxCallMonitorV1());
 					}
-					this.setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
+					setCallMonitorButtonPushed(true);
 				}
 			}
 			break;
 		}
 		case 2: {
 			JFritz.setCallMonitor(new TelnetCallMonitor());
-			this.setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
+			setCallMonitorButtonPushed(true);
 			break;
 		}
 		case 3: {
 			JFritz.setCallMonitor(new SyslogCallMonitor());
-			this.setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
+			setCallMonitorButtonPushed(true);
 			break;
 		}
 		case 4: {
 			JFritz.setCallMonitor(new YACCallMonitor(Integer.parseInt(Main
 					.getProperty("option.yacport", //$NON-NLS-1$
 							"10629")))); //$NON-NLS-1$
-			this.setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
+			setCallMonitorButtonPushed(true);
 			break;
 		}
 		case 5: {
 			JFritz.setCallMonitor(new CallmessageCallMonitor(Integer
 					.parseInt(Main.getProperty("option.callmessageport", //$NON-NLS-1$
 							"23232")))); //$NON-NLS-1$
-			this.setCallMonitorButtons(JFritz.CALLMONITOR_STOP);
+			setCallMonitorButtonPushed(true);
 			break;
 		}
 		}
@@ -1337,8 +1339,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	public void backupToChoosenDirectory() {
 		CopyFile backup = new CopyFile();
 		try {
-			String directory = new DirectoryChooser().getDirectory(
-					JFritz.getJframe()).toString();
+			String directory = new DirectoryChooser().getDirectory(this)
+					.toString();
 			backup.copy(".", "xml", directory); //$NON-NLS-1$,  //$NON-NLS-2$
 		} catch (NullPointerException e) {
 			Debug.msg("No directory choosen for backup!"); //$NON-NLS-1$
