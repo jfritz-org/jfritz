@@ -292,6 +292,13 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 		addEntrys(persons);
 
 	}
+	/**
+	 * for the LookupObserver
+	 */
+	public void percentOfLookupDone(float f) {
+		// TODO Auto-generated method stub
+
+	}
 
 	/**
 	 * Does a reverse lookup on all calls
@@ -314,7 +321,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 		filterExceptions.clear();
 	}
 
-	public void addEntrys(Vector persons) {
+	public synchronized void addEntrys(Vector persons) {
 		for (Iterator iter = persons.iterator(); iter.hasNext();) {
 			Person element = (Person) iter.next();
 			addEntry(element);
@@ -324,7 +331,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 /*
  * inherited from AbstractTableModel
  */
-	public boolean addEntry(Person newPerson) {
+	public synchronized boolean addEntry(Person newPerson) {
 		Enumeration<Person> en = unfilteredPersons.elements();
 		PhoneNumber pn1 = newPerson.getStandardTelephoneNumber();
 		while (en.hasMoreElements()) {
@@ -1197,6 +1204,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 	public boolean getAllLastCallsSearched() {
 		return allLastCallsSearched;
 	}
+
 
 
 

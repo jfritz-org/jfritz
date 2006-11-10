@@ -757,7 +757,7 @@ public class Main {
 				}
 				break;
 			case 'r':
-				JFritz.getCallerList().reverseLookupCalls(JFritz.getCallerList().getUnfilteredCallVector());
+				JFritz.getCallerList().reverseLookup(false);
 				shutdown = true;
 				break;
 			case 'e':

@@ -689,8 +689,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					while (!isdone) {
 						setBusy(true);
 						setStatus(Main.getMessage("reverse_lookup")); //$NON-NLS-1$
-						JFritz.getCallerList().reverseLookupCalls(
-								JFritz.getCallerList().getFilteredCallVector());
+						JFritz.getCallerList().reverseLookup(true);
 						isdone = true;
 					}
 					return null;

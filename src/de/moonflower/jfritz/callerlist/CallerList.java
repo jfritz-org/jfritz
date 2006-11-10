@@ -142,7 +142,6 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 		return unfilteredCallerData;
 	}
 
-
 	/**
 	 *
 	 * @return Filtered Vector of Calls
@@ -724,7 +723,8 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 			}
 		}
 
-		Collections.sort(unfilteredCallerData, new ColumnSorter<Call>(indexOfDate, false));
+		Collections.sort(unfilteredCallerData, new ColumnSorter<Call>(
+				indexOfDate, false));
 		// Resort filtered data
 		Collections.sort(filteredCallerData, new ColumnSorter<Call>(sortColumn,
 				sortDirection));
@@ -745,10 +745,9 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 			this.ascending = ascending;
 		}
 
-
 		public int compare2(Object a, Object b) {
 
-			if ( !(a instanceof Call) || !(b instanceof Call) ) {
+			if (!(a instanceof Call) || !(b instanceof Call)) {
 				return 0;
 			}
 
@@ -756,6 +755,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 			Call call2 = (Call) b;
 			return compare(call1, call2);
 		}
+
 		//FIXME
 		public int compare(Call call1, Call call2) {
 			Object o1 = null, o2 = null;
@@ -1661,7 +1661,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 	 */
 	public Vector<Call> filterData(Vector<Call> src) {
 		Vector<Call> result = new Vector<Call>();
-//		Debug.msg("updating filtered Data");
+		//		Debug.msg("updating filtered Data");
 		Enumeration<Call> en = src.elements();
 		Call call;
 		CallFilter f;
@@ -1795,67 +1795,77 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 		sortAllFilteredRowsBy(sortColumn, sortDirection);
 		fireTableDataChanged();
 	}
+/**
+ * looks up either all filtered/displayed calls or all calls
+ * @param filteredOnly if false it will lookup all calls
+ * @return
+ */
+	public void reverseLookup(boolean filteredOnly) {
+		Vector<PhoneNumber> numbers = new Vector<PhoneNumber>();
+		if (filteredOnly) {
+			for (int i = 0; i < filteredCallerData.size(); i++) {
+				Call call = filteredCallerData.get(i);
+				if (call.getPhoneNumber() != null) {
+					numbers.add(call.getPhoneNumber());
+				}
+			}
+		} else {
+			for (int i = 0; i < unfilteredCallerData.size(); i++) {
+				Call call = unfilteredCallerData.get(i);
+				if (call.getPhoneNumber() != null) {
+					numbers.add(call.getPhoneNumber());
+				}
+			}
+		}
+		reverseLookup(numbers);
 
+	}
 	/**
 	 * does reverse lookup (find the name and address for a given phone number
 	 *
 	 * @param rows
 	 *            the rows, wich are selected for reverse lookup
 	 */
+
 	public void doReverseLookup(int[] rows) {
-		if (rows.length > 0) { // nur für markierte Einträge ReverseLookup
-			// durchführen
-			Vector<PhoneNumber> numbers = new Vector<PhoneNumber>();
-			for (int i = 0; i < rows.length; i++) {
-				Call call = filteredCallerData.get(rows[i]);
-				if (call.getPhoneNumber() != null) {
-					numbers.add(call.getPhoneNumber());
-					}
-				}
-			reverseLookup(numbers);
-		} else { // Für alle gefilterten Einträge ReverseLookup durchführen
-			reverseLookupCalls(filteredCallerData);
+		Vector<PhoneNumber> numbers = new Vector<PhoneNumber>();
+		// nur für markierte Einträge ReverseLookup
+		// durchführen
+		for (int i = 0; i < rows.length; i++) {
+			Call call = filteredCallerData.get(rows[i]);
+			if (call.getPhoneNumber() != null) {
+				numbers.add(call.getPhoneNumber());
+			}
 		}
+		reverseLookup(numbers);
 	}
 
 	/**
 	 * Does a reverse lookup for all numbers in vector "numbers"
 	 * @param numbers, a vector of numbers to do reverse lookup on
 	 */
-	public boolean reverseLookup(Vector<PhoneNumber> numbers) {
+	public void reverseLookup(Vector<PhoneNumber> numbers) {
 		Debug.msg("Reverse lookup for " //$NON-NLS-1$
-				+ numbers.size()+"numbers");
+				+ numbers.size() + "numbers");
 
-		return ReverseLookup.lookup(numbers, this);
+		ReverseLookup.lookup(numbers, this);
 	}
-/**
- *
- */
+
+	/**
+	 *
+	 */
 	public void personsFound(Vector persons) {
 		if (persons != null) {
 			phonebook.addEntrys(persons);
 			phonebook.fireTableDataChanged();
-			this.fireTableDataChanged();
 			phonebook.saveToXMLFile(Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
+			this.fireTableDataChanged();
 		}
 	}
 
+	public void percentOfLookupDone(float f) {
+		// TODO Auto-generated method stub
 
-	/**
-	 * Does a reverse lookup on all calls
-	 * @param calls, calls to do reverse lookup on
-	 */
-	public void reverseLookupCalls(Vector<Call> calls) {
-		Debug.msg("Doing reverse Lookup");
-		Vector<PhoneNumber> numbers = new Vector<PhoneNumber>();
-		for (int i = 0; i < calls.size(); i++) {
-			Call call = calls.get(i);
-			PhoneNumber number = call.getPhoneNumber();
-			if ((number != null) && (!numbers.contains(number)) && (call.getPerson() == null)) {
-				numbers.add(number);
-			}
-		}
-		reverseLookup(numbers);
 	}
 
 	public void setPhoneBook(PhoneBook phonebook) {
@@ -1897,9 +1907,8 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 		update();
 	}
 
-
-
 	public PhoneBook getPhoneBook() {
 		return phonebook;
 	}
+
 }

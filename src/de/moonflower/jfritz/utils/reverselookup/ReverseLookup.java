@@ -6,9 +6,11 @@
 package de.moonflower.jfritz.utils.reverselookup;
 
 import java.util.Vector;
+import java.util.concurrent.PriorityBlockingQueue;
 
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupSwitzerland;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupFrance;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupGermany;
@@ -16,6 +18,59 @@ import de.moonflower.jfritz.utils.reverselookup.ReverseLookupItaly;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupNetherlands;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupUnitedStates;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupAustria;
+
+class LookupThread extends Thread {
+	LookupRequest currentRequest;
+
+	private PriorityBlockingQueue<LookupRequest> requests;
+
+	boolean empty;
+
+	LookupThread(PriorityBlockingQueue<LookupRequest> requests) {
+		this.requests = requests;
+	}
+
+	public void run() {
+		while (true) {
+			try {
+				currentRequest = requests.take();
+			} catch (InterruptedException e) {
+				continue;// we were interrupted
+			}
+			Vector<Person> result = new Vector<Person>();
+			for (int i = 0; i < currentRequest.numbers.size(); i++) {
+				// doppelte?!?
+				Person newPerson = ReverseLookup.lookup(currentRequest.numbers
+						.elementAt(i));
+				result.add(newPerson);
+				currentRequest.observer.percentOfLookupDone(((float)i) / currentRequest.numbers.size());
+			}
+			currentRequest.observer.personsFound(result);
+		}
+	}
+
+	public void notifyRequest() {
+		notifyAll();
+	}
+}
+
+class LookupRequest implements Comparable<LookupRequest> {
+	final Vector<PhoneNumber> numbers;
+
+	final LookupObserver observer;
+
+	final public int priority;
+
+	LookupRequest(Vector<PhoneNumber> numbers, LookupObserver obs, int priority) {
+		this.numbers = numbers;
+		this.observer = obs;
+		this.priority = priority;
+	}
+
+	public int compareTo(LookupRequest o) {
+		return priority > o.priority ? 1 : priority < o.priority ? -1 : 0;
+	}
+}
 
 /**
  * Class for telephone number reverse lookup using various search engines
@@ -25,43 +80,9 @@ import de.moonflower.jfritz.utils.reverselookup.ReverseLookupAustria;
  */
 public class ReverseLookup {
 
-	static class LookupThread extends Thread {
-		int total;
+	static LookupThread thread;
 
-		int current;
-
-		private Vector<PhoneNumber> number;
-
-		private Vector<Person> result;
-
-		private LookupObserver observer;
-
-		LookupThread(Vector<PhoneNumber> number, LookupObserver obs) {
-			total = number.size();
-			this.number = number;
-			this.observer = obs;
-			result = new Vector<Person>();
-		}
-
-		public void run() {
-			for (current = 0; current < number.size(); current++) {
-				// doppelte?!?
-				Person newPerson = lookup(number.elementAt(current));
-				result.add(newPerson);
-			}
-			observer.personsFound(result);
-		}
-
-		public double getPercentDone() {
-			return current / (total + 0.0);
-		}
-
-		public String getMessage() {
-			return "Looking up: " + number.elementAt(current).toString();
-		}
-	}
-
-	private static LookupThread thread;
+	static volatile PriorityBlockingQueue<LookupRequest> requests = new PriorityBlockingQueue<LookupRequest>();
 
 	/**
 	 * This Function does a lookup for a Vector of PhoneNumbers, only if the
@@ -75,13 +96,11 @@ public class ReverseLookup {
 	 * @return true if the Thread is free and we can start lookup, false if the
 	 *         Thread is already busy
 	 */
-	public static boolean lookup(PhoneNumber number, LookupObserver obs) {
-		if (thread.isAlive()) {
-			return false;
-		}
+	public static synchronized void lookup(PhoneNumber number,
+			LookupObserver obs) {
 		Vector<PhoneNumber> v = new Vector<PhoneNumber>();
 		v.add(number);
-		return lookup(v, obs);
+		lookup(v, obs);
 	}
 
 	/**
@@ -96,15 +115,19 @@ public class ReverseLookup {
 	 * @return true if the Thread is free and we can start lookup, false if the
 	 *         Thread is already busy
 	 */
-	public static boolean lookup(Vector<PhoneNumber> number, LookupObserver obs) {
+	public static synchronized void lookup(Vector<PhoneNumber> number,
+			LookupObserver obs) {
 
-		if ((thread != null) && thread.isAlive()) {
-			return false;
+		LookupRequest req = new LookupRequest(number, obs, 5);
+		Debug.msg("adding request");
+		requests.put(req);
+
+		if (thread == null) {
+			Debug.msg("creating thread");
+			thread = new LookupThread(requests);
+			thread.setDaemon(true);
+			thread.start();
 		}
-		thread = new LookupThread(number, obs);
-		thread.start();
-		return true;
-
 	}
 
 	/**
@@ -113,8 +136,7 @@ public class ReverseLookup {
 	 * @param number
 	 * @return the Person
 	 */
-	//TODO check if we need to sync
-	private static Person lookup(PhoneNumber number) {
+	static synchronized Person lookup(PhoneNumber number) {
 
 		Person newPerson;
 		/***********************************************************************
