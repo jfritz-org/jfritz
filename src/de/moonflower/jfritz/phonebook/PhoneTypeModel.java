@@ -21,13 +21,13 @@ public class PhoneTypeModel extends AbstractListModel implements
 
 	private transient PhoneType sel;
 
-	private Vector types;
+	private Vector<PhoneType> types;
 
 	private Person person;
 
 	public PhoneTypeModel(Person person) {
 		super();
-		types = new Vector();
+		types = new Vector<PhoneType>();
 		this.person = person;
 		setTypes();
 	}
@@ -66,7 +66,7 @@ public class PhoneTypeModel extends AbstractListModel implements
 		fireContentsChanged(this, 0, types.size() - 1);
 	}
 
-	public Vector getTypes() {
+	public Vector<PhoneType> getTypes() {
 		return types;
 	}
 
