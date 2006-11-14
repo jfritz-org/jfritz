@@ -95,7 +95,8 @@ public class ImportOutlookContactsDialog extends JDialog implements ActionListen
         setVisible(true);
         Debug.msg("Importing..."); //$NON-NLS-1$
         int entriesImported = 0;
-        for (int i = 1; i <= count; i++) {
+        Vector<Person> persons = new Vector<Person>();
+		for (int i = 1; i <= count; i++) {
             boolean hasTel = false;
             Dispatch item = Dispatch.call(items, "Item", new Integer(i)) //$NON-NLS-1$
                     .toDispatch();
@@ -193,13 +194,11 @@ public class ImportOutlookContactsDialog extends JDialog implements ActionListen
                 }
 
             if (hasTel) {
-                JFritz.getPhonebook().addEntry(newContact);
+            	persons .add(newContact);
                 entriesImported++;
             }
         }
-        if (entriesImported > 0) {
-            JFritz.getPhonebook().saveToXMLFile(Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
-        }
+        JFritz.getPhonebook().addEntries(persons);
         Debug.msg("Import done, " + entriesImported + " entries imported"); //$NON-NLS-1$,	//$NON-NLS-2$
         JButton jButton = new JButton(Main.getMessage("okay")); //$NON-NLS-1$
 

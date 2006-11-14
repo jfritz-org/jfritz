@@ -52,7 +52,7 @@ import de.moonflower.jfritz.struct.PhoneNumber;
  * TODO: Auf Tasten reagieren
  *
  * TODO: Default-Button TODO: Überprüfen, ob Undo-Button auch die Rufnummern,
- * Rufnummerntyp und Standardrufnummer korrekt zurücksetzt
+ * Rufnummerntyp korrekt zurücksetzt
  */
 public class PersonPanel extends JPanel implements ActionListener,
 		ListSelectionListener, CaretListener {

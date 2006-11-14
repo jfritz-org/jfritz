@@ -42,6 +42,7 @@ public class Person implements Cloneable{
 	private String[] basicTypes = {"home", "mobile", "homezone", "business", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$
 			"other", "fax", "sip", "main"}; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$
 
+
 	public Person() {
 		numbers = new Vector<PhoneNumber>();
 	}
@@ -69,12 +70,7 @@ public class Person implements Cloneable{
 		this.privateEntry = false;
 	}
 
-	public Person(Person person) {
-		this();
-		copyFrom(person);
-	}
-
-	public void copyFrom(Person person) {
+	private void copyFrom(Person person) {
 		firstName = person.getFirstName();
 		company = person.getCompany();
 		lastName = person.getLastName();
@@ -513,7 +509,17 @@ public class Person implements Cloneable{
 	}
 
 	public Person clone() {
-		return new Person(this);
+		Person p = new Person();
+		p.copyFrom(this);
+		return p;
 	}
 
+	public boolean isDummy() {
+		return getFullname().equals("") && (getNumbers().size() == 1)
+				&& getAddress().equals("") && getCity().equals("")
+				&& getCompany().equals("")
+				&& getEmailAddress().equals("")
+				&& getPostalCode().equals("")
+				&& getStreet().equals("");
+	}
 }

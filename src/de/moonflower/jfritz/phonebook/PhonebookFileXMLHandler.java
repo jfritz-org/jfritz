@@ -5,7 +5,6 @@
  */
 package de.moonflower.jfritz.phonebook;
 
-import java.util.Date;
 import java.util.Vector;
 
 import org.xml.sax.Attributes;
@@ -33,23 +32,21 @@ public class PhonebookFileXMLHandler extends DefaultHandler {
 
 	PhoneBook phonebook;
 
-	Person person;
-
-	Date calldate;
-
-	int duration;
-
 	boolean privateEntry;
+
+	Vector<Person> persons;
 
 	public PhonebookFileXMLHandler(PhoneBook phonebook) {
 		super();
 		this.phonebook = phonebook;
+		this.persons = new Vector<Person>();
 	}
 
 	public void startDocument() throws SAXException {
 	}
 
 	public void endDocument() throws SAXException {
+		phonebook.addEntries(persons);
 	}
 
 	public void startElement(String namespaceURI, String lName, String qName,
@@ -114,8 +111,7 @@ public class PhonebookFileXMLHandler extends DefaultHandler {
 
 			newPerson.setNumbers(numbers, standard);
 			newPerson.setPrivateEntry(privateEntry);
-			phonebook.addEntry(newPerson);
-
+			persons.add(newPerson);
 		}
 	}
 

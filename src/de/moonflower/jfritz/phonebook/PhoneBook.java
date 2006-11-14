@@ -39,6 +39,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
+import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.CallerList;
 import de.moonflower.jfritz.struct.Call;
@@ -49,7 +50,6 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.reverselookup.LookupObserver;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 
-// TODO: beim updaten von personendaten / nummern noch den lastcall und die person im cache der anrufliste aktualisieren
 public class PhoneBook extends AbstractTableModel implements LookupObserver {
 	private static final long serialVersionUID = 1;
 
@@ -72,9 +72,13 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 	private Vector<Person> filteredPersons;
 
 	private Vector<Person> unfilteredPersons;
+
 	private String fileLocation;
+
 	private CallerList callerList;
+
 	private boolean allLastCallsSearched = false;
+
 	/**
 	 * A vector of Persons that will match any search filter. In other words: a
 	 * list of sticky Persons, that will always show up. Used to ensure that a
@@ -104,7 +108,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 	 */
 	public void sortAllFilteredRowsBy(int col, boolean asc) {
 		Collections.sort(filteredPersons, new ColumnSorter(col, asc));
-		//Debug.msg("last calls: "+(t2-t1) + "ms sorting: "+(t3-t2)+"ms");
+		// Debug.msg("last calls: "+(t2-t1) + "ms sorting: "+(t3-t2)+"ms");
 		fireTableDataChanged();
 	}
 
@@ -168,13 +172,11 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 			this.ascending = ascending;
 		}
 
-/*		public int compare(Object a, Object b) {
-			Person p1 = (Person) a;
-			Person p2 = (Person) b;
-			return compare (p1,p2);
-		}
-		*/
-//FIXME
+		/*
+		 * public int compare(Object a, Object b) { Person p1 = (Person) a;
+		 * Person p2 = (Person) b; return compare (p1,p2); }
+		 */
+		// FIXME
 		public int compare(Person p1, Person p2) {
 			Object o1, o2;
 			switch (colIndex) {
@@ -253,7 +255,6 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 		}
 	}
 
-
 	public Vector<Person> getFilteredPersons() {
 		return filteredPersons;
 	}
@@ -267,9 +268,10 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 	public void addFilterException(Person nonFilteredPerson) {
 		filterExceptions.add(nonFilteredPerson);
 	}
+
 	/**
-	 * TODO: wird noch nicht benutzt
-	 * does reverse lookup (find the name and address for a given phone number
+	 * TODO: wird noch nicht benutzt does reverse lookup (find the name and
+	 * address for a given phone number
 	 *
 	 * @param rows
 	 *            the rows, wich are selected for reverse lookup
@@ -289,9 +291,9 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 	}
 
 	public void personsFound(Vector persons) {
-		addEntrys(persons);
-
+		addEntries(persons);
 	}
+
 	/**
 	 * for the LookupObserver
 	 */
@@ -302,7 +304,9 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 
 	/**
 	 * Does a reverse lookup on all calls
-	 * @param calls, calls to do reverse lookup on
+	 *
+	 * @param calls,
+	 *            calls to do reverse lookup on
 	 */
 	public void reverseLookupPersons(Vector<Person> persons) {
 		Debug.msg("Doing reverse Lookup");
@@ -321,35 +325,51 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 		filterExceptions.clear();
 	}
 
-	public synchronized void addEntrys(Vector persons) {
+	public synchronized void addEntries(Vector persons) {
 		for (Iterator iter = persons.iterator(); iter.hasNext();) {
 			Person element = (Person) iter.next();
 			addEntry(element);
 		}
+		updateFilter();
+		fireTableDataChanged();
+		this.saveToXMLFile(Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
 	}
 
-/*
- * inherited from AbstractTableModel
- */
-	public synchronized boolean addEntry(Person newPerson) {
-		Enumeration<Person> en = unfilteredPersons.elements();
+	/*
+	 * inherited from AbstractTableModel
+	 */
+	private synchronized boolean addEntry(Person newPerson) {
+		// TODO: Mergen von Einträgen.
 		PhoneNumber pn1 = newPerson.getStandardTelephoneNumber();
+
+		Enumeration<Person> en = unfilteredPersons.elements();
 		while (en.hasMoreElements()) {
 			Person p = en.nextElement();
-			PhoneNumber pn2 = p.getStandardTelephoneNumber();
-			if ((pn1 != null) && (pn2 != null)
-					&& pn1.getIntNumber().equals(pn2.getIntNumber())) {
-				return false;
+			if (p.isDummy()
+					&& newPerson.getStandardTelephoneNumber().getIntNumber()
+							.equals(
+									p.getStandardTelephoneNumber()
+											.getIntNumber())) {
+				deleteEntry(p);
+			} else {
+				// TODO: merge entries
+				// Bisher nur vergleich mit standardrufnummer
+				// und hinzufügen, wenn kein Eintrag existiert
+				PhoneNumber pn2 = p.getStandardTelephoneNumber();
+				if ((pn1 != null) && (pn2 != null)
+						&& pn1.getIntNumber().equals(pn2.getIntNumber())) {
+					return false;
+				}
 			}
 		}
+
 		newPerson.setLastCall(callerList.findLastCall(newPerson));
 		unfilteredPersons.add(newPerson);
 		callerList.updatePersonInCalls(newPerson, newPerson.getNumbers());
-		updateFilter();
 		return true;
 	}
 
-	public void setLastCall(Person p ,Call c){
+	public void setLastCall(Person p, Call c) {
 		int index = unfilteredPersons.indexOf(p);
 		unfilteredPersons.get(index).setLastCall(c);
 		fireTableDataChanged();
@@ -359,7 +379,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 		unfilteredPersons.remove(person);
 		Call call = callerList.findLastCall(person);
 		Person newPerson = null;
-		if(call != null){
+		if (call != null) {
 			newPerson = findPerson(call);
 			callerList.setPerson(newPerson, call);
 		}
@@ -383,7 +403,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 			Person current;
 			String name;
 
-			String nr;//, type;
+			String nr;// , type;
 			PhoneNumber pn;
 
 			while (en1.hasMoreElements()) {
@@ -415,7 +435,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 						if (nr.startsWith("+49")) {
 							nr = "0" + nr.substring(3, nr.length()); //$NON-NLS-1$,  //$NON-NLS-2$
 						}
-//						type = pn.getType();
+						// type = pn.getType();
 
 						pw.write(nr + "=" + name); //$NON-NLS-1$
 						pw.newLine();
@@ -444,7 +464,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 			Person current;
 			String name;
 
-			String nr;//, type;
+			String nr;// , type;
 			PhoneNumber pn;
 
 			while (en1.hasMoreElements()) {
@@ -476,7 +496,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 						if (nr.startsWith("+49")) {
 							nr = "0" + nr.substring(3, nr.length()); //$NON-NLS-1$,  //$NON-NLS-2$
 						}
-//						type = pn.getType();
+						// type = pn.getType();
 
 						pw.write("\"" + name + "\",\"" + nr + "\""); //$NON-NLS-1$, //$NON-NLS-2$,  //$NON-NLS-3$
 						pw.newLine();
@@ -693,8 +713,8 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 
 		default:
 			return "X"; //$NON-NLS-1$
-			// throw new IllegalArgumentException("Invalid column: " +
-			// columnIndex);
+		// throw new IllegalArgumentException("Invalid column: " +
+		// columnIndex);
 		}
 	}
 
@@ -721,61 +741,45 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 	 *            Filename to save to
 	 * @param wholePhoneBook
 	 *            Save whole phone book or only selected entries
-	 *            @deprecated
+	 * @deprecated
 	 */
-/*	public void saveToCSVFile(String filename, boolean wholePhoneBook,
-			char separator) {
-		Debug.msg("Saving phone book to csv file " + filename); //$NON-NLS-1$
-		FileOutputStream fos;
-		try {
-			fos = new FileOutputStream(filename);
-			PrintWriter pw = new PrintWriter(fos);
-			// pw.println("\"Private\";\"Last Name\";\"First
-			// Name\";\"Number\";\"Address\";\"City\"");
-			pw.println(getCSVHeader(separator));
-			int rows[] = null;
-
-			if (JFritz.getJframe() != null) {
-				rows = JFritz.getJframe().getPhoneBookPanel()
-						.getPhoneBookTable().getSelectedRows();
-			}
-
-			if (!wholePhoneBook && (rows != null) && (rows.length > 0)) {
-				for (int i = 0; i < rows.length; i++) {
-					Person currentPerson = (Person) filteredPersons
-							.elementAt(rows[i]);
-					pw.println(currentPerson.toCSV(separator));
-				}
-			} else if (wholePhoneBook) { // Export ALL UNFILTERED Calls
-				Enumeration en = getUnfilteredPersons().elements();
-				while (en.hasMoreElements()) {
-					Person person = (Person) en.nextElement();
-					pw.println(person.toCSV(separator));
-				}
-			} else { // Export ALL FILTERED Calls
-				Enumeration en = getFilteredPersons().elements();
-				while (en.hasMoreElements()) {
-					Person person = (Person) en.nextElement();
-					pw.println(person.toCSV(separator));
-				}
-			}
-			pw.close();
-		} catch (FileNotFoundException e) {
-			Debug.err("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
-		}
-	}
-*/
+	/*
+	 * public void saveToCSVFile(String filename, boolean wholePhoneBook, char
+	 * separator) { Debug.msg("Saving phone book to csv file " + filename);
+	 * //$NON-NLS-1$ FileOutputStream fos; try { fos = new
+	 * FileOutputStream(filename); PrintWriter pw = new PrintWriter(fos); //
+	 * pw.println("\"Private\";\"Last Name\";\"First //
+	 * Name\";\"Number\";\"Address\";\"City\"");
+	 * pw.println(getCSVHeader(separator)); int rows[] = null;
+	 *
+	 * if (JFritz.getJframe() != null) { rows =
+	 * JFritz.getJframe().getPhoneBookPanel()
+	 * .getPhoneBookTable().getSelectedRows(); }
+	 *
+	 * if (!wholePhoneBook && (rows != null) && (rows.length > 0)) { for (int i =
+	 * 0; i < rows.length; i++) { Person currentPerson = (Person)
+	 * filteredPersons .elementAt(rows[i]);
+	 * pw.println(currentPerson.toCSV(separator)); } } else if (wholePhoneBook) { //
+	 * Export ALL UNFILTERED Calls Enumeration en =
+	 * getUnfilteredPersons().elements(); while (en.hasMoreElements()) { Person
+	 * person = (Person) en.nextElement(); pw.println(person.toCSV(separator)); } }
+	 * else { // Export ALL FILTERED Calls Enumeration en =
+	 * getFilteredPersons().elements(); while (en.hasMoreElements()) { Person
+	 * person = (Person) en.nextElement(); pw.println(person.toCSV(separator)); } }
+	 * pw.close(); } catch (FileNotFoundException e) { Debug.err("Could not
+	 * write " + filename + "!"); //$NON-NLS-1$, //$NON-NLS-2$ } }
+	 */
 	/**
 	 * Saves PhoneBook to csv file
 	 *
 	 * @author Bastian Schaefer
 	 *
 	 * @param filename
-	 *            Filename to save to
-	 *            Save whole phone book
+	 *            Filename to save to Save whole phone book
 	 */
 	public void saveToCSVFile(String filename, char separator) {
-		Debug.msg("Saving phone book("+unfilteredPersons.size()+" lines) to csv file " + filename); //$NON-NLS-1$
+		Debug
+				.msg("Saving phone book(" + unfilteredPersons.size() + " lines) to csv file " + filename); //$NON-NLS-1$
 		FileOutputStream fos;
 		try {
 			fos = new FileOutputStream(filename);
@@ -783,35 +787,34 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 			// pw.println("\"Private\";\"Last Name\";\"First
 			// Name\";\"Number\";\"Address\";\"City\"");
 			pw.println(getCSVHeader(separator));
-				//wenn man das komplette buch speichern will
+			// wenn man das komplette buch speichern will
 			// unfilteredPersons durchsuchen
-				for (int i = 0; i < unfilteredPersons.size(); i++) {
-					Person currentPerson = unfilteredPersons
-							.elementAt(i);
-					pw.println(currentPerson.toCSV(separator));
-				}
+			for (int i = 0; i < unfilteredPersons.size(); i++) {
+				Person currentPerson = unfilteredPersons.elementAt(i);
+				pw.println(currentPerson.toCSV(separator));
+			}
 			pw.close();
 		} catch (FileNotFoundException e) {
 			Debug.err("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 
 	}
+
 	/**
 	 * Saves PhoneBook to csv file
 	 *
 	 * @author Bastian Schaefer
 	 *
 	 * @param filename
-	 *            Filename to save to
-	 *            Save phone book only selected entries
+	 *            Filename to save to Save phone book only selected entries
 	 */
-	public void saveToCSVFile(String filename, int[] rows,
-			char separator) {
-		if(rows.length ==0){
+	public void saveToCSVFile(String filename, int[] rows, char separator) {
+		if (rows.length == 0) {
 			saveToCSVFile(filename, separator);
 			return;
 		}
-		Debug.msg("Saving phone book("+rows.length+" lines) to csv file " + filename); //$NON-NLS-1$
+		Debug
+				.msg("Saving phone book(" + rows.length + " lines) to csv file " + filename); //$NON-NLS-1$
 		FileOutputStream fos;
 		try {
 			fos = new FileOutputStream(filename);
@@ -819,18 +822,18 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 			// pw.println("\"Private\";\"Last Name\";\"First
 			// Name\";\"Number\";\"Address\";\"City\"");
 			pw.println(getCSVHeader(separator));
-				// wenn man nicht das komplette buch speichern will
+			// wenn man nicht das komplette buch speichern will
 			// muss man filteredPersons durchsuchen
-				for (int i = 0; i < rows.length; i++) {
-					Person currentPerson = filteredPersons
-							.elementAt(rows[i]);
-					pw.println(currentPerson.toCSV(separator));
-				}
+			for (int i = 0; i < rows.length; i++) {
+				Person currentPerson = filteredPersons.elementAt(rows[i]);
+				pw.println(currentPerson.toCSV(separator));
+			}
 			pw.close();
 		} catch (FileNotFoundException e) {
 			Debug.err("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
+
 	/**
 	 * Returns info about stored Person
 	 *
@@ -863,7 +866,8 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 	public Person findPerson(PhoneNumber number) {
 		return findPerson(number, true);
 	}
-	public Person findPerson(Call call){
+
+	public Person findPerson(Call call) {
 		return findPerson(call.getPhoneNumber(), true);
 	}
 
@@ -898,44 +902,40 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 		} else {
 			// delete all dummy entries for this number and return first element
 			// of foundPersons
-			for (int i = 0; i < foundPersons.size(); i++) {
-				Person p = foundPersons.get(i);
-				if (p.getFullname().equals("") && (p.getNumbers().size() == 1)
-						&& p.getAddress().equals("") && p.getCity().equals("")
-						&& p.getCompany().equals("")
-						&& p.getEmailAddress().equals("")
-						&& p.getPostalCode().equals("")
-						&& p.getStreet().equals("")) {
-					// dummy entry, delete it from database
-					foundPersons.removeElement(p);
-					unfilteredPersons.removeElement(p);
-					this.saveToXMLFile(fileLocation);
-				}
-			}
+			/**
+			 * for (int i = 0; i < foundPersons.size(); i++) { Person p =
+			 * foundPersons.get(i); if ( p.isDummy() ) { // dummy entry, delete
+			 * it from database foundPersons.removeElement(p);
+			 * unfilteredPersons.removeElement(p);
+			 * this.saveToXMLFile(fileLocation); } }
+			 */
 			return foundPersons.get(0);
 		}
 	}
 
 	/**
-	 * searches for the last call for every Person in the
-	 * Addressbook, and write it to person.lastCall to speed up sorting
+	 * searches for the last call for every Person in the Addressbook, and write
+	 * it to person.lastCall to speed up sorting
 	 */
-	public void findAllLastCalls(){
-		//TODO updaten wenn neue call oder personen oder rufnummern hinzukommen
+	public void findAllLastCalls() {
+		// TODO updaten wenn neue call oder personen oder rufnummern hinzukommen
 		// oder alte gelöscht werden
 		Debug.msg("searching lastCall for allPersons in the phonebook....");
-		if(callerList==null){ Debug.err("setCallerList first!");}
+		if (callerList == null) {
+			Debug.err("setCallerList first!");
+		}
 		/*
-		JFritz.getCallerList().calculateAllLastCalls(unfilteredPersons);
-		too slow
-		*/
+		 * JFritz.getCallerList().calculateAllLastCalls(unfilteredPersons); too
+		 * slow
+		 */
 		Person person;
 		Call call;
 		for (int i = 0; i < unfilteredPersons.size(); i++) {
 			person = unfilteredPersons.get(i);
 			call = callerList.findLastCall(person);
-			if(call!=null){
-				// wichtig, sonst stht da noch null drinn und den Fehler findet man dann niemals
+			if (call != null) {
+				// wichtig, sonst stht da noch null drinn und den Fehler findet
+				// man dann niemals
 				callerList.setPerson(person, call);
 			}
 			person.setLastCall(call);
@@ -1008,13 +1008,12 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 
 		sortAllFilteredRows();
 
-		/*//FIXME checken, ob das jetzt echt nicht mehr gebraucht wird
-		if (JFritz.getJframe() != null) {
-			if (JFritz.getJframe().getPhoneBookPanel() != null) {
-				JFritz.getJframe().getPhoneBookPanel().setStatus();
-			}
-		}
-	*/
+		/*
+		 * //FIXME checken, ob das jetzt echt nicht mehr gebraucht wird if
+		 * (JFritz.getJframe() != null) { if
+		 * (JFritz.getJframe().getPhoneBookPanel() != null) {
+		 * JFritz.getJframe().getPhoneBookPanel().setStatus(); } }
+		 */
 	}
 
 	/**
@@ -1171,8 +1170,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 			for (int i = 0; i < size; i++) {
 				Person currentOuter = unfilteredPersons.elementAt(i);
 				for (int j = i + 1; j < size; j++) {
-					Person currentInner = unfilteredPersons
-							.elementAt(j);
+					Person currentInner = unfilteredPersons.elementAt(j);
 					if (currentOuter.supersedes(currentInner)) {
 						redundantEntries.add(currentInner);
 					} else if (currentInner.supersedes(currentOuter)) {
@@ -1204,9 +1202,5 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 	public boolean getAllLastCallsSearched() {
 		return allLastCallsSearched;
 	}
-
-
-
-
 
 }

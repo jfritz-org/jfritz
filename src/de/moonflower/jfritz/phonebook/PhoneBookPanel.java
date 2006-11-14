@@ -133,8 +133,10 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("addPerson")) { //$NON-NLS-1$
 			Person newPerson = new Person("", messages.getString("new")); //$NON-NLS-1$,  //$NON-NLS-2$
+			Vector<Person> persons = new Vector<Person>();
+			persons.add(newPerson);
 			phonebook.addFilterException(newPerson);
-			phonebook.addEntry(newPerson);
+			phonebook.addEntries(persons);
 			phonebook.fireTableDataChanged();
 			int index = phonebook.indexOf(newPerson);
 			phoneBookTable.getSelectionModel().setSelectionInterval(index, index);

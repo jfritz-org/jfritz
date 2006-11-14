@@ -7,6 +7,7 @@ package de.moonflower.jfritz.callmonitor;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,6 +47,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
     }
 
     private String searchNameToPhoneNumber(String caller) {
+    	Vector<Person> persons = new Vector<Person>();
         String name = ""; //$NON-NLS-1$
         PhoneNumber callerPhoneNumber = new PhoneNumber(caller);
         Debug.msg("Searchin in local database ..."); //$NON-NLS-1$
@@ -67,14 +69,15 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
                 Debug.msg("Found no person"); //$NON-NLS-1$
                 Debug.msg("Add dummy person to database"); //$NON-NLS-1$
             }
-            JFritz.getPhonebook().addEntry(person);
-            JFritz.getPhonebook().fireTableDataChanged();
-
+            persons.add(person);
         }
+        JFritz.getPhonebook().addEntries(persons);
+        JFritz.getPhonebook().fireTableDataChanged();
         return name;
     }
 
     private String[] searchFirstAndLastNameToPhoneNumber(String caller) {
+    	Vector<Person> persons = new Vector<Person>();
         String name[] = {"", "", ""}; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
         PhoneNumber callerPhoneNumber = new PhoneNumber(caller);
         Debug.msg("Searching in local database ..."); //$NON-NLS-1$
@@ -94,16 +97,16 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
                 Debug
                         .msg("Found on dastelefonbuch.de: " + name[1] + ", " + name[0]); //$NON-NLS-1$,  //$NON-NLS-2$
                 Debug.msg("Add person to database"); //$NON-NLS-1$
-                JFritz.getPhonebook().addEntry(person);
-                JFritz.getPhonebook().fireTableDataChanged();
+                persons.add(person);
             } else {
                 person = new Person();
                 person.addNumber(new PhoneNumber(caller));
                 Debug.msg("Found no person"); //$NON-NLS-1$
                 Debug.msg("Add dummy person to database"); //$NON-NLS-1$
-                JFritz.getPhonebook().addEntry(person);
-                JFritz.getPhonebook().fireTableDataChanged();
+                persons.add(person);
             }
+            JFritz.getPhonebook().addEntries(persons);
+            JFritz.getPhonebook().fireTableDataChanged();
         }
         return name;
     }
