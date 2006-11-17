@@ -1035,6 +1035,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 			int newEntries = 0;
 			// read until EOF
 			while (null != (line = br.readLine())) {
+				line += "\n";
 				linesRead++;
 				Person person = parseContactsThunderbirdCSV(line);
 
@@ -1097,11 +1098,11 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 	 *         from the datei
 	 */
 	public Person parseContactsThunderbirdCSV(String line) {
-		String[] field = line.split(PATTERN_THUNDERBRID_CSV);
+		String[] field = splitCSVLine(line);
 		Person person;
 
 		// check if line has correct amount of entries
-		if (field.length < 36) {
+		if (field.length < 37) {
 			Debug.err("Invalid Thunderbird CSV format!"); //$NON-NLS-1$
 			return null;
 		}
@@ -1201,6 +1202,36 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 
 	public boolean getAllLastCallsSearched() {
 		return allLastCallsSearched;
+	}
+
+	public String[] splitCSVLine(String line){
+		String[] items;
+		//		Alle überflüssigen " zusammenfassen
+		//line = line.trim();
+		if(line.contains("\"")){
+			while(!line.equals(line = line.replace("\"\"","\"")));
+		//jetzt zuerst am " splitten und danach nur falls der String ein "," am Anfang oder Ende enthält
+		String[] pre = line.split("\"");
+		//  aaa,bbb,"ccc,ddd,eee",fff,ggg,hhh,"iii,jjj,kkk",lll,mmm
+		String[] tmpString;
+		Vector<String> v = new Vector<String>();
+		for(int i=0; i< pre.length; i++){
+			//falls der String ein "," am Anfang oder Ende enthält
+			if ((pre[i].indexOf(",")==0) || pre[i].lastIndexOf(",")==pre[i].length()-1)
+				tmpString = pre[i].split(",");
+			else {
+				tmpString = new String[1];
+				tmpString[0] = pre[i];
+			}
+			for(int j =0; j< tmpString.length; j++)
+				v.add(tmpString[j]);
+		}
+
+		items = new String[v.capacity()];
+		v.copyInto(items);
+		}
+		else items = line.split(",");
+		return items;
 	}
 
 }

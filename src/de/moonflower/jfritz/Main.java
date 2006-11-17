@@ -116,7 +116,6 @@
  * - Importierte Rufnummern auf Sonderzeichen ( -, /, (, ) ) überprüfen
  * - Durchwahlnummern vor Zentrale-Nummern bei der Anzeige bevorzugen (sollte eigentlich gehen, aber scheint einen Bug zu haben)
  * - Schnittstelle zu externen Inverssuche-Programmen
- * - Bug: Importieren von Thunderbird-Einträgen (es werden nur die ersten 5 Felder der CSV-Datei erkannt)
  * - Andere Anrufmonitore noch an die neuen Listener anpassen und TestCases schreiben
  * - Kurzwahlliste sortierbar und Spaltenreihenfolge änderbar
  * - Bug "Doppelt erfasste Anrufe" behoben?
@@ -172,6 +171,7 @@
  * - Fenstergröße, -position und -status wird nun korrekt wiederhergestellt
  * - Spaltengröße und -reihenfolge korrekt wiederhergestellt
  * - Bugfix: Telefonnummern werden nun korrekt gespeichert
+ * - Bugfix: Importieren von Thunderbird-Einträgen funktioniert nun wieder
  *
  * JFritz 0.6.1
  * - Neue Strings:
