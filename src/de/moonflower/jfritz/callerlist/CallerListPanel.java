@@ -106,7 +106,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	private static final String FILTER_CALLBYCALL = "filter_callbycall";
 //	private static final String FILTER_CALLIN ="filter_callin";
-	private static final String FILTER_CALLIN_NOTHING = "filter_callin_show_all";
+	private static final String FILTER_CALLIN_NOTHING = "filter_callin";
 //	private static final String FILTER_CALLIN_SELECTED = "filter_callin_show_selected";
 //	private static final String FILTER_CALLIN_INVERTED = "filter_callin_show_inverted";
 

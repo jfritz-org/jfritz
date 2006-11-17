@@ -128,15 +128,17 @@
  *
  * - Neue Strings:
  *  check_for_new_version_after_start
- *  update_JFritz
- *  enable_inet_monitoring
- *  monitoring
- *  inet_usage
- *  date_filter_this_week
  *  date_filter_last_week
+ *  date_filter_this_week
+ *  enable_inet_monitoring
  *  filter_search
+ *  inet_usage
+ *  monitoring
+ *  restart_telefond (only english version)
+ *  restart_telefond_desc (only english version)
  *  undo
- *  Alle Strings in der Datei update.properties
+ *  update_JFritz
+ *  Alle Strings in der Datei update_de_DE.properties
  *
  * - Bugfix: örtliche Nummer, die mit 49 beginnen, werden jetzt richtig verarbeitet
  * - Bugfix: Callmonitor schreibt die Ortsvorwahl vor unbekannten Rufnummern nicht mehr
@@ -596,10 +598,6 @@ public class Main {
 	private static JFritz jfritz;
 
 	private CLIOptions options;
-
-	Boolean isRunning;
-
-	String mutex = "";
 
 	public Main(String[] args) {
 		System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION //$NON-NLS-1$
