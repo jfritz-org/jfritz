@@ -198,7 +198,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 		callerListPanel = new CallerListPanel(JFritz.getCallerList(), this);
 		phoneBookPanel = new PhoneBookPanel(JFritz.getPhonebook(), this,
-				new Locale(Main.getProperty("locale", "de_DE")));
+				new Locale(Main.getProperty("locale", "en_US")));
 		callerListPanel.setPhoneBookPanel(phoneBookPanel);
 		quickDialPanel = new QuickDialPanel();
 		// New code here, remove if problematic

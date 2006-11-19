@@ -22,13 +22,12 @@ public class Update {
 
 	private String programVersion = "0";
 
-	private Locale locale = new Locale("de_DE");
+	private Locale locale = null;
 
 	private boolean updateOnStart = true;
 
 	public Update(String propertiesDirectory) {
 		this.propertiesDirectory = propertiesDirectory;
-		UpdateLocale.loadMessages(locale);
 	}
 
 	/**
@@ -54,6 +53,7 @@ public class Update {
 	 */
 	public void setLocale(String locale) {
 		this.locale = new Locale(locale);
+		UpdateLocale.loadMessages(this.locale);
 	}
 
 	/**
@@ -72,7 +72,7 @@ public class Update {
 	public void saveSettings() {
 		try {
 
-			System.out.println(className + "Saving update-properties...");
+			System.out.print(className + "Saving update-properties...");
 
 			// if $HOME/saveDirectory doesn't exist create it
 			File file = new File(USER_HOME + propertiesDirectory);
@@ -101,6 +101,7 @@ public class Update {
 	 *
 	 */
 	public void loadSettings() {
+		Locale locale = null;
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new FileReader(USER_HOME
@@ -112,7 +113,7 @@ public class Update {
 					String[] entries = line.split("=");
 					if (entries[0].equals("updateOnStart")) {
 						if (!entries[1].equals(""))
-							updateOnStart = parseBoolean(entries[1]);
+							updateOnStart = Boolean.parseBoolean(entries[1]);
 					} else if (entries[0].equals("locale")) {
 						if (!entries[1].equals(""))
 							locale = new Locale(entries[1]);
@@ -139,7 +140,10 @@ public class Update {
 		System.out.println(className + "Program version: " + programVersion);
 		System.out.println(className + "Locale: " + locale.toString());
 		System.out.println(className + "Update on start: " + updateOnStart);
-		UpdateLocale.loadMessages(locale);
+		if ( locale == null ) {
+			locale = new Locale("en_US");
+		}
+		setLocale(locale.toString());
 	}
 
 	/**
@@ -148,17 +152,5 @@ public class Update {
 	 */
 	public String getProgramVersion() {
 		return programVersion;
-	}
-	/**
-	 * Wandelt einen String in einen boolean-Wert um
-	 *
-	 * @param input
-	 * @return boolean value of input
-	 */
-	private boolean parseBoolean(String input) {
-		if (input != null && input.equalsIgnoreCase("true")) //$NON-NLS-1$
-			return true;
-		else
-			return false;
 	}
 }

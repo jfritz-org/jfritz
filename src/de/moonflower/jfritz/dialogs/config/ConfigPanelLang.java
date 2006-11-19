@@ -84,7 +84,7 @@ public class ConfigPanelLang extends JPanel implements ConfigPanel{
 
 	public void loadSettings() {
 		int index = 0;
-		String loc = Main.getProperty("locale", "de_DE");
+		String loc = Main.getProperty("locale", "en_US");
 		for (int a = 0; a < localeList.length; a++) {
 			if (localeList[a].equals(loc)) index = a;
 		}
@@ -92,7 +92,7 @@ public class ConfigPanelLang extends JPanel implements ConfigPanel{
 	}
 
 	public void saveSettings() {
-		if (!Main.getProperty("locale", "de_DE").equals(localeList[languageCombo.getSelectedIndex()])) { //$NON-NLS-1$ //$NON-NLS-2$
+		if (!Main.getProperty("locale", "en_US").equals(localeList[languageCombo.getSelectedIndex()])) { //$NON-NLS-1$ //$NON-NLS-2$
 			Main.setProperty(
 					"locale", localeList[languageCombo.getSelectedIndex()]); //$NON-NLS-1$
 			String loc = localeList[languageCombo.getSelectedIndex()];

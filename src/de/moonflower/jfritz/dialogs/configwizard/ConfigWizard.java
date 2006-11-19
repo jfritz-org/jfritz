@@ -139,7 +139,7 @@ public class ConfigWizard {
 			String[] localeList = ((ConfigPanelLang)descriptorLang.getPanelComponent()).localeList;
 
 			//This code is real ugly, i should get around to cleaning it up!
-			if (!Main.getProperty("locale", "de_DE").equals(localeList[languageCombo.getSelectedIndex()])) { //$NON-NLS-1$ //$NON-NLS-2$
+			if (!Main.getProperty("locale", "en_US").equals(localeList[languageCombo.getSelectedIndex()])) { //$NON-NLS-1$ //$NON-NLS-2$
 				Main.setProperty(
 						"locale", localeList[languageCombo.getSelectedIndex()]); //$NON-NLS-1$
 				String loc = localeList[languageCombo.getSelectedIndex()];
