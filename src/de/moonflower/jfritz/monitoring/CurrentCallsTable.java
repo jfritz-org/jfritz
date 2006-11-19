@@ -32,10 +32,11 @@ public class CurrentCallsTable extends AbstractTableModel implements
 	}
 
 	public int getRowCount() {
-
-		if(currentCalls.size() < 5)
-			return 4;
-
+	/**
+	 * Auskommentiert von Rob, finde ich so schöner
+	 *	if(currentCalls.size() < 5)
+	 *		return currentCalls.size();
+	 **/
 		return currentCalls.size();
 	}
 
