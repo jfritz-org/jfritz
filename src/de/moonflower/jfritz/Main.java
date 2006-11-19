@@ -45,6 +45,7 @@
  * TODO: JFritz.ico mitliefern
  * TODO: Linux-Startscript mitliefern
  * TODO: LANG/jfritz.properties bei einem neuen Release aktuell halten
+ * TODO: Vor dem Release noch den installDirectory-Pfad in JFritzUpdate auf "." anpassen
  *
  * Roadmap:
  * JFritz 1.0
@@ -123,7 +124,6 @@
  * - 0900 Nummern werden nicht korrekt erkannt http://www.ip-phone-forum.de/showthread.php?t=114325 => Liste mit Call-By-Call Vorwahlen
  * - Überprüfen, geht wohl nicht mehr: Rückwärtssuche für Österreich über dasoertliche.de wieder eingebaut
  * - Connection-Timeout für ReverseLookup setzen
- * - Vor dem Release noch den installDirectory-Pfad in JFritzUpdate auf "." anpassen
  * TODO-ENDE
  *
  * - Neue Strings:
@@ -627,7 +627,7 @@ public class Main {
 		loadSaveDir();
 
 		loadProperties();
-		loadMessages(new Locale(getProperty("locale", "de_DE"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		loadMessages(new Locale(getProperty("locale", "en_US"))); //$NON-NLS-1$,  //$NON-NLS-2$
 		loadLocaleMeanings(new Locale("int", "INT"));
 
 		saveUpdateProperties();
@@ -672,6 +672,7 @@ public class Main {
 				"Writes debug messages to logfile"); //$NON-NLS-1$,
 		options.addOption('p', "priority", "level", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 				"Set program priority [1..10]"); //$NON-NLS-1$
+        options.addOption('i',"lang", "language","Set the display language, currently supported: german, english"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$, //$NON-NLS-4$
 		options
 				.addOption(
 						'w',
@@ -784,6 +785,25 @@ public class Main {
 				JFritz.getCallerList().clearList();
 				shutdown = true;
 				break;
+            case 'i': //$NON-NLS-1$
+            	String language = option.getParameter();
+            	if(language == null){
+            		System.err.println(Main.getMessage("invalid_language")); //$NON-NLS-1$
+            		System.err.println("Deutsch: de"); //$NON-NLS-1$
+            		System.err.println("English: en"); //$NON-NLS-1$
+            		System.exit(0);
+            	}else if(language.equals("english") || language.equals("en")){ //$NON-NLS-1$
+            		Main.setProperty("locale", "en_US");
+            	}else if(language.equals("german") || language.equals("de")){ //$NON-NLS-1$
+            		Main.setProperty("locale", "de_DE");
+            	}else{
+            		System.err.println(Main.getMessage("invalid_language")); //$NON-NLS-1$
+            		System.err.println("Deutsch: de"); //$NON-NLS-1$
+            		System.err.println("English: en"); //$NON-NLS-1$
+            		System.exit(0);
+            	}
+        		loadMessages(new Locale(Main.getProperty("locale","en_US"))); //$NON-NLS-1$,  //$NON-NLS-2$
+            	break;
 			case 'w': //$NON-NLS-1$
 				enableInstanceControl = false;
 				System.err.println("Turning off Multiple instance control!"); //$NON-NLS-1$
@@ -1256,7 +1276,7 @@ public class Main {
 		Update update = new Update(jfritzUpdate.getPropertiesDirectory());
 		update.loadSettings();
 		update.setProgramVersion(PROGRAM_VERSION);
-		update.setLocale(getProperty("locale", "de_DE"));
+		update.setLocale(getProperty("locale", "en_US"));
 		update.setUpdateOnStart(JFritzUtils.parseBoolean(Main.getProperty(
 				"option.checkNewVersionAfterStart", "false")));
 		update.saveSettings();
