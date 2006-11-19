@@ -138,7 +138,8 @@ public class Update {
 			}
 		}
 		System.out.println(className + "Program version: " + programVersion);
-		System.out.println(className + "Locale: " + locale.toString());
+		if ( locale != null)
+			System.out.println(className + "Locale: " + locale.toString());
 		System.out.println(className + "Update on start: " + updateOnStart);
 		if ( locale == null ) {
 			locale = new Locale("en_US");
