@@ -123,7 +123,7 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 		DateAxis domainAxis = new DateAxis();
 		domainAxis.setTickLabelsVisible(false);
 		domainAxis.setTickMarksVisible(false);
-		ValueAxis rangeAxis = new NumberAxis("KB\\s");
+		ValueAxis rangeAxis = new NumberAxis("KB/s");
 		renderer1.setPaint(new GradientPaint(0,0, new Color(0, 175, 30), 0, 215,
 				new Color(220, 250, 220), false));
 		XYPlot plot = new XYPlot(data1, domainAxis, rangeAxis, renderer1);

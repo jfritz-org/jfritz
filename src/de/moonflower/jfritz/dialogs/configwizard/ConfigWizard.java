@@ -31,7 +31,9 @@ public class ConfigWizard {
 
 	private Wizard wizard;
 
-	private WizardPanelDescriptor descriptor2, descriptor3, descriptor4, descriptor5;
+	private ConfigPanelFritzBoxDescriptor descriptor3;
+
+	private WizardPanelDescriptor descriptor2, descriptor4, descriptor5;
 
 	private boolean canceled = false;
 
@@ -61,7 +63,7 @@ public class ConfigWizard {
         descriptor4 = new ConfigPanelMessageDescriptor();
         wizard.registerWizardPanel(ConfigPanelMessageDescriptor.IDENTIFIER, descriptor4);
 
-        descriptor5 = new ConfigPanelCallMonitorDescriptor();
+        descriptor5 = new ConfigPanelCallMonitorDescriptor(descriptor3.getFritzBoxPanel());
         wizard.registerWizardPanel(ConfigPanelCallMonitorDescriptor.IDENTIFIER, descriptor5);
 
         //set the first panel to be displayed

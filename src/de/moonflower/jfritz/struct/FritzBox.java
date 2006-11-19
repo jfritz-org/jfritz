@@ -129,9 +129,6 @@ public class FritzBox {
 	 */
 	public void detectFirmware() {
 		try {
-			box_address = Main.getProperty("box.address");
-			box_password = Encryption.decrypt(Main.getProperty("box.password"));
-			box_port = Main.getProperty("box.port");
 			firmware = FritzBoxFirmware.detectFirmwareVersion(
 					box_address,
 					box_password,
@@ -702,6 +699,18 @@ public class FritzBox {
 	public String getInternetStats(){
 
 		return UPNPUtils.getSOAPData("http://" + getAddress() + URL_INTERNET_STATS, URN_INTERNET_STATS);
+	}
+
+	public void setAddress(String box_address) {
+		this.box_address = box_address;
+	}
+
+	public void setPassword(String box_password) {
+		this.box_password = box_password;
+	}
+
+	public void setPort(String box_port) {
+		this.box_port = box_port;
 	}
 
 

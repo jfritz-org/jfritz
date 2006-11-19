@@ -85,7 +85,7 @@ public class ConfigDialog extends JDialog {
 		phonePanel = new ConfigPanelPhone();
 		fritzBoxPanel = new ConfigPanelFritzBox();
 		messagePanel = new ConfigPanelMessage();
-		callMonitorPanel = new ConfigPanelCallMonitor(this, true);
+		callMonitorPanel = new ConfigPanelCallMonitor(this, true, fritzBoxPanel);
 		languagePanel = new ConfigPanelLang();
 		otherPanel = new ConfigPanelOther(fritzBoxPanel);
 
@@ -170,6 +170,9 @@ public class ConfigDialog extends JDialog {
 		Main.setProperty("option.watchdog.fetchAfterStandby", Boolean //$NON-NLS-1$
 				.toString(fetchAfterStandby.isSelected()));
 
+		JFritz.getFritzBox().setAddress(fritzBoxPanel.getAddress());
+		JFritz.getFritzBox().setPassword(fritzBoxPanel.getPassword());
+		JFritz.getFritzBox().setPort(fritzBoxPanel.getPort());
 		JFritz.getFritzBox().detectFirmware();
 
 		Debug.msg("Saved config"); //$NON-NLS-1$
@@ -312,6 +315,9 @@ public class ConfigDialog extends JDialog {
 					ConfigDialog.this.setVisible(false);
 				} else if (e.getActionCommand().equals("fetchSIP")) { //$NON-NLS-1$
 					try {
+						JFritz.getFritzBox().setAddress(fritzBoxPanel.getAddress());
+						JFritz.getFritzBox().setPassword(fritzBoxPanel.getPassword());
+						JFritz.getFritzBox().setPort(fritzBoxPanel.getPort());
 						JFritz.getFritzBox().detectFirmware();
 						Vector<SipProvider> data = JFritz.getFritzBox().retrieveSipProvider();
 						JFritz.getSIPProviderTableModel().updateProviderList(

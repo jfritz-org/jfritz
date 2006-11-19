@@ -108,6 +108,7 @@ public class Telnet {
 						isdone = true;
 					} else {
 						Main.setProperty("box.address", box_address); //$NON-NLS-1$
+						JFritz.getFritzBox().setAddress(box_address);
 						JFritz.getFritzBox().detectFirmware();
 					}
 				}
@@ -196,6 +197,7 @@ public class Telnet {
 										Main.setProperty(
 											"box.password", //$NON-NLS-1$
 											Encryption.encrypt(newPassword));
+										JFritz.getFritzBox().setPassword(newPassword);
 										JFritz.getFritzBox().detectFirmware();
 									}
 								}

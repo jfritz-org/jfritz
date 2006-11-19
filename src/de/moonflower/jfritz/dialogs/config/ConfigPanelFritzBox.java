@@ -205,9 +205,12 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 	}
 
 	public void saveSettings() {
-		Main.setProperty("box.password", Encryption.encrypt(password)); //$NON-NLS-1$
 		Main.setProperty("box.address", address.getText()); //$NON-NLS-1$
+		Main.setProperty("box.password", Encryption.encrypt(password)); //$NON-NLS-1$
 		Main.setProperty("box.port", port.getText()); //$NON-NLS-1$
+		JFritz.getFritzBox().setAddress(address.getText());
+		JFritz.getFritzBox().setPassword(password);
+		JFritz.getFritzBox().setPort(port.getText());
 
 		if (firmware != null) {
 			Main.setProperty("box.firmware", firmware.getFirmwareVersion()); //$NON-NLS-1$
@@ -218,5 +221,13 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 
 	public String getPassword() {
 		return password;
+	}
+
+	public String getAddress() {
+		return address.getText();
+	}
+
+	public String getPort() {
+		return port.getText();
 	}
 }
