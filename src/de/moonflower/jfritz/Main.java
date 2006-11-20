@@ -561,7 +561,9 @@ public class Main {
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
-	public final static String PROGRAM_AUTHOR = "Arno Willig <akw@thinkwiki.org>"; //$NON-NLS-1$
+	public final static String JFRITZ_PROJECT = "all members of the JFritz-Team";
+
+	public final static String PROJECT_ADMIN = "Robert Palmer <robotniko@users.sourceforge.net>"; //$NON-NLS-1$
 
 	public final static String USER_DIR = System.getProperty("user.home")
 			+ File.separator + ".jfritz";
@@ -601,7 +603,7 @@ public class Main {
 
 	public Main(String[] args) {
 		System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION //$NON-NLS-1$
-				+ " (c) 2005 by " + PROGRAM_AUTHOR); //$NON-NLS-1$
+				+ " (c) 2005-2006 by " + JFRITZ_PROJECT); //$NON-NLS-1$
 		Thread.currentThread().setPriority(5);
 
 		jfritzHomedir = JFritzUtils.getFullPath(".update");

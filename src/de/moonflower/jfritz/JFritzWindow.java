@@ -805,18 +805,26 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	public void showAboutDialog() {
 		JOptionPane.showMessageDialog(this, Main.PROGRAM_NAME + " v" //$NON-NLS-1$
 				+ Main.PROGRAM_VERSION + "\n" //$NON-NLS-1$
-				+ JFritzUtils.getVersionFromCVSTag(JFritz.CVS_TAG) + "\n\n" //$NON-NLS-1$
-				+ "(c) 2005 by " + Main.PROGRAM_AUTHOR + "\n\n" //$NON-NLS-1$,  //$NON-NLS-2$
-				+ "Developers:\n" + Main.PROGRAM_AUTHOR + "\n" //$NON-NLS-1$,  //$NON-NLS-2$
-				+ "Robert Palmer <robotniko@users.sourceforge.net>\n" //$NON-NLS-1$
-				+ "Christian Klein <kleinch@users.sourceforge.net>\n" //$NON-NLS-1$
-				+ "Benjamin Schmitt <little_ben@users.sourceforge.net>\n" //$NON-NLS-1$
-				+ "Bastian Schaefer <baefer@users.sourceforge.net>\n" //$NON-NLS-1$
-				+ "Brian Jensen <capncrunch@users.sourceforge.net>\n" + "\n" //$NON-NLS-1$,  //$NON-NLS-2$
-				+ Main.PROGRAM_URL + "\n\n" //$NON-NLS-1$
-				+ "This tool is developed and released under\n" //$NON-NLS-1$
-				+ "the terms of the GNU General Public License\n\n" //$NON-NLS-1$
-				+ "Long live Free Software!"); //$NON-NLS-1$
+				+ JFritzUtils.getVersionFromCVSTag(JFritz.CVS_TAG) + "\n" //$NON-NLS-1$
+				+ "(c) 2005-2006 by " + Main.JFRITZ_PROJECT + "\n" //$NON-NLS-1$,  //$NON-NLS-2$
+				+ Main.PROGRAM_URL + "\n\n" 							//$NON-NLS-1$
+				+ "Project-Admin: " + Main.PROJECT_ADMIN + "\n"		//$NON-NLS-1$
+				+ "Project-Initiator: " + "Arno Willig <akw@thinkwiki.org>" //$NON-NLS-1$
+				+ "\n\n"
+				+ "Active Developers:\n"
+				+ "Robert Palmer <robotniko@users.sourceforge.net>\n" 	//$NON-NLS-1$
+				+ "Marc Waldenberger <MarcWaldenberger@gmx.net>\n"		//$NON-NLS-1$
+				+ "Brian Jensen <capncrunch@users.sourceforge.net>\n" 	//$NON-NLS-1$
+				+ "Bastian Schaefer <baefer@users.sourceforge.net>\n" 	//$NON-NLS-1$
+				+ "\n"													//$NON-NLS-1$
+				+ "Former Developers:\n" 								//$NON-NLS-1$
+				+ "Arno Willig <akw@thinkwiki.org>\n"					//$NON-NLS-1$
+				+ "Christian Klein <kleinch@users.sourceforge.net>\n" 	//$NON-NLS-1$
+				+ "Benjamin Schmitt <little_ben@users.sourceforge.net>" //$NON-NLS-1$
+				+ "\n\n"												//$NON-NLS-1$
+				+ "This tool is developed and released under\n" 		//$NON-NLS-1$
+				+ "the terms of the GNU General Public License\n\n" 	//$NON-NLS-1$
+				+ "Long live Free Software!"); 							//$NON-NLS-1$
 	}
 
 	/**
