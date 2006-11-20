@@ -559,6 +559,8 @@ public class Main {
 
 	public final static String PROGRAM_VERSION = "0.6.2"; //$NON-NLS-1$
 
+	public final static String CVS_TAG = "$Id: Main.java,v 1.24 2006/11/20 17:57:27 robotniko Exp $"; //$NON-NLS-1$
+
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
 	public final static String JFRITZ_PROJECT = "all members of the JFritz-Team";

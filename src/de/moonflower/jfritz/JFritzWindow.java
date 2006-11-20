@@ -805,7 +805,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	public void showAboutDialog() {
 		JOptionPane.showMessageDialog(this, Main.PROGRAM_NAME + " v" //$NON-NLS-1$
 				+ Main.PROGRAM_VERSION + "\n" //$NON-NLS-1$
-				+ JFritzUtils.getVersionFromCVSTag(JFritz.CVS_TAG) + "\n" //$NON-NLS-1$
+				+ JFritzUtils.getVersionFromCVSTag(Main.CVS_TAG) + "\n" //$NON-NLS-1$
 				+ "(c) 2005-2006 by " + Main.JFRITZ_PROJECT + "\n" //$NON-NLS-1$,  //$NON-NLS-2$
 				+ Main.PROGRAM_URL + "\n\n" 							//$NON-NLS-1$
 				+ "Project-Admin: " + Main.PROJECT_ADMIN + "\n"		//$NON-NLS-1$

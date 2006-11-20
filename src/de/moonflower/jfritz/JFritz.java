@@ -60,8 +60,6 @@ public final class JFritz {
 
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/wiki/Kategorie:Hilfe"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: JFritz.java,v 1.374 2006/11/09 02:24:18 robotniko Exp $"; //$NON-NLS-1$
-
 	public final static String CALLS_FILE = "jfritz.calls.xml"; //$NON-NLS-1$
 
 	public final static String QUICKDIALS_FILE = "jfritz.quickdials.xml"; //$NON-NLS-1$
