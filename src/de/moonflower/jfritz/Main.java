@@ -129,7 +129,7 @@
  * - Neu: Italienische Sprachdateien aktualisiert
  * - New: Import english push-service-csv-file
  * - Bugfix: Neuer Eintrag im Telefonbuch nun wieder möglich
- *
+ * - Bugfix: JFritz-Menü wird nun korrekt dargestellt
  *
  * Jfritz 0.6.2
  * - Neue Strings:
@@ -565,7 +565,7 @@ public class Main {
 
 	public final static String PROGRAM_VERSION = "0.6.2.01"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.26 2006/11/21 00:36:21 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.27 2006/11/21 14:48:01 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
