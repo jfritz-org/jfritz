@@ -106,8 +106,8 @@
  *
  * CHANGELOG:
  *
- * Jfritz 0.6.2
- * TODO:
+ * JFritz 0.6.2.01
+ *  * TODO:
  * - Alle Zugriffe auf FritzBox in eigenen Threads
  * - Bug: Eingabe der IP-Nummer nach Ruhezustand
  * - Markieren der Zeilen per STRG auch in der "Teilnehmer"-Spalte
@@ -124,8 +124,11 @@
  * - 0900 Nummern werden nicht korrekt erkannt http://www.ip-phone-forum.de/showthread.php?t=114325 => Liste mit Call-By-Call Vorwahlen
  * - Überprüfen, geht wohl nicht mehr: Rückwärtssuche für Österreich über dasoertliche.de wieder eingebaut
  * - Connection-Timeout für ReverseLookup setzen
- * TODO-ENDE
+ * TODO-END
+ * - Neu: Italienische Sprachdateien aktualisiert
+ * - Bugfix: Neuer Eintrag im Telefonbuch nun wieder möglich
  *
+ * Jfritz 0.6.2
  * - Neue Strings:
  *  check_for_new_version_after_start
  *  date_filter_last_week
@@ -557,9 +560,9 @@ public class Main {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.6.2"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.6.2.01"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.24 2006/11/20 17:57:27 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.25 2006/11/21 00:05:08 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
