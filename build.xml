@@ -2,7 +2,7 @@
 <project name="JFritz" default="build" basedir=".">
 
 	<property name="app.name" value="JFritz" />
-	<property name="version" value="0.6.2" />
+	<property name="version" value="0.6.2.01" />
 
 	<!-- compiler flags -->
 	<property name="javac.debug" value="true" />
@@ -97,6 +97,12 @@
 		<!-- copy lang files -->
 		<copy todir="${dist}/lang">
 			<fileset dir="lang">
+			</fileset>
+		</copy>
+
+		<!-- copy number files -->
+		<copy todir="${dist}/number">
+			<fileset dir="number">
 			</fileset>
 		</copy>
 

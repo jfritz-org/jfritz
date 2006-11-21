@@ -26,7 +26,7 @@ public class JFritzUpdate {
 	private String deleteListFile = "deletefiles";
 
 	// TODO: noch auf den richtigen Pfad wechseln
-	private String installDirectory = "";
+	private String installDirectory = ".";
 
 	private String directoriesZipedAsFilesEndWith = ".zip";
 
