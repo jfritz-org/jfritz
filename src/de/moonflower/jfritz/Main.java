@@ -107,7 +107,8 @@
  * CHANGELOG:
  *
  * JFritz 0.6.2.01
- *  * TODO:
+ * TODO:
+ * - Lautstärke der Sounds halbieren
  * - Alle Zugriffe auf FritzBox in eigenen Threads
  * - Bug: Eingabe der IP-Nummer nach Ruhezustand
  * - Markieren der Zeilen per STRG auch in der "Teilnehmer"-Spalte
@@ -126,7 +127,9 @@
  * - Connection-Timeout für ReverseLookup setzen
  * TODO-END
  * - Neu: Italienische Sprachdateien aktualisiert
+ * - New: Import english push-service-csv-file
  * - Bugfix: Neuer Eintrag im Telefonbuch nun wieder möglich
+ *
  *
  * Jfritz 0.6.2
  * - Neue Strings:
@@ -562,7 +565,7 @@ public class Main {
 
 	public final static String PROGRAM_VERSION = "0.6.2.01"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.25 2006/11/21 00:05:08 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.26 2006/11/21 00:36:21 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
