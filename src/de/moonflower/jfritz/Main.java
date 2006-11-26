@@ -126,6 +126,7 @@
  * - Überprüfen, geht wohl nicht mehr: Rückwärtssuche für Österreich über dasoertliche.de wieder eingebaut
  * - Connection-Timeout für ReverseLookup setzen
  * TODO-END
+ * - Neu: Polnische Sprachdateien aktualisiert
  * - Neu: Italienische Sprachdateien aktualisiert
  * - New: Import english push-service-csv-file
  * - Bugfix: Neuer Eintrag im Telefonbuch nun wieder möglich
@@ -567,7 +568,7 @@ public class Main {
 
 	public final static String PROGRAM_VERSION = "0.6.2.01"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.28 2006/11/21 20:01:15 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.29 2006/11/26 18:40:54 baefer Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
