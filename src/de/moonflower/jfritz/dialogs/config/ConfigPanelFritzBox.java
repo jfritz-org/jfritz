@@ -97,8 +97,10 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 		}
 
 		// make sure the stored address is listed
-		if (!boxAddressAdded)
+		if (!boxAddressAdded) {
 			addressCombo.addItem(JFritz.getFritzBox().getAddress());
+			addressCombo.setSelectedIndex(addressCombo.getItemCount() - 1);
+		}
 
 		addressCombo.setActionCommand("addresscombo"); //$NON-NLS-1$
 		addressCombo.addActionListener(this);
@@ -140,10 +142,32 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 
 		if (e.getActionCommand().equals("addresscombo")) { //$NON-NLS-1$
 			int i = addressCombo.getSelectedIndex();
-			if (devices.size() != 0) {
-				SSDPPacket dev = (SSDPPacket) devices.get(i);
-				address.setText(dev.getIP().getHostAddress());
-				firmware = dev.getFirmware();
+			try {
+
+				if (devices.size() != 0 && i < devices.size()) {
+					SSDPPacket dev = (SSDPPacket) devices.get(i);
+					address.setText(dev.getIP().getHostAddress());
+					firmware = FritzBoxFirmware.detectFirmwareVersion(address
+							.getText(), password, port.getText());
+				} else {
+					firmware = FritzBoxFirmware.detectFirmwareVersion(address
+							.getText(), password, port.getText());
+				}
+			} catch (WrongPasswordException e1) {
+				Debug.err("Password wrong!"); //$NON-NLS-1$
+				boxtypeLabel.setForeground(Color.RED);
+				boxtypeLabel.setText(Main.getMessage("wrong_password")); //$NON-NLS-1$
+				firmware = null;
+			} catch (InvalidFirmwareException ife) {
+				Debug.err("Invalid firmware detected"); //$NON-NLS-1$
+				boxtypeLabel.setForeground(Color.RED);
+				boxtypeLabel.setText(Main.getMessage("box_address_wrong")); //$NON-NLS-1$
+				firmware = null;
+			} catch (IOException e1) {
+				Debug.err("Address wrong!"); //$NON-NLS-1$
+				boxtypeLabel.setForeground(Color.RED);
+				boxtypeLabel.setText(Main.getMessage("box_address_wrong")); //$NON-NLS-1$
+				firmware = null;
 			}
 			setBoxTypeLabel();
 
@@ -153,7 +177,6 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 						.getText(), password, port.getText());
 
 				// firmware = new FritzBoxFirmware("14", "1", "35");
-				setBoxTypeLabel();
 			} catch (WrongPasswordException e1) {
 				Debug.err("Password wrong!"); //$NON-NLS-1$
 				boxtypeLabel.setForeground(Color.RED);
@@ -208,9 +231,6 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 		Main.setProperty("box.address", address.getText()); //$NON-NLS-1$
 		Main.setProperty("box.password", Encryption.encrypt(password)); //$NON-NLS-1$
 		Main.setProperty("box.port", port.getText()); //$NON-NLS-1$
-		JFritz.getFritzBox().setAddress(address.getText());
-		JFritz.getFritzBox().setPassword(password);
-		JFritz.getFritzBox().setPort(port.getText());
 
 		if (firmware != null) {
 			Main.setProperty("box.firmware", firmware.getFirmwareVersion()); //$NON-NLS-1$

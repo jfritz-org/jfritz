@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
@@ -28,11 +26,6 @@ public class SSDPPacket {
 
     final static String SSDP_DISCOVER = "M-SEARCH * HTTP/1.1\r\nST: upnp:rootdevice\r\n" //$NON-NLS-1$
             + "MX: 10\r\nMAN: \"ssdp:discover\"\r\nHOST: 239.255.255.250:1900\r\n\r\n"; //$NON-NLS-1$
-
-    // watZZ2BLACK UPnP/1.0 AVM FRITZ!Box Fon WLAN 7050 14.03.101
-    // 00:04:0E:A2:B1:7B
-    final static String PATTERN_MAC = "\\w\\w:\\w\\w:\\w\\w:\\w\\w:\\w\\w:\\w\\w"; //$NON-NLS-1$
-    final static String PATTERN_FIRMWARE = "\\d\\d\\.\\d\\d\\.\\d\\d*"; //$NON-NLS-1$
 
     private DatagramPacket udpPacket;
 
@@ -152,27 +145,12 @@ public class SSDPPacket {
         return name;
     }
 
-    public String getMAC() {
-        Pattern p = Pattern.compile(PATTERN_MAC);
-        Matcher m = p.matcher(getServer());
-        String mac = ""; //$NON-NLS-1$
-        if (m.find()) {
-            mac = m.group(0);
-        }
-        Debug.msg("SSDP MAC: "+mac); //$NON-NLS-1$
-        return mac;
-    }
-
-    public FritzBoxFirmware getFirmware() {
-        Pattern p = Pattern.compile(PATTERN_FIRMWARE);
-        Matcher m = p.matcher(getServer());
-        String fwstr = ""; //$NON-NLS-1$
-        if (m.find()) {
-            fwstr = m.group(0);
-        }
-        Debug.msg("SSDP FW: "+fwstr); //$NON-NLS-1$
+    private FritzBoxFirmware getFirmware() {
         try {
-            return FritzBoxFirmware.detectFirmwareVersion(this.getIP().toString().substring(1), "", Main.getProperty("box.port", "80"));
+        	FritzBoxFirmware firmware = FritzBoxFirmware.detectFirmwareVersion(this.getIP().toString().substring(1), "", Main.getProperty("box.port", "80"));
+        	Debug.msg("SSDP: FritzBox-IP: "+this.getIP().toString().substring(1));
+        	Debug.msg("SSDP: FritzBox-Firmware: "+firmware.getFirmwareVersion());
+            return firmware;
         } catch (WrongPasswordException wpe) {
             return null;
         } catch (InvalidFirmwareException e) {

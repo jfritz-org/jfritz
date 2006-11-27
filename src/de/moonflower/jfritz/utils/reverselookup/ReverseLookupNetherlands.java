@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.HTMLUtil;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
@@ -123,21 +124,21 @@ public final class ReverseLookupNetherlands {
 					if (mName.find()) {
 						String[] results = mName.group(1).trim().split(",");
 
-						lastname = results[0];
+						lastname = HTMLUtil.stripEntities(results[0]);
 						Debug.msg("Last name: " + lastname);
 						if(results.length > 1)
-							firstname = results[1].substring(results[1].indexOf(";")+1);
+							firstname = HTMLUtil.stripEntities(results[1].substring(results[1].indexOf(";")+1));
 						Debug.msg("First name: " + firstname);
 					}
 
 					//parse Street, zip code and city
 					Matcher mAddress = pAddress.matcher(data);
 					if(mAddress.find()){
-						street = mAddress.group(1).trim().replaceAll("&nbsp;"," ");
+						street = HTMLUtil.stripEntities(mAddress.group(1).trim());
 						Debug.msg("Street: "+street);
-						zipCode  = mAddress.group(2).trim().substring(mAddress.group(2).indexOf(";")+1);
+						zipCode  = HTMLUtil.stripEntities(mAddress.group(2).trim().substring(mAddress.group(2).indexOf(";")+1));
 						Debug.msg("Zip Code: "+ zipCode);
-						city = mAddress.group(2).trim().substring(0,mAddress.group(2).indexOf(";")).replaceAll("&nbsp","");
+						city = HTMLUtil.stripEntities(mAddress.group(2).trim().substring(0,mAddress.group(2).indexOf(";")));
 						Debug.msg("City: "+city);
 					}
 

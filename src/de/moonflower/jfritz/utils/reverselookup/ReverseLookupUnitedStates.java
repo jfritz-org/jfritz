@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.HTMLUtil;
 
 /**
  * This class is responsible for doing reverse lookups for swiss numbers
@@ -119,20 +120,20 @@ public final class ReverseLookupUnitedStates {
 					//parse Name
 					Matcher mName = pName.matcher(data);
 					if (mName.find()) {
-						lastname = replaceChar(mName.group(1).trim());
+						lastname = HTMLUtil.stripEntities(mName.group(1).trim());
 						Debug.msg("Last name: " + lastname);
-						firstname = replaceChar(mName.group(2).trim());
+						firstname = HTMLUtil.stripEntities(mName.group(2).trim());
 						Debug.msg("First name: " + firstname);
 					}
 
 					//parse Street, zip code and city
 					Matcher mAddress = pAddress.matcher(data);
 					if(mAddress.find()){
-					    street = replaceChar(mAddress.group(1).trim());
+					    street = HTMLUtil.stripEntities(mAddress.group(1).trim());
 						Debug.msg("Street: "+street);
-						zipCode  =replaceChar(mAddress.group(3).trim()+" "+mAddress.group(4).trim());
+						zipCode  = HTMLUtil.stripEntities(mAddress.group(3).trim()+" "+mAddress.group(4).trim());
 						Debug.msg("Zip Code: "+ zipCode);
-						city = replaceChar(mAddress.group(2).trim());
+						city = HTMLUtil.stripEntities(mAddress.group(2).trim());
 						Debug.msg("City: "+city);
 					}
 
@@ -154,7 +155,15 @@ public final class ReverseLookupUnitedStates {
 		return newPerson;
 
 	}
-	public static String replaceChar ( String text ){
+
+	/**
+	 * Frage von ROB: Wozu dient das? Um HTML-Entities wie &nbsp; zu entfernen?
+	 * Wenn ja, dann ist HTMLUtil.stripEntities() besser.
+	 * @deprecated
+	 * @param text
+	 * @return
+	 */
+	private static String replaceChar ( String text ){
 	// Hier gibt es noch Optimierungsbedarf
 
 		 if ( text == null )

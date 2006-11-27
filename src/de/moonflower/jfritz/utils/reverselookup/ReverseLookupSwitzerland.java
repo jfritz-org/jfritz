@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.HTMLUtil;
 
 /**
  * This class is responsible for doing reverse lookups for swiss numbers
@@ -122,10 +123,10 @@ public final class ReverseLookupSwitzerland {
 						else
 							results = mName.group(1).trim().split(",");
 
-						lastname = results[0];
+						lastname = HTMLUtil.stripEntities(results[0]);
 						Debug.msg("Last name: " + lastname);
 						if(results.length > 1)
-							firstname = results[1];
+							firstname = HTMLUtil.stripEntities(results[1]);
 
 						Debug.msg("First name: " + firstname);
 					}
@@ -133,11 +134,11 @@ public final class ReverseLookupSwitzerland {
 					//parse Street, zip code and city
 					Matcher mAddress = pAddress.matcher(data);
 					if(mAddress.find()){
-						street = mAddress.group(1).trim();
+						street = HTMLUtil.stripEntities(mAddress.group(1).trim());
 						Debug.msg("Street: "+street);
-						zipCode  = mAddress.group(2).trim();
+						zipCode  = HTMLUtil.stripEntities(mAddress.group(2).trim());
 						Debug.msg("Zip Code: "+ zipCode);
-						city = mAddress.group(3).trim();
+						city = HTMLUtil.stripEntities(mAddress.group(3).trim());
 						Debug.msg("City: "+city);
 					}
 

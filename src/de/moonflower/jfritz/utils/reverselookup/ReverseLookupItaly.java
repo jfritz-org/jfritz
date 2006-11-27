@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.HTMLUtil;
 /**
  * Class for looking up Italian phone numbers
  * Search engine used is www.paginebianche.it
@@ -115,25 +116,25 @@ public final static String SEARCH_URL="http://www.paginebianche.it/execute.cgi?b
 					//parse Data
 					Matcher mData = pMain.matcher(data);
 					if (mData.find()) {
-						lastname = mData.group(1).trim();
+						lastname = HTMLUtil.stripEntities(mData.group(1).trim());
 						Debug.msg("Last name: " + lastname);
-						zipCode = mData.group(2).trim();
+						zipCode = HTMLUtil.stripEntities(mData.group(2).trim());
 						Debug.msg("Zip code: "+ zipCode);
-						city = mData.group(3).trim();
+						city = HTMLUtil.stripEntities(mData.group(3).trim());
 						Debug.msg("City: "+ city);
-						street = mData.group(4).trim();
+						street = HTMLUtil.stripEntities(mData.group(4).trim());
 						Debug.msg("Street: "+ street);
 
 						//don't run the reg ex unless necessary
 					}else if((mData = pSecondary.matcher(data)).find()){
 						Debug.msg("Found secondary match");
-						lastname = mData.group(1).trim();
+						lastname = HTMLUtil.stripEntities(mData.group(1).trim());
 						Debug.msg("Last name: " + lastname);
-						zipCode = mData.group(2).trim();
+						zipCode = HTMLUtil.stripEntities(mData.group(2).trim());
 						Debug.msg("Zip code: "+ zipCode);
-						city = mData.group(3).trim();
+						city = HTMLUtil.stripEntities(mData.group(3).trim());
 						Debug.msg("City: "+ city);
-						street = mData.group(4).trim();
+						street = HTMLUtil.stripEntities(mData.group(4).trim());
 						Debug.msg("Street: "+ street);
 					}
 

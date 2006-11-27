@@ -133,6 +133,8 @@
  * - Bugfix: JFritz-Menü wird nun korrekt dargestellt
  * - Bugfix: number-Ordner nun mitgeliefert
  * - Bugfix: Autoupdate in richtigen Ordner
+ * - Bugfix: Firmwareerkennung korrigiert
+ * - Bugfix: HTML-Sonderzeichen beim ReverseLookup
  *
  * Jfritz 0.6.2
  * - Neue Strings:
@@ -568,7 +570,7 @@ public class Main {
 
 	public final static String PROGRAM_VERSION = "0.6.2.01"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.29 2006/11/26 18:40:54 baefer Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.30 2006/11/27 18:51:29 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

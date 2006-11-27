@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.HTMLUtil;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
@@ -141,9 +142,9 @@ public final class ReverseLookupGermany {
 								address = "", //$NON-NLS-1$
 								zipcode = "", //$NON-NLS-1$
 								city = ""; 	  //$NON-NLS-1$
-						lastname = split[0];
+						lastname = HTMLUtil.stripEntities(split[0]);
 						if (split.length > 1) {
-							firstname = " " + split[1]; //$NON-NLS-1$
+							firstname = " " + HTMLUtil.stripEntities(split[1]); //$NON-NLS-1$
 							Debug.msg("*" + firstname + "*" //$NON-NLS-1$,  //$NON-NLS-2$
 									+ firstname.indexOf("  ")); //$NON-NLS-1$
 							if ((firstname.indexOf("  ") > -1) //$NON-NLS-1$
@@ -159,20 +160,20 @@ public final class ReverseLookupGermany {
 						}
 						firstname = firstname.trim();
 						if (m.group(2) != null) { // there is an address
-							String line2 = m.group(2).trim();
+							String line2 = HTMLUtil.stripEntities(m.group(2).trim());
 							Debug.msg(3, "Pattern2: " + line2); //$NON-NLS-1$
 							address = line2.trim();
 						}
 						if (m.group(3) != null) { // there is a zipcity
-							String line3 = m.group(3).trim();
+							String line3 = HTMLUtil.stripEntities(m.group(3).trim());
 							Debug.msg(3, "Pattern3: " + line3); //$NON-NLS-1$
 							String zipcity = line3.replaceAll("\t", ""); //$NON-NLS-1$
 							split = zipcity.split(" ", 2); //$NON-NLS-1$
 							if (split.length > 1) {
 								zipcode = split[0].trim();
-								city = split[1].trim();
+								city = HTMLUtil.stripEntities(split[1].trim());
 							} else {
-								city = split[0].trim();
+								city = HTMLUtil.stripEntities(split[0].trim());
 							}
 						}
 
