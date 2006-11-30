@@ -56,7 +56,6 @@ import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 /**
  * This class manages the caller list.
  *
- * @author Arno Willig
  */
 public class CallerList extends AbstractTableModel implements LookupObserver {
 	private static final long serialVersionUID = 1;
@@ -209,7 +208,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 			if (JFritz.getJframe() != null) {
 				rows = JFritz.getJframe().getCallerTable().getSelectedRows();
 			}
-			if (!wholeCallerList && rows != null && rows.length > 0) {
+			if (!wholeCallerList && (rows != null) && (rows.length > 0)) {
 				for (int i = 0; i < rows.length; i++) {
 					Call currentCall = filteredCallerData.elementAt(rows[i]);
 					pw.write(currentCall.toXML());
@@ -262,7 +261,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 			if (JFritz.getJframe() != null) {
 				rows = JFritz.getJframe().getCallerTable().getSelectedRows();
 			}
-			if (!wholeCallerList && rows != null && rows.length > 0) {
+			if (!wholeCallerList && (rows != null) && (rows.length > 0)) {
 				for (int i = 0; i < rows.length; i++) {
 					Call currentCall = filteredCallerData.elementAt(rows[i]);
 					pw.println(currentCall.toCSV());
@@ -440,8 +439,9 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 		while (left <= right) {
 			middle = ((right - left) / 2) + left;
 
-			if (unfilteredCallerData.isEmpty())
+			if (unfilteredCallerData.isEmpty()) {
 				return false;
+			}
 
 			Call c = unfilteredCallerData.elementAt(middle);
 			int Compare = newCall.getCalldate().compareTo(c.getCalldate());
@@ -449,16 +449,16 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 			// check if the date is before or after the current element in the
 			// vector
 			// Note: change the values here to fit the current sorting method
-			if (Compare > 0)
+			if (Compare > 0) {
 				right = middle - 1;
-			else if (Compare < 0)
+			} else if (Compare < 0) {
 				left = middle + 1;
-			else {
+			} else {
 				// if we are here, then the dates match
 				// lets check if everything else matches
-				if (c.equals(newCall))
+				if (c.equals(newCall)) {
 					return true;
-				else {
+				} else {
 					// two calls, same date, different values...
 					// this is really a performance killer...
 					int tmpMiddle = middle - 1;
@@ -471,14 +471,16 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 						while (c.getCalldate().equals(newCall.getCalldate())) {
 
 							// check if equal
-							if (c.equals(newCall))
+							if (c.equals(newCall)) {
 								return true;
+							}
 
 							// make sure we stay in the array bounds
-							if (tmpMiddle > 0)
+							if (tmpMiddle > 0) {
 								c = unfilteredCallerData.elementAt(--tmpMiddle);
-							else
+							} else {
 								break;
+							}
 						}
 					}
 
@@ -490,14 +492,16 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 						while (c.getCalldate().equals(newCall.getCalldate())) {
 
 							// check if equal
-							if (c.equals(newCall))
+							if (c.equals(newCall)) {
 								return true;
+							}
 
 							// make sure to stay in the array bounds
-							if (tmpMiddle < (unfilteredCallerData.size() - 1))
+							if (tmpMiddle < (unfilteredCallerData.size() - 1)) {
 								c = unfilteredCallerData.elementAt(++tmpMiddle);
-							else
+							} else {
 								break;
+							}
 						}
 
 					}
@@ -627,10 +631,11 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 		} else if (columnName.equals("date")) { //$NON-NLS-1$
 			return call.getCalldate();
 		} else if (columnName.equals("callbycall")) { //$NON-NLS-1$
-			if (call.getPhoneNumber() != null)
+			if (call.getPhoneNumber() != null) {
 				return call.getPhoneNumber().getCallByCall();
-			else
+			} else {
 				return null;
+			}
 		} else if (columnName.equals("number")) { //$NON-NLS-1$
 			return call.getPhoneNumber();
 		} else if (columnName.equals("participant")) { //$NON-NLS-1$
@@ -638,9 +643,10 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 		} else if (columnName.equals("port")) { //$NON-NLS-1$
 			return call.getPort();
 		} else if (columnName.equals("route")) { //$NON-NLS-1$
-			if (call.getRoute().startsWith("SIP")) //$NON-NLS-1$
+			if (call.getRoute().startsWith("SIP")) {
 				return JFritz.getSIPProviderTableModel().getSipProvider(
 						call.getRoute(), call.getRoute());
+			}
 			return call.getRoute();
 		} else if (columnName.equals("duration")) { //$NON-NLS-1$
 			return Integer.toString(call.getDuration());
@@ -770,32 +776,38 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 				o1 = call1.getCalldate();
 				o2 = call2.getCalldate();
 			} else if (columnName.equals("callbycall")) { //$NON-NLS-1$
-				if (call1.getPhoneNumber() != null)
+				if (call1.getPhoneNumber() != null) {
 					o1 = call1.getPhoneNumber().getCallByCall();
-				else
+				} else {
 					o1 = null;
-				if (call2.getPhoneNumber() != null)
+				}
+				if (call2.getPhoneNumber() != null) {
 					o2 = call2.getPhoneNumber().getCallByCall();
-				else
+				} else {
 					o2 = null;
+				}
 			} else if (columnName.equals("number")) { //$NON-NLS-1$
-				if (call1.getPhoneNumber() != null)
+				if (call1.getPhoneNumber() != null) {
 					o1 = call1.getPhoneNumber().getIntNumber();
-				else
+				} else {
 					o1 = null;
-				if (call2.getPhoneNumber() != null)
+				}
+				if (call2.getPhoneNumber() != null) {
 					o2 = call2.getPhoneNumber().getIntNumber();
-				else
+				} else {
 					o2 = null;
+				}
 			} else if (columnName.equals("participant")) { //$NON-NLS-1$
-				if (call1.getPerson() != null)
+				if (call1.getPerson() != null) {
 					o1 = call1.getPerson().getFullname().toUpperCase();
-				else
+				} else {
 					o1 = null;
-				if (call2.getPerson() != null)
+				}
+				if (call2.getPerson() != null) {
 					o2 = call2.getPerson().getFullname().toUpperCase();
-				else
+				} else {
 					o2 = null;
+				}
 			} else if (columnName.equals("port")) { //$NON-NLS-1$
 				o1 = call1.getPort();
 				o2 = call2.getPort();
@@ -803,14 +815,16 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 				o1 = call1.getRoute();
 				o2 = call2.getRoute();
 			} else if (columnName.equals("duration")) { //$NON-NLS-1$
-				if (call1.getDuration() != 0)
+				if (call1.getDuration() != 0) {
 					o1 = format(Integer.toString(call1.getDuration()), 10);
-				else
+				} else {
 					o1 = null;
-				if (call2.getDuration() != 0)
+				}
+				if (call2.getDuration() != 0) {
 					o2 = format(Integer.toString(call2.getDuration()), 10);
-				else
+				} else {
 					o2 = null;
+				}
 			} else if (columnName.equals("comment")) { //$NON-NLS-1$
 				o1 = call1.getComment().toUpperCase();
 				o2 = call2.getComment().toUpperCase();
@@ -821,16 +835,16 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 			}
 
 			// Treat empty strings like nulls
-			if (o1 instanceof String && ((String) o1).trim().length() == 0) {
+			if ((o1 instanceof String) && (((String) o1).trim().length() == 0)) {
 				o1 = null;
 			}
-			if (o2 instanceof String && ((String) o2).trim().length() == 0) {
+			if ((o2 instanceof String) && (((String) o2).trim().length() == 0)) {
 				o2 = null;
 			}
 
 			// Sort nulls so they appear last, regardless
 			// of sort order
-			if (o1 == null && o2 == null) {
+			if ((o1 == null) && (o2 == null)) {
 				return 0;
 			} else if (o1 == null) {
 				return 1;
@@ -856,11 +870,13 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 			if (j > 0) {
 				StringBuffer sb = null;
 				sb = new StringBuffer(j);
-				for (int k = 0; k < j; k++)
+				for (int k = 0; k < j; k++) {
 					sb.append(' ');
+				}
 				return sb.toString() + s;
-			} else
+			} else {
 				return s;
+			}
 		}
 
 	}
@@ -886,8 +902,9 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 		int total = 0;
 		while (en.hasMoreElements()) {
 			Call call = en.nextElement();
-			if (call.getCost() > 0) // Negative Kosten => unbekannte kosten
+			if (call.getCost() > 0) {
 				total += call.getCost();
+			}
 		}
 		return total;
 	}
@@ -905,8 +922,9 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 				if (call.getPhoneNumber() != null) {
 					for (int i = 0; i < numbers.size(); i++) {
 						if (call.getPhoneNumber().getIntNumber().equals(
-								((PhoneNumber) numbers.get(i)).getIntNumber()))
+								((PhoneNumber) numbers.get(i)).getIntNumber())) {
 							return call;
+						}
 					}
 				}
 			}
@@ -918,8 +936,9 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 		Debug.msg("Clearing caller Table"); //$NON-NLS-1$
 		unfilteredCallerData.clear();
 		if ((JFritz.getJframe() != null)
-				&& JFritz.getJframe().getCallerTable() != null)
+				&& (JFritz.getJframe().getCallerTable() != null)) {
 			JFritz.getJframe().getCallerTable().clearSelection();
+		}
 		saveToXMLFile(Main.SAVE_DIR + JFritz.CALLS_FILE, true);
 		fireTableDataChanged();
 	}
@@ -958,15 +977,16 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 		super.fireTableDataChanged();
 	}
 
-	public String getRealColumnName(int columnIndex) { // FIXME
+	public String getRealColumnName(int columnIndex) {
 		String columnName = ""; //$NON-NLS-1$
 		if (JFritz.getJframe() != null) {
 			Enumeration en = JFritz.getJframe().getCallerTable()
 					.getTableHeader().getColumnModel().getColumns();
 			while (en.hasMoreElements()) {
 				TableColumn col = (TableColumn) en.nextElement();
-				if (col.getModelIndex() == columnIndex)
+				if (col.getModelIndex() == columnIndex) {
 					columnName = col.getIdentifier().toString();
+				}
 			}
 		}
 		return columnName;
@@ -979,13 +999,15 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 
 	public Call getSelectedCall() {
 		int rows[] = null;
-		if (JFritz.getJframe() != null)
+		if (JFritz.getJframe() != null) {
 			rows = JFritz.getJframe().getCallerTable().getSelectedRows();
+		}
 
-		if (rows != null && rows.length == 1)
+		if ((rows != null) && (rows.length == 1)) {
 			return this.filteredCallerData.elementAt(rows[0]);
-		else
+		} else {
 			Debug.errDlg(Main.getMessage("error_choose_one_call")); //$NON-NLS-1$
+		}
 
 		return null;
 	}
@@ -1048,18 +1070,19 @@ public boolean importFromCSVFile(BufferedReader br) {
 					|| line.equals(EXPORT_CSV_FORMAT_PUSHSERVICE_NEW)) {
 
 				// check which kind of a file it is
-				if (line.equals(EXPORT_CSV_FORMAT_JFRITZ))
+				if (line.equals(EXPORT_CSV_FORMAT_JFRITZ)) {
 					isJFritzExport = true;
-				else if (line.equals(EXPORT_CSV_FORMAT_FRITZBOX_PUSHSERVICE))
+				} else if (line.equals(EXPORT_CSV_FORMAT_FRITZBOX_PUSHSERVICE)) {
 					isPushFile = true;
-				else if (line.equals(EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE)
-						|| line.equals(EXPORT_CSV_FORMAT_PUSHSERVICE_NEW))
+				} else if (line.equals(EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE)
+						|| line.equals(EXPORT_CSV_FORMAT_PUSHSERVICE_NEW)) {
 					isNewFirmware = true;
-				else if (line.equals(EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH)
-						|| line.equals(EXPORT_CSV_FORMAT_PUSHSERVICE_ENGLISH))
+				} else if (line.equals(EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH)
+						|| line.equals(EXPORT_CSV_FORMAT_PUSHSERVICE_ENGLISH)) {
 					isEnglishFirmware = true;
-				else if (line.equals(EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH_NEW))
+				} else if (line.equals(EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH_NEW)) {
 					isNewEnglishFirmware = true;
+				}
 
 				int linesRead = 0;
 				Call c;
@@ -1067,20 +1090,22 @@ public boolean importFromCSVFile(BufferedReader br) {
 					linesRead++;
 
 					// call the appropriate parse function
-					if (isJFritzExport)
+					if (isJFritzExport) {
 						c = parseCallJFritzCSV(line, separator);
-					else if (isNewFirmware)
+					} else if (isNewFirmware) {
 						c = parseCallFritzboxNewCSV(line, separator);
-					else if (isEnglishFirmware)
+					} else if (isEnglishFirmware) {
 						c = parseCallFritzboxEnglishCSV(line, separator);
-					else if (isNewEnglishFirmware)
+					} else if (isNewEnglishFirmware) {
 						c = parseCallFritzboxNewEnglishCSV(line, separator);
-					else
+					} else {
 						c = parseCallFritzboxCSV(line, isPushFile, separator);
+					}
 
 					if (c == null) {
-						if (!line.equals(""))
+						if (!line.equals("")) {
 							Debug.err("Broken entry: " + line);
+						}
 					} else if (addEntry(c)) {
 						newEntries++;
 					}
@@ -1130,10 +1155,11 @@ public boolean importFromCSVFile(BufferedReader br) {
 		t2 = System.currentTimeMillis();
 		Debug.msg("Time used to import CSV-File: " + (t2 - t1) + "ms");
 
-		if (newEntries > 0)
+		if (newEntries > 0) {
 			return true;
-		else
+		} else {
 			return false;
+		}
 
 	}
 	/**
@@ -1157,14 +1183,16 @@ public boolean importFromCSVFile(BufferedReader br) {
 
 		// check if line has correct amount of entries
 		if (field.length < 12) {
-			if (field.length != 1)
+			if (field.length != 1) {
 				Debug.err("Invalid CSV format, incorrect number of fields!"); //$NON-NLS-1$
+			}
 			return null;
 		}
 
 		// Strip those damn quotes
-		for (int i = 0; i < 12; i++)
+		for (int i = 0; i < 12; i++) {
 			field[i] = field[i].substring(1, field[i].length() - 1);
+		}
 
 		// Call type
 		// Perhaps it would be nice to standardize the calltype and export
@@ -1181,7 +1209,7 @@ public boolean importFromCSVFile(BufferedReader br) {
 		}
 
 		// Call date and time
-		if (field[1] != null && field[2] != null) {
+		if ((field[1] != null) && (field[2] != null)) {
 
 			try {
 				calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(field[1] + " " + field[2]); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -1213,8 +1241,9 @@ public boolean importFromCSVFile(BufferedReader br) {
 		if (!field[3].equals("")) {
 			number = new PhoneNumber(field[3]);
 			number.setCallByCall(field[10]);
-		} else
+		} else {
 			number = null;
+		}
 
 		// now make the call object
 		// TODO: change the order of the Call constructor to fit
@@ -1253,8 +1282,9 @@ public boolean importFromCSVFile(BufferedReader br) {
 
 		// check if line has correct amount of entries
 		if (field.length != 6) {
-			if (field.length != 1)
+			if (field.length != 1) {
 				Debug.err("Invalid CSV format, incorrect number of fields!"); // if
+			}
 			// you
 			// find
 			// an
@@ -1296,13 +1326,14 @@ public boolean importFromCSVFile(BufferedReader br) {
 		}
 
 		// Phone number
-		if (!field[2].equals(""))
+		if (!field[2].equals("")) {
 			number = new PhoneNumber(field[2], Main.getProperty(
 					"option.activateDialPrefix").toLowerCase().equals("true")
 					&& (calltype.toInt() == CallType.CALLOUT)
 					&& !field[4].startsWith("Internet"));
-		else
+		} else {
 			number = null;
+		}
 
 		// split the duration into two stings, hours:minutes
 		String[] time = field[5].split(":");
@@ -1350,8 +1381,9 @@ public boolean importFromCSVFile(BufferedReader br) {
 
 		// check if line has correct amount of entries
 		if (field.length != 7) {
-			if (field.length != 1)
+			if (field.length != 1) {
 				Debug.err("Invalid CSV format, incorrect number fields!");
+			}
 			return null;
 		}
 
@@ -1381,13 +1413,14 @@ public boolean importFromCSVFile(BufferedReader br) {
 		}
 
 		// Phone number
-		if (!field[3].equals(""))
+		if (!field[3].equals("")) {
 			number = new PhoneNumber(field[3], Main.getProperty(
 					"option.activateDialPrefix").toLowerCase().equals("true")
 					&& (calltype.toInt() == CallType.CALLOUT)
 					&& !field[5].startsWith("Internet"));
-		else
+		} else {
 			number = null;
+		}
 
 		// split the duration into two stings, hours:minutes
 		String[] time = field[6].split(":");
@@ -1445,8 +1478,9 @@ public boolean importFromCSVFile(BufferedReader br) {
 
 		// check if line has correct amount of entries
 		if (field.length != 6) {
-			if (field.length != 1)
+			if (field.length != 1) {
 				Debug.err("Invalid CSV format, incorrect number of fields"); // if
+			}
 			return null; // jfritz is broken, the fritz box exports things
 		} // with an extra empty line for whatever reason
 
@@ -1480,13 +1514,14 @@ public boolean importFromCSVFile(BufferedReader br) {
 		}
 
 		// Phone number
-		if (!field[2].equals(""))
+		if (!field[2].equals("")) {
 			number = new PhoneNumber(field[2], Main.getProperty(
 					"option.activateDialPrefix").toLowerCase().equals("true")
 					&& (calltype.toInt() == CallType.CALLOUT)
 					&& !field[4].startsWith("Internet"));
-		else
+		} else {
 			number = null;
+		}
 
 		// split the duration into two stings, hours:minutes
 		String[] time = field[5].split(":");
@@ -1543,8 +1578,9 @@ public boolean importFromCSVFile(BufferedReader br) {
 
 		// check if line has correct amount of entries
 		if (field.length != 7) {
-			if (field.length != 1)
+			if (field.length != 1) {
 				Debug.err("Invalid CSV format, incorrect number of fields"); // if
+			}
 			return null; // jfritz is broken, the fritz box exports things
 		} // with an extra empty line for whatever reason
 
@@ -1581,13 +1617,14 @@ public boolean importFromCSVFile(BufferedReader br) {
 		// field[2]
 
 		// Phone number
-		if (!field[3].equals(""))
+		if (!field[3].equals("")) {
 			number = new PhoneNumber(field[3], Main.getProperty(
 					"option.activateDialPrefix").toLowerCase().equals("true")
 					&& (calltype.toInt() == CallType.CALLOUT)
 					&& !field[5].startsWith("Internet"));
-		else
+		} else {
 			number = null;
+		}
 
 		// split the duration into two stings, hours:minutes
 		String[] time = field[6].split(":");
@@ -1673,14 +1710,14 @@ public boolean importFromCSVFile(BufferedReader br) {
 			call = en.nextElement();
 			for (i = 0; i < filters.size(); i++) {
 				f = filters.elementAt(i);
-				if (!f.passFilter(call))
+				if (!f.passFilter(call)) {
 					break;
+				}
 			}// only add if we passed all filters
-			if (i == filters.size())
+			if (i == filters.size()) {
 				result.add(call);
+			}
 		}
-		if (JFritz.getJframe() != null)
-			JFritz.getJframe().setStatus();
 		return result;
 	}
 
@@ -1779,10 +1816,12 @@ public boolean importFromCSVFile(BufferedReader br) {
 		// TODO updaten wenn neue call oder personen oder rufnummern hinzukommen
 		// oder alte gelöscht werden
 		Debug.msg("searching all Persons for the CallerList...");
-		if (phonebook == null)
+		if (phonebook == null) {
 			Debug.err("set phonebook first!");
-		if (!phonebook.getAllLastCallsSearched())
+		}
+		if (!phonebook.getAllLastCallsSearched()) {
 			Debug.err("searchAllLastCalls in the phonebook first");
+		}
 		Call call;
 		Person person;
 		for (int i = 0; i < unfilteredCallerData.size(); i++) {
@@ -1813,9 +1852,10 @@ public boolean importFromCSVFile(BufferedReader br) {
 				Call call = filteredCallerData.get(i);
 				if (call.getPhoneNumber() != null) {
 					Person foundPerson = phonebook.findPerson(call);
-					if (foundPerson == null
-							&& !numbers.contains(call.getPhoneNumber()))
+					if ((foundPerson == null)
+							&& !numbers.contains(call.getPhoneNumber())) {
 						numbers.add(call.getPhoneNumber());
+					}
 				}
 			}
 		} else {
@@ -1823,9 +1863,10 @@ public boolean importFromCSVFile(BufferedReader br) {
 				Call call = unfilteredCallerData.get(i);
 				if (call.getPhoneNumber() != null) {
 					Person foundPerson = phonebook.findPerson(call);
-					if (foundPerson == null
-							&& !numbers.contains(call.getPhoneNumber()))
+					if ((foundPerson == null)
+							&& !numbers.contains(call.getPhoneNumber())) {
 						numbers.add(call.getPhoneNumber());
+					}
 				}
 			}
 		}
@@ -1892,8 +1933,9 @@ public boolean importFromCSVFile(BufferedReader br) {
 				call.setPerson(null);
 			} else {
 				if (call.getPerson() == null) {
-					if (!person.isEmpty())
+					if (!person.isEmpty()) {
 						call.setPerson(person.clone());
+					}
 				} else if (!call.getPerson().equals(person)) {
 					call.setPerson(person.clone());
 				}

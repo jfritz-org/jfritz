@@ -3,6 +3,7 @@ package de.moonflower.jfritz.callmonitor;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.StatusListener;
 import de.moonflower.jfritz.utils.network.Telnet;
 
 import java.util.regex.Pattern;
@@ -13,7 +14,6 @@ import javax.swing.JOptionPane;
 /**
  * Thread. Logon on FritzBox via Telnet. Captures Callermessages via Telnet.
  *
- * @author Arno Willig
  *
  */
 
@@ -27,14 +27,18 @@ public class TelnetCallMonitor extends Thread implements CallMonitorInterface {
 
     private boolean isRunning = false;
 
-    public TelnetCallMonitor() {
+	private StatusListener statusListener;
+
+    public TelnetCallMonitor(StatusListener statusListener) {
         super();
+        this.statusListener = statusListener;
         start();
 
     }
 
     public void run() {
         telnet = new Telnet();
+        telnet.getStatusBarController().addStatusBarListener(statusListener);
         Debug.msg("Starting TelnetListener"); //$NON-NLS-1$
         telnet.connect();
         if (telnet.isConnected()) {

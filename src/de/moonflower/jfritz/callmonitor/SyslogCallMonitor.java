@@ -45,8 +45,11 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 
 	private DatagramSocket socket = null;
 
-	public SyslogCallMonitor() {
+	private StatusListener statusListener;
+
+	public SyslogCallMonitor(StatusListener statusListener) {
 		super();
+		this.statusListener = statusListener;
 		start();
 	}
 
@@ -76,6 +79,7 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 					|| JFritzUtils.parseBoolean(Main.getProperty(
 							"syslog.checkTelefon", "true"))) { //$NON-NLS-1$,  //$NON-NLS-2$
 				Telnet telnet = new Telnet();
+				telnet.getStatusBarController().addStatusBarListener(statusListener);
 				telnet.connect();
 				if (telnet.isConnected()) {
 					if (JFritzUtils.parseBoolean(Main.getProperty(

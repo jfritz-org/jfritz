@@ -45,14 +45,14 @@ import de.moonflower.jfritz.struct.FritzBox;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
+import de.moonflower.jfritz.utils.StatusListener;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 import de.moonflower.jfritz.utils.network.SSDPdiscoverThread;
 
 /**
- * @author Arno Willig
  *
  */
-public final class JFritz {
+public final class JFritz implements  StatusListener{
 
 	// when changing this, don't forget to check the resource bundles!!
 
@@ -197,15 +197,16 @@ public final class JFritz {
 			}
 		}
 		jframe.checkStartOptions();
-
+		//FIXME ich nehme mal an SSDPdiscover macht irgendwas mit der Fritzbox? => nach Fritzbox verschieben
 		if (JFritzUtils.parseBoolean(Main.getProperty("option.useSSDP",//$NON-NLS-1$
 				"true"))) {//$NON-NLS-1$
 			Debug.msg("Searching for  FritzBox per UPnP / SSDP");//$NON-NLS-1$
 
 			ssdpthread = new SSDPdiscoverThread(SSDP_TIMEOUT);
+			ssdpthread.getStatusBarController().addStatusBarListener(this);
 			ssdpthread.start();
 			try {
-				ssdpthread.join();
+				ssdpthread.join();//FIXME start a thread just to call join in the next line?
 			} catch (InterruptedException ie) {
 
 			}
@@ -616,4 +617,23 @@ public final class JFritz {
 	public static CallMonitorList getCallMonitorList() {
 		return callMonitorList;
 	}
+
+	public void statusChanged(Object status) {
+		String statusMsg = "";
+
+		if(status instanceof Integer){
+			int duration = ((Integer)status).intValue();
+			int hours = duration / 3600;
+			int mins = duration % 3600 / 60;
+			 statusMsg = Main.getMessage("telephone_entries").replaceAll("%N", Integer.toString(JFritz.getCallerList().getRowCount())) + ", " //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+					+ Main.getMessage("total_duration") + ": " + hours + "h " //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+					+ mins + " min " + " (" + duration / 60 + " min)"; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+			;
+		}
+		if(status instanceof String){
+			statusMsg = (String) status;
+		}
+		jframe.setStatus(statusMsg);
+	}
+
 }

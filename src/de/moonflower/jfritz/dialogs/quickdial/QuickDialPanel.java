@@ -30,12 +30,12 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.QuickDial;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.StatusBarController;
 
 /**
  * Main panel for QuickDials
  *
- * @author Arno Willig
- */
+  */
 public class QuickDialPanel extends JPanel implements ActionListener,
 		ListSelectionListener {
 	private static final long serialVersionUID = 1;
@@ -45,6 +45,8 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 	private JTable quickdialtable;
 
 	private JButton addButton, delButton;
+
+	private StatusBarController statusBarController = new StatusBarController();
 
 	public QuickDialPanel() {
 		setLayout(new BorderLayout());
@@ -106,7 +108,7 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 					int rowIndex, int vColIndex) {
 				Component c = super.prepareRenderer(renderer, rowIndex,
 						vColIndex);
-				if (rowIndex % 2 == 0 && !isCellSelected(rowIndex, vColIndex)) {
+				if ((rowIndex % 2 == 0) && !isCellSelected(rowIndex, vColIndex)) {
 					c.setBackground(new Color(255, 255, 200));
 				} else if (!isCellSelected(rowIndex, vColIndex)) {
 					c.setBackground(getBackground());
@@ -130,8 +132,9 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 		quickdialtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		quickdialtable.getSelectionModel().addListSelectionListener(this);
 
-		if (quickdialtable.getRowCount() != 0)
+		if (quickdialtable.getRowCount() != 0) {
 			quickdialtable.setRowSelectionInterval(0, 0);
+		}
 
 		// TODO new QuickDialFieldCellEditor());
 		/*
@@ -192,8 +195,8 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 
 	public void updateButtons() {
 
-		delButton.setEnabled(quickdialtable.getSelectedRow() > -1
-				&& dataModel.getRowCount() > 0);
+		delButton.setEnabled((quickdialtable.getSelectedRow() > -1)
+				&& (dataModel.getRowCount() > 0));
 
 		Enumeration en = dataModel.getQuickDials().elements();
 		boolean addEnabled = true;
@@ -206,9 +209,16 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 		}
 		addButton.setEnabled(addEnabled);
 	}
-
 	public void setStatus() {
-		JFritz.getJframe().setStatus(Main.getMessage("entries").  //$NON-NLS-1$
+		statusBarController.fireStatusChanged(Main.getMessage("entries").  //$NON-NLS-1$
 				replaceAll("%N", Integer.toString(getDataModel().getQuickDials().size())));  //$NON-NLS-1$
+	}
+
+	public StatusBarController getStatusBarController() {
+		return statusBarController;
+	}
+
+	public void setStatusBarController(StatusBarController statusBarController) {
+		this.statusBarController = statusBarController;
 	}
 }

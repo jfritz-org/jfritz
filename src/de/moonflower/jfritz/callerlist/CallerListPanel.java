@@ -39,7 +39,6 @@ import javax.swing.JToolBar;
 import com.toedter.calendar.JDateChooser;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.filter.CallByCallFilter;
 import de.moonflower.jfritz.callerlist.filter.CallFilter;
@@ -60,10 +59,10 @@ import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.JFritzClipboard;
+import de.moonflower.jfritz.utils.StatusBarController;
 import de.moonflower.jfritz.utils.threeStateButton.ThreeStateButton;
 
 /**
- * @ex-author Arno Willig
  * @author marc
  */
 public class CallerListPanel extends JPanel implements ActionListener,
@@ -195,11 +194,11 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	private JLabel searchLabel;
 
-	// private FixedFilter fixedFilter;
 
 	private JDateChooser startDateChooser;
 	private PhoneBookPanel phoneBookPanel;
 	private JFrame parentFrame;
+	private StatusBarController statusBarController = new StatusBarController();
 
 	/**
 	 * A callerListPanel is a view for a callerlist, it has its own
@@ -329,7 +328,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		dateSpecialSaveString = " ";
 		syncAllFilters();
 		callerList.update();
-		((JFritzWindow) parentFrame).setStatus();
+		//((JFritzWindow) parentFrame).setStatus();
 	}
 
 	/**
@@ -653,8 +652,9 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	public void actionPerformed(ActionEvent e) {
 		handleAction(e.getActionCommand());
 		callerList.update();
-		((JFritzWindow) parentFrame).setStatus();// FIXME make a StatusChangedListener
+		statusBarController.fireStatusChanged(callerList.getTotalDuration());
 	}
+
 
 	/**
 	 * the control this method is called, if the user pushed buttons or changes
@@ -735,13 +735,13 @@ public class CallerListPanel extends JPanel implements ActionListener,
 					// selected rows
 					int[] rows = callerTable.getSelectedRows();
 					// min und max bestimmen
-					Date min = ((Call) callerList.getFilteredCallVector().get(
+					Date min = (callerList.getFilteredCallVector().get(
 							rows[0])).getCalldate();
-					Date max = ((Call) callerList.getFilteredCallVector().get(
+					Date max = (callerList.getFilteredCallVector().get(
 							rows[0])).getCalldate();
 					Date current;
 					for (int i = 0; i < rows.length; i++) {
-						current = ((Call) callerList.getFilteredCallVector()
+						current = (callerList.getFilteredCallVector()
 								.get(rows[i])).getCalldate();
 						if (current.before(min)) {
 							min = current;
@@ -1053,11 +1053,9 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
 			handleAction(FILTER_SEARCH);
 			callerList.update();
-			((JFritzWindow) parentFrame).setStatus();
+			statusBarController.fireStatusChanged(callerList.getTotalDuration());
 			return;
-
 		}
-
 	}
 
 	/**
@@ -1079,7 +1077,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	public void propertyChange(PropertyChangeEvent evt) {
 		handleAction(FILTER_DATE);
 		callerList.update();
-		((JFritzWindow) parentFrame).setStatus();
+		statusBarController.fireStatusChanged(callerList.getTotalDuration());
 	}
 
 	/**
@@ -1264,7 +1262,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		}
 		syncAllFilters();
 		callerList.update();
-		((JFritzWindow) parentFrame).setStatus();
+		statusBarController.fireStatusChanged(callerList.getTotalDuration());
 	}
 
 	/**
@@ -1286,6 +1284,14 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	public PhoneBookPanel getPhoneBookPanel() {
 		return phoneBookPanel;
+	}
+
+	public StatusBarController getStatusBarController() {
+		return statusBarController;
+	}
+
+	public void setStatusBarController(StatusBarController statusBarController) {
+		this.statusBarController = statusBarController;
 	}
 
 }

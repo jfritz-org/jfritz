@@ -199,10 +199,14 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		callerListPanel = new CallerListPanel(JFritz.getCallerList(), this);
 		phoneBookPanel = new PhoneBookPanel(JFritz.getPhonebook(), this,
 				new Locale(Main.getProperty("locale", "en_US")));
+		phoneBookPanel.getStatusBarController().addStatusBarListener(jFritz);
 		callerListPanel.setPhoneBookPanel(phoneBookPanel);
+		callerListPanel.getStatusBarController().addStatusBarListener(jFritz);
 		quickDialPanel = new QuickDialPanel();
+		quickDialPanel.getStatusBarController().addStatusBarListener(jFritz);
 		// New code here, remove if problematic
 		monitoringPanel = new MonitoringPanel();
+		monitoringPanel.getStatusBarController().addStatusBarListener(jFritz);
 
 		tabber = new JTabbedPane(SwingConstants.BOTTOM);
 		tabber.addTab(Main.getMessage("callerlist"), callerListPanel); //$NON-NLS-1$
@@ -870,6 +874,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	}
 
 	/**
+	 * @deprecated
 	 * Sets standard info into the status bar
 	 *
 	 */
@@ -887,16 +892,18 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		}
 	}
 
+
 	/**
 	 * Sets text in the status bar
-	 *
 	 * @param status
 	 */
-	public void setStatus(String status) {
+	void setStatus(String status) {
 		if (status.equals("")) {
 			setStatus();
 		} else {
-			progressbar.setString(status);
+			if (progressbar != null) {
+				progressbar.setString(status);
+			}
 		}
 	}
 
@@ -1264,12 +1271,12 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			break;
 		}
 		case 2: {
-			JFritz.setCallMonitor(new TelnetCallMonitor());
+			JFritz.setCallMonitor(new TelnetCallMonitor(jFritz));
 			setCallMonitorButtonPushed(true);
 			break;
 		}
 		case 3: {
-			JFritz.setCallMonitor(new SyslogCallMonitor());
+			JFritz.setCallMonitor(new SyslogCallMonitor(jFritz));
 			setCallMonitorButtonPushed(true);
 			break;
 		}
@@ -1618,4 +1625,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		// quickDialPanel
 		// monitoringPanel
 	}
+
+
 }

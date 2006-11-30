@@ -8,6 +8,7 @@ import java.util.Vector;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.utils.StatusBarController;
 
 /**
  * @author Arno Willig
@@ -16,6 +17,7 @@ import de.moonflower.jfritz.Main;
 public class SSDPdiscoverThread extends Thread {
 
 	int timeout;
+	private StatusBarController statusBarController = new StatusBarController();
 
 	Vector devices;
 
@@ -32,12 +34,12 @@ public class SSDPdiscoverThread extends Thread {
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
-		JFritz.getJframe().setStatus(Main.getMessage("detect_boxes")); //$NON-NLS-1$
+		statusBarController.fireStatusChanged(Main.getMessage("detect_boxes")); //$NON-NLS-1$
 		JFritz.getJframe().setBusy(true);
 
 		devices = UPNPUtils.SSDP_discoverFritzBoxes(timeout);
 		JFritz.getJframe().setBusy(false);
-		JFritz.getJframe().setStatus();
+		statusBarController.fireStatusChanged("");
 	}
 
 	/**
@@ -45,5 +47,13 @@ public class SSDPdiscoverThread extends Thread {
 	 */
 	synchronized public final Vector getDevices() {
 		return devices;
+	}
+
+	public StatusBarController getStatusBarController() {
+		return statusBarController;
+	}
+
+	public void setStatusBarController(StatusBarController statusBarController) {
+		this.statusBarController = statusBarController;
 	}
 }

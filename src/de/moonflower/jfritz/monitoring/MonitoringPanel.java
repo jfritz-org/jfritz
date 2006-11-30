@@ -40,11 +40,11 @@ import java.text.SimpleDateFormat;
 import java.util.Timer;
 
 
-import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.cellrenderer.*;
 import de.moonflower.jfritz.monitoring.CurrentCallsTable;
 import de.moonflower.jfritz.monitoring.UpdateInternetTask;
+import de.moonflower.jfritz.utils.StatusBarController;
 
 /**
  * Class for displaying monitoring information like current internet
@@ -72,6 +72,8 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 	private static int count = 0;
 
 	private CurrentCallsTable currentCallsTable;
+
+	private StatusBarController statusBarController = new StatusBarController();
 
 	/**
 	 * Creates the two monitoring sub panels and initializes everything
@@ -198,7 +200,7 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 					int rowIndex, int vColIndex) {
 				Component c = super.prepareRenderer(renderer, rowIndex,
 						vColIndex);
-				if (rowIndex % 2 == 0 && !isCellSelected(rowIndex, vColIndex)) {
+				if ((rowIndex % 2 == 0) && !isCellSelected(rowIndex, vColIndex)) {
 					c.setBackground(new Color(255, 255, 200));
 				} else if (!isCellSelected(rowIndex, vColIndex)) {
 					// If not shaded, match the table's background
@@ -288,8 +290,9 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 
 	}
 
+	//TODO change me!
 	public void setStatus(){
-		JFritz.getJframe().setStatus("Change Me!");
+		statusBarController.fireStatusChanged("Change Me!");
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -316,6 +319,14 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 		timer = new Timer();
 		UpdateInternetTask task = new UpdateInternetTask(this);
 		timer.schedule(task, 1000, 975);
+	}
+
+	public StatusBarController getStatusBarController() {
+		return statusBarController;
+	}
+
+	public void setStatusBarController(StatusBarController statusBarController) {
+		this.statusBarController = statusBarController;
 	}
 
 }

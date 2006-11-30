@@ -12,6 +12,7 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
+import de.moonflower.jfritz.utils.StatusBarController;
 import de.moonflower.jfritz.dialogs.config.TelnetConfigDialog;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
@@ -34,11 +35,13 @@ public class Telnet {
 
 	private PrintStream out;
 
-	private final char prompt = '#'; //$NON-NLS-1$
+	private final char prompt = '#';
 
 	private static final int LOGIN_OK = 0;
 
 	private static final int LOGIN_CANCELED = 1;
+
+	private StatusBarController statusBarController = new StatusBarController();
 
 	public Telnet() {
 		telnet = new TelnetClient();
@@ -54,7 +57,7 @@ public class Telnet {
 		boolean isdone = false;
 		int connectionFailures = 0;
 		while (!isdone) {
-			String server = JFritz.getFritzBox().getAddress(); //$NON-NLS-1$
+			String server = JFritz.getFritzBox().getAddress();
 
 			String password;
 			if (Main.getProperty("telnet.password", "").equals("")) { //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
@@ -71,16 +74,15 @@ public class Telnet {
 			}
 
 			String user = Main.getProperty("telnet.user", ""); //$NON-NLS-1$,  //$NON-NLS-2$
-			password = Encryption
-					.decrypt(Main.getProperty("telnet.password")); //$NON-NLS-1$
+			password = Encryption.decrypt(Main.getProperty("telnet.password")); //$NON-NLS-1$
 			int port = 23;
 			try {
 				Debug.msg("Verbinde mit Telnet ..."); //$NON-NLS-1$
-				if (JFritz.getJframe() != null) {
-					JFritz.getJframe().setStatus("Verbinde mit Telnet ..."); //$NON-NLS-1$
-				}
+				statusBarController.fireStatusChanged(Main
+						.getMessage("Verbinde mit Telnet ...")); //$NON-NLS-1$
+
 				telnet.connect(server, port); // Connect to the specified
-												// server
+				// server
 				in = telnet.getInputStream();
 				out = new PrintStream(telnet.getOutputStream());
 				if (login(user, password) == LOGIN_OK) {
@@ -97,12 +99,12 @@ public class Telnet {
 					connectionFailures++;
 				} else {
 					Debug.msg("FritzBox not found. Get new IP ..."); //$NON-NLS-1$
-					JFritz.getJframe().setStatus(
-							Main.getMessage("box_not_found")); //$NON-NLS-1$
+					statusBarController.fireStatusChanged(Main
+							.getMessage("box_not_found")); //$NON-NLS-1$
 					Debug.err("Address wrong!"); //$NON-NLS-1$
 					JFritz.getJframe().setBusy(false);
 					String box_address = JFritz.getJframe().showAddressDialog(
-							JFritz.getFritzBox().getAddress()); //$NON-NLS-1$,  //$NON-NLS-2$
+							JFritz.getFritzBox().getAddress()); //,
 					if (box_address == null) {
 						JFritz.stopCallMonitor();
 						isdone = true;
@@ -140,7 +142,7 @@ public class Telnet {
 			char ch = (char) in.read();
 			while (true) {
 				sb.append(ch); // FIXME This can be done better!!!
-				if (ch == lastCharLogin || ch == lastCharPasswd || ch == prompt) {
+				if ((ch == lastCharLogin) || (ch == lastCharPasswd) || (ch == prompt)) {
 					if (sb.toString().endsWith(login)) {
 						// wenn Fehlgeschlagen, dann
 						// mehrmaliges Login mit falschem
@@ -165,39 +167,43 @@ public class Telnet {
 					if (sb.toString().endsWith(passwd)) {
 						// schauen, ob WebPasswort abgefragt wird
 						if (sb.toString().endsWith("web password: ")) { //$NON-NLS-1$
-							password = JFritz.getFritzBox().getPassword(); //$NON-NLS-1$
+							password = JFritz.getFritzBox().getPassword();
 
 							while (true) { // test WebPassword
 								try {
-									FritzBoxFirmware
-											.detectFirmwareVersion(
-													JFritz.getFritzBox().getAddress(),
-													JFritz.getFritzBox().getPassword(),
-													JFritz.getFritzBox().getPort()
-											);
-									password = JFritz.getFritzBox().getPassword(); //$NON-NLS-1$
+									FritzBoxFirmware.detectFirmwareVersion(
+											JFritz.getFritzBox().getAddress(),
+											JFritz.getFritzBox().getPassword(),
+											JFritz.getFritzBox().getPort());
+									password = JFritz.getFritzBox()
+											.getPassword();
 									break; // go on with telnet login
 								} catch (WrongPasswordException e1) {
 									Debug.err("Password wrong!"); //$NON-NLS-1$
-									JFritz.getJframe()
-											.setStatus(
-													Main.getMessage("password_wrong")); //$NON-NLS-1$
+
+									statusBarController.fireStatusChanged(Main
+											.getMessage("password_wrong")); //$NON-NLS-1$
 									JFritz.getJframe().setBusy(false);
 
-									String newPassword = JFritz
-											.getJframe()
-											.showPasswordDialog(JFritz.getFritzBox().getPassword()); //$NON-NLS-1$
+									String newPassword = JFritz.getJframe()
+											.showPasswordDialog(
+													JFritz.getFritzBox()
+															.getPassword());
 									Debug.msg("OLD PASS: " //$NON-NLS-1$
-											+ JFritz.getFritzBox().getPassword());
+											+ JFritz.getFritzBox()
+													.getPassword());
 									if (newPassword == null) { // Dialog
-																// aborted
+										// aborted
 										JFritz.stopCallMonitor();
 										return LOGIN_CANCELED;
 									} else {
-										Main.setProperty(
-											"box.password", //$NON-NLS-1$
-											Encryption.encrypt(newPassword));
-										JFritz.getFritzBox().setPassword(newPassword);
+										Main
+												.setProperty(
+														"box.password", //$NON-NLS-1$
+														Encryption
+																.encrypt(newPassword));
+										JFritz.getFritzBox().setPassword(
+												newPassword);
 										JFritz.getFritzBox().detectFirmware();
 									}
 								}
@@ -312,6 +318,14 @@ public class Telnet {
 			connected = false;
 		} catch (Exception e) {
 		}
+	}
+
+	public StatusBarController getStatusBarController() {
+		return statusBarController;
+	}
+
+	public void setStatusBarController(StatusBarController statusBarController) {
+		this.statusBarController = statusBarController;
 	}
 
 }

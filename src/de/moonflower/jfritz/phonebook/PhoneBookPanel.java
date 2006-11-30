@@ -43,9 +43,9 @@ import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.VCardList;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.StatusBarController;
 
 /**
- * @author Arno Willig
  *
  */
 public class PhoneBookPanel extends JPanel implements ListSelectionListener,
@@ -54,10 +54,11 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		public void mouseClicked(MouseEvent e) {
 			if (e.getClickCount() > 1) {
 				int loc = splitPane.getDividerLocation();
-				if (loc < PERSONPANEL_WIDTH)
+				if (loc < PERSONPANEL_WIDTH) {
 					splitPane.setDividerLocation(PERSONPANEL_WIDTH);
-				else
+				} else {
 					splitPane.setDividerLocation(0);
+				}
 			}
 		}
 
@@ -95,6 +96,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 
 	private PhoneBook phonebook;
 	private ResourceBundle messages;
+	private StatusBarController statusBarController = new StatusBarController();
 
 	public PhoneBookPanel(PhoneBook phonebook, JFritzWindow parentFrame, Locale locale) {
 		try {
@@ -141,16 +143,18 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			int index = phonebook.indexOf(newPerson);
 			phoneBookTable.getSelectionModel().setSelectionInterval(index, index);
 			int loc = splitPane.getDividerLocation();
-			if (loc < PERSONPANEL_WIDTH)
+			if (loc < PERSONPANEL_WIDTH) {
 				splitPane.setDividerLocation(PERSONPANEL_WIDTH);
+			}
 			personPanel.focusFirstName();
 		} else if (e.getActionCommand().equals("deletePerson")) { //$NON-NLS-1$
 			removeSelectedPersons();
 		} else if (e.getActionCommand().equals("editPerson")) { //$NON-NLS-1$
 			// Edit Panel anzeigen, falls verborgen
 			int loc = splitPane.getDividerLocation();
-			if (loc < PERSONPANEL_WIDTH)
+			if (loc < PERSONPANEL_WIDTH) {
 				splitPane.setDividerLocation(PERSONPANEL_WIDTH);
+			}
 			;
 		} else if (e.getActionCommand().equals("filter_private")) { //$NON-NLS-1$
 			Main.setProperty("filter_private", Boolean //$NON-NLS-1$
@@ -277,8 +281,8 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		});
 		int rows[] = getPhoneBookTable().getSelectedRows();
 		for (int i = 0; i < rows.length; i++) {
-			Person person = (Person) phonebook.getPersonAt(rows[i]);
-			if (person != null && !person.getFullname().equals("")) { //$NON-NLS-1$
+			Person person = phonebook.getPersonAt(rows[i]);
+			if ((person != null) && !person.getFullname().equals("")) { //$NON-NLS-1$
 				list.addVCard(person);
 			}
 		}
@@ -343,7 +347,9 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 				return messages.getString("xml_files");  //$NON-NLS-1$
 			}
 		});
-		if (fc.showOpenDialog(parentFrame) != JFileChooser.APPROVE_OPTION) return;
+		if (fc.showOpenDialog(parentFrame) != JFileChooser.APPROVE_OPTION) {
+			return;
+		}
 		Main.setProperty("option.phonebook.import_xml_path", fc.getSelectedFile().getAbsolutePath());  //$NON-NLS-1$
 		phonebook.loadFromXMLFile(fc.getSelectedFile().getAbsolutePath());
 		phonebook.saveToXMLFile(Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
@@ -416,7 +422,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	public void setStatus() {
 		PhoneBook pb = (PhoneBook) phoneBookTable.getModel();
 		int entries = pb.getFilteredPersons().size();
-		parentFrame.setStatus(messages.getString("entries").  //$NON-NLS-1$
+		statusBarController.fireStatusChanged(messages.getString("entries").  //$NON-NLS-1$
 				replaceAll("%N", Integer.toString(entries)));  //$NON-NLS-1$
 	}
 
@@ -438,8 +444,8 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 				setStatus();
 			}
 			else {
-				parentFrame.setStatus( messages.getString("phonebook_chosenEntries")  //$NON-NLS-1$
-						.replaceAll("%N", Integer.toString(rows.length))); //$NON-NLS-1$,  //$NON-NLS-2$
+				statusBarController.fireStatusChanged(messages.getString("phonebook_chosenEntries")  //$NON-NLS-1$
+						.replaceAll("%N", Integer.toString(rows.length))); //$NON-NLS-1$,
 			}
 		}
 	}
@@ -461,5 +467,13 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		personPanel = new PersonPanel(new Person(), phonebook);
 		editPanel.add(personPanel, BorderLayout.CENTER);
 		return editPanel;
+	}
+
+	public StatusBarController getStatusBarController() {
+		return statusBarController;
+	}
+
+	public void setStatusBarController(StatusBarController statusBarController) {
+		this.statusBarController = statusBarController;
 	}
 }
