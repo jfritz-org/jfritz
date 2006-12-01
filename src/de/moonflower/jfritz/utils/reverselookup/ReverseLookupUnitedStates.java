@@ -43,7 +43,7 @@ public final class ReverseLookupUnitedStates {
 		}
 		Debug.msg("USA reverselookup number: "+number);
 
-		String urlstr = SEARCH_URL + number;
+		String urlstr = SEARCH_URL + number.replaceAll("\\+","%2B");
 		Person newPerson;
 
 		String firstname = "",

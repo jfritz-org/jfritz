@@ -50,7 +50,7 @@ public final class ReverseLookupNetherlands {
 		}
 		Debug.msg("Netherland reverselookup number: "+number);
 
-		String urlstr = SEARCH_URL + number;
+		String urlstr = SEARCH_URL + number.replaceAll("\\+","%2B");
 		Person newPerson;
 
 		String firstname = "",

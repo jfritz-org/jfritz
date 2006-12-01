@@ -46,7 +46,7 @@ public final class ReverseLookupFrance {
 		}
 		Debug.msg("France reverselookup number: "+number);
 
-		String urlstr = SEARCH_URL_PRENUMBER + number + SEARCH_URL_POSTNUMBER;
+		String urlstr = SEARCH_URL_PRENUMBER + number.replaceAll("\\+","%2B") + SEARCH_URL_POSTNUMBER;
 		Person newPerson;
 
 		String firstname = "",

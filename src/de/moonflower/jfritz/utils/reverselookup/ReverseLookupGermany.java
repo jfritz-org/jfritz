@@ -56,8 +56,7 @@ public final class ReverseLookupGermany {
 		String data = ""; //$NON-NLS-1$
 		Person newPerson;
 
-		String urlstr = SEARCH_URL + number;
-
+		String urlstr = SEARCH_URL + number.replaceAll("\\+","%2B");
 		try {
 			url = new URL(urlstr);
 			if (url != null) {

@@ -135,6 +135,7 @@
  * - Bugfix: Autoupdate in richtigen Ordner
  * - Bugfix: Firmwareerkennung korrigiert
  * - Bugfix: HTML-Sonderzeichen beim ReverseLookup
+ * - Bugfix: ReverseLookup für ausländische Nummern
  *
  * Jfritz 0.6.2
  * - Neue Strings:
@@ -570,7 +571,7 @@ public class Main {
 
 	public final static String PROGRAM_VERSION = "0.6.2.01"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.30 2006/11/27 18:51:29 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.31 2006/12/01 10:50:21 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

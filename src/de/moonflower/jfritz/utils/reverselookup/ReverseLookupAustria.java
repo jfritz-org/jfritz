@@ -55,7 +55,8 @@ public final class ReverseLookupAustria {
 		Person newPerson;
 
 		String urlstr = "http://www.dasoertliche.de/DB4Web/es/oetb2suche/home.htm?main=Antwort&s=2&kw_invers=" //$NON-NLS-1$
-				+ number;
+				+ number.replaceAll("\\+","%2B");
+;
 		try {
 			url = new URL(urlstr);
 			if (url != null) {
