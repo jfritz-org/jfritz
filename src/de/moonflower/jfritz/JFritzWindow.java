@@ -1621,7 +1621,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		callerListPanel.saveProperties();
 
 		// TODO: möglicherweise speichern der Einstellungen für
-		// phoneBookPanel
+		// phonebookPanel
 		// quickDialPanel
 		// monitoringPanel
 	}

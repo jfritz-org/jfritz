@@ -27,10 +27,6 @@ public class ShutdownThread extends Thread {
             }
             Main.saveProperties();
             JFritz.getJframe().saveQuickDials();
-
-			if (JFritz.getCallMonitor() != null) {
-                JFritz.getCallMonitor().stopCallMonitor();
-			}
 		}
 		Debug.msg("Shutdown thread done."); //$NON-NLS-1$
 

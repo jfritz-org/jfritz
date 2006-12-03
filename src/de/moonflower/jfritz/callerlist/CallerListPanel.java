@@ -15,6 +15,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -40,6 +42,7 @@ import com.toedter.calendar.JDateChooser;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+
 import de.moonflower.jfritz.callerlist.filter.CallByCallFilter;
 import de.moonflower.jfritz.callerlist.filter.CallFilter;
 import de.moonflower.jfritz.callerlist.filter.CallInFailedFilter;
@@ -57,6 +60,7 @@ import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.JFritzClipboard;
 import de.moonflower.jfritz.utils.StatusBarController;
@@ -147,6 +151,10 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	private static final String LAST_MONTH = "date_filter_last_month";
 
+	private static final String FILTER_DATE_SPECIAL = "date_filter_special";
+
+	private static final String PROPERTIES_FILE = "jfritz.callerlist.properties.xml";
+
 	private String dateSpecialSaveString;
 
 	private CallerList callerList;
@@ -179,8 +187,6 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	private static final int FILTERCOUNT = 11;
 
-	private static final String FILTER_DATE_SPECIAL = "date_filter_special";
-
 	private ThreeStateButton dateFilterButton, callByCallFilterButton,
 			callInFilterButton, callOutFilterButton, callInFailedFilterButton,
 			anonymFilterButton, fixedFilterButton, handyFilterButton,
@@ -200,6 +206,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	private JFrame parentFrame;
 	private StatusBarController statusBarController = new StatusBarController();
 
+	private JFritzProperties properties;
+
 	/**
 	 * A callerListPanel is a view for a callerlist, it has its own
 	 * resourceBundle to get the localized strings for its components. The
@@ -217,6 +225,15 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	public CallerListPanel(CallerList callerList, JFrame parent) {
 		super();
 		parentFrame = parent;
+		properties = new JFritzProperties();
+		try {
+			properties.loadFromXML(Main.SAVE_DIR + PROPERTIES_FILE);
+		} catch (FileNotFoundException e) {
+			Debug.err("File " + PROPERTIES_FILE //$NON-NLS-1$
+					+ " not found, using default values"); //$NON-NLS-1$
+		} catch (Exception e) {
+			Debug.err("Exception: " + e.toString()); //$NON-NLS-1$
+		}
 		this.callerList = callerList;
 		createFilters(callerList);
 		setLayout(new BorderLayout());
@@ -1171,26 +1188,26 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 */
 	private void saveButtonStatus() {
 		Debug.msg("writing Buttons");
-		Main.setProperty(FILTER_SEARCH_TEXT, searchFilterTextField.getText());
-		Main.setProperty(FILTER_SEARCH, "" + searchFilterButton.getState());
-		Main.setProperty(FILTER_COMMENT, "" + commentFilterButton.getState());
-		Main.setProperty(FILTER_DATE, "" + dateFilterButton.getState());
+		properties.setProperty(FILTER_SEARCH_TEXT, searchFilterTextField.getText());
+		properties.setProperty(FILTER_SEARCH, "" + searchFilterButton.getState());
+		properties.setProperty(FILTER_COMMENT, "" + commentFilterButton.getState());
+		properties.setProperty(FILTER_DATE, "" + dateFilterButton.getState());
 		DateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm");
 		Date start = startDateChooser.getDate();
 		Date end = endDateChooser.getDate();
 
-		Main.setProperty(FILTER_DATE_START, df.format(start));
-		Main.setProperty(FILTER_DATE_END, df.format(end));
-		Main.setProperty(FILTER_DATE_SPECIAL, dateSpecialSaveString);
-		Main.setProperty(FILTER_SIP, "" + sipFilterButton.getState());
-		Main.setProperty(FILTER_CALLBYCALL, ""
+		properties.setProperty(FILTER_DATE_START, df.format(start));
+		properties.setProperty(FILTER_DATE_END, df.format(end));
+		properties.setProperty(FILTER_DATE_SPECIAL, dateSpecialSaveString);
+		properties.setProperty(FILTER_SIP, "" + sipFilterButton.getState());
+		properties.setProperty(FILTER_CALLBYCALL, ""
 				+ callByCallFilterButton.getState());
-		Main.setProperty(FILTER_CALLOUT, "" + callOutFilterButton.getState());
-		Main.setProperty(FILTER_ANONYM, "" + anonymFilterButton.getState());
-		Main.setProperty(FILTER_FIXED, "" + fixedFilterButton.getState());
-		Main.setProperty(FILTER_HANDY, "" + handyFilterButton.getState());
-		Main.setProperty(FILTER_CALLIN_NOTHING, "" + callInFilterButton.getState());
-		Main.setProperty(FILTER_CALLINFAILED, ""
+		properties.setProperty(FILTER_CALLOUT, "" + callOutFilterButton.getState());
+		properties.setProperty(FILTER_ANONYM, "" + anonymFilterButton.getState());
+		properties.setProperty(FILTER_FIXED, "" + fixedFilterButton.getState());
+		properties.setProperty(FILTER_HANDY, "" + handyFilterButton.getState());
+		properties.setProperty(FILTER_CALLIN_NOTHING, "" + callInFilterButton.getState());
+		properties.setProperty(FILTER_CALLINFAILED, ""
 				+ callInFailedFilterButton.getState());
 	}
 
@@ -1200,32 +1217,32 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	private void loadButtonStatus() {
 		Debug.msg("reading Buttons");
 		int state;
-		state = JFritzUtils.parseInt(Main.getProperty(FILTER_COMMENT, "0"));
+		state = JFritzUtils.parseInt(properties.getProperty(FILTER_COMMENT, "0"));
 		commentFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getProperty(FILTER_DATE, "0"));
+		state = JFritzUtils.parseInt(properties.getProperty(FILTER_DATE, "0"));
 		dateFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getProperty(FILTER_SIP, "0"));
+		state = JFritzUtils.parseInt(properties.getProperty(FILTER_SIP, "0"));
 		sipFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getProperty(FILTER_CALLBYCALL, "0"));
+		state = JFritzUtils.parseInt(properties.getProperty(FILTER_CALLBYCALL, "0"));
 		callByCallFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getProperty(FILTER_CALLOUT, "0"));
+		state = JFritzUtils.parseInt(properties.getProperty(FILTER_CALLOUT, "0"));
 		callOutFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getProperty(FILTER_ANONYM, "0"));
+		state = JFritzUtils.parseInt(properties.getProperty(FILTER_ANONYM, "0"));
 		anonymFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getProperty(FILTER_FIXED, "0"));
+		state = JFritzUtils.parseInt(properties.getProperty(FILTER_FIXED, "0"));
 		fixedFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getProperty(FILTER_HANDY, "0"));
+		state = JFritzUtils.parseInt(properties.getProperty(FILTER_HANDY, "0"));
 		handyFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getProperty(FILTER_CALLIN_NOTHING, "0"));
+		state = JFritzUtils.parseInt(properties.getProperty(FILTER_CALLIN_NOTHING, "0"));
 		callInFilterButton.setState(state);
 		state = JFritzUtils
-				.parseInt(Main.getProperty(FILTER_CALLINFAILED, "0"));
+				.parseInt(properties.getProperty(FILTER_CALLINFAILED, "0"));
 		callInFailedFilterButton.setState(state);
-		searchFilterTextField.setText(Main.getProperty(FILTER_SEARCH_TEXT, ""));
+		searchFilterTextField.setText(properties.getProperty(FILTER_SEARCH_TEXT, ""));
 
-		state = JFritzUtils.parseInt(Main.getProperty(FILTER_SEARCH, "0"));
+		state = JFritzUtils.parseInt(properties.getProperty(FILTER_SEARCH, "0"));
 		searchFilterButton.setState(state);
-		dateSpecialSaveString = Main.getProperty(FILTER_DATE_SPECIAL, " ");
+		dateSpecialSaveString = properties.getProperty(FILTER_DATE_SPECIAL, " ");
 		// Debug.msg(dateSpecialSaveString);
 		if (dateSpecialSaveString.equals(THIS_DAY)) {
 			setThisDayFilter();
@@ -1244,9 +1261,9 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			Date start = new Date();
 			Date end = new Date();
 			try {
-				start = df.parse(Main.getProperty(FILTER_DATE_START,
+				start = df.parse(properties.getProperty(FILTER_DATE_START,
 						"11.11.11 11:11"));
-				end = df.parse(Main.getProperty(FILTER_DATE_END,
+				end = df.parse(properties.getProperty(FILTER_DATE_END,
 						"11.11.11 11:11"));
 				startDateChooser.setDate(start); // durch setDate wird über
 													// den
@@ -1272,6 +1289,12 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	public void saveProperties() {
 		saveButtonStatus();
 		callerTable.saveColumnStatus();
+		try {
+			Debug.msg("Save other properties"); //$NON-NLS-1$
+			properties.storeToXML(Main.SAVE_DIR + PROPERTIES_FILE);
+		} catch (IOException e) {
+			Debug.err("Couldn't save Properties"); //$NON-NLS-1$
+		}
 	}
 
 	/**
@@ -1280,10 +1303,6 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 */
 	public void showHideColumns() {
 		callerTable.showHideColumns();
-	}
-
-	public PhoneBookPanel getPhoneBookPanel() {
-		return phoneBookPanel;
 	}
 
 	public StatusBarController getStatusBarController() {

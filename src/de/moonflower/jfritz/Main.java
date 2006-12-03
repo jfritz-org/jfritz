@@ -571,7 +571,7 @@ public class Main {
 
 	public final static String PROGRAM_VERSION = "0.6.2.01"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.31 2006/12/01 10:50:21 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.32 2006/12/03 16:02:59 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -1115,6 +1115,19 @@ public class Main {
 					properties.getProperty("column.Kommentar.width")); //$NON-NLS-1$
 			removeProperty("column.Kommentar.width"); //$NON-NLS-1$
 		}
+
+		Enumeration en = properties.keys();
+		while (en.hasMoreElements()) {
+			String key = (String) en.nextElement();
+			if ( key.toLowerCase().startsWith("filter")) {
+				if ( !key.equals("filter_private") && !key.equals("filter.Phonebook.search"))
+					properties.remove(key);
+			}
+			if ( key.equals("date_filter_special") ) {
+				properties.remove("date_filter_special");
+			}
+		}
+		saveProperties();
 	}
 
 	/**
