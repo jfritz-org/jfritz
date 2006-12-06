@@ -293,6 +293,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 			firePropertyChange();
 		} else if (e.getActionCommand().equals("del")) { //$NON-NLS-1$
 			int row = numberTable.getSelectedRow();
+			cancelEditing();
 			// Shift standard number if deleted
 			if (clonedPerson.getStandard().equals(
 					((PhoneNumber) clonedPerson.getNumbers().get(row))

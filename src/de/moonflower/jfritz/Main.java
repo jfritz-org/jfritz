@@ -136,6 +136,7 @@
  * - Bugfix: Firmwareerkennung korrigiert
  * - Bugfix: HTML-Sonderzeichen beim ReverseLookup
  * - Bugfix: ReverseLookup für ausländische Nummern
+ * - Bugfix: Löschen einer Nummer im Telefonbuch
  *
  * Jfritz 0.6.2
  * - Neue Strings:
@@ -571,7 +572,7 @@ public class Main {
 
 	public final static String PROGRAM_VERSION = "0.6.2.01"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.32 2006/12/03 16:02:59 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.33 2006/12/06 11:42:02 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
