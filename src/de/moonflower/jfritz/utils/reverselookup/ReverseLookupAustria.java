@@ -265,8 +265,11 @@ public final class ReverseLookupAustria {
 
 	public static String getCity(String number){
 
-		Debug.msg("Looking up city in numberMap: "+number);
+		Debug.msg("Looking up city in austrian numberMap: "+number);
 		String city = "";
+		if ( number.startsWith("+43")) {
+			number = "0"+number.substring(3);
+		}
 		if(number.startsWith("0") && numberMap != null){
 			if(numberMap.containsKey(number.substring(0, 3)))
 				city = numberMap.get(number.substring(0,3));
