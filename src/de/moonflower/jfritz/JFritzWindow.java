@@ -202,7 +202,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		phoneBookPanel.getStatusBarController().addStatusBarListener(jFritz);
 		callerListPanel.setPhoneBookPanel(phoneBookPanel);
 		callerListPanel.getStatusBarController().addStatusBarListener(jFritz);
-		quickDialPanel = new QuickDialPanel();
+		quickDialPanel = new QuickDialPanel(JFritz.getQuickDials());
 		quickDialPanel.getStatusBarController().addStatusBarListener(jFritz);
 		// New code here, remove if problematic
 		monitoringPanel = new MonitoringPanel();
@@ -1194,11 +1194,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	public JButton getFetchButton() {
 		return fetchButton;
-	}
-
-	public void saveQuickDials() {
-		quickDialPanel.getDataModel().saveToXMLFile(
-				Main.SAVE_DIR + JFritz.QUICKDIALS_FILE);
 	}
 
 	public void switchMonitorButton() {

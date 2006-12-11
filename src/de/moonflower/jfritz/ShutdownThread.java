@@ -26,7 +26,6 @@ public class ShutdownThread extends Thread {
                 Debug.msg("Multiple instance lock: release lock."); //$NON-NLS-1$
             }
             Main.saveProperties();
-            JFritz.getJframe().saveQuickDials();
 		}
 		Debug.msg("Shutdown thread done."); //$NON-NLS-1$
 

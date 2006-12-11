@@ -26,7 +26,6 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellRenderer;
 
-import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.QuickDial;
 import de.moonflower.jfritz.utils.Debug;
@@ -48,17 +47,16 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 
 	private StatusBarController statusBarController = new StatusBarController();
 
-	public QuickDialPanel() {
+	public QuickDialPanel(QuickDials dataModel) {
 		setLayout(new BorderLayout());
-		dataModel = new QuickDials();
+		this.dataModel = dataModel;
 		// dataModel.getQuickDialDataFromFritzBox();
 
-		dataModel.addTableModelListener(new TableModelListener() {
+		this.dataModel.addTableModelListener(new TableModelListener() {
 			public void tableChanged(TableModelEvent e) {
 				updateButtons();
 			}
 		});
-		dataModel.loadFromXMLFile(Main.SAVE_DIR + JFritz.QUICKDIALS_FILE);
 		add(createQuickDialToolBar(), BorderLayout.NORTH);
 		add(createQuickDialTable(), BorderLayout.CENTER);
 	}
@@ -186,13 +184,6 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 
 	}
 
-	/**
-	 * @return Returns the dataModel.
-	 */
-	public final QuickDials getDataModel() {
-		return dataModel;
-	}
-
 	public void updateButtons() {
 
 		delButton.setEnabled((quickdialtable.getSelectedRow() > -1)
@@ -211,7 +202,7 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 	}
 	public void setStatus() {
 		statusBarController.fireStatusChanged(Main.getMessage("entries").  //$NON-NLS-1$
-				replaceAll("%N", Integer.toString(getDataModel().getQuickDials().size())));  //$NON-NLS-1$
+				replaceAll("%N", Integer.toString(dataModel.getQuickDials().size())));  //$NON-NLS-1$
 	}
 
 	public StatusBarController getStatusBarController() {

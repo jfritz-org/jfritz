@@ -106,8 +106,7 @@
  *
  * CHANGELOG:
  *
- * JFritz 0.6.2.01
- * TODO:
+ * * TODO:
  * - Lautstärke der Sounds halbieren
  * - Alle Zugriffe auf FritzBox in eigenen Threads
  * - Bug: Eingabe der IP-Nummer nach Ruhezustand
@@ -126,6 +125,12 @@
  * - Überprüfen, geht wohl nicht mehr: Rückwärtssuche für Österreich über dasoertliche.de wieder eingebaut
  * - Connection-Timeout für ReverseLookup setzen
  * TODO-END
+ *
+ * JFritz 0.6.2.02
+ * - Bugfix: Kurzwahlen
+ *
+ *
+ * JFritz 0.6.2.01
  * - Neu: Polnische Sprachdateien aktualisiert
  * - Neu: Italienische Sprachdateien aktualisiert
  * - New: Import english push-service-csv-file
@@ -572,7 +577,7 @@ public class Main {
 
 	public final static String PROGRAM_VERSION = "0.6.2.01"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.33 2006/12/06 11:42:02 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.34 2006/12/11 09:49:03 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

@@ -37,6 +37,7 @@ import de.moonflower.jfritz.callmonitor.CallMonitorList;
 import de.moonflower.jfritz.callmonitor.DisconnectMonitor;
 import de.moonflower.jfritz.callmonitor.DisplayCallsMonitor;
 import de.moonflower.jfritz.dialogs.configwizard.ConfigWizard;
+import de.moonflower.jfritz.dialogs.quickdial.QuickDials;
 import de.moonflower.jfritz.dialogs.simple.MessageDlg;
 import de.moonflower.jfritz.dialogs.sip.SipProviderTableModel;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
@@ -101,8 +102,9 @@ public final class JFritz implements  StatusListener{
 	private static FritzBox fritzBox;
 
 	private static int oldFrameState; // saves old frame state to restore old
+									  // state
 
-	// state
+	private static QuickDials quickDials;
 
 	public static CallMonitorList callMonitorList;
 
@@ -151,6 +153,9 @@ public final class JFritz implements  StatusListener{
 						.encrypt(""))), Main.getProperty("box.port", "80")); //$NON-NLS-1$
 		sipprovider = new SipProviderTableModel();
 		sipprovider.loadFromXMLFile(Main.SAVE_DIR + SIPPROVIDER_FILE);
+
+		quickDials = new QuickDials();
+		quickDials.loadFromXMLFile(Main.SAVE_DIR + JFritz.QUICKDIALS_FILE);
 
 		callerlist = new CallerList();
 		phonebook = new PhoneBook(PHONEBOOK_FILE);
@@ -547,6 +552,8 @@ public final class JFritz implements  StatusListener{
 		Debug.msg("Shut down JFritz");
 
 		// TODO maybe some more cleanup is needed
+		quickDials.saveToXMLFile(Main.SAVE_DIR + QUICKDIALS_FILE);
+
 		jframe.saveProperties();
 
 		if (callMonitor != null) {
@@ -636,4 +643,7 @@ public final class JFritz implements  StatusListener{
 		jframe.setStatus(statusMsg);
 	}
 
+	public static QuickDials getQuickDials() {
+		return quickDials;
+	}
 }

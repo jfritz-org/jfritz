@@ -500,17 +500,16 @@ public class PhoneNumber implements Comparable {
 			String quickDialNumber = number.substring(3, 5);
 			Debug.msg("Quickdail number: " + quickDialNumber);
 
-			if (JFritz.getJframe().getQuickDialPanel().getDataModel()
+			if (JFritz.getQuickDials()
 					.getQuickDials().size() == 0) {
 
 				// get QuickDials from FritzBox
 				Debug
 						.msg("No Quickdials present in JFritz, retrieving the list from the box");
-				JFritz.getJframe().getQuickDialPanel().getDataModel()
+				JFritz.getQuickDials()
 						.getQuickDialDataFromFritzBox();
 			}
-			Enumeration en = JFritz.getJframe().getQuickDialPanel()
-					.getDataModel().getQuickDials().elements();
+			Enumeration en = JFritz.getQuickDials().getQuickDials().elements();
 			while (en.hasMoreElements()) {
 				QuickDial quickDial = (QuickDial) en.nextElement();
 				if (quickDialNumber.equals(quickDial.getQuickdial())) {
