@@ -149,21 +149,23 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 
             Call call = JFritz.getCallMonitorList().getCall(callId);
             PhoneNumber pn = new PhoneNumber(number);
-            if (pn.getIntNumber().equals(call.getPhoneNumber().getIntNumber())) {
-                try {
-                    if (JFritz.getCallMonitorList().getCall(callId) != null) {
-                        JFritz.getCallMonitorList().getCall(callId)
-                                .setCalldate(
-                                        new SimpleDateFormat(
-                                                "dd.MM.yy HH:mm:ss")
-                                                .parse(split[0]));
-                        JFritz.getCallMonitorList().getCall(callId).setPort(
-                                port);
-                    }
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                JFritz.getCallMonitorList().establishCall(callId);
+            if ( call != null ) {
+            	if (pn.getIntNumber().equals(call.getPhoneNumber().getIntNumber())) {
+            		try {
+            			if (JFritz.getCallMonitorList().getCall(callId) != null) {
+            				JFritz.getCallMonitorList().getCall(callId)
+            					.setCalldate(
+            						new SimpleDateFormat(
+            							"dd.MM.yy HH:mm:ss")
+            								.parse(split[0]));
+            				JFritz.getCallMonitorList().getCall(callId).setPort(
+            						port);
+            			}
+            		} catch (ParseException e) {
+            			e.printStackTrace();
+            		}
+            		JFritz.getCallMonitorList().establishCall(callId);
+            	}
             }
         }
     }

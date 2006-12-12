@@ -128,6 +128,8 @@
  *
  * JFritz 0.6.2.02
  * - Bugfix: Kurzwahlen
+ * - Bugfix: Österreichischer Reverselookup
+ * - Bugfix: CallMonitor outgoing calls
  *
  *
  * JFritz 0.6.2.01
@@ -575,9 +577,9 @@ public class Main {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.6.2.01"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.6.2.02"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.34 2006/12/11 09:49:03 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.35 2006/12/12 10:16:04 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
