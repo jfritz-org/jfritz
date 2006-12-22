@@ -1,6 +1,7 @@
 package de.moonflower.jfritz.utils.reverselookup;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -30,6 +31,11 @@ public final class ReverseLookupGermany {
 	public final static String SEARCH_URL="http://www.tao.dastelefonbuch.de/?sourceid=Mozilla-search&cmd=search&kw=";
 
 	public final static String FILE_HEADER = "Vorwahl;Ortsnetz";
+
+	public static String s1 = "<!-- ****** Treffer Einträge ****** -->",
+	s2 = "<!-- ****** Ende Treffer Einträge ****** -->";
+
+
 
 	private static HashMap<String, String> numberMap;
 
@@ -108,29 +114,36 @@ public final class ReverseLookupGermany {
 					boolean flg_found_end   = false;
 					String str = ""; //$NON-NLS-1$
 
+					//Strings must be cast to ISO-8859-1 or else umlauts wont match up
+					String searchString = new String(s1.getBytes(), "ISO-8859-1");
+					String endString = new String(s2.getBytes(), "ISO-8859-1");
+
+
 					while ((flg_found_end == false) && (null != ((str = d.readLine())))) {
+
 						// Search for starttag
 						if (flg_found_start == false
-								&& (str.indexOf("<!-- ****** Treffer Einträge ****** -->")!=-1))
+								&& (str.indexOf(searchString)!=-1))
 							flg_found_start = true;
 
 						if (flg_found_start == true) {
 							data += str;
 							// Seach for endtag
-							if (str.indexOf("<!-- ****** Ende Treffer Einträge ****** -->")!=-1)
+							if (str.indexOf(endString)!=-1)
 								flg_found_end = true;
 						}
 					}
+
+					Debug.msg(data);
 					d.close();
 					Debug.msg("Begin processing responce from dastelefonbuch.de");
-					//This just makes the debug output unreadable!
-					//Debug.msg("dastelefonbuch.de Webpage: " + data); //$NON-NLS-1$
 					Pattern p = Pattern
 							.compile("title=\\\"([^<]*)\\\">[^\"]*[^>]*>([^<]*)?[^\"]*.*title=\\\"([^<]*)\\\">([^-*]*)"); //$NON-NLS-1$
 
 					Matcher m = p.matcher(data);
 					// Get name and address
 					if (m.find()) {
+						Debug.msg("Found a match");
 						String line1 = m.group(1).trim();
 						Debug.msg(3, "Pattern1: " + line1); //$NON-NLS-1$
 
@@ -214,7 +227,7 @@ public final class ReverseLookupGermany {
 
 	/**
 	 * This function attemps to fill the hashmap numberMap up with the data found
-	 * in number/Vorwahlen.csv
+	 * in number/germany/areacodes_germany.csv
 	 * The funtion uses the area codes listed in the file as keys and the cities as values
 	 *
 	 *
@@ -225,10 +238,12 @@ public final class ReverseLookupGermany {
 		Debug.msg("Loading the german number to city list");
 		numberMap = new HashMap<String, String>(5300);
 		BufferedReader br = null;
-		FileReader fr = null;
+		FileInputStream fi = null;
+
 		try{
-			fr = new FileReader(JFritzUtils.getFullPath("/number") +"/germany/areacodes_germany.csv");
-			br = new BufferedReader(fr);
+			fi = new FileInputStream(JFritzUtils.getFullPath("/number") +"/germany/areacodes_germany.csv");
+			br = new BufferedReader(new InputStreamReader(fi, "ISO-8859-1"));
+
 			String line;
 			String[] entries;
 			int lines = 0;
@@ -255,8 +270,8 @@ public final class ReverseLookupGermany {
 			Debug.msg(e.toString());
 		}finally{
 			try{
-				if(fr!=null)
-					fr.close();
+				if(fi!=null)
+					fi.close();
 				if(br!=null)
 					br.close();
 			}catch (IOException ioe){
@@ -292,6 +307,8 @@ public final class ReverseLookupGermany {
 
 		return city;
 	}
+
+	//Is this still necessary? Brian
 
 	/*
 	 * (13:30:37) DEBUG: Looking up 09187959984...
