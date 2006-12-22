@@ -130,7 +130,7 @@
  * - Bugfix: Kurzwahlen
  * - Bugfix: Österreichischer Reverselookup
  * - Bugfix: CallMonitor outgoing calls
- *
+ * - Bugfix: Reverselookup on mac now run with correct character encoding
  *
  * JFritz 0.6.2.01
  * - Neu: Polnische Sprachdateien aktualisiert
@@ -579,7 +579,7 @@ public class Main {
 
 	public final static String PROGRAM_VERSION = "0.6.2.02"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.35 2006/12/12 10:16:04 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.36 2006/12/22 21:38:47 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
