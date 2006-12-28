@@ -149,14 +149,20 @@ public final class ReverseLookupFrance {
 					//parse Street, zip code and city
 					Matcher mAddress = pAddress.matcher(data);
 					if(mAddress.find()){
-						street = JFritzUtils.capitalize(HTMLUtil.stripEntities(mAddress.group(1).trim().toLowerCase()));
-						Debug.msg("Street: "+street);
-						zipCode  = HTMLUtil.stripEntities(mAddress.group(2).trim().split("\\s",2)[0]);
-						Debug.msg("Zip Code: "+ zipCode);
-						city = JFritzUtils.capitalize(HTMLUtil.stripEntities(mAddress.group(2).trim().split("\\s",2)[1].toLowerCase()));
-						Debug.msg("City: "+city);
+						if (mAddress.groupCount() >= 1) {
+							street = JFritzUtils.capitalize(HTMLUtil.stripEntities(mAddress.group(1).trim().toLowerCase()));
+							Debug.msg("Street: "+street);
+						}
+						if (mAddress.groupCount() >= 2) {
+							String[] splitAddress = mAddress.group(2).trim().split("\\s",2);
+							zipCode  = HTMLUtil.stripEntities(splitAddress[0]);
+							Debug.msg("Zip Code: "+ zipCode);
+							if ( splitAddress.length == 2) {
+								city = JFritzUtils.capitalize(HTMLUtil.stripEntities(splitAddress[1].toLowerCase()));
+								Debug.msg("City: "+city);
+							}
+						}
 					}
-
 				} catch (IOException e1) {
 					Debug.err("Error while retrieving " + urlstr); //$NON-NLS-1$
 				}
