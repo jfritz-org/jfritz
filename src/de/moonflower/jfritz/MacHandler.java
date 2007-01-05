@@ -4,8 +4,12 @@ import javax.swing.SwingUtilities;
 
 import java.lang.reflect.*;
 
+import com.apple.eawt.*;
+
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.Debug;
+
+
 
 /**
  * @author rob
@@ -101,6 +105,14 @@ public class MacHandler {
 						jfritz.maybeExit(0);
 					}
 				});
+
+				//This is a workaround so that  we can convince OSX to let jfritz shutdown
+				//before stopping the log off / shut down process
+				//This would be unnecessary if we didnt exit JFritz with System.exit
+				//If we ever do that, you can remove this code here
+				//NOTE: Code throws a harmless exception as a side effect
+				((ApplicationEvent) args[0]).setHandled(true);
+
 				throw new IllegalStateException("Let the quit handler do it"); //$NON-NLS-1$
 			}
 
