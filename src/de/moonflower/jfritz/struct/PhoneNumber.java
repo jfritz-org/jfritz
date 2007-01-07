@@ -4,6 +4,10 @@
  */
 package de.moonflower.jfritz.struct;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Enumeration;
 import java.util.HashMap;
 
@@ -43,6 +47,15 @@ public class PhoneNumber implements Comparable {
 			UKRAINE_CODE = "+380", USA_CODE = "+1", INT_FREECALL = "+800";
 
 	static HashMap<String, String> mobileMap;
+	static HashMap<String, String> worldFlagMap;
+
+	static String FLAG_FILE_HEADER = "Country Code;Flag file; Full Text";
+
+	private String flagFileName;
+
+	private String Description;
+
+
 
 	/**
 	 * @deprecated use the other constructor from now on
@@ -57,7 +70,7 @@ public class PhoneNumber implements Comparable {
 		this.type = type;
 		// if (number.matches(numberMatcher)) this.number = number;
 		this.number = number;
-		createMobileMap();
+		//createMobileMap();
 		refactorNumber();
 	}
 
@@ -96,7 +109,7 @@ public class PhoneNumber implements Comparable {
 			Debug.msg("Parsed the dial out prefix, new number: " + this.number);
 		}
 
-			createMobileMap();
+			//createMobileMap();
 			refactorNumber();
 	}
 
@@ -112,7 +125,8 @@ public class PhoneNumber implements Comparable {
 		refactorNumber();
 	}
 
-	/**
+	/**@deprecated completely unnecessary with the new i18n scheme
+	 *
 	 * Creates a map of german cellphone providers
 	 */
 	private void createMobileMap() {
@@ -151,7 +165,7 @@ public class PhoneNumber implements Comparable {
 
 	/**
 	 * Method cuts unnecessary characters from the number, resolves quickdials,
-	 * and cuts the call by from the number
+	 * cuts the call by call from the number and then processes the country info
 	 *
 	 * @author Brian Jensen
 	 *
@@ -159,21 +173,75 @@ public class PhoneNumber implements Comparable {
 	public void refactorNumber() {
 		removeUnnecessaryChars();
 		convertQuickDial();
-
-		/*
-		 * Part of the i18n work, don't delete
-		 * if(Main.getProperty("country.code","49").equals("41")){ callbycall =
-		 * PhoneNumberSwitzerland.getCallbyCall(number); number =
-		 * number.substring(callbycall.length()); number = convertToIntNumber();
-		 * }else{ cutCallByCall(); number = convertToIntNumber(); }
-		 */
-
 		cutCallByCall();
 		number = convertToIntNumber();
+		getCountryInfo();
 
 	}
 
 	/**
+	 * This function does two things. First it searches for the number in the worldFlagMap,
+	 * so it can determine the correct flag to display. Then it determines if the number is
+	 * part of a mobile network for this particular country.
+	 *
+	 * @author brian jensen
+	 *
+	 */
+
+	private void getCountryInfo(){
+		String[] value;
+
+		if(worldFlagMap != null){
+			if(worldFlagMap.containsKey(number.substring(1,6))){
+				value = worldFlagMap.get(number.substring(1,6)).split(";");
+				flagFileName = value[0];
+				Description = value[1];
+			}else if(worldFlagMap.containsKey(number.substring(1,5))){
+				value = worldFlagMap.get(number.substring(1,5)).split(";");
+				flagFileName = value[0];
+				Description = value[1];
+			}else if(worldFlagMap.containsKey(number.substring(1,4))){
+				value = worldFlagMap.get(number.substring(1,4)).split(";");
+				flagFileName = value[0];
+				Description = value[1];
+			}else if(worldFlagMap.containsKey(number.substring(1,3))){
+				value = worldFlagMap.get(number.substring(1,3)).split(";");
+				flagFileName = value[0];
+				Description = value[1];
+			}else if(worldFlagMap.containsKey(number.substring(1,2))){
+				value = worldFlagMap.get(number.substring(1,2)).split(";");
+				flagFileName = value[0];
+				Description = value[1];
+			}else if(worldFlagMap.containsKey(number.substring(1,1))){
+				value = worldFlagMap.get(number.substring(1,1)).split(";");
+				flagFileName = value[0];
+				Description = value[1];
+			}else{
+				Debug.msg("No flag file for "+number+" found!!");
+			}
+
+			//All known mobile numbers are marked in the csv
+			if(Description.contains("Mobile"))
+				type = "mobile";
+			else
+				type = "home";
+
+		}
+	}
+
+	public String getFlagFileName(){
+		return flagFileName;
+	}
+
+	public String getDescription(){
+		return Description;
+	}
+
+
+	/**
+	 * TODO: This is the last part of PhoneNumber that needs to be
+	 * internationalised
+	 *
 	 * Cuts call by call part of number
 	 *
 	 * @return Number withour call by call part
@@ -386,6 +454,23 @@ public class PhoneNumber implements Comparable {
 	}
 
 	/**
+	 * This function determines if the phone number is part of a mobile network
+	 * NOTE: This attribute is determined upon creation of the object
+	 *
+	 * @author brian jensen
+	 *
+	 * @return if number is a part of a mobile network
+	 */
+
+	public boolean isMobile(){
+		if(type.equals("mobile"))
+			return true;
+		else
+			return false;
+	}
+
+
+	/**
 	 *
 	 * @return Country code (49 for Germany, 41 for Switzerland)
 	 */
@@ -408,7 +493,7 @@ public class PhoneNumber implements Comparable {
 		return ""; //$NON-NLS-1$
 	}
 
-	/**
+	/**@depreciated don't use it anymore!
 	 *
 	 * @return Returns mobile provider
 	 */
@@ -421,9 +506,11 @@ public class PhoneNumber implements Comparable {
 		return mobileMap.get(number.substring(0, 6)).toString();
 	}
 
-	/**
+
+
+	/** Disabled, Brian
 	 * @return True if number is a mobile one
-	 */
+
 	public boolean isMobile() {
 		// String provider = ReverseLookup.getMobileProvider(getFullNumber());
 		// return (!provider.equals(""));
@@ -440,6 +527,8 @@ public class PhoneNumber implements Comparable {
 		}
 
 	}
+	*/
+
 
 	/**
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
@@ -533,5 +622,51 @@ public class PhoneNumber implements Comparable {
 			return true;
 		else
 			return false;
+	}
+
+	public static void loadFlagMap(){
+		Debug.msg("Loading the country code -> flag map");
+		worldFlagMap = new HashMap<String, String>(2200);
+		BufferedReader br = null;
+		FileInputStream fi = null;
+
+		try{
+			fi = new FileInputStream(JFritzUtils.getFullPath("/number") +"/country_codes_world.csv");
+			br = new BufferedReader(new InputStreamReader(fi, "ISO-8859-1"));
+
+			String line;
+			String[] entries;
+			int lines = 0;
+			String l = br.readLine();
+			if(l==null){
+				Debug.errDlg("File "+JFritzUtils.getFullPath("/number") +"/country_codes_world"+" empty");
+			}
+			//Load the keys and values quick and dirty
+			if(l.equals(FLAG_FILE_HEADER)){
+				while (null != (line = br.readLine())) {
+					lines++;
+					entries = line.split(";");
+					if(entries.length == 3)
+						//country code is the key, flag name; Description is the value
+						worldFlagMap.put(entries[0], entries[1]+";"+entries[2]);
+				}
+			}
+
+			Debug.msg(lines + " Lines read from country_codes_world.csv");
+			Debug.msg("worldFlagMap size: "+worldFlagMap.size());
+
+		}catch(Exception e){
+			Debug.msg(e.toString());
+		}finally{
+			try{
+				if(fi!=null)
+					fi.close();
+				if(br!=null)
+					br.close();
+			}catch (IOException ioe){
+				Debug.msg("error closing stream"+ioe.toString());
+			}
+		}
+
 	}
 }

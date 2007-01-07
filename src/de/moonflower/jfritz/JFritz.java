@@ -43,6 +43,7 @@ import de.moonflower.jfritz.dialogs.sip.SipProviderTableModel;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.phonebook.PhoneBook;
 import de.moonflower.jfritz.struct.FritzBox;
+import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -611,6 +612,7 @@ public final class JFritz implements  StatusListener{
 	public static void loadNumberSettings() {
 		// load the different area code -> city mappings
 		ReverseLookup.loadAreaCodes();
+		PhoneNumber.loadFlagMap();
 	}
 
 	public static URL getRingSound() {

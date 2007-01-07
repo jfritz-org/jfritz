@@ -113,7 +113,7 @@ public class MacHandler {
 				//NOTE: Code throws a harmless exception as a side effect
 				((ApplicationEvent) args[0]).setHandled(true);
 
-				throw new IllegalStateException("Let the quit handler do it"); //$NON-NLS-1$
+				//throw new IllegalStateException("Let the quit handler do it"); //$NON-NLS-1$
 			}
 
 			else if (method.getName().equalsIgnoreCase("handleAbout")) { //$NON-NLS-1$

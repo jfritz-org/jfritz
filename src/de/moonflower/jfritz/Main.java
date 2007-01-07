@@ -580,7 +580,7 @@ public class Main {
 
 	public final static String PROGRAM_VERSION = "0.6.2.02"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.37 2006/12/28 16:42:50 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.38 2007/01/07 21:33:06 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -665,7 +665,7 @@ public class Main {
 		jfritz.createJFrame(showConfWizard);
 		// TODO sollten wir das programm nicht hier beenden?
 		// while(!shutdown){sleep oder sowas
-		// Debug.msg("ENDEN---main.java---DNEND");
+		Debug.msg("Main thread shut down");
 	}
 
 	/**
