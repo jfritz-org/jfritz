@@ -686,7 +686,7 @@ public class PhoneNumber implements Comparable {
 		FileInputStream fi = null;
 
 		try{
-			fi = new FileInputStream(JFritzUtils.getFullPath("/number") +"/country_codes_world.csv");
+			fi = new FileInputStream(JFritzUtils.getFullPath("/number") +"/international/country_codes_world.csv");
 			br = new BufferedReader(new InputStreamReader(fi, "ISO-8859-1"));
 
 			String line;
@@ -694,7 +694,7 @@ public class PhoneNumber implements Comparable {
 			int lines = 0;
 			String l = br.readLine();
 			if(l==null){
-				Debug.errDlg("File "+JFritzUtils.getFullPath("/number") +"/country_codes_world"+" empty");
+				Debug.errDlg("File "+JFritzUtils.getFullPath("/number") +"/international/country_codes_world"+" empty");
 			}
 			//Load the keys and values quick and dirty
 			if(l.equals(FLAG_FILE_HEADER)){
