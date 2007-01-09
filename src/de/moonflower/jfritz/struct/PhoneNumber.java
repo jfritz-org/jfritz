@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
-import de.moonflower.jfritz.struct.countryspecific.*;
+import de.moonflower.jfritz.struct.CallByCall;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
@@ -47,9 +47,14 @@ public class PhoneNumber implements Comparable {
 			UKRAINE_CODE = "+380", USA_CODE = "+1", INT_FREECALL = "+800";
 
 	static HashMap<String, String> mobileMap;
+
 	static HashMap<String, String> worldFlagMap;
 
+	static HashMap<String, CallByCall[]> callbyCallMap;
+
 	static String FLAG_FILE_HEADER = "Country Code;Flag file; Full Text";
+
+	static String CBC_FILE_HEADER  = "Country Code;CallbyCall Prefix:length";
 
 	private String flagFileName;
 
@@ -229,23 +234,64 @@ public class PhoneNumber implements Comparable {
 		}
 	}
 
+	/**
+	 * Used by NumberCellRenderer
+	 *
+	 * @return flag file name
+	 */
 	public String getFlagFileName(){
 		return flagFileName;
 	}
 
+	/**
+	 * Used by NumberCellRenderer
+	 *
+	 * @return description of country and / or phone network
+	 */
 	public String getDescription(){
 		return Description;
 	}
 
-
 	/**
+	 * i18n version
+	 *
+	 * This funtction cuts the call by call from the number as determined
+	 * by the parameters loaded from number/internation/callbycall_world.csv
+	 *
+	 */
+	private void cutCallByCall(){
+		String countryCode = Main.getProperty("country.code");//$NON-NLS-1$
+		CallByCall[] cbc;
+
+		if(callbyCallMap.containsKey(countryCode)){
+			cbc = callbyCallMap.get(countryCode);
+			for(int i = 0; i < cbc.length; i++){
+				if(number.startsWith(cbc[i].getPrefix())){
+					//This is just for testing, will be removed soon
+					Debug.msg("Number parsed using prefix: "+cbc[i].getPrefix());
+					callbycall = number.substring(0, cbc[i].getLength());
+					number = number.substring(cbc[i].getLength());
+					break;
+				}
+			}
+		} else {
+			Debug.msg("No Call by Call prefix information for "+countryCode+" found.");
+		}
+
+
+	}
+
+
+	/**Disabled, Brian
+	 *
+	 *
 	 * TODO: This is the last part of PhoneNumber that needs to be
 	 * internationalised
 	 *
 	 * Cuts call by call part of number
 	 *
 	 * @return Number withour call by call part
-	 */
+	 *
 	private void cutCallByCall() {
 		if (number.startsWith("0100")) {//$NON-NLS-1$
 			// cut 0100yy (y = 0..9)
@@ -257,6 +303,7 @@ public class PhoneNumber implements Comparable {
 			number = number.substring(5);
 		}
 	}
+	*/
 
 	/**
 	 * Converts number to international number Internation numbers have the
@@ -302,7 +349,7 @@ public class PhoneNumber implements Comparable {
 
 		// if its not any internationl call, or a national call (in germany you
 		// can't dial
-		// a national number using the internation prefix), then its a local
+		// a national number using the international prefix), then its a local
 		// call
 		return countryCode + areaCode + number;//$NON-NLS-1$
 	}
@@ -493,7 +540,7 @@ public class PhoneNumber implements Comparable {
 		return ""; //$NON-NLS-1$
 	}
 
-	/**@depreciated don't use it anymore!
+	/**@deprecated don't use it anymore!
 	 *
 	 * @return Returns mobile provider
 	 */
@@ -505,8 +552,6 @@ public class PhoneNumber implements Comparable {
 			return ""; //$NON-NLS-1$
 		return mobileMap.get(number.substring(0, 6)).toString();
 	}
-
-
 
 	/** Disabled, Brian
 	 * @return True if number is a mobile one
@@ -624,6 +669,16 @@ public class PhoneNumber implements Comparable {
 			return false;
 	}
 
+	/**
+	 * This function loads all the info from the file number/country_codes_world.csv
+	 * and stores the information in a hashmap indexed by country code
+	 *
+	 * worldFlagMap contains information about the country and has the name of
+	 * a flag to display for that country
+	 *
+	 * @author brian
+	 *
+	 */
 	public static void loadFlagMap(){
 		Debug.msg("Loading the country code -> flag map");
 		worldFlagMap = new HashMap<String, String>(2200);
@@ -669,4 +724,83 @@ public class PhoneNumber implements Comparable {
 		}
 
 	}
+
+	/**
+	 * his function loads all the info from the file number/callbycall_world.csv
+	 * and stores the information in a hashmap indexed by country code
+	 *
+	 * callbyCallMap contains the information about callbycall providers used to
+	 * process that information from numbers retrieved by jfritz
+	 *
+	 * @author brian
+	 *
+	 */
+	public static void loadCallbyCallMap(){
+		Debug.msg("Loading the country code -> Call by Call Map");
+		//reserve space internally for future updates
+		callbyCallMap = new HashMap<String, CallByCall[]>(20);
+		BufferedReader br = null;
+		FileInputStream fi = null;
+
+		try{
+			fi = new FileInputStream(JFritzUtils.getFullPath("/number") +"/international/callbycall_world.csv");
+			br = new BufferedReader(new InputStreamReader(fi, "ISO-8859-1"));
+
+			String line;
+			String[] entries, elements, details;
+			CallByCall[] cbc;
+			int lines = 0;
+			String l = br.readLine();
+			if(l==null){
+				Debug.errDlg("File "+JFritzUtils.getFullPath("/number") +"/international/callbycall_world.csv"+" empty");
+			}
+			//Load the keys and values quick and dirty
+			if(l.equals(CBC_FILE_HEADER)){
+				while (null != (line = br.readLine())) {
+					lines++;
+					entries = line.split(";");
+
+					//These are the two field entries
+					if(entries.length == 2){
+						elements = entries[1].split(" ");
+						cbc = new CallByCall[elements.length];
+
+						//These are the different cbc:lenth elements
+						for(int i = 0; i < elements.length; i++){
+							details = elements[i].split(":");
+
+							//make sure each entry is correctly formed
+							if(details.length == 2){
+								Debug.msg("Call by Call for +"+entries[0]+" added. Prefix: "+
+										details[0]+" Length: "+details[1]);
+
+								cbc[i] = new CallByCall(details[0], new Integer(details[1]));
+							}
+						}
+
+						//country code is the key, CallByCall[] Array is the object
+						callbyCallMap.put("+"+entries[0], cbc);
+
+					}
+				}
+			}
+
+			Debug.msg(lines + " Lines read from callbycall_world.csv");
+			Debug.msg("callbyCallMap size: "+callbyCallMap.size());
+
+		}catch(Exception e){
+			Debug.msg(e.toString());
+		}finally{
+			try{
+				if(fi!=null)
+					fi.close();
+				if(br!=null)
+					br.close();
+			}catch (IOException ioe){
+				Debug.msg("error closing stream"+ioe.toString());
+			}
+		}
+
+	}
+
 }
