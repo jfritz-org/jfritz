@@ -56,9 +56,9 @@ public class PhoneNumber implements Comparable {
 
 	static String CBC_FILE_HEADER  = "Country Code;CallbyCall Prefix:length";
 
-	private String flagFileName;
+	private String flagFileName = "";
 
-	private String Description;
+	private String Description = "";
 
 
 
