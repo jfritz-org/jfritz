@@ -195,17 +195,16 @@ public class PhoneNumber implements Comparable {
 
 	private void getCountryInfo(){
 		String[] value;
-
 		if(worldFlagMap != null){
-			if(worldFlagMap.containsKey(number.substring(1,6))){
+			if(number.length() > 5 && worldFlagMap.containsKey(number.substring(1,6))){
 				value = worldFlagMap.get(number.substring(1,6)).split(";");
 				flagFileName = value[0];
 				Description = value[1];
-			}else if(worldFlagMap.containsKey(number.substring(1,5))){
+			}else if(number.length() > 4 && worldFlagMap.containsKey(number.substring(1,5))){
 				value = worldFlagMap.get(number.substring(1,5)).split(";");
 				flagFileName = value[0];
 				Description = value[1];
-			}else if(worldFlagMap.containsKey(number.substring(1,4))){
+			}else if(number.length() > 3 && worldFlagMap.containsKey(number.substring(1,4))){
 				value = worldFlagMap.get(number.substring(1,4)).split(";");
 				flagFileName = value[0];
 				Description = value[1];
@@ -215,10 +214,6 @@ public class PhoneNumber implements Comparable {
 				Description = value[1];
 			}else if(worldFlagMap.containsKey(number.substring(1,2))){
 				value = worldFlagMap.get(number.substring(1,2)).split(";");
-				flagFileName = value[0];
-				Description = value[1];
-			}else if(worldFlagMap.containsKey(number.substring(1,1))){
-				value = worldFlagMap.get(number.substring(1,1)).split(";");
 				flagFileName = value[0];
 				Description = value[1];
 			}else{
