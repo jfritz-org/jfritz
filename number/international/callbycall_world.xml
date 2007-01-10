@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<callbycalls>
+	<country code="+31">
+		<callbycall>
+			<prefix>16</prefix>
+			<length>4</length>
+		</callbycall>
+	</country>
+	<country code="+41">
+		<callbycall>
+			<prefix>10</prefix>
+			<length>5</length>
+		</callbycall>
+	</country>
+	<country code="+49">
+	        <callbycall>
+		        <prefix>0100</prefix>
+	                <length>6</length>
+	        </callbycall>
+		<callbycall>
+		        <prefix>010</prefix>
+			<length>5</length>
+		</callbycall>
+	</country>
+</callbycalls>
+	
+
+	

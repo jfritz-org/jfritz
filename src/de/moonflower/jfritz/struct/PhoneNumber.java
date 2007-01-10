@@ -8,12 +8,26 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.Enumeration;
 import java.util.HashMap;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.EntityResolver;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLReader;
+
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.callerlist.CallFileXMLHandler;
 import de.moonflower.jfritz.struct.CallByCall;
+import de.moonflower.jfritz.utils.CbCFileXMLHandler;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
@@ -229,7 +243,7 @@ public class PhoneNumber implements Comparable {
 			cbc = callbyCallMap.get(countryCode);
 			for(int i = 0; i < cbc.length; i++){
 				if(number.startsWith(cbc[i].getPrefix())){
-					//This is just for testing, will be removed soon
+					//TODO: This is just for testing, will be removed soon
 					Debug.msg("Number parsed using prefix: "+cbc[i].getPrefix());
 					callbycall = number.substring(0, cbc[i].getLength());
 					number = number.substring(cbc[i].getLength());
@@ -628,82 +642,69 @@ public class PhoneNumber implements Comparable {
 
 	}
 
-	/**
-	 * his function loads all the info from the file number/callbycall_world.csv
-	 * and stores the information in a hashmap indexed by country code
-	 *
-	 * callbyCallMap contains the information about callbycall providers used to
-	 * process that information from numbers retrieved by jfritz
+	/** This function loads the file number/international/callbycall_world.xml
+	 * It starts by initializing the callbyCallMap and then proceeds to setup
+	 * the sax parser
 	 *
 	 * @author brian
 	 *
 	 */
-	public static void loadCallbyCallMap(){
-		Debug.msg("Loading the country code -> Call by Call Map");
-		//reserve space internally for future updates
-		callbyCallMap = new HashMap<String, CallByCall[]>(20);
-		BufferedReader br = null;
-		FileInputStream fi = null;
+	public static void loadCbCXMLFile(){
+		try {
+			Debug.msg("Loading the call by call xml file");
+			callbyCallMap = new HashMap<String, CallByCall[]>(20);
 
-		try{
-			fi = new FileInputStream(JFritzUtils.getFullPath("/number") +"/international/callbycall_world.csv");
-			br = new BufferedReader(new InputStreamReader(fi, "ISO-8859-1"));
+			SAXParserFactory factory = SAXParserFactory.newInstance();
+			factory.setValidating(false);
+			SAXParser parser = factory.newSAXParser();
+			XMLReader reader = parser.getXMLReader();
 
-			String line;
-			String[] entries, elements, details;
-			CallByCall[] cbc;
-			int lines = 0;
-			String l = br.readLine();
-			if(l==null){
-				Debug.errDlg("File "+JFritzUtils.getFullPath("/number") +"/international/callbycall_world.csv"+" empty");
-			}
-			//Load the keys and values quick and dirty
-			if(l.equals(CBC_FILE_HEADER)){
-				while (null != (line = br.readLine())) {
-					lines++;
-					entries = line.split(";");
-
-					//These are the two field entries
-					if(entries.length == 2){
-						elements = entries[1].split(" ");
-						cbc = new CallByCall[elements.length];
-
-						//These are the different cbc:lenth elements
-						for(int i = 0; i < elements.length; i++){
-							details = elements[i].split(":");
-
-							//make sure each entry is correctly formed
-							if(details.length == 2){
-								Debug.msg("Call by Call for +"+entries[0]+" added. Prefix: "+
-										details[0]+" Length: "+details[1]);
-
-								cbc[i] = new CallByCall(details[0], new Integer(details[1]));
-							}
-						}
-
-						//country code is the key, CallByCall[] Array is the object
-						callbyCallMap.put("+"+entries[0], cbc);
-
-					}
+			reader.setErrorHandler(new ErrorHandler() {
+				public void error(SAXParseException x) throws SAXException {
+					// Debug.err(x.toString());
+					throw x;
 				}
-			}
 
-			Debug.msg(lines + " Lines read from callbycall_world.csv");
-			Debug.msg("callbyCallMap size: "+callbyCallMap.size());
+				public void fatalError(SAXParseException x) throws SAXException {
+					// Debug.err(x.toString());
+					throw x;
+				}
 
-		}catch(Exception e){
-			Debug.msg(e.toString());
-		}finally{
-			try{
-				if(fi!=null)
-					fi.close();
-				if(br!=null)
-					br.close();
-			}catch (IOException ioe){
-				Debug.msg("error closing stream"+ioe.toString());
+				public void warning(SAXParseException x) throws SAXException {
+					// Debug.err(x.toString());
+					throw x;
+				}
+			});
+
+			reader.setContentHandler(new CbCFileXMLHandler());
+			reader.parse(new InputSource(new FileInputStream(
+					JFritzUtils.getFullPath("/number") +"/international/callbycall_world.xml")));
+
+		} catch (ParserConfigurationException e) {
+			Debug.err("Error with ParserConfiguration!"); //$NON-NLS-1$
+		} catch (SAXException e) {
+			Debug.err("Error on parsing number/internation/callbycall_world.xml! No call by calls loaded!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.err(e.toString());
+			e.printStackTrace();
+
+			if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
+					|| e.getLocalizedMessage().startsWith(
+							"Invalid system identifier")) { //$NON-NLS-1$
+				Debug.err(e.getLocalizedMessage());
 			}
+		} catch (IOException e) {
+			Debug.err("Could not read number/international/callbycall_world.xml! No call by calls loaded!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
+	}
 
+	/**
+	 * This function is used by the xml handler to add entries to the list
+	 *
+	 * @param countryCode
+	 * @param cbc_list
+	 */
+	public static void addCallbyCall(String countryCode, CallByCall[] cbc_list){
+		callbyCallMap.put(countryCode, cbc_list);
 	}
 
 }
