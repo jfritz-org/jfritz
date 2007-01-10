@@ -35,16 +35,7 @@ public class PhoneNumber implements Comparable {
 	// "business", "other", "fax", "sip" };
 
 	// Please keep these in alphabetical order!!!
-	public static final String AUSTRIA_CODE = "+43", BELGIUM_CODE = "+32",
-			CHINA_CODE = "+86", CZECH_CODE = "+420", DENMARK_CODE = "+45",
-			FINLAND_CODE = "+358", FRANCE_CODE = "+33", GERMANY_CODE = "+49",
-			GREATBRITAIN_CODE = "+44", HOLLAND_CODE = "+31",
-			HUNGARY_CODE = "+36", IRELAND_CODE = "+353", ITALY_CODE = "+39",
-			JAPAN_CODE = "+81", LUXEMBOURG_CODE = "+352", NORWAY_CODE = "+47",
-			POLAND_CODE = "+48", PORTUGAL_CODE = "+351", RUSSIA_CODE = "+7",
-			SLOVAKIA_CODE = "+421", SPAIN_CODE = "+34", SWEDEN_CODE = "+46",
-			SWITZERLAND_CODE = "+41", TURKEY_CODE = "+90",
-			UKRAINE_CODE = "+380", USA_CODE = "+1", INT_FREECALL = "+800";
+	public static final String INT_FREECALL = "+800";
 
 	static HashMap<String, String> mobileMap;
 
@@ -60,7 +51,7 @@ public class PhoneNumber implements Comparable {
 
 	private String Description = "";
 
-
+	private String countryCode = "";
 
 	/**
 	 * @deprecated use the other constructor from now on
@@ -130,33 +121,6 @@ public class PhoneNumber implements Comparable {
 		refactorNumber();
 	}
 
-	/**@deprecated completely unnecessary with the new i18n scheme
-	 *
-	 * Creates a map of german cellphone providers
-	 */
-	private void createMobileMap() {
-		if (mobileMap == null) {
-			mobileMap = new HashMap<String, String>();
-			mobileMap.put("+49151", "D1");//$NON-NLS-1$, //$NON-NLS-2$
-			mobileMap.put("+49160", "D1");//$NON-NLS-1$, //$NON-NLS-2$
-			mobileMap.put("+49170", "D1");//$NON-NLS-1$, //$NON-NLS-2$
-			mobileMap.put("+49171", "D1");//$NON-NLS-1$, //$NON-NLS-2$
-			mobileMap.put("+49175", "D1");//$NON-NLS-1$, //$NON-NLS-2$
-			mobileMap.put("+49152", "D2");//$NON-NLS-1$, //$NON-NLS-2$
-			mobileMap.put("+49162", "D2");//$NON-NLS-1$, //$NON-NLS-2$
-			mobileMap.put("+49172", "D2");//$NON-NLS-1$, //$NON-NLS-2$
-			mobileMap.put("+49173", "D2");//$NON-NLS-1$, //$NON-NLS-2$
-			mobileMap.put("+49174", "D2");//$NON-NLS-1$, //$NON-NLS-2$
-			mobileMap.put("+49157", "E+");//$NON-NLS-1$, //$NON-NLS-2$
-			mobileMap.put("+49163", "E+");//$NON-NLS-1$, //$NON-NLS-2$
-			mobileMap.put("+49177", "E+");//$NON-NLS-1$, //$NON-NLS-2$
-			mobileMap.put("+49178", "E+");//$NON-NLS-1$, //$NON-NLS-2$
-			mobileMap.put("+49159", "O2");//$NON-NLS-1$, //$NON-NLS-2$
-			mobileMap.put("+49176", "O2");//$NON-NLS-1$, //$NON-NLS-2$
-			mobileMap.put("+49179", "O2");//$NON-NLS-1$, //$NON-NLS-2$
-		}
-	}
-
 	/**
 	 * Removes whitespaces, ) and ( from number
 	 *
@@ -196,27 +160,30 @@ public class PhoneNumber implements Comparable {
 	private void getCountryInfo(){
 		String[] value;
 		if(worldFlagMap != null){
-			if(number.length() > 5 && worldFlagMap.containsKey(number.substring(1,6))){
-				value = worldFlagMap.get(number.substring(1,6)).split(";");
-				flagFileName = value[0];
-				Description = value[1];
-			}else if(number.length() > 4 && worldFlagMap.containsKey(number.substring(1,5))){
-				value = worldFlagMap.get(number.substring(1,5)).split(";");
-				flagFileName = value[0];
-				Description = value[1];
-			}else if(number.length() > 3 && worldFlagMap.containsKey(number.substring(1,4))){
-				value = worldFlagMap.get(number.substring(1,4)).split(";");
-				flagFileName = value[0];
-				Description = value[1];
-			}else if(worldFlagMap.containsKey(number.substring(1,3))){
-				value = worldFlagMap.get(number.substring(1,3)).split(";");
-				flagFileName = value[0];
-				Description = value[1];
-			}else if(worldFlagMap.containsKey(number.substring(1,2))){
-				value = worldFlagMap.get(number.substring(1,2)).split(";");
-				flagFileName = value[0];
-				Description = value[1];
-			}else{
+
+			// Finde Landeskennzahl
+			for ( int i=3; i>0; i-- ) {
+				if ( number.length()>i && worldFlagMap.containsKey(number.substring(1, i))) {
+					value = worldFlagMap.get(number.substring(1,i)).split(";");
+					countryCode = "+" + number.substring(1,i);
+					flagFileName = value[0];
+					Description = value[1];
+					break;
+				}
+			}
+
+			// Finde weitere Durchwahlen, wie z.B. Mobilfunkanbieter
+			for ( int i=9; i>3; i-- ) {
+				if ( number.length()>i && worldFlagMap.containsKey(number.substring(1, i))) {
+					value = worldFlagMap.get(number.substring(1,i)).split(";");
+					if ( countryCode.equals(Main.getProperty("country.code","+49"))) {
+						flagFileName = value[0];
+					}
+					Description = value[1];
+					break;
+				}
+			}
+			if ( countryCode.equals("+")) {
 				Debug.msg("No flag file for "+number+" found!!");
 			}
 
@@ -275,30 +242,6 @@ public class PhoneNumber implements Comparable {
 
 
 	}
-
-
-	/**Disabled, Brian
-	 *
-	 *
-	 * TODO: This is the last part of PhoneNumber that needs to be
-	 * internationalised
-	 *
-	 * Cuts call by call part of number
-	 *
-	 * @return Number withour call by call part
-	 *
-	private void cutCallByCall() {
-		if (number.startsWith("0100")) {//$NON-NLS-1$
-			// cut 0100yy (y = 0..9)
-			callbycall = number.substring(0, 6);
-			number = number.substring(6);
-		} else if (number.startsWith("010")) {//$NON-NLS-1$
-			// cut 010xx (x = 1..9, y = 0..9)
-			callbycall = number.substring(0, 5);
-			number = number.substring(5);
-		}
-	}
-	*/
 
 	/**
 	 * Converts number to international number Internation numbers have the
@@ -517,7 +460,7 @@ public class PhoneNumber implements Comparable {
 	 * @return Country code (49 for Germany, 41 for Switzerland)
 	 */
 	public String getCountryCode() {
-		return ""; //$NON-NLS-1$
+		return countryCode; //$NON-NLS-1$
 	}
 
 	/**
@@ -534,41 +477,6 @@ public class PhoneNumber implements Comparable {
 	public String getLocalPart() {
 		return ""; //$NON-NLS-1$
 	}
-
-	/**@deprecated don't use it anymore!
-	 *
-	 * @return Returns mobile provider
-	 */
-	public String getMobileProvider() {
-		if (number.length() < 5)
-			return ""; //$NON-NLS-1$
-		Object provider = mobileMap.get(number.substring(0, 6));
-		if (provider == null)
-			return ""; //$NON-NLS-1$
-		return mobileMap.get(number.substring(0, 6)).toString();
-	}
-
-	/** Disabled, Brian
-	 * @return True if number is a mobile one
-
-	public boolean isMobile() {
-		// String provider = ReverseLookup.getMobileProvider(getFullNumber());
-		// return (!provider.equals(""));
-		if (number.startsWith("+" + SWITZERLAND_CODE)
-				&& Main.getProperty("country.code", "+49").equals(
-						SWITZERLAND_CODE))
-			return PhoneNumberSwitzerland.isMobile(getAreaNumber());
-		else {
-			boolean ret = number.length() > 6
-					&& mobileMap.containsKey(number.substring(0, 6));
-			if (ret && getType().equals("")) //$NON-NLS-1$
-				type = "mobile"; //$NON-NLS-1$
-			return ret;
-		}
-
-	}
-	*/
-
 
 	/**
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
