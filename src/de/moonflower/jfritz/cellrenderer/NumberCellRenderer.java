@@ -26,15 +26,6 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 	private static final long serialVersionUID = 1;
 	private final ImageIcon imagePhone, imageHandy, imageHome, imageWorld,
 			imageFreeCall;
-			/*,imageAT, imageBE, imageCH, imageCN, imageCZ, imageDE,
-			imageDK, imageES, imageFI,  imageFR, imageGB, imageHU, imageIE,
-			imageIT, imageJP, imageLU, imageNL, imageNO, imagePL, imagePT,
-			imageRU, imageSE, imageSK,  imageTR, imageUA, imageUS;
-
-	*/
-	private final ImageIcon imageD1, imageD2, imageO2, imageEplus;
-			//imageSipgate;
-
 
 	private final static boolean showHandyLogos = true;
 
@@ -65,19 +56,6 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 		imageFreeCall = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/freecall.png"))); //$NON-NLS-1$
-		imageD1 = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/d1.png"))); //$NON-NLS-1$
-		imageD2 = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/d2.png"))); //$NON-NLS-1$
-		imageO2 = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/o2.png"))); //$NON-NLS-1$
-		imageEplus = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/eplus.png"))); //$NON-NLS-1$
-
 	}
 
 	public Component getTableCellRendererComponent(JTable table, Object value,
@@ -98,27 +76,15 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 				if(number.isLocalCall()){
 					label.setIcon(imageHome);
 					setToolTipText(Main.getMessage("local_call")); //$NON-NLS-1$
-				}else if(number.isMobile() && number.getIntNumber().startsWith(countryCode)){
-					String description = number.getDescription();
-					if(description.contains("O2"))
-						label.setIcon(imageO2);
-					else if(description.contains("T-Mobile"))
-						label.setIcon(imageD1);
-					else if(description.contains("Vodafone"))
-						label.setIcon(imageD2);
-					else if(description.contains("E-Plus") || description.contains("KPN"))
-						label.setIcon(imageEplus);
-					else
-						label.setIcon(imageHandy);
-
-					setToolTipText(description);
-
 				}else if(number.isFreeCall()){
 					label.setIcon(imageFreeCall);
 					setToolTipText(Main.getMessage("freecall")); //$NON-NLS-1$
-				}else if (number.getIntNumber().startsWith(countryCode)){
+				}else if (!number.isMobile() && number.getIntNumber().startsWith(countryCode)){
 					label.setIcon(imagePhone);
 					setToolTipText(Main.getMessage("fixed_network")); //$NON-NLS-1$
+				} else if ( number.isMobile() && !showHandyLogos ) {
+					label.setIcon(imageHandy);
+					setToolTipText(number.getDescription());
 				}else{
 					if(!number.getFlagFileName().equals("")){
 						label.setIcon(new ImageIcon(lang + FILESEP + "flags" + FILESEP + number.getFlagFileName()));

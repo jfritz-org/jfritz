@@ -126,20 +126,19 @@
  * - Connection-Timeout für ReverseLookup setzen
  * TODO-END
  *
- * JFritz 0.6.2.03
+ * JFritz 0.6.2.02
  * - Neu: CallbyCall-Vorwahlen jetzt in einer Datei einstellbar, für jedes Land möglich
  * - Neu: Unterteilung in Handy/Festnetz jetzt in einer Datei einstellbar, für jedes Land möglich
+ * - Neu: Eigene Icons für Handybetreiber
  * - Neu: JFritz ordnet jede Nummer eine Pfanne aus einer einstellbaren Datei
- * - Bugfix: JFritz verhindert das Herunterfahren auf OSX nicht mehr
- * - Bugfix: Rückwärtssuche funktioniert jetzt mit beliebigem Host-Zeichensatz
- * - Bugfix: Rückwärtssuche nach Ort zeigt jetzt Stadtnamen mit Umlauts
- *
- * JFritz 0.6.2.02
  * - Bugfix: Kurzwahlen
  * - Bugfix: Österreichischer Reverselookup
  * - Bugfix: CallMonitor outgoing calls
  * - Bugfix: Reverselookup on mac now run with correct character encoding
  * - Bugfix: Französischer Reverselookup
+ * - Bugfix: JFritz verhindert das Herunterfahren auf OSX nicht mehr
+ * - Bugfix: Rückwärtssuche funktioniert jetzt mit beliebigem Host-Zeichensatz
+ * - Bugfix: Rückwärtssuche nach Ort zeigt jetzt Stadtnamen mit Umlauts
  *
  * JFritz 0.6.2.01
  * - Neu: Polnische Sprachdateien aktualisiert
@@ -588,7 +587,7 @@ public class Main {
 
 	public final static String PROGRAM_VERSION = "0.6.2.02"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.39 2007/01/09 20:39:45 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.40 2007/01/10 14:33:27 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
