@@ -48,12 +48,14 @@ class LookupThread extends Thread {
 				Person newPerson = ReverseLookup.lookup(currentRequest.numbers
 						.elementAt(i));
 				result.add(newPerson);
-				currentRequest.observer.percentOfLookupDone(((float)i) / currentRequest.numbers.size());
+				currentRequest.observer.percentOfLookupDone(((float) i)
+						/ currentRequest.numbers.size());
 			}
 			currentRequest.observer.personsFound(result);
 		}
 	}
 }
+
 /**
  *
  * @author marc
@@ -84,14 +86,24 @@ class LookupRequest implements Comparable<LookupRequest> {
  *
  */
 public class ReverseLookup {
+	public static final String AUSTRIA_CODE = "+43", BELGIUM_CODE = "+32",
+			CHINA_CODE = "+86", CZECH_CODE = "+420", DENMARK_CODE = "+45",
+			FINLAND_CODE = "+358", FRANCE_CODE = "+33", GERMANY_CODE = "+49",
+			GREATBRITAIN_CODE = "+44", HOLLAND_CODE = "+31",
+			HUNGARY_CODE = "+36", IRELAND_CODE = "+353", ITALY_CODE = "+39",
+			JAPAN_CODE = "+81", LUXEMBOURG_CODE = "+352", NORWAY_CODE = "+47",
+			POLAND_CODE = "+48", PORTUGAL_CODE = "+351", RUSSIA_CODE = "+7",
+			SLOVAKIA_CODE = "+421", SPAIN_CODE = "+34", SWEDEN_CODE = "+46",
+			SWITZERLAND_CODE = "+41", TURKEY_CODE = "+90",
+			UKRAINE_CODE = "+380", USA_CODE = "+1";
 
 	static LookupThread thread;
 
 	static volatile PriorityBlockingQueue<LookupRequest> requests = new PriorityBlockingQueue<LookupRequest>();
 
 	/**
-	 * This Function does a lookup for a Vector of PhoneNumbers, the caller must give an observer, his method
-	 * personsFound(Vector<Person>) will be called
+	 * This Function does a lookup for a Vector of PhoneNumbers, the caller must
+	 * give an observer, his method personsFound(Vector<Person>) will be called
 	 *
 	 * @param number
 	 *            the number wich will be looked up
@@ -106,8 +118,8 @@ public class ReverseLookup {
 	}
 
 	/**
-	 * This Function does a lookup for a Vector of PhoneNumbers the caller must give an observer, his method
-	 * personsFound(Vector<Person>) will be called
+	 * This Function does a lookup for a Vector of PhoneNumbers the caller must
+	 * give an observer, his method personsFound(Vector<Person>) will be called
 	 *
 	 * @param number
 	 *            the numbers wich will be looked up
@@ -131,7 +143,7 @@ public class ReverseLookup {
 
 	/**
 	 * @deprecated better use boolean lookup(Vector<PhoneNumber> number,
-	 *             LookupObserver obs)  or busyLookup for one single lookup
+	 *             LookupObserver obs) or busyLookup for one single lookup
 	 * @param number
 	 * @return the Person
 	 */
@@ -150,29 +162,22 @@ public class ReverseLookup {
 			newPerson = new Person();
 			newPerson.addNumber(number);
 		} else {
-			if (number.convertToIntNumber().startsWith(
-					PhoneNumber.SWITZERLAND_CODE)) {
+			if (number.getCountryCode().equals(SWITZERLAND_CODE)) {
 				newPerson = ReverseLookupSwitzerland.lookup(number
 						.getAreaNumber());
-			} else if (number.convertToIntNumber().startsWith(
-					PhoneNumber.ITALY_CODE)) {
+			} else if (number.getCountryCode().equals(ITALY_CODE)) {
 				newPerson = ReverseLookupItaly.lookup(number.getAreaNumber());
-			} else if (number.convertToIntNumber().startsWith(
-					PhoneNumber.GERMANY_CODE)) {
+			} else if (number.getCountryCode().equals(GERMANY_CODE)) {
 				newPerson = ReverseLookupGermany.lookup(number.getAreaNumber());
-			} else if (number.convertToIntNumber().startsWith(
-					PhoneNumber.HOLLAND_CODE)) {
+			} else if (number.getCountryCode().equals(HOLLAND_CODE)) {
 				newPerson = ReverseLookupNetherlands.lookup(number
 						.getAreaNumber());
-			} else if (number.convertToIntNumber().startsWith(
-					PhoneNumber.FRANCE_CODE)) {
+			} else if (number.getCountryCode().equals(FRANCE_CODE)) {
 				newPerson = ReverseLookupFrance.lookup(number.getAreaNumber());
-			} else if (number.convertToIntNumber().startsWith(
-					PhoneNumber.USA_CODE)) {
+			} else if (number.getCountryCode().equals(USA_CODE)) {
 				newPerson = ReverseLookupUnitedStates.lookup(number
 						.getAreaNumber());
-			} else if (number.convertToIntNumber().startsWith(
-					PhoneNumber.AUSTRIA_CODE)) {
+			} else if (number.getCountryCode().equals(AUSTRIA_CODE)) {
 				newPerson = ReverseLookupAustria.lookup(number.getAreaNumber());
 			} else {
 				newPerson = new Person();
@@ -190,13 +195,17 @@ public class ReverseLookup {
 		// ReverseLookupNetherlands.loadAreaCodes();
 
 	}
-/**
- * This function does one lookup for a PhoneNumber. Good if you want a single lookup,
- * id you need more numbers looked up better use
- * <code>lookup(Vector<PhoneNumber> number, LookupObserver obs)</code> this will start an extra Thread
- * @param callerPhoneNumber the number wich will be looked up
- * @return the Person this method found
- */
+
+	/**
+	 * This function does one lookup for a PhoneNumber. Good if you want a
+	 * single lookup, id you need more numbers looked up better use
+	 * <code>lookup(Vector<PhoneNumber> number, LookupObserver obs)</code>
+	 * this will start an extra Thread
+	 *
+	 * @param callerPhoneNumber
+	 *            the number wich will be looked up
+	 * @return the Person this method found
+	 */
 	public static Person busyLookup(PhoneNumber callerPhoneNumber) {
 		return lookup(callerPhoneNumber);
 	}
