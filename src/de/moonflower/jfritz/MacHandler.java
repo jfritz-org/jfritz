@@ -4,12 +4,8 @@ import javax.swing.SwingUtilities;
 
 import java.lang.reflect.*;
 
-import com.apple.eawt.*;
-
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.Debug;
-
-
 
 /**
  * @author rob
@@ -23,17 +19,16 @@ public class MacHandler {
 	/**
 	 * Register quit-, about-, prefsHandler
 	 *
-	 *            An instance of JFritz
+	 * An instance of JFritz
 	 */
 	public MacHandler(JFritz jfritz) {
 		this.jfritz = jfritz;
 		try {
 
-			System.setProperty("apple.laf.useScreenMenuBar", "true");  //$NON-NLS-1$,  //$NON-NLS-2$
-			System
-					.setProperty(
-							"com.apple.mrj.application.apple.menu.about.name", //$NON-NLS-1$
-							"JFritz"); //$NON-NLS-1$
+			System.setProperty("apple.laf.useScreenMenuBar", "true"); //$NON-NLS-1$,  //$NON-NLS-2$
+			System.setProperty(
+					"com.apple.mrj.application.apple.menu.about.name", //$NON-NLS-1$
+					"JFritz"); //$NON-NLS-1$
 			System.setProperty("com.apple.mrj.application.growbox.intrudes", //$NON-NLS-1$
 					"false"); //$NON-NLS-1$
 
@@ -106,22 +101,26 @@ public class MacHandler {
 					}
 				});
 
-				//This is a workaround so that  we can convince OSX to let jfritz shutdown
-				//before stopping the log off / shut down process
-				//This would be unnecessary if we didnt exit JFritz with System.exit
-				//If we ever do that, you can remove this code here
-				//NOTE: Code throws a harmless exception as a side effect
-				((ApplicationEvent) args[0]).setHandled(true);
+				// This is a workaround so that we can convince OSX to let
+				// jfritz shutdown
+				// before stopping the log off / shut down process
+				// This would be unnecessary if we didnt exit JFritz with
+				// System.exit
+				// If we ever do that, you can remove this code here
+				// NOTE: Code throws a harmless exception as a side effect
 
-				//throw new IllegalStateException("Let the quit handler do it"); //$NON-NLS-1$
+				// ((ApplicationEvent) args[0]).setHandled(true);
+
+				// throw new IllegalStateException("Let the quit handler do
+				// it"); //$NON-NLS-1$
 			}
 
 			else if (method.getName().equalsIgnoreCase("handleAbout")) { //$NON-NLS-1$
 				Debug.msg("MAC Application Menu: Show About Dialog"); //$NON-NLS-1$
-                JFritz.getJframe().showAboutDialog();
+				JFritz.getJframe().showAboutDialog();
 			} else if (method.getName().equalsIgnoreCase("handlePrefs")) { //$NON-NLS-1$
 				Debug.msg("MAC Application Menu: Show Prefs Dialog"); //$NON-NLS-1$
-                JFritz.getJframe().showConfigDialog();
+				JFritz.getJframe().showConfigDialog();
 			}
 			return null;
 		}
