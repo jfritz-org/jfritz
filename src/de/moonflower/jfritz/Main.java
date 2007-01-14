@@ -127,6 +127,7 @@
  * TODO-END
  *
  * JFritz 0.6.2.02
+ * - Bugfix: Support for english firmware 14.04.26 corrected
  * - Neu: CallbyCall-Vorwahlen jetzt in einer xml-datei ausgelagert.
  * - Neu: CallbyCall-Vorwahlen jetzt in einer Datei einstellbar, für jedes Land möglich
  * - Neu: Unterteilung in Handy/Festnetz jetzt in einer Datei einstellbar, für jedes Land möglich
@@ -588,7 +589,7 @@ public class Main {
 
 	public final static String PROGRAM_VERSION = "0.6.2.02"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.41 2007/01/10 17:16:32 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.42 2007/01/14 14:55:35 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

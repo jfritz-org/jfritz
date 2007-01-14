@@ -251,7 +251,8 @@ public class PhoneNumber implements Comparable {
 				}
 			}
 		} else {
-			Debug.msg("No Call by Call prefix information for "+countryCode+" found.");
+			//Just floods the debug output with useless junk
+			//Debug.msg("No Call by Call prefix information for "+countryCode+" found.");
 		}
 
 
