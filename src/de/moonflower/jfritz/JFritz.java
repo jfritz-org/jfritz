@@ -555,7 +555,8 @@ public final class JFritz implements  StatusListener{
 		// TODO maybe some more cleanup is needed
 		quickDials.saveToXMLFile(Main.SAVE_DIR + QUICKDIALS_FILE);
 
-		jframe.saveProperties();
+		if ( jframe != null)
+			jframe.saveProperties();
 
 		if (callMonitor != null) {
 			callMonitor.stopCallMonitor();
