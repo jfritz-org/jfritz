@@ -244,7 +244,7 @@ public class PhoneNumber implements Comparable {
 			for(int i = 0; i < cbc.length; i++){
 				if(number.startsWith(cbc[i].getPrefix())){
 					//TODO: This is just for testing, will be removed soon
-					Debug.msg("Number parsed using prefix: "+cbc[i].getPrefix());
+					//Debug.msg("Number parsed using prefix: "+cbc[i].getPrefix());
 					callbycall = number.substring(0, cbc[i].getLength());
 					number = number.substring(cbc[i].getLength());
 					break;

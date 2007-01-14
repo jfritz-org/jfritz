@@ -140,7 +140,6 @@
  * - Bugfix: CallMonitor outgoing calls
  * - Bugfix: Reverselookup on mac now run with correct character encoding
  * - Bugfix: Französischer Reverselookup
- * - Bugfix: JFritz verhindert das Herunterfahren auf OSX nicht mehr
  * - Bugfix: Rückwärtssuche funktioniert jetzt mit beliebigem Host-Zeichensatz
  * - Bugfix: Rückwärtssuche nach Ort zeigt jetzt Stadtnamen mit Umlauts
  *
@@ -591,7 +590,7 @@ public class Main {
 
 	public final static String PROGRAM_VERSION = "0.6.2.02"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.43 2007/01/14 17:37:45 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.44 2007/01/14 21:09:03 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
