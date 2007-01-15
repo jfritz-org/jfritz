@@ -107,7 +107,6 @@
  * CHANGELOG:
  *
  * * TODO:
- * - Lautstärke der Sounds halbieren
  * - Alle Zugriffe auf FritzBox in eigenen Threads
  * - Bug: Eingabe der IP-Nummer nach Ruhezustand
  * - Bug: Wizard setzt die IP nicht richtig
@@ -128,6 +127,7 @@
  *
  * JFritz 0.6.2.03
  * - Umstrukturierung des Aufrufs von externen Programmen
+ * - Leisere Sounds
  *
  * JFritz 0.6.2.02
  * - Bugfix: Problem mit der schweizer Rückwärtssuche behoben
@@ -593,7 +593,7 @@ public class Main {
 
 	public final static String PROGRAM_VERSION = "0.6.2.03"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.45 2007/01/15 10:47:23 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.46 2007/01/15 11:14:03 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
