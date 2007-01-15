@@ -110,6 +110,7 @@
  * - Lautstärke der Sounds halbieren
  * - Alle Zugriffe auf FritzBox in eigenen Threads
  * - Bug: Eingabe der IP-Nummer nach Ruhezustand
+ * - Bug: Wizard setzt die IP nicht richtig
  * - Markieren der Zeilen per STRG auch in der "Teilnehmer"-Spalte
  * - Ändern der Standardrufnummer per Häckchen führt nicht zur Speicherung, erst wenn man noch ein Datum ändert
  * - Filter für Nebenstelle (Port) kombiniert mit eingetragenem Namen in der Weboberfläche
@@ -121,10 +122,12 @@
  * - Kurzwahlliste sortierbar und Spaltenreihenfolge änderbar
  * - Bug "Doppelt erfasste Anrufe" behoben?
  * - http://www.ip-phone-forum.de/showthread.php?t=112348
- * - 0900 Nummern werden nicht korrekt erkannt http://www.ip-phone-forum.de/showthread.php?t=114325 => Liste mit Call-By-Call Vorwahlen
  * - Überprüfen, geht wohl nicht mehr: Rückwärtssuche für Österreich über dasoertliche.de wieder eingebaut
  * - Connection-Timeout für ReverseLookup setzen
  * TODO-END
+ *
+ * JFritz 0.6.2.03
+ * - Umstrukturierung des Aufrufs von externen Programmen
  *
  * JFritz 0.6.2.02
  * - Bugfix: Problem mit der schweizer Rückwärtssuche behoben
@@ -588,9 +591,9 @@ public class Main {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.6.2.02"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.6.2.03"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.44 2007/01/14 21:09:03 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.45 2007/01/15 10:47:23 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

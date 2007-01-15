@@ -1238,4 +1238,31 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 		return items;
 	}
 
+    public static Person searchFirstAndLastNameToPhoneNumber(String caller) {
+    	Vector<Person> persons = new Vector<Person>();
+        PhoneNumber callerPhoneNumber = new PhoneNumber(caller);
+        Debug.msg("Searching in local database for number "+caller+" ..."); //$NON-NLS-1$
+        Person person = JFritz.getPhonebook().findPerson(callerPhoneNumber);
+        if (person != null) {
+            Debug.msg("Found in local database: " + person.getLastName() + ", " + person.getFirstName()); //$NON-NLS-1$,  //$NON-NLS-2$
+        } else {
+            Debug.msg("Searching on dastelefonbuch.de ..."); //$NON-NLS-1$
+            person = ReverseLookup.busyLookup(callerPhoneNumber);
+            if (!person.getFullname().equals("")) { //$NON-NLS-1$
+                Debug
+                        .msg("Found on dastelefonbuch.de: " + person.getLastName() + ", " + person.getFirstName()); //$NON-NLS-1$,  //$NON-NLS-2$
+                Debug.msg("Add person to database"); //$NON-NLS-1$
+                persons.add(person);
+            } else {
+                person = new Person();
+                person.addNumber(new PhoneNumber(caller));
+                Debug.msg("Found no person"); //$NON-NLS-1$
+                Debug.msg("Add dummy person to database"); //$NON-NLS-1$
+                persons.add(person);
+            }
+            JFritz.getPhonebook().addEntries(persons);
+            JFritz.getPhonebook().fireTableDataChanged();
+        }
+        return person;
+    }
 }

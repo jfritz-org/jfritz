@@ -7,27 +7,28 @@ package de.moonflower.jfritz.callmonitor;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.phonebook.PhoneBook;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
-import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 
 public class DisplayCallsMonitor extends CallMonitorAdaptor {
 
     public void pendingCallOut(Call call) {
-        displayCallOutMsg(call.getPhoneNumber().getAreaNumber(), call.getRoute());
+    	Person person = PhoneBook.searchFirstAndLastNameToPhoneNumber(call.getPhoneNumber().getAreaNumber());
+        displayCallOutMsg(call.getPhoneNumber().getAreaNumber(), call.getRoute(), person);
     }
 
     public void pendingCallIn(Call call) {
-        displayCallInMsg(call.getPhoneNumber().getAreaNumber(), call.getRoute());
+    	Person person = PhoneBook.searchFirstAndLastNameToPhoneNumber(call.getPhoneNumber().getAreaNumber());
+        displayCallInMsg(call.getPhoneNumber().getAreaNumber(), call.getRoute(), person);
     }
 
     public void endOfCall(Call call) {
@@ -42,73 +43,8 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
      * @param called
      *            Called number
      */
-    public void displayCallInMsg(String caller, String called) {
-        displayCallInMsg(caller, called, ""); //$NON-NLS-1$
-    }
-
-    private String searchNameToPhoneNumber(String caller) {
-    	Vector<Person> persons = new Vector<Person>();
-        String name = ""; //$NON-NLS-1$
-        PhoneNumber callerPhoneNumber = new PhoneNumber(caller);
-        Debug.msg("Searchin in local database ..."); //$NON-NLS-1$
-        Person callerperson = JFritz.getPhonebook().findPerson(callerPhoneNumber);
-        if (callerperson != null) {
-            name = callerperson.getFullname();
-            Debug.msg("Found in local database: " + name); //$NON-NLS-1$
-        } else {
-            Debug.msg("Searchin on dastelefonbuch.de ..."); //$NON-NLS-1$
-            //ReverseLookup.lookup(callerPhoneNumber, JFritz.getPhonebook());
-
-            Person person = ReverseLookup.busyLookup(callerPhoneNumber);
-
-            if (!person.getFullname().equals("")) { //$NON-NLS-1$
-                name = person.getFullname();
-                Debug.msg("Found on dastelefonbuch.de: " + name); //$NON-NLS-1$
-                Debug.msg("Add person to database"); //$NON-NLS-1$
-            } else {
-                Debug.msg("Found no person"); //$NON-NLS-1$
-                Debug.msg("Add dummy person to database"); //$NON-NLS-1$
-            }
-            persons.add(person);
-        }
-        JFritz.getPhonebook().addEntries(persons);
-        JFritz.getPhonebook().fireTableDataChanged();
-        return name;
-    }
-
-    private String[] searchFirstAndLastNameToPhoneNumber(String caller) {
-    	Vector<Person> persons = new Vector<Person>();
-        String name[] = {"", "", ""}; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-        PhoneNumber callerPhoneNumber = new PhoneNumber(caller);
-        Debug.msg("Searching in local database ..."); //$NON-NLS-1$
-        Person callerperson = JFritz.getPhonebook().findPerson(callerPhoneNumber);
-        if (callerperson != null) {
-            name[0] = callerperson.getFirstName();
-            name[1] = callerperson.getLastName();
-            name[2] = callerperson.getCompany();
-            Debug.msg("Found in local database: " + name[1] + ", " + name[0]); //$NON-NLS-1$,  //$NON-NLS-2$
-        } else {
-            Debug.msg("Searching on dastelefonbuch.de ..."); //$NON-NLS-1$
-            Person person = ReverseLookup.busyLookup(callerPhoneNumber);
-            if (!person.getFullname().equals("")) { //$NON-NLS-1$
-                name[0] = person.getFirstName();
-                name[1] = person.getLastName();
-                name[2] = person.getCompany();
-                Debug
-                        .msg("Found on dastelefonbuch.de: " + name[1] + ", " + name[0]); //$NON-NLS-1$,  //$NON-NLS-2$
-                Debug.msg("Add person to database"); //$NON-NLS-1$
-                persons.add(person);
-            } else {
-                person = new Person();
-                person.addNumber(new PhoneNumber(caller));
-                Debug.msg("Found no person"); //$NON-NLS-1$
-                Debug.msg("Add dummy person to database"); //$NON-NLS-1$
-                persons.add(person);
-            }
-            JFritz.getPhonebook().addEntries(persons);
-            JFritz.getPhonebook().fireTableDataChanged();
-        }
-        return name;
+    public void displayCallInMsg(String caller, String called, Person person) {
+        displayCallInMsg(caller, called, "", person); //$NON-NLS-1$
     }
 
     /**
@@ -121,7 +57,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
      * @param name
      *            Known name (only YAC)
      */
-    public void displayCallInMsg(String callerInput, String calledInput, String name) {
+    public void displayCallInMsg(String callerInput, String calledInput, String name, Person person) {
 
         Debug.msg("Caller: " + callerInput); //$NON-NLS-1$
         Debug.msg("Called: " + calledInput); //$NON-NLS-1$
@@ -145,11 +81,10 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
                     calledInput);
 
         if (name.equals("") && !callerstr.equals(Main.getMessage("unknown"))) { //$NON-NLS-1$,  //$NON-NLS-2$
-            name = searchNameToPhoneNumber(callerstr);
-            String[] nameArray = searchFirstAndLastNameToPhoneNumber(callerstr);
-            firstname = nameArray[0];
-            surname = nameArray[1];
-            company = nameArray[2];
+            firstname = person.getFirstName();
+            surname = person.getLastName();
+            company = person.getCompany();
+            name = person.getFullname();
         }
         if (name.equals(""))name = Main.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$
         if (firstname.equals("") && surname.equals(""))surname = Main.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
@@ -241,7 +176,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
      * @param called
      *            Called number
      */
-    public void displayCallOutMsg(String calledInput, String providerInput) {
+    public void displayCallOutMsg(String calledInput, String providerInput, Person person) {
         Debug.msg("Called: " + calledInput); //$NON-NLS-1$
         Debug.msg("Provider: " + providerInput); //$NON-NLS-1$
 
@@ -262,11 +197,10 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
             providerstr = JFritz.getSIPProviderTableModel().getSipProvider(
                     providerInput, providerInput);
 
-        name = searchNameToPhoneNumber(calledstr);
-        String[] nameArray = searchFirstAndLastNameToPhoneNumber(calledstr);
-        firstname = nameArray[0];
-        surname = nameArray[1];
-        company = nameArray[2];
+        firstname = person.getFirstName();
+        surname = person.getLastName();
+        company = person.getCompany();
+        name = person.getFullname();
 
         if (name.equals(""))name = Main.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$
         if (firstname.equals("") && surname.equals(""))surname = Main.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$

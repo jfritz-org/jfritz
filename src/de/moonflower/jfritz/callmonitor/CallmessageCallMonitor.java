@@ -10,6 +10,8 @@ import java.io.DataOutputStream;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.phonebook.PhoneBook;
+import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.utils.Debug;
 
 /**
@@ -93,7 +95,8 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
                           }
                      }
                      // TODO: add Call to CallMonitorList and display it only, if number is not in ignoreMSN-List
-                     dcm.displayCallInMsg(number, msn, "");  //$NON-NLS-1$
+                     Person person = PhoneBook.searchFirstAndLastNameToPhoneNumber(number);
+                     dcm.displayCallInMsg(number, msn, "", person);  //$NON-NLS-1$
                      // Alter Callmessagemonitor
                 } else if (msg.startsWith("@")) {  //$NON-NLS-1$
 					// Call
@@ -132,7 +135,8 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
 						number = ""; //$NON-NLS-1$
 					}
                     // TODO: add Call to CallMonitorList and display it only, if number is not in ignoreMSN-List
-                    dcm.displayCallInMsg(number, msn, "");  //$NON-NLS-1$
+                    Person person = PhoneBook.searchFirstAndLastNameToPhoneNumber(number);
+                    dcm.displayCallInMsg(number, msn, "", person);  //$NON-NLS-1$
 					//JFritz.getCallMonitorList().displayCallInMsg(number, msn, name);
 				} else {
 					// Message

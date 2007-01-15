@@ -112,6 +112,8 @@ public class CallMonitorList {
         Integer intID = new Integer(id);
         if (pendingCalls.keySet().contains(intID)) {
             pendingCalls.remove(intID);
+            // Setze Type auf FAILED, da kein Anruf zustandegekommen ist
+            call.setCallType(new CallType(CallType.CALLIN_FAILED));
         } else if (establishedCalls.keySet().contains(intID)) {
             establishedCalls.remove(intID);
         }

@@ -142,6 +142,14 @@ public class Call {
 	}
 
 	/**
+	 * Set call type
+	 * @param callType
+	 */
+	public void setCallType(CallType callType) {
+		calltype = callType;
+	}
+
+	/**
 	 * @return Returns the comment.
 	 */
 	public String getComment() {
