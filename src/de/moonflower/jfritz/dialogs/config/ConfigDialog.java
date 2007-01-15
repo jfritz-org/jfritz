@@ -327,11 +327,11 @@ public class ConfigDialog extends JDialog {
 						JFritz.getCallerList().fireTableDataChanged();
 
 					} catch (WrongPasswordException e1) {
-						JFritz.errorMsg(Main.getMessage("wrong_password")); //$NON-NLS-1$
-						Debug.errDlg(Main.getMessage("wrong_password")); //$NON-NLS-1$
+						JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+						Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
 					} catch (IOException e1) {
-						JFritz.errorMsg(Main.getMessage("box_address_wrong")); //$NON-NLS-1$
-						Debug.errDlg(Main.getMessage("box_address_wrong")); //$NON-NLS-1$
+						JFritz.errorMsg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
+						Debug.errDlg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
 					} catch (InvalidFirmwareException e1) {
 						JFritz.errorMsg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
 						Debug.errDlg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$

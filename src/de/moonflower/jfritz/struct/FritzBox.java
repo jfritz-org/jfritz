@@ -133,11 +133,11 @@ public class FritzBox {
 					box_password,
 					box_port);
 		} catch (WrongPasswordException e) {
-			Debug.msg(Main.getMessage("wrong_password"));
+			Debug.msg(Main.getMessage("box.wrong_password"));
 		} catch (InvalidFirmwareException e) {
-			Debug.msg(Main.getMessage("box_address_wrong"));
+			Debug.msg(Main.getMessage("box.address_wrong"));
 		} catch (IOException e) {
-			Debug.msg(Main.getMessage("box_address_wrong"));
+			Debug.msg(Main.getMessage("box.address_wrong"));
 		}
 	}
 

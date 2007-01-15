@@ -144,13 +144,13 @@ public class QuickDials extends AbstractTableModel {
 			fireTableDataChanged();
 		} catch (WrongPasswordException e) {
 			Debug.err("getQuickDialData: Wrong password"); //$NON-NLS-1$
-			Debug.errDlg(Main.getMessage("wrong_password")); //$NON-NLS-1$
+			Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
 		} catch (IOException e) {
 			Debug.err("getQuickDialData: Box not found"); //$NON-NLS-1$
-			Debug.errDlg(Main.getMessage("box_address_wrong")); //$NON-NLS-1$
+			Debug.errDlg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
 		} catch (InvalidFirmwareException e) {
 			Debug.err("getQuickDialData: Invalid firmware"); //$NON-NLS-1$
-			Debug.errDlg(Main.getMessage("box_address_wrong")); //$NON-NLS-1$
+			Debug.errDlg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
 		}
 	}
 

@@ -100,7 +100,7 @@ public class Telnet {
 				} else {
 					Debug.msg("FritzBox not found. Get new IP ..."); //$NON-NLS-1$
 					statusBarController.fireStatusChanged(Main
-							.getMessage("box_not_found")); //$NON-NLS-1$
+							.getMessage("box.not_found")); //$NON-NLS-1$
 					Debug.err("Address wrong!"); //$NON-NLS-1$
 					JFritz.getJframe().setBusy(false);
 					String box_address = JFritz.getJframe().showAddressDialog(
@@ -179,10 +179,10 @@ public class Telnet {
 											.getPassword();
 									break; // go on with telnet login
 								} catch (WrongPasswordException e1) {
-									Debug.err("Password wrong!"); //$NON-NLS-1$
+									Debug.err(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
 
 									statusBarController.fireStatusChanged(Main
-											.getMessage("password_wrong")); //$NON-NLS-1$
+											.getMessage("box.wrong_password")); //$NON-NLS-1$
 									JFritz.getJframe().setBusy(false);
 
 									String newPassword = JFritz.getJframe()

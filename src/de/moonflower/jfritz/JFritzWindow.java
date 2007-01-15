@@ -250,8 +250,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				Debug.err("Eingabe abgebrochen"); //$NON-NLS-1$
 				throw new WrongPasswordException();
 			} else if (!password.equals(pass)) {
-				Debug.errDlg(Main.getMessage("wrong_password")); //$NON-NLS-1$
-				Debug.err(Main.getMessage("wrong_password")); //$NON-NLS-1$
+				Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+				Debug.err(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
 				throw new WrongPasswordException();
 			}
 		}
@@ -630,7 +630,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 							isdone = true;
 						} catch (WrongPasswordException e) {
 							setBusy(false);
-							setStatus(Main.getMessage("password_wrong")); //$NON-NLS-1$
+							setStatus(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
 							String password = showPasswordDialog(JFritz
 									.getFritzBox().getPassword());
 							if (password == null) { // Dialog canceled
@@ -650,7 +650,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 							} else {
 								Debug.msg("Callerlist Box not found"); //$NON-NLS-1$
 								setBusy(false);
-								setStatus(Main.getMessage("box_not_found")); //$NON-NLS-1$
+								setStatus(Main.getMessage("box.not_found")); //$NON-NLS-1$
 								String box_address = showAddressDialog(JFritz
 										.getFritzBox().getAddress());
 								if (box_address == null) { // Dialog canceled
@@ -746,11 +746,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 							Main.SAVE_DIR + JFritz.SIPPROVIDER_FILE);
 					JFritz.getCallerList().fireTableDataChanged();
 				} catch (WrongPasswordException e1) {
-					JFritz.errorMsg(Main.getMessage("wrong_password")); //$NON-NLS-1$
-					Debug.errDlg(Main.getMessage("wrong_password")); //$NON-NLS-1$
+					JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+					Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
 				} catch (IOException e1) {
-					JFritz.errorMsg(Main.getMessage("box_address_wrong")); //$NON-NLS-1$
-					Debug.errDlg(Main.getMessage("box_address_wrong")); //$NON-NLS-1$
+					JFritz.errorMsg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
+					Debug.errDlg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
 				} catch (InvalidFirmwareException e1) {
 					JFritz.errorMsg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
 					Debug.errDlg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$

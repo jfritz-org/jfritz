@@ -154,19 +154,19 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 							.getText(), password, port.getText());
 				}
 			} catch (WrongPasswordException e1) {
-				Debug.err("Password wrong!"); //$NON-NLS-1$
+				Debug.err(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
 				boxtypeLabel.setForeground(Color.RED);
-				boxtypeLabel.setText(Main.getMessage("wrong_password")); //$NON-NLS-1$
+				boxtypeLabel.setText(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
 				firmware = null;
 			} catch (InvalidFirmwareException ife) {
 				Debug.err("Invalid firmware detected"); //$NON-NLS-1$
 				boxtypeLabel.setForeground(Color.RED);
-				boxtypeLabel.setText(Main.getMessage("box_address_wrong")); //$NON-NLS-1$
+				boxtypeLabel.setText(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
 				firmware = null;
 			} catch (IOException e1) {
 				Debug.err("Address wrong!"); //$NON-NLS-1$
 				boxtypeLabel.setForeground(Color.RED);
-				boxtypeLabel.setText(Main.getMessage("box_address_wrong")); //$NON-NLS-1$
+				boxtypeLabel.setText(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
 				firmware = null;
 			}
 			setBoxTypeLabel();
@@ -178,19 +178,19 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 
 				// firmware = new FritzBoxFirmware("14", "1", "35");
 			} catch (WrongPasswordException e1) {
-				Debug.err("Password wrong!"); //$NON-NLS-1$
+				Debug.err(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
 				boxtypeLabel.setForeground(Color.RED);
-				boxtypeLabel.setText(Main.getMessage("wrong_password")); //$NON-NLS-1$
+				boxtypeLabel.setText(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
 				firmware = null;
 			} catch (InvalidFirmwareException ife) {
 				Debug.err("Invalid firmware detected"); //$NON-NLS-1$
 				boxtypeLabel.setForeground(Color.RED);
-				boxtypeLabel.setText(Main.getMessage("box_address_wrong")); //$NON-NLS-1$
+				boxtypeLabel.setText(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
 				firmware = null;
 			} catch (IOException e1) {
 				Debug.err("Address wrong!"); //$NON-NLS-1$
 				boxtypeLabel.setForeground(Color.RED);
-				boxtypeLabel.setText(Main.getMessage("box_address_wrong")); //$NON-NLS-1$
+				boxtypeLabel.setText(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
 				firmware = null;
 			}
 			// firmware = new FritzBoxFirmware("14", "1", "35");

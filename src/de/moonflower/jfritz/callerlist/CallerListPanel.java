@@ -139,19 +139,19 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	private static final String FILTER_DATE_START = "FILTER_DATE_START";
 
-	private static final String THIS_DAY = "date_filter_today";
+	private static final String THIS_DAY = "date_filter.today";
 
-	private static final String LAST_DAY = "date_filter_yesterday";
+	private static final String LAST_DAY = "date_filter.yesterday";
 
-	private static final String THIS_WEEK = "date_filter_this_week";
+	private static final String THIS_WEEK = "date_filter.this_week";
 
-	private static final String LAST_WEEK = "date_filter_last_week";
+	private static final String LAST_WEEK = "date_filter.last_week";
 
-	private static final String THIS_MONTH = "date_filter_this_month";
+	private static final String THIS_MONTH = "date_filter.this_month";
 
-	private static final String LAST_MONTH = "date_filter_last_month";
+	private static final String LAST_MONTH = "date_filter.last_month";
 
-	private static final String FILTER_DATE_SPECIAL = "date_filter_special";
+	private static final String FILTER_DATE_SPECIAL = "date_filter.special";
 
 	private static final String PROPERTIES_FILE = "jfritz.callerlist.properties.xml";
 
