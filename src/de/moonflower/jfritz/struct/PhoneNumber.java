@@ -8,7 +8,6 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.util.Enumeration;
 import java.util.HashMap;
 
@@ -16,7 +15,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.xml.sax.EntityResolver;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -25,7 +23,6 @@ import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
-import de.moonflower.jfritz.callerlist.CallFileXMLHandler;
 import de.moonflower.jfritz.struct.CallByCall;
 import de.moonflower.jfritz.utils.CbCFileXMLHandler;
 import de.moonflower.jfritz.utils.Debug;
@@ -176,7 +173,7 @@ public class PhoneNumber implements Comparable {
 		if(worldFlagMap != null){
 
 			// Finde Landeskennzahl
-			for ( int i=3; i>0; i-- ) {
+			for ( int i=4; i>0; i-- ) {
 				if ( number.length()>i && worldFlagMap.containsKey(number.substring(1, i))) {
 					value = worldFlagMap.get(number.substring(1,i)).split(";");
 					countryCode = "+" + number.substring(1,i);
@@ -187,7 +184,7 @@ public class PhoneNumber implements Comparable {
 			}
 
 			// Finde weitere Durchwahlen, wie z.B. Mobilfunkanbieter
-			for ( int i=9; i>3; i-- ) {
+			for ( int i=11; i>3; i-- ) {
 				if ( number.length()>i && worldFlagMap.containsKey(number.substring(1, i))) {
 					value = worldFlagMap.get(number.substring(1,i)).split(";");
 					if ( countryCode.equals(Main.getProperty("country.code","+49"))) {
