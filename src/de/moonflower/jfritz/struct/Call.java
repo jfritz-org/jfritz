@@ -115,7 +115,9 @@ public class Call {
 			route2 = call2.getRoute();
 		}
 
-		if ((nr1).equals(nr2) && (this.getPort().equals(call2.getPort()))
+		if ( this.getCalldate().equals(call2.getCalldate())
+				&& (nr1).equals(nr2)
+				&& (this.getPort().equals(call2.getPort()))
 				&& (this.getDuration() == call2.getDuration())
 				&& (this.getCalltype().toInt() == call2.getCalltype().toInt())
 				&& (route1.equals(route2))) {

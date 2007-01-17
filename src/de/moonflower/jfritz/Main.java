@@ -125,10 +125,13 @@
  * - Connection-Timeout für ReverseLookup setzen
  * TODO-END
  *
+ * JFritz 0.6.2.04
+ * - Umstrukturierung des Aufrufs von externen Programmen (noch nicht abgeschlossen)
+ *
  * JFritz 0.6.2.03
- * - Umstrukturierung des Aufrufs von externen Programmen
  * - Leisere Sounds
  * - Bugfix: Zu kurze Landesvorwahl
+ * - Bugfix: Falsche Rufnummern gelöscht
  *
  * JFritz 0.6.2.02
  * - Bugfix: Problem mit der schweizer Rückwärtssuche behoben
@@ -594,7 +597,7 @@ public class Main {
 
 	public final static String PROGRAM_VERSION = "0.6.2.03"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.48 2007/01/16 00:19:30 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.49 2007/01/17 09:55:04 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
