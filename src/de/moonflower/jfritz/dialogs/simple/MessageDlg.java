@@ -74,6 +74,7 @@ public class MessageDlg extends JDialog implements ActionListener{
 
 			setSize(300, 150);
 			setVisible(true);
+			toFront();
 		}
 
 		/**

@@ -96,6 +96,7 @@ public class CallMessageDlg extends JDialog implements ActionListener{
 
 			setSize(300, 150);
 			setVisible(true);
+			toFront();
 		}
 
 		/**
