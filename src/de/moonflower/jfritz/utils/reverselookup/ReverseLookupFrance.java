@@ -65,6 +65,11 @@ public final class ReverseLookupFrance {
 				try {
 					con = url.openConnection();
 
+					// 5 Sekunden-Timeout für Verbindungsaufbau
+					//Set the read time for 15 seconds
+					con.setConnectTimeout(5000);
+					con.setReadTimeout(15000);
+
 					String header = ""; //$NON-NLS-1$
 					String charSet = ""; //$NON-NLS-1$
 					for (int i = 0;; i++) {

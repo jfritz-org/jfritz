@@ -66,6 +66,12 @@ public final class ReverseLookupUnitedStates {
 					con.setRequestProperty("user-agent","Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)");
 					String header = ""; //$NON-NLS-1$
 					String charSet = ""; //$NON-NLS-1$
+
+					// 5 Sekunden-Timeout für Verbindungsaufbau
+					//Set the read time for 15 seconds
+					con.setConnectTimeout(5000);
+					con.setReadTimeout(15000);
+
 					for (int i = 0;; i++) {
 						String headerName = con.getHeaderFieldKey(i);
 						String headerValue = con.getHeaderField(i);

@@ -64,6 +64,11 @@ public final static String SEARCH_URL="http://www.paginebianche.it/execute.cgi?b
 
 					String header = ""; //$NON-NLS-1$
 					String charSet = ""; //$NON-NLS-1$
+					// 5 Sekunden-Timeout für Verbindungsaufbau
+					//Set the read time for 15 seconds
+					con.setConnectTimeout(5000);
+					con.setReadTimeout(15000);
+
 					for (int i = 0;; i++) {
 						String headerName = con.getHeaderFieldKey(i);
 						String headerValue = con.getHeaderField(i);

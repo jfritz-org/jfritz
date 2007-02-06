@@ -63,6 +63,12 @@ public final class ReverseLookupSwitzerland {
 
 					String header = ""; //$NON-NLS-1$
 					String charSet = ""; //$NON-NLS-1$
+
+					// 5 Sekunden-Timeout für Verbindungsaufbau
+					//Set the read time for 15 seconds
+					con.setConnectTimeout(5000);
+					con.setReadTimeout(15000);
+
 					for (int i = 0;; i++) {
 						String headerName = con.getHeaderFieldKey(i);
 						String headerValue = con.getHeaderField(i);
@@ -96,15 +102,14 @@ public final class ReverseLookupSwitzerland {
 						d = new BufferedReader(new InputStreamReader(con
 								.getInputStream(), charSet));
 					}
-					int i = 0;
+
 					String str = ""; //$NON-NLS-1$
 					String data = "";
 
 					// Get response data
-					while ((i < 700) && (null != ((str = d.readLine())))) {
+					while ((null != ((str = d.readLine()))))
 						data += str;
-						i++;
-					}
+
 					d.close();
 					Debug.msg("Begin processing responce from tel.search.ch");
 
@@ -117,13 +122,6 @@ public final class ReverseLookupSwitzerland {
 					Matcher mName = pName.matcher(data);
 					if (mName.find()) {
 						String[] results;
-
-						//Not necessary anymore
-						/*if(mName.group(1).indexOf("<h4>") > 0)
-							results = mName.group(2).trim().split(",");
-						else
-							results = mName.group(1).trim().split(",");
-						*/
 
 						results = mName.group(1).trim().split(",");
 
