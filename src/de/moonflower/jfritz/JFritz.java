@@ -317,8 +317,13 @@ public final class JFritz implements  StatusListener{
 		trayIcon.setIconAutoSize(false);
 		trayIcon.setCaption(Main.PROGRAM_NAME + " v" + Main.PROGRAM_VERSION); //$NON-NLS-1$
 		trayIcon.addActionListener(new ActionListener() {
+			private long oldTimeStamp = 0;
 			public void actionPerformed(ActionEvent e) {
-				hideShowJFritz();
+				long timeStamp = e.getWhen();
+				if ( timeStamp-oldTimeStamp>600 ) {
+					hideShowJFritz();
+					oldTimeStamp = timeStamp;
+				}
 			}
 		});
 		systray.addTrayIcon(trayIcon);
