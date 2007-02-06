@@ -9,6 +9,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import de.moonflower.jfritz.Main;
+
 /**
  * This class allows to backup files to a
  * file structure consisting out of the current date.
@@ -44,7 +46,7 @@ public class CopyFile {
 
         for (int i = 0; i < numberOfFiles; i++) {
             try {
-                in[i] = new FileInputStream(entries[i].getName());
+                in[i] = new FileInputStream(Main.SAVE_DIR + entries[i].getName());
             } catch (IOException ex) {
                 Debug.err(ex.toString());
             }
@@ -56,14 +58,14 @@ public class CopyFile {
      * creates a directory-structure in the following format: backup/yyyy.MM.dd_HH.mm.ss
      *
      */
-    private void createDirectory() {
-        date = Calendar.getInstance().getTime();
-
-        boolean success = (new File("backup"+File.separator + df.format( date ))) //$NON-NLS-1$
+    private String createDirectory(String directoryPrefix) {
+    	String dir = directoryPrefix+ "backup"+File.separator + df.format( date );
+        boolean success = (new File(dir)) //$NON-NLS-1$
                 .mkdirs();
         if (!success) {
             Debug.err("Directory creation failed"); //$NON-NLS-1$
         }
+        return dir;
     }
 
     /**
@@ -72,43 +74,9 @@ public class CopyFile {
      *
      */
     public void copy(String sourceDirectory, String fileFormat) {
-        this.sourceDirectory = sourceDirectory;
-        this.fileFormat = fileFormat;
-        getFiles();
-        createDirectory();
-        out = new FileOutputStream[numberOfFiles];
-        for (int i = 0; i < numberOfFiles; i++) {
-            try {
-                Debug.msg("Found file to backup: " + entries[i].getName()); //$NON-NLS-1$
-                out[i] = new FileOutputStream("backup" //$NON-NLS-1$
-                		+ File.separator + df.format( date ) + File.separator + entries[i].getName());
-                byte[] buf = new byte[4096];
-                int len;
-                while ((len = in[i].read(buf)) > 0) {
-                    out[i].write(buf, 0, len);
-                }
-                in[i].close();
-                out[i].close();
-            } catch (IOException ex) {
-                Debug.err(ex.toString());
-            } catch (ArrayIndexOutOfBoundsException ex) {
-                Debug.err("No files available"); //$NON-NLS-1$
-            }finally{
-            	try{
-            		if(in[i]!=null)
-            			in[i].close();
-            	}catch(IOException e){
-                    Debug.err("exception closing a stream"); //$NON-NLS-1$
-            	}
-            	try{
-            		if(out[i]!=null)
-            			out[i].close();
-            	}catch(IOException e){
-                    Debug.err("exception closing a stream"); //$NON-NLS-1$
-            	}
-            }
-
-        }
+        date = Calendar.getInstance().getTime();
+    	String toDir = Main.SAVE_DIR;
+        copy(sourceDirectory, fileFormat, createDirectory(toDir));
     }
 
     /**

@@ -996,7 +996,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 
 	private static void doBackup() {
 		CopyFile backup = new CopyFile();
-		backup.copy(".", "xml"); //$NON-NLS-1$,  //$NON-NLS-2$
+		backup.copy(Main.SAVE_DIR, "xml"); //$NON-NLS-1$,  //$NON-NLS-2$
 	}
 
 	public Call getSelectedCall() {
