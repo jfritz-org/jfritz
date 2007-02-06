@@ -231,6 +231,7 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 		Main.setProperty("box.address", address.getText()); //$NON-NLS-1$
 		Main.setProperty("box.password", Encryption.encrypt(password)); //$NON-NLS-1$
 		Main.setProperty("box.port", port.getText()); //$NON-NLS-1$
+		JFritz.getFritzBox().updateSettings();
 
 		if (firmware != null) {
 			Main.setProperty("box.firmware", firmware.getFirmwareVersion()); //$NON-NLS-1$

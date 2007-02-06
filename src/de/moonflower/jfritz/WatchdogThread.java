@@ -14,7 +14,7 @@ public class WatchdogThread extends Thread {
 
     private int interval = 1;
 
-    private Date now, lastTimestamp;
+    private Date now, lastTimestamp, startWatchdogTimestamp;
 
     private Calendar cal;
 
@@ -26,6 +26,7 @@ public class WatchdogThread extends Thread {
     public WatchdogThread(int interval) {
         cal = Calendar.getInstance();
         this.interval = interval;
+        startWatchdogTimestamp = cal.getTime();
         lastTimestamp = cal.getTime();
     }
 
@@ -47,21 +48,30 @@ public class WatchdogThread extends Thread {
             // Starte den Anrufmonitor neu.
 
             Debug.msg("Watchdog: Restarting call monitor"); //$NON-NLS-1$
-            JFritz.stopCallMonitor();
-            try {
-                Thread.sleep(15000);
-            } catch (InterruptedException e) {
-                Debug.err("Watchdog-Error: " + e);
-            }
-            JFritz.getJframe().startChosenCallMonitor();
-
+            restartCallMonitor();
 			if (JFritzUtils.parseBoolean(Main.getProperty("option.watchdog.fetchAfterStandby", "true"))) //$NON-NLS-1$, //$NON-NLS-2$
                 JFritz.getJframe().fetchList(JFritzUtils.parseBoolean(Main.getProperty("option.deleteAfterFetch", "true"))); //$NON-NLS-1$, //$NON-NLS-2$
+        }
+
+        else if (now.getTime() - startWatchdogTimestamp.getTime() > 5*60000) {
+//        	Debug.msg("Watchdog: 5 Minuten vorbei. Restarte CallMonitor");
+        	restartCallMonitor();
+        	startWatchdogTimestamp = now;
         }
         setTimestamp();
     }
 
     private void setTimestamp() {
         lastTimestamp = Calendar.getInstance().getTime();
+    }
+
+    private void restartCallMonitor() {
+        JFritz.stopCallMonitor();
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Debug.err("Watchdog-Error: " + e);
+        }
+        JFritz.getJframe().startChosenCallMonitor();
     }
 }

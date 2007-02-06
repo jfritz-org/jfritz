@@ -109,7 +109,6 @@
  * * TODO:
  * - Alle Zugriffe auf FritzBox in eigenen Threads
  * - Bug: Eingabe der IP-Nummer nach Ruhezustand
- * - Bug: Wizard setzt die IP nicht richtig
  * - Markieren der Zeilen per STRG auch in der "Teilnehmer"-Spalte
  * - Ändern der Standardrufnummer per Häckchen führt nicht zur Speicherung, erst wenn man noch ein Datum ändert
  * - Filter für Nebenstelle (Port) kombiniert mit eingetragenem Namen in der Weboberfläche
@@ -133,6 +132,8 @@
  * - Bugfix: Zu kurze Landesvorwahl
  * - Bugfix: Falsche Rufnummern gelöscht
  * - Bugfix?: JFritz verliert Einstellungen
+ * - Bugfix: Anrufmonitor funktioniert sporadisch nicht mehr. (Restart alle 5 Minuten)
+ * - Bugfix: Wizard speichert IP nun wieder korrekt
  * - INTERN: Getrenntes Speichern von config-properties und state-properties.
  *           config-properties: ip, passwort, optionen ...
  *           state-properties: filter-state, window-position, window-state, column-width...
@@ -604,7 +605,7 @@ public class Main {
 
 	public final static String PROGRAM_VERSION = "0.6.2.03"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.50 2007/02/06 09:55:59 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.51 2007/02/06 10:36:45 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

@@ -23,6 +23,7 @@ import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.HTMLUtil;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.network.UPNPUtils;
@@ -119,6 +120,13 @@ public class FritzBox {
 		box_address = address;
 		box_password = password;
 		box_port = port;
+		detectFirmware();
+	}
+
+	public void updateSettings() {
+		box_address = Main.getProperty("box.address","192.168.178.1");
+		box_password = Encryption.decrypt(Main.getProperty("box.password",Encryption.encrypt("")));
+		box_port = Main.getProperty("box.port","80");
 		detectFirmware();
 	}
 

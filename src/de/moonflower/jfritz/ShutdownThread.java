@@ -3,8 +3,6 @@
  */
 package de.moonflower.jfritz;
 
-import java.io.File;
-
 import de.moonflower.jfritz.utils.Debug;
 
 /**
