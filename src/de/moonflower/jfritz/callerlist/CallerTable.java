@@ -154,7 +154,7 @@ public class CallerTable extends JTable {
 		headerTips.setToolTip(col, Main.getMessage(columnName + "_desc")); //$NON-NLS-1$
 		col.setMinWidth(10);
 		col.setMaxWidth(1600);
-		col.setPreferredWidth(Integer.parseInt(Main.getProperty(
+		col.setPreferredWidth(Integer.parseInt(Main.getStateProperty(
 				"column." + columnName + ".width", "70"))); //$NON-NLS-1$,  //$NON-NLS-2$
 		return col;
 	}
@@ -194,7 +194,7 @@ public class CallerTable extends JTable {
 		showHideColumns();
 
 		for (int i = 0; i < getColumnCount(); i++) {
-			String columnName = Main.getProperty("column" + i + ".name", ""); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+			String columnName = Main.getStateProperty("column" + i + ".name", ""); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 			// Debug.msg("column"+i+".name:
 			// "+Main.getProperty("column"+i+".name",""));
 			if (!columnName.equals("")) { //$NON-NLS-1$
@@ -257,7 +257,7 @@ public class CallerTable extends JTable {
 		TableColumnModel colModel = getColumnModel();
 		for (int i = 0; i < colModel.getColumnCount(); i++) {
 			TableColumn col = getColumnModel().getColumn(i);
-			Main.setProperty("column." + col.getIdentifier() + ".width", ""
+			Main.setStateProperty("column." + col.getIdentifier() + ".width", ""
 					+ col.getPreferredWidth());
 		}
 		try {
@@ -281,14 +281,14 @@ public class CallerTable extends JTable {
 
 		for (int i = 0; i < MAXCOLUMNCOUNT; i++) {
 			try {
-				Main.setProperty("" + "column" + i + ".name", ""
+				Main.setStateProperty("" + "column" + i + ".name", ""
 						+ colModel.getColumn(i).getIdentifier());
 				// Debug.msg("" + "column" + i + ".name" + "="+
 				// colModel.getColumn(i).getIdentifier());
 			} catch (IllegalArgumentException iae) {
-				Main.setProperty("column" + i + ".name", "");
+				Main.setStateProperty("column" + i + ".name", "");
 			} catch (ArrayIndexOutOfBoundsException aioobe) {
-				Main.setProperty("column" + i + ".name", "");
+				Main.setStateProperty("column" + i + ".name", "");
 			}
 		}/*
 			 * String columnName = Main.getProperty("column"+i+".name","");
@@ -347,7 +347,7 @@ public class CallerTable extends JTable {
 			colModel.addColumn(column);
 			Debug.msg("Showing " + columnName + " column"); //$NON-NLS-1$
 			colModel.getColumn(getColumnCount() - 1).setPreferredWidth(
-					Integer.parseInt(Main.getProperty(
+					Integer.parseInt(Main.getStateProperty(
 							"column." + columnName + ".width", "50"))); //$NON-NLS-1$, //$NON-NLS-2$
 		}
 	}

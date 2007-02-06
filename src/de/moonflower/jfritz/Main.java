@@ -132,6 +132,13 @@
  * - Leisere Sounds
  * - Bugfix: Zu kurze Landesvorwahl
  * - Bugfix: Falsche Rufnummern gelöscht
+ * - Bugfix?: JFritz verliert Einstellungen
+ * - INTERN: Getrenntes Speichern von config-properties und state-properties.
+ *           config-properties: ip, passwort, optionen ...
+ *           state-properties: filter-state, window-position, window-state, column-width...
+ * - INTERN: getProperty() gibt config-properties, getStateProperty()
+ *           getStatePropery() gibt state-properties, setStateProperty()
+ * - INTERN: Shutdown-Thread wird NICHT mehr benutzt
  *
  * JFritz 0.6.2.02
  * - Bugfix: Problem mit der schweizer Rückwärtssuche behoben
@@ -597,7 +604,7 @@ public class Main {
 
 	public final static String PROGRAM_VERSION = "0.6.2.03"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.49 2007/01/17 09:55:04 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.50 2007/02/06 09:55:59 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -617,13 +624,17 @@ public class Main {
 
 	public final static String LOCK_FILE = ".lock"; //$NON-NLS-1$
 
-	public final static String PROPERTIES_FILE = "jfritz.properties.xml"; //$NON-NLS-1$
+	public final static String CONFIG_PROPERTIES_FILE = "jfritz.properties.xml"; //$NON-NLS-1$
+
+	public final static String STATE_PROPERTIES_FILE = "jfritz.state.properties.xml"; //$NON-NLS-1$
 
 	public static boolean SYSTRAY_SUPPORT = false;
 
 	private static JFritzProperties defaultProperties;
 
-	private static JFritzProperties properties;
+	private static JFritzProperties config_properties;
+
+	private static JFritzProperties state_properties;
 
 	private static ResourceBundle localeMeanings;
 
@@ -1019,15 +1030,7 @@ public class Main {
 	 */
 	public static void clearCallsOnBox() {
 		Debug.msg("Clearing callerlist on box."); //$NON-NLS-1$
-		JFritzProperties properties = new JFritzProperties();
-		try {
-			properties.loadFromXML(PROPERTIES_FILE);
-		} catch (FileNotFoundException e) {
-			Debug.err("File " + PROPERTIES_FILE //$NON-NLS-1$
-					+ " not found, using default values"); //$NON-NLS-1$
-		} catch (Exception e) {
-			Debug.err("Exception: " + e.toString()); //$NON-NLS-1$
-		}
+		loadProperties();
 		try {
 			FritzBox fritzBox = new FritzBox(getProperty(
 					"box.address", "192.168.178.1"), Encryption //$NON-NLS-1$,  //$NON-NLS-2$
@@ -1052,6 +1055,16 @@ public class Main {
 		// notifyAll();
 		// TODO maybe some cleanup is needed
 		Debug.msg("Main.exit(" + i + ")");
+
+		if (isInstanceControlEnabled()) {
+            File f = new File( SAVE_DIR + LOCK_FILE );
+            if ( f.exists() )
+                {
+                    f.delete();
+                }
+            Debug.msg("Multiple instance lock: release lock."); //$NON-NLS-1$
+        }
+
 		System.exit(i);
 	}
 
@@ -1060,7 +1073,6 @@ public class Main {
 	 */
 	public static void loadProperties() {
 		defaultProperties = new JFritzProperties();
-		properties = new JFritzProperties(defaultProperties);
 
 		// Default properties
 		defaultProperties.setProperty("box.address", "192.168.178.1");//$NON-NLS-1$, //$NON-NLS-2$
@@ -1072,104 +1084,94 @@ public class Main {
 		defaultProperties.setProperty("area.code", "441");//$NON-NLS-1$, //$NON-NLS-2$
 		defaultProperties.setProperty("fetch.timer", "5");//$NON-NLS-1$, //$NON-NLS-2$
 
+		config_properties = new JFritzProperties(defaultProperties);
+
 		try {
-			properties.loadFromXML(Main.SAVE_DIR + PROPERTIES_FILE);
-			replaceOldProperties();
+			config_properties.loadFromXML(Main.SAVE_DIR + CONFIG_PROPERTIES_FILE);
 		} catch (FileNotFoundException e) {
-			Debug.err("File " + Main.SAVE_DIR + PROPERTIES_FILE //$NON-NLS-1$
+			Debug.err("File " + Main.SAVE_DIR + CONFIG_PROPERTIES_FILE //$NON-NLS-1$
 					+ " not found => showing config wizard"); //$NON-NLS-1$
 			showConfWizard = true;
 		} catch (IOException ioe) {
-			Debug.err("File " + Main.SAVE_DIR + PROPERTIES_FILE //$NON-NLS-1$
+			Debug.err("File " + Main.SAVE_DIR + CONFIG_PROPERTIES_FILE //$NON-NLS-1$
 					+ " not readable => showing config wizard"); //$NON-NLS-1$
 			showConfWizard = true;
 		}
+
+		state_properties = new JFritzProperties();
+		try {
+			state_properties.loadFromXML(Main.SAVE_DIR + STATE_PROPERTIES_FILE);
+		} catch (FileNotFoundException e) {
+			Debug.err("File " + Main.SAVE_DIR + STATE_PROPERTIES_FILE //$NON-NLS-1$
+					+ " not found. Using default values."); //$NON-NLS-1$
+		} catch (IOException ioe) {
+			Debug.err("File " + Main.SAVE_DIR + STATE_PROPERTIES_FILE //$NON-NLS-1$
+					+ " not readable. Using default values."); //$NON-NLS-1$
+		}
+
+		replaceOldProperties();
+
 	}
 
 	/**
-	 * Replace old property values with new one p.e. column0.width =>
-	 * column.type.width
+	 * Replace old property values with new one
 	 *
 	 */
 	private static void replaceOldProperties() {
-		for (int i = 0; i < 10; i++) {
-			removeProperty("SIP" + i); //$NON-NLS-1$
-		}
-
-		if (properties.containsKey("column.Typ.width")) { //$NON-NLS-1$
-			properties.setProperty("column.type.width", //$NON-NLS-1$
-					properties.getProperty("column.Typ.width")); //$NON-NLS-1$
-			removeProperty("column.Typ.width"); //$NON-NLS-1$
-		}
-		if (properties.containsKey("column.Zeitpunkt.width")) { //$NON-NLS-1$
-			properties.setProperty("column.date.width", //$NON-NLS-1$
-					properties.getProperty("column.Zeitpunkt.width")); //$NON-NLS-1$
-			removeProperty("column.Zeitpunkt.width"); //$NON-NLS-1$
-		}
-		if (properties.containsKey("column.Call-By-Call.width")) { //$NON-NLS-1$
-			properties.setProperty("column.callbycall.width", //$NON-NLS-1$
-					properties.getProperty("column.Call-By-Call.width")); //$NON-NLS-1$
-			removeProperty("column.Call-By-Call.width"); //$NON-NLS-1$
-		}
-		if (properties.containsKey("column.Rufnummer.width")) { //$NON-NLS-1$
-			properties.setProperty("column.number.width", //$NON-NLS-1$
-					properties.getProperty("column.Rufnummer.width")); //$NON-NLS-1$
-			removeProperty("column.Rufnummer.width"); //$NON-NLS-1$
-		}
-		if (properties.containsKey("column.Teilnehmer.width")) { //$NON-NLS-1$
-			properties.setProperty("column.participant.width", //$NON-NLS-1$
-					properties.getProperty("column.Teilnehmer.width")); //$NON-NLS-1$
-			removeProperty("column.Teilnehmer.width"); //$NON-NLS-1$
-		}
-		if (properties.containsKey("column.Anschluß.width")) { //$NON-NLS-1$
-			properties.setProperty("column.port.width", //$NON-NLS-1$
-					properties.getProperty("column.Anschluß.width")); //$NON-NLS-1$
-			removeProperty("column.Anschluß.width"); //$NON-NLS-1$
-		}
-		if (properties.containsKey("column.MSN.width")) { //$NON-NLS-1$
-			properties.setProperty("column.route.width", //$NON-NLS-1$
-					properties.getProperty("column.MSN.width")); //$NON-NLS-1$
-			removeProperty("column.MSN.width"); //$NON-NLS-1$
-		}
-		if (properties.containsKey("column.Dauer.width")) { //$NON-NLS-1$
-			properties.setProperty("column.duration.width", //$NON-NLS-1$
-					properties.getProperty("column.Dauer.width")); //$NON-NLS-1$
-			removeProperty("column.Dauer.width"); //$NON-NLS-1$
-		}
-		if (properties.containsKey("column.Kommentar.width")) { //$NON-NLS-1$
-			properties.setProperty("column.comment.width", //$NON-NLS-1$
-					properties.getProperty("column.Kommentar.width")); //$NON-NLS-1$
-			removeProperty("column.Kommentar.width"); //$NON-NLS-1$
-		}
-
-		Enumeration en = properties.keys();
-		while (en.hasMoreElements()) {
-			String key = (String) en.nextElement();
-			if ( key.toLowerCase().startsWith("filter")) {
-				if ( !key.equals("filter_private") && !key.equals("filter.Phonebook.search"))
-					properties.remove(key);
-			}
-			if ( key.equals("date_filter.special") ) {
-				properties.remove("date_filter.special");
-			}
-		}
-		saveProperties();
+		// TODO: Kopieren einiger Einstellungen in State-Properties
+//		saveProperties();
 	}
 
 	/**
-	 * Saves properties to xml files
+	 * Saves config properties to xml files
+	 * ip, password, options
 	 */
-	public static void saveProperties() {
+	public static void saveConfigProperties() {
 		try {
-			Debug.msg("Save other properties"); //$NON-NLS-1$
-			properties.storeToXML(Main.SAVE_DIR + PROPERTIES_FILE);
+			Debug.msg("Save config properties"); //$NON-NLS-1$
+			config_properties.storeToXML(Main.SAVE_DIR + CONFIG_PROPERTIES_FILE);
 		} catch (IOException e) {
-			Debug.err("Couldn't save Properties"); //$NON-NLS-1$
+			Debug.err("Couldn't save config properties"); //$NON-NLS-1$
 		}
 	}
 
 	/**
-	 *
+	 * Saves state properties to xml files
+	 * window-state, filter-state ...
+	 */
+	public static void saveStateProperties() {
+		try {
+			Debug.msg("Save state properties"); //$NON-NLS-1$
+			state_properties.storeToXML(Main.SAVE_DIR + STATE_PROPERTIES_FILE);
+		} catch (IOException e) {
+			Debug.err("Couldn't save state properties"); //$NON-NLS-1$
+		}
+	}
+
+	/**
+	 * Get state properties with default value
+	 * @param property
+	 *            Property to get the value from
+	 * @param defaultValue
+	 *            Default value to be returned if property does not exist
+	 * @return Returns value of a specific property
+	 */
+	public static String getStateProperty(String property, String defaultValue) {
+		return state_properties.getProperty(property, defaultValue);
+	}
+
+	/**
+	 * Get state properties
+	 * @param property
+	 *            Property to get the value from
+	 * @return Returns value of a specific property
+	 */
+	public static String getStateProperty(String property) {
+		return getStateProperty(property, ""); //$NON-NLS-1$
+	}
+
+	/**
+	 * Get config properties with default value
 	 * @param property
 	 *            Property to get the value from
 	 * @param defaultValue
@@ -1177,11 +1179,11 @@ public class Main {
 	 * @return Returns value of a specific property
 	 */
 	public static String getProperty(String property, String defaultValue) {
-		return properties.getProperty(property, defaultValue);
+		return config_properties.getProperty(property, defaultValue);
 	}
 
 	/**
-	 *
+	 * Get config properties
 	 * @param property
 	 *            Property to get the value from
 	 * @return Returns value of a specific property
@@ -1191,7 +1193,7 @@ public class Main {
 	}
 
 	/**
-	 * Sets a property to a specific value
+	 * Sets a config property to a specific value
 	 *
 	 * @param property
 	 *            Property to be set
@@ -1199,11 +1201,11 @@ public class Main {
 	 *            Value of property
 	 */
 	public static void setProperty(String property, String value) {
-		properties.setProperty(property, value);
+		config_properties.setProperty(property, value);
 	}
 
 	/**
-	 * Sets a property to a specific value
+	 * Sets a config property to a specific value
 	 *
 	 * @param property
 	 *            Property to be set
@@ -1211,17 +1213,51 @@ public class Main {
 	 *            Value of property
 	 */
 	public static void setProperty(String property, boolean value) {
-		properties.setProperty(property, String.valueOf(value));
+		config_properties.setProperty(property, String.valueOf(value));
 	}
 
 	/**
-	 * Removes a property
+	 * Sets a state property to a specific value
+	 *
+	 * @param property
+	 *            Property to be set
+	 * @param value
+	 *            Value of property
+	 */
+	public static void setStateProperty(String property, String value) {
+		state_properties.setProperty(property, value);
+	}
+
+	/**
+	 * Sets a state property to a specific value
+	 *
+	 * @param property
+	 *            Property to be set
+	 * @param value
+	 *            Value of property
+	 */
+	public static void setStateProperty(String property, boolean value) {
+		state_properties.setProperty(property, String.valueOf(value));
+	}
+
+	/**
+	 * Removes a config property
 	 *
 	 * @param property
 	 *            Property to be removed
 	 */
 	public static void removeProperty(String property) {
-		properties.remove(property);
+		config_properties.remove(property);
+	}
+
+	/**
+	 * Removes a state property
+	 *
+	 * @param property
+	 *            Property to be removed
+	 */
+	public static void removeStateProperty(String property) {
+		state_properties.remove(property);
 	}
 
 	/**

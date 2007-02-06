@@ -95,7 +95,7 @@ public class ConfigWizard {
        			((ConfigPanelCallMonitor)descriptor5.getPanelComponent()).saveSettings();
 
       			JFritz.getFritzBox().detectFirmware();
-      			Main.saveProperties();
+      			Main.saveConfigProperties();
 
        			break;
        		case 1:

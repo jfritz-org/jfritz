@@ -78,7 +78,6 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.DirectoryChooser;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.ImportOutlookContactsDialog;
-import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.PrintCallerList;
 import de.moonflower.jfritz.utils.SwingWorker;
@@ -123,8 +122,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	private JFritz jFritz;
 
-	private JFritzProperties windowProperties;
-
 	public final String WINDOW_PROPERTIES_FILE = "jfritz.window.properties.xml"; //$NON-NLS-1$
 
 	/**
@@ -137,13 +134,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		this.jFritz = jfritz;
 		Debug.msg("Create JFritz-GUI"); //$NON-NLS-1$
 		maxBounds = null;
-		windowProperties = new JFritzProperties();
-		loadProperties();
 		createGUI();
 		addWindowStateListener(new WindowStateListener() {
 
 			public void windowStateChanged(WindowEvent arg0) {
-				windowProperties.setProperty("window.state", Integer
+				Main.setStateProperty("window.state", Integer
 						.toString(arg0.getNewState()));
 			}
 
@@ -183,8 +178,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		setTitle(Main.PROGRAM_NAME);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setDefaultLookAndFeel();
-		ShutdownThread shutdownThread = new ShutdownThread();
-		Runtime.getRuntime().addShutdownHook(shutdownThread);
+//		ShutdownThread shutdownThread = new ShutdownThread();
+//		Runtime.getRuntime().addShutdownHook(shutdownThread);
 
 		addKeyListener(KeyEvent.VK_F5, "F5"); //$NON-NLS-1$
 
@@ -257,16 +252,16 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		}
 
 		// Setting size and position
-		int x = Integer.parseInt(windowProperties.getProperty(
+		int x = Integer.parseInt(Main.getStateProperty(
 				"position.left", "10")); //$NON-NLS-1$,  //$NON-NLS-2$
-		int y = Integer.parseInt(windowProperties.getProperty(
+		int y = Integer.parseInt(Main.getStateProperty(
 				"position.top", "10")); //$NON-NLS-1$,  //$NON-NLS-2$
-		int w = Integer.parseInt(windowProperties.getProperty(
+		int w = Integer.parseInt(Main.getStateProperty(
 				"position.width", "640")); //$NON-NLS-1$,  //$NON-NLS-2$
-		int h = Integer.parseInt(windowProperties.getProperty(
+		int h = Integer.parseInt(Main.getStateProperty(
 				"position.height", "400")); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		int windowState = Integer.parseInt(windowProperties.getProperty(
+		int windowState = Integer.parseInt(Main.getStateProperty(
 				"window.state", Integer.toString(Frame.NORMAL)));
 
 		setLocation(x, y);
@@ -732,7 +727,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		configDialog.setLocationRelativeTo(this);
 		if (configDialog.showDialog()) {
 			configDialog.storeValues();
-			Main.saveProperties();
+			Main.saveConfigProperties();
 			if (JFritz.getSIPProviderTableModel().getProviderList().size() == 0) { // Noch
 				// keine
 				// SipProvider
@@ -1572,48 +1567,25 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		return progressbar;
 	}
 
-	public void loadWindowProperties() {
-		try {
-			windowProperties
-					.loadFromXML(Main.SAVE_DIR + WINDOW_PROPERTIES_FILE);
-		} catch (FileNotFoundException e) {
-			Debug.err("File " + Main.SAVE_DIR + WINDOW_PROPERTIES_FILE //$NON-NLS-1$
-					+ " not found, using default values"); //$NON-NLS-1$
-		} catch (IOException e) {
-			Debug.err("IO-Exception: " + e.toString()); //$NON-NLS-1$
-		}
-	}
-
 	public void saveWindowProperties() {
 		Debug.msg("Save window position"); //$NON-NLS-1$
 
-		windowProperties.setProperty(
+		Main.setStateProperty(
 				"position.left", Integer.toString(getLocation().x)); //$NON-NLS-1$
-		windowProperties.setProperty(
+		Main.setStateProperty(
 				"position.top", Integer.toString(getLocation().y));//$NON-NLS-1$
-		windowProperties.setProperty(
+		Main.setStateProperty(
 				"position.width", Integer.toString(this.getWidth()));//$NON-NLS-1$
-		windowProperties.setProperty(
+		Main.setStateProperty(
 				"position.height", Integer.toString(this.getHeight()));//$NON-NLS-1$
 
-		windowProperties.setProperty("window.state", Integer.toString(this
+		Main.setStateProperty("window.state", Integer.toString(this
 				.getExtendedState()));
-
-		try {
-			Debug.msg("Save window properties"); //$NON-NLS-1$
-			windowProperties.storeToXML(Main.SAVE_DIR + WINDOW_PROPERTIES_FILE);
-		} catch (IOException e) {
-			Debug.err("Couldn't save Window-Properties"); //$NON-NLS-1$
-		}
 	}
 
-	public void loadProperties() {
-		loadWindowProperties();
-	}
-
-	public void saveProperties() {
+	public void saveStateProperties() {
 		saveWindowProperties();
-		callerListPanel.saveProperties();
+		callerListPanel.saveStateProperties();
 
 		// TODO: möglicherweise speichern der Einstellungen für
 		// phonebookPanel
