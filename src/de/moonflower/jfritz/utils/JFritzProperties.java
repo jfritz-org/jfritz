@@ -121,7 +121,6 @@ public class JFritzProperties extends Properties {
                             "Invalid system identifier")) { //$NON-NLS-1$
                 Debug.err(e.getLocalizedMessage());
             Debug.errDlg("Error on parsing " + filename);
-                //System.exit(0);
             }
         } catch (IOException e) {
             Debug.err("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$

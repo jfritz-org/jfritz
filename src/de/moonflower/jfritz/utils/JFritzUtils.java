@@ -265,4 +265,11 @@ public class JFritzUtils {
 		}
 		return 0;
 	}
+
+	public static String removeLeadingSpaces(String str) {
+		while ( str.startsWith(" ")){
+			str = str.substring(1);
+		}
+		return str;
+	}
 }

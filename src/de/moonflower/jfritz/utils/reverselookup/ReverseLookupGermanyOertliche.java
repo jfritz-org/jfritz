@@ -1,13 +1,11 @@
 package de.moonflower.jfritz.utils.reverselookup;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -99,6 +97,7 @@ public class ReverseLookupGermanyOertliche {
 
 					d.close();
 					Debug.msg("Begin processing responce from dasoertliche.de");
+					Debug.msg(data);
 
 					Pattern pName = Pattern
 							.compile("class=\"entry\">([^<]*)</a>");
@@ -119,34 +118,34 @@ public class ReverseLookupGermanyOertliche {
 						String line1 = mName.group(1).trim();
 						String[] split = line1.split(" ", 2); //$NON-NLS-1$
 
-						lastname = HTMLUtil.stripEntities(split[0]);
+						lastname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(split[0]));
 						if (split.length > 1) {
 							firstname = " " + HTMLUtil.stripEntities(split[1]); //$NON-NLS-1$
 							if ((firstname.indexOf("  ") > -1) //$NON-NLS-1$
 									&& (firstname.indexOf("  u.") == -1)) { //$NON-NLS-1$
-								company = firstname.substring(
-										firstname.indexOf("  ")).trim(); //$NON-NLS-1$
-								firstname = firstname.substring(0,
-										firstname.indexOf("  ")).trim(); //$NON-NLS-1$
+								company = JFritzUtils.removeLeadingSpaces(firstname.substring(
+										firstname.indexOf("  ")).trim()); //$NON-NLS-1$
+								firstname = JFritzUtils.removeLeadingSpaces(firstname.substring(0,
+										firstname.indexOf("  ")).trim()); //$NON-NLS-1$
 							} else {
-								firstname = firstname.replaceAll("  u. ", //$NON-NLS-1$
-										" und "); //$NON-NLS-1$
+								firstname = JFritzUtils.removeLeadingSpaces(firstname.replaceAll("  u. ", //$NON-NLS-1$
+										" und ")); //$NON-NLS-1$
 							}
 						}
 
-						firstname = firstname.trim();
+						firstname = JFritzUtils.removeLeadingSpaces(firstname.trim());
 					}
 
 					//get address part, if its available
 					Matcher mAddress = pAddress.matcher(data);
 					if(mAddress.find()){
 						Debug.msg("found an address match");
-						address = HTMLUtil.stripEntities(mAddress.group(1).trim());
-						String line2 = HTMLUtil.stripEntities(mAddress.group(2)).trim();
+						address = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(mAddress.group(1).trim()));
+						String line2 = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(mAddress.group(2)).trim());
 						String split[] = line2.split(" ", 2);
-						zipcode = split[0];
+						zipcode = JFritzUtils.removeLeadingSpaces(split[0]);
 						if(split.length == 2){
-							city = split[1];
+							city = JFritzUtils.removeLeadingSpaces(split[1]);
 						}
 					}
 

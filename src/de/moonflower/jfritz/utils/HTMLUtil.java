@@ -681,7 +681,7 @@ public class HTMLUtil {
                 } // end else
             } // end for
         // if result is not shorter, we did not do anything. Saves RAM.
-        return ( sb.length() == originalTextLength ) ? text : sb.toString();
+        return ( sb.length() == originalTextLength ) ? text : stripNbsp(sb.toString());
         } // end stripEntities
 
     /**

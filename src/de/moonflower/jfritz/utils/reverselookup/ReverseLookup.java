@@ -137,6 +137,7 @@ public class ReverseLookup {
 			Debug.msg("creating thread");
 			thread = new LookupThread(requests);
 			thread.setDaemon(true);
+			thread.setName("lookup-thread");
 			thread.start();
 		}
 	}
