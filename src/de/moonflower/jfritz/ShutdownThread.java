@@ -3,7 +3,7 @@
  */
 package de.moonflower.jfritz;
 
-import de.moonflower.jfritz.utils.Debug;
+import java.io.File;
 
 /**
  * @author rob
@@ -11,9 +11,5 @@ import de.moonflower.jfritz.utils.Debug;
 public class ShutdownThread extends Thread {
 
 	public void run() {
-
-		Debug.msg("Starting shutdown thread.."); //$NON-NLS-1$
-		Debug.msg("Shutdown thread done."); //$NON-NLS-1$
-
 	}
 }

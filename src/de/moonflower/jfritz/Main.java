@@ -601,13 +601,13 @@ import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
-public class Main {
+public class Main extends Thread {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
 	public final static String PROGRAM_VERSION = "0.6.2.03"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.53 2007/02/06 12:12:23 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.54 2007/02/07 18:59:56 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -655,10 +655,14 @@ public class Main {
 
 	private CLIOptions options;
 
+	private static boolean isRunning = false;
+
 	public Main(String[] args) {
+		isRunning = true;
 		System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION //$NON-NLS-1$
 				+ " (c) 2005-2006 by " + JFRITZ_PROJECT); //$NON-NLS-1$
 		Thread.currentThread().setPriority(5);
+		Runtime.getRuntime().addShutdownHook(this);
 
 		jfritzHomedir = JFritzUtils.getFullPath(".update");
 		jfritzHomedir = jfritzHomedir.substring(0, jfritzHomedir.length() - 7);
@@ -694,9 +698,6 @@ public class Main {
 		main.checkInstanceControl();
 
 		jfritz.createJFrame(showConfWizard);
-		// TODO sollten wir das programm nicht hier beenden?
-		// while(!shutdown){sleep oder sowas
-		Debug.msg("Main thread shut down");
 	}
 
 	/**
@@ -1051,24 +1052,7 @@ public class Main {
 	}
 
 	public void exit(int i) {
-		/*
-		 * isRunning = new Boolean(false); synchronized(mutex){ mutex.notify(); }
-		 *
-		 */
-		// notifyAll();
-		// TODO maybe some cleanup is needed
-		Debug.msg("Main.exit(" + i + ")");
-
-		if (isInstanceControlEnabled()) {
-            File f = new File( SAVE_DIR + LOCK_FILE );
-            if ( f.exists() )
-                {
-                    f.delete();
-                }
-            Debug.msg("Multiple instance lock: release lock."); //$NON-NLS-1$
-        }
-
-		System.exit(i);
+		this.run();
 	}
 
 	/**
@@ -1278,7 +1262,6 @@ public class Main {
 					+ Main.PROGRAM_VERSION
 					+ "\n\nCannot find the language file \"jfritz_" + locale
 					+ ".properties\"!" + "\nProgram will exit!");//$NON-NLS-1$
-			System.exit(0);
 		}
 	}
 
@@ -1376,4 +1359,28 @@ public class Main {
 		update.saveSettings();
 	}
 
+	/**
+	 *  Shutdown-Thread
+	 *  Wird aufgerufen, wenn JFritz beendet werden muss
+	 */
+	public void run() {
+		if ( !isRunning )
+			return;
+
+		Debug.msg("Shutting down JFritz..."); //$NON-NLS-1$
+
+		if (Main.isInstanceControlEnabled()) {
+			File f = new File(Main.SAVE_DIR + Main.LOCK_FILE);
+
+			if (f.exists())
+				f.delete();
+			Debug.msg("Multiple instance lock: release lock."); //$NON-NLS-1$
+		}
+	        if ( jfritz != null ) {
+			jfritz.prepareShutdown();
+		}
+		isRunning = false;
+
+		Debug.msg("Finished shutting down"); //$NON-NLS-1$
+	}
 }
