@@ -355,7 +355,6 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 						.errDlg("STRUKTURÄNDERUNG!\n\nBitte in der Datei jfritz.calls.xml\n " //$NON-NLS-1$
 								+ "die Zeichenkette \"calls.dtd\" durch\n \"" //$NON-NLS-1$
 								+ CALLS_DTD_URI + "\"\n ersetzen!"); //$NON-NLS-1$
-				// System.exit(0);
 			}
 		} catch (IOException e) {
 			Debug.err("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$

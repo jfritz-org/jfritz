@@ -1171,7 +1171,6 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 *
 	 */
 	private void saveButtonStatus() {
-		Debug.msg("writing Buttons");
 		Main.setStateProperty(FILTER_SEARCH_TEXT, searchFilterTextField.getText());
 		Main.setStateProperty(FILTER_SEARCH, "" + searchFilterButton.getState());
 		Main.setStateProperty(FILTER_COMMENT, "" + commentFilterButton.getState());

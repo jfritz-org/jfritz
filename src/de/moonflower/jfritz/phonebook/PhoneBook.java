@@ -682,7 +682,6 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 				Debug.err(e.getLocalizedMessage());
 
 				Debug.errDlg("Error on paring " + filename);
-				// System.exit(0);
 			}
 		} catch (IOException e) {
 			Debug.err("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$

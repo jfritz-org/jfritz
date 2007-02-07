@@ -26,6 +26,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellRenderer;
 
+import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.QuickDial;
 import de.moonflower.jfritz.utils.Debug;
@@ -158,14 +159,17 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 			if (row >= 0) {
 				dataModel.remove(row);
 				dataModel.fireTableRowsDeleted(row, row);
+				JFritz.getQuickDials().saveToXMLFile(Main.SAVE_DIR + JFritz.QUICKDIALS_FILE);
 			}
 		} else if (e.getActionCommand().equals("addSIP")) {  //$NON-NLS-1$
 			dataModel.addEntry(new QuickDial("99", "?", "?", "?"));  //$NON-NLS-1$,   //$NON-NLS-2$,   //$NON-NLS-3$,   //$NON-NLS-4$
 			dataModel.fireTableDataChanged();
 			updateButtons();
+			JFritz.getQuickDials().saveToXMLFile(Main.SAVE_DIR + JFritz.QUICKDIALS_FILE);
 		} else if (e.getActionCommand().equals("fetchSIP")) {  //$NON-NLS-1$
 			dataModel.getQuickDialDataFromFritzBox();
 			dataModel.fireTableDataChanged();
+			JFritz.getQuickDials().saveToXMLFile(Main.SAVE_DIR + JFritz.QUICKDIALS_FILE);
 		} else if (e.getActionCommand().equals("storeSIP")) {  //$NON-NLS-1$
 			Debug.err("Not yet implemented");  //$NON-NLS-1$
 			JOptionPane.showMessageDialog(null,

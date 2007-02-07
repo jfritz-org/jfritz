@@ -100,7 +100,6 @@ public class CallFileXMLHandler extends DefaultHandler {
 				Debug.err("Date problem:  " + chars); //$NON-NLS-1$
 				Debug.errDlg("Date problem");
 				calldate = null;
-				//TODO geht das so? System.exit(0); einfach raus
 				return;
 			}
 		} else if (qName.equals("entry")) { //$NON-NLS-1$
