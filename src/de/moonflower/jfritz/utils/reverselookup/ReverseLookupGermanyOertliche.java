@@ -97,7 +97,6 @@ public class ReverseLookupGermanyOertliche {
 
 					d.close();
 					Debug.msg("Begin processing responce from dasoertliche.de");
-					Debug.msg(data);
 
 					Pattern pName = Pattern
 							.compile("class=\"entry\">([^<]*)</a>");
