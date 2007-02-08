@@ -122,6 +122,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	private JFritz jFritz;
 
+	private int windowState;
+
 	public final String WINDOW_PROPERTIES_FILE = "jfritz.window.properties.xml"; //$NON-NLS-1$
 
 	/**
@@ -669,7 +671,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 							.equals("true")) { //$NON-NLS-1$
 						reverseLookup();
 					}
-					interrupt();
+//					interrupt();
 				}
 			};
 			worker.start();
@@ -700,7 +702,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					isretrieving = false;
 					// int rows = JFritz.getCallerlist().getRowCount();
 					setStatus();
-					interrupt();
+//					interrupt();
 				}
 			};
 			worker.start();
@@ -829,6 +831,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * Listener for window events
 	 */
 	protected void processWindowEvent(WindowEvent e) {
+
+		windowState=this.getExtendedState();
 
 		if (e.getID() == WindowEvent.WINDOW_CLOSING) {
 			if (JFritzUtils.parseBoolean(Main.getProperty("option.minimize", //$NON-NLS-1$
@@ -1232,7 +1236,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			// TODO: Fehlermeldung für den User
 			e.printStackTrace();
 		}
-		thread.interrupt();
+//		thread.interrupt();
 		thread = null;
 	}
 
@@ -1579,8 +1583,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				"position.width", Integer.toString(this.getWidth()));//$NON-NLS-1$
 		Main.setStateProperty(
 				"position.height", Integer.toString(this.getHeight()));//$NON-NLS-1$
-		Main.setStateProperty("window.state", Integer.toString(this
-				.getExtendedState()));
+		Main.setStateProperty("window.state", Integer.toString(windowState));
 	}
 
 	public void prepareShutdown() {

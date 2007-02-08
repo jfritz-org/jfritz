@@ -601,13 +601,13 @@ import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
-public class Main extends Thread {
+public class Main {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
 	public final static String PROGRAM_VERSION = "0.6.2.03"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.54 2007/02/07 18:59:56 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.55 2007/02/08 14:39:20 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -658,11 +658,11 @@ public class Main extends Thread {
 	private static boolean isRunning = false;
 
 	public Main(String[] args) {
-		isRunning = true;
 		System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION //$NON-NLS-1$
 				+ " (c) 2005-2006 by " + JFRITZ_PROJECT); //$NON-NLS-1$
 		Thread.currentThread().setPriority(5);
-		Runtime.getRuntime().addShutdownHook(this);
+		ShutdownThread shutdownThread = new ShutdownThread(this);
+		Runtime.getRuntime().addShutdownHook(shutdownThread);
 
 		jfritzHomedir = JFritzUtils.getFullPath(".update");
 		jfritzHomedir = jfritzHomedir.substring(0, jfritzHomedir.length() - 7);
@@ -1052,7 +1052,8 @@ public class Main extends Thread {
 	}
 
 	public void exit(int i) {
-		this.run();
+		Debug.msg("Main.exit(" + i + ")");
+		System.exit(i);
 	}
 
 	/**
@@ -1359,13 +1360,7 @@ public class Main extends Thread {
 		update.saveSettings();
 	}
 
-	/**
-	 *  Shutdown-Thread
-	 *  Wird aufgerufen, wenn JFritz beendet werden muss
-	 */
-	public void run() {
-		if ( !isRunning )
-			return;
+	public void prepareShutdown() {
 
 		Debug.msg("Shutting down JFritz..."); //$NON-NLS-1$
 
@@ -1379,8 +1374,8 @@ public class Main extends Thread {
 	        if ( jfritz != null ) {
 			jfritz.prepareShutdown();
 		}
-		isRunning = false;
 
 		Debug.msg("Finished shutting down"); //$NON-NLS-1$
 	}
+
 }
