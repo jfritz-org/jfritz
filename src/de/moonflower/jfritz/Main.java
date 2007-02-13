@@ -128,6 +128,7 @@
  * - Umstrukturierung des Aufrufs von externen Programmen (noch nicht abgeschlossen)
  *
  * JFritz 0.6.2.03
+ * - Autoupdate korrektur
  * - Leisere Sounds
  * - Doppelklick auf das Trayicon nun möglich
  * - Bugfix: Zu kurze Landesvorwahl
@@ -607,7 +608,7 @@ public class Main {
 
 	public final static String PROGRAM_VERSION = "0.6.2.03"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.55 2007/02/08 14:39:20 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.56 2007/02/13 10:08:58 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

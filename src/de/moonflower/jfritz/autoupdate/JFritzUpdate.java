@@ -9,6 +9,8 @@ import java.net.URLClassLoader;
 
 import javax.swing.JOptionPane;
 
+import de.moonflower.jfritz.utils.JFritzUtils;
+
 public class JFritzUpdate {
 
 	private final static String className = "(JFritzUpdate) ";
@@ -34,6 +36,10 @@ public class JFritzUpdate {
 
 	public JFritzUpdate(boolean informOnNoUpdate) {
 		this.informOnNoUpdate = informOnNoUpdate;
+		installDirectory = JFritzUtils.getFullPath("/jfritz.jar");
+		installDirectory = installDirectory.substring(0, installDirectory.length()-10);
+		updateFile = installDirectory + "update.txt";
+		updateDirectory = installDirectory+"update";
 		File installDir = new File(installDirectory);
 		if (!installDir.exists()) {
 			installDir.mkdir();
@@ -172,7 +178,10 @@ public class JFritzUpdate {
 	 *            Die Kommandozeilenparameter
 	 */
 	private static void startJFritz(String[] args) {
-		File jfritzJAR = new File("jfritz-internals.jar");
+
+		String installDirectory = JFritzUtils.getFullPath("/jfritz.jar");
+		installDirectory = installDirectory.substring(0, installDirectory.length()-10);
+		File jfritzJAR = new File(installDirectory + "jfritz-internals.jar");
 
 		if (!jfritzJAR.exists()) {
 			JOptionPane.showMessageDialog(null, UpdateLocale
