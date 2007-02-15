@@ -188,7 +188,7 @@ public class JFritzUpdate {
 					.getMessage("wrongWorkingDirectory"), UpdateLocale
 					.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
 			throw new RuntimeException(
-					"Wrong working directory! Could not find jfritz-internals.jar.");
+					"Wrong working directory! Could not find jfritz-internals.jar. Searched in " + installDirectory);
 		}
 
 		Class[] parameterTypes = new Class[] { String[].class };
