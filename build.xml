@@ -78,7 +78,7 @@
 	<target name="compile" depends="init" description="Compile the source tree">
 		<mkdir dir="${build}" />
 		<mkdir dir="${build.classes}" />
-		<javac srcdir="${src}" destdir="${build.classes}" classpathref="build.classpath" debug="${javac.debug}" optimize="${javac.optimize}" />
+		<javac srcdir="${src}" destdir="${build.classes}" classpathref="build.classpath" debug="${javac.debug}" optimize="${javac.optimize}" encoding="iso-8859-1" />
 	</target>
 
 	<target name="build" depends="jar" description="Generates runnable version of JFritz in directory dist">

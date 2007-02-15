@@ -139,11 +139,14 @@
  *
  * JFritz 0.6.2.04
  * - Umstrukturierung des Aufrufs von externen Programmen (noch nicht abgeschlossen)
+ * - Neu: Rückwärtssuche Engine komplette neu geschrieben. Alle paramter in einer XML-Datei einstellbar
  *
  * JFritz 0.6.2.03
  * - Autoupdate korrektur
  * - Leisere Sounds
  * - Doppelklick auf das Trayicon nun möglich
+ * - Bugfix: Rückwärtssuche bleibt nicht mehr stehen, falls die Verbindung zum Server stalled ist
+ * - Bugfix: Rückwärtssuche für deutschland wieder angepasst, dastelefonbuch.de und dasoertliche.de eingesetzt
  * - Bugfix: Zu kurze Landesvorwahl
  * - Bugfix: Falsche Rufnummern gelöscht
  * - Bugfix?: JFritz verliert Einstellungen
@@ -614,14 +617,17 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.JFritzUtils;
+import de.moonflower.jfritz.utils.reverselookup.LookupObserver;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 
-public class Main {
+
+public class Main implements LookupObserver {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
 	public final static String PROGRAM_VERSION = "0.6.2.03"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.57 2007/02/15 16:10:56 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.58 2007/02/15 19:15:59 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -669,7 +675,7 @@ public class Main {
 
 	private CLIOptions options;
 
-	private static boolean isRunning = false;
+	private static boolean commandLineOnly = false, isRunning = false;
 
 	private static int exitCode = 0;
 
@@ -829,7 +835,7 @@ public class Main {
 				}
 				break;
 			case 'r':
-				JFritz.getCallerList().reverseLookup(false);
+				doReverseLookup();
 				shutdown = true;
 				break;
 			case 'e':
@@ -1394,6 +1400,34 @@ public class Main {
 		}
 
 		Debug.msg("Finished shutting down"); //$NON-NLS-1$
+	}
+
+	/**
+	 * function does a command line lookup, gathers all unkown entries
+	 *
+	 */
+	private void doReverseLookup(){
+		ReverseLookup.lookup(JFritz.getCallerList().getAllUnknownEntries(), this, true);
+		try{
+			ReverseLookup.thread.join();
+		}catch(InterruptedException e){
+
+		}
+
+	}
+
+	/**
+	 * adds the results to the phonebook and saves
+	 */
+	public void personsFound(Vector persons){
+		JFritz.getPhonebook().addEntries(persons);
+	}
+
+	/**
+	 * is called to give progress information
+	 */
+	public void percentOfLookupDone(float f){
+		//TODO: Update the status here!
 	}
 
 }

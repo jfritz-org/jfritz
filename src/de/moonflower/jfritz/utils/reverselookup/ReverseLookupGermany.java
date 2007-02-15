@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
-import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
@@ -25,29 +24,6 @@ public class ReverseLookupGermany {
 	public final static String FILE_HEADER = "Vorwahl;Ortsnetz";
 
 	private static HashMap<String, String> numberMap;
-
-	/** This is called to do the lookup. First dasoertliche.de is tried
-	 * if that fails, then dastelefonbuch is tried. If neither return a result
-	 * then the city is looked up using the area code
-	 *
-	 * @param number to be looked up
-	 * @return person object (not null)
-	 */
-	public static Person lookup(String number) {
-
-		Person p = ReverseLookupGermanyOertliche.lookup(number);
-
-		if(p.getFullname().equals("")){
-			Debug.msg("No name found, trying dastelefonbuch.de");
-			p = ReverseLookupGermanyTelefonbuch.lookup(number);
-		}
-
-		if(p.getCity().equals(""))
-			p.setCity(getCity(number));
-
-
-		return p;
-	}
 
 	/**
 	 * This function attemps to fill the hashmap numberMap up with the data found

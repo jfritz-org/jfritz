@@ -284,7 +284,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 				Person person = getFilteredPersons().get(rows[i]);
 				numbers.addAll(person.getNumbers());
 			}
-			ReverseLookup.lookup(numbers, this);
+			ReverseLookup.lookup(numbers, this, false);
 		} else { // Für alle Einträge ReverseLookup durchführen
 			reverseLookupPersons(filteredPersons);
 		}

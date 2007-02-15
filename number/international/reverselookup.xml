@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- The syntax of this file is fairly self-explanatory
+     However, a few things need to be said. First and foremost
+     everything in here needs to be xml compliant, that means all
+     quotes, pound signs etc need to be properly escaped!!!
+     Otherwise jfritz will refuse too load due to of SAX errors.
+     
+     Websites and pattern entries are processed in the order they
+     are placed. This is important when determining what web site should
+     be used first and what pattern should be used for that web site first.
+   	 As soon as one matching name is found, jfritz will stop trying other
+   	 patterns / entries.
+   	 
+   	 Make sure that each url entry contains the string $NUMBER at the
+   	 appropriate spot or else the algorithm won't work! The attribute
+   	 prefix is used to determine if the number is in local format or not   	 
+-->
+
+<reverselookup>
+	<country code="+1">
+		<website name="whitepages.com" url="http://www.whitepages.com/search/ReversePhone?phone=$NUMBER" prefix="1">
+			<entry>
+				<name>lname=([^&lt;]*)&amp;amp;fname=([^&lt;]*)&amp;amp;h_street=</name>
+				<street>h_street=([^&lt;]*)&amp;amp;h_city=[^&lt;]*&amp;amp;h_state=[^&lt;]*&amp;amp;h_zip=[^&lt;]*&amp;amp;h_country</street>
+				<city>h_street=[^&lt;]*&amp;amp;h_city=([^&lt;]*)&amp;amp;h_state=[^&lt;]*&amp;amp;h_zip=[^&lt;]*&amp;amp;h_country</city>
+				<zipcode>h_street=[^&lt;]*&amp;amp;h_city=[^&lt;]*&amp;amp;h_state=([^&lt;]*)&amp;amp;h_zip=([^&lt;]*)&amp;amp;h_country</zipcode>
+			</entry>
+		</website>
+	</country>
+	<country code="+31">
+		<website name="www.gebeld.nl" url="http://www.gebeld.nl/content.asp?zapp=zapp&amp;land=Nederland&amp;zoek=numm&amp;searchfield1=fullnumber&amp;searchfield2=&amp;queryfield1=$NUMBER" prefix="0">
+			<entry>
+				<name>&lt;td&gt;&lt;font size=&quot;2&quot; face=&quot;Verdana, Arial, Helvetica, sans-serif&quot;&gt;([^&lt;]*)&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;</name>
+				<street>&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;font size=&quot;2&quot; face=&quot;Verdana, Arial, Helvetica, sans-serif&quot;&gt;([^&lt;]*)&lt;/font&gt;&lt;/td>&lt;/tr&gt;&lt;tr&gt;&lt;td>&lt;/td&gt;&lt;td&gt;[^&lt;]*&lt;/td&gt;&lt;/tr&gt;</street>
+				<city>&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;font size=&quot;2&quot; face=&quot;Verdana, Arial, Helvetica, sans-serif&quot;&gt;[^&lt;]*&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td>&lt;/td&gt;&lt;td&gt;([^&lt;]*)&lt;/td&gt;&lt;/tr&gt;</city>
+				<zipcode>&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;font size=&quot;2&quot; face=&quot;Verdana, Arial, Helvetica, sans-serif&quot;&gt;[^&lt;]*&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;([^&lt;]*)&lt;/td&gt;&lt;/tr&gt;</zipcode>
+			</entry>
+		</website>
+	</country>
+	<country code="+33">
+		<website name="www.annuaireinverse.com" url="http://www.annuaireinverse.com/G118012/home.asp?RN=$NUMBER&amp;CO=RN&amp;FR=118012&amp;sm=rep" prefix="0">;
+			<entry>
+				<name>&lt;TD HEIGHT=&quot;15&quot; BGCOLOR=&quot;#ABEEFB&quot;  &gt;&lt;FONT CLASS=&quot;ctexte&quot;&gt;&amp;nbsp;([^&lt;]*)</name>
+				<street>&lt;TD HEIGHT=&quot;35&quot; VALIGN=&quot;TOP&quot;&gt;&lt;FONT CLASS=&quot;copytexte&quot;&gt;([^&lt;]*)&lt;br /&gt;[^&lt;]*</street>
+				<city>&lt;TD HEIGHT=&quot;35&quot; VALIGN=&quot;TOP&quot;&gt;&lt;FONT CLASS=&quot;copytexte&quot;&gt;[^&lt;]*&lt;br /&gt;([^&lt;]*)</city>
+				<zipcode>&lt;TD HEIGHT=&quot;35&quot; VALIGN=&quot;TOP&quot;&gt;&lt;FONT CLASS=&quot;copytexte&quot;&gt;[^&lt;]*&lt;br /&gt;([^&lt;]*)</zipcode>
+			</entry>
+		</website>
+	</country>
+	<country code="+39">
+		<website name="paginebianche.it" url="http://www.paginebianche.it/execute.cgi?btt=1&amp;tl=2&amp;tr=106&amp;tc=&amp;cb=&amp;x=0&amp;y=0&amp;qs=$NUMBER" prefix="0">
+			<entry>
+				<name>&lt;a [^&gt;]*&gt;&lt;img [^&gt;]*&gt;&lt;/a&gt;&lt;a [^&gt;]*&gt;([^&lt;]*)</name>
+				<street>&lt;font [^&gt;]*&gt;[0-9]*&amp;nbsp;[^&amp;]*[^-]*-([^&lt;]*)&lt;</street>
+				<city>&lt;font [^&gt;]*&gt;[0-9]*&amp;nbsp;([^&amp;]*)[^-]*-[^&lt;]*&lt;</city>
+				<zipcode>&lt;font [^&gt;]*&gt;([0-9]*)&amp;nbsp;[^&amp;]*[^-]*-[^&lt;]*&lt;</zipcode>
+			</entry>
+			<entry>
+				<name>&lt;td class=&quot;dati&quot;&gt;&lt;span [^&gt;]*&gt;([^&lt;]*)&lt;/span&gt;&lt;br&gt;[0-9]*&amp;nbsp;[^&amp;]*[^-]*-[^&lt;]*&lt;</name>
+				<street>&lt;td class=&quot;dati&quot;&gt;&lt;span [^&gt;]*&gt;[^&lt;]*&lt;/span&gt;&lt;br&gt;[0-9]*&amp;nbsp;[^&amp;]*[^-]*-([^&lt;]*)&lt;</street>
+				<city>&lt;td class=&quot;dati&quot;&gt;&lt;span [^&gt;]*&gt;[^&lt;]*&lt;/span>&lt;br&gt;[0-9]*&amp;nbsp;([^&amp;]*)[^-]*-[^&lt;]*&lt;</city>
+				<zipcode>&lt;td class=&quot;dati&quot;&gt;&lt;span [^&gt;]*&gt;[^&lt;]*&lt;/span&gt;&lt;br&gt;([0-9]*)&amp;nbsp;[^&amp;]*[^-]*-[^&lt;]*&lt;</zipcode>
+			</entry>
+		</website>
+	</country>
+	<country code="+41">
+		<website name="tel.search.ch" url="http://tel.search.ch/result.html?tel=$NUMBER" prefix="0">
+			<entry>
+				<name>&lt;div class=&quot;rname&quot;&gt;&lt;h4&gt;&lt;a[^&gt;]*&gt;([^&lt;]*)&lt;/a&gt;</name>
+				<street>&lt;div class=&quot;raddr&quot;&gt;([^&lt;,]*),\s*[0-9]*[^&lt;]*&lt;/div&gt;</street>
+				<city>&lt;div class=&quot;raddr&quot;&gt;[^&lt;,]*,\s*[0-9]*([^&lt;]*)&lt;/div&gt;</city>
+				<zipcode>&lt;div class=&quot;raddr&quot;&gt;[^&lt;,]*,\s*([0-9]*)[^&lt;]*&lt;/div&gt;</zipcode>
+			</entry>
+		</website>
+	</country>
+	<country code="+49">
+		<website name="dastelefonbuch.de" url="http://www.dastelefonbuch.de/?sourceid=Mozilla-search&amp;cmd=search&amp;kw=$NUMBER" prefix="0">
+			<entry>
+				<name>&lt;td width=&quot;[^&quot;]*&quot;&gt;[^&lt;]*&lt;a href=&quot;[^&quot;]*&quot; title=&quot;([^&quot;]*)&quot;&gt;</name>
+				<street>&lt;/td&gt;[^&lt;]*&lt;td width=&quot;[^&quot;]*&quot;&gt;([^&lt;]*)&lt;/td&gt;[^&lt;]*&lt;td width=&quot;[^&quot;]*&quot;&gt;[^&lt;]*&lt;s</street>
+				<city>&lt;span title=&quot;[0-9]*([^&quot;]*)&quot;&gt;</city>
+				<zipcode>&lt;span title=&quot;([0-9]*)[^&quot;]*&quot;&gt;</zipcode>
+			</entry>
+		</website>
+		<website name="dasoertliche.de" url="http://dasoertliche.de/?form_name=search_inv&amp;page=RUECKSUCHE&amp;context=RUECKSUCHE&amp;action=STANDARDSUCHE&amp;la=de&amp;rci=no&amp;ph=$NUMBER" prefix="0">
+	        <entry>
+	        	<name>class=&quot;entry&quot;&gt;([^&lt;]*)&lt;/a&gt;</name>
+	        	<street>([^,&gt;]*),([^&lt;]*)&lt;br/&gt;</street>
+	        	<city>[^,&gt;]*,&amp;nbsp;[^&amp;]*([^&lt;]*)&lt;br/&gt;</city>
+	        	<zipcode>[^,&gt;]*,&amp;nbsp;([^&amp;]*)[^&lt;]*&lt;br/&gt;</zipcode>
+	        </entry>
+		</website>
+	</country>
+</reverselookup>
+	
+
+	

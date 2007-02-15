@@ -624,7 +624,7 @@ public final class JFritz implements  StatusListener{
 
 	public static void loadNumberSettings() {
 		// load the different area code -> city mappings
-		ReverseLookup.loadAreaCodes();
+		ReverseLookup.loadSettings();
 		PhoneNumber.loadFlagMap();
 		PhoneNumber.loadCbCXMLFile();
 	}

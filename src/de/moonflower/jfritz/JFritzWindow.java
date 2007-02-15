@@ -98,9 +98,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	private JToolBar mBar;
 
-	private JButton fetchButton, lookupButton, configButton;
+	private JButton fetchButton, configButton;
 
-	private JToggleButton taskButton, monitorButton;
+	private JToggleButton taskButton, monitorButton, lookupButton;
 
 	private JProgressBar progressbar;
 
@@ -332,7 +332,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		monitorButton.setIcon(getImage("monitor.png")); //$NON-NLS-1$
 		mBar.add(monitorButton);
 
-		lookupButton = new JButton();
+		lookupButton = new JToggleButton();
 		lookupButton.setToolTipText(Main.getMessage("reverse_lookup")); //$NON-NLS-1$
 		lookupButton.setActionCommand("reverselookup"); //$NON-NLS-1$
 		lookupButton.addActionListener(this);
@@ -669,45 +669,12 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					isretrieving = false;
 					if (Main.getProperty("option.lookupAfterFetch", "false") //$NON-NLS-1$,  //$NON-NLS-2$
 							.equals("true")) { //$NON-NLS-1$
-						reverseLookup();
+						JFritz.getCallerList().reverseLookup(false);
 					}
 //					interrupt();
 				}
 			};
 			worker.start();
-		}
-	}
-
-	/**
-	 * Does a reverse lookup for the whole list
-	 */
-	public void reverseLookup() {
-		if (!isretrieving) { // Prevent multiple clicking
-			isretrieving = true;
-
-			final SwingWorker worker = new SwingWorker() {
-				public Object construct() {
-					boolean isdone = false;
-					while (!isdone) {
-						setBusy(true);
-						setStatus(Main.getMessage("reverse_lookup")); //$NON-NLS-1$
-						JFritz.getCallerList().reverseLookup(true);
-						isdone = true;
-					}
-					return null;
-				}
-
-				public void finished() {
-					setBusy(false);
-					isretrieving = false;
-					// int rows = JFritz.getCallerlist().getRowCount();
-					setStatus();
-//					interrupt();
-				}
-			};
-			worker.start();
-		} else {
-			Debug.err("Multiple clicking is disabled.."); //$NON-NLS-1$
 		}
 	}
 
@@ -930,6 +897,16 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	}
 
 	/**
+	 * Used to set the progressbar as busy
+	 * function does not block any other functions
+	 *
+	 * @param busy
+	 */
+	public void setLookupBusy(boolean busy){
+		progressbar.setIndeterminate(busy);
+	}
+
+	/**
 	 * Action Listener for menu and toolbar
 	 */
 	public void actionPerformed(ActionEvent e) {
@@ -989,7 +966,16 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			}
 
 		} else if (e.getActionCommand().equals("reverselookup")) {
-			reverseLookup();
+			//reverseLookup();
+			boolean active = ((JToggleButton) e.getSource()).isSelected();
+			if (active) {
+				Debug.msg("Start reverselookup"); //$NON-NLS-1$
+				JFritz.getCallerList().reverseLookup(true);
+			} else {
+				Debug.msg("Stopping reverse lookup"); //$NON-NLS-1$
+				JFritz.getCallerList().stopLookup();
+			}
+
 		} else if (e.getActionCommand().equals("F5")) {
 			fetchList();
 		} else if (e.getActionCommand().equals("import_callerlist_csv")) {
@@ -1423,7 +1409,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 					if (Main.getProperty("option.lookupAfterFetch", "false")
 							.equals("true")) {
-						lookupButton.doClick();
+						JFritz.getCallerList().reverseLookup(false);
 					}
 
 				} catch (FileNotFoundException e) {
@@ -1597,5 +1583,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		// phonebookPanel
 		// quickDialPanel
 		// monitoringPanel
+	}
+
+	public void selectLookupButton(boolean select){
+		lookupButton.setSelected(select);
 	}
 }

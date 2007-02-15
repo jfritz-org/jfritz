@@ -1,219 +1,108 @@
 package de.moonflower.jfritz.utils.reverselookup;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.HashMap;
 
-import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.utils.Debug;
-import de.moonflower.jfritz.utils.HTMLUtil;
+import de.moonflower.jfritz.utils.JFritzUtils;
+
+
 
 /**
- * This class is responsible for doing reverse lookups for swiss numbers
- *
- * The search engine used is: http://www.whitepages.com
- * A big thanks to them for creating an easy to parse web page
  *
  * @author Brian Jensen
  *
  */
 public final class ReverseLookupUnitedStates {
 
-	public final static String SEARCH_URL="http://www.whitepages.com/search/ReversePhone?phone=";
+	public final static String FILE_HEADER = "Area Code;Region;Description";
+
+	private static HashMap<String, String> numberMap;
 
 	/**
-	 * This function performs the reverse lookup
+	 * This function attemps to fill the hashmap numberMap up with the data found
+	 * in number/usa/areacodes_usa.csv
+	 * The funtion uses the area codes listed in the file as keys and the cities as values
+	 *
 	 *
 	 * @author Brian Jensen
-	 * @param number in area format to be looked up
 	 *
-	 * @return a person object created using the data from the site
 	 */
-	public static Person lookup(String number){
-		boolean intNumber = false;
+	public static void loadAreaCodes(){
+		Debug.msg("Loading the american number to city list");
+		numberMap = new HashMap<String, String>(500);
+		BufferedReader br = null;
+		FileInputStream fi = null;
 
-		if(number.startsWith("+")){
-			number = number.substring(2);
-			intNumber = true;
-		}
-		Debug.msg("USA reverselookup number: "+number);
+		try{
+			fi = new FileInputStream(JFritzUtils.getFullPath("/number") +"/usa/areacodes_usa.csv");
+			br = new BufferedReader(new InputStreamReader(fi, "ISO-8859-1"));
 
-		String urlstr = SEARCH_URL + number.replaceAll("\\+","%2B");
-		Person newPerson;
+			String line;
+			String[] entries;
+			int lines = 0;
+			String l = br.readLine();
+			if(l==null){
+				Debug.errDlg("File "+JFritzUtils.getFullPath("/number") +"/usa/areacodes_usa.csv"+" empty");
+			}
+			//Load the keys and values quick and dirty
+			if(l.equals(FILE_HEADER)){
+				while (null != (line = br.readLine())) {
+					lines++;
+					entries = line.split(";");
+					if(entries.length == 3)
+						//number is the key, city is the value
+						numberMap.put(entries[0], entries[1]);
 
-		String firstname = "",
-				lastname = "",
-				street = "", //$NON-NLS-1$
-				zipCode = "", //$NON-NLS-1$
-				city = ""; 	  //$NON-NLS-1$;
-
-
-		try {
-			URL url = new URL(urlstr);
-			if (url != null) {
-
-				URLConnection con;
-			//	con.setRequestProperty("user-agent","Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)");
-
-
-				try {
-					con = url.openConnection();
-					con.setRequestProperty("user-agent","Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)");
-					String header = ""; //$NON-NLS-1$
-					String charSet = ""; //$NON-NLS-1$
-
-					// 5 Sekunden-Timeout für Verbindungsaufbau
-					//Set the read time for 15 seconds
-					con.setConnectTimeout(5000);
-					con.setReadTimeout(15000);
-
-					for (int i = 0;; i++) {
-						String headerName = con.getHeaderFieldKey(i);
-						String headerValue = con.getHeaderField(i);
-
-						if (headerName == null && headerValue == null) {
-							// No more headers
-							break;
-						}
-						if ("Content-Type".equalsIgnoreCase(headerName)) { //$NON-NLS-1$
-							String[] split = headerValue.split(" ", 2); //$NON-NLS-1$
-							for (int j = 0; j < split.length; j++) {
-								split[j] = split[j].replaceAll(";", ""); //$NON-NLS-1$,  //$NON-NLS-2$
-								if (split[j].toLowerCase().startsWith(
-										"charset=")) { //$NON-NLS-1$
-									String[] charsetSplit = split[j].split("="); //$NON-NLS-1$
-									charSet = charsetSplit[1];
-								}
-							}
-						}
-						header += headerName + ": " + headerValue + " | "; //$NON-NLS-1$,  //$NON-NLS-2$
-					}
-					Debug.msg("Header of whitepages.com: " + header); //$NON-NLS-1$
-					Debug.msg("CHARSET : " + charSet); //$NON-NLS-1$
-
-					// Get used Charset
-					BufferedReader d;
-					if (charSet.equals("")) { //$NON-NLS-1$
-						d = new BufferedReader(new InputStreamReader(con
-								.getInputStream(), "ISO-8859-1")); //$NON-NLS-1$
-					} else {
-						d = new BufferedReader(new InputStreamReader(con
-								.getInputStream(), charSet));
-					}
-					int i = 0;
-					String str = ""; //$NON-NLS-1$
-					String data = "";
-
-					// Get response data
-					while ((i < 700) && (null != ((str = d.readLine())))) {
-						data += str;
-						i++;
-					}
-					d.close();
-					Debug.msg("Begin processing responce from whitepages.com");
-			        //Debug.msg("DATA:"+data);
-					Pattern pName = Pattern
-									.compile("lname=([^<]*)&amp;fname=([^<]*)&amp;h_street="); //$NON-NLS-1$
-					Pattern pAddress = Pattern
-								.compile("h_street=([^<]*)&amp;h_city=([^<]*)&amp;h_state=([^<]*)&amp;h_zip=([^<]*)&amp;h_country"); //$NON-NLS-1$
-
-
-					//parse Name
-					Matcher mName = pName.matcher(data);
-					if (mName.find()) {
-						lastname = HTMLUtil.stripEntities(mName.group(1).trim());
-						Debug.msg("Last name: " + lastname);
-						firstname = HTMLUtil.stripEntities(mName.group(2).trim());
-						Debug.msg("First name: " + firstname);
-					}
-
-					//parse Street, zip code and city
-					Matcher mAddress = pAddress.matcher(data);
-					if(mAddress.find()){
-					    street = HTMLUtil.stripEntities(mAddress.group(1).trim());
-						Debug.msg("Street: "+street);
-						zipCode  = HTMLUtil.stripEntities(mAddress.group(3).trim()+" "+mAddress.group(4).trim());
-						Debug.msg("Zip Code: "+ zipCode);
-						city = HTMLUtil.stripEntities(mAddress.group(2).trim());
-						Debug.msg("City: "+city);
-					}
-
-				} catch (IOException e1) {
-					Debug.err("Error while retrieving " + urlstr); //$NON-NLS-1$
 				}
 			}
-		} catch (MalformedURLException e) {
-			Debug.err("URL invalid: " + urlstr); //$NON-NLS-1$
+
+			Debug.msg(lines + " Lines read from areacodes_germany.csv");
+			Debug.msg("numberMap size: "+numberMap.size());
+
+		}catch(Exception e){
+			Debug.msg(e.toString());
+		}finally{
+			try{
+				if(fi!=null)
+					fi.close();
+				if(br!=null)
+					br.close();
+			}catch (IOException ioe){
+				Debug.msg("error closing stream"+ioe.toString());
+			}
 		}
 
-		newPerson = new Person(firstname, "", lastname, street, zipCode, city, "");
-		if(intNumber)
-			number = "+1" + number;
-
-		newPerson.addNumber(number, "home"); //$NON-NLS-1$
-
-
-		return newPerson;
 
 	}
 
 	/**
-	 * Frage von ROB: Wozu dient das? Um HTML-Entities wie &nbsp; zu entfernen?
-	 * Wenn ja, dann ist HTMLUtil.stripEntities() besser.
-	 * @deprecated
-	 * @param text
-	 * @return
+	 * This function determines the city to a particular number
+	 * The hashmap does not have to initialised in order to call this function
+	 *
+	 *
+	 * @param number in area format e.g. starting with "1"
+	 * @return the city found or "" if nothing was found
 	 */
-	private static String replaceChar ( String text ){
-	// Hier gibt es noch Optimierungsbedarf
+	public static String getCity(String number){
 
-		 if ( text == null )
-               return null;
+		Debug.msg("Looking up city in numberMap: "+number);
+		String city = "";
+		int l = number.length();
+		if(number.startsWith("0") && numberMap != null){
+			if(l>=3 && numberMap.containsKey(number.substring(0, 3)))
+				city = numberMap.get(number.substring(0,3));
+			else if(l>=4 && numberMap.containsKey(number.substring(0,4)))
+				city = numberMap.get(number.substring(0,4));
+			else if(l>=5 && numberMap.containsKey(number.substring(0,5)))
+				city = numberMap.get(number.substring(0,5));
+		}
 
-         if ( text.indexOf( '%' ) < 0 )
-            // are no entities, nothing to do
-            return text;
+		return city;
+	}
 
-         int originalTextLength = text.length();
-         StringBuffer sb = new StringBuffer( originalTextLength );
-         for ( int i = 0; i < originalTextLength; i++ )
-           {
-            int whereProz = text.indexOf( '%', i );
-            if ( whereProz < 0 ){
-            	// no more %, we are done
-            	// append all remaining text
-            	sb.append( text.substring( i ) );
-            	break;
-            }else{
-            	// append all text to left of next &
-            	sb.append( text.substring( i, whereProz ) );
-            	// avoid reprocessing those chars
-            	i = whereProz;
-            	// text.charAt(i) is an %
-            	// possEntity has lead % stripped.
-
-            	String possEntity="";
-            	if ( i +3 <= originalTextLength ){
-            		possEntity = text.substring( i + 1,i + 3  );
-            		possEntity=possEntity.toUpperCase(); }
-                  	i= i + 2;
-                  	char t=0;
-
-                  	if (possEntity.length()==2)
-                  		t=(char)Integer.parseInt( possEntity,16 );
-
-                  	if ( t != 0 )
-                  		sb.append( t );
-
-              } // end else
-           } // end for
-          // if result is not shorter, we did not do anything. Saves RAM.
-         return ( sb.length() == originalTextLength ) ? text : sb.toString();
-    } // end replaceChar
 
 }
