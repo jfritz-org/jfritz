@@ -139,13 +139,13 @@
  *
  * JFritz 0.6.2.04
  * - Umstrukturierung des Aufrufs von externen Programmen (noch nicht abgeschlossen)
- * - Neu: Rückwärtssuche Engine komplette neu geschrieben. Alle paramter in einer XML-Datei einstellbar
  *
  * JFritz 0.6.2.03
  * - Autoupdate korrektur
  * - Leisere Sounds
  * - Doppelklick auf das Trayicon nun möglich
- * - Bugfix: Rückwärtssuche bleibt nicht mehr stehen, falls die Verbindung zum Server stalled ist
+ * - Neu: Rückwärtssuche Engine komplette neu geschrieben. Alle paramter in einer XML-Datei einstellbar
+ * - Bugfix: Rückwärtssuche bleibt nicht mehr stehen, falls die Verbindung zum Server hängt
  * - Bugfix: Rückwärtssuche für deutschland wieder angepasst, dastelefonbuch.de und dasoertliche.de eingesetzt
  * - Bugfix: Zu kurze Landesvorwahl
  * - Bugfix: Falsche Rufnummern gelöscht
@@ -627,7 +627,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.6.2.03"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.58 2007/02/15 19:15:59 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.59 2007/02/16 19:47:51 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
