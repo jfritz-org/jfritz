@@ -149,7 +149,7 @@
  * - Bugfix: Rückwärtssuche für deutschland wieder angepasst, dastelefonbuch.de und dasoertliche.de eingesetzt
  * - Bugfix: Zu kurze Landesvorwahl
  * - Bugfix: Falsche Rufnummern gelöscht
- * - Bugfix?: JFritz verliert Einstellungen
+ * - Bugfix: JFritz verliert Einstellungen
  * - Bugfix: Anrufmonitor funktioniert sporadisch nicht mehr. (Restart alle 5 Minuten)
  * - Bugfix: Wizard speichert IP nun wieder korrekt
  * - Bugfix: Richtiger Quell- und Zielordner für die Backups
@@ -627,7 +627,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.6.2.03"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.59 2007/02/16 19:47:51 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.60 2007/02/17 10:27:44 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -1420,7 +1420,8 @@ public class Main implements LookupObserver {
 	 * adds the results to the phonebook and saves
 	 */
 	public void personsFound(Vector persons){
-		JFritz.getPhonebook().addEntries(persons);
+		if ( persons != null )
+			JFritz.getPhonebook().addEntries(persons);
 	}
 
 	/**
@@ -1428,6 +1429,14 @@ public class Main implements LookupObserver {
 	 */
 	public void percentOfLookupDone(float f){
 		//TODO: Update the status here!
+	}
+
+	/**
+	 * is called to save progress
+	 */
+	public void saveFoundEntries(Vector persons) {
+		if ( persons != null )
+			JFritz.getPhonebook().addEntries(persons);
 	}
 
 }

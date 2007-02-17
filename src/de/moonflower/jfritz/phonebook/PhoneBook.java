@@ -291,7 +291,10 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 	}
 
 	public void personsFound(Vector persons) {
-		addEntries(persons);
+		if (persons != null) {
+			addEntries(persons);
+			fireTableDataChanged();
+		}
 	}
 
 	/**
@@ -301,6 +304,17 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 		// TODO Auto-generated method stub
 
 	}
+
+	/**
+	 * for the LookupObserver
+	 */
+	public void saveFoundEntries(Vector persons) {
+		if (persons != null) {
+			addEntries(persons);
+			fireTableDataChanged();
+		}
+	}
+
 
 	/**
 	 * Does a reverse lookup on all calls

@@ -54,6 +54,7 @@ public class ReverseLookup {
 	public static LookupThread thread;
 
 	static volatile PriorityBlockingQueue<LookupRequest> requests = new PriorityBlockingQueue<LookupRequest>();
+	static volatile PriorityBlockingQueue<LookupRequest> requests_done = new PriorityBlockingQueue<LookupRequest>();
 
 	public static HashMap<String, LinkedList<ReverseLookupSite>> rlsMap;
 
@@ -99,7 +100,7 @@ public class ReverseLookup {
 		//run through elements and add elements that aren't already in the queue
 		while(en.hasMoreElements()){
 			req = new LookupRequest(en.nextElement(), 5);
-			if(!requests.contains(req))
+			if(!requests.contains(req) && !requests_done.contains(req))
 				requests.put(req);
 
 		}
@@ -126,11 +127,7 @@ public class ReverseLookup {
 	 * @return next element in the queue or null
 	 */
 	public static synchronized LookupRequest getNextRequest(){
-		try{
-			return requests.take();
-		}catch(InterruptedException e){
-			return null;
-		}
+			return requests.peek();
 	}
 
 	/**
@@ -159,7 +156,15 @@ public class ReverseLookup {
 	public static synchronized void personFound(Person person){
 		done++;
 		Debug.msg("Finished "+done+" from "+count+" requests");
+		try {
+			requests_done.add(requests.take());
+		}catch(InterruptedException e){
+			Debug.msg("Interrupted thread");
+		}
 		results.add(person);
+		if ( results.size() % 20 == 0) {
+			observer.saveFoundEntries(results);
+		}
 	}
 
 	/**

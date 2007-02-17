@@ -1337,7 +1337,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		try {
 			String directory = new DirectoryChooser().getDirectory(this)
 					.toString();
-			backup.copy(".", "xml", directory); //$NON-NLS-1$,  //$NON-NLS-2$
+			backup.copy(Main.SAVE_DIR, "xml", directory); //$NON-NLS-1$,  //$NON-NLS-2$
 		} catch (NullPointerException e) {
 			Debug.msg("No directory choosen for backup!"); //$NON-NLS-1$
 		}

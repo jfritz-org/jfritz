@@ -1926,7 +1926,7 @@ public boolean importFromCSVFile(BufferedReader br) {
 	}
 
 	/**
-	 *
+	 * for the LookupObserver
 	 */
 	public void personsFound(Vector persons) {
 		if (persons != null) {
@@ -1938,9 +1938,22 @@ public boolean importFromCSVFile(BufferedReader br) {
 
 	}
 
+	/**
+	 * for the LookupObserver
+	 */
 	public void percentOfLookupDone(float f) {
 		// TODO Auto-generated method stub
 
+	}
+
+	/**
+	 * for the LookupObserver
+	 */
+	public void saveFoundEntries(Vector persons) {
+		if (persons != null) {
+			phonebook.addEntries(persons);
+			this.fireTableDataChanged();
+		}
 	}
 
 	public void setPhoneBook(PhoneBook phonebook) {

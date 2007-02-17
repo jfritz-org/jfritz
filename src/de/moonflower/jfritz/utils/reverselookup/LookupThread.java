@@ -147,7 +147,7 @@ public class LookupThread extends Thread {
 
 			//Iterate over all the web sites loaded for the given country
 			for(int i=0; i < rls_list.size(); i++){
-
+				yield();
 				rls = rls_list.get(i);
 				//if(rls_list[i] == null)
 				//	break;
@@ -174,7 +174,7 @@ public class LookupThread extends Thread {
 							//15 seconds for the response
 							con.setConnectTimeout(5000);
 							con.setReadTimeout(15000);
-
+							con.connect();
 							//process header
 							for (int j = 0;; j++) {
 								String headerName = con.getHeaderFieldKey(j);
@@ -209,17 +209,21 @@ public class LookupThread extends Thread {
 								d = new BufferedReader(new InputStreamReader(con
 										.getInputStream(), charSet));
 							}
-
 							//read in data, if the website has stalled the timer will kill the connection
-							while (null != ((str = d.readLine())))
+							while (null != ((str = d.readLine()))) {
 									data += str;
-
+									yield();
+									if ( data.length() > 100000 ) {
+										System.err.println("Result > 100000 Bytes");
+										break;
+									}
+							}
 							d.close();
 							Debug.msg("Begin processing response from "+rls.getName());
 
 							//iterate over all patterns for this web site
 							for(int j=0; j < rls.size(); j++){
-
+								yield();
 								//clear all the entries in case something got matched by mistake
 								firstname = ""; //$NON-NLS-1$
 								lastname = ""; //$NON-NLS-1$
@@ -261,7 +265,7 @@ public class LookupThread extends Thread {
 										firstname = JFritzUtils.removeLeadingSpaces(firstname.trim());
 									}
 								}
-
+								yield();
 								//match street
 								if(!patterns[1].equals("")){
 
@@ -277,7 +281,7 @@ public class LookupThread extends Thread {
 										street = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(str));;
 									}
 								}
-
+								yield();
 								//match city
 								if(!patterns[2].equals("")){
 
@@ -294,6 +298,7 @@ public class LookupThread extends Thread {
 									}
 								}
 
+								yield();
 								//match zip code
 								if(!patterns[3].equals("")){
 
@@ -316,6 +321,7 @@ public class LookupThread extends Thread {
 
 							} //Done iterating for the given web site
 
+							yield();
 							Debug.msg("Firstname: " + firstname); //$NON-NLS-1$
 							Debug.msg("Lastname: " + lastname); //$NON-NLS-1$
 							Debug.msg("Company: " + company); //$NON-NLS-1$
@@ -337,9 +343,9 @@ public class LookupThread extends Thread {
 								newPerson = new Person(firstname, company, lastname,
 										street, zipcode, city, ""); //$NON-NLS-1$
 								if (company.length() > 0) {
-									newPerson.addNumber(number.getAreaNumber(), "business"); //$NON-NLS-1$
+									newPerson.addNumber(number.getIntNumber(), "business"); //$NON-NLS-1$
 								} else {
-									newPerson.addNumber(number.getAreaNumber(), "home"); //$NON-NLS-1$
+									newPerson.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
 								}
 
 								return newPerson;
@@ -354,6 +360,7 @@ public class LookupThread extends Thread {
 				}
 
 			} // done iterating over all the loaded web sites
+			yield();
 
 			//if we made it here, no match was found
 			Debug.msg("No match for "+nummer+" found");

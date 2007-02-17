@@ -9,6 +9,12 @@ public interface LookupObserver {
 	 */
 	public void personsFound(Vector persons);
 
+
+	/**
+	 * Will be called if a specified number of calls have been found
+	 */
+	public void saveFoundEntries(Vector persons);
+
 	/**
 	 * Will be called after each single lookup so a view can show a progressbar
 	 * @param f
