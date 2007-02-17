@@ -351,6 +351,11 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		menuItem.addActionListener(this);
 		callerlistPopupMenu.add(menuItem);
 
+		menuItem = new JMenuItem(Main.getMessage("reverse_lookup_dummy")); //$NON-NLS-1$
+		menuItem.setActionCommand("reverselookup_dummy"); //$NON-NLS-1$
+		menuItem.addActionListener(this);
+		callerlistPopupMenu.add(menuItem);
+
 		callerlistPopupMenu.addSeparator();
 
 		menuItem = new JMenuItem(Main.getMessage("export_csv")); //$NON-NLS-1$
@@ -859,6 +864,10 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		}
 		if (command.equals("reverselookup")) { //$NON-NLS-1$
 			callerList.doReverseLookup(callerTable.getSelectedRows());
+			return;
+		}
+		if (command.equals("reverselookup_dummy")) { //$NON-NLS-1$
+			callerList.reverseLookup(true, true);
 			return;
 		}
 		if (command.equals("export_csv")) { //$NON-NLS-1$

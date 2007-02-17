@@ -159,6 +159,8 @@
  * - INTERN: getProperty() gibt config-properties, getStateProperty()
  *           getStatePropery() gibt state-properties, setStateProperty()
  * - INTERN: Shutdown-Thread wird NICHT mehr benutzt
+ * - Neue Strings:
+ * 		reverse_lookup_dummy
  *
  * JFritz 0.6.2.02
  * - Bugfix: Problem mit der schweizer Rückwärtssuche behoben
@@ -627,7 +629,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.6.2.03"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.60 2007/02/17 10:27:44 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.61 2007/02/17 13:51:27 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -1407,7 +1409,7 @@ public class Main implements LookupObserver {
 	 *
 	 */
 	private void doReverseLookup(){
-		ReverseLookup.lookup(JFritz.getCallerList().getAllUnknownEntries(), this, true);
+		ReverseLookup.lookup(JFritz.getCallerList().getAllUnknownEntries(false), this, true);
 		try{
 			ReverseLookup.thread.join();
 		}catch(InterruptedException e){

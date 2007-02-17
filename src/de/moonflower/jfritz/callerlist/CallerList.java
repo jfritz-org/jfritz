@@ -1854,9 +1854,11 @@ public boolean importFromCSVFile(BufferedReader br) {
 	 *
 	 * @param filteredOnly
 	 *            if false it will lookup all calls
+	 * @param searchAlsoDummyEntries
+	 *            if true, it will also lookup dummy entries
 	 * @return
 	 */
-	public void reverseLookup(boolean filteredOnly) {
+	public void reverseLookup(boolean filteredOnly, boolean searchAlsoForDummyEntries) {
 		JFritz.getJframe().selectLookupButton(true);
 		JFritz.getJframe().setLookupBusy(true);
 		Vector<PhoneNumber> numbers = new Vector<PhoneNumber>();
@@ -1865,25 +1867,30 @@ public boolean importFromCSVFile(BufferedReader br) {
 				Call call = filteredCallerData.get(i);
 				if (call.getPhoneNumber() != null) {
 					Person foundPerson = phonebook.findPerson(call);
-					if ((foundPerson == null )
+					if ((foundPerson == null ) || (searchAlsoForDummyEntries && foundPerson.isDummy())
 							&& !numbers.contains(call.getPhoneNumber())) {
 						numbers.add(call.getPhoneNumber());
 					}
 				}
 			}
 		} else {
-			numbers = getAllUnknownEntries();
+			numbers = getAllUnknownEntries(searchAlsoForDummyEntries);
 		}
 		reverseLookup(numbers);
 	}
-
-	public Vector<PhoneNumber> getAllUnknownEntries(){
+	/**
+	 * Returns all unknown entries
+	 * @param searchAlsoForDummyEntries
+	 *            if true, it will also lookup dummy entries
+	 * @return all unknown entries
+	 */
+	public Vector<PhoneNumber> getAllUnknownEntries(boolean searchAlsoForDummyEntries){
 		Vector<PhoneNumber> numbers = new Vector<PhoneNumber>();
 		for (int i = 0; i < unfilteredCallerData.size(); i++) {
 			Call call = unfilteredCallerData.get(i);
 			if (call.getPhoneNumber() != null) {
 				Person foundPerson = phonebook.findPerson(call);
-				if ((foundPerson == null)
+				if ((foundPerson == null || (searchAlsoForDummyEntries && foundPerson.isDummy()))
 						&& !numbers.contains(call.getPhoneNumber())) {
 					numbers.add(call.getPhoneNumber());
 				}

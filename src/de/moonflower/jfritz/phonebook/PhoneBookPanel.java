@@ -157,7 +157,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			}
 			;
 		} else if (e.getActionCommand().equals("filter_private")) { //$NON-NLS-1$
-			Main.setProperty("filter_private", Boolean //$NON-NLS-1$
+			Main.setStateProperty("filter_private", Boolean //$NON-NLS-1$
 					.toString(((JToggleButton) e.getSource()).isSelected()));
 			phonebook.updateFilter();
 		} else if (e.getActionCommand().equals("export_vcard")) { //$NON-NLS-1$
@@ -230,7 +230,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		tb.setActionCommand("filter_private"); //$NON-NLS-1$
 		tb.addActionListener(this);
 		tb.setToolTipText(messages.getString("private_entry")); //$NON-NLS-1$
-		tb.setSelected(JFritzUtils.parseBoolean(Main.getProperty(
+		tb.setSelected(JFritzUtils.parseBoolean(Main.getStateProperty(
 				"filter_private", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 		toolBar.add(tb);
 
@@ -248,7 +248,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 
 		resetButton = new JButton();
 		toolBar.add(new JLabel(messages.getString("search") + ": ")); //$NON-NLS-1$, //$NON-NLS-2$
-		searchFilter = new JTextField(Main.getProperty("filter.Phonebook.search", ""), //$NON-NLS-1$,  //$NON-NLS-2$
+		searchFilter = new JTextField(Main.getStateProperty("filter.Phonebook.search", ""), //$NON-NLS-1$,  //$NON-NLS-2$
 				10);
 		searchFilter.addKeyListener(this);
 		toolBar.add(searchFilter);
@@ -266,7 +266,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	 */
 	public void exportVCard() {
 		VCardList list = new VCardList();
-		JFileChooser fc = new JFileChooser(Main.getProperty("options.exportVCARDpath",null)); //$NON-NLS-1$
+		JFileChooser fc = new JFileChooser(Main.getStateProperty("options.exportVCARDpath",null)); //$NON-NLS-1$
 		fc.setDialogTitle(messages.getString("export_vcard")); //$NON-NLS-1$
 		fc.setDialogType(JFileChooser.SAVE_DIALOG);
 		fc.setFileFilter(new FileFilter() {
@@ -297,7 +297,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 			    String path = fc.getSelectedFile().getPath();
 			    path = path.substring(0,path.length()-fc.getSelectedFile().getName().length());
-			    Main.setProperty("options.exportVCARDpath", path);  //$NON-NLS-1$
+			    Main.setStateProperty("options.exportVCARDpath", path);  //$NON-NLS-1$
 				File file = fc.getSelectedFile();
 				if (file.exists()) {
 					if (JOptionPane.showConfirmDialog(this,
@@ -336,7 +336,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	}
 
 	public void importFromXML () {
-		JFileChooser fc = new JFileChooser(Main.getProperty("option.phonebook.import_xml_path"));  //$NON-NLS-1$
+		JFileChooser fc = new JFileChooser(Main.getStateProperty("option.phonebook.import_xml_path"));  //$NON-NLS-1$
 		fc.setFileFilter(new FileFilter() {
 			public boolean accept(File f) {
 				return f.isDirectory()
@@ -350,7 +350,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		if (fc.showOpenDialog(parentFrame) != JFileChooser.APPROVE_OPTION) {
 			return;
 		}
-		Main.setProperty("option.phonebook.import_xml_path", fc.getSelectedFile().getAbsolutePath());  //$NON-NLS-1$
+		Main.setStateProperty("option.phonebook.import_xml_path", fc.getSelectedFile().getAbsolutePath());  //$NON-NLS-1$
 		phonebook.loadFromXMLFile(fc.getSelectedFile().getAbsolutePath());
 		phonebook.saveToXMLFile(Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
 	}
@@ -368,8 +368,8 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			String filter = search.getText().trim();
 
 			// only update filter when the search expression has changed
-			if (! filter.equals(Main.getProperty("filter.Phonebook.search",""))) {  //$NON-NLS-1$,  //$NON-NLS-2$
-				Main.setProperty("filter.Phonebook.search", filter);  //$NON-NLS-1$
+			if (! filter.equals(Main.getStateProperty("filter.Phonebook.search",""))) {  //$NON-NLS-1$,  //$NON-NLS-2$
+				Main.setStateProperty("filter.Phonebook.search", filter);  //$NON-NLS-1$
 				phonebook.clearFilterExceptions();
 				phonebook.updateFilter();
 				phonebook.fireTableDataChanged();
@@ -452,7 +452,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 
 	private void clearAllFilter() {
 		setSearchFilter("");  //$NON-NLS-1$
-		Main.setProperty("filter.Phonebook.search", "");  //$NON-NLS-1$,   //$NON-NLS-2$
+		Main.setStateProperty("filter.Phonebook.search", "");  //$NON-NLS-1$,   //$NON-NLS-2$
 		phonebook.clearFilterExceptions();
 		phonebook.updateFilter();
 		phonebook.fireTableDataChanged();
