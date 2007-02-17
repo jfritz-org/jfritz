@@ -1865,7 +1865,7 @@ public boolean importFromCSVFile(BufferedReader br) {
 				Call call = filteredCallerData.get(i);
 				if (call.getPhoneNumber() != null) {
 					Person foundPerson = phonebook.findPerson(call);
-					if ((foundPerson == null)
+					if ((foundPerson == null )
 							&& !numbers.contains(call.getPhoneNumber())) {
 						numbers.add(call.getPhoneNumber());
 					}

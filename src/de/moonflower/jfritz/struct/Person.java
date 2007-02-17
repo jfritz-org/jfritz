@@ -516,7 +516,6 @@ public class Person implements Cloneable{
 
 	public boolean isDummy() {
 		return getFullname().equals("") && (getNumbers().size() == 1)
-				&& getAddress().equals("") && getCity().equals("")
 				&& getCompany().equals("")
 				&& getEmailAddress().equals("")
 				&& getPostalCode().equals("")
