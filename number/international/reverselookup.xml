@@ -19,7 +19,7 @@
 
 <reverselookup>
 	<country code="+1">
-		<website name="whitepages.com" url="http://www.whitepages.com/search/ReversePhone?phone=$NUMBER" prefix="1">
+		<website name="whitepages.com" url="http://www.whitepages.com/10001/search/ReversePhone?phone=$NUMBER" prefix="1">
 			<entry>
 				<name>lname=([^&lt;]*)&amp;amp;fname=([^&lt;]*)&amp;amp;h_street=</name>
 				<street>h_street=([^&lt;]*)&amp;amp;h_city=[^&lt;]*&amp;amp;h_state=[^&lt;]*&amp;amp;h_zip=[^&lt;]*&amp;amp;h_country</street>
@@ -77,7 +77,7 @@
 	<country code="+49">
 		<website name="dastelefonbuch.de" url="http://www.dastelefonbuch.de/?sourceid=Mozilla-search&amp;cmd=search&amp;kw=$NUMBER" prefix="0">
 			<entry>
-				<name>&lt;td width=&quot;[^&quot;]*&quot;&gt;[^&lt;]*&lt;a href=&quot;[^&quot;]*&quot; title=&quot;([^&quot;]*)&quot;&gt;</name>
+				<name>&lt;a href=&quot;[^&quot;]*&quot; title=&quot;([^&quot;]*)&quot;\s*?&gt;[^&lt;]*&lt;/a&gt;&lt;br /&gt;</name>
 				<street>&lt;/td&gt;[^&lt;]*&lt;td width=&quot;[^&quot;]*&quot;&gt;([^&lt;]*)&lt;/td&gt;[^&lt;]*&lt;td width=&quot;[^&quot;]*&quot;&gt;[^&lt;]*&lt;s</street>
 				<city>&lt;span title=&quot;[0-9]*([^&quot;]*)&quot;&gt;</city>
 				<zipcode>&lt;span title=&quot;([0-9]*)[^&quot;]*&quot;&gt;</zipcode>
@@ -86,7 +86,7 @@
 		<website name="dasoertliche.de" url="http://dasoertliche.de/?form_name=search_inv&amp;page=RUECKSUCHE&amp;context=RUECKSUCHE&amp;action=STANDARDSUCHE&amp;la=de&amp;rci=no&amp;ph=$NUMBER" prefix="0">
 	        <entry>
 	        	<name>class=&quot;entry&quot;&gt;([^&lt;]*)&lt;/a&gt;</name>
-	        	<street>([^,&gt;]*),([^&lt;]*)&lt;br/&gt;</street>
+	        	<street>([^,&gt;]*),[^&lt;]*&lt;br/&gt;</street>
 	        	<city>[^,&gt;]*,&amp;nbsp;[^&amp;]*([^&lt;]*)&lt;br/&gt;</city>
 	        	<zipcode>[^,&gt;]*,&amp;nbsp;([^&amp;]*)[^&lt;]*&lt;br/&gt;</zipcode>
 	        </entry>
