@@ -75,14 +75,6 @@
 		</website>
 	</country>
 	<country code="+49">
-		<website name="dastelefonbuch.de" url="http://www.dastelefonbuch.de/?sourceid=Mozilla-search&amp;cmd=search&amp;kw=$NUMBER" prefix="0">
-			<entry>
-				<name>&lt;a href=&quot;[^&quot;]*&quot; title=&quot;([^&quot;]*)&quot;\s*?&gt;[^&lt;]*&lt;/a&gt;&lt;br /&gt;</name>
-				<street>&lt;/td&gt;[^&lt;]*&lt;td width=&quot;[^&quot;]*&quot;&gt;([^&lt;]*)&lt;/td&gt;[^&lt;]*&lt;td width=&quot;[^&quot;]*&quot;&gt;[^&lt;]*&lt;s</street>
-				<city>&lt;span title=&quot;[0-9]*([^&quot;]*)&quot;&gt;</city>
-				<zipcode>&lt;span title=&quot;([0-9]*)[^&quot;]*&quot;&gt;</zipcode>
-			</entry>
-		</website>
 		<website name="dasoertliche.de" url="http://dasoertliche.de/?form_name=search_inv&amp;page=RUECKSUCHE&amp;context=RUECKSUCHE&amp;action=STANDARDSUCHE&amp;la=de&amp;rci=no&amp;ph=$NUMBER" prefix="0">
 	        <entry>
 	        	<name>class=&quot;entry&quot;&gt;([^&lt;]*)&lt;/a&gt;</name>
@@ -90,6 +82,14 @@
 	        	<city>[^,&gt;]*,&amp;nbsp;[^&amp;]*([^&lt;]*)&lt;br/&gt;</city>
 	        	<zipcode>[^,&gt;]*,&amp;nbsp;([^&amp;]*)[^&lt;]*&lt;br/&gt;</zipcode>
 	        </entry>
+		</website>
+		<website name="dastelefonbuch.de" url="http://www.dastelefonbuch.de/?sourceid=Mozilla-search&amp;cmd=search&amp;kw=$NUMBER" prefix="0">
+			<entry>
+				<name>&lt;a href=&quot;[^&quot;]*&quot; title=&quot;([^&quot;]*)&quot;\s*?&gt;[^&lt;]*&lt;/a&gt;&lt;br /&gt;</name>
+				<street>&lt;/td&gt;[^&lt;]*&lt;td width=&quot;[^&quot;]*&quot;&gt;([^&lt;]*)&lt;/td&gt;[^&lt;]*&lt;td width=&quot;[^&quot;]*&quot;&gt;[^&lt;]*&lt;s</street>
+				<city>&lt;span title=&quot;[0-9]*([^&quot;]*)&quot;&gt;</city>
+				<zipcode>&lt;span title=&quot;([0-9]*)[^&quot;]*&quot;&gt;</zipcode>
+			</entry>
 		</website>
 	</country>
 </reverselookup>
