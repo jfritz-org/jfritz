@@ -783,12 +783,12 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				+ "Robert Palmer <robotniko@users.sourceforge.net>\n" 	//$NON-NLS-1$
 				+ "Marc Waldenberger <MarcWaldenberger@gmx.net>\n"		//$NON-NLS-1$
 				+ "Brian Jensen <capncrunch@users.sourceforge.net>\n" 	//$NON-NLS-1$
-				+ "Bastian Schaefer <baefer@users.sourceforge.net>\n" 	//$NON-NLS-1$
 				+ "\n"													//$NON-NLS-1$
 				+ "Former Developers:\n" 								//$NON-NLS-1$
 				+ "Arno Willig <akw@thinkwiki.org>\n"					//$NON-NLS-1$
 				+ "Christian Klein <kleinch@users.sourceforge.net>\n" 	//$NON-NLS-1$
 				+ "Benjamin Schmitt <little_ben@users.sourceforge.net>" //$NON-NLS-1$
+				+ "Bastian Schaefer <baefer@users.sourceforge.net>\n" 	//$NON-NLS-1$
 				+ "\n\n"												//$NON-NLS-1$
 				+ "This tool is developed and released under\n" 		//$NON-NLS-1$
 				+ "the terms of the GNU General Public License\n"); 	//$NON-NLS-1$
