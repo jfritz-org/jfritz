@@ -134,6 +134,7 @@
  * - Einstellungsseite muß gescrollt werden, obwohl viel Platz am Bildschirm wäre
  * - Bestehenden dummy Eintrag überschreiben
  * - Rechtsklick in Teilnehmerspalte
+ * - Text ändern für reverse_lookup_dummy
  *
  * FIXME-END
  *
@@ -629,7 +630,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.6.2.03"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.61 2007/02/17 13:51:27 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.62 2007/02/18 10:01:49 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
