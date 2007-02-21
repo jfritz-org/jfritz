@@ -105,7 +105,12 @@ public class Person implements Cloneable{
 
 	public void setNumbers(Vector<PhoneNumber> numbers, String std) {
 		this.numbers = numbers;
-		this.standard = std;
+		setStandard(std);
+
+		if (this.standard.equals("") && this.numbers.size() >= 1) {
+			// if there is no standard defined, promote the first number
+			this.standard = this.numbers.get(0).getType();
+		}
 	}
 
 	public boolean isEmpty() {
@@ -312,6 +317,10 @@ public class Person implements Cloneable{
 	 *            Sets standard number
 	 */
 	public final void setStandard(String standard) {
+		if  (getPhoneNumber(standard) == null) {
+			// do not set a type as standard, if the number does not exist
+			return;
+		}
 		this.standard = standard;
 	}
 

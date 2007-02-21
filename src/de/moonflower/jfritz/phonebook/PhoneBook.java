@@ -360,6 +360,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 		while (en.hasMoreElements()) {
 			Person p = en.nextElement();
 			if (p.isDummy()
+					&& p.getStandardTelephoneNumber() != null
 					&& newPerson.getStandardTelephoneNumber() != null
 					&& newPerson.getStandardTelephoneNumber().getIntNumber()
 							.equals(
