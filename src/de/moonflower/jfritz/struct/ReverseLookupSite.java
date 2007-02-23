@@ -3,14 +3,22 @@ package de.moonflower.jfritz.struct;
 import java.util.LinkedList;
 
 /** This is a structure class for holding reverse lookup sites
- * Currently you can add a URL, a user defined name, a prefix needed
+ * Currently you can add a URL, a user defined name, a prefix needed,
+ * an area code length (for sites that like to split up the numbers)
  * for the site and a list of sets of patterns to match for the site
  *
  * Pattern categories available are: name, street, city, zip code
  *
- * Note: It is important that in each pattern exactly one grouping is
- * present, or else the lookup engine won't find anything or the wrong data!!!
- * These objects may be omitted if necessary
+ * Placeholders available for the url: $PFXAREACODE gets replaced
+ * with the prefix and area code (determined by AREACODE_LENGTH),
+ * $AREACODE gets replaced with area code minus prefix, and finally
+ * $NUMBER which gets replaced the whole number - AREACODE_LENGTH
+ *
+ * Note: There may be more than one grouping for each pattern,
+ * each grouping found will be concated on the previous grouping
+ * found, ordering is not yet supported
+ *
+ *
  *
  * @author brian jensen
  *
@@ -28,15 +36,16 @@ public class ReverseLookupSite {
 	//needed to be certify if the number format is correct for the site
 	private String PREFIX="";
 
-	int count = 0;
+	private int AREACODE_LENGTH = 0;
 
 	//currently a linked list of String arrays
 	private LinkedList<String[]> entries;
 
-	public ReverseLookupSite(String url, String name, String prefix){
+	public ReverseLookupSite(String url, String name, String prefix, int ac_length){
 		URL = url;
 		NAME = name;
 		PREFIX = prefix;
+		AREACODE_LENGTH = ac_length;
 		entries = new LinkedList<String[]>();
 	}
 
@@ -56,7 +65,6 @@ public class ReverseLookupSite {
 	 * @return a String[4] object containing the patterns
 	 */
 	public String[] getEntry(int index){
-
 		return entries.get(index);
 	}
 
@@ -75,4 +83,9 @@ public class ReverseLookupSite {
 	public String getPrefix(){
 		return PREFIX;
 	}
+
+	public int getAreaCodeLength(){
+		return AREACODE_LENGTH;
+	}
+
 }

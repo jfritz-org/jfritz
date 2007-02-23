@@ -26,7 +26,7 @@ public class ReverseLookupXMLHandler extends DefaultHandler{
 
 	LinkedList<ReverseLookupSite> rls_list;
 
-	int rls_count;
+	int rls_count, ac_length;
 
 	public ReverseLookupXMLHandler() {
 		super();
@@ -49,6 +49,7 @@ public class ReverseLookupXMLHandler extends DefaultHandler{
 		//	Important to clear buffer :)
 		chars = "";  //$NON-NLS-1$
 
+
 		//if we have a beginning country tag create a new reverselookupsite list
 		if (eName.equals("country")) { //$NON-NLS-1$
 			rls_count = 0;
@@ -61,6 +62,7 @@ public class ReverseLookupXMLHandler extends DefaultHandler{
 			url = "";
 			name = "";
 			prefix ="";
+			ac_length = 0;
 
 		//if we have a new entry tag, clear the previous pattern data
 		}else if (eName.equals("entry")){
@@ -78,6 +80,8 @@ public class ReverseLookupXMLHandler extends DefaultHandler{
 				if ("".equals(aName)) //$NON-NLS-1$
 					aName = attrs.getQName(i);
 
+				if(eName.equals("reverselookup") && aName.equals("version"))
+					Debug.msg("Loading reverselookup.xml version "+attrs.getValue(i));
 				//this adds the country code
 				if (eName.equals("country") && aName.equals("code")) { //$NON-NLS-1$,  //$NON-NLS-2$
 					country_code = attrs.getValue(i);
@@ -88,11 +92,13 @@ public class ReverseLookupXMLHandler extends DefaultHandler{
 						name = attrs.getValue(i);
 					else if(aName.equals("prefix"))
 						prefix = attrs.getValue(i);
+					else if(aName.equals("areacode"))
+						ac_length = Integer.parseInt(attrs.getValue(i));
 
 					//add a new reverselookup site to the list
 					if(i == attrs.getLength() -1){
 						Debug.msg("Adding website: "+url+" for "+country_code);
-						rls_list.add(new ReverseLookupSite(url, name, prefix));
+						rls_list.add(new ReverseLookupSite(url, name, prefix, ac_length));
 
 					}
 				}
@@ -131,12 +137,10 @@ public class ReverseLookupXMLHandler extends DefaultHandler{
 				//Add the country to the hashmap with the reveselookupsite list
 				ReverseLookup.addReverseLookupSites(country_code, rls_list);
 			}
-
 		}
 	}
 
 	public void characters(char buf[], int offset, int len) throws SAXException {
 		chars += new String(buf, offset, len);
 	}
-
 }

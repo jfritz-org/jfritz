@@ -644,6 +644,9 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 		} catch (IOException e) {
 			Debug.err("IOException " + filename); //$NON-NLS-1$
 		}
+
+		this.callerList.fireTableDataChanged();
+
 	}
 
 	public synchronized void loadFromXMLFile(String filename) {

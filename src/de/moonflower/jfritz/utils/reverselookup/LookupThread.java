@@ -130,6 +130,8 @@ public class LookupThread extends Thread {
 			String header = ""; //$NON-NLS-1$
 			String charSet = ""; //$NON-NLS-1$
 			String str = ""; //$NON-NLS-1$
+			String prefix;
+			int ac_length;
 			Pattern pData;
 			Matcher mData;
 			String firstname = "", //$NON-NLS-1$
@@ -149,19 +151,28 @@ public class LookupThread extends Thread {
 			for(int i=0; i < rls_list.size(); i++){
 				yield();
 				rls = rls_list.get(i);
-				//if(rls_list[i] == null)
-				//	break;
+
+				prefix = rls.getPrefix();
+				ac_length = rls.getAreaCodeLength();
 
 				//needed to make sure international calls are formatted correctly
-				if(!nummer.startsWith(rls.getPrefix()))
-					nummer = rls.getPrefix() + nummer;
+				if(!nummer.startsWith(prefix))
+					nummer = prefix + nummer;
 
-				urlstr = rls.getURL().replaceAll("\\$NUMBER", nummer);
+				//urlstr = rls.getURL().replaceAll("\\$NUMBER", nummer);
+				urlstr = rls.getURL();
+				if(urlstr.contains("$AREACODE")){
+					urlstr = urlstr.replaceAll("\\$AREACODE", nummer.substring(prefix.length(), ac_length+prefix.length()));
+					urlstr = urlstr.replaceAll("\\$NUMBER", nummer.substring(prefix.length()+ac_length));
+				}else if(urlstr.contains("$PFXAREACODE")){
+					urlstr = urlstr.replaceAll("\\$PFXAREACODE", nummer.substring(0, prefix.length()+ac_length));
+					urlstr = urlstr.replaceAll("\\$NUMBER", nummer.substring(prefix.length()+ ac_length));
+				}else
+					urlstr = urlstr.replaceAll("\\$NUMBER", nummer);
+
 				Debug.msg("Reverse lookup using: "+urlstr);
 				url = null;
 				data = "";
-
-				//urlstr = rls_list[i].getURL() + nummer.replaceAll("\\+","%2B");
 
 				//open a connection to the site
 				try {
@@ -185,9 +196,8 @@ public class LookupThread extends Thread {
 									break;
 								}
 								if ("content-type".equalsIgnoreCase(headerName)) { //$NON-NLS-1$
-									String[] split = headerValue.split(" ", 2); //$NON-NLS-1$
-									for (int k = 0; j < split.length; k++) {
-										split[k] = split[k].replaceAll(";", ""); //$NON-NLS-1$,  //$NON-NLS-2$
+									String[] split = headerValue.split(";", 2); //$NON-NLS-1$
+									for (int k = 0; k < split.length; k++) {
 										if (split[k].toLowerCase().startsWith(
 												"charset=")) { //$NON-NLS-1$
 											String[] charsetSplit = split[k].split("="); //$NON-NLS-1$
@@ -242,9 +252,10 @@ public class LookupThread extends Thread {
 
 										//read in and concate all groupings
 										str = "";
-										for(int k=1; k <= mData.groupCount(); k++)
-											str = str + mData.group(k).trim() + " ";
-
+										for(int k=1; k <= mData.groupCount(); k++){
+											if(mData.group(k) != null)
+												str = str + mData.group(k).trim() + " ";
+										}
 										String[] split = str.split(" ", 2); //$NON-NLS-1$
 
 										lastname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(split[0]));
@@ -275,9 +286,10 @@ public class LookupThread extends Thread {
 
 										//read in and concate all groupings
 										str = "";
-										for(int k=1; k <= mData.groupCount(); k++)
-											str = str + mData.group(k).trim() + " ";
-
+										for(int k=1; k <= mData.groupCount(); k++){
+											if(mData.group(k) != null)
+												str = str + mData.group(k).trim() + " ";
+										}
 										street = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(str));;
 									}
 								}
@@ -291,9 +303,10 @@ public class LookupThread extends Thread {
 
 										//read in and concate all groupings
 										str = "";
-										for(int k=1; k <= mData.groupCount(); k++)
-											str = str + mData.group(k).trim() + " ";
-
+										for(int k=1; k <= mData.groupCount(); k++){
+											if(mData.group(k) != null)
+												str = str + mData.group(k).trim() + " ";
+										}
 										city = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(str));
 									}
 								}
@@ -308,9 +321,10 @@ public class LookupThread extends Thread {
 
 										//read in and concate all groupings
 										str = "";
-										for(int k=1; k <= mData.groupCount(); k++)
-											str = str + mData.group(k).trim() + " ";
-
+										for(int k=1; k <= mData.groupCount(); k++){
+											if(mData.group(k) != null)
+												str = str + mData.group(k).trim() + " ";
+										}
 										zipcode = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(str));
 									}
 								}

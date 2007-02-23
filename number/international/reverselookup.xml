@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- The syntax of this file is fairly self-explanatory
+<!-- reverselookup.xml revision 1.01 from 23, Feb 2007 
+
+	 The syntax of this file is fairly self-explanatory
      However, a few things need to be said. First and foremost
      everything in here needs to be xml compliant, that means all
      quotes, pound signs etc need to be properly escaped!!!
@@ -13,11 +15,15 @@
    	 patterns / entries.
    	 
    	 Make sure that each url entry contains the string $NUMBER at the
-   	 appropriate spot or else the algorithm won't work! The attribute
-   	 prefix is used to determine if the number is in local format or not   	 
+   	 appropriate spot or else the algorithm won't work! The attributes prefix
+   	 and areacode are optional. The attribute prefix is used to determine if 
+   	 the number needs the area code prefix or not. if the attribute area code
+   	 is set make sure to include string $AREACODE, or $PFXAREACODE at the
+   	 appropriate spot in the url. For more info see http://www.jfritz.org
+   	    	 
 -->
 
-<reverselookup>
+<reverselookup version="1.01">
 	<country code="+1">
 		<website name="whitepages.com" url="http://www.whitepages.com/10001/search/ReversePhone?phone=$NUMBER" prefix="1">
 			<entry>
@@ -89,6 +95,16 @@
 				<street>&lt;/td&gt;[^&lt;]*&lt;td width=&quot;[^&quot;]*&quot;&gt;([^&lt;]*)&lt;/td&gt;[^&lt;]*&lt;td width=&quot;[^&quot;]*&quot;&gt;[^&lt;]*&lt;s</street>
 				<city>&lt;span title=&quot;[0-9]*([^&quot;]*)&quot;&gt;</city>
 				<zipcode>&lt;span title=&quot;([0-9]*)[^&quot;]*&quot;&gt;</zipcode>
+			</entry>
+		</website>
+	</country>
+	<country code="+90">
+		<website name="ttrehber.tr.gov" url="http://www.ttrehber.gov.tr/trk-wp/IDA2?REQ=20&amp;IDAERROR=&amp;QRY=bus&amp;CTRY=trk&amp;LANG=tu&amp;PAGE=complexSearch&amp;LIP=complexSearch&amp;ACTION=search&amp;STP=C&amp;ACD=$AREACODE&amp;TEL=$NUMBER&amp;sorgula=Ki%FEi+%2F+Kurum+Sorgula" prefix="0" areacode="3">
+			<entry>
+				<name>&lt;td class=&quot;level0&quot;&gt;([^&lt;]*)&lt;/td&gt;&lt;td align=&quot;left&quot;&gt;</name>
+				<street>&lt;td align=&quot;left&quot;&gt;([^,]*),[^&lt;]*&lt;/td&gt;</street>
+				<city>&lt;td align=&quot;left&quot;&gt;[^,]*,(?:[^,]*,[^,]*,([^&lt;]*)|[^,]*,([^&lt;]*)|([^&lt;]*))&lt;/td&gt;</city>
+				<zipcode>&lt;td align=&quot;left&quot;&gt;[^,]*, ([0-9]*)[^&lt;]*&lt;/td&gt;</zipcode>
 			</entry>
 		</website>
 	</country>
