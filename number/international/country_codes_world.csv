@@ -46,11 +46,11 @@ Country Code;Flag file; Full Text
 6128;au.gif;Australia Sydney
 6129;au.gif;Australia Sydney
 43;at.gif;Austria
-431;au.gif;Austria
-4350;au.gif;Austria Corporate
-43517;au.gif;Austria Corporate
-4357;au.gif;Austria Corporate
-4359;au.gif;Austria Corporate
+431;at.gif;Austria
+4350;at.gif;Austria Corporate
+43517;at.gif;Austria Corporate
+4357;at.gif;Austria Corporate
+4359;at.gif;Austria Corporate
 43660;mobile.gif;Austria Mobile Hutchinson 3G
 43699;mobile.gif;Austria Mobile ONE
 43688;mobile.gif;Austria Mobile Tele2
@@ -60,14 +60,14 @@ Country Code;Flag file; Full Text
 43664;mobile.gif;Austria Mobilecom
 43610;mobile.gif;Austria Mobile
 4368;mobile.gif;Austria Mobile
-43711;au.gif;Austria Services
-43720;au.gif;Austria Services
-43730;au.gif;Austria Services
-43740;au.gif;Austria Services
-43780;au.gif;Austria Services
-43810;au.gif;Austria Services
-43820;au.gif;Austria Services
-43676;mobile.gif;Austria T-Mobile
+43711;at.gif;Austria Services
+43720;at.gif;Austria Services
+43730;at.gif;Austria Services
+43740;at.gif;Austria Services
+43780;at.gif;Austria Services
+43810;at.gif;Austria Services
+43820;at.gif;Austria Services
+43676;d1.gif;Austria T-Mobile
 994;az.gif;Azerbaijan
 99450;mobile.gif;Azerbaijan Mobile
 99455;mobile.gif;Azerbaijan Mobile
@@ -758,9 +758,6 @@ Country Code;Flag file; Full Text
 49178;eplus.png;Germany Mobile E-Plus
 49155;eplus.png;Germany Mobile E-Plus 3G Luxb.
 49150;mobile.gif;Germany Mobile Group3G (Quam)
-4915;mobile.gif;Germany Mobile GSM and UMTS/IMT-2000
-4916;mobile.gif;Germany Mobile GSM and UMTS/IMT-2000
-4917;mobile.gif;Germany Mobile GSM and UMTS/IMT-2000
 49156;mobile.gif;Germany Mobile MobileCom
 49159;o2.png;Germany Mobile O2
 49176;o2.png;Germany Mobile O2

@@ -82,6 +82,8 @@ public class PhoneNumber implements Comparable {
 	}
 
 	/**
+	 * @deprecated don't use anymore
+	 *
 	 * Constructs a PhoneNumber without a type
 	 *
 	 * @param fullNumber
@@ -92,7 +94,7 @@ public class PhoneNumber implements Comparable {
 
 	/**
 	 * This constructor should be used if the number may be a quickdial and
-	 * needs to be resolved!
+	 * needs to be resolved! Or if the number starts with a dial out prefix
 	 *
 	 * @author Brian Jensen
 	 *
@@ -173,7 +175,7 @@ public class PhoneNumber implements Comparable {
 		if(worldFlagMap != null){
 
 			// Finde Landeskennzahl
-			for ( int i=4; i>0; i-- ) {
+			for ( int i=5; i>0; i-- ) {
 				if ( number.length()>i && worldFlagMap.containsKey(number.substring(1, i))) {
 					value = worldFlagMap.get(number.substring(1,i)).split(";");
 					countryCode = "+" + number.substring(1,i);

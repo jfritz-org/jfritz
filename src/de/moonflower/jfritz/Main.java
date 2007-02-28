@@ -143,6 +143,8 @@
  * - Neu: Rückwärtssuche erweitert, jetzt können die Regex Ausdrücke beliebige groupiert werden
  * - Bugfix: Rückwärtssuche erkennt die Charset jetzt automatisch
  * - Neu: Rückwärtssuche für Türkei eingebaut
+ * - Neu: Rückwärtssuche nach Ort für Türkei eingebaut
+ * - Bugfix: Amtskennzahl richtig verarbeitet beim CallMonitor
  *
  * JFritz 0.6.2.03
  * - Autoupdate korrektur
@@ -633,7 +635,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.6.2.03"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.63 2007/02/23 16:40:29 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.64 2007/02/28 11:16:58 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

@@ -9,12 +9,9 @@ import java.util.HashMap;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
-/**
- * This is an overlay class for doing the reverse lookup in germany
- * Class calls ReverseLookupGermanyOertliche or
- * ReverseLookupTelefonbuch automatically
- *
- * Class also contains the code for doing a city lookup by area code
+/** This class is responsible for mainting the germany area code -> city
+ * hash map. It is also used to perfom the lookups using this map
+
  *
  * @author brian
  *
@@ -31,7 +28,7 @@ public class ReverseLookupGermany {
 	 * The funtion uses the area codes listed in the file as keys and the cities as values
 	 *
 	 *
-	 * @author Brian Jensen
+	 * @author Brian
 	 *
 	 */
 	public static void loadAreaCodes(){

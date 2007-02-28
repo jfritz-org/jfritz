@@ -73,7 +73,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
             try {
                 Call currentCall = new Call(new CallType(CallType.CALLIN),
                         new SimpleDateFormat("dd.MM.yy HH:mm:ss")
-                                .parse(split[0]), new PhoneNumber(number), "0",
+                                .parse(split[0]), new PhoneNumber(number, false), "0",
                         provider, 0);
                 JFritz.getCallMonitorList().addNewCall(
                         Integer.parseInt(split[2]), currentCall);
@@ -114,7 +114,8 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
             try {
                 Call currentCall = new Call(new CallType(CallType.CALLOUT),
                         new SimpleDateFormat("dd.MM.yy HH:mm:ss")
-                                .parse(split[0]), new PhoneNumber(number),
+                                .parse(split[0]), new PhoneNumber(number, Main.getProperty("option.activateDialPrefix")
+                                		.toLowerCase().equals("true")),
                         split[3], provider, 0);
                 JFritz.getCallMonitorList().addNewCall(
                         Integer.parseInt(split[2]), currentCall);

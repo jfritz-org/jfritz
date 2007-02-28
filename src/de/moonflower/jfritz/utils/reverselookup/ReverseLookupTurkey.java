@@ -9,58 +9,57 @@ import java.util.HashMap;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
-
-
-/**
+/** This class is responsible for maintaining the turkish area code -> city
+ * hash map. It is also used to perfom the lookups using this map
  *
- * @author Brian Jensen
+ *
+ * @author brian
  *
  */
-public final class ReverseLookupUnitedStates {
+public class ReverseLookupTurkey {
 
-	public final static String FILE_HEADER = "Area Code;Region;Description";
+	public final static String FILE_HEADER = "Area Code;City";
 
 	private static HashMap<String, String> numberMap;
 
 	/**
 	 * This function attemps to fill the hashmap numberMap up with the data found
-	 * in number/usa/areacodes_usa.csv
+	 * in number/turkey/areacodes_turkey.csv
 	 * The funtion uses the area codes listed in the file as keys and the cities as values
 	 *
 	 *
-	 * @author Brian Jensen
+	 * @author Brian
 	 *
 	 */
 	public static void loadAreaCodes(){
-		Debug.msg("Loading the american number to city list");
-		numberMap = new HashMap<String, String>(500);
+	Debug.msg("Loading the turkish number to city list");
+		numberMap = new HashMap<String, String>(5300);
 		BufferedReader br = null;
 		FileInputStream fi = null;
 
 		try{
-			fi = new FileInputStream(JFritzUtils.getFullPath("/number") +"/usa/areacodes_usa.csv");
-			br = new BufferedReader(new InputStreamReader(fi, "ISO-8859-1"));
+			fi = new FileInputStream(JFritzUtils.getFullPath("/number") +"/turkey/areacodes_turkey.csv");
+			br = new BufferedReader(new InputStreamReader(fi, "UTF-8"));
 
 			String line;
 			String[] entries;
 			int lines = 0;
 			String l = br.readLine();
 			if(l==null){
-				Debug.errDlg("File "+JFritzUtils.getFullPath("/number") +"/usa/areacodes_usa.csv"+" empty");
+				Debug.errDlg("File "+JFritzUtils.getFullPath("/number") +"/turkey/areacodes_turkey.csv"+" empty");
 			}
 			//Load the keys and values quick and dirty
 			if(l.equals(FILE_HEADER)){
 				while (null != (line = br.readLine())) {
 					lines++;
 					entries = line.split(";");
-					if(entries.length == 3)
+					if(entries.length == 2)
 						//number is the key, city is the value
 						numberMap.put(entries[0], entries[1]);
-
 				}
 			}
 
-			Debug.msg(lines + " Lines read from areacodes_usa.csv");
+			Debug.msg(lines + " Lines read from areacodes_turkey.csv");
 			Debug.msg("numberMap size: "+numberMap.size());
 
 		}catch(Exception e){
@@ -68,23 +67,23 @@ public final class ReverseLookupUnitedStates {
 		}finally{
 			try{
 				if(fi!=null)
-					fi.close();
-				if(br!=null)
-					br.close();
-			}catch (IOException ioe){
-				Debug.msg("error closing stream"+ioe.toString());
+						fi.close();
+					if(br!=null)
+						br.close();
+				}catch (IOException ioe){
+					Debug.msg("error closing stream"+ioe.toString());
+				}
 			}
+
+
 		}
-
-
-	}
 
 	/**
 	 * This function determines the city to a particular number
 	 * The hashmap does not have to initialised in order to call this function
 	 *
 	 *
-	 * @param number in area format e.g. starting with "1"
+	 * @param number in area format e.g. starting with "0"
 	 * @return the city found or "" if nothing was found
 	 */
 	public static String getCity(String number){
@@ -103,6 +102,5 @@ public final class ReverseLookupUnitedStates {
 
 		return city;
 	}
-
 
 }

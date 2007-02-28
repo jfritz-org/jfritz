@@ -1242,7 +1242,7 @@ public boolean importFromCSVFile(BufferedReader br) {
 
 		// Phone number
 		if (!field[3].equals("")) {
-			number = new PhoneNumber(field[3]);
+			number = new PhoneNumber(field[3], false);
 			number.setCallByCall(field[10]);
 		} else {
 			number = null;

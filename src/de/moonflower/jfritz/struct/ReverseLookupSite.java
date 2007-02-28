@@ -28,15 +28,15 @@ import java.util.LinkedList;
 public class ReverseLookupSite {
 
 	//Site url, as will be used to process the reverse lookup
-	private String URL="";
+	private String URL;
 
 	//A user defined site name
-	private String NAME="";
+	private String NAME;
 
 	//needed to be certify if the number format is correct for the site
-	private String PREFIX="";
+	private String PREFIX;
 
-	private int AREACODE_LENGTH = 0;
+	private int AREACODE_LENGTH;
 
 	//currently a linked list of String arrays
 	private LinkedList<String[]> entries;

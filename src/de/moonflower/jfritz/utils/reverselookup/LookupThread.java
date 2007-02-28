@@ -24,11 +24,32 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 	 */
 public class LookupThread extends Thread {
 
-	LookupRequest currentRequest;
+	private LookupRequest currentRequest;
 
 	private boolean threadSuspended, quit;
 
-	Person result;
+	private Person result;
+
+	private static String nummer, urlstr, data, header,
+		charSet, str, prefix, firstname, company,
+		lastname, street, zipcode, city;
+
+	private static LinkedList<ReverseLookupSite> rls_list;
+
+	private static ReverseLookupSite rls;
+
+	private static String[] patterns;
+
+	private static URL url;
+
+	private static URLConnection con;
+
+	private static int ac_length;
+
+	private static Pattern pData;
+
+	private static Matcher mData;
+
 
 	/**
 	 * sets the default thread state to active
@@ -119,33 +140,17 @@ public class LookupThread extends Thread {
 			newPerson.addNumber(number);
 		} else if (ReverseLookup.rlsMap.containsKey(number.getCountryCode())) {
 
-			String nummer = number.getAreaNumber();
-			LinkedList<ReverseLookupSite> rls_list = ReverseLookup.rlsMap.get(number.getCountryCode());
-			ReverseLookupSite rls;
-			String[] patterns;
-			String urlstr = "";
-			String data = ""; //$NON-NLS-1$
-			URL url;
-			URLConnection con;
-			String header = ""; //$NON-NLS-1$
-			String charSet = ""; //$NON-NLS-1$
-			String str = ""; //$NON-NLS-1$
-			String prefix;
-			int ac_length;
-			Pattern pData;
-			Matcher mData;
-			String firstname = "", //$NON-NLS-1$
-			lastname = "", //$NON-NLS-1$
-			company = "", //$NON-NLS-1$
-			street = "", //$NON-NLS-1$
-			zipcode = "", //$NON-NLS-1$
-			city = ""; 	  //$NON-NLS-1$
+			nummer = number.getAreaNumber();
+			rls_list = ReverseLookup.rlsMap.get(number.getCountryCode());
 
 			Debug.msg("Begin reverselookup for: "+nummer);
 
 			//cut off the country code if were doing a non local lookup
 			if(nummer.startsWith(number.getCountryCode()))
 				nummer = nummer.substring(number.getCountryCode().length());
+
+			//make sure city was initialized
+			city = "";	  //$NON-NLS-1$
 
 			//Iterate over all the web sites loaded for the given country
 			for(int i=0; i < rls_list.size(); i++){
@@ -347,12 +352,16 @@ public class LookupThread extends Thread {
 							if(!firstname.equals("") || !lastname.equals("")){
 
 								//if the city wasnt listed or matched use the number maps
-								if(city.equals("") && number.getCountryCode().equals(ReverseLookup.GERMANY_CODE))
-									city = ReverseLookupGermany.getCity(nummer);
-								else if(city.equals("") && number.getCountryCode().equals(ReverseLookup.AUSTRIA_CODE))
-									city = ReverseLookupGermany.getCity(nummer);
-								else if(number.getCountryCode().startsWith(ReverseLookup.USA_CODE))
-									city = ReverseLookupUnitedStates.getCity(nummer);
+								if(city.equals("")){
+									if(number.getCountryCode().equals(ReverseLookup.GERMANY_CODE))
+										city = ReverseLookupGermany.getCity(nummer);
+									else if(number.getCountryCode().equals(ReverseLookup.AUSTRIA_CODE))
+										city = ReverseLookupGermany.getCity(nummer);
+									else if(number.getCountryCode().startsWith(ReverseLookup.USA_CODE))
+										city = ReverseLookupUnitedStates.getCity(nummer);
+									else if(number.getCountryCode().startsWith(ReverseLookup.TURKEY_CODE))
+										city = ReverseLookupTurkey.getCity(nummer);
+								}
 
 								newPerson = new Person(firstname, company, lastname,
 										street, zipcode, city, ""); //$NON-NLS-1$
@@ -379,13 +388,17 @@ public class LookupThread extends Thread {
 			//if we made it here, no match was found
 			Debug.msg("No match for "+nummer+" found");
 
-			//use the number maps to lookup the city
-			if(number.getCountryCode().equals(ReverseLookup.GERMANY_CODE))
-				city = ReverseLookupGermany.getCity(nummer);
-			else if(number.getCountryCode().equals(ReverseLookup.AUSTRIA_CODE))
-				city = ReverseLookupGermany.getCity(nummer);
-			else if(number.getCountryCode().startsWith(ReverseLookup.USA_CODE))
-				city = ReverseLookupUnitedStates.getCity(nummer);
+			//use the number maps to lookup the citys
+			if(city.equals("")){
+				if(number.getCountryCode().equals(ReverseLookup.GERMANY_CODE))
+					city = ReverseLookupGermany.getCity(nummer);
+				else if(number.getCountryCode().equals(ReverseLookup.AUSTRIA_CODE))
+					city = ReverseLookupGermany.getCity(nummer);
+				else if(number.getCountryCode().startsWith(ReverseLookup.USA_CODE))
+					city = ReverseLookupUnitedStates.getCity(nummer);
+				else if(number.getCountryCode().startsWith(ReverseLookup.TURKEY_CODE))
+					city = ReverseLookupTurkey.getCity(nummer);
+			}
 
 			newPerson = new Person("", "", "", "", "", city, "");
 			newPerson.addNumber(number.getAreaNumber(), "home"); //$NON-NLS-1$

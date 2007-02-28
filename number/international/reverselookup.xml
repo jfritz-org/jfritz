@@ -103,7 +103,7 @@
 			<entry>
 				<name>&lt;td class=&quot;level0&quot;&gt;([^&lt;]*)&lt;/td&gt;&lt;td align=&quot;left&quot;&gt;</name>
 				<street>&lt;td align=&quot;left&quot;&gt;([^,]*),[^&lt;]*&lt;/td&gt;</street>
-				<city>&lt;td align=&quot;left&quot;&gt;[^,]*,(?:[^,]*,[^,]*,([^&lt;]*)|[^,]*,([^&lt;]*)|([^&lt;]*))&lt;/td&gt;</city>
+				<city>&lt;td align=&quot;left&quot;&gt;[^,]*,(?:[^,]*,\s*[0-9]*([^,]*,[^&lt;]*)|\s*[0-9]*([^,]*,[^&lt;]*)|([^&lt;]*))&lt;/td&gt;</city>
 				<zipcode>&lt;td align=&quot;left&quot;&gt;[^,]*, ([0-9]*)[^&lt;]*&lt;/td&gt;</zipcode>
 			</entry>
 		</website>

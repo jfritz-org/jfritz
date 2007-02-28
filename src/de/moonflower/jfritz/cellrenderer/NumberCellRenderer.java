@@ -24,10 +24,10 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  */
 public class NumberCellRenderer extends DefaultTableCellRenderer {
 	private static final long serialVersionUID = 1;
-	private final ImageIcon imagePhone, imageHandy, imageHome, imageWorld,
+	private final ImageIcon imagePhone, /*imageHandy,*/ imageHome, imageWorld,
 			imageFreeCall;
 
-	private final static boolean showHandyLogos = true;
+//	private final static boolean showHandyLogos = true;
 
 	static final String FILESEP = System.getProperty("file.separator");			//$NON-NLS-1$
 
@@ -44,9 +44,9 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 		imagePhone = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/phone.png"))); //$NON-NLS-1$
-		imageHandy = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/handy.png"))); //$NON-NLS-1$
+		//imageHandy = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+		//		getClass().getResource(
+		//				"/de/moonflower/jfritz/resources/images/handy.png"))); //$NON-NLS-1$
 		imageHome = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/home.png"))); //$NON-NLS-1$
@@ -82,9 +82,11 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 				}else if (!number.isMobile() && number.getIntNumber().startsWith(countryCode)){
 					label.setIcon(imagePhone);
 					setToolTipText(Main.getMessage("fixed_network")); //$NON-NLS-1$
-				} else if ( number.isMobile() && !showHandyLogos ) {
-					label.setIcon(imageHandy);
-					setToolTipText(number.getDescription());
+
+					//condition is never true!!
+				//} else if ( number.isMobile() && !showHandyLogos ) {
+				//	label.setIcon(imageHandy);
+				//	setToolTipText(number.getDescription());
 				}else{
 					if(!number.getFlagFileName().equals("")){
 						label.setIcon(new ImageIcon(lang + FILESEP + "flags" + FILESEP + number.getFlagFileName()));
