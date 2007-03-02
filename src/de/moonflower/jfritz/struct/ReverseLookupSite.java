@@ -1,6 +1,6 @@
 package de.moonflower.jfritz.struct;
 
-import java.util.LinkedList;
+import java.util.Vector;
 
 /** This is a structure class for holding reverse lookup sites
  * Currently you can add a URL, a user defined name, a prefix needed,
@@ -39,14 +39,14 @@ public class ReverseLookupSite {
 	private int AREACODE_LENGTH;
 
 	//currently a linked list of String arrays
-	private LinkedList<String[]> entries;
+	private Vector<String[]> entries;
 
 	public ReverseLookupSite(String url, String name, String prefix, int ac_length){
 		URL = url;
 		NAME = name;
 		PREFIX = prefix;
 		AREACODE_LENGTH = ac_length;
-		entries = new LinkedList<String[]>();
+		entries = new Vector<String[]>(2);
 	}
 
 	public void addEntry(String name, String street, String city, String zipcode){

@@ -1,6 +1,6 @@
 package de.moonflower.jfritz.utils.reverselookup;
 
-import java.util.LinkedList;
+import java.util.Vector;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -24,7 +24,7 @@ public class ReverseLookupXMLHandler extends DefaultHandler{
 
 	String chars, url, name, prefix, country_code, pname, pstreet, pcity, pzipcode;
 
-	LinkedList<ReverseLookupSite> rls_list;
+	Vector<ReverseLookupSite> rls_list;
 
 	int rls_count, ac_length;
 
@@ -55,7 +55,7 @@ public class ReverseLookupXMLHandler extends DefaultHandler{
 			rls_count = 0;
 
 			//create a new linked list for the country
-			rls_list = new LinkedList<ReverseLookupSite>();
+			rls_list = new Vector<ReverseLookupSite>(2);
 
 		//if we have a new website tag, clear the previous url and name attributes
 		}else if (eName.equals("website")){

@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.LinkedList;
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,7 +34,7 @@ public class LookupThread extends Thread {
 		charSet, str, prefix, firstname, company,
 		lastname, street, zipcode, city;
 
-	private static LinkedList<ReverseLookupSite> rls_list;
+	private static Vector<ReverseLookupSite> rls_list;
 
 	private static ReverseLookupSite rls;
 
@@ -192,6 +192,8 @@ public class LookupThread extends Thread {
 							con.setReadTimeout(15000);
 							con.connect();
 							//process header
+							//avoid problems with null headers
+							header = "";
 							for (int j = 0;; j++) {
 								String headerName = con.getHeaderFieldKey(j);
 								String headerValue = con.getHeaderField(j);
