@@ -73,6 +73,9 @@ public class ProcessUpdateFolderThread extends Thread {
 		File deleteFile = new File(updateDirectory
 				+ System.getProperty("file.separator") + deleteListFile);
 
+		String fileToDelete = "";
+		String dirName = "";
+		File deleteDirectory;
 		if (deleteFile.exists()) {
 			BufferedReader pw;
 			try {
@@ -85,15 +88,14 @@ public class ProcessUpdateFolderThread extends Thread {
 					if (line.endsWith(directoriesZipedAsFilesEndWith)) {
 						// File is an ziped directory
 						// Delete whole directory
-						String dirName = line.substring(0, line
+						dirName = line.substring(0, line
 								.indexOf(directoriesZipedAsFilesEndWith));
-						File deleteDirectory = new File(installDirectory
-								+ System.getProperty("file.separator")
-								+ dirName);
+						fileToDelete = installDirectory + System.getProperty("file.seperator") + dirName;
+						deleteDirectory = new File(fileToDelete);
 						UpdateUtils.deleteTree(deleteDirectory);
 					} else {
-						UpdateUtils.deleteFile(installDirectory
-								+ System.getProperty("file.separator") + line);
+						fileToDelete = installDirectory + System.getProperty("file.separator") + line;
+						UpdateUtils.deleteFile(fileToDelete);
 					}
 				}
 
@@ -105,11 +107,11 @@ public class ProcessUpdateFolderThread extends Thread {
 				e.printStackTrace();
 			} catch (FileNotFoundException e) {
 				System.err.println(threadName + "ERROR: File not found");
-				JOptionPane.showMessageDialog(null, UpdateLocale.getMessage("fileNotFound"), UpdateLocale.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, UpdateLocale.getMessage("fileNotFound").replaceAll("%FILENAME", fileToDelete), UpdateLocale.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			} catch (IOException ioe) {
 				System.err.println(threadName + "ERROR: IO exception");
-				JOptionPane.showMessageDialog(null, UpdateLocale.getMessage("ioError"), UpdateLocale.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, UpdateLocale.getMessage("ioError").replaceAll("%FILENAME", fileToDelete), UpdateLocale.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
 				ioe.printStackTrace();
 			}
 		}
@@ -139,7 +141,7 @@ public class ProcessUpdateFolderThread extends Thread {
 							updateSuccessfull = true;
 						} catch (IOException e) {
 							System.err.println(threadName + "ERROR: IO exception");
-							JOptionPane.showMessageDialog(null, UpdateLocale.getMessage("ioError"), UpdateLocale.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(null, UpdateLocale.getMessage("ioError").replaceAll("%FILENAME", destinationFile.getAbsolutePath()), UpdateLocale.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
 							e.printStackTrace();
 						}
 					}
