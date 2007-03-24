@@ -145,6 +145,7 @@
  * - Neu: Rückwärtssuche für Türkei eingebaut
  * - Neu: Rückwärtssuche nach Ort für Türkei eingebaut
  * - Bugfix: Amtskennzahl richtig verarbeitet beim CallMonitor
+ * - Neu: Unterstützung für gemoddete Eumex 300ip (Firmware 15.xx.xx)
  *
  * JFritz 0.6.2.03
  * - Autoupdate korrektur
@@ -635,7 +636,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.6.2.03"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.64 2007/02/28 11:16:58 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.65 2007/03/24 15:33:37 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

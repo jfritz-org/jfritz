@@ -148,6 +148,7 @@ public class CallDialog extends JDialog implements ActionListener {
 			if (firmware != null) {
 				switch (firmware.getBoxType()) {
 					case FritzBoxFirmware.BOXTYPE_FRITZBOX_FON :
+					case FritzBoxFirmware.BOXTYPE_EUMEX_300:
 						port.addItem("Fon 2"); //$NON-NLS-1$
 						break;
 					case FritzBoxFirmware.BOXTYPE_FRITZBOX_FON_WLAN :
