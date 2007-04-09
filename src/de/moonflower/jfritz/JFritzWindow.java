@@ -53,6 +53,7 @@ import javax.swing.filechooser.FileFilter;
 
 import de.moonflower.jfritz.autoupdate.JFritzUpdate;
 import de.moonflower.jfritz.autoupdate.Update;
+import de.moonflower.jfritz.callerlist.CallDialog;
 import de.moonflower.jfritz.callerlist.CallerListPanel;
 import de.moonflower.jfritz.callerlist.CallerTable;
 import de.moonflower.jfritz.callmonitor.CallmessageCallMonitor;
@@ -72,6 +73,7 @@ import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.monitoring.MonitoringPanel;
 import de.moonflower.jfritz.phonebook.PhoneBookPanel;
 
+import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.CopyFile;
 import de.moonflower.jfritz.utils.Debug;
@@ -98,7 +100,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	private JToolBar mBar;
 
-	private JButton fetchButton, configButton;
+	private JButton fetchButton, configButton, calldialogButton;
 
 	private JToggleButton taskButton, monitorButton, lookupButton;
 
@@ -331,6 +333,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		monitorButton.addActionListener(this);
 		monitorButton.setIcon(getImage("monitor.png")); //$NON-NLS-1$
 		mBar.add(monitorButton);
+
+		calldialogButton = new JButton();
+		calldialogButton.setToolTipText(Main.getMessage("call"));
+		calldialogButton.setActionCommand("callDialog");
+		calldialogButton.addActionListener(this);
+		calldialogButton.setIcon(getImage("PhoneBig.png"));
+		mBar.add(calldialogButton);
 
 		lookupButton = new JToggleButton();
 		lookupButton.setToolTipText(Main.getMessage("reverse_lookup")); //$NON-NLS-1$
@@ -955,6 +964,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			backupToChoosenDirectory();
 		} else if (e.getActionCommand().equals("fetchTask")) {
 			fetchTask(((JToggleButton) e.getSource()).isSelected());
+		} else if (e.getActionCommand().equals("callDialog")) {
+			CallDialog p = new CallDialog(new PhoneNumber("0", false));
+			p.setVisible(true);
+			p.dispose();
 		} else if (e.getActionCommand().equals("callMonitor")) { //$NON-NLS-1$
 			boolean active = ((JToggleButton) e.getSource()).isSelected();
 			if (active) {
