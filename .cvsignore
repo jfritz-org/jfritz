@@ -15,3 +15,4 @@ build-release.xml
 update
 *.jar
 temp
+debug.txt

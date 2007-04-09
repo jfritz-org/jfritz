@@ -51,6 +51,7 @@ public class PhoneNumber implements Comparable {
 	static HashMap<String, String> mobileMap;
 
 	static HashMap<String, String> worldFlagMap;
+	static HashMap<String, String> specificWorldFlagMap;
 
 	static HashMap<String, CallByCall[]> callbyCallMap;
 
@@ -175,7 +176,7 @@ public class PhoneNumber implements Comparable {
 		if(worldFlagMap != null){
 
 			// Finde Landeskennzahl
-			for ( int i=5; i>0; i-- ) {
+			for ( int i=6; i>0; i-- ) {
 				if ( number.length()>i && worldFlagMap.containsKey(number.substring(1, i))) {
 					value = worldFlagMap.get(number.substring(1,i)).split(";");
 					countryCode = "+" + number.substring(1,i);
@@ -187,8 +188,8 @@ public class PhoneNumber implements Comparable {
 
 			// Finde weitere Durchwahlen, wie z.B. Mobilfunkanbieter
 			for ( int i=11; i>3; i-- ) {
-				if ( number.length()>i && worldFlagMap.containsKey(number.substring(1, i))) {
-					value = worldFlagMap.get(number.substring(1,i)).split(";");
+				if ( number.length()>i && specificWorldFlagMap.containsKey(number.substring(1, i))) {
+					value = specificWorldFlagMap.get(number.substring(1,i)).split(";");
 					if ( countryCode.equals(Main.getProperty("country.code","+49"))) {
 						flagFileName = value[0];
 					}
@@ -623,6 +624,62 @@ public class PhoneNumber implements Comparable {
 
 			Debug.msg(lines + " Lines read from country_codes_world.csv");
 			Debug.msg("worldFlagMap size: "+worldFlagMap.size());
+
+		}catch(Exception e){
+			Debug.msg(e.toString());
+		}finally{
+			try{
+				if(fi!=null)
+					fi.close();
+				if(br!=null)
+					br.close();
+			}catch (IOException ioe){
+				Debug.msg("error closing stream"+ioe.toString());
+			}
+		}
+		loadSpecificFlagMap();
+	}
+
+	/**
+	 * This function loads all the info from the file number/country_codes_world.csv
+	 * and stores the information in a hashmap indexed by country code
+	 *
+	 * worldFlagMap contains information about the country and has the name of
+	 * a flag to display for that country
+	 *
+	 * @author brian
+	 *
+	 */
+	private static void loadSpecificFlagMap(){
+		Debug.msg("Loading the country code -> flag map");
+		specificWorldFlagMap = new HashMap<String, String>(2200);
+		BufferedReader br = null;
+		FileInputStream fi = null;
+
+		try{
+			fi = new FileInputStream(JFritzUtils.getFullPath("/number") +"/international/country_specfic_codes_world.csv");
+			br = new BufferedReader(new InputStreamReader(fi, "ISO-8859-1"));
+
+			String line;
+			String[] entries;
+			int lines = 0;
+			String l = br.readLine();
+			if(l==null){
+				Debug.errDlg("File "+JFritzUtils.getFullPath("/number") +"/international/country_specfic_codes_world.csv"+" empty");
+			}
+			//Load the keys and values quick and dirty
+			if(l.equals(FLAG_FILE_HEADER)){
+				while (null != (line = br.readLine())) {
+					lines++;
+					entries = line.split(";");
+					if(entries.length == 3)
+						//country code is the key, flag name; Description is the value
+						worldFlagMap.put(entries[0], entries[1]+";"+entries[2]);
+				}
+			}
+
+			Debug.msg(lines + " Lines read from country_specfic_codes_world.csv");
+			Debug.msg("specificWorldFlagMap size: "+specificWorldFlagMap.size());
 
 		}catch(Exception e){
 			Debug.msg(e.toString());
