@@ -144,6 +144,7 @@ public class PhoneNumber implements Comparable {
 		number = number.replaceAll("\\(0", "");//$NON-NLS-1$, //$NON-NLS-2$
 		number = number.replaceAll("\\(", ""); //$NON-NLS-1$, //$NON-NLS-2$
 		number = number.replaceAll("\\)", ""); //$NON-NLS-1$, //$NON-NLS-2$
+		number = number.replaceAll("\\/", ""); //$NON-NLS-1$, //$NON-NLS-2$
 	}
 
 	/**
