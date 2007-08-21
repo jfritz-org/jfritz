@@ -219,7 +219,7 @@ public class LookupThread extends Thread {
 
 							// Get used Charset
 							BufferedReader d;
-							if (charSet.equals("")) { //$NON-NLS-1$
+							if (charSet == null || charSet.equals("")) { //$NON-NLS-1$
 								d = new BufferedReader(new InputStreamReader(con
 										.getInputStream(), "ISO-8859-1")); //$NON-NLS-1$
 							} else {
