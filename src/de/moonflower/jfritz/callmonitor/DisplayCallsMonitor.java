@@ -22,13 +22,25 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 public class DisplayCallsMonitor extends CallMonitorAdaptor {
 
     public void pendingCallOut(Call call) {
-    	Person person = PhoneBook.searchFirstAndLastNameToPhoneNumber(call.getPhoneNumber().getAreaNumber());
-        displayCallOutMsg(call.getPhoneNumber().getAreaNumber(), call.getRoute(), person);
+    	Person person = null;
+    	if ( call.getPhoneNumber() != null )
+    	{
+    		person = PhoneBook.searchFirstAndLastNameToPhoneNumber(call.getPhoneNumber().getAreaNumber());
+            displayCallOutMsg(call.getPhoneNumber().getAreaNumber(), call.getRoute(), person);
+    	} else {
+          displayCallOutMsg(null, call.getRoute(), person);
+    	}
     }
 
     public void pendingCallIn(Call call) {
-    	Person person = PhoneBook.searchFirstAndLastNameToPhoneNumber(call.getPhoneNumber().getAreaNumber());
-        displayCallInMsg(call.getPhoneNumber().getAreaNumber(), call.getRoute(), person);
+    	Person person = null;
+    	if ( call.getPhoneNumber() != null )
+    	{
+    		person = PhoneBook.searchFirstAndLastNameToPhoneNumber(call.getPhoneNumber().getAreaNumber());
+            displayCallInMsg(call.getPhoneNumber().getAreaNumber(), call.getRoute(), person);
+    	} else {
+            displayCallInMsg(null, call.getRoute(), person);
+    	}
     }
 
     public void endOfCall(Call call) {
@@ -66,21 +78,29 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
         String callerstr = "", calledstr = ""; //$NON-NLS-1$,  //$NON-NLS-2$
         String firstname = "", surname = "", company = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 
-        callerstr = calledInput;
-        if (!callerInput.startsWith("SIP")) { //$NON-NLS-1$
-            PhoneNumber caller = new PhoneNumber(callerInput, false);
-            if (caller.getIntNumber().equals("")) { //$NON-NLS-1$
-                callerstr = Main.getMessage("unknown"); //$NON-NLS-1$
-            } else
+        callerstr = callerInput;
+        if ( callerInput != null )
+        {
+          if (!callerInput.startsWith("SIP")) { //$NON-NLS-1$
+              PhoneNumber caller = new PhoneNumber(callerInput, false);
+              if (caller.getIntNumber().equals("")) { //$NON-NLS-1$
+                  callerstr = Main.getMessage("unknown"); //$NON-NLS-1$
+              } else {
                 callerstr = caller.getIntNumber();
+              }
+          }
+        } else {
+          callerstr = Main.getMessage("unknown"); //$NON-NLS-1$
         }
 
         calledstr = calledInput;
-        if (calledInput.startsWith("SIP")) //$NON-NLS-1$
-            calledstr = JFritz.getSIPProviderTableModel().getSipProvider(calledInput,
-                    calledInput);
+        if ( calledInput != null )
+        {
+        	if (calledInput.startsWith("SIP")) //$NON-NLS-1$
+              calledstr = JFritz.getSIPProviderTableModel().getSipProvider(calledInput, calledInput);
+        }
 
-        if (name.equals("") && !callerstr.equals(Main.getMessage("unknown"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+        if (name.equals("") && !callerstr.equals(Main.getMessage("unknown")) && person != null) { //$NON-NLS-1$,  //$NON-NLS-2$
             firstname = person.getFirstName();
             surname = person.getLastName();
             company = person.getCompany();
@@ -183,24 +203,33 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
         String calledstr = "", providerstr = "", name = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
         String firstname = "", surname = "", company = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 
-        calledstr = calledInput;
-        if (!calledInput.startsWith("SIP")) { //$NON-NLS-1$
-            PhoneNumber called = new PhoneNumber(calledInput, Main.getProperty("option.activateDialPrefix").toLowerCase()
-                    .equals("true")
-                    && (!(providerInput.indexOf("@") > 0)));
-            if (!called.getIntNumber().equals("")) //$NON-NLS-1$
-                calledstr = called.getIntNumber();
+        if ( calledInput != null )
+        {
+          calledstr = calledInput;
+          if (!calledInput.startsWith("SIP")) { //$NON-NLS-1$
+              PhoneNumber called = new PhoneNumber(calledInput, Main.getProperty("option.activateDialPrefix").toLowerCase()
+                      .equals("true")
+                      && (!(providerInput.indexOf("@") > 0)));
+              if (!called.getIntNumber().equals("")) //$NON-NLS-1$
+                  calledstr = called.getIntNumber();
+          }
         }
 
-        providerstr = providerInput;
-        if (providerInput.startsWith("SIP")) //$NON-NLS-1$
-            providerstr = JFritz.getSIPProviderTableModel().getSipProvider(
-                    providerInput, providerInput);
+        if ( providerInput != null )
+        {
+          providerstr = providerInput;
+          if (providerInput.startsWith("SIP")) //$NON-NLS-1$
+              providerstr = JFritz.getSIPProviderTableModel().getSipProvider(
+                      providerInput, providerInput);
+        }
 
-        firstname = person.getFirstName();
-        surname = person.getLastName();
-        company = person.getCompany();
-        name = person.getFullname();
+        if ( person != null )
+        {
+          firstname = person.getFirstName();
+          surname = person.getLastName();
+          company = person.getCompany();
+          name = person.getFullname();
+        }
 
         if (name.equals(""))name = Main.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$
         if (firstname.equals("") && surname.equals(""))surname = Main.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
