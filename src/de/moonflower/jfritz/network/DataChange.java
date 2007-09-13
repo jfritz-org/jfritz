@@ -9,8 +9,9 @@ import java.util.Vector;
  * Currently supported are the operations ADD, REMOVE for
  * the destinations CallList and PhoneBook
  *
- * Not this objects a new vector on construction and is intended
- * to be reused so that memory usage can be reduced
+ * New: This object also supports sending call monitor information
+ * but it will probably be removed in the next version for a better
+ * model, i.e. this implementation is only temporary
  *
  * @author brian
  *
@@ -24,7 +25,7 @@ public class DataChange<E> implements Serializable {
 
 	public Operation operation;
 
-	public enum Destination {CALLLIST, PHONEBOOK}
+	public enum Destination {CALLLIST, PHONEBOOK, CALLMONITOR}
 
 	public Destination destination;
 
@@ -43,6 +44,4 @@ public class DataChange<E> implements Serializable {
 
 		return clone;
 	}
-
-
 }

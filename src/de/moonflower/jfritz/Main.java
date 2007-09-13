@@ -140,6 +140,8 @@
  *
  * JFritz 0.6.2.05
  * - Umstrukturierung des Aufrufs von externen Programmen (noch nicht abgeschlossen)
+ * - Neu: Einführung von ServerSenderThreads, jede Verbindung hat eigene Empfänger und Sender-Threads
+ * - Neu: Clients können den Anrufmonitor vom Server verwenden
  *
  * JFritz network-v1
  * 	 Neue Strings:
@@ -694,7 +696,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.6.2.05"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.69 2007/09/13 11:09:37 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.70 2007/09/13 16:54:15 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

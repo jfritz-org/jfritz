@@ -149,8 +149,11 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 				.isSelected()));
 		Main.setProperty("option.clientCallList", Boolean //$NON-NLS-1$
 				.toString(clientCallList.isSelected()));
-		Main.setProperty("option.clientCallMonitor", Boolean //$NON-NLS-1$
-				.toString(clientCallMonitor.isSelected()));
+
+		if(clientCallMonitor.isSelected()){
+			Main.setProperty("option.callMonitorType", "6");
+		}
+
 		Main.setProperty("option.isDumbClient", Boolean //$NON-NLS-1$
 				.toString(isDumbClient.isSelected()));
 		Main.setProperty("network.type", String //$NON-NLS-1$

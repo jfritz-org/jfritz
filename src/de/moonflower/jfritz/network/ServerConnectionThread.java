@@ -371,9 +371,90 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 								}
 							}
 
+							//Call monitor event from the server
+						}else if(change.destination == DataChange.Destination.CALLMONITOR
+								&& Boolean.parseBoolean(Main.getProperty("option.callmonitorStarted", "false"))
+								&& Main.getProperty("option.callMonitorType", "0").equals("6")){
+
+							Debug.msg("Call monitor event received from server");
+							//call in or disconnect event received
+							String[] ignoredMSNs = Main.getProperty("option.callmonitor.ignoreMSN","").trim().split(";");
+							boolean ignoreIt = false;
+
+							if(change.original != null){
+
+								Call c = (Call) change.original;
+
+								// see if we need to ignore this call
+								for (int i = 0; i < ignoredMSNs.length; i++) {
+						            Debug.msg(ignoredMSNs[i]);
+						            if (!ignoredMSNs[i].equals(""))
+						                if (c.getRoute()
+						                        .equals(ignoredMSNs[i])) {
+
+						                    ignoreIt = true;
+						                    break;
+						                }
+						        }
+
+								if(ignoreIt)
+									continue;
+
+								//Pending call in event
+								if(change.operation == DataChange.Operation.ADD &&
+										Boolean.parseBoolean(Main.getProperty(
+						                        "option.callmonitor.monitorIncomingCalls", "true"))){
+
+									JFritz.getCallMonitorList().invokeIncomingCall(c);
+
+									//Established call in event
+								} else if(change.operation == DataChange.Operation.UPDATE &&
+										Boolean.parseBoolean(Main.getProperty(
+						                        "option.callmonitor.monitorIncomingCalls", "true"))){
+
+									JFritz.getCallMonitorList().invokeIncomingCallEstablished(c);
+
+									//Disconnect call event
+								} else if(change.operation == DataChange.Operation.REMOVE){
+									JFritz.getCallMonitorList().invokeDisconnectCall(c);
+								}
+
+								// call out event received
+							} else if( change.updated != null && Boolean.parseBoolean(Main.getProperty(
+										"option.callmonitor.monitorOutgoingCalls", "false"))){
+
+								Call c = (Call) change.updated;
+
+								//see if we need to ingnore the call
+								for (int i = 0; i < ignoredMSNs.length; i++) {
+						            Debug.msg(ignoredMSNs[i]);
+						            if (!ignoredMSNs[i].equals(""))
+						                if (c.getRoute()
+						                        .equals(ignoredMSNs[i])) {
+
+						                    ignoreIt = true;
+						                    break;
+						                }
+						        }
+
+								if(ignoreIt)
+									continue;
+
+								// call out pending event received
+								if(change.operation == DataChange.Operation.ADD){
+									JFritz.getCallMonitorList().invokeOutgoingCall(c);
+
+								// call out established event received
+								}else if(change.operation == DataChange.Operation.UPDATE){
+									JFritz.getCallMonitorList().invokeOutgoingCallEstablished(c);
+								}
+
+							}
+
 						}else{
 							Debug.msg("destination not chosen for incoming data, ignoring!");
 						}
+
 				}else if(o instanceof String){ //message received from the server
 
 					message = (String) o;

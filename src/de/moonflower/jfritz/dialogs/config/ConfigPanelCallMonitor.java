@@ -57,6 +57,7 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 		callMonitorCombo.addItem(Main.getMessage("syslog_call_monitor")); //$NON-NLS-1$
 		callMonitorCombo.addItem(Main.getMessage("yac_call_monitor")); //$NON-NLS-1$
 		callMonitorCombo.addItem(Main.getMessage("callmessage_call_monitor")); //$NON-NLS-1$
+		callMonitorCombo.addItem(Main.getMessage("client_call_monitor"));
 		callMonitorCombo.addActionListener(this);
 
 		add(callMonitorCombo, BorderLayout.NORTH);
@@ -112,26 +113,12 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 	}
 
 	public void loadSettings() {
+
 		callMonitorCombo.setSelectedIndex(Integer.parseInt(Main.getProperty(
 				"option.callMonitorType", "0"))); //$NON-NLS-1$,  //$NON-NLS-2$
+
 		callMonitorAfterStartButton.setSelected(JFritzUtils.parseBoolean(Main
 				.getProperty("option.autostartcallmonitor", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		soundButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty(
-				"option.playSounds", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		externProgramCheckBox.setSelected(JFritzUtils.parseBoolean(Main
-				.getProperty("option.startExternProgram", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		externProgramTextField.setText(JFritzUtils.deconvertSpecialChars(Main
-				.getProperty("option.externProgram", ""))); //$NON-NLS-1$,  //$NON-NLS-2$
-
-		soundButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty(
-				"option.playSounds", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		externProgramCheckBox.setSelected(JFritzUtils.parseBoolean(Main
-				.getProperty("option.startExternProgram", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		externProgramTextField.setText(JFritzUtils.deconvertSpecialChars(Main
-				.getProperty("option.externProgram", ""))); //$NON-NLS-1$,  //$NON-NLS-2$
-
-		callMonitorCombo.setSelectedIndex(Integer.parseInt(Main.getProperty(
-				"option.callMonitorType", "0"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		if (JFritz.getCallMonitor() == null) {
 			startCallMonitorButton.setSelected(false);
@@ -139,9 +126,26 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 			startCallMonitorButton.setSelected(true);
 		}
 		callMonitorAfterStartButton.setSelected(JFritzUtils.parseBoolean(Main
-				.getProperty("option.autostartcallmonitor", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+					.getProperty("option.autostartcallmonitor", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		setCallMonitorButtonPushed(startCallMonitorButton.isSelected());
+
+
+		soundButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty(
+				"option.playSounds", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		externProgramCheckBox.setSelected(JFritzUtils.parseBoolean(Main
+				.getProperty("option.startExternProgram", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		externProgramTextField.setText(JFritzUtils.deconvertSpecialChars(Main
+				.getProperty("option.externProgram", ""))); //$NON-NLS-1$,  //$NON-NLS-2$
+
+		soundButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty(
+				"option.playSounds", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		externProgramCheckBox.setSelected(JFritzUtils.parseBoolean(Main
+				.getProperty("option.startExternProgram", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		externProgramTextField.setText(JFritzUtils.deconvertSpecialChars(Main
+				.getProperty("option.externProgram", ""))); //$NON-NLS-1$,  //$NON-NLS-2$
+
+
 	}
 
 	public void saveSettings() {
@@ -152,8 +156,19 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 				.toString(externProgramCheckBox.isSelected()));
 		Main.setProperty("option.externProgram", JFritzUtils //$NON-NLS-1$
 				.convertSpecialChars(externProgramTextField.getText()));
+
+
 		Main.setProperty("option.callMonitorType", String //$NON-NLS-1$
 				.valueOf(callMonitorCombo.getSelectedIndex()));
+
+		Main.setProperty("option.callmonitorStarted", Boolean //$NON-NLS-1$
+				.toString(startCallMonitorButton.isSelected()));
+
+		Main.setProperty("option.autostartcallmonitor", Boolean //$NON-NLS-1$
+				.toString(callMonitorAfterStartButton.isSelected()));
+		Main.setProperty("option.callMonitorType", String //$NON-NLS-1$
+				.valueOf(callMonitorCombo.getSelectedIndex()));
+
 
 		Main.setProperty("option.playSounds", Boolean.toString(soundButton //$NON-NLS-1$
 				.isSelected()));
@@ -164,14 +179,6 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 				.setProperty(
 						"option.externProgram", JFritzUtils.convertSpecialChars(externProgramTextField //$NON-NLS-1$
 										.getText()));
-
-		Main.setProperty("option.callmonitorStarted", Boolean //$NON-NLS-1$
-				.toString(startCallMonitorButton.isSelected()));
-
-		Main.setProperty("option.autostartcallmonitor", Boolean //$NON-NLS-1$
-				.toString(callMonitorAfterStartButton.isSelected()));
-		Main.setProperty("option.callMonitorType", String //$NON-NLS-1$
-				.valueOf(callMonitorCombo.getSelectedIndex()));
 	}
 
 	private void hideCallMonitorPanel() {
@@ -242,6 +249,13 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 
 				break;
 			}
+			case 6: {
+				showCallMonitorPanel();
+				Debug.msg("Call monitor from server chosen");
+
+				break;
+			}
+
 			}
 		} else if ("startCallMonitor".equals(e.getActionCommand())) { //$NON-NLS-1$
 			// Aktion des StartCallMonitorButtons
@@ -279,6 +293,10 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 			case 5:
 				callMonitorConfigDialog = new CallmessageConfigDialog(parent);
 				break;
+			case 6:
+				callMonitorConfigDialog = new FRITZBOXConfigDialog(parent);
+				break;
+
 			}
 			if (callMonitorConfigDialog != null) {
 				callMonitorConfigDialog.showConfigDialog();

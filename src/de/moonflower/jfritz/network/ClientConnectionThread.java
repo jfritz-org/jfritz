@@ -13,7 +13,7 @@ import java.util.Vector;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.callerlist.CallerListListener;
-
+import de.moonflower.jfritz.callmonitor.CallMonitorListener;
 import de.moonflower.jfritz.phonebook.PhoneBookListener;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
@@ -33,7 +33,7 @@ import de.moonflower.jfritz.utils.Debug;
  *
  */
 public class ClientConnectionThread extends Thread implements CallerListListener,
-			PhoneBookListener {
+			PhoneBookListener, CallMonitorListener {
 
 	private Socket socket;
 
@@ -47,7 +47,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 	private ClientConnectionListener connectionListener;
 
-	private DataChange<Call> callsAdd, callsRemove, callUpdate;
+	private DataChange<Call> callsAdd, callsRemove, callUpdate, callMonitor;
 
 	private DataChange<Person> contactsAdd, contactsRemove, contactUpdate;
 
@@ -83,6 +83,8 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 				callUpdate = new DataChange<Call>();
 				callUpdate.destination = DataChange.Destination.CALLLIST;
 				callUpdate.operation = DataChange.Operation.UPDATE;
+				callMonitor = new DataChange<Call>();
+				callMonitor.destination = DataChange.Destination.CALLMONITOR;
 
 				contactsAdd = new DataChange<Person>();
 				contactsAdd.destination = DataChange.Destination.PHONEBOOK;
@@ -101,10 +103,12 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 				JFritz.getCallerList().addListener(this);
 				JFritz.getPhonebook().addListener(this);
+				JFritz.getCallMonitorList().addCallMonitorListener(this);
 				waitForClientRequest();
 
 				JFritz.getCallerList().removeListener(this);
 				JFritz.getPhonebook().removeListener(this);
+				JFritz.getCallMonitorList().removeCallMonitorListener(this);
 			}
 
 		}catch(IOException e){
@@ -471,6 +475,65 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 		contactUpdate.updated = updated;
 
 		sender.addChange(contactUpdate.clone());
-
 	}
+
+	/**
+	 * part of CallMonitorListener
+	 */
+    public void pendingCallIn(Call call){
+		Debug.msg("Notifying client "+remoteAddress+" of pending call in");
+		callMonitor.original = call;
+		callMonitor.operation = DataChange.Operation.ADD;
+
+		sender.addChange(callMonitor.clone());
+		callMonitor.original = null;
+    }
+
+	/**
+	 * part of CallMonitorListener
+	 */
+    public void establishedCallIn(Call call){
+		Debug.msg("Notifying client "+remoteAddress+" of established call in");
+		callMonitor.original = call;
+		callMonitor.operation = DataChange.Operation.UPDATE;
+
+		sender.addChange(callMonitor.clone());
+		callMonitor.original = null;
+    }
+
+	/**
+	 * part of CallMonitorListener
+	 */
+    public void pendingCallOut(Call call){
+		Debug.msg("Notifying client "+remoteAddress+" of pending call out");
+		callMonitor.updated = call;
+		callMonitor.operation = DataChange.Operation.ADD;
+
+		sender.addChange(callMonitor.clone());
+		callMonitor.updated = null;
+    }
+
+	/**
+	 * part of CallMonitorListener
+	 */
+    public void establishedCallOut(Call call){
+		Debug.msg("Notifying client "+remoteAddress+" of pending call");
+		callMonitor.updated = call;
+		callMonitor.operation = DataChange.Operation.UPDATE;
+
+		sender.addChange(callMonitor.clone());
+		callMonitor.updated = null;
+    }
+
+	/**
+	 * part of CallMonitorListener
+	 */
+    public void endOfCall(Call call){
+		Debug.msg("Notifying client "+remoteAddress+" of pending call");
+		callMonitor.original = call;
+		callMonitor.operation = DataChange.Operation.REMOVE;
+
+		sender.addChange(callMonitor);
+		callMonitor.original = null;
+    }
 }

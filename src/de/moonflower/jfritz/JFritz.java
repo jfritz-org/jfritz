@@ -490,9 +490,9 @@ public final class JFritz implements  StatusListener{
 		if (callMonitor != null) {
 			callMonitor.stopCallMonitor();
 			// Let buttons enable start of callMonitor
-			getJframe().setCallMonitorButtonPushed(false);
 			callMonitor = null;
 		}
+		getJframe().setCallMonitorButtonPushed(false);
 	}
 
 	public static CallMonitorInterface getCallMonitor() {
