@@ -1680,7 +1680,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			networkButton.setSelected(true);
 			networkButton.setToolTipText(Main.getMessage("client_is_connected"));
 
-			//also activate the call monitor is one is wished
+			//also activate the call monitor if one is wished
 			if(Main.getProperty("option.callMonitorType", "0").equals("6")
 					&& Main.getProperty("option.autostartcallmonitor", "false").equals(
 					"true"))
@@ -1688,6 +1688,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		}else{
 			networkButton.setSelected(false);
 			networkButton.setToolTipText(Main.getMessage("connect_to_server"));
+
+			//also deactivate the call monitor if one was active
+			if(Main.getProperty("option.callMonitorType", "0").equals("6") )
+				this.setCallMonitorButtonPushed(false);
+
 		}
 	}
 

@@ -340,6 +340,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 	private synchronized void disconnect(){
 		try{
 			sender.stopThread();
+			objectOut.flush();
 			objectOut.close();
 			objectIn.close();
 			socket.close();
