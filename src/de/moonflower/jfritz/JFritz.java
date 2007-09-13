@@ -41,6 +41,11 @@ import de.moonflower.jfritz.dialogs.quickdial.QuickDials;
 import de.moonflower.jfritz.dialogs.simple.MessageDlg;
 import de.moonflower.jfritz.dialogs.sip.SipProviderTableModel;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.JFritzEvent.*;
+import de.moonflower.jfritz.JFritzEvent.actions.*;
+import de.moonflower.jfritz.JFritzEvent.events.*;
+import de.moonflower.jfritz.network.ClientLoginsTableModel;
+import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.phonebook.PhoneBook;
 import de.moonflower.jfritz.struct.FritzBox;
 import de.moonflower.jfritz.struct.PhoneNumber;
@@ -69,6 +74,8 @@ public final class JFritz implements  StatusListener{
 	public final static String PHONEBOOK_FILE = "jfritz.phonebook.xml"; //$NON-NLS-1$
 
 	public final static String SIPPROVIDER_FILE = "jfritz.sipprovider.xml"; //$NON-NLS-1$
+
+	public final static String CLIENT_SETTINGS_FILE = "jfritz.clientsettings.xml"; //$NON-NLS-1$
 
 	public final static String CALLS_CSV_FILE = "calls.csv"; //$NON-NLS-1$
 
@@ -113,11 +120,24 @@ public final class JFritz implements  StatusListener{
 
 	private Main main;
 
+	private static ClientLoginsTableModel clientLogins;
+
 	/**
 	 * Constructs JFritz object
 	 */
 	public JFritz(Main main) {
 		this.main = main;
+
+		/*
+		JFritzEventDispatcher eventDispatcher = new JFritzEventDispatcher();
+		JFritzEventDispatcher.registerEventType(new MessageEvent());
+
+		JFritzEventDispatcher.registerActionType(new PopupAction());
+		JFritzEventDispatcher.registerActionType(new TrayMessageAction());
+
+		JFritzEventDispatcher.loadFromXML();
+
+		*/
 
 		if (JFritzUtils.parseBoolean(Main.getProperty(
 				"option.createBackup", "false"))) { //$NON-NLS-1$,  //$NON-NLS-2$
@@ -174,6 +194,11 @@ public final class JFritz implements  StatusListener{
 		callMonitorList.addCallMonitorListener(new DisplayCallsMonitor());
 		callMonitorList.addCallMonitorListener(new DisconnectMonitor());
 
+
+		clientLogins = new ClientLoginsTableModel();
+
+		ClientLoginsTableModel.loadFromXMLFile(Main.SAVE_DIR+CLIENT_SETTINGS_FILE);
+
 		if (Main
 				.getProperty(
 						"lookandfeel", UIManager.getSystemLookAndFeelClassName()).endsWith("MetalLookAndFeel")) { //$NON-NLS-1$,  //$NON-NLS-2$
@@ -206,8 +231,10 @@ public final class JFritz implements  StatusListener{
 		}
 		jframe.checkStartOptions();
 		//FIXME ich nehme mal an SSDPdiscover macht irgendwas mit der Fritzbox? => nach Fritzbox verschieben
+		//only do the search if jfritz is not running as a client and using the call list from server
 		if (JFritzUtils.parseBoolean(Main.getProperty("option.useSSDP",//$NON-NLS-1$
-				"true"))) {//$NON-NLS-1$
+				"true")) && !(Main.getProperty("network.type", "0").equals("2")
+						&& Boolean.parseBoolean(Main.getProperty("option.clientCallList", "false"))) ) {//$NON-NLS-1$
 			Debug.msg("Searching for  FritzBox per UPnP / SSDP");//$NON-NLS-1$
 
 			ssdpthread = new SSDPdiscoverThread(SSDP_TIMEOUT);
@@ -228,6 +255,15 @@ public final class JFritz implements  StatusListener{
 
 		javax.swing.SwingUtilities.invokeLater(jframe);
 
+		if(Main.getProperty("network.type", "0").equals("1") &&
+				Boolean.parseBoolean(Main.getProperty("option.listenOnStartup", "false"))){
+			Debug.msg("listening on startup enabled, starting client listener!");
+			NetworkStateMonitor.startServer();
+		}else if(Main.getProperty("network.type", "0").equals("2") &&
+				Boolean.parseBoolean(Main.getProperty("option.connectOnStartup", "false"))){
+			Debug.msg("Connect on startup enabled, connectig to server");
+			NetworkStateMonitor.startClient();
+		}
 		startWatchdog();
 
 	}
@@ -437,8 +473,10 @@ public final class JFritz implements  StatusListener{
 	 * @return Returns the fritzbox devices.
 	 */
 	public static final Vector getDevices() {
+		//avoid using the ssdp thread if jfritz is running as a client and using the call list from server
 		if (JFritzUtils.parseBoolean(Main.getProperty("option.useSSDP", //$NON-NLS-1$
-				"true"))) { //$NON-NLS-1$
+				"true")) && !(Main.getProperty("network.type", "0").equals("2")
+						&& Boolean.parseBoolean(Main.getProperty("option.clientCallList", "false")))) { //$NON-NLS-1$
 			try {
 				ssdpthread.join();
 			} catch (InterruptedException e) {
@@ -662,4 +700,9 @@ public final class JFritz implements  StatusListener{
 	public static QuickDials getQuickDials() {
 		return quickDials;
 	}
+
+	public static ClientLoginsTableModel getClientLogins(){
+		return clientLogins;
+	}
+
 }

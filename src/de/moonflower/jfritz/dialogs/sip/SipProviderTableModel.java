@@ -49,7 +49,7 @@ public class SipProviderTableModel extends AbstractTableModel {
 			+ "<!ELEMENT entry (name,number,active?)>" //$NON-NLS-1$
 			+ "<!ATTLIST entry id CDATA #REQUIRED>"; //$NON-NLS-1$
 
-    private static final long serialVersionUID = 1;
+    private static final long serialVersionUID = 100;
 
     private final String columnNames[] = { Main.getMessage("id"), Main.getMessage("active"), //$NON-NLS-1$,  //$NON-NLS-2$
     		Main.getMessage("sip_numbers"), Main.getMessage("provider") }; //$NON-NLS-1$,  //$NON-NLS-2$

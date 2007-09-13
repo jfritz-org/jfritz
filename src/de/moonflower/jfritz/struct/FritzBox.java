@@ -136,10 +136,19 @@ public class FritzBox {
 	 */
 	public void detectFirmware() {
 		try {
-			firmware = FritzBoxFirmware.detectFirmwareVersion(
-					box_address,
-					box_password,
-					box_port);
+
+			//avoid trying to access the box if running as a client
+			if(Main.getProperty("network.type", "0").equals("2")
+					&& Boolean.parseBoolean(Main.getProperty("option.clientCallList", "false"))){
+
+				Debug.msg("JFritz is running as a client and using call list from server, canceling firmware detection");
+
+			}else{
+				firmware = FritzBoxFirmware.detectFirmwareVersion(
+						box_address,
+						box_password,
+						box_port);
+			}
 		} catch (WrongPasswordException e) {
 			Debug.msg(Main.getMessage("box.wrong_password"));
 		} catch (InvalidFirmwareException e) {

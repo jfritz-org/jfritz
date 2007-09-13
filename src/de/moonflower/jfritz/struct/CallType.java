@@ -5,6 +5,8 @@
  */
 package de.moonflower.jfritz.struct;
 
+import java.io.Serializable;
+
 import de.moonflower.jfritz.Main;
 
 
@@ -14,7 +16,10 @@ import de.moonflower.jfritz.Main;
  *
  * @author Arno Willig
  */
-public class CallType {
+public class CallType implements Serializable {
+
+	private static final long serialVersionUID = 103;
+
 	public static final byte CALLIN = 1;
 	public static final byte CALLIN_FAILED = 2;
 	public static final byte CALLOUT = 3;

@@ -243,7 +243,6 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 		currentCalls.getColumnModel().getColumn(6).setMinWidth(20);
 		//currentCalls.getColumnModel().getColumn(6).setMaxWidth(200);
 		currentCalls.getColumnModel().getColumn(6).setCellRenderer(new RouteCellRenderer());
-
 		currentCalls.setSize(500, 150);
 
 		//create the Border

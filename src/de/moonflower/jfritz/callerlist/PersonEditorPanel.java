@@ -16,8 +16,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
+import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.phonebook.PersonDialog;
 import de.moonflower.jfritz.struct.Person;
+
+import de.moonflower.jfritz.utils.Debug;
 
 /**
  * @author Arno Willig
@@ -50,11 +53,25 @@ public class PersonEditorPanel extends JComponent {
 		input.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() > 1) {
+
+					callerList.getPhoneBook().addEntry(person);
+					callerList.getPhoneBook().addFilterException(person);
+					callerList.getPhoneBook().updateFilter();
+					callerList.getPhoneBook().fireTableDataChanged();
+					int index = callerList.getPhoneBook().indexOf(person);
+					JFritz.getJframe().getPhoneBookPanel().getPhoneBookTable().getSelectionModel()
+							.setSelectionInterval(index, index);
+
+
+					JFritz.getJframe().activatePhoneBook();
+
+					/* Old code, not compatible with the current interface
 					PersonDialog p = new PersonDialog(callerList.getPhoneBook(), person);
 					p.showDialog();
 					cellEditor.stopCellEditing();
 					callerList.update();
 					p.dispose();
+					*/
 				}
 			}
 		});

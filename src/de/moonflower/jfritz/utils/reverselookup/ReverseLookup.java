@@ -165,6 +165,7 @@ public class ReverseLookup {
 		if ( results.size() % 20 == 0) {
 			observer.saveFoundEntries(results);
 			requests_done.clear();
+			results.clear();
 		}
 	}
 

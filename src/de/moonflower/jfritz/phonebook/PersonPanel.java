@@ -37,6 +37,7 @@ import javax.swing.table.TableCellRenderer;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 
@@ -313,11 +314,13 @@ public class PersonPanel extends JPanel implements ActionListener,
 			firePropertyChange();
 		} else if (e.getActionCommand().equals("ok")) {
 			updatePerson();
+
 			phoneBook.sortAllFilteredRows();
 			phoneBook.updateFilter();
 			phoneBook.saveToXMLFile(Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
 			JFritz.getJframe().getPhoneBookPanel().getPhoneBookTable()
 					.showAndSelectPerson(originalPerson);
+
 			Enumeration<ActionListener> en = actionListener.elements();
 			while (en.hasMoreElements()) {
 				ActionListener al = en.nextElement();
@@ -462,20 +465,40 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 	public final Person updatePerson() {
 		terminateEditing();
-		originalPerson.setPrivateEntry(chkBoxPrivateEntry.isSelected());
-		originalPerson.setFirstName(tfFirstName.getText());
-		originalPerson.setCompany(tfCompany.getText());
-		originalPerson.setLastName(tfLastName.getText());
-		originalPerson.setStreet(tfStreet.getText());
-		originalPerson.setPostalCode(tfPostalCode.getText());
-		originalPerson.setCity(tfCity.getText());
-		originalPerson.setEmailAddress(tfEmail.getText());
+		Person unchanged = originalPerson.clone();
 
-		originalPerson.setNumbers((Vector<PhoneNumber>) clonedPerson
-				.getNumbers().clone(), clonedPerson.getStandard());
+		//remove the person reference in the call list, if one was present!
+		Call call = originalPerson.getLastCall();
+		Person newPerson = null;
+		if(call != null){
+			newPerson = phoneBook.findPerson(call);
+			JFritz.getCallerList().setPerson(newPerson, call);
+		}
+		JFritz.getCallerList().updatePersonInCalls(newPerson, originalPerson.getNumbers());
+
+		synchronized(phoneBook){
+			originalPerson.setPrivateEntry(chkBoxPrivateEntry.isSelected());
+			originalPerson.setFirstName(tfFirstName.getText());
+			originalPerson.setCompany(tfCompany.getText());
+			originalPerson.setLastName(tfLastName.getText());
+			originalPerson.setStreet(tfStreet.getText());
+			originalPerson.setPostalCode(tfPostalCode.getText());
+			originalPerson.setCity(tfCity.getText());
+			originalPerson.setEmailAddress(tfEmail.getText());
+
+			originalPerson.setNumbers((Vector<PhoneNumber>) clonedPerson
+					.getNumbers().clone(), clonedPerson.getStandard());
+
+			phoneBook.notifyListenersOfUpdate(unchanged, originalPerson);
+		}
+
+		originalPerson.setLastCall(JFritz.getCallerList().findLastCall(originalPerson));
+		JFritz.getCallerList().updatePersonInCalls(originalPerson, originalPerson.getNumbers());
 
 		hasChanged = false;
 		numberHasChanged = false;
+
+
 
 		return originalPerson;
 	}

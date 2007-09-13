@@ -141,8 +141,61 @@
  * JFritz 0.6.2.05
  * - Umstrukturierung des Aufrufs von externen Programmen (noch nicht abgeschlossen)
  *
+ * JFritz network-v1
+ * 	 Neue Strings:
+ * 	 no_network_function
+ *   network_server_function
+ *   network_client_function
+ *   client_call_list
+ *   client_telephone_book
+ *   be_dumb_client
+ *   connect_on_startup
+ *   server_name
+ *   server_login
+ *   server_password
+ *   server_port
+ *   set
+ *   listen_on_startup
+ *   client_connect_port
+ *   max_client_connections
+ *   add
+ *   remove
+ *   network
+ *   server_is_listening
+ *   connect_to_server
+ *   set_client_permissions
+ *   allow_client_add_calllist
+ *   allow_client_remove_calllist
+ *   allow_client_update_calllist
+ *   allow_client_add_phonebook
+ *   allow_client_remove_phonebook
+ *   allow_client_update_phoneBook
+ *   allow_client_lookup
+ *   allow_client_getcalllist
+ *   authentification_failed
+ *   connection_server_refused
+ *   error_binding_port
+ *   start_listening_clients
+ *   client_is_connected
+ *   client_call_monitor
+ *   callerlist_filters
+ *   phonebook_filters
+ *
+ * changelog:
+ * - Neu: Networkcode hinzugefügt! JFritz kann nun entweder als Server oder client arbeiten
+ * - Bugfix: Neue kontakte werden jetzt richtig in der Anrufliste dargestellt
+ * - Bugfix: Gelöschte Kontakte werden jetzt auch in der Anrufliste entfernt
+ * - Bugfix: Geänderte Kontakte werden jetzt auch richtig in der Anrufliste dargestellt
+ * - Bugfix: Clientseitige / serverseitige Änderungen im Telefonbuch werden bei allen Clients auch richtig in der Anrufliste dargestellt
+ * - Neu: Clients, die die Anrufliste des Servers übernehmen, versuchen nicht mehr auf die Box zuzugreifen.
+ * - Bugfix: NullPointerException beim Charset-Lesen entfernt, Rückwärtssuche funktioniert bei einigen wieder
+ *
+ *
+ *
  * JFritz 0.6.2.04
- * - Neu: Rückwärtssuche erweitert, jetzt können die Regex Ausdrücke beliebig gruppiert werden
+ * - Umstrukturierung des Aufrufs von externen Programmen (noch nicht abgeschlossen)
+ * - Neu: Rückwärtssuche erweitert, jetzt können die Regex Ausdrücke beliebige groupiert werden
+ * - Bugfix: Rückwärtssuche erkennt die Charset jetzt automatisch
  * - Neu: Rückwärtssuche für Türkei eingebaut
  * - Neu: Rückwärtssuche nach Ort für Türkei eingebaut
  * - Neu: Unterstützung für gemoddete Eumex 300ip (Firmware 15.xx.xx)
@@ -622,6 +675,7 @@ import javax.swing.JOptionPane;
 import de.moonflower.jfritz.autoupdate.JFritzUpdate;
 import de.moonflower.jfritz.autoupdate.Update;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.struct.FritzBox;
 import de.moonflower.jfritz.utils.CLIOption;
 import de.moonflower.jfritz.utils.CLIOptions;
@@ -640,7 +694,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.6.2.05"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.68 2007/04/17 10:14:16 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.69 2007/09/13 11:09:37 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -1089,8 +1143,23 @@ public class Main implements LookupObserver {
 	public void exit(int i) {
 		Debug.msg("Main.exit(" + i + ")");
 		exitCode = i;
+		closeOpenConnections();
 		System.exit(i);
 	}
+
+	public void closeOpenConnections(){
+		Debug.msg("Closing all open network connections");
+
+		String networkType = Main.getProperty("network.type", "0");
+
+		if(networkType.equals("1") && NetworkStateMonitor.isListening())
+			NetworkStateMonitor.stopServer();
+
+		else if(networkType.equals("2") && NetworkStateMonitor.isConnectedToServer())
+			NetworkStateMonitor.stopClient();
+
+	}
+
 
 	/**
 	 * Loads properties from xml files
@@ -1451,5 +1520,8 @@ public class Main implements LookupObserver {
 		if ( persons != null )
 			JFritz.getPhonebook().addEntries(persons);
 	}
+
+
+
 
 }

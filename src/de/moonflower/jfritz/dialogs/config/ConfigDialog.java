@@ -24,6 +24,8 @@ import java.util.Vector;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -51,13 +53,15 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  * @author Arno Willig
  *
  */
-public class ConfigDialog extends JDialog {
+public class ConfigDialog extends JDialog implements ChangeListener {
 
 	public static boolean refreshWindow;
 
 	private static final long serialVersionUID = 1;
 
 	private JButton okButton, cancelButton;
+
+	private JTabbedPane tpane;
 
 	private JCheckBox deleteAfterFetchButton, fetchAfterStartButton,
 			notifyOnCallsButton,
@@ -72,6 +76,7 @@ public class ConfigDialog extends JDialog {
 	private ConfigPanelCallMonitor callMonitorPanel;
 	private ConfigPanelLang languagePanel;
 	private ConfigPanelOther otherPanel;
+	private ConfigPanelNetwork networkPanel;
 
 	private boolean pressed_OK = false;
 
@@ -88,6 +93,7 @@ public class ConfigDialog extends JDialog {
 		callMonitorPanel = new ConfigPanelCallMonitor(this, true, fritzBoxPanel);
 		languagePanel = new ConfigPanelLang();
 		otherPanel = new ConfigPanelOther(fritzBoxPanel);
+		networkPanel = new ConfigPanelNetwork(this);
 
 		drawDialog();
 		setValues();
@@ -111,6 +117,7 @@ public class ConfigDialog extends JDialog {
 		callMonitorPanel.loadSettings();
 		languagePanel.loadSettings();
 		otherPanel.loadSettings();
+		networkPanel.loadSettings();
 
 		notifyOnCallsButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.notifyOnCalls"))); //$NON-NLS-1$
 		fetchAfterStartButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.fetchAfterStart"))); //$NON-NLS-1$
@@ -147,6 +154,7 @@ public class ConfigDialog extends JDialog {
 		callMonitorPanel.saveSettings();
 		languagePanel.saveSettings();
 		otherPanel.saveSettings();
+		networkPanel.saveSettings();
 
 		Main.setProperty("option.notifyOnCalls", Boolean //$NON-NLS-1$
 				.toString(notifyOnCallsButton.isSelected()));
@@ -281,7 +289,7 @@ public class ConfigDialog extends JDialog {
 	protected void drawDialog() {
 
 		// Create JTabbedPane
-		JTabbedPane tpane = new JTabbedPane(JTabbedPane.TOP);
+		tpane = new JTabbedPane(JTabbedPane.TOP);
 
 		tpane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
@@ -384,9 +392,11 @@ public class ConfigDialog extends JDialog {
 		tpane.addTab(Main.getMessage("callerlist"), callerListPaneScrollable); //$NON-NLS-1$
 		tpane.addTab(Main.getMessage("callmonitor"), callMonitorPanel); //$NON-NLS-1$
 		tpane.addTab(Main.getMessage("messages"), messagePanel); //$NON-NLS-1$
+		tpane.addTab(Main.getMessage("language"),languagePanel);
+		tpane.addTab(Main.getMessage("network"), networkPanel);
 		JScrollPane otherPaneScrollable = new JScrollPane(otherPanel); //$NON-NLS-1$
 		tpane.addTab(Main.getMessage("other"), otherPaneScrollable); //$NON-NLS-1$
-		tpane.addTab(Main.getMessage("language"),languagePanel);
+		tpane.addChangeListener(this);
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(tpane, BorderLayout.CENTER);
@@ -404,4 +414,43 @@ public class ConfigDialog extends JDialog {
 		setVisible(true);
 		return okPressed();
 	}
+
+	/**
+	 * function used to adjust the size of the options dialog
+	 */
+	public void stateChanged(ChangeEvent e){
+		//change sizes here to fit the panel content
+		//box panel
+		if(tpane.getSelectedIndex() == 0){
+			setSize(new Dimension(510,360));
+		//phone panel
+		}else if(tpane.getSelectedIndex() == 1){
+			setSize(new Dimension(510,310));
+		//sip panel
+		}else if(tpane.getSelectedIndex() == 2){
+			setSize(new Dimension(510,300));
+		//call list panel
+		}else if(tpane.getSelectedIndex() == 3){
+			setSize(new Dimension(510,360));
+		//call monitor panel
+		}else if(tpane.getSelectedIndex() == 4){
+			setSize(new Dimension(510,360));
+		//message panel
+		}else if(tpane.getSelectedIndex() == 5){
+			setSize(new Dimension(510,300));
+		//language panel
+		}else if(tpane.getSelectedIndex() == 6){
+			setSize(new Dimension(510,180));
+		//network panel
+		}else if(tpane.getSelectedIndex() == 7){
+			setSize(new Dimension(510, 510));
+		//other panel
+		}else if(tpane.getSelectedIndex() == 8){
+			setSize(new Dimension(610,470));
+		}else{
+			setSize(new Dimension(510,360));
+		}
+	}
+
+
 }

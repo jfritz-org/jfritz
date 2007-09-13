@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
@@ -15,7 +16,9 @@ import de.moonflower.jfritz.utils.Debug;
  * @author rob
  *
  */
-public class Person implements Cloneable{
+public class Person implements Cloneable, Serializable{
+
+	private static final long serialVersionUID = 104;
 
 	private boolean privateEntry = false;
 
@@ -45,6 +48,28 @@ public class Person implements Cloneable{
 
 	public Person() {
 		numbers = new Vector<PhoneNumber>();
+	}
+
+	/**
+	 * this function is needed to override the basic function equals
+	 * inherited by object or else the network code won't work at all
+	 *
+	 * @author brian
+	 *
+	 */
+	public boolean equals(Object p){
+		Person person;
+		if(!(p instanceof Person))
+			return false;
+
+		person = (Person) p;
+
+		//Just use csv to compare for now, if it doesnt work then write one by hand
+		if(person.toCSV().equals(this.toCSV()))
+			return true;
+		else
+			return false;
+
 	}
 
 	public Person(String firstName, String company, String lastName,
@@ -432,6 +457,56 @@ public class Person implements Cloneable{
 
 		return outString;
 	}
+
+	/**
+	 * used by client server model
+	 * @return person in csv
+	 */
+	public String toCSV() {
+		String outString = ""; //$NON-NLS-1$
+
+		// private contact?
+		if (privateEntry) {
+			outString = "\"YES\""; //$NON-NLS-1$
+		} else {
+			outString = "\"NO\""; //$NON-NLS-1$
+		}
+
+		// last name
+		outString = outString.concat(";\"" + getLastName() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+
+		// first name
+		outString = outString.concat(";\"" + getFirstName() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+
+		// company
+		outString = outString.concat(";\"" + getCompany() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+
+		// Street
+		outString = outString.concat(";\"" + getStreet() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+
+		// Postal Code
+		outString = outString.concat(";\"" + getPostalCode() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+
+		// city
+		outString = outString.concat(";\"" + getCity() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+
+		// email
+		outString = outString.concat(";\"" + getEmailAddress() + "\";\""); //$NON-NLS-1$,  //$NON-NLS-2$
+
+		// numbers
+		if (getNumbers() == null)
+			outString = outString.concat("\""); //$NON-NLS-1$
+
+		else
+			for (PhoneNumber number: numbers)
+				outString = outString + number.toCSV()+":";
+
+			outString = outString.substring(0, outString.length()-2);
+			outString = outString+"\"";
+
+		return outString;
+	}
+
 
 	/**
 	 * @author: haeusler DATE: 02.04.06, added by Brian This is part of a fix

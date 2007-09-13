@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.HashMap;
 
@@ -32,7 +33,9 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  * @author Arno Willig
  *
  */
-public class PhoneNumber implements Comparable {
+public class PhoneNumber implements Comparable, Serializable {
+
+	private static final long serialVersionUID = 102;
 
 	private String numberMatcher = "([0-9]|\\+|\\(|\\)| |-|/)+|\\**";//$NON-NLS-1$
 
@@ -78,7 +81,6 @@ public class PhoneNumber implements Comparable {
 		this.type = type;
 		// if (number.matches(numberMatcher)) this.number = number;
 		this.number = number;
-		//createMobileMap();
 		refactorNumber();
 	}
 
@@ -107,11 +109,11 @@ public class PhoneNumber implements Comparable {
 	 */
 	public PhoneNumber(String fullNumber, boolean parseDialOut) {
 		this.type = "";
-		// if (number.matches(numberMatcher)) this.number = fullNumber;
-		if (fullNumber != null
-				&& !fullNumber.equals(Main.getMessage("unknown"))) {
+
+		if (fullNumber != null) {
 			this.number = fullNumber;
 		}
+
 		if (parseDialOut
 				&& this.number.startsWith(Main.getProperty("dial.prefix", " "))) {
 			this.number = number.substring(Main.getProperty("dial.prefix")
@@ -119,7 +121,6 @@ public class PhoneNumber implements Comparable {
 			Debug.msg("Parsed the dial out prefix, new number: " + this.number);
 		}
 
-			//createMobileMap();
 			refactorNumber();
 	}
 
@@ -761,4 +762,9 @@ public class PhoneNumber implements Comparable {
 	public static void addCallbyCall(String countryCode, CallByCall[] cbc_list){
 		callbyCallMap.put(countryCode, cbc_list);
 	}
+
+	public String toCSV(){
+		return type+"="+number;
+	}
+
 }

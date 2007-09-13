@@ -398,22 +398,8 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 				Main.PROGRAM_NAME,
 				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 
-			int row[] = getPhoneBookTable().getSelectedRows();
-			if (row.length > 0) {
-				// Markierte Einträge löschen
-				Vector<Person> personsToDelete = new Vector<Person>();
-				for (int i = 0; i < row.length; i++) {
-					personsToDelete.add(phonebook
-							.getFilteredPersons().get(row[i]));
-				}
-				Enumeration en = personsToDelete.elements();
-				while (en.hasMoreElements()) {
-					phonebook
-							.deleteEntry((Person) en.nextElement());
-				}
-				phonebook.fireTableDataChanged();
-				phonebook.saveToXMLFile(Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
-			}
+			phonebook.removePersons(getPhoneBookTable().getSelectedRows());
+
 		}
 	}
 	public void setSearchFilter(String text) {

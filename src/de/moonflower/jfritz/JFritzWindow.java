@@ -5,6 +5,7 @@ package de.moonflower.jfritz;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Insets;
 import java.awt.Rectangle;
@@ -71,6 +72,8 @@ import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.monitoring.MonitoringPanel;
+import de.moonflower.jfritz.network.NetworkStateListener;
+import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.phonebook.PhoneBookPanel;
 
 import de.moonflower.jfritz.struct.PhoneNumber;
@@ -90,7 +93,7 @@ import de.moonflower.jfritz.utils.SwingWorker;
  * @author akw
  */
 public class JFritzWindow extends JFrame implements Runnable, ActionListener,
-		ItemListener {
+		ItemListener, NetworkStateListener {
 
 	private static final long serialVersionUID = 1;
 
@@ -102,7 +105,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	private JButton fetchButton, configButton, calldialogButton;
 
-	private JToggleButton taskButton, monitorButton, lookupButton;
+	private JToggleButton taskButton, monitorButton, lookupButton, networkButton;
 
 	private JProgressBar progressbar;
 
@@ -403,6 +406,34 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		configButton.setToolTipText(Main.getMessage("config")); //$NON-NLS-1$
 		mBar.add(configButton);
 
+		networkButton = new JToggleButton();
+		networkButton.setActionCommand("network");
+		networkButton.addActionListener(this);
+
+		String networkType = Main.getProperty("network.type", "0");
+
+		if(networkType.equals("1")){
+			networkButton.setIcon(getImage("server.png"));
+			networkButton.setToolTipText(Main.getMessage("start_listening_clients"));
+		}else if(networkType.equals("2")){
+			networkButton.setIcon(getImage("client.png"));
+			networkButton.setToolTipText(Main.getMessage("connect_to_server"));
+		}else{
+			networkButton.setIcon(getImage("no_network.png"));
+			networkButton.setEnabled(false);
+		}
+
+		networkButton.setPreferredSize(new Dimension(32, 32));
+
+		//disable icon if jfritz network functionality not wanted
+		if(Main.getProperty("network.type", "0").equals("0")){
+			networkButton.setEnabled(false);
+		}
+
+		NetworkStateMonitor.addListener(this);
+
+		mBar.add(networkButton);
+
 		mBar.addSeparator();
 		return mBar;
 	}
@@ -618,7 +649,12 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * Fetches list from box
 	 */
 	public void fetchList(final boolean deleteFritzBoxCallerList) {
-		if (!isretrieving) { // Prevent multiple clicking
+		if(Main.getProperty("option.clientCallList", "false").equals("true")){
+			if(NetworkStateMonitor.isConnectedToServer()){
+				Debug.msg("requesting get call list from box from the server");
+				NetworkStateMonitor.requestGetCallListFromServer();
+			}
+		} else if (!isretrieving) { // Prevent multiple clicking
 			isretrieving = true;
 			tabber.setSelectedComponent(callerListPanel);
 			final SwingWorker worker = new SwingWorker() {
@@ -678,7 +714,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					isretrieving = false;
 					if (Main.getProperty("option.lookupAfterFetch", "false") //$NON-NLS-1$,  //$NON-NLS-2$
 							.equals("true")) { //$NON-NLS-1$
-						JFritz.getCallerList().reverseLookup(false, false);
+
+						if(Main.getProperty("option.clientTelephoneBook", "false").equals("true"))
+							lookupButton.doClick();
+						else
+							JFritz.getCallerList().reverseLookup(false, false);
 					}
 //					interrupt();
 				}
@@ -980,10 +1020,18 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 		} else if (e.getActionCommand().equals("reverselookup")) {
 			//reverseLookup();
-			boolean active = ((JToggleButton) e.getSource()).isSelected();
-			if (active) {
-				Debug.msg("Start reverselookup"); //$NON-NLS-1$
-				JFritz.getCallerList().reverseLookup(true, false);
+			Object o = e.getSource();
+			if (lookupButton.isSelected() || (o instanceof JMenuItem  && !lookupButton.isSelected())) {
+				if(Main.getProperty("option.clientTelephoneBook").equals("true") &&
+						NetworkStateMonitor.isConnectedToServer()){
+					//if connected to server make server to the lookup
+					Debug.msg("requesting reverse lookup from server");
+					NetworkStateMonitor.requestLookupFromServer();
+					lookupButton.setSelected(false);
+				}else{
+					Debug.msg("Start reverselookup"); //$NON-NLS-1$
+					JFritz.getCallerList().reverseLookup(true, false);
+				}
 			} else {
 				Debug.msg("Stopping reverse lookup"); //$NON-NLS-1$
 				JFritz.getCallerList().stopLookup();
@@ -1002,7 +1050,21 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			JFritz.hideShowJFritz();
 		} else if (e.getActionCommand().equals("configwizard")) {
 			JFritz.showConfigWizard();
-		} else {
+		} else if(e.getActionCommand().equals("network")){
+
+			if(Main.getProperty("network.type", "0").equals("2")){
+				if(networkButton.isSelected())
+					NetworkStateMonitor.startClient();
+				else
+					NetworkStateMonitor.stopClient();
+
+			}else if(Main.getProperty("network.type", "0").equals("1")){
+				if(networkButton.isSelected())
+					NetworkStateMonitor.startServer();
+				else
+					NetworkStateMonitor.stopServer();
+			}
+		}else {
 			Debug.err("Unimplemented action: " + e.getActionCommand()); //$NON-NLS-1$
 		}
 	}
@@ -1179,6 +1241,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	public void activatePhoneBook() {
 		Rectangle rect = phoneBookPanel.getPhoneBookTable().getCellRect(
 				phoneBookPanel.getPhoneBookTable().getSelectedRow(), 0, true);
+		Debug.msg("Rectangle: "+rect.toString());
 		phoneBookPanel.getPhoneBookTable().scrollRectToVisible(rect);
 		tabber.setSelectedComponent(phoneBookPanel);
 	}
@@ -1601,4 +1664,68 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	public void selectLookupButton(boolean select){
 		lookupButton.setSelected(select);
 	}
+
+	public void clientStateChanged(){
+		networkButton.setEnabled(true);
+		if(NetworkStateMonitor.isConnectedToServer()){
+			networkButton.setSelected(true);
+			networkButton.setToolTipText(Main.getMessage("client_is_connected"));
+		}else{
+			networkButton.setSelected(false);
+			networkButton.setToolTipText(Main.getMessage("connect_to_server"));
+		}
+	}
+
+	public void serverStateChanged(){
+		networkButton.setEnabled(true);
+		if(NetworkStateMonitor.isListening()){
+			networkButton.setSelected(true);
+			networkButton.setToolTipText(Main.getMessage("server_is_listening"));
+		}else{
+			networkButton.setSelected(false);
+			networkButton.setToolTipText(Main.getMessage("start_listening_clients"));
+		}
+	}
+
+	/**
+	 * This function is called by the network code
+	 * when a client requests a reverse lookup
+	 *
+	 */
+	public void doLookupButtonClick(){
+		if(!lookupButton.isSelected())
+			lookupButton.doClick();
+	}
+
+	public void doFetchButtonClick(){
+		if(fetchButton.isEnabled())
+			fetchButton.doClick();
+	}
+
+	/**
+	 * This function sets the icon for the network button
+	 * and enables or disables the toggle button.
+	 * function called after saving the settings in the dialog
+	 *
+	 *
+	 */
+	public void setNetworkButton(){
+
+		String networkType = Main.getProperty("network.type", "0");
+
+		if(networkType.equals("1")){
+			networkButton.setIcon(getImage("server.png"));
+			networkButton.setEnabled(true);
+			networkButton.setToolTipText(Main.getMessage("start_listening_clients"));
+		}else if(networkType.equals("2")){
+			networkButton.setIcon(getImage("client.png"));
+			networkButton.setEnabled(true);
+			networkButton.setToolTipText(Main.getMessage("connect_to_server"));
+		}else{
+			networkButton.setIcon(getImage("no_network.png"));
+			networkButton.setEnabled(false);
+			networkButton.setToolTipText("");
+		}
+	}
+
 }

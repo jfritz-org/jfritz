@@ -41,6 +41,7 @@ import org.xml.sax.XMLReader;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.filter.CallFilter;
+import de.moonflower.jfritz.callerlist.filter.DateFilter;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.phonebook.PhoneBook;
 import de.moonflower.jfritz.struct.Call;
@@ -114,6 +115,8 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 
 	private Vector<CallFilter> filters;
 
+	private Vector<CallerListListener> listeners;
+
 	private boolean sortDirection = false;
 
 	private PhoneBook phonebook;
@@ -133,8 +136,28 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 		filters = new Vector<CallFilter>();
 		// lets see if my new method works better
 		newCalls = new Vector<Call>(32);
+		listeners = new Vector<CallerListListener>();
 
 		sortColumn = 1;
+	}
+
+	/**CallerListListeners are used to passively catch changes to the
+	 * data in the call list
+	 *
+	 * @param l the listener to be added
+	 */
+	public synchronized void addListener(CallerListListener l){
+		listeners.add(l);
+	}
+
+	/**
+	 * CallerListListeners are used to passively catch changes to the
+	 * data in the call list
+	 *
+	 * @param l the listener to be removed
+	 */
+	public synchronized void removeListener(CallerListListener l){
+		listeners.remove(l);
 	}
 
 	/**
@@ -191,11 +214,12 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 	 * @param wholeCallerList
 	 *            Save whole caller list or only selected entries
 	 */
-	public void saveToXMLFile(String filename, boolean wholeCallerList) {
+	public synchronized void saveToXMLFile(String filename, boolean wholeCallerList) {
 		Debug.msg("Saving to file " + filename); //$NON-NLS-1$
 		try {
 			BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(filename), "UTF8")); //$NON-NLS-1$
+
 			pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
 			pw.newLine();
 			// pw.write("<!DOCTYPE calls SYSTEM \"" + CALLS_DTD_URI + "\">");
@@ -251,7 +275,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 	 * @param wholeCallerList
 	 *            Save whole caller list or only selected entries
 	 */
-	public void saveToCSVFile(String filename, boolean wholeCallerList) {
+	public synchronized void saveToCSVFile(String filename, boolean wholeCallerList) {
 		Debug.msg("Saving to csv file " + filename); //$NON-NLS-1$
 		FileOutputStream fos;
 		try {
@@ -292,7 +316,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 	 *
 	 * @param filename
 	 */
-	public void loadFromXMLFile(String filename) {
+	public synchronized void loadFromXMLFile(String filename) {
 		try {
 
 			// Workaround for SAX parser
@@ -367,7 +391,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 	 * @param inputStr
 	 * @return outputStr
 	 */
-	public static String removeDuplicateWhitespace(String inputStr) {
+	public synchronized static String removeDuplicateWhitespace(String inputStr) {
 		Pattern p = Pattern.compile("\\s+"); //$NON-NLS-1$
 		Matcher matcher = p.matcher(inputStr);
 		return matcher.replaceAll(" "); //$NON-NLS-1$
@@ -422,7 +446,94 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 	}
 
 	/**
-	 * This function tests if the given call (not the call object!!!) is
+	 * Adds a vector of new calls to the list, used by network code to
+	 * import calls en masse
+	 *
+	 * @author brian
+	 *
+	 * @param newCalls to be added to the call list
+	 */
+	public synchronized void addEntries(Vector<Call> newCalls){
+		int newEntries = 0;
+
+		for(Call call: newCalls)
+			if(addEntry(call))
+				newEntries++;
+
+		if (newEntries > 0) {
+
+			fireUpdateCallVector();
+			update();
+
+			saveToXMLFile(Main.SAVE_DIR + JFritz.CALLS_FILE, true);
+
+			String msg;
+
+			if (newEntries == 1) {
+				msg = Main.getMessage("imported_call"); //$NON-NLS-1$
+			} else {
+				msg = Main
+						.getMessage("imported_calls").replaceAll("%N", Integer.toString(newEntries)); //$NON-NLS-1$, //$NON-NLS-2$
+			}
+
+			JFritz.infoMsg(msg);
+
+			// Notify user?
+			if (Main.getProperty("option.notifyOnCalls", "true")
+					.equals("true")) {
+				JFritz.getJframe().setVisible(true);
+				JFritz.getJframe().toFront();
+			}
+
+			// Make back-up after fetching the caller list?
+			if (JFritzUtils.parseBoolean(Main.getProperty(
+							"option.createBackupAfterFetch", "false")))
+				doBackup();
+
+
+		}
+	}
+
+	/**
+	 * Updates call data based upon an external data source
+	 *
+	 * @param oldCall original call
+	 * @param newCall new call containing changed data
+	 */
+	public synchronized void updateEntry(Call oldCall, Call newCall){
+
+		int index = unfilteredCallerData.indexOf(oldCall);
+
+		//make sure original call was in our list
+		if(index >= 0){
+
+			unfilteredCallerData.setElementAt(newCall, index);
+
+			for(CallerListListener listener: listeners)
+				listener.callsUpdated(oldCall, newCall);
+
+			update();
+			saveToXMLFile(Main.SAVE_DIR+JFritz.CALLS_FILE, true);
+		}
+	}
+
+	/**
+	 * Removes a vector of calls, as dictated by an external data source
+	 *
+	 * @author brian
+	 *
+	 * @param removeCalls calls to be removed
+	 */
+	public synchronized void removeEntries(Vector<Call> removeCalls){
+
+			unfilteredCallerData.removeAll(removeCalls);
+			update();
+			saveToXMLFile(Main.SAVE_DIR + JFritz.CALLS_FILE, true);
+
+	}
+
+	/**
+	 * This function tests if the given call  is
 	 * contained in the call list
 	 *
 	 * This new method is using a binary search algorithm, that means
@@ -432,7 +543,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 	 * @author Brian Jensen
 	 *
 	 */
-	public boolean contains(Call newCall) {
+	public synchronized boolean contains(Call newCall) {
 		int left, right, middle;
 		left = 0;
 		right = unfilteredCallerData.size() - 1;
@@ -520,7 +631,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 	}
 
 	/**
-	 * This method synchronises the main call vector with with the recently
+	 * This method synchronizes the main call vector with with the recently
 	 * added calls per addEntry(Call call)
 	 *
 	 * NOTE: This method must be called after any calls have been added but
@@ -529,9 +640,13 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 	 * @author Brian Jensen
 	 *
 	 */
-	public void fireUpdateCallVector() {
+	public synchronized void fireUpdateCallVector() {
 		// update the call list and then sort it
 		unfilteredCallerData.addAll(newCalls);
+
+		for(CallerListListener l: listeners)
+			l.callsAdded(newCalls);
+
 		newCalls.clear();
 		sortAllUnfilteredRows();
 
@@ -678,9 +793,15 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 		fireTableCellUpdated(rowIndex, columnIndex);
 	}
 
-	public void setComment(String comment, int rowIndex) {
-		Call call = filteredCallerData.get(rowIndex);
-		call.setComment(comment);
+	public synchronized void setComment(String comment, int rowIndex) {
+		Call updated = filteredCallerData.get(rowIndex);
+		Call original = updated.clone();
+		updated.setComment(comment);
+
+		//Remove the old copy at each client
+		for(CallerListListener listener: listeners)
+			listener.callsUpdated(original, updated);
+
 	}
 
 	public void setPerson(Person person, int rowIndex) {
@@ -952,13 +1073,16 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 	 * @param rows
 	 *            of the filteredCallerData to be removed
 	 */
-	public void removeEntries(int[] rows) {
+	public synchronized void  removeEntries(int[] rows) {
+
+		Vector<Call> removedCalls = new Vector<Call>(rows.length);
 		if (rows.length > 0) {
 			Call call;
 			for (int i = 0; i < rows.length; i++) {
 				call = filteredCallerData.get(rows[i]);
+				removedCalls.add(call);
 				unfilteredCallerData.remove(call);
-				Debug.msg("removing " + call);
+				//Debug.msg("removing " + call);
 				Person p = call.getPerson();
 				if (p != null) {
 					if (call.equals(p.getLastCall())) {
@@ -968,6 +1092,11 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 				}
 
 			}
+
+			//notify all listeners that calls have been removed
+			for(CallerListListener l: listeners)
+				l.callsRemoved(removedCalls);
+
 			saveToXMLFile(Main.SAVE_DIR + JFritz.CALLS_FILE, true);
 			update();
 			fireTableDataChanged();
@@ -1035,7 +1164,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 	 * @param filename
 	 *            of the csv file to import from
 	 */
-public boolean importFromCSVFile(BufferedReader br) {
+public synchronized boolean importFromCSVFile(BufferedReader br) {
 		long t1, t2;
 		t1 = System.currentTimeMillis();
 		String line = "";
@@ -1935,7 +2064,7 @@ public boolean importFromCSVFile(BufferedReader br) {
 	/**
 	 * for the LookupObserver
 	 */
-	public void personsFound(Vector persons) {
+	public void personsFound(Vector<Person> persons) {
 		if (persons != null) {
 			phonebook.addEntries(persons);
 			this.fireTableDataChanged();
@@ -1956,7 +2085,7 @@ public boolean importFromCSVFile(BufferedReader br) {
 	/**
 	 * for the LookupObserver
 	 */
-	public void saveFoundEntries(Vector persons) {
+	public void saveFoundEntries(Vector<Person> persons) {
 		if (persons != null) {
 			phonebook.addEntries(persons);
 			this.fireTableDataChanged();
@@ -2012,6 +2141,39 @@ public boolean importFromCSVFile(BufferedReader br) {
 
 	public void stopLookup(){
 		ReverseLookup.stopLookup();
+	}
+
+	/**
+	 *  This function is used to get the date of the last
+	 *  call in the list. Used by the network code to get updates
+	 *
+	 *  @author brian
+	 *
+	 */
+	public synchronized Date getLastCallDate(){
+
+		if(unfilteredCallerData.size() > 0)
+			return unfilteredCallerData.firstElement().getCalldate();
+		return null;
+	}
+
+	/** This function is used by the network code to retrieve all calls
+	 * newer than that of the timestamp
+	 *
+	 * @author brian
+	 *
+	 * @param timestamp of the last call received
+	 * @return a vector of calls newer than the timestamp
+	 */
+	public synchronized Vector<Call> getNewerCalls(Date timestamp){
+		Vector<Call> newerCalls = new Vector<Call>();
+		DateFilter dateFilter = new DateFilter(timestamp, new Date(System.currentTimeMillis()));
+		for(Call call: unfilteredCallerData){
+			if(dateFilter.passFilter(call))
+				newerCalls.add(call);
+		}
+
+		return newerCalls;
 	}
 
 }
