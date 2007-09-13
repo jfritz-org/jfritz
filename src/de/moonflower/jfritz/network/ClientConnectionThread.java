@@ -21,7 +21,7 @@ import de.moonflower.jfritz.utils.Debug;
 
 /**
  * This class is responsible for interacting with a JFritz client.
- * All communication between client and server is asynchronus.
+ * All communications between client and server are asynchronous.
  *
  * Communication between client and server is done using either
  * ClientRequest or String objects. Communication between server
@@ -53,6 +53,8 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 	private boolean callsAdded=false, callsRemoved=false, callUpdated = false,
 		contactsAdded=false, contactsRemoved=false, contactUpdated=false;
+
+	private ServerSenderThread sender;
 
 	public ClientConnectionThread(Socket socket, ClientConnectionListener connectionListener){
 		super("Client connection for "+socket.getInetAddress());
@@ -91,6 +93,11 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 				contactUpdate = new DataChange<Person>();
 				contactUpdate.destination = DataChange.Destination.PHONEBOOK;
 				contactUpdate.operation = DataChange.Operation.UPDATE;
+
+				// create the sender thread, start it up, and set it for the min priority
+				sender = new ServerSenderThread(objectOut, remoteAddress);
+				sender.start();
+				sender.setPriority(Thread.MIN_PRIORITY);
 
 				JFritz.getCallerList().addListener(this);
 				JFritz.getPhonebook().addListener(this);
@@ -234,7 +241,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 
 			}catch(ClassNotFoundException e){
-				Debug.err("unrecognized class received as request from server");
+				Debug.err("unrecognized class received as request from client");
 				Debug.err(e.toString());
 				e.printStackTrace();
 			}catch(SocketException e){
@@ -328,6 +335,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 	 */
 	private synchronized void disconnect(){
 		try{
+			sender.stopThread();
 			objectOut.close();
 			objectIn.close();
 			socket.close();
@@ -347,6 +355,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 			Debug.msg("Notifying client "+remoteAddress+" to close connection");
 			objectOut.writeObject("JFRITZ CLOSE");
 			objectOut.flush();
+			sender.stopThread();
 			objectOut.close();
 			objectIn.close();
 			socket.close();
@@ -376,19 +385,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 		Debug.msg("Notifying client "+remoteAddress+" of added calls, size: "+newCalls.size());
 		callsAdd.data =  newCalls;
 
-		try{
-
-			objectOut.writeObject(callsAdd);
-			objectOut.flush();
-			objectOut.reset();
-
-		}catch(IOException e){
-			Debug.err("Error writing new calls to client!");
-			Debug.err(e.toString());
-			e.printStackTrace();
-		}
-
-		callsAdd.data = null;
+		sender.addChange(callsAdd.clone());
 
 	}
 
@@ -407,20 +404,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 		Debug.msg("Notifying client "+remoteAddress+" of removed calls, size: "+removedCalls.size());
 		callsRemove.data = removedCalls;
 
-		try{
-
-			objectOut.writeObject(callsRemove);
-			objectOut.flush();
-			objectOut.reset();
-
-		}catch(IOException e){
-			Debug.err("Error writing removed calls to client!");
-			Debug.err(e.toString());
-			e.printStackTrace();
-		}
-
-		callsRemove.data = null;
-
+		sender.addChange(callsRemove.clone());
 	}
 
 	/**
@@ -435,15 +419,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 		callUpdate.original = original;
 		callUpdate.updated = updated;
 
-		try{
-			objectOut.writeObject(callUpdate);
-			objectOut.flush();
-			objectOut.reset();
-		}catch(IOException e){
-			Debug.err("Error writing updated call to client "+remoteAddress);
-			Debug.err(e.toString());
-			e.printStackTrace();
-		}
+		sender.addChange(callUpdate.clone());
 
 	}
 
@@ -460,19 +436,8 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 		Debug.msg("Notifying client "+remoteAddress+" of added contacts, size: "+newContacts.size());
 		contactsAdd.data = newContacts;
 
-		try{
+		sender.addChange(contactsAdd.clone());
 
-			objectOut.writeObject(contactsAdd);
-			objectOut.flush();
-			objectOut.reset();
-
-		}catch(IOException e){
-			Debug.err("Error while writing added contacts to client "+remoteAddress);
-			Debug.err(e.toString());
-			e.printStackTrace();
-		}
-
-		contactsAdd.data = null;
 	}
 
 	/**
@@ -488,19 +453,8 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 		Debug.msg("Notifying client "+remoteAddress+" of removed contacts, size: "+removedContacts.size());
 		contactsRemove.data = removedContacts;
 
-		try{
+		sender.addChange(contactsRemove.clone());
 
-			objectOut.writeObject(contactsRemove);
-			objectOut.flush();
-			objectOut.reset();
-
-		}catch(IOException e){
-			Debug.err("Error while writing removed contacts to client "+remoteAddress);
-			Debug.err(e.toString());
-			e.printStackTrace();
-		}
-
-		contactsRemove.data = null;
 	}
 
 	/**
@@ -516,16 +470,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 		contactUpdate.original = original;
 		contactUpdate.updated = updated;
 
-		try{
+		sender.addChange(contactUpdate.clone());
 
-			objectOut.writeObject(contactUpdate);
-			objectOut.flush();
-			objectOut.reset();
-
-		}catch(IOException e){
-			Debug.err("Error writing updated contact to client "+remoteAddress);
-			Debug.err(e.toString());
-			e.printStackTrace();
-		}
 	}
 }

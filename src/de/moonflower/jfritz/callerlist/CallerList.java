@@ -645,7 +645,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 		unfilteredCallerData.addAll(newCalls);
 
 		for(CallerListListener l: listeners)
-			l.callsAdded(newCalls);
+			l.callsAdded((Vector) newCalls.clone());
 
 		newCalls.clear();
 		sortAllUnfilteredRows();
@@ -1095,7 +1095,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 
 			//notify all listeners that calls have been removed
 			for(CallerListListener l: listeners)
-				l.callsRemoved(removedCalls);
+				l.callsRemoved((Vector) removedCalls.clone());
 
 			saveToXMLFile(Main.SAVE_DIR + JFritz.CALLS_FILE, true);
 			update();

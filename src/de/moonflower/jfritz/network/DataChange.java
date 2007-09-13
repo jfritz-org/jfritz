@@ -32,4 +32,17 @@ public class DataChange<E> implements Serializable {
 
 	public E original, updated;
 
+	public DataChange<E> clone() {
+
+		DataChange<E> clone = new DataChange<E>();
+		clone.operation = this.operation;
+		clone.destination = this.destination;
+		clone.data = this.data;
+		clone.original = this.original;
+		clone.updated = this.updated;
+
+		return clone;
+	}
+
+
 }
