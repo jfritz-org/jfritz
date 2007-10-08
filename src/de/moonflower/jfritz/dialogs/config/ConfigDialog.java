@@ -406,7 +406,7 @@ public class ConfigDialog extends JDialog implements ChangeListener {
 		addKeyListener(keyListener);
 
 		setSize(new Dimension(510, 360));
-		setResizable(false);
+		setResizable(true);
 		// pack();
 	}
 
@@ -443,7 +443,7 @@ public class ConfigDialog extends JDialog implements ChangeListener {
 			setSize(new Dimension(510,180));
 		//network panel
 		}else if(tpane.getSelectedIndex() == 7){
-			setSize(new Dimension(510, 510));
+			setSize(new Dimension(530, 530));
 		//other panel
 		}else if(tpane.getSelectedIndex() == 8){
 			setSize(new Dimension(610,470));

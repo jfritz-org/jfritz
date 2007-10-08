@@ -57,16 +57,18 @@ public class ClientConnectionListener extends Thread {
 
 					while(listen){
 
-						if(Integer.parseInt(Main.getProperty("max.connections", "1")) <= connectedClients.size()){
+						if(Integer.parseInt(Main.getProperty("max.Connections", "1")) <= connectedClients.size()){
 
 							synchronized(this){
 								try{
+									Debug.msg("Max number of clients reached, waiting for one to quit");
 									wait();
 								}catch(InterruptedException e){
 									Debug.err("client listener interrupted while waiting for connection to close!");
 								}
 							}
 						}else{
+							Debug.msg("Client Connection Listener waiting for incoming connection");
 							ClientConnectionThread connection = new ClientConnectionThread(serverSocket.accept(), this);
 
 							synchronized(this){
@@ -167,6 +169,16 @@ public class ClientConnectionListener extends Thread {
 	public synchronized void quitThread(){
 		quit = true;
 		notify();
+	}
+
+	/**
+	 * Is called to notify the listener that settings have changed.
+	 * Code to act on this information should go here
+	 *
+	 */
+	public synchronized void settingsChanged(){
+		notify();
+
 	}
 
 }

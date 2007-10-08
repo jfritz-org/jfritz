@@ -133,6 +133,9 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 				try{
 					socket = new Socket(server, port);
 					Debug.msg("successfully connected to server, authenticating");
+
+					//set timeout in case server thread is not functioning properly
+					socket.setSoTimeout(15000);
 					objectOut = new ObjectOutputStream(socket.getOutputStream());
 					objectIn = new ObjectInputStream(socket.getInputStream());
 
@@ -140,6 +143,9 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 						Debug.msg("Successfully authenticated with server");
 						isConnected = true;
 						NetworkStateMonitor.clientStateChanged();
+
+						//reset the keep alive settings
+						socket.setSoTimeout(0);
 
 						callListRequest = new ClientDataRequest<Call>();
 						callListRequest.destination = ClientDataRequest.Destination.CALLLIST;
@@ -176,6 +182,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 					e.printStackTrace();
 
 				}catch(IOException e){
+					Debug.errDlg(Main.getMessage("connection_server_refused"));
 					Debug.err(e.toString());
 					e.printStackTrace();
 				}
@@ -202,8 +209,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 		Object o;
 		String response;
 		try{
-			//set timeout in case server thread is not functioning properly
-			socket.setSoTimeout(15000);
+
 			o = objectIn.readObject();
 			if(o instanceof String){
 

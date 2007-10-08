@@ -6,7 +6,11 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.Vector;
 
+import de.moonflower.jfritz.callerlist.filter.*;
+import de.moonflower.jfritz.struct.Call;
+import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.utils.Debug;
 
 /**
@@ -69,6 +73,9 @@ public class ServerSenderThread extends Thread {
 
 					Debug.msg("Writing data to client "+remoteAddress);
 
+					if(change.destination == DataChange.Destination.CALLLIST)
+						filterCallData((Vector<Call>) change.data);
+
 					// now write it accross the socket connection while leaving the queue open for writing
 					try{
 
@@ -111,6 +118,10 @@ public class ServerSenderThread extends Thread {
 	public synchronized void stopThread(){
 		stop = true;
 		notify();
+	}
+
+	public static void filterCallData(Vector<Call> calls){
+
 	}
 
 }

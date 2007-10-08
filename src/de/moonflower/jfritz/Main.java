@@ -138,10 +138,17 @@
  *
  * FIXME-END
  *
- * JFritz 0.6.2.05
+ * JFritz 0.6.2.3
  * - Umstrukturierung des Aufrufs von externen Programmen (noch nicht abgeschlossen)
  * - Neu: Einführung von ServerSenderThreads, jede Verbindung hat eigene Empfänger und Sender-Threads
  * - Neu: Clients können den Anrufmonitor vom Server verwenden
+ * - Neu: Networkcode hinzugefügt! JFritz kann nun entweder als Server oder client arbeiten
+ * - Bugfix: Neue kontakte werden jetzt richtig in der Anrufliste dargestellt
+ * - Bugfix: Gelöschte Kontakte werden jetzt auch in der Anrufliste entfernt
+ * - Bugfix: Geänderte Kontakte werden jetzt auch richtig in der Anrufliste dargestellt
+ * - Bugfix: Clientseitige / serverseitige Änderungen im Telefonbuch werden bei allen Clients auch richtig in der Anrufliste dargestellt
+ * - Neu: Clients, die die Anrufliste des Servers übernehmen, versuchen nicht mehr auf die Box zuzugreifen.
+ * - Bugfix: NullPointerException beim Charset-Lesen entfernt, Rückwärtssuche funktioniert bei einigen wieder
  *
  * JFritz network-v1
  * 	 Neue Strings:
@@ -182,17 +189,6 @@
  *   client_call_monitor
  *   callerlist_filters
  *   phonebook_filters
- *
- * changelog:
- * - Neu: Networkcode hinzugefügt! JFritz kann nun entweder als Server oder client arbeiten
- * - Bugfix: Neue kontakte werden jetzt richtig in der Anrufliste dargestellt
- * - Bugfix: Gelöschte Kontakte werden jetzt auch in der Anrufliste entfernt
- * - Bugfix: Geänderte Kontakte werden jetzt auch richtig in der Anrufliste dargestellt
- * - Bugfix: Clientseitige / serverseitige Änderungen im Telefonbuch werden bei allen Clients auch richtig in der Anrufliste dargestellt
- * - Neu: Clients, die die Anrufliste des Servers übernehmen, versuchen nicht mehr auf die Box zuzugreifen.
- * - Bugfix: NullPointerException beim Charset-Lesen entfernt, Rückwärtssuche funktioniert bei einigen wieder
- *
- *
  *
  * JFritz 0.6.2.04
  * - Umstrukturierung des Aufrufs von externen Programmen (noch nicht abgeschlossen)
@@ -696,7 +692,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.6.3"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.71 2007/09/13 19:58:12 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.72 2007/10/08 15:57:46 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

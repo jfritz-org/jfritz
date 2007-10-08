@@ -120,7 +120,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		serverPassword.setText(Encryption.decrypt(Main.getProperty("server.password", "")));
 
 		clientsPort.setText(Main.getProperty("clients.port", "4455"));
-		maxConnections.setText(Main.getProperty("max.Connections", "6"));
+		maxConnections.setText(Main.getProperty("max.Connections", "2"));
 
 		if(NetworkStateMonitor.isListening()){
 			startServerButton.setSelected(true);
@@ -190,6 +190,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		}
 
 		JFritz.getJframe().setNetworkButton();
+		NetworkStateMonitor.serverStateChanged();
 		ClientLoginsTableModel.saveToXMLFile(Main.SAVE_DIR + JFritz.CLIENT_SETTINGS_FILE);
 
 	}

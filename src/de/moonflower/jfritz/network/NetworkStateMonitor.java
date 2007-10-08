@@ -2,6 +2,13 @@ package de.moonflower.jfritz.network;
 
 import java.util.Vector;
 
+/**
+ * This class is used as a sort of static back end for accessing and changing
+ * settings for the client oder server.
+ *
+ * @author brian
+ *
+ */
 public class NetworkStateMonitor  {
 
 	public static ServerConnectionThread serverConnection;
@@ -74,6 +81,21 @@ public class NetworkStateMonitor  {
 
 	public static void requestGetCallListFromServer(){
 		serverConnection.requestGetCallList();
+	}
+
+	/**
+	 * This code here should take care of the case when the settings
+	 * have changed while the server is currently running.
+	 *
+	 * Right now client priviledges are checked dynamically on a per request basis
+	 * so no to reset anything there. The only thing that needs to be checked for
+	 * is the the port being used, and the max number of connections.
+	 *
+	 */
+	public static void serverSettingsChanged(){
+
+		clientConnectionListener.settingsChanged();
+
 	}
 
 }
