@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.Vector;
 
 import de.moonflower.jfritz.callerlist.filter.*;
+import de.moonflower.jfritz.network.Login;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.utils.Debug;
@@ -30,17 +31,31 @@ public class ServerSenderThread extends Thread {
 
 	private DataChange<?> change;
 
+	private DataChange<Call> callChange;
+
+	private DataChange<Person> contactChange;
+
 	private InetAddress remoteAddress;
 
 	private ObjectOutputStream objectOut;
 
 	private ConcurrentLinkedQueue<DataChange> changedObjects;
 
-	public ServerSenderThread(ObjectOutputStream oos, InetAddress rAddress){
+	private Vector<CallFilter> callFilters;
+
+	private Vector<Call> filteredCalls;
+
+	private String contactFilter;
+
+	private Vector<Person> filteredContacts;
+
+	public ServerSenderThread(ObjectOutputStream oos, InetAddress rAddress, Login login){
 
 		objectOut = oos;
 		remoteAddress = rAddress;
 		changedObjects = new ConcurrentLinkedQueue<DataChange>();
+		callFilters = login.callFilters;
+		contactFilter = login.contactFilter;
 	}
 
 	public void run(){
@@ -71,10 +86,13 @@ public class ServerSenderThread extends Thread {
 						change = changedObjects.poll();
 					}
 
-					Debug.msg("Writing data to client "+remoteAddress);
-
-					if(change.destination == DataChange.Destination.CALLLIST)
+					if(change.destination == DataChange.Destination.CALLLIST){
+						//set the reference to DataChange<Call> so we can modify members
+						callChange = (DataChange<Call>) change;
 						filterCallData((Vector<Call>) change.data);
+					}
+
+					Debug.msg("Writing data to client "+remoteAddress);
 
 					// now write it accross the socket connection while leaving the queue open for writing
 					try{
@@ -120,8 +138,33 @@ public class ServerSenderThread extends Thread {
 		notify();
 	}
 
-	public static void filterCallData(Vector<Call> calls){
 
+	/**
+	 * This function should filter the calls
+	 * before they are sent to the client
+	 *
+	 * @param calls
+	 */
+	public void filterCallData(Vector<Call> calls){
+
+		boolean passed = true;
+		filteredCalls = new Vector<Call>();
+
+		Debug.msg("Filtering outgoing call data for: "+this.remoteAddress);
+		for(Call call: calls){
+
+			for(CallFilter cf: callFilters){
+				if(!cf.passFilter(call)){
+					passed = false;
+					break;
+				}
+			}
+			if(passed){
+				filteredCalls.add(call);
+			}
+		}
+
+		callChange.data = filteredCalls;
 	}
 
 }

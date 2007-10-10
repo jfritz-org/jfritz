@@ -26,6 +26,7 @@ public class Login {
 			boolean allowRemovelist, boolean allowAddbook, boolean allowUpdatebook,
 			boolean allowRemovebook, boolean allowlookup, boolean allowGetlist,
 			Vector<CallFilter> CallFilters, String ContactFilter){
+
 		this.user = user;
 		this.password = password;
 		allowAddList = allowAddlist;
