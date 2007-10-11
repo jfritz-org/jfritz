@@ -134,7 +134,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 		unfilteredCallerData = new Vector<Call>(256);
 		filteredCallerData = new Vector<Call>();
 		filters = new Vector<CallFilter>();
-		// lets see if my new method works better
+
 		newCalls = new Vector<Call>(32);
 		listeners = new Vector<CallerListListener>();
 

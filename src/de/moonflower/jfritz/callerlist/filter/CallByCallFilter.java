@@ -10,9 +10,11 @@ import de.moonflower.jfritz.struct.Call;
 
 public class CallByCallFilter extends CallFilter {
 
-    private Vector filteredCallByCallProviders = new Vector();
+    private static final String type = FILTER_CALLBYCALL;
 
-    public CallByCallFilter(Vector providers) {
+	private Vector<String> filteredCallByCallProviders = new Vector<String>();
+
+    public CallByCallFilter(Vector<String> providers) {
     	filteredCallByCallProviders = providers;
     }
 
@@ -39,7 +41,11 @@ public class CallByCallFilter extends CallFilter {
     	return result;
     }
 
-	public void setCallbyCallProvider(Vector callByCallProvider) {
+    public Vector<String> getCallbyCallProviders(){
+    	return this.filteredCallByCallProviders;
+    }
+
+	public void setCallbyCallProvider(Vector<String> callByCallProvider) {
 		filteredCallByCallProviders = callByCallProvider;
 
 	}

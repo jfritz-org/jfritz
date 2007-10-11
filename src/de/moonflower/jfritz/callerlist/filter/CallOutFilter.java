@@ -5,6 +5,8 @@ import de.moonflower.jfritz.struct.CallType;
 
 public class CallOutFilter extends CallFilter {
 
+	private static final String type = FILTER_CALLOUT;
+
 	public CallOutFilter() {
 	}
 

@@ -20,6 +20,10 @@ public class DateFilter extends CallFilter {
 
 	private Date endDate;
 
+	private static final String type = FILTER_DATE;
+
+	public String specialType = " ";
+
 	public DateFilter(Date from, Date to) {
 		// make sure from is not after to
 		if (from.after(to)) {

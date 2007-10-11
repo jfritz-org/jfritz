@@ -5,6 +5,8 @@ import de.moonflower.jfritz.struct.CallType;
 
 public class CallInFailedFilter extends CallFilter {
 
+	private static final String type = FILTER_CALLINFAILED;
+
 	public CallInFailedFilter() {
 	}
 

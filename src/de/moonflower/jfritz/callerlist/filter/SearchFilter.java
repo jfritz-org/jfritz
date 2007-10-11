@@ -18,6 +18,10 @@ public class SearchFilter extends CallFilter {
 
 	private String part; //only for speedUp
 
+	private String text;
+
+	private static final String type = FILTER_SEARCH;
+
 	public SearchFilter(String s) {
 		setSearchString(s);
 	}
@@ -25,7 +29,8 @@ public class SearchFilter extends CallFilter {
 	//FEATURE reguläre Ausdrücke zulassen wird dann aber wohl super langsam
 
 	public void setSearchString(String s) {
-		parts = s.toLowerCase().split(" ");
+		parts = s.toLowerCase().trim().split(" ");
+		text = s.trim();
 		//Debug.msg("setting searchFilter to "+s);
 	}
 
@@ -63,5 +68,9 @@ public class SearchFilter extends CallFilter {
 			}
 		}
 		return false;
+	}
+
+	public String getSearchString(){
+		return text;
 	}
 }

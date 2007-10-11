@@ -104,51 +104,11 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	private static final String DELETE_ENTRY = "delete_entry";
 
-	private static final String FILTER_CALLBYCALL = "filter_callbycall";
 //	private static final String FILTER_CALLIN ="filter_callin";
-	private static final String FILTER_CALLIN_NOTHING = "filter_callin";
 //	private static final String FILTER_CALLIN_SELECTED = "filter_callin_show_selected";
 //	private static final String FILTER_CALLIN_INVERTED = "filter_callin_show_inverted";
 
-	public static final String FILTER_CALLINFAILED = "filter_callinfailed";
-
-	private static final String FILTER_CALLOUT = "filter_callout";
-
-	private static final String FILTER_COMMENT = "filter_comment";
-
-	private static final String FILTER_DATE = "filter_date";
-
-	private static final String FILTER_FIXED = "filter_fixed";
-
-	private static final String FILTER_HANDY = "filter_handy";
-
-	private static final String FILTER_ANONYM = "filter_number";
-
-	private static final String FILTER_SEARCH = "filter_search";
-
-	private static final String FILTER_SEARCH_TEXT = "filter_search.text";
-
-	private static final String FILTER_SIP = "filter_sip";
-
-	private static final long serialVersionUID = 1;
-
-	private static final String FILTER_DATE_END = "FILTER_DATE_END";
-
-	private static final String FILTER_DATE_START = "FILTER_DATE_START";
-
-	private static final String THIS_DAY = "date_filter.today";
-
-	private static final String LAST_DAY = "date_filter.yesterday";
-
-	private static final String THIS_WEEK = "date_filter.this_week";
-
-	private static final String LAST_WEEK = "date_filter.last_week";
-
-	private static final String THIS_MONTH = "date_filter.this_month";
-
-	private static final String LAST_MONTH = "date_filter.last_month";
-
-	private static final String FILTER_DATE_SPECIAL = "date_filter.special";
+	public static final long serialVersionUID = 1;
 
 	private String dateSpecialSaveString;
 
@@ -447,16 +407,16 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		upperToolBar.addSeparator();
 
 		callInFilterButton = new ThreeStateButton(getImageIcon("callin.png"));
-		callInFilterButton.setActionCommand(FILTER_CALLIN_NOTHING);
+		callInFilterButton.setActionCommand(CallFilter.FILTER_CALLIN_NOTHING);
 		callInFilterButton.addActionListener(this);
-		callInFilterButton.setToolTipText(Main.getMessage(FILTER_CALLIN_NOTHING));
+		callInFilterButton.setToolTipText(Main.getMessage(CallFilter.FILTER_CALLIN_NOTHING));
 
 		callInFailedFilterButton = new ThreeStateButton(
 				getImageIcon("callinfailed.png")); //$NON-NLS-1$
-		callInFailedFilterButton.setActionCommand(FILTER_CALLINFAILED);
+		callInFailedFilterButton.setActionCommand(CallFilter.FILTER_CALLINFAILED);
 		callInFailedFilterButton.addActionListener(this);
 		callInFailedFilterButton.setToolTipText(Main
-				.getMessage(FILTER_CALLINFAILED));
+				.getMessage(CallFilter.FILTER_CALLINFAILED));
 
 		JPopupMenu missedPopupMenu = new JPopupMenu();
 		JMenuItem menuItem;
@@ -475,55 +435,55 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		callInFailedFilterButton.addMouseListener(popupListener);
 
 		callOutFilterButton = new ThreeStateButton(getImageIcon("callout.png"));
-		callOutFilterButton.setActionCommand(FILTER_CALLOUT);
+		callOutFilterButton.setActionCommand(CallFilter.FILTER_CALLOUT);
 		callOutFilterButton.addActionListener(this);
-		callOutFilterButton.setToolTipText(Main.getMessage(FILTER_CALLOUT));
+		callOutFilterButton.setToolTipText(Main.getMessage(CallFilter.FILTER_CALLOUT));
 
 		anonymFilterButton = new ThreeStateButton(getImageIcon("mask.gif")); //$NON-NLS-1$
-		anonymFilterButton.setActionCommand(FILTER_ANONYM);
+		anonymFilterButton.setActionCommand(CallFilter.FILTER_ANONYM);
 		anonymFilterButton.addActionListener(this);
-		anonymFilterButton.setToolTipText(Main.getMessage(FILTER_ANONYM));
+		anonymFilterButton.setToolTipText(Main.getMessage(CallFilter.FILTER_ANONYM));
 
 		fixedFilterButton = new ThreeStateButton(getImageIcon("phone.png")); //$NON-NLS-1$
-		fixedFilterButton.setActionCommand(FILTER_FIXED);
+		fixedFilterButton.setActionCommand(CallFilter.FILTER_FIXED);
 		fixedFilterButton.addActionListener(this);
-		fixedFilterButton.setToolTipText(Main.getMessage(FILTER_FIXED));
+		fixedFilterButton.setToolTipText(Main.getMessage(CallFilter.FILTER_FIXED));
 
 		handyFilterButton = new ThreeStateButton(getImageIcon("handy.png")); //$NON-NLS-1$
-		handyFilterButton.setActionCommand(FILTER_HANDY);
+		handyFilterButton.setActionCommand(CallFilter.FILTER_HANDY);
 		handyFilterButton.addActionListener(this);
-		handyFilterButton.setToolTipText(Main.getMessage(FILTER_HANDY));
+		handyFilterButton.setToolTipText(Main.getMessage(CallFilter.FILTER_HANDY));
 
 		dateFilterButton = new ThreeStateButton(getImageIcon("calendar.png")); //$NON-NLS-1$
 
-		dateFilterButton.setActionCommand(FILTER_DATE);
+		dateFilterButton.setActionCommand(CallFilter.FILTER_DATE);
 		dateFilterButton.addActionListener(this);
-		dateFilterButton.setToolTipText(Main.getMessage(FILTER_DATE));
+		dateFilterButton.setToolTipText(Main.getMessage(CallFilter.FILTER_DATE));
 
 		JPopupMenu datePopupMenu = new JPopupMenu();
-		menuItem = new JMenuItem(Main.getMessage(THIS_DAY));
-		menuItem.setActionCommand(THIS_DAY);
+		menuItem = new JMenuItem(Main.getMessage(CallFilter.THIS_DAY));
+		menuItem.setActionCommand(CallFilter.THIS_DAY);
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
-		menuItem = new JMenuItem(Main.getMessage(LAST_DAY));
-		menuItem.setActionCommand(LAST_DAY);
+		menuItem = new JMenuItem(Main.getMessage(CallFilter.LAST_DAY));
+		menuItem.setActionCommand(CallFilter.LAST_DAY);
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
-		menuItem = new JMenuItem(Main.getMessage(THIS_WEEK));
-		menuItem.setActionCommand(THIS_WEEK);
+		menuItem = new JMenuItem(Main.getMessage(CallFilter.THIS_WEEK));
+		menuItem.setActionCommand(CallFilter.THIS_WEEK);
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
-		menuItem = new JMenuItem(Main.getMessage(LAST_WEEK));
-		menuItem.setActionCommand(LAST_WEEK);
+		menuItem = new JMenuItem(Main.getMessage(CallFilter.LAST_WEEK));
+		menuItem.setActionCommand(CallFilter.LAST_WEEK);
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
 
-		menuItem = new JMenuItem(Main.getMessage(THIS_MONTH));
-		menuItem.setActionCommand(THIS_MONTH);
+		menuItem = new JMenuItem(Main.getMessage(CallFilter.THIS_MONTH));
+		menuItem.setActionCommand(CallFilter.THIS_MONTH);
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
-		menuItem = new JMenuItem(Main.getMessage(LAST_MONTH));
-		menuItem.setActionCommand(LAST_MONTH);
+		menuItem = new JMenuItem(Main.getMessage(CallFilter.LAST_MONTH));
+		menuItem.setActionCommand(CallFilter.LAST_MONTH);
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
 		popupListener = new PopupListener(datePopupMenu);
@@ -539,28 +499,28 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		endDateChooser.addPropertyChangeListener("date", this);
 
 		sipFilterButton = new ThreeStateButton(getImageIcon("world.png")); //$NON-NLS-1$
-		sipFilterButton.setActionCommand(FILTER_SIP);
+		sipFilterButton.setActionCommand(CallFilter.FILTER_SIP);
 		sipFilterButton.addActionListener(this);
-		sipFilterButton.setToolTipText(Main.getMessage(FILTER_SIP));
+		sipFilterButton.setToolTipText(Main.getMessage(CallFilter.FILTER_SIP));
 
 		callByCallFilterButton = new ThreeStateButton(
 				getImageIcon("callbycall.png")); //$NON-NLS-1$
-		callByCallFilterButton.setActionCommand(FILTER_CALLBYCALL);
+		callByCallFilterButton.setActionCommand(CallFilter.FILTER_CALLBYCALL);
 		callByCallFilterButton.addActionListener(this);
 		callByCallFilterButton.setToolTipText(Main
-				.getMessage(FILTER_CALLBYCALL));
+				.getMessage(CallFilter.FILTER_CALLBYCALL));
 
 		commentFilterButton = new ThreeStateButton(
 				getImageIcon("commentFilter.png"));
-		commentFilterButton.setActionCommand(FILTER_COMMENT);
+		commentFilterButton.setActionCommand(CallFilter.FILTER_COMMENT);
 		commentFilterButton.addActionListener(this);
-		commentFilterButton.setToolTipText(Main.getMessage(FILTER_COMMENT));
+		commentFilterButton.setToolTipText(Main.getMessage(CallFilter.FILTER_COMMENT));
 
 		searchFilterButton = new ThreeStateButton(
 				getImageIcon("searchfilter.png"));
-		searchFilterButton.setActionCommand(FILTER_SEARCH);
+		searchFilterButton.setActionCommand(CallFilter.FILTER_SEARCH);
 		searchFilterButton.addActionListener(this);
-		searchFilterButton.setToolTipText(Main.getMessage(FILTER_SEARCH));
+		searchFilterButton.setToolTipText(Main.getMessage(CallFilter.FILTER_SEARCH));
 		searchFilterTextField = new JTextField(10);
 
 		deleteEntriesButton = new JButton();
@@ -677,36 +637,36 @@ public class CallerListPanel extends JPanel implements ActionListener,
 				ce.cancelCellEditing();
 			}
 		}
-		if (command.equals(FILTER_CALLIN_NOTHING)) {
+		if (command.equals(CallFilter.FILTER_CALLIN_NOTHING)) {
 			syncFilterWithButton(filter[callIn], callInFilterButton);
 			return;
 		}
-		if (command.equals(FILTER_CALLINFAILED)) {
+		if (command.equals(CallFilter.FILTER_CALLINFAILED)) {
 			syncFilterWithButton(filter[callInFailed], callInFailedFilterButton);
 			return;
 		}
-		if (command.equals(FILTER_CALLOUT)) {
+		if (command.equals(CallFilter.FILTER_CALLOUT)) {
 			syncFilterWithButton(filter[callOut], callOutFilterButton);
 			return;
 		}
-		if (command.equals(FILTER_COMMENT)) {
+		if (command.equals(CallFilter.FILTER_COMMENT)) {
 			syncFilterWithButton(filter[comment], commentFilterButton);
 			return;
 		}
-		if (command.equals(FILTER_ANONYM)) {
+		if (command.equals(CallFilter.FILTER_ANONYM)) {
 			syncFilterWithButton(filter[anonym], anonymFilterButton);
 			return;
 		}
-		if (command.equals(FILTER_FIXED)) {
+		if (command.equals(CallFilter.FILTER_FIXED)) {
 			syncFilterWithButton(filter[fixed], fixedFilterButton);
 			return;
 		}
-		if (command.equals(FILTER_HANDY)) {
+		if (command.equals(CallFilter.FILTER_HANDY)) {
 			syncFilterWithButton(filter[handy], handyFilterButton);
 			return;
 		}
 
-		if (command.equals(FILTER_SEARCH)) {
+		if (command.equals(CallFilter.FILTER_SEARCH)) {
 			if (searchFilterButton.getState() == ThreeStateButton.NOTHING) {
 				searchFilterTextField.setVisible(false);
 				searchLabel.setVisible(false);
@@ -729,7 +689,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			return;
 		}
 
-		if (command.equals(FILTER_DATE)) {
+		if (command.equals(CallFilter.FILTER_DATE)) {
 			syncFilterWithButton(filter[date], dateFilterButton);
 			if (dateFilterButton.getState() == ThreeStateButton.NOTHING) {
 				startDateChooser.setVisible(false);
@@ -783,28 +743,28 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			return;
 		}
 
-		if (command.equals(THIS_DAY)) {
+		if (command.equals(CallFilter.THIS_DAY)) {
 			setThisDayFilter();
 			return;
 		}
-		if (command.equals(LAST_DAY)) {
+		if (command.equals(CallFilter.LAST_DAY)) {
 			setLastDayFilter();
 			return;
 		}
-		if (command.equals(THIS_WEEK)) {
+		if (command.equals(CallFilter.THIS_WEEK)) {
 			setThisWeekFilter();
 			return;
 		}
-		if (command.equals(LAST_WEEK)) {
+		if (command.equals(CallFilter.LAST_WEEK)) {
 			setLastWeekFilter();
 			return;
 		}
 
-		if (command.equals(THIS_MONTH)) {
+		if (command.equals(CallFilter.THIS_MONTH)) {
 			setThisMonthFilter();
 			return;
 		}
-		if (command.equals(LAST_MONTH)) {
+		if (command.equals(CallFilter.LAST_MONTH)) {
 			setLastMonthFilter();
 			return;
 		}
@@ -837,12 +797,12 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			syncAllFilters();
 			return;
 		}
-		if (command.equals(FILTER_SIP)) {
+		if (command.equals(CallFilter.FILTER_SIP)) {
 			((SipFilter) filter[sip]).setProvider(getSelectedSipProvider(callerList));
 			syncFilterWithButton(filter[sip], sipFilterButton);
 			return;
 		}
-		if (command.equals(FILTER_CALLBYCALL)) {
+		if (command.equals(CallFilter.FILTER_CALLBYCALL)) {
 			((CallByCallFilter) filter[callByCall])
 					.setCallbyCallProvider(getSelectedCallByCallProvider(callerList));
 			syncFilterWithButton(filter[callByCall], callByCallFilterButton);
@@ -930,7 +890,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		endDateChooser.setDate(end);
 		startDateChooser.setVisible(true);
 		endDateChooser.setVisible(true);
-		dateSpecialSaveString = LAST_MONTH;
+		dateSpecialSaveString = CallFilter.LAST_MONTH;
 	}
 
 	/**
@@ -956,7 +916,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		endDateChooser.setDate(end);
 		startDateChooser.setVisible(true);
 		endDateChooser.setVisible(true);
-		dateSpecialSaveString = THIS_MONTH;
+		dateSpecialSaveString = CallFilter.THIS_MONTH;
 	}
 
 	/**
@@ -979,7 +939,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		endDateChooser.setDate(end);
 		startDateChooser.setVisible(true);
 		endDateChooser.setVisible(true);
-		dateSpecialSaveString = LAST_DAY;
+		dateSpecialSaveString = CallFilter.LAST_DAY;
 	}
 
 	/**
@@ -1005,7 +965,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		endDateChooser.setDate(end);
 		startDateChooser.setVisible(true);
 		endDateChooser.setVisible(true);
-		dateSpecialSaveString = LAST_WEEK;
+		dateSpecialSaveString = CallFilter.LAST_WEEK;
 	}
 
 	/**
@@ -1031,7 +991,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		endDateChooser.setDate(end);
 		startDateChooser.setVisible(true);
 		endDateChooser.setVisible(true);
-		dateSpecialSaveString = LAST_WEEK;
+		dateSpecialSaveString = CallFilter.LAST_WEEK;
 	}
 
 	/**
@@ -1052,7 +1012,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		endDateChooser.setDate(end);
 		startDateChooser.setVisible(true);
 		endDateChooser.setVisible(true);
-		dateSpecialSaveString = THIS_DAY;
+		dateSpecialSaveString = CallFilter.THIS_DAY;
 	}
 
 	/**
@@ -1061,7 +1021,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	public void keyPressed(KeyEvent arg0) {
 		if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
-			handleAction(FILTER_SEARCH);
+			handleAction(CallFilter.FILTER_SEARCH);
 			callerList.update();
 			statusBarController.fireStatusChanged(callerList.getTotalDuration());
 			return;
@@ -1085,7 +1045,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 * to react on the change events of the Datechoosers PropertyChangedListener
 	 */
 	public void propertyChange(PropertyChangeEvent evt) {
-		handleAction(FILTER_DATE);
+		handleAction(CallFilter.FILTER_DATE);
 		callerList.update();
 		statusBarController.fireStatusChanged(callerList.getTotalDuration());
 	}
@@ -1180,26 +1140,26 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 *
 	 */
 	private void saveButtonStatus() {
-		Main.setStateProperty(FILTER_SEARCH_TEXT, searchFilterTextField.getText());
-		Main.setStateProperty(FILTER_SEARCH, "" + searchFilterButton.getState());
-		Main.setStateProperty(FILTER_COMMENT, "" + commentFilterButton.getState());
-		Main.setStateProperty(FILTER_DATE, "" + dateFilterButton.getState());
+		Main.setStateProperty(CallFilter.FILTER_SEARCH_TEXT, searchFilterTextField.getText());
+		Main.setStateProperty(CallFilter.FILTER_SEARCH, "" + searchFilterButton.getState());
+		Main.setStateProperty(CallFilter.FILTER_COMMENT, "" + commentFilterButton.getState());
+		Main.setStateProperty(CallFilter.FILTER_DATE, "" + dateFilterButton.getState());
 		DateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm");
 		Date start = startDateChooser.getDate();
 		Date end = endDateChooser.getDate();
 
-		Main.setStateProperty(FILTER_DATE_START, df.format(start));
-		Main.setStateProperty(FILTER_DATE_END, df.format(end));
-		Main.setStateProperty(FILTER_DATE_SPECIAL, dateSpecialSaveString);
-		Main.setStateProperty(FILTER_SIP, "" + sipFilterButton.getState());
-		Main.setStateProperty(FILTER_CALLBYCALL, ""
+		Main.setStateProperty(CallFilter.FILTER_DATE_START, df.format(start));
+		Main.setStateProperty(CallFilter.FILTER_DATE_END, df.format(end));
+		Main.setStateProperty(CallFilter.FILTER_DATE_SPECIAL, dateSpecialSaveString);
+		Main.setStateProperty(CallFilter.FILTER_SIP, "" + sipFilterButton.getState());
+		Main.setStateProperty(CallFilter.FILTER_CALLBYCALL, ""
 				+ callByCallFilterButton.getState());
-		Main.setStateProperty(FILTER_CALLOUT, "" + callOutFilterButton.getState());
-		Main.setStateProperty(FILTER_ANONYM, "" + anonymFilterButton.getState());
-		Main.setStateProperty(FILTER_FIXED, "" + fixedFilterButton.getState());
-		Main.setStateProperty(FILTER_HANDY, "" + handyFilterButton.getState());
-		Main.setStateProperty(FILTER_CALLIN_NOTHING, "" + callInFilterButton.getState());
-		Main.setStateProperty(FILTER_CALLINFAILED, ""
+		Main.setStateProperty(CallFilter.FILTER_CALLOUT, "" + callOutFilterButton.getState());
+		Main.setStateProperty(CallFilter.FILTER_ANONYM, "" + anonymFilterButton.getState());
+		Main.setStateProperty(CallFilter.FILTER_FIXED, "" + fixedFilterButton.getState());
+		Main.setStateProperty(CallFilter.FILTER_HANDY, "" + handyFilterButton.getState());
+		Main.setStateProperty(CallFilter.FILTER_CALLIN_NOTHING, "" + callInFilterButton.getState());
+		Main.setStateProperty(CallFilter.FILTER_CALLINFAILED, ""
 				+ callInFailedFilterButton.getState());
 	}
 
@@ -1209,53 +1169,53 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	private void loadButtonStatus() {
 		Debug.msg("reading Buttons");
 		int state;
-		state = JFritzUtils.parseInt(Main.getStateProperty(FILTER_COMMENT, "0"));
+		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_COMMENT, "0"));
 		commentFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getStateProperty(FILTER_DATE, "0"));
+		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_DATE, "0"));
 		dateFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getStateProperty(FILTER_SIP, "0"));
+		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_SIP, "0"));
 		sipFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getStateProperty(FILTER_CALLBYCALL, "0"));
+		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_CALLBYCALL, "0"));
 		callByCallFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getStateProperty(FILTER_CALLOUT, "0"));
+		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_CALLOUT, "0"));
 		callOutFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getStateProperty(FILTER_ANONYM, "0"));
+		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_ANONYM, "0"));
 		anonymFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getStateProperty(FILTER_FIXED, "0"));
+		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_FIXED, "0"));
 		fixedFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getStateProperty(FILTER_HANDY, "0"));
+		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_HANDY, "0"));
 		handyFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getStateProperty(FILTER_CALLIN_NOTHING, "0"));
+		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_CALLIN_NOTHING, "0"));
 		callInFilterButton.setState(state);
 		state = JFritzUtils
-				.parseInt(Main.getStateProperty(FILTER_CALLINFAILED, "0"));
+				.parseInt(Main.getStateProperty(CallFilter.FILTER_CALLINFAILED, "0"));
 		callInFailedFilterButton.setState(state);
-		searchFilterTextField.setText(Main.getStateProperty(FILTER_SEARCH_TEXT, ""));
+		searchFilterTextField.setText(Main.getStateProperty(CallFilter.FILTER_SEARCH_TEXT, ""));
 
-		state = JFritzUtils.parseInt(Main.getStateProperty(FILTER_SEARCH, "0"));
+		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_SEARCH, "0"));
 		searchFilterButton.setState(state);
-		dateSpecialSaveString = Main.getStateProperty(FILTER_DATE_SPECIAL, " ");
+		dateSpecialSaveString = Main.getStateProperty(CallFilter.FILTER_DATE_SPECIAL, " ");
 		// Debug.msg(dateSpecialSaveString);
-		if (dateSpecialSaveString.equals(THIS_DAY)) {
+		if (dateSpecialSaveString.equals(CallFilter.THIS_DAY)) {
 			setThisDayFilter();
-		} else if (dateSpecialSaveString.equals(LAST_DAY)) {
+		} else if (dateSpecialSaveString.equals(CallFilter.LAST_DAY)) {
 			setLastDayFilter();
-		} else if (dateSpecialSaveString.equals(THIS_WEEK)) {
+		} else if (dateSpecialSaveString.equals(CallFilter.THIS_WEEK)) {
 			setThisWeekFilter();
-		} else if (dateSpecialSaveString.equals(LAST_WEEK)) {
+		} else if (dateSpecialSaveString.equals(CallFilter.LAST_WEEK)) {
 			setLastWeekFilter();
-		} else if (dateSpecialSaveString.equals(THIS_MONTH)) {
+		} else if (dateSpecialSaveString.equals(CallFilter.THIS_MONTH)) {
 			setThisMonthFilter();
-		} else if (dateSpecialSaveString.equals(LAST_MONTH)) {
+		} else if (dateSpecialSaveString.equals(CallFilter.LAST_MONTH)) {
 			setLastMonthFilter();
 		} else { // read data
 			DateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm");
 			Date start = new Date();
 			Date end = new Date();
 			try {
-				start = df.parse(Main.getStateProperty(FILTER_DATE_START,
+				start = df.parse(Main.getStateProperty(CallFilter.FILTER_DATE_START,
 						"11.11.11 11:11"));
-				end = df.parse(Main.getStateProperty(FILTER_DATE_END,
+				end = df.parse(Main.getStateProperty(CallFilter.FILTER_DATE_END,
 						"11.11.11 11:11"));
 				startDateChooser.setDate(start); // durch setDate wird über
 													// den

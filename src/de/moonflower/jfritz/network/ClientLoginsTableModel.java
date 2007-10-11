@@ -1,5 +1,7 @@
 package de.moonflower.jfritz.network;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Vector;
 
 import java.awt.Component;
@@ -24,9 +26,11 @@ import org.xml.sax.XMLReader;
 
 
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.callerlist.filter.*;
 import de.moonflower.jfritz.dialogs.config.PermissionsDialog;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
+import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class ClientLoginsTableModel extends AbstractTableModel{
 
@@ -127,6 +131,61 @@ public class ClientLoginsTableModel extends AbstractTableModel{
 				pw.println("\t\t<allowPhoneBookRemove>"+login.allowRemoveBook+"</allowPhoneBookRemove>");
 				pw.println("\t\t<allowDoLookup>"+login.allowLookup+"</allowDoLookup>");
 				pw.println("\t\t<allowGetCallList>"+login.allowGetList+"</allowGetCallList>");
+
+				//print all the filters set for this client
+				for(CallFilter callFilter: login.callFilters){
+
+						//save the basic state of the filter
+					pw.println("\t\t<callfilter type=\""+ callFilter.getType()+"\">");
+					pw.println("\t\t\t<enabled>"+callFilter.isEnabled()+"</enabled>");
+					pw.println("\t\t\t<inverted>"+callFilter.isInvert()+"</inverted>");
+
+					//process the filters that use extra information
+					if(callFilter.getType().equals(CallFilter.FILTER_CALLBYCALL)){
+						pw.print("\t\t\t<callbycall>");
+						CallByCallFilter cbcf = (CallByCallFilter) callFilter;
+						Vector<String> cbc = cbcf.getCallbyCallProviders();
+
+						for(String provider: cbc)
+							pw.print(provider+" ");
+
+						pw.println("</callbycall>");
+
+					}else if(callFilter.getType().equals(CallFilter.FILTER_DATE)){
+
+						DateFilter df = (DateFilter) callFilter;
+						//first check if this is special date filter
+						if(df.specialType.equals(CallFilter.THIS_DAY) ||
+								df.specialType.equals(CallFilter.THIS_MONTH) ||
+								df.specialType.equals(CallFilter.THIS_WEEK) ||
+								df.specialType.equals(CallFilter.LAST_DAY) ||
+								df.specialType.equals(CallFilter.LAST_MONTH) ||
+								df.specialType.equals(CallFilter.LAST_WEEK)){
+
+							pw.println("\t\t\t<special>"+df.specialType+"</special>");
+
+						}else{
+
+							DateFormat datef = new SimpleDateFormat("dd.MM.yy HH:mm");
+
+							pw.println("\t\t\t<start>"+datef.format(df.getStartDate())+"</start>");
+							pw.println("\t\t\t<end>"+datef.format(df.getEndDate())+"</end>");
+						}
+
+					}else if(callFilter.getType().equals(CallFilter.FILTER_SEARCH)){
+						SearchFilter sf = (SearchFilter) callFilter;
+						pw.println("\t\t\t<text>"+JFritzUtils.convertSpecialChars(sf.getSearchString())
+								+"</text>");
+
+					}else if(callFilter.getType().equals(CallFilter.FILTER_SIP)){
+						SipFilter sf = (SipFilter) callFilter;
+						pw.println("\t\t\t<providers>"+JFritzUtils.convertSpecialChars(sf.toString())
+								+"</providers>");
+					}
+
+					pw.println("\t\t</callfilter>");
+				}
+
 				pw.println("\t</client>");
 			}
 

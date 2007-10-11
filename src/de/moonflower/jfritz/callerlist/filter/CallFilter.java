@@ -5,6 +5,7 @@
 package de.moonflower.jfritz.callerlist.filter;
 
 import de.moonflower.jfritz.struct.Call;
+
 /**
  * Call Filter if a call should get throught tht filter the passFilter method must
  * return true.
@@ -18,6 +19,52 @@ import de.moonflower.jfritz.struct.Call;
 public abstract class CallFilter {
     private boolean invert = false;
     private boolean enabled = true;
+
+    //used for deteriming what kind of filter an instance is at run time
+    private static String type;
+
+	public static final String FILTER_CALLBYCALL = "filter_callbycall";
+
+	public static final String FILTER_CALLIN_NOTHING = "filter_callin";
+
+	public static final String FILTER_CALLINFAILED = "filter_callinfailed";
+
+	public static final String FILTER_CALLOUT = "filter_callout";
+
+	public static final String FILTER_COMMENT = "filter_comment";
+
+	public static final String FILTER_DATE = "filter_date";
+
+	public static final String FILTER_FIXED = "filter_fixed";
+
+	public static final String FILTER_HANDY = "filter_handy";
+
+	public static final String FILTER_ANONYM = "filter_number";
+
+	public static final String FILTER_SEARCH = "filter_search";
+
+	public static final String FILTER_SEARCH_TEXT = "filter_search.text";
+
+	public static final String FILTER_SIP = "filter_sip";
+
+	public static final String FILTER_DATE_END = "FILTER_DATE_END";
+
+	public static final String FILTER_DATE_START = "FILTER_DATE_START";
+
+	public static final String THIS_DAY = "date_filter.today";
+
+	public static final String LAST_DAY = "date_filter.yesterday";
+
+	public static final String THIS_WEEK = "date_filter.this_week";
+
+	public static final String LAST_WEEK = "date_filter.last_week";
+
+	public static final String THIS_MONTH = "date_filter.this_month";
+
+	public static final String LAST_MONTH = "date_filter.last_month";
+
+	public static final String FILTER_DATE_SPECIAL = "date_filter.special";
+
 
     /**
      * @return true if the Filter is enabled, else false
@@ -64,6 +111,10 @@ public abstract class CallFilter {
      */
 	public boolean isInvert() {
 		return invert;
+	}
+
+	public String getType(){
+		return type;
 	}
 }
 

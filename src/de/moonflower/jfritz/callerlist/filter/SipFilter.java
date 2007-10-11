@@ -10,9 +10,11 @@ import de.moonflower.jfritz.struct.Call;
 
 public class SipFilter extends CallFilter {
 
-	private Vector sipProviders = new Vector();
+	private Vector<String> sipProviders = new Vector<String>();
 
-	public SipFilter(Vector providers) {
+	private static final String type = FILTER_SIP;
+
+	public SipFilter(Vector<String> providers) {
 		this.sipProviders = providers;
 	}
 
@@ -39,7 +41,7 @@ public class SipFilter extends CallFilter {
     	return result;
     }
 
-	public void setProvider(Vector sipProvider) {
+	public void setProvider(Vector<String> sipProvider) {
 		this.sipProviders = sipProvider;
 
 	}

@@ -4,6 +4,8 @@ import de.moonflower.jfritz.struct.Call;
 
 public class FixedFilter extends CallFilter {
 
+	private static final String type = FILTER_FIXED;
+
 	public boolean passInternFilter(Call currentCall) {
 		if (currentCall.getPhoneNumber() != null
 				&& !currentCall.getPhoneNumber().isMobile())

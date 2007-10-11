@@ -5,6 +5,8 @@ import de.moonflower.jfritz.struct.CallType;
 
 public class CallInFilter extends CallFilter {
 
+	private static final String type = FILTER_CALLIN_NOTHING;
+
 	public CallInFilter() {
 	}
 

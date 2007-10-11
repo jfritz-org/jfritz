@@ -4,6 +4,8 @@ import de.moonflower.jfritz.struct.Call;
 
 public class HandyFilter extends CallFilter {
 
+	private static final String type = FILTER_HANDY;
+
 	public HandyFilter() {
 	}
 
