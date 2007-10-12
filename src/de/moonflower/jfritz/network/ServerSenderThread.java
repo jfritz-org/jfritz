@@ -92,7 +92,7 @@ public class ServerSenderThread extends Thread {
 						filterCallData((Vector<Call>) change.data);
 					}
 
-					Debug.msg("Writing data to client "+remoteAddress);
+					Debug.msg("Writing filtered data to client "+remoteAddress);
 
 					// now write it accross the socket connection while leaving the queue open for writing
 					try{
@@ -140,17 +140,18 @@ public class ServerSenderThread extends Thread {
 
 
 	/**
-	 * This function should filter the calls
+	 * This function filters the calls
 	 * before they are sent to the client
 	 *
-	 * @param calls
+	 * @param calls to be filtered
 	 */
 	public void filterCallData(Vector<Call> calls){
 
 		boolean passed = true;
 		filteredCalls = new Vector<Call>();
 
-		Debug.msg("Filtering outgoing call data for: "+this.remoteAddress);
+		Debug.msg("Filtering outgoing call data for: "+this.remoteAddress
+				+" size of calls: "+calls.size());
 		for(Call call: calls){
 
 			for(CallFilter cf: callFilters){
