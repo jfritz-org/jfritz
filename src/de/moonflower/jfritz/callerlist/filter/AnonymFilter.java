@@ -12,4 +12,8 @@ public class AnonymFilter extends CallFilter {
 			return true;
 		return false;
 	}
+
+	public String getType(){
+		return type;
+	}
 }

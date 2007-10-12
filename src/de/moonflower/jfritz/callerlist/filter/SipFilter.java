@@ -46,4 +46,8 @@ public class SipFilter extends CallFilter {
 
 	}
 
+	public String getType(){
+		return type;
+	}
+
 }

@@ -20,9 +20,6 @@ public abstract class CallFilter {
     private boolean invert = false;
     private boolean enabled = true;
 
-    //used for deteriming what kind of filter an instance is at run time
-    private static String type;
-
 	public static final String FILTER_CALLBYCALL = "filter_callbycall";
 
 	public static final String FILTER_CALLIN_NOTHING = "filter_callin";
@@ -113,8 +110,6 @@ public abstract class CallFilter {
 		return invert;
 	}
 
-	public String getType(){
-		return type;
-	}
+	public abstract String getType();
 }
 

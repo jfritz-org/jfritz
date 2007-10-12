@@ -73,4 +73,8 @@ public class SearchFilter extends CallFilter {
 	public String getSearchString(){
 		return text;
 	}
+
+	public String getType(){
+		return type;
+	}
 }

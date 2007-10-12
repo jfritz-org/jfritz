@@ -47,6 +47,10 @@ public class CallByCallFilter extends CallFilter {
 
 	public void setCallbyCallProvider(Vector<String> callByCallProvider) {
 		filteredCallByCallProviders = callByCallProvider;
-
 	}
+
+	public String getType(){
+		return type;
+	}
+
 }

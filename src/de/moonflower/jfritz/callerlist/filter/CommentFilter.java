@@ -12,4 +12,8 @@ public class CommentFilter extends CallFilter {
 			return false;
 		return true;
 	}
+
+	public String getType(){
+		return type;
+	}
 }

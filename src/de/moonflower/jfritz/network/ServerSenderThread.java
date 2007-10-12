@@ -162,6 +162,7 @@ public class ServerSenderThread extends Thread {
 			if(passed){
 				filteredCalls.add(call);
 			}
+			passed = true;
 		}
 
 		callChange.data = filteredCalls;

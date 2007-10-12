@@ -16,4 +16,8 @@ public class HandyFilter extends CallFilter {
 
 		return false;
 	}
+
+	public String getType(){
+		return type;
+	}
 }

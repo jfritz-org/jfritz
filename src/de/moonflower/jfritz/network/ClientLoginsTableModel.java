@@ -141,6 +141,11 @@ public class ClientLoginsTableModel extends AbstractTableModel{
 					pw.println("\t\t\t<inverted>"+callFilter.isInvert()+"</inverted>");
 
 					//process the filters that use extra information
+					if(callFilter.getType() == null){
+						Debug.msg("CallFilter type is null!");
+						break;
+					}
+
 					if(callFilter.getType().equals(CallFilter.FILTER_CALLBYCALL)){
 						pw.print("\t\t\t<callbycall>");
 						CallByCallFilter cbcf = (CallByCallFilter) callFilter;

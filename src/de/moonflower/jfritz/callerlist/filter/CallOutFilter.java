@@ -13,4 +13,8 @@ public class CallOutFilter extends CallFilter {
 	public boolean passInternFilter(Call currentCall) {
 		return (currentCall.getCalltype().toInt() == CallType.CALLOUT);
 	}
+
+	public String getType(){
+		return type;
+	}
 }

@@ -12,4 +12,8 @@ public class FixedFilter extends CallFilter {
 			return true;
 		return false;
 	}
+
+	public String getType(){
+		return type;
+	}
 }

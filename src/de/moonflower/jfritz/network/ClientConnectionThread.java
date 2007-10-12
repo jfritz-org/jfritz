@@ -97,7 +97,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 				contactUpdate.operation = DataChange.Operation.UPDATE;
 
 				// create the sender thread, start it up, and set it for the min priority
-				sender = new ServerSenderThread(objectOut, remoteAddress);
+				sender = new ServerSenderThread(objectOut, remoteAddress, login);
 				sender.start();
 				sender.setPriority(Thread.MIN_PRIORITY);
 
