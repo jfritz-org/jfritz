@@ -18,4 +18,11 @@ public class CallInFilter extends CallFilter {
 		return type;
 	}
 
+	public CallInFilter clone(){
+		CallInFilter cif = new CallInFilter();
+		cif.setEnabled(this.isEnabled());
+		cif.setInvert(this.isInvert());
+		return cif;
+	}
+
 }

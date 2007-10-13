@@ -20,4 +20,11 @@ public class HandyFilter extends CallFilter {
 	public String getType(){
 		return type;
 	}
+
+	public HandyFilter clone(){
+		HandyFilter hf = new HandyFilter();
+		hf.setEnabled(this.isEnabled());
+		hf.setInvert(this.isInvert());
+		return hf;
+	}
 }

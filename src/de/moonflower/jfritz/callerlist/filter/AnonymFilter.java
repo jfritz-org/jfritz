@@ -16,4 +16,11 @@ public class AnonymFilter extends CallFilter {
 	public String getType(){
 		return type;
 	}
+
+	public AnonymFilter clone(){
+		AnonymFilter af = new AnonymFilter();
+		af.setEnabled(this.isEnabled());
+		af.setInvert(this.isInvert());
+		return af;
+	}
 }

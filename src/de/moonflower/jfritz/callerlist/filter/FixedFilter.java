@@ -16,4 +16,11 @@ public class FixedFilter extends CallFilter {
 	public String getType(){
 		return type;
 	}
+
+	public FixedFilter clone(){
+		FixedFilter ff = new FixedFilter();
+		ff.setEnabled(this.isEnabled());
+		ff.setInvert(this.isInvert());
+		return ff;
+	}
 }

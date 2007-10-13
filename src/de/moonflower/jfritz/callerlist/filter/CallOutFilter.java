@@ -17,4 +17,12 @@ public class CallOutFilter extends CallFilter {
 	public String getType(){
 		return type;
 	}
+
+	public CallOutFilter clone(){
+		CallOutFilter cof = new CallOutFilter();
+		cof.setEnabled(this.isEnabled());
+		cof.setInvert(this.isInvert());
+		return cof;
+	}
+
 }

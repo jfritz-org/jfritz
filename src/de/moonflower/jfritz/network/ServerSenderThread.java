@@ -41,7 +41,7 @@ public class ServerSenderThread extends Thread {
 
 	private ConcurrentLinkedQueue<DataChange> changedObjects;
 
-	private Vector<CallFilter> callFilters;
+	private Login login;
 
 	private Vector<Call> filteredCalls;
 
@@ -54,7 +54,7 @@ public class ServerSenderThread extends Thread {
 		objectOut = oos;
 		remoteAddress = rAddress;
 		changedObjects = new ConcurrentLinkedQueue<DataChange>();
-		callFilters = login.callFilters;
+		this.login = login;
 		contactFilter = login.contactFilter;
 	}
 
@@ -149,6 +149,10 @@ public class ServerSenderThread extends Thread {
 
 		boolean passed = true;
 		filteredCalls = new Vector<Call>();
+
+		// always get the callFilters reference directly from the login object
+		// because this may change through user editing
+		Vector<CallFilter> callFilters = login.callFilters;
 
 		Debug.netMsg("Filtering outgoing call data for: "+this.remoteAddress
 				+" size of calls: "+calls.size());

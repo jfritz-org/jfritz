@@ -50,4 +50,10 @@ public class SipFilter extends CallFilter {
 		return type;
 	}
 
+	public SipFilter clone(){
+		SipFilter sf = new SipFilter((Vector<String>) sipProviders.clone());
+		sf.setEnabled(this.isEnabled());
+		sf.setInvert(this.isInvert());
+		return sf;
+	}
 }

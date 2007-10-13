@@ -77,4 +77,12 @@ public class SearchFilter extends CallFilter {
 	public String getType(){
 		return type;
 	}
+
+	public SearchFilter clone(){
+		SearchFilter sf = new SearchFilter(this.text);
+		sf.setEnabled(this.isEnabled());
+		sf.setInvert(this.isInvert());
+		return sf;
+	}
+
 }

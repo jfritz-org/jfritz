@@ -53,4 +53,12 @@ public class CallByCallFilter extends CallFilter {
 		return type;
 	}
 
+	public CallByCallFilter clone(){
+		CallByCallFilter cbcf = new CallByCallFilter((Vector<String>) this.filteredCallByCallProviders.clone());
+		cbcf.setEnabled(this.isEnabled());
+		cbcf.setInvert(this.isInvert());
+		return cbcf;
+
+	}
+
 }

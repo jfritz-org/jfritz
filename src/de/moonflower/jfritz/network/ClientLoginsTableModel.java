@@ -114,7 +114,12 @@ public class ClientLoginsTableModel extends AbstractTableModel{
 
 				if(resp == 0){
 					Debug.netMsg("Setting call filters for client: "+login.user);
-					login.callFilters = (Vector<CallFilter>) JFritz.getCallerList().getCallFilters().clone();
+
+					// stupid shallow cloning of java, we have to clone each callfilter individually!
+					login.callFilters = new Vector<CallFilter>();
+					for(CallFilter callFilter: JFritz.getCallerList().getCallFilters()){
+						login.callFilters.add(callFilter.clone());					}
+
 				}
 			}
 			break;

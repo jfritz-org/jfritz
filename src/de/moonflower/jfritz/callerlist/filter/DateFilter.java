@@ -72,4 +72,13 @@ public class DateFilter extends CallFilter {
 	public String getType(){
 		return type;
 	}
+
+	public DateFilter clone(){
+		DateFilter df = new DateFilter(startDate, endDate);
+		df.specialType = this.specialType;
+		df.setEnabled(this.isEnabled());
+		df.setInvert(this.isInvert());
+		return df;
+	}
+
 }

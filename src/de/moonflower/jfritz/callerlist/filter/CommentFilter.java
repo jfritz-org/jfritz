@@ -16,4 +16,12 @@ public class CommentFilter extends CallFilter {
 	public String getType(){
 		return type;
 	}
+
+	public CommentFilter clone(){
+		CommentFilter cf = new CommentFilter();
+		cf.setEnabled(this.isEnabled());
+		cf.setInvert(this.isInvert());
+		return cf;
+	}
+
 }

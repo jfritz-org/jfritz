@@ -17,4 +17,12 @@ public class CallInFailedFilter extends CallFilter {
 	public String getType(){
 		return type;
 	}
+
+	public CallInFailedFilter clone(){
+		CallInFailedFilter ciff = new CallInFailedFilter();
+		ciff.setEnabled(this.isEnabled());
+		ciff.setInvert(this.isInvert());
+		return ciff;
+	}
+
 }

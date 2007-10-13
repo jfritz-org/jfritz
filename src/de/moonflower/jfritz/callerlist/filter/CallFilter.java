@@ -16,7 +16,7 @@ import de.moonflower.jfritz.struct.Call;
  * @author marc
  *
  */
-public abstract class CallFilter {
+public abstract class CallFilter implements Cloneable {
     private boolean invert = false;
     private boolean enabled = true;
 
@@ -111,5 +111,8 @@ public abstract class CallFilter {
 	}
 
 	public abstract String getType();
+
+	public abstract CallFilter clone();
+
 }
 
