@@ -60,7 +60,7 @@ public class ServerSenderThread extends Thread {
 
 	public void run(){
 
-		Debug.msg("Sender thread for "+remoteAddress+" started up");
+		Debug.netMsg("Sender thread for "+remoteAddress+" started up");
 		while(!stop){
 
 			// if no changes are present then sleep
@@ -70,7 +70,7 @@ public class ServerSenderThread extends Thread {
 						wait();
 					}
 				}catch(InterruptedException e){
-					Debug.msg("A Server sender thread was interrupted!");
+					Debug.netMsg("A Server sender thread was interrupted!");
 				}
 
 			} else {
@@ -92,7 +92,7 @@ public class ServerSenderThread extends Thread {
 						filterCallData((Vector<Call>) change.data);
 					}
 
-					Debug.msg("Writing filtered data to client "+remoteAddress);
+					Debug.netMsg("Writing filtered data to client "+remoteAddress);
 
 					// now write it accross the socket connection while leaving the queue open for writing
 					try{
@@ -115,7 +115,7 @@ public class ServerSenderThread extends Thread {
 			}
 		}
 
-		Debug.msg("Sender Thread for "+remoteAddress+" stopping");
+		Debug.netMsg("Sender Thread for "+remoteAddress+" stopping");
 
 	}
 
@@ -150,7 +150,7 @@ public class ServerSenderThread extends Thread {
 		boolean passed = true;
 		filteredCalls = new Vector<Call>();
 
-		Debug.msg("Filtering outgoing call data for: "+this.remoteAddress
+		Debug.netMsg("Filtering outgoing call data for: "+this.remoteAddress
 				+" size of calls: "+calls.size());
 		for(Call call: calls){
 

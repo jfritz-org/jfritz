@@ -2176,4 +2176,8 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 		return newerCalls;
 	}
 
+	public Vector<CallFilter> getCallFilters(){
+		return filters;
+	}
+
 }

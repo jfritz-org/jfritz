@@ -24,7 +24,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
-
+import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.filter.*;
 import de.moonflower.jfritz.dialogs.config.PermissionsDialog;
@@ -32,6 +32,13 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
+/**
+ * This class is responsible for the displaying and managing
+ * the client settings and saving those settings to an xml file
+ *
+ * @author brian
+ *
+ */
 public class ClientLoginsTableModel extends AbstractTableModel{
 
 	public static final long serialVersionUID = 100;
@@ -88,6 +95,8 @@ public class ClientLoginsTableModel extends AbstractTableModel{
 		case 1:
 			login.password = value.toString();
 			break;
+
+			//set permissions button was clicked
 		case 2:
 			if(value instanceof JDialog){
 				PermissionsDialog dialog = new PermissionsDialog((JDialog) value,login);
@@ -95,7 +104,21 @@ public class ClientLoginsTableModel extends AbstractTableModel{
 				dialog.dispose();
 			}
 			break;
+
+			//set call filters button was clicked
 		case 3:
+
+			if(value instanceof JDialog){
+				int resp = JOptionPane.showConfirmDialog((Component) value, Main.getMessage("apply_filter_client"),
+					Main.getMessage("set_client_callfilter"), JOptionPane.YES_NO_OPTION);
+
+				if(resp == 0){
+					Debug.netMsg("Setting call filters for client: "+login.user);
+					login.callFilters = (Vector<CallFilter>) JFritz.getCallerList().getCallFilters().clone();
+				}
+			}
+			break;
+
 		case 4:
 			if(value instanceof JDialog){
 				JOptionPane.showMessageDialog((Component) value, "Function not yet implemented!!");

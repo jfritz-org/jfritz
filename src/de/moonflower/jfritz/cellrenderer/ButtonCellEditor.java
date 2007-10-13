@@ -9,7 +9,12 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JTable;
-
+/**
+ * This is used to make the editable buttons in the table
+ *
+ * @author brian
+ *
+ */
 public class ButtonCellEditor extends DefaultCellEditor {
 
 	public static final long serialVersionUID = 100;

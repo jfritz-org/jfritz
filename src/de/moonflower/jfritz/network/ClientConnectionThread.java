@@ -65,7 +65,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 	public void run(){
 
-		Debug.msg("Accepted incoming connection from "+remoteAddress);
+		Debug.netMsg("Accepted incoming connection from "+remoteAddress);
 
 		try{
 			objectOut = new ObjectOutputStream(socket.getOutputStream());
@@ -73,7 +73,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 			if((login = authenticateClient()) != null){
 
-				Debug.msg("Authentication for client "+remoteAddress+" successful!");
+				Debug.netMsg("Authentication for client "+remoteAddress+" successful!");
 				callsAdd = new DataChange<Call>();
 				callsAdd.destination = DataChange.Destination.CALLLIST;
 				callsAdd.operation = DataChange.Operation.ADD;
@@ -136,7 +136,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 				//currently only call list and phone book update
 				//requests are supported
 				o = objectIn.readObject();
-				Debug.msg("received request from "+remoteAddress);
+				Debug.netMsg("received request from "+remoteAddress);
 				if(o instanceof ClientDataRequest){
 
 					dataRequest = (ClientDataRequest) o;
@@ -146,17 +146,17 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 						if(dataRequest.operation == ClientDataRequest.Operation.GET){
 
 							if(dataRequest.timestamp != null){
-								Debug.msg("Received call list update request from "+remoteAddress);
-								Debug.msg("Timestamp: "+dataRequest.timestamp.toString());
+								Debug.netMsg("Received call list update request from "+remoteAddress);
+								Debug.netMsg("Timestamp: "+dataRequest.timestamp.toString());
 								callsAdded(JFritz.getCallerList().getNewerCalls(dataRequest.timestamp));
 							}else{
-								Debug.msg("Received complete call list request from "+remoteAddress);
+								Debug.netMsg("Received complete call list request from "+remoteAddress);
 								callsAdded(JFritz.getCallerList().getUnfilteredCallVector());
 							}
 
 						}else if(dataRequest.operation == ClientDataRequest.Operation.ADD && login.allowAddList){
 
-							Debug.msg("Received request to add "+dataRequest.data.size()+" calls from "+remoteAddress);
+							Debug.netMsg("Received request to add "+dataRequest.data.size()+" calls from "+remoteAddress);
 							synchronized(JFritz.getCallerList()){
 								callsAdded = true;
 								JFritz.getCallerList().addEntries(dataRequest.data);
@@ -165,7 +165,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 						}else if(dataRequest.operation == ClientDataRequest.Operation.REMOVE && login.allowRemoveList){
 
-							Debug.msg("Received request to remove "+dataRequest.data.size()+" calls from "+remoteAddress);
+							Debug.netMsg("Received request to remove "+dataRequest.data.size()+" calls from "+remoteAddress);
 							synchronized(JFritz.getCallerList()){
 								callsRemoved = true;
 								JFritz.getCallerList().removeEntries(dataRequest.data);
@@ -174,7 +174,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 						}else if(dataRequest.operation == ClientDataRequest.Operation.UPDATE && login.allowUpdateList){
 
-							Debug.msg("Received request to update a call from "+remoteAddress);
+							Debug.netMsg("Received request to update a call from "+remoteAddress);
 							synchronized(JFritz.getCallerList()){
 								callUpdated = true;
 								JFritz.getCallerList().updateEntry((Call) dataRequest.original, (Call) dataRequest.updated);
@@ -186,12 +186,12 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 						//determine what operation to carry out, if applicable
 						if(dataRequest.operation == ClientDataRequest.Operation.GET){
-							Debug.msg("Received complete phone book request from "+remoteAddress);
+							Debug.netMsg("Received complete phone book request from "+remoteAddress);
 							contactsAdded(JFritz.getPhonebook().getUnfilteredPersons());
 
 						}else if(dataRequest.operation == ClientDataRequest.Operation.ADD && login.allowAddBook){
 
-							Debug.msg("Received request to add "+dataRequest.data.size()+" contacts from "+remoteAddress);
+							Debug.netMsg("Received request to add "+dataRequest.data.size()+" contacts from "+remoteAddress);
 							synchronized(JFritz.getPhonebook()){
 								contactsAdded = true;
 								JFritz.getPhonebook().addEntries(dataRequest.data);
@@ -200,7 +200,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 						}else if(dataRequest.operation == ClientDataRequest.Operation.REMOVE && login.allowRemoveBook){
 
-							Debug.msg("Received request to remove "+dataRequest.data.size()+" contacts from "+remoteAddress);
+							Debug.netMsg("Received request to remove "+dataRequest.data.size()+" contacts from "+remoteAddress);
 							synchronized(JFritz.getPhonebook()){
 								contactsRemoved = true;
 								JFritz.getPhonebook().removeEntries(dataRequest.data);
@@ -208,7 +208,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 							}
 						}else if(dataRequest.operation == ClientDataRequest.Operation.UPDATE && login.allowUpdateBook){
 
-							Debug.msg("Received request to update a contact from "+remoteAddress);
+							Debug.netMsg("Received request to update a contact from "+remoteAddress);
 							synchronized(JFritz.getPhonebook()){
 								contactUpdated = true;
 								JFritz.getPhonebook().updateEntry((Person) dataRequest.original, (Person) dataRequest.updated);
@@ -217,30 +217,30 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 						}
 
 					}else{
-						Debug.msg("Request from "+remoteAddress+" contained no destination, ignoring");
+						Debug.netMsg("Request from "+remoteAddress+" contained no destination, ignoring");
 					}
 				}else if(o instanceof ClientActionRequest){
 					//client has requested to perform an action
 					actionRequest = (ClientActionRequest) o;
 					if(actionRequest.doLookup && login.allowLookup){
-						Debug.msg("Received request to do reverse lookup from "+remoteAddress);
+						Debug.netMsg("Received request to do reverse lookup from "+remoteAddress);
 						JFritz.getJframe().doLookupButtonClick();
 					}
 					if(actionRequest.getCallList && login.allowGetList){
-						Debug.msg("Received request to get call from the box from "+remoteAddress);
+						Debug.netMsg("Received request to get call from the box from "+remoteAddress);
 						JFritz.getJframe().doFetchButtonClick();
 					}
 
 				}else if(o instanceof String){
 					message = (String) o;
-					Debug.msg("Received message from client "+remoteAddress+": "+message);
+					Debug.netMsg("Received message from client "+remoteAddress+": "+message);
 					if(message.equals("JFRITZ CLOSE")){
-						Debug.msg("Client is closing the connection, closing this thread");
+						Debug.netMsg("Client is closing the connection, closing this thread");
 						disconnect();
 					}
 
 				}else{
-					Debug.msg("Received unexpected object from "+remoteAddress+" ignoring");
+					Debug.netMsg("Received unexpected object from "+remoteAddress+" ignoring");
 				}
 
 
@@ -250,7 +250,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 				e.printStackTrace();
 			}catch(SocketException e){
 				if(e.getMessage().equals("Socket closed")){
-					Debug.msg("socket for "+remoteAddress+" was closed!");
+					Debug.netMsg("socket for "+remoteAddress+" was closed!");
 				}else{
 					Debug.err(e.toString());
 					e.printStackTrace();
@@ -262,7 +262,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 				e.printStackTrace();
 				return;
 			}catch (IOException e){
-				Debug.msg("IOException occured reading client request");
+				Debug.netMsg("IOException occured reading client request");
 				e.printStackTrace();
 				return;
 			}
@@ -312,18 +312,18 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 							}
 						}
 					}else
-						Debug.msg("received unexpected object from client: "+o.toString());
+						Debug.netMsg("received unexpected object from client: "+o.toString());
 
 				}else
-					Debug.msg("received unexpected object from client: "+o.toString());
+					Debug.netMsg("received unexpected object from client: "+o.toString());
 			}
 
 		}catch(ClassNotFoundException e){
-			Debug.err("received unrecognized object from client!");
+			Debug.netMsg("received unrecognized object from client!");
 			Debug.err(e.toString());
 			e.printStackTrace();
 		}catch(IOException e){
-			Debug.err("Error authenticating client!");
+			Debug.netMsg("Error authenticating client!");
 			Debug.err(e.toString());
 			e.printStackTrace();
 		}
@@ -365,7 +365,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 			objectIn.close();
 			socket.close();
 		}catch(SocketException e){
-			Debug.msg("Error closing socket");
+			Debug.netMsg("Error closing socket");
 			Debug.err(e.toString());
 			e.printStackTrace();
 		}catch(IOException e){
@@ -387,7 +387,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 			return;
 		}
 
-		Debug.msg("Notifying client "+remoteAddress+" of added calls, size: "+newCalls.size());
+		Debug.netMsg("Notifying client "+remoteAddress+" of added calls, size: "+newCalls.size());
 		callsAdd.data =  newCalls;
 
 		sender.addChange(callsAdd.clone());
@@ -406,7 +406,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 			return;
 		}
 
-		Debug.msg("Notifying client "+remoteAddress+" of removed calls, size: "+removedCalls.size());
+		Debug.netMsg("Notifying client "+remoteAddress+" of removed calls, size: "+removedCalls.size());
 		callsRemove.data = removedCalls;
 
 		sender.addChange(callsRemove.clone());
@@ -420,7 +420,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 		if(callUpdated)
 			return;
 
-		Debug.msg("Notifying client "+remoteAddress+" of updated call");
+		Debug.netMsg("Notifying client "+remoteAddress+" of updated call");
 		callUpdate.original = original;
 		callUpdate.updated = updated;
 
@@ -438,7 +438,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 		if(contactsAdded)
 			return;
 
-		Debug.msg("Notifying client "+remoteAddress+" of added contacts, size: "+newContacts.size());
+		Debug.netMsg("Notifying client "+remoteAddress+" of added contacts, size: "+newContacts.size());
 		contactsAdd.data = newContacts;
 
 		sender.addChange(contactsAdd.clone());
@@ -455,7 +455,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 		if(contactsRemoved)
 			return;
 
-		Debug.msg("Notifying client "+remoteAddress+" of removed contacts, size: "+removedContacts.size());
+		Debug.netMsg("Notifying client "+remoteAddress+" of removed contacts, size: "+removedContacts.size());
 		contactsRemove.data = removedContacts;
 
 		sender.addChange(contactsRemove.clone());
@@ -471,7 +471,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 		if(contactUpdated)
 			return;
 
-		Debug.msg("Notifying client "+remoteAddress+" of updated contact");
+		Debug.netMsg("Notifying client "+remoteAddress+" of updated contact");
 		contactUpdate.original = original;
 		contactUpdate.updated = updated;
 
@@ -482,7 +482,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 	 * part of CallMonitorListener
 	 */
     public void pendingCallIn(Call call){
-		Debug.msg("Notifying client "+remoteAddress+" of pending call in");
+		Debug.netMsg("Notifying client "+remoteAddress+" of pending call in");
 		callMonitor.original = call;
 		callMonitor.operation = DataChange.Operation.ADD;
 
@@ -494,7 +494,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 	 * part of CallMonitorListener
 	 */
     public void establishedCallIn(Call call){
-		Debug.msg("Notifying client "+remoteAddress+" of established call in");
+		Debug.netMsg("Notifying client "+remoteAddress+" of established call in");
 		callMonitor.original = call;
 		callMonitor.operation = DataChange.Operation.UPDATE;
 
@@ -506,7 +506,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 	 * part of CallMonitorListener
 	 */
     public void pendingCallOut(Call call){
-		Debug.msg("Notifying client "+remoteAddress+" of pending call out");
+		Debug.netMsg("Notifying client "+remoteAddress+" of pending call out");
 		callMonitor.updated = call;
 		callMonitor.operation = DataChange.Operation.ADD;
 
@@ -518,7 +518,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 	 * part of CallMonitorListener
 	 */
     public void establishedCallOut(Call call){
-		Debug.msg("Notifying client "+remoteAddress+" of pending call");
+		Debug.netMsg("Notifying client "+remoteAddress+" of pending call");
 		callMonitor.updated = call;
 		callMonitor.operation = DataChange.Operation.UPDATE;
 
@@ -530,7 +530,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 	 * part of CallMonitorListener
 	 */
     public void endOfCall(Call call){
-		Debug.msg("Notifying client "+remoteAddress+" of pending call");
+		Debug.netMsg("Notifying client "+remoteAddress+" of pending call");
 		callMonitor.original = call;
 		callMonitor.operation = DataChange.Operation.REMOVE;
 

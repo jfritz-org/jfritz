@@ -114,6 +114,25 @@ public class Debug {
 	}
 
 	/**
+	 * This is a modified message function, used by the network subsystem
+	 * so the debug output is more readable
+	 *
+	 * @param message
+	 */
+	public static void netMsg(String message){
+
+		message = "(" + getCurrentTime() + ") NETWORK: " + message; //$NON-NLS-1$,  //$NON-NLS-2$
+		System.out.println(message);
+
+		// if both verbose mode and logging enabled, make sure output
+		// still lands on the console as well!
+		if (logFile && verboseMode) {
+			originalOut.println(message);
+		}
+
+	}
+
+	/**
 	 * Print error-message
 	 *
 	 * @param message

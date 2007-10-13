@@ -50,7 +50,7 @@ public class ClientConnectionListener extends Thread {
 					serverSocket = new ServerSocket(Integer.parseInt(
 							Main.getProperty("clients.port", "4455")));
 
-					Debug.msg("Listening for client connections on: "+
+					Debug.netMsg("Listening for client connections on: "+
 							Main.getProperty("clients.port", "4455"));
 					isListening = true;
 					NetworkStateMonitor.serverStateChanged();
@@ -61,14 +61,14 @@ public class ClientConnectionListener extends Thread {
 
 							synchronized(this){
 								try{
-									Debug.msg("Max number of clients reached, waiting for one to quit");
+									Debug.netMsg("Max number of clients reached, waiting for one to quit");
 									wait();
 								}catch(InterruptedException e){
 									Debug.err("client listener interrupted while waiting for connection to close!");
 								}
 							}
 						}else{
-							Debug.msg("Client Connection Listener waiting for incoming connection");
+							Debug.netMsg("Client Connection Listener waiting for incoming connection");
 							ClientConnectionThread connection = new ClientConnectionThread(serverSocket.accept(), this);
 
 							synchronized(this){
@@ -83,7 +83,7 @@ public class ClientConnectionListener extends Thread {
 
 				}catch(SocketException e){
 					if(e.getMessage().equals("Socket closed"))
-						Debug.msg("Server socket closed!");
+						Debug.netMsg("Server socket closed!");
 					else{
 						Debug.err(e.toString());
 						e.printStackTrace();
@@ -95,11 +95,11 @@ public class ClientConnectionListener extends Thread {
 					Debug.err(e.toString());
 					e.printStackTrace();
 				}
-				Debug.msg("Client connection listener stopped");
+				Debug.netMsg("Client connection listener stopped");
 				isListening = false;
 				listen = false;
 
-				Debug.msg("Closing all open client connections");
+				Debug.netMsg("Closing all open client connections");
 				synchronized(this){
 					for(ClientConnectionThread client: connectedClients)
 						client.closeConnection();
@@ -108,7 +108,7 @@ public class ClientConnectionListener extends Thread {
 				NetworkStateMonitor.serverStateChanged();
 			}
 		}
-		Debug.msg("ClientConnectionListener thread quitting");
+		Debug.netMsg("ClientConnectionListener thread quitting");
 
 	}
 
@@ -148,7 +148,7 @@ public class ClientConnectionListener extends Thread {
 	 */
 	public synchronized void stopListening(){
 		listen = false;
-		Debug.msg("Stopping client listener!");
+		Debug.netMsg("Stopping client listener!");
 		try{
 			serverSocket.close();
 

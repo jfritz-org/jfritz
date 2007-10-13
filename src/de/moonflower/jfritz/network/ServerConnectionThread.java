@@ -87,7 +87,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 	 */
 	public synchronized void disconnectFromServer(){
 		try{
-			Debug.msg("Writing disconnect message to the server");
+			Debug.netMsg("Writing disconnect message to the server");
 			objectOut.writeObject("JFRITZ CLOSE");
 			objectOut.flush();
 			objectOut.close();
@@ -124,15 +124,15 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 				user = Main.getProperty("server.login", "");
 				password = Encryption.decrypt(Main.getProperty("server.password", ""));
 
-				Debug.msg("Attempting to connect to server");
-				Debug.msg("Server: "+ server);
-				Debug.msg("Port: "+port);
-				Debug.msg("User: "+user);
-				Debug.msg("Pass: "+password);
+				Debug.netMsg("Attempting to connect to server");
+				Debug.netMsg("Server: "+ server);
+				Debug.netMsg("Port: "+port);
+				Debug.netMsg("User: "+user);
+				Debug.netMsg("Pass: "+password);
 
 				try{
 					socket = new Socket(server, port);
-					Debug.msg("successfully connected to server, authenticating");
+					Debug.netMsg("successfully connected to server, authenticating");
 
 					//set timeout in case server thread is not functioning properly
 					socket.setSoTimeout(15000);
@@ -140,7 +140,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 					objectIn = new ObjectInputStream(socket.getInputStream());
 
 					if(authenticateWithServer(user, password)){
-						Debug.msg("Successfully authenticated with server");
+						Debug.netMsg("Successfully authenticated with server");
 						isConnected = true;
 						NetworkStateMonitor.clientStateChanged();
 
@@ -165,7 +165,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 						JFritz.getPhonebook().removeListener(this);
 
 					}else{
-						Debug.msg("Authentication failed!");
+						Debug.netMsg("Authentication failed!");
 						Debug.errDlg(Main.getMessage("authentification_failed"));
 
 					}
@@ -193,7 +193,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 			}
 
-			Debug.msg("Connection to server closed");
+			Debug.netMsg("Connection to server closed");
 			//TODO: Cleanup code here!
 		}
 	}
@@ -214,7 +214,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			if(o instanceof String){
 
 				response = (String) o;
-				Debug.msg("Connected to JFritz Server: "+response);
+				Debug.netMsg("Connected to JFritz Server: "+response);
 
 				for(int i=0; i < 3; i++){
 					objectOut.writeObject(user);
@@ -231,15 +231,15 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 						}
 
 						else if(response.equals("JFRITZ 1.0 INVALID"))
-							Debug.msg("login attempt refused by server");
+							Debug.netMsg("login attempt refused by server");
 						else
-							Debug.msg("unrecognized response from server: "+response);
+							Debug.netMsg("unrecognized response from server: "+response);
 					}else
-						Debug.msg("unexpected object received from server: "+o.toString());
+						Debug.netMsg("unexpected object received from server: "+o.toString());
 
 				}
 			}else
-				Debug.msg("Server identification invalid, canceling login attempt: "+o.toString());
+				Debug.netMsg("Server identification invalid, canceling login attempt: "+o.toString());
 
 		}catch(ClassNotFoundException e){
 			Debug.err("Server authentication response invalid!");
@@ -269,7 +269,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 	 */
 	private synchronized void synchronizeWithServer(){
 
-		Debug.msg("Requesting updates from server");
+		Debug.netMsg("Requesting updates from server");
 		try{
 			callListRequest.operation = ClientDataRequest.Operation.GET;
 			callListRequest.timestamp = JFritz.getCallerList().getLastCallDate();
@@ -302,7 +302,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 		Object o;
 		String message;
 
-		Debug.msg("Listening for commands from server");
+		Debug.netMsg("Listening for commands from server");
 		while(true){
 			try{
 				o = objectIn.readObject();
@@ -313,7 +313,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 							if(change.operation == DataChange.Operation.ADD){
 
 								vCalls = (Vector<Call>) change.data;
-								Debug.msg("Received request to add "+vCalls.size()+" calls");
+								Debug.netMsg("Received request to add "+vCalls.size()+" calls");
 
 								//lock the call list so the new entries don't ping pong back and forth
 								synchronized(JFritz.getCallerList()){
@@ -325,7 +325,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 							}else if(change.operation == DataChange.Operation.REMOVE){
 
 								vCalls = (Vector<Call>) change.data;
-								Debug.msg("Received request to remove "+vCalls.size()+" calls");
+								Debug.netMsg("Received request to remove "+vCalls.size()+" calls");
 
 								synchronized(JFritz.getCallerList()){
 									callsRemoved = true;
@@ -335,7 +335,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 							}else if(change.operation == DataChange.Operation.UPDATE){
 
-								Debug.msg("Received request to upate a call");
+								Debug.netMsg("Received request to upate a call");
 								synchronized(JFritz.getCallerList()){
 									callUpdated=true;
 									JFritz.getCallerList().updateEntry((Call) change.original, (Call) change.updated);
@@ -347,7 +347,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 							if(change.operation == DataChange.Operation.ADD){
 
 								vPersons = (Vector<Person>) change.data;
-								Debug.msg("Received request to add "+vPersons.size()+" contacts");
+								Debug.netMsg("Received request to add "+vPersons.size()+" contacts");
 
 								synchronized(JFritz.getCallerList()){
 									contactsAdded = true;
@@ -358,7 +358,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 							}else if(change.operation == DataChange.Operation.REMOVE){
 
 								vPersons = (Vector<Person>) change.data;
-								Debug.msg("Received request to remove "+vPersons.size()+" contacts");
+								Debug.netMsg("Received request to remove "+vPersons.size()+" contacts");
 
 								synchronized(JFritz.getPhonebook()){
 									contactsRemoved = true;
@@ -368,7 +368,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 							}else if(change.operation == DataChange.Operation.UPDATE){
 
-								Debug.msg("Recieved request to update a contact");
+								Debug.netMsg("Recieved request to update a contact");
 
 								synchronized(JFritz.getPhonebook()){
 									contactUpdated = true;
@@ -382,7 +382,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 								&& Boolean.parseBoolean(Main.getProperty("option.callmonitorStarted", "false"))
 								&& Main.getProperty("option.callMonitorType", "0").equals("6")){
 
-							Debug.msg("Call monitor event received from server");
+							Debug.netMsg("Call monitor event received from server");
 							//call in or disconnect event received
 							String[] ignoredMSNs = Main.getProperty("option.callmonitor.ignoreMSN","").trim().split(";");
 							boolean ignoreIt = false;
@@ -393,7 +393,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 								// see if we need to ignore this call
 								for (int i = 0; i < ignoredMSNs.length; i++) {
-						            Debug.msg(ignoredMSNs[i]);
+						            Debug.netMsg(ignoredMSNs[i]);
 						            if (!ignoredMSNs[i].equals(""))
 						                if (c.getRoute()
 						                        .equals(ignoredMSNs[i])) {
@@ -458,23 +458,23 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 							}
 
 						}else{
-							Debug.msg("destination not chosen for incoming data, ignoring!");
+							Debug.netMsg("destination not chosen for incoming data, ignoring!");
 						}
 
 				}else if(o instanceof String){ //message received from the server
 
 					message = (String) o;
-					Debug.msg("Received message from server: "+message);
+					Debug.netMsg("Received message from server: "+message);
 
 					if(message.equals("JFRITZ CLOSE")){
-						Debug.msg("Closing connection with server!");
+						Debug.netMsg("Closing connection with server!");
 						disconnect();
 						return;
 					} //TODO: Add other messages here if necessary
 
 				}else {
-					Debug.msg(o.toString());
-					Debug.msg("received unexpected object, ignoring!");
+					Debug.netMsg(o.toString());
+					Debug.netMsg("received unexpected object, ignoring!");
 				}
 
 			}catch(ClassNotFoundException e){
@@ -483,7 +483,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 				e.printStackTrace();
 			}catch(SocketException e){
 				if(e.getMessage().equals("Socket closed")){
-					Debug.msg("Socket closed");	//we closed the socket as requested by the user
+					Debug.netMsg("Socket closed");	//we closed the socket as requested by the user
 				}else{
 					Debug.err(e.toString());
 					e.printStackTrace();
@@ -567,7 +567,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 		if(callsAdded)
 			return;
 
-		Debug.msg("Notifying the server of added calls, size: "+newCalls.size());
+		Debug.netMsg("Notifying the server of added calls, size: "+newCalls.size());
 		callListRequest.data = newCalls;
 		callListRequest.operation = ClientDataRequest.Operation.ADD;
 
@@ -592,7 +592,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 		if(callsRemoved)
 			return;
 
-		Debug.msg("Notifying the server of removed calls, size: "+removedCalls.size());
+		Debug.netMsg("Notifying the server of removed calls, size: "+removedCalls.size());
 		callListRequest.data = removedCalls;
 		callListRequest.operation = ClientDataRequest.Operation.REMOVE;
 
@@ -615,7 +615,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 		if(callUpdated)
 			return;
 
-		Debug.msg("Notifying server of updated call");
+		Debug.netMsg("Notifying server of updated call");
 		callListRequest.operation = ClientDataRequest.Operation.UPDATE;
 		callListRequest.original = original;
 		callListRequest.updated = updated;
@@ -644,7 +644,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 		if(contactsAdded)
 			return;
 
-		Debug.msg("Notifying the server of added contacts, size: "+newContacts.size());
+		Debug.netMsg("Notifying the server of added contacts, size: "+newContacts.size());
 		phoneBookRequest.data = newContacts;
 		phoneBookRequest.operation = ClientDataRequest.Operation.ADD;
 
@@ -667,7 +667,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 		if(contactsRemoved)
 			return;
 
-		Debug.msg("Notifying the server of removed contacts, size: "+removedContacts.size());
+		Debug.netMsg("Notifying the server of removed contacts, size: "+removedContacts.size());
 		phoneBookRequest.data = removedContacts;
 		phoneBookRequest.operation = ClientDataRequest.Operation.REMOVE;
 

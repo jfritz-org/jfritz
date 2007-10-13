@@ -346,7 +346,7 @@ public class ClientLoginsXMLHandler extends DefaultHandler{
 					allowPhoneBookRemove, allowLookup, allowGetCallList,
 					callFilters, "");
 			ClientLoginsTableModel.addLogin(login);
-			Debug.msg("Adding client login: "+username+" with "+ callFilters.size()+" Filters");
+			Debug.netMsg("Adding client login: "+username+" with "+ callFilters.size()+" Filters");
 		}
 	}
 
