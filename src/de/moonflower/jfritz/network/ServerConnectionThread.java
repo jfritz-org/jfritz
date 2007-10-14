@@ -1,5 +1,7 @@
 package de.moonflower.jfritz.network;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -10,7 +12,13 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
+import java.security.*;
+import java.security.spec.InvalidKeySpecException;
+
 import java.util.Vector;
+
+import javax.crypto.*;
+import javax.crypto.spec.*;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
@@ -135,7 +143,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 					Debug.netMsg("successfully connected to server, authenticating");
 
 					//set timeout in case server thread is not functioning properly
-					socket.setSoTimeout(15000);
+					socket.setSoTimeout(25000);
 					objectOut = new ObjectOutputStream(socket.getOutputStream());
 					objectIn = new ObjectInputStream(socket.getInputStream());
 
@@ -208,51 +216,114 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 	private boolean authenticateWithServer(String user, String password){
 		Object o;
 		String response;
+		byte[] dataKey;
+
 		try{
 
 			o = objectIn.readObject();
 			if(o instanceof String){
 
+				//write out the username to the server and close the stream to free all resources
 				response = (String) o;
 				Debug.netMsg("Connected to JFritz Server: "+response);
+				objectOut.writeObject(user);
+				objectOut.flush();
 
-				for(int i=0; i < 3; i++){
-					objectOut.writeObject(user);
-					objectOut.writeObject(password);
-					objectOut.flush();
+				// compute the password md5 hash to get our authentication key
+				MessageDigest md = MessageDigest.getInstance("MD5");
+				md.update(password.getBytes());
+
+				// create our first private key, the auth key for authentication with the client
+				DESKeySpec desKeySpec = new DESKeySpec(md.digest());
+				SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
+				SecretKey secretKey = keyFactory.generateSecret(desKeySpec);
+
+				// create the first cipher
+				Cipher desCipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
+				desCipher.init(Cipher.DECRYPT_MODE, secretKey);
+
+				//create the auth object output stream
+				BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
+				BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
+				CipherInputStream cis = new CipherInputStream(bis, desCipher);
+				objectIn = new ObjectInputStream(cis);
+
+				// read in our data key, encoded with the authentication key
+				// and then close all resources associated with it
+				o = objectIn.readObject();
+				if(o instanceof byte[]){
+					dataKey = (byte[]) o;
+
+					//create the second private key,  the data key
+					desKeySpec = new DESKeySpec(dataKey);
+					secretKey = keyFactory.generateSecret(desKeySpec);
+
+					//prepare the two data key ciphers
+					Cipher inCipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
+					Cipher outCipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
+					inCipher.init(Cipher.DECRYPT_MODE, secretKey);
+					outCipher.init(Cipher.ENCRYPT_MODE, secretKey);
+
+					//create the new object streams
+					cis = new CipherInputStream(bis, inCipher);
+					CipherOutputStream cos = new CipherOutputStream(bos, outCipher);
+					objectIn = new ObjectInputStream(cis);
+					objectOut = new ObjectOutputStream(cos);
+
+					//write the server our OK encoded with our new data key
+					objectOut.writeObject("OK");
 					o = objectIn.readObject();
-
 					if(o instanceof String){
-						response = (String) o;
-						if(response.equals("JFRITZ 1.0 OK")){
-							//remove timeout, no need since all communcation is asynchronous anyways
-							socket.setSoTimeout(0);
+						if(o.equals("OK")){		//server unstands us and we understand it
 							return true;
+						}else{
+							Debug.netMsg("Server sent wrong string as response to authentication challenge!");
 						}
+					}else{
+						Debug.netMsg("Server sent wrong object as response to authentication challenge!");
+					}
 
-						else if(response.equals("JFRITZ 1.0 INVALID"))
-							Debug.netMsg("login attempt refused by server");
-						else
-							Debug.netMsg("unrecognized response from server: "+response);
-					}else
-						Debug.netMsg("unexpected object received from server: "+o.toString());
 
+				}else {
+					Debug.netMsg("Server sent wrong type for data key!");
 				}
-			}else
-				Debug.netMsg("Server identification invalid, canceling login attempt: "+o.toString());
+			}
 
 		}catch(ClassNotFoundException e){
 			Debug.err("Server authentication response invalid!");
 			Debug.err(e.toString());
 			e.printStackTrace();
+
+		}catch(NoSuchAlgorithmException e){
+			Debug.netMsg("MD5 Algorithm not present in this JVM!");
+			Debug.err(e.toString());
+			e.printStackTrace();
+
+		}catch(InvalidKeySpecException e){
+			Debug.netMsg("Error generating cipher, problems with key spec?");
+			Debug.err(e.toString());
+			e.printStackTrace();
+
+		}catch(InvalidKeyException e){
+			Debug.netMsg("Error genertating cipher, problems with key?");
+			Debug.err(e.toString());
+			e.printStackTrace();
+
+		}catch(NoSuchPaddingException e){
+			Debug.netMsg("Error generating cipher, problems with padding?");
+			Debug.err(e.toString());
+			e.printStackTrace();
+
 		}catch(EOFException e){
 			Debug.err("Server closed Stream unexpectedly!");
 			Debug.err(e.toString());
 			e.printStackTrace();
+
 		}catch(SocketTimeoutException e){
 			Debug.err("Read timeout while authenticating with server!");
 			Debug.err(e.toString());
 			e.printStackTrace();
+
 		}catch(IOException e){
 			Debug.err("Error reading response during authentication!");
 			Debug.err(e.toString());

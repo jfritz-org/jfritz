@@ -32,7 +32,7 @@ public class ClientConnectionListener extends Thread {
 	private static boolean quit = false;
 
 	public void run(){
-		Debug.msg("client connection listener started");
+		Debug.netMsg("client connection listener started");
 		connectedClients = new Vector<ClientConnectionThread>();
 		while(!quit){
 			if(!listen){
@@ -57,6 +57,7 @@ public class ClientConnectionListener extends Thread {
 
 					while(listen){
 
+						//make sure we dont exceed our maximum amount of connections
 						if(Integer.parseInt(Main.getProperty("max.Connections", "1")) <= connectedClients.size()){
 
 							synchronized(this){
@@ -68,6 +69,7 @@ public class ClientConnectionListener extends Thread {
 								}
 							}
 						}else{
+							// we have at least one more connection slot free
 							Debug.netMsg("Client Connection Listener waiting for incoming connection");
 							ClientConnectionThread connection = new ClientConnectionThread(serverSocket.accept(), this);
 
