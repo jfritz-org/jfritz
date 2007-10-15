@@ -58,6 +58,10 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 	private ObjectOutputStream objectOut;
 
+	private Cipher inCipher;
+
+	private Cipher outCipher;
+
 	private ClientDataRequest<Call> callListRequest;
 
 	private ClientDataRequest<Person> phoneBookRequest;
@@ -242,15 +246,10 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 				Cipher desCipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
 				desCipher.init(Cipher.DECRYPT_MODE, secretKey);
 
-				//create the auth object output stream
-				BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
-				BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
-				CipherInputStream cis = new CipherInputStream(bis, desCipher);
-				objectIn = new ObjectInputStream(cis);
-
 				// read in our data key, encoded with the authentication key
 				// and then close all resources associated with it
-				o = objectIn.readObject();
+				SealedObject sealedObject = (SealedObject)objectIn.readObject();
+				o = sealedObject.getObject(desCipher);
 				if(o instanceof byte[]){
 					dataKey = (byte[]) o;
 
@@ -259,20 +258,17 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 					secretKey = keyFactory.generateSecret(desKeySpec);
 
 					//prepare the two data key ciphers
-					Cipher inCipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
-					Cipher outCipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
+					inCipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
+					outCipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
 					inCipher.init(Cipher.DECRYPT_MODE, secretKey);
 					outCipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
-					//create the new object streams
-					cis = new CipherInputStream(bis, inCipher);
-					CipherOutputStream cos = new CipherOutputStream(bos, outCipher);
-					objectIn = new ObjectInputStream(cis);
-					objectOut = new ObjectOutputStream(cos);
-
 					//write the server our OK encoded with our new data key
-					objectOut.writeObject("OK");
-					o = objectIn.readObject();
+					SealedObject sealed_ok = new SealedObject("OK", outCipher);
+					objectOut.writeObject(sealed_ok);
+					//read "OK" response from server
+					SealedObject sealed_response = (SealedObject)objectIn.readObject();
+					o = sealed_response.getObject(inCipher);
 					if(o instanceof String){
 						if(o.equals("OK")){		//server unstands us and we understand it
 							return true;
@@ -328,6 +324,14 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			Debug.err("Error reading response during authentication!");
 			Debug.err(e.toString());
 			e.printStackTrace();
+		} catch (IllegalBlockSizeException e) {
+			Debug.err("Illegal block size exception!");
+			Debug.err(e.toString());
+			e.printStackTrace();
+		} catch (BadPaddingException e) {
+			Debug.err("Bad padding exception!");
+			Debug.err(e.toString());
+			e.printStackTrace();
 		}
 
 		return false;
@@ -344,17 +348,23 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 		try{
 			callListRequest.operation = ClientDataRequest.Operation.GET;
 			callListRequest.timestamp = JFritz.getCallerList().getLastCallDate();
-			objectOut.writeObject(callListRequest);
+			SealedObject sealedCallListRequest = new SealedObject(callListRequest, outCipher);
+			objectOut.writeObject(sealedCallListRequest);
 			objectOut.flush();
 			objectOut.reset(); //reset the streams object cache!
 
+			SealedObject sealedPhoneBookRequest = new SealedObject(phoneBookRequest, outCipher);
 			phoneBookRequest.operation = ClientDataRequest.Operation.GET;
-			objectOut.writeObject(phoneBookRequest);
+			objectOut.writeObject(sealedPhoneBookRequest);
 			objectOut.flush();
 			objectOut.reset();
 
 		}catch(IOException e){
 			Debug.err("Error writing synchronizing request to server!");
+			Debug.err(e.toString());
+			e.printStackTrace();
+		} catch (IllegalBlockSizeException e) {
+			Debug.err("Illegal block size exception!");
 			Debug.err(e.toString());
 			e.printStackTrace();
 		}
@@ -376,7 +386,8 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 		Debug.netMsg("Listening for commands from server");
 		while(true){
 			try{
-				o = objectIn.readObject();
+				SealedObject sealed_object = (SealedObject)objectIn.readObject();
+				o = sealed_object.getObject(inCipher);
 				if(o instanceof DataChange){
 
 					change = (DataChange) o;
@@ -569,6 +580,14 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 				Debug.err(e.toString());
 				e.printStackTrace();
 				return;
+			} catch (IllegalBlockSizeException e) {
+				Debug.err("Illegal block size exception!");
+				Debug.err(e.toString());
+				e.printStackTrace();
+			} catch (BadPaddingException e) {
+				Debug.err("Bad padding exception!");
+				Debug.err(e.toString());
+				e.printStackTrace();
 			}
 		}
 	}
@@ -603,7 +622,9 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 	public synchronized void requestLookup(){
 		actionRequest.doLookup = true;
 		try{
-			objectOut.writeObject(actionRequest);
+
+			SealedObject sealedActionRequest = new SealedObject(actionRequest, outCipher);
+			objectOut.writeObject(sealedActionRequest);
 			objectOut.flush();
 			objectOut.reset();
 
@@ -611,8 +632,12 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			Debug.err("Error writing lookup request to server");
 			Debug.err(e.toString());
 			e.printStackTrace();
+		} catch (IllegalBlockSizeException e) {
+			Debug.err("Illegal block size exception!");
+			Debug.err(e.toString());
+			e.printStackTrace();
 		}
-		actionRequest.getCallList = false;
+		actionRequest.doLookup = false;
 	}
 
 	public synchronized void requestGetCallList(){
@@ -620,12 +645,17 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 		try{
 
-			objectOut.writeObject(actionRequest);
+			SealedObject sealedActionRequest = new SealedObject(actionRequest, outCipher);
+			objectOut.writeObject(sealedActionRequest);
 			objectOut.flush();
 			objectOut.reset();
 
 		}catch(IOException e){
 			Debug.err("Error writing do get list request");
+			Debug.err(e.toString());
+			e.printStackTrace();
+		} catch (IllegalBlockSizeException e) {
+			Debug.err("Illegal block size exception!");
 			Debug.err(e.toString());
 			e.printStackTrace();
 		}
@@ -643,12 +673,17 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 		callListRequest.operation = ClientDataRequest.Operation.ADD;
 
 		try{
-			objectOut.writeObject(callListRequest);
+			SealedObject sealedCallListRequest = new SealedObject(callListRequest, outCipher);
+			objectOut.writeObject(sealedCallListRequest);
 			objectOut.flush();
 			objectOut.reset();
 
 		}catch(IOException e){
 			Debug.err("Error writing new calls to the server");
+			Debug.err(e.toString());
+			e.printStackTrace();
+		} catch (IllegalBlockSizeException e) {
+			Debug.err("Illegal block size exception!");
 			Debug.err(e.toString());
 			e.printStackTrace();
 		}
@@ -668,11 +703,16 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 		callListRequest.operation = ClientDataRequest.Operation.REMOVE;
 
 		try{
-			objectOut.writeObject(callListRequest);
+			SealedObject sealedCallListRequest = new SealedObject(callListRequest, outCipher);
+			objectOut.writeObject(sealedCallListRequest);
 			objectOut.flush();
 			objectOut.reset();
 		}catch(IOException e){
 			Debug.err("Error writing removed calls to the server");
+			Debug.err(e.toString());
+			e.printStackTrace();
+		} catch (IllegalBlockSizeException e) {
+			Debug.err("Illegal block size exception!");
 			Debug.err(e.toString());
 			e.printStackTrace();
 		}
@@ -693,12 +733,17 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 		try{
 
-			objectOut.writeObject(callListRequest);
+			SealedObject sealedCallListRequest = new SealedObject(callListRequest, outCipher);
+			objectOut.writeObject(sealedCallListRequest);
 			objectOut.flush();
 			objectOut.reset();
 
 		}catch(IOException e){
 			Debug.err("Error writing updated call to server!");
+			Debug.err(e.toString());
+			e.printStackTrace();
+		} catch (IllegalBlockSizeException e) {
+			Debug.err("Illegal block size exception!");
 			Debug.err(e.toString());
 			e.printStackTrace();
 		}
@@ -720,11 +765,16 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 		phoneBookRequest.operation = ClientDataRequest.Operation.ADD;
 
 		try{
-			objectOut.writeObject(phoneBookRequest);
+			SealedObject sealedPhoneBookRequest = new SealedObject(phoneBookRequest, outCipher);
+			objectOut.writeObject(sealedPhoneBookRequest);
 			objectOut.flush();
 			objectOut.reset();
 		}catch(IOException e){
 			Debug.err("Error writing new contacts to server!");
+			Debug.err(e.toString());
+			e.printStackTrace();
+		} catch (IllegalBlockSizeException e) {
+			Debug.err("Illegal block size exception!");
 			Debug.err(e.toString());
 			e.printStackTrace();
 		}
@@ -744,12 +794,17 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 		try{
 
-			objectOut.writeObject(phoneBookRequest);
+			SealedObject sealedPhoneBookRequest = new SealedObject(phoneBookRequest, outCipher);
+			objectOut.writeObject(sealedPhoneBookRequest);
 			objectOut.flush();
 			objectOut.reset();
 
 		}catch(IOException e){
 			Debug.err("Error writing removed contacts to server!");
+			Debug.err(e.toString());
+			e.printStackTrace();
+		} catch (IllegalBlockSizeException e) {
+			Debug.err("Illegal block size exception!");
 			Debug.err(e.toString());
 			e.printStackTrace();
 		}
@@ -768,12 +823,17 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 		try{
 
-			objectOut.writeObject(phoneBookRequest);
+			SealedObject sealedPhoneBookRequest = new SealedObject(phoneBookRequest, outCipher);
+			objectOut.writeObject(sealedPhoneBookRequest);
 			objectOut.flush();
 			objectOut.reset();
 
 		}catch(IOException e){
 			Debug.err("Error writing updated contact to server");
+			Debug.err(e.toString());
+			e.printStackTrace();
+		} catch (IllegalBlockSizeException e) {
+			Debug.err("Illegal block size exception!");
 			Debug.err(e.toString());
 			e.printStackTrace();
 		}

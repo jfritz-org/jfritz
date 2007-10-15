@@ -1,7 +1,5 @@
 package de.moonflower.jfritz.network;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -54,6 +52,10 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 	private ObjectOutputStream objectOut;
 
+	private Cipher inCipher;
+
+	private Cipher outCipher;
+
 	private ClientConnectionListener connectionListener;
 
 	private DataChange<Call> callsAdd, callsRemove, callUpdate, callMonitor;
@@ -83,6 +85,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 			if((login = authenticateClient()) != null){
 
 				Debug.netMsg("Authentication for client "+remoteAddress+" successful!");
+				socket.setSoTimeout(0);
 				callsAdd = new DataChange<Call>();
 				callsAdd.destination = DataChange.Destination.CALLLIST;
 				callsAdd.operation = DataChange.Operation.ADD;
@@ -106,7 +109,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 				contactUpdate.operation = DataChange.Operation.UPDATE;
 
 				// create the sender thread, start it up, and set it for the min priority
-				sender = new ServerSenderThread(objectOut, remoteAddress, login);
+				sender = new ServerSenderThread(objectOut, remoteAddress, login, outCipher);
 				sender.start();
 				sender.setPriority(Thread.MIN_PRIORITY);
 
@@ -144,7 +147,8 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 				//currently only call list and phone book update
 				//requests are supported
-				o = objectIn.readObject();
+				SealedObject sealed_object = (SealedObject)objectIn.readObject();
+				o = sealed_object.getObject(inCipher);
 				Debug.netMsg("received request from "+remoteAddress);
 				if(o instanceof ClientDataRequest){
 
@@ -274,6 +278,13 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 				Debug.netMsg("IOException occured reading client request");
 				e.printStackTrace();
 				return;
+			} catch (IllegalBlockSizeException e) {
+				Debug.err("Illegal block size exception!");
+				Debug.err(e.toString());
+				e.printStackTrace();
+			} catch (BadPaddingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}
@@ -294,7 +305,6 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 		Login login = null;
 
 		try{
-
 			//set timeout in case client implementation is broken
 			socket.setSoTimeout(25000);
 			// tell the client who we are in plain text
@@ -331,12 +341,6 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 					Cipher desCipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
 					desCipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
-					//create the auth object output stream
-					BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
-					BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
-					CipherOutputStream cos = new CipherOutputStream(bos, desCipher);
-					ObjectOutputStream oosAuth = new ObjectOutputStream(cos);
-
 					// Prepare the data key
 					byte[] dataKeySeed = new byte[32];
 					Random random = new Random();
@@ -347,30 +351,30 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 					// tell the client the data key using our auth key
 					// then close the stream for later usage using the data key
-					oosAuth.writeObject(dataKeySeed);
-					oosAuth.flush();
+					SealedObject dataKeySeedSealed;
+					dataKeySeedSealed = new SealedObject(dataKeySeed, desCipher);
+					objectOut.writeObject(dataKeySeedSealed);
+					objectOut.flush();
 
 					//create the second private key,  the data key
 					desKeySpec = new DESKeySpec(dataKeySeed);
 					secretKey = keyFactory.generateSecret(desKeySpec);
 
 					//prepare the two data key ciphers
-					Cipher inCipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
-					Cipher outCipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
+					inCipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
+					outCipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
 					inCipher.init(Cipher.DECRYPT_MODE, secretKey);
 					outCipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
 					//create the new object streams
-					CipherInputStream cis = new CipherInputStream(bis, inCipher);
-					cos = new CipherOutputStream(bos, outCipher);
-					objectIn = new ObjectInputStream(cis);
-					objectOut = new ObjectOutputStream(cos);
 
-					o = objectIn.readObject();
+					SealedObject sealedObject = (SealedObject)objectIn.readObject();
+					o = sealedObject.getObject(inCipher);
 					if(o instanceof String){
 						String response = (String) o;
 						if(response.equals("OK")){
-							objectOut.writeObject("OK");
+							SealedObject ok_sealed = new SealedObject("OK",outCipher);
+							objectOut.writeObject(ok_sealed);
 							return login;
 						}else{
 							Debug.netMsg("Client sent false response to challenge!");
@@ -382,6 +386,10 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 					Debug.netMsg("client sent unkown username: "+user);
 				}
 			}
+		}catch (IllegalBlockSizeException e) {
+			Debug.netMsg("Wrong blocksize for sealed object!");
+			Debug.err(e.toString());
+			e.printStackTrace();
 
 		}catch(ClassNotFoundException e){
 			Debug.netMsg("received unrecognized object from client!");
@@ -410,6 +418,10 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 		}catch(IOException e){
 			Debug.netMsg("Error authenticating client!");
+			Debug.err(e.toString());
+			e.printStackTrace();
+		} catch (BadPaddingException e) {
+			Debug.netMsg("Bad padding exception!");
 			Debug.err(e.toString());
 			e.printStackTrace();
 		}

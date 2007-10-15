@@ -8,6 +8,10 @@ import java.net.InetAddress;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.Vector;
 
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.SealedObject;
+
 import de.moonflower.jfritz.callerlist.filter.*;
 import de.moonflower.jfritz.network.Login;
 import de.moonflower.jfritz.struct.Call;
@@ -39,6 +43,8 @@ public class ServerSenderThread extends Thread {
 
 	private ObjectOutputStream objectOut;
 
+	private Cipher outCipher;
+
 	private ConcurrentLinkedQueue<DataChange> changedObjects;
 
 	private Login login;
@@ -49,9 +55,10 @@ public class ServerSenderThread extends Thread {
 
 	private Vector<Person> filteredContacts;
 
-	public ServerSenderThread(ObjectOutputStream oos, InetAddress rAddress, Login login){
+	public ServerSenderThread(ObjectOutputStream oos, InetAddress rAddress, Login login, Cipher cipher){
 
 		objectOut = oos;
+		outCipher = cipher;
 		remoteAddress = rAddress;
 		changedObjects = new ConcurrentLinkedQueue<DataChange>();
 		this.login = login;
@@ -97,12 +104,17 @@ public class ServerSenderThread extends Thread {
 					// now write it accross the socket connection while leaving the queue open for writing
 					try{
 
-						objectOut.writeObject(change);
+						SealedObject sealed_object = new SealedObject(change, outCipher);
+						objectOut.writeObject(sealed_object);
 						objectOut.flush();
 						objectOut.reset();
 
 					}catch(IOException e){
 						Debug.err("Error writing change information to client! host: "+remoteAddress);
+						Debug.err(e.toString());
+						e.printStackTrace();
+					} catch (IllegalBlockSizeException e) {
+						Debug.err("Illegal block size exception!");
 						Debug.err(e.toString());
 						e.printStackTrace();
 					}
