@@ -15,6 +15,7 @@ import java.net.SocketTimeoutException;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 
+import java.util.Timer;
 import java.util.Vector;
 
 import javax.crypto.*;
@@ -23,6 +24,7 @@ import javax.crypto.spec.*;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.CallerListListener;
+import de.moonflower.jfritz.monitoring.UpdateInternetTask;
 import de.moonflower.jfritz.phonebook.PhoneBookListener;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
@@ -147,7 +149,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 					Debug.netMsg("successfully connected to server, authenticating");
 
 					//set timeout in case server thread is not functioning properly
-					socket.setSoTimeout(25000);
+					socket.setSoTimeout(60000);
 					objectOut = new ObjectOutputStream(socket.getOutputStream());
 					objectIn = new ObjectInputStream(socket.getInputStream());
 
@@ -156,8 +158,8 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 						isConnected = true;
 						NetworkStateMonitor.clientStateChanged();
 
-						//reset the keep alive settings
-						socket.setSoTimeout(0);
+						//reset the keep alive settings to more reasonable level
+						socket.setSoTimeout(20000);
 
 						callListRequest = new ClientDataRequest<Call>();
 						callListRequest.destination = ClientDataRequest.Destination.CALLLIST;
@@ -266,6 +268,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 					//write the server our OK encoded with our new data key
 					SealedObject sealed_ok = new SealedObject("OK", outCipher);
 					objectOut.writeObject(sealed_ok);
+
 					//read "OK" response from server
 					SealedObject sealed_response = (SealedObject)objectIn.readObject();
 					o = sealed_response.getObject(inCipher);
@@ -552,7 +555,12 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 						Debug.netMsg("Closing connection with server!");
 						disconnect();
 						return;
-					} //TODO: Add other messages here if necessary
+					}else if(message.equals("Party on, Wayne!")){
+						Debug.netMsg("Received keep alive message from server");
+						replyToKeepAlive();
+					}
+
+					//TODO: Add other messages here if necessary
 
 				}else {
 					Debug.netMsg(o.toString());
@@ -841,4 +849,31 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 		phoneBookRequest.original = null;
 		phoneBookRequest.updated = null;
 	}
+
+	/**
+	 * This function replies to a keep alive message sent form
+	 * the server
+	 *
+	 */
+	public  void replyToKeepAlive(){
+		try{
+
+			Debug.netMsg("Replying to servers keep alive message");
+			SealedObject sealedPhoneBookRequest = new SealedObject("Party on, Garth!", outCipher);
+			objectOut.writeObject(sealedPhoneBookRequest);
+			objectOut.flush();
+			objectOut.reset();
+
+		}catch(IOException e){
+			Debug.err("Error writing updated contact to server");
+			Debug.err(e.toString());
+			e.printStackTrace();
+		} catch (IllegalBlockSizeException e) {
+			Debug.err("Illegal block size exception!");
+			Debug.err(e.toString());
+			e.printStackTrace();
+		}
+	}
+
+
 }

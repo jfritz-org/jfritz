@@ -13,6 +13,7 @@ import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 
 import java.util.Random;
+import java.util.Timer;
 import java.util.Vector;
 
 import javax.crypto.*;
@@ -67,6 +68,8 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 	private ServerSenderThread sender;
 
+	private Timer timer;
+
 	public ClientConnectionThread(Socket socket, ClientConnectionListener connectionListener){
 		super("Client connection for "+socket.getInetAddress());
 		this.socket = socket;
@@ -85,7 +88,15 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 			if((login = authenticateClient()) != null){
 
 				Debug.netMsg("Authentication for client "+remoteAddress+" successful!");
-				socket.setSoTimeout(0);
+
+					//Reset the timeout
+				socket.setSoTimeout(60000);
+
+				//set the timer for the keep alive task
+				timer = new Timer();
+				ServerKeepAliveTask task = new ServerKeepAliveTask(objectOut, remoteAddress, outCipher);
+				timer.schedule(task, 5000, 55000);
+
 				callsAdd = new DataChange<Call>();
 				callsAdd.destination = DataChange.Destination.CALLLIST;
 				callsAdd.operation = DataChange.Operation.ADD;
@@ -118,9 +129,14 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 				JFritz.getCallMonitorList().addCallMonitorListener(this);
 				waitForClientRequest();
 
+				//clean up resources used and remove any hooks open into
+				//the jfritz subsystems
+				timer.cancel();
 				JFritz.getCallerList().removeListener(this);
 				JFritz.getPhonebook().removeListener(this);
 				JFritz.getCallMonitorList().removeCallMonitorListener(this);
+				objectOut.close();
+				objectIn.close();
 			}
 
 		}catch(IOException e){
@@ -250,6 +266,8 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 					if(message.equals("JFRITZ CLOSE")){
 						Debug.netMsg("Client is closing the connection, closing this thread");
 						disconnect();
+					}else if(message.equals("Party on, Garth!")){
+						Debug.netMsg("Received keep alive response from client!");
 					}
 
 				}else{
