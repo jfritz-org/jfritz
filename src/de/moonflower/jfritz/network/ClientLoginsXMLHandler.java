@@ -355,11 +355,13 @@ public class ClientLoginsXMLHandler extends DefaultHandler{
 				allowCallListAdd = false;
 				allowCallListRemove = false;
 				allowCallListUpdate = false;
+				allowGetCallList = false;
 			}
 			if(!allowPhoneBook){
 				allowPhoneBookAdd = false;
 				allowPhoneBookRemove = false;
 				allowPhoneBookUpdate = false;
+				allowLookup = false;
 			}
 
 			//add login settings to the list

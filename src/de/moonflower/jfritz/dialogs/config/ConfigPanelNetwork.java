@@ -61,7 +61,9 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 
 	private JTable logonsTable;
 
-	private JPanel clientPanel, serverPanel;
+	private JPanel serverPanel;
+
+	private JScrollPane clientPanel;
 
 	public ConfigPanelNetwork(JDialog parent) {
 		this.parent = parent;
@@ -303,69 +305,98 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		return panel;
 	}
 
-	private JPanel getClientPanel(){
+	private JScrollPane getClientPanel(){
 		JPanel panel = new JPanel();
+		JScrollPane sPanel = new JScrollPane();
+		JLabel label;
 
 		panel.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets.top = 5;
 		c.insets.bottom = 5;
-		c.insets.left = 85;
-		c.insets.right = 5;
-		c.anchor = GridBagConstraints.WEST;
+		c.insets.left = 5;
+		c.ipadx = 5;
+		c.anchor = GridBagConstraints.LINE_START;
+		c.fill = GridBagConstraints.HORIZONTAL;
 
 		c.gridy = 1;
-		panel.add(new JLabel(Main.getMessage("client_call_list")), c);
+		label = new JLabel(Main.getMessage("client_call_list"));
+		label.setPreferredSize(new Dimension(200, 20));
+		panel.add(label, c);
 		clientCallList = new JCheckBox();
 		panel.add(clientCallList, c);
 
 		c.gridy = 2;
-		panel.add(new JLabel(Main.getMessage("client_telephone_book")), c);
+		label = new JLabel(Main.getMessage("client_telephone_book"));
+		label.setPreferredSize(new Dimension(200, 20));
+		panel.add(label, c);
 		clientTelephoneBook = new JCheckBox();
 		panel.add(clientTelephoneBook, c);
 
 		c.gridy = 3;
-		panel.add(new JLabel(Main.getMessage("client_call_monitor")), c);
+		label = new JLabel(Main.getMessage("client_call_monitor"));
+		label.setPreferredSize(new Dimension(200, 20));
+		panel.add(label, c);
 		clientCallMonitor = new JCheckBox();
 		panel.add(clientCallMonitor, c);
 
 		c.gridy = 4;
-		panel.add(new JLabel(Main.getMessage("be_dumb_client")), c);
+		label = new JLabel(Main.getMessage("be_dumb_client"));
+		label.setPreferredSize(new Dimension(200, 20));
+		panel.add(label, c);
 		isDumbClient = new JCheckBox();
 		panel.add(isDumbClient, c);
 
 		c.gridy = 5;
-		panel.add(new JLabel(Main.getMessage("connect_on_startup")), c);
+		label = new JLabel(Main.getMessage("connect_on_startup"));
+		label.setPreferredSize(new Dimension(200, 20));
+		panel.add(label, c);
 		connectOnStartup = new JCheckBox();
 		panel.add(connectOnStartup, c);
 
-		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridy = 6;
-		c.insets.left = 5;
-		panel.add(new JLabel(Main.getMessage("server_name")), c);
+		c.weightx = 0.5;
+		c.gridx = 0;
+		label = new JLabel(Main.getMessage("server_name"));
+		label.setPreferredSize(new Dimension(100, 20));
+		panel.add(label, c);
+		c.gridx = 1;
 		serverName = new JTextField("", 16);
-		serverName.setMinimumSize(new Dimension(200, 20));
+		serverName.setPreferredSize(new Dimension(100, 20));
 		panel.add(serverName, c);
 
 		c.gridy = 7;
-		panel.add(new JLabel(Main.getMessage("server_login")), c);
+		c.gridx = 0;
+		label = new JLabel(Main.getMessage("server_login"));
+		label.setPreferredSize(new Dimension(100, 20));
+		panel.add(label, c);
+		c.gridx = 1;
 		serverLogin = new JTextField("", 16);
-		serverLogin.setMinimumSize(new Dimension(200, 20));
+		serverLogin.setPreferredSize(new Dimension(100, 20));
 		panel.add(serverLogin, c);
 
 		c.gridy = 8;
-		panel.add(new JLabel(Main.getMessage("server_password")), c);
+		c.gridx = 0;
+		label = new JLabel(Main.getMessage("server_password"));
+		label.setPreferredSize(new Dimension(100, 20));
+		panel.add(label, c);
+		c.gridx = 1;
 		serverPassword = new JPasswordField("", 16);
-		serverPassword.setMinimumSize(new Dimension(200, 20));
+		serverPassword.setPreferredSize(new Dimension(100, 20));
 		panel.add(serverPassword, c);
 
 		c.gridy = 9;
-		panel.add(new JLabel(Main.getMessage("server_port")), c);
+		c.gridx = 0;
+		label = new JLabel(Main.getMessage("server_port"));
+		label.setPreferredSize(new Dimension(100, 20));
+		panel.add(label, c);
+		c.gridx = 1;
 		serverPort = new JTextField("", 16);
-		serverPort.setMinimumSize(new Dimension(200, 20));
+		serverPort.setPreferredSize(new Dimension(100, 20));
 		panel.add(serverPort, c);
 
 		c.gridy = 10;
+		c.gridx = 0;
 		c.anchor = GridBagConstraints.CENTER;
 		c.fill = GridBagConstraints.NONE;
 		c.gridwidth = GridBagConstraints.REMAINDER;
@@ -375,8 +406,9 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		startClientButton.addActionListener(this);
 		panel.add(startClientButton, c);
 
+		sPanel = new JScrollPane(panel);
 
-		return panel;
+		return sPanel;
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -429,7 +461,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 			}
 		}else if(e.getActionCommand().equals("add")){
 			ClientLoginsTableModel.addLogin(new Login("changeme", "", false, false,
-					false, false, false, false, false, false,
+					false, false, false, false, false, false, false, false, false,
 					new Vector<CallFilter>(), ""));
 			JFritz.getClientLogins().fireTableDataChanged();
 

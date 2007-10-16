@@ -106,14 +106,18 @@ public class PermissionsDialog extends JDialog {
 				// Close Window
 				if (source == okButton || source == cancelButton) {
 					setVisible(false);
+
+					//if call list or phone book were unchecked, uncheck other relevant options
 				}else if(source == allowCallList && !allowCallList.isSelected()){
 					allowCallListAdd.setSelected(false);
 					allowCallListRemove.setSelected(false);
 					allowCallListUpdate.setSelected(false);
+					allowGetCallList.setSelected(false);
 				}else if(source == allowPhoneBook && !allowPhoneBook.isSelected()){
 					allowPhoneBookAdd.setSelected(false);
 					allowPhoneBookRemove.setSelected(false);
 					allowPhoneBookUpdate.setSelected(false);
+					allowLookup.setSelected(false);
 				}
 
 			}

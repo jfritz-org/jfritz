@@ -172,7 +172,10 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 				if(o instanceof ClientDataRequest){
 
 					dataRequest = (ClientDataRequest) o;
-					if(dataRequest.destination == ClientDataRequest.Destination.CALLLIST){
+
+					//Process call list request, if the client is allowed
+					if(dataRequest.destination == ClientDataRequest.Destination.CALLLIST
+							&& login.allowCallList){
 
 						//determine what operation to carry out, if applicable
 						if(dataRequest.operation == ClientDataRequest.Operation.GET){
@@ -185,6 +188,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 								Debug.netMsg("Received complete call list request from "+remoteAddress);
 								callsAdded(JFritz.getCallerList().getUnfilteredCallVector());
 							}
+
 
 						}else if(dataRequest.operation == ClientDataRequest.Operation.ADD && login.allowAddList){
 
@@ -214,7 +218,9 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 							}
 						}
 
-					}else if(dataRequest.destination == ClientDataRequest.Destination.PHONEBOOK){
+						//Process phone book request, if client is allowed
+					}else if(dataRequest.destination == ClientDataRequest.Destination.PHONEBOOK
+							&& login.allowPhoneBook){
 
 						//determine what operation to carry out, if applicable
 						if(dataRequest.operation == ClientDataRequest.Operation.GET){
@@ -520,7 +526,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 	public synchronized void callsAdded(Vector<Call> newCalls){
 
 		//this thread added calls, no need to write them back
-		if(callsAdded){
+		if(callsAdded || !login.allowCallList){
 			callsAdded = false;
 			return;
 		}
@@ -539,7 +545,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 	public synchronized void callsRemoved(Vector<Call> removedCalls){
 
 		//this thread removed calls no need to add them back
-		if(callsRemoved){
+		if(callsRemoved || !login.allowCallList){
 			callsRemoved = false;
 			return;
 		}
@@ -555,7 +561,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 	 */
 	public synchronized void callsUpdated(Call original, Call updated){
 
-		if(callUpdated)
+		if(callUpdated || !login.allowCallList)
 			return;
 
 		Debug.netMsg("Notifying client "+remoteAddress+" of updated call");
@@ -573,7 +579,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 	 */
 	public synchronized void contactsAdded(Vector<Person> newContacts){
 
-		if(contactsAdded)
+		if(contactsAdded || !login.allowPhoneBook)
 			return;
 
 		Debug.netMsg("Notifying client "+remoteAddress+" of added contacts, size: "+newContacts.size());
@@ -590,7 +596,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 	 */
 	public synchronized void contactsRemoved(Vector<Person> removedContacts){
 
-		if(contactsRemoved)
+		if(contactsRemoved || !login.allowPhoneBook)
 			return;
 
 		Debug.netMsg("Notifying client "+remoteAddress+" of removed contacts, size: "+removedContacts.size());
@@ -606,7 +612,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 	 */
 	public synchronized void contactUpdated(Person original, Person updated){
 
-		if(contactUpdated)
+		if(contactUpdated || !login.allowPhoneBook)
 			return;
 
 		Debug.netMsg("Notifying client "+remoteAddress+" of updated contact");
@@ -620,7 +626,12 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 	 * part of CallMonitorListener
 	 */
     public void pendingCallIn(Call call){
-		Debug.netMsg("Notifying client "+remoteAddress+" of pending call in");
+
+    	//make sure the client is allowed to use our call monitor
+    	if(!login.allowCallMonitor)
+    		return;
+
+    	Debug.netMsg("Notifying client "+remoteAddress+" of pending call in");
 		callMonitor.original = call;
 		callMonitor.operation = DataChange.Operation.ADD;
 
@@ -632,7 +643,12 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 	 * part of CallMonitorListener
 	 */
     public void establishedCallIn(Call call){
-		Debug.netMsg("Notifying client "+remoteAddress+" of established call in");
+
+    	//make sure the client is allowed to use our call monitor
+    	if(!login.allowCallMonitor)
+    		return;
+
+    	Debug.netMsg("Notifying client "+remoteAddress+" of established call in");
 		callMonitor.original = call;
 		callMonitor.operation = DataChange.Operation.UPDATE;
 
@@ -644,7 +660,12 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 	 * part of CallMonitorListener
 	 */
     public void pendingCallOut(Call call){
-		Debug.netMsg("Notifying client "+remoteAddress+" of pending call out");
+
+    	//make sure the client is allowed to use our call monitor
+    	if(!login.allowCallMonitor)
+    		return;
+
+    	Debug.netMsg("Notifying client "+remoteAddress+" of pending call out");
 		callMonitor.updated = call;
 		callMonitor.operation = DataChange.Operation.ADD;
 
@@ -656,7 +677,12 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 	 * part of CallMonitorListener
 	 */
     public void establishedCallOut(Call call){
-		Debug.netMsg("Notifying client "+remoteAddress+" of pending call");
+
+    	//make sure the client is allowed to use our call monitor
+    	if(!login.allowCallMonitor)
+    		return;
+
+    	Debug.netMsg("Notifying client "+remoteAddress+" of pending call");
 		callMonitor.updated = call;
 		callMonitor.operation = DataChange.Operation.UPDATE;
 
@@ -668,7 +694,12 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 	 * part of CallMonitorListener
 	 */
     public void endOfCall(Call call){
-		Debug.netMsg("Notifying client "+remoteAddress+" of pending call");
+
+    	//make sure the client is allowed to use our call monitor
+    	if(!login.allowCallMonitor)
+    		return;
+
+    	Debug.netMsg("Notifying client "+remoteAddress+" of pending call");
 		callMonitor.original = call;
 		callMonitor.operation = DataChange.Operation.REMOVE;
 
