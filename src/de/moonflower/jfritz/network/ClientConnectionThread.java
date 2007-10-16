@@ -70,6 +70,8 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 	private Timer timer;
 
+	private boolean keptAlive;
+
 	public ClientConnectionThread(Socket socket, ClientConnectionListener connectionListener){
 		super("Client connection for "+socket.getInetAddress());
 		this.socket = socket;
@@ -90,12 +92,13 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 				Debug.netMsg("Authentication for client "+remoteAddress+" successful!");
 
 					//Reset the timeout
-				socket.setSoTimeout(60000);
+				socket.setSoTimeout(65000);
 
 				//set the timer for the keep alive task
 				timer = new Timer();
-				ServerKeepAliveTask task = new ServerKeepAliveTask(objectOut, remoteAddress, outCipher);
-				timer.schedule(task, 5000, 55000);
+				ServerKeepAliveTask task = new ServerKeepAliveTask(this, objectOut, remoteAddress, outCipher);
+				timer.schedule(task, 5000, 60000);
+				keptAlive = true;
 
 				callsAdd = new DataChange<Call>();
 				callsAdd.destination = DataChange.Destination.CALLLIST;
@@ -262,12 +265,15 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 				}else if(o instanceof String){
 					message = (String) o;
-					Debug.netMsg("Received message from client "+remoteAddress+": "+message);
+
 					if(message.equals("JFRITZ CLOSE")){
 						Debug.netMsg("Client is closing the connection, closing this thread");
 						disconnect();
 					}else if(message.equals("Party on, Garth!")){
 						Debug.netMsg("Received keep alive response from client!");
+						keptAlive = true;
+					}else{
+						Debug.netMsg("Received message from client: "+remoteAddress+": "+message);
 					}
 
 				}else{
@@ -279,6 +285,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 				Debug.err("unrecognized class received as request from client");
 				Debug.err(e.toString());
 				e.printStackTrace();
+
 			}catch(SocketException e){
 				if(e.getMessage().equals("Socket closed")){
 					Debug.netMsg("socket for "+remoteAddress+" was closed!");
@@ -292,14 +299,17 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 				Debug.err(e.toString());
 				e.printStackTrace();
 				return;
+
 			}catch (IOException e){
 				Debug.netMsg("IOException occured reading client request");
 				e.printStackTrace();
 				return;
+
 			} catch (IllegalBlockSizeException e) {
 				Debug.err("Illegal block size exception!");
 				Debug.err(e.toString());
 				e.printStackTrace();
+
 			} catch (BadPaddingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -452,6 +462,9 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 	 * the connection. Is sychronized with all other write requests,
 	 * so queued writes should still be written out.
 	 *
+	 * If you want to close this connection cleanly, then call
+	 * closeConnection()
+	 *
 	 */
 	private synchronized void disconnect(){
 		try{
@@ -469,23 +482,32 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 	/**
 	 * called when the user has chosen to kill all network connections
+	 * or when a keep alive timeout has been exceeded
 	 *
 	 */
 	public synchronized void closeConnection(){
 		try{
 			Debug.msg("Notifying client "+remoteAddress+" to close connection");
-			objectOut.writeObject("JFRITZ CLOSE");
+			SealedObject sealed_object = new SealedObject("JFRITZ CLOSE", outCipher);
+			objectOut.writeObject(sealed_object);
 			objectOut.flush();
 			sender.stopThread();
 			objectOut.close();
 			objectIn.close();
 			socket.close();
+
 		}catch(SocketException e){
 			Debug.netMsg("Error closing socket");
 			Debug.err(e.toString());
 			e.printStackTrace();
+
 		}catch(IOException e){
 			Debug.err("Error writing close request to client!");
+			Debug.err(e.toString());
+			e.printStackTrace();
+
+		}catch(IllegalBlockSizeException e){
+			Debug.err("Error with the block size?");
 			Debug.err(e.toString());
 			e.printStackTrace();
 		}
@@ -652,5 +674,23 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 		sender.addChange(callMonitor);
 		callMonitor.original = null;
+    }
+
+    /**
+     * This function reports the activity state of the connected client
+     *
+     * @return whether the client has responded to our last keep alive request
+     */
+    public boolean isClientAlive(){
+    	return keptAlive;
+    }
+
+    /**
+     * This is called to reset the state of the keep alive state once
+     * the ServerKeepAliveTask has sent a new keep alive request
+     *
+     */
+    public void resetKeepAlive(){
+    	keptAlive = false;
     }
 }

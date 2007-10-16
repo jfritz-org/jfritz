@@ -1,7 +1,5 @@
 package de.moonflower.jfritz.network;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -15,7 +13,6 @@ import java.net.SocketTimeoutException;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 
-import java.util.Timer;
 import java.util.Vector;
 
 import javax.crypto.*;
@@ -24,7 +21,6 @@ import javax.crypto.spec.*;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.CallerListListener;
-import de.moonflower.jfritz.monitoring.UpdateInternetTask;
 import de.moonflower.jfritz.phonebook.PhoneBookListener;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
@@ -100,15 +96,25 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 	 *
 	 */
 	public synchronized void disconnectFromServer(){
+
+		if(!isConnected)
+			return;
+
 		try{
 			Debug.netMsg("Writing disconnect message to the server");
-			objectOut.writeObject("JFRITZ CLOSE");
+			SealedObject sealed_object = new SealedObject("JFRITZ CLOSE", outCipher);
+
+			objectOut.writeObject(sealed_object);
 			objectOut.flush();
 			objectOut.close();
 			objectIn.close();
-			socket.close();
+			connect = false;
 		}catch(IOException e){
 			Debug.err("Error writing disconnect message to server");
+			Debug.err(e.toString());
+			e.printStackTrace();
+		}catch(IllegalBlockSizeException e){
+			Debug.err("Problems with the block size");
 			Debug.err(e.toString());
 			e.printStackTrace();
 		}
@@ -130,6 +136,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 					Debug.err("SeverConnection Thread was interrupted!");
 				}
 			}else{
+
 				String server, user, password;
 				int port;
 
@@ -149,7 +156,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 					Debug.netMsg("successfully connected to server, authenticating");
 
 					//set timeout in case server thread is not functioning properly
-					socket.setSoTimeout(60000);
+					socket.setSoTimeout(20000);
 					objectOut = new ObjectOutputStream(socket.getOutputStream());
 					objectIn = new ObjectInputStream(socket.getInputStream());
 
@@ -159,7 +166,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 						NetworkStateMonitor.clientStateChanged();
 
 						//reset the keep alive settings to more reasonable level
-						socket.setSoTimeout(20000);
+						socket.setSoTimeout(70000);
 
 						callListRequest = new ClientDataRequest<Call>();
 						callListRequest.destination = ClientDataRequest.Destination.CALLLIST;
@@ -177,16 +184,16 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 						JFritz.getCallerList().removeListener(this);
 						JFritz.getPhonebook().removeListener(this);
+						Debug.netMsg("Connection to server closed");
 
 					}else{
 						Debug.netMsg("Authentication failed!");
 						Debug.errDlg(Main.getMessage("authentification_failed"));
-
+						connect = false;
 					}
 
 					objectOut.close();
 					objectIn.close();
-					socket.close();
 
 				}catch(ConnectException e){
 
@@ -194,6 +201,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 					Debug.err("Error connecting to the server");
 					Debug.err(e.toString());
 					e.printStackTrace();
+					connect = false;
 
 				}catch(IOException e){
 					Debug.errDlg(Main.getMessage("connection_server_refused"));
@@ -203,11 +211,26 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 				isConnected = false;
 				NetworkStateMonitor.clientStateChanged();
-				connect = false;
+
+				//if a connection is still wished, the socket was closed for some
+				//reason, wait a short delay before retrying
+				if(connect){
+
+					synchronized(this){
+
+						try{
+							Debug.netMsg("Waiting 15 secs for retry attempt");
+							wait(15000);
+						}catch(InterruptedException e){
+							Debug.err("ServerConnectionThread interrupted waiting to reconnect!");
+							Debug.err(e.toString());
+							e.printStackTrace();
+						}
+					}
+				}
 
 			}
 
-			Debug.netMsg("Connection to server closed");
 			//TODO: Cleanup code here!
 		}
 	}
@@ -549,15 +572,17 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 				}else if(o instanceof String){ //message received from the server
 
 					message = (String) o;
-					Debug.netMsg("Received message from server: "+message);
 
 					if(message.equals("JFRITZ CLOSE")){
 						Debug.netMsg("Closing connection with server!");
 						disconnect();
+						connect = false;
 						return;
 					}else if(message.equals("Party on, Wayne!")){
 						Debug.netMsg("Received keep alive message from server");
 						replyToKeepAlive();
+					}else{
+						Debug.netMsg("Received message from server: "+message);
 					}
 
 					//TODO: Add other messages here if necessary
@@ -609,7 +634,6 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 		try{
 			objectOut.close();
 			objectIn.close();
-			socket.close();
 		}catch(IOException e){
 			Debug.err("Error disconnecting from server");
 			Debug.err(e.toString());
