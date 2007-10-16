@@ -174,12 +174,15 @@
  *   server_is_listening
  *   connect_to_server
  *   set_client_permissions
+ *   allow_client_calllist
  *   allow_client_add_calllist
  *   allow_client_remove_calllist
  *   allow_client_update_calllist
+ *   allow_client_phonebook
  *   allow_client_add_phonebook
  *   allow_client_remove_phonebook
  *   allow_client_update_phoneBook
+ *   allow_client_callmonitor
  *   allow_client_lookup
  *   allow_client_getcalllist
  *   authentification_failed
@@ -697,7 +700,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.6.3"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.74 2007/10/13 14:31:53 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.75 2007/10/16 12:04:07 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

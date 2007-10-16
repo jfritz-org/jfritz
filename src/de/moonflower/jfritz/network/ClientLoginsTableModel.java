@@ -151,12 +151,15 @@ public class ClientLoginsTableModel extends AbstractTableModel{
 				pw.println("\t<client>");
 				pw.println("\t\t<user>"+login.user+"</user>");
 				pw.println("\t\t<password>"+Encryption.encrypt(login.password)+"</password>");
+				pw.println("\t\t<allowCallList>"+login.allowCallList+"</allowCallList>");
 				pw.println("\t\t<allowCallListAdd>"+login.allowAddList+"</allowCallListAdd>");
 				pw.println("\t\t<allowCallListUpdate>"+login.allowUpdateList+"</allowCallListUpdate>");
 				pw.println("\t\t<allowCallListRemove>"+login.allowRemoveList+"</allowCallListRemove>");
+				pw.println("\t\t<allowPhoneBook>"+login.allowPhoneBook+"</allowPhoneBook>");
 				pw.println("\t\t<allowPhoneBookAdd>"+login.allowAddBook+"</allowPhoneBookAdd>");
 				pw.println("\t\t<allowPhoneBookUpdate>"+login.allowUpdateBook+"</allowPhoneBookUpdate>");
 				pw.println("\t\t<allowPhoneBookRemove>"+login.allowRemoveBook+"</allowPhoneBookRemove>");
+				pw.println("\t\t<allowCallMonitor>"+login.allowCallMonitor+"</allowCallMonitor>");
 				pw.println("\t\t<allowDoLookup>"+login.allowLookup+"</allowDoLookup>");
 				pw.println("\t\t<allowGetCallList>"+login.allowGetList+"</allowGetCallList>");
 

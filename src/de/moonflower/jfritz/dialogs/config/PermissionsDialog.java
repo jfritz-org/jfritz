@@ -48,9 +48,9 @@ public class PermissionsDialog extends JDialog {
     public static final int CANCEL_OPTION = 2;
 
 
-	private JCheckBox allowCallListAdd, allowCallListUpdate, allowCallListRemove,
-		allowPhoneBookAdd, allowPhoneBookUpdate, allowPhoneBookRemove,
-		allowLookup, allowGetCallList;
+	private JCheckBox allowCallList, allowCallListAdd, allowCallListUpdate, allowCallListRemove,
+		allowPhoneBook, allowPhoneBookAdd, allowPhoneBookUpdate, allowPhoneBookRemove,
+		allowCallMonitor, allowLookup, allowGetCallList;
 
 	public PermissionsDialog(JDialog parent, Login login){
 		super(parent, true);
@@ -65,7 +65,8 @@ public class PermissionsDialog extends JDialog {
 
 	public void init(){
 		setTitle(Main.getMessage("set_client_permissions"));
-	      setSize(290, 320);
+	      setSize(320, 430);
+
 	      drawDialog();
 	      setProperties();
 	}
@@ -105,7 +106,16 @@ public class PermissionsDialog extends JDialog {
 				// Close Window
 				if (source == okButton || source == cancelButton) {
 					setVisible(false);
+				}else if(source == allowCallList && !allowCallList.isSelected()){
+					allowCallListAdd.setSelected(false);
+					allowCallListRemove.setSelected(false);
+					allowCallListUpdate.setSelected(false);
+				}else if(source == allowPhoneBook && !allowPhoneBook.isSelected()){
+					allowPhoneBookAdd.setSelected(false);
+					allowPhoneBookRemove.setSelected(false);
+					allowPhoneBookUpdate.setSelected(false);
 				}
+
 			}
 		};
 
@@ -118,35 +128,50 @@ public class PermissionsDialog extends JDialog {
 	    c.anchor = GridBagConstraints.WEST;
 
 	    c.gridwidth = 1;
+
         c.gridy = 0;
+        allowCallList = new JCheckBox(Main.getMessage("allow_client_calllist"));
+        allowCallList.addActionListener(actionListener);
+        panel.add(allowCallList, c);
+
+	    c.gridy = 1;
         allowCallListAdd = new JCheckBox(Main.getMessage("allow_client_add_calllist"));
         panel.add(allowCallListAdd, c);
 
-        c.gridy = 1;
+        c.gridy = 2;
         allowCallListRemove = new JCheckBox(Main.getMessage("allow_client_remove_calllist"));
         panel.add(allowCallListRemove, c);
 
-        c.gridy = 2;
+        c.gridy = 3;
         allowCallListUpdate = new JCheckBox(Main.getMessage("allow_client_update_calllist"));
         panel.add(allowCallListUpdate, c);
 
-        c.gridy = 3;
+        c.gridy = 4;
+        allowPhoneBook= new JCheckBox(Main.getMessage("allow_client_phonebook"));
+        allowPhoneBook.addActionListener(actionListener);
+        panel.add(allowPhoneBook, c);
+
+        c.gridy = 5;
         allowPhoneBookAdd = new JCheckBox(Main.getMessage("allow_client_add_phonebook"));
         panel.add(allowPhoneBookAdd, c);
 
-        c.gridy = 4;
+        c.gridy = 6;
         allowPhoneBookRemove = new JCheckBox(Main.getMessage("allow_client_remove_phonebook"));
         panel.add(allowPhoneBookRemove, c);
 
-        c.gridy = 5;
+        c.gridy = 7;
         allowPhoneBookUpdate = new JCheckBox(Main.getMessage("allow_client_update_phoneBook"));
         panel.add(allowPhoneBookUpdate, c);
 
-        c.gridy = 6;
+        c.gridy = 8;
+        allowCallMonitor = new JCheckBox(Main.getMessage("allow_client_callmonitor"));
+        panel.add(allowCallMonitor, c);
+
+        c.gridy = 9;
         allowLookup = new JCheckBox(Main.getMessage("allow_client_lookup"));
         panel.add(allowLookup, c);
 
-        c.gridy = 7;
+        c.gridy = 10;
         allowGetCallList = new JCheckBox(Main.getMessage("allow_client_getcalllist"));
         panel.add(allowGetCallList, c);
 
@@ -192,23 +217,29 @@ public class PermissionsDialog extends JDialog {
 	}
 
 	public void setProperties(){
+		allowCallList.setSelected(login.allowCallList);
 		allowCallListAdd.setSelected(login.allowAddList);
 		allowCallListUpdate.setSelected(login.allowUpdateList);
 		allowCallListRemove.setSelected(login.allowRemoveList);
+		allowPhoneBook.setSelected(login.allowPhoneBook);
 		allowPhoneBookAdd.setSelected(login.allowAddBook);
 		allowPhoneBookUpdate.setSelected(login.allowUpdateBook);
 		allowPhoneBookRemove.setSelected(login.allowRemoveBook);
+		allowCallMonitor.setSelected(login.allowCallMonitor);
 		allowLookup.setSelected(login.allowLookup);
 		allowGetCallList.setSelected(login.allowGetList);
 	}
 
 	public void storeProperties(){
+		login.allowCallList = allowCallList.isSelected();
 		login.allowAddList = allowCallListAdd.isSelected();
 		login.allowUpdateList = allowCallListUpdate.isSelected();
 		login.allowRemoveList = allowCallListRemove.isSelected();
+		login.allowPhoneBook = allowPhoneBook.isSelected();
 		login.allowAddBook = allowPhoneBookAdd.isSelected();
 		login.allowUpdateBook = allowPhoneBookUpdate.isSelected();
 		login.allowRemoveBook = allowPhoneBookRemove.isSelected();
+		login.allowCallMonitor = allowCallMonitor.isSelected();
 		login.allowLookup = allowLookup.isSelected();
 		login.allowGetList = allowGetCallList.isSelected();
 	}

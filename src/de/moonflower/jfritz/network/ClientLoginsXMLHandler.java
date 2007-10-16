@@ -27,7 +27,7 @@ public class ClientLoginsXMLHandler extends DefaultHandler{
 
 	boolean allowCallListAdd, allowCallListUpdate, allowCallListRemove, allowPhoneBookAdd,
 			allowPhoneBookUpdate, allowPhoneBookRemove, allowLookup, allowGetCallList,
-			enabled, inverted;
+			enabled, inverted, allowCallList, allowPhoneBook, allowCallMonitor;
 
 	Vector<CallFilter> callFilters;
 
@@ -57,12 +57,15 @@ public class ClientLoginsXMLHandler extends DefaultHandler{
 		if (eName.equals("client")) { //$NON-NLS-1$
 			username = "";
 			password = "";
+			allowCallList = false;
 			allowCallListAdd = false;
 			allowCallListUpdate = false;
 			allowCallListRemove = false;
+			allowPhoneBook = false;
 			allowPhoneBookAdd = false;
 			allowPhoneBookUpdate = false;
 			allowPhoneBookRemove = false;
+			allowCallMonitor = false;
 			allowLookup = false;
 			allowGetCallList = false;
 			callFilters = new Vector<CallFilter>();
@@ -107,18 +110,24 @@ public class ClientLoginsXMLHandler extends DefaultHandler{
 			username = chars;
 		} else if (qName.equals("password")) { //$NON-NLS-1$
 			password = Encryption.decrypt(chars);
+		}else if(qName.equals("allowCallList")){
+			allowCallList = Boolean.parseBoolean(chars);
 		}else if(qName.equals("allowCallListAdd")){
 			allowCallListAdd = Boolean.parseBoolean(chars);
 		}else if(qName.equals("allowCallListUpdate")){
 			allowCallListUpdate = Boolean.parseBoolean(chars);
 		}else if(qName.equals("allowCallListRemove")){
 			allowCallListRemove = Boolean.parseBoolean(chars);
+		}else if(qName.equals("allowPhoneBook")){
+			allowPhoneBook = Boolean.parseBoolean(chars);
 		}else if(qName.equals("allowPhoneBookAdd")){
 			allowPhoneBookAdd = Boolean.parseBoolean(chars);
 		}else if(qName.equals("allowPhoneBookUpdate")){
 			allowPhoneBookUpdate = Boolean.parseBoolean(chars);
 		}else if(qName.equals("allowPhoneBookRemove")){
 			allowPhoneBookRemove = Boolean.parseBoolean(chars);
+		}else if(qName.equals("allowCallMonitor")){
+			allowCallMonitor = Boolean.parseBoolean(chars);
 		}else if(qName.equals("allowDoLookup")){
 			allowLookup = Boolean.parseBoolean(chars);
 		}else if(qName.equals("allowGetCallList")){
@@ -340,10 +349,23 @@ public class ClientLoginsXMLHandler extends DefaultHandler{
 			}
 
 		}else if (qName.equals("client")) { //$NON-NLS-1$
+
+			//make sure the user didn't add any invalid settings by hand editing the xml file
+			if(!allowCallList){
+				allowCallListAdd = false;
+				allowCallListRemove = false;
+				allowCallListUpdate = false;
+			}
+			if(!allowPhoneBook){
+				allowPhoneBookAdd = false;
+				allowPhoneBookRemove = false;
+				allowPhoneBookUpdate = false;
+			}
+
 			//add login settings to the list
-			Login login = new Login(username, password, allowCallListAdd, allowCallListUpdate,
-					allowCallListRemove, allowPhoneBookAdd, allowPhoneBookUpdate,
-					allowPhoneBookRemove, allowLookup, allowGetCallList,
+			Login login = new Login(username, password, allowCallList, allowCallListAdd, allowCallListUpdate,
+					allowCallListRemove, allowPhoneBook, allowPhoneBookAdd, allowPhoneBookUpdate,
+					allowPhoneBookRemove, allowCallMonitor, allowLookup, allowGetCallList,
 					callFilters, "");
 			ClientLoginsTableModel.addLogin(login);
 			Debug.netMsg("Adding client login: "+username+" with "+ callFilters.size()+" Filters");
