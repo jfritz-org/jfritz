@@ -194,7 +194,7 @@ public class LookupThread extends Thread {
 							//process header
 							//avoid problems with null headers
 							header = "";
-							charSet="";
+							charSet = "";
 
 							for (int j = 0;; j++) {
 								String headerName = con.getHeaderFieldKey(j);

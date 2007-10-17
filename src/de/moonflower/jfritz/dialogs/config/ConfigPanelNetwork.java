@@ -496,22 +496,4 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		}
 	}
 
-	/**
-	 * this function is used by the config wizard
-	 *
-	 * @return
-	 */
-	public int getNetworkType(){
-		return networkTypeCombo.getSelectedIndex();
-	}
-
-	/**
-	 * this function is used by the config wizard
-	 *
-	 * @return
-	 */
-	public boolean useCallListFromServer(){
-		return clientCallList.isSelected();
-	}
-
 }

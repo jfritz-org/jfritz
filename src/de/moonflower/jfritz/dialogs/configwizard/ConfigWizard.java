@@ -32,9 +32,9 @@ public class ConfigWizard {
 
 	private Wizard wizard;
 
-	private ConfigPanelFritzBoxDescriptor descriptor4;
+	private ConfigPanelFritzBoxDescriptor descriptor3;
 
-	private WizardPanelDescriptor descriptor2, descriptor3, descriptor5, descriptor6;
+	private WizardPanelDescriptor descriptor2, descriptor4, descriptor5;
 
 	private boolean canceled = false;
 
@@ -58,17 +58,14 @@ public class ConfigWizard {
         descriptor2 = new ConfigPanelPhoneDescriptor();
         wizard.registerWizardPanel(ConfigPanelPhoneDescriptor.IDENTIFIER, descriptor2);
 
-        descriptor3 = new ConfigPanelNetworkDescriptor();
-        wizard.registerWizardPanel(ConfigPanelNetworkDescriptor.IDENTIFIER, descriptor3);
+        descriptor3 = new ConfigPanelFritzBoxDescriptor();
+        wizard.registerWizardPanel(ConfigPanelFritzBoxDescriptor.IDENTIFIER, descriptor3);
 
-        descriptor4 = new ConfigPanelFritzBoxDescriptor();
-        wizard.registerWizardPanel(ConfigPanelFritzBoxDescriptor.IDENTIFIER, descriptor4);
+        descriptor4 = new ConfigPanelMessageDescriptor();
+        wizard.registerWizardPanel(ConfigPanelMessageDescriptor.IDENTIFIER, descriptor4);
 
-        descriptor5 = new ConfigPanelMessageDescriptor();
-        wizard.registerWizardPanel(ConfigPanelMessageDescriptor.IDENTIFIER, descriptor5);
-
-        descriptor6 = new ConfigPanelCallMonitorDescriptor(descriptor4.getFritzBoxPanel());
-        wizard.registerWizardPanel(ConfigPanelCallMonitorDescriptor.IDENTIFIER, descriptor6);
+        descriptor5 = new ConfigPanelCallMonitorDescriptor(descriptor3.getFritzBoxPanel());
+        wizard.registerWizardPanel(ConfigPanelCallMonitorDescriptor.IDENTIFIER, descriptor5);
 
         //set the first panel to be displayed
         wizard.setCurrentPanel(ConfigPanel1Descriptor.IDENTIFIER);
@@ -94,10 +91,9 @@ public class ConfigWizard {
        			Debug.msg("Finished clicked, saving settings");
 
        			((ConfigPanelPhone)descriptor2.getPanelComponent()).saveSettings();
-       			((ConfigPanelNetwork)descriptor3.getPanelComponent()).saveSettings();
-       			((ConfigPanelFritzBox)descriptor4.getPanelComponent()).saveSettings();
-       			((ConfigPanelMessage)descriptor5.getPanelComponent()).saveSettings();
-       			((ConfigPanelCallMonitor)descriptor6.getPanelComponent()).saveSettings();
+       			((ConfigPanelFritzBox)descriptor3.getPanelComponent()).saveSettings();
+       			((ConfigPanelMessage)descriptor4.getPanelComponent()).saveSettings();
+       			((ConfigPanelCallMonitor)descriptor5.getPanelComponent()).saveSettings();
 
       			JFritz.getFritzBox().detectFirmware();
       			Main.saveConfigProperties();

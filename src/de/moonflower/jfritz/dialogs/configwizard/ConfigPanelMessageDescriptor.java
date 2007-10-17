@@ -30,11 +30,6 @@ public class ConfigPanelMessageDescriptor extends WizardPanelDescriptor {
 	    }
 
 	    public Object getBackPanelDescriptor() {
-	    	if(ConfigPanelNetworkDescriptor.networkPanel.getNetworkType() == 2
-	    			&& ConfigPanelNetworkDescriptor.networkPanel.useCallListFromServer()){
-
-	    		return ConfigPanelNetworkDescriptor.IDENTIFIER;
-	    	}
 	    	return ConfigPanelFritzBoxDescriptor.IDENTIFIER;
 	    }
 }

@@ -30,7 +30,7 @@ public class ConfigPanelFritzBoxDescriptor extends WizardPanelDescriptor{
 	    }
 
 	    public Object getBackPanelDescriptor() {
-	        return ConfigPanelNetworkDescriptor.IDENTIFIER;
+	        return ConfigPanelMessageDescriptor.IDENTIFIER;
 	    }
 
 	    public ConfigPanelFritzBox getFritzBoxPanel() {
