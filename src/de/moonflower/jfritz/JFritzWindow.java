@@ -1735,12 +1735,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 		if(networkType.equals("1")){
 			networkButton.setIcon(getImage("server.png"));
-			networkButton.setEnabled(true);
-			networkButton.setToolTipText(Main.getMessage("start_listening_clients"));
+			serverStateChanged();
 		}else if(networkType.equals("2")){
 			networkButton.setIcon(getImage("client.png"));
-			networkButton.setEnabled(true);
-			networkButton.setToolTipText(Main.getMessage("connect_to_server"));
+			clientStateChanged();
 		}else{
 			networkButton.setIcon(getImage("no_network.png"));
 			networkButton.setEnabled(false);

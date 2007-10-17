@@ -192,7 +192,6 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		}
 
 		JFritz.getJframe().setNetworkButton();
-		NetworkStateMonitor.serverStateChanged();
 		ClientLoginsTableModel.saveToXMLFile(Main.SAVE_DIR + JFritz.CLIENT_SETTINGS_FILE);
 
 	}

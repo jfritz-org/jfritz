@@ -255,6 +255,10 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 				//write out the username to the server and close the stream to free all resources
 				response = (String) o;
 				Debug.netMsg("Connected to JFritz Server: "+response);
+				if(!response.equals("JFRITZ SERVER 1.0")){
+					Debug.netMsg("Unkown Server version, newer JFritz protocoll version?");
+					Debug.netMsg("Canceling login attempt!");
+				}
 				objectOut.writeObject(user);
 				objectOut.flush();
 

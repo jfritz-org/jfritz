@@ -703,7 +703,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 		callMonitor.original = call;
 		callMonitor.operation = DataChange.Operation.REMOVE;
 
-		sender.addChange(callMonitor);
+		sender.addChange(callMonitor.clone());
 		callMonitor.original = null;
     }
 
