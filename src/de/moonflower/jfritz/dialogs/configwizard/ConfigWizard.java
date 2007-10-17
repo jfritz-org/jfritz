@@ -10,6 +10,7 @@ import de.moonflower.jfritz.dialogs.config.ConfigPanelCallMonitor;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelLang;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelFritzBox;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelMessage;
+import de.moonflower.jfritz.dialogs.config.ConfigPanelNetwork;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelPhone;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.JFritz;
@@ -31,9 +32,9 @@ public class ConfigWizard {
 
 	private Wizard wizard;
 
-	private ConfigPanelFritzBoxDescriptor descriptor3;
+	private ConfigPanelFritzBoxDescriptor descriptor4;
 
-	private WizardPanelDescriptor descriptor2, descriptor4, descriptor5;
+	private WizardPanelDescriptor descriptor2, descriptor3, descriptor5, descriptor6;
 
 	private boolean canceled = false;
 
@@ -57,14 +58,17 @@ public class ConfigWizard {
         descriptor2 = new ConfigPanelPhoneDescriptor();
         wizard.registerWizardPanel(ConfigPanelPhoneDescriptor.IDENTIFIER, descriptor2);
 
-        descriptor3 = new ConfigPanelFritzBoxDescriptor();
-        wizard.registerWizardPanel(ConfigPanelFritzBoxDescriptor.IDENTIFIER, descriptor3);
+        descriptor3 = new ConfigPanelNetworkDescriptor();
+        wizard.registerWizardPanel(ConfigPanelNetworkDescriptor.IDENTIFIER, descriptor3);
 
-        descriptor4 = new ConfigPanelMessageDescriptor();
-        wizard.registerWizardPanel(ConfigPanelMessageDescriptor.IDENTIFIER, descriptor4);
+        descriptor4 = new ConfigPanelFritzBoxDescriptor();
+        wizard.registerWizardPanel(ConfigPanelFritzBoxDescriptor.IDENTIFIER, descriptor4);
 
-        descriptor5 = new ConfigPanelCallMonitorDescriptor(descriptor3.getFritzBoxPanel());
-        wizard.registerWizardPanel(ConfigPanelCallMonitorDescriptor.IDENTIFIER, descriptor5);
+        descriptor5 = new ConfigPanelMessageDescriptor();
+        wizard.registerWizardPanel(ConfigPanelMessageDescriptor.IDENTIFIER, descriptor5);
+
+        descriptor6 = new ConfigPanelCallMonitorDescriptor(descriptor4.getFritzBoxPanel());
+        wizard.registerWizardPanel(ConfigPanelCallMonitorDescriptor.IDENTIFIER, descriptor6);
 
         //set the first panel to be displayed
         wizard.setCurrentPanel(ConfigPanel1Descriptor.IDENTIFIER);
@@ -90,9 +94,10 @@ public class ConfigWizard {
        			Debug.msg("Finished clicked, saving settings");
 
        			((ConfigPanelPhone)descriptor2.getPanelComponent()).saveSettings();
-       			((ConfigPanelFritzBox)descriptor3.getPanelComponent()).saveSettings();
-       			((ConfigPanelMessage)descriptor4.getPanelComponent()).saveSettings();
-       			((ConfigPanelCallMonitor)descriptor5.getPanelComponent()).saveSettings();
+       			((ConfigPanelNetwork)descriptor3.getPanelComponent()).saveSettings();
+       			((ConfigPanelFritzBox)descriptor4.getPanelComponent()).saveSettings();
+       			((ConfigPanelMessage)descriptor5.getPanelComponent()).saveSettings();
+       			((ConfigPanelCallMonitor)descriptor6.getPanelComponent()).saveSettings();
 
       			JFritz.getFritzBox().detectFirmware();
       			Main.saveConfigProperties();

@@ -63,7 +63,9 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 
 	private JPanel serverPanel;
 
-	private JScrollPane clientPanel;
+	//private JScrollPane clientPanel;
+
+	private JPanel clientPanel;
 
 	public ConfigPanelNetwork(JDialog parent) {
 		this.parent = parent;
@@ -117,7 +119,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 				.getProperty("option.listenOnStartup", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		serverName.setText(Main.getProperty("server.name", ""));
-		serverPort.setText(Main.getProperty("server.port", ""));
+		serverPort.setText(Main.getProperty("server.port", "4455"));
 		serverLogin.setText(Main.getProperty("server.login", ""));
 		serverPassword.setText(Encryption.decrypt(Main.getProperty("server.password", "")));
 
@@ -155,6 +157,8 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		if(clientCallMonitor.isSelected()){
 			Main.setProperty("option.callMonitorType", "6");
 		}
+		Main.setProperty("option.clientCallMonitor", Boolean
+				.toString(clientCallMonitor.isSelected()));
 
 		Main.setProperty("option.isDumbClient", Boolean //$NON-NLS-1$
 				.toString(isDumbClient.isSelected()));
@@ -304,7 +308,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		return panel;
 	}
 
-	private JScrollPane getClientPanel(){
+	private JPanel getClientPanel(){
 		JPanel panel = new JPanel();
 		JScrollPane sPanel = new JScrollPane();
 		JLabel label;
@@ -405,9 +409,10 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		startClientButton.addActionListener(this);
 		panel.add(startClientButton, c);
 
-		sPanel = new JScrollPane(panel);
+		//sPanel = new JScrollPane(panel);
 
-		return sPanel;
+		//return sPanel;
+		return panel;
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -491,6 +496,22 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		}
 	}
 
+	/**
+	 * this function is used by the config wizard
+	 *
+	 * @return
+	 */
+	public int getNetworkType(){
+		return networkTypeCombo.getSelectedIndex();
+	}
 
+	/**
+	 * this function is used by the config wizard
+	 *
+	 * @return
+	 */
+	public boolean useCallListFromServer(){
+		return clientCallList.isSelected();
+	}
 
 }

@@ -383,8 +383,8 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			objectOut.flush();
 			objectOut.reset(); //reset the streams object cache!
 
-			SealedObject sealedPhoneBookRequest = new SealedObject(phoneBookRequest, outCipher);
 			phoneBookRequest.operation = ClientDataRequest.Operation.GET;
+			SealedObject sealedPhoneBookRequest = new SealedObject(phoneBookRequest, outCipher);
 			objectOut.writeObject(sealedPhoneBookRequest);
 			objectOut.flush();
 			objectOut.reset();
