@@ -138,12 +138,12 @@
  *
  * FIXME-END
  *
- * JFritz 0.6.2.3
+ * JFritz 0.6.3
  * - Umstrukturierung des Aufrufs von externen Programmen (noch nicht abgeschlossen)
  * - Neu: Einführung von ServerSenderThreads, jede Verbindung hat eigene Empfänger und Sender-Threads
  * - Neu: Clients können den Anrufmonitor vom Server verwenden
  * - Neu: Networkcode hinzugefügt! JFritz kann nun entweder als Server oder client arbeiten
- * - Bugfix: Neue kontakte werden jetzt richtig in der Anrufliste dargestellt
+ * - Bugfix: Neue Kontakte werden jetzt richtig in der Anrufliste dargestellt
  * - Bugfix: Gelöschte Kontakte werden jetzt auch in der Anrufliste entfernt
  * - Bugfix: Geänderte Kontakte werden jetzt auch richtig in der Anrufliste dargestellt
  * - Bugfix: Clientseitige / serverseitige Änderungen im Telefonbuch werden bei allen Clients auch richtig in der Anrufliste dargestellt
@@ -700,7 +700,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.6.3"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.75 2007/10/16 12:04:07 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.76 2007/10/19 12:59:51 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -754,7 +754,7 @@ public class Main implements LookupObserver {
 
 	public Main(String[] args) {
 		System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION //$NON-NLS-1$
-				+ " (c) 2005-2006 by " + JFRITZ_PROJECT); //$NON-NLS-1$
+				+ " (c) 2005-2007 by " + JFRITZ_PROJECT); //$NON-NLS-1$
 		Thread.currentThread().setPriority(5);
 		ShutdownThread shutdownThread = new ShutdownThread(this);
 		Runtime.getRuntime().addShutdownHook(shutdownThread);
