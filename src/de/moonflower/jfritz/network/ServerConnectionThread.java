@@ -192,6 +192,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 						Debug.netMsg("Authentication failed!");
 						Debug.errDlg(Main.getMessage("authentification_failed"));
 						connect = false;
+
 					}
 
 					objectOut.close();

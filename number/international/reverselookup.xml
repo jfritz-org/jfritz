@@ -99,10 +99,10 @@
 		</website>
 		<website name="dastelefonbuch.de" url="http://www.dastelefonbuch.de/?sourceid=Mozilla-search&amp;cmd=search&amp;kw=$NUMBER" prefix="0">
 			<entry>
-				<name>&lt;a href=&quot;[^&quot;]*&quot; title=&quot;([^&quot;]*)&quot;\s*?&gt;[^&lt;]*&lt;/a&gt;&lt;br /&gt;</name>
-				<street>&lt;/td&gt;[^&lt;]*&lt;td width=&quot;[^&quot;]*&quot;&gt;([^&lt;]*)&lt;/td&gt;[^&lt;]*&lt;td width=&quot;[^&quot;]*&quot;&gt;[^&lt;]*&lt;s</street>
-				<city>&lt;span title=&quot;[0-9]*([^&quot;]*)&quot;&gt;</city>
-				<zipcode>&lt;span title=&quot;([0-9]*)[^&quot;]*&quot;&gt;</zipcode>
+				<name>class=&quot;hl&quot;&gt;\s*&lt;td&gt;([^&lt;]*)&lt;br</name>
+				<street>class=&quot;hl&quot;&gt;\s*&lt;td&gt;[^&lt;]*&lt;br\s/&gt;\s*&lt;/td&gt;\s*&lt;td&gt;([^&lt;]*)&lt;</street>
+				<city>&lt;td&gt;\d{5}([^&lt;]*)&lt;</city>
+				<zipcode>&lt;td&gt;(\d{5})[^&lt;]*&lt;</zipcode>
 			</entry>
 		</website>
 	</country>

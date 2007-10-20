@@ -50,7 +50,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 	private JComboBox networkTypeCombo;
 
 	private JCheckBox clientTelephoneBook, clientCallList, clientCallMonitor,
-			isDumbClient, connectOnStartup, listenOnStartup;
+			connectOnStartup, listenOnStartup;
 
 	private JTextField serverName, serverPort, serverLogin,
 	 	clientsPort, maxConnections;
@@ -109,9 +109,6 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		listenOnStartup.setSelected(JFritzUtils.parseBoolean(Main
 				.getProperty("option.clientCallMonitor", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		isDumbClient.setSelected(JFritzUtils.parseBoolean(Main
-				.getProperty("option.isDumbClient", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
-
 		connectOnStartup.setSelected(JFritzUtils.parseBoolean(Main
 				.getProperty("option.connectOnStartup", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
@@ -160,8 +157,6 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		Main.setProperty("option.clientCallMonitor", Boolean
 				.toString(clientCallMonitor.isSelected()));
 
-		Main.setProperty("option.isDumbClient", Boolean //$NON-NLS-1$
-				.toString(isDumbClient.isSelected()));
 		Main.setProperty("network.type", String //$NON-NLS-1$
 				.valueOf(selectedIndex));
 		Main.setProperty("option.connectOnStartup", Boolean //$NON-NLS-1$
@@ -344,20 +339,13 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		panel.add(clientCallMonitor, c);
 
 		c.gridy = 4;
-		label = new JLabel(Main.getMessage("be_dumb_client"));
-		label.setPreferredSize(new Dimension(200, 20));
-		panel.add(label, c);
-		isDumbClient = new JCheckBox();
-		panel.add(isDumbClient, c);
-
-		c.gridy = 5;
 		label = new JLabel(Main.getMessage("connect_on_startup"));
 		label.setPreferredSize(new Dimension(200, 20));
 		panel.add(label, c);
 		connectOnStartup = new JCheckBox();
 		panel.add(connectOnStartup, c);
 
-		c.gridy = 6;
+		c.gridy = 5;
 		c.weightx = 0.5;
 		c.gridx = 0;
 		label = new JLabel(Main.getMessage("server_name"));
@@ -368,7 +356,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		serverName.setPreferredSize(new Dimension(100, 20));
 		panel.add(serverName, c);
 
-		c.gridy = 7;
+		c.gridy = 6;
 		c.gridx = 0;
 		label = new JLabel(Main.getMessage("server_login"));
 		label.setPreferredSize(new Dimension(100, 20));
@@ -378,7 +366,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		serverLogin.setPreferredSize(new Dimension(100, 20));
 		panel.add(serverLogin, c);
 
-		c.gridy = 8;
+		c.gridy = 7;
 		c.gridx = 0;
 		label = new JLabel(Main.getMessage("server_password"));
 		label.setPreferredSize(new Dimension(100, 20));
@@ -388,7 +376,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		serverPassword.setPreferredSize(new Dimension(100, 20));
 		panel.add(serverPassword, c);
 
-		c.gridy = 9;
+		c.gridy = 8;
 		c.gridx = 0;
 		label = new JLabel(Main.getMessage("server_port"));
 		label.setPreferredSize(new Dimension(100, 20));
@@ -398,7 +386,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		serverPort.setPreferredSize(new Dimension(100, 20));
 		panel.add(serverPort, c);
 
-		c.gridy = 10;
+		c.gridy = 9;
 		c.gridx = 0;
 		c.anchor = GridBagConstraints.CENTER;
 		c.fill = GridBagConstraints.NONE;
@@ -452,6 +440,8 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		}else if(e.getActionCommand().equals("listen")){
 			if(startServerButton.isSelected()){
 				this.saveSettings();
+				//saveSettings() removes this panel as a listener, add it again
+				NetworkStateMonitor.addListener(this);
 				NetworkStateMonitor.startServer();
 			}else{
 				NetworkStateMonitor.stopServer();
@@ -459,6 +449,8 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		}else if(e.getActionCommand().equals("connect")){
 			if(this.startClientButton.isSelected()){
 				this.saveSettings();
+				//re add this panel as a listener
+				NetworkStateMonitor.addListener(this);
 				NetworkStateMonitor.startClient();
 			}else{
 				NetworkStateMonitor.stopClient();

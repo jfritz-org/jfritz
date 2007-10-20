@@ -2,6 +2,8 @@ package de.moonflower.jfritz.network;
 
 import java.util.Vector;
 
+import de.moonflower.jfritz.utils.Debug;
+
 /**
  * This class is used as a sort of static back end for accessing and changing
  * settings for the client oder server.
