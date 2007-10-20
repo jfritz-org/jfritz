@@ -25,6 +25,7 @@ import de.moonflower.jfritz.utils.Debug;
  * the connection. It uses a minimal locking to make sure that
  * a slow connection doesnt block any other parts of jfritz.
  *
+ * @see de.moonflower.jfritz.network.ClientConnectionListener
  *
  * @author brian
  *

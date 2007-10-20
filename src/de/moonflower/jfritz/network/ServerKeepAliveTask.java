@@ -15,6 +15,8 @@ import de.moonflower.jfritz.utils.Debug;
  * This class makes sure that the connection to the client
  * is still active and able to correctly transfer data
  *
+ * @see de.moonflower.jfritz.network.ClientConnectionListener
+ *
  * @author brian
  *
  */

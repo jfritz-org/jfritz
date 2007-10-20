@@ -37,6 +37,8 @@ import de.moonflower.jfritz.utils.Debug;
  *
  * This thread exits automatically once the connection has been closed.
  *
+ * @see de.moonflower.jfritz.network.ClientConnectionListener
+ *
  * @author brian
  *
  */

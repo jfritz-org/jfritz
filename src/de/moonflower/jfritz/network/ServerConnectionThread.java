@@ -40,6 +40,8 @@ import de.moonflower.jfritz.utils.Encryption;
  * All communication from server to client uses either DataChange or
  * String objects, where the String objects are also used to pass messages.
  *
+ *  @see de.moonflower.jfritz.network.ClientConnectionListener
+ *
  * @author brian
  *
  */

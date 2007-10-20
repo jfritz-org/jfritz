@@ -15,7 +15,78 @@ import de.moonflower.jfritz.utils.Debug;
  * on the user specified port. On an incoming connection this thread
  * creates a new ClientConnectionThread to handle the communication
  * with the new client.
-
+ *
+ * So how does the whole network code work?
+ *
+ * Its probabely best to first describe the general architecture of
+ * the network code. JFritz uses a client / server model, where the
+ * information flow is controlled by server. All information is exchanged
+ * asynchronously between the server and the client, with the exception
+ * of the authentication protocol :). The server and client use object
+ * streams to exchange information, the server sends DataChange objects
+ * and the cilent sends ClientDataRequest, ClientActionRequest objects.
+ *
+ * What code si responsible for what function?
+ *
+ * The ClientConnectionListener listens for new connections on the specified
+ * port in the options dialog. When an incoming connection is received, a new
+ * ClientConnectionThread is spawned. This thread handles the authentication with
+ * the client and then is responsible for listening for incoming requests
+ * from the client. Once successfully authenticated the ClienConnectionThread
+ * spawns a new ServerSenderThread, whose job it is to filter and send the data
+ * to the client. The ClientConnectionThread communicates with the ServerSenderThread
+ * by using a queue.
+ *
+ * Once the the SenderThread is started the ClientConnectionThread registers
+ * itself in CallerList as a CallerListListener, in the PhoneBook as a
+ * PhoneBookListener and as a CallMonitorListener. These Interfaces specify that
+ * the ClientConnectionThread is notified (using various function calls) of changes
+ * to the data to the phonebook and the call list. The ClientConnectionThread then
+ * packs these Changes into DataChange objects and puts them in the output queue of the
+ * SenderThread, that is if the client has the appropriate rights to reveive
+ * the this iformation.
+ *
+ * The client on the other hand communicates with the server using only one
+ * thread, as writing objects to only one socket won't have a noticeable
+ * drop in the gui reaction time. Once connected and authenticated with
+ * the server, the ServerConnectionThread then listens for all incoming
+ * changes, and depending upon whether the client should use the phone book,
+ * call monitor and call list from the server and not use its own, the client sends
+ * requests for reverse lookups, updating the call list to the server instead of
+ * trying to access a fritz box.The client also registers istelf as a callerListListener
+ * and a PhoneBookListener and writes all changes to its personal data to the server,
+ * however the server will determine whether to accept or ignore these changes
+ * based on the clients rights.
+ *
+ * How does the protocol work?
+ *
+ * Upon connection the server writes a hello string in plain text containing
+ * its name and version number, right now this is "JFRITZ SERVER 1.0". Then
+ * the server writes the request for the clients login name, "login:". The
+ * client then responds in clear writing its login name. The server then writes
+ * the client the data key (the randomly generated key, that will be used to
+ * transfer data throughout the rest of the connection) encrypted using an
+ * md5 hash of the clients password as the key (referred to as the auth key).
+ * The client then decrypts the data key using its copy of the password.
+ * The client then writes an ok response to the server, encrypted using the
+ * newly decrypted data key, currently this string is
+ * "OK". The server responds to this string "OK". If either of the two
+ * don't understand the others response, they close the connection, as
+ * there has been a problem with authentication (most likely both passwords
+ * don't match). If everything went alright the communication continues
+ * asynchronuously encrypted using the data key.
+ *
+ * The exchange of encrypted objects is done by packing regular objects
+ * into SecureObjects. For the rest of the connection information is
+ * exchanged on demand between the two. The Server does however send
+ * keep alive messages to the client, currently every 60 seconds,
+ * so that a defunct connection can be identified and terminated, or
+ * restarted if wished. This is handled by the server, using the
+ * ServerKeepAliveTask to send the keep alive string. The client then
+ * has 30 seconds to repsond to the keep alive string.When either of
+ * the two want to end the connection they send the string "JFRITZ CLOSE".
+ * For even more detailed information see the classes named above.
+ *
  * @author brian
  *
  */

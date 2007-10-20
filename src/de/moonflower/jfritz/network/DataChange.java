@@ -13,6 +13,8 @@ import java.util.Vector;
  * but it will probably be removed in the next version for a better
  * model, i.e. this implementation is only temporary
  *
+ * @see de.moonflower.jfritz.network.ClientConnectionListener
+ *
  * @author brian
  *
  */

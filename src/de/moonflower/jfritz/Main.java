@@ -147,9 +147,7 @@
  * - Bugfix: Gelöschte Kontakte werden jetzt auch in der Anrufliste entfernt
  * - Bugfix: Geänderte Kontakte werden jetzt auch richtig in der Anrufliste dargestellt
  * - Bugfix: Clientseitige / serverseitige Änderungen im Telefonbuch werden bei allen Clients auch richtig in der Anrufliste dargestellt
- * - Neu: Clients, die die Anrufliste des Servers übernehmen, versuchen nicht mehr auf die Box zuzugreifen.
  * - Bugfix: NullPointerException beim Charset-Lesen entfernt, Rückwärtssuche funktioniert bei einigen wieder
- * - Neu: JFritz-Server kann jetzt serverseitig die Anrufliste für jeden Client selbst filtern
  *
  * JFritz network-v1
  * 	 Neue Strings:
@@ -700,7 +698,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.6.3"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.76 2007/10/19 12:59:51 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.77 2007/10/20 12:03:05 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

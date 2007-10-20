@@ -6,6 +6,9 @@ import java.util.Vector;
  * This class is used as a sort of static back end for accessing and changing
  * settings for the client oder server.
  *
+ * This is also used a central way for the connection threads to notify
+ * the GUI of changes to their state
+ *
  * @author brian
  *
  */

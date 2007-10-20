@@ -10,6 +10,8 @@ import java.util.Vector;
  * Currently the fields data and timestamp are optional
  * and should be left null if not used to save space and bandwidth.
  *
+ * @see de.moonflower.jfritz.network.ClientConnectionListener
+ *
  * @author brian
  *
  * @param <E>
