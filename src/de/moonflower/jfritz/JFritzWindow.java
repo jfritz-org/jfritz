@@ -1664,6 +1664,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		if ( timer != null )
 			timer.cancel();
 
+		if(MonitoringPanel.timer != null)
+			MonitoringPanel.timer.cancel();
+
 		saveWindowProperties();
 		callerListPanel.saveStateProperties();
 

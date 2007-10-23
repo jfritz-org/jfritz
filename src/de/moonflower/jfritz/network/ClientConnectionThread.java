@@ -126,6 +126,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 				// create the sender thread, start it up, and set it for the min priority
 				sender = new ServerSenderThread(objectOut, remoteAddress, login, outCipher);
+				sender.setDaemon(true);
 				sender.start();
 				sender.setPriority(Thread.MIN_PRIORITY);
 
@@ -150,6 +151,8 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 		}
 
 		connectionListener.clientConnectionEnded(this);
+
+		Debug.netMsg("Client Connection thread for "+remoteAddress+" has ended cleanly");
 	}
 
 	/**

@@ -236,6 +236,8 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 			//TODO: Cleanup code here!
 		}
+
+		Debug.netMsg("Server Connection thread has ended cleanly");
 	}
 
 	/**

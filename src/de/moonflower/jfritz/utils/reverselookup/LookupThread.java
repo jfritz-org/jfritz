@@ -97,7 +97,7 @@ public class LookupThread extends Thread {
 			}
 		}
 
-		Debug.msg("Lookup thread exiting");
+		Debug.msg("Lookup thread  has quit");
 
 	}
 

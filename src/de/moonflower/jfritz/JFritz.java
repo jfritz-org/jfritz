@@ -531,6 +531,7 @@ public final class JFritz implements  StatusListener{
 		watchdogTimer = new Timer();
 		watchdog = new WatchdogThread(1);
 		watchdog.setName("Watchdog-Thread");
+		watchdog.setDaemon(false);
 		watchdogTimer.schedule(new TimerTask() {
 			public void run() {
 				watchdog.run();

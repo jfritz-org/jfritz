@@ -67,7 +67,7 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 
 	private JToggleButton enableInetMonitoring;
 
-	private Timer timer;
+	public static Timer timer;
 
 	private static int count = 0;
 

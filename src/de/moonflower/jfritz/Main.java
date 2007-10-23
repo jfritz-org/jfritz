@@ -698,7 +698,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.6.3"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.78 2007/10/23 19:48:42 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.79 2007/10/23 20:51:58 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -756,6 +756,7 @@ public class Main implements LookupObserver {
 		System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION //$NON-NLS-1$
 				+ " (c) 2005-2007 by " + JFRITZ_PROJECT); //$NON-NLS-1$
 		Thread.currentThread().setPriority(5);
+		Thread.currentThread().setName("JFritz main thread");
 		ShutdownThread shutdownThread = new ShutdownThread(this);
 		Runtime.getRuntime().addShutdownHook(shutdownThread);
 
@@ -794,6 +795,8 @@ public class Main implements LookupObserver {
 		main.checkInstanceControl();
 
 		jfritz.createJFrame(showConfWizard);
+
+		Debug.msg("Main is now exiting...");
 	}
 
 	/**

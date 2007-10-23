@@ -20,6 +20,8 @@ public class NetworkStateMonitor  {
 
 	public static ClientConnectionListener clientConnectionListener;
 
+	private static Vector<NetworkStateListener> listeners = new Vector<NetworkStateListener>();
+
 	public static void startServer(){
 		if(clientConnectionListener == null){
 			clientConnectionListener = new ClientConnectionListener();
@@ -34,8 +36,6 @@ public class NetworkStateMonitor  {
 	public static void stopServer(){
 		clientConnectionListener.stopListening();
 	}
-
-	private static Vector<NetworkStateListener> listeners = new Vector<NetworkStateListener>();
 
 	public static void addListener(NetworkStateListener listener){
 		listeners.add(listener);

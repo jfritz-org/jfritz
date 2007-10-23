@@ -143,6 +143,7 @@ public class ClientConnectionListener extends Thread {
 							// we have at least one more connection slot free
 							Debug.netMsg("Client Connection Listener waiting for incoming connection");
 							ClientConnectionThread connection = new ClientConnectionThread(serverSocket.accept(), this);
+							connection.setDaemon(true);
 
 							synchronized(this){
 								connectedClients.add(connection);
@@ -156,7 +157,7 @@ public class ClientConnectionListener extends Thread {
 
 				}catch(SocketException e){
 					if(e.getMessage().equals("Socket closed"))
-						Debug.netMsg("Server socket closed!");
+						Debug.netMsg("Server socket closed");
 					else{
 						Debug.err(e.toString());
 						e.printStackTrace();
@@ -168,7 +169,7 @@ public class ClientConnectionListener extends Thread {
 					Debug.err(e.toString());
 					e.printStackTrace();
 				}
-				Debug.netMsg("Client connection listener stopped");
+
 				isListening = false;
 				listen = false;
 
@@ -181,7 +182,9 @@ public class ClientConnectionListener extends Thread {
 				NetworkStateMonitor.serverStateChanged();
 			}
 		}
-		Debug.netMsg("ClientConnectionListener thread quitting");
+
+		//Always display a message, so we know the thread ended cleanly
+		Debug.netMsg("ClientConnectionListener has exited cleanly");
 
 	}
 
@@ -221,6 +224,7 @@ public class ClientConnectionListener extends Thread {
 	 */
 	public synchronized void stopListening(){
 		listen = false;
+		quit = true;
 		Debug.netMsg("Stopping client listener!");
 		try{
 			serverSocket.close();
