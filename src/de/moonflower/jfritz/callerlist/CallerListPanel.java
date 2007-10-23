@@ -1239,8 +1239,10 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 *
 	 */
 	public void saveStateProperties() {
+		Debug.msg("saveStateProperties in CallerListPanel.java");
 		saveButtonStatus();
 		callerTable.saveColumnStatus();
+		Debug.msg("saveStateProperties in CallerListPanel.java");
 	}
 
 	/**

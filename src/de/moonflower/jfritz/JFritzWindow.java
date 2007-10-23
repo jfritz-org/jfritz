@@ -1645,6 +1645,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	public void saveWindowProperties() {
 //		Debug.msg("Save window position"); //$NON-NLS-1$
+		Debug.msg("saving Window properties in JFritzWindow.java");
 
 		Main.setStateProperty(
 				"position.left", Integer.toString(getLocation().x)); //$NON-NLS-1$
@@ -1655,9 +1656,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		Main.setStateProperty(
 				"position.height", Integer.toString(this.getHeight()));//$NON-NLS-1$
 		Main.setStateProperty("window.state", Integer.toString(windowState));
+		Debug.msg("saving Window properties in JFritzWindow.java done");
 	}
 
 	public void prepareShutdown() {
+		Debug.msg("prepareShutdown in JFritzWindow.java");
 		if ( timer != null )
 			timer.cancel();
 
@@ -1668,6 +1671,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		// phonebookPanel
 		// quickDialPanel
 		// monitoringPanel
+		Debug.msg("prepareShutdown in JFritzWindow.java done");
 	}
 
 	public void selectLookupButton(boolean select){

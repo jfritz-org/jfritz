@@ -41,9 +41,6 @@ import de.moonflower.jfritz.dialogs.quickdial.QuickDials;
 import de.moonflower.jfritz.dialogs.simple.MessageDlg;
 import de.moonflower.jfritz.dialogs.sip.SipProviderTableModel;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
-import de.moonflower.jfritz.JFritzEvent.*;
-import de.moonflower.jfritz.JFritzEvent.actions.*;
-import de.moonflower.jfritz.JFritzEvent.events.*;
 import de.moonflower.jfritz.network.ClientLoginsTableModel;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.phonebook.PhoneBook;
@@ -594,6 +591,7 @@ public final class JFritz implements  StatusListener{
 
 	void prepareShutdown() {
 		// TODO maybe some more cleanup is needed
+		Debug.msg("prepareShutdown in JFritz.java");
 
 		if ( jframe != null) {
 			jframe.prepareShutdown();
@@ -606,15 +604,20 @@ public final class JFritz implements  StatusListener{
 		if ( watchdog != null ) {
 			watchdogTimer.cancel();
 			// FIXME: interrupt() lässt JFritz beim System-Shutdown hängen
-//			watchdog.interrupt();
+			//			watchdog.interrupt();
 		}
 
-//		Debug.msg("disposing jframe");
-//		if (jframe != null)
-//			jframe.dispose();
-//		if (Main.SYSTRAY_SUPPORT)
-//			systray.removeTrayIcon(null);
+		if ( Main.SYSTRAY_SUPPORT && systray != null )
+		{
+			systray.removeTrayIcon(trayIcon);
+			systray = null;
+		}
 
+		Debug.msg("disposing jframe");
+		if (jframe != null)
+			jframe.dispose();
+
+		Debug.msg("prepareShutdown in JFritz.java done");
 	}
 
 	/**

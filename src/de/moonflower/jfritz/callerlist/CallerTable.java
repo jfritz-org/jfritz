@@ -254,6 +254,7 @@ public class CallerTable extends JTable {
 	}
 
 	public void saveColumnStatus() {
+		Debug.msg("saveColumnStatus in CallerTable.java");
 		TableColumnModel colModel = getColumnModel();
 		for (int i = 0; i < colModel.getColumnCount(); i++) {
 			TableColumn col = getColumnModel().getColumn(i);
@@ -298,6 +299,7 @@ public class CallerTable extends JTable {
 			 * moveColumn(getColumnIndex(columnName), i); } }
 			 *
 			 */
+		Debug.msg("saveColumnStatus in CallerTable.java done");
 	}
 
 	/**
