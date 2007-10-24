@@ -128,6 +128,14 @@
  * - http://www.ip-phone-forum.de/showthread.php?t=112348
  * - Überprüfen, geht wohl nicht mehr: Rückwärtssuche für Österreich über dasoertliche.de wieder eingebaut
  * - Connection-Timeout für ReverseLookup setzen
+ * - Möglichst alle Fenstergrößen und -positionen speichern und wiederherstellen
+ * - Gesprächigeres JFritz, bessere Statusleiste
+ * - Einstellung der Standardsprache anhand der Betriebssystemsprache
+ * - Alle Strings im Wizard überprüfen, vor allem die Sprache sollte stimmen
+ * - Standardmäßiges Einbelden des Bearbeitungsfensters im Telefonbuch
+ * - Plötzlicher Wechsel vom Telefonbuch zur Anrufliste
+ * - Hilfe für jede Einstellungsseite, womit zur Wiki-Seite verlinkt wird
+ * - .jfritz eigentlich unter Windows unter Anwendungsdaten\.jfritz
  * TODO-END
  *
  * FIXME:
@@ -139,6 +147,7 @@
  * FIXME-END
  *
  * JFritz 0.6.3
+ * - Bugfix: Bug beim Herunterfahren / Abmelden unter Linux, Windows behoben
  * - Bugfix: JFritz blockiert das Herunterfahren / Abmelden von OS X nicht mehr
  * - Umstrukturierung des Aufrufs von externen Programmen (noch nicht abgeschlossen)
  * - Neu: Einführung von ServerSenderThreads, jede Verbindung hat eigene Empfänger und Sender-Threads
@@ -700,7 +709,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.6.3"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.81 2007/10/24 16:54:33 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.82 2007/10/24 19:34:46 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
