@@ -58,10 +58,14 @@ public class Debug {
 		// Save the original outputstream so we can write to the console too!
 		originalOut = System.out;
 
+		//if our file name contains no path, then save in our save dir
+		if(!fname.contains(System.getProperty("file.separator")))
+			fname = Main.SAVE_DIR + fname;
+
 		try {
 			// setup the redirection of Sysem.out and System.err
 			FileOutputStream tmpOutputStream = new FileOutputStream(
-					Main.SAVE_DIR + fname);
+					fname);
 			fileRedirecter = new PrintStream(tmpOutputStream);
 			System.setOut(fileRedirecter);
 			System.setErr(fileRedirecter);
@@ -72,7 +76,7 @@ public class Debug {
 		}
 
 		fileRedirecter.println("------------------------------------------"); //$NON-NLS-1$
-		msg("logging to file \"" + Main.SAVE_DIR + fname + "\" has been enabled"); //$NON-NLS-1$,  //$NON-NLS-2$
+		msg("logging to file \"" + fname + "\" has been enabled"); //$NON-NLS-1$,  //$NON-NLS-2$
 	}
 
 	/**
