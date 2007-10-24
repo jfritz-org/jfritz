@@ -1,7 +1,5 @@
 package de.moonflower.jfritz;
 
-import javax.swing.SwingUtilities;
-
 import java.lang.reflect.*;
 
 import de.moonflower.jfritz.JFritz;
@@ -97,28 +95,30 @@ public class MacHandler {
 				throws Throwable {
 
 			if (method.getName().equalsIgnoreCase("handleQuit")) { //$NON-NLS-1$
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						Debug.msg("MAC Application Menu: Show Exit Dialog"); //$NON-NLS-1$
-						jfritz.maybeExit(0);
-					}
-				});
+
+				//new attempt at preventing jfritz from stopping a shutdown
+				//JFritz either has to call system.exit before this method closes
+				//or JFritz has to throw an illegalStateException to prevent
+				//the close event from continuing, if the user click cancel
+				Debug.msg("Mac Quit handler was called");
+				if(jfritz.maybeExit(0)){
+					System.exit(0);
+				} else{
+					throw new IllegalStateException("User chose not to quit JFritz!"); //$NON-NLS-1$
+				}
+
+				Debug.msg("Mac Quit handler is exiting");
 
 
-				//throw new IllegalStateException("Let the quit handler do it"); //$NON-NLS-1$
 
-				// This is a workaround so that we can convince OSX to let
-				// jfritz shutdown
-				// before stopping the log off / shut down process
-				// This would be unnecessary if we didnt exit JFritz with
-				// System.exit
-				// If we ever do that, you can remove this code here
-				// NOTE: Code throws a harmless exception as a side effect
+	//This is an old workaround for 10.2 code, no longer need and preventing proper shutdowns
+//				SwingUtilities.invokeLater(new Runnable() {
+//					public void run() {
+//						Debug.msg("MAC Application Menu: Show Exit Dialog"); //$NON-NLS-1$
+//						jfritz.maybeExit(0);
+//					}
+//				});
 
-				// ((ApplicationEvent) args[0]).setHandled(true);
-
-				// throw new IllegalStateException("Let the quit handler do
-				// it"); //$NON-NLS-1$
 			}
 
 			else if (method.getName().equalsIgnoreCase("handleAbout")) { //$NON-NLS-1$

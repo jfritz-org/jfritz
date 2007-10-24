@@ -139,6 +139,7 @@
  * FIXME-END
  *
  * JFritz 0.6.3
+ * - Bugfix: JFritz blockiert das Herunterfahren / Abmelden von OS X nicht mehr
  * - Umstrukturierung des Aufrufs von externen Programmen (noch nicht abgeschlossen)
  * - Neu: Einführung von ServerSenderThreads, jede Verbindung hat eigene Empfänger und Sender-Threads
  * - Neu: Clients können den Anrufmonitor vom Server verwenden
@@ -698,7 +699,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.6.3"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.79 2007/10/23 20:51:58 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.80 2007/10/24 16:00:11 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -767,7 +768,7 @@ public class Main implements LookupObserver {
 	/**
 	 * Main method for starting JFritz
 	 *
-	 * LAST MODIFIED: Brian Jensen 04.06.06 added option to disable mulitple
+	 * LAST MODIFIED: Brian 04.06.06 added option to disable mulitple
 	 * instance control added a new parameter switch: -w
 	 *
 	 * @param args
@@ -1150,6 +1151,14 @@ public class Main implements LookupObserver {
 		}
 	}
 
+
+	/**
+	 * The function is called mostly from the mac quit handler code to
+	 * safely end jfritz when the program should be terminated
+	 * either through user input or through a system event (logoff / restart ..)
+	 *
+	 * @param i the exit code
+	 */
 	public void exit(int i) {
 		Debug.msg("Main.exit(" + i + ")");
 		exitCode = i;

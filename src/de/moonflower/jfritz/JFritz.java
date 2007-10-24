@@ -579,7 +579,7 @@ public final class JFritz implements  StatusListener{
 
 	}
 
-	void maybeExit(int i) {
+	boolean maybeExit(int i) {
 		boolean exit = true;
 		if (JFritzUtils.parseBoolean(Main.getProperty(
 				"option.confirmOnExit", "false"))) { //$NON-NLS-1$ $NON-NLS-2$
@@ -588,6 +588,7 @@ public final class JFritz implements  StatusListener{
 		if (exit) {
 			main.exit(0);
 		}
+		return exit;
 	}
 
 	void prepareShutdown() {
