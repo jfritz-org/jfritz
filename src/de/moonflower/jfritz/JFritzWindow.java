@@ -12,6 +12,8 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -127,7 +129,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	private JFritz jFritz;
 
-	private int windowState;
+	private JFritzWindow thisWindow;
 
 	public final String WINDOW_PROPERTIES_FILE = "jfritz.window.properties.xml"; //$NON-NLS-1$
 
@@ -142,6 +144,34 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		Debug.msg("Create JFritz-GUI"); //$NON-NLS-1$
 		maxBounds = null;
 		createGUI();
+		thisWindow = this;
+		this.addComponentListener(new ComponentListener() {
+
+			public void componentHidden(ComponentEvent arg0) {
+				// TODO Auto-generated method stub
+
+			}
+
+			public void componentMoved(ComponentEvent arg0) {
+				Main.setStateProperty("position.left", Integer.toString(getLocation().x)); //$NON-NLS-1$
+				Main.setStateProperty("position.top", Integer.toString(getLocation().y));//$NON-NLS-1$
+				Main.setStateProperty("position.width", Integer.toString(thisWindow.getWidth()));//$NON-NLS-1$
+				Main.setStateProperty("position.height", Integer.toString(thisWindow.getHeight()));//$NON-NLS-1$
+			}
+
+			public void componentResized(ComponentEvent arg0) {
+				Main.setStateProperty("position.left", Integer.toString(getLocation().x)); //$NON-NLS-1$
+				Main.setStateProperty("position.top", Integer.toString(getLocation().y));//$NON-NLS-1$
+				Main.setStateProperty("position.width", Integer.toString(thisWindow.getWidth()));//$NON-NLS-1$
+				Main.setStateProperty("position.height", Integer.toString(thisWindow.getHeight()));//$NON-NLS-1$
+			}
+
+			public void componentShown(ComponentEvent arg0) {
+				// TODO Auto-generated method stub
+
+			}
+
+		});
 		addWindowStateListener(new WindowStateListener() {
 
 			public void windowStateChanged(WindowEvent arg0) {
@@ -184,7 +214,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	private void createGUI() throws WrongPasswordException {
 		setTitle(Main.PROGRAM_NAME);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		setDefaultLookAndFeel();
 
 		addKeyListener(KeyEvent.VK_F5, "F5"); //$NON-NLS-1$
 
@@ -272,22 +301,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		setLocation(x, y);
 		setSize(w, h);
 		setExtendedState(windowState);
-	}
-
-	/**
-	 * Sets default Look'n'Feel
-	 */
-	public void setDefaultLookAndFeel() {
-		setDefaultLookAndFeelDecorated(true);
-		try {
-			UIManager.setLookAndFeel(Main.getProperty("lookandfeel", //$NON-NLS-1$
-					UIManager.getSystemLookAndFeelClassName()));
-			// Wunsch eines MAC Users, dass das Default LookAndFeel des
-			// Betriebssystems genommen wird
-
-		} catch (Exception ex) {
-			Debug.err(ex.toString());
-		}
 	}
 
 	/**
@@ -848,8 +861,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 */
 	protected void processWindowEvent(WindowEvent e) {
 
-		windowState=this.getExtendedState();
-
 		if (e.getID() == WindowEvent.WINDOW_CLOSING) {
 			if (JFritzUtils.parseBoolean(Main.getProperty("option.minimize", //$NON-NLS-1$
 					"false"))) { //$NON-NLS-1$
@@ -878,9 +889,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			UIManager.LookAndFeelInfo info = (UIManager.LookAndFeelInfo) rbmi
 					.getClientProperty("lnf name"); //$NON-NLS-1$
 			try {
-				UIManager.setLookAndFeel(info.getClassName());
-				SwingUtilities.updateComponentTreeUI(this);
-				Main.setProperty("lookandfeel", info.getClassName()); //$NON-NLS-1$
+//				UIManager.setLookAndFeel(info.getClassName());
+				Main.setStateProperty("lookandfeel", info.getClassName()); //$NON-NLS-1$
 				jFritz.refreshWindow();
 			} catch (Exception e) {
 				Debug.err("Unable to set UI " + e.getMessage()); //$NON-NLS-1$
@@ -1643,22 +1653,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		return progressbar;
 	}
 
-	public void saveWindowProperties() {
-//		Debug.msg("Save window position"); //$NON-NLS-1$
-		Debug.msg("saving Window properties in JFritzWindow.java");
-
-		Main.setStateProperty(
-				"position.left", Integer.toString(getLocation().x)); //$NON-NLS-1$
-		Main.setStateProperty(
-				"position.top", Integer.toString(getLocation().y));//$NON-NLS-1$
-		Main.setStateProperty(
-				"position.width", Integer.toString(this.getWidth()));//$NON-NLS-1$
-		Main.setStateProperty(
-				"position.height", Integer.toString(this.getHeight()));//$NON-NLS-1$
-		Main.setStateProperty("window.state", Integer.toString(windowState));
-		Debug.msg("saving Window properties in JFritzWindow.java done");
-	}
-
 	public void prepareShutdown() {
 		Debug.msg("prepareShutdown in JFritzWindow.java");
 		if ( timer != null )
@@ -1666,9 +1660,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 		if(MonitoringPanel.timer != null)
 			MonitoringPanel.timer.cancel();
-
-		saveWindowProperties();
-		callerListPanel.saveStateProperties();
 
 		// TODO: möglicherweise speichern der Einstellungen für
 		// phonebookPanel

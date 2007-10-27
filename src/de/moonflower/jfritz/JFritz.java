@@ -26,6 +26,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import org.jdesktop.jdic.tray.SystemTray;
@@ -196,6 +197,7 @@ public final class JFritz implements  StatusListener{
 
 		ClientLoginsTableModel.loadFromXMLFile(Main.SAVE_DIR+CLIENT_SETTINGS_FILE);
 
+		setDefaultLookAndFeel();
 		if (Main
 				.getProperty(
 						"lookandfeel", UIManager.getSystemLookAndFeelClassName()).endsWith("MetalLookAndFeel")) { //$NON-NLS-1$,  //$NON-NLS-2$
@@ -557,6 +559,25 @@ public final class JFritz implements  StatusListener{
 	}
 
 	/**
+	 * Sets default Look'n'Feel
+	 */
+	public void setDefaultLookAndFeel() {
+		JFritzWindow.setDefaultLookAndFeelDecorated(true);
+		try {
+			UIManager.setLookAndFeel(Main.getStateProperty("lookandfeel", //$NON-NLS-1$
+					UIManager.getSystemLookAndFeelClassName()));
+			if ( jframe != null )
+			{
+				SwingUtilities.updateComponentTreeUI(jframe);
+			}
+			// Wunsch eines MAC Users, dass das Default LookAndFeel des
+			// Betriebssystems genommen wird
+		} catch (Exception ex) {
+			Debug.err(ex.toString());
+		}
+	}
+
+	/**
 	 * @ Bastian Schaefer
 	 *
 	 * Destroys and repaints the Main Frame.
@@ -564,8 +585,8 @@ public final class JFritz implements  StatusListener{
 	 */
 
 	public void refreshWindow() {
-		jframe.saveWindowProperties();
 		jframe.dispose();
+		setDefaultLookAndFeel();
 		javax.swing.SwingUtilities.invokeLater(jframe);
 		try {
 			jframe = new JFritzWindow(this);

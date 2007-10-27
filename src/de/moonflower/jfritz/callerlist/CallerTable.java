@@ -12,7 +12,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableColumnModelEvent;
+import javax.swing.event.TableColumnModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -73,6 +76,82 @@ public class CallerTable extends JTable {
 		headerTips = new ColumnHeaderToolTips();
 		setTableProperties();
 		createColumns();
+		getColumnModel().addColumnModelListener(new TableColumnModelListener(){
+
+			TableColumnModel colModel = getColumnModel();
+
+			public void columnAdded(TableColumnModelEvent arg0) {
+				try {
+					colModel.getColumnIndex("callbycall");
+					Main.setProperty("option.showCallByCallColumn", "" + TRUE);
+				} catch (IllegalArgumentException iae) {
+					Main.setProperty("option.showCallByCallColumn", "" + FALSE);
+				}
+				try {
+					colModel.getColumnIndex("comment");
+					Main.setProperty("option.showCommentColumn", "" + TRUE);
+				} catch (IllegalArgumentException iae) {
+					Main.setProperty("option.showCommentColumn", "" + FALSE);
+				}
+				try {
+					colModel.getColumnIndex("port");
+					Main.setProperty("option.showPortColumn", "" + TRUE);
+				} catch (IllegalArgumentException iae) {
+					Main.setProperty("option.showPortColumn", "" + FALSE);
+				}
+			}
+
+			public void columnMarginChanged(ChangeEvent arg0) {
+				// TODO Auto-generated method stub
+				for (int i = 0; i < colModel.getColumnCount(); i++) {
+					TableColumn col = getColumnModel().getColumn(i);
+					Main.setStateProperty("column." + col.getIdentifier() + ".width", ""
+							+ col.getPreferredWidth());
+				}
+			}
+
+			public void columnMoved(TableColumnModelEvent arg0) {
+				// TODO Auto-generated method stub
+				for (int i = 0; i < MAXCOLUMNCOUNT; i++) {
+					try {
+						Main.setStateProperty("" + "column" + i + ".name", ""
+								+ colModel.getColumn(i).getIdentifier());
+						// Debug.msg("" + "column" + i + ".name" + "="+
+						// colModel.getColumn(i).getIdentifier());
+					} catch (IllegalArgumentException iae) {
+						Main.setStateProperty("column" + i + ".name", "");
+					} catch (ArrayIndexOutOfBoundsException aioobe) {
+						Main.setStateProperty("column" + i + ".name", "");
+					}
+				}
+			}
+
+			public void columnRemoved(TableColumnModelEvent arg0) {
+				try {
+					colModel.getColumnIndex("callbycall");
+					Main.setProperty("option.showCallByCallColumn", "" + TRUE);
+				} catch (IllegalArgumentException iae) {
+					Main.setProperty("option.showCallByCallColumn", "" + FALSE);
+				}
+				try {
+					colModel.getColumnIndex("comment");
+					Main.setProperty("option.showCommentColumn", "" + TRUE);
+				} catch (IllegalArgumentException iae) {
+					Main.setProperty("option.showCommentColumn", "" + FALSE);
+				}
+				try {
+					colModel.getColumnIndex("port");
+					Main.setProperty("option.showPortColumn", "" + TRUE);
+				} catch (IllegalArgumentException iae) {
+					Main.setProperty("option.showPortColumn", "" + FALSE);
+				}
+			}
+
+			public void columnSelectionChanged(ListSelectionEvent arg0) {
+				// TODO Auto-generated method stub
+			}
+
+		});
 	}
 
 	public CallerTable(CallerListPanel parentPanel, PhoneBookTable phoneBookTable, CallerList list) {
@@ -251,55 +330,6 @@ public class CallerTable extends JTable {
                         + Main.getMessage("total_duration") + ": " + (selectedCallsTotalMinutes / 60) + " min"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 			}
 		}
-	}
-
-	public void saveColumnStatus() {
-		Debug.msg("saveColumnStatus in CallerTable.java");
-		TableColumnModel colModel = getColumnModel();
-		for (int i = 0; i < colModel.getColumnCount(); i++) {
-			TableColumn col = getColumnModel().getColumn(i);
-			Main.setStateProperty("column." + col.getIdentifier() + ".width", ""
-					+ col.getPreferredWidth());
-		}
-		try {
-			colModel.getColumnIndex("callbycall");
-			Main.setProperty("option.showCallByCallColumn", "" + TRUE);
-		} catch (IllegalArgumentException iae) {
-			Main.setProperty("option.showCallByCallColumn", "" + FALSE);
-		}
-		try {
-			colModel.getColumnIndex("comment");
-			Main.setProperty("option.showCommentColumn", "" + TRUE);
-		} catch (IllegalArgumentException iae) {
-			Main.setProperty("option.showCommentColumn", "" + FALSE);
-		}
-		try {
-			colModel.getColumnIndex("port");
-			Main.setProperty("option.showPortColumn", "" + TRUE);
-		} catch (IllegalArgumentException iae) {
-			Main.setProperty("option.showPortColumn", "" + FALSE);
-		}
-
-		for (int i = 0; i < MAXCOLUMNCOUNT; i++) {
-			try {
-				Main.setStateProperty("" + "column" + i + ".name", ""
-						+ colModel.getColumn(i).getIdentifier());
-				// Debug.msg("" + "column" + i + ".name" + "="+
-				// colModel.getColumn(i).getIdentifier());
-			} catch (IllegalArgumentException iae) {
-				Main.setStateProperty("column" + i + ".name", "");
-			} catch (ArrayIndexOutOfBoundsException aioobe) {
-				Main.setStateProperty("column" + i + ".name", "");
-			}
-		}/*
-			 * String columnName = Main.getProperty("column"+i+".name","");
-			 * //$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$ if
-			 * (!columnName.equals("")) { //$NON-NLS-1$ if
-			 * (getColumnIndex(columnName) != -1) {
-			 * moveColumn(getColumnIndex(columnName), i); } }
-			 *
-			 */
-		Debug.msg("saveColumnStatus in CallerTable.java done");
 	}
 
 	/**

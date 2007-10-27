@@ -619,6 +619,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		handleAction(e.getActionCommand());
 		callerList.update();
 		statusBarController.fireStatusChanged(callerList.getTotalDuration());
+		saveButtonStatus();
 	}
 
 
@@ -1232,17 +1233,6 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		syncAllFilters();
 		callerList.update();
 		statusBarController.fireStatusChanged(callerList.getTotalDuration());
-	}
-
-	/**
-	 * Speichert alle Properties, die zum CallerListPanel gehören.
-	 *
-	 */
-	public void saveStateProperties() {
-		Debug.msg("saveStateProperties in CallerListPanel.java");
-		saveButtonStatus();
-		callerTable.saveColumnStatus();
-		Debug.msg("saveStateProperties in CallerListPanel.java");
 	}
 
 	/**
