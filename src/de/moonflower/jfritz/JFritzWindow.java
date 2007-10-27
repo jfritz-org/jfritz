@@ -47,7 +47,6 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.ChangeEvent;
@@ -593,6 +592,12 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		item.addActionListener(this);
 		viewMenu.add(item);
 
+
+		item = new JMenuItem(Main.getMessage("monitoring"), null);
+		item.setActionCommand("monitoring");
+		item.addActionListener(this);
+		viewMenu.add(item);
+
 		// help menu
 		item = new JMenuItem(Main.getMessage("help_content"), 'h'); //$NON-NLS-1$,
 		item.setActionCommand("help"); //$NON-NLS-1$
@@ -669,7 +674,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			}
 		} else if (!isretrieving) { // Prevent multiple clicking
 			isretrieving = true;
-			tabber.setSelectedComponent(callerListPanel);
 			final SwingWorker worker = new SwingWorker() {
 				public Object construct() {
 					boolean isdone = false;
@@ -843,14 +847,14 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				+ "\n\n"
 				+ "Active Developers:\n"
 				+ "Robert Palmer <robotniko@users.sourceforge.net>\n" 	//$NON-NLS-1$
-				+ "Marc Waldenberger <MarcWaldenberger@gmx.net>\n"		//$NON-NLS-1$
 				+ "Brian Jensen <capncrunch@users.sourceforge.net>\n" 	//$NON-NLS-1$
 				+ "\n"													//$NON-NLS-1$
 				+ "Former Developers:\n" 								//$NON-NLS-1$
 				+ "Arno Willig <akw@thinkwiki.org>\n"					//$NON-NLS-1$
 				+ "Christian Klein <kleinch@users.sourceforge.net>\n" 	//$NON-NLS-1$
-				+ "Benjamin Schmitt <little_ben@users.sourceforge.net>" //$NON-NLS-1$
+				+ "Benjamin Schmitt <little_ben@users.sourceforge.net>\n" //$NON-NLS-1$
 				+ "Bastian Schaefer <baefer@users.sourceforge.net>\n" 	//$NON-NLS-1$
+				+ "Marc Waldenberger <MarcWaldenberger@gmx.net>\n"		//$NON-NLS-1$
 				+ "\n\n"												//$NON-NLS-1$
 				+ "This tool is developed and released under\n" 		//$NON-NLS-1$
 				+ "the terms of the GNU General Public License\n"); 	//$NON-NLS-1$
@@ -1001,6 +1005,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			activatePhoneBook();
 		} else if (e.getActionCommand().equals("quickdial")) {
 			tabber.setSelectedComponent(quickDialPanel);
+		} else if (e.getActionCommand().equals("monitoring")) {
+			tabber.setSelectedComponent(monitoringPanel);
 		} else if (e.getActionCommand().equals("stats")) {
 			showStatsDialog();
 		} else if (e.getActionCommand().equals("fetchList")) {
