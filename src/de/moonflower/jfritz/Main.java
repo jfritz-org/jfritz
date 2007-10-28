@@ -154,6 +154,7 @@
  * - Bestehenden dummy Eintrag überschreiben
  * - Rechtsklick in Teilnehmerspalte
  * - Text ändern für reverse_lookup_dummy
+ * - Falls VoIP-Provider unbekannt, soll in der FritzBox gesucht werden
  *
  * FIXME-END
  *
@@ -175,7 +176,7 @@
  * - Neu: Neuer Menüpunkt unter "Ansicht" für das Monitoring-Panel
  * - Fix: About-Dialog korrigiert
  * - Bugfix: Zu kleines Fenster bei Popup-Verzögerung behoben
- * - Neu: Vier neue Look&Feels
+ * - Neu: Drei neue Look&Feels
  *
  * JFritz network-v1
  * 	 Neue Strings:
@@ -727,7 +728,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.6.3"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.87 2007/10/28 15:21:51 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.88 2007/10/28 16:14:40 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

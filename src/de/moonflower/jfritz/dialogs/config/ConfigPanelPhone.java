@@ -38,25 +38,25 @@ public class ConfigPanelPhone extends JPanel implements ConfigPanel{
 			c.gridy = 2;
 			label = new JLabel(Main.getMessage("country_code")); //$NON-NLS-1$
 			add(label, c);
-			countryCode = new JTextField("", 3); //$NON-NLS-1$
+			countryCode = new JTextField("", 6); //$NON-NLS-1$
 			add(countryCode, c);
 
 			c.gridy = 3;
 			label = new JLabel(Main.getMessage("area_prefix")); //$NON-NLS-1$
 			add(label, c);
-			areaPrefix = new JTextField("", 3); //$NON-NLS-1$
+			areaPrefix = new JTextField("", 6); //$NON-NLS-1$
 			add(areaPrefix, c);
 
 			c.gridy = 4;
 			label = new JLabel(Main.getMessage("country_prefix")); //$NON-NLS-1$
 			add(label, c);
-			countryPrefix = new JTextField("", 3); //$NON-NLS-1$
+			countryPrefix = new JTextField("", 6); //$NON-NLS-1$
 			add(countryPrefix, c);
 
 	        c.gridy = 5;
 	        activateDialPrefix = new JCheckBox(Main.getMessage("dial_prefix")); //$NON-NLS-1$
 	        add(activateDialPrefix, c);
-	        dialPrefix = new JTextField("", 3); //$NON-NLS-1$
+	        dialPrefix = new JTextField("", 6); //$NON-NLS-1$
 	        add(dialPrefix, c);
 	}
 
