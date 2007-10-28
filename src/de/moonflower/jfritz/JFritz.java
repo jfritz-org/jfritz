@@ -564,6 +564,11 @@ public final class JFritz implements  StatusListener{
 	public void setDefaultLookAndFeel() {
 		JFritzWindow.setDefaultLookAndFeelDecorated(true);
 		try {
+//			UIManager.setLookAndFeel("com.jgoodies.looks.windows.WindowsLookAndFeel");
+//			UIManager.setLookAndFeel("com.jgoodies.looks.plastic.PlasticLookAndFeel");
+//			UIManager.setLookAndFeel("com.jgoodies.looks.plastic.Plastic3DLookAndFeel");
+//			UIManager.setLookAndFeel("com.jgoodies.looks.plastic.PlasticXPLookAndFeel");
+			System.err.println(Main.getStateProperty("lookandfeel"));
 			UIManager.setLookAndFeel(Main.getStateProperty("lookandfeel", //$NON-NLS-1$
 					UIManager.getSystemLookAndFeelClassName()));
 			if ( jframe != null )

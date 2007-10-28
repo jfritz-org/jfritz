@@ -9,7 +9,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/jfreereport-0.8.6-2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jcommon-1.0.0-rc1-cvs.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/poi-2.5.1-final-20040804.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/bsf-2.3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/bsh-1.3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/itext-1.3.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/pixie-0.8.4.jar"/>
@@ -18,5 +17,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/jfreechart-1.0.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/jdom.jar"/>
+	<classpathentry kind="lib" path="lib/bsf-2.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/looks-2.1.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

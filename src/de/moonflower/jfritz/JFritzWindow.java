@@ -552,6 +552,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		// options menu
 		LookAndFeelInfo[] lnfs = UIManager.getInstalledLookAndFeels();
 		ButtonGroup lnfgroup = new ButtonGroup();
+
+		// Add system dependent look and feels
 		for (int i = 0; i < lnfs.length; i++) {
 			JRadioButtonMenuItem rbmi = new JRadioButtonMenuItem(lnfs[i]
 					.getName());
@@ -562,6 +564,35 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			rbmi.addItemListener(this);
 			lnfgroup.add(rbmi);
 		}
+
+		// Add additional look and feels from looks-2.1.4.jar
+		LookAndFeelInfo lnf = new LookAndFeelInfo("Plastic","com.jgoodies.looks.plastic.PlasticLookAndFeel");
+		JRadioButtonMenuItem rb = new JRadioButtonMenuItem(lnf.getName());
+		lnfMenu.add(rb);
+		rb.putClientProperty("lnf name", lnf);
+		rb.setSelected(UIManager.getLookAndFeel().getClass().getName()
+				.equals(lnf.getClassName()));
+		rb.addItemListener(this);
+		lnfgroup.add(rb);
+
+		lnf = new LookAndFeelInfo("Plastic 3D","com.jgoodies.looks.plastic.Plastic3DLookAndFeel");
+		rb = new JRadioButtonMenuItem(lnf.getName());
+		lnfMenu.add(rb);
+		rb.putClientProperty("lnf name", lnf);
+		rb.setSelected(UIManager.getLookAndFeel().getClass().getName()
+				.equals(lnf.getClassName()));
+		rb.addItemListener(this);
+		lnfgroup.add(rb);
+
+		lnf = new LookAndFeelInfo("Plastic XP","com.jgoodies.looks.plastic.PlasticXPLookAndFeel");
+		rb = new JRadioButtonMenuItem(lnf.getName());
+		lnfMenu.add(rb);
+		rb.putClientProperty("lnf name", lnf);
+		rb.setSelected(UIManager.getLookAndFeel().getClass().getName()
+				.equals(lnf.getClassName()));
+		rb.addItemListener(this);
+		lnfgroup.add(rb);
+
 		optionsMenu.add(lnfMenu);
 
 		item = new JMenuItem(Main.getMessage("config_wizard"), null); //$NON-NLS-1$
