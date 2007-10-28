@@ -141,7 +141,7 @@ public class FritzBox {
 			if(Main.getProperty("network.type", "0").equals("2")
 					&& Boolean.parseBoolean(Main.getProperty("option.clientCallList", "false"))){
 
-				Debug.msg("JFritz is running as a client and using call list from server, canceling firmware detection");
+				Debug.netMsg("JFritz is running as a client and using call list from server, canceling firmware detection");
 
 			}else{
 				firmware = FritzBoxFirmware.detectFirmwareVersion(

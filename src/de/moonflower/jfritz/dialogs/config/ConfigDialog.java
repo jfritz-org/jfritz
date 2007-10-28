@@ -133,15 +133,14 @@ public class ConfigDialog extends JDialog implements ChangeListener {
 
 		fetchAfterStandby.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.watchdog.fetchAfterStandby", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		//Buggy code
-		/*if (devices != null) {
-			for (int i = 0; i < devices.size(); i++) {
-				SSDPPacket p = (SSDPPacket) devices.get(i);
-				if (p.getIP().getHostAddress().equals(address.getText())) {
-					addressCombo.setSelectedIndex(i);
-				}
-			}
-		}*/
+		if(Main.getProperty("network.type", "0").equals("2")
+				&& Boolean.parseBoolean(Main.getProperty("option.clientCallList", "false"))){
+
+			Debug.netMsg("JFritz is running as a client and using call list from server, disabeling some options");
+			deleteAfterFetchButton.setSelected(false);
+			deleteAfterFetchButton.setEnabled(false);
+		}
+
 	}
 
 	/**

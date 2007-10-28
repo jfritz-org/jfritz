@@ -19,6 +19,7 @@ import javax.swing.event.ChangeListener;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
@@ -162,6 +163,16 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 
 		searchWithSSDP.setSelected(JFritzUtils.parseBoolean(Main.getProperty(
 				"option.useSSDP", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
+
+		if(Main.getProperty("network.type", "0").equals("2")
+				&& Boolean.parseBoolean(Main.getProperty("option.clientCallList", "false"))){
+
+			Debug.netMsg("JFritz is running as a client and using call list from server, disabeling some options");
+			searchWithSSDP.setSelected(false);
+			searchWithSSDP.setEnabled(false);
+
+
+		}
 
 	}
 

@@ -190,6 +190,13 @@ public class FritzBoxFirmware {
 			String box_password, String port) throws WrongPasswordException, IOException, InvalidFirmwareException {
 		final String urlstr = "http://" + box_address +":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
 
+		if(Main.getProperty("network.type", "0").equals("2")
+				&& Boolean.parseBoolean(Main.getProperty("option.clientCallList", "false"))){
+
+			Debug.netMsg("JFritz is configured as a client and using call list from server, canceling firmware detection");
+			return null;
+		}
+
 		String data = ""; //$NON-NLS-1$
 		String language = "de";
 
