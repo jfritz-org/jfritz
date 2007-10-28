@@ -82,6 +82,9 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		clientPanel = getClientPanel();
 		serverPanel = getServerPanel();
 
+		clientPanel.setVisible(false);
+		serverPanel.setVisible(false);
+
 		NetworkStateMonitor.addListener(this);
 	}
 
@@ -412,24 +415,32 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 				this.removeAll();
 				networkTypeCombo.setSelectedIndex(0);
 				this.add(networkTypeCombo, BorderLayout.NORTH);
+				clientPanel.setVisible(false);
+				serverPanel.setVisible(false);
 				this.repaint();
 				break;
 			}
 			case 1: {
 				Debug.msg("JFritz as a server chosen"); //$NON-NLS-1$
 				this.removeAll();
-				networkTypeCombo.setSelectedIndex(1);
 				this.add(networkTypeCombo, BorderLayout.NORTH);
+				networkTypeCombo.setSelectedIndex(1);
 				this.add(serverPanel, BorderLayout.SOUTH);
+				clientPanel.setVisible(false);
+				serverPanel.setVisible(true);
+				serverPanel.repaint();
 				this.repaint();
 				break;
 			}
 			case 2: {
 				Debug.msg("JFritz as a client chosen"); //$NON-NLS-1$
 				this.removeAll();
-				networkTypeCombo.setSelectedIndex(2);
 				this.add(networkTypeCombo, BorderLayout.NORTH);
+				networkTypeCombo.setSelectedIndex(2);
 				this.add(clientPanel, BorderLayout.SOUTH);
+				clientPanel.setVisible(true);
+				serverPanel.setVisible(false);
+				clientPanel.repaint();
 				this.repaint();
 				break;
 
