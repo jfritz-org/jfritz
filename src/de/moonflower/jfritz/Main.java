@@ -177,6 +177,7 @@
  * - Fix: About-Dialog korrigiert
  * - Bugfix: Zu kleines Fenster bei Popup-Verzögerung behoben
  * - Neu: Drei neue Look&Feels
+ * - Bugfix: Ubuntu 7.04 trayicon and Sun Java 1.6 working now
  *
  * JFritz network-v1
  * 	 Neue Strings:
@@ -728,7 +729,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.6.3"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.88 2007/10/28 16:14:40 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.89 2007/10/28 16:34:39 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
