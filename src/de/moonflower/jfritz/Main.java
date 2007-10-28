@@ -174,6 +174,7 @@
  * - Neu: JFritz Log-Datein kann jetzt im beliebigen Verzeichnis gespeichert werden
  * - Neu: Neuer Menüpunkt unter "Ansicht" für das Monitoring-Panel
  * - Fix: About-Dialog korrigiert
+ * - Bugfix: Zu kleines Fenster bei Popup-Verzögerung behoben
  *
  * JFritz network-v1
  * 	 Neue Strings:
@@ -714,6 +715,7 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.JFritzUtils;
+import de.moonflower.jfritz.utils.ShutdownHook;
 import de.moonflower.jfritz.utils.reverselookup.LookupObserver;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 
@@ -724,7 +726,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.6.3"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.85 2007/10/27 18:21:51 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.86 2007/10/28 10:46:01 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -783,6 +785,15 @@ public class Main implements LookupObserver {
 				+ " (c) 2005-2007 by " + JFRITZ_PROJECT); //$NON-NLS-1$
 		Thread.currentThread().setPriority(5);
 		Thread.currentThread().setName("JFritz main thread");
+
+		//Catch non-user-initiated VM shutdown
+	    ShutdownHook.install( new ShutdownHook.Handler() {
+	      public void shutdown( String signal_name ) {
+	        Debug.msg( "Core: Caught signal " +signal_name );
+	        prepareShutdown();
+	      }
+	    });
+
 		ShutdownThread shutdownThread = new ShutdownThread(this);
 		Runtime.getRuntime().addShutdownHook(shutdownThread);
 
@@ -1280,6 +1291,7 @@ public class Main implements LookupObserver {
 		try {
 			Debug.msg("Save state properties"); //$NON-NLS-1$
 			state_properties.storeToXML(Main.SAVE_DIR + STATE_PROPERTIES_FILE);
+			Debug.msg("Save state properties done"); //$NON-NLS-1$
 		} catch (IOException e) {
 			Debug.err("Couldn't save state properties"); //$NON-NLS-1$
 		}
@@ -1517,16 +1529,19 @@ public class Main implements LookupObserver {
 
 			closeOpenConnections();
 
-			if ( jfritz != null ) {
-				jfritz.prepareShutdown();
-			}
-
+			Debug.msg("Releasing lock");
 			if (exitCode != -1 && Main.isInstanceControlEnabled()) {
 				File f = new File(Main.SAVE_DIR + Main.LOCK_FILE);
 
 				if (f.exists())
 					f.delete();
 				Debug.msg("Multiple instance lock: release lock."); //$NON-NLS-1$
+			}
+
+			// This must be the last call, after disposing JFritzWindow nothing
+			// is executed at windows-shutdown
+			if ( jfritz != null ) {
+				jfritz.prepareShutdown();
 			}
 
 			Debug.msg("Finished shutting down"); //$NON-NLS-1$
