@@ -175,6 +175,7 @@
  * - Neu: Neuer Menüpunkt unter "Ansicht" für das Monitoring-Panel
  * - Fix: About-Dialog korrigiert
  * - Bugfix: Zu kleines Fenster bei Popup-Verzögerung behoben
+ * - Bugfix: MSN-Filter werden jetzt richtig gespeichert und geladen
  * - Neu: Drei neue Look&Feels
  * - Bugfix: Ubuntu 7.04 trayicon and Sun Java 1.6 working now
  * - Neu: Sprache wird beim ersten Start von JFritz automatisch auf Betriebssystemsprache eingestellt
@@ -730,7 +731,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.6.3"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.90 2007/10/29 11:17:14 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.91 2007/10/29 21:14:47 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

@@ -44,6 +44,8 @@ public abstract class CallFilter implements Cloneable {
 
 	public static final String FILTER_SIP = "filter_sip";
 
+	public static final String FILTER_SIP_PROVIDERS = "filter_sip_providers";
+
 	public static final String FILTER_DATE_END = "FILTER_DATE_END";
 
 	public static final String FILTER_DATE_START = "FILTER_DATE_START";

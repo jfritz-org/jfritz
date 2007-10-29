@@ -1073,6 +1073,13 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		((DateFilter)filter[date]).setStartDate(startDateChooser.getDate());
 		((DateFilter)filter[date]).setEndDate(endDateChooser.getDate());
 		((SearchFilter)filter[search]).setSearchString(searchFilterTextField.getText());
+
+		Vector<String> providers = new Vector<String>();
+		String[] parts = Main.getStateProperty(CallFilter.FILTER_SIP_PROVIDERS, "").split(" ");
+		for(String part: parts)
+			providers.add(part);
+
+		((SipFilter)filter[sip]).setProvider(providers);
 		syncFilterWithButton(filter[callIn], callInFilterButton);
 		syncFilterWithButton(filter[callInFailed], callInFailedFilterButton);
 		syncFilterWithButton(filter[callOut], callOutFilterButton);
@@ -1153,6 +1160,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		Main.setStateProperty(CallFilter.FILTER_DATE_END, df.format(end));
 		Main.setStateProperty(CallFilter.FILTER_DATE_SPECIAL, dateSpecialSaveString);
 		Main.setStateProperty(CallFilter.FILTER_SIP, "" + sipFilterButton.getState());
+		Main.setStateProperty(CallFilter.FILTER_SIP_PROVIDERS, filter[sip].toString());
 		Main.setStateProperty(CallFilter.FILTER_CALLBYCALL, ""
 				+ callByCallFilterButton.getState());
 		Main.setStateProperty(CallFilter.FILTER_CALLOUT, "" + callOutFilterButton.getState());
