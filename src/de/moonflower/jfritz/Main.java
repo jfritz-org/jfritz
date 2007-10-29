@@ -132,7 +132,6 @@
  * - Überprüfen, geht wohl nicht mehr: Rückwärtssuche für Österreich über dasoertliche.de wieder eingebaut
  * - Connection-Timeout für ReverseLookup setzen
  * - Möglichst alle Fenstergrößen und -positionen speichern und wiederherstellen
- * - Einstellung der Standardsprache anhand der Betriebssystemsprache
  * - Alle Strings im Wizard überprüfen, vor allem die Sprache sollte stimmen
  * - Standardmäßiges Einbelden des Bearbeitungsfensters im Telefonbuch
  * - Hilfe für jede Einstellungsseite, womit zur Wiki-Seite verlinkt wird
@@ -178,6 +177,7 @@
  * - Bugfix: Zu kleines Fenster bei Popup-Verzögerung behoben
  * - Neu: Drei neue Look&Feels
  * - Bugfix: Ubuntu 7.04 trayicon and Sun Java 1.6 working now
+ * - Neu: Sprache wird beim ersten Start von JFritz automatisch auf Betriebssystemsprache eingestellt
  *
  * JFritz network-v1
  * 	 Neue Strings:
@@ -699,6 +699,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -729,7 +730,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.6.3"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.89 2007/10/28 16:34:39 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.90 2007/10/29 11:17:14 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -764,6 +765,7 @@ public class Main implements LookupObserver {
 	private static ResourceBundle localeMeanings;
 
 	private static ResourceBundle messages;
+	private static ResourceBundle en_messages;
 
 	private static boolean showConfWizard;
 
@@ -782,6 +784,8 @@ public class Main implements LookupObserver {
 	private static int exitCode = 0;
 
 	private static boolean already_done_shutdown;
+
+	private static Vector<Locale> supported_languages;
 
 	public Main(String[] args) {
 		System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION //$NON-NLS-1$
@@ -820,11 +824,32 @@ public class Main implements LookupObserver {
 		main.initiateCLIParameters();
 		main.checkDebugParameters(args);
 
+		// load supported languages
+		loadLanguages();
+
 		// Weitere Initialisierung
 		loadSaveDir();
 
 		loadProperties();
-		loadMessages(new Locale(getProperty("locale", "en_US"))); //$NON-NLS-1$,  //$NON-NLS-2$
+
+    	Debug.msg("OS Language: " + System.getProperty("user.language"));
+    	Debug.msg("OS Country: " + System.getProperty("user.country"));
+		if ( Main.getProperty("locale").equals("") )
+		{
+			Debug.msg("No language set yet ... Setting language to OS language");
+	    	// Check if language is supported. If not switch to english
+	    	if ( supported_languages.contains(new Locale(System.getProperty("user.language"),System.getProperty("user.country"))))
+	    	{
+	        	Main.setProperty("locale", System.getProperty("user.language")+"_"+System.getProperty("user.country"));
+	    	} else {
+	    		Debug.msg("Your language ist not yet supported.");
+	        	Main.setProperty("locale", "en_US");
+	    	}
+		}
+		String loc = Main.getProperty("locale");
+		Debug.msg("Selected language: " + loc);
+
+		loadMessages(new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_")+1, loc.length()))); //$NON-NLS-1$,  //$NON-NLS-2$
 		loadLocaleMeanings(new Locale("int", "INT"));
 
 		saveUpdateProperties();
@@ -987,15 +1012,31 @@ public class Main implements LookupObserver {
             		System.err.println(Main.getMessage("invalid_language")); //$NON-NLS-1$
             		System.err.println("Deutsch: de"); //$NON-NLS-1$
             		System.err.println("English: en"); //$NON-NLS-1$
+            		System.err.println("Italian: it"); //$NON-NLS-1$
+            		System.err.println("Netherland: nl"); //$NON-NLS-1$
+            		System.err.println("Poland: pl"); //$NON-NLS-1$
+            		System.err.println("Russia: ru"); //$NON-NLS-1$
             		System.exit(0);
             	}else if(language.equals("english") || language.equals("en")){ //$NON-NLS-1$
             		Main.setProperty("locale", "en_US");
             	}else if(language.equals("german") || language.equals("de")){ //$NON-NLS-1$
             		Main.setProperty("locale", "de_DE");
+            	}else if(language.equals("italian") || language.equals("it")){ //$NON-NLS-1$
+            		Main.setProperty("locale", "it_IT");
+            	}else if(language.equals("netherlands") || language.equals("nl")){ //$NON-NLS-1$
+            		Main.setProperty("locale", "nl_NL");
+            	}else if(language.equals("poland") || language.equals("pl")){ //$NON-NLS-1$
+            		Main.setProperty("locale", "pl_PL");
+            	}else if(language.equals("russian") || language.equals("ru")){ //$NON-NLS-1$
+            		Main.setProperty("locale", "ru_RU");
             	}else{
             		System.err.println(Main.getMessage("invalid_language")); //$NON-NLS-1$
             		System.err.println("Deutsch: de"); //$NON-NLS-1$
             		System.err.println("English: en"); //$NON-NLS-1$
+            		System.err.println("Italian: it"); //$NON-NLS-1$
+            		System.err.println("Netherland: nl"); //$NON-NLS-1$
+            		System.err.println("Poland: pl"); //$NON-NLS-1$
+            		System.err.println("Russia: ru"); //$NON-NLS-1$
             		System.exit(0);
             	}
         		loadMessages(new Locale(Main.getProperty("locale","en_US"))); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -1419,6 +1460,8 @@ public class Main implements LookupObserver {
 	 */
 	public static void loadMessages(Locale locale) {
 		try {
+			Debug.msg("Loading locale: " + locale);
+			en_messages = ResourceBundle.getBundle("jfritz", new Locale("en","US"));//$NON-NLS-1$
 			messages = ResourceBundle.getBundle("jfritz", locale);//$NON-NLS-1$
 		} catch (MissingResourceException e) {
 			Debug
@@ -1457,7 +1500,7 @@ public class Main implements LookupObserver {
 			}
 		} catch (MissingResourceException e) {
 			Debug.err("Can't find resource string for " + msg); //$NON-NLS-1$
-			i18n = msg;
+			i18n = en_messages.getString(msg);
 		}
 		return i18n;
 	}
@@ -1518,7 +1561,7 @@ public class Main implements LookupObserver {
 		Update update = new Update(jfritzUpdate.getPropertiesDirectory());
 		update.loadSettings();
 		update.setProgramVersion(PROGRAM_VERSION);
-		update.setLocale(getProperty("locale", "en_US"));
+		update.setLocale(getProperty("locale"));
 		update.setUpdateOnStart(JFritzUtils.parseBoolean(Main.getProperty(
 				"option.checkNewVersionAfterStart", "false")));
 		update.saveSettings();
@@ -1589,7 +1632,16 @@ public class Main implements LookupObserver {
 			JFritz.getPhonebook().addEntries(persons);
 	}
 
-
+	private static void loadLanguages()
+	{
+		supported_languages = new Vector<Locale>();
+		supported_languages.add(new Locale("de","DE"));
+		supported_languages.add(new Locale("en","US"));
+		supported_languages.add(new Locale("it","IT"));
+		supported_languages.add(new Locale("nl","NL"));
+		supported_languages.add(new Locale("pl","PL"));
+		supported_languages.add(new Locale("ru","RU"));
+	}
 
 
 }

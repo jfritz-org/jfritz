@@ -226,7 +226,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 		callerListPanel = new CallerListPanel(JFritz.getCallerList(), this);
 		phoneBookPanel = new PhoneBookPanel(JFritz.getPhonebook(), this,
-				new Locale(Main.getProperty("locale", "en_US")));
+				new Locale(Main.getProperty("locale")));
 		phoneBookPanel.getStatusBarController().addStatusBarListener(jFritz);
 		callerListPanel.setPhoneBookPanel(phoneBookPanel);
 		callerListPanel.getStatusBarController().addStatusBarListener(jFritz);
