@@ -19,7 +19,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 
 	/**
 	 *
-	 * @author marc
+	 * @author Brian
 	 *
 	 */
 public class LookupThread extends Thread {
@@ -123,7 +123,6 @@ public class LookupThread extends Thread {
 	 *
 	 * @see de.moonflower.jfritz.struct.ReverseLookupSite
 	 *
-	 * @author brian
 	 *
 	 * @param number number to be looked up
 	 * @return a new person object containing the results of the search

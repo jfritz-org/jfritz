@@ -2180,4 +2180,14 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 		return filters;
 	}
 
+	/**
+	 * this function is used for determing the call called in a pop up message
+	 *
+	 * @param row number of call in table
+	 * @return call object
+	 */
+	public Call getCallAt(int row){
+		return filteredCallerData.elementAt(row);
+	}
+
 }

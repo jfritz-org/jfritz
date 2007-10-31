@@ -33,6 +33,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 
@@ -60,6 +61,7 @@ import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.JFritzClipboard;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 import de.moonflower.jfritz.utils.StatusBarController;
 import de.moonflower.jfritz.utils.threeStateButton.ThreeStateButton;
 
@@ -92,6 +94,20 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		}
 
 		public void mousePressed(MouseEvent e) {
+
+			//get the call object that was right clicked
+			JTable target = (JTable) e.getSource();
+			int row = target.rowAtPoint(e.getPoint());
+			Call call = callerList.getCallAt(row);
+
+			String countryCode = call.getPhoneNumber().getCountryCode();
+			if(ReverseLookup.rlsMap.containsKey(countryCode)){
+
+			}
+
+
+
+			Debug.msg("richt click, call object: " + call);
 			maybeShowPopup(e);
 		}
 
@@ -160,6 +176,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	private PhoneBookPanel phoneBookPanel;
 	private JFrame parentFrame;
 	private StatusBarController statusBarController = new StatusBarController();
+
+	private JMenuItem reverseItem;
 
 	/**
 	 * A callerListPanel is a view for a callerlist, it has its own
