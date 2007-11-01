@@ -178,6 +178,7 @@
  * - Neu: Drei neue Look&Feels
  * - Bugfix: Ubuntu 7.04 trayicon and Sun Java 1.6 funktioniert nun
  * - Neu: Sprache wird beim ersten Start von JFritz automatisch auf Betriebssystemsprache eingestellt
+ * - Neu: Rückwärtssuche kann von der Anrufliste aus für eine ausgewählte Seite ausgeführt werden
  * - Standardmäßiges Einbelden des Bearbeitungsfensters im Telefonbuch
  * - Debug-Nachrichten können nun unter "Hilfe"-"Debug-Fenster" eingesehen und gespeichert werden
  *
@@ -736,7 +737,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.6.3"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.92 2007/11/01 12:05:13 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.93 2007/11/01 16:19:45 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

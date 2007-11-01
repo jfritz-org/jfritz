@@ -8,12 +8,19 @@ import de.moonflower.jfritz.struct.PhoneNumber;
  */
 class LookupRequest implements Comparable<LookupRequest> {
 	final PhoneNumber number;
-
+	final String lookupSite;
 	final public int priority;
 
 	LookupRequest(PhoneNumber number, int priority) {
 		this.number = number;
 		this.priority = priority;
+		lookupSite = "";
+	}
+
+	LookupRequest(PhoneNumber number, int priority, String site) {
+		this.number = number;
+		this.priority = priority;
+		lookupSite = site;
 	}
 
 	public int compareTo(LookupRequest o) {
@@ -21,7 +28,8 @@ class LookupRequest implements Comparable<LookupRequest> {
 	}
 
 	public boolean equals(Object obj){
-		return this.number.equals(((LookupRequest)obj).number) && this.priority == ((LookupRequest)obj).priority;
+		return this.number.equals(((LookupRequest)obj).number) && this.priority == ((LookupRequest)obj).priority
+			&& this.lookupSite == ((LookupRequest)obj).lookupSite;
 	}
 
 }

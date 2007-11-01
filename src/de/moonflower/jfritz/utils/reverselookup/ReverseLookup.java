@@ -121,6 +121,39 @@ public class ReverseLookup {
 		}
 	}
 
+
+	/**
+	 * This method adds a special lookup request for a specific site to the queue
+	 *
+	 * @param number
+	 * @param siteName
+	 * @param obs
+	 */
+	public static synchronized void specificLookup(PhoneNumber number, String siteName, LookupObserver obs){
+
+		Debug.msg("Creating Lookup request for "+number+" using "+siteName);
+		observer = obs;
+
+		count = requests.size();
+		done = 0;
+
+		LookupRequest request = new LookupRequest(number, 10, siteName);
+		if(!requests.contains(request) && !requests_done.contains(request))
+			requests.put(request);
+
+		//if the thread isn't started yet, start it up
+		if (thread == null) {
+			Debug.msg("creating thread");
+			thread = new LookupThread(false);
+			thread.setDaemon(true);
+			thread.setName("lookup-thread");
+			thread.start();
+		}else{
+			thread.resumeLookup();
+		}
+
+	}
+
 	/**
 	 * Function removes the next element from the request queue
 	 *
@@ -203,7 +236,7 @@ public class ReverseLookup {
 	 * @return the Person this method found
 	 */
 	public static Person busyLookup(PhoneNumber callerPhoneNumber) {
-		return LookupThread.lookup(callerPhoneNumber);
+		return LookupThread.lookup(callerPhoneNumber, "");
 	}
 
 	/** This function loads the file number/international/reverselookup.xml
@@ -271,4 +304,5 @@ public class ReverseLookup {
 	public static void addReverseLookupSites(String countryCode, Vector<ReverseLookupSite> rls_list){
 		rlsMap.put(countryCode, rls_list);
 	}
+
 }

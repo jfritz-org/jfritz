@@ -58,6 +58,7 @@ import de.moonflower.jfritz.phonebook.PhoneBookPanel;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.ReverseLookupSite;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.JFritzClipboard;
@@ -73,14 +74,46 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	class PopupListener extends MouseAdapter {
 		JPopupMenu popupMenu;
+		ActionListener listener;
 
-		PopupListener(JPopupMenu popupMenu) {
+		PopupListener(JPopupMenu popupMenu, ActionListener listener) {
 			super();
 			this.popupMenu = popupMenu;
+			this.listener = listener;
 		}
 
 		private void maybeShowPopup(MouseEvent e) {
 			if (e.isPopupTrigger()) {
+
+				//only modify the popup menu if its for the call table
+				if(listener != null){
+					//get the call object that was right clicked
+					JTable target = (JTable) e.getSource();
+					int row = target.rowAtPoint(e.getPoint());
+					Call call = callerList.getCallAt(row);
+
+					//remove all the previous choices
+					reverseMenu.removeAll();
+
+					//get the list of sites available for this number
+					String countryCode = call.getPhoneNumber().getCountryCode();
+					if(ReverseLookup.rlsMap.containsKey(countryCode)){
+						Vector<ReverseLookupSite> rls_list;
+						JMenuItem item;
+
+						rls_list = ReverseLookup.rlsMap.get(call.getPhoneNumber().getCountryCode());
+						for(ReverseLookupSite rls: rls_list){
+							item = new JMenuItem("using "+rls.getName());
+							item.addActionListener(listener);
+							item.setActionCommand("Lookup :"+rls.getName()+":"+row);
+							item.setEnabled(true);
+								reverseMenu.add(item);
+						}
+
+					}
+
+				}
+
 				popupMenu.show(e.getComponent(), e.getX(), e.getY());
 			}
 		}
@@ -94,20 +127,6 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		}
 
 		public void mousePressed(MouseEvent e) {
-
-			//get the call object that was right clicked
-			JTable target = (JTable) e.getSource();
-			int row = target.rowAtPoint(e.getPoint());
-			Call call = callerList.getCallAt(row);
-
-			String countryCode = call.getPhoneNumber().getCountryCode();
-			if(ReverseLookup.rlsMap.containsKey(countryCode)){
-
-			}
-
-
-
-			Debug.msg("richt click, call object: " + call);
 			maybeShowPopup(e);
 		}
 
@@ -177,7 +196,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	private JFrame parentFrame;
 	private StatusBarController statusBarController = new StatusBarController();
 
-	private JMenuItem reverseItem;
+	private JMenu reverseMenu;
 
 	/**
 	 * A callerListPanel is a view for a callerlist, it has its own
@@ -324,10 +343,14 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		}
 		JPopupMenu callerlistPopupMenu = new JPopupMenu();
 		JMenuItem menuItem;
-		menuItem = new JMenuItem(Main.getMessage("reverse_lookup")); //$NON-NLS-1$
-		menuItem.setActionCommand("reverselookup"); //$NON-NLS-1$
-		menuItem.addActionListener(this);
-		callerlistPopupMenu.add(menuItem);
+
+		reverseMenu = new JMenu(Main.getMessage("reverse_lookup"));
+		callerlistPopupMenu.add(reverseMenu);
+
+//		menuItem = new JMenuItem(Main.getMessage("reverse_lookup")); //$NON-NLS-1$
+//		menuItem.setActionCommand("reverselookup"); //$NON-NLS-1$
+//		menuItem.addActionListener(this);
+//		callerlistPopupMenu.add(menuItem);
 
 		menuItem = new JMenuItem(Main.getMessage("reverse_lookup_dummy")); //$NON-NLS-1$
 		menuItem.setActionCommand("reverselookup_dummy"); //$NON-NLS-1$
@@ -375,7 +398,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 		callerlistPopupMenu.add(clipboardMenu);
 
-		MouseAdapter popupListener = new PopupListener(callerlistPopupMenu);
+		MouseAdapter popupListener = new PopupListener(callerlistPopupMenu, this);
 		callerTable.addMouseListener(popupListener);
 
 		return new JScrollPane(callerTable);
@@ -449,7 +472,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		menuItem.setActionCommand("filter_callinfailed_allWithoutComment"); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		missedPopupMenu.add(menuItem);
-		MouseAdapter popupListener = new PopupListener(missedPopupMenu);
+		MouseAdapter popupListener = new PopupListener(missedPopupMenu, null);
 		callInFailedFilterButton.addMouseListener(popupListener);
 
 		callOutFilterButton = new ThreeStateButton(getImageIcon("callout.png"));
@@ -504,7 +527,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		menuItem.setActionCommand(CallFilter.LAST_MONTH);
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
-		popupListener = new PopupListener(datePopupMenu);
+		popupListener = new PopupListener(datePopupMenu, null);
 
 		dateFilterButton.addMouseListener(popupListener);
 
@@ -841,10 +864,24 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			}
 			return;
 		}
-		if (command.equals("reverselookup")) { //$NON-NLS-1$
-			callerList.doReverseLookup(callerTable.getSelectedRows());
+
+		if(command.startsWith("Lookup :")){
+
+			//this should run a specific reverse lookup just for one site
+			String parts[] = command.split(":");
+			Call call = callerList.getCallAt(Integer.parseInt(parts[2]));
+			ReverseLookup.specificLookup(call.getPhoneNumber(), parts[1], callerList);
+			JFritz.getJframe().selectLookupButton(true);
+			JFritz.getJframe().setLookupBusy(true);
 			return;
+
 		}
+
+		//old code
+//		if (command.equals("reverselookup")) { //$NON-NLS-1$
+//			callerList.doReverseLookup(callerTable.getSelectedRows());
+//			return;
+//		}
 		if (command.equals("reverselookup_dummy")) { //$NON-NLS-1$
 			callerList.reverseLookup(true, true);
 			return;

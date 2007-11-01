@@ -87,7 +87,7 @@ public class LookupThread extends Thread {
 
 			currentRequest = ReverseLookup.getNextRequest();
 
-			result = lookup(currentRequest.number);
+			result = lookup(currentRequest.number, currentRequest.lookupSite);
 			ReverseLookup.personFound(result);
 
 			try{
@@ -127,7 +127,7 @@ public class LookupThread extends Thread {
 	 * @param number number to be looked up
 	 * @return a new person object containing the results of the search
 	 */
-	static synchronized Person lookup(PhoneNumber number) {
+	static synchronized Person lookup(PhoneNumber number, String siteName) {
 
 		Person newPerson = new Person();
 
@@ -154,7 +154,13 @@ public class LookupThread extends Thread {
 			//Iterate over all the web sites loaded for the given country
 			for(int i=0; i < rls_list.size(); i++){
 				yield();
+
 				rls = rls_list.get(i);
+
+				if(!siteName.equals("") && !siteName.equals(rls.getName())){
+					Debug.msg("This lookup should be done using a specific site, skipping");
+					continue;
+				}
 
 				prefix = rls.getPrefix();
 				ac_length = rls.getAreaCodeLength();
