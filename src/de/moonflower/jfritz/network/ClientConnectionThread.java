@@ -26,6 +26,7 @@ import de.moonflower.jfritz.phonebook.PhoneBookListener;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 
 /**
  * This class is responsible for interacting with a JFritz client.
@@ -266,8 +267,15 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 					//client has requested to perform an action
 					actionRequest = (ClientActionRequest) o;
 					if(actionRequest.doLookup && login.allowLookup){
-						Debug.netMsg("Received request to do reverse lookup from "+remoteAddress);
-						JFritz.getJframe().doLookupButtonClick();
+
+						if(actionRequest.number != null && actionRequest.siteName != null){
+							Debug.netMsg("Received request to do specific reverse lookup for "+actionRequest.number
+									+" using "+actionRequest.siteName+ " from "+remoteAddress);
+							ReverseLookup.specificLookup(actionRequest.number, actionRequest.siteName, JFritz.getCallerList());
+						}else{
+							Debug.netMsg("Received request to do complete reverse lookup from "+remoteAddress);
+							JFritz.getJframe().doLookupButtonClick();
+						}
 					}
 					if(actionRequest.getCallList && login.allowGetList){
 						Debug.netMsg("Received request to get call from the box from "+remoteAddress);

@@ -2,6 +2,8 @@ package de.moonflower.jfritz.network;
 
 import java.io.Serializable;
 
+import de.moonflower.jfritz.struct.PhoneNumber;
+
 /**
  * used to make the ask the server to do something
  * @see de.moonflower.jfritz.network.ClientConnectionListener
@@ -17,5 +19,9 @@ public class ClientActionRequest implements Serializable {
 	public boolean doLookup = false;
 
 	public boolean getCallList = false;
+
+	public String siteName;
+
+	public PhoneNumber number;
 
 }

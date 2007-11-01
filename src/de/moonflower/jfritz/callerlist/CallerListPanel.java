@@ -54,6 +54,7 @@ import de.moonflower.jfritz.callerlist.filter.HandyFilter;
 import de.moonflower.jfritz.callerlist.filter.AnonymFilter;
 import de.moonflower.jfritz.callerlist.filter.SearchFilter;
 import de.moonflower.jfritz.callerlist.filter.SipFilter;
+import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.phonebook.PhoneBookPanel;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
@@ -87,29 +88,56 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 				//only modify the popup menu if its for the call table
 				if(listener != null){
-					//get the call object that was right clicked
+
+					//get the selected objects that were right clicked
 					JTable target = (JTable) e.getSource();
-					int row = target.rowAtPoint(e.getPoint());
-					Call call = callerList.getCallAt(row);
+					int[] selectedRows = target.getSelectedRows();
+					String countryCode = null, newCountryCode;
+					boolean diffCodes = false;
+					Vector<Call> calls = new Vector<Call>(selectedRows.length);
+					Call call;
+
+					//make sure all calls have the same country code
+					for(int i: selectedRows){
+
+						call = callerList.getCallAt(i);
+						calls.add(call);
+						newCountryCode = call.getPhoneNumber().getCountryCode();
+						if(countryCode == null)
+							countryCode = newCountryCode;
+						else if(!newCountryCode.equals(countryCode)){
+							diffCodes = true;
+						}
+					}
 
 					//remove all the previous choices
 					reverseMenu.removeAll();
+					JMenuItem item;
 
-					//get the list of sites available for this number
-					String countryCode = call.getPhoneNumber().getCountryCode();
-					if(ReverseLookup.rlsMap.containsKey(countryCode)){
+						//if calls have different country codes, only offer a generic lookup
+					if(selectedRows.length > 0 && diffCodes){
+						item = new JMenuItem("for "+selectedRows.length+" Calls");
+						item.addActionListener(listener);
+						item.setActionCommand("lookup:");
+						item.setEnabled(true);
+						reverseMenu.add(item);
+					}else if(selectedRows.length > 0 && ReverseLookup.rlsMap.containsKey(countryCode)){
+						reverseMenu.setEnabled(true);
 						Vector<ReverseLookupSite> rls_list;
-						JMenuItem item;
 
-						rls_list = ReverseLookup.rlsMap.get(call.getPhoneNumber().getCountryCode());
+						//get the list of sites available for this number
+						rls_list = ReverseLookup.rlsMap.get(countryCode);
 						for(ReverseLookupSite rls: rls_list){
 							item = new JMenuItem("using "+rls.getName());
 							item.addActionListener(listener);
-							item.setActionCommand("Lookup :"+rls.getName()+":"+row);
+							item.setActionCommand("lookup:"+rls.getName());
 							item.setEnabled(true);
-								reverseMenu.add(item);
+							reverseMenu.add(item);
 						}
 
+						//no lookup sites for this particular country
+					}else{
+						reverseMenu.setEnabled(false);
 					}
 
 				}
@@ -189,7 +217,6 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	private JTextField searchFilterTextField;
 
 	private JLabel searchLabel;
-
 
 	private JDateChooser startDateChooser;
 	private PhoneBookPanel phoneBookPanel;
@@ -865,14 +892,26 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			return;
 		}
 
-		if(command.startsWith("Lookup :")){
+		if(command.startsWith("lookup:")){
 
 			//this should run a specific reverse lookup just for one site
 			String parts[] = command.split(":");
-			Call call = callerList.getCallAt(Integer.parseInt(parts[2]));
-			ReverseLookup.specificLookup(call.getPhoneNumber(), parts[1], callerList);
-			JFritz.getJframe().selectLookupButton(true);
-			JFritz.getJframe().setLookupBusy(true);
+			int[] selectedRows = callerTable.getSelectedRows();
+			Call call;
+
+			//get all the selected calls
+			for(int i: selectedRows){
+				call = callerList.getCallAt(i);
+				ReverseLookup.specificLookup(call.getPhoneNumber(), parts[1], callerList);
+			}
+
+			//only set the progrss bar and button if we aren't networked
+			if(!Main.getProperty("option.clientTelephoneBook").equals("true") ||
+					!NetworkStateMonitor.isConnectedToServer()){
+
+				JFritz.getJframe().selectLookupButton(true);
+				JFritz.getJframe().setLookupBusy(true);
+			}
 			return;
 
 		}

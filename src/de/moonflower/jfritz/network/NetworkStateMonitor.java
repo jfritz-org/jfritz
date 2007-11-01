@@ -2,6 +2,8 @@ package de.moonflower.jfritz.network;
 
 import java.util.Vector;
 
+import de.moonflower.jfritz.struct.PhoneNumber;
+
 /**
  * This class is used as a sort of static back end for accessing and changing
  * settings for the client oder server.
@@ -80,6 +82,10 @@ public class NetworkStateMonitor  {
 
 	public static void requestLookupFromServer(){
 		serverConnection.requestLookup();
+	}
+
+	public static void requestSpecificLookupFromServer(PhoneNumber number, String siteName){
+		serverConnection.requestSpecificLookup(number, siteName);
 	}
 
 	public static void requestGetCallListFromServer(){

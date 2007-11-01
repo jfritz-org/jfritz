@@ -24,6 +24,7 @@ import de.moonflower.jfritz.callerlist.CallerListListener;
 import de.moonflower.jfritz.phonebook.PhoneBookListener;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
+import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 
@@ -679,6 +680,40 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			e.printStackTrace();
 		}
 		actionRequest.doLookup = false;
+	}
+
+	/**
+	 * This function request a specific reverse lookup for the number using the site
+	 *
+	 * @param number
+	 * @param siteName
+	 */
+	public synchronized void requestSpecificLookup(PhoneNumber number, String siteName){
+
+		actionRequest.doLookup = true;
+		actionRequest.number = number;
+		actionRequest.siteName = siteName;
+
+		try{
+
+			SealedObject sealedActionRequest = new SealedObject(actionRequest, outCipher);
+			objectOut.writeObject(sealedActionRequest);
+			objectOut.flush();
+			objectOut.reset();
+
+		}catch(IOException e){
+			Debug.err("Error writing lookup request to server");
+			Debug.err(e.toString());
+			e.printStackTrace();
+		} catch (IllegalBlockSizeException e) {
+			Debug.err("Illegal block size exception!");
+			Debug.err(e.toString());
+			e.printStackTrace();
+		}
+
+		actionRequest.doLookup = false;
+		actionRequest.number = null;
+		actionRequest.siteName = null;
 	}
 
 	public synchronized void requestGetCallList(){

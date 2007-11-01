@@ -22,6 +22,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
+import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.struct.ReverseLookupSite;
@@ -93,6 +95,14 @@ public class ReverseLookup {
 	public static synchronized void lookup(Vector<PhoneNumber> numbers,
 			LookupObserver obs, boolean quitOnDone) {
 
+		if(Main.getProperty("option.clientTelephoneBook").equals("true") &&
+				NetworkStateMonitor.isConnectedToServer()){
+			//if connected to server make server to the lookup
+			Debug.msg("requesting reverse lookup from server");
+			NetworkStateMonitor.requestLookupFromServer();
+			return;
+		}
+
 		LookupRequest req;
 		Enumeration<PhoneNumber> en = numbers.elements();
 		observer = obs;
@@ -130,6 +140,15 @@ public class ReverseLookup {
 	 * @param obs
 	 */
 	public static synchronized void specificLookup(PhoneNumber number, String siteName, LookupObserver obs){
+
+		if(Main.getProperty("option.clientTelephoneBook").equals("true") &&
+				NetworkStateMonitor.isConnectedToServer()){
+			//if connected to server make server to the lookup
+			Debug.msg("requesting specific reverse lookup for "+number+" using "+ siteName+" from server");
+			NetworkStateMonitor.requestSpecificLookupFromServer(number, siteName);
+			return;
+		}
+
 
 		Debug.msg("Creating Lookup request for "+number+" using "+siteName);
 		observer = obs;
