@@ -3,9 +3,7 @@ package de.moonflower.jfritz.JFritzEvent.gui;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
+
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -15,18 +13,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 
-import org.jdom.Attribute;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
-
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.JFritzEvent.JFritzEventDispatcher;
 import de.moonflower.jfritz.JFritzEvent.JFritzEventTableModel;
-import de.moonflower.jfritz.JFritzEvent.actions.JFritzAction;
 import de.moonflower.jfritz.JFritzEvent.struct.JFritzEventAction;
-import de.moonflower.jfritz.JFritzEvent.struct.JFritzEventCondition;
 import de.moonflower.jfritz.dialogs.config.ConfigPanel;
 import de.moonflower.jfritz.utils.Debug;
 

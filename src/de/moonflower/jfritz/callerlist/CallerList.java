@@ -645,7 +645,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 		unfilteredCallerData.addAll(newCalls);
 
 		for(CallerListListener l: listeners)
-			l.callsAdded((Vector) newCalls.clone());
+			l.callsAdded((Vector<Call>) newCalls.clone());
 
 		newCalls.clear();
 		sortAllUnfilteredRows();

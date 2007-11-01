@@ -9,7 +9,6 @@ import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 
 import javax.swing.JDialog;
@@ -17,7 +16,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.ListModel;
 
 import de.moonflower.jfritz.JFritzEvent.actions.JFritzAction;
 import de.moonflower.jfritz.JFritzEvent.events.JFritzEvent;

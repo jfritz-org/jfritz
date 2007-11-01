@@ -11,14 +11,12 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.filter.*;
 import de.moonflower.jfritz.network.ClientLoginsTableModel;
 import de.moonflower.jfritz.network.Login;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
-import de.moonflower.jfritz.utils.threeStateButton.ThreeStateButton;
 
 public class ClientLoginsXMLHandler extends DefaultHandler{
 

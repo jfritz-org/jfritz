@@ -49,22 +49,6 @@ public class ExecuteExternalProgram extends CallMonitorAdaptor {
         return parameter;
 	}
 
-	private void startProgram(String programString) {
-        if (programString.equals("")) { //$NON-NLS-1$
-            Debug.errDlg(Main.getMessage("no_external_program") //$NON-NLS-1$
-                    + programString);
-            return;
-        }
-        Debug.msg("Start external Program: " + programString); //$NON-NLS-1$
-        try {
-            Runtime.getRuntime().exec(programString);
-        } catch (IOException e) {
-            Debug.errDlg(Main.getMessage("not_external_program_start") //$NON-NLS-1$
-                    + programString);
-            Debug.err(e.toString());
-        }
-	}
-
     public void pendingCallIn(Call call) {
     }
 

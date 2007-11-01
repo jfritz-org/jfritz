@@ -133,7 +133,6 @@
  * - Connection-Timeout für ReverseLookup setzen
  * - Möglichst alle Fenstergrößen und -positionen speichern und wiederherstellen
  * - Alle Strings im Wizard überprüfen, vor allem die Sprache sollte stimmen
- * - Standardmäßiges Einbelden des Bearbeitungsfensters im Telefonbuch
  * - Hilfe für jede Einstellungsseite, womit zur Wiki-Seite verlinkt wird
  * - .jfritz eigentlich unter Windows unter Anwendungsdaten\.jfritz
  * - Eigenständige Inverssuche nach beliebiger Nummer
@@ -154,7 +153,7 @@
  * - Rechtsklick in Teilnehmerspalte
  * - Text ändern für reverse_lookup_dummy
  * - Falls VoIP-Provider unbekannt, soll in der FritzBox gesucht werden
- *
+ * - Popup wird beim Anrufmonitor mehrfach gestartet
  * FIXME-END
  *
  * JFritz 0.6.3
@@ -177,8 +176,10 @@
  * - Bugfix: Zu kleines Fenster bei Popup-Verzögerung behoben
  * - Bugfix: MSN-Filter werden jetzt richtig gespeichert und geladen
  * - Neu: Drei neue Look&Feels
- * - Bugfix: Ubuntu 7.04 trayicon and Sun Java 1.6 working now
+ * - Bugfix: Ubuntu 7.04 trayicon and Sun Java 1.6 funktioniert nun
  * - Neu: Sprache wird beim ersten Start von JFritz automatisch auf Betriebssystemsprache eingestellt
+ * - Standardmäßiges Einbelden des Bearbeitungsfensters im Telefonbuch
+ * - Debug-Nachrichten können nun unter "Hilfe"-"Debug-Fenster" eingesehen und gespeichert werden
  *
  * JFritz network-v1
  * 	 Neue Strings:
@@ -226,6 +227,10 @@
  *   set_client_callfilter
  *   username
  *   permissions
+ *   close
+ *   debug_window
+ *   debug_files
+ *   save_debug_log
  *
  * JFritz 0.6.2.04
  * - Umstrukturierung des Aufrufs von externen Programmen (noch nicht abgeschlossen)
@@ -700,7 +705,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -713,6 +717,7 @@ import de.moonflower.jfritz.autoupdate.Update;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.struct.FritzBox;
+import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.utils.CLIOption;
 import de.moonflower.jfritz.utils.CLIOptions;
 import de.moonflower.jfritz.utils.CopyFile;
@@ -731,7 +736,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.6.3"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.91 2007/10/29 21:14:47 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.92 2007/11/01 12:05:13 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -780,8 +785,6 @@ public class Main implements LookupObserver {
 
 	private CLIOptions options;
 
-	private static boolean commandLineOnly = false, isRunning = false;
-
 	private static int exitCode = 0;
 
 	private static boolean already_done_shutdown;
@@ -823,6 +826,7 @@ public class Main implements LookupObserver {
 		already_done_shutdown = false;
 		Main main = new Main(args);
 		main.initiateCLIParameters();
+		Debug.on();
 		main.checkDebugParameters(args);
 
 		// load supported languages
@@ -1244,7 +1248,6 @@ public class Main implements LookupObserver {
 		Debug.msg("Main.exit(" + i + ")");
 		exitCode = i;
 		prepareShutdown();
-//		System.exit(i);
 	}
 
 	public void closeOpenConnections(){
@@ -1593,6 +1596,7 @@ public class Main implements LookupObserver {
 
 			Debug.msg("Finished shutting down"); //$NON-NLS-1$
 			already_done_shutdown = true;
+			System.exit(0);
 		}
 	}
 
@@ -1613,7 +1617,7 @@ public class Main implements LookupObserver {
 	/**
 	 * adds the results to the phonebook and saves
 	 */
-	public void personsFound(Vector persons){
+	public void personsFound(Vector<Person> persons){
 		if ( persons != null )
 			JFritz.getPhonebook().addEntries(persons);
 	}
@@ -1628,7 +1632,7 @@ public class Main implements LookupObserver {
 	/**
 	 * is called to save progress
 	 */
-	public void saveFoundEntries(Vector persons) {
+	public void saveFoundEntries(Vector<Person> persons) {
 		if ( persons != null )
 			JFritz.getPhonebook().addEntries(persons);
 	}

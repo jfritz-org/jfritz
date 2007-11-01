@@ -516,14 +516,10 @@ public final class JFritz implements  StatusListener{
 			jframe.setVisible(false);
 		} else {
 			Debug.msg("Show JFritz-Window"); //$NON-NLS-1$
+			jframe.setVisible(true);
 			jframe.setExtendedState(oldFrameState);
 			jframe.toFront();
-			jframe.setVisible(true);
 			jframe.repaint();
-			if ( !jframe.isVisible() ) {  // bugfix for ubuntu sun java 1.6
-				jframe.setVisible(true);
-				jframe.toFront();
-			}
 		}
 	}
 

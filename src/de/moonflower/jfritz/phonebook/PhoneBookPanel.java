@@ -13,7 +13,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.util.Enumeration;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -124,7 +123,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		splitPane.setOneTouchExpandable(true);
 		splitPane.setContinuousLayout(true);
 		add(splitPane, BorderLayout.CENTER);
-		splitPane.setDividerLocation(0);
+		splitPane.setDividerLocation(PERSONPANEL_WIDTH);
 	}
 
 	/**
@@ -155,6 +154,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			if (loc < PERSONPANEL_WIDTH) {
 				splitPane.setDividerLocation(PERSONPANEL_WIDTH);
 			}
+			personPanel.focusFirstName();
 			;
 		} else if (e.getActionCommand().equals("filter_private")) { //$NON-NLS-1$
 			Main.setStateProperty("filter_private", Boolean //$NON-NLS-1$

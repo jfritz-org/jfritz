@@ -10,7 +10,6 @@ import de.moonflower.jfritz.dialogs.config.ConfigPanelCallMonitor;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelLang;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelFritzBox;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelMessage;
-import de.moonflower.jfritz.dialogs.config.ConfigPanelNetwork;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelPhone;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.JFritz;

@@ -17,10 +17,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.phonebook.PersonDialog;
 import de.moonflower.jfritz.struct.Person;
-
-import de.moonflower.jfritz.utils.Debug;
 
 /**
  * @author Arno Willig

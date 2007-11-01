@@ -634,6 +634,12 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		item.setActionCommand("help"); //$NON-NLS-1$
 		item.addActionListener(this);
 		helpMenu.add(item);
+
+		item = new JMenuItem(Main.getMessage("debug_window"), 'h'); //$NON-NLS-1$,
+		item.setActionCommand("debug_window"); //$NON-NLS-1$
+		item.addActionListener(this);
+		helpMenu.add(item);
+
 		item = new JMenuItem(Main.getMessage("jfritz_website"), 'w'); //$NON-NLS-1$,
 		item.setActionCommand("website"); //$NON-NLS-1$
 		item.addActionListener(this);
@@ -1011,6 +1017,16 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			showAboutDialog();
 		} else if (e.getActionCommand().equals("help")) { //$NON-NLS-1$
 			BrowserLaunch.openURL(JFritz.DOCUMENTATION_URL);
+		} else if (e.getActionCommand().equals("debug_window")) { //$NON-NLS-1$
+			JFrame debug_frame = new JFrame();
+			debug_frame.add(Debug.getPanel());
+			debug_frame.setTitle(Main.getMessage("debug_window"));
+			Debug.SetSaveButtonText(Main.getMessage("save"));
+			Debug.SetClearButtonText(Main.getMessage("clear"));
+			Debug.SetCloseButtonText(Main.getMessage("close"));
+			Debug.setFrame(debug_frame);
+			debug_frame.pack();
+			debug_frame.setVisible(true);
 		} else if (e.getActionCommand().equals("website")) { //$NON-NLS-1$
 			BrowserLaunch.openURL(Main.PROGRAM_URL);
 		} else if (e.getActionCommand().equals("export_csv")) {
