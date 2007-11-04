@@ -178,7 +178,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
                         + programString);
                 return;
             }
-            Debug.msg("Start external Program: " + programString); //$NON-NLS-1$
+            Debug.msg("Starte externes Programm: " + programString); //$NON-NLS-1$
             try {
                 Runtime.getRuntime().exec(programString);
             } catch (IOException e) {

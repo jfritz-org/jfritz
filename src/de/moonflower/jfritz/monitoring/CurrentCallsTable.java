@@ -88,7 +88,6 @@ public class CurrentCallsTable extends AbstractTableModel implements
      * Method part of the interface CallMonitorListener
      */
     public void pendingCallOut(Call call){
-    	Debug.msg("pendingCallOut was called");
     	//Nothing here for now
     	currentCalls.add(call);
     	fireTableDataChanged();

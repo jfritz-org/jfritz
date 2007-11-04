@@ -4,7 +4,7 @@
  */
 package de.moonflower.jfritz.utils;
 
-import javax.swing.BoxLayout;
+
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -14,11 +14,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileFilter;
 
-import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 
 import java.awt.BorderLayout;
-import java.awt.FileDialog;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -236,7 +234,7 @@ public class Debug extends JPanel {
 	{
 		main_panel = new JPanel();
 		main_panel.setLayout(new BorderLayout());
-		log_area = new JTextArea(40, 80);
+		log_area = new JTextArea(25, 80);
 		scroll_pane = new JScrollPane(log_area);
 		main_panel.add(scroll_pane, BorderLayout.NORTH);
 
@@ -288,7 +286,9 @@ public class Debug extends JPanel {
 						}
 					} else {
 						try {
-							log_area.write(new FileWriter(file.getAbsolutePath()));
+							FileWriter fw = new FileWriter(file.getAbsolutePath());
+							log_area.write(fw);
+							fw.close();
 						} catch (IOException e) {
 							Debug.err("Could not save debug log to file: "+file.getAbsolutePath());
 							e.printStackTrace();
