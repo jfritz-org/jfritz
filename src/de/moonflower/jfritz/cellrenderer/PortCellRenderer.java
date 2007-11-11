@@ -38,6 +38,8 @@ public class PortCellRenderer extends DefaultTableCellRenderer {
 				portStr = "FON 2"; //$NON-NLS-1$
 			else if (port.equals("2")) //$NON-NLS-1$
 				portStr = "FON 3"; //$NON-NLS-1$
+		    else if (port.equals("3")) //$NON-NLS-1$
+			    portStr = "Durchwahl"; //$NON-NLS-1$
             else if (port.equals("32")) //$NON-NLS-1$
                 portStr = "Daten Fon 1";     //$NON-NLS-1$
             else if (port.equals("33")) //$NON-NLS-1$

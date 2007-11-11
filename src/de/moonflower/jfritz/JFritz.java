@@ -4,6 +4,7 @@
 
 package de.moonflower.jfritz;
 
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -108,9 +109,6 @@ public final class JFritz implements  StatusListener{
 	private static Timer watchdogTimer;
 
 	private static FritzBox fritzBox;
-
-	private static int oldFrameState; // saves old frame state to restore old
-									  // state
 
 	private static QuickDials quickDials;
 
@@ -510,14 +508,22 @@ public final class JFritz implements  StatusListener{
 
 	public static void hideShowJFritz() {
 		if (jframe.isVisible()) {
-			oldFrameState = jframe.getExtendedState();
 			Debug.msg("Hide JFritz-Window"); //$NON-NLS-1$
+			Debug.msg(Main.getStateProperty("window.property.old",
+					Integer.toString(Frame.NORMAL)));
+			Main.setStateProperty("window.state.old", Main.getProperty("window.state", Integer.toString(Frame.NORMAL)));
+			Main.setStateProperty("window.state", Integer
+					.toString(Frame.ICONIFIED));
 			jframe.setExtendedState(JFrame.ICONIFIED);
-			jframe.setVisible(false);
-		} else {
+//			jframe.setVisible(false);
+		} else while ( !jframe.isVisible() ){
 			Debug.msg("Show JFritz-Window"); //$NON-NLS-1$
+			Debug.msg(Main.getStateProperty("window.property.old",
+					Integer.toString(Frame.NORMAL)));
 			jframe.setVisible(true);
-			jframe.setExtendedState(oldFrameState);
+			jframe.setExtendedState(Integer.parseInt(
+					Main.getStateProperty("window.property.old",
+							Integer.toString(Frame.NORMAL))));
 			jframe.toFront();
 			jframe.repaint();
 		}

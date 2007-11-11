@@ -157,12 +157,18 @@ public class CallDialog extends JDialog implements ActionListener {
 						port.addItem(Main.getMessage("analog_telephones_all"));  //$NON-NLS-1$
 						break;
 					case FritzBoxFirmware.BOXTYPE_FRITZBOX_ATA :
+					case FritzBoxFirmware.BOXTYPE_FRITZBOX_7140:
+					case FritzBoxFirmware.BOXTYPE_FRITZBOX_7141:
+					case FritzBoxFirmware.BOXTYPE_FRITZBOX_7113:
 						port.addItem("Fon 2"); //$NON-NLS-1$
 						break;
 					case FritzBoxFirmware.BOXTYPE_FRITZBOX_5010:
 						// die 5010 hat nur einen analogen Anschluss
 						break;
 					case FritzBoxFirmware.BOXTYPE_SPEEDPORT_W900V:
+					case FritzBoxFirmware.BOXTYPE_FRITZBOX_7270:
+					case FritzBoxFirmware.BOXTYPE_FRITZBOX_5140:
+						// 2 analoge Telefonanschlüsse und interner S0-Bus
 						{
 							port.addItem("Fon 2");
 							port.addItem("ISDN Alle"); //$NON-NLS-1$
@@ -180,6 +186,7 @@ public class CallDialog extends JDialog implements ActionListener {
 					case FritzBoxFirmware.BOXTYPE_FRITZBOX_5050:
 					case FritzBoxFirmware.BOXTYPE_FRITZBOX_7050:
 					case FritzBoxFirmware.BOXTYPE_FRITZBOX_7170:
+						// 3 analoge Telefonanschlüsse und interner S0-Bus
 						 {
 							 port.addItem("Fon 2"); //$NON-NLS-1$
 							 port.addItem("Fon 3"); //$NON-NLS-1$

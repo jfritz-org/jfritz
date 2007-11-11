@@ -63,6 +63,8 @@ public class ConfigDialog extends JDialog implements ChangeListener {
 
 	private JTabbedPane tpane;
 
+	private Frame parent;
+
 	private JCheckBox deleteAfterFetchButton, fetchAfterStartButton,
 			notifyOnCallsButton,
 			lookupAfterFetchButton,
@@ -85,6 +87,7 @@ public class ConfigDialog extends JDialog implements ChangeListener {
 
 	public ConfigDialog(Frame parent) {
 		super(parent, true);
+		this.parent = parent;
 		setTitle(Main.getMessage("config")); //$NON-NLS-1$
 
 		phonePanel = new ConfigPanelPhone();
@@ -404,7 +407,7 @@ public class ConfigDialog extends JDialog implements ChangeListener {
 
 		addKeyListener(keyListener);
 
-		setSize(new Dimension(510, 360));
+		setSize(new Dimension(610,470));
 		setResizable(true);
 		// pack();
 	}
@@ -418,38 +421,41 @@ public class ConfigDialog extends JDialog implements ChangeListener {
 	 * function used to adjust the size of the options dialog
 	 */
 	public void stateChanged(ChangeEvent e){
-		//change sizes here to fit the panel content
-		//box panel
-		if(tpane.getSelectedIndex() == 0){
-			setSize(new Dimension(510,360));
-		//phone panel
-		}else if(tpane.getSelectedIndex() == 1){
-			setSize(new Dimension(510,310));
-		//sip panel
-		}else if(tpane.getSelectedIndex() == 2){
-			setSize(new Dimension(510,300));
-		//call list panel
-		}else if(tpane.getSelectedIndex() == 3){
-			setSize(new Dimension(510,360));
-		//call monitor panel
-		}else if(tpane.getSelectedIndex() == 4){
-			setSize(new Dimension(510,360));
-		//message panel
-		}else if(tpane.getSelectedIndex() == 5){
-			setSize(new Dimension(510,300));
-		//language panel
-		}else if(tpane.getSelectedIndex() == 6){
-			setSize(new Dimension(510,180));
-		//network panel
-		}else if(tpane.getSelectedIndex() == 7){
-			setSize(new Dimension(510, 550));
-		//other panel
-		}else if(tpane.getSelectedIndex() == 8){
-			setSize(new Dimension(610,470));
-		}else{
-			setSize(new Dimension(510,360));
+//		//change sizes here to fit the panel content
+//		//box panel
+//		if(tpane.getSelectedIndex() == 0){
+//			setSize(new Dimension(510,360));
+//		//phone panel
+//		}else if(tpane.getSelectedIndex() == 1){
+//			setSize(new Dimension(510,310));
+//		//sip panel
+//		}else if(tpane.getSelectedIndex() == 2){
+//			setSize(new Dimension(510,300));
+//		//call list panel
+//		}else if(tpane.getSelectedIndex() == 3){
+//			setSize(new Dimension(510,360));
+//		//call monitor panel
+//		}else if(tpane.getSelectedIndex() == 4){
+//			setSize(new Dimension(510,360));
+//		//message panel
+//		}else if(tpane.getSelectedIndex() == 5){
+//			setSize(new Dimension(510,300));
+//		//language panel
+//		}else if(tpane.getSelectedIndex() == 6){
+//			setSize(new Dimension(510,180));
+//		//network panel
+//		}else if(tpane.getSelectedIndex() == 7){
+//			setSize(new Dimension(510, 550));
+//		//other panel
+//		}else if(tpane.getSelectedIndex() == 8){
+//			setSize(new Dimension(610,470));
+//		}else{
+//			setSize(new Dimension(510,360));
+//		}
+		setSize(new Dimension(610,470));
+		if (parent != null) {
+			setLocationRelativeTo(parent);
 		}
 	}
-
 
 }

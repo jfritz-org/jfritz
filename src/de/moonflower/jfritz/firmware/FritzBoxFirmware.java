@@ -44,7 +44,17 @@ public class FritzBoxFirmware {
 
     public final static byte BOXTYPE_FRITZBOX_7170 = 29;
 
+    public final static byte BOXTYPE_FRITZBOX_7140 = 30;
+
     public final static byte BOXTYPE_SPEEDPORT_W900V = 34;
+
+    public final static byte BOXTYPE_FRITZBOX_7141 = 40;
+
+    public final static byte BOXTYPE_FRITZBOX_5140 = 43;
+
+    public final static byte BOXTYPE_FRITZBOX_7270 = 54;
+
+    public final static byte BOXTYPE_FRITZBOX_7113 = 60;
 
     public final static byte ACCESS_METHOD_POST_0342 = 0;
 
@@ -345,6 +355,16 @@ public class FritzBoxFirmware {
             return "FRITZ!Box 5012"; //$NON-NLS-1$
         case 29:
             return "FRITZ!Box 7170"; //$NON-NLS-1$
+        case 30:
+            return "FRITZ!Box 7140"; //$NON-NLS-1$
+        case 40:
+            return "FRITZ!Box 7141"; //$NON-NLS-1$
+        case 43:
+            return "FRITZ!Box 5140"; //$NON-NLS-1$
+        case 54:
+            return "FRITZ!Box 7270"; //$NON-NLS-1$
+        case 60:
+            return "FRITZ!Box 7113"; //$NON-NLS-1$
 		default:
 			return Main.getMessage("unknown"); //$NON-NLS-1$
 		}

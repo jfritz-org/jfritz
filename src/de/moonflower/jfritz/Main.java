@@ -52,7 +52,6 @@
  * Bewertung - Feature
  * rob - brian
  * 10 - 10 - Fehlermeldung an den Benutzer, wenn Daten nicht auf Festplatte gespeichert werden können. (Vielleicht schon implementiert -- Rob)
- * 10 - 9 - "Verbindungsgerät" in "MSN/Rufnummer" ändern
  * 10 - 10 - Kommentarspalte im Telefonbuch
  * 10 - 7 - Webverkehr über Proxy (Was für Proxys sind gemeint: Socks 4 /5, oder HTTP(S)?)
  * 10 - 10 - Einstellen der Landes- und Ortsvorwahlen pro SIP-Account und nicht nur global (SF [ 1438932 ])
@@ -156,12 +155,15 @@
  * - Popup wird beim Anrufmonitor mehrfach gestartet
  * FIXME-END
  *
+ * JFritz 0.6.4
+ * - Umstrukturierung des Aufrufs von externen Programmen (noch nicht abgeschlossen)
+ *
  * JFritz 0.6.3
+ * - Neu: Unterstützung für Fritz!Box 7270, Fritz!Box 7140, Fritz!Box 7141, Fritz!Box 7113, Fritz!Box 5140
  * - Bugfix: Bug beim Herunterfahren / Abmelden unter Linux, Windows behoben
  * - Bugfix: JFritz blockiert das Herunterfahren / Abmelden von OS X nicht mehr
  * - Bugfix: Aussehen von JFritz wird nun wieder gespeichert
  * - Bugfix: Kein plötzlicher Wechsel vom Telefonbuch zur Anrufliste mehr
- * - Umstrukturierung des Aufrufs von externen Programmen (noch nicht abgeschlossen)
  * - Neu: Einführung von ServerSenderThreads, jede Verbindung hat eigene Empfänger und Sender-Threads
  * - Neu: Clients können den Anrufmonitor vom Server verwenden
  * - Neu: Networkcode hinzugefügt! JFritz kann nun entweder als Server oder client arbeiten
@@ -179,8 +181,11 @@
  * - Bugfix: Ubuntu 7.04 trayicon and Sun Java 1.6 funktioniert nun
  * - Neu: Sprache wird beim ersten Start von JFritz automatisch auf Betriebssystemsprache eingestellt
  * - Neu: Rückwärtssuche kann von der Anrufliste aus für eine ausgewählte Seite ausgeführt werden
- * - Standardmäßiges Einbelden des Bearbeitungsfensters im Telefonbuch
- * - Debug-Nachrichten können nun unter "Hilfe"-"Debug-Fenster" eingesehen und gespeichert werden
+ * - Neu: Standardmäßiges Einbelden des Bearbeitungsfensters im Telefonbuch
+ * - Neu: Debug-Nachrichten können nun unter "Hilfe"-"Debug-Fenster" eingesehen und gespeichert werden
+ * - Bugfix: Einstellungsfenster wird zentriert
+ * - Bugfix: "Verbindungsgerät" in "MSN/Rufnummer" ändern
+ * - Bugfix: Anzeige von "Durchwahl" statt "3" in der Anrufliste
  *
  * JFritz network-v1
  * 	 Neue Strings:
@@ -737,7 +742,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.6.3"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.93 2007/11/01 16:19:45 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.94 2007/11/11 00:38:47 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

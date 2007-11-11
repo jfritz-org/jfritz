@@ -147,11 +147,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		this.addComponentListener(new ComponentListener() {
 
 			public void componentHidden(ComponentEvent arg0) {
-				// TODO Auto-generated method stub
-
+				Debug.msg("Window hidden");
 			}
 
 			public void componentMoved(ComponentEvent arg0) {
+				Debug.msg("Window moved");
 				Main.setStateProperty("position.left", Integer.toString(getLocation().x)); //$NON-NLS-1$
 				Main.setStateProperty("position.top", Integer.toString(getLocation().y));//$NON-NLS-1$
 				Main.setStateProperty("position.width", Integer.toString(thisWindow.getWidth()));//$NON-NLS-1$
@@ -159,23 +159,30 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			}
 
 			public void componentResized(ComponentEvent arg0) {
+				Debug.msg("Window resized");
 				Main.setStateProperty("position.left", Integer.toString(getLocation().x)); //$NON-NLS-1$
 				Main.setStateProperty("position.top", Integer.toString(getLocation().y));//$NON-NLS-1$
 				Main.setStateProperty("position.width", Integer.toString(thisWindow.getWidth()));//$NON-NLS-1$
 				Main.setStateProperty("position.height", Integer.toString(thisWindow.getHeight()));//$NON-NLS-1$
+				Main.setStateProperty("window.state.old", Main.getProperty("window.state", Integer.toString(Frame.NORMAL)));
+				Main.setStateProperty("window.state", Integer
+						.toString(getExtendedState()));
 			}
 
 			public void componentShown(ComponentEvent arg0) {
-				// TODO Auto-generated method stub
-
+				Debug.msg("Window shown");
 			}
-
 		});
 		addWindowStateListener(new WindowStateListener() {
 
 			public void windowStateChanged(WindowEvent arg0) {
+				Main.setStateProperty("window.state.old", Main.getProperty("window.state", Integer.toString(Frame.NORMAL)));
 				Main.setStateProperty("window.state", Integer
-						.toString(arg0.getNewState()));
+				.toString(getExtendedState()));
+//				Debug.msg("Window state changed: " + Integer
+//						.toString(getExtendedState()));
+//				Main.setStateProperty("window.state", Integer
+//						.toString(getExtendedState()));
 			}
 
 		});
