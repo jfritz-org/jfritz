@@ -38,7 +38,7 @@ import java.util.Date;
  * @author Arno Willig
  *
  */
-public class Debug extends JPanel {
+public class Debug{
 
 	private static final long serialVersionUID = 9211082107025215527L;
 
@@ -62,6 +62,8 @@ public class Debug extends JPanel {
 
 	private static JFrame display_frame;
 
+	private static StringBuffer debugBuffer;
+
 	/**
 	 * Turns debug-mode on
 	 *
@@ -69,10 +71,7 @@ public class Debug extends JPanel {
 	public static void on() {
 		verboseMode = true;
 		Debug.debugLevel = 3;
-		if ( main_panel == null )
-		{
-		  generatePanel();
-		}
+		debugBuffer = new StringBuffer();
 		msg("debugging mode has been enabled"); //$NON-NLS-1$
 	}
 
@@ -141,8 +140,15 @@ public class Debug extends JPanel {
 		if ( debugLevel >= level) {
 			message = "(" + getCurrentTime() + ") DEBUG: " + message; //$NON-NLS-1$,  //$NON-NLS-2$
 			System.out.println(message);
-			log_area.append(message+"\n");
-			autoScroll();
+
+				//only write the message to the panel if we have already created it
+			if(main_panel != null){
+				log_area.append(message+"\n");
+				autoScroll();
+				//otherwise save it for later use, if the panel gets created later
+			}else {
+				debugBuffer.append(message+"\n");
+			}
 
 			// if both verbose mode and logging enabled, make sure output
 			// still lands on the console as well!
@@ -162,8 +168,15 @@ public class Debug extends JPanel {
 
 		message = "(" + getCurrentTime() + ") NETWORK: " + message; //$NON-NLS-1$,  //$NON-NLS-2$
 		System.out.println(message);
-		log_area.append(message+"\n");
-		autoScroll();
+
+		//only write the message to the panel if we have already created it
+		if(main_panel != null){
+			log_area.append(message+"\n");
+			autoScroll();
+			//otherwise save it for later use, if the panel gets created later
+		}else {
+			debugBuffer.append(message+"\n");
+		}
 
 		// if both verbose mode and logging enabled, make sure output
 		// still lands on the console as well!
@@ -181,8 +194,15 @@ public class Debug extends JPanel {
 	public static void err(String message) {
 			message = "(" + getCurrentTime() + ") ERROR: " + message; //$NON-NLS-1$,  //$NON-NLS-2$
 			System.err.println(message);
-			log_area.append(message+"\n");
-			autoScroll();
+
+			//only write the message to the panel if we have already created it
+			if(main_panel != null){
+				log_area.append(message+"\n");
+				autoScroll();
+				//otherwise save it for later use, if the panel gets created later
+			}else {
+				debugBuffer.append(message+"\n");
+			}
 
 			// if both verbose mode and logging enabled, make sure output
 			// still lands on the console as well!
@@ -190,23 +210,6 @@ public class Debug extends JPanel {
 				originalOut.println(message);
 			}
 	}
-
-	/**
-	 * Write message to logfile
-	 *
-	 * @param message
-	 *
-	 * private static void logMessage(String message) {
-	 *
-	 * BufferedWriter appendedFile = null; try { appendedFile = new
-	 * BufferedWriter(new FileWriter(logFileName, true));
-	 * appendedFile.write(message); appendedFile.newLine();
-	 * appendedFile.flush(); appendedFile.close(); } catch (Exception e) {
-	 * System.out.println("EXCEPTION when writing to LOGFILE"); //$NON-NLS-1$ }
-	 * finally { // always close the file if (appendedFile != null) try {
-	 * appendedFile.close(); } catch (Exception ioe2) { // just ignore it } }
-	 *  }
-	 */
 
 	/**
 	 * Show Dialog with message
@@ -230,14 +233,13 @@ public class Debug extends JPanel {
 				Main.getMessage("error"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
 	}
 
-	private static void generatePanel()
+	public static void generatePanel()
 	{
 		main_panel = new JPanel();
 		main_panel.setLayout(new BorderLayout());
 		log_area = new JTextArea(25, 80);
 		scroll_pane = new JScrollPane(log_area);
 		main_panel.add(scroll_pane, BorderLayout.NORTH);
-
 		JPanel button_panel = new JPanel();
 		button_panel.setLayout(new GridLayout(1,3));
 
@@ -313,6 +315,9 @@ public class Debug extends JPanel {
 		button_panel.add(clear_button);
 		button_panel.add(close_button);
 		main_panel.add(button_panel, BorderLayout.SOUTH);
+
+		log_area.append(debugBuffer.toString());
+		autoScroll();
 	}
 
 	public static JPanel getPanel()

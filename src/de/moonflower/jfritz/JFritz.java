@@ -163,6 +163,11 @@ public final class JFritz implements  StatusListener{
 			new MacHandler(this);
 		}
 
+		//once the machandler has been installed, activate the debug panel
+		//otherwise it will cause ui problems on the mac
+		//stupid concept really, but it has to be done
+		Debug.generatePanel();
+
 		// loads various country specific number settings and tables
 		loadNumberSettings();
 
