@@ -185,6 +185,7 @@
  * - Bugfix: Einstellungsfenster wird zentriert
  * - Bugfix: "Verbindungsgerät" in "MSN/Rufnummer" ändern
  * - Bugfix: Anzeige von "Durchwahl" statt "3" in der Anrufliste
+ * - Neu: Anzeige des Ports beim Anrufmonitor
  *
  * JFritz network-v1
  * 	 Neue Strings:
@@ -741,7 +742,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.6.3"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.95 2007/11/26 11:51:15 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.96 2007/12/23 11:45:43 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

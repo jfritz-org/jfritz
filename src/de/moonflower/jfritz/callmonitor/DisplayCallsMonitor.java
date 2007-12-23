@@ -26,9 +26,9 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
     	if ( call.getPhoneNumber() != null )
     	{
     		person = PhoneBook.searchFirstAndLastNameToPhoneNumber(call.getPhoneNumber().getAreaNumber());
-            displayCallOutMsg(call.getPhoneNumber().getAreaNumber(), call.getRoute(), person);
+            displayCallOutMsg(call.getPhoneNumber().getAreaNumber(), call.getRoute(), call.getPort(), person);
     	} else {
-          displayCallOutMsg(null, call.getRoute(), person);
+          displayCallOutMsg(null, call.getRoute(), call.getPort(), person);
     	}
     }
 
@@ -37,9 +37,9 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
     	if ( call.getPhoneNumber() != null )
     	{
     		person = PhoneBook.searchFirstAndLastNameToPhoneNumber(call.getPhoneNumber().getAreaNumber());
-            displayCallInMsg(call.getPhoneNumber().getAreaNumber(), call.getRoute(), person);
+            displayCallInMsg(call.getPhoneNumber().getAreaNumber(), call.getRoute(), call.getPort(), person);
     	} else {
-            displayCallInMsg(null, call.getRoute(), person);
+            displayCallInMsg(null, call.getRoute(), call.getPort(), person);
     	}
     }
 
@@ -55,8 +55,8 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
      * @param called
      *            Called number
      */
-    public void displayCallInMsg(String caller, String called, Person person) {
-        displayCallInMsg(caller, called, "", person); //$NON-NLS-1$
+    public void displayCallInMsg(String caller, String called, String port, Person person) {
+        displayCallInMsg(caller, called, "", port, person); //$NON-NLS-1$
     }
 
     /**
@@ -69,13 +69,14 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
      * @param name
      *            Known name (only YAC)
      */
-    public void displayCallInMsg(String callerInput, String calledInput, String name, Person person) {
+    public void displayCallInMsg(String callerInput, String calledInput, String name, String port, Person person) {
 
         Debug.msg("Caller: " + callerInput); //$NON-NLS-1$
         Debug.msg("Called: " + calledInput); //$NON-NLS-1$
         Debug.msg("Name: " + name); //$NON-NLS-1$
+        Debug.msg("Port: " + port); //$NON-NLS-1$
 
-        String callerstr = "", calledstr = ""; //$NON-NLS-1$,  //$NON-NLS-2$
+        String callerstr = "", calledstr = "", portstr = ""; //$NON-NLS-1$,  //$NON-NLS-2$
         String firstname = "", surname = "", company = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 
         callerstr = callerInput;
@@ -112,9 +113,34 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 
         if (callerstr.startsWith("+49"))callerstr = "0" + callerstr.substring(3); //$NON-NLS-1$,  //$NON-NLS-2$
 
+		if (port.equals("4")) //$NON-NLS-1$
+			portstr = "ISDN"; //$NON-NLS-1$
+		else if (port.equals("0")) //$NON-NLS-1$
+			portstr = "FON 1"; //$NON-NLS-1$
+		else if (port.equals("1")) //$NON-NLS-1$
+			portstr = "FON 2"; //$NON-NLS-1$
+		else if (port.equals("2")) //$NON-NLS-1$
+			portstr = "FON 3"; //$NON-NLS-1$
+	    else if (port.equals("3")) //$NON-NLS-1$
+		    portstr = "Durchwahl"; //$NON-NLS-1$
+        else if (port.equals("32")) //$NON-NLS-1$
+            portstr = "Daten Fon 1";     //$NON-NLS-1$
+        else if (port.equals("33")) //$NON-NLS-1$
+            portstr = "Daten Fon 2";        //$NON-NLS-1$
+        else if (port.equals("34")) //$NON-NLS-1$
+            portstr = "Daten Fon 3";       //$NON-NLS-1$
+        else if (port.equals("36")) //$NON-NLS-1$
+            portstr = "Daten S0"; //$NON-NLS-1$
+		else if (port.equals("")) //$NON-NLS-1$
+			portstr = ""; //$NON-NLS-1$
+		else
+			portstr = port;
+
+
         Debug.msg("Caller: " + callerstr); //$NON-NLS-1$
         Debug.msg("Called: " + calledstr); //$NON-NLS-1$
         Debug.msg("Name: " + name); //$NON-NLS-1$
+        Debug.msg("Port: " + portstr); //$NON-NLS-1$
 
         switch (Integer.parseInt(Main.getProperty("option.popuptype", "1"))) { //$NON-NLS-1$,  //$NON-NLS-2$
             case 0 : { // No Popup
@@ -149,6 +175,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
             programString = programString.replaceAll("%Number", callerstr); //$NON-NLS-1$
             programString = programString.replaceAll("%Name", name); //$NON-NLS-1$
             programString = programString.replaceAll("%Called", calledstr); //$NON-NLS-1$
+            programString = programString.replaceAll("%Port", portstr); //$NON-NLS-1$
             programString = programString.replaceAll("%Firstname", firstname); //$NON-NLS-1$
             programString = programString.replaceAll("%Surname", surname); //$NON-NLS-1$
             programString = programString.replaceAll("%Company", company); //$NON-NLS-1$
@@ -196,11 +223,12 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
      * @param called
      *            Called number
      */
-    public void displayCallOutMsg(String calledInput, String providerInput, Person person) {
+    public void displayCallOutMsg(String calledInput, String providerInput, String port, Person person) {
         Debug.msg("Called: " + calledInput); //$NON-NLS-1$
         Debug.msg("Provider: " + providerInput); //$NON-NLS-1$
+        Debug.msg("Port: " + port); //$NON-NLS-1$
 
-        String calledstr = "", providerstr = "", name = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+        String calledstr = "", providerstr = "", name = "", portstr = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
         String firstname = "", surname = "", company = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 
         if ( calledInput != null )
@@ -251,8 +279,31 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
             JFritz.playSound(JFritz.getCallSound());
         }
 
+		if (port.equals("4")) //$NON-NLS-1$
+			portstr = "ISDN"; //$NON-NLS-1$
+		else if (port.equals("0")) //$NON-NLS-1$
+			portstr = "FON 1"; //$NON-NLS-1$
+		else if (port.equals("1")) //$NON-NLS-1$
+			portstr = "FON 2"; //$NON-NLS-1$
+		else if (port.equals("2")) //$NON-NLS-1$
+			portstr = "FON 3"; //$NON-NLS-1$
+	    else if (port.equals("3")) //$NON-NLS-1$
+		    portstr = "Durchwahl"; //$NON-NLS-1$
+        else if (port.equals("32")) //$NON-NLS-1$
+            portstr = "Daten Fon 1";     //$NON-NLS-1$
+        else if (port.equals("33")) //$NON-NLS-1$
+            portstr = "Daten Fon 2";        //$NON-NLS-1$
+        else if (port.equals("34")) //$NON-NLS-1$
+            portstr = "Daten Fon 3";       //$NON-NLS-1$
+        else if (port.equals("36")) //$NON-NLS-1$
+            portstr = "Daten S0"; //$NON-NLS-1$
+		else if (port.equals("")) //$NON-NLS-1$
+			portstr = ""; //$NON-NLS-1$
+		else
+			portstr = port;
+
         // z.Z. noch deaktiviert
-        if (false && JFritzUtils.parseBoolean(Main.getProperty(
+        if (JFritzUtils.parseBoolean(Main.getProperty(
                 "option.startExternProgram", "false"))) { //$NON-NLS-1$,  //$NON-NLS-2$
             String programString = Main.getProperty("option.externProgram", //$NON-NLS-1$
                     ""); //$NON-NLS-1$
@@ -260,6 +311,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
             programString = programString.replaceAll("%Number", providerstr); //$NON-NLS-1$
             programString = programString.replaceAll("%Name", name); //$NON-NLS-1$
             programString = programString.replaceAll("%Called", calledstr); //$NON-NLS-1$
+            programString = programString.replaceAll("%Port", portstr); //$NON-NLS-1$
             programString = programString.replaceAll("%Firstname", firstname); //$NON-NLS-1$
             programString = programString.replaceAll("%Surname", surname); //$NON-NLS-1$
             programString = programString.replaceAll("%Company", company); //$NON-NLS-1$

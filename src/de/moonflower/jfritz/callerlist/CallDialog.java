@@ -166,7 +166,6 @@ public class CallDialog extends JDialog implements ActionListener {
 						// die 5010 hat nur einen analogen Anschluss
 						break;
 					case FritzBoxFirmware.BOXTYPE_SPEEDPORT_W900V:
-					case FritzBoxFirmware.BOXTYPE_FRITZBOX_7270:
 					case FritzBoxFirmware.BOXTYPE_FRITZBOX_5140:
 						// 2 analoge Telefonanschlüsse und interner S0-Bus
 						{
@@ -205,6 +204,23 @@ public class CallDialog extends JDialog implements ActionListener {
 							 port.addItem("ISDN 9"); //$NON-NLS-1$
 							 break;
 						 }
+					case FritzBoxFirmware.BOXTYPE_FRITZBOX_7270:
+						// 2 analoge Telefonanschlüsse, interner S0-Bus und DECT
+						{
+							port.addItem("Fon 2");
+							port.addItem("ISDN Alle"); //$NON-NLS-1$
+							port.addItem("ISDN 1"); //$NON-NLS-1$
+							port.addItem("ISDN 2"); //$NON-NLS-1$
+							port.addItem("ISDN 3"); //$NON-NLS-1$
+							port.addItem("ISDN 4"); //$NON-NLS-1$
+							port.addItem("ISDN 5"); //$NON-NLS-1$
+							port.addItem("ISDN 6"); //$NON-NLS-1$
+							port.addItem("ISDN 7"); //$NON-NLS-1$
+							port.addItem("ISDN 8"); //$NON-NLS-1$
+							port.addItem("ISDN 9"); //$NON-NLS-1$
+							// TODO: DECT
+							break;
+						}
 					}
 			}
             port.setPreferredSize(new Dimension(100, 20));
