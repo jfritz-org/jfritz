@@ -87,7 +87,7 @@ import de.moonflower.jfritz.utils.Debug;
  * the two want to end the connection they send the string "JFRITZ CLOSE".
  * For even more detailed information see the classes named above.
  *
- * @author brian
+ * @author Brian
  *
  */
 public class ClientConnectionListener extends Thread {

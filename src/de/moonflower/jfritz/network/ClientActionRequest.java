@@ -5,10 +5,11 @@ import java.io.Serializable;
 import de.moonflower.jfritz.struct.PhoneNumber;
 
 /**
- * used to make the ask the server to do something
+ * used to ask the server to do something for a client
+ *
  * @see de.moonflower.jfritz.network.ClientConnectionListener
  *
- * @author brian
+ * @author Brian
  *
  */
 
