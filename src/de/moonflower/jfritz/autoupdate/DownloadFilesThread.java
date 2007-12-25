@@ -322,6 +322,7 @@ public class DownloadFilesThread extends Thread {
 	 *
 	 */
 	private void processUpdateList() {
+		System.out.println(threadName + "Processing update list.");
 		int totalSize = 0;
 		int totalFileNum = updateFilesList.size();
 		for (int i = 0; i < updateFilesList.size(); i++) {

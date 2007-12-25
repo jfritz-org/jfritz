@@ -38,7 +38,7 @@ public class JFritzUpdate {
 		this.informOnNoUpdate = informOnNoUpdate;
 		installDirectory = JFritzUtils.getFullPath("/jfritz.jar");
 		installDirectory = installDirectory.substring(0, installDirectory.length()-10);
-		updateFile = installDirectory + "update.txt";
+		//updateFile = installDirectory + "update.txt"; //?? why ??
 		updateDirectory = installDirectory+"update";
 		File installDir = new File(installDirectory);
 		if (!installDir.exists()) {

@@ -313,7 +313,10 @@ public class CallerTable extends JTable {
 				call = callerList.getFilteredCallVector().get(rows[i]);
 				selectedCallsTotalMinutes += call.getDuration();
 			}
-			parentPanel.setDeleteEntriesButton(selectedCalls);
+			if ( selectedCalls > 0 )
+			{
+			  parentPanel.setDeleteEntriesButton(selectedCalls);
+			}
 			if (rows.length == 1) { // set the selection in the phonebook to the person of the selected call
 				// table.getJfritz().getJframe().getPhoneBookPanel().getPersonPanel().setPerson(person);
 				if(phoneBookTable != null){
