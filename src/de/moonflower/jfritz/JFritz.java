@@ -362,8 +362,11 @@ public final class JFritz implements  StatusListener{
 			public void actionPerformed(ActionEvent e) {
 				long timeStamp = e.getWhen();
 				if ( timeStamp-oldTimeStamp>600 ) {
-					hideShowJFritz();
-					oldTimeStamp = timeStamp;
+					if ( jframe != null )
+					{
+						jframe.hideShowJFritz();
+						oldTimeStamp = timeStamp;
+					}
 				}
 			}
 		});
@@ -509,29 +512,6 @@ public final class JFritz implements  StatusListener{
 
 	public static String runsOn() {
 		return HostOS;
-	}
-
-	public static void hideShowJFritz() {
-		if (jframe.isVisible()) {
-			Debug.msg("Hide JFritz-Window"); //$NON-NLS-1$
-			Debug.msg(Main.getStateProperty("window.property.old",
-					Integer.toString(Frame.NORMAL)));
-			Main.setStateProperty("window.state.old", Main.getProperty("window.state", Integer.toString(Frame.NORMAL)));
-			Main.setStateProperty("window.state", Integer
-					.toString(Frame.ICONIFIED));
-			jframe.setExtendedState(JFrame.ICONIFIED);
-//			jframe.setVisible(false);
-		} else while ( !jframe.isVisible() ){
-			Debug.msg("Show JFritz-Window"); //$NON-NLS-1$
-			Debug.msg(Main.getStateProperty("window.property.old",
-					Integer.toString(Frame.NORMAL)));
-			jframe.setVisible(true);
-			jframe.setExtendedState(Integer.parseInt(
-					Main.getStateProperty("window.property.old",
-							Integer.toString(Frame.NORMAL))));
-			jframe.toFront();
-			jframe.repaint();
-		}
 	}
 
 	public static SipProviderTableModel getSIPProviderTableModel() {

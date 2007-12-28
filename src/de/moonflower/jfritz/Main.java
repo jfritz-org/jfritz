@@ -152,10 +152,21 @@
  * - Text ändern für reverse_lookup_dummy
  * - Falls VoIP-Provider unbekannt, soll in der FritzBox gesucht werden
  * - Popup wird beim Anrufmonitor mehrfach gestartet
+ * - Änderungen einer Telefonnummer im Client wird beim Server nicht aktualisiert
+ * - ^ auch Löschen von Rufnummern funktioniert nicht, Hinzufügen EINER Nummer jedoch schon (mehrerer nicht)
+ * - Rückwärtssuche beim Client funktioniert nicht
  * FIXME-END
  *
  * JFritz 0.7.1
  * - Umstrukturierung des Aufrufs von externen Programmen (noch nicht abgeschlossen)
+ *
+ * JFritz 0.7.0.1
+ * - Funktioniert nun wieder mit Java 1.5
+ * - Bugfix: JFrtz-Menü manchmal nicht sichtbar
+ * - Bugfix: Rückwärtssuche "Das Telefonbuch"
+ * - Bugfix: Auto-Update
+ * - Bugfix: Externes Programm bei ausgehendem Anruf
+ * - Bugfix: Windows-Installer: Fremde JAR-Dateien werden beim Installieren nicht gelöscht
  *
  * JFritz 0.7.0
  * - Neu: Unterstützung für Fritz!Box 7270, Fritz!Box 7140, Fritz!Box 7141, Fritz!Box 7113, Fritz!Box 5140
@@ -742,7 +753,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.7.0.1"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.98 2007/12/25 11:08:50 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.99 2007/12/28 09:44:40 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

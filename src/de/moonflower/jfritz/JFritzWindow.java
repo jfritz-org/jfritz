@@ -164,9 +164,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				Main.setStateProperty("position.top", Integer.toString(getLocation().y));//$NON-NLS-1$
 				Main.setStateProperty("position.width", Integer.toString(thisWindow.getWidth()));//$NON-NLS-1$
 				Main.setStateProperty("position.height", Integer.toString(thisWindow.getHeight()));//$NON-NLS-1$
-				Main.setStateProperty("window.state.old", Main.getProperty("window.state", Integer.toString(Frame.NORMAL)));
-				Main.setStateProperty("window.state", Integer
-						.toString(getExtendedState()));
 			}
 
 			public void componentShown(ComponentEvent arg0) {
@@ -176,13 +173,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		addWindowStateListener(new WindowStateListener() {
 
 			public void windowStateChanged(WindowEvent arg0) {
-				Main.setStateProperty("window.state.old", Main.getProperty("window.state", Integer.toString(Frame.NORMAL)));
-				Main.setStateProperty("window.state", Integer
-				.toString(getExtendedState()));
-//				Debug.msg("Window state changed: " + Integer
-//						.toString(getExtendedState()));
-//				Main.setStateProperty("window.state", Integer
-//						.toString(getExtendedState()));
+				Debug.msg("Window state changed");
+				Main.setStateProperty("window.state.old", Main.getStateProperty("window.state", Integer.toString(Frame.NORMAL)));
+				Main.setStateProperty("window.state", Integer.toString(getExtendedState()));
 			}
 
 		});
@@ -301,9 +294,19 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		int h = Integer.parseInt(Main.getStateProperty(
 				"position.height", "400")); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		int windowState = Integer.parseInt(Main.getStateProperty(
-				"window.state", Integer.toString(Frame.NORMAL)));
+		int windowState;
 
+		if ((!Main.getProperty("option.startMinimized", "false").equals("true")) &&
+			(Frame.ICONIFIED == Integer.parseInt(Main.getStateProperty("window.state", Integer.toString(Frame.NORMAL)))))
+		{ // Old state was iconified and we don't want to startup iconified
+		  // Set previous old state to prevent bug in showing menu bar
+			windowState = Integer.parseInt(Main.getStateProperty(
+					"window.state.old", Integer.toString(Frame.NORMAL)));
+		} else
+		{
+			windowState = Integer.parseInt(Main.getStateProperty(
+					"window.state", Integer.toString(Frame.NORMAL)));
+		}
 		setLocation(x, y);
 		setSize(w, h);
 		setExtendedState(windowState);
@@ -1117,7 +1120,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				"import_contacts_thunderbird_csv")) {
 			importContactsThunderbirdCSV();
 		} else if (e.getActionCommand().equals("showhide")) {
-			JFritz.hideShowJFritz();
+			hideShowJFritz();
 		} else if (e.getActionCommand().equals("configwizard")) {
 			JFritz.showConfigWizard();
 		} else if(e.getActionCommand().equals("network")){
@@ -1138,6 +1141,28 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			Debug.err("Unimplemented action: " + e.getActionCommand()); //$NON-NLS-1$
 		}
 	}
+
+	public void hideShowJFritz() {
+		if (isVisible()) {
+			Debug.msg("Hide JFritz-Window"); //$NON-NLS-1$
+			Debug.msg(Main.getStateProperty("window.property.old",
+					Integer.toString(Frame.NORMAL)));
+			setExtendedState(JFrame.ICONIFIED);
+		} else while ( !isVisible() ){
+			Debug.msg("Show JFritz-Window"); //$NON-NLS-1$
+			int windowState = 0;
+			windowState = Integer.parseInt(Main.getStateProperty("window.property.old", Integer.toString(Frame.NORMAL)));
+
+			Debug.msg(Integer.toString(windowState));
+
+			setVisible(true);
+			setExtendedState(windowState);
+
+			toFront();
+			repaint();
+		}
+	}
+
 
 	/**
 	 * Exports caller list as CSV

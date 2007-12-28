@@ -181,9 +181,10 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 	 */
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		String columnName = getRealColumnName(columnIndex);
-		if (columnName.equals("participant")) { //$NON-NLS-1$
-			return (filteredCallerData.get(rowIndex)).getPhoneNumber() != null;
-		} else if (columnName.equals("comment")) { //$NON-NLS-1$
+//		if (columnName.equals("participant")) { //$NON-NLS-1$
+//			return (filteredCallerData.get(rowIndex)).getPhoneNumber() != null;
+//		} else
+		if (columnName.equals("comment")) { //$NON-NLS-1$
 			return true;
 		} else if (columnName.equals("number")) { //$NON-NLS-1$
 			return true;
@@ -845,6 +846,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 
 	public void sortAllUnfilteredRows() {
 		Debug.msg("Sorting unfiltered data"); //$NON-NLS-1$
+
 		int indexOfDate = -1;
 		for (int i = 0; i < getColumnCount(); i++) {
 			String columnName = getRealColumnName(i);

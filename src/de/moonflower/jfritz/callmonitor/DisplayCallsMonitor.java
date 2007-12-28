@@ -302,53 +302,53 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 		else
 			portstr = port;
 
-        // z.Z. noch deaktiviert
         if (JFritzUtils.parseBoolean(Main.getProperty(
                 "option.startExternProgram", "false"))) { //$NON-NLS-1$,  //$NON-NLS-2$
-            String programString = Main.getProperty("option.externProgram", //$NON-NLS-1$
-                    ""); //$NON-NLS-1$
 
-            programString = programString.replaceAll("%Number", providerstr); //$NON-NLS-1$
-            programString = programString.replaceAll("%Name", name); //$NON-NLS-1$
-            programString = programString.replaceAll("%Called", calledstr); //$NON-NLS-1$
-            programString = programString.replaceAll("%Port", portstr); //$NON-NLS-1$
-            programString = programString.replaceAll("%Firstname", firstname); //$NON-NLS-1$
-            programString = programString.replaceAll("%Surname", surname); //$NON-NLS-1$
-            programString = programString.replaceAll("%Company", company); //$NON-NLS-1$
+            String programString = JFritzUtils.deconvertSpecialChars(Main.getProperty("option.externProgram", //$NON-NLS-1$
+            "")); //$NON-NLS-1$
 
-            if (programString.indexOf("%URLENCODE") > -1) { //$NON-NLS-1$
-                try {
-                    Pattern p;
-                    p = Pattern.compile("%URLENCODE\\(([^;]*)\\);"); //$NON-NLS-1$
-                    Matcher m = p.matcher(programString);
-                    while (m.find()) {
-                        String toReplace = m.group();
-                        toReplace = toReplace.replaceAll("\\\\", "\\\\\\\\"); //$NON-NLS-1$,  //$NON-NLS-2$
-                        toReplace = toReplace.replaceAll("\\(", "\\\\("); //$NON-NLS-1$,  //$NON-NLS-2$
-                        toReplace = toReplace.replaceAll("\\)", "\\\\)"); //$NON-NLS-1$,  //$NON-NLS-2$
-                        String toEncode = m.group(1);
-                        programString = programString.replaceAll(toReplace,
-                                URLEncoder.encode(toEncode, "UTF-8")); //$NON-NLS-1$
-                    }
-                } catch (UnsupportedEncodingException uee) {
-                    Debug.err("JFritz.class: UnsupportedEncodingException: " //$NON-NLS-1$
-                            + uee.toString());
-                }
-            }
+			programString = programString.replaceAll("%Number", calledstr); //$NON-NLS-1$
+			programString = programString.replaceAll("%Name", name); //$NON-NLS-1$
+			programString = programString.replaceAll("%Called", providerstr); //$NON-NLS-1$
+			programString = programString.replaceAll("%Port", portstr); //$NON-NLS-1$
+			programString = programString.replaceAll("%Firstname", firstname); //$NON-NLS-1$
+			programString = programString.replaceAll("%Surname", surname); //$NON-NLS-1$
+			programString = programString.replaceAll("%Company", company); //$NON-NLS-1$
 
-            if (programString.equals("")) { //$NON-NLS-1$
-                Debug.errDlg(Main.getMessage("no_external_program") //$NON-NLS-1$
-                        + programString);
-                return;
-            }
-            Debug.msg("Starting external Program: " + programString); //$NON-NLS-1$
-            try {
-                Runtime.getRuntime().exec(programString);
-            } catch (IOException e) {
-                Debug.errDlg(Main.getMessage("not_external_program_start") //$NON-NLS-1$
-                        + programString);
-                Debug.err(e.toString());
-            }
+			if (programString.indexOf("%URLENCODE") > -1) { //$NON-NLS-1$
+			try {
+			    Pattern p;
+			    p = Pattern.compile("%URLENCODE\\(([^;]*)\\);"); //$NON-NLS-1$
+			    Matcher m = p.matcher(programString);
+			    while (m.find()) {
+			        String toReplace = m.group();
+			        toReplace = toReplace.replaceAll("\\\\", "\\\\\\\\"); //$NON-NLS-1$,  //$NON-NLS-2$
+			        toReplace = toReplace.replaceAll("\\(", "\\\\("); //$NON-NLS-1$, //$NON-NLS-2$
+			        toReplace = toReplace.replaceAll("\\)", "\\\\)"); //$NON-NLS-1$, //$NON-NLS-2$
+			        String toEncode = m.group(1);
+			        programString = programString.replaceAll(toReplace,
+			                URLEncoder.encode(toEncode, "UTF-8")); //$NON-NLS-1$
+			    }
+			} catch (UnsupportedEncodingException uee) {
+			    Debug.err("JFritz.class: UnsupportedEncodingException: " //$NON-NLS-1$
+			            + uee.toString());
+			}
+			}
+
+			if (programString.equals("")) { //$NON-NLS-1$
+			Debug.errDlg(Main.getMessage("no_external_program") //$NON-NLS-1$
+			        + programString);
+			return;
+			}
+			Debug.msg("Starte externes Programm: " + programString); //$NON-NLS-1$
+			try {
+				Runtime.getRuntime().exec(programString);
+			} catch (IOException e) {
+				Debug.errDlg(Main.getMessage("not_external_program_start") //$NON-NLS-1$
+							+ programString);
+				Debug.err(e.toString());
+			}
         }
     }
 }
