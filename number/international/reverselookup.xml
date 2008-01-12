@@ -99,7 +99,7 @@
 		</website>
 		<website name="dastelefonbuch.de" url="http://www.dastelefonbuch.de/?sourceid=Mozilla-search&amp;cmd=search&amp;kw=$NUMBER" prefix="0">
 			<entry>
-				<name>class=&quot;celname&quot;&gt;\s*&lt;[^&gt;]*&gt;([^&lt;]*)&lt;/a&gt;</name>
+				<name>class=&quot;celname&quot;&gt;\s*(?:&lt;img[^&gt;]*&gt;)\s*&lt;a[^&gt;]*&gt;([^&lt;]*)&lt;/a&gt;</name>
 				<street>class=&quot;celstreet&quot;&gt;([^&lt;]*)&lt;/td&gt;</street>
 				<city>class=&quot;celcity&quot;&gt;\d{5}([^&lt;]*)&lt;</city>
 				<zipcode>class=&quot;celcity&quot;&gt;(\d{5})[^&lt;]*&lt;</zipcode>
