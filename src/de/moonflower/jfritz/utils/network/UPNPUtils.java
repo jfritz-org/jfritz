@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.HttpURLConnection;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
@@ -93,21 +94,39 @@ public class UPNPUtils {
 		DataOutputStream printout = null;
 		try {
 			URL u = new URL(url);
-			URLConnection uc = u.openConnection();
+			HttpURLConnection uc = (HttpURLConnection) u.openConnection();
+			uc.setRequestMethod("POST");
 
 			// 5 Sekunden-Timeout für Verbindungsaufbau
 			uc.setConnectTimeout(5000);
 
 			uc.setDoOutput(true);
 			uc.setDoInput(true);
-			uc
-					.setRequestProperty("Content-Type", //$NON-NLS-1$
+
+			String msg =
+		        "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+		        "<s:Envelope " +
+		        " xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n"
+		        +"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding\">\n" +
+		        "<s:Body>" +
+		        "<u:GetAddonInfos xmlns:u=\"urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1\""+
+		        "</u:GetAddonInfos>\n"	+
+		        " </s:Body>\n" +
+		        "</s:Envelope>";
+
+			byte[] bytes = msg.getBytes();
+			uc.setRequestProperty("CONTENT-LENGTH", String.valueOf(bytes.length));
+
+			uc.setRequestProperty("CONTENT-TYPE", //$NON-NLS-1$
 							"text/xml; charset=\"utf-8\""); //$NON-NLS-1$
-			uc.setRequestProperty("SOAPAction", urn); //$NON-NLS-1$
+			uc.setRequestProperty("SOAPACTION", urn); //$NON-NLS-1$
+			uc.setRequestProperty("USER-AGENT", "AVM UPnP/1.0 Client 1.0");
 
 			printout = new DataOutputStream(uc
 					.getOutputStream());
+			printout.write(bytes);
 			printout.close();
+
 
 			//InputStream in = uc.getInputStream();
 			d = new BufferedReader(new InputStreamReader(uc
@@ -116,6 +135,7 @@ public class UPNPUtils {
 			String str;
 			while (null != ((str = d.readLine())))
 				data += str + "\n"; //$NON-NLS-1$
+
 
 		} catch (IOException e) {
             Debug.err(e.toString());

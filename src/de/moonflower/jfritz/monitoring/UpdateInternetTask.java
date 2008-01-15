@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 import java.util.TimerTask;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.utils.Debug;
 
 /**
  * This class is called automatically by the scheduler,
@@ -37,9 +38,9 @@ public class UpdateInternetTask extends TimerTask {
 		//I would have used a sax parser, but this should be quicker
 		//as i only really need these two fields
 		mRate = pRate.matcher(xml);
-		if(mRate.find())
+		if(mRate.find()){
 			monitoringPanel.updateInternetUsage(mRate.group(2), mRate.group(1));
-
+		}
 	}
 
 }

@@ -159,6 +159,7 @@
  *
  * JFritz 0.7.1
  * - Umstrukturierung des Aufrufs von externen Programmen (noch nicht abgeschlossen)
+ * - Bugfix: Internet Monitoring funktioniert wieder
  *
  * JFritz 0.7.0.1
  * - Funktioniert nun wieder mit Java 1.5
@@ -753,7 +754,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.7.0.1"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.99 2007/12/28 09:44:40 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.100 2008/01/15 20:33:27 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

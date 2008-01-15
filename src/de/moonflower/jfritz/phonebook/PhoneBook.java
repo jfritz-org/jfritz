@@ -353,7 +353,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 
 	/**
 	 * This method is called by the network code and reverselookup code
-	 * to add many contacts at one
+	 * to add many contacts at once
 	 *
 	 * This method calls addEntry(Person person), to set properties
 	 * like last call and set the correct person in the call list.
