@@ -76,18 +76,16 @@ public class UPNPUtils {
 		return fritzboxes;
 	}
 
-	public static String getSOAPData(String url, String urn) {
-		// http://192.168.178.1:49000/upnp/control/WANCommonIFC1
-		// UpstreamMaxBitRate, DownstreamMaxBitRate, PhysicalLinkStatus:
-		// urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetCommonLinkProperties
-		// Bytes-Statistik, DNS:
-		// urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetAddonInfos
-		// urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetModulationType
-
-		// http://192.168.178.1:49000/upnp/control/WANIPConn1
-		// urn:schemas-upnp-org:service:WANIPConnection:1#GetExternalIPAddress
-		// Uptime and Connection:
-		// urn:schemas-upnp-org:service:WANIPConnection:1#GetStatusInfo
+	/**
+	 * function calls the web service specified by the url with the soap
+	 * envelope specified in xml
+	 *
+	 * @param url of the web service
+	 * @param urn
+	 * @param xml soap element to be trasmitted
+	 * @return
+	 */
+	public static String getSOAPData(String url, String urn, String xml) {
 
 		String data = ""; //$NON-NLS-1$
 		BufferedReader d = null;
@@ -103,18 +101,7 @@ public class UPNPUtils {
 			uc.setDoOutput(true);
 			uc.setDoInput(true);
 
-			String msg =
-		        "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-		        "<s:Envelope " +
-		        " xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n"
-		        +"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding\">\n" +
-		        "<s:Body>" +
-		        "<u:GetAddonInfos xmlns:u=\"urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1\""+
-		        "</u:GetAddonInfos>\n"	+
-		        " </s:Body>\n" +
-		        "</s:Envelope>";
-
-			byte[] bytes = msg.getBytes();
+			byte[] bytes = xml.getBytes();
 			uc.setRequestProperty("CONTENT-LENGTH", String.valueOf(bytes.length));
 
 			uc.setRequestProperty("CONTENT-TYPE", //$NON-NLS-1$

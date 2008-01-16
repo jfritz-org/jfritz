@@ -712,9 +712,45 @@ public class FritzBox {
 		return box_port;
 	}
 
+	/**
+	 * This function calls one of the upnp web services of the box and returns the raw data
+	 * the data returned has the following format
+	 *
+	 * <s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body>
+	 * <u:GetAddonInfosResponse xmlns:u="urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1">
+	 * <NewByteSendRate>0</NewByteSendRate>
+	 * <NewByteReceiveRate>0</NewByteReceiveRate>
+	 * <NewPacketSendRate>0</NewPacketSendRate>
+	 * <NewPacketReceiveRate>0</NewPacketReceiveRate>
+	 * <NewTotalBytesSent>0</NewTotalBytesSent>
+	 * <NewTotalBytesReceived>0</NewTotalBytesReceived>
+	 * <NewAutoDisconnectTime>300</NewAutoDisconnectTime>
+	 * <NewIdleDisconnectTime>7</NewIdleDisconnectTime>
+	 * <NewDNSServer1>X.X.X.X</NewDNSServer1>
+ 	 * <NewDNSServer2>Y.Y.Y.Y</NewDNSServer2>
+	 * <NewVoipDNSServer1>Z.Z.Z.Z</NewVoipDNSServer1>
+	 * <NewVoipDNSServer2>0.0.0.0</NewVoipDNSServer2>
+	 * <NewUpnpControlEnabled>0</NewUpnpControlEnabled>
+	 * <NewRoutedBridgedModeBoth>0</NewRoutedBridgedModeBoth>
+	 * </u:GetAddonInfosResponse>
+	 * </s:Body> </s:Envelope>
+	 *
+	 * @return the raw xml from the web service of the box
+	 */
 	public String getInternetStats(){
 
-		return UPNPUtils.getSOAPData("http://" + getAddress() + URL_INTERNET_STATS, URN_INTERNET_STATS);
+		String xml =
+	        "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+	        "<s:Envelope " +
+	        " xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n"
+	        +"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding\">\n" +
+	        "<s:Body>" +
+	        "<u:GetAddonInfos xmlns:u=\"urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1\""+
+	        "</u:GetAddonInfos>\n"	+
+	        " </s:Body>\n" +
+	        "</s:Envelope>";
+
+		return UPNPUtils.getSOAPData("http://" + getAddress() + URL_INTERNET_STATS, URN_INTERNET_STATS, xml);
 	}
 
 	public void setAddress(String box_address) {
