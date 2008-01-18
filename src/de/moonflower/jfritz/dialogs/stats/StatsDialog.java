@@ -79,7 +79,7 @@ public class StatsDialog extends JDialog {
 		+":49000/upnp/control/WANCommonIFC1"; //$NON-NLS-1$
 		final String urn = "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetAddonInfos"; //$NON-NLS-1$
 
-		String xml = UPNPUtils.getSOAPData(server, urn);
+		String xml = UPNPUtils.getSOAPData(server, urn, "");
 		try {
 			XMLReader reader = SAXParserFactory.newInstance().newSAXParser()
 					.getXMLReader();
