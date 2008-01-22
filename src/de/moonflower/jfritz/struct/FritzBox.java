@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -14,6 +15,13 @@ import java.util.Enumeration;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
@@ -26,6 +34,8 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.HTMLUtil;
 import de.moonflower.jfritz.utils.JFritzUtils;
+import de.moonflower.jfritz.utils.network.AddonInfosListener;
+import de.moonflower.jfritz.utils.network.AddonInfosXMLHandler;
 import de.moonflower.jfritz.utils.network.UPNPUtils;
 
 public class FritzBox {
@@ -46,9 +56,23 @@ public class FritzBox {
 
 	private static String POSTDATA_CALL = "&login:command/password=$PASSWORT&telcfg:settings/UseClickToDial=1&telcfg:settings/DialPort=$NEBENSTELLE&telcfg:command/Dial=$NUMMER"; //$NON-NLS-1$
 
-	private static String URL_INTERNET_STATS = ":49000/upnp/control/WANCommonIFC1";  //$NON-NLS-1$
 
-	private static String URN_INTERNET_STATS = "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetAddonInfos"; //$NON-NLS-1$
+	//the following are strings used by the web services on the box
+	//from XX.04.33 onwards
+	private static String URL_SERVICE_ADDONINFOS = ":49000/upnp/control/WANCommonIFC1";  //$NON-NLS-1$
+
+	private static String URN_SERVICE_ADDONINFOS = "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetAddonInfos"; //$NON-NLS-1$
+
+	private static String URL_SERVICE_DSLLINK = ":49000/upnp/control/WANDSLLinkC1";
+
+	private static String URN_SERVICE_DSLLINK = "urn:schemas-upnp-org:service: WANDSLLinkConfig:1#GetDSLLinkInfo";
+
+
+
+
+	private static String URL_SERVICE_STATUSINFO = ":49000/upnp/control/WANIPConn1";
+
+	private static String URN_SERVICE_STATUSINFO = "urn:schemas-upnp-org:service:WANIPConnection:1#GetStatusInfo";
 
 	private final static String CSV_FILE_EN = "FRITZ!Box_Calllist.csv";
 
@@ -737,7 +761,7 @@ public class FritzBox {
 	 *
 	 * @return the raw xml from the web service of the box
 	 */
-	public String getInternetStats(){
+	public void getInternetStats(AddonInfosListener listener){
 
 		String xml =
 	        "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
@@ -750,8 +774,60 @@ public class FritzBox {
 	        " </s:Body>\n" +
 	        "</s:Envelope>";
 
-		return UPNPUtils.getSOAPData("http://" + getAddress() + URL_INTERNET_STATS, URN_INTERNET_STATS, xml);
+
+		try {
+			XMLReader reader = SAXParserFactory.newInstance().newSAXParser()
+					.getXMLReader();
+			reader.setContentHandler(new AddonInfosXMLHandler(listener));
+			reader.parse(new InputSource(new StringReader(
+					UPNPUtils.getSOAPData("http://" + getAddress() +
+					URL_SERVICE_ADDONINFOS, URN_SERVICE_ADDONINFOS, xml))));
+
+		} catch (ParserConfigurationException e1) {
+			System.err.println(e1);
+		} catch (SAXException e1) {
+			System.err.println(e1);
+		} catch (IOException e1) {
+			System.err.println(e1);
+		}
+
 	}
+
+
+	public void getWebservice(){
+
+		String xml =
+	        "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+	        "<s:Envelope " +
+	        " xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n"
+	        +"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding\">\n" +
+	        "<s:Body>" +
+	        "<u:GetDSLLinkInfo xmlns:u=\"urn:schemas-upnp-org:service: WANDSLLinkConfig:1\""+
+	        "</u:GetDSLLinkInfo>\n"	+
+	        " </s:Body>\n" +
+	        "</s:Envelope>";
+
+		String result = UPNPUtils.getSOAPData("http://" + getAddress() +
+			URL_SERVICE_DSLLINK, URN_SERVICE_DSLLINK, xml);
+
+		Debug.msg("Result of dsl service: "+ result);
+
+       /* <?xml version="1.0"?>
+        <s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"
+        s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+        <s:Body><u:GetStatusInfo xmlns:u="urn:schemas-upnp-org:service:WANIPConnection:1"></u:GetStatusInfo>
+        </s:Body>
+        </s:Envelope>*/
+
+		result = UPNPUtils.getSOAPData("http://" + getAddress() +
+				URL_SERVICE_STATUSINFO, URN_SERVICE_STATUSINFO, xml);
+
+		Debug.msg("Result of status info: "+result);
+
+
+	}
+
+
 
 	public void setAddress(String box_address) {
 		this.box_address = box_address;

@@ -11,31 +11,36 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import de.moonflower.jfritz.dialogs.stats.StatsDialog;
+import de.moonflower.jfritz.utils.network.AddonInfosListener;
 
 /**
- * XML Handler for reading the statistic file
+ * XML Handler for reading the output of the addonInfos
+ * Web service on the box
  *
  * @author Arno Willig
  *
  */
 public class AddonInfosXMLHandler extends DefaultHandler {
 
-	StatsDialog statsdialog;
+	AddonInfosListener listener;
 
 	String chars;
 
-	int ByteSendRate, ByteReceiveRate, PacketSendRate, PacketReceiveRate;
+	String ByteSendRate, ByteReceiveRate, PacketSendRate, PacketReceiveRate;
 
-	int TotalBytesSent, TotalBytesReceived;
+	String TotalBytesSent, TotalBytesReceived;
 
-	int AutoDisconnectTime, IdleDisconnectTime;
+	String AutoDisconnectTime, IdleDisconnectTime;
 
 	String DNSServer1, DNSServer2;
 
-	public AddonInfosXMLHandler(StatsDialog statsdialog) {
+	String voipDNSServer1, voipDNSServer2;
+
+	String upnpControl, routedBridgeMode;
+
+	public AddonInfosXMLHandler(AddonInfosListener ail) {
 		super();
-		this.statsdialog = statsdialog;
+		listener = ail;
 	}
 
 	public void startDocument() throws SAXException {
@@ -60,35 +65,41 @@ public class AddonInfosXMLHandler extends DefaultHandler {
 		//SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
 		if (qName.equals("NewByteSendRate")) { //$NON-NLS-1$
-			ByteSendRate = Integer.parseInt(chars);
+			ByteSendRate = chars;
 		} else if (qName.equals("NewByteReceiveRate")) { //$NON-NLS-1$
-			ByteReceiveRate = Integer.parseInt(chars);
+			ByteReceiveRate = chars;
 		} else if (qName.equals("NewPacketSendRate")) { //$NON-NLS-1$
-			PacketSendRate = Integer.parseInt(chars);
+			PacketSendRate = chars;
 		} else if (qName.equals("NewReceiveSendRate")) { //$NON-NLS-1$
-			PacketReceiveRate = Integer.parseInt(chars);
+			PacketReceiveRate = chars;
 		} else if (qName.equals("NewTotalBytesSent")) { //$NON-NLS-1$
-			TotalBytesSent = Integer.parseInt(chars);
+			TotalBytesSent = chars;
 		} else if (qName.equals("NewTotalBytesReceived")) { //$NON-NLS-1$
-			TotalBytesReceived = Integer.parseInt(chars);
+			TotalBytesReceived = chars;
 		} else if (qName.equals("NewAutoDisconnectTime")) { //$NON-NLS-1$
-			AutoDisconnectTime = Integer.parseInt(chars);
+			AutoDisconnectTime = chars;
 		} else if (qName.equals("NewIdleDisconnectTime")) { //$NON-NLS-1$
-			IdleDisconnectTime = Integer.parseInt(chars);
+			IdleDisconnectTime = chars;
 		} else if (qName.equals("NewDNSServer1")) { //$NON-NLS-1$
 			DNSServer1 = chars;
 		} else if (qName.equals("NewDNSServer2")) { //$NON-NLS-1$
 			DNSServer2 = chars;
+		} else if(qName.equals("NewVoipDNSServer1")){
+			voipDNSServer1 = chars;
+		} else if(qName.equals("NewVoipDNSServer2")){
+			voipDNSServer2 = chars;
+		} else if(qName.equals("NewUpnpControlEnabled")){
+			upnpControl = chars;
+		} else if(qName.equals("NewRoutedBridgedModeBoth")){
+			routedBridgeMode = chars;
 		} else if (qName.equals("u:GetAddonInfosResponse")) { //$NON-NLS-1$
-			System.out.println("FRITZ!Box-Statistic:"); //$NON-NLS-1$
-			System.out.println("ByteSendRate: " + ByteSendRate); //$NON-NLS-1$
-			System.out.println("ByteReceiveRate: " + ByteReceiveRate); //$NON-NLS-1$
-			System.out.println("TotalBytesSent: " + TotalBytesSent); //$NON-NLS-1$
-			System.out.println("TotalBytesReceived: " + TotalBytesReceived); //$NON-NLS-1$
-			System.out.println("DNSServer 1: " + DNSServer1); //$NON-NLS-1$
-			System.out.println("DNSServer 2: " + DNSServer2); //$NON-NLS-1$
-			statsdialog.setAddonInfos(ByteSendRate, ByteReceiveRate,
-					TotalBytesSent, TotalBytesReceived, DNSServer1, DNSServer2);
+
+			listener.setBytesRate(ByteSendRate, ByteReceiveRate);
+			listener.setTotalBytesInfo(TotalBytesSent, TotalBytesReceived);
+			listener.setDNSInfo(DNSServer1, DNSServer2);
+			listener.setVoipDNSInfo(voipDNSServer1, voipDNSServer2);
+			listener.setDisconnectInfo(AutoDisconnectTime, IdleDisconnectTime);
+			listener.setOtherInfo(upnpControl, routedBridgeMode);
 		}
 	}
 

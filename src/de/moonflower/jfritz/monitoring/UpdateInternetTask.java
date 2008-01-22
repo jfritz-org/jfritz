@@ -6,6 +6,7 @@ import java.util.TimerTask;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.network.AddonInfosListener;
 
 /**
  * This class is called automatically by the scheduler,
@@ -17,14 +18,9 @@ import de.moonflower.jfritz.utils.Debug;
  * @author Brian Jensen
  *
  */
-public class UpdateInternetTask extends TimerTask {
+public class UpdateInternetTask extends TimerTask implements AddonInfosListener {
 
 	private MonitoringPanel monitoringPanel;
-
-	private Pattern pRate = Pattern.compile(
-			"<NewByteSendRate>([0-9]*)</NewByteSendRate>\\n<NewByteReceiveRate>([0-9]*)</NewByteReceiveRate>");
-
-	private Matcher mRate;
 
 	public UpdateInternetTask(MonitoringPanel mPanel){
 		monitoringPanel = mPanel;
@@ -32,15 +28,33 @@ public class UpdateInternetTask extends TimerTask {
 
 	public void run() {
 
-		//get the SOAP response from the box
-		String xml = JFritz.getFritzBox().getInternetStats();
+		//Access the AddonsInfo web service of the box
+		JFritz.getFritzBox().getInternetStats(this);
 
-		//I would have used a sax parser, but this should be quicker
-		//as i only really need these two fields
-		mRate = pRate.matcher(xml);
-		if(mRate.find()){
-			monitoringPanel.updateInternetUsage(mRate.group(2), mRate.group(1));
-		}
+	}
+
+	public void setBytesRate(String sent, String received){
+		monitoringPanel.updateInternetUsage(sent, received);
+	}
+
+	public void setTotalBytesInfo(String sent, String received){
+		//not needed here
+	}
+
+	public void setDNSInfo(String dns1, String dns2){
+		//not needed here
+	}
+
+	public void setVoipDNSInfo(String voipDns1, String voipDns2){
+		//not needed here
+	}
+
+	public void setDisconnectInfo(String disconnectTime, String idleTime){
+		//not needed here
+	}
+
+	public void setOtherInfo(String upnpControl, String routedMode){
+		//not needed here
 	}
 
 }

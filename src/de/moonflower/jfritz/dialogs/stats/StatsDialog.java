@@ -28,6 +28,8 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -39,21 +41,22 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.network.AddonInfosListener;
 import de.moonflower.jfritz.utils.network.AddonInfosXMLHandler;
-import de.moonflower.jfritz.utils.network.UPNPUtils;
 
 /**
  * Displays a dialog with some statistical data
  * @author Arno Willig
  *
  */
-public class StatsDialog extends JDialog {
+public class StatsDialog extends JDialog implements AddonInfosListener {
 	private static final long serialVersionUID = 1;
 
 	JButton okButton, cancelButton, refreshButton;
 
-	JLabel byteSendRateLabel, byteReceiveRateLabel, totalBytesSendLabel,
-			totalBytesReceivedLabel, dns1Label, dns2Label;
+	JLabel totalBytesSentLabel, totalBytesReceivedLabel, dns1Label, dns2Label,
+			voipDnsLabel1, voipDnsLabel2, upnpLabel, routedBridgeMode,
+			autoDisconnectLabel, idleTimeLabel;
 
 	private boolean pressed_OK = false;
 
@@ -75,24 +78,9 @@ public class StatsDialog extends JDialog {
 	 *
 	 */
 	private void getStats() {
-		final String server = "http://"+JFritz.getFritzBox().getAddress() //$NON-NLS-1$
-		+":49000/upnp/control/WANCommonIFC1"; //$NON-NLS-1$
-		final String urn = "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetAddonInfos"; //$NON-NLS-1$
 
-		String xml = UPNPUtils.getSOAPData(server, urn, "");
-		try {
-			XMLReader reader = SAXParserFactory.newInstance().newSAXParser()
-					.getXMLReader();
-			reader.setContentHandler(new AddonInfosXMLHandler(this));
-			reader.parse(new InputSource(new StringReader(xml)));
-
-		} catch (ParserConfigurationException e1) {
-			System.err.println(e1);
-		} catch (SAXException e1) {
-			System.err.println(e1);
-		} catch (IOException e1) {
-			System.err.println(e1);
-		}
+		JFritz.getFritzBox().getInternetStats(this);
+		JFritz.getFritzBox().getWebservice();
 
 	}
 
@@ -110,7 +98,7 @@ public class StatsDialog extends JDialog {
 		JPanel bottomPane = new JPanel();
 		BoxLayout boxlayout = new BoxLayout(mainPane, BoxLayout.Y_AXIS);
 		mainPane.setBorder(BorderFactory.createEmptyBorder(10, 20, 5, 20));
-		mainPane.setLayout(boxlayout);
+		mainPane.setLayout(new GridBagLayout());
 
 		KeyListener keyListener = (new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
@@ -177,19 +165,73 @@ public class StatsDialog extends JDialog {
         bottomPane.add(okButton);
 		bottomPane.add(cancelButton);
 
-		byteSendRateLabel = new JLabel();
-		byteReceiveRateLabel = new JLabel();
-		totalBytesSendLabel = new JLabel();
+		totalBytesSentLabel = new JLabel();
 		totalBytesReceivedLabel = new JLabel();
 		dns1Label = new JLabel();
 		dns2Label = new JLabel();
+		voipDnsLabel1 = new JLabel();
+		voipDnsLabel2 = new JLabel();
+		upnpLabel = new JLabel();
+		routedBridgeMode = new JLabel();
+		autoDisconnectLabel = new JLabel();
+		idleTimeLabel = new JLabel();
 
-		mainPane.add(byteSendRateLabel);
-		mainPane.add(byteReceiveRateLabel);
-		mainPane.add(totalBytesSendLabel);
-		mainPane.add(totalBytesReceivedLabel);
-		mainPane.add(dns1Label);
-		mainPane.add(dns2Label);
+		GridBagConstraints c = new GridBagConstraints();
+		c.insets.top = 5;
+		c.insets.bottom = 5;
+		c.insets.left = 5;
+		c.insets.right = 5;
+		c.anchor = GridBagConstraints.WEST;
+
+		c.gridx = 0;
+		c.gridy = 0;
+		mainPane.add(new JLabel("Total Bytes Sent:"), c);
+		c.gridx = 1;
+		mainPane.add(totalBytesSentLabel, c);
+		c.gridx = 2;
+		mainPane.add(new JLabel("Total Bytes Received:"), c);
+		c.gridx = 3;
+		mainPane.add(totalBytesReceivedLabel, c);
+
+		c.gridx = 0;
+		c.gridy = 1;
+		mainPane.add(new JLabel("DNS 1:"), c);
+		c.gridx = 1;
+		mainPane.add(dns1Label, c);
+		c.gridx = 2;
+		mainPane.add(new JLabel("DNS 2:"), c);
+		c.gridx = 3;
+		mainPane.add(dns2Label, c);
+
+		c.gridx = 0;
+		c.gridy = 2;
+		mainPane.add(new JLabel("VoipDNS 1:"), c);
+		c.gridx = 1;
+		mainPane.add(voipDnsLabel1, c);
+		c.gridx = 2;
+		mainPane.add(new JLabel("VoipDNS 2:"), c);
+		c.gridx = 3;
+		mainPane.add(voipDnsLabel2, c);
+
+		c.gridx = 0;
+		c.gridy = 3;
+		mainPane.add(new JLabel("Auto Disconnect Time:"), c);
+		c.gridx = 1;
+		mainPane.add(autoDisconnectLabel, c);
+		c.gridx = 2;
+		mainPane.add(new JLabel("Connection Idle Time:"), c);
+		c.gridx = 3;
+		mainPane.add(idleTimeLabel, c);
+
+		c.gridx = 0;
+		c.gridy = 4;
+		mainPane.add(new JLabel("UPnP Control Enabled: "), c);
+		c.gridx = 1;
+		mainPane.add(upnpLabel, c);
+		c.gridx = 2;
+		mainPane.add(new JLabel("Routed Bridge Mode Both: "), c);
+		c.gridx = 3;
+		mainPane.add(routedBridgeMode, c);
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
@@ -198,7 +240,7 @@ public class StatsDialog extends JDialog {
 		panel.add(bottomPane, BorderLayout.SOUTH);
 		getContentPane().add(panel);
 
-		setSize(new Dimension(400, 210));
+		setSize(new Dimension(600, 310));
 		// setResizable(false);
 		// pack();
 	}
@@ -212,22 +254,35 @@ public class StatsDialog extends JDialog {
 		return okPressed();
 	}
 
-	public void setAddonInfos(int byteSendRate, int byteReceiveRate,
-			int totalBytesSent, int totalBytesReceived, String dns1, String dns2) {
-		byteSendRateLabel.setText(Main.getMessage(
-				"bytessendrate") //$NON-NLS-1$
-				+ ": " + byteSendRate); //$NON-NLS-1$
-		byteReceiveRateLabel.setText(Main.getMessage(
-				"bytesreceivedrate") //$NON-NLS-1$
-				+ ": " + byteReceiveRate); //$NON-NLS-1$
-		totalBytesSendLabel.setText(Main.getMessage(
-				"totaldatasent") //$NON-NLS-1$
-				+ ": " + (totalBytesSent / 1024) + " KByte"); //$NON-NLS-1$,  //$NON-NLS-2$
-		totalBytesReceivedLabel.setText(Main.getMessage(
-				"totaldatareceived") //$NON-NLS-1$
-				+ ": " + (totalBytesReceived / 1024) + " KByte"); //$NON-NLS-1$,  //$NON-NLS-2$
-		dns1Label.setText("DNS Server 1: " + dns1); //$NON-NLS-1$
-		dns2Label.setText("DNS Server 2: " + dns2); //$NON-NLS-1$
+	public void setBytesRate(String sent, String received){
+		//not needed here
 	}
+
+	public void setTotalBytesInfo(String sent, String received){
+		totalBytesSentLabel.setText(sent);
+		totalBytesReceivedLabel.setText(received);
+	}
+
+	public void setDNSInfo(String dns1, String dns2){
+		dns1Label.setText(dns1);
+		dns2Label.setText(dns2);
+	}
+
+	public void setVoipDNSInfo(String voipDns1, String voipDns2){
+		voipDnsLabel1.setText(voipDns1);
+		voipDnsLabel2.setText(voipDns2);
+	}
+
+	public void setDisconnectInfo(String disconnectTime, String idleTime){
+		autoDisconnectLabel.setText(disconnectTime);
+		idleTimeLabel.setText(idleTime);
+	}
+
+	public void setOtherInfo(String upnpControl, String routedMode){
+		upnpLabel.setText(upnpControl);
+		routedBridgeMode.setText(routedMode);
+	}
+
+
 
 }
