@@ -355,7 +355,6 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 				e.printStackTrace();
 
 			} catch (BadPaddingException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

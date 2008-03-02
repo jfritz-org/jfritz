@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
@@ -201,7 +202,8 @@ public class FritzBoxFirmware {
 		final String urlstr = "http://" + box_address +":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
 
 		if(Main.getProperty("network.type", "0").equals("2")
-				&& Boolean.parseBoolean(Main.getProperty("option.clientCallList", "false"))){
+				&& Boolean.parseBoolean(Main.getProperty("option.clientCallList", "false"))
+				&& NetworkStateMonitor.isConnectedToServer()){
 
 			Debug.netMsg("JFritz is configured as a client and using call list from server, canceling firmware detection");
 			return null;

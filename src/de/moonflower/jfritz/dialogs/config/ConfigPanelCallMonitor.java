@@ -57,7 +57,6 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 		callMonitorCombo.addItem(Main.getMessage("syslog_call_monitor")); //$NON-NLS-1$
 		callMonitorCombo.addItem(Main.getMessage("yac_call_monitor")); //$NON-NLS-1$
 		callMonitorCombo.addItem(Main.getMessage("callmessage_call_monitor")); //$NON-NLS-1$
-		callMonitorCombo.addItem(Main.getMessage("client_call_monitor"));
 		callMonitorCombo.addActionListener(this);
 
 		add(callMonitorCombo, BorderLayout.NORTH);

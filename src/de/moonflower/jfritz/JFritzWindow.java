@@ -1408,6 +1408,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	}
 
 	public void startChosenCallMonitor() {
+		if(Main.getProperty("option.clientCallMonitor", "false").equals("true")
+			 && NetworkStateMonitor.isConnectedToServer()){
+
+			return;
+		}
+
+
 		switch (Integer.parseInt(Main.getProperty("option.callMonitorType", //$NON-NLS-1$
 				"0"))) { //$NON-NLS-1$
 		case 1: {
@@ -1455,14 +1462,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 							"23232")))); //$NON-NLS-1$
 			setCallMonitorButtonPushed(true);
 			break;
-		}
-		// JFritz server as call monitor
-		case 6: {
-			if(NetworkStateMonitor.isConnectedToServer())
-				setCallMonitorButtonPushed(true);
-			else
-				setCallMonitorButtonPushed(false);
-
 		}
 
 		}
@@ -1774,17 +1773,22 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			networkButton.setToolTipText(Main.getMessage("client_is_connected"));
 
 			//also activate the call monitor if one is wished
-			if(Main.getProperty("option.callMonitorType", "0").equals("6")
+			if(Main.getProperty("option.clientCallMonitor", "false").equals("6")
 					&& Main.getProperty("option.autostartcallmonitor", "false").equals(
-					"true"))
-				this.setCallMonitorButtonPushed(true);
+					"true")){
+				this.monitorButton.setSelected(true);
+				this.monitorButton.setEnabled(false);
+			}
 		}else{
 			networkButton.setSelected(false);
 			networkButton.setToolTipText(Main.getMessage("connect_to_server"));
 
 			//also deactivate the call monitor if one was active
-			if(Main.getProperty("option.callMonitorType", "0").equals("6") )
-				this.setCallMonitorButtonPushed(false);
+			if(Main.getProperty("option.clientCallMonitor", "false").equals("6") ){
+				this.monitorButton.setSelected(false);
+				this.monitorButton.setEnabled(true);
+			}
+
 
 		}
 	}
