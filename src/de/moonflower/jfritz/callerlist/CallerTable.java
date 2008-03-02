@@ -111,13 +111,11 @@ public class CallerTable extends JTable {
 			}
 
 			public void columnMoved(TableColumnModelEvent arg0) {
-				// TODO Auto-generated method stub
 				for (int i = 0; i < MAXCOLUMNCOUNT; i++) {
 					try {
 						Main.setStateProperty("" + "column" + i + ".name", ""
 								+ colModel.getColumn(i).getIdentifier());
-						// Debug.msg("" + "column" + i + ".name" + "="+
-						// colModel.getColumn(i).getIdentifier());
+
 					} catch (IllegalArgumentException iae) {
 						Main.setStateProperty("column" + i + ".name", "");
 					} catch (ArrayIndexOutOfBoundsException aioobe) {
@@ -148,7 +146,7 @@ public class CallerTable extends JTable {
 			}
 
 			public void columnSelectionChanged(ListSelectionEvent arg0) {
-				// TODO Auto-generated method stub
+
 			}
 
 		});

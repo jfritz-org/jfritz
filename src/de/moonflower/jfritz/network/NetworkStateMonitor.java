@@ -2,6 +2,8 @@ package de.moonflower.jfritz.network;
 
 import java.util.Vector;
 
+import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.PhoneNumber;
 
 /**
@@ -106,9 +108,46 @@ public class NetworkStateMonitor  {
 	 *
 	 */
 	public static void serverSettingsChanged(){
-
 		clientConnectionListener.settingsChanged();
-
 	}
+
+	/**
+	 * Check if direct dialing is available, if we are connected to a server
+	 * or if we have a valid firmware
+	 *
+	 * @return wether direct dialing is available
+	 */
+	public static boolean hasAvailablePorts(){
+		if(Main.getProperty("option.clientCallList", "false").equals("true")
+				&& isConnectedToServer())
+			return serverConnection.hasAvailablePorts();
+
+		else if(JFritz.getFritzBox().getAvailablePorts() != null)
+			return true;
+
+		return false;
+	}
+
+	public static String[] getAvailablePorts(){
+		if(Main.getProperty("option.clientCallList", "false").equals("true")
+				&& isConnectedToServer())
+			return serverConnection.getAvailablePorts();
+
+		return JFritz.getFritzBox().getAvailablePorts();
+	}
+
+	/**
+	 * send the direct dial request to the server only if we are connected
+	 * otherwise send it directly to the box
+	 *
+	 */
+	public static void doCall(String number, String port){
+		if(Main.getProperty("option.clientCallList", "false").equals("true")
+				&& isConnectedToServer())
+			serverConnection.requestDoCall(new PhoneNumber(number, false), port);
+		else
+			JFritz.getFritzBox().doCall(number, port);
+	}
+
 
 }

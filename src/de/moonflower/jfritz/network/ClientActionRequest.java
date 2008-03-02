@@ -23,6 +23,8 @@ public class ClientActionRequest implements Serializable {
 
 	public ActionType action;
 
+	public String port;
+
 	public String siteName;
 
 	public PhoneNumber number;

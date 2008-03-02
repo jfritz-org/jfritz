@@ -935,6 +935,121 @@ public class FritzBox {
 
 	}
 
+	public String[] getAvailablePorts(){
+		String[] ports = null;
+
+		if(firmware == null)
+			return null;
+
+		switch (firmware.getBoxType()) {
+		case FritzBoxFirmware.BOXTYPE_FRITZBOX_FON :
+		case FritzBoxFirmware.BOXTYPE_EUMEX_300:
+			ports = new String[2];
+			ports[0] = "Fon 1";
+			ports[1] = "Fon 2"; //$NON-NLS-1$
+			break;
+		case FritzBoxFirmware.BOXTYPE_FRITZBOX_FON_WLAN :
+			ports = new String[3];
+			ports[0] = "Fon 1";
+
+			// ggf. kann dies auch für die anderen Boxen gelten?
+			ports[1] = "Fon 2"; //$NON-NLS-1$
+			ports[2] = Main.getMessage("analog_telephones_all");  //$NON-NLS-1$
+			break;
+		case FritzBoxFirmware.BOXTYPE_FRITZBOX_ATA :
+		case FritzBoxFirmware.BOXTYPE_FRITZBOX_7140:
+		case FritzBoxFirmware.BOXTYPE_FRITZBOX_7141:
+		case FritzBoxFirmware.BOXTYPE_FRITZBOX_7113:
+			ports = new String[2];
+			ports[0] = "Fon 1";
+			ports[1] = "Fon 2"; //$NON-NLS-1$
+			break;
+		case FritzBoxFirmware.BOXTYPE_FRITZBOX_5010:
+			// die 5010 hat nur einen analogen Anschluss
+			ports = new String[1];
+			ports[0] = "Fon 1";
+			break;
+		case FritzBoxFirmware.BOXTYPE_SPEEDPORT_W900V:
+		case FritzBoxFirmware.BOXTYPE_FRITZBOX_5140:
+			// 2 analoge Telefonanschlüsse und interner S0-Bus
+			{
+				ports = new String[12];
+				ports[0] = "Fon 1";
+				ports[1] = "Fon 2";
+				ports[2] = "ISDN Alle"; //$NON-NLS-1$
+				ports[3] = "ISDN 1"; //$NON-NLS-1$
+				ports[4] = "ISDN 2"; //$NON-NLS-1$
+				ports[5] = "ISDN 3"; //$NON-NLS-1$
+				ports[6] = "ISDN 4"; //$NON-NLS-1$
+				ports[7] = "ISDN 5"; //$NON-NLS-1$
+				ports[8] = "ISDN 6"; //$NON-NLS-1$
+				ports[9] = "ISDN 7"; //$NON-NLS-1$
+				ports[10] = "ISDN 8"; //$NON-NLS-1$
+				ports[11] = "ISDN 9"; //$NON-NLS-1$
+				break;
+			}
+		case FritzBoxFirmware.BOXTYPE_FRITZBOX_5050:
+		case FritzBoxFirmware.BOXTYPE_FRITZBOX_7050:
+		case FritzBoxFirmware.BOXTYPE_FRITZBOX_7170:
+			// 3 analoge Telefonanschlüsse und interner S0-Bus
+			 {
+				ports = new String[13];
+				ports[0] = "Fon 1";
+				ports[1] = "Fon 2"; //$NON-NLS-1$
+				ports[2] = "Fon 3"; //$NON-NLS-1$
+				ports[3] = "ISDN Alle"; //$NON-NLS-1$
+				ports[4] = "ISDN 1"; //$NON-NLS-1$
+				ports[5] = "ISDN 2"; //$NON-NLS-1$
+				ports[6] = "ISDN 3"; //$NON-NLS-1$
+				ports[7] = "ISDN 4"; //$NON-NLS-1$
+				ports[8] = "ISDN 5"; //$NON-NLS-1$
+				ports[9] = "ISDN 6"; //$NON-NLS-1$
+				ports[10] = "ISDN 7"; //$NON-NLS-1$
+				ports[11] = "ISDN 8"; //$NON-NLS-1$
+				ports[12] = "ISDN 9"; //$NON-NLS-1$
+				break;
+			 }
+		case FritzBoxFirmware.BOXTYPE_FRITZBOX_5012:
+			 {
+					ports = new String[11];
+					ports[0] = "Fon 1";
+					ports[1] = "ISDN Alle"; //$NON-NLS-1$
+					ports[2] = "ISDN 1"; //$NON-NLS-1$
+					ports[3] = "ISDN 2"; //$NON-NLS-1$
+					ports[4] = "ISDN 3"; //$NON-NLS-1$
+					ports[5] = "ISDN 4"; //$NON-NLS-1$
+					ports[6] = "ISDN 5"; //$NON-NLS-1$
+					ports[7] = "ISDN 6"; //$NON-NLS-1$
+					ports[8] = "ISDN 7"; //$NON-NLS-1$
+					ports[9] = "ISDN 8"; //$NON-NLS-1$
+					ports[10] = "ISDN 9"; //$NON-NLS-1$
+				 break;
+			 }
+		case FritzBoxFirmware.BOXTYPE_FRITZBOX_7270:
+			// 2 analoge Telefonanschlüsse, interner S0-Bus und DECT
+			{
+				ports = new String[12];
+				ports[0] = "Fon 1";
+				ports[1] = "Fon 2";
+				ports[2] = "ISDN Alle"; //$NON-NLS-1$
+				ports[3] = "ISDN 1"; //$NON-NLS-1$
+				ports[4] = "ISDN 2"; //$NON-NLS-1$
+				ports[5] = "ISDN 3"; //$NON-NLS-1$
+				ports[6] = "ISDN 4"; //$NON-NLS-1$
+				ports[7] = "ISDN 5"; //$NON-NLS-1$
+				ports[8] = "ISDN 6"; //$NON-NLS-1$
+				ports[9] = "ISDN 7"; //$NON-NLS-1$
+				ports[10] = "ISDN 8"; //$NON-NLS-1$
+				ports[11] = "ISDN 9"; //$NON-NLS-1$
+
+
+				break;
+			}
+		}
+
+		return ports;
+	}
+
 
 	public void setAddress(String box_address) {
 		this.box_address = box_address;

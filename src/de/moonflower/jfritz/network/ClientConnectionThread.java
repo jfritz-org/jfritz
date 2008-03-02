@@ -21,6 +21,7 @@ import javax.crypto.spec.*;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.callerlist.CallerListListener;
+import de.moonflower.jfritz.callerlist.filter.CallFilter;
 import de.moonflower.jfritz.callmonitor.CallMonitorListener;
 import de.moonflower.jfritz.phonebook.PhoneBookListener;
 import de.moonflower.jfritz.struct.Call;
@@ -287,6 +288,23 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 							&& login.allowDeleteList){
 						Debug.netMsg("Received request to delete the list from the box from "+remoteAddress);
 						JFritz.getJframe().fetchList(true);
+					}
+					else if(actionRequest.action == ClientActionRequest.ActionType.doCall
+							&& login.allowDoCall){
+
+							//client has requested the list of available ports
+						if(actionRequest.number == null){
+							Debug.netMsg("Received request to list available ports for "+remoteAddress);
+							writeAvailablePorts();
+						}else if(actionRequest.number != null && actionRequest.port != null){
+							Debug.netMsg("Received request to dial number "+actionRequest.number.getIntNumber()
+									+ " using port "+actionRequest.port+" from "+remoteAddress);
+
+							//TODO: filtering!!
+							JFritz.getFritzBox().doCall(actionRequest.number.getAreaNumber(), actionRequest.port);
+
+						}else
+							Debug.netMsg("Received invalid direct dial request from "+remoteAddress);
 					}
 
 				}else if(o instanceof String){
@@ -744,4 +762,25 @@ public class ClientConnectionThread extends Thread implements CallerListListener
     public void resetKeepAlive(){
     	keptAlive = false;
     }
+
+    private void writeAvailablePorts(){
+    	try{
+			Debug.msg("Notifying client "+remoteAddress+" of available ports");
+			SealedObject sealed_object = new SealedObject(JFritz.getFritzBox().getAvailablePorts(),
+					outCipher);
+			objectOut.writeObject(sealed_object);
+			objectOut.flush();
+
+		}catch(IOException e){
+			Debug.err("Error writing available ports to client!");
+			Debug.err(e.toString());
+			e.printStackTrace();
+
+		}catch(IllegalBlockSizeException e){
+			Debug.err("Error with the block size?");
+			Debug.err(e.toString());
+			e.printStackTrace();
+		}
+    }
+
 }

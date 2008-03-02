@@ -16,6 +16,8 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 
@@ -46,8 +48,12 @@ public class CallPanel extends JComponent {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() > 1) {
 					Person person = JFritz.getPhonebook().findPerson(number);
-					if (JFritz.getFritzBox().checkValidFirmware())
-					{
+
+					//only allow direct dialing if we detected a valid firmware
+					//of if we are currently connected to a server and have
+					//received the available ports
+					if (NetworkStateMonitor.hasAvailablePorts()){
+
 						CallDialog p;
 
 						/* opens CallDialog with:

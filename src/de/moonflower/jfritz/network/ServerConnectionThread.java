@@ -21,6 +21,7 @@ import javax.crypto.spec.*;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.CallerListListener;
+import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.phonebook.PhoneBookListener;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
@@ -73,6 +74,9 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 	private boolean callsAdded = false, callsRemoved=false, callUpdated=false,
 		contactsAdded=false, contactsRemoved=false, contactUpdated=false;
+
+	//needed for direct dialing
+	private String[] availablePorts = null;
 
 	/**
 	 * Returns the current state of this thread
@@ -395,6 +399,15 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			objectOut.flush();
 			objectOut.reset();
 
+			//request the available ports
+			actionRequest.action = ClientActionRequest.ActionType.doCall;
+			actionRequest.port = null;
+			actionRequest.number = null;
+			SealedObject sealedActionRequest = new SealedObject(actionRequest, outCipher);
+			objectOut.writeObject(sealedActionRequest);
+			objectOut.flush();
+			objectOut.reset();
+
 		}catch(IOException e){
 			Debug.err("Error writing synchronizing request to server!");
 			Debug.err(e.toString());
@@ -578,7 +591,10 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 						}else{
 							Debug.netMsg("destination not chosen for incoming data, ignoring!");
 						}
-
+						//we received the ports list from the server
+				}else if(o instanceof String[]){
+					Debug.msg("received available ports from server");
+					availablePorts = (String[]) o;
 				}else if(o instanceof String){ //message received from the server
 
 					message = (String) o;
@@ -737,6 +753,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 	}
 
 	public synchronized void requestDeleteList(){
+		Debug.msg("Requesting server to delete the list from the box");
 		actionRequest.action = ClientActionRequest.ActionType.deleteListFromBox;
 
 		try{
@@ -755,6 +772,33 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			Debug.err(e.toString());
 			e.printStackTrace();
 		}
+	}
+
+	public synchronized void requestDoCall(PhoneNumber number, String port){
+		Debug.netMsg("Requesting the server to dial "+number.getIntNumber()+" using "+port);
+		actionRequest.action = ClientActionRequest.ActionType.doCall;
+		actionRequest.number = number;
+		actionRequest.port = port;
+
+		try{
+
+			SealedObject sealedActionRequest = new SealedObject(actionRequest, outCipher);
+			objectOut.writeObject(sealedActionRequest);
+			objectOut.flush();
+			objectOut.reset();
+
+		}catch(IOException e){
+			Debug.err("Error writing writing delete list from box request");
+			Debug.err(e.toString());
+			e.printStackTrace();
+		} catch (IllegalBlockSizeException e) {
+			Debug.err("Illegal block size exception!");
+			Debug.err(e.toString());
+			e.printStackTrace();
+		}
+
+		actionRequest.number = null;
+		actionRequest.port = null;
 	}
 
 	public synchronized void callsAdded(Vector<Call> newCalls){
@@ -942,7 +986,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 	 * the server
 	 *
 	 */
-	public  void replyToKeepAlive(){
+	public  synchronized void replyToKeepAlive(){
 		try{
 
 			Debug.netMsg("Replying to servers keep alive message");
@@ -962,5 +1006,15 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 		}
 	}
 
+	public synchronized boolean hasAvailablePorts(){
+		if(availablePorts != null)
+			return true;
+
+		return false;
+	}
+
+	public synchronized String[] getAvailablePorts(){
+		return availablePorts;
+	}
 
 }

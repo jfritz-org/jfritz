@@ -30,6 +30,7 @@ import javax.swing.KeyStroke;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
+import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.NoticeDialog;
 
@@ -143,86 +144,15 @@ public class CallDialog extends JDialog implements ActionListener {
 			topPane.add(label, c);
 
 			port = new JComboBox();
-			port.addItem("Fon 1"); //$NON-NLS-1$
-            firmware = JFritz.getFritzBox().getFirmware();
-			if (firmware != null) {
-				switch (firmware.getBoxType()) {
-					case FritzBoxFirmware.BOXTYPE_FRITZBOX_FON :
-					case FritzBoxFirmware.BOXTYPE_EUMEX_300:
-						port.addItem("Fon 2"); //$NON-NLS-1$
-						break;
-					case FritzBoxFirmware.BOXTYPE_FRITZBOX_FON_WLAN :
-						// ggf. kann dies auch für die anderen Boxen gelten?
-						port.addItem("Fon 2"); //$NON-NLS-1$
-						port.addItem(Main.getMessage("analog_telephones_all"));  //$NON-NLS-1$
-						break;
-					case FritzBoxFirmware.BOXTYPE_FRITZBOX_ATA :
-					case FritzBoxFirmware.BOXTYPE_FRITZBOX_7140:
-					case FritzBoxFirmware.BOXTYPE_FRITZBOX_7141:
-					case FritzBoxFirmware.BOXTYPE_FRITZBOX_7113:
-						port.addItem("Fon 2"); //$NON-NLS-1$
-						break;
-					case FritzBoxFirmware.BOXTYPE_FRITZBOX_5010:
-						// die 5010 hat nur einen analogen Anschluss
-						break;
-					case FritzBoxFirmware.BOXTYPE_SPEEDPORT_W900V:
-					case FritzBoxFirmware.BOXTYPE_FRITZBOX_5140:
-						// 2 analoge Telefonanschlüsse und interner S0-Bus
-						{
-							port.addItem("Fon 2");
-							port.addItem("ISDN Alle"); //$NON-NLS-1$
-							port.addItem("ISDN 1"); //$NON-NLS-1$
-							port.addItem("ISDN 2"); //$NON-NLS-1$
-							port.addItem("ISDN 3"); //$NON-NLS-1$
-							port.addItem("ISDN 4"); //$NON-NLS-1$
-							port.addItem("ISDN 5"); //$NON-NLS-1$
-							port.addItem("ISDN 6"); //$NON-NLS-1$
-							port.addItem("ISDN 7"); //$NON-NLS-1$
-							port.addItem("ISDN 8"); //$NON-NLS-1$
-							port.addItem("ISDN 9"); //$NON-NLS-1$
-							break;
-						}
-					case FritzBoxFirmware.BOXTYPE_FRITZBOX_5050:
-					case FritzBoxFirmware.BOXTYPE_FRITZBOX_7050:
-					case FritzBoxFirmware.BOXTYPE_FRITZBOX_7170:
-						// 3 analoge Telefonanschlüsse und interner S0-Bus
-						 {
-							 port.addItem("Fon 2"); //$NON-NLS-1$
-							 port.addItem("Fon 3"); //$NON-NLS-1$
-						 }
-					case FritzBoxFirmware.BOXTYPE_FRITZBOX_5012:
-						 {
-							 port.addItem("ISDN Alle"); //$NON-NLS-1$
-							 port.addItem("ISDN 1"); //$NON-NLS-1$
-							 port.addItem("ISDN 2"); //$NON-NLS-1$
-							 port.addItem("ISDN 3"); //$NON-NLS-1$
-							 port.addItem("ISDN 4"); //$NON-NLS-1$
-							 port.addItem("ISDN 5"); //$NON-NLS-1$
-							 port.addItem("ISDN 6"); //$NON-NLS-1$
-							 port.addItem("ISDN 7"); //$NON-NLS-1$
-							 port.addItem("ISDN 8"); //$NON-NLS-1$
-							 port.addItem("ISDN 9"); //$NON-NLS-1$
-							 break;
-						 }
-					case FritzBoxFirmware.BOXTYPE_FRITZBOX_7270:
-						// 2 analoge Telefonanschlüsse, interner S0-Bus und DECT
-						{
-							port.addItem("Fon 2");
-							port.addItem("ISDN Alle"); //$NON-NLS-1$
-							port.addItem("ISDN 1"); //$NON-NLS-1$
-							port.addItem("ISDN 2"); //$NON-NLS-1$
-							port.addItem("ISDN 3"); //$NON-NLS-1$
-							port.addItem("ISDN 4"); //$NON-NLS-1$
-							port.addItem("ISDN 5"); //$NON-NLS-1$
-							port.addItem("ISDN 6"); //$NON-NLS-1$
-							port.addItem("ISDN 7"); //$NON-NLS-1$
-							port.addItem("ISDN 8"); //$NON-NLS-1$
-							port.addItem("ISDN 9"); //$NON-NLS-1$
-							// TODO: DECT
-							break;
-						}
-					}
+
+			String[] ports = NetworkStateMonitor.getAvailablePorts();
+
+			//make sure the firmware was correctly detected
+			if(ports != null){
+				for(int i=0; i < ports.length; i++)
+					port.addItem(ports[i]);
 			}
+
             port.setPreferredSize(new Dimension(100, 20));
 			topPane.add(port, c);
 
@@ -273,20 +203,15 @@ public class CallDialog extends JDialog implements ActionListener {
 
             Main.setProperty("calldialog.lastport", Integer.toString(port.getSelectedIndex()));
 
-//			if(!number.getText().equals(""))
-//				JFritz.getFritzBox().doCall(number.getText(), port.getSelectedItem().toString());
-
 			if (cboNumber.getClass().toString().equals(
 					"class javax.swing.JTextField")) //$NON-NLS-1$
 			{
-				JFritz.getFritzBox().doCall(((JTextField) cboNumber).getText(), port.getSelectedItem().toString());
-				//JOptionPane.showMessageDialog(null,"JTextField: "+((JTextField) cboNumber).getText());
+				NetworkStateMonitor.doCall(((JTextField) cboNumber).getText(), port.getSelectedItem().toString());
 			}
 			if (cboNumber.getClass().toString().equals(
 					"class javax.swing.JComboBox")) //$NON-NLS-1$
 			{
-				JFritz.getFritzBox().doCall(((JComboBox) cboNumber).getSelectedItem().toString(), port.getSelectedItem().toString());
-				//JOptionPane.showMessageDialog(null,"JComboBox: "+((JComboBox) cboNumber).getSelectedItem().toString());
+				NetworkStateMonitor.doCall(((JComboBox) cboNumber).getSelectedItem().toString(), port.getSelectedItem().toString());
 			}
 
 			setVisible(false);
