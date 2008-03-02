@@ -5,7 +5,9 @@ import java.io.Serializable;
 import de.moonflower.jfritz.struct.PhoneNumber;
 
 /**
- * used to ask the server to do something for a client
+ * This class is used to ask the server to perfrom an external action.
+ * Because the client doesn't know his permissions with server,
+ * it is not guranteed this action will be carried out.
  *
  * @see de.moonflower.jfritz.network.ClientConnectionListener
  *
@@ -15,11 +17,11 @@ import de.moonflower.jfritz.struct.PhoneNumber;
 
 public class ClientActionRequest implements Serializable {
 
-	public static final long serialVersionUID = 100;
+	public static final long serialVersionUID = 101;
 
-	public boolean doLookup = false;
+	public enum ActionType {doLookup, getCallList, deleteListFromBox, doCall};
 
-	public boolean getCallList = false;
+	public ActionType action;
 
 	public String siteName;
 

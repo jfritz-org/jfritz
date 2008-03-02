@@ -261,7 +261,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 				//write out the username to the server and close the stream to free all resources
 				response = (String) o;
 				Debug.netMsg("Connected to JFritz Server: "+response);
-				if(!response.equals("JFRITZ SERVER 1.0")){
+				if(!response.equals("JFRITZ SERVER 1.1")){
 					Debug.netMsg("Unkown Server version, newer JFritz protocoll version?");
 					Debug.netMsg("Canceling login attempt!");
 				}
@@ -662,7 +662,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 
 	public synchronized void requestLookup(){
-		actionRequest.doLookup = true;
+		actionRequest.action = ClientActionRequest.ActionType.doLookup;
 		try{
 
 			SealedObject sealedActionRequest = new SealedObject(actionRequest, outCipher);
@@ -679,7 +679,6 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			Debug.err(e.toString());
 			e.printStackTrace();
 		}
-		actionRequest.doLookup = false;
 	}
 
 	/**
@@ -690,7 +689,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 	 */
 	public synchronized void requestSpecificLookup(PhoneNumber number, String siteName){
 
-		actionRequest.doLookup = true;
+		actionRequest.action = ClientActionRequest.ActionType.doLookup;
 		actionRequest.number = number;
 		actionRequest.siteName = siteName;
 
@@ -711,13 +710,12 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			e.printStackTrace();
 		}
 
-		actionRequest.doLookup = false;
 		actionRequest.number = null;
 		actionRequest.siteName = null;
 	}
 
 	public synchronized void requestGetCallList(){
-		actionRequest.getCallList = true;
+		actionRequest.action = ClientActionRequest.ActionType.getCallList;
 
 		try{
 
@@ -735,7 +733,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			Debug.err(e.toString());
 			e.printStackTrace();
 		}
-		actionRequest.getCallList = false;
+
 	}
 
 	public synchronized void callsAdded(Vector<Call> newCalls){

@@ -25,7 +25,8 @@ public class ClientLoginsXMLHandler extends DefaultHandler{
 
 	boolean allowCallListAdd, allowCallListUpdate, allowCallListRemove, allowPhoneBookAdd,
 			allowPhoneBookUpdate, allowPhoneBookRemove, allowLookup, allowGetCallList,
-			enabled, inverted, allowCallList, allowPhoneBook, allowCallMonitor;
+			enabled, inverted, allowCallList, allowPhoneBook, allowCallMonitor,
+			allowDeleteList, allowDoCall;
 
 	Vector<CallFilter> callFilters;
 
@@ -66,6 +67,8 @@ public class ClientLoginsXMLHandler extends DefaultHandler{
 			allowCallMonitor = false;
 			allowLookup = false;
 			allowGetCallList = false;
+			allowDeleteList = false;
+			allowDoCall = false;
 			callFilters = new Vector<CallFilter>();
 
 		}else if(eName.equals("callfilter")){
@@ -130,6 +133,10 @@ public class ClientLoginsXMLHandler extends DefaultHandler{
 			allowLookup = Boolean.parseBoolean(chars);
 		}else if(qName.equals("allowGetCallList")){
 			allowGetCallList = Boolean.parseBoolean(chars);
+		}else if(qName.equals("allowDeleteList")){
+			allowDeleteList = Boolean.parseBoolean(chars);
+		}else if(qName.equals("allowDoCall")){
+			allowDoCall = Boolean.parseBoolean(chars);
 
 			//individual filter settings
 		}else if(qName.equals("callbycall")){
@@ -366,7 +373,7 @@ public class ClientLoginsXMLHandler extends DefaultHandler{
 			Login login = new Login(username, password, allowCallList, allowCallListAdd, allowCallListUpdate,
 					allowCallListRemove, allowPhoneBook, allowPhoneBookAdd, allowPhoneBookUpdate,
 					allowPhoneBookRemove, allowCallMonitor, allowLookup, allowGetCallList,
-					callFilters, "");
+					allowDeleteList, allowDoCall, callFilters, "");
 			ClientLoginsTableModel.addLogin(login);
 			Debug.netMsg("Adding client login: "+username+" with "+ callFilters.size()+" Filters");
 		}

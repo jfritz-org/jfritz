@@ -162,6 +162,12 @@
  * - Bugfix: Internet Monitoring funktioniert wieder
  * - Umstrukturierung des Statiskdialogs, funktioniert jetzt wieder
  *
+ * Strings:
+ * 	allow_client_deletelist
+ * 	allow_client_docall;
+ *
+ *
+ *
  * JFritz 0.7.0.1
  * - Funktioniert nun wieder mit Java 1.5
  * - Bugfix: JFrtz-Menü manchmal nicht sichtbar
@@ -755,7 +761,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.7.0.1"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.101 2008/01/22 13:05:28 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.102 2008/03/02 16:22:49 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -812,7 +818,7 @@ public class Main implements LookupObserver {
 
 	public Main(String[] args) {
 		System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION //$NON-NLS-1$
-				+ " (c) 2005-2007 by " + JFRITZ_PROJECT); //$NON-NLS-1$
+				+ " (c) 2005-2008 by " + JFRITZ_PROJECT); //$NON-NLS-1$
 		Thread.currentThread().setPriority(5);
 		Thread.currentThread().setName("JFritz main thread");
 

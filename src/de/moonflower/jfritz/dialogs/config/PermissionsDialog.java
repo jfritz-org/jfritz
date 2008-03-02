@@ -50,7 +50,7 @@ public class PermissionsDialog extends JDialog {
 
 	private JCheckBox allowCallList, allowCallListAdd, allowCallListUpdate, allowCallListRemove,
 		allowPhoneBook, allowPhoneBookAdd, allowPhoneBookUpdate, allowPhoneBookRemove,
-		allowCallMonitor, allowLookup, allowGetCallList;
+		allowCallMonitor, allowLookup, allowGetCallList, allowDeleteList, allowDoCall;
 
 	public PermissionsDialog(JDialog parent, Login login){
 		super(parent, true);
@@ -65,7 +65,7 @@ public class PermissionsDialog extends JDialog {
 
 	public void init(){
 		setTitle(Main.getMessage("set_client_permissions"));
-	      setSize(320, 430);
+	      setSize(340, 490);
 
 	      drawDialog();
 	      setProperties();
@@ -179,6 +179,14 @@ public class PermissionsDialog extends JDialog {
         allowGetCallList = new JCheckBox(Main.getMessage("allow_client_getcalllist"));
         panel.add(allowGetCallList, c);
 
+        c.gridy = 11;
+        allowDeleteList = new JCheckBox(Main.getMessage("allow_client_deletelist"));
+        panel.add(allowDeleteList, c);
+
+        c.gridy = 12;
+        allowDoCall = new JCheckBox(Main.getMessage("allow_client_docall"));
+        panel.add(allowDoCall, c);
+
         JPanel buttonPanel = new JPanel();
         okButton = new JButton(Main.getMessage("okay")); //$NON-NLS-1$
         okButton.setActionCommand("ok_pressed"); //$NON-NLS-1$
@@ -232,6 +240,8 @@ public class PermissionsDialog extends JDialog {
 		allowCallMonitor.setSelected(login.allowCallMonitor);
 		allowLookup.setSelected(login.allowLookup);
 		allowGetCallList.setSelected(login.allowGetList);
+		allowDeleteList.setSelected(login.allowDeleteList);
+		allowDoCall.setSelected(login.allowDoCall);
 	}
 
 	public void storeProperties(){
@@ -246,6 +256,8 @@ public class PermissionsDialog extends JDialog {
 		login.allowCallMonitor = allowCallMonitor.isSelected();
 		login.allowLookup = allowLookup.isSelected();
 		login.allowGetList = allowGetCallList.isSelected();
+		login.allowDeleteList = allowDeleteList.isSelected();
+		login.allowDoCall = allowDoCall.isSelected();
 	}
 
 }

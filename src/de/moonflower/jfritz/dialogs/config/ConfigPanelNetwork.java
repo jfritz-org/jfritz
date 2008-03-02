@@ -469,7 +469,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		}else if(e.getActionCommand().equals("add")){
 			ClientLoginsTableModel.addLogin(new Login("changeme", "", false, false,
 					false, false, false, false, false, false, false, false, false,
-					new Vector<CallFilter>(), ""));
+					false, false, new Vector<CallFilter>(), ""));
 			JFritz.getClientLogins().fireTableDataChanged();
 
 		}else if(e.getActionCommand().equals("remove")){

@@ -266,7 +266,8 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 				}else if(o instanceof ClientActionRequest){
 					//client has requested to perform an action
 					actionRequest = (ClientActionRequest) o;
-					if(actionRequest.doLookup && login.allowLookup){
+					if(actionRequest.action == ClientActionRequest.ActionType.doLookup
+							&& login.allowLookup){
 
 						if(actionRequest.number != null && actionRequest.siteName != null){
 							Debug.netMsg("Received request to do specific reverse lookup for "+actionRequest.number
@@ -277,7 +278,8 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 							JFritz.getJframe().doLookupButtonClick();
 						}
 					}
-					if(actionRequest.getCallList && login.allowGetList){
+					if(actionRequest.action == ClientActionRequest.ActionType.getCallList
+							&& login.allowGetList){
 						Debug.netMsg("Received request to get call from the box from "+remoteAddress);
 						JFritz.getJframe().doFetchButtonClick();
 					}
@@ -355,7 +357,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 			//set timeout in case client implementation is broken
 			socket.setSoTimeout(25000);
 			// tell the client who we are in plain text
-			objectOut.writeObject("JFRITZ SERVER 1.0");
+			objectOut.writeObject("JFRITZ SERVER 1.1");
 			objectOut.flush();
 
 			// first read in the user name from the client, string is in plain text

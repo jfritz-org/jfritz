@@ -17,7 +17,7 @@ public class Login {
 
 	public boolean allowAddList, allowUpdateList, allowRemoveList, allowAddBook,
 			allowUpdateBook, allowRemoveBook, allowLookup, allowGetList,
-			allowCallList, allowPhoneBook, allowCallMonitor;
+			allowCallList, allowPhoneBook, allowCallMonitor, allowDeleteList, allowDoCall;
 
 	public Vector<CallFilter> callFilters;
 
@@ -26,7 +26,7 @@ public class Login {
 	public Login(String user, String password, boolean allowCalllist, boolean allowAddlist, boolean allowUpdatelist,
 			boolean allowRemovelist,boolean allowPhonebook, boolean allowAddbook, boolean allowUpdatebook,
 			boolean allowRemovebook, boolean allowCallmonitor, boolean allowlookup, boolean allowGetlist,
-			Vector<CallFilter> CallFilters, String ContactFilter){
+			boolean allowDeletelist, boolean allowDocall, Vector<CallFilter> CallFilters, String ContactFilter){
 
 		this.user = user;
 		this.password = password;
@@ -41,6 +41,8 @@ public class Login {
 		allowCallMonitor = allowCallmonitor;
 		allowLookup = allowlookup;
 		allowGetList = allowGetlist;
+		allowDeleteList = allowDeletelist;
+		allowDoCall = allowDocall;
 		callFilters = CallFilters;
 		contactFilter = ContactFilter;
 	}

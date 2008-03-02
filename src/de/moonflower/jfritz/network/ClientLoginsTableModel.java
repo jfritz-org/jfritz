@@ -162,6 +162,8 @@ public class ClientLoginsTableModel extends AbstractTableModel{
 				pw.println("\t\t<allowCallMonitor>"+login.allowCallMonitor+"</allowCallMonitor>");
 				pw.println("\t\t<allowDoLookup>"+login.allowLookup+"</allowDoLookup>");
 				pw.println("\t\t<allowGetCallList>"+login.allowGetList+"</allowGetCallList>");
+				pw.println("\t\t<allowDeleteList>"+login.allowDeleteList+"</allowDeleteList>");
+				pw.println("\t\t<allowDoCall>"+login.allowDoCall+"</allowDoCall>");
 
 				//print all the filters set for this client
 				for(CallFilter callFilter: login.callFilters){
