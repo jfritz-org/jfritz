@@ -161,6 +161,7 @@
  * - Umstrukturierung des Aufrufs von externen Programmen (noch nicht abgeschlossen)
  * - Bugfix: Internet Monitoring funktioniert wieder
  * - Umstrukturierung des Statiskdialogs, funktioniert jetzt wieder
+ * - Neu: Clients können jetzt über den Server die Anrufliste von der Box löschen
  *
  * Strings:
  * 	allow_client_deletelist
@@ -761,7 +762,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.7.0.1"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.102 2008/03/02 16:22:49 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.103 2008/03/02 16:57:59 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

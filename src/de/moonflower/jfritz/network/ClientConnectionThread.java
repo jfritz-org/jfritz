@@ -95,12 +95,12 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 				Debug.netMsg("Authentication for client "+remoteAddress+" successful!");
 
 					//Reset the timeout
-				socket.setSoTimeout(65000);
+				socket.setSoTimeout(100000);
 
 				//set the timer for the keep alive task
 				timer = new Timer();
 				ServerKeepAliveTask task = new ServerKeepAliveTask(this, objectOut, remoteAddress, outCipher);
-				timer.schedule(task, 5000, 60000);
+				timer.schedule(task, 5000, 90000);
 				keptAlive = true;
 
 				callsAdd = new DataChange<Call>();
@@ -278,10 +278,15 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 							JFritz.getJframe().doLookupButtonClick();
 						}
 					}
-					if(actionRequest.action == ClientActionRequest.ActionType.getCallList
+					else if(actionRequest.action == ClientActionRequest.ActionType.getCallList
 							&& login.allowGetList){
 						Debug.netMsg("Received request to get call from the box from "+remoteAddress);
 						JFritz.getJframe().doFetchButtonClick();
+					}
+					else if(actionRequest.action == ClientActionRequest.ActionType.deleteListFromBox
+							&& login.allowDeleteList){
+						Debug.netMsg("Received request to delete the list from the box from "+remoteAddress);
+						JFritz.getJframe().fetchList(true);
 					}
 
 				}else if(o instanceof String){

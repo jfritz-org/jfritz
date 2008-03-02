@@ -714,11 +714,21 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * Fetches list from box
 	 */
 	public void fetchList(final boolean deleteFritzBoxCallerList) {
-		if(Main.getProperty("option.clientCallList", "false").equals("true")){
-			if(NetworkStateMonitor.isConnectedToServer()){
-				Debug.msg("requesting get call list from box from the server");
+
+		//only send request to the server if we are connected
+		if(Main.getProperty("option.clientCallList", "false").equals("true")
+				&& NetworkStateMonitor.isConnectedToServer()){
+
+				//pass on the request to delete the list from the box
+			if(deleteFritzBoxCallerList){
+				Debug.netMsg("Requesting server to delete the list from the box");
+				NetworkStateMonitor.requestDeleteList();
+			}else{
+				Debug.netMsg("requesting get call list from box from the server");
 				NetworkStateMonitor.requestGetCallListFromServer();
 			}
+
+			//otherwise act as a standalone instance
 		} else if (!isretrieving) { // Prevent multiple clicking
 			isretrieving = true;
 			final SwingWorker worker = new SwingWorker() {

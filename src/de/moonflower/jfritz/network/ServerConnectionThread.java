@@ -169,7 +169,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 						NetworkStateMonitor.clientStateChanged();
 
 						//reset the keep alive settings to more reasonable level
-						socket.setSoTimeout(70000);
+						socket.setSoTimeout(105000);
 
 						callListRequest = new ClientDataRequest<Call>();
 						callListRequest.destination = ClientDataRequest.Destination.CALLLIST;
@@ -734,6 +734,27 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			e.printStackTrace();
 		}
 
+	}
+
+	public synchronized void requestDeleteList(){
+		actionRequest.action = ClientActionRequest.ActionType.deleteListFromBox;
+
+		try{
+
+			SealedObject sealedActionRequest = new SealedObject(actionRequest, outCipher);
+			objectOut.writeObject(sealedActionRequest);
+			objectOut.flush();
+			objectOut.reset();
+
+		}catch(IOException e){
+			Debug.err("Error writing writing delete list from box request");
+			Debug.err(e.toString());
+			e.printStackTrace();
+		} catch (IllegalBlockSizeException e) {
+			Debug.err("Illegal block size exception!");
+			Debug.err(e.toString());
+			e.printStackTrace();
+		}
 	}
 
 	public synchronized void callsAdded(Vector<Call> newCalls){

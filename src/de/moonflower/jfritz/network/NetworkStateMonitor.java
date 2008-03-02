@@ -92,6 +92,10 @@ public class NetworkStateMonitor  {
 		serverConnection.requestGetCallList();
 	}
 
+	public static void requestDeleteList(){
+		serverConnection.requestDeleteList();
+	}
+
 	/**
 	 * This code here should take care of the case when the settings
 	 * have changed while the server is currently running.
