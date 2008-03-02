@@ -67,12 +67,18 @@ public class FritzBox {
 
 	private static String URN_SERVICE_DSLLINK = "urn:schemas-upnp-org:service: WANDSLLinkConfig:1#GetDSLLinkInfo";
 
+	private static String URL_SERVICE_EXTERNALIP = ":49000/upnp/control/WANIPConn1";
 
-
+	private static String URN_SERVICE_EXTERNALIP = "urn:schemas-upnp-org:service:WANIPConnection:1#GetExternalIPAddress";
 
 	private static String URL_SERVICE_STATUSINFO = ":49000/upnp/control/WANIPConn1";
 
 	private static String URN_SERVICE_STATUSINFO = "urn:schemas-upnp-org:service:WANIPConnection:1#GetStatusInfo";
+
+	private static String URL_SERVICE_COMMONLINK= ":49000/upnp/control/WANCommonIFC1";
+
+	private static String URN_SERVICE_COMMONLINK = "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetCommonLinkProperties";
+
 
 	private final static String CSV_FILE_EN = "FRITZ!Box_Calllist.csv";
 
@@ -793,7 +799,11 @@ public class FritzBox {
 
 	}
 
-
+	/**
+	 * This functions contains various web service calls that are not currently
+	 * used but may be used in the future
+	 *
+	 */
 	public void getWebservice(){
 
 		String xml =
@@ -810,8 +820,18 @@ public class FritzBox {
 		String result = UPNPUtils.getSOAPData("http://" + getAddress() +
 			URL_SERVICE_DSLLINK, URN_SERVICE_DSLLINK, xml);
 
+		/*	This is the result of the web service
+		 	<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body>
+			<u:GetDSLLinkInfoResponse xmlns:u="urn:schemas-upnp-org:service: WANDSLLinkConfig:1">
+			<NewLinkType>PPPoE</NewLinkType>
+			<NewLinkStatus>Up</NewLinkStatus>
+			</u:GetDSLLinkInfoResponse>
+			</s:Body> </s:Envelope>
+		 	*/
+
 		Debug.msg("Result of dsl service: "+ result);
 
+		//XML for service, in case the box starts checking some time
        /* <?xml version="1.0"?>
         <s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"
         s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
@@ -822,11 +842,98 @@ public class FritzBox {
 		result = UPNPUtils.getSOAPData("http://" + getAddress() +
 				URL_SERVICE_STATUSINFO, URN_SERVICE_STATUSINFO, xml);
 
+		/* 	This is the result fo the STATUSINFO web service
+		<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body>
+		<u:GetStatusInfoResponse xmlns:u="urn:schemas-upnp-org:service:WANIPConnection:1">
+		<NewConnectionStatus>Connected</NewConnectionStatus>
+		<NewLastConnectionError>ERROR_NONE</NewLastConnectionError>
+		<NewUptime>29313</NewUptime>
+		</u:GetStatusInfoResponse>
+		</s:Body> </s:Envelope>
+	*/
+
+
 		Debug.msg("Result of status info: "+result);
 
 
 	}
 
+	/**
+	 * function gets the external IP address from the box using the upnp web services
+	 *
+	 * @return
+	 */
+	public String getExternalIPAddress(){
+
+		String xml =
+			"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+			"<s:Envelope " +
+			" xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n"
+			+"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding\">\n" +
+			"<s:Body>" +
+			"<u:GetExternalIPAddress xmlns:u=\"urn:schemas-upnp-org:service:WANIPConnection:1\""+
+			"</u:GetExternalIPAddress>\n"	+
+			" </s:Body>\n" +
+			"</s:Envelope>";
+
+		String result = UPNPUtils.getSOAPData("http://" + getAddress() +
+				URL_SERVICE_EXTERNALIP, URN_SERVICE_EXTERNALIP, xml);
+
+		/*  Results from the box
+		    <s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body>
+			<u:GetExternalIPAddressResponse xmlns:u="urn:schemas-upnp-org:service:WANIPConnection:1">
+			<NewExternalIPAddress>X.X.X.X</NewExternalIPAddress>
+			</u:GetExternalIPAddressResponse>
+			</s:Body> </s:Envelope> */
+
+		Debug.msg("External IP response: "+result);
+
+		Pattern p = Pattern.compile("<NewExternalIPAddress>([^<]*)</NewExternalIPAddress>");
+		Matcher m = p.matcher(result);
+		if(m.find())
+			return m.group(1);
+		else
+			return "";
+
+	}
+
+	public void getCommonLinkInfo(){
+		/*
+		 *  This is the soap message expected by the box
+			<?xml version="1.0"?>
+			<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"
+			s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+			<s:Body><u:GetCommonLinkProperties xmlns:u="urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1"></u:GetCommonLinkProperties>
+			</s:Body>
+			</s:Envelope>
+		 */
+
+		String xml =
+			"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+			"<s:Envelope " +
+			" xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n"
+			+"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding\">\n" +
+			"<s:Body>" +
+			"<u:GetCommonLinkProperties xmlns:u=\"urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1\""+
+			"</u:GetCommonLinkProperties>\n"	+
+			" </s:Body>\n" +
+			"</s:Envelope>";
+
+		String result =  UPNPUtils.getSOAPData("http://" + getAddress() +
+				URL_SERVICE_COMMONLINK, URN_SERVICE_COMMONLINK, xml);
+
+		/*  This is the response
+		 	<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body>
+			<u:GetCommonLinkPropertiesResponse xmlns:u="urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1">
+			<NewWANAccessType>DSL</NewWANAccessType>
+			<NewLayer1UpstreamMaxBitRate>1183000</NewLayer1UpstreamMaxBitRate>
+			<NewLayer1DownstreamMaxBitRate>15656000</NewLayer1DownstreamMaxBitRate>
+			<NewPhysicalLinkStatus>Up</NewPhysicalLinkStatus>
+			</u:GetCommonLinkPropertiesResponse>
+			</s:Body> </s:Envelope>
+		*/
+
+	}
 
 
 	public void setAddress(String box_address) {
