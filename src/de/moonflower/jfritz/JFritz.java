@@ -140,6 +140,11 @@ public final class JFritz implements  StatusListener{
 			Main.doBackup();
 		}
 
+			//option was removed from the config dialog in 0.7.1, make sure
+			//it is automatically deselected
+		if(Main.getProperty("option.callMonitorType", "0").equals("6"))
+			Main.setProperty("option.callMonitorType", "0");
+
 		// make sure there is a plus on the country code, or else the number
 		// scheme won't work
 		if (!Main.getProperty("country.code").startsWith("+"))

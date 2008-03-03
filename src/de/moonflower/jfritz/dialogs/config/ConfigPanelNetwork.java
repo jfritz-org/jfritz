@@ -50,7 +50,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 	private JComboBox networkTypeCombo;
 
 	private JCheckBox clientTelephoneBook, clientCallList, clientCallMonitor,
-			connectOnStartup, listenOnStartup;
+		clientStandAlone, connectOnStartup, listenOnStartup;
 
 	private JTextField serverName, serverPort, serverLogin,
 	 	clientsPort, maxConnections;
@@ -109,6 +109,9 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		clientCallMonitor.setSelected(JFritzUtils.parseBoolean(Main
 				.getProperty("option.clientCallMonitor", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
+		clientStandAlone.setSelected(JFritzUtils.parseBoolean(Main
+				.getProperty("option.clientStandAlone", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+
 		listenOnStartup.setSelected(JFritzUtils.parseBoolean(Main
 				.getProperty("option.clientCallMonitor", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
@@ -154,11 +157,11 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		Main.setProperty("option.clientCallList", Boolean //$NON-NLS-1$
 				.toString(clientCallList.isSelected()));
 
-		if(clientCallMonitor.isSelected()){
-			Main.setProperty("option.callMonitorType", "6");
-		}
 		Main.setProperty("option.clientCallMonitor", Boolean
 				.toString(clientCallMonitor.isSelected()));
+
+		Main.setProperty("option.clientStandAlone", Boolean
+				.toString(clientStandAlone.isSelected()));
 
 		Main.setProperty("network.type", String //$NON-NLS-1$
 				.valueOf(selectedIndex));
@@ -320,76 +323,100 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		c.anchor = GridBagConstraints.LINE_START;
 		c.fill = GridBagConstraints.HORIZONTAL;
 
+		c.weightx = 0.9;
 		c.gridy = 1;
 		label = new JLabel(Main.getMessage("client_call_list"));
 		label.setPreferredSize(new Dimension(200, 20));
 		panel.add(label, c);
 		clientCallList = new JCheckBox();
+		c.weightx = 0.1;
 		panel.add(clientCallList, c);
 
 		c.gridy = 2;
+		c.weightx = 0.9;
 		label = new JLabel(Main.getMessage("client_telephone_book"));
 		label.setPreferredSize(new Dimension(200, 20));
 		panel.add(label, c);
 		clientTelephoneBook = new JCheckBox();
+		c.weightx = 0.1;
 		panel.add(clientTelephoneBook, c);
 
 		c.gridy = 3;
+		c.weightx = 0.9;
 		label = new JLabel(Main.getMessage("client_call_monitor"));
 		label.setPreferredSize(new Dimension(200, 20));
 		panel.add(label, c);
 		clientCallMonitor = new JCheckBox();
+		c.weightx = 0.1;
 		panel.add(clientCallMonitor, c);
 
 		c.gridy = 4;
+		c.weightx = 0.9;
 		label = new JLabel(Main.getMessage("connect_on_startup"));
 		label.setPreferredSize(new Dimension(200, 20));
 		panel.add(label, c);
 		connectOnStartup = new JCheckBox();
+		c.weightx = 0.1;
 		panel.add(connectOnStartup, c);
 
 		c.gridy = 5;
-		c.weightx = 0.5;
+		c.weightx = 0.9;
+		label = new JLabel(Main.getMessage("client_stand_alone"));
+		label.setPreferredSize(new Dimension(200, 20));
+		panel.add(label, c);
+		clientStandAlone = new JCheckBox();
+		c.weightx = 0.1;
+		panel.add(clientStandAlone, c);
+
+		c.gridy = 6;
+		c.weightx = 0.9;
 		c.gridx = 0;
 		label = new JLabel(Main.getMessage("server_name"));
 		label.setPreferredSize(new Dimension(100, 20));
 		panel.add(label, c);
 		c.gridx = 1;
+		c.weightx = 0.1;
 		serverName = new JTextField("", 16);
 		serverName.setPreferredSize(new Dimension(100, 20));
 		panel.add(serverName, c);
 
-		c.gridy = 6;
+		c.weightx = 0.9;
+		c.gridy = 7;
 		c.gridx = 0;
 		label = new JLabel(Main.getMessage("server_login"));
 		label.setPreferredSize(new Dimension(100, 20));
 		panel.add(label, c);
 		c.gridx = 1;
+		c.weightx = 0.1;
 		serverLogin = new JTextField("", 16);
 		serverLogin.setPreferredSize(new Dimension(100, 20));
 		panel.add(serverLogin, c);
 
-		c.gridy = 7;
+		c.gridy = 8;
 		c.gridx = 0;
+		c.weightx = 0.9;
 		label = new JLabel(Main.getMessage("server_password"));
 		label.setPreferredSize(new Dimension(100, 20));
 		panel.add(label, c);
 		c.gridx = 1;
+		c.weightx = 0.1;
 		serverPassword = new JPasswordField("", 16);
 		serverPassword.setPreferredSize(new Dimension(100, 20));
 		panel.add(serverPassword, c);
 
-		c.gridy = 8;
+		c.gridy = 9;
 		c.gridx = 0;
+		c.weightx = 0.9;
 		label = new JLabel(Main.getMessage("server_port"));
 		label.setPreferredSize(new Dimension(100, 20));
 		panel.add(label, c);
 		c.gridx = 1;
+		c.weightx = 0.1;
 		serverPort = new JTextField("", 16);
 		serverPort.setPreferredSize(new Dimension(100, 20));
 		panel.add(serverPort, c);
 
-		c.gridy = 9;
+		c.gridy = 10;
 		c.gridx = 0;
 		c.anchor = GridBagConstraints.CENTER;
 		c.fill = GridBagConstraints.NONE;

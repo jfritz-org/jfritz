@@ -248,12 +248,6 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 
 				break;
 			}
-			case 6: {
-				showCallMonitorPanel();
-				Debug.msg("Call monitor from server chosen");
-
-				break;
-			}
 
 			}
 		} else if ("startCallMonitor".equals(e.getActionCommand())) { //$NON-NLS-1$
@@ -291,9 +285,6 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 				break;
 			case 5:
 				callMonitorConfigDialog = new CallmessageConfigDialog(parent);
-				break;
-			case 6:
-				callMonitorConfigDialog = new FRITZBOXConfigDialog(parent);
 				break;
 
 			}

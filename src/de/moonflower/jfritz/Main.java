@@ -167,6 +167,7 @@
  * Strings:
  * 	allow_client_deletelist
  * 	allow_client_docall;
+ * 	client_stand_alone
  *
  *
  *
@@ -763,7 +764,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.7.0.1"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.104 2008/03/02 19:52:19 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.105 2008/03/03 20:57:42 capncrunch Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
