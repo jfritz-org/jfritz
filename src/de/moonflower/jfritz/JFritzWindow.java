@@ -1783,6 +1783,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 			//also deactivate the call monitor if one was active
 			if(Main.getProperty("option.clientCallMonitor", "false").equals("true")){
+
+
 				this.monitorButton.setEnabled(true);
 				this.monitorButton.setSelected(false);
 			}
