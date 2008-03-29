@@ -61,6 +61,22 @@ public class ShutdownHook {
         }
       });
 
+      //coredump signal
+      old_handlers[0] = Signal.handle( new Signal( "BREAK" ), new SignalHandler() {
+        public void handle( Signal sig ) {
+          try{
+            handler.shutdown( sig.getName() );  //main ShutdownHook.Handler
+
+            if( old_handlers[0] != null && old_handlers[0] != SIG_DFL && old_handlers[0] != SIG_IGN ) {  //chain back to previous handler if one exists
+              old_handlers[0].handle( sig );
+            }
+          }
+          catch( Throwable t ) {
+            Debug.msg( t.getLocalizedMessage() );
+          }
+        }
+      });
+
       //os termination signal
       old_handlers[1] = Signal.handle( new Signal( "TERM" ), new SignalHandler() {
         public void handle( Signal sig ) {

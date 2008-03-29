@@ -163,6 +163,9 @@
  * - Umstrukturierung des Statiskdialogs, funktioniert jetzt wieder
  * - Neu: Clients können über den Server die Anrufliste von der Box löschen
  * - Neu: Clients können die Wahlhilfe über den Server verwenden.
+ * - Bugfix für Java 1.5: JFritz-Menü manchmal nicht sichtbar - Part 2
+ * - Bugfix: Aktualisierung der Rückwärtssuche mit "Das Telefonbuch"
+ * - Bugfix: Rückwärtssuche für Türkei und andere Länder korrigiert. CountryCode wurde nicht korrekt extrahiert.
  *
  * Strings:
  * 	allow_client_deletelist
@@ -762,9 +765,9 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.0.1"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.0.2"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.105 2008/03/03 20:57:42 capncrunch Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.106 2008/03/29 14:50:55 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -829,7 +832,9 @@ public class Main implements LookupObserver {
 	    ShutdownHook.install( new ShutdownHook.Handler() {
 	      public void shutdown( String signal_name ) {
 	        Debug.msg( "Core: Caught signal " +signal_name );
-	        prepareShutdown();
+	        prepareShutdown(false);
+	        Debug.msg("Core: Shutdown signal handler done");
+	        System.exit(0);
 	      }
 	    });
 
@@ -1275,7 +1280,7 @@ public class Main implements LookupObserver {
 	public void exit(int i) {
 		Debug.msg("Main.exit(" + i + ")");
 		exitCode = i;
-		prepareShutdown();
+		prepareShutdown(false);
 	}
 
 	public void closeOpenConnections(){
@@ -1599,7 +1604,7 @@ public class Main implements LookupObserver {
 		update.saveSettings();
 	}
 
-	public void prepareShutdown() {
+	public void prepareShutdown(boolean shutdownhook) {
 
 		if ( !already_done_shutdown )
 		{
@@ -1619,12 +1624,13 @@ public class Main implements LookupObserver {
 			// This must be the last call, after disposing JFritzWindow nothing
 			// is executed at windows-shutdown
 			if ( jfritz != null ) {
-				jfritz.prepareShutdown();
+				jfritz.prepareShutdown(shutdownhook);
 			}
 
 			Debug.msg("Finished shutting down"); //$NON-NLS-1$
 			already_done_shutdown = true;
-			System.exit(0);
+//			if ( !shutdownhook )
+//			System.exit(0);
 		}
 	}
 

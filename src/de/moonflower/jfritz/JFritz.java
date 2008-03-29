@@ -4,9 +4,10 @@
 
 package de.moonflower.jfritz;
 
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import java.io.IOException;
 import java.net.URL;
@@ -21,14 +22,18 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 
 import org.jdesktop.jdic.tray.SystemTray;
 import org.jdesktop.jdic.tray.TrayIcon;
@@ -58,7 +63,7 @@ import de.moonflower.jfritz.utils.network.SSDPdiscoverThread;
 /**
  *
  */
-public final class JFritz implements  StatusListener{
+public final class JFritz implements  StatusListener, ItemListener {
 
 	// when changing this, don't forget to check the resource bundles!!
 
@@ -327,8 +332,53 @@ public final class JFritz implements  StatusListener{
 	/**
 	 * Creates the tray icon menu
 	 */
-	private static void createTrayMenu() {
+	private void createTrayMenu() {
 		System.setProperty("javax.swing.adjustPopupLocationToFit", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
+
+		LookAndFeelInfo[] lnfs = UIManager.getInstalledLookAndFeels();
+		ButtonGroup lnfgroup = new ButtonGroup();
+
+		JMenu lnfMenu = new JMenu(Main.getMessage("lnf_menu")); //$NON-NLS-1$
+		// Add system dependent look and feels
+		for (int i = 0; i < lnfs.length; i++) {
+			JRadioButtonMenuItem rbmi = new JRadioButtonMenuItem(lnfs[i]
+					.getName());
+			lnfMenu.add(rbmi);
+			rbmi.setSelected(UIManager.getLookAndFeel().getClass().getName()
+					.equals(lnfs[i].getClassName()));
+			rbmi.putClientProperty("lnf name", lnfs[i]); //$NON-NLS-1$
+			rbmi.addItemListener(this);
+			lnfgroup.add(rbmi);
+		}
+
+		// Add additional look and feels from looks-2.1.4.jar
+		LookAndFeelInfo lnf = new LookAndFeelInfo("Plastic","com.jgoodies.looks.plastic.PlasticLookAndFeel");
+		JRadioButtonMenuItem rb = new JRadioButtonMenuItem(lnf.getName());
+		lnfMenu.add(rb);
+		rb.putClientProperty("lnf name", lnf);
+		rb.setSelected(UIManager.getLookAndFeel().getClass().getName()
+				.equals(lnf.getClassName()));
+		rb.addItemListener(this);
+		lnfgroup.add(rb);
+
+		lnf = new LookAndFeelInfo("Plastic 3D","com.jgoodies.looks.plastic.Plastic3DLookAndFeel");
+		rb = new JRadioButtonMenuItem(lnf.getName());
+		lnfMenu.add(rb);
+		rb.putClientProperty("lnf name", lnf);
+		rb.setSelected(UIManager.getLookAndFeel().getClass().getName()
+				.equals(lnf.getClassName()));
+		rb.addItemListener(this);
+		lnfgroup.add(rb);
+
+		lnf = new LookAndFeelInfo("Plastic XP","com.jgoodies.looks.plastic.PlasticXPLookAndFeel");
+		rb = new JRadioButtonMenuItem(lnf.getName());
+		lnfMenu.add(rb);
+		rb.putClientProperty("lnf name", lnf);
+		rb.setSelected(UIManager.getLookAndFeel().getClass().getName()
+				.equals(lnf.getClassName()));
+		rb.addItemListener(this);
+		lnfgroup.add(rb);
+
 
 		JPopupMenu menu = new JPopupMenu("JFritz Menu"); //$NON-NLS-1$
 		JMenuItem menuItem = new JMenuItem(Main.PROGRAM_NAME + " v" //$NON-NLS-1$
@@ -345,6 +395,7 @@ public final class JFritz implements  StatusListener{
 		menuItem.setActionCommand("reverselookup"); //$NON-NLS-1$
 		menuItem.addActionListener(jframe);
 		menu.add(menuItem);
+		menu.add(lnfMenu);
 		menuItem = new JMenuItem(Main.getMessage("config")); //$NON-NLS-1$
 		menuItem.setActionCommand("config"); //$NON-NLS-1$
 		menuItem.addActionListener(jframe);
@@ -612,7 +663,7 @@ public final class JFritz implements  StatusListener{
 		return exit;
 	}
 
-	void prepareShutdown() {
+	void prepareShutdown(boolean shutdownhook) {
 		// TODO maybe some more cleanup is needed
 		Debug.msg("prepareShutdown in JFritz.java");
 
@@ -625,9 +676,9 @@ public final class JFritz implements  StatusListener{
 		if (callMonitor != null)
 			callMonitor.stopCallMonitor();
 
-		Debug.msg("Removing systray"); //$NON-NLS-1$
-		if ( Main.SYSTRAY_SUPPORT && systray != null )
+		if ( (!shutdownhook) && (Main.SYSTRAY_SUPPORT) && (systray != null) )
 		{
+			Debug.msg("Removing systray"); //$NON-NLS-1$
 			systray.removeTrayIcon(trayIcon);
 			systray = null;
 		}
@@ -644,9 +695,11 @@ public final class JFritz implements  StatusListener{
 
 		// This must be the last call, after disposing JFritzWindow nothing
 		// is executed at windows-shutdown
-		Debug.msg("Disposing jframe");
-		if (jframe != null)
+		if ( (!shutdownhook) && (jframe != null) )
+		{
+			Debug.msg("Disposing jframe");
 			jframe.dispose();
+		}
 	}
 
 	/**
@@ -666,7 +719,7 @@ public final class JFritz implements  StatusListener{
 	 *
 	 * @author Benjamin Schmitt
 	 */
-	public static void refreshTrayMenu() {
+	public void refreshTrayMenu() {
 		if (systray != null && trayIcon != null) {
 			systray.removeTrayIcon(trayIcon);
 			createTrayMenu();
@@ -735,6 +788,26 @@ public final class JFritz implements  StatusListener{
 
 	public static ClientLoginsTableModel getClientLogins(){
 		return clientLogins;
+	}
+
+	/**
+	 * ItemListener for LookAndFeel Menu
+	 *
+	 * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
+	 */
+	public void itemStateChanged(ItemEvent ie) {
+		JRadioButtonMenuItem rbmi = (JRadioButtonMenuItem) ie.getSource();
+		if (rbmi.isSelected()) {
+			UIManager.LookAndFeelInfo info = (UIManager.LookAndFeelInfo) rbmi
+					.getClientProperty("lnf name"); //$NON-NLS-1$
+			try {
+//				UIManager.setLookAndFeel(info.getClassName());
+				Main.setStateProperty("lookandfeel", info.getClassName()); //$NON-NLS-1$
+				refreshWindow();
+			} catch (Exception e) {
+				Debug.err("Unable to set UI " + e.getMessage()); //$NON-NLS-1$
+			}
+		}
 	}
 
 }

@@ -168,12 +168,14 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 			public void componentShown(ComponentEvent arg0) {
 				Debug.msg("Window shown");
+				Main.setStateProperty("window.state.old", Main.getStateProperty("window.state", Integer.toString(Frame.NORMAL)));
+				Main.setStateProperty("window.state", Integer.toString(getExtendedState()));
 			}
 		});
 		addWindowStateListener(new WindowStateListener() {
 
 			public void windowStateChanged(WindowEvent arg0) {
-				Debug.msg("Window state changed");
+				Debug.msg("Window state changed: " + Main.getStateProperty("window.state", Integer.toString(Frame.NORMAL)) + " -> " + Integer.toString(getExtendedState()));
 				Main.setStateProperty("window.state.old", Main.getStateProperty("window.state", Integer.toString(Frame.NORMAL)));
 				Main.setStateProperty("window.state", Integer.toString(getExtendedState()));
 			}
@@ -182,15 +184,21 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	}
 
 	public void checkStartOptions() {
+		Debug.msg("CHECKSTARTOPTIONS: ");
 		if (!Main.getProperty("option.startMinimized", "false") //$NON-NLS-1$,  //$NON-NLS-2$,
 				.equals("true")) { //$NON-NLS-1$
 			setVisible(true);
-		} else {
-			if (!Main.SYSTRAY_SUPPORT) {
-				setVisible(true);
-			}
-			setExtendedState(Frame.ICONIFIED);
+			Debug.msg("CHECKSTARTOPTIONS: don't start minimized");
 		}
+//		} else {
+//			if (!Main.SYSTRAY_SUPPORT) {
+//				setVisible(true);
+//			}
+//			if ( getExtendedState() != Frame.ICONIFIED )
+//			{
+//				setExtendedState(Frame.ICONIFIED);
+//			}
+//		}
 		checkOptions();
 	}
 
@@ -294,18 +302,21 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		int h = Integer.parseInt(Main.getStateProperty(
 				"position.height", "400")); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		int windowState;
+		int windowState = Frame.NORMAL;
 
+		Debug.msg("CREATE GUI: ");
 		if ((!Main.getProperty("option.startMinimized", "false").equals("true")) &&
 			(Frame.ICONIFIED == Integer.parseInt(Main.getStateProperty("window.state", Integer.toString(Frame.NORMAL)))))
 		{ // Old state was iconified and we don't want to startup iconified
 		  // Set previous old state to prevent bug in showing menu bar
 			windowState = Integer.parseInt(Main.getStateProperty(
 					"window.state.old", Integer.toString(Frame.NORMAL)));
+			Debug.msg("CREATE GUI: restore old window state " + Integer.toString(windowState));
 		} else
 		{
 			windowState = Integer.parseInt(Main.getStateProperty(
 					"window.state", Integer.toString(Frame.NORMAL)));
+			Debug.msg("CREATE GUI: restore window state " + Integer.toString(windowState));
 		}
 		setLocation(x, y);
 		setSize(w, h);
@@ -897,7 +908,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		JOptionPane.showMessageDialog(this, Main.PROGRAM_NAME + " v" //$NON-NLS-1$
 				+ Main.PROGRAM_VERSION + "\n" //$NON-NLS-1$
 				+ JFritzUtils.getVersionFromCVSTag(Main.CVS_TAG) + "\n" //$NON-NLS-1$
-				+ "(c) 2005-2006 by " + Main.JFRITZ_PROJECT + "\n" //$NON-NLS-1$,  //$NON-NLS-2$
+				+ "(c) 2005-2008 by " + Main.JFRITZ_PROJECT + "\n" //$NON-NLS-1$,  //$NON-NLS-2$
 				+ Main.PROGRAM_URL + "\n\n" 							//$NON-NLS-1$
 				+ "Project-Admin: " + Main.PROJECT_ADMIN + "\n"		//$NON-NLS-1$
 				+ "Project-Initiator: " + "Arno Willig <akw@thinkwiki.org>" //$NON-NLS-1$
@@ -926,10 +937,12 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			if (JFritzUtils.parseBoolean(Main.getProperty("option.minimize", //$NON-NLS-1$
 					"false"))) { //$NON-NLS-1$
 				setExtendedState(Frame.ICONIFIED);
+				Debug.msg("PROCESS WINDOW EVENT: minimize statt close");
 			} else {
 				jFritz.maybeExit(0);
 			}
 		} else if (e.getID() == WindowEvent.WINDOW_ICONIFIED) {
+			Debug.msg("PROCESS WINDOW EVENT: minimize");
 			setExtendedState(Frame.ICONIFIED);
 			if (Main.SYSTRAY_SUPPORT) {
 				setVisible(false);
@@ -1165,8 +1178,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 			Debug.msg(Integer.toString(windowState));
 
-			setVisible(true);
 			setExtendedState(windowState);
+			setVisible(true);
 
 			toFront();
 			repaint();
@@ -1674,7 +1687,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		jFritz.createNewWindow(locale);
 		// current window will be destroyed and a new one created
 
-		JFritz.refreshTrayMenu();
+		jFritz.refreshTrayMenu();
 	}
 
 	/**

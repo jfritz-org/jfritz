@@ -643,11 +643,11 @@ public class PhoneNumber implements Comparable, Serializable {
 	}
 
 	/**
-	 * This function loads all the info from the file number/country_codes_world.csv
+	 * This function loads all the info from the file number/country_specfic_codes_world.csv
 	 * and stores the information in a hashmap indexed by country code
 	 *
-	 * worldFlagMap contains information about the country and has the name of
-	 * a flag to display for that country
+	 * specificWorldFlagMap contains information about the country
+	 * used provider and has the name of a flag to display for that country
 	 *
 	 * @author brian
 	 *
@@ -676,7 +676,7 @@ public class PhoneNumber implements Comparable, Serializable {
 					entries = line.split(";");
 					if(entries.length == 3)
 						//country code is the key, flag name; Description is the value
-						worldFlagMap.put(entries[0], entries[1]+";"+entries[2]);
+						specificWorldFlagMap.put(entries[0], entries[1]+";"+entries[2]);
 				}
 			}
 
