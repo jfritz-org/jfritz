@@ -24,7 +24,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 public class PhonebookFileXMLHandler extends DefaultHandler {
 
 	String firstName, company, lastName, type, standard, email, street,
-			postCode, city, category;
+			postCode, city, category, picture;
 
 	Vector<PhoneNumber> numbers;
 
@@ -73,6 +73,7 @@ public class PhonebookFileXMLHandler extends DefaultHandler {
 			city = ""; //$NON-NLS-1$
 			email = ""; //$NON-NLS-1$
 			category = ""; //$NON-NLS-1$
+			picture = ""; //$NON-NLS-1$
 			type = "home"; //$NON-NLS-1$
 			standard = "home"; //$NON-NLS-1$
 		} else if (eName.equals("phonenumbers")) { //$NON-NLS-1$
@@ -105,9 +106,11 @@ public class PhonebookFileXMLHandler extends DefaultHandler {
 			email = chars;
 		} else if (qName.equals("category")) { //$NON-NLS-1$
 			category = chars;
+		} else if (qName.equals("picture")) { //$NON-NLS-1$
+			picture = chars;
 		} else if (qName.equals("entry")) { //$NON-NLS-1$
 			Person newPerson = new Person(firstName, company, lastName,
-					street, postCode, city, email);
+					street, postCode, city, email, picture);
 
 			newPerson.setNumbers(numbers, standard);
 			newPerson.setPrivateEntry(privateEntry);

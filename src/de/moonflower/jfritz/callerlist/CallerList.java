@@ -25,6 +25,9 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.ImageIcon;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.xml.parsers.ParserConfigurationException;
@@ -477,13 +480,10 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 						.getMessage("imported_calls").replaceAll("%N", Integer.toString(newEntries)); //$NON-NLS-1$, //$NON-NLS-2$
 			}
 
-			JFritz.infoMsg(msg);
-
 			// Notify user?
 			if (Main.getProperty("option.notifyOnCalls", "true")
 					.equals("true")) {
-				JFritz.getJframe().setVisible(true);
-				JFritz.getJframe().toFront();
+				JFritz.infoMsg(msg);
 			}
 
 			// Make back-up after fetching the caller list?
@@ -692,14 +692,6 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 
 			boolean newEntries = JFritz.getFritzBox().retrieveCSVList();
 
-			// Notify user?
-			if ((Main.getProperty("option.notifyOnCalls", "true")
-					.equals("true"))
-					&& newEntries) {
-				JFritz.getJframe().setVisible(true);
-				JFritz.getJframe().toFront();
-			}
-
 			if ((newEntries && Main.getProperty("option.deleteAfterFetch",
 					"false").equals("true"))
 					|| deleteFritzBoxCallerList) {
@@ -731,8 +723,8 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 	 * @see javax.swing.table.TableModel#getColumnCount()
 	 */
 	public int getColumnCount() {
-		// 9 Columns on the Table
-		return 9;
+		// 10 Columns on the Table
+		return 10;
 	}
 
 	/**
@@ -769,11 +761,17 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 			return Integer.toString(call.getDuration());
 		} else if (columnName.equals("comment")) { //$NON-NLS-1$
 			return call.getComment();
+		} else if (columnName.equals("picture")) { //$NON-NLS-1$
+			if (call.getPerson() != null)
+				return call.getPerson().getScaledPicture();
+			else
+				return new ImageIcon("");
+		}
 			/**
 			 * } else if (columnName.equals("Kosten")) { return
 			 * Double.toString(call.getCost());
+			 * }
 			 */
-		}
 
 		// default: return null
 		return null;
@@ -1267,7 +1265,10 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 								.getMessage("imported_calls").replaceAll("%N", Integer.toString(newEntries)); //$NON-NLS-1$, //$NON-NLS-2$
 					}
 
-					JFritz.infoMsg(msg);
+					if (Main.getProperty("option.notifyOnCalls", "true")
+							.equals("true")) {
+						JFritz.infoMsg(msg);
+					}
 
 				} else {
 					// JFritz.infoMsg(JFritz.getMessage("no_imported_calls"));

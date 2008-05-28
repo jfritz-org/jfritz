@@ -20,6 +20,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
+import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.ButtonGroup;
@@ -464,6 +465,7 @@ public final class JFritz implements  StatusListener, ItemListener {
 		}
 	}
 
+
 	/**
 	 * Plays a sound by a given resource URL
 	 *
@@ -478,6 +480,12 @@ public final class JFritz implements  StatusListener, ItemListener {
 							.getFrameSize()));
 			Clip clip = (Clip) AudioSystem.getLine(info);
 			clip.open(ais);
+            FloatControl gainControl =
+                (FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);
+            float min = gainControl.getMinimum();
+            float max = gainControl.getMaximum();
+            float diff = max - min;
+            gainControl.setValue(min + (diff / 2));
 			clip.start();
 			while (true) {
 				try {
@@ -671,6 +679,9 @@ public final class JFritz implements  StatusListener, ItemListener {
 			jframe.prepareShutdown();
 			Main.saveStateProperties();
 		}
+
+		Debug.msg("Stopping reverse lookup");
+		ReverseLookup.terminate();
 
 		Debug.msg("Stopping callMonitor"); //$NON-NLS-1$
 		if (callMonitor != null)

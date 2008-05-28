@@ -66,7 +66,7 @@ public class PersonDialog extends JDialog implements ActionListener {
 		topPane.add(label);
 
 		// Main Pane
-		personPanel = new PersonPanel(person, phoneBook);
+		personPanel = new PersonPanel(person, phoneBook, null);
 		personPanel.addActionListener(this);
 
 		// set default close button (ESC)

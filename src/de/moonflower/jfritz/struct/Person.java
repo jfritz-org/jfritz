@@ -1,5 +1,6 @@
 package de.moonflower.jfritz.struct;
 
+import java.awt.Image;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -10,6 +11,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
+import javax.swing.ImageIcon;
+
 import de.moonflower.jfritz.utils.Debug;
 
 /**
@@ -19,6 +22,10 @@ import de.moonflower.jfritz.utils.Debug;
 public class Person implements Cloneable, Serializable{
 
 	private static final long serialVersionUID = 104;
+
+	private static final int scaleWidth = 40;
+
+	private static final int scaleHeight = 50;
 
 	private boolean privateEntry = false;
 
@@ -40,7 +47,11 @@ public class Person implements Cloneable, Serializable{
 
 	private Vector<PhoneNumber> numbers;
 
-	private Call lastCall; //TODO lastCallaktualisiern beim löschen von calls
+	private Call lastCall; //TODO lastCall aktualisiern beim löschen von calls
+
+	private String pictureUrl = ""; //$NON-NLS-1$
+
+	private Image scaledPicture = null;
 
 	private String[] basicTypes = {"home", "mobile", "homezone", "business", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$
 			"other", "fax", "sip", "main"}; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$
@@ -73,7 +84,8 @@ public class Person implements Cloneable, Serializable{
 	}
 
 	public Person(String firstName, String company, String lastName,
-			String street, String postalCode, String city, String eMail) {
+			String street, String postalCode, String city, String eMail,
+			String pictureUrl) {
 		this();
 
 		this.firstName = firstName;
@@ -83,8 +95,9 @@ public class Person implements Cloneable, Serializable{
 		this.postalCode = postalCode;
 		this.city = city;
 		this.emailAddress = eMail;
+		this.pictureUrl = pictureUrl;
 		this.privateEntry = false;
-
+		updateScaledPicture();
 	}
 
 	public Person(String firstName, String lastName) {
@@ -104,6 +117,8 @@ public class Person implements Cloneable, Serializable{
 		city = person.getCity();
 		emailAddress = person.getEmailAddress();
 		standard = person.getStandard();
+		pictureUrl = person.getPictureUrl();
+		scaledPicture = person.getScaledPicture();
 		numbers.clear();
 		Enumeration<PhoneNumber> en = person.getNumbers().elements();
 		while (en.hasMoreElements()) {
@@ -252,6 +267,16 @@ public class Person implements Cloneable, Serializable{
 		return city;
 	}
 
+	public String getPictureUrl() {
+		if (pictureUrl == null)
+			return ""; //$NON-NLS-1$
+		return pictureUrl;
+	}
+
+	public Image getScaledPicture() {
+		return scaledPicture;
+	}
+
 	public PhoneNumber getPhoneNumber(String type) {
 		Enumeration<PhoneNumber> en = numbers.elements();
 		while (en.hasMoreElements()) {
@@ -326,6 +351,11 @@ public class Person implements Cloneable, Serializable{
 
 	public void setEmailAddress(String email) {
 		this.emailAddress = email;
+	}
+
+	public void setPictureUrl(String pictureUrl) {
+		this.pictureUrl = pictureUrl;
+		updateScaledPicture();
 	}
 
 	/**
@@ -438,6 +468,9 @@ public class Person implements Cloneable, Serializable{
 		// email
 		outString = outString.concat(separator+"\"" + getEmailAddress() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 
+		// picture
+		outString = outString.concat(separator+"\"" + getPictureUrl() + "\""); //$NON-NLS-1$
+
 		// numbers
 		if (getNumbers() == null)
 			outString = outString.concat(separator+"\"\""); //$NON-NLS-1$
@@ -492,6 +525,8 @@ public class Person implements Cloneable, Serializable{
 
 		// email
 		outString = outString.concat(";\"" + getEmailAddress() + "\";\""); //$NON-NLS-1$,  //$NON-NLS-2$
+
+		//@todo meybe also transmit picture
 
 		// numbers
 		if (getNumbers() == null)
@@ -603,6 +638,35 @@ public class Person implements Cloneable, Serializable{
 				&& getCompany().equals("")
 				&& getEmailAddress().equals("")
 				&& getPostalCode().equals("")
-				&& getStreet().equals("");
+				&& getStreet().equals("")
+				&& getPictureUrl().equals("");
+	}
+
+	private void updateScaledPicture()
+	{
+		ImageIcon pictureIcon = new ImageIcon(pictureUrl);
+
+		// if we don't find the image, display the default one
+		if (pictureIcon.getIconWidth() == -1 || pictureIcon.getIconHeight() == -1)
+		{
+			pictureIcon = new ImageIcon("");
+		}
+		float pictureWidthFactor = (float)pictureIcon.getIconWidth() / (float)scaleWidth;
+		float pictureHeightFactor = (float)pictureIcon.getIconHeight() / (float)scaleHeight;
+
+		int scaleToWidth = 0;
+		int scaleToHeight = 0;
+		if ( pictureWidthFactor > pictureHeightFactor )
+		{
+			scaleToWidth = (int)((float)pictureIcon.getIconWidth() / pictureWidthFactor);
+			scaleToHeight = (int)((float)pictureIcon.getIconHeight() / pictureWidthFactor);
+		}
+		else
+		{
+			scaleToWidth = (int)((float)pictureIcon.getIconWidth() / pictureHeightFactor);
+			scaleToHeight = (int)((float)pictureIcon.getIconHeight() / pictureHeightFactor);
+		}
+
+		this.scaledPicture = pictureIcon.getImage().getScaledInstance(scaleToWidth, scaleToHeight, Image.SCALE_SMOOTH);
 	}
 }

@@ -17,6 +17,7 @@ import javax.swing.table.TableCellRenderer;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.callerlist.CallCellEditor;
 import de.moonflower.jfritz.cellrenderer.CallTypeDateCellRenderer;
+import de.moonflower.jfritz.cellrenderer.MultiLineCellRenderer;
 import de.moonflower.jfritz.struct.Person;
 
 /**
@@ -36,7 +37,7 @@ public class PhoneBookTable extends JTable implements KeyListener{
 		this.phonebook = book;
 		this.parentPanel = parentPanel;
 		setModel(phonebook);
-		setRowHeight(24);
+		setRowHeight(50);
 		setFocusable(false);
 		setAutoCreateColumnsFromModel(true);
 		setColumnSelectionAllowed(false);
@@ -47,13 +48,16 @@ public class PhoneBookTable extends JTable implements KeyListener{
 		addKeyListener(this);
 
 		// setDefaultRenderer(Call.class, new CallTypeDateCellRenderer());
-
+		getColumnModel().getColumn(4).setCellRenderer(
+				new MultiLineCellRenderer());
 		getColumnModel().getColumn(5).setCellRenderer(
 				new CallTypeDateCellRenderer());
 		getColumnModel().getColumn(0).setMinWidth(50);
 		getColumnModel().getColumn(0).setMaxWidth(50);
+		getColumnModel().getColumn(1).setMinWidth(60);
+		getColumnModel().getColumn(1).setMaxWidth(60);
 
-		getColumnModel().getColumn(2).setCellEditor(new CallCellEditor());
+		getColumnModel().getColumn(3).setCellEditor(new CallCellEditor());
 
 		getTableHeader().addMouseListener(new ColumnHeaderListener(getModel()));
 

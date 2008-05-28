@@ -29,6 +29,7 @@ import de.moonflower.jfritz.cellrenderer.DateCellRenderer;
 import de.moonflower.jfritz.cellrenderer.DurationCellRenderer;
 import de.moonflower.jfritz.cellrenderer.NumberCellRenderer;
 import de.moonflower.jfritz.cellrenderer.PersonCellRenderer;
+import de.moonflower.jfritz.cellrenderer.PictureCellRenderer;
 import de.moonflower.jfritz.cellrenderer.PortCellRenderer;
 import de.moonflower.jfritz.cellrenderer.RouteCellRenderer;
 import de.moonflower.jfritz.phonebook.PhoneBookTable;
@@ -54,6 +55,8 @@ public class CallerTable extends JTable {
 	private TableColumn commentColumn = null;
 
 	private TableColumn portColumn = null;
+
+	private TableColumn pictureColumn = null;
 
 	private ColumnHeaderToolTips headerTips;
 
@@ -81,24 +84,7 @@ public class CallerTable extends JTable {
 			TableColumnModel colModel = getColumnModel();
 
 			public void columnAdded(TableColumnModelEvent arg0) {
-				try {
-					colModel.getColumnIndex("callbycall");
-					Main.setProperty("option.showCallByCallColumn", "" + TRUE);
-				} catch (IllegalArgumentException iae) {
-					Main.setProperty("option.showCallByCallColumn", "" + FALSE);
-				}
-				try {
-					colModel.getColumnIndex("comment");
-					Main.setProperty("option.showCommentColumn", "" + TRUE);
-				} catch (IllegalArgumentException iae) {
-					Main.setProperty("option.showCommentColumn", "" + FALSE);
-				}
-				try {
-					colModel.getColumnIndex("port");
-					Main.setProperty("option.showPortColumn", "" + TRUE);
-				} catch (IllegalArgumentException iae) {
-					Main.setProperty("option.showPortColumn", "" + FALSE);
-				}
+				// hier stand was vor der Version 0.7.2, falls wieder notwendig, per CVS nachschauen
 			}
 
 			public void columnMarginChanged(ChangeEvent arg0) {
@@ -125,24 +111,7 @@ public class CallerTable extends JTable {
 			}
 
 			public void columnRemoved(TableColumnModelEvent arg0) {
-				try {
-					colModel.getColumnIndex("callbycall");
-					Main.setProperty("option.showCallByCallColumn", "" + TRUE);
-				} catch (IllegalArgumentException iae) {
-					Main.setProperty("option.showCallByCallColumn", "" + FALSE);
-				}
-				try {
-					colModel.getColumnIndex("comment");
-					Main.setProperty("option.showCommentColumn", "" + TRUE);
-				} catch (IllegalArgumentException iae) {
-					Main.setProperty("option.showCommentColumn", "" + FALSE);
-				}
-				try {
-					colModel.getColumnIndex("port");
-					Main.setProperty("option.showPortColumn", "" + TRUE);
-				} catch (IllegalArgumentException iae) {
-					Main.setProperty("option.showPortColumn", "" + FALSE);
-				}
+				// hier stand was vor der Version 0.7.2, falls wieder notwendig, per CVS nachschauen
 			}
 
 			public void columnSelectionChanged(ListSelectionEvent arg0) {
@@ -178,7 +147,7 @@ public class CallerTable extends JTable {
 	 * sets some properties of the CallerTable
 	 */
 	private void setTableProperties() {
-		setRowHeight(24);
+		setRowHeight(25);
 		setAutoCreateColumnsFromModel(false);
 		setColumnSelectionAllowed(false);
 		setCellSelectionEnabled(false);
@@ -205,8 +174,6 @@ public class CallerTable extends JTable {
 		});
 
 		addKeyListener(keyListener);
-
-
 	}
 
 	/**
@@ -267,6 +234,8 @@ public class CallerTable extends JTable {
 
 		commentColumn = createColumn(8, "comment", new CommentCellRenderer());
 		commentColumn.setCellEditor(new CommentCellEditor());
+
+		pictureColumn = createColumn(9, "picture", new PictureCellRenderer());
 
 		showHideColumns();
 
@@ -428,6 +397,13 @@ public class CallerTable extends JTable {
 			hideColumn("port");
 		} else {
 			showColumn("port", portColumn);
+		}
+
+		if (!JFritzUtils.parseBoolean(Main.getProperty(
+				"option.showPictureColumn", "true"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+			hideColumn("picture");
+		} else {
+			showColumn("picture", pictureColumn);
 		}
 	}
 }

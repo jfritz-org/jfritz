@@ -8,6 +8,7 @@ package de.moonflower.jfritz.phonebook;
  * TODO: Cellrenderer for PrivateCell
  *
  */
+import java.awt.Image;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
@@ -27,6 +28,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 
+import javax.swing.ImageIcon;
 import javax.swing.table.AbstractTableModel;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -64,8 +66,8 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 			+ "<!ELEMENT entry (firstname?,middlename?,lastname?)>"; //$NON-NLS-1$
 
 	private final String columnNames[] = {
-			"private_entry", "fullName", "telephoneNumber", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-			"address", "city", "last_call" }; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+			"private_entry", "picture", "fullName", "telephoneNumber", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$
+			"address", "last_call" }; //$NON-NLS-1$,  //$NON-NLS-2$
 
 	private static final String PATTERN_THUNDERBRID_CSV = ","; //$NON-NLS-1$
 
@@ -661,6 +663,11 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 				pw
 						.write("<entry private=\"" + current.isPrivateEntry() + "\">"); //$NON-NLS-1$,  //$NON-NLS-2$
 				pw.newLine();
+				if (current.getPictureUrl().length() > 0) {
+					pw.write("\t\t<picture>" + JFritzUtils.convertSpecialChars(current.getPictureUrl())
+							+ "</picture>");
+					pw.newLine();
+				}
 				if (current.getFullname().length() > 0) {
 					pw.write("\t<name>"); //$NON-NLS-1$
 					pw.newLine();
@@ -830,13 +837,20 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 				return "NO"; //$NON-NLS-1$
 			}
 		case 1:
-			return person.getFullname();
+		{
+			if ( !person.getPictureUrl().equals(""))
+			{
+				return new ImageIcon(person.getScaledPicture());
+			} else {
+				return new ImageIcon("");
+			}
+		}
 		case 2:
-			return person.getStandardTelephoneNumber();
+			return person.getFullname();
 		case 3:
-			return person.getStreet();
+			return person.getStandardTelephoneNumber();
 		case 4:
-			return (person.getPostalCode() + " " + person.getCity()).trim(); //$NON-NLS-1$
+			return person.getStreet() + "\n" +  (person.getPostalCode() + " " + person.getCity()).trim(); //$NON-NLS-1$ //$NON-NLS-1$
 		case 5: {
 			return person.getLastCall();
 		}
@@ -859,7 +873,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 	}
 
 	private String getCSVHeader(char separator) {
-		return "\"Private\"" + separator + "\"Last Name\"" + separator + "\"First Name\"" + separator + "\"Company\"" + separator + "\"Street\"" + separator + "\"ZIP Code\"" + separator + "\"City\"" + separator + "\"E-Mail\"" + separator + "\"Home\"" + separator + "\"Mobile\"" + separator + "\"Homezone\"" + separator + "\"Business\"" + separator + "\"Other\"" + separator + "\"Fax\"" + separator + "\"Sip\"" + separator + "\"Main\""; //$NON-NLS-1$
+		return "\"Private\"" + separator + "\"Last Name\"" + separator + "\"First Name\"" + separator + "\"Company\"" + separator + "\"Street\"" + separator + "\"ZIP Code\"" + separator + "\"City\"" + separator + "\"E-Mail\"" + separator + "\"Picture\"" + separator + "\"Home\"" + separator + "\"Mobile\"" + separator + "\"Homezone\"" + separator + "\"Business\"" + separator + "\"Other\"" + separator + "\"Fax\"" + separator + "\"Sip\"" + separator + "\"Main\""; //$NON-NLS-1$
 	}
 
 	/**
@@ -1252,7 +1266,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 		// is an email client and stores at least an email addy
 		// so create a new person object
 		person = new Person(field[0], field[25], field[1], field[11]
-				+ field[12], field[15], field[13], field[4]);
+				+ field[12], field[15], field[13], field[4], "");
 
 		// TODO: Check for valid numbers, as you can never gurantee
 		// that users do things properly, could be possible to create

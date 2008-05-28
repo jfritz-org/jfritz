@@ -26,7 +26,7 @@ public class LookupThread extends Thread {
 
 	private LookupRequest currentRequest;
 
-	private boolean threadSuspended, quit;
+	private boolean threadSuspended, quit, terminate, terminated;
 
 	private Person result;
 
@@ -57,6 +57,8 @@ public class LookupThread extends Thread {
 	 */
 	public LookupThread(boolean quitOnDone) {
 		threadSuspended = false;
+		terminate = false;
+		terminated = false;
 		quit = quitOnDone;
 	}
 
@@ -69,13 +71,13 @@ public class LookupThread extends Thread {
 	 */
 	public void run() {
 
-		while (true) {
+		while (!terminate) {
 			try {
 
 			if(ReverseLookup.getRequestsCount() == 0 && quit)
 				break;
 
-			while(threadSuspended || ReverseLookup.getRequestsCount() == 0){
+			while((!terminate) && (threadSuspended || ReverseLookup.getRequestsCount() == 0)){
 					ReverseLookup.lookupDone();
 					synchronized(this){
 						wait();
@@ -85,20 +87,32 @@ public class LookupThread extends Thread {
 					break;// we were interrupted
 			}
 
-			currentRequest = ReverseLookup.getNextRequest();
+			if (!terminate)
+			{
+				currentRequest = ReverseLookup.getNextRequest();
 
-			result = lookup(currentRequest.number, currentRequest.lookupSite);
-			ReverseLookup.personFound(result);
+				result = lookup(currentRequest.number, currentRequest.lookupSite);
+				ReverseLookup.personFound(result);
 
-			try{
-				sleep(2000);
-			}catch(Exception e){
-				break;
+				try{
+					sleep(2000);
+				}catch(Exception e){
+					break;
+				}
 			}
 		}
 
 		Debug.msg("Lookup thread  has quit");
+		terminated = true;
+	}
 
+	public synchronized void terminate(){
+		terminate = true;
+		resumeLookup();
+	}
+
+	public synchronized boolean isTerminated(){
+		return terminated;
 	}
 
 	public synchronized void suspendLookup(){
@@ -373,7 +387,7 @@ public class LookupThread extends Thread {
 								}
 
 								newPerson = new Person(firstname, company, lastname,
-										street, zipcode, city, ""); //$NON-NLS-1$
+										street, zipcode, city, "", ""); //$NON-NLS-1$
 								if (company.length() > 0) {
 									newPerson.addNumber(number.getIntNumber(), "business"); //$NON-NLS-1$
 								} else {
@@ -409,7 +423,7 @@ public class LookupThread extends Thread {
 					city = ReverseLookupTurkey.getCity(nummer);
 			}
 
-			newPerson = new Person("", "", "", "", "", city, "");
+			newPerson = new Person("", "", "", "", "", city, "", "");
 			newPerson.addNumber(number.getAreaNumber(), "home"); //$NON-NLS-1$
 
 		//no reverse lookup sites available for country

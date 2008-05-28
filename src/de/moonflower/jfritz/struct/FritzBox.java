@@ -969,7 +969,7 @@ public class FritzBox {
 			ports = new String[1];
 			ports[0] = "Fon 1";
 			break;
-		case FritzBoxFirmware.BOXTYPE_SPEEDPORT_W900V:
+		case FritzBoxFirmware.BOXTYPE_FRITZBOX_SPEEDPORT_W900V:
 		case FritzBoxFirmware.BOXTYPE_FRITZBOX_5140:
 			// 2 analoge Telefonanschlüsse und interner S0-Bus
 			{

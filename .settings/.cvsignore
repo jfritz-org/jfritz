@@ -1,1 +1,4 @@
 org.eclipse.jdt.core.prefs
+org.eclipse.core.runtime.prefs
+org.eclipse.ltk.core.refactoring.prefs
+org.eclipse.wst.validation.prefs

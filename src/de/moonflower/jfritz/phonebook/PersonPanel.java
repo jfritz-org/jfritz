@@ -8,19 +8,26 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.Enumeration;
+import java.util.ResourceBundle;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -33,9 +40,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.TableCellRenderer;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
@@ -68,7 +77,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 	private JTextField tfFirstName, tfCompany, tfLastName, tfStreet,
 			tfPostalCode, tfCity, tfEmail;
 
-	private JButton addButton, delButton, okButton, cancelButton, undoButton;
+	private JButton addButton, delButton, okButton, cancelButton, undoButton, pictureButton;
 
 	private JTable numberTable;
 
@@ -84,14 +93,19 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 	private Vector<ActionListener> actionListener;
 
+	private ResourceBundle messages;
+
+	private JFritzWindow parentFrame;
+
 	/**
 	 *
 	 */
-	public PersonPanel(Person person, PhoneBook phoneBook) {
+	public PersonPanel(Person person, PhoneBook phoneBook, JFritzWindow parentFrame) {
 		super();
 		this.originalPerson = person;
 		this.clonedPerson = person.clone();
 		this.phoneBook = phoneBook;
+		this.parentFrame = parentFrame;
 		actionListener = new Vector<ActionListener>();
 		createPanel();
 		setPerson(person);
@@ -100,66 +114,13 @@ public class PersonPanel extends JPanel implements ActionListener,
 	private void createPanel() {
 		setBorder(BorderFactory.createEmptyBorder(10, 20, 5, 20));
 
-		JPanel configPanel = new JPanel();
-		configPanel.setLayout(new GridLayout(0, 2));
-		JLabel label = new JLabel(Main.getMessage("private_entry") + ": "); //$NON-NLS-1$,   //$NON-NLS-2$
-		configPanel.add(label);
-
-		chkBoxPrivateEntry = new JCheckBox();
-		ChangeListener changeListener = new ChangeListener() {
-			public void stateChanged(ChangeEvent changeEvent) {
-				hasChanged = chkBoxPrivateEntry.isSelected() != originalPerson
-						.isPrivateEntry();
-				firePropertyChange();
-			}
-		};
-		chkBoxPrivateEntry.addChangeListener(changeListener);
-		configPanel.add(chkBoxPrivateEntry);
-
-		label = new JLabel(Main.getMessage("firstName") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		configPanel.add(label);
-		tfFirstName = new JTextField();
-		tfFirstName.addCaretListener(this);
-		configPanel.add(tfFirstName);
-
-		label = new JLabel(Main.getMessage("lastName") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		configPanel.add(label);
-		tfLastName = new JTextField();
-		tfLastName.addCaretListener(this);
-		configPanel.add(tfLastName);
-
-		label = new JLabel(Main.getMessage("company") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		configPanel.add(label);
-		tfCompany = new JTextField();
-		tfCompany.addCaretListener(this);
-		configPanel.add(tfCompany);
-
-		label = new JLabel(Main.getMessage("street") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		configPanel.add(label);
-		tfStreet = new JTextField();
-		tfStreet.addCaretListener(this);
-		configPanel.add(tfStreet);
-
-		label = new JLabel(Main.getMessage("postalCode") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		configPanel.add(label);
-		tfPostalCode = new JTextField();
-		tfPostalCode.addCaretListener(this);
-		configPanel.add(tfPostalCode);
-
-		label = new JLabel(Main.getMessage("city") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		configPanel.add(label);
-		tfCity = new JTextField();
-		tfCity.addCaretListener(this);
-		configPanel.add(tfCity);
-
-		label = new JLabel(Main.getMessage("emailAddress") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		configPanel.add(label);
-		tfEmail = new JTextField();
-		tfEmail.addCaretListener(this);
-		configPanel.add(tfEmail);
-
+		JPanel configPanel = createConfigPanel();
 		JPanel numberPanel = createNumberPanel();
 		numberPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+		JPanel centerPanel = new JPanel();
+		centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+		centerPanel.add(configPanel);
+		centerPanel.add(numberPanel);
 
 		JPanel buttonPanel = new JPanel();
 
@@ -182,13 +143,127 @@ public class PersonPanel extends JPanel implements ActionListener,
 		buttonPanel.add(undoButton);
 
 		setLayout(new BorderLayout());
-		add(configPanel, BorderLayout.NORTH);
-		add(numberPanel, BorderLayout.CENTER);
+		add(new JScrollPane(centerPanel), BorderLayout.CENTER);//));
 		add(buttonPanel, BorderLayout.SOUTH);
 
 		setPreferredSize(new Dimension(350, -1));
 		setMinimumSize(new Dimension(350, 0));
 		setMaximumSize(new Dimension(350, 0));
+	}
+
+
+	/**
+	 * @return Returns number panel with number table
+	 */
+	private JPanel createConfigPanel() {
+		JPanel configPanel = new JPanel();
+		configPanel.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+
+		c.gridx = 0;
+		c.gridy = 0;
+		c.gridwidth = 2;
+		c.insets.bottom= 10;
+		pictureButton = new JButton();
+		pictureButton.addActionListener(this);
+		pictureButton.setActionCommand("setPicture");
+		pictureButton.setToolTipText("Click to set image");
+		pictureButton.setBorder(null);
+		configPanel.add(pictureButton, c);
+
+		c.insets.bottom= 1;
+		c.gridwidth = 1;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 1;
+		JLabel label = new JLabel(Main.getMessage("private_entry") + ": "); //$NON-NLS-1$,   //$NON-NLS-2$
+		configPanel.add(label, c);
+		c.gridx = 1;
+		c.gridy = 1;
+		chkBoxPrivateEntry = new JCheckBox();
+		ChangeListener changeListener = new ChangeListener() {
+			public void stateChanged(ChangeEvent changeEvent) {
+				hasChanged = chkBoxPrivateEntry.isSelected() != originalPerson
+						.isPrivateEntry();
+				firePropertyChange();
+			}
+		};
+		chkBoxPrivateEntry.addChangeListener(changeListener);
+		configPanel.add(chkBoxPrivateEntry, c);
+
+		c.gridx = 0;
+		c.gridy = 2;
+		label = new JLabel(Main.getMessage("firstName") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		configPanel.add(label,c );
+		c.gridx = 1;
+		c.gridy = 2;
+		tfFirstName = new JTextField(25);
+		tfFirstName.setMinimumSize(new Dimension(150, 20));
+		tfFirstName.addCaretListener(this);
+		configPanel.add(tfFirstName, c);
+
+		c.gridx = 0;
+		c.gridy = 3;
+		label = new JLabel(Main.getMessage("lastName") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		configPanel.add(label, c);
+		c.gridx = 1;
+		c.gridy = 3;
+		tfLastName = new JTextField();
+		tfLastName.addCaretListener(this);
+		configPanel.add(tfLastName, c);
+
+		c.gridx = 0;
+		c.gridy = 4;
+		label = new JLabel(Main.getMessage("company") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		configPanel.add(label, c);
+		c.gridx = 1;
+		c.gridy = 4;
+		tfCompany = new JTextField();
+		tfCompany.addCaretListener(this);
+		configPanel.add(tfCompany, c);
+
+		c.gridx = 0;
+		c.gridy = 5;
+		label = new JLabel(Main.getMessage("street") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		configPanel.add(label, c);
+		c.gridx = 1;
+		c.gridy = 5;
+		tfStreet = new JTextField();
+		tfStreet.addCaretListener(this);
+		configPanel.add(tfStreet, c);
+
+		c.gridx = 0;
+		c.gridy = 6;
+		label = new JLabel(Main.getMessage("postalCode") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		configPanel.add(label, c);
+		c.gridx = 1;
+		c.gridy = 6;
+		tfPostalCode = new JTextField();
+		tfPostalCode.addCaretListener(this);
+		configPanel.add(tfPostalCode, c);
+
+		c.gridx = 0;
+		c.gridy = 7;
+		label = new JLabel(Main.getMessage("city") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		configPanel.add(label, c);
+		c.gridx = 1;
+		c.gridy = 7;
+		tfCity = new JTextField();
+		tfCity.addCaretListener(this);
+		configPanel.add(tfCity, c);
+
+		c.gridx = 0;
+		c.gridy = 8;
+		label = new JLabel(Main.getMessage("emailAddress") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		configPanel.add(label, c);
+		c.gridx = 1;
+		c.gridy = 8;
+		tfEmail = new JTextField();
+		tfEmail.addCaretListener(this);
+		configPanel.add(tfEmail, c);
+		configPanel.setPreferredSize(new Dimension(100, 400));
+
+		return configPanel;
 	}
 
 	/**
@@ -280,6 +355,8 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 		updateAddDelButtons();
 
+		numberPanel.setPreferredSize(new Dimension(100, 200));
+
 		return numberPanel;
 	}
 
@@ -287,7 +364,30 @@ public class PersonPanel extends JPanel implements ActionListener,
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals("add")) { //$NON-NLS-1$
+		if (e.getActionCommand().equals("setPicture")) //$NON-NLS-1$
+		{
+			JFileChooser fc = new JFileChooser(Main.getStateProperty("option.picture.default_path"));  //$NON-NLS-1$
+			fc.setFileFilter(new FileFilter() {
+				public boolean accept(File f) {
+					return f.isDirectory()
+							|| f.getName().toLowerCase().endsWith(".jpg")   //$NON-NLS-1$
+							|| f.getName().toLowerCase().endsWith(".gif")   //$NON-NLS-1$
+							|| f.getName().toLowerCase().endsWith(".png");  //$NON-NLS-1$
+				}
+
+				public String getDescription() {
+					return Main.getMessage("picture_files");  //$NON-NLS-1$
+				}
+			});
+			if (fc.showOpenDialog(parentFrame) != JFileChooser.APPROVE_OPTION) {
+				return;
+			}
+			Main.setStateProperty("option.picture.default_path", fc.getSelectedFile().getAbsolutePath());  //$NON-NLS-1$
+			clonedPerson.setPictureUrl(fc.getSelectedFile().getAbsolutePath());
+			hasChanged = true;
+			updateUndoButton();
+			updateGUI();
+		} else if (e.getActionCommand().equals("add")) { //$NON-NLS-1$
 			clonedPerson.getNumbers().add(new PhoneNumber("")); //$NON-NLS-1$,  //$NON-NLS-2$
 			typeModel.setTypes();
 			numberHasChanged = true;
@@ -444,6 +544,24 @@ public class PersonPanel extends JPanel implements ActionListener,
 	 *
 	 */
 	public final void updateGUI() {
+		ImageIcon pictureIcon;
+		if (clonedPerson.getPictureUrl().equals(""))
+		{
+			pictureIcon = new ImageIcon("pictures/NoPic.jpg");
+		} else {
+			pictureIcon = new ImageIcon(clonedPerson.getPictureUrl());
+		}
+
+		// if we don't find the image, display the default one
+		if (pictureIcon.getIconWidth() == -1 || pictureIcon.getIconHeight() == -1)
+		{
+			pictureIcon = new ImageIcon("pictures/NoPic.jpg");
+		}
+		Image scaledImage = pictureIcon.getImage().getScaledInstance(171, 221, Image.SCALE_SMOOTH);
+		pictureIcon.setImage(scaledImage);
+		pictureButton.setSize(pictureIcon.getIconWidth(),pictureIcon.getIconHeight());
+		pictureButton.setIcon(pictureIcon);
+
 		chkBoxPrivateEntry.setSelected(clonedPerson.isPrivateEntry());
 		tfFirstName.setText(clonedPerson.getFirstName());
 		tfCompany.setText(clonedPerson.getCompany());
@@ -485,6 +603,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 			originalPerson.setPostalCode(tfPostalCode.getText());
 			originalPerson.setCity(tfCity.getText());
 			originalPerson.setEmailAddress(tfEmail.getText());
+			originalPerson.setPictureUrl(clonedPerson.getPictureUrl());
 
 			originalPerson.setNumbers((Vector<PhoneNumber>) clonedPerson
 					.getNumbers().clone(), clonedPerson.getStandard());
@@ -523,6 +642,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 						originalPerson.getPostalCode())
 				|| !tfCity.getText().equals(originalPerson.getCity())
 				|| !tfEmail.getText().equals(originalPerson.getEmailAddress())
+				|| !clonedPerson.getPictureUrl().equals(originalPerson.getPictureUrl())
 				|| numberHasChanged;
 
 		firePropertyChange();

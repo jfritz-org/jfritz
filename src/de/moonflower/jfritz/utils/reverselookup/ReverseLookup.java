@@ -201,6 +201,14 @@ public class ReverseLookup {
 	}
 
 	/**
+	 * used to terminate lookup thread
+	 */
+	public static synchronized void terminate(){
+		if ( thread != null )
+			thread.terminate();
+	}
+
+	/**
 	 * adds a result to the array of results
 	 *
 	 * @param person

@@ -70,7 +70,7 @@ public class ConfigDialog extends JDialog implements ChangeListener {
 			lookupAfterFetchButton,
 			showCallByCallColumnButton,
 			showCommentColumnButton, showPortColumnButton,
-			fetchAfterStandby;
+			showPictureColumnButton, fetchAfterStandby;
 
 	private ConfigPanelPhone phonePanel;
 	private ConfigPanelFritzBox fritzBoxPanel;
@@ -134,6 +134,8 @@ public class ConfigDialog extends JDialog implements ChangeListener {
 
 		showPortColumnButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.showPortColumn", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
+		showPictureColumnButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.showPictureColumn", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
+
 		fetchAfterStandby.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.watchdog.fetchAfterStandby", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		if(Main.getProperty("network.type", "0").equals("2")
@@ -176,6 +178,9 @@ public class ConfigDialog extends JDialog implements ChangeListener {
 
 		Main.setProperty("option.showPortColumn", Boolean //$NON-NLS-1$
 				.toString(showPortColumnButton.isSelected()));
+
+		Main.setProperty("option.showPictureColumn", Boolean //$NON-NLS-1$
+				.toString(showPictureColumnButton.isSelected()));
 
 		Main.setProperty("option.watchdog.fetchAfterStandby", Boolean //$NON-NLS-1$
 				.toString(fetchAfterStandby.isSelected()));
@@ -274,14 +279,18 @@ public class ConfigDialog extends JDialog implements ChangeListener {
 		cPanel.add(showCallByCallColumnButton, c);
 
 		c.gridy = 5;
+		showPictureColumnButton = new JCheckBox(Main.getMessage("show_picture_column")); //$NON-NLS-1$
+		cPanel.add(showPictureColumnButton, c);
+
+		c.gridy = 6;
 		showCommentColumnButton = new JCheckBox(Main.getMessage("show_comment_column")); //$NON-NLS-1$
 		cPanel.add(showCommentColumnButton, c);
 
-		c.gridy = 6;
+		c.gridy = 7;
 		showPortColumnButton = new JCheckBox(Main.getMessage("show_port_column")); //$NON-NLS-1$
 		cPanel.add(showPortColumnButton, c);
 
-		c.gridy = 7;
+		c.gridy = 8;
 		fetchAfterStandby = new JCheckBox(Main.getMessage("fetch_after_standby")); //$NON-NLS-1$
 		cPanel.add(fetchAfterStandby, c);
 

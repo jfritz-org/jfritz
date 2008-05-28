@@ -143,6 +143,7 @@ public class ClientConnectionListener extends Thread {
 							// we have at least one more connection slot free
 							Debug.netMsg("Client Connection Listener waiting for incoming connection");
 							ClientConnectionThread connection = new ClientConnectionThread(serverSocket.accept(), this);
+							connection.setName("Client connection listener");
 							connection.setDaemon(true);
 
 							synchronized(this){

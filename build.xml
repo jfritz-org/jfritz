@@ -114,6 +114,12 @@
 			</fileset>
 		</copy>
 
+		<!-- copy other resources -->
+		<copy todir="${dist}/pictures">
+			<fileset dir="pictures">
+				<include name="**/NoPic.jpg" />
+			</fileset>
+		</copy>
 	</target>
 
 	<target name="jar" depends="compile" description="Generates jar files">

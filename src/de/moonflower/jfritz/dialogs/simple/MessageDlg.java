@@ -29,6 +29,12 @@ import java.util.TimerTask;
 public class MessageDlg extends JDialog implements ActionListener{
 	private static final long serialVersionUID = 1;
 
+		public MessageDlg()
+		{
+			super();
+		    addWindowListener(new WindowCloseHandle(this));
+		}
+
 		/**
 		 * Show popup dialog with text: message
 		 * @param message
@@ -82,6 +88,7 @@ public class MessageDlg extends JDialog implements ActionListener{
 		 */
 		public void actionPerformed(ActionEvent e) {
 			setVisible(false);
+			dispose();
 		}
 
 		/**
@@ -99,6 +106,20 @@ public class MessageDlg extends JDialog implements ActionListener{
 				msgDialog.setVisible(false);
 				msgDialog.dispose();
 			}
+		}
+
+		private class WindowCloseHandle extends java.awt.event.WindowAdapter
+		{
+			private MessageDlg msgDialog;
+			public WindowCloseHandle(MessageDlg msgDialog)
+			{
+				this.msgDialog = msgDialog;
+			}
+
+			public void windowClosing(java.awt.event.WindowEvent evt)
+	        {
+				msgDialog.dispose();
+	        }
 		}
 }
 

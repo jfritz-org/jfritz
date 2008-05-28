@@ -101,12 +101,11 @@
  * 1 - (-1) - Unterstützung für das Adressbuch von Lotus Notes (SF [ 1445456 ]) (Ich bin dagegen, denn man bräuchte nochmal so ne Plugin wie bei Outlook,
  * 						nur ich schätze es gibt gar keins => wir müssten eine schreiben.
  * 						Habe das programm bei mir in der Arbeit, und ich hasse es. Ich werde nicht mehr Zeit als notwendig ist damit verbringen.
- * 1 -  1 - Bild / Rufton / Farbe eines bestimmten Anrufers
+ * 1 -  1 - Rufton / Farbe eines bestimmten Anrufers
  * 1 -  1 - Verschiedene Klingeltöne per Rufnummer
- * - Viele finden es super, daß man ein Bild pro Telefonnummer hinterlegen kann. Beim Anruf würde wie beim handy das Bild mit aufploppen
  * - Einteilung der Benutzer in Gruppen
  * - Einfachere Verwaltung der Telefonbucheinträge, speziell das mergen zweier Einträge. Speziell wenn jemand mehrere Nummern hat, also Handy, Privat und SIP. Hier wäre es schön, wenn die eine Nummer leicht einem bestehenden Telefonbucheintrag hinzugefügt werden könnte und eben der 2te Eintrag dann gelöscht werden würde
- * - Adressbuchimport nur XML :-(    CVS!?
+ * - Adressbuchimport nur XML :-(    CSV!?
  * - Adressbuchabgleich mit SeaMonkey oder Thunderbird
  * - Adressbuchabgleich mit Outlook
  * - Adressbuchabgleich jfritz <-> FritzBox
@@ -160,17 +159,30 @@
  * JFritz 0.7.1
  * - Umstrukturierung des Aufrufs von externen Programmen (noch nicht abgeschlossen)
  * - Bugfix: Internet Monitoring funktioniert wieder
- * - Umstrukturierung des Statiskdialogs, funktioniert jetzt wieder
+ * - Umstrukturierung des Statiskdialogs, funktioniert jetzt wieder.
+ * - Anpassung des Bearbeiten-Dialogs im Telefonbuch an unterschiedliche Bildschirmauflösungen.
  * - Neu: Clients können über den Server die Anrufliste von der Box löschen
  * - Neu: Clients können die Wahlhilfe über den Server verwenden.
+ * - Neu: Bild bei jedem Kontakt möglich. Noch nicht im Client/Server-Modus getestet.
+ * - Neu: NoPic.png hinzugefügt, welches im Telefonbuch bei Kontakten ohne Bild angezeigt wird.
+ * - Änderung: Keine Zwangspopup mehr beim Abholen der Anrufliste.
+ * - Änderung: Anzeige der Adresse im Telefonbuch in einer Spalte (Stadt-Spalte entfallen).
+ * - Änderung: Abgespielter Sound bei einem Anruf nur halb so laut.
  * - Bugfix für Java 1.5: JFritz-Menü manchmal nicht sichtbar - Part 2
  * - Bugfix: Aktualisierung der Rückwärtssuche mit "Das Telefonbuch"
  * - Bugfix: Rückwärtssuche für Türkei und andere Länder korrigiert. CountryCode wurde nicht korrekt extrahiert.
+ * - Bugfix: Korrektes Beenden des Lookup-Threads
+ * - Bugfix: Kein "Beenden"-Bug mehr nach dem Darstellen eines Popups.
  *
  * Strings:
  * 	allow_client_deletelist
  * 	allow_client_docall;
  * 	client_stand_alone
+ *  notify_on_calls   // Adapt meaning of this string
+ *  picture
+ *  picture_desc
+ *  picture_files
+ *  show_picture_column
  *
  *
  *
@@ -765,9 +777,9 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.0.2"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.1"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.106 2008/03/29 14:50:55 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.107 2008/05/28 20:20:49 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

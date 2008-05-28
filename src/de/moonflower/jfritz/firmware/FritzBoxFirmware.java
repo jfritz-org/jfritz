@@ -47,7 +47,7 @@ public class FritzBoxFirmware {
 
     public final static byte BOXTYPE_FRITZBOX_7140 = 30;
 
-    public final static byte BOXTYPE_SPEEDPORT_W900V = 34;
+    public final static byte BOXTYPE_FRITZBOX_SPEEDPORT_W900V = 34;
 
     public final static byte BOXTYPE_FRITZBOX_7141 = 40;
 
@@ -223,7 +223,7 @@ public class FritzBoxFirmware {
 			 				+ URLEncoder.encode(box_password, "ISO-8859-1"), true).trim(); //$NON-NLS-1$
 
                 if (false) {
-                    String filename = "c://Labor-Firmware.txt"; //$NON-NLS-1$
+                    String filename = "c://SpeedFirm.txt"; //$NON-NLS-1$
                     Debug.msg("Debug mode: Loading " + filename); //$NON-NLS-1$
                     try {
                         data = ""; //$NON-NLS-1$
@@ -359,6 +359,8 @@ public class FritzBoxFirmware {
             return "FRITZ!Box 7170"; //$NON-NLS-1$
         case 30:
             return "FRITZ!Box 7140"; //$NON-NLS-1$
+        case 34:
+            return "FRITZ!Box Fon WLAN Speedport W 900V";
         case 40:
             return "FRITZ!Box 7141"; //$NON-NLS-1$
         case 43:

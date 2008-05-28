@@ -233,8 +233,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 												"/de/moonflower/jfritz/resources/images/trayicon.png"))); //$NON-NLS-1$
 
 		callerListPanel = new CallerListPanel(JFritz.getCallerList(), this);
-		phoneBookPanel = new PhoneBookPanel(JFritz.getPhonebook(), this,
-				new Locale(Main.getProperty("locale")));
+		phoneBookPanel = new PhoneBookPanel(JFritz.getPhonebook(), this);
 		phoneBookPanel.getStatusBarController().addStatusBarListener(jFritz);
 		callerListPanel.setPhoneBookPanel(phoneBookPanel);
 		callerListPanel.getStatusBarController().addStatusBarListener(jFritz);
