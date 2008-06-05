@@ -171,8 +171,9 @@
  * - Bugfix für Java 1.5: JFritz-Menü manchmal nicht sichtbar - Part 2
  * - Bugfix: Aktualisierung der Rückwärtssuche mit "Das Telefonbuch"
  * - Bugfix: Rückwärtssuche für Türkei und andere Länder korrigiert. CountryCode wurde nicht korrekt extrahiert.
- * - Bugfix: Korrektes Beenden des Lookup-Threads
+ * - Bugfix: Korrektes Beenden des Lookup-Threads.
  * - Bugfix: Kein "Beenden"-Bug mehr nach dem Darstellen eines Popups.
+ * - Bugfix: Inverssuche aktualisiert.
  *
  * Strings:
  * 	allow_client_deletelist
@@ -779,7 +780,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.7.1"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.107 2008/05/28 20:20:49 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.108 2008/06/05 17:28:59 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

@@ -91,18 +91,18 @@
 	<country code="+49">
 		<website name="dasoertliche.de" url="http://dasoertliche.de/?form_name=search_inv&amp;page=RUECKSUCHE&amp;context=RUECKSUCHE&amp;action=STANDARDSUCHE&amp;la=de&amp;rci=no&amp;ph=$NUMBER" prefix="0">
 	        <entry>
-	        	<name>class=&quot;entry&quot;&gt;([^&lt;]*)&lt;/a&gt;</name>
-	        	<street>([^,&gt;]*),[^&lt;]*&lt;br/&gt;</street>
-	        	<city>[^,&gt;]*,&amp;nbsp;[^&amp;]*([^&lt;]*)&lt;br/&gt;</city>
-	        	<zipcode>[^,&gt;]*,&amp;nbsp;([^&amp;]*)[^&lt;]*&lt;br/&gt;</zipcode>
+	        	<name>title=&quot;Details\szu\sdiesem\sEintrag\sanzeigen&quot;[^&gt;]*&gt;([^&lt;]*)&lt;</name>
+	        	<street>span\sid=&quot;invers0&quot;(?:[^&gt;]*&gt;){10}([^,]*),</street>
+	        	<city>span\sid=&quot;invers0&quot;(?:[^&gt;]*&gt;){10}[^,]*,[^\d]*\d{5}([^&lt;]*)&lt;</city>
+	        	<zipcode>span\sid=&quot;invers0&quot;(?:[^&gt;]*&gt;){10}[^,]*,[^\d]*(\d{5})</zipcode>
 	        </entry>
 		</website>
 		<website name="dastelefonbuch.de" url="http://www.dastelefonbuch.de/?sourceid=Mozilla-search&amp;cmd=search&amp;kw=$NUMBER" prefix="0">
 			<entry>
-				<name>class=&quot;celname&quot;&gt;\s*(?:&lt;img[^&gt;]*&gt;)\s*&lt;a[^&gt;]*&gt;([^&lt;]*)&lt;/a&gt;</name>
-				<street>class=&quot;celstreet&quot;&gt;([^&lt;]*)&lt;/td&gt;</street>
-				<city>class=&quot;celcity&quot;&gt;\d{5}([^&lt;]*)&lt;</city>
-				<zipcode>class=&quot;celcity&quot;&gt;(\d{5})[^&lt;]*&lt;</zipcode>
+				<name>&lt;td\sclass=&quot;col1&quot;&gt;[^&gt;]*&gt;([^&lt;]*)&lt;</name>
+				<street>&lt;td\sclass=&quot;col2&quot;&gt;([^&lt;]*)&lt;</street>
+				<city>&lt;td class=&quot;col3&quot;&gt;\d{5}&amp;nbsp;([^&lt;]*)&lt;</city>
+				<zipcode>&lt;td class=&quot;col3&quot;&gt;(\d{5})</zipcode>
 			</entry>
 		</website>
 	</country>

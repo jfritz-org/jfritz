@@ -13,8 +13,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
