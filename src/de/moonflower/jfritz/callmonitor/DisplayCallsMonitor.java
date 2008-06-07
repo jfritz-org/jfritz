@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.dialogs.simple.CallMessageDlg;
 import de.moonflower.jfritz.phonebook.PhoneBook;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
@@ -76,7 +77,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
         Debug.msg("Name: " + name); //$NON-NLS-1$
         Debug.msg("Port: " + port); //$NON-NLS-1$
 
-        String callerstr = "", calledstr = "", portstr = ""; //$NON-NLS-1$,  //$NON-NLS-2$
+        String callerstr = "", calledstr = "", portstr = ""; //$NON-NLS-1$,  //$NON-NLS-2$ //$NON-NLS-3$
         String firstname = "", surname = "", company = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 
         callerstr = callerInput;
@@ -146,19 +147,23 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
             case 0 : { // No Popup
                 break;
             }
-            default : {
+            case 1: { // Popup
+            	CallMessageDlg callMsgDialog = new CallMessageDlg();
+            	callMsgDialog.showIncomingCall(callerstr, calledstr, name, portstr, person);
+            	break;
+            }
+            case 2: { // Balloon
                 String outstring = Main.getMessage("incoming_call") + "\n " + Main.getMessage("from") //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-                        + " " + callerstr; //$NON-NLS-1$
-                if (!name.equals(Main.getMessage("unknown"))) { //$NON-NLS-1$
-                    outstring = outstring + " (" + name + ")"; //$NON-NLS-1$,  //$NON-NLS-2$
-                }
-                if (!calledstr.equals(Main.getMessage("unknown"))) { //$NON-NLS-1$
-                    outstring = outstring
-                            + "\n " + Main.getMessage("to") + " " + calledstr; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-                }
-                JFritz.infoMsg(outstring);
-                break;
-
+                + " " + callerstr; //$NON-NLS-1$
+		        if (!name.equals(Main.getMessage("unknown"))) { //$NON-NLS-1$
+		            outstring = outstring + " (" + name + ")"; //$NON-NLS-1$,  //$NON-NLS-2$
+		        }
+		        if (!calledstr.equals(Main.getMessage("unknown"))) { //$NON-NLS-1$
+		            outstring = outstring
+		                    + "\n " + Main.getMessage("to") + " " + calledstr; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+		        }
+		        JFritz.infoMsg(outstring);
+		        break;
             }
         }
 

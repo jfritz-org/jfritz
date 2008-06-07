@@ -174,6 +174,9 @@
  * - Bugfix: Korrektes Beenden des Lookup-Threads.
  * - Bugfix: Kein "Beenden"-Bug mehr nach dem Darstellen eines Popups.
  * - Bugfix: Inverssuche aktualisiert.
+ * - Bugfix: Erstellen eines neuen Eintrags für einen unbekannten Anruf.
+ * - Bugfix: Multiple-Instance check.
+ * - Neu: Neue Anzeige von eingehenden Anrufen.
  *
  * Strings:
  * 	allow_client_deletelist
@@ -780,7 +783,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.7.1"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.108 2008/06/05 17:28:59 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.109 2008/06/07 13:04:16 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -908,9 +911,11 @@ public class Main implements LookupObserver {
 		jfritz = new JFritz(main);
 
 		main.checkCLIParameters(args);
-		main.checkInstanceControl();
+		boolean createGui = main.checkInstanceControl();
 
-		jfritz.createJFrame(showConfWizard);
+		if ( createGui ) {
+			jfritz.createJFrame(showConfWizard);
+		}
 
 		Debug.msg("Main is now exiting...");
 	}
@@ -1130,10 +1135,12 @@ public class Main implements LookupObserver {
 
 	/**
 	 * Ist die Mehrfachstart-Überprüfung aktiv, so wird ein Dialog angezeigt mit
-	 * dem der User JFritz sicher beenden kann
+	 * dem der User JFritz sicher beenden kann.
 	 *
+	 * @return true, if everything is ok. false if user decided to shutdown jfritz.
 	 */
-	private void checkInstanceControl() {
+	private boolean checkInstanceControl() {
+		boolean result = true;
 		if (enableInstanceControl) {
 			// check isRunning and exit or set lock
 			File f = new File(SAVE_DIR + LOCK_FILE);
@@ -1141,6 +1148,7 @@ public class Main implements LookupObserver {
 
 			if (!isRunning) {
 				Debug.msg("Multiple instance lock: set lock."); //$NON-NLS-1$
+				result = true;
 				try {
 					f.createNewFile();
 				} catch (IOException e) {
@@ -1159,12 +1167,15 @@ public class Main implements LookupObserver {
 					Debug
 							.msg("Multiple instance lock: User decided to shut down this instance."); //$NON-NLS-1$
 					exit(-1);
+					result = false;
 				} else {
 					Debug
 							.msg("Multiple instance lock: User decided NOT to shut down this instance."); //$NON-NLS-1$
+					result = true;
 				}
 			}
 		}
+		return result;
 	}
 
 	/**

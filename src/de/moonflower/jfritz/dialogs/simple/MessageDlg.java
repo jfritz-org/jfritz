@@ -29,6 +29,8 @@ import java.util.TimerTask;
 public class MessageDlg extends JDialog implements ActionListener{
 	private static final long serialVersionUID = 1;
 
+		private Timer timer;
+		private HideTimer task;
 		public MessageDlg()
 		{
 			super();
@@ -41,8 +43,8 @@ public class MessageDlg extends JDialog implements ActionListener{
 		 */
 		public void showMessage (String message, long delay) {
 			toFront();
-			Timer timer = new Timer();
-			HideTimer task = new HideTimer(this);
+			timer = new Timer();
+			task = new HideTimer(this);
 
 			//if the delay is <=0 then dont close the dialog
 			if(delay > 0)
@@ -87,6 +89,8 @@ public class MessageDlg extends JDialog implements ActionListener{
 		 * Hide dialog after OK-Button pressed
 		 */
 		public void actionPerformed(ActionEvent e) {
+			timer.cancel();
+			task.cancel();
 			setVisible(false);
 			dispose();
 		}
@@ -103,6 +107,8 @@ public class MessageDlg extends JDialog implements ActionListener{
 			}
 
 			public void run() {
+				timer.cancel();
+				task.cancel();
 				msgDialog.setVisible(false);
 				msgDialog.dispose();
 			}
@@ -118,6 +124,8 @@ public class MessageDlg extends JDialog implements ActionListener{
 
 			public void windowClosing(java.awt.event.WindowEvent evt)
 	        {
+				timer.cancel();
+				task.cancel();
 				msgDialog.dispose();
 	        }
 		}
