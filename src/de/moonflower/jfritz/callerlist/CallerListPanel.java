@@ -100,9 +100,13 @@ public class CallerListPanel extends JPanel implements ActionListener,
 					//make sure all calls have the same country code
 					for(int i: selectedRows){
 
+						newCountryCode = "49";
 						call = callerList.getCallAt(i);
 						calls.add(call);
-						newCountryCode = call.getPhoneNumber().getCountryCode();
+						if ( call.getPhoneNumber() != null)
+						{
+							newCountryCode = call.getPhoneNumber().getCountryCode();
+						}
 						if(countryCode == null)
 							countryCode = newCountryCode;
 						else if(!newCountryCode.equals(countryCode)){

@@ -9,6 +9,7 @@ import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Vector;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -18,7 +19,9 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.callerlist.CallCellEditor;
 import de.moonflower.jfritz.cellrenderer.CallTypeDateCellRenderer;
 import de.moonflower.jfritz.cellrenderer.MultiLineCellRenderer;
+import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
+import de.moonflower.jfritz.struct.PhoneNumber;
 
 /**
  * @author Arno Willig
@@ -106,6 +109,23 @@ public class PhoneBookTable extends JTable implements KeyListener{
 
 	public void keyTyped(KeyEvent e) {
 		//do nothing
+	}
+
+	public void showAndSelectPersonByCall(Call call)
+	{
+		if ( call.getPerson() == null && call.getPhoneNumber() != null)
+		{
+			Person person = new Person();
+			person.addNumber(call.getPhoneNumber());
+			Vector<Person> persons = new Vector<Person>();
+			persons.add(person);
+			phonebook.addEntries(persons);
+			int index = phonebook.getFilteredPersons().indexOf(person);
+			showAndSelectRow(index);
+		} else {
+			int index = phonebook.getFilteredPersons().indexOf(call.getPerson());
+			showAndSelectRow(index);
+		}
 	}
 
 	public void showAndSelectPerson(Person person) {

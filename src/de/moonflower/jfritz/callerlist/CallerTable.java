@@ -288,7 +288,7 @@ public class CallerTable extends JTable {
 				// table.getJfritz().getJframe().getPhoneBookPanel().getPersonPanel().setPerson(person);
 				if(phoneBookTable != null){
 					call =callerList.getFilteredCallVector().get(rows[0]);
-					phoneBookTable.showAndSelectPerson(call.getPerson());
+					phoneBookTable.showAndSelectPersonByCall(call);
 				}
 				//'normaler' status
 				parentPanel.getStatusBarController().fireStatusChanged(callerList.getTotalDuration());

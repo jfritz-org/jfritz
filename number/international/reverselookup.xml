@@ -91,10 +91,10 @@
 	<country code="+49">
 		<website name="dasoertliche.de" url="http://dasoertliche.de/?form_name=search_inv&amp;page=RUECKSUCHE&amp;context=RUECKSUCHE&amp;action=STANDARDSUCHE&amp;la=de&amp;rci=no&amp;ph=$NUMBER" prefix="0">
 	        <entry>
-	        	<name>title=&quot;Details\szu\sdiesem\sEintrag\sanzeigen&quot;[^&gt;]*&gt;([^&lt;]*)&lt;</name>
-	        	<street>span\sid=&quot;invers0&quot;(?:[^&gt;]*&gt;){10}([^,]*),</street>
-	        	<city>span\sid=&quot;invers0&quot;(?:[^&gt;]*&gt;){10}[^,]*,[^\d]*\d{5}([^&lt;]*)&lt;</city>
-	        	<zipcode>span\sid=&quot;invers0&quot;(?:[^&gt;]*&gt;){10}[^,]*,[^\d]*(\d{5})</zipcode>
+	        	<name>class=&quot;entry&quot;\s*(onmouseover=&quot;&quot;)?\s*&gt;([^&lt;]*)&lt;/a&gt;</name>
+	        	<street>([^,&gt;]*),[^&lt;]*&lt;br/&gt;</street>
+	        	<city>[^,&gt;]*,&amp;nbsp;[^&amp;]*([^&lt;]*)&lt;br/&gt;</city>
+	        	<zipcode>[^,&gt;]*,&amp;nbsp;([^&amp;]*)[^&lt;]*&lt;br/&gt;</zipcode>
 	        </entry>
 		</website>
 		<website name="dastelefonbuch.de" url="http://www.dastelefonbuch.de/?sourceid=Mozilla-search&amp;cmd=search&amp;kw=$NUMBER" prefix="0">
