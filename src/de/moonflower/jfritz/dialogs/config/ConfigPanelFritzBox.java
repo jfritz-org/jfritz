@@ -14,6 +14,7 @@ import java.util.Vector;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -54,6 +55,8 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 	private String password;
 
 	private FritzBoxFirmware firmware;
+
+	private JCheckBox defaultFritzBox;
 
 	public ConfigPanelFritzBox() {
 		setLayout(new GridBagLayout());
@@ -128,6 +131,13 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 		add(port, c);
 
 		c.gridy = 6;
+		label = new JLabel("");
+		add(label, c);
+		defaultFritzBox = new JCheckBox(Main.getMessage("set_default_fritzbox"));
+		defaultFritzBox.setSelected(true);
+		add(defaultFritzBox, c);
+
+		c.gridy = 7;
 		boxtypeButton = new JButton(Main.getMessage("detect_box_type")); //$NON-NLS-1$
 		boxtypeButton.setActionCommand("detectboxtype"); //$NON-NLS-1$
 		boxtypeButton.addActionListener(this);
@@ -149,9 +159,11 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 					address.setText(dev.getIP().getHostAddress());
 					firmware = FritzBoxFirmware.detectFirmwareVersion(address
 							.getText(), password, port.getText());
+					defaultFritzBox.setSelected(false);
 				} else {
 					firmware = FritzBoxFirmware.detectFirmwareVersion(address
 							.getText(), password, port.getText());
+					defaultFritzBox.setSelected(false);
 				}
 			} catch (WrongPasswordException e1) {
 				Debug.err(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
@@ -243,6 +255,10 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 
 		if (firmware != null) {
 			Main.setProperty("box.firmware", firmware.getFirmwareVersion()); //$NON-NLS-1$
+			if (defaultFritzBox.isSelected())
+			{
+				Main.setProperty("box.mac", firmware.getMacAddress());
+			}
 		} else {
 			Main.removeProperty("box.firmware"); //$NON-NLS-1$
 		}

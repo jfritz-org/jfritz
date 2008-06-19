@@ -10,6 +10,8 @@ import java.awt.Component;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Vector;
+
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
@@ -34,6 +36,7 @@ import de.moonflower.jfritz.cellrenderer.PortCellRenderer;
 import de.moonflower.jfritz.cellrenderer.RouteCellRenderer;
 import de.moonflower.jfritz.phonebook.PhoneBookTable;
 import de.moonflower.jfritz.struct.Call;
+import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
@@ -165,7 +168,8 @@ public class CallerTable extends JTable {
 					// clear selection
 					table.clearSelection();
 					//JFritz.getJframe().setStatus();
-					parentPanel.getStatusBarController().fireStatusChanged(callerList.getTotalDuration());
+					parentPanel.updateStatusBar(false);
+//					parentPanel.getStatusBarController().fireStatusChanged(callerList.getTotalDuration());
 				} else if (e.getKeyCode() == KeyEvent.VK_DELETE) {
 					// Delete selected entries
 					((CallerList) getModel()).removeEntries(getSelectedRows());
@@ -285,21 +289,35 @@ public class CallerTable extends JTable {
 			  parentPanel.setDeleteEntriesButton(selectedCalls);
 			}
 			if (rows.length == 1) { // set the selection in the phonebook to the person of the selected call
-				// table.getJfritz().getJframe().getPhoneBookPanel().getPersonPanel().setPerson(person);
-				if(phoneBookTable != null){
-					call =callerList.getFilteredCallVector().get(rows[0]);
-					phoneBookTable.showAndSelectPersonByCall(call);
-				}
 				//'normaler' status
-				parentPanel.getStatusBarController().fireStatusChanged(callerList.getTotalDuration());
+				parentPanel.setSelectedCallsInfo(selectedCalls, selectedCallsTotalMinutes);
+				parentPanel.updateStatusBar(true);
 
 			} else if (rows.length > 0) {
 				// Setze Statusbar mit Infos über selektierte Anrufe
-				parentPanel.getStatusBarController().fireStatusChanged(Main.getMessage("entries").replaceAll( //$NON-NLS-1$
-						"%N", Integer.toString(selectedCalls)) + ", "  //$NON-NLS-1$,  //$NON-NLS-2$
-                        + Main.getMessage("total_duration") + ": " + (selectedCallsTotalMinutes / 60) + " min"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+				parentPanel.setSelectedCallsInfo(selectedCalls, selectedCallsTotalMinutes);
+				parentPanel.updateStatusBar(true);
 			}
 		}
+	}
+
+	public Vector<Person> getSelectedPersons()
+	{
+		Vector<Person> selectedPersons = new Vector<Person>();
+		int rows[] = getSelectedRows();
+		int selectedCalls = rows.length;
+
+		Person currentPerson = null;
+		for (int i=0; i<selectedCalls; i++)
+		{
+			currentPerson = callerList.getFilteredCallVector().get(rows[i]).getPerson();
+			if ( currentPerson != null )
+			{
+				selectedPersons.add(currentPerson);
+			}
+		}
+
+		return selectedPersons;
 	}
 
 	/**

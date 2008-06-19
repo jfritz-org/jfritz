@@ -18,6 +18,7 @@
 
 	<!-- build properties -->
 	<property name="build" value="${home}/build" />
+	<property name="buildcallsim" value="${home}/buildcallsim" />
 	<property name="build.classes" value="${build}/classes" />
 	<property name="build.unittests" value="${build}/unittests" />
 	<property name="build.unittests.reports" value="${build.unittests}/reports" />
@@ -82,6 +83,19 @@
 		<javac srcdir="${src}" destdir="${build.classes}" classpathref="build.classpath" debug="${javac.debug}" optimize="${javac.optimize}" source="${javac.version}" target="${javac.version}" encoding="iso-8859-1" />
 	</target>
 
+	<target name="CallSim" description="Create a jar of my call simulator">
+	    <mkdir dir="${buildcallsim}" />
+		<javac srcdir="${src}/de/moonflower/jfritz/utils/callsimulator/" destdir="${buildcallsim}" />
+		<jar jarfile="${buildcallsim}/callsim.jar" update="yes">
+			<fileset dir="${buildcallsim}">
+				<include name="**/de/moonflower/jfritz/utils/callsimulator/*.*" />
+			</fileset>
+			<manifest>
+				<attribute name="Main-Class" value="de.moonflower.jfritz.utils.callsimulator.CallSimulator" />
+			</manifest>
+		</jar>
+    </target>
+
 	<target name="build" depends="jar" description="Generates runnable version of JFritz in directory dist">
 
 		<mkdir dir="${dist}" />
@@ -107,6 +121,12 @@
 			</fileset>
 		</copy>
 
+		<!-- copy css files -->
+		<copy todir="${dist}/css">
+			<fileset dir="css">
+			</fileset>
+		</copy>
+
 		<!-- copy all jar files -->
 		<copy todir="${dist}">
 			<fileset dir="${build}">
@@ -118,6 +138,12 @@
 		<copy todir="${dist}/pictures">
 			<fileset dir="pictures">
 				<include name="**/NoPic.jpg" />
+			</fileset>
+		</copy>
+		<copy todir="${dist}/">
+			<fileset dir="">
+				<include name="**/splash.png" />
+				<include name="**/status.png" />
 			</fileset>
 		</copy>
 	</target>

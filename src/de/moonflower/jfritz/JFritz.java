@@ -48,6 +48,7 @@ import de.moonflower.jfritz.dialogs.configwizard.ConfigWizard;
 import de.moonflower.jfritz.dialogs.quickdial.QuickDials;
 import de.moonflower.jfritz.dialogs.simple.MessageDlg;
 import de.moonflower.jfritz.dialogs.sip.SipProviderTableModel;
+import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.network.ClientLoginsTableModel;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
@@ -179,19 +180,56 @@ public final class JFritz implements  StatusListener, ItemListener {
 		//stupid concept really, but it has to be done
 		Debug.generatePanel();
 
+	}
+
+	public void initNumbers()
+	{
 		// loads various country specific number settings and tables
 		loadNumberSettings();
+	}
 
+	public int initFritzBox()
+	{
+		int result = 0;
 		fritzBox = new FritzBox(Main
 				.getProperty("box.address", "192.168.178.1"), Encryption //$NON-NLS-1$,  //$NON-NLS-2$
 				.decrypt(Main.getProperty("box.password", Encryption //$NON-NLS-1$
 						.encrypt(""))), Main.getProperty("box.port", "80")); //$NON-NLS-1$
+		String macStr = Main.getProperty("box.mac", "");
+		if ( fritzBox.getFirmware() != null )
+		{
+			if ( (!macStr.equals("")) && (!fritzBox.getFirmware().getMacAddress().equals(macStr)))
+			{
+				int answer = JOptionPane.showConfirmDialog(null,
+						Main.getMessage("new_fritzbox") + "\n" //$NON-NLS-1$
+								+ Main.getMessage("accept_fritzbox_communication"), //$NON-NLS-1$
+						Main.getMessage("information"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
+				if (answer == JOptionPane.YES_OPTION) {
+					Debug.msg("New FritzBox detected, user decided to accept connection."); //$NON-NLS-1$
+					result = 0;
+				} else {
+					Debug.msg("New FritzBox detected, user decided to prohibit connection."); //$NON-NLS-1$
+					result = -1;
+				}
+			}
+		}
+		return result;
+	}
+
+	public void initSipProvider()
+	{
 		sipprovider = new SipProviderTableModel();
 		sipprovider.loadFromXMLFile(Main.SAVE_DIR + SIPPROVIDER_FILE);
+	}
 
+	public void initQuickDials()
+	{
 		quickDials = new QuickDials();
 		quickDials.loadFromXMLFile(Main.SAVE_DIR + JFritz.QUICKDIALS_FILE);
+	}
 
+	public void initCallerListAndPhoneBook()
+	{
 		callerlist = new CallerList();
 		phonebook = new PhoneBook(PHONEBOOK_FILE);
 		callerlist.setPhoneBook(phonebook);
@@ -201,16 +239,24 @@ public final class JFritz implements  StatusListener, ItemListener {
 		callerlist.loadFromXMLFile(Main.SAVE_DIR + CALLS_FILE);
 		phonebook.findAllLastCalls();
 		callerlist.findAllPersons();
+	}
 
+	public void initCallMonitor()
+	{
 		callMonitorList = new CallMonitorList();
 		callMonitorList.addCallMonitorListener(new DisplayCallsMonitor());
 		callMonitorList.addCallMonitorListener(new DisconnectMonitor());
+	}
 
-
+	public void initClientServer()
+	{
 		clientLogins = new ClientLoginsTableModel();
 
 		ClientLoginsTableModel.loadFromXMLFile(Main.SAVE_DIR+CLIENT_SETTINGS_FILE);
+	}
 
+	public void initLookAndFeel()
+	{
 		setDefaultLookAndFeel();
 		if (Main
 				.getProperty(
@@ -698,6 +744,8 @@ public final class JFritz implements  StatusListener, ItemListener {
 
 		if ( watchdog != null ) {
 			watchdogTimer.cancel();
+			watchdog = null;
+			watchdogTimer = null;
 			// FIXME: interrupt() lässt JFritz beim System-Shutdown hängen
 			//			watchdog.interrupt();
 		}

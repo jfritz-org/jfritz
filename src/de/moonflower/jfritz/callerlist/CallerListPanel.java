@@ -25,7 +25,6 @@ import java.util.Vector;
 import javax.swing.CellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -36,11 +35,15 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 
 import com.toedter.calendar.JDateChooser;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.StatusBarPanel;
 
 import de.moonflower.jfritz.callerlist.filter.CallByCallFilter;
 import de.moonflower.jfritz.callerlist.filter.CallFilter;
@@ -154,6 +157,11 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			// FIXME Listener in den table einbauen
 			if ((e.getClickCount() > 1)
 					&& (e.getComponent().getClass() == CallerTable.class)) {
+				if (callerTable.getSelectedPersons().size() == 1)
+				{
+					phoneBookPanel.getPhoneBookTable().showAndSelectPerson(callerTable.getSelectedPersons().get(0));
+				}
+
 				JFritz.getJframe().activatePhoneBook();
 			}
 		}
@@ -224,10 +232,17 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	private JDateChooser startDateChooser;
 	private PhoneBookPanel phoneBookPanel;
-	private JFrame parentFrame;
+	private JFritzWindow jFrame;
 	private StatusBarController statusBarController = new StatusBarController();
 
 	private JMenu reverseMenu;
+
+	private StatusBarPanel callerListStatusBar;
+
+	private JLabel callsLabel;
+	private JLabel durationLabel;
+	private int numSelectedCalls = 0;
+	private double durationSelectedCalls = 0;
 
 	/**
 	 * A callerListPanel is a view for a callerlist, it has its own
@@ -243,14 +258,15 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 *            bar
 	 */
 
-	public CallerListPanel(CallerList callerList, JFrame parent) {
+	public CallerListPanel(CallerList callerList, JFritzWindow parent) {
 		super();
-		parentFrame = parent;
+		jFrame = parent;
 		this.callerList = callerList;
 		createFilters(callerList);
 		setLayout(new BorderLayout());
 		add(createToolBar(), BorderLayout.NORTH);
 		add(createCallerListTable(), BorderLayout.CENTER);
+		registerStatusBar();
 	}
 
 	public void setPhoneBookPanel(PhoneBookPanel phoneBookPanel){
@@ -365,7 +381,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 *
 	 * @return a scrollPane with the callerListTable
 	 */
-	public JScrollPane createCallerListTable() {
+	private JScrollPane createCallerListTable() {
 		callerTable = new CallerTable(this, callerList);
 		if(phoneBookPanel==null){
 			callerTable.setPhoneBookTable(null);
@@ -440,7 +456,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 *
 	 * @return the toolbar
 	 */
-	public JPanel createToolBar() {
+	private JPanel createToolBar() {
 		JToolBar upperToolBar = new JToolBar();
 		upperToolBar.setFloatable(true);
 		JToolBar lowerToolbar = new JToolBar();
@@ -690,7 +706,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	public void actionPerformed(ActionEvent e) {
 		handleAction(e.getActionCommand());
 		callerList.update();
-		statusBarController.fireStatusChanged(callerList.getTotalDuration());
+		updateStatusBar(false);
+//		statusBarController.fireStatusChanged(callerList.getTotalDuration());
 		saveButtonStatus();
 	}
 
@@ -886,7 +903,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			return;
 		}
 		if (command.equals(DELETE_ENTRY)) {
-			if (JOptionPane.showConfirmDialog(parentFrame, Main
+			if (JOptionPane.showConfirmDialog(jFrame, Main
 					.getMessage("really_delete_entries"), //$NON-NLS-1$
 					Main.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 				Debug.msg("Removing entries"); //$NON-NLS-1$
@@ -898,17 +915,28 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 		if(command.startsWith("lookup:")){
 
-			//this should run a specific reverse lookup just for one site
+			Call call;
 			String parts[] = command.split(":");
 			int[] selectedRows = callerTable.getSelectedRows();
-			Call call;
-
-			//get all the selected calls
-			for(int i: selectedRows){
-				call = callerList.getCallAt(i);
-				ReverseLookup.specificLookup(call.getPhoneNumber(), parts[1], callerList);
+			if ( parts.length > 1 )
+			{
+				//this should run a specific reverse lookup just for one site
+				//get all the selected calls
+				for(int i: selectedRows){
+					call = callerList.getCallAt(i);
+					ReverseLookup.specificLookup(call.getPhoneNumber(), parts[1], callerList);
+				}
+			} else {
+				Vector<PhoneNumber> numbers = new Vector<PhoneNumber>();
+				for (int i: selectedRows) {
+					call = callerList.getCallAt(i);
+					if ( call.getPhoneNumber() != null )
+					{
+						numbers.add(call.getPhoneNumber());
+					}
+				}
+				ReverseLookup.lookup(numbers, callerList, false);
 			}
-
 			//only set the progrss bar and button if we aren't networked
 			if(!Main.getProperty("option.clientTelephoneBook").equals("true") ||
 					!NetworkStateMonitor.isConnectedToServer()){
@@ -1122,7 +1150,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
 			handleAction(CallFilter.FILTER_SEARCH);
 			callerList.update();
-			statusBarController.fireStatusChanged(callerList.getTotalDuration());
+			updateStatusBar(false);
+//			statusBarController.fireStatusChanged(callerList.getTotalDuration());
 			return;
 		}
 	}
@@ -1146,7 +1175,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	public void propertyChange(PropertyChangeEvent evt) {
 		handleAction(CallFilter.FILTER_DATE);
 		callerList.update();
-		statusBarController.fireStatusChanged(callerList.getTotalDuration());
+		updateStatusBar(false);
+//		statusBarController.fireStatusChanged(callerList.getTotalDuration());
 	}
 
 	/**
@@ -1338,7 +1368,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		}
 		syncAllFilters();
 		callerList.update();
-		statusBarController.fireStatusChanged(callerList.getTotalDuration());
+		updateStatusBar(false);
+//		statusBarController.fireStatusChanged(callerList.getTotalDuration());
 	}
 
 	/**
@@ -1357,4 +1388,66 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		this.statusBarController = statusBarController;
 	}
 
+	public void registerStatusBar()
+	{
+		callerListStatusBar = new StatusBarPanel(1);
+		Border border = LineBorder.createGrayLineBorder();
+		callsLabel = new JLabel("Calls");
+		callsLabel.setBorder(border);
+		durationLabel = new JLabel();
+		durationLabel.setBorder(border);
+		callerListStatusBar.add(callsLabel);
+		callerListStatusBar.add(durationLabel);
+		jFrame.getStatusBar().registerFixStatusPanel(callerListStatusBar);
+	}
+
+	public void setSelectedCallsInfo(int numSelectedCalls, double durationSelectedCalls)
+	{
+		this.numSelectedCalls = numSelectedCalls;
+		this.durationSelectedCalls = durationSelectedCalls;
+	}
+
+	public void setStatus()
+	{
+		jFrame.setStatus("");
+	}
+
+	/**
+	 *
+	 * @param selectedEntries Specifies which type of status message will be displayed.
+	 *        if true, only information about selected calls will be displayed.
+	 *        if false, information about all calls will be displayed.
+	 */
+	public void updateStatusBar(boolean selectedEntries)
+	{
+		if ( selectedEntries )
+		{
+			if ( numSelectedCalls != 1 )
+			{
+				String calls = " " + Main.getMessage("entries").replaceAll( //$NON-NLS-1$, //$NON-NLS-2$
+						"%N", Integer.toString(numSelectedCalls)) + " "; //$NON-NLS-1$, //$NON-NLS-2$
+				String duration = " " + Main.getMessage("total_duration") + ": " + (durationSelectedCalls / 60) + " min "; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+
+				jFrame.setStatus(calls + " " + duration);
+			} else {
+				jFrame.setStatus("");
+			}
+		}
+		else
+		{
+			if ( callsLabel != null )
+			{
+				callsLabel.setText(" " + Main.getMessage("telephone_entries").replaceAll("%N", Integer.toString(callerList.getRowCount())) + " "); //$NON-NLS-1$,  //$NON-NLS-2$
+			}
+			if ( durationLabel != null )
+			{
+				int duration = callerList.getTotalDuration();
+				int hours = duration / 3600;
+				int mins = duration % 3600 / 60;
+
+				durationLabel.setText(" " + Main.getMessage("total_duration") + ": " + hours + "h " //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+						+ mins + " min " + " (" + duration / 60 + " min) "); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+			}
+		}
+	}
 }

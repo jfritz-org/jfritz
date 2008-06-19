@@ -73,6 +73,8 @@ public class FritzBoxFirmware {
 
 	private String language;
 
+	private String macAddress;
+
 	private final static String[] POSTDATA_ACCESS_METHOD = {
 			"getpage=../html/de/menus/menu2.html", //$NON-NLS-1$
 			"getpage=../html/en/menus/menu2.html", //$NON-NLS-1$
@@ -88,51 +90,7 @@ public class FritzBoxFirmware {
 
 	private final static String PATTERN_DETECT_LANGUAGE_EN = "Telephony";
 
-	/**
-	 * Firmware Constructor using Bytes
-	 *
-	 * @param boxtype
-	 * @param majorFirmwareVersion
-	 * @param minorFirmwareVersion
-	 */
-	public FritzBoxFirmware(byte boxtype, byte majorFirmwareVersion,
-			byte minorFirmwareVersion) {
-		this.boxtype = boxtype;
-		this.majorFirmwareVersion = majorFirmwareVersion;
-		this.minorFirmwareVersion = minorFirmwareVersion;
-		this.modFirmwareVersion = ""; //$NON-NLS-1$
-	}
-
-	/**
-	 * Firmware Constructor using Strings
-	 *
-	 * @param boxtype
-	 * @param majorFirmwareVersion
-	 * @param minorFirmwareVersion
-	 */
-	public FritzBoxFirmware(String boxtype, String majorFirmwareVersion,
-			String minorFirmwareVersion) {
-		this.boxtype = Byte.parseByte(boxtype);
-		this.majorFirmwareVersion = Byte.parseByte(majorFirmwareVersion);
-		this.minorFirmwareVersion = Byte.parseByte(minorFirmwareVersion);
-		this.modFirmwareVersion = ""; //$NON-NLS-1$
-	}
-
-	/**
-	 * Firmware Constructor using Strings
-	 *
-	 * @param boxtype
-	 * @param majorFirmwareVersion
-	 * @param minorFirmwareVersion
-	 * @param modFirmwareVersion
-	 */
-	public FritzBoxFirmware(String boxtype, String majorFirmwareVersion,
-			String minorFirmwareVersion, String modFirmwareVersion) {
-		this.boxtype = Byte.parseByte(boxtype);
-		this.majorFirmwareVersion = Byte.parseByte(majorFirmwareVersion);
-		this.minorFirmwareVersion = Byte.parseByte(minorFirmwareVersion);
-		this.modFirmwareVersion = modFirmwareVersion;
-	}
+	private final static String POSTDATA_QUERY = "getpage=../html/query.txt";
 
 	/**
 	 * Firmware Constructor using Strings
@@ -144,12 +102,13 @@ public class FritzBoxFirmware {
 	 * @param language
 	 */
 	public FritzBoxFirmware(String boxtype, String majorFirmwareVersion,
-			String minorFirmwareVersion, String modFirmwareVersion, String language) {
+			String minorFirmwareVersion, String modFirmwareVersion, String language, String mac) {
 		this.boxtype = Byte.parseByte(boxtype);
 		this.majorFirmwareVersion = Byte.parseByte(majorFirmwareVersion);
 		this.minorFirmwareVersion = Byte.parseByte(minorFirmwareVersion);
 		this.modFirmwareVersion = modFirmwareVersion;
 		this.language = language;
+		this.macAddress = mac;
 	}
 
 	/**
@@ -261,6 +220,10 @@ public class FritzBoxFirmware {
 		}
 
 		if (!detected ) throw new InvalidFirmwareException();
+		// get DSL-MAC:
+		String mac = JFritzUtils.fetchDataFromURL(
+				urlstr,
+				POSTDATA_QUERY + "&var%3Acnt=1&var%3An0=env%3Asettings/macdsl", true).trim(); //$NON-NLS-1$
 
 		// Modded firmware: data = "> FRITZ!Box Fon WLAN, <span
 		// class=\"Dialoglabel\">Modified-Firmware </span>08.03.37mod-0.55
@@ -279,7 +242,7 @@ public class FritzBoxFirmware {
 					modFirmwareVersion + " " +
 					language);
 			return new FritzBoxFirmware(boxtypeString, majorFirmwareVersion,
-					minorFirmwareVersion, modFirmwareVersion, language);
+					minorFirmwareVersion, modFirmwareVersion, language, mac);
 		} else {
 			System.err.println("detectFirmwareVersion: Password wrong?"); //$NON-NLS-1$
 			throw new WrongPasswordException(
@@ -292,6 +255,13 @@ public class FritzBoxFirmware {
 	 */
 	public final byte getBoxType() {
 		return boxtype;
+	}
+
+	/**
+	 * @return Returns mac address of dsl port.
+	 */
+	public final String getMacAddress() {
+		return macAddress;
 	}
 
 	/**

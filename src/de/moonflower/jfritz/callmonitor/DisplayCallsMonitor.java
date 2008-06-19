@@ -38,9 +38,11 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
     	if ( call.getPhoneNumber() != null )
     	{
     		person = PhoneBook.searchFirstAndLastNameToPhoneNumber(call.getPhoneNumber().getAreaNumber());
-            displayCallInMsg(call.getPhoneNumber().getAreaNumber(), call.getRoute(), call.getPort(), person);
+            Debug.msg("Displaying call in message...");
+            displayCallInMsg(call, call.getPhoneNumber().getAreaNumber(), call.getRoute(), call.getPort(), person);
     	} else {
-            displayCallInMsg(null, call.getRoute(), call.getPort(), person);
+            Debug.msg("Displaying call in message...");
+            displayCallInMsg(call, null, call.getRoute(), call.getPort(), person);
     	}
     }
 
@@ -56,8 +58,8 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
      * @param called
      *            Called number
      */
-    public void displayCallInMsg(String caller, String called, String port, Person person) {
-        displayCallInMsg(caller, called, "", port, person); //$NON-NLS-1$
+    public void displayCallInMsg(Call call, String caller, String called, String port, Person person) {
+        displayCallInMsg(call, caller, called, "", port, person); //$NON-NLS-1$
     }
 
     /**
@@ -70,7 +72,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
      * @param name
      *            Known name (only YAC)
      */
-    public void displayCallInMsg(String callerInput, String calledInput, String name, String port, Person person) {
+    public void displayCallInMsg(Call call, String callerInput, String calledInput, String name, String port, Person person) {
 
         Debug.msg("Caller: " + callerInput); //$NON-NLS-1$
         Debug.msg("Called: " + calledInput); //$NON-NLS-1$
@@ -149,7 +151,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
             }
             case 1: { // Popup
             	CallMessageDlg callMsgDialog = new CallMessageDlg();
-            	callMsgDialog.showIncomingCall(callerstr, calledstr, name, portstr, person);
+            	callMsgDialog.showIncomingCall(call, callerstr, calledstr, name, portstr, person);
             	break;
             }
             case 2: { // Balloon

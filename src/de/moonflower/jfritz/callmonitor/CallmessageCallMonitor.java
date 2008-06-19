@@ -96,7 +96,7 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
                      }
                      // TODO: add Call to CallMonitorList and display it only, if number is not in ignoreMSN-List
                      Person person = PhoneBook.searchFirstAndLastNameToPhoneNumber(number);
-                     dcm.displayCallInMsg(number, msn, "", person);  //$NON-NLS-1$
+                     dcm.displayCallInMsg(null, number, msn, "", person);  //$NON-NLS-1$
                      // Alter Callmessagemonitor
                 } else if (msg.startsWith("@")) {  //$NON-NLS-1$
 					// Call
@@ -136,7 +136,7 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
 					}
                     // TODO: add Call to CallMonitorList and display it only, if number is not in ignoreMSN-List
                     Person person = PhoneBook.searchFirstAndLastNameToPhoneNumber(number);
-                    dcm.displayCallInMsg(number, msn, "", person);  //$NON-NLS-1$
+                    dcm.displayCallInMsg(null, number, msn, "", person);  //$NON-NLS-1$
 					//JFritz.getCallMonitorList().displayCallInMsg(number, msn, name);
 				} else {
 					// Message

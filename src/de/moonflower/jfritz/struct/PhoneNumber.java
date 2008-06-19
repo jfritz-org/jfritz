@@ -64,6 +64,8 @@ public class PhoneNumber implements Comparable, Serializable {
 
 	private String flagFileName = "";
 
+	private String country = "";
+
 	private String Description = "";
 
 	private String countryCode = "";
@@ -183,6 +185,7 @@ public class PhoneNumber implements Comparable, Serializable {
 					value = worldFlagMap.get(number.substring(1,i)).split(";");
 					countryCode = "+" + number.substring(1,i);
 					flagFileName = value[0];
+					country = value[1];
 					Description = value[1];
 					break;
 				}
@@ -397,7 +400,7 @@ public class PhoneNumber implements Comparable, Serializable {
 	 * @return True if number is a FreeCall number
 	 */
 	public boolean isFreeCall() {
-		boolean ret = number.startsWith("0800") || number.startsWith(INT_FREECALL); //$NON-NLS-1$
+		boolean ret = number.startsWith("+49800") || number.startsWith(INT_FREECALL); //$NON-NLS-1$
 		if (ret && getType().equals("")) //$NON-NLS-1$
 			type = "business"; //$NON-NLS-1$
 		return ret;
@@ -468,6 +471,9 @@ public class PhoneNumber implements Comparable, Serializable {
 			return false;
 	}
 
+	public String getCountry() {
+		return country;
+	}
 
 	/**
 	 *

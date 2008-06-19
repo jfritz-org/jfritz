@@ -14,6 +14,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,8 +31,8 @@ public class JFritzUtils {
 
     public static final String FILESEP = System.getProperty("file.separator");			//$NON-NLS-1$
     public static final String PATHSEP = System.getProperty("path.separator");			//$NON-NLS-1$
-	public static final String binID = FILESEP + "jfritz.jar";								//$NON-NLS-1$
-
+	public static final String binID = FILESEP + "jfritz.jar";							//$NON-NLS-1$
+    public static final String rootID = FILESEP;										//$NON-NLS-1$
 	/**
 	 * This constant can be used to search for the lang-directory.
 	 * @see #getFullPath(String)

@@ -16,6 +16,7 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -168,12 +169,12 @@ public class FritzBox {
 		try {
 
 			//avoid trying to access the box if running as a client
-			if(Main.getProperty("network.type", "0").equals("2")
+			if (Main.getProperty("network.type", "0").equals("2")
 					&& Boolean.parseBoolean(Main.getProperty("option.clientCallList", "false"))){
 
 				Debug.netMsg("JFritz is running as a client and using call list from server, canceling firmware detection");
 
-			}else{
+			} else {
 				firmware = FritzBoxFirmware.detectFirmwareVersion(
 						box_address,
 						box_password,

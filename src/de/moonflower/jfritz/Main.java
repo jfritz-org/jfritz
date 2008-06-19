@@ -177,6 +177,13 @@
  * - Bugfix: Erstellen eines neuen Eintrags für einen unbekannten Anruf.
  * - Bugfix: Multiple-Instance check.
  * - Neu: Neue Anzeige von eingehenden Anrufen.
+ * - Neu: Neue Statusbar. Unter anderem Anzeige vom Fortschritt der Inverssuche.
+ * - Neu: Anrufsimulator
+ * - Neu: Land wird zu jeder Telefonnummer mit abgespeichert.
+ * - Neu: Bestimmung der MAC-Adresse, um FRITZ!Boxen zu unterscheiden.
+ * - Bugfix: Beim Doppelklick in der Anrufliste wird der korrekte Telefonbucheintrag angezeigt.
+ * - Bugfix: Inverssuche für viele Rufnummern korrigiert.
+ * - Neu: Splash-Screen
  *
  * Strings:
  * 	allow_client_deletelist
@@ -187,8 +194,10 @@
  *  picture_desc
  *  picture_files
  *  show_picture_column
- *
- *
+ *  accept_fritzbox_communication
+ *  new_fritzbox
+ *  set_default_fritzbox
+ *  show_on_google_maps
  *
  * JFritz 0.7.0.1
  * - Funktioniert nun wieder mit Java 1.5
@@ -783,7 +792,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.7.1"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.109 2008/06/07 13:04:16 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.110 2008/06/19 17:42:18 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -872,6 +881,9 @@ public class Main implements LookupObserver {
 	 *
 	 */
 	public static void main(String[] args) {
+		SplashScreen splash = new SplashScreen();
+		splash.setVersion("v" + Main.PROGRAM_VERSION);
+		splash.setStatus("Initializing JFritz...");
 		already_done_shutdown = false;
 		Main main = new Main(args);
 		main.initiateCLIParameters();
@@ -879,11 +891,13 @@ public class Main implements LookupObserver {
 		main.checkDebugParameters(args);
 
 		// load supported languages
+		splash.setStatus("Loading supported languages...");
 		loadLanguages();
 
 		// Weitere Initialisierung
 		loadSaveDir();
 
+		splash.setStatus("Loading properties...");
 		loadProperties();
 
     	Debug.msg("OS Language: " + System.getProperty("user.language"));
@@ -908,16 +922,64 @@ public class Main implements LookupObserver {
 
 		saveUpdateProperties();
 
+		splash.setStatus("Initializing main application...");
 		jfritz = new JFritz(main);
 
-		main.checkCLIParameters(args);
-		boolean createGui = main.checkInstanceControl();
+		int result = 0;
+		jfritz.initNumbers();
+		splash.setStatus("Initializing Fritz!Box..");
+		result = jfritz.initFritzBox();
+		if (result == 0)
+		{
+			splash.setStatus("Loading SIP provider...");
+			jfritz.initSipProvider();
+		}
+		if (result == 0)
+		{
+			splash.setStatus("Loading quick dials...");
+			jfritz.initQuickDials();
+		}
+		if (result == 0)
+		{
+			splash.setStatus("Loading caller list and phonebook...");
+			jfritz.initCallerListAndPhoneBook();
+		}
+		if (result == 0)
+		{
+			splash.setStatus("Initializing call monitor...");
+			jfritz.initCallMonitor();
+		}
+		if (result == 0)
+		{
+			splash.setStatus("Initializing Client/Server...");
+			jfritz.initClientServer();
+		}
+		if (result == 0)
+		{
+			splash.setStatus("Setting default look and feel...");
+			jfritz.initLookAndFeel();
+		}
+		if (result == 0)
+		{
+			main.checkCLIParameters(args);
+		}
+		if (result == 0)
+		{
+			boolean createGui = main.checkInstanceControl();
 
-		if ( createGui ) {
-			jfritz.createJFrame(showConfWizard);
+			if ( createGui ) {
+				splash.setStatus("Creating GUI");
+				jfritz.createJFrame(showConfWizard);
+			}
 		}
 
+		splash.dispose();
 		Debug.msg("Main is now exiting...");
+		if (result != 0)
+		{
+			main.exit(-1);
+		}
+
 	}
 
 	/**

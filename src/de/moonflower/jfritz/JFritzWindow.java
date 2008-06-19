@@ -35,10 +35,12 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
@@ -67,6 +69,7 @@ import de.moonflower.jfritz.callmonitor.YACCallMonitor;
 import de.moonflower.jfritz.dialogs.config.ConfigDialog;
 import de.moonflower.jfritz.dialogs.quickdial.QuickDialPanel;
 import de.moonflower.jfritz.dialogs.simple.AddressPasswordDialog;
+import de.moonflower.jfritz.dialogs.simple.CallMessageDlg;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.dialogs.stats.StatsDialog;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
@@ -110,6 +113,12 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	private JProgressBar progressbar;
 
+	private StatusBarPanel mainStatusPanel;
+
+	private StatusBar statusBar;
+
+	private JLabel mainStatusBar;
+
 	private boolean isretrieving = false;
 
 	private JTabbedPane tabber;
@@ -143,6 +152,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		Debug.msg("Create JFritz-GUI"); //$NON-NLS-1$
 		maxBounds = null;
 		createGUI();
+    	CallMessageDlg callMsgDialog = new CallMessageDlg();
+    	callMsgDialog.showIncomingCall(null, "", "", "", "", null);
+    	callMsgDialog.close();
+    	callMsgDialog.dispose();
 		thisWindow = this;
 		this.addComponentListener(new ComponentListener() {
 
@@ -215,12 +228,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				"true")) { //$NON-NLS-1$
 			startChosenCallMonitor();
 		}
-		setStatus();
 	}
 
 	private void createGUI() throws WrongPasswordException {
 		setTitle(Main.PROGRAM_NAME);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+		statusBar = createStatusBar2();
 
 		addKeyListener(KeyEvent.VK_F5, "F5"); //$NON-NLS-1$
 
@@ -252,7 +266,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			public void stateChanged(ChangeEvent e) {
 				if (tabber.getTitleAt(tabber.getSelectedIndex()).equals(
 						Main.getMessage("callerlist"))) { //$NON-NLS-1$
-					setStatus();
+					callerListPanel.setStatus();
 				} else if (tabber.getTitleAt(tabber.getSelectedIndex()).equals(
 						Main.getMessage("phonebook"))) { //$NON-NLS-1$
 					phoneBookPanel.setStatus();
@@ -272,7 +286,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(createMainToolBar(), BorderLayout.NORTH);
 		getContentPane().add(tabber, BorderLayout.CENTER);
-		getContentPane().add(createStatusBar(), BorderLayout.SOUTH);
+		JPanel statusPanels = new JPanel();
+		statusPanels.setLayout(new BorderLayout());
+//		statusPanels.add(createStatusBar(), BorderLayout.CENTER);
+		statusPanels.add(statusBar, BorderLayout.SOUTH);
+		getContentPane().add(statusPanels, BorderLayout.SOUTH);
 		JFritz.getCallerList().fireTableDataChanged();
 		JFritz.getCallerList().fireTableStructureChanged();
 		String ask = Main.getProperty("jfritz.password", Encryption //$NON-NLS-1$
@@ -330,6 +348,19 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		progressbar.setValue(0);
 		progressbar.setStringPainted(true);
 		return progressbar;
+	}
+
+	/**
+	 * Create the StatusBar
+	 */
+	public StatusBar createStatusBar2() {
+		statusBar = new StatusBar();
+		mainStatusPanel = new StatusBarPanel(1);
+		mainStatusBar = new JLabel("");
+		mainStatusPanel.add(mainStatusBar);
+		mainStatusPanel.setVisible(false);
+		statusBar.registerDynamicStatusPanel(mainStatusPanel);
+		return statusBar;
 	}
 
 	/**
@@ -793,7 +824,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 				public void finished() {
 					setBusy(false);
-					setStatus();
 					JFritz.getCallerList().fireTableStructureChanged();
 					isretrieving = false;
 					if (Main.getProperty("option.lookupAfterFetch", "false") //$NON-NLS-1$,  //$NON-NLS-2$
@@ -804,6 +834,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 						else
 							JFritz.getCallerList().reverseLookup(false, false);
 					}
+					setStatus("");
 //					interrupt();
 				}
 			};
@@ -980,14 +1011,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		int duration = JFritz.getCallerList().getTotalDuration();
 		int hours = duration / 3600;
 		int mins = duration % 3600 / 60;
-		String status = Main
-				.getMessage("telephone_entries").replaceAll("%N", Integer.toString(JFritz.getCallerList().getRowCount())) + ", " //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-				+ Main.getMessage("total_duration") + ": " + hours + "h " //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-				+ mins + " min " + " (" + duration / 60 + " min)"; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-		;
-		if (progressbar != null) {
-			progressbar.setString(status);
-		}
+		callerListPanel.updateStatusBar(false);
 	}
 
 
@@ -995,10 +1019,17 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * Sets text in the status bar
 	 * @param status
 	 */
-	void setStatus(String status) {
+	public void setStatus(String status) {
 		if (status.equals("")) {
+			mainStatusBar.setText("");
+			mainStatusPanel.setVisible(false);
+			callerListPanel.updateStatusBar(false);
+			statusBar.refresh();
 			setStatus();
 		} else {
+			mainStatusPanel.setVisible(true);
+			mainStatusBar.setText(status);
+			statusBar.refresh();
 			if (progressbar != null) {
 				progressbar.setString(status);
 			}
@@ -1020,7 +1051,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 							"option.callMonitorType", "0")) > 0)); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 		menu.setEnabled(!busy);
-		progressbar.setIndeterminate(busy);
+		if ( progressbar != null )
+		{
+			progressbar.setIndeterminate(busy);
+		}
 		if (busy) {
 			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		} else {
@@ -1035,7 +1069,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * @param busy
 	 */
 	public void setLookupBusy(boolean busy){
-		progressbar.setIndeterminate(busy);
+		if ( progressbar != null )
+		{
+			progressbar.setIndeterminate(busy);
+		}
 	}
 
 	/**
@@ -1855,4 +1892,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		}
 	}
 
+	public StatusBar getStatusBar()
+	{
+		return statusBar;
+	}
 }
