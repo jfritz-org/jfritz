@@ -6,7 +6,6 @@ package de.moonflower.jfritz.dialogs.simple;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.BorderLayout;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.Dimension;
 
@@ -16,7 +15,6 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
@@ -28,9 +26,17 @@ import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.HTMLUtil;
 import de.moonflower.jfritz.utils.JFritzUtils;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupAustria;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupGermany;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookupTurkey;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookupUnitedStates;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Timer;
@@ -47,10 +53,11 @@ public class CallMessageDlg extends JDialog implements ActionListener{
 	private Timer timer;
 	private HideTimer task;
 	private String os_file = "file:";
-	private String HTML_HEAD = "";
 	private String langPath = "";
 	private JEditorPane callInLabel;
     private URL imageWorldPath, imagePhonePath, imageHomePath, imageFreeCallPath, imageMobilePath, googlePath;
+    private String template = "";
+    private int imageWidth, imageHeight;
 
 	public CallMessageDlg()
 	{
@@ -58,8 +65,8 @@ public class CallMessageDlg extends JDialog implements ActionListener{
 	    addWindowListener(new WindowCloseHandle(this));
 		if (System.getProperty("os.name").equals("Linux"))
 			os_file += "/";
-		HTML_HEAD = "<head>" + "<link rel=STYLESHEET TYPE=\"text/css\" HREF=\""+ os_file +
-		JFritzUtils.getFullPath(JFritzUtils.rootID) + "css/ru_blue.css"+ "\"></head>";
+		template = loadTemplate(JFritzUtils.getFullPath(JFritzUtils.rootID) + "css/template.html");
+
 		langPath = JFritzUtils.getFullPath(JFritzUtils.langID);
 		imageWorldPath = getClass().getResource("/de/moonflower/jfritz/resources/images/world.png"); //$NON-NLS-1$
 		imagePhonePath = getClass().getResource("/de/moonflower/jfritz/resources/images/phone.png"); //$NON-NLS-1$
@@ -124,127 +131,156 @@ public class CallMessageDlg extends JDialog implements ActionListener{
 			}
 		});
 
-		Debug.msg("Determine name, street and city...");
-		String nameStr = "",
-			   streetStr = "",
-			   cityStr = "",
-			   flagPath = "",
-			   country = "",
-			   countryStr = "",
-			   google = "",
-			   dateStr = "",
-			   timeStr = "";
-		URL phoneIcon;
+		String message = template;
 		if ( person != null )
 		{
-			nameStr =  "<td id=\"name\" height=\"" + "10" + "\">" + person.getFullname() + "</td>";
-			streetStr = "<td id=\"inv_strasse\" class=\"inv\">" + person.getStreet() + "</td></tr><tr>";
-			cityStr = "<td id=\"inv_ort\" class=\"inv\">" + person.getPostalCode() + " " + person.getCity() + "</td></tr><tr>";
-		}
-
-		Debug.msg("Determine country and flag...");
-		phoneIcon = imageHomePath;
-		if ((call != null) && (call.getPhoneNumber() != null) && (call.getPhoneNumber().getIntNumber().length() > 6))
-		{
-			PhoneNumber number = call.getPhoneNumber();
-			SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy"); //$NON-NLS-1$
-			dateStr = df.format(call.getCalldate());
-			df = new SimpleDateFormat("HH:mm"); //$NON-NLS-1$
-			timeStr = df.format(call.getCalldate());
-			country = number.getCountry();
-			if (!number.getFlagFileName().equals(""))
+			message = message.replaceAll("%FIRSTNAME%", person.getFirstName());
+			message = message.replaceAll("%LASTNAME%", person.getLastName());
+			message = message.replaceAll("%COMPANY%", person.getCompany());
+			message = message.replaceAll("%STREET%", person.getStreet());
+			message = message.replaceAll("%POSTALCODE%", person.getPostalCode());
+			message = message.replaceAll("%CITY%", person.getCity());
+			if ( !person.getPictureUrl().equals("") )
 			{
-				flagPath = os_file + langPath + JFritzUtils.FILESEP + "flags" + JFritzUtils.FILESEP+ number.getFlagFileName();
+				URL imageURL;
+				try {
+					imageURL = new URL(os_file + person.getPictureUrl());
+					String htmlStr = "<img src=\"" + imageURL.toString() + "\" height=\"%HEIGHT%\" width=\"%WIDTH%\">";
+					htmlStr = htmlStr.replaceAll("%HEIGHT%", Integer.toString(imageHeight));
+					htmlStr = htmlStr.replaceAll("%WIDTH%", Integer.toString(imageWidth));
+					message = message.replaceAll("%IMAGE%", htmlStr);
+					} catch (MalformedURLException e) {
+					e.printStackTrace();
+				}
 			}
 			else
 			{
-				flagPath = "";
-				country = "Unknown country";
-			}
-
-			String countryCode = Main.getProperty("country.code", "+49");
-			if(number.isLocalCall()){
-				phoneIcon = imageHomePath;
-			}else if(number.isFreeCall()){
-				phoneIcon = imageFreeCallPath;
-			}else if (number.getIntNumber().startsWith(countryCode)){
-				if(number.isMobile()){
-					phoneIcon = imageMobilePath;
-				} else {
-					phoneIcon = imagePhonePath;
-				}
-			}
-
-			String loc = Main.getProperty("locale", "en_US");
-			String googleLink = "http://maps.google.com/maps?f=q&hl="+ loc.substring(0, 2) +"&q=";
-			String city = "";
-			if ( person != null )
-			{
-				googleLink += HTMLUtil.stripEntities(person.getStreet())+",+";
-				city = person.getCity();
-
-				if ( city.replaceAll(" ", "").equals(""))
-				{
-					if(number.getCountryCode().equals("+49"))
-					{
-						googleLink += HTMLUtil.stripEntities(ReverseLookupGermany.getCity(number.getAreaNumber()))+",+";
-					}
-					if(number.getCountryCode().equals("+43"))
-					{
-						googleLink += HTMLUtil.stripEntities(ReverseLookupAustria.getCity(number.getAreaNumber()))+",+";
-					}
-				}
-				googleLink += HTMLUtil.stripEntities(city) + ",+";
-				googleLink += HTMLUtil.stripEntities(number.getCountry());
-				google = "<tr><td id=\"google\"><a border=\"0\" href='" + googleLink + "'><img src=\"" + googlePath + "\"></a></td></tr>";
+				message = message.replaceAll("%IMAGE%", "");
 			}
 		}
-
-		if ( country.equals("Unknown country"))
+		else
 		{
-			countryStr = "<td id=\"inv_land\" class=\"inv\"><img src=\""+ imageWorldPath +"\">&nbsp;&nbsp;" + country + "</td></tr>";
-			google = "";
-		} else {
-			countryStr = "<td id=\"inv_land\" class=\"inv\"><img src=\""+ flagPath +"\">&nbsp;&nbsp;" + country + "</td></tr>";
+			message = message.replaceAll("%FIRSTNAME%", "");
+			message = message.replaceAll("%LASTNAME%", "");
+			message = message.replaceAll("%COMPANY%", "");
+			message = message.replaceAll("%STREET%", "");
+			message = message.replaceAll("%POSTALCODE%", "");
+			message = message.replaceAll("%CITY%", "");
+			message = message.replaceAll("%IMAGE%", "");
 		}
 
-		Debug.msg("Setting text message...");
-		String textToDisplay = "<html>" + HTML_HEAD + "<body><div id=\"divU\" " +
-//				"height=\"" + "300" + "\" width=\"" +"300" +
-				"><table id=\"tabU\">" +
-				"<tr><td id=\"datetime\" height=\"10\">" + dateStr + " " + timeStr + "</td></tr>" +
-				"<tr>" + "<td id=\"called\" height=\"" + "10" + "\">" + calledstr + "</td></tr>" +
-				"<tr>" + nameStr + "</tr>" +
-				"<tr>" + "<td id=\"number\" height=\"" + "10" + "\"><img src=\""+ phoneIcon+"\">&nbsp;&nbsp;" + callerstr+ "</td></tr>" +
-				"<tr><td id=\"inv_name\" class=\"inv\">" + name + "</td></tr><tr>" +
-				streetStr +
-				cityStr +
-				countryStr +
-				google +
-				"</table></div>" +
-				"</body></html>";
-		Debug.msg(textToDisplay);
-//		BrowserLaunch.openURL(JFritz.DOCUMENTATION_URL);
+		if ( call != null )
+		{
+			message = message.replaceAll("%CALLED%", call.getRoute());
+			SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy"); //$NON-NLS-1$
+			message = message.replaceAll("%DATE%", df.format(call.getCalldate()));
+			df = new SimpleDateFormat("HH:mm:ss"); //$NON-NLS-1$
+			message = message.replaceAll("%TIME%", df.format(call.getCalldate()));
+			PhoneNumber number = call.getPhoneNumber();
+			if ( call.getPhoneNumber() != null )
+			{
+				message = message.replaceAll("%COUNTRY%", number.getCountry());
+				if (!number.getFlagFileName().equals(""))
+				{
+					try {
+						URL flagURL = new URL(os_file + langPath + JFritzUtils.FILESEP + "flags" + JFritzUtils.FILESEP+ number.getFlagFileName());
+						message = message.replaceAll("%FLAG%", "<img src=\"" + flagURL.toString() + "\">");
+					} catch (MalformedURLException e) {
+						e.printStackTrace();
+					}
+				}
+				else
+				{
+					message = message.replaceAll("%FLAG%", "<img src=\"" + imageWorldPath.toString() + "\">");
+					message = message.replaceAll("%COUNTRY%", Main.getMessage("unknown_country"));
+				}
 
-		callInLabel.setText(textToDisplay);
+				String countryCode = Main.getProperty("country.code", "+49");
+				URL phoneIcon = imageHomePath;
+				if(number.isLocalCall()){
+					phoneIcon = imageHomePath;
+					message = message.replaceAll("%NUMBER%", call.getPhoneNumber().getAreaNumber());
+				}else if(number.isFreeCall()){
+					phoneIcon = imageFreeCallPath;
+					message = message.replaceAll("%NUMBER%", call.getPhoneNumber().getAreaNumber());
+				}else if (number.getIntNumber().startsWith(countryCode)){
+					if(number.isMobile()){
+						phoneIcon = imageMobilePath;
+						message = message.replaceAll("%NUMBER%", call.getPhoneNumber().getAreaNumber());
+					} else {
+						phoneIcon = imagePhonePath;
+						message = message.replaceAll("%NUMBER%", call.getPhoneNumber().getFullNumber());
+					}
+				}else{
+					message = message.replaceAll("%NUMBER%", call.getPhoneNumber().getFullNumber());
+				}
+				message = message.replaceAll("%PHONEICON%", "<img src=\"" + phoneIcon.toString() + "\">");
+
+				String loc = Main.getProperty("locale", "en_US");
+				String googleLink = "http://maps.google.com/maps?f=q&hl="+ loc.substring(0, 2) +"&q=";
+				String city = "";
+				if ( person != null )
+				{
+					googleLink += HTMLUtil.stripEntities(person.getStreet())+",+";
+					city = person.getCity();
+
+					if ( city.replaceAll(" ", "").equals(""))
+					{
+						if(number.getCountryCode().equals(ReverseLookup.GERMANY_CODE))
+						{
+							googleLink += HTMLUtil.stripEntities(ReverseLookupGermany.getCity(number.getAreaNumber()))+",+";
+						}
+						if(number.getCountryCode().equals(ReverseLookup.AUSTRIA_CODE))
+						{
+							googleLink += HTMLUtil.stripEntities(ReverseLookupAustria.getCity(number.getAreaNumber()))+",+";
+						}
+						if(number.getCountryCode().equals(ReverseLookup.USA_CODE))
+						{
+							googleLink += HTMLUtil.stripEntities(ReverseLookupUnitedStates.getCity(number.getAreaNumber()))+",+";
+						}
+						if(number.getCountryCode().equals(ReverseLookup.TURKEY_CODE))
+						{
+							googleLink += HTMLUtil.stripEntities(ReverseLookupTurkey.getCity(number.getAreaNumber()))+",+";
+						}
+					}
+					googleLink += HTMLUtil.stripEntities(city) + ",+";
+					googleLink += HTMLUtil.stripEntities(number.getCountry());
+					message = message.replaceAll("%GOOGLE%", "<a border=\"0\" href='" + googleLink + "'><img src=\"" + googlePath + "\"></a>");
+				}
+				else
+				{
+					message = message.replaceAll("%GOOGLE%", "");
+				}
+			}
+			else
+			{
+				message = message.replaceAll("%NUMBER%", "");
+				message = message.replaceAll("%FLAG%", "");
+				message = message.replaceAll("%COUNTRY%", "");
+				message = message.replaceAll("%PHONEICON%", "");
+				message = message.replaceAll("%GOOGLE%", "");
+			}
+		}
+		else
+		{
+			message = message.replaceAll("%CALLED%", "");
+			message = message.replaceAll("%NUMBER%", "");
+			message = message.replaceAll("%DATE%", "");
+			message = message.replaceAll("%TIME%", "");
+			message = message.replaceAll("%FLAG%", "");
+			message = message.replaceAll("%COUNTRY%", "");
+			message = message.replaceAll("%PHONEICON%", "");
+			message = message.replaceAll("%GOOGLE%", "");
+		}
+
+		message = message.replaceAll("<td></td>", "");
+		Debug.msg(message);
+		callInLabel.setText(message);
 		mainPane.add(callInLabel);
 
 		getContentPane().add(mainPane, BorderLayout.CENTER);
 
 		Debug.msg("Display message...");
-		pack();
-		Debug.msg("Showing icon...");
-		if ( person != null )
-		{
-			if ( !person.getPictureUrl().equals("") )
-			{
-				ImageIcon boxicon = new ImageIcon(person.getPictureUrl());
-				Image scaledImage = boxicon.getImage().getScaledInstance(-1, mainPane.getHeight(), Image.SCALE_SMOOTH);
-				JLabel label = new JLabel(new ImageIcon(scaledImage));
-				label.setIconTextGap(0);
-				getContentPane().add(label, BorderLayout.WEST);
-			}
-		}
 		pack();
 		Dimension screenDim = Toolkit.getDefaultToolkit().getScreenSize();
 		int posXDefault = (screenDim.width / 2) - (this.getWidth() / 2);
@@ -263,6 +299,7 @@ public class CallMessageDlg extends JDialog implements ActionListener{
 		this.setLocation(xPos, yPos);
 		setVisible(true);
 		toFront();
+		pack();
 		Debug.msg("Should be displayed...");
 	}
 
@@ -284,6 +321,63 @@ public class CallMessageDlg extends JDialog implements ActionListener{
 		Main.setStateProperty("callmessenger.popup.xpos", currentXPos);
 		Main.setStateProperty("callmessenger.popup.ypos", currentYPos);
 	}
+
+	public String loadTemplate(String filename)
+	{
+		Debug.msg("Loading template " + filename + " ... ");
+		imageWidth = 100;
+		imageHeight = 150;
+		String template = "";
+		try {
+			String line = "";
+			BufferedReader test =
+				 new BufferedReader(new FileReader(filename));
+			while ( null != (line = test.readLine()))
+			{
+				if ( line.contains("#imagewidth"))
+				{
+					String[] linesplit = line.split(":");
+					if ( linesplit.length == 2)
+					{
+						String command = linesplit[0];
+						String pixel = linesplit[1];
+						command = command.replaceAll(" ","");
+						command = command.replaceAll("\t","");
+						pixel = pixel.replaceAll(" ","");
+						pixel = pixel.replaceAll("\t","");
+						imageWidth = Integer.parseInt(pixel);
+					} else {
+						Debug.msg("Error in parsing popup-template! Wrong syntax: Use #imagewidth:100 and #imageheight:150 to set width of the picture to 100 and height to 150!");
+					}
+				} else if ( line.contains("#imageheight"))
+				{
+					String[] linesplit = line.split(":");
+					if ( linesplit.length == 2)
+					{
+						String command = linesplit[0];
+						String pixel = linesplit[1];
+						command = command.replaceAll(" ","");
+						command = command.replaceAll("\t","");
+						pixel = pixel.replaceAll(" ","");
+						pixel = pixel.replaceAll("\t","");
+						imageHeight = Integer.parseInt(pixel);
+					} else {
+						Debug.msg("Error in parsing popup-template! Wrong syntax: Use #imagewidth:100 and #imageheight:150 to set width of the picture to 100 and height to 150!");
+					}
+				}
+				template += line;
+			}
+			Debug.msg("Loding template done!");
+		} catch (FileNotFoundException e) {
+			//@todo error message or load default style
+			Debug.err("Template not found! " + e.toString());
+		} catch (IOException e) {
+			//@todo error message or load default style
+			Debug.err("IOException! " + e.toString());
+		}
+		return template;
+	}
+
 
 	/**
 	 * Hide dialog after timeout

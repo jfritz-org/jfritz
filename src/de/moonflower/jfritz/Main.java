@@ -183,7 +183,9 @@
  * - Neu: Bestimmung der MAC-Adresse, um FRITZ!Boxen zu unterscheiden.
  * - Bugfix: Beim Doppelklick in der Anrufliste wird der korrekte Telefonbucheintrag angezeigt.
  * - Bugfix: Inverssuche für viele Rufnummern korrigiert.
- * - Neu: Splash-Screen
+ * - Neu: Splash-Screen.
+ * - Neu: Alle Inverssuche-Seiten aus Klingeling hinzugefügt.
+ * - Bugfix: Suche nach der Stadt anhand der Vorwahl für die Türkei, USA, Österreich und Deutschland
  *
  * Strings:
  * 	allow_client_deletelist
@@ -792,7 +794,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.7.1"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.110 2008/06/19 17:42:18 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.111 2008/06/20 08:41:30 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

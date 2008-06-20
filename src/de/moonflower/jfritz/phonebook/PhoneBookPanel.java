@@ -84,11 +84,12 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 
 	private JSplitPane splitPane;
 
-	private JButton resetButton;
 
 	private JPopupMenu popupMenu;
-	private JTextField searchFilter;
 	private JFritzWindow parentFrame;
+	public JButton resetButton;
+	public JTextField searchFilter;
+	public JToggleButton privateFilter;
 
 	private PhoneBook phonebook;
 	private StatusBarController statusBarController = new StatusBarController();
@@ -210,14 +211,14 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		//toolBar.addSeparator();
 		//toolBar.addSeparator();
 
-		JToggleButton tb = new JToggleButton(getImage("addbook_grey.png"), true); //$NON-NLS-1$
-		tb.setSelectedIcon(getImage("addbook.png")); //$NON-NLS-1$
-		tb.setActionCommand("filter_private"); //$NON-NLS-1$
-		tb.addActionListener(this);
-		tb.setToolTipText(Main.getMessage("private_entry")); //$NON-NLS-1$
-		tb.setSelected(JFritzUtils.parseBoolean(Main.getStateProperty(
+		privateFilter = new JToggleButton(getImage("addbook_grey.png"), true); //$NON-NLS-1$
+		privateFilter.setSelectedIcon(getImage("addbook.png")); //$NON-NLS-1$
+		privateFilter.setActionCommand("filter_private"); //$NON-NLS-1$
+		privateFilter.addActionListener(this);
+		privateFilter.setToolTipText(Main.getMessage("private_entry")); //$NON-NLS-1$
+		privateFilter.setSelected(JFritzUtils.parseBoolean(Main.getStateProperty(
 				"filter_private", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		toolBar.add(tb);
+		toolBar.add(privateFilter);
 
 		//toolBar.addSeparator();
 		toolBar.addSeparator();

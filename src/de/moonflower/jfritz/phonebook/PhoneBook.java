@@ -51,6 +51,10 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.reverselookup.LookupObserver;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookupAustria;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookupGermany;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookupTurkey;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookupUnitedStates;
 
 public class PhoneBook extends AbstractTableModel implements LookupObserver {
 	private static final long serialVersionUID = 1;
@@ -1385,23 +1389,33 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 
     public static Person searchFirstAndLastNameToPhoneNumber(String caller) {
     	Vector<Person> persons = new Vector<Person>();
-        PhoneNumber callerPhoneNumber = new PhoneNumber(caller);
+        PhoneNumber callerPhoneNumber = new PhoneNumber(caller, false);
         Debug.msg("Searching in local database for number "+caller+" ..."); //$NON-NLS-1$
         Person person = JFritz.getPhonebook().findPerson(callerPhoneNumber);
         if (person != null) {
             Debug.msg("Found in local database: " + person.getLastName() + ", " + person.getFirstName()); //$NON-NLS-1$,  //$NON-NLS-2$
         } else {
-            Debug.msg("Searching on dastelefonbuch.de ..."); //$NON-NLS-1$
+            Debug.msg("Searching on internet ..."); //$NON-NLS-1$
             person = ReverseLookup.busyLookup(callerPhoneNumber);
             if (!person.getFullname().equals("")) { //$NON-NLS-1$
                 Debug
-                        .msg("Found on dastelefonbuch.de: " + person.getLastName() + ", " + person.getFirstName()); //$NON-NLS-1$,  //$NON-NLS-2$
+                        .msg("Found on internet: " + person.getLastName() + ", " + person.getFirstName()); //$NON-NLS-1$,  //$NON-NLS-2$
                 Debug.msg("Add person to database"); //$NON-NLS-1$
                 persons.add(person);
             } else {
                 person = new Person();
-                person.addNumber(new PhoneNumber(caller));
+                person.addNumber(callerPhoneNumber);
+                String city = "";
                 Debug.msg("Found no person"); //$NON-NLS-1$
+    			if(callerPhoneNumber.getCountryCode().equals(ReverseLookup.GERMANY_CODE))
+    				city = ReverseLookupGermany.getCity(callerPhoneNumber.getIntNumber());
+    			else if(callerPhoneNumber.getCountryCode().equals(ReverseLookup.AUSTRIA_CODE))
+    				city = ReverseLookupAustria.getCity(callerPhoneNumber.getIntNumber());
+    			else if(callerPhoneNumber.getCountryCode().startsWith(ReverseLookup.USA_CODE))
+    				city = ReverseLookupUnitedStates.getCity(callerPhoneNumber.getIntNumber());
+    			else if(callerPhoneNumber.getCountryCode().startsWith(ReverseLookup.TURKEY_CODE))
+    				city = ReverseLookupTurkey.getCity(callerPhoneNumber.getIntNumber());
+    			person.setCity(city);
                 Debug.msg("Add dummy person to database"); //$NON-NLS-1$
                 persons.add(person);
             }

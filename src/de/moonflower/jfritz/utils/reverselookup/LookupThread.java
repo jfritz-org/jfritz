@@ -379,7 +379,7 @@ public class LookupThread extends Thread {
 									if(number.getCountryCode().equals(ReverseLookup.GERMANY_CODE))
 										city = ReverseLookupGermany.getCity(nummer);
 									else if(number.getCountryCode().equals(ReverseLookup.AUSTRIA_CODE))
-										city = ReverseLookupGermany.getCity(nummer);
+										city = ReverseLookupAustria.getCity(nummer);
 									else if(number.getCountryCode().startsWith(ReverseLookup.USA_CODE))
 										city = ReverseLookupUnitedStates.getCity(nummer);
 									else if(number.getCountryCode().startsWith(ReverseLookup.TURKEY_CODE))
@@ -416,7 +416,7 @@ public class LookupThread extends Thread {
 				if(number.getCountryCode().equals(ReverseLookup.GERMANY_CODE))
 					city = ReverseLookupGermany.getCity(nummer);
 				else if(number.getCountryCode().equals(ReverseLookup.AUSTRIA_CODE))
-					city = ReverseLookupGermany.getCity(nummer);
+					city = ReverseLookupAustria.getCity(nummer);
 				else if(number.getCountryCode().startsWith(ReverseLookup.USA_CODE))
 					city = ReverseLookupUnitedStates.getCity(nummer);
 				else if(number.getCountryCode().startsWith(ReverseLookup.TURKEY_CODE))
@@ -431,6 +431,15 @@ public class LookupThread extends Thread {
 			Debug.msg("No reverse lookup sites for: "+number.getCountryCode());
 			newPerson = new Person();
 			newPerson.addNumber(number.getAreaNumber(), "home");
+			if(number.getCountryCode().equals(ReverseLookup.GERMANY_CODE))
+				city = ReverseLookupGermany.getCity(number.getIntNumber());
+			else if(number.getCountryCode().equals(ReverseLookup.AUSTRIA_CODE))
+				city = ReverseLookupAustria.getCity(number.getIntNumber());
+			else if(number.getCountryCode().startsWith(ReverseLookup.USA_CODE))
+				city = ReverseLookupUnitedStates.getCity(number.getIntNumber());
+			else if(number.getCountryCode().startsWith(ReverseLookup.TURKEY_CODE))
+				city = ReverseLookupTurkey.getCity(number.getIntNumber());
+			newPerson.setCity(city);
 		}
 
 		return newPerson;

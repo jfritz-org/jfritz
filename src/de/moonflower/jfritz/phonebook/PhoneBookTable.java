@@ -16,12 +16,14 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.TableCellRenderer;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.CallCellEditor;
 import de.moonflower.jfritz.cellrenderer.CallTypeDateCellRenderer;
 import de.moonflower.jfritz.cellrenderer.MultiLineCellRenderer;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
  * @author Arno Willig
@@ -129,7 +131,11 @@ public class PhoneBookTable extends JTable implements KeyListener{
 	}
 
 	public void showAndSelectPerson(Person person) {
+		String filterText = parentPanel.searchFilter.getText();
+		parentPanel.resetButton.doClick();
+		phonebook.updateFilter();
 		int index = phonebook.getFilteredPersons().indexOf(person);
 		showAndSelectRow(index);
+		parentPanel.searchFilter.setText(filterText);
 	}
 }
