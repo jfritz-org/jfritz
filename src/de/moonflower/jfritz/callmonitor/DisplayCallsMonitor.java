@@ -27,9 +27,11 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
     	if ( call.getPhoneNumber() != null )
     	{
     		person = PhoneBook.searchFirstAndLastNameToPhoneNumber(call.getPhoneNumber().getAreaNumber());
-            displayCallOutMsg(call.getPhoneNumber().getAreaNumber(), call.getRoute(), call.getPort(), person);
+            Debug.msg("Displaying call out message...");
+            displayCallOutMsg(call, call.getPhoneNumber().getAreaNumber(), call.getRoute(), call.getPort(), person);
     	} else {
-          displayCallOutMsg(null, call.getRoute(), call.getPort(), person);
+    	  Debug.msg("Displaying call out message...");
+          displayCallOutMsg(call, null, call.getRoute(), call.getPort(), person);
     	}
     }
 
@@ -151,7 +153,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
             }
             case 1: { // Popup
             	CallMessageDlg callMsgDialog = new CallMessageDlg();
-            	callMsgDialog.showIncomingCall(call, callerstr, calledstr, name, portstr, person);
+            	callMsgDialog.showIncomingCall(call, callerstr, calledstr, person);
             	break;
             }
             case 2: { // Balloon
@@ -230,7 +232,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
      * @param called
      *            Called number
      */
-    public void displayCallOutMsg(String calledInput, String providerInput, String port, Person person) {
+    public void displayCallOutMsg(Call call, String calledInput, String providerInput, String port, Person person) {
         Debug.msg("Called: " + calledInput); //$NON-NLS-1$
         Debug.msg("Provider: " + providerInput); //$NON-NLS-1$
         Debug.msg("Port: " + port); //$NON-NLS-1$
@@ -272,20 +274,6 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 
         if (calledstr.startsWith("+49"))calledstr = "0" + calledstr.substring(3); //$NON-NLS-1$,  //$NON-NLS-2$
 
-        String outstring = Main.getMessage("outgoing_call") + "\n " //$NON-NLS-1$,  //$NON-NLS-2$
-                + Main.getMessage("to") + " " + calledstr; //$NON-NLS-1$,  //$NON-NLS-2$
-        if (!name.equals(Main.getMessage("unknown")))outstring += " (" + name + ")\n "; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-        else
-            outstring += "\n "; //$NON-NLS-1$
-        outstring += Main.getMessage("through_provider") + " " + providerstr; //$NON-NLS-1$,  //$NON-NLS-2$
-
-        JFritz.infoMsg(outstring);
-
-        if (JFritzUtils.parseBoolean(Main.getProperty("option.playSounds", //$NON-NLS-1$
-                "true"))) { //$NON-NLS-1$
-            JFritz.playSound(JFritz.getCallSound());
-        }
-
 		if (port.equals("4")) //$NON-NLS-1$
 			portstr = "ISDN"; //$NON-NLS-1$
 		else if (port.equals("0")) //$NON-NLS-1$
@@ -308,6 +296,38 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 			portstr = ""; //$NON-NLS-1$
 		else
 			portstr = port;
+
+        Debug.msg("Provider: " + providerstr); //$NON-NLS-1$
+        Debug.msg("Called: " + calledstr); //$NON-NLS-1$
+        Debug.msg("Name: " + name); //$NON-NLS-1$
+        Debug.msg("Port: " + portstr); //$NON-NLS-1$
+
+        switch (Integer.parseInt(Main.getProperty("option.popuptype", "1"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+            case 0 : { // No Popup
+                break;
+            }
+            case 1: { // Popup
+            	CallMessageDlg callMsgDialog = new CallMessageDlg();
+            	callMsgDialog.showOutgoingCall(call, providerstr, calledstr, person);
+            	break;
+            }
+            case 2: { // Balloon
+                String outstring = Main.getMessage("outgoing_call") + "\n " //$NON-NLS-1$,  //$NON-NLS-2$
+                	+ Main.getMessage("to") + " " + calledstr; //$NON-NLS-1$,  //$NON-NLS-2$
+                if (!name.equals(Main.getMessage("unknown")))outstring += " (" + name + ")\n "; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+                else
+                	outstring += "\n "; //$NON-NLS-1$
+                outstring += Main.getMessage("through_provider") + " " + providerstr; //$NON-NLS-1$,  //$NON-NLS-2$
+
+		        JFritz.infoMsg(outstring);
+		        break;
+            }
+        }
+
+        if (JFritzUtils.parseBoolean(Main.getProperty("option.playSounds", //$NON-NLS-1$
+                "true"))) { //$NON-NLS-1$
+            JFritz.playSound(JFritz.getCallSound());
+        }
 
         if (JFritzUtils.parseBoolean(Main.getProperty(
                 "option.startExternProgram", "false"))) { //$NON-NLS-1$,  //$NON-NLS-2$

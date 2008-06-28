@@ -153,7 +153,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		maxBounds = null;
 		createGUI();
     	CallMessageDlg callMsgDialog = new CallMessageDlg();
-    	callMsgDialog.showIncomingCall(null, "", "", "", "", null);
+    	callMsgDialog.showIncomingCall(null, "", "", null);
     	callMsgDialog.close();
     	callMsgDialog.dispose();
 		thisWindow = this;

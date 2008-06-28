@@ -286,6 +286,11 @@ public class LookupThread extends Thread {
 										}
 										String[] split = str.split(" ", 2); //$NON-NLS-1$
 
+										if (split[0].equals("onmouseover=\"\""))
+										{
+											split = split[1].split(" ", 2);
+										}
+
 										lastname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(split[0]));
 										if (split.length > 1) {
 											firstname = " " + HTMLUtil.stripEntities(split[1]); //$NON-NLS-1$

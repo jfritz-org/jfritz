@@ -332,7 +332,7 @@ public class ReverseLookup {
 				Debug.err(e.getLocalizedMessage());
 			}
 		} catch (IOException e) {
-			Debug.err("Could not read number/international/reverselookup.xml! No reverse lookup sites loaded!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.err("Could not read number/international/reverselookup.xml! No reverse lookup sites loaded!" + e.getMessage()); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 

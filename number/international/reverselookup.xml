@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- reverselookup.xml revision 1.02 from 10, Jun 2007 
+<!-- reverselookup.xml revision 1.03 from 20, Jun 2008
 
 	 The syntax of this file is fairly self-explanatory
      However, a few things need to be said. First and foremost
@@ -911,7 +911,7 @@
 			<entry>
 				<name>&lt;span\sclass=.txtTitleBlack.&gt;([^&lt;]*)&lt;</name>
 				<street>&lt;span\sclass=.txtTitleBlack.&gt;(?:[^&gt;]*&gt;){3}([^&lt;]*)&lt;</street>
-				<city>&lt;span\sclass=.txtTitleBlack.&gt;(?:[^&gt;]*&gt;){5}Panamá\s-\s([^&lt;]*)&lt;</city>
+				<city>&lt;span\sclass=.txtTitleBlack.&gt;(?:[^&gt;]*&gt;){5}Panam%e1\s-\s([^&lt;]*)&lt;</city>
 				<zipcode>()</zipcode>
 			</entry>
 		</website>
@@ -941,7 +941,7 @@
 			<entry>
 				<name>&lt;span\sclass=.txtTitleBlack.&gt;([^&lt;]*)&lt;</name>
 				<street>&lt;span\sclass=.txtTitleBlack.&gt;(?:[^&gt;]*&gt;){3}([^&lt;]*)&lt;</street>
-				<city>&lt;span\sclass=.txtTitleBlack.&gt;(?:[^&gt;]*&gt;){5}México\s-\s([^&lt;]*)&lt;</city>
+				<city>&lt;span\sclass=.txtTitleBlack.&gt;(?:[^&gt;]*&gt;){5}M%e9xico\s-\s([^&lt;]*)&lt;</city>
 				<zipcode>()</zipcode>
 			</entry>
 		</website>
@@ -1030,8 +1030,8 @@
 		<website name="guiaslatinas.com.py" url="http://www.guiaslatinas.com.py/apag.php?mod=2&amp;ciu=0&amp;tel=$NUMBER" prefix="">
 			<entry>
 				<name>&lt;span\sclass=resul&gt;([^&lt;]*)&lt;(?:[^&gt;]*?&gt;){10}[^\(]*\(0$AREACODE\)</name>
-				<street>&lt;b&gt;Dirección\s?:&lt;/b&gt;&lt;br&gt;([^&lt;]*)&lt;br&gt;[^\(]*\(0$AREACODE\)</street>
-				<city>&lt;b&gt;Dirección\s?:&lt;/b&gt;&lt;br&gt;[^&lt;]*&lt;br&gt;([^\(]*)\(0$AREACODE\)</city>
+				<street>&lt;b&gt;Direcci%f3n\s?:&lt;/b&gt;&lt;br&gt;([^&lt;]*)&lt;br&gt;[^\(]*\(0$AREACODE\)</street>
+				<city>&lt;b&gt;Direcci%f3n\s?:&lt;/b&gt;&lt;br&gt;[^&lt;]*&lt;br&gt;([^\(]*)\(0$AREACODE\)</city>
 				<zipcode>()</zipcode>
 			</entry>
 		</website>

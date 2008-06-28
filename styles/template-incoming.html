@@ -1,0 +1,135 @@
+<html>
+	<head>
+	<style>
+		#imagewidth:-1
+		#imageheight:240
+		html,body {
+			height:100%;
+			margin:0px;
+			padding:0px;
+		}
+		body {
+			background-color:#002d91;
+		}
+		table {
+			margin:0px;
+			padding:0px;
+			width:100%;
+			table-layout:fixed;
+			white-space:nowrap;
+		}
+		tr {
+			margin:0px;
+			padding:0px;
+		}
+		td {
+			margin:0px;
+			margin-right:1px;
+			margin-left:3px;
+			padding-left:5px;
+			overflow:hidden;
+		}
+		#called {
+			font-size:14pt;
+			font-family:Arial;
+			font-weight:bold;
+			color:#000000;
+			background-color:#ffffce;
+			margin-top:3px;
+			padding-left:5px;
+		}
+		#name {
+			font-size:20pt;
+			font-family:Arial;
+			font-weight:bold;
+			color:#ffffce;
+			background-color:#002d91;
+		}
+		#number {
+			font-size:20pt;
+			font-family:Arial;
+			font-weight:bold;
+			color:#ffffce;
+			background-color:#002d91;
+			padding-bottom:5px;
+		}
+		#datetime {
+			margin:0px;
+			padding:0px;
+			text-align:right;
+			font-size:14pt;
+			font-family:Arial;
+			font-weight:bold;
+			color:#ffffce;
+			background-color:#002d91;
+			margin-top:3px;
+		}
+		#status {
+			font-size:12pt;
+			font-family:Arial;
+			font-weight:bold;
+			color:#000000;
+			background-color:#ffffce;
+			margin-top:0px;
+			margin-bottom:0px;
+		}
+		#google {
+			margin:0px;
+			padding:0px;
+			text-align:right;
+			font-size:14pt;
+			font-family:Arial;
+			font-weight:bold;
+			color:#ffffce;
+			background-color:#002d91;
+			margin-top:3px;}
+		.inv {
+			font-size:14pt;
+			font-family:Arial;
+			font-weight:bold;
+			color:#000000;
+			background-color:#c6d4e1;
+			padding-top:0px;
+			padding-left:5px;
+			padding-right:5px;
+		}
+		#inv_name {
+			padding-top:5px;
+			margin-top:0px;
+		}
+		#inv_strasse {
+		}
+		#inv_ort {
+		}
+		#inv_land {
+			padding-top:5px;
+			margin-bottom:0px;
+			padding-bottom:9px;
+		}
+	</style>
+	</head>
+
+	<body>
+		<div>
+			<table>
+			<tr>
+				<td>%IMAGE%</td>
+				<td>
+					<div>
+			          <div id="datetime">%DATE% %TIME%</div>
+			          <div id="called">%CALLED%</div>
+			          <div id="name">%FIRSTNAME% %LASTNAME%</div>
+			          <div id="number">%PHONEICON%&nbsp;%NUMBER%</div>
+			          <div class="inv" id="inv_name">%FIRSTNAME% %LASTNAME%</div>
+			          <div class="inv" id="inv_company">%COMPANY%</div>
+			          <div class="inv" id="inv_strasse">%STREET%</div>
+			          <div class="inv" id="inv_ort">%POSTALCODE% %CITY%</div>
+			          <div class="inv" id="inv_land">%FLAG%&nbsp;%COUNTRY%</div>
+			          <div id="google">%GOOGLE%</div>
+					</div>
+				</td>
+			</tr>
+			</table>
+		</div>
+	</body>
+</html>

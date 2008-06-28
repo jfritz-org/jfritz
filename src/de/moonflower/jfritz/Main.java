@@ -142,6 +142,7 @@
  * - Zentrieren des Wizards
  * - Popup trotz fehlender Inverssuche
  * - Überprüfen, ob Internetüberwachung auch mit neueren Firmwares geht
+ * - Popup am Bildschirmrand andocken.
  * TODO-END
  *
  * FIXME:
@@ -200,6 +201,8 @@
  *  new_fritzbox
  *  set_default_fritzbox
  *  show_on_google_maps
+ *  dialog_title_callin // New syntax
+ *  dialog_title_callout // New syntax
  *
  * JFritz 0.7.0.1
  * - Funktioniert nun wieder mit Java 1.5
@@ -794,7 +797,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.7.1"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.111 2008/06/20 08:41:30 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.112 2008/06/28 08:35:26 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

@@ -121,9 +121,9 @@
 			</fileset>
 		</copy>
 
-		<!-- copy css files -->
-		<copy todir="${dist}/css">
-			<fileset dir="css">
+		<!-- copy styles files -->
+		<copy todir="${dist}/styles">
+			<fileset dir="styles">
 			</fileset>
 		</copy>
 
