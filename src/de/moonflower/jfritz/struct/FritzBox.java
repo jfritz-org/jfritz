@@ -515,7 +515,7 @@ public class FritzBox {
 				newEntries = JFritz.getCallerList().importFromCSVFile(reader);
 				Debug.msg("Finished processing response");
 
-				// close the reader and the cocket connection
+				// close the reader and the socket connection
 				reader.close();
 				urlConn.getInputStream().close();
 

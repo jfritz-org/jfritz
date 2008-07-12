@@ -187,6 +187,7 @@
  * - Neu: Splash-Screen.
  * - Neu: Alle Inverssuche-Seiten aus Klingeling hinzugefügt.
  * - Bugfix: Suche nach der Stadt anhand der Vorwahl für die Türkei, USA, Österreich und Deutschland
+ * - Neu: Fortschrittsanzeige beim Abholen der Anrufliste
  *
  * Strings:
  * 	allow_client_deletelist
@@ -797,7 +798,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.7.1"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.112 2008/06/28 08:35:26 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.113 2008/07/12 22:18:21 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

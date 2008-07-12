@@ -47,6 +47,7 @@ import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.phonebook.PhoneBook;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
+import de.moonflower.jfritz.struct.IProgressListener;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.CopyFile;
@@ -116,11 +117,13 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 
 	private Vector<CallFilter> filters;
 
-	private Vector<CallerListListener> listeners;
+	private Vector<CallerListListener> callListListeners;
 
 	private boolean sortDirection = false;
 
 	private PhoneBook phonebook;
+
+	private Vector<IProgressListener> progressListeners;
 
 	/**
 	 * CallerList Constructor new contrustor, using binary sizes
@@ -137,7 +140,9 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 		filters = new Vector<CallFilter>();
 
 		newCalls = new Vector<Call>(32);
-		listeners = new Vector<CallerListListener>();
+		callListListeners = new Vector<CallerListListener>();
+
+		progressListeners = new Vector<IProgressListener>();
 
 		sortColumn = 1;
 	}
@@ -148,7 +153,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 	 * @param l the listener to be added
 	 */
 	public synchronized void addListener(CallerListListener l){
-		listeners.add(l);
+		callListListeners.add(l);
 	}
 
 	/**
@@ -158,7 +163,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 	 * @param l the listener to be removed
 	 */
 	public synchronized void removeListener(CallerListListener l){
-		listeners.remove(l);
+		callListListeners.remove(l);
 	}
 
 	/**
@@ -508,7 +513,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 
 			unfilteredCallerData.setElementAt(newCall, index);
 
-			for(CallerListListener listener: listeners)
+			for(CallerListListener listener: callListListeners)
 				listener.callsUpdated(oldCall, newCall);
 
 			update();
@@ -643,7 +648,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 		// update the call list and then sort it
 		unfilteredCallerData.addAll(newCalls);
 
-		for(CallerListListener l: listeners)
+		for(CallerListListener l: callListListeners)
 			l.callsAdded((Vector<Call>) newCalls.clone());
 
 		newCalls.clear();
@@ -796,7 +801,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 		updated.setComment(comment);
 
 		//Remove the old copy at each client
-		for(CallerListListener listener: listeners)
+		for(CallerListListener listener: callListListeners)
 			listener.callsUpdated(original, updated);
 
 	}
@@ -1092,7 +1097,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 			}
 
 			//notify all listeners that calls have been removed
-			for(CallerListListener l: listeners)
+			for(CallerListListener l: callListListeners)
 				l.callsRemoved((Vector) removedCalls.clone());
 
 			saveToXMLFile(Main.SAVE_DIR + JFritz.CALLS_FILE, true);
@@ -1187,6 +1192,12 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 				Debug.msg("CSV-Header: " + line);
 			}
 
+			for(IProgressListener listener: progressListeners)
+			{
+				listener.setMin(0);
+				listener.setMax(400);
+			}
+
 			// check if we have a correct header
 			if (line.equals(EXPORT_CSV_FORMAT_JFRITZ)
 					|| line.equals(EXPORT_CSV_FORMAT_FRITZBOX)
@@ -1239,8 +1250,16 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 					} else if (addEntry(c)) {
 						newEntries++;
 					}
+					for(IProgressListener listener: progressListeners)
+					{
+						listener.setProgress(linesRead);
+					}
 				}
 
+				for(IProgressListener listener: progressListeners)
+				{
+					listener.finished();
+				}
 				Debug.msg(linesRead + " Lines read from csv file ");
 				Debug.msg(newEntries + " New entries processed");
 
@@ -2191,4 +2210,13 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 		return filteredCallerData.elementAt(row);
 	}
 
+	public void registerProgressListener(IProgressListener listener)
+	{
+		progressListeners.add(listener);
+	}
+
+	public void unregisterProgressListener(IProgressListener listener)
+	{
+		progressListeners.remove(listener);
+	}
 }

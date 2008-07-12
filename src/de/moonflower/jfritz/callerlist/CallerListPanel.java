@@ -31,6 +31,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -60,6 +61,7 @@ import de.moonflower.jfritz.callerlist.filter.SipFilter;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.phonebook.PhoneBookPanel;
 import de.moonflower.jfritz.struct.Call;
+import de.moonflower.jfritz.struct.IProgressListener;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.struct.ReverseLookupSite;
@@ -74,7 +76,7 @@ import de.moonflower.jfritz.utils.threeStateButton.ThreeStateButton;
  * @author marc
  */
 public class CallerListPanel extends JPanel implements ActionListener,
-		KeyListener, PropertyChangeListener {
+		KeyListener, PropertyChangeListener, IProgressListener {
 
 	class PopupListener extends MouseAdapter {
 		JPopupMenu popupMenu;
@@ -238,11 +240,12 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	private JMenu reverseMenu;
 
 	private StatusBarPanel callerListStatusBar;
-
 	private JLabel callsLabel;
 	private JLabel durationLabel;
 	private int numSelectedCalls = 0;
 	private double durationSelectedCalls = 0;
+	private StatusBarPanel progressStatusBar;
+	private JProgressBar progressBar;
 
 	/**
 	 * A callerListPanel is a view for a callerlist, it has its own
@@ -267,6 +270,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		add(createToolBar(), BorderLayout.NORTH);
 		add(createCallerListTable(), BorderLayout.CENTER);
 		registerStatusBar();
+		callerList.registerProgressListener(this);
 	}
 
 	public void setPhoneBookPanel(PhoneBookPanel phoneBookPanel){
@@ -1392,13 +1396,22 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	{
 		callerListStatusBar = new StatusBarPanel(1);
 		Border border = LineBorder.createGrayLineBorder();
-		callsLabel = new JLabel("Calls");
+		callsLabel = new JLabel("");
 		callsLabel.setBorder(border);
 		durationLabel = new JLabel();
 		durationLabel.setBorder(border);
 		callerListStatusBar.add(callsLabel);
 		callerListStatusBar.add(durationLabel);
 		jFrame.getStatusBar().registerFixStatusPanel(callerListStatusBar);
+
+		progressStatusBar = new StatusBarPanel(2);
+		progressBar = new JProgressBar();
+		progressStatusBar.add(progressBar);
+		progressBar.setToolTipText("Importing calls...");
+		progressBar.setName("Importing calls ...");
+		progressBar.setVisible(false);
+		progressStatusBar.setVisible(false);
+		jFrame.getStatusBar().registerDynamicStatusPanel(progressStatusBar);
 	}
 
 	public void setSelectedCallsInfo(int numSelectedCalls, double durationSelectedCalls)
@@ -1449,5 +1462,32 @@ public class CallerListPanel extends JPanel implements ActionListener,
 						+ mins + " min " + " (" + duration / 60 + " min) "); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 			}
 		}
+	}
+
+	public void setMax(int max) {
+		progressBar.setValue(0);
+		progressBar.setMaximum(max);
+		progressBar.setVisible(true);
+		progressStatusBar.setVisible(true);
+		jFrame.getStatusBar().refresh();
+	}
+
+	public void setMin(int min) {
+		progressBar.setValue(0);
+		progressBar.setMinimum(min);
+		progressBar.setVisible(true);
+		progressStatusBar.setVisible(true);
+		jFrame.getStatusBar().refresh();
+	}
+
+	public void setProgress(int progress) {
+		progressBar.setValue(progress);
+		jFrame.getStatusBar().refresh();
+	}
+
+	public void finished() {
+		progressBar.setVisible(false);
+		progressStatusBar.setVisible(false);
+		jFrame.getStatusBar().refresh();
 	}
 }
