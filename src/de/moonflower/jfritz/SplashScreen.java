@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class SplashScreen extends JFrame {
@@ -65,29 +66,35 @@ public class SplashScreen extends JFrame {
 
 	public void setStatus(String status)
 	{
+		Debug.msg(status);
 		statusBar.setText("   " +status);
 	}
 
 	public class BackgroundPanel extends JPanel {
+		private static final long serialVersionUID = 5679129084605163733L;
 		private Image img ;
 		public BackgroundPanel(String background) {
 			setLayout( new BorderLayout() ) ;
 			img = new ImageIcon( background ).getImage() ;
 			if( img == null ) {
-				System.out.println( "Image is null" );
+				System.err.println( "Image is null" );
 			}
 			if( img.getHeight(this) <= 0 || img.getWidth( this ) <= 0 ) {
-				System.out.println( "Image width or height must be positive" );
+				System.err.println( "Image width or height must be positive" );
+				img = null;
 			}
 		}
 		public void drawBackground( Graphics g ) {
-			int w = getWidth() ;
-			int h = getHeight() ;
-			int iw = img.getWidth( this ) ;
-			int ih = img.getHeight( this ) ;
-			for( int i = 0 ; i < w ; i+=iw ) {
-				for( int j = 0 ; j < h ; j+= ih ) {
-					g.drawImage( img , i , j , this ) ;
+			if (img != null)
+			{
+				int w = getWidth() ;
+				int h = getHeight() ;
+				int iw = img.getWidth( this ) ;
+				int ih = img.getHeight( this ) ;
+				for( int i = 0 ; i < w ; i+=iw ) {
+					for( int j = 0 ; j < h ; j+= ih ) {
+						g.drawImage( img , i , j , this ) ;
+					}
 				}
 			}
 		}

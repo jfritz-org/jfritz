@@ -25,6 +25,8 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
 
     protected Socket clientSocket;
 
+    private boolean running;
+
     // wird benutzt, um X Sekunden lang zu warten
     protected Random zufallszahl;
 
@@ -43,6 +45,7 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
                     + JFritz.getFritzBox().getAddress() + ":1012"); //$NON-NLS-1$,  //$NON-NLS-2$
             clientSocket = new Socket(JFritz.getFritzBox().getAddress(), 1012); //$NON-NLS-1$
             clientSocket.setKeepAlive(true);
+            running = true;
             return true;
         } catch (UnknownHostException uhe) {
             Debug.msg("Unknown host exception: " + uhe.toString()); //$NON-NLS-1$
@@ -63,7 +66,7 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
             in = new BufferedReader(new InputStreamReader(clientSocket
                     .getInputStream()));
             String currentLine;
-            while (!isInterrupted()) {
+            while (running) {
                 // lese nächste Nachricht ein
                 currentLine = in.readLine();
                 parseOutput(currentLine);
@@ -80,6 +83,7 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
         try {
             if (clientSocket != null)
                 clientSocket.close();
+            running = false;
             this.interrupt();
         } catch (IOException e) {
             System.err.println(e);

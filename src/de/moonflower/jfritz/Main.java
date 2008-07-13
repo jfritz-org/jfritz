@@ -798,7 +798,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_VERSION = "0.7.1"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.113 2008/07/12 22:18:21 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.114 2008/07/13 13:01:21 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -1054,8 +1054,7 @@ public class Main implements LookupObserver {
 			case 'l': //$NON-NLS-1$
 				String logFilename = option.getParameter();
 				if (logFilename == null || logFilename.equals("")) { //$NON-NLS-1$
-					System.err.println(getMessage("parameter_not_found")); //$NON-NLS-1$
-					exit(0);
+					Debug.logToFile("Debuglog.txt");
 				} else {
 					Debug.logToFile(logFilename);
 					break;

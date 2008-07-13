@@ -10,6 +10,7 @@ import java.awt.Toolkit;
 import java.awt.Dimension;
 
 import javax.swing.JEditorPane;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -47,7 +48,7 @@ import java.util.TimerTask;
  * @author rob
  */
 
-public class CallMessageDlg extends JDialog implements ActionListener{
+public class CallMessageDlg extends JFrame implements ActionListener{
 	private static final long serialVersionUID = 1;
 
 	private Timer timer;
