@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -32,6 +33,8 @@ import javax.swing.KeyStroke;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callmonitor.SyslogCallMonitor;
+import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
+import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.network.Telnet;
@@ -158,7 +161,18 @@ public class SyslogConfigDialog extends CallMonitorConfigDialog {
 				}
 				if (e.getActionCommand().equals("restartSyslog")) { //$NON-NLS-1$
 					Telnet telnet = new Telnet();
-					telnet.connect();
+					try {
+						telnet.connect();
+					} catch (WrongPasswordException e1) {
+						JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+						Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+					} catch (IOException e1) {
+						JFritz.errorMsg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
+						Debug.errDlg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
+					} catch (InvalidFirmwareException e1) {
+						JFritz.errorMsg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
+						Debug.errDlg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
+					}
 					if (telnet.isConnected()) {
 						SyslogCallMonitor.restartSyslogOnFritzBox(telnet, Main.getProperty("option.syslogclientip", //$NON-NLS-1$
 										"192.168.178.21")); //$NON-NLS-1$
@@ -173,7 +187,18 @@ public class SyslogConfigDialog extends CallMonitorConfigDialog {
 				}
 				if (e.getActionCommand().equals("restartTelefon")) { //$NON-NLS-1$
 					Telnet telnet = new Telnet();
-					telnet.connect();
+					try {
+						telnet.connect();
+					} catch (WrongPasswordException e1) {
+						JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+						Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+					} catch (IOException e1) {
+						JFritz.errorMsg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
+						Debug.errDlg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
+					} catch (InvalidFirmwareException e1) {
+						JFritz.errorMsg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
+						Debug.errDlg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
+					}
 					if (telnet.isConnected()) {
 						if (SyslogCallMonitor.restartTelefonOnFritzBox(telnet) == JOptionPane.YES_OPTION) {
 							JFritz.infoMsg(Main.getMessage("telefond_restart_successfully")); //$NON-NLS-1$

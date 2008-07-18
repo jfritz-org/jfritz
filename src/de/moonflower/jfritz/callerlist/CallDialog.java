@@ -13,6 +13,8 @@ import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
@@ -29,9 +31,12 @@ import javax.swing.KeyStroke;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
+import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.NoticeDialog;
 
 /**
@@ -200,21 +205,28 @@ public class CallDialog extends JDialog implements ActionListener {
 	 */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("call")) { //$NON-NLS-1$
+			try {
+	            Main.setProperty("calldialog.lastport", Integer.toString(port.getSelectedIndex()));
 
-            Main.setProperty("calldialog.lastport", Integer.toString(port.getSelectedIndex()));
+				if (cboNumber.getClass().toString().equals(
+						"class javax.swing.JTextField")) //$NON-NLS-1$
+				{
+					NetworkStateMonitor.doCall(((JTextField) cboNumber).getText(), port.getSelectedItem().toString());
+				}
+				if (cboNumber.getClass().toString().equals(
+						"class javax.swing.JComboBox")) //$NON-NLS-1$
+				{
+					NetworkStateMonitor.doCall(((JComboBox) cboNumber).getSelectedItem().toString(), port.getSelectedItem().toString());
+				}
 
-			if (cboNumber.getClass().toString().equals(
-					"class javax.swing.JTextField")) //$NON-NLS-1$
-			{
-				NetworkStateMonitor.doCall(((JTextField) cboNumber).getText(), port.getSelectedItem().toString());
+				setVisible(false);
+			} catch (WrongPasswordException e1) {
+				JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+				Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+			} catch (IOException e1) {
+				JFritz.errorMsg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
+				Debug.errDlg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
 			}
-			if (cboNumber.getClass().toString().equals(
-					"class javax.swing.JComboBox")) //$NON-NLS-1$
-			{
-				NetworkStateMonitor.doCall(((JComboBox) cboNumber).getSelectedItem().toString(), port.getSelectedItem().toString());
-			}
-
-			setVisible(false);
 		} else if (e.getActionCommand().equals("close")) { //$NON-NLS-1$
 			Main.setProperty("calldialog.lastport", Integer.toString(port.getSelectedIndex()));
 			setVisible(false);

@@ -147,14 +147,26 @@ public class FritzBox {
 
 	private final static int NUMBER = 3;
 
-	public FritzBox ( String address, String password, String port) {
+	public FritzBox ( String address, String password, String port, Exception exc) {
 		box_address = address;
 		box_password = password;
 		box_port = port;
-		detectFirmware();
+		exc = null;
+		try {
+			detectFirmware();
+		} catch (WrongPasswordException e) {
+			exc = e;
+			Debug.msg(Main.getMessage("box.wrong_password"));
+		} catch (InvalidFirmwareException e) {
+			exc = e;
+			Debug.msg(Main.getMessage("box.address_wrong"));
+		} catch (IOException e) {
+			exc = e;
+			Debug.msg(Main.getMessage("box.address_wrong"));
+		}
 	}
 
-	public void updateSettings() {
+	public void updateSettings() throws WrongPasswordException, InvalidFirmwareException, IOException {
 		box_address = Main.getProperty("box.address","192.168.178.1");
 		box_password = Encryption.decrypt(Main.getProperty("box.password",Encryption.encrypt("")));
 		box_port = Main.getProperty("box.port","80");
@@ -165,8 +177,7 @@ public class FritzBox {
 	 * Detects firmware version
 	 * @return
 	 */
-	public void detectFirmware() {
-		try {
+	public void detectFirmware() throws WrongPasswordException, InvalidFirmwareException, IOException {
 
 			//avoid trying to access the box if running as a client
 			if (Main.getProperty("network.type", "0").equals("2")
@@ -180,13 +191,6 @@ public class FritzBox {
 						box_password,
 						box_port);
 			}
-		} catch (WrongPasswordException e) {
-			Debug.msg(Main.getMessage("box.wrong_password"));
-		} catch (InvalidFirmwareException e) {
-			Debug.msg(Main.getMessage("box.address_wrong"));
-		} catch (IOException e) {
-			Debug.msg(Main.getMessage("box.address_wrong"));
-		}
 	}
 
 	/**
@@ -609,114 +613,74 @@ public class FritzBox {
 		return list;
 	}
 
-	public boolean checkValidFirmware() {
-		while (firmware == null) {
-			try {
-				firmware = FritzBoxFirmware.detectFirmwareVersion(
-								box_address,
-								box_password,
-								box_port);
-				return true;
-			} catch (WrongPasswordException e) {
-				String new_box_password = JFritz.getJframe().showPasswordDialog("");
-				if (new_box_password == null) // Canceled dialog
-					return false;
-				else {
-					box_password = new_box_password;
-				}
-			} catch (InvalidFirmwareException e) {
-				String new_box_address = JFritz.getJframe().showAddressDialog(box_address);
-				if (new_box_address == null) { // Dialog canceled
-					return false;
-				} else {
-					box_address = new_box_address;
-				}
-			} catch (IOException e) {
-				String new_box_address = JFritz.getJframe().showAddressDialog(box_address);
-				if (new_box_address == null) { // Dialog canceled
-					return false;
-				} else {
-					box_address = new_box_address;
-				}
-			}
-		}
+	public boolean checkValidFirmware() throws WrongPasswordException, InvalidFirmwareException, IOException {
+		firmware = FritzBoxFirmware.detectFirmwareVersion(
+						box_address,
+						box_password,
+						box_port);
 		return true;
 	}
 
 	/**
 	 * Sends login data to FritzBox
 	 */
-	public void login() {
-		try {
-			String postdata = POSTDATA_LOGIN.replaceAll("\\$PASSWORT", //$NON-NLS-1$
-					URLEncoder.encode(box_password, "ISO-8859-1"));
+	public void login() throws WrongPasswordException, IOException {
+		String postdata = POSTDATA_LOGIN.replaceAll("\\$PASSWORT", //$NON-NLS-1$
+				URLEncoder.encode(box_password, "ISO-8859-1"));
 
-			postdata = firmware.getAccessMethod() + postdata;
+		postdata = firmware.getAccessMethod() + postdata;
 
-			String urlstr = "http://" //$NON-NLS-1$
-					+ box_address + ":" + box_port
-					+ "/cgi-bin/webcm"; //$NON-NLS-1$
-			fetchDataFromURL(urlstr, postdata, true);
-		} catch (UnsupportedEncodingException uee) {
-			//TODO handle Exceptions
-		} catch (WrongPasswordException wpe) {
-			//TODO handle Exceptions
-		} catch (IOException ioe) {
-			//TODO handle Exceptions
-		}
+		String urlstr = "http://" //$NON-NLS-1$
+				+ box_address + ":" + box_port
+				+ "/cgi-bin/webcm"; //$NON-NLS-1$
+		fetchDataFromURL(urlstr, postdata, true);
 	}
 
-	public void doCall(String number, String port) {
-		try {
-			login();
-			number = number.replaceAll("\\+", "00"); //$NON-NLS-1$,  //$NON-NLS-2$
+	public void doCall(String number, String port) throws WrongPasswordException, IOException {
+		login();
+		number = number.replaceAll("\\+", "00"); //$NON-NLS-1$,  //$NON-NLS-2$
 
-			String portStr = ""; //$NON-NLS-1$
-			if (port.equals("Fon 1")) { //$NON-NLS-1$
-				portStr = "1"; //$NON-NLS-1$
-			} else if (port.equals("Fon 2")) { //$NON-NLS-1$
-				portStr = "2"; //$NON-NLS-1$
-			} else if (port.equals("Fon 3")) { //$NON-NLS-1$
-				portStr = "3"; //$NON-NLS-1$
-			} else if (port.equals(Main.getMessage("analog_telephones_all"))) { //$NON-NLS-1$
-				portStr = "9"; //$NON-NLS-1$
-			} else if (port.equals("ISDN Alle")) { //$NON-NLS-1$
-				portStr = "50"; //$NON-NLS-1$
-			} else if (port.equals("ISDN 1")) { //$NON-NLS-1$
-				portStr = "51"; //$NON-NLS-1$
-			} else if (port.equals("ISDN 2")) { //$NON-NLS-1$
-				portStr = "52"; //$NON-NLS-1$
-			} else if (port.equals("ISDN 3")) { //$NON-NLS-1$
-				portStr = "53"; //$NON-NLS-1$
-			} else if (port.equals("ISDN 4")) { //$NON-NLS-1$
-				portStr = "54"; //$NON-NLS-1$
-			} else if (port.equals("ISDN 5")) { //$NON-NLS-1$
-				portStr = "55"; //$NON-NLS-1$
-			} else if (port.equals("ISDN 6")) { //$NON-NLS-1$
-				portStr = "56"; //$NON-NLS-1$
-			} else if (port.equals("ISDN 7")) { //$NON-NLS-1$
-				portStr = "57"; //$NON-NLS-1$
-			} else if (port.equals("ISDN 8")) { //$NON-NLS-1$
-				portStr = "58"; //$NON-NLS-1$
-			} else if (port.equals("ISDN 9")) { //$NON-NLS-1$
-				portStr = "59"; //$NON-NLS-1$
-			}
-            String postdata = POSTDATA_CALL.replaceAll("\\$PASSWORT", //$NON-NLS-1$
-                    URLEncoder.encode(box_password, "ISO-8859-1"));
-			postdata = postdata.replaceAll("\\$NUMMER", number); //$NON-NLS-1$
-			postdata = postdata.replaceAll("\\$NEBENSTELLE", portStr); //$NON-NLS-1$
-
-			postdata = firmware.getAccessMethod() + postdata;
-
-			String urlstr = "http://" //$NON-NLS-1$
-					+ box_address + ":" + box_port
-					+ "/cgi-bin/webcm"; //$NON-NLS-1$
-			fetchDataFromURL(urlstr, postdata, true);
-		} catch (UnsupportedEncodingException uee) {
-		} catch (WrongPasswordException wpe) {
-		} catch (IOException ioe) {
+		String portStr = ""; //$NON-NLS-1$
+		if (port.equals("Fon 1")) { //$NON-NLS-1$
+			portStr = "1"; //$NON-NLS-1$
+		} else if (port.equals("Fon 2")) { //$NON-NLS-1$
+			portStr = "2"; //$NON-NLS-1$
+		} else if (port.equals("Fon 3")) { //$NON-NLS-1$
+			portStr = "3"; //$NON-NLS-1$
+		} else if (port.equals(Main.getMessage("analog_telephones_all"))) { //$NON-NLS-1$
+			portStr = "9"; //$NON-NLS-1$
+		} else if (port.equals("ISDN Alle")) { //$NON-NLS-1$
+			portStr = "50"; //$NON-NLS-1$
+		} else if (port.equals("ISDN 1")) { //$NON-NLS-1$
+			portStr = "51"; //$NON-NLS-1$
+		} else if (port.equals("ISDN 2")) { //$NON-NLS-1$
+			portStr = "52"; //$NON-NLS-1$
+		} else if (port.equals("ISDN 3")) { //$NON-NLS-1$
+			portStr = "53"; //$NON-NLS-1$
+		} else if (port.equals("ISDN 4")) { //$NON-NLS-1$
+			portStr = "54"; //$NON-NLS-1$
+		} else if (port.equals("ISDN 5")) { //$NON-NLS-1$
+			portStr = "55"; //$NON-NLS-1$
+		} else if (port.equals("ISDN 6")) { //$NON-NLS-1$
+			portStr = "56"; //$NON-NLS-1$
+		} else if (port.equals("ISDN 7")) { //$NON-NLS-1$
+			portStr = "57"; //$NON-NLS-1$
+		} else if (port.equals("ISDN 8")) { //$NON-NLS-1$
+			portStr = "58"; //$NON-NLS-1$
+		} else if (port.equals("ISDN 9")) { //$NON-NLS-1$
+			portStr = "59"; //$NON-NLS-1$
 		}
+        String postdata = POSTDATA_CALL.replaceAll("\\$PASSWORT", //$NON-NLS-1$
+                URLEncoder.encode(box_password, "ISO-8859-1"));
+		postdata = postdata.replaceAll("\\$NUMMER", number); //$NON-NLS-1$
+		postdata = postdata.replaceAll("\\$NEBENSTELLE", portStr); //$NON-NLS-1$
 
+		postdata = firmware.getAccessMethod() + postdata;
+
+		String urlstr = "http://" //$NON-NLS-1$
+				+ box_address + ":" + box_port
+				+ "/cgi-bin/webcm"; //$NON-NLS-1$
+		fetchDataFromURL(urlstr, postdata, true);
 	}
 
 	/**

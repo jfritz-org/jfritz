@@ -19,6 +19,8 @@ import javax.swing.JOptionPane;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
+import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.utils.*;
 import de.moonflower.jfritz.utils.network.Telnet;
 
@@ -185,6 +187,12 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 			}
 		} catch (IOException e) {
 			Debug.err("IOException: " + e); //$NON-NLS-1$
+		} catch (WrongPasswordException e1) {
+			JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+			Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+		} catch (InvalidFirmwareException e1) {
+			JFritz.errorMsg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
+			Debug.errDlg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
 		}
 	}
 

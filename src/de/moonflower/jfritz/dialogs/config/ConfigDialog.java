@@ -151,7 +151,7 @@ public class ConfigDialog extends JDialog implements ChangeListener {
 	/**
 	 * Stores values in dialog components to programm properties
 	 */
-	public void storeValues() {
+	public void storeValues() throws WrongPasswordException, InvalidFirmwareException, IOException {
 		fritzBoxPanel.saveSettings();
 		phonePanel.saveSettings();
 		messagePanel.saveSettings();

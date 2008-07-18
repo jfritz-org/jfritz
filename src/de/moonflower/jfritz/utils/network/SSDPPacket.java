@@ -1,15 +1,8 @@
 package de.moonflower.jfritz.utils.network;
 
-import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-
-import de.moonflower.jfritz.Main;
-import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
-import de.moonflower.jfritz.exceptions.WrongPasswordException;
-import de.moonflower.jfritz.firmware.FritzBoxFirmware;
-import de.moonflower.jfritz.utils.Debug;
 
 /*
  * Created on 22.05.2005
@@ -143,20 +136,5 @@ public class SSDPPacket {
         String parts[] = getServer().split(" ", 4); //$NON-NLS-1$
         String name = parts[3];
         return name;
-    }
-
-    private FritzBoxFirmware getFirmware() {
-        try {
-        	FritzBoxFirmware firmware = FritzBoxFirmware.detectFirmwareVersion(this.getIP().toString().substring(1), "", Main.getProperty("box.port", "80"));
-        	Debug.msg("SSDP: FritzBox-IP: "+this.getIP().toString().substring(1));
-        	Debug.msg("SSDP: FritzBox-Firmware: "+firmware.getFirmwareVersion());
-            return firmware;
-        } catch (WrongPasswordException wpe) {
-            return null;
-        } catch (InvalidFirmwareException e) {
-            return null;
-        } catch (IOException ioe) {
-            return null;
-        }
     }
 }

@@ -1408,7 +1408,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
                 String city = "";
                 Debug.msg("Found no person"); //$NON-NLS-1$
     			if(callerPhoneNumber.getCountryCode().equals(ReverseLookup.GERMANY_CODE))
-    				city = ReverseLookupGermany.getCity(callerPhoneNumber.getIntNumber());
+    				city = ReverseLookupGermany.getCity(callerPhoneNumber.getAreaNumber());
     			else if(callerPhoneNumber.getCountryCode().equals(ReverseLookup.AUSTRIA_CODE))
     				city = ReverseLookupAustria.getCity(callerPhoneNumber.getIntNumber());
     			else if(callerPhoneNumber.getCountryCode().startsWith(ReverseLookup.USA_CODE))

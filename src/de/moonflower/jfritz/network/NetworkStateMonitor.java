@@ -1,9 +1,12 @@
 package de.moonflower.jfritz.network;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.struct.PhoneNumber;
 
 /**
@@ -139,9 +142,12 @@ public class NetworkStateMonitor  {
 	/**
 	 * send the direct dial request to the server only if we are connected
 	 * otherwise send it directly to the box
+	 * @throws IOException
+	 * @throws WrongPasswordException
+	 * @throws UnsupportedEncodingException
 	 *
 	 */
-	public static void doCall(String number, String port){
+	public static void doCall(String number, String port) throws UnsupportedEncodingException, WrongPasswordException, IOException{
 		if(Main.getProperty("option.clientCallList", "false").equals("true")
 				&& isConnectedToServer())
 			serverConnection.requestDoCall(new PhoneNumber(number, false), port);

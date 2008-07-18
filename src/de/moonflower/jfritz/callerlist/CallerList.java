@@ -43,6 +43,7 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.filter.CallFilter;
 import de.moonflower.jfritz.callerlist.filter.DateFilter;
+import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.phonebook.PhoneBook;
 import de.moonflower.jfritz.struct.Call;
@@ -662,7 +663,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 	 * @throws WrongPasswordException
 	 * @throws IOException
 	 */
-	public void getNewCalls() throws WrongPasswordException, IOException {
+	public void getNewCalls() throws WrongPasswordException, InvalidFirmwareException, IOException {
 		getNewCalls(false);
 	}
 
@@ -682,7 +683,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 	 * @throws IOException
 	 */
 	public void getNewCalls(boolean deleteFritzBoxCallerList)
-			throws WrongPasswordException, IOException {
+			throws WrongPasswordException, InvalidFirmwareException, IOException {
 
 		if (JFritz.getFritzBox().checkValidFirmware()) {
 

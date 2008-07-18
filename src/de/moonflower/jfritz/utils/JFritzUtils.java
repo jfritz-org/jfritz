@@ -14,7 +14,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

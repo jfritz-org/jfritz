@@ -165,6 +165,7 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 							.getText(), password, port.getText());
 					defaultFritzBox.setSelected(false);
 				}
+				setBoxTypeLabel();
 			} catch (WrongPasswordException e1) {
 				Debug.err(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
 				boxtypeLabel.setForeground(Color.RED);
@@ -181,7 +182,6 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 				boxtypeLabel.setText(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
 				firmware = null;
 			}
-			setBoxTypeLabel();
 
 		} else if (e.getActionCommand().equals("detectboxtype")) { //$NON-NLS-1$
 			try {
@@ -189,6 +189,7 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 						.getText(), password, port.getText());
 
 				// firmware = new FritzBoxFirmware("14", "1", "35");
+				setBoxTypeLabel();
 			} catch (WrongPasswordException e1) {
 				Debug.err(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
 				boxtypeLabel.setForeground(Color.RED);
@@ -205,8 +206,6 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 				boxtypeLabel.setText(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
 				firmware = null;
 			}
-			// firmware = new FritzBoxFirmware("14", "1", "35");
-			setBoxTypeLabel();
 		}
 	}
 
@@ -247,20 +246,21 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 
 	}
 
-	public void saveSettings() {
+	public void saveSettings() throws WrongPasswordException, InvalidFirmwareException, IOException {
 		Main.setProperty("box.address", address.getText()); //$NON-NLS-1$
 		Main.setProperty("box.password", Encryption.encrypt(password)); //$NON-NLS-1$
 		Main.setProperty("box.port", port.getText()); //$NON-NLS-1$
 		JFritz.getFritzBox().updateSettings();
 
-		if (firmware != null) {
-			Main.setProperty("box.firmware", firmware.getFirmwareVersion()); //$NON-NLS-1$
+		if (JFritz.getFritzBox().getFirmware() != null) {
+			Main.setProperty("box.firmware", JFritz.getFritzBox().getFirmware().getFirmwareVersion()); //$NON-NLS-1$
 			if (defaultFritzBox.isSelected())
 			{
-				Main.setProperty("box.mac", firmware.getMacAddress());
+				Main.setProperty("box.mac", JFritz.getFritzBox().getFirmware().getMacAddress());
 			}
 		} else {
 			Main.removeProperty("box.firmware"); //$NON-NLS-1$
+			throw new InvalidFirmwareException("Invalid firmware");
 		}
 	}
 

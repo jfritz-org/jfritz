@@ -2,10 +2,13 @@ package de.moonflower.jfritz.callmonitor;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
+import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.StatusListener;
 import de.moonflower.jfritz.utils.network.Telnet;
 
+import java.io.IOException;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -40,7 +43,18 @@ public class TelnetCallMonitor extends Thread implements CallMonitorInterface {
         telnet = new Telnet();
         telnet.getStatusBarController().addStatusBarListener(statusListener);
         Debug.msg("Starting TelnetListener"); //$NON-NLS-1$
-        telnet.connect();
+        try {
+			telnet.connect();
+		} catch (WrongPasswordException e1) {
+			JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+			Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+		} catch (IOException e1) {
+			JFritz.errorMsg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
+			Debug.errDlg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
+		} catch (InvalidFirmwareException e1) {
+			JFritz.errorMsg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
+			Debug.errDlg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
+		}
         if (telnet.isConnected()) {
             Debug.msg("run()"); //$NON-NLS-1$
             if (JOptionPane

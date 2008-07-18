@@ -1,6 +1,8 @@
 package de.moonflower.jfritz.dialogs.configwizard;
 
 import java.awt.Frame;
+import java.io.IOException;
+
 import javax.swing.*;
 import java.util.Locale;
 
@@ -11,6 +13,8 @@ import de.moonflower.jfritz.dialogs.config.ConfigPanelLang;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelFritzBox;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelMessage;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelPhone;
+import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
+import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
@@ -74,9 +78,12 @@ public class ConfigWizard {
 	 * This function shows the wizard then stores the values if finish is clicked
 	 *
 	 * @author Brian Jensen
+	 * @throws IOException
+	 * @throws InvalidFirmwareException
+	 * @throws WrongPasswordException
 	 *
 	 */
-	public void showWizard(){
+	public void showWizard() throws WrongPasswordException, InvalidFirmwareException, IOException{
 
 		if(canceled)
 			return;

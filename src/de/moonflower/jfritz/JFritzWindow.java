@@ -67,6 +67,7 @@ import de.moonflower.jfritz.callmonitor.SyslogCallMonitor;
 import de.moonflower.jfritz.callmonitor.TelnetCallMonitor;
 import de.moonflower.jfritz.callmonitor.YACCallMonitor;
 import de.moonflower.jfritz.dialogs.config.ConfigDialog;
+import de.moonflower.jfritz.dialogs.configwizard.ConfigWizard;
 import de.moonflower.jfritz.dialogs.quickdial.QuickDialPanel;
 import de.moonflower.jfritz.dialogs.simple.AddressPasswordDialog;
 import de.moonflower.jfritz.dialogs.simple.CallMessageDlg;
@@ -113,7 +114,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	private JProgressBar progressbar;
 
-	private StatusBarPanel mainStatusPanel;
+	private StatusBarPanel mainStatusPanel, iconStatusPanel;
 
 	private StatusBar statusBar;
 
@@ -137,6 +138,12 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	private JFritz jFritz;
 
+	private ImageIcon connectIcon;
+
+	private ImageIcon disconnectIcon;
+
+	private JLabel connectButton;
+
 	private JFritzWindow thisWindow;
 
 	public final String WINDOW_PROPERTIES_FILE = "jfritz.window.properties.xml"; //$NON-NLS-1$
@@ -145,9 +152,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * Constructs JFritzWindow
 	 *
 	 * @param jfritz
-	 * @throws WrongPasswordException
 	 */
-	public JFritzWindow(JFritz jfritz) throws WrongPasswordException {
+	public JFritzWindow(JFritz jfritz) {
 		this.jFritz = jfritz;
 		Debug.msg("Create JFritz-GUI"); //$NON-NLS-1$
 		maxBounds = null;
@@ -230,7 +236,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		}
 	}
 
-	private void createGUI() throws WrongPasswordException {
+	private void createGUI() {
 		setTitle(Main.PROGRAM_NAME);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
@@ -295,17 +301,20 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		JFritz.getCallerList().fireTableStructureChanged();
 		String ask = Main.getProperty("jfritz.password", Encryption //$NON-NLS-1$
 				.encrypt(JFritz.PROGRAM_SECRET + "")); //$NON-NLS-1$
-		String pass = JFritz.getFritzBox().getPassword();
+		String pass = "";
+		if (JFritz.getFritzBox() != null)
+		{
+			pass = JFritz.getFritzBox().getPassword();
+		}
 		if (!Encryption.decrypt(ask).equals(JFritz.PROGRAM_SECRET + pass)) {
+			//@todo: Anzeigen, dass Passwort ungültig ist, statt passwortdialog zu öffnen
 			String password = showPasswordDialog(""); //$NON-NLS-1$
 			if (password == null) { // PasswordDialog canceled
 				Debug.errDlg(Main.getMessage("input_canceled")); //$NON-NLS-1$
 				Debug.err("Eingabe abgebrochen"); //$NON-NLS-1$
-				throw new WrongPasswordException();
 			} else if (!password.equals(pass)) {
 				Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
 				Debug.err(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
-				throw new WrongPasswordException();
 			}
 		}
 
@@ -360,7 +369,34 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		mainStatusPanel.add(mainStatusBar);
 		mainStatusPanel.setVisible(false);
 		statusBar.registerDynamicStatusPanel(mainStatusPanel);
+
+		iconStatusPanel = new StatusBarPanel(1);
+		iconStatusPanel.setVisible(true);
+		connectIcon = new ImageIcon(
+				JFritz.class
+						.getResource("/de/moonflower/jfritz/resources/images/connect.png")); //$NON-NLS-1$
+		disconnectIcon = new ImageIcon(
+				JFritz.class
+						.getResource("/de/moonflower/jfritz/resources/images/disconnect.png")); //$NON-NLS-1$
+		connectButton = new JLabel("");
+		setDisconnectedStatus();
+		iconStatusPanel.add(connectButton);
+		statusBar.registerStatusIcon(iconStatusPanel);
+
 		return statusBar;
+	}
+
+	private void setDisconnectedStatus()
+	{
+		connectButton.setIcon(disconnectIcon);
+		connectButton.setToolTipText(Main.getMessage("disconnected_fritz"));
+		setCallMonitorButtonPushed(false);
+	}
+
+	private void setConnectedStatus()
+	{
+		connectButton.setIcon(connectIcon);
+		connectButton.setToolTipText(Main.getMessage("connected_fritz"));
 	}
 
 	/**
@@ -780,43 +816,53 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 						try {
 							setBusy(true);
 							setStatus(Main.getMessage("fetchdata")); //$NON-NLS-1$
+							setConnectedStatus();
 							JFritz.getCallerList().getNewCalls(
 									deleteFritzBoxCallerList);
 							isdone = true;
 						} catch (WrongPasswordException e) {
 							setBusy(false);
-							setStatus(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
-							String password = showPasswordDialog(JFritz
-									.getFritzBox().getPassword());
-							if (password == null) { // Dialog canceled
-								isdone = true;
-							} else {
-								Main.setProperty("box.password", Encryption //$NON-NLS-1$
-										.encrypt(password));
-								JFritz.getFritzBox().setPassword(password);
-								JFritz.getFritzBox().detectFirmware();
-							}
+							isdone = true;
+							setDisconnectedStatus();
+							//@todo: anzeigen, dass die box unerreichbar ist
+//							setStatus(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+//							String password = showPasswordDialog(JFritz
+//									.getFritzBox().getPassword());
+//							if (password == null) { // Dialog canceled
+//								isdone = true;
+//							} else {
+//								Main.setProperty("box.password", Encryption //$NON-NLS-1$
+//										.encrypt(password));
+//								JFritz.getFritzBox().setPassword(password);
+//								JFritz.getFritzBox().detectFirmware();
+//							}
 						} catch (IOException e) {
+							setDisconnectedStatus();
+							isdone = true;
 							// Warten, falls wir von einem Standby aufwachen,
 							// oder das Netzwerk temporär nicht erreichbar ist.
-							if (connectionFailures < 5) {
-								Debug.msg("Waiting for FritzBox, retrying ..."); //$NON-NLS-1$
-								connectionFailures++;
-							} else {
-								Debug.msg("Callerlist Box not found"); //$NON-NLS-1$
-								setBusy(false);
-								setStatus(Main.getMessage("box.not_found")); //$NON-NLS-1$
-								String box_address = showAddressDialog(JFritz
-										.getFritzBox().getAddress());
-								if (box_address == null) { // Dialog canceled
-									isdone = true;
-								} else {
-									Main.setProperty("box.address", //$NON-NLS-1$
-											box_address);
-									JFritz.getFritzBox().setAddress(box_address);
-									JFritz.getFritzBox().detectFirmware();
-								}
-							}
+//							if (connectionFailures < 5) {
+//								Debug.msg("Waiting for FritzBox, retrying ..."); //$NON-NLS-1$
+//								connectionFailures++;
+//							} else {
+//								Debug.msg("Callerlist Box not found"); //$NON-NLS-1$
+//								setBusy(false);
+//								setStatus(Main.getMessage("box.not_found")); //$NON-NLS-1$
+//								String box_address = showAddressDialog(JFritz
+//										.getFritzBox().getAddress());
+//								if (box_address == null) { // Dialog canceled
+//									isdone = true;
+//								} else {
+//									Main.setProperty("box.address", //$NON-NLS-1$
+//											box_address);
+//									JFritz.getFritzBox().setAddress(box_address);
+//									JFritz.getFritzBox().detectFirmware();
+//								}
+//							}
+						} catch (InvalidFirmwareException e) {
+							setDisconnectedStatus();
+							isdone = true;
+							e.printStackTrace();
 						}
 					}
 					return null;
@@ -859,30 +905,37 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		configDialog = new ConfigDialog(this);
 		configDialog.setLocationRelativeTo(this);
 		if (configDialog.showDialog()) {
-			configDialog.storeValues();
-			Main.saveConfigProperties();
-			if (JFritz.getSIPProviderTableModel().getProviderList().size() == 0) { // Noch
-				// keine
-				// SipProvider
-				// eingelesen.
-				try {
-					Vector<SipProvider> data = JFritz.getFritzBox()
-							.retrieveSipProvider();
-					JFritz.getSIPProviderTableModel().updateProviderList(data);
-					JFritz.getSIPProviderTableModel().fireTableDataChanged();
-					JFritz.getSIPProviderTableModel().saveToXMLFile(
-							Main.SAVE_DIR + JFritz.SIPPROVIDER_FILE);
-					JFritz.getCallerList().fireTableDataChanged();
-				} catch (WrongPasswordException e1) {
-					JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
-					Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
-				} catch (IOException e1) {
-					JFritz.errorMsg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
-					Debug.errDlg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
-				} catch (InvalidFirmwareException e1) {
-					JFritz.errorMsg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
-					Debug.errDlg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
+			try {
+				configDialog.storeValues();
+				Main.saveConfigProperties();
+				if (JFritz.getSIPProviderTableModel().getProviderList().size() == 0) { // Noch
+					// keine
+					// SipProvider
+					// eingelesen.
+						setConnectedStatus();
+						Vector<SipProvider> data = JFritz.getFritzBox()
+								.retrieveSipProvider();
+						JFritz.getSIPProviderTableModel().updateProviderList(data);
+						JFritz.getSIPProviderTableModel().fireTableDataChanged();
+						JFritz.getSIPProviderTableModel().saveToXMLFile(
+								Main.SAVE_DIR + JFritz.SIPPROVIDER_FILE);
+						JFritz.getCallerList().fireTableDataChanged();
 				}
+			} catch (WrongPasswordException e1) {
+				setDisconnectedStatus();
+				// @todo: display connection problem icon
+	//			JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+	//			Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+			} catch (IOException e1) {
+				setDisconnectedStatus();
+				// @todo: display connection problem icon
+	//			JFritz.errorMsg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
+	//			Debug.errDlg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
+			} catch (InvalidFirmwareException e1) {
+				setDisconnectedStatus();
+				// @todo: display connection problem icon
+	//			JFritz.errorMsg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
+	//			Debug.errDlg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
 			}
 			monitorButton.setEnabled((Integer.parseInt(Main.getProperty(
 					"option.callMonitorType", "0")) > 0)); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -1181,7 +1234,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		} else if (e.getActionCommand().equals("showhide")) {
 			hideShowJFritz();
 		} else if (e.getActionCommand().equals("configwizard")) {
-			JFritz.showConfigWizard();
+			showConfigWizard();
 		} else if(e.getActionCommand().equals("network")){
 
 			if(Main.getProperty("network.type", "0").equals("2")){
@@ -1222,6 +1275,33 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		}
 	}
 
+
+	/**
+	 * @author Brian Jensen This creates and then display the config wizard
+	 * @throws IOException
+	 * @throws InvalidFirmwareException
+	 * @throws WrongPasswordException
+	 *
+	 */
+	public void showConfigWizard() {
+		ConfigWizard wizard = new ConfigWizard(this);
+		try {
+			setConnectedStatus();
+			wizard.showWizard();
+		} catch (WrongPasswordException e) {
+			setDisconnectedStatus();
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidFirmwareException e) {
+			setDisconnectedStatus();
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			setDisconnectedStatus();
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * Exports caller list as CSV
@@ -1433,7 +1513,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	public void setCallMonitorButtonPushed(boolean isPushed) {
 		Main.setProperty("option.callmonitorStarted", Boolean
 				.toString(isPushed));
-		monitorButton.setSelected(isPushed);
+		if (monitorButton != null)
+			monitorButton.setSelected(isPushed);
 
 		/**
 		 * switch (option) { case JFritz.CALLMONITOR_START: {
@@ -1466,53 +1547,64 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 		switch (Integer.parseInt(Main.getProperty("option.callMonitorType", //$NON-NLS-1$
 				"0"))) { //$NON-NLS-1$
-		case 1: {
-			if (JFritz.getFritzBox().checkValidFirmware()) {
-				FritzBoxFirmware currentFirm = JFritz.getFritzBox()
-						.getFirmware();
-				if ((currentFirm.getMajorFirmwareVersion() == 3)
-						&& (currentFirm.getMinorFirmwareVersion() < 96)) {
-					Debug.errDlg(Main
-							.getMessage("callmonitor_error_wrong_firmware")); //$NON-NLS-1$
-					monitorButton.setSelected(false);
-					setCallMonitorButtonPushed(true);
-				} else {
-					if ((currentFirm.getMajorFirmwareVersion() >= 4)
-							&& (currentFirm.getMinorFirmwareVersion() >= 3)) {
-						JFritz.setCallMonitor(new FBoxCallMonitorV3());
-					} else {
-						JFritz.setCallMonitor(new FBoxCallMonitorV1());
+			case 1: {
+				try {
+					setConnectedStatus();
+					if (JFritz.getFritzBox().checkValidFirmware()) {
+						FritzBoxFirmware currentFirm = JFritz.getFritzBox()
+								.getFirmware();
+						if ((currentFirm.getMajorFirmwareVersion() == 3)
+								&& (currentFirm.getMinorFirmwareVersion() < 96)) {
+							Debug.errDlg(Main
+									.getMessage("callmonitor_error_wrong_firmware")); //$NON-NLS-1$
+							monitorButton.setSelected(false);
+							setCallMonitorButtonPushed(true);
+						} else {
+							if ((currentFirm.getMajorFirmwareVersion() >= 4)
+									&& (currentFirm.getMinorFirmwareVersion() >= 3)) {
+								JFritz.setCallMonitor(new FBoxCallMonitorV3());
+							} else {
+								JFritz.setCallMonitor(new FBoxCallMonitorV1());
+							}
+							setCallMonitorButtonPushed(true);
+						}
 					}
-					setCallMonitorButtonPushed(true);
+				} catch (WrongPasswordException e1) {
+					setDisconnectedStatus();
+					JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+				} catch (IOException e1) {
+					setDisconnectedStatus();
+					JFritz.errorMsg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
+				} catch (InvalidFirmwareException e1) {
+					setDisconnectedStatus();
+					JFritz.errorMsg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
 				}
+				break;
 			}
-			break;
-		}
-		case 2: {
-			JFritz.setCallMonitor(new TelnetCallMonitor(jFritz));
-			setCallMonitorButtonPushed(true);
-			break;
-		}
-		case 3: {
-			JFritz.setCallMonitor(new SyslogCallMonitor(jFritz));
-			setCallMonitorButtonPushed(true);
-			break;
-		}
-		case 4: {
-			JFritz.setCallMonitor(new YACCallMonitor(Integer.parseInt(Main
-					.getProperty("option.yacport", //$NON-NLS-1$
-							"10629")))); //$NON-NLS-1$
-			setCallMonitorButtonPushed(true);
-			break;
-		}
-		case 5: {
-			JFritz.setCallMonitor(new CallmessageCallMonitor(Integer
-					.parseInt(Main.getProperty("option.callmessageport", //$NON-NLS-1$
-							"23232")))); //$NON-NLS-1$
-			setCallMonitorButtonPushed(true);
-			break;
-		}
-
+			case 2: {
+				JFritz.setCallMonitor(new TelnetCallMonitor(jFritz));
+				setCallMonitorButtonPushed(true);
+				break;
+			}
+			case 3: {
+				JFritz.setCallMonitor(new SyslogCallMonitor(jFritz));
+				setCallMonitorButtonPushed(true);
+				break;
+			}
+			case 4: {
+				JFritz.setCallMonitor(new YACCallMonitor(Integer.parseInt(Main
+						.getProperty("option.yacport", //$NON-NLS-1$
+								"10629")))); //$NON-NLS-1$
+				setCallMonitorButtonPushed(true);
+				break;
+			}
+			case 5: {
+				JFritz.setCallMonitor(new CallmessageCallMonitor(Integer
+						.parseInt(Main.getProperty("option.callmessageport", //$NON-NLS-1$
+								"23232")))); //$NON-NLS-1$
+				setCallMonitorButtonPushed(true);
+				break;
+			}
 		}
 
 	}

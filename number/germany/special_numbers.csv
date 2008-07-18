@@ -1,0 +1,16 @@
+Prefix;Type;Description
+0800;freecall;Kostenlos
+0900;service;Premium Dienste
+0180X;service;Servicenummer
+0137;service;Servicenummer
+0138;service;Servicenummer
+0190;service;Servicenummer
+0137;service;Servicenummer
+110;police;Polizei
+112;firedepartement;Feuerwehr
+115;medical;Schnelle medizinische Hilfe
+19222;medical;Rettungsdienst
+118xx;informationservice;Auskunftsdients
+0700;personal;Persönliche Nummer
+032;voip;VoIP
+

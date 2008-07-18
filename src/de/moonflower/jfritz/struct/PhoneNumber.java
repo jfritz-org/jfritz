@@ -24,6 +24,8 @@ import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
+import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.struct.CallByCall;
 import de.moonflower.jfritz.utils.CbCFileXMLHandler;
 import de.moonflower.jfritz.utils.Debug;
@@ -563,8 +565,16 @@ public class PhoneNumber implements Comparable, Serializable {
 				// get QuickDials from FritzBox
 				Debug
 						.msg("No Quickdials present in JFritz, retrieving the list from the box");
-				JFritz.getQuickDials()
-						.getQuickDialDataFromFritzBox();
+				try {
+					JFritz.getQuickDials()
+							.getQuickDialDataFromFritzBox();
+				} catch (WrongPasswordException e1) {
+					// just do nothing. No conversion possible
+				} catch (IOException e1) {
+					// just do nothing. No conversion possible
+				} catch (InvalidFirmwareException e1) {
+					// just do nothing. No conversion possible
+				}
 			}
 			Enumeration en = JFritz.getQuickDials().getQuickDials().elements();
 			while (en.hasMoreElements()) {

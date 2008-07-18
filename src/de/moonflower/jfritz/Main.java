@@ -188,6 +188,7 @@
  * - Neu: Alle Inverssuche-Seiten aus Klingeling hinzugefügt.
  * - Bugfix: Suche nach der Stadt anhand der Vorwahl für die Türkei, USA, Österreich und Deutschland
  * - Neu: Fortschrittsanzeige beim Abholen der Anrufliste
+ * - Neu: Popup bei keiner Verbindung zur FritzBox entfernt. Stattdessen Anzeige in der neuen Statusbar
  *
  * Strings:
  * 	allow_client_deletelist
@@ -204,6 +205,8 @@
  *  show_on_google_maps
  *  dialog_title_callin // New syntax
  *  dialog_title_callout // New syntax
+ *  connected_fritz
+ *  disconnected_fritz
  *
  * JFritz 0.7.0.1
  * - Funktioniert nun wieder mit Java 1.5
@@ -776,6 +779,7 @@ import javax.swing.JOptionPane;
 
 import de.moonflower.jfritz.autoupdate.JFritzUpdate;
 import de.moonflower.jfritz.autoupdate.Update;
+import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.struct.FritzBox;
@@ -796,9 +800,9 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.1"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.1.2"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.114 2008/07/13 13:01:21 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.115 2008/07/18 17:11:36 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -934,7 +938,16 @@ public class Main implements LookupObserver {
 		int result = 0;
 		jfritz.initNumbers();
 		splash.setStatus("Initializing Fritz!Box..");
-		result = jfritz.initFritzBox();
+		try {
+			result = jfritz.initFritzBox();
+		} catch (WrongPasswordException e1) {
+			Debug.err(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+		} catch (IOException e1) {
+			Debug.err(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
+		} catch (InvalidFirmwareException e1) {
+			Debug.err(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
+		}
+
 		if (result == 0)
 		{
 			splash.setStatus("Loading SIP provider...");
@@ -1095,8 +1108,13 @@ public class Main implements LookupObserver {
 					JFritz.getCallerList().getNewCalls();
 				} catch (WrongPasswordException e) {
 					Debug.err(e.toString());
+					e.printStackTrace();
 				} catch (IOException e) {
 					Debug.err(e.toString());
+					e.printStackTrace();
+				} catch (InvalidFirmwareException e) {
+					Debug.err(e.toString());
+					e.printStackTrace();
 				}
 				break;
 			case 'r':
@@ -1121,7 +1139,7 @@ public class Main implements LookupObserver {
 				break;
 			case 'd': //$NON-NLS-1$
 				Debug.on();
-				clearCallsOnBox();
+				clearCallsOnBoxCli();
 				shutdown = true;
 				break;
 			case 'c': //$NON-NLS-1$
@@ -1341,22 +1359,36 @@ public class Main implements LookupObserver {
 	/**
 	 *
 	 */
-	public static void clearCallsOnBox() {
+	public static void clearCallsOnBoxCli() {
 		Debug.msg("Clearing callerlist on box."); //$NON-NLS-1$
 		loadProperties();
 		try {
+			Exception ex = null;
 			FritzBox fritzBox = new FritzBox(getProperty(
 					"box.address", "192.168.178.1"), Encryption //$NON-NLS-1$,  //$NON-NLS-2$
 					.decrypt(getProperty("box.password", Encryption //$NON-NLS-1$
-							.encrypt(""))), getProperty("box.port", "80")); //$NON-NLS-1$
-
+							.encrypt(""))), getProperty("box.port", "80"), ex); //$NON-NLS-1$
+			if ( ex != null )
+			{
+				try {
+					throw ex;
+				} catch (Exception e)
+				{
+					Debug.err("Error: " + e.getLocalizedMessage());
+				}
+			}
 			fritzBox.clearListOnFritzBox();
 			Debug.msg("Clearing done"); //$NON-NLS-1$
 		} catch (WrongPasswordException e) {
 			Debug.err("Wrong password, can not delete callerlist on Box."); //$NON-NLS-1$
+			e.printStackTrace();
 		} catch (IOException e) {
 			Debug
 					.err("IOException while deleting callerlist on box (wrong IP-address?)."); //$NON-NLS-1$
+			e.printStackTrace();
+//		} catch (InvalidFirmwareException e) {
+//			Debug.err("Invalid firmware, can not delete callerlist on Box."); //$NON-NLS-1$
+//			e.printStackTrace();
 		}
 	}
 

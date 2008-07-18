@@ -21,8 +21,8 @@ import javax.crypto.spec.*;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.callerlist.CallerListListener;
-import de.moonflower.jfritz.callerlist.filter.CallFilter;
 import de.moonflower.jfritz.callmonitor.CallMonitorListener;
+import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.phonebook.PhoneBookListener;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
@@ -356,6 +356,9 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 				e.printStackTrace();
 
 			} catch (BadPaddingException e) {
+				e.printStackTrace();
+			} catch (WrongPasswordException e) {
+				Debug.netMsg("Wrong password exception1");
 				e.printStackTrace();
 			}
 		}

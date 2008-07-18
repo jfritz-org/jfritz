@@ -4,6 +4,7 @@
  */
 package de.moonflower.jfritz.utils.network;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.ConnectException;
@@ -14,6 +15,7 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.StatusBarController;
 import de.moonflower.jfritz.dialogs.config.TelnetConfigDialog;
+import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 
@@ -52,8 +54,11 @@ public class Telnet {
 	 *
 	 * TODO: Einbau der Abfrage der IP, User, Passwort, wenn keine Verbindung
 	 * aufgebaut werden kann.
+	 * @throws IOException
+	 * @throws InvalidFirmwareException
+	 * @throws WrongPasswordException
 	 */
-	public void connect() {
+	public void connect() throws WrongPasswordException, InvalidFirmwareException, IOException {
 		boolean isdone = false;
 		int connectionFailures = 0;
 		while (!isdone) {

@@ -6,6 +6,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -18,6 +19,8 @@ import javax.swing.JToggleButton;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
+import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
@@ -258,15 +261,23 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 			JFritz.getFritzBox().setAddress(fritzBoxPanel.getAddress());
 			JFritz.getFritzBox().setPassword(fritzBoxPanel.getPassword());
 			JFritz.getFritzBox().setPort(fritzBoxPanel.getPort());
-			JFritz.getFritzBox().detectFirmware();
-			JFritz.getJframe().switchMonitorButton();
-
-			// Speichere den Button-Status
-			Main.setProperty("option.callmonitorStarted", Boolean //$NON-NLS-1$
-					.toString(startCallMonitorButton.isSelected()));
-
-			setCallMonitorButtonPushed(startCallMonitorButton.isSelected());
-
+			try {
+				JFritz.getFritzBox().detectFirmware();
+				JFritz.getJframe().switchMonitorButton();
+				// Speichere den Button-Status
+				Main.setProperty("option.callmonitorStarted", Boolean //$NON-NLS-1$
+						.toString(startCallMonitorButton.isSelected()));
+				setCallMonitorButtonPushed(startCallMonitorButton.isSelected());
+			} catch (WrongPasswordException e1) {
+				JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+				startCallMonitorButton.setSelected(!startCallMonitorButton.isSelected());
+			} catch (IOException e1) {
+				JFritz.errorMsg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
+				startCallMonitorButton.setSelected(!startCallMonitorButton.isSelected());
+			} catch (InvalidFirmwareException e1) {
+				JFritz.errorMsg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
+				startCallMonitorButton.setSelected(!startCallMonitorButton.isSelected());
+			}
 		} else if ("startCallMonitorOptions".equals(e //$NON-NLS-1$
 				.getActionCommand())) {
 			CallMonitorConfigDialog callMonitorConfigDialog = null;

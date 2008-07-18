@@ -145,49 +145,64 @@ public class ImportOutlookContactsDialog extends JDialog implements ActionListen
                         newContact.setCity(strValue);
                     } else if (strName.equals("HomeTelephoneNumber") //$NON-NLS-1$
                             && (!strValue.equals(""))) { //$NON-NLS-1$
-                        newContact.addNumber(new PhoneNumber(strValue, "home")); //$NON-NLS-1$
+                    	PhoneNumber number = new PhoneNumber(strValue, false); //$NON-NLS-1$
+                    	number.setType("home"); //$NON-NLS-1$
+                        newContact.addNumber(number);
                     } else if (strName.equals("Home2TelephoneNumber") //$NON-NLS-1$
                             && (!strValue.equals(""))) { //$NON-NLS-1$
-                        newContact.addNumber(new PhoneNumber(strValue, "home")); //$NON-NLS-1$
+                    	PhoneNumber number = new PhoneNumber(strValue, false); //$NON-NLS-1$
+                    	number.setType("home"); //$NON-NLS-1$
+                        newContact.addNumber(number);
                     } else if (strName.equals("PrimaryTelephoneNumber") //$NON-NLS-1$
                             && (!strValue.equals(""))) { //$NON-NLS-1$
-                        newContact.addNumber(new PhoneNumber(strValue, "home")); //$NON-NLS-1$
+                    	PhoneNumber number = new PhoneNumber(strValue, false); //$NON-NLS-1$
+                    	number.setType("home"); //$NON-NLS-1$
+                        newContact.addNumber(number);
                     } else if (strName.equals("MobileTelephoneNumber") //$NON-NLS-1$
                             && (!strValue.equals(""))) { //$NON-NLS-1$
-                        newContact
-                                .addNumber(new PhoneNumber(strValue, "mobile")); //$NON-NLS-1$
+                    	PhoneNumber number = new PhoneNumber(strValue, false); //$NON-NLS-1$
+                    	number.setType("mobile"); //$NON-NLS-1$
+                        newContact.addNumber(number);
                     } else if (strName.equals("BusinessTelephoneNumber") //$NON-NLS-1$
                             && (!strValue.equals(""))) { //$NON-NLS-1$
-                        newContact.addNumber(new PhoneNumber(strValue,
-                                "business")); //$NON-NLS-1$
+                    	PhoneNumber number = new PhoneNumber(strValue, false); //$NON-NLS-1$
+                    	number.setType("business"); //$NON-NLS-1$
+                        newContact.addNumber(number);
                     } else if (strName.equals("Business2TelephoneNumber") //$NON-NLS-1$
                             && (!strValue.equals(""))) { //$NON-NLS-1$
-                        newContact.addNumber(new PhoneNumber(strValue,
-                                "business")); //$NON-NLS-1$
+                    	PhoneNumber number = new PhoneNumber(strValue, false); //$NON-NLS-1$
+                    	number.setType("business"); //$NON-NLS-1$
+                        newContact.addNumber(number);
                     } else if (strName.equals("RadioTelephoneNumber") //$NON-NLS-1$
                             && (!strValue.equals(""))) { //$NON-NLS-1$
-                        newContact
-                                .addNumber(new PhoneNumber(strValue, "other")); //$NON-NLS-1$
+                    	PhoneNumber number = new PhoneNumber(strValue, false); //$NON-NLS-1$
+                    	number.setType("other"); //$NON-NLS-1$
+                        newContact.addNumber(number);
                     } else if (strName.equals("CarTelephoneNumber") //$NON-NLS-1$
                             && (!strValue.equals(""))) { //$NON-NLS-1$
-                        newContact
-                                .addNumber(new PhoneNumber(strValue, "other")); //$NON-NLS-1$
+                    	PhoneNumber number = new PhoneNumber(strValue, false); //$NON-NLS-1$
+                    	number.setType("other"); //$NON-NLS-1$
+                        newContact.addNumber(number);
                     } else if (strName.equals("CallbackTelephoneNumber") //$NON-NLS-1$
                             && (!strValue.equals(""))) { //$NON-NLS-1$
-                        newContact
-                                .addNumber(new PhoneNumber(strValue, "other")); //$NON-NLS-1$
+                    	PhoneNumber number = new PhoneNumber(strValue, false); //$NON-NLS-1$
+                    	number.setType("other"); //$NON-NLS-1$
+                        newContact.addNumber(number);
                     } else if (strName.equals("AssistantTelephoneNumber") //$NON-NLS-1$
                             && (!strValue.equals(""))) { //$NON-NLS-1$
-                        newContact
-                                .addNumber(new PhoneNumber(strValue, "other")); //$NON-NLS-1$
+                    	PhoneNumber number = new PhoneNumber(strValue, false); //$NON-NLS-1$
+                    	number.setType("other"); //$NON-NLS-1$
+                        newContact.addNumber(number);
                     } else if (strName.equals("CompanyMainTelephoneNumber") //$NON-NLS-1$
                             && (!strValue.equals(""))) { //$NON-NLS-1$
-                        newContact
-                                .addNumber(new PhoneNumber(strValue, "other")); //$NON-NLS-1$
+                    	PhoneNumber number = new PhoneNumber(strValue, false); //$NON-NLS-1$
+                    	number.setType("other"); //$NON-NLS-1$
+                        newContact.addNumber(number);
                     } else if (strName.equals("OtherTelephoneNumber") //$NON-NLS-1$
                             && (!strValue.equals(""))) { //$NON-NLS-1$
-                        newContact
-                                .addNumber(new PhoneNumber(strValue, "other")); //$NON-NLS-1$
+                    	PhoneNumber number = new PhoneNumber(strValue, false); //$NON-NLS-1$
+                    	number.setType("other"); //$NON-NLS-1$
+                        newContact.addNumber(number);
                     }
 
                 } catch (Exception exception1) {

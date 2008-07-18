@@ -10,6 +10,7 @@ import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.Enumeration;
 
 import javax.swing.ImageIcon;
@@ -28,6 +29,8 @@ import javax.swing.table.TableCellRenderer;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
+import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.struct.QuickDial;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.StatusBarController;
@@ -167,7 +170,18 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 			updateButtons();
 			JFritz.getQuickDials().saveToXMLFile(Main.SAVE_DIR + JFritz.QUICKDIALS_FILE);
 		} else if (e.getActionCommand().equals("fetchSIP")) {  //$NON-NLS-1$
-			dataModel.getQuickDialDataFromFritzBox();
+			try {
+				dataModel.getQuickDialDataFromFritzBox();
+			} catch (WrongPasswordException e1) {
+				JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+				Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+			} catch (IOException e1) {
+				JFritz.errorMsg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
+				Debug.errDlg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
+			} catch (InvalidFirmwareException e1) {
+				JFritz.errorMsg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
+				Debug.errDlg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
+			}
 			dataModel.fireTableDataChanged();
 			JFritz.getQuickDials().saveToXMLFile(Main.SAVE_DIR + JFritz.QUICKDIALS_FILE);
 		} else if (e.getActionCommand().equals("storeSIP")) {  //$NON-NLS-1$
