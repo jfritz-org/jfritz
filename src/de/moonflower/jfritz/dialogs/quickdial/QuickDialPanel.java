@@ -176,8 +176,8 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 				JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
 				Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
 			} catch (IOException e1) {
-				JFritz.errorMsg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
-				Debug.errDlg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
+				JFritz.errorMsg(Main.getMessage("box.not_found")); //$NON-NLS-1$
+				Debug.errDlg(Main.getMessage("box.not_found")); //$NON-NLS-1$
 			} catch (InvalidFirmwareException e1) {
 				JFritz.errorMsg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
 				Debug.errDlg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$

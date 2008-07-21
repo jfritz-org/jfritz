@@ -68,8 +68,27 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
             String currentLine;
             while (running) {
                 // lese nächste Nachricht ein
-                currentLine = in.readLine();
-                parseOutput(currentLine);
+            	while (!in.ready() && running)
+            	{
+            		clientSocket.getInetAddress().isReachable(1000);
+            		try {
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+					}
+            	}
+
+            	if (running)
+            	{
+	                currentLine = in.readLine();
+	                parseOutput(currentLine);
+	                if (!clientSocket.isConnected())
+	                {
+	                	Debug.msg("Detected connection interruption. Reconnecting...");
+	                	connect();
+	                    in = new BufferedReader(new InputStreamReader(clientSocket
+	                            .getInputStream()));
+	                }
+            	}
             }
         } catch (IOException ioe) {
             Debug.msg("IO exception: " + ioe.toString()); //$NON-NLS-1$

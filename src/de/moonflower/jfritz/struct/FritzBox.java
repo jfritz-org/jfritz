@@ -159,10 +159,10 @@ public class FritzBox {
 			Debug.msg(Main.getMessage("box.wrong_password"));
 		} catch (InvalidFirmwareException e) {
 			exc = e;
-			Debug.msg(Main.getMessage("box.address_wrong"));
+			Debug.msg(Main.getMessage("unknown_firmware"));
 		} catch (IOException e) {
 			exc = e;
-			Debug.msg(Main.getMessage("box.address_wrong"));
+			Debug.msg(Main.getMessage("box.not_found"));
 		}
 	}
 

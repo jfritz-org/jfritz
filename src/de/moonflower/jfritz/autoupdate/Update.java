@@ -83,6 +83,8 @@ public class Update {
 					new FileWriter(USER_HOME + propertiesDirectory
 							+ File.separator + UPDATE_FILE, false));
 
+			bw.write("[Settings]");
+			bw.newLine();
 			bw.write("updateOnStart=" + updateOnStart);
 			bw.newLine();
 			bw.write("locale=" + locale.toString());

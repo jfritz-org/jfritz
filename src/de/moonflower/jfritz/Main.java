@@ -189,6 +189,11 @@
  * - Bugfix: Suche nach der Stadt anhand der Vorwahl für die Türkei, USA, Österreich und Deutschland
  * - Neu: Fortschrittsanzeige beim Abholen der Anrufliste
  * - Neu: Popup bei keiner Verbindung zur FritzBox entfernt. Stattdessen Anzeige in der neuen Statusbar
+ * - Neu: Resize der Spalten in der Anrufliste nun intuitiver.
+ * - Bugfix: Sortieren in Telefonbuch funktioniert nun wieder korrekt.
+ * - Bugfix: Restart des Anrufmonitors nach Ruhezustand und Standby.
+ * - Bugfix: Passwortabfrage beim Start funktioniert wieder.
+ * - Neu: Auflösungsabhängige Größe des Bildes im Edit-Modus des Telefonbuchs.
  *
  * Strings:
  * 	allow_client_deletelist
@@ -779,6 +784,7 @@ import javax.swing.JOptionPane;
 
 import de.moonflower.jfritz.autoupdate.JFritzUpdate;
 import de.moonflower.jfritz.autoupdate.Update;
+import de.moonflower.jfritz.dialogs.simple.AddressPasswordDialog;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
@@ -800,9 +806,9 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.1.2"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.1.4"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.115 2008/07/18 17:11:36 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.116 2008/07/21 21:53:02 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -943,7 +949,7 @@ public class Main implements LookupObserver {
 		} catch (WrongPasswordException e1) {
 			Debug.err(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
 		} catch (IOException e1) {
-			Debug.err(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
+			Debug.err(Main.getMessage("box.not_found")); //$NON-NLS-1$
 		} catch (InvalidFirmwareException e1) {
 			Debug.err(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
 		}
@@ -982,6 +988,29 @@ public class Main implements LookupObserver {
 		{
 			main.checkCLIParameters(args);
 		}
+
+		splash.setStatus("Checking startup password...");
+		String ask = Main.getProperty("jfritz.password", Encryption //$NON-NLS-1$
+				.encrypt(JFritz.PROGRAM_SECRET + "")); //$NON-NLS-1$
+		String pass = "";
+		if (JFritz.getFritzBox() != null)
+		{
+			pass = JFritz.getFritzBox().getPassword();
+		}
+		if (!Encryption.decrypt(ask).equals(JFritz.PROGRAM_SECRET + pass)) {
+			String password = "";
+			while (result == 0 && !password.equals(pass))
+			{
+				password = main.showPasswordDialog(""); //$NON-NLS-1$
+				if (password == null) { // PasswordDialog canceled
+					result = 1;
+				} else if (!password.equals(pass)) {
+					Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+					Debug.err(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+				}
+			}
+		}
+
 		if (result == 0)
 		{
 			boolean createGui = main.checkInstanceControl();
@@ -996,7 +1025,7 @@ public class Main implements LookupObserver {
 		Debug.msg("Main is now exiting...");
 		if (result != 0)
 		{
-			main.exit(-1);
+			main.exit(result);
 		}
 
 	}
@@ -1805,5 +1834,22 @@ public class Main implements LookupObserver {
 		supported_languages.add(new Locale("ru","RU"));
 	}
 
+	/**
+	 * Shows the password dialog
+	 *
+	 * @param old_password
+	 * @return new_password
+	 */
+	public String showPasswordDialog(String old_password) {
+		String password = null;
+		AddressPasswordDialog p = new AddressPasswordDialog(null, true);
+		p.setPass(old_password);
 
+		if (p.showDialog()) {
+			password = p.getPass();
+		}
+		p.dispose();
+		p = null;
+		return password;
+	}
 }

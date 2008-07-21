@@ -190,7 +190,7 @@ public class Telnet {
 											.getMessage("box.wrong_password")); //$NON-NLS-1$
 									JFritz.getJframe().setBusy(false);
 
-									String newPassword = JFritz.getJframe()
+									String newPassword = JFritz
 											.showPasswordDialog(
 													JFritz.getFritzBox()
 															.getPassword());

@@ -100,7 +100,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 	 */
 	private Vector<Person> filterExceptions;
 
-	private int sortColumn = 1;
+	private int sortColumn = 2;
 
 	private boolean sortDirection = true;
 
@@ -208,10 +208,14 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 				o2 = Boolean.toString(p2.isPrivateEntry());
 				break;
 			case 1:
+				o1 = p1.getPictureUrl().toUpperCase();
+				o2 = p2.getPictureUrl().toUpperCase();
+				break;
+			case 2:
 				o1 = p1.getFullname().toUpperCase();
 				o2 = p2.getFullname().toUpperCase();
 				break;
-			case 2:
+			case 3:
 				o1 = ""; //$NON-NLS-1$
 				o2 = ""; //$NON-NLS-1$
 				if (p1.getStandardTelephoneNumber() != null) {
@@ -221,15 +225,15 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 					o2 = p2.getStandardTelephoneNumber().toString();
 				}
 				break;
-			case 3:
+			case 4:
 				o1 = p1.getStreet().toUpperCase();
 				o2 = p2.getStreet().toUpperCase();
 				break;
-			case 4:
+			case 5:
 				o1 = p1.getPostalCode() + p1.getCity().toUpperCase();
 				o2 = p2.getPostalCode() + p2.getCity().toUpperCase();
 				break;
-			case 5:
+			case 6:
 				o1 = ""; //$NON-NLS-1$
 				o2 = ""; //$NON-NLS-1$
 				Call call1 = p1.getLastCall();

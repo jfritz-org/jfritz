@@ -72,6 +72,10 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 	private Person originalPerson;
 
+	private static int scaleWidth = 171;
+
+	private static int scaleHeight = 221;
+
 	private Person clonedPerson;
 
 	private JTextField tfFirstName, tfCompany, tfLastName, tfStreet,
@@ -93,8 +97,6 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 	private Vector<ActionListener> actionListener;
 
-	private ResourceBundle messages;
-
 	private JFritzWindow parentFrame;
 
 	/**
@@ -112,11 +114,11 @@ public class PersonPanel extends JPanel implements ActionListener,
 	}
 
 	private void createPanel() {
-		setBorder(BorderFactory.createEmptyBorder(10, 20, 5, 20));
+		setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
 
 		JPanel configPanel = createConfigPanel();
 		JPanel numberPanel = createNumberPanel();
-		numberPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+		numberPanel.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
 		JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
 		centerPanel.add(configPanel);
@@ -452,7 +454,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		delButton.setEnabled(numberTable.getSelectedRow() > -1
 				&& clonedPerson.getNumbers().size() > 1);
 
-		Enumeration en = clonedPerson.getNumbers().elements();
+		Enumeration<PhoneNumber> en = clonedPerson.getNumbers().elements();
 		boolean addEnabled = true;
 		while (en.hasMoreElements()) {
 			String nr = ((PhoneNumber) en.nextElement()).getIntNumber();
@@ -544,6 +546,9 @@ public class PersonPanel extends JPanel implements ActionListener,
 	 *
 	 */
 	public final void updateGUI() {
+		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+		scaleHeight = (int)screen.getHeight() / 5;
+		scaleWidth = (scaleHeight / 4) * 3;
 		ImageIcon pictureIcon;
 		if (clonedPerson.getPictureUrl().equals(""))
 		{
@@ -557,7 +562,24 @@ public class PersonPanel extends JPanel implements ActionListener,
 		{
 			pictureIcon = new ImageIcon("pictures/NoPic.jpg");
 		}
-		Image scaledImage = pictureIcon.getImage().getScaledInstance(171, 221, Image.SCALE_SMOOTH);
+		float pictureWidthFactor = (float)pictureIcon.getIconWidth() / (float)scaleWidth;
+		float pictureHeightFactor = (float)pictureIcon.getIconHeight() / (float)scaleHeight;
+
+		int scaleToWidth = 0;
+		int scaleToHeight = 0;
+		if ( pictureWidthFactor > pictureHeightFactor )
+		{
+			scaleToWidth = (int)((float)pictureIcon.getIconWidth() / pictureWidthFactor);
+			scaleToHeight = (int)((float)pictureIcon.getIconHeight() / pictureWidthFactor);
+		}
+		else
+		{
+			scaleToWidth = (int)((float)pictureIcon.getIconWidth() / pictureHeightFactor);
+			scaleToHeight = (int)((float)pictureIcon.getIconHeight() / pictureHeightFactor);
+		}
+
+		Image scaledImage = pictureIcon.getImage().getScaledInstance(scaleToWidth, scaleToHeight, Image.SCALE_SMOOTH);
+
 		pictureIcon.setImage(scaledImage);
 		pictureButton.setSize(pictureIcon.getIconWidth(),pictureIcon.getIconHeight());
 		pictureButton.setIcon(pictureIcon);

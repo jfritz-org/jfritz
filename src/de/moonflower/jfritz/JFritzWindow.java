@@ -86,7 +86,6 @@ import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.CopyFile;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.DirectoryChooser;
-import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.ImportOutlookContactsDialog;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.PrintCallerList;
@@ -299,24 +298,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		getContentPane().add(statusPanels, BorderLayout.SOUTH);
 		JFritz.getCallerList().fireTableDataChanged();
 		JFritz.getCallerList().fireTableStructureChanged();
-		String ask = Main.getProperty("jfritz.password", Encryption //$NON-NLS-1$
-				.encrypt(JFritz.PROGRAM_SECRET + "")); //$NON-NLS-1$
-		String pass = "";
-		if (JFritz.getFritzBox() != null)
-		{
-			pass = JFritz.getFritzBox().getPassword();
-		}
-		if (!Encryption.decrypt(ask).equals(JFritz.PROGRAM_SECRET + pass)) {
-			//@todo: Anzeigen, dass Passwort ungültig ist, statt passwortdialog zu öffnen
-			String password = showPasswordDialog(""); //$NON-NLS-1$
-			if (password == null) { // PasswordDialog canceled
-				Debug.errDlg(Main.getMessage("input_canceled")); //$NON-NLS-1$
-				Debug.err("Eingabe abgebrochen"); //$NON-NLS-1$
-			} else if (!password.equals(pass)) {
-				Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
-				Debug.err(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
-			}
-		}
 
 		// Setting size and position
 		int x = Integer.parseInt(Main.getStateProperty(
@@ -811,7 +792,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			final SwingWorker worker = new SwingWorker() {
 				public Object construct() {
 					boolean isdone = false;
-					int connectionFailures = 0;
 					while (!isdone) {
 						try {
 							setBusy(true);
@@ -824,41 +804,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 							setBusy(false);
 							isdone = true;
 							setDisconnectedStatus();
-							//@todo: anzeigen, dass die box unerreichbar ist
-//							setStatus(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
-//							String password = showPasswordDialog(JFritz
-//									.getFritzBox().getPassword());
-//							if (password == null) { // Dialog canceled
-//								isdone = true;
-//							} else {
-//								Main.setProperty("box.password", Encryption //$NON-NLS-1$
-//										.encrypt(password));
-//								JFritz.getFritzBox().setPassword(password);
-//								JFritz.getFritzBox().detectFirmware();
-//							}
 						} catch (IOException e) {
 							setDisconnectedStatus();
 							isdone = true;
-							// Warten, falls wir von einem Standby aufwachen,
-							// oder das Netzwerk temporär nicht erreichbar ist.
-//							if (connectionFailures < 5) {
-//								Debug.msg("Waiting for FritzBox, retrying ..."); //$NON-NLS-1$
-//								connectionFailures++;
-//							} else {
-//								Debug.msg("Callerlist Box not found"); //$NON-NLS-1$
-//								setBusy(false);
-//								setStatus(Main.getMessage("box.not_found")); //$NON-NLS-1$
-//								String box_address = showAddressDialog(JFritz
-//										.getFritzBox().getAddress());
-//								if (box_address == null) { // Dialog canceled
-//									isdone = true;
-//								} else {
-//									Main.setProperty("box.address", //$NON-NLS-1$
-//											box_address);
-//									JFritz.getFritzBox().setAddress(box_address);
-//									JFritz.getFritzBox().detectFirmware();
-//								}
-//							}
 						} catch (InvalidFirmwareException e) {
 							setDisconnectedStatus();
 							isdone = true;
@@ -923,19 +871,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				}
 			} catch (WrongPasswordException e1) {
 				setDisconnectedStatus();
-				// @todo: display connection problem icon
-	//			JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
-	//			Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
 			} catch (IOException e1) {
 				setDisconnectedStatus();
-				// @todo: display connection problem icon
-	//			JFritz.errorMsg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
-	//			Debug.errDlg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
 			} catch (InvalidFirmwareException e1) {
 				setDisconnectedStatus();
-				// @todo: display connection problem icon
-	//			JFritz.errorMsg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
-	//			Debug.errDlg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
 			}
 			monitorButton.setEnabled((Integer.parseInt(Main.getProperty(
 					"option.callMonitorType", "0")) > 0)); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -943,25 +882,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			callerListPanel.showHideColumns();
 		}
 		configDialog.dispose();
-	}
-
-	/**
-	 * Shows the password dialog
-	 *
-	 * @param old_password
-	 * @return new_password
-	 */
-	public String showPasswordDialog(String old_password) {
-		String password = null;
-		AddressPasswordDialog p = new AddressPasswordDialog(this, true);
-		p.setPass(old_password);
-
-		if (p.showDialog()) {
-			password = p.getPass();
-		}
-		p.dispose();
-		p = null;
-		return password;
 	}
 
 	/**
@@ -1061,9 +981,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 *
 	 */
 	public void setStatus() {
-		int duration = JFritz.getCallerList().getTotalDuration();
-		int hours = duration / 3600;
-		int mins = duration % 3600 / 60;
 		callerListPanel.updateStatusBar(false);
 	}
 
@@ -1574,7 +1491,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
 				} catch (IOException e1) {
 					setDisconnectedStatus();
-					JFritz.errorMsg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
+					JFritz.errorMsg(Main.getMessage("box.not_found")); //$NON-NLS-1$
 				} catch (InvalidFirmwareException e1) {
 					setDisconnectedStatus();
 					JFritz.errorMsg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$

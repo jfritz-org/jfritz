@@ -272,7 +272,7 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 				JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
 				startCallMonitorButton.setSelected(!startCallMonitorButton.isSelected());
 			} catch (IOException e1) {
-				JFritz.errorMsg(Main.getMessage("box.address_wrong")); //$NON-NLS-1$
+				JFritz.errorMsg(Main.getMessage("box.not_found")); //$NON-NLS-1$
 				startCallMonitorButton.setSelected(!startCallMonitorButton.isSelected());
 			} catch (InvalidFirmwareException e1) {
 				JFritz.errorMsg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
