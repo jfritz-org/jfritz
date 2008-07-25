@@ -42,61 +42,117 @@ public class ShutdownHook {
    * @param handler
    */
   public static void install( final Handler handler) {
-    try{
-      final SignalHandler[] old_handlers = new SignalHandler[2];
+      Debug.msg("Installing shutdown hook...");
+      final SignalHandler[] old_handlers = new SignalHandler[3];
 
-      //ctrl-c signal
-      old_handlers[0] = Signal.handle( new Signal( "INT" ), new SignalHandler() {
-        public void handle( Signal sig ) {
-          try{
-            handler.shutdown( sig.getName() );  //main ShutdownHook.Handler
+      try{
+	      //ctrl-c signal
+	      old_handlers[0] = Signal.handle( new Signal( "INT" ), new SignalHandler() {
+	        public void handle( Signal sig ) {
+	          try{
+	            handler.shutdown( sig.getName() );  //main ShutdownHook.Handler
 
-            if( old_handlers[0] != null && old_handlers[0] != SIG_DFL && old_handlers[0] != SIG_IGN ) {  //chain back to previous handler if one exists
-              old_handlers[0].handle( sig );
-            }
-          }
-          catch( Throwable t ) {
-            Debug.msg( t.getLocalizedMessage() );
-          }
-        }
-      });
+	            if( old_handlers[0] != null && old_handlers[0] != SIG_DFL && old_handlers[0] != SIG_IGN ) {  //chain back to previous handler if one exists
+	              old_handlers[0].handle( sig );
+	            }
+	          }
+	          catch( Throwable t ) {
+	            Debug.err( t.getLocalizedMessage() );
+	          }
+	        }
+	      });
+      }
+      catch( Throwable t ) {
+          Debug.err( t.getLocalizedMessage() );
+      }
 
-      //coredump signal
-      old_handlers[0] = Signal.handle( new Signal( "BREAK" ), new SignalHandler() {
-        public void handle( Signal sig ) {
-          try{
-            handler.shutdown( sig.getName() );  //main ShutdownHook.Handler
+      try {
+	      //coredump signal
+	      old_handlers[1] = Signal.handle( new Signal( "HUP" ), new SignalHandler() {
+	        public void handle( Signal sig ) {
+	          try{
+	            handler.shutdown( sig.getName() );  //main ShutdownHook.Handler
 
-            if( old_handlers[0] != null && old_handlers[0] != SIG_DFL && old_handlers[0] != SIG_IGN ) {  //chain back to previous handler if one exists
-              old_handlers[0].handle( sig );
-            }
-          }
-          catch( Throwable t ) {
-            Debug.msg( t.getLocalizedMessage() );
-          }
-        }
-      });
+	            if( old_handlers[1] != null && old_handlers[1] != SIG_DFL && old_handlers[1] != SIG_IGN ) {  //chain back to previous handler if one exists
+	              old_handlers[1].handle( sig );
+	            }
+	          }
+	          catch( Throwable t ) {
+	        	Debug.err(t.getLocalizedMessage() );
+	          }
+	        }
+	      });
+      }
+      catch( Throwable t ) {
+          Debug.err( t.getLocalizedMessage() );
+      }
 
-      //os termination signal
-      old_handlers[1] = Signal.handle( new Signal( "TERM" ), new SignalHandler() {
-        public void handle( Signal sig ) {
-          try{
-            handler.shutdown( sig.getName() );  //main ShutdownHook.Handler
+      try {
+	      //os termination signal
+	      old_handlers[2] = Signal.handle( new Signal( "TERM" ), new SignalHandler() {
+	        public void handle( Signal sig ) {
+	          try{
+	            handler.shutdown( sig.getName() );  //main ShutdownHook.Handler
 
-            if( old_handlers[1] != null && old_handlers[1] != SIG_DFL && old_handlers[1] != SIG_IGN ) {  //chain back to previous handler if one exists
-              old_handlers[1].handle( sig );
-            }
-          }
-          catch( Throwable t ) {
-            Debug.msg( t.getLocalizedMessage() );
-          }
-        }
-      });
-    }
-    catch( Throwable t ) {
-      Debug.msg( t.getLocalizedMessage() );
-    }
+	            if( old_handlers[2] != null && old_handlers[2] != SIG_DFL && old_handlers[2] != SIG_IGN ) {  //chain back to previous handler if one exists
+	              old_handlers[2].handle( sig );
+	            }
+	          }
+	          catch( Throwable t ) {
+	        	Debug.err( t.getLocalizedMessage() );
+	          }
+	        }
+	      });
+      }
+      catch( Throwable t ) {
+          Debug.err( t.getLocalizedMessage() );
+      }
 
+
+      try {
+	      //kill signal
+	      old_handlers[3] = Signal.handle( new Signal( "KILL" ), new SignalHandler() {
+	        public void handle( Signal sig ) {
+	          try{
+	            handler.shutdown( sig.getName() );  //main ShutdownHook.Handler
+
+	            if( old_handlers[3] != null && old_handlers[3] != SIG_DFL && old_handlers[3] != SIG_IGN ) {  //chain back to previous handler if one exists
+	              old_handlers[3].handle( sig );
+	            }
+	          }
+	          catch( Throwable t ) {
+	        	Debug.err( t.getLocalizedMessage() );
+	          }
+	        }
+	      });
+      }
+      catch( Throwable t ) {
+          Debug.err( t.getLocalizedMessage() );
+      }
+
+      try {
+	      //ctrl-break signal
+	      old_handlers[4] = Signal.handle( new Signal( "BREAK" ), new SignalHandler() {
+	        public void handle( Signal sig ) {
+	          try{
+	            handler.shutdown( sig.getName() );  //main ShutdownHook.Handler
+
+	            if( old_handlers[4] != null && old_handlers[4] != SIG_DFL && old_handlers[4] != SIG_IGN ) {  //chain back to previous handler if one exists
+	              old_handlers[4].handle( sig );
+	            }
+	          }
+	          catch( Throwable t ) {
+	        	Debug.err( t.getLocalizedMessage() );
+	          }
+	        }
+	      });
+      }
+      catch( Throwable t ) {
+          Debug.err( t.getLocalizedMessage() );
+      }
+
+
+      Debug.msg("Shutdown hook installed!");
   }
 
 

@@ -194,6 +194,7 @@
  * - Bugfix: Restart des Anrufmonitors nach Ruhezustand und Standby.
  * - Bugfix: Passwortabfrage beim Start funktioniert wieder.
  * - Neu: Auflösungsabhängige Größe des Bildes im Edit-Modus des Telefonbuchs.
+ * - Bugfix: Signal-Handler
  *
  * Strings:
  * 	allow_client_deletelist
@@ -806,9 +807,9 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.1.4"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.1.5"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.116 2008/07/21 21:53:02 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.117 2008/07/25 12:03:35 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -897,13 +898,13 @@ public class Main implements LookupObserver {
 	 *
 	 */
 	public static void main(String[] args) {
+		Debug.on();
 		SplashScreen splash = new SplashScreen();
 		splash.setVersion("v" + Main.PROGRAM_VERSION);
 		splash.setStatus("Initializing JFritz...");
 		already_done_shutdown = false;
 		Main main = new Main(args);
 		main.initiateCLIParameters();
-		Debug.on();
 		main.checkDebugParameters(args);
 
 		// load supported languages

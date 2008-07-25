@@ -11,7 +11,6 @@ import java.awt.event.ItemListener;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
