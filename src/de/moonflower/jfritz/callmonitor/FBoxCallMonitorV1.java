@@ -20,14 +20,19 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class FBoxCallMonitorV1 extends FBoxCallMonitor {
 
+	private boolean connected = false;
+
     public FBoxCallMonitorV1() {
         Debug.msg("FBoxListener V1"); //$NON-NLS-1$
     }
 
     public void run() {
         if (super.connect()) {
+        	connected = true;
             Debug.msg("Connected"); //$NON-NLS-1$
             readOutput();
+        } else {
+        	connected = false;
         }
     }
 
@@ -107,6 +112,7 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
                 }
             } catch (InterruptedException e) {
                 Debug.err(e.toString());
+	        	Thread.currentThread().interrupt();
             }
 
         } else if (split[1].equals("CONNECT")) {
@@ -139,4 +145,8 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
             }
         }
     }
+
+	public boolean isConnected() {
+		return connected;
+	}
 }

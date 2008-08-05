@@ -84,7 +84,7 @@ public class LookupThread extends Thread {
 					}
 				}
 			} catch (InterruptedException e) {
-					break;// we were interrupted
+	        	Thread.currentThread().interrupt();
 			}
 
 			if (!terminate)

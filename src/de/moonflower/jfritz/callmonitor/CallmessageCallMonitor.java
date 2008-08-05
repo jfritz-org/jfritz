@@ -32,6 +32,8 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
 
     DisplayCallsMonitor dcm;
 
+    private boolean connected = false;
+
 	public CallmessageCallMonitor() {
 		this(23232);
 		start();
@@ -52,14 +54,18 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
 		Debug.msg("Starting Callmessage-Monitor on Port " + port); //$NON-NLS-1$
 		try {
 			serverSocket = new ServerSocket(port);
+			connected = true;
 		} catch (Exception e) {
 			try {
                 Debug.err("Exception occoured"); //$NON-NLS-1$
+                connected = false;
 				synchronized (this) {
 					wait(5000);
 				}
 			} catch (InterruptedException e1) {
+				connected = false;
                 Debug.err(e1.toString());
+	        	Thread.currentThread().interrupt();
 			}
 			JFritz.stopCallMonitor();
 		}
@@ -173,6 +179,10 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
 			Debug.msg("Error on closing socket"); //$NON-NLS-1$
 		}
 		isRunning = false;
+	}
+
+	public boolean isConnected() {
+		return connected;
 	}
 
 }

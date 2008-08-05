@@ -114,6 +114,7 @@ public class ClientConnectionListener extends Thread {
 
 				}catch(InterruptedException e){
 					Debug.err("Sever thread was interuppted!");
+		        	Thread.currentThread().interrupt();
 				}
 			}else {
 
@@ -137,6 +138,7 @@ public class ClientConnectionListener extends Thread {
 									wait();
 								}catch(InterruptedException e){
 									Debug.err("client listener interrupted while waiting for connection to close!");
+						        	Thread.currentThread().interrupt();
 								}
 							}
 						}else{

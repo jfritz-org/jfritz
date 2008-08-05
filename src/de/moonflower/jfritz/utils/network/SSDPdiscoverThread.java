@@ -8,6 +8,7 @@ import java.util.Vector;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.StatusBarController;
 
 /**
@@ -40,6 +41,7 @@ public class SSDPdiscoverThread extends Thread {
 		devices = UPNPUtils.SSDP_discoverFritzBoxes(timeout);
 		JFritz.getJframe().setBusy(false);
 		statusBarController.fireStatusChanged("");
+		Debug.msg("Discover thread");
 	}
 
 	/**

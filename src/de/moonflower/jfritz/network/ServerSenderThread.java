@@ -79,6 +79,7 @@ public class ServerSenderThread extends Thread {
 					}
 				}catch(InterruptedException e){
 					Debug.netMsg("A Server sender thread was interrupted!");
+		        	Thread.currentThread().interrupt();
 				}
 
 			} else {

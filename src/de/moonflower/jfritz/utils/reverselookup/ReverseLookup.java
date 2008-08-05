@@ -230,7 +230,7 @@ public class ReverseLookup {
 		try {
 			requests_done.add(requests.take());
 		}catch(InterruptedException e){
-			Debug.msg("Interrupted thread");
+        	Thread.currentThread().interrupt();
 		}
 		results.add(person);
 		if ( results.size() % 20 == 0) {

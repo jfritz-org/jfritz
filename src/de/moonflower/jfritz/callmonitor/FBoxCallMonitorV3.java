@@ -20,7 +20,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 
-    public FBoxCallMonitorV3() {
+	public FBoxCallMonitorV3() {
         Debug.msg("FBoxListener V3"); //$NON-NLS-1$
     }
 
@@ -138,6 +138,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 	                }
 	            } catch (InterruptedException e) {
 	                Debug.err(e.toString());
+		        	Thread.currentThread().interrupt();
 	            }
 
 	        } else if (split[1].equals("CONNECT")) {

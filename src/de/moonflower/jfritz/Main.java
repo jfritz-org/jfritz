@@ -795,6 +795,7 @@ import de.moonflower.jfritz.utils.CLIOption;
 import de.moonflower.jfritz.utils.CLIOptions;
 import de.moonflower.jfritz.utils.CopyFile;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.DiagSignalHandler;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -802,14 +803,13 @@ import de.moonflower.jfritz.utils.ShutdownHook;
 import de.moonflower.jfritz.utils.reverselookup.LookupObserver;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 
-
 public class Main implements LookupObserver {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.1.5"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.1.7"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.117 2008/07/25 12:03:35 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.118 2008/08/05 19:51:17 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -864,6 +864,9 @@ public class Main implements LookupObserver {
 
 	private static Vector<Locale> supported_languages;
 
+	private static ShutdownHook.Handler shutdownHandler;
+	private static ShutdownThread shutdownThread;
+
 	public Main(String[] args) {
 		System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION //$NON-NLS-1$
 				+ " (c) 2005-2008 by " + JFRITZ_PROJECT); //$NON-NLS-1$
@@ -871,16 +874,19 @@ public class Main implements LookupObserver {
 		Thread.currentThread().setName("JFritz main thread");
 
 		//Catch non-user-initiated VM shutdown
-	    ShutdownHook.install( new ShutdownHook.Handler() {
-	      public void shutdown( String signal_name ) {
-	        Debug.msg( "Core: Caught signal " +signal_name );
-	        prepareShutdown(false);
-	        Debug.msg("Core: Shutdown signal handler done");
-	        System.exit(0);
-	      }
-	    });
+		shutdownHandler = new ShutdownHook.Handler() {
+		      public void shutdown( String signal_name ) {
+		    	  	Runtime.getRuntime().removeShutdownHook(shutdownThread);
+			        Debug.msg( "Core: Caught signal " +signal_name );
+			        prepareShutdown(false, true);
+//			        Debug.msg("Core: Shutdown signal handler done");
+					System.exit(0);
+			      }
+			    };
 
-		ShutdownThread shutdownThread = new ShutdownThread(this);
+	    ShutdownHook.install(shutdownHandler);
+
+		shutdownThread = new ShutdownThread(this);
 		Runtime.getRuntime().addShutdownHook(shutdownThread);
 
 		jfritzHomedir = JFritzUtils.getFullPath(".update");
@@ -1028,7 +1034,6 @@ public class Main implements LookupObserver {
 		{
 			main.exit(result);
 		}
-
 	}
 
 	/**
@@ -1433,7 +1438,8 @@ public class Main implements LookupObserver {
 	public void exit(int i) {
 		Debug.msg("Main.exit(" + i + ")");
 		exitCode = i;
-		prepareShutdown(false);
+	  	Runtime.getRuntime().removeShutdownHook(shutdownThread);
+		prepareShutdown(false, false);
 	}
 
 	public void closeOpenConnections(){
@@ -1757,33 +1763,54 @@ public class Main implements LookupObserver {
 		update.saveSettings();
 	}
 
-	public void prepareShutdown(boolean shutdownhook) {
+	private void showActiveThreads()
+	{
+			Debug.msg("Active Threads: " + Thread.activeCount());
+			Thread[] threadarray = new Thread[Thread.activeCount()];
+			int threadCount = Thread.enumerate(threadarray);
+			Debug.msg("Threads: " + threadCount);
+			for (int i=0; i<threadCount; i++)
+			{
+				Debug.msg("ID: " + i);
+				Debug.msg("Name: " +  threadarray[i].getName());
+				Debug.msg("Class: " + threadarray[i].getClass().toString());
+				Debug.msg("State: " +  threadarray[i].getState());
+				Debug.msg("---");
+			}
+	}
 
+	public void prepareShutdown(boolean shutdownThread, boolean shutdownHook) {
+		try {
 		if ( !already_done_shutdown )
 		{
+			showActiveThreads();
+			already_done_shutdown = true;
 			Debug.msg("Shutting down JFritz..."); //$NON-NLS-1$
-
 			closeOpenConnections();
-
 			Debug.msg("Releasing lock");
 			if (exitCode != -1 && Main.isInstanceControlEnabled()) {
 				File f = new File(Main.SAVE_DIR + Main.LOCK_FILE);
-
 				if (f.exists())
+				{
+		    	    Debug.msg("Prepare Shutdown: 8");
 					f.delete();
+				}
 				Debug.msg("Multiple instance lock: release lock."); //$NON-NLS-1$
 			}
 
 			// This must be the last call, after disposing JFritzWindow nothing
 			// is executed at windows-shutdown
 			if ( jfritz != null ) {
-				jfritz.prepareShutdown(shutdownhook);
+				jfritz.prepareShutdown(shutdownThread, shutdownHook);
 			}
+			showActiveThreads();
 
 			Debug.msg("Finished shutting down"); //$NON-NLS-1$
-			already_done_shutdown = true;
-//			if ( !shutdownhook )
-//			System.exit(0);
+		}
+	    Debug.msg("Prepare Shutdown: 20");
+	    Thread.sleep(500);
+		} catch (InterruptedException e) {
+        	Thread.currentThread().interrupt();
 		}
 	}
 
@@ -1796,7 +1823,7 @@ public class Main implements LookupObserver {
 		try{
 			ReverseLookup.thread.join();
 		}catch(InterruptedException e){
-
+        	Thread.currentThread().interrupt();
 		}
 
 	}

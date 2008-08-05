@@ -13,4 +13,6 @@ public interface CallMonitorInterface {
 
 	public void stopCallMonitor();
 
+	public boolean isConnected();
+
 }

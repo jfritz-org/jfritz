@@ -84,6 +84,7 @@ public class JFritzUpdate {
 					} catch (InterruptedException e) {
 						System.err.println(className
 								+ "DownloadFiles-Thread has been interrupted");
+			        	Thread.currentThread().interrupt();
 					}
 				}
 			} else {
@@ -97,6 +98,7 @@ public class JFritzUpdate {
 			cleanupUpdateDirectory();
 			System.err.println(className
 					+ "CheckNewVersion-Thread has been interrupted");
+        	Thread.currentThread().interrupt();
 		}
 	}
 
@@ -117,6 +119,7 @@ public class JFritzUpdate {
 			System.err.println(className
 					+ "ProcessUpdateFolder-Thread has been interrupted");
 			e.printStackTrace();
+        	Thread.currentThread().interrupt();
 		}
 		if (updateFolderThread.wasUpdateSuccessfull())
 			AutoUpdateGUI.showUpdateSuccessfulMessage();

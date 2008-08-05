@@ -18,6 +18,8 @@ public class WatchdogThread extends Thread {
 
     private Calendar cal;
 
+    private boolean standbyDetected = false;
+
     /**
      *
      * @param interval
@@ -39,14 +41,9 @@ public class WatchdogThread extends Thread {
     }
 
     private void checkCallmonitor() {
+    	Debug.msg("Checking call monitor");
         cal = Calendar.getInstance();
         now = cal.getTime();
-
-        Debug.msg("Now: " + now.getTime());
-        Debug.msg("Last: " + lastTimestamp.getTime());
-        Debug.msg("Diff: " + (now.getTime() - lastTimestamp.getTime()));
-        Debug.msg("Thresh: " + 3 * interval * 1000);
-        Debug.msg("-------------------------");
 
         if (now.getTime() - lastTimestamp.getTime() > 3 * interval * 1000
         		|| lastTimestamp.getTime() - now.getTime() > 3 * interval * 1000) {
@@ -56,9 +53,18 @@ public class WatchdogThread extends Thread {
 
             Debug.msg("STANDBY or SUSPEND TO RAM detected"); //$NON-NLS-1$
             Debug.msg("Watchdog: Restarting call monitor"); //$NON-NLS-1$
-            restartCallMonitor();
-			if (JFritzUtils.parseBoolean(Main.getProperty("option.watchdog.fetchAfterStandby", "true"))) //$NON-NLS-1$, //$NON-NLS-2$
-                JFritz.getJframe().fetchList(JFritzUtils.parseBoolean(Main.getProperty("option.deleteAfterFetch", "true"))); //$NON-NLS-1$, //$NON-NLS-2$
+            standbyDetected = true;
+        }
+
+        if (standbyDetected)
+        {
+        	restartCallMonitor();
+        	if (JFritz.getCallMonitor().isConnected())
+        	{
+        		if (JFritzUtils.parseBoolean(Main.getProperty("option.watchdog.fetchAfterStandby", "true"))) //$NON-NLS-1$, //$NON-NLS-2$
+        			JFritz.getJframe().fetchList(JFritzUtils.parseBoolean(Main.getProperty("option.deleteAfterFetch", "true"))); //$NON-NLS-1$, //$NON-NLS-2$
+        		standbyDetected = false; // reset flag, because we have successfully restarted the call monitor
+        	}
         }
 
 //        else if (now.getTime() - startWatchdogTimestamp.getTime() > 5*60000) {
@@ -78,8 +84,13 @@ public class WatchdogThread extends Thread {
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
-            Debug.err("Watchdog-Error: " + e);
+        	Thread.currentThread().interrupt();
         }
         JFritz.getJframe().startChosenCallMonitor();
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+        	Thread.currentThread().interrupt();
+        }
     }
 }

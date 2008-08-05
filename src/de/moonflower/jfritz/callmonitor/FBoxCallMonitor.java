@@ -30,6 +30,8 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
     // wird benutzt, um X Sekunden lang zu warten
     protected Random zufallszahl;
 
+    private boolean connected = false;
+
     public FBoxCallMonitor() {
         super();
         Debug.msg("Starting FBoxListener"); //$NON-NLS-1$
@@ -46,6 +48,7 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
             clientSocket = new Socket(JFritz.getFritzBox().getAddress(), 1012); //$NON-NLS-1$
             clientSocket.setKeepAlive(true);
             running = true;
+            connected = true;
             return true;
         } catch (UnknownHostException uhe) {
             Debug.msg("Unknown host exception: " + uhe.toString()); //$NON-NLS-1$
@@ -58,6 +61,7 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
             		replaceAll("%A", JFritz.getFritzBox().getAddress())); //$NON-NLS-1$,  //$NON-NLS-2$
             JFritz.stopCallMonitor();
         }
+        connected = false;
         return false;
     }
 
@@ -70,10 +74,21 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
                 // lese nächste Nachricht ein
             	while (!in.ready() && running)
             	{
-            		clientSocket.getInetAddress().isReachable(1000);
+            		if (clientSocket.getInetAddress().isReachable(1500) == false)
+        			{
+            			Debug.err("Ping failed. Reconnecting call monitor");
+            			connected = false;
+        			}
             		try {
 						Thread.sleep(10);
 					} catch (InterruptedException e) {
+						connected = false;
+			        	Thread.currentThread().interrupt();
+					}
+
+					if ( running && connected == false )
+					{
+						connected = connect();
 					}
             	}
 
@@ -93,6 +108,7 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
         } catch (IOException ioe) {
             Debug.msg("IO exception: " + ioe.toString()); //$NON-NLS-1$
         }
+        Debug.msg("Callmonitor Thread stopped");
     }
 
     protected abstract void parseOutput(String line);
@@ -103,9 +119,15 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
             if (clientSocket != null)
                 clientSocket.close();
             running = false;
-            this.interrupt();
+            connected = false;
+//            this.interrupt();
         } catch (IOException e) {
             System.err.println(e);
         }
+    }
+
+    public boolean isConnected()
+    {
+    	return connected;
     }
 }

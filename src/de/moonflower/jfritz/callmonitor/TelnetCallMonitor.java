@@ -83,12 +83,14 @@ public class TelnetCallMonitor extends Thread implements CallMonitorInterface {
             sleep(1000);
         } catch (InterruptedException e) {
             Debug.err("Fehler beim Schlafen: " + e); //$NON-NLS-1$
+        	Thread.currentThread().interrupt();
         }
         telnet.write("telefon &>&1 &"); //$NON-NLS-1$
         try {
             sleep(1000);
         } catch (InterruptedException e) {
             Debug.err("Fehler beim Schlafen: " + e); //$NON-NLS-1$
+        	Thread.currentThread().interrupt();
         }
         Debug.msg("Telefon Daemon restarted."); //$NON-NLS-1$
         Main.setProperty("telefond.laststarted", "telnetMonitor"); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -127,4 +129,8 @@ public class TelnetCallMonitor extends Thread implements CallMonitorInterface {
         Debug.msg("Stopping TelnetListener"); //$NON-NLS-1$
         isRunning = false;
     }
+
+	public boolean isConnected() {
+		return telnet.isConnected();
+	}
 }

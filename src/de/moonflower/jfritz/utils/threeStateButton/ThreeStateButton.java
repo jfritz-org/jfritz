@@ -160,6 +160,7 @@ public class ThreeStateButton extends JButton implements ImageObserver {
 				//Debug.msg("image loaded: "+star.toString());
 			} catch (InterruptedException ie) {
 				Debug.err("error loading images/stern.gif" + ie);
+	        	Thread.currentThread().interrupt();
 			}
 		} else {
 			Debug.err("images/stern.gif not found for ThreeStateButton");

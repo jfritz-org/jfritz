@@ -29,6 +29,7 @@ public class UpdateInternetTask extends TimerTask implements AddonInfosListener 
 	public void run() {
 
 		//Access the AddonsInfo web service of the box
+		Debug.msg("Update internet task");
 		JFritz.getFritzBox().getInternetStats(this);
 
 	}

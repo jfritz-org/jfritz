@@ -141,6 +141,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 					}
 				}catch(InterruptedException e){
 					Debug.err("SeverConnection Thread was interrupted!");
+		        	Thread.currentThread().interrupt();
 				}
 			}else{
 
@@ -233,6 +234,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 							Debug.err("ServerConnectionThread interrupted waiting to reconnect!");
 							Debug.err(e.toString());
 							e.printStackTrace();
+				        	Thread.currentThread().interrupt();
 						}
 					}
 				}

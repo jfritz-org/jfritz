@@ -49,6 +49,8 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 
 	private StatusListener statusListener;
 
+	private Telnet telnet;
+
 	public SyslogCallMonitor(StatusListener statusListener) {
 		super();
 		this.statusListener = statusListener;
@@ -80,7 +82,7 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 					"syslog.checkSyslog", "true")) //$NON-NLS-1$,  //$NON-NLS-2$
 					|| JFritzUtils.parseBoolean(Main.getProperty(
 							"syslog.checkTelefon", "true"))) { //$NON-NLS-1$,  //$NON-NLS-2$
-				Telnet telnet = new Telnet();
+				telnet = new Telnet();
 				telnet.getStatusBarController().addStatusBarListener(statusListener);
 				telnet.connect();
 				if (telnet.isConnected()) {
@@ -223,11 +225,13 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 		try {
 			sleep(1000);
 		} catch (InterruptedException e) {
+        	Thread.currentThread().interrupt();
 		}
 		telnet.sendCommand("syslogd -R " + ip + ":" + port); //$NON-NLS-1$,  //$NON-NLS-2$
 		try {
 			sleep(1000);
 		} catch (InterruptedException e) {
+        	Thread.currentThread().interrupt();
 		}
 		telnet.readUntil("# "); //$NON-NLS-1$
 		// Stimmt so, dass 2 mal bis PROMPT gelesen wird
@@ -235,6 +239,7 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 		try {
 			sleep(1000);
 		} catch (InterruptedException e) {
+        	Thread.currentThread().interrupt();
 		}
 	}
 
@@ -256,16 +261,19 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 			try {
 				sleep(5000);
 			} catch (InterruptedException e) {
+	        	Thread.currentThread().interrupt();
 			}
 			telnet.sendCommand("killall telefon"); //$NON-NLS-1$
 			try {
 				sleep(1000);
 			} catch (InterruptedException e) {
+	        	Thread.currentThread().interrupt();
 			}
 			telnet.sendCommand("telefon | logger &"); //$NON-NLS-1$
 			try {
 				sleep(1000);
 			} catch (InterruptedException e) {
+	        	Thread.currentThread().interrupt();
 			}
 			Debug.msg("telefond restarted"); //$NON-NLS-1$
 			Main.setProperty("telefond.laststarted", "syslogMonitor"); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -300,5 +308,9 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
             Debug.err(e.toString());
 		}
 		return addresses;
+	}
+
+	public boolean isConnected() {
+		return telnet.isConnected();
 	}
 }

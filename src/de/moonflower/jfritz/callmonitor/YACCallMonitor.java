@@ -25,6 +25,8 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 
 	private ServerSocket serverSocket;
 
+	private boolean connected;
+
 	public YACCallMonitor() {
 		super();
 		start();
@@ -46,6 +48,7 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 		try {
 			Debug.msg("Starting YAC-Monitor"); //$NON-NLS-1$
 			serverSocket = new ServerSocket(port);
+			connected = true;
             Debug.msg("YAC-Monitor ready"); //$NON-NLS-1$
 			while (isRunning) {
 				Socket socket = serverSocket.accept();
@@ -104,11 +107,13 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 
 				}
 				socket.close();
+				connected = false;
 			}
 			serverSocket.close();
-
+			connected = false;
 		} catch (IOException e) {
 			Debug.err(e.toString());
+			connected = false;
 		}
 	}
 
@@ -117,10 +122,15 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 		try {
 			if (serverSocket != null)
 			serverSocket.close();
+			connected = false;
 		} catch (IOException e) {
 			Debug.msg("Fehler beim Schliessen des YAC-Sockets"); //$NON-NLS-1$
 		}
 		isRunning = false;
+	}
+
+	public boolean isConnected() {
+		return connected;
 	}
 
 }

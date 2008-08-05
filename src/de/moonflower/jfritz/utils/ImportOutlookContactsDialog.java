@@ -97,6 +97,7 @@ public class ImportOutlookContactsDialog extends JDialog implements ActionListen
         int entriesImported = 0;
         Vector<Person> persons = new Vector<Person>();
 		for (int i = 1; i <= count; i++) {
+			Debug.msg("Importing contact "+i);
             boolean hasTel = false;
             Dispatch item = Dispatch.call(items, "Item", new Integer(i)) //$NON-NLS-1$
                     .toDispatch();
