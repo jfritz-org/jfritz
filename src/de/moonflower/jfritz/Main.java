@@ -157,6 +157,9 @@
  * - Rückwärtssuche beim Client funktioniert nicht
  * FIXME-END
  *
+ * JFritz 0.7.1.8
+ * - Reboot-Bug unter Windows und Java 1.5 behoben.
+ *
  * JFritz 0.7.1
  * - Umstrukturierung des Aufrufs von externen Programmen (noch nicht abgeschlossen)
  * - Bugfix: Internet Monitoring funktioniert wieder
@@ -768,6 +771,7 @@
 
 package de.moonflower.jfritz;
 
+import java.awt.Frame;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -807,9 +811,9 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.1.7"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.1.8"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.118 2008/08/05 19:51:17 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.119 2008/08/16 23:13:45 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -880,7 +884,6 @@ public class Main implements LookupObserver {
 			        Debug.msg( "Core: Caught signal " +signal_name );
 			        prepareShutdown(false, true);
 //			        Debug.msg("Core: Shutdown signal handler done");
-					System.exit(0);
 			      }
 			    };
 
@@ -1775,7 +1778,31 @@ public class Main implements LookupObserver {
 				Debug.msg("Name: " +  threadarray[i].getName());
 				Debug.msg("Class: " + threadarray[i].getClass().toString());
 				Debug.msg("State: " +  threadarray[i].getState());
+				Debug.msg("Daemon: " + threadarray[i].isDaemon());
+				Debug.msg("Thread group: " + threadarray[i].getThreadGroup());
+				Debug.msg("Thread priority: " + threadarray[i].getPriority());
 				Debug.msg("---");
+			}
+	}
+
+	private void wakeupActiveThreads()
+	{
+			Thread[] threadarray = new Thread[Thread.activeCount()];
+			int threadCount = Thread.enumerate(threadarray);
+			Thread t = Thread.currentThread();
+			for (int i=0; i<threadCount; i++)
+			{
+				if (t != threadarray[i] && i==8) {
+					Debug.msg("Waking up thread: " + i);
+					Debug.msg("Name: " +  threadarray[i].getName());
+					Debug.msg("Class: " + threadarray[i].getClass().toString());
+					Debug.msg("State: " +  threadarray[i].getState());
+					Debug.msg("Daemon: " + threadarray[i].isDaemon());
+					Debug.msg("Thread group: " + threadarray[i].getThreadGroup());
+					Debug.msg("Thread priority: " + threadarray[i].getPriority());
+					Debug.msg("---");
+					threadarray[i].interrupt();
+				}
 			}
 	}
 
@@ -1804,11 +1831,16 @@ public class Main implements LookupObserver {
 				jfritz.prepareShutdown(shutdownThread, shutdownHook);
 			}
 			showActiveThreads();
-
-			Debug.msg("Finished shutting down"); //$NON-NLS-1$
+			Frame[] frames = Frame.getFrames();
+			for (int i=0; i< frames.length; i++)
+			{
+				Debug.msg("Frame: " + frames[i]);
+				Debug.msg("Frame name: " + frames[i].getName());
+				Debug.msg("Frame visible: " + frames[i].isVisible());
+				Debug.msg("Frame displayable: " + frames[i].isDisplayable());
+				Debug.msg("---");
+			}
 		}
-	    Debug.msg("Prepare Shutdown: 20");
-	    Thread.sleep(500);
 		} catch (InterruptedException e) {
         	Thread.currentThread().interrupt();
 		}

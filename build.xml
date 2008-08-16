@@ -2,7 +2,7 @@
 <project name="JFritz" default="build" basedir=".">
 
 	<property name="app.name" value="JFritz" />
-	<property name="version" value="0.7.1.7" />
+	<property name="version" value="0.7.1.8" />
 
 	<!-- compiler flags -->
 	<property name="javac.debug" value="true" />
