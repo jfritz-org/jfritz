@@ -51,15 +51,15 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
             connected = true;
             return true;
         } catch (UnknownHostException uhe) {
+            JFritz.stopCallMonitor();
             Debug.msg("Unknown host exception: " + uhe.toString()); //$NON-NLS-1$
             Debug.errDlg(Main.getMessage("error_fritzbox_callmonitor_no_connection"). //$NON-NLS-1$
             		replaceAll("%A", JFritz.getFritzBox().getAddress())); //$NON-NLS-1$,  //$NON-NLS-2$
-            JFritz.stopCallMonitor();
         } catch (IOException ioe) {
+            JFritz.stopCallMonitor();
             Debug.msg("IO exception: " + ioe.toString()); //$NON-NLS-1$
             Debug.errDlg(Main.getMessage("error_fritzbox_callmonitor_no_connection"). //$NON-NLS-1$
             		replaceAll("%A", JFritz.getFritzBox().getAddress())); //$NON-NLS-1$,  //$NON-NLS-2$
-            JFritz.stopCallMonitor();
         }
         connected = false;
         return false;

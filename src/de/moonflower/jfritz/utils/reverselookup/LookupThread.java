@@ -293,7 +293,7 @@ public class LookupThread extends Thread {
 
 										lastname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(split[0]));
 										if (split.length > 1) {
-											firstname = " " + HTMLUtil.stripEntities(split[1]); //$NON-NLS-1$
+											firstname = HTMLUtil.stripEntities(split[1]); //$NON-NLS-1$
 											if ((firstname.indexOf("  ") > -1) //$NON-NLS-1$
 													&& (firstname.indexOf("  u.") == -1)) { //$NON-NLS-1$
 												company = JFritzUtils.removeLeadingSpaces(firstname.substring(

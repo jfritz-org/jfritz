@@ -104,6 +104,11 @@ public class ConfigWizard {
       			JFritz.getFritzBox().detectFirmware();
       			Main.saveConfigProperties();
 
+      			// start call monitor if selected
+				if (Integer.parseInt(Main.getProperty("option.callMonitorType", "1")) != 0)
+				{
+					JFritz.getJframe().switchMonitorButton();
+				}
        			break;
        		case 1:
        			Debug.msg("Cancel clicked, not saving values");

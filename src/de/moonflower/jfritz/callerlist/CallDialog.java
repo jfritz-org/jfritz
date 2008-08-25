@@ -36,6 +36,7 @@ import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.utils.CallPendingDialog;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.NoticeDialog;
 
@@ -220,6 +221,13 @@ public class CallDialog extends JDialog implements ActionListener {
 				}
 
 				setVisible(false);
+
+				//popup new dialog with the possibility to cancel this call
+				String text = Main.getMessage("calldialog_pending_call");
+				text = text.replaceAll("%NUMBER", ((JComboBox) cboNumber).getSelectedItem().toString());
+				CallPendingDialog cancelDialog = new CallPendingDialog(text);
+				cancelDialog.setVisible(true);
+				cancelDialog.dispose();
 			} catch (WrongPasswordException e1) {
 				JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
 				Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$

@@ -57,6 +57,8 @@ public class FritzBox {
 
 	private static String POSTDATA_CALL = "&login:command/password=$PASSWORT&telcfg:settings/UseClickToDial=1&telcfg:settings/DialPort=$NEBENSTELLE&telcfg:command/Dial=$NUMMER"; //$NON-NLS-1$
 
+	private static String POSTDATA_HANGUP = "&login:command/password=$PASSWORT&telcfg:settings/UseClickToDial=1&telcfg:command%2FHangup"; //$NON-NLS-1$
+
 
 	//the following are strings used by the web services on the box
 	//from XX.04.33 onwards
@@ -674,6 +676,19 @@ public class FritzBox {
                 URLEncoder.encode(box_password, "ISO-8859-1"));
 		postdata = postdata.replaceAll("\\$NUMMER", number); //$NON-NLS-1$
 		postdata = postdata.replaceAll("\\$NEBENSTELLE", portStr); //$NON-NLS-1$
+
+		postdata = firmware.getAccessMethod() + postdata;
+
+		String urlstr = "http://" //$NON-NLS-1$
+				+ box_address + ":" + box_port
+				+ "/cgi-bin/webcm"; //$NON-NLS-1$
+		fetchDataFromURL(urlstr, postdata, true);
+	}
+
+	public void hangup() throws WrongPasswordException, IOException {
+		login();
+        String postdata = POSTDATA_HANGUP.replaceAll("\\$PASSWORT", //$NON-NLS-1$
+                URLEncoder.encode(box_password, "ISO-8859-1"));
 
 		postdata = firmware.getAccessMethod() + postdata;
 

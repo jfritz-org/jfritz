@@ -790,7 +790,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			objectOut.reset();
 
 		}catch(IOException e){
-			Debug.err("Error writing writing delete list from box request");
+			Debug.err("Error writing writing doCall request");
 			Debug.err(e.toString());
 			e.printStackTrace();
 		} catch (IllegalBlockSizeException e) {
@@ -801,6 +801,28 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 		actionRequest.number = null;
 		actionRequest.port = null;
+	}
+
+	public synchronized void requestHangup(){
+		Debug.netMsg("Requesting the server to hangup");
+		actionRequest.action = ClientActionRequest.ActionType.hangup;
+
+		try{
+
+			SealedObject sealedActionRequest = new SealedObject(actionRequest, outCipher);
+			objectOut.writeObject(sealedActionRequest);
+			objectOut.flush();
+			objectOut.reset();
+
+		}catch(IOException e){
+			Debug.err("Error writing writing hangup request");
+			Debug.err(e.toString());
+			e.printStackTrace();
+		} catch (IllegalBlockSizeException e) {
+			Debug.err("Illegal block size exception!");
+			Debug.err(e.toString());
+			e.printStackTrace();
+		}
 	}
 
 	public synchronized void callsAdded(Vector<Call> newCalls){

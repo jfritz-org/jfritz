@@ -859,7 +859,7 @@
 				<zipcode>&lt;td class=&quot;col3&quot;&gt;(\d{5})</zipcode>
 			</entry>
 		</website>
-		<website name="www.klicktel.de" url="http://www.klicktel.de/telefonbuch/backwardssearch.html?newSearch=1&amp;boxtype=backwards&amp;vollstaendig=%s" prefix="0">
+		<website name="www.klicktel.de" url="http://www.klicktel.de/telefonbuch/backwardssearch.html?newSearch=1&amp;boxtype=backwards&amp;vollstaendig=$NUMBER" prefix="0">
 	        <entry>
 	        	<name>class=&quot;title&quot;&gt;([^&lt;]+)&lt;/span&gt;</name>
 	        	<street>class=&quot;location&quot;&gt;([^&lt;]+)&lt;br /&gt;\d{5}\s+[^&lt;]+&lt;/span&gt;</street>

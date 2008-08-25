@@ -75,7 +75,7 @@ public class FRITZBOXConfigDialog extends
                         "option.callmonitor.monitorIncomingCalls", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
         monitorOutgoingCalls.setSelected(JFritzUtils
                 .parseBoolean(Main.getProperty(
-                        "option.callmonitor.monitorOutgoingCalls", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+                        "option.callmonitor.monitorOutgoingCalls", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
         fetchAfterDisconnect.setSelected(JFritzUtils
                 .parseBoolean(Main.getProperty(
                         "option.callmonitor.fetchAfterDisconnect", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$

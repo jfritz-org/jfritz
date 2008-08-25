@@ -28,6 +28,7 @@ import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
+import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.network.SSDPPacket;
 
 public class ConfigPanelFritzBox extends JPanel implements ActionListener,
@@ -159,11 +160,18 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 					address.setText(dev.getIP().getHostAddress());
 					firmware = FritzBoxFirmware.detectFirmwareVersion(address
 							.getText(), password, port.getText());
-					defaultFritzBox.setSelected(false);
 				} else {
-					firmware = FritzBoxFirmware.detectFirmwareVersion(address
-							.getText(), password, port.getText());
-					defaultFritzBox.setSelected(false);
+					String selectedItem = addressCombo.getItemAt(addressCombo.getSelectedIndex()).toString();
+					if (!selectedItem.equals(""))
+					{
+						address.setText(selectedItem);
+						firmware = FritzBoxFirmware.detectFirmwareVersion(address.getText(), password, port.getText());
+					} else {
+						Debug.err("Address wrong!"); //$NON-NLS-1$
+						boxtypeLabel.setForeground(Color.RED);
+						boxtypeLabel.setText(Main.getMessage("box.not_found")); //$NON-NLS-1$
+						firmware = null;
+					}
 				}
 				setBoxTypeLabel();
 			} catch (WrongPasswordException e1) {
@@ -214,9 +222,25 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 			boxtypeLabel.setForeground(Color.BLUE);
 			boxtypeLabel.setText(firmware.getBoxName() + " (" //$NON-NLS-1$
 					+ firmware.getFirmwareVersion() + ")"); //$NON-NLS-1$
+			checkDefaultFritzBox();
 		} else {
 			boxtypeLabel.setForeground(Color.RED);
 			boxtypeLabel.setText(Main.getMessage("unknown")); //$NON-NLS-1$
+		}
+	}
+
+	private void checkDefaultFritzBox()
+	{
+		if (Main.getProperty("box.mac", "").equals(""))
+		{
+				defaultFritzBox.setSelected(true);
+		} else {
+			if (firmware.getMacAddress().equals(Main.getProperty("box.mac", "")))
+			{
+				defaultFritzBox.setSelected(true);
+			} else {
+				defaultFritzBox.setSelected(false);
+			}
 		}
 	}
 
@@ -243,7 +267,6 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 			Debug.netMsg("JFritz is running as a client and using call list from server, disabeling FritzBox panel");
 			this.boxtypeButton.setEnabled(false);
 		}
-
 	}
 
 	public void saveSettings() throws WrongPasswordException, InvalidFirmwareException, IOException {

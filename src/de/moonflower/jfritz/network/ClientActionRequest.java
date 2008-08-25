@@ -19,7 +19,7 @@ public class ClientActionRequest implements Serializable {
 
 	public static final long serialVersionUID = 101;
 
-	public enum ActionType {doLookup, getCallList, deleteListFromBox, doCall};
+	public enum ActionType {doLookup, getCallList, deleteListFromBox, doCall, hangup};
 
 	public ActionType action;
 

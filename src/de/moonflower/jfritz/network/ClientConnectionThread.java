@@ -293,7 +293,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 					else if(actionRequest.action == ClientActionRequest.ActionType.doCall
 							&& login.allowDoCall){
 
-							//client has requested the list of available ports
+							//client has requested a call
 						if(actionRequest.number == null){
 							Debug.netMsg("Received request to list available ports for "+remoteAddress);
 							writeAvailablePorts();
@@ -306,6 +306,12 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 						}else
 							Debug.netMsg("Received invalid direct dial request from "+remoteAddress);
+					}
+					else if(actionRequest.action == ClientActionRequest.ActionType.hangup
+							&& login.allowDoCall){
+
+							//client has requested a hangup
+							JFritz.getFritzBox().hangup();
 					}
 
 				}else if(o instanceof String){

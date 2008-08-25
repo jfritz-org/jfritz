@@ -155,5 +155,12 @@ public class NetworkStateMonitor  {
 			JFritz.getFritzBox().doCall(number, port);
 	}
 
-
+	public static void hangup() throws IOException, WrongPasswordException
+	{
+		if(Main.getProperty("option.clientCallList", "false").equals("true")
+				&& isConnectedToServer())
+			serverConnection.requestHangup();
+		else
+			JFritz.getFritzBox().hangup();
+	}
 }

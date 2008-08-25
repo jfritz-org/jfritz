@@ -157,6 +157,14 @@
  * - Rückwärtssuche beim Client funktioniert nicht
  * FIXME-END
  *
+ * JFritz 0.7.1.9
+ * - Bugfix: FritzBox-Einstellungen, defaultBox und ComboBox
+ * - Bugfix: Fritz!Box-Anrufmonitor wird im Wizard als Standard gewählt und nach Abschluss des Wizards automatisch gestartet.
+ * 			 Auch anzeigen ausgehender Anrufe nun per default aktiviert.
+ * - Neu: Abbruch eines Wählhilfe-Anrufs möglich.
+ * Strings:
+ * calldialog_pending_call
+ *
  * JFritz 0.7.1.8
  * - Reboot-Bug unter Windows und Java 1.5 behoben.
  *
@@ -811,9 +819,9 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.1.8"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.1.9"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.119 2008/08/16 23:13:45 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.120 2008/08/25 18:40:57 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
