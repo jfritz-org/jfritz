@@ -291,7 +291,7 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 
 	//TODO change me!
 	public void setStatus(){
-		statusBarController.fireStatusChanged("Change Me!");
+		//statusBarController.fireStatusChanged("!");
 	}
 
 	public void actionPerformed(ActionEvent e) {

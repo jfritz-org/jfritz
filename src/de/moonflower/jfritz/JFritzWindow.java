@@ -60,6 +60,7 @@ import de.moonflower.jfritz.autoupdate.Update;
 import de.moonflower.jfritz.callerlist.CallDialog;
 import de.moonflower.jfritz.callerlist.CallerListPanel;
 import de.moonflower.jfritz.callerlist.CallerTable;
+import de.moonflower.jfritz.callerlist.FetchListTimer;
 import de.moonflower.jfritz.callmonitor.CallmessageCallMonitor;
 import de.moonflower.jfritz.callmonitor.FBoxCallMonitorV1;
 import de.moonflower.jfritz.callmonitor.FBoxCallMonitorV3;
@@ -101,7 +102,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	private static final long serialVersionUID = 1;
 
-	private Timer timer = null;
+	private FetchListTimer timer = null;
+
+	private TimerTask timerTask = null;
 
 	private JMenuBar menu;
 
@@ -741,19 +744,17 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 */
 	private void fetchTask(boolean enabled) {
 		if (enabled) {
-			timer = new Timer();
-
 			int interval = Integer.parseInt(Main.getProperty("fetch.timer", //$NON-NLS-1$
 					"3")) * 60000;
-
-			timer.schedule(new TimerTask() {
+			timerTask = new TimerTask() {
 
 				public void run() {
 					Debug.msg("Running FetchListTask.."); //$NON-NLS-1$
 					fetchList();
 				}
-
-			}, interval, interval); //$NON-NLS-1$
+			};
+			timer = new FetchListTimer("FetchList-Timer", true);
+			timer.schedule(timerTask, interval, interval); //$NON-NLS-1$
 			Debug.msg("Timer enabled"); //$NON-NLS-1$
 		} else {
 			timer.cancel();
@@ -765,6 +766,25 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * Fetches list from box
 	 */
 	public void fetchList() {
+		if (timer.getState() == FetchListTimer.STATE_SCHEDULED)
+		{
+			// restart timer
+			timer.cancel();
+			timer = null;
+			int interval = Integer.parseInt(Main.getProperty("fetch.timer", //$NON-NLS-1$
+			"3")) * 60000;
+			timerTask.cancel();
+			timerTask = new TimerTask() {
+
+				public void run() {
+					Debug.msg("Running FetchListTask.."); //$NON-NLS-1$
+					fetchList();
+				}
+			};
+			timer = new FetchListTimer("FetchList-Timer2", true);
+			timer.schedule(timerTask, interval, interval); //$NON-NLS-1$
+		}
+		// fetch the call list
 		fetchList(false);
 	}
 

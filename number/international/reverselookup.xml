@@ -775,7 +775,7 @@
 		</website>
 		<website name="tel.search.ch" url="http://tel.search.ch/result.html?tel=$NUMBER" prefix="0">
 			<entry>
-				<name>&lt;div class=&quot;rname&quot;&gt;&lt;h4&gt;&lt;a[^&gt;]*&gt;([^&lt;]*)&lt;/a&gt;</name>
+				<name>&lt;div class=&quot;rname&quot;&gt;&lt;h[1-9]*&gt;&lt;a[^&gt;]*&gt;([^&lt;]*)&lt;/a&gt;</name>
 				<street>&lt;div class=&quot;raddr&quot;&gt;([^&lt;,]*),\s*[0-9]*[^&lt;]*&lt;/div&gt;</street>
 				<city>&lt;div class=&quot;raddr&quot;&gt;[^&lt;,]*,\s*[0-9]*([^&lt;]*)&lt;/div&gt;</city>
 				<zipcode>&lt;div class=&quot;raddr&quot;&gt;[^&lt;,]*,\s*([0-9]*)[^&lt;]*&lt;/div&gt;</zipcode>

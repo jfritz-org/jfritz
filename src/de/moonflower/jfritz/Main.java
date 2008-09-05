@@ -157,6 +157,11 @@
  * - Rückwärtssuche beim Client funktioniert nicht
  * FIXME-END
  *
+ * JFritz 0.7.1.10
+ * - Bugfix: Reparatur der Tel.Search.Ch-Inverssuche.
+ * - Bugfix: Manuelles Abholen der Anrufliste startet den Timer zum automatischen Abholen der Anrufliste wieder neu.
+ * - Änderung des Strings Festnetz zu Ferngespräch
+ *
  * JFritz 0.7.1.9
  * - Bugfix: FritzBox-Einstellungen, defaultBox und ComboBox
  * - Bugfix: Fritz!Box-Anrufmonitor wird im Wizard als Standard gewählt und nach Abschluss des Wizards automatisch gestartet.
@@ -807,7 +812,6 @@ import de.moonflower.jfritz.utils.CLIOption;
 import de.moonflower.jfritz.utils.CLIOptions;
 import de.moonflower.jfritz.utils.CopyFile;
 import de.moonflower.jfritz.utils.Debug;
-import de.moonflower.jfritz.utils.DiagSignalHandler;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -819,9 +823,9 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.1.9"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.1.10"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.120 2008/08/25 18:40:57 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.121 2008/09/05 10:20:27 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
