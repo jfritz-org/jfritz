@@ -867,6 +867,22 @@
 	        	<zipcode>class=&quot;location&quot;&gt;[^&lt;]+&lt;br /&gt;(\d{5})\s+[^&lt;]+&lt;/span&gt;</zipcode>
 	        </entry>
 		</website>
+		<website name="www.goyellow.de" url="http://www.goyellow.de/inverssuche/?TEL=$NUMBER" prefix="0">
+	        <entry>
+	        	<name>&lt;a href=&quot;[^&quot;]*&quot; onClick=&quot;[^&quot;]*&quot; title=&quot;[^&quot;]*&quot;&gt;([^&lt;]*)&lt;/a&gt;</name>
+	        	<street>&lt;p class=&quot;address&quot;&gt;([^&lt;]*)&lt;br /&gt;[\d]* [^&lt;]*&lt;/p&gt;</street>
+	        	<city>&lt;p class=&quot;address&quot;&gt;[^&lt;]*&lt;br /&gt;[\d]* ([^&lt;]*)&lt;/p&gt;</city>
+	        	<zipcode>&lt;p class=&quot;address&quot;&gt;[^&lt;]*&lt;br /&gt;([\d]*) [^&lt;]*&lt;/p&gt;</zipcode>
+	        </entry>
+		</website>
+		<website name="www.11880.com" url="http://www.11880.com/Suche/index.cfm?fuseaction=Suche.rueckwaertssucheresult&amp;init=true&amp;tel=$NUMBER" prefix="0">
+	        <entry>
+	        	<name>&lt;a style=&quot;text-decoration: underline;&quot; href=&quot;[^&quot;]*&quot; onclick=&quot;[^&quot;]*&quot; class=&quot;popup&quot;[^&gt;]*&gt;([^&lt;]*)&lt;/a&gt;</name>
+	        	<street>&lt;div style=&quot;padding-bottom:5px;&quot;&gt;\s*([^,]*), [\d]* [^&lt;]*&lt;br /&gt;</street>
+	        	<city>&lt;div style=&quot;padding-bottom:5px;&quot;&gt;\s*[^,]*, [\d]* ([^&lt;]*)&lt;br /&gt;</city>
+	        	<zipcode>&lt;div style=&quot;padding-bottom:5px;&quot;&gt;\s*[^,]*, ([\d]*) [^&lt;]*&lt;br /&gt;</zipcode>
+	        </entry>
+		</website>
 	</country>
 	<country code="+501">
 		<website name="belizeweb.com" url="http://www.belizeweb.com:8080/directory/index-new.jsp" cookie="(JSESSIONID=[^;]*);" nexturl="http://www.belizeweb.com:8080/directory/index-new.jsp?dirlist=$PART1-$PART2&amp;imageField.x=0&amp;imageField.y=0&amp;maxrecords=5" post="" hidden="(wrzlgrmpf)" prefix="">
