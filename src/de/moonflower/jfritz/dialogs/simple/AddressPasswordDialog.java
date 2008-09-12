@@ -5,9 +5,11 @@
 
 package de.moonflower.jfritz.dialogs.simple;
 
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -59,10 +61,15 @@ public class AddressPasswordDialog extends JDialog {
 		super(parent, true);
 	    addWindowListener(new WindowCloseHandle(this));
 		this.isPasswordDlg = isPasswordDlg;
+		drawDialog();
 		if (parent != null) {
 			setLocationRelativeTo(parent);
+		} else {
+			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+			int top = (screenSize.height - getHeight()) / 2;
+			int left = (screenSize.width - getWidth()) / 2;
+			setLocation(left, top);
 		}
-		drawDialog();
 	}
 
 	public String getPass() {
@@ -93,8 +100,8 @@ public class AddressPasswordDialog extends JDialog {
 		address = new JTextField("", 20); //$NON-NLS-1$
 		okButton = new JButton(Main.getMessage("okay")); //$NON-NLS-1$
 		cancelButton = new JButton(Main.getMessage("cancel")); //$NON-NLS-1$
-		passLabel = new JLabel(Main.getMessage("password")); //$NON-NLS-1$
-		addressLabel = new JLabel(Main.getMessage("ip_address")); //$NON-NLS-1$
+		passLabel = new JLabel(Main.getMessage("password") + ": "); //$NON-NLS-1$
+		addressLabel = new JLabel(Main.getMessage("ip_address") + ": "); //$NON-NLS-1$
 
 		super.dialogInit();
 

@@ -20,20 +20,23 @@ public class WatchdogThread extends Thread {
 
     private boolean standbyDetected = false;
 
+    private JFritz jfritz;
+
     /**
      *
      * @param interval
      *            in minutes
      */
-    public WatchdogThread(int interval) {
+    public WatchdogThread(int interval, JFritz jfritz) {
         cal = Calendar.getInstance();
         this.interval = interval;
         startWatchdogTimestamp = cal.getTime();
         lastTimestamp = cal.getTime();
+        this.jfritz = jfritz;
     }
 
     public void run() {
-        if (JFritz.getJframe().getMonitorButton().isSelected()) {
+        if (JFritz.getJframe().isCallMonitorStarted()) {
 //            Debug.msg("Watchdog: Check call monitor state");
             checkCallmonitor();
 //            Debug.msg("Watchdog: Check done");
@@ -56,10 +59,15 @@ public class WatchdogThread extends Thread {
             standbyDetected = true;
         }
 
+        if ((JFritz.getCallMonitor() != null) && (!JFritz.getCallMonitor().isConnected()))
+        {
+        	restartCallMonitor(false);
+        }
+
         if (standbyDetected)
         {
-        	restartCallMonitor();
-        	if (JFritz.getCallMonitor().isConnected())
+        	restartCallMonitor(true);
+        	if ((JFritz.getCallMonitor() != null) && (JFritz.getCallMonitor().isConnected()))
         	{
         		if (JFritzUtils.parseBoolean(Main.getProperty("option.watchdog.fetchAfterStandby", "true"))) //$NON-NLS-1$, //$NON-NLS-2$
         			JFritz.getJframe().fetchList(JFritzUtils.parseBoolean(Main.getProperty("option.deleteAfterFetch", "true"))); //$NON-NLS-1$, //$NON-NLS-2$
@@ -79,14 +87,14 @@ public class WatchdogThread extends Thread {
         lastTimestamp = now;
     }
 
-    private void restartCallMonitor() {
+    private void restartCallMonitor(boolean showErrorMessage) {
         JFritz.stopCallMonitor();
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
         	Thread.currentThread().interrupt();
         }
-        JFritz.getJframe().startChosenCallMonitor();
+        jfritz.startChosenCallMonitor(showErrorMessage);
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {

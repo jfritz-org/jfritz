@@ -27,7 +27,7 @@ public class ConfigPanelCallMonitorDescriptor extends WizardPanelDescriptor {
 	    }
 
 	    public Object getNextPanelDescriptor() {
-	        return FINISH;
+	        return ConfigPanelFinishDescriptor.IDENTIFIER;
 	    }
 
 	    public Object getBackPanelDescriptor() {

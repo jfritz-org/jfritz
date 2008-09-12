@@ -115,7 +115,7 @@ public class ConfigPanelMessage extends JPanel implements ConfigPanel {
 		}
 		}
 
-		popupDelay.setText(Main.getProperty("option.popupDelay", "10"));
+		popupDelay.setText(Main.getProperty("option.popupDelay", "0"));
 
 	}
 

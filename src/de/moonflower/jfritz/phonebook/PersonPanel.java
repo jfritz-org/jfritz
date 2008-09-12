@@ -17,7 +17,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Enumeration;
-import java.util.ResourceBundle;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -29,6 +28,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -126,7 +126,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 		JPanel buttonPanel = new JPanel();
 
-		okButton = new JButton(Main.getMessage("okay")); //$NON-NLS-1$
+		okButton = new JButton(Main.getMessage("save")); //$NON-NLS-1$
 		okButton.setActionCommand("ok"); //$NON-NLS-1$
 		okButton.setIcon(getImage("okay.png")); //$NON-NLS-1$
 		okButton.addActionListener(this);
@@ -410,31 +410,11 @@ public class PersonPanel extends JPanel implements ActionListener,
 			numberHasChanged = true;
 			firePropertyChange();
 		} else if (e.getActionCommand().equals("undo")) { //$NON-NLS-1$
-			this.setPerson(originalPerson);
-			hasChanged = false;
-			numberHasChanged = false;
-			firePropertyChange();
+			undo();
 		} else if (e.getActionCommand().equals("ok")) {
-			updatePerson();
-
-			phoneBook.sortAllFilteredRows();
-			phoneBook.updateFilter();
-			phoneBook.saveToXMLFile(Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
-			JFritz.getJframe().getPhoneBookPanel().getPhoneBookTable()
-					.showAndSelectPerson(originalPerson);
-
-			Enumeration<ActionListener> en = actionListener.elements();
-			while (en.hasMoreElements()) {
-				ActionListener al = en.nextElement();
-				al.actionPerformed(e);
-			}
+			save(e);
 		} else if (e.getActionCommand().equals("cancel")) {
-			this.setPerson(originalPerson);
-			Enumeration<ActionListener> en = actionListener.elements();
-			while (en.hasMoreElements()) {
-				ActionListener al = en.nextElement();
-				al.actionPerformed(e);
-			}
+			cancel(e);
 		}
 	}
 
@@ -533,12 +513,17 @@ public class PersonPanel extends JPanel implements ActionListener,
 	 *            The person to set.
 	 */
 	public final void setPerson(Person person) {
-		this.cancelEditing();
-		this.originalPerson = person;
-		clonedPerson = originalPerson.clone();
-		numberHasChanged = false;
-		hasChanged = false;
-		updateGUI();
+		if (!clonedPerson.equals(person))
+		{
+			this.cancelEditing();
+			this.originalPerson = person;
+			clonedPerson = originalPerson.clone();
+			numberHasChanged = false;
+			hasChanged = false;
+			updateGUI();
+			JFritz.getJframe().getPhoneBookPanel().getPhoneBookTable()
+			.showAndSelectPerson(originalPerson);
+		}
 	}
 
 	/**
@@ -688,14 +673,38 @@ public class PersonPanel extends JPanel implements ActionListener,
 	}
 
 	public void cancelEditing() {
+		int result = -1;
+		if ( hasChanged || numberHasChanged )
+		{
+		    result = JOptionPane.showConfirmDialog(parentFrame, Main.getMessage("save_changes"), Main.getMessage("unsaved_changes")
+		            , JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+		}
 		hasChanged = false;
 		if (numberTable.isEditing()) {
 			int row = numberTable.getEditingRow();
 			int column = numberTable.getEditingColumn();
+			if ( result == 0)
+			{
+				numberTable.editingStopped(new ChangeEvent(numberTable
+						.getComponentAt(row, column)));
+			}
+			else
+			{
+				numberTable.editingCanceled(new ChangeEvent(numberTable
+						.getComponentAt(row, column)));
+			}
 			numberHasChanged = false;
-			numberTable.editingCanceled(new ChangeEvent(numberTable
-					.getComponentAt(row, column)));
 		}
+	    if (result == 0) // YES
+	    {
+	    	ActionEvent e = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "ok");
+	    	e.setSource(okButton);
+	    	save(e);
+	    }
+	    else if (result == 1)// NO
+	    {
+	    	undo();
+	    }
 	}
 
 	/**
@@ -747,4 +756,36 @@ public class PersonPanel extends JPanel implements ActionListener,
 			actionListener.remove(listener);
 	}
 
+	private void undo()
+	{
+		this.setPerson(originalPerson);
+		hasChanged = false;
+		numberHasChanged = false;
+		firePropertyChange();
+	}
+
+	private void cancel(ActionEvent e)
+	{
+		this.setPerson(originalPerson);
+		Enumeration<ActionListener> en = actionListener.elements();
+		while (en.hasMoreElements()) {
+			ActionListener al = en.nextElement();
+			al.actionPerformed(e);
+		}
+	}
+
+	private void save(ActionEvent e)
+	{
+		updatePerson();
+
+		phoneBook.sortAllFilteredRows();
+		phoneBook.updateFilter();
+		phoneBook.saveToXMLFile(Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
+
+		Enumeration<ActionListener> en = actionListener.elements();
+		while (en.hasMoreElements()) {
+			ActionListener al = en.nextElement();
+			al.actionPerformed(e);
+		}
+	}
 }

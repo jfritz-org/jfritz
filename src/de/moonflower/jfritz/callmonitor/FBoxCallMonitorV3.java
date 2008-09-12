@@ -21,14 +21,22 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 
 	public FBoxCallMonitorV3() {
-        Debug.msg("FBoxListener V3"); //$NON-NLS-1$
-    }
+		super();
+		Debug.msg("FBoxListener V3"); //$NON-NLS-1$
+	}
 
     public void run() {
-        if (super.connect()) {
-            Debug.msg("Connected"); //$NON-NLS-1$
-            readOutput();
-        }
+    	while (!this.isConnected())
+    	{
+	        if (super.connect()) {
+	            Debug.msg("Connected"); //$NON-NLS-1$
+	            readOutput();
+	        }
+	        if (this.isRunning() == false)
+	        {
+	        	break;
+	        }
+    	}
     }
 
     public void parseOutput(String line) {

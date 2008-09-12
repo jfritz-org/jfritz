@@ -23,17 +23,21 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
 	private boolean connected = false;
 
     public FBoxCallMonitorV1() {
+    	super();
         Debug.msg("FBoxListener V1"); //$NON-NLS-1$
     }
 
     public void run() {
-        if (super.connect()) {
-        	connected = true;
-            Debug.msg("Connected"); //$NON-NLS-1$
-            readOutput();
-        } else {
-        	connected = false;
-        }
+    	while (!this.isConnected() && this.isRunning())
+    	{
+            if (super.connect()) {
+            	connected = true;
+                Debug.msg("Connected"); //$NON-NLS-1$
+                readOutput();
+            } else {
+            	connected = false;
+            }
+    	}
     }
 
     protected void parseOutput(String line) {

@@ -70,6 +70,9 @@ public class ConfigWizard {
         descriptor5 = new ConfigPanelCallMonitorDescriptor(descriptor3.getFritzBoxPanel());
         wizard.registerWizardPanel(ConfigPanelCallMonitorDescriptor.IDENTIFIER, descriptor5);
 
+        WizardPanelDescriptor finishDescriptor= new ConfigPanelFinishDescriptor();
+        wizard.registerWizardPanel(ConfigPanelFinishDescriptor.IDENTIFIER, finishDescriptor);
+
         //set the first panel to be displayed
         wizard.setCurrentPanel(ConfigPanel1Descriptor.IDENTIFIER);
 

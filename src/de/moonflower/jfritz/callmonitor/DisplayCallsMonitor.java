@@ -173,7 +173,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 
         if (JFritzUtils.parseBoolean(Main.getProperty("option.playSounds", //$NON-NLS-1$
                 "true"))) { //$NON-NLS-1$
-            JFritz.playSound(JFritz.getRingSound());
+            JFritz.playSound(JFritz.getRingSound(), 1.0f);
         }
 
         if (JFritzUtils.parseBoolean(Main.getProperty(
@@ -326,7 +326,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 
         if (JFritzUtils.parseBoolean(Main.getProperty("option.playSounds", //$NON-NLS-1$
                 "true"))) { //$NON-NLS-1$
-            JFritz.playSound(JFritz.getCallSound());
+            JFritz.playSound(JFritz.getCallSound(), 1.0f);
         }
 
         if (JFritzUtils.parseBoolean(Main.getProperty(

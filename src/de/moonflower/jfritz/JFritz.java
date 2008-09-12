@@ -42,13 +42,20 @@ import org.jdesktop.jdic.tray.TrayIcon;
 import de.moonflower.jfritz.callerlist.CallerList;
 import de.moonflower.jfritz.callmonitor.CallMonitorInterface;
 import de.moonflower.jfritz.callmonitor.CallMonitorList;
+import de.moonflower.jfritz.callmonitor.CallmessageCallMonitor;
 import de.moonflower.jfritz.callmonitor.DisconnectMonitor;
 import de.moonflower.jfritz.callmonitor.DisplayCallsMonitor;
+import de.moonflower.jfritz.callmonitor.FBoxCallMonitorV1;
+import de.moonflower.jfritz.callmonitor.FBoxCallMonitorV3;
+import de.moonflower.jfritz.callmonitor.SyslogCallMonitor;
+import de.moonflower.jfritz.callmonitor.TelnetCallMonitor;
+import de.moonflower.jfritz.callmonitor.YACCallMonitor;
 import de.moonflower.jfritz.dialogs.quickdial.QuickDials;
 import de.moonflower.jfritz.dialogs.simple.MessageDlg;
 import de.moonflower.jfritz.dialogs.sip.SipProviderTableModel;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.network.ClientLoginsTableModel;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.phonebook.PhoneBook;
@@ -533,8 +540,10 @@ public final class JFritz implements  StatusListener, ItemListener {
 	 *
 	 * @param sound
 	 *            URL of sound to be played
+	 * @param volume
+	 * 			  Volume in percent. 1.0 means 100 percent (loudest volume)
 	 */
-	public static void playSound(URL sound) {
+	public static void playSound(URL sound, float volume) {
 		try {
 			AudioInputStream ais = AudioSystem.getAudioInputStream(sound);
 			DataLine.Info info = new DataLine.Info(Clip.class, ais.getFormat(),
@@ -547,7 +556,7 @@ public final class JFritz implements  StatusListener, ItemListener {
             float min = gainControl.getMinimum();
             float max = gainControl.getMaximum();
             float diff = max - min;
-            gainControl.setValue(min + (diff / 2));
+            gainControl.setValue(volume);
 			clip.start();
 			while (true) {
 				try {
@@ -620,6 +629,92 @@ public final class JFritz implements  StatusListener, ItemListener {
 		}
 	}
 
+	public void startChosenCallMonitor(boolean showErrorMessage) {
+		if(Main.getProperty("option.clientCallMonitor", "false").equals("true")
+			 && NetworkStateMonitor.isConnectedToServer()){
+
+			return;
+		}
+
+
+		switch (Integer.parseInt(Main.getProperty("option.callMonitorType", //$NON-NLS-1$
+				"0"))) { //$NON-NLS-1$
+			case 1: {
+				try {
+					getJframe().setConnectedStatus();
+					if (JFritz.getFritzBox().checkValidFirmware()) {
+						FritzBoxFirmware currentFirm = JFritz.getFritzBox()
+								.getFirmware();
+						if ((currentFirm.getMajorFirmwareVersion() == 3)
+								&& (currentFirm.getMinorFirmwareVersion() < 96)) {
+							Debug.errDlg(Main
+									.getMessage("callmonitor_error_wrong_firmware")); //$NON-NLS-1$
+							getJframe().getMonitorButton().setSelected(false);
+							getJframe().setCallMonitorButtonPushed(true);
+							getJframe().setCallMonitorConnectedStatus();
+						} else {
+							if ((currentFirm.getMajorFirmwareVersion() >= 4)
+									&& (currentFirm.getMinorFirmwareVersion() >= 3)) {
+								JFritz.setCallMonitor(new FBoxCallMonitorV3());
+							} else {
+								JFritz.setCallMonitor(new FBoxCallMonitorV1());
+							}
+							getJframe().setCallMonitorButtonPushed(true);
+							getJframe().setCallMonitorConnectedStatus();
+						}
+					}
+				} catch (WrongPasswordException e1) {
+					JFritz.setCallMonitor(new FBoxCallMonitorV3());
+					getJframe().setCallMonitorDisconnectedStatus();
+					if (showErrorMessage)
+					{
+						JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+					}
+				} catch (IOException e1) {
+					JFritz.setCallMonitor(new FBoxCallMonitorV3());
+					getJframe().setCallMonitorDisconnectedStatus();
+					if (showErrorMessage)
+					{
+						JFritz.errorMsg(Main.getMessage("box.not_found")); //$NON-NLS-1$
+					}
+				} catch (InvalidFirmwareException e1) {
+					JFritz.setCallMonitor(new FBoxCallMonitorV3());
+					getJframe().setCallMonitorDisconnectedStatus();
+					if (showErrorMessage)
+					{
+						JFritz.errorMsg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
+					}
+				}
+				break;
+			}
+			case 2: {
+				JFritz.setCallMonitor(new TelnetCallMonitor(this));
+				getJframe().setCallMonitorButtonPushed(true);
+				break;
+			}
+			case 3: {
+				JFritz.setCallMonitor(new SyslogCallMonitor(this));
+				getJframe().setCallMonitorButtonPushed(true);
+				break;
+			}
+			case 4: {
+				JFritz.setCallMonitor(new YACCallMonitor(Integer.parseInt(Main
+						.getProperty("option.yacport", //$NON-NLS-1$
+								"10629")))); //$NON-NLS-1$
+				getJframe().setCallMonitorButtonPushed(true);
+				break;
+			}
+			case 5: {
+				JFritz.setCallMonitor(new CallmessageCallMonitor(Integer
+						.parseInt(Main.getProperty("option.callmessageport", //$NON-NLS-1$
+								"23232")))); //$NON-NLS-1$
+				getJframe().setCallMonitorButtonPushed(true);
+				break;
+			}
+		}
+
+	}
+
 	public static void stopCallMonitor() {
 		if (callMonitor != null) {
 			callMonitor.stopCallMonitor();
@@ -627,6 +722,7 @@ public final class JFritz implements  StatusListener, ItemListener {
 			callMonitor = null;
 		}
 		getJframe().setCallMonitorButtonPushed(false);
+		getJframe().setCallMonitorDisconnectedStatus();
 	}
 
 	public static CallMonitorInterface getCallMonitor() {
@@ -649,10 +745,10 @@ public final class JFritz implements  StatusListener, ItemListener {
 	 * start timer for watchdog
 	 *
 	 */
-	private static void startWatchdog() {
+	private void startWatchdog() {
 		int interval = 10; // seconds
 		watchdogTimer = new Timer();
-		watchdog = new WatchdogThread(interval);
+		watchdog = new WatchdogThread(interval, this);
 		watchdog.setDaemon(false);
 		watchdog.setName("Watchdog-Thread");
 		watchdogTimer.schedule(new TimerTask() {

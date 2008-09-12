@@ -32,9 +32,12 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
 
     private boolean connected = false;
 
+    private long exceptionTimestamp = 0;
+
     public FBoxCallMonitor() {
         super();
         Debug.msg("Starting FBoxListener"); //$NON-NLS-1$
+        this.setDaemon(true);
         start();
         zufallszahl = new Random();
     }
@@ -45,21 +48,40 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
         try {
             Debug.msg("Trying to connect to " //$NON-NLS-1$
                     + JFritz.getFritzBox().getAddress() + ":1012"); //$NON-NLS-1$,  //$NON-NLS-2$
+            running = true;
             clientSocket = new Socket(JFritz.getFritzBox().getAddress(), 1012); //$NON-NLS-1$
             clientSocket.setKeepAlive(true);
-            running = true;
             connected = true;
+    		JFritz.getJframe().setCallMonitorConnectedStatus();
             return true;
         } catch (UnknownHostException uhe) {
-            JFritz.stopCallMonitor();
             Debug.msg("Unknown host exception: " + uhe.toString()); //$NON-NLS-1$
-            Debug.errDlg(Main.getMessage("error_fritzbox_callmonitor_no_connection"). //$NON-NLS-1$
-            		replaceAll("%A", JFritz.getFritzBox().getAddress())); //$NON-NLS-1$,  //$NON-NLS-2$
+            closeConnection();
+        	if ( exceptionTimestamp == 0)
+        	{
+        		exceptionTimestamp = System.currentTimeMillis();
+        		JFritz.getJframe().setCallMonitorDisconnectedStatus();
+        	}
+        	if ( System.currentTimeMillis() > exceptionTimestamp + 180*1000)
+        	{
+	            Debug.errDlg(Main.getMessage("error_fritzbox_callmonitor_no_connection"). //$NON-NLS-1$
+	            		replaceAll("%A", JFritz.getFritzBox().getAddress())); //$NON-NLS-1$,  //$NON-NLS-2$
+	            exceptionTimestamp = 0;
+        	}
         } catch (IOException ioe) {
-            JFritz.stopCallMonitor();
             Debug.msg("IO exception: " + ioe.toString()); //$NON-NLS-1$
-            Debug.errDlg(Main.getMessage("error_fritzbox_callmonitor_no_connection"). //$NON-NLS-1$
-            		replaceAll("%A", JFritz.getFritzBox().getAddress())); //$NON-NLS-1$,  //$NON-NLS-2$
+            closeConnection();
+        	if ( exceptionTimestamp == 0)
+        	{
+        		exceptionTimestamp = System.currentTimeMillis();
+        		JFritz.getJframe().setCallMonitorDisconnectedStatus();
+        	}
+        	if ( System.currentTimeMillis() > exceptionTimestamp + 180*1000)
+        	{
+	            Debug.errDlg(Main.getMessage("error_fritzbox_callmonitor_no_connection"). //$NON-NLS-1$
+	            		replaceAll("%A", JFritz.getFritzBox().getAddress())); //$NON-NLS-1$,  //$NON-NLS-2$
+	            exceptionTimestamp = 0;
+        	}
         }
         connected = false;
         return false;
@@ -78,9 +100,10 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
         			{
             			Debug.err("Ping failed. Reconnecting call monitor");
             			connected = false;
+            			JFritz.getJframe().setCallMonitorDisconnectedStatus();
         			}
             		try {
-						Thread.sleep(10);
+						Thread.sleep(20);
 					} catch (InterruptedException e) {
 						connected = false;
 			        	Thread.currentThread().interrupt();
@@ -115,10 +138,16 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
 
     public void stopCallMonitor() {
         Debug.msg("Stopping FBoxListener"); //$NON-NLS-1$
+    	closeConnection();
+        running = false;
+    }
+
+    private void closeConnection()
+    {
+        Debug.msg("Stopping FBoxListener"); //$NON-NLS-1$
         try {
             if (clientSocket != null)
                 clientSocket.close();
-            running = false;
             connected = false;
 //            this.interrupt();
         } catch (IOException e) {
@@ -129,5 +158,10 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
     public boolean isConnected()
     {
     	return connected;
+    }
+
+    public boolean isRunning()
+    {
+    	return running;
     }
 }
