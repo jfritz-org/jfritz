@@ -28,7 +28,6 @@ import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
-import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.network.SSDPPacket;
 
 public class ConfigPanelFritzBox extends JPanel implements ActionListener,
@@ -52,8 +51,6 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 	private JButton boxtypeButton;
 
 	private JLabel boxtypeLabel;
-
-	private String password;
 
 	private FritzBoxFirmware firmware;
 
@@ -149,23 +146,18 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 
 	public void actionPerformed(ActionEvent e) {
 
-		password = new String(pass.getPassword());
+		String password = new String(pass.getPassword());
 
 		if (e.getActionCommand().equals("addresscombo")) { //$NON-NLS-1$
 			int i = addressCombo.getSelectedIndex();
-			try {
-
 				if (devices.size() != 0 && i < devices.size()) {
 					SSDPPacket dev = (SSDPPacket) devices.get(i);
 					address.setText(dev.getIP().getHostAddress());
-					firmware = FritzBoxFirmware.detectFirmwareVersion(address
-							.getText(), password, port.getText());
 				} else {
 					String selectedItem = addressCombo.getItemAt(addressCombo.getSelectedIndex()).toString();
 					if (!selectedItem.equals(""))
 					{
 						address.setText(selectedItem);
-						firmware = FritzBoxFirmware.detectFirmwareVersion(address.getText(), password, port.getText());
 					} else {
 						Debug.err("Address wrong!"); //$NON-NLS-1$
 						boxtypeLabel.setForeground(Color.RED);
@@ -174,22 +166,6 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 					}
 				}
 				setBoxTypeLabel();
-			} catch (WrongPasswordException e1) {
-				Debug.err(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
-				boxtypeLabel.setForeground(Color.RED);
-				boxtypeLabel.setText(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
-				firmware = null;
-			} catch (InvalidFirmwareException ife) {
-				Debug.err("Invalid firmware detected"); //$NON-NLS-1$
-				boxtypeLabel.setForeground(Color.RED);
-				boxtypeLabel.setText(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
-				firmware = null;
-			} catch (IOException e1) {
-				Debug.err("Address wrong!"); //$NON-NLS-1$
-				boxtypeLabel.setForeground(Color.RED);
-				boxtypeLabel.setText(Main.getMessage("box.not_found")); //$NON-NLS-1$
-				firmware = null;
-			}
 
 		} else if (e.getActionCommand().equals("detectboxtype")) { //$NON-NLS-1$
 			try {
@@ -247,7 +223,6 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 	public void loadSettings() {
 		firmware = JFritz.getFritzBox().getFirmware(); //$NON-NLS-1$
 		pass.setText(JFritz.getFritzBox().getPassword()); //$NON-NLS-1$
-		password = JFritz.getFritzBox().getPassword(); //$NON-NLS-1$
 		address.setText(JFritz.getFritzBox().getAddress()); //$NON-NLS-1$,  //$NON-NLS-2$
 		port.setText(JFritz.getFritzBox().getPort()); //$NON-NLS-1$,  //$NON-NLS-2$
 
@@ -271,7 +246,7 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 
 	public void saveSettings() throws WrongPasswordException, InvalidFirmwareException, IOException {
 		Main.setProperty("box.address", address.getText()); //$NON-NLS-1$
-		Main.setProperty("box.password", Encryption.encrypt(password)); //$NON-NLS-1$
+		Main.setProperty("box.password", Encryption.encrypt(new String(pass.getPassword()))); //$NON-NLS-1$
 		Main.setProperty("box.port", port.getText()); //$NON-NLS-1$
 		JFritz.getFritzBox().updateSettings();
 
@@ -288,7 +263,7 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 	}
 
 	public String getPassword() {
-		return password;
+		return new String(pass.getPassword());
 	}
 
 	public String getAddress() {

@@ -12,7 +12,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/bsh-1.3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/itext-1.3.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/pixie-0.8.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/wizard.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jcalendar-1.3.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jfreechart-1.0.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.5.0_14"/>

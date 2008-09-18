@@ -213,7 +213,7 @@ public final class JFritz implements  StatusListener, ItemListener {
 		String macStr = Main.getProperty("box.mac", "");
 		if ( fritzBox.getFirmware() != null )
 		{
-			if ( (!macStr.equals("")) && (!fritzBox.getFirmware().getMacAddress().equals(macStr)))
+			if ( (!macStr.equals("")) && (!fritzBox.getFirmware().getMacAddress().equals("")) && (!fritzBox.getFirmware().getMacAddress().equals(macStr)))
 			{
 				int answer = JOptionPane.showConfirmDialog(null,
 						Main.getMessage("new_fritzbox") + "\n" //$NON-NLS-1$

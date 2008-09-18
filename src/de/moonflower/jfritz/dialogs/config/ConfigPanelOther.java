@@ -137,9 +137,9 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 
 	public void loadSettings() {
 		checkNewVersionAfterStart.setSelected(JFritzUtils.parseBoolean(Main
-				.getProperty("option.checkNewVersionAfterStart", "false")));//$NON-NLS-1$, //ßNON-NLS-2$
+				.getProperty("option.checkNewVersionAfterStart", "true")));//$NON-NLS-1$, //ßNON-NLS-2$
 		timerAfterStartButton.setSelected(JFritzUtils.parseBoolean(Main
-				.getProperty("option.timerAfterStart"))); //$NON-NLS-1$
+				.getProperty("option.timerAfterStart", "true"))); //$NON-NLS-1$
 		confirmOnExitButton.setSelected(JFritzUtils.parseBoolean(Main
 				.getProperty("option.confirmOnExit", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
 		startMinimizedButton.setSelected(JFritzUtils.parseBoolean(Main
@@ -159,7 +159,7 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 
 		passwordAfterStartButton.setSelected(pwAfterStart);
 
-		timerSlider.setValue(Integer.parseInt(Main.getProperty("fetch.timer"))); //$NON-NLS-1$
+		timerSlider.setValue(Integer.parseInt(Main.getProperty("fetch.timer", "5"))); //$NON-NLS-1$
 
 		searchWithSSDP.setSelected(JFritzUtils.parseBoolean(Main.getProperty(
 				"option.useSSDP", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$

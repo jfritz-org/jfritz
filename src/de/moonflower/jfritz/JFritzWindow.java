@@ -224,21 +224,21 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	}
 
 	public void checkOptions() {
-		if (Main.getProperty("option.timerAfterStart", "false") //$NON-NLS-1$,  //$NON-NLS-2$
-				.equals("true")) { //$NON-NLS-1$
-			taskButton.doClick();
-		}
-		if (Main.getProperty("option.fetchAfterStart", "false") //$NON-NLS-1$,  //$NON-NLS-2$
+		if (Main.getProperty("option.fetchAfterStart", "true") //$NON-NLS-1$,  //$NON-NLS-2$
 				.equals("true")) { //$NON-NLS-1$
 			fetchButton.doClick();
 		}
-		if (Main.getProperty("option.autostartcallmonitor", "false").equals( //$NON-NLS-1$,  //$NON-NLS-2$
+		if (Main.getProperty("option.autostartcallmonitor", "true").equals( //$NON-NLS-1$,  //$NON-NLS-2$
 				"true")) { //$NON-NLS-1$
 			if (callMonitorStarted == false)
 			{
 				callMonitorStarted = true;
 				jFritz.startChosenCallMonitor(true);
 			}
+		}
+		if (Main.getProperty("option.timerAfterStart", "true") //$NON-NLS-1$,  //$NON-NLS-2$
+				.equals("true")) { //$NON-NLS-1$
+			taskButton.doClick();
 		}
 	}
 
@@ -786,7 +786,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	private void fetchTask(boolean enabled) {
 		if (enabled) {
 			int interval = Integer.parseInt(Main.getProperty("fetch.timer", //$NON-NLS-1$
-					"3")) * 60000;
+					"5")) * 60000;
 			timerTask = new TimerTask() {
 
 				public void run() {
@@ -815,7 +815,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				timer.cancel();
 				timer = null;
 				int interval = Integer.parseInt(Main.getProperty("fetch.timer", //$NON-NLS-1$
-				"3")) * 60000;
+				"5")) * 60000;
 				timerTask.cancel();
 				timerTask = new TimerTask() {
 
@@ -852,22 +852,17 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 			//otherwise act as a standalone instance
 		} else if (!isretrieving) { // Prevent multiple clicking
-			Debug.msg("1");
 			isretrieving = true;
 			final SwingWorker worker = new SwingWorker() {
 				public Object construct() {
-					Debug.msg("2");
 					boolean isdone = false;
 					while (!isdone) {
 						try {
-							Debug.msg("3");
 							setBusy(true);
 							setStatus(Main.getMessage("fetchdata")); //$NON-NLS-1$
 							setConnectedStatus();
-							Debug.msg("4");
 							JFritz.getCallerList().getNewCalls(
 									deleteFritzBoxCallerList);
-							Debug.msg("5");
 							isdone = true;
 						} catch (WrongPasswordException e) {
 							setBusy(false);
@@ -886,12 +881,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				}
 
 				public void finished() {
-					Debug.msg("6");
 					setBusy(false);
 					JFritz.getCallerList().fireTableStructureChanged();
-					Debug.msg("7");
 					isretrieving = false;
-					if (Main.getProperty("option.lookupAfterFetch", "false") //$NON-NLS-1$,  //$NON-NLS-2$
+					if (Main.getProperty("option.lookupAfterFetch", "true") //$NON-NLS-1$,  //$NON-NLS-2$
 							.equals("true")) { //$NON-NLS-1$
 
 						if(Main.getProperty("option.clientTelephoneBook", "false").equals("true"))
@@ -899,14 +892,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 						else
 							JFritz.getCallerList().reverseLookup(false, false);
 					}
-					Debug.msg("8");
 					setStatus("");
 //					interrupt();
 				}
 			};
-			Debug.msg("1.1");
 			worker.start();
-			Debug.msg("1.2");
 		}
 	}
 
@@ -1662,7 +1652,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					JFritz.getCallerList().importFromCSVFile(br);
 					br.close();
 
-					if (Main.getProperty("option.lookupAfterFetch", "false")
+					if (Main.getProperty("option.lookupAfterFetch", "true")
 							.equals("true")) {
 						JFritz.getCallerList().reverseLookup(false, false);
 					}
@@ -1718,7 +1708,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 						.importFromThunderbirdCSVfile(file.getAbsolutePath());
 				JFritz.infoMsg(msg);
 
-				if (Main.getProperty("option.lookupAfterFetch", "false") //$NON-NLS-1$,  //$NON-NLS-2$
+				if (Main.getProperty("option.lookupAfterFetch", "true") //$NON-NLS-1$,  //$NON-NLS-2$
 						.equals("true")) { //$NON-NLS-1$
 					lookupButton.doClick();
 				}

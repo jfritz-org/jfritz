@@ -31,7 +31,6 @@ public class ConfigPanel1Descriptor extends WizardPanelDescriptor {
 	}
 
 	public void aboutToDisplayPanel() {
-
 	}
 
 }

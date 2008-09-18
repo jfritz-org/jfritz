@@ -1186,11 +1186,20 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 			if (line == null) {
 				Debug.err("File empty"); //$NON-NLS-1$
 				return false;
-			} else if (line.startsWith("sep=")) {
-				separator = line.substring(4);
-				Debug.msg("Separator: " + separator);
-				line = br.readLine();
-				Debug.msg("CSV-Header: " + line);
+			} else
+			{
+				Pattern p = Pattern.compile("sep=(\\W{1})"); //$NON-NLS-1$
+				Matcher matcher = p.matcher(line);
+				if (matcher.find())
+				{
+					if (matcher.groupCount() == 1)
+					{
+						separator = matcher.group(1);
+						Debug.msg("Separator: " + separator);
+						line = br.readLine();
+						Debug.msg("CSV-Header: " + line);
+					}
+				}
 			}
 
 			for(IProgressListener listener: progressListeners)
@@ -1299,7 +1308,6 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 			}
 
 			// NOTE: the caller must close the stream!
-
 		} catch (FileNotFoundException e) {
 			Debug.err("Could not read from File!");
 		} catch (IOException e) {

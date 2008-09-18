@@ -10,6 +10,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Calendar;
@@ -76,10 +77,15 @@ public class JFritzUtils {
 			if (postdata != null) {
 				urlConn.setRequestProperty("Content-Type", //$NON-NLS-1$
 						"application/x-www-form-urlencoded"); //$NON-NLS-1$
-				printout = new DataOutputStream(urlConn.getOutputStream());
-				printout.writeBytes(postdata);
-				printout.flush();
-				printout.close();
+				try {
+					printout = new DataOutputStream(urlConn.getOutputStream());
+					printout.writeBytes(postdata);
+					printout.flush();
+					printout.close();
+				} catch (SocketTimeoutException ste)
+				{
+					Debug.err("Could not fetch data from url: "+ste.toString());
+				}
 			}
 
 			BufferedReader d;

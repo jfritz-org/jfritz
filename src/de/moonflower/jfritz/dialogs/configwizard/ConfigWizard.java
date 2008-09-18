@@ -1,6 +1,7 @@
 package de.moonflower.jfritz.dialogs.configwizard;
 
 import java.awt.Frame;
+import java.awt.Toolkit;
 import java.io.IOException;
 
 import javax.swing.*;
@@ -51,8 +52,6 @@ public class ConfigWizard {
 		Debug.msg("Create JFritz config wizard");
 		wizard = new Wizard(JFritz.getJframe());
         wizard.getDialog().setTitle(Main.getMessage("config_wizard"));
-       	wizard.getDialog().setLocationRelativeTo(JFritz.getJframe());
-
 
         //initialize the wizard with the correct order of the panels
         WizardPanelDescriptor descriptor1 = new ConfigPanel1Descriptor();
@@ -75,6 +74,7 @@ public class ConfigWizard {
 
         //set the first panel to be displayed
         wizard.setCurrentPanel(ConfigPanel1Descriptor.IDENTIFIER);
+       	wizard.setLocationRelativeToParent(true);
 
 	}
 	/**
@@ -87,7 +87,6 @@ public class ConfigWizard {
 	 *
 	 */
 	public void showWizard() throws WrongPasswordException, InvalidFirmwareException, IOException{
-
 		if(canceled)
 			return;
 
@@ -108,10 +107,12 @@ public class ConfigWizard {
       			Main.saveConfigProperties();
 
       			// start call monitor if selected
-				if (Integer.parseInt(Main.getProperty("option.callMonitorType", "1")) != 0)
-				{
-					JFritz.getJframe().switchMonitorButton();
-				}
+//				if (Integer.parseInt(Main.getProperty("option.callMonitorType", "1")) != 0)
+//				{
+//					JFritz.getJframe().switchMonitorButton();
+//				}
+      			JFritz.getJframe().checkOptions();
+
        			break;
        		case 1:
        			Debug.msg("Cancel clicked, not saving values");
@@ -138,6 +139,7 @@ public class ConfigWizard {
 
 		wizard = new Wizard();
 	    wizard.getDialog().setTitle(Main.getMessage("config_wizard"));
+       	wizard.setLocationRelativeToParent(true);
 
 	    if(parent != null)
 	       	wizard.getDialog().setLocationRelativeTo(parent);
@@ -146,7 +148,7 @@ public class ConfigWizard {
         wizard.registerWizardPanel(ConfigPanelLangDescriptor.IDENTIFIER, descriptorLang);
 
         wizard.setCurrentPanel(ConfigPanelLangDescriptor.IDENTIFIER);
-
+        wizard.getDialog().setLocationRelativeTo(parent);
 		int ret = wizard.showModalDialog();
 		//only change the language if finish was selected
 		if(ret == 0){

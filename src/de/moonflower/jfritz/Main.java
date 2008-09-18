@@ -157,6 +157,13 @@
  * - Rückwärtssuche beim Client funktioniert nicht
  * FIXME-END
  *
+ * JFritz 0.7.1.13
+ * - Bugfix: Korrektes Abholen der Anrufliste von der 54.04.63-12190 labor firmware.
+ * - Neu: Wizard wird nun zentriert dargestellt.
+ * - Bugfix: Falls MAC-Adresse nicht bestimmt werden kann, keine Warnung bei vermeintlich neuer Box mehr ausgeben.
+ * - Bugfix: Korrektes speichern des Passworts in den Einstellungen auch ohne Klick auf "Box erkennen"
+ * - Bugfix: Autodetection bei Auswahl der FritzBox in den Einstellungen deaktiviert, weil in die labor-fw eine Sperre wegen falschem Passwort eingebaut wurde.
+ *
  * JFritz 0.7.1.12
  * - Bugfix: Splash bleibt beim Start hängen.
  * - Bugfix: Anrufliste kann nicht geholt werden, wenn Timer deaktiviert.
@@ -848,9 +855,9 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.1.12"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.1.13"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.122 2008/09/12 09:55:18 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.123 2008/09/18 17:22:28 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -1074,7 +1081,10 @@ public class Main implements LookupObserver {
 		{
 			main.exit(result);
 		}
-		JFritz.getJframe().checkOptions();
+		if ( result == 0)
+		{
+			JFritz.getJframe().checkOptions();
+		}
 	}
 
 	/**
@@ -1800,7 +1810,7 @@ public class Main implements LookupObserver {
 		update.setProgramVersion(PROGRAM_VERSION);
 		update.setLocale(getProperty("locale"));
 		update.setUpdateOnStart(JFritzUtils.parseBoolean(Main.getProperty(
-				"option.checkNewVersionAfterStart", "false")));
+				"option.checkNewVersionAfterStart", "true")));
 		update.saveSettings();
 	}
 
