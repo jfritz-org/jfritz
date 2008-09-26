@@ -486,7 +486,7 @@ public class FritzBox {
 		}
 
 		// If the url is valid load the data
-		if (url != null) {
+		if (!JFritz.isShutdownInvoked() && url != null) {
 
 			urlConn = url.openConnection();
 			urlConn.setDoInput(true);

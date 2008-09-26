@@ -131,6 +131,10 @@ public final class JFritz implements  StatusListener, ItemListener {
 
 	private static ClientLoginsTableModel clientLogins;
 
+	private static boolean shutdownInvoked = false;
+
+	private static boolean wizardCanceled = false;
+
 	/**
 	 * Constructs JFritz object
 	 */
@@ -307,35 +311,40 @@ public final class JFritz implements  StatusListener, ItemListener {
 						&& Boolean.parseBoolean(Main.getProperty("option.clientCallList", "false"))) ) {//$NON-NLS-1$
 			Debug.msg("Searching for  FritzBox per UPnP / SSDP");//$NON-NLS-1$
 
-			ssdpthread = new SSDPdiscoverThread(SSDP_TIMEOUT);
-			ssdpthread.getStatusBarController().addStatusBarListener(this);
-			ssdpthread.start();
-			try {
-				ssdpthread.join();//FIXME start a thread just to call join in the next line?
-			} catch (InterruptedException ie) {
-	        	Thread.currentThread().interrupt();
+			if (!shutdownInvoked)
+			{
+				ssdpthread = new SSDPdiscoverThread(SSDP_TIMEOUT);
+				ssdpthread.getStatusBarController().addStatusBarListener(this);
+				ssdpthread.start();
+				try {
+					ssdpthread.join();//FIXME start a thread just to call join in the next line?
+				} catch (InterruptedException ie) {
+		        	Thread.currentThread().interrupt();
+				}
+	//			ssdpthread.interrupt();
 			}
-//			ssdpthread.interrupt();
 		}
 
-		if (showConfWizard) {
+		if (!shutdownInvoked && showConfWizard) {
 			Debug.msg("Presenting user with the configuration dialog");
-			jframe.showConfigWizard();
+			wizardCanceled = jframe.showConfigWizard();
 		}
 
-		javax.swing.SwingUtilities.invokeLater(jframe);
+		if (!shutdownInvoked)
+		{
+			javax.swing.SwingUtilities.invokeLater(jframe);
 
-		if(Main.getProperty("network.type", "0").equals("1") &&
-				Boolean.parseBoolean(Main.getProperty("option.listenOnStartup", "false"))){
-			Debug.msg("listening on startup enabled, starting client listener!");
-			NetworkStateMonitor.startServer();
-		}else if(Main.getProperty("network.type", "0").equals("2") &&
-				Boolean.parseBoolean(Main.getProperty("option.connectOnStartup", "false"))){
-			Debug.msg("Connect on startup enabled, connectig to server");
-			NetworkStateMonitor.startClient();
+			if(Main.getProperty("network.type", "0").equals("1") &&
+					Boolean.parseBoolean(Main.getProperty("option.listenOnStartup", "false"))){
+				Debug.msg("listening on startup enabled, starting client listener!");
+				NetworkStateMonitor.startServer();
+			}else if(Main.getProperty("network.type", "0").equals("2") &&
+					Boolean.parseBoolean(Main.getProperty("option.connectOnStartup", "false"))){
+				Debug.msg("Connect on startup enabled, connectig to server");
+				NetworkStateMonitor.startClient();
+			}
+			startWatchdog();
 		}
-		startWatchdog();
-
 	}
 
 	/**
@@ -630,89 +639,91 @@ public final class JFritz implements  StatusListener, ItemListener {
 	}
 
 	public void startChosenCallMonitor(boolean showErrorMessage) {
-		if(Main.getProperty("option.clientCallMonitor", "false").equals("true")
-			 && NetworkStateMonitor.isConnectedToServer()){
+		if (!shutdownInvoked)
+		{
+			if(Main.getProperty("option.clientCallMonitor", "false").equals("true")
+				 && NetworkStateMonitor.isConnectedToServer()){
 
-			return;
-		}
+				return;
+			}
 
 
-		switch (Integer.parseInt(Main.getProperty("option.callMonitorType", //$NON-NLS-1$
-				"0"))) { //$NON-NLS-1$
-			case 1: {
-				try {
-					getJframe().setConnectedStatus();
-					if (JFritz.getFritzBox().checkValidFirmware()) {
-						FritzBoxFirmware currentFirm = JFritz.getFritzBox()
-								.getFirmware();
-						if ((currentFirm.getMajorFirmwareVersion() == 3)
-								&& (currentFirm.getMinorFirmwareVersion() < 96)) {
-							Debug.errDlg(Main
-									.getMessage("callmonitor_error_wrong_firmware")); //$NON-NLS-1$
-							getJframe().getMonitorButton().setSelected(false);
-							getJframe().setCallMonitorButtonPushed(true);
-							getJframe().setCallMonitorConnectedStatus();
-						} else {
-							if ((currentFirm.getMajorFirmwareVersion() >= 4)
-									&& (currentFirm.getMinorFirmwareVersion() >= 3)) {
-								JFritz.setCallMonitor(new FBoxCallMonitorV3());
+			switch (Integer.parseInt(Main.getProperty("option.callMonitorType", //$NON-NLS-1$
+					"0"))) { //$NON-NLS-1$
+				case 1: {
+					try {
+						getJframe().setConnectedStatus();
+						if (JFritz.getFritzBox().checkValidFirmware()) {
+							FritzBoxFirmware currentFirm = JFritz.getFritzBox()
+									.getFirmware();
+							if ((currentFirm.getMajorFirmwareVersion() == 3)
+									&& (currentFirm.getMinorFirmwareVersion() < 96)) {
+								Debug.errDlg(Main
+										.getMessage("callmonitor_error_wrong_firmware")); //$NON-NLS-1$
+								getJframe().getMonitorButton().setSelected(false);
+								getJframe().setCallMonitorButtonPushed(true);
+								getJframe().setCallMonitorConnectedStatus();
 							} else {
-								JFritz.setCallMonitor(new FBoxCallMonitorV1());
+								if ((currentFirm.getMajorFirmwareVersion() >= 4)
+										&& (currentFirm.getMinorFirmwareVersion() >= 3)) {
+									JFritz.setCallMonitor(new FBoxCallMonitorV3());
+								} else {
+									JFritz.setCallMonitor(new FBoxCallMonitorV1());
+								}
+								getJframe().setCallMonitorButtonPushed(true);
+								getJframe().setCallMonitorConnectedStatus();
 							}
-							getJframe().setCallMonitorButtonPushed(true);
-							getJframe().setCallMonitorConnectedStatus();
+						}
+					} catch (WrongPasswordException e1) {
+						JFritz.setCallMonitor(new FBoxCallMonitorV3());
+						getJframe().setCallMonitorDisconnectedStatus();
+						if (showErrorMessage)
+						{
+							JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+						}
+					} catch (IOException e1) {
+						JFritz.setCallMonitor(new FBoxCallMonitorV3());
+						getJframe().setCallMonitorDisconnectedStatus();
+						if (showErrorMessage)
+						{
+							JFritz.errorMsg(Main.getMessage("box.not_found")); //$NON-NLS-1$
+						}
+					} catch (InvalidFirmwareException e1) {
+						JFritz.setCallMonitor(new FBoxCallMonitorV3());
+						getJframe().setCallMonitorDisconnectedStatus();
+						if (showErrorMessage)
+						{
+							JFritz.errorMsg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
 						}
 					}
-				} catch (WrongPasswordException e1) {
-					JFritz.setCallMonitor(new FBoxCallMonitorV3());
-					getJframe().setCallMonitorDisconnectedStatus();
-					if (showErrorMessage)
-					{
-						JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
-					}
-				} catch (IOException e1) {
-					JFritz.setCallMonitor(new FBoxCallMonitorV3());
-					getJframe().setCallMonitorDisconnectedStatus();
-					if (showErrorMessage)
-					{
-						JFritz.errorMsg(Main.getMessage("box.not_found")); //$NON-NLS-1$
-					}
-				} catch (InvalidFirmwareException e1) {
-					JFritz.setCallMonitor(new FBoxCallMonitorV3());
-					getJframe().setCallMonitorDisconnectedStatus();
-					if (showErrorMessage)
-					{
-						JFritz.errorMsg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
-					}
+					break;
 				}
-				break;
-			}
-			case 2: {
-				JFritz.setCallMonitor(new TelnetCallMonitor(this));
-				getJframe().setCallMonitorButtonPushed(true);
-				break;
-			}
-			case 3: {
-				JFritz.setCallMonitor(new SyslogCallMonitor(this));
-				getJframe().setCallMonitorButtonPushed(true);
-				break;
-			}
-			case 4: {
-				JFritz.setCallMonitor(new YACCallMonitor(Integer.parseInt(Main
-						.getProperty("option.yacport", //$NON-NLS-1$
-								"10629")))); //$NON-NLS-1$
-				getJframe().setCallMonitorButtonPushed(true);
-				break;
-			}
-			case 5: {
-				JFritz.setCallMonitor(new CallmessageCallMonitor(Integer
-						.parseInt(Main.getProperty("option.callmessageport", //$NON-NLS-1$
-								"23232")))); //$NON-NLS-1$
-				getJframe().setCallMonitorButtonPushed(true);
-				break;
+				case 2: {
+					JFritz.setCallMonitor(new TelnetCallMonitor(this));
+					getJframe().setCallMonitorButtonPushed(true);
+					break;
+				}
+				case 3: {
+					JFritz.setCallMonitor(new SyslogCallMonitor(this));
+					getJframe().setCallMonitorButtonPushed(true);
+					break;
+				}
+				case 4: {
+					JFritz.setCallMonitor(new YACCallMonitor(Integer.parseInt(Main
+							.getProperty("option.yacport", //$NON-NLS-1$
+									"10629")))); //$NON-NLS-1$
+					getJframe().setCallMonitorButtonPushed(true);
+					break;
+				}
+				case 5: {
+					JFritz.setCallMonitor(new CallmessageCallMonitor(Integer
+							.parseInt(Main.getProperty("option.callmessageport", //$NON-NLS-1$
+									"23232")))); //$NON-NLS-1$
+					getJframe().setCallMonitorButtonPushed(true);
+					break;
+				}
 			}
 		}
-
 	}
 
 	public static void stopCallMonitor() {
@@ -746,17 +757,22 @@ public final class JFritz implements  StatusListener, ItemListener {
 	 *
 	 */
 	private void startWatchdog() {
-		int interval = 10; // seconds
-		watchdogTimer = new Timer();
-		watchdog = new WatchdogThread(interval, this);
-		watchdog.setDaemon(false);
-		watchdog.setName("Watchdog-Thread");
-		watchdogTimer.schedule(new TimerTask() {
-			public void run() {
-				watchdog.run();
-			}
-		}, interval*1000, interval * 1000);
-		Debug.msg("Watchdog enabled"); //$NON-NLS-1$
+		if (!shutdownInvoked)
+		{
+			int interval = 10; // seconds
+			watchdogTimer = new Timer();
+			watchdog = new WatchdogThread(interval, this);
+			watchdog.setDaemon(true);
+			watchdog.setName("Watchdog-Thread");
+			watchdogTimer.schedule(new TimerTask() {
+				public void run() {
+					if (shutdownInvoked)
+						this.cancel();
+					watchdog.run();
+				}
+			}, interval*1000, interval * 1000);
+			Debug.msg("Watchdog enabled"); //$NON-NLS-1$
+		}
 	}
 
 	/**
@@ -833,6 +849,8 @@ public final class JFritz implements  StatusListener, ItemListener {
 	}
 
 	void prepareShutdown(boolean shutdownThread, boolean shutdownHook) throws InterruptedException {
+		shutdownInvoked = true;
+
 		// TODO maybe some more cleanup is needed
 		Debug.msg("prepareShutdown in JFritz.java");
 
@@ -981,4 +999,13 @@ public final class JFritz implements  StatusListener, ItemListener {
 		}
 	}
 
+	public static boolean isShutdownInvoked()
+	{
+		return shutdownInvoked;
+	}
+
+	public static boolean isWizardCanceled()
+	{
+		return wizardCanceled;
+	}
 }

@@ -224,21 +224,24 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	}
 
 	public void checkOptions() {
-		if (Main.getProperty("option.fetchAfterStart", "true") //$NON-NLS-1$,  //$NON-NLS-2$
-				.equals("true")) { //$NON-NLS-1$
-			fetchButton.doClick();
-		}
-		if (Main.getProperty("option.autostartcallmonitor", "true").equals( //$NON-NLS-1$,  //$NON-NLS-2$
-				"true")) { //$NON-NLS-1$
-			if (callMonitorStarted == false)
-			{
-				callMonitorStarted = true;
-				jFritz.startChosenCallMonitor(true);
+		if (!JFritz.isShutdownInvoked())
+		{
+			if (Main.getProperty("option.fetchAfterStart", "true") //$NON-NLS-1$,  //$NON-NLS-2$
+					.equals("true")) { //$NON-NLS-1$
+				fetchButton.doClick();
 			}
-		}
-		if (Main.getProperty("option.timerAfterStart", "true") //$NON-NLS-1$,  //$NON-NLS-2$
-				.equals("true")) { //$NON-NLS-1$
-			taskButton.doClick();
+			if (Main.getProperty("option.autostartcallmonitor", "true").equals( //$NON-NLS-1$,  //$NON-NLS-2$
+					"true")) { //$NON-NLS-1$
+				if (callMonitorStarted == false)
+				{
+					callMonitorStarted = true;
+					jFritz.startChosenCallMonitor(true);
+				}
+			}
+			if (Main.getProperty("option.timerAfterStart", "true") //$NON-NLS-1$,  //$NON-NLS-2$
+					.equals("true")) { //$NON-NLS-1$
+				taskButton.doClick();
+			}
 		}
 	}
 
@@ -790,8 +793,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			timerTask = new TimerTask() {
 
 				public void run() {
-					Debug.msg("Running FetchListTask.."); //$NON-NLS-1$
-					fetchList();
+					if (!JFritz.isShutdownInvoked())
+					{
+						Debug.msg("Running FetchListTask.."); //$NON-NLS-1$
+						fetchList();
+					} else {
+						this.cancel();
+					}
 				}
 			};
 			timer = new FetchListTimer("FetchList-Timer", true);
@@ -884,16 +892,19 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					setBusy(false);
 					JFritz.getCallerList().fireTableStructureChanged();
 					isretrieving = false;
-					if (Main.getProperty("option.lookupAfterFetch", "true") //$NON-NLS-1$,  //$NON-NLS-2$
-							.equals("true")) { //$NON-NLS-1$
+					if (!JFritz.isShutdownInvoked())
+					{
+						if (Main.getProperty("option.lookupAfterFetch", "true") //$NON-NLS-1$,  //$NON-NLS-2$
+								.equals("true")) { //$NON-NLS-1$
 
-						if(Main.getProperty("option.clientTelephoneBook", "false").equals("true"))
-							lookupButton.doClick();
-						else
-							JFritz.getCallerList().reverseLookup(false, false);
+							if(Main.getProperty("option.clientTelephoneBook", "false").equals("true"))
+								lookupButton.doClick();
+							else
+								JFritz.getCallerList().reverseLookup(false, false);
+						}
+						setStatus("");
+	//					interrupt();
 					}
-					setStatus("");
-//					interrupt();
 				}
 			};
 			worker.start();
@@ -1267,24 +1278,29 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * @throws WrongPasswordException
 	 *
 	 */
-	public void showConfigWizard() {
+	public boolean showConfigWizard() {
 		ConfigWizard wizard = new ConfigWizard(this);
+		boolean wizardCanceled = false;
 		try {
 			setConnectedStatus();
-			wizard.showWizard();
+			wizardCanceled = wizard.showWizard();
 		} catch (WrongPasswordException e) {
 			setDisconnectedStatus();
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return true;
 		} catch (InvalidFirmwareException e) {
 			setDisconnectedStatus();
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return true;
 		} catch (IOException e) {
 			setDisconnectedStatus();
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return true;
 		}
+		return wizardCanceled;
 	}
 
 	/**

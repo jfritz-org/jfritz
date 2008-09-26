@@ -40,7 +40,7 @@ public class ConfigWizard {
 
 	private WizardPanelDescriptor descriptor2, descriptor4, descriptor5;
 
-	private boolean canceled = false;
+	private boolean languageCanceled = false;
 
 	public ConfigWizard(Frame parent){
 
@@ -86,9 +86,9 @@ public class ConfigWizard {
 	 * @throws WrongPasswordException
 	 *
 	 */
-	public void showWizard() throws WrongPasswordException, InvalidFirmwareException, IOException{
-		if(canceled)
-			return;
+	public boolean showWizard() throws WrongPasswordException, InvalidFirmwareException, IOException{
+		if(languageCanceled)
+			return true;
 
 		//possible return values: 0 finish clicked, 1 cancel clicked, 2 error...
        int ret = wizard.showModalDialog();
@@ -112,18 +112,16 @@ public class ConfigWizard {
 //					JFritz.getJframe().switchMonitorButton();
 //				}
       			JFritz.getJframe().checkOptions();
-
-       			break;
+				return false;
        		case 1:
        			Debug.msg("Cancel clicked, not saving values");
-       			break;
+       			return true;
        		case 2:
        			Debug.msg("Error in the wizard, bailing out..");
-       			break;
-
-
+       			return true;
+       		default:
+       			return true;
        }
-
 	}
 
 	/**
@@ -167,7 +165,7 @@ public class ConfigWizard {
 			}
 
 		}else
-			canceled =  true;
+			languageCanceled =  true;
 
 	}
 

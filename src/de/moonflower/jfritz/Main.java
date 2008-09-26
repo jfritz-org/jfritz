@@ -157,6 +157,14 @@
  * - Rückwärtssuche beim Client funktioniert nicht
  * FIXME-END
  *
+ * JFritz 0.7.1.14
+ * - Bugfix: Abbruch von Threads, wenn JFritz während des Startups beendet wird.
+ * - Bugfix: Kein abholen der Anrufliste und kein starten des Anrufmonitors mehr, wenn Wizard abgebrochen wurde.
+ *
+ * Strings:
+ * config_wizard.finish
+ * removed config_wizard.finish1 - config_wizard.finish5
+ *
  * JFritz 0.7.1.13
  * - Bugfix: Korrektes Abholen der Anrufliste von der 54.04.63-12190 labor firmware.
  * - Neu: Wizard wird nun zentriert dargestellt.
@@ -855,9 +863,9 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.1.13"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.1.14"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.123 2008/09/18 17:22:28 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.124 2008/09/26 18:13:53 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -1065,23 +1073,24 @@ public class Main implements LookupObserver {
 			}
 		}
 
+		splash.dispose();
+
 		if (result == 0)
 		{
 			boolean createGui = main.checkInstanceControl();
 
 			if ( createGui ) {
-				splash.setStatus("Creating GUI");
 				jfritz.createJFrame(showConfWizard);
 			}
 		}
 
-		splash.dispose();
 		Debug.msg("Main is now exiting...");
 		if (result != 0)
 		{
 			main.exit(result);
 		}
-		if ( result == 0)
+
+		if ( result == 0 && !JFritz.isWizardCanceled())
 		{
 			JFritz.getJframe().checkOptions();
 		}
