@@ -251,7 +251,7 @@ public class CallMonitorList {
 
     protected void initIgnoreList() {
         String ignoreMSNString = Main.getProperty(
-                "option.callmonitor.ignoreMSN", ""); //$NON-NLS-1$,  //$NON-NLS-2$
+                "option.callmonitor.ignoreMSN"); //$NON-NLS-1$,  //$NON-NLS-2$
         if (ignoreMSNString.length() > 0 && ignoreMSNString.indexOf(";") == -1) { //$NON-NLS-1$
             ignoreMSNString = ignoreMSNString + ";"; //$NON-NLS-1$
         }

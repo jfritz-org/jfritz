@@ -120,17 +120,17 @@ public class ClientConnectionListener extends Thread {
 
 				try{
 					serverSocket = new ServerSocket(Integer.parseInt(
-							Main.getProperty("clients.port", "4455")));
+							Main.getProperty("clients.port")));
 
 					Debug.netMsg("Listening for client connections on: "+
-							Main.getProperty("clients.port", "4455"));
+							Main.getProperty("clients.port"));
 					isListening = true;
 					NetworkStateMonitor.serverStateChanged();
 
 					while(listen){
 
 						//make sure we dont exceed our maximum amount of connections
-						if(Integer.parseInt(Main.getProperty("max.Connections", "1")) <= connectedClients.size()){
+						if(Integer.parseInt(Main.getProperty("max.Connections")) <= connectedClients.size()){
 
 							synchronized(this){
 								try{
@@ -168,7 +168,7 @@ public class ClientConnectionListener extends Thread {
 
 				}catch(IOException e){
 					Debug.errDlg(Main.getMessage("error_binding_port"));
-					Debug.err("Error binding to port: "+Main.getProperty("clients.port", "4455"));
+					Debug.err("Error binding to port: "+Main.getProperty("clients.port"));
 					Debug.err(e.toString());
 					e.printStackTrace();
 				}

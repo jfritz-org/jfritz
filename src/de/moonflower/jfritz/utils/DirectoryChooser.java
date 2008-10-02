@@ -20,7 +20,7 @@ public class DirectoryChooser  {
 
 		chooser = new JFileChooser();
 		chooser.setApproveButtonText(Main.getMessage("save")); //$NON-NLS-1$
-		chooser.setCurrentDirectory(new java.io.File(JFritzUtils.deconvertSpecialChars(Main.getProperty("backup.path", ".")))); //$NON-NLS-1$,  //$NON-NLS-2$
+		chooser.setCurrentDirectory(new java.io.File(JFritzUtils.deconvertSpecialChars(Main.getProperty("backup.path")))); //$NON-NLS-1$,  //$NON-NLS-2$
 		chooser.setDialogTitle(CHOOSER_TITLE);
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {

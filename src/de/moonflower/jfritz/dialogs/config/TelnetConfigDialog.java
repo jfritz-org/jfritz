@@ -76,12 +76,12 @@ public class TelnetConfigDialog extends CallMonitorConfigDialog{
 	}
 
 	private void setProperties() {
-		userNameTextfield.setText(Main.getProperty("telnet.user", "")); //$NON-NLS-1$,  //$NON-NLS-2$
+		userNameTextfield.setText(Main.getProperty("telnet.user")); //$NON-NLS-1$,  //$NON-NLS-2$
 		if (Main.getProperty("telnet.password").equals("")) { //$NON-NLS-1$,  //$NON-NLS-2$
 			passwordTextfield.setText(""); //$NON-NLS-1$
 		}
 		else {
-			passwordTextfield.setText(Encryption.decrypt(Main.getProperty("telnet.password",""))); //$NON-NLS-1$,  //$NON-NLS-2$
+			passwordTextfield.setText(Encryption.decrypt(Main.getProperty("telnet.password"))); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 

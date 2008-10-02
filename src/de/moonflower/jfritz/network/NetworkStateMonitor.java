@@ -121,7 +121,7 @@ public class NetworkStateMonitor  {
 	 * @return wether direct dialing is available
 	 */
 	public static boolean hasAvailablePorts(){
-		if(Main.getProperty("option.clientCallList", "false").equals("true")
+		if(Main.getProperty("option.clientCallList").equals("true")
 				&& isConnectedToServer())
 			return serverConnection.hasAvailablePorts();
 
@@ -132,7 +132,7 @@ public class NetworkStateMonitor  {
 	}
 
 	public static String[] getAvailablePorts(){
-		if(Main.getProperty("option.clientCallList", "false").equals("true")
+		if(Main.getProperty("option.clientCallList").equals("true")
 				&& isConnectedToServer())
 			return serverConnection.getAvailablePorts();
 
@@ -148,7 +148,7 @@ public class NetworkStateMonitor  {
 	 *
 	 */
 	public static void doCall(String number, String port) throws UnsupportedEncodingException, WrongPasswordException, IOException{
-		if(Main.getProperty("option.clientCallList", "false").equals("true")
+		if(Main.getProperty("option.clientCallList").equals("true")
 				&& isConnectedToServer())
 			serverConnection.requestDoCall(new PhoneNumber(number, false), port);
 		else
@@ -157,7 +157,7 @@ public class NetworkStateMonitor  {
 
 	public static void hangup() throws IOException, WrongPasswordException
 	{
-		if(Main.getProperty("option.clientCallList", "false").equals("true")
+		if(Main.getProperty("option.clientCallList").equals("true")
 				&& isConnectedToServer())
 			serverConnection.requestHangup();
 		else

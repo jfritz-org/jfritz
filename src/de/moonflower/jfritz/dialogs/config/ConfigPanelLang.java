@@ -92,7 +92,7 @@ public class ConfigPanelLang extends JPanel implements ConfigPanel{
 	}
 
 	public void saveSettings() {
-		if (!Main.getProperty("locale", System.getProperty("user.language")+"_"+System.getProperty("user.country")).equals(localeList[languageCombo.getSelectedIndex()])) { //$NON-NLS-1$ //$NON-NLS-2$
+		if (!Main.getProperty("locale").equals(localeList[languageCombo.getSelectedIndex()])) { //$NON-NLS-1$ //$NON-NLS-2$
 			Main.setProperty(
 					"locale", localeList[languageCombo.getSelectedIndex()]); //$NON-NLS-1$
 			String loc = localeList[languageCombo.getSelectedIndex()];

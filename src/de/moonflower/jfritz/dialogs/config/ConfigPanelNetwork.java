@@ -89,7 +89,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 	}
 
 	public void loadSettings() {
-		String type = Main.getProperty("network.type", "0");
+		String type = Main.getProperty("network.type");
 		if(type.equals("0")){
 			networkTypeCombo.setSelectedIndex(0);
 		}else if(type.equals("1")){
@@ -101,33 +101,33 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		}
 
 		clientTelephoneBook.setSelected(JFritzUtils.parseBoolean(Main
-				.getProperty("option.clientTelephoneBook", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+				.getProperty("option.clientTelephoneBook"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		clientCallList.setSelected(JFritzUtils.parseBoolean(Main
-				.getProperty("option.clientCallList", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+				.getProperty("option.clientCallList"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		clientCallMonitor.setSelected(JFritzUtils.parseBoolean(Main
-				.getProperty("option.clientCallMonitor", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+				.getProperty("option.clientCallMonitor"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		clientStandAlone.setSelected(JFritzUtils.parseBoolean(Main
-				.getProperty("option.clientStandAlone", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+				.getProperty("option.clientStandAlone"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		listenOnStartup.setSelected(JFritzUtils.parseBoolean(Main
-				.getProperty("option.clientCallMonitor", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+				.getProperty("option.clientCallMonitor"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		connectOnStartup.setSelected(JFritzUtils.parseBoolean(Main
-				.getProperty("option.connectOnStartup", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+				.getProperty("option.connectOnStartup"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		listenOnStartup.setSelected(JFritzUtils.parseBoolean(Main
-				.getProperty("option.listenOnStartup", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+				.getProperty("option.listenOnStartup"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		serverName.setText(Main.getProperty("server.name", ""));
-		serverPort.setText(Main.getProperty("server.port", "4455"));
-		serverLogin.setText(Main.getProperty("server.login", ""));
-		serverPassword.setText(Encryption.decrypt(Main.getProperty("server.password", "")));
+		serverName.setText(Main.getProperty("server.name"));
+		serverPort.setText(Main.getProperty("server.port"));
+		serverLogin.setText(Main.getProperty("server.login"));
+		serverPassword.setText(Encryption.decrypt(Main.getProperty("server.password")));
 
-		clientsPort.setText(Main.getProperty("clients.port", "4455"));
-		maxConnections.setText(Main.getProperty("max.Connections", "2"));
+		clientsPort.setText(Main.getProperty("clients.port"));
+		maxConnections.setText(Main.getProperty("max.Connections"));
 
 		if(NetworkStateMonitor.isListening()){
 			startServerButton.setSelected(true);

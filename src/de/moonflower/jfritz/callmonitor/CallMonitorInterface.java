@@ -15,4 +15,8 @@ public interface CallMonitorInterface {
 
 	public boolean isConnected();
 
+	public boolean pingBox();
+
+	public void closeConnection();
+
 }

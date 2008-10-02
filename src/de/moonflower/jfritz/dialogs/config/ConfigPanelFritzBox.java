@@ -207,11 +207,11 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 
 	private void checkDefaultFritzBox()
 	{
-		if (Main.getProperty("box.mac", "").equals(""))
+		if (Main.getProperty("box.mac").equals(""))
 		{
 				defaultFritzBox.setSelected(true);
 		} else {
-			if (firmware.getMacAddress().equals(Main.getProperty("box.mac", "")))
+			if (firmware.getMacAddress().equals(Main.getProperty("box.mac")))
 			{
 				defaultFritzBox.setSelected(true);
 			} else {
@@ -236,8 +236,8 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 		}
 		setBoxTypeLabel();
 
-		if(Main.getProperty("network.type", "0").equals("2")
-				&& Boolean.parseBoolean(Main.getProperty("option.clientCallList", "false"))){
+		if(Main.getProperty("network.type").equals("2")
+				&& Boolean.parseBoolean(Main.getProperty("option.clientCallList"))){
 
 			Debug.netMsg("JFritz is running as a client and using call list from server, disabeling FritzBox panel");
 			this.boxtypeButton.setEnabled(false);

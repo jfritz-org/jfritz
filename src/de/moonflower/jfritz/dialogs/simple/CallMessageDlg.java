@@ -88,7 +88,7 @@ public class CallMessageDlg extends JFrame implements ActionListener{
 
 		//if the delay is <=0 then dont close the dialog
 		long delay = Long.parseLong(Main.getProperty(
-				"option.popupDelay", "10")) * 1000;
+				"option.popupDelay")) * 1000;
 		if(delay > 0)
 			timer.schedule(task, delay);
 
@@ -220,7 +220,7 @@ public class CallMessageDlg extends JFrame implements ActionListener{
 					message = message.replaceAll("%COUNTRY%", Main.getMessage("unknown_country"));
 				}
 
-				String countryCode = Main.getProperty("country.code", "+49");
+				String countryCode = Main.getProperty("country.code");
 				URL phoneIcon = imageHomePath;
 				if(number.isLocalCall()){
 					phoneIcon = imageHomePath;
@@ -241,7 +241,7 @@ public class CallMessageDlg extends JFrame implements ActionListener{
 				}
 				message = message.replaceAll("%PHONEICON%", "<img src=\"" + phoneIcon.toString() + "\">");
 
-				String loc = Main.getProperty("locale", "en_US");
+				String loc = Main.getProperty("locale");
 				String googleLink = "http://maps.google.com/maps?f=q&hl="+ loc.substring(0, 2) +"&q=";
 				String city = "";
 				if ( person != null )
@@ -342,7 +342,7 @@ public class CallMessageDlg extends JFrame implements ActionListener{
 
 		//if the delay is <=0 then dont close the dialog
 		long delay = Long.parseLong(Main.getProperty(
-				"option.popupDelay", "10")) * 1000;
+				"option.popupDelay")) * 1000;
 		if(delay > 0)
 			timer.schedule(task, delay);
 
@@ -474,7 +474,7 @@ public class CallMessageDlg extends JFrame implements ActionListener{
 					message = message.replaceAll("%COUNTRY%", Main.getMessage("unknown_country"));
 				}
 
-				String countryCode = Main.getProperty("country.code", "+49");
+				String countryCode = Main.getProperty("country.code");
 				URL phoneIcon = imageHomePath;
 				if(number.isLocalCall()){
 					phoneIcon = imageHomePath;
@@ -495,7 +495,7 @@ public class CallMessageDlg extends JFrame implements ActionListener{
 				}
 				message = message.replaceAll("%PHONEICON%", "<img src=\"" + phoneIcon.toString() + "\">");
 
-				String loc = Main.getProperty("locale", "en_US");
+				String loc = Main.getProperty("locale");
 				String googleLink = "http://maps.google.com/maps?f=q&hl="+ loc.substring(0, 2) +"&q=";
 				String city = "";
 				if ( person != null )

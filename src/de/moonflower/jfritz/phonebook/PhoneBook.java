@@ -1117,7 +1117,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 		boolean filter_private = JFritzUtils.parseBoolean(Main
 				.getStateProperty("filter_private")); //$NON-NLS-1$
 
-		String filterSearch = Main.getStateProperty("filter.Phonebook.search", ""); //$NON-NLS-1$,  //$NON-NLS-2$
+		String filterSearch = Main.getStateProperty("filter.Phonebook.search"); //$NON-NLS-1$,  //$NON-NLS-2$
 		String keywords[] = filterSearch.split(" "); //$NON-NLS-1$
 
 		if ((!filter_private) && (keywords.length == 0)) {

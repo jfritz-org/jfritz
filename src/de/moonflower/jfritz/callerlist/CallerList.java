@@ -191,9 +191,9 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 //		if (columnName.equals("participant")) { //$NON-NLS-1$
 //			return (filteredCallerData.get(rowIndex)).getPhoneNumber() != null;
 //		} else
-		if (columnName.equals("comment")) { //$NON-NLS-1$
+		if (columnName.equals(CallerTable.COLUMN_COMMENT)) { //$NON-NLS-1$
 			return true;
-		} else if (columnName.equals("number")) { //$NON-NLS-1$
+		} else if (columnName.equals(CallerTable.COLUMN_NUMBER)) { //$NON-NLS-1$
 			return true;
 		}
 		return false;
@@ -485,14 +485,14 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 			}
 
 			// Notify user?
-			if (Main.getProperty("option.notifyOnCalls", "true")
+			if (Main.getProperty("option.notifyOnCalls")
 					.equals("true")) {
 				JFritz.infoMsg(msg);
 			}
 
 			// Make back-up after fetching the caller list?
 			if (JFritzUtils.parseBoolean(Main.getProperty(
-							"option.createBackupAfterFetch", "false")))
+							"option.createBackupAfterFetch")))
 				doBackup();
 
 
@@ -698,8 +698,8 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 
 			if (!JFritz.isShutdownInvoked())
 			{
-				if ((newEntries && Main.getProperty("option.deleteAfterFetch",
-						"false").equals("true"))
+				if ((newEntries && Main.getProperty("option.deleteAfterFetch")
+						.equals("true"))
 						|| deleteFritzBoxCallerList) {
 					JFritz.getFritzBox().clearListOnFritzBox();
 				}
@@ -708,7 +708,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 			// Make back-up after fetching the caller list?
 			if (newEntries
 					&& JFritzUtils.parseBoolean(Main.getProperty(
-							"option.createBackupAfterFetch", "false"))) {
+							"option.createBackupAfterFetch"))) {
 				doBackup();
 			}
 		}
@@ -742,33 +742,33 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		Call call = filteredCallerData.get(rowIndex);
 		String columnName = getRealColumnName(columnIndex);
-		if (columnName.equals("type")) { //$NON-NLS-1$
+		if (columnName.equals(CallerTable.COLUMN_TYPE)) { //$NON-NLS-1$
 			return call.getCalltype();
-		} else if (columnName.equals("date")) { //$NON-NLS-1$
+		} else if (columnName.equals(CallerTable.COLUMN_DATE)) { //$NON-NLS-1$
 			return call.getCalldate();
-		} else if (columnName.equals("callbycall")) { //$NON-NLS-1$
+		} else if (columnName.equals(CallerTable.COLUMN_CALL_BY_CALL)) { //$NON-NLS-1$
 			if (call.getPhoneNumber() != null) {
 				return call.getPhoneNumber().getCallByCall();
 			} else {
 				return null;
 			}
-		} else if (columnName.equals("number")) { //$NON-NLS-1$
+		} else if (columnName.equals(CallerTable.COLUMN_NUMBER)) { //$NON-NLS-1$
 			return call.getPhoneNumber();
-		} else if (columnName.equals("participant")) { //$NON-NLS-1$
+		} else if (columnName.equals(CallerTable.COLUMN_PARTICIPANT)) { //$NON-NLS-1$
 			return call.getPerson();
-		} else if (columnName.equals("port")) { //$NON-NLS-1$
+		} else if (columnName.equals(CallerTable.COLUMN_PORT)) { //$NON-NLS-1$
 			return call.getPort();
-		} else if (columnName.equals("route")) { //$NON-NLS-1$
+		} else if (columnName.equals(CallerTable.COLUMN_ROUTE)) { //$NON-NLS-1$
 			if (call.getRoute().startsWith("SIP")) {
 				return JFritz.getSIPProviderTableModel().getSipProvider(
 						call.getRoute(), call.getRoute());
 			}
 			return call.getRoute();
-		} else if (columnName.equals("duration")) { //$NON-NLS-1$
+		} else if (columnName.equals(CallerTable.COLUMN_DURATION)) { //$NON-NLS-1$
 			return Integer.toString(call.getDuration());
-		} else if (columnName.equals("comment")) { //$NON-NLS-1$
+		} else if (columnName.equals(CallerTable.COLUMN_COMMENT)) { //$NON-NLS-1$
 			return call.getComment();
-		} else if (columnName.equals("picture")) { //$NON-NLS-1$
+		} else if (columnName.equals(CallerTable.COLUMN_PICTURE)) { //$NON-NLS-1$
 			if (call.getPerson() != null)
 				return call.getPerson().getScaledPicture();
 			else
@@ -790,9 +790,9 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 	public void setValueAt(Object object, int rowIndex, int columnIndex) {
 
 		String columnName = getRealColumnName(columnIndex);
-		if (columnName.equals("participant")) { //$NON-NLS-1$
+		if (columnName.equals(CallerTable.COLUMN_PARTICIPANT)) { //$NON-NLS-1$
 			setPerson((Person) object, rowIndex);
-		} else if (columnName.equals("comment")) { //$NON-NLS-1$
+		} else if (columnName.equals(CallerTable.COLUMN_COMMENT)) { //$NON-NLS-1$
 			setComment((String) object, rowIndex);
 		}
 
@@ -855,7 +855,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 		int indexOfDate = -1;
 		for (int i = 0; i < getColumnCount(); i++) {
 			String columnName = getRealColumnName(i);
-			if (columnName.equals("date")) {
+			if (columnName.equals(CallerTable.COLUMN_DATE)) {
 				indexOfDate = i;
 			}
 		}
@@ -898,13 +898,13 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 			Object o1 = null, o2 = null;
 			String columnName = getRealColumnName(columnIndex);
 
-			if (columnName.equals("type")) { //$NON-NLS-1$
+			if (columnName.equals(CallerTable.COLUMN_TYPE)) { //$NON-NLS-1$
 				o1 = call1.getCalltype().toString();
 				o2 = call2.getCalltype().toString();
-			} else if (columnName.equals("date")) { //$NON-NLS-1$
+			} else if (columnName.equals(CallerTable.COLUMN_DATE)) { //$NON-NLS-1$
 				o1 = call1.getCalldate();
 				o2 = call2.getCalldate();
-			} else if (columnName.equals("callbycall")) { //$NON-NLS-1$
+			} else if (columnName.equals(CallerTable.COLUMN_CALL_BY_CALL)) { //$NON-NLS-1$
 				if (call1.getPhoneNumber() != null) {
 					o1 = call1.getPhoneNumber().getCallByCall();
 				} else {
@@ -915,7 +915,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 				} else {
 					o2 = null;
 				}
-			} else if (columnName.equals("number")) { //$NON-NLS-1$
+			} else if (columnName.equals(CallerTable.COLUMN_NUMBER)) { //$NON-NLS-1$
 				if (call1.getPhoneNumber() != null) {
 					o1 = call1.getPhoneNumber().getIntNumber();
 				} else {
@@ -926,7 +926,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 				} else {
 					o2 = null;
 				}
-			} else if (columnName.equals("participant")) { //$NON-NLS-1$
+			} else if (columnName.equals(CallerTable.COLUMN_PARTICIPANT)) { //$NON-NLS-1$
 				if (call1.getPerson() != null) {
 					o1 = call1.getPerson().getFullname().toUpperCase();
 				} else {
@@ -937,13 +937,13 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 				} else {
 					o2 = null;
 				}
-			} else if (columnName.equals("port")) { //$NON-NLS-1$
+			} else if (columnName.equals(CallerTable.COLUMN_PORT)) { //$NON-NLS-1$
 				o1 = call1.getPort();
 				o2 = call2.getPort();
-			} else if (columnName.equals("route")) { //$NON-NLS-1$
+			} else if (columnName.equals(CallerTable.COLUMN_ROUTE)) { //$NON-NLS-1$
 				o1 = call1.getRoute();
 				o2 = call2.getRoute();
-			} else if (columnName.equals("duration")) { //$NON-NLS-1$
+			} else if (columnName.equals(CallerTable.COLUMN_DURATION)) { //$NON-NLS-1$
 				if (call1.getDuration() != 0) {
 					o1 = format(Integer.toString(call1.getDuration()), 10);
 				} else {
@@ -954,7 +954,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 				} else {
 					o2 = null;
 				}
-			} else if (columnName.equals("comment")) { //$NON-NLS-1$
+			} else if (columnName.equals(CallerTable.COLUMN_COMMENT)) { //$NON-NLS-1$
 				o1 = call1.getComment().toUpperCase();
 				o2 = call2.getComment().toUpperCase();
 			} else {
@@ -1295,7 +1295,7 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 								.getMessage("imported_calls").replaceAll("%N", Integer.toString(newEntries)); //$NON-NLS-1$, //$NON-NLS-2$
 					}
 
-					if (Main.getProperty("option.notifyOnCalls", "true")
+					if (Main.getProperty("option.notifyOnCalls")
 							.equals("true")) {
 						JFritz.infoMsg(msg);
 					}

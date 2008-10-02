@@ -133,4 +133,13 @@ public class TelnetCallMonitor extends Thread implements CallMonitorInterface {
 	public boolean isConnected() {
 		return telnet.isConnected();
 	}
+
+	public void closeConnection() {
+		Debug.err("WARNING: Method not implemented!");
+	}
+
+	public boolean pingBox() {
+		Debug.err("WARNING: Method not implemented!");
+		return false;
+	}
 }

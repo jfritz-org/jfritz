@@ -536,7 +536,7 @@ public class Person implements Cloneable, Serializable{
 			for (PhoneNumber number: numbers)
 				outString = outString + number.toCSV()+":";
 
-			outString = outString.substring(0, outString.length()-2);
+			outString = outString.substring(0, outString.length()-1);
 			outString = outString+"\"";
 
 		return outString;

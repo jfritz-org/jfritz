@@ -137,35 +137,34 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 
 	public void loadSettings() {
 		checkNewVersionAfterStart.setSelected(JFritzUtils.parseBoolean(Main
-				.getProperty("option.checkNewVersionAfterStart", "true")));//$NON-NLS-1$, //ßNON-NLS-2$
+				.getProperty("option.checkNewVersionAfterStart")));//$NON-NLS-1$, //ßNON-NLS-2$
 		timerAfterStartButton.setSelected(JFritzUtils.parseBoolean(Main
-				.getProperty("option.timerAfterStart", "true"))); //$NON-NLS-1$
+				.getProperty("option.timerAfterStart"))); //$NON-NLS-1$
 		confirmOnExitButton.setSelected(JFritzUtils.parseBoolean(Main
-				.getProperty("option.confirmOnExit", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
+				.getProperty("option.confirmOnExit"))); //$NON-NLS-1$,  //$NON-NLS-2$
 		startMinimizedButton.setSelected(JFritzUtils.parseBoolean(Main
-				.getProperty("option.startMinimized", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+				.getProperty("option.startMinimized"))); //$NON-NLS-1$,  //$NON-NLS-2$
 		minimizeInsteadOfClose.setSelected(JFritzUtils.parseBoolean(Main
-				.getProperty("option.minimize", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+				.getProperty("option.minimize"))); //$NON-NLS-1$,  //$NON-NLS-2$
 		createBackup.setSelected(JFritzUtils.parseBoolean(Main.getProperty(
-				"option.createBackup", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+				"option.createBackup"))); //$NON-NLS-1$,  //$NON-NLS-2$
 		createBackupAfterFetch.setSelected(JFritzUtils.parseBoolean(Main
-				.getProperty("option.createBackupAfterFetch", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+				.getProperty("option.createBackupAfterFetch"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		boolean pwAfterStart = !Encryption.decrypt(
-				Main.getProperty("jfritz.password", "")).equals( //$NON-NLS-1$,  //$NON-NLS-2$
+				Main.getProperty("jfritz.password")).equals( //$NON-NLS-1$,  //$NON-NLS-2$
 				JFritz.PROGRAM_SECRET
-						+ Encryption.decrypt(Main.getProperty("box.password", //$NON-NLS-1$
-								""))); //$NON-NLS-1$
+						+ Encryption.decrypt(Main.getProperty("box.password"))); //$NON-NLS-1$
 
 		passwordAfterStartButton.setSelected(pwAfterStart);
 
-		timerSlider.setValue(Integer.parseInt(Main.getProperty("fetch.timer", "5"))); //$NON-NLS-1$
+		timerSlider.setValue(Integer.parseInt(Main.getProperty("fetch.timer"))); //$NON-NLS-1$
 
 		searchWithSSDP.setSelected(JFritzUtils.parseBoolean(Main.getProperty(
-				"option.useSSDP", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
+				"option.useSSDP"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		if(Main.getProperty("network.type", "0").equals("2")
-				&& Boolean.parseBoolean(Main.getProperty("option.clientCallList", "false"))){
+		if(Main.getProperty("network.type").equals("2")
+				&& Boolean.parseBoolean(Main.getProperty("option.clientCallList"))){
 
 			Debug.netMsg("JFritz is running as a client and using call list from server, disabeling some options");
 			searchWithSSDP.setSelected(false);

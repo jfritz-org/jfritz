@@ -98,12 +98,12 @@ public class SyslogConfigDialog extends CallMonitorConfigDialog {
 
 	private void setProperties() {
 		checkSyslog.setSelected(JFritzUtils.parseBoolean(Main.getProperty(
-				"syslog.checkSyslog", "true")));//$NON-NLS-1$,  //$NON-NLS-2$
+				"syslog.checkSyslog")));//$NON-NLS-1$,  //$NON-NLS-2$
 		checkTelefon.setSelected(JFritzUtils.parseBoolean(Main.getProperty(
-				"syslog.checkTelefon", "true")));//$NON-NLS-1$,  //$NON-NLS-2$
+				"syslog.checkTelefon")));//$NON-NLS-1$,  //$NON-NLS-2$
 		ipAddressComboBox.setSelectedItem(Main.getProperty(
-				"option.syslogclientip", "192.168.178.21"));//$NON-NLS-1$,  //$NON-NLS-2$
-		syslogPassthroughCheckBox.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.syslogpassthrough", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+				"option.syslogclientip"));//$NON-NLS-1$,  //$NON-NLS-2$
+		syslogPassthroughCheckBox.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.syslogpassthrough"))); //$NON-NLS-1$,  //$NON-NLS-2$
 		// Anhand von Problemen mit dem Passthrough ist diese Checkbox erst
 		// einmal deaktiviert
 		syslogPassthroughCheckBox.setEnabled(false);
@@ -174,8 +174,7 @@ public class SyslogConfigDialog extends CallMonitorConfigDialog {
 						Debug.errDlg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
 					}
 					if (telnet.isConnected()) {
-						SyslogCallMonitor.restartSyslogOnFritzBox(telnet, Main.getProperty("option.syslogclientip", //$NON-NLS-1$
-										"192.168.178.21")); //$NON-NLS-1$
+						SyslogCallMonitor.restartSyslogOnFritzBox(telnet, Main.getProperty("option.syslogclientip")); //$NON-NLS-1$
 						telnet.disconnect();
 						JFritz.infoMsg("Syslogd erfolgreich gestartet"); //$NON-NLS-1$
 						Debug.msg("Syslogd restarted successfully"); //$NON-NLS-1$

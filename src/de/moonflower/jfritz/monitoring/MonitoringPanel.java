@@ -157,7 +157,7 @@ public class MonitoringPanel extends JPanel implements ActionListener {
 		enableInetMonitoring.setActionCommand("toggleInetMonitoring");
 		enableInetMonitoring.addActionListener(this);
 		enableInetMonitoring.setSize(new Dimension(200,30));
-		if(Main.getProperty("inet.monitoring", "false").equals("true")){
+		if(Main.getProperty("inet.monitoring").equals("true")){
 			enableInetMonitoring.setSelected(true);
 			setTimer();
 		}else{

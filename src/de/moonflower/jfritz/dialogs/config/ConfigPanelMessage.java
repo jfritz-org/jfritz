@@ -94,7 +94,7 @@ public class ConfigPanelMessage extends JPanel implements ConfigPanel {
 		if (!Main.SYSTRAY_SUPPORT) {
 			popupTrayButton.setVisible(false);
 		}
-		switch (Integer.parseInt(Main.getProperty("option.popuptype", "1"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+		switch (Integer.parseInt(Main.getProperty("option.popuptype"))) { //$NON-NLS-1$,  //$NON-NLS-2$
 		case 0: {
 			popupNoButton.setSelected(true);
 			delayLbl.setVisible(false);
@@ -115,7 +115,7 @@ public class ConfigPanelMessage extends JPanel implements ConfigPanel {
 		}
 		}
 
-		popupDelay.setText(Main.getProperty("option.popupDelay", "0"));
+		popupDelay.setText(Main.getProperty("option.popupDelay"));
 
 	}
 

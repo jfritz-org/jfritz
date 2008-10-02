@@ -46,11 +46,18 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  *
  */
 public class CallerTable extends JTable {
+	public static final String COLUMN_CALL_BY_CALL = "callbycall";
+	public static final String COLUMN_COMMENT = "comment";
+	public static final String COLUMN_DATE = "date";
+	public static final String COLUMN_DURATION = "duration";
+	public static final String COLUMN_NUMBER = "number";
+	public static final String COLUMN_PARTICIPANT = "participant";
+	public static final String COLUMN_PICTURE = "picture";
+	public static final String COLUMN_PORT = "port";
+	public static final String COLUMN_ROUTE = "route";
+	public static final String COLUMN_TYPE = "type";
+
 	private static final long serialVersionUID = 1;
-
-	private static final String TRUE = "true";
-
-	private static final String FALSE = "false";
 
 	private static final int MAXCOLUMNCOUNT = 9;
 
@@ -205,7 +212,7 @@ public class CallerTable extends JTable {
 		col.setMinWidth(10);
 		col.setMaxWidth(1600);
 		col.setPreferredWidth(Integer.parseInt(Main.getStateProperty(
-				"column." + columnName + ".width", "70"))); //$NON-NLS-1$,  //$NON-NLS-2$
+				"column." + columnName + ".width"))); //$NON-NLS-1$,  //$NON-NLS-2$
 		return col;
 	}
 
@@ -216,37 +223,37 @@ public class CallerTable extends JTable {
 	 */
 	private void createColumns() {
 
-		createColumn(0, "type", new CallTypeCellRenderer());
+		createColumn(0, COLUMN_TYPE, new CallTypeCellRenderer());
 
-		createColumn(1, "date", new DateCellRenderer());
+		createColumn(1, COLUMN_DATE, new DateCellRenderer());
 
-		callByCallColumn = createColumn(2, "callbycall",
+		callByCallColumn = createColumn(2, COLUMN_CALL_BY_CALL,
 				new CallByCallCellRenderer());
 
-		TableColumn numberColumn = createColumn(3, "number",
+		TableColumn numberColumn = createColumn(3, COLUMN_NUMBER,
 				new NumberCellRenderer());
 		numberColumn.setCellEditor(new CallCellEditor());
 
-		TableColumn participantColumn = createColumn(4, "participant",
+		TableColumn participantColumn = createColumn(4, COLUMN_PARTICIPANT,
 				new PersonCellRenderer());
 //		participantColumn.setCellEditor(new PersonCellEditor(
 //				(CallerList) getModel()));
 
-		portColumn = createColumn(5, "port", new PortCellRenderer());
+		portColumn = createColumn(5, COLUMN_PORT, new PortCellRenderer());
 
-		createColumn(6, "route", new RouteCellRenderer());
+		createColumn(6, COLUMN_ROUTE, new RouteCellRenderer());
 
-		createColumn(7, "duration", new DurationCellRenderer());
+		createColumn(7, COLUMN_DURATION, new DurationCellRenderer());
 
-		commentColumn = createColumn(8, "comment", new CommentCellRenderer());
+		commentColumn = createColumn(8, COLUMN_COMMENT, new CommentCellRenderer());
 		commentColumn.setCellEditor(new CommentCellEditor());
 
-		pictureColumn = createColumn(9, "picture", new PictureCellRenderer());
+		pictureColumn = createColumn(9, COLUMN_PICTURE, new PictureCellRenderer());
 
 		showHideColumns();
 
 		for (int i = 0; i < getColumnCount(); i++) {
-			String columnName = Main.getStateProperty("column" + i + ".name", ""); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+			String columnName = Main.getStateProperty("column" + i + ".name"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 			// Debug.msg("column"+i+".name:
 			// "+Main.getProperty("column"+i+".name",""));
 			if (!columnName.equals("")) { //$NON-NLS-1$
@@ -370,7 +377,7 @@ public class CallerTable extends JTable {
 			Debug.msg("Showing " + columnName + " column"); //$NON-NLS-1$
 			colModel.getColumn(getColumnCount() - 1).setPreferredWidth(
 					Integer.parseInt(Main.getStateProperty(
-							"column." + columnName + ".width", "50"))); //$NON-NLS-1$, //$NON-NLS-2$
+							"column." + columnName + ".width"))); //$NON-NLS-1$, //$NON-NLS-2$
 		}
 	}
 
@@ -399,31 +406,31 @@ public class CallerTable extends JTable {
 	 */
 	public void showHideColumns() {
 		if (!JFritzUtils.parseBoolean(Main.getProperty(
-				"option.showCallByCallColumn", "true"))) { //$NON-NLS-1$, //$NON-NLS-2$
-			hideColumn("callbycall");
+				"option.showCallByCallColumn"))) { //$NON-NLS-1$, //$NON-NLS-2$
+			hideColumn(COLUMN_CALL_BY_CALL);
 		} else {
-			showColumn("callbycall", callByCallColumn);
+			showColumn(COLUMN_CALL_BY_CALL, callByCallColumn);
 		}
 
 		if (!JFritzUtils.parseBoolean(Main.getProperty(
-				"option.showCommentColumn", "true"))) { //$NON-NLS-1$,  //$NON-NLS-2$
-			hideColumn("comment");
+				"option.showCommentColumn"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+			hideColumn(COLUMN_COMMENT);
 		} else {
-			showColumn("comment", commentColumn);
+			showColumn(COLUMN_COMMENT, commentColumn);
 		}
 
 		if (!JFritzUtils.parseBoolean(Main.getProperty(
-				"option.showPortColumn", "true"))) { //$NON-NLS-1$,  //$NON-NLS-2$
-			hideColumn("port");
+				"option.showPortColumn"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+			hideColumn(COLUMN_PORT);
 		} else {
-			showColumn("port", portColumn);
+			showColumn(COLUMN_PORT, portColumn);
 		}
 
 		if (!JFritzUtils.parseBoolean(Main.getProperty(
-				"option.showPictureColumn", "true"))) { //$NON-NLS-1$,  //$NON-NLS-2$
-			hideColumn("picture");
+				"option.showPictureColumn"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+			hideColumn(COLUMN_PICTURE);
 		} else {
-			showColumn("picture", pictureColumn);
+			showColumn(COLUMN_PICTURE, pictureColumn);
 		}
 	}
 }

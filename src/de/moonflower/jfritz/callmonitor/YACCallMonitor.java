@@ -133,4 +133,12 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 		return connected;
 	}
 
+	public void closeConnection() {
+		Debug.err("WARNING: Method not implemented!");
+	}
+
+	public boolean pingBox() {
+		Debug.err("WARNING: Method not implemented!");
+		return false;
+	}
 }

@@ -148,10 +148,10 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 				String server, user, password;
 				int port;
 
-				server = Main.getProperty("server.name", "");
-				port = Integer.parseInt(Main.getProperty("server.port", "0"));
-				user = Main.getProperty("server.login", "");
-				password = Encryption.decrypt(Main.getProperty("server.password", ""));
+				server = Main.getProperty("server.name");
+				port = Integer.parseInt(Main.getProperty("server.port"));
+				user = Main.getProperty("server.login");
+				password = Encryption.decrypt(Main.getProperty("server.password"));
 
 				Debug.netMsg("Attempting to connect to server");
 				Debug.netMsg("Server: "+ server);
@@ -512,12 +512,12 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 							//Call monitor event from the server
 						}else if(change.destination == DataChange.Destination.CALLMONITOR
-								&& Boolean.parseBoolean(Main.getProperty("option.callmonitorStarted", "false"))
-								&& Main.getProperty("option.callMonitorType", "0").equals("6")){
+								&& JFritz.getJframe() != null && JFritz.getJframe().isCallMonitorStarted()
+								&& Main.getProperty("option.callMonitorType").equals("6")){
 
 							Debug.netMsg("Call monitor event received from server");
 							//call in or disconnect event received
-							String[] ignoredMSNs = Main.getProperty("option.callmonitor.ignoreMSN","").trim().split(";");
+							String[] ignoredMSNs = Main.getProperty("option.callmonitor.ignoreMSN").trim().split(";");
 							boolean ignoreIt = false;
 
 							if(change.original != null){
@@ -542,14 +542,14 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 								//Pending call in event
 								if(change.operation == DataChange.Operation.ADD &&
 										Boolean.parseBoolean(Main.getProperty(
-						                        "option.callmonitor.monitorIncomingCalls", "true"))){
+						                        "option.callmonitor.monitorIncomingCalls"))){
 
 									JFritz.getCallMonitorList().invokeIncomingCall(c);
 
 									//Established call in event
 								} else if(change.operation == DataChange.Operation.UPDATE &&
 										Boolean.parseBoolean(Main.getProperty(
-						                        "option.callmonitor.monitorIncomingCalls", "true"))){
+						                        "option.callmonitor.monitorIncomingCalls"))){
 
 									JFritz.getCallMonitorList().invokeIncomingCallEstablished(c);
 
@@ -560,7 +560,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 								// call out event received
 							} else if( change.updated != null && Boolean.parseBoolean(Main.getProperty(
-										"option.callmonitor.monitorOutgoingCalls", "false"))){
+										"option.callmonitor.monitorOutgoingCalls"))){
 
 								Call c = (Call) change.updated;
 

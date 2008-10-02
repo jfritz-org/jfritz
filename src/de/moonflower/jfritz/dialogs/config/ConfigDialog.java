@@ -122,24 +122,24 @@ public class ConfigDialog extends JDialog implements ChangeListener {
 		otherPanel.loadSettings();
 		networkPanel.loadSettings();
 
-		notifyOnCallsButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.notifyOnCalls", "false"))); //$NON-NLS-1$
-		fetchAfterStartButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.fetchAfterStart", "true"))); //$NON-NLS-1$
-		deleteAfterFetchButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.deleteAfterFetch", "false"))); //$NON-NLS-1$
+		notifyOnCallsButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.notifyOnCalls"))); //$NON-NLS-1$
+		fetchAfterStartButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.fetchAfterStart"))); //$NON-NLS-1$
+		deleteAfterFetchButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.deleteAfterFetch"))); //$NON-NLS-1$
 
-		lookupAfterFetchButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.lookupAfterFetch", "true")));
+		lookupAfterFetchButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.lookupAfterFetch")));
 
-		showCallByCallColumnButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.showCallByCallColumn", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		showCallByCallColumnButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.showCallByCallColumn"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		showCommentColumnButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.showCommentColumn", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		showCommentColumnButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.showCommentColumn"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		showPortColumnButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.showPortColumn", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		showPortColumnButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.showPortColumn"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		showPictureColumnButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.showPictureColumn", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		showPictureColumnButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.showPictureColumn"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		fetchAfterStandby.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.watchdog.fetchAfterStandby", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		fetchAfterStandby.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.watchdog.fetchAfterStandby"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		if(Main.getProperty("network.type", "0").equals("2")
-				&& Boolean.parseBoolean(Main.getProperty("option.clientCallList", "false"))){
+		if(Main.getProperty("network.type").equals("2")
+				&& Boolean.parseBoolean(Main.getProperty("option.clientCallList"))){
 
 			Debug.netMsg("JFritz is running as a client and using call list from server, disabeling some options");
 			deleteAfterFetchButton.setSelected(false);

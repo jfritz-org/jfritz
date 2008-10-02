@@ -14,7 +14,7 @@ public class DisconnectMonitor extends CallMonitorAdaptor {
 
     public void endOfCall(Call call) {
         if (JFritzUtils.parseBoolean(Main.getProperty(
-                "option.callmonitor.fetchAfterDisconnect", "false"))) //$NON-NLS-1$,  //$NON-NLS-2$
+                "option.callmonitor.fetchAfterDisconnect"))) //$NON-NLS-1$,  //$NON-NLS-2$
         {
             Debug.msg("Fetch callerlist at end of call");
             JFritz.getJframe().fetchList();

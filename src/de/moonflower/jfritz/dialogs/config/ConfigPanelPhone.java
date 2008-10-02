@@ -62,7 +62,7 @@ public class ConfigPanelPhone extends JPanel implements ConfigPanel{
 
 	public void loadSettings() {
 		activateDialPrefix.setSelected(JFritzUtils.parseBoolean(Main.getProperty(
-                "option.activateDialPrefix", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
+                "option.activateDialPrefix"))); //$NON-NLS-1$,  //$NON-NLS-2$
 		areaCode.setText(Main.getProperty("area.code")); //$NON-NLS-1$
 		countryCode.setText(Main.getProperty("country.code")); //$NON-NLS-1$
         areaPrefix.setText(Main.getProperty("area.prefix")); //$NON-NLS-1$

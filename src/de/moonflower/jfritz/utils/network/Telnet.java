@@ -65,7 +65,7 @@ public class Telnet {
 			String server = JFritz.getFritzBox().getAddress();
 
 			String password;
-			if (Main.getProperty("telnet.password", "").equals("")) { //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+			if (Main.getProperty("telnet.password").equals("")) { //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 				// Noch kein Passwort gesetzt. Zeige Einstellungsdialog
 				TelnetConfigDialog telnetConfigDialog = new TelnetConfigDialog(
 						JFritz.getJframe());
@@ -78,7 +78,7 @@ public class Telnet {
 				telnetConfigDialog.dispose();
 			}
 
-			String user = Main.getProperty("telnet.user", ""); //$NON-NLS-1$,  //$NON-NLS-2$
+			String user = Main.getProperty("telnet.user"); //$NON-NLS-1$,  //$NON-NLS-2$
 			password = Encryption.decrypt(Main.getProperty("telnet.password")); //$NON-NLS-1$
 			int port = 23;
 			try {

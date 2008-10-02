@@ -63,7 +63,7 @@ public class YacConfigDialog extends CallMonitorConfigDialog {
     }
 
     private void setProperties() {
-        yacPort.setText(Main.getProperty("option.yacport", "10629")); //$NON-NLS-1$,  //$NON-NLS-2$
+        yacPort.setText(Main.getProperty("option.yacport")); //$NON-NLS-1$,  //$NON-NLS-2$
     }
 
     private void storeProperties() {

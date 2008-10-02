@@ -99,18 +99,41 @@ public class ConfigWizard {
        			Debug.msg("Finished clicked, saving settings");
 
        			((ConfigPanelPhone)descriptor2.getPanelComponent()).saveSettings();
-       			((ConfigPanelFritzBox)descriptor3.getPanelComponent()).saveSettings();
+       			try {
+           			((ConfigPanelFritzBox)descriptor3.getPanelComponent()).saveSettings();
+       			}
+       			catch (WrongPasswordException wpe)
+       			{
+       				Debug.err("Wrong password");
+       			}
+   				catch (InvalidFirmwareException ife)
+   				{
+   					Debug.err("Invalid firmware");
+   				}
+       			catch (IOException ioe)
+       			{
+       				Debug.err("No connection to box!");
+       			}
        			((ConfigPanelMessage)descriptor4.getPanelComponent()).saveSettings();
        			((ConfigPanelCallMonitor)descriptor5.getPanelComponent()).saveSettings();
 
-      			JFritz.getFritzBox().detectFirmware();
+       			try {
+          			JFritz.getFritzBox().detectFirmware();
+       			}
+       			catch (WrongPasswordException wpe)
+       			{
+       				Debug.err("Wrong password");
+       			}
+   				catch (InvalidFirmwareException ife)
+   				{
+   					Debug.err("Invalid firmware");
+   				}
+       			catch (IOException ioe)
+       			{
+       				Debug.err("No connection to box!");
+       			}
       			Main.saveConfigProperties();
 
-      			// start call monitor if selected
-//				if (Integer.parseInt(Main.getProperty("option.callMonitorType", "1")) != 0)
-//				{
-//					JFritz.getJframe().switchMonitorButton();
-//				}
       			JFritz.getJframe().checkOptions();
 				return false;
        		case 1:

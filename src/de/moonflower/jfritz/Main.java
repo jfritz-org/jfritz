@@ -143,6 +143,7 @@
  * - Popup trotz fehlender Inverssuche
  * - Überprüfen, ob Internetüberwachung auch mit neueren Firmwares geht
  * - Popup am Bildschirmrand andocken.
+ * - option.clientStandAlone wird nirgends verwendet
  * TODO-END
  *
  * FIXME:
@@ -158,28 +159,39 @@
  * FIXME-END
  *
  * JFritz 0.7.1.14
+ * - I18N: Popup im Telefonbuch, wenn ungespeicherte Änderungen vorhanden sind.
+ * - Bugfix-Telefonbuch: Wenn ein Eintrag gewählt wurde, der bis auf die Nummer dem zuvor gewählen gleich war
+ *                       , und sich bei der Nummer nur in der letzten Stelle unterschied, wurde das Selektieren unmöglich.
+ * - Bugfix-Telefonbuch: Beim Löschen eines Eintrags wird nun der erste Eintrag selektiert.
+ * - Neu: Interfaceerweiterung für die Anrufmonitore (Ping, closeConnection).
+ * - Neu: Ping von AM in den Watchdog verschoben. Watchdog startet nun mit anderem Intervall.
  * - Bugfix: Abbruch von Threads, wenn JFritz während des Startups beendet wird.
  * - Bugfix: Kein abholen der Anrufliste und kein starten des Anrufmonitors mehr, wenn Wizard abgebrochen wurde.
+ * - Default-Werte überarbeitet.
+ * - Bugfix: Fensterstatus wird nun wieder korrekt wiederhergestellt.
  *
  * Strings:
  * config_wizard.finish
  * removed config_wizard.finish1 - config_wizard.finish5
+ * discard
+ * dialog_title_password_dialog - new meaning (added FRITZ!Box)
+ * dialog_title_ipaddress_dialog - new meaning (added FRITZ!Box)
  *
  * JFritz 0.7.1.13
- * - Bugfix: Korrektes Abholen der Anrufliste von der 54.04.63-12190 labor firmware.
+ * - Bugfix: Korrektes Abholen der Anrufliste von der 54.04.63-12190 Labor-Firmware.
  * - Neu: Wizard wird nun zentriert dargestellt.
  * - Bugfix: Falls MAC-Adresse nicht bestimmt werden kann, keine Warnung bei vermeintlich neuer Box mehr ausgeben.
- * - Bugfix: Korrektes speichern des Passworts in den Einstellungen auch ohne Klick auf "Box erkennen"
- * - Bugfix: Autodetection bei Auswahl der FritzBox in den Einstellungen deaktiviert, weil in die labor-fw eine Sperre wegen falschem Passwort eingebaut wurde.
+ * - Bugfix: Korrektes Speichern des Passworts in den Einstellungen auch ohne Klick auf "Box erkennen"
+ * - Bugfix: Autodetection bei Auswahl der FritzBox in den Einstellungen deaktiviert, weil in die Labor-Firmware eine Sperre wegen falschem Passwort eingebaut wurde.
  *
  * JFritz 0.7.1.12
  * - Bugfix: Splash bleibt beim Start hängen.
- * - Bugfix: Anrufliste kann nicht geholt werden, wenn Timer deaktiviert.
- * - Bugfix: Autostart CallMonitor after standby or lost connection.
- * - Bugfix: Set sound volume to 100%.
+ * - Bugfix: Anrufliste kann nicht geholt werden, wenn Timer deaktiviert ist.
+ * - Bugfix: Autostart CallMonitor nach Standby oder verlorener Verbindung.
+ * - Bugfix: Lautstärke des Klingeltons auf 100% gesetzt.
  * - Bugfix: Inverssuche DasÖrtliche korrigiert (Straßenname).
- * - New: Icons für den Anrufmonitorstatus.
- * - Change: Renamed Phonebook-Button "Okay" to "Save".
+ * - New: Status-Icons für den Anrufmonitor.
+ * - Change: Phonebook-Knopf von "Okay" nach "Save" umbenannt.
  * - New: Popup im Telefonbuch, wenn ungespeicherte Änderungen vorhanden sind.
  * - Change: Passwort-Dialog nun zentriert.
  * - Change: Config-Wizard überarbeitet.
@@ -824,7 +836,9 @@
 
 package de.moonflower.jfritz;
 
+import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -839,9 +853,12 @@ import java.util.ResourceBundle;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 import de.moonflower.jfritz.autoupdate.JFritzUpdate;
 import de.moonflower.jfritz.autoupdate.Update;
+import de.moonflower.jfritz.callerlist.CallerTable;
+import de.moonflower.jfritz.callerlist.filter.CallFilter;
 import de.moonflower.jfritz.dialogs.simple.AddressPasswordDialog;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
@@ -859,13 +876,17 @@ import de.moonflower.jfritz.utils.ShutdownHook;
 import de.moonflower.jfritz.utils.reverselookup.LookupObserver;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 
+/**
+ * @author robroy
+ *
+ */
 public class Main implements LookupObserver {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
 	public final static String PROGRAM_VERSION = "0.7.1.14"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.124 2008/09/26 18:13:53 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.125 2008/10/02 19:21:23 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -890,8 +911,6 @@ public class Main implements LookupObserver {
 	public final static String STATE_PROPERTIES_FILE = "jfritz.state.properties.xml"; //$NON-NLS-1$
 
 	public static boolean SYSTRAY_SUPPORT = false;
-
-	private static JFritzProperties defaultProperties;
 
 	private static JFritzProperties config_properties;
 
@@ -1052,8 +1071,7 @@ public class Main implements LookupObserver {
 		}
 
 		splash.setStatus("Checking startup password...");
-		String ask = Main.getProperty("jfritz.password", Encryption //$NON-NLS-1$
-				.encrypt(JFritz.PROGRAM_SECRET + "")); //$NON-NLS-1$
+		String ask = Main.getProperty("jfritz.password");//$NON-NLS-1$
 		String pass = "";
 		if (JFritz.getFritzBox() != null)
 		{
@@ -1275,7 +1293,7 @@ public class Main implements LookupObserver {
             		System.err.println("Russia: ru"); //$NON-NLS-1$
             		System.exit(0);
             	}
-        		loadMessages(new Locale(Main.getProperty("locale","en_US"))); //$NON-NLS-1$,  //$NON-NLS-2$
+        		loadMessages(new Locale(Main.getProperty("locale"))); //$NON-NLS-1$,  //$NON-NLS-2$
             	break;
 			case 'w': //$NON-NLS-1$
 				enableInstanceControl = false;
@@ -1460,9 +1478,9 @@ public class Main implements LookupObserver {
 		try {
 			Exception ex = null;
 			FritzBox fritzBox = new FritzBox(getProperty(
-					"box.address", "192.168.178.1"), Encryption //$NON-NLS-1$,  //$NON-NLS-2$
-					.decrypt(getProperty("box.password", Encryption //$NON-NLS-1$
-							.encrypt(""))), getProperty("box.port", "80"), ex); //$NON-NLS-1$
+					"box.address"), //$NON-NLS-1$,  //$NON-NLS-2$
+					Encryption .decrypt(getProperty("box.password")), //$NON-NLS-1$
+					getProperty("box.port"), ex); //$NON-NLS-1$
 			if ( ex != null )
 			{
 				try {
@@ -1505,7 +1523,7 @@ public class Main implements LookupObserver {
 	public void closeOpenConnections(){
 		Debug.msg("Closing all open network connections");
 
-		String networkType = Main.getProperty("network.type", "0");
+		String networkType = Main.getProperty("network.type");
 
 		if(networkType.equals("1") && NetworkStateMonitor.isListening())
 			NetworkStateMonitor.stopServer();
@@ -1515,24 +1533,167 @@ public class Main implements LookupObserver {
 
 	}
 
+	/**
+	 * This method sets the default properties
+	 * @return Set of default properties.
+	 */
+	private static JFritzProperties loadDefaultProperties()
+	{
+		JFritzProperties defProps = new JFritzProperties();
+		// Default properties
+		defProps.setProperty("area.code", "721");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("area.prefix", "0");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("backup.path", ".");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("box.address", "192.168.178.1");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("box.mac", "");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("box.password", Encryption.encrypt(""));//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("box.port", "80");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("calldialog.lastport", "0");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("clients.port", "4455");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("country.code", "+49");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("country.prefix", "00");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("dial.prefix", " ");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("fetch.timer", "5");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("inet.monitoring", "false");//$NON-NLS-1$, //$NON-NLS-2$
+		//"en_US"
+		defProps.setProperty("locale", System.getProperty("user.language")+"_"+System.getProperty("user.country"));//$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$
+		defProps.setProperty("max.Connections", "2");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("network.type", "0");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.activateDialPrefix", "false");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.autostartcallmonitor", "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.callmessageport", "23232");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.callMonitorType", "1");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.callmonitor.ignoreMSN", "");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.callmonitor.fetchAfterDisconnect", "false");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.callmonitor.monitorIncomingCalls", "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.callmonitor.monitorOutgoingCalls", "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.checkNewVersionAfterStart", "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.clientTelephoneBook", "false");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.clientCallList", "false");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.clientCallMonitor", "false");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.clientStandAlone", "false");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.confirmOnExit", "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.connectOnStartup", "false");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.createBackup", "false");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.createBackupAfterFetch", "false");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.deleteAfterFetch", "false");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.externProgram", "");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.fetchAfterStart", "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.listenOnStartup", "false");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.lookupAfterFetch", "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.minimize", "false");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.notifyOnCalls", "false");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.playSounds", "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.popuptype", "1");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.popupDelay", "0");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.showCallByCallColumn", "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.showCommentColumn", "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.showPortColumn", "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.showPictureColumn", "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.startExternProgram", "false");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.startMinimized", "false");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.syslogclientip", "192.168.178.21");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.syslogpassthrough", "false");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.timerAfterStart", "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.useSSDP", "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.watchdog.fetchAfterStandby", "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.yacport", "10629");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("options.exportCSVpath", ".");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("options.exportXMLpath", ".");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("options.exportCSVpathOfPhoneBook", ".");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("server.name", "");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("server.port", "4455");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("server.login", "");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("server.password", "");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("syslog.checkSyslog", "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("syslog.checkTelefon", "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("server.password", "");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("telefond.laststarted", "");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("telnet.user", "");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("telnet.password", "");//$NON-NLS-1$, //$NON-NLS-2$
+		return defProps;
+	}
+
+	private static JFritzProperties loadDefaultWindowProperties()
+	{
+		JFritzProperties defProps = new JFritzProperties();
+		defProps.setProperty("window.state.old", Integer.toString(Frame.NORMAL));//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("window.state", Integer.toString(Frame.MAXIMIZED_BOTH));//$NON-NLS-1$, //$NON-NLS-2$
+
+		defProps.setProperty("position.left", "10");//$NON-NLS-1$
+		defProps.setProperty("position.top", "10");//$NON-NLS-1$
+		defProps.setProperty("position.width", "640");//$NON-NLS-1$
+		defProps.setProperty("position.height", "480");//$NON-NLS-1$
+
+		// Filter properties
+		defProps.setProperty(CallFilter.FILTER_SIP_PROVIDERS, "");//$NON-NLS-1$
+		defProps.setProperty(CallFilter.FILTER_COMMENT, "0");//$NON-NLS-1$
+		defProps.setProperty(CallFilter.FILTER_DATE, "0");//$NON-NLS-1$
+		defProps.setProperty(CallFilter.FILTER_SIP, "0");//$NON-NLS-1$
+		defProps.setProperty(CallFilter.FILTER_CALLBYCALL, "0");//$NON-NLS-1$
+		defProps.setProperty(CallFilter.FILTER_CALLOUT, "0");//$NON-NLS-1$
+		defProps.setProperty(CallFilter.FILTER_ANONYM, "0");//$NON-NLS-1$
+		defProps.setProperty(CallFilter.FILTER_FIXED, "0");//$NON-NLS-1$
+		defProps.setProperty(CallFilter.FILTER_HANDY, "0");//$NON-NLS-1$
+		defProps.setProperty(CallFilter.FILTER_CALLIN_NOTHING, "0");//$NON-NLS-1$
+		defProps.setProperty(CallFilter.FILTER_CALLINFAILED, "0");//$NON-NLS-1$
+		defProps.setProperty(CallFilter.FILTER_SEARCH_TEXT, "");//$NON-NLS-1$
+		defProps.setProperty(CallFilter.FILTER_SEARCH, "0");//$NON-NLS-1$
+		defProps.setProperty(CallFilter.FILTER_DATE_SPECIAL, " ");//$NON-NLS-1$
+		defProps.setProperty(CallFilter.FILTER_DATE_START, "11.11.11 11:11");//$NON-NLS-1$
+		defProps.setProperty(CallFilter.FILTER_DATE_END, "11.11.11 11:11");//$NON-NLS-1$
+
+		// column properties
+		String default_column_width = "70";
+		defProps.setProperty("column." + CallerTable.COLUMN_CALL_BY_CALL + ".name", CallerTable.COLUMN_CALL_BY_CALL);//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("column." + CallerTable.COLUMN_CALL_BY_CALL + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$
+
+		defProps.setProperty("column." + CallerTable.COLUMN_COMMENT + ".name", CallerTable.COLUMN_COMMENT);//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("column." + CallerTable.COLUMN_COMMENT + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$
+
+		defProps.setProperty("column." + CallerTable.COLUMN_DATE + ".name", CallerTable.COLUMN_DATE);//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("column." + CallerTable.COLUMN_DATE + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$
+
+		defProps.setProperty("column." + CallerTable.COLUMN_DURATION + ".name", CallerTable.COLUMN_DURATION);//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("column." + CallerTable.COLUMN_DURATION + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
+
+		defProps.setProperty("column." + CallerTable.COLUMN_NUMBER + ".name", CallerTable.COLUMN_NUMBER);//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("column." + CallerTable.COLUMN_NUMBER + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
+
+		defProps.setProperty("column." + CallerTable.COLUMN_PARTICIPANT + ".name", CallerTable.COLUMN_PARTICIPANT);//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("column." + CallerTable.COLUMN_PARTICIPANT + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
+
+		defProps.setProperty("column." + CallerTable.COLUMN_PICTURE + ".name", CallerTable.COLUMN_PICTURE);//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("column." + CallerTable.COLUMN_PICTURE + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
+
+		defProps.setProperty("column." + CallerTable.COLUMN_PORT + ".name", CallerTable.COLUMN_PORT);//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("column." + CallerTable.COLUMN_PORT + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
+
+		defProps.setProperty("column." + CallerTable.COLUMN_ROUTE + ".name", CallerTable.COLUMN_ROUTE);//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("column." + CallerTable.COLUMN_ROUTE + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
+
+		defProps.setProperty("column." + CallerTable.COLUMN_TYPE + ".name", CallerTable.COLUMN_TYPE);//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("column." + CallerTable.COLUMN_TYPE + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
+
+		defProps.setProperty("option.picture.default_path", ".");//$NON-NLS-1$, //$NON-NLS-2$
+
+		defProps.setProperty("filter.Phonebook.search", "");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("filter_private", "false");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("options.exportVCARDpath", ".");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.phonebook.import_xml_path", ".");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("lookandfeel", UIManager.getSystemLookAndFeelClassName());//$NON-NLS-1$, //$NON-NLS-2$
+
+
+
+		return defProps;
+	}
 
 	/**
 	 * Loads properties from xml files
 	 */
 	public static void loadProperties() {
-		defaultProperties = new JFritzProperties();
 
-		// Default properties
-		defaultProperties.setProperty("box.address", "192.168.178.1");//$NON-NLS-1$, //$NON-NLS-2$
-		defaultProperties.setProperty("box.password", Encryption.encrypt(""));//$NON-NLS-1$, //$NON-NLS-2$
-		defaultProperties.setProperty("box.port", "80");//$NON-NLS-1$, //$NON-NLS-2$
-		defaultProperties.setProperty("country.prefix", "00");//$NON-NLS-1$, //$NON-NLS-2$
-		defaultProperties.setProperty("area.prefix", "0");//$NON-NLS-1$, //$NON-NLS-2$
-		defaultProperties.setProperty("country.code", "+49");//$NON-NLS-1$, //$NON-NLS-2$
-		defaultProperties.setProperty("area.code", "441");//$NON-NLS-1$, //$NON-NLS-2$
-		defaultProperties.setProperty("fetch.timer", "5");//$NON-NLS-1$, //$NON-NLS-2$
-
-		config_properties = new JFritzProperties(defaultProperties);
+		config_properties = new JFritzProperties(loadDefaultProperties());
 
 		try {
 			config_properties.loadFromXML(Main.SAVE_DIR + CONFIG_PROPERTIES_FILE);
@@ -1546,7 +1707,7 @@ public class Main implements LookupObserver {
 			showConfWizard = true;
 		}
 
-		state_properties = new JFritzProperties();
+		state_properties = new JFritzProperties(loadDefaultWindowProperties());
 		try {
 			state_properties.loadFromXML(Main.SAVE_DIR + STATE_PROPERTIES_FILE);
 		} catch (FileNotFoundException e) {
@@ -1819,7 +1980,7 @@ public class Main implements LookupObserver {
 		update.setProgramVersion(PROGRAM_VERSION);
 		update.setLocale(getProperty("locale"));
 		update.setUpdateOnStart(JFritzUtils.parseBoolean(Main.getProperty(
-				"option.checkNewVersionAfterStart", "true")));
+				"option.checkNewVersionAfterStart")));
 		update.saveSettings();
 	}
 

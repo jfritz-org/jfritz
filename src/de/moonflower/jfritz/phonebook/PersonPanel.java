@@ -676,8 +676,11 @@ public class PersonPanel extends JPanel implements ActionListener,
 		int result = -1;
 		if ( hasChanged || numberHasChanged )
 		{
-		    result = JOptionPane.showConfirmDialog(parentFrame, Main.getMessage("save_changes"), Main.getMessage("unsaved_changes")
-		            , JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+			String[] options = {Main.getMessage("save"), Main.getMessage("discard")};
+
+			result = JOptionPane.showOptionDialog(parentFrame, Main.getMessage("save_changes"), Main.getMessage("unsaved_changes"),
+					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
 		}
 		hasChanged = false;
 		if (numberTable.isEditing()) {

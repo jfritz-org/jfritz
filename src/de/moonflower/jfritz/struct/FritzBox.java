@@ -169,9 +169,9 @@ public class FritzBox {
 	}
 
 	public void updateSettings() throws WrongPasswordException, InvalidFirmwareException, IOException {
-		box_address = Main.getProperty("box.address","192.168.178.1");
-		box_password = Encryption.decrypt(Main.getProperty("box.password",Encryption.encrypt("")));
-		box_port = Main.getProperty("box.port","80");
+		box_address = Main.getProperty("box.address");
+		box_password = Encryption.decrypt(Main.getProperty("box.password"));
+		box_port = Main.getProperty("box.port");
 		detectFirmware();
 	}
 
@@ -182,8 +182,8 @@ public class FritzBox {
 	public void detectFirmware() throws WrongPasswordException, InvalidFirmwareException, IOException {
 
 			//avoid trying to access the box if running as a client
-			if (Main.getProperty("network.type", "0").equals("2")
-					&& Boolean.parseBoolean(Main.getProperty("option.clientCallList", "false"))){
+			if (Main.getProperty("network.type").equals("2")
+					&& Boolean.parseBoolean(Main.getProperty("option.clientCallList"))){
 
 				Debug.netMsg("JFritz is running as a client and using call list from server, canceling firmware detection");
 

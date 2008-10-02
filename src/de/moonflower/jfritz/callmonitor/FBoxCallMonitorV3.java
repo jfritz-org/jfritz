@@ -26,16 +26,27 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 	}
 
     public void run() {
+    	int failedConnections = 0;
     	while (!this.isConnected())
     	{
-	        if (super.connect()) {
+	        if (failedConnections % 50 == 0 && super.connect()) {
 	            Debug.msg("Connected"); //$NON-NLS-1$
 	            readOutput();
+	            failedConnections = 0;
+	        }
+	        else
+	        {
+	        	failedConnections++;
 	        }
 	        if (this.isRunning() == false)
 	        {
 	        	break;
 	        }
+	        try {
+				Thread.sleep(20);
+			} catch (InterruptedException e) {
+	        	break;
+			}
     	}
     }
 
@@ -55,7 +66,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 	            Debug.msg("Split[" + i + "] = " + split[i]); //$NON-NLS-1$,  //$NON-NLS-2$
 	        }
 	        if (JFritzUtils.parseBoolean(Main.getProperty(
-	                "option.callmonitor.monitorIncomingCalls", "true")) //$NON-NLS-1$,  //$NON-NLS-2$
+	                "option.callmonitor.monitorIncomingCalls")) //$NON-NLS-1$,  //$NON-NLS-2$
 	                && split[1].equals("RING")) { //$NON-NLS-1$
 	            if (split[3].equals("")) { //$NON-NLS-1$
 	                number = Main.getMessage("unknown"); //$NON-NLS-1$
@@ -91,7 +102,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 	                e.printStackTrace();
 	            }
 	        } else if (JFritzUtils.parseBoolean(Main.getProperty(
-	                "option.callmonitor.monitorOutgoingCalls", "true")) //$NON-NLS-1$,  //$NON-NLS-2$
+	                "option.callmonitor.monitorOutgoingCalls")) //$NON-NLS-1$,  //$NON-NLS-2$
 	                && split[1].equals("CALL")) { //$NON-NLS-1$
 
 	            if (split[5].equals("")) { //$NON-NLS-1$

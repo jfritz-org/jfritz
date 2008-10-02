@@ -72,14 +72,14 @@ public class FRITZBOXConfigDialog extends
     private void setProperties() {
         monitorIncomingCalls.setSelected(JFritzUtils
                 .parseBoolean(Main.getProperty(
-                        "option.callmonitor.monitorIncomingCalls", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
+                        "option.callmonitor.monitorIncomingCalls"))); //$NON-NLS-1$,  //$NON-NLS-2$
         monitorOutgoingCalls.setSelected(JFritzUtils
                 .parseBoolean(Main.getProperty(
-                        "option.callmonitor.monitorOutgoingCalls", "true"))); //$NON-NLS-1$,  //$NON-NLS-2$
+                        "option.callmonitor.monitorOutgoingCalls"))); //$NON-NLS-1$,  //$NON-NLS-2$
         fetchAfterDisconnect.setSelected(JFritzUtils
                 .parseBoolean(Main.getProperty(
-                        "option.callmonitor.fetchAfterDisconnect", "false"))); //$NON-NLS-1$,  //$NON-NLS-2$
-        ignoreMSN.setText(Main.getProperty("option.callmonitor.ignoreMSN","")); //$NON-NLS-1$,  //$NON-NLS-2$
+                        "option.callmonitor.fetchAfterDisconnect"))); //$NON-NLS-1$,  //$NON-NLS-2$
+        ignoreMSN.setText(Main.getProperty("option.callmonitor.ignoreMSN")); //$NON-NLS-1$,  //$NON-NLS-2$
     }
 
     private void storeProperties() {

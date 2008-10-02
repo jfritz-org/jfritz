@@ -35,6 +35,7 @@ import org.jfree.report.style.FontDefinition;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.callerlist.CallerTable;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.Person;
 
@@ -103,10 +104,10 @@ public class PrintCallerList {
 
         } while (restWidth < 150);
 
-        int columnNumberIndex = JFritz.getJframe().getCallerTable().getColumnIndex("number"); //$NON-NLS-1$
+        int columnNumberIndex = JFritz.getJframe().getCallerTable().getColumnIndex(CallerTable.COLUMN_NUMBER); //$NON-NLS-1$
         double columnNumberWidth = colModel.getColumn(columnNumberIndex)
                 .getWidth();
-        int columnParticipantIndex = JFritz.getJframe().getCallerTable().getColumnIndex("participant"); //$NON-NLS-1$
+        int columnParticipantIndex = JFritz.getJframe().getCallerTable().getColumnIndex(CallerTable.COLUMN_PARTICIPANT); //$NON-NLS-1$
         double columnParticipantWidth = colModel.getColumn(
                 columnParticipantIndex).getWidth();
 
@@ -411,14 +412,14 @@ public class PrintCallerList {
             String columnName = JFritz.getJframe().getCallerTable()
                     .getColumnModel().getColumn(i).getIdentifier().toString();
 
-            if (columnName.equals("type")) { //$NON-NLS-1$
+            if (columnName.equals(CallerTable.COLUMN_TYPE)) { //$NON-NLS-1$
                 ImageElement imageElement = ImageFieldElementFactory
                         .createImageDataRowElement("Type-Element", //$NON-NLS-1$
                                 new Rectangle2D.Float(columnStart[i] + 2, 2,
                                         14, 14), "print_type", true, false); //$NON-NLS-1$
                 imageElement.setDynamicContent(false);
                 report.getItemBand().addElement(imageElement);
-            } else if (columnName.equals("date")) { //$NON-NLS-1$
+            } else if (columnName.equals(CallerTable.COLUMN_DATE)) { //$NON-NLS-1$
                 factory = new DateFieldElementFactory();
                 factory.setFontSize(fontSize);
                 factory.setName(JFritz.getCallerList().getColumnName(i));
@@ -445,19 +446,19 @@ public class PrintCallerList {
                 factory.setHorizontalAlignment(ElementAlignment.CENTER);
                 factory.setVerticalAlignment(ElementAlignment.MIDDLE);
                 factory.setNullString(" "); //$NON-NLS-1$
-                if (columnName.equals("callbycall")) { //$NON-NLS-1$
+                if (columnName.equals(CallerTable.COLUMN_CALL_BY_CALL)) { //$NON-NLS-1$
                     factory.setFieldname("print_callbycall"); //$NON-NLS-1$
-                } else if (columnName.equals("number")) { //$NON-NLS-1$
+                } else if (columnName.equals(CallerTable.COLUMN_NUMBER)) { //$NON-NLS-1$
                     factory.setFieldname("print_number"); //$NON-NLS-1$
-                } else if (columnName.equals("participant")) { //$NON-NLS-1$
+                } else if (columnName.equals(CallerTable.COLUMN_PARTICIPANT)) { //$NON-NLS-1$
                     factory.setFieldname("print_personname"); //$NON-NLS-1$
-                } else if (columnName.equals("port")) { //$NON-NLS-1$
+                } else if (columnName.equals(CallerTable.COLUMN_PORT)) { //$NON-NLS-1$
                     factory.setFieldname("print_port"); //$NON-NLS-1$
-                } else if (columnName.equals("route")) { //$NON-NLS-1$
+                } else if (columnName.equals(CallerTable.COLUMN_ROUTE)) { //$NON-NLS-1$
                     factory.setFieldname("print_route"); //$NON-NLS-1$
-                } else if (columnName.equals("duration")) { //$NON-NLS-1$
+                } else if (columnName.equals(CallerTable.COLUMN_DURATION)) { //$NON-NLS-1$
                     factory.setFieldname("print_duration"); //$NON-NLS-1$
-                } else if (columnName.equals("comment")) { //$NON-NLS-1$
+                } else if (columnName.equals(CallerTable.COLUMN_COMMENT)) { //$NON-NLS-1$
                     factory.setFieldname("print_comment"); //$NON-NLS-1$
                 }
                 report.getItemBand().addElement(factory.createElement());

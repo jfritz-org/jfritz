@@ -147,7 +147,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
         Debug.msg("Name: " + name); //$NON-NLS-1$
         Debug.msg("Port: " + portstr); //$NON-NLS-1$
 
-        switch (Integer.parseInt(Main.getProperty("option.popuptype", "1"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+        switch (Integer.parseInt(Main.getProperty("option.popuptype"))) { //$NON-NLS-1$,  //$NON-NLS-2$
             case 0 : { // No Popup
                 break;
             }
@@ -171,15 +171,14 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
             }
         }
 
-        if (JFritzUtils.parseBoolean(Main.getProperty("option.playSounds", //$NON-NLS-1$
-                "true"))) { //$NON-NLS-1$
+        if (JFritzUtils.parseBoolean(Main.getProperty("option.playSounds"))) //$NON-NLS-1$
+        {
             JFritz.playSound(JFritz.getRingSound(), 1.0f);
         }
 
         if (JFritzUtils.parseBoolean(Main.getProperty(
-                "option.startExternProgram", "false"))) { //$NON-NLS-1$,  //$NON-NLS-2$
-            String programString = JFritzUtils.deconvertSpecialChars(Main.getProperty("option.externProgram", //$NON-NLS-1$
-                            "")); //$NON-NLS-1$
+                "option.startExternProgram"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+            String programString = JFritzUtils.deconvertSpecialChars(Main.getProperty("option.externProgram")); //$NON-NLS-1$
 
             programString = programString.replaceAll("%Number", callerstr); //$NON-NLS-1$
             programString = programString.replaceAll("%Name", name); //$NON-NLS-1$
@@ -302,7 +301,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
         Debug.msg("Name: " + name); //$NON-NLS-1$
         Debug.msg("Port: " + portstr); //$NON-NLS-1$
 
-        switch (Integer.parseInt(Main.getProperty("option.popuptype", "1"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+        switch (Integer.parseInt(Main.getProperty("option.popuptype"))) { //$NON-NLS-1$,  //$NON-NLS-2$
             case 0 : { // No Popup
                 break;
             }
@@ -324,16 +323,15 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
             }
         }
 
-        if (JFritzUtils.parseBoolean(Main.getProperty("option.playSounds", //$NON-NLS-1$
-                "true"))) { //$NON-NLS-1$
+        if (JFritzUtils.parseBoolean(Main.getProperty("option.playSounds"))) //$NON-NLS-1$
+        {
             JFritz.playSound(JFritz.getCallSound(), 1.0f);
         }
 
         if (JFritzUtils.parseBoolean(Main.getProperty(
-                "option.startExternProgram", "false"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+                "option.startExternProgram"))) { //$NON-NLS-1$,  //$NON-NLS-2$
 
-            String programString = JFritzUtils.deconvertSpecialChars(Main.getProperty("option.externProgram", //$NON-NLS-1$
-            "")); //$NON-NLS-1$
+            String programString = JFritzUtils.deconvertSpecialChars(Main.getProperty("option.externProgram")); //$NON-NLS-1$
 
 			programString = programString.replaceAll("%Number", calledstr); //$NON-NLS-1$
 			programString = programString.replaceAll("%Name", name); //$NON-NLS-1$

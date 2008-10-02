@@ -63,7 +63,7 @@ public class CallmessageConfigDialog extends CallMonitorConfigDialog{
 	}
 
 	private void setProperties() {
-		callmessagePort.setText(Main.getProperty("option.callmessageport", "23232")); //$NON-NLS-1$,  //$NON-NLS-2$
+		callmessagePort.setText(Main.getProperty("option.callmessageport")); //$NON-NLS-1$,  //$NON-NLS-2$
 	}
 
 	private void storeProperties() {

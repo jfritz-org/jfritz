@@ -119,7 +119,7 @@ public class PhoneNumber implements Comparable, Serializable {
 		}
 
 		if (parseDialOut
-				&& this.number.startsWith(Main.getProperty("dial.prefix", " "))) {
+				&& this.number.startsWith(Main.getProperty("dial.prefix"))) {
 			this.number = number.substring(Main.getProperty("dial.prefix")
 					.length());
 			Debug.msg("Parsed the dial out prefix, new number: " + this.number);
@@ -197,7 +197,7 @@ public class PhoneNumber implements Comparable, Serializable {
 			for ( int i=11; i>3; i-- ) {
 				if ( number.length()>i && specificWorldFlagMap.containsKey(number.substring(1, i))) {
 					value = specificWorldFlagMap.get(number.substring(1,i)).split(";");
-					if ( countryCode.equals(Main.getProperty("country.code","+49"))) {
+					if ( countryCode.equals(Main.getProperty("country.code"))) {
 						flagFileName = value[0];
 					}
 					Description = value[1];
@@ -319,8 +319,8 @@ public class PhoneNumber implements Comparable, Serializable {
 	 * @author Benjamin Schmitt
 	 */
 	public String convertToNationalNumber() {
-		String countryCode = Main.getProperty("country.code", "+49");//$NON-NLS-1$, //$NON-NLS-2$
-		String areaPrefix = Main.getProperty("area.prefix", "0"); //$NON-NLS-1$, //$NON-NLS-2$
+		String countryCode = Main.getProperty("country.code");//$NON-NLS-1$, //$NON-NLS-2$
+		String areaPrefix = Main.getProperty("area.prefix"); //$NON-NLS-1$, //$NON-NLS-2$
 
 		if (number.startsWith(countryCode)) //$NON-NLS-1$
 			return areaPrefix + number.substring(3);
@@ -357,7 +357,7 @@ public class PhoneNumber implements Comparable, Serializable {
 	}
 
 	public String getShortNumber() {
-		String countryCode = Main.getProperty("country.code", "+49");//$NON-NLS-1$
+		String countryCode = Main.getProperty("country.code");//$NON-NLS-1$
 		String areaCode = Main.getProperty("area.code"); //$NON-NLS-1$
 		String areaPrefix = Main.getProperty("area.prefix"); //$NON-NLS-1$
 		if (number.startsWith(countryCode + areaCode)) //$NON-NLS-1$
@@ -369,8 +369,8 @@ public class PhoneNumber implements Comparable, Serializable {
 	}
 
 	public String getAreaNumber() {
-		String countryCode = Main.getProperty("country.code", "+49"); //$NON-NLS-1$
-		String areaPrefix = Main.getProperty("area.prefix", "0"); //$NON-NLS-1$
+		String countryCode = Main.getProperty("country.code"); //$NON-NLS-1$
+		String areaPrefix = Main.getProperty("area.prefix"); //$NON-NLS-1$
 		if (number.startsWith(countryCode)) //$NON-NLS-1$
 			return areaPrefix + number.substring(countryCode.length());
 		return number;

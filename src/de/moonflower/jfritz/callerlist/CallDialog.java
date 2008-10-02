@@ -191,7 +191,7 @@ public class CallDialog extends JDialog implements ActionListener {
 			getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeKeyStroke, "ESCAPE"); //$NON-NLS-1$
 			getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
 
-            port.setSelectedIndex(Integer.parseInt(Main.getProperty("calldialog.lastport", "0")));
+            port.setSelectedIndex(Integer.parseInt(Main.getProperty("calldialog.lastport")));
 
 			getContentPane().add(topPane, BorderLayout.NORTH);
 			getContentPane().add(bottomPane, BorderLayout.SOUTH);

@@ -1207,7 +1207,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		((SearchFilter)filter[search]).setSearchString(searchFilterTextField.getText());
 
 		Vector<String> providers = new Vector<String>();
-		String[] parts = Main.getStateProperty(CallFilter.FILTER_SIP_PROVIDERS, "").split(" ");
+		String[] parts = Main.getStateProperty(CallFilter.FILTER_SIP_PROVIDERS).split(" ");
 		for(String part: parts)
 			providers.add(part);
 
@@ -1310,32 +1310,32 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	private void loadButtonStatus() {
 		Debug.msg("reading Buttons");
 		int state;
-		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_COMMENT, "0"));
+		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_COMMENT));
 		commentFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_DATE, "0"));
+		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_DATE));
 		dateFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_SIP, "0"));
+		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_SIP));
 		sipFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_CALLBYCALL, "0"));
+		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_CALLBYCALL));
 		callByCallFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_CALLOUT, "0"));
+		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_CALLOUT));
 		callOutFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_ANONYM, "0"));
+		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_ANONYM));
 		anonymFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_FIXED, "0"));
+		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_FIXED));
 		fixedFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_HANDY, "0"));
+		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_HANDY));
 		handyFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_CALLIN_NOTHING, "0"));
+		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_CALLIN_NOTHING));
 		callInFilterButton.setState(state);
 		state = JFritzUtils
-				.parseInt(Main.getStateProperty(CallFilter.FILTER_CALLINFAILED, "0"));
+				.parseInt(Main.getStateProperty(CallFilter.FILTER_CALLINFAILED));
 		callInFailedFilterButton.setState(state);
-		searchFilterTextField.setText(Main.getStateProperty(CallFilter.FILTER_SEARCH_TEXT, ""));
+		searchFilterTextField.setText(Main.getStateProperty(CallFilter.FILTER_SEARCH_TEXT));
 
-		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_SEARCH, "0"));
+		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_SEARCH));
 		searchFilterButton.setState(state);
-		dateSpecialSaveString = Main.getStateProperty(CallFilter.FILTER_DATE_SPECIAL, " ");
+		dateSpecialSaveString = Main.getStateProperty(CallFilter.FILTER_DATE_SPECIAL);
 		// Debug.msg(dateSpecialSaveString);
 		if (dateSpecialSaveString.equals(CallFilter.THIS_DAY)) {
 			setThisDayFilter();
@@ -1354,10 +1354,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			Date start = new Date();
 			Date end = new Date();
 			try {
-				start = df.parse(Main.getStateProperty(CallFilter.FILTER_DATE_START,
-						"11.11.11 11:11"));
-				end = df.parse(Main.getStateProperty(CallFilter.FILTER_DATE_END,
-						"11.11.11 11:11"));
+				start = df.parse(Main.getStateProperty(CallFilter.FILTER_DATE_START));
+				end = df.parse(Main.getStateProperty(CallFilter.FILTER_DATE_END));
 				startDateChooser.setDate(start); // durch setDate wird über
 													// den
 				endDateChooser.setDate(end); // PropertyListener update
