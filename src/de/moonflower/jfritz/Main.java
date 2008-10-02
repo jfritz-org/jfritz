@@ -158,6 +158,13 @@
  * - Rückwärtssuche beim Client funktioniert nicht
  * FIXME-END
  *
+ * JFritz 0.7.1.15
+ * - Bugfix: Fehler im Telefonbuch beseitigt. Filter wurden fälschlicherweise Zurückgesetzt, wenn man einen
+ *   Telefonbucheintrag ausgewählt hat.
+ * - Bugfix: Inverssuche goyellow.de
+ * - Bugfix: Inverssuche 11880.com (Mozilla-Browser + Optionales <div>)
+ * - Bugfix: Inverssuche wird nun Zeilenweise geparsed.
+ *
  * JFritz 0.7.1.14
  * - I18N: Popup im Telefonbuch, wenn ungespeicherte Änderungen vorhanden sind.
  * - Bugfix-Telefonbuch: Wenn ein Eintrag gewählt wurde, der bis auf die Nummer dem zuvor gewählen gleich war
@@ -884,9 +891,9 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.1.14"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.1.15"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.125 2008/10/02 19:21:23 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.126 2008/10/02 23:13:43 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

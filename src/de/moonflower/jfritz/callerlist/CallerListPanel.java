@@ -161,7 +161,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 					&& (e.getComponent().getClass() == CallerTable.class)) {
 				if (callerTable.getSelectedPersons().size() == 1)
 				{
-					phoneBookPanel.getPhoneBookTable().showAndSelectPerson(callerTable.getSelectedPersons().get(0));
+					phoneBookPanel.getPhoneBookTable().showAndSelectPerson(callerTable.getSelectedPersons().get(0), true);
 				}
 
 				JFritz.getJframe().activatePhoneBook();

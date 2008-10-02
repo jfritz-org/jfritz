@@ -110,7 +110,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		this.parentFrame = parentFrame;
 		actionListener = new Vector<ActionListener>();
 		createPanel();
-		setPerson(person);
+		setPerson(person, false);
 	}
 
 	private void createPanel() {
@@ -512,7 +512,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 	 * @param person
 	 *            The person to set.
 	 */
-	public final void setPerson(Person person) {
+	public final void setPerson(Person person, boolean resetFilter) {
 		if (!clonedPerson.equals(person))
 		{
 			this.cancelEditing();
@@ -522,7 +522,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 			hasChanged = false;
 			updateGUI();
 			JFritz.getJframe().getPhoneBookPanel().getPhoneBookTable()
-			.showAndSelectPerson(originalPerson);
+			.showAndSelectPerson(originalPerson, resetFilter);
 		}
 	}
 
@@ -761,7 +761,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 	private void undo()
 	{
-		this.setPerson(originalPerson);
+		this.setPerson(originalPerson, false);
 		hasChanged = false;
 		numberHasChanged = false;
 		firePropertyChange();
@@ -769,7 +769,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 	private void cancel(ActionEvent e)
 	{
-		this.setPerson(originalPerson);
+		this.setPerson(originalPerson, false);
 		Enumeration<ActionListener> en = actionListener.elements();
 		while (en.hasMoreElements()) {
 			ActionListener al = en.nextElement();

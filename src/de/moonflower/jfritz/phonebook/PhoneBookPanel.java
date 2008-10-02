@@ -143,8 +143,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			personPanel.focusFirstName();
 			;
 		} else if (e.getActionCommand().equals("filter_private")) { //$NON-NLS-1$
-			Main.setStateProperty("filter_private", Boolean //$NON-NLS-1$
-					.toString(((JToggleButton) e.getSource()).isSelected()));
+			setPrivateFilter(privateFilter.isSelected());
 			phonebook.updateFilter();
 		} else if (e.getActionCommand().equals("export_vcard")) { //$NON-NLS-1$
 			exportVCard();
@@ -392,6 +391,14 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	public void setSearchFilter(String text) {
 		searchFilter.setText(text);
 	}
+
+	private void setPrivateFilter(boolean enabled)
+	{
+		Main.setStateProperty("filter_private", Boolean //$NON-NLS-1$
+				.toString(enabled));
+		privateFilter.setSelected(enabled);
+	}
+
 	public void setStatus() {
 		PhoneBook pb = (PhoneBook) phoneBookTable.getModel();
 		int entries = pb.getFilteredPersons().size();
@@ -413,7 +420,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 				Person p = ((PhoneBook) phoneBookTable.getModel())
 						.getPersonAt(rows[0]);
 				personPanel.cancelEditing();
-				personPanel.setPerson(p);
+				personPanel.setPerson(p, false);
 				setStatus();
 			}
 			else {
@@ -426,6 +433,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	private void clearAllFilter() {
 		setSearchFilter("");  //$NON-NLS-1$
 		Main.setStateProperty("filter.Phonebook.search", "");  //$NON-NLS-1$,   //$NON-NLS-2$
+		setPrivateFilter(false);
 		phonebook.clearFilterExceptions();
 		phonebook.updateFilter();
 		phonebook.fireTableDataChanged();

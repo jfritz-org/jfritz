@@ -276,6 +276,9 @@ public class JFritzUtils {
 		while ( str.startsWith(" ")){
 			str = str.substring(1);
 		}
+		while ( str.startsWith("\u00a0")){
+			str = str.substring(1);
+		}
 		return str;
 	}
 }

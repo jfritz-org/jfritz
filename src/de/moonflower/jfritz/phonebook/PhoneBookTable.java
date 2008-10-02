@@ -130,9 +130,12 @@ public class PhoneBookTable extends JTable implements KeyListener{
 		}
 	}
 
-	public void showAndSelectPerson(Person person) {
+	public void showAndSelectPerson(Person person, boolean resetFilter) {
 		String filterText = parentPanel.searchFilter.getText();
-		parentPanel.resetButton.doClick();
+		if (resetFilter)
+		{
+			parentPanel.resetButton.doClick();
+		}
 		phonebook.updateFilter();
 		int index = phonebook.getFilteredPersons().indexOf(person);
 		showAndSelectRow(index);

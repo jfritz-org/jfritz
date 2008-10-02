@@ -24,15 +24,19 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 	 */
 public class LookupThread extends Thread {
 
+	private static final String userAgent = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.13) Gecko/20080208 Mandriva/2.0.0.13-1mdv2008.1 (2008.1) Firefox/2.0.0.13";
+
 	private LookupRequest currentRequest;
 
 	private boolean threadSuspended, quit, terminate, terminated;
 
 	private Person result;
 
-	private static String nummer, urlstr, data, header,
+	private static String nummer, urlstr, header,
 		charSet, str, prefix, firstname, company,
 		lastname, street, zipcode, city;
+
+	private static String[] data;
 
 	private static Vector<ReverseLookupSite> rls_list;
 
@@ -49,7 +53,6 @@ public class LookupThread extends Thread {
 	private static Pattern pData;
 
 	private static Matcher mData;
-
 
 	/**
 	 * sets the default thread state to active
@@ -196,7 +199,7 @@ public class LookupThread extends Thread {
 
 				Debug.msg("Reverse lookup using: "+urlstr);
 				url = null;
-				data = "";
+				data = new String[10000];
 
 				//open a connection to the site
 				try {
@@ -209,6 +212,7 @@ public class LookupThread extends Thread {
 							//15 seconds for the response
 							con.setConnectTimeout(5000);
 							con.setReadTimeout(15000);
+							con.addRequestProperty("User-Agent", userAgent);
 							con.connect();
 							//process header
 							//avoid problems with null headers
@@ -248,16 +252,26 @@ public class LookupThread extends Thread {
 										.getInputStream(), charSet));
 							}
 							//read in data, if the website has stalled the timer will kill the connection
+							int lines = 0;
 							while (null != ((str = d.readLine()))) {
-									data += str;
+									data[lines] = str;
 									yield();
-									if ( data.length() > 100000 ) {
-										System.err.println("Result > 100000 Bytes");
+									if ( lines >= 10000 ) {
+										System.err.println("Result > 10000 Lines");
 										break;
 									}
+									lines++;
 							}
 							d.close();
 							Debug.msg("Begin processing response from "+rls.getName());
+
+//							for (int aaa=0; aaa<10000; aaa++ )
+//							{
+//								if (data[aaa] != null)
+//								{
+//									Debug.msg(data[aaa]);
+//								}
+//							}
 
 							//iterate over all patterns for this web site
 							for(int j=0; j < rls.size(); j++){
@@ -272,100 +286,107 @@ public class LookupThread extends Thread {
 
 								patterns = rls.getEntry(j);
 
-								//match name
-								if(!patterns[0].equals("")){
-									pData = Pattern.compile(patterns[0]);
-									mData = pData.matcher(data);
-									if(mData.find()){
+								for (int line=0; line<10000; line++)
+								{
+									if (data[line] != null)
+									{
+										//match name
+										if(!patterns[0].equals("")){
+											pData = Pattern.compile(patterns[0]);
+											mData = pData.matcher(data[line]);
+											if(mData.find()){
 
-										//read in and concate all groupings
-										str = "";
-										for(int k=1; k <= mData.groupCount(); k++){
-											if(mData.group(k) != null)
-												str = str + mData.group(k).trim() + " ";
+												//read in and concate all groupings
+												str = "";
+												for(int k=1; k <= mData.groupCount(); k++){
+													if(mData.group(k) != null)
+														str = str + mData.group(k).trim() + " ";
+												}
+												String[] split = str.split(" ", 2); //$NON-NLS-1$
+
+												if (split[0].equals("onmouseover=\"\""))
+												{
+													split = split[1].split(" ", 2);
+												}
+
+												lastname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(split[0]));
+												lastname = lastname.trim();
+												if (split.length > 1) {
+													firstname = HTMLUtil.stripEntities(split[1]); //$NON-NLS-1$
+													if ((firstname.indexOf("  ") > -1) //$NON-NLS-1$
+															&& (firstname.indexOf("  u.") == -1)) { //$NON-NLS-1$
+														company = JFritzUtils.removeLeadingSpaces(firstname.substring(
+																firstname.indexOf("  ")).trim()); //$NON-NLS-1$
+														firstname = JFritzUtils.removeLeadingSpaces(firstname.substring(0,
+																firstname.indexOf("  ")).trim()); //$NON-NLS-1$
+													} else {
+														firstname = JFritzUtils.removeLeadingSpaces(firstname.replaceAll("  u. ", //$NON-NLS-1$
+																" und ")); //$NON-NLS-1$
+													}
+												}
+
+												firstname = JFritzUtils.removeLeadingSpaces(firstname.trim());
+											}
 										}
-										String[] split = str.split(" ", 2); //$NON-NLS-1$
+										yield();
+										//match street
+										if(!patterns[1].equals("")){
+											pData = Pattern.compile(patterns[1]);
+											mData = pData.matcher(data[line]);
+											if(mData.find()){
 
-										if (split[0].equals("onmouseover=\"\""))
-										{
-											split = split[1].split(" ", 2);
+												//read in and concate all groupings
+												str = "";
+												for(int k=1; k <= mData.groupCount(); k++){
+													if(mData.group(k) != null)
+														str = str + mData.group(k).trim() + " ";
+												}
+												street = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(str));
+												street = street.trim();
+											}
 										}
+										yield();
+										//match city
+										if(!patterns[2].equals("")){
 
-										lastname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(split[0]));
-										if (split.length > 1) {
-											firstname = HTMLUtil.stripEntities(split[1]); //$NON-NLS-1$
-											if ((firstname.indexOf("  ") > -1) //$NON-NLS-1$
-													&& (firstname.indexOf("  u.") == -1)) { //$NON-NLS-1$
-												company = JFritzUtils.removeLeadingSpaces(firstname.substring(
-														firstname.indexOf("  ")).trim()); //$NON-NLS-1$
-												firstname = JFritzUtils.removeLeadingSpaces(firstname.substring(0,
-														firstname.indexOf("  ")).trim()); //$NON-NLS-1$
-											} else {
-												firstname = JFritzUtils.removeLeadingSpaces(firstname.replaceAll("  u. ", //$NON-NLS-1$
-														" und ")); //$NON-NLS-1$
+											pData = Pattern.compile(patterns[2]);
+											mData = pData.matcher(data[line]);
+											if(mData.find()){
+
+												//read in and concate all groupings
+												str = "";
+												for(int k=1; k <= mData.groupCount(); k++){
+													if(mData.group(k) != null)
+														str = str + mData.group(k).trim() + " ";
+												}
+												city = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(str));
+												city = city.trim();
 											}
 										}
 
-										firstname = JFritzUtils.removeLeadingSpaces(firstname.trim());
-									}
-								}
-								yield();
-								//match street
-								if(!patterns[1].equals("")){
+										yield();
+										//match zip code
+										if(!patterns[3].equals("")){
 
-									pData = Pattern.compile(patterns[1]);
-									mData = pData.matcher(data);
-									if(mData.find()){
+											pData = Pattern.compile(patterns[3]);
+											mData = pData.matcher(data[line]);
+											if(mData.find()){
 
-										//read in and concate all groupings
-										str = "";
-										for(int k=1; k <= mData.groupCount(); k++){
-											if(mData.group(k) != null)
-												str = str + mData.group(k).trim() + " ";
+												//read in and concate all groupings
+												str = "";
+												for(int k=1; k <= mData.groupCount(); k++){
+													if(mData.group(k) != null)
+														str = str + mData.group(k).trim() + " ";
+												}
+												zipcode = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(str));
+												zipcode = zipcode.trim();
+											}
 										}
-										street = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(str));;
 									}
 								}
-								yield();
-								//match city
-								if(!patterns[2].equals("")){
-
-									pData = Pattern.compile(patterns[2]);
-									mData = pData.matcher(data);
-									if(mData.find()){
-
-										//read in and concate all groupings
-										str = "";
-										for(int k=1; k <= mData.groupCount(); k++){
-											if(mData.group(k) != null)
-												str = str + mData.group(k).trim() + " ";
-										}
-										city = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(str));
-									}
-								}
-
-								yield();
-								//match zip code
-								if(!patterns[3].equals("")){
-
-									pData = Pattern.compile(patterns[3]);
-									mData = pData.matcher(data);
-									if(mData.find()){
-
-										//read in and concate all groupings
-										str = "";
-										for(int k=1; k <= mData.groupCount(); k++){
-											if(mData.group(k) != null)
-												str = str + mData.group(k).trim() + " ";
-										}
-										zipcode = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(str));
-									}
-								}
-
 								//we found a name so stop looping
-								if(!firstname.equals("") || !lastname.equals(""))
+								if(!firstname.equals("") || !lastname.equals("") || !company.equals(""))
 									break;
-
 							} //Done iterating for the given web site
 
 							yield();
@@ -377,7 +398,7 @@ public class LookupThread extends Thread {
 							Debug.msg("City: " + city); //$NON-NLS-1$
 
 							//if we got a name then quite looking
-							if(!firstname.equals("") || !lastname.equals("")){
+							if(!firstname.equals("") || !lastname.equals("") || !company.equals("")){
 
 								//if the city wasnt listed or matched use the number maps
 								if(city.equals("")){
