@@ -109,7 +109,14 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		splitPane.setOneTouchExpandable(true);
 		splitPane.setContinuousLayout(true);
 		add(splitPane, BorderLayout.CENTER);
-		splitPane.setDividerLocation(PERSONPANEL_WIDTH);
+		if (phonebook.getUnfilteredPersons().size() == 0)
+		{
+			splitPane.setDividerLocation(0);
+		}
+		else
+		{
+			splitPane.setDividerLocation(PERSONPANEL_WIDTH);
+		}
 	}
 
 	/**
@@ -420,7 +427,10 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 				Person p = ((PhoneBook) phoneBookTable.getModel())
 						.getPersonAt(rows[0]);
 				personPanel.cancelEditing();
-				personPanel.setPerson(p, false);
+				if (p != null)
+				{
+					personPanel.setPerson(p, false);
+				}
 				setStatus();
 			}
 			else {

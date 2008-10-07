@@ -513,7 +513,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 	 *            The person to set.
 	 */
 	public final void setPerson(Person person, boolean resetFilter) {
-		if (!clonedPerson.equals(person))
+		if (clonedPerson.isDummy() || !clonedPerson.equals(person))
 		{
 			this.cancelEditing();
 			this.originalPerson = person;
@@ -521,8 +521,11 @@ public class PersonPanel extends JPanel implements ActionListener,
 			numberHasChanged = false;
 			hasChanged = false;
 			updateGUI();
-			JFritz.getJframe().getPhoneBookPanel().getPhoneBookTable()
-			.showAndSelectPerson(originalPerson, resetFilter);
+			if (!clonedPerson.isDummy())
+			{
+				JFritz.getJframe().getPhoneBookPanel().getPhoneBookTable()
+				.showAndSelectPerson(originalPerson, resetFilter);
+			}
 		}
 	}
 
@@ -590,41 +593,42 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 	public final Person updatePerson() {
 		terminateEditing();
-		Person unchanged = originalPerson.clone();
+		if (originalPerson != null)
+		{
+			Person unchanged = originalPerson.clone();
 
-		//remove the person reference in the call list, if one was present!
-		Call call = originalPerson.getLastCall();
-		Person newPerson = null;
-		if(call != null){
-			newPerson = phoneBook.findPerson(call);
-			JFritz.getCallerList().setPerson(newPerson, call);
+			//remove the person reference in the call list, if one was present!
+			Call call = originalPerson.getLastCall();
+			Person newPerson = null;
+			if(call != null){
+				newPerson = phoneBook.findPerson(call);
+				JFritz.getCallerList().setPerson(newPerson, call);
+			}
+			JFritz.getCallerList().updatePersonInCalls(newPerson, originalPerson.getNumbers());
+
+			synchronized(phoneBook){
+				originalPerson.setPrivateEntry(chkBoxPrivateEntry.isSelected());
+				originalPerson.setFirstName(tfFirstName.getText());
+				originalPerson.setCompany(tfCompany.getText());
+				originalPerson.setLastName(tfLastName.getText());
+				originalPerson.setStreet(tfStreet.getText());
+				originalPerson.setPostalCode(tfPostalCode.getText());
+				originalPerson.setCity(tfCity.getText());
+				originalPerson.setEmailAddress(tfEmail.getText());
+				originalPerson.setPictureUrl(clonedPerson.getPictureUrl());
+
+				originalPerson.setNumbers((Vector<PhoneNumber>) clonedPerson
+						.getNumbers().clone(), clonedPerson.getStandard());
+
+				phoneBook.notifyListenersOfUpdate(unchanged, originalPerson);
+			}
+
+			originalPerson.setLastCall(JFritz.getCallerList().findLastCall(originalPerson));
+			JFritz.getCallerList().updatePersonInCalls(originalPerson, originalPerson.getNumbers());
+
+			hasChanged = false;
+			numberHasChanged = false;
 		}
-		JFritz.getCallerList().updatePersonInCalls(newPerson, originalPerson.getNumbers());
-
-		synchronized(phoneBook){
-			originalPerson.setPrivateEntry(chkBoxPrivateEntry.isSelected());
-			originalPerson.setFirstName(tfFirstName.getText());
-			originalPerson.setCompany(tfCompany.getText());
-			originalPerson.setLastName(tfLastName.getText());
-			originalPerson.setStreet(tfStreet.getText());
-			originalPerson.setPostalCode(tfPostalCode.getText());
-			originalPerson.setCity(tfCity.getText());
-			originalPerson.setEmailAddress(tfEmail.getText());
-			originalPerson.setPictureUrl(clonedPerson.getPictureUrl());
-
-			originalPerson.setNumbers((Vector<PhoneNumber>) clonedPerson
-					.getNumbers().clone(), clonedPerson.getStandard());
-
-			phoneBook.notifyListenersOfUpdate(unchanged, originalPerson);
-		}
-
-		originalPerson.setLastCall(JFritz.getCallerList().findLastCall(originalPerson));
-		JFritz.getCallerList().updatePersonInCalls(originalPerson, originalPerson.getNumbers());
-
-		hasChanged = false;
-		numberHasChanged = false;
-
-
 
 		return originalPerson;
 	}

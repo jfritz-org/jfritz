@@ -576,7 +576,7 @@ public class PhoneNumber implements Comparable, Serializable {
 					// just do nothing. No conversion possible
 				}
 			}
-			Enumeration en = JFritz.getQuickDials().getQuickDials().elements();
+			Enumeration<QuickDial> en = JFritz.getQuickDials().getQuickDials().elements();
 			while (en.hasMoreElements()) {
 				QuickDial quickDial = (QuickDial) en.nextElement();
 				if (quickDialNumber.equals(quickDial.getQuickdial())) {

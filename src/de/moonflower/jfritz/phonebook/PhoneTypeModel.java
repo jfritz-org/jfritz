@@ -38,7 +38,7 @@ public class PhoneTypeModel extends AbstractListModel implements
 		for (int i = 0; i < typeCount.length; i++)
 			typeCount[i] = 0;
 
-		Enumeration en = person.getNumbers().elements();
+		Enumeration<PhoneNumber> en = person.getNumbers().elements();
 		while (en.hasMoreElements()) {
 			String type = ((PhoneNumber) en.nextElement()).getType();
 			Pattern p = Pattern.compile("([a-z]*)(\\d*)"); //$NON-NLS-1$

@@ -84,7 +84,7 @@ public class NumberTableModel extends AbstractTableModel {
 	protected boolean isValidNumber(String value, String oldvalue) {
 		if (value.equals(oldvalue))
 			return true;
-		Enumeration en = person.getNumbers().elements();
+		Enumeration<PhoneNumber> en = person.getNumbers().elements();
 		while (en.hasMoreElements()) {
 			String nr = ((PhoneNumber) en.nextElement()).getIntNumber();
 			if (value.equals(nr))
@@ -102,7 +102,7 @@ public class NumberTableModel extends AbstractTableModel {
 		for (int i = 0; i < typeModel.getSize(); i++) {
 			if (value.getType().equals(
 					((PhoneType) typeModel.getElementAt(i)).getType())) {
-				Enumeration en = person.getNumbers().elements();
+				Enumeration<PhoneNumber> en = person.getNumbers().elements();
 				while (en.hasMoreElements()) {
 					String type = ((PhoneNumber) en.nextElement())
 							.getType();

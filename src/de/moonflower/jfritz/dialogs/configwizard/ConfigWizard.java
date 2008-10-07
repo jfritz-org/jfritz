@@ -1,7 +1,6 @@
 package de.moonflower.jfritz.dialogs.configwizard;
 
 import java.awt.Frame;
-import java.awt.Toolkit;
 import java.io.IOException;
 
 import javax.swing.*;

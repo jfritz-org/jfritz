@@ -2,9 +2,6 @@ package com.nexes.test;
 
 import com.nexes.wizard.*;
 
-import java.awt.*;
-import javax.swing.*;
-
 
 public class TestPanel1Descriptor extends WizardPanelDescriptor {
 

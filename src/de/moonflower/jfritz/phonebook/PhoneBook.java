@@ -8,7 +8,6 @@ package de.moonflower.jfritz.phonebook;
  * TODO: Cellrenderer for PrivateCell
  *
  */
-import java.awt.Image;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
@@ -992,7 +991,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 	 * @param rowIndex
 	 */
 	public Person getPersonAt(int rowIndex) {
-		if (rowIndex >= 0) {
+		if (filteredPersons.size() > 0 && rowIndex >= 0) {
 			return filteredPersons.get(rowIndex);
 		} else {
 			return null;

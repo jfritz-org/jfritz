@@ -634,7 +634,7 @@ public class Person implements Cloneable, Serializable{
 	}
 
 	public boolean isDummy() {
-		return getFullname().equals("") && (getNumbers().size() == 1)
+		return getFullname().equals("") && (getNumbers().size() == 1 || getNumbers().size() == 0)
 				&& getCompany().equals("")
 				&& getEmailAddress().equals("")
 				&& getPostalCode().equals("")

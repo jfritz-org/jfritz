@@ -1,12 +1,9 @@
 package com.nexes.wizard;
 
 import java.beans.*;
-import java.awt.*;
-import java.awt.event.*;
 import java.util.*;
 
 import javax.swing.*;
-import javax.swing.border.*;
 
 /**
  * The model for the Wizard component, which tracks the text, icons, and enabled state
