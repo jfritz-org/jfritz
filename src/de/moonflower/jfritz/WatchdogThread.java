@@ -70,6 +70,7 @@ public class WatchdogThread extends Thread {
 
             Debug.msg("STANDBY or SUSPEND TO RAM detected"); //$NON-NLS-1$
             Debug.msg("Watchdog: Restarting call monitor"); //$NON-NLS-1$
+			JFritz.getJframe().setCallMonitorDisconnectedStatus();
             standbyDetected = true;
         }
 

@@ -1,7 +1,12 @@
+JFritz 0.7.1.17
+- Bugfix: Inverssuchen für Österreich und Schweiz korrigiert.
+
 JFritz 0.7.1.16
 - Bugfix: Fehler im Telefonbuch beseitigt. Konnte keine neuen Einträge einfügen, ohne den neu erzeugten Eintrag 
 	 neu auszuwählen.
 - Changelog von Main.java nach Changelog.txt verschoben.
+- Neu: Datum im Debug-Log.
+- Bugfix: Anrufmonitor wird nun nach Standby wieder korrekt gestartet.
 
 JFritz 0.7.1.15
 - Bugfix: Fehler im Telefonbuch beseitigt. Filter wurden fälschlicherweise Zurückgesetzt, wenn man einen 

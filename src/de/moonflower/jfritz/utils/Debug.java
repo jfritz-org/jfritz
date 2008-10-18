@@ -126,7 +126,7 @@ public class Debug{
 	 */
 	private static String getCurrentTime() {
 		Date now = new java.util.Date();
-		SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss"); //$NON-NLS-1$
+		SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm:ss"); //$NON-NLS-1$
 		return df.format(now);
 	}
 

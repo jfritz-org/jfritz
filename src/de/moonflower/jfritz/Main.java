@@ -201,9 +201,9 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.1.16"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.1.17"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.127 2008/10/07 18:21:44 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.128 2008/10/18 10:58:46 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

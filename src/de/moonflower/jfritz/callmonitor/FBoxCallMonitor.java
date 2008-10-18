@@ -188,7 +188,7 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
 
     public void closeConnection()
     {
-        Debug.msg("Stopping FBoxListener"); //$NON-NLS-1$
+        Debug.msg("Closing connection"); //$NON-NLS-1$
         try {
             if (clientSocket != null)
                 clientSocket.close();

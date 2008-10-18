@@ -26,6 +26,8 @@ public class LookupThread extends Thread {
 
 	private static final String userAgent = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.13) Gecko/20080208 Mandriva/2.0.0.13-1mdv2008.1 (2008.1) Firefox/2.0.0.13";
 
+	private static final int dataLength = 30000;
+
 	private LookupRequest currentRequest;
 
 	private boolean threadSuspended, quit, terminate, terminated;
@@ -199,7 +201,7 @@ public class LookupThread extends Thread {
 
 				Debug.msg("Reverse lookup using: "+urlstr);
 				url = null;
-				data = new String[10000];
+				data = new String[dataLength];
 
 				//open a connection to the site
 				try {
@@ -256,8 +258,8 @@ public class LookupThread extends Thread {
 							while (null != ((str = d.readLine()))) {
 									data[lines] = str;
 									yield();
-									if ( lines >= 10000 ) {
-										System.err.println("Result > 10000 Lines");
+									if ( lines >= dataLength ) {
+										System.err.println("Result > " + dataLength + " Lines");
 										break;
 									}
 									lines++;
@@ -265,7 +267,7 @@ public class LookupThread extends Thread {
 							d.close();
 							Debug.msg("Begin processing response from "+rls.getName());
 
-//							for (int aaa=0; aaa<10000; aaa++ )
+//							for (int aaa=0; aaa<dataLength; aaa++ )
 //							{
 //								if (data[aaa] != null)
 //								{
@@ -286,7 +288,7 @@ public class LookupThread extends Thread {
 
 								patterns = rls.getEntry(j);
 
-								for (int line=0; line<10000; line++)
+								for (int line=0; line<dataLength; line++)
 								{
 									if (data[line] != null)
 									{

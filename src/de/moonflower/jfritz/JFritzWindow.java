@@ -1514,7 +1514,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 */
 
 	public void setCallMonitorButtonPushed(boolean isPushed) {
-		callMonitorStarted = isPushed;
 		if (monitorButton != null)
 			monitorButton.setSelected(isPushed);
 
