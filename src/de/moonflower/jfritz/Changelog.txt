@@ -1,5 +1,6 @@
 JFritz 0.7.1.17
 - Bugfix: Inverssuchen für Österreich und Schweiz korrigiert.
+- New: New italian translation from Valery. 
 
 JFritz 0.7.1.16
 - Bugfix: Fehler im Telefonbuch beseitigt. Konnte keine neuen Einträge einfügen, ohne den neu erzeugten Eintrag 
