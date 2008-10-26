@@ -1,3 +1,6 @@
+JFritz 0.7.2:
+- Release Version
+
 JFritz 0.7.1.18
 - Bugfix: Inverssuche schlug fehl, wenn weniger als 20 Nummern zu suchen waren.
 - Bugfix: Inverssuchen für Niederlande, USA, Italien, Schweiz korrigiert und Tests dafür geschrieben.

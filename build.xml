@@ -146,6 +146,12 @@
 				<include name="**/status.png" />
 			</fileset>
 		</copy>
+		<copy todir="${dist}">
+			<fileset dir="src/de/moonflower/jfritz">
+				<include name="**/Changelog.txt" />
+			</fileset>
+		</copy>
+
 	</target>
 
 	<target name="jar" depends="compile" description="Generates jar files">
