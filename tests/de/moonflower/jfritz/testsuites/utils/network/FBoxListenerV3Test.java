@@ -6,6 +6,7 @@ package de.moonflower.jfritz.testsuites.utils.network;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
@@ -13,6 +14,7 @@ import de.moonflower.jfritz.callmonitor.CallMonitorList;
 import de.moonflower.jfritz.callmonitor.FBoxCallMonitorV3;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
+import de.moonflower.jfritz.utils.Debug;
 import junit.framework.TestCase;
 
 public class FBoxListenerV3Test extends TestCase {
@@ -22,6 +24,9 @@ public class FBoxListenerV3Test extends TestCase {
     public JFritz jfritz;
 
     public FBoxListenerV3Test() {
+    	Debug.on();
+		Main.loadProperties();
+		Main.loadMessages(new Locale("de_DE"));
         jfritz = new Main(new String[0]).getJfritz();
     }
 

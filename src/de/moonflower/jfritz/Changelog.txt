@@ -1,3 +1,8 @@
+JFritz 0.7.1.18
+- Bugfix: Inverssuche schlug fehl, wenn weniger als 20 Nummern zu suchen waren.
+- Bugfix: Inverssuchen für Niederlande, USA, Italien, Schweiz korrigiert und Tests dafür geschrieben.
+- Bugfix: Inverssuche: UTF8-Sonderzeichen werden nun korrekt umgewandelt.
+
 JFritz 0.7.1.17
 - Bugfix: Inverssuchen für Österreich und Schweiz korrigiert.
 - New: New italian translation from Valery. 

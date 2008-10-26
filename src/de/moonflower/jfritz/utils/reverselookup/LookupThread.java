@@ -292,6 +292,9 @@ public class LookupThread extends Thread {
 								{
 									if (data[line] != null)
 									{
+										int spaceAlternative = 160; // hex: a0 = space like ascii character
+										data[line] = data[line].replaceAll(new Character((char)spaceAlternative).toString(), " "); //$NON-NLS-1$
+
 										//match name
 										if(!patterns[0].equals("")){
 											pData = Pattern.compile(patterns[0]);
@@ -304,16 +307,14 @@ public class LookupThread extends Thread {
 													if(mData.group(k) != null)
 														str = str + mData.group(k).trim() + " ";
 												}
-												String[] split = str.split(" ", 2); //$NON-NLS-1$
 
-												if (split[0].equals("onmouseover=\"\""))
-												{
-													split = split[1].split(" ", 2);
-												}
+												String[] split = str.split(" ", 2); //$NON-NLS-1$
 
 												lastname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(split[0]));
 												lastname = lastname.trim();
-												if (split.length > 1) {
+												lastname = lastname.replaceAll(",", "");
+
+												if (split[1].length() > 0) {
 													firstname = HTMLUtil.stripEntities(split[1]); //$NON-NLS-1$
 													if ((firstname.indexOf("  ") > -1) //$NON-NLS-1$
 															&& (firstname.indexOf("  u.") == -1)) { //$NON-NLS-1$
@@ -392,6 +393,23 @@ public class LookupThread extends Thread {
 							} //Done iterating for the given web site
 
 							yield();
+
+//							Debug.msg(JFritzUtils.toAscii(street));
+
+							firstname = firstname.replaceAll("%20", " ");
+							lastname = lastname.replaceAll("%20", " ");
+							company = company.replaceAll("%20", " ");
+							street = street.replaceAll("%20", " ");
+							zipcode = zipcode.replaceAll("%20", " ");
+							city = city.replaceAll("%20", " ");
+
+							firstname = JFritzUtils.replaceSpecialCharsUTF(firstname);
+							lastname = JFritzUtils.replaceSpecialCharsUTF(lastname);
+							company = JFritzUtils.replaceSpecialCharsUTF(company);
+							street = JFritzUtils.replaceSpecialCharsUTF(street);
+							zipcode = JFritzUtils.replaceSpecialCharsUTF(zipcode);
+							city = JFritzUtils.replaceSpecialCharsUTF(city);
+
 							Debug.msg("Firstname: " + firstname); //$NON-NLS-1$
 							Debug.msg("Lastname: " + lastname); //$NON-NLS-1$
 							Debug.msg("Company: " + company); //$NON-NLS-1$
@@ -399,7 +417,7 @@ public class LookupThread extends Thread {
 							Debug.msg("ZipCode: " + zipcode); //$NON-NLS-1$
 							Debug.msg("City: " + city); //$NON-NLS-1$
 
-							//if we got a name then quite looking
+							//if we got a name then quit looking
 							if(!firstname.equals("") || !lastname.equals("") || !company.equals("")){
 
 								//if the city wasnt listed or matched use the number maps

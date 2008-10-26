@@ -94,6 +94,24 @@ public class ReverseLookup {
 	}
 
 	/**
+	 * This Function does a lookup for a Vector of PhoneNumbers, the caller must
+	 * give an observer, his method personsFound(Vector<Person>) will be called
+	 *
+	 * @param number
+	 *            the number wich will be looked up
+	 * @param obs
+	 *            the observer wich will be will receive the Persons
+	 * @param quitOnDone
+	 *            shall the thread be killed after lookup
+	 */
+	public static synchronized void lookup(PhoneNumber number,
+			LookupObserver obs, boolean quitOnDone) {
+		Vector<PhoneNumber> v = new Vector<PhoneNumber>();
+		v.add(number);
+		lookup(v, obs, quitOnDone);
+	}
+
+	/**
 	 * This Function does a lookup for a Vector of PhoneNumbers the caller must
 	 * give an observer, this method personsFound(Vector<Person>) will be called
 	 * either on stop or on completion
@@ -102,6 +120,8 @@ public class ReverseLookup {
 	 *            the numbers wich will be looked up
 	 * @param obs
 	 *            the observer wich will be will receive the Persons
+	 * @param quitOnDone
+	 *            shall the thread be killed after lookup
 	 */
 	public static synchronized void lookup(Vector<PhoneNumber> numbers,
 			LookupObserver obs, boolean quitOnDone) {
@@ -233,7 +253,7 @@ public class ReverseLookup {
         	Thread.currentThread().interrupt();
 		}
 		results.add(person);
-		if ( results.size() % 20 == 0) {
+		if ( results.size() % 20 == 0 || done == count) {
 			observer.saveFoundEntries(results);
 			requests_done.clear();
 			results.clear();
@@ -400,6 +420,10 @@ public class ReverseLookup {
 				progressBar.setStringPainted(true);
 			}
 		}
-		JFritz.getJframe().getStatusBar().refresh();
+
+		if (JFritz.getJframe() != null && JFritz.getJframe().getStatusBar() != null)
+		{
+			JFritz.getJframe().getStatusBar().refresh();
+		}
 	}
 }

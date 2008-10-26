@@ -281,4 +281,28 @@ public class JFritzUtils {
 		}
 		return str;
 	}
+
+	public static String toAscii(String str)
+	{
+		String out = "";
+		for (int i=0; i<str.length(); i++)
+		{
+			out = out + "#" + Integer.toHexString(str.charAt(i));
+		}
+		return out;
+	}
+
+	public static String replaceSpecialCharsUTF(String str)
+	{
+		str = str.replaceAll("&#x[00]*C4;", "Ä");
+		str = str.replaceAll("&#x[00]*D6;", "Ö");
+		str = str.replaceAll("&#x[00]*DC;", "Ü");
+
+		str = str.replaceAll("&#x[00]*E4;", "ä");
+		str = str.replaceAll("&#x[00]*F6;", "ö");
+		str = str.replaceAll("&#x[00]*FC;", "ü");
+		str = str.replaceAll("&#x[00]*DF;", "ß");
+
+		return str;
+	}
 }

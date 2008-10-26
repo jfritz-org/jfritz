@@ -97,7 +97,7 @@ public class ReverseLookupXMLHandler extends DefaultHandler{
 
 					//add a new reverselookup site to the list
 					if(i == attrs.getLength() -1){
-						Debug.msg("Adding website: "+url+" for "+country_code);
+//						Debug.msg("Adding website: "+url+" for "+country_code);
 						rls_list.add(new ReverseLookupSite(url, name, prefix, ac_length));
 
 					}
@@ -121,11 +121,11 @@ public class ReverseLookupXMLHandler extends DefaultHandler{
 
 			//add the patterns to the new object
 			rls_list.get(rls_count).addEntry(pname, pstreet, pcity, pzipcode);
-			Debug.msg("adding patterns for: "+name);
-			Debug.msg("Pattern name: "+ pname);
-			Debug.msg("Pattern street: "+ pstreet);
-			Debug.msg("Pattern city: "+pcity);
-			Debug.msg("Pattern zipcode: "+pzipcode);
+//			Debug.msg("adding patterns for: "+name);
+//			Debug.msg("Pattern name: "+ pname);
+//			Debug.msg("Pattern street: "+ pstreet);
+//			Debug.msg("Pattern city: "+pcity);
+//			Debug.msg("Pattern zipcode: "+pzipcode);
 
 		}else if(qName.equals("website")){
 			rls_count++;
