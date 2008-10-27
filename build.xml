@@ -2,7 +2,7 @@
 <project name="JFritz" default="build" basedir=".">
 
 	<property name="app.name" value="JFritz" />
-	<property name="version" value="0.7.1.15" />
+	<property name="version" value="0.7.2" />
 
 	<!-- compiler flags -->
 	<property name="javac.debug" value="true" />
@@ -144,6 +144,7 @@
 			<fileset dir="">
 				<include name="**/splash.png" />
 				<include name="**/status.png" />
+				<include name="**/MSVCR71.dll" />
 			</fileset>
 		</copy>
 		<copy todir="${dist}">
@@ -257,13 +258,38 @@
 		<copy todir="${source-archive}/tmp/${lib}">
 			<fileset dir="${lib}">
 				<include name="**/*.jar" />
+				<include name="**/*.dll" />
+				<include name="**/*.so" />
+				<include name="**/mozembed-linux-gtk1.2" />
+				<include name="**/mozembed-linux-gtk2" />
+				<include name="**/mozembed-solaris-gtk1.2" />
+				<include name="**/mozembed-solaris-gtk2" />
+				<include name="**/*.jnilib" />
+				<include name="**/*.exe" />
 			</fileset>
 		</copy>
 		<copy todir="${source-archive}/tmp/${lang}">
 			<fileset dir="${lang}" />
 		</copy>
+		<copy todir="${source-archive}/tmp/number">
+			<fileset dir="number" />
+		</copy>
+		<copy todir="${source-archive}/tmp/pictures">
+			<fileset dir="pictures">
+				<include name="**/NoPic.jpg" />
+			</fileset>
+		</copy>
+		<copy todir="${source-archive}/tmp/styles">
+			<fileset dir="styles">
+				<include name="**/*.html" />
+			</fileset>
+		</copy>
 		<copy file="${lib}/jacob.dll" todir="${source-archive}/tmp" />
 		<copy file="build.xml" todir="${source-archive}/tmp" />
+		<copy file="jfritzlogo.png" todir="${source-archive}/tmp" />
+		<copy file="splash.png" todir="${source-archive}/tmp" />
+		<copy file="status.png" todir="${source-archive}/tmp" />
+
 		<zip zipfile="${source-archive}/jfritz-${version}-source.zip" basedir="${source-archive}/tmp" />
 		<delete dir="${source-archive}/tmp" />
 	</target>
