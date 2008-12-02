@@ -899,7 +899,7 @@
 		<website name="www.dasoertliche.de" url="http://dasoertliche.de/?form_name=search_inv&amp;page=RUECKSUCHE&amp;context=RUECKSUCHE&amp;action=STANDARDSUCHE&amp;la=de&amp;rci=no&amp;ph=$NUMBER" prefix="0">
 	        <entry>
 	        	<name>class=&quot;entry&quot;\s*(?:onmouseover=&quot;&quot;)?\s*&gt;([^&lt;]*)&lt;/a&gt;</name>
-	        	<street>^\s*&lt;/div&gt;\s+([^,]*),&amp;nbsp;\d{5}&amp;nbsp;[^&lt;]*&lt;br/&gt;</street>
+	        	<street>^\s*+([^,]*),&amp;nbsp;\d{5}&amp;nbsp;[^&lt;]*&lt;br/&gt;</street>
 	        	<city>^[^,]*,&amp;nbsp;\d{5}&amp;nbsp;([^&lt;]*)&lt;br/&gt;</city>
 	        	<zipcode>^[^,]*,&amp;nbsp;(\d{5})&amp;nbsp;[^&lt;]*&lt;br/&gt;</zipcode>
 	        </entry>

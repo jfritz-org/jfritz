@@ -1,3 +1,9 @@
+JFritz 0.7.2.1:
+- Bugfix: Print/Export der Anrufliste funktioniert wieder.
+- Bugfix: Anzeige der Landesflagge und des Anruferbildes unter Linux.
+- Neu: Drucken des Anruferbildes möglich.
+- Bugfix: Inverssuche funktioniert nun wieder für alle Länder mit Testdatensätzen.
+
 JFritz 0.7.2:
 - Release Version
 

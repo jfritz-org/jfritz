@@ -65,7 +65,7 @@ public class CallMessageDlg extends JFrame implements ActionListener{
 		super();
 	    addWindowListener(new WindowCloseHandle(this));
 		if (System.getProperty("os.name").equals("Linux"))
-			os_file += "/";
+			os_file += "//";
 		template_incoming = loadTemplate(JFritzUtils.getFullPath(JFritzUtils.rootID) + "styles/template-incoming.html");
 		template_outgoing = loadTemplate(JFritzUtils.getFullPath(JFritzUtils.rootID) + "styles/template-outgoing.html");
 

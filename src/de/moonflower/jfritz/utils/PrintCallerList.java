@@ -14,6 +14,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Paper;
 
+import javax.swing.ImageIcon;
 import javax.swing.table.TableColumnModel;
 
 import org.jfree.report.ElementAlignment;
@@ -32,6 +33,8 @@ import org.jfree.report.elementfactory.TextFieldElementFactory;
 import org.jfree.report.function.AbstractExpression;
 import org.jfree.report.modules.gui.base.PreviewFrame;
 import org.jfree.report.style.FontDefinition;
+
+import sun.awt.image.ToolkitImage;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
@@ -217,6 +220,10 @@ public class PrintCallerList {
         final Image callOutImage = Toolkit.getDefaultToolkit().getImage(
                 getClass().getResource(
                         "/de/moonflower/jfritz/resources/images/callout.png")); //$NON-NLS-1$
+
+        final Image emptyImage = Toolkit.getDefaultToolkit().getImage(
+        		getClass().getResource(
+        				"/de/moonflower/jfritz/resources/images/empty.png")); //$NON-NLS-1$
 
         // Set Font size to 8
         Integer fontSize = new Integer(8);
@@ -406,6 +413,53 @@ public class PrintCallerList {
         exp.setName("print_comment"); //$NON-NLS-1$
         report.addExpression(exp);
 
+        exp = new AbstractExpression() {
+            /**
+			 *
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public Object getValue() {
+                Object obj = getDataRow().get(
+                        JFritz.getCallerList().getColumnName(9));
+                if (obj == null)
+                    return emptyImage; //$NON-NLS-1$
+                else
+                {
+	                if (ToolkitImage.class.isInstance(obj))
+	                {
+		                ToolkitImage image = (ToolkitImage)(obj);
+		                if (image.getHeight() == -1 || image.getWidth() == -1)
+		                {
+		                	return emptyImage;
+		                }
+		                else
+		                {
+		                	return image;
+		                }
+	                }
+	                else if (ImageIcon.class.isInstance(obj))
+	                {
+	                	ImageIcon imageIcon = (ImageIcon)(obj);
+	                	if (imageIcon.getIconHeight() == -1 || imageIcon.getIconWidth() == -1)
+	                	{
+	                		return emptyImage;
+	                	}
+	                	else
+	                	{
+	                		return imageIcon;
+	                	}
+	                }
+	                else
+	                {
+	                	return emptyImage;
+	                }
+                }
+            }
+        };
+        exp.setName("print_picture"); //$NON-NLS-1$
+        report.addExpression(exp);
+
         for (int i = 0; i < JFritz.getJframe().getCallerTable()
                 .getColumnCount(); i++) {
 
@@ -434,6 +488,11 @@ public class PrintCallerList {
                 factory.setNullString("-"); //$NON-NLS-1$
                 factory.setFieldname("print_date"); //$NON-NLS-1$
                 report.getItemBand().addElement(factory.createElement());
+            } else if (columnName.equals(CallerTable.COLUMN_PICTURE)) {
+            	ImageElement imageElement = ImageFieldElementFactory.createImageDataRowElement("Picture-Element",
+            			new Rectangle2D.Float(columnStart[i] + 2, 2, 40, 50), "print_picture", true, false);
+            	imageElement.setDynamicContent(false);
+            	report.getItemBand().addElement(imageElement);
             } else {
                 factory = new TextFieldElementFactory();
                 factory.setFontSize(fontSize);
@@ -465,11 +524,21 @@ public class PrintCallerList {
             }
 
             // Rand zeichnen
+            Rectangle2D.Float border;
+            if (JFritzUtils.parseBoolean(Main.getProperty("option.showPictureColumn")))
+            {
+            	border = new Rectangle2D.Float(columnStart[i], 0,
+                        columnWidth[i], 55);
+            }
+            else
+            {
+            	border = new Rectangle2D.Float(columnStart[i], 0,
+                        columnWidth[i], 18);
+            }
             ShapeElement selement = StaticShapeElementFactory
                     .createRectangleShapeElement("back", Color //$NON-NLS-1$
                             .decode("#000000"), new BasicStroke(0), //$NON-NLS-1$
-                            new Rectangle2D.Float(columnStart[i], 0,
-                                    columnWidth[i], 18), true, false);
+                            border , true, false);
             report.getItemBand().addElement(selement);
         }
 

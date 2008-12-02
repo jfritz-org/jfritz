@@ -3,6 +3,7 @@ package de.moonflower.jfritz.testsuites.utils.reverselookup;
 import java.util.Vector;
 
 import de.moonflower.jfritz.struct.Person;
+import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.reverselookup.LookupObserver;
 
 public class CheckEntry implements LookupObserver {
@@ -11,11 +12,14 @@ public class CheckEntry implements LookupObserver {
 	private boolean done = false;
 
 	private Person checkPerson;
+	private Person receivedPerson;
+	PhoneNumber checkedNumber;
 
-	public CheckEntry(String firstname, String lastname, String street, String zipcode, String city)
+	public CheckEntry(PhoneNumber num, String firstname, String lastname, String street, String zipcode, String city)
 	{
 		checkPerson = new Person(firstname, "", lastname,
 				street, zipcode, city, "", "");
+		checkedNumber = num;
 		succeeded = false;
 		done = false;
 	}
@@ -34,17 +38,27 @@ public class CheckEntry implements LookupObserver {
 
 	public void saveFoundEntries(Vector<Person> persons) {
 		succeeded = (persons.size() == 1);
-		Person person = persons.elementAt(0);
+		receivedPerson = persons.elementAt(0);
 		if (succeeded)
-			succeeded = (person.getFirstName().equals(checkPerson.getFirstName()));
+		{
+			succeeded = (receivedPerson.getFirstName().equals(checkPerson.getFirstName()));
+		}
 		if (succeeded)
-			succeeded = (person.getLastName().equals(checkPerson.getLastName()));
+		{
+			succeeded = (receivedPerson.getLastName().equals(checkPerson.getLastName()));
+		}
 		if (succeeded)
-			succeeded = (person.getStreet().equals(checkPerson.getStreet()));
+		{
+			succeeded = (receivedPerson.getStreet().equals(checkPerson.getStreet()));
+		}
 		if (succeeded)
-			succeeded = (person.getCity().equals(checkPerson.getCity()));
+		{
+			succeeded = (receivedPerson.getCity().equals(checkPerson.getCity()));
+		}
 		if (succeeded)
-			succeeded = (person.getPostalCode().equals(checkPerson.getPostalCode()));
+		{
+			succeeded = (receivedPerson.getPostalCode().equals(checkPerson.getPostalCode()));
+		}
 
 		done = true;
 	}
@@ -57,5 +71,20 @@ public class CheckEntry implements LookupObserver {
 	public boolean isDone()
 	{
 		return done;
+	}
+
+	public Person getCheckPerson()
+	{
+		return checkPerson;
+	}
+
+	public Person getReceivedPerson()
+	{
+		return receivedPerson;
+	}
+
+	public PhoneNumber getCheckedNumber()
+	{
+		return checkedNumber;
 	}
 }
