@@ -201,9 +201,9 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.2.2"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.2.3"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.132 2009/01/02 14:22:14 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.133 2009/01/02 16:43:16 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -228,6 +228,8 @@ public class Main implements LookupObserver {
 	public final static String STATE_PROPERTIES_FILE = "jfritz.state.properties.xml"; //$NON-NLS-1$
 
 	public static boolean SYSTRAY_SUPPORT = false;
+
+	public static boolean SHOW_SPLASH_SCREEN = true;
 
 	private static JFritzProperties config_properties;
 
@@ -296,13 +298,13 @@ public class Main implements LookupObserver {
 	 */
 	public static void main(String[] args) {
 		Debug.on();
-		SplashScreen splash = new SplashScreen();
-		splash.setVersion("v" + Main.PROGRAM_VERSION);
-		splash.setStatus("Initializing JFritz...");
 		already_done_shutdown = false;
 		Main main = new Main(args);
 		main.initiateCLIParameters();
 		main.checkDebugParameters(args);
+		SplashScreen splash = new SplashScreen(SHOW_SPLASH_SCREEN);
+		splash.setVersion("v" + Main.PROGRAM_VERSION);
+		splash.setStatus("Initializing JFritz...");
 
 		// load supported languages
 		splash.setStatus("Loading supported languages...");
@@ -438,37 +440,38 @@ public class Main implements LookupObserver {
 	private void initiateCLIParameters() {
 		options = new CLIOptions();
 
-		options.addOption('h', "help", null, "This short description"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-		CLIOption verboseOption = new CLIOption('v', "verbose", null,
-				"Turn on debug information");
-		options.addOption(verboseOption); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-		options.addOption('s', "systray", null, "Turn on systray support"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-		options.addOption('n', "nosystray", null, "Turn off systray support"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-		options.addOption('f', "fetch", null, "Fetch new calls and exit"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-		options.addOption('d', "delete_on_box", null, //$NON-NLS-1$,  //$NON-NLS-2$
-				"Delete callerlist of the Fritz!Box."); //$NON-NLS-1$
-		options.addOption('b', "backup", null,
-				"Creates a backup of all xml-Files in the directory 'backup'"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-		options.addOption('c', "clear_list", null, //$NON-NLS-1$,  //$NON-NLS-2$
-				"Clears Caller List and exit"); //$NON-NLS-1$
-		options.addOption('e', "export", "filename", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-				"Fetch calls and export to CSV file."); //$NON-NLS-1$
-		options
-				.addOption('z', "exportForeign", null, //$NON-NLS-1$,  //$NON-NLS-2$
-						"Write phonebooks compatible to BIT FBF Dialer and some other callmonitors."); //$NON-NLS-1$
-		options.addOption('l', "logfile", "filename", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-				"Writes debug messages to logfile"); //$NON-NLS-1$,
-		options.addOption('p', "priority", "level", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-				"Set program priority [1..10]"); //$NON-NLS-1$
-        options.addOption('i',"lang", "language","Set the display language, currently supported: german, english"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$, //$NON-NLS-4$
-		options
-				.addOption(
-						'w',
-						"without-control", null, //$NON-NLS-1$,  //$NON-NLS-2$
-						"Turns off multiple instance control. DON'T USE, unless you know what your are doing"); //$NON-NLS-1$
-		options
-				.addOption('r', "reverse-lookup", null,
-						"Do a reverse lookup and exit. Can be used together with -e -f and -z");
+		options.addOption('b', "backup" //$NON-NLS-1$,  //$NON-NLS-2$
+				, null, "Creates a backup of all xml-Files in the directory 'backup'"); //$NON-NLS-1$
+		options.addOption('c', "clear_list" //$NON-NLS-1$,  //$NON-NLS-2$
+				, null, "Clears Caller List and exit"); //$NON-NLS-1$
+		options.addOption('d', "delete_on_box" //$NON-NLS-1$,  //$NON-NLS-2$
+				, null, "Delete callerlist of the Fritz!Box."); //$NON-NLS-1$
+		options.addOption('e', "export" //$NON-NLS-1$,  //$NON-NLS-2$
+				, "filename", "Fetch calls and export to CSV file."); //$NON-NLS-1$,  //$NON-NLS-2$
+		options.addOption('f', "fetch" //$NON-NLS-1$,  //$NON-NLS-2$
+				, null, "Fetch new calls and exit"); //$NON-NLS-3$
+		options.addOption('h', "help" //$NON-NLS-1$,  //$NON-NLS-2$
+				, null, "This short description"); //$NON-NLS-1$
+        options.addOption('i',"lang" //$NON-NLS-1$,  //$NON-NLS-2$
+        		, "language", "Set the display language, currently supported: german, english"); //$NON-NLS-1$,  //$NON-NLS-2$
+		options.addOption('l', "logfile" //$NON-NLS-1$,  //$NON-NLS-2$
+				, "filename", "Writes debug messages to logfile"); //$NON-NLS-1$,  //$NON-NLS-2$
+		options.addOption('n', "nosystray" //$NON-NLS-1$,  //$NON-NLS-2$
+				, null, "Turn off systray support"); //$NON-NLS-1$
+		options.addOption('p', "priority" //$NON-NLS-1$,  //$NON-NLS-2$
+				, "level", "Set program priority [1..10]"); //$NON-NLS-1$,  //$NON-NLS-2$
+		options.addOption('q', "quiet" //$NON-NLS-1$,  //$NON-NLS-2$
+				, null, "Hides splash screen"); //$NON-NLS-1$
+		options.addOption('r', "reverse-lookup" //$NON-NLS-1$,  //$NON-NLS-2$
+				, null, "Do a reverse lookup and exit. Can be used together with -e -f and -z"); //$NON-NLS-1$
+		options.addOption('s', "systray" //$NON-NLS-1$,  //$NON-NLS-2$
+				, null, "Turn on systray support"); //$NON-NLS-1$
+		options.addOption('w', "without-control" //$NON-NLS-1$,  //$NON-NLS-2$
+				, null, "Turns off multiple instance control. DON'T USE, unless you know what your are doing"); //$NON-NLS-1$
+		options.addOption('z', "exportForeign" //$NON-NLS-1$,  //$NON-NLS-2$
+				, null, "Write phonebooks compatible to BIT FBF Dialer and some other callmonitors."); //$NON-NLS-1$
+		options.addOption('v', "verbose" //$NON-NLS-1$,  //$NON-NLS-2$
+				, null, "Turn on debug information"); //$NON-NLS-1$
 	}
 
 	/**
@@ -502,6 +505,9 @@ public class Main implements LookupObserver {
 					Debug.logToFile(logFilename);
 					break;
 				}
+			case 'q': //$NON-NSL-1$
+				SHOW_SPLASH_SCREEN = false;
+				break;
 			}
 		}
 	}

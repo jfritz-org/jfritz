@@ -1,10 +1,13 @@
+JFritz 0.7.2.3:
+- Neu [0000061]: Unterdrücken des Splash-Screens mit dem Startparameter -q oder --quiet möglich.
+
 JFritz 0.7.2.2:
-- Bugfix [00091]: Korrekte Anzeige von JFritz, wenn JFritz minimiert gestartet werden soll, jedoch kein Tray verfügbar ist.
+- Bugfix [0000094]: Korrekte Anzeige von JFritz, wenn JFritz minimiert gestartet werden soll, jedoch kein Tray verfügbar ist.
 - Neu: Umbau des Trays zur Unterstützung des Java 1.6 SystemTray und JDIC gleichzeitig.
 
 JFritz 0.7.2.1:
-- Bugfix [00091]: Print/Export der Anrufliste funktioniert wieder.
-- Bugfix [00136]: Anzeige der Landesflagge und des Anruferbildes unter Linux.
+- Bugfix [0000091]: Print/Export der Anrufliste funktioniert wieder.
+- Bugfix [0000136]: Anzeige der Landesflagge und des Anruferbildes unter Linux.
 - Neu: Drucken des Anruferbildes möglich.
 - Bugfix: Inverssuche funktioniert nun wieder für alle Länder mit Testdatensätzen.
 

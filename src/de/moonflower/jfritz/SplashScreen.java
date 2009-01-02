@@ -24,7 +24,7 @@ public class SplashScreen extends JFrame {
 	private JLabel statusBar;
 	private JLabel versionPanel;
 
-	public SplashScreen()
+	public SplashScreen(boolean show)
 	{
 		super();
 		this.setUndecorated(true);
@@ -56,7 +56,11 @@ public class SplashScreen extends JFrame {
 		this.pack();
 		this.setLocation((screenDim.width / 2) - (this.getWidth() / 2),
 				(screenDim.height / 2) - (this.getHeight() / 2));
-		this.setVisible(true);
+
+		if (show)
+		{
+			this.setVisible(true);
+		}
 	}
 
 	public void setVersion(String version)
