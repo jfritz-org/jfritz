@@ -4,6 +4,7 @@
 
 package de.moonflower.jfritz;
 
+import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -36,9 +37,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
-import org.jdesktop.jdic.tray.SystemTray;
-import org.jdesktop.jdic.tray.TrayIcon;
-
 import de.moonflower.jfritz.callerlist.CallerList;
 import de.moonflower.jfritz.callmonitor.CallMonitorInterface;
 import de.moonflower.jfritz.callmonitor.CallMonitorList;
@@ -61,6 +59,11 @@ import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.phonebook.PhoneBook;
 import de.moonflower.jfritz.struct.FritzBox;
 import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.tray.AWTTray;
+import de.moonflower.jfritz.tray.JDICTray;
+import de.moonflower.jfritz.tray.Tray;
+import de.moonflower.jfritz.tray.TrayMenu;
+import de.moonflower.jfritz.tray.TrayMenuItem;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -97,7 +100,7 @@ public final class JFritz implements  StatusListener, ItemListener {
 
 	public final static int SSDP_MAX_BOXES = 3;
 
-	private static SystemTray systray;
+	private static Tray tray;
 
 	private static JFritzWindow jframe;
 
@@ -105,7 +108,7 @@ public final class JFritz implements  StatusListener, ItemListener {
 
 	private static CallerList callerlist;
 
-	private static TrayIcon trayIcon;
+	private static ImageIcon trayIcon;
 
 	private static PhoneBook phonebook;
 
@@ -293,14 +296,16 @@ public final class JFritz implements  StatusListener, ItemListener {
 		if (Main.checkForSystraySupport()) {
 			Debug.msg("Check Systray-Support"); //$NON-NLS-1$
 			try {
-				systray = SystemTray.getDefaultSystemTray();
+				if(Integer.parseInt(System.getProperty("java.version").substring(2, 3)) < 6)
+				{
+					tray = new JDICTray();
+				} else {
+					tray = new AWTTray();
+				}
 				createTrayMenu();
-			} catch (UnsatisfiedLinkError ule) {
-				Debug.err(ule.toString());
+			} catch (Throwable e) {
 				Main.SYSTRAY_SUPPORT = false;
-			} catch (Exception e) {
 				Debug.err(e.toString());
-				Main.SYSTRAY_SUPPORT = false;
 			}
 		}
 		jframe.checkStartOptions();
@@ -459,40 +464,40 @@ public final class JFritz implements  StatusListener, ItemListener {
 		lnfgroup.add(rb);
 
 
-		JPopupMenu menu = new JPopupMenu("JFritz Menu"); //$NON-NLS-1$
-		JMenuItem menuItem = new JMenuItem(Main.PROGRAM_NAME + " v" //$NON-NLS-1$
+		TrayMenu menu = new TrayMenu("JFritz Menu"); //$NON-NLS-1$
+		TrayMenuItem menuItem = new TrayMenuItem(Main.PROGRAM_NAME + " v" //$NON-NLS-1$
 				+ Main.PROGRAM_VERSION);
 		menuItem.setActionCommand("showhide");
 		menuItem.addActionListener(jframe);
 		menu.add(menuItem);
 		menu.addSeparator();
-		menuItem = new JMenuItem(Main.getMessage("fetchlist")); //$NON-NLS-1$
+		menuItem = new TrayMenuItem(Main.getMessage("fetchlist")); //$NON-NLS-1$
 		menuItem.setActionCommand("fetchList"); //$NON-NLS-1$
 		menuItem.addActionListener(jframe);
 		menu.add(menuItem);
-		menuItem = new JMenuItem(Main.getMessage("reverse_lookup")); //$NON-NLS-1$
+		menuItem = new TrayMenuItem(Main.getMessage("reverse_lookup")); //$NON-NLS-1$
 		menuItem.setActionCommand("reverselookup"); //$NON-NLS-1$
 		menuItem.addActionListener(jframe);
 		menu.add(menuItem);
 		menu.add(lnfMenu);
-		menuItem = new JMenuItem(Main.getMessage("config")); //$NON-NLS-1$
+		menuItem = new TrayMenuItem(Main.getMessage("config")); //$NON-NLS-1$
 		menuItem.setActionCommand("config"); //$NON-NLS-1$
 		menuItem.addActionListener(jframe);
 		menu.add(menuItem);
 		menu.addSeparator();
-		menuItem = new JMenuItem(Main.getMessage("prog_exit")); //$NON-NLS-1$
+		menuItem = new TrayMenuItem(Main.getMessage("prog_exit")); //$NON-NLS-1$
 		menuItem.setActionCommand("exit"); //$NON-NLS-1$
 		menuItem.addActionListener(jframe);
 		menu.add(menuItem);
 
-		ImageIcon icon = new ImageIcon(
+		trayIcon = new ImageIcon(
 				JFritz.class
 						.getResource("/de/moonflower/jfritz/resources/images/trayicon.png")); //$NON-NLS-1$
 
-		trayIcon = new TrayIcon(icon, Main.PROGRAM_NAME, menu); //$NON-NLS-1$
-		trayIcon.setIconAutoSize(false);
-		trayIcon.setCaption(Main.PROGRAM_NAME + " v" + Main.PROGRAM_VERSION); //$NON-NLS-1$
-		trayIcon.addActionListener(new ActionListener() {
+		tray.add(trayIcon);
+		tray.setTooltip(Main.PROGRAM_NAME + " v"+Main.PROGRAM_VERSION);
+		tray.setPopupMenu(menu);
+		tray.addActionListener(new ActionListener() {
 			private long oldTimeStamp = 0;
 			public void actionPerformed(ActionEvent e) {
 				long timeStamp = e.getWhen();
@@ -505,7 +510,6 @@ public final class JFritz implements  StatusListener, ItemListener {
 				}
 			}
 		});
-		systray.addTrayIcon(trayIcon);
 	}
 
 	/**
@@ -528,10 +532,10 @@ public final class JFritz implements  StatusListener, ItemListener {
 			break;
 		}
 		case 2: {
-			if (trayIcon != null)
-				trayIcon.displayMessage(Main.PROGRAM_NAME, msg,
-						TrayIcon.INFO_MESSAGE_TYPE);
-			else if (trayIcon == null) {
+			if (tray.isSupported())
+				tray.displayMessage(Main.PROGRAM_NAME, msg,
+						Tray.MESSAGE_TYPE_INFO);
+			else {
 				MessageDlg msgDialog = new MessageDlg();
 				msgDialog.showMessage(msg, Long.parseLong(Main.getProperty(
 						"option.popupDelay")) * 1000);
@@ -592,9 +596,9 @@ public final class JFritz implements  StatusListener, ItemListener {
 	 */
 	public static void errorMsg(String msg) {
 		Debug.err(msg);
-		if (Main.SYSTRAY_SUPPORT) {
-			trayIcon.displayMessage(Main.PROGRAM_NAME, msg,
-					TrayIcon.ERROR_MESSAGE_TYPE);
+		if (Main.SYSTRAY_SUPPORT && tray != null) {
+			tray.displayMessage(Main.PROGRAM_NAME, msg,
+					Tray.MESSAGE_TYPE_ERROR);
 		}
 	}
 
@@ -864,11 +868,11 @@ public final class JFritz implements  StatusListener, ItemListener {
 			callMonitor.stopCallMonitor();
 		}
 
-		if ( (Main.SYSTRAY_SUPPORT) && (systray != null) )
+		if ( (Main.SYSTRAY_SUPPORT) && (tray != null) )
 		{
 			Debug.msg("Removing systray"); //$NON-NLS-1$
-			systray.removeTrayIcon(trayIcon);
-			systray = null;
+			tray.remove();
+			tray = null;
 		}
 
 		Debug.msg("Stopping watchdog"); //$NON-NLS-1$
@@ -915,8 +919,8 @@ public final class JFritz implements  StatusListener, ItemListener {
 	 * @author Benjamin Schmitt
 	 */
 	public void refreshTrayMenu() {
-		if (systray != null && trayIcon != null) {
-			systray.removeTrayIcon(trayIcon);
+		if (tray != null && trayIcon != null) {
+			tray.remove();
 			createTrayMenu();
 		}
 	}

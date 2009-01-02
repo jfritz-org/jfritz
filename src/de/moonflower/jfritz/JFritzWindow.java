@@ -211,16 +211,15 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				.equals("true")) { //$NON-NLS-1$
 			setVisible(true);
 			Debug.msg("CHECKSTARTOPTIONS: don't start minimized");
+		} else {
+			if (!Main.SYSTRAY_SUPPORT) {
+				setVisible(true);
+			}
+			if ( getExtendedState() != Frame.ICONIFIED )
+			{
+				setExtendedState(Frame.ICONIFIED);
+			}
 		}
-//		} else {
-//			if (!Main.SYSTRAY_SUPPORT) {
-//				setVisible(true);
-//			}
-//			if ( getExtendedState() != Frame.ICONIFIED )
-//			{
-//				setExtendedState(Frame.ICONIFIED);
-//			}
-//		}
 	}
 
 	public void checkOptions() {
