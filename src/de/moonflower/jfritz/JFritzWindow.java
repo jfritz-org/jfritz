@@ -1250,18 +1250,18 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	public void hideShowJFritz() {
 		if (isVisible()) {
 			Debug.msg("Hide JFritz-Window"); //$NON-NLS-1$
-			Debug.msg(Main.getStateProperty("window.state.old"));
+			Debug.msg("Old windows state: " + Main.getStateProperty("window.state.old"));
 			setExtendedState(JFrame.ICONIFIED);
 		} else while ( !isVisible() ){
 			Debug.msg("Show JFritz-Window"); //$NON-NLS-1$
 			int windowState = 0;
 			windowState = Integer.parseInt(Main.getStateProperty("window.state.old"));
 
-			Debug.msg(Integer.toString(windowState));
+			Debug.msg("Window state old: " + Integer.toString(windowState));
+			Debug.msg("Windows state:    " + Main.getStateProperty("window.state"));
 
-			setExtendedState(windowState);
 			setVisible(true);
-
+			setExtendedState(windowState);
 			toFront();
 			repaint();
 		}
