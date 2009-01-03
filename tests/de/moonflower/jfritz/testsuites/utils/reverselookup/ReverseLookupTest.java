@@ -240,6 +240,11 @@ public class ReverseLookupTest extends TestCase {
 		CheckEntry entry;
 		PhoneNumber checkNum;
 
+		checkNum = new PhoneNumber("+499115402808", false);
+		entry = new CheckEntry(checkNum, "Car", "City", "Kleiststr. 48", "46539", "Dinslaken");
+		ReverseLookup.lookup(checkNum,  entry, true);
+		testGermanyFailed = checkEntry(entry, testGermanyFailed);
+
 		checkNum = new PhoneNumber("+4920648286171", false);
 		entry = new CheckEntry(checkNum, "Car", "City", "Kleiststr. 48", "46539", "Dinslaken");
 		ReverseLookup.lookup(checkNum,  entry, true);
