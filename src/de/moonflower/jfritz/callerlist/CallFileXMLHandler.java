@@ -107,7 +107,7 @@ public class CallFileXMLHandler extends DefaultHandler {
 			if (callerlist != null) { // Add an entry to the callerlist
 				PhoneNumber number = null;
 				if (caller.length() > 0) {
-					number = new PhoneNumber(caller);
+					number = new PhoneNumber(caller, false);
 					if (callbycall.length() > 0)
 						number.setCallByCall(callbycall);
 				}

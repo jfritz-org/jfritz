@@ -940,6 +940,7 @@ public class FritzBox {
 		case FritzBoxFirmware.BOXTYPE_FRITZBOX_7140:
 		case FritzBoxFirmware.BOXTYPE_FRITZBOX_7141:
 		case FritzBoxFirmware.BOXTYPE_FRITZBOX_7113:
+		case FritzBoxFirmware.BOXTYPE_FRITZBOX_SPEEDPORT_W501V:
 			ports = new String[2];
 			ports[0] = "Fon 1";
 			ports[1] = "Fon 2"; //$NON-NLS-1$

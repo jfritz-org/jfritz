@@ -69,6 +69,7 @@ public class Person implements Cloneable, Serializable{
 	 *
 	 */
 	public boolean equals(Object p){
+		boolean equals = false;
 		Person person;
 		if(!(p instanceof Person))
 			return false;
@@ -77,10 +78,33 @@ public class Person implements Cloneable, Serializable{
 
 		//Just use csv to compare for now, if it doesnt work then write one by hand
 		if(person.toCSV().equals(this.toCSV()))
-			return true;
+		{
+			equals = true;
+		}
 		else
-			return false;
+		{
+			equals = false;
+		}
 
+		if (equals && person.getStandardTelephoneNumber()!=null && this.getStandardTelephoneNumber()!=null)
+		{
+			equals = person.getStandardTelephoneNumber().equals(this.getStandardTelephoneNumber());
+		}
+
+		if (equals)
+		{
+			equals = person.getStandard().equals(this.getStandard());
+		}
+
+		if (equals)
+		{
+			if ((person.getPictureUrl() != null)
+			   && (this.getPictureUrl() != null))
+			   {
+					equals = (person.getPictureUrl().equals(this.getPictureUrl()));
+			   }
+		}
+		return equals;
 	}
 
 	public Person(String firstName, String company, String lastName,
@@ -122,7 +146,7 @@ public class Person implements Cloneable, Serializable{
 		numbers.clear();
 		Enumeration<PhoneNumber> en = person.getNumbers().elements();
 		while (en.hasMoreElements()) {
-			numbers.add(en.nextElement());
+			numbers.add(en.nextElement().clone());
 		}
 		privateEntry = person.isPrivateEntry();
 	}
@@ -574,10 +598,10 @@ public class Person implements Cloneable, Serializable{
 	}
 
 	/**
-	 * Checks wether the current object supersedes a given one.
+	 * Checks whether the current object supersedes a given one.
 	 *
 	 * @param p data object which is checked for redundancy
-	 * @return true iff p contains only redundant information
+	 * @return true if p contains only redundant information
 	 */
 	public boolean supersedes(Person p) {
 		// Person data is checked
@@ -608,7 +632,7 @@ public class Person implements Cloneable, Serializable{
 			ownNumberSet.add(n.getIntNumber());
 		}
 
-		// Checking wether this person's numbers are a real superset
+		// Checking whether this person's numbers are a real superset
 		Enumeration otherNumberEnum = p.numbers.elements();
 		while (otherNumberEnum.hasMoreElements()) {
 			PhoneNumber n = (PhoneNumber) otherNumberEnum.nextElement();

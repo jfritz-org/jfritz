@@ -470,6 +470,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 		Enumeration<Person> en = unfilteredPersons.elements();
 		while (en.hasMoreElements()){
 			Person p = en.nextElement();
+			//TODO: search more numbers, not only the standard one
 			if (p.isDummy()
 					&& p.getStandardTelephoneNumber() != null
 					&& newPerson.getStandardTelephoneNumber() != null

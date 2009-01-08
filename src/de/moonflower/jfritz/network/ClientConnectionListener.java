@@ -18,15 +18,15 @@ import de.moonflower.jfritz.utils.Debug;
  *
  * So how does the whole network code work?
  *
- * Its probabely best to first describe the general architecture of
+ * Its probably best to first describe the general architecture of
  * the network code. JFritz uses a client / server model, where the
  * information flow is controlled by server. All information is exchanged
  * asynchronously between the server and the client, with the exception
  * of the authentication protocol :). The server and client use object
  * streams to exchange information, the server sends DataChange objects
- * and the cilent sends ClientDataRequest, ClientActionRequest objects.
+ * and the client sends ClientDataRequest, ClientActionRequest objects.
  *
- * What code si responsible for what function?
+ * What code is responsible for what function?
  *
  * The ClientConnectionListener listens for new connections on the specified
  * port in the options dialog. When an incoming connection is received, a new
@@ -42,9 +42,9 @@ import de.moonflower.jfritz.utils.Debug;
  * PhoneBookListener and as a CallMonitorListener. These Interfaces specify that
  * the ClientConnectionThread is notified (using various function calls) of changes
  * to the data to the phonebook and the call list. The ClientConnectionThread then
- * packs these Changes into DataChange objects and puts them in the output queue of the
- * SenderThread, that is if the client has the appropriate rights to reveive
- * the this iformation.
+ * packs these changes into DataChange objects and puts them in the output queue of the
+ * SenderThread, that is if the client has the appropriate rights to receive
+ * this information.
  *
  * The client on the other hand communicates with the server using only one
  * thread, as writing objects to only one socket won't have a noticeable
@@ -53,7 +53,7 @@ import de.moonflower.jfritz.utils.Debug;
  * changes, and depending upon whether the client should use the phone book,
  * call monitor and call list from the server and not use its own, the client sends
  * requests for reverse lookups, updating the call list to the server instead of
- * trying to access a fritz box.The client also registers istelf as a callerListListener
+ * trying to access a fritz box.The client also registers itself as a callerListListener
  * and a PhoneBookListener and writes all changes to its personal data to the server,
  * however the server will determine whether to accept or ignore these changes
  * based on the clients rights.

@@ -1,3 +1,13 @@
+JFritz 0.7.2.4:
+- Bugfix: Phonebook 
+	(korrektes Kopieren und clonen von PhoneNumber)
+	(Person.equals() prüft nun neben dem CSV-Export auch Standard-Nummer und PictureUrl.
+- Neu: Erkennen von Fritzifizierten Speedport W501V.
+- Bugfix-Phonebook: Änderung des Rufnummerntyps aktiviert den Undo-Button.
+- Bugfix-Phonebook: Änderung der Standardrufnummer aktiviert den Undo-Button.
+- Bugfix-Phonebook: Undo-Button setzt nun wirklich alle Felder korrekt zurück.
+- Einige überflüssige bzw. veraltete Methoden entfernt.  
+
 JFritz 0.7.2.3:
 - Neu [0000061]: Unterdrücken des Splash-Screens mit dem Startparameter -q oder --quiet möglich.
 - Bugfix: Wiederherstellung des JFritz-Fensters nach minimiertem Start funktioniert nun wieder. Unter KDE, Gnome und MacOS noch zu testen.

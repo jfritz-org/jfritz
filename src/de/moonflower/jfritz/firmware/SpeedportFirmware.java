@@ -22,48 +22,12 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 /**
  * Class for detected and managing different firmware versions
  *
- * @author Arno Willig
+ * @author Robert Palmer
  *
  */
-public class FritzBoxFirmware {
+public class SpeedportFirmware {
 
-	public final static byte BOXTYPE_FRITZBOX_FON = 6;
-
-	public final static byte BOXTYPE_FRITZBOX_FON_WLAN = 8;
-
-	public final static byte BOXTYPE_FRITZBOX_ATA = 11;
-
-    public final static byte BOXTYPE_FRITZBOX_5010 = 23;
-
-    public final static byte BOXTYPE_FRITZBOX_5012 = 25;
-
-	public final static byte BOXTYPE_FRITZBOX_5050 = 12;
-
-    public final static byte BOXTYPE_FRITZBOX_7050 = 14;
-
-    public final static byte BOXTYPE_EUMEX_300 = 15;
-
-    public final static byte BOXTYPE_FRITZBOX_SPEEDPORT_W501V = 28;
-
-    public final static byte BOXTYPE_FRITZBOX_7170 = 29;
-
-    public final static byte BOXTYPE_FRITZBOX_7140 = 30;
-
-    public final static byte BOXTYPE_FRITZBOX_SPEEDPORT_W900V = 34;
-
-    public final static byte BOXTYPE_FRITZBOX_7141 = 40;
-
-    public final static byte BOXTYPE_FRITZBOX_5140 = 43;
-
-    public final static byte BOXTYPE_FRITZBOX_7270 = 54;
-
-    public final static byte BOXTYPE_FRITZBOX_7113 = 60;
-
-    public final static byte ACCESS_METHOD_POST_0342 = 0;
-
-	public final static byte ACCESS_METHOD_ENGLISH = 1;
-
-	public final static byte ACCESS_METHOD_PRIOR_0342 = 2;
+	public final static byte BOXTYPE_SPEEDPORT_W920V = 65;
 
 	private byte boxtype;
 
@@ -78,19 +42,18 @@ public class FritzBoxFirmware {
 	private String macAddress;
 
 	private final static String[] POSTDATA_ACCESS_METHOD = {
-			"getpage=../html/de/menus/menu2.html", //$NON-NLS-1$
-			"getpage=../html/en/menus/menu2.html", //$NON-NLS-1$
-			"getpage=../html/menus/menu2.html" }; //$NON-NLS-1$
+			"getpage=../html/hcti_status_information.htm" //$NON-NLS-1$
+			};
 
 	private final static String[] POSTDATA_DETECT_FIRMWARE = {
-			"&var%3Alang=de&var%3Amenu=home&var%3Apagename=home&login%3Acommand%2Fpassword=", //$NON-NLS-1$
-			"&var%3Alang=en&var%3Amenu=home&var%3Apagename=home&login%3Acommand%2Fpassword="}; //$NON-NLS-1$
+			"&login%3Acommand%2Fpassword=", //$NON-NLS-1$
+			};
 
-	private final static String PATTERN_DETECT_FIRMWARE = "[Firmware|Labor][-| ][V|v]ersion[^\\d]*(\\d\\d).(\\d\\d).(\\d\\d\\d*)([^<]*)"; //$NON-NLS-1$
+	private final static String PATTERN_DETECT_FIRMWARE = "<DIV class=colIndiv> [^\\d]*(\\d\\d).(\\d\\d).(\\d\\d\\d*)<span id=\"betastr\">([^<]*)"; //$NON-NLS-1$
 
-	private final static String PATTERN_DETECT_LANGUAGE_DE = "Telefonie";
+	private final static String PATTERN_DETECT_LANGUAGE_DE = "Datum";
 
-	private final static String PATTERN_DETECT_LANGUAGE_EN = "Telephony";
+//	private final static String PATTERN_DETECT_LANGUAGE_EN = "Telephony";
 
 	private final static String POSTDATA_QUERY = "getpage=../html/query.txt";
 
@@ -103,7 +66,7 @@ public class FritzBoxFirmware {
 	 * @param modFirmwareVersion
 	 * @param language
 	 */
-	public FritzBoxFirmware(String boxtype, String majorFirmwareVersion,
+	public SpeedportFirmware(String boxtype, String majorFirmwareVersion,
 			String minorFirmwareVersion, String modFirmwareVersion, String language, String mac) {
 		this.boxtype = Byte.parseByte(boxtype);
 		this.majorFirmwareVersion = Byte.parseByte(majorFirmwareVersion);
@@ -158,7 +121,7 @@ public class FritzBoxFirmware {
 	 * @throws WrongPasswordException
 	 * @throws IOException
 	 */
-	public static FritzBoxFirmware detectFirmwareVersion(String box_address,
+	public static SpeedportFirmware detectFirmwareVersion(String box_address,
 			String box_password, String port) throws WrongPasswordException, IOException, InvalidFirmwareException {
 		final String urlstr = "http://" + box_address +":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
 
@@ -207,16 +170,16 @@ public class FritzBoxFirmware {
 					break;
 				}
 
-				if (!detected)
-				{
-					p = Pattern.compile(PATTERN_DETECT_LANGUAGE_EN);
-					m = p.matcher(data);
-					if (m.find()) {
-						language = "en";
-						detected = true;
-						break;
-					}
-				}
+//				if (!detected)
+//				{
+//					p = Pattern.compile(PATTERN_DETECT_LANGUAGE_EN);
+//					m = p.matcher(data);
+//					if (m.find()) {
+//						language = "en";
+//						detected = true;
+//						break;
+//					}
+//				}
 			}
 			if ( detected ) break;
 		}
@@ -243,7 +206,7 @@ public class FritzBoxFirmware {
 					minorFirmwareVersion +
 					modFirmwareVersion + " " +
 					language);
-			return new FritzBoxFirmware(boxtypeString, majorFirmwareVersion,
+			return new SpeedportFirmware(boxtypeString, majorFirmwareVersion,
 					minorFirmwareVersion, modFirmwareVersion, language, mac);
 		} else {
 			System.err.println("detectFirmwareVersion: Password wrong?"); //$NON-NLS-1$
@@ -271,15 +234,7 @@ public class FritzBoxFirmware {
 	 *
 	 */
 	public final String getAccessMethod() {
-		int accessMethod;
-		if ( language.equals("en"))
-			accessMethod = ACCESS_METHOD_ENGLISH;
-		else if (majorFirmwareVersion == 3 && minorFirmwareVersion < 42)
-			accessMethod = ACCESS_METHOD_PRIOR_0342;
-		else
-			accessMethod = ACCESS_METHOD_POST_0342;
-
-		return POSTDATA_ACCESS_METHOD[accessMethod];
+		return POSTDATA_ACCESS_METHOD[0];
 	}
 
 	/**
@@ -311,38 +266,8 @@ public class FritzBoxFirmware {
 
 	public String getBoxName() {
 		switch (boxtype) {
-		case 6:
-			return "FRITZ!Box Fon"; //$NON-NLS-1$
-		case 8:
-			return "FRITZ!Box Fon WLAN"; //$NON-NLS-1$
-		case 14:
-			return "FRITZ!Box 7050"; //$NON-NLS-1$
-		case 12:
-			return "FRITZ!Box 5050"; //$NON-NLS-1$
-		case 11:
-			return "FRITZ!Box ata"; //$NON-NLS-1$
-		case 15:
-			return "Eumex 300ip"; //$NON-NLS-1$
-        case 23:
-            return "FRITZ!Box 5010"; //$NON-NLS-1$
-        case 25:
-            return "FRITZ!Box 5012"; //$NON-NLS-1$
-        case 28:
-        	return "FRITZ!Box Fon WLAN Speedport W501V";
-        case 29:
-            return "FRITZ!Box 7170"; //$NON-NLS-1$
-        case 30:
-            return "FRITZ!Box 7140"; //$NON-NLS-1$
-        case 34:
-            return "FRITZ!Box Fon WLAN Speedport W900V";
-        case 40:
-            return "FRITZ!Box 7141"; //$NON-NLS-1$
-        case 43:
-            return "FRITZ!Box 5140"; //$NON-NLS-1$
-        case 54:
-            return "FRITZ!Box 7270"; //$NON-NLS-1$
-        case 60:
-            return "FRITZ!Box 7113"; //$NON-NLS-1$
+		case 65:
+			return "Speedport"; //$NON-NLS-1$
 		default:
 			return Main.getMessage("unknown"); //$NON-NLS-1$
 		}

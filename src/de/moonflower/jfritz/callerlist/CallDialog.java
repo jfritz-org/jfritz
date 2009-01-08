@@ -14,7 +14,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
@@ -31,9 +30,7 @@ import javax.swing.KeyStroke;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
-import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
-import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.CallPendingDialog;
@@ -50,8 +47,6 @@ public class CallDialog extends JDialog implements ActionListener {
 	private Vector<PhoneNumber> numbers;
 
 	private JComboBox port;
-
-	private FritzBoxFirmware firmware = null;
 
 	JButton okButton, cancelButton;
 

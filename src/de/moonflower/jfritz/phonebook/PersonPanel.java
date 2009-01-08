@@ -54,15 +54,13 @@ import de.moonflower.jfritz.struct.PhoneNumber;
  * This class is used in the phone book to edit individual entries
  *
  *
- * @author Arno Willig
- *
- * TODO: Änderung des Typs einer Rufnummer soll Undo-Button aktivieren TODO:
- * Änderung der Standard-Rufnummer soll Undo-Button aktivieren
+ * @author Arno Willig, Robert Palmer
  *
  * TODO: Auf Tasten reagieren
+ * TODO: Selektion eines falschen Eintrages beim UNDO
+ * TODO: Undo schon bei der Änderung eines Buchstabens (z.B. im Namen) aktivieren (derzeit erst beim zweiten)
  *
- * TODO: Default-Button TODO: Überprüfen, ob Undo-Button auch die Rufnummern,
- * Rufnummerntyp korrekt zurücksetzt
+ * TODO: Default-Button
  */
 public class PersonPanel extends JPanel implements ActionListener,
 		ListSelectionListener, CaretListener {
@@ -99,6 +97,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 	private JFritzWindow parentFrame;
 
+	private boolean updatingGui = false;
 	/**
 	 *
 	 */
@@ -168,8 +167,8 @@ public class PersonPanel extends JPanel implements ActionListener,
 		c.insets.bottom= 10;
 		pictureButton = new JButton();
 		pictureButton.addActionListener(this);
-		pictureButton.setActionCommand("setPicture");
-		pictureButton.setToolTipText("Click to set image");
+		pictureButton.setActionCommand("setPicture"); //$NON-NLS-1$
+		pictureButton.setToolTipText("Click to set image"); //$NON-NLS-1$
 		pictureButton.setBorder(null);
 		configPanel.add(pictureButton, c);
 
@@ -185,8 +184,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		chkBoxPrivateEntry = new JCheckBox();
 		ChangeListener changeListener = new ChangeListener() {
 			public void stateChanged(ChangeEvent changeEvent) {
-				hasChanged = chkBoxPrivateEntry.isSelected() != originalPerson
-						.isPrivateEntry();
+				checkChanged();
 				firePropertyChange();
 			}
 		};
@@ -311,9 +309,26 @@ public class PersonPanel extends JPanel implements ActionListener,
 		// Editors
 		JCheckBox checkBox = new JCheckBox();
 		checkBox.setHorizontalAlignment(JLabel.CENTER);
+		ChangeListener changeListener = new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				checkChanged();
+				firePropertyChange();
+			}
+		};
+		checkBox.addChangeListener(changeListener);
 
 		numberTypesComboBox = new JComboBox(typeModel);
 		numberTypesComboBox.setEditable(false);
+		ActionListener actionListener = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				checkChanged();
+				firePropertyChange();
+			}
+		};
+		numberTypesComboBox.addActionListener(actionListener);
+
 
 		DefaultCellEditor checkBoxEditor = new DefaultCellEditor(checkBox);
 		DefaultCellEditor comboEditor = new DefaultCellEditor(
@@ -390,7 +405,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 			updateUndoButton();
 			updateGUI();
 		} else if (e.getActionCommand().equals("add")) { //$NON-NLS-1$
-			clonedPerson.getNumbers().add(new PhoneNumber("")); //$NON-NLS-1$,  //$NON-NLS-2$
+			clonedPerson.getNumbers().add(new PhoneNumber("", false)); //$NON-NLS-1$
 			typeModel.setTypes();
 			numberHasChanged = true;
 			firePropertyChange();
@@ -411,9 +426,9 @@ public class PersonPanel extends JPanel implements ActionListener,
 			firePropertyChange();
 		} else if (e.getActionCommand().equals("undo")) { //$NON-NLS-1$
 			undo();
-		} else if (e.getActionCommand().equals("ok")) {
+		} else if (e.getActionCommand().equals("ok")) {  //$NON-NLS-1$
 			save(e);
-		} else if (e.getActionCommand().equals("cancel")) {
+		} else if (e.getActionCommand().equals("cancel")) {  //$NON-NLS-1$
 			cancel(e);
 		}
 	}
@@ -448,64 +463,10 @@ public class PersonPanel extends JPanel implements ActionListener,
 	}
 
 	private void updateUndoButton() {
-		undoButton.setEnabled(hasChanged || numberHasChanged);
-	}
-
-	/**
-	 * @return Returns the City.
-	 */
-	public final String getCity() {
-		return tfCity.getText();
-	}
-
-	/**
-	 * @return Returns the company.
-	 */
-	public final String getCompany() {
-		return tfCompany.getText();
-	}
-
-	/**
-	 * @return Returns the FirstName.
-	 */
-	public final String getFirstName() {
-		return tfFirstName.getText();
-	}
-
-	/**
-	 * @return Returns the LastName.
-	 */
-	public final String getLastName() {
-		return tfLastName.getText();
-	}
-
-	/**
-	 * @return Returns the PostalCode.
-	 */
-	public final String getPostalCode() {
-		return tfPostalCode.getText();
-	}
-
-	/**
-	 * @return Returns the Street.
-	 */
-	public final String getStreet() {
-		return tfStreet.getText();
-	}
-
-	/**
-	 * @return Returns the eMail.
-	 */
-	public final String getEmail() {
-		return tfEmail.getText();
-	}
-
-	/**
-	 *
-	 * @return Returns if Person is a private entry
-	 */
-	public final boolean isPrivateEntry() {
-		return chkBoxPrivateEntry.isSelected();
+		if (undoButton != null)
+		{
+			undoButton.setEnabled(hasChanged || numberHasChanged);
+		}
 	}
 
 	/**
@@ -518,8 +479,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 			this.cancelEditing();
 			this.originalPerson = person;
 			clonedPerson = originalPerson.clone();
-			numberHasChanged = false;
-			hasChanged = false;
+			checkChanged();
 			updateGUI();
 			if (!clonedPerson.isDummy())
 			{
@@ -534,13 +494,14 @@ public class PersonPanel extends JPanel implements ActionListener,
 	 *
 	 */
 	public final void updateGUI() {
+		updatingGui = true;
 		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 		scaleHeight = (int)screen.getHeight() / 5;
 		scaleWidth = (scaleHeight / 4) * 3;
 		ImageIcon pictureIcon;
-		if (clonedPerson.getPictureUrl().equals(""))
+		if (clonedPerson.getPictureUrl().equals("")) //$NON-NLS-1$
 		{
-			pictureIcon = new ImageIcon("pictures/NoPic.jpg");
+			pictureIcon = new ImageIcon("pictures/NoPic.jpg"); //$NON-NLS-1$
 		} else {
 			pictureIcon = new ImageIcon(clonedPerson.getPictureUrl());
 		}
@@ -548,7 +509,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		// if we don't find the image, display the default one
 		if (pictureIcon.getIconWidth() == -1 || pictureIcon.getIconHeight() == -1)
 		{
-			pictureIcon = new ImageIcon("pictures/NoPic.jpg");
+			pictureIcon = new ImageIcon("pictures/NoPic.jpg"); //$NON-NLS-1$
 		}
 		float pictureWidthFactor = (float)pictureIcon.getIconWidth() / (float)scaleWidth;
 		float pictureHeightFactor = (float)pictureIcon.getIconHeight() / (float)scaleHeight;
@@ -587,6 +548,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		((NumberTableModel) numberTable.getModel()).setTypeModel(typeModel);
 		((NumberTableModel) numberTable.getModel()).setPerson(clonedPerson);
 
+		updatingGui = false;
 		updateAddDelButtons();
 		updateUndoButton();
 	}
@@ -617,8 +579,10 @@ public class PersonPanel extends JPanel implements ActionListener,
 				originalPerson.setEmailAddress(tfEmail.getText());
 				originalPerson.setPictureUrl(clonedPerson.getPictureUrl());
 
-				originalPerson.setNumbers((Vector<PhoneNumber>) clonedPerson
-						.getNumbers().clone(), clonedPerson.getStandard());
+				Vector<PhoneNumber> vNumbers = (Vector<PhoneNumber>) clonedPerson.getNumbers();
+				Vector<PhoneNumber> cNumbers = (Vector<PhoneNumber>) vNumbers.clone();
+
+				originalPerson.setNumbers(cNumbers, clonedPerson.getStandard());
 
 				phoneBook.notifyListenersOfUpdate(unchanged, originalPerson);
 			}
@@ -626,8 +590,8 @@ public class PersonPanel extends JPanel implements ActionListener,
 			originalPerson.setLastCall(JFritz.getCallerList().findLastCall(originalPerson));
 			JFritz.getCallerList().updatePersonInCalls(originalPerson, originalPerson.getNumbers());
 
-			hasChanged = false;
-			numberHasChanged = false;
+			checkChanged();
+			updateUndoButton();
 		}
 
 		return originalPerson;
@@ -640,31 +604,43 @@ public class PersonPanel extends JPanel implements ActionListener,
 		return hasChanged;
 	}
 
+	private void updateClonedPerson()
+	{
+		clonedPerson.setPrivateEntry(chkBoxPrivateEntry.isSelected());
+		clonedPerson.setFirstName(tfFirstName.getText());
+		clonedPerson.setCompany(tfCompany.getText());
+		clonedPerson.setLastName(tfLastName.getText());
+		clonedPerson.setStreet(tfStreet.getText());
+		clonedPerson.setPostalCode(tfPostalCode.getText());
+		clonedPerson.setCity(tfCity.getText());
+		clonedPerson.setEmailAddress(tfEmail.getText());
+	}
+
+	private void checkChanged()
+	{
+		hasChanged = !clonedPerson.equals(originalPerson);
+	}
+
 	/**
 	 * @see javax.swing.event.CaretListener#caretUpdate(javax.swing.event.CaretEvent)
 	 */
 	public void caretUpdate(CaretEvent e) {
-		hasChanged = !tfFirstName.getText().equals(
-				originalPerson.getFirstName())
-				|| !tfCompany.getText().equals(originalPerson.getCompany())
-				|| !tfLastName.getText().equals(originalPerson.getLastName())
-				|| !tfStreet.getText().equals(originalPerson.getStreet())
-				|| !tfPostalCode.getText().equals(
-						originalPerson.getPostalCode())
-				|| !tfCity.getText().equals(originalPerson.getCity())
-				|| !tfEmail.getText().equals(originalPerson.getEmailAddress())
-				|| !clonedPerson.getPictureUrl().equals(originalPerson.getPictureUrl())
-				|| numberHasChanged;
+		checkChanged();
 
 		firePropertyChange();
 	}
 
 	public void firePropertyChange() {
-		if (numberHasChanged) {
-			((NumberTableModel) numberTable.getModel()).fireTableDataChanged();
+
+		if (!updatingGui)
+		{
+			if (numberHasChanged) {
+				((NumberTableModel) numberTable.getModel()).fireTableDataChanged();
+			}
+			updateClonedPerson();
+			updateAddDelButtons();
+			updateUndoButton();
 		}
-		updateAddDelButtons();
-		updateUndoButton();
 	}
 
 	public void terminateEditing() {
@@ -680,31 +656,29 @@ public class PersonPanel extends JPanel implements ActionListener,
 		int result = -1;
 		if ( hasChanged || numberHasChanged )
 		{
-			String[] options = {Main.getMessage("save"), Main.getMessage("discard")};
+			String[] options = {Main.getMessage("save"), Main.getMessage("discard")}; //$NON-NLS-1$
 
-			result = JOptionPane.showOptionDialog(parentFrame, Main.getMessage("save_changes"), Main.getMessage("unsaved_changes"),
+			result = JOptionPane.showOptionDialog(parentFrame, Main.getMessage("save_changes"), Main.getMessage("unsaved_changes"),  //$NON-NLS-1$,  //$NON-NLS-2$
 					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
 		}
-		hasChanged = false;
+		checkChanged();
 		if (numberTable.isEditing()) {
 			int row = numberTable.getEditingRow();
 			int column = numberTable.getEditingColumn();
 			if ( result == 0)
 			{
-				numberTable.editingStopped(new ChangeEvent(numberTable
-						.getComponentAt(row, column)));
+				numberTable.editingStopped(new ChangeEvent(numberTable.getComponentAt(row, column)));
 			}
 			else
 			{
-				numberTable.editingCanceled(new ChangeEvent(numberTable
-						.getComponentAt(row, column)));
+				numberTable.editingCanceled(new ChangeEvent(numberTable.getComponentAt(row, column)));
 			}
 			numberHasChanged = false;
 		}
 	    if (result == 0) // YES
 	    {
-	    	ActionEvent e = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "ok");
+	    	ActionEvent e = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "ok"); //$NON-NLS-1$
 	    	e.setSource(okButton);
 	    	save(e);
 	    }
@@ -765,9 +739,9 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 	private void undo()
 	{
-		this.setPerson(originalPerson, false);
 		hasChanged = false;
 		numberHasChanged = false;
+		this.setPerson(originalPerson, false);
 		firePropertyChange();
 	}
 

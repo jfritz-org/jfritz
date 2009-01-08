@@ -783,4 +783,22 @@ public class PhoneNumber implements Comparable, Serializable {
 		return type+"="+number;
 	}
 
+	public void copyFrom(PhoneNumber num)
+	{
+		this.callbycall = num.callbycall;
+		this.country = num.country;
+		this.countryCode = num.countryCode;
+		this.Description = num.Description;
+		this.flagFileName = num.flagFileName;
+		this.number = num.number;
+		this.numberMatcher = num.numberMatcher;
+		this.type = num.type;
+	}
+
+	public PhoneNumber clone()
+	{
+		PhoneNumber p = new PhoneNumber("", false);
+		p.copyFrom(this);
+		return p;
+	}
 }
