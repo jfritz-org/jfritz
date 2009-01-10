@@ -11,7 +11,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import de.moonflower.jfritz.utils.network.AddonInfosListener;
+import de.moonflower.jfritz.utils.network.UPNPAddonInfosListener;
 
 /**
  * XML Handler for reading the output of the addonInfos
@@ -22,23 +22,23 @@ import de.moonflower.jfritz.utils.network.AddonInfosListener;
  */
 public class AddonInfosXMLHandler extends DefaultHandler {
 
-	AddonInfosListener listener;
+	UPNPAddonInfosListener listener;
 
 	String chars;
 
-	String ByteSendRate, ByteReceiveRate, PacketSendRate, PacketReceiveRate;
+	String ByteSendRate = "-", ByteReceiveRate = "-", PacketSendRate = "-", PacketReceiveRate = "-";
 
-	String TotalBytesSent, TotalBytesReceived;
+	String TotalBytesSent = "-", TotalBytesReceived = "-";
 
-	String AutoDisconnectTime, IdleDisconnectTime;
+	String AutoDisconnectTime = "-", IdleDisconnectTime = "-";
 
-	String DNSServer1, DNSServer2;
+	String DNSServer1 = "-", DNSServer2 = "-";
 
-	String voipDNSServer1, voipDNSServer2;
+	String voipDNSServer1 = "-", voipDNSServer2 = "-";
 
-	String upnpControl, routedBridgeMode;
+	String upnpControl = "-", routedBridgeMode = "-";
 
-	public AddonInfosXMLHandler(AddonInfosListener ail) {
+	public AddonInfosXMLHandler(UPNPAddonInfosListener ail) {
 		super();
 		listener = ail;
 	}
@@ -51,12 +51,6 @@ public class AddonInfosXMLHandler extends DefaultHandler {
 
 	public void startElement(String namespaceURI, String lName, String qName,
 			Attributes attrs) throws SAXException {
-//		String eName = lName;
-		//FIXME this makes no sense to me
-//		if ("".equals(eName)) //$NON-NLS-1$
-	//		eName = qName;
-
-		// Important to clear buffer :)
 		chars = "";  //$NON-NLS-1$
 	}
 
@@ -70,7 +64,7 @@ public class AddonInfosXMLHandler extends DefaultHandler {
 			ByteReceiveRate = chars;
 		} else if (qName.equals("NewPacketSendRate")) { //$NON-NLS-1$
 			PacketSendRate = chars;
-		} else if (qName.equals("NewReceiveSendRate")) { //$NON-NLS-1$
+		} else if (qName.equals("NewPacketReceiveRate")) { //$NON-NLS-1$
 			PacketReceiveRate = chars;
 		} else if (qName.equals("NewTotalBytesSent")) { //$NON-NLS-1$
 			TotalBytesSent = chars;

@@ -14,13 +14,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.IOException;
-import java.io.StringReader;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -30,26 +27,20 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.utils.Debug;
-import de.moonflower.jfritz.utils.network.AddonInfosListener;
-import de.moonflower.jfritz.utils.network.AddonInfosXMLHandler;
+import de.moonflower.jfritz.utils.network.UPNPAddonInfosListener;
+import de.moonflower.jfritz.utils.network.UPNPExternalIpListener;
 
 /**
  * Displays a dialog with some statistical data
- * @author Arno Willig
+ * @author Arno Willig, Robert Palmer
  *
  */
-public class StatsDialog extends JDialog implements AddonInfosListener {
+public class StatsDialog extends JDialog implements UPNPAddonInfosListener, UPNPExternalIpListener {
 	private static final long serialVersionUID = 1;
 
 	JButton okButton, cancelButton, refreshButton;
@@ -81,8 +72,11 @@ public class StatsDialog extends JDialog implements AddonInfosListener {
 
 		JFritz.getFritzBox().getInternetStats(this);
 		JFritz.getFritzBox().getWebservice();
-		externalIPLabel.setText(JFritz.getFritzBox().getExternalIPAddress());
-
+		JFritz.getFritzBox().getInfo();
+		JFritz.getFritzBox().getAutoConfig();
+		JFritz.getFritzBox().getConnectionTypeInfo();
+		JFritz.getFritzBox().getGenericPortMappingEntry();
+		JFritz.getFritzBox().getExternalIPAddress(this);
 	}
 
 	/**
@@ -291,6 +285,8 @@ public class StatsDialog extends JDialog implements AddonInfosListener {
 		routedBridgeMode.setText(routedMode);
 	}
 
-
-
+	@Override
+	public void setExternalIp(String externalIp) {
+		externalIPLabel.setText(externalIp);
+	}
 }

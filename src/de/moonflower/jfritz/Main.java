@@ -44,7 +44,6 @@
  * TODO: Sonderzeichen werden in den Balloontips unter Windows nicht korrekt angezeigt. Scheint ein Windowsproblem zu sein. Lösung/Workaround noch nicht gefunden.
  * TODO: JFritz.ico mitliefern
  * TODO: Linux-Startscript mitliefern
- * TODO: LANG/jfritz.properties bei einem neuen Release aktuell halten
  * TODO: Vor dem Release noch den installDirectory-Pfad in JFritzUpdate auf "." anpassen
  *
  * Roadmap:
@@ -201,9 +200,9 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.2.4"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.2.5"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.134 2009/01/08 16:38:50 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.135 2009/01/10 23:06:58 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

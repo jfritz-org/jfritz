@@ -1,11 +1,45 @@
+JFritz 0.7.2.5:
+- Neu: Auswertung weiterer UPNP-Nachrichten.
+- Bugfix: Internetstatistiken werden nun wieder korrekt dargestellt.
+- Bugfix-Telefonbuch: Undo setzt nun wirklich alle Felder korrekt zurück.
+- Monitoring-Anzeige komplett überarbeitet.
+- Bugfix: Alten Statistikdialog wieder funktionsfähig gemacht. Ist jedoch durch die neue Monitoring-Anzeige überflüssig. TODO: Entfernen.
+- Bugfix-Wahlhilfe: Fenster mit Auflegoption kommt nun bei jedem Wahlvorgang.
+Strings:
+actualize
+auto_disconnect_time
+calls_in_progress
+connection_idle_time
+day_days
+disabled
+dns_server_1
+dns_server_2
+dns_server_voip_1
+dns_server_voip_2
+dsl_information
+download
+enabled
+external_ip
+hour_hours
+minute_minutes
+pppoe_passthrough
+receive_rate
+second_seconds
+send_rate
+sync_down
+sync_up
+upload
+upnp_control
+uptime
+
 JFritz 0.7.2.4:
-- Bugfix: Phonebook 
+- Bugfix: Telefonbuch 
 	(korrektes Kopieren und clonen von PhoneNumber)
-	(Person.equals() prüft nun neben dem CSV-Export auch Standard-Nummer und PictureUrl.
+	(Person.equals() prüft nun neben dem CSV-Export auch Standard-Nummer und PictureUrl)
 - Neu: Erkennen von Fritzifizierten Speedport W501V.
-- Bugfix-Phonebook: Änderung des Rufnummerntyps aktiviert den Undo-Button.
-- Bugfix-Phonebook: Änderung der Standardrufnummer aktiviert den Undo-Button.
-- Bugfix-Phonebook: Undo-Button setzt nun wirklich alle Felder korrekt zurück.
+- Bugfix-Telefonbuch: Änderung des Rufnummerntyps aktiviert den Undo-Button.
+- Bugfix-Telefonbuch: Änderung der Standardrufnummer aktiviert den Undo-Button.
+- Bugfix-Telefonbuch: Undo-Button setzt nun wirklich alle Felder korrekt zurück. (doch nicht :)
 - Einige überflüssige bzw. veraltete Methoden entfernt.  
 
 JFritz 0.7.2.3:
@@ -81,7 +115,7 @@ JFritz 0.7.1.12
 - Bugfix: Lautstärke des Klingeltons auf 100% gesetzt.
 - Bugfix: Inverssuche DasÖrtliche korrigiert (Straßenname).
 - New: Status-Icons für den Anrufmonitor.
-- Change: Phonebook-Knopf von "Okay" nach "Save" umbenannt.
+- Change: Telefonbuch-Knopf von "Okay" nach "Save" umbenannt.
 - New: Popup im Telefonbuch, wenn ungespeicherte Änderungen vorhanden sind.
 - Change: Passwort-Dialog nun zentriert.
 - Change: Config-Wizard überarbeitet.

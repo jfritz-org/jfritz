@@ -474,14 +474,14 @@ public class PersonPanel extends JPanel implements ActionListener,
 	 *            The person to set.
 	 */
 	public final void setPerson(Person person, boolean resetFilter) {
-		if (clonedPerson.isDummy() || !clonedPerson.equals(person))
+		if (clonedPerson == null || clonedPerson.isDummy() || !clonedPerson.equals(person))
 		{
 			this.cancelEditing();
 			this.originalPerson = person;
 			clonedPerson = originalPerson.clone();
 			checkChanged();
 			updateGUI();
-			if (!clonedPerson.isDummy())
+			if ((clonedPerson != null) && (!clonedPerson.isDummy()))
 			{
 				JFritz.getJframe().getPhoneBookPanel().getPhoneBookTable()
 				.showAndSelectPerson(originalPerson, resetFilter);
@@ -618,7 +618,10 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 	private void checkChanged()
 	{
-		hasChanged = !clonedPerson.equals(originalPerson);
+		if (clonedPerson != null)
+			hasChanged = !clonedPerson.equals(originalPerson);
+		else
+			hasChanged = true;
 	}
 
 	/**
@@ -741,6 +744,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 	{
 		hasChanged = false;
 		numberHasChanged = false;
+		clonedPerson = null;
 		this.setPerson(originalPerson, false);
 		firePropertyChange();
 	}

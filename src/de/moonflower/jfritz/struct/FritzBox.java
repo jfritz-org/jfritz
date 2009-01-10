@@ -35,8 +35,11 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.HTMLUtil;
 import de.moonflower.jfritz.utils.JFritzUtils;
-import de.moonflower.jfritz.utils.network.AddonInfosListener;
+import de.moonflower.jfritz.utils.network.UPNPAddonInfosListener;
 import de.moonflower.jfritz.utils.network.AddonInfosXMLHandler;
+import de.moonflower.jfritz.utils.network.UPNPCommonLinkPropertiesListener;
+import de.moonflower.jfritz.utils.network.UPNPExternalIpListener;
+import de.moonflower.jfritz.utils.network.UPNPStatusInfoListener;
 import de.moonflower.jfritz.utils.network.UPNPUtils;
 
 public class FritzBox {
@@ -68,7 +71,7 @@ public class FritzBox {
 
 	private static String URL_SERVICE_DSLLINK = ":49000/upnp/control/WANDSLLinkC1";
 
-	private static String URN_SERVICE_DSLLINK = "urn:schemas-upnp-org:service: WANDSLLinkConfig:1#GetDSLLinkInfo";
+	private static String URN_SERVICE_DSLLINK = "urn:schemas-upnp-org:service:WANDSLLinkConfig:1#GetDSLLinkInfo";
 
 	private static String URL_SERVICE_EXTERNALIP = ":49000/upnp/control/WANIPConn1";
 
@@ -82,6 +85,21 @@ public class FritzBox {
 
 	private static String URN_SERVICE_COMMONLINK = "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetCommonLinkProperties";
 
+	private static String URL_SERVICE_GETINFO = ":49000/upnp/control/any";
+
+	private static String URN_SERVICE_GETINFO = "urn:schemas-any-com:service:Any:1#GetInfo";
+
+	private static String URL_SERVICE_AUTOCONFIG = ":49000/upnp/control/WANDSLLinkC1";
+
+	private static String URN_SERVICE_AUTOCONFIG = "urn:schemas-upnp-org:service:WANDSLLinkConfig:1#GetAutoConfig";
+
+	private static String URL_SERVICE_CONNECTIONTYPEINFO = ":49000/upnp/control/WANIPConn1";
+
+	private static String URN_SERVICE_CONNECTIONTYPEINFO = "urn:schemas-upnp-org:service:WANIPConnection:1#GetConnectionTypeInfo";
+
+	private static String URL_SERVICE_GENERICPORTMAPPING = ":49000/upnp/control/WANIPConn1";
+
+	private static String URN_SERVICE_GENERICPORTMAPPING = "urn:schemas-upnp-org:service:WANIPConnection:1#GetGenericPortMappingEntry";
 
 	private final static String CSV_FILE_EN = "FRITZ!Box_Calllist.csv";
 
@@ -747,27 +765,28 @@ public class FritzBox {
 	 *
 	 * @return the raw xml from the web service of the box
 	 */
-	public void getInternetStats(AddonInfosListener listener){
+	public void getInternetStats(UPNPAddonInfosListener listener){
 
 		String xml =
-	        "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-	        "<s:Envelope " +
-	        " xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n"
-	        +"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding\">\n" +
+	        "<?xml version=\"1.0\"?>\n" +
+	        "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n"
+	        +"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
 	        "<s:Body>" +
-	        "<u:GetAddonInfos xmlns:u=\"urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1\""+
-	        "</u:GetAddonInfos>\n"	+
-	        " </s:Body>\n" +
+	        "<u:GetAddonInfos xmlns:u=\"urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1\"></u:GetAddonInfos>\n"	+
+	        "</s:Body>\n" +
 	        "</s:Envelope>";
 
+		String result = UPNPUtils.getSOAPData("http://" + getAddress() +
+				URL_SERVICE_ADDONINFOS, URN_SERVICE_ADDONINFOS, xml);
+
+//		Debug.msg("Result of getAddonInfos: "+ result);
 
 		try {
 			XMLReader reader = SAXParserFactory.newInstance().newSAXParser()
 					.getXMLReader();
 			reader.setContentHandler(new AddonInfosXMLHandler(listener));
 			reader.parse(new InputSource(new StringReader(
-					UPNPUtils.getSOAPData("http://" + getAddress() +
-					URL_SERVICE_ADDONINFOS, URN_SERVICE_ADDONINFOS, xml))));
+					result)));
 
 		} catch (ParserConfigurationException e1) {
 			System.err.println(e1);
@@ -787,55 +806,62 @@ public class FritzBox {
 	public void getWebservice(){
 
 		String xml =
-	        "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-	        "<s:Envelope " +
-	        " xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n"
-	        +"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding\">\n" +
-	        "<s:Body>" +
-	        "<u:GetDSLLinkInfo xmlns:u=\"urn:schemas-upnp-org:service: WANDSLLinkConfig:1\""+
-	        "</u:GetDSLLinkInfo>\n"	+
-	        " </s:Body>\n" +
+	        "<?xml version=\"1.0\"?>\n" +
+	        "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n"
+	        +"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
+	        "<s:Body><u:GetDSLLinkInfo xmlns:u=\"urn:schemas-upnp-org:service:WANDSLLinkConfig:1\"></u:GetDSLLinkInfo>\n"	+
+	        "</s:Body>\n" +
 	        "</s:Envelope>";
 
 		String result = UPNPUtils.getSOAPData("http://" + getAddress() +
 			URL_SERVICE_DSLLINK, URN_SERVICE_DSLLINK, xml);
 
 		/*	This is the result of the web service
-		 	<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body>
-			<u:GetDSLLinkInfoResponse xmlns:u="urn:schemas-upnp-org:service: WANDSLLinkConfig:1">
-			<NewLinkType>PPPoE</NewLinkType>
+			<?xml version="1.0"?>
+			<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body>
+			<u:GetDSLLinkInfoResponse xmlns:u="urn:schemas-upnp-org:service:WANDSLLinkConfig:1">
+			<NewLinkType>PPPoA</NewLinkType>
 			<NewLinkStatus>Up</NewLinkStatus>
 			</u:GetDSLLinkInfoResponse>
 			</s:Body> </s:Envelope>
 		 	*/
 
-		Debug.msg("Result of dsl service: "+ result);
+		Debug.msg("Result of GetDSLLinkInfo: "+ result);
 
-		//XML for service, in case the box starts checking some time
-       /* <?xml version="1.0"?>
-        <s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"
-        s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-        <s:Body><u:GetStatusInfo xmlns:u="urn:schemas-upnp-org:service:WANIPConnection:1"></u:GetStatusInfo>
-        </s:Body>
-        </s:Envelope>*/
+	}
 
-		result = UPNPUtils.getSOAPData("http://" + getAddress() +
+	public void getStatusInfo(UPNPStatusInfoListener listener)
+	{
+		String xml =
+	        "<?xml version=\"1.0\"?>\n" +
+	        "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n"
+	        +"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
+	        "<s:Body><u:GetDSLLinkInfo xmlns:u=\"urn:schemas-upnp-org:service:WANDSLLinkConfig:1\"></u:GetDSLLinkInfo>\n"	+
+	        "</s:Body>\n" +
+	        "</s:Envelope>";
+
+		String result = UPNPUtils.getSOAPData("http://" + getAddress() +
 				URL_SERVICE_STATUSINFO, URN_SERVICE_STATUSINFO, xml);
 
-		/* 	This is the result fo the STATUSINFO web service
+//		Debug.msg("Result of dsl getStatusInfo: "+ result);
+
+		Pattern p = Pattern.compile("<NewUptime>([^<]*)</NewUptime>");
+		Matcher m = p.matcher(result);
+		if(m.find())
+			listener.setUptime(m.group(1));
+		else
+			listener.setUptime("-");
+
+		/*
+		<?xml version="1.0"?>
 		<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body>
 		<u:GetStatusInfoResponse xmlns:u="urn:schemas-upnp-org:service:WANIPConnection:1">
 		<NewConnectionStatus>Connected</NewConnectionStatus>
 		<NewLastConnectionError>ERROR_NONE</NewLastConnectionError>
-		<NewUptime>29313</NewUptime>
+		<NewUptime>3574</NewUptime>
 		</u:GetStatusInfoResponse>
 		</s:Body> </s:Envelope>
-	*/
-
-
-		Debug.msg("Result of status info: "+result);
-
-
+		*/
 	}
 
 	/**
@@ -843,76 +869,174 @@ public class FritzBox {
 	 *
 	 * @return
 	 */
-	public String getExternalIPAddress(){
+	public void getExternalIPAddress(UPNPExternalIpListener listener){
 
 		String xml =
-			"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-			"<s:Envelope " +
-			" xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n"
-			+"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding\">\n" +
-			"<s:Body>" +
-			"<u:GetExternalIPAddress xmlns:u=\"urn:schemas-upnp-org:service:WANIPConnection:1\""+
-			"</u:GetExternalIPAddress>\n"	+
-			" </s:Body>\n" +
+			"<?xml version=\"1.0\"?>\n" +
+			"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n"
+			+"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
+			"<s:Body><u:GetExternalIPAddress xmlns:u=\"urn:schemas-upnp-org:service:WANIPConnection:1\"></u:GetExternalIPAddress>\n"	+
+			"</s:Body>\n" +
 			"</s:Envelope>";
 
 		String result = UPNPUtils.getSOAPData("http://" + getAddress() +
 				URL_SERVICE_EXTERNALIP, URN_SERVICE_EXTERNALIP, xml);
 
-		/*  Results from the box
-		    <s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body>
-			<u:GetExternalIPAddressResponse xmlns:u="urn:schemas-upnp-org:service:WANIPConnection:1">
-			<NewExternalIPAddress>X.X.X.X</NewExternalIPAddress>
-			</u:GetExternalIPAddressResponse>
-			</s:Body> </s:Envelope> */
+		/*
+		<?xml version="1.0"?>
+		<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body>
+		<u:GetExternalIPAddressResponse xmlns:u="urn:schemas-upnp-org:service:WANIPConnection:1">
+		<NewExternalIPAddress>93.216.135.71</NewExternalIPAddress>
+		</u:GetExternalIPAddressResponse>
+		</s:Body> </s:Envelope>
+		 */
 
-		Debug.msg("External IP response: "+result);
+//		Debug.msg("External IP response: "+result);
 
 		Pattern p = Pattern.compile("<NewExternalIPAddress>([^<]*)</NewExternalIPAddress>");
 		Matcher m = p.matcher(result);
 		if(m.find())
-			return m.group(1);
+			listener.setExternalIp(m.group(1));
 		else
-			return "";
-
+			listener.setExternalIp("-");
 	}
 
-	public void getCommonLinkInfo(){
-		/*
-		 *  This is the soap message expected by the box
-			<?xml version="1.0"?>
-			<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"
-			s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-			<s:Body><u:GetCommonLinkProperties xmlns:u="urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1"></u:GetCommonLinkProperties>
-			</s:Body>
-			</s:Envelope>
-		 */
-
+	public void getCommonLinkInfo(UPNPCommonLinkPropertiesListener listener){
 		String xml =
-			"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-			"<s:Envelope " +
-			" xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n"
-			+"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding\">\n" +
-			"<s:Body>" +
-			"<u:GetCommonLinkProperties xmlns:u=\"urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1\""+
-			"</u:GetCommonLinkProperties>\n"	+
-			" </s:Body>\n" +
+			"<?xml version=\"1.0\"?>\n" +
+			"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n"
+			+"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
+			"<s:Body><u:GetCommonLinkProperties xmlns:u=\"urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1\"></u:GetCommonLinkProperties>\n"	+
+			"</s:Body>\n" +
 			"</s:Envelope>";
 
 		String result =  UPNPUtils.getSOAPData("http://" + getAddress() +
 				URL_SERVICE_COMMONLINK, URN_SERVICE_COMMONLINK, xml);
 
-		/*  This is the response
-		 	<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body>
-			<u:GetCommonLinkPropertiesResponse xmlns:u="urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1">
-			<NewWANAccessType>DSL</NewWANAccessType>
-			<NewLayer1UpstreamMaxBitRate>1183000</NewLayer1UpstreamMaxBitRate>
-			<NewLayer1DownstreamMaxBitRate>15656000</NewLayer1DownstreamMaxBitRate>
-			<NewPhysicalLinkStatus>Up</NewPhysicalLinkStatus>
-			</u:GetCommonLinkPropertiesResponse>
-			</s:Body> </s:Envelope>
-		*/
+//		Debug.msg("Result of getCommonLinkProperties: "+ result);
 
+		Pattern p = Pattern.compile("<NewLayer1UpstreamMaxBitRate>([^<]*)</NewLayer1UpstreamMaxBitRate>");
+		Matcher m = p.matcher(result);
+		if(m.find())
+			listener.setUpstreamMaxBitRate(m.group(1));
+		else
+			listener.setUpstreamMaxBitRate("-");
+
+		p = Pattern.compile("<NewLayer1DownstreamMaxBitRate>([^<]*)</NewLayer1DownstreamMaxBitRate>");
+		m = p.matcher(result);
+		if(m.find())
+			listener.setDownstreamMaxBitRate(m.group(1));
+		else
+			listener.setDownstreamMaxBitRate("-");
+
+		/*  This is the response
+		<?xml version="1.0"?>
+		<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body>
+		<u:GetCommonLinkPropertiesResponse xmlns:u="urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1">
+		<NewWANAccessType>DSL</NewWANAccessType>
+		<NewLayer1UpstreamMaxBitRate>10044000</NewLayer1UpstreamMaxBitRate>
+		<NewLayer1DownstreamMaxBitRate>51384000</NewLayer1DownstreamMaxBitRate>
+		<NewPhysicalLinkStatus>Up</NewPhysicalLinkStatus>
+		</u:GetCommonLinkPropertiesResponse>
+		</s:Body> </s:Envelope>
+		*/
+	}
+
+	public void getInfo() {
+		String xml =
+			"<?xml version=\"1.0\"?>\n" +
+			"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
+			"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
+			"<s:Body><u:GetInfo xmlns:u=\"urn:schemas-any-com:service:Any:1\"></u:GetInfo>\n" +
+			"</s:Body>\n" +
+			"</s:Envelope>";
+
+		String result =  UPNPUtils.getSOAPData("http://" + getAddress() +
+				URL_SERVICE_GETINFO, URN_SERVICE_GETINFO, xml);
+
+//		Debug.msg("Result of getInfo: "+ result);
+
+		/*
+		<?xml version="1.0"?>
+		<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body>
+		<u:GetInfoResponse xmlns:u="urn:schemas-any-com:service:Any:1">
+		<NewBoxid>123</NewBoxid>
+		<NewMacaddress>456</NewMacaddress>
+		<NewProductname>FRITZ!Box</NewProductname>
+		<NewHostname></NewHostname>
+		<NewLanguage></NewLanguage>
+		<NewHardwarelist></NewHardwarelist>
+		<NewUsbPluglist></NewUsbPluglist>
+		<NewExtendedInfo></NewExtendedInfo>
+		</u:GetInfoResponse>
+		</s:Body> </s:Envelope>
+		*/
+	}
+	public void getAutoConfig() {
+		String xml =
+			"<?xml version=\"1.0\"?>\n" +
+			"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
+			"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
+			"<s:Body><u:GetAutoConfig xmlns:u=\"urn:schemas-upnp-org:service:WANDSLLinkConfig:1\"></u:GetAutoConfig>\n" +
+			"</s:Body>\n" +
+			"</s:Envelope>";
+
+		String result =  UPNPUtils.getSOAPData("http://" + getAddress() +
+				URL_SERVICE_AUTOCONFIG, URN_SERVICE_AUTOCONFIG, xml);
+
+		Debug.msg("Result of getAutoConfig: "+ result);
+
+		/*
+		<?xml version="1.0"?>
+		<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body>
+ 		<u:GetAutoConfigResponse xmlns:u="urn:schemas-upnp-org:service:WANDSLLinkConfig:1">
+		<NewAutoConfig>0</NewAutoConfig>
+		</u:GetAutoConfigResponse>
+		</s:Body> </s:Envelope>
+		 */
+	}
+
+	public void getConnectionTypeInfo() {
+		String xml =
+			"<?xml version=\"1.0\"?>\n" +
+			"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
+			":encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
+			"<s:Body><u:GetConnectionTypeInfo xmlns:u=\"urn:schemas-upnp-org:service:WANIPConnection:1\"></u:GetConnectionTypeInfo>\n" +
+			"</s:Body>\n" +
+			"</s:Envelope>";
+
+		String result =  UPNPUtils.getSOAPData("http://" + getAddress() +
+				URL_SERVICE_CONNECTIONTYPEINFO, URN_SERVICE_CONNECTIONTYPEINFO, xml);
+
+//		Debug.msg("Result of getConnectionTypeInfo: "+ result);
+
+		/*
+		<?xml version="1.0"?>
+		<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body>
+		<u:GetConnectionTypeInfoResponse xmlns:u="urn:schemas-upnp-org:service:WANIPConnection:1">
+		<NewConnectionType>IP_Routed</NewConnectionType>
+		<NewPossibleConnectionTypes>IP_Routed</NewPossibleConnectionTypes>
+		</u:GetConnectionTypeInfoResponse>
+		</s:Body> </s:Envelope>
+		 */
+	}
+
+	public void getGenericPortMappingEntry()
+	{
+		String xml =
+			"<?xml version=\"1.0\"?>\n" +
+			"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
+			"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
+			"<s:Body><u:GetGenericPortMappingEntry xmlns:u=\"urn:schemas-upnp-org:service:WANIPConnection:1\">\n" +
+			"<NewPortMappingIndex></NewPortMappingIndex>\n" +
+			"</u:GetGenericPortMappingEntry>\n" +
+			"</s:Body>\n" +
+			"</s:Envelope>";
+
+		String result =  UPNPUtils.getSOAPData("http://" + getAddress() +
+				URL_SERVICE_GENERICPORTMAPPING, URN_SERVICE_GENERICPORTMAPPING, xml);
+
+//		Debug.msg("Result of getGenericPortMappingEntry: "+ result);
 	}
 
 	public String[] getAvailablePorts(){

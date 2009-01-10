@@ -8,7 +8,7 @@ package de.moonflower.jfritz.utils.network;
 	 * @author brian
 	 *
 	 */
-public interface AddonInfosListener {
+public interface UPNPAddonInfosListener {
 
 	public void setBytesRate(String sent, String received);
 

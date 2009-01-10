@@ -219,7 +219,12 @@ public class CallDialog extends JDialog implements ActionListener {
 
 				//popup new dialog with the possibility to cancel this call
 				String text = Main.getMessage("calldialog_pending_call");
-				text = text.replaceAll("%NUMBER", ((JComboBox) cboNumber).getSelectedItem().toString());
+				if (this.numbers.size() == 1) { // if only one number -> use editable JTextField
+					text = text.replaceAll("%NUMBER", ((JTextField) cboNumber).getText());
+				} else {// if more then one number -> use editable JComboBox
+					text = text.replaceAll("%NUMBER", ((JComboBox) cboNumber).getSelectedItem().toString());
+				}
+
 				CallPendingDialog cancelDialog = new CallPendingDialog(text);
 				cancelDialog.setVisible(true);
 				cancelDialog.dispose();

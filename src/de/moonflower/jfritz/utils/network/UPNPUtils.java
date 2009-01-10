@@ -3,7 +3,6 @@ package de.moonflower.jfritz.utils.network;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
-//import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -11,7 +10,6 @@ import java.net.HttpURLConnection;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -61,7 +59,7 @@ public class UPNPUtils {
 		return devices;
 	}
 
-	public static Vector SSDP_discoverFritzBoxes(int timeout) {
+	public static Vector<SSDPPacket> SSDP_discoverFritzBoxes(int timeout) {
 		Vector<SSDPPacket> devices = SSDP_discoverDevices(timeout);
 		Vector<SSDPPacket> fritzboxes = new Vector<SSDPPacket>();
 		Enumeration<SSDPPacket> en = devices.elements();
