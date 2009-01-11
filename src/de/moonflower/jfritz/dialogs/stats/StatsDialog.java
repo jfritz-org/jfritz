@@ -285,7 +285,6 @@ public class StatsDialog extends JDialog implements UPNPAddonInfosListener, UPNP
 		routedBridgeMode.setText(routedMode);
 	}
 
-	@Override
 	public void setExternalIp(String externalIp) {
 		externalIPLabel.setText(externalIp);
 	}

@@ -310,7 +310,6 @@ public class PersonPanel extends JPanel implements ActionListener,
 		JCheckBox checkBox = new JCheckBox();
 		checkBox.setHorizontalAlignment(JLabel.CENTER);
 		ChangeListener changeListener = new ChangeListener() {
-			@Override
 			public void stateChanged(ChangeEvent e) {
 				checkChanged();
 				firePropertyChange();
@@ -321,7 +320,6 @@ public class PersonPanel extends JPanel implements ActionListener,
 		numberTypesComboBox = new JComboBox(typeModel);
 		numberTypesComboBox.setEditable(false);
 		ActionListener actionListener = new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				checkChanged();
 				firePropertyChange();

@@ -105,10 +105,14 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 	 *
 	 */
 	public MonitoringPanel(){
-		setLayout(new BorderLayout());
+		JPanel innerPanel = new JPanel();
 
-		add(createInternetPanel(), BorderLayout.NORTH);
-		add(createPhonePanel(), BorderLayout.CENTER);
+		innerPanel.setLayout(new BorderLayout());
+
+		innerPanel.add(createInternetPanel(), BorderLayout.NORTH);
+		innerPanel.add(createPhonePanel(), BorderLayout.CENTER);
+
+		this.add(new JScrollPane(innerPanel));
 
 		getStaticUPnPInfos();
 	}
@@ -498,6 +502,7 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 	//TODO change me!
 	public void setStatus(){
 		//statusBarController.fireStatusChanged("!");
+		statusBarController.fireStatusChanged("");
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -523,7 +528,7 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 
 	private void getStaticUPnPInfos()
 	{
-//		JFritz.getFritzBox().getInternetStats(this);
+		JFritz.getFritzBox().getInternetStats(this);
 		JFritz.getFritzBox().getCommonLinkInfo(this);
 		JFritz.getFritzBox().getStatusInfo(this);
 		JFritz.getFritzBox().getExternalIPAddress(this);
@@ -559,7 +564,6 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		this.statusBarController = statusBarController;
 	}
 
-	@Override
 	public void setBytesRate(String sent, String received) {
 		updateInternetUsage(sent, received);
 		if (sent.equals("-")) //$NON-NLS-1$
@@ -591,13 +595,11 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		}
 	}
 
-	@Override
 	public void setDNSInfo(String dns1, String dns2) {
 		dns1Label.setText(dns1);
 		dns2Label.setText(dns2);
 	}
 
-	@Override
 	public void setDisconnectInfo(String disconnectTime, String idleTime) {
 		if (disconnectTime.equals("0"))
 		{
@@ -610,7 +612,6 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		idleTimeLabel.setText(idleTime + " " + Main.getMessage("second_seconds"));
 	}
 
-	@Override
 	public void setOtherInfo(String upnpControl, String routedMode) {
 		if (upnpControl.equals("1")) //$NON-NLS-1$
 		{
@@ -631,7 +632,6 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		}
 	}
 
-	@Override
 	public void setTotalBytesInfo(String sent, String received) {
 		if (!sent.equals("-")) //$NON-NLS-1$
 		{
@@ -684,18 +684,15 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		}
 	}
 
-	@Override
 	public void setVoipDNSInfo(String voipDns1, String voipDns2) {
 		voipDnsLabel1.setText(voipDns1);
 		voipDnsLabel2.setText(voipDns2);
 	}
 
-	@Override
 	public void setExternalIp(String externalIp) {
 		externalIPLabel.setText(externalIp);
 	}
 
-	@Override
 	public void setDownstreamMaxBitRate(String maxDown) {
 		if (!maxDown.equals("-")) //$NON-NLS-1$
 		{
@@ -712,7 +709,6 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		}
 	}
 
-	@Override
 	public void setUpstreamMaxBitRate(String maxUp) {
 		if (!maxUp.equals("-")) //$NON-NLS-1$
 		{
@@ -729,7 +725,6 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		}
 	}
 
-	@Override
 	public void setUptime(String uptime) {
 		if (uptime.equals("-")) //$NON-NLS-1$
 		{
