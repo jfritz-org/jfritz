@@ -6,7 +6,6 @@ import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
-import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.chart.renderer.xy.XYAreaRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.plot.XYPlot;
@@ -50,7 +49,6 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.cellrenderer.*;
 import de.moonflower.jfritz.monitoring.CurrentCallsTable;
-import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.StatusBarController;
 import de.moonflower.jfritz.utils.network.UPNPAddonInfosListener;
 import de.moonflower.jfritz.utils.network.UPNPCommonLinkPropertiesListener;
@@ -105,14 +103,14 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 	 *
 	 */
 	public MonitoringPanel(){
+		setLayout(new BorderLayout());
+
 		JPanel innerPanel = new JPanel();
-
 		innerPanel.setLayout(new BorderLayout());
-
 		innerPanel.add(createInternetPanel(), BorderLayout.NORTH);
 		innerPanel.add(createPhonePanel(), BorderLayout.CENTER);
 
-		this.add(new JScrollPane(innerPanel));
+		this.add(new JScrollPane(innerPanel), BorderLayout.CENTER);
 
 		getStaticUPnPInfos();
 	}
@@ -636,9 +634,9 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		if (!sent.equals("-")) //$NON-NLS-1$
 		{
 			long bSent = Long.parseLong(sent);
-			float kSent = bSent / 1000;
-			float mSent = kSent / 1024;
-			float gSent = mSent / 1024;
+			double kSent = bSent / 1000;
+			double mSent = kSent / 1024;
+			double gSent = mSent / 1024;
 			NumberFormat.getInstance().setMinimumFractionDigits(0);
 			NumberFormat.getInstance().setMaximumFractionDigits(1);
 			String kSentStr = NumberFormat.getInstance().format(kSent);
@@ -661,9 +659,9 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		if (!received.equals("-")) //$NON-NLS-1$
 		{
 			long bReceived = Long.parseLong(received);
-			float kReceived = bReceived / 1000;
-			float mReceived = kReceived / 1024;
-			float gReceived = mReceived / 1024;
+			double kReceived = bReceived / 1000;
+			double mReceived = kReceived / 1024;
+			double gReceived = mReceived / 1024;
 			NumberFormat.getInstance().setMinimumFractionDigits(0);
 			NumberFormat.getInstance().setMaximumFractionDigits(1);
 			String kReceivedStr = NumberFormat.getInstance().format(kReceived);
@@ -772,15 +770,6 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		if (dynamicUpnpTimer != null)
 		{
 			dynamicUpnpTimer.cancel();
-		}
-
-		if (JFritzUtils.parseBoolean(Main.getStateProperty("inet.monitoring", "false")))
-		{
-			System.err.println("Enabled");
-		}
-		else
-		{
-			System.err.println("Disabled");
 		}
 	}
 }

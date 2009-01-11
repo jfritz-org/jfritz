@@ -52,7 +52,7 @@ public class ThreeStateButton extends JButton implements ImageObserver {
 	/**
 	 *
 	 * @param state should be one of <code>NOTHING, SELECTED, INVERTED </code>
-	 * @param text the ToolTipText wich will appear in this state
+	 * @param text the ToolTipText which will appear in this state
 	 */
 	public void setToolTipText(int state, String text){
 		toolTipText[state] = text;

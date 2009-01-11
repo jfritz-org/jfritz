@@ -323,8 +323,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 *            the callerlist to retrieve the SIPProviders
 	 * @return the createdFilter
 	 */
-	private Vector getSelectedSipProvider(CallerList callerList) {
-		Vector provider;
+	private Vector<String> getSelectedSipProvider(CallerList callerList) {
+		Vector<String> provider;
 		if ((callerTable != null) && (callerTable.getSelectedRowCount() != 0)) {
 			provider = callerList
 					.getSelectedProviders(callerTable.getSelectedRows());
@@ -343,8 +343,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 * @return the createdFilter
 	 */
 
-	private Vector getSelectedCallByCallProvider(CallerList callerList) {
-		Vector provider;
+	private Vector<String> getSelectedCallByCallProvider(CallerList callerList) {
+		Vector<String> provider;
 		if ((callerTable != null) && (callerTable.getSelectedRowCount() != 0)) {
 			provider = callerList
 					.getCbCProviders(callerTable.getSelectedRows());
@@ -501,13 +501,13 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		callInFilterButton = new ThreeStateButton(getImageIcon("callin.png"));
 		callInFilterButton.setActionCommand(CallFilter.FILTER_CALLIN_NOTHING);
 		callInFilterButton.addActionListener(this);
-		callInFilterButton.setToolTipText(Main.getMessage(CallFilter.FILTER_CALLIN_NOTHING));
+		callInFilterButton.setToolTipText(ThreeStateButton.NOTHING, Main.getMessage(CallFilter.FILTER_CALLIN_NOTHING));
 
 		callInFailedFilterButton = new ThreeStateButton(
 				getImageIcon("callinfailed.png")); //$NON-NLS-1$
 		callInFailedFilterButton.setActionCommand(CallFilter.FILTER_CALLINFAILED);
 		callInFailedFilterButton.addActionListener(this);
-		callInFailedFilterButton.setToolTipText(Main
+		callInFailedFilterButton.setToolTipText(ThreeStateButton.NOTHING, Main
 				.getMessage(CallFilter.FILTER_CALLINFAILED));
 
 		JPopupMenu missedPopupMenu = new JPopupMenu();
@@ -529,28 +529,28 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		callOutFilterButton = new ThreeStateButton(getImageIcon("callout.png"));
 		callOutFilterButton.setActionCommand(CallFilter.FILTER_CALLOUT);
 		callOutFilterButton.addActionListener(this);
-		callOutFilterButton.setToolTipText(Main.getMessage(CallFilter.FILTER_CALLOUT));
+		callOutFilterButton.setToolTipText(ThreeStateButton.NOTHING, Main.getMessage(CallFilter.FILTER_CALLOUT));
 
 		anonymFilterButton = new ThreeStateButton(getImageIcon("mask.gif")); //$NON-NLS-1$
 		anonymFilterButton.setActionCommand(CallFilter.FILTER_ANONYM);
 		anonymFilterButton.addActionListener(this);
-		anonymFilterButton.setToolTipText(Main.getMessage(CallFilter.FILTER_ANONYM));
+		anonymFilterButton.setToolTipText(ThreeStateButton.NOTHING, Main.getMessage(CallFilter.FILTER_ANONYM));
 
 		fixedFilterButton = new ThreeStateButton(getImageIcon("phone.png")); //$NON-NLS-1$
 		fixedFilterButton.setActionCommand(CallFilter.FILTER_FIXED);
 		fixedFilterButton.addActionListener(this);
-		fixedFilterButton.setToolTipText(Main.getMessage(CallFilter.FILTER_FIXED));
+		fixedFilterButton.setToolTipText(ThreeStateButton.NOTHING, Main.getMessage(CallFilter.FILTER_FIXED));
 
 		handyFilterButton = new ThreeStateButton(getImageIcon("handy.png")); //$NON-NLS-1$
 		handyFilterButton.setActionCommand(CallFilter.FILTER_HANDY);
 		handyFilterButton.addActionListener(this);
-		handyFilterButton.setToolTipText(Main.getMessage(CallFilter.FILTER_HANDY));
+		handyFilterButton.setToolTipText(ThreeStateButton.NOTHING, Main.getMessage(CallFilter.FILTER_HANDY));
 
 		dateFilterButton = new ThreeStateButton(getImageIcon("calendar.png")); //$NON-NLS-1$
 
 		dateFilterButton.setActionCommand(CallFilter.FILTER_DATE);
 		dateFilterButton.addActionListener(this);
-		dateFilterButton.setToolTipText(Main.getMessage(CallFilter.FILTER_DATE));
+		dateFilterButton.setToolTipText(ThreeStateButton.NOTHING, Main.getMessage(CallFilter.FILTER_DATE));
 
 		JPopupMenu datePopupMenu = new JPopupMenu();
 		menuItem = new JMenuItem(Main.getMessage(CallFilter.THIS_DAY));
@@ -593,26 +593,28 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		sipFilterButton = new ThreeStateButton(getImageIcon("world.png")); //$NON-NLS-1$
 		sipFilterButton.setActionCommand(CallFilter.FILTER_SIP);
 		sipFilterButton.addActionListener(this);
-		sipFilterButton.setToolTipText(Main.getMessage(CallFilter.FILTER_SIP));
+		sipFilterButton.setToolTipText(ThreeStateButton.NOTHING, Main.getMessage(CallFilter.FILTER_SIP));
 
 		callByCallFilterButton = new ThreeStateButton(
 				getImageIcon("callbycall.png")); //$NON-NLS-1$
 		callByCallFilterButton.setActionCommand(CallFilter.FILTER_CALLBYCALL);
 		callByCallFilterButton.addActionListener(this);
-		callByCallFilterButton.setToolTipText(Main
-				.getMessage(CallFilter.FILTER_CALLBYCALL));
+		callByCallFilterButton.setToolTipText(ThreeStateButton.NOTHING,
+				Main.getMessage(CallFilter.FILTER_CALLBYCALL));
 
 		commentFilterButton = new ThreeStateButton(
 				getImageIcon("commentFilter.png"));
 		commentFilterButton.setActionCommand(CallFilter.FILTER_COMMENT);
 		commentFilterButton.addActionListener(this);
-		commentFilterButton.setToolTipText(Main.getMessage(CallFilter.FILTER_COMMENT));
+		commentFilterButton.setToolTipText(ThreeStateButton.NOTHING,
+				Main.getMessage(CallFilter.FILTER_COMMENT));
 
 		searchFilterButton = new ThreeStateButton(
 				getImageIcon("searchfilter.png"));
 		searchFilterButton.setActionCommand(CallFilter.FILTER_SEARCH);
 		searchFilterButton.addActionListener(this);
-		searchFilterButton.setToolTipText(Main.getMessage(CallFilter.FILTER_SEARCH));
+		searchFilterButton.setToolTipText(ThreeStateButton.NOTHING,
+				Main.getMessage(CallFilter.FILTER_SEARCH));
 		searchFilterTextField = new JTextField(10);
 
 		deleteEntriesButton = new JButton();
