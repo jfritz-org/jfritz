@@ -12,17 +12,14 @@ public class ColumnTableModel extends AbstractTableModel {
 
 	private Vector<JFritzTableColumn> columns = new Vector<JFritzTableColumn>();
 
-	@Override
 	public int getColumnCount() {
 		return 2;
 	}
 
-	@Override
 	public int getRowCount() {
 		return columns.size();
 	}
 
-	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		switch (columnIndex)
 		{

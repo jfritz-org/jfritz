@@ -44,7 +44,7 @@ public class NoticeDialog extends JDialog implements ActionListener {
 		this.infoText = infoText;
 		this.property= property;
 
-		if (Main.getProperty(property, "false").equals( //$NON-NLS-1$
+		if (Main.getStateProperty(property, "false").equals( //$NON-NLS-1$
 				"true")) { //$NON-NLS-1$
 			accepted = true;
 		} else {
@@ -142,7 +142,7 @@ public class NoticeDialog extends JDialog implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("ok")) { //$NON-NLS-1$
 			accepted = true;
-			Main.setProperty(property, Boolean
+			Main.setStateProperty(property, Boolean
 					.toString(checkBox.isSelected()));
 			setVisible(false);
 		} else if (e.getActionCommand().equals("cancel")) { //$NON-NLS-1$

@@ -779,21 +779,23 @@ public class FritzBox {
 
 		Debug.msg("Result of getAddonInfos: "+ result);
 
-		try {
-			XMLReader reader = SAXParserFactory.newInstance().newSAXParser()
-					.getXMLReader();
-			reader.setContentHandler(new AddonInfosXMLHandler(listener));
-			reader.parse(new InputSource(new StringReader(
-					result)));
+		if (!result.equals(""))
+		{
+			try {
+				XMLReader reader = SAXParserFactory.newInstance().newSAXParser()
+						.getXMLReader();
+				reader.setContentHandler(new AddonInfosXMLHandler(listener));
+				reader.parse(new InputSource(new StringReader(
+						result)));
 
-		} catch (ParserConfigurationException e1) {
-			System.err.println(e1);
-		} catch (SAXException e1) {
-			System.err.println(e1);
-		} catch (IOException e1) {
-			System.err.println(e1);
+			} catch (ParserConfigurationException e1) {
+				System.err.println(e1);
+			} catch (SAXException e1) {
+				System.err.println(e1);
+			} catch (IOException e1) {
+				System.err.println(e1);
+			}
 		}
-
 	}
 
 	/**

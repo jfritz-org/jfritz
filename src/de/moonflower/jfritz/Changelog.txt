@@ -2,6 +2,11 @@ TODO: Drucken der Anrufliste muss korrigiert werden.
 TODO: Entfernen der überflüssigen Einstellungen zum Ausblenden der Anruflistenspalten.
 TODO: CallMonitor überprüfen, manchmal immer noch Einträge doppelt ... 
 
+JFritz 0.7.2.7:
+- Bugfix: Default-Werte für Spaltenreihenfolge angepasst.
+- Bugfix: SAX-Parser-Exception, wenn UPNP nicht abgefragt werden konnte.
+- Bugfix [0000096]: Warnung bei Wählhilfe dauerhaft deaktivieren. 
+
 JFritz 0.7.2.6:
 - Bugfix: Korrektes Anzeigeformat der TotalBytes und currentByteRate.
 - Neu: Redesign des Einstellungsdialogs. Navigation über Baumstruktur und zu jeder 

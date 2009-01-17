@@ -102,7 +102,6 @@ public class ConfigPanelCallerListAppearance extends JPanel implements ConfigPan
 		return "http://jfritz.org/wiki/JFritz_Handbuch:Deutsch#AnruflisteAussehen";
 	}
 
-	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("up"))
 		{

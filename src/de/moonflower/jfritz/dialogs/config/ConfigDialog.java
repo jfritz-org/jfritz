@@ -374,23 +374,18 @@ public class ConfigDialog extends JDialog {
 		helpLinkLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
 		helpLinkLabel.setCursor( new Cursor(Cursor.HAND_CURSOR));
 		helpLinkLabel.addMouseListener(new MouseListener(){
-			@Override
 			public void mouseClicked(MouseEvent e) {
 			}
 
-			@Override
 			public void mouseReleased(MouseEvent e) {
 			}
 
-			@Override
 			public void mouseEntered(MouseEvent e) {
 			}
 
-			@Override
 			public void mouseExited(MouseEvent e) {
 			}
 
-			@Override
 			public void mousePressed(MouseEvent e) {
 				BrowserLaunch.openURL(helpUrl);
 			}
