@@ -162,6 +162,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Savepoint;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -200,9 +201,9 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.2.5"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.2.6"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.135 2009/01/10 23:06:58 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.136 2009/01/17 16:01:05 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -262,7 +263,7 @@ public class Main implements LookupObserver {
 
 	public Main(String[] args) {
 		System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION //$NON-NLS-1$
-				+ " (c) 2005-2008 by " + JFRITZ_PROJECT); //$NON-NLS-1$
+				+ " (c) 2005-2009 by " + JFRITZ_PROJECT); //$NON-NLS-1$
 		Thread.currentThread().setPriority(5);
 		Thread.currentThread().setName("JFritz main thread");
 
@@ -908,10 +909,16 @@ public class Main implements LookupObserver {
 		defProps.setProperty("option.playSounds", "true");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.popuptype", "1");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.popupDelay", "0");//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("option.showCallByCallColumn", "true");//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("option.showCommentColumn", "true");//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("option.showPortColumn", "true");//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("option.showPictureColumn", "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.showCallerListColumn."+CallerTable.COLUMN_CALL_BY_CALL, "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.showCallerListColumn."+CallerTable.COLUMN_COMMENT, "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.showCallerListColumn."+CallerTable.COLUMN_PORT, "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.showCallerListColumn."+CallerTable.COLUMN_PICTURE, "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.showCallerListColumn."+CallerTable.COLUMN_TYPE, "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.showCallerListColumn."+CallerTable.COLUMN_DATE, "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.showCallerListColumn."+CallerTable.COLUMN_NUMBER, "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.showCallerListColumn."+CallerTable.COLUMN_PARTICIPANT, "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.showCallerListColumn."+CallerTable.COLUMN_ROUTE, "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.showCallerListColumn."+CallerTable.COLUMN_DURATION, "true");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.startExternProgram", "false");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.startMinimized", "false");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.syslogclientip", "192.168.178.21");//$NON-NLS-1$, //$NON-NLS-2$
@@ -967,38 +974,18 @@ public class Main implements LookupObserver {
 
 		// column properties
 		String default_column_width = "70";
-		defProps.setProperty("column." + CallerTable.COLUMN_CALL_BY_CALL + ".name", CallerTable.COLUMN_CALL_BY_CALL);//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("column." + CallerTable.COLUMN_CALL_BY_CALL + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$
-
-		defProps.setProperty("column." + CallerTable.COLUMN_COMMENT + ".name", CallerTable.COLUMN_COMMENT);//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("column." + CallerTable.COLUMN_COMMENT + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$
-
-		defProps.setProperty("column." + CallerTable.COLUMN_DATE + ".name", CallerTable.COLUMN_DATE);//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("column." + CallerTable.COLUMN_DATE + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$
-
-		defProps.setProperty("column." + CallerTable.COLUMN_DURATION + ".name", CallerTable.COLUMN_DURATION);//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("column." + CallerTable.COLUMN_DURATION + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
-
-		defProps.setProperty("column." + CallerTable.COLUMN_NUMBER + ".name", CallerTable.COLUMN_NUMBER);//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("column." + CallerTable.COLUMN_NUMBER + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
-
-		defProps.setProperty("column." + CallerTable.COLUMN_PARTICIPANT + ".name", CallerTable.COLUMN_PARTICIPANT);//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("column." + CallerTable.COLUMN_PARTICIPANT + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
-
-		defProps.setProperty("column." + CallerTable.COLUMN_PICTURE + ".name", CallerTable.COLUMN_PICTURE);//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("column." + CallerTable.COLUMN_PICTURE + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
-
-		defProps.setProperty("column." + CallerTable.COLUMN_PORT + ".name", CallerTable.COLUMN_PORT);//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("column." + CallerTable.COLUMN_PORT + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
-
-		defProps.setProperty("column." + CallerTable.COLUMN_ROUTE + ".name", CallerTable.COLUMN_ROUTE);//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("column." + CallerTable.COLUMN_ROUTE + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
-
-		defProps.setProperty("column." + CallerTable.COLUMN_TYPE + ".name", CallerTable.COLUMN_TYPE);//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("column." + CallerTable.COLUMN_TYPE + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("callerTable.column." + CallerTable.COLUMN_CALL_BY_CALL + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$
+		defProps.setProperty("callerTable.column." + CallerTable.COLUMN_COMMENT + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$
+		defProps.setProperty("callerTable.column." + CallerTable.COLUMN_DATE + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$
+		defProps.setProperty("callerTable.column." + CallerTable.COLUMN_DURATION + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("callerTable.column." + CallerTable.COLUMN_NUMBER + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("callerTable.column." + CallerTable.COLUMN_PARTICIPANT + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("callerTable.column." + CallerTable.COLUMN_PICTURE + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("callerTable.column." + CallerTable.COLUMN_PORT + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("callerTable.column." + CallerTable.COLUMN_ROUTE + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("callerTable.column." + CallerTable.COLUMN_TYPE + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
 
 		defProps.setProperty("option.picture.default_path", ".");//$NON-NLS-1$, //$NON-NLS-2$
-
 		defProps.setProperty("filter.Phonebook.search", "");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("filter_private", "false");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("options.exportVCARDpath", ".");//$NON-NLS-1$, //$NON-NLS-2$
@@ -1049,8 +1036,119 @@ public class Main implements LookupObserver {
 	 *
 	 */
 	private static void replaceOldProperties() {
-		// TODO: Kopieren einiger Einstellungen in State-Properties
-//		saveProperties();
+
+		for (int i=0; i<CallerTable.NUM_COLUMNS; i++)
+		{
+			if (state_properties.getProperty("column"+i+".name") != null)
+			{
+				state_properties.setProperty("callerTable.column"+i+".name", state_properties.getProperty("column"+i+".name"));
+				state_properties.remove("column"+i+".name");
+			}
+		}
+
+		String currentProp = state_properties.getProperty("column." + CallerTable.COLUMN_CALL_BY_CALL + ".width");
+
+		if (currentProp != null)
+		{
+			state_properties.setProperty("callerTable.column." + CallerTable.COLUMN_CALL_BY_CALL + ".width", currentProp);
+			state_properties.remove("column." + CallerTable.COLUMN_CALL_BY_CALL + ".width");
+		}
+
+		currentProp = state_properties.getProperty("column." + CallerTable.COLUMN_COMMENT + ".width");
+		if (currentProp != null)
+		{
+			state_properties.setProperty("callerTable.column." + CallerTable.COLUMN_COMMENT + ".width", currentProp);
+			state_properties.remove("column." + CallerTable.COLUMN_COMMENT + ".width");
+		}
+
+		currentProp = state_properties.getProperty("column." + CallerTable.COLUMN_DATE + ".width");
+		if (currentProp != null)
+		{
+			state_properties.setProperty("callerTable.column." + CallerTable.COLUMN_DATE + ".width", currentProp);
+			state_properties.remove("column." + CallerTable.COLUMN_DATE + ".width");
+		}
+
+		currentProp = state_properties.getProperty("column." + CallerTable.COLUMN_DURATION + ".width");
+		if (currentProp != null)
+		{
+			state_properties.setProperty("callerTable.column." + CallerTable.COLUMN_DURATION + ".width", currentProp);
+			state_properties.remove("column." + CallerTable.COLUMN_DURATION + ".width");
+		}
+
+		currentProp = state_properties.getProperty("column." + CallerTable.COLUMN_NUMBER + ".width");
+		if (currentProp != null)
+		{
+			state_properties.setProperty("callerTable.column." + CallerTable.COLUMN_NUMBER + ".width", currentProp);
+			state_properties.remove("column." + CallerTable.COLUMN_NUMBER + ".width");
+		}
+
+		currentProp = state_properties.getProperty("column." + CallerTable.COLUMN_PARTICIPANT + ".width");
+		if (currentProp != null)
+		{
+			state_properties.setProperty("callerTable.column." + CallerTable.COLUMN_PARTICIPANT + ".width", currentProp);
+			state_properties.remove("column." + CallerTable.COLUMN_PARTICIPANT + ".width");
+		}
+
+		currentProp = state_properties.getProperty("column." + CallerTable.COLUMN_PICTURE + ".width");
+		if (currentProp != null)
+		{
+			state_properties.setProperty("callerTable.column." + CallerTable.COLUMN_PICTURE + ".width", currentProp);
+			state_properties.remove("column." + CallerTable.COLUMN_PICTURE + ".width");
+		}
+
+		currentProp = state_properties.getProperty("column." + CallerTable.COLUMN_PORT + ".width");
+		if (currentProp != null)
+		{
+			state_properties.setProperty("callerTable.column." + CallerTable.COLUMN_PORT + ".width", currentProp);
+			state_properties.remove("column." + CallerTable.COLUMN_PORT + ".width");
+		}
+
+		currentProp = state_properties.getProperty("column." + CallerTable.COLUMN_ROUTE + ".width");
+		if (currentProp != null)
+		{
+			state_properties.setProperty("callerTable.column." + CallerTable.COLUMN_ROUTE + ".width", currentProp);
+			state_properties.remove("column." + CallerTable.COLUMN_ROUTE + ".width");
+		}
+
+		currentProp = state_properties.getProperty("column." + CallerTable.COLUMN_TYPE + ".width");
+		if (currentProp != null)
+		{
+			state_properties.setProperty("callerTable.column." + CallerTable.COLUMN_TYPE + ".width", currentProp);
+			state_properties.remove("column." + CallerTable.COLUMN_TYPE + ".width");
+		}
+
+		saveStateProperties();
+
+
+		currentProp = config_properties.getProperty("option.showCallByCallColumn");
+		if ( currentProp != null)
+		{
+			config_properties.setProperty("option.showCallerListColumn."+CallerTable.COLUMN_CALL_BY_CALL, currentProp);
+			config_properties.remove("option.showCallByCallColumn");
+		}
+
+		currentProp = config_properties.getProperty("option.showCommentColumn");
+		if ( currentProp != null)
+		{
+			config_properties.setProperty("option.showCallerListColumn."+CallerTable.COLUMN_COMMENT, currentProp);
+			config_properties.remove("option.showCommentColumn");
+		}
+
+		currentProp = config_properties.getProperty("option.showPictureColumn");
+		if ( currentProp != null)
+		{
+			config_properties.setProperty("option.showCallerListColumn."+CallerTable.COLUMN_PICTURE, currentProp);
+			config_properties.remove("option.showPictureColumn");
+		}
+
+		currentProp = config_properties.getProperty("option.showPortColumn");
+		if ( currentProp != null)
+		{
+			config_properties.setProperty("option.showCallerListColumn."+CallerTable.COLUMN_PORT, currentProp);
+			config_properties.remove("option.showPortColumn");
+		}
+
+		saveConfigProperties();
 	}
 
 	/**
@@ -1104,6 +1202,7 @@ public class Main implements LookupObserver {
 
 	/**
 	 * Get config properties with default value
+	 * @deprecated
 	 * @param property
 	 *            Property to get the value from
 	 * @param defaultValue
@@ -1322,27 +1421,6 @@ public class Main implements LookupObserver {
 				Debug.msg("Thread group: " + threadarray[i].getThreadGroup());
 				Debug.msg("Thread priority: " + threadarray[i].getPriority());
 				Debug.msg("---");
-			}
-	}
-
-	private void wakeupActiveThreads()
-	{
-			Thread[] threadarray = new Thread[Thread.activeCount()];
-			int threadCount = Thread.enumerate(threadarray);
-			Thread t = Thread.currentThread();
-			for (int i=0; i<threadCount; i++)
-			{
-				if (t != threadarray[i] && i==8) {
-					Debug.msg("Waking up thread: " + i);
-					Debug.msg("Name: " +  threadarray[i].getName());
-					Debug.msg("Class: " + threadarray[i].getClass().toString());
-					Debug.msg("State: " +  threadarray[i].getState());
-					Debug.msg("Daemon: " + threadarray[i].isDaemon());
-					Debug.msg("Thread group: " + threadarray[i].getThreadGroup());
-					Debug.msg("Thread priority: " + threadarray[i].getPriority());
-					Debug.msg("---");
-					threadarray[i].interrupt();
-				}
 			}
 	}
 

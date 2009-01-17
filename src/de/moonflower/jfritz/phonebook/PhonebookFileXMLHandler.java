@@ -93,7 +93,7 @@ public class PhonebookFileXMLHandler extends DefaultHandler {
 		} else if (qName.equals("lastname")) { //$NON-NLS-1$
 			lastName = chars;
 		} else if (qName.equals("number")) { //$NON-NLS-1$
-			PhoneNumber pn = new PhoneNumber(chars);
+			PhoneNumber pn = new PhoneNumber(chars, false);
 			pn.setType(type);
 			numbers.add(pn);
 		} else if (qName.equals("street")) { //$NON-NLS-1$

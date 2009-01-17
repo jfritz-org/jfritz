@@ -1,5 +1,6 @@
 package de.moonflower.jfritz.dialogs.config;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -12,6 +13,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
@@ -35,9 +37,11 @@ public class ConfigPanelLang extends JPanel implements ConfigPanel{
     public JComboBox languageCombo;
 
     public ConfigPanelLang(){
+        setLayout(new BorderLayout());
+		setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
 
-		setLayout(new GridBagLayout());
-		setBorder(BorderFactory.createEmptyBorder(10, 20, 5, 20));
+		JPanel cPane = new JPanel();
+		cPane.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets.top = 5;
 		c.insets.bottom = 5;
@@ -47,7 +51,7 @@ public class ConfigPanelLang extends JPanel implements ConfigPanel{
 		JLabel label;
 		c.gridy = 2;
 		label = new JLabel(Main.getMessage("language") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		add(label, c);
+		cPane.add(label, c);
 
 		String lang = JFritzUtils.getFullPath(JFritzUtils.langID);
 		File file = new File(lang);
@@ -79,7 +83,9 @@ public class ConfigPanelLang extends JPanel implements ConfigPanel{
 		languageCombo.setActionCommand("languageCombo"); //$NON-NLS-1$
 		languageCombo.setMaximumRowCount(8);
 
-		add(languageCombo, c);
+		cPane.add(languageCombo, c);
+
+		add(new JScrollPane(cPane), BorderLayout.CENTER);
 	}
 
 	public void loadSettings() {
@@ -99,5 +105,18 @@ public class ConfigPanelLang extends JPanel implements ConfigPanel{
 			JFritz.getJframe().setLanguage(
 					new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_")+1, loc.length())));
 		}
+	}
+
+	public String getPath()
+	{
+		return Main.getMessage("language");
+	}
+
+	public JPanel getPanel() {
+		return this;
+	}
+
+	public String getHelpUrl() {
+		return "http://jfritz.org/wiki/JFritz_Handbuch:Deutsch#Sprache";
 	}
 }

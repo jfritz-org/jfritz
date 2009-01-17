@@ -37,10 +37,6 @@ public class PermissionsDialog extends JDialog {
 
 	private Login login;
 
-	private JDialog parent;
-
-	private int exitCode = 0;
-
     private JButton cancelButton, okButton;
 
     public static final int APPROVE_OPTION = 1;
@@ -55,7 +51,6 @@ public class PermissionsDialog extends JDialog {
 	public PermissionsDialog(JDialog parent, Login login){
 		super(parent, true);
 
-		this.parent = parent;
 		this.login = login;
 		init();
 
@@ -81,14 +76,12 @@ public class PermissionsDialog extends JDialog {
 				// Cancel
 				if (e.getKeyCode() == KeyEvent.VK_ESCAPE
 						|| (e.getSource() == cancelButton && e.getKeyCode() == KeyEvent.VK_ENTER)) {
-					exitCode = CANCEL_OPTION;
 					setVisible(false);
 				}
 				// OK
 				if (e.getSource() == okButton
 						&& e.getKeyCode() == KeyEvent.VK_ENTER) {
 					storeProperties();
-					exitCode = APPROVE_OPTION;
 					setVisible(false);
 				}
 			}
@@ -98,10 +91,8 @@ public class PermissionsDialog extends JDialog {
 				Object source = e.getSource();
 				if (source == okButton) {
 					// OK
-					exitCode = APPROVE_OPTION;
 					storeProperties();
 				} else if (source == cancelButton) {
-	                    exitCode = CANCEL_OPTION;
 				}
 				// Close Window
 				if (source == okButton || source == cancelButton) {

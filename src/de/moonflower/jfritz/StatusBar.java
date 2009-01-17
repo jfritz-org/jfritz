@@ -1,7 +1,6 @@
 package de.moonflower.jfritz;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -122,7 +121,7 @@ public class StatusBar extends JPanel {
 	public void refresh()
 	{
 		boolean centerVisible = false;
-		Enumeration en = centerPaneVector.elements();
+		Enumeration<StatusBarPanel> en = centerPaneVector.elements();
 		while ( en.hasMoreElements() )
 		{
 			StatusBarPanel panel = ((StatusBarPanel)en.nextElement());

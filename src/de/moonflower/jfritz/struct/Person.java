@@ -158,7 +158,7 @@ public class Person implements Cloneable, Serializable{
 	}
 
 	public void addNumber(String number, String type) {
-		PhoneNumber pn = new PhoneNumber(number);
+		PhoneNumber pn = new PhoneNumber(number, false);
 		pn.setType(type);
 		addNumber(pn);
 	}
@@ -633,7 +633,7 @@ public class Person implements Cloneable, Serializable{
 		}
 
 		// Checking whether this person's numbers are a real superset
-		Enumeration otherNumberEnum = p.numbers.elements();
+		Enumeration<PhoneNumber> otherNumberEnum = p.numbers.elements();
 		while (otherNumberEnum.hasMoreElements()) {
 			PhoneNumber n = (PhoneNumber) otherNumberEnum.nextElement();
 			if (! ownNumberSet.contains(n.getIntNumber()))

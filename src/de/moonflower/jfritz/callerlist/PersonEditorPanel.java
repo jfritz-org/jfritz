@@ -30,8 +30,6 @@ public class PersonEditorPanel extends JComponent {
 
 	private Person person;
 
-	private AbstractCellEditor cellEditor;
-
 	private JLabel input;
 
 	/**
@@ -40,7 +38,6 @@ public class PersonEditorPanel extends JComponent {
 	public PersonEditorPanel(AbstractCellEditor cellEditor, CallerList callerList) {
 		super();
 		this.callerList = callerList;
-		this.cellEditor = cellEditor;
 		drawPanel();
 	}
 

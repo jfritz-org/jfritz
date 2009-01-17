@@ -1,3 +1,19 @@
+TODO: Drucken der Anrufliste muss korrigiert werden.
+TODO: Entfernen der überflüssigen Einstellungen zum Ausblenden der Anruflistenspalten.
+TODO: CallMonitor überprüfen, manchmal immer noch Einträge doppelt ... 
+
+JFritz 0.7.2.6:
+- Bugfix: Korrektes Anzeigeformat der TotalBytes und currentByteRate.
+- Neu: Redesign des Einstellungsdialogs. Navigation über Baumstruktur und zu jeder 
+	   Einstellungsseite ist eine Hilfeseite vorhanden (Hilfe-Link oder F1-Taste).
+	   Die Größe des Einstellungsdialogs wird nun gespeichert und wiederhergestellt.
+- Neu: Einlesen von mehr als 10 SIP-Providern.
+- Neu: Ein- und Ausblenden aller Spalten in der Anrufliste möglich.
+- Neu: Einstellungen in den XML-Dateien sind nun zur besseren Lesbarkeit sortiert.
+- Code: Einige veraltete Methoden entfernt und Warnungen behoben.
+Strings:
+save_settings
+
 JFritz 0.7.2.5:
 - Neu: Auswertung weiterer UPNP-Nachrichten.
 - Bugfix: Internetstatistiken werden nun wieder korrekt dargestellt.

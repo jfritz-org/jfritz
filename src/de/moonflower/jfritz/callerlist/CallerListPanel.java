@@ -1376,12 +1376,13 @@ public class CallerListPanel extends JPanel implements ActionListener,
 //		statusBarController.fireStatusChanged(callerList.getTotalDuration());
 	}
 
+
 	/**
-	 * Zeigt bzw. versteckt die Spalten je nach Einstellung vom Benutzer
-	 *
+	 * Verschiebt und versteckt die Spalten je nach Einstellung des Benutzers
 	 */
-	public void showHideColumns() {
-		callerTable.showHideColumns();
+	public void reorderColumns()
+	{
+		callerTable.reorderColumns();
 	}
 
 	public StatusBarController getStatusBarController() {

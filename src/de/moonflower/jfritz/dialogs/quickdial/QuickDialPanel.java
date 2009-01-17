@@ -207,7 +207,7 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 		delButton.setEnabled((quickdialtable.getSelectedRow() > -1)
 				&& (dataModel.getRowCount() > 0));
 
-		Enumeration en = dataModel.getQuickDials().elements();
+		Enumeration<QuickDial> en = dataModel.getQuickDials().elements();
 		boolean addEnabled = true;
 		while (en.hasMoreElements()) {
 			String nr = ((QuickDial) en.nextElement()).getQuickdial();

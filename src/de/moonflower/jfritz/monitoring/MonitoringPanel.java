@@ -85,6 +85,8 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 
 	private Timer dynamicUpnpTimer = null;
 
+	private TimerTask dynamicUpnpTask = null;
+
 	private static int count = 0;
 
 	private CurrentCallsTable currentCallsTable;
@@ -542,16 +544,16 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		if (dynamicUpnpTimer != null)
 			dynamicUpnpTimer.cancel();
 
-		dynamicUpnpTimer = new Timer();
+		dynamicUpnpTimer = new Timer("NetworkMonitor", true);
 		final MonitoringPanel mPanel = this;
-		TimerTask task = new TimerTask(){
+		dynamicUpnpTask = new TimerTask(){
 			public void run() {
 				JFritz.getFritzBox().getInternetStats(mPanel);
 				getStaticUPnPInfos();
 			}
 
 		};
-		dynamicUpnpTimer.schedule(task, 1000, 975);
+		dynamicUpnpTimer.schedule(dynamicUpnpTask, 1000, 975);
 	}
 
 	public StatusBarController getStatusBarController() {
@@ -640,8 +642,8 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 			NumberFormat.getInstance().setMinimumFractionDigits(0);
 			NumberFormat.getInstance().setMaximumFractionDigits(1);
 			String kSentStr = NumberFormat.getInstance().format(kSent);
-			String mSentStr = String.format("%.1f", mSent); //$NON-NLS-1$
-			String gSentStr = String.format("%.1f", gSent); //$NON-NLS-1$
+			String mSentStr = NumberFormat.getInstance().format(mSent);
+			String gSentStr = NumberFormat.getInstance().format(gSent);
 			if (gSent < 1.0)
 			{
 				totalSentLabel.setText(kSentStr + " KB (" + mSentStr + " MB)"); //$NON-NLS-1$, //$NON-NLS-2$
@@ -665,8 +667,8 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 			NumberFormat.getInstance().setMinimumFractionDigits(0);
 			NumberFormat.getInstance().setMaximumFractionDigits(1);
 			String kReceivedStr = NumberFormat.getInstance().format(kReceived);
-			String mReceivedStr = String.format("%.1f", mReceived); //$NON-NLS-1$
-			String gReceivedStr = String.format("%.1f", gReceived); //$NON-NLS-1$
+			String mReceivedStr = NumberFormat.getInstance().format(mReceived);
+			String gReceivedStr = NumberFormat.getInstance().format(gReceived);
 			if (gReceived < 1.0)
 			{
 				totalReceivedLabel.setText(kReceivedStr + " KB (" + mReceivedStr + " MB)"); //$NON-NLS-1$, //$NON-NLS-2$
@@ -698,7 +700,9 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 			float kMax = max / 1000;
 			float mMax = kMax / 1024;
 			String kMaxStr = NumberFormat.getInstance().format(kMax);
-			String mMaxStr = String.format("%.1f", mMax); //$NON-NLS-1$
+			NumberFormat.getInstance().setMinimumFractionDigits(0);
+			NumberFormat.getInstance().setMaximumFractionDigits(1);
+			String mMaxStr = NumberFormat.getInstance().format(mMax);
 			syncDownLabel.setText(kMaxStr + " KBit/s (" + mMaxStr + " MBit/s)"); //$NON-NLS-1$, //$NON-NLS-2$
 		}
 		else
@@ -714,7 +718,9 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 			float kMax = max / 1000;
 			float mMax = kMax / 1024;
 			String kMaxStr = NumberFormat.getInstance().format(kMax);
-			String mMaxStr = String.format("%.1f", mMax); //$NON-NLS-1$
+			NumberFormat.getInstance().setMinimumFractionDigits(0);
+			NumberFormat.getInstance().setMaximumFractionDigits(1);
+			String mMaxStr = NumberFormat.getInstance().format(mMax);
 			syncUpLabel.setText(kMaxStr + " KBit/s (" + mMaxStr + " MBit/s)"); //$NON-NLS-1$, //$NON-NLS-2$
 		}
 		else

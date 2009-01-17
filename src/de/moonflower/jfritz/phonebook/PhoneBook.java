@@ -890,43 +890,6 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 	 * @author Bastian Schaefer
 	 *
 	 * @param filename
-	 *            Filename to save to
-	 * @param wholePhoneBook
-	 *            Save whole phone book or only selected entries
-	 * @deprecated
-	 */
-	/*
-	 * public void saveToCSVFile(String filename, boolean wholePhoneBook, char
-	 * separator) { Debug.msg("Saving phone book to csv file " + filename);
-	 * //$NON-NLS-1$ FileOutputStream fos; try { fos = new
-	 * FileOutputStream(filename); PrintWriter pw = new PrintWriter(fos); //
-	 * pw.println("\"Private\";\"Last Name\";\"First //
-	 * Name\";\"Number\";\"Address\";\"City\"");
-	 * pw.println(getCSVHeader(separator)); int rows[] = null;
-	 *
-	 * if (JFritz.getJframe() != null) { rows =
-	 * JFritz.getJframe().getPhoneBookPanel()
-	 * .getPhoneBookTable().getSelectedRows(); }
-	 *
-	 * if (!wholePhoneBook && (rows != null) && (rows.length > 0)) { for (int i =
-	 * 0; i < rows.length; i++) { Person currentPerson = (Person)
-	 * filteredPersons .elementAt(rows[i]);
-	 * pw.println(currentPerson.toCSV(separator)); } } else if (wholePhoneBook) { //
-	 * Export ALL UNFILTERED Calls Enumeration en =
-	 * getUnfilteredPersons().elements(); while (en.hasMoreElements()) { Person
-	 * person = (Person) en.nextElement(); pw.println(person.toCSV(separator)); } }
-	 * else { // Export ALL FILTERED Calls Enumeration en =
-	 * getFilteredPersons().elements(); while (en.hasMoreElements()) { Person
-	 * person = (Person) en.nextElement(); pw.println(person.toCSV(separator)); } }
-	 * pw.close(); } catch (FileNotFoundException e) { Debug.err("Could not
-	 * write " + filename + "!"); //$NON-NLS-1$, //$NON-NLS-2$ } }
-	 */
-	/**
-	 * Saves PhoneBook to csv file
-	 *
-	 * @author Bastian Schaefer
-	 *
-	 * @param filename
 	 *            Filename to save to Save whole phone book
 	 */
 	public void saveToCSVFile(String filename, char separator) {

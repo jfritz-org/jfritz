@@ -1043,7 +1043,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 	 * @return Returns last call of person
 	 */
 	public Call findLastCall(Person person) {
-		Vector numbers = person.getNumbers();
+		Vector<PhoneNumber> numbers = person.getNumbers();
 		if (numbers.size() > 0) {
 			Enumeration<Call> en = unfilteredCallerData.elements();
 			while (en.hasMoreElements()) {
@@ -1117,7 +1117,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 	public String getRealColumnName(int columnIndex) {
 		String columnName = ""; //$NON-NLS-1$
 		if (JFritz.getJframe() != null) {
-			Enumeration en = JFritz.getJframe().getCallerTable()
+			Enumeration<TableColumn> en = JFritz.getJframe().getCallerTable()
 					.getTableHeader().getColumnModel().getColumns();
 			while (en.hasMoreElements()) {
 				TableColumn col = (TableColumn) en.nextElement();

@@ -15,7 +15,7 @@ public class WatchdogThread extends Thread {
     private int interval = 1; // in seconds
     private int factor = 10;
 
-    private Date now, lastTimestamp, startWatchdogTimestamp;
+    private Date now, lastTimestamp;
 
     private Calendar cal;
 
@@ -34,14 +34,13 @@ public class WatchdogThread extends Thread {
         cal = Calendar.getInstance();
         this.interval = interval;
         this.factor = factor;
-        startWatchdogTimestamp = cal.getTime();
         lastTimestamp = cal.getTime();
         this.jfritz = jfritz;
     }
 
     public void run() {
     	if (JFritz.getJframe().isCallMonitorStarted() && (JFritz.getCallMonitor() != null)) {
-    		Debug.msg("Ping box");
+//    		Debug.msg("Ping box");
     		if (!JFritz.getCallMonitor().pingBox())
     		{
 				Debug.err("Ping failed. Reconnecting call monitor");

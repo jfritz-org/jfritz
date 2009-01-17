@@ -171,9 +171,10 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 	                number = number.substring(0, number.length() - 1);
 
 	            Call call = JFritz.getCallMonitorList().getCall(callId);
-	            PhoneNumber pn = new PhoneNumber(number);
+	            PhoneNumber pn = new PhoneNumber(number, false);
 	            if ( call != null ) {
-	            	if (pn.getIntNumber().equals(call.getPhoneNumber().getIntNumber())) {
+	            	if (pn.getIntNumber().equals(call.getPhoneNumber().getIntNumber())
+	            		|| pn.getIntNumber().equals(Main.getProperty("dial.prefix")+call.getPhoneNumber().getIntNumber())) {
 	            		try {
 	            			if (JFritz.getCallMonitorList().getCall(callId) != null) {
 	            				JFritz.getCallMonitorList().getCall(callId)

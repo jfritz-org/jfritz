@@ -1,5 +1,6 @@
 package de.moonflower.jfritz.dialogs.config;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -19,6 +20,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import de.moonflower.jfritz.JFritz;
@@ -40,7 +42,7 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 
 	private JComboBox addressCombo;
 
-	private Vector devices;
+	private Vector<SSDPPacket> devices;
 
 	private JTextField address;
 
@@ -56,9 +58,14 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 
 	private JCheckBox defaultFritzBox;
 
+	@SuppressWarnings("unchecked")
 	public ConfigPanelFritzBox() {
-		setLayout(new GridBagLayout());
-		setBorder(BorderFactory.createEmptyBorder(10, 20, 5, 20));
+		setLayout(new BorderLayout());
+		setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
+
+		JPanel cPane = new JPanel();
+
+		cPane.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets.top = 5;
 		c.insets.bottom = 5;
@@ -71,13 +78,13 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 						"/de/moonflower/jfritz/resources/images/fritzbox.png"))); //$NON-NLS-1$
 		JLabel label = new JLabel(""); //$NON-NLS-1$
 		label.setIcon(boxicon);
-		add(label, c);
+		cPane.add(label, c);
 		label = new JLabel(Main.getMessage("FRITZ!Box_Preferences")); //$NON-NLS-1$
-		add(label, c);
+		cPane.add(label, c);
 
 		c.gridy = 2;
 		label = new JLabel(Main.getMessage("FRITZ!Box") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		add(label, c);
+		cPane.add(label, c);
 
 		addressCombo = new JComboBox();
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -86,7 +93,7 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 		// initialize the drop down box
 		devices = JFritz.getDevices();
 		if (devices != null) {
-			Enumeration en = devices.elements();
+			Enumeration<SSDPPacket> en = (Enumeration<SSDPPacket>)devices.elements();
 			while (en.hasMoreElements()) {
 				SSDPPacket p = (SSDPPacket) en.nextElement();
 				// addressCombo.addItem(p.getShortName());
@@ -105,43 +112,45 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 
 		addressCombo.setActionCommand("addresscombo"); //$NON-NLS-1$
 		addressCombo.addActionListener(this);
-		add(addressCombo, c);
+		cPane.add(addressCombo, c);
 
 		c.gridy = 3;
 		label = new JLabel(Main.getMessage("ip_address") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		add(label, c);
+		cPane.add(label, c);
 		address = new JTextField("", 16); //$NON-NLS-1$
 		address.setMinimumSize(new Dimension(200, 20));
-		add(address, c);
+		cPane.add(address, c);
 
 		c.gridy = 4;
 		label = new JLabel(Main.getMessage("password") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		add(label, c);
+		cPane.add(label, c);
 		pass = new JPasswordField("", 16); //$NON-NLS-1$
 		pass.setMinimumSize(new Dimension(200, 20));
-		add(pass, c);
+		cPane.add(pass, c);
 
 		c.gridy = 5;
 		label = new JLabel(Main.getMessage("box.port") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		add(label, c);
+		cPane.add(label, c);
 		port = new JTextField("", 16); //$NON-NLS-1$
 		port.setMinimumSize(new Dimension(200, 20));
-		add(port, c);
+		cPane.add(port, c);
 
 		c.gridy = 6;
 		label = new JLabel("");
-		add(label, c);
+		cPane.add(label, c);
 		defaultFritzBox = new JCheckBox(Main.getMessage("set_default_fritzbox"));
 		defaultFritzBox.setSelected(true);
-		add(defaultFritzBox, c);
+		cPane.add(defaultFritzBox, c);
 
 		c.gridy = 7;
 		boxtypeButton = new JButton(Main.getMessage("detect_box_type")); //$NON-NLS-1$
 		boxtypeButton.setActionCommand("detectboxtype"); //$NON-NLS-1$
 		boxtypeButton.addActionListener(this);
-		add(boxtypeButton, c);
+		cPane.add(boxtypeButton, c);
 		boxtypeLabel = new JLabel();
-		add(boxtypeLabel, c);
+		cPane.add(boxtypeLabel, c);
+
+		add(new JScrollPane(cPane), BorderLayout.CENTER);
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -272,5 +281,17 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 
 	public String getPort() {
 		return port.getText();
+	}
+
+	public String getPath() {
+		return Main.getMessage("FRITZ!Box");
+	}
+
+	public JPanel getPanel() {
+		return this;
+	}
+
+	public String getHelpUrl() {
+		return "http://jfritz.org/wiki/JFritz_Handbuch:Deutsch#FRITZ.21Box";
 	}
 }

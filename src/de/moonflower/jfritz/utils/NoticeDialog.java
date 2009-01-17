@@ -32,13 +32,13 @@ public class NoticeDialog extends JDialog implements ActionListener {
 
 	private boolean accepted = false;
 
-
 	private String infoText, property;
 
 	JButton okButton, cancelButton;
 
 	JCheckBox checkBox;
 
+	@SuppressWarnings("deprecation") // property is not known before
 	public NoticeDialog(String property, String infoText) throws HeadlessException {
 		super(JFritz.getJframe());
 		this.infoText = infoText;
@@ -53,6 +53,7 @@ public class NoticeDialog extends JDialog implements ActionListener {
 		this.setLocationRelativeTo(JFritz.getJframe());
 	}
 
+	@SuppressWarnings("deprecation") //property is not known before
 	public void drawDialog() {
 		super.dialogInit();
 		setTitle(Main.getMessage("information")); //$NON-NLS-1$

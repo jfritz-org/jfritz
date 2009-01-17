@@ -437,12 +437,10 @@ public class SipProvider {
     /**
      * This comparator is used to sort vectors of data
      */
-    public class ColumnSorter implements Comparator {
+    public class ColumnSorter implements Comparator<Call> {
 
-        public int compare(Object a, Object b) {
+		public int compare(Call v1, Call v2) {
             Date o1, o2;
-            Call v1 = (Call) a;
-            Call v2 = (Call) b;
 
             o1 = v1.getCalldate();
             o2 = v2.getCalldate();
@@ -458,8 +456,7 @@ public class SipProvider {
             } else {
             	return 	o1.compareTo(o2);
             }
-
-        }
+		}
     }
 
     /**

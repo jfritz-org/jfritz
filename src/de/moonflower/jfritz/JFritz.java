@@ -4,7 +4,6 @@
 
 package de.moonflower.jfritz;
 
-import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -29,9 +28,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -69,6 +66,7 @@ import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.StatusListener;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
+import de.moonflower.jfritz.utils.network.SSDPPacket;
 import de.moonflower.jfritz.utils.network.SSDPdiscoverThread;
 
 /**
@@ -566,9 +564,9 @@ public final class JFritz implements  StatusListener, ItemListener {
 			clip.open(ais);
             FloatControl gainControl =
                 (FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);
-            float min = gainControl.getMinimum();
-            float max = gainControl.getMaximum();
-            float diff = max - min;
+//            float min = gainControl.getMinimum();
+//            float max = gainControl.getMaximum();
+//            float diff = max - min;
             gainControl.setValue(volume);
 			clip.start();
 			while (true) {
@@ -626,7 +624,7 @@ public final class JFritz implements  StatusListener, ItemListener {
 	/**
 	 * @return Returns the fritzbox devices.
 	 */
-	public static final Vector getDevices() {
+	public static final Vector<SSDPPacket> getDevices() {
 		//avoid using the ssdp thread if jfritz is running as a client and using the call list from server
 		if (JFritzUtils.parseBoolean(Main.getProperty("option.useSSDP")) //$NON-NLS-1$
 			&& !(Main.getProperty("network.type").equals("2")

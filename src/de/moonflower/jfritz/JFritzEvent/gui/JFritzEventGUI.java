@@ -128,4 +128,15 @@ public class JFritzEventGUI extends JPanel implements ConfigPanel, ActionListene
 		}
 	}
 
+	public String getPath() {
+		return "EventAction";
+	}
+
+	public JPanel getPanel() {
+		return this;
+	}
+
+	public String getHelpUrl() {
+		return "";
+	}
 }

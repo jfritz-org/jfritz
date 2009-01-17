@@ -81,8 +81,7 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
             try {
                 Call currentCall = new Call(new CallType(CallType.CALLIN),
                         new SimpleDateFormat("dd.MM.yy HH:mm:ss")
-                                .parse(split[0]), new PhoneNumber(number), "0",
-                        provider, 0);
+                                .parse(split[0]), new PhoneNumber(number, false), "0", provider, 0);
                 JFritz.getCallMonitorList().addNewCall(
                         Integer.parseInt(split[2]), currentCall);
             } catch (ParseException e) {
@@ -108,8 +107,9 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
             try {
                 Call currentCall = new Call(new CallType(CallType.CALLOUT),
                         new SimpleDateFormat("dd.MM.yy HH:mm:ss")
-                                .parse(split[0]), new PhoneNumber(number),
-                        split[3], provider, 0);
+                                .parse(split[0]),
+                                new PhoneNumber(number, JFritzUtils.parseBoolean(Main.getProperty("option.activateDialPrefix"))),
+                                split[3], provider, 0);
                 JFritz.getCallMonitorList().addNewCall(
                         Integer.parseInt(split[2]), currentCall);
             } catch (ParseException e) {
@@ -142,8 +142,9 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
                 number = number.substring(0, number.length() - 1);
 
             Call call = JFritz.getCallMonitorList().getCall(callId);
-            PhoneNumber pn = new PhoneNumber(number);
-            if (pn.getIntNumber().equals(call.getPhoneNumber().getIntNumber())) {
+            PhoneNumber pn = new PhoneNumber(number, false);
+            if (pn.getIntNumber().equals(call.getPhoneNumber().getIntNumber())
+        		|| pn.getIntNumber().equals(Main.getProperty("dial.prefix")+call.getPhoneNumber().getIntNumber())) {
                 try {
                     if (JFritz.getCallMonitorList().getCall(callId) != null) {
                         JFritz.getCallMonitorList().getCall(callId)

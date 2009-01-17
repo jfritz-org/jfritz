@@ -14,6 +14,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 
@@ -52,7 +53,7 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 		this.fritzBoxPanel = fritzBoxPanel;
 
 		setLayout(new BorderLayout());
-		setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+		setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
 		callMonitorCombo = new JComboBox();
 		callMonitorCombo.addItem(Main.getMessage("no_call_monitor")); //$NON-NLS-1$
 		callMonitorCombo.addItem(Main.getMessage("fritz_call_monitor")); //$NON-NLS-1$
@@ -65,7 +66,7 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 		add(callMonitorCombo, BorderLayout.NORTH);
 
 		JPanel pane = new JPanel();
-		add(pane, BorderLayout.CENTER);
+		add(new JScrollPane(pane), BorderLayout.CENTER);
 
 		pane.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
@@ -310,4 +311,18 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 			JFritz.getJframe().setCallMonitorButtonPushed(false);
 		}
 	}
+
+	public String getPath()
+	{
+		return Main.getMessage("callmonitor");
+	}
+
+	public JPanel getPanel() {
+		return this;
+	}
+
+	public String getHelpUrl() {
+		return "http://jfritz.org/wiki/JFritz_Handbuch:Deutsch#Anrufmonitor";
+	}
+
 }

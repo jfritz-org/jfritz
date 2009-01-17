@@ -13,7 +13,10 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -241,15 +244,23 @@ public class JFritzProperties extends Properties {
                     + Main.PROGRAM_VERSION + "</comment>"); //$NON-NLS-1$
             pw.newLine();
 
-            Enumeration en = keys();
-            while (en.hasMoreElements()) {
-                String element = en.nextElement().toString();
-                pw.write("<entry key=\"" + element + //$NON-NLS-1$
-                		"\">" //$NON-NLS-1$
-                		+JFritzUtils.convertSpecialChars(
-                				JFritzUtils.deconvertSpecialChars(
-                						getProperty(element)))+"</entry>"); //$NON-NLS-1$
-                pw.newLine();
+            Enumeration <Object> keys = keys();
+            List <String> elementList = new ArrayList<String>();
+            while (keys.hasMoreElements()) {
+            elementList.add((String)keys.nextElement());
+            }
+
+            Collections.sort(elementList);
+
+            for (int i=0; i<elementList.size(); i++)
+            {
+            	String element = elementList.get(i);
+            	pw.write("<entry key=\"" + element + //$NON-NLS-1$
+            			"\">" //$NON-NLS-1$
+            			+JFritzUtils.convertSpecialChars(
+            					JFritzUtils.deconvertSpecialChars(
+            							getProperty(element)))+"</entry>"); //$NON-NLS-1$
+            	pw.newLine();
             }
             pw.write("</properties>"); //$NON-NLS-1$
             pw.newLine();

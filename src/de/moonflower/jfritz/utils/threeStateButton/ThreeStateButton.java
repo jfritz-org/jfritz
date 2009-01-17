@@ -57,7 +57,7 @@ public class ThreeStateButton extends JButton implements ImageObserver {
 	public void setToolTipText(int state, String text){
 		toolTipText[state] = text;
 		if(this.state == state){
-			setToolTipText(text);
+			super.setToolTipText(text);
 		}
 	}
 
@@ -74,7 +74,7 @@ public class ThreeStateButton extends JButton implements ImageObserver {
 	}
 
 	/**
-	 * @deprecated
+	 * @deprecated Use the other setToolTipText instead.
 	 */
 	public void setToolTipText(String s){
 		super.setToolTipText(s);

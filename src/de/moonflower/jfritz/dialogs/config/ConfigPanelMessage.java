@@ -1,15 +1,18 @@
 package de.moonflower.jfritz.dialogs.config;
 
+import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.AbstractButton;
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import de.moonflower.jfritz.Main;
@@ -29,13 +32,17 @@ public class ConfigPanelMessage extends JPanel implements ConfigPanel {
 	private JLabel delayLbl;
 
 	public ConfigPanelMessage() {
-		setLayout(new GridBagLayout());
+		setLayout(new BorderLayout());
+		setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
+
+		JPanel cPane = new JPanel();
+		cPane.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.WEST;
 
 		c.gridy = 0;
 		JLabel text = new JLabel(Main.getMessage("popup_for_information")); //$NON-NLS-1$
-		add(text, c);
+		cPane.add(text, c);
 
 		delayLbl = new JLabel(Main.getMessage("popup_delay"));
 
@@ -62,32 +69,34 @@ public class ConfigPanelMessage extends JPanel implements ConfigPanel {
 		popupNoButton = new JRadioButton(Main.getMessage("no_popups")); //$NON-NLS-1$
 		popupNoButton.addActionListener(actionListener);
 		popupGroup.add(popupNoButton);
-		add(popupNoButton, c);
+		cPane.add(popupNoButton, c);
 
 		c.gridy = 2;
 		popupDialogButton = new JRadioButton(Main.getMessage("popup_windows")); //$NON-NLS-1$
 		popupDialogButton.addActionListener(actionListener);
 		popupGroup.add(popupDialogButton);
-		add(popupDialogButton, c);
+		cPane.add(popupDialogButton, c);
 
 		c.gridy = 3;
 		popupTrayButton = new JRadioButton(Main.getMessage("tray_messages")); //$NON-NLS-1$
 		popupTrayButton.addActionListener(actionListener);
 		popupGroup.add(popupTrayButton);
-		add(popupTrayButton, c);
+		cPane.add(popupTrayButton, c);
 
 		c.gridy = 4;
 		c.insets.top = 10;
-		add(delayLbl, c);
+		cPane.add(delayLbl, c);
 
 		popupDelay = new JTextField("", 3);
 		c.gridx = 1;
 		c.insets.left = 15;
-		add(popupDelay, c);
+		cPane.add(popupDelay, c);
 
 		if (!Main.SYSTRAY_SUPPORT) {
 			popupTrayButton.setVisible(false);
 		}
+
+		add(new JScrollPane(cPane), BorderLayout.CENTER);
 	}
 
 	public void loadSettings() {
@@ -133,4 +142,16 @@ public class ConfigPanelMessage extends JPanel implements ConfigPanel {
 
 	}
 
+	public String getPath()
+	{
+		return Main.getMessage("messages");
+	}
+
+	public JPanel getPanel() {
+		return this;
+	}
+
+	public String getHelpUrl() {
+		return "http://jfritz.org/wiki/JFritz_Handbuch:Deutsch#Nachrichten";
+	}
 }

@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -16,7 +15,6 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -122,16 +120,16 @@ public class FritzBox {
 		+ "\\s*<td class=\"c3\"><script type=\"text/javascript\">document.write\\(ProviderDisplay\\(\"([^\"]*)\"\\)\\);</script></td>" //$NON-NLS-1$
 		+ "\\s*<td class=\"c6\"><script type=\"text/javascript\">document.write\\(AuswahlDisplay\\(\"([^\"]*)\"\\)\\);</script></td>"; //$NON-NLS-1$
 
-	private final static String PATTERN_SIPPROVIDER_96 = "<!--\\s*\"(\\d)\"\\s*/\\s*\"(\\w*)\"\\s*/\\s*\"\\w*\"\\s*-->" //$NON-NLS-1$
+	private final static String PATTERN_SIPPROVIDER_96 = "<!--\\s*\"(\\d[\\d]*)\"\\s*/\\s*\"(\\w*)\"\\s*/\\s*\"\\w*\"\\s*-->" //$NON-NLS-1$
 		// FW >= 96
-		+ "\\s*<td class=\"c1\">\\s*<input type=checkbox id=\"uiViewActivsip\\d\"" //$NON-NLS-1$
-		+ "\\s*onclick=\"uiOnChangeActivated\\('uiViewActivsip\\d','uiPostActivsip\\d'\\); return true;\">" //$NON-NLS-1$
+		+ "\\s*<td class=\"c1\">\\s*<input type=checkbox id=\"uiViewActivsip\\d[\\d]*\"" //$NON-NLS-1$
+		+ "\\s*onclick=\"uiOnChangeActivated\\('uiViewActivsip\\d[\\d]*','uiPostActivsip\\d[\\d]*'\\); return true;\">" //$NON-NLS-1$
 		+ "\\s*</td>" //$NON-NLS-1$
 		+ "\\s*<td class=\"c2\">([^<]*)</td>" //$NON-NLS-1$
 		+ "\\s*<td class=\"c3\"><script type=\"text/javascript\">document.write\\(ProviderDisplay\\(\"([^\"]*)\"\\)\\);</script></td>" //$NON-NLS-1$
 		+ "\\s*<td class=\"c6\"><script type=\"text/javascript\">document.write\\(AuswahlDisplay\\(\"([^\"]*)\"\\)\\);</script></td>"; //$NON-NLS-1$
 
-	private final static String PATTERN_SIPPROVIDER_ACTIVE = "<input type=\"hidden\" name=\"sip:settings/sip(\\d)/activated\" value=\"(\\d)\" id=\"uiPostActivsip"; //$NON-NLS-1$
+	private final static String PATTERN_SIPPROVIDER_ACTIVE = "<input type=\"hidden\" name=\"sip:settings/sip(\\d[\\d]*)/activated\" value=\"(\\d[\\d]*)\" id=\"uiPostActivsip"; //$NON-NLS-1$
 
 	private final static String PATTERN_QUICKDIAL = "<tr class=\"Dialoglist\">" //$NON-NLS-1$
 		+ "\\s*<td style=\"text-align: center;\">(\\d*)</td>" //$NON-NLS-1$
@@ -779,7 +777,7 @@ public class FritzBox {
 		String result = UPNPUtils.getSOAPData("http://" + getAddress() +
 				URL_SERVICE_ADDONINFOS, URN_SERVICE_ADDONINFOS, xml);
 
-//		Debug.msg("Result of getAddonInfos: "+ result);
+		Debug.msg("Result of getAddonInfos: "+ result);
 
 		try {
 			XMLReader reader = SAXParserFactory.newInstance().newSAXParser()
@@ -951,7 +949,8 @@ public class FritzBox {
 			"</s:Body>\n" +
 			"</s:Envelope>";
 
-		String result =  UPNPUtils.getSOAPData("http://" + getAddress() +
+//		String result =
+			UPNPUtils.getSOAPData("http://" + getAddress() +
 				URL_SERVICE_GETINFO, URN_SERVICE_GETINFO, xml);
 
 //		Debug.msg("Result of getInfo: "+ result);
@@ -1005,7 +1004,8 @@ public class FritzBox {
 			"</s:Body>\n" +
 			"</s:Envelope>";
 
-		String result =  UPNPUtils.getSOAPData("http://" + getAddress() +
+//		String result =
+			UPNPUtils.getSOAPData("http://" + getAddress() +
 				URL_SERVICE_CONNECTIONTYPEINFO, URN_SERVICE_CONNECTIONTYPEINFO, xml);
 
 //		Debug.msg("Result of getConnectionTypeInfo: "+ result);
@@ -1033,7 +1033,8 @@ public class FritzBox {
 			"</s:Body>\n" +
 			"</s:Envelope>";
 
-		String result =  UPNPUtils.getSOAPData("http://" + getAddress() +
+//		String result =
+			UPNPUtils.getSOAPData("http://" + getAddress() +
 				URL_SERVICE_GENERICPORTMAPPING, URN_SERVICE_GENERICPORTMAPPING, xml);
 
 //		Debug.msg("Result of getGenericPortMappingEntry: "+ result);

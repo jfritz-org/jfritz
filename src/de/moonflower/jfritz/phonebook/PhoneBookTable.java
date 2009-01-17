@@ -16,14 +16,11 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.TableCellRenderer;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.CallCellEditor;
 import de.moonflower.jfritz.cellrenderer.CallTypeDateCellRenderer;
 import de.moonflower.jfritz.cellrenderer.MultiLineCellRenderer;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.PhoneNumber;
-import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
  * @author Arno Willig

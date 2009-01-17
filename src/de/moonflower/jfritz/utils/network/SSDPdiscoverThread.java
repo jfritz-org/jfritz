@@ -20,7 +20,7 @@ public class SSDPdiscoverThread extends Thread {
 	int timeout;
 	private StatusBarController statusBarController = new StatusBarController();
 
-	Vector devices;
+	Vector<SSDPPacket> devices;
 
 	/**
 	 * Constructs SSDPdiscoverThread
@@ -47,7 +47,7 @@ public class SSDPdiscoverThread extends Thread {
 	/**
 	 * @return Returns the fritz box devices.
 	 */
-	synchronized public final Vector getDevices() {
+	synchronized public final Vector<SSDPPacket> getDevices() {
 		return devices;
 	}
 

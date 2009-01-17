@@ -1,11 +1,14 @@
 package de.moonflower.jfritz.dialogs.config;
 
+import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
+import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import de.moonflower.jfritz.Main;
@@ -23,41 +26,47 @@ public class ConfigPanelPhone extends JPanel implements ConfigPanel{
 	private JCheckBox activateDialPrefix;
 
 	public ConfigPanelPhone() {
-			setLayout(new GridBagLayout());
-			GridBagConstraints c = new GridBagConstraints();
-			c.insets.top = 5;
-			c.insets.bottom = 5;
-			c.anchor = GridBagConstraints.WEST;
+		setLayout(new BorderLayout());
+		setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
 
-			c.gridy = 1;
-			JLabel label = new JLabel(Main.getMessage("area_code")); //$NON-NLS-1$
-			add(label, c);
-			areaCode = new JTextField("", 6); //$NON-NLS-1$
-			add(areaCode, c);
+		JPanel cPane = new JPanel();
+		cPane.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.insets.top = 5;
+		c.insets.bottom = 5;
+		c.anchor = GridBagConstraints.WEST;
 
-			c.gridy = 2;
-			label = new JLabel(Main.getMessage("country_code")); //$NON-NLS-1$
-			add(label, c);
-			countryCode = new JTextField("", 6); //$NON-NLS-1$
-			add(countryCode, c);
+		c.gridy = 1;
+		JLabel label = new JLabel(Main.getMessage("area_code")); //$NON-NLS-1$
+		cPane.add(label, c);
+		areaCode = new JTextField("", 6); //$NON-NLS-1$
+		cPane.add(areaCode, c);
 
-			c.gridy = 3;
-			label = new JLabel(Main.getMessage("area_prefix")); //$NON-NLS-1$
-			add(label, c);
-			areaPrefix = new JTextField("", 6); //$NON-NLS-1$
-			add(areaPrefix, c);
+		c.gridy = 2;
+		label = new JLabel(Main.getMessage("country_code")); //$NON-NLS-1$
+		cPane.add(label, c);
+		countryCode = new JTextField("", 6); //$NON-NLS-1$
+		cPane.add(countryCode, c);
 
-			c.gridy = 4;
-			label = new JLabel(Main.getMessage("country_prefix")); //$NON-NLS-1$
-			add(label, c);
-			countryPrefix = new JTextField("", 6); //$NON-NLS-1$
-			add(countryPrefix, c);
+		c.gridy = 3;
+		label = new JLabel(Main.getMessage("area_prefix")); //$NON-NLS-1$
+		cPane.add(label, c);
+		areaPrefix = new JTextField("", 6); //$NON-NLS-1$
+		cPane.add(areaPrefix, c);
 
-	        c.gridy = 5;
-	        activateDialPrefix = new JCheckBox(Main.getMessage("dial_prefix")); //$NON-NLS-1$
-	        add(activateDialPrefix, c);
-	        dialPrefix = new JTextField("", 6); //$NON-NLS-1$
-	        add(dialPrefix, c);
+		c.gridy = 4;
+		label = new JLabel(Main.getMessage("country_prefix")); //$NON-NLS-1$
+		cPane.add(label, c);
+		countryPrefix = new JTextField("", 6); //$NON-NLS-1$
+		cPane.add(countryPrefix, c);
+
+        c.gridy = 5;
+        activateDialPrefix = new JCheckBox(Main.getMessage("dial_prefix")); //$NON-NLS-1$
+        cPane.add(activateDialPrefix, c);
+        dialPrefix = new JTextField("", 6); //$NON-NLS-1$
+        cPane.add(dialPrefix, c);
+
+        add(new JScrollPane(cPane), BorderLayout.CENTER);
 	}
 
 	public void loadSettings() {
@@ -90,5 +99,18 @@ public class ConfigPanelPhone extends JPanel implements ConfigPanel{
         Main.setProperty("dial.prefix", dialPrefix.getText()); //$NON-NLS-1$
 		Main.setProperty("country.prefix", countryPrefix.getText()); //$NON-NLS-1$
 
+	}
+
+	public String getPath()
+	{
+		return Main.getMessage("telephone");
+	}
+
+	public JPanel getPanel() {
+		return this;
+	}
+
+	public String getHelpUrl() {
+		return "http://jfritz.org/wiki/JFritz_Handbuch:Deutsch#Telefon";
 	}
 }

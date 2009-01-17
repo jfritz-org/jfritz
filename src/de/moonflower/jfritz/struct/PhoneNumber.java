@@ -35,7 +35,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  * @author Arno Willig
  *
  */
-public class PhoneNumber implements Comparable, Serializable {
+public class PhoneNumber implements Serializable {
 
 	private static final long serialVersionUID = 102;
 
@@ -71,33 +71,6 @@ public class PhoneNumber implements Comparable, Serializable {
 	private String Description = "";
 
 	private String countryCode = "";
-
-	/**
-	 * @deprecated use the other constructor from now on
-	 *
-	 * Constructs a PhoneNumber with a special type
-	 * @param number
-	 *            Phone number
-	 * @param type
-	 *            Type of number
-	 */
-	public PhoneNumber(String number, String type) {
-		this.type = type;
-		// if (number.matches(numberMatcher)) this.number = number;
-		this.number = number;
-		refactorNumber();
-	}
-
-	/**
-	 * @deprecated don't use anymore
-	 *
-	 * Constructs a PhoneNumber without a type
-	 *
-	 * @param fullNumber
-	 */
-	public PhoneNumber(String fullNumber) {
-		this(fullNumber, "");//$NON-NLS-1$
-	}
 
 	/**
 	 * This constructor should be used if the number may be a quickdial and

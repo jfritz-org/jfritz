@@ -927,12 +927,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		configDialog.setLocationRelativeTo(this);
 		if (configDialog.showDialog()) {
 			try {
+				this.setStatus(Main.getMessage("save_settings"));
 				configDialog.storeValues();
 				Main.saveConfigProperties();
-				if (JFritz.getSIPProviderTableModel().getProviderList().size() == 0) { // Noch
-					// keine
-					// SipProvider
-					// eingelesen.
+				if (JFritz.getSIPProviderTableModel().getProviderList().size() == 0) {
+					// Noch keine SipProvider eingelesen.
 						setConnectedStatus();
 						Vector<SipProvider> data = JFritz.getFritzBox()
 								.retrieveSipProvider();
@@ -952,9 +951,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			monitorButton.setEnabled((Integer.parseInt(Main.getProperty(
 					"option.callMonitorType")) > 0)); //$NON-NLS-1$,  //$NON-NLS-2$
 
-			callerListPanel.showHideColumns();
+			callerListPanel.reorderColumns();
 		}
 		configDialog.dispose();
+		this.setStatus("");
 	}
 
 	/**
@@ -984,7 +984,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		JOptionPane.showMessageDialog(this, Main.PROGRAM_NAME + " v" //$NON-NLS-1$
 				+ Main.PROGRAM_VERSION + "\n" //$NON-NLS-1$
 				+ JFritzUtils.getVersionFromCVSTag(Main.CVS_TAG) + "\n" //$NON-NLS-1$
-				+ "(c) 2005-2008 by " + Main.JFRITZ_PROJECT + "\n" //$NON-NLS-1$,  //$NON-NLS-2$
+				+ "(c) 2005-2009 by " + Main.JFRITZ_PROJECT + "\n" //$NON-NLS-1$,  //$NON-NLS-2$
 				+ Main.PROGRAM_URL + "\n\n" 							//$NON-NLS-1$
 				+ "Project-Admin: " + Main.PROJECT_ADMIN + "\n"		//$NON-NLS-1$
 				+ "Project-Initiator: " + "Arno Willig <akw@thinkwiki.org>" //$NON-NLS-1$
@@ -1051,16 +1051,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	}
 
 	/**
-	 * @deprecated
-	 * Sets standard info into the status bar
-	 *
-	 */
-	public void setStatus() {
-		callerListPanel.updateStatusBar(false);
-	}
-
-
-	/**
 	 * Sets text in the status bar
 	 * @param status
 	 */
@@ -1070,7 +1060,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			mainStatusPanel.setVisible(false);
 			callerListPanel.updateStatusBar(false);
 			statusBar.refresh();
-			setStatus();
+			callerListPanel.updateStatusBar(false);
 		} else {
 			mainStatusPanel.setVisible(true);
 			mainStatusBar.setText(status);

@@ -16,7 +16,7 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 
 /**
- * This deprecated class manages editing of the participant cell in the caller table.
+ * This class manages editing of the comment cell in the caller table.
  *
  * @author Arno Willig
  *

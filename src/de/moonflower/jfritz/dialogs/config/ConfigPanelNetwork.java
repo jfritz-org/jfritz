@@ -61,6 +61,8 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 
 	private JTable logonsTable;
 
+	private JPanel mainPanel;
+
 	private JPanel serverPanel;
 
 	//private JScrollPane clientPanel;
@@ -69,15 +71,20 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 
 	public ConfigPanelNetwork(JDialog parent) {
 		this.parent = parent;
+
 		setLayout(new BorderLayout());
-		setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+		setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
+
+		mainPanel = new JPanel();
+		mainPanel.setLayout(new BorderLayout());
+		setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
 		networkTypeCombo = new JComboBox();
 		networkTypeCombo.addItem(Main.getMessage("no_network_function")); //$NON-NLS-1$
 		networkTypeCombo.addItem(Main.getMessage("network_server_function")); //$NON-NLS-1$
 		networkTypeCombo.addItem(Main.getMessage("network_client_function")); //$NON-NLS-1$
 		networkTypeCombo.addActionListener(this);
 
-		add(networkTypeCombo, BorderLayout.NORTH);
+		mainPanel.add(networkTypeCombo, BorderLayout.NORTH);
 
 		clientPanel = getClientPanel();
 		serverPanel = getServerPanel();
@@ -86,6 +93,8 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		serverPanel.setVisible(false);
 
 		NetworkStateMonitor.addListener(this);
+
+		add(new JScrollPane(mainPanel), BorderLayout.CENTER);
 	}
 
 	public void loadSettings() {
@@ -93,10 +102,10 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		if(type.equals("0")){
 			networkTypeCombo.setSelectedIndex(0);
 		}else if(type.equals("1")){
-			add(serverPanel, BorderLayout.SOUTH);
+			mainPanel.add(serverPanel, BorderLayout.SOUTH);
 			networkTypeCombo.setSelectedIndex(1);
 		}else{
-			add(clientPanel, BorderLayout.SOUTH);
+			mainPanel.add(clientPanel, BorderLayout.SOUTH);
 			networkTypeCombo.setSelectedIndex(2);
 		}
 
@@ -311,7 +320,6 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 
 	private JPanel getClientPanel(){
 		JPanel panel = new JPanel();
-		JScrollPane sPanel = new JScrollPane();
 		JLabel label;
 
 		panel.setLayout(new GridBagLayout());
@@ -439,36 +447,36 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 			switch (networkTypeCombo.getSelectedIndex()) {
 			case 0: {
 				Debug.msg("No network functionality chosen"); //$NON-NLS-1$
-				this.removeAll();
+				mainPanel.removeAll();
 				networkTypeCombo.setSelectedIndex(0);
-				this.add(networkTypeCombo, BorderLayout.NORTH);
+				mainPanel.add(networkTypeCombo, BorderLayout.NORTH);
 				clientPanel.setVisible(false);
 				serverPanel.setVisible(false);
-				this.repaint();
+				mainPanel.updateUI();
 				break;
 			}
 			case 1: {
 				Debug.msg("JFritz as a server chosen"); //$NON-NLS-1$
-				this.removeAll();
-				this.add(networkTypeCombo, BorderLayout.NORTH);
+				mainPanel.removeAll();
+				mainPanel.add(networkTypeCombo, BorderLayout.NORTH);
 				networkTypeCombo.setSelectedIndex(1);
-				this.add(serverPanel, BorderLayout.SOUTH);
+				mainPanel.add(serverPanel, BorderLayout.SOUTH);
 				clientPanel.setVisible(false);
 				serverPanel.setVisible(true);
 				serverPanel.repaint();
-				this.repaint();
+				mainPanel.updateUI();
 				break;
 			}
 			case 2: {
 				Debug.msg("JFritz as a client chosen"); //$NON-NLS-1$
-				this.removeAll();
-				this.add(networkTypeCombo, BorderLayout.NORTH);
+				mainPanel.removeAll();
+				mainPanel.add(networkTypeCombo, BorderLayout.NORTH);
 				networkTypeCombo.setSelectedIndex(2);
-				this.add(clientPanel, BorderLayout.SOUTH);
+				mainPanel.add(clientPanel, BorderLayout.SOUTH);
 				clientPanel.setVisible(true);
 				serverPanel.setVisible(false);
 				clientPanel.repaint();
-				this.repaint();
+				mainPanel.updateUI();
 				break;
 
 			}
@@ -526,4 +534,16 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		}
 	}
 
+	public String getPath()
+	{
+		return Main.getMessage("network");
+	}
+
+	public JPanel getPanel() {
+		return this;
+	}
+
+	public String getHelpUrl() {
+		return "http://jfritz.org/wiki/JFritz_Handbuch:Deutsch#Netzwerk";
+	}
 }

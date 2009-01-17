@@ -14,7 +14,6 @@ import java.util.Vector;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.ToolTipManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
@@ -59,15 +58,7 @@ public class CallerTable extends JTable {
 
 	private static final long serialVersionUID = 1;
 
-	private static final int MAXCOLUMNCOUNT = 9;
-
-	private TableColumn callByCallColumn = null;
-
-	private TableColumn commentColumn = null;
-
-	private TableColumn portColumn = null;
-
-	private TableColumn pictureColumn = null;
+	public static final int NUM_COLUMNS = 10;
 
 	private ColumnHeaderToolTips headerTips;
 
@@ -78,6 +69,10 @@ public class CallerTable extends JTable {
 	private PhoneBookTable phoneBookTable; //to change the selected Person, if someone selects a call
 
 	private CallerListPanel parentPanel;
+
+	private Vector<JFritzTableColumn> allTableColumns = new Vector<JFritzTableColumn>();
+
+	private Vector<JFritzTableColumn> sortedTableColumns = new Vector<JFritzTableColumn>();
 
 	/**
 	 * Constructs CallerTable
@@ -100,24 +95,20 @@ public class CallerTable extends JTable {
 			}
 
 			public void columnMarginChanged(ChangeEvent arg0) {
-				// TODO Auto-generated method stub
 				for (int i = 0; i < colModel.getColumnCount(); i++) {
 					TableColumn col = getColumnModel().getColumn(i);
-					Main.setStateProperty("column." + col.getIdentifier() + ".width", ""
+					Main.setStateProperty("callerTable.column." + col.getIdentifier() + ".width", ""
 							+ col.getPreferredWidth());
 				}
 			}
 
 			public void columnMoved(TableColumnModelEvent arg0) {
-				for (int i = 0; i < MAXCOLUMNCOUNT; i++) {
-					try {
-						Main.setStateProperty("" + "column" + i + ".name", ""
-								+ colModel.getColumn(i).getIdentifier());
-
-					} catch (IllegalArgumentException iae) {
-						Main.setStateProperty("column" + i + ".name", "");
-					} catch (ArrayIndexOutOfBoundsException aioobe) {
-						Main.setStateProperty("column" + i + ".name", "");
+				if (arg0.getFromIndex() != arg0.getToIndex())
+				{
+					moveColumn(arg0.getFromIndex(), arg0.getToIndex(), false);
+					for (int i =0; i < sortedTableColumns.size(); i++)
+					{
+						Main.setStateProperty("callerTable.column" + i + ".name", sortedTableColumns.get(i).getName());
 					}
 				}
 			}
@@ -212,7 +203,13 @@ public class CallerTable extends JTable {
 		col.setMinWidth(10);
 		col.setMaxWidth(1600);
 		col.setPreferredWidth(Integer.parseInt(Main.getStateProperty(
-				"column." + columnName + ".width"))); //$NON-NLS-1$,  //$NON-NLS-2$
+				"callerTable.column." + columnName + ".width"))); //$NON-NLS-1$,  //$NON-NLS-2$
+
+		JFritzTableColumn jCol = new JFritzTableColumn(columnName);
+		jCol.setColumn(col);
+		jCol.setVisible(true);
+		allTableColumns.insertElementAt(jCol, position);
+		sortedTableColumns.insertElementAt(jCol, position);
 		return col;
 	}
 
@@ -227,41 +224,28 @@ public class CallerTable extends JTable {
 
 		createColumn(1, COLUMN_DATE, new DateCellRenderer());
 
-		callByCallColumn = createColumn(2, COLUMN_CALL_BY_CALL,
+		createColumn(2, COLUMN_CALL_BY_CALL,
 				new CallByCallCellRenderer());
 
 		TableColumn numberColumn = createColumn(3, COLUMN_NUMBER,
 				new NumberCellRenderer());
 		numberColumn.setCellEditor(new CallCellEditor());
 
-		TableColumn participantColumn = createColumn(4, COLUMN_PARTICIPANT,
+		createColumn(4, COLUMN_PARTICIPANT,
 				new PersonCellRenderer());
-//		participantColumn.setCellEditor(new PersonCellEditor(
-//				(CallerList) getModel()));
 
-		portColumn = createColumn(5, COLUMN_PORT, new PortCellRenderer());
+		createColumn(5, COLUMN_PORT, new PortCellRenderer());
 
 		createColumn(6, COLUMN_ROUTE, new RouteCellRenderer());
 
 		createColumn(7, COLUMN_DURATION, new DurationCellRenderer());
 
-		commentColumn = createColumn(8, COLUMN_COMMENT, new CommentCellRenderer());
+		TableColumn commentColumn = createColumn(8, COLUMN_COMMENT, new CommentCellRenderer());
 		commentColumn.setCellEditor(new CommentCellEditor());
 
-		pictureColumn = createColumn(9, COLUMN_PICTURE, new PictureCellRenderer());
+		createColumn(9, COLUMN_PICTURE, new PictureCellRenderer());
 
-		showHideColumns();
-
-		for (int i = 0; i < getColumnCount(); i++) {
-			String columnName = Main.getStateProperty("column" + i + ".name"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-			// Debug.msg("column"+i+".name:
-			// "+Main.getProperty("column"+i+".name",""));
-			if (!columnName.equals("")) { //$NON-NLS-1$
-				if (getColumnIndex(columnName) != -1) {
-					moveColumn(getColumnIndex(columnName), i);
-				}
-			}
-		}
+		reorderColumns();
 
 		getTableHeader().addMouseMotionListener(headerTips);
 	}
@@ -330,107 +314,192 @@ public class CallerTable extends JTable {
 	}
 
 	/**
-	 *
-	 * Bestimmt die Spaltennummer zu einer bestimmten SpaltenID SpaltenID =
-	 * type, duration, port, participant etc.
-	 *
-	 */
-	public int getColumnIndex(String columnIdentifier) {
-		for (int i = 0; i < getColumnModel().getColumnCount(); i++) {
-			TableColumn currentColumn = getColumnModel().getColumn(i);
-			if (currentColumn.getIdentifier().toString().equals(
-					columnIdentifier)) {
-				return i;
-			}
-		}
-		return -1;
-	}
-
-	/**
-	 * Existiert die Spalte mit dem Namen columnName?
-	 *
-	 * @param columnName
-	 * @return true, wenn Spalte existiert
-	 */
-	public boolean columnExists(String columnName) {
-		TableColumnModel colModel = getColumnModel();
-		try {
-			colModel.getColumnIndex(columnName);
-			// column found
-			return true;
-		} catch (IllegalArgumentException iae) {
-			// No column found
-			return false;
-		}
-	}
-
-	/**
-	 * Fügt die Spalte column mit dem Namen columnName ein
-	 *
-	 * @param columnName
-	 * @param column
-	 */
-	private void showColumn(String columnName, TableColumn column) {
-		TableColumnModel colModel = getColumnModel();
-		if (!columnExists(columnName)) {
-			colModel.addColumn(column);
-			Debug.msg("Showing " + columnName + " column"); //$NON-NLS-1$
-			colModel.getColumn(getColumnCount() - 1).setPreferredWidth(
-					Integer.parseInt(Main.getStateProperty(
-							"column." + columnName + ".width"))); //$NON-NLS-1$, //$NON-NLS-2$
-		}
-	}
-
-	/**
-	 * Versteckt die Spalte column mit dem Namen columnName
-	 *
-	 * @param columnName
-	 */
-	private void hideColumn(String columnName) {
-		TableColumnModel colModel = getColumnModel();
-		if (columnExists(columnName)) {
-			try {
-				// Try to remove Call-By-Call Column
-				colModel.removeColumn(colModel.getColumn(colModel
-						.getColumnIndex(columnName)));
-				Debug.msg("Hiding " + columnName + " column"); //$NON-NLS-1$
-			} catch (IllegalArgumentException iae) {
-				// No CbC-Column found
-			}
-		}
-	}
-
-	/**
 	 * Blendet die Spalten ein oder aus
 	 *
 	 */
-	public void showHideColumns() {
+	public void hideColumns() {
 		if (!JFritzUtils.parseBoolean(Main.getProperty(
-				"option.showCallByCallColumn"))) { //$NON-NLS-1$, //$NON-NLS-2$
+				"option.showCallerListColumn."+COLUMN_CALL_BY_CALL))) { //$NON-NLS-1$, //$NON-NLS-2$
 			hideColumn(COLUMN_CALL_BY_CALL);
-		} else {
-			showColumn(COLUMN_CALL_BY_CALL, callByCallColumn);
 		}
 
 		if (!JFritzUtils.parseBoolean(Main.getProperty(
-				"option.showCommentColumn"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+				"option.showCallerListColumn."+COLUMN_COMMENT))) { //$NON-NLS-1$,  //$NON-NLS-2$
 			hideColumn(COLUMN_COMMENT);
-		} else {
-			showColumn(COLUMN_COMMENT, commentColumn);
 		}
 
 		if (!JFritzUtils.parseBoolean(Main.getProperty(
-				"option.showPortColumn"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+				"option.showCallerListColumn."+COLUMN_PORT))) { //$NON-NLS-1$,  //$NON-NLS-2$
 			hideColumn(COLUMN_PORT);
-		} else {
-			showColumn(COLUMN_PORT, portColumn);
 		}
 
 		if (!JFritzUtils.parseBoolean(Main.getProperty(
-				"option.showPictureColumn"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+				"option.showCallerListColumn."+COLUMN_PICTURE))) { //$NON-NLS-1$,  //$NON-NLS-2$
 			hideColumn(COLUMN_PICTURE);
-		} else {
-			showColumn(COLUMN_PICTURE, pictureColumn);
+		}
+
+		if (!JFritzUtils.parseBoolean(Main.getProperty(
+				"option.showCallerListColumn."+COLUMN_DATE))) { //$NON-NLS-1$,  //$NON-NLS-2$
+			hideColumn(COLUMN_DATE);
+		}
+
+		if (!JFritzUtils.parseBoolean(Main.getProperty(
+				"option.showCallerListColumn."+COLUMN_DURATION))) { //$NON-NLS-1$,  //$NON-NLS-2$
+			hideColumn(COLUMN_DURATION);
+		}
+
+		if (!JFritzUtils.parseBoolean(Main.getProperty(
+				"option.showCallerListColumn."+COLUMN_NUMBER))) { //$NON-NLS-1$,  //$NON-NLS-2$
+			hideColumn(COLUMN_NUMBER);
+		}
+
+		if (!JFritzUtils.parseBoolean(Main.getProperty(
+				"option.showCallerListColumn."+COLUMN_PARTICIPANT))) { //$NON-NLS-1$,  //$NON-NLS-2$
+			hideColumn(COLUMN_PARTICIPANT);
+		}
+
+		if (!JFritzUtils.parseBoolean(Main.getProperty(
+				"option.showCallerListColumn."+COLUMN_ROUTE))) { //$NON-NLS-1$,  //$NON-NLS-2$
+			hideColumn(COLUMN_ROUTE);
+		}
+
+		if (!JFritzUtils.parseBoolean(Main.getProperty(
+				"option.showCallerListColumn."+COLUMN_TYPE))) { //$NON-NLS-1$,  //$NON-NLS-2$
+			hideColumn(COLUMN_TYPE);
 		}
 	}
+
+	private JFritzTableColumn getColumnByName(String columnName)
+	{
+		for (int i=0; i<allTableColumns.size(); i++)
+		{
+			JFritzTableColumn col = allTableColumns.get(i);
+			if (col.getName().equals(columnName))
+			{
+				return col;
+			}
+		}
+		return null;
+	}
+
+	private void hideColumn(String columnName)
+	{
+		JFritzTableColumn col = getColumnByName(columnName);
+		if (col != null)
+		{
+			hideColumn(col.getColumn());
+		}
+	}
+
+    public void moveColumn(int oldIndex, int newIndex, boolean moveTableColumn) {
+    	if ((oldIndex < 0) || (oldIndex >= getColumnCount()) ||
+    	    (newIndex < 0) || (newIndex >= getColumnCount()))
+    	{
+    	    throw new IllegalArgumentException("moveColumn() - Index out of range");
+    	}
+
+    	if (oldIndex != newIndex)
+    	{
+    		Debug.msg("Sorted size: " + sortedTableColumns.size());
+    		Debug.msg("Old index: " + oldIndex);
+    		Debug.msg("New index: " + newIndex);
+    		Debug.msg("ColumnSize: " + getColumnCount());
+	    	JFritzTableColumn fromColumn = sortedTableColumns.get(oldIndex);
+	    	JFritzTableColumn toColumn = sortedTableColumns.get(newIndex);
+
+	        int allColumnsOldIndex  = sortedTableColumns.indexOf(fromColumn);
+	        int allColumnsNewIndex  = sortedTableColumns.indexOf(toColumn);
+
+	        if(oldIndex != newIndex) {
+	        	sortedTableColumns.removeElementAt(allColumnsOldIndex);
+	        	sortedTableColumns.insertElementAt(fromColumn, allColumnsNewIndex);
+	        }
+
+	        if (moveTableColumn)
+	        {
+	        	super.moveColumn(oldIndex, newIndex);
+	        }
+    	}
+    }
+
+    public void hideColumn(TableColumn column) {
+        JFritzTableColumn col = getJFritzTableColumn(column.getIdentifier().toString());
+        if (col != null && col.isVisible())
+        {
+        	col.setVisible(false);
+        }
+        else
+        {
+        	assert col!=null;
+        }
+        super.removeColumn(column);
+    }
+
+    public void reorderColumns()
+    {
+    	// remove all columns
+    	while (getColumnCount() != 0)
+    	{
+    		TableColumn col = getColumnModel().getColumn(0);
+    		getColumnModel().removeColumn(col);
+    	}
+
+    	sortedTableColumns.clear();
+
+		for (int i = 0; i < allTableColumns.size(); i++) {
+			String columnName = Main.getStateProperty("callerTable.column" + i + ".name"); //$NON-NLS-1$,  //$NON-NLS-2$
+			JFritzTableColumn col = getColumnByName(columnName);
+			if (col != null)
+			{
+				Debug.msg(i + ": " + columnName);
+				getColumnModel().addColumn(col.getColumn());
+				sortedTableColumns.add(col);
+			}
+			else
+			{
+				if (col == null)
+				{
+					Debug.err(columnName + " not found");
+				}
+				else
+				{
+					Debug.err(columnName + " visible:" + col.isVisible());
+				}
+			}
+		}
+
+		Debug.msg("---");
+
+		for (int i=0; i<getColumnCount(); i++)
+		{
+			Debug.msg(i + ": " + getColumnModel().getColumn(i).getIdentifier());
+		}
+
+		hideColumns();
+	}
+
+    public int getColumnIndex(String columnName)
+    {
+    	for (int i=0; i<sortedTableColumns.size(); i++)
+    	{
+    		JFritzTableColumn col = sortedTableColumns.get(i);
+    		if (col != null && col.isVisible() && col.getName().equals(columnName))
+    		{
+    			return i;
+    		}
+    	}
+    	return -1;
+    }
+
+    private JFritzTableColumn getJFritzTableColumn(String columnName)
+    {
+    	for (int i=0; i<allTableColumns.size(); i++)
+    	{
+    		if (allTableColumns.get(i).getName().equals(columnName))
+    		{
+    			return allTableColumns.get(i);
+    		}
+    	}
+    	return null;
+    }
 }

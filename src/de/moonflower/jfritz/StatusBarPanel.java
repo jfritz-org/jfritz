@@ -2,7 +2,7 @@ package de.moonflower.jfritz;
 
 import javax.swing.JToolBar;
 
-public class StatusBarPanel extends JToolBar implements Comparable {
+public class StatusBarPanel extends JToolBar implements Comparable<StatusBarPanel> {
 
 	private static final long serialVersionUID = -218612992436900904L;
 
@@ -18,14 +18,13 @@ public class StatusBarPanel extends JToolBar implements Comparable {
 		return priority;
 	}
 
-	public int compareTo(Object o) {
-		if (((StatusBarPanel) o).priority < this.priority)
+	public int compareTo(StatusBarPanel o) {
+		if (o.priority < this.priority)
 			return 1;
-		else if (((StatusBarPanel) o).priority > this.priority)
+		else if (o.priority > this.priority)
 			return -1;
 		else {
 			return 0;
 		}
-
 	}
 }

@@ -1,10 +1,12 @@
 package de.moonflower.jfritz.dialogs.config;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -12,6 +14,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
@@ -43,9 +46,13 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 	public ConfigPanelOther(ConfigPanelFritzBox fritzBoxPanel) {
 		this.fritzBoxPanel = fritzBoxPanel;
 
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		setLayout(new BorderLayout());
+		setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
+
+		JPanel cPane = new JPanel();
+		cPane.setLayout(new BoxLayout(cPane, BoxLayout.Y_AXIS));
 		timerLabel = new JLabel(Main.getMessage("timer_in") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		add(timerLabel);
+		cPane.add(timerLabel);
 
 		timerSlider = new JSlider(0, 120, 30);
 		timerSlider.setPaintTicks(true);
@@ -61,39 +68,39 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 			}
 
 		});
-		add(timerSlider);
+		cPane.add(timerSlider);
 
 		checkNewVersionAfterStart = new JCheckBox(Main
 				.getMessage("check_for_new_version_after_start")); //$NON-NLS-1$
-		add(checkNewVersionAfterStart);
+		cPane.add(checkNewVersionAfterStart);
 
 		passwordAfterStartButton = new JCheckBox(Main
 				.getMessage("ask_for_password_before_start")); //$NON-NLS-1$
-		add(passwordAfterStartButton);
+		cPane.add(passwordAfterStartButton);
 
 		timerAfterStartButton = new JCheckBox(Main
 				.getMessage("get_timer_after")); //$NON-NLS-1$
-		add(timerAfterStartButton);
+		cPane.add(timerAfterStartButton);
 
 		startMinimizedButton = new JCheckBox(Main.getMessage("start_minimized")); //$NON-NLS-1$
-		add(startMinimizedButton);
+		cPane.add(startMinimizedButton);
 
 		confirmOnExitButton = new JCheckBox(Main.getMessage("confirm_on_exit")); //$NON-NLS-1$
-		add(confirmOnExitButton);
+		cPane.add(confirmOnExitButton);
 
 		searchWithSSDP = new JCheckBox(Main.getMessage("search_with_SSDP")); //$NON-NLS-1$
-		add(searchWithSSDP);
+		cPane.add(searchWithSSDP);
 
 		minimizeInsteadOfClose = new JCheckBox(Main
 				.getMessage("minimize_instead_close")); //$NON-NLS-1$
-		add(minimizeInsteadOfClose);
+		cPane.add(minimizeInsteadOfClose);
 
 		createBackup = new JCheckBox(Main.getMessage("create_backup_start")); //$NON-NLS-1$
-		add(createBackup);
+		cPane.add(createBackup);
 
 		createBackupAfterFetch = new JCheckBox(Main
 				.getMessage("create_backup_fetch")); //$NON-NLS-1$
-		add(createBackupAfterFetch);
+		cPane.add(createBackupAfterFetch);
 
 		JPanel panel = new JPanel();
 
@@ -131,7 +138,9 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 		browseButton.addActionListener(actionListener);
 
 		panel.add(browseButton);
-		add(panel);
+		cPane.add(panel);
+
+		add(new JScrollPane(cPane), BorderLayout.CENTER);
 
 	}
 
@@ -213,5 +222,18 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 		Main.setProperty("fetch.timer", Integer.toString(timerSlider //$NON-NLS-1$
 				.getValue()));
 
+	}
+
+	public String getPath()
+	{
+		return Main.getMessage("other");
+	}
+
+	public JPanel getPanel() {
+		return this;
+	}
+
+	public String getHelpUrl() {
+		return "http://jfritz.org/wiki/JFritz_Handbuch:Deutsch#Weiteres";
 	}
 }

@@ -7,83 +7,89 @@ package de.moonflower.jfritz.dialogs.config;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.BorderFactory;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
+import javax.swing.JTree;
 import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.TableCellRenderer;
+import javax.swing.SwingConstants;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeSelectionModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.Debug;
-import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
  * JDialog for JFritz configuration.
+ * Completely refactored in January 2009 by Robert
  *
- * @author Arno Willig
+ * @author Arno Willig, Robert Palmer
  *
  */
-public class ConfigDialog extends JDialog implements ChangeListener {
-
-	public static boolean refreshWindow;
+public class ConfigDialog extends JDialog {
 
 	private static final long serialVersionUID = 1;
 
 	private JButton okButton, cancelButton;
 
-	private JTabbedPane tpane;
-
 	private Frame parent;
-
-	private JCheckBox deleteAfterFetchButton, fetchAfterStartButton,
-			notifyOnCallsButton,
-			lookupAfterFetchButton,
-			showCallByCallColumnButton,
-			showCommentColumnButton, showPortColumnButton,
-			showPictureColumnButton, fetchAfterStandby;
 
 	private ConfigPanelPhone phonePanel;
 	private ConfigPanelFritzBox fritzBoxPanel;
 	private ConfigPanelMessage messagePanel;
+	private ConfigPanelCallerList callerListPanel;
+	private ConfigPanelCallerListAppearance callerListAppearancePanel;
 	private ConfigPanelCallMonitor callMonitorPanel;
 	private ConfigPanelLang languagePanel;
 	private ConfigPanelOther otherPanel;
 	private ConfigPanelNetwork networkPanel;
+	private ConfigPanelSip sipPanel;
 
 	private boolean pressed_OK = false;
 
     static final String FILESEP = System.getProperty("file.separator");			//$NON-NLS-1$
 	final String langID = FILESEP + "lang";										//$NON-NLS-1$
+
+	private JTree tree;
+	private ConfigTreeNode rootNode;
+	private JPanel configPanel;
+
+	private JLabel helpLinkLabel;
+	private String helpUrl = "";
 
 	public ConfigDialog(Frame parent) {
 		super(parent, true);
@@ -93,10 +99,29 @@ public class ConfigDialog extends JDialog implements ChangeListener {
 		phonePanel = new ConfigPanelPhone();
 		fritzBoxPanel = new ConfigPanelFritzBox();
 		messagePanel = new ConfigPanelMessage();
+		callerListPanel = new ConfigPanelCallerList();
+		callerListAppearancePanel = new ConfigPanelCallerListAppearance();
 		callMonitorPanel = new ConfigPanelCallMonitor(this, true, fritzBoxPanel);
+		sipPanel = new ConfigPanelSip(fritzBoxPanel);
 		languagePanel = new ConfigPanelLang();
 		otherPanel = new ConfigPanelOther(fritzBoxPanel);
 		networkPanel = new ConfigPanelNetwork(this);
+
+		rootNode = new ConfigTreeNode(Main.getMessage("config"));
+		tree = new JTree(rootNode);
+		tree.setRootVisible(true);
+		TreeSelectionModel tsm = new DefaultTreeSelectionModel();
+		tsm.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		tree.setSelectionModel(tsm);
+		configPanel = fritzBoxPanel;
+		helpUrl = fritzBoxPanel.getHelpUrl();
+
+	    DefaultTreeCellRenderer noneRenderer = new DefaultTreeCellRenderer();
+	    noneRenderer.setOpenIcon(null);
+	    noneRenderer.setClosedIcon(null);
+	    noneRenderer.setLeafIcon(null);
+	    tree.setCellRenderer(noneRenderer);
+
 
 		drawDialog();
 		setValues();
@@ -104,7 +129,118 @@ public class ConfigDialog extends JDialog implements ChangeListener {
 			setLocationRelativeTo(parent);
 		}
 
+		TreeSelectionListener selectionListener = new TreeSelectionListener() {
+			public void valueChanged(TreeSelectionEvent e) {
+				ConfigTreeNode node = (ConfigTreeNode)e.getNewLeadSelectionPath().getLastPathComponent();
+				getContentPane().remove(configPanel);
+				configPanel = node.getPanel().getPanel();
+				helpUrl = node.getPanel().getHelpUrl();
+				if (helpUrl.equals(""))
+				{
+					helpLinkLabel.setVisible(false);
+				}
+				else
+				{
+					helpLinkLabel.setVisible(true);
+				}
+				getContentPane().add(configPanel, BorderLayout.CENTER);
+				configPanel.updateUI();
+			}
+		};
+		tree.addTreeSelectionListener(selectionListener);
+
+		tree.setSelectionRow(1);
 	}
+
+	public void addConfigPanel(ConfigPanel panel)
+	{
+		ConfigTreeNode currentNode = rootNode;
+		String path = panel.getPath();
+		String rest = "none";
+
+		while (!rest.equals(""))
+		{
+			if (path.contains("::"))
+			{
+				rest = path.substring(path.indexOf("::")+2);
+				path = path.substring(0, path.indexOf("::"));
+			}
+			else
+			{
+				rest = "";
+			}
+
+			Enumeration<ConfigTreeNode> en = currentNode.children();
+			ConfigTreeNode child = rootNode;
+			boolean found = false;
+			while (en.hasMoreElements() && !found)
+			{
+				child = en.nextElement();
+				if (child.toString().equals(path))
+				{
+					found = true;
+				}
+			}
+			if (!found && !rest.equals("")) // we found no entry, but are still not at the end of our path, just add a subpath-entry.
+			{
+				ConfigTreeNode newNode = new ConfigTreeNode(path);
+				currentNode.add(newNode);
+				currentNode = newNode;
+			}
+			if (!found && rest.equals("")) // we found no entry, but we are at end of our path. Add panel.
+			{
+				ConfigTreeNode newNode = new ConfigTreeNode(panel, path);
+				currentNode.add(newNode);
+				currentNode = newNode;
+			}
+			if (found && !rest.equals("")) // we found an entry, but we are still not at the end of our path.
+			{
+				currentNode = child;
+			}
+			if (found && rest.equals("")) // we found an entry with the same name!!!
+			{
+				if (child.getPanel() != null) // there already exists a panel. Add a new one with en _ERROR suffix.
+				{
+					ConfigTreeNode newNode = new ConfigTreeNode(panel, path + "_ERROR");
+					currentNode.add(newNode);
+					currentNode = newNode;
+				}
+				else // an empty panel, just add our panel instead
+				{
+					child.setPanel(panel);
+				}
+			}
+
+			path = rest;
+		}
+	}
+
+    // If expand is true, expands all nodes in the tree.
+    // Otherwise, collapses all nodes in the tree.
+    public void expandAll(JTree tree, boolean expand) {
+        TreeNode root = (TreeNode)tree.getModel().getRoot();
+
+        // Traverse tree from root
+        expandAll(tree, new TreePath(root), expand);
+    }
+    private void expandAll(JTree tree, TreePath parent, boolean expand) {
+        // Traverse children
+        TreeNode node = (TreeNode)parent.getLastPathComponent();
+        if (node.getChildCount() >= 0) {
+            for (Enumeration e=node.children(); e.hasMoreElements(); ) {
+                TreeNode n = (TreeNode)e.nextElement();
+                TreePath path = parent.pathByAddingChild(n);
+                expandAll(tree, path, expand);
+            }
+        }
+
+        // Expansion or collapse must be done bottom-up
+        if (expand) {
+            tree.expandPath(parent);
+        } else {
+            tree.collapsePath(parent);
+        }
+    }
 
 	public boolean okPressed() {
 		return pressed_OK;
@@ -121,31 +257,9 @@ public class ConfigDialog extends JDialog implements ChangeListener {
 		languagePanel.loadSettings();
 		otherPanel.loadSettings();
 		networkPanel.loadSettings();
-
-		notifyOnCallsButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.notifyOnCalls"))); //$NON-NLS-1$
-		fetchAfterStartButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.fetchAfterStart"))); //$NON-NLS-1$
-		deleteAfterFetchButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.deleteAfterFetch"))); //$NON-NLS-1$
-
-		lookupAfterFetchButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.lookupAfterFetch")));
-
-		showCallByCallColumnButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.showCallByCallColumn"))); //$NON-NLS-1$,  //$NON-NLS-2$
-
-		showCommentColumnButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.showCommentColumn"))); //$NON-NLS-1$,  //$NON-NLS-2$
-
-		showPortColumnButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.showPortColumn"))); //$NON-NLS-1$,  //$NON-NLS-2$
-
-		showPictureColumnButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.showPictureColumn"))); //$NON-NLS-1$,  //$NON-NLS-2$
-
-		fetchAfterStandby.setSelected(JFritzUtils.parseBoolean(Main.getProperty("option.watchdog.fetchAfterStandby"))); //$NON-NLS-1$,  //$NON-NLS-2$
-
-		if(Main.getProperty("network.type").equals("2")
-				&& Boolean.parseBoolean(Main.getProperty("option.clientCallList"))){
-
-			Debug.netMsg("JFritz is running as a client and using call list from server, disabeling some options");
-			deleteAfterFetchButton.setSelected(false);
-			deleteAfterFetchButton.setEnabled(false);
-		}
-
+		callerListPanel.loadSettings();
+		callerListAppearancePanel.loadSettings();
+		sipPanel.loadSettings();
 	}
 
 	/**
@@ -159,31 +273,9 @@ public class ConfigDialog extends JDialog implements ChangeListener {
 		languagePanel.saveSettings();
 		otherPanel.saveSettings();
 		networkPanel.saveSettings();
-
-		Main.setProperty("option.notifyOnCalls", Boolean //$NON-NLS-1$
-				.toString(notifyOnCallsButton.isSelected()));
-		Main.setProperty("option.fetchAfterStart", Boolean //$NON-NLS-1$
-				.toString(fetchAfterStartButton.isSelected()));
-		Main.setProperty("option.deleteAfterFetch", Boolean //$NON-NLS-1$
-				.toString(deleteAfterFetchButton.isSelected()));
-
-		Main.setProperty("option.lookupAfterFetch", Boolean //$NON-NLS-1$
-				.toString(lookupAfterFetchButton.isSelected()));
-
-		Main.setProperty("option.showCallByCallColumn", Boolean //$NON-NLS-1$
-				.toString(showCallByCallColumnButton.isSelected()));
-
-		Main.setProperty("option.showCommentColumn", Boolean //$NON-NLS-1$
-				.toString(showCommentColumnButton.isSelected()));
-
-		Main.setProperty("option.showPortColumn", Boolean //$NON-NLS-1$
-				.toString(showPortColumnButton.isSelected()));
-
-		Main.setProperty("option.showPictureColumn", Boolean //$NON-NLS-1$
-				.toString(showPictureColumnButton.isSelected()));
-
-		Main.setProperty("option.watchdog.fetchAfterStandby", Boolean //$NON-NLS-1$
-				.toString(fetchAfterStandby.isSelected()));
+		callerListPanel.saveSettings();
+		callerListAppearancePanel.saveSettings();
+		sipPanel.saveSettings();
 
 		JFritz.getFritzBox().setAddress(fritzBoxPanel.getAddress());
 		JFritz.getFritzBox().setPassword(fritzBoxPanel.getPassword());
@@ -198,111 +290,8 @@ public class ConfigDialog extends JDialog implements ChangeListener {
         Main.saveUpdateProperties();
 	}
 
-	protected JPanel createSipPane(ActionListener actionListener) {
-		JPanel sippane = new JPanel();
-		sippane.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.insets.top = 5;
-		c.insets.bottom = 5;
-		c.anchor = GridBagConstraints.WEST;
-
-		JPanel sipButtonPane = new JPanel();
-		final JTable siptable = new JTable(JFritz.getSIPProviderTableModel()) {
-			private static final long serialVersionUID = 1;
-
-			public Component prepareRenderer(TableCellRenderer renderer,
-					int rowIndex, int vColIndex) {
-				Component c = super.prepareRenderer(renderer, rowIndex,
-						vColIndex);
-				if (rowIndex % 2 == 0 && !isCellSelected(rowIndex, vColIndex)) {
-					c.setBackground(new Color(255, 255, 200));
-				} else if (!isCellSelected(rowIndex, vColIndex)) {
-					// If not shaded, match the table's background
-					c.setBackground(getBackground());
-				} else {
-					c.setBackground(new Color(204, 204, 255));
-				}
-				return c;
-			}
-		};
-		siptable.setRowHeight(24);
-		siptable.setFocusable(false);
-		siptable.setAutoCreateColumnsFromModel(false);
-		siptable.setColumnSelectionAllowed(false);
-		siptable.setCellSelectionEnabled(false);
-		siptable.setRowSelectionAllowed(true);
-		siptable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		siptable.getColumnModel().getColumn(0).setMinWidth(20);
-		siptable.getColumnModel().getColumn(0).setMaxWidth(20);
-		siptable.getColumnModel().getColumn(1).setMinWidth(40);
-		siptable.getColumnModel().getColumn(1).setMaxWidth(40);
-		siptable.setSize(200, 200);
-		JButton b1 = new JButton(Main.getMessage("get_sip_provider_from_box")); //$NON-NLS-1$
-		b1.setActionCommand("fetchSIP"); //$NON-NLS-1$
-		b1.addActionListener(actionListener);
-		JButton b2 = new JButton(Main.getMessage("save_sip_provider_on_box")); //$NON-NLS-1$
-		b2.setEnabled(false);
-		sipButtonPane.add(b1);
-		sipButtonPane.add(b2);
-
-		sippane.setLayout(new BorderLayout());
-		sippane.add(sipButtonPane, BorderLayout.NORTH);
-		sippane.add(new JScrollPane(siptable), BorderLayout.CENTER);
-		return sippane;
-	}
-
-	protected JPanel createCallerListPane() {
-		JPanel cPanel = new JPanel();
-
-		cPanel.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.anchor = GridBagConstraints.WEST;
-
-		c.gridy = 0;
-		fetchAfterStartButton = new JCheckBox(Main.getMessage("fetch_after_start")); //$NON-NLS-1$
-		cPanel.add(fetchAfterStartButton, c);
-
-		c.gridy = 1;
-		notifyOnCallsButton = new JCheckBox(Main.getMessage("notify_on_calls")); //$NON-NLS-1$
-		cPanel.add(notifyOnCallsButton, c);
-
-		c.gridy = 2;
-		deleteAfterFetchButton = new JCheckBox(Main.getMessage("delete_after_fetch")); //$NON-NLS-1$
-		cPanel.add(deleteAfterFetchButton, c);
-
-		c.gridy = 3;
-		lookupAfterFetchButton = new JCheckBox(Main.getMessage("lookup_after_fetch")); //$NON-NLS-1$
-		cPanel.add(lookupAfterFetchButton, c);
-
-		c.gridy = 4;
-		showCallByCallColumnButton = new JCheckBox(Main.getMessage("show_callbyball_column")); //$NON-NLS-1$
-		cPanel.add(showCallByCallColumnButton, c);
-
-		c.gridy = 5;
-		showPictureColumnButton = new JCheckBox(Main.getMessage("show_picture_column")); //$NON-NLS-1$
-		cPanel.add(showPictureColumnButton, c);
-
-		c.gridy = 6;
-		showCommentColumnButton = new JCheckBox(Main.getMessage("show_comment_column")); //$NON-NLS-1$
-		cPanel.add(showCommentColumnButton, c);
-
-		c.gridy = 7;
-		showPortColumnButton = new JCheckBox(Main.getMessage("show_port_column")); //$NON-NLS-1$
-		cPanel.add(showPortColumnButton, c);
-
-		c.gridy = 8;
-		fetchAfterStandby = new JCheckBox(Main.getMessage("fetch_after_standby")); //$NON-NLS-1$
-		cPanel.add(fetchAfterStandby, c);
-
-		return cPanel;
-	}
-
 	protected void drawDialog() {
-
-		// Create JTabbedPane
-		tpane = new JTabbedPane(JTabbedPane.TOP);
-
-		tpane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		helpLinkLabel = new JLabel(Main.getMessage("help_menu"));
 
 		okButton = new JButton(Main.getMessage("okay")); //$NON-NLS-1$
 		okButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
@@ -315,12 +304,12 @@ public class ConfigDialog extends JDialog implements ChangeListener {
 				if (e.getKeyCode() == KeyEvent.VK_ESCAPE
 						|| (e.getSource() == cancelButton && e.getKeyCode() == KeyEvent.VK_ENTER)) {
 					pressed_OK = false;
-					ConfigDialog.this.setVisible(false);
+					closeWindow();
 				}
 				if (e.getSource() == okButton
 						&& e.getKeyCode() == KeyEvent.VK_ENTER) {
 					pressed_OK = true;
-					ConfigDialog.this.setVisible(false);
+					closeWindow();
 				}
 			}
 		});
@@ -331,7 +320,7 @@ public class ConfigDialog extends JDialog implements ChangeListener {
 				pressed_OK = (source == okButton);
 				if (source == okButton
 						|| source == cancelButton) {
-					ConfigDialog.this.setVisible(false);
+					closeWindow();
 				} else if (e.getActionCommand().equals("fetchSIP")) { //$NON-NLS-1$
 					try {
 						JFritz.getFritzBox().setAddress(fritzBoxPanel.getAddress());
@@ -375,53 +364,111 @@ public class ConfigDialog extends JDialog implements ChangeListener {
 		cancelButton.setMnemonic(KeyEvent.VK_ESCAPE);
 		okcancelpanel.add(cancelButton);
 
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new BorderLayout());
+		buttonPanel.add(okcancelpanel, BorderLayout.CENTER);
+		buttonPanel.add(helpLinkLabel, BorderLayout.WEST);
+
+		helpLinkLabel.setForeground(Color.BLUE);
+		helpLinkLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		helpLinkLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+		helpLinkLabel.setCursor( new Cursor(Cursor.HAND_CURSOR));
+		helpLinkLabel.addMouseListener(new MouseListener(){
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				BrowserLaunch.openURL(helpUrl);
+			}
+
+		});
+
         //set default confirm button (Enter)
         getRootPane().setDefaultButton(okButton);
 
         //set default close button (ESC)
         KeyStroke escapeKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+        KeyStroke helpKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0, true);
         Action escapeAction = new AbstractAction()
         {
-            private static final long serialVersionUID = 3L;
+			private static final long serialVersionUID = 4043321314432066705L;
 
-            public void actionPerformed(ActionEvent e)
+			public void actionPerformed(ActionEvent e)
             {
                  cancelButton.doClick();
             }
         };
+        Action helpAction = new AbstractAction()
+        {
+			private static final long serialVersionUID = -5044333644283489649L;
+
+			public void actionPerformed(ActionEvent e) {
+				BrowserLaunch.openURL(helpUrl);
+			}
+
+        };
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeKeyStroke, "ESCAPE"); //$NON-NLS-1$
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(helpKeyStroke, "HELP"); //$NON-NLS-1$
         getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
+        getRootPane().getActionMap().put("HELP", helpAction); //$NON-NLS-1$
 
-		tpane.addTab(
-				Main.getMessage("FRITZ!Box"), fritzBoxPanel); //$NON-NLS-1$
-		tpane.addTab(Main.getMessage("telephone"), phonePanel); //$NON-NLS-1$
-		tpane
-				.addTab(
-						Main.getMessage("sip_numbers"), createSipPane(actionListener)); //$NON-NLS-1$
-		JScrollPane callerListPaneScrollable = new JScrollPane(
-				createCallerListPane());
-		tpane.addTab(Main.getMessage("callerlist"), callerListPaneScrollable); //$NON-NLS-1$
-		tpane.addTab(Main.getMessage("callmonitor"), callMonitorPanel); //$NON-NLS-1$
-		tpane.addTab(Main.getMessage("messages"), messagePanel); //$NON-NLS-1$
-		tpane.addTab(Main.getMessage("language"),languagePanel);
-		tpane.addTab(Main.getMessage("network"), networkPanel);
-		JScrollPane otherPaneScrollable = new JScrollPane(otherPanel); //$NON-NLS-1$
-		tpane.addTab(Main.getMessage("other"), otherPaneScrollable); //$NON-NLS-1$
-		tpane.addChangeListener(this);
+        BorderLayout layout = new BorderLayout();
+//        layout.setHgap(15);
+//        layout.setVgap(100);
+		getContentPane().setLayout(layout);
+		getContentPane().add(configPanel, BorderLayout.CENTER);
+//		getContentPane().add(tpane, BorderLayout.EAST);
+		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(tpane, BorderLayout.CENTER);
-		getContentPane().add(okcancelpanel, BorderLayout.SOUTH);
+		JScrollPane treePane = new JScrollPane(tree);
+		treePane.setPreferredSize(new Dimension(150,100));
+		treePane.setMaximumSize(new Dimension(200, 100));
+		treePane.setBorder(BorderFactory.createEmptyBorder(20, 10, 0, 0));
+		getContentPane().add(treePane, BorderLayout.WEST);
 		c.fill = GridBagConstraints.HORIZONTAL;
 
 		addKeyListener(keyListener);
 
-		setSize(new Dimension(610,470));
+		// new config dialog
+		this.addConfigPanel(fritzBoxPanel);
+		this.addConfigPanel(phonePanel);
+		this.addConfigPanel(sipPanel);
+		this.addConfigPanel(callerListPanel);
+		this.addConfigPanel(callMonitorPanel);
+		this.addConfigPanel(messagePanel);
+		this.addConfigPanel(languagePanel);
+		this.addConfigPanel(networkPanel);
+		this.addConfigPanel(otherPanel);
+		this.addConfigPanel(callerListAppearancePanel);
+
+		int width = Integer.parseInt(Main.getStateProperty("configDialog.width", "700"));
+		int height = Integer.parseInt(Main.getStateProperty("configDialog.height", "470"));
+		setSize(width, height);
 		setResizable(true);
+		if (parent != null)
+		{
+			setLocationRelativeTo(parent);
+		}
 		// pack();
 	}
 
 	public boolean showDialog() {
+		expandAll(tree, false);
+		expandAll(tree, true);
 		setVisible(true);
 		return okPressed();
 	}
@@ -430,41 +477,23 @@ public class ConfigDialog extends JDialog implements ChangeListener {
 	 * function used to adjust the size of the options dialog
 	 */
 	public void stateChanged(ChangeEvent e){
-//		//change sizes here to fit the panel content
-//		//box panel
-//		if(tpane.getSelectedIndex() == 0){
-//			setSize(new Dimension(510,360));
-//		//phone panel
-//		}else if(tpane.getSelectedIndex() == 1){
-//			setSize(new Dimension(510,310));
-//		//sip panel
-//		}else if(tpane.getSelectedIndex() == 2){
-//			setSize(new Dimension(510,300));
-//		//call list panel
-//		}else if(tpane.getSelectedIndex() == 3){
-//			setSize(new Dimension(510,360));
-//		//call monitor panel
-//		}else if(tpane.getSelectedIndex() == 4){
-//			setSize(new Dimension(510,360));
-//		//message panel
-//		}else if(tpane.getSelectedIndex() == 5){
-//			setSize(new Dimension(510,300));
-//		//language panel
-//		}else if(tpane.getSelectedIndex() == 6){
-//			setSize(new Dimension(510,180));
-//		//network panel
-//		}else if(tpane.getSelectedIndex() == 7){
-//			setSize(new Dimension(510, 550));
-//		//other panel
-//		}else if(tpane.getSelectedIndex() == 8){
-//			setSize(new Dimension(610,470));
-//		}else{
-//			setSize(new Dimension(510,360));
-//		}
-		setSize(new Dimension(610,470));
+		int width = Integer.parseInt(Main.getStateProperty("configDialog.width", "700"));
+		int height = Integer.parseInt(Main.getStateProperty("configDialog.height", "470"));
+		setSize(width, height);
 		if (parent != null) {
 			setLocationRelativeTo(parent);
 		}
+	}
+
+	private void closeWindow()
+	{
+		if (pressed_OK)
+		{
+			// save window position and size
+			Main.setStateProperty("configDialog.width", Integer.toString(this.getWidth()));
+			Main.setStateProperty("configDialog.height", Integer.toString(this.getHeight()));
+		}
+		ConfigDialog.this.setVisible(false);
 	}
 
 }

@@ -1,7 +1,5 @@
 package de.moonflower.jfritz.utils.callsimulator;
 
-import java.awt.BorderLayout;
-
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;

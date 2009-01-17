@@ -35,7 +35,7 @@ public class VCardList {
 	 */
 	public void addVCard(Person person) {
 		boolean found = false;
-		Enumeration en = list.elements();
+		Enumeration<Person> en = list.elements();
 		while (en.hasMoreElements()) {
 			Person p = (Person) en.nextElement();
 			if (p.getStandardTelephoneNumber().getIntNumber().equals(

@@ -1,7 +1,6 @@
 package de.moonflower.jfritz.utils;
 
 import javax.swing.*;
-import javax.swing.border.*;
 import java.awt.*;
 import java.util.*;
 
@@ -239,39 +238,5 @@ public class MultiLabel extends JComponent implements SwingConstants
     {
         this.textAlignment = textAlignment;
         repaint();
-    }
-
-
-    public static void main(String args[]) throws Exception
-    {
-        String wiseText = "This is a true example\n"+
-                          "Of the MultiLine"  + "\n" +
-                          "Label class";
-
-        MultiLabel x0 = new MultiLabel(wiseText);
-        MultiLabel x1 = new MultiLabel(wiseText, MultiLabel.RIGHT , MultiLabel.RIGHT);
-        MultiLabel x2 = new MultiLabel(wiseText, MultiLabel.CENTER);
-        MultiLabel x3 = new MultiLabel(wiseText, MultiLabel.CENTER, MultiLabel.RIGHT);
-        MultiLabel x4 = new MultiLabel(wiseText, MultiLabel.CENTER, MultiLabel.CENTER);
-        MultiLabel x5 = new MultiLabel(wiseText, MultiLabel.RIGHT , MultiLabel.LEFT, MultiLabel.BOTTOM);
-        MultiLabel x6 = new MultiLabel(wiseText);
-
-        JPanel
-        mainPanel = new JPanel(new GridLayout(3,2,15,15));
-        mainPanel.add(x0);  mainPanel.add(x1);
-        mainPanel.add(x2);  mainPanel.add(x3);
-        mainPanel.add(x4);  mainPanel.add(x5);
-        mainPanel.setBackground(SystemColor.control);
-        mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-        for (int i=0; i < mainPanel.getComponentCount(); i++)
-            ((JComponent) mainPanel.getComponent(i)).setBorder(new LineBorder(Color.red));
-
-
-        JFrame fr = new JFrame("MultiLabel Example");
-        fr.getContentPane().add(mainPanel);
-        fr.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        fr.setSize(460,350);
-        fr.setLocationRelativeTo(null);
-        fr.show();
     }
 }

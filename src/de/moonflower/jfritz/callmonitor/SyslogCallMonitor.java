@@ -286,14 +286,14 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 	 * @return Returns vector of local IPs
 	 */
 	public static Vector<InetAddress> getIP() {
-		Enumeration ifaces;
+		Enumeration<NetworkInterface> ifaces;
 		Vector<InetAddress> addresses = new Vector<InetAddress>();
 		try {
 			ifaces = NetworkInterface.getNetworkInterfaces();
 			while (ifaces.hasMoreElements()) {
 				NetworkInterface ni = (NetworkInterface) ifaces.nextElement();
 				if (!ni.getName().equals("lo")) { //$NON-NLS-1$
-					Enumeration addrs = ni.getInetAddresses();
+					Enumeration<InetAddress> addrs = ni.getInetAddresses();
 
 					while (addrs.hasMoreElements()) {
 						InetAddress addr = (InetAddress) addrs.nextElement();

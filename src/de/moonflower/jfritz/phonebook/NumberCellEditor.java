@@ -14,9 +14,7 @@ import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
 /**
- * This deprecated class manages editing of the participant cell in the caller
- * table.
- *
+ * This class manages editing of the phone number in phonebook number table.
  */
 public class NumberCellEditor extends AbstractCellEditor
 		implements
