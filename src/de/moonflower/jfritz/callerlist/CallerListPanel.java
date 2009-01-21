@@ -1383,6 +1383,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	public void reorderColumns()
 	{
 		callerTable.reorderColumns();
+		callerList.fireTableStructureChanged();
 	}
 
 	public StatusBarController getStatusBarController() {

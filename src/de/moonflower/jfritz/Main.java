@@ -200,9 +200,9 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.2.7"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.2.8"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.137 2009/01/17 22:00:21 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.138 2009/01/21 22:05:40 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -908,16 +908,6 @@ public class Main implements LookupObserver {
 		defProps.setProperty("option.playSounds", "true");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.popuptype", "1");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.popupDelay", "0");//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("option.showCallerListColumn."+CallerTable.COLUMN_CALL_BY_CALL, "true");//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("option.showCallerListColumn."+CallerTable.COLUMN_COMMENT, "true");//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("option.showCallerListColumn."+CallerTable.COLUMN_PORT, "true");//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("option.showCallerListColumn."+CallerTable.COLUMN_PICTURE, "true");//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("option.showCallerListColumn."+CallerTable.COLUMN_TYPE, "true");//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("option.showCallerListColumn."+CallerTable.COLUMN_DATE, "true");//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("option.showCallerListColumn."+CallerTable.COLUMN_NUMBER, "true");//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("option.showCallerListColumn."+CallerTable.COLUMN_PARTICIPANT, "true");//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("option.showCallerListColumn."+CallerTable.COLUMN_ROUTE, "true");//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("option.showCallerListColumn."+CallerTable.COLUMN_DURATION, "true");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.startExternProgram", "false");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.startMinimized", "false");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.syslogclientip", "192.168.178.21");//$NON-NLS-1$, //$NON-NLS-2$
@@ -939,6 +929,15 @@ public class Main implements LookupObserver {
 		defProps.setProperty("telefond.laststarted", "");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("telnet.user", "");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("telnet.password", "");//$NON-NLS-1$, //$NON-NLS-2$
+
+		// set all callertable columns to visible
+		Enumeration<String> columns = CallerTable.getCallerTableColumns().elements();
+		String currentColumn = "";
+		while (columns.hasMoreElements())
+		{
+			currentColumn = columns.nextElement();
+			defProps.setProperty("option.showCallerListColumn."+currentColumn, "true");//$NON-NLS-1$, //$NON-NLS-2$
+		}
 		return defProps;
 	}
 
@@ -971,30 +970,21 @@ public class Main implements LookupObserver {
 		defProps.setProperty(CallFilter.FILTER_DATE_START, "11.11.11 11:11");//$NON-NLS-1$
 		defProps.setProperty(CallFilter.FILTER_DATE_END, "11.11.11 11:11");//$NON-NLS-1$
 
-		// column properties
+		// set default callerlist column width
 		String default_column_width = "70";
-		defProps.setProperty("callerTable.column." + CallerTable.COLUMN_CALL_BY_CALL + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$
-		defProps.setProperty("callerTable.column." + CallerTable.COLUMN_COMMENT + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$
-		defProps.setProperty("callerTable.column." + CallerTable.COLUMN_DATE + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$
-		defProps.setProperty("callerTable.column." + CallerTable.COLUMN_DURATION + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("callerTable.column." + CallerTable.COLUMN_NUMBER + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("callerTable.column." + CallerTable.COLUMN_PARTICIPANT + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("callerTable.column." + CallerTable.COLUMN_PICTURE + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("callerTable.column." + CallerTable.COLUMN_PORT + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("callerTable.column." + CallerTable.COLUMN_ROUTE + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("callerTable.column." + CallerTable.COLUMN_TYPE + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
+		Enumeration<String> columns = CallerTable.getCallerTableColumns().elements();
+		String currentColumn = "";
+		while (columns.hasMoreElements())
+		{
+			currentColumn = columns.nextElement();
+			defProps.setProperty("callerTable.column." + currentColumn + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
+		}
 
 		// column order
-		defProps.setProperty("callerTable.column0.name", "type");
-		defProps.setProperty("callerTable.column1.name", "date");
-		defProps.setProperty("callerTable.column2.name", "callbycall");
-		defProps.setProperty("callerTable.column3.name", "number");
-		defProps.setProperty("callerTable.column4.name", "participant");
-		defProps.setProperty("callerTable.column5.name", "port");
-		defProps.setProperty("callerTable.column6.name", "route");
-		defProps.setProperty("callerTable.column7.name", "duration");
-		defProps.setProperty("callerTable.column8.name", "comment");
-		defProps.setProperty("callerTable.column9.name", "picture");
+		for (int i=0; i<CallerTable.getCallerTableColumns().size();i++)
+		{
+			defProps.setProperty("callerTable.column"+i+".name", CallerTable.getCallerTableColumns().get(i));
+		}
 
 		defProps.setProperty("option.picture.default_path", ".");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("filter.Phonebook.search", "");//$NON-NLS-1$, //$NON-NLS-2$
@@ -1034,9 +1024,7 @@ public class Main implements LookupObserver {
 			Debug.err("File " + Main.SAVE_DIR + STATE_PROPERTIES_FILE //$NON-NLS-1$
 					+ " not readable. Using default values."); //$NON-NLS-1$
 		}
-
 		replaceOldProperties();
-
 	}
 
 	/**
@@ -1045,90 +1033,47 @@ public class Main implements LookupObserver {
 	 */
 	private static void replaceOldProperties() {
 
-		for (int i=0; i<CallerTable.NUM_COLUMNS; i++)
+		Vector<String> allCallerListColumns = CallerTable.getCallerTableColumns();
+
+		String currentColumn = "";
+		int currentIndex = 0;
+		boolean foundOldEntries = false;
+		// copy the previous column order to new structure
+		for (int i=0; i<CallerTable.getCallerTableColumnsCount(); i++)
 		{
-			if (state_properties.getProperty("column"+i+".name") != null)
+			currentColumn = state_properties.getProperty("column"+i+".name");
+			if (currentColumn != null)
 			{
-				state_properties.setProperty("callerTable.column"+i+".name", state_properties.getProperty("column"+i+".name"));
+				state_properties.setProperty("callerTable.column"+currentIndex+".name", currentColumn);
 				state_properties.remove("column"+i+".name");
+				allCallerListColumns.remove(currentColumn);
+				currentIndex++;
+				foundOldEntries = true;
 			}
 		}
 
-		String currentProp = state_properties.getProperty("column." + CallerTable.COLUMN_CALL_BY_CALL + ".width");
-
-		if (currentProp != null)
+		// add all remaining hidden columns at the end of our new structure
+		for (int i=0; foundOldEntries && (i<allCallerListColumns.size());i++)
 		{
-			state_properties.setProperty("callerTable.column." + CallerTable.COLUMN_CALL_BY_CALL + ".width", currentProp);
-			state_properties.remove("column." + CallerTable.COLUMN_CALL_BY_CALL + ".width");
+			state_properties.setProperty("callerTable.column"+currentIndex+".name", allCallerListColumns.get(i));
+			currentIndex++;
 		}
 
-		currentProp = state_properties.getProperty("column." + CallerTable.COLUMN_COMMENT + ".width");
-		if (currentProp != null)
+		Enumeration<String> callerListColumns = CallerTable.getCallerTableColumns().elements();
+		currentColumn = "";
+		String currentWidth = "";
+		while (callerListColumns.hasMoreElements())
 		{
-			state_properties.setProperty("callerTable.column." + CallerTable.COLUMN_COMMENT + ".width", currentProp);
-			state_properties.remove("column." + CallerTable.COLUMN_COMMENT + ".width");
+			currentColumn = callerListColumns.nextElement();
+			currentWidth = state_properties.getProperty("column." + currentColumn + ".width");
+			if (currentWidth != null)
+			{
+				state_properties.setProperty("callerTable.column." + currentColumn + ".width", currentWidth);
+				state_properties.remove("column." + currentColumn + ".width");
+			}
 		}
 
-		currentProp = state_properties.getProperty("column." + CallerTable.COLUMN_DATE + ".width");
-		if (currentProp != null)
-		{
-			state_properties.setProperty("callerTable.column." + CallerTable.COLUMN_DATE + ".width", currentProp);
-			state_properties.remove("column." + CallerTable.COLUMN_DATE + ".width");
-		}
-
-		currentProp = state_properties.getProperty("column." + CallerTable.COLUMN_DURATION + ".width");
-		if (currentProp != null)
-		{
-			state_properties.setProperty("callerTable.column." + CallerTable.COLUMN_DURATION + ".width", currentProp);
-			state_properties.remove("column." + CallerTable.COLUMN_DURATION + ".width");
-		}
-
-		currentProp = state_properties.getProperty("column." + CallerTable.COLUMN_NUMBER + ".width");
-		if (currentProp != null)
-		{
-			state_properties.setProperty("callerTable.column." + CallerTable.COLUMN_NUMBER + ".width", currentProp);
-			state_properties.remove("column." + CallerTable.COLUMN_NUMBER + ".width");
-		}
-
-		currentProp = state_properties.getProperty("column." + CallerTable.COLUMN_PARTICIPANT + ".width");
-		if (currentProp != null)
-		{
-			state_properties.setProperty("callerTable.column." + CallerTable.COLUMN_PARTICIPANT + ".width", currentProp);
-			state_properties.remove("column." + CallerTable.COLUMN_PARTICIPANT + ".width");
-		}
-
-		currentProp = state_properties.getProperty("column." + CallerTable.COLUMN_PICTURE + ".width");
-		if (currentProp != null)
-		{
-			state_properties.setProperty("callerTable.column." + CallerTable.COLUMN_PICTURE + ".width", currentProp);
-			state_properties.remove("column." + CallerTable.COLUMN_PICTURE + ".width");
-		}
-
-		currentProp = state_properties.getProperty("column." + CallerTable.COLUMN_PORT + ".width");
-		if (currentProp != null)
-		{
-			state_properties.setProperty("callerTable.column." + CallerTable.COLUMN_PORT + ".width", currentProp);
-			state_properties.remove("column." + CallerTable.COLUMN_PORT + ".width");
-		}
-
-		currentProp = state_properties.getProperty("column." + CallerTable.COLUMN_ROUTE + ".width");
-		if (currentProp != null)
-		{
-			state_properties.setProperty("callerTable.column." + CallerTable.COLUMN_ROUTE + ".width", currentProp);
-			state_properties.remove("column." + CallerTable.COLUMN_ROUTE + ".width");
-		}
-
-		currentProp = state_properties.getProperty("column." + CallerTable.COLUMN_TYPE + ".width");
-		if (currentProp != null)
-		{
-			state_properties.setProperty("callerTable.column." + CallerTable.COLUMN_TYPE + ".width", currentProp);
-			state_properties.remove("column." + CallerTable.COLUMN_TYPE + ".width");
-		}
-
-		saveStateProperties();
-
-
-		currentProp = config_properties.getProperty("option.showCallByCallColumn");
+		String currentProp = config_properties.getProperty("option.showCallByCallColumn");
 		if ( currentProp != null)
 		{
 			config_properties.setProperty("option.showCallerListColumn."+CallerTable.COLUMN_CALL_BY_CALL, currentProp);
@@ -1156,6 +1101,7 @@ public class Main implements LookupObserver {
 			config_properties.remove("option.showPortColumn");
 		}
 
+		saveStateProperties();
 		saveConfigProperties();
 	}
 

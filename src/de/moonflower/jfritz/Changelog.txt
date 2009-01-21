@@ -1,6 +1,15 @@
 TODO: Drucken der Anrufliste muss korrigiert werden.
-TODO: Entfernen der überflüssigen Einstellungen zum Ausblenden der Anruflistenspalten.
 TODO: CallMonitor überprüfen, manchmal immer noch Einträge doppelt ... 
+TODO: Internationalisieren des neuen Einstelldialogs für Ausblendung der Spalten.
+TODO: UPNP-Bug fixen.
+TODO: Ressourcen in eigenes Jar packen.
+TODO: Client-Server fixen.  
+
+JFritz 0.7.2.8:
+- Bugfix: Konvertieren der alten Spalteneinträge korrigiert.
+- Bugfix: Verstecken der Spalten korrigiert.
+- Bugfix: Speicherung der Einstellungen, wenn FritzBox nicht erreichbar.
+- Code: Alte Einstellungen zum Verstecken der Spalten entfernt.
 
 JFritz 0.7.2.7:
 - Bugfix: Default-Werte für Spaltenreihenfolge angepasst.

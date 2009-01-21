@@ -17,6 +17,7 @@ import javax.swing.ListSelectionModel;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.CallerTable;
 import de.moonflower.jfritz.callerlist.JFritzTableColumn;
+import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class ConfigPanelCallerListAppearance extends JPanel implements ConfigPanel, ActionListener {
@@ -69,7 +70,7 @@ public class ConfigPanelCallerListAppearance extends JPanel implements ConfigPan
 	}
 
 	public void loadSettings() {
-		for (int i=0; i<CallerTable.NUM_COLUMNS; i++)
+		for (int i=0; i<CallerTable.getCallerTableColumnsCount(); i++)
 		{
 			String columnName = Main.getStateProperty("callerTable.column"+i+".name");
 			if ( columnName != null)
@@ -86,6 +87,7 @@ public class ConfigPanelCallerListAppearance extends JPanel implements ConfigPan
 		{
 			Main.setStateProperty("callerTable.column"+i+".name", columnTableModel.getData(i).getName());
 			Main.setProperty("option.showCallerListColumn." + columnTableModel.getData(i).getName(), columnTableModel.getData(i).isVisible());
+			Debug.msg("CallerListTableColumn " + i + ": " + columnTableModel.getData(i).getName() + " / visible: " +columnTableModel.getData(i).isVisible());
 		}
 	}
 

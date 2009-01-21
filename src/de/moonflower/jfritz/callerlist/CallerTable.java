@@ -10,6 +10,7 @@ import java.awt.Component;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Enumeration;
 import java.util.Vector;
 
 import javax.swing.JTable;
@@ -57,8 +58,6 @@ public class CallerTable extends JTable {
 	public static final String COLUMN_TYPE = "type";
 
 	private static final long serialVersionUID = 1;
-
-	public static final int NUM_COLUMNS = 10;
 
 	private ColumnHeaderToolTips headerTips;
 
@@ -318,54 +317,16 @@ public class CallerTable extends JTable {
 	 *
 	 */
 	public void hideColumns() {
-		if (!JFritzUtils.parseBoolean(Main.getProperty(
-				"option.showCallerListColumn."+COLUMN_CALL_BY_CALL))) { //$NON-NLS-1$, //$NON-NLS-2$
-			hideColumn(COLUMN_CALL_BY_CALL);
-		}
+		Enumeration<String> columns = getCallerTableColumns().elements();
 
-		if (!JFritzUtils.parseBoolean(Main.getProperty(
-				"option.showCallerListColumn."+COLUMN_COMMENT))) { //$NON-NLS-1$,  //$NON-NLS-2$
-			hideColumn(COLUMN_COMMENT);
-		}
-
-		if (!JFritzUtils.parseBoolean(Main.getProperty(
-				"option.showCallerListColumn."+COLUMN_PORT))) { //$NON-NLS-1$,  //$NON-NLS-2$
-			hideColumn(COLUMN_PORT);
-		}
-
-		if (!JFritzUtils.parseBoolean(Main.getProperty(
-				"option.showCallerListColumn."+COLUMN_PICTURE))) { //$NON-NLS-1$,  //$NON-NLS-2$
-			hideColumn(COLUMN_PICTURE);
-		}
-
-		if (!JFritzUtils.parseBoolean(Main.getProperty(
-				"option.showCallerListColumn."+COLUMN_DATE))) { //$NON-NLS-1$,  //$NON-NLS-2$
-			hideColumn(COLUMN_DATE);
-		}
-
-		if (!JFritzUtils.parseBoolean(Main.getProperty(
-				"option.showCallerListColumn."+COLUMN_DURATION))) { //$NON-NLS-1$,  //$NON-NLS-2$
-			hideColumn(COLUMN_DURATION);
-		}
-
-		if (!JFritzUtils.parseBoolean(Main.getProperty(
-				"option.showCallerListColumn."+COLUMN_NUMBER))) { //$NON-NLS-1$,  //$NON-NLS-2$
-			hideColumn(COLUMN_NUMBER);
-		}
-
-		if (!JFritzUtils.parseBoolean(Main.getProperty(
-				"option.showCallerListColumn."+COLUMN_PARTICIPANT))) { //$NON-NLS-1$,  //$NON-NLS-2$
-			hideColumn(COLUMN_PARTICIPANT);
-		}
-
-		if (!JFritzUtils.parseBoolean(Main.getProperty(
-				"option.showCallerListColumn."+COLUMN_ROUTE))) { //$NON-NLS-1$,  //$NON-NLS-2$
-			hideColumn(COLUMN_ROUTE);
-		}
-
-		if (!JFritzUtils.parseBoolean(Main.getProperty(
-				"option.showCallerListColumn."+COLUMN_TYPE))) { //$NON-NLS-1$,  //$NON-NLS-2$
-			hideColumn(COLUMN_TYPE);
+		String currentColumn = "";
+		while (columns.hasMoreElements())
+		{
+			currentColumn = columns.nextElement();
+			if (!JFritzUtils.parseBoolean(Main.getProperty(
+					"option.showCallerListColumn."+currentColumn))) { //$NON-NLS-1$, //$NON-NLS-2$
+				hideColumn(currentColumn);
+			}
 		}
 	}
 
@@ -451,9 +412,10 @@ public class CallerTable extends JTable {
 			JFritzTableColumn col = getColumnByName(columnName);
 			if (col != null)
 			{
-				Debug.msg(i + ": " + columnName);
+				Debug.msg("CallerTable: Adding table column " + columnName + " at position " + i);
 				getColumnModel().addColumn(col.getColumn());
 				sortedTableColumns.add(col);
+				Main.setStateProperty("callerTable.column" + i + ".name", columnName);
 			}
 			else
 			{
@@ -472,7 +434,7 @@ public class CallerTable extends JTable {
 
 		for (int i=0; i<getColumnCount(); i++)
 		{
-			Debug.msg(i + ": " + getColumnModel().getColumn(i).getIdentifier());
+			Debug.msg("Table column " + i + ": " + getColumnModel().getColumn(i).getIdentifier());
 		}
 
 		hideColumns();
@@ -501,5 +463,28 @@ public class CallerTable extends JTable {
     		}
     	}
     	return null;
+    }
+
+    public static Vector<String> getCallerTableColumns()
+    {
+    	Vector<String> columns = new Vector<String>();
+
+    	columns.add(COLUMN_TYPE);
+    	columns.add(COLUMN_DATE);
+    	columns.add(COLUMN_CALL_BY_CALL);
+    	columns.add(COLUMN_NUMBER);
+    	columns.add(COLUMN_PICTURE);
+    	columns.add(COLUMN_PARTICIPANT);
+    	columns.add(COLUMN_PORT);
+    	columns.add(COLUMN_ROUTE);
+    	columns.add(COLUMN_DURATION);
+    	columns.add(COLUMN_COMMENT);
+
+    	return columns;
+    }
+
+    public static int getCallerTableColumnsCount()
+    {
+    	return getCallerTableColumns().size();
     }
 }
