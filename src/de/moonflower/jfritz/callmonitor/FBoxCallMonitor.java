@@ -43,7 +43,7 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
     private JEditorPane errorPane;
 
     public FBoxCallMonitor() {
-        super();
+        super("FBoxThread");
         Debug.msg("Starting FBoxListener"); //$NON-NLS-1$
         this.setDaemon(true);
         start();

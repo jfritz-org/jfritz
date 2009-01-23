@@ -777,7 +777,7 @@ public class FritzBox {
 		String result = UPNPUtils.getSOAPData("http://" + getAddress() +
 				URL_SERVICE_ADDONINFOS, URN_SERVICE_ADDONINFOS, xml);
 
-		Debug.msg("Result of getAddonInfos: "+ result);
+//		Debug.msg("Result of getAddonInfos: "+ result);
 
 		if (!result.equals(""))
 		{
@@ -826,7 +826,7 @@ public class FritzBox {
 			</s:Body> </s:Envelope>
 		 	*/
 
-		Debug.msg("Result of GetDSLLinkInfo: "+ result);
+//		Debug.msg("Result of GetDSLLinkInfo: "+ result);
 
 	}
 

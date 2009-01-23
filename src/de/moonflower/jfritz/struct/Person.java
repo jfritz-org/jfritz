@@ -68,7 +68,7 @@ public class Person implements Cloneable, Serializable{
 	 * @author brian
 	 *
 	 */
-	public boolean equals(Object p){
+	public boolean equalsOld(Object p){
 		boolean equals = false;
 		Person person;
 		if(!(p instanceof Person))
@@ -105,6 +105,47 @@ public class Person implements Cloneable, Serializable{
 			   }
 		}
 		return equals;
+	}
+
+	/**
+	 * this function is needed to override the basic function equals
+	 * inherited by object or else the network code won't work at all
+	 *
+	 * @author Robert
+	 *
+	 */
+	public boolean equals(Object p){
+		Person person;
+		if(!(p instanceof Person))
+			return false;
+
+		person = (Person) p;
+
+		if (person.lastName.equals(this.lastName))
+			if (person.firstName.equals(this.firstName))
+				if (person.numbers.size() == this.numbers.size())
+					if (person.standard.equals(this.standard))
+				if (person.city.equals(this.city))
+				if (person.street.equals(this.street))
+				if (person.postalCode.equals(this.postalCode))
+				if ((person.privateEntry == this.privateEntry))
+				if (person.pictureUrl.equals(this.pictureUrl))
+				if (person.company.equals(this.company))
+				if (person.emailAddress.equals(this.emailAddress))
+		{
+			for (int i=0; i<this.numbers.size(); i++)
+			{
+				PhoneNumber myNumber = this.numbers.get(i);
+				PhoneNumber hisNumber = person.numbers.get(i);
+				if (!myNumber.equals(hisNumber))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
+		return false;
 	}
 
 	public Person(String firstName, String company, String lastName,

@@ -12,7 +12,8 @@ public class ShutdownThread extends Thread {
 	Main jfritzMain;
 
 	public ShutdownThread(Main main) {
-		super();
+		super("ShutdownThread");
+		this.setDaemon(true);
 		jfritzMain = main;
 	}
 

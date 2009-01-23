@@ -3,7 +3,13 @@ TODO: CallMonitor überprüfen, manchmal immer noch Einträge doppelt ...
 TODO: Internationalisieren des neuen Einstelldialogs für Ausblendung der Spalten.
 TODO: UPNP-Bug fixen.
 TODO: Ressourcen in eigenes Jar packen.
-TODO: Client-Server fixen.  
+TODO: Client-Server fixen.
+TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
+
+JFritz 0.7.2.9
+- Bugfix: kbit/s, kB, ... im MonitoringPanel korrigiert.
+- Bugfix: Error-Handling bei UPNP-Paketen. UPNP-Bug gefixed.
+- Neu: Kein Auto-Resize der Anruflisten-Tabelle mehr. (Todo: Resize konfigurierbar gestalten)
 
 JFritz 0.7.2.8:
 - Bugfix: Konvertieren der alten Spalteneinträge korrigiert.

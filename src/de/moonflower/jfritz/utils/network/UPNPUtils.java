@@ -90,11 +90,14 @@ public class UPNPUtils {
 		DataOutputStream printout = null;
 		try {
 			URL u = new URL(url);
+
 			HttpURLConnection uc = (HttpURLConnection) u.openConnection();
 			uc.setRequestMethod("POST");
 
 			// 5 Sekunden-Timeout für Verbindungsaufbau
 			uc.setConnectTimeout(5000);
+
+			uc.setReadTimeout(2000);
 
 			uc.setDoOutput(true);
 			uc.setDoInput(true);
@@ -111,7 +114,6 @@ public class UPNPUtils {
 					.getOutputStream());
 			printout.write(bytes);
 			printout.close();
-
 
 			//InputStream in = uc.getInputStream();
 			d = new BufferedReader(new InputStreamReader(uc

@@ -760,10 +760,8 @@ public final class JFritz implements  StatusListener, ItemListener {
 		{
 			int interval = 5; // seconds
 			int factor = 2; // factor how many times a STANDBY will be checked
-			watchdogTimer = new Timer();
+			watchdogTimer = new Timer("Watchdog-Timer", true);
 			watchdog = new WatchdogThread(interval, factor, this);
-			watchdog.setDaemon(true);
-			watchdog.setName("Watchdog-Thread");
 			watchdogTimer.schedule(new TimerTask() {
 				public void run() {
 					if (shutdownInvoked)

@@ -79,7 +79,6 @@ public class CallerTable extends JTable {
 	 */
 	public CallerTable(CallerListPanel parentPanel, CallerList list) {
 		super(list);
-		this.setAutoResizeMode(AUTO_RESIZE_LAST_COLUMN);
 		this.parentPanel = parentPanel;
 		this.callerList = list;
 		headerTips = new ColumnHeaderToolTips();
@@ -149,6 +148,7 @@ public class CallerTable extends JTable {
 	 * sets some properties of the CallerTable
 	 */
 	private void setTableProperties() {
+		setAutoResizeMode(AUTO_RESIZE_OFF); //AUTO_RESIZE_LAST_COLUMN
 		setRowHeight(25);
 		setAutoCreateColumnsFromModel(false);
 		setColumnSelectionAllowed(false);

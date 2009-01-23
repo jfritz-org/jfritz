@@ -273,7 +273,7 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		DateAxis domainAxis = new DateAxis();
 		domainAxis.setTickLabelsVisible(false);
 		domainAxis.setTickMarksVisible(false);
-		ValueAxis rangeAxis = new NumberAxis("KB/s"); //$NON-NLS-1$
+		ValueAxis rangeAxis = new NumberAxis("kB/s"); //$NON-NLS-1$
 	    renderer1.setPaint(new GradientPaint(0,0, new Color(175, 0, 30), 0, 215,
 	    		new Color(250,220, 220), false));
 		XYPlot plot = new XYPlot(data1, domainAxis, rangeAxis, renderer1);
@@ -565,7 +565,12 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 	}
 
 	public void setBytesRate(String sent, String received) {
+		if (sent.equals("") || received.equals(""))
+		{
+			return;
+		}
 		updateInternetUsage(sent, received);
+
 		if (sent.equals("-")) //$NON-NLS-1$
 		{
 			sendRateLabel.setText(sent);
@@ -577,7 +582,7 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 			float mMax = kMax / 1024;
 			String kMaxStr = NumberFormat.getInstance().format(kMax);
 			String mMaxStr = String.format("%.1f", mMax); //$NON-NLS-1$
-			sendRateLabel.setText(kMaxStr + " KB/s (" + mMaxStr + " MB/s)"); //$NON-NLS-1$, //$NON-NLS-2$
+			sendRateLabel.setText(kMaxStr + " kB/s (" + mMaxStr + " MB/s)"); //$NON-NLS-1$, //$NON-NLS-2$
 		}
 
 		if (received.equals("-"))
@@ -591,7 +596,7 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 			float mMax = kMax / 1024;
 			String kMaxStr = NumberFormat.getInstance().format(kMax);
 			String mMaxStr = String.format("%.1f", mMax); //$NON-NLS-1$
-			receivedRateLabel.setText(kMaxStr + " KB/s (" + mMaxStr + " MB/s)"); //$NON-NLS-1$, //$NON-NLS-2$
+			receivedRateLabel.setText(kMaxStr + " kB/s (" + mMaxStr + " MB/s)"); //$NON-NLS-1$, //$NON-NLS-2$
 		}
 	}
 
@@ -601,6 +606,10 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 	}
 
 	public void setDisconnectInfo(String disconnectTime, String idleTime) {
+		if (disconnectTime.equals("") || idleTime.equals(""))
+		{
+			return;
+		}
 		if (disconnectTime.equals("0"))
 		{
 			autoDisconnectLabel.setText(Main.getMessage("disabled"));
@@ -613,6 +622,10 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 	}
 
 	public void setOtherInfo(String upnpControl, String routedMode) {
+		if (upnpControl.equals("") || routedMode.equals(""))
+		{
+			return;
+		}
 		if (upnpControl.equals("1")) //$NON-NLS-1$
 		{
 			upnpControlLabel.setText(Main.getMessage("enabled")); //$NON-NLS-1$
@@ -633,6 +646,10 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 	}
 
 	public void setTotalBytesInfo(String sent, String received) {
+		if (sent.equals("") || received.equals(""))
+		{
+			return;
+		}
 		if (!sent.equals("-")) //$NON-NLS-1$
 		{
 			long bSent = Long.parseLong(sent);
@@ -646,7 +663,7 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 			String gSentStr = NumberFormat.getInstance().format(gSent);
 			if (gSent < 1.0)
 			{
-				totalSentLabel.setText(kSentStr + " KB (" + mSentStr + " MB)"); //$NON-NLS-1$, //$NON-NLS-2$
+				totalSentLabel.setText(kSentStr + " kB (" + mSentStr + " MB)"); //$NON-NLS-1$, //$NON-NLS-2$
 			}
 			else
 			{
@@ -671,7 +688,7 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 			String gReceivedStr = NumberFormat.getInstance().format(gReceived);
 			if (gReceived < 1.0)
 			{
-				totalReceivedLabel.setText(kReceivedStr + " KB (" + mReceivedStr + " MB)"); //$NON-NLS-1$, //$NON-NLS-2$
+				totalReceivedLabel.setText(kReceivedStr + " kB (" + mReceivedStr + " MB)"); //$NON-NLS-1$, //$NON-NLS-2$
 			}
 			else
 			{
@@ -694,6 +711,10 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 	}
 
 	public void setDownstreamMaxBitRate(String maxDown) {
+		if (maxDown.equals(""))
+		{
+			return;
+		}
 		if (!maxDown.equals("-")) //$NON-NLS-1$
 		{
 			int max = Integer.parseInt(maxDown);
@@ -703,7 +724,7 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 			NumberFormat.getInstance().setMinimumFractionDigits(0);
 			NumberFormat.getInstance().setMaximumFractionDigits(1);
 			String mMaxStr = NumberFormat.getInstance().format(mMax);
-			syncDownLabel.setText(kMaxStr + " KBit/s (" + mMaxStr + " MBit/s)"); //$NON-NLS-1$, //$NON-NLS-2$
+			syncDownLabel.setText(kMaxStr + " kbit/s (" + mMaxStr + " Mbit/s)"); //$NON-NLS-1$, //$NON-NLS-2$
 		}
 		else
 		{
@@ -712,6 +733,10 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 	}
 
 	public void setUpstreamMaxBitRate(String maxUp) {
+		if (maxUp.equals(""))
+		{
+			return;
+		}
 		if (!maxUp.equals("-")) //$NON-NLS-1$
 		{
 			int max = Integer.parseInt(maxUp);
@@ -721,7 +746,7 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 			NumberFormat.getInstance().setMinimumFractionDigits(0);
 			NumberFormat.getInstance().setMaximumFractionDigits(1);
 			String mMaxStr = NumberFormat.getInstance().format(mMax);
-			syncUpLabel.setText(kMaxStr + " KBit/s (" + mMaxStr + " MBit/s)"); //$NON-NLS-1$, //$NON-NLS-2$
+			syncUpLabel.setText(kMaxStr + " kbit/s (" + mMaxStr + " Mbit/s)"); //$NON-NLS-1$, //$NON-NLS-2$
 		}
 		else
 		{
@@ -730,6 +755,10 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 	}
 
 	public void setUptime(String uptime) {
+		if (uptime.equals(""))
+		{
+			return;
+		}
 		if (uptime.equals("-")) //$NON-NLS-1$
 		{
 			uptimeLabel.setText(uptime);
