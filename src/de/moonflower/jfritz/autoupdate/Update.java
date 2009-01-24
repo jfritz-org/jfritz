@@ -72,7 +72,7 @@ public class Update {
 	public void saveSettings() {
 		try {
 
-			System.out.print(className + "Saving update-properties...");
+			Logger.msg(className + "Saving update-properties...");
 
 			// if $HOME/saveDirectory doesn't exist create it
 			File file = new File(USER_HOME + propertiesDirectory);
@@ -91,10 +91,10 @@ public class Update {
 			bw.newLine();
 			bw.write("programVersion=" + programVersion.toString());
 			bw.close();
-			System.out.println("...done");
+			Logger.msg("...done");
 
 		} catch (Exception e) {
-			System.err.println(className + "ERROR while saving update-properties");
+			Logger.err(className + "ERROR while saving update-properties");
 		}
 	}
 
@@ -126,24 +126,25 @@ public class Update {
 				}
 			} while (line != null);
 		} catch (FileNotFoundException e) {
-			System.err
-					.println(className + "Could not load update-properties (File not found), using defaults");
+			Logger.err(className + "Could not load update-properties (File not found), using defaults");
 		} catch (IOException ioe) {
-			System.err
-					.println(className + "Error processing update-properties, using defaults");
+			Logger.err(className + "Error processing update-properties, using defaults");
 		} finally {
 			try {
 				if (br != null)
 					br.close();
 			} catch (IOException ioe) {
-				System.err.println("Error closing stream");
+				Logger.err("Error closing stream");
 			}
 		}
-		System.out.println(className + "Program version: " + programVersion);
+		Logger.msg(className + "Program version: " + programVersion);
 		if ( locale != null)
-			System.out.println(className + "Locale: " + locale.toString());
-		System.out.println(className + "Update on start: " + updateOnStart);
-		if ( locale == null ) {
+		{
+			Logger.msg(className + "Locale: " + locale.toString());
+		}
+		Logger.msg(className + "Update on start: " + updateOnStart);
+		if ( locale == null )
+		{
 			locale = new Locale("en_US");
 		}
 		setLocale(locale.toString());

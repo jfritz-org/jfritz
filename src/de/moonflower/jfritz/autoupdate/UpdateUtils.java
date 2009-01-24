@@ -29,9 +29,9 @@ public class UpdateUtils {
 	 */
 	public static void deleteFile(String fileName) {
 		File file = new File(fileName);
-		System.out.println(className + "Deleting file " + file.getAbsolutePath());
+		Logger.msg(className + "Deleting file " + file.getAbsolutePath());
 		if (!file.delete()) {
-			System.err.println("Could not delete file "
+			Logger.err("Could not delete file "
 					+ file.getAbsolutePath());
 		}
 	}
@@ -43,7 +43,7 @@ public class UpdateUtils {
 	 *            Das zu löschende Verzeichnis
 	 */
 	public static void deleteTree(File path) {
-		System.out.println(className + "Deleting directory " + path.getAbsolutePath());
+		Logger.msg(className + "Deleting directory " + path.getAbsolutePath());
 		if (path.exists()) {
 			for (File file : path.listFiles()) {
 				if (file.isDirectory())
@@ -129,19 +129,19 @@ public class UpdateUtils {
 			for (Enumeration<? extends ZipEntry> e = zf.entries(); e
 					.hasMoreElements();) {
 				target = e.nextElement();
-				System.out.print(className + target.getName() + " .");
+				Logger.msg(className + target.getName() + " .");
 				saveEntry(zf, target, destinationDirectory);
-				System.out.println(". unpacked");
+				Logger.msg(". unpacked");
 			}
 			zf.close();
 		} catch (FileNotFoundException e) {
-			System.out.println(className + "... file not found");
+			Logger.err(className + "... file not found");
 			JOptionPane.showMessageDialog(null, UpdateLocale.getMessage("fileNotFound").replaceAll("%FILENAME", target.getName()), UpdateLocale.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
 		} catch (ZipException e) {
-			System.out.println(className + "... zip error");
+			Logger.err(className + "... zip error");
 			JOptionPane.showMessageDialog(null, UpdateLocale.getMessage("zipError").replaceAll("%FILENAME", target.getName()), UpdateLocale.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
 		} catch (IOException e) {
-			System.out.println(className + "...io error");
+			Logger.err(className + "...io error");
 			JOptionPane.showMessageDialog(null, UpdateLocale.getMessage("ioError").replaceAll("%FILENAME", target.getName()), UpdateLocale.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
 		}
 	}

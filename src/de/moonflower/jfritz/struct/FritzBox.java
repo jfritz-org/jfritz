@@ -358,8 +358,9 @@ public class FritzBox {
 	 * @return list of SipProvider objects author robotniko, akw
 	 */
 	public Vector<SipProvider> parseSipProvider(String data, FritzBoxFirmware firmware) {
+		String sipProviderData = data;
 		Vector<SipProvider> list = new Vector<SipProvider>();
-		data = JFritzUtils.removeDuplicateWhitespace(data);
+		sipProviderData = JFritzUtils.removeDuplicateWhitespace(sipProviderData);
 		Pattern p;
 		if (firmware.getMajorFirmwareVersion() == 3
 				&& firmware.getMinorFirmwareVersion() < 42)
@@ -369,7 +370,7 @@ public class FritzBox {
 			p = Pattern.compile(PATTERN_SIPPROVIDER_37_91);
 		else
 			p = Pattern.compile(PATTERN_SIPPROVIDER_96);
-		Matcher m = p.matcher(data);
+		Matcher m = p.matcher(sipProviderData);
 		while (m.find()) {
 			Debug.msg("FOUND SIP-PROVIDER"); //$NON-NLS-1$
 			if (!(m.group(4).equals(""))) { //$NON-NLS-1$
@@ -385,7 +386,7 @@ public class FritzBox {
 			}
 		}
 		p = Pattern.compile(PATTERN_SIPPROVIDER_ACTIVE);
-		m = p.matcher(data);
+		m = p.matcher(sipProviderData);
 		while (m.find()) {
 			Enumeration<SipProvider> en = list.elements();
 			while (en.hasMoreElements()) {
@@ -593,8 +594,9 @@ public class FritzBox {
 	 */
 	public Vector<QuickDial> parseQuickDialData(QuickDials model, String data,
 			FritzBoxFirmware firmware) {
+		String quickDialData = data;
 		Vector<QuickDial> list = new Vector<QuickDial>();
-		data = JFritzUtils.removeDuplicateWhitespace(data);
+		quickDialData = JFritzUtils.removeDuplicateWhitespace(quickDialData);
 		Pattern p;
 		if (firmware.getMajorFirmwareVersion() == 4
 				&& firmware.getMinorFirmwareVersion() >= 3
@@ -618,7 +620,7 @@ public class FritzBox {
 			quickdial_indizes[NUMBER] = 3;
 
 		}
-		Matcher m = p.matcher(data);
+		Matcher m = p.matcher(quickDialData);
 
 		// TODO: Name einfügen
 		while (m.find()) {
@@ -654,9 +656,10 @@ public class FritzBox {
 		fetchDataFromURL(urlstr, postdata, true);
 	}
 
-	public void doCall(String number, String port) throws WrongPasswordException, IOException {
+	public void doCall(final String number, String port) throws WrongPasswordException, IOException {
 		login();
-		number = number.replaceAll("\\+", "00"); //$NON-NLS-1$,  //$NON-NLS-2$
+		String currentNumber = number;
+		currentNumber = currentNumber.replaceAll("\\+", "00"); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		String portStr = ""; //$NON-NLS-1$
 		if (port.equals("Fon 1")) { //$NON-NLS-1$
@@ -665,6 +668,18 @@ public class FritzBox {
 			portStr = "2"; //$NON-NLS-1$
 		} else if (port.equals("Fon 3")) { //$NON-NLS-1$
 			portStr = "3"; //$NON-NLS-1$
+		} else if (port.equals("DECT 1")) { //$NON-NLS-1$
+			portStr = "60"; //$NON-NLS-1$
+		} else if (port.equals("DECT 2")) { //$NON-NLS-1$
+			portStr = "61"; //$NON-NLS-1$
+		} else if (port.equals("DECT 3")) { //$NON-NLS-1$
+			portStr = "62"; //$NON-NLS-1$
+		} else if (port.equals("DECT 4")) { //$NON-NLS-1$
+			portStr = "63"; //$NON-NLS-1$
+		} else if (port.equals("DECT 5")) { //$NON-NLS-1$
+			portStr = "64"; //$NON-NLS-1$
+		} else if (port.equals("DECT 6")) { //$NON-NLS-1$
+			portStr = "65"; //$NON-NLS-1$
 		} else if (port.equals(Main.getMessage("analog_telephones_all"))) { //$NON-NLS-1$
 			portStr = "9"; //$NON-NLS-1$
 		} else if (port.equals("ISDN Alle")) { //$NON-NLS-1$
@@ -690,7 +705,7 @@ public class FritzBox {
 		}
         String postdata = POSTDATA_CALL.replaceAll("\\$PASSWORT", //$NON-NLS-1$
                 URLEncoder.encode(box_password, "ISO-8859-1"));
-		postdata = postdata.replaceAll("\\$NUMMER", number); //$NON-NLS-1$
+		postdata = postdata.replaceAll("\\$NUMMER", currentNumber); //$NON-NLS-1$
 		postdata = postdata.replaceAll("\\$NEBENSTELLE", portStr); //$NON-NLS-1$
 
 		postdata = firmware.getAccessMethod() + postdata;
@@ -789,11 +804,11 @@ public class FritzBox {
 						result)));
 
 			} catch (ParserConfigurationException e1) {
-				System.err.println(e1);
+				Debug.err(e1.toString());
 			} catch (SAXException e1) {
-				System.err.println(e1);
+				Debug.err(e1.toString());
 			} catch (IOException e1) {
-				System.err.println(e1);
+				Debug.err(e1.toString());
 			}
 		}
 	}
@@ -1136,7 +1151,7 @@ public class FritzBox {
 		case FritzBoxFirmware.BOXTYPE_FRITZBOX_7270:
 			// 2 analoge Telefonanschlüsse, interner S0-Bus und DECT
 			{
-				ports = new String[12];
+				ports = new String[18];
 				ports[0] = "Fon 1";
 				ports[1] = "Fon 2";
 				ports[2] = "ISDN Alle"; //$NON-NLS-1$
@@ -1149,6 +1164,12 @@ public class FritzBox {
 				ports[9] = "ISDN 7"; //$NON-NLS-1$
 				ports[10] = "ISDN 8"; //$NON-NLS-1$
 				ports[11] = "ISDN 9"; //$NON-NLS-1$
+				ports[12] = "DECT 1"; //$NON-NLS-1$
+				ports[13] = "DECT 2"; //$NON-NLS-1$
+				ports[14] = "DECT 3"; //$NON-NLS-1$
+				ports[15] = "DECT 4"; //$NON-NLS-1$
+				ports[16] = "DECT 5"; //$NON-NLS-1$
+				ports[17] = "DECT 6"; //$NON-NLS-1$
 
 
 				break;

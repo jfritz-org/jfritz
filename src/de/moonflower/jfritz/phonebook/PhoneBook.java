@@ -1321,16 +1321,17 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 		return allLastCallsSearched;
 	}
 
-	public String[] splitCSVLine(String line) {
+	public String[] splitCSVLine(final String line) {
+		String currentLine = line;
 		String[] items;
 		// Alle überflüssigen " zusammenfassen
 		// line = line.trim();
-		if (line.contains("\"")) {
-			while (!line.equals(line = line.replace("\"\"", "\"")))
+		if (currentLine.contains("\"")) {
+			while (!currentLine.equals(currentLine = currentLine.replace("\"\"", "\"")))
 				;
 			// jetzt zuerst am " splitten und danach nur falls der String ein
 			// "," am Anfang oder Ende enthält
-			String[] pre = line.split("\"");
+			String[] pre = currentLine.split("\"");
 			// aaa,bbb,"ccc,ddd,eee",fff,ggg,hhh,"iii,jjj,kkk",lll,mmm
 			String[] tmpString;
 			Vector<String> v = new Vector<String>();
@@ -1350,7 +1351,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 			items = new String[v.capacity()];
 			v.copyInto(items);
 		} else
-			items = line.split(",");
+			items = currentLine.split(",");
 		return items;
 	}
 

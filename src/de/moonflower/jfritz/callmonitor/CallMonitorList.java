@@ -69,7 +69,7 @@ public class CallMonitorList {
         }
         if (!ignoreIt) {
             Debug.msg("CallMonitorList: Adding new call");
-            pendingCalls.put(new Integer(id), call);
+            pendingCalls.put(Integer.valueOf(id), call);
             if (call.getCalltype().toInt() == CallType.CALLIN) {
                 invokeIncomingCall(call);
             } else if (call.getCalltype().toInt() == CallType.CALLOUT) {
@@ -86,10 +86,10 @@ public class CallMonitorList {
      *            call id
      */
     public void establishCall(int id) {
-        Integer callID = new Integer(id);
+        Integer callID = Integer.valueOf(id);
         if (pendingCalls.keySet().contains(callID)) {
             Debug.msg("CallMonitorList: Establishing call");
-            establishedCalls.put(callID, pendingCalls.get(new Integer(id)));
+            establishedCalls.put(callID, pendingCalls.get(Integer.valueOf(id)));
             pendingCalls.remove(callID);
             Call call = establishedCalls.get(callID);
 
@@ -109,7 +109,7 @@ public class CallMonitorList {
      */
     public void removeCall(int id, Call call) {
         Debug.msg("CallMonitorList: Removing call");
-        Integer intID = new Integer(id);
+        Integer intID = Integer.valueOf(id);
         if (pendingCalls.keySet().contains(intID)) {
             pendingCalls.remove(intID);
             // Setze Type auf FAILED, da kein Anruf zustandegekommen ist
@@ -129,9 +129,9 @@ public class CallMonitorList {
      *            id des Anrufs
      */
     public int getCallState(int id) {
-        if (pendingCalls.keySet().contains(new Integer(id))) {
+        if (pendingCalls.keySet().contains(Integer.valueOf(id))) {
             return PENDING;
-        } else if (establishedCalls.keySet().contains(new Integer(id))) {
+        } else if (establishedCalls.keySet().contains(Integer.valueOf(id))) {
             return ESTABLISHED;
         } else
             return NONE;
@@ -145,9 +145,9 @@ public class CallMonitorList {
      */
     public Call getCall(int id) {
         if (getCallState(id) == PENDING) {
-            return pendingCalls.get(new Integer(id));
+            return pendingCalls.get(Integer.valueOf(id));
         } else if (getCallState(id) == ESTABLISHED) {
-            return establishedCalls.get(new Integer(id));
+            return establishedCalls.get(Integer.valueOf(id));
         } else
             return null;
     }

@@ -11,10 +11,10 @@ public class MultiLabel extends JComponent implements SwingConstants
 	 */
 	private static final long serialVersionUID = 2138955409962236274L;
 
-	int num_lines,line_height,line_ascent;
-    int max_width  = -1;
-    int text_height = -1;
-    int[] line_widths;
+	int numLines,lineHeight,lineAscent;
+    int maxWidth  = -1;
+    int textHeight = -1;
+    int[] lineWidths;
     int btnMarginWidth =1;
 
     private String lines[]=null;
@@ -47,17 +47,18 @@ public class MultiLabel extends JComponent implements SwingConstants
         this.verticalAlignment = verticalAlignment;
     }
 
-    public void setText(String text)
+    public void setText(final String text)
     {
-        if (text == null) text="";
+    	String currentText = text;
+        if (currentText == null) currentText="";
 
-        StringTokenizer tkn = new StringTokenizer(text,"\n");
+        StringTokenizer tkn = new StringTokenizer(currentText,"\n");
 
-        num_lines = tkn.countTokens();
-        lines       = new String[num_lines];
-        line_widths = new int   [num_lines];
+        numLines = tkn.countTokens();
+        lines       = new String[numLines];
+        lineWidths = new int   [numLines];
 
-        for (int i=0;i<num_lines;i++)
+        for (int i=0;i<numLines;i++)
             lines[i] = tkn.nextToken();
 
         recalculateDimension();
@@ -67,19 +68,19 @@ public class MultiLabel extends JComponent implements SwingConstants
     {
         FontMetrics fontmetrics=getFontMetrics(getFont());
 
-        line_height=fontmetrics.getHeight();
-        line_ascent=fontmetrics.getAscent();
+        lineHeight=fontmetrics.getHeight();
+        lineAscent=fontmetrics.getAscent();
 
-        max_width=0;
-        for (int i=0;i<num_lines;i++)
+        maxWidth=0;
+        for (int i=0;i<numLines;i++)
         {
-            line_widths[i] = fontmetrics.stringWidth(lines[ i ]);
+            lineWidths[i] = fontmetrics.stringWidth(lines[ i ]);
 
-            max_width = Math.max(max_width, line_widths[i]);
+            maxWidth = Math.max(maxWidth, lineWidths[i]);
         }
 
-        max_width += 2*btnMarginWidth;
-        text_height=num_lines*line_height;
+        maxWidth += 2*btnMarginWidth;
+        textHeight=numLines*lineHeight;
    }
 
 
@@ -95,19 +96,19 @@ public class MultiLabel extends JComponent implements SwingConstants
 
     public Dimension getMinimumSize()
     {
-        if (max_width == -1 || text_height == -1) recalculateDimension();
+        if (maxWidth == -1 || textHeight == -1) recalculateDimension();
 
         Insets insets = getInsets();
 
-        return new Dimension(max_width   + insets.left + insets.right,
-                             text_height + insets.top  + insets.bottom);
+        return new Dimension(maxWidth   + insets.left + insets.right,
+                             textHeight + insets.top  + insets.bottom);
     }
     protected void paintComponent(Graphics g)
     {
         super.paintComponent(g);
         Dimension d = getSize();
 
-        if (d.width  != max_width || d.height != text_height)
+        if (d.width  != maxWidth || d.height != textHeight)
             recalculateDimension();
 
         Insets insets = this.getInsets();
@@ -116,28 +117,28 @@ public class MultiLabel extends JComponent implements SwingConstants
 
         if (verticalAlignment == TOP)
         {
-            y = insets.top + line_ascent;
+            y = insets.top + lineAscent;
         }
         else if (verticalAlignment == CENTER)
         {
          //These two are must musts:
-            y = insets.top + line_ascent;
+            y = insets.top + lineAscent;
 
           //So far it looks like the TOP case, BUT:
             int clientAreaHeight = d.height - insets.top - insets.bottom;
-            y = y + (clientAreaHeight - text_height) / 2;
+            y = y + (clientAreaHeight - textHeight) / 2;
         }
         else if (verticalAlignment == BOTTOM)
         {
             int clientAreaBottom = d.height - insets.bottom;
 
-            y = clientAreaBottom - text_height;
+            y = clientAreaBottom - textHeight;
 
-            y += line_ascent;
+            y += lineAscent;
         }
 
 
-        for (int i=0; i<num_lines; i++)
+        for (int i=0; i<numLines; i++)
         {
             int ha = getBidiHorizontalAlignment(horizontalAlignment);
 
@@ -147,15 +148,15 @@ public class MultiLabel extends JComponent implements SwingConstants
             {
                 ha = getBidiHorizontalAlignment(textAlignment);
                      if (ha == LEFT  ) x = insets.left;
-                else if (ha == RIGHT ) x = max_width - line_widths[i] + insets.left;
-                else if (ha == CENTER) x = insets.left + (max_width - line_widths[i]) / 2;
+                else if (ha == RIGHT ) x = maxWidth - lineWidths[i] + insets.left;
+                else if (ha == CENTER) x = insets.left + (maxWidth - lineWidths[i]) / 2;
             }
             else if (ha == RIGHT)
             {
                 ha = getBidiHorizontalAlignment(textAlignment);
-                     if (ha == LEFT  ) x = d.width - max_width - insets.right;
-                else if (ha == RIGHT ) x = d.width - line_widths[i] - insets.right;
-                else if (ha == CENTER) x = d.width - max_width - insets.right+ (max_width - line_widths[i]) / 2;
+                     if (ha == LEFT  ) x = d.width - maxWidth - insets.right;
+                else if (ha == RIGHT ) x = d.width - lineWidths[i] - insets.right;
+                else if (ha == CENTER) x = d.width - maxWidth - insets.right+ (maxWidth - lineWidths[i]) / 2;
             }
             else if (ha == CENTER)
             {
@@ -163,32 +164,33 @@ public class MultiLabel extends JComponent implements SwingConstants
 
              // Just imagine that ha=LEFT (much easier), and follow code
                 int  clientAreaWidth = d.width - insets.left - insets.right;
-                     if (ha == LEFT  ) x = insets.left + (clientAreaWidth - max_width) / 2;
-                else if (ha == RIGHT ) x = insets.left + (clientAreaWidth - max_width) / 2 + (max_width-line_widths[i]);
-                else if (ha == CENTER) x = insets.left + (clientAreaWidth - line_widths[i]) / 2;
+                     if (ha == LEFT  ) x = insets.left + (clientAreaWidth - maxWidth) / 2;
+                else if (ha == RIGHT ) x = insets.left + (clientAreaWidth - maxWidth) / 2 + (maxWidth-lineWidths[i]);
+                else if (ha == CENTER) x = insets.left + (clientAreaWidth - lineWidths[i]) / 2;
             }
             x+=btnMarginWidth;
             g.drawString(lines[i],x,y);
 
-            y+=line_height;
+            y+=lineHeight;
         }
    }
 
-   private int getBidiHorizontalAlignment(int ha)
+   private int getBidiHorizontalAlignment(final int ha)
    {
-        if (ha == LEADING)
-        {
-            if (getComponentOrientation().isLeftToRight())
-                 ha = LEFT;
-            else ha = RIGHT;
-        }
-        else if (ha == TRAILING)
-        {
-            if (getComponentOrientation().isLeftToRight())
-                 ha = RIGHT;
-            else ha = LEFT;
-        }
-        return ha;
+		int hAlignment = ha;
+		if (hAlignment == LEADING)
+		{
+		    if (getComponentOrientation().isLeftToRight())
+		    	hAlignment = LEFT;
+		    else hAlignment = RIGHT;
+		}
+		else if (hAlignment == TRAILING)
+		{
+		    if (getComponentOrientation().isLeftToRight())
+		    	hAlignment = RIGHT;
+		    else hAlignment = LEFT;
+		}
+		return hAlignment;
     }
 
 

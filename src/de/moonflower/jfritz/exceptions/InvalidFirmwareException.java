@@ -15,7 +15,7 @@ public class InvalidFirmwareException extends Exception {
     public InvalidFirmwareException() {
         super();
     }
-    public InvalidFirmwareException(String s) {
-        super(s);
+    public InvalidFirmwareException(final String param) {
+        super(param);
     }
 }

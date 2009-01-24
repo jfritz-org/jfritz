@@ -48,7 +48,7 @@ public class AddressPasswordDialog extends JDialog {
 
 	protected JLabel passLabel, addressLabel;
 
-	private boolean pressed_OK = false;
+	private boolean pressedOK = false;
 
 	private boolean isPasswordDlg;
 
@@ -81,7 +81,7 @@ public class AddressPasswordDialog extends JDialog {
 	}
 
 	public boolean okPressed() {
-		return pressed_OK;
+		return pressedOK;
 	}
 
 	public void setPass(String pass) {
@@ -109,12 +109,12 @@ public class AddressPasswordDialog extends JDialog {
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ESCAPE
 						|| (e.getSource() == cancelButton && e.getKeyCode() == KeyEvent.VK_ENTER)) {
-					pressed_OK = false;
+					pressedOK = false;
 					AddressPasswordDialog.this.setVisible(false);
 				}
 				if (e.getSource() == okButton
 						&& e.getKeyCode() == KeyEvent.VK_ENTER) {
-					pressed_OK = true;
+					pressedOK = true;
 					AddressPasswordDialog.this.setVisible(false);
 				}
 			}
@@ -124,7 +124,7 @@ public class AddressPasswordDialog extends JDialog {
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Object source = e.getSource();
-				pressed_OK = (source == pass || source == okButton);
+				pressedOK = (source == pass || source == okButton);
 				AddressPasswordDialog.this.setVisible(false);
 			}
 		};

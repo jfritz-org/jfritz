@@ -23,9 +23,9 @@ public class Person implements Cloneable, Serializable{
 
 	private static final long serialVersionUID = 104;
 
-	private static final int scaleWidth = 40;
+	private static final int SCALE_WIDTH = 40;
 
-	private static final int scaleHeight = 50;
+	private static final int SCALE_HEIGHT = 50;
 
 	private boolean privateEntry = false;
 
@@ -716,8 +716,8 @@ public class Person implements Cloneable, Serializable{
 		{
 			pictureIcon = new ImageIcon("");
 		}
-		float pictureWidthFactor = (float)pictureIcon.getIconWidth() / (float)scaleWidth;
-		float pictureHeightFactor = (float)pictureIcon.getIconHeight() / (float)scaleHeight;
+		float pictureWidthFactor = (float)pictureIcon.getIconWidth() / (float)SCALE_WIDTH;
+		float pictureHeightFactor = (float)pictureIcon.getIconHeight() / (float)SCALE_HEIGHT;
 
 		int scaleToWidth = 0;
 		int scaleToHeight = 0;

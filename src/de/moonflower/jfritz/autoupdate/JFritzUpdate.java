@@ -82,7 +82,7 @@ public class JFritzUpdate {
 						update.setProgramVersion(downloadFilesThread.getNewVersion());
 						auGui.dispose();
 					} catch (InterruptedException e) {
-						System.err.println(className
+						Logger.err(className
 								+ "DownloadFiles-Thread has been interrupted");
 			        	Thread.currentThread().interrupt();
 					}
@@ -96,7 +96,7 @@ public class JFritzUpdate {
 		} catch (InterruptedException e) {
 			// Thread wurde unterbrochen
 			cleanupUpdateDirectory();
-			System.err.println(className
+			Logger.err(className
 					+ "CheckNewVersion-Thread has been interrupted");
         	Thread.currentThread().interrupt();
 		}
@@ -116,7 +116,7 @@ public class JFritzUpdate {
 			updateFolderThread.join();
 
 		} catch (InterruptedException e) {
-			System.err.println(className
+			Logger.err(className
 					+ "ProcessUpdateFolder-Thread has been interrupted");
 			e.printStackTrace();
         	Thread.currentThread().interrupt();
@@ -161,7 +161,7 @@ public class JFritzUpdate {
 	 *
 	 */
 	private void cleanupUpdateDirectory() {
-		System.out.println(className + "Cleaning up update directory");
+		Logger.msg(className + "Cleaning up update directory");
 		File upDir = new File(updateDirectory);
 		UpdateUtils.deleteTreeWithoutFile(upDir, updateFile);
 	}
@@ -190,7 +190,7 @@ public class JFritzUpdate {
 			JOptionPane.showMessageDialog(null, UpdateLocale
 					.getMessage("wrongWorkingDirectory"), UpdateLocale
 					.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
-			throw new RuntimeException(
+			throw new UpdateException(
 					"Wrong working directory! Could not find jfritz-internals.jar. Searched in " + installDirectory);
 		}
 
@@ -208,29 +208,22 @@ public class JFritzUpdate {
 					parameterTypes);
 			mainMethod.invoke(args, arguments);
 		} catch (MalformedURLException e) {
-			System.err.println(className + "ERROR: malformed URL");
+			Logger.err(className + "ERROR: malformed URL: "+ e.toString());
 			JOptionPane.showMessageDialog(null, "Malformed URL", UpdateLocale
 					.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			System.err.println(className + "ERROR: class not found");
+			Logger.err(className + "ERROR: class not found: " + e.toString());
 			JOptionPane.showMessageDialog(null, UpdateLocale
 					.getMessage("wrongWorkingDirectory"), UpdateLocale
 					.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
 		} catch (NoSuchMethodException e) {
-			System.err.println(className + "ERROR: No such method");
-			e.printStackTrace();
+			Logger.err(className + "ERROR: No such method: " + e.toString());
 		} catch (IllegalArgumentException e) {
-			System.err.println(className + "ERROR: illegal argument exception");
-			e.printStackTrace();
+			Logger.err(className + "ERROR: illegal argument exception: " + e.toString());
 		} catch (IllegalAccessException e) {
-			System.err.println(className + "ERROR: illegal access exception");
-			e.printStackTrace();
+			Logger.err(className + "ERROR: illegal access exception:" + e.toString());
 		} catch (InvocationTargetException e) {
-			System.err
-					.println(className + "ERROR: invocation target exception");
-			e.printStackTrace();
+			Logger.err(className + "ERROR: invocation target exception:" + e.toString());
 		}
 	}
 }

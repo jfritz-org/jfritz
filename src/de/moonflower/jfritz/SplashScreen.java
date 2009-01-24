@@ -81,10 +81,10 @@ public class SplashScreen extends JFrame {
 			setLayout( new BorderLayout() ) ;
 			img = new ImageIcon( background ).getImage() ;
 			if( img == null ) {
-				System.err.println( "Image is null" );
+				Debug.err( "Image is null" );
 			}
 			if( img.getHeight(this) <= 0 || img.getWidth( this ) <= 0 ) {
-				System.err.println( "Image width or height must be positive" );
+				Debug.err( "Image width or height must be positive" );
 				img = null;
 			}
 		}

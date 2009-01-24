@@ -10,17 +10,17 @@ package de.moonflower.jfritz.utils.network;
 	 */
 public interface UPNPAddonInfosListener {
 
-	public void setBytesRate(String sent, String received);
+	void setBytesRate(String sent, String received);
 
-	public void setTotalBytesInfo(String sent, String received);
+	void setTotalBytesInfo(String sent, String received);
 
-	public void setDNSInfo(String dns1, String dns2);
+	void setDNSInfo(String dns1, String dns2);
 
-	public void setVoipDNSInfo(String voipDns1, String voipDns2);
+	void setVoipDNSInfo(String voipDns1, String voipDns2);
 
-	public void setDisconnectInfo(String disconnectTime, String idleTime);
+	void setDisconnectInfo(String disconnectTime, String idleTime);
 
-	public void setOtherInfo(String upnpControl, String routedMode);
+	void setOtherInfo(String upnpControl, String routedMode);
 
 }
 

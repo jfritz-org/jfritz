@@ -209,7 +209,7 @@ public class SpeedportFirmware {
 			return new SpeedportFirmware(boxtypeString, majorFirmwareVersion,
 					minorFirmwareVersion, modFirmwareVersion, language, mac);
 		} else {
-			System.err.println("detectFirmwareVersion: Password wrong?"); //$NON-NLS-1$
+			Debug.err("detectFirmwareVersion: Password wrong?"); //$NON-NLS-1$
 			throw new WrongPasswordException(
 					"Could not detect FRITZ!Box firmware version."); //$NON-NLS-1$
 		}
@@ -265,10 +265,12 @@ public class SpeedportFirmware {
 	}
 
 	public String getBoxName() {
-		switch (boxtype) {
-		case 65:
+		if (boxtype == 65)
+		{
 			return "Speedport"; //$NON-NLS-1$
-		default:
+		}
+		else
+		{
 			return Main.getMessage("unknown"); //$NON-NLS-1$
 		}
 	}

@@ -80,7 +80,7 @@ public class MacHandler {
 			registerPrefsHandler.invoke(proxy, argslist);
 
 		} catch (Throwable e) {
-			System.err.println(e);
+			Debug.err(e.toString());
 		}
 	}
 

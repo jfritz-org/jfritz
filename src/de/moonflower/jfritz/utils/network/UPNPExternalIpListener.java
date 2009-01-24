@@ -9,6 +9,6 @@ package de.moonflower.jfritz.utils.network;
 	 */
 public interface UPNPExternalIpListener {
 
-	public void setExternalIp(String externalIp);
+	void setExternalIp(String externalIp);
 }
 

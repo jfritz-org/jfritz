@@ -195,7 +195,7 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
             connected = false;
 //            this.interrupt();
         } catch (IOException e) {
-            System.err.println(e);
+            Debug.err(e.toString());
         }
     }
 

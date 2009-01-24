@@ -10,9 +10,9 @@ package de.moonflower.jfritz.utils.network;
 	 */
 public interface UPNPCommonLinkPropertiesListener {
 
-	public void setUpstreamMaxBitRate(String maxUp);
+	void setUpstreamMaxBitRate(String maxUp);
 
-	public void setDownstreamMaxBitRate(String maxDown);
+	void setDownstreamMaxBitRate(String maxDown);
 
 }
 

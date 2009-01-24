@@ -295,12 +295,19 @@ public class SipProviderTableModel extends AbstractTableModel {
 //FIXME
 		public int compare(SipProvider v1, SipProvider v2){
 			Object o1, o2;
-			switch (colIndex) {
-			case 0:
-			    if (v1.getProviderID() > v2.getProviderID()) {
+			if (colIndex == 0)
+			{
+			    if (v1.getProviderID() > v2.getProviderID())
+			    {
 			        return 1;
-			    } else return 0;
-			default:
+			    }
+			    else
+		    	{
+			    	return 0;
+		    	}
+			}
+			else
+			{
 			    o1 = null;
 				o2 = null;
 			}

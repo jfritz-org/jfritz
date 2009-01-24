@@ -126,6 +126,18 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 			portstr = "FON 2"; //$NON-NLS-1$
 		else if (port.equals("2")) //$NON-NLS-1$
 			portstr = "FON 3"; //$NON-NLS-1$
+		else if (port.equals("10")) //$NON-NLS-1$
+			portstr = "DECT 1"; //$NON-NLS-1$
+		else if (port.equals("11")) //$NON-NLS-1$
+			portstr = "DECT 2"; //$NON-NLS-1$
+		else if (port.equals("12")) //$NON-NLS-1$
+			portstr = "DECT 3"; //$NON-NLS-1$
+		else if (port.equals("13")) //$NON-NLS-1$
+			portstr = "DECT 4"; //$NON-NLS-1$
+		else if (port.equals("14")) //$NON-NLS-1$
+			portstr = "DECT 5"; //$NON-NLS-1$
+		else if (port.equals("15")) //$NON-NLS-1$
+			portstr = "DECT 6"; //$NON-NLS-1$
 	    else if (port.equals("3")) //$NON-NLS-1$
 		    portstr = "Durchwahl"; //$NON-NLS-1$
         else if (port.equals("32")) //$NON-NLS-1$
@@ -283,6 +295,18 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 			portstr = "FON 3"; //$NON-NLS-1$
 	    else if (port.equals("3")) //$NON-NLS-1$
 		    portstr = "Durchwahl"; //$NON-NLS-1$
+		else if (port.equals("10")) //$NON-NLS-1$
+			portstr = "DECT 1"; //$NON-NLS-1$
+		else if (port.equals("11")) //$NON-NLS-1$
+			portstr = "DECT 2"; //$NON-NLS-1$
+		else if (port.equals("12")) //$NON-NLS-1$
+			portstr = "DECT 3"; //$NON-NLS-1$
+		else if (port.equals("13")) //$NON-NLS-1$
+			portstr = "DECT 4"; //$NON-NLS-1$
+		else if (port.equals("14")) //$NON-NLS-1$
+			portstr = "DECT 5"; //$NON-NLS-1$
+		else if (port.equals("15")) //$NON-NLS-1$
+			portstr = "DECT 6"; //$NON-NLS-1$
         else if (port.equals("32")) //$NON-NLS-1$
             portstr = "Daten Fon 1";     //$NON-NLS-1$
         else if (port.equals("33")) //$NON-NLS-1$

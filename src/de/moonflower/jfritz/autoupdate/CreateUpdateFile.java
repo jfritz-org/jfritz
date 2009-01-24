@@ -14,39 +14,53 @@ public class CreateUpdateFile {
 
 	private final static String className = "(CreateUpdateFile) ";
 
-	File targetDirectory;
+	transient private File targetDirectory;
 
-	String version = "";
+	transient private String version = "";
 
-	String versionFile = "";
+	transient private File versionFile;
 
-	Vector<Directory> dirs = new Vector<Directory>();
+	transient private File updateFile;
 
-	public void setToDir(String targetDir) {
+	transient private BufferedWriter versionFileWriter;
+
+	transient private BufferedWriter updateFileWriter;
+
+	transient private Vector<Directory> dirs = new Vector<Directory>();
+
+	public void setToDir(final String targetDir) {
 		targetDirectory = new File(targetDir);
+		versionFile = new File(targetDirectory.getAbsolutePath()
+				+ System.getProperty("file.separator") + "current.txt");
+		updateFile = new File(targetDirectory.getAbsolutePath()
+				+ System.getProperty("file.separator") + "update.txt");
+		try {
+			versionFileWriter = new BufferedWriter(new OutputStreamWriter(
+					new FileOutputStream(versionFile), "UTF8"));
+		} catch (UnsupportedEncodingException e) {
+			Logger.err(className + "Could not write file with UTF8 encoding");
+		} catch (FileNotFoundException e) {
+			Logger.err(className + "Could not find file " + versionFile);
+		}
+
+		try {
+			updateFileWriter = new BufferedWriter(new OutputStreamWriter(
+				new FileOutputStream(updateFile), "UTF8"));
+		} catch (UnsupportedEncodingException e) {
+			Logger.err(className + "Could not write file with UTF8 encoding");
+		} catch (FileNotFoundException e) {
+			Logger.err(className + "Could not find file " + updateFile);
+		}
 	}
 
-	public void setVersion(String version) {
+	public void setVersion(final String version) {
 		this.version = version;
 	}
 
-	public void setVersionFile(String versionFile) {
-		this.versionFile = versionFile;
-	}
-
-	public Directory createAddDirectory() {
-		Directory dir = new Directory();
-		dirs.add(dir);
-		return dir;
-	}
-
 	public class Directory {
-		public Directory() {
-		}
+		transient private String dir;
 
-		String dir;
-
-		public void setDirectory(String file) {
+		public void setDirectory(final String file) {
 			this.dir = file;
 		}
 
@@ -56,81 +70,66 @@ public class CreateUpdateFile {
 	}
 
 	private void setVersion() {
-		File versionFile = new File(targetDirectory.getAbsolutePath()
-				+ System.getProperty("file.separator") + "current.txt");
 		versionFile.delete();
 		try {
 			versionFile.createNewFile();
 		} catch (IOException e1) {
-			System.err.println(className + "Could not create version file: "
+			Logger.err(className + "Could not create version file: "
 					+ versionFile.getAbsolutePath());
 		}
 
 		try {
-			BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
-					new FileOutputStream(versionFile), "UTF8"));
-			pw.write(version);
-			pw.close();
-		} catch (UnsupportedEncodingException e1) {
-			System.err.println(className + "Could not write file with UTF8 encoding");
-		} catch (FileNotFoundException e1) {
-			System.err.println(className + "Could not find file " + versionFile);
+			versionFileWriter.write(version);
+			versionFileWriter.close();
 		} catch (IOException e) {
-			System.err.println(className + "Could not write to file " + versionFile);
+			Logger.err(className + "Could not write to file " + versionFile);
 		}
 	}
 
 	private void setUpdateFiles() {
-		File updateFile = new File(targetDirectory.getAbsolutePath()
-				+ System.getProperty("file.separator") + "update.txt");
 		updateFile.delete();
 		try {
 			updateFile.createNewFile();
 		} catch (IOException e1) {
-			System.err.println(className + "Could not create update file: "
+			Logger.err(className + "Could not create update file: "
 					+ updateFile.getAbsolutePath());
 		}
 		try {
-			BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
-					new FileOutputStream(updateFile), "UTF8"));
-			for (Iterator<Directory> it = dirs.iterator(); it.hasNext();) {
-				Directory dir = it.next();
-
-				File[] entries = new File(dir.getDirectory()).listFiles();
+			Iterator<Directory> iterator;
+			for (iterator = dirs.iterator(); iterator.hasNext();) {
+				File[] entries = new File(iterator.next().getDirectory()).listFiles();
 				for (int j = 0; j < entries.length; j++) {
 					String fileDigest = "";
 					try {
 						byte[] digest = MDGenerator.messageDigest(entries[j]
 								.getAbsolutePath(), "MD5");
 						for (int i = 0; i < digest.length; i++) {
-							fileDigest += (Integer
-									.toHexString(digest[i] & 0xFF));
+							fileDigest += Integer.toHexString(digest[i] & 0xFF);
 						}
 					} catch (Exception e) {
-						System.err
-								.println(className + "Could not create message digest for file \""
+						Logger.err(className + "Could not create message digest for file \""
 										+ entries[j].getName() + "\"");
 					}
-					System.out.println(className + "File: " + entries[j].getName() + " ("
+					Logger.msg(className + "File: " + entries[j].getName() + " ("
 							+ fileDigest + ")");
-					pw.write(entries[j].getName() + ";" + fileDigest + ";"
+					updateFileWriter.write(entries[j].getName() + ";" + fileDigest + ";"
 							+ entries[j].length());
-					pw.newLine();
+					updateFileWriter.newLine();
 
 				}
 			}
-			pw.close();
+			updateFileWriter.close();
 		} catch (UnsupportedEncodingException e1) {
-			System.err.println(className + "Could not write file with UTF8 encoding");
+			Logger.err(className + "Could not write file with UTF8 encoding");
 		} catch (FileNotFoundException e1) {
-			System.err.println(className + "Could not find file " + updateFile);
+			Logger.err(className + "Could not find file " + updateFile);
 		} catch (IOException e) {
-			System.err.println(className + "Could not write to file " + updateFile);
+			Logger.err(className + "Could not write to file " + updateFile);
 		}
 	}
 
 	public void execute() {
-		System.out.println(className + "Target directory: "
+		Logger.msg(className + "Target directory: "
 				+ targetDirectory.getAbsolutePath());
 		setVersion();
 		setUpdateFiles();

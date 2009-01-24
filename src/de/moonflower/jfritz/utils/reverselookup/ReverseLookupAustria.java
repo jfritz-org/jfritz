@@ -79,20 +79,20 @@ public final class ReverseLookupAustria {
 	 * @return the city found or "" if nothing was found
 	 */
 
-	public static String getCity(String number){
-
-		Debug.msg("Looking up city in austrian numberMap: "+number);
+	public static String getCity(final String number){
+		String currentNum = number;
+		Debug.msg("Looking up city in austrian numberMap: "+currentNum);
 		String city = "";
-		if ( number.startsWith("+43")) {
-			number = "0"+number.substring(3);
+		if ( currentNum.startsWith("+43")) {
+			currentNum = "0"+currentNum.substring(3);
 		}
-		if(number.startsWith("0") && numberMap != null){
-			if(numberMap.containsKey(number.substring(0, 3)))
-				city = numberMap.get(number.substring(0,3));
-			else if(numberMap.containsKey(number.substring(0,4)))
-				city = numberMap.get(number.substring(0,4));
-			else if(numberMap.containsKey(number.substring(0,5)))
-				city = numberMap.get(number.substring(0,5));
+		if(currentNum.startsWith("0") && numberMap != null){
+			if(numberMap.containsKey(currentNum.substring(0, 3)))
+				city = numberMap.get(currentNum.substring(0,3));
+			else if(numberMap.containsKey(currentNum.substring(0,4)))
+				city = numberMap.get(currentNum.substring(0,4));
+			else if(numberMap.containsKey(currentNum.substring(0,5)))
+				city = numberMap.get(currentNum.substring(0,5));
 		}
 
 		return city;

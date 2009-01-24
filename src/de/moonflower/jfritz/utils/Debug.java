@@ -84,31 +84,32 @@ public class Debug{
 	 * @param fname
 	 *            Filename to log into
 	 */
-	public static void logToFile(String fname) {
+	public static void logToFile(final String fName) {
+		String fileName = fName;
 		Debug.debugLevel = 3;
 		logFile = true;
 		// Save the original outputstream so we can write to the console too!
 		originalOut = System.out;
 
 		//if our file name contains no path, then save in our save dir
-		if(!fname.contains(System.getProperty("file.separator")))
-			fname = Main.SAVE_DIR + fname;
+		if(!fileName.contains(System.getProperty("file.separator")))
+			fileName = Main.SAVE_DIR + fileName;
 
 		try {
 			// setup the redirection of Sysem.out and System.err
 			FileOutputStream tmpOutputStream = new FileOutputStream(
-					fname);
+					fileName);
 			fileRedirecter = new PrintStream(tmpOutputStream);
 			System.setOut(fileRedirecter);
 			System.setErr(fileRedirecter);
 		}
 
 		catch (Exception e) {
-			System.out.println("EXCEPTION when writing to LOGFILE"); //$NON-NLS-1$
+			System.err.println("EXCEPTION when writing to LOGFILE"); //$NON-NLS-1$
 		}
 
 		fileRedirecter.println("------------------------------------------"); //$NON-NLS-1$
-		msg("logging to file \"" + fname + "\" has been enabled"); //$NON-NLS-1$,  //$NON-NLS-2$
+		msg("logging to file \"" + fileName + "\" has been enabled"); //$NON-NLS-1$,  //$NON-NLS-2$
 	}
 
 	/**
@@ -136,8 +137,9 @@ public class Debug{
 	 * @param level
 	 * @param message
 	 */
-	public static void msg(int level, String message) {
+	public static void msg(int level, final String msg) {
 		if ( debugLevel >= level) {
+			String message = msg;
 			message = "(" + getCurrentTime() + ") DEBUG: " + message; //$NON-NLS-1$,  //$NON-NLS-2$
 			System.out.println(message);
 
@@ -164,8 +166,8 @@ public class Debug{
 	 *
 	 * @param message
 	 */
-	public static void netMsg(String message){
-
+	public static void netMsg(final String msg){
+		String message = msg;
 		message = "(" + getCurrentTime() + ") NETWORK: " + message; //$NON-NLS-1$,  //$NON-NLS-2$
 		System.out.println(message);
 
@@ -191,7 +193,8 @@ public class Debug{
 	 *
 	 * @param message
 	 */
-	public static void err(String message) {
+	public static void err(String msg) {
+			String message = msg;
 			message = "(" + getCurrentTime() + ") ERROR: " + message; //$NON-NLS-1$,  //$NON-NLS-2$
 			System.err.println(message);
 
@@ -325,17 +328,17 @@ public class Debug{
 		return main_panel;
 	}
 
-	public static void SetCloseButtonText(String text)
+	public static void setCloseButtonText(String text)
 	{
 		close_button.setText(text);
 	}
 
-	public static void SetSaveButtonText(String text)
+	public static void setSaveButtonText(String text)
 	{
 		save_button.setText(text);
 	}
 
-	public static void SetClearButtonText(String text)
+	public static void setClearButtonText(String text)
 	{
 		clear_button.setText(text);
 	}

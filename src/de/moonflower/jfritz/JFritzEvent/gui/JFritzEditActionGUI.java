@@ -50,7 +50,7 @@ public class JFritzEditActionGUI extends JDialog implements ActionListener {
 	private JFritzAction action;
 	private JFritzEvent event;
 
-	private boolean ok_pressed = false;
+	private boolean pressedOK = false;
 
 	public JFritzEditActionGUI(JDialog parent, JFritzEvent event, JFritzAction action) {
 		super(parent, true);
@@ -162,7 +162,7 @@ public class JFritzEditActionGUI extends JDialog implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if ( e.getActionCommand().equals("ok")) {
 			action.setDescription(descriptionTextField.getText());
-			ok_pressed  = true;
+			pressedOK  = true;
 			setVisible(false);
 		} else {
 			this.setVisible(false);
@@ -171,7 +171,7 @@ public class JFritzEditActionGUI extends JDialog implements ActionListener {
 
 	public boolean showDialog() {
 		setVisible(true);
-		return ok_pressed;
+		return pressedOK;
 	}
 
 }

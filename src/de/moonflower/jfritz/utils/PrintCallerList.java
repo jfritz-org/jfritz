@@ -226,7 +226,7 @@ public class PrintCallerList {
         				"/de/moonflower/jfritz/resources/images/empty.png")); //$NON-NLS-1$
 
         // Set Font size to 8
-        Integer fontSize = new Integer(8);
+        Integer fontSize = Integer.valueOf(8);
 
         AbstractExpression exp = new AbstractExpression() {
             /**
@@ -350,6 +350,18 @@ public class PrintCallerList {
                     portStr = "FON 2"; //$NON-NLS-1$
                 else if (port.equals("2")) //$NON-NLS-1$
                     portStr = "FON 3"; //$NON-NLS-1$
+                else if (port.equals("10")) //$NON-NLS-1$
+                    portStr = "DECT 1"; //$NON-NLS-1$
+                else if (port.equals("11")) //$NON-NLS-1$
+                    portStr = "DECT 2"; //$NON-NLS-1$
+                else if (port.equals("12")) //$NON-NLS-1$
+                    portStr = "DECT 3"; //$NON-NLS-1$
+                else if (port.equals("13")) //$NON-NLS-1$
+                    portStr = "DECT 4"; //$NON-NLS-1$
+                else if (port.equals("14")) //$NON-NLS-1$
+                    portStr = "DECT 5"; //$NON-NLS-1$
+                else if (port.equals("15")) //$NON-NLS-1$
+                    portStr = "DECT 6"; //$NON-NLS-1$
                 else if (port.equals("")) //$NON-NLS-1$
                     portStr = ""; //$NON-NLS-1$
                 else

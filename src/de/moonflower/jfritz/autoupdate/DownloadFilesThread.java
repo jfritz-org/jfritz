@@ -80,7 +80,7 @@ public class DownloadFilesThread extends Thread {
 
 	public void run() {
 		wasInterrupted = false;
-		System.out.println(threadName + "Downloading files...");
+		Logger.msg(threadName + "Downloading files...");
 
 		getRemoteFileList();
 		getLocalFileList();
@@ -89,7 +89,7 @@ public class DownloadFilesThread extends Thread {
 		processUpdateList();
 		updateLocalFileList();
 
-		System.out.println(threadName + "...done");
+		Logger.msg(threadName + "...done");
 	}
 
 	/**
@@ -180,8 +180,7 @@ public class DownloadFilesThread extends Thread {
 			if (url != null) {
 				URLConnection con;
 				try {
-					System.out
-							.println(threadName + "getting remote file list");
+					Logger.msg(threadName + "getting remote file list");
 					con = url.openConnection();
 					// 5 Sekunden-Timeout für den Verbindungsaufbau
 					con.setConnectTimeout(5000);
@@ -194,8 +193,7 @@ public class DownloadFilesThread extends Thread {
 					while (null != (line = d.readLine())) {
 						String[] split = line.split(";");
 						if (split.length < 3) {
-							System.err
-									.println(threadName + "split-length < 3");
+							Logger.msg(threadName + "split-length < 3");
 						}
 						UpdateFile remoteFile = new UpdateFile(split[0],
 								split[1], Integer.parseInt(split[2]));
@@ -204,14 +202,13 @@ public class DownloadFilesThread extends Thread {
 					}
 					d.close();
 				} catch (IOException e1) {
-					System.err
-							.println(threadName + "Error while retrieving "
+					Logger.msg(threadName + "Error while retrieving "
 									+ urlstr
 									+ " (possibly no connection to the internet)"); //$NON-NLS-1$
 				}
 			}
 		} catch (MalformedURLException e) {
-			System.err.println(threadName + "URL invalid: " + urlstr); //$NON-NLS-1$
+			Logger.err(threadName + "URL invalid: " + urlstr); //$NON-NLS-1$
 		}
 	}
 
@@ -221,7 +218,7 @@ public class DownloadFilesThread extends Thread {
 	 */
 	private void getLocalFileList() {
 		try {
-			System.out.println(threadName + "getting local file list");
+			Logger.msg(threadName + "getting local file list");
 
 			File localVersionFile = new File(updateDirectory
 					+ System.getProperty("file.separator") + updateFile);
@@ -235,7 +232,7 @@ public class DownloadFilesThread extends Thread {
 				if ( !line.equals("")) {
 					String[] split = line.split(";");
 					if (split.length < 3) {
-						System.err.println(threadName + "split-length < 3 for line " + line);
+						Logger.err(threadName + "split-length < 3 for line " + line);
 					}
 					UpdateFile localFile = new UpdateFile(split[0], split[1],
 							Integer.parseInt(split[2]));
@@ -245,8 +242,7 @@ public class DownloadFilesThread extends Thread {
 			}
 			pw.close();
 		} catch (IOException e1) {
-			System.err
-					.println(threadName + "Error opening local version file"); //$NON-NLS-1$
+			Logger.err(threadName + "Error opening local version file"); //$NON-NLS-1$
 		}
 	}
 
@@ -260,7 +256,7 @@ public class DownloadFilesThread extends Thread {
 	private void analyseRemoteFileList() {
 		for (int i = 0; i < remoteFilesList.size(); i++) {
 			UpdateFile currentRemoteFile = remoteFilesList.get(i);
-			System.out.println(threadName + "Analysing file "
+			Logger.msg(threadName + "Analysing file "
 					+ currentRemoteFile.getName());
 			if (localFilesList.contains(currentRemoteFile)) {
 				UpdateFile localFile = localFilesList.get(localFilesList
@@ -292,7 +288,7 @@ public class DownloadFilesThread extends Thread {
 		try {
 			deleteFile.createNewFile();
 		} catch (IOException e1) {
-			System.err.println(threadName + "Could not create version file: "
+			Logger.err(threadName + "Could not create version file: "
 					+ deleteFile.getAbsolutePath());
 		}
 
@@ -309,11 +305,11 @@ public class DownloadFilesThread extends Thread {
 			pw.flush();
 			pw.close();
 		} catch (UnsupportedEncodingException e1) {
-			System.err.println(threadName + "Could not write file with UTF8 encoding");
+			Logger.err(threadName + "Could not write file with UTF8 encoding");
 		} catch (FileNotFoundException e1) {
-			System.err.println(threadName + "Could not find file " + deleteFile);
+			Logger.err(threadName + "Could not find file " + deleteFile);
 		} catch (IOException e) {
-			System.err.println(threadName + "Could not write to file " + deleteFile);
+			Logger.err(threadName + "Could not write to file " + deleteFile);
 		}
 	}
 
@@ -322,7 +318,7 @@ public class DownloadFilesThread extends Thread {
 	 *
 	 */
 	private void processUpdateList() {
-		System.out.println(threadName + "Processing update list.");
+		Logger.msg(threadName + "Processing update list.");
 		int totalSize = 0;
 		int totalFileNum = updateFilesList.size();
 		for (int i = 0; i < updateFilesList.size(); i++) {
@@ -336,7 +332,7 @@ public class DownloadFilesThread extends Thread {
 				return;
 			}
 			UpdateFile nextFileToDownload = updateFilesList.get(i);
-			System.out.println(threadName + "Update file " + nextFileToDownload.getName());
+			Logger.msg(threadName + "Update file " + nextFileToDownload.getName());
 
 			// Informiere alle Listener über den Download einer neuen Datei
 			Enumeration<DownloadFilesListener> en = listener.elements();
@@ -367,7 +363,7 @@ public class DownloadFilesThread extends Thread {
 		String urlstr = updateURL + directory + fileName;
 		int position = 0;
 		try {
-			System.out.println(threadName + "Download new file from "
+			Logger.msg(threadName + "Download new file from "
 					+ urlstr);
 			url = new URL(urlstr);
 			URLConnection conn = url.openConnection();
@@ -412,11 +408,11 @@ public class DownloadFilesThread extends Thread {
 			in.close();
 			out.flush();
 			out.close();
-			System.out.println(threadName + "Saved file " + fileName
+			Logger.msg(threadName + "Saved file " + fileName
 					+ " to " + updateDirectory
 					+ System.getProperty("file.separator") + fileName);
 		} catch (Exception e) {
-			System.err.println(threadName + "Error (" + e.toString()
+			Logger.err(threadName + "Error (" + e.toString()
 					+ ")");
 		}
 	}

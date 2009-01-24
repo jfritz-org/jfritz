@@ -100,7 +100,7 @@ public class JFritzEventDispatcher extends Thread {
 		for (int i = 0; i < registeredActions.size(); i++) {
 			actionComboBox.addItem(registeredActions.get(i).clone());
 		}
-		System.err.println(actionComboBox);
+		Debug.msg(actionComboBox.toString());
 		return actionComboBox;
 	}
 

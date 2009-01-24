@@ -21,35 +21,44 @@ public class CheckVersionThread extends Thread {
 
 	private final static String className = "(CheckVersionThread) ";
 
+	private final static String pointPattern = "\\.";
+
+	private final static String dividerPattern = "\\|";
+
 	// URL zum Update-Ordner auf der Homepage
-	private String updateURL = "";
+	transient private String updateURL = "";
 
 	// Datei, die die Versionsinformationen auf der Homepage enthält
-	private String versionFile = "";
+	transient private String versionFile = "";
 
 	// Enthält die aktuelle Versionsnummer
-	private String programVersion = "";
+	transient private String programVersion = "";
 
 	// Enthält die neue Versionsnummer
-	private String newVersion = "";
+	transient private String newVersion = "";
+
+	// Enthält die URL zum update
+	transient private String urlstr = "";
 
 	// Neue Version verfügbar?
-	private boolean newVersionAvailable = false;
+	transient private boolean newVerAvailable = false;
 
-	public CheckVersionThread(String programVersion, String updateURL, String versionFile) {
+	public CheckVersionThread(final String programVersion, final String updateURL, final String versionFile) {
+		super();
 		this.programVersion = programVersion;
 		this.updateURL = updateURL;
 		this.versionFile = versionFile;
+		urlstr = updateURL + versionFile;
 	}
 
 	public void run() {
-		System.out.println(className + "Check for new program version...");
+		Logger.msg(className + "Check for new program version...");
 		if (checkForNewVersion()) {
-			newVersionAvailable = true;
+			newVerAvailable = true;
 		} else {
-			newVersionAvailable = false;
+			newVerAvailable = false;
 		}
-		System.out.println(className + "...done");
+		Logger.msg(className + "...done");
 	}
 
 	/**
@@ -58,9 +67,11 @@ public class CheckVersionThread extends Thread {
 	 * @param URL
 	 *            zum Update-Ordner auf der Homepage
 	 */
-	public void setUpdateURL(String updateURL) {
+	public void setUpdateURL(final String updateURL) {
 		if (!updateURL.endsWith("/"))
+		{
 			updateURL.concat("/");
+		}
 		this.updateURL = updateURL;
 	}
 
@@ -70,7 +81,7 @@ public class CheckVersionThread extends Thread {
 	 *
 	 * @param Dateiname
 	 */
-	public void setVersionFile(String versionFile) {
+	public void setVersionFile(final String versionFile) {
 		this.versionFile = versionFile;
 	}
 
@@ -79,7 +90,7 @@ public class CheckVersionThread extends Thread {
 	 *
 	 * @param programVersion
 	 */
-	public void setProgramVersion(String programVersion) {
+	public void setProgramVersion(final String programVersion) {
 		this.programVersion = programVersion;
 	}
 
@@ -89,60 +100,70 @@ public class CheckVersionThread extends Thread {
 	 * @return true, wenn neue Version verfügbar
 	 */
 	private boolean checkForNewVersion() {
+		boolean result = true;
+
 		// Don't check for new version, if programVersion is zero
-		if (programVersion.equals("0"))
-			return false;
-
-
-		URL url = null;
-		String urlstr = updateURL + versionFile; //$NON-NLS-1$
-
-		boolean foundNewVersion = false;
-
-		try {
-			url = new URL(urlstr);
-			if (url != null) {
-
-				URLConnection con;
-				try {
-					con = url.openConnection();
-					// 1 Sekunde-Timeout für den Verbindungsaufbau
-					con.setConnectTimeout(5000);
-
-					// 30 Sekunde-Timeout für die Datenverbindung
-					con.setReadTimeout(30000);
-					BufferedReader d = new BufferedReader(
-							new InputStreamReader(con.getInputStream()));
-
-					// Get remote version
-					String str = d.readLine();
-					// Format remote version as 0.621
-					String remoteVersion = str.replaceFirst("\\.", "\\|")
-							.replaceAll("\\.", "").replaceFirst("\\|", "\\.");
-
-					// Format local version as 0.621
-					String localVersion = programVersion.replaceFirst("\\.",
-							"\\|").replaceAll("\\.", "").replaceFirst("\\|",
-							"\\.");
-
-					if (Double.valueOf(remoteVersion).compareTo(
-							Double.valueOf(localVersion)) > 0) {
-						newVersion = str;
-						foundNewVersion = true;
-					}
-
-					d.close();
-
-				} catch (IOException e1) {
-					System.err.println(className + "Error while retrieving "
-							+ urlstr
-							+ " (possibly no connection to the internet)"); //$NON-NLS-1$
-				}
-			}
-		} catch (MalformedURLException e) {
-			System.err.println(className + "URL invalid: " + urlstr); //$NON-NLS-1$
+		if ("0".equals(programVersion))
+		{
+			result = false;
 		}
-		return foundNewVersion;
+
+		if (result)
+		{
+			urlstr = updateURL + versionFile; //$NON-NLS-1$
+
+			boolean foundNewVersion = false;
+			BufferedReader buffReader;
+			String currentLine;
+			String remoteVersion;
+			String localVersion;
+			try {
+				final URL url = new URL(urlstr);
+				if (url != null) {
+
+					URLConnection con;
+					try {
+						con = url.openConnection();
+						// 1 Sekunde-Timeout für den Verbindungsaufbau
+						con.setConnectTimeout(5000);
+
+						// 30 Sekunde-Timeout für die Datenverbindung
+						con.setReadTimeout(30000);
+						buffReader = new BufferedReader(
+								new InputStreamReader(con.getInputStream()));
+
+						// Get remote version
+						currentLine = buffReader.readLine();
+						// Format remote version as 0.621
+						remoteVersion = currentLine.replaceFirst(pointPattern, dividerPattern)
+								.replaceAll(pointPattern, "").replaceFirst(dividerPattern, pointPattern);
+
+						// Format local version as 0.621
+						localVersion = programVersion.replaceFirst(pointPattern,
+								dividerPattern).replaceAll(pointPattern, "").replaceFirst(dividerPattern,
+								pointPattern);
+
+						if (Double.valueOf(remoteVersion).compareTo(
+								Double.valueOf(localVersion)) > 0) {
+							newVersion = currentLine;
+							foundNewVersion = true;
+						}
+
+						buffReader.close();
+
+					} catch (IOException e1) {
+						Logger.err(className + "Error while retrieving "
+								+ urlstr
+								+ " (possibly no connection to the internet)"); //$NON-NLS-1$
+					}
+				}
+			} catch (MalformedURLException e) {
+				Logger.err(className + "URL invalid: " + urlstr); //$NON-NLS-1$
+			}
+			result = foundNewVersion;
+		}
+
+		return result;
 	}
 
 	/**
@@ -150,7 +171,7 @@ public class CheckVersionThread extends Thread {
 	 * @return
 	 */
 	public boolean isNewVersionAvailable() {
-		return newVersionAvailable;
+		return newVerAvailable;
 	}
 
 	/**

@@ -272,14 +272,15 @@ public class JFritzUtils {
 		return 0;
 	}
 
-	public static String removeLeadingSpaces(String str) {
-		while ( str.startsWith(" ")){
-			str = str.substring(1);
+	public static String removeLeadingSpaces(final String str) {
+		String currentStr = str;
+		while ( currentStr.startsWith(" ")){
+			currentStr = currentStr.substring(1);
 		}
-		while ( str.startsWith("\u00a0")){
-			str = str.substring(1);
+		while ( currentStr.startsWith("\u00a0")){
+			currentStr = currentStr.substring(1);
 		}
-		return str;
+		return currentStr;
 	}
 
 	public static String toAscii(String str)
@@ -292,17 +293,18 @@ public class JFritzUtils {
 		return out;
 	}
 
-	public static String replaceSpecialCharsUTF(String str)
+	public static String replaceSpecialCharsUTF(final String str)
 	{
-		str = str.replaceAll("&#x[00]*C4;", "Ä");
-		str = str.replaceAll("&#x[00]*D6;", "Ö");
-		str = str.replaceAll("&#x[00]*DC;", "Ü");
+		String currentStr = str;
+		currentStr = currentStr.replaceAll("&#x[00]*C4;", "Ä");
+		currentStr = currentStr.replaceAll("&#x[00]*D6;", "Ö");
+		currentStr = currentStr.replaceAll("&#x[00]*DC;", "Ü");
 
-		str = str.replaceAll("&#x[00]*E4;", "ä");
-		str = str.replaceAll("&#x[00]*F6;", "ö");
-		str = str.replaceAll("&#x[00]*FC;", "ü");
-		str = str.replaceAll("&#x[00]*DF;", "ß");
+		currentStr = currentStr.replaceAll("&#x[00]*E4;", "ä");
+		currentStr = currentStr.replaceAll("&#x[00]*F6;", "ö");
+		currentStr = currentStr.replaceAll("&#x[00]*FC;", "ü");
+		currentStr = currentStr.replaceAll("&#x[00]*DF;", "ß");
 
-		return str;
+		return currentStr;
 	}
 }

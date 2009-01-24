@@ -33,7 +33,7 @@ public class Call implements Serializable {
 
 	private String route;
 
-	private int route_type;
+	private int routeType;
 
 	private String port;
 
@@ -60,19 +60,19 @@ public class Call implements Serializable {
 
 		// Parse the SIP Provider and save it correctly
 		if ( route.contains("@")) {
-			this.route_type = ROUTE_SIP;
+			this.routeType = ROUTE_SIP;
 		} else if (this.route.startsWith("Internet: ")) {
 			Enumeration<SipProvider> en = JFritz.getSIPProviderTableModel().getProviderList().elements();
 			while (en.hasMoreElements()) {
 				SipProvider sipProvider = (SipProvider) en.nextElement();
 				if (sipProvider.getNumber().equals(this.route.substring(10))) {
 					this.route = sipProvider.toString();
-					this.route_type = ROUTE_SIP;
+					this.routeType = ROUTE_SIP;
 					break;
 				}
 			}
 		} else {
-			route_type = ROUTE_FIXED_NETWORK;
+			routeType = ROUTE_FIXED_NETWORK;
 		}
 
 		this.port = port;
@@ -222,7 +222,7 @@ public class Call implements Serializable {
 	 * @return type of route
 	 */
 	public int getRouteType() {
-		return route_type;
+		return routeType;
 	}
 
 	public int hashCode() {

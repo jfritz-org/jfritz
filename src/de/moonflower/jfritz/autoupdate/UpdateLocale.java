@@ -18,7 +18,7 @@ public class UpdateLocale {
 		try {
 			messages = ResourceBundle.getBundle("update", locale);//$NON-NLS-1$
 		} catch (MissingResourceException e) {
-			System.err.println("Cannot find the language file \"update_"
+			Logger.err("Cannot find the language file \"update_"
 					+ locale + ".properties\"!");//$NON-NLS-1$
 		}
 	}

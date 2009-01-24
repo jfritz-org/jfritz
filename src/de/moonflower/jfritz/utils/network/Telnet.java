@@ -120,8 +120,7 @@ public class Telnet {
 					}
 				}
 			} catch (Exception e) {
-				System.err.println("Error in Class Telnet"); //$NON-NLS-1$
-				Debug.err(e.toString());
+				Debug.err(" in Class Telnet: " + e.toString()); //$NON-NLS-1$
 				return;
 			}
 		}
@@ -134,8 +133,9 @@ public class Telnet {
 	 * @param password
 	 */
 
-	private int login(String user, String password) {
+	private int login(final String user, final String password) {
 		try {
+			String currentPass = password;
 			Debug.msg("Login to Telnet"); //$NON-NLS-1$
 			String login = "ogin: "; //$NON-NLS-1$
 			String passwd = "assword: "; //$NON-NLS-1$
@@ -172,7 +172,7 @@ public class Telnet {
 					if (sb.toString().endsWith(passwd)) {
 						// schauen, ob WebPasswort abgefragt wird
 						if (sb.toString().endsWith("web password: ")) { //$NON-NLS-1$
-							password = JFritz.getFritzBox().getPassword();
+							currentPass = JFritz.getFritzBox().getPassword();
 
 							while (true) { // test WebPassword
 								try {
@@ -180,7 +180,7 @@ public class Telnet {
 											JFritz.getFritzBox().getAddress(),
 											JFritz.getFritzBox().getPassword(),
 											JFritz.getFritzBox().getPort());
-									password = JFritz.getFritzBox()
+									currentPass = JFritz.getFritzBox()
 											.getPassword();
 									break; // go on with telnet login
 								} catch (WrongPasswordException e1) {
@@ -218,8 +218,8 @@ public class Telnet {
 						// mehrmaliges Login mit falschem
 						// Passwort verhindern
 						if (firstPassword) {
-							Debug.msg("Writing Telnet Password: " + password); //$NON-NLS-1$
-							write(password);
+							Debug.msg("Writing Telnet Password: " + currentPass); //$NON-NLS-1$
+							write(currentPass);
 							firstPassword = false;
 						} else {
 							TelnetConfigDialog telnetConfigDialog = new TelnetConfigDialog(
@@ -234,7 +234,7 @@ public class Telnet {
 						}
 					}
 					if (ch == prompt) {
-						System.err.println(sb.toString());
+						Debug.err(sb.toString());
 						break;
 					}
 				}

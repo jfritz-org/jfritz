@@ -5,11 +5,11 @@ import java.util.TimerTask;
 
 public class FetchListTimer extends Timer {
 
-	public static int STATE_INITIALIZED = 0;
+	public final static int STATE_INITIALIZED = 0;
 
-	public static int STATE_SCHEDULED = 1;
+	public final static int STATE_SCHEDULED = 1;
 
-	public static int STATE_CANCELED = 2;
+	public final static int STATE_CANCELED = 2;
 
 	private int state;
 

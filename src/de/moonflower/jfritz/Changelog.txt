@@ -6,15 +6,20 @@ TODO: Ressourcen in eigenes Jar packen.
 TODO: Client-Server fixen.
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 
-JFritz 0.7.2.9
+JFritz 0.7.2.10:
+- Statistik-Knopf deaktiviert, weil Internet-Monitor funktioniert.
+- Unterstützung der DECT-Telefone der 7270.
+- Lint der ganzen Files. Viele Warnings und Errors entfernt, dennoch noch eine Menge Warnings und einige Errors da.
+
+JFritz 0.7.2.9:
 - Bugfix: kbit/s, kB, ... im MonitoringPanel korrigiert.
 - Bugfix: Error-Handling bei UPNP-Paketen. UPNP-Bug gefixed.
-- Neu: Kein Auto-Resize der Anruflisten-Tabelle mehr. (Todo: Resize konfigurierbar gestalten)
+- Bugfix [0000072]: Kein Auto-Resize der Anruflisten-Tabelle mehr. (Todo: Resize konfigurierbar gestalten)
 
 JFritz 0.7.2.8:
 - Bugfix: Konvertieren der alten Spalteneinträge korrigiert.
 - Bugfix: Verstecken der Spalten korrigiert.
-- Bugfix: Speicherung der Einstellungen, wenn FritzBox nicht erreichbar.
+- Bugfix [0000135]: Speicherung der Einstellungen, wenn FritzBox nicht erreichbar.
 - Code: Alte Einstellungen zum Verstecken der Spalten entfernt.
 
 JFritz 0.7.2.7:
@@ -24,10 +29,10 @@ JFritz 0.7.2.7:
 
 JFritz 0.7.2.6:
 - Bugfix: Korrektes Anzeigeformat der TotalBytes und currentByteRate.
-- Neu: Redesign des Einstellungsdialogs. Navigation über Baumstruktur und zu jeder 
+- Neu [0000064]: Redesign des Einstellungsdialogs. Navigation über Baumstruktur und zu jeder 
 	   Einstellungsseite ist eine Hilfeseite vorhanden (Hilfe-Link oder F1-Taste).
 	   Die Größe des Einstellungsdialogs wird nun gespeichert und wiederhergestellt.
-- Neu: Einlesen von mehr als 10 SIP-Providern.
+- Neu[0000078]: Einlesen von mehr als 10 SIP-Providern.
 - Neu: Ein- und Ausblenden aller Spalten in der Anrufliste möglich.
 - Neu: Einstellungen in den XML-Dateien sind nun zur besseren Lesbarkeit sortiert.
 - Code: Einige veraltete Methoden entfernt und Warnungen behoben.
@@ -38,7 +43,7 @@ JFritz 0.7.2.5:
 - Neu: Auswertung weiterer UPNP-Nachrichten.
 - Bugfix: Internetstatistiken werden nun wieder korrekt dargestellt.
 - Bugfix-Telefonbuch: Undo setzt nun wirklich alle Felder korrekt zurück.
-- Monitoring-Anzeige komplett überarbeitet.
+- Bugfix[0000069]: Monitoring-Anzeige komplett überarbeitet.
 - Bugfix: Alten Statistikdialog wieder funktionsfähig gemacht. Ist jedoch durch die neue Monitoring-Anzeige überflüssig. TODO: Entfernen.
 - Bugfix-Wahlhilfe: Fenster mit Auflegoption kommt nun bei jedem Wahlvorgang.
 Strings:

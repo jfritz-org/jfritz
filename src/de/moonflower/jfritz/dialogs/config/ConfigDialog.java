@@ -79,7 +79,7 @@ public class ConfigDialog extends JDialog {
 	private ConfigPanelNetwork networkPanel;
 	private ConfigPanelSip sipPanel;
 
-	private boolean pressed_OK = false;
+	private boolean pressedOK = false;
 
     static final String FILESEP = System.getProperty("file.separator");			//$NON-NLS-1$
 	final String langID = FILESEP + "lang";										//$NON-NLS-1$
@@ -243,7 +243,7 @@ public class ConfigDialog extends JDialog {
     }
 
 	public boolean okPressed() {
-		return pressed_OK;
+		return pressedOK;
 	}
 
 	/**
@@ -319,12 +319,12 @@ public class ConfigDialog extends JDialog {
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ESCAPE
 						|| (e.getSource() == cancelButton && e.getKeyCode() == KeyEvent.VK_ENTER)) {
-					pressed_OK = false;
+					pressedOK = false;
 					closeWindow();
 				}
 				if (e.getSource() == okButton
 						&& e.getKeyCode() == KeyEvent.VK_ENTER) {
-					pressed_OK = true;
+					pressedOK = true;
 					closeWindow();
 				}
 			}
@@ -333,7 +333,7 @@ public class ConfigDialog extends JDialog {
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Object source = e.getSource();
-				pressed_OK = (source == okButton);
+				pressedOK = (source == okButton);
 				if (source == okButton
 						|| source == cancelButton) {
 					closeWindow();
@@ -498,7 +498,7 @@ public class ConfigDialog extends JDialog {
 
 	private void closeWindow()
 	{
-		if (pressed_OK)
+		if (pressedOK)
 		{
 			// save window position and size
 			Main.setStateProperty("configDialog.width", Integer.toString(this.getWidth()));

@@ -102,15 +102,15 @@ public class ProcessUpdateFolderThread extends Thread {
 				pw.close();
 				deleteFile.delete();
 			} catch (UnsupportedEncodingException e) {
-				System.err.println(threadName + "ERROR: Encoding not supported");
+				Logger.err(threadName + "ERROR: Encoding not supported");
 				JOptionPane.showMessageDialog(null, UpdateLocale.getMessage("encodingNotSupported"), UpdateLocale.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			} catch (FileNotFoundException e) {
-				System.err.println(threadName + "ERROR: File not found");
+				Logger.err(threadName + "ERROR: File not found");
 				JOptionPane.showMessageDialog(null, UpdateLocale.getMessage("fileNotFound").replaceAll("%FILENAME", fileToDelete), UpdateLocale.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			} catch (IOException ioe) {
-				System.err.println(threadName + "ERROR: IO exception");
+				Logger.err(threadName + "ERROR: IO exception");
 				JOptionPane.showMessageDialog(null, UpdateLocale.getMessage("ioError").replaceAll("%FILENAME", fileToDelete), UpdateLocale.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
 				ioe.printStackTrace();
 			}
@@ -128,7 +128,7 @@ public class ProcessUpdateFolderThread extends Thread {
 					// Datei ist ein gezipptes Verzeichnis
 					// Entpacke die Datei ins installDirectory
 					if (file.getName().endsWith(directoriesZipedAsFilesEndWith)) {
-						System.out.println(threadName + file.getAbsolutePath()
+						Logger.msg(threadName + file.getAbsolutePath()
 								+ " is a ziped directory");
 						UpdateUtils.unzipFile(file.getAbsolutePath(), installDirectory);
 					} else {
@@ -140,7 +140,7 @@ public class ProcessUpdateFolderThread extends Thread {
 									true);
 							updateSuccessfull = true;
 						} catch (IOException e) {
-							System.err.println(threadName + "ERROR: IO exception");
+							Logger.err(threadName + "ERROR: IO exception");
 							JOptionPane.showMessageDialog(null, UpdateLocale.getMessage("ioError").replaceAll("%FILENAME", destinationFile.getAbsolutePath()), UpdateLocale.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
 							e.printStackTrace();
 						}

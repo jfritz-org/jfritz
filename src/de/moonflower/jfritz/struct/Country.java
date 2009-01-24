@@ -10,21 +10,21 @@ package de.moonflower.jfritz.struct;
  */
 public class Country {
 
-	private String name;
+	private final String name;
 
-	private String locale;
+	private final String locale;
 
-	private String IDD; // International Direct Dialing
+	private final String IDD; // International Direct Dialing
 
-	private String NDD; // National Direct Dialing
+	private final String NDD; // National Direct Dialing
 
-	private String countryCode;
+	private final String countryCode;
 
 	/**
 	 *
 	 */
-	public Country(String name, String locale, String countryCode, String IDD,
-			String NDD) {
+	public Country(final String name, final String locale, final String countryCode, final String IDD,
+			final String NDD) {
 		this.name = name;
 		this.locale = locale;
 		this.IDD = IDD;

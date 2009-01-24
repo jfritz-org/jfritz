@@ -246,7 +246,7 @@ public class FritzBoxFirmware {
 			return new FritzBoxFirmware(boxtypeString, majorFirmwareVersion,
 					minorFirmwareVersion, modFirmwareVersion, language, mac);
 		} else {
-			System.err.println("detectFirmwareVersion: Password wrong?"); //$NON-NLS-1$
+			Debug.err("detectFirmwareVersion: Password wrong?"); //$NON-NLS-1$
 			throw new WrongPasswordException(
 					"Could not detect FRITZ!Box firmware version."); //$NON-NLS-1$
 		}

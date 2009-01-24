@@ -21,14 +21,16 @@ public class QuickDial {
 	 * @param vanity
 	 * @param number
 	 */
-	public QuickDial(String quickdial, String vanity, String number,
-			String description) {
-		if (description == null)
-			description = ""; //$NON-NLS-1$
+	public QuickDial(final String quickdial, final String vanity, final String number,
+			final String description) {
 		this.quickdial = quickdial;
 		this.vanity = vanity;
 		this.number = number;
 		this.description = description;
+		if (description == null)
+		{
+			this.description = ""; //$NON-NLS-1$
+		}
 	}
 
 	/**
@@ -42,7 +44,7 @@ public class QuickDial {
 	 * @param number
 	 *            The number to set.
 	 */
-	public final void setNumber(String number) {
+	public final void setNumber(final String number) {
 		this.number = number;
 	}
 
@@ -57,7 +59,7 @@ public class QuickDial {
 	 * @param quickdial
 	 *            The quickdial to set.
 	 */
-	public final void setQuickdial(String quickdial) {
+	public final void setQuickdial(final String quickdial) {
 		this.quickdial = quickdial;
 	}
 
@@ -72,7 +74,7 @@ public class QuickDial {
 	 * @param vanity
 	 *            The vanity to set.
 	 */
-	public final void setVanity(String vanity) {
+	public final void setVanity(final String vanity) {
 		this.vanity = vanity;
 	}
 
@@ -87,7 +89,7 @@ public class QuickDial {
 	 * @param description
 	 *            The description to set.
 	 */
-	public final void setDescription(String description) {
+	public final void setDescription(final String description) {
 		this.description = description;
 	}
 }

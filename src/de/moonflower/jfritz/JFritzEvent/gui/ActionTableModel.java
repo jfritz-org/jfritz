@@ -70,13 +70,13 @@ public class ActionTableModel extends AbstractTableModel implements ActionListen
 	}
 
 	public void setValueAt(Object value, int row, int col) {
- 		switch ( col ) {
-		case 0: // action
+		if (col == 0)
+		{
 			eventAction.setAction(row, ((JFritzAction) value).clone());
-			break;
-		case 1: // description
+		}
+		else if (col == 1) // description
+		{
 			eventAction.getAction(row).setDescription((String) value);
-			break;
 		}
 		fireTableDataChanged();
     }

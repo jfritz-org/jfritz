@@ -302,7 +302,7 @@ public final class JFritz implements  StatusListener, ItemListener {
 				}
 				createTrayMenu();
 			} catch (Throwable e) {
-				Main.SYSTRAY_SUPPORT = false;
+				Main.systraySupport = false;
 				Debug.err(e.toString());
 			}
 		}
@@ -594,7 +594,7 @@ public final class JFritz implements  StatusListener, ItemListener {
 	 */
 	public static void errorMsg(String msg) {
 		Debug.err(msg);
-		if (Main.SYSTRAY_SUPPORT && tray != null) {
+		if (Main.systraySupport && tray != null) {
 			tray.displayMessage(Main.PROGRAM_NAME, msg,
 					Tray.MESSAGE_TYPE_ERROR);
 		}
@@ -864,7 +864,7 @@ public final class JFritz implements  StatusListener, ItemListener {
 			callMonitor.stopCallMonitor();
 		}
 
-		if ( (Main.SYSTRAY_SUPPORT) && (tray != null) )
+		if ( (Main.systraySupport) && (tray != null) )
 		{
 			Debug.msg("Removing systray"); //$NON-NLS-1$
 			tray.remove();

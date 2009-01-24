@@ -54,7 +54,7 @@ public class SipConfigDialog extends JDialog {
 
     private JButton okButton, cancelButton;
 
-    private boolean ok_pressed = false;
+    private boolean pressedOk = false;
 
     private SipProvider sipProvider;
 
@@ -206,10 +206,10 @@ public class SipConfigDialog extends JDialog {
     }
 
     public boolean showDialog() {
-        ok_pressed = false;
+        pressedOk = false;
 //        super.show();
         super.setVisible(true);
-        if (ok_pressed)
+        if (pressedOk)
             return true;
         else
             return false;
@@ -232,10 +232,10 @@ public class SipConfigDialog extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 Object source = e.getSource();
                 if (source == okButton) {
-                    ok_pressed = true;
+                    pressedOk = true;
                 }
                 if (source == cancelButton) {
-                    ok_pressed = false;
+                    pressedOk = false;
                 }
                 if ((source == okButton && checkValues())
                         || source == cancelButton) {

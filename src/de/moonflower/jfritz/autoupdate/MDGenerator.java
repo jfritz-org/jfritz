@@ -17,12 +17,12 @@ public class MDGenerator {
 
 	private static void digestDemo(String file, String algo) throws Exception {
 		byte[] digest = messageDigest(file, algo);
-		System.out.println(algo + ", Schlüssellänge: " + digest.length * 8
+		Logger.msg(algo + ", Schlüssellänge: " + digest.length * 8
 				+ " Bit");
 		for (int i = 0; i < digest.length; i++) {
-			System.out.print(Integer.toHexString(digest[i] & 0xFF));
+			Logger.msg(Integer.toHexString(digest[i] & 0xFF));
 		}
-		System.out.println("\n");
+		Logger.msg("\n");
 	}
 
 	public static void main(String[] args) throws Exception {

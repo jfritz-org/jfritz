@@ -36,7 +36,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
@@ -196,27 +195,27 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	private CallFilter[] filter;
 
-	private static final int callByCall = 0;
+	private static final int CALL_BY_CALL = 0;
 
-	private static final int callInFailed = 1;
+	private static final int CALL_IN_FAILED = 1;
 
-	private static final int callIn = 2;
+	private static final int CALL_IN = 2;
 
-	private static final int callOut = 3;
+	private static final int CALL_OUT = 3;
 
-	private static final int comment = 4;
+	private static final int COMMENT = 4;
 
-	private static final int handy = 5;
+	private static final int MOBILE = 5;
 
-	private static final int fixed = 6;
+	private static final int FIXED = 6;
 
-	private static final int sip = 7;
+	private static final int SIP = 7;
 
-	private static final int anonym = 8;
+	private static final int ANONYMOUS = 8;
 
-	private static final int date = 9;
+	private static final int DATE = 9;
 
-	private static final int search = 10;
+	private static final int SEARCH = 10;
 
 	private static final int FILTERCOUNT = 11;
 
@@ -291,29 +290,29 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 */
 	private void createFilters(CallerList callerList) {
 		filter = new CallFilter[FILTERCOUNT];
-		filter[callByCall] = new CallByCallFilter(
+		filter[CALL_BY_CALL] = new CallByCallFilter(
 				getSelectedCallByCallProvider(callerList));
-		callerList.addFilter(filter[callByCall]);
-		filter[callInFailed] = new CallInFailedFilter();
-		callerList.addFilter(filter[callInFailed]);
-		filter[callIn] = new CallInFilter();
-		callerList.addFilter(filter[callIn]);
-		filter[callOut] = new CallOutFilter();
-		callerList.addFilter(filter[callOut]);
-		filter[comment] = new CommentFilter();
-		callerList.addFilter(filter[comment]);
-		filter[anonym] = new AnonymFilter();
-		callerList.addFilter(filter[anonym]);
-		filter[fixed] = new FixedFilter();
-		callerList.addFilter(filter[fixed]);
-		filter[handy] = new HandyFilter();
-		callerList.addFilter(filter[handy]);
-		filter[sip] = new SipFilter(getSelectedSipProvider(callerList));
-		callerList.addFilter(filter[sip]);
-		filter[date] = new DateFilter(new Date(), new Date());
-		callerList.addFilter(filter[date]);
-		filter[search] = new SearchFilter("");
-		callerList.addFilter(filter[search]);
+		callerList.addFilter(filter[CALL_BY_CALL]);
+		filter[CALL_IN_FAILED] = new CallInFailedFilter();
+		callerList.addFilter(filter[CALL_IN_FAILED]);
+		filter[CALL_IN] = new CallInFilter();
+		callerList.addFilter(filter[CALL_IN]);
+		filter[CALL_OUT] = new CallOutFilter();
+		callerList.addFilter(filter[CALL_OUT]);
+		filter[COMMENT] = new CommentFilter();
+		callerList.addFilter(filter[COMMENT]);
+		filter[ANONYMOUS] = new AnonymFilter();
+		callerList.addFilter(filter[ANONYMOUS]);
+		filter[FIXED] = new FixedFilter();
+		callerList.addFilter(filter[FIXED]);
+		filter[MOBILE] = new HandyFilter();
+		callerList.addFilter(filter[MOBILE]);
+		filter[SIP] = new SipFilter(getSelectedSipProvider(callerList));
+		callerList.addFilter(filter[SIP]);
+		filter[DATE] = new DateFilter(new Date(), new Date());
+		callerList.addFilter(filter[DATE]);
+		filter[SEARCH] = new SearchFilter("");
+		callerList.addFilter(filter[SEARCH]);
 	}
 
 	/**
@@ -735,31 +734,31 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			}
 		}
 		if (command.equals(CallFilter.FILTER_CALLIN_NOTHING)) {
-			syncFilterWithButton(filter[callIn], callInFilterButton);
+			syncFilterWithButton(filter[CALL_IN], callInFilterButton);
 			return;
 		}
 		if (command.equals(CallFilter.FILTER_CALLINFAILED)) {
-			syncFilterWithButton(filter[callInFailed], callInFailedFilterButton);
+			syncFilterWithButton(filter[CALL_IN_FAILED], callInFailedFilterButton);
 			return;
 		}
 		if (command.equals(CallFilter.FILTER_CALLOUT)) {
-			syncFilterWithButton(filter[callOut], callOutFilterButton);
+			syncFilterWithButton(filter[CALL_OUT], callOutFilterButton);
 			return;
 		}
 		if (command.equals(CallFilter.FILTER_COMMENT)) {
-			syncFilterWithButton(filter[comment], commentFilterButton);
+			syncFilterWithButton(filter[COMMENT], commentFilterButton);
 			return;
 		}
 		if (command.equals(CallFilter.FILTER_ANONYM)) {
-			syncFilterWithButton(filter[anonym], anonymFilterButton);
+			syncFilterWithButton(filter[ANONYMOUS], anonymFilterButton);
 			return;
 		}
 		if (command.equals(CallFilter.FILTER_FIXED)) {
-			syncFilterWithButton(filter[fixed], fixedFilterButton);
+			syncFilterWithButton(filter[FIXED], fixedFilterButton);
 			return;
 		}
 		if (command.equals(CallFilter.FILTER_HANDY)) {
-			syncFilterWithButton(filter[handy], handyFilterButton);
+			syncFilterWithButton(filter[MOBILE], handyFilterButton);
 			return;
 		}
 
@@ -767,19 +766,19 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			if (searchFilterButton.getState() == ThreeStateButton.NOTHING) {
 				searchFilterTextField.setVisible(false);
 				searchLabel.setVisible(false);
-				filter[search].setEnabled(false);
+				filter[SEARCH].setEnabled(false);
 			} else {
-				filter[search].setEnabled(true);
+				filter[SEARCH].setEnabled(true);
 				searchFilterTextField.setVisible(true);
 				searchLabel.setVisible(true);
-				((SearchFilter) filter[search])
+				((SearchFilter) filter[SEARCH])
 						.setSearchString(searchFilterTextField.getText());
 				// do nothing
 				if(searchFilterButton.getState()==ThreeStateButton.SELECTED){
-					filter[search].setInvert(false);
+					filter[SEARCH].setInvert(false);
 				}
 				if (searchFilterButton.getState() == ThreeStateButton.INVERTED) {
-					filter[search].setInvert(true);
+					filter[SEARCH].setInvert(true);
 				}
 			}
 
@@ -787,7 +786,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		}
 
 		if (command.equals(CallFilter.FILTER_DATE)) {
-			syncFilterWithButton(filter[date], dateFilterButton);
+			syncFilterWithButton(filter[DATE], dateFilterButton);
 			if (dateFilterButton.getState() == ThreeStateButton.NOTHING) {
 				startDateChooser.setVisible(false);
 				endDateChooser.setVisible(false);
@@ -826,12 +825,12 @@ public class CallerListPanel extends JPanel implements ActionListener,
 					endDateChooser.setDate(JFritzUtils
 							.setEndOfDay(endDateChooser.getDate()));
 				}
-				((DateFilter) filter[date]).setStartDate(startDateChooser
+				((DateFilter) filter[DATE]).setStartDate(startDateChooser
 						.getDate());
-				((DateFilter) filter[date])
+				((DateFilter) filter[DATE])
 						.setEndDate(endDateChooser.getDate());
 				if (dateFilterButton.getState() == ThreeStateButton.INVERTED) {
-					filter[date].setInvert(true);
+					filter[DATE].setInvert(true);
 				}
 				startDateChooser.setVisible(true);
 				endDateChooser.setVisible(true);
@@ -884,8 +883,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			JFritzUtils.setStartOfDay(start);
 			JFritzUtils.setEndOfDay(end);
 
-			((DateFilter) filter[date]).setStartDate(start);
-			((DateFilter) filter[date]).setEndDate(end);
+			((DateFilter) filter[DATE]).setStartDate(start);
+			((DateFilter) filter[DATE]).setEndDate(end);
 
 			startDateChooser.setDate(end);
 			endDateChooser.setDate(start);
@@ -895,14 +894,14 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			return;
 		}
 		if (command.equals(CallFilter.FILTER_SIP)) {
-			((SipFilter) filter[sip]).setProvider(getSelectedSipProvider(callerList));
-			syncFilterWithButton(filter[sip], sipFilterButton);
+			((SipFilter) filter[SIP]).setProvider(getSelectedSipProvider(callerList));
+			syncFilterWithButton(filter[SIP], sipFilterButton);
 			return;
 		}
 		if (command.equals(CallFilter.FILTER_CALLBYCALL)) {
-			((CallByCallFilter) filter[callByCall])
+			((CallByCallFilter) filter[CALL_BY_CALL])
 					.setCallbyCallProvider(getSelectedCallByCallProvider(callerList));
-			syncFilterWithButton(filter[callByCall], callByCallFilterButton);
+			syncFilterWithButton(filter[CALL_BY_CALL], callByCallFilterButton);
 			return;
 		}
 		if (command.equals("clearFilter")) { //$NON-NLS-1$
@@ -1017,8 +1016,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		JFritzUtils.setStartOfDay(start);
 		JFritzUtils.setEndOfDay(end);
 
-		((DateFilter) filter[date]).setStartDate(start);
-		((DateFilter) filter[date]).setEndDate(end);
+		((DateFilter) filter[DATE]).setStartDate(start);
+		((DateFilter) filter[DATE]).setEndDate(end);
 
 		startDateChooser.setDate(start);
 		endDateChooser.setDate(end);
@@ -1043,8 +1042,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		JFritzUtils.setStartOfDay(start);
 		JFritzUtils.setEndOfDay(end);
 
-		((DateFilter) filter[date]).setStartDate(start);
-		((DateFilter) filter[date]).setEndDate(end);
+		((DateFilter) filter[DATE]).setStartDate(start);
+		((DateFilter) filter[DATE]).setEndDate(end);
 
 		startDateChooser.setDate(start);
 		endDateChooser.setDate(end);
@@ -1066,8 +1065,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		JFritzUtils.setStartOfDay(start);
 		JFritzUtils.setEndOfDay(end);
 
-		((DateFilter) filter[date]).setStartDate(start);
-		((DateFilter) filter[date]).setEndDate(end);
+		((DateFilter) filter[DATE]).setStartDate(start);
+		((DateFilter) filter[DATE]).setEndDate(end);
 
 		startDateChooser.setDate(start);
 		endDateChooser.setDate(end);
@@ -1092,8 +1091,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		JFritzUtils.setStartOfDay(start);
 		JFritzUtils.setEndOfDay(end);
 
-		((DateFilter) filter[date]).setStartDate(start);
-		((DateFilter) filter[date]).setEndDate(end);
+		((DateFilter) filter[DATE]).setStartDate(start);
+		((DateFilter) filter[DATE]).setEndDate(end);
 
 		startDateChooser.setDate(start);
 		endDateChooser.setDate(end);
@@ -1118,8 +1117,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		JFritzUtils.setStartOfDay(start);
 		JFritzUtils.setEndOfDay(end);
 
-		((DateFilter) filter[date]).setStartDate(start);
-		((DateFilter) filter[date]).setEndDate(end);
+		((DateFilter) filter[DATE]).setStartDate(start);
+		((DateFilter) filter[DATE]).setEndDate(end);
 
 		startDateChooser.setDate(start);
 		endDateChooser.setDate(end);
@@ -1139,8 +1138,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		JFritzUtils.setStartOfDay(start);
 		JFritzUtils.setEndOfDay(end);
 
-		((DateFilter) filter[date]).setStartDate(start);
-		((DateFilter) filter[date]).setEndDate(end);
+		((DateFilter) filter[DATE]).setStartDate(start);
+		((DateFilter) filter[DATE]).setEndDate(end);
 
 		startDateChooser.setDate(start);
 		endDateChooser.setDate(end);
@@ -1205,27 +1204,27 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			startDateChooser.setVisible(true);
 			endDateChooser.setVisible(true);
 		}
-		((DateFilter)filter[date]).setStartDate(startDateChooser.getDate());
-		((DateFilter)filter[date]).setEndDate(endDateChooser.getDate());
-		((SearchFilter)filter[search]).setSearchString(searchFilterTextField.getText());
+		((DateFilter)filter[DATE]).setStartDate(startDateChooser.getDate());
+		((DateFilter)filter[DATE]).setEndDate(endDateChooser.getDate());
+		((SearchFilter)filter[SEARCH]).setSearchString(searchFilterTextField.getText());
 
 		Vector<String> providers = new Vector<String>();
 		String[] parts = Main.getStateProperty(CallFilter.FILTER_SIP_PROVIDERS).split(" ");
 		for(String part: parts)
 			providers.add(part);
 
-		((SipFilter)filter[sip]).setProvider(providers);
-		syncFilterWithButton(filter[callIn], callInFilterButton);
-		syncFilterWithButton(filter[callInFailed], callInFailedFilterButton);
-		syncFilterWithButton(filter[callOut], callOutFilterButton);
-		syncFilterWithButton(filter[comment], commentFilterButton);
-		syncFilterWithButton(filter[anonym], anonymFilterButton);
-		syncFilterWithButton(filter[fixed], fixedFilterButton);
-		syncFilterWithButton(filter[handy], handyFilterButton);
-		syncFilterWithButton(filter[date], dateFilterButton);
-		syncFilterWithButton(filter[sip], sipFilterButton);
-		syncFilterWithButton(filter[callByCall], callByCallFilterButton);
-		syncFilterWithButton(filter[search], searchFilterButton);
+		((SipFilter)filter[SIP]).setProvider(providers);
+		syncFilterWithButton(filter[CALL_IN], callInFilterButton);
+		syncFilterWithButton(filter[CALL_IN_FAILED], callInFailedFilterButton);
+		syncFilterWithButton(filter[CALL_OUT], callOutFilterButton);
+		syncFilterWithButton(filter[COMMENT], commentFilterButton);
+		syncFilterWithButton(filter[ANONYMOUS], anonymFilterButton);
+		syncFilterWithButton(filter[FIXED], fixedFilterButton);
+		syncFilterWithButton(filter[MOBILE], handyFilterButton);
+		syncFilterWithButton(filter[DATE], dateFilterButton);
+		syncFilterWithButton(filter[SIP], sipFilterButton);
+		syncFilterWithButton(filter[CALL_BY_CALL], callByCallFilterButton);
+		syncFilterWithButton(filter[SEARCH], searchFilterButton);
 
 	}
 
@@ -1295,7 +1294,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		Main.setStateProperty(CallFilter.FILTER_DATE_END, df.format(end));
 		Main.setStateProperty(CallFilter.FILTER_DATE_SPECIAL, dateSpecialSaveString);
 		Main.setStateProperty(CallFilter.FILTER_SIP, "" + sipFilterButton.getState());
-		Main.setStateProperty(CallFilter.FILTER_SIP_PROVIDERS, filter[sip].toString());
+		Main.setStateProperty(CallFilter.FILTER_SIP_PROVIDERS, filter[SIP].toString());
 		Main.setStateProperty(CallFilter.FILTER_CALLBYCALL, ""
 				+ callByCallFilterButton.getState());
 		Main.setStateProperty(CallFilter.FILTER_CALLOUT, "" + callOutFilterButton.getState());

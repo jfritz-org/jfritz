@@ -113,8 +113,7 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
                 JFritz.getCallMonitorList().addNewCall(
                         Integer.parseInt(split[2]), currentCall);
             } catch (ParseException e) {
-                System.err
-                        .println("FBoxListenerV3: Could not convert call" + e);
+                Debug.err("FBoxListenerV3: Could not convert call" + e);
             }
         } else if (split[1].equals("DISCONNECT")) { //$NON-NLS-1$
             try {

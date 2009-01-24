@@ -63,7 +63,7 @@ public class ButtonCellEditor extends DefaultCellEditor {
 			table.setValueAt(parent, row, column);
 		}
 		isPushed = false;
-		return new String(label);
+		return label;
 	}
 
 	public boolean stopCellEditing(){

@@ -36,7 +36,6 @@ public class DataChange<E> implements Serializable {
 	public E original, updated;
 
 	public DataChange<E> clone() {
-
 		DataChange<E> clone = new DataChange<E>();
 		clone.operation = this.operation;
 		clone.destination = this.destination;

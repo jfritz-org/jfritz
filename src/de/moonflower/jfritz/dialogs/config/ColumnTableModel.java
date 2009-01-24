@@ -21,13 +21,18 @@ public class ColumnTableModel extends AbstractTableModel {
 	}
 
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		switch (columnIndex)
+		if (columnIndex == 0)
 		{
-		case 0: return columns.get(rowIndex).isVisible();
-
-		case 1: return columns.get(rowIndex).getI18NName();
+			return columns.get(rowIndex).isVisible();
 		}
-		return null;
+		else if (columnIndex == 1)
+		{
+			return columns.get(rowIndex).getI18NName();
+		}
+		else
+		{
+			return null;
+		}
 	}
 
 	public boolean isCellEditable(int row, int col)

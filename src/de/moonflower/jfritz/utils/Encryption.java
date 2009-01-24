@@ -59,10 +59,11 @@ public class Encryption {
 		}
 	}
 
-	public static String decrypt(String source) {
+	public static String decrypt(final String source) {
 		try {
-			if (source == null)
-				source = "";
+			String sourceStr = source;
+			if (sourceStr == null)
+				sourceStr = "";
 			// Get our secret key
 			Key key = getKey();
 
@@ -70,7 +71,7 @@ public class Encryption {
 			Cipher desCipher = Cipher.getInstance("DES/ECB/PKCS5Padding"); //$NON-NLS-1$
 
 			// Encrypt the cleartext
-			byte[] ciphertext = getBytes(source);
+			byte[] ciphertext = getBytes(sourceStr);
 
 			// Initialize the same cipher for decryption
 			desCipher.init(Cipher.DECRYPT_MODE, key);

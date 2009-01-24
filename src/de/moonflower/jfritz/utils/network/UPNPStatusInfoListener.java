@@ -10,6 +10,6 @@ package de.moonflower.jfritz.utils.network;
 	 */
 public interface UPNPStatusInfoListener {
 
-	public void setUptime(String uptime);
+	void setUptime(String uptime);
 }
 

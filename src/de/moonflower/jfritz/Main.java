@@ -200,9 +200,9 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.2.9.2"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.2.10"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.139 2009/01/23 19:57:17 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.140 2009/01/24 11:01:13 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -226,9 +226,9 @@ public class Main implements LookupObserver {
 
 	public final static String STATE_PROPERTIES_FILE = "jfritz.state.properties.xml"; //$NON-NLS-1$
 
-	public static boolean SYSTRAY_SUPPORT = false;
+	public static boolean systraySupport = false;
 
-	public static boolean SHOW_SPLASH_SCREEN = true;
+	public static boolean showSplashScreen = true;
 
 	private static JFritzProperties config_properties;
 
@@ -253,7 +253,7 @@ public class Main implements LookupObserver {
 
 	private static int exitCode = 0;
 
-	private static boolean already_done_shutdown;
+	private static boolean alreadyDoneShutdown;
 
 	private static Vector<Locale> supported_languages;
 
@@ -297,11 +297,11 @@ public class Main implements LookupObserver {
 	 */
 	public static void main(String[] args) {
 		Debug.on();
-		already_done_shutdown = false;
+		alreadyDoneShutdown = false;
 		Main main = new Main(args);
 		main.initiateCLIParameters();
 		main.checkDebugParameters(args);
-		SplashScreen splash = new SplashScreen(SHOW_SPLASH_SCREEN);
+		SplashScreen splash = new SplashScreen(showSplashScreen);
 		splash.setVersion("v" + Main.PROGRAM_VERSION);
 		splash.setStatus("Initializing JFritz...");
 
@@ -505,7 +505,7 @@ public class Main implements LookupObserver {
 					break;
 				}
 			case 'q': //$NON-NSL-1$
-				SHOW_SPLASH_SCREEN = false;
+				showSplashScreen = false;
 				break;
 			}
 		}
@@ -531,7 +531,7 @@ public class Main implements LookupObserver {
 				doBackup();
 				break;
 			case 's': //$NON-NLS-1$
-				SYSTRAY_SUPPORT = true;
+				systraySupport = true;
 				break;
 			case 'n': //$NON-NLS-1$
 				checkSystray = false;
@@ -633,12 +633,10 @@ public class Main implements LookupObserver {
 						Thread.currentThread().setPriority(level);
 						Debug.msg("Set priority to level " + priority); //$NON-NLS-1$
 					} catch (NumberFormatException nfe) {
-						System.err
-								.println(getMessage("parameter_wrong_priority")); //$NON-NLS-1$
+						System.err.println(getMessage("parameter_wrong_priority")); //$NON-NLS-1$
 						exit(0);
 					} catch (IllegalArgumentException iae) {
-						System.err
-								.println(getMessage("parameter_wrong_priority")); //$NON-NLS-1$
+						System.err.println(getMessage("parameter_wrong_priority")); //$NON-NLS-1$
 						exit(0);
 					}
 					break;
@@ -1331,9 +1329,9 @@ public class Main implements LookupObserver {
 		String os = System.getProperty("os.name"); //$NON-NLS-1$
 		if (os.equals("Linux") || os.equals("Solaris") //$NON-NLS-1$,  //$NON-NLS-2$
 				|| os.startsWith("Windows")) { //$NON-NLS-1$
-			SYSTRAY_SUPPORT = true;
+			systraySupport = true;
 		}
-		return SYSTRAY_SUPPORT;
+		return systraySupport;
 	}
 
 	public static String getHomeDirectory() {
@@ -1380,10 +1378,10 @@ public class Main implements LookupObserver {
 
 	public void prepareShutdown(boolean shutdownThread, boolean shutdownHook) {
 		try {
-		if ( !already_done_shutdown )
+		if ( !alreadyDoneShutdown )
 		{
 			showActiveThreads();
-			already_done_shutdown = true;
+			alreadyDoneShutdown = true;
 			Debug.msg("Shutting down JFritz..."); //$NON-NLS-1$
 			closeOpenConnections();
 			Debug.msg("Releasing lock");

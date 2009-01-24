@@ -1513,6 +1513,18 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 			field[3] = "3";
 		} else if (field[3].equals("FON S0")) {
 			field[3] = "4";
+		} else if (field[3].equals("DECT 1")) {
+			field[3] = "10";
+		} else if (field[3].equals("DECT 2")) {
+			field[3] = "11";
+		} else if (field[3].equals("DECT 3")) {
+			field[3] = "12";
+		} else if (field[3].equals("DECT 4")) {
+			field[3] = "13";
+		} else if (field[3].equals("DECT 5")) {
+			field[3] = "14";
+		} else if (field[3].equals("DECT 6")) {
+			field[3] = "15";
 		} else if (field[3].equals("DATA S0")) {
 			field[3] = "36";
 		}
@@ -1599,6 +1611,18 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 			field[4] = "2";
 		} else if (field[4].equals("Durchwahl")) {
 			field[4] = "3";
+		} else if (field[4].equals("DECT 1")) {
+			field[4] = "10";
+		} else if (field[4].equals("DECT 2")) {
+			field[4] = "11";
+		} else if (field[4].equals("DECT 3")) {
+			field[4] = "12";
+		} else if (field[4].equals("DECT 4")) {
+			field[4] = "13";
+		} else if (field[4].equals("DECT 5")) {
+			field[4] = "14";
+		} else if (field[4].equals("DECT 6")) {
+			field[4] = "15";
 		} else if (field[4].equals("FON S0")) {
 			field[4] = "4";
 		} else if (field[4].equals("DATA S0")) {
@@ -1701,6 +1725,18 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 			field[3] = "3";
 		} else if (field[3].equals("FON S0")) {
 			field[3] = "4";
+		} else if (field[3].equals("DECT 1")) {
+			field[3] = "10";
+		} else if (field[3].equals("DECT 2")) {
+			field[3] = "11";
+		} else if (field[3].equals("DECT 3")) {
+			field[3] = "12";
+		} else if (field[3].equals("DECT 4")) {
+			field[3] = "13";
+		} else if (field[3].equals("DECT 5")) {
+			field[3] = "14";
+		} else if (field[3].equals("DECT 6")) {
+			field[3] = "15";
 		} else if (field[3].equals("DATA S0")) {
 			field[3] = "36";
 		}
@@ -1812,6 +1848,18 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 			field[4] = "3";
 		} else if (field[4].equals("FON S0")) {
 			field[4] = "4";
+		} else if (field[4].equals("DECT 1")) {
+			field[4] = "10";
+		} else if (field[4].equals("DECT 2")) {
+			field[4] = "11";
+		} else if (field[4].equals("DECT 3")) {
+			field[4] = "12";
+		} else if (field[4].equals("DECT 4")) {
+			field[4] = "13";
+		} else if (field[4].equals("DECT 5")) {
+			field[4] = "14";
+		} else if (field[4].equals("DECT 6")) {
+			field[4] = "15";
 		} else if (field[4].equals("DATA S0")) {
 			field[4] = "36";
 		}

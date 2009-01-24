@@ -157,7 +157,7 @@ public class ConfigPanelCallerListAppearance extends JPanel implements ConfigPan
 				columnTable.setRowSelectionInterval(newSelection, newSelection);
 			}
 		} else {
-			System.err.println("Unknown command received: "+e.getActionCommand());
+			Debug.err("Unknown command received: "+e.getActionCommand());
 		}
 	}
 }

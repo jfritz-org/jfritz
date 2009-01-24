@@ -28,28 +28,28 @@ import java.util.Vector;
 public class ReverseLookupSite {
 
 	//Site url, as will be used to process the reverse lookup
-	private String URL;
+	private String url;
 
 	//A user defined site name
-	private String NAME;
+	private String name;
 
 	//needed to be certify if the number format is correct for the site
-	private String PREFIX;
+	private String prefix;
 
-	private int AREACODE_LENGTH;
+	private int areacodeLength;
 
 	//currently a linked list of String arrays
 	private Vector<String[]> entries;
 
 	public ReverseLookupSite(String url, String name, String prefix, int ac_length){
-		URL = url;
-		NAME = name;
-		PREFIX = prefix;
-		AREACODE_LENGTH = ac_length;
+		this.url = url;
+		this.name = name;
+		this.prefix = prefix;
+		this.areacodeLength = ac_length;
 		entries = new Vector<String[]>(2);
 	}
 
-	public void addEntry(String name, String street, String city, String zipcode){
+	public void addEntry(final String name, final String street, final String city, final String zipcode){
 		String[] patterns = new String[4];
 		patterns[0] = name;
 		patterns[1] = street;
@@ -64,16 +64,16 @@ public class ReverseLookupSite {
 	 * @param number index of the set of patterns
 	 * @return a String[4] object containing the patterns
 	 */
-	public String[] getEntry(int index){
+	public String[] getEntry(final int index){
 		return entries.get(index);
 	}
 
 	public String getURL(){
-		return URL;
+		return url;
 	}
 
 	public String getName(){
-		return NAME;
+		return name;
 	}
 
 	public int size(){
@@ -81,11 +81,11 @@ public class ReverseLookupSite {
 	}
 
 	public String getPrefix(){
-		return PREFIX;
+		return prefix;
 	}
 
 	public int getAreaCodeLength(){
-		return AREACODE_LENGTH;
+		return areacodeLength;
 	}
 
 }

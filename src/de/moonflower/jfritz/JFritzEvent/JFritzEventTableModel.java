@@ -36,9 +36,13 @@ public class JFritzEventTableModel extends AbstractTableModel {
     }
 
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		switch (columnIndex) {
-		case 0: return events.get(rowIndex).getDescription();
-		case 1: return events.get(rowIndex).isActive();
+		if (columnIndex == 0)
+		{
+			return events.get(rowIndex).getDescription();
+		}
+		else if (columnIndex == 1)
+		{
+			return events.get(rowIndex).isActive();
 		}
 		return "";
 	}

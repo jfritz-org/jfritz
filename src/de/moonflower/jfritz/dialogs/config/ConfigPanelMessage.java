@@ -92,7 +92,7 @@ public class ConfigPanelMessage extends JPanel implements ConfigPanel {
 		c.insets.left = 15;
 		cPane.add(popupDelay, c);
 
-		if (!Main.SYSTRAY_SUPPORT) {
+		if (!Main.systraySupport) {
 			popupTrayButton.setVisible(false);
 		}
 
@@ -100,7 +100,7 @@ public class ConfigPanelMessage extends JPanel implements ConfigPanel {
 	}
 
 	public void loadSettings() {
-		if (!Main.SYSTRAY_SUPPORT) {
+		if (!Main.systraySupport) {
 			popupTrayButton.setVisible(false);
 		}
 		switch (Integer.parseInt(Main.getProperty("option.popuptype"))) { //$NON-NLS-1$,  //$NON-NLS-2$
