@@ -60,7 +60,7 @@ public class WindowStateDemo extends JPanel
         if (SystemTray.isSupported())
         {
         	SystemTray tray = SystemTray.getSystemTray();
-            Image image = Toolkit.getDefaultToolkit().getImage("tray.gif");
+            Image image = Toolkit.getDefaultToolkit().getImage("tray.png");
             MouseListener mouseListener = new MouseListener() {
 
                 public void mouseClicked(MouseEvent e) {
@@ -116,27 +116,6 @@ public class WindowStateDemo extends JPanel
             }
 
         }
-    }
-
-    private static void hideFrame()
-    {
-		oldState = frame.getExtendedState();
-		System.out.println("Old state: " + oldState);
-		frame.setVisible(false);
-		frame.setState(Frame.ICONIFIED);
-		frame.setState(Frame.NORMAL);
-		frame.setState(Frame.ICONIFIED);
-    }
-
-    private static void showFrame(boolean b)
-    {
-		System.out.println("Restoring state: " + oldState);
-		frame.setState(oldState);
-		frame.setVisible(true);
-		frame.setState(Frame.ICONIFIED);
-		frame.setVisible(false);
-		frame.setState(oldState);
-		frame.setVisible(true);
     }
 
     private void showHide(boolean tray)
@@ -207,7 +186,9 @@ public class WindowStateDemo extends JPanel
 
     public void windowIconified(WindowEvent e) {
 //    	frame.setVisible(false);
-    	frame.setExtendedState(Frame.NORMAL);
+    	System.out.println("OldState: " + e.getOldState());
+    	System.out.println("NewState: " + e.getNewState());
+    	frame.setExtendedState(oldState);
     	showHide(false);
 //        displayMessage("WindowListener method called: windowIconified.");
     }
@@ -233,6 +214,14 @@ public class WindowStateDemo extends JPanel
     }
 
     public void windowStateChanged(WindowEvent e) {
+    	if (e.getNewState() == Frame.NORMAL)
+    	{
+    		oldState = Frame.NORMAL;
+    	}
+    	else if (e.getNewState() == Frame.MAXIMIZED_BOTH)
+    	{
+    		oldState = Frame.MAXIMIZED_BOTH;
+    	}
         displayStateMessage(
           "WindowStateListener method called: windowStateChanged.", e);
     }
