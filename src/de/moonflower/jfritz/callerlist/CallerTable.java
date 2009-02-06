@@ -103,9 +103,14 @@ public class CallerTable extends JTable {
 			public void columnMoved(TableColumnModelEvent arg0) {
 				if (arg0.getFromIndex() != arg0.getToIndex())
 				{
+					for (int i =0; i < sortedTableColumns.size(); i++)
+					{
+						Debug.msg("Sorted columns: " + sortedTableColumns.get(i).getName() + " - visible: " + sortedTableColumns.get(i).isVisible());
+					}
 					moveColumn(arg0.getFromIndex(), arg0.getToIndex(), false);
 					for (int i =0; i < sortedTableColumns.size(); i++)
 					{
+						Debug.msg("Sorted columns: " + sortedTableColumns.get(i).getName() + " - visible: " + sortedTableColumns.get(i).isVisible());
 						Main.setStateProperty("callerTable.column" + i + ".name", sortedTableColumns.get(i).getName());
 					}
 				}
@@ -361,25 +366,60 @@ public class CallerTable extends JTable {
 
     	if (oldIndex != newIndex)
     	{
-    		Debug.msg("Sorted size: " + sortedTableColumns.size());
-    		Debug.msg("Old index: " + oldIndex);
-    		Debug.msg("New index: " + newIndex);
-    		Debug.msg("ColumnSize: " + getColumnCount());
-	    	JFritzTableColumn fromColumn = sortedTableColumns.get(oldIndex);
-	    	JFritzTableColumn toColumn = sortedTableColumns.get(newIndex);
+       		String oldColumnIdentifier = (String)getColumnModel().getColumn(oldIndex).getIdentifier();
+    		String newColumnIdentifier = (String)getColumnModel().getColumn(newIndex).getIdentifier();
 
-	        int allColumnsOldIndex  = sortedTableColumns.indexOf(fromColumn);
-	        int allColumnsNewIndex  = sortedTableColumns.indexOf(toColumn);
+    		System.out.println("Moving column " + oldColumnIdentifier + " from position " + oldIndex + " to " + newIndex);
 
-	        if(oldIndex != newIndex) {
-	        	sortedTableColumns.removeElementAt(allColumnsOldIndex);
-	        	sortedTableColumns.insertElementAt(fromColumn, allColumnsNewIndex);
-	        }
+    		int sortedPositionOld = -1;
+    		int sortedPositionNew = -1;
+    		for (int i=0; i<sortedTableColumns.size(); i++)
+    		{
+    			if (sortedTableColumns.get(i).getName().equals(oldColumnIdentifier))
+    			{
+    				sortedPositionOld = i;
+    			}
+    			else if (sortedTableColumns.get(i).getName().equals(newColumnIdentifier))
+    			{
+    				sortedPositionNew = i;
+    			}
+    		}
 
-	        if (moveTableColumn)
-	        {
-	        	super.moveColumn(oldIndex, newIndex);
-	        }
+    		if ((sortedPositionOld != -1) && (sortedPositionNew != -1))
+    		{
+    	    	JFritzTableColumn fromColumn = sortedTableColumns.get(sortedPositionOld);
+    	    	JFritzTableColumn toColumn = sortedTableColumns.get(sortedPositionNew);
+
+    	    	Debug.msg("Old sortedColumn: " + fromColumn);
+        		Debug.msg("New sortedColumn: " + toColumn);
+
+    	        int allColumnsOldIndex  = sortedTableColumns.indexOf(fromColumn);
+    	        int allColumnsNewIndex  = sortedTableColumns.indexOf(toColumn);
+
+    	    	Debug.msg("Old sortedColumnIndex: " + allColumnsOldIndex);
+        		Debug.msg("New sortedColumnIndex: " + allColumnsNewIndex);
+
+        		if(oldIndex != newIndex) {
+    	        	sortedTableColumns.removeElementAt(allColumnsOldIndex);
+    	        	sortedTableColumns.insertElementAt(fromColumn, allColumnsNewIndex);
+    	        }
+
+    	        if (moveTableColumn)
+    	        {
+    	        	super.moveColumn(oldIndex, newIndex);
+    	        }
+    			Debug.msg("---");
+
+    			for (int i=0; i<getColumnCount(); i++)
+    			{
+    				Debug.msg("Table column " + i + ": " + getColumnModel().getColumn(i).getIdentifier());
+    			}
+    		}
+    		else
+    		{
+    			Debug.err("Could not reorder columns. Rebuild old state!");
+    			reorderColumns();
+    		}
     	}
     }
 

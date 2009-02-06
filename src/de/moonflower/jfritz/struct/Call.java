@@ -45,8 +45,8 @@ public class Call implements Serializable {
 
 	private String comment = ""; //$NON-NLS-1$
 
-	public Call(CallType calltype, Date calldate, PhoneNumber number,
-			String port, String route, int duration) {
+	public Call(final CallType calltype, final Date calldate, final PhoneNumber number,
+			final String port, final String route, final int duration) {
 		this.calltype = calltype;
 		this.calldate = calldate;
 		this.number = number;
@@ -63,8 +63,9 @@ public class Call implements Serializable {
 			this.routeType = ROUTE_SIP;
 		} else if (this.route.startsWith("Internet: ")) {
 			Enumeration<SipProvider> en = JFritz.getSIPProviderTableModel().getProviderList().elements();
+			SipProvider sipProvider;
 			while (en.hasMoreElements()) {
-				SipProvider sipProvider = (SipProvider) en.nextElement();
+				sipProvider = (SipProvider) en.nextElement();
 				if (sipProvider.getNumber().equals(this.route.substring(10))) {
 					this.route = sipProvider.toString();
 					this.routeType = ROUTE_SIP;
@@ -79,8 +80,8 @@ public class Call implements Serializable {
 		this.duration = duration;
 	}
 
-	public Call(CallType calltype, Date calldate, PhoneNumber number,
-			String port, String route, int duration, String comment) {
+	public Call(final CallType calltype, final Date calldate, final PhoneNumber number,
+			final String port, final String route, final int duration, final String comment) {
 		this(calltype, calldate, number, port, route, duration);
 		this.comment = comment;
 	}
@@ -157,7 +158,7 @@ public class Call implements Serializable {
 	 * Set call type
 	 * @param callType
 	 */
-	public void setCallType(CallType callType) {
+	public void setCallType(final CallType callType) {
 		calltype = callType;
 	}
 
@@ -188,11 +189,7 @@ public class Call implements Serializable {
 	 * @return Returns the person the number belongs to or null.
 	 */
 	public Person getPerson() {
-		if (person == null) {
-			return null;
-		} else {
-			return person;
-		}
+		return person; // may also be null
 	}
 
 	/**
@@ -226,13 +223,13 @@ public class Call implements Serializable {
 	}
 
 	public int hashCode() {
-		String s = "";
-		s += this.getPhoneNumber().getFullNumber();
-		s += this.getPort();
-		s += this.getDuration();
-		s += this.getCalltype().toInt();
-		s += this.getRoute();
-		return s.hashCode();
+		StringBuffer sBuffer = new StringBuffer("");
+		sBuffer.append(this.getPhoneNumber().getFullNumber());
+		sBuffer.append(this.getPort());
+		sBuffer.append(this.getDuration());
+		sBuffer.append(this.getCalltype().toInt());
+		sBuffer.append(this.getRoute());
+		return sBuffer.hashCode();
 	}
 
 	/**
@@ -289,47 +286,51 @@ public class Call implements Serializable {
 	public String toCSV() {
 		SimpleDateFormat date = new SimpleDateFormat("dd.MM.yyyy"); //$NON-NLS-1$
 		SimpleDateFormat time = new SimpleDateFormat("HH:mm"); //$NON-NLS-1$
-		String outString = ""; //$NON-NLS-1$
+		StringBuffer outString = new StringBuffer(""); //$NON-NLS-1$
 
 		// type
 		switch (calltype.toInt()) {
 		case 1: {
-			outString = "\"Incoming\""; //$NON-NLS-1$
+			outString.append("\"Incoming\""); //$NON-NLS-1$
 			break;
 		}
 		case 2: {
-			outString = "\"Missed\""; //$NON-NLS-1$
+			outString.append("\"Missed\""); //$NON-NLS-1$
 			break;
 		}
 		case 3: {
-			outString = "\"Outgoing\""; //$NON-NLS-1$
+			outString.append("\"Outgoing\""); //$NON-NLS-1$
 			break;
+		}
+		default: {
+			outString.append("\"ERROR\"");
 		}
 		}
 
 		// date
-		outString = outString.concat(";\"" + date.format(calldate) + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+		outString = outString.append(";\"" + date.format(calldate) + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		// time
-		outString = outString.concat(";\"" + time.format(calldate) + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+		outString = outString.append(";\"" + time.format(calldate) + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		// number
 		if (number == null) {
-			outString = outString.concat(";\"\""); //$NON-NLS-1$
+			outString = outString.append(";\"\""); //$NON-NLS-1$
 		} else {
-			outString = outString.concat(";\"" + number + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+			outString = outString.append(";\"" + number + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 
 		// route
 		if (route == null) {
-			outString = outString.concat(";\"\""); //$NON-NLS-1$
+			outString = outString.append(";\"\""); //$NON-NLS-1$
 		} else {
 			// String sipRoute = ""; //$NON-NLS-1$
 			String convertedRoute = route;
 			if (route.startsWith("SIP")) { // FIXME old code
 				Enumeration<SipProvider> en = JFritz.getSIPProviderTableModel().getProviderList().elements();
+				SipProvider sipProvider;
 				while (en.hasMoreElements()) {
-					SipProvider sipProvider = (SipProvider) en.nextElement();
+					sipProvider = (SipProvider) en.nextElement();
 					if (route.substring(3).equals(
 							String.valueOf(sipProvider.getProviderID()))) {
 						convertedRoute = sipProvider.toString();
@@ -352,71 +353,87 @@ public class Call implements Serializable {
 			 * sipRoute + "\""); //$NON-NLS-1$, //$NON-NLS-2$ }
 			 */
 
-			outString = outString.concat(";\"" + convertedRoute + "\"");
+			outString = outString.append(";\"" + convertedRoute + "\"");
 
 		}
 
 		// port
 		if (port.equals("4")) {
-			outString = outString.concat(";\"ISDN\""); //$NON-NLS-1$
+			outString = outString.append(";\"ISDN\""); //$NON-NLS-1$
 		} else if (port.equals("0")) {
-			outString = outString.concat(";\"FON1\""); //$NON-NLS-1$
+			outString = outString.append(";\"FON1\""); //$NON-NLS-1$
 		} else if (port.equals("1")) {
-			outString = outString.concat(";\"FON2\""); //$NON-NLS-1$
+			outString = outString.append(";\"FON2\""); //$NON-NLS-1$
 		} else if (port.equals("2")) {
-			outString = outString.concat(";\"FON3\""); //$NON-NLS-1$
+			outString = outString.append(";\"FON3\""); //$NON-NLS-1$
+		} else if (port.equals("3")) {
+			outString = outString.append(";\"Durchwahl\""); //$NON-NLS-1$
+		} else if (port.equals("4")) {
+			outString = outString.append(";\"ISDN\""); //$NON-NLS-1$
+		} else if (port.equals("10")) {
+			outString = outString.append(";\"DECT 1\""); //$NON-NLS-1$
+		} else if (port.equals("11")) {
+			outString = outString.append(";\"DECT 2\""); //$NON-NLS-1$
+		} else if (port.equals("12")) {
+			outString = outString.append(";\"DECT 3\""); //$NON-NLS-1$
+		} else if (port.equals("13")) {
+			outString = outString.append(";\"DECT 4\""); //$NON-NLS-1$
+		} else if (port.equals("14")) {
+			outString = outString.append(";\"DECT 5\""); //$NON-NLS-1$
+		} else if (port.equals("15")) {
+			outString = outString.append(";\"DECT 6\""); //$NON-NLS-1$
 		} else if (port.equals("32")) {
-			outString = outString.concat(";\"DATA\""); //$NON-NLS-1$
+			outString = outString.append(";\"DATA\""); //$NON-NLS-1$
 		} else if (port.equals("33")) {
-			outString = outString.concat(";\"DATA\""); //$NON-NLS-1$
+			outString = outString.append(";\"DATA\""); //$NON-NLS-1$
 		} else if (port.equals("34")) {
-			outString = outString.concat(";\"DATA\""); //$NON-NLS-1$
+			outString = outString.append(";\"DATA\""); //$NON-NLS-1$
 		} else if (port.equals("35")) {
-			outString = outString.concat(";\"DATA\""); //$NON-NLS-1$
+			outString = outString.append(";\"DATA\""); //$NON-NLS-1$
 		} else if (port.equals("36")) {
-			outString = outString.concat(";\"DATA\""); //$NON-NLS-1$
+			outString = outString.append(";\"DATA\""); //$NON-NLS-1$
 		} else if (port.equals("")) {
-			outString = outString.concat(";\"\""); //$NON-NLS-1$
+			outString = outString.append(";\"\""); //$NON-NLS-1$
 		} else {
-			outString = outString.concat(";\"" + port + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+			outString = outString.append(";\"" + port + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 
 		// duration
-		outString = outString.concat(";\"" + duration + "\""); //$NON-NLS-1$, //$NON-NLS-2$
+		outString = outString.append(";\"" + duration + "\""); //$NON-NLS-1$, //$NON-NLS-2$
 
 		// address
-		if (person != null) {
-			outString = outString.concat(";\"" + person.getFullname() //$NON-NLS-1$
+		if (person == null) {
+			outString = outString.append(";\"\";\"\";\"\""); //$NON-NLS-1$
+		} else {
+			outString = outString.append(";\"" + person.getFullname() //$NON-NLS-1$
 					+ "\""); //$NON-NLS-1$
 			outString = outString
-					.concat(";\"" + person.getStreet() + "\""); //$NON-NLS-1$, //$NON-NLS-2$
+					.append(";\"" + person.getStreet() + "\""); //$NON-NLS-1$, //$NON-NLS-2$
 			if (person.getPostalCode().equals("")) { //$NON-NLS-1$
-				outString = outString.concat(";\"" + person.getCity() //$NON-NLS-1$
+				outString = outString.append(";\"" + person.getCity() //$NON-NLS-1$
 						+ "\""); // city might be "" //$NON-NLS-1$
 			} else if (person.getCity().equals("")) { //$NON-NLS-1$
-				outString = outString.concat(";\"" //$NON-NLS-1$
+				outString = outString.append(";\"" //$NON-NLS-1$
 						+ person.getPostalCode() + "\""); //$NON-NLS-1$
 				// postCode might be ""
 			} else { // postCode AND city !equals("")
-				outString = outString.concat(";\"" //$NON-NLS-1$
+				outString = outString.append(";\"" //$NON-NLS-1$
 						+ person.getPostalCode() + " " //$NON-NLS-1$
 						+ person.getCity() + "\""); //$NON-NLS-1$
 			}
-		} else {
-			outString = outString.concat(";\"\";\"\";\"\""); //$NON-NLS-1$
 		}
 
 		// CallByCall
 		if ((number != null) && number.hasCallByCall()) {
-			outString = outString.concat(";\"" + number.getCallByCall() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+			outString = outString.append(";\"" + number.getCallByCall() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 		} else {
-			outString = outString.concat(";\"\""); //$NON-NLS-1$
+			outString = outString.append(";\"\""); //$NON-NLS-1$
 		}
 
 		// comment
-		outString = outString.concat(";\"" + comment + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+		outString = outString.append(";\"" + comment + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		return outString;
+		return outString.toString();
 	}
 
 	public String toString() {
@@ -428,31 +445,29 @@ public class Call implements Serializable {
 	 */
 	public String toXML() {
 		String sep = System.getProperty("line.separator", "\n"); //$NON-NLS-1$,  //$NON-NLS-2$
-		String output = ""; //$NON-NLS-1$
-		SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm"); //$NON-NLS-1$
-		output = ("<entry calltype=\"" + calltype.toString() + "\">" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
-		output = output + ("\t<date>" + df.format(calldate) + "</date>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
+		StringBuffer output = new StringBuffer(139); //$NON-NLS-1$
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm"); //$NON-NLS-1$
+		output.append("<entry calltype=\"" + calltype.toString() + "\">" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
+		output.append("\t<date>" + dateFormat.format(calldate) + "</date>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
 		if (number != null) {
 			if (number.getCallByCall().length() > 0) {
-				output = output
-						+ ("\t<caller callbycall=\"" + number.getCallByCall() //$NON-NLS-1$
+				output.append("\t<caller callbycall=\"" + number.getCallByCall() //$NON-NLS-1$
 								+ "\">" + number.getIntNumber() + "</caller>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
 			} else {
-				output = output
-						+ ("\t<caller>" + number.getIntNumber() + "</caller>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
+				output.append("\t<caller>" + number.getIntNumber() + "</caller>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
 			}
 		}
 		if (!port.equals("")) {
-			output = output
-					+ ("\t<port>" + JFritzUtils.convertSpecialChars(port) + "</port>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
+			output.append("\t<port>" + JFritzUtils.convertSpecialChars(port) + "</port>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 
 		if (!route.equals("")) { //$NON-NLS-1$
 			String convertedRoute = route;
 			if (route.startsWith("SIP")) {
 				Enumeration<SipProvider> en = JFritz.getSIPProviderTableModel().getProviderList().elements();
+				SipProvider sipProvider;
 				while (en.hasMoreElements()) {
-					SipProvider sipProvider = (SipProvider) en.nextElement();
+					sipProvider = (SipProvider) en.nextElement();
 					if (route.substring(3).equals(
 							String.valueOf(sipProvider.getProviderID()))) {
 						convertedRoute = sipProvider.toString();
@@ -460,16 +475,14 @@ public class Call implements Serializable {
 					}
 				}
 			}
-			output = output
-					+ ("\t<route>" + JFritzUtils.convertSpecialChars(convertedRoute) + "</route>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
+			output.append("\t<route>" + JFritzUtils.convertSpecialChars(convertedRoute) + "</route>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 		if (duration > 0) {
-			output = output + ("\t<duration>" + duration + "</duration>" + sep); //$NON-NLS-1$, //$NON-NLS-2$
+			output.append("\t<duration>" + duration + "</duration>" + sep); //$NON-NLS-1$, //$NON-NLS-2$
 		}
 
-		output = output
-				+ ("\t<comment>" + JFritzUtils.convertSpecialChars(comment) + "</comment>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
-		output = output + ("</entry>"); //$NON-NLS-1$
-		return output;
+		output.append("\t<comment>" + JFritzUtils.convertSpecialChars(comment) + "</comment>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
+		output.append("</entry>"); //$NON-NLS-1$
+		return output.toString();
 	}
 }

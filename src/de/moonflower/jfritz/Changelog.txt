@@ -1,14 +1,19 @@
 TODO: Drucken der Anrufliste muss korrigiert werden.
 TODO: CallMonitor überprüfen, manchmal immer noch Einträge doppelt ... 
 TODO: Internationalisieren des neuen Einstelldialogs für Ausblendung der Spalten.
-TODO: UPNP-Bug fixen.
+TODO: Hilfe-Seite für neuen Einstelldialog für Ausblendung der Spalten und anpassen des Einstelldialogs der Anrufliste.
 TODO: Ressourcen in eigenes Jar packen.
 TODO: Client-Server fixen.
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 
+JFritz 0.7.2.11:
+- Code überarbeitet und gelintet (Person, Call, CallerList).
+- Minimieren ins Tray und wiederherstellen überarbeitet.
+- Bugfix: Spaltenverschiebung korrigiert.
+
 JFritz 0.7.2.10:
 - Statistik-Knopf deaktiviert, weil Internet-Monitor funktioniert.
-- Unterstützung der DECT-Telefone der 7270.
+- Unterstützung DECT-Telefone der 7270.
 - Lint der ganzen Files. Viele Warnings und Errors entfernt, dennoch noch eine Menge Warnings und einige Errors da.
 
 JFritz 0.7.2.9:

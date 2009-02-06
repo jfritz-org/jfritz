@@ -65,52 +65,6 @@ public class Person implements Cloneable, Serializable{
 	 * this function is needed to override the basic function equals
 	 * inherited by object or else the network code won't work at all
 	 *
-	 * @author brian
-	 *
-	 */
-	public boolean equalsOld(Object p){
-		boolean equals = false;
-		Person person;
-		if(!(p instanceof Person))
-			return false;
-
-		person = (Person) p;
-
-		//Just use csv to compare for now, if it doesnt work then write one by hand
-		if(person.toCSV().equals(this.toCSV()))
-		{
-			equals = true;
-		}
-		else
-		{
-			equals = false;
-		}
-
-		if (equals && person.getStandardTelephoneNumber()!=null && this.getStandardTelephoneNumber()!=null)
-		{
-			equals = person.getStandardTelephoneNumber().equals(this.getStandardTelephoneNumber());
-		}
-
-		if (equals)
-		{
-			equals = person.getStandard().equals(this.getStandard());
-		}
-
-		if (equals)
-		{
-			if ((person.getPictureUrl() != null)
-			   && (this.getPictureUrl() != null))
-			   {
-					equals = (person.getPictureUrl().equals(this.getPictureUrl()));
-			   }
-		}
-		return equals;
-	}
-
-	/**
-	 * this function is needed to override the basic function equals
-	 * inherited by object or else the network code won't work at all
-	 *
 	 * @author Robert
 	 *
 	 */
@@ -121,22 +75,24 @@ public class Person implements Cloneable, Serializable{
 
 		person = (Person) p;
 
-		if (person.lastName.equals(this.lastName))
-			if (person.firstName.equals(this.firstName))
-				if (person.numbers.size() == this.numbers.size())
-					if (person.standard.equals(this.standard))
-				if (person.city.equals(this.city))
-				if (person.street.equals(this.street))
-				if (person.postalCode.equals(this.postalCode))
-				if ((person.privateEntry == this.privateEntry))
-				if (person.pictureUrl.equals(this.pictureUrl))
-				if (person.company.equals(this.company))
-				if (person.emailAddress.equals(this.emailAddress))
+		if ((person.lastName.equals(this.lastName))
+			&& (person.firstName.equals(this.firstName))
+			&& (person.numbers.size() == this.numbers.size())
+			&& (person.standard.equals(this.standard))
+			&& (person.city.equals(this.city))
+			&& (person.street.equals(this.street))
+			&& (person.postalCode.equals(this.postalCode))
+			&& ((person.privateEntry == this.privateEntry))
+			&& (person.pictureUrl.equals(this.pictureUrl))
+			&& (person.company.equals(this.company))
+			&& (person.emailAddress.equals(this.emailAddress)))
 		{
+			PhoneNumber myNumber;
+			PhoneNumber hisNumber;
 			for (int i=0; i<this.numbers.size(); i++)
 			{
-				PhoneNumber myNumber = this.numbers.get(i);
-				PhoneNumber hisNumber = person.numbers.get(i);
+				myNumber = this.numbers.get(i);
+				hisNumber = person.numbers.get(i);
 				if (!myNumber.equals(hisNumber))
 				{
 					return false;
@@ -148,9 +104,9 @@ public class Person implements Cloneable, Serializable{
 		return false;
 	}
 
-	public Person(String firstName, String company, String lastName,
-			String street, String postalCode, String city, String eMail,
-			String pictureUrl) {
+	public Person(final String firstName, final String company, final String lastName,
+			final String street, final String postalCode, final String city, final String eMail,
+			final String pictureUrl) {
 		this();
 
 		this.firstName = firstName;
@@ -162,10 +118,11 @@ public class Person implements Cloneable, Serializable{
 		this.emailAddress = eMail;
 		this.pictureUrl = pictureUrl;
 		this.privateEntry = false;
+
 		updateScaledPicture();
 	}
 
-	public Person(String firstName, String lastName) {
+	public Person(final String firstName, final String lastName) {
 		this();
 
 		this.firstName = firstName;
@@ -173,7 +130,7 @@ public class Person implements Cloneable, Serializable{
 		this.privateEntry = false;
 	}
 
-	private void copyFrom(Person person) {
+	private void copyFrom(final Person person) {
 		firstName = person.getFirstName();
 		company = person.getCompany();
 		lastName = person.getLastName();
@@ -185,30 +142,32 @@ public class Person implements Cloneable, Serializable{
 		pictureUrl = person.getPictureUrl();
 		scaledPicture = person.getScaledPicture();
 		numbers.clear();
-		Enumeration<PhoneNumber> en = person.getNumbers().elements();
+		final Enumeration<PhoneNumber> en = person.getNumbers().elements(); // NOPMD
 		while (en.hasMoreElements()) {
 			numbers.add(en.nextElement().clone());
 		}
 		privateEntry = person.isPrivateEntry();
 	}
 
-	public void addNumber(PhoneNumber number) {
+	public void addNumber(final PhoneNumber number) {
 		numbers.add(number);
 		if (numbers.size() == 1)
+		{
 			setStandard(number.getType());
+		}
 	}
 
-	public void addNumber(String number, String type) {
-		PhoneNumber pn = new PhoneNumber(number, false);
-		pn.setType(type);
-		addNumber(pn);
+	public void addNumber(final String number, final String type) {
+		final PhoneNumber pNumber = new PhoneNumber(number, false); // NOPMD
+		pNumber.setType(type);
+		addNumber(pNumber);
 	}
 
 	public Vector<PhoneNumber> getNumbers() {
 		return numbers;
 	}
 
-	public void setNumbers(Vector<PhoneNumber> numbers, String std) {
+	public void setNumbers(final Vector<PhoneNumber> numbers, final String std) {
 		this.numbers = numbers;
 		setStandard(std);
 
@@ -226,21 +185,36 @@ public class Person implements Cloneable, Serializable{
 		String ret;
 		if ((lastName == null) && (firstName == null)) {
 			ret = "";  //$NON-NLS-1$
-		} else if (lastName == null)
+		}
+		else if (lastName == null)
+		{
 			ret = firstName;
+		}
 		else if (firstName == null)
+		{
 			ret = lastName;
-		else if (lastName.length() == 0 && firstName.length() > 0) {
+		}
+		else if (lastName.length() == 0 && firstName.length() > 0)
+		{
 			ret = firstName;
-		} else if (firstName.length() == 0) {
+		}
+		else if (firstName.length() == 0)
+		{
 			ret = lastName;
-		} else
+		}
+		else
+		{
 			ret = (lastName + ", " + firstName).trim(); //$NON-NLS-1$
+		}
 		if ((company != null) && (company.length() > 0)) {
 			if (ret.length() > 0)
+			{
 				ret += " (" + company + ")"; //$NON-NLS-1$,  //$NON-NLS-2$
+			}
 			else
+			{
 				ret = company;
+			}
 		}
 		return ret;
 	}
@@ -251,32 +225,47 @@ public class Person implements Cloneable, Serializable{
 	// TODO Sonstiges und Nichtgefundenes
 	// TODO sip != Pager, korrigieren
 	public String toVCard() {
-		String vcard = "";  //$NON-NLS-1$
-		vcard = "BEGIN:vCard\n" //$NON-NLS-1$
+		StringBuffer vcard = new StringBuffer(111);  //$NON-NLS-1$
+		vcard.append("BEGIN:vCard\n" //$NON-NLS-1$
 				+ "VERSION:2.1\n" //$NON-NLS-1$
 				+ "FN: " + getFullname() //$NON-NLS-1$
 				+ "\n" + "ADR;Type=HOME,POSTAL:;;" + getStreet() + ";" //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-				+ getCity() + ";;" + getPostalCode() + "\n"; //$NON-NLS-1$,  //$NON-NLS-2$
+				+ getCity() + ";;" + getPostalCode() + "\n"); //$NON-NLS-1$,  //$NON-NLS-2$
 		Enumeration<PhoneNumber> en = numbers.elements();
+		PhoneNumber number;
 		while (en.hasMoreElements()) {
-			PhoneNumber n = en.nextElement();
-			if (n.getType().startsWith("home")) //$NON-NLS-1$
-				vcard = vcard + "TEL;TYPE=VOICE,HOME:"; //$NON-NLS-1$
-			else if (n.getType().startsWith("business")) //$NON-NLS-1$
-				vcard = vcard + "TEL;TYPE=VOICE,WORK:"; //$NON-NLS-1$
-			else if (n.getType().startsWith("mobile")) //$NON-NLS-1$
-				vcard = vcard + "TEL;CELL:"; //$NON-NLS-1$
-			else if (n.getType().startsWith("sip")) //$NON-NLS-1$
-				vcard = vcard + "TEL;PAGER:"; //$NON-NLS-1$
-			else if (n.getType().startsWith("fax")) //$NON-NLS-1$
-				vcard = vcard + "TEL;FAX:"; //$NON-NLS-1$
+			number = en.nextElement();
+			if (number.getType().startsWith("home")) //$NON-NLS-1$
+			{
+				vcard.append("TEL;TYPE=VOICE,HOME:"); //$NON-NLS-1$
+			}
+			else if (number.getType().startsWith("business")) //$NON-NLS-1$
+			{
+				vcard.append("TEL;TYPE=VOICE,WORK:"); //$NON-NLS-1$
+			}
+			else if (number.getType().startsWith("mobile")) //$NON-NLS-1$
+			{
+				vcard.append("TEL;CELL:"); //$NON-NLS-1$
+			}
+			else if (number.getType().startsWith("sip")) //$NON-NLS-1$
+			{
+				vcard.append("TEL;PAGER:"); //$NON-NLS-1$
+			}
+			else if (number.getType().startsWith("fax")) //$NON-NLS-1$
+			{
+				vcard.append("TEL;FAX:"); //$NON-NLS-1$
+			}
 			else
-				vcard = vcard + "TEL;DIVERS:"; //$NON-NLS-1$
-			vcard = vcard + n.convertToIntNumber() + "\n"; //$NON-NLS-1$
+			{
+				vcard.append("TEL;DIVERS:"); //$NON-NLS-1$
+			}
+			vcard.append(number.convertToIntNumber());
+			vcard.append("\n");
 		}
-		vcard = vcard + "EMAIL;TYPE=INTERNET,PREF:" + getEmailAddress() + "\n" //$NON-NLS-1$, //$NON-NLS-2$
-				+ "END:vCard\n"; //$NON-NLS-1$
-		return vcard;
+		vcard.append("EMAIL;TYPE=INTERNET,PREF:");
+		vcard.append(getEmailAddress());
+		vcard.append("\nEND:vCard\n"); //$NON-NLS-1$
+		return vcard.toString();
 	}
 
 	/**
@@ -284,13 +273,14 @@ public class Person implements Cloneable, Serializable{
 	 *
 	 * @param file
 	 */
-	public void saveToVCard(File file) {
+	public void saveToVCard(final File file) {
 		FileOutputStream fos;
+		PrintWriter pWriter;
 		try {
 			fos = new FileOutputStream(file);
-			PrintWriter pw = new PrintWriter(fos);
-			pw.println(toVCard());
-			pw.close();
+			pWriter = new PrintWriter(fos);
+			pWriter.println(toVCard());
+			pWriter.close();
 		} catch (FileNotFoundException e) {
 			Debug.err("Could not write " + file.getName() + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
@@ -298,43 +288,57 @@ public class Person implements Cloneable, Serializable{
 
 	public String getFirstName() {
 		if (firstName == null)
+		{
 			return ""; //$NON-NLS-1$
+		}
 		return firstName;
 	}
 
 	public String getCompany() {
 		if (company == null)
+		{
 			return ""; //$NON-NLS-1$
+		}
 		return company;
 	}
 
 	public String getLastName() {
 		if (lastName == null)
+		{
 			return ""; //$NON-NLS-1$
+		}
 		return lastName;
 	}
 
 	public String getStreet() {
 		if (street == null)
+		{
 			return ""; //$NON-NLS-1$
+		}
 		return street;
 	}
 
 	public String getPostalCode() {
 		if (postalCode == null)
+		{
 			return ""; //$NON-NLS-1$
+		}
 		return postalCode;
 	}
 
 	public String getCity() {
 		if (city == null)
+		{
 			return ""; //$NON-NLS-1$
+		}
 		return city;
 	}
 
 	public String getPictureUrl() {
 		if (pictureUrl == null)
+		{
 			return ""; //$NON-NLS-1$
+		}
 		return pictureUrl;
 	}
 
@@ -342,12 +346,13 @@ public class Person implements Cloneable, Serializable{
 		return scaledPicture;
 	}
 
-	public PhoneNumber getPhoneNumber(String type) {
-		Enumeration<PhoneNumber> en = numbers.elements();
-		while (en.hasMoreElements()) {
-			PhoneNumber n = en.nextElement();
-			if (n.getType().equals(type))
-				return n;
+	public PhoneNumber getPhoneNumber(final String type) {
+		final Enumeration<PhoneNumber> enumeration = numbers.elements(); // NOPMD
+		PhoneNumber number;
+		while (enumeration.hasMoreElements()) {
+			number = enumeration.nextElement();
+			if (number.getType().equals(type))
+				return number;
 		}
 		return null;
 	}
@@ -368,16 +373,17 @@ public class Person implements Cloneable, Serializable{
 	 *            true, if main number sould be considered
 	 * @return True if person has a phone number
 	 */
-	public boolean hasNumber(String number, boolean considerMain) {
+	public boolean hasNumber(final String number, final boolean considerMain) {
 		Enumeration<PhoneNumber> en = numbers.elements();
+		PhoneNumber numb;
 		while (en.hasMoreElements()) {
-			PhoneNumber n = en.nextElement();
-			if ((n.getType().startsWith("main")) && (considerMain)) { //$NON-NLS-1$
+			numb = en.nextElement();
+			if ((numb.getType().startsWith("main")) && (considerMain)) { //$NON-NLS-1$
 				// starts with ...
-				if (number.startsWith(n.getIntNumber()))
+				if (number.startsWith(numb.getIntNumber()))
 					return true;
 			} else { // equal number
-				if (number.equals(n.getIntNumber()))
+				if (number.equals(numb.getIntNumber()))
 					return true;
 			}
 		}
@@ -386,39 +392,41 @@ public class Person implements Cloneable, Serializable{
 
 	public String getEmailAddress() {
 		if (emailAddress == null)
+		{
 			return ""; //$NON-NLS-1$
+		}
 		return emailAddress;
 	}
 
-	public void setFirstName(String firstName) {
+	public void setFirstName(final String firstName) {
 		this.firstName = firstName;
 	}
 
-	public void setCompany(String middleName) {
+	public void setCompany(final String middleName) {
 		this.company = middleName;
 	}
 
-	public void setLastName(String lastName) {
+	public void setLastName(final String lastName) {
 		this.lastName = lastName;
 	}
 
-	public void setStreet(String street) {
+	public void setStreet(final String street) {
 		this.street = street;
 	}
 
-	public void setPostalCode(String postCode) {
+	public void setPostalCode(final String postCode) {
 		this.postalCode = postCode;
 	}
 
-	public void setCity(String city) {
+	public void setCity(final String city) {
 		this.city = city;
 	}
 
-	public void setEmailAddress(String email) {
+	public void setEmailAddress(final String email) {
 		this.emailAddress = email;
 	}
 
-	public void setPictureUrl(String pictureUrl) {
+	public void setPictureUrl(final String pictureUrl) {
 		this.pictureUrl = pictureUrl;
 		updateScaledPicture();
 	}
@@ -428,7 +436,9 @@ public class Person implements Cloneable, Serializable{
 	 */
 	public final String getStandard() {
 		if (standard == null)
+		{
 			return ""; //$NON-NLS-1$
+		}
 		return standard;
 	}
 
@@ -436,7 +446,7 @@ public class Person implements Cloneable, Serializable{
 	 * @param standard
 	 *            Sets standard number
 	 */
-	public final void setStandard(String standard) {
+	public final void setStandard(final String standard) {
 		if  (getPhoneNumber(standard) == null) {
 			// do not set a type as standard, if the number does not exist
 			return;
@@ -444,7 +454,7 @@ public class Person implements Cloneable, Serializable{
 		this.standard = standard;
 	}
 
-	public void setPrivateEntry(boolean b) {
+	public void setPrivateEntry(final boolean b) {
 		privateEntry = b;
 	}
 
@@ -474,7 +484,7 @@ public class Person implements Cloneable, Serializable{
 	 * @param
 	 * @author Benjamin Schmitt
 	 */
-	public String getAddress(String lineSeparator, String wordSeparator) {
+	public String getAddress(final String lineSeparator, final String wordSeparator) {
 
 		// TODO: create patterns as params for that function
 
@@ -538,9 +548,11 @@ public class Person implements Cloneable, Serializable{
 
 		// numbers
 		if (getNumbers() == null)
+		{
 			outString = outString.concat(separator+"\"\""); //$NON-NLS-1$
-
+		}
 		else
+		{
 			for (int i = 0; i < 8; i++) {
 				try {
 					outString = outString.concat(separator+"\""//$NON-NLS-1$
@@ -552,6 +564,7 @@ public class Person implements Cloneable, Serializable{
 				}
 
 			}
+		}
 
 		return outString;
 	}
@@ -595,14 +608,19 @@ public class Person implements Cloneable, Serializable{
 
 		// numbers
 		if (getNumbers() == null)
+		{
 			outString = outString.concat("\""); //$NON-NLS-1$
-
+		}
 		else
+		{
 			for (PhoneNumber number: numbers)
-				outString = outString + number.toCSV()+":";
+			{
+				outString = outString.concat(number.toCSV()+":");
+			}
+		}
 
-			outString = outString.substring(0, outString.length()-1);
-			outString = outString+"\"";
+		outString = outString.substring(0, outString.length()-1);
+		outString = outString.concat("\"");
 
 		return outString;
 	}
@@ -613,26 +631,27 @@ public class Person implements Cloneable, Serializable{
 	 *          for the null pointer exceptions that are caused by adding a
 	 *          contact when a filter is set
 	 */
-	public boolean matchesKeyword(String s) {
-		if (s == null || s.equals("")) {//$NON-NLS-1$
+	public boolean matchesKeyword(final String key) {
+		if (key == null || key.equals("")) {//$NON-NLS-1$
 			return true;
 		}
-		if (getFullname().toLowerCase().indexOf(s.toLowerCase()) != -1) {
+		if (getFullname().toLowerCase().indexOf(key.toLowerCase()) != -1) {
 			return true;
 		}
 		Enumeration<PhoneNumber> en = numbers.elements();
+		PhoneNumber number;
 		while (en.hasMoreElements()) {
-			PhoneNumber n = en.nextElement();
+			number = en.nextElement();
 
-            if ( s.startsWith("+")) {
-                if (n.getIntNumber().indexOf(s) != -1) {
+            if ( key.charAt(0) == '+') {
+                if (number.getIntNumber().indexOf(key) != -1) {
                     return true;
                 }
-            } else if (n.getAreaNumber().indexOf(s) != -1) {
+            } else if (number.getAreaNumber().indexOf(key) != -1) {
 				return true;
 			}
 		}
-		if (getAddress().toLowerCase().indexOf(s.toLowerCase()) != -1) {
+		if (getAddress().toLowerCase().indexOf(key.toLowerCase()) != -1) {
 			return true;
 		}
 		return false;
@@ -644,41 +663,42 @@ public class Person implements Cloneable, Serializable{
 	 * @param p data object which is checked for redundancy
 	 * @return true if p contains only redundant information
 	 */
-	public boolean supersedes(Person p) {
+	public boolean supersedes(final Person p) {
 		// Person data is checked
-		if (firstName.indexOf(p.firstName) == -1)
+		if ((firstName.indexOf(p.firstName) == -1)
+			|| (lastName.indexOf(p.lastName) == -1)
+			|| (company.indexOf(p.company) == -1)
+			|| (street.indexOf(p.street) == -1)
+			|| (postalCode.indexOf(p.postalCode) == -1)
+			|| (city.indexOf(p.city) == -1)
+			|| (emailAddress.indexOf(p.emailAddress) == -1))
+		{
 			return false;
-		if (lastName.indexOf(p.lastName) == -1)
-			return false;
-		if (company.indexOf(p.company) == -1)
-			return false;
-		if (street.indexOf(p.street) == -1)
-			return false;
-		if (postalCode.indexOf(p.postalCode) == -1)
-			return false;
-		if (city.indexOf(p.city) == -1)
-			return false;
-		if (emailAddress.indexOf(p.emailAddress) == -1)
-			return false;
+		}
 
 		// Ensuring that this person has more numbers
 		if (numbers.size() < p.numbers.size())
+		{
 			return false;
+		}
 
 		// Creating a set of this person's numbers
 		Enumeration<PhoneNumber> ownNumberEnum = numbers.elements();
 		Set<String> ownNumberSet = new HashSet<String>();
+		PhoneNumber number;
 		while (ownNumberEnum.hasMoreElements()) {
-			PhoneNumber n = ownNumberEnum.nextElement();
-			ownNumberSet.add(n.getIntNumber());
+			number = ownNumberEnum.nextElement();
+			ownNumberSet.add(number.getIntNumber());
 		}
 
 		// Checking whether this person's numbers are a real superset
 		Enumeration<PhoneNumber> otherNumberEnum = p.numbers.elements();
 		while (otherNumberEnum.hasMoreElements()) {
-			PhoneNumber n = (PhoneNumber) otherNumberEnum.nextElement();
-			if (! ownNumberSet.contains(n.getIntNumber()))
+			number = (PhoneNumber) otherNumberEnum.nextElement();
+			if (! ownNumberSet.contains(number.getIntNumber()))
+			{
 				return false;
+			}
 		}
 
 		return true;
@@ -688,7 +708,7 @@ public class Person implements Cloneable, Serializable{
 		return lastCall;
 	}
 
-	public void setLastCall(Call lastCall) {
+	public void setLastCall(final Call lastCall) {
 		this.lastCall = lastCall;
 	}
 
@@ -716,20 +736,20 @@ public class Person implements Cloneable, Serializable{
 		{
 			pictureIcon = new ImageIcon("");
 		}
-		float pictureWidthFactor = (float)pictureIcon.getIconWidth() / (float)SCALE_WIDTH;
-		float pictureHeightFactor = (float)pictureIcon.getIconHeight() / (float)SCALE_HEIGHT;
+		float pictureWFactor = (float)pictureIcon.getIconWidth() / (float)SCALE_WIDTH;
+		float pictureHFactor = (float)pictureIcon.getIconHeight() / (float)SCALE_HEIGHT;
 
 		int scaleToWidth = 0;
 		int scaleToHeight = 0;
-		if ( pictureWidthFactor > pictureHeightFactor )
+		if ( pictureWFactor > pictureHFactor )
 		{
-			scaleToWidth = (int)((float)pictureIcon.getIconWidth() / pictureWidthFactor);
-			scaleToHeight = (int)((float)pictureIcon.getIconHeight() / pictureWidthFactor);
+			scaleToWidth = (int)((float)pictureIcon.getIconWidth() / pictureWFactor);
+			scaleToHeight = (int)((float)pictureIcon.getIconHeight() / pictureWFactor);
 		}
 		else
 		{
-			scaleToWidth = (int)((float)pictureIcon.getIconWidth() / pictureHeightFactor);
-			scaleToHeight = (int)((float)pictureIcon.getIconHeight() / pictureHeightFactor);
+			scaleToWidth = (int)((float)pictureIcon.getIconWidth() / pictureHFactor);
+			scaleToHeight = (int)((float)pictureIcon.getIconHeight() / pictureHFactor);
 		}
 
 		this.scaledPicture = pictureIcon.getImage().getScaledInstance(scaleToWidth, scaleToHeight, Image.SCALE_SMOOTH);

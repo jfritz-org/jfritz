@@ -157,6 +157,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * @param jfritz
 	 */
 	public JFritzWindow(JFritz jfritz) {
+		super();
 		this.jFritz = jfritz;
 		Debug.msg("Create JFritz-GUI"); //$NON-NLS-1$
 		maxBounds = null;
@@ -182,10 +183,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 			public void componentResized(ComponentEvent arg0) {
 				Debug.msg("Window resized");
-				Main.setStateProperty("position.left", Integer.toString(getLocation().x)); //$NON-NLS-1$
-				Main.setStateProperty("position.top", Integer.toString(getLocation().y));//$NON-NLS-1$
-				Main.setStateProperty("position.width", Integer.toString(thisWindow.getWidth()));//$NON-NLS-1$
-				Main.setStateProperty("position.height", Integer.toString(thisWindow.getHeight()));//$NON-NLS-1$
+				if (getExtendedState() != Frame.MAXIMIZED_BOTH)
+				{
+					Main.setStateProperty("position.left", Integer.toString(getLocation().x)); //$NON-NLS-1$
+					Main.setStateProperty("position.top", Integer.toString(getLocation().y));//$NON-NLS-1$
+					Main.setStateProperty("position.width", Integer.toString(thisWindow.getWidth()));//$NON-NLS-1$
+					Main.setStateProperty("position.height", Integer.toString(thisWindow.getHeight()));//$NON-NLS-1$
+				}
 			}
 
 			public void componentShown(ComponentEvent arg0) {
@@ -1250,10 +1254,26 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			Debug.msg("Window state old: " + Integer.toString(windowState));
 			Debug.msg("Windows state:    " + Main.getStateProperty("window.state"));
 
+			if ((windowState != Frame.MAXIMIZED_BOTH) && (windowState != Frame.ICONIFIED))
+			{
+				windowState = Frame.NORMAL;
+			}
+
+			// use this at windows and other systems
 			setVisible(true);
 			setExtendedState(windowState);
+
+			// use this at gnome
+//            setExtendedState(windowState);
+//            setVisible(true);
+//            setExtendedState(Frame.ICONIFIED);
+//            setVisible(false);
+//            setExtendedState(windowState);
+//            setVisible(true);
+
+			// use this on any system
 			toFront();
-			repaint();
+            repaint();
 		}
 	}
 

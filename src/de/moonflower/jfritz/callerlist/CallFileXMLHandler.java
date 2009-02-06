@@ -13,6 +13,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.Debug;
@@ -111,8 +112,8 @@ public class CallFileXMLHandler extends DefaultHandler {
 					if (callbycall.length() > 0)
 						number.setCallByCall(callbycall);
 				}
-				callerlist.addEntry(calltype, calldate, number, port, route,
-						duration, comment);
+				callerlist.addEntry(new Call(calltype, calldate, number, port, route, duration,
+						comment));
 			}
 
 		}

@@ -133,7 +133,7 @@ public class ReverseLookupXMLHandler extends DefaultHandler{
 		} else if (qName.equals("country")) { //$NON-NLS-1$
 			if(!country_code.equals("")){
 
-				Debug.msg(rls_count+" websites added for "+country_code);
+//				Debug.msg(rls_count+" websites added for "+country_code);
 				//Add the country to the hashmap with the reveselookupsite list
 				ReverseLookup.addReverseLookupSites(country_code, rls_list);
 			}

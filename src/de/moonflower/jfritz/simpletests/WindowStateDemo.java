@@ -76,6 +76,8 @@ public class WindowStateDemo extends JPanel
                 }
 
                 public void mousePressed(MouseEvent e) {
+                	System.out.println("Button: " + e.getButton());
+                	System.out.println("Modifier: "+ e.getModifiers());
                     System.out.println("Tray Icon - Mouse pressed!");
                 }
 

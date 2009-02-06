@@ -200,9 +200,9 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.2.10"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.2.11"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.140 2009/01/24 11:01:13 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.141 2009/02/06 19:15:07 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -266,6 +266,8 @@ public class Main implements LookupObserver {
 		Thread.currentThread().setPriority(5);
 		Thread.currentThread().setName("JFritz main thread");
 
+		alreadyDoneShutdown = false;
+
 		//Catch non-user-initiated VM shutdown
 		shutdownHandler = new ShutdownHook.Handler() {
 		      public void shutdown( String signal_name ) {
@@ -283,6 +285,10 @@ public class Main implements LookupObserver {
 
 		jfritzHomedir = JFritzUtils.getFullPath(".update");
 		jfritzHomedir = jfritzHomedir.substring(0, jfritzHomedir.length() - 7);
+
+		initiateCLIParameters();
+		checkDebugParameters(args);
+		initJFritz(args, this);
 	}
 
 	/**
@@ -297,10 +303,90 @@ public class Main implements LookupObserver {
 	 */
 	public static void main(String[] args) {
 		Debug.on();
-		alreadyDoneShutdown = false;
-		Main main = new Main(args);
-		main.initiateCLIParameters();
-		main.checkDebugParameters(args);
+		new Main(args);
+	}
+
+	/**
+	 * Initialisiert die erlaubten Kommandozeilenparameter
+	 *
+	 */
+	private void initiateCLIParameters() {
+		options = new CLIOptions();
+
+		options.addOption('b', "backup" //$NON-NLS-1$,  //$NON-NLS-2$
+				, null, "Creates a backup of all xml-Files in the directory 'backup'"); //$NON-NLS-1$
+		options.addOption('c', "clear_list" //$NON-NLS-1$,  //$NON-NLS-2$
+				, null, "Clears Caller List and exit"); //$NON-NLS-1$
+		options.addOption('d', "delete_on_box" //$NON-NLS-1$,  //$NON-NLS-2$
+				, null, "Delete callerlist of the Fritz!Box."); //$NON-NLS-1$
+		options.addOption('e', "export" //$NON-NLS-1$,  //$NON-NLS-2$
+				, "filename", "Fetch calls and export to CSV file."); //$NON-NLS-1$,  //$NON-NLS-2$
+		options.addOption('f', "fetch" //$NON-NLS-1$,  //$NON-NLS-2$
+				, null, "Fetch new calls and exit"); //$NON-NLS-3$
+		options.addOption('h', "help" //$NON-NLS-1$,  //$NON-NLS-2$
+				, null, "This short description"); //$NON-NLS-1$
+        options.addOption('i',"lang" //$NON-NLS-1$,  //$NON-NLS-2$
+        		, "language", "Set the display language, currently supported: german, english"); //$NON-NLS-1$,  //$NON-NLS-2$
+		options.addOption('l', "logfile" //$NON-NLS-1$,  //$NON-NLS-2$
+				, "filename", "Writes debug messages to logfile"); //$NON-NLS-1$,  //$NON-NLS-2$
+		options.addOption('n', "nosystray" //$NON-NLS-1$,  //$NON-NLS-2$
+				, null, "Turn off systray support"); //$NON-NLS-1$
+		options.addOption('p', "priority" //$NON-NLS-1$,  //$NON-NLS-2$
+				, "level", "Set program priority [1..10]"); //$NON-NLS-1$,  //$NON-NLS-2$
+		options.addOption('q', "quiet" //$NON-NLS-1$,  //$NON-NLS-2$
+				, null, "Hides splash screen"); //$NON-NLS-1$
+		options.addOption('r', "reverse-lookup" //$NON-NLS-1$,  //$NON-NLS-2$
+				, null, "Do a reverse lookup and exit. Can be used together with -e -f and -z"); //$NON-NLS-1$
+		options.addOption('s', "systray" //$NON-NLS-1$,  //$NON-NLS-2$
+				, null, "Turn on systray support"); //$NON-NLS-1$
+		options.addOption('w', "without-control" //$NON-NLS-1$,  //$NON-NLS-2$
+				, null, "Turns off multiple instance control. DON'T USE, unless you know what your are doing"); //$NON-NLS-1$
+		options.addOption('z', "exportForeign" //$NON-NLS-1$,  //$NON-NLS-2$
+				, null, "Write phonebooks compatible to BIT FBF Dialer and some other callmonitors."); //$NON-NLS-1$
+		options.addOption('v', "verbose" //$NON-NLS-1$,  //$NON-NLS-2$
+				, null, "Turn on debug information"); //$NON-NLS-1$
+	}
+
+	/**
+	 * Überprüft, ob die -h, -v oder -l Startparameter gesetzt sind
+	 *
+	 * @param args
+	 *            Kommandozeilenargumente
+	 */
+	private void checkDebugParameters(String[] args) {
+		Vector<CLIOption> foundOptions = options.parseOptions(args);
+
+		// Checke den help, verbose/debug und log-to-file parameter
+		Enumeration<CLIOption> en = foundOptions.elements();
+		while (en.hasMoreElements()) {
+			CLIOption option = (CLIOption) en.nextElement();
+
+			switch (option.getShortOption()) {
+			case 'h': //$NON-NLS-1$
+				System.out.println("Usage: java -jar jfritz.jar [Options]"); //$NON-NLS-1$
+				options.printOptions();
+				exit(0);
+				break;
+			case 'v': //$NON-NLS-1$
+				Debug.on();
+				break;
+			case 'l': //$NON-NLS-1$
+				String logFilename = option.getParameter();
+				if (logFilename == null || logFilename.equals("")) { //$NON-NLS-1$
+					Debug.logToFile("Debuglog.txt");
+				} else {
+					Debug.logToFile(logFilename);
+					break;
+				}
+			case 'q': //$NON-NSL-1$
+				showSplashScreen = false;
+				break;
+			}
+		}
+	}
+
+	private void initJFritz(String[] args, Main main)
+	{
 		SplashScreen splash = new SplashScreen(showSplashScreen);
 		splash.setVersion("v" + Main.PROGRAM_VERSION);
 		splash.setStatus("Initializing JFritz...");
@@ -429,85 +515,6 @@ public class Main implements LookupObserver {
 		if ( result == 0 && !JFritz.isWizardCanceled() && JFritz.getJframe() != null)
 		{
 			JFritz.getJframe().checkOptions();
-		}
-	}
-
-	/**
-	 * Initialisiert die erlaubten Kommandozeilenparameter
-	 *
-	 */
-	private void initiateCLIParameters() {
-		options = new CLIOptions();
-
-		options.addOption('b', "backup" //$NON-NLS-1$,  //$NON-NLS-2$
-				, null, "Creates a backup of all xml-Files in the directory 'backup'"); //$NON-NLS-1$
-		options.addOption('c', "clear_list" //$NON-NLS-1$,  //$NON-NLS-2$
-				, null, "Clears Caller List and exit"); //$NON-NLS-1$
-		options.addOption('d', "delete_on_box" //$NON-NLS-1$,  //$NON-NLS-2$
-				, null, "Delete callerlist of the Fritz!Box."); //$NON-NLS-1$
-		options.addOption('e', "export" //$NON-NLS-1$,  //$NON-NLS-2$
-				, "filename", "Fetch calls and export to CSV file."); //$NON-NLS-1$,  //$NON-NLS-2$
-		options.addOption('f', "fetch" //$NON-NLS-1$,  //$NON-NLS-2$
-				, null, "Fetch new calls and exit"); //$NON-NLS-3$
-		options.addOption('h', "help" //$NON-NLS-1$,  //$NON-NLS-2$
-				, null, "This short description"); //$NON-NLS-1$
-        options.addOption('i',"lang" //$NON-NLS-1$,  //$NON-NLS-2$
-        		, "language", "Set the display language, currently supported: german, english"); //$NON-NLS-1$,  //$NON-NLS-2$
-		options.addOption('l', "logfile" //$NON-NLS-1$,  //$NON-NLS-2$
-				, "filename", "Writes debug messages to logfile"); //$NON-NLS-1$,  //$NON-NLS-2$
-		options.addOption('n', "nosystray" //$NON-NLS-1$,  //$NON-NLS-2$
-				, null, "Turn off systray support"); //$NON-NLS-1$
-		options.addOption('p', "priority" //$NON-NLS-1$,  //$NON-NLS-2$
-				, "level", "Set program priority [1..10]"); //$NON-NLS-1$,  //$NON-NLS-2$
-		options.addOption('q', "quiet" //$NON-NLS-1$,  //$NON-NLS-2$
-				, null, "Hides splash screen"); //$NON-NLS-1$
-		options.addOption('r', "reverse-lookup" //$NON-NLS-1$,  //$NON-NLS-2$
-				, null, "Do a reverse lookup and exit. Can be used together with -e -f and -z"); //$NON-NLS-1$
-		options.addOption('s', "systray" //$NON-NLS-1$,  //$NON-NLS-2$
-				, null, "Turn on systray support"); //$NON-NLS-1$
-		options.addOption('w', "without-control" //$NON-NLS-1$,  //$NON-NLS-2$
-				, null, "Turns off multiple instance control. DON'T USE, unless you know what your are doing"); //$NON-NLS-1$
-		options.addOption('z', "exportForeign" //$NON-NLS-1$,  //$NON-NLS-2$
-				, null, "Write phonebooks compatible to BIT FBF Dialer and some other callmonitors."); //$NON-NLS-1$
-		options.addOption('v', "verbose" //$NON-NLS-1$,  //$NON-NLS-2$
-				, null, "Turn on debug information"); //$NON-NLS-1$
-	}
-
-	/**
-	 * Überprüft, ob die -h, -v oder -l Startparameter gesetzt sind
-	 *
-	 * @param args
-	 *            Kommandozeilenargumente
-	 */
-	private void checkDebugParameters(String[] args) {
-		Vector<CLIOption> foundOptions = options.parseOptions(args);
-
-		// Checke den help, verbose/debug und log-to-file parameter
-		Enumeration<CLIOption> en = foundOptions.elements();
-		while (en.hasMoreElements()) {
-			CLIOption option = (CLIOption) en.nextElement();
-
-			switch (option.getShortOption()) {
-			case 'h': //$NON-NLS-1$
-				System.out.println("Usage: java -jar jfritz.jar [Options]"); //$NON-NLS-1$
-				options.printOptions();
-				exit(0);
-				break;
-			case 'v': //$NON-NLS-1$
-				Debug.on();
-				break;
-			case 'l': //$NON-NLS-1$
-				String logFilename = option.getParameter();
-				if (logFilename == null || logFilename.equals("")) { //$NON-NLS-1$
-					Debug.logToFile("Debuglog.txt");
-				} else {
-					Debug.logToFile(logFilename);
-					break;
-				}
-			case 'q': //$NON-NSL-1$
-				showSplashScreen = false;
-				break;
-			}
 		}
 	}
 

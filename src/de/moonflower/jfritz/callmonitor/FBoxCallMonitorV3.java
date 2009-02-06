@@ -83,8 +83,11 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 	                    provider = split[4];
 	                }
 	            } else if (split[5].startsWith("SIP")) { //$NON-NLS-1$
-	                provider = JFritz.getSIPProviderTableModel().getSipProvider(
+	            	if (JFritz.getSIPProviderTableModel() != null)
+	            	{
+	            		provider = JFritz.getSIPProviderTableModel().getSipProvider(
 	                        split[5], split[5]);
+	            	}
 
 	            } else if (split[5].equals("ISDN")) { //$NON-NLS-1$
 	                provider = split[4];
@@ -124,9 +127,11 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 	                    provider = split[4];
 	                }
 	            } else if (split[6].startsWith("SIP")) { //$NON-NLS-1$
+	            	if (JFritz.getSIPProviderTableModel() != null)
+	            	{
 	                provider = JFritz.getSIPProviderTableModel().getSipProvider(
 	                        split[6], split[6]);
-
+	            	}
 	            } else if (split[6].equals("ISDN")) { //$NON-NLS-1$
 	                provider = split[4];
 	            } else
