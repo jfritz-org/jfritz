@@ -40,13 +40,6 @@ public class WatchdogThread extends Thread {
 
     public void run() {
     	if (JFritz.getJframe().isCallMonitorStarted() && (JFritz.getCallMonitor() != null)) {
-//    		Debug.msg("Ping box");
-    		if (!JFritz.getCallMonitor().pingBox())
-    		{
-				Debug.err("Ping failed. Reconnecting call monitor");
-				JFritz.getCallMonitor().closeConnection();
-				JFritz.getJframe().setCallMonitorDisconnectedStatus();
-    		}
 	    	if (watchdogCalls == factor)
 	    	{
 				watchdogCalls = 0;
@@ -73,11 +66,6 @@ public class WatchdogThread extends Thread {
             standbyDetected = true;
         }
 
-        if ((JFritz.getCallMonitor() != null) && (!JFritz.getCallMonitor().isConnected()))
-        {
-        	restartCallMonitor(false);
-        }
-
         if (standbyDetected)
         {
         	restartCallMonitor(true);
@@ -88,12 +76,6 @@ public class WatchdogThread extends Thread {
         		standbyDetected = false; // reset flag, because we have successfully restarted the call monitor
         	}
         }
-
-//        else if (now.getTime() - startWatchdogTimestamp.getTime() > 5*60000) {
-////        	Debug.msg("Watchdog: 5 Minuten vorbei. Restarte CallMonitor");
-//        	restartCallMonitor();
-//        	startWatchdogTimestamp = now;
-//        }
         setTimestamp();
     }
 

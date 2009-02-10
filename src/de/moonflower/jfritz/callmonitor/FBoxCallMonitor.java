@@ -8,7 +8,9 @@ import de.moonflower.jfritz.utils.Debug;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.NoRouteToHostException;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.Random;
 
@@ -46,16 +48,63 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
         super("FBoxThread");
         Debug.msg("Starting FBoxListener"); //$NON-NLS-1$
         this.setDaemon(true);
+        running = true;
         start();
         zufallszahl = new Random();
+        Debug.msg("Trying to connect to " //$NON-NLS-1$
+                + JFritz.getFritzBox().getAddress() + ":1012"); //$NON-NLS-1$,  //$NON-NLS-2$
     }
 
     public abstract void run();
 
     protected boolean connect() {
+    	try {
+	        clientSocket = new Socket(JFritz.getFritzBox().getAddress(), 1012); //$NON-NLS-1$
+	        clientSocket.setKeepAlive(true);
+			JFritz.getJframe().setCallMonitorConnectedStatus();
+			clientSocket.setSoTimeout(15000);
+			connected = true;
+			return true;
+    	} catch (SocketTimeoutException stoe) {
+	        Debug.msg("Socket connect timeout: " + stoe.toString()); //$NON-NLS-1$
+	        closeConnection();
+	        try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	} catch (NoRouteToHostException nrthe) {
+	        Debug.msg("No route to host exception: " + nrthe.toString()); //$NON-NLS-1$
+	        closeConnection();
+	        try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    } catch (UnknownHostException uhe) {
+	        Debug.msg("Unknown host exception: " + uhe.toString()); //$NON-NLS-1$
+	        closeConnection();
+	        try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    } catch (IOException ioe) {
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e1) {
+				System.err.println("Thread interrupted while sleeping!");
+				e1.printStackTrace();
+			}
+	    }
+	    return false;
+    }
+
+    protected boolean connectOld() {
         try {
-            Debug.msg("Trying to connect to " //$NON-NLS-1$
-                    + JFritz.getFritzBox().getAddress() + ":1012"); //$NON-NLS-1$,  //$NON-NLS-2$
             running = true;
             clientSocket = new Socket(JFritz.getFritzBox().getAddress(), 1012); //$NON-NLS-1$
             clientSocket.setKeepAlive(true);
@@ -128,54 +177,19 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
     }
 
     protected void readOutput() {
-    	int failedConnectionCounter = 0;
         try {
             in = new BufferedReader(new InputStreamReader(clientSocket
                     .getInputStream()));
             String currentLine;
-            while (running) {
-                // lese nächste Nachricht ein
-            	while (!in.ready() && running)
-            	{
-					if ( running && !connected )
-					{
-						if (failedConnectionCounter==0)
-						{
-							Debug.msg("Detected connection interruption. Reconnecting...");
-							JFritz.getJframe().setCallMonitorDisconnectedStatus();
-						}
-						failedConnectionCounter++;
-
-            			if (failedConnectionCounter % 20 == 0)
-            			{
-							connected = connect();
-		                    in = new BufferedReader(new InputStreamReader(clientSocket
-		                            .getInputStream()));
-		                    if (connected)
-		                    {
-		                    	failedConnectionCounter=0;
-		                    }
-            			}
-					}
-            		try {
-						Thread.sleep(20);
-					} catch (InterruptedException e) {
-						connected = false;
-			        	Thread.currentThread().interrupt();
-					}
-            	}
-
-            	if (running && connected)
-            	{
-	                currentLine = in.readLine();
-	                parseOutput(currentLine);
-            	}
-            }
+            // lese nächste Nachricht ein
+        	if (running && connected)
+        	{
+                currentLine = in.readLine();
+                parseOutput(currentLine);
+        	}
         } catch (IOException ioe) {
-            Debug.msg("IO exception: " + ioe.toString()); //$NON-NLS-1$
             connected = false;
         }
-        Debug.msg("Callmonitor Thread stopped");
     }
 
     protected abstract void parseOutput(String line);
@@ -197,6 +211,7 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
         } catch (IOException e) {
             Debug.err(e.toString());
         }
+		JFritz.getJframe().setCallMonitorDisconnectedStatus();
     }
 
     public boolean isConnected()

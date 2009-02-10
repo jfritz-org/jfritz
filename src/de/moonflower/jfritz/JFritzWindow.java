@@ -18,6 +18,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.event.WindowStateListener;
 import java.io.BufferedReader;
 import java.io.File;
@@ -93,7 +94,29 @@ import de.moonflower.jfritz.utils.SwingWorker;
 public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		ItemListener, NetworkStateListener {
 
-	private static final long serialVersionUID = 1;
+	class ShowHideFrame extends TimerTask
+    {
+    	JFrame frame;
+    	public ShowHideFrame(JFrame frame)
+    	{
+    		this.frame = frame;
+    	}
+
+    	public void run()
+    	{
+	    	if (frame.isVisible())
+	    	{
+    			frame.setVisible(false); // hide frame
+	    	}
+	    	else
+	    	{
+	        	frame.setVisible(true);
+				frame.toFront();
+	            frame.repaint();
+	    	}
+    	}
+    }
+	private static final long serialVersionUID = 7856291642743441767L;
 
 	private FetchListTimer timer = null;
 
@@ -204,6 +227,46 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				Debug.msg("Window state changed: " + Main.getStateProperty("window.state") + " -> " + Integer.toString(getExtendedState()));
 				Main.setStateProperty("window.state.old", Main.getStateProperty("window.state"));
 				Main.setStateProperty("window.state", Integer.toString(getExtendedState()));
+			}
+
+		});
+
+		final JFritzWindow thisWindow = this;
+		addWindowListener(new WindowListener() {
+
+			public void windowActivated(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+
+			}
+
+			public void windowClosed(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+
+			}
+
+			public void windowClosing(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+
+			}
+
+			public void windowDeactivated(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+
+			}
+
+			public void windowDeiconified(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+
+			}
+
+			public void windowIconified(WindowEvent arg0) {
+				thisWindow.setExtendedState(Integer.parseInt(Main.getStateProperty("window.state")));
+				thisWindow.hideShowJFritz();
+			}
+
+			public void windowOpened(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+
 			}
 
 		});
@@ -1017,17 +1080,20 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		if (e.getID() == WindowEvent.WINDOW_CLOSING) {
 			if (JFritzUtils.parseBoolean(Main.getProperty("option.minimize"))) //$NON-NLS-1$
 			{
+				Debug.msg("Current state close: " + getExtendedState());
 				setExtendedState(Frame.ICONIFIED);
 				Debug.msg("PROCESS WINDOW EVENT: minimize statt close");
 			} else {
 				jFritz.maybeExit(0);
 			}
 		} else if (e.getID() == WindowEvent.WINDOW_ICONIFIED) {
-			Debug.msg("PROCESS WINDOW EVENT: minimize");
-			setExtendedState(Frame.ICONIFIED);
-			if (Main.systraySupport) {
-				setVisible(false);
-			}
+			Debug.msg("Current state: " + getExtendedState());
+//			Main.setStateProperty("window.state.old", Integer.toString(getExtendedState()));
+			super.processWindowEvent(e);
+//			Debug.msg("PROCESS WINDOW EVENT: minimize");
+//			setExtendedState(Frame.ICONIFIED);
+//			if (Main.systraySupport) {
+//				setVisible(false);
 		} else {
 			super.processWindowEvent(e);
 		}
@@ -1242,6 +1308,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	}
 
 	public void hideShowJFritz() {
+    	java.util.Timer timer = new java.util.Timer(true);
+    	timer.schedule(new ShowHideFrame(this), 50);
+	}
+
+	public void hideShowJFritz2() {
 		if (isVisible()) {
 			Debug.msg("Hide JFritz-Window"); //$NON-NLS-1$
 			Debug.msg("Old windows state: " + Main.getStateProperty("window.state.old"));

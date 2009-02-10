@@ -26,27 +26,15 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 	}
 
     public void run() {
-    	int failedConnections = 0;
-    	while (!this.isConnected())
+    	while (this.isRunning())
     	{
-	        if (failedConnections % 50 == 0 && super.connect()) {
-	            Debug.msg("Connected"); //$NON-NLS-1$
-	            readOutput();
-	            failedConnections = 0;
-	        }
-	        else
-	        {
-	        	failedConnections++;
-	        }
-	        if (this.isRunning() == false)
-	        {
-	        	break;
-	        }
-	        try {
-				Thread.sleep(20);
-			} catch (InterruptedException e) {
-	        	break;
-			}
+    		if (!this.isConnected()) {
+    			connect();
+    		}
+    		else
+    		{
+    			readOutput();
+    		}
     	}
     }
 

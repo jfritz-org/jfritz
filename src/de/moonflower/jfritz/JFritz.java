@@ -16,6 +16,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
 
+import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -557,11 +558,15 @@ public final class JFritz implements  StatusListener, ItemListener {
 	public static void playSound(URL sound, float volume) {
 		try {
 			AudioInputStream ais = AudioSystem.getAudioInputStream(sound);
-			DataLine.Info info = new DataLine.Info(Clip.class, ais.getFormat(),
-					((int) ais.getFrameLength() * ais.getFormat()
-							.getFrameSize()));
-			Clip clip = (Clip) AudioSystem.getLine(info);
-			clip.open(ais);
+			AudioFormat aFormat     = ais.getFormat();
+			int size      = (int) (aFormat.getFrameSize() * ais.getFrameLength());
+			byte[] audio       = new byte[size];
+			DataLine.Info info      = new DataLine.Info(Clip.class, aFormat, size);
+			ais.read(audio, 0, size);
+
+            Clip clip = (Clip) AudioSystem.getLine(info);
+            clip.open(aFormat, audio, 0, size);
+
             FloatControl gainControl =
                 (FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);
 //            float min = gainControl.getMinimum();
@@ -569,21 +574,27 @@ public final class JFritz implements  StatusListener, ItemListener {
 //            float diff = max - min;
             gainControl.setValue(volume);
 			clip.start();
+			int loopCount=0;
 			while (true) {
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e1) {
 		        	Thread.currentThread().interrupt();
 				}
-				if (!clip.isRunning()) {
+				loopCount++;
+				if (!clip.isRunning() || loopCount > 40) {
 					break;
 				}
 			}
 			clip.stop();
 			clip.close();
+			ais.close();
 		} catch (UnsupportedAudioFileException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
+			e.printStackTrace();
 		} catch (LineUnavailableException e) {
+			e.printStackTrace();
 		}
 	}
 

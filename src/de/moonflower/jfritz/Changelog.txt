@@ -5,6 +5,11 @@ TODO: Hilfe-Seite für neuen Einstelldialog für Ausblendung der Spalten und anpas
 TODO: Ressourcen in eigenes Jar packen.
 TODO: Client-Server fixen.
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
+TODO: JFritz.playSound scheint buggy zu sein (zumindest unter Vista), ÜBERPRÜFEN und fixen.
+
+JFritz 0.7.2.12:
+- Neuer Anrufmonitor.
+- Minimieren ins Tray funktioniert nun unter Windows-Vista-64.
 
 JFritz 0.7.2.11:
 - Code überarbeitet und gelintet (Person, Call, CallerList).
