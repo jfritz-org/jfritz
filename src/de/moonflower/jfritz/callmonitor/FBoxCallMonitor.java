@@ -15,7 +15,6 @@ import java.net.UnknownHostException;
 import java.util.Random;
 
 import javax.swing.JEditorPane;
-import javax.swing.JOptionPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
@@ -185,7 +184,14 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
         	if (running && connected)
         	{
                 currentLine = in.readLine();
-                parseOutput(currentLine);
+                if (currentLine != null)
+                {
+                    parseOutput(currentLine);
+                }
+                else
+                {
+                	connected = false;
+                }
         	}
         } catch (IOException ioe) {
             connected = false;
