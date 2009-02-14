@@ -7,6 +7,9 @@ TODO: Client-Server fixen.
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 TODO: JFritz.playSound scheint buggy zu sein (zumindest unter Vista), ÜBERPRÜFEN und fixen.
 
+JFritz 0.7.2.14:
+- Neu: Ressourcen in eigenes jar gepackt. Nun können diese relativ leicht ausgetauscht werden.
+
 JFritz 0.7.2.13:
 - Bugfix: Anrufmonitor hat sich aufgehängt und CPU-Last erzeugt.
 - Minimieren ins Tray wieder auf Stand von 0.7.2.10 gebracht, da es doch nicht funktioniert hat.
