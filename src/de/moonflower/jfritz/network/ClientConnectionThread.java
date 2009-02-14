@@ -338,7 +338,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 				e.printStackTrace();
 
 			}catch(SocketException e){
-				if(e.getMessage().equals("Socket closed")){
+				if(e.getMessage().toUpperCase().equals("SOCKET CLOSED")){
 					Debug.netMsg("socket for "+remoteAddress+" was closed!");
 				}else{
 					Debug.err(e.toString());

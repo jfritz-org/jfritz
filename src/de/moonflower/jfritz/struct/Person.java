@@ -51,7 +51,7 @@ public class Person implements Cloneable, Serializable{
 
 	private String pictureUrl = ""; //$NON-NLS-1$
 
-	private Image scaledPicture = null;
+	private ImageIcon scaledPicture = null;
 
 	private String[] basicTypes = {"home", "mobile", "homezone", "business", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$
 			"other", "fax", "sip", "main"}; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$
@@ -342,7 +342,7 @@ public class Person implements Cloneable, Serializable{
 		return pictureUrl;
 	}
 
-	public Image getScaledPicture() {
+	public ImageIcon getScaledPicture() {
 		return scaledPicture;
 	}
 
@@ -729,29 +729,32 @@ public class Person implements Cloneable, Serializable{
 
 	private void updateScaledPicture()
 	{
-		ImageIcon pictureIcon = new ImageIcon(pictureUrl);
-
-		// if we don't find the image, display the default one
-		if (pictureIcon.getIconWidth() == -1 || pictureIcon.getIconHeight() == -1)
+		if (! "".equals(pictureUrl))
 		{
-			pictureIcon = new ImageIcon("");
-		}
-		float pictureWFactor = (float)pictureIcon.getIconWidth() / (float)SCALE_WIDTH;
-		float pictureHFactor = (float)pictureIcon.getIconHeight() / (float)SCALE_HEIGHT;
+			ImageIcon pictureIcon = new ImageIcon(pictureUrl);
 
-		int scaleToWidth = 0;
-		int scaleToHeight = 0;
-		if ( pictureWFactor > pictureHFactor )
-		{
-			scaleToWidth = (int)((float)pictureIcon.getIconWidth() / pictureWFactor);
-			scaleToHeight = (int)((float)pictureIcon.getIconHeight() / pictureWFactor);
-		}
-		else
-		{
-			scaleToWidth = (int)((float)pictureIcon.getIconWidth() / pictureHFactor);
-			scaleToHeight = (int)((float)pictureIcon.getIconHeight() / pictureHFactor);
-		}
+			// if we don't find the image, display the default one
+			if (pictureIcon.getIconWidth() == -1 || pictureIcon.getIconHeight() == -1)
+			{
+				pictureIcon = new ImageIcon("");
+			}
+			float pictureWFactor = (float)pictureIcon.getIconWidth() / (float)SCALE_WIDTH;
+			float pictureHFactor = (float)pictureIcon.getIconHeight() / (float)SCALE_HEIGHT;
 
-		this.scaledPicture = pictureIcon.getImage().getScaledInstance(scaleToWidth, scaleToHeight, Image.SCALE_SMOOTH);
+			int scaleToWidth = 0;
+			int scaleToHeight = 0;
+			if ( pictureWFactor > pictureHFactor )
+			{
+				scaleToWidth = (int)((float)pictureIcon.getIconWidth() / pictureWFactor);
+				scaleToHeight = (int)((float)pictureIcon.getIconHeight() / pictureWFactor);
+			}
+			else
+			{
+				scaleToWidth = (int)((float)pictureIcon.getIconWidth() / pictureHFactor);
+				scaleToHeight = (int)((float)pictureIcon.getIconHeight() / pictureHFactor);
+			}
+
+			this.scaledPicture = new ImageIcon(pictureIcon.getImage().getScaledInstance(scaleToWidth, scaleToHeight, Image.SCALE_SMOOTH));
+		}
 	}
 }

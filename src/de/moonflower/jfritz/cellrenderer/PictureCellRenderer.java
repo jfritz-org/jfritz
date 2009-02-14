@@ -23,9 +23,9 @@ public class PictureCellRenderer extends DefaultTableCellRenderer {
 		label.setText("");
 		label.setHorizontalAlignment(JLabel.CENTER);
 		ImageIcon icon = new ImageIcon("");
-		if ( value instanceof Image )
+		if ( value instanceof ImageIcon )
 		{
-			icon = new ImageIcon((Image) value);
+			icon = (ImageIcon)value;
 		}
 		label.setIcon(icon);
 		if ( ( icon.getIconWidth() != -1) && ( icon.getIconHeight() != -1 ) )

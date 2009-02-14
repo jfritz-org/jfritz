@@ -228,11 +228,11 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 				o1 = p1.getStreet().toUpperCase();
 				o2 = p2.getStreet().toUpperCase();
 				break;
+//			case 5:
+//				o1 = p1.getPostalCode() + p1.getCity().toUpperCase();
+//				o2 = p2.getPostalCode() + p2.getCity().toUpperCase();
+//				break;
 			case 5:
-				o1 = p1.getPostalCode() + p1.getCity().toUpperCase();
-				o2 = p2.getPostalCode() + p2.getCity().toUpperCase();
-				break;
-			case 6:
 				o1 = ""; //$NON-NLS-1$
 				o2 = ""; //$NON-NLS-1$
 				Call call1 = p1.getLastCall();
@@ -848,7 +848,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 		{
 			if ( !person.getPictureUrl().equals(""))
 			{
-				return new ImageIcon(person.getScaledPicture());
+				return person.getScaledPicture();
 			} else {
 				return new ImageIcon("");
 			}
