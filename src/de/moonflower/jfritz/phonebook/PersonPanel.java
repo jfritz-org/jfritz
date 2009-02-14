@@ -578,11 +578,11 @@ public class PersonPanel extends JPanel implements ActionListener,
 				originalPerson.setPictureUrl(clonedPerson.getPictureUrl());
 
 				Vector<PhoneNumber> vNumbers = (Vector<PhoneNumber>) clonedPerson.getNumbers();
-				Vector<PhoneNumber> cNumbers = (Vector<PhoneNumber>) vNumbers.clone();
 
-				originalPerson.setNumbers(cNumbers, clonedPerson.getStandard());
+				originalPerson.setNumbers(vNumbers, clonedPerson.getStandard());
 
 				phoneBook.notifyListenersOfUpdate(unchanged, originalPerson);
+				numberHasChanged = false;
 			}
 
 			originalPerson.setLastCall(JFritz.getCallerList().findLastCall(originalPerson));

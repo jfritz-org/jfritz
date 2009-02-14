@@ -8,6 +8,7 @@ import de.moonflower.jfritz.utils.Debug;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.ConnectException;
 import java.net.NoRouteToHostException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -84,6 +85,15 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
 			}
 	    } catch (UnknownHostException uhe) {
 	        Debug.msg("Unknown host exception: " + uhe.toString()); //$NON-NLS-1$
+	        closeConnection();
+	        try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    } catch (ConnectException ce) {
+	        Debug.msg("Connect exception: " + ce.toString()); //$NON-NLS-1$
 	        closeConnection();
 	        try {
 				Thread.sleep(10000);

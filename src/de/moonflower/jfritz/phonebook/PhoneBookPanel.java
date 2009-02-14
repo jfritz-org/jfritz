@@ -385,14 +385,26 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	 *
 	 */
 	public void removeSelectedPersons() {
-		if (JOptionPane.showConfirmDialog(this,
-				Main.getMessage("delete_entries").replaceAll("%N",""), //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-				Main.PROGRAM_NAME,
-				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+		if (getPhoneBookTable().getSelectedRowCount() > 0)
+		{
+			String message;
+			if (getPhoneBookTable().getSelectedRowCount() == 1)
+			{
+				message = Main.getMessage("delete_entry");
+			}
+			else
+			{
+				message = Main.getMessage("delete_entries").replaceAll("%N", Integer.toString(getPhoneBookTable().getSelectedRowCount()));
+			}
+			if (JOptionPane.showConfirmDialog(this,
+					message, //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+					Main.PROGRAM_NAME,
+					JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 
-			personPanel.cancelEditing();
-			phonebook.removePersons(getPhoneBookTable().getSelectedRows());
-			phoneBookTable.getSelectionModel().setSelectionInterval(0, 0);
+				personPanel.cancelEditing();
+				phonebook.removePersons(getPhoneBookTable().getSelectedRows());
+				phoneBookTable.getSelectionModel().setSelectionInterval(0, 0);
+			}
 		}
 	}
 	public void setSearchFilter(String text) {

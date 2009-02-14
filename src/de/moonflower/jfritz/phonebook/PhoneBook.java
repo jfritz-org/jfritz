@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
@@ -103,13 +104,15 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 
 	private boolean sortDirection = true;
 
+	private NumberMultiHashMap numberHashMap;
+
 	public PhoneBook(String fileLocation) {
 		this.fileLocation = fileLocation;
 		filteredPersons = new Vector<Person>();
 		unfilteredPersons = new Vector<Person>();
 		filterExceptions = new Vector<Person>();
 		listeners = new Vector<PhoneBookListener>();
-
+		numberHashMap = new NumberMultiHashMap();
 	}
 
 	/**
@@ -296,13 +299,14 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 	}
 
 	/**
-	 * TODO: wird noch nicht benutzt does reverse lookup (find the name and
+	 * TODO: wird noch nicht benutzt
+	 * does reverse lookup (find the name and
 	 * address for a given phone number
 	 *
 	 * @param rows
 	 *            the rows, wich are selected for reverse lookup
 	 */
-	public void doReverseLookup(int[] rows) {
+	private void doReverseLookup(int[] rows) {
 		if (rows.length > 0) { // nur für markierte Einträge ReverseLookup
 			// durchführen
 			Vector<PhoneNumber> numbers = new Vector<PhoneNumber>();
@@ -316,7 +320,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 		}
 	}
 
-	public void personsFound(Vector persons) {
+	public void personsFound(Vector<Person> persons) {
 		if (persons != null) {
 			addEntries(persons);
 			fireTableDataChanged();
@@ -334,7 +338,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 	/**
 	 * for the LookupObserver
 	 */
-	public void saveFoundEntries(Vector persons) {
+	public void saveFoundEntries(Vector<Person> persons) {
 		if (persons != null) {
 			addEntries(persons);
 			fireTableDataChanged();
@@ -493,6 +497,10 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 
 		newPerson.setLastCall(callerList.findLastCall(newPerson));
 		unfilteredPersons.add(newPerson);
+		for (PhoneNumber number: newPerson.getNumbers())
+		{
+			numberHashMap.addPerson(number, newPerson);
+		}
 		callerList.updatePersonInCalls(newPerson, newPerson.getNumbers());
 		return true;
 	}
@@ -513,6 +521,11 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 	 */
 	public void deleteEntry(Person person) {
 		unfilteredPersons.remove(person);
+		for (PhoneNumber number: person.getNumbers())
+		{
+			numberHashMap.deletePerson(number, person);
+		}
+
 		Call call = callerList.findLastCall(person);
 		Person newPerson = null;
 		if (call != null) {
@@ -535,7 +548,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 					new FileOutputStream(filename), "UTF8")); //$NON-NLS-1$
 			Enumeration<Person> en1 = unfilteredPersons.elements();
 
-			Enumeration en2;
+			Enumeration<PhoneNumber> en2;
 			Person current;
 			String name;
 
@@ -585,7 +598,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 	}
 
 	/**
-	 * Saves phonebook to BIT FBF Dialer file.
+	 * Saves phonebook to CallMonitorFileFormat.
 	 *
 	 * @param filename
 	 */
@@ -596,7 +609,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 					new FileOutputStream(filename), "UTF8")); //$NON-NLS-1$
 			Enumeration<Person> en1 = unfilteredPersons.elements();
 
-			Enumeration en2;
+			Enumeration<PhoneNumber> en2;
 			Person current;
 			String name;
 
@@ -672,7 +685,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 						.write("<entry private=\"" + current.isPrivateEntry() + "\">"); //$NON-NLS-1$,  //$NON-NLS-2$
 				pw.newLine();
 				if (current.getPictureUrl().length() > 0) {
-					pw.write("\t\t<picture>" + JFritzUtils.convertSpecialChars(current.getPictureUrl())
+					pw.write("\t<picture>" + JFritzUtils.convertSpecialChars(current.getPictureUrl())
 							+ "</picture>");
 					pw.newLine();
 				}
@@ -731,7 +744,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 				pw.write("\t<phonenumbers standard=\"" //$NON-NLS-1$
 						+ current.getStandard() + "\">"); //$NON-NLS-1$
 				pw.newLine();
-				Enumeration en2 = current.getNumbers().elements();
+				Enumeration<PhoneNumber> en2 = current.getNumbers().elements();
 				while (en2.hasMoreElements()) {
 					PhoneNumber nr = (PhoneNumber) en2.nextElement();
 					pw.write("\t\t<number type=\"" + nr.getType() + "\">" //$NON-NLS-1$,  //$NON-NLS-2$
@@ -1002,29 +1015,34 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 		if (number == null) {
 			return null;
 		}
-		Vector<Person> foundPersons = new Vector<Person>();
-		Enumeration<Person> en = unfilteredPersons.elements();
-		while (en.hasMoreElements()) {
-			Person p = en.nextElement();
-			if (p.hasNumber(number.getIntNumber(), considerMain)) {
-				foundPersons.add(p);
+		List<Person> l = numberHashMap.getPerson(number);
+		if (l != null)
+		{
+			if (l.size() == 0) {
+				return null;
+			} else if (l.size() == 1) {
+				if (l.get(0).getNumbers().contains(number))
+				{
+					return l.get(0);
+				}
+				else
+				{
+					return null;
+				}
+			} else {
+				if (l.get(0).getNumbers().contains(number))
+				{
+					return l.get(0);
+				}
+				else
+				{
+					return null;
+				}
 			}
 		}
-		if (foundPersons.size() == 0) {
+		else
+		{
 			return null;
-		} else if (foundPersons.size() == 1) {
-			return foundPersons.get(0);
-		} else {
-			// delete all dummy entries for this number and return first element
-			// of foundPersons
-			/**
-			 * for (int i = 0; i < foundPersons.size(); i++) { Person p =
-			 * foundPersons.get(i); if ( p.isDummy() ) { // dummy entry, delete
-			 * it from database foundPersons.removeElement(p);
-			 * unfilteredPersons.removeElement(p);
-			 * this.saveToXMLFile(fileLocation); } }
-			 */
-			return foundPersons.get(0);
 		}
 	}
 
@@ -1049,7 +1067,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 			person = unfilteredPersons.get(i);
 			call = callerList.findLastCall(person);
 			if (call != null) {
-				// wichtig, sonst stht da noch null drinn und den Fehler findet
+				// wichtig, sonst steht da noch null drinn und den Fehler findet
 				// man dann niemals
 				callerList.setPerson(person, call);
 			}
