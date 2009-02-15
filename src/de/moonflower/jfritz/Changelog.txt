@@ -7,6 +7,10 @@ TODO: Client-Server fixen.
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 TODO: JFritz.playSound scheint buggy zu sein (zumindest unter Vista), ÜBERPRÜFEN und fixen.
 
+JFritz 0.7.2.18:
+- Bugfix: Aktuallisieren der Zuordnung von Call <-> Person nach dem Ändern eines Kontaktes.
+- Bugfix: Nach dem Speichern eines Telefonbucheintrags wird dieser wieder ausgewählt.
+
 JFritz 0.7.2.17:
 - HashMap zum schnelleren Mapping von Telefonnummer -> Call.
 - Log in Update-Routine wieder aktiviert.

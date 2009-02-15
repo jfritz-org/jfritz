@@ -582,7 +582,6 @@ public class PersonPanel extends JPanel implements ActionListener,
 				originalPerson.setNumbers(vNumbers, clonedPerson.getStandard());
 
 				phoneBook.notifyListenersOfUpdate(unchanged, originalPerson);
-				numberHasChanged = false;
 			}
 
 			originalPerson.setLastCall(JFritz.getCallerList().findLastCall(originalPerson));
@@ -770,5 +769,11 @@ public class PersonPanel extends JPanel implements ActionListener,
 			ActionListener al = en.nextElement();
 			al.actionPerformed(e);
 		}
+		JFritz.getCallerList().findAllPersons();
+		numberHasChanged = false;
+		hasChanged = false;
+		updateUndoButton();
+		JFritz.getJframe().getPhoneBookPanel().getPhoneBookTable()
+		.showAndSelectPerson(originalPerson, false);
 	}
 }

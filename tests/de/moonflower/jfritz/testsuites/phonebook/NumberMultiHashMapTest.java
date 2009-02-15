@@ -158,6 +158,7 @@ public class NumberMultiHashMapTest extends TestCase {
 
 		// delete also the last entry with number 3772
 		map.deletePerson(num4, person3);
+		result = map.getPerson(num4);
 		assertTrue(result.size() == 0);
 
 		main = null;
