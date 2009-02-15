@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -126,6 +127,8 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 
 	private Vector<IProgressListener> progressListeners;
 
+	private NumberCallMultiHashMap hashMap;
+
 	/**
 	 * CallerList Constructor new contrustor, using binary sizes
 	 * NOTE:filteredCallerData = unfilteredCallerData is forbidden!! use
@@ -144,6 +147,8 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 		callListListeners = new Vector<CallerListListener>();
 
 		progressListeners = new Vector<IProgressListener>();
+
+		hashMap = new NumberCallMultiHashMap();
 
 		sortColumn = 1;
 	}
@@ -439,6 +444,10 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 			}
 		}
 		newCalls.add(call);
+		if (call.getPhoneNumber() != null)
+		{
+			hashMap.addCall(call.getPhoneNumber(), call);
+		}
 
 		return true;
 
@@ -526,6 +535,10 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 	public synchronized void removeEntries(Vector<Call> removeCalls){
 
 			unfilteredCallerData.removeAll(removeCalls);
+			for (Call c:removeCalls)
+			{
+				hashMap.deleteCall(c.getPhoneNumber(), c);
+			}
 			update();
 			saveToXMLFile(Main.SAVE_DIR + JFritz.CALLS_FILE, true);
 
@@ -805,7 +818,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 
 	}
 
-	public void setPerson(Person person, int rowIndex) {
+	private void setPerson(Person person, int rowIndex) {
 		Call call = filteredCallerData.get(rowIndex);
 		setPerson(person, call);
 	}
@@ -1043,21 +1056,43 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 	public Call findLastCall(Person person) {
 		Vector<PhoneNumber> numbers = person.getNumbers();
 		if (numbers.size() > 0) {
-			Enumeration<Call> en = unfilteredCallerData.elements();
-			Call call;
-			while (en.hasMoreElements()) {
-				call = en.nextElement();
-				if (call.getPhoneNumber() != null) {
-					for (int i = 0; i < numbers.size(); i++) {
-						if (call.getPhoneNumber().getIntNumber().equals(
-								((PhoneNumber) numbers.get(i)).getIntNumber())) {
-							return call;
+			Call result = new Call(new CallType(CallType.CALLIN_STR),
+					new Date(0), new PhoneNumber("", false), "port", "route", 0);
+			for (PhoneNumber num:numbers)
+			{
+				List<Call> l = hashMap.getCall(num);
+				if (l != null)
+				{
+					for (Call c:l)
+					{
+						if (c.getCalldate().after(result.getCalldate()))
+						{
+							result = c;
 						}
 					}
 				}
 			}
+			return result;
 		}
+
 		return null;
+//		Vector<PhoneNumber> numbers = person.getNumbers();
+//		if (numbers.size() > 0) {
+//			Enumeration<Call> en = unfilteredCallerData.elements();
+//			Call call;
+//			while (en.hasMoreElements()) {
+//				call = en.nextElement();
+//				if (call.getPhoneNumber() != null) {
+//					for (int i = 0; i < numbers.size(); i++) {
+//						if (call.getPhoneNumber().getIntNumber().equals(
+//								((PhoneNumber) numbers.get(i)).getIntNumber())) {
+//							return call;
+//						}
+//					}
+//				}
+//			}
+//		}
+//		return null;
 	}
 
 	public void clearList() {
@@ -1079,7 +1114,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 	 * @param rows
 	 *            of the filteredCallerData to be removed
 	 */
-	public synchronized void  removeEntries(int[] rows) {
+	public synchronized void removeEntries(int[] rows) {
 
 		Vector<Call> removedCalls = new Vector<Call>(rows.length);
 		if (rows.length > 0) {
@@ -1089,6 +1124,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver {
 				call = filteredCallerData.get(rows[i]);
 				removedCalls.add(call);
 				unfilteredCallerData.remove(call);
+				hashMap.deleteCall(call.getPhoneNumber(), call);
 				//Debug.msg("removing " + call);
 				p = call.getPerson();
 				if (p != null) {
@@ -2227,15 +2263,27 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 	 */
 	public void updatePersonInCalls(Person person,
 			Vector<PhoneNumber> phoneNumbers) {
-		Enumeration<Call> en = unfilteredCallerData.elements();
-		Call call;
-		while (en.hasMoreElements()) {
-			call = en.nextElement();
-			if (phoneNumbers.contains(call.getPhoneNumber())) {
-				call.setPerson(person);
+		for (PhoneNumber num: phoneNumbers)
+		{
+			List<Call> l = hashMap.getCall(num);
+			if (l != null)
+			{
+				for (Call c: l)
+				{
+					c.setPerson(person);
+				}
 			}
 		}
 		update();
+//		Enumeration<Call> en = unfilteredCallerData.elements();
+//		Call call;
+//		while (en.hasMoreElements()) {
+//			call = en.nextElement();
+//			if (phoneNumbers.contains(call.getPhoneNumber())) {
+//				call.setPerson(person);
+//			}
+//		}
+//		update();
 	}
 
 	public PhoneBook getPhoneBook() {

@@ -7,6 +7,12 @@ TODO: Client-Server fixen.
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 TODO: JFritz.playSound scheint buggy zu sein (zumindest unter Vista), ÜBERPRÜFEN und fixen.
 
+JFritz 0.7.2.17:
+- HashMap zum schnelleren Mapping von Telefonnummer -> Call.
+- Log in Update-Routine wieder aktiviert.
+- Watchdog-Thread startet den AM nicht mehr neu. Am kümmert sich selbst um den Neustart.
+- Kein Update der Zuordnung Person<->Anruf in initCallerListAndPhoneBook() mehr.
+
 JFritz 0.7.2.16:
 - HashMap zum schnelleren Mapping von Telefonnummer -> Person.
 - TestCase für HashMap.

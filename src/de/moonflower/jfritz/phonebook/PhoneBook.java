@@ -104,7 +104,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 
 	private boolean sortDirection = true;
 
-	private NumberMultiHashMap numberHashMap;
+	private NumberPersonMultiHashMap numberHashMap;
 
 	public PhoneBook(String fileLocation) {
 		this.fileLocation = fileLocation;
@@ -112,7 +112,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 		unfilteredPersons = new Vector<Person>();
 		filterExceptions = new Vector<Person>();
 		listeners = new Vector<PhoneBookListener>();
-		numberHashMap = new NumberMultiHashMap();
+		numberHashMap = new NumberPersonMultiHashMap();
 	}
 
 	/**

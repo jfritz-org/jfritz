@@ -9,11 +9,11 @@ import java.util.Map;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 
-public class NumberMultiHashMap {
+public class NumberPersonMultiHashMap {
 
 	private Map<String, List<Person>> hashMap;
 
-	public NumberMultiHashMap()
+	public NumberPersonMultiHashMap()
 	{
 		hashMap = new HashMap<String, List<Person>>();
 	}

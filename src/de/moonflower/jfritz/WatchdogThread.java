@@ -6,6 +6,8 @@ package de.moonflower.jfritz;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -61,8 +63,8 @@ public class WatchdogThread extends Thread {
             // Starte den Anrufmonitor neu.
 
             Debug.msg("STANDBY or SUSPEND TO RAM detected"); //$NON-NLS-1$
-            Debug.msg("Watchdog: Restarting call monitor"); //$NON-NLS-1$
-			JFritz.getJframe().setCallMonitorDisconnectedStatus();
+//          Debug.msg("Watchdog: Restarting call monitor"); //$NON-NLS-1$
+//			JFritz.getJframe().setCallMonitorDisconnectedStatus();
             standbyDetected = true;
         }
 
@@ -72,7 +74,17 @@ public class WatchdogThread extends Thread {
         	if ((JFritz.getCallMonitor() != null) && (JFritz.getCallMonitor().isConnected()))
         	{
         		if (JFritzUtils.parseBoolean(Main.getProperty("option.watchdog.fetchAfterStandby"))) //$NON-NLS-1$, //$NON-NLS-2$
-        			JFritz.getJframe().fetchList(JFritzUtils.parseBoolean(Main.getProperty("option.deleteAfterFetch"))); //$NON-NLS-1$, //$NON-NLS-2$
+        		{
+        			Timer timer = new Timer("Standby-Timer: Fetch-List", true);
+        			timer.schedule(new TimerTask() {
+
+						@Override
+						public void run() {
+		        			JFritz.getJframe().fetchList(JFritzUtils.parseBoolean(Main.getProperty("option.deleteAfterFetch"))); //$NON-NLS-1$, //$NON-NLS-2$
+						}
+
+        			}, 20000);
+        		}
         		standbyDetected = false; // reset flag, because we have successfully restarted the call monitor
         	}
         }

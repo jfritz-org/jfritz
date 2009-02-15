@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Vector;
 
 import de.moonflower.jfritz.Main;
-import de.moonflower.jfritz.phonebook.NumberMultiHashMap;
+import de.moonflower.jfritz.phonebook.NumberPersonMultiHashMap;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import junit.framework.TestCase;
@@ -15,7 +15,7 @@ public class NumberMultiHashMapTest extends TestCase {
 	{
 		Main main = new Main();
 		Vector<Person> vector = new Vector<Person>();
-		NumberMultiHashMap map = new NumberMultiHashMap();
+		NumberPersonMultiHashMap map = new NumberPersonMultiHashMap();
 
 		// Test insert one object
 		PhoneNumber num1_1 = new PhoneNumber("1234", false);

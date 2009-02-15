@@ -258,8 +258,9 @@ public final class JFritz implements  StatusListener, ItemListener {
 
 		phonebook.loadFromXMLFile(Main.SAVE_DIR + PHONEBOOK_FILE);
 		callerlist.loadFromXMLFile(Main.SAVE_DIR + CALLS_FILE);
-		phonebook.findAllLastCalls();
-		callerlist.findAllPersons();
+
+//		phonebook.findAllLastCalls();
+//		callerlist.findAllPersons();
 	}
 
 	public void initCallMonitor()

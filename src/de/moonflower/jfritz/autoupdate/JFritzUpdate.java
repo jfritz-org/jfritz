@@ -35,6 +35,7 @@ public class JFritzUpdate {
 	private boolean informOnNoUpdate;
 
 	public JFritzUpdate(boolean informOnNoUpdate) {
+		Logger.on();
 		this.informOnNoUpdate = informOnNoUpdate;
 		installDirectory = JFritzUtils.getFullPath("/jfritz.jar");
 		installDirectory = installDirectory.substring(0, installDirectory.length()-10);
