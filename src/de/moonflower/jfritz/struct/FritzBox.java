@@ -1148,6 +1148,7 @@ public class FritzBox {
 					ports[10] = "ISDN 9"; //$NON-NLS-1$
 				 break;
 			 }
+		case FritzBoxFirmware.BOXTYPE_FRITZBOX_7570:
 		case FritzBoxFirmware.BOXTYPE_FRITZBOX_7270:
 			// 2 analoge Telefonanschlüsse, interner S0-Bus und DECT
 			{

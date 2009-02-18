@@ -57,6 +57,8 @@ public class FritzBoxFirmware {
 
     public final static byte BOXTYPE_FRITZBOX_7270 = 54;
 
+    public final static byte BOXTYPE_FRITZBOX_7570 = 75;
+
     public final static byte BOXTYPE_FRITZBOX_7113 = 60;
 
     public final static byte ACCESS_METHOD_POST_0342 = 0;
@@ -343,6 +345,8 @@ public class FritzBoxFirmware {
             return "FRITZ!Box 7270"; //$NON-NLS-1$
         case 60:
             return "FRITZ!Box 7113"; //$NON-NLS-1$
+        case 75:
+        	return "FRITZ!Box 7570"; //$NON-NLS-1$
 		default:
 			return Main.getMessage("unknown"); //$NON-NLS-1$
 		}

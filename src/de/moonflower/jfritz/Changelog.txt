@@ -7,6 +7,9 @@ TODO: Client-Server fixen.
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 TODO: JFritz.playSound scheint buggy zu sein (zumindest unter Vista), ÜBERPRÜFEN und fixen.
 
+JFritz 0.7.2.19:
+- Support für FRITZ!Box 7570 hinzugefügt.
+
 JFritz 0.7.2.18:
 - Bugfix: Aktuallisieren der Zuordnung von Call <-> Person nach dem Ändern eines Kontaktes.
 - Bugfix: Nach dem Speichern eines Telefonbucheintrags wird dieser wieder ausgewählt.
