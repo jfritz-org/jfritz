@@ -337,7 +337,7 @@ public class ReverseLookup {
 
 			reader.setContentHandler(new ReverseLookupXMLHandler());
 			reader.parse(new InputSource(new FileInputStream(
-					JFritzUtils.getFullPath("/number") +"/international/reverselookup.xml")));
+					JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") +JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "reverselookup.xml")));
 
 		} catch (ParserConfigurationException e) {
 			Debug.err("Error with ParserConfiguration!"); //$NON-NLS-1$

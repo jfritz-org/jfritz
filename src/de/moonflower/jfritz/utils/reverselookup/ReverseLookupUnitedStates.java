@@ -38,7 +38,7 @@ public final class ReverseLookupUnitedStates {
 		FileInputStream fi = null;
 
 		try{
-			fi = new FileInputStream(JFritzUtils.getFullPath("/number") +"/usa/areacodes_usa.csv");
+			fi = new FileInputStream(JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") + JFritzUtils.FILESEP + "usa" + JFritzUtils.FILESEP + "areacodes_usa.csv");
 			br = new BufferedReader(new InputStreamReader(fi, "ISO-8859-1"));
 
 			String line;
@@ -46,7 +46,7 @@ public final class ReverseLookupUnitedStates {
 			int lines = 0;
 			String l = br.readLine();
 			if(l==null){
-				Debug.errDlg("File "+JFritzUtils.getFullPath("/number") +"/usa/areacodes_usa.csv"+" empty");
+				Debug.errDlg("File "+JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") + JFritzUtils.FILESEP + "usa" + JFritzUtils.FILESEP + "areacodes_usa.csv"+" empty");
 			}
 			//Load the keys and values quick and dirty
 			if(l.equals(FILE_HEADER)){

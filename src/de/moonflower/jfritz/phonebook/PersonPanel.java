@@ -49,6 +49,7 @@ import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
  * This class is used in the phone book to edit individual entries
@@ -499,7 +500,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		ImageIcon pictureIcon;
 		if (clonedPerson.getPictureUrl().equals("")) //$NON-NLS-1$
 		{
-			pictureIcon = new ImageIcon("pictures/NoPic.jpg"); //$NON-NLS-1$
+			pictureIcon = new ImageIcon(JFritzUtils.getFullPath(JFritzUtils.FILESEP + "pictures") + JFritzUtils.FILESEP + "NoPic.jpg"); //$NON-NLS-1$
 		} else {
 			pictureIcon = new ImageIcon(clonedPerson.getPictureUrl());
 		}
@@ -507,7 +508,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		// if we don't find the image, display the default one
 		if (pictureIcon.getIconWidth() == -1 || pictureIcon.getIconHeight() == -1)
 		{
-			pictureIcon = new ImageIcon("pictures/NoPic.jpg"); //$NON-NLS-1$
+			pictureIcon = new ImageIcon(JFritzUtils.getFullPath(JFritzUtils.FILESEP + "pictures") + JFritzUtils.FILESEP + "NoPic.jpg"); //$NON-NLS-1$
 		}
 		float pictureWidthFactor = (float)pictureIcon.getIconWidth() / (float)scaleWidth;
 		float pictureHeightFactor = (float)pictureIcon.getIconHeight() / (float)scaleHeight;

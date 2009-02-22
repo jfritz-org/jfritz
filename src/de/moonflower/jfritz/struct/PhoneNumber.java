@@ -597,7 +597,7 @@ public class PhoneNumber implements Serializable {
 		FileInputStream fi = null;
 
 		try{
-			fi = new FileInputStream(JFritzUtils.getFullPath("/number") +"/international/country_codes_world.csv");
+			fi = new FileInputStream(JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") + JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "country_codes_world.csv");
 			br = new BufferedReader(new InputStreamReader(fi, "ISO-8859-1"));
 
 			String line;
@@ -605,7 +605,7 @@ public class PhoneNumber implements Serializable {
 			int lines = 0;
 			String l = br.readLine();
 			if(l==null){
-				Debug.errDlg("File "+JFritzUtils.getFullPath("/number") +"/international/country_codes_world"+" empty");
+				Debug.errDlg("File "+JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") +JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "country_codes_world"+" empty");
 			}
 			//Load the keys and values quick and dirty
 			if(l.equals(FLAG_FILE_HEADER)){
@@ -653,7 +653,7 @@ public class PhoneNumber implements Serializable {
 		FileInputStream fi = null;
 
 		try{
-			fi = new FileInputStream(JFritzUtils.getFullPath("/number") +"/international/country_specfic_codes_world.csv");
+			fi = new FileInputStream(JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") +JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "country_specfic_codes_world.csv");
 			br = new BufferedReader(new InputStreamReader(fi, "ISO-8859-1"));
 
 			String line;
@@ -661,7 +661,7 @@ public class PhoneNumber implements Serializable {
 			int lines = 0;
 			String l = br.readLine();
 			if(l==null){
-				Debug.errDlg("File "+JFritzUtils.getFullPath("/number") +"/international/country_specfic_codes_world.csv"+" empty");
+				Debug.errDlg("File "+JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") +JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "country_specfic_codes_world.csv"+" empty");
 			}
 			//Load the keys and values quick and dirty
 			if(l.equals(FLAG_FILE_HEADER)){
@@ -728,7 +728,7 @@ public class PhoneNumber implements Serializable {
 
 			reader.setContentHandler(new CbCFileXMLHandler());
 			reader.parse(new InputSource(new FileInputStream(
-					JFritzUtils.getFullPath("/number") +"/international/callbycall_world.xml")));
+					JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") + JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "callbycall_world.xml")));
 
 		} catch (ParserConfigurationException e) {
 			Debug.err("Error with ParserConfiguration!"); //$NON-NLS-1$

@@ -38,7 +38,7 @@ public class ReverseLookupTurkey {
 		FileInputStream fi = null;
 
 		try{
-			fi = new FileInputStream(JFritzUtils.getFullPath("/number") +"/turkey/areacodes_turkey.csv");
+			fi = new FileInputStream(JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") + JFritzUtils.FILESEP + "turkey" + JFritzUtils.FILESEP + "areacodes_turkey.csv");
 			br = new BufferedReader(new InputStreamReader(fi, "UTF-8"));
 
 			String line;
@@ -46,7 +46,7 @@ public class ReverseLookupTurkey {
 			int lines = 0;
 			String l = br.readLine();
 			if(l==null){
-				Debug.errDlg("File "+JFritzUtils.getFullPath("/number") +"/turkey/areacodes_turkey.csv"+" empty");
+				Debug.errDlg("File "+JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") + JFritzUtils.FILESEP + "turkey" + JFritzUtils.FILESEP + "areacodes_turkey.csv"+" empty");
 			}
 			//Load the keys and values quick and dirty
 			if(l.equals(FILE_HEADER)){

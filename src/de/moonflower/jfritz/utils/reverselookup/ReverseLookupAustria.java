@@ -35,7 +35,7 @@ public final class ReverseLookupAustria {
 		BufferedReader br = null;
 		FileReader fr = null;
 		try{
-			fr = new FileReader(JFritzUtils.getFullPath("/number") +"/austria/areacodes_austria.csv");
+			fr = new FileReader(JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") +JFritzUtils.FILESEP + "austria" + JFritzUtils.FILESEP + "areacodes_austria.csv");
 			br = new BufferedReader(fr);
 			String line;
 			String[] entries;

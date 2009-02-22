@@ -37,7 +37,7 @@ public class JFritzUpdate {
 	public JFritzUpdate(boolean informOnNoUpdate) {
 		Logger.on();
 		this.informOnNoUpdate = informOnNoUpdate;
-		installDirectory = JFritzUtils.getFullPath("/jfritz.jar");
+		installDirectory = JFritzUtils.getFullPath(JFritzUtils.binID);
 		installDirectory = installDirectory.substring(0, installDirectory.length()-10);
 		//updateFile = installDirectory + "update.txt"; //?? why ??
 		updateDirectory = installDirectory+"update";
@@ -183,7 +183,7 @@ public class JFritzUpdate {
 	 */
 	private static void startJFritz(String[] args) {
 
-		String installDirectory = JFritzUtils.getFullPath("/jfritz.jar");
+		String installDirectory = JFritzUtils.getFullPath(JFritzUtils.binID);
 		installDirectory = installDirectory.substring(0, installDirectory.length()-10);
 		File jfritzJAR = new File(installDirectory + "jfritz-internals.jar");
 
