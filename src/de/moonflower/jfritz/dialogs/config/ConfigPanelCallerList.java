@@ -97,4 +97,9 @@ public class ConfigPanelCallerList extends JPanel implements ConfigPanel {
 	public String getHelpUrl() {
 		return "http://jfritz.org/wiki/JFritz_Handbuch:Deutsch#Anrufliste";
 	}
+
+	public void cancel() {
+		// TODO Auto-generated method stub
+
+	}
 }

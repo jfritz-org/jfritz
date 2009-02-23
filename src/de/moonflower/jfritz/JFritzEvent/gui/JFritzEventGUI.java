@@ -139,4 +139,9 @@ public class JFritzEventGUI extends JPanel implements ConfigPanel, ActionListene
 	public String getHelpUrl() {
 		return "";
 	}
+
+	public void cancel() {
+		// TODO Auto-generated method stub
+
+	}
 }

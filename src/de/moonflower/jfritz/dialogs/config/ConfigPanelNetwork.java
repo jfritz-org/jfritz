@@ -546,4 +546,9 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 	public String getHelpUrl() {
 		return "http://jfritz.org/wiki/JFritz_Handbuch:Deutsch#Netzwerk";
 	}
+
+	public void cancel() {
+		// TODO Auto-generated method stub
+
+	}
 }

@@ -160,4 +160,9 @@ public class ConfigPanelCallerListAppearance extends JPanel implements ConfigPan
 			Debug.err("Unknown command received: "+e.getActionCommand());
 		}
 	}
+
+	public void cancel() {
+		// TODO Auto-generated method stub
+
+	}
 }

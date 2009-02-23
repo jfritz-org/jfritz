@@ -39,6 +39,8 @@ public class JFritzUtils {
 	 */
     public static final String langID = FILESEP + "lang";
 
+	private final static String PATTERN_WAIT_FOR_X_SECONDS = "var loginBlocked = parseInt\\(\"([^\"]*)\\),10\\);";
+
 	/**
 	 * fetches html data from url using POST requests
 	 *
@@ -62,7 +64,7 @@ public class JFritzUtils {
 			url = new URL(urlstr);
 		} catch (MalformedURLException e) {
 			Debug.err("URL invalid: " + urlstr); //$NON-NLS-1$
-			throw new WrongPasswordException("URL invalid: " + urlstr); //$NON-NLS-1$
+			throw new MalformedURLException("URL invalid: " + urlstr); //$NON-NLS-1$
 		}
 
 		if (url != null) {
@@ -97,10 +99,15 @@ public class JFritzUtils {
 				String str;
 				while (null != ((str = HTMLUtil.stripEntities(d.readLine())))) {
 					// Password seems to be wrong
-					if (str.indexOf("FRITZ!Box Anmeldung") > 0) //$NON-NLS-1$
+					if ((str.indexOf("Das angegebene Kennwort ist ungültig") > 0) //$NON-NLS-1$
+						|| (str.indexOf("Password not valid") > 0))
+					{
 						wrong_pass = true;
+					}
 					if (retrieveData)
+					{
 						data += str;
+					}
 				}
 				d.close();
 			} catch (IOException e1) {
@@ -108,7 +115,23 @@ public class JFritzUtils {
 			}
 
 			if (wrong_pass)
-				throw new WrongPasswordException("Password invalid"); //$NON-NLS-1$
+			{
+				int wait = 3;
+				Pattern waitSeconds = Pattern.compile(PATTERN_WAIT_FOR_X_SECONDS);
+				Matcher m = waitSeconds.matcher(data);
+				if (m.find())
+				{
+					try {
+						wait = Integer.parseInt(m.group(1));
+					}
+					catch (NumberFormatException nfe)
+					{
+						wait = 3;
+					}
+				}
+
+				throw new WrongPasswordException("Password invalid", wait); //$NON-NLS-1$
+			}
 		}
 		return data;
 	}

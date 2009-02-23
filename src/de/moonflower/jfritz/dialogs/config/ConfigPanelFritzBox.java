@@ -10,6 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -31,6 +33,7 @@ import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.network.SSDPPacket;
+import de.moonflower.jfritz.utils.MultiLabel;
 
 public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 		ConfigPanel {
@@ -52,11 +55,54 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 
 	private JButton boxtypeButton;
 
-	private JLabel boxtypeLabel;
+	private MultiLabel boxtypeLabel;
 
 	private FritzBoxFirmware firmware;
 
 	private JCheckBox defaultFritzBox;
+
+	private RefreshTimeoutTask refreshTimeoutTask = null;
+
+	class RefreshTimeoutTask extends TimerTask
+	{
+		private int current;
+		public RefreshTimeoutTask(int start)
+		{
+			current = start;
+		}
+
+		@Override
+		public void run() {
+			if (current > 0)
+			{
+				String error = Main.getMessage("box.wrong_password.wait");
+				error = error.replaceFirst("%WAIT%", Integer.toString(current));
+				boxtypeLabel.setForeground(Color.RED);
+				boxtypeLabel.setText(error); //$NON-NLS-1$
+				boxtypeLabel.setPreferredSize(boxtypeLabel.getPreferredSize());
+				boxtypeLabel.repaint();
+				boxtypeButton.setEnabled(false);
+				current -= 1;
+			}
+			else
+			{
+				String error = " \n" + Main.getMessage("box.wrong_password") + "\n ";
+				error = error.replaceFirst("%WAIT%", Integer.toString(current));
+				boxtypeLabel.setForeground(Color.RED);
+				boxtypeLabel.setText(error); //$NON-NLS-1$
+				boxtypeLabel.setPreferredSize(boxtypeLabel.getPreferredSize());
+				boxtypeLabel.repaint();
+				boxtypeButton.setEnabled(true);
+				this.cancel();
+			}
+		}
+
+		public int getCurrent()
+		{
+			return current;
+		}
+
+	}
 
 	@SuppressWarnings("unchecked")
 	public ConfigPanelFritzBox() {
@@ -147,7 +193,7 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 		boxtypeButton.setActionCommand("detectboxtype"); //$NON-NLS-1$
 		boxtypeButton.addActionListener(this);
 		cPane.add(boxtypeButton, c);
-		boxtypeLabel = new JLabel();
+		boxtypeLabel = new MultiLabel("a\nb\nc\n");
 		cPane.add(boxtypeLabel, c);
 
 		add(new JScrollPane(cPane), BorderLayout.CENTER);
@@ -184,10 +230,22 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 				// firmware = new FritzBoxFirmware("14", "1", "35");
 				setBoxTypeLabel();
 			} catch (WrongPasswordException e1) {
-				Debug.err(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+				Timer wrongPasswordTask = new Timer();
+				if (refreshTimeoutTask != null)
+				{
+					refreshTimeoutTask.cancel();
+				}
+				refreshTimeoutTask = new RefreshTimeoutTask(e1.getRetryTime());
+				wrongPasswordTask.schedule(refreshTimeoutTask, 0, 1000);
+				String error = Main.getMessage("box.wrong_password.wait");
+				error = error.replaceFirst("%WAIT%", Integer.toString(e1.getRetryTime()));
+				Debug.err(error); //$NON-NLS-1$
 				boxtypeLabel.setForeground(Color.RED);
-				boxtypeLabel.setText(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+				boxtypeLabel.setText(error); //$NON-NLS-1$
+				boxtypeLabel.setPreferredSize(boxtypeLabel.getPreferredSize());
+				boxtypeLabel.repaint();
 				firmware = null;
+				this.repaint();
 			} catch (InvalidFirmwareException ife) {
 				Debug.err("Invalid firmware detected"); //$NON-NLS-1$
 				boxtypeLabel.setForeground(Color.RED);
@@ -205,12 +263,12 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 	private void setBoxTypeLabel() {
 		if (firmware != null) {
 			boxtypeLabel.setForeground(Color.BLUE);
-			boxtypeLabel.setText(firmware.getBoxName() + " (" //$NON-NLS-1$
-					+ firmware.getFirmwareVersion() + ")"); //$NON-NLS-1$
+			boxtypeLabel.setText(" \n" + firmware.getBoxName() + " (" //$NON-NLS-1$
+					+ firmware.getFirmwareVersion() + ") \n "); //$NON-NLS-1$
 			checkDefaultFritzBox();
 		} else {
 			boxtypeLabel.setForeground(Color.RED);
-			boxtypeLabel.setText(Main.getMessage("unknown")); //$NON-NLS-1$
+			boxtypeLabel.setText(" \n" + Main.getMessage("unknown")+"\n "); //$NON-NLS-1$
 		}
 	}
 
@@ -254,6 +312,10 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 	}
 
 	public void saveSettings() throws WrongPasswordException, InvalidFirmwareException, IOException {
+		if (refreshTimeoutTask != null)
+		{
+			refreshTimeoutTask.cancel();
+		}
 		Main.setProperty("box.address", address.getText()); //$NON-NLS-1$
 		Main.setProperty("box.password", Encryption.encrypt(new String(pass.getPassword()))); //$NON-NLS-1$
 		Main.setProperty("box.port", port.getText()); //$NON-NLS-1$
@@ -293,5 +355,12 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 
 	public String getHelpUrl() {
 		return "http://jfritz.org/wiki/JFritz_Handbuch:Deutsch#FRITZ.21Box";
+	}
+
+	public void cancel() {
+		if (refreshTimeoutTask != null)
+		{
+			refreshTimeoutTask.cancel();
+		}
 	}
 }

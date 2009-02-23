@@ -31,7 +31,6 @@ import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
-import de.moonflower.jfritz.utils.HTMLUtil;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.network.UPNPAddonInfosListener;
 import de.moonflower.jfritz.utils.network.AddonInfosXMLHandler;
@@ -231,78 +230,7 @@ public class FritzBox {
 		String urlstr = "http://" + box_address + ":" + box_port + "/cgi-bin/webcm"; //$NON-NLS-1$,  //$NON-NLS-2$
 		String postdata = firmware.getAccessMethod()
 				+ POSTDATA_CLEAR.replaceAll("\\$LANG", firmware.getLanguage());
-		fetchDataFromURL(urlstr, postdata, true);
-	}
-
-	/**
-	 * fetches html data from url using POST requests
-	 *
-	 * @param urlstr
-	 * @param postdata
-	 * @return html data
-	 * @throws WrongPasswordException
-	 * @throws IOException
-	 */
-	public String fetchDataFromURL(String urlstr, String postdata,
-			boolean retrieveData) throws WrongPasswordException, IOException {
-		URL url = null;
-		URLConnection urlConn;
-		DataOutputStream printout;
-		String data = ""; //$NON-NLS-1$
-		boolean wrong_pass = false;
-		Debug.msg("Urlstr: " + urlstr);
-		Debug.msg("Postdata: " + postdata);
-
-		try {
-			url = new URL(urlstr);
-		} catch (MalformedURLException e) {
-			Debug.err("URL invalid: " + urlstr); //$NON-NLS-1$
-			throw new WrongPasswordException("URL invalid: " + urlstr); //$NON-NLS-1$
-		}
-
-		if (url != null) {
-			urlConn = url.openConnection();
-			// 5 Sekunden-Timeout für Verbindungsaufbau
-			urlConn.setConnectTimeout(5000);
-			urlConn.setDoInput(true);
-			urlConn.setDoOutput(true);
-			urlConn.setUseCaches(false);
-			// Sending postdata
-			if (postdata != null) {
-				urlConn.setRequestProperty("Content-Type", //$NON-NLS-1$
-						"application/x-www-form-urlencoded"); //$NON-NLS-1$
-				printout = new DataOutputStream(urlConn.getOutputStream());
-				printout.writeBytes(postdata);
-				printout.flush();
-				printout.close();
-			}
-
-			BufferedReader d;
-
-			try {
-				// Get response data
-				d = new BufferedReader(new InputStreamReader(urlConn
-						.getInputStream()));
-				String str;
-				while (null != ((str = HTMLUtil.stripEntities(d.readLine())))) {
-					// Password seems to be wrong
-					if (str.indexOf("FRITZ!Box Anmeldung") > 0) //$NON-NLS-1$
-						wrong_pass = true;
-					if (retrieveData)
-						data += str;
-				}
-				d.close();
-
-
-			} catch (IOException e1) {
-				throw new IOException("Network unavailable"); //$NON-NLS-1$
-			}
-
-			if (wrong_pass)
-				throw new WrongPasswordException("Password invalid"); //$NON-NLS-1$
-		}
-
-		return data;
+		JFritzUtils.fetchDataFromURL(urlstr, postdata, true);
 	}
 
 	/**
@@ -326,7 +254,7 @@ public class FritzBox {
 		String urlstr = "http://" + box_address + ":" + box_port + "/cgi-bin/webcm"; //$NON-NLS-1$,  //$NON-NLS-2$
 		Debug.msg("Postdata: " + postdata); //$NON-NLS-1$
 		Debug.msg("Urlstr: " + urlstr); //$NON-NLS-1$
-		String data = fetchDataFromURL(urlstr, postdata, true);
+		String data = JFritzUtils.fetchDataFromURL(urlstr, postdata, true);
 
 		// DEBUG: Test other versions
 		if (false) {
@@ -422,136 +350,135 @@ public class FritzBox {
 	 */
 
 	public boolean retrieveCSVList()
-			throws WrongPasswordException, IOException {
+			throws IOException, MalformedURLException {
 
-		URL url;
-		URLConnection urlConn;
-		DataOutputStream printout;
-		boolean wrong_pass = false;
-		boolean newEntries = false;
-		Debug.msg("Opening HTML Callerlist page");
-		// retrieveHTMLCallerList(box_address, password, countryPrefix,
-		// countryCode,
-		// areaPrefix, areaCode, firmware, jfritz);
+		synchronized(this)
+		{
+			URL url;
+			URLConnection urlConn;
+			DataOutputStream printout;
+			boolean newEntries = false;
+			Debug.msg("Opening HTML Callerlist page");
+			// retrieveHTMLCallerList(box_address, password, countryPrefix,
+			// countryCode,
+			// areaPrefix, areaCode, firmware, jfritz);
 
-		// Attempting to fetch the html version of the call list
-		String postdata = firmware.getAccessMethod()
-				+ POSTDATA_LIST.replaceAll("\\$LANG", firmware.getLanguage())
-				+ URLEncoder.encode(box_password, "ISO-8859-1");
-		String urlstr = "http://" + box_address +":" + box_port + "/cgi-bin/webcm";
+			// Attempting to fetch the html version of the call list
+			String postdata = firmware.getAccessMethod()
+					+ POSTDATA_LIST.replaceAll("\\$LANG", firmware.getLanguage())
+					+ URLEncoder.encode(box_password, "ISO-8859-1");
+			String urlstr = "http://" + box_address +":" + box_port + "/cgi-bin/webcm";
 
-		Debug.msg("Urlstr: " + urlstr);
-		Debug.msg("Postdata: " + postdata);
+			Debug.msg("Urlstr: " + urlstr);
+			Debug.msg("Postdata: " + postdata);
 
-		try {
-			url = new URL(urlstr);
-		} catch (MalformedURLException e) {
-			Debug.err("URL invalid: " + urlstr);
-			throw new WrongPasswordException("URL invalid: " + urlstr);
-		}
+			try {
+				url = new URL(urlstr);
+			} catch (MalformedURLException e) {
+				Debug.err("URL invalid: " + urlstr);
+				throw new MalformedURLException("URL invalid: " + urlstr);
+			}
 
-		if (url != null) {
-			urlConn = url.openConnection();
-			// 5 Sekunden-Timeout für Verbindungsaufbau
-			urlConn.setConnectTimeout(5000);
+			if (url != null) {
+				urlConn = url.openConnection();
+				// 5 Sekunden-Timeout für Verbindungsaufbau
+				urlConn.setConnectTimeout(5000);
 
-			urlConn.setDoInput(true);
-			urlConn.setDoOutput(true);
-			urlConn.setUseCaches(false);
-			// Sending postdata
-			if (postdata != null) {
+				urlConn.setDoInput(true);
+				urlConn.setDoOutput(true);
+				urlConn.setUseCaches(false);
+				// Sending postdata
+				if (postdata != null) {
+					urlConn.setRequestProperty("Content-Type",
+							"application/x-www-form-urlencoded");
+					printout = new DataOutputStream(urlConn.getOutputStream());
+					printout.writeBytes(postdata);
+					printout.flush();
+					printout.close();
+				}
+
+				try {
+					// Get response data from the box
+					BufferedReader reader = new BufferedReader(
+							new InputStreamReader(urlConn.getInputStream()));
+
+					// read out the response data!
+					while (reader.skip(100000) > 0) {
+						// kind of stupid, but it has to be
+						// If you don't read the list, you may not get an
+						// Updated list from the box
+					}
+
+					// close the streams
+					reader.close();
+					urlConn.getInputStream().close();
+
+				} catch (IOException e1) {
+					throw new IOException("Network unavailable");
+				}
+
+			}
+
+			// The list should be updated now
+			// Get the csv file for processing
+			Debug.msg("Retrieving the CSV list from the box");
+			urlstr = "http://" + box_address + ":" + box_port + "/cgi-bin/webcm";
+
+			try {
+				url = new URL(urlstr);
+			} catch (MalformedURLException e) {
+				Debug.err("URL invalid: " + urlstr);
+				throw new MalformedURLException("URL invalid: " + urlstr);
+			}
+
+			// If the url is valid load the data
+			if (!JFritz.isShutdownInvoked() && url != null) {
+
+				urlConn = url.openConnection();
+				urlConn.setDoInput(true);
+				urlConn.setDoOutput(true);
+				urlConn.setUseCaches(false);
+				// Sending postdata to the fritz box
 				urlConn.setRequestProperty("Content-Type",
 						"application/x-www-form-urlencoded");
 				printout = new DataOutputStream(urlConn.getOutputStream());
-				printout.writeBytes(postdata);
+				if (firmware.getLanguage().equals("de")) {
+					printout.writeBytes(POSTDATA_FETCH_CALLERLIST.replaceAll(
+							"\\$LANG", firmware.getLanguage()).replaceAll(
+							"\\$CSV_FILE", CSV_FILE_DE));
+				} else if (firmware.getLanguage().equals("en")) {
+					printout.writeBytes(POSTDATA_FETCH_CALLERLIST.replaceAll(
+							"\\$LANG", firmware.getLanguage()).replaceAll(
+							"\\$CSV_FILE", CSV_FILE_EN));
+				}
 				printout.flush();
 				printout.close();
-			}
 
-			try {
-				// Get response data from the box
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(urlConn.getInputStream()));
+				BufferedReader reader;
 
-				// read out the response data!
-				while (reader.skip(100000) > 0) {
-					// kind of stupid, but it has to be
-					// If you don't read the list, you may not get an
-					// Updated list from the box
+				try {
+					// Get response data from the box
+					reader = new BufferedReader(new InputStreamReader(urlConn
+							.getInputStream()));
+
+					// pass it on to the import function
+
+					Debug.msg("Received response, begin processing call list");
+					newEntries = JFritz.getCallerList().importFromCSVFile(reader);
+					Debug.msg("Finished processing response");
+
+					// close the reader and the socket connection
+					reader.close();
+					urlConn.getInputStream().close();
+
+				} catch (IOException e1) {
+					throw new IOException("Network unavailable");
 				}
-
-				// close the streams
-				reader.close();
-				urlConn.getInputStream().close();
-
-			} catch (IOException e1) {
-				throw new IOException("Network unavailable");
 			}
 
+			// return if there were new entries or not
+			return newEntries;
 		}
-
-		// The list should be updated now
-		// Get the csv file for processing
-		Debug.msg("Retrieving the CSV list from the box");
-		urlstr = "http://" + box_address + ":" + box_port + "/cgi-bin/webcm";
-
-		try {
-			url = new URL(urlstr);
-		} catch (MalformedURLException e) {
-			Debug.err("URL invalid: " + urlstr);
-			throw new WrongPasswordException("URL invalid: " + urlstr);
-		}
-
-		// If the url is valid load the data
-		if (!JFritz.isShutdownInvoked() && url != null) {
-
-			urlConn = url.openConnection();
-			urlConn.setDoInput(true);
-			urlConn.setDoOutput(true);
-			urlConn.setUseCaches(false);
-			// Sending postdata to the fritz box
-			urlConn.setRequestProperty("Content-Type",
-					"application/x-www-form-urlencoded");
-			printout = new DataOutputStream(urlConn.getOutputStream());
-			if (firmware.getLanguage().equals("de")) {
-				printout.writeBytes(POSTDATA_FETCH_CALLERLIST.replaceAll(
-						"\\$LANG", firmware.getLanguage()).replaceAll(
-						"\\$CSV_FILE", CSV_FILE_DE));
-			} else if (firmware.getLanguage().equals("en")) {
-				printout.writeBytes(POSTDATA_FETCH_CALLERLIST.replaceAll(
-						"\\$LANG", firmware.getLanguage()).replaceAll(
-						"\\$CSV_FILE", CSV_FILE_EN));
-			}
-			printout.flush();
-			printout.close();
-
-			BufferedReader reader;
-
-			try {
-				// Get response data from the box
-				reader = new BufferedReader(new InputStreamReader(urlConn
-						.getInputStream()));
-
-				// pass it on to the import function
-
-				Debug.msg("Received response, begin processing call list");
-				newEntries = JFritz.getCallerList().importFromCSVFile(reader);
-				Debug.msg("Finished processing response");
-
-				// close the reader and the socket connection
-				reader.close();
-				urlConn.getInputStream().close();
-
-			} catch (IOException e1) {
-				throw new IOException("Network unavailable");
-			}
-
-			if (wrong_pass)
-				throw new WrongPasswordException("Password invalid");
-		}
-
-		// return if there were new entries or not
-		return newEntries;
 	}
 
 	/**
@@ -581,7 +508,7 @@ public class FritzBox {
 				+ box_address + ":"
 				+ box_port
 				+ "/cgi-bin/webcm"; //$NON-NLS-1$
-		String data = fetchDataFromURL(urlstr, postdata, true);
+		String data = JFritzUtils.fetchDataFromURL(urlstr, postdata, true);
 		return parseQuickDialData(model, data, firmware);
 	}
 
@@ -653,7 +580,7 @@ public class FritzBox {
 		String urlstr = "http://" //$NON-NLS-1$
 				+ box_address + ":" + box_port
 				+ "/cgi-bin/webcm"; //$NON-NLS-1$
-		fetchDataFromURL(urlstr, postdata, true);
+		JFritzUtils.fetchDataFromURL(urlstr, postdata, true);
 	}
 
 	public void doCall(final String number, String port) throws WrongPasswordException, IOException {
@@ -713,7 +640,7 @@ public class FritzBox {
 		String urlstr = "http://" //$NON-NLS-1$
 				+ box_address + ":" + box_port
 				+ "/cgi-bin/webcm"; //$NON-NLS-1$
-		fetchDataFromURL(urlstr, postdata, true);
+		JFritzUtils.fetchDataFromURL(urlstr, postdata, true);
 	}
 
 	public void hangup() throws WrongPasswordException, IOException {
@@ -726,7 +653,7 @@ public class FritzBox {
 		String urlstr = "http://" //$NON-NLS-1$
 				+ box_address + ":" + box_port
 				+ "/cgi-bin/webcm"; //$NON-NLS-1$
-		fetchDataFromURL(urlstr, postdata, true);
+		JFritzUtils.fetchDataFromURL(urlstr, postdata, true);
 	}
 
 	/**
@@ -828,7 +755,8 @@ public class FritzBox {
 	        "</s:Body>\n" +
 	        "</s:Envelope>";
 
-		String result = UPNPUtils.getSOAPData("http://" + getAddress() +
+		// String result =
+		UPNPUtils.getSOAPData("http://" + getAddress() +
 			URL_SERVICE_DSLLINK, URN_SERVICE_DSLLINK, xml);
 
 		/*	This is the result of the web service

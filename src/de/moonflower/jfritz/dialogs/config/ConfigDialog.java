@@ -334,8 +334,20 @@ public class ConfigDialog extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				Object source = e.getSource();
 				pressedOK = (source == okButton);
-				if (source == okButton
-						|| source == cancelButton) {
+				if (source == okButton)
+				{
+					closeWindow();
+				} else if (source == cancelButton) {
+					fritzBoxPanel.cancel();
+					phonePanel.cancel();
+					messagePanel.cancel();
+					callMonitorPanel.cancel();
+					languagePanel.cancel();
+					otherPanel.cancel();
+					networkPanel.cancel();
+					callerListPanel.cancel();
+					callerListAppearancePanel.cancel();
+					sipPanel.cancel();
 					closeWindow();
 				} else if (e.getActionCommand().equals("fetchSIP")) { //$NON-NLS-1$
 					try {

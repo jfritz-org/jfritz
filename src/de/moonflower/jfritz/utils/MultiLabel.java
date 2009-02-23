@@ -62,6 +62,7 @@ public class MultiLabel extends JComponent implements SwingConstants
             lines[i] = tkn.nextToken();
 
         recalculateDimension();
+        repaint();
     }
 
     private void recalculateDimension()

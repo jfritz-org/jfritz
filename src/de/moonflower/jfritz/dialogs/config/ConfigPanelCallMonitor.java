@@ -325,4 +325,9 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 		return "http://jfritz.org/wiki/JFritz_Handbuch:Deutsch#Anrufmonitor";
 	}
 
+	public void cancel() {
+		// TODO Auto-generated method stub
+
+	}
+
 }

@@ -90,6 +90,8 @@ public class FritzBoxFirmware {
 
 	private final static String PATTERN_DETECT_FIRMWARE = "[Firmware|Labor][-| ][V|v]ersion[^\\d]*(\\d\\d).(\\d\\d).(\\d\\d\\d*)([^<]*)"; //$NON-NLS-1$
 
+	private final static String PATTERN_WAIT_FOR_X_SECONDS = "var loginBlocked = parseInt\\(\"([^\"]*)\",10\\)";
+
 	private final static String PATTERN_DETECT_LANGUAGE_DE = "Telefonie";
 
 	private final static String PATTERN_DETECT_LANGUAGE_EN = "Telephony";
@@ -201,8 +203,28 @@ public class FritzBoxFirmware {
                     }
                 }
 
+        		Debug.msg(data);
+
+    			int wait = 20;
+    			Pattern waitSeconds = Pattern.compile(PATTERN_WAIT_FOR_X_SECONDS);
+    			Matcher m = waitSeconds.matcher(data);
+    			if (m.find())
+    			{
+    				try {
+  					wait = Integer.parseInt(m.group(1));
+    				}
+    				catch (NumberFormatException nfe)
+    				{
+    					wait = 20;
+    				}
+    				Debug.err("Wrong password! Waiting for " + wait + " seconds!"); //$NON-NLS-1$
+    				throw new WrongPasswordException(
+    						"Wrong password, could not detect FRITZ!Box firmware version.",
+    						wait); //$NON-NLS-1$
+    			}
+
 				Pattern p = Pattern.compile(PATTERN_DETECT_LANGUAGE_DE);
-				Matcher m = p.matcher(data);
+				m = p.matcher(data);
 				if (m.find()) {
 					language = "de";
 					detected = true;
@@ -239,18 +261,29 @@ public class FritzBoxFirmware {
 			String majorFirmwareVersion = m.group(2);
 			String minorFirmwareVersion = m.group(3);
 			String modFirmwareVersion = m.group(4).trim();
+
 			Debug.msg("Detected Firmware: " +
 					boxtypeString + "." +
 					majorFirmwareVersion + "." +
 					minorFirmwareVersion +
 					modFirmwareVersion + " " +
 					language);
+			if ((((Integer.parseInt(majorFirmwareVersion) == 4) && (Integer.parseInt(minorFirmwareVersion) >= 67))
+				  || (Integer.parseInt(majorFirmwareVersion) > 4))
+				&& (language.equals("en")))
+				{
+					// ab version xx.04.67 gibt es bei englischen Firmwares keine Unterscheidung mehr zwischen
+					// internationaler und deutscher Firmware bei den URLs und Anrufliste.csv
+					Debug.msg("Detected international firmware greater then xx.04.67. Forcing to use german patterns.");
+					language = "de";
+				}
+
 			return new FritzBoxFirmware(boxtypeString, majorFirmwareVersion,
 					minorFirmwareVersion, modFirmwareVersion, language, mac);
-		} else {
-			Debug.err("detectFirmwareVersion: Password wrong?"); //$NON-NLS-1$
-			throw new WrongPasswordException(
-					"Could not detect FRITZ!Box firmware version."); //$NON-NLS-1$
+		}
+		else
+		{
+			throw new InvalidFirmwareException();
 		}
 	}
 

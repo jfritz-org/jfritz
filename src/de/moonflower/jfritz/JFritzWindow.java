@@ -995,6 +995,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				+ "Active Developers:\n"
 				+ "Robert Palmer <robotniko@users.sourceforge.net>\n" 	//$NON-NLS-1$
 				+ "Brian Jensen <capncrunch@users.sourceforge.net>\n" 	//$NON-NLS-1$
+				+ "Rainer Ullrich <jfritz@rainerullrich.de>\n" 			//$NON-NLS-1$
 				+ "\n"													//$NON-NLS-1$
 				+ "Former Developers:\n" 								//$NON-NLS-1$
 				+ "Arno Willig <akw@thinkwiki.org>\n"					//$NON-NLS-1$
