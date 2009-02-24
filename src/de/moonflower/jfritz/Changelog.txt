@@ -6,6 +6,9 @@ TODO: Client-Server fixen.
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 TODO: JFritz.playSound scheint buggy zu sein (zumindest unter Vista), ÜBERPRÜFEN und fixen.
 
+JFritz 0.7.2.23:
+- Bugfix: Restart FRITZ!Box durch Anrufmonitor.
+
 JFritz 0.7.2.22:
 - Neu: About-Dialog erweitert.
 - Neu: Erkennung der notwendigen Wartezeit, wenn das Passwort falsch eingegeben wurde.

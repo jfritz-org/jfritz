@@ -15,6 +15,7 @@ public class FBoxCallMonitorNew extends Thread {
 	private Socket socket;
 
 	private BufferedReader in;
+	private BufferedWriter out;
 
 	FBoxCallMonitorNew()
 	{
@@ -41,7 +42,7 @@ public class FBoxCallMonitorNew extends Thread {
 					socket = new Socket();
 					socket.bind(null);
 					try {
-					socket.connect(new InetSocketAddress("192.168.1.4", 1012), 500);
+						socket.connect(new InetSocketAddress("192.168.1.4", 1012), 500);
 					} catch (IOException e)
 					{
 						try {
@@ -52,8 +53,9 @@ public class FBoxCallMonitorNew extends Thread {
 						}
 						System.err.println(getCurrentTime() + " Connection timed out. Set symbol to DISCONNECTED.");
 					}
-					socket.setSoTimeout(15000);
+					socket.setSoTimeout(1000);
 					in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+					out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 					connected = true;
 					System.out.println(getCurrentTime() + " Connected. Set symbol to CONNECTED.");
 				}
@@ -64,7 +66,10 @@ public class FBoxCallMonitorNew extends Thread {
 				}
 			} catch (IOException e) {
 				try {
+					socket.shutdownInput();
+					socket.shutdownOutput();
 					in.close();
+					out.close();
 					socket.close();
 
 					//TODO: probiere, ob mit setReuseAddress() und einem korrektem Bind die zustzlich
