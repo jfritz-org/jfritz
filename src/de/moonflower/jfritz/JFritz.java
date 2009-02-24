@@ -400,7 +400,6 @@ public final class JFritz implements  StatusListener, ItemListener {
 		phonebook.setCallerList(callerlist);
 		callerlist.setPhoneBook(phonebook);
 		phonebook.findAllLastCalls();
-		callerlist.findAllPersons();
 	}
 
 	/**

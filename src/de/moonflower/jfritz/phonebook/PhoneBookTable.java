@@ -112,7 +112,8 @@ public class PhoneBookTable extends JTable implements KeyListener{
 
 	public void showAndSelectPersonByCall(Call call)
 	{
-		if ( call.getPerson() == null && call.getPhoneNumber() != null)
+		Person p = JFritz.getPhonebook().findPerson(call);
+		if ( p == null && call.getPhoneNumber() != null)
 		{
 			Person person = new Person();
 			person.addNumber(call.getPhoneNumber());
@@ -122,7 +123,7 @@ public class PhoneBookTable extends JTable implements KeyListener{
 			int index = phonebook.getFilteredPersons().indexOf(person);
 			showAndSelectRow(index);
 		} else {
-			int index = phonebook.getFilteredPersons().indexOf(call.getPerson());
+			int index = phonebook.getFilteredPersons().indexOf(p);
 			showAndSelectRow(index);
 		}
 	}

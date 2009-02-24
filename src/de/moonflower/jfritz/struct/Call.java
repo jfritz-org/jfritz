@@ -41,8 +41,6 @@ public class Call implements Serializable {
 
 	private double cost = -1;
 
-	private Person person;
-
 	private String comment = ""; //$NON-NLS-1$
 
 	public Call(final CallType calltype, final Date calldate, final PhoneNumber number,
@@ -186,13 +184,6 @@ public class Call implements Serializable {
 	}
 
 	/**
-	 * @return Returns the person the number belongs to or null.
-	 */
-	public Person getPerson() {
-		return person; // may also be null
-	}
-
-	/**
 	 * @return Returns the number.
 	 */
 	public PhoneNumber getPhoneNumber() {
@@ -264,11 +255,6 @@ public class Call implements Serializable {
 	 */
 	public void setDuration(int duration) {
 		this.duration = duration;
-	}
-
-	public void setPerson(Person person) {
-		this.person = person;
-
 	}
 
 	/**
@@ -402,6 +388,7 @@ public class Call implements Serializable {
 		outString = outString.append(";\"" + duration + "\""); //$NON-NLS-1$, //$NON-NLS-2$
 
 		// address
+		Person person = JFritz.getPhonebook().findPerson(this);
 		if (person == null) {
 			outString = outString.append(";\"\";\"\";\"\""); //$NON-NLS-1$
 		} else {

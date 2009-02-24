@@ -53,8 +53,14 @@ public class CreateUpdateFile {
 		}
 	}
 
-	public void setVersion(final String version) {
+	public void setVersion(String version) {
 		this.version = version;
+	}
+
+	public Directory createAddDirectory() {
+		Directory dir = new Directory();
+		dirs.add(dir);
+		return dir;
 	}
 
 	public class Directory {

@@ -25,6 +25,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.cellrenderer.CallByCallCellRenderer;
 import de.moonflower.jfritz.cellrenderer.CallTypeCellRenderer;
 import de.moonflower.jfritz.cellrenderer.CommentCellRenderer;
@@ -305,9 +306,11 @@ public class CallerTable extends JTable {
 		int selectedCalls = rows.length;
 
 		Person currentPerson = null;
+		Call currentCall = null;
 		for (int i=0; i<selectedCalls; i++)
 		{
-			currentPerson = callerList.getFilteredCallVector().get(rows[i]).getPerson();
+			currentCall = callerList.getFilteredCallVector().get(rows[i]);
+			currentPerson = JFritz.getPhonebook().findPerson(currentCall);
 			if ( currentPerson != null )
 			{
 				selectedPersons.add(currentPerson);

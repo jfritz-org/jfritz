@@ -1,5 +1,6 @@
 package de.moonflower.jfritz.callerlist.filter;
 
+import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
@@ -48,7 +49,7 @@ public class SearchFilter extends CallFilter {
 				return true;
 			}
 
-			person = currentCall.getPerson();
+			person = JFritz.getPhonebook().findPerson(currentCall);
 			if ((person != null)
 					&& person.getFullname().toLowerCase().contains(part)) {
 				return true;

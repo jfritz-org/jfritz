@@ -51,7 +51,7 @@ public class CurrentCallsTable extends AbstractTableModel implements
 						return call.getPhoneNumber().getCallByCall();
 					return null;
 			case 3: return call.getPhoneNumber();
-			case 4: return call.getPerson();
+			case 4: return JFritz.getPhonebook().findPerson(call);
 			case 5: return call.getPort();
 			case 6: return call.getRoute();
 			case 7: return null;

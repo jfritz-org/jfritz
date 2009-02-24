@@ -989,7 +989,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		if (command.equals("clipboard_adress")) { //$NON-NLS-1$
 			Call call = callerList.getSelectedCall();
 			if (call != null) {
-				Person person = call.getPerson();
+				Person person = JFritz.getPhonebook().findPerson(call);
 				if (person != null) {
 					JFritzClipboard.copy(person.getAddress());
 				}

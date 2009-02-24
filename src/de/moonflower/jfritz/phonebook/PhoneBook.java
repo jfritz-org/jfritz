@@ -439,10 +439,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 			unfilteredPersons.set(index, updated);
 
 			updated.setLastCall(JFritz.getCallerList().findLastCall(updated));
-			JFritz.getCallerList().updatePersonInCalls(updated, updated.getNumbers());
-
-			for(PhoneBookListener listener: listeners)
-				listener.contactUpdated(original, updated);
+			notifyListenersOfUpdate(original, updated);
 
 			updateFilter();
 			fireTableDataChanged();
@@ -459,9 +456,38 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 	 * @param updated the updated data for this contact
 	 */
 	public synchronized void notifyListenersOfUpdate(Person original, Person updated){
-		for(PhoneBookListener listener: listeners)
-			listener.contactUpdated(original, updated);
+		// update deleted numbers
+		for (PhoneNumber number: original.getNumbers())
+		{
+			if (!updated.getNumbers().contains(number))
+			{
+				// number has been deleted, remove it from hash table
+				numberHashMap.deletePerson(number, updated);
+			}
+		}
 
+		// update new numbers
+		for (PhoneNumber number: updated.getNumbers())
+		{
+			if (!original.getNumbers().contains(number))
+			{
+				// number has been added, add it to hash table
+				numberHashMap.addPerson(number, updated);
+			}
+		}
+
+		for(PhoneBookListener listener: listeners)
+		{
+			listener.contactUpdated(original, updated);
+		}
+	}
+
+	public synchronized void notifyListenersOfDelete(Vector<Person> deletedPersons)
+	{
+		for (PhoneBookListener listener: listeners)
+		{
+			listener.contactsRemoved(deletedPersons);
+		}
 	}
 
 	/*
@@ -470,6 +496,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 	public synchronized boolean addEntry(Person newPerson) {
 		// TODO: Mergen von Einträgen.
 		PhoneNumber pn1 = newPerson.getStandardTelephoneNumber();
+		Vector<Person> removedPersons = new Vector<Person>();
 
 		Enumeration<Person> en = unfilteredPersons.elements();
 		while (en.hasMoreElements()){
@@ -483,6 +510,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 									p.getStandardTelephoneNumber()
 											.getIntNumber())) {
 				deleteEntry(p);
+				removedPersons.add(p);
 			} else {
 				// TODO: merge entries
 				// Bisher nur vergleich mit standardrufnummer
@@ -501,7 +529,9 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 		{
 			numberHashMap.addPerson(number, newPerson);
 		}
-		callerList.updatePersonInCalls(newPerson, newPerson.getNumbers());
+
+		notifyListenersOfDelete(removedPersons);
+
 		return true;
 	}
 
@@ -525,15 +555,6 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 		{
 			numberHashMap.deletePerson(number, person);
 		}
-
-		Call call = callerList.findLastCall(person);
-		Person newPerson = null;
-		if (call != null) {
-			newPerson = findPerson(call);
-			callerList.setPerson(newPerson, call);
-		}
-		callerList.updatePersonInCalls(newPerson, person.getNumbers());
-		//updateFilter();
 	}
 
 	/**
@@ -1066,11 +1087,6 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 		for (int i = 0; i < unfilteredPersons.size(); i++) {
 			person = unfilteredPersons.get(i);
 			call = callerList.findLastCall(person);
-			if (call != null) {
-				// wichtig, sonst steht da noch null drinn und den Fehler findet
-				// man dann niemals
-				callerList.setPerson(person, call);
-			}
 			person.setLastCall(call);
 		}
 		Debug.msg("...done");
@@ -1315,11 +1331,14 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 				}
 			}
 
+			Vector<Person> removedPersons = new Vector<Person>();
 			Iterator<Person> iterator = redundantEntries.iterator();
 			while (iterator.hasNext()) {
 				Person p = iterator.next();
 				deleteEntry(p);
+				removedPersons.add(p);
 			}
+			notifyListenersOfDelete(removedPersons);
 		}
 
 		if (redundantEntries.size() > 0) {
@@ -1441,24 +1460,4 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 			saveToXMLFile(Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
 		}
     }
-
-    /**
-     * This function is used to notify the network subsystem that a
-     * contact has been modified
-     *
-     * @param old
-     * @param updated
-     */
-    public void personUpdated(Person old, Person updated){
-    	Vector<Person> o = new Vector<Person>();
-    	Vector<Person> u = new Vector<Person>();
-    	o.add(old);
-    	u.add(updated);
-
-    	for(PhoneBookListener listener: listeners){
-    		listener.contactsRemoved(o);
-    		listener.contactsAdded(u);
-    	}
-    }
-
 }

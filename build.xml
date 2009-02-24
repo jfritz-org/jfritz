@@ -2,7 +2,7 @@
 <project name="JFritz" default="build" basedir=".">
 
 	<property name="app.name" value="JFritz" />
-	<property name="version" value="0.7.2" />
+	<property name="version" value="0.7.2.24" />
 
 	<!-- compiler flags -->
 	<property name="javac.debug" value="true" />
@@ -141,10 +141,10 @@
 			</fileset>
 		</copy>
 		<copy todir="${dist}/">
-			<fileset dir="">
-				<include name="**/splash.png" />
-				<include name="**/status.png" />
-				<include name="**/MSVCR71.dll" />
+			<fileset dir=".">
+				<include name="splash.png" />
+				<include name="status.png" />
+				<include name="MSVCR71.dll" />
 			</fileset>
 		</copy>
 		<copy todir="${dist}">
@@ -152,7 +152,6 @@
 				<include name="**/Changelog.txt" />
 			</fileset>
 		</copy>
-
 	</target>
 
 	<target name="jar" depends="compile" description="Generates jar files">
@@ -339,5 +338,4 @@
 			</fileset>
 		</copy>
 	</target>
-
 </project>

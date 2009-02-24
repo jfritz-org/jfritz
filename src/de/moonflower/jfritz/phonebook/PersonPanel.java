@@ -46,7 +46,6 @@ import javax.swing.table.TableCellRenderer;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.Main;
-import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -408,6 +407,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 			typeModel.setTypes();
 			numberHasChanged = true;
 			firePropertyChange();
+			updateGUI();
 		} else if (e.getActionCommand().equals("del")) { //$NON-NLS-1$
 			int row = numberTable.getSelectedRow();
 			cancelEditing();
@@ -423,6 +423,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 			}
 			numberHasChanged = true;
 			firePropertyChange();
+			updateGUI();
 		} else if (e.getActionCommand().equals("undo")) { //$NON-NLS-1$
 			undo();
 		} else if (e.getActionCommand().equals("ok")) {  //$NON-NLS-1$
@@ -558,15 +559,6 @@ public class PersonPanel extends JPanel implements ActionListener,
 		{
 			Person unchanged = originalPerson.clone();
 
-			//remove the person reference in the call list, if one was present!
-			Call call = originalPerson.getLastCall();
-			Person newPerson = null;
-			if(call != null){
-				newPerson = phoneBook.findPerson(call);
-				JFritz.getCallerList().setPerson(newPerson, call);
-			}
-			JFritz.getCallerList().updatePersonInCalls(newPerson, originalPerson.getNumbers());
-
 			synchronized(phoneBook){
 				originalPerson.setPrivateEntry(chkBoxPrivateEntry.isSelected());
 				originalPerson.setFirstName(tfFirstName.getText());
@@ -586,10 +578,10 @@ public class PersonPanel extends JPanel implements ActionListener,
 			}
 
 			originalPerson.setLastCall(JFritz.getCallerList().findLastCall(originalPerson));
-			JFritz.getCallerList().updatePersonInCalls(originalPerson, originalPerson.getNumbers());
 
 			checkChanged();
 			updateUndoButton();
+			clonedPerson = originalPerson.clone();
 		}
 
 		return originalPerson;
@@ -770,7 +762,6 @@ public class PersonPanel extends JPanel implements ActionListener,
 			ActionListener al = en.nextElement();
 			al.actionPerformed(e);
 		}
-		JFritz.getCallerList().findAllPersons();
 		numberHasChanged = false;
 		hasChanged = false;
 		updateUndoButton();
