@@ -47,8 +47,6 @@ public class Person implements Cloneable, Serializable{
 
 	private Vector<PhoneNumber> numbers;
 
-	private Call lastCall; //TODO lastCall aktualisiern beim löschen von calls
-
 	private String pictureUrl = ""; //$NON-NLS-1$
 
 	private ImageIcon scaledPicture = null;
@@ -702,14 +700,6 @@ public class Person implements Cloneable, Serializable{
 		}
 
 		return true;
-	}
-
-	public Call getLastCall() {
-		return lastCall;
-	}
-
-	public void setLastCall(final Call lastCall) {
-		this.lastCall = lastCall;
 	}
 
 	public Person clone() {

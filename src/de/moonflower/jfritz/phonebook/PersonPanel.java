@@ -49,6 +49,7 @@ import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.JFritzUtils;
+import de.moonflower.jfritz.utils.Debug;
 
 /**
  * This class is used in the phone book to edit individual entries
@@ -400,7 +401,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 			Main.setStateProperty("option.picture.default_path", fc.getSelectedFile().getAbsolutePath());  //$NON-NLS-1$
 			clonedPerson.setPictureUrl(fc.getSelectedFile().getAbsolutePath());
 			hasChanged = true;
-			updateUndoButton();
+			firePropertyChange();
 			updateGUI();
 		} else if (e.getActionCommand().equals("add")) { //$NON-NLS-1$
 			clonedPerson.getNumbers().add(new PhoneNumber("", false)); //$NON-NLS-1$
@@ -438,7 +439,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 	 */
 	public void valueChanged(ListSelectionEvent e) {
 		if (!e.getValueIsAdjusting()) {
-			updateAddDelButtons();
+			firePropertyChange();
 		}
 	}
 
@@ -549,8 +550,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		((NumberTableModel) numberTable.getModel()).setPerson(clonedPerson);
 
 		updatingGui = false;
-		updateAddDelButtons();
-		updateUndoButton();
+		firePropertyChange();
 	}
 
 	public final Person updatePerson() {
@@ -577,10 +577,8 @@ public class PersonPanel extends JPanel implements ActionListener,
 				phoneBook.notifyListenersOfUpdate(unchanged, originalPerson);
 			}
 
-			originalPerson.setLastCall(JFritz.getCallerList().findLastCall(originalPerson));
-
 			checkChanged();
-			updateUndoButton();
+			firePropertyChange();
 			clonedPerson = originalPerson.clone();
 		}
 
@@ -619,7 +617,6 @@ public class PersonPanel extends JPanel implements ActionListener,
 	 */
 	public void caretUpdate(CaretEvent e) {
 		checkChanged();
-
 		firePropertyChange();
 	}
 
@@ -710,26 +707,6 @@ public class PersonPanel extends JPanel implements ActionListener,
 		this.numberHasChanged = numberHasChanged;
 	}
 
-	/**
-	 * Adds an button-listener
-	 *
-	 * @param listener
-	 */
-	public void addActionListener(ActionListener listener) {
-		if (!actionListener.contains(listener))
-			actionListener.add(listener);
-	}
-
-	/**
-	 * Removes an button-listener
-	 *
-	 * @param listener
-	 */
-	public void removeButtonListener(ActionListener listener) {
-		if (actionListener.contains(listener))
-			actionListener.remove(listener);
-	}
-
 	private void undo()
 	{
 		hasChanged = false;
@@ -747,6 +724,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 			ActionListener al = en.nextElement();
 			al.actionPerformed(e);
 		}
+		firePropertyChange();
 	}
 
 	private void save(ActionEvent e)
@@ -764,8 +742,8 @@ public class PersonPanel extends JPanel implements ActionListener,
 		}
 		numberHasChanged = false;
 		hasChanged = false;
-		updateUndoButton();
 		JFritz.getJframe().getPhoneBookPanel().getPhoneBookTable()
 		.showAndSelectPerson(originalPerson, false);
+		firePropertyChange();
 	}
 }

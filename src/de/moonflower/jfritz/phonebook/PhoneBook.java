@@ -44,6 +44,7 @@ import org.xml.sax.XMLReader;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.CallerList;
+import de.moonflower.jfritz.callerlist.CallerListListener;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
@@ -56,7 +57,7 @@ import de.moonflower.jfritz.utils.reverselookup.ReverseLookupGermany;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupTurkey;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupUnitedStates;
 
-public class PhoneBook extends AbstractTableModel implements LookupObserver {
+public class PhoneBook extends AbstractTableModel implements LookupObserver, CallerListListener {
 	private static final long serialVersionUID = 1;
 
 	private static final String PHONEBOOK_DTD_URI = "http://jfritz.moonflower.de/dtd/phonebook.dtd"; //$NON-NLS-1$
@@ -238,11 +239,11 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 			case 5:
 				o1 = ""; //$NON-NLS-1$
 				o2 = ""; //$NON-NLS-1$
-				Call call1 = p1.getLastCall();
+				Call call1 = JFritz.getCallerList().findLastCall(p1);
 				if (call1 != null) {
 					o1 = call1.getCalldate();
 				}
-				Call call2 = p2.getLastCall();
+				Call call2 = JFritz.getCallerList().findLastCall(p2);
 				if (call2 != null) {
 					o2 = call2.getCalldate();
 				}
@@ -438,7 +439,6 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 		if(index >= 0){
 			unfilteredPersons.set(index, updated);
 
-			updated.setLastCall(JFritz.getCallerList().findLastCall(updated));
 			notifyListenersOfUpdate(original, updated);
 
 			updateFilter();
@@ -523,7 +523,6 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 			}
 		}
 
-		newPerson.setLastCall(callerList.findLastCall(newPerson));
 		unfilteredPersons.add(newPerson);
 		for (PhoneNumber number: newPerson.getNumbers())
 		{
@@ -533,12 +532,6 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 		notifyListenersOfDelete(removedPersons);
 
 		return true;
-	}
-
-	public void setLastCall(Person p, Call c) {
-		int index = unfilteredPersons.indexOf(p);
-		unfilteredPersons.get(index).setLastCall(c);
-		fireTableDataChanged();
 	}
 
 	/**
@@ -867,6 +860,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 		allLastCallsSearched = true;
 		loadingXMLFile = false;
 		updateFilter();
+		JFritz.getCallerList().addListener(this);
 	}
 
 	public Object getValueAt(int rowIndex, int columnIndex) {
@@ -894,7 +888,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 		case 4:
 			return person.getStreet() + "\n" +  (person.getPostalCode() + " " + person.getCity()).trim(); //$NON-NLS-1$ //$NON-NLS-1$
 		case 5: {
-			return person.getLastCall();
+			return JFritz.getCallerList().findLastCall(person);
 		}
 
 		default:
@@ -1065,32 +1059,6 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 		{
 			return null;
 		}
-	}
-
-	/**
-	 * searches for the last call for every Person in the Addressbook, and write
-	 * it to person.lastCall to speed up sorting
-	 */
-	public void findAllLastCalls() {
-		// TODO updaten wenn neue call oder personen oder rufnummern hinzukommen
-		// oder alte gelöscht werden
-		Debug.msg("searching lastCall for allPersons in the phonebook....");
-		if (callerList == null) {
-			Debug.err("setCallerList first!");
-		}
-		/*
-		 * JFritz.getCallerList().calculateAllLastCalls(unfilteredPersons); too
-		 * slow
-		 */
-		Person person;
-		Call call;
-		for (int i = 0; i < unfilteredPersons.size(); i++) {
-			person = unfilteredPersons.get(i);
-			call = callerList.findLastCall(person);
-			person.setLastCall(call);
-		}
-		Debug.msg("...done");
-		fireTableDataChanged();
 	}
 
 	/**
@@ -1460,4 +1428,19 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver {
 			saveToXMLFile(Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
 		}
     }
+
+	public void callsAdded(Vector<Call> newCalls) {
+		updateFilter();
+		fireTableDataChanged();
+	}
+
+	public void callsRemoved(Vector<Call> callsRemoved) {
+		updateFilter();
+		fireTableDataChanged();
+	}
+
+	public void callsUpdated(Call original, Call update) {
+		updateFilter();
+		fireTableDataChanged();
+	}
 }

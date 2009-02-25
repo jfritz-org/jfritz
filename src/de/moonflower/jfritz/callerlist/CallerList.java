@@ -130,6 +130,8 @@ public class CallerList extends AbstractTableModel implements LookupObserver, Ph
 
 	private NumberCallMultiHashMap hashMap;
 
+	private boolean initStage = true;
+
 	/**
 	 * CallerList Constructor new contrustor, using binary sizes
 	 * NOTE:filteredCallerData = unfilteredCallerData is forbidden!! use
@@ -389,6 +391,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver, Ph
 
 			// Synchronise the call vectors
 			fireUpdateCallVector();
+			initStage = false;
 
 		} catch (ParserConfigurationException e) {
 			Debug.err("Error with ParserConfiguration!"); //$NON-NLS-1$
@@ -431,19 +434,11 @@ public class CallerList extends AbstractTableModel implements LookupObserver, Ph
 	 *
 	 * @author Brian Jensen
 	 */
-	public synchronized boolean addEntry(Call call) {
+	private synchronized boolean addEntry(Call call) {
 		if (contains(call)) {
 			return false;
 		} // add a new enty to the call list
 
-		Person p = phonebook.findPerson(call.getPhoneNumber());
-		if (p != null) {
-			if (p.getLastCall() == null) {
-				phonebook.setLastCall(p, call);
-			} else if (p.getLastCall().getCalldate().before(call.getCalldate())) {
-				phonebook.setLastCall(p, call);
-			}
-		}
 		newCalls.add(call);
 		if (call.getPhoneNumber() != null)
 		{
@@ -473,7 +468,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver, Ph
 			}
 		}
 
-		if (newEntries > 0) {
+		if ((!initStage) && (newEntries > 0)) {
 
 			fireUpdateCallVector();
 			update();
@@ -540,6 +535,12 @@ public class CallerList extends AbstractTableModel implements LookupObserver, Ph
 			{
 				hashMap.deleteCall(c.getPhoneNumber(), c);
 			}
+
+			for(CallerListListener listener: callListListeners)
+			{
+				listener.callsRemoved(removeCalls);
+			}
+
 			update();
 			saveToXMLFile(Main.SAVE_DIR + JFritz.CALLS_FILE, true);
 
@@ -654,7 +655,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver, Ph
 	 * @author Brian Jensen
 	 *
 	 */
-	public synchronized void fireUpdateCallVector() {
+	private synchronized void fireUpdateCallVector() {
 		// update the call list and then sort it
 		unfilteredCallerData.addAll(newCalls);
 
@@ -1122,20 +1123,13 @@ public class CallerList extends AbstractTableModel implements LookupObserver, Ph
 				removedCalls.add(call);
 				unfilteredCallerData.remove(call);
 				hashMap.deleteCall(call.getPhoneNumber(), call);
-				//Debug.msg("removing " + call);
-				p = JFritz.getPhonebook().findPerson(call);
-				if (p != null) {
-					if (call.equals(p.getLastCall())) {
-						// this was the LastCall of the Person
-						phonebook.setLastCall(p, findLastCall(p));
-					}
-				}
-
 			}
 
 			//notify all listeners that calls have been removed
 			for(CallerListListener l: callListListeners)
+			{
 				l.callsRemoved((Vector) removedCalls.clone());
+			}
 
 			saveToXMLFile(Main.SAVE_DIR + JFritz.CALLS_FILE, true);
 			update();
@@ -2180,7 +2174,7 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 	 * for the LookupObserver
 	 */
 	public void personsFound(Vector<Person> persons) {
-		if (persons != null) {
+		if (persons != null && persons.size() > 0) {
 			phonebook.addEntries(persons);
 			update();
 		}

@@ -399,7 +399,6 @@ public final class JFritz implements  StatusListener, ItemListener {
 		// phonebook.loadFromXMLFile(SAVE_DIR + PHONEBOOK_FILE);
 		phonebook.setCallerList(callerlist);
 		callerlist.setPhoneBook(phonebook);
-		phonebook.findAllLastCalls();
 	}
 
 	/**
