@@ -2,7 +2,7 @@
 <project name="JFritz" default="build" basedir=".">
 
 	<property name="app.name" value="JFritz" />
-	<property name="version" value="0.7.2.24" />
+	<property name="version" value="unknown" />
 
 	<!-- compiler flags -->
 	<property name="javac.debug" value="true" />
@@ -81,6 +81,9 @@
 		<mkdir dir="${build}" />
 		<mkdir dir="${build.classes}" />
 		<javac srcdir="${src}" destdir="${build.classes}" classpathref="build.classpath" debug="${javac.debug}" optimize="${javac.optimize}" source="${javac.version}" target="${javac.version}" encoding="iso-8859-1" />
+		<taskdef name="GetJFritzVersion" classname="de.moonflower.jfritz.ant.GetJFritzVersion" classpathref="test.classpath" />
+		<GetJFritzVersion/>
+		<echo message="${app.name} - ${version} compiled!" />
 	</target>
 
 	<target name="CallSim" description="Create a jar of my call simulator">

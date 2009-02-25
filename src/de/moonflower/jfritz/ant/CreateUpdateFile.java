@@ -1,4 +1,4 @@
-package de.moonflower.jfritz.autoupdate;
+package de.moonflower.jfritz.ant;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -9,6 +9,9 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.Vector;
+
+import de.moonflower.jfritz.autoupdate.Logger;
+import de.moonflower.jfritz.autoupdate.MDGenerator;
 
 public class CreateUpdateFile {
 
