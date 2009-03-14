@@ -274,7 +274,7 @@ public class FritzBoxFirmware {
 				{
 					// ab version xx.04.67 gibt es bei englischen Firmwares keine Unterscheidung mehr zwischen
 					// internationaler und deutscher Firmware bei den URLs und Anrufliste.csv
-					Debug.msg("Detected international firmware greater then xx.04.67. Forcing to use german patterns.");
+					Debug.msg("Detected international firmware greater than xx.04.67. Forcing to use german patterns.");
 					language = "de";
 				}
 

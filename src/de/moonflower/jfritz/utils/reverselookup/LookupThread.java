@@ -52,10 +52,6 @@ public class LookupThread extends Thread {
 
 	private static int ac_length;
 
-	private static Pattern pData;
-
-	private static Matcher mData;
-
 	/**
 	 * sets the default thread state to active
 	 *
@@ -148,14 +144,16 @@ public class LookupThread extends Thread {
 	 */
 	static synchronized Person lookup(PhoneNumber number, String siteName) {
 
-		Person newPerson = new Person();
+		Vector<Person> foundPersons = new Vector<Person>(5);
 
 		if (number.isFreeCall()) {
-			newPerson = new Person("", "FreeCall"); //$NON-NLS-1$,  //$NON-NLS-2$
-			newPerson.addNumber(number);
+			Person p = new Person("", "FreeCall"); //$NON-NLS-1$,  //$NON-NLS-2$
+			p.addNumber(number);
+			foundPersons.add(p);
 		} else if (number.isSIPNumber() || number.isQuickDial()) {
-			newPerson = new Person();
-			newPerson.addNumber(number);
+			Person p = new Person();
+			p.addNumber(number);
+			foundPersons.add(p);
 		} else if (ReverseLookup.rlsMap.containsKey(number.getCountryCode())) {
 
 			nummer = number.getAreaNumber();
@@ -285,8 +283,35 @@ public class LookupThread extends Thread {
 								street = ""; //$NON-NLS-1$
 								zipcode = ""; //$NON-NLS-1$
 								city = "";	  //$NON-NLS-1$
+								Person p = null;
 
 								patterns = rls.getEntry(j);
+								Pattern namePattern = null;
+								Pattern streetPattern = null;
+								Pattern cityPattern = null;
+								Pattern zipcodePattern = null;
+
+								Matcher nameMatcher = null;
+								Matcher streetMatcher = null;
+								Matcher cityMatcher = null;
+								Matcher zipcodeMatcher = null;
+
+								if (!patterns[0].equals(""))
+								{
+									namePattern = Pattern.compile(patterns[0]);
+								}
+								if (!patterns[1].equals(""))
+								{
+									streetPattern = Pattern.compile(patterns[1]);
+								}
+								if (!patterns[2].equals(""))
+								{
+									cityPattern = Pattern.compile(patterns[2]);
+								}
+								if (!patterns[3].equals(""))
+								{
+									zipcodePattern = Pattern.compile(patterns[3]);
+								}
 
 								for (int line=0; line<dataLength; line++)
 								{
@@ -296,23 +321,28 @@ public class LookupThread extends Thread {
 										data[line] = data[line].replaceAll(new Character((char)spaceAlternative).toString(), " "); //$NON-NLS-1$
 
 										//match name
-										if(!patterns[0].equals("")){
-											pData = Pattern.compile(patterns[0]);
-											mData = pData.matcher(data[line]);
-											if(mData.find()){
+										if(namePattern != null){
+											nameMatcher = namePattern.matcher(data[line]);
+											if(nameMatcher.find()){
 
 												//read in and concate all groupings
 												str = "";
-												for(int k=1; k <= mData.groupCount(); k++){
-													if(mData.group(k) != null)
-														str = str + mData.group(k).trim() + " ";
+												for(int k=1; k <= nameMatcher.groupCount(); k++){
+													if(nameMatcher.group(k) != null)
+														str = str + nameMatcher.group(k).trim() + " ";
 												}
 
-												String[] split = str.split(" ", 2); //$NON-NLS-1$
+												String[] split;
+												str = str.replaceAll(",", " ");
+												split = str.split(" ", 2); //$NON-NLS-1$
 
 												lastname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(split[0]));
 												lastname = lastname.trim();
 												lastname = lastname.replaceAll(",", "");
+												lastname = lastname.replaceAll("%20", " ");
+												lastname = JFritzUtils.replaceSpecialCharsUTF(lastname);
+												lastname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(lastname));
+												lastname = JFritzUtils.removeDuplicateWhitespace(lastname);
 
 												if (split[1].length() > 0) {
 													firstname = HTMLUtil.stripEntities(split[1]); //$NON-NLS-1$
@@ -328,61 +358,101 @@ public class LookupThread extends Thread {
 													}
 												}
 
-												firstname = JFritzUtils.removeLeadingSpaces(firstname.trim());
+												firstname = firstname.replaceAll("%20", " ");
+												firstname = JFritzUtils.replaceSpecialCharsUTF(firstname);
+												firstname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(firstname));
+												firstname = JFritzUtils.removeDuplicateWhitespace(firstname);
+												firstname = firstname.trim();
+
+												company = company.replaceAll("%20", " ");
+												company = JFritzUtils.replaceSpecialCharsUTF(company);
+												company = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(company));
+												company = JFritzUtils.removeDuplicateWhitespace(company);
+												company = company.trim();
+
+												p = new Person();
+												p.setFirstName(firstname);
+												p.setLastName(lastname);
+												p.setCompany(company);
+												if (company.length() > 0) {
+													p.addNumber(number.getIntNumber(), "business"); //$NON-NLS-1$
+												} else {
+													p.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
+												}
+												foundPersons.add(p);
 											}
 										}
 										yield();
 										//match street
-										if(!patterns[1].equals("")){
-											pData = Pattern.compile(patterns[1]);
-											mData = pData.matcher(data[line]);
-											if(mData.find()){
+										if(streetPattern != null){
+											streetMatcher = streetPattern.matcher(data[line]);
+											if(streetMatcher.find()){
 
 												//read in and concate all groupings
 												str = "";
-												for(int k=1; k <= mData.groupCount(); k++){
-													if(mData.group(k) != null)
-														str = str + mData.group(k).trim() + " ";
+												for(int k=1; k <= streetMatcher.groupCount(); k++){
+													if(streetMatcher.group(k) != null)
+														str = str + streetMatcher.group(k).trim() + " ";
 												}
-												street = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(str));
+												street = str.replaceAll("%20", " ");
+												street = JFritzUtils.replaceSpecialCharsUTF(street);
+												street = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(street));
+												street = JFritzUtils.removeDuplicateWhitespace(street);
 												street = street.trim();
+
+												if (p != null)
+												{
+													p.setStreet(street);
+												}
 											}
 										}
 										yield();
 										//match city
-										if(!patterns[2].equals("")){
-
-											pData = Pattern.compile(patterns[2]);
-											mData = pData.matcher(data[line]);
-											if(mData.find()){
+										if(cityPattern != null){
+											cityMatcher = cityPattern.matcher(data[line]);
+											if(cityMatcher.find()){
 
 												//read in and concate all groupings
 												str = "";
-												for(int k=1; k <= mData.groupCount(); k++){
-													if(mData.group(k) != null)
-														str = str + mData.group(k).trim() + " ";
+												for(int k=1; k <= cityMatcher.groupCount(); k++){
+													if(cityMatcher.group(k) != null)
+														str = str + cityMatcher.group(k).trim() + " ";
 												}
-												city = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(str));
+												city = str.replaceAll("%20", " ");
+												city = JFritzUtils.replaceSpecialCharsUTF(city);
+												city = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(city));
+												city = JFritzUtils.removeDuplicateWhitespace(city);
 												city = city.trim();
+
+												if (p != null)
+												{
+													p.setCity(city);
+												}
 											}
 										}
 
 										yield();
 										//match zip code
-										if(!patterns[3].equals("")){
-
-											pData = Pattern.compile(patterns[3]);
-											mData = pData.matcher(data[line]);
-											if(mData.find()){
+										if(zipcodePattern != null){
+											zipcodeMatcher = zipcodePattern.matcher(data[line]);
+											if(zipcodeMatcher.find()){
 
 												//read in and concate all groupings
 												str = "";
-												for(int k=1; k <= mData.groupCount(); k++){
-													if(mData.group(k) != null)
-														str = str + mData.group(k).trim() + " ";
+												for(int k=1; k <= zipcodeMatcher.groupCount(); k++){
+													if(zipcodeMatcher.group(k) != null)
+														str = str + zipcodeMatcher.group(k).trim() + " ";
 												}
-												zipcode = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(str));
+												zipcode = str.replaceAll("%20", " ");
+												zipcode = JFritzUtils.replaceSpecialCharsUTF(zipcode);
+												zipcode = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(zipcode));
+												zipcode = JFritzUtils.removeDuplicateWhitespace(zipcode);
 												zipcode = zipcode.trim();
+
+												if (p != null)
+												{
+													p.setPostalCode(zipcode);
+												}
 											}
 										}
 									}
@@ -395,20 +465,6 @@ public class LookupThread extends Thread {
 							yield();
 
 //							Debug.msg(JFritzUtils.toAscii(street));
-
-							firstname = firstname.replaceAll("%20", " ");
-							lastname = lastname.replaceAll("%20", " ");
-							company = company.replaceAll("%20", " ");
-							street = street.replaceAll("%20", " ");
-							zipcode = zipcode.replaceAll("%20", " ");
-							city = city.replaceAll("%20", " ");
-
-							firstname = JFritzUtils.replaceSpecialCharsUTF(firstname);
-							lastname = JFritzUtils.replaceSpecialCharsUTF(lastname);
-							company = JFritzUtils.replaceSpecialCharsUTF(company);
-							street = JFritzUtils.replaceSpecialCharsUTF(street);
-							zipcode = JFritzUtils.replaceSpecialCharsUTF(zipcode);
-							city = JFritzUtils.replaceSpecialCharsUTF(city);
 
 							Debug.msg("Firstname: " + firstname); //$NON-NLS-1$
 							Debug.msg("Lastname: " + lastname); //$NON-NLS-1$
@@ -432,15 +488,7 @@ public class LookupThread extends Thread {
 										city = ReverseLookupTurkey.getCity(nummer);
 								}
 
-								newPerson = new Person(firstname, company, lastname,
-										street, zipcode, city, "", ""); //$NON-NLS-1$
-								if (company.length() > 0) {
-									newPerson.addNumber(number.getIntNumber(), "business"); //$NON-NLS-1$
-								} else {
-									newPerson.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
-								}
-
-								return newPerson;
+								return foundPersons.get(0);
 							}
 
 					} catch (IOException e1) {
@@ -469,14 +517,15 @@ public class LookupThread extends Thread {
 					city = ReverseLookupTurkey.getCity(nummer);
 			}
 
-			newPerson = new Person("", "", "", "", "", city, "", "");
-			newPerson.addNumber(number.getAreaNumber(), "home"); //$NON-NLS-1$
+			Person p = new Person("", "", "", "", "", city, "", "");
+			p.addNumber(number.getAreaNumber(), "home"); //$NON-NLS-1$
+			return p;
 
 		//no reverse lookup sites available for country
 		} else {
 			Debug.msg("No reverse lookup sites for: "+number.getCountryCode());
-			newPerson = new Person();
-			newPerson.addNumber(number.getAreaNumber(), "home");
+			Person p = new Person();
+			p.addNumber(number.getAreaNumber(), "home");
 			if(number.getCountryCode().equals(ReverseLookup.GERMANY_CODE))
 				city = ReverseLookupGermany.getCity(number.getIntNumber());
 			else if(number.getCountryCode().equals(ReverseLookup.AUSTRIA_CODE))
@@ -485,10 +534,11 @@ public class LookupThread extends Thread {
 				city = ReverseLookupUnitedStates.getCity(number.getIntNumber());
 			else if(number.getCountryCode().startsWith(ReverseLookup.TURKEY_CODE))
 				city = ReverseLookupTurkey.getCity(number.getIntNumber());
-			newPerson.setCity(city);
+			p.setCity(city);
+			return p;
 		}
 
-		return newPerson;
+		return new Person("not found", "Person");
 	}
 
 }

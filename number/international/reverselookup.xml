@@ -542,6 +542,8 @@
 				<city>^[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,([^,]*)$</city>
 				<zipcode>^[^,]*,[^,]*,[^,]*,[^,]*,([^,]*),[^,]*$</zipcode>
 			</entry>
+020-7711969,Smid,C,Westerdok 328,1013BH,Amsterdam			
+0117-371233,Camping International,,Sint Bavodijk 2/D,4504AA,Nieuwvliet
 		</website>
 		<website name="www.gebeld.nl" url="http://www.gebeld.nl/content.asp?zapp=zapp&amp;land=Nederland&amp;zoek=numm&amp;searchfield1=fullnumber&amp;searchfield2=&amp;queryfield1=$NUMBER" prefix="0">
 			<entry>
@@ -563,20 +565,12 @@
 		</website>
 	</country>
 	<country code="+33">
-		<website name="www.annuaireinverse.com" url="http://88.175.61.166/G118012/home.asp?RN=$NUMBER&amp;CO=RN&amp;FR=118012&amp;sm=rep" prefix="0">;
-			<entry>
-				<name>&lt;TD HEIGHT=&quot;15&quot; BGCOLOR=&quot;#ABEEFB&quot;  &gt;&lt;FONT CLASS=&quot;ctexte&quot;&gt;&amp;nbsp;([^&lt;]*)</name>
-				<street>&lt;TD HEIGHT=&quot;35&quot; VALIGN=&quot;TOP&quot;&gt;&lt;FONT CLASS=&quot;copytexte&quot;&gt;([^&lt;]*)&lt;br /&gt;[^&lt;]*</street>
-				<city>&lt;TD HEIGHT=&quot;35&quot; VALIGN=&quot;TOP&quot;&gt;&lt;FONT CLASS=&quot;copytexte&quot;&gt;[^&lt;]*&lt;br /&gt;\d* ([^&lt;]*)</city>
-				<zipcode>&lt;TD HEIGHT=&quot;35&quot; VALIGN=&quot;TOP&quot;&gt;&lt;FONT CLASS=&quot;copytexte&quot;&gt;[^&lt;]*&lt;br /&gt;(\d*) [^&lt;]*</zipcode>
-			</entry>
-		</website>
-		<website name="www.annuaireinverse.com" url="http://www.annuaireinverse.com/G118012/home.asp?RN=$NUMBER&amp;CO=RN&amp;FR=118012&amp;sm=rep" prefix="0">;
-			<entry>
-				<name>&lt;TD HEIGHT=&quot;15&quot; BGCOLOR=&quot;#ABEEFB&quot;  &gt;&lt;FONT CLASS=&quot;ctexte&quot;&gt;&amp;nbsp;([^&lt;]*)</name>
-				<street>&lt;TD HEIGHT=&quot;35&quot; VALIGN=&quot;TOP&quot;&gt;&lt;FONT CLASS=&quot;copytexte&quot;&gt;([^&lt;]*)&lt;br /&gt;[^&lt;]*</street>
-				<city>&lt;TD HEIGHT=&quot;35&quot; VALIGN=&quot;TOP&quot;&gt;&lt;FONT CLASS=&quot;copytexte&quot;&gt;[^&lt;]*&lt;br /&gt;\d* ([^&lt;]*)</city>
-				<zipcode>&lt;TD HEIGHT=&quot;35&quot; VALIGN=&quot;TOP&quot;&gt;&lt;FONT CLASS=&quot;copytexte&quot;&gt;[^&lt;]*&lt;br /&gt;(\d*) [^&lt;]*</zipcode>
+		<website name="www.annuaireinverse.com" url="http://www.annuaireinverse.com/reponses.asp?LANGUE=FRFR-XXXXX&amp;RECHERCHE=EXACTE&amp;image=RechercheV4&amp;RN=$NUMBER" prefix="0">
+			<entry>			
+				<name>&lt;b&gt;([^&lt;]*)&lt;/b&gt;&lt;br&gt;[^&lt;]*&lt;br&gt;\d{5}\s[^&lt;]*&lt;br&gt;[^&lt;]*&lt;/font&gt;</name>
+				<street>&lt;b&gt;[^&lt;]*&lt;/b&gt;&lt;br&gt;([^&lt;]*)&lt;br&gt;\d{5}\s[^&lt;]*&lt;br&gt;[^&lt;]*&lt;/font&gt;</street>
+				<city>&lt;b&gt;[^&lt;]*&lt;/b&gt;&lt;br&gt;[^&lt;]*&lt;br&gt;\d{5}\s([^&lt;]*)&lt;br&gt;[^&lt;]*&lt;/font&gt;</city>
+				<zipcode>&lt;b&gt;[^&lt;]*&lt;/b&gt;&lt;br&gt;[^&lt;]*&lt;br&gt;(\d{5})\s[^&lt;]*&lt;br&gt;[^&lt;]*&lt;/font&gt;</zipcode>
 			</entry>
 		</website>
 	</country>
@@ -771,10 +765,10 @@
 	<country code="+39">
 		<website name="paginebianche.it" url="http://www.paginebianche.it/execute.cgi?btt=1&amp;ts=106&amp;cb=8&amp;mr=10&amp;rk=&amp;om=&amp;qs=$NUMBER" prefix="0">
 			<entry>
-				<name>class="org"&gt;([^&lt;]*)</name>
-				<street>class="street-address">([^&lt;]*)</street>
-				<city>class="locality">([^&lt;]*)</city>
-				<zipcode>class="postal-code">([^&lt;]*)</zipcode>
+				<name>class=&quot;org&quot;&gt;([^&lt;]*)&lt;</name>
+				<street>class=&quot;street-address&quot;>([^&lt;]*)&lt;</street>
+				<city>class=&quot;locality&quot;>([^&lt;]*)&lt;</city>
+				<zipcode>class=&quot;postal-code&quot;>([^&lt;]*)&lt;</zipcode>
 			</entry>
 			<entry>
 				<name>&lt;a [^&gt;]*&gt;&lt;img [^&gt;]*&gt;&lt;/a&gt;&lt;a [^&gt;]*&gt;([^&lt;]*)</name>

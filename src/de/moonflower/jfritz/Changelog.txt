@@ -6,6 +6,10 @@ TODO: Client-Server fixen.
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 TODO: JFritz.playSound scheint buggy zu sein (zumindest unter Vista), ÜBERPRÜFEN und fixen.
 
+JFritz 0.7.2.26:
+- Inverssuche für Niederlande, Frankreich, Österreich, Italien und Deutschland repariert.
+- Ant-Bibliothek als Development-Bibliothek hinzugefügt.
+
 JFritz 0.7.2.25:
 - "LastCall" als Feld in "Person" entfernt. Referenz wird nun über die Anrufliste geholt.
 

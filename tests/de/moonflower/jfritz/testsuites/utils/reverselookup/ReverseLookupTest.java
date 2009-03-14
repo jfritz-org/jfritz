@@ -19,8 +19,6 @@ import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
  */
 public class ReverseLookupTest extends TestCase {
 
-	public JFritz jfritz;
-
 	private boolean testItalyFailed = false;
 	private boolean testSwitzerlandFailed = false;
 	private boolean testUsaFailed = false;
@@ -34,7 +32,6 @@ public class ReverseLookupTest extends TestCase {
 		Main.loadProperties();
 		Main.loadMessages(new Locale("de_DE"));
 		JFritz.loadNumberSettings();
-		jfritz = new Main(new String[0]).getJfritz();
 	}
 
 	/**
@@ -58,12 +55,12 @@ public class ReverseLookupTest extends TestCase {
 		testItalyFailed = checkEntry(entry, testItalyFailed);
 
 		checkNum = new PhoneNumber("+3931642176", false);
-		entry = new CheckEntry(checkNum, "Foto Ottica (s.n.c.)", "", "Corso XXV Aprile, 123", "22036", "Erba");
+		entry = new CheckEntry(checkNum, "Foto Ottica (S.N.C.)", "Fantinato", "", "22036", "Erba");
 		ReverseLookup.lookup(checkNum, entry, true);
 		testItalyFailed = checkEntry(entry, testItalyFailed);
 
 		checkNum = new PhoneNumber("+39226830102", false);
-		entry = new CheckEntry(checkNum, "S.r.l. Prenotazioni Hotel", "Initalia", "Via Carnia, 33/A", "20132", "Milano");
+		entry = new CheckEntry(checkNum, "S.R.L. Prenotazioni Hotel", "Initalia", "Via Carnia, 33/A", "20132", "Milano");
 		ReverseLookup.lookup(checkNum, entry, true);
 		testItalyFailed = checkEntry(entry, testItalyFailed);
 
@@ -139,12 +136,12 @@ public class ReverseLookupTest extends TestCase {
 		testUsaFailed = checkEntry(entry, testUsaFailed);
 
 		checkNum = new PhoneNumber("+13202304187", false);
-		entry = new CheckEntry(checkNum, "Engelen", "M", "1349 15th Ave S", "56301-5439", "Saint Cloud");
+		entry = new CheckEntry(checkNum, "Engelen", "J", "1349 15th Ave S", "56301-5439", "Saint Cloud");
 		ReverseLookup.lookup(checkNum, entry, true);
 		testUsaFailed = checkEntry(entry, testUsaFailed);
 
 		checkNum =  new PhoneNumber("+14104200629", false);
-		entry = new CheckEntry(checkNum, "D Smith", "Mark", "316 Streett Cir", "21050-3061", "Forest Hill");
+		entry = new CheckEntry(checkNum, "L Smith", "Jennifer", "316 Streett Cir", "21050-3061", "Forest Hill");
 		ReverseLookup.lookup(checkNum, entry, true);
 		testUsaFailed = checkEntry(entry, testUsaFailed);
 
@@ -167,7 +164,7 @@ public class ReverseLookupTest extends TestCase {
 		testNetherlandFailed = checkEntry(entry, testNetherlandFailed);
 
 		checkNum = new PhoneNumber("+31207711969", false);
-		entry = new CheckEntry(checkNum, "Smid", "C", "Lijnbaansgracht 153/HS", "1016VW", "Amsterdam");
+		entry = new CheckEntry(checkNum, "C", "Smid", "Westerdok 328", "1013BH", "Amsterdam");
 		ReverseLookup.lookup(checkNum, entry, true);
 		testNetherlandFailed = checkEntry(entry, testNetherlandFailed);
 
@@ -184,8 +181,13 @@ public class ReverseLookupTest extends TestCase {
 		CheckEntry entry;
 		PhoneNumber checkNum;
 
-		checkNum = new PhoneNumber("+33387936406", false);
-		entry = new CheckEntry(checkNum, "Fabien", "Losson", "26 RUE DE BIBLING", "57550", "MERTEN");
+		checkNum = new PhoneNumber("+33387065155", false);
+		entry = new CheckEntry(checkNum, "Hanau Plage", "Camping", "r Etang", "57230", "PHILIPPSBOURG");
+		ReverseLookup.lookup(checkNum, entry, true);
+		testFranceFailed = checkEntry(entry, testFranceFailed);
+
+		checkNum = new PhoneNumber("+33388862622", false);
+		entry = new CheckEntry(checkNum, "Au Cerf", "Restaurant", "2 r Fort Louis", "67480", "ROESCHWOOG");
 		ReverseLookup.lookup(checkNum, entry, true);
 		testFranceFailed = checkEntry(entry, testFranceFailed);
 
@@ -203,27 +205,27 @@ public class ReverseLookupTest extends TestCase {
 		PhoneNumber checkNum;
 
 		checkNum = new PhoneNumber("+4313323531", false);
-		entry = new CheckEntry(checkNum, "GmbH", "Trivadis", "Handelskai  94-96", "1200", "Wien");
+		entry = new CheckEntry(checkNum, "GmbH", "Trivadis", "Handelskai 94-96", "1200", "Wien");
 		ReverseLookup.lookup(checkNum, entry, true);
 		testAustriaFailed = checkEntry(entry, testAustriaFailed);
 
 		checkNum = new PhoneNumber("+4353365227", false);
-		entry = new CheckEntry(checkNum, "Böglerhof GmbH u Co KG", "Romantikhotel", "166", "", "Alpbach");
+		entry = new CheckEntry(checkNum, "Karin", "Duftner", "Nr 166", "6236", "Alpbach");
 		ReverseLookup.lookup(checkNum, entry, true);
 		testAustriaFailed = checkEntry(entry, testAustriaFailed);
 
 		checkNum = new PhoneNumber("+43662439860", false);
-		entry = new CheckEntry(checkNum, "Fritz, Ing.", "Aberger", "Fischerg  12", "5020", "Salzburg");
+		entry = new CheckEntry(checkNum, "Fritz", "Aberger", "Ing.", "Fischerg 12", "5020", "Salzburg");
 		ReverseLookup.lookup(checkNum, entry, true);
 		testAustriaFailed = checkEntry(entry, testAustriaFailed);
 
 		checkNum = new PhoneNumber("+436507522840", false);
-		entry = new CheckEntry(checkNum, "Birgitt", "Duftner", "Römerstr  25", "6230", "Brixlegg");
+		entry = new CheckEntry(checkNum, "Birgitt", "Duftner", "Römerstr 25", "6230", "Brixlegg");
 		ReverseLookup.lookup(checkNum, entry, true);
 		testAustriaFailed = checkEntry(entry, testAustriaFailed);
 
 		checkNum = new PhoneNumber("+43140400", false);
-		entry = new CheckEntry(checkNum, "Krankenhaus - Universitätskliniken", "Allgemeines", "Währinger Gürtel  18-20", "1090", "Wien");
+		entry = new CheckEntry(checkNum, "Krankenhaus - Universitätskliniken", "Allgemeines", "Währinger Gürtel 18-20", "1090", "Wien");
 		ReverseLookup.lookup(checkNum,  entry, true);
 		testAustriaFailed = checkEntry(entry, testAustriaFailed);
 
@@ -241,18 +243,13 @@ public class ReverseLookupTest extends TestCase {
 		PhoneNumber checkNum;
 
 		checkNum = new PhoneNumber("+499115402808", false);
-		entry = new CheckEntry(checkNum, "Car", "City", "Kleiststr. 48", "46539", "Dinslaken");
+		entry = new CheckEntry(checkNum, "", "Apollo-Optik", "Äußere Bayreuther Str. 80", "90491", "Nürnberg");
 		ReverseLookup.lookup(checkNum,  entry, true);
 		testGermanyFailed = checkEntry(entry, testGermanyFailed);
 
 		checkNum = new PhoneNumber("+4920648286171", false);
 		entry = new CheckEntry(checkNum, "Car", "City", "Kleiststr. 48", "46539", "Dinslaken");
 		ReverseLookup.lookup(checkNum,  entry, true);
-		testGermanyFailed = checkEntry(entry, testGermanyFailed);
-
-		checkNum = new PhoneNumber("+4921149277129", false);
-		entry = new CheckEntry(checkNum, "", "BEGIS-GRUPPE", "Jägerhofstr. 31", "40479", "Düsseldorf");
-		ReverseLookup.lookup(checkNum, entry, true);
 		testGermanyFailed = checkEntry(entry, testGermanyFailed);
 
 		checkNum = new PhoneNumber("+496084950130", false);
@@ -262,11 +259,6 @@ public class ReverseLookupTest extends TestCase {
 
 		checkNum = new PhoneNumber("+496221567200", false);
 		entry = new CheckEntry(checkNum, "", "Universitätsklinikum", "Im Neuenheimer Feld 672", "69120", "Heidelberg");
-		ReverseLookup.lookup(checkNum, entry, true);
-		testGermanyFailed = checkEntry(entry, testGermanyFailed);
-
-		checkNum = new PhoneNumber("+497112800144", false);
-		entry = new CheckEntry(checkNum, "City", "Reisebüro", "Kronprinzstr. 8", "70173", "Stuttgart");
 		ReverseLookup.lookup(checkNum, entry, true);
 		testGermanyFailed = checkEntry(entry, testGermanyFailed);
 
@@ -286,7 +278,7 @@ public class ReverseLookupTest extends TestCase {
 		testGermanyFailed = checkEntry(entry, testGermanyFailed);
 
 		checkNum = new PhoneNumber("+498962021830", false);
-		entry = new CheckEntry(checkNum, "Birgit u. Dirk", "Lütkefent", "Moarstr. 6", "85737", "Ismaning");
+		entry = new CheckEntry(checkNum, "Hausverwaltung GmbH & Co. Beteiligungs KG", "Infraplan", "Franziskanerstr. 14", "81669", "München");
 		ReverseLookup.lookup(checkNum, entry, true);
 		testGermanyFailed = checkEntry(entry, testGermanyFailed);
 
