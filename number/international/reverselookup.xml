@@ -565,7 +565,8 @@
 	<country code="+33">
 		<website name="www.annuaireinverse.com" url="http://www.annuaireinverse.com/reponses.asp?RN=$NUMBER&amp;action.x=62&amp;action.y=18&amp;action=RechercheV4&amp;NBR_L_P=10&amp;PAGE=1&amp;RECHERCHE=EXACTE&amp;LANGUE=FRFR-XXXXX" prefix="0">;
 			<entry>
-				<name>tblAdresses\[0\]\[1\] = &quot;([^&quot;]+)&quot;;</name>
+				<number>tblAdresses\[0\]\[5\] = "&lt;[^&gt;]*&gt;&lt;b&gt;[^&lt;]*&lt;/b&gt;&lt;br&gt;[^&lt;]*&lt;br&gt;[^&lt;]*&lt;br&gt;([^&lt;]*)&lt;/font&gt;&quot;</number>
+				<name>tblAdresses\[0\]\[5\] = "&lt;[^&gt;]*&gt;&lt;b&gt;([^&lt;]*)&lt;/b&gt;</name>
 				<street>tblAdresses\[0\]\[2\] = &quot;([^&quot;]+)&quot;;</street>
 				<zipcode>tblAdresses\[0\]\[3\] = &quot;([^&quot;]+)&quot;;</zipcode>
 				<city>tblAdresses\[0\]\[4\] = &quot;([^&quot;]+)&quot;;</city>
@@ -587,6 +588,7 @@
 			</entry>
 		</website>
 -->
+<!-- gives 404 Not Found
 		<website name="www.annuaireinverse.com" url="http://www.annuaireinverse.com/G118012/home.asp?RN=$NUMBER&amp;CO=RN&amp;FR=118012&amp;sm=rep" prefix="0">;
 			<entry>
 				<name>&lt;TD HEIGHT=&quot;15&quot; BGCOLOR=&quot;#ABEEFB&quot;  &gt;&lt;FONT CLASS=&quot;ctexte&quot;&gt;&amp;nbsp;([^&lt;]*)</name>
@@ -594,6 +596,7 @@
 				<city>&lt;TD HEIGHT=&quot;35&quot; VALIGN=&quot;TOP&quot;&gt;&lt;FONT CLASS=&quot;copytexte&quot;&gt;[^&lt;]*&lt;br /&gt;\d* ([^&lt;]*)</city>
 				<zipcode>&lt;TD HEIGHT=&quot;35&quot; VALIGN=&quot;TOP&quot;&gt;&lt;FONT CLASS=&quot;copytexte&quot;&gt;[^&lt;]*&lt;br /&gt;(\d*) [^&lt;]*</zipcode>
 			</entry>
+-->
 		</website>
 	</country>
 	<country code="+350">
