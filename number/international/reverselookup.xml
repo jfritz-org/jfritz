@@ -899,7 +899,7 @@
 		</website>
 		<website name="www.dastelefonbuch.de" url="http://www.dastelefonbuch.de/?sourceid=Mozilla-search&amp;cmd=search&amp;kw=$NUMBER" prefix="0">
 			<entry>
-				<name>&lt;td\sclass=&quot;col1&quot;&gt;(?:&lt;b&gt;)?&lt;a href=[^&gt;]*&gt;([^&lt;]*)&lt;</name>
+				<name>&lt;td\sclass=&quot;col1&quot;&gt;\s*(?:&lt;div class=&quot;short&quot;&gt;)?(?:&lt;b&gt;)?&lt;a href=[^&gt;]*&gt;([^&lt;]*)&lt;</name>
 				<street>&lt;td\sclass=&quot;col2&quot;&gt;([^&lt;]*)&lt;</street>
 				<city>&lt;td class=&quot;col3&quot;&gt;\d{5}&amp;nbsp;([^&lt;]*)&lt;</city>
 				<zipcode>&lt;td class=&quot;col3&quot;&gt;(\d{5})</zipcode>
