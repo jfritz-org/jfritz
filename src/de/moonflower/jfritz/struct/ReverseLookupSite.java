@@ -26,6 +26,13 @@ import java.util.Vector;
  *
  */
 public class ReverseLookupSite {
+	public static final int NAME = 0;
+	public static final int STREET = 1;
+	public static final int CITY = 2;
+	public static final int ZIPCODE = 3;
+	public static final int FIRSTNAME = 4;
+	public static final int LASTNAME = 5;
+	public static final int FIRSTOCCURANCE = 6;
 
 	//Site url, as will be used to process the reverse lookup
 	private String url;
@@ -49,12 +56,17 @@ public class ReverseLookupSite {
 		entries = new Vector<String[]>(2);
 	}
 
-	public void addEntry(final String name, final String street, final String city, final String zipcode){
-		String[] patterns = new String[4];
-		patterns[0] = name;
-		patterns[1] = street;
-		patterns[2] = city;
-		patterns[3] = zipcode;
+	public void addEntry(final String firstOccurance,
+			final String name, final String street, final String city, final String zipcode,
+			final String firstName, final String lastName){
+		String[] patterns = new String[7];
+		patterns[NAME] = name;
+		patterns[STREET] = street;
+		patterns[CITY] = city;
+		patterns[ZIPCODE] = zipcode;
+		patterns[FIRSTNAME] = firstName;
+		patterns[LASTNAME] = lastName;
+		patterns[FIRSTOCCURANCE] = firstOccurance;
 
 		entries.add(patterns);
 	}

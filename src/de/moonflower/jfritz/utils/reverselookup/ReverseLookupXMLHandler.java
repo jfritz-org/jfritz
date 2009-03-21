@@ -22,7 +22,8 @@ import de.moonflower.jfritz.utils.Debug;
  */
 public class ReverseLookupXMLHandler extends DefaultHandler{
 
-	String chars, url, name, prefix, country_code, pname, pstreet, pcity, pzipcode;
+	String chars, url, name, prefix, country_code, pname, pstreet, pcity, pzipcode,
+		   pfirst, plast, firstOccurance;
 
 	Vector<ReverseLookupSite> rls_list;
 
@@ -63,6 +64,7 @@ public class ReverseLookupXMLHandler extends DefaultHandler{
 			name = "";
 			prefix ="";
 			ac_length = 0;
+			firstOccurance = "name";
 
 		//if we have a new entry tag, clear the previous pattern data
 		}else if (eName.equals("entry")){
@@ -70,7 +72,8 @@ public class ReverseLookupXMLHandler extends DefaultHandler{
 			pstreet = "";
 			pcity = "";
 			pzipcode = "";
-
+			pfirst = "";
+			plast = "";
 		}
 
 		//process all attributes
@@ -101,6 +104,10 @@ public class ReverseLookupXMLHandler extends DefaultHandler{
 						rls_list.add(new ReverseLookupSite(url, name, prefix, ac_length));
 
 					}
+				}else if(eName.equals("entry")){
+					if (aName.equals("firstOccurance")){
+						firstOccurance = attrs.getValue(i);
+					}
 				}
 			}
 		}
@@ -117,10 +124,15 @@ public class ReverseLookupXMLHandler extends DefaultHandler{
 			pcity = chars;
 		}else if(qName.equals("zipcode")){
 			pzipcode = chars;
+		}else if(qName.equals("firstname")){
+			pfirst = chars;
+		}else if(qName.equals("lastname")){
+			plast = chars;
 		} else if (qName.equals("entry")) { //$NON-NLS-1$
 
 			//add the patterns to the new object
-			rls_list.get(rls_count).addEntry(pname, pstreet, pcity, pzipcode);
+			rls_list.get(rls_count).addEntry(firstOccurance,
+					pname, pstreet, pcity, pzipcode, pfirst, plast);
 //			Debug.msg("adding patterns for: "+name);
 //			Debug.msg("Pattern name: "+ pname);
 //			Debug.msg("Pattern street: "+ pstreet);

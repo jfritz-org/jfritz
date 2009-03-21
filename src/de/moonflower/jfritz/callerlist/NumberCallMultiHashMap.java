@@ -20,28 +20,41 @@ public class NumberCallMultiHashMap {
 
 	public void addCall(PhoneNumber number, Call call)
 	{
-		List<Call> l = hashMap.get(number.getIntNumber());
-		if (l == null)
+		if (number != null)
 		{
-			hashMap.put(number.getIntNumber(), l=new ArrayList<Call>());
-		}
-		if (!l.contains(call))
-		{
-			l.add(call);
+			List<Call> l = hashMap.get(number.getIntNumber());
+			if (l == null)
+			{
+				hashMap.put(number.getIntNumber(), l=new ArrayList<Call>());
+			}
+			if (!l.contains(call))
+			{
+				l.add(call);
+			}
 		}
 	}
 
 	public List<Call> getCall(PhoneNumber number)
 	{
-		return hashMap.get(number.getIntNumber());
+		if (number != null)
+		{
+			return hashMap.get(number.getIntNumber());
+		}
+		else
+		{
+			return null;
+		}
 	}
 
 	public void deleteCall(PhoneNumber number, Call call)
 	{
-		List<Call> l = hashMap.get(number.getIntNumber());
-		l.remove(call);
-		hashMap.remove(number.getIntNumber());
-		hashMap.put(number.getIntNumber(), l);
+		if (number != null)
+		{
+			List<Call> l = hashMap.get(number.getIntNumber());
+			l.remove(call);
+			hashMap.remove(number.getIntNumber());
+			hashMap.put(number.getIntNumber(), l);
+		}
 	}
 
 	public List<Call> getAllCalls()
