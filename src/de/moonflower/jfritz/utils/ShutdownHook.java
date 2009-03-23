@@ -42,7 +42,7 @@ public class ShutdownHook {
    * @param handler
    */
   public static void install( final Handler handler) {
-      Debug.msg("Installing shutdown hook...");
+      Debug.info("Installing shutdown hook...");
       final SignalHandler[] old_handlers = new SignalHandler[3];
 
       try{
@@ -57,13 +57,13 @@ public class ShutdownHook {
 	            }
 	          }
 	          catch( Throwable t ) {
-	            Debug.err( t.getLocalizedMessage() );
+	            Debug.error( t.toString() );
 	          }
 	        }
 	      });
       }
       catch( Throwable t ) {
-          Debug.err( t.getLocalizedMessage() );
+          Debug.error( t.toString() );
       }
 
       try {
@@ -78,13 +78,13 @@ public class ShutdownHook {
 	            }
 	          }
 	          catch( Throwable t ) {
-	        	Debug.err(t.getLocalizedMessage() );
+	        	Debug.error(t.toString() );
 	          }
 	        }
 	      });
       }
       catch( Throwable t ) {
-          Debug.err( t.getLocalizedMessage() );
+          Debug.error( t.toString() );
       }
 
       try {
@@ -99,13 +99,13 @@ public class ShutdownHook {
 	            }
 	          }
 	          catch( Throwable t ) {
-	        	Debug.err( t.getLocalizedMessage() );
+	        	Debug.error( t.toString() );
 	          }
 	        }
 	      });
       }
       catch( Throwable t ) {
-          Debug.err( t.getLocalizedMessage() );
+          Debug.error( t.toString() );
       }
 
 
@@ -121,13 +121,13 @@ public class ShutdownHook {
 	            }
 	          }
 	          catch( Throwable t ) {
-	        	Debug.err( t.getLocalizedMessage() );
+	        	Debug.error( t.toString() );
 	          }
 	        }
 	      });
       }
       catch( Throwable t ) {
-          Debug.err( t.getLocalizedMessage() );
+          Debug.error( t.toString() );
       }
 
       try {
@@ -142,17 +142,16 @@ public class ShutdownHook {
 	            }
 	          }
 	          catch( Throwable t ) {
-	        	Debug.err( t.getLocalizedMessage() );
+	        	Debug.error( t.toString() );
 	          }
 	        }
 	      });
       }
       catch( Throwable t ) {
-          Debug.err( t.getLocalizedMessage() );
+          Debug.error( t.toString() );
       }
 
-
-      Debug.msg("Shutdown hook installed!");
+      Debug.info("Shutdown hook installed!");
   }
 
 

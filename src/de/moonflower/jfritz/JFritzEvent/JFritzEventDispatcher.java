@@ -100,7 +100,7 @@ public class JFritzEventDispatcher extends Thread {
 		for (int i = 0; i < registeredActions.size(); i++) {
 			actionComboBox.addItem(registeredActions.get(i).clone());
 		}
-		Debug.msg(actionComboBox.toString());
+		Debug.debug(actionComboBox.toString());
 		return actionComboBox;
 	}
 
@@ -208,7 +208,7 @@ public class JFritzEventDispatcher extends Thread {
 
 	public static void saveToXML() {
 		String filename = EVENT_MANAGMENT_FILE_NAME;
-		Debug.msg("Saving events to file " + filename); //$NON-NLS-1$
+		Debug.info("Saving events to file " + filename); //$NON-NLS-1$
 		try {
 			BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(filename), "UTF8")); //$NON-NLS-1$
@@ -267,11 +267,11 @@ public class JFritzEventDispatcher extends Thread {
 			pw.close();
 
 		} catch (UnsupportedEncodingException e) {
-			Debug.err("UTF-8 not supported"); //$NON-NLS-1$
+			Debug.error("UTF-8 not supported"); //$NON-NLS-1$
 		} catch (FileNotFoundException e) {
-			Debug.err("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		} catch (IOException e) {
-			Debug.err("IOException " + filename); //$NON-NLS-1$
+			Debug.error("IOException " + filename); //$NON-NLS-1$
 		}
 
 	}

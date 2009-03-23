@@ -129,7 +129,7 @@ public class ReverseLookup {
 		if(Main.getProperty("option.clientTelephoneBook").equals("true") &&
 				NetworkStateMonitor.isConnectedToServer()){
 			//if connected to server make server to the lookup
-			Debug.msg("requesting reverse lookup from server");
+			Debug.info("requesting reverse lookup from server");
 			NetworkStateMonitor.requestLookupFromServer();
 			return;
 		}
@@ -148,11 +148,11 @@ public class ReverseLookup {
 
 		count = requests.size();
 		done = 0;
-		Debug.msg("ReverseLookup requests for "+count+" numbers");
+		Debug.info("ReverseLookup requests for "+count+" numbers");
 
 		//if the thread isn't started yet, start it up
 		if (thread == null) {
-			Debug.msg("creating thread");
+			Debug.info("creating thread");
 			thread = new LookupThread(quitOnDone);
 			thread.setDaemon(true);
 			thread.setName("lookup-thread");
@@ -176,13 +176,13 @@ public class ReverseLookup {
 		if(Main.getProperty("option.clientTelephoneBook").equals("true") &&
 				NetworkStateMonitor.isConnectedToServer()){
 			//if connected to server make server to the lookup
-			Debug.msg("requesting specific reverse lookup for "+number+" using "+ siteName+" from server");
+			Debug.info("requesting specific reverse lookup for "+number+" using "+ siteName+" from server");
 			NetworkStateMonitor.requestSpecificLookupFromServer(number, siteName);
 			return;
 		}
 
 
-		Debug.msg("Creating Lookup request for "+number+" using "+siteName);
+		Debug.info("Creating Lookup request for "+number+" using "+siteName);
 		observer = obs;
 
 		LookupRequest request = new LookupRequest(number, 10, siteName);
@@ -194,7 +194,7 @@ public class ReverseLookup {
 
 		//if the thread isn't started yet, start it up
 		if (thread == null) {
-			Debug.msg("creating thread");
+			Debug.info("creating thread");
 			thread = new LookupThread(false);
 			thread.setDaemon(true);
 			thread.setName("lookup-thread");
@@ -258,7 +258,7 @@ public class ReverseLookup {
 			requests_done.clear();
 			results.clear();
 		}
-		Debug.msg("Finished "+done+" from "+ count +" requests");
+		Debug.info("Finished "+done+" from "+ count +" requests");
 		updateStatusBar(false);
 	}
 
@@ -310,7 +310,7 @@ public class ReverseLookup {
 	 */
 	public static void loadrlsXMLFile(){
 		try {
-			Debug.msg("Loading the reverse lookup xml file");
+			Debug.info("Loading the reverse lookup xml file");
 			rlsMap = new HashMap<String, Vector<ReverseLookupSite>>(8);
 
 			SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -340,19 +340,19 @@ public class ReverseLookup {
 					JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") +JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "reverselookup.xml")));
 
 		} catch (ParserConfigurationException e) {
-			Debug.err("Error with ParserConfiguration!"); //$NON-NLS-1$
+			Debug.error("Error with ParserConfiguration!"); //$NON-NLS-1$
 		} catch (SAXException e) {
-			Debug.err("Error on parsing number/internation/reverselookup.xml! No reverse lookup sites loaded"); //$NON-NLS-1$,  //$NON-NLS-2$
-			Debug.err(e.toString());
+			Debug.error("Error on parsing number/internation/reverselookup.xml! No reverse lookup sites loaded"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.error(e.toString());
 			e.printStackTrace();
 
 			if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
 					|| e.getLocalizedMessage().startsWith(
 							"Invalid system identifier")) { //$NON-NLS-1$
-				Debug.err(e.getLocalizedMessage());
+				Debug.error(e.toString());
 			}
 		} catch (IOException e) {
-			Debug.err("Could not read number/international/reverselookup.xml! No reverse lookup sites loaded!" + e.getMessage()); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.error("Could not read number/international/reverselookup.xml! No reverse lookup sites loaded!" + e.getMessage()); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 

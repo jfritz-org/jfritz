@@ -24,7 +24,7 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
 
     public FBoxCallMonitorV1() {
     	super();
-        Debug.msg("FBoxListener V1"); //$NON-NLS-1$
+        Debug.info("FBoxListener V1"); //$NON-NLS-1$
     }
 
     public void run() {
@@ -32,7 +32,7 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
     	while (!this.isConnected())
     	{
 	        if (failedConnections % 50 == 0 && super.connect()) {
-	            Debug.msg("Connected"); //$NON-NLS-1$
+	            Debug.info("Connected"); //$NON-NLS-1$
 	            readOutput();
 	            failedConnections = 0;
 	        }
@@ -53,13 +53,13 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
     }
 
     protected void parseOutput(String line) {
-        Debug.msg("Server: " + line); //$NON-NLS-1$
+        Debug.debug("Server: " + line); //$NON-NLS-1$
         String number = ""; //$NON-NLS-1$
         String provider = ""; //$NON-NLS-1$
         String[] split;
         split = line.split(";", 7); //$NON-NLS-1$
         for (int i = 0; i < split.length; i++) {
-            Debug.msg("Split[" + i + "] = " + split[i]); //$NON-NLS-1$,  //$NON-NLS-2$
+            Debug.debug("Split[" + i + "] = " + split[i]); //$NON-NLS-1$,  //$NON-NLS-2$
         }
         if (JFritzUtils.parseBoolean(Main.getProperty(
                 "option.callmonitor.monitorIncomingCalls")) //$NON-NLS-1$, //$NON-NLS-2$
@@ -113,7 +113,7 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
                 JFritz.getCallMonitorList().addNewCall(
                         Integer.parseInt(split[2]), currentCall);
             } catch (ParseException e) {
-                Debug.err("FBoxListenerV3: Could not convert call" + e);
+                Debug.error("FBoxListenerV1: Could not convert call" + e);
             }
         } else if (split[1].equals("DISCONNECT")) { //$NON-NLS-1$
             try {
@@ -126,7 +126,7 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
                     Thread.sleep(zufallszahl.nextInt(3000));
                 }
             } catch (InterruptedException e) {
-                Debug.err(e.toString());
+                Debug.error(e.toString());
 	        	Thread.currentThread().interrupt();
             }
 

@@ -200,9 +200,9 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.2.28"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.2.29"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java,v 1.154 2009/03/21 11:50:26 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java,v 1.155 2009/03/23 20:39:03 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -273,7 +273,7 @@ public class Main implements LookupObserver {
 	}
 
 	public Main(String[] args) {
-		Debug.msg(PROGRAM_NAME + " v" + PROGRAM_VERSION //$NON-NLS-1$
+		Debug.always(PROGRAM_NAME + " v" + PROGRAM_VERSION //$NON-NLS-1$
 				+ " (c) 2005-2009 by " + JFRITZ_PROJECT); //$NON-NLS-1$
 		Thread.currentThread().setPriority(5);
 		Thread.currentThread().setName("JFritz main thread");
@@ -284,7 +284,7 @@ public class Main implements LookupObserver {
 		shutdownHandler = new ShutdownHook.Handler() {
 		      public void shutdown( String signal_name ) {
 		    	  	Runtime.getRuntime().removeShutdownHook(shutdownThread);
-			        Debug.msg( "Core: Caught signal " +signal_name );
+			        Debug.debug( "Core: Caught signal " +signal_name );
 			        prepareShutdown(false, true);
 //			        Debug.msg("Core: Shutdown signal handler done");
 			      }
@@ -315,6 +315,7 @@ public class Main implements LookupObserver {
 	 */
 	public static void main(String[] args) {
 		Debug.on();
+		Debug.setDebugLevel(Debug.LS_WARNING);
 		new Main(args);
 	}
 
@@ -351,12 +352,12 @@ public class Main implements LookupObserver {
 				, null, "Do a reverse lookup and exit. Can be used together with -e -f and -z"); //$NON-NLS-1$
 		options.addOption('s', "systray" //$NON-NLS-1$,  //$NON-NLS-2$
 				, null, "Turn on systray support"); //$NON-NLS-1$
+		options.addOption('v', "verbose" //$NON-NLS-1$,  //$NON-NLS-2$
+				, "level", "Turn on debug information on console. Possible values: ERROR, WARNING, INFO, DEBUG"); //$NON-NLS-1$
 		options.addOption('w', "without-control" //$NON-NLS-1$,  //$NON-NLS-2$
 				, null, "Turns off multiple instance control. DON'T USE, unless you know what your are doing"); //$NON-NLS-1$
 		options.addOption('z', "exportForeign" //$NON-NLS-1$,  //$NON-NLS-2$
 				, null, "Write phonebooks compatible to BIT FBF Dialer and some other callmonitors."); //$NON-NLS-1$
-		options.addOption('v', "verbose" //$NON-NLS-1$,  //$NON-NLS-2$
-				, null, "Turn on debug information"); //$NON-NLS-1$
 	}
 
 	/**
@@ -380,7 +381,17 @@ public class Main implements LookupObserver {
 				exit(0);
 				break;
 			case 'v': //$NON-NLS-1$
-				Debug.on();
+				Debug.setVerbose(true);
+				String level = option.getParameter();
+				if ("ERROR".equals(level)) {
+					Debug.setDebugLevel(Debug.LS_ERROR);
+				} else if ("WARNING".equals(level)) {
+					Debug.setDebugLevel(Debug.LS_WARNING);
+				} else if ("INFO".equals(level)) {
+					Debug.setDebugLevel(Debug.LS_INFO);
+				} else if ("DEBUG".equals(level)) {
+					Debug.setDebugLevel(Debug.LS_DEBUG);
+				}
 				break;
 			case 'l': //$NON-NLS-1$
 				String logFilename = option.getParameter();
@@ -413,22 +424,22 @@ public class Main implements LookupObserver {
 		splash.setStatus("Loading properties...");
 		loadProperties();
 
-    	Debug.msg("OS Language: " + System.getProperty("user.language"));
-    	Debug.msg("OS Country: " + System.getProperty("user.country"));
+    	Debug.always("OS Language: " + System.getProperty("user.language"));
+    	Debug.always("OS Country: " + System.getProperty("user.country"));
 		if ( Main.getProperty("locale").equals("") )
 		{
-			Debug.msg("No language set yet ... Setting language to OS language");
+			Debug.info("No language set yet ... Setting language to OS language");
 	    	// Check if language is supported. If not switch to english
 	    	if ( supported_languages.contains(new Locale(System.getProperty("user.language"),System.getProperty("user.country"))))
 	    	{
 	        	Main.setProperty("locale", System.getProperty("user.language")+"_"+System.getProperty("user.country"));
 	    	} else {
-	    		Debug.msg("Your language ist not yet supported.");
+	    		Debug.warning("Your language ist not yet supported.");
 	        	Main.setProperty("locale", "en_US");
 	    	}
 		}
 		String loc = Main.getProperty("locale");
-		Debug.msg("Selected language: " + loc);
+		Debug.always("Selected language: " + loc);
 
 		loadMessages(new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_")+1, loc.length()))); //$NON-NLS-1$,  //$NON-NLS-2$
 		loadLocaleMeanings(new Locale("int", "INT"));
@@ -444,11 +455,11 @@ public class Main implements LookupObserver {
 		try {
 			result = jfritz.initFritzBox();
 		} catch (WrongPasswordException e1) {
-			Debug.err(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+			Debug.error(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
 		} catch (IOException e1) {
-			Debug.err(Main.getMessage("box.not_found")); //$NON-NLS-1$
+			Debug.error(Main.getMessage("box.not_found")); //$NON-NLS-1$
 		} catch (InvalidFirmwareException e1) {
-			Debug.err(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
+			Debug.error(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
 		}
 
 		if (result == 0)
@@ -502,7 +513,6 @@ public class Main implements LookupObserver {
 					result = 1;
 				} else if (!password.equals(pass)) {
 					Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
-					Debug.err(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
 				}
 			}
 		}
@@ -518,7 +528,7 @@ public class Main implements LookupObserver {
 			}
 		}
 
-		Debug.msg("Main is now exiting...");
+		Debug.info("Main is now exiting...");
 		if (result != 0)
 		{
 			main.exit(result);
@@ -538,7 +548,7 @@ public class Main implements LookupObserver {
 	 */
 	private void checkCLIParameters(String[] args) {
 		boolean shutdown = false;
-		Debug.msg("Start commandline parsing"); //$NON-NLS-1$
+		Debug.debug("Start commandline parsing"); //$NON-NLS-1$
 		// Checke alle weiteren Parameter
 		Vector<CLIOption> foundOptions = options.parseOptions(args);
 		Enumeration<CLIOption> en = foundOptions.elements();
@@ -557,17 +567,17 @@ public class Main implements LookupObserver {
 				break;
 			case 'f':
 				shutdown = true;
-				Debug.msg("Fetch caller list ..."); //$NON-NLS-1$
+				Debug.always("Fetch caller list from command line ..."); //$NON-NLS-1$
 				try {
 					JFritz.getCallerList().getNewCalls();
 				} catch (WrongPasswordException e) {
-					Debug.err(e.toString());
+					Debug.error(e.toString());
 					e.printStackTrace();
 				} catch (IOException e) {
-					Debug.err(e.toString());
+					Debug.error(e.toString());
 					e.printStackTrace();
 				} catch (InvalidFirmwareException e) {
-					Debug.err(e.toString());
+					Debug.error(e.toString());
 					e.printStackTrace();
 				}
 				break;
@@ -581,7 +591,7 @@ public class Main implements LookupObserver {
 					System.err.println(getMessage("parameter_not_found")); //$NON-NLS-1$
 					exit(0);
 				}
-				Debug.msg("Exporting Call list (csv) to " + csvFileName); //$NON-NLS-1$
+				Debug.always("Exporting Call list (csv) to " + csvFileName); //$NON-NLS-1$
 				JFritz.getCallerList().saveToCSVFile(csvFileName, true);
 				shutdown = true;
 				break;
@@ -592,12 +602,11 @@ public class Main implements LookupObserver {
 				shutdown = true;
 				break;
 			case 'd': //$NON-NLS-1$
-				Debug.on();
 				clearCallsOnBoxCli();
 				shutdown = true;
 				break;
 			case 'c': //$NON-NLS-1$
-				Debug.msg("Clearing Call List"); //$NON-NLS-1$
+				Debug.always("Clearing Call List"); //$NON-NLS-1$
 				JFritz.getCallerList().clearList();
 				shutdown = true;
 				break;
@@ -650,7 +659,7 @@ public class Main implements LookupObserver {
 					try {
 						int level = Integer.parseInt(priority);
 						Thread.currentThread().setPriority(level);
-						Debug.msg("Set priority to level " + priority); //$NON-NLS-1$
+						Debug.always("Set priority to level " + priority); //$NON-NLS-1$
 					} catch (NumberFormatException nfe) {
 						System.err.println(getMessage("parameter_wrong_priority")); //$NON-NLS-1$
 						exit(0);
@@ -684,16 +693,15 @@ public class Main implements LookupObserver {
 			boolean isRunning = f.exists();
 
 			if (!isRunning) {
-				Debug.msg("Multiple instance lock: set lock."); //$NON-NLS-1$
+				Debug.info("Multiple instance lock: set lock."); //$NON-NLS-1$
 				result = true;
 				try {
 					f.createNewFile();
 				} catch (IOException e) {
-					Debug.err("Could not set instance lock");
+					Debug.error("Could not set instance lock");
 				}
 			} else {
-				Debug
-						.msg("Multiple instance lock: Another instance is already running."); //$NON-NLS-1$
+				Debug.warning("Multiple instance lock: Another instance is already running."); //$NON-NLS-1$
 				int answer = JOptionPane.showConfirmDialog(null,
 						getMessage("lock_error_dialog1") //$NON-NLS-1$
 								+ getMessage("lock_error_dialog2") //$NON-NLS-1$
@@ -701,13 +709,11 @@ public class Main implements LookupObserver {
 								+ getMessage("lock_error_dialog4"), //$NON-NLS-1$
 						getMessage("information"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
 				if (answer == JOptionPane.YES_OPTION) {
-					Debug
-							.msg("Multiple instance lock: User decided to shut down this instance."); //$NON-NLS-1$
+					Debug.warning("Multiple instance lock: User decided to shut down this instance."); //$NON-NLS-1$
 					exit(-1);
 					result = false;
 				} else {
-					Debug
-							.msg("Multiple instance lock: User decided NOT to shut down this instance."); //$NON-NLS-1$
+					Debug.warning("Multiple instance lock: User decided NOT to shut down this instance."); //$NON-NLS-1$
 					result = true;
 				}
 			}
@@ -746,11 +752,10 @@ public class Main implements LookupObserver {
 			bw.write(SAVE_DIR_TEXT + SAVE_DIR);
 			bw.newLine();
 			bw.close();
-			Debug.msg("Successfully wrote save dir to disk");
+			Debug.info("Successfully wrote save dir to disk");
 
 		} catch (Exception e) {
-			Debug
-					.err("Error writing save dir to disk, reverting back to default save dir");
+			Debug.warning("Error writing save dir to disk, reverting back to default save dir");
 			SAVE_DIR = System.getProperty("user.dir") + File.separator;
 			// if there was an error, bail out and revert to the default save
 			// location
@@ -773,8 +778,8 @@ public class Main implements LookupObserver {
 			String line = br.readLine();
 			if (line == null) {
 				br.close();
-				Debug.msg("File" + USER_DIR + File.separator + USER_JFRITZ_FILE
-						+ "empty");
+				Debug.warning("File " + USER_DIR + File.separator + USER_JFRITZ_FILE
+						+ " is empty");
 			}
 			String[] entries = line.split("=");
 			if (!entries[1].equals("")) {
@@ -785,20 +790,18 @@ public class Main implements LookupObserver {
 				else if (!SAVE_DIR.endsWith(File.separator))
 					SAVE_DIR = SAVE_DIR + File.separator;
 			}
-			Debug.msg("Save directory: " + SAVE_DIR);
+			Debug.always("Save directory: " + SAVE_DIR);
 		} catch (FileNotFoundException e) {
-			Debug
-					.msg("Error processing the user save location(File not found), using defaults");
+			Debug.warning("Error processing the user save location(File not found), using defaults");
 			// If something happens, just bail out and use the standard dir
 		} catch (IOException ioe) {
-			Debug
-					.msg("Error processing the user save location, using defaults");
+			Debug.warning("Error processing the user save location, using defaults");
 		} finally {
 			try {
 				if (br != null)
 					br.close();
 			} catch (IOException ioe) {
-				Debug.msg("Error closing stream");
+				Debug.error("Error closing stream");
 			}
 		}
 	}
@@ -812,7 +815,7 @@ public class Main implements LookupObserver {
 	 *
 	 */
 	public static void clearCallsOnBoxCli() {
-		Debug.msg("Clearing callerlist on box."); //$NON-NLS-1$
+		Debug.info("Clearing callerlist on box."); //$NON-NLS-1$
 		loadProperties();
 		try {
 			Exception ex = null;
@@ -826,17 +829,16 @@ public class Main implements LookupObserver {
 					throw ex;
 				} catch (Exception e)
 				{
-					Debug.err("Error: " + e.getLocalizedMessage());
+					Debug.error(e.toString());
 				}
 			}
 			fritzBox.clearListOnFritzBox();
-			Debug.msg("Clearing done"); //$NON-NLS-1$
+			Debug.info("Clearing done"); //$NON-NLS-1$
 		} catch (WrongPasswordException e) {
-			Debug.err("Wrong password, can not delete callerlist on Box."); //$NON-NLS-1$
+			Debug.error("Wrong password, can not delete callerlist on Box."); //$NON-NLS-1$
 			e.printStackTrace();
 		} catch (IOException e) {
-			Debug
-					.err("IOException while deleting callerlist on box (wrong IP-address?)."); //$NON-NLS-1$
+			Debug.error("IOException while deleting callerlist on box (wrong IP-address?)."); //$NON-NLS-1$
 			e.printStackTrace();
 //		} catch (InvalidFirmwareException e) {
 //			Debug.err("Invalid firmware, can not delete callerlist on Box."); //$NON-NLS-1$
@@ -853,14 +855,14 @@ public class Main implements LookupObserver {
 	 * @param i the exit code
 	 */
 	public void exit(int i) {
-		Debug.msg("Main.exit(" + i + ")");
+		Debug.debug("Main.exit(" + i + ")");
 		exitCode = i;
 	  	Runtime.getRuntime().removeShutdownHook(shutdownThread);
 		prepareShutdown(false, false);
 	}
 
 	public void closeOpenConnections(){
-		Debug.msg("Closing all open network connections");
+		Debug.info("Closing all open network connections");
 
 		String networkType = Main.getProperty("network.type");
 
@@ -1022,11 +1024,11 @@ public class Main implements LookupObserver {
 		try {
 			config_properties.loadFromXML(Main.SAVE_DIR + CONFIG_PROPERTIES_FILE);
 		} catch (FileNotFoundException e) {
-			Debug.err("File " + Main.SAVE_DIR + CONFIG_PROPERTIES_FILE //$NON-NLS-1$
+			Debug.warning("File " + Main.SAVE_DIR + CONFIG_PROPERTIES_FILE //$NON-NLS-1$
 					+ " not found => showing config wizard"); //$NON-NLS-1$
 			showConfWizard = true;
 		} catch (IOException ioe) {
-			Debug.err("File " + Main.SAVE_DIR + CONFIG_PROPERTIES_FILE //$NON-NLS-1$
+			Debug.warning("File " + Main.SAVE_DIR + CONFIG_PROPERTIES_FILE //$NON-NLS-1$
 					+ " not readable => showing config wizard"); //$NON-NLS-1$
 			showConfWizard = true;
 		}
@@ -1035,10 +1037,10 @@ public class Main implements LookupObserver {
 		try {
 			state_properties.loadFromXML(Main.SAVE_DIR + STATE_PROPERTIES_FILE);
 		} catch (FileNotFoundException e) {
-			Debug.err("File " + Main.SAVE_DIR + STATE_PROPERTIES_FILE //$NON-NLS-1$
+			Debug.warning("File " + Main.SAVE_DIR + STATE_PROPERTIES_FILE //$NON-NLS-1$
 					+ " not found. Using default values."); //$NON-NLS-1$
 		} catch (IOException ioe) {
-			Debug.err("File " + Main.SAVE_DIR + STATE_PROPERTIES_FILE //$NON-NLS-1$
+			Debug.warning("File " + Main.SAVE_DIR + STATE_PROPERTIES_FILE //$NON-NLS-1$
 					+ " not readable. Using default values."); //$NON-NLS-1$
 		}
 		replaceOldProperties();
@@ -1128,10 +1130,10 @@ public class Main implements LookupObserver {
 	 */
 	public static void saveConfigProperties() {
 		try {
-			Debug.msg("Save config properties"); //$NON-NLS-1$
+			Debug.always("Save config properties"); //$NON-NLS-1$
 			config_properties.storeToXML(Main.SAVE_DIR + CONFIG_PROPERTIES_FILE);
 		} catch (IOException e) {
-			Debug.err("Couldn't save config properties"); //$NON-NLS-1$
+			Debug.error("Couldn't save config properties"); //$NON-NLS-1$
 		}
 	}
 
@@ -1141,11 +1143,10 @@ public class Main implements LookupObserver {
 	 */
 	public static void saveStateProperties() {
 		try {
-			Debug.msg("Save state properties"); //$NON-NLS-1$
+			Debug.always("Save state properties"); //$NON-NLS-1$
 			state_properties.storeToXML(Main.SAVE_DIR + STATE_PROPERTIES_FILE);
-			Debug.msg("Save state properties done"); //$NON-NLS-1$
 		} catch (IOException e) {
-			Debug.err("Couldn't save state properties"); //$NON-NLS-1$
+			Debug.error("Couldn't save state properties"); //$NON-NLS-1$
 		}
 	}
 
@@ -1269,12 +1270,11 @@ public class Main implements LookupObserver {
 	 */
 	public static void loadMessages(Locale locale) {
 		try {
-			Debug.msg("Loading locale: " + locale);
+			Debug.info("Loading locale: " + locale);
 			en_messages = ResourceBundle.getBundle("jfritz", new Locale("en","US"));//$NON-NLS-1$
 			messages = ResourceBundle.getBundle("jfritz", locale);//$NON-NLS-1$
 		} catch (MissingResourceException e) {
-			Debug
-					.err("Can't find i18n resource! (\"jfritz_" + locale + ".properties\")");//$NON-NLS-1$
+			Debug.error("Can't find i18n resource! (\"jfritz_" + locale + ".properties\")");//$NON-NLS-1$
 			JOptionPane.showMessageDialog(null, Main.PROGRAM_NAME + " v"//$NON-NLS-1$
 					+ Main.PROGRAM_VERSION
 					+ "\n\nCannot find the language file \"jfritz_" + locale
@@ -1291,7 +1291,7 @@ public class Main implements LookupObserver {
 		try {
 			localeMeanings = ResourceBundle.getBundle("languages", locale);//$NON-NLS-1$
 		} catch (MissingResourceException e) {
-			Debug.err("Can't find locale Meanings resource!");//$NON-NLS-1$
+			Debug.error("Can't find locale Meanings resource!");//$NON-NLS-1$
 		}
 	}
 
@@ -1308,7 +1308,7 @@ public class Main implements LookupObserver {
 				i18n = msg;
 			}
 		} catch (MissingResourceException e) {
-			Debug.err("Can't find resource string for " + msg); //$NON-NLS-1$
+			Debug.error("Can't find resource string for " + msg); //$NON-NLS-1$
 			i18n = en_messages.getString(msg);
 		}
 		return i18n;
@@ -1326,10 +1326,10 @@ public class Main implements LookupObserver {
 				localeMeaning = msg;
 			}
 		} catch (MissingResourceException e) {
-			Debug.err("Can't find resource string for " + msg); //$NON-NLS-1$
+			Debug.error("Can't find resource string for " + msg); //$NON-NLS-1$
 			localeMeaning = msg;
 		} catch (NullPointerException e) {
-			Debug.err("Can't find locale Meanings file"); //$NON-NLS-1$
+			Debug.error("Can't find locale Meanings file"); //$NON-NLS-1$
 			localeMeaning = msg;
 		}
 		return localeMeaning;
@@ -1378,20 +1378,20 @@ public class Main implements LookupObserver {
 
 	private void showActiveThreads()
 	{
-			Debug.msg("Active Threads: " + Thread.activeCount());
+			Debug.debug("Active Threads: " + Thread.activeCount());
 			Thread[] threadarray = new Thread[Thread.activeCount()];
 			int threadCount = Thread.enumerate(threadarray);
-			Debug.msg("Threads: " + threadCount);
+			Debug.debug("Threads: " + threadCount);
 			for (int i=0; i<threadCount; i++)
 			{
-				Debug.msg("ID: " + i);
-				Debug.msg("Name: " +  threadarray[i].getName());
-				Debug.msg("Class: " + threadarray[i].getClass().toString());
-				Debug.msg("State: " +  threadarray[i].getState());
-				Debug.msg("Daemon: " + threadarray[i].isDaemon());
-				Debug.msg("Thread group: " + threadarray[i].getThreadGroup());
-				Debug.msg("Thread priority: " + threadarray[i].getPriority());
-				Debug.msg("---");
+				Debug.debug("ID: " + i);
+				Debug.debug("Name: " +  threadarray[i].getName());
+				Debug.debug("Class: " + threadarray[i].getClass().toString());
+				Debug.debug("State: " +  threadarray[i].getState());
+				Debug.debug("Daemon: " + threadarray[i].isDaemon());
+				Debug.debug("Thread group: " + threadarray[i].getThreadGroup());
+				Debug.debug("Thread priority: " + threadarray[i].getPriority());
+				Debug.debug("---");
 			}
 	}
 
@@ -1401,17 +1401,15 @@ public class Main implements LookupObserver {
 		{
 			showActiveThreads();
 			alreadyDoneShutdown = true;
-			Debug.msg("Shutting down JFritz..."); //$NON-NLS-1$
+			Debug.always("Shutting down JFritz..."); //$NON-NLS-1$
 			closeOpenConnections();
-			Debug.msg("Releasing lock");
 			if (exitCode != -1 && Main.isInstanceControlEnabled()) {
 				File f = new File(Main.SAVE_DIR + Main.LOCK_FILE);
 				if (f.exists())
 				{
-		    	    Debug.msg("Prepare Shutdown: 8");
 					f.delete();
 				}
-				Debug.msg("Multiple instance lock: release lock."); //$NON-NLS-1$
+				Debug.always("Multiple instance lock: release lock."); //$NON-NLS-1$
 			}
 
 			// This must be the last call, after disposing JFritzWindow nothing
@@ -1425,11 +1423,11 @@ public class Main implements LookupObserver {
 				Frame[] frames = Frame.getFrames();
 				for (int i=0; i< frames.length; i++)
 				{
-					Debug.msg("Frame: " + frames[i]);
-					Debug.msg("Frame name: " + frames[i].getName());
-					Debug.msg("Frame visible: " + frames[i].isVisible());
-					Debug.msg("Frame displayable: " + frames[i].isDisplayable());
-					Debug.msg("---");
+					Debug.debug("Frame: " + frames[i]);
+					Debug.debug("Frame name: " + frames[i].getName());
+					Debug.debug("Frame visible: " + frames[i].isVisible());
+					Debug.debug("Frame displayable: " + frames[i].isDisplayable());
+					Debug.debug("---");
 				}
 			}
 		}

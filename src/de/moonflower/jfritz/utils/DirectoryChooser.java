@@ -24,7 +24,7 @@ public class DirectoryChooser  {
 		chooser.setDialogTitle(CHOOSER_TITLE);
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-			Debug.msg("getCurrentDirectory(): " + chooser.getSelectedFile()); //$NON-NLS-1$
+			Debug.debug("getCurrentDirectory(): " + chooser.getSelectedFile()); //$NON-NLS-1$
 			Main.setProperty("backup.path", JFritzUtils.convertSpecialChars(chooser.getSelectedFile().toString())); //$NON-NLS-1$
 			return chooser.getSelectedFile();
 		} else {

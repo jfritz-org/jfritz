@@ -46,10 +46,10 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 	public void startYACListener() {
 		isRunning = true;
 		try {
-			Debug.msg("Starting YAC-Monitor"); //$NON-NLS-1$
+			Debug.info("Starting YAC-Monitor"); //$NON-NLS-1$
 			serverSocket = new ServerSocket(port);
 			connected = true;
-            Debug.msg("YAC-Monitor ready"); //$NON-NLS-1$
+            Debug.info("YAC-Monitor ready"); //$NON-NLS-1$
 			while (isRunning) {
 				Socket socket = serverSocket.accept();
 				BufferedReader input = new BufferedReader(
@@ -60,7 +60,7 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 					if (msg == null)
 						break;
 					// parsing incoming DATA
-					Debug.msg("Got YAC-Data: " + msg); //$NON-NLS-1$
+					Debug.debug("Got YAC-Data: " + msg); //$NON-NLS-1$
 					// if last character is $00, delete it
 					if (msg.length() > 0 && msg.charAt(msg.length() - 1) == 0) {
 						msg = msg.substring(0, msg.length() - 1);
@@ -112,19 +112,19 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 			serverSocket.close();
 			connected = false;
 		} catch (IOException e) {
-			Debug.err(e.toString());
+			Debug.error(e.toString());
 			connected = false;
 		}
 	}
 
 	public void stopCallMonitor() {
-		Debug.msg("Stopping YACListener"); //$NON-NLS-1$
+		Debug.info("Stopping YACListener"); //$NON-NLS-1$
 		try {
 			if (serverSocket != null)
 			serverSocket.close();
 			connected = false;
 		} catch (IOException e) {
-			Debug.msg("Fehler beim Schliessen des YAC-Sockets"); //$NON-NLS-1$
+			Debug.error("Fehler beim Schliessen des YAC-Sockets"); //$NON-NLS-1$
 		}
 		isRunning = false;
 	}
@@ -134,11 +134,6 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 	}
 
 	public void closeConnection() {
-		Debug.err("WARNING: Method not implemented!");
-	}
-
-	public boolean pingBox() {
-		Debug.err("WARNING: Method not implemented!");
-		return false;
+		Debug.warning("Method not implemented!");
 	}
 }

@@ -173,13 +173,13 @@ public class FritzBox {
 			detectFirmware();
 		} catch (WrongPasswordException e) {
 			exc = e;
-			Debug.msg(Main.getMessage("box.wrong_password"));
+			Debug.error(Main.getMessage("box.wrong_password"));
 		} catch (InvalidFirmwareException e) {
 			exc = e;
-			Debug.msg(Main.getMessage("unknown_firmware"));
+			Debug.error(Main.getMessage("unknown_firmware"));
 		} catch (IOException e) {
 			exc = e;
-			Debug.msg(Main.getMessage("box.not_found"));
+			Debug.error(Main.getMessage("box.not_found"));
 		}
 	}
 
@@ -226,7 +226,7 @@ public class FritzBox {
 	 */
 	public void clearListOnFritzBox() throws WrongPasswordException,
 			IOException {
-		Debug.msg("Clearing List"); //$NON-NLS-1$
+		Debug.info("Clearing List"); //$NON-NLS-1$
 		String urlstr = "http://" + box_address + ":" + box_port + "/cgi-bin/webcm"; //$NON-NLS-1$,  //$NON-NLS-2$
 		String postdata = firmware.getAccessMethod()
 				+ POSTDATA_CLEAR.replaceAll("\\$LANG", firmware.getLanguage());
@@ -252,14 +252,14 @@ public class FritzBox {
 						.getLanguage())
 				+ URLEncoder.encode(box_password, "ISO-8859-1"); //$NON-NLS-1$
 		String urlstr = "http://" + box_address + ":" + box_port + "/cgi-bin/webcm"; //$NON-NLS-1$,  //$NON-NLS-2$
-		Debug.msg("Postdata: " + postdata); //$NON-NLS-1$
-		Debug.msg("Urlstr: " + urlstr); //$NON-NLS-1$
+		Debug.debug("Postdata: " + postdata); //$NON-NLS-1$
+		Debug.debug("Urlstr: " + urlstr); //$NON-NLS-1$
 		String data = JFritzUtils.fetchDataFromURL(urlstr, postdata, true);
 
 		// DEBUG: Test other versions
 		if (false) {
 			String filename = "./Firmware 96/sipProvider.html"; //$NON-NLS-1$
-			Debug.msg("Debug mode: Loading " + filename); //$NON-NLS-1$
+			Debug.debug("Debug mode: Loading " + filename); //$NON-NLS-1$
 			try {
 				data = ""; //$NON-NLS-1$
 				String thisLine;
@@ -269,7 +269,7 @@ public class FritzBox {
 				}
 				in.close();
 			} catch (IOException e) {
-				Debug.err("File not found: " + filename); //$NON-NLS-1$
+				Debug.error("File not found: " + filename); //$NON-NLS-1$
 			}
 		}
 
@@ -300,7 +300,7 @@ public class FritzBox {
 			p = Pattern.compile(PATTERN_SIPPROVIDER_96);
 		Matcher m = p.matcher(sipProviderData);
 		while (m.find()) {
-			Debug.msg("FOUND SIP-PROVIDER"); //$NON-NLS-1$
+			Debug.debug("FOUND SIP-PROVIDER"); //$NON-NLS-1$
 			if (!(m.group(4).equals(""))) { //$NON-NLS-1$
 				if (firmware.getMajorFirmwareVersion() == 3
 						&& firmware.getMinorFirmwareVersion() < 42)
@@ -310,7 +310,7 @@ public class FritzBox {
 					list.add(new SipProvider(Integer.parseInt(m.group(5)), m
 							.group(3), m.group(4)));
 
-				Debug.msg("SIP-Provider: " + list.lastElement()); //$NON-NLS-1$
+				Debug.debug("SIP-Provider: " + list.lastElement()); //$NON-NLS-1$
 			}
 		}
 		p = Pattern.compile(PATTERN_SIPPROVIDER_ACTIVE);
@@ -358,7 +358,7 @@ public class FritzBox {
 			URLConnection urlConn;
 			DataOutputStream printout;
 			boolean newEntries = false;
-			Debug.msg("Opening HTML Callerlist page");
+			Debug.info("Opening HTML Callerlist page");
 			// retrieveHTMLCallerList(box_address, password, countryPrefix,
 			// countryCode,
 			// areaPrefix, areaCode, firmware, jfritz);
@@ -369,13 +369,13 @@ public class FritzBox {
 					+ URLEncoder.encode(box_password, "ISO-8859-1");
 			String urlstr = "http://" + box_address +":" + box_port + "/cgi-bin/webcm";
 
-			Debug.msg("Urlstr: " + urlstr);
-			Debug.msg("Postdata: " + postdata);
+			Debug.debug("Urlstr: " + urlstr);
+			Debug.debug("Postdata: " + postdata);
 
 			try {
 				url = new URL(urlstr);
 			} catch (MalformedURLException e) {
-				Debug.err("URL invalid: " + urlstr);
+				Debug.error("URL invalid: " + urlstr);
 				throw new MalformedURLException("URL invalid: " + urlstr);
 			}
 
@@ -421,13 +421,13 @@ public class FritzBox {
 
 			// The list should be updated now
 			// Get the csv file for processing
-			Debug.msg("Retrieving the CSV list from the box");
+			Debug.info("Retrieving the CSV list from the box");
 			urlstr = "http://" + box_address + ":" + box_port + "/cgi-bin/webcm";
 
 			try {
 				url = new URL(urlstr);
 			} catch (MalformedURLException e) {
-				Debug.err("URL invalid: " + urlstr);
+				Debug.error("URL invalid: " + urlstr);
 				throw new MalformedURLException("URL invalid: " + urlstr);
 			}
 
@@ -463,9 +463,9 @@ public class FritzBox {
 
 					// pass it on to the import function
 
-					Debug.msg("Received response, begin processing call list");
+					Debug.info("Received response, begin processing call list");
 					newEntries = JFritz.getCallerList().importFromCSVFile(reader);
-					Debug.msg("Finished processing response");
+					Debug.info("Finished processing response");
 
 					// close the reader and the socket connection
 					reader.close();
@@ -731,11 +731,11 @@ public class FritzBox {
 						result)));
 
 			} catch (ParserConfigurationException e1) {
-				Debug.err(e1.toString());
+				Debug.error(e1.toString());
 			} catch (SAXException e1) {
-				Debug.err(e1.toString());
+				Debug.error(e1.toString());
 			} catch (IOException e1) {
-				Debug.err(e1.toString());
+				Debug.error(e1.toString());
 			}
 		}
 	}
@@ -928,7 +928,7 @@ public class FritzBox {
 		String result =  UPNPUtils.getSOAPData("http://" + getAddress() +
 				URL_SERVICE_AUTOCONFIG, URN_SERVICE_AUTOCONFIG, xml);
 
-		Debug.msg("Result of getAutoConfig: "+ result);
+		Debug.info("Result of getAutoConfig: "+ result);
 
 		/*
 		<?xml version="1.0"?>

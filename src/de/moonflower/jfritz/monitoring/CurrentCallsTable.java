@@ -69,7 +69,7 @@ public class CurrentCallsTable extends AbstractTableModel implements
      * Method part of the interface CallMonitorListener
      */
     public void pendingCallIn(Call call){
-    	Debug.msg("pendingCallIn was called");
+    	Debug.info("pendingCallIn was called");
     	//Nothing here for now
     	currentCalls.add(call);
     	fireTableDataChanged();
@@ -80,7 +80,7 @@ public class CurrentCallsTable extends AbstractTableModel implements
      * Method part of the interface CallMonitorListener
      */
     public void establishedCallIn(Call call){
-    	Debug.msg("establishedCallIn was called");
+    	Debug.info("establishedCallIn was called");
 
     }
 
@@ -98,7 +98,7 @@ public class CurrentCallsTable extends AbstractTableModel implements
      * Method part of the interface CallMonitorListener
      */
     public void establishedCallOut(Call call){
-    	Debug.msg("establishedCallOut was called");
+    	Debug.info("establishedCallOut was called");
 
     }
 

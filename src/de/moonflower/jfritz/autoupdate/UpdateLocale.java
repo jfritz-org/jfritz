@@ -36,7 +36,7 @@ public class UpdateLocale {
 				i18n = msg;
 			}
 		} catch (MissingResourceException e) {
-			Debug.err("Can't find resource string for " + msg); //$NON-NLS-1$
+			Debug.error("Can't find resource string for " + msg); //$NON-NLS-1$
 			i18n = msg;
 		}
 		return i18n;

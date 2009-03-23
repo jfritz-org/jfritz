@@ -97,16 +97,13 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 							if (m.group(1).equals(
 									Main.getProperty("option.syslogclientip")) //$NON-NLS-1$
 									&& (m.group(2).equals(":4711"))) { //$NON-NLS-1$
-								Debug
-										.msg("Syslog IS RUNNING PROPERLY on FritzBox"); //$NON-NLS-1$
+								Debug.info("Syslog IS RUNNING PROPERLY on FritzBox"); //$NON-NLS-1$
 							} else {
-								Debug
-										.msg("Syslog ISN'T RUNNING PROPERLY on FritzBox, RESTARTING SYSLOG"); //$NON-NLS-1$
+								Debug.warning("Syslog ISN'T RUNNING PROPERLY on FritzBox, RESTARTING SYSLOG"); //$NON-NLS-1$
 								restartSyslogOnFritzBox(telnet, Main.getProperty("option.syslogclientip")); //$NON-NLS-1$
 							}
 						} else {
-							Debug
-									.msg("Syslog ISN'T RUNNING PROPERLY on FritzBox, RESTARTING SYSLOG"); //$NON-NLS-1$
+							Debug.warning("Syslog ISN'T RUNNING PROPERLY on FritzBox, RESTARTING SYSLOG"); //$NON-NLS-1$
 							restartSyslogOnFritzBox(telnet, Main.getProperty(
 									"option.syslogclientip")); //$NON-NLS-1$,  //$NON-NLS-2$
 						}
@@ -119,19 +116,16 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 						p = Pattern.compile(PATTERN_TELEFON_RUNNING);
 						m = p.matcher(data);
 						if (m.find()) {
-							Debug
-									.msg("Telefon ISN'T RUNNING PROPERLY on FritzBox, RESTARTING TELEFON"); //$NON-NLS-1$
+							Debug.warning("Telefon ISN'T RUNNING PROPERLY on FritzBox, RESTARTING TELEFON"); //$NON-NLS-1$
 							restartTelefonOnFritzBox(telnet);
 						} else {
 
 							if (!Main.getProperty("telefond.laststarted") //$NON-NLS-1$,  //$NON-NLS-2$
 									.equals("syslogMonitor")) { //$NON-NLS-1$
-								Debug
-										.msg("Telefon ISN'T RUNNING PROPERLY on FritzBox, RESTARTING TELEFON"); //$NON-NLS-1$
+								Debug.warning("Telefon ISN'T RUNNING PROPERLY on FritzBox, RESTARTING TELEFON"); //$NON-NLS-1$
 								restartTelefonOnFritzBox(telnet);
 							} else {
-								Debug
-										.msg("Telefon IS RUNNING PROPERLY on FritzBox"); //$NON-NLS-1$
+								Debug.info("Telefon IS RUNNING PROPERLY on FritzBox"); //$NON-NLS-1$
 							}
 						}
 					}
@@ -143,14 +137,14 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 				}
 			}
 			socket = new DatagramSocket(port);
-			Debug.msg("Starting SyslogListener on port " + port); //$NON-NLS-1$
+			Debug.info("Starting SyslogListener on port " + port); //$NON-NLS-1$
 			// DatagramSocket passthroughSocket = new
 			// DatagramSocket(SYSLOG_PORT);
 			while (!isInterrupted()) {
 				socket.receive(packet);
 				String msg = new String(log_buffer, 0, packet.getLength(),
 						"UTF-8"); //$NON-NLS-1$
-				Debug.msg("Get Syslogmessage: " + msg); //$NON-NLS-1$
+				Debug.debug("Get Syslogmessage: " + msg); //$NON-NLS-1$
 
 				//if (JFritzUtils.parseBoolean(Main.getProperty(
 				//		"option.syslogpassthrough"))) {
@@ -164,7 +158,7 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 					String id = m.group(1);
 					String caller = m.group(2);
 					String called = m.group(3);
-					Debug.msg("NEW INCOMING CALL " + id + ": " + caller //$NON-NLS-1$,  //$NON-NLS-2$
+					Debug.debug("NEW INCOMING CALL " + id + ": " + caller //$NON-NLS-1$,  //$NON-NLS-2$
 							+ " -> " + called); //$NON-NLS-1$
 
 					// POPUP Messages to JFritz
@@ -176,17 +170,17 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 				if (m.find()) {
 					String called = m.group(2);
 					if (!called.equals("")) { //$NON-NLS-1$
-						Debug.msg("NEW OUTGOING CALL: " + called); //$NON-NLS-1$
+						Debug.debug("NEW OUTGOING CALL: " + called); //$NON-NLS-1$
 						//						JFritz.callOutMsg(called);
 					}
 				}
 			}
 		} catch (SocketException e) {
 			if (!e.toString().equals("java.net.SocketException: socket closed")) { //$NON-NLS-1$
-				Debug.err("SocketException: " + e); //$NON-NLS-1$
+				Debug.error(e.toString()); //$NON-NLS-1$
 			}
 		} catch (IOException e) {
-			Debug.err("IOException: " + e); //$NON-NLS-1$
+			Debug.error(e.toString()); //$NON-NLS-1$
 		} catch (WrongPasswordException e1) {
 			JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
 			Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
@@ -200,7 +194,7 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 	 * Stops call monitor
 	 */
 	public void stopCallMonitor() {
-		Debug.msg("Stopping SyslogListener"); //$NON-NLS-1$
+		Debug.info("Stopping SyslogListener"); //$NON-NLS-1$
 		interrupt();
 		if (socket != null) {
 			socket.close();
@@ -217,7 +211,7 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 	 */
 	public static void restartSyslogOnFritzBox(Telnet telnet, String ip) {
 		int port = 4711;
-		Debug.msg("Start syslogd on FritzBox with: syslog -R " + ip + ":" //$NON-NLS-1$,  //$NON-NLS-2$
+		Debug.info("Start syslogd on FritzBox with: syslog -R " + ip + ":" //$NON-NLS-1$,  //$NON-NLS-2$
 				+ port);
 		telnet.sendCommand("killall syslogd"); //$NON-NLS-1$
 		try {
@@ -254,7 +248,7 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 						+ "Die Anrufliste wird vorher gesichert.\n" //TODO: I18N
 						+ "Soll der telefond neu gestartet werden?", //TODO: I18N
 						Main.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-			Debug.msg("Get new calls"); //$NON-NLS-1$
+			Debug.info("Get new calls"); //$NON-NLS-1$
 			JFritz.getJframe().getFetchButton().doClick();
 			try {
 				sleep(5000);
@@ -273,7 +267,7 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 			} catch (InterruptedException e) {
 	        	Thread.currentThread().interrupt();
 			}
-			Debug.msg("telefond restarted"); //$NON-NLS-1$
+			Debug.info("telefond restarted"); //$NON-NLS-1$
 			Main.setProperty("telefond.laststarted", "syslogMonitor"); //$NON-NLS-1$,  //$NON-NLS-2$
 			return JOptionPane.YES_OPTION;
 		} else {
@@ -303,7 +297,7 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 				}
 			}
 		} catch (SocketException e) {
-            Debug.err(e.toString());
+            Debug.error(e.toString());
 		}
 		return addresses;
 	}
@@ -313,11 +307,6 @@ public class SyslogCallMonitor extends Thread implements CallMonitorInterface {
 	}
 
 	public void closeConnection() {
-		Debug.err("WARNING: Method not implemented!");
-	}
-
-	public boolean pingBox() {
-		Debug.err("WARNING: Method not implemented!");
-		return false;
+		Debug.warning("Method not implemented!");
 	}
 }

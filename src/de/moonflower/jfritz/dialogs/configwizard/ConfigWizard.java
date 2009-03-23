@@ -43,12 +43,12 @@ public class ConfigWizard {
 
 	public ConfigWizard(Frame parent){
 
-		Debug.msg("asking the user for the language");
+		Debug.info("asking the user for the language");
 
 		//if user clicked cancel on the language dialog, return back to jfritz
 		askLanguage(parent);
 
-		Debug.msg("Create JFritz config wizard");
+		Debug.info("Create JFritz config wizard");
 		wizard = new Wizard(JFritz.getJframe());
         wizard.getDialog().setTitle(Main.getMessage("config_wizard"));
 
@@ -95,7 +95,7 @@ public class ConfigWizard {
        switch (ret){
 
        		case 0:
-       			Debug.msg("Finished clicked, saving settings");
+       			Debug.info("Finished clicked, saving settings");
 
        			((ConfigPanelPhone)descriptor2.getPanelComponent()).saveSettings();
        			try {
@@ -103,15 +103,15 @@ public class ConfigWizard {
        			}
        			catch (WrongPasswordException wpe)
        			{
-       				Debug.err("Wrong password");
+       				Debug.error("Wrong password");
        			}
    				catch (InvalidFirmwareException ife)
    				{
-   					Debug.err("Invalid firmware");
+   					Debug.error("Invalid firmware");
    				}
        			catch (IOException ioe)
        			{
-       				Debug.err("No connection to box!");
+       				Debug.error("No connection to box!");
        			}
        			((ConfigPanelMessage)descriptor4.getPanelComponent()).saveSettings();
        			((ConfigPanelCallMonitor)descriptor5.getPanelComponent()).saveSettings();
@@ -121,25 +121,25 @@ public class ConfigWizard {
        			}
        			catch (WrongPasswordException wpe)
        			{
-       				Debug.err("Wrong password");
+       				Debug.error("Wrong password");
        			}
    				catch (InvalidFirmwareException ife)
    				{
-   					Debug.err("Invalid firmware");
+   					Debug.error("Invalid firmware");
    				}
        			catch (IOException ioe)
        			{
-       				Debug.err("No connection to box!");
+       				Debug.error("No connection to box!");
        			}
       			Main.saveConfigProperties();
 
       			JFritz.getJframe().checkOptions();
 				return false;
        		case 1:
-       			Debug.msg("Cancel clicked, not saving values");
+       			Debug.info("Cancel clicked, not saving values");
        			return true;
        		case 2:
-       			Debug.msg("Error in the wizard, bailing out..");
+       			Debug.info("Error in the wizard, bailing out..");
        			return true;
        		default:
        			return true;

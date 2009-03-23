@@ -50,11 +50,11 @@ public class UPNPUtils {
 			}
 			socket.close();
 		} catch (SocketTimeoutException e) {
-			Debug.msg("Timeout for SSDP"); //$NON-NLS-1$
+			Debug.warning("Timeout for SSDP"); //$NON-NLS-1$
 		} catch (SocketException e) {
-            Debug.err(e.toString());
+            Debug.error(e.toString());
 		} catch (IOException e) {
-			Debug.err(e.toString());
+			Debug.error(e.toString());
 		}
 		return devices;
 	}
@@ -66,7 +66,7 @@ public class UPNPUtils {
 		while (en.hasMoreElements()) {
 			SSDPPacket p = en.nextElement();
 			if (p.getServer().toLowerCase().indexOf("avm fritz!box") > 0) { //$NON-NLS-1$
-				Debug.msg("Box found at " + p.getIP().toString() + ": " //$NON-NLS-1$,  //$NON-NLS-2$
+				Debug.info("Box found at " + p.getIP().toString() + ": " //$NON-NLS-1$,  //$NON-NLS-2$
 						+ p.getServer());
 				fritzboxes.add(p);
 			}
@@ -125,19 +125,19 @@ public class UPNPUtils {
 
 
 		} catch (IOException e) {
-            Debug.err(e.toString());
+            Debug.error(e.toString());
 		}finally{
 			try{
 				if(d!=null)
 					d.close();
 			}catch(IOException ioe){
-				Debug.err("Error closing Stream");
+				Debug.error("Error closing Stream");
 			}
 			try{
 				if(printout!=null)
 					printout.close();
 			}catch(IOException ioe){
-				Debug.err("Error closing Stream");
+				Debug.error("Error closing Stream");
 			}
 		}
 		return data;

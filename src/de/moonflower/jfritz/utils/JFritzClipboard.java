@@ -34,11 +34,11 @@ public class JFritzClipboard{
         	{
             	StringSelection stringSelection = new StringSelection(text);
         		systemClip.setContents(stringSelection, stringSelection);
-        		Debug.msg("JFritzClipboard.copy: "+text); //$NON-NLS-1$
+        		Debug.debug("JFritzClipboard.copy: "+text); //$NON-NLS-1$
         	}
         }catch(IllegalStateException ise)
         {
-        	Debug.err("Cannot copy "+text+" into clipboard (clipboard not available)"); //$NON-NLS-1$,  //$NON-NLS-2$
+        	Debug.error("Cannot copy "+text+" into clipboard (clipboard not available)"); //$NON-NLS-1$,  //$NON-NLS-2$
         	Debug.errDlg(Main.getMessage("error_clipboard_not_available")); //$NON-NLS-1$
         }
     }

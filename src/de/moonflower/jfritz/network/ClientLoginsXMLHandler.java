@@ -316,7 +316,7 @@ public class ClientLoginsXMLHandler extends DefaultHandler{
 							callFilters.add(df);
 
 						} catch (ParseException error) {
-							Debug.err("error parsing date while loading dates from client settings"
+							Debug.error("error parsing date while loading dates from client settings "
 											+ error.toString());
 						}
 

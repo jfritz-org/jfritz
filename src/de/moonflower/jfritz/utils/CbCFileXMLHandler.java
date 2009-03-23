@@ -72,7 +72,7 @@ public class CbCFileXMLHandler extends DefaultHandler {
 		} else if (qName.equals("length")) { //$NON-NLS-1$
 			length = Integer.parseInt(chars);
 		} else if (qName.equals("callbycall")) { //$NON-NLS-1$
-			Debug.msg("Call by Call for "+country_code+" added. Prefix: "+
+			Debug.info("Call by Call for "+country_code+" added. Prefix: "+
 					prefix+" Length: "+length);
 			cbc[cbc_count] = new CallByCall(prefix, length);
 			cbc_count++;

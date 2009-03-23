@@ -87,7 +87,7 @@ public class ConfigPanelCallerListAppearance extends JPanel implements ConfigPan
 		{
 			Main.setStateProperty("callerTable.column"+i+".name", columnTableModel.getData(i).getName());
 			Main.setProperty("option.showCallerListColumn." + columnTableModel.getData(i).getName(), columnTableModel.getData(i).isVisible());
-			Debug.msg("CallerListTableColumn " + i + ": " + columnTableModel.getData(i).getName() + " / visible: " +columnTableModel.getData(i).isVisible());
+			Debug.debug("CallerListTableColumn " + i + ": " + columnTableModel.getData(i).getName() + " / visible: " +columnTableModel.getData(i).isVisible());
 		}
 	}
 
@@ -157,7 +157,7 @@ public class ConfigPanelCallerListAppearance extends JPanel implements ConfigPan
 				columnTable.setRowSelectionInterval(newSelection, newSelection);
 			}
 		} else {
-			Debug.err("Unknown command received: "+e.getActionCommand());
+			Debug.warning("Unknown command received: "+e.getActionCommand());
 		}
 	}
 

@@ -214,7 +214,7 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 					{
 						address.setText(selectedItem);
 					} else {
-						Debug.err("Address wrong!"); //$NON-NLS-1$
+						Debug.error("Address wrong!"); //$NON-NLS-1$
 						boxtypeLabel.setForeground(Color.RED);
 						boxtypeLabel.setText(Main.getMessage("box.not_found")); //$NON-NLS-1$
 						firmware = null;
@@ -239,7 +239,7 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 				wrongPasswordTask.schedule(refreshTimeoutTask, 0, 1000);
 				String error = Main.getMessage("box.wrong_password.wait");
 				error = error.replaceFirst("%WAIT%", Integer.toString(e1.getRetryTime()));
-				Debug.err(error); //$NON-NLS-1$
+				Debug.error(error); //$NON-NLS-1$
 				boxtypeLabel.setForeground(Color.RED);
 				boxtypeLabel.setText(error); //$NON-NLS-1$
 				boxtypeLabel.setPreferredSize(boxtypeLabel.getPreferredSize());
@@ -247,12 +247,12 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 				firmware = null;
 				this.repaint();
 			} catch (InvalidFirmwareException ife) {
-				Debug.err("Invalid firmware detected"); //$NON-NLS-1$
+				Debug.error("Invalid firmware detected"); //$NON-NLS-1$
 				boxtypeLabel.setForeground(Color.RED);
 				boxtypeLabel.setText(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
 				firmware = null;
 			} catch (IOException e1) {
-				Debug.err("Address wrong!"); //$NON-NLS-1$
+				Debug.error("Address wrong!"); //$NON-NLS-1$
 				boxtypeLabel.setForeground(Color.RED);
 				boxtypeLabel.setText(Main.getMessage("box.not_found")); //$NON-NLS-1$
 				firmware = null;

@@ -22,7 +22,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 
 	public FBoxCallMonitorV3() {
 		super();
-		Debug.msg("FBoxListener V3"); //$NON-NLS-1$
+		Debug.info("FBoxListener V3"); //$NON-NLS-1$
 	}
 
     public void run() {
@@ -45,13 +45,13 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
     public void parseOutput(String line, boolean interactWithJFritz) {
     	if ( line != null )
     	{
-	        Debug.msg("Server: " + line); //$NON-NLS-1$
+	        Debug.debug("Server: " + line); //$NON-NLS-1$
 	        String number = ""; //$NON-NLS-1$
 	        String provider = ""; //$NON-NLS-1$
 	        String[] split;
 	        split = line.split(";", 7); //$NON-NLS-1$
 	        for (int i = 0; i < split.length; i++) {
-	            Debug.msg("Split[" + i + "] = " + split[i]); //$NON-NLS-1$,  //$NON-NLS-2$
+	            Debug.debug("Split[" + i + "] = " + split[i]); //$NON-NLS-1$,  //$NON-NLS-2$
 	        }
 	        if (JFritzUtils.parseBoolean(Main.getProperty(
 	                "option.callmonitor.monitorIncomingCalls")) //$NON-NLS-1$,  //$NON-NLS-2$
@@ -134,7 +134,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 	                JFritz.getCallMonitorList().addNewCall(
 	                        Integer.parseInt(split[2]), currentCall);
 	            } catch (ParseException e) {
-	                Debug.err("FBoxListenerV3: Could not convert call" + e);
+	                Debug.error("FBoxListenerV3: Could not convert call" + e);
 	            }
 
 	        } else if (split[1].equals("DISCONNECT")) { //$NON-NLS-1$
@@ -148,7 +148,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 	                    Thread.sleep(zufallszahl.nextInt(3000));
 	                }
 	            } catch (InterruptedException e) {
-	                Debug.err(e.toString());
+	                Debug.error(e.toString());
 		        	Thread.currentThread().interrupt();
 	            }
 

@@ -42,12 +42,12 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
 
     public FBoxCallMonitor() {
         super("FBoxThread");
-        Debug.msg("Starting FBoxListener"); //$NON-NLS-1$
+        Debug.info("Starting FBoxListener"); //$NON-NLS-1$
         this.setDaemon(true);
         running = true;
         start();
         zufallszahl = new Random();
-        Debug.msg("Trying to connect to " //$NON-NLS-1$
+        Debug.info("Trying to connect to " //$NON-NLS-1$
                 + JFritz.getFritzBox().getAddress() + ":1012"); //$NON-NLS-1$,  //$NON-NLS-2$
     }
 
@@ -59,11 +59,12 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
 	        clientSocket = new Socket(JFritz.getFritzBox().getAddress(), 1012); //$NON-NLS-1$
 	        clientSocket.setKeepAlive(true);
 			JFritz.getJframe().setCallMonitorConnectedStatus();
-			clientSocket.setSoTimeout(READ_TIMEOUT);
+			clientSocket.setSoTimeout(CONNECTION_TIMEOUT);
 			connected = true;
+			clientSocket.setSoTimeout(READ_TIMEOUT);
 			return true;
     	} catch (SocketTimeoutException stoe) {
-	        Debug.msg("Socket connect timeout: " + stoe.toString()); //$NON-NLS-1$
+	        Debug.error("Socket connect timeout: " + stoe.toString()); //$NON-NLS-1$
 	        closeConnection();
 	        try {
 				Thread.sleep(WAIT_UNTIL_RECONNECT);
@@ -72,7 +73,7 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
 				e.printStackTrace();
 			}
     	} catch (NoRouteToHostException nrthe) {
-	        Debug.msg("No route to host exception: " + nrthe.toString()); //$NON-NLS-1$
+	        Debug.error("No route to host exception: " + nrthe.toString()); //$NON-NLS-1$
 	        closeConnection();
 	        try {
 				Thread.sleep(WAIT_UNTIL_RECONNECT);
@@ -81,7 +82,7 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
 				e.printStackTrace();
 			}
 	    } catch (UnknownHostException uhe) {
-	        Debug.msg("Unknown host exception: " + uhe.toString()); //$NON-NLS-1$
+	        Debug.error("Unknown host exception: " + uhe.toString()); //$NON-NLS-1$
 	        closeConnection();
 	        try {
 				Thread.sleep(WAIT_UNTIL_RECONNECT);
@@ -90,7 +91,7 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
 				e.printStackTrace();
 			}
 	    } catch (ConnectException ce) {
-	        Debug.msg("Connect exception: " + ce.toString()); //$NON-NLS-1$
+	        Debug.error("Connect exception: " + ce.toString()); //$NON-NLS-1$
 	        closeConnection();
 	        try {
 				Thread.sleep(WAIT_UNTIL_RECONNECT);
@@ -139,21 +140,21 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
         }
         catch (IOException ioe)
         {
-        	Debug.err("IOException while closing call monitor input!");
+        	Debug.error("IOException while closing call monitor input!");
         }
     }
 
     protected abstract void parseOutput(String line);
 
     public void stopCallMonitor() {
-        Debug.msg("Stopping FBoxListener"); //$NON-NLS-1$
+        Debug.info("Stopping FBoxListener"); //$NON-NLS-1$
     	closeConnection();
         running = false;
     }
 
     public void closeConnection()
     {
-        Debug.msg("Closing connection"); //$NON-NLS-1$
+        Debug.info("Closing connection"); //$NON-NLS-1$
         try {
             connected = false;
             if (clientSocket != null)
@@ -162,12 +163,12 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
             }
 //            this.interrupt();
         } catch (IOException e) {
-            Debug.err(e.toString());
+            Debug.error(e.toString());
         }
         try {
         	in.close();
 	    } catch (IOException e) {
-	        Debug.err(e.toString());
+	        Debug.error(e.toString());
 	    }
 		JFritz.getJframe().setCallMonitorDisconnectedStatus();
     }

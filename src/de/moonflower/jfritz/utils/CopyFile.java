@@ -48,7 +48,7 @@ public class CopyFile {
             try {
                 in[i] = new FileInputStream(Main.SAVE_DIR + entries[i].getName());
             } catch (IOException ex) {
-                Debug.err(ex.toString());
+                Debug.error(ex.toString());
             }
         }
 
@@ -63,7 +63,7 @@ public class CopyFile {
         boolean success = (new File(dir)) //$NON-NLS-1$
                 .mkdirs();
         if (!success) {
-            Debug.err("Directory creation failed"); //$NON-NLS-1$
+            Debug.error("Directory creation failed"); //$NON-NLS-1$
         }
         return dir;
     }
@@ -91,7 +91,7 @@ public class CopyFile {
         out = new FileOutputStream[numberOfFiles];
         for (int i = 0; i < numberOfFiles; i++) {
             try {
-                Debug.msg("Found file to backup: " + entries[i].getName()); //$NON-NLS-1$
+                Debug.info("Found file to backup: " + entries[i].getName()); //$NON-NLS-1$
                 out[i] = new FileOutputStream( targetDirectory + File.separator + entries[i].getName());
                 byte[] buf = new byte[4096];
                 int len;
@@ -101,21 +101,21 @@ public class CopyFile {
                 in[i].close();
                 out[i].close();
             } catch (IOException ex) {
-                Debug.err(ex.toString());
+                Debug.error(ex.toString());
             } catch (ArrayIndexOutOfBoundsException ex) {
-                Debug.err("No files available"); //$NON-NLS-1$
+                Debug.error("No files available"); //$NON-NLS-1$
             }finally{
             	try{
             		if(in[i]!=null)
             			in[i].close();
             	}catch(IOException e){
-                    Debug.err("exception closing a stream"); //$NON-NLS-1$
+                    Debug.error("exception closing a stream"); //$NON-NLS-1$
             	}
             	try{
             		if(out[i]!=null)
             			out[i].close();
             	}catch(IOException e){
-                    Debug.err("exception closing a stream"); //$NON-NLS-1$
+                    Debug.error("exception closing a stream"); //$NON-NLS-1$
             	}
             }
         }

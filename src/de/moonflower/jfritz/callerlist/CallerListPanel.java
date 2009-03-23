@@ -811,11 +811,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 						if (current.after(max)) {
 							max = current;
 						}
-						Debug.msg("currentDate: " + current);
 					}
-					Debug.msg("minDate: " + min);
-					Debug.msg("maxDate: " + max);
-
 					startDateChooser.setDate(min);
 					endDateChooser.setDate(max);
 				} else {// no rows selected so we only have the days and set the
@@ -912,8 +908,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			if (JOptionPane.showConfirmDialog(jFrame, Main
 					.getMessage("really_delete_entries"), //$NON-NLS-1$
 					Main.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-				Debug.msg("Removing entries"); //$NON-NLS-1$
 				int rows[] = callerTable.getSelectedRows();
+				Debug.info("Removing " + rows.length + " entries"); //$NON-NLS-1$
 				callerList.removeEntries(rows);
 			}
 			return;
@@ -997,7 +993,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			// JFritz.getJframe().copyAddressToClipboard();
 
 		}
-		Debug.err("unknown command: " + command);
+		Debug.warning("Unknown command: " + command);
 	}
 
 	/**
@@ -1310,7 +1306,6 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 * load the status of the Buttons from the Main Properties
 	 */
 	private void loadButtonStatus() {
-		Debug.msg("reading Buttons");
 		int state;
 		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_COMMENT));
 		commentFilterButton.setState(state);
@@ -1365,8 +1360,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			} catch (ParseException e) {
 				startDateChooser.setDate(Calendar.getInstance().getTime());
 				endDateChooser.setDate(Calendar.getInstance().getTime());
-				Debug
-						.err("error parsing date while loading dates from main properties "
+				Debug.error("Error parsing date while loading dates from main properties "
 								+ e.toString());
 			}
 		}

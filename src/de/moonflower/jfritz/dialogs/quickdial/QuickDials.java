@@ -191,12 +191,12 @@ public class QuickDials extends AbstractTableModel {
 			reader.parse(new InputSource(new FileInputStream(filename)));
 
 		} catch (ParserConfigurationException e) {
-			Debug.err("Error with ParserConfiguration!"); //$NON-NLS-1$
+			Debug.error("Error with ParserConfiguration!"); //$NON-NLS-1$
 		} catch (SAXException e) {
-			Debug.err("Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
-            Debug.err(e.toString());
+			Debug.error("Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+            Debug.error(e.toString());
 		} catch (IOException e) {
-			Debug.err("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.error("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 
@@ -206,7 +206,7 @@ public class QuickDials extends AbstractTableModel {
 	 * @param filename
 	 */
 	public void saveToXMLFile(String filename) {
-		Debug.msg("Saving to file " + filename); //$NON-NLS-1$
+		Debug.info("Saving to file " + filename); //$NON-NLS-1$
 		FileOutputStream fos;
 		try {
 			fos = new FileOutputStream(filename);
@@ -235,7 +235,7 @@ public class QuickDials extends AbstractTableModel {
 			pw.println("</quickdials>"); //$NON-NLS-1$
 			pw.close();
 		} catch (FileNotFoundException e) {
-			Debug.err("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 

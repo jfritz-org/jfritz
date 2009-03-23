@@ -57,13 +57,13 @@ public class JFritzUtils {
 		DataOutputStream printout;
 		String data = ""; //$NON-NLS-1$
 		boolean wrong_pass = false;
-		Debug.msg("Urlstr: " + urlstr);
-		Debug.msg("Postdata: " + postdata);
+		Debug.debug("Urlstr: " + urlstr);
+		Debug.debug("Postdata: " + postdata);
 
 		try {
 			url = new URL(urlstr);
 		} catch (MalformedURLException e) {
-			Debug.err("URL invalid: " + urlstr); //$NON-NLS-1$
+			Debug.error("URL invalid: " + urlstr); //$NON-NLS-1$
 			throw new MalformedURLException("URL invalid: " + urlstr); //$NON-NLS-1$
 		}
 
@@ -86,7 +86,7 @@ public class JFritzUtils {
 					printout.close();
 				} catch (SocketTimeoutException ste)
 				{
-					Debug.err("Could not fetch data from url: "+ste.toString());
+					Debug.error("Could not fetch data from url: "+ste.toString());
 				}
 			}
 
@@ -238,7 +238,7 @@ public class JFritzUtils {
 	 */
 	public static String getFullPath(String subDir){
 
-		Debug.msg("Subdirectory: "+ subDir);
+		Debug.debug("Subdirectory: "+ subDir);
 		String[] classPath = System.getProperty("java.class.path").split(PATHSEP);	//$NON-NLS-1$
 		String userDir = System.getProperty("user.dir");							//$NON-NLS-1$
 		if (userDir.endsWith(FILESEP))
@@ -258,7 +258,7 @@ public class JFritzUtils {
 			langDir = (binDir != null) ? binDir + subDir : userDir + subDir;
 		}
 
-		Debug.msg("full path: " + langDir);											//$NON-NLS-1$
+		Debug.debug("full path: " + langDir);											//$NON-NLS-1$
 
 		return langDir;
 	}
@@ -290,7 +290,7 @@ public class JFritzUtils {
 		try {
 			return Integer.parseInt(property);
 		} catch (NumberFormatException nfe) {
-			Debug.msg("error converting Int returning 0 instead");
+			Debug.warning("error converting Int returning 0 instead");
 		}
 		return 0;
 	}

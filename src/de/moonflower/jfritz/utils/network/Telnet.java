@@ -82,7 +82,7 @@ public class Telnet {
 			password = Encryption.decrypt(Main.getProperty("telnet.password")); //$NON-NLS-1$
 			int port = 23;
 			try {
-				Debug.msg("Verbinde mit Telnet ..."); //$NON-NLS-1$
+				Debug.info("Verbinde mit Telnet ..."); //$NON-NLS-1$
 				statusBarController.fireStatusChanged(Main
 						.getMessage("Verbinde mit Telnet ...")); //$NON-NLS-1$
 
@@ -94,19 +94,19 @@ public class Telnet {
 					connected = true;
 				}
 				isdone = true;
-				Debug.msg("Done"); //$NON-NLS-1$
+				Debug.info("Done"); //$NON-NLS-1$
 			} catch (ConnectException e) { // Connection Timeout
-				Debug.msg("Telnet connection timeout ..."); //$NON-NLS-1$
+				Debug.warning("Telnet connection timeout ..."); //$NON-NLS-1$
 				// Warten, falls wir von einem Standby aufwachen,
 				// oder das Netzwerk temporär nicht erreichbar ist.
 				if (connectionFailures < 5) {
-					Debug.msg("Waiting for FritzBox, retrying ..."); //$NON-NLS-1$
+					Debug.warning("Waiting for FritzBox, retrying ..."); //$NON-NLS-1$
 					connectionFailures++;
 				} else {
-					Debug.msg("FritzBox not found. Get new IP ..."); //$NON-NLS-1$
+					Debug.warning("FritzBox not found. Get new IP ..."); //$NON-NLS-1$
 					statusBarController.fireStatusChanged(Main
 							.getMessage("box.not_found")); //$NON-NLS-1$
-					Debug.err("Address wrong!"); //$NON-NLS-1$
+					Debug.error("Address wrong!"); //$NON-NLS-1$
 					JFritz.getJframe().setBusy(false);
 					String box_address = JFritz.getJframe().showAddressDialog(
 							JFritz.getFritzBox().getAddress()); //,
@@ -120,7 +120,7 @@ public class Telnet {
 					}
 				}
 			} catch (Exception e) {
-				Debug.err(" in Class Telnet: " + e.toString()); //$NON-NLS-1$
+				Debug.error(" in Class Telnet: " + e.toString()); //$NON-NLS-1$
 				return;
 			}
 		}
@@ -136,7 +136,7 @@ public class Telnet {
 	private int login(final String user, final String password) {
 		try {
 			String currentPass = password;
-			Debug.msg("Login to Telnet"); //$NON-NLS-1$
+			Debug.info("Login to Telnet"); //$NON-NLS-1$
 			String login = "ogin: "; //$NON-NLS-1$
 			String passwd = "assword: "; //$NON-NLS-1$
 			boolean firstLogin = true;
@@ -153,7 +153,7 @@ public class Telnet {
 						// mehrmaliges Login mit falschem
 						// Username verhindern
 						if (firstLogin) {
-							Debug.msg("Writing Telnet User: " + user); //$NON-NLS-1$
+							Debug.debug("Writing Telnet User: " + user); //$NON-NLS-1$
 							write(user);
 							firstLogin = false;
 						} else {
@@ -184,7 +184,7 @@ public class Telnet {
 											.getPassword();
 									break; // go on with telnet login
 								} catch (WrongPasswordException e1) {
-									Debug.err(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+									Debug.error(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
 
 									statusBarController.fireStatusChanged(Main
 											.getMessage("box.wrong_password")); //$NON-NLS-1$
@@ -194,7 +194,7 @@ public class Telnet {
 											.showPasswordDialog(
 													JFritz.getFritzBox()
 															.getPassword());
-									Debug.msg("OLD PASS: " //$NON-NLS-1$
+									Debug.debug("OLD PASS: " //$NON-NLS-1$
 											+ JFritz.getFritzBox()
 													.getPassword());
 									if (newPassword == null) { // Dialog
@@ -218,7 +218,7 @@ public class Telnet {
 						// mehrmaliges Login mit falschem
 						// Passwort verhindern
 						if (firstPassword) {
-							Debug.msg("Writing Telnet Password: " + currentPass); //$NON-NLS-1$
+							Debug.debug("Writing Telnet Password: " + currentPass); //$NON-NLS-1$
 							write(currentPass);
 							firstPassword = false;
 						} else {
@@ -234,16 +234,16 @@ public class Telnet {
 						}
 					}
 					if (ch == prompt) {
-						Debug.err(sb.toString());
+						Debug.error(sb.toString());
 						break;
 					}
 				}
 				ch = (char) in.read();
 			}
 		} catch (Exception e) {
-			Debug.err(e.getMessage());
+			Debug.error(e.getMessage());
 		}
-		Debug.msg("Logged into Telnet connection."); //$NON-NLS-1$
+		Debug.info("Logged into Telnet connection."); //$NON-NLS-1$
 		return LOGIN_OK;
 	}
 
@@ -268,7 +268,7 @@ public class Telnet {
 				ch = (char) in.read();
 			}
 		} catch (Exception e) {
-			Debug.err(e.getMessage());
+			Debug.error(e.getMessage());
 		}
 		return null;
 	}
@@ -283,7 +283,7 @@ public class Telnet {
 			out.println(value);
 			out.flush();
 		} catch (Exception e) {
-			Debug.err(e.toString());
+			Debug.error(e.toString());
 		}
 	}
 
@@ -299,7 +299,7 @@ public class Telnet {
 			String data = readUntil(prompt + " "); //$NON-NLS-1$
 			return data;
 		} catch (Exception e) {
-			Debug.err(e.toString());
+			Debug.error(e.toString());
 		}
 		return null;
 	}
@@ -317,7 +317,7 @@ public class Telnet {
 	 *
 	 */
 	public void disconnect() {
-		Debug.msg("Disconnect Telnet connection."); //$NON-NLS-1$
+		Debug.info("Disconnect Telnet connection."); //$NON-NLS-1$
 		try {
 			telnet.disconnect();
 			connected = false;

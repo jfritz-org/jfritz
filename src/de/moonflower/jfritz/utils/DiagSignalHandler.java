@@ -18,21 +18,21 @@ public class DiagSignalHandler implements SignalHandler {
         	return diagHandler;
         } catch (IllegalArgumentException iae)
         {
-        	Debug.err(iae.toString());
+        	Debug.error(iae.toString());
         	return null;
         }
     }
 
     // Signal handler method
     public void handle(Signal sig) {
-        Debug.msg("Diagnostic Signal handler called for signal "+sig);
+        Debug.info("Diagnostic Signal handler called for signal "+sig);
         try {
             // Output information for each thread
             Thread[] threadArray = new Thread[Thread.activeCount()];
             int numThreads = Thread.enumerate(threadArray);
-            Debug.msg("Current threads:");
+            Debug.debug("Current threads:");
             for (int i=0; i < numThreads; i++) {
-                Debug.msg("    "+threadArray[i]);
+                Debug.debug("    "+threadArray[i]);
             }
 
             // Chain back to previous handler, if one exists
@@ -40,7 +40,7 @@ public class DiagSignalHandler implements SignalHandler {
                 oldHandler.handle(sig);
             }
         } catch (Exception e) {
-            Debug.err("Signal handler failed, reason "+e);
+            Debug.error("Signal handler failed, reason "+e);
         }
     }
 }

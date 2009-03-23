@@ -185,7 +185,7 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 			dataModel.fireTableDataChanged();
 			JFritz.getQuickDials().saveToXMLFile(Main.SAVE_DIR + JFritz.QUICKDIALS_FILE);
 		} else if (e.getActionCommand().equals("storeSIP")) {  //$NON-NLS-1$
-			Debug.err("Not yet implemented");  //$NON-NLS-1$
+			Debug.warning("Not yet implemented");  //$NON-NLS-1$
 			JOptionPane.showMessageDialog(null,
 					Main.getMessage("not_implemented"));  //$NON-NLS-1$
 		}

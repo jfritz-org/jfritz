@@ -42,7 +42,7 @@ public class Encryption {
 			// Return a String representation of the cipher text
 			return getString(ciphertext);
 		} catch (Exception e) {
-            Debug.err(e.toString());
+            Debug.error(e.toString());
 		}
 		return null;
 	}
@@ -54,7 +54,7 @@ public class Encryption {
 			byte[] bytes = desKey.getEncoded();
 			return getString(bytes);
 		} catch (Exception e) {
-            Debug.err(e.toString());
+            Debug.error(e.toString());
 			return null;
 		}
 	}
@@ -82,7 +82,7 @@ public class Encryption {
 			// Return the clear text
 			return new String(cleartext);
 		} catch (Exception e) {
-            Debug.err(e.toString());
+            Debug.error(e.toString());
 		}
 		return null;
 	}
@@ -95,7 +95,7 @@ public class Encryption {
 			SecretKey s = skf.generateSecret(pass);
 			return s;
 		} catch (Exception e) {
-            Debug.err(e.toString());
+            Debug.error(e.toString());
 		}
 		return null;
 	}

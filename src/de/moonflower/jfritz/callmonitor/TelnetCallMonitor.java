@@ -42,7 +42,7 @@ public class TelnetCallMonitor extends Thread implements CallMonitorInterface {
     public void run() {
         telnet = new Telnet();
         telnet.getStatusBarController().addStatusBarListener(statusListener);
-        Debug.msg("Starting TelnetListener"); //$NON-NLS-1$
+        Debug.info("Starting TelnetListener"); //$NON-NLS-1$
         try {
 			telnet.connect();
 		} catch (WrongPasswordException e1) {
@@ -56,7 +56,7 @@ public class TelnetCallMonitor extends Thread implements CallMonitorInterface {
 			Debug.errDlg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
 		}
         if (telnet.isConnected()) {
-            Debug.msg("run()"); //$NON-NLS-1$
+            Debug.debug("run()"); //$NON-NLS-1$
             if (JOptionPane
                     .showConfirmDialog(
                             null,
@@ -82,17 +82,17 @@ public class TelnetCallMonitor extends Thread implements CallMonitorInterface {
         try {
             sleep(1000);
         } catch (InterruptedException e) {
-            Debug.err("Fehler beim Schlafen: " + e); //$NON-NLS-1$
+            Debug.error("Fehler beim Schlafen: " + e); //$NON-NLS-1$
         	Thread.currentThread().interrupt();
         }
         telnet.write("telefon &>&1 &"); //$NON-NLS-1$
         try {
             sleep(1000);
         } catch (InterruptedException e) {
-            Debug.err("Fehler beim Schlafen: " + e); //$NON-NLS-1$
+            Debug.error("Fehler beim Schlafen: " + e); //$NON-NLS-1$
         	Thread.currentThread().interrupt();
         }
-        Debug.msg("Telefon Daemon restarted."); //$NON-NLS-1$
+        Debug.info("Telefon Daemon restarted."); //$NON-NLS-1$
         Main.setProperty("telefond.laststarted", "telnetMonitor"); //$NON-NLS-1$,  //$NON-NLS-2$
     }
 
@@ -108,7 +108,7 @@ public class TelnetCallMonitor extends Thread implements CallMonitorInterface {
                     String id = m.group(1);
                     String caller = m.group(2);
                     String called = m.group(3);
-                    Debug.msg("NEW CALL " + id + ": " + caller + " -> " //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+                    Debug.debug("NEW CALL " + id + ": " + caller + " -> " //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
                             + called);
 
                     // TODO: Add call to CallMonitorList and show message if number is not in ignore list
@@ -119,14 +119,14 @@ public class TelnetCallMonitor extends Thread implements CallMonitorInterface {
 
             }
         } catch (Exception e) {
-            Debug.err(e.toString());
+            Debug.error(e.toString());
             isRunning = false;
         }
         telnet.disconnect();
     }
 
     public void stopCallMonitor() {
-        Debug.msg("Stopping TelnetListener"); //$NON-NLS-1$
+        Debug.info("Stopping TelnetListener"); //$NON-NLS-1$
         isRunning = false;
     }
 
@@ -135,11 +135,6 @@ public class TelnetCallMonitor extends Thread implements CallMonitorInterface {
 	}
 
 	public void closeConnection() {
-		Debug.err("WARNING: Method not implemented!");
-	}
-
-	public boolean pingBox() {
-		Debug.err("WARNING: Method not implemented!");
-		return false;
+		Debug.warning("Method not implemented!");
 	}
 }

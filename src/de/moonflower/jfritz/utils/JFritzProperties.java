@@ -115,18 +115,18 @@ public class JFritzProperties extends Properties {
             reader.parse(new InputSource(new FileInputStream(filename)));
 
         } catch (ParserConfigurationException e) {
-            Debug.err("Error with ParserConfiguration!"); //$NON-NLS-1$
+            Debug.error("Error with ParserConfiguration!"); //$NON-NLS-1$
         } catch (SAXException e) {
-            Debug.err("Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
-            Debug.err(e.toString());
+            Debug.error("Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+            Debug.error(e.toString());
             if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
                     || e.getLocalizedMessage().startsWith(
                             "Invalid system identifier")) { //$NON-NLS-1$
-                Debug.err(e.getLocalizedMessage());
+                Debug.error(e.toString());
             Debug.errDlg("Error on parsing " + filename);
             }
         } catch (IOException e) {
-            Debug.err("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+            Debug.error("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 
             //make sure that we jfritz.java knows to show the config wizard
             throw new FileNotFoundException();
@@ -232,7 +232,7 @@ public class JFritzProperties extends Properties {
 	}
 
     public void save(String filename) throws IOException {
-        Debug.msg("Saving to file " + filename); //$NON-NLS-1$
+        Debug.info("Saving to file " + filename); //$NON-NLS-1$
         try {
                 BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
                     new FileOutputStream(filename), "UTF8")); //$NON-NLS-1$
@@ -266,11 +266,11 @@ public class JFritzProperties extends Properties {
             pw.newLine();
             pw.close();
           } catch (UnsupportedEncodingException e) {
-              Debug.err("UTF-8 not supported."); //$NON-NLS-1$
+              Debug.error("UTF-8 not supported."); //$NON-NLS-1$
             } catch (FileNotFoundException e) {
-                Debug.err("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+                Debug.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
           } catch (IOException e) {
-            Debug.err("IOException " + filename); //$NON-NLS-1$
+            Debug.error("IOException " + filename); //$NON-NLS-1$
         }
     }
 }

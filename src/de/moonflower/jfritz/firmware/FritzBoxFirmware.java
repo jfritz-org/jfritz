@@ -189,7 +189,7 @@ public class FritzBoxFirmware {
 
                 if (false) {
                     String filename = "c://SpeedFirm.txt"; //$NON-NLS-1$
-                    Debug.msg("Debug mode: Loading " + filename); //$NON-NLS-1$
+                    Debug.debug("Debug mode: Loading " + filename); //$NON-NLS-1$
                     try {
                         data = ""; //$NON-NLS-1$
                         String thisLine;
@@ -199,7 +199,7 @@ public class FritzBoxFirmware {
                         }
                         in.close();
                     } catch (IOException e) {
-                        Debug.err("File not found: " + filename); //$NON-NLS-1$
+                        Debug.error("File not found: " + filename); //$NON-NLS-1$
                     }
                 }
 
@@ -217,7 +217,7 @@ public class FritzBoxFirmware {
     				{
     					wait = 20;
     				}
-    				Debug.err("Wrong password! Waiting for " + wait + " seconds!"); //$NON-NLS-1$
+    				Debug.warning("Wrong password! Waiting for " + wait + " seconds!"); //$NON-NLS-1$
     				throw new WrongPasswordException(
     						"Wrong password, could not detect FRITZ!Box firmware version.",
     						wait); //$NON-NLS-1$
@@ -262,7 +262,7 @@ public class FritzBoxFirmware {
 			String minorFirmwareVersion = m.group(3);
 			String modFirmwareVersion = m.group(4).trim();
 
-			Debug.msg("Detected Firmware: " +
+			Debug.info("Detected Firmware: " +
 					boxtypeString + "." +
 					majorFirmwareVersion + "." +
 					minorFirmwareVersion +
@@ -274,7 +274,7 @@ public class FritzBoxFirmware {
 				{
 					// ab version xx.04.67 gibt es bei englischen Firmwares keine Unterscheidung mehr zwischen
 					// internationaler und deutscher Firmware bei den URLs und Anrufliste.csv
-					Debug.msg("Detected international firmware greater than xx.04.67. Forcing to use german patterns.");
+					Debug.info("Detected international firmware greater than xx.04.67. Forcing to use german patterns.");
 					language = "de";
 				}
 

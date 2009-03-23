@@ -55,7 +55,7 @@ public class PrintCallerList {
     private JFreeReport report;
 
     private void createColumnWidths() {
-        Debug.msg("Create Columns"); //$NON-NLS-1$
+        Debug.debug("Create Columns"); //$NON-NLS-1$
         int columnCount = JFritz.getJframe().getCallerTable().getColumnCount();
         int fixedColumnsWidth = 0; // width of all columns except "number" and
         // "participant"
@@ -86,7 +86,7 @@ public class PrintCallerList {
         do {
             fixedColumnsWidth = 0;
             int columnWithMaxWidth = 0;
-            Debug.msg(columnCount + " Columns"); //$NON-NLS-1$
+            Debug.debug(columnCount + " Columns"); //$NON-NLS-1$
             for (int i = 0; i < columnCount; i++) {
                 String columnName = colModel.getColumn(i).getHeaderValue()
                 .toString();
@@ -149,7 +149,7 @@ public class PrintCallerList {
                     columnStart[i], 50, columnWidth[i], 20), Color.BLACK,
                     ElementAlignment.CENTER, ElementAlignment.MIDDLE, font,
                     columnName);
-            Debug.msg("Column: " + columnName +  //$NON-NLS-1$
+            Debug.debug("Column: " + columnName +  //$NON-NLS-1$
             		" Start: "+columnStart[i] + //$NON-NLS-1$
             		" Width: " + columnWidth[i]); //$NON-NLS-1$
             pageHeader.addElement(label);
@@ -558,7 +558,7 @@ public class PrintCallerList {
     }
 
     public void print() {
-        Debug.msg("Start report creation"); //$NON-NLS-1$
+        Debug.info("Start report creation"); //$NON-NLS-1$
         JFreeReport report = createReportDefinition();
         report.setData(JFritz.getCallerList());
         try {
@@ -566,7 +566,7 @@ public class PrintCallerList {
             preview.pack();
             preview.setVisible(true);
         } catch (ReportProcessingException e) {
-            Debug.err("Failed to generate report " + e); //$NON-NLS-1$
+            Debug.error("Failed to generate report " + e); //$NON-NLS-1$
         }
     }
 }

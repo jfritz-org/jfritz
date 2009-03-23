@@ -84,7 +84,7 @@ public class ReverseLookupXMLHandler extends DefaultHandler{
 					aName = attrs.getQName(i);
 
 				if(eName.equals("reverselookup") && aName.equals("version"))
-					Debug.msg("Loading reverselookup.xml version "+attrs.getValue(i));
+					Debug.info("Loading reverselookup.xml version "+attrs.getValue(i));
 				//this adds the country code
 				if (eName.equals("country") && aName.equals("code")) { //$NON-NLS-1$,  //$NON-NLS-2$
 					country_code = attrs.getValue(i);

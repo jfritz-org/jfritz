@@ -176,7 +176,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 	}
 
 	public void sortAllUnfilteredRows() {
-		Debug.msg("Sorting unfiltered data"); //$NON-NLS-1$
+		Debug.info("Sorting unfiltered data"); //$NON-NLS-1$
 		Collections.sort(unfilteredPersons, new ColumnSorter(1, true));
 		// Resort filtered data
 		Collections.sort(filteredPersons, new ColumnSorter(sortColumn,
@@ -354,7 +354,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 	 *            calls to do reverse lookup on
 	 */
 	public void reverseLookupPersons(Vector<Person> persons) {
-		Debug.msg("Doing reverse Lookup");
+		Debug.info("Doing reverse Lookup");
 		for (int i = 0; i < persons.size(); i++) {
 			Person person = persons.get(i);
 			callerList.reverseLookup(person.getNumbers());
@@ -556,7 +556,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 	 * @param filename
 	 */
 	public synchronized void saveToBITFBFDialerFormat(String filename) {
-		Debug.msg("Saving to BIT FBF Dialer file " + filename); //$NON-NLS-1$
+		Debug.info("Saving to BIT FBF Dialer file " + filename); //$NON-NLS-1$
 		try {
 			BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(filename), "UTF8")); //$NON-NLS-1$
@@ -607,7 +607,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 			}
 			pw.close();
 		} catch (Exception e) {
-			Debug.err("Could not write file!"); //$NON-NLS-1$
+			Debug.error("Could not write file!"); //$NON-NLS-1$
 		}
 	}
 
@@ -617,7 +617,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 	 * @param filename
 	 */
 	public synchronized void saveToCallMonitorFormat(String filename) {
-		Debug.msg("Saving to Call Monitor file " + filename); //$NON-NLS-1$
+		Debug.info("Saving to Call Monitor file " + filename); //$NON-NLS-1$
 		try {
 			BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(filename), "UTF8")); //$NON-NLS-1$
@@ -668,7 +668,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 			}
 			pw.close();
 		} catch (Exception e) {
-			Debug.err("Could not write file!"); //$NON-NLS-1$
+			Debug.error("Could not write file!"); //$NON-NLS-1$
 		}
 	}
 
@@ -678,7 +678,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 	 * @param filename
 	 */
 	public synchronized void saveToXMLFile(String filename) {
-		Debug.msg("Saving to file " + filename); //$NON-NLS-1$
+		Debug.info("Saving to file " + filename); //$NON-NLS-1$
 		try {
 			BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(filename), "UTF8")); //$NON-NLS-1$
@@ -790,11 +790,11 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 			pw.newLine();
 			pw.close();
 		} catch (UnsupportedEncodingException e) {
-			Debug.err("UTF-8 not supported."); //$NON-NLS-1$
+			Debug.error("UTF-8 not supported."); //$NON-NLS-1$
 		} catch (FileNotFoundException e) {
-			Debug.err("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		} catch (IOException e) {
-			Debug.err("IOException " + filename); //$NON-NLS-1$
+			Debug.error("IOException " + filename); //$NON-NLS-1$
 		}
 
 		this.callerList.fireTableDataChanged();
@@ -843,19 +843,19 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 			reader.parse(new InputSource(new FileInputStream(filename)));
 			updateFilter();
 		} catch (ParserConfigurationException e) {
-			Debug.err("Error with ParserConfiguration!"); //$NON-NLS-1$
+			Debug.error("Error with ParserConfiguration!"); //$NON-NLS-1$
 		} catch (SAXException e) {
-			Debug.err("Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
-			Debug.err(e.toString());
+			Debug.error("Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.error(e.toString());
 			if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
 					|| e.getLocalizedMessage().startsWith(
 							"Invalid system identifier")) { //$NON-NLS-1$
-				Debug.err(e.getLocalizedMessage());
+				Debug.error(e.toString());
 
 				Debug.errDlg("Error on paring " + filename);
 			}
 		} catch (IOException e) {
-			Debug.err("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.error("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 		allLastCallsSearched = true;
 		loadingXMLFile = false;
@@ -921,8 +921,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 	 *            Filename to save to Save whole phone book
 	 */
 	public void saveToCSVFile(String filename, char separator) {
-		Debug
-				.msg("Saving phone book(" + unfilteredPersons.size() + " lines) to csv file " + filename); //$NON-NLS-1$
+		Debug.info("Saving phone book(" + unfilteredPersons.size() + " lines) to csv file " + filename); //$NON-NLS-1$
 		FileOutputStream fos;
 		try {
 			fos = new FileOutputStream(filename);
@@ -938,7 +937,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 			}
 			pw.close();
 		} catch (FileNotFoundException e) {
-			Debug.err("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 
 	}
@@ -956,8 +955,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 			saveToCSVFile(filename, separator);
 			return;
 		}
-		Debug
-				.msg("Saving phone book(" + rows.length + " lines) to csv file " + filename); //$NON-NLS-1$
+		Debug.info("Saving phone book(" + rows.length + " lines) to csv file " + filename); //$NON-NLS-1$
 		FileOutputStream fos;
 		try {
 			fos = new FileOutputStream(filename);
@@ -973,7 +971,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 			}
 			pw.close();
 		} catch (FileNotFoundException e) {
-			Debug.err("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 
@@ -1088,8 +1086,8 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 		if ((!filter_private) && (keywords.length == 0)) {
 			// Use unfiltered data
 			filteredPersons = unfilteredPersons;
-			Debug.msg("Im updating the filter");
-			Debug.msg("Size of filtered contacts: "+filteredPersons.size());
+			Debug.debug("Im updating the filter");
+			Debug.debug("Size of filtered contacts: "+filteredPersons.size());
 		} else {
 			// Data got to be filtered
 			Vector<Person> newFilteredPersons = new Vector<Person>();
@@ -1143,7 +1141,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 	 *            is the path to a valid thunderbird csv file
 	 */
 	public String importFromThunderbirdCSVfile(String filename) {
-		Debug.msg("Importing Thunderbird Contacts from csv file " + filename); //$NON-NLS-1$
+		Debug.info("Importing Thunderbird Contacts from csv file " + filename); //$NON-NLS-1$
 		String line = ""; //$NON-NLS-1$
 		String message;
 		try {
@@ -1168,9 +1166,9 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 
 			}
 
-			Debug.msg(linesRead
+			Debug.debug(linesRead
 					+ " Lines read from Thunderbird csv file " + filename); //$NON-NLS-1$
-			Debug.msg(newEntries + " New contacts processed"); //$NON-NLS-1$
+			Debug.debug(newEntries + " New contacts processed"); //$NON-NLS-1$
 
 			if (newEntries > 0) {
 				sortAllUnfilteredRows();
@@ -1193,10 +1191,10 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 
 		} catch (FileNotFoundException e) {
 			message = "Could not read from " + filename + "!";
-			Debug.err("Could not read from " + filename + "!"); //$NON-NLS-1$, //$NON-NLS-2$
+			Debug.error("Could not read from " + filename + "!"); //$NON-NLS-1$, //$NON-NLS-2$
 		} catch (IOException e) {
 			message = "IO Exception reading csv file";
-			Debug.err("IO Exception reading csv file"); //$NON-NLS-1$
+			Debug.error("IO Exception reading csv file"); //$NON-NLS-1$
 		}
 		return message;
 	}
@@ -1222,7 +1220,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 
 		// check if line has correct amount of entries
 		if (field.length < 37) {
-			Debug.err("Invalid Thunderbird CSV format!"); //$NON-NLS-1$
+			Debug.error("Invalid Thunderbird CSV format!"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -1231,7 +1229,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 		// "+field[10]);
 		if (field[6].equals("") && field[7].equals("") && field[8].equals("") && //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 				field[9].equals("") && field[10].equals("")) { //$NON-NLS-1$,  //$NON-NLS-2$
-			Debug.msg("No phone number present for contact"); //$NON-NLS-1$
+			Debug.warning("No phone number present for contact"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -1363,23 +1361,22 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
     public static Person searchFirstAndLastNameToPhoneNumber(String caller) {
     	Vector<Person> persons = new Vector<Person>();
         PhoneNumber callerPhoneNumber = new PhoneNumber(caller, false);
-        Debug.msg("Searching in local database for number "+caller+" ..."); //$NON-NLS-1$
+        Debug.info("Searching in local database for number "+caller+" ..."); //$NON-NLS-1$
         Person person = JFritz.getPhonebook().findPerson(callerPhoneNumber);
         if (person != null) {
-            Debug.msg("Found in local database: " + person.getLastName() + ", " + person.getFirstName()); //$NON-NLS-1$,  //$NON-NLS-2$
+            Debug.info("Found in local database: " + person.getLastName() + ", " + person.getFirstName()); //$NON-NLS-1$,  //$NON-NLS-2$
         } else {
-            Debug.msg("Searching on internet ..."); //$NON-NLS-1$
+            Debug.info("Searching on internet ..."); //$NON-NLS-1$
             person = ReverseLookup.busyLookup(callerPhoneNumber);
             if (!person.getFullname().equals("")) { //$NON-NLS-1$
-                Debug
-                        .msg("Found on internet: " + person.getLastName() + ", " + person.getFirstName()); //$NON-NLS-1$,  //$NON-NLS-2$
-                Debug.msg("Add person to database"); //$NON-NLS-1$
+                Debug.info("Found on internet: " + person.getLastName() + ", " + person.getFirstName()); //$NON-NLS-1$,  //$NON-NLS-2$
+                Debug.info("Add person to database"); //$NON-NLS-1$
                 persons.add(person);
             } else {
                 person = new Person();
                 person.addNumber(callerPhoneNumber);
                 String city = "";
-                Debug.msg("Found no person"); //$NON-NLS-1$
+                Debug.warning("Found no person"); //$NON-NLS-1$
     			if(callerPhoneNumber.getCountryCode().equals(ReverseLookup.GERMANY_CODE))
     				city = ReverseLookupGermany.getCity(callerPhoneNumber.getAreaNumber());
     			else if(callerPhoneNumber.getCountryCode().equals(ReverseLookup.AUSTRIA_CODE))
@@ -1389,7 +1386,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
     			else if(callerPhoneNumber.getCountryCode().startsWith(ReverseLookup.TURKEY_CODE))
     				city = ReverseLookupTurkey.getCity(callerPhoneNumber.getIntNumber());
     			person.setCity(city);
-                Debug.msg("Add dummy person to database"); //$NON-NLS-1$
+                Debug.warning("Add dummy person to database"); //$NON-NLS-1$
                 persons.add(person);
             }
             JFritz.getPhonebook().addEntries(persons);

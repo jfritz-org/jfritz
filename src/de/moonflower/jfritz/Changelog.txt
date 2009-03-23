@@ -6,6 +6,10 @@ TODO: Client-Server fixen.
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 TODO: JFritz.playSound scheint buggy zu sein (zumindest unter Vista), ÜBERPRÜFEN und fixen.
 
+JFritz 0.7.2.29:
+- Logger umgeschrieben, unterstützt nun unterschiedliche LOG_SEVERITIES.
+- Über den Kommandozeilenparameter -v / --verbose lässt sich die SEVERITY (ERROR, WARNING, INFO, DEBUG) einstellen.  
+
 JFritz 0.7.2.28:
 - Bugfix: Inverssuche überarbeitet. Explizite Suche für Vor- und Nachnamen eingebaut.
 

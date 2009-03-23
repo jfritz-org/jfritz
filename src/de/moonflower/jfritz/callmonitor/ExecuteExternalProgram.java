@@ -40,8 +40,7 @@ public class ExecuteExternalProgram extends CallMonitorAdaptor {
                             URLEncoder.encode(toEncode, "UTF-8")); //$NON-NLS-1$
                 }
             } catch (UnsupportedEncodingException uee) {
-                Debug.err("JFritz.class: UnsupportedEncodingException: " //$NON-NLS-1$
-                        + uee.toString());
+                Debug.error(uee.toString());
             }
         }
         return parameter;

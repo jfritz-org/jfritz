@@ -54,12 +54,12 @@ public class CallMonitorList {
      *            der Anruf ansich
      */
     public void addNewCall(int id, Call call) {
-        Debug.msg("Used Provider: " + call.getRoute());
-        Debug.msg("Ignored MSNs: ");
+        Debug.debug("Used Provider: " + call.getRoute());
+        Debug.debug("Ignored MSNs: ");
         initIgnoreList();
         boolean ignoreIt = false;
         for (int i = 0; i < ignoredMSNs.length; i++) {
-            Debug.msg(ignoredMSNs[i]);
+            Debug.debug(ignoredMSNs[i]);
             if (!ignoredMSNs[i].equals(""))
                 if (call.getRoute()
                         .equals(ignoredMSNs[i])) {
@@ -68,7 +68,7 @@ public class CallMonitorList {
                 }
         }
         if (!ignoreIt) {
-            Debug.msg("CallMonitorList: Adding new call");
+            Debug.info("CallMonitorList: Adding new call");
             pendingCalls.put(Integer.valueOf(id), call);
             if (call.getCalltype().toInt() == CallType.CALLIN) {
                 invokeIncomingCall(call);
@@ -88,7 +88,7 @@ public class CallMonitorList {
     public void establishCall(int id) {
         Integer callID = Integer.valueOf(id);
         if (pendingCalls.keySet().contains(callID)) {
-            Debug.msg("CallMonitorList: Establishing call");
+            Debug.info("CallMonitorList: Establishing call");
             establishedCalls.put(callID, pendingCalls.get(Integer.valueOf(id)));
             pendingCalls.remove(callID);
             Call call = establishedCalls.get(callID);
@@ -108,7 +108,7 @@ public class CallMonitorList {
      *            id des Anrufs
      */
     public void removeCall(int id, Call call) {
-        Debug.msg("CallMonitorList: Removing call");
+        Debug.info("CallMonitorList: Removing call");
         Integer intID = Integer.valueOf(id);
         if (pendingCalls.keySet().contains(intID)) {
             pendingCalls.remove(intID);
@@ -173,7 +173,7 @@ public class CallMonitorList {
      *            new CallMonitorListener
      */
     public void addCallMonitorListener(CallMonitorListener cml) {
-        Debug.msg("CallMonitorList: Added new event listener " + cml.toString());
+        Debug.info("CallMonitorList: Added new event listener " + cml.toString());
         listeners.add(cml);
     }
 
@@ -184,7 +184,7 @@ public class CallMonitorList {
      *            CallMonitorListener to remove
      */
     public void removeCallMonitorListener(CallMonitorListener cml) {
-        Debug.msg("CallMonitorList: Removing event listener " + cml.toString());
+        Debug.info("CallMonitorList: Removing event listener " + cml.toString());
         listeners.remove(cml);
     }
 
@@ -194,7 +194,7 @@ public class CallMonitorList {
      * @param call
      */
     public void invokeIncomingCallEstablished(Call call) {
-        Debug.msg("CallMonitorList: Invoking incoming call established");
+        Debug.info("CallMonitorList: Invoking incoming call established");
         for (int i = 0; i < listeners.size(); i++) {
             listeners.get(i).establishedCallIn(call);
         }
@@ -206,7 +206,7 @@ public class CallMonitorList {
      * @param call
      */
     public void invokeOutgoingCallEstablished(Call call) {
-        Debug.msg("CallMonitorList: Invoking outgoing call established");
+        Debug.info("CallMonitorList: Invoking outgoing call established");
         for (int i = 0; i < listeners.size(); i++) {
             listeners.get(i).establishedCallOut(call);
         }
@@ -219,7 +219,7 @@ public class CallMonitorList {
      * @param call
      */
     public void invokeIncomingCall(Call call) {
-        Debug.msg("CallMonitorList: Invoking incoming call");
+        Debug.info("CallMonitorList: Invoking incoming call");
         for (int i = 0; i < listeners.size(); i++) {
             listeners.get(i).pendingCallIn(call);
         }
@@ -231,7 +231,7 @@ public class CallMonitorList {
      * @param call
      */
     public void invokeOutgoingCall(Call call) {
-        Debug.msg("CallMonitorList: Invoking outgoing call");
+        Debug.info("CallMonitorList: Invoking outgoing call");
         for (int i = 0; i < listeners.size(); i++) {
             listeners.get(i).pendingCallOut(call);
         }
@@ -243,7 +243,7 @@ public class CallMonitorList {
      * @param call
      */
     public void invokeDisconnectCall(Call call) {
-       Debug.msg("CallMonitorList: Invoking disconnect call");
+       Debug.info("CallMonitorList: Invoking disconnect call");
         for (int i = 0; i < listeners.size(); i++) {
             listeners.get(i).endOfCall(call);
         }
@@ -256,9 +256,9 @@ public class CallMonitorList {
             ignoreMSNString = ignoreMSNString + ";"; //$NON-NLS-1$
         }
         ignoredMSNs = ignoreMSNString.split(";"); //$NON-NLS-1$
-        Debug.msg("Ignored MSNs: "); //$NON-NLS-1$
+        Debug.debug("Ignored MSNs: "); //$NON-NLS-1$
         for (int i = 0; i < ignoredMSNs.length; i++) {
-            Debug.msg(ignoredMSNs[i]);
+            Debug.debug(ignoredMSNs[i]);
         }
     }
 }

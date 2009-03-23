@@ -41,7 +41,7 @@ public class SSDPdiscoverThread extends Thread {
 		devices = UPNPUtils.SSDP_discoverFritzBoxes(timeout);
 		JFritz.getJframe().setBusy(false);
 		statusBarController.fireStatusChanged("");
-		Debug.msg("Discover thread");
+		Debug.info("Discover thread");
 	}
 
 	/**

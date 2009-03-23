@@ -113,7 +113,7 @@ public class ClientConnectionListener extends Thread {
 					}
 
 				}catch(InterruptedException e){
-					Debug.err("Sever thread was interuppted!");
+					Debug.error("Server thread was interuppted!");
 		        	Thread.currentThread().interrupt();
 				}
 			}else {
@@ -137,7 +137,7 @@ public class ClientConnectionListener extends Thread {
 									Debug.netMsg("Max number of clients reached, waiting for one to quit");
 									wait();
 								}catch(InterruptedException e){
-									Debug.err("client listener interrupted while waiting for connection to close!");
+									Debug.error("Client listener interrupted while waiting for connection to close!");
 						        	Thread.currentThread().interrupt();
 								}
 							}
@@ -162,14 +162,13 @@ public class ClientConnectionListener extends Thread {
 					if(e.getMessage().equals("Socket closed"))
 						Debug.netMsg("Server socket closed");
 					else{
-						Debug.err(e.toString());
+						Debug.error(e.toString());
 						e.printStackTrace();
 					}
 
 				}catch(IOException e){
-					Debug.errDlg(Main.getMessage("error_binding_port"));
-					Debug.err("Error binding to port: "+Main.getProperty("clients.port"));
-					Debug.err(e.toString());
+					Debug.errDlg(Main.getMessage("error_binding_port") + ": " + Main.getProperty("clients.port"));
+					Debug.error(e.toString());
 					e.printStackTrace();
 				}
 
@@ -233,8 +232,7 @@ public class ClientConnectionListener extends Thread {
 			serverSocket.close();
 
 		}catch(IOException e){
-			Debug.err("Error closing server socket");
-			Debug.err(e.toString());
+			Debug.error("Error closing server socket: " + e.toString());
 			e.printStackTrace();
 		}
 

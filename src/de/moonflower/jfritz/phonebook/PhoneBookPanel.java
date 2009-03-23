@@ -159,7 +159,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		} else if (e.getActionCommand().equals("clearFilter")) { //$NON-NLS-1$
 			clearAllFilter();
 		} else {
-			Debug.msg("Unsupported Command: " + e.getActionCommand()); //$NON-NLS-1$
+			Debug.warning("Unsupported Command: " + e.getActionCommand()); //$NON-NLS-1$
 		}
 	}
 

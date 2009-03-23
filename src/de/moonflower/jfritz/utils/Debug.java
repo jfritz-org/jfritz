@@ -6,24 +6,15 @@ package de.moonflower.jfritz.utils;
 
 
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.filechooser.FileFilter;
 
 import de.moonflower.jfritz.Main;
 
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -39,14 +30,20 @@ import java.util.Date;
  *
  */
 public class Debug{
+	public static final int LS_ALWAYS = 0;
+	public static final int LS_ERROR = 1;
+	public static final int LS_WARNING = 2;
+	public static final int LS_NETWORK = 3;
+	public static final int LS_INFO = 4;
+	public static final int LS_DEBUG = 5;
+
+	private static final String[] ls_string = {"", ": ERROR", ": WARNING", ": NETWORK", ": INFO", ": DEBUG"};
 
 	private static final long serialVersionUID = 9211082107025215527L;
 
 	private static int debugLevel;
 
 	private static boolean verboseMode = false;
-
-	private static boolean logFile = false;
 
 	private static PrintStream fileRedirecter, originalOut;
 
@@ -61,18 +58,14 @@ public class Debug{
 	private static JScrollPane scroll_pane;
 
 	private static JFrame display_frame;
-
-	private static StringBuffer debugBuffer;
-
 	/**
 	 * Turns debug-mode on
 	 *
 	 */
 	public static void on() {
-		verboseMode = true;
-		Debug.debugLevel = 3;
-		debugBuffer = new StringBuffer();
-		msg("debugging mode has been enabled"); //$NON-NLS-1$
+		verboseMode = false;
+		Debug.debugLevel = LS_WARNING;
+		logToFile("debug.log");
 	}
 
 	/**
@@ -86,8 +79,7 @@ public class Debug{
 	 */
 	public static void logToFile(final String fName) {
 		String fileName = fName;
-		Debug.debugLevel = 3;
-		logFile = true;
+
 		// Save the original outputstream so we can write to the console too!
 		originalOut = System.out;
 
@@ -109,16 +101,6 @@ public class Debug{
 		}
 
 		fileRedirecter.println("------------------------------------------"); //$NON-NLS-1$
-		msg("logging to file \"" + fileName + "\" has been enabled"); //$NON-NLS-1$,  //$NON-NLS-2$
-	}
-
-	/**
-	 * Print message with priority 1
-	 *
-	 * @param message
-	 */
-	public static void msg(String message) {
-		msg(1, message);
 	}
 
 	/**
@@ -140,21 +122,12 @@ public class Debug{
 	public static void msg(int level, final String msg) {
 		if ( debugLevel >= level) {
 			String message = msg;
-			message = "(" + getCurrentTime() + ") DEBUG: " + message; //$NON-NLS-1$,  //$NON-NLS-2$
+			message = "(" + getCurrentTime() + ")"+ ls_string[level] + ": "+ message; //$NON-NLS-1$,  //$NON-NLS-2$
 			System.out.println(message);
-
-				//only write the message to the panel if we have already created it
-			if(main_panel != null){
-				log_area.append(message+"\n");
-				autoScroll();
-				//otherwise save it for later use, if the panel gets created later
-			}else {
-				debugBuffer.append(message+"\n");
-			}
 
 			// if both verbose mode and logging enabled, make sure output
 			// still lands on the console as well!
-			if (logFile && verboseMode) {
+			if (verboseMode) {
 				originalOut.println(message);
 			}
 		}
@@ -167,51 +140,27 @@ public class Debug{
 	 * @param message
 	 */
 	public static void netMsg(final String msg){
-		String message = msg;
-		message = "(" + getCurrentTime() + ") NETWORK: " + message; //$NON-NLS-1$,  //$NON-NLS-2$
-		System.out.println(message);
-
-		//only write the message to the panel if we have already created it
-		if(main_panel != null){
-			log_area.append(message+"\n");
-			autoScroll();
-			//otherwise save it for later use, if the panel gets created later
-		}else {
-			debugBuffer.append(message+"\n");
-		}
-
-		// if both verbose mode and logging enabled, make sure output
-		// still lands on the console as well!
-		if (logFile && verboseMode) {
-			originalOut.println(message);
-		}
-
+		msg(LS_NETWORK, msg);
 	}
 
-	/**
-	 * Print error-message
-	 *
-	 * @param message
-	 */
-	public static void err(String msg) {
-			String message = msg;
-			message = "(" + getCurrentTime() + ") ERROR: " + message; //$NON-NLS-1$,  //$NON-NLS-2$
-			System.err.println(message);
+	public static void always(String msg) {
+		msg(LS_ALWAYS, msg);
+	}
 
-			//only write the message to the panel if we have already created it
-			if(main_panel != null){
-				log_area.append(message+"\n");
-				autoScroll();
-				//otherwise save it for later use, if the panel gets created later
-			}else {
-				debugBuffer.append(message+"\n");
-			}
+	public static void error(String msg) {
+		msg(LS_ERROR, msg);
+	}
 
-			// if both verbose mode and logging enabled, make sure output
-			// still lands on the console as well!
-			if (logFile && verboseMode) {
-				originalOut.println(message);
-			}
+	public static void warning(String msg) {
+		msg(LS_WARNING, msg);
+	}
+
+	public static void info(String msg) {
+		msg(LS_INFO, msg);
+	}
+
+	public static void debug(String msg) {
+		msg(LS_DEBUG, msg);
 	}
 
 	/**
@@ -220,7 +169,7 @@ public class Debug{
 	 * @param message
 	 */
 	public static void msgDlg(String message) {
-		msg(message);
+		msg(LS_ALWAYS, message);
 		JOptionPane.showMessageDialog(null, message, Main
 				.getMessage("information"), JOptionPane.INFORMATION_MESSAGE); //$NON-NLS-1$
 	}
@@ -231,96 +180,96 @@ public class Debug{
 	 * @param message
 	 */
 	public static void errDlg(String message) {
-		err(message);
+		error(message);
 		JOptionPane.showMessageDialog(null, message,
 				Main.getMessage("error"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
 	}
 
 	public static void generatePanel()
 	{
-		main_panel = new JPanel();
-		main_panel.setLayout(new BorderLayout());
-		log_area = new JTextArea(25, 80);
-		scroll_pane = new JScrollPane(log_area);
-		main_panel.add(scroll_pane, BorderLayout.NORTH);
-		JPanel button_panel = new JPanel();
-		button_panel.setLayout(new GridLayout(1,3));
-
-		close_button = new JButton();
-		close_button.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent arg0) {
-				display_frame.setVisible(false);
-				display_frame.dispose();
-			}
-		});
-		close_button.setText("Close");
-
-		save_button = new JButton();
-		save_button.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent arg0) {
-				JFileChooser fc = new JFileChooser(Main.SAVE_DIR); //$NON-NLS-1$
-				fc.setDialogTitle(Main.getMessage("save_debug_log")); //$NON-NLS-1$
-				fc.setDialogType(JFileChooser.SAVE_DIALOG);
-				fc.setFileFilter(new FileFilter() {
-					public boolean accept(File f) {
-						return f.isDirectory()
-								|| f.getName().toLowerCase().endsWith(".dbg"); //$NON-NLS-1$
-					}
-
-					public String getDescription() {
-						return Main.getMessage("debug_files"); //$NON-NLS-1$
-					}
-				});
-				if (fc.showSaveDialog(display_frame) == JFileChooser.APPROVE_OPTION) {
-					String path = fc.getSelectedFile().getPath();
-					path = path.substring(0, path.length()
-							- fc.getSelectedFile().getName().length());
-					Main.setProperty("options.exportCSVpath", path); //$NON-NLS-1$
-					File file = fc.getSelectedFile();
-					if (file.exists()) {
-						if (JOptionPane.showConfirmDialog(display_frame, Main.getMessage(
-								"overwrite_file").replaceAll("%F", file.getName()), //$NON-NLS-1$, //$NON-NLS-2$
-								Main.getMessage("dialog_title_overwrite_file"), //$NON-NLS-1$
-								JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
-							try {
-								log_area.write(new FileWriter(file.getAbsolutePath()));
-							} catch (IOException e) {
-								Debug.err("Could not save debug log to file: "+file.getAbsolutePath());
-								e.printStackTrace();
-							}
-						}
-					} else {
-						try {
-							FileWriter fw = new FileWriter(file.getAbsolutePath());
-							log_area.write(fw);
-							fw.close();
-						} catch (IOException e) {
-							Debug.err("Could not save debug log to file: "+file.getAbsolutePath());
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-		});
-		save_button.setText("Save");
-
-		clear_button = new JButton();
-		clear_button.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent arg0) {
-				log_area.setText("");
-			}
-		});
-		clear_button.setText("Clear");
-
-		((GridLayout)button_panel.getLayout()).setHgap(20);
-		((GridLayout)button_panel.getLayout()).setVgap(20);
-		button_panel.add(save_button);
-		button_panel.add(clear_button);
-		button_panel.add(close_button);
-		main_panel.add(button_panel, BorderLayout.SOUTH);
-
-		log_area.append(debugBuffer.toString());
-		autoScroll();
+//		main_panel = new JPanel();
+//		main_panel.setLayout(new BorderLayout());
+//		log_area = new JTextArea(25, 80);
+//		scroll_pane = new JScrollPane(log_area);
+//		main_panel.add(scroll_pane, BorderLayout.NORTH);
+//		JPanel button_panel = new JPanel();
+//		button_panel.setLayout(new GridLayout(1,3));
+//
+//		close_button = new JButton();
+//		close_button.addActionListener(new ActionListener(){
+//			public void actionPerformed(ActionEvent arg0) {
+//				display_frame.setVisible(false);
+//				display_frame.dispose();
+//			}
+//		});
+//		close_button.setText("Close");
+//
+//		save_button = new JButton();
+//		save_button.addActionListener(new ActionListener(){
+//			public void actionPerformed(ActionEvent arg0) {
+//				JFileChooser fc = new JFileChooser(Main.SAVE_DIR); //$NON-NLS-1$
+//				fc.setDialogTitle(Main.getMessage("save_debug_log")); //$NON-NLS-1$
+//				fc.setDialogType(JFileChooser.SAVE_DIALOG);
+//				fc.setFileFilter(new FileFilter() {
+//					public boolean accept(File f) {
+//						return f.isDirectory()
+//								|| f.getName().toLowerCase().endsWith(".dbg"); //$NON-NLS-1$
+//					}
+//
+//					public String getDescription() {
+//						return Main.getMessage("debug_files"); //$NON-NLS-1$
+//					}
+//				});
+//				if (fc.showSaveDialog(display_frame) == JFileChooser.APPROVE_OPTION) {
+//					String path = fc.getSelectedFile().getPath();
+//					path = path.substring(0, path.length()
+//							- fc.getSelectedFile().getName().length());
+//					Main.setProperty("options.exportCSVpath", path); //$NON-NLS-1$
+//					File file = fc.getSelectedFile();
+//					if (file.exists()) {
+//						if (JOptionPane.showConfirmDialog(display_frame, Main.getMessage(
+//								"overwrite_file").replaceAll("%F", file.getName()), //$NON-NLS-1$, //$NON-NLS-2$
+//								Main.getMessage("dialog_title_overwrite_file"), //$NON-NLS-1$
+//								JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
+//							try {
+//								log_area.write(new FileWriter(file.getAbsolutePath()));
+//							} catch (IOException e) {
+//								Debug.err("Could not save debug log to file: "+file.getAbsolutePath());
+//								e.printStackTrace();
+//							}
+//						}
+//					} else {
+//						try {
+//							FileWriter fw = new FileWriter(file.getAbsolutePath());
+//							log_area.write(fw);
+//							fw.close();
+//						} catch (IOException e) {
+//							Debug.err("Could not save debug log to file: "+file.getAbsolutePath());
+//							e.printStackTrace();
+//						}
+//					}
+//				}
+//			}
+//		});
+//		save_button.setText("Save");
+//
+//		clear_button = new JButton();
+//		clear_button.addActionListener(new ActionListener(){
+//			public void actionPerformed(ActionEvent arg0) {
+//				log_area.setText("");
+//			}
+//		});
+//		clear_button.setText("Clear");
+//
+//		((GridLayout)button_panel.getLayout()).setHgap(20);
+//		((GridLayout)button_panel.getLayout()).setVgap(20);
+//		button_panel.add(save_button);
+//		button_panel.add(clear_button);
+//		button_panel.add(close_button);
+//		main_panel.add(button_panel, BorderLayout.SOUTH);
+//
+//		log_area.append(debugBuffer.toString());
+//		autoScroll();
 	}
 
 	public static JPanel getPanel()
@@ -351,5 +300,16 @@ public class Debug{
 	private static void autoScroll()
 	{
 		log_area.setCaretPosition(log_area.getDocument().getLength());
+	}
+
+	public static void setVerbose(boolean verbose)
+	{
+		verboseMode = verbose;
+	}
+
+	public static void setDebugLevel(int level)
+	{
+		debugLevel = level;
+		info("Set debug level to" + ls_string[level]);
 	}
 }

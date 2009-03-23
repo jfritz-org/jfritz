@@ -103,7 +103,7 @@ public class LookupThread extends Thread {
 			}
 		}
 
-		Debug.msg("Lookup thread  has quit");
+		Debug.info("Lookup thread  has quit");
 		terminated = true;
 	}
 
@@ -117,14 +117,14 @@ public class LookupThread extends Thread {
 	}
 
 	public synchronized void suspendLookup(){
-		Debug.msg("suspending lookup thread");
+		Debug.info("suspending lookup thread");
 		threadSuspended = true;
 	}
 
 	public synchronized void resumeLookup(){
 		threadSuspended = false;
 		notify();
-		Debug.msg("resuming lookup thread again");
+		Debug.info("resuming lookup thread again");
 	}
 
 	public synchronized boolean isSuspended(){
@@ -159,7 +159,7 @@ public class LookupThread extends Thread {
 			nummer = number.getAreaNumber();
 			rls_list = ReverseLookup.rlsMap.get(number.getCountryCode());
 
-			Debug.msg("Begin reverselookup for: "+nummer);
+			Debug.info("Begin reverselookup for: "+nummer);
 
 			//cut off the country code if were doing a non local lookup
 			if(nummer.startsWith(number.getCountryCode()))
@@ -175,7 +175,7 @@ public class LookupThread extends Thread {
 				rls = rls_list.get(i);
 
 				if(!siteName.equals("") && !siteName.equals(rls.getName())){
-					Debug.msg("This lookup should be done using a specific site, skipping");
+					Debug.warning("This lookup should be done using a specific site, skipping");
 					continue;
 				}
 
@@ -197,7 +197,7 @@ public class LookupThread extends Thread {
 				}else
 					urlstr = urlstr.replaceAll("\\$NUMBER", nummer);
 
-				Debug.msg("Reverse lookup using: "+urlstr);
+				Debug.info("Reverse lookup using: "+urlstr);
 				url = null;
 				data = new String[dataLength];
 
@@ -239,8 +239,8 @@ public class LookupThread extends Thread {
 								}
 								header += headerName + ": " + headerValue + " | "; //$NON-NLS-1$,  //$NON-NLS-2$
 							}
-							Debug.msg("Header of "+rls.getName()+":" + header); //$NON-NLS-1$
-							Debug.msg("CHARSET : " + charSet); //$NON-NLS-1$
+							Debug.debug("Header of "+rls.getName()+":" + header); //$NON-NLS-1$
+							Debug.debug("CHARSET : " + charSet); //$NON-NLS-1$
 
 							// Get used Charset
 							BufferedReader d;
@@ -263,7 +263,7 @@ public class LookupThread extends Thread {
 									lines++;
 							}
 							d.close();
-							Debug.msg("Begin processing response from "+rls.getName());
+							Debug.info("Begin processing response from "+rls.getName());
 
 //							for (int aaa=0; aaa<dataLength; aaa++ )
 //							{
@@ -588,18 +588,18 @@ public class LookupThread extends Thread {
 							}
 
 					} catch (IOException e1) {
-						Debug.err("Error while retrieving " + urlstr); //$NON-NLS-1$
+						Debug.error("Error while retrieving " + urlstr); //$NON-NLS-1$
 						}
 					}
 				} catch (MalformedURLException e) {
-					Debug.err("URL invalid: " + urlstr); //$NON-NLS-1$
+					Debug.error("URL invalid: " + urlstr); //$NON-NLS-1$
 				}
 
 			} // done iterating over all the loaded web sites
 			yield();
 
 			//if we made it here, no match was found
-			Debug.msg("No match for "+nummer+" found");
+			Debug.warning("No match for "+nummer+" found");
 
 			//use the number maps to lookup the citys
 			if(city.equals("")){
@@ -619,7 +619,7 @@ public class LookupThread extends Thread {
 
 		//no reverse lookup sites available for country
 		} else {
-			Debug.msg("No reverse lookup sites for: "+number.getCountryCode());
+			Debug.warning("No reverse lookup sites for: "+number.getCountryCode());
 			Person p = new Person();
 			p.addNumber(number.getAreaNumber(), "home");
 			if(number.getCountryCode().equals(ReverseLookup.GERMANY_CODE))

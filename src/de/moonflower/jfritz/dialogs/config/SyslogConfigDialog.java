@@ -177,11 +177,11 @@ public class SyslogConfigDialog extends CallMonitorConfigDialog {
 						SyslogCallMonitor.restartSyslogOnFritzBox(telnet, Main.getProperty("option.syslogclientip")); //$NON-NLS-1$
 						telnet.disconnect();
 						JFritz.infoMsg("Syslogd erfolgreich gestartet"); //$NON-NLS-1$
-						Debug.msg("Syslogd restarted successfully"); //$NON-NLS-1$
+						Debug.info("Syslogd restarted successfully"); //$NON-NLS-1$
 					}
 					else {
 						JFritz.infoMsg("Fehler beim Verbinden mit Telnet"); //$NON-NLS-1$
-						Debug.msg("Fehler beim Verbinden mit Telnet"); //$NON-NLS-1$
+						Debug.error("Fehler beim Verbinden mit Telnet"); //$NON-NLS-1$
 					}
 				}
 				if (e.getActionCommand().equals("restartTelefon")) { //$NON-NLS-1$
@@ -201,16 +201,16 @@ public class SyslogConfigDialog extends CallMonitorConfigDialog {
 					if (telnet.isConnected()) {
 						if (SyslogCallMonitor.restartTelefonOnFritzBox(telnet) == JOptionPane.YES_OPTION) {
 							JFritz.infoMsg(Main.getMessage("telefond_restart_successfully")); //$NON-NLS-1$
-							Debug.msg("Telefond restarted successfully"); //$NON-NLS-1$
+							Debug.info("Telefond restarted successfully"); //$NON-NLS-1$
 						} else {
 							JFritz.infoMsg(Main.getMessage("telefond_restart_failed")); //$NON-NLS-1$
-							Debug.msg("Telefond not restarted"); //$NON-NLS-1$
+							Debug.error("Telefond not restarted"); //$NON-NLS-1$
 						}
 						telnet.disconnect();
 					}
 					else {
 						JFritz.infoMsg(Main.getMessage("telnet_connection_error")); //$NON-NLS-1$
-						Debug.msg("Connection failure"); //$NON-NLS-1$
+						Debug.error("Connection failure"); //$NON-NLS-1$
 					}
 				}
 			}
@@ -242,7 +242,7 @@ public class SyslogConfigDialog extends CallMonitorConfigDialog {
 
 		ipAddressComboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Debug.msg(ipAddressComboBox.getSelectedItem().toString());
+				Debug.info(ipAddressComboBox.getSelectedItem().toString());
 				Main.setProperty("option.syslogclientip", ipAddressComboBox //$NON-NLS-1$
 						.getSelectedItem().toString());
 			}

@@ -70,7 +70,7 @@ public class SplashScreen extends JFrame {
 
 	public void setStatus(String status)
 	{
-		Debug.msg(status);
+		Debug.always(status);
 		statusBar.setText("   " +status);
 	}
 
@@ -81,10 +81,10 @@ public class SplashScreen extends JFrame {
 			setLayout( new BorderLayout() ) ;
 			img = new ImageIcon( background ).getImage() ;
 			if( img == null ) {
-				Debug.err( "Image is null" );
+				Debug.error( "Image is null" );
 			}
 			if( img.getHeight(this) <= 0 || img.getWidth( this ) <= 0 ) {
-				Debug.err( "Image width or height must be positive" );
+				Debug.error( "Image width or height must be positive" );
 				img = null;
 			}
 		}

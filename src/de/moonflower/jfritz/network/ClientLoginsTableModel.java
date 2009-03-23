@@ -140,7 +140,7 @@ public class ClientLoginsTableModel extends AbstractTableModel{
     }
 
     public static void saveToXMLFile(String filename){
-    	Debug.msg("Saving to file " + filename); //$NON-NLS-1$
+    	Debug.info("Saving to file " + filename); //$NON-NLS-1$
 		FileOutputStream fos;
 		try {
 			fos = new FileOutputStream(filename);
@@ -175,7 +175,7 @@ public class ClientLoginsTableModel extends AbstractTableModel{
 
 					//process the filters that use extra information
 					if(callFilter.getType() == null){
-						Debug.msg("CallFilter type is null!");
+						Debug.warning("CallFilter type is null!");
 						break;
 					}
 
@@ -230,13 +230,13 @@ public class ClientLoginsTableModel extends AbstractTableModel{
 			pw.println("</clientsettings>"); //$NON-NLS-1$
 			pw.close();
 		} catch (FileNotFoundException e) {
-			Debug.err("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
     }
 
     public static void loadFromXMLFile(String filename){
     	try {
-			Debug.msg("loading the client settings xml file: "+filename);
+			Debug.info("loading the client settings xml file: "+filename);
 
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			factory.setValidating(false);
@@ -264,19 +264,19 @@ public class ClientLoginsTableModel extends AbstractTableModel{
 			reader.parse(new InputSource(new FileInputStream(filename)));
 
 		} catch (ParserConfigurationException e) {
-			Debug.err("Error with ParserConfiguration!"); //$NON-NLS-1$
+			Debug.error("Error with ParserConfiguration!"); //$NON-NLS-1$
 		} catch (SAXException e) {
-			Debug.err("Error on parsing client login settings!"); //$NON-NLS-1$,  //$NON-NLS-2$
-			Debug.err(e.toString());
+			Debug.error("Error on parsing client login settings!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.error(e.toString());
 			e.printStackTrace();
 
 			if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
 					|| e.getLocalizedMessage().startsWith(
 							"Invalid system identifier")) { //$NON-NLS-1$
-				Debug.err(e.getLocalizedMessage());
+				Debug.error(e.toString());
 			}
 		} catch (IOException e) {
-			Debug.err("Could not read client login settings! No settings loaded!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.error("Could not read client login settings! No settings loaded!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
     }
 

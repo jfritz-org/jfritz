@@ -25,6 +25,8 @@ public class FBoxListenerV3Test extends TestCase {
 
     public FBoxListenerV3Test() {
     	Debug.on();
+    	Debug.setVerbose(true);
+    	Debug.setDebugLevel(Debug.LS_DEBUG);
 		Main.loadProperties();
 		Main.loadMessages(new Locale("de_DE"));
 		String[] args = new String[1];

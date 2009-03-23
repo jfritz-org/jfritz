@@ -298,7 +298,7 @@ public class ConfigDialog extends JDialog {
 			parent.setDisconnectedStatus();
 		}
 
-		Debug.msg("Saved config"); //$NON-NLS-1$
+		Debug.info("Saved config"); //$NON-NLS-1$
 		JFritz.getSIPProviderTableModel()
 				.saveToXMLFile(Main.SAVE_DIR + JFritz.SIPPROVIDER_FILE);
 		JFritz.getCallerList().saveToXMLFile(Main.SAVE_DIR+JFritz.CALLS_FILE, true);

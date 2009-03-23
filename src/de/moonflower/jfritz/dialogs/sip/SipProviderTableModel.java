@@ -153,7 +153,7 @@ public class SipProviderTableModel extends AbstractTableModel {
 	 *            Filename to save to
 	 */
 	public void saveToXMLFile(String filename) {
-		Debug.msg("Saving to file " + filename); //$NON-NLS-1$
+		Debug.info("Saving to file " + filename); //$NON-NLS-1$
 		FileOutputStream fos;
 		try {
 			fos = new FileOutputStream(filename);
@@ -171,7 +171,7 @@ public class SipProviderTableModel extends AbstractTableModel {
 			pw.println("</provider>"); //$NON-NLS-1$
 			pw.close();
 		} catch (FileNotFoundException e) {
-			Debug.err("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 
@@ -229,15 +229,14 @@ public class SipProviderTableModel extends AbstractTableModel {
 			sortAllRowsBy(0);
 
 		} catch (ParserConfigurationException e) {
-			Debug.err("Error with ParserConfiguration!"); //$NON-NLS-1$
+			Debug.error("Error with ParserConfiguration!"); //$NON-NLS-1$
 		} catch (SAXException e) {
-			Debug.err("Error on parsing " + filename + "!" + e); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.error("Error on parsing " + filename + "!" + e); //$NON-NLS-1$,  //$NON-NLS-2$
 			if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
 					|| e.getLocalizedMessage().startsWith(
 							"Invalid system identifier")) { //$NON-NLS-1$
-				Debug.err(e.getLocalizedMessage());
-				Debug
-						.err("STRUKTURÄNDERUNG!\n\nBitte in der Datei jfritz.sipprovider.xml\n " //$NON-NLS-1$
+				Debug.error(e.toString());
+				Debug.error("STRUKTURÄNDERUNG!\n\nBitte in der Datei jfritz.sipprovider.xml\n " //$NON-NLS-1$
 								+ "die Zeichenkette \"sip.dtd\" durch\n \"" //$NON-NLS-1$
 								+ SIP_DTD_URI + "\"\n ersetzen!"); //$NON-NLS-1$
 				Debug.errDlg("STRUKTURÄNDERUNG!\n\nBitte in der Datei jfritz.sipprovider.xml\n " //$NON-NLS-1$
@@ -245,7 +244,7 @@ public class SipProviderTableModel extends AbstractTableModel {
 						+ SIP_DTD_URI + "\"\n ersetzen!"); //$NON-NLS-1$
 			}
 		} catch (IOException e) {
-			Debug.err("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.error("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 

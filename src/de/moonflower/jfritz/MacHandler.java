@@ -46,7 +46,7 @@ public class MacHandler {
 			// Array of argument types
 			Class[] types = new Class[1];
 
-			Debug.msg("MAC: Register quitHandler"); //$NON-NLS-1$
+			Debug.info("MAC: Register quitHandler"); //$NON-NLS-1$
 			Proxy proxy = (Proxy) Proxy.newProxyInstance(quitHandler
 					.getClassLoader(), new Class[] { quitHandler },
 					invocationHandler);
@@ -57,7 +57,7 @@ public class MacHandler {
 					"registerQuitHandler", types); //$NON-NLS-1$
 			registerQuitHandler.invoke(proxy, argslist);
 
-			Debug.msg("MAC: Register aboutHandler"); //$NON-NLS-1$
+			Debug.info("MAC: Register aboutHandler"); //$NON-NLS-1$
 			proxy = (Proxy) Proxy.newProxyInstance(aboutHandler
 					.getClassLoader(), new Class[] { aboutHandler },
 					invocationHandler);
@@ -68,7 +68,7 @@ public class MacHandler {
 					"registerAboutHandler", types); //$NON-NLS-1$
 			registerAboutHandler.invoke(proxy, argslist);
 
-			Debug.msg("MAC: Register prefsHandler"); //$NON-NLS-1$
+			Debug.info("MAC: Register prefsHandler"); //$NON-NLS-1$
 			proxy = (Proxy) Proxy.newProxyInstance(prefsHandler
 					.getClassLoader(), new Class[] { prefsHandler },
 					invocationHandler);
@@ -80,7 +80,7 @@ public class MacHandler {
 			registerPrefsHandler.invoke(proxy, argslist);
 
 		} catch (Throwable e) {
-			Debug.err(e.toString());
+			Debug.error(e.toString());
 		}
 	}
 
@@ -100,14 +100,14 @@ public class MacHandler {
 				//JFritz either has to call system.exit before this method closes
 				//or JFritz has to throw an illegalStateException to prevent
 				//the close event from continuing, if the user click cancel
-				Debug.msg("Mac Quit handler was called");
+				Debug.info("Mac Quit handler was called");
 				if(jfritz.maybeExit(0)){
 					System.exit(0);
 				} else{
 					throw new IllegalStateException("User chose not to quit JFritz!"); //$NON-NLS-1$
 				}
 
-				Debug.msg("Mac Quit handler is exiting");
+				Debug.info("Mac Quit handler is exiting");
 
 
 
@@ -122,10 +122,10 @@ public class MacHandler {
 			}
 
 			else if (method.getName().equalsIgnoreCase("handleAbout")) { //$NON-NLS-1$
-				Debug.msg("MAC Application Menu: Show About Dialog"); //$NON-NLS-1$
+				Debug.info("MAC Application Menu: Show About Dialog"); //$NON-NLS-1$
                 JFritz.getJframe().showAboutDialog();
 			} else if (method.getName().equalsIgnoreCase("handlePrefs")) { //$NON-NLS-1$
-				Debug.msg("MAC Application Menu: Show Prefs Dialog"); //$NON-NLS-1$
+				Debug.info("MAC Application Menu: Show Prefs Dialog"); //$NON-NLS-1$
                 JFritz.getJframe().showConfigDialog();
 			}
 			return null;

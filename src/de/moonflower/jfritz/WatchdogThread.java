@@ -62,7 +62,7 @@ public class WatchdogThread extends Thread {
             // Computer wahrscheinlich im Ruhezustand gewesen.
             // Starte den Anrufmonitor neu.
 
-            Debug.msg("STANDBY or SUSPEND TO RAM detected"); //$NON-NLS-1$
+            Debug.always("STANDBY or SUSPEND TO RAM detected"); //$NON-NLS-1$
 //          Debug.msg("Watchdog: Restarting call monitor"); //$NON-NLS-1$
 //			JFritz.getJframe().setCallMonitorDisconnectedStatus();
             standbyDetected = true;

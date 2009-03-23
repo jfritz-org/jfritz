@@ -96,7 +96,7 @@ public class StatsDialog extends JDialog implements UPNPAddonInfosListener, UPNP
 
 		KeyListener keyListener = (new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
-				Debug.msg("KEY: " + e); //$NON-NLS-1$
+				Debug.debug("KEY: " + e); //$NON-NLS-1$
 				if (e.getKeyCode() == KeyEvent.VK_ESCAPE
 						|| (e.getSource() == cancelButton && e.getKeyCode() == KeyEvent.VK_ENTER)) {
 					pressedOK = false;

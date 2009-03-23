@@ -29,6 +29,8 @@ public class ReverseLookupTest extends TestCase {
 
 	public void setUp(){
 		Debug.on();
+    	Debug.setVerbose(true);
+    	Debug.setDebugLevel(Debug.LS_DEBUG);
 		Main.loadProperties();
 		Main.loadMessages(new Locale("de_DE"));
 		JFritz.loadNumberSettings();
@@ -296,14 +298,14 @@ public class ReverseLookupTest extends TestCase {
 		assertTrue(entry.isDone());
 		if (!entry.hasSucceeded())
 		{
-			Debug.err("Failed " + entry.getCheckedNumber());
-			Debug.err("Erwartet: " + entry.getCheckPerson().toCSV());
-			Debug.err("Bekommen: " + entry.getReceivedPerson().toCSV());
+			Debug.error("Failed " + entry.getCheckedNumber());
+			Debug.error("Erwartet: " + entry.getCheckPerson().toCSV());
+			Debug.error("Bekommen: " + entry.getReceivedPerson().toCSV());
 			return true;
 		}
 		else
 		{
-			Debug.err("Passed " + entry.getCheckedNumber());
+			Debug.error("Passed " + entry.getCheckedNumber());
 			return previousTestResult;
 		}
 	}
