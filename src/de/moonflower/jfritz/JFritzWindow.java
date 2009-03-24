@@ -1130,7 +1130,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			debug_frame.add(Debug.getPanel());
 			debug_frame.setTitle(Main.getMessage("debug_window"));
 			Debug.setSaveButtonText(Main.getMessage("save"));
-			Debug.setClearButtonText(Main.getMessage("clear"));
+			Debug.setRefreshButtonText(Main.getMessage("refresh"));
 			Debug.setCloseButtonText(Main.getMessage("close"));
 			Debug.setFrame(debug_frame);
 			debug_frame.pack();

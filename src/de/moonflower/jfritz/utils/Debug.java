@@ -6,15 +6,26 @@ package de.moonflower.jfritz.utils;
 
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.filechooser.FileFilter;
 
 import de.moonflower.jfritz.Main;
 
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -42,6 +53,7 @@ public class Debug{
 	private static final long serialVersionUID = 9211082107025215527L;
 
 	private static int debugLevel;
+	private static String debugLogFile;
 
 	private static boolean verboseMode = false;
 
@@ -53,7 +65,7 @@ public class Debug{
 
 	private static JButton close_button;
 	private static JButton save_button;
-	private static JButton clear_button;
+	private static JButton refresh_button;
 
 	private static JScrollPane scroll_pane;
 
@@ -78,19 +90,19 @@ public class Debug{
 	 *            Filename to log into
 	 */
 	public static void logToFile(final String fName) {
-		String fileName = fName;
+		debugLogFile = fName;
 
 		// Save the original outputstream so we can write to the console too!
 		originalOut = System.out;
 
 		//if our file name contains no path, then save in our save dir
-		if(!fileName.contains(System.getProperty("file.separator")))
-			fileName = Main.SAVE_DIR + fileName;
+		if(!debugLogFile.contains(System.getProperty("file.separator")))
+			debugLogFile = Main.SAVE_DIR + debugLogFile;
 
 		try {
 			// setup the redirection of Sysem.out and System.err
 			FileOutputStream tmpOutputStream = new FileOutputStream(
-					fileName);
+					debugLogFile);
 			fileRedirecter = new PrintStream(tmpOutputStream);
 			System.setOut(fileRedirecter);
 			System.setErr(fileRedirecter);
@@ -99,8 +111,6 @@ public class Debug{
 		catch (Exception e) {
 			System.err.println("EXCEPTION when writing to LOGFILE"); //$NON-NLS-1$
 		}
-
-		fileRedirecter.println("------------------------------------------"); //$NON-NLS-1$
 	}
 
 	/**
@@ -187,93 +197,107 @@ public class Debug{
 
 	public static void generatePanel()
 	{
-//		main_panel = new JPanel();
-//		main_panel.setLayout(new BorderLayout());
-//		log_area = new JTextArea(25, 80);
-//		scroll_pane = new JScrollPane(log_area);
-//		main_panel.add(scroll_pane, BorderLayout.NORTH);
-//		JPanel button_panel = new JPanel();
-//		button_panel.setLayout(new GridLayout(1,3));
-//
-//		close_button = new JButton();
-//		close_button.addActionListener(new ActionListener(){
-//			public void actionPerformed(ActionEvent arg0) {
-//				display_frame.setVisible(false);
-//				display_frame.dispose();
-//			}
-//		});
-//		close_button.setText("Close");
-//
-//		save_button = new JButton();
-//		save_button.addActionListener(new ActionListener(){
-//			public void actionPerformed(ActionEvent arg0) {
-//				JFileChooser fc = new JFileChooser(Main.SAVE_DIR); //$NON-NLS-1$
-//				fc.setDialogTitle(Main.getMessage("save_debug_log")); //$NON-NLS-1$
-//				fc.setDialogType(JFileChooser.SAVE_DIALOG);
-//				fc.setFileFilter(new FileFilter() {
-//					public boolean accept(File f) {
-//						return f.isDirectory()
-//								|| f.getName().toLowerCase().endsWith(".dbg"); //$NON-NLS-1$
-//					}
-//
-//					public String getDescription() {
-//						return Main.getMessage("debug_files"); //$NON-NLS-1$
-//					}
-//				});
-//				if (fc.showSaveDialog(display_frame) == JFileChooser.APPROVE_OPTION) {
-//					String path = fc.getSelectedFile().getPath();
-//					path = path.substring(0, path.length()
-//							- fc.getSelectedFile().getName().length());
-//					Main.setProperty("options.exportCSVpath", path); //$NON-NLS-1$
-//					File file = fc.getSelectedFile();
-//					if (file.exists()) {
-//						if (JOptionPane.showConfirmDialog(display_frame, Main.getMessage(
-//								"overwrite_file").replaceAll("%F", file.getName()), //$NON-NLS-1$, //$NON-NLS-2$
-//								Main.getMessage("dialog_title_overwrite_file"), //$NON-NLS-1$
-//								JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
-//							try {
-//								log_area.write(new FileWriter(file.getAbsolutePath()));
-//							} catch (IOException e) {
-//								Debug.err("Could not save debug log to file: "+file.getAbsolutePath());
-//								e.printStackTrace();
-//							}
-//						}
-//					} else {
-//						try {
-//							FileWriter fw = new FileWriter(file.getAbsolutePath());
-//							log_area.write(fw);
-//							fw.close();
-//						} catch (IOException e) {
-//							Debug.err("Could not save debug log to file: "+file.getAbsolutePath());
-//							e.printStackTrace();
-//						}
-//					}
-//				}
-//			}
-//		});
-//		save_button.setText("Save");
-//
-//		clear_button = new JButton();
-//		clear_button.addActionListener(new ActionListener(){
-//			public void actionPerformed(ActionEvent arg0) {
-//				log_area.setText("");
-//			}
-//		});
-//		clear_button.setText("Clear");
-//
-//		((GridLayout)button_panel.getLayout()).setHgap(20);
-//		((GridLayout)button_panel.getLayout()).setVgap(20);
-//		button_panel.add(save_button);
-//		button_panel.add(clear_button);
-//		button_panel.add(close_button);
-//		main_panel.add(button_panel, BorderLayout.SOUTH);
-//
-//		log_area.append(debugBuffer.toString());
-//		autoScroll();
+		main_panel = new JPanel();
+		main_panel.setLayout(new BorderLayout());
+		log_area = new JTextArea(25, 80);
+		scroll_pane = new JScrollPane(log_area);
+		main_panel.add(scroll_pane, BorderLayout.NORTH);
+		JPanel button_panel = new JPanel();
+		button_panel.setLayout(new GridLayout(1,3));
+
+		close_button = new JButton();
+		close_button.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				display_frame.setVisible(false);
+				display_frame.dispose();
+			}
+		});
+		close_button.setText("Close");
+
+		save_button = new JButton();
+		save_button.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser fc = new JFileChooser(Main.SAVE_DIR); //$NON-NLS-1$
+				fc.setDialogTitle(Main.getMessage("save_debug_log")); //$NON-NLS-1$
+				fc.setDialogType(JFileChooser.SAVE_DIALOG);
+				fc.setFileFilter(new FileFilter() {
+					public boolean accept(File f) {
+						return f.isDirectory()
+								|| f.getName().toLowerCase().endsWith(".log"); //$NON-NLS-1$
+					}
+
+					public String getDescription() {
+						return Main.getMessage("debug_files"); //$NON-NLS-1$
+					}
+				});
+				if (fc.showSaveDialog(display_frame) == JFileChooser.APPROVE_OPTION) {
+					String path = fc.getSelectedFile().getPath();
+					path = path.substring(0, path.length()
+							- fc.getSelectedFile().getName().length());
+					Main.setProperty("options.exportCSVpath", path); //$NON-NLS-1$
+					File file = fc.getSelectedFile();
+					if (file.exists()) {
+						if (JOptionPane.showConfirmDialog(display_frame, Main.getMessage(
+								"overwrite_file").replaceAll("%F", file.getName()), //$NON-NLS-1$, //$NON-NLS-2$
+								Main.getMessage("dialog_title_overwrite_file"), //$NON-NLS-1$
+								JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
+							try {
+								log_area.write(new FileWriter(file.getAbsolutePath()));
+							} catch (IOException e) {
+								error("Could not save debug log to file: "+file.getAbsolutePath());
+								e.printStackTrace();
+							}
+						}
+					} else {
+						try {
+							FileWriter fw = new FileWriter(file.getAbsolutePath());
+							log_area.write(fw);
+							fw.close();
+						} catch (IOException e) {
+							Debug.error("Could not save debug log to file: "+file.getAbsolutePath());
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		});
+		save_button.setText("Save");
+
+		refresh_button = new JButton();
+		refresh_button.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				loadDebugFile();
+			}
+		});
+		refresh_button.setText("Refresh");
+
+		((GridLayout)button_panel.getLayout()).setHgap(20);
+		((GridLayout)button_panel.getLayout()).setVgap(20);
+		button_panel.add(save_button);
+		button_panel.add(refresh_button);
+		button_panel.add(close_button);
+		main_panel.add(button_panel, BorderLayout.SOUTH);
+
+		loadDebugFile();
+		autoScroll();
+	}
+
+	private static void loadDebugFile(){
+		try {
+			log_area.setText("");
+			BufferedReader in = new BufferedReader(new FileReader(debugLogFile));
+			String zeile = null;
+			while ((zeile = in.readLine()) != null) {
+				log_area.append(zeile + "\n");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static JPanel getPanel()
 	{
+		loadDebugFile();
 		return main_panel;
 	}
 
@@ -287,9 +311,9 @@ public class Debug{
 		save_button.setText(text);
 	}
 
-	public static void setClearButtonText(String text)
+	public static void setRefreshButtonText(String text)
 	{
-		clear_button.setText(text);
+		refresh_button.setText(text);
 	}
 
 	public static void setFrame(JFrame frame)
