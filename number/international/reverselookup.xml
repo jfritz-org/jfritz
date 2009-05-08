@@ -895,10 +895,16 @@
 	<country code="+49">
 		<website name="www.dasoertliche.de" url="http://dasoertliche.de/Controller?form_name=search_inv&amp;ph=$NUMBER" prefix="0">
 	        <entry>
+	        	<name>class=&quot;preview&quot;&gt;([^&lt;]*)&lt;span class="preview_box"&gt;</name>
+	        	<street>^\s*([^,&gt;]+),&amp;nbsp;\d{5}&amp;nbsp;[^&lt;]*&lt;/div&gt;</street>
+	        	<city>^[^,]*,&amp;nbsp;\d{5}&amp;nbsp;([^&lt;]*)&lt;/div&gt;</city>
+	        	<zipcode>^[^,]*,&amp;nbsp;(\d{5})&amp;nbsp;[^&lt;]*&lt;/div&gt;</zipcode>
+	        </entry>
+	        <entry>
 	        	<name>class=&quot;entry&quot;\s*(?:onmouseover=&quot;&quot;)?\s*&gt;([^&lt;]*)&lt;/a&gt;</name>
-	        	<street>^\s*([^,&gt;]+),&amp;nbsp;\d{5}&amp;nbsp;[^&lt;]*&lt;br/&gt;</street>
-	        	<city>^[^,]*,&amp;nbsp;\d{5}&amp;nbsp;([^&lt;]*)&lt;br/&gt;</city>
-	        	<zipcode>^[^,]*,&amp;nbsp;(\d{5})&amp;nbsp;[^&lt;]*&lt;br/&gt;</zipcode>
+	        	<street>^\s*([^,&gt;]+),&amp;nbsp;\d{5}&amp;nbsp;[^&lt;]*&lt;/div&gt;</street>
+	        	<city>^[^,]*,&amp;nbsp;\d{5}&amp;nbsp;([^&lt;]*)&lt;/div&gt;</city>
+	        	<zipcode>^[^,]*,&amp;nbsp;(\d{5})&amp;nbsp;[^&lt;]*&lt;/div&gt;</zipcode>
 	        </entry>
 		</website>
 		<website name="www.dastelefonbuch.de" url="http://www.dastelefonbuch.de/?sourceid=Mozilla-search&amp;cmd=search&amp;kw=$NUMBER" prefix="0">
