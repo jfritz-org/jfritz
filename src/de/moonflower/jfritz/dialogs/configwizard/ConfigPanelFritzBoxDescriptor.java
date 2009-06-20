@@ -2,7 +2,10 @@ package de.moonflower.jfritz.dialogs.configwizard;
 
 import com.nexes.wizard.*;
 
+import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.box.FritzBox;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelFritzBox;
+import de.moonflower.jfritz.dialogs.config.ConfigPanelSip;
 
 /**
  *  @author Brian Jensen
@@ -19,7 +22,8 @@ public class ConfigPanelFritzBoxDescriptor extends WizardPanelDescriptor{
 	  public ConfigPanelFritzBox fritzBoxPanel;
 
 	  public ConfigPanelFritzBoxDescriptor() {
-			fritzBoxPanel = new ConfigPanelFritzBox();
+			fritzBoxPanel = new ConfigPanelFritzBox(
+					(FritzBox) JFritz.getBoxCommunication().getBox(0));
 			fritzBoxPanel.loadSettings();
 			setPanelDescriptorIdentifier(IDENTIFIER);
 		    setPanelComponent(fritzBoxPanel);

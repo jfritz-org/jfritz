@@ -66,7 +66,9 @@ public class CallPanel extends JComponent {
 							p = new CallDialog(person.getNumbers(),number);
 						}
 						else
+						{
 							p = new CallDialog(number);
+						}
 						p.setVisible(true);
 						//					p.show();
 						p.dispose();

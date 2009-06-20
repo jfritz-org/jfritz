@@ -10,11 +10,13 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.NoRouteToHostException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,15 +44,17 @@ public class JFritzUtils {
 	private final static String PATTERN_WAIT_FOR_X_SECONDS = "var loginBlocked = parseInt\\(\"([^\"]*)\\),10\\);";
 
 	/**
-	 * fetches html data from url using POST requests
+	 * fetches html data from url using POST requests in one single return String
 	 *
+	 * @param affectedBox
 	 * @param urlstr
 	 * @param postdata
 	 * @return html data
 	 * @throws WrongPasswordException
 	 * @throws IOException
 	 */
-	public static String fetchDataFromURL(String urlstr, String postdata,
+	public static String fetchDataFromURLToString(String affectedBox,
+			String urlstr, String postdata,
 			boolean retrieveData) throws WrongPasswordException, IOException {
 		URL url = null;
 		URLConnection urlConn;
@@ -130,7 +134,110 @@ public class JFritzUtils {
 					}
 				}
 
-				throw new WrongPasswordException("Password invalid", wait); //$NON-NLS-1$
+				throw new WrongPasswordException(affectedBox, "Password invalid", wait); //$NON-NLS-1$
+			}
+		}
+		return data;
+	}
+
+	/**
+	 * fetches html data from url using POST requests in one single return String
+	 *
+	 * @param affectedBox
+	 * @param urlstr
+	 * @param postdata
+	 * @return html data
+	 * @throws WrongPasswordException
+	 * @throws IOException
+	 */
+	public static Vector<String> fetchDataFromURLToVector(String affectedBox,
+			String urlstr, String postdata,
+			boolean retrieveData) throws WrongPasswordException, IOException {
+		URL url = null;
+		URLConnection urlConn;
+		DataOutputStream printout;
+		Vector<String> data = new Vector<String>();
+		boolean wrong_pass = false;
+		Debug.debug("Urlstr: " + urlstr);
+		Debug.debug("Postdata: " + postdata);
+
+		try {
+			url = new URL(urlstr);
+		} catch (MalformedURLException e) {
+			Debug.error("URL invalid: " + urlstr); //$NON-NLS-1$
+			throw new MalformedURLException("URL invalid: " + urlstr); //$NON-NLS-1$
+		}
+
+		if (url != null) {
+			urlConn = url.openConnection();
+			// 5 Sekunden-Timeout für Verbindungsaufbau
+			urlConn.setConnectTimeout(5000);
+
+			urlConn.setDoInput(true);
+			urlConn.setDoOutput(true);
+			urlConn.setUseCaches(false);
+			// Sending postdata
+			if (postdata != null) {
+				urlConn.setRequestProperty("Content-Type", //$NON-NLS-1$
+						"application/x-www-form-urlencoded"); //$NON-NLS-1$
+				try {
+					printout = new DataOutputStream(urlConn.getOutputStream());
+					printout.writeBytes(postdata);
+					printout.flush();
+					printout.close();
+				} catch (SocketTimeoutException ste)
+				{
+					Debug.error("Could not fetch data from url: "+ste.toString());
+				} catch (NoRouteToHostException nrthe)
+				{
+					Debug.error("No route to host exception: " + nrthe.toString());
+				}
+			}
+
+			BufferedReader d;
+
+			try {
+				// Get response data
+				d = new BufferedReader(new InputStreamReader(urlConn
+						.getInputStream(), "UTF8"));
+				String str;
+				while (null != ((str = HTMLUtil.stripEntities(d.readLine())))) {
+					// Password seems to be wrong
+					if ((str.indexOf("Das angegebene Kennwort ist ungültig") > 0) //$NON-NLS-1$
+						|| (str.indexOf("Password not valid") > 0))
+					{
+						wrong_pass = true;
+					}
+					if (retrieveData)
+					{
+						data.add(str);
+					}
+				}
+				d.close();
+			} catch (IOException e1) {
+				throw new IOException("Network unavailable"); //$NON-NLS-1$
+			}
+
+			if (wrong_pass)
+			{
+				int wait = 3;
+				Pattern waitSeconds = Pattern.compile(PATTERN_WAIT_FOR_X_SECONDS);
+				for (int i=0; i<data.size(); i++)
+				{
+					Matcher m = waitSeconds.matcher(data.get(i));
+					if (m.find())
+					{
+						try {
+							wait = Integer.parseInt(m.group(1));
+						}
+						catch (NumberFormatException nfe)
+						{
+							wait = 3;
+						}
+					}
+				}
+
+				throw new WrongPasswordException(affectedBox, "Password invalid", wait); //$NON-NLS-1$
 			}
 		}
 		return data;
@@ -329,5 +436,11 @@ public class JFritzUtils {
 		currentStr = currentStr.replaceAll("&#x[00]*DF;", "ß");
 
 		return currentStr;
+	}
+
+	public static long getTimestamp()
+	{
+		Calendar cal = Calendar.getInstance();
+		return cal.getTimeInMillis();
 	}
 }

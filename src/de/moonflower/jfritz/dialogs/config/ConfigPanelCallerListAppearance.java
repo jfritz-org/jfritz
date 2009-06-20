@@ -1,6 +1,7 @@
 package de.moonflower.jfritz.dialogs.config;
 
 import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -43,24 +44,39 @@ public class ConfigPanelCallerListAppearance extends JPanel implements ConfigPan
 		columnPanel.setLayout(new BorderLayout());
 
 		JPanel buttonPane = new JPanel();
-		buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.Y_AXIS));
-		JButton upButton = new JButton("up");
+		buttonPane.setLayout(new GridBagLayout());
+		JButton upButton = new JButton(Main.getMessage("move_up"));
 		upButton.setActionCommand("up");
 		upButton.addActionListener(this);
 
-		JButton downButton = new JButton("down");
+		JButton downButton = new JButton(Main.getMessage("move_down"));
 		downButton.setActionCommand("down");
 		downButton.addActionListener(this);
 
-		buttonPane.add(upButton);
-		buttonPane.add(downButton);
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets.left = 20;
+		c.gridy = 0;
+		buttonPane.add(upButton, c);
+		c.gridy = 1;
+		buttonPane.add(downButton, c);
 
 		columnTable = new JTable(columnTableModel);
 		columnTable.setRowSelectionAllowed(true);
 		columnTable.setColumnSelectionAllowed(false);
 		columnTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
+		columnTable.setAutoCreateColumnsFromModel(false);
+		columnTable.setColumnSelectionAllowed(false);
+		columnTable.setCellSelectionEnabled(false);
+		columnTable.setRowSelectionAllowed(true);
+		columnTable.getColumnModel().getColumn(0).setMinWidth(60);
+		columnTable.getColumnModel().getColumn(0).setMaxWidth(60);
+		columnTable.getColumnModel().getColumn(1).setMinWidth(120);
+		columnTable.getColumnModel().getColumn(1).setMaxWidth(120);
+
 		columnPanel.add(columnTable, BorderLayout.CENTER);
+		columnPanel.add(columnTable.getTableHeader(), BorderLayout.NORTH);
 		columnPanel.add(buttonPane, BorderLayout.EAST);
 
 		cPane.add(columnPanel);
@@ -93,7 +109,7 @@ public class ConfigPanelCallerListAppearance extends JPanel implements ConfigPan
 
 	public String getPath()
 	{
-		return Main.getMessage("callerlist")+"::Appearance---";
+		return Main.getMessage("callerlist")+"::"+Main.getMessage("appearance");
 	}
 
 	public JPanel getPanel() {

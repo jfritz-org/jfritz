@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Vector;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
@@ -27,16 +28,16 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 
 	private boolean connected;
 
-	public YACCallMonitor() {
-		super();
-		start();
-		port = 10629;
-	}
+	private String boxName;
 
-	public YACCallMonitor(int port) {
+	private Vector<CallMonitorStatusListener> stateListener;
+
+	public YACCallMonitor(String boxName, int port, Vector<CallMonitorStatusListener> stateListener) {
 		super();
-		start();
+		this.boxName = boxName;
 		this.port = port;
+		this.stateListener = stateListener;
+		start();
 	}
 
 	public void run() {
@@ -49,6 +50,7 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 			Debug.info("Starting YAC-Monitor"); //$NON-NLS-1$
 			serverSocket = new ServerSocket(port);
 			connected = true;
+			this.setConnectedStatus();
             Debug.info("YAC-Monitor ready"); //$NON-NLS-1$
 			while (isRunning) {
 				Socket socket = serverSocket.accept();
@@ -108,12 +110,15 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 				}
 				socket.close();
 				connected = false;
+				this.setDisconnectedStatus();
 			}
 			serverSocket.close();
 			connected = false;
+			this.setDisconnectedStatus();
 		} catch (IOException e) {
 			Debug.error(e.toString());
 			connected = false;
+			this.setDisconnectedStatus();
 		}
 	}
 
@@ -121,12 +126,15 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 		Debug.info("Stopping YACListener"); //$NON-NLS-1$
 		try {
 			if (serverSocket != null)
-			serverSocket.close();
+			{
+				serverSocket.close();
+			}
 			connected = false;
 		} catch (IOException e) {
 			Debug.error("Fehler beim Schliessen des YAC-Sockets"); //$NON-NLS-1$
 		}
 		isRunning = false;
+		this.setDisconnectedStatus();
 	}
 
 	public boolean isConnected() {
@@ -135,5 +143,27 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 
 	public void closeConnection() {
 		Debug.warning("Method not implemented!");
+	}
+
+	private void setConnectedStatus()
+	{
+		if (stateListener != null)
+		{
+			for (int i=0; i<stateListener.size(); i++)
+			{
+				stateListener.get(i).setConnectedStatus(boxName);
+			}
+		}
+	}
+
+	private void setDisconnectedStatus()
+	{
+		if (stateListener != null)
+		{
+			for (int i=0; i<stateListener.size(); i++)
+			{
+				stateListener.get(i).setDisconnectedStatus(boxName);
+			}
+		}
 	}
 }

@@ -302,7 +302,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 									+ " using port "+actionRequest.port+" from "+remoteAddress);
 
 							//TODO: filtering!!
-							JFritz.getFritzBox().doCall(actionRequest.number.getAreaNumber(), actionRequest.port);
+							JFritz.getBoxCommunication().doCall(actionRequest.number, actionRequest.port);
 
 						}else
 							Debug.netMsg("Received invalid direct dial request from "+remoteAddress);
@@ -311,7 +311,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 							&& login.allowDoCall){
 
 							//client has requested a hangup
-							JFritz.getFritzBox().hangup();
+							JFritz.getBoxCommunication().hangup(actionRequest.port);
 					}
 
 				}else if(o instanceof String){
@@ -360,9 +360,9 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 			} catch (BadPaddingException e) {
 				e.printStackTrace();
-			} catch (WrongPasswordException e) {
-				Debug.netMsg("Wrong password exception1");
-				e.printStackTrace();
+//			} catch (WrongPasswordException e) {
+//				Debug.netMsg("Wrong password exception1");
+//				e.printStackTrace();
 			}
 		}
 	}
@@ -770,23 +770,24 @@ public class ClientConnectionThread extends Thread implements CallerListListener
     }
 
     private void writeAvailablePorts(){
-    	try{
-			Debug.info("Notifying client "+remoteAddress+" of available ports");
-			SealedObject sealed_object = new SealedObject(JFritz.getFritzBox().getAvailablePorts(),
-					outCipher);
-			objectOut.writeObject(sealed_object);
-			objectOut.flush();
+//    	try{
+//			Debug.info("Notifying client "+remoteAddress+" of available ports");
+//			SealedObject sealed_object = new SealedObject(JFritz.getFritzBox().getAvailablePorts(),
+//					outCipher);
+//			objectOut.writeObject(sealed_object);
+//			objectOut.flush();
 
-		}catch(IOException e){
-			Debug.error("Error writing available ports to client!");
-			Debug.error(e.toString());
-			e.printStackTrace();
-
-		}catch(IllegalBlockSizeException e){
-			Debug.error("Error with the block size?");
-			Debug.error(e.toString());
-			e.printStackTrace();
-		}
+//		}catch(IOException e){
+//			Debug.error("Error writing available ports to client!");
+//			Debug.error(e.toString());
+//			e.printStackTrace();
+//
+//		}catch(IllegalBlockSizeException e){
+//			Debug.error("Error with the block size?");
+//			Debug.error(e.toString());
+//			e.printStackTrace();
+//		}
+		Debug.error("Fix writeAvailablePorts() in ClientConnectionThread!");
     }
 
 }

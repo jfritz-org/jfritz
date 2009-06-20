@@ -12,8 +12,6 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Vector;
-
-import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.Debug;
 
 /*
@@ -28,6 +26,8 @@ import de.moonflower.jfritz.utils.Debug;
  */
 public class UPNPUtils {
 
+	private final static int SSDP_MAX_BOXES = 5;
+
 	/**
 	 * @param timeout
 	 * @return Vector of SSDPPackets
@@ -40,7 +40,7 @@ public class UPNPUtils {
 			socket.send(SSDPPacket.getSSDPDiscoverPacket());
 
 			int i = 0;
-			while (i < JFritz.SSDP_MAX_BOXES) {
+			while (i < SSDP_MAX_BOXES) {
 				DatagramPacket packet = new DatagramPacket(new byte[1024],
 						1024, SSDPPacket.getSSDPAddress(), socket
 								.getLocalPort());

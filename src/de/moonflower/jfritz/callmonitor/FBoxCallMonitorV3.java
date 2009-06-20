@@ -2,12 +2,15 @@ package de.moonflower.jfritz.callmonitor;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Vector;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.box.FritzBox;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
@@ -20,8 +23,9 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 
-	public FBoxCallMonitorV3() {
-		super();
+	public FBoxCallMonitorV3(FritzBox fritzBox,
+							 Vector<CallMonitorStatusListener> listener) {
+		super(fritzBox, listener);
 		Debug.info("FBoxListener V3"); //$NON-NLS-1$
 	}
 
@@ -71,12 +75,17 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 	                    provider = split[4];
 	                }
 	            } else if (split[5].startsWith("SIP")) { //$NON-NLS-1$
-	            	if (JFritz.getSIPProviderTableModel() != null)
-	            	{
-	            		provider = JFritz.getSIPProviderTableModel().getSipProvider(
-	                        split[5], split[5]);
-	            	}
-
+	                try {
+	                	int id = Integer.parseInt(split[5].substring(3));
+	                	if ((fritzBox != null)
+                    		&& (fritzBox.getSipProvider(id) != null))
+                    	{
+                    		provider = fritzBox.getSipProvider(id).toString();
+                    	}
+	                } catch (NumberFormatException nfe)
+	                {
+	                	provider = split[5];
+	                }
 	            } else if (split[5].equals("ISDN")) { //$NON-NLS-1$
 	                provider = split[4];
 	            } else
@@ -85,8 +94,9 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 	            try {
 	                Call currentCall = new Call(new CallType(CallType.CALLIN),
 	                        new SimpleDateFormat("dd.MM.yy HH:mm:ss")
-	                                .parse(split[0]), new PhoneNumber(number, false), "0",
-	                        provider, 0);
+	                                .parse(split[0]), new PhoneNumber(number, false),
+	                                new Port(0, "", "-1", "-1"),
+	                                provider, 0);
 	                JFritz.getCallMonitorList().addNewCall(
 	                        Integer.parseInt(split[2]), currentCall);
 	            } catch (ParseException e) {
@@ -115,22 +125,37 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 	                    provider = split[4];
 	                }
 	            } else if (split[6].startsWith("SIP")) { //$NON-NLS-1$
-	            	if (JFritz.getSIPProviderTableModel() != null)
-	            	{
-	                provider = JFritz.getSIPProviderTableModel().getSipProvider(
-	                        split[6], split[6]);
-	            	}
+	                try {
+	                	int id = Integer.parseInt(split[5].substring(3));
+	                	if ((fritzBox != null)
+                    		&& (fritzBox.getSipProvider(id) != null))
+                    	{
+                    		provider = fritzBox.getSipProvider(id).toString();
+                    	}
+	                } catch (NumberFormatException nfe)
+	                {
+	                	provider = split[5];
+	                }
 	            } else if (split[6].equals("ISDN")) { //$NON-NLS-1$
 	                provider = split[4];
 	            } else
 	                provider = split[4];
 
+	            Port port = null;
+	            try {
+	            	int portId = Integer.parseInt(split[3]);
+	            	port = fritzBox.getConfiguredPort(portId);
+	            } catch (NumberFormatException nfe)
+	            {
+	            	port = new Port(0, "", "-1", "-1");
+	            }
 	            try {
 	                Call currentCall = new Call(new CallType(CallType.CALLOUT),
 	                        new SimpleDateFormat("dd.MM.yy HH:mm:ss")
-	                                .parse(split[0]), new PhoneNumber(number, Main.getProperty("option.activateDialPrefix")
+	                                .parse(split[0]),
+	                                new PhoneNumber(number, Main.getProperty("option.activateDialPrefix")
 	                                		.toLowerCase().equals("true")),
-	                        split[3], provider, 0);
+	                                port, provider, 0);
 	                JFritz.getCallMonitorList().addNewCall(
 	                        Integer.parseInt(split[2]), currentCall);
 	            } catch (ParseException e) {
@@ -154,7 +179,14 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 
 	        } else if (split[1].equals("CONNECT")) {
 	            int callId = Integer.parseInt(split[2]);
-	            String port = split[3];
+	            Port port = null;
+	            try {
+	            	int portId = Integer.parseInt(split[3]);
+	            	port = fritzBox.getConfiguredPort(portId);
+	            } catch (NumberFormatException nfe)
+	            {
+	            	port = new Port(0, "", "-1", "-1");
+	            }
 	            if (split[4].equals("")) { //$NON-NLS-1$
 	                number = Main.getMessage("unknown"); //$NON-NLS-1$
 	            } else

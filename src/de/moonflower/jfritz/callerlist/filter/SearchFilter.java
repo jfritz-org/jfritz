@@ -55,6 +55,31 @@ public class SearchFilter extends CallFilter {
 				return true;
 			}
 
+			if ((person != null)
+					&& person.getAddress().toLowerCase().contains(part)) {
+				return true;
+			}
+
+			if ((person != null)
+					&& person.getCity().toLowerCase().contains(part)) {
+				return true;
+			}
+
+			if ((person != null)
+					&& person.getCompany().toLowerCase().contains(part)) {
+				return true;
+			}
+
+			if ((person != null)
+					&& person.getStreet().toLowerCase().contains(part)) {
+				return true;
+			}
+
+			if ((person != null)
+					&& person.getPostalCode().toLowerCase().contains(part)) {
+				return true;
+			}
+
 			comment = currentCall.getComment();
 			if ((comment != null) && comment.toLowerCase().contains(part)) {
 				return true;

@@ -23,6 +23,7 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
+import de.moonflower.jfritz.struct.Port;
 
 /**
  * @author Bastian Schaefer
@@ -34,11 +35,14 @@ public class CallPendingDialog extends JDialog implements ActionListener {
 
 	private String infoText;
 
+	private Port port;
+
 	JButton okButton, cancelButton;
 
-	public CallPendingDialog(String infoText) throws HeadlessException {
+	public CallPendingDialog(String infoText, Port port) throws HeadlessException {
 		super(JFritz.getJframe());
 		this.infoText = infoText;
+		this.port = port;
 
 		drawDialog();
 		this.setLocationRelativeTo(JFritz.getJframe());
@@ -119,7 +123,7 @@ public class CallPendingDialog extends JDialog implements ActionListener {
 		} else if (e.getActionCommand().equals("cancel")) { //$NON-NLS-1$
 			try
 			{
-				NetworkStateMonitor.hangup();
+				NetworkStateMonitor.hangup(port);
 				setVisible(false);
 			} catch (WrongPasswordException e1) {
 				JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$

@@ -15,16 +15,25 @@ public class WrongPasswordException extends Exception {
 
 	private int waitSeconds = 0;
 
+	private String affectedBox = "";
+
     public WrongPasswordException() {
         super();
     }
-    public WrongPasswordException(final String param, final int waitSeconds) {
+
+    public WrongPasswordException(final String affectedBox, final String param, final int waitSeconds) {
         super(param);
         this.waitSeconds = waitSeconds;
+        this.affectedBox = affectedBox;
     }
 
     public int getRetryTime()
     {
     	return waitSeconds;
+    }
+
+    public String getAffectedBox()
+    {
+    	return affectedBox;
     }
 }

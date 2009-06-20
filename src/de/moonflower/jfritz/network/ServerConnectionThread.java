@@ -21,11 +21,11 @@ import javax.crypto.spec.*;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.CallerListListener;
-import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.phonebook.PhoneBookListener;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 
@@ -776,7 +776,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 		}
 	}
 
-	public synchronized void requestDoCall(PhoneNumber number, String port){
+	public synchronized void requestDoCall(PhoneNumber number, Port port){
 		Debug.netMsg("Requesting the server to dial "+number.getIntNumber()+" using "+port);
 		actionRequest.action = ClientActionRequest.ActionType.doCall;
 		actionRequest.number = number;
@@ -803,9 +803,10 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 		actionRequest.port = null;
 	}
 
-	public synchronized void requestHangup(){
+	public synchronized void requestHangup(Port port){
 		Debug.netMsg("Requesting the server to hangup");
 		actionRequest.action = ClientActionRequest.ActionType.hangup;
+		actionRequest.port = port;
 
 		try{
 

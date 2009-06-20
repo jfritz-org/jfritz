@@ -41,6 +41,7 @@ import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.CallerTable;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.Person;
+import de.moonflower.jfritz.struct.Port;
 
 /**
  * @author Robert Palmer
@@ -73,11 +74,16 @@ public class PrintCallerList {
                 // Minimum size of type-column (icon)
                 if (columnWidth[i] < 20)
                     columnWidth[i] = 20;
+            } else if (columnName.equals(Main.getMessage("picture")))
+            {
+            	// pictures have always the same width
+            	columnWidth[i] = colModel.getColumn(i).getWidth();
             } else {
                 // smaller font size: reduce width
                 columnWidth[i] = colModel.getColumn(i).getWidth() - 20;
             }
             columnStart[i] = 0;
+            Debug.always("Column "+i+ " [" + columnName + "] width: " + columnWidth[i]);
         }
 
         // Rest width for columns "number" and "participant"
@@ -91,8 +97,12 @@ public class PrintCallerList {
                 String columnName = colModel.getColumn(i).getHeaderValue()
                 .toString();
                 if (!(columnName.equals(Main.getMessage("number"))) //$NON-NLS-1$
-                        && (!columnName.equals(Main.getMessage("participant")))) { //$NON-NLS-1$
-                    if (columnWidth[i] > columnWidth[columnWithMaxWidth]) columnWithMaxWidth = i;
+                        && (!columnName.equals(Main.getMessage("participant")))) //$NON-NLS-1$
+                {
+                    if (columnWidth[i] > columnWidth[columnWithMaxWidth])
+                	{
+                    	columnWithMaxWidth = i;
+                	}
                     fixedColumnsWidth += columnWidth[i];
                 }
             }
@@ -107,15 +117,31 @@ public class PrintCallerList {
 
         } while (restWidth < 150);
 
-        int columnNumberIndex = JFritz.getJframe().getCallerTable().getColumnIndex(CallerTable.COLUMN_NUMBER); //$NON-NLS-1$
-        double columnNumberWidth = colModel.getColumn(columnNumberIndex)
-                .getWidth();
-        int columnParticipantIndex = JFritz.getJframe().getCallerTable().getColumnIndex(CallerTable.COLUMN_PARTICIPANT); //$NON-NLS-1$
-        double columnParticipantWidth = colModel.getColumn(
-                columnParticipantIndex).getWidth();
+        double columnParticipantWidth = 0.0;
+        double columnNumberWidth = 0.0;
 
-        columnWidth[columnNumberIndex] = (int) ((columnNumberWidth / (columnNumberWidth + columnParticipantWidth)) * restWidth);
-        columnWidth[columnParticipantIndex] = (int) ((columnParticipantWidth / (columnNumberWidth + columnParticipantWidth)) * restWidth);
+        int columnNumberIndex = JFritz.getJframe().getCallerTable().getVisibleColumnIndex(CallerTable.COLUMN_NUMBER); //$NON-NLS-1$
+        if (columnNumberIndex != -1)
+        {
+        	columnNumberWidth = colModel.getColumn(columnNumberIndex)
+                .getWidth();
+        }
+
+        int columnParticipantIndex = JFritz.getJframe().getCallerTable().getVisibleColumnIndex(CallerTable.COLUMN_PARTICIPANT); //$NON-NLS-1$
+        if (columnParticipantIndex != -1)
+        {
+        	columnParticipantWidth = colModel.getColumn(
+                columnParticipantIndex).getWidth();
+        }
+
+        if (columnNumberIndex != -1)
+        {
+        	columnWidth[columnNumberIndex] = (int) ((columnNumberWidth / (columnNumberWidth + columnParticipantWidth)) * restWidth);
+        }
+        if (columnParticipantIndex != -1)
+        {
+        	columnWidth[columnParticipantIndex] = (int) ((columnParticipantWidth / (columnNumberWidth + columnParticipantWidth)) * restWidth);
+        }
 
         int startPos = 0;
         for (int i = 0; i < columnCount; i++) {
@@ -201,6 +227,7 @@ public class PrintCallerList {
                 createDINA4PaperLandscape());
         report.setPageDefinition(pageDefinition);
 
+        Debug.debug("Creating column widths ..."); //$NON-NLS-1$
         createColumnWidths();
 
         report.setPageHeader(createPageHeader(report.getPageDefinition()
@@ -228,6 +255,7 @@ public class PrintCallerList {
         // Set Font size to 8
         Integer fontSize = Integer.valueOf(8);
 
+        Debug.debug("Adding fields ..."); //$NON-NLS-1$
         AbstractExpression exp = new AbstractExpression() {
             /**
 			 *
@@ -242,17 +270,18 @@ public class PrintCallerList {
                     return null;
                 CallType callType = (CallType) ob;
                 switch (callType.calltype) {
-                case CallType.CALLIN:
-                    return callInImage;
-                case CallType.CALLIN_FAILED:
-                    return callInFailedImage;
-                case CallType.CALLOUT:
-                    return callOutImage;
-                default:
-                    return null;
+	                case CallType.CALLIN:
+	                    return callInImage;
+	                case CallType.CALLIN_FAILED:
+	                    return callInFailedImage;
+	                case CallType.CALLOUT:
+	                    return callOutImage;
+	                default:
+	                    return null;
                 }
             }
         };
+        Debug.debug("Adding print field ..."); //$NON-NLS-1$
         exp.setName("print_type"); //$NON-NLS-1$
         report.addExpression(exp);
 
@@ -271,6 +300,7 @@ public class PrintCallerList {
                 return ob;
             }
         };
+        Debug.debug("Adding date field ..."); //$NON-NLS-1$
         exp.setName("print_date"); //$NON-NLS-1$
         report.addExpression(exp);
 
@@ -289,6 +319,7 @@ public class PrintCallerList {
                 return ob;
             }
         };
+        Debug.debug("Adding callbycall field ..."); //$NON-NLS-1$
         exp.setName("print_callbycall"); //$NON-NLS-1$
         report.addExpression(exp);
 
@@ -307,6 +338,7 @@ public class PrintCallerList {
                 return number.toString();
             }
         };
+        Debug.debug("Adding number field ..."); //$NON-NLS-1$
         exp.setName("print_number"); //$NON-NLS-1$
         report.addExpression(exp);
 
@@ -324,6 +356,7 @@ public class PrintCallerList {
                 return ((Person) person).getFullname();
             }
         };
+        Debug.debug("Adding name field ..."); //$NON-NLS-1$
         exp.setName("print_personname"); //$NON-NLS-1$
         report.addExpression(exp);
 
@@ -338,37 +371,11 @@ public class PrintCallerList {
                         JFritz.getCallerList().getColumnName(5));
                 if (obj == null)
                     return ""; //$NON-NLS-1$
-                String port = (String) obj;
-                String portStr = ""; //$NON-NLS-1$
-                if (port.equals("4")) //$NON-NLS-1$
-                    portStr = "ISDN"; //$NON-NLS-1$
-                else if (port.equals("36")) //$NON-NLS-1$
-                    portStr = "DATA ISDN"; //$NON-NLS-1$
-                else if (port.equals("0")) //$NON-NLS-1$
-                    portStr = "FON 1"; //$NON-NLS-1$
-                else if (port.equals("1")) //$NON-NLS-1$
-                    portStr = "FON 2"; //$NON-NLS-1$
-                else if (port.equals("2")) //$NON-NLS-1$
-                    portStr = "FON 3"; //$NON-NLS-1$
-                else if (port.equals("10")) //$NON-NLS-1$
-                    portStr = "DECT 1"; //$NON-NLS-1$
-                else if (port.equals("11")) //$NON-NLS-1$
-                    portStr = "DECT 2"; //$NON-NLS-1$
-                else if (port.equals("12")) //$NON-NLS-1$
-                    portStr = "DECT 3"; //$NON-NLS-1$
-                else if (port.equals("13")) //$NON-NLS-1$
-                    portStr = "DECT 4"; //$NON-NLS-1$
-                else if (port.equals("14")) //$NON-NLS-1$
-                    portStr = "DECT 5"; //$NON-NLS-1$
-                else if (port.equals("15")) //$NON-NLS-1$
-                    portStr = "DECT 6"; //$NON-NLS-1$
-                else if (port.equals("")) //$NON-NLS-1$
-                    portStr = ""; //$NON-NLS-1$
-                else
-                    portStr = "Port " + port; //$NON-NLS-1$
-                return portStr;
+                Port port = (Port) obj;
+                return port.getName();
             }
         };
+        Debug.debug("Adding port field ..."); //$NON-NLS-1$
         exp.setName("print_port"); //$NON-NLS-1$
         report.addExpression(exp);
 
@@ -387,6 +394,7 @@ public class PrintCallerList {
                 return route;
             }
         };
+        Debug.debug("Adding route field ..."); //$NON-NLS-1$
         exp.setName("print_route"); //$NON-NLS-1$
         report.addExpression(exp);
 
@@ -405,6 +413,7 @@ public class PrintCallerList {
                 return Integer.toString(duration / 60) + " min"; //$NON-NLS-1$
             }
         };
+        Debug.debug("Adding duration field ..."); //$NON-NLS-1$
         exp.setName("print_duration"); //$NON-NLS-1$
         report.addExpression(exp);
 
@@ -422,6 +431,7 @@ public class PrintCallerList {
                 return obj.toString();
             }
         };
+        Debug.debug("Adding comment field ..."); //$NON-NLS-1$
         exp.setName("print_comment"); //$NON-NLS-1$
         report.addExpression(exp);
 
@@ -459,7 +469,7 @@ public class PrintCallerList {
 	                	}
 	                	else
 	                	{
-	                		return imageIcon;
+	                		return imageIcon.getImage();
 	                	}
 	                }
 	                else
@@ -469,9 +479,11 @@ public class PrintCallerList {
                 }
             }
         };
+        Debug.debug("Adding picture field ..."); //$NON-NLS-1$
         exp.setName("print_picture"); //$NON-NLS-1$
         report.addExpression(exp);
 
+        Debug.debug("Creating renderer ..."); //$NON-NLS-1$
         for (int i = 0; i < JFritz.getJframe().getCallerTable()
                 .getColumnCount(); i++) {
 
@@ -502,7 +514,7 @@ public class PrintCallerList {
                 report.getItemBand().addElement(factory.createElement());
             } else if (columnName.equals(CallerTable.COLUMN_PICTURE)) {
             	ImageElement imageElement = ImageFieldElementFactory.createImageDataRowElement("Picture-Element",
-            			new Rectangle2D.Float(columnStart[i] + 2, 2, 40, 50), "print_picture", true, false);
+            			new Rectangle2D.Float(columnStart[i] + 2, 2, 45, 50), "print_picture", true, false);
             	imageElement.setDynamicContent(false);
             	report.getItemBand().addElement(imageElement);
             } else {
@@ -536,8 +548,9 @@ public class PrintCallerList {
             }
 
             // Rand zeichnen
+            Debug.debug("Print border ..."); //$NON-NLS-1$
             Rectangle2D.Float border;
-            if (JFritzUtils.parseBoolean(Main.getProperty("option.showPictureColumn")))
+            if (JFritzUtils.parseBoolean(Main.getProperty("option.showCallerListColumn."+CallerTable.COLUMN_PICTURE)))
             {
             	border = new Rectangle2D.Float(columnStart[i], 0,
                         columnWidth[i], 55);
@@ -558,7 +571,7 @@ public class PrintCallerList {
     }
 
     public void print() {
-        Debug.info("Start report creation"); //$NON-NLS-1$
+        Debug.info("Start print report creation"); //$NON-NLS-1$
         JFreeReport report = createReportDefinition();
         report.setData(JFritz.getCallerList());
         try {

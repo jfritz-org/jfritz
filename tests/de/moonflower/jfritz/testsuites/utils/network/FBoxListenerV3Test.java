@@ -10,6 +10,7 @@ import java.util.Locale;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.box.FritzBox;
 import de.moonflower.jfritz.callmonitor.CallMonitorList;
 import de.moonflower.jfritz.callmonitor.FBoxCallMonitorV3;
 import de.moonflower.jfritz.struct.Call;
@@ -19,7 +20,9 @@ import junit.framework.TestCase;
 
 public class FBoxListenerV3Test extends TestCase {
 
-    private FBoxCallMonitorV3 fBox;
+	private FritzBox fritzBox;
+
+    private FBoxCallMonitorV3 fBoxCallMonitor;
 
     public JFritz jfritz;
 
@@ -33,15 +36,16 @@ public class FBoxListenerV3Test extends TestCase {
 		args[0] = "-q";
 		Main main = new Main(args);
         jfritz = main.getJfritz();
+        fritzBox = new FritzBox("Name", "Description", "192.168.178.1", "80", "", null);
     }
 
     public void setUp() throws Exception {
         super.setUp();
-        fBox = new FBoxCallMonitorV3();
+        fBoxCallMonitor = new FBoxCallMonitorV3(fritzBox, null);
     }
 
     public void tearDown() throws Exception {
-        fBox = null;
+        fBoxCallMonitor = null;
         super.tearDown();
     }
 
@@ -56,7 +60,7 @@ public class FBoxListenerV3Test extends TestCase {
      *      - call route
      */
     public void testIncomingCall() {
-        fBox.parseOutput("09.09.06 15:59:41;CALL;0;0;1234567;01237654321;SIP0", false);
+        fBoxCallMonitor.parseOutput("09.09.06 15:59:41;CALL;0;0;1234567;01237654321;SIP0", false);
         assertEquals(CallMonitorList.PENDING, JFritz.getCallMonitorList().getCallState(0));
 
         Call call = JFritz.getCallMonitorList().getCall(0);
@@ -83,7 +87,7 @@ public class FBoxListenerV3Test extends TestCase {
      *      - call route
      */
     public void testIncomingCallWithSemicolon() {
-        fBox.parseOutput("09.09.06 15:59:41;CALL;0;0;1234567;01237654321;SIP0;", false);
+        fBoxCallMonitor.parseOutput("09.09.06 15:59:41;CALL;0;0;1234567;01237654321;SIP0;", false);
         assertEquals(CallMonitorList.PENDING, JFritz.getCallMonitorList().getCallState(0));
 
         Call call = JFritz.getCallMonitorList().getCall(0);
@@ -109,7 +113,7 @@ public class FBoxListenerV3Test extends TestCase {
      *      - call route
      */
     public void testOutgoingCall() {
-        fBox.parseOutput("09.09.06 16:03:55;RING;2;01781231234;4271960;POTS", false);
+        fBoxCallMonitor.parseOutput("09.09.06 16:03:55;RING;2;01781231234;4271960;POTS", false);
         assertEquals(CallMonitorList.PENDING, JFritz.getCallMonitorList().getCallState(2));
         Call call = JFritz.getCallMonitorList().getCall(2);
         try {
@@ -132,7 +136,7 @@ public class FBoxListenerV3Test extends TestCase {
      *      - call route
      */
     public void testOutgoingCallWithSemicolon() {
-        fBox.parseOutput("09.09.06 16:03:55;RING;2;01781231234;4271960;POTS;", false);
+        fBoxCallMonitor.parseOutput("09.09.06 16:03:55;RING;2;01781231234;4271960;POTS;", false);
         assertEquals(CallMonitorList.PENDING, JFritz.getCallMonitorList().getCallState(2));
         Call call = JFritz.getCallMonitorList().getCall(2);
         try {
@@ -156,10 +160,10 @@ public class FBoxListenerV3Test extends TestCase {
      *      - call route
      */
     public void testEstablishIncomingCall() {
-        fBox.parseOutput("09.09.06 16:03:00;RING;2;01781231234;4271960;POTS;", false);
+        fBoxCallMonitor.parseOutput("09.09.06 16:03:00;RING;2;01781231234;4271960;POTS;", false);
         assertEquals(CallMonitorList.PENDING, JFritz.getCallMonitorList().getCallState(2));
 
-        fBox.parseOutput("09.09.06 16:03:10;CONNECT;2;4;01781231234;");
+        fBoxCallMonitor.parseOutput("09.09.06 16:03:10;CONNECT;2;4;01781231234;");
         assertEquals(CallMonitorList.ESTABLISHED, JFritz.getCallMonitorList().getCallState(2));
 
         Call call = JFritz.getCallMonitorList().getCall(2);
@@ -172,7 +176,7 @@ public class FBoxListenerV3Test extends TestCase {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        fBox.parseOutput("09.09.06 16:05:00;DISCONNECT;2;110;");
+        fBoxCallMonitor.parseOutput("09.09.06 16:05:00;DISCONNECT;2;110;");
         assertEquals(CallMonitorList.NONE, JFritz.getCallMonitorList().getCallState(2));
     }
 
@@ -187,10 +191,10 @@ public class FBoxListenerV3Test extends TestCase {
      *      - call route
      */
     public void testEstablishOutgoingCall() {
-        fBox.parseOutput("09.09.06 16:03:00;CALL;2;4;4271960;01781231234;POTS;", false);
+        fBoxCallMonitor.parseOutput("09.09.06 16:03:00;CALL;2;4;4271960;01781231234;POTS;", false);
         assertEquals(CallMonitorList.PENDING, JFritz.getCallMonitorList().getCallState(2));
 
-        fBox.parseOutput("09.09.06 16:03:10;CONNECT;2;4;01781231234;");
+        fBoxCallMonitor.parseOutput("09.09.06 16:03:10;CONNECT;2;4;01781231234;");
         assertEquals(CallMonitorList.ESTABLISHED, JFritz.getCallMonitorList().getCallState(2));
 
         Call call = JFritz.getCallMonitorList().getCall(2);
@@ -203,7 +207,7 @@ public class FBoxListenerV3Test extends TestCase {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        fBox.parseOutput("09.09.06 16:05:00;DISCONNECT;2;110;");
+        fBoxCallMonitor.parseOutput("09.09.06 16:05:00;DISCONNECT;2;110;");
         assertEquals(CallMonitorList.NONE, JFritz.getCallMonitorList().getCallState(2));
     }
 
@@ -218,16 +222,16 @@ public class FBoxListenerV3Test extends TestCase {
      *      - call route
      */
     public void testParseMultipleCalls() {
-        fBox.parseOutput("09.09.06 15:59:41;CALL;0;0;1234567;01237654321;SIP0", false);
+        fBoxCallMonitor.parseOutput("09.09.06 15:59:41;CALL;0;0;1234567;01237654321;SIP0", false);
         assertEquals(CallMonitorList.PENDING, JFritz.getCallMonitorList().getCallState(0));
 
-        fBox.parseOutput("13.04.03 09:10:13;CALL;1;4;7654321;01231234567;ISDN", false);
+        fBoxCallMonitor.parseOutput("13.04.03 09:10:13;CALL;1;4;7654321;01231234567;ISDN", false);
         assertEquals(CallMonitorList.PENDING, JFritz.getCallMonitorList().getCallState(1));
 
-        fBox.parseOutput("13.04.03 09:10:13;CONNECT;1;4;01231234567;", false);
+        fBoxCallMonitor.parseOutput("13.04.03 09:10:13;CONNECT;1;4;01231234567;", false);
         assertEquals(CallMonitorList.ESTABLISHED, JFritz.getCallMonitorList().getCallState(1));
 
-        fBox.parseOutput("09.09.06 16:03:55;RING;2;01781231234;4271960;POTS", false);
+        fBoxCallMonitor.parseOutput("09.09.06 16:03:55;RING;2;01781231234;4271960;POTS", false);
         assertEquals(CallMonitorList.PENDING, JFritz.getCallMonitorList().getCallState(2));
 
 
@@ -264,11 +268,11 @@ public class FBoxListenerV3Test extends TestCase {
             e.printStackTrace();
         }
 
-        fBox.parseOutput("09.09.06 16:03:08;DISCONNECT;0;156;", false);
+        fBoxCallMonitor.parseOutput("09.09.06 16:03:08;DISCONNECT;0;156;", false);
         assertEquals(JFritz.getCallMonitorList().getPendingSize(), 1);
-        fBox.parseOutput("13.04.03 09:40:13;DISCONNECT;2;310;", false);
+        fBoxCallMonitor.parseOutput("13.04.03 09:40:13;DISCONNECT;2;310;", false);
         assertEquals(JFritz.getCallMonitorList().getPendingSize(), 0);
-        fBox.parseOutput("13.04.03 09:40:13;DISCONNECT;1;960;", false);
+        fBoxCallMonitor.parseOutput("13.04.03 09:40:13;DISCONNECT;1;960;", false);
         assertEquals(JFritz.getCallMonitorList().getPendingSize(), 0);
     }
 

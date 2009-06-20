@@ -14,7 +14,6 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.Vector;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -35,27 +34,19 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
+import de.moonflower.jfritz.box.BoxCommunication;
+import de.moonflower.jfritz.box.FritzBox;
 import de.moonflower.jfritz.callerlist.CallerList;
-import de.moonflower.jfritz.callmonitor.CallMonitorInterface;
 import de.moonflower.jfritz.callmonitor.CallMonitorList;
-import de.moonflower.jfritz.callmonitor.CallmessageCallMonitor;
 import de.moonflower.jfritz.callmonitor.DisconnectMonitor;
 import de.moonflower.jfritz.callmonitor.DisplayCallsMonitor;
-import de.moonflower.jfritz.callmonitor.FBoxCallMonitorV1;
-import de.moonflower.jfritz.callmonitor.FBoxCallMonitorV3;
-import de.moonflower.jfritz.callmonitor.SyslogCallMonitor;
-import de.moonflower.jfritz.callmonitor.TelnetCallMonitor;
-import de.moonflower.jfritz.callmonitor.YACCallMonitor;
 import de.moonflower.jfritz.dialogs.quickdial.QuickDials;
 import de.moonflower.jfritz.dialogs.simple.MessageDlg;
-import de.moonflower.jfritz.dialogs.sip.SipProviderTableModel;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
-import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.network.ClientLoginsTableModel;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.phonebook.PhoneBook;
-import de.moonflower.jfritz.struct.FritzBox;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.tray.AWTTray;
 import de.moonflower.jfritz.tray.JDICTray;
@@ -67,8 +58,6 @@ import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.StatusListener;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
-import de.moonflower.jfritz.utils.network.SSDPPacket;
-import de.moonflower.jfritz.utils.network.SSDPdiscoverThread;
 
 /**
  *
@@ -87,23 +76,15 @@ public final class JFritz implements  StatusListener, ItemListener {
 
 	public final static String PHONEBOOK_FILE = "jfritz.phonebook.xml"; //$NON-NLS-1$
 
-	public final static String SIPPROVIDER_FILE = "jfritz.sipprovider.xml"; //$NON-NLS-1$
-
 	public final static String CLIENT_SETTINGS_FILE = "jfritz.clientsettings.xml"; //$NON-NLS-1$
 
 	public final static String CALLS_CSV_FILE = "calls.csv"; //$NON-NLS-1$
 
 	public final static String PHONEBOOK_CSV_FILE = "contacts.csv"; //$NON-NLS-1$
 
-	public final static int SSDP_TIMEOUT = 1000;
-
-	public final static int SSDP_MAX_BOXES = 3;
-
 	private static Tray tray;
 
 	private static JFritzWindow jframe;
-
-	private static SSDPdiscoverThread ssdpthread;
 
 	private static CallerList callerlist;
 
@@ -111,19 +92,13 @@ public final class JFritz implements  StatusListener, ItemListener {
 
 	private static PhoneBook phonebook;
 
-	private static SipProviderTableModel sipprovider;
-
 	private static URL ringSound, callSound;
-
-	private static CallMonitorInterface callMonitor = null;
 
 	private static String HostOS = "other"; //$NON-NLS-1$
 
 	private static WatchdogThread watchdog;
 
 	private static Timer watchdogTimer;
-
-	private static FritzBox fritzBox;
 
 	private static QuickDials quickDials;
 
@@ -136,6 +111,8 @@ public final class JFritz implements  StatusListener, ItemListener {
 	private static boolean shutdownInvoked = false;
 
 	private static boolean wizardCanceled = false;
+
+	private static BoxCommunication boxCommunication;
 
 	/**
 	 * Constructs JFritz object
@@ -203,10 +180,14 @@ public final class JFritz implements  StatusListener, ItemListener {
 	{
 		int result = 0;
 		Exception ex = null;
-		fritzBox = new FritzBox(Main
-				.getProperty("box.address"), Encryption //$NON-NLS-1$,  //$NON-NLS-2$
-				.decrypt(Main.getProperty("box.password")), //$NON-NLS-1$
-				Main.getProperty("box.port"), ex); //$NON-NLS-1$
+
+		FritzBox fritzBox = new FritzBox("Fritz!Box",
+									     "My Fritz!Box",
+										 Main.getProperty("box.address"),
+										 Main.getProperty("box.port"),
+										 Encryption.decrypt(Main.getProperty("box.password")),
+										 ex);
+
 		if ( ex != null)
 		{
 			try {
@@ -216,31 +197,30 @@ public final class JFritz implements  StatusListener, ItemListener {
 				Debug.error(e.toString());
 			}
 		}
+		boxCommunication = new BoxCommunication();
+		boxCommunication.addBox(fritzBox);
+
+		// if a mac address is set and this box has a different mac address, ask user
+		// if communication to this box should be allowed.
 		String macStr = Main.getProperty("box.mac");
-		if ( fritzBox.getFirmware() != null )
+		if ((!("".equals(macStr))
+		&& ( !("".equals(fritzBox.getMacAddress())))
+		&& (fritzBox.getMacAddress() != null)
+		&& ( !(macStr.equals(fritzBox.getMacAddress())))))
 		{
-			if ( (!macStr.equals("")) && (!fritzBox.getFirmware().getMacAddress().equals("")) && (!fritzBox.getFirmware().getMacAddress().equals(macStr)))
-			{
-				int answer = JOptionPane.showConfirmDialog(null,
-						Main.getMessage("new_fritzbox") + "\n" //$NON-NLS-1$
-								+ Main.getMessage("accept_fritzbox_communication"), //$NON-NLS-1$
-						Main.getMessage("information"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
-				if (answer == JOptionPane.YES_OPTION) {
-					Debug.info("New FritzBox detected, user decided to accept connection."); //$NON-NLS-1$
-					result = 0;
-				} else {
-					Debug.info("New FritzBox detected, user decided to prohibit connection."); //$NON-NLS-1$
-					result = -1;
-				}
+			int answer = JOptionPane.showConfirmDialog(null,
+					Main.getMessage("new_fritzbox") + "\n" //$NON-NLS-1$
+							+ Main.getMessage("accept_fritzbox_communication"), //$NON-NLS-1$
+					Main.getMessage("information"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
+			if (answer == JOptionPane.YES_OPTION) {
+				Debug.info("New FritzBox detected, user decided to accept connection."); //$NON-NLS-1$
+				result = 0;
+			} else {
+				Debug.info("New FritzBox detected, user decided to prohibit connection."); //$NON-NLS-1$
+				result = -1;
 			}
 		}
 		return result;
-	}
-
-	public void initSipProvider()
-	{
-		sipprovider = new SipProviderTableModel();
-		sipprovider.loadFromXMLFile(Main.SAVE_DIR + SIPPROVIDER_FILE);
 	}
 
 	public void initQuickDials()
@@ -309,26 +289,6 @@ public final class JFritz implements  StatusListener, ItemListener {
 			}
 		}
 		jframe.checkStartOptions();
-		//FIXME ich nehme mal an SSDPdiscover macht irgendwas mit der Fritzbox? => nach Fritzbox verschieben
-		//only do the search if jfritz is not running as a client and using the call list from server
-		if (JFritzUtils.parseBoolean(Main.getProperty("option.useSSDP"))//$NON-NLS-1$
-				&& !(Main.getProperty("network.type").equals("2")
-						&& Boolean.parseBoolean(Main.getProperty("option.clientCallList"))) ) {//$NON-NLS-1$
-			Debug.info("Searching for  FritzBox per UPnP / SSDP");//$NON-NLS-1$
-
-			if (!shutdownInvoked)
-			{
-				ssdpthread = new SSDPdiscoverThread(SSDP_TIMEOUT);
-				ssdpthread.getStatusBarController().addStatusBarListener(this);
-				ssdpthread.start();
-				try {
-					ssdpthread.join();//FIXME start a thread just to call join in the next line?
-				} catch (InterruptedException ie) {
-		        	Thread.currentThread().interrupt();
-				}
-	//			ssdpthread.interrupt();
-			}
-		}
 
 		if (!shutdownInvoked && showConfWizard) {
 			Debug.info("Presenting user with the configuration dialog");
@@ -350,11 +310,15 @@ public final class JFritz implements  StatusListener, ItemListener {
 			}
 			startWatchdog();
 		}
+
+		boxCommunication.registerCallMonitorStateListener(jframe);
+		boxCommunication.registerCallListProgressListener(jframe.getCallerListPanel());
+		boxCommunication.registerCallListProgressListener(getCallerList());
 	}
 
 	/**
-	 * This constructor is used for JUnit based testing suites Only the default
-	 * settings are loaded for this jfritz object
+	 * This constructor is used for JUnit based testing suites
+	 * Only the default settings are loaded for this jfritz object
 	 *
 	 * @author brian jensen
 	 * @throws IOException
@@ -375,12 +339,15 @@ public final class JFritz implements  StatusListener, ItemListener {
 		loadNumberSettings();
 
 		Exception ex = null;
-		fritzBox = new FritzBox(Main
-				.getProperty("box.address"), Encryption //$NON-NLS-1$, //$NON-NLS-2$
-				.decrypt(Main.getProperty("box.password")), //$NON-NLS-1$
-				Main.getProperty("box.port"), ex); // //$NON-NLS-1$
-		// $NON-NLS-2$
-		if ( ex != null )
+
+		FritzBox fritzBox = new FritzBox("Fritz!Box",
+									     "My Fritz!Box",
+										 Main.getProperty("box.address"),
+										 Main.getProperty("box.port"),
+										 Encryption.decrypt(Main.getProperty("box.password")),
+										 ex);
+
+		if ( ex != null)
 		{
 			try {
 				throw ex;
@@ -389,8 +356,8 @@ public final class JFritz implements  StatusListener, ItemListener {
 				Debug.error(e.toString());
 			}
 		}
-		sipprovider = new SipProviderTableModel();
-		// sipprovider.loadFromXMLFile(SAVE_DIR + SIPPROVIDER_FILE);
+		boxCommunication = new BoxCommunication();
+		boxCommunication.addBox(fritzBox);
 
 		callerlist = new CallerList();
 		// callerlist.loadFromXMLFile(SAVE_DIR + CALLS_FILE);
@@ -631,134 +598,8 @@ public final class JFritz implements  StatusListener, ItemListener {
 		return jframe;
 	}
 
-	/**
-	 * @return Returns the fritzbox devices.
-	 */
-	public static final Vector<SSDPPacket> getDevices() {
-		//avoid using the ssdp thread if jfritz is running as a client and using the call list from server
-		if (JFritzUtils.parseBoolean(Main.getProperty("option.useSSDP")) //$NON-NLS-1$
-			&& !(Main.getProperty("network.type").equals("2")
-						&& Boolean.parseBoolean(Main.getProperty("option.clientCallList")))) { //$NON-NLS-1$
-			try {
-				ssdpthread.join();
-			} catch (InterruptedException e) {
-			}
-			return ssdpthread.getDevices();
-		} else {
-			Debug.netMsg("jfritz is configured as a client, canceling box detection");
-			return null;
-		}
-	}
-
-	public void startChosenCallMonitor(boolean showErrorMessage) {
-		if (!shutdownInvoked)
-		{
-			if(Main.getProperty("option.clientCallMonitor").equals("true")
-				 && NetworkStateMonitor.isConnectedToServer()){
-
-				return;
-			}
-
-
-			switch (Integer.parseInt(Main.getProperty("option.callMonitorType"))) //$NON-NLS-1$
-			{
-				case 1: {
-					try {
-						if (JFritz.getFritzBox().checkValidFirmware()) {
-							FritzBoxFirmware currentFirm = JFritz.getFritzBox()
-									.getFirmware();
-							if ((currentFirm.getMajorFirmwareVersion() == 3)
-									&& (currentFirm.getMinorFirmwareVersion() < 96)) {
-								Debug.errDlg(Main
-										.getMessage("callmonitor_error_wrong_firmware")); //$NON-NLS-1$
-								getJframe().getMonitorButton().setSelected(false);
-								getJframe().setCallMonitorButtonPushed(true);
-								getJframe().setCallMonitorConnectedStatus();
-							} else {
-								if ((currentFirm.getMajorFirmwareVersion() >= 4)
-										&& (currentFirm.getMinorFirmwareVersion() >= 3)) {
-									JFritz.setCallMonitor(new FBoxCallMonitorV3());
-								} else {
-									JFritz.setCallMonitor(new FBoxCallMonitorV1());
-								}
-								getJframe().setCallMonitorButtonPushed(true);
-								getJframe().setCallMonitorConnectedStatus();
-							}
-						}
-					} catch (WrongPasswordException e1) {
-						JFritz.setCallMonitor(new FBoxCallMonitorV3());
-						getJframe().setCallMonitorDisconnectedStatus();
-						if (showErrorMessage)
-						{
-							JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
-						}
-					} catch (IOException e1) {
-						JFritz.setCallMonitor(new FBoxCallMonitorV3());
-						getJframe().setCallMonitorDisconnectedStatus();
-						if (showErrorMessage)
-						{
-							JFritz.errorMsg(Main.getMessage("box.not_found")); //$NON-NLS-1$
-						}
-					} catch (InvalidFirmwareException e1) {
-						JFritz.setCallMonitor(new FBoxCallMonitorV3());
-						getJframe().setCallMonitorDisconnectedStatus();
-						if (showErrorMessage)
-						{
-							JFritz.errorMsg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
-						}
-					}
-					break;
-				}
-				case 2: {
-					JFritz.setCallMonitor(new TelnetCallMonitor(this));
-					getJframe().setCallMonitorButtonPushed(true);
-					break;
-				}
-				case 3: {
-					JFritz.setCallMonitor(new SyslogCallMonitor(this));
-					getJframe().setCallMonitorButtonPushed(true);
-					break;
-				}
-				case 4: {
-					JFritz.setCallMonitor(new YACCallMonitor(Integer.parseInt(Main
-							.getProperty("option.yacport")))); //$NON-NLS-1$
-					getJframe().setCallMonitorButtonPushed(true);
-					break;
-				}
-				case 5: {
-					JFritz.setCallMonitor(new CallmessageCallMonitor(Integer
-							.parseInt(Main.getProperty("option.callmessageport")))); //$NON-NLS-1$
-					getJframe().setCallMonitorButtonPushed(true);
-					break;
-				}
-			}
-		}
-	}
-
-	public static void stopCallMonitor() {
-		if (callMonitor != null) {
-			callMonitor.stopCallMonitor();
-			// Let buttons enable start of callMonitor
-			callMonitor = null;
-		}
-		getJframe().setCallMonitorButtonPushed(false);
-		getJframe().setCallMonitorDisconnectedStatus();
-	}
-
-	public static CallMonitorInterface getCallMonitor() {
-		return callMonitor;
-	}
-
-	public static void setCallMonitor(CallMonitorInterface cm) {
-		callMonitor = cm;
-	}
-
 	public static String runsOn() {
 		return HostOS;
-	}
-
-	public static SipProviderTableModel getSIPProviderTableModel() {
-		return sipprovider;
 	}
 
 	/**
@@ -771,7 +612,7 @@ public final class JFritz implements  StatusListener, ItemListener {
 			int interval = 5; // seconds
 			int factor = 2; // factor how many times a STANDBY will be checked
 			watchdogTimer = new Timer("Watchdog-Timer", true);
-			watchdog = new WatchdogThread(interval, factor, this);
+			watchdog = new WatchdogThread(interval, factor);
 			watchdogTimer.schedule(new TimerTask() {
 				public void run() {
 					if (shutdownInvoked)
@@ -868,12 +709,6 @@ public final class JFritz implements  StatusListener, ItemListener {
 		Debug.info("Stopping reverse lookup");
 		ReverseLookup.terminate();
 
-		Debug.info("Stopping callMonitor"); //$NON-NLS-1$
-		if (callMonitor != null)
-		{
-			callMonitor.stopCallMonitor();
-		}
-
 		if ( (Main.systraySupport) && (tray != null) )
 		{
 			Debug.info("Removing systray"); //$NON-NLS-1$
@@ -929,15 +764,6 @@ public final class JFritz implements  StatusListener, ItemListener {
 			tray.remove();
 			createTrayMenu();
 		}
-	}
-
-	/**
-	 * Returns reference on current FritzBox-class
-	 *
-	 * @return
-	 */
-	public static FritzBox getFritzBox() {
-		return fritzBox;
 	}
 
 	public static void loadNumberSettings() {
@@ -1013,5 +839,10 @@ public final class JFritz implements  StatusListener, ItemListener {
 	public static boolean isWizardCanceled()
 	{
 		return wizardCanceled;
+	}
+
+	public static BoxCommunication getBoxCommunication()
+	{
+		return boxCommunication;
 	}
 }

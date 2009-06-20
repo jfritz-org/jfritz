@@ -3,6 +3,7 @@ package de.moonflower.jfritz.network;
 import java.io.Serializable;
 
 import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.Port;
 
 /**
  * This class is used to ask the server to perfrom an external action.
@@ -23,7 +24,7 @@ public class ClientActionRequest implements Serializable {
 
 	public ActionType action;
 
-	public String port;
+	public Port port;
 
 	public String siteName;
 

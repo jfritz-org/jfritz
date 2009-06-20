@@ -4,9 +4,13 @@ import java.util.Vector;
 
 import javax.swing.table.AbstractTableModel;
 
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.JFritzTableColumn;
 
 public class ColumnTableModel extends AbstractTableModel {
+	private final String columnNames[] = {
+			Main.getMessage("visible"), 	//$NON-NLS-1$
+			Main.getMessage("column") }; 		//$NON-NLS-1$
 
 	private static final long serialVersionUID = 5141550318674410834L;
 
@@ -94,5 +98,12 @@ public class ColumnTableModel extends AbstractTableModel {
 	public void insertElementAt(JFritzTableColumn col, int index)
 	{
 		columns.insertElementAt(col, index);
+	}
+
+	/**
+	 * @return Returns the column names
+	 */
+	public String getColumnName(int column) {
+		return columnNames[column];
 	}
 }

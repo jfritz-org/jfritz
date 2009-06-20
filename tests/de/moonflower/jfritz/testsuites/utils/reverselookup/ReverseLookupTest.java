@@ -19,6 +19,7 @@ import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
  */
 public class ReverseLookupTest extends TestCase {
 
+	private boolean testLuxemburgFailed = false;
 	private boolean testItalyFailed = false;
 	private boolean testSwitzerlandFailed = false;
 	private boolean testUsaFailed = false;
@@ -34,6 +35,49 @@ public class ReverseLookupTest extends TestCase {
 		Main.loadProperties();
 		Main.loadMessages(new Locale("de_DE"));
 		JFritz.loadNumberSettings();
+	}
+
+	/**
+	 * This method tests the reverse lookup for several luxemburg phone numbers.
+	 * IT IS NOT ALLOWED TO USE ANY OF THIS INFORMATION IN THIS FILE FOR OTHER PURPOSES THAN TESTING.
+	 */
+	public void testReverseLookupLuxemburg()
+	{
+		// CheckEntry(firstName, lastName, street, postalCode, city);
+		CheckEntry entry;
+		PhoneNumber checkNum;
+
+		checkNum = new PhoneNumber("+35247921", false);
+		entry = new CheckEntry(checkNum, "Headquarters", "ArcelorMittal", "19 AV. DE LA LIBERTE", "2930", "LUXEMBOURG");
+		ReverseLookup.lookup(checkNum, entry, true);
+		testLuxemburgFailed = checkEntry(entry, testLuxemburgFailed);
+
+		checkNum = new PhoneNumber("+352225533", false);
+		entry = new CheckEntry(checkNum, "Immobilière Luxembourgeoise Immosol Sàrl", "Agence", "14 AV. DE LA LIBERTE", "1930", "LUXEMBOURG");
+		ReverseLookup.lookup(checkNum, entry, true);
+		testLuxemburgFailed = checkEntry(entry, testLuxemburgFailed);
+
+		checkNum = new PhoneNumber("+35226203026", false);
+		entry = new CheckEntry(checkNum, "LUXEMBOURG S.A R.L.", "PEARLE", "18 R. NOTRE-DAME", "2240", "LUXEMBOURG");
+		ReverseLookup.lookup(checkNum, entry, true);
+		testLuxemburgFailed = checkEntry(entry, testLuxemburgFailed);
+
+		checkNum = new PhoneNumber("+3523279011", false);
+		entry = new CheckEntry(checkNum, "CASTERMANS SARL", "GARAGE", "175 RTE DE LUXEMBOURG", "7540", "ROLLINGEN");
+		ReverseLookup.lookup(checkNum, entry, true);
+		testLuxemburgFailed = checkEntry(entry, testLuxemburgFailed);
+
+		checkNum = new PhoneNumber("+352220335", false);
+		entry = new CheckEntry(checkNum, "Luxembourgeoise de Crémation SA", "Société", "1 R. DES BENEDICTINS", "6414", "ECHTERNACH");
+		ReverseLookup.lookup(checkNum, entry, true);
+		testLuxemburgFailed = checkEntry(entry, testLuxemburgFailed);
+
+		checkNum = new PhoneNumber("+352788331", false);
+		entry = new CheckEntry(checkNum, "S.A R.L.", "RISCHETTE", "4 RTE DE LUXEMBOURG", "6130", "JUNGLINSTER");
+		ReverseLookup.lookup(checkNum, entry, true);
+		testLuxemburgFailed = checkEntry(entry, testLuxemburgFailed);
+
+		assertFalse(testLuxemburgFailed);
 	}
 
 	/**
@@ -94,11 +138,6 @@ public class ReverseLookupTest extends TestCase {
 		ReverseLookup.lookup(checkNum, entry, true);
 		testSwitzerlandFailed = checkEntry(entry, testSwitzerlandFailed);
 
-		checkNum = new PhoneNumber("+41442425243", false);
-		entry = new CheckEntry(checkNum, "Martha (-Müller)", "Hauser", "Werdgässchen 15", "8004", "Zürich");
-		ReverseLookup.lookup(checkNum, entry, true);
-		testSwitzerlandFailed = checkEntry(entry, testSwitzerlandFailed);
-
 		checkNum = new PhoneNumber("+41447712727", false);
 		entry = new CheckEntry(checkNum, "GmbH", "Cytracon", "Fabrikhof 3", "8134", "Adliswil");
 		ReverseLookup.lookup(checkNum, entry, true);
@@ -133,12 +172,12 @@ public class ReverseLookupTest extends TestCase {
 		PhoneNumber checkNum;
 
 		checkNum = new PhoneNumber("+19736350430", false);
-		entry = new CheckEntry(checkNum, "S Levison", "Adam", "602 Sun Valley Way", "07932", "Florham Park");
+		entry = new CheckEntry(checkNum, "S Levison", "Adam", "602 Sun Valley Way", "07932-3005", "Florham Park");
 		ReverseLookup.lookup(checkNum, entry, true);
 		testUsaFailed = checkEntry(entry, testUsaFailed);
 
 		checkNum = new PhoneNumber("+13202304187", false);
-		entry = new CheckEntry(checkNum, "Engelen", "J", "1349 15th Ave S", "56301-5439", "Saint Cloud");
+		entry = new CheckEntry(checkNum, "Engelen", "Jeff", "1349 15th Ave S", "56301-5439", "Saint Cloud");
 		ReverseLookup.lookup(checkNum, entry, true);
 		testUsaFailed = checkEntry(entry, testUsaFailed);
 

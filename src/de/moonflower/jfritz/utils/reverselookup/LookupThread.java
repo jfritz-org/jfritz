@@ -634,7 +634,18 @@ public class LookupThread extends Thread {
 			return p;
 		}
 
-		return new Person("not found", "Person");
+		if (foundPersons.size() > 0)
+		{
+			// return first found person
+			return foundPersons.get(0);
+		}
+		else
+		{
+			// return new empty person
+			Person p = new Person();
+			p.addNumber(number.getAreaNumber(), "home"); //$NON-NLS-1$
+			return p;
+		}
 	}
 
 }

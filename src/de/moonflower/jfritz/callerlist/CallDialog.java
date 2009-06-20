@@ -33,6 +33,7 @@ import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.CallPendingDialog;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.NoticeDialog;
@@ -46,7 +47,7 @@ public class CallDialog extends JDialog implements ActionListener {
 
 	private Vector<PhoneNumber> numbers;
 
-	private JComboBox port;
+	private JComboBox portComboBox;
 
 	JButton okButton, cancelButton;
 
@@ -97,7 +98,6 @@ public class CallDialog extends JDialog implements ActionListener {
                 "legalInfo.telephoneCharges", //$NON-NLS-1$
 				Main.getMessage("telefonCharges_Warning")); //$NON-NLS-1$
 
-		info.setVisible(true);
 		info.dispose();
 		if (info.isAccepted()) {
 			super.dialogInit();
@@ -126,7 +126,7 @@ public class CallDialog extends JDialog implements ActionListener {
 			//make the number editable
 			if (this.numbers.size() == 1) { // if only one number -> use editable JTextField
 				cboNumber = new JTextField((numbers.elementAt(0)).getAreaNumber());
-				((JTextField)cboNumber).setPreferredSize(new Dimension(100, 20));
+				((JTextField)cboNumber).setPreferredSize(new Dimension(200, 20));
 			} else {// if more then one number -> use editable JComboBox
 				cboNumber = new JComboBox();
 				for (int i = 0; i < this.numbers.size(); i++) {
@@ -144,18 +144,24 @@ public class CallDialog extends JDialog implements ActionListener {
 			label = new JLabel(Main.getMessage("extension")+": "); //$NON-NLS-1$,  //$NON-NLS-2$
 			topPane.add(label, c);
 
-			port = new JComboBox();
+			portComboBox = new JComboBox();
 
-			String[] ports = NetworkStateMonitor.getAvailablePorts();
+			Vector<Port> ports = NetworkStateMonitor.getAvailablePorts();
 
 			//make sure the firmware was correctly detected
 			if(ports != null){
-				for(int i=0; i < ports.length; i++)
-					port.addItem(ports[i]);
+				for(int i=0; i < ports.size(); i++)
+				{
+					if ((!"".equals(ports.get(i).getDialPort()))
+						&& (!"-1".equals(ports.get(i).getDialPort())))
+					{
+						portComboBox.addItem(ports.get(i));
+					}
+				}
 			}
 
-            port.setPreferredSize(new Dimension(100, 20));
-			topPane.add(port, c);
+            portComboBox.setPreferredSize(new Dimension(200, 20));
+			topPane.add(portComboBox, c);
 
 			// Bottom Pane
 			okButton = new JButton(Main.getMessage("call")); //$NON-NLS-1$
@@ -186,11 +192,27 @@ public class CallDialog extends JDialog implements ActionListener {
 			getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeKeyStroke, "ESCAPE"); //$NON-NLS-1$
 			getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
 
-            port.setSelectedIndex(Integer.parseInt(Main.getProperty("calldialog.lastport")));
+			if (portComboBox.getItemCount() > 0)
+			{
+				try {
+					int lastPort = Integer.parseInt(Main.getStateProperty("calldialog.lastport"));
+					if (portComboBox.getItemCount() > lastPort)
+					{
+						portComboBox.setSelectedIndex(lastPort);
+					}
+					else
+					{
+						portComboBox.setSelectedIndex(0);
+					}
+				} catch (NumberFormatException nfe)
+				{
+					portComboBox.setSelectedIndex(0);
+				}
+			}
 
 			getContentPane().add(topPane, BorderLayout.NORTH);
 			getContentPane().add(bottomPane, BorderLayout.SOUTH);
-			setSize(new Dimension(300, 150));
+			setSize(new Dimension(400, 150));
 
 		}
 
@@ -202,17 +224,21 @@ public class CallDialog extends JDialog implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("call")) { //$NON-NLS-1$
 			try {
-	            Main.setProperty("calldialog.lastport", Integer.toString(port.getSelectedIndex()));
+				Port port = (Port) portComboBox.getSelectedItem();
+
+				Main.setStateProperty("calldialog.lastport", Integer.toString(portComboBox.getSelectedIndex()));
 
 				if (cboNumber.getClass().toString().equals(
 						"class javax.swing.JTextField")) //$NON-NLS-1$
 				{
-					NetworkStateMonitor.doCall(((JTextField) cboNumber).getText(), port.getSelectedItem().toString());
+					NetworkStateMonitor.doCall(((JTextField) cboNumber).getText(),
+							(Port)portComboBox.getSelectedItem());
 				}
 				if (cboNumber.getClass().toString().equals(
 						"class javax.swing.JComboBox")) //$NON-NLS-1$
 				{
-					NetworkStateMonitor.doCall(((JComboBox) cboNumber).getSelectedItem().toString(), port.getSelectedItem().toString());
+					NetworkStateMonitor.doCall(((JComboBox) cboNumber).getSelectedItem().toString(),
+							(Port)portComboBox.getSelectedItem());
 				}
 
 				setVisible(false);
@@ -225,7 +251,7 @@ public class CallDialog extends JDialog implements ActionListener {
 					text = text.replaceAll("%NUMBER", ((JComboBox) cboNumber).getSelectedItem().toString());
 				}
 
-				CallPendingDialog cancelDialog = new CallPendingDialog(text);
+				CallPendingDialog cancelDialog = new CallPendingDialog(text, port);
 				cancelDialog.setVisible(true);
 				cancelDialog.dispose();
 			} catch (WrongPasswordException e1) {
@@ -236,7 +262,7 @@ public class CallDialog extends JDialog implements ActionListener {
 				Debug.errDlg(Main.getMessage("box.not_found")); //$NON-NLS-1$
 			}
 		} else if (e.getActionCommand().equals("close")) { //$NON-NLS-1$
-			Main.setProperty("calldialog.lastport", Integer.toString(port.getSelectedIndex()));
+			Main.setStateProperty("calldialog.lastport", Integer.toString(portComboBox.getSelectedIndex()));
 			setVisible(false);
 		}
 	}

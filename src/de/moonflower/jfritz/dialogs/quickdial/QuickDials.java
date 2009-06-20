@@ -135,11 +135,12 @@ public class QuickDials extends AbstractTableModel {
 
 	public void getQuickDialDataFromFritzBox() throws WrongPasswordException, IOException, InvalidFirmwareException {
 
-		if (JFritz.getFritzBox().getFirmware() == null)
-			if (JFritz.getFritzBox().checkValidFirmware()) {
-				quickDials = JFritz.getFritzBox().retrieveQuickDialsFromFritzBox(this); //$NON-NLS-1$
-				fireTableDataChanged();
-			}
+		Debug.error("Fix getQuickDialDataFromFritzBox() in QuickDials!");
+//		if (JFritz.getFritzBox().getFirmware() == null)
+//			if (JFritz.getFritzBox().checkValidFirmware()) {
+//				quickDials = JFritz.getFritzBox().retrieveQuickDialsFromFritzBox(this); //$NON-NLS-1$
+//				fireTableDataChanged();
+//			}
 	}
 
 	public void addEntry(QuickDial quickDial) {

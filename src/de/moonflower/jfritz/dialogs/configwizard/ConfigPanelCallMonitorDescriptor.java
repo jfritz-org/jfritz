@@ -20,7 +20,7 @@ public class ConfigPanelCallMonitorDescriptor extends WizardPanelDescriptor {
 	  public ConfigPanelCallMonitor callMonitorPanel;
 
 	   public ConfigPanelCallMonitorDescriptor(ConfigPanelFritzBox fritzBoxPanel) {
-			callMonitorPanel = new ConfigPanelCallMonitor(null, false, fritzBoxPanel); //TODO: nicht null, sondern ein richtiges Fenster
+			callMonitorPanel = new ConfigPanelCallMonitor(null, false, fritzBoxPanel, null); //TODO: nicht null, sondern ein richtiges Fenster
 			callMonitorPanel.loadSettings();
 			setPanelDescriptorIdentifier(IDENTIFIER);
 		    setPanelComponent(callMonitorPanel);

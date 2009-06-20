@@ -49,8 +49,9 @@ public class NoticeDialog extends JDialog implements ActionListener {
 			accepted = true;
 		} else {
 			drawDialog();
+			this.setLocationRelativeTo(JFritz.getJframe());
+			this.setVisible(true);
 		}
-		this.setLocationRelativeTo(JFritz.getJframe());
 	}
 
 	@SuppressWarnings("deprecation") //property is not known before

@@ -44,8 +44,6 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.filter.CallFilter;
 import de.moonflower.jfritz.callerlist.filter.DateFilter;
-import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
-import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.phonebook.PhoneBook;
 import de.moonflower.jfritz.phonebook.PhoneBookListener;
 import de.moonflower.jfritz.struct.Call;
@@ -53,6 +51,7 @@ import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.IProgressListener;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.CopyFile;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -63,7 +62,8 @@ import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
  * This class manages the caller list.
  *
  */
-public class CallerList extends AbstractTableModel implements LookupObserver, PhoneBookListener {
+public class CallerList extends AbstractTableModel
+		implements LookupObserver, PhoneBookListener, IProgressListener {
 	private static final long serialVersionUID = 1;
 
 	private static final String CALLS_DTD_URI = "http://jfritz.moonflower.de/dtd/calls.dtd"; //$NON-NLS-1$
@@ -126,8 +126,6 @@ public class CallerList extends AbstractTableModel implements LookupObserver, Ph
 
 	private PhoneBook phonebook;
 
-	private Vector<IProgressListener> progressListeners;
-
 	private NumberCallMultiHashMap hashMap;
 
 	private boolean initStage = true;
@@ -148,8 +146,6 @@ public class CallerList extends AbstractTableModel implements LookupObserver, Ph
 
 		newCalls = new Vector<Call>(32);
 		callListListeners = new Vector<CallerListListener>();
-
-		progressListeners = new Vector<IProgressListener>();
 
 		hashMap = new NumberCallMultiHashMap();
 
@@ -646,7 +642,7 @@ public class CallerList extends AbstractTableModel implements LookupObserver, Ph
 	}
 
 	/**
-	 * This method synchronizes the main call vector with with the recently
+	 * This method synchronizes the main call vector with the recently
 	 * added calls per addEntry(Call call)
 	 *
 	 * NOTE: This method must be called after any calls have been added but
@@ -665,64 +661,6 @@ public class CallerList extends AbstractTableModel implements LookupObserver, Ph
 		newCalls.clear();
 		sortAllUnfilteredRows();
 
-	}
-
-	/**
-	 * Retrieves data from FRITZ!Box
-	 *
-	 * @throws WrongPasswordException
-	 * @throws IOException
-	 */
-	public void getNewCalls() throws WrongPasswordException, InvalidFirmwareException, IOException {
-		getNewCalls(false);
-	}
-
-	/**
-	 * Retrieves data from FRITZ!Box Function calls
-	 * JFritzUtils.retrieveCSVList(...) which reads the HTML page from the box
-	 * then reads the csv-file in and passes it on to
-	 * CallerList.importFromCSVFile(BufferedReader br) which then parses all the
-	 * entries makes backups and deletes entries from the box as appropriate *
-	 *
-	 * @author Brian Jensen
-	 *
-	 * @param deleteFritzBoxCallerList
-	 *            true indicates that fritzbox callerlist should be deleted
-	 *            without considering number of entries or config
-	 * @throws WrongPasswordException
-	 * @throws IOException
-	 */
-	public void getNewCalls(boolean deleteFritzBoxCallerList)
-			throws WrongPasswordException, InvalidFirmwareException, IOException {
-
-		if (JFritz.getFritzBox().checkValidFirmware()) {
-
-			Debug.info("box.address: " + JFritz.getFritzBox().getAddress());
-			Debug.info("box.port: " + JFritz.getFritzBox().getPort());
-			Debug.debug("box.password: " + JFritz.getFritzBox().getPassword());
-			Debug.info("box.firmware: "
-					+ JFritz.getFritzBox().getFirmware().getFirmwareVersion()
-					+ " " + JFritz.getFritzBox().getFirmware().getLanguage());
-
-			boolean newEntries = JFritz.getFritzBox().retrieveCSVList();
-
-			if (!JFritz.isShutdownInvoked())
-			{
-				if ((newEntries && Main.getProperty("option.deleteAfterFetch")
-						.equals("true"))
-						|| deleteFritzBoxCallerList) {
-					JFritz.getFritzBox().clearListOnFritzBox();
-				}
-			}
-
-			// Make back-up after fetching the caller list?
-			if (newEntries
-					&& JFritzUtils.parseBoolean(Main.getProperty(
-							"option.createBackupAfterFetch"))) {
-				doBackup();
-			}
-		}
-		update();
 	}
 
 	/**
@@ -769,10 +707,6 @@ public class CallerList extends AbstractTableModel implements LookupObserver, Ph
 		} else if (columnName.equals(CallerTable.COLUMN_PORT)) { //$NON-NLS-1$
 			return call.getPort();
 		} else if (columnName.equals(CallerTable.COLUMN_ROUTE)) { //$NON-NLS-1$
-			if (call.getRoute().startsWith("SIP")) {
-				return JFritz.getSIPProviderTableModel().getSipProvider(
-						call.getRoute(), call.getRoute());
-			}
 			return call.getRoute();
 		} else if (columnName.equals(CallerTable.COLUMN_DURATION)) { //$NON-NLS-1$
 			return Integer.toString(call.getDuration());
@@ -1055,7 +989,8 @@ public class CallerList extends AbstractTableModel implements LookupObserver, Ph
 		Vector<PhoneNumber> numbers = person.getNumbers();
 		if (numbers.size() > 0) {
 			Call result = new Call(new CallType(CallType.CALLIN_STR),
-					new Date(0), new PhoneNumber("", false), "port", "route", 0);
+					new Date(0), new PhoneNumber("", false),
+					new Port(0, "", "-1", "-1"), "route", 0);
 			for (PhoneNumber num:numbers)
 			{
 				List<Call> l = hashMap.getCall(num);
@@ -1233,12 +1168,6 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 				}
 			}
 
-			for(IProgressListener listener: progressListeners)
-			{
-				listener.setMin(0);
-				listener.setMax(400);
-			}
-
 			// check if we have a correct header
 			if (line.equals(EXPORT_CSV_FORMAT_JFRITZ)
 					|| line.equals(EXPORT_CSV_FORMAT_FRITZBOX)
@@ -1291,16 +1220,8 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 					} else if (addEntry(c)) {
 						newEntries++;
 					}
-					for(IProgressListener listener: progressListeners)
-					{
-						listener.setProgress(linesRead);
-					}
 				}
 
-				for(IProgressListener listener: progressListeners)
-				{
-					listener.finished();
-				}
 				Debug.debug(linesRead + " Lines read from csv file ");
 				Debug.debug(newEntries + " New entries processed");
 
@@ -1414,32 +1335,32 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 			return null;
 		}
 
-		// change the port to fit the jfritz naming convention
-		if (field[5].equals("FON1")) {
-			field[5] = "0";
-		} else if (field[5].equals("FON2")) {
-			field[5] = "1";
-		} else if (field[5].equals("FON3")) {
-			field[5] = "2";
-		} else if (field[5].equals("Durchwahl")) {
-			field[5] = "3";
-		} else if (field[5].equals("ISDN")) {
-			field[5] = "4";
-		} else if (field[5].equals("DECT 1")) {
-			field[5] = "10";
-		} else if (field[5].equals("DECT 2")) {
-			field[5] = "11";
-		} else if (field[5].equals("DECT 3")) {
-			field[5] = "12";
-		} else if (field[5].equals("DECT 4")) {
-			field[5] = "13";
-		} else if (field[5].equals("DECT 5")) {
-			field[5] = "14";
-		} else if (field[5].equals("DECT 6")) {
-			field[5] = "15";
-		} else if (field[5].equals("DATA")) {
-			field[5] = "36";
-		}
+//		// change the port to fit the jfritz naming convention
+//		if (field[5].equals("FON1")) {
+//			field[5] = "0";
+//		} else if (field[5].equals("FON2")) {
+//			field[5] = "1";
+//		} else if (field[5].equals("FON3")) {
+//			field[5] = "2";
+//		} else if (field[5].equals("Durchwahl")) {
+//			field[5] = "3";
+//		} else if (field[5].equals("ISDN")) {
+//			field[5] = "4";
+//		} else if (field[5].equals("DECT 1")) {
+//			field[5] = "10";
+//		} else if (field[5].equals("DECT 2")) {
+//			field[5] = "11";
+//		} else if (field[5].equals("DECT 3")) {
+//			field[5] = "12";
+//		} else if (field[5].equals("DECT 4")) {
+//			field[5] = "13";
+//		} else if (field[5].equals("DECT 5")) {
+//			field[5] = "14";
+//		} else if (field[5].equals("DECT 6")) {
+//			field[5] = "15";
+//		} else if (field[5].equals("DATA")) {
+//			field[5] = "36";
+//		}
 
 		// Phone number
 		if (!field[3].equals("")) {
@@ -1452,8 +1373,9 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 		// now make the call object
 		// TODO: change the order of the Call constructor to fit
 		// the oder of the csv export function or vice versa!!!
-		call = new Call(calltype, calldate, number, field[5], field[4], Integer
-				.parseInt(field[6]));
+		call = new Call(calltype, calldate, number,
+				new Port(0, field[5], "-1", "-1"),
+				field[4], Integer.parseInt(field[6]));
 
 		// TODO: perhaps split export function into two functions
 		// exportCallListCSV() and exportPhoneBookCSV()
@@ -1543,35 +1465,36 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 		String[] time = field[5].split(":");
 
 		// change the port to fit the jfritz naming convention
-		if (field[3].equals("FON 1")) {
-			field[3] = "0";
-		} else if (field[3].equals("FON 2")) {
-			field[3] = "1";
-		} else if (field[3].equals("FON 3")) {
-			field[3] = "2";
-		} else if (field[3].equals("Durchwahl")) {
-			field[3] = "3";
-		} else if (field[3].equals("FON S0")) {
-			field[3] = "4";
-		} else if (field[3].equals("DECT 1")) {
-			field[3] = "10";
-		} else if (field[3].equals("DECT 2")) {
-			field[3] = "11";
-		} else if (field[3].equals("DECT 3")) {
-			field[3] = "12";
-		} else if (field[3].equals("DECT 4")) {
-			field[3] = "13";
-		} else if (field[3].equals("DECT 5")) {
-			field[3] = "14";
-		} else if (field[3].equals("DECT 6")) {
-			field[3] = "15";
-		} else if (field[3].equals("DATA S0")) {
-			field[3] = "36";
-		}
+//		if (field[3].equals("FON 1")) {
+//			field[3] = "0";
+//		} else if (field[3].equals("FON 2")) {
+//			field[3] = "1";
+//		} else if (field[3].equals("FON 3")) {
+//			field[3] = "2";
+//		} else if (field[3].equals("Durchwahl")) {
+//			field[3] = "3";
+//		} else if (field[3].equals("FON S0")) {
+//			field[3] = "4";
+//		} else if (field[3].equals("DECT 1")) {
+//			field[3] = "10";
+//		} else if (field[3].equals("DECT 2")) {
+//			field[3] = "11";
+//		} else if (field[3].equals("DECT 3")) {
+//			field[3] = "12";
+//		} else if (field[3].equals("DECT 4")) {
+//			field[3] = "13";
+//		} else if (field[3].equals("DECT 5")) {
+//			field[3] = "14";
+//		} else if (field[3].equals("DECT 6")) {
+//			field[3] = "15";
+//		} else if (field[3].equals("DATA S0")) {
+//			field[3] = "36";
+//		}
 
 		// make the call object and exit
-		call = new Call(calltype, calldate, number, field[3], field[4], Integer
-				.parseInt(time[0])
+		call = new Call(calltype, calldate, number,
+				new Port(0, field[3], "-1", "-1"),
+				field[4], Integer.parseInt(time[0])
 				* 3600 + Integer.parseInt(time[1]) * 60);
 
 		return call;
@@ -1643,35 +1566,36 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 		// make the call object
 
 		// change the port to fit the jfritz naming convention
-		if (field[4].equals("FON 1")) {
-			field[4] = "0";
-		} else if (field[4].equals("FON 2")) {
-			field[4] = "1";
-		} else if (field[4].equals("FON 3")) {
-			field[4] = "2";
-		} else if (field[4].equals("Durchwahl")) {
-			field[4] = "3";
-		} else if (field[4].equals("DECT 1")) {
-			field[4] = "10";
-		} else if (field[4].equals("DECT 2")) {
-			field[4] = "11";
-		} else if (field[4].equals("DECT 3")) {
-			field[4] = "12";
-		} else if (field[4].equals("DECT 4")) {
-			field[4] = "13";
-		} else if (field[4].equals("DECT 5")) {
-			field[4] = "14";
-		} else if (field[4].equals("DECT 6")) {
-			field[4] = "15";
-		} else if (field[4].equals("FON S0")) {
-			field[4] = "4";
-		} else if (field[4].equals("DATA S0")) {
-			field[4] = "36";
-		}
+//		if (field[4].equals("FON 1")) {
+//			field[4] = "0";
+//		} else if (field[4].equals("FON 2")) {
+//			field[4] = "1";
+//		} else if (field[4].equals("FON 3")) {
+//			field[4] = "2";
+//		} else if (field[4].equals("Durchwahl")) {
+//			field[4] = "3";
+//		} else if (field[4].equals("DECT 1")) {
+//			field[4] = "10";
+//		} else if (field[4].equals("DECT 2")) {
+//			field[4] = "11";
+//		} else if (field[4].equals("DECT 3")) {
+//			field[4] = "12";
+//		} else if (field[4].equals("DECT 4")) {
+//			field[4] = "13";
+//		} else if (field[4].equals("DECT 5")) {
+//			field[4] = "14";
+//		} else if (field[4].equals("DECT 6")) {
+//			field[4] = "15";
+//		} else if (field[4].equals("FON S0")) {
+//			field[4] = "4";
+//		} else if (field[4].equals("DATA S0")) {
+//			field[4] = "36";
+//		}
 
 		// make the call object and exit
-		call = new Call(calltype, calldate, number, field[4], field[5], Integer
-				.parseInt(time[0])
+		call = new Call(calltype, calldate, number,
+				new Port(0, field[4], "-1", "-1"),
+				field[5], Integer.parseInt(time[0])
 				* 3600 + Integer.parseInt(time[1]) * 60);
 
 		return call;
@@ -1755,35 +1679,36 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 		String[] time = field[5].split(":");
 
 		// change the port to fit the jfritz naming convention
-		if (field[3].equals("FON 1")) {
-			field[3] = "0";
-		} else if (field[3].equals("FON 2")) {
-			field[3] = "1";
-		} else if (field[3].equals("FON 3")) {
-			field[3] = "2";
-		} else if (field[3].equals("Durchwahl")) {
-			field[3] = "3";
-		} else if (field[3].equals("FON S0")) {
-			field[3] = "4";
-		} else if (field[3].equals("DECT 1")) {
-			field[3] = "10";
-		} else if (field[3].equals("DECT 2")) {
-			field[3] = "11";
-		} else if (field[3].equals("DECT 3")) {
-			field[3] = "12";
-		} else if (field[3].equals("DECT 4")) {
-			field[3] = "13";
-		} else if (field[3].equals("DECT 5")) {
-			field[3] = "14";
-		} else if (field[3].equals("DECT 6")) {
-			field[3] = "15";
-		} else if (field[3].equals("DATA S0")) {
-			field[3] = "36";
-		}
+//		if (field[3].equals("FON 1")) {
+//			field[3] = "0";
+//		} else if (field[3].equals("FON 2")) {
+//			field[3] = "1";
+//		} else if (field[3].equals("FON 3")) {
+//			field[3] = "2";
+//		} else if (field[3].equals("Durchwahl")) {
+//			field[3] = "3";
+//		} else if (field[3].equals("FON S0")) {
+//			field[3] = "4";
+//		} else if (field[3].equals("DECT 1")) {
+//			field[3] = "10";
+//		} else if (field[3].equals("DECT 2")) {
+//			field[3] = "11";
+//		} else if (field[3].equals("DECT 3")) {
+//			field[3] = "12";
+//		} else if (field[3].equals("DECT 4")) {
+//			field[3] = "13";
+//		} else if (field[3].equals("DECT 5")) {
+//			field[3] = "14";
+//		} else if (field[3].equals("DECT 6")) {
+//			field[3] = "15";
+//		} else if (field[3].equals("DATA S0")) {
+//			field[3] = "36";
+//		}
 
 		// make the call object and exit
-		call = new Call(calltype, calldate, number, field[3], field[4], Integer
-				.parseInt(time[0])
+		call = new Call(calltype, calldate, number,
+				new Port(0, field[3], "-1", "-1"),
+				field[4], Integer.parseInt(time[0])
 				* 3600 + Integer.parseInt(time[1]) * 60);
 
 		return call;
@@ -1876,35 +1801,36 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 		}
 
 		// change the port to fit the jfritz naming convention
-		if (field[4].equals("FON 1")) {
-			field[4] = "0";
-		} else if (field[4].equals("FON 2")) {
-			field[4] = "1";
-		} else if (field[4].equals("FON 3")) {
-			field[4] = "2";
-		} else if (field[4].equals("Durchwahl")) {
-			field[4] = "3";
-		} else if (field[4].equals("FON S0")) {
-			field[4] = "4";
-		} else if (field[4].equals("DECT 1")) {
-			field[4] = "10";
-		} else if (field[4].equals("DECT 2")) {
-			field[4] = "11";
-		} else if (field[4].equals("DECT 3")) {
-			field[4] = "12";
-		} else if (field[4].equals("DECT 4")) {
-			field[4] = "13";
-		} else if (field[4].equals("DECT 5")) {
-			field[4] = "14";
-		} else if (field[4].equals("DECT 6")) {
-			field[4] = "15";
-		} else if (field[4].equals("DATA S0")) {
-			field[4] = "36";
-		}
+//		if (field[4].equals("FON 1")) {
+//			field[4] = "0";
+//		} else if (field[4].equals("FON 2")) {
+//			field[4] = "1";
+//		} else if (field[4].equals("FON 3")) {
+//			field[4] = "2";
+//		} else if (field[4].equals("Durchwahl")) {
+//			field[4] = "3";
+//		} else if (field[4].equals("FON S0")) {
+//			field[4] = "4";
+//		} else if (field[4].equals("DECT 1")) {
+//			field[4] = "10";
+//		} else if (field[4].equals("DECT 2")) {
+//			field[4] = "11";
+//		} else if (field[4].equals("DECT 3")) {
+//			field[4] = "12";
+//		} else if (field[4].equals("DECT 4")) {
+//			field[4] = "13";
+//		} else if (field[4].equals("DECT 5")) {
+//			field[4] = "14";
+//		} else if (field[4].equals("DECT 6")) {
+//			field[4] = "15";
+//		} else if (field[4].equals("DATA S0")) {
+//			field[4] = "36";
+//		}
 
 		// make the call object and exit
-		call = new Call(calltype, calldate, number, field[4], field[5], Integer
-				.parseInt(time[0])
+		call = new Call(calltype, calldate, number,
+				new Port(0, field[4], "-1", "-1"),
+				field[5], Integer.parseInt(time[0])
 				* 3600 + Integer.parseInt(time[1]) * 60);
 
 		return call;
@@ -2259,16 +2185,6 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 		return filteredCallerData.elementAt(row);
 	}
 
-	public void registerProgressListener(IProgressListener listener)
-	{
-		progressListeners.add(listener);
-	}
-
-	public void unregisterProgressListener(IProgressListener listener)
-	{
-		progressListeners.remove(listener);
-	}
-
 	public void contactUpdated(Person original, Person updated) {
 		update();
 	}
@@ -2279,5 +2195,58 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 
 	public void contactsRemoved(Vector<Person> removedContacts) {
 		update();
+	}
+
+	public void finished(Vector<Call> newCalls) {
+		int newEntries = 0;
+		if (newCalls != null)
+		{
+			for (Call call: newCalls)
+			{
+				if (addEntry(call)) {
+					newEntries++;
+				}
+			}
+
+			fireUpdateCallVector();
+
+			if (newEntries > 0) {
+
+				// uncomment these in case the import function is broken
+				// for(int i=0; i < unfilteredCallerData.size(); i++)
+				// System.out.println(unfilteredCallerData.elementAt(i).toString());
+
+				saveToXMLFile(Main.SAVE_DIR + JFritz.CALLS_FILE, true);
+
+				String msg;
+
+				if (newEntries == 1) {
+					msg = Main.getMessage("imported_call"); //$NON-NLS-1$
+				} else {
+					msg = Main
+							.getMessage("imported_calls").replaceAll("%N", Integer.toString(newEntries)); //$NON-NLS-1$, //$NON-NLS-2$
+				}
+
+				if (Main.getProperty("option.notifyOnCalls")
+						.equals("true")) {
+					JFritz.infoMsg(msg);
+				}
+
+			}
+
+			update();
+		}
+	}
+
+	public void setMax(int max) {
+		// do nothing
+	}
+
+	public void setMin(int min) {
+		// do nothing
+	}
+
+	public void setProgress(int progress) {
+		// do nothing
 	}
 }

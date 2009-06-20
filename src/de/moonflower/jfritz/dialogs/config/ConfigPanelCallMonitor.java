@@ -1,12 +1,15 @@
 package de.moonflower.jfritz.dialogs.config;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -18,8 +21,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 
-import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.callmonitor.CallMonitorStatusListener;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.utils.Debug;
@@ -37,7 +40,7 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 
 	private JTextField externProgramTextField;
 
-	private JToggleButton startCallMonitorButton;
+	private JToggleButton startStopCallMonitorButton;
 
 	private JButton callMonitorOptionsButton;
 
@@ -47,18 +50,25 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 
 	private ConfigPanelFritzBox fritzBoxPanel;
 
-	public ConfigPanelCallMonitor(JDialog parent, boolean showButtons, ConfigPanelFritzBox fritzBoxPanel) {
+	private String configPath;
+
+	private boolean loadingSettingsDone = false;
+
+	private Vector<CallMonitorStatusListener> stateListener;
+
+	public ConfigPanelCallMonitor(JDialog parent, boolean showButtons,
+								  ConfigPanelFritzBox fritzBoxPanel,
+								  Vector<CallMonitorStatusListener> listener) {
 		this.parent = parent;
 		this.showButtons = showButtons;
 		this.fritzBoxPanel = fritzBoxPanel;
+		this.stateListener = listener;
 
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
 		callMonitorCombo = new JComboBox();
 		callMonitorCombo.addItem(Main.getMessage("no_call_monitor")); //$NON-NLS-1$
 		callMonitorCombo.addItem(Main.getMessage("fritz_call_monitor")); //$NON-NLS-1$
-		callMonitorCombo.addItem(Main.getMessage("telnet_call_monitor")); //$NON-NLS-1$
-		callMonitorCombo.addItem(Main.getMessage("syslog_call_monitor")); //$NON-NLS-1$
 		callMonitorCombo.addItem(Main.getMessage("yac_call_monitor")); //$NON-NLS-1$
 		callMonitorCombo.addItem(Main.getMessage("callmessage_call_monitor")); //$NON-NLS-1$
 		callMonitorCombo.addActionListener(this);
@@ -100,11 +110,11 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 		c.gridx = 0;
 		c.gridy = 5;
 		c.gridwidth = 1;
-		startCallMonitorButton = new JToggleButton();
-		startCallMonitorButton.setActionCommand("startCallMonitor"); //$NON-NLS-1$
-		startCallMonitorButton.addActionListener(this);
-		startCallMonitorButton.setVisible(showButtons);
-		pane.add(startCallMonitorButton, c);
+		startStopCallMonitorButton = new JToggleButton();
+		startStopCallMonitorButton.setActionCommand("startStopCallMonitor"); //$NON-NLS-1$
+		startStopCallMonitorButton.addActionListener(this);
+		startStopCallMonitorButton.setVisible(showButtons);
+		pane.add(startStopCallMonitorButton, c);
 
 		c.gridx = 1;
 		c.gridy = 5;
@@ -115,19 +125,31 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 	}
 
 	public void loadSettings() {
+		loadingSettingsDone = false;
 
-		callMonitorCombo.setSelectedIndex(Integer.parseInt(Main.getProperty(
-				"option.callMonitorType"))); //$NON-NLS-1$,  //$NON-NLS-2$
-
-		if (JFritz.getCallMonitor() == null) {
-			startCallMonitorButton.setSelected(false);
-		} else {
-			startCallMonitorButton.setSelected(true);
+		int selectedCallMonitorType = Integer.parseInt(Main.getProperty("option.callMonitorType"));
+		if (callMonitorCombo.getSelectedIndex() != selectedCallMonitorType)
+		{
+			callMonitorCombo.setSelectedIndex(selectedCallMonitorType);
 		}
+
+		if ((fritzBoxPanel != null)
+			&& (fritzBoxPanel.getFritzBox() != null))
+		{
+			if (fritzBoxPanel.getFritzBox().isCallMonitorConnected())
+			{
+				startStopCallMonitorButton.setSelected(true);
+			}
+			else
+			{
+				startStopCallMonitorButton.setSelected(false);
+			}
+		}
+
 		callMonitorAfterStartButton.setSelected(JFritzUtils.parseBoolean(Main
 					.getProperty("option.autostartcallmonitor"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		setCallMonitorButtonPushed(startCallMonitorButton.isSelected());
+		setCallMonitorButtonPushed(startStopCallMonitorButton.isSelected());
 
 		soundButton.setSelected(JFritzUtils.parseBoolean(Main.getProperty(
 				"option.playSounds"))); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -136,7 +158,7 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 		externProgramTextField.setText(JFritzUtils.deconvertSpecialChars(Main
 				.getProperty("option.externProgram"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-
+		loadingSettingsDone = true;
 	}
 
 	public void saveSettings() {
@@ -163,14 +185,12 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 
 		Main.setProperty("option.startExternProgram", Boolean //$NON-NLS-1$
 				.toString(externProgramCheckBox.isSelected()));
-		Main
-				.setProperty(
-						"option.externProgram", JFritzUtils.convertSpecialChars(externProgramTextField //$NON-NLS-1$
-										.getText()));
+		Main.setProperty("option.externProgram",  //$NON-NLS-1$
+				JFritzUtils.convertSpecialChars(externProgramTextField.getText()));
 	}
 
 	private void hideCallMonitorPanel() {
-		startCallMonitorButton.setVisible(false);
+		startStopCallMonitorButton.setVisible(false);
 		callMonitorOptionsButton.setVisible(false);
 		callMonitorAfterStartButton.setVisible(false);
 		soundButton.setVisible(false);
@@ -180,7 +200,7 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 	}
 
 	private void showCallMonitorPanel() {
-		startCallMonitorButton.setVisible(showButtons);
+		startStopCallMonitorButton.setVisible(showButtons);
 		callMonitorOptionsButton.setVisible(showButtons);
 		callMonitorAfterStartButton.setVisible(true);
 		soundButton.setVisible(true);
@@ -190,9 +210,11 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 	}
 
 	protected void stopAllCallMonitors() {
-		if (startCallMonitorButton.isSelected()) {
-			setCallMonitorButtonPushed(false);
-			JFritz.stopCallMonitor();
+		if ((fritzBoxPanel != null)
+			&& (fritzBoxPanel.getFritzBox() != null)
+			&& loadingSettingsDone)
+		{
+			fritzBoxPanel.getFritzBox().stopCallMonitor(stateListener);
 		}
 	}
 
@@ -214,24 +236,11 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 			}
 			case 2: {
 				showCallMonitorPanel();
-				Debug.info("Telnet call monitor chosen"); //$NON-NLS-1$
-				stopAllCallMonitors();
-				break;
-
-			}
-			case 3: {
-				showCallMonitorPanel();
-				Debug.info("Syslog call monitor chosen"); //$NON-NLS-1$
-				stopAllCallMonitors();
-				break;
-			}
-			case 4: {
-				showCallMonitorPanel();
 				Debug.info("YAC call monitor chosen"); //$NON-NLS-1$
 				stopAllCallMonitors();
 				break;
 			}
-			case 5: {
+			case 3: {
 				showCallMonitorPanel();
 				Debug.info("Callmessage call monitor chosen"); //$NON-NLS-1$
 
@@ -239,29 +248,27 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 			}
 
 			}
-		} else if ("startCallMonitor".equals(e.getActionCommand())) { //$NON-NLS-1$
+		} else if ("startStopCallMonitor".equals(e.getActionCommand())) { //$NON-NLS-1$
 			// Aktion des StartCallMonitorButtons
 			Main.setProperty("option.callMonitorType", String //$NON-NLS-1$
 					.valueOf(callMonitorCombo.getSelectedIndex()));
 
-			JFritz.getFritzBox().setAddress(fritzBoxPanel.getAddress());
-			JFritz.getFritzBox().setPassword(fritzBoxPanel.getPassword());
-			JFritz.getFritzBox().setPort(fritzBoxPanel.getPort());
+		    Container c = getPanel(); // get the window's content pane
 			try {
-				JFritz.getFritzBox().detectFirmware();
-				JFritz.getJframe().switchMonitorButton();
-				// Speichere den Button-Status
-				setCallMonitorButtonPushed(startCallMonitorButton.isSelected());
+				c.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+				fritzBoxPanel.detectBoxType();
+				this.startStopCallMonitor();
 			} catch (WrongPasswordException e1) {
-				JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
-				startCallMonitorButton.setSelected(!startCallMonitorButton.isSelected());
+				Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+				startStopCallMonitorButton.setSelected(!startStopCallMonitorButton.isSelected());
 			} catch (IOException e1) {
-				JFritz.errorMsg(Main.getMessage("box.not_found")); //$NON-NLS-1$
-				startCallMonitorButton.setSelected(!startCallMonitorButton.isSelected());
+				Debug.errDlg(Main.getMessage("box.not_found")); //$NON-NLS-1$
+				startStopCallMonitorButton.setSelected(!startStopCallMonitorButton.isSelected());
 			} catch (InvalidFirmwareException e1) {
-				JFritz.errorMsg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
-				startCallMonitorButton.setSelected(!startCallMonitorButton.isSelected());
+				Debug.errDlg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
+				startStopCallMonitorButton.setSelected(!startStopCallMonitorButton.isSelected());
 			}
+			c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		} else if ("startCallMonitorOptions".equals(e //$NON-NLS-1$
 				.getActionCommand())) {
 			CallMonitorConfigDialog callMonitorConfigDialog = null;
@@ -270,15 +277,9 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 				callMonitorConfigDialog = new FRITZBOXConfigDialog(parent);
 				break;
 			case 2:
-				callMonitorConfigDialog = new TelnetConfigDialog(parent);
-				break;
-			case 3:
-				callMonitorConfigDialog = new SyslogConfigDialog(parent);
-				break;
-			case 4:
 				callMonitorConfigDialog = new YacConfigDialog(parent);
 				break;
-			case 5:
+			case 3:
 				callMonitorConfigDialog = new CallmessageConfigDialog(parent);
 				break;
 
@@ -300,21 +301,24 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 	 */
 	public void setCallMonitorButtonPushed(boolean isPushed) {
 		if (isPushed) {
-			startCallMonitorButton
+			startStopCallMonitorButton
 					.setText(Main.getMessage("stop_call_monitor")); //$NON-NLS-1$
-			startCallMonitorButton.setSelected(true);
-			JFritz.getJframe().setCallMonitorButtonPushed(true);
+			startStopCallMonitorButton.setSelected(true);
 		} else {
-			startCallMonitorButton.setText(Main
+			startStopCallMonitorButton.setText(Main
 					.getMessage("start_call_monitor")); //$NON-NLS-1$
-			startCallMonitorButton.setSelected(false);
-			JFritz.getJframe().setCallMonitorButtonPushed(false);
+			startStopCallMonitorButton.setSelected(false);
 		}
+	}
+
+	public void setPath(String path)
+	{
+		this.configPath = path;
 	}
 
 	public String getPath()
 	{
-		return Main.getMessage("callmonitor");
+		return configPath;
 	}
 
 	public JPanel getPanel() {
@@ -328,6 +332,24 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 	public void cancel() {
 		// TODO Auto-generated method stub
 
+	}
+
+	private void startStopCallMonitor()
+	{
+		if ((fritzBoxPanel != null)
+			&& (fritzBoxPanel.getFritzBox() != null))
+		{
+			if (fritzBoxPanel.getFritzBox().isCallMonitorConnected())
+			{
+				fritzBoxPanel.getFritzBox().stopCallMonitor(stateListener);
+			}
+			else
+			{
+				fritzBoxPanel.getFritzBox().startCallMonitor(stateListener);
+			}
+			// Speichere den Button-Status
+			setCallMonitorButtonPushed(startStopCallMonitorButton.isSelected());
+		}
 	}
 
 }

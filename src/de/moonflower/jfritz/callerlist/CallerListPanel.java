@@ -270,7 +270,6 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		add(createToolBar(), BorderLayout.NORTH);
 		add(createCallerListTable(), BorderLayout.CENTER);
 		registerStatusBar();
-		callerList.registerProgressListener(this);
 	}
 
 	public void setPhoneBookPanel(PhoneBookPanel phoneBookPanel){
@@ -816,20 +815,44 @@ public class CallerListPanel extends JPanel implements ActionListener,
 					endDateChooser.setDate(max);
 				} else {// no rows selected so we only have the days and set the
 						// hours to min and max
-					startDateChooser.setDate(JFritzUtils
-							.setStartOfDay(startDateChooser.getDate()));
-					endDateChooser.setDate(JFritzUtils
+					if (endDateChooser.getDate() != null)
+					{
+						endDateChooser.setDate(JFritzUtils
 							.setEndOfDay(endDateChooser.getDate()));
+					}
+					else
+					{
+						endDateChooser.setDate(JFritzUtils
+								.setEndOfDay(new Date()));
+					}
+
+					if (startDateChooser.getDate() != null)
+					{
+						startDateChooser.setDate(JFritzUtils
+							.setStartOfDay(startDateChooser.getDate()));
+					}
+					else
+					{   // start date invalid, set Date to begining of this year
+						Calendar cal = Calendar.getInstance();
+						cal.setTime(new Date());
+						cal.set(Calendar.MONTH, 0);
+						cal.set(Calendar.DAY_OF_MONTH, 1);
+						startDateChooser.setDate(JFritzUtils.setStartOfDay(cal.getTime()));
+					}
 				}
-				((DateFilter) filter[DATE]).setStartDate(startDateChooser
-						.getDate());
-				((DateFilter) filter[DATE])
-						.setEndDate(endDateChooser.getDate());
-				if (dateFilterButton.getState() == ThreeStateButton.INVERTED) {
-					filter[DATE].setInvert(true);
+				if ((startDateChooser.getDate() != null)
+						&& (endDateChooser.getDate() != null))
+				{
+					((DateFilter) filter[DATE]).setStartDate(startDateChooser
+							.getDate());
+					((DateFilter) filter[DATE])
+							.setEndDate(endDateChooser.getDate());
+					if (dateFilterButton.getState() == ThreeStateButton.INVERTED) {
+						filter[DATE].setInvert(true);
+					}
+					startDateChooser.setVisible(true);
+					endDateChooser.setVisible(true);
 				}
-				startDateChooser.setVisible(true);
-				endDateChooser.setVisible(true);
 			}
 			dateSpecialSaveString = "";
 			return;
@@ -1286,8 +1309,24 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		Date start = startDateChooser.getDate();
 		Date end = endDateChooser.getDate();
 
-		Main.setStateProperty(CallFilter.FILTER_DATE_START, df.format(start));
-		Main.setStateProperty(CallFilter.FILTER_DATE_END, df.format(end));
+		if (start != null)
+		{
+			Main.setStateProperty(CallFilter.FILTER_DATE_START, df.format(start));
+		}
+		else
+		{
+			Main.setStateProperty(CallFilter.FILTER_DATE_START, "");
+		}
+
+		if (end != null)
+		{
+			Main.setStateProperty(CallFilter.FILTER_DATE_END, df.format(end));
+		}
+		else
+		{
+			Main.setStateProperty(CallFilter.FILTER_DATE_END, "");
+		}
+
 		Main.setStateProperty(CallFilter.FILTER_DATE_SPECIAL, dateSpecialSaveString);
 		Main.setStateProperty(CallFilter.FILTER_SIP, "" + sipFilterButton.getState());
 		Main.setStateProperty(CallFilter.FILTER_SIP_PROVIDERS, filter[SIP].toString());
@@ -1481,7 +1520,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		jFrame.getStatusBar().refresh();
 	}
 
-	public void finished() {
+	public void finished(Vector<Call> newCalls) {
 		progressBar.setVisible(false);
 		progressStatusBar.setVisible(false);
 		jFrame.getStatusBar().refresh();

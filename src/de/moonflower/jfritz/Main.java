@@ -162,6 +162,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -179,7 +180,6 @@ import de.moonflower.jfritz.dialogs.simple.AddressPasswordDialog;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
-import de.moonflower.jfritz.struct.FritzBox;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.utils.CLIOption;
 import de.moonflower.jfritz.utils.CLIOptions;
@@ -200,7 +200,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.2.30"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.2.37"; //$NON-NLS-1$
 
 	public final static String CVS_TAG = "$Id: Main.java,v 1.156 2009/03/24 17:51:39 robotniko Exp $"; //$NON-NLS-1$
 
@@ -260,6 +260,12 @@ public class Main implements LookupObserver {
 	private static ShutdownHook.Handler shutdownHandler;
 	private static ShutdownThread shutdownThread;
 
+	private static int EXIT_CODE_OK = 0;
+	private static int EXIT_CODE_HELP = -1;
+	private static int EXIT_CODE_PARAMETER_NOT_FOUND = -2;
+	private static int EXIT_CODE_PARAMETER_WRONG_FORMAT = -3;
+	private static int EXIT_CODE_MULTIPLE_INSTANCE_LOCK = 1;
+
 	public Main()
 	{
 		// NICHT VERWENDEN, nur für TestCases, nicht alles initialisiert. NICHT VERWENDEN!
@@ -273,8 +279,11 @@ public class Main implements LookupObserver {
 	}
 
 	public Main(String[] args) {
+		Calendar cal = Calendar.getInstance();
+		cal.getTime();
+
 		Debug.always(PROGRAM_NAME + " v" + PROGRAM_VERSION //$NON-NLS-1$
-				+ " (c) 2005-2009 by " + JFRITZ_PROJECT); //$NON-NLS-1$
+				+ " (c) 2005-" + cal.get(Calendar.YEAR) + " by " + JFRITZ_PROJECT); //$NON-NLS-1$
 		Thread.currentThread().setPriority(5);
 		Thread.currentThread().setName("JFritz main thread");
 
@@ -330,8 +339,6 @@ public class Main implements LookupObserver {
 				, null, "Creates a backup of all xml-Files in the directory 'backup'"); //$NON-NLS-1$
 		options.addOption('c', "clear_list" //$NON-NLS-1$,  //$NON-NLS-2$
 				, null, "Clears Caller List and exit"); //$NON-NLS-1$
-		options.addOption('d', "delete_on_box" //$NON-NLS-1$,  //$NON-NLS-2$
-				, null, "Delete callerlist of the Fritz!Box."); //$NON-NLS-1$
 		options.addOption('e', "export" //$NON-NLS-1$,  //$NON-NLS-2$
 				, "filename", "Fetch calls and export to CSV file."); //$NON-NLS-1$,  //$NON-NLS-2$
 		options.addOption('f', "fetch" //$NON-NLS-1$,  //$NON-NLS-2$
@@ -378,7 +385,7 @@ public class Main implements LookupObserver {
 			case 'h': //$NON-NLS-1$
 				System.out.println("Usage: java -jar jfritz.jar [Options]"); //$NON-NLS-1$
 				options.printOptions();
-				exit(0);
+				exit(EXIT_CODE_HELP);
 				break;
 			case 'v': //$NON-NLS-1$
 				Debug.setVerbose(true);
@@ -464,11 +471,6 @@ public class Main implements LookupObserver {
 
 		if (result == 0)
 		{
-			splash.setStatus("Loading SIP provider...");
-			jfritz.initSipProvider();
-		}
-		if (result == 0)
-		{
 			splash.setStatus("Loading quick dials...");
 			jfritz.initQuickDials();
 		}
@@ -492,30 +494,35 @@ public class Main implements LookupObserver {
 			splash.setStatus("Setting default look and feel...");
 			jfritz.initLookAndFeel();
 		}
+
 		if (result == 0)
 		{
-			main.checkCLIParameters(args);
-		}
-
-		splash.setStatus("Checking startup password...");
-		String ask = Main.getProperty("jfritz.password");//$NON-NLS-1$
-		String pass = "";
-		if (JFritz.getFritzBox() != null)
-		{
-			pass = JFritz.getFritzBox().getPassword();
-		}
-		if (!Encryption.decrypt(ask).equals(JFritz.PROGRAM_SECRET + pass)) {
-			String password = "";
-			while (result == 0 && !password.equals(pass))
+			boolean shutdownInvoked = main.checkCLIParameters(args);
+			if (shutdownInvoked)
 			{
-				password = main.showPasswordDialog(""); //$NON-NLS-1$
-				if (password == null) { // PasswordDialog canceled
-					result = 1;
-				} else if (!password.equals(pass)) {
-					Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
-				}
+				result = -1;
 			}
 		}
+
+//		splash.setStatus("Checking startup password...");
+//		String ask = Main.getProperty("jfritz.password");//$NON-NLS-1$
+//		String pass = "";
+//		if (JFritz.getFritzBox() != null)
+//		{
+//			pass = JFritz.getFritzBox().getPassword();
+//		}
+//		if (!Encryption.decrypt(ask).equals(JFritz.PROGRAM_SECRET + pass)) {
+//			String password = "";
+//			while (result == 0 && !password.equals(pass))
+//			{
+//				password = main.showPasswordDialog(""); //$NON-NLS-1$
+//				if (password == null) { // PasswordDialog canceled
+//					result = 1;
+//				} else if (!password.equals(pass)) {
+//					Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+//				}
+//			}
+//		}
 
 		splash.dispose();
 
@@ -545,8 +552,9 @@ public class Main implements LookupObserver {
 	 *
 	 * @param args
 	 *            Kommandozeilenargumente
+	 * @return True if shutdown has been invoked, false otherwise.
 	 */
-	private void checkCLIParameters(String[] args) {
+	private boolean checkCLIParameters(String[] args) {
 		boolean shutdown = false;
 		Debug.debug("Start commandline parsing"); //$NON-NLS-1$
 		// Checke alle weiteren Parameter
@@ -566,49 +574,41 @@ public class Main implements LookupObserver {
 				checkSystray = false;
 				break;
 			case 'f':
-				shutdown = true;
 				Debug.always("Fetch caller list from command line ..."); //$NON-NLS-1$
-				try {
-					JFritz.getCallerList().getNewCalls();
-				} catch (WrongPasswordException e) {
-					Debug.error(e.toString());
-					e.printStackTrace();
-				} catch (IOException e) {
-					Debug.error(e.toString());
-					e.printStackTrace();
-				} catch (InvalidFirmwareException e) {
-					Debug.error(e.toString());
-					e.printStackTrace();
-				}
+				JFritz.getBoxCommunication().getCallerList();
+				shutdown = true;
+				exit(EXIT_CODE_OK);
 				break;
 			case 'r':
 				doReverseLookup();
 				shutdown = true;
+				exit(EXIT_CODE_OK);
 				break;
 			case 'e':
 				String csvFileName = option.getParameter();
 				if (csvFileName == null || csvFileName.equals("")) { //$NON-NLS-1$
 					System.err.println(getMessage("parameter_not_found")); //$NON-NLS-1$
-					exit(0);
+					shutdown = true;
+					exit(EXIT_CODE_PARAMETER_NOT_FOUND);
+					break;
 				}
 				Debug.always("Exporting Call list (csv) to " + csvFileName); //$NON-NLS-1$
 				JFritz.getCallerList().saveToCSVFile(csvFileName, true);
 				shutdown = true;
+				exit(EXIT_CODE_OK);
 				break;
 			case 'z':
 				JFritz.getPhonebook().saveToBITFBFDialerFormat("bitbook.dat"); //$NON-NLS-1$
 				JFritz.getPhonebook()
 						.saveToCallMonitorFormat("CallMonitor.adr"); //$NON-NLS-1$
 				shutdown = true;
-				break;
-			case 'd': //$NON-NLS-1$
-				clearCallsOnBoxCli();
-				shutdown = true;
+				exit(EXIT_CODE_OK);
 				break;
 			case 'c': //$NON-NLS-1$
 				Debug.always("Clearing Call List"); //$NON-NLS-1$
 				JFritz.getCallerList().clearList();
 				shutdown = true;
+				exit(EXIT_CODE_OK);
 				break;
             case 'i': //$NON-NLS-1$
             	String language = option.getParameter();
@@ -620,7 +620,8 @@ public class Main implements LookupObserver {
             		System.err.println("Netherland: nl"); //$NON-NLS-1$
             		System.err.println("Poland: pl"); //$NON-NLS-1$
             		System.err.println("Russia: ru"); //$NON-NLS-1$
-            		System.exit(0);
+            		exit(EXIT_CODE_PARAMETER_WRONG_FORMAT);
+            		shutdown = true;
             	}else if(language.equals("english") || language.equals("en")){ //$NON-NLS-1$
             		Main.setProperty("locale", "en_US");
             	}else if(language.equals("german") || language.equals("de")){ //$NON-NLS-1$
@@ -641,7 +642,8 @@ public class Main implements LookupObserver {
             		System.err.println("Netherland: nl"); //$NON-NLS-1$
             		System.err.println("Poland: pl"); //$NON-NLS-1$
             		System.err.println("Russia: ru"); //$NON-NLS-1$
-            		System.exit(0);
+            		exit(EXIT_CODE_PARAMETER_WRONG_FORMAT);
+            		shutdown = true;
             	}
         		loadMessages(new Locale(Main.getProperty("locale"))); //$NON-NLS-1$,  //$NON-NLS-2$
             	break;
@@ -654,7 +656,8 @@ public class Main implements LookupObserver {
 				String priority = option.getParameter();
 				if (priority == null || priority.equals("")) { //$NON-NLS-1$
 					System.err.println(getMessage("parameter_not_found")); //$NON-NLS-1$
-					exit(0);
+					exit(EXIT_CODE_PARAMETER_NOT_FOUND);
+					shutdown = true;
 				} else {
 					try {
 						int level = Integer.parseInt(priority);
@@ -662,10 +665,12 @@ public class Main implements LookupObserver {
 						Debug.always("Set priority to level " + priority); //$NON-NLS-1$
 					} catch (NumberFormatException nfe) {
 						System.err.println(getMessage("parameter_wrong_priority")); //$NON-NLS-1$
-						exit(0);
+						exit(EXIT_CODE_PARAMETER_WRONG_FORMAT);
+						shutdown = true;
 					} catch (IllegalArgumentException iae) {
 						System.err.println(getMessage("parameter_wrong_priority")); //$NON-NLS-1$
-						exit(0);
+						exit(EXIT_CODE_PARAMETER_WRONG_FORMAT);
+						shutdown = true;
 					}
 					break;
 				}
@@ -674,8 +679,43 @@ public class Main implements LookupObserver {
 			}
 		}
 
-		if (shutdown) {
-			exit(0);
+		return shutdown;
+	}
+
+	public static boolean lockExists()
+	{
+		File f = new File(SAVE_DIR + LOCK_FILE);
+		return f.exists();
+	}
+
+	public static void createLock()
+	{
+		File f = new File(SAVE_DIR + LOCK_FILE);
+		try {
+			if (f.exists())
+			{
+				f.delete();
+			}
+			f.createNewFile();
+		} catch (SecurityException se)
+		{
+			Debug.error("Could not delete instance lock");
+		} catch (IOException e) {
+			Debug.error("Could not set instance lock");
+		}
+	}
+
+	public static void removeLock()
+	{
+		File f = new File(SAVE_DIR + LOCK_FILE);
+		try {
+			if (f.exists())
+			{
+				f.delete();
+			}
+		} catch (SecurityException se)
+		{
+			Debug.error("Could not delete instance lock");
 		}
 	}
 
@@ -686,6 +726,36 @@ public class Main implements LookupObserver {
 	 * @return true, if everything is ok. false if user decided to shutdown jfritz.
 	 */
 	private boolean checkInstanceControl() {
+		boolean result = true;
+		if (enableInstanceControl) {
+			// check isRunning and exit or set lock
+			if (!lockExists())
+			{
+				Debug.info("Multiple instance lock: set lock."); //$NON-NLS-1$
+				result = true;
+				createLock();
+			} else {
+				Debug.warning("Multiple instance lock: Another instance is already running."); //$NON-NLS-1$
+				int answer = JOptionPane.showConfirmDialog(null,
+						getMessage("lock_error_dialog1") //$NON-NLS-1$
+								+ getMessage("lock_error_dialog2") //$NON-NLS-1$
+								+ getMessage("lock_error_dialog3") //$NON-NLS-1$
+								+ getMessage("lock_error_dialog4"), //$NON-NLS-1$
+						getMessage("information"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
+				if (answer == JOptionPane.YES_OPTION) {
+					Debug.warning("Multiple instance lock: User decided to shut down this instance."); //$NON-NLS-1$
+					exit(EXIT_CODE_MULTIPLE_INSTANCE_LOCK);
+					result = false;
+				} else {
+					Debug.warning("Multiple instance lock: User decided NOT to shut down this instance."); //$NON-NLS-1$
+					result = true;
+				}
+			}
+		}
+		return result;
+	}
+
+	private boolean checkInstanceControlOld() {
 		boolean result = true;
 		if (enableInstanceControl) {
 			// check isRunning and exit or set lock
@@ -710,7 +780,7 @@ public class Main implements LookupObserver {
 						getMessage("information"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
 				if (answer == JOptionPane.YES_OPTION) {
 					Debug.warning("Multiple instance lock: User decided to shut down this instance."); //$NON-NLS-1$
-					exit(-1);
+					exit(EXIT_CODE_MULTIPLE_INSTANCE_LOCK);
 					result = false;
 				} else {
 					Debug.warning("Multiple instance lock: User decided NOT to shut down this instance."); //$NON-NLS-1$
@@ -736,18 +806,24 @@ public class Main implements LookupObserver {
 			// if $HOME/.jfritz doesn't exist create it
 			File file = new File(USER_DIR);
 			if (!file.isDirectory() && !file.isFile())
+			{
 				file.mkdir();
+			}
 
 			BufferedWriter bw = new BufferedWriter(new FileWriter(USER_DIR
 					+ File.separator + USER_JFRITZ_FILE, false));
 
 			// make sure the user didn't screw something up
 			if (!SAVE_DIR.endsWith(File.separator))
+			{
 				SAVE_DIR = SAVE_DIR + File.separator;
+			}
 
 			file = new File(SAVE_DIR);
 			if (!file.isDirectory())
+			{
 				SAVE_DIR = System.getProperty("user.dir") + File.separator;
+			}
 
 			bw.write(SAVE_DIR_TEXT + SAVE_DIR);
 			bw.newLine();
@@ -812,42 +888,6 @@ public class Main implements LookupObserver {
 	}
 
 	/**
-	 *
-	 */
-	public static void clearCallsOnBoxCli() {
-		Debug.info("Clearing callerlist on box."); //$NON-NLS-1$
-		loadProperties();
-		try {
-			Exception ex = null;
-			FritzBox fritzBox = new FritzBox(getProperty(
-					"box.address"), //$NON-NLS-1$,  //$NON-NLS-2$
-					Encryption .decrypt(getProperty("box.password")), //$NON-NLS-1$
-					getProperty("box.port"), ex); //$NON-NLS-1$
-			if ( ex != null )
-			{
-				try {
-					throw ex;
-				} catch (Exception e)
-				{
-					Debug.error(e.toString());
-				}
-			}
-			fritzBox.clearListOnFritzBox();
-			Debug.info("Clearing done"); //$NON-NLS-1$
-		} catch (WrongPasswordException e) {
-			Debug.error("Wrong password, can not delete callerlist on Box."); //$NON-NLS-1$
-			e.printStackTrace();
-		} catch (IOException e) {
-			Debug.error("IOException while deleting callerlist on box (wrong IP-address?)."); //$NON-NLS-1$
-			e.printStackTrace();
-//		} catch (InvalidFirmwareException e) {
-//			Debug.err("Invalid firmware, can not delete callerlist on Box."); //$NON-NLS-1$
-//			e.printStackTrace();
-		}
-	}
-
-
-	/**
 	 * The function is called mostly from the mac quit handler code to
 	 * safely end jfritz when the program should be terminated
 	 * either through user input or through a system event (logoff / restart ..)
@@ -889,7 +929,6 @@ public class Main implements LookupObserver {
 		defProps.setProperty("box.mac", "");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("box.password", Encryption.encrypt(""));//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("box.port", "80");//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("calldialog.lastport", "0");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("clients.port", "4455");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("country.code", "+49");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("country.prefix", "00");//$NON-NLS-1$, //$NON-NLS-2$
@@ -971,6 +1010,8 @@ public class Main implements LookupObserver {
 		defProps.setProperty("position.width", "640");//$NON-NLS-1$
 		defProps.setProperty("position.height", "480");//$NON-NLS-1$
 
+		defProps.setProperty("calldialog.lastport", "0");//$NON-NLS-1$, //$NON-NLS-2$
+
 		// Filter properties
 		defProps.setProperty(CallFilter.FILTER_SIP_PROVIDERS, "");//$NON-NLS-1$
 		defProps.setProperty(CallFilter.FILTER_COMMENT, "0");//$NON-NLS-1$
@@ -996,8 +1037,53 @@ public class Main implements LookupObserver {
 		while (columns.hasMoreElements())
 		{
 			currentColumn = columns.nextElement();
-			defProps.setProperty("callerTable.column." + currentColumn + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
+			if (currentColumn.equals("type"))
+			{
+				defProps.setProperty("callerTable.column." + currentColumn + ".width", "35");
+			}
+			else if (currentColumn.equals("date"))
+			{
+				defProps.setProperty("callerTable.column." + currentColumn + ".width", "85");
+			}
+			else if (currentColumn.equals("callbycall"))
+			{
+				defProps.setProperty("callerTable.column." + currentColumn + ".width", "70");
+			}
+			else if (currentColumn.equals("number"))
+			{
+				defProps.setProperty("callerTable.column." + currentColumn + ".width", "185");
+			}
+			else if (currentColumn.equals("participant"))
+			{
+				defProps.setProperty("callerTable.column." + currentColumn + ".width", "185");
+			}
+			else if (currentColumn.equals("picture"))
+			{
+				defProps.setProperty("callerTable.column." + currentColumn + ".width", "50");
+			}
+			else if (currentColumn.equals("port"))
+			{
+				defProps.setProperty("callerTable.column." + currentColumn + ".width", "115");
+			}
+			else if (currentColumn.equals("route"))
+			{
+				defProps.setProperty("callerTable.column." + currentColumn + ".width", "80");
+			}
+			else if (currentColumn.equals("duration"))
+			{
+				defProps.setProperty("callerTable.column." + currentColumn + ".width", "60");
+			}
+			else if (currentColumn.equals("comment"))
+			{
+				defProps.setProperty("callerTable.column." + currentColumn + ".width", "135");
+			}
+			else
+			{
+				defProps.setProperty("callerTable.column." + currentColumn + ".width", default_column_width);//$NON-NLS-1$, //$NON-NLS-2$
+			}
 		}
+
+
 
 		// column order
 		for (int i=0; i<CallerTable.getCallerTableColumns().size();i++)
@@ -1119,6 +1205,9 @@ public class Main implements LookupObserver {
 			config_properties.setProperty("option.showCallerListColumn."+CallerTable.COLUMN_PORT, currentProp);
 			config_properties.remove("option.showPortColumn");
 		}
+
+		config_properties.remove("telnet.user");
+		config_properties.remove("telnet.password");
 
 		saveStateProperties();
 		saveConfigProperties();
@@ -1404,12 +1493,8 @@ public class Main implements LookupObserver {
 			Debug.always("Shutting down JFritz..."); //$NON-NLS-1$
 			closeOpenConnections();
 			if (exitCode != -1 && Main.isInstanceControlEnabled()) {
-				File f = new File(Main.SAVE_DIR + Main.LOCK_FILE);
-				if (f.exists())
-				{
-					f.delete();
-				}
 				Debug.always("Multiple instance lock: release lock."); //$NON-NLS-1$
+				removeLock();
 			}
 
 			// This must be the last call, after disposing JFritzWindow nothing

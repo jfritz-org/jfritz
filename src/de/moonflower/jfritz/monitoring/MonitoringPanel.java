@@ -49,6 +49,7 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.cellrenderer.*;
 import de.moonflower.jfritz.monitoring.CurrentCallsTable;
+import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.StatusBarController;
 import de.moonflower.jfritz.utils.network.UPNPAddonInfosListener;
 import de.moonflower.jfritz.utils.network.UPNPCommonLinkPropertiesListener;
@@ -528,10 +529,10 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 
 	private void getStaticUPnPInfos()
 	{
-		JFritz.getFritzBox().getInternetStats(this);
-		JFritz.getFritzBox().getCommonLinkInfo(this);
-		JFritz.getFritzBox().getStatusInfo(this);
-		JFritz.getFritzBox().getExternalIPAddress(this);
+		JFritz.getBoxCommunication().getBox(0).getInternetStats(this);
+		JFritz.getBoxCommunication().getBox(0).getCommonLinkInfo(this);
+		JFritz.getBoxCommunication().getBox(0).getStatusInfo(this);
+		JFritz.getBoxCommunication().getBox(0).getExternalIPAddress(this);
 	}
 
 	/**
@@ -548,7 +549,7 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		final MonitoringPanel mPanel = this;
 		dynamicUpnpTask = new TimerTask(){
 			public void run() {
-				JFritz.getFritzBox().getInternetStats(mPanel);
+//				JFritz.getFritzBox().getInternetStats(mPanel);
 				getStaticUPnPInfos();
 			}
 

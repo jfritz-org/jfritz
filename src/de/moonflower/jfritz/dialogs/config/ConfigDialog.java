@@ -47,7 +47,8 @@ import javax.swing.tree.TreeSelectionModel;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.Main;
-import de.moonflower.jfritz.dialogs.sip.SipProvider;
+import de.moonflower.jfritz.box.FritzBox;
+import de.moonflower.jfritz.callmonitor.CallMonitorStatusListener;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.utils.BrowserLaunch;
@@ -69,6 +70,7 @@ public class ConfigDialog extends JDialog {
 	private JFritzWindow parent;
 
 	private ConfigPanelPhone phonePanel;
+//	private ConfigPanelBox boxPanel;
 	private ConfigPanelFritzBox fritzBoxPanel;
 	private ConfigPanelMessage messagePanel;
 	private ConfigPanelCallerList callerListPanel;
@@ -91,18 +93,26 @@ public class ConfigDialog extends JDialog {
 	private JLabel helpLinkLabel;
 	private String helpUrl = "";
 
-	public ConfigDialog(JFritzWindow parent) {
+	public ConfigDialog(JFritzWindow parent, Vector<CallMonitorStatusListener> stateListener) {
 		super(parent, true);
 		this.parent = parent;
 		setTitle(Main.getMessage("config")); //$NON-NLS-1$
 
 		phonePanel = new ConfigPanelPhone();
-		fritzBoxPanel = new ConfigPanelFritzBox();
+//		boxPanel = new ConfigPanelBox();
+		fritzBoxPanel = new ConfigPanelFritzBox(
+				(FritzBox) JFritz.getBoxCommunication().getBox(0));
+		sipPanel = new ConfigPanelSip();
+
+		fritzBoxPanel.setSipPanel(sipPanel);
+		sipPanel.setFritzBoxPanel(fritzBoxPanel);
+		sipPanel.setPath(fritzBoxPanel.getPath() + "::" + Main.getMessage("sip_numbers"));
+		callMonitorPanel = new ConfigPanelCallMonitor(this, true, fritzBoxPanel, stateListener);
+		callMonitorPanel.setPath(fritzBoxPanel.getPath() + "::" + Main.getMessage("callmonitor"));
+
 		messagePanel = new ConfigPanelMessage();
 		callerListPanel = new ConfigPanelCallerList();
 		callerListAppearancePanel = new ConfigPanelCallerListAppearance();
-		callMonitorPanel = new ConfigPanelCallMonitor(this, true, fritzBoxPanel);
-		sipPanel = new ConfigPanelSip(fritzBoxPanel);
 		languagePanel = new ConfigPanelLang();
 		otherPanel = new ConfigPanelOther(fritzBoxPanel);
 		networkPanel = new ConfigPanelNetwork(this);
@@ -250,6 +260,7 @@ public class ConfigDialog extends JDialog {
 	 * Sets properties to dialog components
 	 */
 	public void setValues() {
+//		boxPanel.loadSettings();
 		fritzBoxPanel.loadSettings();
 		phonePanel.loadSettings();
 		messagePanel.loadSettings();
@@ -267,6 +278,7 @@ public class ConfigDialog extends JDialog {
 	 */
 	public void storeValues() {
 		try {
+//			boxPanel.saveSettings();
 			fritzBoxPanel.saveSettings();
 		} catch (WrongPasswordException e) {
 			parent.setDisconnectedStatus();
@@ -285,24 +297,10 @@ public class ConfigDialog extends JDialog {
 		callerListAppearancePanel.saveSettings();
 		sipPanel.saveSettings();
 
-		JFritz.getFritzBox().setAddress(fritzBoxPanel.getAddress());
-		JFritz.getFritzBox().setPassword(fritzBoxPanel.getPassword());
-		JFritz.getFritzBox().setPort(fritzBoxPanel.getPort());
-		try {
-			JFritz.getFritzBox().detectFirmware();
-		} catch (WrongPasswordException e) {
-			parent.setDisconnectedStatus();
-		} catch (InvalidFirmwareException e) {
-			parent.setDisconnectedStatus();
-		} catch (IOException e) {
-			parent.setDisconnectedStatus();
-		}
-
 		Debug.info("Saved config"); //$NON-NLS-1$
-		JFritz.getSIPProviderTableModel()
-				.saveToXMLFile(Main.SAVE_DIR + JFritz.SIPPROVIDER_FILE);
-		JFritz.getCallerList().saveToXMLFile(Main.SAVE_DIR+JFritz.CALLS_FILE, true);
-		JFritz.getPhonebook().saveToXMLFile(Main.SAVE_DIR+JFritz.PHONEBOOK_FILE);
+//		Save of caller list and phonebook unnecessary at this position
+//		JFritz.getCallerList().saveToXMLFile(Main.SAVE_DIR+JFritz.CALLS_FILE, true);
+//		JFritz.getPhonebook().saveToXMLFile(Main.SAVE_DIR+JFritz.PHONEBOOK_FILE);
         Main.saveUpdateProperties();
 	}
 
@@ -338,6 +336,7 @@ public class ConfigDialog extends JDialog {
 				{
 					closeWindow();
 				} else if (source == cancelButton) {
+//					boxPanel.cancel();
 					fritzBoxPanel.cancel();
 					phonePanel.cancel();
 					messagePanel.cancel();
@@ -349,29 +348,6 @@ public class ConfigDialog extends JDialog {
 					callerListAppearancePanel.cancel();
 					sipPanel.cancel();
 					closeWindow();
-				} else if (e.getActionCommand().equals("fetchSIP")) { //$NON-NLS-1$
-					try {
-						JFritz.getFritzBox().setAddress(fritzBoxPanel.getAddress());
-						JFritz.getFritzBox().setPassword(fritzBoxPanel.getPassword());
-						JFritz.getFritzBox().setPort(fritzBoxPanel.getPort());
-						JFritz.getFritzBox().detectFirmware();
-						Vector<SipProvider> data = JFritz.getFritzBox().retrieveSipProvider();
-						JFritz.getSIPProviderTableModel().updateProviderList(
-								data);
-						JFritz.getSIPProviderTableModel()
-								.fireTableDataChanged();
-						JFritz.getCallerList().fireTableDataChanged();
-
-					} catch (WrongPasswordException e1) {
-						JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
-						Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
-					} catch (IOException e1) {
-						JFritz.errorMsg(Main.getMessage("box.not_found")); //$NON-NLS-1$
-						Debug.errDlg(Main.getMessage("box.not_found")); //$NON-NLS-1$
-					} catch (InvalidFirmwareException e1) {
-						JFritz.errorMsg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
-						Debug.errDlg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
-					}
 				}
 			}
 		};
@@ -467,6 +443,7 @@ public class ConfigDialog extends JDialog {
 		addKeyListener(keyListener);
 
 		// new config dialog
+//		this.addConfigPanel(boxPanel);
 		this.addConfigPanel(fritzBoxPanel);
 		this.addConfigPanel(phonePanel);
 		this.addConfigPanel(sipPanel);

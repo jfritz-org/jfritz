@@ -1,6 +1,6 @@
 package de.moonflower.jfritz.callmonitor;
 
-import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.box.FritzBox;
 import de.moonflower.jfritz.utils.Debug;
 
 import java.io.BufferedReader;
@@ -12,6 +12,7 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.Random;
+import java.util.Vector;
 
 /**
  * Thread. Connects to FritzBox Port 1012. Captures Callermessages.
@@ -21,7 +22,6 @@ import java.util.Random;
  */
 
 public abstract class FBoxCallMonitor extends Thread implements CallMonitorInterface {
-
 	private static final int CONNECTION_TIMEOUT = 1000; //15000
 
 	private static final int READ_TIMEOUT = 15000; //15000;
@@ -40,15 +40,22 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
 
     private boolean connected = false;
 
-    public FBoxCallMonitor() {
+    protected FritzBox fritzBox;
+
+    private Vector<CallMonitorStatusListener> stateListener;
+
+    public FBoxCallMonitor(FritzBox fritzBox,
+    		Vector<CallMonitorStatusListener> listener) {
         super("FBoxThread");
+        this.stateListener = listener;
+        this.fritzBox = fritzBox;
         Debug.info("Starting FBoxListener"); //$NON-NLS-1$
         this.setDaemon(true);
         running = true;
         start();
         zufallszahl = new Random();
         Debug.info("Trying to connect to " //$NON-NLS-1$
-                + JFritz.getFritzBox().getAddress() + ":1012"); //$NON-NLS-1$,  //$NON-NLS-2$
+        		+ fritzBox.getAddress() + ":1012"); //$NON-NLS-1$,  //$NON-NLS-2$
     }
 
     public abstract void run();
@@ -56,12 +63,14 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
     protected boolean connect() {
     	try {
 //    		Debug.msg("Connecting call monitor ... ");
-	        clientSocket = new Socket(JFritz.getFritzBox().getAddress(), 1012); //$NON-NLS-1$
+	        clientSocket = new Socket(fritzBox.getAddress(), 1012); //$NON-NLS-1$
 	        clientSocket.setKeepAlive(true);
-			JFritz.getJframe().setCallMonitorConnectedStatus();
 			clientSocket.setSoTimeout(CONNECTION_TIMEOUT);
 			connected = true;
 			clientSocket.setSoTimeout(READ_TIMEOUT);
+            in = new BufferedReader(new InputStreamReader(clientSocket
+                    .getInputStream()));
+			this.setConnectedStatus();
 			return true;
     	} catch (SocketTimeoutException stoe) {
 	        Debug.error("Socket connect timeout: " + stoe.toString()); //$NON-NLS-1$
@@ -111,10 +120,9 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
     }
 
     protected void readOutput() {
-        try {
+    	boolean timeout = true;
+    	try {
 //        	Debug.msg("Reading call monitor input ... ");
-            in = new BufferedReader(new InputStreamReader(clientSocket
-                    .getInputStream()));
             String currentLine;
             // lese nächste Nachricht ein
         	if (running && connected)
@@ -122,25 +130,31 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
                 currentLine = in.readLine();
                 if (currentLine != null)
                 {
+                	timeout = false;
                     parseOutput(currentLine);
                 }
                 else
                 {
                 	connected = false;
+                	this.setDisconnectedStatus();
                 	in.close();
                 }
         	}
         } catch (IOException ioe) {
             connected = false;
+            this.setDisconnectedStatus();
         }
-        try {
-        	clientSocket.close();
-        	in.close();
-//        	Debug.msg("Closed input stream of call monitor!");
-        }
-        catch (IOException ioe)
+        if (timeout)
         {
-        	Debug.error("IOException while closing call monitor input!");
+	        try {
+	        	clientSocket.close();
+	        	in.close();
+	//        	Debug.msg("Closed input stream of call monitor!");
+	        }
+	        catch (IOException ioe)
+	        {
+	        	Debug.error("IOException while closing call monitor input!");
+	        }
         }
     }
 
@@ -166,11 +180,14 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
             Debug.error(e.toString());
         }
         try {
-        	in.close();
+        	if (in != null)
+        	{
+        		in.close();
+        	}
 	    } catch (IOException e) {
 	        Debug.error(e.toString());
 	    }
-		JFritz.getJframe().setCallMonitorDisconnectedStatus();
+	    this.setDisconnectedStatus();
     }
 
     public boolean isConnected()
@@ -182,4 +199,26 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
     {
     	return running;
     }
+
+	private void setConnectedStatus()
+	{
+		if (stateListener != null)
+		{
+			for (int i=0; i<stateListener.size(); i++)
+			{
+				stateListener.get(i).setConnectedStatus(fritzBox.getName());
+			}
+		}
+	}
+
+	private void setDisconnectedStatus()
+	{
+		if (stateListener != null)
+		{
+			for (int i=0; i<stateListener.size(); i++)
+			{
+				stateListener.get(i).setDisconnectedStatus(fritzBox.getName());
+			}
+		}
+	}
 }

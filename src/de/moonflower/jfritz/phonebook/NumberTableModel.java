@@ -10,7 +10,10 @@ import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.struct.PhoneType;
 
 public class NumberTableModel extends AbstractTableModel {
-	private final String columnNames[] = { Main.getMessage("standard_short"), Main.getMessage("type"), Main.getMessage("number") }; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+	private final String columnNames[] = {
+			Main.getMessage("standard_short"), 	//$NON-NLS-1$
+			Main.getMessage("type"), 			//$NON-NLS-1$
+			Main.getMessage("number") }; 		//$NON-NLS-1$
 
 	private static final long serialVersionUID = 1;
 

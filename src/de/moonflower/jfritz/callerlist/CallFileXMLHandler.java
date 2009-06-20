@@ -17,6 +17,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.Debug;
 
 /**
@@ -29,7 +30,7 @@ public class CallFileXMLHandler extends DefaultHandler {
 
 	Vector<Call> newCalls;
 
-	String chars, caller, callbycall, port, route, comment;
+	String chars, caller, callbycall, portStr, route, comment;
 
 	CallerList callerlist;
 
@@ -62,7 +63,7 @@ public class CallFileXMLHandler extends DefaultHandler {
 		chars = "";  //$NON-NLS-1$
 
 		if (eName.equals("entry")) { //$NON-NLS-1$
-			port = ""; //$NON-NLS-1$
+			portStr = ""; //$NON-NLS-1$
 			route = ""; //$NON-NLS-1$
 			caller = ""; //$NON-NLS-1$
 			callbycall = ""; //$NON-NLS-1$
@@ -92,7 +93,7 @@ public class CallFileXMLHandler extends DefaultHandler {
 		if (qName.equals("duration")) { //$NON-NLS-1$
 			duration = Integer.parseInt(chars);
 		} else if (qName.equals("port")) { //$NON-NLS-1$
-			port = chars;
+			portStr = chars;
 		} else if (qName.equals("route")) { //$NON-NLS-1$
 			route = chars;
 		} else if (qName.equals("caller")) { //$NON-NLS-1$
@@ -116,6 +117,15 @@ public class CallFileXMLHandler extends DefaultHandler {
 					number = new PhoneNumber(caller, false);
 					if (callbycall.length() > 0)
 						number.setCallByCall(callbycall);
+				}
+
+				Port port = null;
+				try {
+					int portId = Integer.parseInt(portStr);
+					port = Port.getPort(portId);
+				} catch (NumberFormatException nfe)
+				{
+					port = new Port(0, portStr, "-1", "-1");
 				}
 				newCalls.add(new Call(calltype, calldate, number, port, route, duration,
 						comment));

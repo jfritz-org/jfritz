@@ -102,153 +102,15 @@ public class SipProviderTableModel extends AbstractTableModel {
     }
 
     /**
-     * @return Returns the providerList.
-     */
-    public final Vector<SipProvider> getProviderList() {
-        return providerList;
-    }
-
-    /**
      * Updates SIP-Provider list
      * @param newProviderList
      *            The new providerList to update.
      */
     public final void updateProviderList(Vector<SipProvider> newProviderList) {
-        Vector<SipProvider> newProviderVector = new Vector<SipProvider>();
-        if (providerList.size() == 0) { // Empty providerList
-            providerList = newProviderList;
-        } else {
-            Enumeration<SipProvider> en1 = newProviderList.elements(); // neue Provider
-            while (en1.hasMoreElements()) {
-                SipProvider sip1 = en1.nextElement();
-                boolean found =  false;
-                for (int i=0; i < providerList.size(); i++) {
-                    SipProvider sip2 = providerList.get(i);
-                    if (sip1.toString().equals(sip2.toString())) {
-                        // Provider existiert schon
-                        // Active-Status und ProviderID anpassen und zur neuen Liste hinzufügen
-                        found = true;
-                        sip2.setActive(sip1.isActive());
-                        sip2.setProviderID(sip1.getProviderID());
-                        newProviderVector.add(sip2);
-                    }
-                }
-                if (!found) {
-                    newProviderVector.add(sip1);
-                }
-            }
-            providerList = newProviderVector;
-            sortAllRowsBy(0);
-        }
+    	providerList = newProviderList;
     }
 
-    public final void addProvider(SipProvider sip) {
-        providerList.add(sip);
-    }
-
-	/**
-	 * Saves sip provider list to xml file.
-	 *
-	 * @param filename
-	 *            Filename to save to
-	 */
-	public void saveToXMLFile(String filename) {
-		Debug.info("Saving to file " + filename); //$NON-NLS-1$
-		FileOutputStream fos;
-		try {
-			fos = new FileOutputStream(filename);
-			PrintWriter pw = new PrintWriter(fos);
-			pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
-			pw.println("<provider>"); //$NON-NLS-1$
-			pw.println("<comment>SIP-Provider for " + Main.PROGRAM_NAME + " v" //$NON-NLS-1$,  //$NON-NLS-2$
-					+ Main.PROGRAM_VERSION + "</comment>"); //$NON-NLS-1$
-
-			Enumeration<SipProvider> en = providerList.elements();
-				while (en.hasMoreElements()) {
-					SipProvider provider = en.nextElement();
-					pw.println(provider.toXML());
-				}
-			pw.println("</provider>"); //$NON-NLS-1$
-			pw.close();
-		} catch (FileNotFoundException e) {
-			Debug.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
-		}
-	}
-
-	/**
-	 * Loads calls from xml file
-	 *
-	 * @param filename
-	 */
-	public void loadFromXMLFile(String filename) {
-		try {
-
-			// Workaround for SAX parser
-			// File dtd = new File("calls.dtd");
-			// dtd.deleteOnExit();
-			// if (!dtd.exists()) dtd.createNewFile();
-			SAXParserFactory factory = SAXParserFactory.newInstance();
-			factory.setValidating(false); // FIXME Something wrong with the DTD
-			SAXParser parser = factory.newSAXParser();
-			XMLReader reader = parser.getXMLReader();
-
-			reader.setErrorHandler(new ErrorHandler() {
-				public void error(SAXParseException x) throws SAXException {
-					// Debug.err(x.toString());
-					throw x;
-				}
-
-				public void fatalError(SAXParseException x) throws SAXException {
-					// Debug.err(x.toString());
-					throw x;
-				}
-
-				public void warning(SAXParseException x) throws SAXException {
-					// Debug.err(x.toString());
-					throw x;
-				}
-			});
-			reader.setEntityResolver(new EntityResolver() {
-				public InputSource resolveEntity(String publicId,
-						String systemId) throws SAXException, IOException {
-					if (systemId.equals(SIP_DTD_URI)
-							|| systemId.equals("sip.dtd")) { //$NON-NLS-1$
-						InputSource is;
-						is = new InputSource(new StringReader(SIP_DTD));
-						is.setSystemId(SIP_DTD_URI);
-						return is;
-					}
-					throw new SAXException("Invalid system identifier: " //$NON-NLS-1$
-							+ systemId);
-				}
-
-			});
-
-			reader.setContentHandler(new SIPFileXMLHandler(this));
-			reader.parse(new InputSource(new FileInputStream(filename)));
-			sortAllRowsBy(0);
-
-		} catch (ParserConfigurationException e) {
-			Debug.error("Error with ParserConfiguration!"); //$NON-NLS-1$
-		} catch (SAXException e) {
-			Debug.error("Error on parsing " + filename + "!" + e); //$NON-NLS-1$,  //$NON-NLS-2$
-			if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
-					|| e.getLocalizedMessage().startsWith(
-							"Invalid system identifier")) { //$NON-NLS-1$
-				Debug.error(e.toString());
-				Debug.error("STRUKTURÄNDERUNG!\n\nBitte in der Datei jfritz.sipprovider.xml\n " //$NON-NLS-1$
-								+ "die Zeichenkette \"sip.dtd\" durch\n \"" //$NON-NLS-1$
-								+ SIP_DTD_URI + "\"\n ersetzen!"); //$NON-NLS-1$
-				Debug.errDlg("STRUKTURÄNDERUNG!\n\nBitte in der Datei jfritz.sipprovider.xml\n " //$NON-NLS-1$
-						+ "die Zeichenkette \"sip.dtd\" durch\n \"" //$NON-NLS-1$
-						+ SIP_DTD_URI + "\"\n ersetzen!"); //$NON-NLS-1$
-			}
-		} catch (IOException e) {
-			Debug.error("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
-		}
-	}
-
-	public void sortAllRowsBy(int col) {
+    public void sortAllRowsBy(int col) {
 	    Collections.sort(providerList, new ColumnSorter<SipProvider>(col, true));
 		fireTableDataChanged();
 	}

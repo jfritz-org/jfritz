@@ -6,6 +6,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.URLDecoder;
+import java.util.Vector;
 import java.io.DataOutputStream;
 
 import de.moonflower.jfritz.JFritz;
@@ -34,27 +35,29 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
 
     private boolean connected = false;
 
-	public CallmessageCallMonitor() {
-		this(23232);
-		start();
-	}
+    private String boxName = "";
 
-	public CallmessageCallMonitor(int port) {
+    private Vector<CallMonitorStatusListener> stateListener;
+
+	public CallmessageCallMonitor(String boxName, int port, Vector<CallMonitorStatusListener> listener) {
 		super();
-		start();
+		this.boxName = boxName;
 		this.port = port;
+		this.stateListener = listener;
+		start();
 	}
 
 	public void run() {
 		startCallmessageListener();
 	}
 
-	public void startCallmessageListener() {
+	private void startCallmessageListener() {
 		isRunning = true;
 		Debug.info("Starting Callmessage-Monitor on Port " + port); //$NON-NLS-1$
 		try {
 			serverSocket = new ServerSocket(port);
 			connected = true;
+			this.setConnectedStatus();
 		} catch (Exception e) {
 			try {
                 Debug.error(e.toString()); //$NON-NLS-1$
@@ -67,7 +70,7 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
                 Debug.error(e1.toString());
 	        	Thread.currentThread().interrupt();
 			}
-			JFritz.stopCallMonitor();
+			this.setDisconnectedStatus();
 		}
         Debug.info("Callmessage-Monitor ready"); //$NON-NLS-1$
 		while (isRunning) {
@@ -102,7 +105,7 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
                      }
                      // TODO: add Call to CallMonitorList and display it only, if number is not in ignoreMSN-List
                      Person person = PhoneBook.searchFirstAndLastNameToPhoneNumber(number);
-                     dcm.displayCallInMsg(null, number, msn, "", person);  //$NON-NLS-1$
+                     dcm.displayCallInMsg(null, null, number, msn, "", person);  //$NON-NLS-1$
                      // Alter Callmessagemonitor
                 } else if (msg.startsWith("@")) {  //$NON-NLS-1$
 					// Call
@@ -139,7 +142,7 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
 					}
                     // TODO: add Call to CallMonitorList and display it only, if number is not in ignoreMSN-List
                     Person person = PhoneBook.searchFirstAndLastNameToPhoneNumber(number);
-                    dcm.displayCallInMsg(null, number, msn, "", person);  //$NON-NLS-1$
+                    dcm.displayCallInMsg(null, null, number, msn, "", person);  //$NON-NLS-1$
 					//JFritz.getCallMonitorList().displayCallInMsg(number, msn, name);
 				} else {
 					// Message
@@ -155,12 +158,12 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
 			} catch (SocketException e) {
 				Debug.error(e.toString()); //$NON-NLS-1$
 				if (!e.toString().equals("java.net.SocketException: socket closed")) { //$NON-NLS-1$
-					JFritz.stopCallMonitor();
+					this.setDisconnectedStatus();
 				}
 			} catch (Exception e) {
 				JFritz.infoMsg("Exception " + e); //$NON-NLS-1$
 				Debug.error("CallmessageListener: Exception " + e.toString()); //$NON-NLS-1$
-				JFritz.stopCallMonitor();
+				this.setDisconnectedStatus();
 				isRunning = false;
 				//				break;
 			}
@@ -184,5 +187,27 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
 
 	public void closeConnection() {
 		Debug.warning("Method not implemented!");
+	}
+
+	private void setConnectedStatus()
+	{
+		if (stateListener != null)
+		{
+			for (int i=0; i<stateListener.size(); i++)
+			{
+				stateListener.get(i).setConnectedStatus(boxName);
+			}
+		}
+	}
+
+	private void setDisconnectedStatus()
+	{
+		if (stateListener != null)
+		{
+			for (int i=0; i<stateListener.size(); i++)
+			{
+				stateListener.get(i).setDisconnectedStatus(boxName);
+			}
+		}
 	}
 }

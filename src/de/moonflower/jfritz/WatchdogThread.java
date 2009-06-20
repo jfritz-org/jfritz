@@ -23,8 +23,6 @@ public class WatchdogThread extends Thread {
 
     private boolean standbyDetected = false;
 
-    private JFritz jfritz;
-
     private int watchdogCalls = 0;
 
     /**
@@ -32,27 +30,27 @@ public class WatchdogThread extends Thread {
      * @param interval
      *            in minutes
      */
-    public WatchdogThread(int interval, int factor, JFritz jfritz) {
+    public WatchdogThread(int interval, int factor) {
         cal = Calendar.getInstance();
         this.interval = interval;
         this.factor = factor;
         lastTimestamp = cal.getTime();
-        this.jfritz = jfritz;
     }
 
     public void run() {
-    	if (JFritz.getJframe().isCallMonitorStarted() && (JFritz.getCallMonitor() != null)) {
-	    	if (watchdogCalls == factor)
-	    	{
-				watchdogCalls = 0;
-	            checkCallmonitor();
-	    	}
-	    	watchdogCalls++;
-        }
+    	if (JFritz.getJframe().isCallMonitorStarted())
+    	{
+    		if (watchdogCalls == factor)
+    		{
+    			watchdogCalls = 0;
+    			checkCallMonitor();
+    		}
+    		watchdogCalls++;
+    	}
     }
 
-    private void checkCallmonitor() {
-    	//Debug.msg("Checking STANDBY");
+    private void checkCallMonitor() {
+    	Debug.debug("Checking STANDBY");
         cal = Calendar.getInstance();
         now = cal.getTime();
 
@@ -63,30 +61,27 @@ public class WatchdogThread extends Thread {
             // Starte den Anrufmonitor neu.
 
             Debug.always("STANDBY or SUSPEND TO RAM detected"); //$NON-NLS-1$
-//          Debug.msg("Watchdog: Restarting call monitor"); //$NON-NLS-1$
-//			JFritz.getJframe().setCallMonitorDisconnectedStatus();
+			JFritz.getJframe().setDisconnectedStatus();
             standbyDetected = true;
         }
 
         if (standbyDetected)
         {
-        	restartCallMonitor(true);
-        	if ((JFritz.getCallMonitor() != null) && (JFritz.getCallMonitor().isConnected()))
-        	{
-        		if (JFritzUtils.parseBoolean(Main.getProperty("option.watchdog.fetchAfterStandby"))) //$NON-NLS-1$, //$NON-NLS-2$
-        		{
-        			Timer timer = new Timer("Standby-Timer: Fetch-List", true);
-        			timer.schedule(new TimerTask() {
+        	Debug.debug("Restarting call monitor due to STANDBY/SUSPEND TO RAM");
+			restartCallMonitor(true);
+    		if (JFritzUtils.parseBoolean(Main.getProperty("option.watchdog.fetchAfterStandby"))) //$NON-NLS-1$, //$NON-NLS-2$
+    		{
+    			Timer timer = new Timer("Standby-Timer: Fetch-List", true);
+    			timer.schedule(new TimerTask() {
 
-						@Override
-						public void run() {
-		        			JFritz.getJframe().fetchList(JFritzUtils.parseBoolean(Main.getProperty("option.deleteAfterFetch"))); //$NON-NLS-1$, //$NON-NLS-2$
-						}
+					@Override
+					public void run() {
+	        			JFritz.getJframe().fetchList(JFritzUtils.parseBoolean(Main.getProperty("option.deleteAfterFetch"))); //$NON-NLS-1$, //$NON-NLS-2$
+					}
 
-        			}, 20000);
-        		}
-        		standbyDetected = false; // reset flag, because we have successfully restarted the call monitor
-        	}
+    			}, 10000);
+    		}
+    		standbyDetected = false; // reset flag, because we have successfully restarted the call monitor
         }
         setTimestamp();
     }
@@ -96,13 +91,13 @@ public class WatchdogThread extends Thread {
     }
 
     private void restartCallMonitor(boolean showErrorMessage) {
-        JFritz.stopCallMonitor();
+    	JFritz.getBoxCommunication().stopCallMonitor();
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
         	Thread.currentThread().interrupt();
         }
-        jfritz.startChosenCallMonitor(showErrorMessage);
+        JFritz.getBoxCommunication().startCallMonitor();
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {

@@ -1,10 +1,51 @@
-TODO: Drucken der Anrufliste muss korrigiert werden.
-TODO: CallMonitor überprüfen, manchmal immer noch Einträge doppelt ... 
-TODO: Internationalisieren des neuen Einstelldialogs für Ausblendung der Spalten.
-TODO: Hilfe-Seite für neuen Einstelldialog für Ausblendung der Spalten und anpassen des Einstelldialogs der Anrufliste.
-TODO: Client-Server fixen.
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
-TODO: JFritz.playSound scheint buggy zu sein (zumindest unter Vista), ÜBERPRÜFEN und fixen.
+
+JFritz 0.7.2.37:
+- New [0000194]: Updated localization for The Netherlands 
+- Bugfix [0000172]: Sip-Accounts nicht alle vorhanden 
+New strings:
+call_a_number
+
+JFritz 0.7.2.36:
+- Bugfix [0000170]: 0800-Nummer zeigt im AM-Fenster "not found Person" 
+- Bugfix [0000180]: doppelte Einträge in der Anrufliste 
+- Bugfix [0000181]: Löschen eines Eintrags in der Anrufliste mit der DEL-Taste hat keine Sicherheitsabfrage gebracht 
+- Bugfix [0000188]: 0.7.2.34: Löschen der Fritz!Box-Anrufliste ohne Funktion 
+ 	 
+JFritz 0.7.2.35:
+- Bugfix [0000091]: Anrufliste drucken / exportieren funktioniert nicht mehr
+- Bugfix [0000109]: Call-By-Call wird nicht korrekt aufgelöst.
+- Bugfix [0000145]: "Daten sichern" in das JFritz-Daten-Verzeichnis löscht die Daten!
+- Bugfix [0000151]: JFritz kommt mit Sonderzeichen im FRITZ!Box Passwort nicht zurecht.
+- Bugfix [0000157]: .lock wird nicht gelöscht, wenn der Speicherordner verändert wird.
+- Bugfix [0000166]: Spalte Anschluß Ü/ü und Ä/ä wird nicht richtig angezeigt.
+- Neu: Performancemessung bei der Detektierung der Firmware.
+Strings:
+backup_to_source_directory
+
+JFritz 0.7.2.33:
+- Unterstützung für Login per SessionID.
+- Telnet- und Syslog-Anrufmonitor entfernt.
+- Unterstützung für mehrere FritzBoxen vorbereitet, GUI muss noch angepasst werden.
+- Kosten, Freiminuten usw. von SipProvider entfernt.
+- Keine Speicherung von SipProvidern in XML.
+- Sanduhr bei langen Aktionen.
+- Bugfix: ReverseLookup für Luxemburg
+- Neu: Support für FRITZ!Box 7240 
+Strings:
+answering_machine
+appearance
+call_through
+column
+detect_firmware
+edit
+fax_fon
+isdn
+isdn_telephones_all
+move_down
+move_up
+visible
+voip_extension
 
 JFritz 0.7.2.30:
 - Debug-View an umgeschriebenen Logger angepasst.

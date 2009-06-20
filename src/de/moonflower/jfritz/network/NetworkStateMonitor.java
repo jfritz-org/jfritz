@@ -8,6 +8,8 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.Port;
+import de.moonflower.jfritz.utils.Debug;
 
 /**
  * This class is used as a sort of static back end for accessing and changing
@@ -123,20 +125,27 @@ public class NetworkStateMonitor  {
 	public static boolean hasAvailablePorts(){
 		if(Main.getProperty("option.clientCallList").equals("true")
 				&& isConnectedToServer())
+		{
 			return serverConnection.hasAvailablePorts();
+		}
 
-		else if(JFritz.getFritzBox().getAvailablePorts() != null)
+		else if(JFritz.getBoxCommunication().getAvailablePorts() != null)
+		{
 			return true;
+		}
 
 		return false;
 	}
 
-	public static String[] getAvailablePorts(){
-		if(Main.getProperty("option.clientCallList").equals("true")
-				&& isConnectedToServer())
-			return serverConnection.getAvailablePorts();
+	public static Vector<Port> getAvailablePorts(){
+		Debug.always("Fix getAvailablePorts() in NetworkStateMonitor");
+//		if(Main.getProperty("option.clientCallList").equals("true")
+//				&& isConnectedToServer())
+//		{
+//			return serverConnection.getAvailablePorts();
+//		}
 
-		return JFritz.getFritzBox().getAvailablePorts();
+		return JFritz.getBoxCommunication().getAvailablePorts();
 	}
 
 	/**
@@ -147,20 +156,28 @@ public class NetworkStateMonitor  {
 	 * @throws UnsupportedEncodingException
 	 *
 	 */
-	public static void doCall(String number, String port) throws UnsupportedEncodingException, WrongPasswordException, IOException{
+	public static void doCall(String number, Port port) throws UnsupportedEncodingException, WrongPasswordException, IOException{
 		if(Main.getProperty("option.clientCallList").equals("true")
 				&& isConnectedToServer())
+		{
 			serverConnection.requestDoCall(new PhoneNumber(number, false), port);
+		}
 		else
-			JFritz.getFritzBox().doCall(number, port);
+		{
+			JFritz.getBoxCommunication().doCall(new PhoneNumber(number, false), port);
+		}
 	}
 
-	public static void hangup() throws IOException, WrongPasswordException
+	public static void hangup(Port port) throws IOException, WrongPasswordException
 	{
 		if(Main.getProperty("option.clientCallList").equals("true")
 				&& isConnectedToServer())
-			serverConnection.requestHangup();
+		{
+			serverConnection.requestHangup(port);
+		}
 		else
-			JFritz.getFritzBox().hangup();
+		{
+			JFritz.getBoxCommunication().hangup(port);
+		}
 	}
 }

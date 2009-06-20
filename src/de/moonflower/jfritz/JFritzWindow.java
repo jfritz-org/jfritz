@@ -4,6 +4,7 @@
 package de.moonflower.jfritz;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -60,14 +61,13 @@ import de.moonflower.jfritz.callerlist.CallDialog;
 import de.moonflower.jfritz.callerlist.CallerListPanel;
 import de.moonflower.jfritz.callerlist.CallerTable;
 import de.moonflower.jfritz.callerlist.FetchListTimer;
+import de.moonflower.jfritz.callmonitor.CallMonitorStatusListener;
 
 import de.moonflower.jfritz.dialogs.config.ConfigDialog;
 import de.moonflower.jfritz.dialogs.configwizard.ConfigWizard;
 import de.moonflower.jfritz.dialogs.quickdial.QuickDialPanel;
 import de.moonflower.jfritz.dialogs.simple.AddressPasswordDialog;
 import de.moonflower.jfritz.dialogs.simple.CallMessageDlg;
-import de.moonflower.jfritz.dialogs.sip.SipProvider;
-import de.moonflower.jfritz.dialogs.stats.StatsDialog;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.monitoring.MonitoringPanel;
@@ -75,6 +75,7 @@ import de.moonflower.jfritz.network.NetworkStateListener;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.phonebook.PhoneBookPanel;
 
+import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.CopyFile;
@@ -91,7 +92,7 @@ import de.moonflower.jfritz.utils.SwingWorker;
  * @author akw
  */
 public class JFritzWindow extends JFrame implements Runnable, ActionListener,
-		ItemListener, NetworkStateListener {
+		ItemListener, NetworkStateListener, CallMonitorStatusListener {
 
 	private static final long serialVersionUID = 7856291642743441767L;
 
@@ -146,8 +147,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	private JLabel connectButton;
 
 	private JFritzWindow thisWindow;
-
-	private boolean callMonitorStarted = false;
 
 	public final String WINDOW_PROPERTIES_FILE = "jfritz.window.properties.xml"; //$NON-NLS-1$
 
@@ -235,11 +234,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			}
 			if (Main.getProperty("option.autostartcallmonitor").equals( //$NON-NLS-1$,  //$NON-NLS-2$
 					"true")) { //$NON-NLS-1$
-				if (callMonitorStarted == false)
-				{
-					callMonitorStarted = true;
-					jFritz.startChosenCallMonitor(true);
-				}
+				JFritz.getBoxCommunication().startCallMonitor();
 			}
 			if (Main.getProperty("option.timerAfterStart") //$NON-NLS-1$,  //$NON-NLS-2$
 					.equals("true")) { //$NON-NLS-1$
@@ -390,7 +385,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	{
 		connectButton.setIcon(disconnectIcon);
 		connectButton.setToolTipText(Main.getMessage("disconnected_fritz"));
-		setCallMonitorButtonPushed(false);
+		this.setDisconnectedStatus("");
 		statusBar.refresh();
 	}
 
@@ -399,36 +394,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			connectButton.setIcon(connectIcon);
 			connectButton.setToolTipText(Main.getMessage("connected_fritz"));
 			statusBar.refresh();
-	}
-
-	public void setCallMonitorConnectedStatus()
-	{
-		if (JFritz.getCallMonitor() != null)
-		{
-			callMonitorConnectButton.setIcon(callMonitorConnectIcon);
-			callMonitorConnectButton.setToolTipText(Main.getMessage("connected_callmonitor"));
-			callMonitorConnectButton.setVisible(true);
-		}
-		else
-		{
-			callMonitorConnectButton.setVisible(false);
-		}
-		statusBar.refresh();
-	}
-
-	public void setCallMonitorDisconnectedStatus()
-	{
-		if (JFritz.getCallMonitor() != null)
-		{
-			callMonitorConnectButton.setIcon(callMonitorDisconnectIcon);
-			callMonitorConnectButton.setToolTipText(Main.getMessage("disconnected_callmonitor"));
-			callMonitorConnectButton.setVisible(true);
-		}
-		else
-		{
-			callMonitorConnectButton.setVisible(false);
-		}
-		statusBar.refresh();
 	}
 
 	/**
@@ -511,14 +476,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		mBar.add(button);
 
 		mBar.addSeparator();
-
-		button = new JButton();
-		button.setActionCommand("stats"); //$NON-NLS-1$
-		button.addActionListener(this);
-		button.setIcon(getImage("stats.png")); //$NON-NLS-1$
-		button.setToolTipText(Main.getMessage("stats")); //$NON-NLS-1$
-		button.setEnabled(false);
-		mBar.add(button);
 
 		button = new JButton();
 		button.setActionCommand("help"); //$NON-NLS-1$
@@ -813,10 +770,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		}
 	}
 
-	/**
-	 * Fetches list from box
-	 */
-	public void fetchList() {
+	private void restartFetchListTimer()
+	{
 		if (timer != null)
 		{
 			if (timer.getState() == FetchListTimer.STATE_SCHEDULED)
@@ -837,6 +792,14 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				timer.schedule(timerTask, interval, interval); //$NON-NLS-1$
 			}
 		}
+	}
+
+	/**
+	 * Fetches list from box
+	 */
+	public void fetchList() {
+		restartFetchListTimer();
+
 		// fetch the call list
 		fetchList(false);
 	}
@@ -866,25 +829,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				public Object construct() {
 					boolean isdone = false;
 					while (!isdone) {
-						try {
-							setBusy(true);
-							setStatus(Main.getMessage("fetchdata")); //$NON-NLS-1$
-							setConnectedStatus();
-							JFritz.getCallerList().getNewCalls(
-									deleteFritzBoxCallerList);
-							isdone = true;
-						} catch (WrongPasswordException e) {
-							setBusy(false);
-							isdone = true;
-							setDisconnectedStatus();
-						} catch (IOException e) {
-							setDisconnectedStatus();
-							isdone = true;
-						} catch (InvalidFirmwareException e) {
-							setDisconnectedStatus();
-							isdone = true;
-							e.printStackTrace();
-						}
+						setBusy(true);
+						setStatus(Main.getMessage("fetchdata")); //$NON-NLS-1$
+						setConnectedStatus();
+						JFritz.getBoxCommunication().getCallerList();
+						isdone = true;
 					}
 					return null;
 				}
@@ -893,6 +842,15 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					setBusy(false);
 					JFritz.getCallerList().fireTableStructureChanged();
 					isretrieving = false;
+					if (!JFritz.isShutdownInvoked())
+					{
+						if ((JFritz.getBoxCommunication().getLastFetchedCallsCount()>0) &&
+								((Main.getProperty("option.deleteAfterFetch").equals("true")))
+								|| (deleteFritzBoxCallerList)) {
+							JFritz.getBoxCommunication().clearCallerList();
+						}
+					}
+
 					if (!JFritz.isShutdownInvoked())
 					{
 						if (Main.getProperty("option.lookupAfterFetch") //$NON-NLS-1$,  //$NON-NLS-2$
@@ -913,44 +871,21 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	}
 
 	/**
-	 * Shows the stats dialog
-	 */
-	private void showStatsDialog() {
-		StatsDialog dialog = new StatsDialog(this);
-		if (dialog.showDialog()) {
-		}
-		dialog.dispose();
-	}
-
-	/**
 	 * Shows the configuration dialog
 	 */
 	public void showConfigDialog() {
-		configDialog = new ConfigDialog(this);
+	    Container c = this.getContentPane(); // get the window's content pane
+	    c.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		Vector<CallMonitorStatusListener> stateListener = new Vector<CallMonitorStatusListener>();
+		stateListener.add(this);
+		configDialog = new ConfigDialog(this, stateListener);
 		configDialog.setLocationRelativeTo(this);
 		if (configDialog.showDialog()) {
-			try {
-				this.setStatus(Main.getMessage("save_settings"));
-				configDialog.storeValues();
-				Main.saveConfigProperties();
-				if (JFritz.getSIPProviderTableModel().getProviderList().size() == 0) {
-					// Noch keine SipProvider eingelesen.
-						setConnectedStatus();
-						Vector<SipProvider> data = JFritz.getFritzBox()
-								.retrieveSipProvider();
-						JFritz.getSIPProviderTableModel().updateProviderList(data);
-						JFritz.getSIPProviderTableModel().fireTableDataChanged();
-						JFritz.getSIPProviderTableModel().saveToXMLFile(
-								Main.SAVE_DIR + JFritz.SIPPROVIDER_FILE);
-						JFritz.getCallerList().fireTableDataChanged();
-				}
-			} catch (WrongPasswordException e1) {
-				setDisconnectedStatus();
-			} catch (IOException e1) {
-				setDisconnectedStatus();
-			} catch (InvalidFirmwareException e1) {
-				setDisconnectedStatus();
-			}
+			this.setStatus(Main.getMessage("save_settings"));
+			configDialog.storeValues();
+
+			Main.saveConfigProperties();
+			setConnectedStatus();
 			monitorButton.setEnabled((Integer.parseInt(Main.getProperty(
 					"option.callMonitorType")) > 0)); //$NON-NLS-1$,  //$NON-NLS-2$
 
@@ -958,6 +893,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		}
 		configDialog.dispose();
 		this.setStatus("");
+	    c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}
 
 	/**
@@ -1162,8 +1098,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			tabber.setSelectedComponent(quickDialPanel);
 		} else if (e.getActionCommand().equals("monitoring")) {
 			tabber.setSelectedComponent(monitoringPanel);
-		} else if (e.getActionCommand().equals("stats")) {
-			showStatsDialog();
 		} else if (e.getActionCommand().equals("fetchList")) {
 			fetchList();
 		} else if (e.getActionCommand().equals("delete_fritzbox_callerlist")) {
@@ -1183,12 +1117,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			boolean active = ((JToggleButton) e.getSource()).isSelected();
 			if (active) {
 				Debug.info("Start callMonitor"); //$NON-NLS-1$
-				callMonitorStarted = true;
-				jFritz.startChosenCallMonitor(true);
+				JFritz.getBoxCommunication().startCallMonitor();
 			} else {
 				Debug.info("Stop callMonitor"); //$NON-NLS-1$
-				callMonitorStarted = false;
-				JFritz.stopCallMonitor();
+				JFritz.getBoxCommunication().stopCallMonitor();
 			}
 
 		} else if (e.getActionCommand().equals("reverselookup")) {
@@ -1503,36 +1435,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		return fetchButton;
 	}
 
-	public void switchMonitorButton() {
-		if (!monitorButton.isEnabled()) {
-			monitorButton.setEnabled(true);
-		}
-		monitorButton.doClick();
-	}
-
-	public JToggleButton getMonitorButton() {
-		return monitorButton;
-	}
-
-	/**
-	 * Let startCallMonitorButtons start or stop callMonitor Changes caption of
-	 * buttons and their status
-	 *
-	 * @param option
-	 *            CALLMONITOR_START or CALLMONITOR_STOP
-	 */
-
-	public void setCallMonitorButtonPushed(boolean isPushed) {
-		if (monitorButton != null)
-			monitorButton.setSelected(isPushed);
-
-		/**
-		 * switch (option) { case JFritz.CALLMONITOR_START: {
-		 * monitorButton.setSelected(false); break; } case
-		 * JFritz.CALLMONITOR_STOP: { monitorButton.setSelected(true); } }
-		 */
-	}
-
 	private void importOutlook() {
 		Debug.info("Starte Import von Outlook"); //$NON-NLS-1$
 		Thread thread = new Thread(new ImportOutlookContactsDialog(this));
@@ -1748,6 +1650,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 *            to switch the language to
 	 */
 	public void setLanguage(Locale locale) {
+		JFritz.getBoxCommunication().stopCallMonitor();
 		jFritz.createNewWindow(locale);
 		// current window will be destroyed and a new one created
 
@@ -1850,7 +1753,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 			//also activate the call monitor if one is wished
 			if(Main.getProperty("option.clientCallMonitor").equals("true")){
-				callMonitorStarted = true;
 				this.monitorButton.setSelected(true);
 				this.monitorButton.setEnabled(false);
 			}
@@ -1860,8 +1762,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 			//also deactivate the call monitor if one was active
 			if(Main.getProperty("option.clientCallMonitor").equals("true")){
-
-				callMonitorStarted = false;
 				this.monitorButton.setEnabled(true);
 				this.monitorButton.setSelected(false);
 			}
@@ -1927,6 +1827,58 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	public boolean isCallMonitorStarted()
 	{
-		return callMonitorStarted;
+		return monitorButton.isSelected();
+	}
+
+	public void setConnectedStatus(String boxName) {
+		//@TODO: if multiple boxes have callmonitors support it here
+		callMonitorConnectButton.setIcon(callMonitorConnectIcon);
+		callMonitorConnectButton.setToolTipText(Main.getMessage("connected_callmonitor"));
+		callMonitorConnectButton.setVisible(true);
+		if (statusBar != null)
+		{
+			statusBar.refresh();
+		}
+
+		if (monitorButton != null)
+		{
+			monitorButton.setSelected(true);
+		}
+	}
+
+	public void setDisconnectedStatus(String boxName) {
+		//@TODO: if multiple boxes have callmonitors support it here
+		callMonitorConnectButton.setIcon(callMonitorDisconnectIcon);
+		callMonitorConnectButton.setToolTipText(Main.getMessage("disconnected_callmonitor"));
+		callMonitorConnectButton.setVisible(true);
+		if (statusBar != null)
+		{
+			statusBar.refresh();
+		}
+
+		if (monitorButton != null)
+		{
+			monitorButton.setSelected(false);
+		}
+	}
+
+	public void finished(Vector<Call> newCalls) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void setMax(int max) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void setMin(int min) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void setProgress(int progress) {
+		// TODO Auto-generated method stub
+
 	}
 }

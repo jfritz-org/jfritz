@@ -85,6 +85,21 @@ public class CopyFile {
      *
      */
     public void copy(String sourceDirectory, String fileFormat, String targetDirectory) {
+    	if ((targetDirectory != null)
+    		&& (!targetDirectory.endsWith(File.separator)))
+    	{
+    		targetDirectory += File.separator;
+    	}
+    	else return;
+
+    	if ((sourceDirectory != null)
+			&& (sourceDirectory.equals(targetDirectory)))
+    	{
+    		Debug.errDlg(Main.getMessage("backup_to_source_directory"));
+    		return;
+    	}
+
+    	// do this only if sourceDirectory != targetDirectory
         this.sourceDirectory = sourceDirectory;
         this.fileFormat = fileFormat;
         getFiles();

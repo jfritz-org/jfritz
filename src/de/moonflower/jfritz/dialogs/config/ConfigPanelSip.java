@@ -3,12 +3,13 @@ package de.moonflower.jfritz.dialogs.config;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
+import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -20,7 +21,7 @@ import javax.swing.table.TableCellRenderer;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
-import de.moonflower.jfritz.dialogs.sip.SipProvider;
+import de.moonflower.jfritz.dialogs.sip.SipProviderTableModel;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.utils.Debug;
@@ -29,10 +30,14 @@ public class ConfigPanelSip extends JPanel implements ConfigPanel {
 
 	private static final long serialVersionUID = -630145657490186844L;
 
-	private ConfigPanelFritzBox fBoxPanel;
+	private String configPath;
 
-	public ConfigPanelSip(ConfigPanelFritzBox fritzBoxPanel) {
-		this.fBoxPanel = fritzBoxPanel;
+	private SipProviderTableModel sipProviderTableModel;
+
+	private ConfigPanelFritzBox fritzBoxPanel;
+
+	public ConfigPanelSip() {
+		this.sipProviderTableModel = new SipProviderTableModel();
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
 
@@ -44,7 +49,7 @@ public class ConfigPanelSip extends JPanel implements ConfigPanel {
 		c.anchor = GridBagConstraints.WEST;
 
 		JPanel sipButtonPane = new JPanel();
-		final JTable siptable = new JTable(JFritz.getSIPProviderTableModel()) {
+		final JTable siptable = new JTable(sipProviderTableModel) {
 			private static final long serialVersionUID = 1;
 
 			public Component prepareRenderer(TableCellRenderer renderer,
@@ -69,8 +74,8 @@ public class ConfigPanelSip extends JPanel implements ConfigPanel {
 		siptable.setCellSelectionEnabled(false);
 		siptable.setRowSelectionAllowed(true);
 		siptable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		siptable.getColumnModel().getColumn(0).setMinWidth(20);
-		siptable.getColumnModel().getColumn(0).setMaxWidth(20);
+		siptable.getColumnModel().getColumn(0).setMinWidth(30);
+		siptable.getColumnModel().getColumn(0).setMaxWidth(30);
 		siptable.getColumnModel().getColumn(1).setMinWidth(40);
 		siptable.getColumnModel().getColumn(1).setMaxWidth(40);
 //		siptable.setSize(200, 150);
@@ -78,18 +83,11 @@ public class ConfigPanelSip extends JPanel implements ConfigPanel {
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (e.getActionCommand().equals("fetchSIP")) { //$NON-NLS-1$
+				    Container c = getPanel(); // get the window's content pane
 					try {
-						JFritz.getFritzBox().setAddress(fBoxPanel.getAddress());
-						JFritz.getFritzBox().setPassword(fBoxPanel.getPassword());
-						JFritz.getFritzBox().setPort(fBoxPanel.getPort());
-						JFritz.getFritzBox().detectFirmware();
-						Vector<SipProvider> data = JFritz.getFritzBox().retrieveSipProvider();
-						JFritz.getSIPProviderTableModel().updateProviderList(
-								data);
-						JFritz.getSIPProviderTableModel()
-								.fireTableDataChanged();
-						JFritz.getCallerList().fireTableDataChanged();
-
+					    c.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+						fritzBoxPanel.detectBoxType();
+						updateTable();
 					} catch (WrongPasswordException e1) {
 						JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
 						Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
@@ -100,6 +98,7 @@ public class ConfigPanelSip extends JPanel implements ConfigPanel {
 						JFritz.errorMsg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
 						Debug.errDlg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
 					}
+					c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				}
 			}
 		};
@@ -114,20 +113,25 @@ public class ConfigPanelSip extends JPanel implements ConfigPanel {
 
 		sippane.setLayout(new BorderLayout());
 		sippane.add(sipButtonPane, BorderLayout.NORTH);
-		sippane.add(siptable, BorderLayout.CENTER);
+		sippane.add(new JScrollPane(siptable), BorderLayout.CENTER);
 
 		add(new JScrollPane(sippane), BorderLayout.CENTER);
 	}
 
 	public void loadSettings() {
+		updateTable();
 	}
 
 	public void saveSettings() {
 	}
 
+	public void setPath(String path) {
+		this.configPath = path;
+	}
+
 	public String getPath()
 	{
-		return Main.getMessage("sip_numbers");
+		return this.configPath;
 	}
 
 	public JPanel getPanel() {
@@ -141,5 +145,23 @@ public class ConfigPanelSip extends JPanel implements ConfigPanel {
 	public void cancel() {
 		// TODO Auto-generated method stub
 
+	}
+
+	public void updateTable()
+	{
+		if ((fritzBoxPanel != null)
+			&& (fritzBoxPanel.getFritzBox() != null)
+			&& (fritzBoxPanel.getFritzBox().getSipProvider() != null))
+		{
+			sipProviderTableModel.updateProviderList(
+					fritzBoxPanel.getFritzBox().getSipProvider());
+			sipProviderTableModel.fireTableDataChanged();
+			JFritz.getCallerList().fireTableDataChanged();
+		}
+	}
+
+	public void setFritzBoxPanel(ConfigPanelFritzBox fritzBoxPanel)
+	{
+		this.fritzBoxPanel = fritzBoxPanel;
 	}
 }

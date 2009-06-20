@@ -22,6 +22,7 @@ import javax.swing.event.ChangeListener;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.utils.CopyFile;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -185,8 +186,20 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 	public void saveSettings() {
 		// only write the save dir to disk if the user changed something
 		if (!save_location.getText().equals(Main.SAVE_DIR)) {
-			Main.SAVE_DIR = save_location.getText();
-			Main.writeSaveDir();
+			File f = new File(save_location.getText());
+			if (f.isDirectory())
+			{
+				CopyFile backup = new CopyFile();
+				try {
+					backup.copy(Main.SAVE_DIR, "xml", save_location.getText()); //$NON-NLS-1$,  //$NON-NLS-2$
+				} catch (NullPointerException e) {
+					Debug.error("No directory choosen for backup!"); //$NON-NLS-1$
+				}
+				Main.removeLock();
+				Main.SAVE_DIR = save_location.getText();
+				Main.createLock();
+				Main.writeSaveDir();
+			}
 		}
 		Main.setProperty("option.useSSDP", Boolean.toString(searchWithSSDP //$NON-NLS-1$
 				.isSelected()));

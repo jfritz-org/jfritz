@@ -28,10 +28,10 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
     	{
     		person = PhoneBook.searchFirstAndLastNameToPhoneNumber(call.getPhoneNumber().getAreaNumber());
             Debug.info("Displaying call out message...");
-            displayCallOutMsg(call, call.getPhoneNumber().getAreaNumber(), call.getRoute(), call.getPort(), person);
+            displayCallOutMsg(call, call.getPhoneNumber().getAreaNumber(), call.getRoute(), call.getPort().getName(), person);
     	} else {
     		Debug.info("Displaying call out message...");
-    		displayCallOutMsg(call, null, call.getRoute(), call.getPort(), person);
+    		displayCallOutMsg(call, null, call.getRoute(), call.getPort().getName(), person);
     	}
     }
 
@@ -41,10 +41,10 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
     	{
     		person = PhoneBook.searchFirstAndLastNameToPhoneNumber(call.getPhoneNumber().getAreaNumber());
             Debug.info("Displaying call in message...");
-            displayCallInMsg(call, call.getPhoneNumber().getAreaNumber(), call.getRoute(), call.getPort(), person);
+            displayCallInMsg(call, call.getPhoneNumber().getAreaNumber(), call.getRoute(), call.getPort().getName(), person);
     	} else {
             Debug.info("Displaying call in message...");
-            displayCallInMsg(call, null, call.getRoute(), call.getPort(), person);
+            displayCallInMsg(call, null, call.getRoute(), call.getPort().getName(), person);
     	}
     }
 
@@ -81,7 +81,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
         Debug.debug("Name: " + name); //$NON-NLS-1$
         Debug.debug("Port: " + port); //$NON-NLS-1$
 
-        String callerstr = "", calledstr = "", portstr = ""; //$NON-NLS-1$,  //$NON-NLS-2$ //$NON-NLS-3$
+        String callerstr = "", calledstr = ""; //$NON-NLS-1$,  //$NON-NLS-2$ //$NON-NLS-3$
         String firstname = "", surname = "", company = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 
         callerstr = callerInput;
@@ -100,11 +100,6 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
         }
 
         calledstr = calledInput;
-        if ( calledInput != null )
-        {
-        	if (calledInput.startsWith("SIP")) //$NON-NLS-1$
-              calledstr = JFritz.getSIPProviderTableModel().getSipProvider(calledInput, calledInput);
-        }
 
         if (name.equals("") && !callerstr.equals(Main.getMessage("unknown")) && person != null) { //$NON-NLS-1$,  //$NON-NLS-2$
             firstname = person.getFirstName();
@@ -118,46 +113,10 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 
         if (callerstr.startsWith("+49"))callerstr = "0" + callerstr.substring(3); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		if (port.equals("4")) //$NON-NLS-1$
-			portstr = "ISDN"; //$NON-NLS-1$
-		else if (port.equals("0")) //$NON-NLS-1$
-			portstr = "FON 1"; //$NON-NLS-1$
-		else if (port.equals("1")) //$NON-NLS-1$
-			portstr = "FON 2"; //$NON-NLS-1$
-		else if (port.equals("2")) //$NON-NLS-1$
-			portstr = "FON 3"; //$NON-NLS-1$
-		else if (port.equals("10")) //$NON-NLS-1$
-			portstr = "DECT 1"; //$NON-NLS-1$
-		else if (port.equals("11")) //$NON-NLS-1$
-			portstr = "DECT 2"; //$NON-NLS-1$
-		else if (port.equals("12")) //$NON-NLS-1$
-			portstr = "DECT 3"; //$NON-NLS-1$
-		else if (port.equals("13")) //$NON-NLS-1$
-			portstr = "DECT 4"; //$NON-NLS-1$
-		else if (port.equals("14")) //$NON-NLS-1$
-			portstr = "DECT 5"; //$NON-NLS-1$
-		else if (port.equals("15")) //$NON-NLS-1$
-			portstr = "DECT 6"; //$NON-NLS-1$
-	    else if (port.equals("3")) //$NON-NLS-1$
-		    portstr = "Durchwahl"; //$NON-NLS-1$
-        else if (port.equals("32")) //$NON-NLS-1$
-            portstr = "Daten Fon 1";     //$NON-NLS-1$
-        else if (port.equals("33")) //$NON-NLS-1$
-            portstr = "Daten Fon 2";        //$NON-NLS-1$
-        else if (port.equals("34")) //$NON-NLS-1$
-            portstr = "Daten Fon 3";       //$NON-NLS-1$
-        else if (port.equals("36")) //$NON-NLS-1$
-            portstr = "Daten S0"; //$NON-NLS-1$
-		else if (port.equals("")) //$NON-NLS-1$
-			portstr = ""; //$NON-NLS-1$
-		else
-			portstr = port;
-
-
         Debug.debug("Caller: " + callerstr); //$NON-NLS-1$
         Debug.debug("Called: " + calledstr); //$NON-NLS-1$
         Debug.debug("Name: " + name); //$NON-NLS-1$
-        Debug.debug("Port: " + portstr); //$NON-NLS-1$
+        Debug.debug("Port: " + port); //$NON-NLS-1$
 
         switch (Integer.parseInt(Main.getProperty("option.popuptype"))) { //$NON-NLS-1$,  //$NON-NLS-2$
             case 0 : { // No Popup
@@ -195,7 +154,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
             programString = programString.replaceAll("%Number", callerstr); //$NON-NLS-1$
             programString = programString.replaceAll("%Name", name); //$NON-NLS-1$
             programString = programString.replaceAll("%Called", calledstr); //$NON-NLS-1$
-            programString = programString.replaceAll("%Port", portstr); //$NON-NLS-1$
+            programString = programString.replaceAll("%Port", port); //$NON-NLS-1$
             programString = programString.replaceAll("%Firstname", firstname); //$NON-NLS-1$
             programString = programString.replaceAll("%Surname", surname); //$NON-NLS-1$
             programString = programString.replaceAll("%Company", company); //$NON-NLS-1$
@@ -247,7 +206,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
         Debug.debug("Provider: " + providerInput); //$NON-NLS-1$
         Debug.debug("Port: " + port); //$NON-NLS-1$
 
-        String calledstr = "", providerstr = "", name = "", portstr = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+        String calledstr = "", providerstr = "", name = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
         String firstname = "", surname = "", company = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 
         if ( calledInput != null )
@@ -265,9 +224,6 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
         if ( providerInput != null )
         {
           providerstr = providerInput;
-          if (providerInput.startsWith("SIP")) //$NON-NLS-1$
-              providerstr = JFritz.getSIPProviderTableModel().getSipProvider(
-                      providerInput, providerInput);
         }
 
         if ( person != null )
@@ -284,45 +240,10 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 
         if (calledstr.startsWith("+49"))calledstr = "0" + calledstr.substring(3); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		if (port.equals("4")) //$NON-NLS-1$
-			portstr = "ISDN"; //$NON-NLS-1$
-		else if (port.equals("0")) //$NON-NLS-1$
-			portstr = "FON 1"; //$NON-NLS-1$
-		else if (port.equals("1")) //$NON-NLS-1$
-			portstr = "FON 2"; //$NON-NLS-1$
-		else if (port.equals("2")) //$NON-NLS-1$
-			portstr = "FON 3"; //$NON-NLS-1$
-	    else if (port.equals("3")) //$NON-NLS-1$
-		    portstr = "Durchwahl"; //$NON-NLS-1$
-		else if (port.equals("10")) //$NON-NLS-1$
-			portstr = "DECT 1"; //$NON-NLS-1$
-		else if (port.equals("11")) //$NON-NLS-1$
-			portstr = "DECT 2"; //$NON-NLS-1$
-		else if (port.equals("12")) //$NON-NLS-1$
-			portstr = "DECT 3"; //$NON-NLS-1$
-		else if (port.equals("13")) //$NON-NLS-1$
-			portstr = "DECT 4"; //$NON-NLS-1$
-		else if (port.equals("14")) //$NON-NLS-1$
-			portstr = "DECT 5"; //$NON-NLS-1$
-		else if (port.equals("15")) //$NON-NLS-1$
-			portstr = "DECT 6"; //$NON-NLS-1$
-        else if (port.equals("32")) //$NON-NLS-1$
-            portstr = "Daten Fon 1";     //$NON-NLS-1$
-        else if (port.equals("33")) //$NON-NLS-1$
-            portstr = "Daten Fon 2";        //$NON-NLS-1$
-        else if (port.equals("34")) //$NON-NLS-1$
-            portstr = "Daten Fon 3";       //$NON-NLS-1$
-        else if (port.equals("36")) //$NON-NLS-1$
-            portstr = "Daten S0"; //$NON-NLS-1$
-		else if (port.equals("")) //$NON-NLS-1$
-			portstr = ""; //$NON-NLS-1$
-		else
-			portstr = port;
-
         Debug.debug("Provider: " + providerstr); //$NON-NLS-1$
         Debug.debug("Called: " + calledstr); //$NON-NLS-1$
         Debug.debug("Name: " + name); //$NON-NLS-1$
-        Debug.debug("Port: " + portstr); //$NON-NLS-1$
+        Debug.debug("Port: " + port); //$NON-NLS-1$
 
         switch (Integer.parseInt(Main.getProperty("option.popuptype"))) { //$NON-NLS-1$,  //$NON-NLS-2$
             case 0 : { // No Popup
@@ -359,7 +280,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 			programString = programString.replaceAll("%Number", calledstr); //$NON-NLS-1$
 			programString = programString.replaceAll("%Name", name); //$NON-NLS-1$
 			programString = programString.replaceAll("%Called", providerstr); //$NON-NLS-1$
-			programString = programString.replaceAll("%Port", portstr); //$NON-NLS-1$
+			programString = programString.replaceAll("%Port", port); //$NON-NLS-1$
 			programString = programString.replaceAll("%Firstname", firstname); //$NON-NLS-1$
 			programString = programString.replaceAll("%Surname", surname); //$NON-NLS-1$
 			programString = programString.replaceAll("%Company", company); //$NON-NLS-1$

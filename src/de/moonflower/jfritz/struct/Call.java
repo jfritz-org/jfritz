@@ -9,10 +9,9 @@ import java.io.Serializable;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Enumeration;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.dialogs.sip.SipProvider;
+import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
@@ -35,7 +34,7 @@ public class Call implements Serializable {
 
 	private int routeType;
 
-	private String port;
+	private Port port;
 
 	private int duration;
 
@@ -44,11 +43,18 @@ public class Call implements Serializable {
 	private String comment = ""; //$NON-NLS-1$
 
 	public Call(final CallType calltype, final Date calldate, final PhoneNumber number,
-			final String port, final String route, final int duration) {
+			final Port port, final String route, final int duration) {
 		this.calltype = calltype;
 		this.calldate = calldate;
 		this.number = number;
 		this.route = route;
+		this.port = port;
+		this.duration = duration;
+
+		if (port == null)
+		{
+			this.port = new Port(-1, "", "-1", "-1");
+		}
 
 		// fix so that an empty number doesnt get linked to an empty entry in
 		// the telephone book
@@ -60,26 +66,26 @@ public class Call implements Serializable {
 		if ( route.contains("@")) {
 			this.routeType = ROUTE_SIP;
 		} else if (this.route.startsWith("Internet: ")) {
-			Enumeration<SipProvider> en = JFritz.getSIPProviderTableModel().getProviderList().elements();
-			SipProvider sipProvider;
-			while (en.hasMoreElements()) {
-				sipProvider = (SipProvider) en.nextElement();
-				if (sipProvider.getNumber().equals(this.route.substring(10))) {
-					this.route = sipProvider.toString();
-					this.routeType = ROUTE_SIP;
-					break;
-				}
-			}
+			Debug.error("Route: " + route);
+			this.route = "!!!!!!!!FIXME!!!!!!!!";
+			this.routeType = ROUTE_SIP;
+//			Enumeration<SipProvider> en = JFritz.getBoxCommunication().sielements();
+//			SipProvider sipProvider;
+//			while (en.hasMoreElements()) {
+//				sipProvider = (SipProvider) en.nextElement();
+//				if (sipProvider.getNumber().equals(this.route.substring(10))) {
+//					this.route = sipProvider.toString();
+//					this.routeType = ROUTE_SIP;
+//					break;
+//				}
+//			}
 		} else {
 			routeType = ROUTE_FIXED_NETWORK;
 		}
-
-		this.port = port;
-		this.duration = duration;
 	}
 
 	public Call(final CallType calltype, final Date calldate, final PhoneNumber number,
-			final String port, final String route, final int duration, final String comment) {
+			final Port port, final String route, final int duration, final String comment) {
 		this(calltype, calldate, number, port, route, duration);
 		this.comment = comment;
 	}
@@ -122,9 +128,12 @@ public class Call implements Serializable {
 				&& (this.getPort().equals(call2.getPort()))
 				&& (this.getDuration() == call2.getDuration())
 				&& (this.getCalltype().toInt() == call2.getCalltype().toInt())
-				&& (route1.equals(route2))) {
+				&& (route1.equals(route2)))
+		{
 			return true;
-		} else {
+		}
+		else
+		{
 			return false;
 		}
 
@@ -193,7 +202,7 @@ public class Call implements Serializable {
 	/**
 	 * @return Returns the port.
 	 */
-	public String getPort() {
+	public Port getPort() {
 		return port;
 	}
 
@@ -262,7 +271,7 @@ public class Call implements Serializable {
 	 *
 	 * @param newPort
 	 */
-	public void setPort(String newPort) {
+	public void setPort(Port newPort) {
 		port = newPort;
 	}
 
@@ -310,80 +319,16 @@ public class Call implements Serializable {
 		if (route == null) {
 			outString = outString.append(";\"\""); //$NON-NLS-1$
 		} else {
-			// String sipRoute = ""; //$NON-NLS-1$
-			String convertedRoute = route;
-			if (route.startsWith("SIP")) { // FIXME old code
-				Enumeration<SipProvider> en = JFritz.getSIPProviderTableModel().getProviderList().elements();
-				SipProvider sipProvider;
-				while (en.hasMoreElements()) {
-					sipProvider = (SipProvider) en.nextElement();
-					if (route.substring(3).equals(
-							String.valueOf(sipProvider.getProviderID()))) {
-						convertedRoute = sipProvider.toString();
-						break;
-					}
-				}
-			}
-
-			/*
-			 * This is the old format if (route.startsWith("SIP")) {
-			 * //$NON-NLS-1$ Enumeration en = JFritz.getSIPProviderTableModel()
-			 * .getProviderList().elements(); while (en.hasMoreElements()) {
-			 * SipProvider sipProvider = (SipProvider) en.nextElement(); if
-			 * (sipProvider.getProviderID() == Integer.parseInt(route
-			 * .substring(3))) { sipRoute = sipProvider.toString(); } } }
-			 *
-			 * if (sipRoute.equals("")) { //$NON-NLS-1$ outString =
-			 * outString.concat(";\"" + route + "\""); //$NON-NLS-1$,
-			 * //$NON-NLS-2$ } else { outString = outString.concat(";\"" +
-			 * sipRoute + "\""); //$NON-NLS-1$, //$NON-NLS-2$ }
-			 */
-
-			outString = outString.append(";\"" + convertedRoute + "\"");
-
+			outString = outString.append(";\"" + route + "\"");
 		}
-
-		// port
-		if (port.equals("4")) {
-			outString = outString.append(";\"ISDN\""); //$NON-NLS-1$
-		} else if (port.equals("0")) {
-			outString = outString.append(";\"FON1\""); //$NON-NLS-1$
-		} else if (port.equals("1")) {
-			outString = outString.append(";\"FON2\""); //$NON-NLS-1$
-		} else if (port.equals("2")) {
-			outString = outString.append(";\"FON3\""); //$NON-NLS-1$
-		} else if (port.equals("3")) {
-			outString = outString.append(";\"Durchwahl\""); //$NON-NLS-1$
-		} else if (port.equals("4")) {
-			outString = outString.append(";\"ISDN\""); //$NON-NLS-1$
-		} else if (port.equals("10")) {
-			outString = outString.append(";\"DECT 1\""); //$NON-NLS-1$
-		} else if (port.equals("11")) {
-			outString = outString.append(";\"DECT 2\""); //$NON-NLS-1$
-		} else if (port.equals("12")) {
-			outString = outString.append(";\"DECT 3\""); //$NON-NLS-1$
-		} else if (port.equals("13")) {
-			outString = outString.append(";\"DECT 4\""); //$NON-NLS-1$
-		} else if (port.equals("14")) {
-			outString = outString.append(";\"DECT 5\""); //$NON-NLS-1$
-		} else if (port.equals("15")) {
-			outString = outString.append(";\"DECT 6\""); //$NON-NLS-1$
-		} else if (port.equals("32")) {
-			outString = outString.append(";\"DATA\""); //$NON-NLS-1$
-		} else if (port.equals("33")) {
-			outString = outString.append(";\"DATA\""); //$NON-NLS-1$
-		} else if (port.equals("34")) {
-			outString = outString.append(";\"DATA\""); //$NON-NLS-1$
-		} else if (port.equals("35")) {
-			outString = outString.append(";\"DATA\""); //$NON-NLS-1$
-		} else if (port.equals("36")) {
-			outString = outString.append(";\"DATA\""); //$NON-NLS-1$
-		} else if (port.equals("")) {
-			outString = outString.append(";\"\""); //$NON-NLS-1$
-		} else {
-			outString = outString.append(";\"" + port + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+		if (port != null)
+		{
+			outString = outString.append(";\"" + port.getName() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
-
+		else
+		{
+			outString = outString.append(";");
+		}
 		// duration
 		outString = outString.append(";\"" + duration + "\""); //$NON-NLS-1$, //$NON-NLS-2$
 
@@ -444,25 +389,19 @@ public class Call implements Serializable {
 				output.append("\t<caller>" + number.getIntNumber() + "</caller>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
 			}
 		}
-		if (!port.equals("")) {
-			output.append("\t<port>" + JFritzUtils.convertSpecialChars(port) + "</port>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
+		if (port == null)
+		{
+			output.append("\t<port>Unknown</port>" + sep);
+		}
+		else
+		{
+			if (!port.getName().equals("")) {
+				output.append("\t<port>" + JFritzUtils.convertSpecialChars(port.getName()) + "</port>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
+			}
 		}
 
 		if (!route.equals("")) { //$NON-NLS-1$
-			String convertedRoute = route;
-			if (route.startsWith("SIP")) {
-				Enumeration<SipProvider> en = JFritz.getSIPProviderTableModel().getProviderList().elements();
-				SipProvider sipProvider;
-				while (en.hasMoreElements()) {
-					sipProvider = (SipProvider) en.nextElement();
-					if (route.substring(3).equals(
-							String.valueOf(sipProvider.getProviderID()))) {
-						convertedRoute = sipProvider.toString();
-						break;
-					}
-				}
-			}
-			output.append("\t<route>" + JFritzUtils.convertSpecialChars(convertedRoute) + "</route>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
+			output.append("\t<route>" + JFritzUtils.convertSpecialChars(route) + "</route>" + sep); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 		if (duration > 0) {
 			output.append("\t<duration>" + duration + "</duration>" + sep); //$NON-NLS-1$, //$NON-NLS-2$

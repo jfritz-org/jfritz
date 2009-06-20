@@ -1,0 +1,85 @@
+	   JFritz 0.7.2.34:
+- Neu: HashMaps zum schnelleren Mapping -> JFritz ist viel schneller
+- Neu: Umbau des Trays zur Unterstützung des Java 1.6 SystemTray und JDIC gleichzeitig
+- Neu: Unterstützung für mehrere FritzBoxen vorbereitet, GUI muss noch angepasst werden. Kommt mit JFritz 0.7.4.
+- Neu: Support für fritzifizierten Speedport W501V.
+- Neu: Support für FRITZ!Box 7570 hinzugefügt.
+- Neu: Ein- und Ausblenden aller Spalten in der Anrufliste möglich.
+- Neu: Drucken des Anruferbildes möglich => Drucken funktioniert noch nicht 100%, da Spalten ausgeblendet werden können
+- Neu: Einstellungen in den XML-Dateien sind nun zur besseren Lesbarkeit sortiert.
+- Neu: Ressourcen in eigenes jar gepackt. Nun können diese relativ leicht ausgetauscht werden.
+- Neu: About-Dialog erweitert.
+- Neu: Neuer Logger und Debug-View mit unterschiedlichen Level(ERROR, WARNING, INFO, DEBUG) über
+       Kommandozeilenparameter -v / --verbose, z.B. -vINFO, --verboseDEBUG 
+- Neu: Neuer Anrufmonitor => kann manchmal zu Reboots der Fritzbox/Speedports führen -> bitte Rückmelden
+- Neu: Redesign des Reiters "Überwachung". Auswertung weiterer UPNP-Nachrichten.
+       Dadurch Wegfall des Statistik-Knopfs
+- Neu [0000061]: Unterdrücken des Splash-Screens mit dem Startparameter -q oder --quiet möglich.
+- Neu [0000064]: Redesign des Einstellungsdialogs. Navigation über Baumstruktur und zu jeder 
+	   Einstellungsseite ist eine Hilfeseite vorhanden (Hilfe-Link oder F1-Taste).
+	   Die Größe des Einstellungsdialogs wird nun gespeichert und wiederhergestellt.
+- Neu [0000078]: Einlesen von mehr als 10 SIP-Providern.
+- Neu [0000097]: Unterstützung DECT-Telefone der 7270.
+- Neu [0000144]: Inverssuche für Luxemburg
+- Neu [0000147]: Unterstützung SIP-Telefone der 7270.
+- Neu [0000150]: Erkennung der notwendigen Wartezeit, wenn das Passwort falsch eingegeben wurde.
+- Neu [0000160]: Unterstützung für Login per SessionID (ab Firmware xx.04.74 notwendig)
+- Bugfix [0000069]: Monitoring-Anzeige komplett überarbeitet.
+- Bugfix [0000072]: Kein Auto-Resize der Anruflisten-Tabelle mehr. (Todo: Resize konfigurierbar gestalten)
+- Bugfix [0000091]: Print/Export der Anrufliste funktioniert wieder.
+- Bugfix [0000094]: Korrekte Anzeige von JFritz, wenn JFritz minimiert gestartet werden soll, jedoch kein Tray verfügbar ist.
+- Bugfix [0000096]: Warnung bei Wählhilfe dauerhaft deaktivieren. 
+- Bugfix [0000135]: Speicherung der Einstellungen, wenn FritzBox nicht erreichbar.
+- Bugfix [0000136]: Anzeige der Landesflagge und des Anruferbildes unter Linux.
+- Bugfix [0000152]: Support for international firmware xx.04.67 and above.
+- Bugfix: Löschen von Einträgen in der Anrufliste
+- Bugfix: Inverssuche überarbeitet. Explizite Suche für Vor- und Nachnamen eingebaut.
+- Bugfix: Inverssuche funktioniert nun wieder für alle Länder mit Testdatensätzen.
+- Bugfix: Telefonbuch sortieren nach Spalte "Letztes Telefonat". 
+- Bugfix: Absturz, wenn Nummer kürzer als Call-by-Call-Vorwahl.
+- Bugfix: Nach dem Speichern eines Telefonbucheintrags wird dieser wieder ausgewählt.
+- Bugfix-Wahlhilfe: Fenster mit Auflegoption kommt nun bei jedem Wahlvorgang.
+- Änderung: Telnet- und Syslog-Anrufmonitor entfernt.
+
+Neue Strings für Internationalisierung / New strings for internationalization:
+actualize
+answering_machine
+appearance
+auto_disconnect_time
+box.wrong_password.wait
+call_through
+calls_in_progress
+column
+connection_idle_time
+day_days
+detect_firmware
+disabled
+dns_server_1
+dns_server_2
+dns_server_voip_1
+dns_server_voip_2
+dsl_information
+download
+edit
+enabled
+external_ip
+fax_fon
+hour_hours
+isdn
+isdn_telephones_all
+minute_minutes
+move_down
+move_up
+pppoe_passthrough
+receive_rate
+refresh
+save_settings
+second_seconds
+send_rate
+sync_down
+sync_up
+upload
+upnp_control
+uptime
+visible
+voip_extension

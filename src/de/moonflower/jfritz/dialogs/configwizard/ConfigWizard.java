@@ -116,24 +116,8 @@ public class ConfigWizard {
        			((ConfigPanelMessage)descriptor4.getPanelComponent()).saveSettings();
        			((ConfigPanelCallMonitor)descriptor5.getPanelComponent()).saveSettings();
 
-       			try {
-          			JFritz.getFritzBox().detectFirmware();
-       			}
-       			catch (WrongPasswordException wpe)
-       			{
-       				Debug.error("Wrong password");
-       			}
-   				catch (InvalidFirmwareException ife)
-   				{
-   					Debug.error("Invalid firmware");
-   				}
-       			catch (IOException ioe)
-       			{
-       				Debug.error("No connection to box!");
-       			}
       			Main.saveConfigProperties();
 
-      			JFritz.getJframe().checkOptions();
 				return false;
        		case 1:
        			Debug.info("Cancel clicked, not saving values");

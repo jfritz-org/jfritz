@@ -13,6 +13,7 @@ import java.awt.event.KeyListener;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
@@ -177,7 +178,14 @@ public class CallerTable extends JTable {
 //					parentPanel.getStatusBarController().fireStatusChanged(callerList.getTotalDuration());
 				} else if (e.getKeyCode() == KeyEvent.VK_DELETE) {
 					// Delete selected entries
-					((CallerList) getModel()).removeEntries(getSelectedRows());
+					if (JOptionPane.showConfirmDialog(parentPanel, Main
+							.getMessage("really_delete_entries"), //$NON-NLS-1$
+							Main.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+						int rows[] = getSelectedRows();
+						Debug.info("Removing " + rows.length + " entries"); //$NON-NLS-1$
+//						((CallerList) getModel()).removeEntries(getSelectedRows());
+						callerList.removeEntries(rows);
+					}
 				}
 			}
 		});
@@ -455,6 +463,7 @@ public class CallerTable extends JTable {
 			JFritzTableColumn col = getColumnByName(columnName);
 			if (col != null)
 			{
+				col.setVisible(true);
 				Debug.debug("CallerTable: Adding table column " + columnName + " at position " + i);
 				getColumnModel().addColumn(col.getColumn());
 				sortedTableColumns.add(col);
@@ -491,6 +500,24 @@ public class CallerTable extends JTable {
     		if (col != null && col.isVisible() && col.getName().equals(columnName))
     		{
     			return i;
+    		}
+    	}
+    	return -1;
+    }
+
+    public int getVisibleColumnIndex(String columnName)
+    {
+    	int index = 0;
+    	for (int i=0; i<sortedTableColumns.size(); i++)
+    	{
+    		JFritzTableColumn col = sortedTableColumns.get(i);
+    		if (col != null && col.isVisible() && col.getName().equals(columnName))
+    		{
+    			return index;
+    		}
+    		if (col.isVisible())
+    		{
+    			index++;
     		}
     	}
     	return -1;
