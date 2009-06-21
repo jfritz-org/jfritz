@@ -29,6 +29,7 @@ import java.util.Locale;
 import java.util.TimerTask;
 import java.util.Vector;
 
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -57,6 +58,7 @@ import javax.swing.filechooser.FileFilter;
 
 import de.moonflower.jfritz.autoupdate.JFritzUpdate;
 import de.moonflower.jfritz.autoupdate.Update;
+import de.moonflower.jfritz.box.BoxCommunication;
 import de.moonflower.jfritz.callerlist.CallDialog;
 import de.moonflower.jfritz.callerlist.CallerListPanel;
 import de.moonflower.jfritz.callerlist.CallerTable;
@@ -983,6 +985,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			try {
 //				UIManager.setLookAndFeel(info.getClassName());
 				Main.setStateProperty("lookandfeel", info.getClassName()); //$NON-NLS-1$
+				JFritz.getBoxCommunication().stopCallMonitor();
 				jFritz.refreshWindow();
 			} catch (Exception e) {
 				Debug.error("Unable to set UI " + e.getMessage()); //$NON-NLS-1$

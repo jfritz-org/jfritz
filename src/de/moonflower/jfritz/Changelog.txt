@@ -1,5 +1,10 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 
+JFritz 0.7.2.38:
+- Bugfix [0000165]: Nach dem Wechseln der Sprache scheint der AM nicht mehr zu laufen, tut es aber dennoch. 
+- Bugfix [0000184]: Debug-Fenster vergrößern, Textfeld bleibt gleich 
+- Bugfix [0000187]: Anrufmonitor-Symbol Rot, beim Wechseln des Look and Feels 
+
 JFritz 0.7.2.37:
 - New [0000194]: Updated localization for The Netherlands 
 - Bugfix [0000172]: Sip-Accounts nicht alle vorhanden 

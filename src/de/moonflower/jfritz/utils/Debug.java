@@ -17,6 +17,7 @@ import javax.swing.filechooser.FileFilter;
 import de.moonflower.jfritz.Main;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -199,9 +200,10 @@ public class Debug{
 	{
 		main_panel = new JPanel();
 		main_panel.setLayout(new BorderLayout());
-		log_area = new JTextArea(25, 80);
+		log_area = new JTextArea(0, 80);
 		scroll_pane = new JScrollPane(log_area);
-		main_panel.add(scroll_pane, BorderLayout.NORTH);
+		scroll_pane.setPreferredSize(new Dimension(640, 320));
+		main_panel.add(scroll_pane, BorderLayout.CENTER);
 		JPanel button_panel = new JPanel();
 		button_panel.setLayout(new GridLayout(1,3));
 

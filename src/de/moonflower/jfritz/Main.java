@@ -200,7 +200,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.2.37"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.2.38"; //$NON-NLS-1$
 
 	public final static String CVS_TAG = "$Id: Main.java,v 1.156 2009/03/24 17:51:39 robotniko Exp $"; //$NON-NLS-1$
 

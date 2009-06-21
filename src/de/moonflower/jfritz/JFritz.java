@@ -637,7 +637,6 @@ public final class JFritz implements  StatusListener, ItemListener {
 		Main.loadMessages(l);
 
 		refreshWindow();
-
 	}
 
 	/**
@@ -667,15 +666,18 @@ public final class JFritz implements  StatusListener, ItemListener {
 	 */
 
 	public void refreshWindow() {
+		boxCommunication.unregisterCallMonitorStateListener(jframe);
+		boxCommunication.unregisterCallListProgressListener(jframe.getCallerListPanel());
 		jframe.dispose();
 		setDefaultLookAndFeel();
 		javax.swing.SwingUtilities.invokeLater(jframe);
 		jframe = new JFritzWindow(this);
+		boxCommunication.registerCallMonitorStateListener(jframe);
+		boxCommunication.registerCallListProgressListener(jframe.getCallerListPanel());
 		javax.swing.SwingUtilities.invokeLater(jframe);
 		jframe.checkOptions();
 		javax.swing.SwingUtilities.invokeLater(jframe);
 		jframe.setVisible(true);
-
 	}
 
 	boolean maybeExit(int i) {

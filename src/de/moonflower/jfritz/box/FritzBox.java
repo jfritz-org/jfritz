@@ -947,6 +947,7 @@ public class FritzBox extends BoxClass {
 						int id = Integer.parseInt(response.get(offset+1));
 						String name = response.get(offset+2);
 						String number = response.get((id * numQueries) + 3);
+						Debug.debug("SIP-Provider["+i+"]: id="+id+" Number="+number+ " Name="+name);
 						SipProvider newSipProvider =
 							new SipProvider(id,
 											number,
