@@ -920,6 +920,7 @@ public class FritzBox extends BoxClass {
 		{
 			int numQueries = 4;
 			int sipCount = Integer.parseInt(response.get(0));
+			Debug.debug("Number of SIP Providers: " + sipCount);
 
 			query.clear();
 			for (int i=0; i<sipCount; i++)
@@ -941,26 +942,30 @@ public class FritzBox extends BoxClass {
 				for (int i=0; i<sipCount; i++)
 				{
 					int offset = i * numQueries;
-					if ((!"er".equals(response.get(offset+0)))
-						&& (!"".equals(response.get(offset+3))))
+					if (!"er".equals(response.get(offset+0)))
 					{
 						int id = Integer.parseInt(response.get(offset+1));
 						String name = response.get(offset+2);
-						String number = response.get((id * numQueries) + 3);
-						Debug.debug("SIP-Provider["+i+"]: id="+id+" Number="+number+ " Name="+name);
-						SipProvider newSipProvider =
-							new SipProvider(id,
-											number,
-											name);
-						if (Integer.parseInt(response.get(offset+0)) == 0)
+						int numberId = (id * numQueries) + 3;
+						String number = response.get(numberId);
+						Debug.debug("id= " + id + " NumberID=" +numberId + " Number=" + number + " Name="+name);
+						if (!"".equals(number))
 						{
-							newSipProvider.setActive(false);
+							Debug.debug("SIP-Provider["+i+"]: id="+id+" Number="+number+ " Name="+name);
+							SipProvider newSipProvider =
+								new SipProvider(id,
+												number,
+												name);
+							if (Integer.parseInt(response.get(offset+0)) == 0)
+							{
+								newSipProvider.setActive(false);
+							}
+							else
+							{
+								newSipProvider.setActive(true);
+							}
+							sipProvider.add(newSipProvider);
 						}
-						else
-						{
-							newSipProvider.setActive(true);
-						}
-						sipProvider.add(newSipProvider);
 					}
 				}
 			}
