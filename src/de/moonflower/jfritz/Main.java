@@ -30,13 +30,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  *
- * BUGS: bitte bei Sourceforge nachschauen und dort auch den Status ändern
- * BUGS: http://sourceforge.net/tracker/?group_id=138196&atid=741413
- *
- * FeatureRequests: bitte bei Sourceforge nachschauen und dort auch den Status ändern
- * FeatureRequests: http://sourceforge.net/tracker/?func=browse&group_id=138196&atid=741416
-
- *
  * (TODO: Checken, ob alle Bibliotheken vorhanden sind)
  * (TODO: Neue Kurzwahlen von der Beta-FW ins Telefonbuch aufnehmen)
  * (TODO: Import der Anrufliste im XML-Format beim Kontextmenü einbauen)
@@ -140,11 +133,9 @@
  * TODO-END
  *
  * FIXME:
- * - Einstellungsseite muß gescrollt werden, obwohl viel Platz am Bildschirm wäre
  * - Bestehenden dummy Eintrag überschreiben
  * - Rechtsklick in Teilnehmerspalte
  * - Text ändern für reverse_lookup_dummy
- * - Falls VoIP-Provider unbekannt, soll in der FritzBox gesucht werden
  * - Änderungen einer Telefonnummer im Client wird beim Server nicht aktualisiert
  * - ^ auch Löschen von Rufnummern funktioniert nicht, Hinzufügen EINER Nummer jedoch schon (mehrerer nicht)
  * - Rückwärtssuche beim Client funktioniert nicht
@@ -200,7 +191,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.2.38"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.2.39"; //$NON-NLS-1$
 
 	public final static String CVS_TAG = "$Id: Main.java,v 1.156 2009/03/24 17:51:39 robotniko Exp $"; //$NON-NLS-1$
 

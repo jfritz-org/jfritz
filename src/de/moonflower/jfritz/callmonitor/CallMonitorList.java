@@ -60,10 +60,10 @@ public class CallMonitorList {
         initIgnoreList();
         boolean ignoreIt = false;
         for (int i = 0; i < ignoredMSNs.length; i++) {
-            Debug.debug(ignoredMSNs[i]);
             if (!ignoredMSNs[i].equals(""))
                 if (call.getRoute()
                         .equals(ignoredMSNs[i])) {
+                    Debug.debug("Ignoring call because MSN " + ignoredMSNs[i] + " is on ignore list.");
                     ignoreIt = true;
                     break;
                 }

@@ -29,7 +29,7 @@ import javax.swing.JTextField;
 
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.box.BoxClass;
-import de.moonflower.jfritz.box.FritzBox;
+import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.utils.Debug;

@@ -362,6 +362,11 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			// only update filter when the search expression has changed
 			if (! filter.equals(Main.getStateProperty("filter.Phonebook.search"))) {  //$NON-NLS-1$,  //$NON-NLS-2$
 				Main.setStateProperty("filter.Phonebook.search", filter);  //$NON-NLS-1$
+				if ((phoneBookTable != null)
+					&& (phoneBookTable.getCellEditor() != null))
+				{
+	 				phoneBookTable.getCellEditor().cancelCellEditing();
+				}
 				phonebook.clearFilterExceptions();
 				phonebook.updateFilter();
 				phonebook.fireTableDataChanged();

@@ -49,7 +49,6 @@ import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.JFritzUtils;
-import de.moonflower.jfritz.utils.Debug;
 
 /**
  * This class is used in the phone book to edit individual entries

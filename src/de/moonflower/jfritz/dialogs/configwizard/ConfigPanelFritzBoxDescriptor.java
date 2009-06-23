@@ -3,7 +3,7 @@ package de.moonflower.jfritz.dialogs.configwizard;
 import com.nexes.wizard.*;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.box.FritzBox;
+import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelFritzBox;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelSip;
 

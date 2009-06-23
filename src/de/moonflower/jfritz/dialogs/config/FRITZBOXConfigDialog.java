@@ -5,6 +5,7 @@
 package de.moonflower.jfritz.dialogs.config;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -64,7 +65,7 @@ public class FRITZBOXConfigDialog extends
 
     public void initDialog() {
         setTitle(Main.getMessage("monitor_settings")); //$NON-NLS-1$
-        setSize(270, 240);
+        this.setPreferredSize(new Dimension(270, 240));
         drawDialog();
         setProperties();
     }

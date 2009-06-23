@@ -35,7 +35,7 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 import de.moonflower.jfritz.box.BoxCommunication;
-import de.moonflower.jfritz.box.FritzBox;
+import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.callerlist.CallerList;
 import de.moonflower.jfritz.callmonitor.CallMonitorList;
 import de.moonflower.jfritz.callmonitor.DisconnectMonitor;

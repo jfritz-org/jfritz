@@ -50,7 +50,7 @@ public class WatchdogThread extends Thread {
     }
 
     private void checkCallMonitor() {
-    	Debug.debug("Checking STANDBY");
+//    	Debug.debug("Checking STANDBY");
         cal = Calendar.getInstance();
         now = cal.getTime();
 

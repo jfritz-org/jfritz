@@ -285,6 +285,7 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 
 			}
 			if (callMonitorConfigDialog != null) {
+				callMonitorConfigDialog.pack();
 				callMonitorConfigDialog.showConfigDialog();
 				callMonitorConfigDialog.dispose();
 			}

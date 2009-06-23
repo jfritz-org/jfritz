@@ -1,4 +1,4 @@
-package de.moonflower.jfritz.box;
+package de.moonflower.jfritz.box.fritzbox;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -22,6 +22,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.box.BoxCallMonitorInterface;
+import de.moonflower.jfritz.box.BoxClass;
 import de.moonflower.jfritz.callmonitor.CallMonitorInterface;
 import de.moonflower.jfritz.callmonitor.CallMonitorStatusListener;
 import de.moonflower.jfritz.callmonitor.CallmessageCallMonitor;
@@ -31,7 +33,6 @@ import de.moonflower.jfritz.callmonitor.YACCallMonitor;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
-import de.moonflower.jfritz.firmware.FritzBoxFirmware;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.IProgressListener;
@@ -1168,7 +1169,7 @@ public class FritzBox extends BoxClass {
 		String result =  UPNPUtils.getSOAPData("http://" + getAddress() +
 				URL_SERVICE_COMMONLINK, URN_SERVICE_COMMONLINK, xml);
 
-//		Debug.msg("Result of getCommonLinkProperties: "+ result);
+		Debug.debug("Result of getCommonLinkProperties: "+ result);
 
 		Pattern p = Pattern.compile("<NewLayer1UpstreamMaxBitRate>([^<]*)</NewLayer1UpstreamMaxBitRate>");
 		Matcher m = p.matcher(result);

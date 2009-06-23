@@ -1,6 +1,6 @@
 package de.moonflower.jfritz.callmonitor;
 
-import de.moonflower.jfritz.box.FritzBox;
+import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.utils.Debug;
 
 import java.io.BufferedReader;

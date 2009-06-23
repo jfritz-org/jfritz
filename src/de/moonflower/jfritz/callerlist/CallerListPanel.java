@@ -1367,10 +1367,9 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		state = JFritzUtils
 				.parseInt(Main.getStateProperty(CallFilter.FILTER_CALLINFAILED));
 		callInFailedFilterButton.setState(state);
-		searchFilterTextField.setText(Main.getStateProperty(CallFilter.FILTER_SEARCH_TEXT));
 
-		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_SEARCH));
-		searchFilterButton.setState(state);
+		searchFilterTextField.setText("");
+		searchFilterButton.setState(ThreeStateButton.NOTHING);
 		dateSpecialSaveString = Main.getStateProperty(CallFilter.FILTER_DATE_SPECIAL);
 		// Debug.msg(dateSpecialSaveString);
 		if (dateSpecialSaveString.equals(CallFilter.THIS_DAY)) {

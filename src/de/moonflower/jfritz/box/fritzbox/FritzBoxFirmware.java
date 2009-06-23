@@ -3,14 +3,12 @@
  * Created on 17.05.2005
  *
  */
-package de.moonflower.jfritz.firmware;
+package de.moonflower.jfritz.box.fritzbox;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -140,10 +138,6 @@ public class FritzBoxFirmware {
 	public static FritzBoxFirmware detectFirmwareVersion(
 			String box_name, String box_address,
 			String box_password, String port) throws WrongPasswordException, IOException, InvalidFirmwareException {
-		long start = 0;
-		long end = 0;
-
-		start = JFritzUtils.getTimestamp();
 		final String urlstr = "http://" + box_address +":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
 
 		if(Main.getProperty("network.type").equals("2")
@@ -286,157 +280,6 @@ public class FritzBoxFirmware {
 
 				long endTimestamp = JFritzUtils.getTimestamp();
 				Debug.debug("Used time to detect Firmware: " + (endTimestamp - startTimestamp) + "ms");
-				return new FritzBoxFirmware(boxtypeString, majorFirmwareVersion,
-						minorFirmwareVersion, modFirmwareVersion, language,
-						sidLogin.isSidLogin(), sidLogin.getSessionId());
-			}
-		}
-
-		// no firmware found
-		throw new InvalidFirmwareException();
-	}
-
-	private static FritzBoxFirmware detectFirmwareVersion2(
-			String box_name, String box_address,
-			String box_password, String port) throws WrongPasswordException, IOException, InvalidFirmwareException {
-		final String urlstr = "http://" + box_address +":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
-
-		if(Main.getProperty("network.type").equals("2")
-				&& Boolean.parseBoolean(Main.getProperty("option.clientCallList"))
-				&& NetworkStateMonitor.isConnectedToServer()){
-
-			Debug.netMsg("JFritz is configured as a client and using call list from server, canceling firmware detection");
-			return null;
-		}
-
-		Vector<String> data = new Vector<String>();
-		String language = "de";
-
-		boolean detected = false;
-
-		SIDLogin sidLogin = new SIDLogin();
-		sidLogin.check(box_name, urlstr, box_password);
-
-		for (int i=0; i<(POSTDATA_ACCESS_METHOD).length && !detected; i++)
-		{
-			for (int j=0; j<(POSTDATA_DETECT_FIRMWARE).length && !detected; j++)
-			{
-				String postdata = POSTDATA_ACCESS_METHOD[i] + POSTDATA_DETECT_FIRMWARE[j];
-				if (sidLogin.isSidLogin())
-				{
-					postdata = postdata.replace("%LOGINMODE%", "response");
-					postdata = postdata + URLEncoder.encode(sidLogin.getResponse(), "ISO-8859-1");
-				}
-				else
-				{
-					postdata = postdata.replace("%LOGINMODE%", "password");
-					postdata = postdata + URLEncoder.encode(box_password, "ISO-8859-1");
-				}
-				data = JFritzUtils.fetchDataFromURLToVector(
-						box_name, urlstr, postdata, true);
-
-                if (false) {
-                    String filename = "c://SpeedFirm.txt"; //$NON-NLS-1$
-                    Debug.debug("Debug mode: Loading " + filename); //$NON-NLS-1$
-                    try {
-                        data.clear(); //$NON-NLS-1$
-                        String thisLine;
-                        BufferedReader in = new BufferedReader(new FileReader(filename));
-                        while ((thisLine = in.readLine()) != null) {
-                            data.add(thisLine);
-                        }
-                        in.close();
-                    } catch (IOException e) {
-                        Debug.error("File not found: " + filename); //$NON-NLS-1$
-                    }
-                }
-
-//        		Debug.msg(data);
-
-                Debug.debug("Parsing for Pattern 'Wait for x seconds'!");
-    			int wait = 20;
-    			Pattern waitSeconds = Pattern.compile(PATTERN_WAIT_FOR_X_SECONDS);
-				Pattern detectDE = Pattern.compile(PATTERN_DETECT_LANGUAGE_DE);
-				Pattern detectEN = Pattern.compile(PATTERN_DETECT_LANGUAGE_EN);
-
-    			for (int k=0; k<data.size(); k++)
-    			{
-	    			Matcher m = waitSeconds.matcher(data.get(k));
-	    			if (m.find())
-	    			{
-	    				try {
-	  					wait = Integer.parseInt(m.group(1));
-	    				}
-	    				catch (NumberFormatException nfe)
-	    				{
-	    					wait = 20;
-	    				}
-
-	    				if (wait != 0)
-	    				{
-		    				Debug.warning("Wrong password! Waiting for " + wait + " seconds!"); //$NON-NLS-1$
-		    				throw new WrongPasswordException(box_name,
-		    						"Wrong password for box \"" + box_name + "\"! Could not detect FRITZ!Box firmware version.",
-		    						wait); //$NON-NLS-1$
-	    				}
-	    			}
-
-					m = detectDE.matcher(data.get(k));
-					if (m.find()) {
-						language = "de";
-						detected = true;
-						break;
-					}
-
-					if (!detected)
-					{
-						m = detectEN.matcher(data.get(k));
-						if (m.find()) {
-							language = "en";
-							detected = true;
-							break;
-						}
-					}
-    			}
-			}
-			if ( detected ) break;
-		}
-
-		if (!detected ) throw new InvalidFirmwareException();
-
-		// Modded firmware: data = "> FRITZ!Box Fon WLAN, <span
-		// class=\"Dialoglabel\">Modified-Firmware </span>08.03.37mod-0.55
-		// \n</div>";
-        Debug.debug("Parsing data (" + data.size() + " lines) to detect firmware!");
-		Pattern normalFirmware = Pattern.compile(PATTERN_DETECT_FIRMWARE);
-
-		for (int k=data.size()-1; k>0; k--)
-		{
-			Matcher m = normalFirmware.matcher(data.get(k));
-			if (m.find()) {
-				String boxtypeString = m.group(1);
-				String majorFirmwareVersion = m.group(2);
-				String minorFirmwareVersion = m.group(3);
-				String modFirmwareVersion = m.group(4).trim();
-
-				Debug.info("Detected Firmware: " +
-						boxtypeString + "." +
-						majorFirmwareVersion + "." +
-						minorFirmwareVersion +
-						modFirmwareVersion + " " +
-						language);
-				if ((((Integer.parseInt(majorFirmwareVersion) == 4) && (Integer.parseInt(minorFirmwareVersion) >= 67))
-					  || (Integer.parseInt(majorFirmwareVersion) > 4))
-					&& (language.equals("en")))
-					{
-						// ab version xx.04.67 gibt es bei englischen Firmwares keine Unterscheidung mehr zwischen
-						// internationaler und deutscher Firmware bei den URLs und Anrufliste.csv
-						Debug.info("Detected international firmware greater than xx.04.67. Forcing to use german patterns.");
-						language = "de";
-					}
-
-				sidLogin.getSidFromResponse(data);
-
 				return new FritzBoxFirmware(boxtypeString, majorFirmwareVersion,
 						minorFirmwareVersion, modFirmwareVersion, language,
 						sidLogin.isSidLogin(), sidLogin.getSessionId());
