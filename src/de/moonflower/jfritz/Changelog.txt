@@ -1,5 +1,10 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 
+JFritz 0.7.2.41:
+- New [0000209]: 2nd Localization update for The Netherlands
+- Bugfix: Resampled callin sound.
+- Bugfix: Password-Sperre bei falscher Passworteingabe zu kurz.
+
 JFritz 0.7.2.40:
 - Bugfix [0000044]: Passwortprüfung beim Start vorziehen  
 - Bugfix [0000180]: doppelte Einträge in der Anrufliste 

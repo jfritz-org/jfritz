@@ -134,7 +134,7 @@ public class JFritzUtils {
 					}
 				}
 
-				throw new WrongPasswordException(affectedBox, "Password invalid", wait); //$NON-NLS-1$
+				throw new WrongPasswordException(affectedBox, "Password invalid", wait+2); //$NON-NLS-1$
 			}
 		}
 		return data;
@@ -240,7 +240,7 @@ public class JFritzUtils {
 					}
 				}
 
-				throw new WrongPasswordException(affectedBox, "Password invalid", wait); //$NON-NLS-1$
+				throw new WrongPasswordException(affectedBox, "Password invalid", wait+2); //$NON-NLS-1$
 			}
 		}
 		return data;

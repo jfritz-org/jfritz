@@ -29,7 +29,6 @@ import java.util.Locale;
 import java.util.TimerTask;
 import java.util.Vector;
 
-import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -58,7 +57,6 @@ import javax.swing.filechooser.FileFilter;
 
 import de.moonflower.jfritz.autoupdate.JFritzUpdate;
 import de.moonflower.jfritz.autoupdate.Update;
-import de.moonflower.jfritz.box.BoxCommunication;
 import de.moonflower.jfritz.callerlist.CallDialog;
 import de.moonflower.jfritz.callerlist.CallerListPanel;
 import de.moonflower.jfritz.callerlist.CallerTable;
@@ -68,7 +66,6 @@ import de.moonflower.jfritz.callmonitor.CallMonitorStatusListener;
 import de.moonflower.jfritz.dialogs.config.ConfigDialog;
 import de.moonflower.jfritz.dialogs.configwizard.ConfigWizard;
 import de.moonflower.jfritz.dialogs.quickdial.QuickDialPanel;
-import de.moonflower.jfritz.dialogs.simple.AddressPasswordDialog;
 import de.moonflower.jfritz.dialogs.simple.CallMessageDlg;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
@@ -896,26 +893,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		configDialog.dispose();
 		this.setStatus("");
 	    c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-	}
-
-	/**
-	 * Shows the address dialog
-	 *
-	 * @param old_address
-	 * @return address
-	 */
-	public String showAddressDialog(String old_address) {
-		String address = null;
-		AddressPasswordDialog p = new AddressPasswordDialog(this, false);
-		p.setAddress(old_address);
-
-		if (p.showDialog()) {
-			address = p.getAddress();
-		}
-		p.dispose();
-		p = null;
-		return address;
-
 	}
 
 	/**

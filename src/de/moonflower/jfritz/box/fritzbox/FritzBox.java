@@ -1173,7 +1173,7 @@ public class FritzBox extends BoxClass {
 		String result =  UPNPUtils.getSOAPData("http://" + getAddress() +
 				URL_SERVICE_COMMONLINK, URN_SERVICE_COMMONLINK, xml);
 
-		Debug.debug("Result of getCommonLinkProperties: "+ result);
+//		Debug.debug("Result of getCommonLinkProperties: "+ result);
 
 		Pattern p = Pattern.compile("<NewLayer1UpstreamMaxBitRate>([^<]*)</NewLayer1UpstreamMaxBitRate>");
 		Matcher m = p.matcher(result);

@@ -96,8 +96,6 @@ public class FritzBoxFirmware {
 
 	private final static String PATTERN_DETECT_FIRMWARE = "[Firmware|Labor][-| ][V|v]ersion[^\\d]*(\\d\\d).(\\d\\d).(\\d\\d\\d*)([^<]*)"; //$NON-NLS-1$
 
-	private final static String PATTERN_WAIT_FOR_X_SECONDS = "var loginBlocked = parseInt\\(\"([^\"]*)\",10\\)";
-
 	private final static String PATTERN_DETECT_LANGUAGE_DE = "Telefonie";
 
 	private final static String PATTERN_DETECT_LANGUAGE_EN = "Telephony";

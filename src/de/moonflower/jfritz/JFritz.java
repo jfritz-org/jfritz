@@ -528,6 +528,11 @@ public final class JFritz implements  StatusListener, ItemListener {
             Clip clip = (Clip) AudioSystem.getLine(info);
             clip.open(aFormat, audio, 0, size);
 
+            Debug.debug("ais: " + ais.toString());
+            Debug.debug("aFormat: " + aFormat.toString());
+            Debug.debug("size: " + size);
+            Debug.debug("info: " + info.toString());
+            Debug.debug("clip: " + clip.toString());
             FloatControl gainControl =
                 (FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);
 //            float min = gainControl.getMinimum();
@@ -543,7 +548,15 @@ public final class JFritz implements  StatusListener, ItemListener {
 		        	Thread.currentThread().interrupt();
 				}
 				loopCount++;
-				if (!clip.isRunning() || loopCount > 40) {
+				if (!clip.isActive() || loopCount > 100) {
+					if (!clip.isActive())
+					{
+						Debug.debug("Sound finished after " + loopCount + " loops!");
+					}
+					else
+					{
+						Debug.debug("Sound aborted after " + loopCount + " loops!");
+					}
 					break;
 				}
 			}
@@ -685,11 +698,6 @@ public final class JFritz implements  StatusListener, ItemListener {
 			main.exit(0);
 		}
 		return exit;
-	}
-
-	public static String showPasswordDialog(String str)
-	{
-		return main.showPasswordDialog(str);
 	}
 
 	void prepareShutdown(boolean shutdownThread, boolean shutdownHook) throws InterruptedException {
