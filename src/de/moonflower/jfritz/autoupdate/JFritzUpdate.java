@@ -144,17 +144,6 @@ public class JFritzUpdate {
 		updateFiles();
 
 		update.saveSettings();
-		// TODO: Frage nach einem restart
-
-		/**
-		 * // Ask for restarting JFritz ok = JOptionPane.showOptionDialog(null,
-		 * Main .getMessage("new_version_restart"), Main
-		 * .getMessage("new_version"), JOptionPane.YES_NO_OPTION,
-		 * JOptionPane.INFORMATION_MESSAGE, null, // don't use a // custom Icon
-		 * options, // the titles of buttons options[0]); // default button
-		 * title if (ok == JOptionPane.YES_OPTION) { // TODO: restart JFritz;
-		 * System.exit(0); //FIXME later } }
-		 */
 	}
 
 	/**

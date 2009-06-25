@@ -1,5 +1,15 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 
+JFritz 0.7.2.40:
+- Bugfix [0000044]: Passwortprüfung beim Start vorziehen  
+- Bugfix [0000180]: doppelte Einträge in der Anrufliste 
+- Bugfix [0000183]: Fehlende Zeilen im Einst./Anrufliste/Aussehen-Dialog 
+- Bugfix [0000192]: Function "Ask for password does not work" 
+- Bugfix: Festnetz/Ferngespräch
+- TODO: Check international term for fixed_network in caller list
+New Strings:
+long_distance_call
+
 JFritz 0.7.2.39:
 - Bugfix [0000053]: Filter in der Anrufliste ist nach Neustart immer noch da.
 - Bugfix [0000171]: Selektiertes Feld wird nicht aktualisiert 

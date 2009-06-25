@@ -41,7 +41,7 @@ public class JFritzUtils {
 	 */
     public static final String langID = FILESEP + "lang";
 
-	private final static String PATTERN_WAIT_FOR_X_SECONDS = "var loginBlocked = parseInt\\(\"([^\"]*)\\),10\\);";
+	private final static String PATTERN_WAIT_FOR_X_SECONDS = "var loginBlocked = parseInt\\(\"([^\"]*)\",10\\);";
 
 	/**
 	 * fetches html data from url using POST requests in one single return String
@@ -206,6 +206,7 @@ public class JFritzUtils {
 					if ((str.indexOf("Das angegebene Kennwort ist ungültig") > 0) //$NON-NLS-1$
 						|| (str.indexOf("Password not valid") > 0))
 					{
+						Debug.debug("Wrong password detected: " + str);
 						wrong_pass = true;
 					}
 					if (retrieveData)
@@ -227,11 +228,13 @@ public class JFritzUtils {
 					Matcher m = waitSeconds.matcher(data.get(i));
 					if (m.find())
 					{
+						Debug.debug("Waiting string: " + data.get(i));
 						try {
 							wait = Integer.parseInt(m.group(1));
 						}
-						catch (NumberFormatException nfe)
+						catch (Exception e)
 						{
+							Debug.error(e.toString());
 							wait = 3;
 						}
 					}

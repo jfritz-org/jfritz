@@ -870,6 +870,10 @@ public class FritzBox extends BoxClass {
 				if (routeType == 0) // Festnetz
 				{
 					route = response.get(newOffset+5);
+					if ("".equals(route))
+					{
+						route = Main.getMessage("fixed_network");
+					}
 				}
 				else if (routeType == 1) // SIP
 				{

@@ -28,7 +28,7 @@ public class WatchdogThread extends Thread {
     /**
      *
      * @param interval
-     *            in minutes
+     *            in seconds
      */
     public WatchdogThread(int interval, int factor) {
         cal = Calendar.getInstance();

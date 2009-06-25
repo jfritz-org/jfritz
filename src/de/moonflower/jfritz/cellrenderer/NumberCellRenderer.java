@@ -79,7 +79,7 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 					setToolTipText(Main.getMessage("freecall")); //$NON-NLS-1$
 				}else if (!number.isMobile() && number.getIntNumber().startsWith(countryCode)){
 					label.setIcon(imagePhone);
-					setToolTipText(Main.getMessage("fixed_network")); //$NON-NLS-1$
+					setToolTipText(Main.getMessage("long_distance_call")); //$NON-NLS-1$
 
 				}else{
 					if(!number.getFlagFileName().equals("")){

@@ -346,8 +346,7 @@ public class CallerList extends AbstractTableModel
 			// if (!dtd.exists()) dtd.createNewFile();
 
 			SAXParserFactory factory = SAXParserFactory.newInstance();
-			factory.setValidating(false); // FIXME Something wrong with the
-			// DTD
+			factory.setValidating(false); // FIXME Something wrong with the DTD
 			SAXParser parser = factory.newSAXParser();
 			XMLReader reader = parser.getXMLReader();
 
@@ -832,7 +831,6 @@ public class CallerList extends AbstractTableModel
 			return compare(call1, call2);
 		}
 
-		// FIXME
 		public int compare(Call call1, Call call2) {
 			Object o1 = null, o2 = null;
 			String columnName = getRealColumnName(columnIndex);
@@ -1930,7 +1928,6 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 	 *            the call with the route, if it is a route to a CbCProvider it
 	 *            will be added
 	 */
-	// FIXME
 	private void addIfCbCProvider(Vector<String> callByCallProviders, Call call) {
 		String provider = "";
 		if (call.getPhoneNumber() != null) {

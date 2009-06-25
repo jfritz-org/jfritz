@@ -2,6 +2,8 @@ package de.moonflower.jfritz.dialogs.config;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -14,6 +16,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
@@ -40,6 +43,8 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 
 	private JTextField save_location;
 
+	private JPasswordField passwordField;
+
 	private JSlider timerSlider;
 
 	private ConfigPanelFritzBox fritzBoxPanel;
@@ -51,9 +56,17 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 		setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
 
 		JPanel cPane = new JPanel();
-		cPane.setLayout(new BoxLayout(cPane, BoxLayout.Y_AXIS));
+//		cPane.setLayout(new BoxLayout(cPane, BoxLayout.Y_AXIS));
+		cPane.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.insets.top = 0;
+		c.insets.bottom = 0;
+		c.insets.left = 5;
+		c.anchor = GridBagConstraints.WEST;
+
+		JPanel timerPanel = new JPanel();
 		timerLabel = new JLabel(Main.getMessage("timer_in") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		cPane.add(timerLabel);
+		timerPanel.add(timerLabel);
 
 		timerSlider = new JSlider(0, 120, 30);
 		timerSlider.setPaintTicks(true);
@@ -69,39 +82,59 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 			}
 
 		});
-		cPane.add(timerSlider);
+		timerPanel.add(timerSlider);
+		c.gridy = 0;
+		cPane.add(timerPanel, c);
 
 		checkNewVersionAfterStart = new JCheckBox(Main
 				.getMessage("check_for_new_version_after_start")); //$NON-NLS-1$
-		cPane.add(checkNewVersionAfterStart);
+		c.gridy++;
+		cPane.add(checkNewVersionAfterStart, c);
 
 		passwordAfterStartButton = new JCheckBox(Main
 				.getMessage("ask_for_password_before_start")); //$NON-NLS-1$
-		cPane.add(passwordAfterStartButton);
+		c.gridy++;
+		cPane.add(passwordAfterStartButton, c);
+
+		JPanel passwordPane = new JPanel();
+		JLabel passwordLabel = new JLabel(Main.getMessage("password") + ": ");
+		passwordPane.add(passwordLabel);
+		passwordField = new JPasswordField("", 16);
+		passwordPane.add(passwordField);
+		passwordPane.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
+		c.gridy++;
+		cPane.add(passwordPane, c);
 
 		timerAfterStartButton = new JCheckBox(Main
 				.getMessage("get_timer_after")); //$NON-NLS-1$
-		cPane.add(timerAfterStartButton);
+		c.gridy++;
+		cPane.add(timerAfterStartButton, c);
 
 		startMinimizedButton = new JCheckBox(Main.getMessage("start_minimized")); //$NON-NLS-1$
-		cPane.add(startMinimizedButton);
+		c.gridy++;
+		cPane.add(startMinimizedButton, c);
 
 		confirmOnExitButton = new JCheckBox(Main.getMessage("confirm_on_exit")); //$NON-NLS-1$
-		cPane.add(confirmOnExitButton);
+		c.gridy++;
+		cPane.add(confirmOnExitButton, c);
 
 		searchWithSSDP = new JCheckBox(Main.getMessage("search_with_SSDP")); //$NON-NLS-1$
-		cPane.add(searchWithSSDP);
+		c.gridy++;
+		cPane.add(searchWithSSDP, c);
 
 		minimizeInsteadOfClose = new JCheckBox(Main
 				.getMessage("minimize_instead_close")); //$NON-NLS-1$
-		cPane.add(minimizeInsteadOfClose);
+		c.gridy++;
+		cPane.add(minimizeInsteadOfClose, c);
 
 		createBackup = new JCheckBox(Main.getMessage("create_backup_start")); //$NON-NLS-1$
-		cPane.add(createBackup);
+		c.gridy++;
+		cPane.add(createBackup, c);
 
 		createBackupAfterFetch = new JCheckBox(Main
 				.getMessage("create_backup_fetch")); //$NON-NLS-1$
-		cPane.add(createBackupAfterFetch);
+		c.gridy++;
+		cPane.add(createBackupAfterFetch, c);
 
 		JPanel panel = new JPanel();
 
@@ -139,7 +172,8 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 		browseButton.addActionListener(actionListener);
 
 		panel.add(browseButton);
-		cPane.add(panel);
+		c.gridy++;
+		cPane.add(panel, c);
 
 		add(new JScrollPane(cPane), BorderLayout.CENTER);
 
@@ -161,12 +195,36 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 		createBackupAfterFetch.setSelected(JFritzUtils.parseBoolean(Main
 				.getProperty("option.createBackupAfterFetch"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		boolean pwAfterStart = !Encryption.decrypt(
-				Main.getProperty("jfritz.password")).equals( //$NON-NLS-1$,  //$NON-NLS-2$
-				JFritz.PROGRAM_SECRET
-						+ Encryption.decrypt(Main.getProperty("box.password"))); //$NON-NLS-1$
+		String decrypted_pwd = Encryption.decrypt(Main.getProperty("jfritz.seed"));
+		if ((decrypted_pwd != null)
+			&& (decrypted_pwd.length() > Main.PROGRAM_SEED.length()))
+		{
+			String pwd = decrypted_pwd.substring(Main.PROGRAM_SEED.length());
+			if (Main.PROGRAM_SECRET.equals(pwd))
+			{
+				pwd = "";
+			}
+			passwordField.setText(pwd);
+		}
+		else
+		{
+			passwordField.setText("");
+		}
 
-		passwordAfterStartButton.setSelected(pwAfterStart);
+		String pwd = new String(passwordField.getPassword());
+		if ("".equals(pwd))
+		{
+			passwordAfterStartButton.setSelected(false);
+		}
+		else
+		{
+			String a = Encryption.decrypt(
+					Main.getProperty("jfritz.pwd"));
+			String b = Main.PROGRAM_SECRET + pwd;
+			boolean pwAfterStart = !a.equals(b); //$NON-NLS-1$,  //$NON-NLS-2$
+
+			passwordAfterStartButton.setSelected(pwAfterStart);
+		}
 
 		timerSlider.setValue(Integer.parseInt(Main.getProperty("fetch.timer"))); //$NON-NLS-1$
 
@@ -221,12 +279,22 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 				.setProperty(
 						"option.checkNewVersionAfterStart", Boolean.toString(checkNewVersionAfterStart.isSelected())); //$NON-NLS-1$
 
+		String passwd = new String(passwordField.getPassword());
+		if ("".equals(passwd))
+		{
+			// if password is empty, set it to program secret
+			passwd = Main.PROGRAM_SECRET;
+			passwordAfterStartButton.setSelected(false);
+		}
 		if (!passwordAfterStartButton.isSelected()) {
-			Main.setProperty("jfritz.password", Encryption //$NON-NLS-1$
-					.encrypt(JFritz.PROGRAM_SECRET
-							+ fritzBoxPanel.getPassword()));
+			Main.setProperty("jfritz.seed", Encryption
+					.encrypt(Main.PROGRAM_SEED + passwd));
+			Main.setProperty("jfritz.pwd", Encryption //$NON-NLS-1$
+					.encrypt(Main.PROGRAM_SECRET + passwd));
 		} else {
-			Main.removeProperty("jfritz.password"); //$NON-NLS-1$
+			Main.setProperty("jfritz.seed", Encryption
+					.encrypt(Main.PROGRAM_SEED + passwd));
+			Main.removeProperty("jfritz.pwd"); //$NON-NLS-1$
 		}
 		if (timerSlider.getValue() < 3)
 			timerSlider.setValue(3);

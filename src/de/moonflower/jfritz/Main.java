@@ -189,9 +189,14 @@ import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
  */
 public class Main implements LookupObserver {
 
+	// when changing this, don't forget to check the resource bundles!!
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.2.39"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.2.40"; //$NON-NLS-1$
+
+	public final static String PROGRAM_SECRET = "jFrItZsEcReT"; //$NON-NLS-1$
+
+	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
 	public final static String CVS_TAG = "$Id: Main.java,v 1.156 2009/03/24 17:51:39 robotniko Exp $"; //$NON-NLS-1$
 
@@ -444,20 +449,52 @@ public class Main implements LookupObserver {
 
 		saveUpdateProperties();
 
-		splash.setStatus("Initializing main application...");
-		jfritz = new JFritz(main);
-
 		int result = 0;
-		jfritz.initNumbers();
-		splash.setStatus("Initializing Fritz!Box..");
-		try {
-			result = jfritz.initFritzBox();
-		} catch (WrongPasswordException e1) {
-			Debug.error(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
-		} catch (IOException e1) {
-			Debug.error(Main.getMessage("box.not_found")); //$NON-NLS-1$
-		} catch (InvalidFirmwareException e1) {
-			Debug.error(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
+		splash.setStatus("Checking startup password...");
+		String ask = Main.getProperty("jfritz.pwd");//$NON-NLS-1$
+		String decrypted_pwd = Encryption.decrypt(Main.getProperty("jfritz.seed"));
+		String pass = "";
+		if ((decrypted_pwd != null)
+			&& (decrypted_pwd.length() > Main.PROGRAM_SEED.length()))
+		{
+			pass = decrypted_pwd.substring(Main.PROGRAM_SEED.length());
+		}
+		else
+		{
+			Debug.errDlg("Configuration file \"jfritz.properties.xml\" is corrupt."
+					+ "\nSend an EMail to support@jfritz.org with this error"
+					+ "\nmessage and the attached \"jfritz.properties.xml\"-file.");
+			result = 1;
+		}
+		if (!(Main.PROGRAM_SECRET + pass).equals(Encryption.decrypt(ask))) {
+			String password = "1";
+			while (result == 0 && !password.equals(pass))
+			{
+				password = main.showPasswordDialog(""); //$NON-NLS-1$
+				if (password == null) { // PasswordDialog canceled
+					result = 1;
+				} else if (!password.equals(pass)) {
+					Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+				}
+			}
+		}
+
+		if (result == 0)
+		{
+			splash.setStatus("Initializing main application...");
+			jfritz = new JFritz(main);
+
+			jfritz.initNumbers();
+			splash.setStatus("Initializing Fritz!Box..");
+			try {
+				result = jfritz.initFritzBox();
+			} catch (WrongPasswordException e1) {
+				Debug.error(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+			} catch (IOException e1) {
+				Debug.error(Main.getMessage("box.not_found")); //$NON-NLS-1$
+			} catch (InvalidFirmwareException e1) {
+				Debug.error(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
+			}
 		}
 
 		if (result == 0)
@@ -494,26 +531,6 @@ public class Main implements LookupObserver {
 				result = -1;
 			}
 		}
-
-//		splash.setStatus("Checking startup password...");
-//		String ask = Main.getProperty("jfritz.password");//$NON-NLS-1$
-//		String pass = "";
-//		if (JFritz.getFritzBox() != null)
-//		{
-//			pass = JFritz.getFritzBox().getPassword();
-//		}
-//		if (!Encryption.decrypt(ask).equals(JFritz.PROGRAM_SECRET + pass)) {
-//			String password = "";
-//			while (result == 0 && !password.equals(pass))
-//			{
-//				password = main.showPasswordDialog(""); //$NON-NLS-1$
-//				if (password == null) { // PasswordDialog canceled
-//					result = 1;
-//				} else if (!password.equals(pass)) {
-//					Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
-//				}
-//			}
-//		}
 
 		splash.dispose();
 
@@ -926,6 +943,8 @@ public class Main implements LookupObserver {
 		defProps.setProperty("dial.prefix", " ");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("fetch.timer", "5");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("inet.monitoring", "false");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("jfritz.seed", "");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("jfritz.pwd", "");//$NON-NLS-1$, //$NON-NLS-2$
 		//"en_US"
 		defProps.setProperty("locale", System.getProperty("user.language")+"_"+System.getProperty("user.country"));//$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$
 		defProps.setProperty("max.Connections", "2");//$NON-NLS-1$, //$NON-NLS-2$
@@ -1138,7 +1157,9 @@ public class Main implements LookupObserver {
 		for (int i=0; i<CallerTable.getCallerTableColumnsCount(); i++)
 		{
 			currentColumn = state_properties.getProperty("column"+i+".name");
-			if (currentColumn != null)
+			state_properties.remove("column"+i+".name");
+			if ((currentColumn != null)
+			   && (!"".equals(currentColumn)))
 			{
 				state_properties.setProperty("callerTable.column"+currentIndex+".name", currentColumn);
 				state_properties.remove("column"+i+".name");
@@ -1199,6 +1220,37 @@ public class Main implements LookupObserver {
 
 		config_properties.remove("telnet.user");
 		config_properties.remove("telnet.password");
+
+		// no startup password set yet
+		if (config_properties.getProperty("option.syslogEnabled") == null)
+		{
+			config_properties.setProperty("option.syslogEnabled", "true");
+			if (config_properties.getProperty("box.password") != null)
+			{
+				String box_pw = Encryption.decrypt(config_properties.getProperty("box.password"));
+				if ("".equals(box_pw))
+				{
+					String defaultPw = PROGRAM_SECRET;
+					config_properties.setProperty("jfritz.seed", Encryption.encrypt(Main.PROGRAM_SEED + defaultPw));
+					config_properties.setProperty("jfritz.pwd", Encryption.encrypt(Main.PROGRAM_SECRET + defaultPw));
+				}
+				else
+				{
+					String seed_pw = Encryption.encrypt(Main.PROGRAM_SEED + box_pw);
+					config_properties.setProperty("jfritz.seed", seed_pw);
+					if (config_properties.getProperty("jfritz.password") != null)
+					{
+						String jf_pw = Encryption.encrypt(Main.PROGRAM_SECRET + box_pw);
+						config_properties.setProperty("jfritz.pwd", jf_pw);
+					}
+				}
+			}
+
+			if (config_properties.getProperty("jfritz.password") != null)
+			{
+				config_properties.remove("jfritz.password");
+			}
+		}
 
 		saveStateProperties();
 		saveConfigProperties();

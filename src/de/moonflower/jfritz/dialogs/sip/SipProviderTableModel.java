@@ -146,14 +146,6 @@ public class SipProviderTableModel extends AbstractTableModel {
 			this.ascending = ascending;
 		}
 
-	/*	public int compare(Object a, Object b) {
-			Object o1, o2;
-			SipProvider v1 = (SipProvider) a;
-			SipProvider v2 = (SipProvider) b;
-			return compare(v1,v2);
-		}
-		*/
-//FIXME
 		public int compare(SipProvider v1, SipProvider v2){
 			Object o1, o2;
 			if (colIndex == 0)

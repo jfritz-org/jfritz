@@ -11,7 +11,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
@@ -66,19 +65,7 @@ public class Call implements Serializable {
 		if ( route.contains("@")) {
 			this.routeType = ROUTE_SIP;
 		} else if (this.route.startsWith("Internet: ")) {
-			Debug.error("Route: " + route);
-			this.route = "!!!!!!!!FIXME!!!!!!!!";
 			this.routeType = ROUTE_SIP;
-//			Enumeration<SipProvider> en = JFritz.getBoxCommunication().sielements();
-//			SipProvider sipProvider;
-//			while (en.hasMoreElements()) {
-//				sipProvider = (SipProvider) en.nextElement();
-//				if (sipProvider.getNumber().equals(this.route.substring(10))) {
-//					this.route = sipProvider.toString();
-//					this.routeType = ROUTE_SIP;
-//					break;
-//				}
-//			}
 		} else {
 			routeType = ROUTE_FIXED_NETWORK;
 		}

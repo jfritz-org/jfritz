@@ -192,37 +192,13 @@ public class FritzBoxFirmware {
 
 //        		Debug.msg(data);
 
-                Debug.debug("Parsing for Pattern 'Wait for x seconds'!");
-    			int wait = 20;
-    			Pattern waitSeconds = Pattern.compile(PATTERN_WAIT_FOR_X_SECONDS);
 				Pattern detectDE = Pattern.compile(PATTERN_DETECT_LANGUAGE_DE);
 				Pattern detectEN = Pattern.compile(PATTERN_DETECT_LANGUAGE_EN);
 
 				long startParse = JFritzUtils.getTimestamp();
     			for (int k=0; k<data.size(); k++)
     			{
-	    			Matcher m = waitSeconds.matcher(data.get(k));
-	    			if (m.find())
-	    			{
-	    				try {
-	  					wait = Integer.parseInt(m.group(1));
-	    				}
-	    				catch (NumberFormatException nfe)
-	    				{
-	    					wait = 20;
-	    				}
-
-	    				if (wait != 0)
-	    				{
-		    				Debug.warning("Wrong password! Waiting for " + wait + " seconds!"); //$NON-NLS-1$
-		    				throw new WrongPasswordException(box_name,
-		    						"Wrong password for box \"" + box_name + "\"! Could not detect FRITZ!Box firmware version.",
-		    						wait); //$NON-NLS-1$
-	    				}
-	    			}
-
-
-					m = detectDE.matcher(data.get(k));
+					Matcher m = detectDE.matcher(data.get(k));
 					if (m.find()) {
 						language = "de";
 						detected = true;

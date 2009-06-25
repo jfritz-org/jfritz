@@ -63,11 +63,6 @@ import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
  *
  */
 public final class JFritz implements  StatusListener, ItemListener {
-
-	// when changing this, don't forget to check the resource bundles!!
-
-	public final static String PROGRAM_SECRET = "jFrItZsEcReT"; //$NON-NLS-1$
-
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/wiki/Kategorie:Hilfe"; //$NON-NLS-1$
 
 	public final static String CALLS_FILE = "jfritz.calls.xml"; //$NON-NLS-1$

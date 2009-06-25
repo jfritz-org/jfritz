@@ -198,11 +198,6 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 			this.ascending = ascending;
 		}
 
-		/*
-		 * public int compare(Object a, Object b) { Person p1 = (Person) a;
-		 * Person p2 = (Person) b; return compare (p1,p2); }
-		 */
-		// FIXME
 		public int compare(Person p1, Person p2) {
 			Object o1, o2;
 			switch (colIndex) {
@@ -1124,13 +1119,6 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 		}
 
 		sortAllFilteredRows();
-
-		/*
-		 * //FIXME checken, ob das jetzt echt nicht mehr gebraucht wird if
-		 * (JFritz.getJframe() != null) { if
-		 * (JFritz.getJframe().getPhoneBookPanel() != null) {
-		 * JFritz.getJframe().getPhoneBookPanel().setStatus(); } }
-		 */
 	}
 
 	/**
