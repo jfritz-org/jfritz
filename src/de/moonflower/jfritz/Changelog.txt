@@ -2,7 +2,7 @@ TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 
 JFritz 0.7.2.41:
 - New [0000209]: 2nd Localization update for The Netherlands
-- Bugfix: Resampled callin sound.
+- Bugfix [0000175]: Unter Vista und XP-Notebook ist der Klingelton ganz kurz, EeePC mit XP kommen garkeine Töne. 
 - Bugfix: Password-Sperre bei falscher Passworteingabe zu kurz.
 
 JFritz 0.7.2.40:
