@@ -231,11 +231,12 @@ public class JFritzUtils {
 						Debug.debug("Waiting string: " + data.get(i));
 						try {
 							wait = Integer.parseInt(m.group(1));
+							break;
 						}
 						catch (Exception e)
 						{
 							Debug.error(e.toString());
-							wait = 3;
+							wait = 4;
 						}
 					}
 				}

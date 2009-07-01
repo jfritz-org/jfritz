@@ -1,5 +1,14 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 
+JFritz 0.7.3.1:
+- Änderung: Default log severity auf LS_DEBUG angehoben.
+- Neu: DebugView hat nun einen Filter für log severity.
+- Änderung: Wenn die Firmwareerkennung ein falsches Passwort meldet, wird nun bis zu 3 mal probiert, 
+  die Firmware zu erkennen bevor die Fehlermeldung weitergeleitet wird.
+
+JFritz 0.7.3:
+- Release
+
 JFritz 0.7.2.41:
 - New [0000209]: 2nd Localization update for The Netherlands
 - Bugfix [0000175]: Unter Vista und XP-Notebook ist der Klingelton ganz kurz, EeePC mit XP kommen garkeine Töne. 

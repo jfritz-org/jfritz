@@ -6,6 +6,7 @@ package de.moonflower.jfritz.utils;
 
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -38,22 +39,20 @@ import java.util.Date;
  * 14.05.06 Added support for redirecting System.out and System.err Now all
  * exceptions are also included in the debug file Brian Jensen
  *
- * @author Arno Willig
+ * @author Robert Palmer
  *
  */
-public class Debug{
-	public static final int LS_ALWAYS = 0;
-	public static final int LS_ERROR = 1;
-	public static final int LS_WARNING = 2;
-	public static final int LS_NETWORK = 3;
-	public static final int LS_INFO = 4;
-	public static final int LS_DEBUG = 5;
-
-	private static final String[] ls_string = {"", ": ERROR", ": WARNING", ": NETWORK", ": INFO", ": DEBUG"};
+public class Debug {
+	public static final LogSeverity LS_ALWAYS = new LogSeverity(0, "LS_ALWAYS", "");
+	public static final LogSeverity LS_ERROR = new LogSeverity(1, "LS_ERROR", ": ERROR");
+	public static final LogSeverity LS_WARNING = new LogSeverity(2, "LS_WARNING", ": WARNING");
+	public static final LogSeverity LS_NETWORK = new LogSeverity(3, "LS_NETWORK", ": NETWORK");
+	public static final LogSeverity LS_INFO = new LogSeverity(4, "LS_INFO", ": INFO");
+	public static final LogSeverity LS_DEBUG = new LogSeverity(5, "LS_DEBUG", ": DEBUG");
 
 	private static final long serialVersionUID = 9211082107025215527L;
 
-	private static int debugLevel;
+	private static LogSeverity debugLevel;
 	private static String debugLogFile;
 
 	private static boolean verboseMode = false;
@@ -67,6 +66,7 @@ public class Debug{
 	private static JButton close_button;
 	private static JButton save_button;
 	private static JButton refresh_button;
+	private static JComboBox log_severity_box;
 
 	private static JScrollPane scroll_pane;
 
@@ -130,10 +130,11 @@ public class Debug{
 	 * @param level
 	 * @param message
 	 */
-	public static void msg(int level, final String msg) {
-		if ( debugLevel >= level) {
+	private static void msg(LogSeverity level, final String msg) {
+		if ( (debugLevel == null)
+				|| (debugLevel != null) && (debugLevel.getId() >= level.getId())) {
 			String message = msg;
-			message = "(" + getCurrentTime() + ")"+ ls_string[level] + ": "+ message; //$NON-NLS-1$,  //$NON-NLS-2$
+			message = "(" + getCurrentTime() + ")"+ level.getPrefix() + ": "+ message; //$NON-NLS-1$,  //$NON-NLS-2$
 			System.out.println(message);
 
 			// if both verbose mode and logging enabled, make sure output
@@ -204,6 +205,28 @@ public class Debug{
 		scroll_pane = new JScrollPane(log_area);
 		scroll_pane.setPreferredSize(new Dimension(640, 320));
 		main_panel.add(scroll_pane, BorderLayout.CENTER);
+
+		JPanel top_panel = new JPanel();
+		log_severity_box = new JComboBox();
+		log_severity_box.addItem(LS_ALWAYS);
+		log_severity_box.addItem(LS_ERROR);
+		log_severity_box.addItem(LS_WARNING);
+		log_severity_box.addItem(LS_NETWORK);
+		log_severity_box.addItem(LS_INFO);
+		log_severity_box.addItem(LS_DEBUG);
+		log_severity_box.setSelectedItem(LS_DEBUG);
+		log_severity_box.setActionCommand("severity_changed");
+		log_severity_box.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if ("severity_changed".equals(e.getActionCommand()))
+				{
+					loadDebugFile();
+				}
+			}
+		});
+		top_panel.add(log_severity_box);
+		main_panel.add(top_panel, BorderLayout.NORTH);
+
 		JPanel button_panel = new JPanel();
 		button_panel.setLayout(new GridLayout(1,3));
 
@@ -286,15 +309,40 @@ public class Debug{
 
 	private static void loadDebugFile(){
 		try {
+			int selectedLogSeverityIndex = log_severity_box.getSelectedIndex();
+			LogSeverity selectedLogSeverity = (LogSeverity) log_severity_box.getItemAt(selectedLogSeverityIndex);
 			log_area.setText("");
 			BufferedReader in = new BufferedReader(new FileReader(debugLogFile));
 			String zeile = null;
 			while ((zeile = in.readLine()) != null) {
-				log_area.append(zeile + "\n");
+				if (selectedLogSeverity.getId() >= returnLineSeverity(zeile).getId())
+				{
+					log_area.append(zeile + "\n");
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private static LogSeverity returnLineSeverity(String line)
+	{
+		LogSeverity ls = LS_DEBUG;
+		if (line.substring(19).startsWith(LS_DEBUG.getPrefix())) {
+			ls = LS_DEBUG;
+		} else if (line.substring(19).startsWith(LS_INFO.getPrefix())) {
+			ls = LS_INFO;
+		} else if (line.substring(19).startsWith(LS_NETWORK.getPrefix())) {
+			ls = LS_NETWORK;
+		} else if (line.substring(19).startsWith(LS_WARNING.getPrefix())) {
+			ls = LS_WARNING;
+		} else if (line.substring(19).startsWith(LS_ERROR.getPrefix())) {
+			ls = LS_ERROR;
+		} else {
+			ls = LS_ALWAYS;
+		}
+
+		return ls;
 	}
 
 	public static JPanel getPanel()
@@ -333,9 +381,9 @@ public class Debug{
 		verboseMode = verbose;
 	}
 
-	public static void setDebugLevel(int level)
+	public static void setDebugLevel(LogSeverity level)
 	{
 		debugLevel = level;
-		info("Set debug level to" + ls_string[level]);
+		info("Set debug level to " + level.getName());
 	}
 }

@@ -152,25 +152,52 @@ public class FritzBoxFirmware {
 		boolean detected = false;
 
 		SIDLogin sidLogin = new SIDLogin();
-		sidLogin.check(box_name, urlstr, box_password);
-
 		for (int i=0; i<(POSTDATA_ACCESS_METHOD).length && !detected; i++)
 		{
 			for (int j=0; j<(POSTDATA_DETECT_FIRMWARE).length && !detected; j++)
 			{
 				String postdata = POSTDATA_ACCESS_METHOD[i] + POSTDATA_DETECT_FIRMWARE[j];
-				if (sidLogin.isSidLogin())
+
+				boolean password_wrong = true;
+				int retry_count = 0;
+				int max_retry_count = 2;
+
+				while ((password_wrong) && (retry_count < max_retry_count))
 				{
-					postdata = postdata.replace("%LOGINMODE%", "response");
-					postdata = postdata + URLEncoder.encode(sidLogin.getResponse(), "ISO-8859-1");
+					Debug.debug("Retry count: " + retry_count );
+					retry_count++;
+					sidLogin.check(box_name, urlstr, box_password);
+
+					if (sidLogin.isSidLogin())
+					{
+						postdata = postdata.replace("%LOGINMODE%", "response");
+						postdata = postdata + URLEncoder.encode(sidLogin.getResponse(), "ISO-8859-1");
+					}
+					else
+					{
+						postdata = postdata.replace("%LOGINMODE%", "password");
+						postdata = postdata + URLEncoder.encode(box_password, "ISO-8859-1");
+					}
+
+					try {
+						data = JFritzUtils.fetchDataFromURLToVector(
+								box_name, urlstr, postdata, true);
+						password_wrong = false;
+					} catch (WrongPasswordException wpe)
+					{
+						password_wrong = true;
+						if (retry_count == max_retry_count)
+						{
+							throw wpe;
+						}
+						try {
+							Thread.sleep(wpe.getRetryTime()*1000);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
 				}
-				else
-				{
-					postdata = postdata.replace("%LOGINMODE%", "password");
-					postdata = postdata + URLEncoder.encode(box_password, "ISO-8859-1");
-				}
-				data = JFritzUtils.fetchDataFromURLToVector(
-						box_name, urlstr, postdata, true);
 
                 if (false) {
                     String filename = "c://SpeedFirm.txt"; //$NON-NLS-1$

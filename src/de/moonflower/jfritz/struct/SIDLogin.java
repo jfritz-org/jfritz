@@ -75,6 +75,7 @@ public class SIDLogin {
 						}
 
 						sidResponse = challenge + '-' + md5Pass;
+						Debug.debug("Challenge: " + challenge + " Response: " + sidResponse);
 					} else {
 						Debug
 								.error("Could not determine challenge in login_sid.xml");
