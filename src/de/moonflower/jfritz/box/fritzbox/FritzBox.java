@@ -319,14 +319,22 @@ public class FritzBox extends BoxClass {
 
 			final String urlstr = "http://" + address +":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
 
-			try {
-				response = JFritzUtils.fetchDataFromURLToVector(name, urlstr, postdata, true);
-			} catch (WrongPasswordException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			boolean password_wrong = true;
+			int retry_count = 0;
+			int max_retry_count = 2;
+
+			while (password_wrong && retry_count < max_retry_count)
+			{
+				try {
+					retry_count++;
+					response = JFritzUtils.fetchDataFromURLToVector(name, urlstr, postdata, true);
+					password_wrong = false;
+				} catch (WrongPasswordException e) {
+					password_wrong = true;
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 
 			if ((response.size() != 0)

@@ -226,7 +226,8 @@ public class PhoneNumber implements Serializable {
 				if (number.length()>cbc.length)
 				{
 					for(int i = 0; i < cbc.length; i++){
-						if(number.startsWith(cbc[i].getPrefix())){
+						if((number.length() > cbc[i].getLength())
+							&& (number.startsWith(cbc[i].getPrefix()))){
 							callbycall = number.substring(0, cbc[i].getLength());
 							number = number.substring(cbc[i].getLength());
 							break;
