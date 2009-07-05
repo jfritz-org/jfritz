@@ -2,6 +2,7 @@ TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 
 JFritz 0.7.3.2:
 - Bugfix [0000109]: Call-By-Call wird nicht korrekt aufgelöst.
+- Bugfix: Serialisierung von Port für Client/Server-Kommunikation
 
 JFritz 0.7.3.1:
 - Änderung: Default log severity auf LS_DEBUG angehoben.

@@ -1,12 +1,18 @@
 package de.moonflower.jfritz.struct;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import de.moonflower.jfritz.box.BoxClass;
 
-public class Port {
+public class Port implements Serializable {
+
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 3535276686594592176L;
 
 	private static HashMap<Integer, Port> allPorts = null;
 
