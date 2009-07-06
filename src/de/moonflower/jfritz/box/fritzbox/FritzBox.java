@@ -93,10 +93,10 @@ public class FritzBox extends BoxClass {
 	private final static String QUERY_SIP_MSN = "telcfg:settings/SIP%NUM%/MSN";
 	private final static String QUERY_SIP_MAXCOUNT = "telcfg:settings/SIP/count";
 //	private final static String QUERY_SIP_COUNT = "sip:settings/sip/count";
-//	private final static String QUERY_SIP_NAME = "sip:settings/sip%NUM%/Name";
-//	private final static String QUERY_SIP_NUMBER = "sip:settings/sip%NUM%/Number";
-//	private final static String QUERY_SIP_DISPLAYNAME = "sip:settings/sip%NUM%/displayname";
-//	private final static String QUERY_SIP_USERNAME = "sip:settings/sip%NUM%/username";
+	private final static String QUERY_SIP_NAME = "sip:settings/sip%NUM%/Name";
+	private final static String QUERY_SIP_NUMBER = "sip:settings/sip%NUM%/Number";
+	private final static String QUERY_SIP_DISPLAYNAME = "sip:settings/sip%NUM%/displayname";
+	private final static String QUERY_SIP_USERNAME = "sip:settings/sip%NUM%/username";
 //	private final static String QUERY_SIP_REGISTRY_TYPE = "telcfg:settings/SIP%NUM%/RegistryType";
 
 
@@ -931,7 +931,7 @@ public class FritzBox extends BoxClass {
 
 		if (response.size() == 1)
 		{
-			int numQueries = 4;
+			int numQueries = 8;
 			int sipCount = Integer.parseInt(response.get(0));
 			Debug.debug("Number of SIP Providers: " + sipCount);
 
@@ -942,10 +942,10 @@ public class FritzBox extends BoxClass {
 				query.add(QUERY_SIP_ID.replaceAll("%NUM%", Integer.toString(i)));
 				query.add(QUERY_SIP_REGISTRAR.replaceAll("%NUM%", Integer.toString(i)));
 				query.add(QUERY_SIP_MSN.replaceAll("%NUM%", Integer.toString(i)));
-//				query.add(QUERY_SIP_NAME.replaceAll("%NUM%", Integer.toString(i)));
-//				query.add(QUERY_SIP_NUMBER.replaceAll("%NUM%", Integer.toString(i)));
-//				query.add(QUERY_SIP_DISPLAYNAME.replaceAll("%NUM%", Integer.toString(i)));
-//				query.add(QUERY_SIP_USERNAME.replaceAll("%NUM%", Integer.toString(i)));
+				query.add(QUERY_SIP_NAME.replaceAll("%NUM%", Integer.toString(i)));
+				query.add(QUERY_SIP_NUMBER.replaceAll("%NUM%", Integer.toString(i)));
+				query.add(QUERY_SIP_DISPLAYNAME.replaceAll("%NUM%", Integer.toString(i)));
+				query.add(QUERY_SIP_USERNAME.replaceAll("%NUM%", Integer.toString(i)));
 //				query.add(QUERY_SIP_REGISTRY_TYPE.replaceAll("%NUM%", Integer.toString(i)));
 			}
 

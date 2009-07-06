@@ -162,8 +162,17 @@ public class LookupThread extends Thread {
 			Debug.info("Begin reverselookup for: "+nummer);
 
 			//cut off the country code if were doing a non local lookup
-			if(nummer.startsWith(number.getCountryCode()))
-				nummer = nummer.substring(number.getCountryCode().length());
+			if(nummer.startsWith(number.getCountryCode())) {
+				if (nummer.length() > number.getCountryCode().length()) {
+					nummer = nummer.substring(number.getCountryCode().length());
+				}
+				else
+				{
+					Person p = new Person();
+					p.addNumber(number);
+					return p;
+				}
+			}
 
 			//make sure city was initialized
 			city = "";	  //$NON-NLS-1$
@@ -184,18 +193,23 @@ public class LookupThread extends Thread {
 
 				//needed to make sure international calls are formatted correctly
 				if(!nummer.startsWith(prefix))
+				{
 					nummer = prefix + nummer;
+				}
 
 				//urlstr = rls.getURL().replaceAll("\\$NUMBER", nummer);
 				urlstr = rls.getURL();
-				if(urlstr.contains("$AREACODE")){
+				if(urlstr.contains("$AREACODE")
+						&& (nummer.length() > prefix.length())) {
 					urlstr = urlstr.replaceAll("\\$AREACODE", nummer.substring(prefix.length(), ac_length+prefix.length()));
 					urlstr = urlstr.replaceAll("\\$NUMBER", nummer.substring(prefix.length()+ac_length));
-				}else if(urlstr.contains("$PFXAREACODE")){
+				}else if(urlstr.contains("$PFXAREACODE")
+						&& (nummer.length() > prefix.length())){
 					urlstr = urlstr.replaceAll("\\$PFXAREACODE", nummer.substring(0, prefix.length()+ac_length));
 					urlstr = urlstr.replaceAll("\\$NUMBER", nummer.substring(prefix.length()+ ac_length));
-				}else
+				}else {
 					urlstr = urlstr.replaceAll("\\$NUMBER", nummer);
+				}
 
 				Debug.info("Reverse lookup using: "+urlstr);
 				url = null;
@@ -256,11 +270,11 @@ public class LookupThread extends Thread {
 							while (null != ((str = d.readLine()))) {
 									data[lines] = str;
 									yield();
+									lines++;
 									if ( lines >= dataLength ) {
 										System.err.println("Result > " + dataLength + " Lines");
 										break;
 									}
-									lines++;
 							}
 							d.close();
 							Debug.info("Begin processing response from "+rls.getName());

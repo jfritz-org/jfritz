@@ -1,5 +1,9 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 
+JFritz 0.7.3.3:
+- Bugfix [0000224]: Rückwärtssuche hängt 
+- Neu: Mehr Debug-Nachrichten bei getSipProvider um Bug beim Abholen der Sip-Provider zu beheben.
+
 JFritz 0.7.3.2:
 - Bugfix [0000109]: Call-By-Call wird nicht korrekt aufgelöst.
 - Bugfix: Serialisierung von Port für Client/Server-Kommunikation
