@@ -30,7 +30,7 @@ import de.moonflower.jfritz.exceptions.WrongPasswordException;
  *
  */
 public class JFritzUtils {
-
+	private static final int READ_TIMEOUT = 30000;										//$NON-NLS-1$
     public static final String FILESEP = System.getProperty("file.separator");			//$NON-NLS-1$
     public static final String PATHSEP = System.getProperty("path.separator");			//$NON-NLS-1$
 	public static final String binID = FILESEP + "jfritz.jar";							//$NON-NLS-1$
@@ -55,7 +55,7 @@ public class JFritzUtils {
 	 */
 	public static String fetchDataFromURLToString(String affectedBox,
 			String urlstr, String postdata,
-			boolean retrieveData) throws WrongPasswordException, IOException {
+			boolean retrieveData) throws WrongPasswordException, SocketTimeoutException, IOException {
 		URL url = null;
 		URLConnection urlConn;
 		DataOutputStream printout;
@@ -75,6 +75,7 @@ public class JFritzUtils {
 			urlConn = url.openConnection();
 			// 5 Sekunden-Timeout für Verbindungsaufbau
 			urlConn.setConnectTimeout(5000);
+			urlConn.setReadTimeout(READ_TIMEOUT);
 
 			urlConn.setDoInput(true);
 			urlConn.setDoOutput(true);
@@ -91,6 +92,7 @@ public class JFritzUtils {
 				} catch (SocketTimeoutException ste)
 				{
 					Debug.error("Could not fetch data from url: "+ste.toString());
+					throw ste;
 				}
 			}
 
@@ -155,7 +157,7 @@ public class JFritzUtils {
 	 */
 	public static Vector<String> fetchDataFromURLToVector(String affectedBox,
 			String urlstr, String postdata,
-			boolean retrieveData) throws WrongPasswordException, IOException {
+			boolean retrieveData) throws WrongPasswordException, SocketTimeoutException, IOException {
 		URL url = null;
 		URLConnection urlConn;
 		DataOutputStream printout;
@@ -175,6 +177,7 @@ public class JFritzUtils {
 			urlConn = url.openConnection();
 			// 5 Sekunden-Timeout für Verbindungsaufbau
 			urlConn.setConnectTimeout(5000);
+			urlConn.setReadTimeout(READ_TIMEOUT);
 
 			urlConn.setDoInput(true);
 			urlConn.setDoOutput(true);
@@ -191,9 +194,11 @@ public class JFritzUtils {
 				} catch (SocketTimeoutException ste)
 				{
 					Debug.error("Could not fetch data from url: "+ste.toString());
+					throw ste;
 				} catch (NoRouteToHostException nrthe)
 				{
 					Debug.error("No route to host exception: " + nrthe.toString());
+					throw nrthe;
 				}
 			}
 

@@ -76,7 +76,7 @@ public class WatchdogThread extends Thread {
 
 					@Override
 					public void run() {
-	        			JFritz.getJframe().fetchList(JFritzUtils.parseBoolean(Main.getProperty("option.deleteAfterFetch"))); //$NON-NLS-1$, //$NON-NLS-2$
+	        			JFritz.getJframe().fetchList(false);
 					}
 
     			}, 10000);

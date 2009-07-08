@@ -740,8 +740,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				public void run() {
 					if (!JFritz.isShutdownInvoked())
 					{
-						Debug.info("Running FetchListTask.."); //$NON-NLS-1$
-						fetchList();
+						Debug.info("Running FetchListTask after Timer ..."); //$NON-NLS-1$
+						fetchList(false);
 					} else {
 						this.cancel();
 					}
@@ -770,8 +770,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				timerTask = new TimerTask() {
 
 					public void run() {
-						Debug.info("Running FetchListTask.."); //$NON-NLS-1$
-						fetchList();
+						Debug.info("Running FetchListTask after timer ..."); //$NON-NLS-1$
+						fetchList(false);
 					}
 				};
 				timer = new FetchListTimer("FetchList-Timer2", true);
@@ -783,17 +783,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	/**
 	 * Fetches list from box
 	 */
-	public void fetchList() {
-		restartFetchListTimer();
-
-		// fetch the call list
-		fetchList(false);
-	}
-
-	/**
-	 * Fetches list from box
-	 */
 	public void fetchList(final boolean deleteFritzBoxCallerList) {
+		Debug.info("Reset timer ...");
+		restartFetchListTimer();
 		Debug.info("Fetching list ...");
 		//only send request to the server if we are connected
 		if(Main.getProperty("option.clientCallList").equals("true")
@@ -1066,7 +1058,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		} else if (e.getActionCommand().equals("monitoring")) {
 			tabber.setSelectedComponent(monitoringPanel);
 		} else if (e.getActionCommand().equals("fetchList")) {
-			fetchList();
+			fetchList(false);
 		} else if (e.getActionCommand().equals("delete_fritzbox_callerlist")) {
 			deleteFritzBoxCallerList();
 		} else if (e.getActionCommand().equals(
@@ -1110,7 +1102,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			}
 
 		} else if (e.getActionCommand().equals("F5")) {
-			fetchList();
+			fetchList(false);
 		} else if (e.getActionCommand().equals("import_callerlist_csv")) {
 			importCallerlistCSV();
 		} else if (e.getActionCommand().equals("phonebook_import")) {
@@ -1430,6 +1422,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				options, options[1]);
 
 		if (answer == JOptionPane.YES_OPTION) {
+			Debug.debug("Fetching data before deleting list on box!");
 			fetchList(true); // param true indicates that FritzBox-CallerList
 			// is to be deleted
 		}

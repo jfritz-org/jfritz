@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -252,13 +253,14 @@ public class FritzBox extends BoxClass {
 
 	private final Vector<String> getQuery(Vector<String> queries)
 	{
+		Vector<String> result;
 		if (queryMethod == QUERY_METHOD_OLD)
 		{
-			return getQueryOld(queries);
+			result = getQueryOld(queries);
 		}
 		else if (queryMethod == QUERY_METHOD_NEW)
 		{
-			return getQueryNew(queries);
+			result = getQueryNew(queries);
 		}
 		else
 		{
@@ -278,8 +280,11 @@ public class FritzBox extends BoxClass {
 				Debug.error("IO exception");
 				setBoxDisconnected();
 			}
-			return new Vector<String>();
+			result = new Vector<String>();
 		}
+
+		Thread.yield();
+		return result;
 	}
 
 	private final String generatePostDataOld(Vector<String> queries)
@@ -332,11 +337,17 @@ public class FritzBox extends BoxClass {
 				} catch (WrongPasswordException e) {
 					password_wrong = true;
 					Debug.debug("Wrong password, maybe SID is invalid.");
+					setBoxDisconnected();
+				} catch (SocketTimeoutException ste) {
+					ste.printStackTrace();
+					setBoxDisconnected();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					setBoxDisconnected();
 				} catch (InvalidFirmwareException e) {
 					password_wrong = true;
+					setBoxDisconnected();
 				}
 			}
 
@@ -360,15 +371,19 @@ public class FritzBox extends BoxClass {
 									response.add(""); // add empty line to be removed further down in this method
 								} catch (WrongPasswordException e) {
 									Debug.errDlg(Main.getMessage("box.wrong_password"));
+									setBoxDisconnected();
 								} catch (InvalidFirmwareException e) {
 									Debug.errDlg(Main.getMessage("box.address_wrong"));
+									setBoxDisconnected();
 								} catch (IOException e) {
 									Debug.errDlg("I/O Exception");
+									setBoxDisconnected();
 								}
 							}
 						} catch (NumberFormatException nfe)
 						{
 							Debug.errDlg("Could not login to FritzBox. Please check password and try it again!");
+							setBoxDisconnected();
 						}
 					}
 				}
@@ -440,11 +455,18 @@ public class FritzBox extends BoxClass {
 				} catch (WrongPasswordException e) {
 					password_wrong = true;
 					Debug.debug("Wrong password, maybe SID is invalid.");
-				} catch (IOException e) {
-					e.printStackTrace();
+					setBoxDisconnected();
+				} catch (SocketTimeoutException ste) {
+					ste.printStackTrace();
 					setBoxDisconnected();
 				} catch (InvalidFirmwareException e) {
 					password_wrong = true;
+					setBoxDisconnected();
+				} catch (IOException e) {
+					e.printStackTrace();
+					setBoxDisconnected();
+				} catch (Exception e) {
+					e.printStackTrace();
 					setBoxDisconnected();
 				}
 			}
@@ -469,10 +491,13 @@ public class FritzBox extends BoxClass {
 									response.add(""); // add empty line to be removed further down in this method
 								} catch (WrongPasswordException e) {
 									Debug.errDlg(Main.getMessage("box.wrong_password"));
+									setBoxDisconnected();
 								} catch (InvalidFirmwareException e) {
 									Debug.errDlg(Main.getMessage("box.address_wrong"));
+									setBoxDisconnected();
 								} catch (IOException e) {
 									Debug.errDlg("I/O Exception");
+									setBoxDisconnected();
 								}
 							}
 						} catch (NumberFormatException nfe)

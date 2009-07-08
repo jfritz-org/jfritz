@@ -1,5 +1,9 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 
+JFritz 0.7.3.6:
+- FetchList in allen Klassen vereinheitlicht, restart des Timers.
+- Read-Timeout für Kommunikation mit der FritzBox.
+
 JFritz 0.7.3.5:
 - Mehr Debug-Nachrichten für Inverssuche
 - Graphische Rückmeldung, wenn die FritzBox nicht erreicht werden konnte.
