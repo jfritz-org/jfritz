@@ -57,6 +57,7 @@ import javax.swing.filechooser.FileFilter;
 
 import de.moonflower.jfritz.autoupdate.JFritzUpdate;
 import de.moonflower.jfritz.autoupdate.Update;
+import de.moonflower.jfritz.box.BoxStatusListener;
 import de.moonflower.jfritz.callerlist.CallDialog;
 import de.moonflower.jfritz.callerlist.CallerListPanel;
 import de.moonflower.jfritz.callerlist.CallerTable;
@@ -91,7 +92,8 @@ import de.moonflower.jfritz.utils.SwingWorker;
  * @author akw
  */
 public class JFritzWindow extends JFrame implements Runnable, ActionListener,
-		ItemListener, NetworkStateListener, CallMonitorStatusListener {
+		ItemListener, NetworkStateListener, CallMonitorStatusListener,
+		BoxStatusListener {
 
 	private static final long serialVersionUID = 7856291642743441767L;
 
@@ -372,27 +374,12 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 						.getResource("/de/moonflower/jfritz/resources/images/monitor-down.png")); //$NON-NLS-1$
 		connectButton = new JLabel("");
 		callMonitorConnectButton = new JLabel("");
-		setDisconnectedStatus();
+		setBoxDisconnected("");
 		iconStatusPanel.add(connectButton);
 		iconStatusPanel.add(callMonitorConnectButton);
 		statusBar.registerStatusIcon(iconStatusPanel);
 
 		return statusBar;
-	}
-
-	public void setDisconnectedStatus()
-	{
-		connectButton.setIcon(disconnectIcon);
-		connectButton.setToolTipText(Main.getMessage("disconnected_fritz"));
-		this.setDisconnectedStatus("");
-		statusBar.refresh();
-	}
-
-	public void setConnectedStatus()
-	{
-			connectButton.setIcon(connectIcon);
-			connectButton.setToolTipText(Main.getMessage("connected_fritz"));
-			statusBar.refresh();
 	}
 
 	/**
@@ -830,7 +817,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					while (!isdone) {
 						setBusy(true);
 						setStatus(Main.getMessage("fetchdata")); //$NON-NLS-1$
-						setConnectedStatus();
+						setBoxConnected("");
 						JFritz.getBoxCommunication().getCallerList();
 						isdone = true;
 					}
@@ -884,7 +871,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			configDialog.storeValues();
 
 			Main.saveConfigProperties();
-			setConnectedStatus();
+			setBoxConnected("");
 			monitorButton.setEnabled((Integer.parseInt(Main.getProperty(
 					"option.callMonitorType")) > 0)); //$NON-NLS-1$,  //$NON-NLS-2$
 
@@ -1203,20 +1190,17 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		boolean wizardCanceled = false;
 		try {
 			wizardCanceled = wizard.showWizard();
-			setConnectedStatus();
+			setBoxConnected("");
 		} catch (WrongPasswordException e) {
-			setDisconnectedStatus();
-			// TODO Auto-generated catch block
+			setBoxDisconnected("");
 			e.printStackTrace();
 			return true;
 		} catch (InvalidFirmwareException e) {
-			setDisconnectedStatus();
-			// TODO Auto-generated catch block
+			setBoxDisconnected("");
 			e.printStackTrace();
 			return true;
 		} catch (IOException e) {
-			setDisconnectedStatus();
-			// TODO Auto-generated catch block
+			setBoxDisconnected("");
 			e.printStackTrace();
 			return true;
 		}
@@ -1860,5 +1844,18 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	public void setProgress(int progress) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public void setBoxConnected(String boxName) {
+		connectButton.setIcon(connectIcon);
+		connectButton.setToolTipText(Main.getMessage("connected_fritz"));
+		statusBar.refresh();
+	}
+
+	public void setBoxDisconnected(String boxName) {
+		connectButton.setIcon(disconnectIcon);
+		connectButton.setToolTipText(Main.getMessage("disconnected_fritz"));
+		this.setDisconnectedStatus(""); // set call monitor to disconnected status
+		statusBar.refresh();
 	}
 }

@@ -281,11 +281,11 @@ public class ConfigDialog extends JDialog {
 //			boxPanel.saveSettings();
 			fritzBoxPanel.saveSettings();
 		} catch (WrongPasswordException e) {
-			parent.setDisconnectedStatus();
+			parent.setBoxDisconnected("");
 		} catch (InvalidFirmwareException e) {
-			parent.setDisconnectedStatus();
+			parent.setBoxDisconnected("");
 		} catch (IOException e) {
-			parent.setDisconnectedStatus();
+			parent.setBoxDisconnected("");
 		}
 		phonePanel.saveSettings();
 		messagePanel.saveSettings();

@@ -24,6 +24,7 @@ import org.xml.sax.XMLReader;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.box.BoxCallMonitorInterface;
 import de.moonflower.jfritz.box.BoxClass;
+import de.moonflower.jfritz.box.BoxStatusListener;
 import de.moonflower.jfritz.callmonitor.CallMonitorInterface;
 import de.moonflower.jfritz.callmonitor.CallMonitorStatusListener;
 import de.moonflower.jfritz.callmonitor.CallmessageCallMonitor;
@@ -134,6 +135,8 @@ public class FritzBox extends BoxClass {
 
 	private byte queryMethod = QUERY_METHOD_UNKNOWN;
 
+	private Vector<BoxStatusListener> boxListener;
+
 	public FritzBox(String name, String description,
 					String address, String port, String password, Exception exc)
 	{
@@ -146,18 +149,23 @@ public class FritzBox extends BoxClass {
 
 		sipProvider = new Vector<SipProvider>();
 		configuredPorts = new HashMap<Integer, Port>();
+		boxListener = new Vector<BoxStatusListener>(4);
 		exc = null;
 		try {
+			setBoxConnected();
 			updateSettings();
 		} catch (WrongPasswordException e) {
 			exc = e;
 			Debug.error(Main.getMessage("box.wrong_password"));
+			setBoxDisconnected();
 		} catch (InvalidFirmwareException e) {
 			exc = e;
 			Debug.error(Main.getMessage("unknown_firmware"));
+			setBoxDisconnected();
 		} catch (IOException e) {
 			exc = e;
 			Debug.error(Main.getMessage("box.not_found"));
+			setBoxDisconnected();
 		}
 	}
 
@@ -254,6 +262,22 @@ public class FritzBox extends BoxClass {
 		}
 		else
 		{
+			try {
+				setBoxConnected();
+				updateSettings();
+				return getQuery(queries);
+			} catch (WrongPasswordException wpe)
+			{
+				Debug.error("Wrong password");
+				setBoxDisconnected();
+			} catch (InvalidFirmwareException ife)
+			{
+				Debug.error("Invalid firmware");
+				setBoxDisconnected();
+			} catch (IOException ioe) {
+				Debug.error("IO exception");
+				setBoxDisconnected();
+			}
 			return new Vector<String>();
 		}
 	}
@@ -417,10 +441,11 @@ public class FritzBox extends BoxClass {
 					password_wrong = true;
 					Debug.debug("Wrong password, maybe SID is invalid.");
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
+					setBoxDisconnected();
 				} catch (InvalidFirmwareException e) {
 					password_wrong = true;
+					setBoxDisconnected();
 				}
 			}
 
@@ -833,6 +858,8 @@ public class FritzBox extends BoxClass {
 	 **************************************************************************************/
 	public Vector<Call> getCallerList(Vector<IProgressListener> progressListener)
 			throws IOException, MalformedURLException {
+
+		setBoxConnected();
 		// getting number of entries
 		Vector<String> query = new Vector<String>();
 		query.add(QUERY_CALLS_REFRESH);
@@ -892,6 +919,11 @@ public class FritzBox extends BoxClass {
 			}
 
 			return newCalls;
+		}
+		else
+		{
+			// response wrong, set disconnected status
+			setBoxDisconnected();
 		}
 
 		return new Vector<Call>();
@@ -1010,6 +1042,7 @@ public class FritzBox extends BoxClass {
 	 * Implementation of the BoxSipProviderInterface
 	 **************************************************************************************/
 	public void detectSipProvider() {
+		setBoxConnected();
 		sipProvider.clear();
 
 		Vector<String> query = new Vector<String>();
@@ -1069,6 +1102,10 @@ public class FritzBox extends BoxClass {
 					}
 				}
 			}
+		}
+		else
+		{
+			setBoxDisconnected();
 		}
 	}
 
@@ -1401,6 +1438,7 @@ public class FritzBox extends BoxClass {
 	 * Implementation of DoCall-Interface
 	 **************************************************************************************/
 	public void doCall(PhoneNumber number, Port port) {
+		setBoxConnected();
 		String currentNumber = number.getAreaNumber();
 		currentNumber = currentNumber.replaceAll("\\+", "00"); //$NON-NLS-1$,  //$NON-NLS-2$
 
@@ -1424,13 +1462,16 @@ public class FritzBox extends BoxClass {
 					this.getName(), urlstr, postdata, true);
 		} catch (WrongPasswordException e) {
 			Debug.errDlg(Main.getMessage("box.wrong_password"));
+			setBoxDisconnected();
 		} catch (IOException e) {
 			Debug.errDlg("I/O exception in doCall()");
+			setBoxDisconnected();
 		}
 	}
 
 	public void hangup(Port port)
 	{
+		setBoxConnected();
         String postdata = POSTDATA_HANGUP;
 
 		try {
@@ -1448,9 +1489,36 @@ public class FritzBox extends BoxClass {
 					this.getName(), urlstr, postdata, true);
 		} catch (WrongPasswordException e) {
 			Debug.errDlg(Main.getMessage("box.wrong_password"));
+			setBoxDisconnected();
 		} catch (IOException e) {
 			Debug.errDlg("I/O exception in hangup()");
+			setBoxDisconnected();
 		}
 	}
 
+	public void addBoxStatusListener(BoxStatusListener listener)
+	{
+		if (!boxListener.contains(listener)) {
+			boxListener.add(listener);
+		}
+	}
+
+	public void removeBoxStatusListener(BoxStatusListener listener)
+	{
+		if (boxListener.contains(listener)) {
+			boxListener.remove(listener);
+		}
+	}
+
+	private void setBoxConnected() {
+		for (BoxStatusListener listener: boxListener) {
+			listener.setBoxConnected(name);
+		}
+	}
+
+	private void setBoxDisconnected() {
+		for (BoxStatusListener listener: boxListener) {
+			listener.setBoxDisconnected(name);
+		}
+	}
 }

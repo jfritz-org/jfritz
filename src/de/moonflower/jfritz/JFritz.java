@@ -309,6 +309,7 @@ public final class JFritz implements  StatusListener, ItemListener {
 		boxCommunication.registerCallMonitorStateListener(jframe);
 		boxCommunication.registerCallListProgressListener(jframe.getCallerListPanel());
 		boxCommunication.registerCallListProgressListener(getCallerList());
+		boxCommunication.registerBoxStatusListener(jframe);
 	}
 
 	/**

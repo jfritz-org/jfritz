@@ -61,7 +61,7 @@ public class WatchdogThread extends Thread {
             // Starte den Anrufmonitor neu.
 
             Debug.always("STANDBY or SUSPEND TO RAM detected"); //$NON-NLS-1$
-			JFritz.getJframe().setDisconnectedStatus();
+			JFritz.getJframe().setBoxDisconnected("");
             standbyDetected = true;
         }
 

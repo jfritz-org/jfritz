@@ -1,5 +1,9 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 
+JFritz 0.7.3.5:
+- Mehr Debug-Nachrichten für Inverssuche
+- Graphische Rückmeldung, wenn die FritzBox nicht erreicht werden konnte.
+
 JFritz 0.7.3.4:
 - Bugfix [0000224]: Rückwärtssuche hängt
 - Bugfix: Verlust der Verbindung zur FritzBox (SID-Ablauf, Standby, Reboot, usw.)
