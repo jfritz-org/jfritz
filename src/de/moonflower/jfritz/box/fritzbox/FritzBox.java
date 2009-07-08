@@ -258,32 +258,96 @@ public class FritzBox extends BoxClass {
 		}
 	}
 
+	private final String generatePostDataOld(Vector<String> queries)
+	{
+		String postdata = POSTDATA_QUERY + "&var:cnt=" + queries.size();
+		for (int i=0; i<queries.size(); i++)
+		{
+			postdata = postdata + "&var:n" + i + "="+queries.get(i);
+		}
+
+		if (firmware.isSidLogin())
+		{
+			postdata = postdata + "&sid=" + firmware.getSessionId();
+		}
+		else
+		{
+			postdata = postdata + "&login:command/password=" + this.password;
+		}
+
+		return postdata;
+	}
+
 	private final Vector<String> getQueryOld(Vector<String> queries)
 	{
 		Vector<String> response = new Vector<String>();
 		if (firmware != null)
 		{
-			String postdata = POSTDATA_QUERY + "&var:cnt=" + queries.size();
-			for (int i=0; i<queries.size(); i++)
-			{
-				postdata = postdata + "&var:n" + i + "="+queries.get(i);
-			}
-
-			if (firmware.isSidLogin())
-			{
-				postdata = postdata + "&sid=" + firmware.getSessionId();
-			}
+			String postdata = generatePostDataOld(queries);
 
 			final String urlstr = "http://" + address +":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
 
-			try {
-				response = JFritzUtils.fetchDataFromURLToVector(name, urlstr, postdata, true);
-			} catch (WrongPasswordException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			boolean finished = false;
+			boolean password_wrong = false;
+			int retry_count = 0;
+			int max_retry_count = 2;
+
+			while (!finished && (retry_count < max_retry_count))
+			{
+				try {
+					if (password_wrong)
+					{
+						password_wrong = false;
+						Debug.debug("Detecting new firmware, getting new SID");
+						this.detectFirmware();
+						postdata = generatePostDataOld(queries);
+					}
+					retry_count++;
+					response = JFritzUtils.fetchDataFromURLToVector(name, urlstr, postdata, true);
+					finished = true;
+				} catch (WrongPasswordException e) {
+					password_wrong = true;
+					Debug.debug("Wrong password, maybe SID is invalid.");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvalidFirmwareException e) {
+					password_wrong = true;
+				}
+			}
+
+			if ((response.size() != 0)
+			  && (response.size() > (queries.size()+1)))
+			{
+				Pattern p = Pattern.compile(PARSE_LOGIN_REASON);
+				for (int i=0; i<response.size(); i++)
+				{
+					Matcher m = p.matcher(response.get(i));
+					if (m.find())
+					{
+						try {
+							int loginReason = Integer.parseInt(m.group(1));
+							if (loginReason == 2) // SID-Timeout
+							{
+								try {
+									Debug.debug("SessionID expired, getting new SessionId!");
+									detectFirmware();
+									response = getQueryNew(queries);
+									response.add(""); // add empty line to be removed further down in this method
+								} catch (WrongPasswordException e) {
+									Debug.errDlg(Main.getMessage("box.wrong_password"));
+								} catch (InvalidFirmwareException e) {
+									Debug.errDlg(Main.getMessage("box.address_wrong"));
+								} catch (IOException e) {
+									Debug.errDlg("I/O Exception");
+								}
+							}
+						} catch (NumberFormatException nfe)
+						{
+							Debug.errDlg("Could not login to FritzBox. Please check password and try it again!");
+						}
+					}
+				}
 			}
 
 			if (response.size() != 0)
@@ -291,6 +355,7 @@ public class FritzBox extends BoxClass {
 				response.remove(response.size()-1); // letzte Zeile entfernen (leerzeile)
 			}
 		}
+
 		Debug.debug("Query-Response: ");
 		for (int i=0; i<response.size(); i++)
 		{
@@ -300,40 +365,62 @@ public class FritzBox extends BoxClass {
 		return response;
 	}
 
+	private final String generatePostDataNew(Vector<String> queries)
+	{
+		String postdata = POSTDATA_QUERY;
+
+		for (int i=0; i<queries.size(); i++)
+		{
+			postdata = postdata + "&var:n[" + i + "]="+queries.get(i);
+		}
+
+		if (firmware.isSidLogin())
+		{
+			postdata = postdata + "&sid=" + firmware.getSessionId();
+		}
+		else
+		{
+			postdata = postdata + "&login:command/password=" + this.password;
+		}
+
+		return postdata;
+	}
+
 	private final Vector<String> getQueryNew(Vector<String> queries)
 	{
 		Vector<String> response = new Vector<String>();
 		if (firmware != null)
 		{
-			String postdata = POSTDATA_QUERY;
-
-			for (int i=0; i<queries.size(); i++)
-			{
-				postdata = postdata + "&var:n[" + i + "]="+queries.get(i);
-			}
-
-			if (firmware.isSidLogin())
-			{
-				postdata = postdata + "&sid=" + firmware.getSessionId();
-			}
+			String postData = generatePostDataNew(queries);
 
 			final String urlstr = "http://" + address +":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
 
-			boolean password_wrong = true;
+			boolean finished = false;
+			boolean password_wrong = false;
 			int retry_count = 0;
 			int max_retry_count = 2;
 
-			while (password_wrong && retry_count < max_retry_count)
+			while (!finished && (retry_count < max_retry_count))
 			{
 				try {
+					if (password_wrong)
+					{
+						password_wrong = false;
+						Debug.debug("Detecting new firmware, getting new SID");
+						this.detectFirmware();
+						postData = generatePostDataNew(queries);
+					}
 					retry_count++;
-					response = JFritzUtils.fetchDataFromURLToVector(name, urlstr, postdata, true);
-					password_wrong = false;
+					response = JFritzUtils.fetchDataFromURLToVector(name, urlstr, postData, true);
+					finished = true;
 				} catch (WrongPasswordException e) {
 					password_wrong = true;
+					Debug.debug("Wrong password, maybe SID is invalid.");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				} catch (InvalidFirmwareException e) {
+					password_wrong = true;
 				}
 			}
 

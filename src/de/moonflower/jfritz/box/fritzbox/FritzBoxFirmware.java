@@ -166,8 +166,12 @@ public class FritzBoxFirmware {
 				{
 					Debug.debug("Retry count: " + retry_count );
 					retry_count++;
-					sidLogin.check(box_name, urlstr, box_password);
 
+					try {
+						sidLogin.check(box_name, urlstr, box_password);
+					} catch (WrongPasswordException wpe) {
+						Debug.debug("No SID-Login necessary.");
+					}
 					if (sidLogin.isSidLogin())
 					{
 						postdata = postdata.replace("%LOGINMODE%", "response");

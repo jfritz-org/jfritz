@@ -103,9 +103,12 @@ public class JFritzUtils {
 				String str;
 				while (null != ((str = HTMLUtil.stripEntities(d.readLine())))) {
 					// Password seems to be wrong
-					if ((str.indexOf("Das angegebene Kennwort ist ungültig") > 0) //$NON-NLS-1$
-						|| (str.indexOf("Password not valid") > 0))
+					if ((str.indexOf("Das angegebene Kennwort ist ungültig") >= 0) //$NON-NLS-1$
+						|| (str.indexOf("Password not valid") >= 0)
+						|| (str.indexOf("<!--loginPage-->") >= 0)
+						|| (str.indexOf("FRITZ!Box Anmeldung") >= 0))
 					{
+						Debug.debug("Wrong password detected: " + str);
 						wrong_pass = true;
 					}
 					if (retrieveData)
@@ -203,8 +206,10 @@ public class JFritzUtils {
 				String str;
 				while (null != ((str = HTMLUtil.stripEntities(d.readLine())))) {
 					// Password seems to be wrong
-					if ((str.indexOf("Das angegebene Kennwort ist ungültig") > 0) //$NON-NLS-1$
-						|| (str.indexOf("Password not valid") > 0))
+					if ((str.indexOf("Das angegebene Kennwort ist ungültig") >= 0) //$NON-NLS-1$
+						|| (str.indexOf("Password not valid") >= 0)
+						|| (str.indexOf("<!--loginPage-->") >= 0)
+						|| (str.indexOf("FRITZ!Box Anmeldung") >= 0))
 					{
 						Debug.debug("Wrong password detected: " + str);
 						wrong_pass = true;

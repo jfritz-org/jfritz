@@ -1,7 +1,10 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 
+JFritz 0.7.3.4:
+- Bugfix [0000224]: Rückwärtssuche hängt
+- Bugfix: Verlust der Verbindung zur FritzBox (SID-Ablauf, Standby, Reboot, usw.)
+
 JFritz 0.7.3.3:
-- Bugfix [0000224]: Rückwärtssuche hängt 
 - Neu: Mehr Debug-Nachrichten bei getSipProvider um Bug beim Abholen der Sip-Provider zu beheben.
 
 JFritz 0.7.3.2:

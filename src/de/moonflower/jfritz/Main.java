@@ -192,7 +192,7 @@ public class Main implements LookupObserver {
 	// when changing this, don't forget to check the resource bundles!!
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.3.3"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.3.4"; //$NON-NLS-1$
 
 	public final static String PROGRAM_SECRET = "jFrItZsEcReT"; //$NON-NLS-1$
 
@@ -946,7 +946,7 @@ public class Main implements LookupObserver {
 		defProps.setProperty("jfritz.seed", "");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("jfritz.pwd", "");//$NON-NLS-1$, //$NON-NLS-2$
 		//"en_US"
-		defProps.setProperty("locale", System.getProperty("user.language")+"_"+System.getProperty("user.country"));//$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$
+		defProps.setProperty("locale", "");//$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$
 		defProps.setProperty("max.Connections", "2");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("network.type", "0");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.activateDialPrefix", "false");//$NON-NLS-1$, //$NON-NLS-2$

@@ -200,11 +200,11 @@ public class LookupThread extends Thread {
 				//urlstr = rls.getURL().replaceAll("\\$NUMBER", nummer);
 				urlstr = rls.getURL();
 				if(urlstr.contains("$AREACODE")
-						&& (nummer.length() > prefix.length())) {
+						&& (nummer.length() > (prefix.length()+ac_length))) {
 					urlstr = urlstr.replaceAll("\\$AREACODE", nummer.substring(prefix.length(), ac_length+prefix.length()));
 					urlstr = urlstr.replaceAll("\\$NUMBER", nummer.substring(prefix.length()+ac_length));
 				}else if(urlstr.contains("$PFXAREACODE")
-						&& (nummer.length() > prefix.length())){
+						&& (nummer.length() > (prefix.length()+ac_length))){
 					urlstr = urlstr.replaceAll("\\$PFXAREACODE", nummer.substring(0, prefix.length()+ac_length));
 					urlstr = urlstr.replaceAll("\\$NUMBER", nummer.substring(prefix.length()+ ac_length));
 				}else {
