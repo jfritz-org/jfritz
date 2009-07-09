@@ -156,14 +156,13 @@ public class FritzBoxFirmware {
 		{
 			for (int j=0; j<(POSTDATA_DETECT_FIRMWARE).length && !detected; j++)
 			{
-				String postdata = POSTDATA_ACCESS_METHOD[i] + POSTDATA_DETECT_FIRMWARE[j];
-
 				boolean password_wrong = true;
 				int retry_count = 0;
 				int max_retry_count = 2;
 
 				while ((password_wrong) && (retry_count < max_retry_count))
 				{
+					String postdata = POSTDATA_ACCESS_METHOD[i] + POSTDATA_DETECT_FIRMWARE[j];
 					Debug.debug("Retry count: " + retry_count );
 					retry_count++;
 

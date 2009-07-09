@@ -161,6 +161,12 @@ public class Port implements Serializable {
 			return true;
 		}
 
+		if (this.getName().equals("ISDN Geraet")
+			&& (port.getName().equals("ISDN")))
+		{
+			return true;
+		}
+
 		if (!"".equals(this.getName()))
 		{
 			try {

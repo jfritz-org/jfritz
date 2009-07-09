@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -420,28 +421,18 @@ public class CallerList extends AbstractTableModel
 	}
 
 	/**
-	 * Adds an entry to the call list this function calls contains(Call newCall)
-	 * to test if the given call is contained in the list the function then adds
-	 * the entry to newCalls if appropriate
-	 *
+	 * Adds an entry to the call list
 	 * Note: After all import processes make sure to call fireUpdateCallVector()
 	 *
 	 *
 	 * @author Brian Jensen
 	 */
-	private synchronized boolean addEntry(Call call) {
-		if (contains(call)) {
-			return false;
-		} // add a new enty to the call list
-
+	private synchronized void addEntry(Call call) {
 		newCalls.add(call);
 		if (call.getPhoneNumber() != null)
 		{
 			hashMap.addCall(call.getPhoneNumber(), call);
 		}
-
-		return true;
-
 	}
 
 	/**
@@ -455,12 +446,32 @@ public class CallerList extends AbstractTableModel
 	public synchronized void addEntries(Vector<Call> newCalls){
 		int newEntries = 0;
 
+		Vector<Call> copyCalls = (Vector<Call>) unfilteredCallerData.clone();
+
+		for (int i=0; i<newCalls.size(); i++)
+		{
+			Call call = newCalls.get(i);
+			Enumeration<Call> enList = copyCalls.elements();
+			boolean found = false;
+			while (enList.hasMoreElements() && !found)
+			{
+				Call callInList = enList.nextElement();
+				if (callInList.equals(call)) {
+					// if this call is in both lists remove it from both lists
+					copyCalls.remove(callInList);
+					newCalls.remove(call);
+					found = true;
+					i--; // go to previous element to get next element
+				}
+			}
+		}
+
+		Debug.debug("Adding " + newCalls.size() + " new calls.");
+
 		for(Call call: newCalls)
 		{
-			if(addEntry(call))
-			{
-				newEntries++;
-			}
+			addEntry(call);
+			newEntries++;
 		}
 
 		if ((!initStage) && (newEntries > 0)) {
@@ -552,18 +563,18 @@ public class CallerList extends AbstractTableModel
 	 * @author Brian Jensen
 	 *
 	 */
-	public synchronized boolean contains(Call newCall) {
+	private synchronized boolean contains(Call newCall) {
 		int left, right, middle;
 		left = 0;
 		right = unfilteredCallerData.size() - 1;
 
+		if (unfilteredCallerData.isEmpty()) {
+			return false;
+		}
+
 		Call c;
 		while (left <= right) {
 			middle = ((right - left) / 2) + left;
-
-			if (unfilteredCallerData.isEmpty()) {
-				return false;
-			}
 
 			c = unfilteredCallerData.elementAt(middle);
 			int Compare = newCall.getCalldate().compareTo(c.getCalldate());
@@ -1215,8 +1226,11 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 						if (!line.equals("")) {
 							Debug.error("Broken entry: " + line);
 						}
-					} else if (addEntry(c)) {
-						newEntries++;
+					} else {
+						if (!contains(c)) {
+							addEntry(c);
+							newEntries++;
+						}
 					}
 				}
 
@@ -1332,33 +1346,6 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 			Debug.error("Invalid date format in csv entry!"); //$NON-NLS-1$
 			return null;
 		}
-
-//		// change the port to fit the jfritz naming convention
-//		if (field[5].equals("FON1")) {
-//			field[5] = "0";
-//		} else if (field[5].equals("FON2")) {
-//			field[5] = "1";
-//		} else if (field[5].equals("FON3")) {
-//			field[5] = "2";
-//		} else if (field[5].equals("Durchwahl")) {
-//			field[5] = "3";
-//		} else if (field[5].equals("ISDN")) {
-//			field[5] = "4";
-//		} else if (field[5].equals("DECT 1")) {
-//			field[5] = "10";
-//		} else if (field[5].equals("DECT 2")) {
-//			field[5] = "11";
-//		} else if (field[5].equals("DECT 3")) {
-//			field[5] = "12";
-//		} else if (field[5].equals("DECT 4")) {
-//			field[5] = "13";
-//		} else if (field[5].equals("DECT 5")) {
-//			field[5] = "14";
-//		} else if (field[5].equals("DECT 6")) {
-//			field[5] = "15";
-//		} else if (field[5].equals("DATA")) {
-//			field[5] = "36";
-//		}
 
 		// Phone number
 		if (!field[3].equals("")) {
@@ -2195,43 +2182,9 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 	}
 
 	public void finished(Vector<Call> newCalls) {
-		int newEntries = 0;
 		if (newCalls != null)
 		{
-			for (Call call: newCalls)
-			{
-				if (addEntry(call)) {
-					newEntries++;
-				}
-			}
-
-			fireUpdateCallVector();
-
-			if (newEntries > 0) {
-
-				// uncomment these in case the import function is broken
-				// for(int i=0; i < unfilteredCallerData.size(); i++)
-				// System.out.println(unfilteredCallerData.elementAt(i).toString());
-
-				saveToXMLFile(Main.SAVE_DIR + JFritz.CALLS_FILE, true);
-
-				String msg;
-
-				if (newEntries == 1) {
-					msg = Main.getMessage("imported_call"); //$NON-NLS-1$
-				} else {
-					msg = Main
-							.getMessage("imported_calls").replaceAll("%N", Integer.toString(newEntries)); //$NON-NLS-1$, //$NON-NLS-2$
-				}
-
-				if (Main.getProperty("option.notifyOnCalls")
-						.equals("true")) {
-					JFritz.infoMsg(msg);
-				}
-
-			}
-
-			update();
+			addEntries(newCalls);
 		}
 	}
 

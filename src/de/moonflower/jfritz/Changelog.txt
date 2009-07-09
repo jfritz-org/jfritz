@@ -1,15 +1,24 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 
+JFritz 0.7.3.8:
+- Bugfix [0000230]: 2 mal gleiche Nummer in gleicher Uhrzeit-Minute wird nicht erkannt.
+
+JFritz 0.7.3.7:
+- Bugfix [0000218]: Rufnummer mit # als Suffix
+- Bugfix [0000180]: doppelte Einträge in der Anrufliste 
+- Bugfix: Korrekte Übermittlung der SID bei zweiter Detektion der Firmware
+
 JFritz 0.7.3.6:
 - FetchList in allen Klassen vereinheitlicht, restart des Timers.
 - Read-Timeout für Kommunikation mit der FritzBox.
+- Bugfix [0000213]: Wählhilfe nur einmalig nutzbar in der Aktuellen Version 0.7.3  
+- Bugfix [0000224]: Rückwärtssuche hängt
 
 JFritz 0.7.3.5:
 - Mehr Debug-Nachrichten für Inverssuche
 - Graphische Rückmeldung, wenn die FritzBox nicht erreicht werden konnte.
 
 JFritz 0.7.3.4:
-- Bugfix [0000224]: Rückwärtssuche hängt
 - Bugfix: Verlust der Verbindung zur FritzBox (SID-Ablauf, Standby, Reboot, usw.)
 
 JFritz 0.7.3.3:

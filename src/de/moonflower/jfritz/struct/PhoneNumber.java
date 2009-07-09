@@ -123,6 +123,10 @@ public class PhoneNumber implements Serializable {
 		number = number.replaceAll("\\(", ""); //$NON-NLS-1$, //$NON-NLS-2$
 		number = number.replaceAll("\\)", ""); //$NON-NLS-1$, //$NON-NLS-2$
 		number = number.replaceAll("\\/", ""); //$NON-NLS-1$, //$NON-NLS-2$
+		if (number.endsWith("#"))
+		{
+			number = number.substring(0, number.length()-1);
+		}
 	}
 
 	/**
@@ -138,7 +142,6 @@ public class PhoneNumber implements Serializable {
 		cutCallByCall();
 		number = convertToIntNumber();
 		getCountryInfo();
-
 	}
 
 	/**
