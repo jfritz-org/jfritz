@@ -209,6 +209,8 @@ public final class JFritz implements  StatusListener, ItemListener {
 					Main.getMessage("information"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
 			if (answer == JOptionPane.YES_OPTION) {
 				Debug.info("New FritzBox detected, user decided to accept connection."); //$NON-NLS-1$
+				Main.setProperty("box.mac", fritzBox.getMacAddress());
+				Main.saveConfigProperties();
 				result = 0;
 			} else {
 				Debug.info("New FritzBox detected, user decided to prohibit connection."); //$NON-NLS-1$

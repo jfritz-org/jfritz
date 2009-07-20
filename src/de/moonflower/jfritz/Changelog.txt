@@ -1,11 +1,15 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 
+JFritz 0.7.3.9:
+- Bugfix [0000176]: Nervige ständige Meldung das eine neue Fritz!Box gefunden wurde (bei jedem Start, obwohl nur eine immer gleiche Fritte im Netz).
+- Bugfix [0000235]: Auf einem frisch aufgesetztem System werden die Anruferdaten zwar von der FB geholt, aber nicht angezeigt/abgespeichert
+
 JFritz 0.7.3.8:
 - Bugfix [0000230]: 2 mal gleiche Nummer in gleicher Uhrzeit-Minute wird nicht erkannt.
 
 JFritz 0.7.3.7:
-- Bugfix [0000218]: Rufnummer mit # als Suffix
 - Bugfix [0000180]: doppelte Einträge in der Anrufliste 
+- Bugfix [0000218]: Rufnummer mit # als Suffix
 - Bugfix: Korrekte Übermittlung der SID bei zweiter Detektion der Firmware
 
 JFritz 0.7.3.6:
@@ -19,7 +23,7 @@ JFritz 0.7.3.5:
 - Graphische Rückmeldung, wenn die FritzBox nicht erreicht werden konnte.
 
 JFritz 0.7.3.4:
-- Bugfix: Verlust der Verbindung zur FritzBox (SID-Ablauf, Standby, Reboot, usw.)
+- Bugfix [0000231]: Verlust der Verbindung zur FritzBox (SID-Ablauf, Standby, Reboot, usw.)
 
 JFritz 0.7.3.3:
 - Neu: Mehr Debug-Nachrichten bei getSipProvider um Bug beim Abholen der Sip-Provider zu beheben.

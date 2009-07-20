@@ -387,8 +387,6 @@ public class CallerList extends AbstractTableModel
 
 			// Synchronise the call vectors
 			fireUpdateCallVector();
-			initStage = false;
-
 		} catch (ParserConfigurationException e) {
 			Debug.error("Error with ParserConfiguration!"); //$NON-NLS-1$
 		} catch (SAXException e) {
@@ -404,6 +402,8 @@ public class CallerList extends AbstractTableModel
 			}
 		} catch (IOException e) {
 			Debug.error("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+		} finally {
+			initStage = false;
 		}
 		JFritz.getPhonebook().addListener(this);
 	}
