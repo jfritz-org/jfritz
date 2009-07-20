@@ -294,28 +294,6 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 		filterExceptions.add(nonFilteredPerson);
 	}
 
-	/**
-	 * TODO: wird noch nicht benutzt
-	 * does reverse lookup (find the name and
-	 * address for a given phone number
-	 *
-	 * @param rows
-	 *            the rows, wich are selected for reverse lookup
-	 */
-	private void doReverseLookup(int[] rows) {
-		if (rows.length > 0) { // nur für markierte Einträge ReverseLookup
-			// durchführen
-			Vector<PhoneNumber> numbers = new Vector<PhoneNumber>();
-			for (int i = 0; i < rows.length; i++) {
-				Person person = getFilteredPersons().get(rows[i]);
-				numbers.addAll(person.getNumbers());
-			}
-			ReverseLookup.lookup(numbers, this, false);
-		} else { // Für alle Einträge ReverseLookup durchführen
-			reverseLookupPersons(filteredPersons);
-		}
-	}
-
 	public void personsFound(Vector<Person> persons) {
 		if (persons != null) {
 			addEntries(persons);
@@ -1027,6 +1005,22 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 		if (l != null)
 		{
 			if (l.size() == 0) {
+				// search for central/main number
+				for (int i=0; i<unfilteredPersons.size(); i++) {
+					Person person = unfilteredPersons.get(i);
+					Vector<PhoneNumber> numbers = person.getNumbers();
+					for (int j=0; j<numbers.size(); j++)
+					{
+						PhoneNumber num = numbers.get(j);
+						if ("main".equals(num.getType()))
+						{
+							if (number.getIntNumber().startsWith(num.getIntNumber()))
+							{
+								return person;
+							}
+						}
+					}
+				}
 				return null;
 			} else if (l.size() == 1) {
 				if (l.get(0).getNumbers().contains(number))

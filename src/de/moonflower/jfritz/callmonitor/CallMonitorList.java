@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import de.moonflower.jfritz.Main;
-import de.moonflower.jfritz.box.BoxClass;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.utils.Debug;

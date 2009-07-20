@@ -26,29 +26,12 @@
 <reverselookup version="1.01">
 	<country code="+1">
 		<website name="whitepages.com" url="http://www.whitepages.com/search/ReversePhone?phone=$NUMBER" prefix="1">
-			<entry>
-				<name>&lt;a href=&quot;[^&quot;]*&quot; class=&quot;fn n&quot; title=&quot;[^&quot;]*&quot;&gt;([^&lt;]*)&lt;/a&gt;</name>
-				<street>&lt;span class=&quot;street-address&quot;&gt;([^&lt;]*)&lt;/span&gt;</street>
-				<city>&lt;span class=&quot;locality&quot;&gt;([^&lt;]*)&lt;/span&gt;</city>
-				<zipcode>&lt;span class=&quot;postal-code&quot;&gt;([^&lt;]*)&lt;/span&gt;</zipcode>
-			</entry>
-			<entry>
-				<name>&lt;a href=&quot;[^&quot;]*&quot; class=&quot;fn n&quot; title=&quot;[^&quot;]*&quot;&gt;([^&lt;]*)&lt;/a&gt;</name>
-				<street>()&lt;span class=&quot;results_widget_street_none&quot;&gt;street address not available&lt;/span&gt;</street>
-				<city>&lt;span class=&quot;locality&quot;&gt;([^&lt;]*)&lt;/span&gt;</city>
-				<zipcode>&lt;span class=&quot;postal-code&quot;&gt;([^&lt;]*)&lt;/span&gt;</zipcode>
-			</entry>
-			<entry>
-				<name>&lt;[span]*[div]* class=&quot;fn n&quot;&gt;([^&lt;]*)&lt;/[span]*[div]*&gt;</name>
-				<street>&lt;span class=&quot;street-address&quot;&gt;([^&lt;]*)&lt;/span&gt;</street>
-				<city>&lt;span class=&quot;locality&quot;&gt;([^&lt;]*)&lt;/span&gt;</city>
-				<zipcode>&lt;span class=&quot;postal-code&quot;&gt;([^&lt;]*)&lt;/span&gt;</zipcode>
-			</entry>
-			<entry>
-				<name>&lt;[span]*[div]* class=&quot;fn n&quot;&gt;([^&lt;]*)&lt;/[span]*[div]*&gt;</name>
-				<street>()&lt;span class=&quot;results_widget_street_none&quot;&gt;street address not available&lt;/span&gt;</street>
-				<city>&lt;span class=&quot;locality&quot;&gt;([^&lt;]*)&lt;/span&gt;</city>
-				<zipcode>&lt;span class=&quot;postal-code&quot;&gt;([^&lt;]*)&lt;/span&gt;</zipcode>
+			<entry firstOccurance="firstname">
+				<firstname>'FIRST'\s*:\s*&quot;([^&quot;]*)&quot;,</firstname>
+				<lastname>'LAST'\s*:\s*&quot;([^&quot;]*)&quot;,</lastname>
+				<street>'ADDRESS'\s*:\s*&quot;([^&quot;]*)&quot;,</street>
+				<city>'CITY'\s*:\s*&quot;([^&quot;]*)&quot;,</city>
+				<zipcode>'ZIP'\s*:\s*&quot;([^&quot;]*)&quot;,</zipcode>
 			</entry>
 		</website>
 	</country>

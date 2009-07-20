@@ -279,13 +279,13 @@ public class LookupThread extends Thread {
 							d.close();
 							Debug.info("Begin processing response from "+rls.getName());
 
-							for (int aaa=0; aaa<dataLength; aaa++ )
-							{
-								if (data[aaa] != null)
-								{
-									Debug.debug("Lookup-Response: " + data[aaa]);
-								}
-							}
+//							for (int aaa=0; aaa<dataLength; aaa++ )
+//							{
+//								if (data[aaa] != null)
+//								{
+//									Debug.debug("Lookup-Response: " + data[aaa]);
+//								}
+//							}
 
 							//iterate over all patterns for this web site
 							for(int j=0; j < rls.size(); j++){

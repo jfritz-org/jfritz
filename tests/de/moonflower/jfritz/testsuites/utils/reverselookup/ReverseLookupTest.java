@@ -172,17 +172,17 @@ public class ReverseLookupTest extends TestCase {
 		PhoneNumber checkNum;
 
 		checkNum = new PhoneNumber("+19736350430", false);
-		entry = new CheckEntry(checkNum, "S Levison", "Adam", "602 Sun Valley Way", "07932-3005", "Florham Park");
+		entry = new CheckEntry(checkNum, "Adam", "Levison", "602 Sun Valley Way", "07932", "Florham Park");
 		ReverseLookup.lookup(checkNum, entry, true);
 		testUsaFailed = checkEntry(entry, testUsaFailed);
 
 		checkNum = new PhoneNumber("+13202304187", false);
-		entry = new CheckEntry(checkNum, "Engelen", "Jeff", "1349 15th Ave S", "56301-5439", "Saint Cloud");
+		entry = new CheckEntry(checkNum, "Jeff", "Engelen", "1349 15th Ave S", "56301", "Saint Cloud");
 		ReverseLookup.lookup(checkNum, entry, true);
 		testUsaFailed = checkEntry(entry, testUsaFailed);
 
 		checkNum =  new PhoneNumber("+14104200629", false);
-		entry = new CheckEntry(checkNum, "L Smith", "Jennifer", "316 Streett Cir", "21050-3061", "Forest Hill");
+		entry = new CheckEntry(checkNum, "Jennifer", "Smith", "316 Streett Cir", "21050", "Forest Hill");
 		ReverseLookup.lookup(checkNum, entry, true);
 		testUsaFailed = checkEntry(entry, testUsaFailed);
 

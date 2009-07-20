@@ -47,9 +47,6 @@ public class PhoneNumber implements Serializable {
 
 	private String type = "";//$NON-NLS-1$
 
-	// type values : "home", "mobile", "homezone",
-	// "business", "other", "fax", "sip" };
-
 	// Please keep these in alphabetical order!!!
 	public static final String INT_FREECALL = "+800";
 
