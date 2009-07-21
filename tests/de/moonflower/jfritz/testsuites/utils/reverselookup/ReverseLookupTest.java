@@ -289,7 +289,7 @@ public class ReverseLookupTest extends TestCase {
 		PhoneNumber checkNum;
 
 		checkNum = new PhoneNumber("+498104889820", false);
-		entry = new CheckEntry(checkNum, "O. Dr.med.", "Then", "", "", "");
+		entry = new CheckEntry(checkNum, "O. Dr.med.", "Then", "", "", "Sauerlach");
 		ReverseLookup.lookup(checkNum,  entry, true);
 		testGermanyFailed = checkEntry(entry, testGermanyFailed);
 
@@ -314,7 +314,7 @@ public class ReverseLookupTest extends TestCase {
 		testGermanyFailed = checkEntry(entry, testGermanyFailed);
 
 		checkNum =  new PhoneNumber("+497215704230", false);
-		entry = new CheckEntry(checkNum, "LAGO", "Bowling", "Gablonzer Str. 13", "76185", "Karlsruhe");
+		entry = new CheckEntry(checkNum, "Karlsruhe", "Bowling-Center", "Gablonzer Str. 13", "76185", "Karlsruhe");
 		ReverseLookup.lookup(checkNum, entry, true);
 		testGermanyFailed = checkEntry(entry, testGermanyFailed);
 
@@ -327,6 +327,8 @@ public class ReverseLookupTest extends TestCase {
 		entry = new CheckEntry(checkNum, "Hausverwaltung GmbH & Co. Beteiligungs KG", "Infraplan", "Franziskanerstr. 14", "81669", "München");
 		ReverseLookup.lookup(checkNum, entry, true);
 		testGermanyFailed = checkEntry(entry, testGermanyFailed);
+
+		assertFalse(testGermanyFailed);
 	}
 
 	private boolean checkEntry(CheckEntry entry, boolean previousTestResult)
