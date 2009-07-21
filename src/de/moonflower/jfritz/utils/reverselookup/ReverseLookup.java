@@ -142,7 +142,9 @@ public class ReverseLookup {
 		while(en.hasMoreElements()){
 			req = new LookupRequest(en.nextElement(), 5);
 			if(!requests.contains(req) && !requests_done.contains(req))
+			{
 				requests.put(req);
+			}
 
 		}
 
@@ -187,7 +189,9 @@ public class ReverseLookup {
 
 		LookupRequest request = new LookupRequest(number, 10, siteName);
 		if(!requests.contains(request) && !requests_done.contains(request))
+		{
 			requests.put(request);
+		}
 
 		count = requests.size();
 		done = 0;

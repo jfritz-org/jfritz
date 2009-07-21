@@ -1005,23 +1005,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 		if (l != null)
 		{
 			if (l.size() == 0) {
-				// search for central/main number
-				for (int i=0; i<unfilteredPersons.size(); i++) {
-					Person person = unfilteredPersons.get(i);
-					Vector<PhoneNumber> numbers = person.getNumbers();
-					for (int j=0; j<numbers.size(); j++)
-					{
-						PhoneNumber num = numbers.get(j);
-						if ("main".equals(num.getType()))
-						{
-							if (number.getIntNumber().startsWith(num.getIntNumber()))
-							{
-								return person;
-							}
-						}
-					}
-				}
-				return null;
+				return searchCentralNumber(number);
 			} else if (l.size() == 1) {
 				if (l.get(0).getNumbers().contains(number))
 				{
@@ -1029,7 +1013,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 				}
 				else
 				{
-					return null;
+					return searchCentralNumber(number);
 				}
 			} else {
 				if (l.get(0).getNumbers().contains(number))
@@ -1038,14 +1022,35 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 				}
 				else
 				{
-					return null;
+					return searchCentralNumber(number);
 				}
 			}
 		}
 		else
 		{
-			return null;
+			return searchCentralNumber(number);
 		}
+	}
+
+	private Person searchCentralNumber(PhoneNumber number)
+	{
+		// search for central/main number
+		for (int i=0; i<unfilteredPersons.size(); i++) {
+			Person person = unfilteredPersons.get(i);
+			Vector<PhoneNumber> numbers = person.getNumbers();
+			for (int j=0; j<numbers.size(); j++)
+			{
+				PhoneNumber num = numbers.get(j);
+				if ("main".equals(num.getType()))
+				{
+					if (number.getIntNumber().startsWith(num.getIntNumber()))
+					{
+						return person;
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 	/**

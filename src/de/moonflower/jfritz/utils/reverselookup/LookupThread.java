@@ -76,15 +76,20 @@ public class LookupThread extends Thread {
 			try {
 
 			if(ReverseLookup.getRequestsCount() == 0 && quit)
+			{
+				Debug.debug("No more numbers to lookup!");
 				break;
+			}
 
 			while((!terminate) && (threadSuspended || ReverseLookup.getRequestsCount() == 0)){
+					Debug.info("Lookup done!");
 					ReverseLookup.lookupDone();
 					synchronized(this){
 						wait();
 					}
 				}
 			} catch (InterruptedException e) {
+				Debug.debug("Lookup-Thread interrupted!");
 	        	Thread.currentThread().interrupt();
 			}
 
@@ -98,6 +103,7 @@ public class LookupThread extends Thread {
 				try{
 					sleep(2000);
 				}catch(Exception e){
+					Debug.debug("Exception occourred: " + e.toString());
 					break;
 				}
 			}
@@ -150,10 +156,12 @@ public class LookupThread extends Thread {
 			Person p = new Person("", "FreeCall"); //$NON-NLS-1$,  //$NON-NLS-2$
 			p.addNumber(number);
 			foundPersons.add(p);
+			Debug.debug("FreeCall detected");
 		} else if (number.isSIPNumber() || number.isQuickDial()) {
 			Person p = new Person();
 			p.addNumber(number);
 			foundPersons.add(p);
+			Debug.debug("SIP-Number or QuickDial detected");
 		} else if (ReverseLookup.rlsMap.containsKey(number.getCountryCode())) {
 
 			nummer = number.getAreaNumber();
@@ -165,9 +173,11 @@ public class LookupThread extends Thread {
 			if(nummer.startsWith(number.getCountryCode())) {
 				if (nummer.length() > number.getCountryCode().length()) {
 					nummer = nummer.substring(number.getCountryCode().length());
+					Debug.debug("Number has been refactored: " + nummer);
 				}
 				else
 				{
+					Debug.debug("Number has no country code, creating new Person as response!");
 					Person p = new Person();
 					p.addNumber(number);
 					return p;
@@ -195,7 +205,9 @@ public class LookupThread extends Thread {
 				if(!nummer.startsWith(prefix))
 				{
 					nummer = prefix + nummer;
+					Debug.debug("Added prefix: " + nummer);
 				}
+
 
 				//urlstr = rls.getURL().replaceAll("\\$NUMBER", nummer);
 				urlstr = rls.getURL();
@@ -319,32 +331,40 @@ public class LookupThread extends Thread {
 										             && patterns[ReverseLookupSite.LASTNAME].equals("")))
 								{
 									namePattern = Pattern.compile(patterns[ReverseLookupSite.NAME]);
+									Debug.debug("Name-Pattern: " + namePattern.toString());
 								}
 								if (!patterns[ReverseLookupSite.STREET].equals(""))
 								{
 									streetPattern = Pattern.compile(patterns[ReverseLookupSite.STREET]);
+									Debug.debug("Street-Pattern: " + streetPattern.toString());
 								}
 								if (!patterns[ReverseLookupSite.CITY].equals(""))
 								{
 									cityPattern = Pattern.compile(patterns[ReverseLookupSite.CITY]);
+									Debug.debug("City-Pattern: " + cityPattern.toString());
 								}
 								if (!patterns[ReverseLookupSite.ZIPCODE].equals(""))
 								{
 									zipcodePattern = Pattern.compile(patterns[ReverseLookupSite.ZIPCODE]);
+									Debug.debug("ZipCode-Pattern: " + zipcodePattern.toString());
 								}
 								if (!patterns[ReverseLookupSite.FIRSTNAME].equals(""))
 								{
 									firstnamePattern = Pattern.compile(patterns[ReverseLookupSite.FIRSTNAME]);
+									Debug.debug("FirstName-Pattern: " + firstnamePattern.toString());
 								}
 								if (!patterns[ReverseLookupSite.LASTNAME].equals(""))
 								{
 									lastnamePattern = Pattern.compile(patterns[ReverseLookupSite.LASTNAME]);
+									Debug.debug("LastName-Pattern: " + lastnamePattern.toString());
 								}
 
+								Debug.debug("Parsing " + lines + " lines:");
 								for (int line=0; line<dataLength; line++)
 								{
 									if (data[line] != null)
 									{
+//										Debug.debug(data[line]);
 										int spaceAlternative = 160; // hex: a0 = space like ascii character
 										data[line] = data[line].replaceAll(new Character((char)spaceAlternative).toString(), " "); //$NON-NLS-1$
 
@@ -373,10 +393,12 @@ public class LookupThread extends Thread {
 													p = new Person();
 													p.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
 													foundPersons.add(p);
+													Debug.debug("Creating new person: "+p.toCSV());
 												}
 												if (p != null)
 												{
 													p.setLastName(lastname);
+													Debug.debug("Adding lastname to person: " + p.toCSV());
 												}
 											}
 										}
@@ -406,10 +428,12 @@ public class LookupThread extends Thread {
 													p = new Person();
 													p.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
 													foundPersons.add(p);
+													Debug.debug("Creating new person: "+p.toCSV());
 												}
 												if (p != null)
 												{
 													p.setFirstName(firstname);
+													Debug.debug("Adding firstName to person: "+p.toCSV());
 												}
 											}
 										}
@@ -472,12 +496,14 @@ public class LookupThread extends Thread {
 														p.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
 													}
 													foundPersons.add(p);
+													Debug.debug("Creating new person: "+p.toCSV());
 												}
 												if (p != null)
 												{
 													p.setFirstName(firstname);
 													p.setLastName(lastname);
 													p.setCompany(company);
+													Debug.debug("Adding firstName, lastName and company to person: "+p.toCSV());
 												}
 											}
 										}
@@ -504,11 +530,13 @@ public class LookupThread extends Thread {
 													p = new Person();
 													p.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
 													foundPersons.add(p);
+													Debug.debug("Creating new person: "+p.toCSV());
 												}
 
 												if (p != null)
 												{
 													p.setStreet(street);
+													Debug.debug("Adding street to person: "+p.toCSV());
 												}
 											}
 										}
@@ -535,11 +563,13 @@ public class LookupThread extends Thread {
 													p = new Person();
 													p.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
 													foundPersons.add(p);
+													Debug.debug("Creating new person: "+p.toCSV());
 												}
 
 												if (p != null)
 												{
 													p.setCity(city);
+													Debug.debug("Adding city to person: "+p.toCSV());
 												}
 											}
 										}
@@ -567,10 +597,12 @@ public class LookupThread extends Thread {
 													p = new Person();
 													p.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
 													foundPersons.add(p);
+													Debug.debug("Creating new person: "+p.toCSV());
 												}
 												if (p != null)
 												{
 													p.setPostalCode(zipcode);
+													Debug.debug("Adding zip-Code to person: "+p.toCSV());
 												}
 											}
 										}
@@ -597,7 +629,11 @@ public class LookupThread extends Thread {
 									else if(number.getCountryCode().startsWith(ReverseLookup.TURKEY_CODE))
 										city = ReverseLookupTurkey.getCity(nummer);
 								}
-
+								Debug.debug("Found " + foundPersons.size() + " persons!");
+								for (int j=0; j<foundPersons.size(); j++) {
+									Debug.debug("Person["+j+"]: " + foundPersons.get(j).toCSV());
+								}
+								Debug.debug("Return Person[0] as lookup-result!");
 								return foundPersons.get(0);
 							}
 
@@ -629,6 +665,7 @@ public class LookupThread extends Thread {
 
 			Person p = new Person("", "", "", "", "", city, "", "");
 			p.addNumber(number.getAreaNumber(), "home"); //$NON-NLS-1$
+			Debug.debug("Got city: " + city);
 			return p;
 
 		//no reverse lookup sites available for country
@@ -645,12 +682,14 @@ public class LookupThread extends Thread {
 			else if(number.getCountryCode().startsWith(ReverseLookup.TURKEY_CODE))
 				city = ReverseLookupTurkey.getCity(number.getIntNumber());
 			p.setCity(city);
+			Debug.debug("Returning city "+city);
 			return p;
 		}
 
 		if (foundPersons.size() > 0)
 		{
 			// return first found person
+			Debug.debug("Returning first found person: "+foundPersons.get(0).toCSV());
 			return foundPersons.get(0);
 		}
 		else
@@ -658,6 +697,7 @@ public class LookupThread extends Thread {
 			// return new empty person
 			Person p = new Person();
 			p.addNumber(number.getAreaNumber(), "home"); //$NON-NLS-1$
+			Debug.debug("Returning new empty person!");
 			return p;
 		}
 	}

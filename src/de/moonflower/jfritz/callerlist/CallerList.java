@@ -1002,14 +1002,27 @@ public class CallerList extends AbstractTableModel
 					new Port(0, "", "-1", "-1"), "route", 0);
 			for (PhoneNumber num:numbers)
 			{
-				List<Call> l = hashMap.getCall(num);
-				if (l != null)
-				{
-					for (Call c:l)
+				if ("main".equals(num.getType())){
+					for (int i=0; i<unfilteredCallerData.size(); i++)
 					{
+						Call c = unfilteredCallerData.get(i);
 						if (c.getCalldate().after(result.getCalldate()))
 						{
 							result = c;
+						}
+					}
+				}
+				else
+				{
+					List<Call> l = hashMap.getCall(num);
+					if (l != null)
+					{
+						for (Call c:l)
+						{
+							if (c.getCalldate().after(result.getCalldate()))
+							{
+								result = c;
+							}
 						}
 					}
 				}
