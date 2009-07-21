@@ -683,22 +683,22 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 						pw
 								.write("\t\t<firstname>" + JFritzUtils.convertSpecialChars(current.getFirstName()) //$NON-NLS-1$
 										+ "</firstname>"); //$NON-NLS-1$
+						pw.newLine();
 					}
-					pw.newLine();
 					if (current.getLastName().length() > 0) {
 						pw
 								.write("\t\t<lastname>" + JFritzUtils.convertSpecialChars(current.getLastName()) //$NON-NLS-1$
 										+ "</lastname>"); //$NON-NLS-1$
+						pw.newLine();
 					}
-					pw.newLine();
 					pw.write("\t</name>"); //$NON-NLS-1$
 					pw.newLine();
 					if (current.getCompany().length() > 0) {
 						pw
 								.write("\t<company>" + JFritzUtils.convertSpecialChars(current.getCompany()) //$NON-NLS-1$
 										+ "</company>"); //$NON-NLS-1$
+						pw.newLine();
 					}
-					pw.newLine();
 				}
 
 				if ((current.getStreet().length() > 0)
@@ -710,20 +710,20 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 						pw
 								.write("\t\t<street>" + JFritzUtils.convertSpecialChars(current.getStreet()) //$NON-NLS-1$
 										+ "</street>"); //$NON-NLS-1$
+						pw.newLine();
 					}
-					pw.newLine();
 					if (current.getPostalCode().length() > 0) {
 						pw
 								.write("\t\t<postcode>" + JFritzUtils.convertSpecialChars(current.getPostalCode()) //$NON-NLS-1$
 										+ "</postcode>"); //$NON-NLS-1$
+						pw.newLine();
 					}
-					pw.newLine();
 					if (current.getCity().length() > 0) {
 						pw
 								.write("\t\t<city>" + JFritzUtils.convertSpecialChars(current.getCity()) //$NON-NLS-1$
 										+ "</city>"); //$NON-NLS-1$
+						pw.newLine();
 					}
-					pw.newLine();
 					pw.write("\t</address>"); //$NON-NLS-1$
 					pw.newLine();
 				}
@@ -751,9 +751,18 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 						pw
 								.write("\t\t<email>" + JFritzUtils.convertSpecialChars(current.getEmailAddress()) //$NON-NLS-1$
 										+ "</email>"); //$NON-NLS-1$
+						pw.newLine();
 					}
-					pw.newLine();
 					pw.write("\t</internet>"); //$NON-NLS-1$
+					pw.newLine();
+				}
+
+				if (current.getLookupSite().length() > 0) {
+					pw.write("\t<lookup>");
+					pw.newLine();
+					pw.write("\t\t<site>" + current.getLookupSite()+ "</site>");
+					pw.newLine();
+					pw.write("\t</lookup>");
 					pw.newLine();
 				}
 				pw.write("</entry>"); //$NON-NLS-1$

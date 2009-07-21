@@ -24,7 +24,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 	 */
 public class LookupThread extends Thread {
 
-	private static final String userAgent = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.13) Gecko/20080208 Mandriva/2.0.0.13-1mdv2008.1 (2008.1) Firefox/2.0.0.13";
+	private static final String userAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.0; de; rv:1.9.1) Gecko/20090624 Firefox/3.5 (.NET CLR 3.5.30729)";
 
 	private static final int dataLength = 30000;
 
@@ -392,13 +392,14 @@ public class LookupThread extends Thread {
 												{
 													p = new Person();
 													p.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
+													p.setLookupSite(rls.getName());
 													foundPersons.add(p);
-													Debug.debug("Creating new person: "+p.toCSV());
+													Debug.debug("Creating new person: "+p.toDebugStr());
 												}
 												if (p != null)
 												{
 													p.setLastName(lastname);
-													Debug.debug("Adding lastname to person: " + p.toCSV());
+													Debug.debug("Adding lastname to person: " + p.toDebugStr());
 												}
 											}
 										}
@@ -427,13 +428,14 @@ public class LookupThread extends Thread {
 												{
 													p = new Person();
 													p.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
+													p.setLookupSite(rls.getName());
 													foundPersons.add(p);
-													Debug.debug("Creating new person: "+p.toCSV());
+													Debug.debug("Creating new person: "+p.toDebugStr());
 												}
 												if (p != null)
 												{
 													p.setFirstName(firstname);
-													Debug.debug("Adding firstName to person: "+p.toCSV());
+													Debug.debug("Adding firstName to person: "+p.toDebugStr());
 												}
 											}
 										}
@@ -495,15 +497,16 @@ public class LookupThread extends Thread {
 													} else {
 														p.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
 													}
+													p.setLookupSite(rls.getName());
 													foundPersons.add(p);
-													Debug.debug("Creating new person: "+p.toCSV());
+													Debug.debug("Creating new person: "+p.toDebugStr());
 												}
 												if (p != null)
 												{
 													p.setFirstName(firstname);
 													p.setLastName(lastname);
 													p.setCompany(company);
-													Debug.debug("Adding firstName, lastName and company to person: "+p.toCSV());
+													Debug.debug("Adding firstName, lastName and company to person: "+p.toDebugStr());
 												}
 											}
 										}
@@ -529,14 +532,15 @@ public class LookupThread extends Thread {
 												{
 													p = new Person();
 													p.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
+													p.setLookupSite(rls.getName());
 													foundPersons.add(p);
-													Debug.debug("Creating new person: "+p.toCSV());
+													Debug.debug("Creating new person: "+p.toDebugStr());
 												}
 
 												if (p != null)
 												{
 													p.setStreet(street);
-													Debug.debug("Adding street to person: "+p.toCSV());
+													Debug.debug("Adding street to person: "+p.toDebugStr());
 												}
 											}
 										}
@@ -562,14 +566,15 @@ public class LookupThread extends Thread {
 												{
 													p = new Person();
 													p.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
+													p.setLookupSite(rls.getName());
 													foundPersons.add(p);
-													Debug.debug("Creating new person: "+p.toCSV());
+													Debug.debug("Creating new person: "+p.toDebugStr());
 												}
 
 												if (p != null)
 												{
 													p.setCity(city);
-													Debug.debug("Adding city to person: "+p.toCSV());
+													Debug.debug("Adding city to person: "+p.toDebugStr());
 												}
 											}
 										}
@@ -596,13 +601,14 @@ public class LookupThread extends Thread {
 												{
 													p = new Person();
 													p.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
+													p.setLookupSite(rls.getName());
 													foundPersons.add(p);
-													Debug.debug("Creating new person: "+p.toCSV());
+													Debug.debug("Creating new person: "+p.toDebugStr());
 												}
 												if (p != null)
 												{
 													p.setPostalCode(zipcode);
-													Debug.debug("Adding zip-Code to person: "+p.toCSV());
+													Debug.debug("Adding zip-Code to person: "+p.toDebugStr());
 												}
 											}
 										}
@@ -631,7 +637,7 @@ public class LookupThread extends Thread {
 								}
 								Debug.debug("Found " + foundPersons.size() + " persons!");
 								for (int j=0; j<foundPersons.size(); j++) {
-									Debug.debug("Person["+j+"]: " + foundPersons.get(j).toCSV());
+									Debug.debug("Person["+j+"]: " + foundPersons.get(j).toDebugStr());
 								}
 								Debug.debug("Return Person[0] as lookup-result!");
 								return foundPersons.get(0);
@@ -689,7 +695,7 @@ public class LookupThread extends Thread {
 		if (foundPersons.size() > 0)
 		{
 			// return first found person
-			Debug.debug("Returning first found person: "+foundPersons.get(0).toCSV());
+			Debug.debug("Returning first found person: "+foundPersons.get(0).toDebugStr());
 			return foundPersons.get(0);
 		}
 		else

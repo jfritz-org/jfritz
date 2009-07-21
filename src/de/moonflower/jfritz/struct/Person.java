@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
@@ -50,6 +51,8 @@ public class Person implements Cloneable, Serializable{
 	private String pictureUrl = ""; //$NON-NLS-1$
 
 	private ImageIcon scaledPicture = null;
+
+	private String lookupSite = ""; //$NON-NLS-1$
 
 	private String[] basicTypes = {"home", "mobile", "homezone", "business", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$
 			"other", "fax", "sip", "main"}; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$
@@ -623,6 +626,65 @@ public class Person implements Cloneable, Serializable{
 		return outString;
 	}
 
+	/**
+	 * Use this only to generate a string for debug-output
+	 * @return person in csv
+	 */
+	public String toDebugStr() {
+		String outString = ""; //$NON-NLS-1$
+
+		if (!"".equals(lookupSite)) {
+			outString = "\"" + lookupSite + "\";";
+		}
+
+		// private contact?
+		if (privateEntry) {
+			outString = outString.concat("\"YES\""); //$NON-NLS-1$
+		} else {
+			outString = outString.concat("\"NO\""); //$NON-NLS-1$
+		}
+
+		// last name
+		outString = outString.concat(";\"" + getLastName() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+
+		// first name
+		outString = outString.concat(";\"" + getFirstName() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+
+		// company
+		outString = outString.concat(";\"" + getCompany() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+
+		// Street
+		outString = outString.concat(";\"" + getStreet() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+
+		// Postal Code
+		outString = outString.concat(";\"" + getPostalCode() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+
+		// city
+		outString = outString.concat(";\"" + getCity() + "\""); //$NON-NLS-1$,  //$NON-NLS-2$
+
+		// email
+		outString = outString.concat(";\"" + getEmailAddress() + "\";\""); //$NON-NLS-1$,  //$NON-NLS-2$
+
+		//@todo meybe also transmit picture
+
+		// numbers
+		if (getNumbers() == null)
+		{
+			outString = outString.concat("\""); //$NON-NLS-1$
+		}
+		else
+		{
+			for (PhoneNumber number: numbers)
+			{
+				outString = outString.concat(number.toCSV()+":");
+			}
+		}
+
+		outString = outString.substring(0, outString.length()-1);
+		outString = outString.concat("\"");
+
+		return outString;
+	}
 
 	/**
 	 * @author: haeusler DATE: 02.04.06, added by Brian This is part of a fix
@@ -746,5 +808,13 @@ public class Person implements Cloneable, Serializable{
 
 			this.scaledPicture = new ImageIcon(pictureIcon.getImage().getScaledInstance(scaleToWidth, scaleToHeight, Image.SCALE_SMOOTH));
 		}
+	}
+
+	public void setLookupSite(String site) {
+		this.lookupSite = site;
+	}
+
+	public String getLookupSite() {
+		return this.lookupSite;
 	}
 }

@@ -23,6 +23,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.box.BoxCallBackListener;
 import de.moonflower.jfritz.box.BoxCallMonitorInterface;
 import de.moonflower.jfritz.box.BoxClass;
 import de.moonflower.jfritz.box.BoxStatusListener;
@@ -137,6 +138,7 @@ public class FritzBox extends BoxClass {
 	private byte queryMethod = QUERY_METHOD_UNKNOWN;
 
 	private Vector<BoxStatusListener> boxListener;
+	private Vector<BoxCallBackListener> callBackListener;
 
 	public FritzBox(String name, String description,
 					String address, String port, String password, Exception exc)
@@ -151,6 +153,7 @@ public class FritzBox extends BoxClass {
 		sipProvider = new Vector<SipProvider>();
 		configuredPorts = new HashMap<Integer, Port>();
 		boxListener = new Vector<BoxStatusListener>(4);
+		callBackListener = new Vector<BoxCallBackListener>(4);
 		exc = null;
 		try {
 			setBoxConnected();
@@ -911,29 +914,45 @@ public class FritzBox extends BoxClass {
 				listener.setMax(numIterations * stepSize);
 			}
 
+			boolean finish = false;
 			for (int j=0; j<numIterations; j++)
 			{
+				Vector<Call> tmpCalls = new Vector<Call>(stepSize);
 				query.clear();
 				int offset = j * stepSize;
-				for (int i=0; i<stepSize; i++)
+				if (!finish)
 				{
-					query.add(QUERY_CALL_X_TYPE.replaceAll("%NUM%", Integer.toString(offset+i)));
-					query.add(QUERY_CALL_X_DATE.replaceAll("%NUM%", Integer.toString(offset+i)));
-					query.add(QUERY_CALL_X_NUMBER.replaceAll("%NUM%", Integer.toString(offset+i)));
-					query.add(QUERY_CALL_X_PORT.replaceAll("%NUM%", Integer.toString(offset+i)));
-					query.add(QUERY_CALL_X_DURATION.replaceAll("%NUM%", Integer.toString(offset+i)));
-					query.add(QUERY_CALL_X_ROUTE.replaceAll("%NUM%", Integer.toString(offset+i)));
-					query.add(QUERY_CALL_X_ROUTETYPE.replaceAll("%NUM%", Integer.toString(offset+i)));
-					query.add(QUERY_CALL_X_NAME.replaceAll("%NUM%", Integer.toString(offset+i)));
-				}
-				response = getQuery(query);
-
-				if (response.size() == querySize*stepSize)
-				{
-					boolean result = createCallFromResponse(newCalls, response, querySize, stepSize);
-					if (!result)
+					for (int i=0; i<stepSize; i++)
 					{
-						throw new IOException("Malformed data while receiving caller list!");
+						query.add(QUERY_CALL_X_TYPE.replaceAll("%NUM%", Integer.toString(offset+i)));
+						query.add(QUERY_CALL_X_DATE.replaceAll("%NUM%", Integer.toString(offset+i)));
+						query.add(QUERY_CALL_X_NUMBER.replaceAll("%NUM%", Integer.toString(offset+i)));
+						query.add(QUERY_CALL_X_PORT.replaceAll("%NUM%", Integer.toString(offset+i)));
+						query.add(QUERY_CALL_X_DURATION.replaceAll("%NUM%", Integer.toString(offset+i)));
+						query.add(QUERY_CALL_X_ROUTE.replaceAll("%NUM%", Integer.toString(offset+i)));
+						query.add(QUERY_CALL_X_ROUTETYPE.replaceAll("%NUM%", Integer.toString(offset+i)));
+						query.add(QUERY_CALL_X_NAME.replaceAll("%NUM%", Integer.toString(offset+i)));
+					}
+					response = getQuery(query);
+
+					if (response.size() == querySize*stepSize)
+					{
+						boolean result = createCallFromResponse(tmpCalls, response, querySize, stepSize);
+						if (!result)
+						{
+							throw new IOException("Malformed data while receiving caller list!");
+						}
+						else
+						{
+							for (BoxCallBackListener listener: callBackListener)
+							{
+								finish = listener.finishGetCallerList(tmpCalls);
+							}
+							if (!finish)
+							{
+								newCalls.addAll(tmpCalls);
+							}
+						}
 					}
 				}
 
@@ -1544,6 +1563,13 @@ public class FritzBox extends BoxClass {
 	private void setBoxDisconnected() {
 		for (BoxStatusListener listener: boxListener) {
 			listener.setBoxDisconnected(name);
+		}
+	}
+
+	public void addBoxCallBackListener(BoxCallBackListener listener)
+	{
+		if (!callBackListener.contains(listener)) {
+			callBackListener.add(listener);
 		}
 	}
 }

@@ -288,8 +288,13 @@ public class ReverseLookupTest extends TestCase {
 		CheckEntry entry;
 		PhoneNumber checkNum;
 
+		checkNum = new PhoneNumber("+498990199190", false);
+		entry = new CheckEntry(checkNum, "Rainer", "Ullrich", "Zugspitzstr. 20", "85609", "Aschheim");
+		ReverseLookup.lookup(checkNum,  entry, true);
+		testGermanyFailed = checkEntry(entry, testGermanyFailed);
+
 		checkNum = new PhoneNumber("+498104889820", false);
-		entry = new CheckEntry(checkNum, "O. Dr.med.", "Then", "", "", "Sauerlach");
+		entry = new CheckEntry(checkNum, "O. Dr.med.", "Then", "", "", "");
 		ReverseLookup.lookup(checkNum,  entry, true);
 		testGermanyFailed = checkEntry(entry, testGermanyFailed);
 

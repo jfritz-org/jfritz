@@ -171,4 +171,6 @@ public abstract class BoxClass
 
 	public abstract void addBoxStatusListener(BoxStatusListener listener);
 	public abstract void removeBoxStatusListener(BoxStatusListener listener);
+
+	public abstract void addBoxCallBackListener(BoxCallBackListener listener);
 }

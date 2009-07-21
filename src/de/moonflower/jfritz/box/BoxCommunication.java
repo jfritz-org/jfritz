@@ -166,6 +166,14 @@ public class BoxCommunication {
 		}
 	}
 
+	public void registerBoxCallBackListener(BoxCallBackListener listener)
+	{
+		for (BoxClass box: registeredBoxes)
+		{
+			box.addBoxCallBackListener(listener);
+		}
+	}
+
 	public void doCall(PhoneNumber number, Port port)
 	{
 		if (port != null)

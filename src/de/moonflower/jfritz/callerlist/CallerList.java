@@ -43,6 +43,7 @@ import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.box.BoxCallBackListener;
 import de.moonflower.jfritz.callerlist.filter.CallFilter;
 import de.moonflower.jfritz.callerlist.filter.DateFilter;
 import de.moonflower.jfritz.phonebook.PhoneBook;
@@ -64,7 +65,8 @@ import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
  *
  */
 public class CallerList extends AbstractTableModel
-		implements LookupObserver, PhoneBookListener, IProgressListener {
+		implements LookupObserver, PhoneBookListener, IProgressListener,
+		BoxCallBackListener {
 	private static final long serialVersionUID = 1;
 
 	private static final String CALLS_DTD_URI = "http://jfritz.moonflower.de/dtd/calls.dtd"; //$NON-NLS-1$
@@ -446,26 +448,7 @@ public class CallerList extends AbstractTableModel
 	public synchronized void addEntries(Vector<Call> newCalls){
 		int newEntries = 0;
 
-		Vector<Call> copyCalls = (Vector<Call>) unfilteredCallerData.clone();
-
-		for (int i=0; i<newCalls.size(); i++)
-		{
-			Call call = newCalls.get(i);
-			Enumeration<Call> enList = copyCalls.elements();
-			boolean found = false;
-			while (enList.hasMoreElements() && !found)
-			{
-				Call callInList = enList.nextElement();
-				if (callInList.equals(call)) {
-					// if this call is in both lists remove it from both lists
-					copyCalls.remove(callInList);
-					newCalls.remove(call);
-					found = true;
-					i--; // go to previous element to get next element
-				}
-			}
-		}
-
+		filterNewCalls(newCalls);
 		Debug.debug("Adding " + newCalls.size() + " new calls.");
 
 		for(Call call: newCalls)
@@ -500,6 +483,28 @@ public class CallerList extends AbstractTableModel
 							"option.createBackupAfterFetch")))
 			{
 				doBackup();
+			}
+		}
+	}
+
+	private void filterNewCalls(Vector<Call> newCalls)
+	{
+		Vector<Call> copyCalls = (Vector<Call>) unfilteredCallerData.clone();
+		for (int i=0; i<newCalls.size(); i++)
+		{
+			Call call = newCalls.get(i);
+			Enumeration<Call> enList = copyCalls.elements();
+			boolean found = false;
+			while (enList.hasMoreElements() && !found)
+			{
+				Call callInList = enList.nextElement();
+				if (callInList.equals(call)) {
+					// if this call is in both lists remove it from both lists
+					copyCalls.remove(callInList);
+					newCalls.remove(call);
+					found = true;
+					i--; // go to previous element to get next element
+				}
 			}
 		}
 	}
@@ -2211,5 +2216,18 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 
 	public void setProgress(int progress) {
 		// do nothing
+	}
+
+	public boolean finishGetCallerList(Vector<Call> calls) {
+		Vector<Call> clone = (Vector<Call>)calls.clone();
+		filterNewCalls(clone);
+		if (clone.size() == 0)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 }

@@ -5,7 +5,8 @@ JFritz 0.7.3.9:
 - Bugfix [0000219]: Zentralnummern scheinen nicht mehr zu funktionieren. 
 - Bugfix [0000235]: Auf einem frisch aufgesetztem System werden die Anruferdaten zwar von der FB geholt, aber nicht angezeigt/abgespeichert
 - Bugfix: Reverselookup für USA korrigiert.
-- Bugfix: Reverselookup für DasOertliche korrigiert.
+- Bugfix: Alle Reverselookup für Deutschland korrigiert.
+- Speedup beim Abholen der Anrufliste.
 
 JFritz 0.7.3.8:
 - Bugfix [0000230]: 2 mal gleiche Nummer in gleicher Uhrzeit-Minute wird nicht erkannt.
