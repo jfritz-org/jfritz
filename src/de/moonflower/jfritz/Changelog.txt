@@ -1,5 +1,8 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 
+JFritz 0.7.3.10:
+- Release of new Version.
+
 JFritz 0.7.3.9:
 - Bugfix [0000176]: Nervige ständige Meldung das eine neue Fritz!Box gefunden wurde (bei jedem Start, obwohl nur eine immer gleiche Fritte im Netz).
 - Bugfix [0000219]: Zentralnummern scheinen nicht mehr zu funktionieren. 

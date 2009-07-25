@@ -103,15 +103,15 @@ public class ProcessUpdateFolderThread extends Thread {
 				deleteFile.delete();
 			} catch (UnsupportedEncodingException e) {
 				Logger.err(threadName + "ERROR: Encoding not supported");
-				JOptionPane.showMessageDialog(null, UpdateLocale.getMessage("encodingNotSupported"), UpdateLocale.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
+//				JOptionPane.showMessageDialog(null, UpdateLocale.getMessage("encodingNotSupported"), UpdateLocale.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			} catch (FileNotFoundException e) {
 				Logger.err(threadName + "ERROR: File not found");
-				JOptionPane.showMessageDialog(null, UpdateLocale.getMessage("fileNotFound").replaceAll("%FILENAME", fileToDelete), UpdateLocale.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
+//				JOptionPane.showMessageDialog(null, UpdateLocale.getMessage("fileNotFound").replaceAll("%FILENAME", fileToDelete), UpdateLocale.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			} catch (IOException ioe) {
 				Logger.err(threadName + "ERROR: IO exception");
-				JOptionPane.showMessageDialog(null, UpdateLocale.getMessage("ioError").replaceAll("%FILENAME", fileToDelete), UpdateLocale.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
+//				JOptionPane.showMessageDialog(null, UpdateLocale.getMessage("ioError").replaceAll("%FILENAME", fileToDelete), UpdateLocale.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
 				ioe.printStackTrace();
 			}
 		}
