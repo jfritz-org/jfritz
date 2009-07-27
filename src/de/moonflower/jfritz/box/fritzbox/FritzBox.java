@@ -300,11 +300,21 @@ public class FritzBox extends BoxClass {
 
 		if (firmware.isSidLogin())
 		{
-			postdata = postdata + "&sid=" + firmware.getSessionId();
+			try {
+			postdata = postdata + "&sid=" + URLEncoder.encode(firmware.getSessionId(), "ISO-8859-1");
+			} catch (UnsupportedEncodingException e) {
+				Debug.error("Encoding not supported");
+				e.printStackTrace();
+			}
 		}
 		else
 		{
-			postdata = postdata + "&login:command/password=" + this.password;
+			try {
+				postdata = postdata + "&login:command/password=" + URLEncoder.encode(this.password, "ISO-8859-1");
+			} catch (UnsupportedEncodingException e) {
+				Debug.error("Encoding not supported");
+				e.printStackTrace();
+			}
 		}
 
 		return postdata;
@@ -418,11 +428,21 @@ public class FritzBox extends BoxClass {
 
 		if (firmware.isSidLogin())
 		{
-			postdata = postdata + "&sid=" + firmware.getSessionId();
+			try {
+			postdata = postdata + "&sid=" + URLEncoder.encode(firmware.getSessionId(), "ISO-8859-1");
+			} catch (UnsupportedEncodingException e) {
+				Debug.error("Encoding not supported");
+				e.printStackTrace();
+			}
 		}
 		else
 		{
-			postdata = postdata + "&login:command/password=" + this.password;
+			try {
+				postdata = postdata + "&login:command/password=" + URLEncoder.encode(this.password, "ISO-8859-1");
+			} catch (UnsupportedEncodingException e) {
+				Debug.error("Encoding not supported");
+				e.printStackTrace();
+			}
 		}
 
 		return postdata;

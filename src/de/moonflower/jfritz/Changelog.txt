@@ -1,5 +1,8 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 
+JFritz 0.7.3.11:
+- Bugfix [0000151]: JFritz kommt mit Sonderzeichen im FRITZ!Box Passwort nicht zurecht.
+
 JFritz 0.7.3.10:
 - Release of new Version.
 
