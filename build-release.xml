@@ -152,7 +152,23 @@
 			</fileset>
 		</copy>
 
+		<!-- creating beta version -->
 		<!-- actualize version of setup file -->
+		<taskdef name="UpdateSetupConfig" classname="de.moonflower.jfritz.ant.UpdateSetupConfig" classpathref="helper.classpath" />
+		<UpdateSetupConfig file="${release}/win/tmp/jfritz-version.txt" appName="${product}" appType="Beta-Setup" appVersion="${version}" />
+
+		<!-- generate setup-file -->
+		<exec executable="C:\Program Files\Inno Setup 5\ISCC.exe">
+			<arg value="${release}/win/tmp/jfritz.iss" />
+		</exec>
+
+		<!-- zip setup-file and delete temporary files-->
+		<zip destfile="${release}/win/jfritz-${version}-Beta-Win.zip" basedir="${release}/win/tmp/Output" />
+		<zip destfile="${release}/win/JFritz-${version}-Beta.zip" basedir="${release}/win/tmp/binaries" />
+
+		<!-- creating release version -->
+		<!-- actualize version of setup file -->
+		<delete dir="${release}/win/tmp/Output" />
 		<taskdef name="UpdateSetupConfig" classname="de.moonflower.jfritz.ant.UpdateSetupConfig" classpathref="helper.classpath" />
 		<UpdateSetupConfig file="${release}/win/tmp/jfritz-version.txt" appName="${product}" appType="Setup" appVersion="${version}" />
 
@@ -164,6 +180,7 @@
 		<!-- zip setup-file and delete temporary files-->
 		<zip destfile="${release}/win/jfritz-${version}-Win.zip" basedir="${release}/win/tmp/Output" />
 		<zip destfile="${release}/win/JFritz-${version}.zip" basedir="${release}/win/tmp/binaries" />
+
 		<delete dir="${release}/win/tmp" />
 	</target>
 
@@ -235,14 +252,13 @@
 		<delete dir="${build.resources}" />
 	</target>
 
-	<target name="scp-beta" depends="release-linux, release-win" description="Copy all files to beta directory">
-		<scp file="${release}/win/JFritz-${version}-Win.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./" verbose="yes" password="${password2}"/>
-		<scp file="${release}/win/JFritz-${version}.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./" verbose="yes" password="${password2}"/>
-		<scp file="${dist}/Changelog.txt" port="${port2}" trust="yes" todir="${user2}@${server2}:./" verbose="yes" password="${password2}"/>
-		<sshexec command="./release.sh" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
+	<target name="scp-beta" depends="release-linux, release-win" description="Copy windows- and linux release files to jfritz.robotniko.de/beta">
+		<scp file="${release}/win/JFritz-${version}-Beta-Win.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/beta" verbose="yes" password="${password2}"/>
+		<scp file="${release}/win/JFritz-${version}-Beta.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/beta" verbose="yes" password="${password2}"/>
+		<scp file="${dist}/Changelog.txt" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/beta" verbose="yes" password="${password2}"/>
 	</target>
 
-	<target name="scp-update-beta" depends="create-updatefiles" description="Uploads update files per scp to jfritz.robotniko.de">
+	<target name="scp-update-beta" depends="create-updatefiles" description="Uploads update files to jfritz.robotniko.de/update">
 		<zip destfile="${update}/jfritz-${version}-update.zip" basedir="${update}/${version}" />
 		<scp file="${update}/jfritz-${version}-update.zip" port="${port1}" trust="yes" todir="${user1}@${server1}:./public/update/" verbose="yes" password="${password1}" />
 		<sshexec command="unzip ./public/update/jfritz-${version}-update.zip -d ./public/update/${version}" username="${user1}" host="${server1}" port="${port1}" trust="yes" password="${password1}" />
@@ -251,8 +267,13 @@
 		<scp file="${update}/current.txt" port="${port1}" trust="yes" todir="${user1}@${server1}:./public/update/" verbose="yes" password="${password1}" />
 	</target>
 
-	<target name="scp-update" depends="create-updatefiles" description="Uploads files per scp to jfritz-webspace">
-		<scp file="${update}/update.txt" port="${port3}" trust="yes" todir="${user3}@${server3}:./" password="${password3}" />
+	<target name="scp-update" depends="create-updatefiles" description="Uploads files per scp to update.jfritz.org">
+		<zip destfile="${update}/jfritz-${version}-update.zip" basedir="${update}/${version}" />
+		<scp file="${update}/jfritz-${version}-update.zip" port="${port3}" trust="yes" todir="${user3}@${server3}:./public/update/" verbose="yes" password="${password3}" />
+		<sshexec command="unzip ./public/update/jfritz-${version}-update.zip -d ./public/update/${version}" username="${user3}" host="${server3}" port="${port3}" trust="yes" password="${password3}" />
+		<sshexec command="rm ./public/update/jfritz-${version}-update.zip"  username="${user3}" host="${server3}" port="${port3}" trust="yes" password="${password3}" />
+		<scp file="${update}/update.txt" port="${port3}" trust="yes" todir="${user3}@${server3}:./public/update/" verbose="yes" password="${password3}" />
+		<scp file="${update}/current.txt" port="${port3}" trust="yes" todir="${user3}@${server3}:./public/update/" verbose="yes" password="${password3}" />
 	</target>
 
 	<target name="ftp-beta" depends="release-linux, release-win" description="Copy all files to beta directory at Rainer's FTP-Server">
@@ -260,8 +281,8 @@
 		       userid="${user4}"
 		       password="${password4}">
 		    <fileset dir="${release}/win/">
-			      <include name="JFritz-${version}-Win.zip"/>
-			      <include name="JFritz-${version}.zip"/>
+			      <include name="JFritz-${version}-Beta-Win.zip"/>
+			      <include name="JFritz-${version}-Beta.zip"/>
 		    </fileset>
 		    <fileset dir="${dist}/">
 			      <include name="Changelog.txt"/>

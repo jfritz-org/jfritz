@@ -9,7 +9,7 @@ import java.io.IOException;
  *
 #define AppName "JFritz"
 #define AppVersion "0.7.2.23"
-;AppType can be "Beta-Setup" or "Setup"
+;AppType can be "Beta-Setup" or "Release-Setup"
 #define AppType "Beta-Setup"
 **/
 
@@ -44,7 +44,7 @@ public class UpdateSetupConfig {
 			out = new BufferedWriter(new FileWriter(path));
 			out.write("#define AppName \"" + appName + "\"\n");
 			out.write("#define AppVersion \"" + appVersion + "\"\n");
-			out.write(";AppType can be \"Beta-Setup\" or \"Setup\"\n");
+			out.write(";AppType can be \"Beta-Setup\" or \"Release-Setup\"\n");
 			out.write("#define AppType \"" + appType + "\"\n");
 			out.close();
 			} catch (IOException e) {
