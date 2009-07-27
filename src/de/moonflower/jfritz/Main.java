@@ -198,7 +198,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id$: Main.java,v 1.157 2009/07/27 10:00:02 robotniko Exp $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id$: Main.java,v 1.158 2009/07/27 10:00:02 robotniko Exp $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
