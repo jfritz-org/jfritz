@@ -192,14 +192,14 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		JToolBar toolBar = new JToolBar();
 		toolBar.setFloatable(true);
 		JButton addButton = new JButton(Main.getMessage("new_entry")); //$NON-NLS-1$
-		addButton.setIcon(getImage("add.png")); //$NON-NLS-1$
+		addButton.setIcon(getImage("add_person.png")); //$NON-NLS-1$
 		addButton.setActionCommand("addPerson"); //$NON-NLS-1$
 		addButton.addActionListener(this);
 		toolBar.add(addButton);
 
 		JButton delButton = new JButton(Main.getMessage("delete_entry")); //$NON-NLS-1$
 		delButton.setToolTipText(Main.getMessage("delete_entry")); //$NON-NLS-1$
-		delButton.setIcon(getImage("delete.png")); //$NON-NLS-1$
+		delButton.setIcon(getImage("delete_person.png")); //$NON-NLS-1$
 		delButton.setActionCommand("deletePerson"); //$NON-NLS-1$
 		delButton.addActionListener(this);
 		toolBar.add(delButton);

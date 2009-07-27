@@ -51,6 +51,8 @@ public class FritzBoxFirmware {
 
     public final static byte BOXTYPE_FRITZBOX_7140 = 30;
 
+    public final static byte BOXTYPE_FRITZBOX_7140_ANNEX_A = 39;
+
     public final static byte BOXTYPE_FRITZBOX_SPEEDPORT_W900V = 34;
 
     public final static byte BOXTYPE_FRITZBOX_7141 = 40;
@@ -363,13 +365,15 @@ public class FritzBoxFirmware {
         case 25:
             return "FRITZ!Box 5012"; //$NON-NLS-1$
         case 28:
-        	return "FRITZ!Box Fon WLAN Speedport W501V";
+        	return "FRITZ!Box Fon WLAN Speedport W501V"; //$NON-NLS-1$
         case 29:
             return "FRITZ!Box 7170"; //$NON-NLS-1$
         case 30:
             return "FRITZ!Box 7140"; //$NON-NLS-1$
         case 34:
-            return "FRITZ!Box Fon WLAN Speedport W900V";
+            return "FRITZ!Box Fon WLAN Speedport W900V"; //$NON-NLS-1$
+        case 39:
+            return "FRITZ!Box 7140 Annex A"; //$NON-NLS-1$
         case 40:
             return "FRITZ!Box 7141"; //$NON-NLS-1$
         case 43:

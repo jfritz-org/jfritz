@@ -8,28 +8,28 @@ import java.util.Vector;
 
 import de.moonflower.jfritz.struct.Call;
 
-public class SipFilter extends CallFilter {
+public class PortFilter extends CallFilter {
 
-	private Vector<String> sipProviders = new Vector<String>();
+	private Vector<String> ports = new Vector<String>();
 
-	private static final String type = FILTER_SIP;
+	private static final String type = FILTER_PORT;
 
-	public SipFilter() {
+	public PortFilter() {
 	}
 
 	public boolean passInternFilter(Call currentCall) {
 
-		if ((sipProviders.size() == 0)
-			|| (sipProviders.get(0).equals("$ALL$")))
+		if ((ports.size() == 0)
+			|| (ports.get(0).equals("$ALL$")))
 		{
 			return true;
 		}
-		String route = currentCall.getRoute();
+		String port = currentCall.getPort().getName();
 //			Debug.msg("route: "+route);
-		if (route.equals("")) { //$NON-NLS-1$
+		if (port.equals("")) { //$NON-NLS-1$
 			return false;
 		}
-		if (sipProviders.contains(route))
+		if (ports.contains(port))
 			return true;
 		else
 			return false;
@@ -37,8 +37,8 @@ public class SipFilter extends CallFilter {
 
 	public String toString(){
     	String result="";
-    	for(int i =0; i<sipProviders.size();i++){
-    		result +=";"+sipProviders.elementAt(i);
+    	for(int i =0; i<ports.size();i++){
+    		result +=";"+ports.elementAt(i);
     	}
     	if (result.startsWith(";"))
     	{
@@ -48,18 +48,17 @@ public class SipFilter extends CallFilter {
     	return result;
     }
 
-	public void setProvider(Vector<String> sipProvider) {
-		this.sipProviders = sipProvider;
-
+	public void setPorts(Vector<String> ports) {
+		this.ports = ports;
 	}
 
 	public String getType(){
 		return type;
 	}
 
-	public SipFilter clone(){
-		SipFilter sf = new SipFilter();
-		sf.setProvider(this.sipProviders);
+	public PortFilter clone(){
+		PortFilter sf = new PortFilter();
+		sf.setPorts(this.ports);
 		sf.setEnabled(this.isEnabled());
 		sf.setInvert(this.isInvert());
 		return sf;

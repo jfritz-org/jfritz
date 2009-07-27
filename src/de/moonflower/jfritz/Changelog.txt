@@ -1,5 +1,11 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 
+JFritz 0.7.3.12:
+- Neu: Added support for FRITZ!Box 7140 Annex A
+- Neu: Filter für den Anschluss/Port aller erkannten Anschlüsse
+- Änderung: Neuer MSN-Filter, Popup aller erkannten MSNs
+- Änderung: Einige Icons ersetzt/hinzugefügt (Crystal-Icons: http://www.everaldo.com/crystal)
+
 JFritz 0.7.3.11:
 - Bugfix [0000151]: JFritz kommt mit Sonderzeichen im FRITZ!Box Passwort nicht zurecht.
 

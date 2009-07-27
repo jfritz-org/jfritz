@@ -20,6 +20,7 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 
 /**
@@ -456,5 +457,13 @@ public class JFritzUtils {
 	{
 		Calendar cal = Calendar.getInstance();
 		return cal.getTimeInMillis();
+	}
+
+	public static void fillVectorByString(Vector<String> vector, String input, String sep) {
+		String[] parts = Main.getStateProperty(input).split(sep);
+		for(String part: parts)
+		{
+			vector.add(part);
+		}
 	}
 }

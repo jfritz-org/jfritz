@@ -182,6 +182,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.ShutdownHook;
 import de.moonflower.jfritz.utils.reverselookup.LookupObserver;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
+import de.moonflower.jfritz.utils.threeStateButton.ThreeStateButton;
 
 /**
  * @author robroy
@@ -192,13 +193,13 @@ public class Main implements LookupObserver {
 	// when changing this, don't forget to check the resource bundles!!
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.3.11"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.3.12"; //$NON-NLS-1$
 
 	public final static String PROGRAM_SECRET = "jFrItZsEcReT"; //$NON-NLS-1$
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 32 2009-07-27 09:28:54Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 33 2009-07-27 22:40:22Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -763,42 +764,6 @@ public class Main implements LookupObserver {
 		return result;
 	}
 
-	private boolean checkInstanceControlOld() {
-		boolean result = true;
-		if (enableInstanceControl) {
-			// check isRunning and exit or set lock
-			File f = new File(SAVE_DIR + LOCK_FILE);
-			boolean isRunning = f.exists();
-
-			if (!isRunning) {
-				Debug.info("Multiple instance lock: set lock."); //$NON-NLS-1$
-				result = true;
-				try {
-					f.createNewFile();
-				} catch (IOException e) {
-					Debug.error("Could not set instance lock");
-				}
-			} else {
-				Debug.warning("Multiple instance lock: Another instance is already running."); //$NON-NLS-1$
-				int answer = JOptionPane.showConfirmDialog(null,
-						getMessage("lock_error_dialog1") //$NON-NLS-1$
-								+ getMessage("lock_error_dialog2") //$NON-NLS-1$
-								+ getMessage("lock_error_dialog3") //$NON-NLS-1$
-								+ getMessage("lock_error_dialog4"), //$NON-NLS-1$
-						getMessage("information"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
-				if (answer == JOptionPane.YES_OPTION) {
-					Debug.warning("Multiple instance lock: User decided to shut down this instance."); //$NON-NLS-1$
-					exit(EXIT_CODE_MULTIPLE_INSTANCE_LOCK);
-					result = false;
-				} else {
-					Debug.warning("Multiple instance lock: User decided NOT to shut down this instance."); //$NON-NLS-1$
-					result = true;
-				}
-			}
-		}
-		return result;
-	}
-
 	/**
 	 * This function writes a file $HOME/.jfritz/jfritz.txt, which contains the
 	 * location of the folder containing jfritz's data If the dir $HOME/.jfritz
@@ -1023,10 +988,10 @@ public class Main implements LookupObserver {
 		defProps.setProperty("calldialog.lastport", "0");//$NON-NLS-1$, //$NON-NLS-2$
 
 		// Filter properties
-		defProps.setProperty(CallFilter.FILTER_SIP_PROVIDERS, "");//$NON-NLS-1$
+		defProps.setProperty(CallFilter.FILTER_SIP_PROVIDERS, "$ALL$");//$NON-NLS-1$
+		defProps.setProperty(CallFilter.FILTER_PORT_LIST, "$ALL$");//$NON-NLS-1$
 		defProps.setProperty(CallFilter.FILTER_COMMENT, "0");//$NON-NLS-1$
 		defProps.setProperty(CallFilter.FILTER_DATE, "0");//$NON-NLS-1$
-		defProps.setProperty(CallFilter.FILTER_SIP, "0");//$NON-NLS-1$
 		defProps.setProperty(CallFilter.FILTER_CALLBYCALL, "0");//$NON-NLS-1$
 		defProps.setProperty(CallFilter.FILTER_CALLOUT, "0");//$NON-NLS-1$
 		defProps.setProperty(CallFilter.FILTER_ANONYM, "0");//$NON-NLS-1$
@@ -1250,6 +1215,36 @@ public class Main implements LookupObserver {
 			{
 				config_properties.remove("jfritz.password");
 			}
+		}
+
+		// replace old SIP Filter configuration
+		String filter_sip = "";
+		String filter_sip_providers = "";
+		if ((filter_sip = state_properties.getProperty(CallFilter.FILTER_SIP)) != null) {
+			if ((filter_sip_providers = state_properties.getProperty(CallFilter.FILTER_SIP_PROVIDERS)) != null ) {
+				if (filter_sip.equals(Integer.toString(ThreeStateButton.SELECTED))) {
+					if (filter_sip_providers.equals("")) {
+						Main.setStateProperty(CallFilter.FILTER_SIP_PROVIDERS, "$ALL$");
+					} else {
+						String newString = "";
+						Vector<String> split = new Vector<String>();
+						JFritzUtils.fillVectorByString(split, CallFilter.FILTER_SIP_PROVIDERS, " ");
+						for (int i=0; i<split.size(); i++) {
+							newString = newString + split.get(i) + ";";
+						}
+						newString = newString.substring(0, newString.length()-1);
+						Main.setStateProperty(CallFilter.FILTER_SIP_PROVIDERS, newString);
+					}
+				} else if (filter_sip.equals(Integer.toString(ThreeStateButton.INVERTED))) {
+					Main.setStateProperty(CallFilter.FILTER_SIP_PROVIDERS, "$ALL$");
+				} else if (filter_sip.equals(Integer.toString(ThreeStateButton.NOTHING))) {
+					Main.setStateProperty(CallFilter.FILTER_SIP_PROVIDERS, "$ALL$");
+				}
+			}
+		}
+		if (state_properties.getProperty(CallFilter.FILTER_SIP) != null)
+		{
+			state_properties.remove(CallFilter.FILTER_SIP);
 		}
 
 		saveStateProperties();

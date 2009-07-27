@@ -350,7 +350,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		delButton.addActionListener(this);
 		delButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
-						"/de/moonflower/jfritz/resources/images/delete.png")))); //$NON-NLS-1$
+						"/de/moonflower/jfritz/resources/images/remove.png")))); //$NON-NLS-1$
 		if (clonedPerson.getNumbers().size() == 1)
 			delButton.setEnabled((false));
 

@@ -38,6 +38,10 @@ public abstract class CallFilter implements Cloneable {
 
 	public static final String FILTER_ANONYM = "filter_number";
 
+	public static final String FILTER_PORT = "filter_port";
+
+	public static final String FILTER_PORT_LIST = "filter_port_list";
+
 	public static final String FILTER_SEARCH = "filter_search";
 
 	public static final String FILTER_SEARCH_TEXT = "filter_search.text";

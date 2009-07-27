@@ -450,7 +450,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		button = new JButton();
 		button.setActionCommand("delete_fritzbox_callerlist"); //$NON-NLS-1$
 		button.addActionListener(this);
-		button.setIcon(getImage("DeleteList.gif")); //$NON-NLS-1$
+		button.setIcon(getImage("DeleteList.png")); //$NON-NLS-1$
 		button.setToolTipText(Main.getMessage("delete_fritzbox_callerlist")); //$NON-NLS-1$
 		mBar.add(button);
 

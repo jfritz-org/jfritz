@@ -13,6 +13,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DateFormat;
@@ -51,11 +52,13 @@ import de.moonflower.jfritz.callerlist.filter.CallFilter;
 import de.moonflower.jfritz.callerlist.filter.CallInFailedFilter;
 import de.moonflower.jfritz.callerlist.filter.CallInFilter;
 import de.moonflower.jfritz.callerlist.filter.CallOutFilter;
+import de.moonflower.jfritz.callerlist.filter.CheckboxPopupMenu;
 import de.moonflower.jfritz.callerlist.filter.CommentFilter;
 import de.moonflower.jfritz.callerlist.filter.DateFilter;
 import de.moonflower.jfritz.callerlist.filter.FixedFilter;
 import de.moonflower.jfritz.callerlist.filter.HandyFilter;
 import de.moonflower.jfritz.callerlist.filter.AnonymFilter;
+import de.moonflower.jfritz.callerlist.filter.PortFilter;
 import de.moonflower.jfritz.callerlist.filter.SearchFilter;
 import de.moonflower.jfritz.callerlist.filter.SipFilter;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
@@ -181,9 +184,6 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	private static final String DELETE_ENTRY = "delete_entry";
 
-//	private static final String FILTER_CALLIN ="filter_callin";
-//	private static final String FILTER_CALLIN_SELECTED = "filter_callin_show_selected";
-//	private static final String FILTER_CALLIN_INVERTED = "filter_callin_show_inverted";
 
 	public static final long serialVersionUID = 1;
 
@@ -211,18 +211,22 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	private static final int SIP = 7;
 
-	private static final int ANONYMOUS = 8;
+	private static final int PORT = 8;
 
-	private static final int DATE = 9;
+	private static final int ANONYMOUS = 9;
 
-	private static final int SEARCH = 10;
+	private static final int DATE = 10;
 
-	private static final int FILTERCOUNT = 11;
+	private static final int SEARCH = 11;
+
+	private static final int FILTERCOUNT = 12;
 
 	private ThreeStateButton dateFilterButton, callByCallFilterButton,
 			callInFilterButton, callOutFilterButton, callInFailedFilterButton,
 			anonymFilterButton, fixedFilterButton, handyFilterButton,
-			sipFilterButton, commentFilterButton, searchFilterButton;
+			commentFilterButton, searchFilterButton;
+
+	private JButton sipFilterButton, portFilterButton;
 
 	private JButton deleteEntriesButton;
 
@@ -246,6 +250,9 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	private double durationSelectedCalls = 0;
 	private StatusBarPanel progressStatusBar;
 	private JProgressBar progressBar;
+
+	private CheckboxPopupMenu msnPopupMenu = null;
+	private CheckboxPopupMenu portPopupMenu = null;
 
 	/**
 	 * A callerListPanel is a view for a callerlist, it has its own
@@ -306,7 +313,9 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		callerList.addFilter(filter[FIXED]);
 		filter[MOBILE] = new HandyFilter();
 		callerList.addFilter(filter[MOBILE]);
-		filter[SIP] = new SipFilter(getSelectedSipProvider(callerList));
+		filter[PORT] = new PortFilter();
+		callerList.addFilter(filter[PORT]);
+		filter[SIP] = new SipFilter();
 		callerList.addFilter(filter[SIP]);
 		filter[DATE] = new DateFilter(new Date(), new Date());
 		callerList.addFilter(filter[DATE]);
@@ -370,7 +379,6 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		startDateChooser.setVisible(false);
 		endDateChooser.setVisible(false);
 		searchLabel.setVisible(false);
-		sipFilterButton.setState(ThreeStateButton.NOTHING);
 		callByCallFilterButton.setState(ThreeStateButton.NOTHING);
 		commentFilterButton.setState(ThreeStateButton.NOTHING);
 		dateSpecialSaveString = " ";
@@ -589,10 +597,116 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		endDateChooser.setVisible(false);
 		endDateChooser.addPropertyChangeListener("date", this);
 
-		sipFilterButton = new ThreeStateButton(getImageIcon("world.png")); //$NON-NLS-1$
+		sipFilterButton = new JButton(getImageIcon("world.png")); //$NON-NLS-1$
 		sipFilterButton.setActionCommand(CallFilter.FILTER_SIP);
 		sipFilterButton.addActionListener(this);
-		sipFilterButton.setToolTipText(ThreeStateButton.NOTHING, Main.getMessage(CallFilter.FILTER_SIP));
+		sipFilterButton.addMouseListener(new MouseListener() {
+
+			public void mouseClicked(MouseEvent e) {
+				if (e.getButton() == MouseEvent.BUTTON1)
+				{
+					if (msnPopupMenu != null) {
+						msnPopupMenu.setVisible(false);
+						msnPopupMenu = null;
+					}
+					msnPopupMenu = new CheckboxPopupMenu(JFritz.getJframe());
+					Vector<String> providers = new Vector<String>(10);
+					for (Call call: callerList.getUnfilteredCallVector())
+					{
+						if (!providers.contains(call.getRoute()))
+						{
+							providers.add(call.getRoute());
+						}
+					}
+					msnPopupMenu.setObjects(providers);
+					Vector<String> filteredMSNs = new Vector<String>();
+					JFritzUtils.fillVectorByString(filteredMSNs, CallFilter.FILTER_SIP_PROVIDERS, ";");
+					for (int i=0; i<filteredMSNs.size(); i++)
+					{
+						msnPopupMenu.setSelected(filteredMSNs.get(i), true);
+					}
+
+					msnPopupMenu.setLocation(e.getXOnScreen()+10, e.getYOnScreen()+10);
+					msnPopupMenu.setVisible(true);
+					if (msnPopupMenu.okPressed()) {
+						((SipFilter) filter[SIP]).setProvider(msnPopupMenu.getSelectedItems());
+						filter[SIP].setEnabled(true);
+						filter[SIP].setInvert(false);
+						update();
+					}
+				}
+			}
+
+			public void mouseEntered(MouseEvent e) {
+			}
+
+			public void mouseExited(MouseEvent e) {
+			}
+
+			public void mousePressed(MouseEvent e) {
+			}
+
+			public void mouseReleased(MouseEvent e) {
+			}
+
+		});
+		sipFilterButton.setToolTipText(Main.getMessage(CallFilter.FILTER_SIP));
+
+		portFilterButton = new JButton(getImageIcon("portfilter.png")); //$NON-NLS-1$
+		portFilterButton.setActionCommand(CallFilter.FILTER_PORT);
+		portFilterButton.addActionListener(this);
+		portFilterButton.addMouseListener(new MouseListener() {
+
+			public void mouseClicked(MouseEvent e) {
+				if (e.getButton() == MouseEvent.BUTTON1)
+				{
+					if (portPopupMenu != null) {
+						portPopupMenu.setVisible(false);
+						portPopupMenu = null;
+					}
+					portPopupMenu = new CheckboxPopupMenu(JFritz.getJframe());
+					Vector<String> ports = new Vector<String>(10);
+					for (Call call: callerList.getUnfilteredCallVector())
+					{
+						if (!ports.contains(call.getPort().getName())
+								&& (!call.getPort().getName().equals("")))
+						{
+							ports.add(call.getPort().getName());
+						}
+					}
+					portPopupMenu.setObjects(ports);
+					Vector<String> filteredPorts = new Vector<String>();
+					JFritzUtils.fillVectorByString(filteredPorts, CallFilter.FILTER_PORT_LIST, ";");
+					for (int i=0; i<filteredPorts.size(); i++)
+					{
+						portPopupMenu.setSelected(filteredPorts.get(i), true);
+					}
+
+					portPopupMenu.setLocation(e.getXOnScreen()+10, e.getYOnScreen()+10);
+					portPopupMenu.setVisible(true);
+					if (portPopupMenu.okPressed()) {
+						((PortFilter) filter[PORT]).setPorts(portPopupMenu.getSelectedItems());
+						filter[PORT].setEnabled(true);
+						filter[PORT].setInvert(false);
+						update();
+					}
+				}
+			}
+
+			public void mouseEntered(MouseEvent e) {
+			}
+
+			public void mouseExited(MouseEvent e) {
+			}
+
+			public void mousePressed(MouseEvent e) {
+			}
+
+			public void mouseReleased(MouseEvent e) {
+			}
+
+		});
+		portFilterButton.setToolTipText(Main.getMessage(CallFilter.FILTER_SIP));
 
 		callByCallFilterButton = new ThreeStateButton(
 				getImageIcon("callbycall.png")); //$NON-NLS-1$
@@ -646,6 +760,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		lowerToolbar.add(anonymFilterButton);
 		lowerToolbar.add(fixedFilterButton);
 		lowerToolbar.add(handyFilterButton);
+		lowerToolbar.add(portFilterButton);
 		lowerToolbar.add(sipFilterButton);
 		lowerToolbar.add(callByCallFilterButton);
 		lowerToolbar.add(commentFilterButton);
@@ -710,12 +825,15 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 */
 	public void actionPerformed(ActionEvent e) {
 		handleAction(e.getActionCommand());
+		update();
+	}
+
+	private void update() {
 		callerList.update();
 		updateStatusBar(false);
 //		statusBarController.fireStatusChanged(callerList.getTotalDuration());
 		saveButtonStatus();
 	}
-
 
 	/**
 	 * the control this method is called, if the user pushed buttons or changes
@@ -912,11 +1030,6 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			syncAllFilters();
 			return;
 		}
-		if (command.equals(CallFilter.FILTER_SIP)) {
-			((SipFilter) filter[SIP]).setProvider(getSelectedSipProvider(callerList));
-			syncFilterWithButton(filter[SIP], sipFilterButton);
-			return;
-		}
 		if (command.equals(CallFilter.FILTER_CALLBYCALL)) {
 			((CallByCallFilter) filter[CALL_BY_CALL])
 					.setCallbyCallProvider(getSelectedCallByCallProvider(callerList));
@@ -1014,7 +1127,13 @@ public class CallerListPanel extends JPanel implements ActionListener,
 				}
 			}
 			// JFritz.getJframe().copyAddressToClipboard();
-
+			return;
+		}
+		if (command.equals(CallFilter.FILTER_SIP)) {
+			return;
+		}
+		if (command.equals(CallFilter.FILTER_PORT)) {
+			return;
 		}
 		Debug.warning("Unknown command: " + command);
 	}
@@ -1228,11 +1347,13 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		((SearchFilter)filter[SEARCH]).setSearchString(searchFilterTextField.getText());
 
 		Vector<String> providers = new Vector<String>();
-		String[] parts = Main.getStateProperty(CallFilter.FILTER_SIP_PROVIDERS).split(" ");
-		for(String part: parts)
-			providers.add(part);
-
+		JFritzUtils.fillVectorByString(providers, CallFilter.FILTER_SIP_PROVIDERS, ";");
 		((SipFilter)filter[SIP]).setProvider(providers);
+
+		Vector<String> ports = new Vector<String>();
+		JFritzUtils.fillVectorByString(ports, CallFilter.FILTER_PORT_LIST, ";");
+		((PortFilter)filter[PORT]).setPorts(ports);
+
 		syncFilterWithButton(filter[CALL_IN], callInFilterButton);
 		syncFilterWithButton(filter[CALL_IN_FAILED], callInFailedFilterButton);
 		syncFilterWithButton(filter[CALL_OUT], callOutFilterButton);
@@ -1241,7 +1362,6 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		syncFilterWithButton(filter[FIXED], fixedFilterButton);
 		syncFilterWithButton(filter[MOBILE], handyFilterButton);
 		syncFilterWithButton(filter[DATE], dateFilterButton);
-		syncFilterWithButton(filter[SIP], sipFilterButton);
 		syncFilterWithButton(filter[CALL_BY_CALL], callByCallFilterButton);
 		syncFilterWithButton(filter[SEARCH], searchFilterButton);
 
@@ -1328,8 +1448,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		}
 
 		Main.setStateProperty(CallFilter.FILTER_DATE_SPECIAL, dateSpecialSaveString);
-		Main.setStateProperty(CallFilter.FILTER_SIP, "" + sipFilterButton.getState());
 		Main.setStateProperty(CallFilter.FILTER_SIP_PROVIDERS, filter[SIP].toString());
+		Main.setStateProperty(CallFilter.FILTER_PORT_LIST, filter[PORT].toString());
 		Main.setStateProperty(CallFilter.FILTER_CALLBYCALL, ""
 				+ callByCallFilterButton.getState());
 		Main.setStateProperty(CallFilter.FILTER_CALLOUT, "" + callOutFilterButton.getState());
@@ -1350,8 +1470,6 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		commentFilterButton.setState(state);
 		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_DATE));
 		dateFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_SIP));
-		sipFilterButton.setState(state);
 		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_CALLBYCALL));
 		callByCallFilterButton.setState(state);
 		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_CALLOUT));

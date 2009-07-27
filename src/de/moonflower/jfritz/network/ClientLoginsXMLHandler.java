@@ -346,7 +346,8 @@ public class ClientLoginsXMLHandler extends DefaultHandler{
 					for(String part: parts)
 						sips.add(part);
 
-					SipFilter sf = new SipFilter(sips);
+					SipFilter sf = new SipFilter();
+					sf.setProvider(sips);
 					sf.setEnabled(enabled);
 					sf.setInvert(inverted);
 					callFilters.add(sf);
