@@ -253,9 +253,11 @@
 	</target>
 
 	<target name="scp-beta" depends="release-linux, release-win" description="Copy windows- and linux release files to jfritz.robotniko.de/beta">
-		<scp file="${release}/win/JFritz-${version}-Beta-Win.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/beta" verbose="yes" password="${password2}"/>
-		<scp file="${release}/win/JFritz-${version}-Beta.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/beta" verbose="yes" password="${password2}"/>
+		<scp file="${release}/win/JFritz-${version}-Beta-Win.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
+		<scp file="${release}/win/JFritz-${version}-Beta.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
 		<scp file="${dist}/Changelog.txt" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/beta" verbose="yes" password="${password2}"/>
+		<sshexec command="mv ./public/JFritz-${version}-Beta-Win.zip ./public/beta" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
+		<sshexec command="mv ./public/JFritz-${version}-Beta.zip ./public/beta" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<sshexec command="unzip ./public/beta/JFritz-${version}-Beta-Win.zip -d ./public/beta/" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 	</target>
 
