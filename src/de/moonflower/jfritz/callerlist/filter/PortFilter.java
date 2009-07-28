@@ -13,14 +13,14 @@ public class PortFilter extends CallFilter {
 	private Vector<String> ports = new Vector<String>();
 
 	private static final String type = FILTER_PORT;
-
+	private boolean allSelected = false;
 	public PortFilter() {
 	}
 
 	public boolean passInternFilter(Call currentCall) {
 
 		if ((ports.size() == 0)
-			|| (ports.get(0).equals("$ALL$")))
+			|| allSelected)
 		{
 			return true;
 		}
@@ -50,6 +50,7 @@ public class PortFilter extends CallFilter {
 
 	public void setPorts(Vector<String> ports) {
 		this.ports = ports;
+		allSelected = false;
 	}
 
 	public String getType(){
@@ -62,5 +63,15 @@ public class PortFilter extends CallFilter {
 		sf.setEnabled(this.isEnabled());
 		sf.setInvert(this.isInvert());
 		return sf;
+	}
+
+	public void setAllSelected() {
+		allSelected = true;
+		ports.clear();
+		ports.add("$ALL$");
+	}
+
+	public boolean isAllSelected() {
+		return allSelected;
 	}
 }

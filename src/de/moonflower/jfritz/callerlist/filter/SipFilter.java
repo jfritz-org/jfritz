@@ -14,13 +14,15 @@ public class SipFilter extends CallFilter {
 
 	private static final String type = FILTER_SIP;
 
+	private boolean allSelected = false;
+
 	public SipFilter() {
 	}
 
 	public boolean passInternFilter(Call currentCall) {
 
 		if ((sipProviders.size() == 0)
-			|| (sipProviders.get(0).equals("$ALL$")))
+			|| allSelected)
 		{
 			return true;
 		}
@@ -50,7 +52,7 @@ public class SipFilter extends CallFilter {
 
 	public void setProvider(Vector<String> sipProvider) {
 		this.sipProviders = sipProvider;
-
+		allSelected = false;
 	}
 
 	public String getType(){
@@ -63,5 +65,15 @@ public class SipFilter extends CallFilter {
 		sf.setEnabled(this.isEnabled());
 		sf.setInvert(this.isInvert());
 		return sf;
+	}
+
+	public void setAllSelected() {
+		allSelected = true;
+		sipProviders.clear();
+		sipProviders.add("$ALL$");
+	}
+
+	public boolean isAllSelected() {
+		return allSelected;
 	}
 }

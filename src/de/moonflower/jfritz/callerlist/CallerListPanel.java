@@ -36,6 +36,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
@@ -226,7 +227,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			anonymFilterButton, fixedFilterButton, handyFilterButton,
 			commentFilterButton, searchFilterButton;
 
-	private JButton sipFilterButton, portFilterButton;
+	private JToggleButton sipFilterButton, portFilterButton;
 
 	private JButton deleteEntriesButton;
 
@@ -379,6 +380,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		startDateChooser.setVisible(false);
 		endDateChooser.setVisible(false);
 		searchLabel.setVisible(false);
+		Main.setStateProperty(CallFilter.FILTER_SIP_PROVIDERS, "$ALL$");
+		Main.setStateProperty(CallFilter.FILTER_PORT_LIST, "$ALL$");
 		callByCallFilterButton.setState(ThreeStateButton.NOTHING);
 		commentFilterButton.setState(ThreeStateButton.NOTHING);
 		dateSpecialSaveString = " ";
@@ -473,35 +476,35 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		JToolBar lowerToolbar = new JToolBar();
 		lowerToolbar.setFloatable(true);
 
-		JButton resetFiltersButton = new JButton();
-		resetFiltersButton.setActionCommand("export_csv"); //$NON-NLS-1$
-		resetFiltersButton.addActionListener(this);
-		resetFiltersButton.setIcon(getImageIcon("csv_export.png")); //$NON-NLS-1$
-		resetFiltersButton.setToolTipText(Main.getMessage("export_csv")); //$NON-NLS-1$
-		upperToolBar.add(resetFiltersButton);
+		JButton toolbarButton = new JButton();
+		toolbarButton.setActionCommand("export_csv"); //$NON-NLS-1$
+		toolbarButton.addActionListener(this);
+		toolbarButton.setIcon(getImageIcon("csv_export.png")); //$NON-NLS-1$
+		toolbarButton.setToolTipText(Main.getMessage("export_csv")); //$NON-NLS-1$
+		upperToolBar.add(toolbarButton);
 
-		resetFiltersButton = new JButton();
-		resetFiltersButton.setActionCommand("import_csv"); //$NON-NLS-1$
-		resetFiltersButton.addActionListener(this);
-		resetFiltersButton.setIcon(getImageIcon("csv_import.png")); //$NON-NLS-1$
-		resetFiltersButton.setToolTipText("CSV-Datei importieren"); //$NON-NLS-1$
-		resetFiltersButton.setEnabled(false);
-		upperToolBar.add(resetFiltersButton);
+		toolbarButton = new JButton();
+		toolbarButton.setActionCommand("import_csv"); //$NON-NLS-1$
+		toolbarButton.addActionListener(this);
+		toolbarButton.setIcon(getImageIcon("csv_import.png")); //$NON-NLS-1$
+		toolbarButton.setToolTipText("CSV-Datei importieren"); //$NON-NLS-1$
+		toolbarButton.setEnabled(false);
+		upperToolBar.add(toolbarButton);
 
-		resetFiltersButton = new JButton();
-		resetFiltersButton.setActionCommand("export_xml"); //$NON-NLS-1$
-		resetFiltersButton.addActionListener(this);
-		resetFiltersButton.setIcon(getImageIcon("xml_export.png")); //$NON-NLS-1$
-		resetFiltersButton.setToolTipText("XML-Datei exportieren"); //$NON-NLS-1$
-		upperToolBar.add(resetFiltersButton);
+		toolbarButton = new JButton();
+		toolbarButton.setActionCommand("export_xml"); //$NON-NLS-1$
+		toolbarButton.addActionListener(this);
+		toolbarButton.setIcon(getImageIcon("xml_export.png")); //$NON-NLS-1$
+		toolbarButton.setToolTipText("XML-Datei exportieren"); //$NON-NLS-1$
+		upperToolBar.add(toolbarButton);
 
-		resetFiltersButton = new JButton();
-		resetFiltersButton.setActionCommand("import_xml"); //$NON-NLS-1$
-		resetFiltersButton.addActionListener(this);
-		resetFiltersButton.setIcon(getImageIcon("xml_import.png")); //$NON-NLS-1$
-		resetFiltersButton.setToolTipText("XML-Datei importieren"); //$NON-NLS-1$
-		resetFiltersButton.setEnabled(false);
-		upperToolBar.add(resetFiltersButton);
+		toolbarButton = new JButton();
+		toolbarButton.setActionCommand("import_xml"); //$NON-NLS-1$
+		toolbarButton.addActionListener(this);
+		toolbarButton.setIcon(getImageIcon("xml_import.png")); //$NON-NLS-1$
+		toolbarButton.setToolTipText("XML-Datei importieren"); //$NON-NLS-1$
+		toolbarButton.setEnabled(false);
+		upperToolBar.add(toolbarButton);
 
 		upperToolBar.addSeparator();
 
@@ -597,7 +600,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		endDateChooser.setVisible(false);
 		endDateChooser.addPropertyChangeListener("date", this);
 
-		sipFilterButton = new JButton(getImageIcon("world.png")); //$NON-NLS-1$
+		sipFilterButton = new JToggleButton(getImageIcon("world.png")); //$NON-NLS-1$
 		sipFilterButton.setActionCommand(CallFilter.FILTER_SIP);
 		sipFilterButton.addActionListener(this);
 		sipFilterButton.addMouseListener(new MouseListener() {
@@ -629,7 +632,14 @@ public class CallerListPanel extends JPanel implements ActionListener,
 					msnPopupMenu.setLocation(e.getXOnScreen()+10, e.getYOnScreen()+10);
 					msnPopupMenu.setVisible(true);
 					if (msnPopupMenu.okPressed()) {
-						((SipFilter) filter[SIP]).setProvider(msnPopupMenu.getSelectedItems());
+						if (msnPopupMenu.getSelectedItems().size() == providers.size())
+						{
+							((SipFilter) filter[SIP]).setAllSelected();
+						}
+						else
+						{
+							((SipFilter) filter[SIP]).setProvider(msnPopupMenu.getSelectedItems());
+						}
 						filter[SIP].setEnabled(true);
 						filter[SIP].setInvert(false);
 						update();
@@ -652,7 +662,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		});
 		sipFilterButton.setToolTipText(Main.getMessage(CallFilter.FILTER_SIP));
 
-		portFilterButton = new JButton(getImageIcon("portfilter.png")); //$NON-NLS-1$
+		portFilterButton = new JToggleButton(getImageIcon("portfilter.png")); //$NON-NLS-1$
 		portFilterButton.setActionCommand(CallFilter.FILTER_PORT);
 		portFilterButton.addActionListener(this);
 		portFilterButton.addMouseListener(new MouseListener() {
@@ -685,7 +695,14 @@ public class CallerListPanel extends JPanel implements ActionListener,
 					portPopupMenu.setLocation(e.getXOnScreen()+10, e.getYOnScreen()+10);
 					portPopupMenu.setVisible(true);
 					if (portPopupMenu.okPressed()) {
-						((PortFilter) filter[PORT]).setPorts(portPopupMenu.getSelectedItems());
+						if (portPopupMenu.getSelectedItems().size() == ports.size())
+						{
+							((PortFilter) filter[PORT]).setAllSelected();
+						}
+						else
+						{
+							((PortFilter) filter[PORT]).setPorts(portPopupMenu.getSelectedItems());
+						}
 						filter[PORT].setEnabled(true);
 						filter[PORT].setInvert(false);
 						update();
@@ -706,7 +723,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			}
 
 		});
-		portFilterButton.setToolTipText(Main.getMessage(CallFilter.FILTER_SIP));
+		portFilterButton.setToolTipText(Main.getMessage(CallFilter.FILTER_PORT));
 
 		callByCallFilterButton = new ThreeStateButton(
 				getImageIcon("callbycall.png")); //$NON-NLS-1$
@@ -744,9 +761,9 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		searchFilterTextField.addKeyListener(this);
 		searchFilterTextField.setVisible(false);
 
-		resetFiltersButton = new JButton(Main.getMessage("clear")); //$NON-NLS-1$
-		resetFiltersButton.setActionCommand("clearFilter"); //$NON-NLS-1$
-		resetFiltersButton.addActionListener(this);
+		toolbarButton = new JButton(Main.getMessage("clear")); //$NON-NLS-1$
+		toolbarButton.setActionCommand("clearFilter"); //$NON-NLS-1$
+		toolbarButton.addActionListener(this);
 
 		JPanel toolbarPanel = new JPanel();
 		toolbarPanel.setLayout(new BorderLayout());
@@ -773,7 +790,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		lowerToolbar.add(searchLabel);
 		lowerToolbar.add(searchFilterTextField);
 		lowerToolbar.addSeparator();
-		lowerToolbar.add(resetFiltersButton);
+		lowerToolbar.add(toolbarButton);
 		lowerToolbar.addSeparator();
 		lowerToolbar.addSeparator();
 		lowerToolbar.add(deleteEntriesButton);
@@ -831,8 +848,14 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	private void update() {
 		callerList.update();
 		updateStatusBar(false);
+		renderFilterButtons();
 //		statusBarController.fireStatusChanged(callerList.getTotalDuration());
 		saveButtonStatus();
+	}
+
+	private void renderFilterButtons() {
+		sipFilterButton.setSelected(!((SipFilter)filter[SIP]).isAllSelected());
+		portFilterButton.setSelected(!((PortFilter)filter[PORT]).isAllSelected());
 	}
 
 	/**
@@ -1348,12 +1371,27 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 		Vector<String> providers = new Vector<String>();
 		JFritzUtils.fillVectorByString(providers, CallFilter.FILTER_SIP_PROVIDERS, ";");
-		((SipFilter)filter[SIP]).setProvider(providers);
+		if ((providers.size() == 1)
+				&& (providers.get(0).equals("$ALL$")))
+		{
+			((SipFilter)filter[SIP]).setAllSelected();
+		}
+		else
+		{
+			((SipFilter)filter[SIP]).setProvider(providers);
+		}
 
 		Vector<String> ports = new Vector<String>();
 		JFritzUtils.fillVectorByString(ports, CallFilter.FILTER_PORT_LIST, ";");
-		((PortFilter)filter[PORT]).setPorts(ports);
-
+		if ((ports.size() == 1)
+				&& (ports.get(0).equals("$ALL$")))
+		{
+			((PortFilter)filter[PORT]).setAllSelected();
+		}
+		else
+		{
+			((PortFilter)filter[PORT]).setPorts(ports);
+		}
 		syncFilterWithButton(filter[CALL_IN], callInFilterButton);
 		syncFilterWithButton(filter[CALL_IN_FAILED], callInFailedFilterButton);
 		syncFilterWithButton(filter[CALL_OUT], callOutFilterButton);
@@ -1521,9 +1559,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			}
 		}
 		syncAllFilters();
-		callerList.update();
-		updateStatusBar(false);
-//		statusBarController.fireStatusChanged(callerList.getTotalDuration());
+		update();
 	}
 
 

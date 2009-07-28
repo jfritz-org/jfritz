@@ -1,5 +1,12 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 
+JFritz 0.7.3.13:
+- Änderung: Tooltip-Text für Port-Filter korrigiert.
+- Neu: Anzeige des Filterstatus für MSN- und PORT-Filter.
+- Bugfix: Reset-Filter-Knopf setzt nun auch MSN- und PORT-Filter zurück.
+New Strings:
+filter_port
+
 JFritz 0.7.3.12:
 - Neu: Added support for FRITZ!Box 7140 Annex A
 - Neu: Filter für den Anschluss/Port aller erkannten Anschlüsse
