@@ -337,6 +337,7 @@ public class FritzBox extends BoxClass {
 			while (!finished && (retry_count < max_retry_count))
 			{
 				try {
+					retry_count++;
 					if (password_wrong)
 					{
 						password_wrong = false;
@@ -344,7 +345,6 @@ public class FritzBox extends BoxClass {
 						this.detectFirmware();
 						postdata = generatePostDataOld(queries);
 					}
-					retry_count++;
 					response = JFritzUtils.fetchDataFromURLToVector(name, urlstr, postdata, true);
 					finished = true;
 				} catch (WrongPasswordException e) {

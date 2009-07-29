@@ -1,9 +1,12 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 
+JFritz 0.7.3.14:
+- Bugfix: Endlosschleife, wenn JFritz läuft und auf der FritzBox das Passwort geändert wird.
+
 JFritz 0.7.3.13:
 - Änderung: Tooltip-Text für Port-Filter korrigiert.
-- Neu: Anzeige des Filterstatus für MSN- und PORT-Filter.
-- Bugfix: Reset-Filter-Knopf setzt nun auch MSN- und PORT-Filter zurück.
+- Neu: Anzeige des Filterstatus für MSN- und Port-Filter.
+- Bugfix: Reset-Filter-Knopf setzt nun auch MSN- und Port-Filter zurück.
 New Strings:
 filter_port
 
