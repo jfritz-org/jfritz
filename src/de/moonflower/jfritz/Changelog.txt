@@ -1,5 +1,9 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 
+JFritz 0.7.3.15:
+- Bugfix [0000191]: Rufnummerübergabe an Wählhilfe funktioniert nicht 
+- Neu [0000158]: Aufruf von Google-Maps als rechte Maustasten-Menüpunkt im Telefonbuch und in der Anrufliste
+ 	 
 JFritz 0.7.3.14:
 - Bugfix [0000190]: Trayproblem unter Ubuntu 9.04 nicht behoben.
 - Bugfix [0000243]: Wahlhilfe setzt Ortsvorwahl und Ortsprefix vor Sondernummer

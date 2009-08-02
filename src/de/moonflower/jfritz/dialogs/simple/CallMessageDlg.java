@@ -240,35 +240,9 @@ public class CallMessageDlg extends JFrame implements ActionListener{
 				}
 				message = message.replaceAll("%PHONEICON%", "<img src=\"" + phoneIcon.toString() + "\">");
 
-				String loc = Main.getProperty("locale");
-				String googleLink = "http://maps.google.com/maps?f=q&hl="+ loc.substring(0, 2) +"&q=";
-				String city = "";
 				if ( person != null )
 				{
-					googleLink += HTMLUtil.stripEntities(person.getStreet())+",+";
-					city = person.getCity();
-
-					if ( city.replaceAll(" ", "").equals(""))
-					{
-						if(number.getCountryCode().equals(ReverseLookup.GERMANY_CODE))
-						{
-							googleLink += HTMLUtil.stripEntities(ReverseLookupGermany.getCity(number.getAreaNumber()))+",+";
-						}
-						if(number.getCountryCode().equals(ReverseLookup.AUSTRIA_CODE))
-						{
-							googleLink += HTMLUtil.stripEntities(ReverseLookupAustria.getCity(number.getAreaNumber()))+",+";
-						}
-						if(number.getCountryCode().equals(ReverseLookup.USA_CODE))
-						{
-							googleLink += HTMLUtil.stripEntities(ReverseLookupUnitedStates.getCity(number.getAreaNumber()))+",+";
-						}
-						if(number.getCountryCode().equals(ReverseLookup.TURKEY_CODE))
-						{
-							googleLink += HTMLUtil.stripEntities(ReverseLookupTurkey.getCity(number.getAreaNumber()))+",+";
-						}
-					}
-					googleLink += HTMLUtil.stripEntities(city) + ",+";
-					googleLink += HTMLUtil.stripEntities(number.getCountry());
+					String googleLink = person.getGoogleLink();
 					message = message.replaceAll("%GOOGLE%", "<a border=\"0\" href='" + googleLink + "'><img src=\"" + googlePath + "\"></a>");
 				}
 				else
@@ -494,35 +468,9 @@ public class CallMessageDlg extends JFrame implements ActionListener{
 				}
 				message = message.replaceAll("%PHONEICON%", "<img src=\"" + phoneIcon.toString() + "\">");
 
-				String loc = Main.getProperty("locale");
-				String googleLink = "http://maps.google.com/maps?f=q&hl="+ loc.substring(0, 2) +"&q=";
-				String city = "";
 				if ( person != null )
 				{
-					googleLink += HTMLUtil.stripEntities(person.getStreet())+",+";
-					city = person.getCity();
-
-					if ( city.replaceAll(" ", "").equals(""))
-					{
-						if(number.getCountryCode().equals(ReverseLookup.GERMANY_CODE))
-						{
-							googleLink += HTMLUtil.stripEntities(ReverseLookupGermany.getCity(number.getAreaNumber()))+",+";
-						}
-						if(number.getCountryCode().equals(ReverseLookup.AUSTRIA_CODE))
-						{
-							googleLink += HTMLUtil.stripEntities(ReverseLookupAustria.getCity(number.getAreaNumber()))+",+";
-						}
-						if(number.getCountryCode().equals(ReverseLookup.USA_CODE))
-						{
-							googleLink += HTMLUtil.stripEntities(ReverseLookupUnitedStates.getCity(number.getAreaNumber()))+",+";
-						}
-						if(number.getCountryCode().equals(ReverseLookup.TURKEY_CODE))
-						{
-							googleLink += HTMLUtil.stripEntities(ReverseLookupTurkey.getCity(number.getAreaNumber()))+",+";
-						}
-					}
-					googleLink += HTMLUtil.stripEntities(city) + ",+";
-					googleLink += HTMLUtil.stripEntities(number.getCountry());
+					String googleLink = person.getGoogleLink();
 					message = message.replaceAll("%GOOGLE%", "<a border=\"0\" href='" + googleLink + "'><img src=\"" + googlePath + "\"></a>");
 				}
 				else

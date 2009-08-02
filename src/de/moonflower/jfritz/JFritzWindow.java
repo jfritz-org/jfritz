@@ -156,6 +156,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	public final String WINDOW_PROPERTIES_FILE = "jfritz.window.properties.xml"; //$NON-NLS-1$
 
+	private JMenuItem googleItem;
+
 	/**
 	 * Constructs JFritzWindow
 	 *
@@ -253,15 +255,14 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 		statusBar = createStatusBar2();
 
-		addKeyListener(KeyEvent.VK_F5, "F5"); //$NON-NLS-1$
+		addKeyListener(this, KeyEvent.VK_F5, "fetchList", 0); //$NON-NLS-1$
 
-		this
-				.setIconImage(Toolkit
+		this.setIconImage(Toolkit
 						.getDefaultToolkit()
 						.getImage(
 								getClass()
 										.getResource(
-												"/de/moonflower/jfritz/resources/images/trayicon.png"))); //$NON-NLS-1$
+												"/de/moonflower/jfritz/resources/images/tray16.png"))); //$NON-NLS-1$
 
 		callerListPanel = new CallerListPanel(JFritz.getCallerList(), this);
 		phoneBookPanel = new PhoneBookPanel(JFritz.getPhonebook(), this);
@@ -284,15 +285,25 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				if (tabber.getTitleAt(tabber.getSelectedIndex()).equals(
 						Main.getMessage("callerlist"))) { //$NON-NLS-1$
 					callerListPanel.setStatus();
+					googleItem.removeActionListener(callerListPanel);
+					googleItem.removeActionListener(phoneBookPanel);
+					googleItem.addActionListener(callerListPanel);
+					callerListPanel.adaptGoogleLink();
 				} else if (tabber.getTitleAt(tabber.getSelectedIndex()).equals(
 						Main.getMessage("phonebook"))) { //$NON-NLS-1$
 					phoneBookPanel.setStatus();
+					googleItem.removeActionListener(callerListPanel);
+					googleItem.removeActionListener(phoneBookPanel);
+					googleItem.addActionListener(phoneBookPanel);
+					phoneBookPanel.adaptGoogleLink();
 				} else if (tabber.getTitleAt(tabber.getSelectedIndex()).equals(
 						Main.getMessage("quickdials"))) { //$NON-NLS-1$
 					quickDialPanel.setStatus();
+					googleItem.setEnabled(false);
 				} else if (tabber.getTitleAt(tabber.getSelectedIndex()).equals(
 						Main.getMessage("monitoring"))) {
 					monitoringPanel.setStatus();
+					googleItem.setEnabled(false);
 				}
 			}
 		});
@@ -541,6 +552,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		item.setActionCommand("reverselookup"); //$NON-NLS-1$
 		item.addActionListener(this);
 		jfritzMenu.add(item);
+
+		googleItem = new JMenuItem(Main.getMessage("show_on_google_maps"));
+		googleItem.setActionCommand("google");
+		googleItem.addActionListener(callerListPanel);
+		googleItem.setEnabled(false);
+		googleItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.ALT_MASK));
+		jfritzMenu.add(googleItem);
 
 		item = new JMenuItem(Main.getMessage("delete_fritzbox_callerlist")); //$NON-NLS-1$
 		item.setActionCommand("delete_fritzbox_callerlist"); //$NON-NLS-1$
@@ -1069,7 +1087,17 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		} else if (e.getActionCommand().equals("fetchTask")) {
 			fetchTask(((JToggleButton) e.getSource()).isSelected());
 		} else if (e.getActionCommand().equals("callDialog")) {
-			CallDialog p = new CallDialog(new PhoneNumber("0", false, false));
+			PhoneNumber number = null;
+			if (this.getCallerTable().getSelectedRowCount() == 1)
+			{
+				int index = this.getCallerTable().getSelectedRow();
+				Call call = this.getCallerListPanel().getCallerList().getFilteredCallVector().get(index);
+				number = call.getPhoneNumber();
+			}
+			else {
+				number = new PhoneNumber("0", false, false);
+			}
+			CallDialog p = new CallDialog(number);
 			p.setVisible(true);
 			p.dispose();
 		} else if (e.getActionCommand().equals("callMonitor")) { //$NON-NLS-1$
@@ -1100,9 +1128,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				Debug.info("Stopping reverse lookup"); //$NON-NLS-1$
 				JFritz.getCallerList().stopLookup();
 			}
-
-		} else if (e.getActionCommand().equals("F5")) {
-			fetchList(false);
+		} else if (e.getActionCommand().equals("google")) {
+			Debug.debug("GOOGLE");
 		} else if (e.getActionCommand().equals("import_callerlist_csv")) {
 			importCallerlistCSV();
 		} else if (e.getActionCommand().equals("phonebook_import")) {
@@ -1504,18 +1531,18 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * Provides easy implementation of a KeyListener. Will add the KeyListener
 	 * to the main Jframe and react without having the Focus.
 	 */
-	public void addKeyListener(int vkey, String listenerString) {
+	public void addKeyListener(ActionListener listener, int vkey, String listenerString, int mask) {
 
-		this.getRootPane().registerKeyboardAction(this, listenerString,
-				keyStroke(vkey), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+		this.getRootPane().registerKeyboardAction(listener, listenerString,
+				keyStroke(vkey, mask), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 	}
 
 	/**
 	 * Provides easy creation of a KeyStroke object without a modifier and
 	 * reaction onKeyReale
 	 */
-	private KeyStroke keyStroke(int vkey) {
-		return KeyStroke.getKeyStroke(vkey, 0, false);
+	private KeyStroke keyStroke(int vkey, int mask) {
+		return KeyStroke.getKeyStroke(vkey, mask, false);
 	}
 
 	/**
@@ -1914,5 +1941,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	public void windowOpened(WindowEvent e) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public void setGoogleItem(boolean status) {
+		googleItem.setEnabled(status);
 	}
 }

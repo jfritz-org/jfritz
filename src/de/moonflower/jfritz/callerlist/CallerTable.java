@@ -304,6 +304,7 @@ public class CallerTable extends JTable {
 				parentPanel.setSelectedCallsInfo(selectedCalls, selectedCallsTotalMinutes);
 				parentPanel.updateStatusBar(true);
 			}
+			parentPanel.adaptGoogleLink();
 		}
 	}
 

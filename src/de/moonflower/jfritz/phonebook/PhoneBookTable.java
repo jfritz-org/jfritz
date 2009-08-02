@@ -13,6 +13,7 @@ import java.util.Vector;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableCellRenderer;
 
 import de.moonflower.jfritz.JFritz;
@@ -139,4 +140,13 @@ public class PhoneBookTable extends JTable implements KeyListener{
 		showAndSelectRow(index);
 		parentPanel.searchFilter.setText(filterText);
 	}
+
+	public void valueChanged(ListSelectionEvent e) {
+		super.valueChanged(e);
+		// make sure we get the last selectionEvent
+		if (!e.getValueIsAdjusting()) {
+			parentPanel.adaptGoogleLink();
+		}
+	}
+
 }

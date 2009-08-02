@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,7 +13,14 @@ import java.util.Vector;
 
 import javax.swing.ImageIcon;
 
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.HTMLUtil;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookupAustria;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookupGermany;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookupTurkey;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookupUnitedStates;
 
 /**
  * @author rob
@@ -816,5 +822,58 @@ public class Person implements Cloneable, Serializable{
 
 	public String getLookupSite() {
 		return this.lookupSite;
+	}
+
+	public String getGoogleLink() {
+		String loc = Main.getProperty("locale");
+		String googleLink = "http://maps.google.com/maps?f=q&hl="+ loc.substring(0, 2) +"&q=";
+		PhoneNumber localNumber = null;
+		googleLink += HTMLUtil.stripEntities(street)+",+";
+
+		for (PhoneNumber number: numbers)
+		{
+			if (!number.isEmergencyCall()
+				&& !number.isFreeCall()
+				&& !number.isQuickDial()
+				&& !number.isSIPNumber()
+				)
+			{
+				if (localNumber != null)
+				{
+					if ((localNumber.isMobile())
+					&& (!number.isMobile())) {
+						localNumber = number;
+					}
+				}
+				else {
+					localNumber = number;
+				}
+			}
+		}
+		if ( city.replaceAll(" ", "").equals(""))
+		{
+			if(localNumber.getCountryCode().equals(ReverseLookup.GERMANY_CODE))
+			{
+				googleLink += HTMLUtil.stripEntities(ReverseLookupGermany.getCity(localNumber.getAreaNumber()))+",+";
+			}
+			if(localNumber.getCountryCode().equals(ReverseLookup.AUSTRIA_CODE))
+			{
+				googleLink += HTMLUtil.stripEntities(ReverseLookupAustria.getCity(localNumber.getAreaNumber()))+",+";
+			}
+			if(localNumber.getCountryCode().equals(ReverseLookup.USA_CODE))
+			{
+				googleLink += HTMLUtil.stripEntities(ReverseLookupUnitedStates.getCity(localNumber.getAreaNumber()))+",+";
+			}
+			if(localNumber.getCountryCode().equals(ReverseLookup.TURKEY_CODE))
+			{
+				googleLink += HTMLUtil.stripEntities(ReverseLookupTurkey.getCity(localNumber.getAreaNumber()))+",+";
+			}
+		}
+
+		googleLink += HTMLUtil.stripEntities(city);
+		if (localNumber != null) {
+			googleLink += HTMLUtil.stripEntities(",+" + localNumber.getCountry());
+		}
+		return googleLink;
 	}
 }

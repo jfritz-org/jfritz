@@ -70,6 +70,7 @@ import de.moonflower.jfritz.struct.IProgressListener;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.struct.ReverseLookupSite;
+import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.JFritzClipboard;
@@ -95,7 +96,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 		private void maybeShowPopup(MouseEvent e) {
 			if (e.isPopupTrigger()) {
-
+				googleLink = null;
 				//only modify the popup menu if its for the call table
 				if(listener != null){
 
@@ -154,6 +155,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 						reverseMenu.setEnabled(false);
 					}
 
+					// adapt google link
+					adaptGoogleLink();
 				}
 
 				popupMenu.show(e.getComponent(), e.getX(), e.getY());
@@ -244,6 +247,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	private StatusBarController statusBarController = new StatusBarController();
 
 	private JMenu reverseMenu;
+	private JMenuItem googleItem;
+	private String googleLink = null;
 
 	private StatusBarPanel callerListStatusBar;
 	private JLabel callsLabel;
@@ -409,10 +414,10 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		reverseMenu = new JMenu(Main.getMessage("reverse_lookup"));
 		callerlistPopupMenu.add(reverseMenu);
 
-//		menuItem = new JMenuItem(Main.getMessage("reverse_lookup")); //$NON-NLS-1$
-//		menuItem.setActionCommand("reverselookup"); //$NON-NLS-1$
-//		menuItem.addActionListener(this);
-//		callerlistPopupMenu.add(menuItem);
+		googleItem = new JMenuItem(Main.getMessage("show_on_google_maps"));
+		googleItem.setActionCommand("google");
+		googleItem.addActionListener(this);
+		callerlistPopupMenu.add(googleItem);
 
 		menuItem = new JMenuItem(Main.getMessage("reverse_lookup_dummy")); //$NON-NLS-1$
 		menuItem.setActionCommand("reverselookup_dummy"); //$NON-NLS-1$
@@ -1123,6 +1128,14 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			callerList.reverseLookup(true, true);
 			return;
 		}
+		if (command.equals("google")) {
+			if (googleLink != null) {
+				Debug.debug(googleLink);
+				BrowserLaunch.openURL(googleLink);
+			}
+			return;
+		}
+
 		if (command.equals("export_csv")) { //$NON-NLS-1$
 			JFritz.getJframe().exportCallerListToCSV();
 			return;
@@ -1682,5 +1695,26 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		progressBar.setVisible(false);
 		progressStatusBar.setVisible(false);
 		jFrame.getStatusBar().refresh();
+	}
+
+	public void adaptGoogleLink() {
+		int[] rows = JFritz.getJframe().getCallerTable().getSelectedRows();
+		if ((rows.length == 0) || (rows.length > 1)) {
+			updateGoogleItem(false);
+		} else {
+			Call call = JFritz.getCallerList().getFilteredCallVector().get(rows[0]);
+			Person person = JFritz.getPhonebook().findPerson(call);
+			if (person != null) {
+				updateGoogleItem(true);
+				googleLink = person.getGoogleLink();
+			} else {
+				updateGoogleItem(false);
+			}
+		}
+	}
+
+	public void updateGoogleItem(boolean status) {
+		googleItem.setEnabled(status);
+		JFritz.getJframe().setGoogleItem(status);
 	}
 }

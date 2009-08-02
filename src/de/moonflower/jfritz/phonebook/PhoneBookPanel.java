@@ -35,8 +35,10 @@ import javax.swing.JMenuItem;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.VCardList;
+import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.StatusBarController;
@@ -68,6 +70,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 
 		private void maybeShowPopup(MouseEvent e) {
 			if (e.isPopupTrigger()) {
+				adaptGoogleLink();
 				popupMenu.show(e
 						.getComponent(), e.getX(), e.getY());
 			}
@@ -90,6 +93,9 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	public JButton resetButton;
 	public JTextField searchFilter;
 	public JToggleButton privateFilter;
+
+	private JMenuItem googleItem;
+	private String googleLink = null;
 
 	private PhoneBook phonebook;
 	private StatusBarController statusBarController = new StatusBarController();
@@ -158,6 +164,11 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			importFromXML ();
 		} else if (e.getActionCommand().equals("clearFilter")) { //$NON-NLS-1$
 			clearAllFilter();
+		} else if (e.getActionCommand().equals("google")) { //$NON-NLS-1$
+			if (googleLink != null) {
+				Debug.debug(googleLink);
+				BrowserLaunch.openURL(googleLink);
+			}
 		} else {
 			Debug.warning("Unsupported Command: " + e.getActionCommand()); //$NON-NLS-1$
 		}
@@ -178,6 +189,10 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		menuItem.setActionCommand("export_vcard"); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		popupMenu.add(menuItem);
+		googleItem = new JMenuItem(Main.getMessage("show_on_google_maps"));
+		googleItem.setActionCommand("google");
+		googleItem.addActionListener(this);
+		popupMenu.add(googleItem);
 
 		//Add listener to components that can bring up popup menus.
 		MouseAdapter popupListener = new PopupListener();
@@ -484,4 +499,24 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	public void setStatusBarController(StatusBarController statusBarController) {
 		this.statusBarController = statusBarController;
 	}
+
+	public void adaptGoogleLink() {
+		int[] selRows = phoneBookTable.getSelectedRows();
+
+		googleLink = null;
+		if ((selRows.length==0)
+			|| (selRows.length>1)) {
+			updateGoogleItem(false);
+		} else {
+			Person person = phonebook.getFilteredPersons().get(phoneBookTable.getSelectedRow());
+			googleLink = person.getGoogleLink();
+			updateGoogleItem(true);
+		}
+	}
+
+	public void updateGoogleItem(boolean status) {
+		googleItem.setEnabled(status);
+		JFritz.getJframe().setGoogleItem(status);
+	}
+
 }
