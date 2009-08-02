@@ -6,6 +6,7 @@ package de.moonflower.jfritz.callerlist;
 
 import java.awt.BorderLayout;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -629,7 +630,9 @@ public class CallerListPanel extends JPanel implements ActionListener,
 						msnPopupMenu.setSelected(filteredMSNs.get(i), true);
 					}
 
-					msnPopupMenu.setLocation(e.getXOnScreen()+10, e.getYOnScreen()+10);
+					Point tmpPoint = sipFilterButton.getLocationOnScreen();
+					tmpPoint.translate(sipFilterButton.getSize().width/2, sipFilterButton.getSize().height/2);
+					msnPopupMenu.setLocation(tmpPoint.x, tmpPoint.y);
 					msnPopupMenu.setVisible(true);
 					if (msnPopupMenu.okPressed()) {
 						if (msnPopupMenu.getSelectedItems().size() == providers.size())
@@ -692,7 +695,9 @@ public class CallerListPanel extends JPanel implements ActionListener,
 						portPopupMenu.setSelected(filteredPorts.get(i), true);
 					}
 
-					portPopupMenu.setLocation(e.getXOnScreen()+10, e.getYOnScreen()+10);
+					Point tmpPoint = portFilterButton.getLocationOnScreen();
+					tmpPoint.translate(portFilterButton.getSize().width/2, portFilterButton.getSize().height/2);
+					portPopupMenu.setLocation(tmpPoint.x, tmpPoint.y);
 					portPopupMenu.setVisible(true);
 					if (portPopupMenu.okPressed()) {
 						if (portPopupMenu.getSelectedItems().size() == ports.size())

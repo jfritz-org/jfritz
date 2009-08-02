@@ -4,9 +4,12 @@ package de.moonflower.jfritz.tray;
  * http://www.igniterealtime.org/community/message/146557#146557
  */
 
-import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
+
 import org.jdesktop.jdic.tray.SystemTray;
 import org.jdesktop.jdic.tray.TrayIcon;
 
@@ -36,7 +39,7 @@ public class JDICTray implements Tray {
 	public void addMouseListener(MouseListener l) {
 	}
 
-	public void addActionListener(ActionListener l) {
+	public void addActionListener(ClickListener l) {
 		icon.addActionListener(l);
 	}
 

@@ -1,7 +1,13 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 
 JFritz 0.7.3.14:
+- Bugfix [0000190]: Trayproblem unter Ubuntu 9.04 nicht behoben.
+- Bugfix [0000243]: Wahlhilfe setzt Ortsvorwahl und Ortsprefix vor Sondernummer
+- Bugfix [0000244]: Kompatibilität zu Java 1.5 wiederhergestellt (Anschluss/Port-Filter).
 - Bugfix: Endlosschleife, wenn JFritz läuft und auf der FritzBox das Passwort geändert wird.
+- Neu [0000245]: Wählhilfe im Tray-Menu anzeigen
+New Strings:
+dial_assist
 
 JFritz 0.7.3.13:
 - Änderung: Tooltip-Text für Port-Filter korrigiert.

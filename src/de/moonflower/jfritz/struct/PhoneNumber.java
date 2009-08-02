@@ -80,8 +80,10 @@ public class PhoneNumber implements Serializable {
 	 * @param parseDialOut,
 	 *            a boolean value representing if a Dial out prefix needs to be
 	 *            parsed
+	 * @param convertInt
+	 * 			  should the number be refactored (add country and area code)
 	 */
-	public PhoneNumber(String fullNumber, boolean parseDialOut) {
+	public PhoneNumber(String fullNumber, boolean parseDialOut, boolean convertInt) {
 		this.type = "";
 
 		if (fullNumber != null) {
@@ -95,7 +97,11 @@ public class PhoneNumber implements Serializable {
 			Debug.info("Parsed the dial out prefix, new number: " + this.number);
 		}
 
-			refactorNumber();
+		refactorNumber(convertInt);
+	}
+
+	public PhoneNumber(String fullNumber, boolean parseDialOut) {
+		this(fullNumber, parseDialOut, true);
 	}
 
 	/**
@@ -107,7 +113,7 @@ public class PhoneNumber implements Serializable {
 	public void setNumber(String number) {
 		if (number.matches(numberMatcher))
 			this.number = number;
-		refactorNumber();
+		refactorNumber(true);
 	}
 
 	/**
@@ -132,13 +138,16 @@ public class PhoneNumber implements Serializable {
 	 *
 	 * @author Brian Jensen
 	 *
+	 * @param convertInt should country and area code be added to the number
 	 */
-	public void refactorNumber() {
+	public void refactorNumber(boolean convertInt) {
 		removeUnnecessaryChars();
 		convertQuickDial();
 		cutCallByCall();
-		number = convertToIntNumber();
-		getCountryInfo();
+		if (convertInt) {
+			number = convertToIntNumber();
+			getCountryInfo();
+		}
 	}
 
 	/**
@@ -775,7 +784,7 @@ public class PhoneNumber implements Serializable {
 
 	public PhoneNumber clone()
 	{
-		PhoneNumber p = new PhoneNumber("", false);
+		PhoneNumber p = new PhoneNumber("", false, false);
 		p.copyFrom(this);
 		return p;
 	}

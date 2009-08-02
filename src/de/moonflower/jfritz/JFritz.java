@@ -5,7 +5,6 @@
 package de.moonflower.jfritz;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
@@ -48,8 +47,9 @@ import de.moonflower.jfritz.network.ClientLoginsTableModel;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.phonebook.PhoneBook;
 import de.moonflower.jfritz.struct.PhoneNumber;
-import de.moonflower.jfritz.tray.AWTTray;
+import de.moonflower.jfritz.tray.ClickListener;
 import de.moonflower.jfritz.tray.JDICTray;
+import de.moonflower.jfritz.tray.SwingTray;
 import de.moonflower.jfritz.tray.Tray;
 import de.moonflower.jfritz.tray.TrayMenu;
 import de.moonflower.jfritz.tray.TrayMenuItem;
@@ -277,7 +277,7 @@ public final class JFritz implements  StatusListener, ItemListener {
 				{
 					tray = new JDICTray();
 				} else {
-					tray = new AWTTray();
+					tray = new SwingTray();
 				}
 				createTrayMenu();
 			} catch (Throwable e) {
@@ -443,6 +443,10 @@ public final class JFritz implements  StatusListener, ItemListener {
 		menuItem.setActionCommand("reverselookup"); //$NON-NLS-1$
 		menuItem.addActionListener(jframe);
 		menu.add(menuItem);
+		menuItem = new TrayMenuItem(Main.getMessage("dial_assist")); //$NON-NLS-1$
+		menuItem.setActionCommand("callDialog");
+		menuItem.addActionListener(jframe);
+		menu.add(menuItem);
 		menu.add(lnfMenu);
 		menuItem = new TrayMenuItem(Main.getMessage("config")); //$NON-NLS-1$
 		menuItem.setActionCommand("config"); //$NON-NLS-1$
@@ -461,16 +465,12 @@ public final class JFritz implements  StatusListener, ItemListener {
 		tray.add(trayIcon);
 		tray.setTooltip(Main.PROGRAM_NAME + " v"+Main.PROGRAM_VERSION);
 		tray.setPopupMenu(menu);
-		tray.addActionListener(new ActionListener() {
-			private long oldTimeStamp = 0;
+		tray.addActionListener(new ClickListener(ClickListener.CLICK_LEFT,
+												 ClickListener.CLICK_COUNT_SINGLE) {
 			public void actionPerformed(ActionEvent e) {
-				long timeStamp = e.getWhen();
-				if ( timeStamp-oldTimeStamp>600 ) {
-					if ( jframe != null )
-					{
-						jframe.hideShowJFritz();
-						oldTimeStamp = timeStamp;
-					}
+				if ( jframe != null )
+				{
+					jframe.hideShowJFritz(true);
 				}
 			}
 		});

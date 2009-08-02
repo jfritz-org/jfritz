@@ -160,11 +160,11 @@ public class NetworkStateMonitor  {
 		if(Main.getProperty("option.clientCallList").equals("true")
 				&& isConnectedToServer())
 		{
-			serverConnection.requestDoCall(new PhoneNumber(number, false), port);
+			serverConnection.requestDoCall(new PhoneNumber(number, false, false), port);
 		}
 		else
 		{
-			JFritz.getBoxCommunication().doCall(new PhoneNumber(number, false), port);
+			JFritz.getBoxCommunication().doCall(new PhoneNumber(number, false, false), port);
 		}
 	}
 

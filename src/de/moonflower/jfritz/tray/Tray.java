@@ -4,7 +4,6 @@ package de.moonflower.jfritz.tray;
  * http://www.igniterealtime.org/community/message/146557#146557
  */
 
-import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import javax.swing.ImageIcon;
 
@@ -18,7 +17,7 @@ public interface Tray {
 	abstract public void add(ImageIcon i);
 	abstract public void setTooltip(String s);
 	abstract public void addMouseListener(MouseListener l);
-	abstract public void addActionListener(ActionListener l);
+	abstract public void addActionListener(ClickListener l);
 	abstract public void setPopupMenu(TrayMenu m);
 	abstract public void displayMessage(String caption, String message, int type);
 	abstract public boolean isSupported();

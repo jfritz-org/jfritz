@@ -19,6 +19,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.event.WindowStateListener;
 import java.io.BufferedReader;
 import java.io.File;
@@ -54,6 +55,8 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
+
+import jd.nutils.OSDetector;
 
 import de.moonflower.jfritz.autoupdate.JFritzUpdate;
 import de.moonflower.jfritz.autoupdate.Update;
@@ -93,7 +96,7 @@ import de.moonflower.jfritz.utils.SwingWorker;
  */
 public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		ItemListener, NetworkStateListener, CallMonitorStatusListener,
-		BoxStatusListener {
+		BoxStatusListener, WindowListener {
 
 	private static final long serialVersionUID = 7856291642743441767L;
 
@@ -149,6 +152,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	private JFritzWindow thisWindow;
 
+	private long lastDeIconifiedEvent = System.currentTimeMillis() - 1000;
+
 	public final String WINDOW_PROPERTIES_FILE = "jfritz.window.properties.xml"; //$NON-NLS-1$
 
 	/**
@@ -174,7 +179,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			}
 
 			public void componentMoved(ComponentEvent arg0) {
-				Debug.debug("Window moved");
+//				Debug.debug("Window moved");
 				Main.setStateProperty("position.left", Integer.toString(getLocation().x)); //$NON-NLS-1$
 				Main.setStateProperty("position.top", Integer.toString(getLocation().y));//$NON-NLS-1$
 				Main.setStateProperty("position.width", Integer.toString(thisWindow.getWidth()));//$NON-NLS-1$
@@ -184,7 +189,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			public void componentResized(ComponentEvent arg0) {
 				if (getExtendedState() != Frame.MAXIMIZED_BOTH)
 				{
-					Debug.debug("Window resized");
+//					Debug.debug("Window resized");
 					Main.setStateProperty("position.left", Integer.toString(getLocation().x)); //$NON-NLS-1$
 					Main.setStateProperty("position.top", Integer.toString(getLocation().y));//$NON-NLS-1$
 					Main.setStateProperty("position.width", Integer.toString(thisWindow.getWidth()));//$NON-NLS-1$
@@ -194,16 +199,14 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 			public void componentShown(ComponentEvent arg0) {
 				Debug.debug("Window shown");
-				Main.setStateProperty("window.state.old", Main.getStateProperty("window.state"));
-				Main.setStateProperty("window.state", Integer.toString(getExtendedState()));
 			}
 		});
 		addWindowStateListener(new WindowStateListener() {
 
 			public void windowStateChanged(WindowEvent arg0) {
-				Debug.debug("Window state changed: " + Main.getStateProperty("window.state") + " -> " + Integer.toString(getExtendedState()));
 				Main.setStateProperty("window.state.old", Main.getStateProperty("window.state"));
 				Main.setStateProperty("window.state", Integer.toString(getExtendedState()));
+				Debug.debug("Window state changed: " + Main.getStateProperty("window.state.old") + " -> " + Main.getStateProperty("window.state"));
 			}
 
 		});
@@ -420,7 +423,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		mBar.add(monitorButton);
 
 		calldialogButton = new JButton();
-		calldialogButton.setToolTipText(Main.getMessage("call"));
+		calldialogButton.setToolTipText(Main.getMessage("dial_assist"));
 		calldialogButton.setActionCommand("callDialog");
 		calldialogButton.addActionListener(this);
 		calldialogButton.setIcon(getImage("PhoneBig.png"));
@@ -912,17 +915,14 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		if (e.getID() == WindowEvent.WINDOW_CLOSING) {
 			if (JFritzUtils.parseBoolean(Main.getProperty("option.minimize"))) //$NON-NLS-1$
 			{
-				setExtendedState(Frame.ICONIFIED);
 				Debug.debug("PROCESS WINDOW EVENT: minimize statt close");
+				setExtendedState(Frame.ICONIFIED);
 			} else {
 				jFritz.maybeExit(0);
 			}
 		} else if (e.getID() == WindowEvent.WINDOW_ICONIFIED) {
 			Debug.debug("PROCESS WINDOW EVENT: minimize");
-			setExtendedState(Frame.ICONIFIED);
-			if (Main.systraySupport) {
-				setVisible(false);
-			}
+			hideShowJFritz();
 		} else {
 			super.processWindowEvent(e);
 		}
@@ -1069,7 +1069,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		} else if (e.getActionCommand().equals("fetchTask")) {
 			fetchTask(((JToggleButton) e.getSource()).isSelected());
 		} else if (e.getActionCommand().equals("callDialog")) {
-			CallDialog p = new CallDialog(new PhoneNumber("0", false));
+			CallDialog p = new CallDialog(new PhoneNumber("0", false, false));
 			p.setVisible(true);
 			p.dispose();
 		} else if (e.getActionCommand().equals("callMonitor")) { //$NON-NLS-1$
@@ -1134,38 +1134,69 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	}
 
 	public void hideShowJFritz() {
-		if (isVisible()) {
-			Debug.debug("Hide JFritz-Window"); //$NON-NLS-1$
-			Debug.debug("Old windows state: " + Main.getStateProperty("window.state.old"));
-			setExtendedState(JFrame.ICONIFIED);
-		} else while ( !isVisible() ){
-			Debug.debug("Show JFritz-Window"); //$NON-NLS-1$
-			int windowState = 0;
-			windowState = Integer.parseInt(Main.getStateProperty("window.state.old"));
+		hideShowJFritz(false);
+	}
 
-			Debug.debug("Window state old: " + Integer.toString(windowState));
-			Debug.debug("Windows state:    " + Main.getStateProperty("window.state"));
+	public void hideShowJFritz(boolean saveState) {
+		if (System.currentTimeMillis() > this.lastDeIconifiedEvent + 250) {
+			this.lastDeIconifiedEvent  = System.currentTimeMillis();
+			if (isVisible()) {
+				Debug.debug("Hide JFritz-Window"); //$NON-NLS-1$
+				if (Main.systraySupport)
+				{
+					Debug.debug("Setting to invisible!");
+					this.setVisible(false);
+				}
+				if (saveState) {
+					Main.setStateProperty("window.state.old", Main.getStateProperty("window.state"));
+					Main.setStateProperty("window.state", Integer.toString(getExtendedState()));
+					Debug.debug("Saving new state: " + Main.getStateProperty("window.state.old")
+							+ " -> " + Main.getStateProperty("window.state"));
+				}
+			} else while ( !isVisible() ){
+				Debug.debug("Show JFritz-Window"); //$NON-NLS-1$
+				int windowState = 0;
+				windowState = Integer.parseInt(Main.getStateProperty("window.state.old"));
 
-			if ((windowState != Frame.MAXIMIZED_BOTH) && (windowState != Frame.ICONIFIED))
-			{
-				windowState = Frame.NORMAL;
+				Debug.debug("Window state old: " + Integer.toString(windowState));
+				Debug.debug("Windows state:    " + Main.getStateProperty("window.state"));
+
+				if ((windowState != Frame.MAXIMIZED_BOTH) && (windowState != Frame.ICONIFIED))
+				{
+					windowState = Frame.NORMAL;
+				}
+
+				if (OSDetector.isGnome())
+				{
+					Debug.debug("Current state1: "
+							+ Main.getStateProperty("window.state.old")
+							+ "/"+Main.getStateProperty("window.state"));
+					Debug.debug("Maximize gnome style");
+		            setExtendedState(windowState);
+		            setVisible(true);
+		            setExtendedState(Frame.ICONIFIED);
+		            setVisible(false);
+		            setExtendedState(windowState);
+		            setVisible(true);
+		            String tmp = Main.getStateProperty("window.state");
+		            Main.setStateProperty("window.state", Main.getStateProperty("window.state.old"));
+		            Main.setStateProperty("window.state.old", tmp);
+					Debug.debug("Current state2: "
+							+ Main.getStateProperty("window.state.old")
+							+ "/"+Main.getStateProperty("window.state"));
+				}
+				else
+				{
+					// use this at windows and other systems
+					Debug.debug("Maximize windows style");
+					setVisible(true);
+					setExtendedState(windowState);
+				}
+
+				// use this on any system
+				toFront();
+	            repaint();
 			}
-
-			// use this at windows and other systems
-			setVisible(true);
-			setExtendedState(windowState);
-
-			// use this at gnome
-//            setExtendedState(windowState);
-//            setVisible(true);
-//            setExtendedState(Frame.ICONIFIED);
-//            setVisible(false);
-//            setExtendedState(windowState);
-//            setVisible(true);
-
-			// use this on any system
-			toFront();
-            repaint();
 		}
 	}
 
@@ -1850,5 +1881,38 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		connectButton.setToolTipText(Main.getMessage("disconnected_fritz"));
 		this.setDisconnectedStatus(""); // set call monitor to disconnected status
 		statusBar.refresh();
+	}
+
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void windowClosed(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void windowClosing(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void windowDeiconified(WindowEvent e) {
+		hideShowJFritz();
+	}
+
+	public void windowIconified(WindowEvent e) {
+		hideShowJFritz();
+	}
+
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+
 	}
 }
