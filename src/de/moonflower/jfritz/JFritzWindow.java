@@ -79,6 +79,7 @@ import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.phonebook.PhoneBookPanel;
 
 import de.moonflower.jfritz.struct.Call;
+import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.CopyFile;
@@ -1087,19 +1088,35 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		} else if (e.getActionCommand().equals("fetchTask")) {
 			fetchTask(((JToggleButton) e.getSource()).isSelected());
 		} else if (e.getActionCommand().equals("callDialog")) {
-			PhoneNumber number = null;
-			if (this.getCallerTable().getSelectedRowCount() == 1)
-			{
-				int index = this.getCallerTable().getSelectedRow();
-				Call call = this.getCallerListPanel().getCallerList().getFilteredCallVector().get(index);
-				number = call.getPhoneNumber();
+			if (tabber.getTitleAt(tabber.getSelectedIndex()).equals(
+					Main.getMessage("callerlist"))) { //$NON-NLS-1$
+				PhoneNumber number = null;
+				if (this.getCallerTable().getSelectedRowCount() == 1)
+				{
+					int index = this.getCallerTable().getSelectedRow();
+					Call call = this.getCallerListPanel().getCallerList().getFilteredCallVector().get(index);
+					number = call.getPhoneNumber();
+				}
+				else {
+					number = new PhoneNumber("0", false, false);
+				}
+				CallDialog p = new CallDialog(number);
+				p.setVisible(true);
+				p.dispose();
+			} else if (tabber.getTitleAt(tabber.getSelectedIndex()).equals(
+					Main.getMessage("phonebook"))) { //$NON-NLS-1$
+				CallDialog dialog = null;
+				if (this.getPhoneBookPanel().getPhoneBookTable().getSelectedRowCount() == 1)
+				{
+					int index = this.getPhoneBookPanel().getPhoneBookTable().getSelectedRow();
+					Person person = JFritz.getPhonebook().getFilteredPersons().get(index);
+					dialog = new CallDialog(person.getNumbers(), person.getStandardTelephoneNumber());
+				} else {
+					dialog = new CallDialog(new PhoneNumber("0", false, false));
+				}
+				dialog.setVisible(true);
+				dialog.dispose();
 			}
-			else {
-				number = new PhoneNumber("0", false, false);
-			}
-			CallDialog p = new CallDialog(number);
-			p.setVisible(true);
-			p.dispose();
 		} else if (e.getActionCommand().equals("callMonitor")) { //$NON-NLS-1$
 			boolean active = ((JToggleButton) e.getSource()).isSelected();
 			if (active) {
@@ -1128,8 +1145,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				Debug.info("Stopping reverse lookup"); //$NON-NLS-1$
 				JFritz.getCallerList().stopLookup();
 			}
-		} else if (e.getActionCommand().equals("google")) {
-			Debug.debug("GOOGLE");
 		} else if (e.getActionCommand().equals("import_callerlist_csv")) {
 			importCallerlistCSV();
 		} else if (e.getActionCommand().equals("phonebook_import")) {
