@@ -2,6 +2,7 @@ TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 
 JFritz 0.7.3.16:
 - Bugfix [0000191]: Rufnummerübergabe an Wählhilfe funktioniert nicht (für Telefonbuch)
+- Bugfix [0000246]: Aufruf von Google-Maps funktioniert auf dem Mac nicht. 
 
 JFritz 0.7.3.15:
 - Bugfix [0000191]: Rufnummerübergabe an Wählhilfe funktioniert nicht (für Anrufliste) 

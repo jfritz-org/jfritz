@@ -13,7 +13,6 @@ package de.moonflower.jfritz.utils;
 
 import java.lang.reflect.Method;
 import javax.swing.JOptionPane;
-
 import de.moonflower.jfritz.Main;
 
 /**
@@ -32,14 +31,18 @@ public static void openURL(String url) {
    String osName = System.getProperty("os.name"); //$NON-NLS-1$
    try {
       if (osName.startsWith("Mac OS")) { //$NON-NLS-1$
+    	 Debug.debug("openURL on Mac OS for URL: " + url);
          Class macUtils = Class.forName("com.apple.mrj.MRJFileUtils"); //$NON-NLS-1$
          Method openURL = macUtils.getDeclaredMethod("openURL", //$NON-NLS-1$
             new Class[] {String.class});
          openURL.invoke(null, new Object[] {url});
          }
-      else if (osName.startsWith("Windows")) //$NON-NLS-1$
+      else if (osName.startsWith("Windows")) { //$NON-NLS-1$
+     	 Debug.debug("openURL on Windows for URL: " + url);
          Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url); //$NON-NLS-1$
+      	 }
       else { //assume Unix or Linux
+     	 Debug.debug("openURL on Unix/Linux for URL: " + url);
          String[] browsers = {
             "firefox", //$NON-NLS-1$
             "opera", //$NON-NLS-1$
@@ -55,10 +58,12 @@ public static void openURL(String url) {
         	Debug.error("No browser found!");
             throw new Exception(Main.getMessage("error_browser_not_found")); //$NON-NLS-1$
          }else
+        	Debug.debug("Executing browser '" + browser + "'");
             Runtime.getRuntime().exec(new String[] {browser, url});
          }
       }
    catch (Exception e) {
+  	  Debug.error("error on openURL: " + e.toString());
       JOptionPane.showMessageDialog(null, errMsg + ":\n" + e.toString()); //$NON-NLS-1$
       }
    }

@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
@@ -826,9 +828,10 @@ public class Person implements Cloneable, Serializable{
 
 	public String getGoogleLink() {
 		String loc = Main.getProperty("locale");
-		String googleLink = "http://maps.google.com/maps?f=q&hl="+ loc.substring(0, 2) +"&q=";
+		String googlePrefix = "http://maps.google.com/maps?f=q&hl="+ loc.substring(0, 2) +"&q=";
+		String googleLink = "";
 		PhoneNumber localNumber = null;
-		googleLink += HTMLUtil.stripEntities(street)+",+";
+		googleLink += HTMLUtil.stripEntities(street)+", ";
 
 		for (PhoneNumber number: numbers)
 		{
@@ -854,26 +857,31 @@ public class Person implements Cloneable, Serializable{
 		{
 			if(localNumber.getCountryCode().equals(ReverseLookup.GERMANY_CODE))
 			{
-				googleLink += HTMLUtil.stripEntities(ReverseLookupGermany.getCity(localNumber.getAreaNumber()))+",+";
+				googleLink += HTMLUtil.stripEntities(ReverseLookupGermany.getCity(localNumber.getAreaNumber()))+", ";
 			}
 			if(localNumber.getCountryCode().equals(ReverseLookup.AUSTRIA_CODE))
 			{
-				googleLink += HTMLUtil.stripEntities(ReverseLookupAustria.getCity(localNumber.getAreaNumber()))+",+";
+				googleLink += HTMLUtil.stripEntities(ReverseLookupAustria.getCity(localNumber.getAreaNumber()))+", ";
 			}
 			if(localNumber.getCountryCode().equals(ReverseLookup.USA_CODE))
 			{
-				googleLink += HTMLUtil.stripEntities(ReverseLookupUnitedStates.getCity(localNumber.getAreaNumber()))+",+";
+				googleLink += HTMLUtil.stripEntities(ReverseLookupUnitedStates.getCity(localNumber.getAreaNumber()))+", ";
 			}
 			if(localNumber.getCountryCode().equals(ReverseLookup.TURKEY_CODE))
 			{
-				googleLink += HTMLUtil.stripEntities(ReverseLookupTurkey.getCity(localNumber.getAreaNumber()))+",+";
+				googleLink += HTMLUtil.stripEntities(ReverseLookupTurkey.getCity(localNumber.getAreaNumber()))+", ";
 			}
 		}
 
 		googleLink += HTMLUtil.stripEntities(city);
 		if (localNumber != null) {
-			googleLink += HTMLUtil.stripEntities(",+" + localNumber.getCountry());
+			googleLink += HTMLUtil.stripEntities(", " + localNumber.getCountry());
 		}
-		return googleLink;
+		try {
+			googleLink = URLEncoder.encode(googleLink, "ISO-8859-1");
+		} catch (UnsupportedEncodingException e) {
+			Debug.error("Unsupported encoding in getGoogleLink: " + e.toString());
+		}
+		return googlePrefix+googleLink;
 	}
 }

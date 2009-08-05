@@ -279,8 +279,9 @@ public class JFritzUtils {
 	 * @return String with version and date of CVS Id-Tag
 	 */
 	public static String getVersionFromCVSTag(String tag) {
+//		"$Id: Main.java 43 2009-08-04 09:08:06Z robotniko $"
 		String[] parts = tag.split(" "); //$NON-NLS-1$
-		return "CVS v" + parts[2] + " (" + parts[3] + ")"; //$NON-NLS-1$, //$NON-NLS-2$,  //$NON-NLS-3$
+		return "SVN v" + parts[2] + " (" + parts[3] + ")"; //$NON-NLS-1$, //$NON-NLS-2$,  //$NON-NLS-3$
 	}
 
 	/**
