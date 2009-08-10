@@ -6,6 +6,7 @@ JFritz 0.7.3.17:
 - Änderung: Fallback auf UPnP um MAC-Adresse zu bestimmen.
 - Neu: Wenn keine MAC-Adresse bestimmt werden konnte, kommt nun eine Warnung.
 - Neu: Vorbereitung Anrufliste und Telefonbuch auf neues Interface um Client/Server zu überarbeiten.
+- Bugfix [0000234]: Beta-Version 7.3.7 startet nicht (Erkennung der ATA-Version) 
 New Strings: 
 mac_not_found
 

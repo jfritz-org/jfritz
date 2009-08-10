@@ -42,7 +42,7 @@
 		</fileset>
 	</path>
 
-	<target name="prepare" depends="getVersion, clean, build" description="Runs getVersion, clean and build of JFritz!">
+	<target name="prepare" depends="clean, build, getVersion" description="Runs getVersion, clean and build of JFritz!">
 	</target>
 
 	<target name="release-linux" depends="prepare" description="Creates a tar.gz-Release for Linux!">
