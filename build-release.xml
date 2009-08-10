@@ -91,10 +91,14 @@
 		<echo message="Prepared MAC-Release ${app.name} ${version}! Package it with TransMac and run the release-mac-Task afterwards." />
 	</target>
 
-	<target name="release-mac" depends="getVersion" description="Creates a DMG- and a ZIP-File for MacOS!">
+	<target name="release-mac" depends="prepare-mac, getVersion" description="Creates a DMG- and a ZIP-File for MacOS!">
+		<waitfor maxwait="15" maxwaitunit="minute" checkevery="10000">
+			<available file="${release}/mac/JFritz-${version}.dmg"/>
+		</waitfor>
+
 		<mkdir dir="${release}/mac/JFritz-${version}" />
 		<!-- copy new package to mac directory -->
-		<copy todir="${release}/mac/jfritz-${version}">
+		<copy todir="${release}/mac/JFritz-${version}">
 			<fileset dir="${release}/mac/">
 				<include name="**/JFritz-${version}.dmg" />
 			</fileset>
@@ -230,6 +234,7 @@
 		<scp file="${release}/linux/JFritz-${version}.tar.gz" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
 		<scp file="${release}/mac/JFritz-${version}/JFritz-${version}.dmg" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
 		<scp file="${dist}/Changelog.txt" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/beta" verbose="yes" password="${password2}"/>
+		<sshexec command="mv -f ./public/beta/JFritz* ./public/beta/old"  username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<sshexec command="mv -f ./public/JFritz-${version}-Beta-Win.zip ./public/beta" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<sshexec command="mv -f ./public/JFritz-${version}-Beta.zip ./public/beta" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<sshexec command="mv -f ./public/JFritz-${version}.tar.gz ./public/beta" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
