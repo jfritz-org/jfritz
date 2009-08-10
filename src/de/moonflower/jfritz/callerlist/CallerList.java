@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -66,7 +65,7 @@ import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
  */
 public class CallerList extends AbstractTableModel
 		implements LookupObserver, PhoneBookListener, IProgressListener,
-		BoxCallBackListener {
+		BoxCallBackListener, CallerListInterface {
 	private static final long serialVersionUID = 1;
 
 	private static final String CALLS_DTD_URI = "http://jfritz.moonflower.de/dtd/calls.dtd"; //$NON-NLS-1$
@@ -155,7 +154,8 @@ public class CallerList extends AbstractTableModel
 		sortColumn = 1;
 	}
 
-	/**CallerListListeners are used to passively catch changes to the
+	/**
+	 * CallerListListeners are used to passively catch changes to the
 	 * data in the call list
 	 *
 	 * @param l the listener to be added
@@ -172,22 +172,6 @@ public class CallerList extends AbstractTableModel
 	 */
 	public synchronized void removeListener(final CallerListListener listener){
 		callListListeners.remove(listener);
-	}
-
-	/**
-	 *
-	 * @return Unfiltered Vector of Calls
-	 */
-	public Vector<Call> getUnfilteredCallVector() {
-		return unfilteredCallerData;
-	}
-
-	/**
-	 *
-	 * @return Filtered Vector of Calls
-	 */
-	public Vector<Call> getFilteredCallVector() {
-		return filteredCallerData;
 	}
 
 	/**
@@ -411,18 +395,6 @@ public class CallerList extends AbstractTableModel
 	}
 
 	/**
-	 * Removes all duplicate whitespaces from inputStr
-	 *
-	 * @param inputStr
-	 * @return outputStr
-	 */
-	public synchronized static String removeDuplicateWhitespace(String inputStr) {
-		Pattern p = Pattern.compile("\\s+"); //$NON-NLS-1$
-		Matcher matcher = p.matcher(inputStr);
-		return matcher.replaceAll(" "); //$NON-NLS-1$
-	}
-
-	/**
 	 * Adds an entry to the call list
 	 * Note: After all import processes make sure to call fireUpdateCallVector()
 	 *
@@ -487,6 +459,11 @@ public class CallerList extends AbstractTableModel
 		}
 	}
 
+	/**
+	 * Adapts incoming list of calls.
+	 * Removes all elements which are already in our unfilteredCallerData from newCalls.
+	 * @param newCalls
+	 */
 	private void filterNewCalls(Vector<Call> newCalls)
 	{
 		Vector<Call> copyCalls = (Vector<Call>) unfilteredCallerData.clone();
@@ -2229,5 +2206,42 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 		{
 			return false;
 		}
+	}
+
+	public Call getFilteredCall(int index) {
+		return filteredCallerData.get(index);
+	}
+
+	public Call getUnfilteredCall(int index) {
+		return filteredCallerData.get(index);
+	}
+
+	public Vector<String> getUsedProviderList() {
+		Vector<String> providers = new Vector<String>(10);
+		for (Call call: unfilteredCallerData)
+		{
+			if (!providers.contains(call.getRoute()))
+			{
+				providers.add(call.getRoute());
+			}
+		}
+		return providers;
+	}
+
+	public Vector<String> getUsedPortsList() {
+		Vector<String> ports = new Vector<String>(10);
+		for (Call call: unfilteredCallerData)
+		{
+			if (!ports.contains(call.getPort().getName())
+					&& (!call.getPort().getName().equals("")))
+			{
+				ports.add(call.getPort().getName());
+			}
+		}
+		return ports;
+	}
+
+	public Vector<Call> getUnfilteredCallVector() {
+		return unfilteredCallerData;
 	}
 }

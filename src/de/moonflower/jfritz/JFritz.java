@@ -53,6 +53,7 @@ import de.moonflower.jfritz.tray.SwingTray;
 import de.moonflower.jfritz.tray.Tray;
 import de.moonflower.jfritz.tray.TrayMenu;
 import de.moonflower.jfritz.tray.TrayMenuItem;
+import de.moonflower.jfritz.utils.ComplexJOptionPaneMessage;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -200,20 +201,50 @@ public final class JFritz implements  StatusListener, ItemListener {
 		String macStr = Main.getProperty("box.mac");
 		if ((!("".equals(macStr))
 		&& ( !("".equals(fritzBox.getMacAddress())))
-		&& (fritzBox.getMacAddress() != null)
-		&& ( !(macStr.equals(fritzBox.getMacAddress())))))
+		&& (fritzBox.getMacAddress() != null)))
 		{
-			int answer = JOptionPane.showConfirmDialog(null,
-					Main.getMessage("new_fritzbox") + "\n" //$NON-NLS-1$
-							+ Main.getMessage("accept_fritzbox_communication"), //$NON-NLS-1$
-					Main.getMessage("information"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
+			ComplexJOptionPaneMessage msg = null;
+			int answer = JOptionPane.YES_OPTION;
+			if (Main.getMessage("unknown").equals(fritzBox.getMacAddress()))
+			{
+				Debug.info("MAC-Address could not be determined. Ask user how to proceed..."); //$NON-NLS-1$
+				msg = new ComplexJOptionPaneMessage("legalInfo.macNotFound",
+						Main.getMessage("mac_not_found") + "\n"
+						+ Main.getMessage("accept_fritzbox_communication")); //$NON-NLS-1$
+				if (msg.showDialogEnabled()) {
+					answer = JOptionPane.showConfirmDialog(null,
+							msg.getComponents(),
+							Main.getMessage("information"), JOptionPane.YES_NO_OPTION);
+					if (answer == JOptionPane.YES_OPTION)
+					{
+						msg.saveProperty();
+						Main.saveStateProperties();
+					}
+				}
+			} else if ( !(macStr.equals(fritzBox.getMacAddress())))
+			{
+				Debug.info("New FRITZ!Box detected. Ask user how to proceed..."); //$NON-NLS-1$
+				msg = new ComplexJOptionPaneMessage("legalInfo.newBox",
+						Main.getMessage("new_fritzbox") + "\n"
+						+ Main.getMessage("accept_fritzbox_communication")); //$NON-NLS-1$
+				if (msg.showDialogEnabled()) {
+					answer = JOptionPane.showConfirmDialog(null,
+							msg.getComponents(),
+							Main.getMessage("information"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
+					if (answer == JOptionPane.YES_OPTION)
+					{
+						msg.saveProperty();
+						Main.saveStateProperties();
+					}
+				}
+			}
 			if (answer == JOptionPane.YES_OPTION) {
-				Debug.info("New FritzBox detected, user decided to accept connection."); //$NON-NLS-1$
+				Debug.info("User decided to accept connection."); //$NON-NLS-1$
 				Main.setProperty("box.mac", fritzBox.getMacAddress());
 				Main.saveConfigProperties();
 				result = 0;
 			} else {
-				Debug.info("New FritzBox detected, user decided to prohibit connection."); //$NON-NLS-1$
+				Debug.info("User decided to prohibit connection."); //$NON-NLS-1$
 				result = -1;
 			}
 		}

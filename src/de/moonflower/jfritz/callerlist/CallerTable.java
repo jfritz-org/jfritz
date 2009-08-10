@@ -287,7 +287,7 @@ public class CallerTable extends JTable {
 			double selectedCallsTotalMinutes = 0;
 
 			for (int i = 0; i < rows.length; i++) { // sum the durations
-				call = callerList.getFilteredCallVector().get(rows[i]);
+				call = callerList.getFilteredCall(rows[i]);
 				selectedCallsTotalMinutes += call.getDuration();
 			}
 			if ( selectedCalls > 0 )
@@ -318,7 +318,7 @@ public class CallerTable extends JTable {
 		Call currentCall = null;
 		for (int i=0; i<selectedCalls; i++)
 		{
-			currentCall = callerList.getFilteredCallVector().get(rows[i]);
+			currentCall = callerList.getFilteredCall(rows[i]);
 			currentPerson = JFritz.getPhonebook().findPerson(currentCall);
 			if ( currentPerson != null )
 			{

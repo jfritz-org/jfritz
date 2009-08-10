@@ -59,8 +59,11 @@ public class FritzBox extends BoxClass {
 	private final static String POSTDATA_QUERY = "getpage=../html/query.txt";
 
 	private final static String PARSE_LOGIN_REASON = "var theReason = parseInt\\(\"([^\"]*)\",10\\)";
+	// <UDN>uuid:75802409-bccb-40e7-8e6c-MACADDRESS</UDN>
+	private final static String PARSE_MAC_ADDRESS = "<UDN>uuid:([^<]*)</UDN>";
 
 	private final static String QUERY_GET_MAC_ADDRESS = "env:settings/macdsl";
+	private final static String QUERY_GET_LOCALTIME = "box:status/localtime";
 
 	private final static String QUERY_CALLS_REFRESH = "telcfg:settings/RefreshJournal";
 	private final static String QUERY_NUM_CALLS = "telcfg:settings/Journal/count";
@@ -236,7 +239,7 @@ public class FritzBox extends BoxClass {
 	private final void detectQueryMethod()
 	{
 		Vector<String> query = new Vector<String>();
-		query.add(QUERY_GET_MAC_ADDRESS);
+		query.add(QUERY_GET_LOCALTIME);
 		Vector<String> response = new Vector<String>();
 		if (((response = getQueryOld(query)).size() != 0)
 			&& (!"".equals(response.get(0))))
@@ -558,7 +561,12 @@ public class FritzBox extends BoxClass {
 		}
 		else
 		{
-			macAddress = Main.getMessage("unknown");
+			setBoxConnected();
+			macAddress = getMacFromUPnP();
+			if ("".equals(macAddress))
+			{
+				macAddress = Main.getMessage("unknown");
+			}
 		}
 	}
 
@@ -1496,6 +1504,58 @@ public class FritzBox extends BoxClass {
 				URL_SERVICE_GENERICPORTMAPPING, URN_SERVICE_GENERICPORTMAPPING, xml);
 
 //		Debug.msg("Result of getGenericPortMappingEntry: "+ result);
+	}
+
+	public String getMacFromUPnP() {
+		String mac = "";
+		Vector<String> response = new Vector<String>();
+		if (firmware != null)
+		{
+			final String urlstr = "http://" + address +":49000/igddesc.xml"; //$NON-NLS-1$, //$NON-NLS-2$
+
+			try {
+				response = JFritzUtils.fetchDataFromURLToVector(name, urlstr, null, true);
+			} catch (WrongPasswordException e) {
+				Debug.debug("Wrong password, maybe SID is invalid.");
+				setBoxDisconnected();
+			} catch (SocketTimeoutException ste) {
+				ste.printStackTrace();
+				setBoxDisconnected();
+			} catch (IOException e) {
+				e.printStackTrace();
+				setBoxDisconnected();
+			} catch (Exception e) {
+				e.printStackTrace();
+				setBoxDisconnected();
+			}
+
+			if (response.size() != 0)
+			{
+				Pattern p = Pattern.compile(PARSE_MAC_ADDRESS);
+				for (int i=0; i<response.size(); i++)
+				{
+					Matcher m = p.matcher(response.get(i));
+					if (m.find())
+					{
+						String resp = m.group(1);
+						int idx = resp.lastIndexOf("-");
+						String macTmp = resp.substring(idx+1);
+						for (int j=0; j<macTmp.length(); j++) {
+							mac = mac + macTmp.charAt(j);
+							if ((j != 0)
+								&& (j != macTmp.length()-1)
+								&& ((j-1)%2 == 0))
+							{
+								mac = mac.concat(":");
+							}
+						}
+						break;
+					}
+				}
+			}
+		}
+
+		return mac;
 	}
 
 	/**************************************************************************************

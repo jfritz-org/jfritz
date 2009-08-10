@@ -24,6 +24,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -35,8 +36,8 @@ import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.CallPendingDialog;
+import de.moonflower.jfritz.utils.ComplexJOptionPaneMessage;
 import de.moonflower.jfritz.utils.Debug;
-import de.moonflower.jfritz.utils.NoticeDialog;
 
 /**
  * @author Robert Palmer
@@ -94,12 +95,22 @@ public class CallDialog extends JDialog implements ActionListener {
 	}
 
 	private void drawDialog() {
-		NoticeDialog info = new NoticeDialog(
+		int answer = JOptionPane.YES_OPTION;
+		ComplexJOptionPaneMessage msg = new ComplexJOptionPaneMessage(
                 "legalInfo.telephoneCharges", //$NON-NLS-1$
 				Main.getMessage("telefonCharges_Warning")); //$NON-NLS-1$
 
-		info.dispose();
-		if (info.isAccepted()) {
+		if (msg.showDialogEnabled()) {
+			answer = JOptionPane.showConfirmDialog(null,
+					msg.getComponents(),
+					Main.getMessage("information"), JOptionPane.YES_NO_OPTION);
+			if (answer == JOptionPane.YES_OPTION) {
+				msg.saveProperty();
+				Main.saveStateProperties();
+			}
+		}
+
+		if (answer == JOptionPane.YES_OPTION) {
 			super.dialogInit();
 			setTitle(Main.getMessage("call")); //$NON-NLS-1$
 			// this.setAlwaysOnTop(true); //erst ab Java V.5.0 möglich

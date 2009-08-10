@@ -1,0 +1,34 @@
+﻿Hallo Beta-Tester,
+
+wir brauchen erneut Eure Unterstützung und bitten Euch, die aktuelle Beta-Version
+von JFritz zu testen. 
+
+Changelog: http://jfritz.robotniko.de/beta/Changelog.txt
+
+Die aktuelle Beta-Version kannst Du hier runterladen:
+
+Für Windows:
+Installer: http://jfritz.robotniko.de/beta/JFritz-${version}-Beta-Win.zip
+ZIP: http://jfritz.robotniko.de/beta/JFritz-${version}-Beta-Win.zip				
+
+Für alle anderen Plattformen:
+http://jfritz.robotniko.de/beta/JFritz-${version}-Beta.zip
+
+
+Bugs bitte wie gehabt in Mantis melden:
+http://jfritz.robotniko.de/mantis/main_page.php
+
+Bitte schaut auch mal nach, ob ihr zu euren alten Bugmeldungen oder zu anderen Bugs neue Informationen liefern könnt.
+
+*** Achtung ***:
+Es handelt sich um eine Beta-Version, die Du bitte nicht weiter verteilen
+sollst. Auch empfehlen wir, daß Du einen Backup deiner JFritz-Daten vorher
+machst, denn man weiß ja nie. In unseren Tests gingen bisher nie Daten kaputt
+oder verloren, aber sicher ist sicher.
+
+Wir bedanken uns recht herzlich für Deine Hilfe und wünschen Dir viel Spaß beim Testen
+Rainer und Robert
+
+
+PS: Wenn wir Dich aus der Beta-Testerliste streichen sollen, reicht eine einfache
+    Antwort auf diese Email mit dem Wort "delete" im Betreff oder Text.

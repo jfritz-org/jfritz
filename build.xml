@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="JFritz" default="build" basedir=".">
+	<import file="build-release-pwd.xml" />
 
 	<property name="app.name" value="JFritz" />
 	<property name="version" value="unknown" />
@@ -35,7 +36,6 @@
 	<property name="release" value="${home}/release" />
 	<property name="jfritzdir" value="D:\Programme\JFritz" />
 
-
 	<!-- include all jars in lib to classpath -->
 	<path id="build.classpath">
 		<fileset dir="${lib}">
@@ -52,6 +52,10 @@
 		</fileset>
 	</path>
 
+	<target name="getVersion">
+		<taskdef name="GetJFritzVersion" classname="de.moonflower.jfritz.ant.GetJFritzVersion" classpathref="test.classpath" />
+		<GetJFritzVersion/>
+	</target>
 
 	<target name="init" description="Show startup informations">
 		<echo message="ant version:   ${ant.version}" />
@@ -63,7 +67,7 @@
 		<echo message="   project source:	${src}" />
 		<echo message="   ---------------------------------------------------------------" />
 		<echo message="" />
-		<echo message="Building ${app.name}..." />
+		<echo message="Building ${app.name} ..." />
 	</target>
 
 	<target name="update" description="Calls 'cvs update'-command">
@@ -81,23 +85,7 @@
 		<mkdir dir="${build}" />
 		<mkdir dir="${build.classes}" />
 		<javac srcdir="${src}" destdir="${build.classes}" classpathref="build.classpath" debug="${javac.debug}" optimize="${javac.optimize}" source="${javac.version}" target="${javac.version}" encoding="iso-8859-1" />
-		<taskdef name="GetJFritzVersion" classname="de.moonflower.jfritz.ant.GetJFritzVersion" classpathref="test.classpath" />
-		<GetJFritzVersion/>
-		<echo message="${app.name} - ${version} compiled!" />
 	</target>
-
-	<target name="CallSim" description="Create a jar of my call simulator">
-	    <mkdir dir="${buildcallsim}" />
-		<javac srcdir="${src}/de/moonflower/jfritz/utils/callsimulator/" destdir="${buildcallsim}" />
-		<jar jarfile="${buildcallsim}/callsim.jar" update="yes">
-			<fileset dir="${buildcallsim}">
-				<include name="**/de/moonflower/jfritz/utils/callsimulator/*.*" />
-			</fileset>
-			<manifest>
-				<attribute name="Main-Class" value="de.moonflower.jfritz.utils.callsimulator.CallSimulator" />
-			</manifest>
-		</jar>
-    </target>
 
 	<target name="build" depends="jar" description="Generates runnable version of JFritz in directory dist">
 
@@ -157,7 +145,7 @@
 		</copy>
 	</target>
 
-	<target name="jar" depends="compile" description="Generates jar files">
+	<target name="jar" depends="compile, getVersion" description="Generates jar files">
 		<!-- copy ThreeStateButton ressource-files -->
 		<copy todir="${build.classes}/de/moonflower/jfritz/utils/threeStateButton/images">
 			<fileset dir="${src}/de/moonflower/jfritz/utils/threeStateButton/images" />
@@ -213,7 +201,7 @@
 
 	</target>
 
-	<target name="junit" depends="compile" description="Runs all test cases and generate report">
+	<target name="junit" depends="compile, getVersion" description="Runs all test cases and generate report">
 		<mkdir dir="${build.unittests}" />
 		<mkdir dir="${build.unittests.reports}" />
 		<mkdir dir="${build.unittests.reports}/html" />
@@ -322,24 +310,16 @@
 		<delete dir="${binaries-archive}/tmp" />
 	</target>
 
-	<target name="copyToFritzDir" depends="build" description="Copy files to JFritz installation directory">
-		<mkdir dir="${jfritzdir}" />
-		<!-- copy all jar files -->
-		<copy todir="${jfritzdir}">
-			<fileset dir="${build}">
-				<include name="**/*.jar" />
+	<target name="CallSim" description="Create a jar of my call simulator">
+	    <mkdir dir="${buildcallsim}" />
+		<javac srcdir="${src}/de/moonflower/jfritz/utils/callsimulator/" destdir="${buildcallsim}" />
+		<jar jarfile="${buildcallsim}/callsim.jar" update="yes">
+			<fileset dir="${buildcallsim}">
+				<include name="**/de/moonflower/jfritz/utils/callsimulator/*.*" />
 			</fileset>
-		</copy>
-		<copy file="dist/jacob.dll" todir="${jfritzdir}" />
-		<mkdir dir="${jfritzdir}/lang" />
-		<copy todir="${jfritzdir}/lang">
-			<fileset dir="lang">
-			</fileset>
-		</copy>
-		<mkdir dir="${jfritzdir}/lib" />
-		<copy todir="${jfritzdir}/lib">
-			<fileset dir="lib">
-			</fileset>
-		</copy>
-	</target>
+			<manifest>
+				<attribute name="Main-Class" value="de.moonflower.jfritz.utils.callsimulator.CallSimulator" />
+			</manifest>
+		</jar>
+    </target>
 </project>

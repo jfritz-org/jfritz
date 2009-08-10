@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="JFritz-Release" default="scp-update-beta" basedir=".">
 	<import file="build-release-pwd.xml" />
+	<import file="build.xml" />
 
 	<property name="product" value="JFritz" />
 	<property name="version" value="unknown" />
@@ -36,21 +37,15 @@
 		<path refid="build.classpath" />
 		<pathelement location="${build.classes}" />
 		<pathelement location="${build.unittests}" />
-		<fileset dir="${build.jars}">
+		<fileset dir="${build}">
 			<include name="*.jar" />
 		</fileset>
 	</path>
 
-	<target name="prepare-docs">
-		<ant antfile="build.xml" dir="." target="clean" />
-		<ant antfile="build.xml" dir="." target="build" />
-		<taskdef name="GetJFritzVersion" classname="de.moonflower.jfritz.ant.GetJFritzVersion" classpathref="helper.classpath" />
-		<GetJFritzVersion/>
-		<echo message="${app.name} - ${version} compiled!" />
+	<target name="prepare" depends="getVersion, clean, build" description="Runs getVersion, clean and build of JFritz!">
 	</target>
 
-	<target name="release-linux" depends="prepare-docs">
-		<ant antfile="build.xml" dir="." target="build" />
+	<target name="release-linux" depends="prepare" description="Creates a tar.gz-Release for Linux!">
 		<delete dir="${release}/linux" />
 		<mkdir dir="${release}" />
 		<mkdir dir="${release}/linux" />
@@ -63,80 +58,58 @@
 		</copy>
 
 		<tar tarfile="${release}/linux/jfritz-${version}.tar" basedir="${release}/linux" />
-		<gzip src="${release}/linux/jfritz-${version}.tar" destfile="${release}/linux/jfritz-${version}.tar.gz" />
+		<gzip src="${release}/linux/jfritz-${version}.tar" destfile="${release}/linux/JFritz-${version}.tar.gz" />
 		<delete dir="${release}/linux/jfritz-${version}" />
 		<delete file="${release}/linux/jfritz-${version}.tar" />
 	</target>
 
-	<target name="release-mac-package" depends="prepare-docs">
-	    <property name="jar"      location="${dist}/${product}.jar"/>
-	    <property name="bundle"   location="${release}/Mac/${product}.app"/>
-		<property name="contents" location="${bundle}/Contents"/>
-		<property name="resources" location="${contents}/Resources"/>
-	    <property name="macos"    location="${contents}/MacOS"/>
-		<property name="java"      location="${resources}/Java"/>
-
-		<mkdir dir="${release}/mac"/>
-        <mkdir dir="${macos}"/>
-        <mkdir dir="${java}"/>
-        <copy todir="${macos}" file="../Release-templates/mac-new/JavaApplicationStub"/>
-        <copy todir="${contents}" file="../Release-templates/mac-new/Info.plist">
-            <filterset>
-                <filter token="PRODUCT" value="${product}"/>
-            </filterset>
-        </copy>
-        <echo file="${contents}/PkgInfo" append="false" message="APPL????"/>
-        <copy todir="${resources}" file="../Release-templates/mac-new/${product}.icns"/>
-        <copy todir="${java}" file="${jar}"/>
-        <chmod file="${stub}" perm="755"/>
-	</target>
-
-	<!-- TODO: Überarbeiten auf den MAC-Installer von 0.6.1 -->
-	<target name="release-mac" depends="prepare-docs">
-		<ant antfile="build.xml" dir="." target="build" />
+	<target name="prepare-mac" depends="prepare" description="Copy new JFritz files to Mac-Template!">
 		<delete dir="${release}/mac" />
 		<mkdir dir="${release}" />
 		<mkdir dir="${release}/mac" />
 		<mkdir dir="${release}/mac/tmp" />
 
-		<!-- copy mac-files to release directory -->
+		<!-- copy mac-template to release directory -->
 		<copy todir="${release}/mac/tmp">
-			<fileset dir="../Release/MAC">
+			<fileset dir="../../Release/MAC/Vorlage">
 			</fileset>
 		</copy>
 
-		<!-- modify mac-files -->
-		<move file="${release}/mac/tmp/__MACOSX/jfritz-VERSION" tofile="${release}/mac/tmp/__MACOSX/jfritz-${version}" />
-		<move file="${release}/mac/tmp/jfritz-VERSION" tofile="${release}/mac/tmp/jfritz-${version}" />
+		<!-- copy actual changelog -->
+		<copy todir="${release}/mac/tmp">
+			<fileset dir="${dist}">
+				<include name="**/Changelog.txt" />
+			</fileset>
+		</copy>
 
-		<!-- copy new jfritz-files to mac directory -->
-		<copy file="${dist}/JFritz-Handbuch.pdf" todir="${release}/mac/tmp/jfritz-${version}" />
-		<copy todir="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java">
+		<!-- copy application files -->
+		<copy todir="${release}/mac/tmp/JFritz.app/Contents/Resources/Java">
 			<fileset dir="${dist}">
 			</fileset>
 		</copy>
-		<delete file="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java/JFritz-Handbuch.pdf" />
-		<delete file="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java/jacob.dll" />
-		<delete file="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java/lib/jacob.jar" />
-		<delete dir="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java/lib/windows" />
-		<delete dir="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java/lib/sunos" />
-		<delete dir="${release}/mac/tmp/jfritz-${version}/JFritz.app/Contents/Resources/Java/lib/linux" />
 
-		<!-- zip mac directorys and delete temporary files -->
-		<zip destfile="${release}/mac/jfritz-${version}-MAC.zip" basedir="${release}/mac/tmp" />
-		<delete dir="${release}/mac/tmp" />
-
+		<echo message="Prepared MAC-Release ${app.name} ${version}! Package it with TransMac and run the release-mac-Task afterwards." />
 	</target>
 
-	<target name="release-win" depends="prepare-docs">
-		<ant antfile="build.xml" dir="." target="build" />
+	<target name="release-mac" depends="getVersion" description="Creates a DMG- and a ZIP-File for MacOS!">
+		<mkdir dir="${release}/mac/JFritz-${version}" />
+		<!-- copy new package to mac directory -->
+		<copy todir="${release}/mac/jfritz-${version}">
+			<fileset dir="${release}/mac/">
+				<include name="**/JFritz-${version}.dmg" />
+			</fileset>
+		</copy>
+		<delete file="${release}/mac/JFritz-${version}.dmg" />
+		<delete dir="${release}/mac/tmp" />
+	</target>
 
+	<target name="release-win" depends="prepare" description="Creates Setup- and ZIP-File for Windows!">
 		<delete dir="${release}/win" />
 		<mkdir dir="${release}" />
 		<mkdir dir="${release}/win" />
 		<mkdir dir="${release}/win/tmp" />
 
-		<!-- copy win-files to release directory -->
+		<!-- copy win template to release directory -->
 		<copy todir="${release}/win/tmp">
 			<fileset dir="../../Release/WIN">
 			</fileset>
@@ -184,8 +157,7 @@
 		<delete dir="${release}/win/tmp" />
 	</target>
 
-	<target name="prepare-updatefiles" depends="prepare-docs" description="Prepares files for creating update file">
-		<ant antfile="build.xml" dir="." target="build" />
+	<target name="prepare-updatefiles" depends="prepare" description="Prepares files for creating update file">
 		<copy todir="${build.resources}/lang/lang">
 			<fileset dir="${dist}/lang" />
 		</copy>
@@ -252,13 +224,17 @@
 		<delete dir="${build.resources}" />
 	</target>
 
-	<target name="scp-beta" depends="release-linux, release-win" description="Copy windows- and linux release files to jfritz.robotniko.de/beta">
+	<target name="scp-beta" depends="release-linux, release-win, release-mac" description="Copy windows-, linux and mac release files to jfritz.robotniko.de/beta">
 		<scp file="${release}/win/JFritz-${version}-Beta-Win.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
 		<scp file="${release}/win/JFritz-${version}-Beta.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
+		<scp file="${release}/linux/JFritz-${version}.tar.gz" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
+		<scp file="${release}/mac/JFritz-${version}/JFritz-${version}.dmg" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
 		<scp file="${dist}/Changelog.txt" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/beta" verbose="yes" password="${password2}"/>
 		<sshexec command="mv -f ./public/JFritz-${version}-Beta-Win.zip ./public/beta" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<sshexec command="mv -f ./public/JFritz-${version}-Beta.zip ./public/beta" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
-		<sshexec command="unzip ./public/beta/JFritz-${version}-Beta-Win.zip -d ./public/beta/" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
+		<sshexec command="mv -f ./public/JFritz-${version}.tar.gz ./public/beta" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
+		<sshexec command="mv -f ./public/JFritz-${version}.dmg ./public/beta" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
+		<sshexec command="unzip -o ./public/beta/JFritz-${version}-Beta-Win.zip -d ./public/beta/" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 	</target>
 
 	<target name="scp-update-beta" depends="create-updatefiles" description="Uploads update files to jfritz.robotniko.de/update">
@@ -293,7 +269,31 @@
 		  </ftp>
 	</target>
 
-	<target name="release-all" depends="prepare-docs, release-linux, release-win, create-updatefiles">
+	<target name="release-all" depends="prepare, release-mac, release-linux, release-win, create-updatefiles">
+	</target>
+
+	<target name="jabber-msg" depends="getVersion">
+		  <taskdef name="jabber" classname="com.tfftech.ant.taskdefs.im.jabber.JabberTask" />
+		  <jabber host="robotniko.de" port="25222" from="${jabber-user}" password="${jabber-pwd}"
+		  	tolist="${jabber-rcp1},${jabber-rcp2}">
+		  	<message>Neue Version ${version} ist online: http://jfritz.robotniko.de/beta/</message>
+		  </jabber>
+	</target>
+
+	<target name="email-msg" depends="getVersion">
+		<mail
+			mailhost="${mailhost}"
+			mailport="${mailport}"
+			ssl="on"
+			user="${mailuser}"
+			password="${mailpwd}"
+			charset="utf-8"
+			from="${mailuser}"
+			replyto="${mailuser}"
+			messagefile="NewVersionMail.txt"
+			subject="JFritz: Neue Version ${version} verfügbar!">
+			<to address="${mail-rcp1}" />
+		</mail>
 	</target>
 
 </project>

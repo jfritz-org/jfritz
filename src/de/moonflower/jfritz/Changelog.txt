@@ -1,5 +1,14 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 
+JFritz 0.7.3.17:
+- Änderung: Log-Severity wieder auf DEBUG angehoben.
+- Änderung: Query-Methode wird nun über box.localtime bestimmt.
+- Änderung: Fallback auf UPnP um MAC-Adresse zu bestimmen.
+- Neu: Wenn keine MAC-Adresse bestimmt werden konnte, kommt nun eine Warnung.
+- Neu: Vorbereitung Anrufliste und Telefonbuch auf neues Interface um Client/Server zu überarbeiten.
+New Strings: 
+mac_not_found
+
 JFritz 0.7.3.16:
 - Bugfix [0000191]: Rufnummerübergabe an Wählhilfe funktioniert nicht (für Telefonbuch)
 - Bugfix [0000246]: Aufruf von Google-Maps funktioniert auf dem Mac nicht. 

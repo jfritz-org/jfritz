@@ -619,14 +619,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 						msnPopupMenu = null;
 					}
 					msnPopupMenu = new CheckboxPopupMenu(JFritz.getJframe());
-					Vector<String> providers = new Vector<String>(10);
-					for (Call call: callerList.getUnfilteredCallVector())
-					{
-						if (!providers.contains(call.getRoute()))
-						{
-							providers.add(call.getRoute());
-						}
-					}
+					Vector<String> providers = callerList.getUsedProviderList();
 					msnPopupMenu.setObjects(providers);
 					Vector<String> filteredMSNs = new Vector<String>();
 					JFritzUtils.fillVectorByString(filteredMSNs, CallFilter.FILTER_SIP_PROVIDERS, ";");
@@ -683,15 +676,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 						portPopupMenu = null;
 					}
 					portPopupMenu = new CheckboxPopupMenu(JFritz.getJframe());
-					Vector<String> ports = new Vector<String>(10);
-					for (Call call: callerList.getUnfilteredCallVector())
-					{
-						if (!ports.contains(call.getPort().getName())
-								&& (!call.getPort().getName().equals("")))
-						{
-							ports.add(call.getPort().getName());
-						}
-					}
+					Vector<String> ports = callerList.getUsedPortsList();
 					portPopupMenu.setObjects(ports);
 					Vector<String> filteredPorts = new Vector<String>();
 					JFritzUtils.fillVectorByString(filteredPorts, CallFilter.FILTER_PORT_LIST, ";");
@@ -947,14 +932,11 @@ public class CallerListPanel extends JPanel implements ActionListener,
 					// selected rows
 					int[] rows = callerTable.getSelectedRows();
 					// min und max bestimmen
-					Date min = (callerList.getFilteredCallVector().get(
-							rows[0])).getCalldate();
-					Date max = (callerList.getFilteredCallVector().get(
-							rows[0])).getCalldate();
+					Date min = (callerList.getFilteredCall(rows[0])).getCalldate();
+					Date max = (callerList.getFilteredCall(rows[0])).getCalldate();
 					Date current;
 					for (int i = 0; i < rows.length; i++) {
-						current = (callerList.getFilteredCallVector()
-								.get(rows[i])).getCalldate();
+						current = (callerList.getFilteredCall(rows[i])).getCalldate();
 						if (current.before(min)) {
 							min = current;
 						}
@@ -1702,7 +1684,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		if ((rows.length == 0) || (rows.length > 1)) {
 			updateGoogleItem(false);
 		} else {
-			Call call = JFritz.getCallerList().getFilteredCallVector().get(rows[0]);
+			Call call = JFritz.getCallerList().getFilteredCall(rows[0]);
 			Person person = JFritz.getPhonebook().findPerson(call);
 			if (person != null) {
 				updateGoogleItem(true);

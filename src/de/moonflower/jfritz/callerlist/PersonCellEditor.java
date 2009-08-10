@@ -54,7 +54,7 @@ public class PersonCellEditor extends AbstractCellEditor implements
 			strval = person.getFullname();
 		} else {
 			person = new Person();
-			Call c = (Call) callerList.getFilteredCallVector().get(row);
+			Call c = (Call) callerList.getFilteredCall(row);
 			c.getPhoneNumber().setType();
 			person.addNumber(c.getPhoneNumber());
 		}

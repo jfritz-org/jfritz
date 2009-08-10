@@ -19,5 +19,6 @@
 	<classpathentry kind="lib" path="lib/bsf-2.3.0.jar"/>
 	<classpathentry kind="lib" path="lib/looks-2.1.4.jar"/>
 	<classpathentry kind="lib" path="lib-dev/ant.jar"/>
+	<classpathentry kind="lib" path="lib-dev/imtask.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

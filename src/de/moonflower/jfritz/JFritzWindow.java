@@ -1094,7 +1094,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				if (this.getCallerTable().getSelectedRowCount() == 1)
 				{
 					int index = this.getCallerTable().getSelectedRow();
-					Call call = this.getCallerListPanel().getCallerList().getFilteredCallVector().get(index);
+					Call call = this.getCallerListPanel().getCallerList().getFilteredCall(index);
 					number = call.getPhoneNumber();
 				}
 				else {
