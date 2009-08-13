@@ -64,7 +64,7 @@ public class FritzBox extends BoxClass {
 
 	private final static String QUERY_GET_MAC_ADDRESS = "env:settings/macdsl";
 	private final static String QUERY_GET_VERSION = "logic:status/nspver";
-	private final static String QUERY_REBOOT = "logic:command/reboot=1";
+	private final static String QUERY_EXTERNAL_IP = "connection0:status/ip";
 
 	private final static String QUERY_CALLS_REFRESH = "telcfg:settings/RefreshJournal";
 	private final static String QUERY_NUM_CALLS = "telcfg:settings/Journal/count";
@@ -570,6 +570,19 @@ public class FritzBox extends BoxClass {
 			{
 				macAddress = Main.getMessage("unknown");
 			}
+		}
+	}
+
+	public String getExternalIP() {
+		Vector<String> query = new Vector<String>();
+		query.add(QUERY_EXTERNAL_IP);
+
+		Vector<String> response = getQuery(query);
+		if (response.size() == 1) {
+			return response.get(0);
+		}
+		else {
+			return "No external IP";
 		}
 	}
 
@@ -1520,14 +1533,6 @@ public class FritzBox extends BoxClass {
 
 		UPNPUtils.getSOAPData("http://" + getAddress() +
 				URL_SERVICE_FORCETERMINATION, URN_SERVICE_FORCETERMINATION, xml);
-	}
-
-	public void rebootBox()
-	{
-		Vector<String> query = new Vector<String>();
-		query.add(QUERY_REBOOT);
-
-		Vector<String> response = getQuery(query);
 	}
 
 	public String getMacFromUPnP() {

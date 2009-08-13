@@ -287,7 +287,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 					else if(actionRequest.action == ClientActionRequest.ActionType.deleteListFromBox
 							&& login.allowDeleteList){
 						Debug.netMsg("Received request to delete the list from the box from "+remoteAddress);
-						JFritz.getJframe().fetchList(true);
+						JFritz.getJframe().fetchList(null, true);
 					}
 					else if(actionRequest.action == ClientActionRequest.ActionType.doCall
 							&& login.allowDoCall){

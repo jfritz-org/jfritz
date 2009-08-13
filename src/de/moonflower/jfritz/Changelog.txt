@@ -1,5 +1,11 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 
+JFritz 0.7.3.19:
+- Neu: Boxen über Tray-Menü steuerbar (Abholen der Anrufliste, Erneuern der WAN-IP)
+- Bugfix: Tray unter Java 1.6 beim wechseln der Sprache nicht mehr verfügbar.
+New Strings:
+renew_ip
+
 JFritz 0.7.3.18:
 - Änderung: Query-Methode wird nun über logic:status/nspver bestimmt.
 Changed Strings:

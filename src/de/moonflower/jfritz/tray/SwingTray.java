@@ -55,24 +55,8 @@ public class SwingTray implements Tray {
         	Debug.error(ex.toString());
         }
 
-        trayParent = new JDialog();
-        trayParent.setSize(0, 0);
-        trayParent.setUndecorated(true);
-        trayParent.setAlwaysOnTop(true);
-        trayParent.setVisible(false);
-
         //ClassCastException fix
         Toolkit.getDefaultToolkit().getSystemEventQueue().push( new PopupFixQueue(popupMenu) );
-
-        tray = SystemTray.getSystemTray();
-        try
-        {
-            tray.add(trayIcon);
-        }
-        catch (AWTException e)
-        {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -83,6 +67,12 @@ public class SwingTray implements Tray {
      */
     private void setTrayPopUp(JPopupMenu trayMenu)
     {
+        trayParent = new JDialog();
+        trayParent.setSize(0, 0);
+        trayParent.setUndecorated(true);
+        trayParent.setAlwaysOnTop(true);
+        trayParent.setVisible(false);
+
         this.popupMenu = trayMenu;
 
         popupMenu.addPopupMenuListener(new PopupMenuListener()
@@ -214,6 +204,15 @@ public class SwingTray implements Tray {
     }
 
 	public void add(ImageIcon i) {
+        tray = SystemTray.getSystemTray();
+        try
+        {
+            tray.add(trayIcon);
+        }
+        catch (AWTException e)
+        {
+            e.printStackTrace();
+        }
 	}
 
 	public void addActionListener(ClickListener l) {

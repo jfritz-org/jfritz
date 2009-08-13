@@ -33,6 +33,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
+import de.moonflower.jfritz.box.BoxClass;
 import de.moonflower.jfritz.box.BoxCommunication;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.callerlist.CallerList;
@@ -465,6 +466,26 @@ public final class JFritz implements  StatusListener, ItemListener {
 		menuItem.setActionCommand("showhide");
 		menuItem.addActionListener(jframe);
 		menu.add(menuItem);
+		menu.addSeparator();
+		for (int i=0; i<getBoxCommunication().getBoxCount(); i++) {
+			String boxName = getBoxCommunication().getBox(i).getName();
+			BoxClass box = getBoxCommunication().getBox(boxName);
+			if (box != null) {
+				JMenu boxItem = new JMenu(boxName);
+				menuItem = new TrayMenuItem("IP: " + box.getExternalIP());
+				boxItem.add(menuItem.getJMenuItem());
+				boxItem.addSeparator();
+				menuItem = new TrayMenuItem(Main.getMessage("fetchlist"));
+				menuItem.setActionCommand("fetchList-"+boxName);
+				menuItem.addActionListener(jframe);
+				boxItem.add(menuItem.getJMenuItem());
+				menuItem = new TrayMenuItem(Main.getMessage("renew_ip"));
+				menuItem.setActionCommand("renewIP-"+boxName);
+				menuItem.addActionListener(jframe);
+				boxItem.add(menuItem.getJMenuItem());
+				menu.add(boxItem);
+			}
+		}
 		menu.addSeparator();
 		menuItem = new TrayMenuItem(Main.getMessage("fetchlist")); //$NON-NLS-1$
 		menuItem.setActionCommand("fetchList"); //$NON-NLS-1$

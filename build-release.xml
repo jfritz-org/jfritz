@@ -289,14 +289,15 @@
 		<mail
 			mailhost="${mailhost}"
 			mailport="${mailport}"
-			ssl="on"
+			ssl="yes"
 			user="${mailuser}"
 			password="${mailpwd}"
 			charset="utf-8"
 			from="${mailuser}"
 			replyto="${mailuser}"
 			messagefile="NewVersionMail.txt"
-			subject="JFritz: Neue Version ${version} verfügbar!">
+			subject="JFritz: Neue Version ${version} verfügbar!"
+			bcclist="${mail-rcp_skyteddy},${mail-rcp2}">
 			<to address="${mail-rcp1}" />
 		</mail>
 	</target>

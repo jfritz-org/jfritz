@@ -174,4 +174,6 @@ public abstract class BoxClass
 	public abstract void removeBoxStatusListener(BoxStatusListener listener);
 
 	public abstract void addBoxCallBackListener(BoxCallBackListener listener);
+
+	public abstract String getExternalIP();
 }

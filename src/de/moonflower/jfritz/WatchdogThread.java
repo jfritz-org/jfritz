@@ -76,7 +76,7 @@ public class WatchdogThread extends Thread {
 
 					@Override
 					public void run() {
-	        			JFritz.getJframe().fetchList(false);
+	        			JFritz.getJframe().fetchList(null, false);
 					}
 
     			}, 10000);

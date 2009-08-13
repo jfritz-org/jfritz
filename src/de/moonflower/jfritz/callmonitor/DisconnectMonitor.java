@@ -17,7 +17,7 @@ public class DisconnectMonitor extends CallMonitorAdaptor {
                 "option.callmonitor.fetchAfterDisconnect"))) //$NON-NLS-1$,  //$NON-NLS-2$
         {
             Debug.info("Fetch callerlist at end of call");
-            JFritz.getJframe().fetchList(false);
+            JFritz.getJframe().fetchList(null, false);
         }
     }
 }

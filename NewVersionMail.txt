@@ -8,8 +8,11 @@ Changelog: http://jfritz.robotniko.de/beta/Changelog.txt
 Die aktuelle Beta-Version kannst Du hier runterladen:
 
 Für Windows:
-Installer: http://jfritz.robotniko.de/beta/JFritz-${version}-Beta-Win.zip
-ZIP: http://jfritz.robotniko.de/beta/JFritz-${version}-Beta-Win.zip				
+Installer: http://jfritz.robotniko.de/beta/JFritz-${version}-Beta-Setup.exe
+ZIP: http://jfritz.robotniko.de/beta/JFritz-${version}-Beta.zip				
+
+Für MacOSX:
+DMG: http://jfritz.robotniko.de/beta/JFritz-${version}.dmg
 
 Für alle anderen Plattformen:
 http://jfritz.robotniko.de/beta/JFritz-${version}-Beta.zip

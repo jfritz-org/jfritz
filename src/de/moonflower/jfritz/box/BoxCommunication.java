@@ -48,6 +48,17 @@ public class BoxCommunication {
 		return registeredBoxes.get(i);
 	}
 
+	public BoxClass getBox(String name)
+	{
+		for (int i=0; i<registeredBoxes.size(); i++) {
+			BoxClass currBox = registeredBoxes.get(i);
+			if (currBox.getName().equals(name)) {
+				return currBox;
+			}
+		}
+		return null;
+	}
+
 	public void startCallMonitor()
 	{
 		for (BoxClass box: registeredBoxes)
@@ -76,14 +87,13 @@ public class BoxCommunication {
 //		return isRunning;
 //	}
 
-	public void getCallerList()
+	public void getCallerList(BoxClass box)
 	{
 		Vector<Call> newCalls = new Vector<Call>(maxCallsPerBox * registeredBoxes.size());
 
-		for (BoxClass currentBox: registeredBoxes)
-		{
+		if (box != null) {
 			try {
-				Vector<Call> tmpCalls = currentBox.getCallerList(callListProgressListener);
+				Vector<Call> tmpCalls = box.getCallerList(callListProgressListener);
 				newCalls.addAll(tmpCalls);
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
@@ -91,6 +101,20 @@ public class BoxCommunication {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}
+		} else {
+			for (BoxClass currentBox: registeredBoxes)
+			{
+				try {
+					Vector<Call> tmpCalls = currentBox.getCallerList(callListProgressListener);
+					newCalls.addAll(tmpCalls);
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 
@@ -192,6 +216,17 @@ public class BoxCommunication {
 			if (port.getBox() != null)
 			{
 				port.getBox().hangup(port);
+			}
+		}
+	}
+
+	public void renewIPAddress(BoxClass box) {
+		if (box != null) {
+			box.renewIPAddress();
+		} else {
+			for (BoxClass currentBox: registeredBoxes)
+			{
+				currentBox.renewIPAddress();
 			}
 		}
 	}

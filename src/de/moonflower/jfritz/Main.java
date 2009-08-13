@@ -193,13 +193,13 @@ public class Main implements LookupObserver {
 	// when changing this, don't forget to check the resource bundles!!
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.3.18"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.3.19"; //$NON-NLS-1$
 
 	public final static String PROGRAM_SECRET = "jFrItZsEcReT"; //$NON-NLS-1$
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 48 2009-08-13 11:22:00Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 49 2009-08-13 13:18:19Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -584,7 +584,7 @@ public class Main implements LookupObserver {
 				break;
 			case 'f':
 				Debug.always("Fetch caller list from command line ..."); //$NON-NLS-1$
-				JFritz.getBoxCommunication().getCallerList();
+				JFritz.getBoxCommunication().getCallerList(null); // null = fetch all boxes
 				shutdown = true;
 				exit(EXIT_CODE_OK);
 				break;

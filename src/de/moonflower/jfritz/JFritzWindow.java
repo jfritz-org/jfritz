@@ -60,6 +60,7 @@ import jd.nutils.OSDetector;
 
 import de.moonflower.jfritz.autoupdate.JFritzUpdate;
 import de.moonflower.jfritz.autoupdate.Update;
+import de.moonflower.jfritz.box.BoxClass;
 import de.moonflower.jfritz.box.BoxStatusListener;
 import de.moonflower.jfritz.callerlist.CallDialog;
 import de.moonflower.jfritz.callerlist.CallerListPanel;
@@ -763,7 +764,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					if (!JFritz.isShutdownInvoked())
 					{
 						Debug.info("Running FetchListTask after Timer ..."); //$NON-NLS-1$
-						fetchList(false);
+						fetchList(null, false);
 					} else {
 						this.cancel();
 					}
@@ -793,7 +794,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 					public void run() {
 						Debug.info("Running FetchListTask after timer ..."); //$NON-NLS-1$
-						fetchList(false);
+						fetchList(null, false);
 					}
 				};
 				timer = new FetchListTimer("FetchList-Timer2", true);
@@ -804,8 +805,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	/**
 	 * Fetches list from box
+	 *
+	 * @param box: if null then fetch from all boxes
+	 * @param deleteFritzBoxCallerList delete list?
 	 */
-	public void fetchList(final boolean deleteFritzBoxCallerList) {
+	public void fetchList(final BoxClass box, final boolean deleteFritzBoxCallerList) {
 		Debug.info("Reset timer ...");
 		restartFetchListTimer();
 		Debug.info("Fetching list ...");
@@ -832,7 +836,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 						setBusy(true);
 						setStatus(Main.getMessage("fetchdata")); //$NON-NLS-1$
 						setBoxConnected("");
-						JFritz.getBoxCommunication().getCallerList();
+						JFritz.getBoxCommunication().getCallerList(box);
 						isdone = true;
 					}
 					return null;
@@ -1077,7 +1081,21 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		} else if (e.getActionCommand().equals("monitoring")) {
 			tabber.setSelectedComponent(monitoringPanel);
 		} else if (e.getActionCommand().equals("fetchList")) {
-			fetchList(false);
+			fetchList(null, false);
+		} else if(e.getActionCommand().startsWith("fetchList-")) {
+			String boxName = e.getActionCommand().substring("fetchlist-".length());
+			BoxClass box = JFritz.getBoxCommunication().getBox(boxName);
+			if (box != null) {
+				Debug.debug("Fetching list for box: " + boxName);
+				fetchList(box, false);
+			}
+		} else if (e.getActionCommand().startsWith("renewIP-")) {
+			String boxName = e.getActionCommand().substring("renewIP-".length());
+			BoxClass box = JFritz.getBoxCommunication().getBox(boxName);
+			if (box != null) {
+				Debug.debug("Renew IP for box: " + boxName);
+				JFritz.getBoxCommunication().renewIPAddress(box);
+			}
 		} else if (e.getActionCommand().equals("delete_fritzbox_callerlist")) {
 			deleteFritzBoxCallerList();
 		} else if (e.getActionCommand().equals(
@@ -1496,7 +1514,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 		if (answer == JOptionPane.YES_OPTION) {
 			Debug.debug("Fetching data before deleting list on box!");
-			fetchList(true); // param true indicates that FritzBox-CallerList
+			fetchList(null, true); // param true indicates that FritzBox-CallerList
 			// is to be deleted
 		}
 	}
