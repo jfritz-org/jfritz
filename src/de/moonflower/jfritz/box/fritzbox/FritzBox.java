@@ -63,7 +63,8 @@ public class FritzBox extends BoxClass {
 	private final static String PARSE_MAC_ADDRESS = "<UDN>uuid:([^<]*)</UDN>";
 
 	private final static String QUERY_GET_MAC_ADDRESS = "env:settings/macdsl";
-	private final static String QUERY_GET_LOCALTIME = "box:status/localtime";
+	private final static String QUERY_GET_VERSION = "logic:status/nspver";
+	private final static String QUERY_REBOOT = "logic:command/reboot=1";
 
 	private final static String QUERY_CALLS_REFRESH = "telcfg:settings/RefreshJournal";
 	private final static String QUERY_NUM_CALLS = "telcfg:settings/Journal/count";
@@ -126,6 +127,8 @@ public class FritzBox extends BoxClass {
 	private static String URN_SERVICE_CONNECTIONTYPEINFO = "urn:schemas-upnp-org:service:WANIPConnection:1#GetConnectionTypeInfo";
 	private static String URL_SERVICE_GENERICPORTMAPPING = ":49000/upnp/control/WANIPConn1";
 	private static String URN_SERVICE_GENERICPORTMAPPING = "urn:schemas-upnp-org:service:WANIPConnection:1#GetGenericPortMappingEntry";
+	private static String URL_SERVICE_FORCETERMINATION = ":49000/upnp/control/WANIPConn1";
+	private static String URN_SERVICE_FORCETERMINATION = "urn:schemas-upnp-org:service:WANIPConnection:1#ForceTermination";
 
 	private static String POSTDATA_CALL = "&telcfg:settings/UseClickToDial=1&telcfg:settings/DialPort=$NEBENSTELLE&telcfg:command/Dial=$NUMMER"; //$NON-NLS-1$
 	private static String POSTDATA_HANGUP = "&telcfg:settings/UseClickToDial=1&telcfg:command%2FHangup"; //$NON-NLS-1$
@@ -239,7 +242,7 @@ public class FritzBox extends BoxClass {
 	private final void detectQueryMethod()
 	{
 		Vector<String> query = new Vector<String>();
-		query.add(QUERY_GET_LOCALTIME);
+		query.add(QUERY_GET_VERSION);
 		Vector<String> response = new Vector<String>();
 		if (((response = getQueryOld(query)).size() != 0)
 			&& (!"".equals(response.get(0))))
@@ -1504,6 +1507,27 @@ public class FritzBox extends BoxClass {
 				URL_SERVICE_GENERICPORTMAPPING, URN_SERVICE_GENERICPORTMAPPING, xml);
 
 //		Debug.msg("Result of getGenericPortMappingEntry: "+ result);
+	}
+
+	public void renewIPAddress() {
+	String xml =
+		"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+		"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
+		"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
+		"<s:Body><u:ForceTermination xmlns:u=\"urn:schemas-upnp-org:service:WANIPConnection:1\" />\n" +
+		"</s:Body>\n" +
+		"</s:Envelope>";
+
+		UPNPUtils.getSOAPData("http://" + getAddress() +
+				URL_SERVICE_FORCETERMINATION, URN_SERVICE_FORCETERMINATION, xml);
+	}
+
+	public void rebootBox()
+	{
+		Vector<String> query = new Vector<String>();
+		query.add(QUERY_REBOOT);
+
+		Vector<String> response = getQuery(query);
 	}
 
 	public String getMacFromUPnP() {

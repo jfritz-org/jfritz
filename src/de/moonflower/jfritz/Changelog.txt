@@ -1,5 +1,10 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 
+JFritz 0.7.3.18:
+- Änderung: Query-Methode wird nun über logic:status/nspver bestimmt.
+Changed Strings:
+play_sound / added "/outgoing"
+
 JFritz 0.7.3.17:
 - Änderung: Log-Severity wieder auf DEBUG angehoben.
 - Änderung: Query-Methode wird nun über box.localtime bestimmt.

@@ -14,7 +14,8 @@ public abstract class BoxClass
 			   BoxSipInterface,
 			   BoxUPnPStatisticsInterface,
 			   BoxPortsInterface,
-			   BoxDoCallInterface
+			   BoxDoCallInterface,
+			   BoxNewIpInterface
 {
 	protected String name;
 	protected String description;
