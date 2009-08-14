@@ -297,7 +297,45 @@
 			replyto="${mailuser}"
 			messagefile="NewVersionMail.txt"
 			subject="JFritz: Neue Version ${version} verfügbar!"
-			bcclist="${mail-rcp_skyteddy},${mail-rcp2}">
+			bcclist="${mail-rcp_skyteddy}, ${mail-rcp_mr_command}, ${mail-rcp_BurningCrash},
+					 ${mail-rcp_F1Schumi}, ${mail-rcp_Kolass}, ${mail-rcp_laubenpieper},
+					 ${mail-rcp_Jonnyswiss}, ${mail-rcp_DrVerdi}, ${mail-rcp_Muenchner},
+			         ${mail-rcp_Fred}, ${mail-rcp_ernest015}, ${mail-rcp_Hermann},
+					 ${mail-rcp_doc456}, ${mail-rcp_Deudekom}, ${mail-rcp_Wäldler}">
+			<to address="${mail-rcp1}" />
+		</mail>
+		<mail
+			mailhost="${mailhost}"
+			mailport="${mailport}"
+			ssl="yes"
+			user="${mailuser}"
+			password="${mailpwd}"
+			charset="utf-8"
+			from="${mailuser}"
+			replyto="${mailuser}"
+			messagefile="NewVersionMail.txt"
+			subject="JFritz: Neue Version ${version} verfügbar!"
+			bcclist="${mail-rcp_magiclb}, ${mail-rcp_DocAdams}, ${mail-rcp_Droemel},
+				 ${mail-rcp_Feuer_Fritz}, ${mail-rcp_musenbaron}, ${mail-rcp_Stefan},
+				 ${mail-rcp_mega}, ${mail-rcp_Freenetler}, ${mail-rcp_Weigandt},
+				 ${mail-rcp_Wohnmobil}, ${mail-rcp_weadolf}, ${mail-rcp_Wolfgang},
+				 ${mail-rcp_Mac_}, ${mail-rcp_Schlumpfine}, ${mail-rcp_Junge}">
+			<to address="${mail-rcp1}" />
+		</mail>
+		<mail
+			mailhost="${mailhost}"
+			mailport="${mailport}"
+			ssl="yes"
+			user="${mailuser}"
+			password="${mailpwd}"
+			charset="utf-8"
+			from="${mailuser}"
+			replyto="${mailuser}"
+			messagefile="NewVersionMail.txt"
+			subject="JFritz: Neue Version ${version} verfügbar!"
+			bcclist="${mail-rcp_Hasa}, ${mail-rcp_Stephan}, ${mail-rcp_roman200},
+				 ${mail-rcp_digi1}, ${mail-rcp_yelsip}, ${mail-rcp_ekrieger},
+				 ${mail-rcp_franco}, ${mail-rcp_richard}, ${mail-rcp_valery}">
 			<to address="${mail-rcp1}" />
 		</mail>
 	</target>

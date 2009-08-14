@@ -271,4 +271,9 @@ public class SwingTray implements Tray {
 	public void setTooltip(String s) {
 		trayIcon.setToolTip(s);
 	}
+
+	public void clearActionListeners() {
+		leftClickListener = null;
+		leftDoubleClickListener = null;
+	}
 }

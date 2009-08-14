@@ -48,6 +48,7 @@ import de.moonflower.jfritz.network.ClientLoginsTableModel;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.phonebook.PhoneBook;
 import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.tray.AWTTray;
 import de.moonflower.jfritz.tray.ClickListener;
 import de.moonflower.jfritz.tray.JDICTray;
 import de.moonflower.jfritz.tray.SwingTray;
@@ -517,12 +518,46 @@ public final class JFritz implements  StatusListener, ItemListener {
 		tray.add(trayIcon);
 		tray.setTooltip(Main.PROGRAM_NAME + " v"+Main.PROGRAM_VERSION);
 		tray.setPopupMenu(menu);
+		refreshTrayActionListener();
+	}
+
+	private void refreshTrayActionListener() {
+		String trayClick = Main.getProperty("tray.clickCount");
+		int clickCount = ClickListener.CLICK_COUNT_SINGLE;
+		if ("2".equals(trayClick)) {
+			clickCount = ClickListener.CLICK_COUNT_DOUBLE;
+		}
+
+		tray.clearActionListeners();
 		tray.addActionListener(new ClickListener(ClickListener.CLICK_LEFT,
-												 ClickListener.CLICK_COUNT_SINGLE) {
-			public void actionPerformed(ActionEvent e) {
+												 clickCount) {
+			private long oldTimeStamp = 0;
+			private void showHide() {
 				if ( jframe != null )
 				{
 					jframe.hideShowJFritz(true);
+				}
+			}
+
+			public void actionPerformed(ActionEvent e) {
+				if (tray instanceof JDICTray) {
+					// old JDICTray has no mouse listener,
+					// get timestamp to simulate single/double-click
+					if (this.getClickCount() == ClickListener.CLICK_COUNT_SINGLE) {
+						long timeStamp = e.getWhen();
+						if ( timeStamp-oldTimeStamp>600 ) {
+							showHide();
+							oldTimeStamp = timeStamp;
+						}
+					} else {
+						long timeStamp = e.getWhen();
+						if ( timeStamp-oldTimeStamp<600 ) {
+							showHide();
+						}
+						oldTimeStamp = timeStamp;
+					}
+				} else if (tray instanceof SwingTray) {
+					showHide();
 				}
 			}
 		});

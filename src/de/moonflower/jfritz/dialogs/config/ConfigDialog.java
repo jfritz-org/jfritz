@@ -80,6 +80,7 @@ public class ConfigDialog extends JDialog {
 	private ConfigPanelOther otherPanel;
 	private ConfigPanelNetwork networkPanel;
 	private ConfigPanelSip sipPanel;
+	private ConfigPanelTray trayPanel;
 
 	private boolean pressedOK = false;
 
@@ -116,6 +117,7 @@ public class ConfigDialog extends JDialog {
 		languagePanel = new ConfigPanelLang();
 		otherPanel = new ConfigPanelOther(fritzBoxPanel);
 		networkPanel = new ConfigPanelNetwork(this);
+		trayPanel = new ConfigPanelTray();
 
 		rootNode = new ConfigTreeNode(Main.getMessage("config"));
 		tree = new JTree(rootNode);
@@ -271,6 +273,7 @@ public class ConfigDialog extends JDialog {
 		callerListPanel.loadSettings();
 		callerListAppearancePanel.loadSettings();
 		sipPanel.loadSettings();
+		trayPanel.loadSettings();
 	}
 
 	/**
@@ -296,6 +299,7 @@ public class ConfigDialog extends JDialog {
 		callerListPanel.saveSettings();
 		callerListAppearancePanel.saveSettings();
 		sipPanel.saveSettings();
+		trayPanel.saveSettings();
 
 		Debug.info("Saved config"); //$NON-NLS-1$
 //		Save of caller list and phonebook unnecessary at this position
@@ -347,6 +351,7 @@ public class ConfigDialog extends JDialog {
 					callerListPanel.cancel();
 					callerListAppearancePanel.cancel();
 					sipPanel.cancel();
+					trayPanel.cancel();
 					closeWindow();
 				}
 			}
@@ -454,6 +459,7 @@ public class ConfigDialog extends JDialog {
 		this.addConfigPanel(networkPanel);
 		this.addConfigPanel(otherPanel);
 		this.addConfigPanel(callerListAppearancePanel);
+		this.addConfigPanel(trayPanel);
 
 		int width = Integer.parseInt(Main.getStateProperty("configDialog.width", "700"));
 		int height = Integer.parseInt(Main.getStateProperty("configDialog.height", "470"));

@@ -7,6 +7,7 @@ package de.moonflower.jfritz.tray;
 import java.awt.AWTException;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import javax.swing.ImageIcon;
 
@@ -69,5 +70,12 @@ public class AWTTray implements Tray{
 
 	public void remove() {
 		tray.remove(icon);
+	}
+
+	public void clearActionListeners() {
+		ActionListener[] listeners = icon.getActionListeners();
+		for (int i=0; i<listeners.length; i++) {
+			icon.removeActionListener(listeners[i]);
+		}
 	}
 }

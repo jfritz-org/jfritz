@@ -22,4 +22,5 @@ public interface Tray {
 	abstract public void displayMessage(String caption, String message, int type);
 	abstract public boolean isSupported();
 	abstract public void remove();
+	abstract public void clearActionListeners();
 }

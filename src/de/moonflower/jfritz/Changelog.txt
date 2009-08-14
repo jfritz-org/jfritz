@@ -1,5 +1,14 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 
+JFritz 0.7.3.20:
+- Neu [0000217]: Traybar-Icon Klicks (Doppel-/Einzelklick) konfigurierbar gestalten
+- Bugfix: Erneuern des TrayPopups nach "WAN-IP erneuern"
+New Strings:
+double_click
+single_click
+tray
+tray_click 
+
 JFritz 0.7.3.19:
 - Neu: Boxen über Tray-Menü steuerbar (Abholen der Anrufliste, Erneuern der WAN-IP)
 - Neu: Anzeigen der WAN-IP im Tray-Menü.

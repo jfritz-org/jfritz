@@ -894,6 +894,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					"option.callMonitorType")) > 0)); //$NON-NLS-1$,  //$NON-NLS-2$
 
 			callerListPanel.reorderColumns();
+			jFritz.refreshTrayMenu();
 		}
 		configDialog.dispose();
 		this.setStatus("");
@@ -1096,6 +1097,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				Debug.debug("Renew IP for box: " + boxName);
 				JFritz.getBoxCommunication().renewIPAddress(box);
 			}
+			jFritz.refreshTrayMenu();
 		} else if (e.getActionCommand().equals("delete_fritzbox_callerlist")) {
 			deleteFritzBoxCallerList();
 		} else if (e.getActionCommand().equals(
