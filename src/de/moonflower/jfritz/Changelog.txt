@@ -5,7 +5,7 @@ JFritz 0.7.3.21:
 - Neu: Neue Option (Weiteres) um Fensterdekorationen abzuschalten.
 - Bugfix: Fehlermeldung "Monitor schon gestartet" beim wechseln des Look&Feel aus dem Tray heraus.
 - Änderung: ConfigDialog erkennt die Einstellungen der FritzBox nur, wenn sich die IP, das Passwort oder der Port geändert haben.
-- Sprachupdate für die Niederlande / Language update for Netherlands.
+- Feature [0000255]: 3rd Localization update for The Netherlands 
 Changed Strings:
 fetchlist
 New Strings: 
