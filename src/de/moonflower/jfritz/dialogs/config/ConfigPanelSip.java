@@ -164,4 +164,12 @@ public class ConfigPanelSip extends JPanel implements ConfigPanel {
 	{
 		this.fritzBoxPanel = fritzBoxPanel;
 	}
+
+	public boolean shouldRefreshJFritzWindow() {
+		return false;
+	}
+
+	public boolean shouldRefreshTrayMenu() {
+		return false;
+	}
 }

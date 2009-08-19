@@ -197,8 +197,8 @@ public class PersonPanel extends JPanel implements ActionListener,
 		configPanel.add(label,c );
 		c.gridx = 1;
 		c.gridy = 2;
-		tfFirstName = new JTextField(25);
-		tfFirstName.setMinimumSize(new Dimension(150, 20));
+		tfFirstName = new JTextField();
+		tfFirstName.setMinimumSize(new Dimension(150, 25));
 		tfFirstName.addCaretListener(this);
 		configPanel.add(tfFirstName, c);
 

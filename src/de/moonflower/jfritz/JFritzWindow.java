@@ -894,8 +894,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					"option.callMonitorType")) > 0)); //$NON-NLS-1$,  //$NON-NLS-2$
 
 			callerListPanel.reorderColumns();
-			jFritz.refreshTrayMenu();
+
+			if (configDialog.shouldRefreshTrayMenu()) {
+				Debug.debug("Refreshing tray!");
+				jFritz.refreshTrayMenu();
+			}
 		}
+
 		configDialog.dispose();
 		this.setStatus("");
 	    c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

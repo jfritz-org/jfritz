@@ -193,13 +193,13 @@ public class Main implements LookupObserver {
 	// when changing this, don't forget to check the resource bundles!!
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.3.20"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.3.21"; //$NON-NLS-1$
 
 	public final static String PROGRAM_SECRET = "jFrItZsEcReT"; //$NON-NLS-1$
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 51 2009-08-14 12:11:37Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 52 2009-08-19 11:47:22Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -486,7 +486,7 @@ public class Main implements LookupObserver {
 			jfritz = new JFritz(main);
 
 			jfritz.initNumbers();
-			splash.setStatus("Initializing Fritz!Box..");
+			splash.setStatus("Initializing Fritz!Box ...");
 			try {
 				result = jfritz.initFritzBox();
 			} catch (WrongPasswordException e1) {
@@ -521,7 +521,7 @@ public class Main implements LookupObserver {
 		if (result == 0)
 		{
 			splash.setStatus("Setting default look and feel...");
-			jfritz.initLookAndFeel();
+			jfritz.setDefaultLookAndFeel();
 		}
 
 		if (result == 0)
@@ -963,6 +963,7 @@ public class Main implements LookupObserver {
 		defProps.setProperty("telnet.user", "");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("telnet.password", "");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("tray.clickCount", "2");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("window.useDecorations", "true");//$NON-NLS-1$, //$NON-NLS-2$
 
 		// set all callertable columns to visible
 		Enumeration<String> columns = CallerTable.getCallerTableColumns().elements();

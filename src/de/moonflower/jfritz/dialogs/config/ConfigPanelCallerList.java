@@ -102,4 +102,12 @@ public class ConfigPanelCallerList extends JPanel implements ConfigPanel {
 		// TODO Auto-generated method stub
 
 	}
+
+	public boolean shouldRefreshJFritzWindow() {
+		return false;
+	}
+
+	public boolean shouldRefreshTrayMenu() {
+		return false;
+	}
 }

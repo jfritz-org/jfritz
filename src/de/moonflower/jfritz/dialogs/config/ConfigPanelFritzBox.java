@@ -67,6 +67,8 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 
 	private ConfigPanelSip sipPanel = null;
 
+	private boolean settingsChanged = false;
+
 	class RefreshTimeoutTask extends TimerTask
 	{
 		private int current;
@@ -340,31 +342,47 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 			Debug.netMsg("JFritz is running as a client and using call list from server, disabeling FritzBox panel");
 			this.boxtypeButton.setEnabled(false);
 		}
+		settingsChanged = false;
 	}
 
 	public void saveSettings() throws WrongPasswordException, InvalidFirmwareException, IOException {
+		saveSettings(true);
+	}
+
+	public void saveSettings(boolean checkChanges) throws WrongPasswordException, InvalidFirmwareException, IOException {
 		if (refreshTimeoutTask != null)
 		{
 			refreshTimeoutTask.cancel();
 		}
-		Main.setProperty("box.address", address.getText()); //$NON-NLS-1$
-		Main.setProperty("box.password", Encryption.encrypt(new String(pass.getPassword()))); //$NON-NLS-1$
-		Main.setProperty("box.port", port.getText()); //$NON-NLS-1$
 
-		fritzBox.setAddress(address.getText());
-		fritzBox.setPassword(new String(pass.getPassword()));
-		fritzBox.setPort(port.getText());
-		fritzBox.updateSettings();
+		if ( (!checkChanges)
+			|| (!Main.getProperty("box.address").equals(address.getText()))
+			|| (!Main.getProperty("box.password").equals(Encryption.encrypt(new String(pass.getPassword()))))
+			|| (!Main.getProperty("box.port").equals(port.getText())))
+		{
+			settingsChanged = true;
+		}
 
-		if (fritzBox.getFirmware() != null) {
-			Main.setProperty("box.firmware", fritzBox.getFirmware().getFirmwareVersion()); //$NON-NLS-1$
-			if (defaultFritzBox.isSelected())
-			{
-				Main.setProperty("box.mac", fritzBox.getMacAddress());
+		if (settingsChanged) {
+			Main.setProperty("box.address", address.getText()); //$NON-NLS-1$
+			Main.setProperty("box.password", Encryption.encrypt(new String(pass.getPassword()))); //$NON-NLS-1$
+			Main.setProperty("box.port", port.getText()); //$NON-NLS-1$
+
+			fritzBox.setAddress(address.getText());
+			fritzBox.setPassword(new String(pass.getPassword()));
+			fritzBox.setPort(port.getText());
+			fritzBox.updateSettings();
+
+			if (fritzBox.getFirmware() != null) {
+				Main.setProperty("box.firmware", fritzBox.getFirmware().getFirmwareVersion()); //$NON-NLS-1$
+				if (defaultFritzBox.isSelected())
+				{
+					Main.setProperty("box.mac", fritzBox.getMacAddress());
+				}
+			} else {
+				Main.removeProperty("box.firmware"); //$NON-NLS-1$
+				throw new InvalidFirmwareException("Invalid firmware");
 			}
-		} else {
-			Main.removeProperty("box.firmware"); //$NON-NLS-1$
-			throw new InvalidFirmwareException("Invalid firmware");
 		}
 	}
 
@@ -417,5 +435,13 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 	public void setSipPanel(ConfigPanelSip sipPanel)
 	{
 		this.sipPanel = sipPanel;
+	}
+
+	public boolean shouldRefreshJFritzWindow() {
+		return false;
+	}
+
+	public boolean shouldRefreshTrayMenu() {
+		return false;
 	}
 }

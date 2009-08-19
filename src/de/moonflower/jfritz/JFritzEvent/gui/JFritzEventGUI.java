@@ -144,4 +144,12 @@ public class JFritzEventGUI extends JPanel implements ConfigPanel, ActionListene
 		// TODO Auto-generated method stub
 
 	}
+
+	public boolean shouldRefreshJFritzWindow() {
+		return false;
+	}
+
+	public boolean shouldRefreshTrayMenu() {
+		return false;
+	}
 }

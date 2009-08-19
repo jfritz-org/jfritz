@@ -1,7 +1,6 @@
 package de.moonflower.jfritz.dialogs.config;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -37,7 +36,7 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 	private JCheckBox checkNewVersionAfterStart, passwordAfterStartButton,
 			timerAfterStartButton, startMinimizedButton, confirmOnExitButton,
 			searchWithSSDP, minimizeInsteadOfClose, createBackup,
-			createBackupAfterFetch;
+			createBackupAfterFetch, useDecorations;
 
 	private JTextField save_location;
 
@@ -125,6 +124,10 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 		c.gridy++;
 		cPane.add(minimizeInsteadOfClose, c);
 
+		useDecorations = new JCheckBox(Main.getMessage("use_decorations"));
+		c.gridy++;
+		cPane.add(useDecorations, c);
+
 		createBackup = new JCheckBox(Main.getMessage("create_backup_start")); //$NON-NLS-1$
 		c.gridy++;
 		cPane.add(createBackup, c);
@@ -139,8 +142,7 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 		JLabel label = new JLabel(Main.getMessage("save_directory"));
 		panel.add(label);
 
-		save_location = new JTextField(Main.SAVE_DIR);
-		save_location.setPreferredSize(new Dimension(200, 20));
+		save_location = new JTextField(Main.SAVE_DIR, 16);
 		panel.add(save_location);
 
 		ActionListener actionListener = new ActionListener() {
@@ -179,19 +181,21 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 
 	public void loadSettings() {
 		checkNewVersionAfterStart.setSelected(JFritzUtils.parseBoolean(Main
-				.getProperty("option.checkNewVersionAfterStart")));//$NON-NLS-1$, //ßNON-NLS-2$
+				.getProperty("option.checkNewVersionAfterStart")));//$NON-NLS-1$
 		timerAfterStartButton.setSelected(JFritzUtils.parseBoolean(Main
 				.getProperty("option.timerAfterStart"))); //$NON-NLS-1$
 		confirmOnExitButton.setSelected(JFritzUtils.parseBoolean(Main
-				.getProperty("option.confirmOnExit"))); //$NON-NLS-1$,  //$NON-NLS-2$
+				.getProperty("option.confirmOnExit"))); //$NON-NLS-1$
 		startMinimizedButton.setSelected(JFritzUtils.parseBoolean(Main
-				.getProperty("option.startMinimized"))); //$NON-NLS-1$,  //$NON-NLS-2$
+				.getProperty("option.startMinimized"))); //$NON-NLS-1$
 		minimizeInsteadOfClose.setSelected(JFritzUtils.parseBoolean(Main
-				.getProperty("option.minimize"))); //$NON-NLS-1$,  //$NON-NLS-2$
+				.getProperty("option.minimize"))); //$NON-NLS-1$
+		useDecorations.setSelected(JFritzUtils.parseBoolean(Main
+				.getProperty("window.useDecorations"))); //$NON-NLS-1$
 		createBackup.setSelected(JFritzUtils.parseBoolean(Main.getProperty(
-				"option.createBackup"))); //$NON-NLS-1$,  //$NON-NLS-2$
+				"option.createBackup"))); //$NON-NLS-1$
 		createBackupAfterFetch.setSelected(JFritzUtils.parseBoolean(Main
-				.getProperty("option.createBackupAfterFetch"))); //$NON-NLS-1$,  //$NON-NLS-2$
+				.getProperty("option.createBackupAfterFetch"))); //$NON-NLS-1$
 
 		String decrypted_pwd = Encryption.decrypt(Main.getProperty("jfritz.seed"));
 		if ((decrypted_pwd != null)
@@ -267,15 +271,14 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 				.toString(startMinimizedButton.isSelected()));
 		Main.setProperty("option.minimize", Boolean //$NON-NLS-1$
 				.toString(minimizeInsteadOfClose.isSelected()));
-		Main
-				.setProperty(
-						"option.createBackup", Boolean.toString(createBackup.isSelected())); //$NON-NLS-1$
-		Main
-				.setProperty(
-						"option.createBackupAfterFetch", Boolean.toString(createBackupAfterFetch.isSelected())); //$NON-NLS-1$
-		Main
-				.setProperty(
-						"option.checkNewVersionAfterStart", Boolean.toString(checkNewVersionAfterStart.isSelected())); //$NON-NLS-1$
+		Main.setProperty("window.useDecorations", Boolean //$NON-NLS-1$
+				.toString(useDecorations.isSelected()));
+		Main.setProperty("option.createBackup", Boolean //$NON-NLS-1$
+				.toString(createBackup.isSelected()));
+		Main.setProperty("option.createBackupAfterFetch", //$NON-NLS-1$
+				Boolean.toString(createBackupAfterFetch.isSelected()));
+		Main.setProperty("option.checkNewVersionAfterStart", //$NON-NLS-1$
+				Boolean.toString(checkNewVersionAfterStart.isSelected()));
 
 		String passwd = new String(passwordField.getPassword());
 		if ("".equals(passwd))
@@ -317,5 +320,13 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 	public void cancel() {
 		// TODO Auto-generated method stub
 
+	}
+
+	public boolean shouldRefreshJFritzWindow() {
+		return false;
+	}
+
+	public boolean shouldRefreshTrayMenu() {
+		return false;
 	}
 }

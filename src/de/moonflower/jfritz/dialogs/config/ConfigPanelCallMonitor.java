@@ -353,4 +353,12 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 		}
 	}
 
+	public boolean shouldRefreshJFritzWindow() {
+		return false;
+	}
+
+	public boolean shouldRefreshTrayMenu() {
+		return false;
+	}
+
 }

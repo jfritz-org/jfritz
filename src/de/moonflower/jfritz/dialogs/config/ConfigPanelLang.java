@@ -124,4 +124,14 @@ public class ConfigPanelLang extends JPanel implements ConfigPanel{
 		// TODO Auto-generated method stub
 
 	}
+
+	public boolean shouldRefreshJFritzWindow() {
+		// is already done on saving settings
+		return false;
+	}
+
+	public boolean shouldRefreshTrayMenu() {
+		// is already done on saving settings
+		return false;
+	}
 }

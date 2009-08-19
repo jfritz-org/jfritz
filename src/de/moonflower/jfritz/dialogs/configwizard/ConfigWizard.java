@@ -99,7 +99,7 @@ public class ConfigWizard {
 
        			((ConfigPanelPhone)descriptor2.getPanelComponent()).saveSettings();
        			try {
-           			((ConfigPanelFritzBox)descriptor3.getPanelComponent()).saveSettings();
+           			((ConfigPanelFritzBox)descriptor3.getPanelComponent()).saveSettings(false);
        			}
        			catch (WrongPasswordException wpe)
        			{

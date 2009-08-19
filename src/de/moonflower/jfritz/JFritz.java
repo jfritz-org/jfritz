@@ -48,7 +48,6 @@ import de.moonflower.jfritz.network.ClientLoginsTableModel;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.phonebook.PhoneBook;
 import de.moonflower.jfritz.struct.PhoneNumber;
-import de.moonflower.jfritz.tray.AWTTray;
 import de.moonflower.jfritz.tray.ClickListener;
 import de.moonflower.jfritz.tray.JDICTray;
 import de.moonflower.jfritz.tray.SwingTray;
@@ -65,7 +64,7 @@ import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 /**
  *
  */
-public final class JFritz implements  StatusListener, ItemListener {
+public final class JFritz implements  StatusListener {
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/wiki/Kategorie:Hilfe"; //$NON-NLS-1$
 
 	public final static String CALLS_FILE = "jfritz.calls.xml"; //$NON-NLS-1$
@@ -287,19 +286,6 @@ public final class JFritz implements  StatusListener, ItemListener {
 		ClientLoginsTableModel.loadFromXMLFile(Main.SAVE_DIR+CLIENT_SETTINGS_FILE);
 	}
 
-	public void initLookAndFeel()
-	{
-		setDefaultLookAndFeel();
-		if (Main
-				.getProperty("lookandfeel")
-				.endsWith("MetalLookAndFeel")) { //$NON-NLS-1$,  //$NON-NLS-2$
-			JFrame.setDefaultLookAndFeelDecorated(true);
-			JDialog.setDefaultLookAndFeelDecorated(true); // uses L&F
-			// decorations for
-			// dialogs
-		}
-	}
-
 	public void createJFrame(boolean showConfWizard) {
 		Debug.info("New instance of JFrame"); //$NON-NLS-1$
 		jframe = new JFritzWindow(this);
@@ -428,7 +414,7 @@ public final class JFritz implements  StatusListener, ItemListener {
 			rbmi.setSelected(UIManager.getLookAndFeel().getClass().getName()
 					.equals(lnfs[i].getClassName()));
 			rbmi.putClientProperty("lnf name", lnfs[i]); //$NON-NLS-1$
-			rbmi.addItemListener(this);
+			rbmi.addItemListener(jframe);
 			lnfgroup.add(rbmi);
 		}
 
@@ -439,7 +425,7 @@ public final class JFritz implements  StatusListener, ItemListener {
 		rb.putClientProperty("lnf name", lnf);
 		rb.setSelected(UIManager.getLookAndFeel().getClass().getName()
 				.equals(lnf.getClassName()));
-		rb.addItemListener(this);
+		rb.addItemListener(jframe);
 		lnfgroup.add(rb);
 
 		lnf = new LookAndFeelInfo("Plastic 3D","com.jgoodies.looks.plastic.Plastic3DLookAndFeel");
@@ -448,7 +434,7 @@ public final class JFritz implements  StatusListener, ItemListener {
 		rb.putClientProperty("lnf name", lnf);
 		rb.setSelected(UIManager.getLookAndFeel().getClass().getName()
 				.equals(lnf.getClassName()));
-		rb.addItemListener(this);
+		rb.addItemListener(jframe);
 		lnfgroup.add(rb);
 
 		lnf = new LookAndFeelInfo("Plastic XP","com.jgoodies.looks.plastic.PlasticXPLookAndFeel");
@@ -457,7 +443,7 @@ public final class JFritz implements  StatusListener, ItemListener {
 		rb.putClientProperty("lnf name", lnf);
 		rb.setSelected(UIManager.getLookAndFeel().getClass().getName()
 				.equals(lnf.getClassName()));
-		rb.addItemListener(this);
+		rb.addItemListener(jframe);
 		lnfgroup.add(rb);
 
 
@@ -742,7 +728,15 @@ public final class JFritz implements  StatusListener, ItemListener {
 	 * Sets default Look'n'Feel
 	 */
 	public void setDefaultLookAndFeel() {
-		JFritzWindow.setDefaultLookAndFeelDecorated(true);
+		if (JFritzUtils.parseBoolean(Main.getProperty("window.useDecorations"))) {
+			JFritzWindow.setDefaultLookAndFeelDecorated(true);
+			JDialog.setDefaultLookAndFeelDecorated(true);
+			JFrame.setDefaultLookAndFeelDecorated(true);
+		} else {
+			JFritzWindow.setDefaultLookAndFeelDecorated(false);
+			JDialog.setDefaultLookAndFeelDecorated(false);
+			JFrame.setDefaultLookAndFeelDecorated(false);
+		}
 		try {
 			Debug.info("Changing look and feel to: " + Main.getStateProperty("lookandfeel")); //$NON-NLS-1$
 			UIManager.setLookAndFeel(Main.getStateProperty("lookandfeel")); //$NON-NLS-1$
@@ -905,26 +899,6 @@ public final class JFritz implements  StatusListener, ItemListener {
 
 	public static ClientLoginsTableModel getClientLogins(){
 		return clientLogins;
-	}
-
-	/**
-	 * ItemListener for LookAndFeel Menu
-	 *
-	 * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
-	 */
-	public void itemStateChanged(ItemEvent ie) {
-		JRadioButtonMenuItem rbmi = (JRadioButtonMenuItem) ie.getSource();
-		if (rbmi.isSelected()) {
-			UIManager.LookAndFeelInfo info = (UIManager.LookAndFeelInfo) rbmi
-					.getClientProperty("lnf name"); //$NON-NLS-1$
-			try {
-//				UIManager.setLookAndFeel(info.getClassName());
-				Main.setStateProperty("lookandfeel", info.getClassName()); //$NON-NLS-1$
-				refreshWindow();
-			} catch (Exception e) {
-				Debug.error("Unable to set UI " + e.getMessage()); //$NON-NLS-1$
-			}
-		}
 	}
 
 	public static boolean isShutdownInvoked()

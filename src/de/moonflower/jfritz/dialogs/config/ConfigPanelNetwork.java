@@ -551,4 +551,12 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		// TODO Auto-generated method stub
 
 	}
+
+	public boolean shouldRefreshJFritzWindow() {
+		return false;
+	}
+
+	public boolean shouldRefreshTrayMenu() {
+		return false;
+	}
 }

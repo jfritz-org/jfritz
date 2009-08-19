@@ -12,4 +12,6 @@ public interface ConfigPanel {
 	public abstract String getPath();
 	public abstract JPanel getPanel();
 	public abstract String getHelpUrl();
+	public abstract boolean shouldRefreshTrayMenu();
+	public abstract boolean shouldRefreshJFritzWindow();
 }

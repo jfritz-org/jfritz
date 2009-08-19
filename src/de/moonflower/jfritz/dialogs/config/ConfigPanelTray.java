@@ -18,6 +18,7 @@ public class ConfigPanelTray extends JPanel implements ConfigPanel {
 
 	private JRadioButton singleClickButton;
 	private JRadioButton doubleClickButton;
+	private boolean settingsChanged = false;
 
 	public ConfigPanelTray() {
 		setLayout(new BorderLayout());
@@ -60,12 +61,21 @@ public class ConfigPanelTray extends JPanel implements ConfigPanel {
 		} else {
 			doubleClickButton.setSelected(true);
 		}
+		settingsChanged = false;
 	}
 
 	public void saveSettings() {
 		if (singleClickButton.isSelected()) {
+			if (!Main.getProperty("tray.clickCount").equals("1"))
+			{
+				settingsChanged = true;
+			}
 			Main.setProperty("tray.clickCount", "1");
 		} else {
+			if (Main.getProperty("tray.clickCount").equals("1"))
+			{
+				settingsChanged = true;
+			}
 			Main.setProperty("tray.clickCount", "2");
 		}
 	}
@@ -86,5 +96,13 @@ public class ConfigPanelTray extends JPanel implements ConfigPanel {
 	public void cancel() {
 		// TODO Auto-generated method stub
 
+	}
+
+	public boolean shouldRefreshJFritzWindow() {
+		return false;
+	}
+
+	public boolean shouldRefreshTrayMenu() {
+		return settingsChanged;
 	}
 }

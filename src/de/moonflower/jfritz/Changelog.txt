@@ -1,4 +1,15 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
+TODO: Timer zum automatischen Aktualisieren der FritzBox-Einstellungen (Telefone, SIP-Provider, ...) nach X Minuten (z.B. 60 / 120)
+
+JFritz 0.7.3.21:
+- Neu: Neue Option (Weiteres) um Fensterdekorationen abzuschalten.
+- Bugfix: Fehlermeldung "Monitor schon gestartet" beim wechseln des Look&Feel aus dem Tray heraus.
+- Änderung: ConfigDialog erkennt die Einstellungen der FritzBox nur, wenn sich die IP, das Passwort oder der Port geändert haben.
+- Sprachupdate für die Niederlande / Language update for Netherlands.
+Changed Strings:
+fetchlist
+New Strings: 
+use_decorations
 
 JFritz 0.7.3.20:
 - Neu [0000217]: Traybar-Icon Klicks (Doppel-/Einzelklick) konfigurierbar gestalten
@@ -11,7 +22,7 @@ tray_click
 
 JFritz 0.7.3.19:
 - Neu: Boxen über Tray-Menü steuerbar (Abholen der Anrufliste, Erneuern der WAN-IP)
-- Neu: Anzeigen der WAN-IP im Tray-Menü.
+- Neu [0000111]: WAN IP über Tray-Icon
 - Bugfix: Tray unter Java 1.6 beim wechseln der Sprache nicht mehr verfügbar.
 New Strings:
 renew_ip

@@ -282,7 +282,7 @@ public class ConfigDialog extends JDialog {
 	public void storeValues() {
 		try {
 //			boxPanel.saveSettings();
-			fritzBoxPanel.saveSettings();
+			fritzBoxPanel.saveSettings(true);
 		} catch (WrongPasswordException e) {
 			parent.setBoxDisconnected("");
 		} catch (InvalidFirmwareException e) {
@@ -502,4 +502,22 @@ public class ConfigDialog extends JDialog {
 		ConfigDialog.this.setVisible(false);
 	}
 
+	public boolean shouldRefreshTrayMenu()
+	{
+		if (phonePanel.shouldRefreshTrayMenu()
+				|| fritzBoxPanel.shouldRefreshTrayMenu()
+				|| messagePanel.shouldRefreshTrayMenu()
+				|| callerListPanel.shouldRefreshTrayMenu()
+				|| callerListAppearancePanel.shouldRefreshTrayMenu()
+				|| callMonitorPanel.shouldRefreshTrayMenu()
+				|| languagePanel.shouldRefreshTrayMenu()
+				|| otherPanel.shouldRefreshTrayMenu()
+				|| networkPanel.shouldRefreshTrayMenu()
+				|| sipPanel.shouldRefreshTrayMenu()
+				|| trayPanel.shouldRefreshTrayMenu())
+		{
+			return true;
+		}
+		return false;
+	}
 }

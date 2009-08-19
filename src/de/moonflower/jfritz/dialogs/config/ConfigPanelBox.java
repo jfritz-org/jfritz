@@ -11,7 +11,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 
 import de.moonflower.jfritz.Main;
@@ -95,6 +94,14 @@ public class ConfigPanelBox extends JPanel implements ActionListener, ConfigPane
 			InvalidFirmwareException, IOException {
 		// TODO Auto-generated method stub
 
+	}
+
+	public boolean shouldRefreshJFritzWindow() {
+		return false;
+	}
+
+	public boolean shouldRefreshTrayMenu() {
+		return false;
 	}
 
 }
