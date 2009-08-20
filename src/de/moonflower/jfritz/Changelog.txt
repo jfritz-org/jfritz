@@ -1,6 +1,14 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 TODO: Timer zum automatischen Aktualisieren der FritzBox-Einstellungen (Telefone, SIP-Provider, ...) nach X Minuten (z.B. 60 / 120)
 
+JFritz 0.7.3.22:
+- Neu [0000239]: Unterstützung für Fritz!Mini
+- Änderung: Erkennung von DECT-Telefonen angepasst, weil Fritz!Mini auf ähnliche Weise erkannt werden.
+- Bugfix [0000250]: Dialassist: The Yes/No buttons are always English (Yes/No) instead of localized text. 
+- Bugfix [0000251]: Exit JFritz Window: The Yes/No buttons are always in English (Yes/No) instead of localized text.
+- Bugfix [0000253]: Phonebook tab: Column "Private" is always English text (Yes/No) instead of localized text.
+- Bugfix [0000254]: Phonebook tab: 1st Column not readable nor sizeable.
+
 JFritz 0.7.3.21:
 - Neu: Neue Option (Weiteres) um Fensterdekorationen abzuschalten.
 - Bugfix: Fehlermeldung "Monitor schon gestartet" beim wechseln des Look&Feel aus dem Tray heraus.

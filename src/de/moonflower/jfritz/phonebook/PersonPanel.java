@@ -299,7 +299,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		numberTable.setRowSelectionAllowed(true);
 		numberTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		numberTable.getColumnModel().getColumn(0).setMinWidth(20);
-		numberTable.getColumnModel().getColumn(0).setMaxWidth(20);
+		numberTable.getColumnModel().getColumn(0).setMaxWidth(100);
 		numberTable.getSelectionModel().addListSelectionListener(this);
 		// Renderers
 		CheckBoxRenderer checkBoxRenderer = new CheckBoxRenderer();

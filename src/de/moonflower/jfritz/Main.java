@@ -193,13 +193,13 @@ public class Main implements LookupObserver {
 	// when changing this, don't forget to check the resource bundles!!
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.3.21"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.3.22"; //$NON-NLS-1$
 
 	public final static String PROGRAM_SECRET = "jFrItZsEcReT"; //$NON-NLS-1$
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 52 2009-08-19 11:47:22Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 55 2009-08-20 01:34:43Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -1402,6 +1402,11 @@ public class Main implements LookupObserver {
 			Debug.info("Loading locale: " + locale);
 			en_messages = ResourceBundle.getBundle("jfritz", new Locale("en","US"));//$NON-NLS-1$
 			messages = ResourceBundle.getBundle("jfritz", locale);//$NON-NLS-1$
+
+			UIManager.put("OptionPane.cancelButtonText", Main.getMessage("cancel"));
+			UIManager.put("OptionPane.noButtonText", Main.getMessage("no"));
+			UIManager.put("OptionPane.okButtonText", Main.getMessage("okay"));
+			UIManager.put("OptionPane.yesButtonText", Main.getMessage("yes"));
 		} catch (MissingResourceException e) {
 			Debug.error("Can't find i18n resource! (\"jfritz_" + locale + ".properties\")");//$NON-NLS-1$
 			JOptionPane.showMessageDialog(null, Main.PROGRAM_NAME + " v"//$NON-NLS-1$

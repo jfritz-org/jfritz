@@ -850,9 +850,9 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 		switch (columnIndex) {
 		case 0:
 			if (person.isPrivateEntry()) {
-				return "YES"; //$NON-NLS-1$
+				return Main.getMessage("yes"); //$NON-NLS-1$
 			} else {
-				return "NO"; //$NON-NLS-1$
+				return Main.getMessage("no"); //$NON-NLS-1$
 			}
 		case 1:
 		{

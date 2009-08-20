@@ -84,10 +84,11 @@ public class FritzBox extends BoxClass {
 	private final static String QUERY_ISDN_NAME = "telcfg:settings/NTHotDialList/Name%NUM%";
 	private final static String QUERY_ISDN_NUMBER = "telcfg:settings/NTHotDialList/Number%NUM%";
 
-	private final static String QUERY_DECT_ENABLED = "dect:settings/enabled";
-	private final static String QUERY_DECT_COUNT = "dect:settings/Handset/count";
-	private final static String QUERY_DECT_NAME = "dect:settings/Handset%NUM%/Name";
-	private final static String QUERY_DECT_SUBSCRIBED = "dect:settings/Handset%NUM%/Subscribed";
+	private final static String QUERY_DECT_MINI_COUNT = "telcfg:settings/Foncontrol/User/count";
+	private final static String QUERY_DECT_MINI_NAME = "telcfg:settings/Foncontrol/User%NUM%/Name";
+	private final static String QUERY_DECT_MINI_ID = "telcfg:settings/Foncontrol/User%NUM%/Id";
+	private final static String QUERY_DECT_MINI_INTERN = "telcfg:settings/Foncontrol/User%NUM%/Intern";
+	private final static String QUERY_DECT_MINI_TYPE = "telcfg:settings/Foncontrol/User%NUM%/Type";
 
 	private final static String QUERY_VOIP_ENABLED = "telcfg:settings/VoipExtension/enabled";
 	private final static String QUERY_VOIP_COUNT = "telcfg:settings/VoipExtension/count";
@@ -598,7 +599,7 @@ public class FritzBox extends BoxClass {
 		configuredPorts.clear();
 		addAnalogPorts();
 		addIsdnPorts();
-		addDectPorts();
+		addDectMiniPorts();
 		addVoIPPorts();
 		addOtherPorts();
 	}
@@ -730,52 +731,64 @@ public class FritzBox extends BoxClass {
 		}
 	}
 
-	private void addDectPorts()
+	private void addDectMiniPorts()
 	{
 		// detect configured ports
 		Vector<String> query = new Vector<String>();
-		query.add(QUERY_DECT_ENABLED);
-		query.add(QUERY_DECT_COUNT);
+		query.add(QUERY_DECT_MINI_COUNT);
 		Vector<String> response = getQuery(query);
 
-		if (response.size() == 2)
+		if (response.size() == 1)
 		{
-			boolean dectEnabled =  response.get(0).equals("1");
 			try {
-				int dectCount = Integer.parseInt(response.get(1));
-				if (dectEnabled)
+				int dectCount = Integer.parseInt(response.get(0));
+				if (dectCount > 0)
 				{
 					query.clear();
 					for (int i=0; i<dectCount; i++)
 					{
-						query.add(QUERY_DECT_SUBSCRIBED.replaceAll("%NUM%", Integer.toString(i)));
-						query.add(QUERY_DECT_NAME.replaceAll("%NUM%", Integer.toString(i)));
+						query.add(QUERY_DECT_MINI_ID.replaceAll("%NUM%", Integer.toString(i)));
+						query.add(QUERY_DECT_MINI_NAME.replaceAll("%NUM%", Integer.toString(i)));
+						query.add(QUERY_DECT_MINI_INTERN.replaceAll("%NUM%", Integer.toString(i)));
+						query.add(QUERY_DECT_MINI_TYPE.replaceAll("%NUM%", Integer.toString(i)));
 					}
 					response = getQuery(query);
 
-					if (response.size() == 2*dectCount)
+					if (response.size() == 4*dectCount)
 					{
 						for (int i=0; i<dectCount; i++)
 						{
-							boolean subscribed = "1".equals(response.get((i*2) + 0));
-							if (subscribed)
+							String id = response.get((i*4) + 0);
+							String name = response.get((i*4) + 1);
+							String internal = response.get((i*4) + 2);
+							String type = response.get((i*4) + 3);
+							String num = "";
+							if (internal.length() >= 3) {
+								num = internal.substring(2);
+							}
+							Debug.debug("ID: " + id);
+							Debug.debug("Name: " + name);
+							Debug.debug("Internal: " + internal);
+							Debug.debug("Num: " + num);
+							Debug.debug("Type: " + type);
+
+							if ("".equals(name))
 							{
-								String dectName = response.get((i*2) + 1);
-								if ("".equals(dectName))
-								{
-									dectName = "DECT " + i;
-								}
-								addConfiguredPort(new Port(10+i,
-										dectName,
-										"6"+Integer.toString(i),
-										"61"+Integer.toString(i)));
+								name = "DECT " + i;
+							}
+
+							if (!"".equals(internal)) {
+								addConfiguredPort(new Port(10+Integer.parseInt(num),
+										name,
+										"6"+num,
+										internal));
 							}
 						}
 					}
 				}
 			} catch (NumberFormatException nfe)
 			{
-				Debug.warning("No dect devices available.");
+				Debug.warning("No dect/mini devices available.");
 			}
 		}
 	}
