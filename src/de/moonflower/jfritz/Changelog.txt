@@ -3,6 +3,12 @@ TODO: Timer zum automatischen Aktualisieren der FritzBox-Einstellungen (Telefone
  
 JFritz 0.7.3.23:
 - Bugfix [0000240]: Verbindung zur FritzBox unterbrochen 
+- Bugfix [0000260]: Buttons "Alle" und "Keine" bei MSN- und Port-Filter hinzufügen 
+New strings:
+select_none
+Changed strings:
+okay (german Okay -> OK)
+select_all
 
 JFritz 0.7.3.22:
 - Neu [0000239]: Unterstützung für Fritz!Mini

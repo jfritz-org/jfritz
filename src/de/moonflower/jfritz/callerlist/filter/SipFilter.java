@@ -21,16 +21,17 @@ public class SipFilter extends CallFilter {
 
 	public boolean passInternFilter(Call currentCall) {
 
-		if ((sipProviders.size() == 0)
-			|| allSelected)
+		if (allSelected)
 		{
 			return true;
 		}
+
 		String route = currentCall.getRoute();
 //			Debug.msg("route: "+route);
 		if (route.equals("")) { //$NON-NLS-1$
 			return false;
 		}
+
 		if (sipProviders.contains(route))
 			return true;
 		else

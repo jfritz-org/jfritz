@@ -618,7 +618,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 						msnPopupMenu.setVisible(false);
 						msnPopupMenu = null;
 					}
-					msnPopupMenu = new CheckboxPopupMenu(JFritz.getJframe());
+					msnPopupMenu = new CheckboxPopupMenu(JFritz.getJframe(), CallFilter.FILTER_SIP_PROVIDERS);
 					Vector<String> providers = callerList.getUsedProviderList();
 					msnPopupMenu.setObjects(providers);
 					Vector<String> filteredMSNs = new Vector<String>();
@@ -675,7 +675,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 						portPopupMenu.setVisible(false);
 						portPopupMenu = null;
 					}
-					portPopupMenu = new CheckboxPopupMenu(JFritz.getJframe());
+					portPopupMenu = new CheckboxPopupMenu(JFritz.getJframe(), CallFilter.FILTER_PORT_LIST);
 					Vector<String> ports = callerList.getUsedPortsList();
 					portPopupMenu.setObjects(ports);
 					Vector<String> filteredPorts = new Vector<String>();

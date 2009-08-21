@@ -19,15 +19,15 @@ public class PortFilter extends CallFilter {
 
 	public boolean passInternFilter(Call currentCall) {
 
-		if ((ports.size() == 0)
-			|| allSelected)
+		if (allSelected)
 		{
 			return true;
 		}
+
 		String port = currentCall.getPort().getName();
 //			Debug.msg("route: "+route);
 		if (port.equals("")) { //$NON-NLS-1$
-			return false;
+			return true;
 		}
 		if (ports.contains(port))
 			return true;

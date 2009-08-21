@@ -1,34 +1,46 @@
 package de.moonflower.jfritz.callerlist.filter;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.HyperLinkLabel;
+import de.moonflower.jfritz.utils.LinkClickListener;
 
-public class CheckboxPopupMenu extends JDialog implements ActionListener {
+public class CheckboxPopupMenu extends JDialog implements ActionListener, LinkClickListener {
 
 	private static final long serialVersionUID = 1L;
+
+	private static final String allUrlStr = "http://all";
+	private static final String noneUrlStr = "http://none";
 
 	private Vector<JCheckBox> objects;
 
 	private boolean ok_pressed = false;
 
-	public CheckboxPopupMenu(JFrame parent) {
+	private String filterStateProperty = "";
+
+	public CheckboxPopupMenu(JFrame parent, String stateProperty) {
 		super(parent);
 		this.setUndecorated(true);
 		this.setModal(true);
+		this.filterStateProperty = stateProperty;
 	}
 
 	public void setObjects(Vector<String> obj) {
@@ -41,19 +53,51 @@ public class CheckboxPopupMenu extends JDialog implements ActionListener {
 			objects.add(new JCheckBox(obj.get(i)));
 			popupPanel.add(objects.get(i));
 		}
-		this.add(popupPanel, BorderLayout.CENTER);
+		JScrollPane scrollPane = new JScrollPane(popupPanel);
+		scrollPane.setAutoscrolls(true);
+		this.add(scrollPane, BorderLayout.CENTER);
 
 		JPanel buttonPanel = new JPanel();
+		buttonPanel.setBorder(BorderFactory.createEtchedBorder());
 		JButton okButton;
 		JButton cancelButton;
-		buttonPanel.add(okButton = new JButton("OK"));
-		buttonPanel.add(cancelButton = new JButton("Cancel"));
+		buttonPanel.add(okButton = new JButton(Main.getMessage("okay")));
+		buttonPanel.add(cancelButton = new JButton(Main.getMessage("cancel")));
 		okButton.setActionCommand("ok");
 		cancelButton.setActionCommand("cancel");
 		okButton.addActionListener(this);
 		cancelButton.addActionListener(this);
-		this.add(buttonPanel, BorderLayout.SOUTH);
+
+		try {
+			JPanel linkPanel = new JPanel();
+
+			URL allUrl = new URL(allUrlStr);
+			URL noneUrl = new URL(noneUrlStr);
+
+			HyperLinkLabel allLink = new HyperLinkLabel(Main.getMessage("select_all"), allUrl);
+			allLink.addClickListener(this);
+			linkPanel.add(allLink);
+
+			HyperLinkLabel noneLink = new HyperLinkLabel(Main.getMessage("select_none"), noneUrl);;
+			noneLink.addClickListener(this);
+			linkPanel.add(noneLink);
+
+			this.add(linkPanel, BorderLayout.SOUTH);
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		this.add(buttonPanel, BorderLayout.NORTH);
 		this.pack();
+
+		if (obj.size() > 8) {
+			scrollPane.setPreferredSize(new Dimension(scrollPane.getWidth()+40, 200));
+			this.pack();
+		} else {
+			scrollPane.setPreferredSize(new Dimension(scrollPane.getWidth()+40, scrollPane.getHeight()));
+			this.pack();
+		}
 		ok_pressed = false;
 	}
 
@@ -78,14 +122,14 @@ public class CheckboxPopupMenu extends JDialog implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("ok")) {
-			String sip_filter = "";
+			String filter = "";
 			for (JCheckBox checkBox: objects) {
 				if (checkBox.isSelected()) {
-					sip_filter = sip_filter.concat(checkBox.getText()).concat(" ");
+					filter = filter.concat(checkBox.getText()).concat(";");
 				}
 			}
-			sip_filter = sip_filter.trim();
-			Main.setStateProperty("filter_sip_providers", sip_filter);
+			filter = filter.trim();
+			Main.setStateProperty(filterStateProperty, filter);
 			Main.saveStateProperties();
 			ok_pressed = true;
 			this.setVisible(false);
@@ -99,5 +143,17 @@ public class CheckboxPopupMenu extends JDialog implements ActionListener {
 
 	public boolean okPressed() {
 		return ok_pressed;
+	}
+
+	public void clicked(URL url) {
+		if (allUrlStr.equals(url.toString())) {
+			Debug.debug("Select all");
+			this.setSelected("$ALL$", true);
+		} else if (noneUrlStr.equals(url.toString())) {
+			Debug.debug("Select none");
+			this.setSelected("$ALL$", false);
+		} else {
+			Debug.warning("Unknown url clicked");
+		}
 	}
 }
