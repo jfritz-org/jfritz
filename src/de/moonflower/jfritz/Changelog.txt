@@ -1,5 +1,8 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 TODO: Timer zum automatischen Aktualisieren der FritzBox-Einstellungen (Telefone, SIP-Provider, ...) nach X Minuten (z.B. 60 / 120)
+ 
+JFritz 0.7.3.23:
+- Bugfix [0000240]: Verbindung zur FritzBox unterbrochen 
 
 JFritz 0.7.3.22:
 - Neu [0000239]: Unterstützung für Fritz!Mini

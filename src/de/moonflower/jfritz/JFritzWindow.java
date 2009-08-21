@@ -835,7 +835,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					while (!isdone) {
 						setBusy(true);
 						setStatus(Main.getMessage("fetchdata")); //$NON-NLS-1$
-						setBoxConnected("");
 						JFritz.getBoxCommunication().getCallerList(box);
 						isdone = true;
 					}
@@ -1938,12 +1937,14 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	}
 
 	public void setBoxConnected(String boxName) {
+		Debug.debug("Box connected");
 		connectButton.setIcon(connectIcon);
 		connectButton.setToolTipText(Main.getMessage("connected_fritz"));
 		statusBar.refresh();
 	}
 
 	public void setBoxDisconnected(String boxName) {
+		Debug.debug("Box disconnected");
 		connectButton.setIcon(disconnectIcon);
 		connectButton.setToolTipText(Main.getMessage("disconnected_fritz"));
 		this.setDisconnectedStatus(""); // set call monitor to disconnected status

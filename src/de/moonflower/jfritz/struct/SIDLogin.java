@@ -110,6 +110,7 @@ public class SIDLogin {
 			{
 				sessionId = matcherSid.group(1);
 				Debug.debug("Current session id: " + sessionId);
+				break;
 			}
 		}
 	}

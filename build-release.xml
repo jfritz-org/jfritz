@@ -285,6 +285,22 @@
 		  </jabber>
 	</target>
 
+	<target name="email-test" depends="getVersion">
+		<mail
+			mailhost="${mailhost}"
+			mailport="${mailport}"
+			ssl="yes"
+			user="${mailuser}"
+			password="${mailpwd}"
+			charset="utf-8"
+			from="${mailuser}"
+			replyto="${mailuser}"
+			messagefile="NewVersionMail.txt"
+			subject="JFritz: Neue Version ${version} verfügbar!">
+			<to address="${mail-rcp2}" />
+		</mail>
+	</target>
+
 	<target name="email-msg" depends="getVersion">
 		<mail
 			mailhost="${mailhost}"

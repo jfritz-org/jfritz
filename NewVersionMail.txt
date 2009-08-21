@@ -16,7 +16,7 @@ DMG: http://jfritz.robotniko.de/beta/JFritz-${version}.dmg
 
 Für alle anderen Plattformen:
 http://jfritz.robotniko.de/beta/JFritz-${version}-Beta.zip
-
+http://jfritz.robotniko.de/beta/JFritz-${version}.tar.gz
 
 Bugs bitte wie gehabt in Mantis melden:
 http://jfritz.robotniko.de/mantis/main_page.php
