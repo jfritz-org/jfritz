@@ -131,6 +131,9 @@ public class FritzBox extends BoxClass {
 	private static String URL_SERVICE_FORCETERMINATION = ":49000/upnp/control/WANIPConn1";
 	private static String URN_SERVICE_FORCETERMINATION = "urn:schemas-upnp-org:service:WANIPConnection:1#ForceTermination";
 
+//	private static String POSTDATA_REBOOT = "getpage=..%2Fhtml%2Freboot.html&errorpage=..%2Fhtml%2Fde%2Fmenus%2Fmenu2.html&var%3Apagename=reset&var%3Aerrorpagename=reset&var%3Amenu=system&var%3Apagemaster=&time%3Asettings%2Ftime=1250935088%2C-120&var%3AtabReset=0&logic%3Acommand%2Freboot=..%2Fgateway%2Fcommands%2Fsaveconfig.html";
+	private static String POSTDATA_REBOOT = "getpage=..%2Fhtml%2Freboot.html&var%3Apagename=reset&var%3Amenu=system&var%3Apagemaster=&time%3Asettings%2Ftime=1250935088%2C-120&var%3AtabReset=0&logic%3Acommand%2Freboot=..%2Fgateway%2Fcommands%2Fsaveconfig.html";
+
 	private static String POSTDATA_CALL = "&telcfg:settings/UseClickToDial=1&telcfg:settings/DialPort=$NEBENSTELLE&telcfg:command/Dial=$NUMMER"; //$NON-NLS-1$
 	private static String POSTDATA_HANGUP = "&telcfg:settings/UseClickToDial=1&telcfg:command%2FHangup"; //$NON-NLS-1$
 
@@ -1752,6 +1755,65 @@ public class FritzBox extends BoxClass {
 	{
 		if (!callBackListener.contains(listener)) {
 			callBackListener.add(listener);
+		}
+	}
+
+	public void reboot() throws WrongPasswordException {
+		final String urlstr = "http://" + address + ":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
+		boolean password_wrong = true;
+		int retry_count = 0;
+		int max_retry_count = 2;
+
+		while ((password_wrong) && (retry_count < max_retry_count)) {
+			String postdata = POSTDATA_REBOOT;
+			Debug.debug("Retry count: " + retry_count);
+			retry_count++;
+
+			if (firmware.isSidLogin())
+			{
+				try {
+				postdata = postdata + "&sid=" + URLEncoder.encode(firmware.getSessionId(), "ISO-8859-1");
+				} catch (UnsupportedEncodingException e) {
+					Debug.error("Encoding not supported");
+					e.printStackTrace();
+				}
+			}
+			else
+			{
+				try {
+					postdata = postdata + "&login:command/password=" + URLEncoder.encode(this.password, "ISO-8859-1");
+				} catch (UnsupportedEncodingException e) {
+					Debug.error("Encoding not supported");
+					e.printStackTrace();
+				}
+			}
+
+			Vector<String> data = new Vector<String>(1000);
+			try {
+				data = JFritzUtils.fetchDataFromURLToVector(name,
+						urlstr, postdata, true);
+				password_wrong = false;
+				for (int i=0; i<data.size(); i++) {
+					Debug.debug(data.get(i));
+				}
+			} catch (WrongPasswordException wpe) {
+				password_wrong = true;
+				if (retry_count == max_retry_count) {
+					throw wpe;
+				}
+				try {
+					Thread.sleep(wpe.getRetryTime() * 1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} catch (SocketTimeoutException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 }

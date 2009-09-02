@@ -390,7 +390,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 						.getResource("/de/moonflower/jfritz/resources/images/monitor-down.png")); //$NON-NLS-1$
 		connectButton = new JLabel("");
 		callMonitorConnectButton = new JLabel("");
-		setBoxDisconnected("");
+		setBoxConnected("");
 		iconStatusPanel.add(connectButton);
 		iconStatusPanel.add(callMonitorConnectButton);
 		statusBar.registerStatusIcon(iconStatusPanel);
@@ -1102,6 +1102,18 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				JFritz.getBoxCommunication().renewIPAddress(box);
 			}
 			jFritz.refreshTrayMenu();
+		} else if (e.getActionCommand().startsWith("reboot-")) {
+			String boxName = e.getActionCommand().substring("reboot-".length());
+			BoxClass box = JFritz.getBoxCommunication().getBox(boxName);
+			if (box != null) {
+				Debug.debug("Rebooting box: " + boxName);
+				try {
+					JFritz.getBoxCommunication().reboot(box);
+				} catch (WrongPasswordException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
 		} else if (e.getActionCommand().equals("delete_fritzbox_callerlist")) {
 			deleteFritzBoxCallerList();
 		} else if (e.getActionCommand().equals(

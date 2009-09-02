@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.util.Vector;
 
 import de.moonflower.jfritz.callmonitor.CallMonitorStatusListener;
+import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.IProgressListener;
 import de.moonflower.jfritz.struct.PhoneNumber;
@@ -227,6 +228,16 @@ public class BoxCommunication {
 			for (BoxClass currentBox: registeredBoxes)
 			{
 				currentBox.renewIPAddress();
+			}
+		}
+	}
+
+	public void reboot(BoxClass box) throws WrongPasswordException {
+		if (box != null) {
+			box.reboot();
+		} else {
+			for (BoxClass currentBox: registeredBoxes) {
+				currentBox.reboot();
 			}
 		}
 	}

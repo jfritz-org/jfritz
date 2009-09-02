@@ -281,9 +281,9 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		this.callerList = callerList;
 		createFilters(callerList);
 		setLayout(new BorderLayout());
+		registerStatusBar();
 		add(createToolBar(), BorderLayout.NORTH);
 		add(createCallerListTable(), BorderLayout.CENTER);
-		registerStatusBar();
 	}
 
 	public void setPhoneBookPanel(PhoneBookPanel phoneBookPanel){

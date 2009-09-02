@@ -3,6 +3,7 @@ package de.moonflower.jfritz.box;
 import java.util.Vector;
 
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.network.SSDPPacket;
@@ -176,4 +177,6 @@ public abstract class BoxClass
 	public abstract void addBoxCallBackListener(BoxCallBackListener listener);
 
 	public abstract String getExternalIP();
+
+	public abstract void reboot() throws WrongPasswordException;
 }

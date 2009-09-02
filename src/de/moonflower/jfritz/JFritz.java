@@ -470,6 +470,10 @@ public final class JFritz implements  StatusListener {
 				menuItem.setActionCommand("renewIP-"+boxName);
 				menuItem.addActionListener(jframe);
 				boxItem.add(menuItem.getJMenuItem());
+				menuItem = new TrayMenuItem("Reboot");
+				menuItem.setActionCommand("reboot-"+boxName);
+				menuItem.addActionListener(jframe);
+				boxItem.add(menuItem.getJMenuItem());
 				menu.add(boxItem);
 			}
 		}

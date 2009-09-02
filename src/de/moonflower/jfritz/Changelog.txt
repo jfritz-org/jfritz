@@ -1,6 +1,16 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 TODO: Timer zum automatischen Aktualisieren der FritzBox-Einstellungen (Telefone, SIP-Provider, ...) nach X Minuten (z.B. 60 / 120)
  
+JFritz 0.7.3.24:
+- Neu: Reboot der FritzBox per Tray-Menü möglich.
+- Bugfix [0000067]: Backup, nur die letzten X Backups behalten 
+- Bugfix [0000258]: 0.7.3.21 beta Anzeige der Telefonate und Gesamtdauer fehlt nach Programmstart 
+- Bugfix [0000259]: Eingabefelder im Adressbuch zu klein 
+- Bugfix [0000262]: Ältere Sicherungskopien automatisch löschen
+- Bugfix [0000264]: FB-Verbindungs-Symbol bleibt Rot, beim Wechseln des Look and Feels
+New strings:
+keep_important_backups_only  
+ 
 JFritz 0.7.3.23:
 - Bugfix [0000240]: Verbindung zur FritzBox unterbrochen 
 - Bugfix [0000260]: Buttons "Alle" und "Keine" bei MSN- und Port-Filter hinzufügen 

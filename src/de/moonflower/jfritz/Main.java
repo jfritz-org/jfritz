@@ -193,13 +193,13 @@ public class Main implements LookupObserver {
 	// when changing this, don't forget to check the resource bundles!!
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.3.23"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.3.24"; //$NON-NLS-1$
 
 	public final static String PROGRAM_SECRET = "jFrItZsEcReT"; //$NON-NLS-1$
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 56 2009-08-21 12:16:19Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 58 2009-09-02 11:09:08Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -931,6 +931,7 @@ public class Main implements LookupObserver {
 		defProps.setProperty("option.connectOnStartup", "false");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.createBackup", "false");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.createBackupAfterFetch", "false");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.keepImportantBackupsOnly", "false");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.deleteAfterFetch", "false");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.externProgram", "");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.fetchAfterStart", "true");//$NON-NLS-1$, //$NON-NLS-2$

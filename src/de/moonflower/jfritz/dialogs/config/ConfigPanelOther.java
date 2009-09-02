@@ -36,7 +36,7 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 	private JCheckBox checkNewVersionAfterStart, passwordAfterStartButton,
 			timerAfterStartButton, startMinimizedButton, confirmOnExitButton,
 			searchWithSSDP, minimizeInsteadOfClose, createBackup,
-			createBackupAfterFetch, useDecorations;
+			createBackupAfterFetch, keepImportantBackupsOnly, useDecorations;
 
 	private JTextField save_location;
 
@@ -137,6 +137,11 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 		c.gridy++;
 		cPane.add(createBackupAfterFetch, c);
 
+		keepImportantBackupsOnly = new JCheckBox(Main
+				.getMessage("keep_important_backups_only"));
+		c.gridy++;
+		cPane.add(keepImportantBackupsOnly, c);
+
 		JPanel panel = new JPanel();
 
 		JLabel label = new JLabel(Main.getMessage("save_directory"));
@@ -196,6 +201,8 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 				"option.createBackup"))); //$NON-NLS-1$
 		createBackupAfterFetch.setSelected(JFritzUtils.parseBoolean(Main
 				.getProperty("option.createBackupAfterFetch"))); //$NON-NLS-1$
+		keepImportantBackupsOnly.setSelected(JFritzUtils.parseBoolean(Main
+				.getProperty("option.keepImportantBackupsOnly"))); //$NON-NLS-1$
 
 		String decrypted_pwd = Encryption.decrypt(Main.getProperty("jfritz.seed"));
 		if ((decrypted_pwd != null)
@@ -277,6 +284,8 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 				.toString(createBackup.isSelected()));
 		Main.setProperty("option.createBackupAfterFetch", //$NON-NLS-1$
 				Boolean.toString(createBackupAfterFetch.isSelected()));
+		Main.setProperty("option.keepImportantBackupsOnly",
+				Boolean.toString(keepImportantBackupsOnly.isSelected()));
 		Main.setProperty("option.checkNewVersionAfterStart", //$NON-NLS-1$
 				Boolean.toString(checkNewVersionAfterStart.isSelected()));
 

@@ -323,15 +323,9 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 		address.setText(fritzBox.getAddress()); //$NON-NLS-1$,  //$NON-NLS-2$
 		port.setText(fritzBox.getPort()); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		if (devices != null) {
-			for (int i = 0; i < devices.size(); i++) {
-				SSDPPacket p = (SSDPPacket) devices.get(i);
-				if (p.getIP().getHostAddress().equals(address.getText())) {
-					if (addressCombo.getItemCount()>i)
-					{
-						addressCombo.setSelectedIndex(i);
-					}
-				}
+		for (int i=0; i < addressCombo.getItemCount(); i++) {
+			if (((String)addressCombo.getItemAt(i)).equals(address.getText())) {
+				addressCombo.setSelectedIndex(i);
 			}
 		}
 		setBoxTypeLabel();

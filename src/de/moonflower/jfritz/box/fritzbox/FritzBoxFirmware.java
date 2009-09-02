@@ -35,39 +35,39 @@ public class FritzBoxFirmware {
 
 	public final static byte BOXTYPE_FRITZBOX_ATA = 11;
 
-    public final static byte BOXTYPE_FRITZBOX_5010 = 23;
+	public final static byte BOXTYPE_FRITZBOX_5010 = 23;
 
-    public final static byte BOXTYPE_FRITZBOX_5012 = 25;
+	public final static byte BOXTYPE_FRITZBOX_5012 = 25;
 
 	public final static byte BOXTYPE_FRITZBOX_5050 = 12;
 
-    public final static byte BOXTYPE_FRITZBOX_7050 = 14;
+	public final static byte BOXTYPE_FRITZBOX_7050 = 14;
 
-    public final static byte BOXTYPE_EUMEX_300 = 15;
+	public final static byte BOXTYPE_EUMEX_300 = 15;
 
-    public final static byte BOXTYPE_FRITZBOX_SPEEDPORT_W501V = 28;
+	public final static byte BOXTYPE_FRITZBOX_SPEEDPORT_W501V = 28;
 
-    public final static byte BOXTYPE_FRITZBOX_7170 = 29;
+	public final static byte BOXTYPE_FRITZBOX_7170 = 29;
 
-    public final static byte BOXTYPE_FRITZBOX_7140 = 30;
+	public final static byte BOXTYPE_FRITZBOX_7140 = 30;
 
-    public final static byte BOXTYPE_FRITZBOX_7140_ANNEX_A = 39;
+	public final static byte BOXTYPE_FRITZBOX_7140_ANNEX_A = 39;
 
-    public final static byte BOXTYPE_FRITZBOX_SPEEDPORT_W900V = 34;
+	public final static byte BOXTYPE_FRITZBOX_SPEEDPORT_W900V = 34;
 
-    public final static byte BOXTYPE_FRITZBOX_7141 = 40;
+	public final static byte BOXTYPE_FRITZBOX_7141 = 40;
 
-    public final static byte BOXTYPE_FRITZBOX_5140 = 43;
+	public final static byte BOXTYPE_FRITZBOX_5140 = 43;
 
-    public final static byte BOXTYPE_FRITZBOX_7270 = 54;
+	public final static byte BOXTYPE_FRITZBOX_7270 = 54;
 
-    public final static byte BOXTYPE_FRITZBOX_7113 = 60;
+	public final static byte BOXTYPE_FRITZBOX_7113 = 60;
 
-    public final static byte BOXTYPE_FRITZBOX_7240 = 73;
+	public final static byte BOXTYPE_FRITZBOX_7240 = 73;
 
-    public final static byte BOXTYPE_FRITZBOX_7570 = 75;
+	public final static byte BOXTYPE_FRITZBOX_7570 = 75;
 
-    public final static byte ACCESS_METHOD_POST_0342 = 0;
+	public final static byte ACCESS_METHOD_POST_0342 = 0;
 
 	public final static byte ACCESS_METHOD_ENGLISH = 1;
 
@@ -94,7 +94,7 @@ public class FritzBoxFirmware {
 
 	private final static String[] POSTDATA_DETECT_FIRMWARE = {
 			"&var%3Alang=de&var%3Amenu=home&var%3Apagename=home&login%3Acommand%2F%LOGINMODE%=", //$NON-NLS-1$
-			"&var%3Alang=en&var%3Amenu=home&var%3Apagename=home&login%3Acommand%2F%LOGINMODE%="}; //$NON-NLS-1$
+			"&var%3Alang=en&var%3Amenu=home&var%3Apagename=home&login%3Acommand%2F%LOGINMODE%=" }; //$NON-NLS-1$
 
 	private final static String PATTERN_DETECT_FIRMWARE = "[Firmware|Labor][-| ][V|v]ersion[^\\d]*(\\d\\d).(\\d\\d).(\\d\\d\\d*)([^<]*)"; //$NON-NLS-1$
 
@@ -114,8 +114,8 @@ public class FritzBoxFirmware {
 	 * @param sid
 	 */
 	public FritzBoxFirmware(String boxtype, String majorFirmwareVersion,
-			String minorFirmwareVersion, String modFirmwareVersion, String language,
-			boolean sidNecessary, String sid) {
+			String minorFirmwareVersion, String modFirmwareVersion,
+			String language, boolean sidNecessary, String sid) {
 		this.boxtype = Byte.parseByte(boxtype);
 		this.majorFirmwareVersion = Byte.parseByte(majorFirmwareVersion);
 		this.minorFirmwareVersion = Byte.parseByte(minorFirmwareVersion);
@@ -135,16 +135,19 @@ public class FritzBoxFirmware {
 	 * @throws WrongPasswordException
 	 * @throws IOException
 	 */
-	public static FritzBoxFirmware detectFirmwareVersion(
-			String box_name, String box_address,
-			String box_password, String port) throws WrongPasswordException, IOException, InvalidFirmwareException {
-		final String urlstr = "http://" + box_address +":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
+	public static FritzBoxFirmware detectFirmwareVersion(String box_name,
+			String box_address, String box_password, String port)
+			throws WrongPasswordException, IOException,
+			InvalidFirmwareException {
+		final String urlstr = "http://" + box_address + ":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
 
-		if(Main.getProperty("network.type").equals("2")
-				&& Boolean.parseBoolean(Main.getProperty("option.clientCallList"))
-				&& NetworkStateMonitor.isConnectedToServer()){
+		if (Main.getProperty("network.type").equals("2")
+				&& Boolean.parseBoolean(Main
+						.getProperty("option.clientCallList"))
+				&& NetworkStateMonitor.isConnectedToServer()) {
 
-			Debug.netMsg("JFritz is configured as a client and using call list from server, canceling firmware detection");
+			Debug
+					.netMsg("JFritz is configured as a client and using call list from server, canceling firmware detection");
 			return null;
 		}
 
@@ -154,18 +157,16 @@ public class FritzBoxFirmware {
 		boolean detected = false;
 
 		SIDLogin sidLogin = new SIDLogin();
-		for (int i=0; i<(POSTDATA_ACCESS_METHOD).length && !detected; i++)
-		{
-			for (int j=0; j<(POSTDATA_DETECT_FIRMWARE).length && !detected; j++)
-			{
+		for (int i = 0; i < (POSTDATA_ACCESS_METHOD).length && !detected; i++) {
+			for (int j = 0; j < (POSTDATA_DETECT_FIRMWARE).length && !detected; j++) {
 				boolean password_wrong = true;
 				int retry_count = 0;
 				int max_retry_count = 2;
 
-				while ((password_wrong) && (retry_count < max_retry_count))
-				{
-					String postdata = POSTDATA_ACCESS_METHOD[i] + POSTDATA_DETECT_FIRMWARE[j];
-					Debug.debug("Retry count: " + retry_count );
+				while ((password_wrong) && (retry_count < max_retry_count)) {
+					String postdata = POSTDATA_ACCESS_METHOD[i]
+							+ POSTDATA_DETECT_FIRMWARE[j];
+					Debug.debug("Retry count: " + retry_count);
 					retry_count++;
 
 					try {
@@ -173,30 +174,28 @@ public class FritzBoxFirmware {
 					} catch (WrongPasswordException wpe) {
 						Debug.debug("No SID-Login necessary.");
 					}
-					if (sidLogin.isSidLogin())
-					{
+					if (sidLogin.isSidLogin()) {
 						postdata = postdata.replace("%LOGINMODE%", "response");
-						postdata = postdata + URLEncoder.encode(sidLogin.getResponse(), "ISO-8859-1");
-					}
-					else
-					{
+						postdata = postdata
+								+ URLEncoder.encode(sidLogin.getResponse(),
+										"ISO-8859-1");
+					} else {
 						postdata = postdata.replace("%LOGINMODE%", "password");
-						postdata = postdata + URLEncoder.encode(box_password, "ISO-8859-1");
+						postdata = postdata
+								+ URLEncoder.encode(box_password, "ISO-8859-1");
 					}
 
 					try {
-						data = JFritzUtils.fetchDataFromURLToVector(
-								box_name, urlstr, postdata, true);
+						data = JFritzUtils.fetchDataFromURLToVector(box_name,
+								urlstr, postdata, true);
 						password_wrong = false;
-					} catch (WrongPasswordException wpe)
-					{
+					} catch (WrongPasswordException wpe) {
 						password_wrong = true;
-						if (retry_count == max_retry_count)
-						{
+						if (retry_count == max_retry_count) {
 							throw wpe;
 						}
 						try {
-							Thread.sleep(wpe.getRetryTime()*1000);
+							Thread.sleep(wpe.getRetryTime() * 1000);
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -204,30 +203,30 @@ public class FritzBoxFirmware {
 					}
 				}
 
-                if (false) {
-                    String filename = "c://SpeedFirm.txt"; //$NON-NLS-1$
-                    Debug.debug("Debug mode: Loading " + filename); //$NON-NLS-1$
-                    try {
-                        data.clear(); //$NON-NLS-1$
-                        String thisLine;
-                        BufferedReader in = new BufferedReader(new FileReader(filename));
-                        while ((thisLine = in.readLine()) != null) {
-                            data.add(thisLine);
-                        }
-                        in.close();
-                    } catch (IOException e) {
-                        Debug.error("File not found: " + filename); //$NON-NLS-1$
-                    }
-                }
+				if (false) {
+					String filename = "c://SpeedFirm.txt"; //$NON-NLS-1$
+					Debug.debug("Debug mode: Loading " + filename); //$NON-NLS-1$
+					try {
+						data.clear(); //$NON-NLS-1$
+						String thisLine;
+						BufferedReader in = new BufferedReader(new FileReader(
+								filename));
+						while ((thisLine = in.readLine()) != null) {
+							data.add(thisLine);
+						}
+						in.close();
+					} catch (IOException e) {
+						Debug.error("File not found: " + filename); //$NON-NLS-1$
+					}
+				}
 
-//        		Debug.msg(data);
+				// Debug.msg(data);
 
 				Pattern detectDE = Pattern.compile(PATTERN_DETECT_LANGUAGE_DE);
 				Pattern detectEN = Pattern.compile(PATTERN_DETECT_LANGUAGE_EN);
 
 				long startParse = JFritzUtils.getTimestamp();
-    			for (int k=0; k<data.size(); k++)
-    			{
+				for (int k = 0; k < data.size(); k++) {
 					Matcher m = detectDE.matcher(data.get(k));
 					if (m.find()) {
 						language = "de";
@@ -235,8 +234,7 @@ public class FritzBoxFirmware {
 						break;
 					}
 
-					if (!detected)
-					{
+					if (!detected) {
 						m = detectEN.matcher(data.get(k));
 						if (m.find()) {
 							language = "en";
@@ -244,23 +242,26 @@ public class FritzBoxFirmware {
 							break;
 						}
 					}
-    			}
+				}
 				long endParse = JFritzUtils.getTimestamp();
-				Debug.debug("Used time to parse response: " + (endParse-startParse) + "ms");
+				Debug.debug("Used time to parse response: "
+						+ (endParse - startParse) + "ms");
 			}
-			if ( detected ) break;
+			if (detected)
+				break;
 		}
 
-		if (!detected ) throw new InvalidFirmwareException();
+		if (!detected)
+			throw new InvalidFirmwareException();
 
 		sidLogin.getSidFromResponse(data);
 
 		long startTimestamp = JFritzUtils.getTimestamp();
-        Debug.debug("Parsing data (" + data.size() + " lines) to detect firmware!");
+		Debug.debug("Parsing data (" + data.size()
+				+ " lines) to detect firmware!");
 		Pattern normalFirmware = Pattern.compile(PATTERN_DETECT_FIRMWARE);
 
-		for (int k=data.size()-1; k>0; k--)
-		{
+		for (int k = data.size() - 1; k > 0; k--) {
 			Matcher m = normalFirmware.matcher(data.get(k));
 			if (m.find()) {
 				String boxtypeString = m.group(1);
@@ -268,27 +269,29 @@ public class FritzBoxFirmware {
 				String minorFirmwareVersion = m.group(3);
 				String modFirmwareVersion = m.group(4).trim();
 
-				Debug.info("Detected Firmware: " +
-						boxtypeString + "." +
-						majorFirmwareVersion + "." +
-						minorFirmwareVersion +
-						modFirmwareVersion + " " +
-						language);
-				if ((((Integer.parseInt(majorFirmwareVersion) == 4) && (Integer.parseInt(minorFirmwareVersion) >= 67))
-					  || (Integer.parseInt(majorFirmwareVersion) > 4))
-					&& (language.equals("en")))
-					{
-						// ab version xx.04.67 gibt es bei englischen Firmwares keine Unterscheidung mehr zwischen
-						// internationaler und deutscher Firmware bei den URLs und Anrufliste.csv
-						Debug.info("Detected international firmware greater than xx.04.67. Forcing to use german patterns.");
-						language = "de";
-					}
+				Debug.info("Detected Firmware: " + boxtypeString + "."
+						+ majorFirmwareVersion + "." + minorFirmwareVersion
+						+ modFirmwareVersion + " " + language);
+				if ((((Integer.parseInt(majorFirmwareVersion) == 4) && (Integer
+						.parseInt(minorFirmwareVersion) >= 67)) || (Integer
+						.parseInt(majorFirmwareVersion) > 4))
+						&& (language.equals("en"))) {
+					// ab version xx.04.67 gibt es bei englischen Firmwares
+					// keine Unterscheidung mehr zwischen
+					// internationaler und deutscher Firmware bei den URLs und
+					// Anrufliste.csv
+					Debug
+							.info("Detected international firmware greater than xx.04.67. Forcing to use german patterns.");
+					language = "de";
+				}
 
 				long endTimestamp = JFritzUtils.getTimestamp();
-				Debug.debug("Used time to detect Firmware: " + (endTimestamp - startTimestamp) + "ms");
-				return new FritzBoxFirmware(boxtypeString, majorFirmwareVersion,
-						minorFirmwareVersion, modFirmwareVersion, language,
-						sidLogin.isSidLogin(), sidLogin.getSessionId());
+				Debug.debug("Used time to detect Firmware: "
+						+ (endTimestamp - startTimestamp) + "ms");
+				return new FritzBoxFirmware(boxtypeString,
+						majorFirmwareVersion, minorFirmwareVersion,
+						modFirmwareVersion, language, sidLogin.isSidLogin(),
+						sidLogin.getSessionId());
 			}
 		}
 
@@ -309,7 +312,7 @@ public class FritzBoxFirmware {
 	 */
 	public final String getAccessMethod() {
 		int accessMethod;
-		if ( language.equals("en"))
+		if (language.equals("en"))
 			accessMethod = ACCESS_METHOD_ENGLISH;
 		else if (majorFirmwareVersion == 3 && minorFirmwareVersion < 42)
 			accessMethod = ACCESS_METHOD_PRIOR_0342;
@@ -337,13 +340,17 @@ public class FritzBoxFirmware {
 	 * @return Returns the majorFirmwareVersion.
 	 */
 	public final String getFirmwareVersion() {
-        String boxtypeStr = Byte.toString(boxtype);
-        String majorStr = Byte.toString(majorFirmwareVersion);
-        String minorStr = Byte.toString(minorFirmwareVersion);
-        if (boxtypeStr.length() == 1) { boxtypeStr = "0" + boxtypeStr; } //$NON-NLS-1$
-        if (majorStr.length() == 1) { majorStr = "0" + majorStr; } //$NON-NLS-1$
-        if (minorStr.length() == 1) { minorStr = "0" + minorStr; } //$NON-NLS-1$
-       	return boxtypeStr + "." + majorStr + "." + minorStr + modFirmwareVersion; //$NON-NLS-1$,  //$NON-NLS-2$
+		String boxtypeStr = Byte.toString(boxtype);
+		String majorStr = Byte.toString(majorFirmwareVersion);
+		String minorStr = Byte.toString(minorFirmwareVersion);
+		if (boxtypeStr.length() == 1) {
+			boxtypeStr = "0" + boxtypeStr;} //$NON-NLS-1$
+		if (majorStr.length() == 1) {
+			majorStr = "0" + majorStr;} //$NON-NLS-1$
+		if (minorStr.length() == 1) {
+			minorStr = "0" + minorStr;} //$NON-NLS-1$
+		return boxtypeStr
+				+ "." + majorStr + "." + minorStr + modFirmwareVersion; //$NON-NLS-1$,  //$NON-NLS-2$
 	}
 
 	public String getBoxName() {
@@ -360,32 +367,32 @@ public class FritzBoxFirmware {
 			return "FRITZ!Box ata"; //$NON-NLS-1$
 		case 15:
 			return "Eumex 300ip"; //$NON-NLS-1$
-        case 23:
-            return "FRITZ!Box 5010"; //$NON-NLS-1$
-        case 25:
-            return "FRITZ!Box 5012"; //$NON-NLS-1$
-        case 28:
-        	return "FRITZ!Box Fon WLAN Speedport W501V"; //$NON-NLS-1$
-        case 29:
-            return "FRITZ!Box 7170"; //$NON-NLS-1$
-        case 30:
-            return "FRITZ!Box 7140"; //$NON-NLS-1$
-        case 34:
-            return "FRITZ!Box Fon WLAN Speedport W900V"; //$NON-NLS-1$
-        case 39:
-            return "FRITZ!Box 7140 Annex A"; //$NON-NLS-1$
-        case 40:
-            return "FRITZ!Box 7141"; //$NON-NLS-1$
-        case 43:
-            return "FRITZ!Box 5140"; //$NON-NLS-1$
-        case 54:
-            return "FRITZ!Box 7270"; //$NON-NLS-1$
-        case 60:
-            return "FRITZ!Box 7113"; //$NON-NLS-1$
-        case 73:
-        	return "FRITZ!Box 7240"; //$NON-NLS-1$
-        case 75:
-        	return "FRITZ!Box 7570"; //$NON-NLS-1$
+		case 23:
+			return "FRITZ!Box 5010"; //$NON-NLS-1$
+		case 25:
+			return "FRITZ!Box 5012"; //$NON-NLS-1$
+		case 28:
+			return "FRITZ!Box Fon WLAN Speedport W501V"; //$NON-NLS-1$
+		case 29:
+			return "FRITZ!Box 7170"; //$NON-NLS-1$
+		case 30:
+			return "FRITZ!Box 7140"; //$NON-NLS-1$
+		case 34:
+			return "FRITZ!Box Fon WLAN Speedport W900V"; //$NON-NLS-1$
+		case 39:
+			return "FRITZ!Box 7140 Annex A"; //$NON-NLS-1$
+		case 40:
+			return "FRITZ!Box 7141"; //$NON-NLS-1$
+		case 43:
+			return "FRITZ!Box 5140"; //$NON-NLS-1$
+		case 54:
+			return "FRITZ!Box 7270"; //$NON-NLS-1$
+		case 60:
+			return "FRITZ!Box 7113"; //$NON-NLS-1$
+		case 73:
+			return "FRITZ!Box 7240"; //$NON-NLS-1$
+		case 75:
+			return "FRITZ!Box 7570"; //$NON-NLS-1$
 		default:
 			return Main.getMessage("unknown"); //$NON-NLS-1$
 		}
