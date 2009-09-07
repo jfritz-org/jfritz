@@ -45,6 +45,7 @@ import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.box.BoxCallBackListener;
 import de.moonflower.jfritz.callerlist.filter.CallFilter;
 import de.moonflower.jfritz.callerlist.filter.DateFilter;
+import de.moonflower.jfritz.importexport.CSVCallerListImport;
 import de.moonflower.jfritz.phonebook.PhoneBook;
 import de.moonflower.jfritz.phonebook.PhoneBookListener;
 import de.moonflower.jfritz.struct.Call;
@@ -90,23 +91,26 @@ public class CallerList extends AbstractTableModel
 
 	private final static String EXPORT_CSV_FORMAT_FRITZBOX = "Typ;Datum;Rufnummer;Nebenstelle;Eigene Rufnummer;Dauer"; //$NON-NLS-1$
 
+	// is the type exported from the new firmware
+	private final static String EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE = "Typ;Datum;Name;Rufnummer;Nebenstelle;Eigene Rufnummer;Dauer";
+
 	// Is the type eyported from a 7170
-	private final static String EXPORT_CSV_FORMAT_FRITZBOX_PUSHSERVICE = "Typ; Datum; Rufnummer; Nebenstelle; Eigene Rufnummer; Dauer"; //$NON-NLS-1$
+	private final static String EXPORT_CSV_FORMAT_PUSHSERVICE = "Typ; Datum; Rufnummer; Nebenstelle; Eigene Rufnummer; Dauer"; //$NON-NLS-1$
 
 	// is the type exported from a 7170 with a >= XX.04.12
 	private final static String EXPORT_CSV_FORMAT_PUSHSERVICE_NEW = "Typ; Datum; Name; Rufnummer; Nebenstelle; Eigene Rufnummer; Dauer";
 
-	// is the type exported from the new firmware
-	private final static String EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE = "Typ;Datum;Name;Rufnummer;Nebenstelle;Eigene Rufnummer;Dauer";
+	private final static String EXPORT_CSV_FORMAT_PUSHSERVICE_ENGLISH = "Type; Date; Number; Extension; Local Number; Duration";
 
 	// english firmware, unknown version
 	private final static String EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH = "Typ;Date;Number;Extension;Outgoing Caller ID;Duration";
 
-	private final static String EXPORT_CSV_FORMAT_PUSHSERVICE_ENGLISH = "Type; Date; Number; Extension; Local Number; Duration";
 
 	private final static String EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH_NEW = "Typ;Date;Name;Number;Extension;Outgoing Caller ID;Duration";
 
-	private final static String EXPORT_CSV_FORMAT_FRITZBOX_EN_140426 = "Type;Date;Name;Number;Extension;Outgoing Caller ID;Duration";
+	private final static String EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH_140426 = "Type;Date;Name;Number;Extension;Outgoing Caller ID;Duration";
+
+	private final static String EXPORT_CSV_FORMAT_JANRUFMONITOR = "Status;Datum;Rufnummer;Name;eigene Rufnummer (MSN);Dauer;";
 
 	// call list used to display entries in the table, can be sorted by other
 	// criteria
@@ -977,6 +981,7 @@ public class CallerList extends AbstractTableModel
 	 * @return Returns last call of person
 	 */
 	public Call findLastCall(Person person) {
+		boolean found = false;
 		Vector<PhoneNumber> numbers = person.getNumbers();
 		if (numbers.size() > 0) {
 			Call result = new Call(new CallType(CallType.CALLIN_STR),
@@ -991,6 +996,7 @@ public class CallerList extends AbstractTableModel
 						if (c.getCalldate().after(result.getCalldate()))
 						{
 							result = c;
+							found = true;
 						}
 					}
 				}
@@ -1004,10 +1010,14 @@ public class CallerList extends AbstractTableModel
 							if (c.getCalldate().after(result.getCalldate()))
 							{
 								result = c;
+								found = true;
 							}
 						}
 					}
 				}
+			}
+			if (!found) {
+				result = null;
 			}
 			return result;
 		}
@@ -1116,172 +1126,66 @@ public class CallerList extends AbstractTableModel
 		return null;
 	}
 
-	/**
-	 * @author Brian Jensen
-	 *
-	 * function reads the stream line by line using a buffered reader and using
-	 * the appropriate parse function based on the structure
-	 *
-	 * currently supported file types: JFritz's own export format:
-	 * EXPORT_CSV_FOMAT_JFRITZ Exported files from the fritzbox's web interface:
-	 * EXPORT_CSV_FORMAT_FRITZBOX Exported files from fritzbox's Push service
-	 * EXPORT_CSV_FORMAT_FRITZBOX_PUSHSERVICE Exported files from the new
-	 * fritzbox's new Firmware EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE Exported
-	 * files from the fritzbox's web interface:
-	 * EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH (english firmware)
-	 *
-	 *
-	 * function also has the ability to 'nicely' handle broken CSV lines
-	 *
-	 * NOTE: As is standard the caller must close the input stream on exit!
-	 *
-	 * @param filename
-	 *            of the csv file to import from
-	 */
-public synchronized boolean importFromCSVFile(BufferedReader br) {
-		long t1, t2;
-		t1 = System.currentTimeMillis();
-		String line = "";
-		boolean isJFritzExport = false; // flags to check which type to parse
-		boolean isPushFile = false;
-		boolean isNewFirmware = false;
-		boolean isEnglishFirmware = false;
-		boolean isNewEnglishFirmware = false;
-		int newEntries = 0;
-
-		try {
-			String separator = PATTERN_CSV;
-			line = br.readLine();
-			Debug.debug("CSV-Header: " + line);
-			if (line == null) {
-				Debug.error("File empty"); //$NON-NLS-1$
-				return false;
-			} else
-			{
-				Pattern p = Pattern.compile("sep=(\\W{1})"); //$NON-NLS-1$
-				Matcher matcher = p.matcher(line);
-				if (matcher.find())
-				{
-					if (matcher.groupCount() == 1)
-					{
-						separator = matcher.group(1);
-						Debug.debug("Separator: " + separator);
-						line = br.readLine();
-						Debug.debug("CSV-Header: " + line);
-					}
-				}
+	public synchronized void importFromCSVFile(final String file) {
+		CSVCallerListImport csvImport = new CSVCallerListImport(file);
+		csvImport.openFile();
+		String firstLine = csvImport.readHeader(0);
+		Debug.debug("Header: " + firstLine);
+		if (firstLine.equals(EXPORT_CSV_FORMAT_JFRITZ)) {
+			csvImport.setSeparaor(";");
+			csvImport.mapColumn(0, CallerTable.COLUMN_TYPE);
+			csvImport.mapColumn(1, CallerTable.COLUMN_DATE);
+			csvImport.mapColumn(2, CallerTable.COLUMN_DATE);
+			csvImport.mapColumn(3, CallerTable.COLUMN_NUMBER);
+			csvImport.mapColumn(4, CallerTable.COLUMN_ROUTE);
+			csvImport.mapColumn(5, CallerTable.COLUMN_PORT);
+			csvImport.mapColumn(6, CallerTable.COLUMN_DURATION);
+			csvImport.mapColumn(10, CallerTable.COLUMN_CALL_BY_CALL);
+			csvImport.mapColumn(11, CallerTable.COLUMN_COMMENT);
+		} else if (firstLine.startsWith("sep=")) {
+			String[] split = firstLine.split("=");
+			Debug.debug("Found separator: " + split[1]);
+			csvImport.setSeparaor(split[1]);
+			String secondLine = csvImport.readHeader(1);
+			if (   secondLine.equals(EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE)
+				|| secondLine.equals(EXPORT_CSV_FORMAT_FRITZBOX)
+				|| secondLine.equals(EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH)
+				|| secondLine.equals(EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH_140426)
+				|| secondLine.equals(EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH_NEW)
+				|| secondLine.equals(EXPORT_CSV_FORMAT_PUSHSERVICE)
+				|| secondLine.equals(EXPORT_CSV_FORMAT_PUSHSERVICE_ENGLISH)
+				|| secondLine.equals(EXPORT_CSV_FORMAT_PUSHSERVICE_NEW)
+					) {
+				csvImport.mapColumn(0, CallerTable.COLUMN_TYPE);
+				csvImport.mapColumn(1, CallerTable.COLUMN_DATE);
+				csvImport.mapColumn(3, CallerTable.COLUMN_NUMBER);
+				csvImport.mapColumn(4, CallerTable.COLUMN_PORT);
+				csvImport.mapColumn(5, CallerTable.COLUMN_ROUTE);
+				csvImport.mapColumn(6, CallerTable.COLUMN_DURATION);
 			}
-
-			// check if we have a correct header
-			if (line.equals(EXPORT_CSV_FORMAT_JFRITZ)
-					|| line.equals(EXPORT_CSV_FORMAT_FRITZBOX)
-					|| line.equals(EXPORT_CSV_FORMAT_FRITZBOX_PUSHSERVICE)
-					|| line.equals(EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE)
-					|| line.equals(EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH)
-					|| line.equals(EXPORT_CSV_FORMAT_PUSHSERVICE_ENGLISH)
-					|| line.equals(EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH_NEW)
-					|| line.equals(EXPORT_CSV_FORMAT_PUSHSERVICE_NEW)
-					|| line.equals(EXPORT_CSV_FORMAT_FRITZBOX_EN_140426)) {
-
-				// check which kind of a file it is
-				if (line.equals(EXPORT_CSV_FORMAT_JFRITZ)) {
-					isJFritzExport = true;
-				} else if (line.equals(EXPORT_CSV_FORMAT_FRITZBOX_PUSHSERVICE)) {
-					isPushFile = true;
-				} else if (line.equals(EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE)
-						|| line.equals(EXPORT_CSV_FORMAT_PUSHSERVICE_NEW)) {
-					isNewFirmware = true;
-				} else if (line.equals(EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH)
-						|| line.equals(EXPORT_CSV_FORMAT_PUSHSERVICE_ENGLISH)) {
-					isEnglishFirmware = true;
-				} else if (line.equals(EXPORT_CSV_FORMAT_FRITZBOX_ENGLISH_NEW)
-						|| line.equals(EXPORT_CSV_FORMAT_FRITZBOX_EN_140426)) {
-					isNewEnglishFirmware = true;
-				}
-
-				int linesRead = 0;
-				Call c;
-				while (!JFritz.isShutdownInvoked() && null != (line = br.readLine())) {
-					linesRead++;
-
-					// call the appropriate parse function
-					if (isJFritzExport) {
-						c = parseCallJFritzCSV(line, separator);
-					} else if (isNewFirmware) {
-						c = parseCallFritzboxNewCSV(line, separator);
-					} else if (isEnglishFirmware) {
-						c = parseCallFritzboxEnglishCSV(line, separator);
-					} else if (isNewEnglishFirmware) {
-						c = parseCallFritzboxNewEnglishCSV(line, separator);
-					} else {
-						c = parseCallFritzboxCSV(line, isPushFile, separator);
-					}
-
-					if (c == null) {
-						if (!line.equals("")) {
-							Debug.error("Broken entry: " + line);
-						}
-					} else {
-						if (!contains(c)) {
-							addEntry(c);
-							newEntries++;
-						}
-					}
-				}
-
-				Debug.debug(linesRead + " Lines read from csv file ");
-				Debug.debug(newEntries + " New entries processed");
-
-				fireUpdateCallVector();
-
-				if (newEntries > 0) {
-
-					// uncomment these in case the import function is broken
-					// for(int i=0; i < unfilteredCallerData.size(); i++)
-					// System.out.println(unfilteredCallerData.elementAt(i).toString());
-
-					saveToXMLFile(Main.SAVE_DIR + JFritz.CALLS_FILE, true);
-
-					String msg;
-
-					if (newEntries == 1) {
-						msg = Main.getMessage("imported_call"); //$NON-NLS-1$
-					} else {
-						msg = Main
-								.getMessage("imported_calls").replaceAll("%N", Integer.toString(newEntries)); //$NON-NLS-1$, //$NON-NLS-2$
-					}
-
-					if (Main.getProperty("option.notifyOnCalls")
-							.equals("true")) {
-						JFritz.infoMsg(msg);
-					}
-
-				} else {
-					// JFritz.infoMsg(JFritz.getMessage("no_imported_calls"));
-					// //$NON-NLS-1$
-				}
-
-			} else {
-				// Invalid file header
-				Debug.error("Wrong file type or corrupted file"); //$NON-NLS-1$
-			}
-
-			// NOTE: the caller must close the stream!
-		} catch (FileNotFoundException e) {
-			Debug.error("Could not read from File!");
-		} catch (IOException e) {
-			Debug.error("IO Exception reading csv file"); //$NON-NLS-1$
+		} else if (firstLine.equals(EXPORT_CSV_FORMAT_JANRUFMONITOR)) {
+			// away;20.08.2009 12:28;+49 (152) number;Name;MSN;27 min ;
+			csvImport.mapColumn(0, CallerTable.COLUMN_TYPE);
+			csvImport.mapColumn(1, CallerTable.COLUMN_DATE);
+			csvImport.mapColumn(2, CallerTable.COLUMN_NUMBER);
+			csvImport.mapColumn(4, CallerTable.COLUMN_ROUTE);
+			csvImport.mapColumn(5, CallerTable.COLUMN_DURATION);
 		}
-		t2 = System.currentTimeMillis();
-		Debug.always("Time used to import CSV-File: " + (t2 - t1) + "ms");
+		csvImport.csvImport();
+		csvImport.closeFile();
+		int newEntries = csvImport.getImportedCalls().size();
+		if (newEntries > 0)
+		{
+			JFritz.getCallerList().addEntries(csvImport.getImportedCalls());
 
-		if (newEntries > 0) {
-			return true;
-		} else {
-			return false;
+			Debug.debug(newEntries + " New entries processed");
+
+			fireUpdateCallVector();
+
+			saveToXMLFile(Main.SAVE_DIR + JFritz.CALLS_FILE, true);
 		}
-
 	}
+
 	/**
 	 * @author Brian Jensen
 	 *
@@ -1289,6 +1193,10 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 	 * quotationmarks(do those have to be?) functions parses according to the
 	 * format EXPORT_CSV_FORMAT_JFRITZ
 	 *
+	 * Header:
+	 * "CallType";"Date";"Time";"Number";"Route";"Port";"Duration";"Name";"Address";"City";"CallByCall";"Comment"
+	 * Data:
+	 * "Outgoing";"02.09.2009";"20:09";"+49YYYXXXXXXX";"MSN-NR";"ISDN";"240";"Mustermann";"";"Stadt";"01072";"Kommentar"
 	 *
 	 * @param line
 	 *            contains the line to be processed from a csv file
@@ -1373,6 +1281,12 @@ public synchronized boolean importFromCSVFile(BufferedReader br) {
 	 *
 	 * function parses according to format: EXPORT_CSV_FORMAT_FRITZBOX and
 	 * EXPORT_CSV_FORMAT_FRITZBOX_PUSHSERVICE
+	 *
+	 * Header:
+	 * Typ;Datum;Rufnummer;Nebenstelle;Eigene Rufnummer;Dauer
+	 * 3;04.09.09 13:13;;0162XXXXXXX;ISDN Geraet;XXXXXX;0:02
+	 * Data:
+	 *
 	 *
 	 * @param line
 	 *            contains the line to be processed

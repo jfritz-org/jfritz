@@ -1,6 +1,23 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 TODO: Timer zum automatischen Aktualisieren der FritzBox-Einstellungen (Telefone, SIP-Provider, ...) nach X Minuten (z.B. 60 / 120)
  
+JFritz 0.7.3.25:
+- Neu: Wählhilfe aus Tray übernimmt Nummer aus Zwischenablage.
+- Neu: %CallType bei Start von Externen Programmen zur Unterscheidung von ankommenden ("In") oder ausgehenden ("Out") Anrufen.
+- Neu: VCard-Import
+- Bugfix [0000067]: Backup, nur die letzten X Backups behalten.
+- Bugfix: Textfelder im Wählhilfe-Dialog vergrößert.  
+- Bugfix: Falsche IP bei Selektion einer FritzBox in den Einstellungen.
+- Änderung: CSV-Import der Anrufliste komplett umgeschrieben.
+- Änderung: CSV-Import der Anrufliste von jAnrufmonitor.
+- Bugfix: Google-Link bei Quickdial
+- Bugfix: Rückwärtssuche Norwegen
+- Bugfix: StdErr nun gleichzeitig auf Console und in Debugdatei
+- Bugfix: TableRenderer im Phonebook fälschlicherweise nach Importieren zurückgesetzt
+New String:
+import_contacts_vcard
+vcf_files 
+ 
 JFritz 0.7.3.24:
 - Neu: Reboot der FritzBox per Tray-Menü möglich.
 - Bugfix [0000067]: Backup, nur die letzten X Backups behalten 

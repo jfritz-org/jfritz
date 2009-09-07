@@ -57,7 +57,7 @@ public class Debug {
 
 	private static boolean verboseMode = false;
 
-	private static PrintStream fileRedirecter, originalOut;
+	private static PrintStream originalOut;
 
 	private static JPanel main_panel = null;
 
@@ -104,9 +104,10 @@ public class Debug {
 			// setup the redirection of Sysem.out and System.err
 			FileOutputStream tmpOutputStream = new FileOutputStream(
 					debugLogFile);
-			fileRedirecter = new PrintStream(tmpOutputStream);
-			System.setOut(fileRedirecter);
-			System.setErr(fileRedirecter);
+			PrintStream outputFileRedirector = new PrintStream(tmpOutputStream);
+			ConsoleAndFilePrintStream errorFileRedirector = new ConsoleAndFilePrintStream(tmpOutputStream);
+			System.setOut(outputFileRedirector);
+			System.setErr(errorFileRedirector);
 		}
 
 		catch (Exception e) {

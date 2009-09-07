@@ -856,12 +856,12 @@
 		</website>
 	</country>
 	<country code="+47">
-		<website name="gulesider.no" url="http://www.gulesider.no/gs/categoryList.c?q=$NUMBER" prefix="0">
+		<website name="gulesider.no" url="http://www.gulesider.no/gs/categoryList.c?q=$NUMBER" prefix="">
 			<entry>
-				<name>RESULT.ITEM.START(?:[^&gt;]*&gt;)+([^&lt;]*?)&lt;/h2&gt;</name>
-				<street>title=.Kart.&gt;([^,]*?),</street>
-				<city>title=.Kart.&gt;(?:[^,]*?,)+\s*?\d{4}\s([^&lt;]*?)&lt;</city>
-				<zipcode>title=.Kart.&gt;(?:[^,]*?,)+\s*?(\d{4})\s[^&lt;]*?&lt;</zipcode>
+				<name>title=&quot;[^p]*personlige infoside&quot;&gt;([^&lt;]*)&lt;/a&gt;</name>
+				<street>&lt;div\s+class=&quot;lead&quot;\s+style=&quot;padding-left: 0px;&quot;>([^,]*),\s+[^&lt;]*&lt;/div&gt;</street>
+				<city>&lt;div\s+class=&quot;lead&quot;\s+style=&quot;padding-left: 0px;&quot;>[^,]*,\s+[^\s]*\s([^&lt;]*)&lt;/div&gt;</city>
+				<zipcode>&lt;div\s+class=&quot;lead&quot;\s+style=&quot;padding-left: 0px;&quot;>[^,]*,\s+([^\s]*)\s[^&lt;]*&lt;/div&gt;</zipcode>
 			</entry>
 		</website>
 	</country>

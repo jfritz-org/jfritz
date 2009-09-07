@@ -1,9 +1,12 @@
 package de.moonflower.jfritz.struct;
 
 import java.awt.Image;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -235,22 +238,30 @@ public class Person implements Cloneable, Serializable{
 	// TODO sip != Pager, korrigieren
 	public String toVCard() {
 		StringBuffer vcard = new StringBuffer(111);  //$NON-NLS-1$
-		vcard.append("BEGIN:vCard\n" //$NON-NLS-1$
-				+ "VERSION:2.1\n" //$NON-NLS-1$
-				+ "FN: " + getFullname() //$NON-NLS-1$
-				+ "\n" + "ADR;Type=HOME,POSTAL:;;" + getStreet() + ";" //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-				+ getCity() + ";;" + getPostalCode() + "\n"); //$NON-NLS-1$,  //$NON-NLS-2$
+		vcard.append("BEGIN:vCard\r\n" //$NON-NLS-1$
+				+ "VERSION:2.1\r\n" //$NON-NLS-1$
+				);
+				// name: lastName;firstName;moreNames;Prefix;Suffix
+					vcard.append("N: " + this.getLastName() + ";" + this.getFirstName() + ";;;\r\n");
+				if (!this.getCompany().equals("")) {
+					vcard.append("ORG: " + this.getCompany() + ";\r\n");
+				}
+				// formated name
+				vcard.append("FN: " + getFullname() + "\r\n"); //$NON-NLS-1$
+				// address: PostOfficeAddress;ExtendedAddress;Street;Locality;Region;PostalCode;Counry
+				vcard.append("ADR;Type=HOME;POSTAL:;;" + getStreet() + ";" //$NON-NLS-1$,  //$NON-NLS-2$
+				+ getCity() + ";;" + getPostalCode() + ";\r\n"); //$NON-NLS-1$,  //$NON-NLS-2$
 		Enumeration<PhoneNumber> en = numbers.elements();
 		PhoneNumber number;
 		while (en.hasMoreElements()) {
 			number = en.nextElement();
 			if (number.getType().startsWith("home")) //$NON-NLS-1$
 			{
-				vcard.append("TEL;TYPE=VOICE,HOME:"); //$NON-NLS-1$
+				vcard.append("TEL;TYPE=VOICE;HOME:"); //$NON-NLS-1$
 			}
 			else if (number.getType().startsWith("business")) //$NON-NLS-1$
 			{
-				vcard.append("TEL;TYPE=VOICE,WORK:"); //$NON-NLS-1$
+				vcard.append("TEL;TYPE=VOICE;WORK:"); //$NON-NLS-1$
 			}
 			else if (number.getType().startsWith("mobile")) //$NON-NLS-1$
 			{
@@ -266,14 +277,16 @@ public class Person implements Cloneable, Serializable{
 			}
 			else
 			{
-				vcard.append("TEL;DIVERS:"); //$NON-NLS-1$
+				vcard.append("TEL;VOICE:"); //$NON-NLS-1$
 			}
 			vcard.append(number.convertToIntNumber());
-			vcard.append("\n");
+			vcard.append("\r\n");
 		}
-		vcard.append("EMAIL;TYPE=INTERNET,PREF:");
+		vcard.append("EMAIL;TYPE=INTERNET:");
 		vcard.append(getEmailAddress());
-		vcard.append("\nEND:vCard\n"); //$NON-NLS-1$
+		vcard.append("\r\n");
+		vcard.append("END:vCard\r\n"); //$NON-NLS-1$
+		vcard.append("\r\n");
 		return vcard.toString();
 	}
 
@@ -855,21 +868,23 @@ public class Person implements Cloneable, Serializable{
 		}
 		if ( city.replaceAll(" ", "").equals(""))
 		{
-			if(localNumber.getCountryCode().equals(ReverseLookup.GERMANY_CODE))
-			{
-				googleLink += HTMLUtil.stripEntities(ReverseLookupGermany.getCity(localNumber.getAreaNumber()))+", ";
-			}
-			if(localNumber.getCountryCode().equals(ReverseLookup.AUSTRIA_CODE))
-			{
-				googleLink += HTMLUtil.stripEntities(ReverseLookupAustria.getCity(localNumber.getAreaNumber()))+", ";
-			}
-			if(localNumber.getCountryCode().equals(ReverseLookup.USA_CODE))
-			{
-				googleLink += HTMLUtil.stripEntities(ReverseLookupUnitedStates.getCity(localNumber.getAreaNumber()))+", ";
-			}
-			if(localNumber.getCountryCode().equals(ReverseLookup.TURKEY_CODE))
-			{
-				googleLink += HTMLUtil.stripEntities(ReverseLookupTurkey.getCity(localNumber.getAreaNumber()))+", ";
+			if (localNumber != null) {
+				if(localNumber.getCountryCode().equals(ReverseLookup.GERMANY_CODE))
+				{
+					googleLink += HTMLUtil.stripEntities(ReverseLookupGermany.getCity(localNumber.getAreaNumber()))+", ";
+				}
+				if(localNumber.getCountryCode().equals(ReverseLookup.AUSTRIA_CODE))
+				{
+					googleLink += HTMLUtil.stripEntities(ReverseLookupAustria.getCity(localNumber.getAreaNumber()))+", ";
+				}
+				if(localNumber.getCountryCode().equals(ReverseLookup.USA_CODE))
+				{
+					googleLink += HTMLUtil.stripEntities(ReverseLookupUnitedStates.getCity(localNumber.getAreaNumber()))+", ";
+				}
+				if(localNumber.getCountryCode().equals(ReverseLookup.TURKEY_CODE))
+				{
+					googleLink += HTMLUtil.stripEntities(ReverseLookupTurkey.getCity(localNumber.getAreaNumber()))+", ";
+				}
 			}
 		}
 

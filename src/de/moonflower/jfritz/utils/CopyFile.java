@@ -81,7 +81,7 @@ public class CopyFile {
     private void clearOldBackups(final String fileFormat) {
         File dir = new File(Main.SAVE_DIR + "backup");
         final Vector<Date> backupDates = new Vector<Date>(20);
-        File[] directories = dir.listFiles(new FileFilter() {
+        dir.listFiles(new FileFilter() {
             public boolean accept(File arg0) {
             	if (arg0.isDirectory())
             	{
@@ -90,51 +90,74 @@ public class CopyFile {
 						backupDates.add(date);
 						return true;
 					} catch (ParseException e) {
-						Debug.warning("Directory '"+arg0.getAbsolutePath()+"' is not a backup directory!");
+						Debug.warning("Directory '"+arg0.getAbsolutePath()+"' is not a valid backup directory!");
 					}
             	}
                 return false;
             }
         });
 
-        Collections.sort(backupDates);
+        Collections.sort(backupDates); // sort backup directories in ascending order
 
-        Vector<Date> deleteBackupList = new Vector<Date>(20);
+        Vector<Date> deleteBackupList = new Vector<Date>(backupDates.size());
         Date currentDate = Calendar.getInstance().getTime();
         for (int i=0; i<backupDates.size(); i++)
     	{
-//        	Debug.debug("Found backup directory: " + backupDates.get(i).toString());
-        	int diffToToday = subtractDays(currentDate, backupDates.get(i));
-//        	Debug.debug("Days old: " + diffToToday);
+        	int diffToToday = JFritzUtils.subtractDays(currentDate, backupDates.get(i));
 
-        	for (int j=i+1; j<backupDates.size(); j++) {
-//        		Debug.debug("Comparing directory " + backupDates.get(i) + " with " + backupDates.get(j));
+        	boolean newerFound = false;
+        	GregorianCalendar gc1 = new GregorianCalendar();
+    		GregorianCalendar gc2 = new GregorianCalendar();
+        	for (int j=i+1; j<backupDates.size() && !newerFound; j++) {
+        		gc1.setTime(backupDates.get(i));
+        		gc2.setTime(backupDates.get(j));
 
-        		int diffCompareToToday = subtractDays(currentDate, backupDates.get(j));
-            	int daysDiffToOtherBackups = subtractDays(backupDates.get(j), backupDates.get(i));
+        		int year1 = gc1.get(Calendar.YEAR);
+        		int year2 = gc2.get(Calendar.YEAR);
 
-//            	Debug.debug("Diff " + daysDiffToOtherBackups);
-            	if (diffToToday > 93 && diffCompareToToday > 93) {
+        		int month1 = gc1.get(Calendar.MONTH);
+        		int month2 = gc2.get(Calendar.MONTH);
+
+        		int week1 = gc1.get(Calendar.WEEK_OF_YEAR);
+        		int week2 = gc2.get(Calendar.WEEK_OF_YEAR);
+
+        		int day1 = gc1.get(Calendar.DAY_OF_MONTH);
+        		int day2 = gc2.get(Calendar.DAY_OF_MONTH);
+
+            	if (diffToToday > 93) {
                 	// Older than 3 months, keep only one copy of this month
-                	if (daysDiffToOtherBackups < 31) {
+            		// delete it, if an newer entry of same year and month exists
+            		if ((year1 == year2)
+            			&& (month1 == month2))
+            		{
                 		deleteBackupList.add(backupDates.get(i));
-//                		Debug.debug("Should delete old backup : " + backupDates.get(i));
-                		break;
-                	}
-            	} else if (diffToToday > 31 && diffCompareToToday > 31)
+                		newerFound = true;
+            		}
+            	} else if (diffToToday > 31)
         		{
                 	// Older than 1 month, keep only one copy per week (latest one)
-            		if (daysDiffToOtherBackups < 7) {
+            		// delete it, if an newer entry of same year and weekofyear exists
+            		if ((year1 == year2)
+            				&& (week1 == week2))
+            		{
                 		deleteBackupList.add(backupDates.get(i));
-//            			Debug.debug("Should delete old backup2 : " + backupDates.get(i));
-            			break;
+            			newerFound = true;
+            		}
+        		} else if (diffToToday > 7) {
+                	// Older than 1 week, keep only one copy per day (latest one)
+            		// delete it, if an newer entry of same year, month and day exists
+            		if ((year1 == year2)
+            				&& (month1 == month2)
+            				&& (day1 == day2))
+            		{
+                		deleteBackupList.add(backupDates.get(i));
+            			newerFound = true;
             		}
         		}
         	}
     	}
 
         for (Date deleteDate:deleteBackupList) {
-        	Debug.debug("Deleting old backup directory: " + df.format(deleteDate));
         	File deleteFile = new File(dir + File.separator + df.format(deleteDate));
         	deleteTree(deleteFile);
         }
@@ -211,29 +234,6 @@ public class CopyFile {
             	}
             }
         }
-    }
-
-    private static int subtractDays(Date date1, Date date2)
-    {
-      GregorianCalendar gc1 = new GregorianCalendar();  gc1.setTime(date1);
-      GregorianCalendar gc2 = new GregorianCalendar();  gc2.setTime(date2);
-
-      int days1 = 0;
-      int days2 = 0;
-      int maxYear = Math.max(gc1.get(Calendar.YEAR), gc2.get(Calendar.YEAR));
-
-      GregorianCalendar gctmp = (GregorianCalendar) gc1.clone();
-      for (int f = gctmp.get(Calendar.YEAR);  f < maxYear;  f++)
-        {days1 += gctmp.getActualMaximum(Calendar.DAY_OF_YEAR);  gctmp.add(Calendar.YEAR, 1);}
-
-      gctmp = (GregorianCalendar) gc2.clone();
-      for (int f = gctmp.get(Calendar.YEAR);  f < maxYear;  f++)
-        {days2 += gctmp.getActualMaximum(Calendar.DAY_OF_YEAR);  gctmp.add(Calendar.YEAR, 1);}
-
-      days1 += gc1.get(Calendar.DAY_OF_YEAR) - 1;
-      days2 += gc2.get(Calendar.DAY_OF_YEAR) - 1;
-
-      return (days1 - days2);
     }
 
 	private void deleteTree(File path) {

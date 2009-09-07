@@ -16,6 +16,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,28 +25,30 @@ import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 
 /**
- * Static class for data retrieval from the fritz box
- * and for several global functions
+ * Static class for data retrieval from the fritz box and for several global
+ * functions
  *
  * @author akw
  *
  */
 public class JFritzUtils {
-	private static final int READ_TIMEOUT = 30000;										//$NON-NLS-1$
-    public static final String FILESEP = System.getProperty("file.separator");			//$NON-NLS-1$
-    public static final String PATHSEP = System.getProperty("path.separator");			//$NON-NLS-1$
-	public static final String binID = FILESEP + "jfritz.jar";							//$NON-NLS-1$
-    public static final String rootID = FILESEP;										//$NON-NLS-1$
+	private static final int READ_TIMEOUT = 30000; //$NON-NLS-1$
+	public static final String FILESEP = System.getProperty("file.separator"); //$NON-NLS-1$
+	public static final String PATHSEP = System.getProperty("path.separator"); //$NON-NLS-1$
+	public static final String binID = FILESEP + "jfritz.jar"; //$NON-NLS-1$
+	public static final String rootID = FILESEP; //$NON-NLS-1$
 	/**
 	 * This constant can be used to search for the lang-directory.
+	 *
 	 * @see #getFullPath(String)
 	 */
-    public static final String langID = FILESEP + "lang";
+	public static final String langID = FILESEP + "lang";
 
 	private final static String PATTERN_WAIT_FOR_X_SECONDS = "var loginBlocked = parseInt\\(\"([^\"]*)\",10\\);";
 
 	/**
-	 * fetches html data from url using POST requests in one single return String
+	 * fetches html data from url using POST requests in one single return
+	 * String
 	 *
 	 * @param affectedBox
 	 * @param urlstr
@@ -55,8 +58,8 @@ public class JFritzUtils {
 	 * @throws IOException
 	 */
 	public static String fetchDataFromURLToString(String affectedBox,
-			String urlstr, String postdata,
-			boolean retrieveData) throws WrongPasswordException, SocketTimeoutException, IOException {
+			String urlstr, String postdata, boolean retrieveData)
+			throws WrongPasswordException, SocketTimeoutException, IOException {
 		URL url = null;
 		URLConnection urlConn;
 		DataOutputStream printout;
@@ -90,9 +93,9 @@ public class JFritzUtils {
 					printout.writeBytes(postdata);
 					printout.flush();
 					printout.close();
-				} catch (SocketTimeoutException ste)
-				{
-					Debug.error("Could not fetch data from url: "+ste.toString());
+				} catch (SocketTimeoutException ste) {
+					Debug.error("Could not fetch data from url: "
+							+ ste.toString());
 					throw ste;
 				}
 			}
@@ -107,15 +110,13 @@ public class JFritzUtils {
 				while (null != ((str = HTMLUtil.stripEntities(d.readLine())))) {
 					// Password seems to be wrong
 					if ((str.indexOf("Das angegebene Kennwort ist ungültig") >= 0) //$NON-NLS-1$
-						|| (str.indexOf("Password not valid") >= 0)
-						|| (str.indexOf("<!--loginPage-->") >= 0)
-						|| (str.indexOf("FRITZ!Box Anmeldung") >= 0))
-					{
+							|| (str.indexOf("Password not valid") >= 0)
+							|| (str.indexOf("<!--loginPage-->") >= 0)
+							|| (str.indexOf("FRITZ!Box Anmeldung") >= 0)) {
 						Debug.debug("Wrong password detected: " + str);
 						wrong_pass = true;
 					}
-					if (retrieveData)
-					{
+					if (retrieveData) {
 						data += str;
 					}
 				}
@@ -124,30 +125,29 @@ public class JFritzUtils {
 				throw new IOException("Network unavailable"); //$NON-NLS-1$
 			}
 
-			if (wrong_pass)
-			{
+			if (wrong_pass) {
 				int wait = 3;
-				Pattern waitSeconds = Pattern.compile(PATTERN_WAIT_FOR_X_SECONDS);
+				Pattern waitSeconds = Pattern
+						.compile(PATTERN_WAIT_FOR_X_SECONDS);
 				Matcher m = waitSeconds.matcher(data);
-				if (m.find())
-				{
+				if (m.find()) {
 					try {
 						wait = Integer.parseInt(m.group(1));
-					}
-					catch (NumberFormatException nfe)
-					{
+					} catch (NumberFormatException nfe) {
 						wait = 3;
 					}
 				}
 
-				throw new WrongPasswordException(affectedBox, "Password invalid", wait+2); //$NON-NLS-1$
+				throw new WrongPasswordException(affectedBox,
+						"Password invalid", wait + 2); //$NON-NLS-1$
 			}
 		}
 		return data;
 	}
 
 	/**
-	 * fetches html data from url using POST requests in one single return String
+	 * fetches html data from url using POST requests in one single return
+	 * String
 	 *
 	 * @param affectedBox
 	 * @param urlstr
@@ -157,8 +157,8 @@ public class JFritzUtils {
 	 * @throws IOException
 	 */
 	public static Vector<String> fetchDataFromURLToVector(String affectedBox,
-			String urlstr, String postdata,
-			boolean retrieveData) throws WrongPasswordException, SocketTimeoutException, IOException {
+			String urlstr, String postdata, boolean retrieveData)
+			throws WrongPasswordException, SocketTimeoutException, IOException {
 		URL url = null;
 		URLConnection urlConn;
 		DataOutputStream printout;
@@ -192,13 +192,13 @@ public class JFritzUtils {
 					printout.writeBytes(postdata);
 					printout.flush();
 					printout.close();
-				} catch (SocketTimeoutException ste)
-				{
-					Debug.error("Could not fetch data from url: "+ste.toString());
+				} catch (SocketTimeoutException ste) {
+					Debug.error("Could not fetch data from url: "
+							+ ste.toString());
 					throw ste;
-				} catch (NoRouteToHostException nrthe)
-				{
-					Debug.error("No route to host exception: " + nrthe.toString());
+				} catch (NoRouteToHostException nrthe) {
+					Debug.error("No route to host exception: "
+							+ nrthe.toString());
 					throw nrthe;
 				}
 			}
@@ -213,15 +213,13 @@ public class JFritzUtils {
 				while (null != ((str = HTMLUtil.stripEntities(d.readLine())))) {
 					// Password seems to be wrong
 					if ((str.indexOf("Das angegebene Kennwort ist ungültig") >= 0) //$NON-NLS-1$
-						|| (str.indexOf("Password not valid") >= 0)
-						|| (str.indexOf("<!--loginPage-->") >= 0)
-						|| (str.indexOf("FRITZ!Box Anmeldung") >= 0))
-					{
+							|| (str.indexOf("Password not valid") >= 0)
+							|| (str.indexOf("<!--loginPage-->") >= 0)
+							|| (str.indexOf("FRITZ!Box Anmeldung") >= 0)) {
 						Debug.debug("Wrong password detected: " + str);
 						wrong_pass = true;
 					}
-					if (retrieveData)
-					{
+					if (retrieveData) {
 						data.add(str);
 					}
 				}
@@ -230,29 +228,26 @@ public class JFritzUtils {
 				throw new IOException("Network unavailable"); //$NON-NLS-1$
 			}
 
-			if (wrong_pass)
-			{
+			if (wrong_pass) {
 				int wait = 3;
-				Pattern waitSeconds = Pattern.compile(PATTERN_WAIT_FOR_X_SECONDS);
-				for (int i=0; i<data.size(); i++)
-				{
+				Pattern waitSeconds = Pattern
+						.compile(PATTERN_WAIT_FOR_X_SECONDS);
+				for (int i = 0; i < data.size(); i++) {
 					Matcher m = waitSeconds.matcher(data.get(i));
-					if (m.find())
-					{
+					if (m.find()) {
 						Debug.debug("Waiting string: " + data.get(i));
 						try {
 							wait = Integer.parseInt(m.group(1));
 							break;
-						}
-						catch (Exception e)
-						{
+						} catch (Exception e) {
 							Debug.error(e.toString());
 							wait = 4;
 						}
 					}
 				}
 
-				throw new WrongPasswordException(affectedBox, "Password invalid", wait+2); //$NON-NLS-1$
+				throw new WrongPasswordException(affectedBox,
+						"Password invalid", wait + 2); //$NON-NLS-1$
 			}
 		}
 		return data;
@@ -279,13 +274,14 @@ public class JFritzUtils {
 	 * @return String with version and date of CVS Id-Tag
 	 */
 	public static String getVersionFromCVSTag(String tag) {
-//		"$Id: Main.java 43 2009-08-04 09:08:06Z robotniko $"
+		// "$Id: Main.java 43 2009-08-04 09:08:06Z robotniko $"
 		String[] parts = tag.split(" "); //$NON-NLS-1$
 		return "SVN v" + parts[2] + " (" + parts[3] + ")"; //$NON-NLS-1$, //$NON-NLS-2$,  //$NON-NLS-3$
 	}
 
 	/**
 	 * Wandelt einen String in einen boolean-Wert um
+	 *
 	 * @param input
 	 * @return boolean value of input
 	 */
@@ -339,31 +335,31 @@ public class JFritzUtils {
 	}
 
 	/**
-	 * This function tries to guess the full path for the given
-	 * subdirectory.<br />
+	 * This function tries to guess the full path for the given subdirectory.<br />
 	 *
 	 * <ol>
 	 * <li>It searches for the directory in the class path.</li>
-	 * <li>If it does not find it there, it assumes that jfritz.jar and
-	 *     the subdirectory are in the same dir.</li>
-	 * <li>If for some reason it fails to generate the full path to the
-	 *     jfritz binary, it assumes that the subdirectory is in the
-	 *     current working directory.</li>
+	 * <li>If it does not find it there, it assumes that jfritz.jar and the
+	 * subdirectory are in the same dir.</li>
+	 * <li>If for some reason it fails to generate the full path to the jfritz
+	 * binary, it assumes that the subdirectory is in the current working
+	 * directory.</li>
 	 * </ol>
 	 *
-	 * @param subDir the subdirectory to search for.
-	 *               The directory must start with a leading file separator
-	 *               and must not end with a file separator (e.g. "/lang"
-	 *               for Linux).
-	 *               It's best to use the predefined constants of this class.
+	 * @param subDir
+	 *            the subdirectory to search for. The directory must start with
+	 *            a leading file separator and must not end with a file
+	 *            separator (e.g. "/lang" for Linux). It's best to use the
+	 *            predefined constants of this class.
 	 * @return the full path to the subdirectory
 	 * @see #langID
 	 */
-	public static String getFullPath(String subDir){
+	public static String getFullPath(String subDir) {
 
-		Debug.debug("Subdirectory: "+ subDir);
-		String[] classPath = System.getProperty("java.class.path").split(PATHSEP);	//$NON-NLS-1$
-		String userDir = System.getProperty("user.dir");							//$NON-NLS-1$
+		Debug.debug("Subdirectory: " + subDir);
+		String[] classPath = System
+				.getProperty("java.class.path").split(PATHSEP); //$NON-NLS-1$
+		String userDir = System.getProperty("user.dir"); //$NON-NLS-1$
 		if (userDir.endsWith(FILESEP))
 			userDir = userDir.substring(0, userDir.length() - 1);
 
@@ -372,7 +368,8 @@ public class JFritzUtils {
 
 		for (int i = 0; i < classPath.length; i++) {
 			if (classPath[i].endsWith(binID))
-				binDir = classPath[i].substring(0, classPath[i].length() - binID.length());
+				binDir = classPath[i].substring(0, classPath[i].length()
+						- binID.length());
 			else if (classPath[i].endsWith(subDir))
 				langDir = classPath[i];
 		}
@@ -381,18 +378,16 @@ public class JFritzUtils {
 			langDir = (binDir != null) ? binDir + subDir : userDir + subDir;
 		}
 
-		Debug.debug("full path: " + langDir);											//$NON-NLS-1$
+		Debug.debug("full path: " + langDir); //$NON-NLS-1$
 
 		return langDir;
 	}
 
 	/*
-	 * This function capitalizes Strings
-	 * example:
-	 * hello, this is a test.
+	 * This function capitalizes Strings example: hello, this is a test.
 	 * ->Hello, This IS A Test.
 	 */
-    public static String capitalize(String str) {
+	public static String capitalize(String str) {
 		StringBuffer strBuf = new StringBuffer();
 		char ch; // One of the characters in str.
 		char prevCh; // The character that comes before ch in the string.
@@ -420,27 +415,24 @@ public class JFritzUtils {
 
 	public static String removeLeadingSpaces(final String str) {
 		String currentStr = str;
-		while ( currentStr.startsWith(" ")){
+		while (currentStr.startsWith(" ")) {
 			currentStr = currentStr.substring(1);
 		}
-		while ( currentStr.startsWith("\u00a0")){
+		while (currentStr.startsWith("\u00a0")) {
 			currentStr = currentStr.substring(1);
 		}
 		return currentStr;
 	}
 
-	public static String toAscii(String str)
-	{
+	public static String toAscii(String str) {
 		String out = "";
-		for (int i=0; i<str.length(); i++)
-		{
+		for (int i = 0; i < str.length(); i++) {
 			out = out + "#" + Integer.toHexString(str.charAt(i));
 		}
 		return out;
 	}
 
-	public static String replaceSpecialCharsUTF(final String str)
-	{
+	public static String replaceSpecialCharsUTF(final String str) {
 		String currentStr = str;
 		currentStr = currentStr.replaceAll("&#x[00]*C4;", "Ä");
 		currentStr = currentStr.replaceAll("&#x[00]*D6;", "Ö");
@@ -454,17 +446,49 @@ public class JFritzUtils {
 		return currentStr;
 	}
 
-	public static long getTimestamp()
-	{
+	public static long getTimestamp() {
 		Calendar cal = Calendar.getInstance();
 		return cal.getTimeInMillis();
 	}
 
-	public static void fillVectorByString(Vector<String> vector, String input, String sep) {
+	public static void fillVectorByString(Vector<String> vector, String input,
+			String sep) {
 		String[] parts = Main.getStateProperty(input).split(sep);
-		for(String part: parts)
-		{
+		for (String part : parts) {
 			vector.add(part);
 		}
 	}
+
+	public static int subtractDays(Date date1, Date date2) {
+		GregorianCalendar gc1 = new GregorianCalendar();
+		GregorianCalendar gc2 = new GregorianCalendar();
+
+		gc1.setTime(date1);
+		gc2.setTime(date2);
+
+		int days1 = 0;
+		int days2 = 0;
+		int maxYear = Math.max(gc1.get(Calendar.YEAR), gc2.get(Calendar.YEAR));
+
+		GregorianCalendar gctmp = (GregorianCalendar) gc1.clone();
+		for (int f = gctmp.get(Calendar.YEAR); f < maxYear; f++) {
+			days2 += gctmp.getActualMaximum(Calendar.DAY_OF_YEAR);
+			gctmp.add(Calendar.YEAR, 1);
+		}
+
+		gctmp = (GregorianCalendar) gc2.clone();
+		for (int f = gctmp.get(Calendar.YEAR); f < maxYear; f++) {
+			days1 += gctmp.getActualMaximum(Calendar.DAY_OF_YEAR);
+			gctmp.add(Calendar.YEAR, 1);
+		}
+
+		days1 += gc1.get(Calendar.DAY_OF_YEAR) - 1;
+		days2 += gc2.get(Calendar.DAY_OF_YEAR) - 1;
+
+		if (days1 - days2 < 0) {
+			Debug.debug("Negative date difference: " + date1 + " - " + date2);
+		}
+		return (days1 - days2);
+	}
+
 }

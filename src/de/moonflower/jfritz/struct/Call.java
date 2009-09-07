@@ -46,7 +46,7 @@ public class Call implements Serializable {
 		this.calltype = calltype;
 		this.calldate = calldate;
 		this.number = number;
-		this.route = route;
+		setRoute(route);
 		this.port = port;
 		this.duration = duration;
 
@@ -59,15 +59,6 @@ public class Call implements Serializable {
 		// the telephone book
 		if ((this.number != null) && this.number.toString().equals("")) {
 			this.number = null;
-		}
-
-		// Parse the SIP Provider and save it correctly
-		if ( route.contains("@")) {
-			this.routeType = ROUTE_SIP;
-		} else if (this.route.startsWith("Internet: ")) {
-			this.routeType = ROUTE_SIP;
-		} else {
-			routeType = ROUTE_FIXED_NETWORK;
 		}
 	}
 
@@ -137,8 +128,11 @@ public class Call implements Serializable {
 	 * @return Returns the calldate.
 	 */
 	public Date getCalldate() {
-		return new Date(calldate.getTime()); // FIXME mal checken, wo man das
+		if (calldate != null) {
+			return new Date(calldate.getTime()); // FIXME mal checken, wo man das
 												// noch alles so machen sollte
+		}
+		return null;
 	}
 
 	/**
@@ -186,6 +180,10 @@ public class Call implements Serializable {
 		return number;
 	}
 
+	public void setPhoneNumber(final PhoneNumber number) {
+		this.number = number;
+	}
+
 	/**
 	 * @return Returns the port.
 	 */
@@ -198,6 +196,19 @@ public class Call implements Serializable {
 	 */
 	public String getRoute() {
 		return route;
+	}
+
+	public void setRoute(final String route) {
+		this.route = route;
+
+		// Parse the SIP Provider and save it correctly
+		if ( route.contains("@")) {
+			this.routeType = ROUTE_SIP;
+		} else if (this.route.startsWith("Internet: ")) {
+			this.routeType = ROUTE_SIP;
+		} else {
+			routeType = ROUTE_FIXED_NETWORK;
+		}
 	}
 
 	/**
@@ -320,7 +331,12 @@ public class Call implements Serializable {
 		outString = outString.append(";\"" + duration + "\""); //$NON-NLS-1$, //$NON-NLS-2$
 
 		// address
-		Person person = JFritz.getPhonebook().findPerson(this);
+		Person person = null;
+		if (JFritz.getPhonebook() != null)
+		{
+			person = JFritz.getPhonebook().findPerson(this);
+		}
+
 		if (person == null) {
 			outString = outString.append(";\"\";\"\";\"\""); //$NON-NLS-1$
 		} else {

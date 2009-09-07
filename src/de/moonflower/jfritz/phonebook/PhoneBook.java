@@ -45,6 +45,13 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.CallerList;
 import de.moonflower.jfritz.callerlist.CallerListListener;
+import de.moonflower.jfritz.importexport.VCardParserAdr;
+import de.moonflower.jfritz.importexport.VCardParser;
+import de.moonflower.jfritz.importexport.VCardParserEMail;
+import de.moonflower.jfritz.importexport.VCardParserName;
+import de.moonflower.jfritz.importexport.VCardParserOrg;
+import de.moonflower.jfritz.importexport.VCardParserTel;
+import de.moonflower.jfritz.importexport.VCardParserVersion;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
@@ -182,7 +189,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 		Collections.sort(filteredPersons, new ColumnSorter(sortColumn,
 				sortDirection));
 		updateFilter();
-		fireTableStructureChanged();
+		fireTableDataChanged();
 	}
 
 	/**
@@ -1267,6 +1274,112 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 		// lets quit while we're still sane and return the person object
 		return person;
 
+	}
+
+	/**
+	 * @author Brian Jensen function reads the thunderbird csv file line for
+	 *         line adding new contacts after each line
+	 *
+	 * @param filename
+	 *            is the path to a valid thunderbird csv file
+	 */
+	public String importFromVCard(String filename) {
+		Debug.info("Importing VCard Contacts from file " + filename); //$NON-NLS-1$
+		String line = ""; //$NON-NLS-1$
+		String message;
+		try {
+			FileReader fr = new FileReader(filename);
+			BufferedReader br = new BufferedReader(fr);
+
+			int linesRead = 0;
+			int newEntries = 0;
+			Person person = null;
+			boolean wrong_version = true;
+			// read until EOF
+			VCardParser vcardParser = new VCardParser();
+			boolean wrongVersion = false;
+			while (null != (line = br.readLine())) {
+				linesRead++;
+				Debug.debug(line);
+				vcardParser.parseLine(line);
+
+				if (vcardParser.getProperty().equals("begin")) {
+					if (vcardParser.getValues().size() != 1
+							|| vcardParser.getValues().get(0).toLowerCase().equals("vcard")) {
+						person = new Person();
+						wrongVersion = false;
+					} else {
+						wrongVersion = true;
+					}
+				} else if (!wrongVersion
+						&& vcardParser.getProperty().equals("version")){
+					wrongVersion = VCardParserVersion.parse(vcardParser, person);
+				} else if (!wrongVersion
+						&& vcardParser.getProperty().equals("n")) {
+					wrongVersion = VCardParserName.parse(vcardParser, person);
+				} else if (!wrongVersion
+						&& vcardParser.getProperty().equals("org")) {
+					wrongVersion = VCardParserOrg.parse(vcardParser, person);
+				} else if (!wrongVersion
+						&& vcardParser.getProperty().equals("adr")) {
+					wrongVersion = VCardParserAdr.parse(vcardParser, person);
+				} else if (!wrongVersion
+						&& vcardParser.getProperty().equals("tel")) {
+					wrongVersion = VCardParserTel.parse(vcardParser, person);
+				} else if (!wrongVersion
+						&& vcardParser.getProperty().equals("email")) {
+					wrongVersion = VCardParserEMail.parse(vcardParser, person);
+				} else if (!wrongVersion
+						&& vcardParser.getProperty().equals("end")) {
+					if (person != null) {
+						if (addEntry(person)) {
+							newEntries++;
+						}
+						person = null;
+					}
+				} else {
+					Debug.debug("Unknown property: " + vcardParser.getProperty());
+					Enumeration en = vcardParser.getPropertyType().keys();
+					while (en.hasMoreElements()) {
+						String key = (String)en.nextElement();
+						Debug.debug("Property values: " + key + "=" + vcardParser.getPropertyType().get(key));
+					}
+					Debug.debug("Values: " + vcardParser.getValues());
+				}
+			}
+
+			Debug.debug(linesRead
+					+ " Lines read from VCard file " + filename); //$NON-NLS-1$
+			Debug.debug(newEntries + " New contacts processed"); //$NON-NLS-1$
+
+			message = "";
+			if (newEntries > 0) {
+				sortAllUnfilteredRows();
+				saveToXMLFile(Main.SAVE_DIR + fileLocation);
+				String msg;
+
+				if (newEntries == 1) {
+					msg = Main.getMessage("imported_contact"); //$NON-NLS-1$
+				} else {
+					msg = newEntries
+							+ " " + Main.getMessage("imported_contacts"); //$NON-NLS-1$,  //$NON-NLS-2$
+				}
+				message = msg;
+
+			} else {
+				message = Main.getMessage("no_imported_contacts"); //$NON-NLS-1$
+			}
+
+			br.close();
+
+		} catch (FileNotFoundException e) {
+			message = "Could not read from " + filename + "!";
+			Debug.error("Could not read from " + filename + "!"); //$NON-NLS-1$, //$NON-NLS-2$
+		} catch (IOException e) {
+			message = "IO Exception reading csv file";
+			Debug.error("IO Exception reading csv file"); //$NON-NLS-1$
+		}
+		return message;
 	}
 
 	/**

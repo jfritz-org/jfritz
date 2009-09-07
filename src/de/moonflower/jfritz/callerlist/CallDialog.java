@@ -137,7 +137,7 @@ public class CallDialog extends JDialog implements ActionListener {
 			//make the number editable
 			if (this.numbers.size() == 1) { // if only one number -> use editable JTextField
 				cboNumber = new JTextField((numbers.elementAt(0)).getAreaNumber());
-				((JTextField)cboNumber).setPreferredSize(new Dimension(200, 20));
+				((JTextField)cboNumber).setPreferredSize(new Dimension(230, 32));
 			} else {// if more then one number -> use editable JComboBox
 				cboNumber = new JComboBox();
 				for (int i = 0; i < this.numbers.size(); i++) {
@@ -171,7 +171,7 @@ public class CallDialog extends JDialog implements ActionListener {
 				}
 			}
 
-            portComboBox.setPreferredSize(new Dimension(200, 20));
+            portComboBox.setPreferredSize(new Dimension(230, 32));
 			topPane.add(portComboBox, c);
 
 			// Bottom Pane
@@ -223,7 +223,7 @@ public class CallDialog extends JDialog implements ActionListener {
 
 			getContentPane().add(topPane, BorderLayout.NORTH);
 			getContentPane().add(bottomPane, BorderLayout.SOUTH);
-			setSize(new Dimension(400, 150));
+			setSize(new Dimension(400, 170));
 
 		}
 

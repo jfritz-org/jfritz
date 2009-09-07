@@ -490,6 +490,10 @@ public final class JFritz implements  StatusListener {
 		menuItem.setActionCommand("callDialog");
 		menuItem.addActionListener(jframe);
 		menu.add(menuItem);
+		menuItem = new TrayMenuItem(Main.getMessage("dial_assist") + "(" + Main.getMessage("clipboard") + ")"); //$NON-NLS-1$
+		menuItem.setActionCommand("callDialogTray");
+		menuItem.addActionListener(jframe);
+		menu.add(menuItem);
 		menu.add(lnfMenu);
 		menuItem = new TrayMenuItem(Main.getMessage("config")); //$NON-NLS-1$
 		menuItem.setActionCommand("config"); //$NON-NLS-1$

@@ -193,13 +193,13 @@ public class Main implements LookupObserver {
 	// when changing this, don't forget to check the resource bundles!!
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.3.24"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.3.25"; //$NON-NLS-1$
 
 	public final static String PROGRAM_SECRET = "jFrItZsEcReT"; //$NON-NLS-1$
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 58 2009-09-02 11:09:08Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 60 2009-09-07 18:37:17Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -1312,7 +1312,11 @@ public class Main implements LookupObserver {
 	 * @return Returns value of a specific property
 	 */
 	public static String getProperty(String property, String defaultValue) {
-		return config_properties.getProperty(property, defaultValue);
+		if (config_properties != null) {
+			return config_properties.getProperty(property, defaultValue);
+		} else {
+			return null;
+		}
 	}
 
 	/**

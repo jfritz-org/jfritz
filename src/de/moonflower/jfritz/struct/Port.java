@@ -162,6 +162,18 @@ public class Port implements Serializable {
 		}
 
 		if (this.getName().equals("ISDN Geraet")
+				&& (port.getName().equals("ISDN Gerät")))
+		{
+			return true;
+		}
+
+		if (this.getName().equals("ISDN Gerät")
+				&& (port.getName().equals("ISDN Geraet")))
+		{
+			return true;
+		}
+
+		if (this.getName().equals("ISDN Geraet")
 			&& (port.getName().equals("ISDN")))
 		{
 			return true;

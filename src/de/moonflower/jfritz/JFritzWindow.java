@@ -74,6 +74,7 @@ import de.moonflower.jfritz.dialogs.quickdial.QuickDialPanel;
 import de.moonflower.jfritz.dialogs.simple.CallMessageDlg;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.importexport.CSVCallerListImport;
 import de.moonflower.jfritz.monitoring.MonitoringPanel;
 import de.moonflower.jfritz.network.NetworkStateListener;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
@@ -87,6 +88,7 @@ import de.moonflower.jfritz.utils.CopyFile;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.DirectoryChooser;
 import de.moonflower.jfritz.utils.ImportOutlookContactsDialog;
+import de.moonflower.jfritz.utils.JFritzClipboard;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.PrintCallerList;
 import de.moonflower.jfritz.utils.SwingWorker;
@@ -621,6 +623,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			importMenu.add(item);
 		}
 
+		item = new JMenuItem(Main.getMessage("import_contacts_vcard")); //$NON-NLS-1$
+		item.setActionCommand("import_vcard");
+		item.addActionListener(this);
+		importMenu.add(item);
+
 		jfritzMenu.add(importMenu);
 
 		if (!JFritz.runsOn().equals("Mac")) { //$NON-NLS-1$
@@ -1153,6 +1160,25 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				dialog.setVisible(true);
 				dialog.dispose();
 			}
+		} else if (e.getActionCommand().equals("callDialogTray")) {
+			Vector<String> clipBoardContents = JFritzClipboard.paste();
+			Vector<PhoneNumber> numbers = new Vector<PhoneNumber>(clipBoardContents.size());
+			for (String content:clipBoardContents) {
+				if (content.length() < 30)
+				{
+					PhoneNumber number = new PhoneNumber(content, false, false);
+					if (!numbers.contains(number))
+					{
+						numbers.add(new PhoneNumber(content, false, false));
+					}
+				}
+			}
+			if (numbers.size() == 0) {
+				numbers.add(new PhoneNumber("0", false, false));
+			}
+			CallDialog p = new CallDialog(numbers, numbers.get(0));
+			p.setVisible(true);
+			p.dispose();
 		} else if (e.getActionCommand().equals("callMonitor")) { //$NON-NLS-1$
 			boolean active = ((JToggleButton) e.getSource()).isSelected();
 			if (active) {
@@ -1188,6 +1214,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		} else if (e.getActionCommand().equals(
 				"import_contacts_thunderbird_csv")) {
 			importContactsThunderbirdCSV();
+		} else if (e.getActionCommand().equals("import_vcard")) {
+			importContactsVCard();
 		} else if (e.getActionCommand().equals("showhide")) {
 			hideShowJFritz();
 		} else if (e.getActionCommand().equals("configwizard")) {
@@ -1441,7 +1469,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	//
 	public void printCallerList() {
 		PrintCallerList printCallerList = new PrintCallerList();
-		printCallerList.print();
+		this.setStatus("Printing caller list");
+		printCallerList.start();
 	}
 
 	public ImageIcon getImage(String filename) {
@@ -1635,23 +1664,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 			} else {
 
-				try {
-					FileReader fr = new FileReader(file.getAbsolutePath());
-					BufferedReader br = new BufferedReader(fr);
-					JFritz.getCallerList().importFromCSVFile(br);
-					br.close();
-
-					if (Main.getProperty("option.lookupAfterFetch")
-							.equals("true")) {
-						JFritz.getCallerList().reverseLookup(false, false);
-					}
-
-				} catch (FileNotFoundException e) {
-					Debug.error("File not found!");
-				} catch (IOException e) {
-					Debug.error("IO Excetion reading file!");
+				JFritz.getCallerList().importFromCSVFile(file.getAbsolutePath());
+				if (JFritzUtils.parseBoolean(Main.getProperty("option.lookupAfterFetch"))) {
+					JFritz.getCallerList().reverseLookup(false, false);
 				}
-
 			}
 		}
 	}
@@ -1701,6 +1717,46 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 						.equals("true")) { //$NON-NLS-1$
 					lookupButton.doClick();
 				}
+			}
+		}
+	}
+
+	public void importContactsVCard() {
+		JFileChooser fc = new JFileChooser(Main.getProperty("options.exportCSVpath")); //$NON-NLS-1$
+		fc.setDialogTitle(Main.getMessage("import_contacts_vcard")); //$NON-NLS-1$
+		fc.setDialogType(JFileChooser.OPEN_DIALOG);
+		fc.setFileFilter(new FileFilter() {
+			public boolean accept(File f) {
+				return f.isDirectory()
+						|| f.getName().toLowerCase().endsWith(".vcf"); //$NON-NLS-1$
+			}
+
+			public String getDescription() {
+				return Main.getMessage("vcf_files"); //$NON-NLS-1$
+			}
+		});
+		if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+			final File file = fc.getSelectedFile();
+			if (!file.exists()) {
+				JOptionPane
+						.showMessageDialog(
+								this,
+								Main.getMessage("file_not_found"), //$NON-NLS-1$
+								Main.getMessage("dialog_title_file_not_found"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+			} else {
+				Thread importThread = new Thread() {
+					public void run() {
+						String msg = JFritz.getPhonebook()
+							.importFromVCard(file.getAbsolutePath());
+						JFritz.infoMsg(msg);
+
+						if (Main.getProperty("option.lookupAfterFetch") //$NON-NLS-1$,  //$NON-NLS-2$
+								.equals("true")) { //$NON-NLS-1$
+							lookupButton.doClick();
+						}
+					}
+				};
+				importThread.run();
 			}
 		}
 	}

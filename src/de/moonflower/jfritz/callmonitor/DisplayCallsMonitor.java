@@ -158,6 +158,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
             programString = programString.replaceAll("%Firstname", firstname); //$NON-NLS-1$
             programString = programString.replaceAll("%Surname", surname); //$NON-NLS-1$
             programString = programString.replaceAll("%Company", company); //$NON-NLS-1$
+            programString = programString.replaceAll("%CallType", "In"); //$NON-NLS-1$, $NON-NLS-2$
 
             if (programString.indexOf("%URLENCODE") > -1) { //$NON-NLS-1$
                 try {
@@ -284,6 +285,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 			programString = programString.replaceAll("%Firstname", firstname); //$NON-NLS-1$
 			programString = programString.replaceAll("%Surname", surname); //$NON-NLS-1$
 			programString = programString.replaceAll("%Company", company); //$NON-NLS-1$
+            programString = programString.replaceAll("%CallType", "Out"); //$NON-NLS-1$, $NON-NLS-2$
 
 			if (programString.indexOf("%URLENCODE") > -1) { //$NON-NLS-1$
 			try {

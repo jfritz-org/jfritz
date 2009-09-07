@@ -47,7 +47,7 @@ import de.moonflower.jfritz.struct.Port;
  * @author Robert Palmer
  *
  */
-public class PrintCallerList {
+public class PrintCallerList extends Thread {
 
     private int[] columnWidth;
 
@@ -570,7 +570,12 @@ public class PrintCallerList {
         return report;
     }
 
-    public void print() {
+    public void run() {
+    	print();
+    	JFritz.getJframe().setStatus("");
+    }
+
+    private void print() {
         Debug.info("Start print report creation"); //$NON-NLS-1$
         JFreeReport report = createReportDefinition();
         report.setData(JFritz.getCallerList());

@@ -2,7 +2,12 @@ package de.moonflower.jfritz.utils;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
+import java.util.Vector;
 
 import de.moonflower.jfritz.Main;
 
@@ -27,6 +32,32 @@ public class JFritzClipboard{
 		jfritzClip.setContents(text);
     }
 
+    public static Vector<String> paste() {
+    	JFritzClipboard jfritzClip = new JFritzClipboard();
+    	return jfritzClip.getContents();
+    }
+
+    protected Vector<String> getContents() {
+    	Vector<String> response = new Vector<String>();
+
+    	Transferable transferData = systemClip.getContents( null );
+    	for(DataFlavor dataFlavor : transferData.getTransferDataFlavors())
+    	{
+			try {
+	    		Object content = transferData.getTransferData( dataFlavor );
+				if ( content instanceof String )
+				{
+					response.add((String)content);
+				}
+			} catch (UnsupportedFlavorException e) {
+				Debug.error("ClipboardException (UnsupportedFlavorException): " + e.getLocalizedMessage());
+			} catch (IOException e) {
+				Debug.error("ClipboardException (IOException): " + e.getLocalizedMessage());
+			}
+    	}
+
+    	return response;
+    }
 
     protected void setContents(String text){
 		try{
@@ -34,7 +65,6 @@ public class JFritzClipboard{
         	{
             	StringSelection stringSelection = new StringSelection(text);
         		systemClip.setContents(stringSelection, stringSelection);
-        		Debug.debug("JFritzClipboard.copy: "+text); //$NON-NLS-1$
         	}
         }catch(IllegalStateException ise)
         {
@@ -47,6 +77,10 @@ public class JFritzClipboard{
     {
     	try{
     		JFritzClipboard.copy("Text to be copied into systems clipboard."); //$NON-NLS-1$
+    		Vector<String> response = JFritzClipboard.paste();
+    		for (String resp:response) {
+    			Debug.debug(resp);
+    		}
     		JFritzClipboard.copy(null);
     		JFritzClipboard.copy(""); //$NON-NLS-1$
     		return true;
@@ -60,7 +94,7 @@ public class JFritzClipboard{
     {
     	//Run test via console from <project>\bin with
     	//"java de.moonflower.jfritz.utils.JFritzClipboard"
-    	System.out.print("\tTesting JFritzClipboard:\t"); //$NON-NLS-1$
+    	System.out.println("Testing JFritzClipboard:\n"); //$NON-NLS-1$
     	System.out.println(JFritzClipboard.runTest()?"OK":"Error"); //$NON-NLS-1$,  //$NON-NLS-2$
     }
 

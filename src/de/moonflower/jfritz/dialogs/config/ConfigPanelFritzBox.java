@@ -11,6 +11,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -147,10 +148,8 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 		// initialize the drop down box
 		BoxClass.detectBoxesWithSSDP();
 		devices = BoxClass.getDevices();
+		Vector<String> deviceAddress = new Vector<String>();
 		if (devices != null) {
-
-			Vector<String> deviceAddress = new Vector<String>(devices.size());
-
 			Enumeration<SSDPPacket> en = (Enumeration<SSDPPacket>)devices.elements();
 			while (en.hasMoreElements()) {
 				SSDPPacket p = (SSDPPacket) en.nextElement();
@@ -158,7 +157,6 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 				{
 					deviceAddress.add(p.getIP().getHostAddress());
 					// addressCombo.addItem(p.getShortName());
-					addressCombo.addItem(p.getIP().getHostAddress());
 					if (p.getIP().getHostAddress().equals(fritzBox.getAddress()))
 					{
 						boxAddressAdded = true;
@@ -169,8 +167,19 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 
 		// make sure the stored address is listed
 		if (!boxAddressAdded) {
-			addressCombo.addItem(fritzBox.getAddress());
-			addressCombo.setSelectedIndex(addressCombo.getItemCount() - 1);
+			deviceAddress.add(fritzBox.getAddress());
+		}
+
+		Collections.sort(deviceAddress);
+
+		for (String device:deviceAddress) {
+			addressCombo.addItem(device);
+		}
+
+		for (int i=0; i < addressCombo.getItemCount(); i++) {
+			if (((String)addressCombo.getItemAt(i)).equals(fritzBox.getAddress())) {
+				addressCombo.setSelectedIndex(i);
+			}
 		}
 
 		addressCombo.setActionCommand("addresscombo"); //$NON-NLS-1$
@@ -218,25 +227,18 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("addresscombo")) { //$NON-NLS-1$
-			int i = addressCombo.getSelectedIndex();
-				if (devices.size() != 0 && i < devices.size()) {
-					SSDPPacket dev = (SSDPPacket) devices.get(i);
-					address.setText(dev.getIP().getHostAddress());
-				} else {
-					String selectedItem = addressCombo.getItemAt(addressCombo.getSelectedIndex()).toString();
-					if (!selectedItem.equals(""))
-					{
-						address.setText(selectedItem);
-					} else {
-						Debug.error("Address wrong!"); //$NON-NLS-1$
-						boxtypeLabel.setForeground(Color.RED);
-						boxtypeLabel.setText(Main.getMessage("box.not_found")); //$NON-NLS-1$
-						boxtypeLabel.setPreferredSize(boxtypeLabel.getPreferredSize());
-						boxtypeLabel.repaint();
-					}
-				}
-				setBoxTypeLabel();
-
+			String selectedItem = addressCombo.getItemAt(addressCombo.getSelectedIndex()).toString();
+			if (!selectedItem.equals(""))
+			{
+				address.setText(selectedItem);
+			} else {
+				Debug.error("Address wrong!"); //$NON-NLS-1$
+				boxtypeLabel.setForeground(Color.RED);
+				boxtypeLabel.setText(Main.getMessage("box.not_found")); //$NON-NLS-1$
+				boxtypeLabel.setPreferredSize(boxtypeLabel.getPreferredSize());
+				boxtypeLabel.repaint();
+			}
+			setBoxTypeLabel();
 		} else if (e.getActionCommand().equals("detectboxtype")) { //$NON-NLS-1$
 		   Container c = getPanel(); // get the window's content pane
 			try {
