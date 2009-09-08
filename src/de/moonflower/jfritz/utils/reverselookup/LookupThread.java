@@ -501,6 +501,14 @@ public class LookupThread extends Thread {
 													foundPersons.add(p);
 													Debug.debug("Creating new person: "+p.toDebugStr());
 												}
+
+												if (JFritzUtils.parseBoolean(patterns[ReverseLookupSite.SWAPFIRSTANDLASTNAME]))
+												{
+													// swap first and last name if necessary
+													String tmp = lastname;
+													lastname = firstname;
+													firstname = tmp;
+												}
 												if (p != null)
 												{
 													p.setFirstName(firstname);

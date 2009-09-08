@@ -23,7 +23,7 @@ import de.moonflower.jfritz.utils.Debug;
 public class ReverseLookupXMLHandler extends DefaultHandler{
 
 	String chars, url, name, prefix, country_code, pname, pstreet, pcity, pzipcode,
-		   pfirst, plast, firstOccurance;
+		   pfirst, plast, firstOccurance, swapFirstAndLastName;
 
 	Vector<ReverseLookupSite> rls_list;
 
@@ -65,6 +65,7 @@ public class ReverseLookupXMLHandler extends DefaultHandler{
 			prefix ="";
 			ac_length = 0;
 			firstOccurance = "name";
+			swapFirstAndLastName = "false";
 
 		//if we have a new entry tag, clear the previous pattern data
 		}else if (eName.equals("entry")){
@@ -108,6 +109,10 @@ public class ReverseLookupXMLHandler extends DefaultHandler{
 					if (aName.equals("firstOccurance")){
 						firstOccurance = attrs.getValue(i);
 					}
+				}else if(eName.equals("name")) {
+					if (aName.equals("swapFirstAndLastName")) {
+						swapFirstAndLastName = attrs.getValue(i);
+					}
 				}
 			}
 		}
@@ -132,7 +137,7 @@ public class ReverseLookupXMLHandler extends DefaultHandler{
 
 			//add the patterns to the new object
 			rls_list.get(rls_count).addEntry(firstOccurance,
-					pname, pstreet, pcity, pzipcode, pfirst, plast);
+					pname, pstreet, pcity, pzipcode, pfirst, plast, swapFirstAndLastName);
 //			Debug.msg("adding patterns for: "+name);
 //			Debug.msg("Pattern name: "+ pname);
 //			Debug.msg("Pattern street: "+ pstreet);

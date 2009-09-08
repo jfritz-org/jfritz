@@ -1,6 +1,11 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 TODO: Timer zum automatischen Aktualisieren der FritzBox-Einstellungen (Telefone, SIP-Provider, ...) nach X Minuten (z.B. 60 / 120)
  
+JFritz 0.7.3.26:
+- Bugfix: Rückwärtssuche Norwegen
+- Neu: JUnitTest für Rückwärtssuche Norwegens
+- Neu: Möglichkeit den Vor- und Nachnamen beim parsen der Rückwärtssuche-Seite zu vertauschen (für Norwegen)
+ 
 JFritz 0.7.3.25:
 - Neu: Wählhilfe aus Tray übernimmt Nummer aus Zwischenablage.
 - Neu: %CallType bei Start von Externen Programmen zur Unterscheidung von ankommenden ("In") oder ausgehenden ("Out") Anrufen.

@@ -858,7 +858,7 @@
 	<country code="+47">
 		<website name="gulesider.no" url="http://www.gulesider.no/gs/categoryList.c?q=$NUMBER" prefix="">
 			<entry>
-				<name>title=&quot;[^p]*personlige infoside&quot;&gt;([^&lt;]*)&lt;/a&gt;</name>
+				<name swapFirstAndLastName="true">title=&quot;.*personlige infoside&quot;&gt;\s*([^&lt;]*)&lt;/a&gt;</name>
 				<street>&lt;div\s+class=&quot;lead&quot;\s+style=&quot;padding-left: 0px;&quot;>([^,]*),\s+[^&lt;]*&lt;/div&gt;</street>
 				<city>&lt;div\s+class=&quot;lead&quot;\s+style=&quot;padding-left: 0px;&quot;>[^,]*,\s+[^\s]*\s([^&lt;]*)&lt;/div&gt;</city>
 				<zipcode>&lt;div\s+class=&quot;lead&quot;\s+style=&quot;padding-left: 0px;&quot;>[^,]*,\s+([^\s]*)\s[^&lt;]*&lt;/div&gt;</zipcode>

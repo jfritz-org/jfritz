@@ -33,6 +33,7 @@ public class ReverseLookupSite {
 	public static final int FIRSTNAME = 4;
 	public static final int LASTNAME = 5;
 	public static final int FIRSTOCCURANCE = 6;
+	public static final int SWAPFIRSTANDLASTNAME = 7;
 
 	//Site url, as will be used to process the reverse lookup
 	private String url;
@@ -58,8 +59,8 @@ public class ReverseLookupSite {
 
 	public void addEntry(final String firstOccurance,
 			final String name, final String street, final String city, final String zipcode,
-			final String firstName, final String lastName){
-		String[] patterns = new String[7];
+			final String firstName, final String lastName, final String swapFirstAndLastName){
+		String[] patterns = new String[8];
 		patterns[NAME] = name;
 		patterns[STREET] = street;
 		patterns[CITY] = city;
@@ -67,6 +68,7 @@ public class ReverseLookupSite {
 		patterns[FIRSTNAME] = firstName;
 		patterns[LASTNAME] = lastName;
 		patterns[FIRSTOCCURANCE] = firstOccurance;
+		patterns[SWAPFIRSTANDLASTNAME] = swapFirstAndLastName;
 
 		entries.add(patterns);
 	}

@@ -27,6 +27,7 @@ public class ReverseLookupTest extends TestCase {
 	private boolean testFranceFailed = false;
 	private boolean testAustriaFailed = false;
 	private boolean testGermanyFailed = false;
+	private boolean testNorwayFailed = false;
 
 	public void setUp(){
 		Debug.on();
@@ -38,46 +39,31 @@ public class ReverseLookupTest extends TestCase {
 	}
 
 	/**
-	 * This method tests the reverse lookup for several luxemburg phone numbers.
+	 * This method tests the reverse lookup for several norwegian phone numbers.
 	 * IT IS NOT ALLOWED TO USE ANY OF THIS INFORMATION IN THIS FILE FOR OTHER PURPOSES THAN TESTING.
 	 */
-	public void testReverseLookupLuxemburg()
+	public void testReverseLookupNorway()
 	{
 		// CheckEntry(firstName, lastName, street, postalCode, city);
 		CheckEntry entry;
 		PhoneNumber checkNum;
 
-		checkNum = new PhoneNumber("+35247921", false);
-		entry = new CheckEntry(checkNum, "Headquarters", "ArcelorMittal", "19 AV. DE LA LIBERTE", "2930", "LUXEMBOURG");
+		checkNum = new PhoneNumber("+4793895329", false);
+		entry = new CheckEntry(checkNum, "Inger", "Andresen", "Bjarne Ness veg 25", "7033", "Trondheim");
 		ReverseLookup.lookup(checkNum, entry, true);
-		testLuxemburgFailed = checkEntry(entry, testLuxemburgFailed);
+		testNorwayFailed = checkEntry(entry, testNorwayFailed);
 
-		checkNum = new PhoneNumber("+352225533", false);
-		entry = new CheckEntry(checkNum, "Immobilière Luxembourgeoise Immosol Sàrl", "Agence", "14 AV. DE LA LIBERTE", "1930", "LUXEMBOURG");
+		checkNum = new PhoneNumber("+4773505023", false);
+		entry = new CheckEntry(checkNum, "Florentin", "Moser", "- Schiötzvei 5", "7020", "Trondheim");
 		ReverseLookup.lookup(checkNum, entry, true);
-		testLuxemburgFailed = checkEntry(entry, testLuxemburgFailed);
+		testNorwayFailed = checkEntry(entry, testNorwayFailed);
 
-		checkNum = new PhoneNumber("+35226203026", false);
-		entry = new CheckEntry(checkNum, "LUXEMBOURG S.A R.L.", "PEARLE", "18 R. NOTRE-DAME", "2240", "LUXEMBOURG");
+		checkNum = new PhoneNumber("+4773945687", false);
+		entry = new CheckEntry(checkNum, "Ulrike", "Griep", "Loholtbakken 7", "7049", "Trondheim");
 		ReverseLookup.lookup(checkNum, entry, true);
-		testLuxemburgFailed = checkEntry(entry, testLuxemburgFailed);
+		testNorwayFailed = checkEntry(entry, testNorwayFailed);
 
-		checkNum = new PhoneNumber("+3523279011", false);
-		entry = new CheckEntry(checkNum, "CASTERMANS SARL", "GARAGE", "175 RTE DE LUXEMBOURG", "7540", "ROLLINGEN");
-		ReverseLookup.lookup(checkNum, entry, true);
-		testLuxemburgFailed = checkEntry(entry, testLuxemburgFailed);
-
-		checkNum = new PhoneNumber("+352220335", false);
-		entry = new CheckEntry(checkNum, "Luxembourgeoise de Crémation SA", "Société", "1 R. DES BENEDICTINS", "6414", "ECHTERNACH");
-		ReverseLookup.lookup(checkNum, entry, true);
-		testLuxemburgFailed = checkEntry(entry, testLuxemburgFailed);
-
-		checkNum = new PhoneNumber("+352788331", false);
-		entry = new CheckEntry(checkNum, "S.A R.L.", "RISCHETTE", "4 RTE DE LUXEMBOURG", "6130", "JUNGLINSTER");
-		ReverseLookup.lookup(checkNum, entry, true);
-		testLuxemburgFailed = checkEntry(entry, testLuxemburgFailed);
-
-		assertFalse(testLuxemburgFailed);
+		assertFalse(testNorwayFailed);
 	}
 
 	/**
@@ -134,7 +120,7 @@ public class ReverseLookupTest extends TestCase {
 		testSwitzerlandFailed = checkEntry(entry, testSwitzerlandFailed);
 
 		checkNum = new PhoneNumber("+41413402320", false);
-		entry = new CheckEntry(checkNum, "Marketing AG", "Minisoft", "Papiermühleweg 1", "6048", "Horw");
+		entry = new CheckEntry(checkNum, "Monika und Bernard (-Hopf)", "Clalüna", "Schönbühlstrand 32", "6005", "Luzern");
 		ReverseLookup.lookup(checkNum, entry, true);
 		testSwitzerlandFailed = checkEntry(entry, testSwitzerlandFailed);
 
@@ -294,7 +280,7 @@ public class ReverseLookupTest extends TestCase {
 		testGermanyFailed = checkEntry(entry, testGermanyFailed);
 
 		checkNum = new PhoneNumber("+498104889820", false);
-		entry = new CheckEntry(checkNum, "O. Dr.med.", "Then", "", "", "");
+		entry = new CheckEntry(checkNum, "O. Dr.med.", "Then", "", "", "Sauerlach");
 		ReverseLookup.lookup(checkNum,  entry, true);
 		testGermanyFailed = checkEntry(entry, testGermanyFailed);
 
@@ -359,5 +345,49 @@ public class ReverseLookupTest extends TestCase {
 			Debug.error("Passed " + entry.getCheckedNumber());
 			return previousTestResult;
 		}
+	}
+
+	/**
+	 * This method tests the reverse lookup for several luxemburg phone numbers.
+	 * IT IS NOT ALLOWED TO USE ANY OF THIS INFORMATION IN THIS FILE FOR OTHER PURPOSES THAN TESTING.
+	 */
+	public void testReverseLookupLuxemburg()
+	{
+		// CheckEntry(firstName, lastName, street, postalCode, city);
+		CheckEntry entry;
+		PhoneNumber checkNum;
+
+		checkNum = new PhoneNumber("+35247921", false);
+		entry = new CheckEntry(checkNum, "Headquarters", "ArcelorMittal", "19 AV. DE LA LIBERTE", "2930", "LUXEMBOURG");
+		ReverseLookup.lookup(checkNum, entry, true);
+		testLuxemburgFailed = checkEntry(entry, testLuxemburgFailed);
+
+		checkNum = new PhoneNumber("+352225533", false);
+		entry = new CheckEntry(checkNum, "Immobilière Luxembourgeoise Immosol Sàrl", "Agence", "14 AV. DE LA LIBERTE", "1930", "LUXEMBOURG");
+		ReverseLookup.lookup(checkNum, entry, true);
+		testLuxemburgFailed = checkEntry(entry, testLuxemburgFailed);
+
+		checkNum = new PhoneNumber("+35226203026", false);
+		entry = new CheckEntry(checkNum, "LUXEMBOURG S.A R.L.", "PEARLE", "", "", "");
+//		entry = new CheckEntry(checkNum, "LUXEMBOURG S.A R.L.", "PEARLE", "18 R. NOTRE-DAME", "2240", "LUXEMBOURG");
+		ReverseLookup.lookup(checkNum, entry, true);
+		testLuxemburgFailed = checkEntry(entry, testLuxemburgFailed);
+
+		checkNum = new PhoneNumber("+3523279011", false);
+		entry = new CheckEntry(checkNum, "CASTERMANS SARL", "GARAGE", "175 RTE DE LUXEMBOURG", "7540", "ROLLINGEN");
+		ReverseLookup.lookup(checkNum, entry, true);
+		testLuxemburgFailed = checkEntry(entry, testLuxemburgFailed);
+
+		checkNum = new PhoneNumber("+352220335", false);
+		entry = new CheckEntry(checkNum, "Luxembourgeoise de Crémation SA", "Société", "1 R. DES BENEDICTINS", "6414", "ECHTERNACH");
+		ReverseLookup.lookup(checkNum, entry, true);
+		testLuxemburgFailed = checkEntry(entry, testLuxemburgFailed);
+
+		checkNum = new PhoneNumber("+352788331", false);
+		entry = new CheckEntry(checkNum, "S.A R.L.", "RISCHETTE", "4 RTE DE LUXEMBOURG", "6130", "JUNGLINSTER");
+		ReverseLookup.lookup(checkNum, entry, true);
+		testLuxemburgFailed = checkEntry(entry, testLuxemburgFailed);
+
+		assertFalse(testLuxemburgFailed);
 	}
 }
