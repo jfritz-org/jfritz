@@ -30,7 +30,7 @@ public class FBoxListenerV3Test extends TestCase {
     	Debug.on();
     	Debug.setVerbose(true);
     	Debug.setDebugLevel(Debug.LS_DEBUG);
-		Main.loadProperties();
+		Main.loadProperties(false);
 		Main.loadMessages(new Locale("de_DE"));
 		String[] args = new String[1];
 		args[0] = "-q";

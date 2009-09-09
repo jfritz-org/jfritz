@@ -28,6 +28,7 @@ public class OSDetector {
     public static final byte OS_WINDOWS_OTHER = 4;
     public static final byte OS_WINDOWS_VISTA = 1;
     public static final byte OS_WINDOWS_XP = 0;
+    public static final byte OS_WINDOWS_7 = 8;
 
     private static void getOS() {
         String OS = getOSString().toLowerCase();
@@ -41,6 +42,8 @@ public class OSDetector {
             OS_ID = OS_WINDOWS_2003;
         } else if (OS.indexOf("nt") > -1) {
             OS_ID = OS_WINDOWS_NT;
+        } else if (OS.indexOf("windows 7") > -1) {
+        	OS_ID = OS_WINDOWS_7;
         } else if (OS.indexOf("windows") > -1) {
             OS_ID = OS_WINDOWS_OTHER;
         } else if (OS.indexOf("mac") > -1) {
@@ -85,6 +88,7 @@ public class OSDetector {
         case OS_WINDOWS_2000:
         case OS_WINDOWS_2003:
         case OS_WINDOWS_NT:
+        case OS_WINDOWS_7:
         case OS_WINDOWS_OTHER:
             return true;
         }

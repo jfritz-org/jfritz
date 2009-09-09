@@ -33,7 +33,7 @@ public class ReverseLookupTest extends TestCase {
 		Debug.on();
     	Debug.setVerbose(true);
     	Debug.setDebugLevel(Debug.LS_DEBUG);
-		Main.loadProperties();
+		Main.loadProperties(false);
 		Main.loadMessages(new Locale("de_DE"));
 		JFritz.loadNumberSettings();
 	}

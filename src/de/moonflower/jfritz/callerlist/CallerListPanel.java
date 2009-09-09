@@ -39,6 +39,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
@@ -1698,5 +1699,29 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	public void updateGoogleItem(boolean status) {
 		googleItem.setEnabled(status);
 		JFritz.getJframe().setGoogleItem(status);
+	}
+
+	public void activateSearchFilter() {
+		if (searchFilterButton.getState() != ThreeStateButton.NOTHING)
+		{
+			searchFilterTextField.setVisible(false);
+			searchLabel.setVisible(false);
+			searchFilterButton.setState(ThreeStateButton.NOTHING);
+			this.update();
+			filter[SEARCH].setEnabled(false);
+		} else {
+			searchFilterTextField.setVisible(true);
+			searchLabel.setVisible(true);
+			((SearchFilter) filter[SEARCH])
+					.setSearchString(searchFilterTextField.getText());
+
+			searchFilterButton.setState(ThreeStateButton.SELECTED);
+			filter[SEARCH].setInvert(false);
+			this.requestFocus();
+			searchFilterTextField.requestFocus();
+			searchFilterTextField.selectAll();
+			filter[SEARCH].setEnabled(true);
+		}
+		update();
 	}
 }

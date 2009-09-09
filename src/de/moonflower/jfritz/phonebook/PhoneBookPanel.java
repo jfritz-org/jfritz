@@ -35,6 +35,7 @@ import javax.swing.JMenuItem;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.callerlist.filter.SearchFilter;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.VCardList;
@@ -42,6 +43,7 @@ import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.StatusBarController;
+import de.moonflower.jfritz.utils.threeStateButton.ThreeStateButton;
 
 /**
  *
@@ -372,24 +374,25 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			JTextField search = (JTextField) arg0.getSource();
 
 			// ignore whitespaces at the beginning and the end
-			String filter = search.getText().trim();
+			doSearchFilter(search.getText().trim());
+		}
+	}
 
-			// only update filter when the search expression has changed
-			if (! filter.equals(Main.getStateProperty("filter.Phonebook.search"))) {  //$NON-NLS-1$,  //$NON-NLS-2$
-				Main.setStateProperty("filter.Phonebook.search", filter);  //$NON-NLS-1$
-				if ((phoneBookTable != null)
-					&& (phoneBookTable.getCellEditor() != null))
-				{
-	 				phoneBookTable.getCellEditor().cancelCellEditing();
-				}
-				phonebook.clearFilterExceptions();
-				phonebook.updateFilter();
-				phonebook.fireTableDataChanged();
+	private void doSearchFilter(final String filter) {
+		// only update filter when the search expression has changed
+		if (! filter.equals(Main.getStateProperty("filter.Phonebook.search"))) {  //$NON-NLS-1$,  //$NON-NLS-2$
+			Main.setStateProperty("filter.Phonebook.search", filter);  //$NON-NLS-1$
+			if ((phoneBookTable != null)
+				&& (phoneBookTable.getCellEditor() != null))
+			{
+					phoneBookTable.getCellEditor().cancelCellEditing();
 			}
+			phonebook.clearFilterExceptions();
+			phonebook.updateFilter();
+			phonebook.fireTableDataChanged();
 		}
 
 	}
-
 	public void keyReleased(KeyEvent arg0) {
 		// unnötig
 
@@ -519,4 +522,10 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		JFritz.getJframe().setGoogleItem(status);
 	}
 
+	public void activateSearchFilter() {
+		this.requestFocus();
+		searchFilter.requestFocus();
+		searchFilter.selectAll();
+		doSearchFilter(searchFilter.getText());
+	}
 }

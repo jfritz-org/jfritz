@@ -15,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -260,6 +261,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		statusBar = createStatusBar2();
 
 		addKeyListener(this, KeyEvent.VK_F5, "fetchList", 0); //$NON-NLS-1$
+		addKeyListener(this, KeyEvent.VK_F, "search", InputEvent.CTRL_MASK); //$NON-NLS-1$
 
 		this.setIconImage(Toolkit
 						.getDefaultToolkit()
@@ -286,26 +288,22 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		tabber.addTab(Main.getMessage("monitoring"), monitoringPanel);
 		tabber.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				if (tabber.getTitleAt(tabber.getSelectedIndex()).equals(
-						Main.getMessage("callerlist"))) { //$NON-NLS-1$
+				if (tabSelected("callerlist")) { //$NON-NLS-1$
 					callerListPanel.setStatus();
 					googleItem.removeActionListener(callerListPanel);
 					googleItem.removeActionListener(phoneBookPanel);
 					googleItem.addActionListener(callerListPanel);
 					callerListPanel.adaptGoogleLink();
-				} else if (tabber.getTitleAt(tabber.getSelectedIndex()).equals(
-						Main.getMessage("phonebook"))) { //$NON-NLS-1$
+				} else if (tabSelected("phonebook")) { //$NON-NLS-1$
 					phoneBookPanel.setStatus();
 					googleItem.removeActionListener(callerListPanel);
 					googleItem.removeActionListener(phoneBookPanel);
 					googleItem.addActionListener(phoneBookPanel);
 					phoneBookPanel.adaptGoogleLink();
-				} else if (tabber.getTitleAt(tabber.getSelectedIndex()).equals(
-						Main.getMessage("quickdials"))) { //$NON-NLS-1$
+				} else if (tabSelected("quickdials")) { //$NON-NLS-1$
 					quickDialPanel.setStatus();
 					googleItem.setEnabled(false);
-				} else if (tabber.getTitleAt(tabber.getSelectedIndex()).equals(
-						Main.getMessage("monitoring"))) {
+				} else if (tabSelected("monitoring")) { //$NON-NLS-1$
 					monitoringPanel.setStatus();
 					googleItem.setEnabled(false);
 				}
@@ -353,6 +351,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		setLocation(x, y);
 		setSize(w, h);
 		setExtendedState(windowState);
+	}
+
+	private boolean tabSelected(final String name) {
+		return tabber.getTitleAt(tabber.getSelectedIndex()).equals(
+				Main.getMessage(name));
 	}
 
 	/**
@@ -534,7 +537,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 */
 	public JMenuBar createMenu() {
 		String menu_text = Main.PROGRAM_NAME;
-		if (JFritz.runsOn().equals("Mac")) {
+		if (OSDetector.isMac()) {
 			menu_text = "File"; //$NON-NLS-1$
 		}
 
@@ -616,7 +619,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		item.addActionListener(this);
 		importMenu.add(item);
 
-		if (JFritz.runsOn().startsWith("Windows")) { //$NON-NLS-1$
+		if (OSDetector.isWindows()) { //$NON-NLS-1$
 			item = new JMenuItem(Main.getMessage("import_contacts_outlook")); //$NON-NLS-1$
 			item.setActionCommand("import_outlook"); //$NON-NLS-1$
 			item.addActionListener(this);
@@ -630,7 +633,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 		jfritzMenu.add(importMenu);
 
-		if (!JFritz.runsOn().equals("Mac")) { //$NON-NLS-1$
+		if (!OSDetector.isMac()) { //$NON-NLS-1$
 			jfritzMenu.add(new JSeparator());
 			item = new JMenuItem(Main.getMessage("prog_exit"), 'x'); //$NON-NLS-1$,
 			// item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
@@ -691,7 +694,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		item.addActionListener(this);
 		optionsMenu.add(item);
 
-		if (!JFritz.runsOn().equals("Mac")) { //$NON-NLS-1$
+		if (!OSDetector.isMac()) { //$NON-NLS-1$
 			item = new JMenuItem(Main.getMessage("config"), 'e'); //$NON-NLS-1$,
 			item.setActionCommand("config"); //$NON-NLS-1$
 			item.addActionListener(this);
@@ -740,7 +743,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		item.addActionListener(this);
 		helpMenu.add(item);
 
-		if (!JFritz.runsOn().equals("Mac")) { //$NON-NLS-1$
+		if (!OSDetector.isMac()) { //$NON-NLS-1$
 			helpMenu.add(new JSeparator());
 			item = new JMenuItem(Main.getMessage("prog_info"), 'i'); //$NON-NLS-1$,
 			item.setActionCommand("about"); //$NON-NLS-1$
@@ -1131,8 +1134,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		} else if (e.getActionCommand().equals("fetchTask")) {
 			fetchTask(((JToggleButton) e.getSource()).isSelected());
 		} else if (e.getActionCommand().equals("callDialog")) {
-			if (tabber.getTitleAt(tabber.getSelectedIndex()).equals(
-					Main.getMessage("callerlist"))) { //$NON-NLS-1$
+			if (tabSelected("callerlist")) { //$NON-NLS-1$
 				PhoneNumber number = null;
 				if (this.getCallerTable().getSelectedRowCount() == 1)
 				{
@@ -1146,8 +1148,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				CallDialog p = new CallDialog(number);
 				p.setVisible(true);
 				p.dispose();
-			} else if (tabber.getTitleAt(tabber.getSelectedIndex()).equals(
-					Main.getMessage("phonebook"))) { //$NON-NLS-1$
+			} else if (tabSelected("phonebook")) { //$NON-NLS-1$
 				CallDialog dialog = null;
 				if (this.getPhoneBookPanel().getPhoneBookTable().getSelectedRowCount() == 1)
 				{
@@ -1233,6 +1234,12 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					NetworkStateMonitor.startServer();
 				else
 					NetworkStateMonitor.stopServer();
+			}
+		} else if (e.getActionCommand().equals("search")) {
+			if (tabSelected("callerlist")) {
+				this.getCallerListPanel().activateSearchFilter();
+			} else if (tabSelected("phonebook")) {
+				this.getPhoneBookPanel().activateSearchFilter();
 			}
 		}else {
 			Debug.warning("Unimplemented action: " + e.getActionCommand()); //$NON-NLS-1$

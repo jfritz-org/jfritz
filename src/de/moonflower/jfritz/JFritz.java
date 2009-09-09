@@ -5,8 +5,6 @@
 package de.moonflower.jfritz;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 import java.io.IOException;
 import java.net.URL;
@@ -32,6 +30,8 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+
+import jd.nutils.OSDetector;
 
 import de.moonflower.jfritz.box.BoxClass;
 import de.moonflower.jfritz.box.BoxCommunication;
@@ -91,8 +91,6 @@ public final class JFritz implements  StatusListener {
 
 	private static URL ringSound, callSound;
 
-	private static String HostOS = "other"; //$NON-NLS-1$
-
 	private static WatchdogThread watchdog;
 
 	private static Timer watchdogTimer;
@@ -145,18 +143,8 @@ public final class JFritz implements  StatusListener {
 					+ Main.getProperty("country.code"));
 
 		loadSounds();
-		String osName = System.getProperty("os.name"); //$NON-NLS-1$
-		Debug.always("Operating System : " + osName); //$NON-NLS-1$
-		if (osName.toLowerCase().startsWith("mac os")) //$NON-NLS-1$
-			HostOS = "Mac"; //$NON-NLS-1$
-		else if (osName.startsWith("Windows")) //$NON-NLS-1$
-			HostOS = "Windows"; //$NON-NLS-1$
-		else if (osName.equals("Linux")) { //$NON-NLS-1$
-			HostOS = "Linux"; //$NON-NLS-1$
-		}
-		Debug.always("JFritz runs on " + HostOS); //$NON-NLS-1$
 
-		if (HostOS.equals("Mac")) { //$NON-NLS-1$
+		if (OSDetector.isMac()) { //$NON-NLS-1$
 			new MacHandler(this);
 		}
 
@@ -689,10 +677,6 @@ public final class JFritz implements  StatusListener {
 	 */
 	public static final JFritzWindow getJframe() {
 		return jframe;
-	}
-
-	public static String runsOn() {
-		return HostOS;
 	}
 
 	/**

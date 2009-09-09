@@ -149,6 +149,7 @@ import java.awt.Frame;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -163,6 +164,8 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+import jd.nutils.OSDetector;
+
 import de.moonflower.jfritz.autoupdate.JFritzUpdate;
 import de.moonflower.jfritz.autoupdate.Update;
 import de.moonflower.jfritz.callerlist.CallerTable;
@@ -174,6 +177,7 @@ import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.utils.CLIOption;
 import de.moonflower.jfritz.utils.CLIOptions;
+import de.moonflower.jfritz.utils.ComplexJOptionPaneMessage;
 import de.moonflower.jfritz.utils.CopyFile;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
@@ -193,13 +197,13 @@ public class Main implements LookupObserver {
 	// when changing this, don't forget to check the resource bundles!!
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.3.25"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.3.26"; //$NON-NLS-1$
 
 	public final static String PROGRAM_SECRET = "jFrItZsEcReT"; //$NON-NLS-1$
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 60 2009-09-07 18:37:17Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 62 2009-09-09 21:10:35Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -263,12 +267,14 @@ public class Main implements LookupObserver {
 	private static int EXIT_CODE_PARAMETER_WRONG_FORMAT = -3;
 	private static int EXIT_CODE_MULTIPLE_INSTANCE_LOCK = 1;
 
+	private static String HostOS = "other"; //$NON-NLS-1$
+
 	public Main()
 	{
 		// NICHT VERWENDEN, nur für TestCases, nicht alles initialisiert. NICHT VERWENDEN!
 		loadLanguages();
 		loadSaveDir();
-		loadProperties();
+		loadProperties(false);
 		String loc = Main.getProperty("locale");
 		loadMessages(new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_")+1, loc.length()))); //$NON-NLS-1$,  //$NON-NLS-2$
 		loadLocaleMeanings(new Locale("int", "INT"));
@@ -279,7 +285,7 @@ public class Main implements LookupObserver {
 		Calendar cal = Calendar.getInstance();
 		cal.getTime();
 
-		Debug.always(PROGRAM_NAME + " v" + PROGRAM_VERSION //$NON-NLS-1$
+		System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION //$NON-NLS-1$
 				+ " (c) 2005-" + cal.get(Calendar.YEAR) + " by " + JFRITZ_PROJECT); //$NON-NLS-1$
 		Thread.currentThread().setPriority(5);
 		Thread.currentThread().setName("JFritz main thread");
@@ -305,6 +311,23 @@ public class Main implements LookupObserver {
 		jfritzHomedir = jfritzHomedir.substring(0, jfritzHomedir.length() - 7);
 
 		initiateCLIParameters();
+
+		// load supported languages
+		loadLanguages();
+
+		// Weitere Initialisierung
+		loadSaveDir();
+
+		// move save dir and default file location
+		moveDataToRightSaveDir();
+
+		Debug.on();
+		Debug.always(PROGRAM_NAME + " v" + PROGRAM_VERSION //$NON-NLS-1$
+				+ " (c) 2005-" + cal.get(Calendar.YEAR) + " by " + JFRITZ_PROJECT); //$NON-NLS-1$
+		Debug.setVerbose(true);
+		Debug.always("JFritz runs on " + OSDetector.getOSString());
+		Debug.setVerbose(false);
+
 		checkDebugParameters(args);
 		initJFritz(args, this);
 	}
@@ -320,8 +343,6 @@ public class Main implements LookupObserver {
 	 *
 	 */
 	public static void main(String[] args) {
-		Debug.on();
-		Debug.setDebugLevel(Debug.LS_DEBUG);
 		new Main(args);
 	}
 
@@ -418,15 +439,8 @@ public class Main implements LookupObserver {
 		splash.setVersion("v" + Main.PROGRAM_VERSION);
 		splash.setStatus("Initializing JFritz...");
 
-		// load supported languages
-		splash.setStatus("Loading supported languages...");
-		loadLanguages();
-
-		// Weitere Initialisierung
-		loadSaveDir();
-
 		splash.setStatus("Loading properties...");
-		loadProperties();
+		loadProperties(true);
 
     	Debug.always("OS Language: " + System.getProperty("user.language"));
     	Debug.always("OS Country: " + System.getProperty("user.country"));
@@ -554,6 +568,111 @@ public class Main implements LookupObserver {
 		{
 			JFritz.getJframe().checkOptions();
 		}
+	}
+
+	private void moveDataToRightSaveDir() {
+		// zeigt auf altes Verzeichnis
+		Debug.debug("Old SAVE_DIR: " + SAVE_DIR);
+		if (SAVE_DIR.equals(System.getProperty("user.dir") + File.separator)) {
+			String newSaveDir = SAVE_DIR;
+			if (OSDetector.isWindows()) {
+				newSaveDir = System.getenv("APPDATA") + File.separator + "JFritz";
+			} else if (OSDetector.isMac()) {
+				newSaveDir = System.getProperty("user.home") + "/Library/Application Support/JFritz";
+			} else if (OSDetector.isLinux()) {
+				newSaveDir = System.getProperty("user.home") + File.separator + ".jfritz";
+			} else {
+
+			}
+			loadProperties(false);
+			if ( Main.getProperty("locale").equals("") )
+			{
+				Debug.info("No language set yet ... Setting language to OS language");
+		    	// Check if language is supported. If not switch to english
+		    	if ( supported_languages.contains(new Locale(System.getProperty("user.language"),System.getProperty("user.country"))))
+		    	{
+		        	Main.setProperty("locale", System.getProperty("user.language")+"_"+System.getProperty("user.country"));
+		    	} else {
+		    		Debug.warning("Your language ist not yet supported.");
+		        	Main.setProperty("locale", "en_US");
+		    	}
+			}
+
+			String loc = Main.getProperty("locale");
+			Debug.always("Selected language: " + loc);
+
+			loadMessages(new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_")+1, loc.length()))); //$NON-NLS-1$,  //$NON-NLS-2$
+			loadLocaleMeanings(new Locale("int", "INT"));
+			Debug.debug("Shall JFritz move data from " + SAVE_DIR + " to " + newSaveDir + " ?");
+
+			int answer = JOptionPane.NO_OPTION;
+
+	        File dir = new File(SAVE_DIR);
+	        File[] entries = dir.listFiles(new FileFilter() {
+	            public boolean accept(File arg0) {
+	                if (arg0.getName().endsWith(".xml")) {
+	                	if (!"build-release-pwd.xml".equals(arg0.getName())
+	                		&& !"build-release.xml".equals(arg0.getName())
+	                		&& !"build.xml".equals(arg0.getName()))
+	                	{
+		                	Debug.debug(arg0.getName());
+	                		return true;
+	                	}
+	                }
+                	return false;
+	            }
+	        });
+
+			String message = Main.getMessage("moveDataDirectory_Warning"); //$NON-NLS-1$
+
+			message = message.replaceAll("%FROM", preparePattern(SAVE_DIR));
+			message = message.replaceAll("%TO", preparePattern(newSaveDir));
+			ComplexJOptionPaneMessage msg = new ComplexJOptionPaneMessage(
+	                "legalInfo.moveDataDirectory", //$NON-NLS-1$
+					message);
+			if (msg.showDialogEnabled()
+					&& (entries.length != 0)) {
+				answer = JOptionPane.showConfirmDialog(null,
+						msg.getComponents(),
+						Main.getMessage("information"), JOptionPane.YES_NO_OPTION);
+				msg.saveProperty();
+				Main.saveStateProperties();
+			}
+
+			if (answer == JOptionPane.YES_OPTION
+					|| (entries.length == 0)) {
+				Debug.debug("Moving data from " + SAVE_DIR + " to " + newSaveDir + " !");
+				changeSaveDir(newSaveDir);
+			}
+
+		} else {
+			Debug.debug("Data is already at an exclusive directory: " + SAVE_DIR);
+		}
+	}
+
+	public static void changeSaveDir(final String path) {
+		File f = new File(path);
+		if (f.isDirectory())
+		{
+			CopyFile backup = new CopyFile();
+			try {
+				backup.copy(Main.SAVE_DIR, "xml", path); //$NON-NLS-1$,  //$NON-NLS-2$
+			} catch (NullPointerException e) {
+				Debug.error("No directory choosen for backup!"); //$NON-NLS-1$
+			}
+			Main.removeLock();
+			Main.SAVE_DIR = path;
+			Main.createLock();
+			Main.writeSaveDir();
+		}
+	}
+
+	private String preparePattern(final String input) {
+		String output = input;
+		if (input.indexOf("\\") > -1) {
+			output = input.replaceAll("[\\\\$]", "\\\\$0");
+		}
+		return output;
 	}
 
 	/**
@@ -793,6 +912,10 @@ public class Main implements LookupObserver {
 			}
 
 			file = new File(SAVE_DIR);
+			if (!file.exists()) {
+				file.mkdir();
+			}
+
 			if (!file.isDirectory())
 			{
 				SAVE_DIR = System.getProperty("user.dir") + File.separator;
@@ -829,17 +952,19 @@ public class Main implements LookupObserver {
 				br.close();
 				Debug.warning("File " + USER_DIR + File.separator + USER_JFRITZ_FILE
 						+ " is empty");
+				SAVE_DIR = System.getProperty("user.dir") + File.separator;
+			} else {
+				String[] entries = line.split("=");
+				if (!entries[1].equals("")) {
+					SAVE_DIR = entries[1];
+					File file = new File(SAVE_DIR);
+					if (!file.isDirectory())
+						SAVE_DIR = System.getProperty("user.dir") + File.separator;
+					else if (!SAVE_DIR.endsWith(File.separator))
+						SAVE_DIR = SAVE_DIR + File.separator;
+				}
+				Debug.always("Save directory: " + SAVE_DIR);
 			}
-			String[] entries = line.split("=");
-			if (!entries[1].equals("")) {
-				SAVE_DIR = entries[1];
-				File file = new File(SAVE_DIR);
-				if (!file.isDirectory())
-					SAVE_DIR = System.getProperty("user.dir") + File.separator;
-				else if (!SAVE_DIR.endsWith(File.separator))
-					SAVE_DIR = SAVE_DIR + File.separator;
-			}
-			Debug.always("Save directory: " + SAVE_DIR);
 		} catch (FileNotFoundException e) {
 			Debug.warning("Error processing the user save location(File not found), using defaults");
 			// If something happens, just bail out and use the standard dir
@@ -1082,7 +1207,7 @@ public class Main implements LookupObserver {
 	/**
 	 * Loads properties from xml files
 	 */
-	public static void loadProperties() {
+	public static void loadProperties(final boolean replace) {
 
 		config_properties = new JFritzProperties(loadDefaultProperties());
 		try {
@@ -1107,7 +1232,10 @@ public class Main implements LookupObserver {
 			Debug.warning("File " + Main.SAVE_DIR + STATE_PROPERTIES_FILE //$NON-NLS-1$
 					+ " not readable. Using default values."); //$NON-NLS-1$
 		}
-		replaceOldProperties();
+
+		if (replace) {
+			replaceOldProperties();
+		}
 	}
 
 	/**

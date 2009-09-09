@@ -13,10 +13,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Vector;
 
-import sun.misc.Cleaner;
-
 import de.moonflower.jfritz.Main;
-import de.moonflower.jfritz.autoupdate.Logger;
 
 /**
  * This class allows to backup files to a

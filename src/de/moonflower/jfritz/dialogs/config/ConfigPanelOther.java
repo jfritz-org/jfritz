@@ -253,21 +253,9 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 	public void saveSettings() {
 		// only write the save dir to disk if the user changed something
 		if (!save_location.getText().equals(Main.SAVE_DIR)) {
-			File f = new File(save_location.getText());
-			if (f.isDirectory())
-			{
-				CopyFile backup = new CopyFile();
-				try {
-					backup.copy(Main.SAVE_DIR, "xml", save_location.getText()); //$NON-NLS-1$,  //$NON-NLS-2$
-				} catch (NullPointerException e) {
-					Debug.error("No directory choosen for backup!"); //$NON-NLS-1$
-				}
-				Main.removeLock();
-				Main.SAVE_DIR = save_location.getText();
-				Main.createLock();
-				Main.writeSaveDir();
-			}
+			Main.changeSaveDir(save_location.getText());
 		}
+
 		Main.setProperty("option.useSSDP", Boolean.toString(searchWithSSDP //$NON-NLS-1$
 				.isSelected()));
 		Main.setProperty("option.timerAfterStart", Boolean //$NON-NLS-1$

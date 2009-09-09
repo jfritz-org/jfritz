@@ -77,7 +77,7 @@ public class Debug {
 	 */
 	public static void on() {
 		verboseMode = false;
-		Debug.debugLevel = LS_WARNING;
+		Debug.debugLevel = LS_DEBUG;
 		logToFile("debug.log");
 	}
 
