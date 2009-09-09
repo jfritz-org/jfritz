@@ -1251,7 +1251,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	}
 
 	public void hideShowJFritz(boolean saveState) {
-		if (System.currentTimeMillis() > this.lastDeIconifiedEvent + 250) {
+		// Konstante von 250ms war für Gnome zu klein, deshalb auf 500 erhöht. Eventuell über Konfigparameter auslesen lassen.
+		if (System.currentTimeMillis() > this.lastDeIconifiedEvent + 500) {
 			this.lastDeIconifiedEvent  = System.currentTimeMillis();
 			if (isVisible()) {
 				Debug.debug("Hide JFritz-Window"); //$NON-NLS-1$
