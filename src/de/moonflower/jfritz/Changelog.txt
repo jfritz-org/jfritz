@@ -7,6 +7,7 @@ JFritz 0.7.3.26:
 - Neu: JUnitTest für Rückwärtssuche Norwegens.
 - Neu: Möglichkeit den Vor- und Nachnamen beim parsen der Rückwärtssuche-Seite zu vertauschen (für Norwegen).
 - Neu [0000265]: Tastaturbefehl für Suche (CTRL-F).
+- Neu: Automatische Erstellung von Debian-Paketen.
 - Änderung [0000237]: Daten im Datenverzeichnis speichern. 
 	XML-Dateien, debug.log und .lock werden nun 
 	unter Windows nach %APPDATA%/JFritz, 

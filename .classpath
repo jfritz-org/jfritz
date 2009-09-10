@@ -21,5 +21,6 @@
 	<classpathentry kind="lib" path="lib-dev/imtask.jar"/>
 	<classpathentry kind="lib" path="lib-dev/mail.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib-dev/ant-deb-0.0.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

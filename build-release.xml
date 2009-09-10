@@ -12,6 +12,7 @@
 	<property name="release" value="${home}/release" />
 	<property name="update" value="${home}/update" />
 	<property name="lib" value="lib" />
+	<property name="lib-dev" value="lib-dev" />
 	<property name="docs" value="../Doku" />
 
 	<!-- build properties -->
@@ -42,10 +43,18 @@
 		</fileset>
 	</path>
 
+	<path id="ant-deb.classpath">
+		<fileset dir="${lib-dev}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<taskdef resource="ant_deb_task.properties" classpathref="ant-deb.classpath"/>
+
 	<target name="prepare" depends="clean, build, getVersion" description="Runs getVersion, clean and build of JFritz!">
 	</target>
 
-	<target name="release-linux" depends="prepare" description="Creates a tar.gz-Release for Linux!">
+	<target name="release-deb" depends="prepare" description="Creates a deb-Package for Linux (Debian)">
 		<delete dir="${release}/linux" />
 		<mkdir dir="${release}" />
 		<mkdir dir="${release}/linux" />
@@ -56,8 +65,77 @@
 			<fileset dir="${dist}">
 			</fileset>
 		</copy>
+		<!-- copy logo to linux directory -->
+		<copy todir="${release}/linux/jfritz-${version}">
+			<fileset dir="../../Release/Linux/">
+				<include name="jfritz.png" />
+			</fileset>
+		</copy>
 
-		<tar tarfile="${release}/linux/jfritz-${version}.tar" basedir="${release}/linux" />
+		<!-- do deb-packaging here -->
+        <desktopentry
+            toFile="${release}/linux/JFritz.desktop"
+            name="JFritz"
+            comment="An application to communicate with your FRITZ!Box"
+            exec="/usr/bin/jfritz"
+            icon="/opt/JFritz/jfritz.png"
+            categories="Utility;TelephonyTools;Java"
+        />
+
+        <deb
+            todir="${release}/linux"
+            package="jfritz"
+            section="utils"
+            depends="sun-java5-jre | sun-java6-jre"
+        	preinst="../../Release/Linux/preinst"
+        >
+            <version upstream="${version}"/>
+            <maintainer email="Robert Palmer" name="jfritz@robotniko.de"/>
+            <description synopsis="An application to communicate with your FRITZ!Box.">
+It is possible to get the caller list, manage phonebook contacts, do reverse lookup for unknown phone numbers,
+show incoming and outgoing calls in real time and to initiate new calls from the computer.
+
+http://www.jfritz.org/
+            </description>
+            <tarfileset dir="${release}/linux/jfritz-${version}" prefix="/opt/JFritz">
+                <include name="**/**"/>
+            	<exclude name="lib/windows/**"/>
+            	<exclude name="lib/mac/**"/>
+	        	<exclude name="lib/sunos/**"/>
+            </tarfileset>
+
+            <tarfileset file="../../Release/Linux/jfritz" prefix="/usr/bin" filemode="755"/>
+            <tarfileset dir="../../Release/Linux/" prefix="/usr/share/doc/jfritz">
+                <include name="COPYING"/>
+                <include name="README-de"/>
+                <include name="README-en"/>
+            </tarfileset>
+            <tarfileset file="${release}/linux/JFritz.desktop" prefix="usr/share/applications"/>
+        </deb>
+
+		<delete dir="${release}/linux/jfritz-${version}" />
+		<delete>
+			<fileset dir="${release}/linux/">
+	    	<include name="JFritz.desktop"/>
+		</fileset>
+</delete>
+
+	</target>
+
+	<target name="release-linux" depends="prepare, release-deb" description="Creates a tar.gz-Release for Linux!">
+		<mkdir dir="${release}/linux/jfritz-${version}" />
+
+		<!-- copy new jfritz-files to linux directory -->
+		<copy todir="${release}/linux/jfritz-${version}">
+			<fileset dir="${dist}">
+			</fileset>
+		</copy>
+
+		<tar tarfile="${release}/linux/jfritz-${version}.tar">
+			<tarfileset dir="${release}/linux">
+				<exclude name="*.deb"/>
+			</tarfileset>
+		</tar>
 		<gzip src="${release}/linux/jfritz-${version}.tar" destfile="${release}/linux/JFritz-${version}.tar.gz" />
 		<delete dir="${release}/linux/jfritz-${version}" />
 		<delete file="${release}/linux/jfritz-${version}.tar" />
@@ -232,6 +310,7 @@
 		<scp file="${release}/win/JFritz-${version}-Beta-Win.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
 		<scp file="${release}/win/JFritz-${version}-Beta.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
 		<scp file="${release}/linux/JFritz-${version}.tar.gz" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
+		<scp file="${release}/linux/jfritz-${version}-1_all.deb" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
 		<scp file="${release}/mac/JFritz-${version}/JFritz-${version}.dmg" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
 		<scp file="${dist}/Changelog.txt" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/beta" verbose="yes" password="${password2}"/>
 		<sshexec command="mv -f ./public/beta/JFritz* ./public/beta/old"  username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
