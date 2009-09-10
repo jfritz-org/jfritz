@@ -5,6 +5,11 @@ von JFritz zu testen.
 
 Changelog: http://jfritz.robotniko.de/beta/Changelog.txt
 
+************************************************* ACHTUNG *************************************************
+Diese Version verschiebt einige XML-Dateien. Macht vor dem Installieren dieser Version eine Sicherungskopie
+von euren Daten und dem gesamten alten JFritz-Ordner 
+************************************************* ACHTUNG *************************************************
+
 Die aktuelle Beta-Version kannst Du hier runterladen:
 
 Für Windows:
@@ -13,6 +18,9 @@ ZIP: http://jfritz.robotniko.de/beta/JFritz-${version}-Beta.zip
 
 Für MacOSX:
 DMG: http://jfritz.robotniko.de/beta/JFritz-${version}.dmg
+
+Für Debian:
+DEB: http://jfritz.robotniko.de/beta/jfritz_${version}-1_all.deb
 
 Für alle anderen Plattformen:
 http://jfritz.robotniko.de/beta/JFritz-${version}-Beta.zip
