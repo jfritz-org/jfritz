@@ -28,6 +28,7 @@ public class ReverseLookupTest extends TestCase {
 	private boolean testAustriaFailed = false;
 	private boolean testGermanyFailed = false;
 	private boolean testNorwayFailed = false;
+	private boolean testSwedenFailed = false;
 
 	public void setUp(){
 		Debug.on();
@@ -36,6 +37,23 @@ public class ReverseLookupTest extends TestCase {
 		Main.loadProperties(false);
 		Main.loadMessages(new Locale("de_DE"));
 		JFritz.loadNumberSettings();
+	}
+
+	/**
+	 * This method tests the reverse lookup for several norwegian phone numbers.
+	 * IT IS NOT ALLOWED TO USE ANY OF THIS INFORMATION IN THIS FILE FOR OTHER PURPOSES THAN TESTING.
+	 */
+	public void testReverseLookupSweden() {
+		// CheckEntry(firstName, lastName, street, postalCode, city);
+		CheckEntry entry;
+		PhoneNumber checkNum;
+
+		checkNum = new PhoneNumber("+4652610580", false);
+		entry = new CheckEntry(checkNum, "Birgitta", "Lystad", "Västra klevgatan 7", "45230", "STRÖMSTAD");
+		ReverseLookup.lookup(checkNum, entry, true);
+		testSwedenFailed = checkEntry(entry, testSwedenFailed);
+
+		assertFalse(testSwedenFailed);
 	}
 
 	/**
