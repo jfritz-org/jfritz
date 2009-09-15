@@ -847,7 +847,7 @@
 	</country>
 	<country code="+46">
 		<website name="privatpersoner.eniro.se" url="http://privatpersoner.eniro.se/query?what=wp&amp;search_word=$NUMBER&amp;geo_area=" prefix="0">
-			<entry>
+			<entry firstOccurance="lastname">
 				<firstname>&lt;span class=&quot;given-name&quot;&gt;([^&lt;]*)&lt;/span&gt;</firstname>
 				<lastname>&lt;span class=&quot;family-name&quot;&gt;([^&lt;]*)&lt;/span&gt;</lastname>
 				<street>&lt;span class=&quot;street-address&quot;&gt;([^&lt;]*)&lt;/span&gt;</street>
