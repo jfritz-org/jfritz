@@ -197,13 +197,13 @@ public class Main implements LookupObserver {
 	// when changing this, don't forget to check the resource bundles!!
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.3.26"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.3.27"; //$NON-NLS-1$
 
 	public final static String PROGRAM_SECRET = "jFrItZsEcReT"; //$NON-NLS-1$
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 62 2009-09-09 21:10:35Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 71 2009-09-15 15:54:53Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -615,7 +615,7 @@ public class Main implements LookupObserver {
 	                		&& !"build-release.xml".equals(arg0.getName())
 	                		&& !"build.xml".equals(arg0.getName()))
 	                	{
-		                	Debug.debug(arg0.getName());
+		                	Debug.debug("Found XML-File to move: " + arg0.getName());
 	                		return true;
 	                	}
 	                }
@@ -632,6 +632,7 @@ public class Main implements LookupObserver {
 					message);
 			if (msg.showDialogEnabled()
 					&& (entries.length != 0)) {
+				Debug.debug("Show confirm dialog to move data");
 				answer = JOptionPane.showConfirmDialog(null,
 						msg.getComponents(),
 						Main.getMessage("information"), JOptionPane.YES_NO_OPTION);
@@ -652,17 +653,26 @@ public class Main implements LookupObserver {
 
 	public static void changeSaveDir(final String path) {
 		File f = new File(path);
+		if (!f.exists()) {
+			Debug.debug("Creating directory");
+			f.mkdir();
+		}
 		if (f.isDirectory())
 		{
 			CopyFile backup = new CopyFile();
 			try {
+				Debug.debug("Moving data ...");
 				backup.copy(Main.SAVE_DIR, "xml", path); //$NON-NLS-1$,  //$NON-NLS-2$
 			} catch (NullPointerException e) {
 				Debug.error("No directory choosen for backup!"); //$NON-NLS-1$
 			}
+			Debug.debug("Remove lock");
 			Main.removeLock();
+			Debug.debug("Change save directory to: " + path);
 			Main.SAVE_DIR = path;
+			Debug.debug("Create lock at new destination");
 			Main.createLock();
+			Debug.debug("Write file ~/.jfritz/jfritz.txt");
 			Main.writeSaveDir();
 		}
 	}

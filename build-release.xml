@@ -153,6 +153,20 @@ http://www.jfritz.org/
 			</fileset>
 		</copy>
 
+		<copy file="../../Release/MAC/Vorlage/__MACOSX/JFritz.app/Contents/._Info.plist"
+		             tofile="${release}/mac/tmp/__MACOSX/JFritz.app/Contents/._Info.plist" />
+
+		<!-- adapt version string in Info.plist -->
+		<copy file="../../Release/MAC/Vorlage/JFritz.app/Contents/Info.plist"
+		             tofile="${release}/mac/tmp/JFritz.app/Contents/Info.plist"
+					 overwrite="yes">
+	        <filterchain>
+	           <replacetokens>
+					<token key="version" value="${version}"/>
+	            </replacetokens>
+	        </filterchain>
+	    </copy>
+
 		<!-- copy actual changelog -->
 		<copy todir="${release}/mac/tmp">
 			<fileset dir="${dist}">

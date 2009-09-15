@@ -43,7 +43,7 @@ public class ShutdownHook {
    */
   public static void install( final Handler handler) {
       Debug.info("Installing shutdown hook...");
-      final SignalHandler[] old_handlers = new SignalHandler[3];
+      final SignalHandler[] old_handlers = new SignalHandler[5];
 
       try{
 	      //ctrl-c signal
