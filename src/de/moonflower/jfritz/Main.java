@@ -197,13 +197,13 @@ public class Main implements LookupObserver {
 	// when changing this, don't forget to check the resource bundles!!
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.3.27"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.3.28"; //$NON-NLS-1$
 
 	public final static String PROGRAM_SECRET = "jFrItZsEcReT"; //$NON-NLS-1$
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 71 2009-09-15 15:54:53Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 73 2009-09-16 21:27:06Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

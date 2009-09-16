@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="JFritz" default="build" basedir=".">
-	<import file="build-release-pwd.xml" />
-
 	<property name="app.name" value="JFritz" />
 	<property name="version" value="unknown" />
 

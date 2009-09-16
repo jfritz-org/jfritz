@@ -17,7 +17,7 @@ Installer: http://jfritz.robotniko.de/beta/JFritz-${version}-Beta-Setup.exe
 ZIP: http://jfritz.robotniko.de/beta/JFritz-${version}-Beta.zip				
 
 Für MacOSX:
-DMG: http://jfritz.robotniko.de/beta/JFritz-${version}.dmg
+DMG: http://jfritz.robotniko.de/beta/JFritz-${version}-Mac.zip
 
 Für Debian:
 DEB: http://jfritz.robotniko.de/beta/jfritz_${version}-1_all.deb

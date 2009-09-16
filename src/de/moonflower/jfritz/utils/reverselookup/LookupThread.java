@@ -368,42 +368,6 @@ public class LookupThread extends Thread {
 										int spaceAlternative = 160; // hex: a0 = space like ascii character
 										data[line] = data[line].replaceAll(new Character((char)spaceAlternative).toString(), " "); //$NON-NLS-1$
 
-										//match last name
-										if(lastnamePattern != null){
-											lastnameMatcher = lastnamePattern.matcher(data[line]);
-											if(lastnameMatcher.find()){
-
-												//read in and concate all groupings
-												str = "";
-												for(int k=1; k <= lastnameMatcher.groupCount(); k++){
-													if(lastnameMatcher.group(k) != null)
-														str = str + lastnameMatcher.group(k).trim() + " ";
-												}
-
-												lastname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(str));
-												lastname = lastname.trim();
-												lastname = lastname.replaceAll(",", "");
-												lastname = lastname.replaceAll("%20", " ");
-												lastname = JFritzUtils.replaceSpecialCharsUTF(lastname);
-												lastname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(lastname));
-												lastname = JFritzUtils.removeDuplicateWhitespace(lastname);
-
-												if ("lastname".equals(patterns[ReverseLookupSite.FIRSTOCCURANCE]))
-												{
-													p = new Person();
-													p.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
-													p.setLookupSite(rls.getName());
-													foundPersons.add(p);
-													Debug.debug("Creating new person: "+p.toDebugStr());
-												}
-												if (p != null)
-												{
-													p.setLastName(lastname);
-													Debug.debug("Adding lastname to person: " + p.toDebugStr());
-												}
-											}
-										}
-										yield();
 										//match first name
 										if(firstnamePattern != null){
 											firstnameMatcher = firstnamePattern.matcher(data[line]);
@@ -436,6 +400,42 @@ public class LookupThread extends Thread {
 												{
 													p.setFirstName(firstname);
 													Debug.debug("Adding firstName to person: "+p.toDebugStr());
+												}
+											}
+										}
+										yield();
+										//match last name
+										if(lastnamePattern != null){
+											lastnameMatcher = lastnamePattern.matcher(data[line]);
+											if(lastnameMatcher.find()){
+
+												//read in and concate all groupings
+												str = "";
+												for(int k=1; k <= lastnameMatcher.groupCount(); k++){
+													if(lastnameMatcher.group(k) != null)
+														str = str + lastnameMatcher.group(k).trim() + " ";
+												}
+
+												lastname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(str));
+												lastname = lastname.trim();
+												lastname = lastname.replaceAll(",", "");
+												lastname = lastname.replaceAll("%20", " ");
+												lastname = JFritzUtils.replaceSpecialCharsUTF(lastname);
+												lastname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(lastname));
+												lastname = JFritzUtils.removeDuplicateWhitespace(lastname);
+
+												if ("lastname".equals(patterns[ReverseLookupSite.FIRSTOCCURANCE]))
+												{
+													p = new Person();
+													p.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
+													p.setLookupSite(rls.getName());
+													foundPersons.add(p);
+													Debug.debug("Creating new person: "+p.toDebugStr());
+												}
+												if (p != null)
+												{
+													p.setLastName(lastname);
+													Debug.debug("Adding lastname to person: " + p.toDebugStr());
 												}
 											}
 										}
