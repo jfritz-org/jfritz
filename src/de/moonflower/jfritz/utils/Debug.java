@@ -58,6 +58,7 @@ public class Debug {
 	private static boolean verboseMode = false;
 
 	private static PrintStream originalOut;
+	private static PrintStream originalErr;
 
 	private static JPanel main_panel = null;
 
@@ -81,6 +82,10 @@ public class Debug {
 		logToFile("debug.log");
 	}
 
+	public static void off() {
+		System.setOut(originalOut);
+		System.setErr(originalErr);
+	}
 	/**
 	 * This function works by redirecting System.out and System.err to fname The
 	 * original console stream is saved as originalout 15.05.06 Brian Jensen
@@ -95,6 +100,7 @@ public class Debug {
 
 		// Save the original outputstream so we can write to the console too!
 		originalOut = System.out;
+		originalErr = System.err;
 
 		//if our file name contains no path, then save in our save dir
 		if(!debugLogFile.contains(System.getProperty("file.separator")))
@@ -380,6 +386,10 @@ public class Debug {
 	public static void setVerbose(boolean verbose)
 	{
 		verboseMode = verbose;
+	}
+
+	public static boolean isVerbose() {
+		return verboseMode;
 	}
 
 	public static void setDebugLevel(LogSeverity level)

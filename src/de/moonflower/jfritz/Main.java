@@ -197,7 +197,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 75 2009-10-28 16:45:34Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 78 2009-10-28 18:31:24Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -320,8 +320,9 @@ public class Main implements LookupObserver {
 		Debug.always("JFritz runs on " + OSDetector.getOSString());
 		Debug.setVerbose(false);
 
-		checkDebugParameters(args);
-		initJFritz(args, this);
+		if (checkDebugParameters(args)) { // false if jfritz should stop execution
+			initJFritz(args, this);
+		}
 	}
 
 	/**
@@ -382,21 +383,34 @@ public class Main implements LookupObserver {
 	 *
 	 * @param args
 	 *            Kommandozeilenargumente
+	 * @return true if jfritz should stop execution
 	 */
-	private void checkDebugParameters(String[] args) {
+	private boolean checkDebugParameters(String[] args) {
 		Vector<CLIOption> foundOptions = options.parseOptions(args);
 
-		// Checke den help, verbose/debug und log-to-file parameter
+		// Checke den help, verbose/debug, quiet und log-to-file parameter
 		Enumeration<CLIOption> en = foundOptions.elements();
 		while (en.hasMoreElements()) {
 			CLIOption option = (CLIOption) en.nextElement();
 
+			if (option == null) {
+				Debug.setVerbose(true);
+				Debug.always("Unknown command line parameter specified!");
+				Debug.always("Usage: java -jar jfritz.jar [Options]"); //$NON-NLS-1$
+				options.printOptions();
+				Debug.setVerbose(false);
+				exit(EXIT_CODE_OK);
+				return false;
+			}
+
 			switch (option.getShortOption()) {
 			case 'h': //$NON-NLS-1$
-				System.out.println("Usage: java -jar jfritz.jar [Options]"); //$NON-NLS-1$
+				Debug.setVerbose(true);
+				Debug.always("Usage: java -jar jfritz.jar [Options]"); //$NON-NLS-1$
 				options.printOptions();
+				Debug.setVerbose(false);
 				exit(EXIT_CODE_HELP);
-				break;
+				return false;
 			case 'v': //$NON-NLS-1$
 				Debug.setVerbose(true);
 				String level = option.getParameter();
@@ -423,6 +437,7 @@ public class Main implements LookupObserver {
 				break;
 			}
 		}
+		return true;
 	}
 
 	private void initJFritz(String[] args, Main main)
@@ -509,11 +524,22 @@ public class Main implements LookupObserver {
 			splash.setStatus("Loading quick dials...");
 			jfritz.initQuickDials();
 		}
+
 		if (result == 0)
 		{
 			splash.setStatus("Loading caller list and phonebook...");
 			jfritz.initCallerListAndPhoneBook();
 		}
+
+		if (result == 0)
+		{
+			boolean shutdownInvoked = main.checkCLIParameters(args);
+			if (shutdownInvoked)
+			{
+				result = -1;
+			}
+		}
+
 		if (result == 0)
 		{
 			splash.setStatus("Initializing call monitor...");
@@ -528,15 +554,6 @@ public class Main implements LookupObserver {
 		{
 			splash.setStatus("Setting default look and feel...");
 			jfritz.setDefaultLookAndFeel();
-		}
-
-		if (result == 0)
-		{
-			boolean shutdownInvoked = main.checkCLIParameters(args);
-			if (shutdownInvoked)
-			{
-				result = -1;
-			}
 		}
 
 		splash.dispose();
@@ -690,6 +707,7 @@ public class Main implements LookupObserver {
 		// Checke alle weiteren Parameter
 		Vector<CLIOption> foundOptions = options.parseOptions(args);
 		Enumeration<CLIOption> en = foundOptions.elements();
+		boolean oldVerbose = Debug.isVerbose();
 		while (en.hasMoreElements()) {
 			CLIOption option = (CLIOption) en.nextElement();
 
@@ -704,7 +722,9 @@ public class Main implements LookupObserver {
 				checkSystray = false;
 				break;
 			case 'f':
+				Debug.setVerbose(true);
 				Debug.always("Fetch caller list from command line ..."); //$NON-NLS-1$
+				Debug.setVerbose(oldVerbose);
 				JFritz.getBoxCommunication().getCallerList(null); // null = fetch all boxes
 				shutdown = true;
 				exit(EXIT_CODE_OK);
@@ -722,7 +742,9 @@ public class Main implements LookupObserver {
 					exit(EXIT_CODE_PARAMETER_NOT_FOUND);
 					break;
 				}
+				Debug.setVerbose(true);
 				Debug.always("Exporting Call list (csv) to " + csvFileName); //$NON-NLS-1$
+				Debug.setVerbose(oldVerbose);
 				JFritz.getCallerList().saveToCSVFile(csvFileName, true);
 				shutdown = true;
 				exit(EXIT_CODE_OK);
@@ -735,7 +757,9 @@ public class Main implements LookupObserver {
 				exit(EXIT_CODE_OK);
 				break;
 			case 'c': //$NON-NLS-1$
+				Debug.setVerbose(true);
 				Debug.always("Clearing Call List"); //$NON-NLS-1$
+				Debug.setVerbose(oldVerbose);
 				JFritz.getCallerList().clearList();
 				shutdown = true;
 				exit(EXIT_CODE_OK);
@@ -792,7 +816,9 @@ public class Main implements LookupObserver {
 					try {
 						int level = Integer.parseInt(priority);
 						Thread.currentThread().setPriority(level);
+						Debug.setVerbose(true);
 						Debug.always("Set priority to level " + priority); //$NON-NLS-1$
+						Debug.setVerbose(oldVerbose);
 					} catch (NumberFormatException nfe) {
 						System.err.println(getMessage("parameter_wrong_priority")); //$NON-NLS-1$
 						exit(EXIT_CODE_PARAMETER_WRONG_FORMAT);
@@ -808,7 +834,6 @@ public class Main implements LookupObserver {
 				break;
 			}
 		}
-
 		return shutdown;
 	}
 
@@ -965,7 +990,6 @@ public class Main implements LookupObserver {
 					else if (!SAVE_DIR.endsWith(File.separator))
 						SAVE_DIR = SAVE_DIR + File.separator;
 				}
-				Debug.always("Save directory: " + SAVE_DIR);
 			}
 		} catch (FileNotFoundException e) {
 			Debug.warning("Error processing the user save location(File not found), using defaults");
@@ -1006,12 +1030,17 @@ public class Main implements LookupObserver {
 
 		String networkType = Main.getProperty("network.type");
 
-		if(networkType.equals("1") && NetworkStateMonitor.isListening())
+		if(networkType != null
+				&& networkType.equals("1")
+				&& NetworkStateMonitor.isListening())
+		{
 			NetworkStateMonitor.stopServer();
-
-		else if(networkType.equals("2") && NetworkStateMonitor.isConnectedToServer())
+		} else {
+			if(networkType != null
+				&& networkType.equals("2")
+				&& NetworkStateMonitor.isConnectedToServer())
 			NetworkStateMonitor.stopClient();
-
+		}
 	}
 
 	/**
@@ -1668,7 +1697,7 @@ public class Main implements LookupObserver {
 		try {
 		if ( !alreadyDoneShutdown )
 		{
-			showActiveThreads();
+//			showActiveThreads();
 			alreadyDoneShutdown = true;
 			Debug.always("Shutting down JFritz..."); //$NON-NLS-1$
 			closeOpenConnections();
@@ -1682,7 +1711,7 @@ public class Main implements LookupObserver {
 			if ( jfritz != null ) {
 				jfritz.prepareShutdown(shutdownThread, shutdownHook);
 			}
-			showActiveThreads();
+//			showActiveThreads();
 			if (JFritz.getJframe() != null)
 			{
 				Frame[] frames = Frame.getFrames();

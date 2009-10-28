@@ -74,8 +74,7 @@ public class CLIOptions {
 				line += "=[" + option.getParameter() + "]"; //$NON-NLS-1$,  //$NON-NLS-2$
 			line = paddingString(line, 29, ' ', false); //$NON-NLS-1$
 			line += option.getDescription();
-			System.out.println(line);
-
+			Debug.always(line);
 		}
 	}
 

@@ -61,6 +61,9 @@ public class ShutdownHook {
 	        }
 	      });
       }
+      catch (IllegalArgumentException iae) {
+    	  // just do nothing, signal may be unknown or already in use
+      }
       catch( Throwable t ) {
           Debug.error( t.toString() );
       }
@@ -82,6 +85,9 @@ public class ShutdownHook {
 	        }
 	      });
       }
+      catch (IllegalArgumentException iae) {
+    	  // just do nothing, signal may be unknown or already in use
+      }
       catch( Throwable t ) {
           Debug.error( t.toString() );
       }
@@ -102,6 +108,9 @@ public class ShutdownHook {
 	          }
 	        }
 	      });
+      }
+      catch (IllegalArgumentException iae) {
+    	  // just do nothing, signal may be unknown or already in use
       }
       catch( Throwable t ) {
           Debug.error( t.toString() );
@@ -125,6 +134,9 @@ public class ShutdownHook {
 	        }
 	      });
       }
+      catch (IllegalArgumentException iae) {
+    	  // just do nothing, signal may be unknown or already in use
+      }
       catch( Throwable t ) {
           Debug.error( t.toString() );
       }
@@ -145,6 +157,9 @@ public class ShutdownHook {
 	          }
 	        }
 	      });
+      }
+      catch (IllegalArgumentException iae) {
+    	  // just do nothing, signal may be unknown or already in use
       }
       catch( Throwable t ) {
           Debug.error( t.toString() );
