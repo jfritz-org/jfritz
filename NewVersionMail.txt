@@ -14,17 +14,17 @@ Die aktuelle Beta-Version kannst Du hier runterladen:
 
 Für Windows:
 Installer: http://jfritz.robotniko.de/beta/JFritz-${version}-Beta-Setup.exe
-ZIP: http://jfritz.robotniko.de/beta/JFritz-${version}-Beta.zip				
+ZIP: http://jfritz.robotniko.de/beta/JFritz-${version}-Beta-Win.zip				
 
 Für MacOSX:
-DMG: http://jfritz.robotniko.de/beta/JFritz-${version}-Mac.zip
+DMG: http://jfritz.robotniko.de/beta/JFritz-${version}-Beta-Mac.zip
 
 Für Debian:
-DEB: http://jfritz.robotniko.de/beta/jfritz_${version}-1_all.deb
+DEB: http://jfritz.robotniko.de/beta/JFritz-${version}-Beta.deb
 
 Für alle anderen Plattformen:
 http://jfritz.robotniko.de/beta/JFritz-${version}-Beta.zip
-http://jfritz.robotniko.de/beta/JFritz-${version}.tar.gz
+http://jfritz.robotniko.de/beta/JFritz-${version}-Beta.tar.gz
 
 Bugs bitte wie gehabt in Mantis melden:
 http://jfritz.robotniko.de/mantis/main_page.php

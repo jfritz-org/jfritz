@@ -168,6 +168,7 @@ public final class JFritz implements  StatusListener {
 
 		FritzBox fritzBox = new FritzBox("Fritz!Box",
 									     "My Fritz!Box",
+									     "http",
 										 Main.getProperty("box.address"),
 										 Main.getProperty("box.port"),
 										 Encryption.decrypt(Main.getProperty("box.password")),
@@ -348,6 +349,7 @@ public final class JFritz implements  StatusListener {
 
 		FritzBox fritzBox = new FritzBox("Fritz!Box",
 									     "My Fritz!Box",
+									     "http",
 										 Main.getProperty("box.address"),
 										 Main.getProperty("box.port"),
 										 Encryption.decrypt(Main.getProperty("box.password")),

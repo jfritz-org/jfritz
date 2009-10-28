@@ -143,17 +143,12 @@ public class ReverseLookupTest extends TestCase {
 		testSwitzerlandFailed = checkEntry(entry, testSwitzerlandFailed);
 
 		checkNum = new PhoneNumber("+41413402320", false);
-		entry = new CheckEntry(checkNum, "Monika und Bernard (-Hopf)", "Clalüna", "Schönbühlstrand 32", "6005", "Luzern");
+		entry = new CheckEntry(checkNum, "Marketing AG", "Minisoft", "Papiermühleweg 1", "6048", "Horw");
 		ReverseLookup.lookup(checkNum, entry, true);
 		testSwitzerlandFailed = checkEntry(entry, testSwitzerlandFailed);
 
 		checkNum = new PhoneNumber("+41447712727", false);
 		entry = new CheckEntry(checkNum, "GmbH", "Cytracon", "Fabrikhof 3", "8134", "Adliswil");
-		ReverseLookup.lookup(checkNum, entry, true);
-		testSwitzerlandFailed = checkEntry(entry, testSwitzerlandFailed);
-
-		checkNum = new PhoneNumber("+41449264500", false);
-		entry = new CheckEntry(checkNum, "Heinz", "Habegger", "Glärnischstrasse 61", "8712", "Stäfa");
 		ReverseLookup.lookup(checkNum, entry, true);
 		testSwitzerlandFailed = checkEntry(entry, testSwitzerlandFailed);
 
@@ -296,6 +291,11 @@ public class ReverseLookupTest extends TestCase {
 		// CheckEntry(firstName, lastName, street, postalCode, city);
 		CheckEntry entry;
 		PhoneNumber checkNum;
+
+		checkNum = new PhoneNumber("+49277242239", false);
+		entry = new CheckEntry(checkNum, "", "Zehner", "An der Alten Kirche 3", "35745", "Herborn");
+		ReverseLookup.lookup(checkNum,  entry, true);
+		testGermanyFailed = checkEntry(entry, testGermanyFailed);
 
 		checkNum = new PhoneNumber("+498990199190", false);
 		entry = new CheckEntry(checkNum, "Rainer", "Ullrich", "Zugspitzstr. 20", "85609", "Aschheim");

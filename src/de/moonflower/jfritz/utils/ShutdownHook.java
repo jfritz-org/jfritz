@@ -42,7 +42,6 @@ public class ShutdownHook {
    * @param handler
    */
   public static void install( final Handler handler) {
-      Debug.info("Installing shutdown hook...");
       final SignalHandler[] old_handlers = new SignalHandler[5];
 
       try{
@@ -150,8 +149,6 @@ public class ShutdownHook {
       catch( Throwable t ) {
           Debug.error( t.toString() );
       }
-
-      Debug.info("Shutdown hook installed!");
   }
 
 

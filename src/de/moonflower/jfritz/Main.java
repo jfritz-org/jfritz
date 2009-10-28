@@ -80,13 +80,7 @@
  * 1 -  1 - LDAP-Anbindung
  * 1 -  1 - SMS Benachrichtigung (Über Festnetzgateway)
  * 1 -  1 - Style-Sheet für die Anzeige der Anrufliste als HTML
- * 1 -  1 - Einige ausgewählte Statisken über die DSL benutzung, damit JFritz eine komplette Lösung für die Fritz!Box anbietet.
- * 1 -  1 - umstieg auf Mustang, damit verbunden jdic rauswerfen und nur noch Java-interne Bibliotheken nutzen
- * 					Gut, dann können wir endlich diese ganze String.indexOf('@') > 0 rausschmeißen :)
- *                  Das würde aber heissen, dass wir nicht mehr zu Java 1.4 kompatibel sind. Einige Plattformen (wie MAC) werden
- *                      bestimmt noch über längere Zeit kein Java SE 6 anbieten. -- Rob
  * 1 -  1 - Statistikfunktionen
- * 1 -  1 - WAN IP beim Tray-Icon anzeigen lassen ?
  * 1 -  1 - Skinns (SF [ 1471202 ])
  * 1 - (-1) - Unterstützung für das Adressbuch von Lotus Notes (SF [ 1445456 ]) (Ich bin dagegen, denn man bräuchte nochmal so ne Plugin wie bei Outlook,
  * 						nur ich schätze es gibt gar keins => wir müssten eine schreiben.
@@ -197,13 +191,13 @@ public class Main implements LookupObserver {
 	// when changing this, don't forget to check the resource bundles!!
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.3.28"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.3.29"; //$NON-NLS-1$
 
 	public final static String PROGRAM_SECRET = "jFrItZsEcReT"; //$NON-NLS-1$
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 73 2009-09-16 21:27:06Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 74 2009-10-28 16:26:35Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

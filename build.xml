@@ -82,7 +82,11 @@
 	<target name="compile" depends="init" description="Compile the source tree">
 		<mkdir dir="${build}" />
 		<mkdir dir="${build.classes}" />
-		<javac srcdir="${src}" destdir="${build.classes}" classpathref="build.classpath" debug="${javac.debug}" optimize="${javac.optimize}" source="${javac.version}" target="${javac.version}" encoding="iso-8859-1" />
+		<javac srcdir="${src}" destdir="${build.classes}"
+			classpathref="build.classpath" debug="${javac.debug}"
+			optimize="${javac.optimize}" source="${javac.version}"
+			target="${javac.version}" encoding="iso-8859-1"
+			excludes="de/moonflower/jfritz/simpletests/**, com/nexes/test/**" />
 	</target>
 
 	<target name="build" depends="jar" description="Generates runnable version of JFritz in directory dist">
@@ -157,6 +161,7 @@
 			<fileset dir="${build.classes}">
 				<include name="**/*.*" />
 				<exclude name="**/de/moonflower/jfritz/autoupdate/*.*" />
+				<exclude name="**/de/moonflower/jfritz/ant/*.*" />
 				<exclude name="**/de/moonflower/jfritz/firmware/*.*" />
 				<exclude name="**/de/moonflower/jfritz/utils/reverselookup/*.*" />
 				<exclude name="**/de/moonflower/jfritz/resources/images/*.*" />

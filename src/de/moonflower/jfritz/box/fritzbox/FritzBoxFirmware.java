@@ -136,10 +136,10 @@ public class FritzBoxFirmware {
 	 * @throws IOException
 	 */
 	public static FritzBoxFirmware detectFirmwareVersion(String box_name,
-			String box_address, String box_password, String port)
+			String box_protocol, String box_address, String box_password, String port)
 			throws WrongPasswordException, IOException,
 			InvalidFirmwareException {
-		final String urlstr = "http://" + box_address + ":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
+		final String urlstr = box_protocol + "://" + box_address + ":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
 
 		if (Main.getProperty("network.type").equals("2")
 				&& Boolean.parseBoolean(Main

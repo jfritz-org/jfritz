@@ -356,7 +356,6 @@ public class JFritzUtils {
 	 */
 	public static String getFullPath(String subDir) {
 
-		Debug.debug("Subdirectory: " + subDir);
 		String[] classPath = System
 				.getProperty("java.class.path").split(PATHSEP); //$NON-NLS-1$
 		String userDir = System.getProperty("user.dir"); //$NON-NLS-1$
@@ -377,8 +376,6 @@ public class JFritzUtils {
 		if (langDir == null) {
 			langDir = (binDir != null) ? binDir + subDir : userDir + subDir;
 		}
-
-		Debug.debug("full path: " + langDir); //$NON-NLS-1$
 
 		return langDir;
 	}

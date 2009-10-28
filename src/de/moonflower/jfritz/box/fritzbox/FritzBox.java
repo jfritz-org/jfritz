@@ -153,11 +153,13 @@ public class FritzBox extends BoxClass {
 	private Vector<BoxCallBackListener> callBackListener;
 
 	public FritzBox(String name, String description,
-					String address, String port, String password, Exception exc)
+					String protocol, String address, String port, String password,
+					Exception exc)
 	{
 		this.name = name;
 		this.description = description;
 
+		this.protocol = protocol;
 		this.address = address;
 		this.port = port;
 		this.password = password;
@@ -228,7 +230,8 @@ public class FritzBox extends BoxClass {
 		{
 			setBoxConnected();
 			firmware = null;
-			firmware = FritzBoxFirmware.detectFirmwareVersion(name, address, password, port);
+			firmware = FritzBoxFirmware.detectFirmwareVersion(name, protocol,
+					address, password, port);
 		}
 	}
 
@@ -340,7 +343,7 @@ public class FritzBox extends BoxClass {
 		{
 			String postdata = generatePostDataOld(queries);
 
-			final String urlstr = "http://" + address +":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
+			final String urlstr = protocol + "://" + address +":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
 
 			boolean finished = false;
 			boolean password_wrong = false;
@@ -467,7 +470,7 @@ public class FritzBox extends BoxClass {
 		{
 			String postData = generatePostDataNew(queries);
 
-			final String urlstr = "http://" + address +":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
+			final String urlstr = protocol + "://" + address +":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
 
 			boolean finished = false;
 			boolean password_wrong = false;
@@ -1270,7 +1273,7 @@ public class FritzBox extends BoxClass {
 	        "</s:Body>\n" +
 	        "</s:Envelope>";
 
-		String result = UPNPUtils.getSOAPData("http://" + getAddress() +
+		String result = UPNPUtils.getSOAPData(protocol + "://" + getAddress() +
 				URL_SERVICE_ADDONINFOS, URN_SERVICE_ADDONINFOS, xml);
 
 //		Debug.msg("Result of getAddonInfos: "+ result);
@@ -1310,7 +1313,7 @@ public class FritzBox extends BoxClass {
 	        "</s:Envelope>";
 
 		// String result =
-		UPNPUtils.getSOAPData("http://" + getAddress() +
+		UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
 			URL_SERVICE_DSLLINK, URN_SERVICE_DSLLINK, xml);
 
 		/*	This is the result of the web service
@@ -1337,7 +1340,7 @@ public class FritzBox extends BoxClass {
 	        "</s:Body>\n" +
 	        "</s:Envelope>";
 
-		String result = UPNPUtils.getSOAPData("http://" + getAddress() +
+		String result = UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
 				URL_SERVICE_STATUSINFO, URN_SERVICE_STATUSINFO, xml);
 
 //		Debug.msg("Result of dsl getStatusInfo: "+ result);
@@ -1376,7 +1379,7 @@ public class FritzBox extends BoxClass {
 			"</s:Body>\n" +
 			"</s:Envelope>";
 
-		String result = UPNPUtils.getSOAPData("http://" + getAddress() +
+		String result = UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
 				URL_SERVICE_EXTERNALIP, URN_SERVICE_EXTERNALIP, xml);
 
 		/*
@@ -1407,7 +1410,7 @@ public class FritzBox extends BoxClass {
 			"</s:Body>\n" +
 			"</s:Envelope>";
 
-		String result =  UPNPUtils.getSOAPData("http://" + getAddress() +
+		String result =  UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
 				URL_SERVICE_COMMONLINK, URN_SERVICE_COMMONLINK, xml);
 
 //		Debug.debug("Result of getCommonLinkProperties: "+ result);
@@ -1449,7 +1452,7 @@ public class FritzBox extends BoxClass {
 			"</s:Envelope>";
 
 //		String result =
-			UPNPUtils.getSOAPData("http://" + getAddress() +
+			UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
 				URL_SERVICE_GETINFO, URN_SERVICE_GETINFO, xml);
 
 //		Debug.msg("Result of getInfo: "+ result);
@@ -1479,7 +1482,7 @@ public class FritzBox extends BoxClass {
 			"</s:Body>\n" +
 			"</s:Envelope>";
 
-		String result =  UPNPUtils.getSOAPData("http://" + getAddress() +
+		String result =  UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
 				URL_SERVICE_AUTOCONFIG, URN_SERVICE_AUTOCONFIG, xml);
 
 		Debug.info("Result of getAutoConfig: "+ result);
@@ -1504,7 +1507,7 @@ public class FritzBox extends BoxClass {
 			"</s:Envelope>";
 
 //		String result =
-			UPNPUtils.getSOAPData("http://" + getAddress() +
+			UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
 				URL_SERVICE_CONNECTIONTYPEINFO, URN_SERVICE_CONNECTIONTYPEINFO, xml);
 
 //		Debug.msg("Result of getConnectionTypeInfo: "+ result);
@@ -1533,7 +1536,7 @@ public class FritzBox extends BoxClass {
 			"</s:Envelope>";
 
 //		String result =
-			UPNPUtils.getSOAPData("http://" + getAddress() +
+			UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
 				URL_SERVICE_GENERICPORTMAPPING, URN_SERVICE_GENERICPORTMAPPING, xml);
 
 //		Debug.msg("Result of getGenericPortMappingEntry: "+ result);
@@ -1548,7 +1551,7 @@ public class FritzBox extends BoxClass {
 		"</s:Body>\n" +
 		"</s:Envelope>";
 
-		UPNPUtils.getSOAPData("http://" + getAddress() +
+		UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
 				URL_SERVICE_FORCETERMINATION, URN_SERVICE_FORCETERMINATION, xml);
 	}
 
@@ -1557,7 +1560,7 @@ public class FritzBox extends BoxClass {
 		Vector<String> response = new Vector<String>();
 		if (firmware != null)
 		{
-			final String urlstr = "http://" + address +":49000/igddesc.xml"; //$NON-NLS-1$, //$NON-NLS-2$
+			final String urlstr = protocol+"://" + address +":49000/igddesc.xml"; //$NON-NLS-1$, //$NON-NLS-2$
 
 			try {
 				response = JFritzUtils.fetchDataFromURLToVector(name, urlstr, null, true);
@@ -1628,7 +1631,7 @@ public class FritzBox extends BoxClass {
 		currentNumber = currentNumber.replaceAll("\\+", "00"); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		String postdata = generateDoCallPostData(currentNumber, port);
-		String urlstr = "http://" //$NON-NLS-1$
+		String urlstr = protocol+"://" //$NON-NLS-1$
 						+ this.address + ":" + this.port
 						+ "/cgi-bin/webcm"; //$NON-NLS-1$
 
@@ -1679,7 +1682,7 @@ public class FritzBox extends BoxClass {
 			Debug.error("Encoding not supported! " + e.toString());
 		}
 
-		String urlstr = "http://" //$NON-NLS-1$
+		String urlstr = protocol+"://" //$NON-NLS-1$
 			+ this.address + ":" + this.port
 			+ "/cgi-bin/webcm"; //$NON-NLS-1$
 
@@ -1759,7 +1762,7 @@ public class FritzBox extends BoxClass {
 	}
 
 	public void reboot() throws WrongPasswordException {
-		final String urlstr = "http://" + address + ":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
+		final String urlstr = protocol+"://" + address + ":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
 		boolean password_wrong = true;
 		int retry_count = 0;
 		int max_retry_count = 2;

@@ -1143,7 +1143,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					number = call.getPhoneNumber();
 				}
 				else {
-					number = new PhoneNumber("0", false, false);
+					number = new PhoneNumber("", false, false);
 				}
 				CallDialog p = new CallDialog(number);
 				p.setVisible(true);
@@ -1156,8 +1156,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					Person person = JFritz.getPhonebook().getFilteredPersons().get(index);
 					dialog = new CallDialog(person.getNumbers(), person.getStandardTelephoneNumber());
 				} else {
-					dialog = new CallDialog(new PhoneNumber("0", false, false));
+					dialog = new CallDialog(new PhoneNumber("", false, false));
 				}
+				dialog.setVisible(true);
+				dialog.dispose();
+			} else {
+				CallDialog dialog = null;
+				dialog = new CallDialog(new PhoneNumber("", false, false));
 				dialog.setVisible(true);
 				dialog.dispose();
 			}

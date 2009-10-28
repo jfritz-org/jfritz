@@ -36,7 +36,7 @@ public class FBoxListenerV3Test extends TestCase {
 		args[0] = "-q";
 		Main main = new Main(args);
         jfritz = main.getJfritz();
-        fritzBox = new FritzBox("Name", "Description", "192.168.178.1", "80", "", null);
+        fritzBox = new FritzBox("Name", "Description", "http", "192.168.178.1", "80", "", null);
     }
 
     public void setUp() throws Exception {

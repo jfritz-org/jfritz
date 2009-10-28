@@ -21,6 +21,7 @@ public abstract class BoxClass
 	protected String name;
 	protected String description;
 
+	protected String protocol;
 	protected String address;
 	protected String port;
 	protected String password;
@@ -47,6 +48,13 @@ public abstract class BoxClass
 	public String getDescription()
 	{
 		return description;
+	}
+
+	/**
+	 * Get used protocol (HTTP / HTTPS)
+	 */
+	public String getProtocol() {
+		return protocol;
 	}
 
 	/**
@@ -101,6 +109,15 @@ public abstract class BoxClass
 	public void setDescription(String desc)
 	{
 		this.description = desc;
+	}
+
+	/**
+	 * Set used protocol (HTTP, HTTPS) of the box.
+	 * @param protocol
+	 */
+	public void setProtocol(String protocol)
+	{
+		this.protocol = protocol;
 	}
 
 	/**
