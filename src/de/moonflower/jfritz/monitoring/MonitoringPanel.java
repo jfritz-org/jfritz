@@ -49,7 +49,6 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.cellrenderer.*;
 import de.moonflower.jfritz.monitoring.CurrentCallsTable;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.StatusBarController;
 import de.moonflower.jfritz.utils.network.UPNPAddonInfosListener;
 import de.moonflower.jfritz.utils.network.UPNPCommonLinkPropertiesListener;
@@ -546,7 +545,6 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 			dynamicUpnpTimer.cancel();
 
 		dynamicUpnpTimer = new Timer("NetworkMonitor", true);
-		final MonitoringPanel mPanel = this;
 		dynamicUpnpTask = new TimerTask(){
 			public void run() {
 //				JFritz.getFritzBox().getInternetStats(mPanel);

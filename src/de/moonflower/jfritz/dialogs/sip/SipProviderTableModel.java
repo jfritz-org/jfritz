@@ -5,49 +5,18 @@
  */
 package de.moonflower.jfritz.dialogs.sip;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringReader;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Vector;
-
 import javax.swing.table.AbstractTableModel;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.xml.sax.EntityResolver;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-import org.xml.sax.XMLReader;
-
 import de.moonflower.jfritz.Main;
-import de.moonflower.jfritz.utils.Debug;
 
 /**
  * @author Arno Willig
  *
  */
 public class SipProviderTableModel extends AbstractTableModel {
-
-    private static final String SIP_DTD_URI = "http://jfritz.moonflower.de/dtd/sip.dtd"; //$NON-NLS-1$
-
-	private static final String SIP_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" //$NON-NLS-1$
-		    + "<!-- DTD for JFritz sip provider -->" //$NON-NLS-1$
-			+ "<!ELEMENT provider (commment?,entry*)>" //$NON-NLS-1$
-			+ "<!ELEMENT comment (#PCDATA)>" //$NON-NLS-1$
-			+ "<!ELEMENT name (#PCDATA)>" //$NON-NLS-1$
-			+ "<!ELEMENT number (#PCDATA)>" //$NON-NLS-1$
-			+ "<!ELEMENT active (#PCDATA)>" //$NON-NLS-1$
-			+ "<!ELEMENT entry (name,number,active?)>" //$NON-NLS-1$
-			+ "<!ATTLIST entry id CDATA #REQUIRED>"; //$NON-NLS-1$
 
     private static final long serialVersionUID = 100;
 

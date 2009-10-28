@@ -197,7 +197,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 74 2009-10-28 16:26:35Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 75 2009-10-28 16:45:34Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -260,8 +260,6 @@ public class Main implements LookupObserver {
 	private static int EXIT_CODE_PARAMETER_NOT_FOUND = -2;
 	private static int EXIT_CODE_PARAMETER_WRONG_FORMAT = -3;
 	private static int EXIT_CODE_MULTIPLE_INSTANCE_LOCK = 1;
-
-	private static String HostOS = "other"; //$NON-NLS-1$
 
 	public Main()
 	{

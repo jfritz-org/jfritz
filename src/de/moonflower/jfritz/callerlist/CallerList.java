@@ -5,7 +5,6 @@
  */
 package de.moonflower.jfritz.callerlist;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -23,8 +22,6 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 import javax.swing.table.AbstractTableModel;
@@ -83,8 +80,6 @@ public class CallerList extends AbstractTableModel
 			+ "<!ELEMENT comment (#PCDATA)>" //$NON-NLS-1$
 			+ "<!ELEMENT entry (date,caller?,port?,route?,duration?,comment?)>" //$NON-NLS-1$
 			+ "<!ATTLIST entry calltype (call_in|call_in_failed|call_out) #REQUIRED>"; //$NON-NLS-1$
-
-	private final static String PATTERN_CSV = "(\\||;)"; //$NON-NLS-1$
 
 	private final static String EXPORT_CSV_FORMAT_JFRITZ = "\"CallType\";\"Date\";\"Time\";\"Number\";\"Route\";\"" + //$NON-NLS-1$
 			"Port\";\"Duration\";\"Name\";\"Address\";\"City\";\"CallByCall\";\"Comment\""; //$NON-NLS-1$

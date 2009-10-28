@@ -7,7 +7,6 @@ package de.moonflower.jfritz.dialogs.config;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,19 +17,14 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
-import de.moonflower.jfritz.utils.Debug;
 
 /**
  * @author Robert Palmer
@@ -48,12 +42,9 @@ public class SipConfigDialog extends JDialog {
 
     private boolean pressedOk = false;
 
-    private SipProvider sipProvider;
-
     public SipConfigDialog(JDialog parent, SipProvider sipProvider) {
         super(parent, true);
         setTitle("Edit Sip-Provider: " + sipProvider.toString());
-        this.sipProvider = sipProvider;
         drawDialog();
         setLocationRelativeTo(parent);
     }

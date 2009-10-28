@@ -11,6 +11,7 @@ import java.util.Vector;
 import javax.swing.JLabel;
 
 public class HyperLinkLabel extends JLabel {
+	private static final long serialVersionUID = 8903409313417427315L;
 	private URL url;
 	private Vector<LinkClickListener> listener;
 

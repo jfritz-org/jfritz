@@ -22,7 +22,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import de.moonflower.jfritz.Main;
-import de.moonflower.jfritz.utils.CopyFile;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -44,11 +43,7 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 
 	private JSlider timerSlider;
 
-	private ConfigPanelFritzBox fritzBoxPanel;
-
 	public ConfigPanelOther(ConfigPanelFritzBox fritzBoxPanel) {
-		this.fritzBoxPanel = fritzBoxPanel;
-
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
 

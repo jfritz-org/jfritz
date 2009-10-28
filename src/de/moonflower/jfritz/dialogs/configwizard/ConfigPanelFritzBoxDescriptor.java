@@ -5,7 +5,6 @@ import com.nexes.wizard.*;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelFritzBox;
-import de.moonflower.jfritz.dialogs.config.ConfigPanelSip;
 
 /**
  *  @author Brian Jensen

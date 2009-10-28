@@ -3,8 +3,6 @@ package de.moonflower.jfritz.importexport;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import de.moonflower.jfritz.utils.Debug;
-
 public class VCardParser {
 
 	private String property;

@@ -24,13 +24,7 @@ import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
 import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.Debug;
-import de.moonflower.jfritz.utils.HTMLUtil;
 import de.moonflower.jfritz.utils.JFritzUtils;
-import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
-import de.moonflower.jfritz.utils.reverselookup.ReverseLookupAustria;
-import de.moonflower.jfritz.utils.reverselookup.ReverseLookupGermany;
-import de.moonflower.jfritz.utils.reverselookup.ReverseLookupTurkey;
-import de.moonflower.jfritz.utils.reverselookup.ReverseLookupUnitedStates;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

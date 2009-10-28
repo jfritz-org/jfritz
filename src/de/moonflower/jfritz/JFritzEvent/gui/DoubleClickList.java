@@ -18,7 +18,7 @@ public class DoubleClickList extends JList {
 		this.addMouseListener(mouseListener);
 	}
 
-	public DoubleClickList(Vector v) {
+	public DoubleClickList(Vector<?> v) {
 		super(v);
 		clickListener = new Vector<ParameterClickedEvent>();
 		MouseListener mouseListener = new JListMouseListener(this);

@@ -35,15 +35,12 @@ import javax.swing.JMenuItem;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.Main;
-import de.moonflower.jfritz.callerlist.filter.SearchFilter;
-import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.VCardList;
 import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.StatusBarController;
-import de.moonflower.jfritz.utils.threeStateButton.ThreeStateButton;
 
 /**
  *

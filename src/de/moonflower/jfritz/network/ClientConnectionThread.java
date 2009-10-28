@@ -377,7 +377,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 		Object o;
 		//Login login;
-		String user, password;
+		String user;
 		Vector<Login> clientLogins = ClientLoginsTableModel.getClientLogins();
 		Login login = null;
 

@@ -203,6 +203,7 @@ public class FritzBoxFirmware {
 					}
 				}
 
+				// read firmware informations from file
 				if (false) {
 					String filename = "c://SpeedFirm.txt"; //$NON-NLS-1$
 					Debug.debug("Debug mode: Loading " + filename); //$NON-NLS-1$

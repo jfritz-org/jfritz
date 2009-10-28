@@ -1,8 +1,5 @@
 package de.moonflower.jfritz.utils;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.JCheckBox;
 
 import de.moonflower.jfritz.Main;

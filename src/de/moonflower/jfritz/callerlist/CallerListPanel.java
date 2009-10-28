@@ -39,7 +39,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
@@ -329,25 +328,6 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		callerList.addFilter(filter[DATE]);
 		filter[SEARCH] = new SearchFilter("");
 		callerList.addFilter(filter[SEARCH]);
-	}
-
-	/**
-	 * creates a SIPfilter using only the selected SIPProviders or <b>all</b>
-	 * SIPProviders, if none is selected
-	 *
-	 * @param callerList
-	 *            the callerlist to retrieve the SIPProviders
-	 * @return the createdFilter
-	 */
-	private Vector<String> getSelectedSipProvider(CallerList callerList) {
-		Vector<String> provider;
-		if ((callerTable != null) && (callerTable.getSelectedRowCount() != 0)) {
-			provider = callerList
-					.getSelectedProviders(callerTable.getSelectedRows());
-		} else {
-			provider = callerList.getAllSipProviders();
-		}
-		return provider;
 	}
 
 	/**

@@ -17,7 +17,7 @@ public class SystemVariables {
 	    System.out.println("");
 	    System.out.println("========= System properties ========");
 	    Properties props = System.getProperties();
-	    Enumeration en = props.keys();
+	    Enumeration<Object> en = props.keys();
 	    String currentKey = "";
 	    while (en.hasMoreElements())
 	    {

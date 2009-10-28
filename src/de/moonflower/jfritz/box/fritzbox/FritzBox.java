@@ -1143,7 +1143,7 @@ public class FritzBox extends BoxClass {
 	{
 		Vector<String> query = new Vector<String>();
 		query.add("telcfg:settings/ClearJournal");
-		Vector<String> response = getQuery(query);
+		getQuery(query);
 	}
 
 	/**************************************************************************************

@@ -13,7 +13,7 @@ public class NumberMultiHashMapTest extends TestCase {
 
 	public void testMultiHashMap()
 	{
-		Main main = new Main();
+		new Main();
 		Vector<Person> vector = new Vector<Person>();
 		NumberPersonMultiHashMap map = new NumberPersonMultiHashMap();
 
@@ -160,8 +160,5 @@ public class NumberMultiHashMapTest extends TestCase {
 		map.deletePerson(num4, person3);
 		result = map.getPerson(num4);
 		assertTrue(result.size() == 0);
-
-		main = null;
 	}
-
 }

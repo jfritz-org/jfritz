@@ -184,7 +184,7 @@ public class JFritzUpdate {
 					"Wrong working directory! Could not find jfritz-internals.jar. Searched in " + installDirectory);
 		}
 
-		Class[] parameterTypes = new Class[] { String[].class };
+		Class<?>[] parameterTypes = new Class[] { String[].class };
 		Object[] arguments = new Object[] { args };
 
 		try {
@@ -192,7 +192,7 @@ public class JFritzUpdate {
 					jfritzJAR.getAbsolutePath());
 			URLClassLoader loader = new URLClassLoader(
 					new URL[] { jfritzInternalsJARurl });
-			final Class jfritzInternalsJAR = loader
+			final Class<?> jfritzInternalsJAR = loader
 					.loadClass("de.moonflower.jfritz.Main");
 			Method mainMethod = jfritzInternalsJAR.getMethod("main",
 					parameterTypes);

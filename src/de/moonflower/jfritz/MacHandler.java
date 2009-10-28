@@ -33,10 +33,10 @@ public class MacHandler {
 			System.setProperty("com.apple.mrj.application.growbox.intrudes", //$NON-NLS-1$
 					"false"); //$NON-NLS-1$
 
-			Class quitHandler = Class.forName("com.apple.mrj.MRJQuitHandler"); //$NON-NLS-1$
-			Class aboutHandler = Class.forName("com.apple.mrj.MRJAboutHandler"); //$NON-NLS-1$
-			Class prefsHandler = Class.forName("com.apple.mrj.MRJPrefsHandler"); //$NON-NLS-1$
-			Class MRJApplicationUtils = Class
+			Class<?> quitHandler = Class.forName("com.apple.mrj.MRJQuitHandler"); //$NON-NLS-1$
+			Class<?> aboutHandler = Class.forName("com.apple.mrj.MRJAboutHandler"); //$NON-NLS-1$
+			Class<?> prefsHandler = Class.forName("com.apple.mrj.MRJPrefsHandler"); //$NON-NLS-1$
+			Class<?> MRJApplicationUtils = Class
 					.forName("com.apple.mrj.MRJApplicationUtils"); //$NON-NLS-1$
 
 			MyInvocationHandler invocationHandler = new MyInvocationHandler();
@@ -44,7 +44,7 @@ public class MacHandler {
 			// Array of arguments for calling method
 			Object argslist[] = new Object[1];
 			// Array of argument types
-			Class[] types = new Class[1];
+			Class<?>[] types = new Class[1];
 
 			Debug.info("MAC: Register quitHandler"); //$NON-NLS-1$
 			Proxy proxy = (Proxy) Proxy.newProxyInstance(quitHandler

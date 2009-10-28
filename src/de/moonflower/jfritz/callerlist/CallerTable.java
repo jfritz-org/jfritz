@@ -7,7 +7,6 @@ package de.moonflower.jfritz.callerlist;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

@@ -81,8 +81,6 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 			"private_entry", "picture", "fullName", "telephoneNumber", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$
 			"address", "last_call" }; //$NON-NLS-1$,  //$NON-NLS-2$
 
-	private static final String PATTERN_THUNDERBRID_CSV = ","; //$NON-NLS-1$
-
 	private Vector<Person> filteredPersons;
 
 	private Vector<Person> unfilteredPersons;
@@ -368,7 +366,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 			addEntry(person);
 
 		for(PhoneBookListener listener: listeners)
-			listener.contactsAdded((Vector) persons.clone());
+			listener.contactsAdded((Vector<Person>) persons.clone());
 
 		updateFilter();
 		fireTableDataChanged();
@@ -395,7 +393,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 			deleteEntry(person);
 
 		for(PhoneBookListener listener: listeners)
-			listener.contactsRemoved((Vector) persons.clone());
+			listener.contactsRemoved((Vector<Person>) persons.clone());
 
 		updateFilter();
 		fireTableDataChanged();
@@ -1294,7 +1292,6 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 			int linesRead = 0;
 			int newEntries = 0;
 			Person person = null;
-			boolean wrong_version = true;
 			// read until EOF
 			VCardParser vcardParser = new VCardParser();
 			boolean wrongVersion = false;
@@ -1339,7 +1336,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 					}
 				} else {
 					Debug.debug("Unknown property: " + vcardParser.getProperty());
-					Enumeration en = vcardParser.getPropertyType().keys();
+					Enumeration<String> en = vcardParser.getPropertyType().keys();
 					while (en.hasMoreElements()) {
 						String key = (String)en.nextElement();
 						Debug.debug("Property values: " + key + "=" + vcardParser.getPropertyType().get(key));
@@ -1527,7 +1524,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 			}
 
 			for(PhoneBookListener listener: listeners)
-				listener.contactsRemoved((Vector) personsToDelete.clone());
+				listener.contactsRemoved((Vector<Person>) personsToDelete.clone());
 
 			updateFilter();
 			fireTableDataChanged();

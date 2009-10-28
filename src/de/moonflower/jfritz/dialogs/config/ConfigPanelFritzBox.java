@@ -111,7 +111,6 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 
 	}
 
-	@SuppressWarnings("unchecked")
 	public ConfigPanelFritzBox(FritzBox fritzBox) {
 		this.fritzBox = fritzBox;
 

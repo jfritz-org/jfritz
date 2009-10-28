@@ -12,6 +12,8 @@ import javax.swing.JFrame;
  *
  */
 public abstract class CallMonitorConfigDialog extends JDialog{
+	private static final long serialVersionUID = -8424740656843258182L;
+
 	public CallMonitorConfigDialog(JDialog parent, boolean b) {
 		super(parent, b);
 	}

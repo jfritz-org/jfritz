@@ -32,7 +32,6 @@ package de.moonflower.jfritz.simpletests;
  */
 
 import java.io.*;
-import java.net.URL;
 
 import java.security.*;
 import java.security.cert.*;
