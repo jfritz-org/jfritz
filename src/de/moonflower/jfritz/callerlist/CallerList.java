@@ -419,6 +419,7 @@ public class CallerList extends AbstractTableModel
 	public synchronized void addEntries(Vector<Call> newCalls){
 		int newEntries = 0;
 
+		Debug.debug("Filtering calls...");
 		filterNewCalls(newCalls);
 		Debug.debug("Adding " + newCalls.size() + " new calls.");
 

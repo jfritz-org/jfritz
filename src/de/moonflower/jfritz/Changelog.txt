@@ -3,6 +3,7 @@ TODO: Timer zum automatischen Aktualisieren der FritzBox-Einstellungen (Telefone
 TODO: charset aus VCard auslesen und verwenden
 
 JFritz 0.7.3.29:
+- Bugfix: Falsche Anzeige bei den Filterbuttons, wenn man mit der Maus drüberfährt.
 - Bugfix [0000272]: Führende Null bei der Wählhilfe störend
 - Bugfix: Wählhilfe wieder sichtbar, wenn Tabs Quickdial oder Überwachung ausgewählt waren.
 - Build.xml und Build-Release.xml überarbeitet und neu strukturiert.

@@ -193,27 +193,27 @@ public class ThreeStateButton extends JButton implements ImageObserver {
 
 	private static final long serialVersionUID = 1L;
 
-	public Icon getNothingIcon() {
+	public Icon getIconNothing() {
 		return icons[NOTHING];
 	}
 
-	public void setNothingIcon(ImageIcon nothingIcon) {
+	public void setIconNothin(ImageIcon nothingIcon) {
 		icons[NOTHING] = nothingIcon;
 	}
 
-	public Icon getSelectedIcon() {
+	public Icon getIconSelected() {
 		return icons[SELECTED];
 	}
 
-	public void setSelectedIcon(ImageIcon selectedIcon) {
+	public void setIconSelected(ImageIcon selectedIcon) {
 		icons[SELECTED] = selectedIcon;
 	}
 
-	public Icon getSelectedNotIcon() {
+	public Icon getIconNotSelected() {
 		return icons[INVERTED];
 	}
 
-	public void setSelectedNotIcon(ImageIcon selectedNotIcon) {
+	public void setIconNotSelected(ImageIcon selectedNotIcon) {
 		icons[INVERTED] = selectedNotIcon;
 	}
 

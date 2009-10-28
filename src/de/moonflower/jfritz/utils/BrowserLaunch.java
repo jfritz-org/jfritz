@@ -32,7 +32,7 @@ public static void openURL(String url) {
    try {
       if (osName.startsWith("Mac OS")) { //$NON-NLS-1$
     	 Debug.debug("openURL on Mac OS for URL: " + url);
-         Class macUtils = Class.forName("com.apple.mrj.MRJFileUtils"); //$NON-NLS-1$
+         Class<?> macUtils = Class.forName("com.apple.mrj.MRJFileUtils"); //$NON-NLS-1$
          Method openURL = macUtils.getDeclaredMethod("openURL", //$NON-NLS-1$
             new Class[] {String.class});
          openURL.invoke(null, new Object[] {url});
