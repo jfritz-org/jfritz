@@ -2,11 +2,6 @@ package com.nexes.test;
 
 import com.nexes.wizard.*;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-
-
 public class TestPanel3Descriptor extends WizardPanelDescriptor {
 
     public static final String IDENTIFIER = "SERVER_CONNECT_PANEL";

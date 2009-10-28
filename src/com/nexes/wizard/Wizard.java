@@ -402,7 +402,7 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
         URL url = null;
 
         try {
-            Class c = Class.forName("com.nexes.wizard.Wizard");
+            Class<?> c = Class.forName("com.nexes.wizard.Wizard");
             url = c.getResource(name);
         } catch (ClassNotFoundException cnfe) {
             System.err.println("Unable to find Wizard class");

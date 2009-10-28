@@ -7,8 +7,9 @@ import javax.swing.border.*;
 
 
 public class TestPanel1 extends JPanel {
+ 	private static final long serialVersionUID = 4704250084696755324L;
 
-    private JLabel blankSpace;
+	private JLabel blankSpace;
     private JLabel jLabel1;
     private JLabel jLabel2;
     private JLabel jLabel3;
@@ -110,7 +111,7 @@ public class TestPanel1 extends JPanel {
         if (name != null) {
 
             try {
-                Class c = Class.forName("com.nexes.test.Main");
+                Class<?> c = Class.forName("com.nexes.test.Main");
                 url = c.getResource(name);
             } catch (ClassNotFoundException cnfe) {
                 System.err.println("Unable to find Main class");

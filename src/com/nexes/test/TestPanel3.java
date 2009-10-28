@@ -3,15 +3,15 @@ package com.nexes.test;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
-import java.awt.event.*;
-
-import com.nexes.wizard.*;
 
 public class TestPanel3 extends JPanel {
 
-    private JLabel anotherBlankSpace;
+    /**
+	 *
+	 */
+	private static final long serialVersionUID = 6093479951334391038L;
+	private JLabel anotherBlankSpace;
     private JLabel blankSpace;
-    private ButtonGroup connectorGroup;
     private JLabel jLabel1;
     private JPanel jPanel1;
     private JLabel progressDescription;
@@ -75,7 +75,6 @@ public class TestPanel3 extends JPanel {
 
         JPanel contentPanel1 = new JPanel();
 
-        connectorGroup = new ButtonGroup();
         welcomeTitle = new JLabel();
         jPanel1 = new JPanel();
         blankSpace = new JLabel();
