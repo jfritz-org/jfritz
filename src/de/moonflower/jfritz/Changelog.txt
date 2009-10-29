@@ -6,6 +6,7 @@ JFritz 0.7.3.29:
 - Bugfix: Falsche Anzeige bei den Filterbuttons, wenn man mit der Maus drüberfährt.
 - Bugfix: Wählhilfe wieder sichtbar, wenn Tabs Quickdial oder Überwachung ausgewählt waren.
 - Bugfix [0000086]: Start des Telefonbuchs immer im Edit-Modus. 
+- Bugfix [0000143]: Neuer Eintrag bei unbekannter Nummer durch Doppelklick in der Anrufliste 
 - Bugfix [0000204]: Löschen des Anruferbildes ermöglichen. 
 - Bugfix [0000267]: Kommandozeilenparameter -h oder --h 
 - Bugfix [0000269]: Kommandozeilenparameter nimmt alles an ohne fehler 

@@ -515,6 +515,14 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		JFritz.getJframe().setGoogleItem(status);
 	}
 
+	public void showEditPerson() {
+		splitPane.setDividerLocation(PERSONPANEL_WIDTH);
+	}
+
+	public void hideEditPerson() {
+		splitPane.setDividerLocation(0);
+	}
+
 	public void activateSearchFilter() {
 		this.requestFocus();
 		searchFilter.requestFocus();

@@ -167,9 +167,23 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			// FIXME Listener in den table einbauen
 			if ((e.getClickCount() > 1)
 					&& (e.getComponent().getClass() == CallerTable.class)) {
-				if (callerTable.getSelectedPersons().size() == 1)
+				int numSelected = callerTable.getSelectedPersons().size();
+				if (numSelected == 1)
 				{
 					phoneBookPanel.getPhoneBookTable().showAndSelectPerson(callerTable.getSelectedPersons().get(0), true);
+				} else if (numSelected == 0 && callerTable.getSelectedRowCount() == 1) {
+					Call selectedCall = callerList.getFilteredCall(callerTable.getSelectedRow());
+					if (selectedCall.getPhoneNumber() != null) {
+						// do not create a new entry without phone number
+						Person newPerson = new Person();
+						newPerson.addNumber(selectedCall.getPhoneNumber());
+						Vector<Person> persons = new Vector<Person>();
+						persons.add(newPerson);
+						JFritz.getPhonebook().addEntries(persons);
+						phoneBookPanel.getPhoneBookTable().showAndSelectPerson(newPerson, true);
+						phoneBookPanel.updateUI();
+						phoneBookPanel.showEditPerson();
+					}
 				}
 
 				JFritz.getJframe().activatePhoneBook();
