@@ -448,13 +448,58 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		JMenu clipboardMenu = new JMenu(Main.getMessage("clipboard")); //$NON-NLS-1$
 		clipboardMenu.setMnemonic(KeyEvent.VK_Z);
 
-		JMenuItem item = new JMenuItem(Main.getMessage("number"), KeyEvent.VK_N); //$NON-NLS-1$
+		JMenuItem item = new JMenuItem(Main.getMessage("name"), KeyEvent.VK_N); //$NON-NLS-1$
+		item.setActionCommand("clipboard_name"); //$NON-NLS-1$
+		item.addActionListener(this);
+		clipboardMenu.add(item);
+
+		item = new JMenuItem(Main.getMessage("company")); //$NON-NLS-1$
+		item.setActionCommand("clipboard_company"); //$NON-NLS-1$
+		item.addActionListener(this);
+		clipboardMenu.add(item);
+
+		item = new JMenuItem(Main.getMessage("number"), KeyEvent.VK_U); //$NON-NLS-1$
 		item.setActionCommand("clipboard_number"); //$NON-NLS-1$
 		item.addActionListener(this);
 		clipboardMenu.add(item);
 
 		item = new JMenuItem(Main.getMessage("address"), KeyEvent.VK_A); //$NON-NLS-1$
 		item.setActionCommand("clipboard_adress"); //$NON-NLS-1$
+		item.addActionListener(this);
+		clipboardMenu.add(item);
+
+		item = new JMenuItem(Main.getMessage("street"));
+		item.setActionCommand("clipboard_street"); //$NON-NLS-1$
+		item.addActionListener(this);
+		clipboardMenu.add(item);
+
+		item = new JMenuItem(Main.getMessage("postalCode"));
+		item.setActionCommand("clipboard_postalCode"); //$NON-NLS-1$
+		item.addActionListener(this);
+		clipboardMenu.add(item);
+
+		item = new JMenuItem(Main.getMessage("city"));
+		item.setActionCommand("clipboard_city"); //$NON-NLS-1$
+		item.addActionListener(this);
+		clipboardMenu.add(item);
+
+		item = new JMenuItem(Main.getMessage("type_desc"));
+		item.setActionCommand("clipboard_type"); //$NON-NLS-1$
+		item.addActionListener(this);
+		clipboardMenu.add(item);
+
+		item = new JMenuItem(Main.getMessage("date_desc"));
+		item.setActionCommand("clipboard_date"); //$NON-NLS-1$
+		item.addActionListener(this);
+		clipboardMenu.add(item);
+
+		item = new JMenuItem(Main.getMessage("callbycall_desc"));
+		item.setActionCommand("clipboard_callbycall"); //$NON-NLS-1$
+		item.addActionListener(this);
+		clipboardMenu.add(item);
+
+		item = new JMenuItem(Main.getMessage("comment_desc"));
+		item.setActionCommand("clipboard_comment"); //$NON-NLS-1$
 		item.addActionListener(this);
 		clipboardMenu.add(item);
 
@@ -865,34 +910,19 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		}
 		if (command.equals(CallFilter.FILTER_CALLIN_NOTHING)) {
 			syncFilterWithButton(filter[CALL_IN], callInFilterButton);
-			return;
-		}
-		if (command.equals(CallFilter.FILTER_CALLINFAILED)) {
+		} else if (command.equals(CallFilter.FILTER_CALLINFAILED)) {
 			syncFilterWithButton(filter[CALL_IN_FAILED], callInFailedFilterButton);
-			return;
-		}
-		if (command.equals(CallFilter.FILTER_CALLOUT)) {
+		} else if (command.equals(CallFilter.FILTER_CALLOUT)) {
 			syncFilterWithButton(filter[CALL_OUT], callOutFilterButton);
-			return;
-		}
-		if (command.equals(CallFilter.FILTER_COMMENT)) {
+		} else if (command.equals(CallFilter.FILTER_COMMENT)) {
 			syncFilterWithButton(filter[COMMENT], commentFilterButton);
-			return;
-		}
-		if (command.equals(CallFilter.FILTER_ANONYM)) {
+		} else if (command.equals(CallFilter.FILTER_ANONYM)) {
 			syncFilterWithButton(filter[ANONYMOUS], anonymFilterButton);
-			return;
-		}
-		if (command.equals(CallFilter.FILTER_FIXED)) {
+		} else if (command.equals(CallFilter.FILTER_FIXED)) {
 			syncFilterWithButton(filter[FIXED], fixedFilterButton);
-			return;
-		}
-		if (command.equals(CallFilter.FILTER_HANDY)) {
+		} else if (command.equals(CallFilter.FILTER_HANDY)) {
 			syncFilterWithButton(filter[MOBILE], handyFilterButton);
-			return;
-		}
-
-		if (command.equals(CallFilter.FILTER_SEARCH)) {
+		} else if (command.equals(CallFilter.FILTER_SEARCH)) {
 			if (searchFilterButton.getState() == ThreeStateButton.NOTHING) {
 				searchFilterTextField.setVisible(false);
 				searchLabel.setVisible(false);
@@ -911,11 +941,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 					filter[SEARCH].setInvert(true);
 				}
 			}
-
-			return;
-		}
-
-		if (command.equals(CallFilter.FILTER_DATE)) {
+		} else if (command.equals(CallFilter.FILTER_DATE)) {
 			syncFilterWithButton(filter[DATE], dateFilterButton);
 			if (dateFilterButton.getState() == ThreeStateButton.NOTHING) {
 				startDateChooser.setVisible(false);
@@ -983,42 +1009,24 @@ public class CallerListPanel extends JPanel implements ActionListener,
 				}
 			}
 			dateSpecialSaveString = "";
-			return;
-		}
-
-		if (command.equals(CallFilter.THIS_DAY)) {
+		} else if (command.equals(CallFilter.THIS_DAY)) {
 			setThisDayFilter();
-			return;
-		}
-		if (command.equals(CallFilter.LAST_DAY)) {
+		} else if (command.equals(CallFilter.LAST_DAY)) {
 			setLastDayFilter();
-			return;
-		}
-		if (command.equals(CallFilter.THIS_WEEK)) {
+		} else if (command.equals(CallFilter.THIS_WEEK)) {
 			setThisWeekFilter();
-			return;
-		}
-		if (command.equals(CallFilter.LAST_WEEK)) {
+		} else if (command.equals(CallFilter.LAST_WEEK)) {
 			setLastWeekFilter();
-			return;
-		}
-
-		if (command.equals(CallFilter.THIS_MONTH)) {
+		} else if (command.equals(CallFilter.THIS_MONTH)) {
 			setThisMonthFilter();
-			return;
-		}
-		if (command.equals(CallFilter.LAST_MONTH)) {
+		} else if (command.equals(CallFilter.LAST_MONTH)) {
 			setLastMonthFilter();
-			return;
-		}
-		if (command.equals("filter_callinfailed_allWithoutComment")) { //$NON-NLS-1$
+		} else if (command.equals("filter_callinfailed_allWithoutComment")) { //$NON-NLS-1$
 			clearAllFilter();
 			callInFailedFilterButton.setState(ThreeStateButton.SELECTED);
 			commentFilterButton.setState(ThreeStateButton.INVERTED);
 			syncAllFilters();
-			return;
-		}
-		if (command.equals("filter_callinfailed_allWithoutCommentLastWeek")) { //$NON-NLS-1$
+		} else if (command.equals("filter_callinfailed_allWithoutCommentLastWeek")) { //$NON-NLS-1$
 			clearAllFilter();
 			callInFailedFilterButton.setState(ThreeStateButton.SELECTED);
 			commentFilterButton.setState(ThreeStateButton.INVERTED);
@@ -1038,19 +1046,13 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			startDateChooser.setVisible(true);
 			endDateChooser.setVisible(true);
 			syncAllFilters();
-			return;
-		}
-		if (command.equals(CallFilter.FILTER_CALLBYCALL)) {
+		} else if (command.equals(CallFilter.FILTER_CALLBYCALL)) {
 			((CallByCallFilter) filter[CALL_BY_CALL])
 					.setCallbyCallProvider(getSelectedCallByCallProvider(callerList));
 			syncFilterWithButton(filter[CALL_BY_CALL], callByCallFilterButton);
-			return;
-		}
-		if (command.equals("clearFilter")) { //$NON-NLS-1$
+		} else if (command.equals("clearFilter")) { //$NON-NLS-1$
 			clearAllFilter();
-			return;
-		}
-		if (command.equals(DELETE_ENTRY)) {
+		} else if (command.equals(DELETE_ENTRY)) {
 			if (JOptionPane.showConfirmDialog(jFrame, Main
 					.getMessage("really_delete_entries"), //$NON-NLS-1$
 					Main.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
@@ -1058,10 +1060,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 				Debug.info("Removing " + rows.length + " entries"); //$NON-NLS-1$
 				callerList.removeEntries(rows);
 			}
-			return;
-		}
-
-		if(command.startsWith("lookup:")){
+		} else if(command.startsWith("lookup:")){
 
 			Call call;
 			String parts[] = command.split(":");
@@ -1092,40 +1091,36 @@ public class CallerListPanel extends JPanel implements ActionListener,
 				JFritz.getJframe().selectLookupButton(true);
 				JFritz.getJframe().setLookupBusy(true);
 			}
-			return;
-
-		}
-
-		//old code
-//		if (command.equals("reverselookup")) { //$NON-NLS-1$
-//			callerList.doReverseLookup(callerTable.getSelectedRows());
-//			return;
-//		}
-		if (command.equals("reverselookup_dummy")) { //$NON-NLS-1$
+		} else if (command.equals("reverselookup_dummy")) { //$NON-NLS-1$
 			callerList.reverseLookup(true, true);
-			return;
-		}
-		if (command.equals("google")) {
+		} else if (command.equals("google")) {
 			if (googleLink != null) {
 				Debug.debug(googleLink);
 				BrowserLaunch.openURL(googleLink);
 			}
-			return;
-		}
-
-		if (command.equals("export_csv")) { //$NON-NLS-1$
+		} else if (command.equals("export_csv")) { //$NON-NLS-1$
 			JFritz.getJframe().exportCallerListToCSV();
-			return;
-		}
-		if (command.equals("export_xml")) { //$NON-NLS-1$
+		} else if (command.equals("export_xml")) { //$NON-NLS-1$
 			JFritz.getJframe().exportCallerListToXML();
-			return;
-		}
-		if (command.equals("import_callerlist_csv")) { //$NON-NLS-1$
+		} else if (command.equals("import_callerlist_csv")) { //$NON-NLS-1$
 			JFritz.getJframe().importCallerlistCSV();
-			return;
-		}
-		if (command.equals("clipboard_number")) { //$NON-NLS-1$
+		} else if (command.equals("clipboard_name")) { //$NON-NLS-1$
+			Call call = callerList.getSelectedCall();
+			if (call != null) {
+				Person person = JFritz.getPhonebook().findPerson(call);
+				if (person != null) {
+					JFritzClipboard.copy(person.getFullname());
+				}
+			}
+		} else if (command.equals("clipboard_company")) { //$NON-NLS-1$
+			Call call = callerList.getSelectedCall();
+			if (call != null) {
+				Person person = JFritz.getPhonebook().findPerson(call);
+				if (person != null) {
+					JFritzClipboard.copy(person.getCompany());
+				}
+			}
+		} else if (command.equals("clipboard_number")) { //$NON-NLS-1$
 			Call call = callerList.getSelectedCall();
 			if (call != null) {
 				PhoneNumber number = call.getPhoneNumber();
@@ -1133,10 +1128,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 					JFritzClipboard.copy(number.convertToNationalNumber());
 				}
 			}
-			// JFritz.getJframe().copyNumberToClipboard();
-			return;
-		}
-		if (command.equals("clipboard_adress")) { //$NON-NLS-1$
+		} else if (command.equals("clipboard_adress")) { //$NON-NLS-1$
 			Call call = callerList.getSelectedCall();
 			if (call != null) {
 				Person person = JFritz.getPhonebook().findPerson(call);
@@ -1144,16 +1136,61 @@ public class CallerListPanel extends JPanel implements ActionListener,
 					JFritzClipboard.copy(person.getAddress());
 				}
 			}
-			// JFritz.getJframe().copyAddressToClipboard();
-			return;
+		} else if (command.equals("clipboard_street")) { //$NON-NLS-1$
+			Call call = callerList.getSelectedCall();
+			if (call != null) {
+				Person person = JFritz.getPhonebook().findPerson(call);
+				if (person != null) {
+					JFritzClipboard.copy(person.getStreet());
+				}
+			}
+		} else if (command.equals("clipboard_postalCode")) { //$NON-NLS-1$
+			Call call = callerList.getSelectedCall();
+			if (call != null) {
+				Person person = JFritz.getPhonebook().findPerson(call);
+				if (person != null) {
+					JFritzClipboard.copy(person.getPostalCode());
+				}
+			}
+		} else if (command.equals("clipboard_city")) { //$NON-NLS-1$
+			Call call = callerList.getSelectedCall();
+			if (call != null) {
+				Person person = JFritz.getPhonebook().findPerson(call);
+				if (person != null) {
+					JFritzClipboard.copy(person.getCity());
+				}
+			}
+		} else if (command.equals("clipboard_type")) { //$NON-NLS-1$
+			Call call = callerList.getSelectedCall();
+			if (call != null) {
+				JFritzClipboard.copy(call.getCalltype().toDescription());
+			}
+		} else if (command.equals("clipboard_date")) { //$NON-NLS-1$
+			Call call = callerList.getSelectedCall();
+			if (call != null) {
+				Date date = call.getCalldate();
+				JFritzClipboard.copy(date.toString());
+			}
+		} else if (command.equals("clipboard_callbycall")) { //$NON-NLS-1$
+			Call call = callerList.getSelectedCall();
+			if (call != null) {
+				if (call.getPhoneNumber() != null)
+				{
+					JFritzClipboard.copy(call.getPhoneNumber().getCallByCall());
+				}
+			}
+		} else if (command.equals("clipboard_comment")) { //$NON-NLS-1$
+			Call call = callerList.getSelectedCall();
+			if (call != null) {
+				JFritzClipboard.copy(call.getComment());
+			}
+		} else if (command.equals(CallFilter.FILTER_SIP)) {
+			// do nothing
+		} else if (command.equals(CallFilter.FILTER_PORT)) {
+			// do nothing
+		} else {
+			Debug.warning("Unknown command: " + command);
 		}
-		if (command.equals(CallFilter.FILTER_SIP)) {
-			return;
-		}
-		if (command.equals(CallFilter.FILTER_PORT)) {
-			return;
-		}
-		Debug.warning("Unknown command: " + command);
 	}
 
 	/**
