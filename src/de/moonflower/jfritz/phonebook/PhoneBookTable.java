@@ -71,7 +71,6 @@ public class PhoneBookTable extends JTable implements KeyListener{
 
 		getSelectionModel().clearSelection();
 		getSelectionModel().setSelectionInterval(row, row);
-		parentPanel.showPersonPanel();
 		// assuring that the newly selected row in the phonebook is visible
 		Rectangle rect = getCellRect(row, 0, true);
 		scrollRectToVisible(rect);

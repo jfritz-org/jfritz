@@ -114,14 +114,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		splitPane.setOneTouchExpandable(true);
 		splitPane.setContinuousLayout(true);
 		add(splitPane, BorderLayout.CENTER);
-		if (phonebook.getUnfilteredPersons().size() == 0)
-		{
-			splitPane.setDividerLocation(0);
-		}
-		else
-		{
-			splitPane.setDividerLocation(PERSONPANEL_WIDTH);
-		}
+		splitPane.setDividerLocation(0);
 	}
 
 	/**
@@ -210,6 +203,13 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		addButton.setActionCommand("addPerson"); //$NON-NLS-1$
 		addButton.addActionListener(this);
 		toolBar.add(addButton);
+
+		JButton editButton = new JButton(Main.getMessage("edit_entry")); //$NON-NLS-1$
+		editButton.setToolTipText(Main.getMessage("edit_entry")); //$NON-NLS-1$
+		editButton.setIcon(getImage("edit_person.png")); //$NON-NLS-1$
+		editButton.setActionCommand("editPerson"); //$NON-NLS-1$
+		editButton.addActionListener(this);
+		toolBar.add(editButton);
 
 		JButton delButton = new JButton(Main.getMessage("delete_entry")); //$NON-NLS-1$
 		delButton.setToolTipText(Main.getMessage("delete_entry")); //$NON-NLS-1$
@@ -443,10 +443,6 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		int entries = pb.getFilteredPersons().size();
 		statusBarController.fireStatusChanged(Main.getMessage("entries").  //$NON-NLS-1$
 				replaceAll("%N", Integer.toString(entries)));  //$NON-NLS-1$
-	}
-
-	public void showPersonPanel() {
-		splitPane.setDividerLocation(PERSONPANEL_WIDTH);
 	}
 
 	/**

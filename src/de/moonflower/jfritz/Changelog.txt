@@ -5,6 +5,7 @@ TODO: charset aus VCard auslesen und verwenden
 JFritz 0.7.3.29:
 - Bugfix: Falsche Anzeige bei den Filterbuttons, wenn man mit der Maus drüberfährt.
 - Bugfix: Wählhilfe wieder sichtbar, wenn Tabs Quickdial oder Überwachung ausgewählt waren.
+- Bugfix [0000086]: Start des Telefonbuchs immer im Edit-Modus. 
 - Bugfix [0000204]: Löschen des Anruferbildes ermöglichen. 
 - Bugfix [0000267]: Kommandozeilenparameter -h oder --h 
 - Bugfix [0000269]: Kommandozeilenparameter nimmt alles an ohne fehler 
@@ -12,6 +13,7 @@ JFritz 0.7.3.29:
 - Build.xml und Build-Release.xml überarbeitet und neu strukturiert.
 - FritzBox-Klasse: Vorbereitung für Remote-Abfrage per https.
 New Strings:
+edit_entry
 picture_remove_desc
 picture_remove
 picture_set
