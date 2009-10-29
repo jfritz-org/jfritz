@@ -34,6 +34,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.border.Border;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.ListSelectionEvent;
@@ -48,7 +49,6 @@ import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumber;
-import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
  * This class is used in the phone book to edit individual entries
@@ -79,7 +79,9 @@ public class PersonPanel extends JPanel implements ActionListener,
 	private JTextField tfFirstName, tfCompany, tfLastName, tfStreet,
 			tfPostalCode, tfCity, tfEmail;
 
-	private JButton addButton, delButton, okButton, cancelButton, undoButton, pictureButton;
+	private Dimension pictureButtonSize;
+	private Border pictureButtonBorder;
+	private JButton addButton, delButton, okButton, cancelButton, undoButton, pictureButton, pictureDelButton;
 
 	private JTable numberTable;
 
@@ -165,22 +167,29 @@ public class PersonPanel extends JPanel implements ActionListener,
 		c.gridy = 0;
 		c.gridwidth = 2;
 		c.insets.bottom= 10;
-		pictureButton = new JButton();
+		pictureButton = new JButton(Main.getMessage("picture_set"));
 		pictureButton.addActionListener(this);
 		pictureButton.setActionCommand("setPicture"); //$NON-NLS-1$
-		pictureButton.setToolTipText("Click to set image"); //$NON-NLS-1$
-		pictureButton.setBorder(null);
+		pictureButton.setToolTipText(Main.getMessage("picture_set_desc")); //$NON-NLS-1$
+		pictureButtonSize = pictureButton.getSize();
+		pictureButtonBorder = pictureButton.getBorder();
 		configPanel.add(pictureButton, c);
+
+		c.gridy = 1;
+		pictureDelButton = new JButton(Main.getMessage("picture_remove"));
+		pictureDelButton.addActionListener(this);
+		pictureDelButton.setActionCommand("delPicture");
+		pictureDelButton.setToolTipText(Main.getMessage("picture_remove_desc"));
+		configPanel.add(pictureDelButton, c);
 
 		c.insets.bottom= 1;
 		c.gridwidth = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
-		c.gridy = 1;
+		c.gridy++;
 		JLabel label = new JLabel(Main.getMessage("private_entry") + ": "); //$NON-NLS-1$,   //$NON-NLS-2$
 		configPanel.add(label, c);
 		c.gridx = 1;
-		c.gridy = 1;
 		chkBoxPrivateEntry = new JCheckBox();
 		ChangeListener changeListener = new ChangeListener() {
 			public void stateChanged(ChangeEvent changeEvent) {
@@ -192,72 +201,65 @@ public class PersonPanel extends JPanel implements ActionListener,
 		configPanel.add(chkBoxPrivateEntry, c);
 
 		c.gridx = 0;
-		c.gridy = 2;
+		c.gridy++;
 		label = new JLabel(Main.getMessage("firstName") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		configPanel.add(label,c );
 		c.gridx = 1;
-		c.gridy = 2;
 		tfFirstName = new JTextField(25);
 		tfFirstName.setMinimumSize(new Dimension(150, 25));
 		tfFirstName.addCaretListener(this);
 		configPanel.add(tfFirstName, c);
 
 		c.gridx = 0;
-		c.gridy = 3;
+		c.gridy++;
 		label = new JLabel(Main.getMessage("lastName") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		configPanel.add(label, c);
 		c.gridx = 1;
-		c.gridy = 3;
 		tfLastName = new JTextField();
 		tfLastName.addCaretListener(this);
 		configPanel.add(tfLastName, c);
 
 		c.gridx = 0;
-		c.gridy = 4;
+		c.gridy++;
 		label = new JLabel(Main.getMessage("company") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		configPanel.add(label, c);
 		c.gridx = 1;
-		c.gridy = 4;
 		tfCompany = new JTextField();
 		tfCompany.addCaretListener(this);
 		configPanel.add(tfCompany, c);
 
 		c.gridx = 0;
-		c.gridy = 5;
+		c.gridy++;
 		label = new JLabel(Main.getMessage("street") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		configPanel.add(label, c);
 		c.gridx = 1;
-		c.gridy = 5;
 		tfStreet = new JTextField();
 		tfStreet.addCaretListener(this);
 		configPanel.add(tfStreet, c);
 
 		c.gridx = 0;
-		c.gridy = 6;
+		c.gridy++;
 		label = new JLabel(Main.getMessage("postalCode") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		configPanel.add(label, c);
 		c.gridx = 1;
-		c.gridy = 6;
 		tfPostalCode = new JTextField();
 		tfPostalCode.addCaretListener(this);
 		configPanel.add(tfPostalCode, c);
 
 		c.gridx = 0;
-		c.gridy = 7;
+		c.gridy++;
 		label = new JLabel(Main.getMessage("city") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		configPanel.add(label, c);
 		c.gridx = 1;
-		c.gridy = 7;
 		tfCity = new JTextField();
 		tfCity.addCaretListener(this);
 		configPanel.add(tfCity, c);
 
 		c.gridx = 0;
-		c.gridy = 8;
+		c.gridy++;
 		label = new JLabel(Main.getMessage("emailAddress") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		configPanel.add(label, c);
 		c.gridx = 1;
-		c.gridy = 8;
 		tfEmail = new JTextField();
 		tfEmail.addCaretListener(this);
 		configPanel.add(tfEmail, c);
@@ -402,6 +404,11 @@ public class PersonPanel extends JPanel implements ActionListener,
 			hasChanged = true;
 			firePropertyChange();
 			updateGUI();
+		} else if (e.getActionCommand().equals("delPicture")) { //$NON-NLS-1$
+			clonedPerson.setPictureUrl("");
+			hasChanged = true;
+			firePropertyChange();
+			updateGUI();
 		} else if (e.getActionCommand().equals("add")) { //$NON-NLS-1$
 			clonedPerson.getNumbers().add(new PhoneNumber("", false)); //$NON-NLS-1$
 			typeModel.setTypes();
@@ -499,39 +506,55 @@ public class PersonPanel extends JPanel implements ActionListener,
 		scaleHeight = (int)screen.getHeight() / 5;
 		scaleWidth = (scaleHeight / 4) * 3;
 		ImageIcon pictureIcon;
+		pictureButton.setText("");
 		if (clonedPerson.getPictureUrl().equals("")) //$NON-NLS-1$
 		{
-			pictureIcon = new ImageIcon(JFritzUtils.getFullPath(JFritzUtils.FILESEP + "pictures") + JFritzUtils.FILESEP + "NoPic.jpg"); //$NON-NLS-1$
+			pictureIcon = null;
 		} else {
 			pictureIcon = new ImageIcon(clonedPerson.getPictureUrl());
 		}
 
 		// if we don't find the image, display the default one
-		if (pictureIcon.getIconWidth() == -1 || pictureIcon.getIconHeight() == -1)
+		if (pictureIcon != null
+				&& (pictureIcon.getIconWidth() == -1 || pictureIcon.getIconHeight() == -1))
 		{
-			pictureIcon = new ImageIcon(JFritzUtils.getFullPath(JFritzUtils.FILESEP + "pictures") + JFritzUtils.FILESEP + "NoPic.jpg"); //$NON-NLS-1$
+			pictureIcon = null;
 		}
-		float pictureWidthFactor = (float)pictureIcon.getIconWidth() / (float)scaleWidth;
-		float pictureHeightFactor = (float)pictureIcon.getIconHeight() / (float)scaleHeight;
 
-		int scaleToWidth = 0;
-		int scaleToHeight = 0;
-		if ( pictureWidthFactor > pictureHeightFactor )
+		if (pictureIcon != null)
 		{
-			scaleToWidth = (int)((float)pictureIcon.getIconWidth() / pictureWidthFactor);
-			scaleToHeight = (int)((float)pictureIcon.getIconHeight() / pictureWidthFactor);
+			float pictureWidthFactor = (float)pictureIcon.getIconWidth() / (float)scaleWidth;
+			float pictureHeightFactor = (float)pictureIcon.getIconHeight() / (float)scaleHeight;
+
+			int scaleToWidth = 0;
+			int scaleToHeight = 0;
+			if ( pictureWidthFactor > pictureHeightFactor )
+			{
+				scaleToWidth = (int)((float)pictureIcon.getIconWidth() / pictureWidthFactor);
+				scaleToHeight = (int)((float)pictureIcon.getIconHeight() / pictureWidthFactor);
+			}
+			else
+			{
+				scaleToWidth = (int)((float)pictureIcon.getIconWidth() / pictureHeightFactor);
+				scaleToHeight = (int)((float)pictureIcon.getIconHeight() / pictureHeightFactor);
+			}
+
+			Image scaledImage = pictureIcon.getImage().getScaledInstance(scaleToWidth, scaleToHeight, Image.SCALE_SMOOTH);
+
+			pictureIcon.setImage(scaledImage);
+			pictureButton.setBorder(null);
+			pictureButton.setSize(pictureIcon.getIconWidth(),pictureIcon.getIconHeight());
+			pictureButton.setIcon(pictureIcon);
+			pictureDelButton.setVisible(true);
 		}
 		else
 		{
-			scaleToWidth = (int)((float)pictureIcon.getIconWidth() / pictureHeightFactor);
-			scaleToHeight = (int)((float)pictureIcon.getIconHeight() / pictureHeightFactor);
+			pictureButton.setText(Main.getMessage("picture_set"));
+			pictureButton.setIcon(null);
+			pictureButton.setBorder(pictureButtonBorder);
+			pictureButton.setSize(pictureButtonSize);
+			pictureDelButton.setVisible(false);
 		}
-
-		Image scaledImage = pictureIcon.getImage().getScaledInstance(scaleToWidth, scaleToHeight, Image.SCALE_SMOOTH);
-
-		pictureIcon.setImage(scaledImage);
-		pictureButton.setSize(pictureIcon.getIconWidth(),pictureIcon.getIconHeight());
-		pictureButton.setIcon(pictureIcon);
 
 		chkBoxPrivateEntry.setSelected(clonedPerson.isPrivateEntry());
 		tfFirstName.setText(clonedPerson.getFirstName());
