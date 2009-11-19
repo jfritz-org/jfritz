@@ -29,44 +29,6 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  */
 public class FritzBoxFirmware {
 
-	public final static byte BOXTYPE_FRITZBOX_FON = 6;
-
-	public final static byte BOXTYPE_FRITZBOX_FON_WLAN = 8;
-
-	public final static byte BOXTYPE_FRITZBOX_ATA = 11;
-
-	public final static byte BOXTYPE_FRITZBOX_5010 = 23;
-
-	public final static byte BOXTYPE_FRITZBOX_5012 = 25;
-
-	public final static byte BOXTYPE_FRITZBOX_5050 = 12;
-
-	public final static byte BOXTYPE_FRITZBOX_7050 = 14;
-
-	public final static byte BOXTYPE_EUMEX_300 = 15;
-
-	public final static byte BOXTYPE_FRITZBOX_SPEEDPORT_W501V = 28;
-
-	public final static byte BOXTYPE_FRITZBOX_7170 = 29;
-
-	public final static byte BOXTYPE_FRITZBOX_7140 = 30;
-
-	public final static byte BOXTYPE_FRITZBOX_7140_ANNEX_A = 39;
-
-	public final static byte BOXTYPE_FRITZBOX_SPEEDPORT_W900V = 34;
-
-	public final static byte BOXTYPE_FRITZBOX_7141 = 40;
-
-	public final static byte BOXTYPE_FRITZBOX_5140 = 43;
-
-	public final static byte BOXTYPE_FRITZBOX_7270 = 54;
-
-	public final static byte BOXTYPE_FRITZBOX_7113 = 60;
-
-	public final static byte BOXTYPE_FRITZBOX_7240 = 73;
-
-	public final static byte BOXTYPE_FRITZBOX_7570 = 75;
-
 	public final static byte ACCESS_METHOD_POST_0342 = 0;
 
 	public final static byte ACCESS_METHOD_ENGLISH = 1;
@@ -394,6 +356,8 @@ public class FritzBoxFirmware {
 			return "FRITZ!Box 7240"; //$NON-NLS-1$
 		case 75:
 			return "FRITZ!Box 7570"; //$NON-NLS-1$
+		case 87:
+			return "FRITZ!Box 7112"; //$NON-NLS-1$
 		default:
 			return Main.getMessage("unknown"); //$NON-NLS-1$
 		}

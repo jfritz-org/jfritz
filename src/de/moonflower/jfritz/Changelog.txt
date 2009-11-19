@@ -14,6 +14,7 @@ JFritz 0.7.3.29:
 - Bugfix [0000272]: Führende Null bei der Wählhilfe störend
 - Build.xml und Build-Release.xml überarbeitet und neu strukturiert.
 - FritzBox-Klasse: Vorbereitung für Remote-Abfrage per https.
+- Support für 7112.
 New Strings:
 edit_entry
 picture_remove_desc
