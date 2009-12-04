@@ -4,6 +4,7 @@ TODO: charset aus VCard auslesen und verwenden
 
 JFritz 0.7.3.29:
 - Neu: Es können nun mehr Informationen eines Anrufs über das Kontextmenü in die Zwischenablage kopiert werden. 
+- Neu: Unterstützung für FRITZ!Box 7112.
 - Bugfix: Falsche Anzeige bei den Filterbuttons, wenn man mit der Maus drüberfährt.
 - Bugfix: Wählhilfe wieder sichtbar, wenn Tabs Quickdial oder Überwachung ausgewählt waren.
 - Bugfix [0000086]: Start des Telefonbuchs immer im Edit-Modus. 
@@ -12,9 +13,8 @@ JFritz 0.7.3.29:
 - Bugfix [0000267]: Kommandozeilenparameter -h oder --h 
 - Bugfix [0000269]: Kommandozeilenparameter nimmt alles an ohne fehler 
 - Bugfix [0000272]: Führende Null bei der Wählhilfe störend
-- Build.xml und Build-Release.xml überarbeitet und neu strukturiert.
-- FritzBox-Klasse: Vorbereitung für Remote-Abfrage per https.
-- Support für 7112.
+- Änderung: Build.xml und Build-Release.xml überarbeitet und neu strukturiert.
+- Änderung: FritzBox-Klasse, Vorbereitung für Remote-Abfrage per https.
 New Strings:
 edit_entry
 picture_remove_desc

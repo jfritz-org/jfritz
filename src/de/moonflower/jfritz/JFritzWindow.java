@@ -918,7 +918,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		JOptionPane.showMessageDialog(this, Main.PROGRAM_NAME + " v" //$NON-NLS-1$
 				+ Main.PROGRAM_VERSION + "\n" //$NON-NLS-1$
 				+ JFritzUtils.getVersionFromCVSTag(Main.CVS_TAG) + "\n" //$NON-NLS-1$
-				+ "(c) 2005-2009 by " + Main.JFRITZ_PROJECT + "\n" //$NON-NLS-1$,  //$NON-NLS-2$
+				+ "(c) 2005-2010 by " + Main.JFRITZ_PROJECT + "\n" //$NON-NLS-1$,  //$NON-NLS-2$
 				+ Main.PROGRAM_URL + "\n\n" 							//$NON-NLS-1$
 				+ "Project-Admin: " + Main.PROJECT_ADMIN + "\n"		//$NON-NLS-1$
 				+ "Project-Initiator: " + "Arno Willig <akw@thinkwiki.org>" //$NON-NLS-1$
@@ -1176,7 +1176,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				}
 			}
 			if (numbers.size() == 0) {
-				numbers.add(new PhoneNumber("0", false, false));
+				numbers.add(new PhoneNumber("", false, false));
 			}
 			CallDialog p = new CallDialog(numbers, numbers.get(0));
 			p.setVisible(true);

@@ -356,6 +356,8 @@ public class FritzBoxFirmware {
 			return "FRITZ!Box 7240"; //$NON-NLS-1$
 		case 75:
 			return "FRITZ!Box 7570"; //$NON-NLS-1$
+		case 84:
+			return "FRITZ!Box 7390"; //$NON-NLS-1$
 		case 87:
 			return "FRITZ!Box 7112"; //$NON-NLS-1$
 		default:
