@@ -23,7 +23,7 @@ import de.moonflower.jfritz.utils.Debug;
 public class ReverseLookupXMLHandler extends DefaultHandler{
 
 	String chars, url, name, prefix, country_code, pname, pstreet, pcity, pzipcode,
-		   pfirst, plast, firstOccurance, swapFirstAndLastName;
+		   pfirst, plast, firstOccurance, swapFirstAndLastName, pstartline, pendline;
 
 	Vector<ReverseLookupSite> rls_list;
 
@@ -75,6 +75,8 @@ public class ReverseLookupXMLHandler extends DefaultHandler{
 			pzipcode = "";
 			pfirst = "";
 			plast = "";
+			pstartline = "";
+			pendline = "";
 		}
 
 		//process all attributes
@@ -125,19 +127,24 @@ public class ReverseLookupXMLHandler extends DefaultHandler{
 			pname = chars;
 		} else if (qName.equals("street")) { //$NON-NLS-1$
 			pstreet = chars;
-		}else if(qName.equals("city")){
+		} else if(qName.equals("city")){
 			pcity = chars;
-		}else if(qName.equals("zipcode")){
+		} else if(qName.equals("zipcode")){
 			pzipcode = chars;
-		}else if(qName.equals("firstname")){
+		} else if(qName.equals("firstname")){
 			pfirst = chars;
-		}else if(qName.equals("lastname")){
+		} else if(qName.equals("lastname")){
 			plast = chars;
+		} else if (qName.equals("startline")){
+			pstartline = chars;
+		} else if (qName.equals("endline")){
+			pendline = chars;
 		} else if (qName.equals("entry")) { //$NON-NLS-1$
 
 			//add the patterns to the new object
 			rls_list.get(rls_count).addEntry(firstOccurance,
-					pname, pstreet, pcity, pzipcode, pfirst, plast, swapFirstAndLastName);
+					pname, pstreet, pcity, pzipcode, pfirst, plast, swapFirstAndLastName,
+					pstartline, pendline);
 //			Debug.msg("adding patterns for: "+name);
 //			Debug.msg("Pattern name: "+ pname);
 //			Debug.msg("Pattern street: "+ pstreet);

@@ -353,7 +353,7 @@ public class ReverseLookup {
 			if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
 					|| e.getLocalizedMessage().startsWith(
 							"Invalid system identifier")) { //$NON-NLS-1$
-				Debug.error(e.toString());
+		 		Debug.error(e.toString());
 			}
 		} catch (IOException e) {
 			Debug.error("Could not read number/international/reverselookup.xml! No reverse lookup sites loaded!" + e.getMessage()); //$NON-NLS-1$,  //$NON-NLS-2$

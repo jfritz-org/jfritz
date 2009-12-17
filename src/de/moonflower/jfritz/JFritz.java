@@ -253,7 +253,6 @@ public final class JFritz implements  StatusListener {
 		phonebook = new PhoneBook(PHONEBOOK_FILE);
 		callerlist.setPhoneBook(phonebook);
 		phonebook.setCallerList(callerlist);
-
 		phonebook.loadFromXMLFile(Main.SAVE_DIR + PHONEBOOK_FILE);
 		callerlist.loadFromXMLFile(Main.SAVE_DIR + CALLS_FILE);
 

@@ -34,6 +34,8 @@ public class ReverseLookupSite {
 	public static final int LASTNAME = 5;
 	public static final int FIRSTOCCURANCE = 6;
 	public static final int SWAPFIRSTANDLASTNAME = 7;
+	public static final int STARTLINE = 8;
+	public static final int ENDLINE = 9;
 
 	//Site url, as will be used to process the reverse lookup
 	private String url;
@@ -59,8 +61,9 @@ public class ReverseLookupSite {
 
 	public void addEntry(final String firstOccurance,
 			final String name, final String street, final String city, final String zipcode,
-			final String firstName, final String lastName, final String swapFirstAndLastName){
-		String[] patterns = new String[8];
+			final String firstName, final String lastName, final String swapFirstAndLastName,
+			final String startline, final String endline){
+		String[] patterns = new String[10];
 		patterns[NAME] = name;
 		patterns[STREET] = street;
 		patterns[CITY] = city;
@@ -69,6 +72,8 @@ public class ReverseLookupSite {
 		patterns[LASTNAME] = lastName;
 		patterns[FIRSTOCCURANCE] = firstOccurance;
 		patterns[SWAPFIRSTANDLASTNAME] = swapFirstAndLastName;
+		patterns[STARTLINE] = startline;
+		patterns[ENDLINE] = endline;
 
 		entries.add(patterns);
 	}
@@ -101,5 +106,4 @@ public class ReverseLookupSite {
 	public int getAreaCodeLength(){
 		return areacodeLength;
 	}
-
 }

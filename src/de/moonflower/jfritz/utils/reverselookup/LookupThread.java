@@ -1,6 +1,7 @@
 package de.moonflower.jfritz.utils.reverselookup;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -28,6 +29,8 @@ public class LookupThread extends Thread {
 
 	private static final int dataLength = 30000;
 
+	private static final int spaceAlternative = 160; // hex: a0 = space like ascii character
+
 	private LookupRequest currentRequest;
 
 	private boolean threadSuspended, quit, terminate, terminated;
@@ -36,7 +39,7 @@ public class LookupThread extends Thread {
 
 	private static String nummer, urlstr, header,
 		charSet, str, prefix, firstname, company,
-		lastname, street, zipcode, city;
+		lastname, street, zipcode, city, startline, endline;
 
 	private static String[] data;
 
@@ -234,10 +237,10 @@ public class LookupThread extends Thread {
 
 						try {
 							con = url.openConnection();
-							// 5 Sekunden-Timeout für Verbindungsaufbau
-							//15 seconds for the response
-							con.setConnectTimeout(5000);
-							con.setReadTimeout(15000);
+							// 10 Sekunden-Timeout für Verbindungsaufbau
+							// 20 Sekunden-Timeout für die Antwort
+							con.setConnectTimeout(10000);
+							con.setReadTimeout(20000);
 							con.addRequestProperty("User-Agent", userAgent);
 							con.connect();
 							//process header
@@ -289,6 +292,33 @@ public class LookupThread extends Thread {
 									}
 							}
 							d.close();
+
+							// read reverse lookup response from file
+							if (false) {
+								String filename = "c://dastelefon.htm"; //$NON-NLS-1$
+								Debug.debug("Debug mode: Loading " + filename); //$NON-NLS-1$
+								data = new String[dataLength];
+								try {
+									String thisLine;
+									BufferedReader in = new BufferedReader(new FileReader(
+											filename));
+									lines = 0;
+									while ((thisLine = in.readLine()) != null) {
+										data[lines] = thisLine;
+										yield();
+										lines++;
+										if ( lines >= dataLength ) {
+											System.err.println("Result > " + dataLength + " Lines");
+											lines = dataLength;
+											break;
+										}
+									}
+									in.close();
+								} catch (IOException e) {
+									Debug.error("File not found: " + filename); //$NON-NLS-1$
+								}
+							}
+
 							Debug.info("Begin processing response from "+rls.getName());
 
 //							for (int aaa=0; aaa<dataLength; aaa++ )
@@ -304,12 +334,15 @@ public class LookupThread extends Thread {
 								yield();
 								//clear all the entries in case something got matched by mistake
 								firstname = ""; //$NON-NLS-1$
-								lastname = ""; //$NON-NLS-1$
-								company = ""; //$NON-NLS-1$
-								street = ""; //$NON-NLS-1$
-								zipcode = ""; //$NON-NLS-1$
-								city = "";	  //$NON-NLS-1$
+								lastname = "";  //$NON-NLS-1$
+								company = "";   //$NON-NLS-1$
+								street = "";    //$NON-NLS-1$
+								zipcode = "";   //$NON-NLS-1$
+								city = "";	    //$NON-NLS-1$
+								startline = ""; //$NON-NLS-1$
+								endline = "";   //$NON-NLS-1$
 								Person p = null;
+								boolean useStartLine = false;
 
 								patterns = rls.getEntry(j);
 								Pattern namePattern = null;
@@ -318,6 +351,8 @@ public class LookupThread extends Thread {
 								Pattern zipcodePattern = null;
 								Pattern firstnamePattern = null;
 								Pattern lastnamePattern = null;
+								Pattern startlinePattern = null;
+								Pattern endlinePattern = null;
 
 								Matcher nameMatcher = null;
 								Matcher streetMatcher = null;
@@ -325,6 +360,19 @@ public class LookupThread extends Thread {
 								Matcher zipcodeMatcher = null;
 								Matcher firstnameMatcher = null;
 								Matcher lastnameMatcher = null;
+								Matcher startlineMatcher = null;
+								Matcher endlineMatcher = null;
+
+								if (!patterns[ReverseLookupSite.STARTLINE].equals("")) {
+									Debug.debug("Startline detected");
+									startlinePattern = Pattern.compile(patterns[ReverseLookupSite.STARTLINE]);
+									useStartLine = true;
+								}
+								if (!patterns[ReverseLookupSite.STARTLINE].equals("")) {
+									Debug.debug("Endline detected");
+									endlinePattern = Pattern.compile(patterns[ReverseLookupSite.ENDLINE]);
+									useStartLine = true;
+								}
 
 								if (!patterns[ReverseLookupSite.NAME].equals("")
 										&& (patterns[ReverseLookupSite.FIRSTNAME].equals("")
@@ -360,263 +408,283 @@ public class LookupThread extends Thread {
 								}
 
 								Debug.debug("Parsing " + lines + " lines:");
-								for (int line=0; line<dataLength; line++)
+								boolean inParseArea = false;
+								for (int line=0; line<lines; line++)
 								{
 									if (data[line] != null)
 									{
-//										Debug.debug(data[line]);
-										int spaceAlternative = 160; // hex: a0 = space like ascii character
 										data[line] = data[line].replaceAll(new Character((char)spaceAlternative).toString(), " "); //$NON-NLS-1$
 
-										//match first name
-										if(firstnamePattern != null){
-											firstnameMatcher = firstnamePattern.matcher(data[line]);
-											if(firstnameMatcher.find()){
-
-												//read in and concate all groupings
-												str = "";
-												for(int k=1; k <= firstnameMatcher.groupCount(); k++){
-													if(firstnameMatcher.group(k) != null)
-														str = str + firstnameMatcher.group(k).trim() + " ";
+										if (useStartLine)
+										{
+											if (startlinePattern != null)
+											{
+												startlineMatcher = startlinePattern.matcher(data[line]);
+												if (startlineMatcher.find()) {
+													inParseArea = true;
 												}
-
-												firstname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(str));
-												firstname = firstname.trim();
-												firstname = firstname.replaceAll(",", "");
-												firstname = firstname.replaceAll("%20", " ");
-												firstname = JFritzUtils.replaceSpecialCharsUTF(firstname);
-												firstname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(firstname));
-												firstname = JFritzUtils.removeDuplicateWhitespace(firstname);
-
-												if ("firstname".equals(patterns[ReverseLookupSite.FIRSTOCCURANCE]))
-												{
-													p = new Person();
-													p.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
-													p.setLookupSite(rls.getName());
-													foundPersons.add(p);
-													Debug.debug("Creating new person: "+p.toDebugStr());
-												}
-												if (p != null)
-												{
-													p.setFirstName(firstname);
-													Debug.debug("Adding firstName to person: "+p.toDebugStr());
+											}
+											if (endlinePattern != null)
+											{
+												endlineMatcher = endlinePattern.matcher(data[line]);
+												if (endlineMatcher.find()) {
+													inParseArea = false;
 												}
 											}
 										}
-										yield();
-										//match last name
-										if(lastnamePattern != null){
-											lastnameMatcher = lastnamePattern.matcher(data[line]);
-											if(lastnameMatcher.find()){
 
-												//read in and concate all groupings
-												str = "";
-												for(int k=1; k <= lastnameMatcher.groupCount(); k++){
-													if(lastnameMatcher.group(k) != null)
-														str = str + lastnameMatcher.group(k).trim() + " ";
-												}
+										if (!useStartLine || (useStartLine && inParseArea))
+										{
+											//match first name
+											if(firstnamePattern != null){
+												firstnameMatcher = firstnamePattern.matcher(data[line]);
+												if(firstnameMatcher.find()){
 
-												lastname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(str));
-												lastname = lastname.trim();
-												lastname = lastname.replaceAll(",", "");
-												lastname = lastname.replaceAll("%20", " ");
-												lastname = JFritzUtils.replaceSpecialCharsUTF(lastname);
-												lastname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(lastname));
-												lastname = JFritzUtils.removeDuplicateWhitespace(lastname);
-
-												if ("lastname".equals(patterns[ReverseLookupSite.FIRSTOCCURANCE]))
-												{
-													p = new Person();
-													p.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
-													p.setLookupSite(rls.getName());
-													foundPersons.add(p);
-													Debug.debug("Creating new person: "+p.toDebugStr());
-												}
-												if (p != null)
-												{
-													p.setLastName(lastname);
-													Debug.debug("Adding lastname to person: " + p.toDebugStr());
-												}
-											}
-										}
-										yield();
-										//match name
-										if(namePattern != null){
-											nameMatcher = namePattern.matcher(data[line]);
-											if(nameMatcher.find()){
-
-												//read in and concate all groupings
-												str = "";
-												for(int k=1; k <= nameMatcher.groupCount(); k++){
-													if(nameMatcher.group(k) != null)
-														str = str + nameMatcher.group(k).trim() + " ";
-												}
-
-												String[] split;
-												split = str.split(" ", 2); //$NON-NLS-1$
-
-												lastname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(split[0]));
-												lastname = lastname.trim();
-												lastname = lastname.replaceAll(",", "");
-												lastname = lastname.replaceAll("%20", " ");
-												lastname = JFritzUtils.replaceSpecialCharsUTF(lastname);
-												lastname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(lastname));
-												lastname = JFritzUtils.removeDuplicateWhitespace(lastname);
-
-												if (split[1].length() > 0) {
-													firstname = HTMLUtil.stripEntities(split[1]); //$NON-NLS-1$
-													if ((firstname.indexOf("  ") > -1) //$NON-NLS-1$
-															&& (firstname.indexOf("  u.") == -1)) { //$NON-NLS-1$
-														company = JFritzUtils.removeLeadingSpaces(firstname.substring(
-																firstname.indexOf("  ")).trim()); //$NON-NLS-1$
-														firstname = JFritzUtils.removeLeadingSpaces(firstname.substring(0,
-																firstname.indexOf("  ")).trim()); //$NON-NLS-1$
-													} else {
-														firstname = JFritzUtils.removeLeadingSpaces(firstname.replaceAll("  u. ", //$NON-NLS-1$
-																" und ")); //$NON-NLS-1$
+													//read in and concate all groupings
+													str = "";
+													for(int k=1; k <= firstnameMatcher.groupCount(); k++){
+														if(firstnameMatcher.group(k) != null)
+															str = str + firstnameMatcher.group(k).trim() + " ";
 													}
-												}
 
-												firstname = firstname.replaceAll("%20", " ");
-												firstname = JFritzUtils.replaceSpecialCharsUTF(firstname);
-												firstname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(firstname));
-												firstname = JFritzUtils.removeDuplicateWhitespace(firstname);
-												firstname = firstname.trim();
+													firstname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(str));
+													firstname = firstname.trim();
+													firstname = firstname.replaceAll(",", "");
+													firstname = firstname.replaceAll("%20", " ");
+													firstname = JFritzUtils.replaceSpecialCharsUTF(firstname);
+													firstname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(firstname));
+													firstname = JFritzUtils.removeDuplicateWhitespace(firstname);
 
-												company = company.replaceAll("%20", " ");
-												company = JFritzUtils.replaceSpecialCharsUTF(company);
-												company = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(company));
-												company = JFritzUtils.removeDuplicateWhitespace(company);
-												company = company.trim();
-
-												if ("name".equals(patterns[ReverseLookupSite.FIRSTOCCURANCE]))
-												{
-													p = new Person();
-													if (company.length() > 0) {
-														p.addNumber(number.getIntNumber(), "business"); //$NON-NLS-1$
-													} else {
+													if ("firstname".equals(patterns[ReverseLookupSite.FIRSTOCCURANCE]))
+													{
+														p = new Person();
 														p.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
+														p.setLookupSite(rls.getName());
+														foundPersons.add(p);
+														Debug.debug("Creating new person: "+p.toDebugStr());
 													}
-													p.setLookupSite(rls.getName());
-													foundPersons.add(p);
-													Debug.debug("Creating new person: "+p.toDebugStr());
-												}
-
-												if (JFritzUtils.parseBoolean(patterns[ReverseLookupSite.SWAPFIRSTANDLASTNAME]))
-												{
-													// swap first and last name if necessary
-													String tmp = lastname;
-													lastname = firstname;
-													firstname = tmp;
-												}
-												if (p != null)
-												{
-													p.setFirstName(firstname);
-													p.setLastName(lastname);
-													p.setCompany(company);
-													Debug.debug("Adding firstName, lastName and company to person: "+p.toDebugStr());
+													if (p != null)
+													{
+														p.setFirstName(firstname);
+														Debug.debug("Adding firstName to person: "+p.toDebugStr());
+													}
 												}
 											}
-										}
-										yield();
-										//match street
-										if(streetPattern != null){
-											streetMatcher = streetPattern.matcher(data[line]);
-											if(streetMatcher.find()){
+											yield();
+											//match last name
+											if(lastnamePattern != null){
+												lastnameMatcher = lastnamePattern.matcher(data[line]);
+												if(lastnameMatcher.find()){
 
-												//read in and concate all groupings
-												str = "";
-												for(int k=1; k <= streetMatcher.groupCount(); k++){
-													if(streetMatcher.group(k) != null)
-														str = str + streetMatcher.group(k).trim() + " ";
-												}
-												street = str.replaceAll("%20", " ");
-												street = JFritzUtils.replaceSpecialCharsUTF(street);
-												street = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(street));
-												street = JFritzUtils.removeDuplicateWhitespace(street);
-												street = street.trim();
+													//read in and concate all groupings
+													str = "";
+													for(int k=1; k <= lastnameMatcher.groupCount(); k++){
+														if(lastnameMatcher.group(k) != null)
+															str = str + lastnameMatcher.group(k).trim() + " ";
+													}
 
-												if ("street".equals(patterns[ReverseLookupSite.FIRSTOCCURANCE]))
-												{
-													p = new Person();
-													p.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
-													p.setLookupSite(rls.getName());
-													foundPersons.add(p);
-													Debug.debug("Creating new person: "+p.toDebugStr());
-												}
+													lastname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(str));
+													lastname = lastname.trim();
+													lastname = lastname.replaceAll(",", "");
+													lastname = lastname.replaceAll("%20", " ");
+													lastname = JFritzUtils.replaceSpecialCharsUTF(lastname);
+													lastname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(lastname));
+													lastname = JFritzUtils.removeDuplicateWhitespace(lastname);
 
-												if (p != null)
-												{
-													p.setStreet(street);
-													Debug.debug("Adding street to person: "+p.toDebugStr());
-												}
-											}
-										}
-										yield();
-										//match city
-										if(cityPattern != null){
-											cityMatcher = cityPattern.matcher(data[line]);
-											if(cityMatcher.find()){
-
-												//read in and concate all groupings
-												str = "";
-												for(int k=1; k <= cityMatcher.groupCount(); k++){
-													if(cityMatcher.group(k) != null)
-														str = str + cityMatcher.group(k).trim() + " ";
-												}
-												city = str.replaceAll("%20", " ");
-												city = JFritzUtils.replaceSpecialCharsUTF(city);
-												city = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(city));
-												city = JFritzUtils.removeDuplicateWhitespace(city);
-												city = city.trim();
-
-												if ("city".equals(patterns[ReverseLookupSite.FIRSTOCCURANCE]))
-												{
-													p = new Person();
-													p.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
-													p.setLookupSite(rls.getName());
-													foundPersons.add(p);
-													Debug.debug("Creating new person: "+p.toDebugStr());
-												}
-
-												if (p != null)
-												{
-													p.setCity(city);
-													Debug.debug("Adding city to person: "+p.toDebugStr());
+													if ("lastname".equals(patterns[ReverseLookupSite.FIRSTOCCURANCE]))
+													{
+														p = new Person();
+														p.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
+														p.setLookupSite(rls.getName());
+														foundPersons.add(p);
+														Debug.debug("Creating new person: "+p.toDebugStr());
+													}
+													if (p != null)
+													{
+														p.setLastName(lastname);
+														Debug.debug("Adding lastname to person: " + p.toDebugStr());
+													}
 												}
 											}
-										}
+											yield();
+											//match name
+											if(namePattern != null){
+												nameMatcher = namePattern.matcher(data[line]);
+												if(nameMatcher.find()){
 
-										yield();
-										//match zip code
-										if(zipcodePattern != null){
-											zipcodeMatcher = zipcodePattern.matcher(data[line]);
-											if(zipcodeMatcher.find()){
+													//read in and concate all groupings
+													str = "";
+													for(int k=1; k <= nameMatcher.groupCount(); k++){
+														if(nameMatcher.group(k) != null)
+															str = str + nameMatcher.group(k).trim() + " ";
+													}
 
-												//read in and concate all groupings
-												str = "";
-												for(int k=1; k <= zipcodeMatcher.groupCount(); k++){
-													if(zipcodeMatcher.group(k) != null)
-														str = str + zipcodeMatcher.group(k).trim() + " ";
+													String[] split;
+													split = str.split(" ", 2); //$NON-NLS-1$
+
+													lastname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(split[0]));
+													lastname = lastname.trim();
+													lastname = lastname.replaceAll(",", "");
+													lastname = lastname.replaceAll("%20", " ");
+													lastname = JFritzUtils.replaceSpecialCharsUTF(lastname);
+													lastname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(lastname));
+													lastname = JFritzUtils.removeDuplicateWhitespace(lastname);
+
+													if (split[1].length() > 0) {
+														firstname = HTMLUtil.stripEntities(split[1]); //$NON-NLS-1$
+														if ((firstname.indexOf("  ") > -1) //$NON-NLS-1$
+																&& (firstname.indexOf("  u.") == -1)) { //$NON-NLS-1$
+															company = JFritzUtils.removeLeadingSpaces(firstname.substring(
+																	firstname.indexOf("  ")).trim()); //$NON-NLS-1$
+															firstname = JFritzUtils.removeLeadingSpaces(firstname.substring(0,
+																	firstname.indexOf("  ")).trim()); //$NON-NLS-1$
+														} else {
+															firstname = JFritzUtils.removeLeadingSpaces(firstname.replaceAll("  u. ", //$NON-NLS-1$
+																	" und ")); //$NON-NLS-1$
+														}
+													}
+
+													firstname = firstname.replaceAll("%20", " ");
+													firstname = JFritzUtils.replaceSpecialCharsUTF(firstname);
+													firstname = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(firstname));
+													firstname = JFritzUtils.removeDuplicateWhitespace(firstname);
+													firstname = firstname.trim();
+
+													company = company.replaceAll("%20", " ");
+													company = JFritzUtils.replaceSpecialCharsUTF(company);
+													company = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(company));
+													company = JFritzUtils.removeDuplicateWhitespace(company);
+													company = company.trim();
+
+													if ("name".equals(patterns[ReverseLookupSite.FIRSTOCCURANCE]))
+													{
+														p = new Person();
+														if (company.length() > 0) {
+															p.addNumber(number.getIntNumber(), "business"); //$NON-NLS-1$
+														} else {
+															p.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
+														}
+														p.setLookupSite(rls.getName());
+														foundPersons.add(p);
+														Debug.debug("Creating new person: "+p.toDebugStr());
+													}
+
+													if (JFritzUtils.parseBoolean(patterns[ReverseLookupSite.SWAPFIRSTANDLASTNAME]))
+													{
+														// swap first and last name if necessary
+														String tmp = lastname;
+														lastname = firstname;
+														firstname = tmp;
+													}
+													if (p != null)
+													{
+														p.setFirstName(firstname);
+														p.setLastName(lastname);
+														p.setCompany(company);
+														Debug.debug("Adding firstName, lastName and company to person: "+p.toDebugStr());
+													}
 												}
-												zipcode = str.replaceAll("%20", " ");
-												zipcode = JFritzUtils.replaceSpecialCharsUTF(zipcode);
-												zipcode = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(zipcode));
-												zipcode = JFritzUtils.removeDuplicateWhitespace(zipcode);
-												zipcode = zipcode.trim();
+											}
+											yield();
+											//match street
+											if(streetPattern != null){
+												streetMatcher = streetPattern.matcher(data[line]);
+												if(streetMatcher.find()){
 
-												if ("zipcode".equals(patterns[ReverseLookupSite.FIRSTOCCURANCE]))
-												{
-													p = new Person();
-													p.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
-													p.setLookupSite(rls.getName());
-													foundPersons.add(p);
-													Debug.debug("Creating new person: "+p.toDebugStr());
+													//read in and concate all groupings
+													str = "";
+													for(int k=1; k <= streetMatcher.groupCount(); k++){
+														if(streetMatcher.group(k) != null)
+															str = str + streetMatcher.group(k).trim() + " ";
+													}
+													street = str.replaceAll("%20", " ");
+													street = JFritzUtils.replaceSpecialCharsUTF(street);
+													street = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(street));
+													street = JFritzUtils.removeDuplicateWhitespace(street);
+													street = street.trim();
+
+													if ("street".equals(patterns[ReverseLookupSite.FIRSTOCCURANCE]))
+													{
+														p = new Person();
+														p.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
+														p.setLookupSite(rls.getName());
+														foundPersons.add(p);
+														Debug.debug("Creating new person: "+p.toDebugStr());
+													}
+
+													if (p != null)
+													{
+														p.setStreet(street);
+														Debug.debug("Adding street to person: "+p.toDebugStr());
+													}
 												}
-												if (p != null)
-												{
-													p.setPostalCode(zipcode);
-													Debug.debug("Adding zip-Code to person: "+p.toDebugStr());
+											}
+											yield();
+											//match city
+											if(cityPattern != null){
+												cityMatcher = cityPattern.matcher(data[line]);
+												if(cityMatcher.find()){
+
+													//read in and concate all groupings
+													str = "";
+													for(int k=1; k <= cityMatcher.groupCount(); k++){
+														if(cityMatcher.group(k) != null)
+															str = str + cityMatcher.group(k).trim() + " ";
+													}
+													city = str.replaceAll("%20", " ");
+													city = JFritzUtils.replaceSpecialCharsUTF(city);
+													city = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(city));
+													city = JFritzUtils.removeDuplicateWhitespace(city);
+													city = city.trim();
+
+													if ("city".equals(patterns[ReverseLookupSite.FIRSTOCCURANCE]))
+													{
+														p = new Person();
+														p.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
+														p.setLookupSite(rls.getName());
+														foundPersons.add(p);
+														Debug.debug("Creating new person: "+p.toDebugStr());
+													}
+
+													if (p != null)
+													{
+														p.setCity(city);
+														Debug.debug("Adding city to person: "+p.toDebugStr());
+													}
+												}
+											}
+
+											yield();
+											//match zip code
+											if(zipcodePattern != null){
+												zipcodeMatcher = zipcodePattern.matcher(data[line]);
+												if(zipcodeMatcher.find()){
+
+													//read in and concate all groupings
+													str = "";
+													for(int k=1; k <= zipcodeMatcher.groupCount(); k++){
+														if(zipcodeMatcher.group(k) != null)
+															str = str + zipcodeMatcher.group(k).trim() + " ";
+													}
+													zipcode = str.replaceAll("%20", " ");
+													zipcode = JFritzUtils.replaceSpecialCharsUTF(zipcode);
+													zipcode = JFritzUtils.removeLeadingSpaces(HTMLUtil.stripEntities(zipcode));
+													zipcode = JFritzUtils.removeDuplicateWhitespace(zipcode);
+													zipcode = zipcode.trim();
+
+													if ("zipcode".equals(patterns[ReverseLookupSite.FIRSTOCCURANCE]))
+													{
+														p = new Person();
+														p.addNumber(number.getIntNumber(), "home"); //$NON-NLS-1$
+														p.setLookupSite(rls.getName());
+														foundPersons.add(p);
+														Debug.debug("Creating new person: "+p.toDebugStr());
+													}
+													if (p != null)
+													{
+														p.setPostalCode(zipcode);
+														Debug.debug("Adding zip-Code to person: "+p.toDebugStr());
+													}
 												}
 											}
 										}
@@ -653,11 +721,15 @@ public class LookupThread extends Thread {
 
 					} catch (IOException e1) {
 						Debug.error("Error while retrieving " + urlstr); //$NON-NLS-1$
-						}
+					} catch (Exception e) {
+						Debug.error("Exception in reverselookup"); //$NON-NLS-1$
+					}
 					}
 				} catch (MalformedURLException e) {
 					Debug.error("URL invalid: " + urlstr); //$NON-NLS-1$
-				}
+				} catch (Exception e) {
+				    Debug.error("Exception in reverselookup 2"); //$NON-NLS-1$
+			    }
 
 			} // done iterating over all the loaded web sites
 			yield();

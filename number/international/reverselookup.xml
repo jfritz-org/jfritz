@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 
 <!-- reverselookup.xml revision 1.03 from 20, Jun 2008
 
@@ -23,7 +23,7 @@
    	    	 
 -->
 
-<reverselookup version="1.01">
+<reverselookup version="1.02">
 	<country code="+1">
 		<website name="whitepages.com" url="http://www.whitepages.com/search/ReversePhone?phone=$NUMBER" prefix="1">
 			<entry firstOccurance="firstname">
@@ -866,7 +866,7 @@
 	<country code="+47">
 		<website name="gulesider.no" url="http://www.gulesider.no/gs/categoryList.c?q=$NUMBER" prefix="">
 			<entry>
-				<name swapFirstAndLastName="true">&lt;h2 class=&quot;name&quot;&gt;\s*&lt;a href=&quot;[^&quot;]*&quot;\s*title=&quot;[^&quot;]*&quot;&gt;\s*([- \w]*)\s*?&lt;span&gt;</name>
+				<name swapFirstAndLastName="true">title=&quot;(.*) - Personlig infoside&quot;&gt;</name>
 				<street>&lt;p class=&quot;[^&quot;]*&quot;&gt;\s*([ \w]*),\s*\d+ \w+\s*&lt;/p&gt;</street>
 				<city>&lt;p class=&quot;[^&quot;]*&quot;&gt;\s*[ \w]*,\s*\d+ (\w+)\s*&lt;/p&gt;</city>
 				<zipcode>&lt;p class=&quot;[^&quot;]*&quot;&gt;\s*[ \w]*,\s*(\d+) \w+\s*&lt;/p&gt;</zipcode>
@@ -886,7 +886,9 @@
 	<country code="+49">
 		<website name="www.dasoertliche.de" url="http://dasoertliche.de/Controller?form_name=search_inv&amp;ph=$NUMBER" prefix="0">
 			<entry firstOccurance="zipcode">
-				<name>\sna: &quot;([^&quot;]*)&quot;,</name>
+			<startline>&lt;h2&gt;A - Z Trefferliste&lt;/h2&gt;</startline>
+			<endline>&lt;div&gt;Treffer&amp;nbsp;[^&amp;]&amp;nbsp;von</endline>
+			<name>\sna: &quot;([^&quot;]*)&quot;,</name>
 				<street>\sst: &quot;([^&quot;]*)&quot;,</street>
 				<city>\sci: &quot;([^&quot;]*)&quot;,</city>
 				<zipcode>\spc: &quot;([^&quot;]*)&quot;,</zipcode>
@@ -906,6 +908,8 @@
 		</website>
 		<website name="www.dastelefonbuch.de" url="http://www3.dastelefonbuch.de/?la=de&amp;kw=$NUMBER&amp;cmd=detail&amp;recSelected=0" prefix="0">
 			<entry>
+				<startline>&lt;!-- Treffer Eintraege --&gt;</startline>
+				<endline>&lt;!-- \\*\\*\\*\\*\\*\\* Ende Treffer Einträge \\*\\*\\*\\*\\*\\* --&gt;</endline>				
 				<name>&lt;div id=&quot;detail-hl&quot;&gt;&lt;h2&gt;([^&lt;]*)&lt;/h2&gt;</name>
 				<street>&lt;div class=&quot;addr&quot; title=&quot;Adresse&quot;&gt;\s*?&lt;div&gt;.*?&lt;/div&gt;\s*?&lt;div&gt;\s*?([^&lt;]*)&lt;br /&gt;\d{5}&amp;nbsp;[^&lt;]*&lt;br /&gt;&lt;/div&gt;\s*?&lt;/div&gt;</street>
 				<city>&lt;div class=&quot;addr&quot; title=&quot;Adresse&quot;&gt;\s*?&lt;div&gt;.*?&lt;/div&gt;\s*?&lt;div&gt;\s*?[^&lt;]*&lt;br /&gt;\d{5}&amp;nbsp;([^&lt;]*)&lt;br /&gt;&lt;/div&gt;\s*?&lt;/div&gt;</city>
@@ -914,6 +918,8 @@
 		</website>
 		<website name="www.dastelefonbuch.de" url="http://www.dastelefonbuch.de/?sourceid=Mozilla-search&amp;cmd=search&amp;kw=$NUMBER" prefix="0">
 			<entry>
+				<startline>&lt;!-- Treffer Eintraege --&gt;</startline>
+				<endline>&lt;!-- \\*\\*\\*\\*\\*\\* Ende Treffer Einträge \\*\\*\\*\\*\\*\\* --&gt;</endline>				
 				<name>&lt;div class=&quot;(?:short|long)&quot;&gt;(?:&lt;b&gt;)?&lt;a href=[^&gt;]*&gt;([^&lt;]*)&lt;</name>
 				<street>&lt;td\sclass=&quot;col2&quot;(?: onclick=&quot;[^&quot;]*&quot;)?&gt;([^&lt;]*)&lt;</street>
 				<city>&lt;td class=&quot;col3&quot;(?: onclick=&quot;[^&quot;]*&quot;)?&gt;\d{5}&amp;nbsp;([^&lt;]*)&lt;</city>

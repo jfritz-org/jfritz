@@ -71,11 +71,6 @@ public class ReverseLookupTest extends TestCase {
 		CheckEntry entry;
 		PhoneNumber checkNum;
 
-		checkNum = new PhoneNumber("+4793895329", false);
-		entry = new CheckEntry(checkNum, "Inger", "Andresen", "Bjarne Ness veg 25", "7033", "Trondheim");
-		ReverseLookup.lookup(checkNum, entry, true);
-		testNorwayFailed = checkEntry(entry, testNorwayFailed);
-
 		checkNum = new PhoneNumber("+4773505023", false);
 		entry = new CheckEntry(checkNum, "Florentin", "Moser", "- Schiötzvei 5", "7020", "Trondheim");
 		ReverseLookup.lookup(checkNum, entry, true);
@@ -303,7 +298,7 @@ public class ReverseLookupTest extends TestCase {
 		testGermanyFailed = checkEntry(entry, testGermanyFailed);
 
 		checkNum = new PhoneNumber("+498104889820", false);
-		entry = new CheckEntry(checkNum, "O. Dr.med.", "Then", "", "", "Sauerlach");
+		entry = new CheckEntry(checkNum, "O. Dr.med.", "Then", "Bahnhofplatz 7", "82054", "Sauerlach");
 		ReverseLookup.lookup(checkNum,  entry, true);
 		testGermanyFailed = checkEntry(entry, testGermanyFailed);
 

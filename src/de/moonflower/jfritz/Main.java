@@ -191,13 +191,13 @@ public class Main implements LookupObserver {
 	// when changing this, don't forget to check the resource bundles!!
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.3.29"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.3.30"; //$NON-NLS-1$
 
 	public final static String PROGRAM_SECRET = "jFrItZsEcReT"; //$NON-NLS-1$
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 78 2009-10-28 18:31:24Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 89 2009-12-17 11:37:47Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -1056,7 +1056,7 @@ public class Main implements LookupObserver {
 		defProps.setProperty("backup.path", ".");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("box.address", "192.168.178.1");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("box.mac", "");//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("box.password", Encryption.encrypt(""));//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("box.password", "121-203-238-10-54-180-181-42");//$NON-NLS-1$, //$NON-NLS-2$ // empty string as default PW
 		defProps.setProperty("box.port", "80");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("clients.port", "4455");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("country.code", "+49");//$NON-NLS-1$, //$NON-NLS-2$
