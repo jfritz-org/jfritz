@@ -30,22 +30,7 @@ import java.util.Vector;
  * @author Robert Palmer
  *
  */
-public class DownloadFilesThread extends Thread {
-
-	private final static String threadName = "(DownloadFilesThread) ";
-
-	// URL zum Update-Ordner auf der Homepage
-	private String updateURL = "";
-
-	// Datei, die auf der Homepage die Informationen über die neuen Dateien
-	// enthält
-	private String updateFile = "";
-
-	// Datei, die die zu löschenden Dateien enthält
-	private String deleteListFile = "";
-
-	// Das Verzeichnis, in das die neuen Dateien heruntergeladen werden
-	private String updateDirectory = "";
+public class DownloadFiles extends AutoUpdateMainClass implements Runnable {
 
 	// Enthält die neue Versionsnummer
 	private String newVersion = "";
@@ -65,22 +50,18 @@ public class DownloadFilesThread extends Thread {
 	// Wird auf true gesetzt, wenn der Thread von aussen unterbrochen wird
 	private boolean wasInterrupted = false;
 
-	public DownloadFilesThread(String newVersion, String updateURL,
-			String updateFile, String updateDirectory, String deleteListFile) {
+	public DownloadFiles(String newVersion) {
+		super("DownloadFilesThread");
 		remoteFilesList = new LinkedList<UpdateFile>();
 		localFilesList = new LinkedList<UpdateFile>();
 		updateFilesList = new LinkedList<UpdateFile>();
 		listener = new Vector<DownloadFilesListener>();
 		this.newVersion = newVersion;
-		this.updateURL = updateURL;
-		this.updateFile = updateFile;
-		this.updateDirectory = updateDirectory;
-		this.deleteListFile = deleteListFile;
 	}
 
 	public void run() {
 		wasInterrupted = false;
-		Logger.msg(threadName + "Downloading files...");
+		logMessage("Downloading files...");
 
 		getRemoteFileList();
 		getLocalFileList();
@@ -89,48 +70,7 @@ public class DownloadFilesThread extends Thread {
 		processUpdateList();
 		updateLocalFileList();
 
-		Logger.msg(threadName + "...done");
-	}
-
-	/**
-	 * Setzt die URL zum Update-Ordner auf der Homepage
-	 *
-	 * @param URL
-	 *            zum Update-Ordner auf der Homepage
-	 */
-	public void setUpdateURL(String updateURL) {
-		if (!updateURL.endsWith("/"))
-			updateURL.concat("/");
-		this.updateURL = updateURL;
-	}
-
-	/**
-	 * Setzt den Dateiname auf die Datei, die auf der Homepage die Informationen
-	 * über die neuen Dateien enthält
-	 *
-	 * @param Dateiname
-	 */
-	public void setUpdateFile(String updateFile) {
-		this.updateFile = updateFile;
-	}
-
-	/**
-	 * Setzt das Verzeichnis, in das die neuen Dateien heruntergeladen werden
-	 *
-	 * @param updateDirectory
-	 */
-	public void setUpdateDirectory(String updateDirectory) {
-		this.updateDirectory = updateDirectory;
-	}
-
-	/**
-	 * Setzt den Dateinamen für die Datei, in der eine Liste der zu löschenden
-	 * Dateien steht
-	 *
-	 * @param deleteListFile
-	 */
-	public void setDeleteListFile(String deleteListFile) {
-		this.deleteListFile = deleteListFile;
+		logMessage("...done");
 	}
 
 	/**
@@ -173,14 +113,14 @@ public class DownloadFilesThread extends Thread {
 	 *
 	 */
 	private void getRemoteFileList() {
-		String urlstr = updateURL + updateFile; //$NON-NLS-1$
+		String urlstr = getUpdateURL() + getUpdateFile(); //$NON-NLS-1$
 		URL url = null;
 		try {
 			url = new URL(urlstr);
 			if (url != null) {
 				URLConnection con;
 				try {
-					Logger.msg(threadName + "getting remote file list");
+					logMessage("getting remote file list");
 					con = url.openConnection();
 					// 5 Sekunden-Timeout für den Verbindungsaufbau
 					con.setConnectTimeout(5000);
@@ -193,7 +133,7 @@ public class DownloadFilesThread extends Thread {
 					while (null != (line = d.readLine())) {
 						String[] split = line.split(";");
 						if (split.length < 3) {
-							Logger.msg(threadName + "split-length < 3");
+							logMessage("split-length < 3");
 						}
 						UpdateFile remoteFile = new UpdateFile(split[0],
 								split[1], Integer.parseInt(split[2]));
@@ -202,13 +142,13 @@ public class DownloadFilesThread extends Thread {
 					}
 					d.close();
 				} catch (IOException e1) {
-					Logger.msg(threadName + "Error while retrieving "
+					logMessage("Error while retrieving "
 									+ urlstr
 									+ " (possibly no connection to the internet)"); //$NON-NLS-1$
 				}
 			}
 		} catch (MalformedURLException e) {
-			Logger.err(threadName + "URL invalid: " + urlstr); //$NON-NLS-1$
+			logError("URL invalid: " + urlstr); //$NON-NLS-1$
 		}
 	}
 
@@ -218,10 +158,10 @@ public class DownloadFilesThread extends Thread {
 	 */
 	private void getLocalFileList() {
 		try {
-			Logger.msg(threadName + "getting local file list");
+			logMessage("getting local file list");
 
-			File localVersionFile = new File(updateDirectory
-					+ System.getProperty("file.separator") + updateFile);
+			File localVersionFile = new File(getUpdateDirectory()
+					+ System.getProperty("file.separator") + getUpdateFile());
 
 			BufferedReader pw = new BufferedReader(new InputStreamReader(
 					new FileInputStream(localVersionFile), "UTF8"));
@@ -232,7 +172,7 @@ public class DownloadFilesThread extends Thread {
 				if ( !line.equals("")) {
 					String[] split = line.split(";");
 					if (split.length < 3) {
-						Logger.err(threadName + "split-length < 3 for line " + line);
+						logError("split-length < 3 for line " + line);
 					}
 					UpdateFile localFile = new UpdateFile(split[0], split[1],
 							Integer.parseInt(split[2]));
@@ -242,7 +182,7 @@ public class DownloadFilesThread extends Thread {
 			}
 			pw.close();
 		} catch (IOException e1) {
-			Logger.err(threadName + "Error opening local version file"); //$NON-NLS-1$
+			logError("Error opening local version file"); //$NON-NLS-1$
 		}
 	}
 
@@ -256,7 +196,7 @@ public class DownloadFilesThread extends Thread {
 	private void analyseRemoteFileList() {
 		for (int i = 0; i < remoteFilesList.size(); i++) {
 			UpdateFile currentRemoteFile = remoteFilesList.get(i);
-			Logger.msg(threadName + "Analysing file "
+			logMessage("Analysing file "
 					+ currentRemoteFile.getName());
 			if (localFilesList.contains(currentRemoteFile)) {
 				UpdateFile localFile = localFilesList.get(localFilesList
@@ -280,15 +220,15 @@ public class DownloadFilesThread extends Thread {
 	 *
 	 */
 	private void analyseLocalFileList() {
-		File updateDir = new File(updateDirectory);
+		File updateDir = new File(getUpdateDirectory());
 		updateDir.mkdir();
-		File deleteFile = new File(updateDirectory
-				+ System.getProperty("file.separator") + deleteListFile);
+		File deleteFile = new File(getUpdateDirectory()
+				+ System.getProperty("file.separator") + getDeleteListFile());
 		deleteFile.delete();
 		try {
 			deleteFile.createNewFile();
 		} catch (IOException e1) {
-			Logger.err(threadName + "Could not create version file: "
+			logError("Could not create version file: "
 					+ deleteFile.getAbsolutePath());
 		}
 
@@ -305,11 +245,11 @@ public class DownloadFilesThread extends Thread {
 			pw.flush();
 			pw.close();
 		} catch (UnsupportedEncodingException e1) {
-			Logger.err(threadName + "Could not write file with UTF8 encoding");
+			logError("Could not write file with UTF8 encoding");
 		} catch (FileNotFoundException e1) {
-			Logger.err(threadName + "Could not find file " + deleteFile);
+			logError("Could not find file " + deleteFile);
 		} catch (IOException e) {
-			Logger.err(threadName + "Could not write to file " + deleteFile);
+			logError("Could not write to file " + deleteFile);
 		}
 	}
 
@@ -318,7 +258,7 @@ public class DownloadFilesThread extends Thread {
 	 *
 	 */
 	private void processUpdateList() {
-		Logger.msg(threadName + "Processing update list.");
+		logMessage("Processing update list.");
 		int totalSize = 0;
 		int totalFileNum = updateFilesList.size();
 		for (int i = 0; i < updateFilesList.size(); i++) {
@@ -326,13 +266,13 @@ public class DownloadFilesThread extends Thread {
 			totalSize += currentFile.getSize();
 		}
 		for (int i = 0; i < updateFilesList.size(); i++) {
-			if (isInterrupted()) {
+			if (Thread.currentThread().isInterrupted()) {
 				setWasInterrupted();
-				interrupt();
+				Thread.currentThread().interrupt();
 				return;
 			}
 			UpdateFile nextFileToDownload = updateFilesList.get(i);
-			Logger.msg(threadName + "Update file " + nextFileToDownload.getName());
+			logMessage("Update file " + nextFileToDownload.getName());
 
 			// Informiere alle Listener über den Download einer neuen Datei
 			Enumeration<DownloadFilesListener> en = listener.elements();
@@ -360,27 +300,27 @@ public class DownloadFilesThread extends Thread {
 	 */
 	private void downloadFile(String directory, String fileName) {
 		URL url = null;
-		String urlstr = updateURL + directory + fileName;
+		String urlstr = getUpdateURL() + directory + fileName;
 		int position = 0;
 		try {
-			Logger.msg(threadName + "Download new file from "
+			logMessage("Download new file from "
 					+ urlstr);
 			url = new URL(urlstr);
 			URLConnection conn = url.openConnection();
 			BufferedInputStream in = new BufferedInputStream(conn
 					.getInputStream());
 			BufferedOutputStream out = new BufferedOutputStream(
-					new FileOutputStream(updateDirectory
+					new FileOutputStream(getUpdateDirectory()
 							+ System.getProperty("file.separator") + fileName));
 
 			int i = in.read();
 			while (i != -1) {
-				if (isInterrupted()) {
+				if (Thread.currentThread().isInterrupted()) {
 					setWasInterrupted();
 					in.close();
 					out.flush();
 					out.close();
-					interrupt();
+					Thread.currentThread().interrupt();
 					return;
 				}
 				out.write(i);
@@ -408,17 +348,17 @@ public class DownloadFilesThread extends Thread {
 			in.close();
 			out.flush();
 			out.close();
-			Logger.msg(threadName + "Saved file " + fileName
-					+ " to " + updateDirectory
+			logMessage("Saved file " + fileName
+					+ " to " + getUpdateDirectory()
 					+ System.getProperty("file.separator") + fileName);
 		} catch (Exception e) {
-			Logger.err(threadName + "Error (" + e.toString()
+			logError("Error (" + e.toString()
 					+ ")");
 		}
 	}
 
 	private void updateLocalFileList() {
-		UpdateFile remoteFileList = new UpdateFile(updateFile, "", 1000);
+		UpdateFile remoteFileList = new UpdateFile(getUpdateFile(), "", 1000);
 		// Informiere alle Listener über den Download einer neuen Datei
 		Enumeration<DownloadFilesListener> en = listener.elements();
 		while (en.hasMoreElements()) {
@@ -426,7 +366,7 @@ public class DownloadFilesThread extends Thread {
 			currentListener.startNewDownload(1, 1, remoteFileList, remoteFileList
 					.getSize());
 		}
-		downloadFile("", updateFile);
+		downloadFile("", getUpdateFile());
 	}
 
 	/**

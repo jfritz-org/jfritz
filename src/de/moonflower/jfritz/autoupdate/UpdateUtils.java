@@ -17,7 +17,6 @@ import java.util.zip.ZipFile;
 import javax.swing.JOptionPane;
 
 public class UpdateUtils {
-	// TODO: I18N
 
 	private final static String className = "(UpdateUtils) ";
 

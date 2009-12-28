@@ -9,16 +9,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Locale;
 
-public class Update {
-
-	private final static String className = "(Update) ";
+public class Update extends AutoUpdateMainClass {
 
 	private static String USER_HOME = System.getProperty("user.home")
 			+ File.separator;
 
 	private static String UPDATE_FILE = ".update";
-
-	private String propertiesDirectory = "";
 
 	private String programVersion = "0";
 
@@ -26,8 +22,8 @@ public class Update {
 
 	private boolean updateOnStart = true;
 
-	public Update(String propertiesDirectory) {
-		this.propertiesDirectory = propertiesDirectory;
+	public Update() {
+		super("Update");
 	}
 
 	/**
@@ -72,15 +68,15 @@ public class Update {
 	public void saveSettings() {
 		try {
 
-			Logger.msg(className + "Saving update-properties...");
+			logMessage("Saving update-properties...");
 
 			// if $HOME/saveDirectory doesn't exist create it
-			File file = new File(USER_HOME + propertiesDirectory);
+			File file = new File(USER_HOME + getPropertiesDirectory());
 			if (!file.isDirectory() && !file.isFile())
 				file.mkdir();
 
 			BufferedWriter bw = new BufferedWriter(
-					new FileWriter(USER_HOME + propertiesDirectory
+					new FileWriter(USER_HOME + getPropertiesDirectory()
 							+ File.separator + UPDATE_FILE, false));
 
 			bw.write("[Settings]");
@@ -94,7 +90,7 @@ public class Update {
 			Logger.msg("...done");
 
 		} catch (Exception e) {
-			Logger.err(className + "ERROR while saving update-properties");
+			logError("ERROR while saving update-properties");
 		}
 	}
 
@@ -107,7 +103,7 @@ public class Update {
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new FileReader(USER_HOME
-					+ propertiesDirectory + File.separator + UPDATE_FILE));
+					+ getPropertiesDirectory() + File.separator + UPDATE_FILE));
 			String line = null;
 			do {
 				line = br.readLine();
@@ -126,9 +122,9 @@ public class Update {
 				}
 			} while (line != null);
 		} catch (FileNotFoundException e) {
-			Logger.err(className + "Could not load update-properties (File not found), using defaults");
+			logError("Could not load update-properties (File not found), using defaults");
 		} catch (IOException ioe) {
-			Logger.err(className + "Error processing update-properties, using defaults");
+			logError("Error processing update-properties, using defaults");
 		} finally {
 			try {
 				if (br != null)
@@ -137,12 +133,12 @@ public class Update {
 				Logger.err("Error closing stream");
 			}
 		}
-		Logger.msg(className + "Program version: " + programVersion);
+		logMessage("Program version: " + programVersion);
 		if ( locale != null)
 		{
-			Logger.msg(className + "Locale: " + locale.toString());
+			logMessage("Locale: " + locale.toString());
 		}
-		Logger.msg(className + "Update on start: " + updateOnStart);
+		logMessage("Update on start: " + updateOnStart);
 		if ( locale == null )
 		{
 			locale = new Locale("en_US");

@@ -2,6 +2,9 @@ TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 TODO: Timer zum automatischen Aktualisieren der FritzBox-Einstellungen (Telefone, SIP-Provider, ...) nach X Minuten (z.B. 60 / 120)
 TODO: charset aus VCard auslesen und verwenden
 
+JFritz 0.7.3.31:
+- Änderung: Code cleanup im Autoupdate
+
 JFritz 0.7.3.30:
 - Bugfix: Reverselookup für Deutschland.
 - Bugfix: Reverselookup für Niederlande.

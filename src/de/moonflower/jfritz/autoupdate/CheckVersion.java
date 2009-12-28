@@ -17,19 +17,11 @@ import java.net.URLConnection;
  * @author Robert Palmer
  *
  */
-public class CheckVersionThread extends Thread {
-
-	private final static String className = "(CheckVersionThread) ";
+public class CheckVersion extends AutoUpdateMainClass implements Runnable {
 
 	private final static String pointPattern = "\\.";
 
 	private final static String dividerPattern = "\\|";
-
-	// URL zum Update-Ordner auf der Homepage
-	transient private String updateURL = "";
-
-	// Datei, die die Versionsinformationen auf der Homepage enthält
-	transient private String versionFile = "";
 
 	// Enthält die aktuelle Versionsnummer
 	transient private String programVersion = "";
@@ -43,46 +35,20 @@ public class CheckVersionThread extends Thread {
 	// Neue Version verfügbar?
 	transient private boolean newVerAvailable = false;
 
-	public CheckVersionThread(final String programVersion, final String updateURL, final String versionFile) {
-		super();
+	public CheckVersion(final String programVersion) {
+		super("CheckVersionThread");
 		this.programVersion = programVersion;
-		this.updateURL = updateURL;
-		this.versionFile = versionFile;
-		urlstr = updateURL + versionFile;
+		urlstr = getUpdateURL() + getVersionFile();
 	}
 
 	public void run() {
-		Logger.msg(className + "Check for new program version...");
+		logMessage("Check for new program version...");
 		if (checkForNewVersion()) {
 			newVerAvailable = true;
 		} else {
 			newVerAvailable = false;
 		}
-		Logger.msg(className + "...done");
-	}
-
-	/**
-	 * Setzt die URL zum Update-Ordner auf der Homepage
-	 *
-	 * @param URL
-	 *            zum Update-Ordner auf der Homepage
-	 */
-	public void setUpdateURL(final String updateURL) {
-		if (!updateURL.endsWith("/"))
-		{
-			updateURL.concat("/");
-		}
-		this.updateURL = updateURL;
-	}
-
-	/**
-	 * Setzt den Dateiname auf die Datei, die die Versionsinformationen auf der
-	 * Homepage enthält
-	 *
-	 * @param Dateiname
-	 */
-	public void setVersionFile(final String versionFile) {
-		this.versionFile = versionFile;
+		logMessage("...done");
 	}
 
 	/**
@@ -110,7 +76,7 @@ public class CheckVersionThread extends Thread {
 
 		if (result)
 		{
-			urlstr = updateURL + versionFile; //$NON-NLS-1$
+			urlstr = getUpdateURL() + getVersionFile(); //$NON-NLS-1$
 
 			boolean foundNewVersion = false;
 			BufferedReader buffReader;
@@ -152,13 +118,13 @@ public class CheckVersionThread extends Thread {
 						buffReader.close();
 
 					} catch (IOException e1) {
-						Logger.err(className + "Error while retrieving "
+						logError("Error while retrieving "
 								+ urlstr
 								+ " (possibly no connection to the internet)"); //$NON-NLS-1$
 					}
 				}
 			} catch (MalformedURLException e) {
-				Logger.err(className + "URL invalid: " + urlstr); //$NON-NLS-1$
+				logError("URL invalid: " + urlstr); //$NON-NLS-1$
 			}
 			result = foundNewVersion;
 		}

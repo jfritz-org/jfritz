@@ -22,30 +22,13 @@ import javax.swing.JOptionPane;
  * @author Rob
  *
  */
-public class ProcessUpdateFolderThread extends Thread {
-
-	private String threadName = "(ProcessUpdateFolderThread) ";
-
-	private String updateFile = "";
-
-	private String updateDirectory = "";
-
-	private String installDirectory = "";
-
-	private String deleteListFile = "";
-
-	private String directoriesZipedAsFilesEndWith = "";
+public class ProcessUpdateFolder extends AutoUpdateMainClass implements Runnable {
 
 	private boolean updateSuccessfull = false;
 
-	public ProcessUpdateFolderThread(String updateDirectory, String updateFile,
-			String installDirectory, String deleteListFile,
-			String directoriesZipedAsFilesEndWith) {
-		this.updateDirectory = updateDirectory;
-		this.updateFile = updateFile;
-		this.installDirectory = installDirectory;
-		this.deleteListFile = deleteListFile;
-		this.directoriesZipedAsFilesEndWith = directoriesZipedAsFilesEndWith;
+	public ProcessUpdateFolder()
+	{
+		super("ProcessUpdateFolderThread");
 	}
 
 	public void run() {
@@ -61,7 +44,7 @@ public class ProcessUpdateFolderThread extends Thread {
 	 * @return
 	 */
 	public boolean updateDirectoryExists() {
-		File updateDir = new File(updateDirectory);
+		File updateDir = new File(getUpdateDirectory());
 		return updateDir.exists();
 	}
 
@@ -70,8 +53,8 @@ public class ProcessUpdateFolderThread extends Thread {
 	 * stehen
 	 */
 	public void processDeleteListFile() {
-		File deleteFile = new File(updateDirectory
-				+ System.getProperty("file.separator") + deleteListFile);
+		File deleteFile = new File(getUpdateDirectory()
+				+ System.getProperty("file.separator") + getDeleteListFile());
 
 		String fileToDelete = "";
 		String dirName = "";
@@ -85,16 +68,16 @@ public class ProcessUpdateFolderThread extends Thread {
 				String line = "";
 				// Füge Dateien zur filesToDownload-Liste hinzu
 				while (null != (line = pw.readLine())) {
-					if (line.endsWith(directoriesZipedAsFilesEndWith)) {
+					if (line.endsWith(getDirectoriesZipedAsFilesEndWith())) {
 						// File is an ziped directory
 						// Delete whole directory
 						dirName = line.substring(0, line
-								.indexOf(directoriesZipedAsFilesEndWith));
-						fileToDelete = installDirectory + System.getProperty("file.seperator") + dirName;
+								.indexOf(getDirectoriesZipedAsFilesEndWith()));
+						fileToDelete = getInstallDirectory() + System.getProperty("file.seperator") + dirName;
 						deleteDirectory = new File(fileToDelete);
 						UpdateUtils.deleteTree(deleteDirectory);
 					} else {
-						fileToDelete = installDirectory + System.getProperty("file.separator") + line;
+						fileToDelete = getInstallDirectory() + System.getProperty("file.separator") + line;
 						UpdateUtils.deleteFile(fileToDelete);
 					}
 				}
@@ -102,15 +85,15 @@ public class ProcessUpdateFolderThread extends Thread {
 				pw.close();
 				deleteFile.delete();
 			} catch (UnsupportedEncodingException e) {
-				Logger.err(threadName + "ERROR: Encoding not supported");
+				logError("Encoding not supported");
 //				JOptionPane.showMessageDialog(null, UpdateLocale.getMessage("encodingNotSupported"), UpdateLocale.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			} catch (FileNotFoundException e) {
-				Logger.err(threadName + "ERROR: File not found");
+				logError("File not found");
 //				JOptionPane.showMessageDialog(null, UpdateLocale.getMessage("fileNotFound").replaceAll("%FILENAME", fileToDelete), UpdateLocale.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			} catch (IOException ioe) {
-				Logger.err(threadName + "ERROR: IO exception");
+				logError("IO exception");
 //				JOptionPane.showMessageDialog(null, UpdateLocale.getMessage("ioError").replaceAll("%FILENAME", fileToDelete), UpdateLocale.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
 				ioe.printStackTrace();
 			}
@@ -118,21 +101,21 @@ public class ProcessUpdateFolderThread extends Thread {
 	}
 
 	public void updateFiles() {
-		File updateDir = new File(updateDirectory);
+		File updateDir = new File(getUpdateDirectory());
 
 		if (updateDir.exists()) {
 			for (File file : updateDir.listFiles()) {
-				if (!((file.getName().equals(deleteListFile)) || (file
-						.getName().equals(updateFile)))) {
+				if (!((file.getName().equals(getDeleteListFile())) || (file
+						.getName().equals(getUpdateFile())))) {
 
 					// Datei ist ein gezipptes Verzeichnis
 					// Entpacke die Datei ins installDirectory
-					if (file.getName().endsWith(directoriesZipedAsFilesEndWith)) {
-						Logger.msg(threadName + file.getAbsolutePath()
+					if (file.getName().endsWith(getDirectoriesZipedAsFilesEndWith())) {
+						logMessage(file.getAbsolutePath()
 								+ " is a ziped directory");
-						UpdateUtils.unzipFile(file.getAbsolutePath(), installDirectory);
+						UpdateUtils.unzipFile(file.getAbsolutePath(), getInstallDirectory());
 					} else {
-						File destinationFile = new File(installDirectory
+						File destinationFile = new File(getInstallDirectory()
 								+ System.getProperty("file.separator")
 								+ file.getName());
 						try {
@@ -140,7 +123,7 @@ public class ProcessUpdateFolderThread extends Thread {
 									true);
 							updateSuccessfull = true;
 						} catch (IOException e) {
-							Logger.err(threadName + "ERROR: IO exception");
+							logError("IO exception");
 							JOptionPane.showMessageDialog(null, UpdateLocale.getMessage("ioError").replaceAll("%FILENAME", destinationFile.getAbsolutePath()), UpdateLocale.getMessage("autoupdate_title"), JOptionPane.ERROR_MESSAGE);
 							e.printStackTrace();
 						}
@@ -151,27 +134,6 @@ public class ProcessUpdateFolderThread extends Thread {
 				}
 			}
 		}
-	}
-
-	public void setDeleteListFile(String deleteListFile) {
-		this.deleteListFile = deleteListFile;
-	}
-
-	public void setDirectoriesZipedAsFilesEndWith(
-			String directoriesZipedAsFilesEndWith) {
-		this.directoriesZipedAsFilesEndWith = directoriesZipedAsFilesEndWith;
-	}
-
-	public void setInstallDirectory(String installDirectory) {
-		this.installDirectory = installDirectory;
-	}
-
-	public void setUpdateDirectory(String updateDirectory) {
-		this.updateDirectory = updateDirectory;
-	}
-
-	public void setUpdateFile(String updateFile) {
-		this.updateFile = updateFile;
 	}
 
 	public boolean wasUpdateSuccessfull() {

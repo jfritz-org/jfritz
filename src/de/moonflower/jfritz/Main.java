@@ -191,13 +191,13 @@ public class Main implements LookupObserver {
 	// when changing this, don't forget to check the resource bundles!!
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.3.30"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.3.31"; //$NON-NLS-1$
 
 	public final static String PROGRAM_SECRET = "jFrItZsEcReT"; //$NON-NLS-1$
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 89 2009-12-17 11:37:47Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 90 2009-12-28 00:15:28Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -205,8 +205,10 @@ public class Main implements LookupObserver {
 
 	public final static String PROJECT_ADMIN = "Robert Palmer <robotniko@users.sourceforge.net>"; //$NON-NLS-1$
 
+	public final static String JFRITZ_HIDDEN_DIR = ".jfritz";
+
 	public final static String USER_DIR = System.getProperty("user.home")
-			+ File.separator + ".jfritz";
+			+ File.separator + JFRITZ_HIDDEN_DIR;
 
 	public final static String USER_JFRITZ_FILE = "jfritz.txt";
 
@@ -589,7 +591,7 @@ public class Main implements LookupObserver {
 			} else if (OSDetector.isMac()) {
 				newSaveDir = System.getProperty("user.home") + "/Library/Application Support/JFritz";
 			} else if (OSDetector.isLinux()) {
-				newSaveDir = System.getProperty("user.home") + File.separator + ".jfritz";
+				newSaveDir = System.getProperty("user.home") + File.separator + JFRITZ_HIDDEN_DIR;
 			} else {
 
 			}
@@ -681,7 +683,7 @@ public class Main implements LookupObserver {
 			Main.SAVE_DIR = path;
 			Debug.debug("Create lock at new destination");
 			Main.createLock();
-			Debug.debug("Write file ~/.jfritz/jfritz.txt");
+			Debug.debug("Write file ~/" + JFRITZ_HIDDEN_DIR + "/" + USER_JFRITZ_FILE);
 			Main.writeSaveDir();
 		}
 	}
@@ -1664,8 +1666,8 @@ public class Main implements LookupObserver {
 	 *
 	 */
 	public static void saveUpdateProperties() {
-		JFritzUpdate jfritzUpdate = new JFritzUpdate(false);
-		Update update = new Update(jfritzUpdate.getPropertiesDirectory());
+		new JFritzUpdate(false); // needed for next line (Update update = new Update());
+		Update update = new Update();
 		update.loadSettings();
 		update.setProgramVersion(PROGRAM_VERSION);
 		update.setLocale(getProperty("locale"));
@@ -1674,24 +1676,24 @@ public class Main implements LookupObserver {
 		update.saveSettings();
 	}
 
-	private void showActiveThreads()
-	{
-			Debug.debug("Active Threads: " + Thread.activeCount());
-			Thread[] threadarray = new Thread[Thread.activeCount()];
-			int threadCount = Thread.enumerate(threadarray);
-			Debug.debug("Threads: " + threadCount);
-			for (int i=0; i<threadCount; i++)
-			{
-				Debug.debug("ID: " + i);
-				Debug.debug("Name: " +  threadarray[i].getName());
-				Debug.debug("Class: " + threadarray[i].getClass().toString());
-				Debug.debug("State: " +  threadarray[i].getState());
-				Debug.debug("Daemon: " + threadarray[i].isDaemon());
-				Debug.debug("Thread group: " + threadarray[i].getThreadGroup());
-				Debug.debug("Thread priority: " + threadarray[i].getPriority());
-				Debug.debug("---");
-			}
-	}
+//	private void showActiveThreads()
+//	{
+//			Debug.debug("Active Threads: " + Thread.activeCount());
+//			Thread[] threadarray = new Thread[Thread.activeCount()];
+//			int threadCount = Thread.enumerate(threadarray);
+//			Debug.debug("Threads: " + threadCount);
+//			for (int i=0; i<threadCount; i++)
+//			{
+//				Debug.debug("ID: " + i);
+//				Debug.debug("Name: " +  threadarray[i].getName());
+//				Debug.debug("Class: " + threadarray[i].getClass().toString());
+//				Debug.debug("State: " +  threadarray[i].getState());
+//				Debug.debug("Daemon: " + threadarray[i].isDaemon());
+//				Debug.debug("Thread group: " + threadarray[i].getThreadGroup());
+//				Debug.debug("Thread priority: " + threadarray[i].getPriority());
+//				Debug.debug("---");
+//			}
+//	}
 
 	public void prepareShutdown(boolean shutdownThread, boolean shutdownHook) {
 		try {

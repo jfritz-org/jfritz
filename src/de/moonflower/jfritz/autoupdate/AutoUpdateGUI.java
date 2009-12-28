@@ -17,6 +17,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
+/**
+ * Graphische Oberfläche zur Anzeige des Fortschritts des AutoUploads.
+ * @author Robert Palmer
+ *
+ */
 public class AutoUpdateGUI extends JDialog implements DownloadFilesListener {
 
 	private static final long serialVersionUID = 5720893048026504125L;
@@ -32,17 +37,20 @@ public class AutoUpdateGUI extends JDialog implements DownloadFilesListener {
 
 	private int totalUpdateSize;
 
-	private DownloadFilesThread downloadFilesThread;
+	private Thread downloadFilesThread;
 
-	public AutoUpdateGUI(DownloadFilesThread downloadFilesThread) {
+	public AutoUpdateGUI(Thread thread) {
 		setLocation(0, 0);
 		setSize(500, 200);
 
-		setTitle("autoupdate_title");
-		this.downloadFilesThread = downloadFilesThread;
+		setTitle(UpdateLocale.getMessage("autoupdate_title"));
+		this.downloadFilesThread = thread;
 		createGUI();
 	}
 
+	/**
+	 * Schließt Fenster und stoppt das Herunterladen der Dateien.
+	 */
 	protected void processWindowEvent(WindowEvent e) {
 		if (e.getID() == WindowEvent.WINDOW_CLOSING) {
 			downloadFilesThread.interrupt();
@@ -52,6 +60,10 @@ public class AutoUpdateGUI extends JDialog implements DownloadFilesListener {
 		}
 	}
 
+	/**
+	 * Erstellt graphische Oberfläche.
+	 *
+	 */
 	private void createGUI() {
 
 		this.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
@@ -161,6 +173,10 @@ public class AutoUpdateGUI extends JDialog implements DownloadFilesListener {
 						new Insets(0, 0, 0, 0), 0, 0));
 	}
 
+	/**
+	 * Zeigt Bestätigungsdialog mit "Ja" und "Nein" an.
+	 * @return
+	 */
 	protected static int showConfirmDialog() {
 		Object[] options = { UpdateLocale.getMessage("yes"),
 				UpdateLocale.getMessage("no") };
@@ -168,14 +184,16 @@ public class AutoUpdateGUI extends JDialog implements DownloadFilesListener {
 		int ok = JOptionPane.showOptionDialog(null, UpdateLocale
 				.getMessage("new_version_text"), UpdateLocale
 				.getMessage("autoupdate_title"), JOptionPane.YES_NO_OPTION,
-				JOptionPane.INFORMATION_MESSAGE, null, // don't use a custom
-				// Icon
+				JOptionPane.INFORMATION_MESSAGE, null, // don't use a custom Icon
 				options, // the titles of buttons
 				options[0]); // default button title
 
 		return ok;
 	}
 
+	/**
+	 * Zeige Meldung, dass keine neue Version gefunden wurde.
+	 */
 	protected static void showNoNewVersionFoundDialog() {
 		JOptionPane.showMessageDialog(null, UpdateLocale
 				.getMessage("no_new_version_found"), UpdateLocale
@@ -183,6 +201,9 @@ public class AutoUpdateGUI extends JDialog implements DownloadFilesListener {
 				JOptionPane.INFORMATION_MESSAGE);
 	}
 
+	/**
+	 * Beginne neuen Download.
+	 */
 	public void startNewDownload(int currentFileNum, int totalFileNum,
 			UpdateFile newFile, int totalSize) {
 		currentUpdateFile = newFile;
@@ -198,6 +219,9 @@ public class AutoUpdateGUI extends JDialog implements DownloadFilesListener {
 		progress(0);
 	}
 
+	/**
+	 * Update des Fortschrittsbalkens.
+	 */
 	public void progress(int increment) {
 		int currentFileProgress = currentFileProgressBar.getValue() + increment;
 		setCurrentFileProgress(currentFileProgress);
@@ -206,6 +230,9 @@ public class AutoUpdateGUI extends JDialog implements DownloadFilesListener {
 		setTotalProgress(totalProgress);
 	}
 
+	/**
+	 * Download fertig.
+	 */
 	public void finished() {
 		if (currentUpdateFile == null) {
 			currentUpdateFile = new UpdateFile("", "", 100);
@@ -217,18 +244,29 @@ public class AutoUpdateGUI extends JDialog implements DownloadFilesListener {
 		cancelButton.setEnabled(false);
 	}
 
+	/**
+	 * Setze aktuellen Fortschritt der Datei.
+	 * @param position
+	 */
 	private void setCurrentFileProgress(int position) {
 		currentFileProgressBar.setValue(position);
 		currentFileProgressLabel.setText(position + " / "
 				+ currentUpdateFile.getSize() + " Bytes");
 	}
 
+	/**
+	 * Setze aktuellen gesamten Fortschritt.
+	 * @param position
+	 */
 	private void setTotalProgress(int position) {
 		totalProgressBar.setValue(position);
 		totalProgressLabel.setText(position + " / " + totalUpdateSize
 				+ " Bytes");
 	}
 
+	/**
+	 * Zeige Nachricht, dass das Update erfolgreich war.
+	 */
 	public static void showUpdateSuccessfulMessage() {
 		JOptionPane.showMessageDialog(null, UpdateLocale
 				.getMessage("update_successfull_msg"), UpdateLocale

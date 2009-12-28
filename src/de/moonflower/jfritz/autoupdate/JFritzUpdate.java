@@ -11,36 +11,32 @@ import javax.swing.JOptionPane;
 
 import de.moonflower.jfritz.utils.JFritzUtils;
 
-public class JFritzUpdate {
+public class JFritzUpdate extends AutoUpdateMainClass {
 
 	private final static String className = "(JFritzUpdate) ";
-
-	private String updateURL = "http://update.jfritz.org/";
-
-	private String versionFile = "current.txt";
-
-	private String updateFile = "update.txt";
-
-	private String propertiesDirectory = ".jfritz";
-
-	private String updateDirectory = "./update";
-
-	private String deleteListFile = "deletefiles";
-
-	// TODO: noch auf den richtigen Pfad wechseln
-	private String installDirectory = ".";
-
-	private String directoriesZipedAsFilesEndWith = ".zip";
 
 	private boolean informOnNoUpdate;
 
 	public JFritzUpdate(boolean informOnNoUpdate) {
+		super("JFritzUpdate");
 		Logger.on();
-		this.informOnNoUpdate = informOnNoUpdate;
+
+		setUpdateURL("http://update.jfritz.org/");
+		setVersionFile("current.txt");
+		setUpdateFile("update.txt");
+		setPropertiesDirectory(".jfritz");
+
+		String installDirectory = "";
 		installDirectory = JFritzUtils.getFullPath(JFritzUtils.binID);
 		installDirectory = installDirectory.substring(0, installDirectory.length()-10);
 		//updateFile = installDirectory + "update.txt"; //?? why ??
-		updateDirectory = installDirectory+"update";
+		setInstallDirectory(installDirectory);
+		setUpdateDirectory(installDirectory+"update");
+		setDirectoriesZipedAsFilesEndWith(".zip");
+		setDeleteListFile("deletefiles");
+
+		this.informOnNoUpdate = informOnNoUpdate;
+
 		File installDir = new File(installDirectory);
 		if (!installDir.exists()) {
 			installDir.mkdir();
@@ -55,28 +51,30 @@ public class JFritzUpdate {
 	public void downloadNewFiles(Update update) {
 		try {
 			// Überprüfe auf neue Version
-			CheckVersionThread checkVersionThread = new CheckVersionThread(
-					update.getProgramVersion(), updateURL, versionFile);
-			checkVersionThread.start();
+			CheckVersion checkVersionThread = new CheckVersion(
+					update.getProgramVersion());
+			Thread checkVersion = new Thread(checkVersionThread);
+			checkVersion.start();
 
 			// Warte, bis der Thread beendet ist
-			checkVersionThread.join();
+			checkVersion.join();
 
 			if (checkVersionThread.isNewVersionAvailable()) {
 				if (AutoUpdateGUI.showConfirmDialog() == JOptionPane.YES_OPTION) {
 
 					// Lade Dateien herunter
-					DownloadFilesThread downloadFilesThread = new DownloadFilesThread(
-							checkVersionThread.getNewVersion(), updateURL,
-							updateFile, updateDirectory, deleteListFile);
-					AutoUpdateGUI auGui = new AutoUpdateGUI(downloadFilesThread);
+					DownloadFiles downloadFilesThread = new DownloadFiles(
+							checkVersionThread.getNewVersion());
+					Thread downloadFiles = new Thread(downloadFilesThread);
+
+					AutoUpdateGUI auGui = new AutoUpdateGUI(downloadFiles);
 					auGui.setModal(true);
 					downloadFilesThread.registerProgressListener(auGui);
-					downloadFilesThread.start();
+					downloadFiles.start();
 					auGui.setVisible(true);
 
 					try {
-						downloadFilesThread.join();
+						downloadFiles.join();
 						if (downloadFilesThread.wasInterrupted()) {
 							cleanupUpdateDirectory();
 						}
@@ -108,13 +106,12 @@ public class JFritzUpdate {
 	 *
 	 */
 	public void updateFiles() {
-		ProcessUpdateFolderThread updateFolderThread = new ProcessUpdateFolderThread(
-				updateDirectory, updateFile, installDirectory, deleteListFile,
-				directoriesZipedAsFilesEndWith);
-		updateFolderThread.start();
+		ProcessUpdateFolder updateFolderThread = new ProcessUpdateFolder();
+		Thread updateFolder = new Thread(updateFolderThread);
+		updateFolder.start();
 
 		try {
-			updateFolderThread.join();
+			updateFolder.join();
 
 		} catch (InterruptedException e) {
 			Logger.err(className
@@ -126,18 +123,8 @@ public class JFritzUpdate {
 			AutoUpdateGUI.showUpdateSuccessfulMessage();
 	}
 
-	/**
-	 * Liefert das Verzeichnis, in dem die Einstellungen für das Update
-	 * gespeichert werden
-	 *
-	 * @return
-	 */
-	public String getPropertiesDirectory() {
-		return propertiesDirectory;
-	}
-
 	private void updateJFritz() {
-		Update update = new Update(propertiesDirectory);
+		Update update = new Update();
 		update.loadSettings();
 		if (update.getUpdateOnStart())
 			downloadNewFiles(update);
@@ -152,8 +139,8 @@ public class JFritzUpdate {
 	 */
 	private void cleanupUpdateDirectory() {
 		Logger.msg(className + "Cleaning up update directory");
-		File upDir = new File(updateDirectory);
-		UpdateUtils.deleteTreeWithoutFile(upDir, updateFile);
+		File upDir = new File(getUpdateDirectory());
+		UpdateUtils.deleteTreeWithoutFile(upDir, getUpdateFile());
 	}
 
 	public static void main(String[] args) {

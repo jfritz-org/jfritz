@@ -1070,7 +1070,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			exportCallerListToCSV();
 		} else if (e.getActionCommand().equals("update")) { //$NON-NLS-1$
 			JFritzUpdate jfritzUpdate = new JFritzUpdate(true);
-			Update update = new Update(jfritzUpdate.getPropertiesDirectory());
+			Update update = new Update();
 			update.loadSettings();
 			update.setProgramVersion(Main.PROGRAM_VERSION);
 			jfritzUpdate.downloadNewFiles(update);
