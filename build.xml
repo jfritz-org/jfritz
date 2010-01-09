@@ -167,9 +167,11 @@
 				<exclude name="**/de/moonflower/jfritz/resources/images/*.*" />
 				<exclude name="**/de/moonflower/jfritz/resources/sounds/*.*" />
 				<exclude name="**/de/moonflower/jfritz/box/fritzbox/*.*" />
+				<exclude name="**/jd/nutils/*.*" />
+				<exclude name="**/de/moonflower/jfritz/ProgramConstants.java" />
 			</fileset>
 			<manifest>
-				<attribute name="Class-Path" value="./jfritz.jar ./fritzbox.jar ./reverselookup.jar ./resources.jar ${lib}/jdic.jar ${lib}/jfreereport-0.8.6-2.jar ${lib}/jcommon-1.0.0-rc1-cvs.jar ${lib}/itext-1.3.4.jar ${lib}/bsh-1.3.0.jar ${lib}/bsf-2.3.0.jar ${lib}/poi-2.5.1-final-20040804.jar ${lib}/jacob.jar ${lang}/ ${lib}/wizard.jar ${lib}/jcalendar-1.3.2.jar ${lib}/jfreechart-1.0.2.jar ${lib}/jdom.jar ${lib}/looks-2.1.4.jar" />
+				<attribute name="Class-Path" value="./jfritz.jar ./fritzbox.jar ./reverselookup.jar ./resources.jar ./utils.jar ${lib}/jdic.jar ${lib}/jfreereport-0.8.6-2.jar ${lib}/jcommon-1.0.0-rc1-cvs.jar ${lib}/itext-1.3.4.jar ${lib}/bsh-1.3.0.jar ${lib}/bsf-2.3.0.jar ${lib}/poi-2.5.1-final-20040804.jar ${lib}/jacob.jar ${lang}/ ${lib}/wizard.jar ${lib}/jcalendar-1.3.2.jar ${lib}/jfreechart-1.0.2.jar ${lib}/jdom.jar ${lib}/looks-2.1.4.jar" />
 			</manifest>
 		</jar>
 
@@ -179,7 +181,7 @@
 			</fileset>
 			<manifest>
 				<attribute name="Main-Class" value="de.moonflower.jfritz.autoupdate.JFritzUpdate" />
-				<attribute name="Class-Path" value="./jfritz-internals.jar" />
+				<attribute name="Class-Path" value="./jfritz-internals.jar ./utils.jar" />
 			</manifest>
 		</jar>
 
@@ -199,6 +201,13 @@
 			<fileset dir="${build.classes}">
 				<include name="**/de/moonflower/jfritz/resources/images/*.*" />
 				<include name="**/de/moonflower/jfritz/resources/sounds/*.*" />
+			</fileset>
+		</jar>
+
+		<jar jarfile="${build}/utils.jar" update="yes">
+			<fileset dir="${build.classes}">
+				<include name="**/jd/nutils/*.*" />
+				<include name="**/de/moonflower/jfritz/ProgramConstants.java" />
 			</fileset>
 		</jar>
 

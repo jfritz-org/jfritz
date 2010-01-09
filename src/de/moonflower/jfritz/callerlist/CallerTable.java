@@ -27,6 +27,7 @@ import javax.swing.table.TableColumnModel;
 
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.ProgramConstants;
 import de.moonflower.jfritz.cellrenderer.CallByCallCellRenderer;
 import de.moonflower.jfritz.cellrenderer.CallTypeCellRenderer;
 import de.moonflower.jfritz.cellrenderer.CommentCellRenderer;
@@ -180,7 +181,7 @@ public class CallerTable extends JTable {
 					// Delete selected entries
 					if (JOptionPane.showConfirmDialog(parentPanel, Main
 							.getMessage("really_delete_entries"), //$NON-NLS-1$
-							Main.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+							ProgramConstants.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 						int rows[] = getSelectedRows();
 						Debug.info("Removing " + rows.length + " entries"); //$NON-NLS-1$
 //						((CallerList) getModel()).removeEntries(getSelectedRows());

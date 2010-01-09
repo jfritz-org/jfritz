@@ -437,8 +437,8 @@ public final class JFritz implements  StatusListener {
 
 
 		TrayMenu menu = new TrayMenu("JFritz Menu"); //$NON-NLS-1$
-		TrayMenuItem menuItem = new TrayMenuItem(Main.PROGRAM_NAME + " v" //$NON-NLS-1$
-				+ Main.PROGRAM_VERSION);
+		TrayMenuItem menuItem = new TrayMenuItem(ProgramConstants.PROGRAM_NAME + " v" //$NON-NLS-1$
+				+ ProgramConstants.PROGRAM_VERSION);
 		menuItem.setActionCommand("showhide");
 		menuItem.addActionListener(jframe);
 		menu.add(menuItem);
@@ -499,7 +499,7 @@ public final class JFritz implements  StatusListener {
 						.getResource("/de/moonflower/jfritz/resources/images/trayicon.png")); //$NON-NLS-1$
 
 		tray.add(trayIcon);
-		tray.setTooltip(Main.PROGRAM_NAME + " v"+Main.PROGRAM_VERSION);
+		tray.setTooltip(ProgramConstants.PROGRAM_NAME + " v"+ProgramConstants.PROGRAM_VERSION);
 		tray.setPopupMenu(menu);
 		refreshTrayActionListener();
 	}
@@ -567,7 +567,7 @@ public final class JFritz implements  StatusListener {
 		}
 		case 2: {
 			if (tray.isSupported())
-				tray.displayMessage(Main.PROGRAM_NAME, msg,
+				tray.displayMessage(ProgramConstants.PROGRAM_NAME, msg,
 						Tray.MESSAGE_TYPE_INFO);
 			else {
 				MessageDlg msgDialog = new MessageDlg();
@@ -654,7 +654,7 @@ public final class JFritz implements  StatusListener {
 	public static void errorMsg(String msg) {
 		Debug.error(msg);
 		if (Main.systraySupport && tray != null) {
-			tray.displayMessage(Main.PROGRAM_NAME, msg,
+			tray.displayMessage(ProgramConstants.PROGRAM_NAME, msg,
 					Tray.MESSAGE_TYPE_ERROR);
 		}
 	}
@@ -766,9 +766,10 @@ public final class JFritz implements  StatusListener {
 		jframe.setVisible(true);
 	}
 
-	boolean maybeExit(int i) {
+	boolean maybeExit(int i, boolean check) {
 		boolean exit = true;
-		if (JFritzUtils.parseBoolean(Main.getProperty(
+		if (check &&
+				JFritzUtils.parseBoolean(Main.getProperty(
 				"option.confirmOnExit"))) { //$NON-NLS-1$ $NON-NLS-2$
 			exit = showExitDialog();
 		}
@@ -831,7 +832,7 @@ public final class JFritz implements  StatusListener {
 	boolean showExitDialog() {
 		boolean exit = true;
 		exit = JOptionPane.showConfirmDialog(jframe, Main
-				.getMessage("really_quit"), Main.PROGRAM_NAME, //$NON-NLS-1$
+				.getMessage("really_quit"), ProgramConstants.PROGRAM_NAME, //$NON-NLS-1$
 				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 
 		return exit;

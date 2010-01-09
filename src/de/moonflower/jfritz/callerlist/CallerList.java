@@ -39,6 +39,7 @@ import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.ProgramConstants;
 import de.moonflower.jfritz.box.BoxCallBackListener;
 import de.moonflower.jfritz.callerlist.filter.CallFilter;
 import de.moonflower.jfritz.callerlist.filter.DateFilter;
@@ -227,8 +228,8 @@ public class CallerList extends AbstractTableModel
 			// pw.newLine();
 			pw.write("<calls>"); //$NON-NLS-1$
 			pw.newLine();
-			pw.write("<comment>Calls for " + Main.PROGRAM_NAME + " v" //$NON-NLS-1$,  //$NON-NLS-2$
-					+ Main.PROGRAM_VERSION + "</comment>"); //$NON-NLS-1$
+			pw.write("<comment>Calls for " + ProgramConstants.PROGRAM_NAME + " v" //$NON-NLS-1$,  //$NON-NLS-2$
+					+ ProgramConstants.PROGRAM_VERSION + "</comment>"); //$NON-NLS-1$
 			pw.newLine();
 
 			int rows[] = null;

@@ -1,7 +1,7 @@
 package de.moonflower.jfritz.ant;
 
 import org.apache.tools.ant.Project;
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.ProgramConstants;
 
 public class GetJFritzVersion {
 	Project project;
@@ -11,7 +11,7 @@ public class GetJFritzVersion {
     }
 
 	public void execute() {
-		project.setProperty("version", Main.PROGRAM_VERSION);
+		project.setProperty("version", ProgramConstants.PROGRAM_VERSION);
 	}
 
 }

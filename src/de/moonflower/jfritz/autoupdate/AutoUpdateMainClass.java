@@ -12,6 +12,9 @@ public class AutoUpdateMainClass {
 	// enthält
 	transient private static String updateFile = "";
 
+	// Datei, die auf der Homepage das Changelog enthält
+	transient private static String changelogFile = "";
+
 	// Das Verzeichnis, in das die neuen Dateien heruntergeladen werden
 	transient private static String updateDirectory = "";
 
@@ -98,6 +101,21 @@ public class AutoUpdateMainClass {
 	protected static String getUpdateFile()
 	{
 		return updateFile;
+	}
+
+	/**
+	 * Setzt den Dateiname auf die Datei, die auf der Homepage die Informationen
+	 * über das Changelog enthält
+	 *
+	 * @param Dateiname
+	 */
+	protected static void setChangelogFile(final String file) {
+		changelogFile = file;
+	}
+
+	protected static String getChangelogFile()
+	{
+		return changelogFile;
 	}
 
 	protected static void setPropertiesDirectory(final String dir)

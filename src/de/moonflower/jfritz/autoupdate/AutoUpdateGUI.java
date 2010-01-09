@@ -1,5 +1,7 @@
 package de.moonflower.jfritz.autoupdate;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -8,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -16,6 +19,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 /**
  * Graphische Oberfläche zur Anzeige des Fortschritts des AutoUploads.
@@ -38,6 +43,8 @@ public class AutoUpdateGUI extends JDialog implements DownloadFilesListener {
 	private int totalUpdateSize;
 
 	private Thread downloadFilesThread;
+
+	private static Vector<String> changelog;
 
 	public AutoUpdateGUI(Thread thread) {
 		setLocation(0, 0);
@@ -179,16 +186,73 @@ public class AutoUpdateGUI extends JDialog implements DownloadFilesListener {
 	 */
 	protected static int showConfirmDialog() {
 		Object[] options = { UpdateLocale.getMessage("yes"),
-				UpdateLocale.getMessage("no") };
+				UpdateLocale.getMessage("no"),
+				 UpdateLocale.getMessage("changelog") };
 
-		int ok = JOptionPane.showOptionDialog(null, UpdateLocale
+		int ok = 99;
+		while ((ok != JOptionPane.YES_OPTION) && (ok != JOptionPane.NO_OPTION))
+		{
+			ok = JOptionPane.showOptionDialog(null, UpdateLocale
 				.getMessage("new_version_text"), UpdateLocale
 				.getMessage("autoupdate_title"), JOptionPane.YES_NO_OPTION,
 				JOptionPane.INFORMATION_MESSAGE, null, // don't use a custom Icon
 				options, // the titles of buttons
 				options[0]); // default button title
 
+			if (ok == 2) // changelog
+			{
+				showChangelog();
+			}
+		}
 		return ok;
+	}
+
+	private static void showChangelog()
+	{
+		final JDialog dialog = new JDialog();
+
+		JPanel pane = new JPanel();
+		pane.setLayout(new BorderLayout());
+		JPanel buttonPane = new JPanel();
+
+		JButton ok = new JButton(UpdateLocale.getMessage("okay"));
+		ok.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dialog.setVisible(false);
+				dialog.dispose();
+			}
+
+		});
+		buttonPane.add(ok);
+		pane.add(buttonPane, BorderLayout.SOUTH);
+
+		JTextArea textarea = new JTextArea();
+		String text = "";
+		for (int i=0; i<changelog.size(); i++)
+		{
+			text = text + changelog.get(i) + "\n";
+		}
+		textarea.setText(text);
+		pane.add(new JScrollPane(textarea), BorderLayout.CENTER);
+
+		dialog.getContentPane().add(pane);
+		dialog.setTitle(UpdateLocale.getMessage("changelog_title"));
+		dialog.pack();
+		Dimension size = new Dimension(800, 400);
+		dialog.setSize(size);
+
+		Dimension screenDim = Toolkit.getDefaultToolkit().getScreenSize();
+
+		dialog.setLocation((screenDim.width / 2) - (dialog.getWidth() / 2),
+				(screenDim.height / 2) - (dialog.getHeight() / 2));
+
+		dialog.setModal(true);
+		dialog.setVisible(true);
+	}
+
+	public static void setChangelog(final Vector<String> log)
+	{
+		changelog = log;
 	}
 
 	/**

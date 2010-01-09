@@ -37,6 +37,7 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.ProgramConstants;
 
 /**
  * Backport of JRE 1.5 Properties class to JRE 1.4.2
@@ -240,8 +241,8 @@ public class JFritzProperties extends Properties {
             pw.newLine();
             pw.write("<properties>"); //$NON-NLS-1$
             pw.newLine();
-            pw.write("<comment>Properties for " + Main.PROGRAM_NAME + " v" //$NON-NLS-1$,  //$NON-NLS-2$
-                    + Main.PROGRAM_VERSION + "</comment>"); //$NON-NLS-1$
+            pw.write("<comment>Properties for " + ProgramConstants.PROGRAM_NAME + " v" //$NON-NLS-1$,  //$NON-NLS-2$
+                    + ProgramConstants.PROGRAM_VERSION + "</comment>"); //$NON-NLS-1$
             pw.newLine();
 
             Enumeration <Object> keys = keys();

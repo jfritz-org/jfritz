@@ -188,16 +188,11 @@ import de.moonflower.jfritz.utils.threeStateButton.ThreeStateButton;
  */
 public class Main implements LookupObserver {
 
-	// when changing this, don't forget to check the resource bundles!!
-	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
-
-	public final static String PROGRAM_VERSION = "0.7.3.31"; //$NON-NLS-1$
-
 	public final static String PROGRAM_SECRET = "jFrItZsEcReT"; //$NON-NLS-1$
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 90 2009-12-28 00:15:28Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 92 2010-01-09 16:18:24Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -226,6 +221,8 @@ public class Main implements LookupObserver {
 	public static boolean systraySupport = false;
 
 	public static boolean showSplashScreen = true;
+
+	public static boolean updateBetaUrl = false;
 
 	private static JFritzProperties config_properties;
 
@@ -279,7 +276,7 @@ public class Main implements LookupObserver {
 		Calendar cal = Calendar.getInstance();
 		cal.getTime();
 
-		System.out.println(PROGRAM_NAME + " v" + PROGRAM_VERSION //$NON-NLS-1$
+		System.out.println(ProgramConstants.PROGRAM_NAME + " v" + ProgramConstants.PROGRAM_VERSION //$NON-NLS-1$
 				+ " (c) 2005-" + cal.get(Calendar.YEAR) + " by " + JFRITZ_PROJECT); //$NON-NLS-1$
 		Thread.currentThread().setPriority(5);
 		Thread.currentThread().setName("JFritz main thread");
@@ -316,7 +313,7 @@ public class Main implements LookupObserver {
 		moveDataToRightSaveDir();
 
 		Debug.on();
-		Debug.always(PROGRAM_NAME + " v" + PROGRAM_VERSION //$NON-NLS-1$
+		Debug.always(ProgramConstants.PROGRAM_NAME + " v" + ProgramConstants.PROGRAM_VERSION //$NON-NLS-1$
 				+ " (c) 2005-" + cal.get(Calendar.YEAR) + " by " + JFRITZ_PROJECT); //$NON-NLS-1$
 		Debug.setVerbose(true);
 		Debug.always("JFritz runs on " + OSDetector.getOSString());
@@ -374,6 +371,8 @@ public class Main implements LookupObserver {
 				, null, "Turn on systray support"); //$NON-NLS-1$
 		options.addOption('v', "verbose" //$NON-NLS-1$,  //$NON-NLS-2$
 				, "level", "Turn on debug information on console. Possible values: ERROR, WARNING, INFO, DEBUG"); //$NON-NLS-1$
+		options.addOption('u', "updateBeta" //$NON-NLS-1$,  //$NON-NLS-2$
+				, null, "Set update url to check for beta-version. Only for beta-testers, you can loose all your data!"); //$NON-NLS-1$
 		options.addOption('w', "without-control" //$NON-NLS-1$,  //$NON-NLS-2$
 				, null, "Turns off multiple instance control. DON'T USE, unless you know what your are doing"); //$NON-NLS-1$
 		options.addOption('z', "exportForeign" //$NON-NLS-1$,  //$NON-NLS-2$
@@ -432,10 +431,13 @@ public class Main implements LookupObserver {
 					Debug.logToFile("Debuglog.txt");
 				} else {
 					Debug.logToFile(logFilename);
-					break;
 				}
-			case 'q': //$NON-NSL-1$
+				break;
+			case 'q': //$NON-NLS-1$
 				showSplashScreen = false;
+				break;
+			case 'u': //$NON-NLS-1$
+				updateBetaUrl = true;
 				break;
 			}
 		}
@@ -445,7 +447,7 @@ public class Main implements LookupObserver {
 	private void initJFritz(String[] args, Main main)
 	{
 		SplashScreen splash = new SplashScreen(showSplashScreen);
-		splash.setVersion("v" + Main.PROGRAM_VERSION);
+		splash.setVersion("v" + ProgramConstants.PROGRAM_VERSION);
 		splash.setStatus("Initializing JFritz...");
 
 		splash.setStatus("Loading properties...");
@@ -1575,8 +1577,8 @@ public class Main implements LookupObserver {
 			UIManager.put("OptionPane.yesButtonText", Main.getMessage("yes"));
 		} catch (MissingResourceException e) {
 			Debug.error("Can't find i18n resource! (\"jfritz_" + locale + ".properties\")");//$NON-NLS-1$
-			JOptionPane.showMessageDialog(null, Main.PROGRAM_NAME + " v"//$NON-NLS-1$
-					+ Main.PROGRAM_VERSION
+			JOptionPane.showMessageDialog(null, ProgramConstants.PROGRAM_NAME + " v"//$NON-NLS-1$
+					+ ProgramConstants.PROGRAM_VERSION
 					+ "\n\nCannot find the language file \"jfritz_" + locale
 					+ ".properties\"!" + "\nProgram will exit!");//$NON-NLS-1$
 		}
@@ -1666,10 +1668,10 @@ public class Main implements LookupObserver {
 	 *
 	 */
 	public static void saveUpdateProperties() {
-		new JFritzUpdate(false); // needed for next line (Update update = new Update());
+		new JFritzUpdate(false, false); // needed for next line (Update update = new Update());
 		Update update = new Update();
 		update.loadSettings();
-		update.setProgramVersion(PROGRAM_VERSION);
+		update.setProgramVersion(ProgramConstants.PROGRAM_VERSION);
 		update.setLocale(getProperty("locale"));
 		update.setUpdateOnStart(JFritzUtils.parseBoolean(Main.getProperty(
 				"option.checkNewVersionAfterStart")));

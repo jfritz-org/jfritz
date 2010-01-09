@@ -1,10 +1,13 @@
 package de.moonflower.jfritz.ant;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
@@ -25,9 +28,13 @@ public class CreateUpdateFile {
 
 	transient private File updateFile;
 
+	transient private File changelogFile;
+
 	transient private BufferedWriter versionFileWriter;
 
 	transient private BufferedWriter updateFileWriter;
+
+	transient private BufferedWriter changelogFileWriter;
 
 	transient private Vector<Directory> dirs = new Vector<Directory>();
 
@@ -37,6 +44,8 @@ public class CreateUpdateFile {
 				+ System.getProperty("file.separator") + "current.txt");
 		updateFile = new File(targetDirectory.getAbsolutePath()
 				+ System.getProperty("file.separator") + "update.txt");
+		changelogFile = new File(targetDirectory.getAbsolutePath()
+				+ System.getProperty("file.separator") + "changelog.txt");
 		try {
 			versionFileWriter = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(versionFile), "UTF8"));
@@ -53,6 +62,15 @@ public class CreateUpdateFile {
 			Logger.err(className + "Could not write file with UTF8 encoding");
 		} catch (FileNotFoundException e) {
 			Logger.err(className + "Could not find file " + updateFile);
+		}
+
+		try {
+			changelogFileWriter = new BufferedWriter(new OutputStreamWriter(
+				new FileOutputStream(changelogFile), "ISO-8859-1"));
+		} catch (UnsupportedEncodingException e) {
+			Logger.err(className + "Could not write file with ISO-8859-1 encoding");
+		} catch (FileNotFoundException e) {
+			Logger.err(className + "Could not find file " + changelogFile);
 		}
 	}
 
@@ -137,11 +155,49 @@ public class CreateUpdateFile {
 		}
 	}
 
+	private void setChangelog()
+	{
+		File sourceChangelogFile = new File("./src/de/moonflower/jfritz/Changelog-Filtered.txt");
+		BufferedReader sourceFileReader = null;
+		try {
+			sourceFileReader = new BufferedReader(
+					new InputStreamReader(new FileInputStream(sourceChangelogFile), "ISO-8859-1"));
+		} catch (UnsupportedEncodingException e) {
+			Logger.err(className + "Could not read file with UTF8 encoding");
+		} catch (FileNotFoundException e) {
+			Logger.err(className + "Could not find file " + sourceChangelogFile);
+		}
+
+		if (sourceFileReader != null)
+		{
+			changelogFile.delete();
+			try {
+				changelogFile.createNewFile();
+			} catch (IOException e1) {
+				Logger.err(className + "Could not create changelog file: "
+						+ changelogFile.getAbsolutePath());
+			}
+
+			try {
+				String line = null;
+				while ((line = sourceFileReader.readLine()) != null)
+				{
+					changelogFileWriter.write(line);
+					changelogFileWriter.newLine();
+				}
+				changelogFileWriter.close();
+			} catch (IOException e) {
+				Logger.err(className + "Could not write to file " + changelogFile);
+			}
+		}
+	}
+
 	public void execute() {
 		Logger.msg(className + "Target directory: "
 				+ targetDirectory.getAbsolutePath());
 		setVersion();
 		setUpdateFiles();
+		setChangelog();
 	}
 
 }

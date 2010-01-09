@@ -38,6 +38,7 @@ import sun.awt.image.ToolkitImage;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.ProgramConstants;
 import de.moonflower.jfritz.callerlist.CallerTable;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.Person;
@@ -159,7 +160,7 @@ public class PrintCallerList extends Thread {
         TextElement label = LabelElementFactory.createLabelElement("JFritz", //$NON-NLS-1$
                 new Rectangle2D.Float(0, 0, pageWidth, 40), Color.BLACK,
                 ElementAlignment.CENTER, ElementAlignment.MIDDLE, font,
-                Main.PROGRAM_NAME + " - " + Main.getMessage("callerlist")); //$NON-NLS-1$,  //$NON-NLS-2$
+                ProgramConstants.PROGRAM_NAME + " - " + Main.getMessage("callerlist")); //$NON-NLS-1$,  //$NON-NLS-2$
         pageHeader.addElement(label);
 
         font = new FontDefinition("Arial", 8, true, false, false, false); //$NON-NLS-1$
@@ -221,7 +222,7 @@ public class PrintCallerList extends Thread {
 
     public JFreeReport createReportDefinition() {
         report = new JFreeReport();
-        report.setName(Main.PROGRAM_NAME + "-" + Main.getMessage("callerlist")); //$NON-NLS-1$,  //$NON-NLS-2$
+        report.setName(ProgramConstants.PROGRAM_NAME + "-" + Main.getMessage("callerlist")); //$NON-NLS-1$,  //$NON-NLS-2$
 
         SimplePageDefinition pageDefinition = new SimplePageDefinition(
                 createDINA4PaperLandscape());

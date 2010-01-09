@@ -146,5 +146,4 @@ public class OSDetector {
         OS_STRING = property;
 
     }
-
 }

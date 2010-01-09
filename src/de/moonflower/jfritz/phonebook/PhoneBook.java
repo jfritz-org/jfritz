@@ -43,6 +43,7 @@ import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.ProgramConstants;
 import de.moonflower.jfritz.callerlist.CallerList;
 import de.moonflower.jfritz.callerlist.CallerListListener;
 import de.moonflower.jfritz.importexport.VCardParserAdr;
@@ -667,8 +668,8 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 			// pw.newLine();
 			pw.write("<phonebook>"); //$NON-NLS-1$
 			pw.newLine();
-			pw.write("<comment>Phonebook for " + Main.PROGRAM_NAME + " v" //$NON-NLS-1$,  //$NON-NLS-2$
-					+ Main.PROGRAM_VERSION + "</comment>"); //$NON-NLS-1$
+			pw.write("<comment>Phonebook for " + ProgramConstants.PROGRAM_NAME + " v" //$NON-NLS-1$,  //$NON-NLS-2$
+					+ ProgramConstants.PROGRAM_VERSION + "</comment>"); //$NON-NLS-1$
 			pw.newLine();
 			Enumeration<Person> en = unfilteredPersons.elements();
 			while (en.hasMoreElements()) {

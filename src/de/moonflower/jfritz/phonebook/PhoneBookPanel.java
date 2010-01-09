@@ -35,6 +35,7 @@ import javax.swing.JMenuItem;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.ProgramConstants;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.VCardList;
 import de.moonflower.jfritz.utils.BrowserLaunch;
@@ -418,7 +419,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			}
 			if (JOptionPane.showConfirmDialog(this,
 					message, //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-					Main.PROGRAM_NAME,
+					ProgramConstants.PROGRAM_NAME,
 					JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 
 				personPanel.cancelEditing();

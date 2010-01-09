@@ -101,7 +101,7 @@ public class MacHandler {
 				//or JFritz has to throw an illegalStateException to prevent
 				//the close event from continuing, if the user click cancel
 				Debug.info("Mac Quit handler was called");
-				if(jfritz.maybeExit(0)){
+				if(jfritz.maybeExit(0, true)){
 					System.exit(0);
 				} else{
 					throw new IllegalStateException("User chose not to quit JFritz!"); //$NON-NLS-1$

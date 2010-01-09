@@ -126,7 +126,7 @@ public class DownloadFiles extends AutoUpdateMainClass implements Runnable {
 					con.setConnectTimeout(5000);
 
 					BufferedReader d = new BufferedReader(
-							new InputStreamReader(con.getInputStream()));
+							new InputStreamReader(con.getInputStream(), "UTF-8"));
 
 					String line = "";
 					// Füge Dateien zur filesToDownload-Liste hinzu

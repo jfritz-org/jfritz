@@ -25,6 +25,7 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.ProgramConstants;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.struct.QuickDial;
@@ -215,8 +216,8 @@ public class QuickDials extends AbstractTableModel {
 //			pw.println("<!DOCTYPE quickdials SYSTEM \"" + QUICKDIALS_DTD_URI
 //					+ "\">");
 			pw.println("<quickdials>"); //$NON-NLS-1$
-			pw.println("\t<comment>QuickDial list for " + Main.PROGRAM_NAME //$NON-NLS-1$
-					+ " v" + Main.PROGRAM_VERSION + "</comment>"); //$NON-NLS-1$,  //$NON-NLS-2$
+			pw.println("\t<comment>QuickDial list for " + ProgramConstants.PROGRAM_NAME //$NON-NLS-1$
+					+ " v" + ProgramConstants.PROGRAM_VERSION + "</comment>"); //$NON-NLS-1$,  //$NON-NLS-2$
 			Enumeration<QuickDial> en = quickDials.elements();
 			while (en.hasMoreElements()) {
 				QuickDial current = en.nextElement();

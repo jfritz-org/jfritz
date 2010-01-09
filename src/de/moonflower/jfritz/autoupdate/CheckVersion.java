@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Vector;
 
 /**
  * Dieser Thread überprüft, ob eine neue Programmversion verfügbar ist
@@ -77,6 +78,7 @@ public class CheckVersion extends AutoUpdateMainClass implements Runnable {
 		if (result)
 		{
 			urlstr = getUpdateURL() + getVersionFile(); //$NON-NLS-1$
+			logMessage("Checking for new update at: " + getUpdateURL());
 
 			boolean foundNewVersion = false;
 			BufferedReader buffReader;
@@ -96,7 +98,7 @@ public class CheckVersion extends AutoUpdateMainClass implements Runnable {
 						// 30 Sekunde-Timeout für die Datenverbindung
 						con.setReadTimeout(30000);
 						buffReader = new BufferedReader(
-								new InputStreamReader(con.getInputStream()));
+								new InputStreamReader(con.getInputStream(), "UTF-8"));
 
 						// Get remote version
 						currentLine = buffReader.readLine();
@@ -146,5 +148,48 @@ public class CheckVersion extends AutoUpdateMainClass implements Runnable {
 	 */
 	public String getNewVersion() {
 		return newVersion;
+	}
+
+	public Vector<String> getChangelog()
+	{
+		Vector<String> changelog = new Vector<String>();
+
+		urlstr = getUpdateURL() + getChangelogFile(); //$NON-NLS-1$
+
+		BufferedReader buffReader;
+		String currentLine = null;
+		try {
+			final URL url = new URL(urlstr);
+			if (url != null) {
+
+				URLConnection con;
+				try {
+					con = url.openConnection();
+					// 1 Sekunde-Timeout für den Verbindungsaufbau
+					con.setConnectTimeout(5000);
+
+					// 30 Sekunde-Timeout für die Datenverbindung
+					con.setReadTimeout(30000);
+					buffReader = new BufferedReader(
+							new InputStreamReader(con.getInputStream(), "ISO-8859-1"));
+
+					while ((currentLine = buffReader.readLine()) != null)
+					{
+						changelog.add(currentLine);
+					}
+
+					buffReader.close();
+
+				} catch (IOException e1) {
+					logError("Error while retrieving "
+							+ urlstr
+							+ " (possibly no connection to the internet)"); //$NON-NLS-1$
+				}
+			}
+		} catch (MalformedURLException e) {
+			logError("URL invalid: " + urlstr); //$NON-NLS-1$
+		}
+
+		return changelog;
 	}
 }

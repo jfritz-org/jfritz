@@ -47,6 +47,7 @@ import com.toedter.calendar.JDateChooser;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.ProgramConstants;
 import de.moonflower.jfritz.StatusBarPanel;
 
 import de.moonflower.jfritz.callerlist.filter.CallByCallFilter;
@@ -1055,7 +1056,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		} else if (command.equals(DELETE_ENTRY)) {
 			if (JOptionPane.showConfirmDialog(jFrame, Main
 					.getMessage("really_delete_entries"), //$NON-NLS-1$
-					Main.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+					ProgramConstants.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 				int rows[] = callerTable.getSelectedRows();
 				Debug.info("Removing " + rows.length + " entries"); //$NON-NLS-1$
 				callerList.removeEntries(rows);

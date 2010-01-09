@@ -57,7 +57,6 @@ import javax.swing.filechooser.FileFilter;
 import jd.nutils.OSDetector;
 
 import de.moonflower.jfritz.autoupdate.JFritzUpdate;
-import de.moonflower.jfritz.autoupdate.Update;
 import de.moonflower.jfritz.box.BoxClass;
 import de.moonflower.jfritz.box.BoxStatusListener;
 import de.moonflower.jfritz.callerlist.CallDialog;
@@ -251,7 +250,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	}
 
 	private void createGUI() {
-		setTitle(Main.PROGRAM_NAME);
+		setTitle(ProgramConstants.PROGRAM_NAME);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 		statusBar = createStatusBar2();
@@ -532,7 +531,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * Creates the menu bar
 	 */
 	public JMenuBar createMenu() {
-		String menu_text = Main.PROGRAM_NAME;
+		String menu_text = ProgramConstants.PROGRAM_NAME;
 		if (OSDetector.isMac()) {
 			menu_text = "File"; //$NON-NLS-1$
 		}
@@ -915,8 +914,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * Shows the about dialog
 	 */
 	public void showAboutDialog() {
-		JOptionPane.showMessageDialog(this, Main.PROGRAM_NAME + " v" //$NON-NLS-1$
-				+ Main.PROGRAM_VERSION + "\n" //$NON-NLS-1$
+		JOptionPane.showMessageDialog(this, ProgramConstants.PROGRAM_NAME + " v" //$NON-NLS-1$
+				+ ProgramConstants.PROGRAM_VERSION + "\n" //$NON-NLS-1$
 				+ JFritzUtils.getVersionFromCVSTag(Main.CVS_TAG) + "\n" //$NON-NLS-1$
 				+ "(c) 2005-2010 by " + Main.JFRITZ_PROJECT + "\n" //$NON-NLS-1$,  //$NON-NLS-2$
 				+ Main.PROGRAM_URL + "\n\n" 							//$NON-NLS-1$
@@ -952,7 +951,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				Debug.debug("PROCESS WINDOW EVENT: minimize statt close");
 				setExtendedState(Frame.ICONIFIED);
 			} else {
-				jFritz.maybeExit(0);
+				jFritz.maybeExit(0, true);
 			}
 		} else if (e.getID() == WindowEvent.WINDOW_ICONIFIED) {
 			Debug.debug("PROCESS WINDOW EVENT: minimize");
@@ -1049,7 +1048,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	public void actionPerformed(ActionEvent e) {
 		Debug.debug("Action " + e.getActionCommand()); //$NON-NLS-1$
 		if (e.getActionCommand().equals("exit")) { //$NON-NLS-1$
-			jFritz.maybeExit(0);
+			jFritz.maybeExit(0, true);
 		} else if (e.getActionCommand().equals("about")) {
 			showAboutDialog();
 		} else if (e.getActionCommand().equals("help")) { //$NON-NLS-1$
@@ -1069,12 +1068,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		} else if (e.getActionCommand().equals("export_csv")) {
 			exportCallerListToCSV();
 		} else if (e.getActionCommand().equals("update")) { //$NON-NLS-1$
-			JFritzUpdate jfritzUpdate = new JFritzUpdate(true);
-			Update update = new Update();
-			update.loadSettings();
-			update.setProgramVersion(Main.PROGRAM_VERSION);
-			jfritzUpdate.downloadNewFiles(update);
-			update.saveSettings();
+			JFritzUpdate jfritzUpdate = new JFritzUpdate(true, Main.updateBetaUrl);
+			jfritzUpdate.setProgramVersion(ProgramConstants.PROGRAM_VERSION);
+			jfritzUpdate.confirmedUpdateJFritz();
+			if (jfritzUpdate.isShutdownNecessary())
+			{
+				jFritz.maybeExit(0, false);
+			}
 		} else if (e.getActionCommand().equals("export_phonebook")) {
 			exportPhoneBookToCSV();
 		} else if (e.getActionCommand().equals("print_callerlist")) {
