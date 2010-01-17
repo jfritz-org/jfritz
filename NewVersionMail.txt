@@ -3,12 +3,11 @@
 wir brauchen erneut Eure Unterstützung und bitten Euch, die aktuelle Beta-Version
 von JFritz zu testen. 
 
-Changelog: http://jfritz.robotniko.de/beta/Changelog.txt
+************************************************* WICHTIG *************************************************
+Bitte schaut auch mal nach, ob ihr zu euren alten Bugmeldungen oder zu anderen Bugs neue Informationen liefern könnt.
+************************************************* WICHTIG *************************************************
 
-************************************************* ACHTUNG *************************************************
-Diese Version verschiebt einige XML-Dateien. Macht vor dem Installieren dieser Version eine Sicherungskopie
-von euren Daten und dem gesamten alten JFritz-Ordner 
-************************************************* ACHTUNG *************************************************
+Changelog: http://jfritz.robotniko.de/beta/Changelog.txt 
 
 Die aktuelle Beta-Version kannst Du hier runterladen:
 
@@ -28,8 +27,6 @@ http://jfritz.robotniko.de/beta/JFritz-${version}-Beta.tar.gz
 
 Bugs bitte wie gehabt in Mantis melden:
 http://jfritz.robotniko.de/mantis/main_page.php
-
-Bitte schaut auch mal nach, ob ihr zu euren alten Bugmeldungen oder zu anderen Bugs neue Informationen liefern könnt.
 
 *** Achtung ***:
 Es handelt sich um eine Beta-Version, die Du bitte nicht weiter verteilen
