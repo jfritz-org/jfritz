@@ -2,7 +2,7 @@
 
 <!-- reverselookup.xml revision 1.03 from 20, Jun 2008
 
-	 The syntax of this file is fairly self-explanatory
+	 The syntax of this file is fairly self-explanatory 
      However, a few things need to be said. First and foremost
      everything in here needs to be xml compliant, that means all
      quotes, pound signs etc need to be properly escaped!!!
