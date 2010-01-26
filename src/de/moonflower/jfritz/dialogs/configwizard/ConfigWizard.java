@@ -6,7 +6,8 @@ import java.io.IOException;
 import javax.swing.*;
 import java.util.Locale;
 
-import com.nexes.wizard.*;
+import com.nexes.wizard.Wizard;
+import com.nexes.wizard.WizardPanelDescriptor;
 
 import de.moonflower.jfritz.dialogs.config.ConfigPanelCallMonitor;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelLang;
@@ -140,7 +141,6 @@ public class ConfigWizard {
 	 * @param parent
 	 */
 	public void askLanguage(Frame parent){
-
 		wizard = new Wizard();
 	    wizard.getDialog().setTitle(Main.getMessage("config_wizard"));
        	wizard.setLocationRelativeToParent(true);
