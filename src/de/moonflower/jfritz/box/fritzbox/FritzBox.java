@@ -137,6 +137,8 @@ public class FritzBox extends BoxClass {
 	private static String POSTDATA_CALL = "&telcfg:settings/UseClickToDial=1&telcfg:settings/DialPort=$NEBENSTELLE&telcfg:command/Dial=$NUMMER"; //$NON-NLS-1$
 	private static String POSTDATA_HANGUP = "&telcfg:settings/UseClickToDial=1&telcfg:command%2FHangup"; //$NON-NLS-1$
 
+	private static String POSTDATA_CLEAR_JOURNAL = "&telcfg:settings/ClearJournal&telcfg:settings/UseJournal=1";
+
 	private static int max_retry_count = 2;
 
 	private FritzBoxFirmware firmware = null;
@@ -1141,10 +1143,76 @@ public class FritzBox extends BoxClass {
 
 	public void clearCallerList()
 	{
+		if ((firmware != null) && (firmware.getMajorFirmwareVersion() == 4)
+						&& (firmware.getMinorFirmwareVersion() < 86)) {
+			clearJournalOld();
+		} else {
+			clearJournalNew();
+		}
+	}
+
+	public void clearJournalOld() {
 		Vector<String> query = new Vector<String>();
 		query.add("telcfg:settings/ClearJournal");
 		getQuery(query);
 	}
+
+	public void clearJournalNew()
+	{
+        String postdata = POSTDATA_CLEAR_JOURNAL;
+
+		try {
+			postdata = this.getPostData(postdata);
+		} catch (UnsupportedEncodingException e) {
+			Debug.error("Encoding not supported! " + e.toString());
+		}
+
+		String urlstr = protocol+"://" //$NON-NLS-1$
+			+ this.address + ":" + this.port
+			+ "/cgi-bin/webcm"; //$NON-NLS-1$
+
+		boolean finished = false;
+		boolean password_wrong = false;
+		int retry_count = 0;
+
+		while (!finished && (retry_count < max_retry_count))
+		{
+			try {
+				retry_count++;
+				if (password_wrong)
+				{
+					password_wrong = false;
+					Debug.debug("Detecting new firmware, getting new SID");
+					this.detectFirmware();
+			        postdata = POSTDATA_CLEAR_JOURNAL;
+
+					try {
+						postdata = this.getPostData(postdata);
+					} catch (UnsupportedEncodingException e) {
+						Debug.error("Encoding not supported! " + e.toString());
+					}
+				}
+				JFritzUtils.fetchDataFromURLToVector(
+						this.getName(), urlstr, postdata, true);
+				finished = true;
+			} catch (WrongPasswordException e) {
+				password_wrong = true;
+				Debug.debug("Wrong password, maybe SID is invalid.");
+				setBoxDisconnected();
+			} catch (SocketTimeoutException ste) {
+				ste.printStackTrace();
+				setBoxDisconnected();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				setBoxDisconnected();
+			} catch (InvalidFirmwareException e) {
+				password_wrong = true;
+				setBoxDisconnected();
+			}
+		}
+	}
+
 
 	/**************************************************************************************
 	 * Implementation of the BoxSipProviderInterface

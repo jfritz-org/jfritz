@@ -13,6 +13,15 @@ JFritz 0.7.3.34:
 - Neu: Phonebook-XML-Handler lädt nun auch Informationen über Land und Area und ist sich der Versionierung bewusst
 - Änderung: Neue JUnit-Version für Tests
 
+JFritz 0.7.3.35:
+- Bugfix: Löschen der Anrufliste mit Firmware xx.04.86 funktioniert wieder.
+
+JFritz 0.7.3.34:
+- Neu: Aktivierung des Editierfeldes im Telefonbuch bei Klick aus der Anrufliste
+- Neu: Vorbereitung zur Ersetzung der Rufnummernklasse durch eine verbesserte Implementierung
+- Neu: Phonebook-XML-Handler lädt nun auch Informationen über Land und Area und ist sich der Versionierung bewusst
+- Änderung: Neue JUnit-Version für Tests
+
 JFritz 0.7.3.33:
 - Bugfix: Wizard verhindert Start von JFritz
 
