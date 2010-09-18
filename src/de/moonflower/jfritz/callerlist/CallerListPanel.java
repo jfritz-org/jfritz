@@ -69,7 +69,7 @@ import de.moonflower.jfritz.phonebook.PhoneBookPanel;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.IProgressListener;
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.ReverseLookupSite;
 import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.Debug;
@@ -172,6 +172,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 				if (numSelected == 1)
 				{
 					phoneBookPanel.getPhoneBookTable().showAndSelectPerson(callerTable.getSelectedPersons().get(0), true);
+					phoneBookPanel.showEditPerson();
 				} else if (numSelected == 0 && callerTable.getSelectedRowCount() == 1) {
 					Call selectedCall = callerList.getFilteredCall(callerTable.getSelectedRow());
 					if (selectedCall.getPhoneNumber() != null) {
@@ -1075,7 +1076,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 					ReverseLookup.specificLookup(call.getPhoneNumber(), parts[1], callerList);
 				}
 			} else {
-				Vector<PhoneNumber> numbers = new Vector<PhoneNumber>();
+				Vector<PhoneNumberOld> numbers = new Vector<PhoneNumberOld>();
 				for (int i: selectedRows) {
 					call = callerList.getCallAt(i);
 					if ( call.getPhoneNumber() != null )
@@ -1124,7 +1125,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		} else if (command.equals("clipboard_number")) { //$NON-NLS-1$
 			Call call = callerList.getSelectedCall();
 			if (call != null) {
-				PhoneNumber number = call.getPhoneNumber();
+				PhoneNumberOld number = call.getPhoneNumber();
 				if ((number != null) && (call != null)) {
 					JFritzClipboard.copy(number.convertToNationalNumber());
 				}

@@ -3,13 +3,13 @@ package de.moonflower.jfritz.callerlist.filter;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 
 public class SearchFilter extends CallFilter {
 	// faster than creating local variables every call of passInternFilter
 	private String parts[];
 
-	private PhoneNumber phoneNumber; //only for speedUp
+	private PhoneNumberOld phoneNumber; //only for speedUp
 
 	private Person person; //only for speedUp
 

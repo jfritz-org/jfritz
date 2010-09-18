@@ -4,14 +4,14 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.utils.Debug;
 
 public class VCardParserTel {
 
 	public static boolean parse(VCardParser parser, Person person) {
 		Enumeration<String> en = parser.getPropertyType().keys();
-		Vector<PhoneNumber> numbers = null;
+		Vector<PhoneNumberOld> numbers = null;
 		while (en.hasMoreElements()) {
 			String key = en.nextElement();
 			if (key.equals("type")) {
@@ -21,14 +21,14 @@ public class VCardParserTel {
 				}
 
 				if (person.getNumbers() == null) {
-					numbers = new Vector<PhoneNumber>();
+					numbers = new Vector<PhoneNumberOld>();
 				} else {
 					numbers = person.getNumbers();
 				}
 
 
 				if (!containsNumber(numbers, parser.getValues().get(0))) {
-					PhoneNumber num = new PhoneNumber(parser.getValues().get(0), false);
+					PhoneNumberOld num = new PhoneNumberOld(parser.getValues().get(0), false);
 					if (propertyTypes.contains("home")) {
 						num.setType("home");
 					} else if (propertyTypes.contains("cell")) {
@@ -55,8 +55,8 @@ public class VCardParserTel {
 		return false;
 	}
 
-	private static boolean containsNumber(Vector<PhoneNumber> numbers, String number) {
-		for (PhoneNumber num: numbers) {
+	private static boolean containsNumber(Vector<PhoneNumberOld> numbers, String number) {
+		for (PhoneNumberOld num: numbers) {
 			if (num.toString().equals(number.toString())) {
 				return true;
 			}

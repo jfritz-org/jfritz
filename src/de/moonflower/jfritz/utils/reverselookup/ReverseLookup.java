@@ -30,7 +30,7 @@ import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.StatusBarPanel;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.ReverseLookupSite;
 
 import de.moonflower.jfritz.utils.Debug;
@@ -86,9 +86,9 @@ public class ReverseLookup {
 	 * @param obs
 	 *            the observer wich will be will receive the Persons
 	 */
-	public static synchronized void lookup(PhoneNumber number,
+	public static synchronized void lookup(PhoneNumberOld number,
 			LookupObserver obs) {
-		Vector<PhoneNumber> v = new Vector<PhoneNumber>();
+		Vector<PhoneNumberOld> v = new Vector<PhoneNumberOld>();
 		v.add(number);
 		lookup(v, obs, false);
 	}
@@ -104,9 +104,9 @@ public class ReverseLookup {
 	 * @param quitOnDone
 	 *            shall the thread be killed after lookup
 	 */
-	public static synchronized void lookup(PhoneNumber number,
+	public static synchronized void lookup(PhoneNumberOld number,
 			LookupObserver obs, boolean quitOnDone) {
-		Vector<PhoneNumber> v = new Vector<PhoneNumber>();
+		Vector<PhoneNumberOld> v = new Vector<PhoneNumberOld>();
 		v.add(number);
 		lookup(v, obs, quitOnDone);
 	}
@@ -123,7 +123,7 @@ public class ReverseLookup {
 	 * @param quitOnDone
 	 *            shall the thread be killed after lookup
 	 */
-	public static synchronized void lookup(Vector<PhoneNumber> numbers,
+	public static synchronized void lookup(Vector<PhoneNumberOld> numbers,
 			LookupObserver obs, boolean quitOnDone) {
 
 		if(Main.getProperty("option.clientTelephoneBook").equals("true") &&
@@ -135,7 +135,7 @@ public class ReverseLookup {
 		}
 
 		LookupRequest req;
-		Enumeration<PhoneNumber> en = numbers.elements();
+		Enumeration<PhoneNumberOld> en = numbers.elements();
 		observer = obs;
 
 		//run through elements and add elements that aren't already in the queue
@@ -173,7 +173,7 @@ public class ReverseLookup {
 	 * @param siteName
 	 * @param obs
 	 */
-	public static synchronized void specificLookup(PhoneNumber number, String siteName, LookupObserver obs){
+	public static synchronized void specificLookup(PhoneNumberOld number, String siteName, LookupObserver obs){
 
 		if(Main.getProperty("option.clientTelephoneBook").equals("true") &&
 				NetworkStateMonitor.isConnectedToServer()){
@@ -300,7 +300,7 @@ public class ReverseLookup {
 	 *            the number wich will be looked up
 	 * @return the Person this method found
 	 */
-	public static Person busyLookup(PhoneNumber callerPhoneNumber) {
+	public static Person busyLookup(PhoneNumberOld callerPhoneNumber) {
 		return LookupThread.lookup(callerPhoneNumber, "");
 	}
 

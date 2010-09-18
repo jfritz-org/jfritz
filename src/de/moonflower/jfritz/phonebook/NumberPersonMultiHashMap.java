@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 
 public class NumberPersonMultiHashMap {
 
@@ -18,7 +18,7 @@ public class NumberPersonMultiHashMap {
 		hashMap = new HashMap<String, List<Person>>();
 	}
 
-	public void addPerson(PhoneNumber number, Person person)
+	public void addPerson(PhoneNumberOld number, Person person)
 	{
 		List<Person> l = hashMap.get(number.getIntNumber());
 		if (l == null)
@@ -31,12 +31,12 @@ public class NumberPersonMultiHashMap {
 		}
 	}
 
-	public List<Person> getPerson(PhoneNumber number)
+	public List<Person> getPerson(PhoneNumberOld number)
 	{
 		return hashMap.get(number.getIntNumber());
 	}
 
-	public void deletePerson(PhoneNumber number, Person person)
+	public void deletePerson(PhoneNumberOld number, Person person)
 	{
 		List<Person> l = hashMap.get(number.getIntNumber());
 		l.remove(person);

@@ -12,7 +12,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
+import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
@@ -24,9 +25,11 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 public class PhonebookFileXMLHandler extends DefaultHandler {
 
 	String firstName, company, lastName, type, standard, email, street,
-			postCode, city, category, picture;
+			postCode, city, category, picture, country, area, num;
 
-	Vector<PhoneNumber> numbers;
+	String version = "1.0";
+
+	Vector<PhoneNumberOld> numbers;
 
 	String chars;
 
@@ -67,7 +70,7 @@ public class PhonebookFileXMLHandler extends DefaultHandler {
 			firstName = ""; //$NON-NLS-1$
 			company = ""; //$NON-NLS-1$
 			lastName = ""; //$NON-NLS-1$
-			numbers = new Vector<PhoneNumber>();
+			numbers = new Vector<PhoneNumberOld>();
 			street = ""; //$NON-NLS-1$
 			postCode = ""; //$NON-NLS-1$
 			city = ""; //$NON-NLS-1$
@@ -80,7 +83,16 @@ public class PhonebookFileXMLHandler extends DefaultHandler {
 			standard = attrs.getValue("standard"); //$NON-NLS-1$
 		} else if (eName.equals("number")) { //$NON-NLS-1$
 			type = attrs.getValue("type"); //$NON-NLS-1$
+			country = "";
+			area = "";
+			num = "";
 			// Debug.msg("STD: "+standard+" TYPE: "+type);
+		} else if (eName.equals("phonebook")) { //$NON-NLS-1$
+			version = attrs.getValue("version"); //$NON-NLS-1$
+			if (version == null)
+			{
+				version = "1.0";
+			}
 		}
 	}
 
@@ -92,10 +104,29 @@ public class PhonebookFileXMLHandler extends DefaultHandler {
 			company = chars;
 		} else if (qName.equals("lastname")) { //$NON-NLS-1$
 			lastName = chars;
+		} else if (qName.equals("country")) { //$NON-NLS-1$
+			country = chars;
+		} else if (qName.equals("area")) { //$NON-NLS-1$
+			area = chars;
+		} else if (qName.equals("num")) { //$NON-NLS-1$
+			num = chars;
 		} else if (qName.equals("number")) { //$NON-NLS-1$
-			PhoneNumber pn = new PhoneNumber(chars, false);
-			pn.setType(type);
-			numbers.add(pn);
+			try {
+				float versionFloat = Float.parseFloat(version);
+				if (versionFloat == 1.0)
+				{
+					PhoneNumberOld pn = new PhoneNumberOld(chars, false);
+					pn.setType(type);
+					numbers.add(pn);
+				} else if (versionFloat >= 2.0) {
+					Debug.debug("DO SOMETHING HERE");
+				}
+			} catch (NumberFormatException nfe)
+			{
+				PhoneNumberOld pn = new PhoneNumberOld(chars, false);
+				pn.setType(type);
+				numbers.add(pn);
+			}
 		} else if (qName.equals("street")) { //$NON-NLS-1$
 			street = chars;
 		} else if (qName.equals("postcode")) { //$NON-NLS-1$

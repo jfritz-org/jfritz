@@ -8,7 +8,7 @@ import de.moonflower.jfritz.callmonitor.CallMonitorStatusListener;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.IProgressListener;
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
 
 public class BoxCommunication {
@@ -199,7 +199,7 @@ public class BoxCommunication {
 		}
 	}
 
-	public void doCall(PhoneNumber number, Port port)
+	public void doCall(PhoneNumberOld number, Port port)
 	{
 		if (port != null)
 		{

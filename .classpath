@@ -3,7 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="tests"/>
 	<classpathentry kind="lib" path="lang"/>
-	<classpathentry kind="var" path="JUNIT_HOME/junit.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jdic.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jacob.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jfreereport-0.8.6-2.jar"/>
@@ -22,5 +21,6 @@
 	<classpathentry kind="lib" path="lib-dev/mail.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib-dev/ant-deb-0.0.1.jar"/>
+	<classpathentry kind="lib" path="lib-dev/junit-4.8.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

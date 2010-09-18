@@ -78,7 +78,7 @@ import de.moonflower.jfritz.phonebook.PhoneBookPanel;
 
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.CopyFile;
 import de.moonflower.jfritz.utils.Debug;
@@ -1131,7 +1131,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			fetchTask(((JToggleButton) e.getSource()).isSelected());
 		} else if (e.getActionCommand().equals("callDialog")) {
 			if (tabSelected("callerlist")) { //$NON-NLS-1$
-				PhoneNumber number = null;
+				PhoneNumberOld number = null;
 				if (this.getCallerTable().getSelectedRowCount() == 1)
 				{
 					int index = this.getCallerTable().getSelectedRow();
@@ -1139,7 +1139,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					number = call.getPhoneNumber();
 				}
 				else {
-					number = new PhoneNumber("", false, false);
+					number = new PhoneNumberOld("", false, false);
 				}
 				CallDialog p = new CallDialog(number);
 				p.setVisible(true);
@@ -1152,31 +1152,31 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					Person person = JFritz.getPhonebook().getFilteredPersons().get(index);
 					dialog = new CallDialog(person.getNumbers(), person.getStandardTelephoneNumber());
 				} else {
-					dialog = new CallDialog(new PhoneNumber("", false, false));
+					dialog = new CallDialog(new PhoneNumberOld("", false, false));
 				}
 				dialog.setVisible(true);
 				dialog.dispose();
 			} else {
 				CallDialog dialog = null;
-				dialog = new CallDialog(new PhoneNumber("", false, false));
+				dialog = new CallDialog(new PhoneNumberOld("", false, false));
 				dialog.setVisible(true);
 				dialog.dispose();
 			}
 		} else if (e.getActionCommand().equals("callDialogTray")) {
 			Vector<String> clipBoardContents = JFritzClipboard.paste();
-			Vector<PhoneNumber> numbers = new Vector<PhoneNumber>(clipBoardContents.size());
+			Vector<PhoneNumberOld> numbers = new Vector<PhoneNumberOld>(clipBoardContents.size());
 			for (String content:clipBoardContents) {
 				if (content.length() < 30)
 				{
-					PhoneNumber number = new PhoneNumber(content, false, false);
+					PhoneNumberOld number = new PhoneNumberOld(content, false, false);
 					if (!numbers.contains(number))
 					{
-						numbers.add(new PhoneNumber(content, false, false));
+						numbers.add(new PhoneNumberOld(content, false, false));
 					}
 				}
 			}
 			if (numbers.size() == 0) {
-				numbers.add(new PhoneNumber("", false, false));
+				numbers.add(new PhoneNumberOld("", false, false));
 			}
 			CallDialog p = new CallDialog(numbers, numbers.get(0));
 			p.setVisible(true);

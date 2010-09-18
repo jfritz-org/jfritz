@@ -3,7 +3,7 @@ package de.moonflower.jfritz.testsuites.utils.reverselookup;
 import java.util.Vector;
 
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.utils.reverselookup.LookupObserver;
 
 public class CheckEntry implements LookupObserver {
@@ -13,14 +13,14 @@ public class CheckEntry implements LookupObserver {
 
 	private Person checkPerson;
 	private Person receivedPerson;
-	PhoneNumber checkedNumber;
+	PhoneNumberOld checkedNumber;
 
-	public CheckEntry(PhoneNumber num, String firstname, String lastname, String street, String zipcode, String city)
+	public CheckEntry(PhoneNumberOld num, String firstname, String lastname, String street, String zipcode, String city)
 	{
 		this(num, firstname, lastname, "", street, zipcode, city);
 	}
 
-	public CheckEntry(PhoneNumber num, String firstname, String lastname, String company, String street, String zipcode, String city)
+	public CheckEntry(PhoneNumberOld num, String firstname, String lastname, String company, String street, String zipcode, String city)
 	{
 		checkPerson = new Person(firstname, "", lastname,
 				street, zipcode, city, "", "");
@@ -88,7 +88,7 @@ public class CheckEntry implements LookupObserver {
 		return receivedPerson;
 	}
 
-	public PhoneNumber getCheckedNumber()
+	public PhoneNumberOld getCheckedNumber()
 	{
 		return checkedNumber;
 	}

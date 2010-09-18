@@ -21,7 +21,7 @@ import javax.swing.event.HyperlinkListener;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -194,7 +194,7 @@ public class CallMessageDlg extends JFrame implements ActionListener{
 			message = message.replaceAll("%DATE%", df.format(call.getCalldate()));
 			df = new SimpleDateFormat("HH:mm:ss"); //$NON-NLS-1$
 			message = message.replaceAll("%TIME%", df.format(call.getCalldate()));
-			PhoneNumber number = call.getPhoneNumber();
+			PhoneNumberOld number = call.getPhoneNumber();
 			if ( call.getPhoneNumber() != null )
 			{
 				message = message.replaceAll("%COUNTRY%", number.getCountry());
@@ -422,7 +422,7 @@ public class CallMessageDlg extends JFrame implements ActionListener{
 			message = message.replaceAll("%DATE%", df.format(call.getCalldate()));
 			df = new SimpleDateFormat("HH:mm:ss"); //$NON-NLS-1$
 			message = message.replaceAll("%TIME%", df.format(call.getCalldate()));
-			PhoneNumber number = call.getPhoneNumber();
+			PhoneNumberOld number = call.getPhoneNumber();
 			if ( call.getPhoneNumber() != null )
 			{
 				message = message.replaceAll("%COUNTRY%", number.getCountry());

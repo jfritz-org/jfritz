@@ -9,7 +9,7 @@ import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.PhoneType;
 
 public class PhoneTypeModel extends AbstractListModel implements
@@ -38,9 +38,9 @@ public class PhoneTypeModel extends AbstractListModel implements
 		for (int i = 0; i < typeCount.length; i++)
 			typeCount[i] = 0;
 
-		Enumeration<PhoneNumber> en = person.getNumbers().elements();
+		Enumeration<PhoneNumberOld> en = person.getNumbers().elements();
 		while (en.hasMoreElements()) {
-			String type = ((PhoneNumber) en.nextElement()).getType();
+			String type = ((PhoneNumberOld) en.nextElement()).getType();
 			Pattern p = Pattern.compile("([a-z]*)(\\d*)"); //$NON-NLS-1$
 			Matcher m = p.matcher(type);
 			if (m.find()) {

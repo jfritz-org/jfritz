@@ -9,7 +9,7 @@ import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -94,7 +94,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 	            try {
 	                Call currentCall = new Call(new CallType(CallType.CALLIN),
 	                        new SimpleDateFormat("dd.MM.yy HH:mm:ss")
-	                                .parse(split[0]), new PhoneNumber(number, false),
+	                                .parse(split[0]), new PhoneNumberOld(number, false),
 	                                new Port(0, "", "-1", "-1"),
 	                                provider, 0);
 	                JFritz.getCallMonitorList().addNewCall(
@@ -153,7 +153,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 	                Call currentCall = new Call(new CallType(CallType.CALLOUT),
 	                        new SimpleDateFormat("dd.MM.yy HH:mm:ss")
 	                                .parse(split[0]),
-	                                new PhoneNumber(number, Main.getProperty("option.activateDialPrefix")
+	                                new PhoneNumberOld(number, Main.getProperty("option.activateDialPrefix")
 	                                		.toLowerCase().equals("true")),
 	                                port, provider, 0);
 	                JFritz.getCallMonitorList().addNewCall(
@@ -195,7 +195,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 	                number = number.substring(0, number.length() - 1);
 
 	            Call call = JFritz.getCallMonitorList().getCall(callId);
-	            PhoneNumber pn = new PhoneNumber(number, false);
+	            PhoneNumberOld pn = new PhoneNumberOld(number, false);
 	            if ( call != null ) {
 	            	if (pn.getIntNumber().equals(call.getPhoneNumber().getIntNumber())
 	            		|| pn.getIntNumber().equals(Main.getProperty("dial.prefix")+call.getPhoneNumber().getIntNumber())) {

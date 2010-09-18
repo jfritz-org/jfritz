@@ -48,7 +48,7 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 
 /**
  * This class is used in the phone book to edit individual entries
@@ -410,7 +410,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 			firePropertyChange();
 			updateGUI();
 		} else if (e.getActionCommand().equals("add")) { //$NON-NLS-1$
-			clonedPerson.getNumbers().add(new PhoneNumber("", false)); //$NON-NLS-1$
+			clonedPerson.getNumbers().add(new PhoneNumberOld("", false)); //$NON-NLS-1$
 			typeModel.setTypes();
 			numberHasChanged = true;
 			firePropertyChange();
@@ -420,10 +420,10 @@ public class PersonPanel extends JPanel implements ActionListener,
 			cancelEditing();
 			// Shift standard number if deleted
 			if (clonedPerson.getStandard().equals(
-					((PhoneNumber) clonedPerson.getNumbers().get(row))
+					((PhoneNumberOld) clonedPerson.getNumbers().get(row))
 							.getType())) {
 				clonedPerson.getNumbers().removeElementAt(row);
-				clonedPerson.setStandard(((PhoneNumber) clonedPerson
+				clonedPerson.setStandard(((PhoneNumberOld) clonedPerson
 						.getNumbers().get(0)).getType());
 			} else { // Just remove the number
 				clonedPerson.getNumbers().removeElementAt(row);
@@ -456,10 +456,10 @@ public class PersonPanel extends JPanel implements ActionListener,
 		delButton.setEnabled(numberTable.getSelectedRow() > -1
 				&& clonedPerson.getNumbers().size() > 1);
 
-		Enumeration<PhoneNumber> en = clonedPerson.getNumbers().elements();
+		Enumeration<PhoneNumberOld> en = clonedPerson.getNumbers().elements();
 		boolean addEnabled = true;
 		while (en.hasMoreElements()) {
-			String nr = ((PhoneNumber) en.nextElement()).getIntNumber();
+			String nr = ((PhoneNumberOld) en.nextElement()).getIntNumber();
 			if (nr.equals("")) { //$NON-NLS-1$
 				addEnabled = false;
 				break;
@@ -592,7 +592,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 				originalPerson.setEmailAddress(tfEmail.getText());
 				originalPerson.setPictureUrl(clonedPerson.getPictureUrl());
 
-				Vector<PhoneNumber> vNumbers = (Vector<PhoneNumber>) clonedPerson.getNumbers();
+				Vector<PhoneNumberOld> vNumbers = (Vector<PhoneNumberOld>) clonedPerson.getNumbers();
 
 				originalPerson.setNumbers(vNumbers, clonedPerson.getStandard());
 

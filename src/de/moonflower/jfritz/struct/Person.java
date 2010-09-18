@@ -54,7 +54,7 @@ public class Person implements Cloneable, Serializable{
 
 	private String emailAddress = ""; //$NON-NLS-1$
 
-	private Vector<PhoneNumber> numbers;
+	private Vector<PhoneNumberOld> numbers;
 
 	private String pictureUrl = ""; //$NON-NLS-1$
 
@@ -67,7 +67,7 @@ public class Person implements Cloneable, Serializable{
 
 
 	public Person() {
-		numbers = new Vector<PhoneNumber>();
+		numbers = new Vector<PhoneNumberOld>();
 	}
 
 	/**
@@ -96,8 +96,8 @@ public class Person implements Cloneable, Serializable{
 			&& (person.company.equals(this.company))
 			&& (person.emailAddress.equals(this.emailAddress)))
 		{
-			PhoneNumber myNumber;
-			PhoneNumber hisNumber;
+			PhoneNumberOld myNumber;
+			PhoneNumberOld hisNumber;
 			for (int i=0; i<this.numbers.size(); i++)
 			{
 				myNumber = this.numbers.get(i);
@@ -151,14 +151,14 @@ public class Person implements Cloneable, Serializable{
 		pictureUrl = person.getPictureUrl();
 		scaledPicture = person.getScaledPicture();
 		numbers.clear();
-		final Enumeration<PhoneNumber> en = person.getNumbers().elements(); // NOPMD
+		final Enumeration<PhoneNumberOld> en = person.getNumbers().elements(); // NOPMD
 		while (en.hasMoreElements()) {
 			numbers.add(en.nextElement().clone());
 		}
 		privateEntry = person.isPrivateEntry();
 	}
 
-	public void addNumber(final PhoneNumber number) {
+	public void addNumber(final PhoneNumberOld number) {
 		numbers.add(number);
 		if (numbers.size() == 1)
 		{
@@ -167,16 +167,16 @@ public class Person implements Cloneable, Serializable{
 	}
 
 	public void addNumber(final String number, final String type) {
-		final PhoneNumber pNumber = new PhoneNumber(number, false); // NOPMD
+		final PhoneNumberOld pNumber = new PhoneNumberOld(number, false); // NOPMD
 		pNumber.setType(type);
 		addNumber(pNumber);
 	}
 
-	public Vector<PhoneNumber> getNumbers() {
+	public Vector<PhoneNumberOld> getNumbers() {
 		return numbers;
 	}
 
-	public void setNumbers(final Vector<PhoneNumber> numbers, final String std) {
+	public void setNumbers(final Vector<PhoneNumberOld> numbers, final String std) {
 		this.numbers = numbers;
 		setStandard(std);
 
@@ -248,8 +248,8 @@ public class Person implements Cloneable, Serializable{
 				// address: PostOfficeAddress;ExtendedAddress;Street;Locality;Region;PostalCode;Counry
 				vcard.append("ADR;Type=HOME;POSTAL:;;" + getStreet() + ";" //$NON-NLS-1$,  //$NON-NLS-2$
 				+ getCity() + ";;" + getPostalCode() + ";\r\n"); //$NON-NLS-1$,  //$NON-NLS-2$
-		Enumeration<PhoneNumber> en = numbers.elements();
-		PhoneNumber number;
+		Enumeration<PhoneNumberOld> en = numbers.elements();
+		PhoneNumberOld number;
 		while (en.hasMoreElements()) {
 			number = en.nextElement();
 			if (number.getType().startsWith("home")) //$NON-NLS-1$
@@ -365,9 +365,9 @@ public class Person implements Cloneable, Serializable{
 		return scaledPicture;
 	}
 
-	public PhoneNumber getPhoneNumber(final String type) {
-		final Enumeration<PhoneNumber> enumeration = numbers.elements(); // NOPMD
-		PhoneNumber number;
+	public PhoneNumberOld getPhoneNumber(final String type) {
+		final Enumeration<PhoneNumberOld> enumeration = numbers.elements(); // NOPMD
+		PhoneNumberOld number;
 		while (enumeration.hasMoreElements()) {
 			number = enumeration.nextElement();
 			if (number.getType().equals(type))
@@ -379,7 +379,7 @@ public class Person implements Cloneable, Serializable{
 	/**
 	 * @return Returns the standard PhoneNumber
 	 */
-	public PhoneNumber getStandardTelephoneNumber() {
+	public PhoneNumberOld getStandardTelephoneNumber() {
 		return getPhoneNumber(standard);
 	}
 
@@ -393,8 +393,8 @@ public class Person implements Cloneable, Serializable{
 	 * @return True if person has a phone number
 	 */
 	public boolean hasNumber(final String number, final boolean considerMain) {
-		Enumeration<PhoneNumber> en = numbers.elements();
-		PhoneNumber numb;
+		Enumeration<PhoneNumberOld> en = numbers.elements();
+		PhoneNumberOld numb;
 		while (en.hasMoreElements()) {
 			numb = en.nextElement();
 			if ((numb.getType().startsWith("main")) && (considerMain)) { //$NON-NLS-1$
@@ -632,7 +632,7 @@ public class Person implements Cloneable, Serializable{
 		}
 		else
 		{
-			for (PhoneNumber number: numbers)
+			for (PhoneNumberOld number: numbers)
 			{
 				outString = outString.concat(number.toCSV()+":");
 			}
@@ -692,7 +692,7 @@ public class Person implements Cloneable, Serializable{
 		}
 		else
 		{
-			for (PhoneNumber number: numbers)
+			for (PhoneNumberOld number: numbers)
 			{
 				outString = outString.concat(number.toCSV()+":");
 			}
@@ -716,8 +716,8 @@ public class Person implements Cloneable, Serializable{
 		if (getFullname().toLowerCase().indexOf(key.toLowerCase()) != -1) {
 			return true;
 		}
-		Enumeration<PhoneNumber> en = numbers.elements();
-		PhoneNumber number;
+		Enumeration<PhoneNumberOld> en = numbers.elements();
+		PhoneNumberOld number;
 		while (en.hasMoreElements()) {
 			number = en.nextElement();
 
@@ -761,18 +761,18 @@ public class Person implements Cloneable, Serializable{
 		}
 
 		// Creating a set of this person's numbers
-		Enumeration<PhoneNumber> ownNumberEnum = numbers.elements();
+		Enumeration<PhoneNumberOld> ownNumberEnum = numbers.elements();
 		Set<String> ownNumberSet = new HashSet<String>();
-		PhoneNumber number;
+		PhoneNumberOld number;
 		while (ownNumberEnum.hasMoreElements()) {
 			number = ownNumberEnum.nextElement();
 			ownNumberSet.add(number.getIntNumber());
 		}
 
 		// Checking whether this person's numbers are a real superset
-		Enumeration<PhoneNumber> otherNumberEnum = p.numbers.elements();
+		Enumeration<PhoneNumberOld> otherNumberEnum = p.numbers.elements();
 		while (otherNumberEnum.hasMoreElements()) {
-			number = (PhoneNumber) otherNumberEnum.nextElement();
+			number = (PhoneNumberOld) otherNumberEnum.nextElement();
 			if (! ownNumberSet.contains(number.getIntNumber()))
 			{
 				return false;
@@ -840,10 +840,10 @@ public class Person implements Cloneable, Serializable{
 		String loc = Main.getProperty("locale");
 		String googlePrefix = "http://maps.google.com/maps?f=q&hl="+ loc.substring(0, 2) +"&q=";
 		String googleLink = "";
-		PhoneNumber localNumber = null;
+		PhoneNumberOld localNumber = null;
 		googleLink += HTMLUtil.stripEntities(street)+", ";
 
-		for (PhoneNumber number: numbers)
+		for (PhoneNumberOld number: numbers)
 		{
 			if (!number.isEmergencyCall()
 				&& !number.isFreeCall()

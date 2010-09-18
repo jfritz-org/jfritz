@@ -16,7 +16,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.Debug;
 
@@ -112,9 +112,9 @@ public class CallFileXMLHandler extends DefaultHandler {
 		} else if (qName.equals("entry")) { //$NON-NLS-1$
 
 			if (callerlist != null) { // Add an entry to the callerlist
-				PhoneNumber number = null;
+				PhoneNumberOld number = null;
 				if (caller.length() > 0) {
-					number = new PhoneNumber(caller, false);
+					number = new PhoneNumberOld(caller, false);
 					if (callbycall.length() > 0)
 						number.setCallByCall(callbycall);
 				}

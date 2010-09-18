@@ -50,7 +50,7 @@ import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.IProgressListener;
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.CopyFile;
 import de.moonflower.jfritz.utils.Debug;
@@ -979,12 +979,12 @@ public class CallerList extends AbstractTableModel
 	 */
 	public Call findLastCall(Person person) {
 		boolean found = false;
-		Vector<PhoneNumber> numbers = person.getNumbers();
+		Vector<PhoneNumberOld> numbers = person.getNumbers();
 		if (numbers.size() > 0) {
 			Call result = new Call(new CallType(CallType.CALLIN_STR),
-					new Date(0), new PhoneNumber("", false),
+					new Date(0), new PhoneNumberOld("", false),
 					new Port(0, "", "-1", "-1"), "route", 0);
-			for (PhoneNumber num:numbers)
+			for (PhoneNumberOld num:numbers)
 			{
 				if ("main".equals(num.getType())){
 					for (int i=0; i<unfilteredCallerData.size(); i++)
@@ -1204,7 +1204,7 @@ public class CallerList extends AbstractTableModel
 		Call call;
 		CallType calltype;
 		Date calldate;
-		PhoneNumber number;
+		PhoneNumberOld number;
 
 		// check if line has correct amount of entries
 		if (field.length < 12) {
@@ -1249,7 +1249,7 @@ public class CallerList extends AbstractTableModel
 
 		// Phone number
 		if (!field[3].equals("")) {
-			number = new PhoneNumber(field[3], false);
+			number = new PhoneNumberOld(field[3], false);
 			number.setCallByCall(field[10]);
 		} else {
 			number = null;
@@ -1295,7 +1295,7 @@ public class CallerList extends AbstractTableModel
 		Call call;
 		CallType calltype;
 		Date calldate;
-		PhoneNumber number;
+		PhoneNumberOld number;
 
 		// check if line has correct amount of entries
 		if (field.length != 6) {
@@ -1344,7 +1344,7 @@ public class CallerList extends AbstractTableModel
 
 		// Phone number
 		if (!field[2].equals("")) {
-			number = new PhoneNumber(field[2], Main.getProperty(
+			number = new PhoneNumberOld(field[2], Main.getProperty(
 					"option.activateDialPrefix").toLowerCase().equals("true")
 					&& (calltype.toInt() == CallType.CALLOUT)
 					&& !field[4].startsWith("Internet"));
@@ -1407,7 +1407,7 @@ public class CallerList extends AbstractTableModel
 		Call call;
 		CallType calltype;
 		Date calldate;
-		PhoneNumber number;
+		PhoneNumberOld number;
 
 		// check if line has correct amount of entries
 		if (field.length != 7) {
@@ -1444,7 +1444,7 @@ public class CallerList extends AbstractTableModel
 
 		// Phone number
 		if (!field[3].equals("")) {
-			number = new PhoneNumber(field[3], Main.getProperty(
+			number = new PhoneNumberOld(field[3], Main.getProperty(
 					"option.activateDialPrefix").toLowerCase().equals("true")
 					&& (calltype.toInt() == CallType.CALLOUT)
 					&& !field[5].startsWith("Internet"));
@@ -1517,7 +1517,7 @@ public class CallerList extends AbstractTableModel
 		Call call;
 		CallType calltype;
 		Date calldate;
-		PhoneNumber number;
+		PhoneNumberOld number;
 
 		// check if line has correct amount of entries
 		if (field.length != 6) {
@@ -1558,7 +1558,7 @@ public class CallerList extends AbstractTableModel
 
 		// Phone number
 		if (!field[2].equals("")) {
-			number = new PhoneNumber(field[2], Main.getProperty(
+			number = new PhoneNumberOld(field[2], Main.getProperty(
 					"option.activateDialPrefix").toLowerCase().equals("true")
 					&& (calltype.toInt() == CallType.CALLOUT)
 					&& !field[4].startsWith("Internet"));
@@ -1632,7 +1632,7 @@ public class CallerList extends AbstractTableModel
 		Call call;
 		CallType calltype;
 		Date calldate;
-		PhoneNumber number;
+		PhoneNumberOld number;
 
 		// check if line has correct amount of entries
 		if (field.length != 7) {
@@ -1676,7 +1676,7 @@ public class CallerList extends AbstractTableModel
 
 		// Phone number
 		if (!field[3].equals("")) {
-			number = new PhoneNumber(field[3], Main.getProperty(
+			number = new PhoneNumberOld(field[3], Main.getProperty(
 					"option.activateDialPrefix").toLowerCase().equals("true")
 					&& (calltype.toInt() == CallType.CALLOUT)
 					&& !field[5].startsWith("Internet"));
@@ -1908,7 +1908,7 @@ public class CallerList extends AbstractTableModel
 	public void reverseLookup(boolean filteredOnly, boolean searchAlsoForDummyEntries) {
 		JFritz.getJframe().selectLookupButton(true);
 		JFritz.getJframe().setLookupBusy(true);
-		Vector<PhoneNumber> numbers = new Vector<PhoneNumber>();
+		Vector<PhoneNumberOld> numbers = new Vector<PhoneNumberOld>();
 		if (filteredOnly) {
 			Call call;
 			Person foundPerson;
@@ -1933,8 +1933,8 @@ public class CallerList extends AbstractTableModel
 	 *            if true, it will also lookup dummy entries
 	 * @return all unknown entries
 	 */
-	public Vector<PhoneNumber> getAllUnknownEntries(boolean searchAlsoForDummyEntries){
-		Vector<PhoneNumber> numbers = new Vector<PhoneNumber>();
+	public Vector<PhoneNumberOld> getAllUnknownEntries(boolean searchAlsoForDummyEntries){
+		Vector<PhoneNumberOld> numbers = new Vector<PhoneNumberOld>();
 		Call call;
 		Person foundPerson;
 		for (int i = 0; i < unfilteredCallerData.size(); i++) {
@@ -1959,7 +1959,7 @@ public class CallerList extends AbstractTableModel
 	 */
 
 	public void doReverseLookup(int[] rows) {
-		Vector<PhoneNumber> numbers = new Vector<PhoneNumber>();
+		Vector<PhoneNumberOld> numbers = new Vector<PhoneNumberOld>();
 		// nur für markierte Einträge ReverseLookup
 		// durchführen
 		Call call;
@@ -1978,7 +1978,7 @@ public class CallerList extends AbstractTableModel
 	 * @param numbers,
 	 *            a vector of numbers to do reverse lookup on
 	 */
-	public void reverseLookup(Vector<PhoneNumber> numbers) {
+	public void reverseLookup(Vector<PhoneNumberOld> numbers) {
 		JFritz.getJframe().selectLookupButton(true);
 		JFritz.getJframe().setLookupBusy(true);
 		ReverseLookup.lookup(numbers, this, false);

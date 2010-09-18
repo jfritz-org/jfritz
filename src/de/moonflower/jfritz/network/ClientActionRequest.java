@@ -2,7 +2,7 @@ package de.moonflower.jfritz.network;
 
 import java.io.Serializable;
 
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
 
 /**
@@ -28,6 +28,6 @@ public class ClientActionRequest implements Serializable {
 
 	public String siteName;
 
-	public PhoneNumber number;
+	public PhoneNumberOld number;
 
 }

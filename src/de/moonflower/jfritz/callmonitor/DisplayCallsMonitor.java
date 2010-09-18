@@ -16,7 +16,7 @@ import de.moonflower.jfritz.dialogs.simple.CallMessageDlg;
 import de.moonflower.jfritz.phonebook.PhoneBook;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
@@ -88,7 +88,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
         if ( callerInput != null )
         {
           if (!callerInput.startsWith("SIP")) { //$NON-NLS-1$
-              PhoneNumber caller = new PhoneNumber(callerInput, false);
+              PhoneNumberOld caller = new PhoneNumberOld(callerInput, false);
               if (caller.getIntNumber().equals("")) { //$NON-NLS-1$
                   callerstr = Main.getMessage("unknown"); //$NON-NLS-1$
               } else {
@@ -214,7 +214,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
         {
           calledstr = calledInput;
           if (!calledInput.startsWith("SIP")) { //$NON-NLS-1$
-              PhoneNumber called = new PhoneNumber(calledInput, Main.getProperty("option.activateDialPrefix").toLowerCase()
+              PhoneNumberOld called = new PhoneNumberOld(calledInput, Main.getProperty("option.activateDialPrefix").toLowerCase()
                       .equals("true")
                       && (!(providerInput.indexOf("@") > 0)));
               if (!called.getIntNumber().equals("")) //$NON-NLS-1$

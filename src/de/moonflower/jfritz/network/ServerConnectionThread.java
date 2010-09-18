@@ -24,7 +24,7 @@ import de.moonflower.jfritz.callerlist.CallerListListener;
 import de.moonflower.jfritz.phonebook.PhoneBookListener;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
@@ -705,7 +705,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 	 * @param number
 	 * @param siteName
 	 */
-	public synchronized void requestSpecificLookup(PhoneNumber number, String siteName){
+	public synchronized void requestSpecificLookup(PhoneNumberOld number, String siteName){
 
 		actionRequest.action = ClientActionRequest.ActionType.doLookup;
 		actionRequest.number = number;
@@ -776,7 +776,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 		}
 	}
 
-	public synchronized void requestDoCall(PhoneNumber number, Port port){
+	public synchronized void requestDoCall(PhoneNumberOld number, Port port){
 		Debug.netMsg("Requesting the server to dial "+number.getIntNumber()+" using "+port);
 		actionRequest.action = ClientActionRequest.ActionType.doCall;
 		actionRequest.number = number;

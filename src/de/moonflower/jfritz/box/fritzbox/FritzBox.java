@@ -39,7 +39,7 @@ import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.IProgressListener;
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -1073,9 +1073,9 @@ public class FritzBox extends BoxClass {
 				}
 
 				// Phone number
-				PhoneNumber number;
+				PhoneNumberOld number;
 				if (!response.get(newOffset+2).equals("")) {
-					number = new PhoneNumber(response.get(newOffset+2), Main.getProperty(
+					number = new PhoneNumberOld(response.get(newOffset+2), Main.getProperty(
 							"option.activateDialPrefix").toLowerCase().equals("true")
 							&& (calltype.toInt() == CallType.CALLOUT)
 							&& !response.get(newOffset+6).startsWith("Internet"));
@@ -1625,7 +1625,7 @@ public class FritzBox extends BoxClass {
 		return postdata;
 	}
 
-	public void doCall(PhoneNumber number, Port port) {
+	public void doCall(PhoneNumberOld number, Port port) {
 		setBoxConnected();
 		String currentNumber = number.getAreaNumber();
 		currentNumber = currentNumber.replaceAll("\\+", "00"); //$NON-NLS-1$,  //$NON-NLS-2$

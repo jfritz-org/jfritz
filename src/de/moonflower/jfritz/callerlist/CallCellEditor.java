@@ -11,7 +11,7 @@ import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 
 
 /**
@@ -46,7 +46,7 @@ public class CallCellEditor extends AbstractCellEditor implements
 			// cell (and perhaps other cells) are selected
 		}
 		// Configure the component with the specified value
-		PhoneNumber number = (PhoneNumber) value;
+		PhoneNumberOld number = (PhoneNumberOld) value;
 		CallPanel panel = (CallPanel) component;
 		if (value == null) {
 		    return null;
@@ -62,7 +62,7 @@ public class CallCellEditor extends AbstractCellEditor implements
 	 * @see javax.swing.CellEditor#getCellEditorValue()
 	 */
 	public Object getCellEditorValue() {
-		PhoneNumber number = ((CallPanel) component).getNumber();
+		PhoneNumberOld number = ((CallPanel) component).getNumber();
 		return number;
 	}
 

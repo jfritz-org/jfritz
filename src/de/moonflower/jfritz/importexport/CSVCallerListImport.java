@@ -11,7 +11,7 @@ import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.CallerTable;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -197,7 +197,7 @@ public class CSVCallerListImport extends CSVImport implements ICSVImport {
 			if (entry.getPhoneNumber() != null) {
 				entry.getPhoneNumber().setCallByCall(value);
 			} else {
-				PhoneNumber number = new PhoneNumber("", false);
+				PhoneNumberOld number = new PhoneNumberOld("", false);
 				number.setCallByCall(value);
 				entry.setPhoneNumber(number);
 			}
@@ -209,16 +209,16 @@ public class CSVCallerListImport extends CSVImport implements ICSVImport {
 			if (entry.getPhoneNumber() != null) {
 				callByCall = entry.getPhoneNumber().getCallByCall();
 				if (value.equals("unbekannt")) {
-					entry.setPhoneNumber(new PhoneNumber("", false));
+					entry.setPhoneNumber(new PhoneNumberOld("", false));
 				} else {
-					entry.setPhoneNumber(new PhoneNumber(value, useDialPrefix));
+					entry.setPhoneNumber(new PhoneNumberOld(value, useDialPrefix));
 				}
 				entry.getPhoneNumber().setCallByCall(callByCall);
 			} else {
 				if (value.equals("unbekannt")) {
-					entry.setPhoneNumber(new PhoneNumber("", false));
+					entry.setPhoneNumber(new PhoneNumberOld("", false));
 				} else {
-					entry.setPhoneNumber(new PhoneNumber(value, useDialPrefix));
+					entry.setPhoneNumber(new PhoneNumberOld(value, useDialPrefix));
 				}
 			}
 		} else if (columnName.equals(CallerTable.COLUMN_PORT)) {

@@ -18,7 +18,7 @@ import javax.swing.JLabel;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 
 /**
  *
@@ -28,7 +28,7 @@ import de.moonflower.jfritz.struct.PhoneNumber;
 public class CallPanel extends JComponent {
 	private static final long serialVersionUID = 1;
 
-	private PhoneNumber number;
+	private PhoneNumberOld number;
 
 	private JLabel input;
 
@@ -105,7 +105,7 @@ public class CallPanel extends JComponent {
 	/**
 	 * @return Returns the PhoneNumber.
 	 */
-	public final PhoneNumber getNumber() {
+	public final PhoneNumberOld getNumber() {
 		return number;
 	}
 
@@ -113,7 +113,7 @@ public class CallPanel extends JComponent {
 	 * @param number
 	 *            The number to set.
 	 */
-	public final void setNumber(PhoneNumber number) {
+	public final void setNumber(PhoneNumberOld number) {
 		this.number = number;
 	}
 }

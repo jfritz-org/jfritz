@@ -27,7 +27,7 @@ public class Call implements Serializable {
 
 	private Date calldate;
 
-	private PhoneNumber number;
+	private PhoneNumberOld number;
 
 	private String route;
 
@@ -41,7 +41,7 @@ public class Call implements Serializable {
 
 	private String comment = ""; //$NON-NLS-1$
 
-	public Call(final CallType calltype, final Date calldate, final PhoneNumber number,
+	public Call(final CallType calltype, final Date calldate, final PhoneNumberOld number,
 			final Port port, final String route, final int duration) {
 		this.calltype = calltype;
 		this.calldate = calldate;
@@ -62,7 +62,7 @@ public class Call implements Serializable {
 		}
 	}
 
-	public Call(final CallType calltype, final Date calldate, final PhoneNumber number,
+	public Call(final CallType calltype, final Date calldate, final PhoneNumberOld number,
 			final Port port, final String route, final int duration, final String comment) {
 		this(calltype, calldate, number, port, route, duration);
 		this.comment = comment;
@@ -176,11 +176,11 @@ public class Call implements Serializable {
 	/**
 	 * @return Returns the number.
 	 */
-	public PhoneNumber getPhoneNumber() {
+	public PhoneNumberOld getPhoneNumber() {
 		return number;
 	}
 
-	public void setPhoneNumber(final PhoneNumber number) {
+	public void setPhoneNumber(final PhoneNumberOld number) {
 		this.number = number;
 	}
 

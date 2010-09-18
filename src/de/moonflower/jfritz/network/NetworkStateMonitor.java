@@ -7,7 +7,7 @@ import java.util.Vector;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.Debug;
 
@@ -91,7 +91,7 @@ public class NetworkStateMonitor  {
 		serverConnection.requestLookup();
 	}
 
-	public static void requestSpecificLookupFromServer(PhoneNumber number, String siteName){
+	public static void requestSpecificLookupFromServer(PhoneNumberOld number, String siteName){
 		serverConnection.requestSpecificLookup(number, siteName);
 	}
 
@@ -160,11 +160,11 @@ public class NetworkStateMonitor  {
 		if(Main.getProperty("option.clientCallList").equals("true")
 				&& isConnectedToServer())
 		{
-			serverConnection.requestDoCall(new PhoneNumber(number, false, false), port);
+			serverConnection.requestDoCall(new PhoneNumberOld(number, false, false), port);
 		}
 		else
 		{
-			JFritz.getBoxCommunication().doCall(new PhoneNumber(number, false, false), port);
+			JFritz.getBoxCommunication().doCall(new PhoneNumberOld(number, false, false), port);
 		}
 	}
 

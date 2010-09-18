@@ -6,7 +6,7 @@ import javax.swing.table.AbstractTableModel;
 
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.PhoneType;
 
 public class NumberTableModel extends AbstractTableModel {
@@ -41,14 +41,14 @@ public class NumberTableModel extends AbstractTableModel {
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		switch (columnIndex) {
 		case 0:
-			return Boolean.valueOf(((PhoneNumber) person.getNumbers()
+			return Boolean.valueOf(((PhoneNumberOld) person.getNumbers()
 					.elementAt(rowIndex)).getType().equals(
 					person.getStandard()));
 		case 1:
-			return new PhoneType(((PhoneNumber) person.getNumbers()
+			return new PhoneType(((PhoneNumberOld) person.getNumbers()
 					.elementAt(rowIndex)).getType());
 		case 2:
-			return ((PhoneNumber) person.getNumbers().elementAt(rowIndex))
+			return ((PhoneNumberOld) person.getNumbers().elementAt(rowIndex))
 					.getIntNumber();
 		default:
 			return null;
@@ -58,7 +58,7 @@ public class NumberTableModel extends AbstractTableModel {
 
 	public void setValueAt(Object value, int row, int column) {
 		if (row < person.getNumbers().size()) {
-			PhoneNumber p = (PhoneNumber) person.getNumbers()
+			PhoneNumberOld p = (PhoneNumberOld) person.getNumbers()
 					.elementAt(row);
 			switch (column) {
 			case 0:
@@ -87,9 +87,9 @@ public class NumberTableModel extends AbstractTableModel {
 	protected boolean isValidNumber(String value, String oldvalue) {
 		if (value.equals(oldvalue))
 			return true;
-		Enumeration<PhoneNumber> en = person.getNumbers().elements();
+		Enumeration<PhoneNumberOld> en = person.getNumbers().elements();
 		while (en.hasMoreElements()) {
-			String nr = ((PhoneNumber) en.nextElement()).getIntNumber();
+			String nr = ((PhoneNumberOld) en.nextElement()).getIntNumber();
 			if (value.equals(nr))
 				return false;
 		}
@@ -105,9 +105,9 @@ public class NumberTableModel extends AbstractTableModel {
 		for (int i = 0; i < typeModel.getSize(); i++) {
 			if (value.getType().equals(
 					((PhoneType) typeModel.getElementAt(i)).getType())) {
-				Enumeration<PhoneNumber> en = person.getNumbers().elements();
+				Enumeration<PhoneNumberOld> en = person.getNumbers().elements();
 				while (en.hasMoreElements()) {
-					String type = ((PhoneNumber) en.nextElement())
+					String type = ((PhoneNumberOld) en.nextElement())
 							.getType();
 					if (value.getType().equals(type))
 						return false;

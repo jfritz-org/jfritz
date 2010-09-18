@@ -33,7 +33,7 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.CallPendingDialog;
 import de.moonflower.jfritz.utils.ComplexJOptionPaneMessage;
@@ -46,14 +46,14 @@ import de.moonflower.jfritz.utils.Debug;
 public class CallDialog extends JDialog implements ActionListener {
 	private static final long serialVersionUID = 1;
 
-	private Vector<PhoneNumber> numbers;
+	private Vector<PhoneNumberOld> numbers;
 
 	private JComboBox portComboBox;
 
 	JButton okButton, cancelButton;
 
 	private Object cboNumber;
-	private PhoneNumber defaultNumber;
+	private PhoneNumberOld defaultNumber;
 
 	/**
 	 * This Constructor initializes the CallDialog with a set of numbers and a default number.
@@ -64,7 +64,7 @@ public class CallDialog extends JDialog implements ActionListener {
 	 *            String containig the default number to select in JComboBox
 	 * @throws HeadlessException
 	 */
-	public CallDialog(Vector<PhoneNumber> numbers, PhoneNumber defaultNumber)
+	public CallDialog(Vector<PhoneNumberOld> numbers, PhoneNumberOld defaultNumber)
 			throws HeadlessException {
 		super(JFritz.getJframe()); //sets icon to JFritz' one
 		//this.setLocation(JFritz.getJframe().getX() + 80, JFritz.getJframe().getY() + 100);
@@ -81,12 +81,12 @@ public class CallDialog extends JDialog implements ActionListener {
 	 *            PhoneNumber object
 	 * @throws HeadlessException
 	 */
-	public CallDialog(PhoneNumber number)
+	public CallDialog(PhoneNumberOld number)
 			throws HeadlessException {
 		super(JFritz.getJframe()); //sets icon to JFritz' one
 		// this.setLocationRelativeTo(JFritz.getJframe());
 		//this.setLocation(JFritz.getJframe().getX() + 80, JFritz.getJframe().getY() + 100);
-		Vector<PhoneNumber> v = new Vector<PhoneNumber>();
+		Vector<PhoneNumberOld> v = new Vector<PhoneNumberOld>();
 		v.addElement(number);
 		this.numbers = v;
         this.defaultNumber = number; //does not really need, but to be complete

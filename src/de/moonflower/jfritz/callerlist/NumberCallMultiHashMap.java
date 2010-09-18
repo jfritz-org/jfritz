@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.moonflower.jfritz.struct.Call;
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 
 public class NumberCallMultiHashMap {
 
@@ -18,7 +18,7 @@ public class NumberCallMultiHashMap {
 		hashMap = new HashMap<String, List<Call>>();
 	}
 
-	public void addCall(PhoneNumber number, Call call)
+	public void addCall(PhoneNumberOld number, Call call)
 	{
 		if (number != null)
 		{
@@ -34,7 +34,7 @@ public class NumberCallMultiHashMap {
 		}
 	}
 
-	public List<Call> getCall(PhoneNumber number)
+	public List<Call> getCall(PhoneNumberOld number)
 	{
 		if (number != null)
 		{
@@ -46,7 +46,7 @@ public class NumberCallMultiHashMap {
 		}
 	}
 
-	public void deleteCall(PhoneNumber number, Call call)
+	public void deleteCall(PhoneNumberOld number, Call call)
 	{
 		if (number != null)
 		{

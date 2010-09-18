@@ -47,7 +47,7 @@ import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.network.ClientLoginsTableModel;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.phonebook.PhoneBook;
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.tray.ClickListener;
 import de.moonflower.jfritz.tray.JDICTray;
 import de.moonflower.jfritz.tray.SwingTray;
@@ -853,8 +853,7 @@ public final class JFritz implements  StatusListener {
 	public static void loadNumberSettings() {
 		// load the different area code -> city mappings
 		ReverseLookup.loadSettings();
-		PhoneNumber.loadFlagMap();
-		PhoneNumber.loadCbCXMLFile();
+		PhoneNumberOld.loadCbCXMLFile();
 	}
 
 	public static URL getRingSound() {

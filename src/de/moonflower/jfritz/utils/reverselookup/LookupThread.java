@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.ReverseLookupSite;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.HTMLUtil;
@@ -151,7 +151,7 @@ public class LookupThread extends Thread {
 	 * @param number number to be looked up
 	 * @return a new person object containing the results of the search
 	 */
-	static synchronized Person lookup(PhoneNumber number, String siteName) {
+	static synchronized Person lookup(PhoneNumberOld number, String siteName) {
 
 		Vector<Person> foundPersons = new Vector<Person>(5);
 

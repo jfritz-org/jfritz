@@ -1,23 +1,23 @@
 package de.moonflower.jfritz.utils.reverselookup;
 
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 /**
  *
  * @author marc
  *
  */
 class LookupRequest implements Comparable<LookupRequest> {
-	final PhoneNumber number;
+	final PhoneNumberOld number;
 	final String lookupSite;
 	final public int priority;
 
-	LookupRequest(PhoneNumber number, int priority) {
+	LookupRequest(PhoneNumberOld number, int priority) {
 		this.number = number;
 		this.priority = priority;
 		lookupSite = "";
 	}
 
-	LookupRequest(PhoneNumber number, int priority, String site) {
+	LookupRequest(PhoneNumberOld number, int priority, String site) {
 		this.number = number;
 		this.priority = priority;
 		lookupSite = site;

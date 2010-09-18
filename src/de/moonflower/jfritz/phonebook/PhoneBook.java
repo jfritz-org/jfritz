@@ -55,7 +55,7 @@ import de.moonflower.jfritz.importexport.VCardParserTel;
 import de.moonflower.jfritz.importexport.VCardParserVersion;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.PhoneNumber;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.reverselookup.LookupObserver;
@@ -436,7 +436,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 	 */
 	public synchronized void notifyListenersOfUpdate(Person original, Person updated){
 		// update deleted numbers
-		for (PhoneNumber number: original.getNumbers())
+		for (PhoneNumberOld number: original.getNumbers())
 		{
 			if (!updated.getNumbers().contains(number))
 			{
@@ -446,7 +446,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 		}
 
 		// update new numbers
-		for (PhoneNumber number: updated.getNumbers())
+		for (PhoneNumberOld number: updated.getNumbers())
 		{
 			if (!original.getNumbers().contains(number))
 			{
@@ -474,7 +474,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 	 */
 	public synchronized boolean addEntry(Person newPerson) {
 		// TODO: Mergen von Einträgen.
-		PhoneNumber pn1 = newPerson.getStandardTelephoneNumber();
+		PhoneNumberOld pn1 = newPerson.getStandardTelephoneNumber();
 		Vector<Person> removedPersons = new Vector<Person>();
 
 		Enumeration<Person> en = unfilteredPersons.elements();
@@ -494,7 +494,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 				// TODO: merge entries
 				// Bisher nur vergleich mit standardrufnummer
 				// und hinzufügen, wenn kein Eintrag existiert
-				PhoneNumber pn2 = p.getStandardTelephoneNumber();
+				PhoneNumberOld pn2 = p.getStandardTelephoneNumber();
 				if ((pn1 != null) && (pn2 != null)
 						&& pn1.getIntNumber().equals(pn2.getIntNumber())) {
 					return false;
@@ -503,7 +503,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 		}
 
 		unfilteredPersons.add(newPerson);
-		for (PhoneNumber number: newPerson.getNumbers())
+		for (PhoneNumberOld number: newPerson.getNumbers())
 		{
 			numberHashMap.addPerson(number, newPerson);
 		}
@@ -523,7 +523,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 	 */
 	public void deleteEntry(Person person) {
 		unfilteredPersons.remove(person);
-		for (PhoneNumber number: person.getNumbers())
+		for (PhoneNumberOld number: person.getNumbers())
 		{
 			numberHashMap.deletePerson(number, person);
 		}
@@ -541,12 +541,12 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 					new FileOutputStream(filename), "UTF8")); //$NON-NLS-1$
 			Enumeration<Person> en1 = unfilteredPersons.elements();
 
-			Enumeration<PhoneNumber> en2;
+			Enumeration<PhoneNumberOld> en2;
 			Person current;
 			String name;
 
 			String nr;// , type;
-			PhoneNumber pn;
+			PhoneNumberOld pn;
 
 			while (en1.hasMoreElements()) {
 				current = en1.nextElement();
@@ -572,7 +572,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 				if (name.length() > 0) {
 					en2 = current.getNumbers().elements();
 					while (en2.hasMoreElements()) {
-						pn = (PhoneNumber) en2.nextElement();
+						pn = (PhoneNumberOld) en2.nextElement();
 						nr = pn.getIntNumber();
 						if (nr.startsWith("+49")) {
 							nr = "0" + nr.substring(3, nr.length()); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -602,12 +602,12 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 					new FileOutputStream(filename), "UTF8")); //$NON-NLS-1$
 			Enumeration<Person> en1 = unfilteredPersons.elements();
 
-			Enumeration<PhoneNumber> en2;
+			Enumeration<PhoneNumberOld> en2;
 			Person current;
 			String name;
 
 			String nr;// , type;
-			PhoneNumber pn;
+			PhoneNumberOld pn;
 
 			while (en1.hasMoreElements()) {
 				current = en1.nextElement();
@@ -633,7 +633,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 				if (name.length() > 0) {
 					en2 = current.getNumbers().elements();
 					while (en2.hasMoreElements()) {
-						pn = (PhoneNumber) en2.nextElement();
+						pn = (PhoneNumberOld) en2.nextElement();
 						nr = pn.getIntNumber();
 						if (nr.startsWith("+49")) {
 							nr = "0" + nr.substring(3, nr.length()); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -737,9 +737,9 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 				pw.write("\t<phonenumbers standard=\"" //$NON-NLS-1$
 						+ current.getStandard() + "\">"); //$NON-NLS-1$
 				pw.newLine();
-				Enumeration<PhoneNumber> en2 = current.getNumbers().elements();
+				Enumeration<PhoneNumberOld> en2 = current.getNumbers().elements();
 				while (en2.hasMoreElements()) {
-					PhoneNumber nr = (PhoneNumber) en2.nextElement();
+					PhoneNumberOld nr = (PhoneNumberOld) en2.nextElement();
 					pw.write("\t\t<number type=\"" + nr.getType() + "\">" //$NON-NLS-1$,  //$NON-NLS-2$
 							+ JFritzUtils
 									.convertSpecialChars(nr.getIntNumber())
@@ -992,7 +992,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 		}
 	}
 
-	public Person findPerson(PhoneNumber number) {
+	public Person findPerson(PhoneNumberOld number) {
 		return findPerson(number, true);
 	}
 
@@ -1012,7 +1012,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 	 *         switchboard in companies, null if no person was found
 	 * @author Benjamin Schmitt (overwriting)
 	 */
-	public Person findPerson(PhoneNumber number, boolean considerMain) {
+	public Person findPerson(PhoneNumberOld number, boolean considerMain) {
 		if (number == null) {
 			return null;
 		}
@@ -1047,15 +1047,15 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 		}
 	}
 
-	private Person searchCentralNumber(PhoneNumber number)
+	private Person searchCentralNumber(PhoneNumberOld number)
 	{
 		// search for central/main number
 		for (int i=0; i<unfilteredPersons.size(); i++) {
 			Person person = unfilteredPersons.get(i);
-			Vector<PhoneNumber> numbers = person.getNumbers();
+			Vector<PhoneNumberOld> numbers = person.getNumbers();
 			for (int j=0; j<numbers.size(); j++)
 			{
-				PhoneNumber num = numbers.get(j);
+				PhoneNumberOld num = numbers.get(j);
 				if ("main".equals(num.getType()))
 				{
 					if (number.getIntNumber().startsWith(num.getIntNumber()))
@@ -1467,7 +1467,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 
     public static Person searchFirstAndLastNameToPhoneNumber(String caller) {
     	Vector<Person> persons = new Vector<Person>();
-        PhoneNumber callerPhoneNumber = new PhoneNumber(caller, false);
+        PhoneNumberOld callerPhoneNumber = new PhoneNumberOld(caller, false);
         Debug.info("Searching in local database for number "+caller+" ..."); //$NON-NLS-1$
         Person person = JFritz.getPhonebook().findPerson(callerPhoneNumber);
         if (person != null) {
