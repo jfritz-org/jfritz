@@ -2,6 +2,11 @@ TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 TODO: Timer zum automatischen Aktualisieren der FritzBox-Einstellungen (Telefone, SIP-Provider, ...) nach X Minuten (z.B. 60 / 120)
 TODO: charset aus VCard auslesen und verwenden
 
+Non-JFritz-Changes:
+- Neu: Neue Klasse für das Anzeigen von Anruefen auf Samsung-TVs
+- Neu: Testklasse zur Überprüfung, ob es für die eigene Box ein FW-Update gibt
+- Neu: Neues Package mit neuer Rufnummer, muss durch externe Komponente ersetzt werden
+
 JFritz 0.7.3.34:
 - Neu: Aktivierung des Editierfeldes im Telefonbuch bei Klick aus der Anrufliste
 - Neu: Vorbereitung zur Ersetzung der Rufnummernklasse durch eine verbesserte Implementierung
