@@ -1,4 +1,4 @@
-JFritz 0.7.3.32:
+JFritz 0.7.4:
 - Neu: Wählhilfe aus Tray übernimmt Nummer aus Zwischenablage.
 - Neu: %CallType bei Start von Externen Programmen zur Unterscheidung von ankommenden ("In") oder ausgehenden ("Out") Anrufen.
 - Neu: VCard-Import 
@@ -16,6 +16,9 @@ JFritz 0.7.3.32:
 - Neu: Es können nun mehr Informationen eines Anrufs über das Kontextmenü in die Zwischenablage kopiert werden. 
 - Neu: Unterstützung für FRITZ!Box 7112.
 - Neu: Optimierung des Reverselookup.
+- Neu: Aktivierung des Editierfeldes im Telefonbuch bei Klick aus der Anrufliste
+- Neu: Vorbereitung zur Ersetzung der Rufnummernklasse durch eine verbesserte Implementierung
+- Neu: Phonebook-XML-Handler lädt nun auch Informationen über Land und Area und ist sich der Versionierung bewusst
 - Neu [0000111]: WAN IP über Tray-Icon
 - Neu [0000158]: Aufruf von Google-Maps als rechte Maustasten-Menüpunkt im Telefonbuch und in der Anrufliste (Shortcut ALT+G)
 - Neu [0000217]: Traybar-Icon Klicks (Doppel-/Einzelklick) konfigurierbar gestalten
@@ -45,6 +48,7 @@ JFritz 0.7.3.32:
 	unter MacOSX nach ~/Library/Application Support/JFritz und 
 	unter Linux nach ~/.jfritz geschrieben/verschoben. 
 - Änderung [0000255]: 3rd Localization update for The Netherlands
+- Bugfix: Löschen der Anrufliste mit Firmware xx.04.86 funktioniert wieder.
 - Bugfix: Reset-Filter-Knopf setzt nun auch MSN- und Port-Filter zurück.
 - Bugfix: Endlosschleife, wenn JFritz läuft und auf der FritzBox das Passwort geändert wird.
 - Bugfix: Erneuern des TrayPopups nach "WAN-IP erneuern"
@@ -65,6 +69,7 @@ JFritz 0.7.3.32:
 - Bugfix: Daten im Datenverzeichnis speichern (Verzeichnis wurde nicht erstellt).
 - Bugfix: Falsche Anzeige bei den Filterbuttons, wenn man mit der Maus drüberfährt.
 - Bugfix: Wählhilfe wieder sichtbar, wenn Tabs Quickdial oder Überwachung ausgewählt waren.
+- Bugfix: Wizard verhindert Start von JFritz
 - Bugfix [0000067]: Backup, nur die letzten X Backups behalten 
 - Bugfix [0000086]: Start des Telefonbuchs immer im Edit-Modus. 
 - Bugfix [0000143]: Neuer Eintrag bei unbekannter Nummer durch Doppelklick in der Anrufliste 
