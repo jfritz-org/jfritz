@@ -209,8 +209,7 @@
 		<delete dir="${dist}/obfuscated/" />
 	</target>
 
-	<target name="prepare-release-files" depends="prepare">
-		<!-- create windows files -->
+	<target name="create-windows">
 		<antcall target="prepare-windows" />
 		<antcall target="create-windows-zip" />
 		<antcall target="create-windows-setup" />
@@ -220,56 +219,56 @@
 		       basedir="${release}/win/"
 		       includes="JFritz-${version}-Setup.exe" />
 		<antcall target="finish-windows" />
+	</target>
 
-		<!-- create linux files -->
+	<target name="create-linux">
 		<antcall target="prepare-linux" />
 		<antcall target="create-linux-deb" />
 		<antcall target="create-linux-targz" />
 		<antcall target="finish-linux" />
-			<move file="${release}/linux/jfritz_${version}-1_all.deb"
-				  tofile="${release}/linux/JFritz-${version}.deb" />
+		<!-- create linux files -->
+		<move file="${release}/linux/jfritz_${version}-1_all.deb"
+			  tofile="${release}/linux/JFritz-${version}.deb" />
+	</target>
 
+	<target name="create-mac">
 		<!-- create mac files -->
 		<antcall target="prepare-mac" />
 		<antcall target="create-mac-zip" />
 		<!-- <antcall target="create-mac-dmg" /> -->
 		<antcall target="finish-mac" />
+		<antcall target="mac-set-execution-bit" />
 	</target>
 
 	<target name="prepare-beta-files" depends="prepare">
-		<!-- create windows files -->
-		<antcall target="prepare-windows" />
-		<antcall target="create-windows-zip" />
-		<antcall target="create-windows-setup" />
-			<!-- rename zip and setup to beta -->
-			<move file="${release}/win/JFritz-${version}.zip"
-				  tofile="${release}/win/JFritz-${version}-Beta.zip" />
-			<move file="${release}/win/JFritz-${version}-Setup.exe"
-				  tofile="${release}/win/JFritz-${version}-Beta-Setup.exe" />
-
-			<!-- zip setup-file -->
-			<zip destfile="${release}/win/JFritz-${version}-Beta-Win.zip"
-			       basedir="${release}/win/"
-			       includes="JFritz-${version}-Beta-Setup.exe" />
-		<antcall target="finish-windows" />
+		<antcall target="create-windows" />
+		<!-- rename zip and setup to beta -->
+		<move file="${release}/win/JFritz-${version}-Win.zip"
+			  tofile="${release}/win/JFritz-${version}-Beta.zip" />
+		<move file="${release}/win/JFritz-${version}-Setup.exe"
+			  tofile="${release}/win/JFritz-${version}-Beta-Setup.exe" />
+		<!-- zip setup-file -->
+		<zip destfile="${release}/win/JFritz-${version}-Beta-Win.zip"
+		       basedir="${release}/win/"
+		       includes="JFritz-${version}-Beta-Setup.exe" />
 
 		<!-- create linux files -->
-		<antcall target="prepare-linux" />
-		<antcall target="create-linux-deb" />
-		<antcall target="create-linux-targz" />
-		<antcall target="finish-linux" />
-			<move file="${release}/linux/JFritz-${version}.tar.gz"
-				  tofile="${release}/linux/JFritz-${version}-Beta.tar.gz" />
-			<move file="${release}/linux/jfritz_${version}-1_all.deb"
-				  tofile="${release}/linux/JFritz-${version}-Beta.deb" />
+		<antcall target="create-linux" />
+		<move file="${release}/linux/JFritz-${version}.tar.gz"
+			  tofile="${release}/linux/JFritz-${version}-Beta.tar.gz" />
+		<move file="${release}/linux/JFritz-${version}.deb"
+			  tofile="${release}/linux/JFritz-${version}-Beta.deb" />
 
 		<!-- create mac files -->
-		<antcall target="prepare-mac" />
-		<antcall target="create-mac-zip" />
-		<!-- <antcall target="create-mac-dmg" /> -->
-		<antcall target="finish-mac" />
-			<move file="${release}/mac/JFritz-${version}-Mac.zip"
-				  tofile="${release}/mac/JFritz-${version}-Beta-Mac.zip" />
+		<antcall target="create-mac" />
+		<move file="${release}/mac/JFritz-${version}-Mac.zip"
+			  tofile="${release}/mac/JFritz-${version}-Beta-Mac.zip" />
+	</target>
+
+	<target name="prepare-release-files" depends="prepare">
+		<antcall target="create-windows" />
+		<antcall target="create-linux" />
+		<antcall target="create-mac" />
 	</target>
 
 	<target name="prepare-linux" description="Prepares directories for linux release!">
@@ -394,12 +393,22 @@ http://www.jfritz.org/
 			</fileset>
 		</copy>
 
-		<!-- set execution permission -->
-		<chmod file="${release}/mac/tmp/JFritz.app/Contents/MacOS/JavaApplicationStub" perm="555"/>
 	</target>
 
 	<target name="finish-mac" description="Deletes temporary mac release files!">
 		<delete dir="${release}/mac/tmp" />
+	</target>
+
+	<target name="mac-set-execution-bit">
+		<scp file="${release}/mac/JFritz-${version}-Mac.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
+		<sshexec command="mkdir ./public/mac"  username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
+		<sshexec command="cd ./public/mac; unzip ../JFritz-${version}-Mac.zip" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
+		<sshexec command="chmod 555 ./public/mac/JFritz.app/Contents/MacOS/JavaApplicationStub" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
+		<sshexec command="rm ./public/JFritz-${version}-Mac.zip" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
+		<sshexec command="cd ./public/mac; zip -r ../JFritz-${version}-Mac.zip *" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
+		<sshexec command="cd ./public/mac; rm * -rf" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
+		<sshexec command="rmdir ./public/mac" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
+		<scp file="${user2}@${server2}:./public/JFritz-${version}-Mac.zip" port="${port2}" trust="yes" todir="${release}/mac/" verbose="yes" password="${password2}"/>
 	</target>
 
 	<target name="create-mac-zip" description="Creates a ZIP-File for MacOS!">
@@ -469,7 +478,6 @@ http://www.jfritz.org/
 	<target name="finish-windows" description="Deletes temporary windows release files!">
 		<delete dir="${release}/win/tmp" />
 	</target>
-
 
 	<target name="scp-beta" description="Copy windows-, linux and mac release files to jfritz.robotniko.de/beta">
 		<scp file="${dist}/Changelog.txt" port="${port2}" trust="yes" todir="${user2}@${server2}:${scp-beta-path}" verbose="yes" password="${password2}"/>
