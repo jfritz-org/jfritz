@@ -142,9 +142,12 @@
 		</copy>
 		<copy todir="${dist}">
 			<fileset dir="src/de/moonflower/jfritz">
-				<include name="**/Changelog.txt" />
+				<include name="**/Changelog-Filtered.txt" />
 			</fileset>
 		</copy>
+		<move file="${dist}/Changelog-Filtered.txt"
+			  tofile="${dist}/Changelog.txt" />
+
 	</target>
 
 	<target name="jar" depends="compile, getVersion" description="Generates jar files">

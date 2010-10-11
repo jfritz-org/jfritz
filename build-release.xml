@@ -209,7 +209,34 @@
 		<delete dir="${dist}/obfuscated/" />
 	</target>
 
-	<target name="prepare-beta-files">
+	<target name="prepare-release-files" depends="prepare">
+		<!-- create windows files -->
+		<antcall target="prepare-windows" />
+		<antcall target="create-windows-zip" />
+		<antcall target="create-windows-setup" />
+
+		<!-- zip setup-file -->
+		<zip destfile="${release}/win/JFritz-${version}-Win.zip"
+		       basedir="${release}/win/"
+		       includes="JFritz-${version}-Setup.exe" />
+		<antcall target="finish-windows" />
+
+		<!-- create linux files -->
+		<antcall target="prepare-linux" />
+		<antcall target="create-linux-deb" />
+		<antcall target="create-linux-targz" />
+		<antcall target="finish-linux" />
+			<move file="${release}/linux/jfritz_${version}-1_all.deb"
+				  tofile="${release}/linux/JFritz-${version}.deb" />
+
+		<!-- create mac files -->
+		<antcall target="prepare-mac" />
+		<antcall target="create-mac-zip" />
+		<!-- <antcall target="create-mac-dmg" /> -->
+		<antcall target="finish-mac" />
+	</target>
+
+	<target name="prepare-beta-files" depends="prepare">
 		<!-- create windows files -->
 		<antcall target="prepare-windows" />
 		<antcall target="create-windows-zip" />
