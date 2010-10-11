@@ -393,6 +393,9 @@ http://www.jfritz.org/
 			<fileset dir="${dist}">
 			</fileset>
 		</copy>
+
+		<!-- set execution permission -->
+		<chmod file="${release}/mac/tmp/JFritz.app/Contents/MacOS/JavaApplicationStub" perm="555"/>
 	</target>
 
 	<target name="finish-mac" description="Deletes temporary mac release files!">
