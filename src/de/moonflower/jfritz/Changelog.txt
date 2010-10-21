@@ -7,6 +7,13 @@ Non-JFritz-Changes:
 - Neu: Testklasse zur Überprüfung, ob es für die eigene Box ein FW-Update gibt
 - Neu: Neues Package mit neuer Rufnummer, muss durch externe Komponente ersetzt werden
 
+JFritz 0.7.4.1:
+- Bugfix [0000106]: Installer findet kein Java
+- Bugfix [0000300]: Rückwärtssuche ausgegraut
+- Bugfix [0000301]: Landesflaggen und Netzbetreiber werden nicht mehr angezeigt 
+- Bugfix [0000302]: JFritz startet nicht unter Mac OSX
+- Bugfix [0000303]: Java 32-Bit wird unter x64 nicht erkannt 
+
 JFritz 0.7.4:
 - Release of new version
 

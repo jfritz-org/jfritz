@@ -853,6 +853,7 @@ public final class JFritz implements  StatusListener {
 	public static void loadNumberSettings() {
 		// load the different area code -> city mappings
 		ReverseLookup.loadSettings();
+		PhoneNumberOld.loadFlagMap();
 		PhoneNumberOld.loadCbCXMLFile();
 	}
 

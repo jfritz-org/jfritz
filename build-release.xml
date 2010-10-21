@@ -145,11 +145,11 @@
 
 	<target name="scp-update" depends="create-updatefiles" description="Uploads files per scp to update.jfritz.org">
 		<zip destfile="${update}/jfritz-${version}-update.zip" basedir="${update}/${version}" />
-		<scp file="${update}/jfritz-${version}-update.zip" port="${port3}" trust="yes" todir="${user3}@${server3}:./public/update/" verbose="yes" password="${password3}" />
-		<sshexec command="unzip ./public/update/jfritz-${version}-update.zip -d ./public/update/${version}" username="${user3}" host="${server3}" port="${port3}" trust="yes" password="${password3}" />
-		<sshexec command="rm ./public/update/jfritz-${version}-update.zip"  username="${user3}" host="${server3}" port="${port3}" trust="yes" password="${password3}" />
-		<scp file="${update}/update.txt" port="${port3}" trust="yes" todir="${user3}@${server3}:./public/update/" verbose="yes" password="${password3}" />
-		<scp file="${update}/current.txt" port="${port3}" trust="yes" todir="${user3}@${server3}:./public/update/" verbose="yes" password="${password3}" />
+		<scp file="${update}/jfritz-${version}-update.zip" port="${port3}" trust="yes" todir="${user3}@${server3}:./htdocs/jfritz.org/update/" verbose="yes" password="${password3}" />
+		<sshexec command="unzip ./htdocs/jfritz.org/update/jfritz-${version}-update.zip -d ./htdocs/jfritz.org/update/${version}" username="${user3}" host="${server3}" port="${port3}" trust="yes" password="${password3}" />
+		<sshexec command="rm ./htdocs/jfritz.org/update/jfritz-${version}-update.zip"  username="${user3}" host="${server3}" port="${port3}" trust="yes" password="${password3}" />
+		<scp file="${update}/update.txt" port="${port3}" trust="yes" todir="${user3}@${server3}:./htdocs/jfritz.org/update/" verbose="yes" password="${password3}" />
+		<scp file="${update}/current.txt" port="${port3}" trust="yes" todir="${user3}@${server3}:./htdocs/jfritz.org/update/" verbose="yes" password="${password3}" />
 	</target>
 
 	<target name="create-updatefiles" depends="prepare-updatefiles" description="Creates files for auto update">

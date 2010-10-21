@@ -4,8 +4,10 @@
  */
 package de.moonflower.jfritz.struct;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -50,7 +52,12 @@ public class PhoneNumberOld implements Serializable {
 
 	static HashMap<String, String> mobileMap;
 
+	static HashMap<String, String> worldFlagMap;
+	static HashMap<String, String> specificWorldFlagMap;
+
 	static HashMap<String, CallByCall[]> callbyCallMap;
+
+	static String FLAG_FILE_HEADER = "Country Code;Flag file; Full Text";
 
 	private final static String CBC_FILE_HEADER  = "Country Code;CallbyCall Prefix:length";
 
@@ -139,6 +146,56 @@ public class PhoneNumberOld implements Serializable {
 		cutCallByCall();
 		if (convertInt) {
 			number = convertToIntNumber();
+			getCountryInfo();
+		}
+	}
+
+	/**
+	 * This function does two things. First it searches for the number in the worldFlagMap,
+	 * so it can determine the correct flag to display. Then it determines if the number is
+	 * part of a mobile network for this particular country.
+	 *
+	 * @author brian jensen
+	 *
+	 */
+
+	private void getCountryInfo(){
+		String[] value;
+		if(worldFlagMap != null){
+
+			// Finde Landeskennzahl
+			for ( int i=6; i>0; i-- ) {
+				if ( number.length()>i && worldFlagMap.containsKey(number.substring(1, i))) {
+					value = worldFlagMap.get(number.substring(1,i)).split(";");
+					countryCode = "+" + number.substring(1,i);
+					flagFileName = value[0];
+					country = value[1];
+					Description = value[1];
+					break;
+				}
+			}
+
+			// Finde weitere Durchwahlen, wie z.B. Mobilfunkanbieter
+			for ( int i=11; i>3; i-- ) {
+				if ( number.length()>i && specificWorldFlagMap.containsKey(number.substring(1, i))) {
+					value = specificWorldFlagMap.get(number.substring(1,i)).split(";");
+					if ( countryCode.equals(Main.getProperty("country.code"))) {
+						flagFileName = value[0];
+					}
+					Description = value[1];
+					break;
+				}
+			}
+			if ( countryCode.equals("+")) {
+				Debug.warning("No flag file for "+number+" found!!");
+			}
+
+			//All known mobile numbers are marked in the csv
+			if(Description.contains("Mobile"))
+				type = "mobile";
+			else
+				type = "home";
+
 		}
 	}
 
@@ -530,6 +587,118 @@ public class PhoneNumberOld implements Serializable {
 			return true;
 		else
 			return false;
+	}
+
+	/**
+	 * This function loads all the info from the file number/country_codes_world.csv
+	 * and stores the information in a hashmap indexed by country code
+	 *
+	 * worldFlagMap contains information about the country and has the name of
+	 * a flag to display for that country
+	 *
+	 * @author brian
+	 *
+	 */
+	public static void loadFlagMap(){
+		Debug.info("Loading the country code -> flag map");
+		worldFlagMap = new HashMap<String, String>(2200);
+		BufferedReader br = null;
+		FileInputStream fi = null;
+
+		try{
+			fi = new FileInputStream(JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") + JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "country_codes_world.csv");
+			br = new BufferedReader(new InputStreamReader(fi, "ISO-8859-1"));
+
+			String line;
+			String[] entries;
+			int lines = 0;
+			String l = br.readLine();
+			if(l==null){
+				Debug.errDlg("File "+JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") +JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "country_codes_world"+" empty");
+			}
+			//Load the keys and values quick and dirty
+			if(l.equals(FLAG_FILE_HEADER)){
+				while (null != (line = br.readLine())) {
+					lines++;
+					entries = line.split(";");
+					if(entries.length == 3)
+						//country code is the key, flag name; Description is the value
+						worldFlagMap.put(entries[0], entries[1]+";"+entries[2]);
+				}
+			}
+
+			Debug.info(lines + " Lines read from country_codes_world.csv");
+			Debug.info("worldFlagMap size: "+worldFlagMap.size());
+
+		}catch(Exception e){
+			Debug.error(e.toString());
+		}finally{
+			try{
+				if(fi!=null)
+					fi.close();
+				if(br!=null)
+					br.close();
+			}catch (IOException ioe){
+				Debug.error("error closing stream"+ioe.toString());
+			}
+		}
+		loadSpecificFlagMap();
+	}
+
+	/**
+	 * This function loads all the info from the file number/country_specfic_codes_world.csv
+	 * and stores the information in a hashmap indexed by country code
+	 *
+	 * specificWorldFlagMap contains information about the country
+	 * used provider and has the name of a flag to display for that country
+	 *
+	 * @author brian
+	 *
+	 */
+	private static void loadSpecificFlagMap(){
+		Debug.info("Loading the country code -> flag map");
+		specificWorldFlagMap = new HashMap<String, String>(2200);
+		BufferedReader br = null;
+		FileInputStream fi = null;
+
+		try{
+			fi = new FileInputStream(JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") +JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "country_specfic_codes_world.csv");
+			br = new BufferedReader(new InputStreamReader(fi, "ISO-8859-1"));
+
+			String line;
+			String[] entries;
+			int lines = 0;
+			String l = br.readLine();
+			if(l==null){
+				Debug.errDlg("File "+JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") +JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "country_specfic_codes_world.csv"+" empty");
+			}
+			//Load the keys and values quick and dirty
+			if(l.equals(FLAG_FILE_HEADER)){
+				while (null != (line = br.readLine())) {
+					lines++;
+					entries = line.split(";");
+					if(entries.length == 3)
+						//country code is the key, flag name; Description is the value
+						specificWorldFlagMap.put(entries[0], entries[1]+";"+entries[2]);
+				}
+			}
+
+			Debug.info(lines + " Lines read from country_specfic_codes_world.csv");
+			Debug.info("specificWorldFlagMap size: "+specificWorldFlagMap.size());
+
+		}catch(Exception e){
+			Debug.error(e.toString());
+		}finally{
+			try{
+				if(fi!=null)
+					fi.close();
+				if(br!=null)
+					br.close();
+			}catch (IOException ioe){
+				Debug.error("error closing stream"+ioe.toString());
+			}
+		}
+
 	}
 
 	/** This function loads the file number/international/callbycall_world.xml
