@@ -73,7 +73,7 @@
 
 	<target name="jabber-msg" depends="getVersion">
 		  <taskdef name="jabber" classname="com.tfftech.ant.taskdefs.im.jabber.JabberTask" />
-		  <jabber host="robotniko.de" port="25222" from="${jabber-user}" password="${jabber-pwd}"
+		  <jabber host="robotniko.de" secure="true" port="25223" from="${jabber-user}" password="${jabber-pwd}"
 		  	tolist="${jabber-rcp1},${jabber-rcp2}">
 		  	<message>Neue Version ${version} ist online: http://jfritz.robotniko.de/beta/</message>
 		  </jabber>
@@ -483,6 +483,7 @@ http://www.jfritz.org/
 		<scp file="${dist}/Changelog.txt" port="${port2}" trust="yes" todir="${user2}@${server2}:${scp-beta-path}" verbose="yes" password="${password2}"/>
 		<scp file="${release}/win/JFritz-${version}-Beta-Win.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
 		<scp file="${release}/win/JFritz-${version}-Beta.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
+		<scp file="${release}/win/JFritz-${version}-Beta-Setup.exe" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
 		<scp file="${release}/linux/JFritz-${version}-Beta.tar.gz" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
 		<scp file="${release}/linux/JFritz-${version}-Beta.deb" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
 		<scp file="${release}/mac/JFritz-${version}-Beta-Mac.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
