@@ -8,7 +8,6 @@ import de.moonflower.jfritz.utils.reverselookup.LookupObserver;
 
 public class CheckEntry implements LookupObserver {
 
-	private boolean succeeded = false;
 	private boolean done = false;
 
 	private Person checkPerson;
@@ -25,7 +24,6 @@ public class CheckEntry implements LookupObserver {
 		checkPerson = new Person(firstname, "", lastname,
 				street, zipcode, city, "", "");
 		checkedNumber = num;
-		succeeded = false;
 		done = false;
 	}
 
@@ -33,44 +31,11 @@ public class CheckEntry implements LookupObserver {
 	}
 
 	public void personsFound(Vector<Person> persons) {
-		succeeded = (persons.size() == 1);
-		if (succeeded)
-		{
-			Person person = persons.elementAt(0);
-			succeeded = (person.getFirstName().equals(checkPerson.getFirstName()));
-		}
 	}
 
 	public void saveFoundEntries(Vector<Person> persons) {
-		succeeded = (persons.size() == 1);
 		receivedPerson = persons.elementAt(0);
-		if (succeeded)
-		{
-			succeeded = (receivedPerson.getFirstName().equals(checkPerson.getFirstName()));
-		}
-		if (succeeded)
-		{
-			succeeded = (receivedPerson.getLastName().equals(checkPerson.getLastName()));
-		}
-		if (succeeded)
-		{
-			succeeded = (receivedPerson.getStreet().equals(checkPerson.getStreet()));
-		}
-		if (succeeded)
-		{
-			succeeded = (receivedPerson.getCity().equals(checkPerson.getCity()));
-		}
-		if (succeeded)
-		{
-			succeeded = (receivedPerson.getPostalCode().equals(checkPerson.getPostalCode()));
-		}
-
 		done = true;
-	}
-
-	public boolean hasSucceeded()
-	{
-		return succeeded;
 	}
 
 	public boolean isDone()

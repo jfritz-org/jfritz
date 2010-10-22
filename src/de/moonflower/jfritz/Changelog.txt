@@ -10,6 +10,8 @@ Non-JFritz-Changes:
 JFritz 0.7.4.0.2:
 - Neu [0000221]: Anzeigen des Ortsnamens als eigene Spalte
 - Bugfix: Rückwärtssuche für Norwegen repariert
+- Bugfix: Rückwärtssuche für Schweiz repariert
+- Bugfix: Rückwärtssuche für Frankreich repariert
 - Bugfix [0000304]: Rückwärtssuche findet zugehörigen Ort nicht
 New Strings:
 city_desc

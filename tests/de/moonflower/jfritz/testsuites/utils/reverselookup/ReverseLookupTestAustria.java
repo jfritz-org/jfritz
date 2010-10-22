@@ -11,7 +11,7 @@ import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 
-public class ReverseLookupTestNorway extends ReverseLookupTestBase {
+public class ReverseLookupTestAustria extends ReverseLookupTestBase {
 	private CheckEntry entry;
 	private PhoneNumberOld checkNum;
 
@@ -26,17 +26,17 @@ public class ReverseLookupTestNorway extends ReverseLookupTestBase {
 	}
 
 	@Test
-	public void testFlorentin() {
-		checkNum = new PhoneNumberOld("+4773505023", false);
-		entry = new CheckEntry(checkNum, "Florentin", "Moser", "Schiötzvei 5", "7020", "Trondheim");
+	public void testTrivadis() {
+		checkNum = new PhoneNumberOld("+4313323531", false);
+		entry = new CheckEntry(checkNum, "Delphi GmbH", "Trivadis", "Handelskai 94-96", "1200", "Wien");
 		ReverseLookup.lookup(checkNum, entry, true);
 		checkEntry(entry);
 	}
 
 	@Test
-	public void testUlrike() {
-		checkNum = new PhoneNumberOld("+4773945687", false);
-		entry = new CheckEntry(checkNum, "Ulrike", "Griep", "Loholtbakken 7", "7049", "Trondheim");
+	public void testKarin() {
+		checkNum = new PhoneNumberOld("+4353365227", false);
+		entry = new CheckEntry(checkNum, "Böglerhof GmbH u Co KG", "Romantikhotel", "Alpbach , 166", "6236", "Alpbach (T)");
 		ReverseLookup.lookup(checkNum, entry, true);
 		checkEntry(entry);
 	}
