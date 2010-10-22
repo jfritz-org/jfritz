@@ -30,6 +30,7 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.ProgramConstants;
 import de.moonflower.jfritz.cellrenderer.CallByCallCellRenderer;
 import de.moonflower.jfritz.cellrenderer.CallTypeCellRenderer;
+import de.moonflower.jfritz.cellrenderer.CityCellRenderer;
 import de.moonflower.jfritz.cellrenderer.CommentCellRenderer;
 import de.moonflower.jfritz.cellrenderer.DateCellRenderer;
 import de.moonflower.jfritz.cellrenderer.DurationCellRenderer;
@@ -59,6 +60,7 @@ public class CallerTable extends JTable {
 	public static final String COLUMN_PORT = "port";
 	public static final String COLUMN_ROUTE = "route";
 	public static final String COLUMN_TYPE = "type";
+	public static final String COLUMN_CITY = "city";
 
 	private static final long serialVersionUID = 1;
 
@@ -258,6 +260,8 @@ public class CallerTable extends JTable {
 		commentColumn.setCellEditor(new CommentCellEditor());
 
 		createColumn(9, COLUMN_PICTURE, new PictureCellRenderer());
+
+		createColumn(10, COLUMN_CITY, new CityCellRenderer());
 
 		reorderColumns();
 
@@ -551,6 +555,7 @@ public class CallerTable extends JTable {
     	columns.add(COLUMN_ROUTE);
     	columns.add(COLUMN_DURATION);
     	columns.add(COLUMN_COMMENT);
+    	columns.add(COLUMN_CITY);
 
     	return columns;
     }

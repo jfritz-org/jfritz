@@ -879,12 +879,12 @@
 		</website>
 	</country>
 	<country code="+47">
-		<website name="gulesider.no" url="http://www.gulesider.no/gs/categoryList.c?q=$NUMBER" prefix="">
+		<website name="gulesider.no" url="http://www.gulesider.no/gs/categoryList.c?q=$NUMBER" prefix="" numLines="7">
 			<entry>
-				<name swapFirstAndLastName="true">&lt;h2 class=&quot;name&quot;&gt;\s*&lt;a href=&quot;[^&quot;]*&quot;\s*title=&quot;[^&quot;]*&quot;&gt;\s*([- \w]*)\s*?&lt;span&gt;</name>
-				<street>&lt;div class=&quot;address&quot;&gt;\s*&lt;p&gt;([ \w]*),\s*\d+ \w+\s*&lt;/p&gt;</street>
-				<city>&lt;div class=&quot;address&quot;&gt;\s*&lt;p&gt;[ \w]*,\s*\d+ (\w+)\s*&lt;/p&gt;</city>
-				<zipcode>&lt;div class=&quot;address&quot;&gt;\s*&lt;p&gt;[ \w]*,\s*(\d+) \w+\s*&lt;/p&gt;</zipcode>
+				<name swapFirstAndLastName="true">&lt;h2 class=&quot;name&quot;&gt;\s*&lt;a href=&quot;[^&quot;]*&quot;\s*title=&quot;[^&quot;]*&quot;&gt;\s*([- \w]*)\s*&lt;span&gt;\s*[^&lt;]*&lt;/span&gt;\s*&lt;/a&gt;\s*&lt;/h2&gt;</name>
+				<street>&lt;div class=&quot;address&quot;&gt;\s*&lt;p&gt;([^,]*),\s*[^\s]*\s[^&lt;]*&lt;/p&gt;\s*&lt;/div&gt;</street>
+				<city>&lt;div class=&quot;address&quot;&gt;\s*&lt;p&gt;[^,]*,\s*[^\s]*\s([^&lt;]*)&lt;/p&gt;\s*&lt;/div&gt;</city>
+				<zipcode>&lt;div class=&quot;address&quot;&gt;\s*&lt;p&gt;[^,]*,\s*([^\s]*)\s[^&lt;]*&lt;/p&gt;\s*&lt;/div&gt;</zipcode>
 			</entry>
 		</website>
 	</country>

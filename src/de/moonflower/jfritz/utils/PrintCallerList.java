@@ -368,6 +368,24 @@ public class PrintCallerList extends Thread {
 			private static final long serialVersionUID = 1L;
 
 			public Object getValue() {
+                Object person = getDataRow().get(
+                        JFritz.getCallerList().getColumnName(4));
+                if (person == null)
+                    return ""; //$NON-NLS-1$
+                return ((Person) person).getCity();
+            }
+        };
+        Debug.debug("Adding name field ..."); //$NON-NLS-1$
+        exp.setName("print_city"); //$NON-NLS-1$
+        report.addExpression(exp);
+
+        exp = new AbstractExpression() {
+            /**
+			 *
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public Object getValue() {
                 Object obj = getDataRow().get(
                         JFritz.getCallerList().getColumnName(5));
                 if (obj == null)
@@ -544,6 +562,8 @@ public class PrintCallerList extends Thread {
                     factory.setFieldname("print_duration"); //$NON-NLS-1$
                 } else if (columnName.equals(CallerTable.COLUMN_COMMENT)) { //$NON-NLS-1$
                     factory.setFieldname("print_comment"); //$NON-NLS-1$
+                } else if (columnName.equals(CallerTable.COLUMN_CITY)) { //$NON-NLS-1$
+                    factory.setFieldname("print_city"); //$NON-NLS-1$
                 }
                 report.getItemBand().addElement(factory.createElement());
             }

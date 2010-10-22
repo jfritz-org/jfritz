@@ -34,6 +34,7 @@ public class CSVCallerListImport extends CSVImport implements ICSVImport {
 		availableColumns.remove(CallerTable.COLUMN_CALL_BY_CALL);
 		availableColumns.remove(CallerTable.COLUMN_PARTICIPANT);
 		availableColumns.remove(CallerTable.COLUMN_PICTURE);
+		availableColumns.remove(CallerTable.COLUMN_CITY);
 		importedCalls = new Vector<Call>(20);
 	}
 

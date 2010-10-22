@@ -36,6 +36,7 @@ public class ReverseLookupSite {
 	public static final int SWAPFIRSTANDLASTNAME = 7;
 	public static final int STARTLINE = 8;
 	public static final int ENDLINE = 9;
+	public static final int NUMLINES = 10;
 
 	//Site url, as will be used to process the reverse lookup
 	private String url;
@@ -46,15 +47,19 @@ public class ReverseLookupSite {
 	//needed to be certify if the number format is correct for the site
 	private String prefix;
 
+	// how many lines should be connected together to perform patternmatching
+	private int numLines;
+
 	private int areacodeLength;
 
 	//currently a linked list of String arrays
 	private Vector<String[]> entries;
 
-	public ReverseLookupSite(String url, String name, String prefix, int ac_length){
+	public ReverseLookupSite(String url, String name, String prefix, int numLines, int ac_length){
 		this.url = url;
 		this.name = name;
 		this.prefix = prefix;
+		this.numLines = numLines;
 		this.areacodeLength = ac_length;
 		entries = new Vector<String[]>(2);
 	}
@@ -103,6 +108,9 @@ public class ReverseLookupSite {
 		return prefix;
 	}
 
+	public int getNumLines(){
+		return numLines;
+	}
 	public int getAreaCodeLength(){
 		return areacodeLength;
 	}

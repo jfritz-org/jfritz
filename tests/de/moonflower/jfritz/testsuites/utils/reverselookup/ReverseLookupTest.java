@@ -62,29 +62,6 @@ public class ReverseLookupTest extends TestCase {
 	}
 
 	/**
-	 * This method tests the reverse lookup for several norwegian phone numbers.
-	 * IT IS NOT ALLOWED TO USE ANY OF THIS INFORMATION IN THIS FILE FOR OTHER PURPOSES THAN TESTING.
-	 */
-	public void testReverseLookupNorway()
-	{
-		// CheckEntry(firstName, lastName, street, postalCode, city);
-		CheckEntry entry;
-		PhoneNumberOld checkNum;
-
-		checkNum = new PhoneNumberOld("+4773505023", false);
-		entry = new CheckEntry(checkNum, "Florentin", "Moser", "- Schiötzvei 5", "7020", "Trondheim");
-		ReverseLookup.lookup(checkNum, entry, true);
-		testNorwayFailed = checkEntry(entry, testNorwayFailed);
-
-		checkNum = new PhoneNumberOld("+4773945687", false);
-		entry = new CheckEntry(checkNum, "Ulrike", "Griep", "Loholtbakken 7", "7049", "Trondheim");
-		ReverseLookup.lookup(checkNum, entry, true);
-		testNorwayFailed = checkEntry(entry, testNorwayFailed);
-
-		assertFalse(testNorwayFailed);
-	}
-
-	/**
 	 * This method tests the reverse lookup for several italian phone numbers.
 	 * IT IS NOT ALLOWED TO USE ANY OF THIS INFORMATION IN THIS FILE FOR OTHER PURPOSES THAN TESTING.
 	 */
@@ -286,6 +263,11 @@ public class ReverseLookupTest extends TestCase {
 		// CheckEntry(firstName, lastName, street, postalCode, city);
 		CheckEntry entry;
 		PhoneNumberOld checkNum;
+
+		checkNum = new PhoneNumberOld("+495311234567", false);
+		entry = new CheckEntry(checkNum, "Am Theater", "STAATSTHEATER", "Am Theater", "38100", "Braunschweig");
+		ReverseLookup.lookup(checkNum,  entry, true);
+		testGermanyFailed = checkEntry(entry, testGermanyFailed);
 
 		checkNum = new PhoneNumberOld("+49277242239", false);
 		entry = new CheckEntry(checkNum, "", "Zehner", "An der Alten Kirche 3", "35745", "Herborn");

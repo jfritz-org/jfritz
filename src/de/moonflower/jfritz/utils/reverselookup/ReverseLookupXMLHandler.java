@@ -23,7 +23,8 @@ import de.moonflower.jfritz.utils.Debug;
 public class ReverseLookupXMLHandler extends DefaultHandler{
 
 	String chars, url, name, prefix, country_code, pname, pstreet, pcity, pzipcode,
-		   pfirst, plast, firstOccurance, swapFirstAndLastName, pstartline, pendline;
+		   pfirst, plast, firstOccurance, swapFirstAndLastName, pstartline, pendline,
+		   numLines;
 
 	Vector<ReverseLookupSite> rls_list;
 
@@ -66,7 +67,7 @@ public class ReverseLookupXMLHandler extends DefaultHandler{
 			ac_length = 0;
 			firstOccurance = "name";
 			swapFirstAndLastName = "false";
-
+			numLines = "1";
 		//if we have a new entry tag, clear the previous pattern data
 		}else if (eName.equals("entry")){
 			pname = "";
@@ -98,13 +99,20 @@ public class ReverseLookupXMLHandler extends DefaultHandler{
 						name = attrs.getValue(i);
 					else if(aName.equals("prefix"))
 						prefix = attrs.getValue(i);
+					else if (aName.equals("numLines"))
+						numLines = attrs.getValue(i);
 					else if(aName.equals("areacode"))
 						ac_length = Integer.parseInt(attrs.getValue(i));
 
 					//add a new reverselookup site to the list
 					if(i == attrs.getLength() -1){
-//						Debug.msg("Adding website: "+url+" for "+country_code);
-						rls_list.add(new ReverseLookupSite(url, name, prefix, ac_length));
+						int nLines = 1;
+						try {
+							nLines = Integer.parseInt(numLines);
+						} catch (NumberFormatException nfe) {
+							nLines = 1;
+						}
+						rls_list.add(new ReverseLookupSite(url, name, prefix, nLines, ac_length));
 
 					}
 				}else if(eName.equals("entry")){

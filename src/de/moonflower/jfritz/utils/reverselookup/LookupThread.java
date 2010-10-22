@@ -368,7 +368,7 @@ public class LookupThread extends Thread {
 									startlinePattern = Pattern.compile(patterns[ReverseLookupSite.STARTLINE]);
 									useStartLine = true;
 								}
-								if (!patterns[ReverseLookupSite.STARTLINE].equals("")) {
+								if (!patterns[ReverseLookupSite.ENDLINE].equals("")) {
 									Debug.debug("Endline detected");
 									endlinePattern = Pattern.compile(patterns[ReverseLookupSite.ENDLINE]);
 									useStartLine = true;
@@ -409,24 +409,36 @@ public class LookupThread extends Thread {
 
 								Debug.debug("Parsing " + lines + " lines:");
 								boolean inParseArea = false;
+								String currentLineToMatch;
 								for (int line=0; line<lines; line++)
 								{
-									if (data[line] != null)
+									if (rls.getNumLines() == 1) {
+										currentLineToMatch = data[line];
+									} else {
+										currentLineToMatch="";
+										for (int lineIt=0; lineIt<rls.getNumLines(); lineIt++) {
+											if (line+lineIt<lines) {
+												if (!data[line+lineIt].trim().equals(""))
+													currentLineToMatch += data[line+lineIt];
+											}
+										}
+									}
+									if (currentLineToMatch != null)
 									{
-										data[line] = data[line].replaceAll(new Character((char)spaceAlternative).toString(), " "); //$NON-NLS-1$
+										currentLineToMatch = currentLineToMatch.replaceAll(new Character((char)spaceAlternative).toString(), " "); //$NON-NLS-1$
 
 										if (useStartLine)
 										{
 											if (startlinePattern != null)
 											{
-												startlineMatcher = startlinePattern.matcher(data[line]);
+												startlineMatcher = startlinePattern.matcher(currentLineToMatch);
 												if (startlineMatcher.find()) {
 													inParseArea = true;
 												}
 											}
 											if (endlinePattern != null)
 											{
-												endlineMatcher = endlinePattern.matcher(data[line]);
+												endlineMatcher = endlinePattern.matcher(currentLineToMatch);
 												if (endlineMatcher.find()) {
 													inParseArea = false;
 												}
@@ -437,7 +449,7 @@ public class LookupThread extends Thread {
 										{
 											//match first name
 											if(firstnamePattern != null){
-												firstnameMatcher = firstnamePattern.matcher(data[line]);
+												firstnameMatcher = firstnamePattern.matcher(currentLineToMatch);
 												if(firstnameMatcher.find()){
 
 													//read in and concate all groupings
@@ -473,7 +485,7 @@ public class LookupThread extends Thread {
 											yield();
 											//match last name
 											if(lastnamePattern != null){
-												lastnameMatcher = lastnamePattern.matcher(data[line]);
+												lastnameMatcher = lastnamePattern.matcher(currentLineToMatch);
 												if(lastnameMatcher.find()){
 
 													//read in and concate all groupings
@@ -509,7 +521,7 @@ public class LookupThread extends Thread {
 											yield();
 											//match name
 											if(namePattern != null){
-												nameMatcher = namePattern.matcher(data[line]);
+												nameMatcher = namePattern.matcher(currentLineToMatch);
 												if(nameMatcher.find()){
 
 													//read in and concate all groupings
@@ -588,7 +600,7 @@ public class LookupThread extends Thread {
 											yield();
 											//match street
 											if(streetPattern != null){
-												streetMatcher = streetPattern.matcher(data[line]);
+												streetMatcher = streetPattern.matcher(currentLineToMatch);
 												if(streetMatcher.find()){
 
 													//read in and concate all groupings
@@ -622,7 +634,7 @@ public class LookupThread extends Thread {
 											yield();
 											//match city
 											if(cityPattern != null){
-												cityMatcher = cityPattern.matcher(data[line]);
+												cityMatcher = cityPattern.matcher(currentLineToMatch);
 												if(cityMatcher.find()){
 
 													//read in and concate all groupings
@@ -657,7 +669,7 @@ public class LookupThread extends Thread {
 											yield();
 											//match zip code
 											if(zipcodePattern != null){
-												zipcodeMatcher = zipcodePattern.matcher(data[line]);
+												zipcodeMatcher = zipcodePattern.matcher(currentLineToMatch);
 												if(zipcodeMatcher.find()){
 
 													//read in and concate all groupings

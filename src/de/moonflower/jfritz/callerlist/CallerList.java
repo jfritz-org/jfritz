@@ -671,8 +671,8 @@ public class CallerList extends AbstractTableModel
 	 * @see javax.swing.table.TableModel#getColumnCount()
 	 */
 	public int getColumnCount() {
-		// 10 Columns on the Table
-		return 10;
+		// 11 Columns on the Table
+		return 11;
 	}
 
 	/**
@@ -705,6 +705,8 @@ public class CallerList extends AbstractTableModel
 			return Integer.toString(call.getDuration());
 		} else if (columnName.equals(CallerTable.COLUMN_COMMENT)) { //$NON-NLS-1$
 			return call.getComment();
+		} else if (columnName.equals(CallerTable.COLUMN_CITY)) {
+			return JFritz.getPhonebook().findPerson(call).getCity();
 		} else if (columnName.equals(CallerTable.COLUMN_PICTURE)) { //$NON-NLS-1$
 			Person p = JFritz.getPhonebook().findPerson(call);
 			if (p != null)
@@ -890,6 +892,19 @@ public class CallerList extends AbstractTableModel
 			} else if (columnName.equals(CallerTable.COLUMN_COMMENT)) { //$NON-NLS-1$
 				o1 = call1.getComment().toUpperCase();
 				o2 = call2.getComment().toUpperCase();
+			} else if (columnName.equals(CallerTable.COLUMN_CITY)) {
+				Person p1 = JFritz.getPhonebook().findPerson(call1);
+				Person p2 = JFritz.getPhonebook().findPerson(call2);
+				if (p1 != null) {
+					o1 = p1.getCity().toUpperCase();
+				} else {
+					o1 = null;
+				}
+				if (p2 != null) {
+					o2 = p2.getCity().toUpperCase();
+				} else {
+					o2 = null;
+				}
 			} else {
 				// Sort by Date
 				o1 = call1.getCalldate();

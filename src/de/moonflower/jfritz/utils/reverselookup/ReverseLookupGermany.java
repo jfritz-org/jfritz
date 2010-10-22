@@ -18,7 +18,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  */
 public class ReverseLookupGermany {
 
-	public final static String FILE_HEADER = "Vorwahl;Ortsnetz";
+	public final static String FILE_HEADER = "AreaCode;City";
 
 	private static HashMap<String, String> numberMap;
 
