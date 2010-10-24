@@ -501,6 +501,7 @@ http://www.jfritz.org/
 		<sshexec command="mv -f ./public/JFritz-${version}-Beta-Mac.zip ${scp-beta-path}" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<sshexec command="mv -f ./public/JFritz-${version}-Beta-Win.zip ${scp-beta-path}" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<sshexec command="mv -f ./public/JFritz-${version}-Beta.zip ${scp-beta-path}" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
+		<sshexec command="mv -f ./public/JFritz-${version}-Beta-Setup.exe ${scp-beta-path}" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<sshexec command="mv -f ./public/JFritz-${version}-Beta.tar.gz ${scp-beta-path}" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<sshexec command="mv -f ./public/JFritz-${version}-Beta.deb ${scp-beta-path}" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 	</target>

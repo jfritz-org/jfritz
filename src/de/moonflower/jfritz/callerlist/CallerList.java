@@ -706,7 +706,11 @@ public class CallerList extends AbstractTableModel
 		} else if (columnName.equals(CallerTable.COLUMN_COMMENT)) { //$NON-NLS-1$
 			return call.getComment();
 		} else if (columnName.equals(CallerTable.COLUMN_CITY)) {
-			return JFritz.getPhonebook().findPerson(call).getCity();
+			String result = "";
+			if (JFritz.getPhonebook().findPerson(call) != null) {
+				result = JFritz.getPhonebook().findPerson(call).getCity();
+			}
+			return result;
 		} else if (columnName.equals(CallerTable.COLUMN_PICTURE)) { //$NON-NLS-1$
 			Person p = JFritz.getPhonebook().findPerson(call);
 			if (p != null)
@@ -895,12 +899,12 @@ public class CallerList extends AbstractTableModel
 			} else if (columnName.equals(CallerTable.COLUMN_CITY)) {
 				Person p1 = JFritz.getPhonebook().findPerson(call1);
 				Person p2 = JFritz.getPhonebook().findPerson(call2);
-				if (p1 != null) {
+				if (p1 != null && p1.getCity() != null) {
 					o1 = p1.getCity().toUpperCase();
 				} else {
 					o1 = null;
 				}
-				if (p2 != null) {
+				if (p2 != null && p2.getCity() != null) {
 					o2 = p2.getCity().toUpperCase();
 				} else {
 					o2 = null;

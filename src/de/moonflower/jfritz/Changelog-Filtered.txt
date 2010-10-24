@@ -1,3 +1,15 @@
+JFritz 0.7.4.0.3:
+- Bugfix [0000305]: Redraw-Probleme auf dem Mac  
+- Bugfix [0000306]: Buttons in Jfritz werden erst sichtbar wenn man sie drückt
+
+JFritz 0.7.4.0.2:
+- Neu [0000221]: Anzeigen des Ortsnamens als eigene Spalte
+- Bugfix: Rückwärtssuche für Norwegen repariert
+- Bugfix: Rückwärtssuche für Schweiz repariert
+- Bugfix: Rückwärtssuche für Frankreich repariert
+- Bugfix [0000297]: Icons für MacOSX in höherer Auflösung
+- Bugfix [0000304]: Rückwärtssuche findet zugehörigen Ort nicht
+
 JFritz 0.7.4.0.1:
 - Bugfix [0000106]: Installer findet kein Java
 - Bugfix [0000300]: Rückwärtssuche ausgegraut
