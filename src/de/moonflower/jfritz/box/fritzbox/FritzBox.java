@@ -1,6 +1,10 @@
 package de.moonflower.jfritz.box.fritzbox;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -305,6 +309,35 @@ public class FritzBox extends BoxClass {
 		}
 
 		Thread.yield();
+		return result;
+	}
+
+	private final Vector<String> getFromFile(final String file)
+	{
+		Vector<String> result = new Vector<String>();
+		BufferedReader br = null;
+		try {
+			FileInputStream fis = new FileInputStream(file);
+			InputStreamReader isr = new InputStreamReader(fis);
+			br = new BufferedReader(isr);
+
+			String line = "";
+			while ((line = br.readLine()) != null) {
+				result.add(line);
+			}
+		} catch (FileNotFoundException fe) {
+			System.err.println("Datei nicht gefunden: " + file);
+		} catch (IOException e) {
+			System.err.println("Kann aus Datei nicht lesen: " + file);
+		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					System.err.println("Kann Datei nicht schließen: " + file);
+				}
+			}
+		}
 		return result;
 	}
 
@@ -815,7 +848,7 @@ public class FritzBox extends BoxClass {
 			boolean voipEnabled =  response.get(0).equals("1");
 			try {
 				int voipCount = Integer.parseInt(response.get(1));
-				if (voipEnabled)
+//				if (voipEnabled)
 				{
 					query.clear();
 					for (int i=0; i<voipCount; i++)
@@ -839,7 +872,7 @@ public class FritzBox extends BoxClass {
 								}
 								addConfiguredPort(new Port(20+i,
 										voipName,
-										"-1",
+										Integer.toString(20+i),
 										"62"+Integer.toString(i)));
 							}
 						}
@@ -951,6 +984,15 @@ public class FritzBox extends BoxClass {
 	 * Implementation of the BoxCallListInterface
 	 **************************************************************************************/
 	public Vector<Call> getCallerList(Vector<IProgressListener> progressListener)
+	throws IOException, MalformedURLException {
+		if (true) {
+			return getCallerListFromBox(progressListener);
+		} else {
+			return getCallerListFromFile(progressListener);
+		}
+	}
+
+	private Vector<Call> getCallerListFromBox(Vector<IProgressListener> progressListener)
 			throws IOException, MalformedURLException {
 
 		setBoxConnected();
@@ -1039,6 +1081,31 @@ public class FritzBox extends BoxClass {
 		return new Vector<Call>();
 	}
 
+	private Vector<Call> getCallerListFromFile(Vector<IProgressListener> progressListener)
+	throws IOException, MalformedURLException {
+		Vector<String> response = new Vector<String>();
+		response = getFromFile("D:\\callerlist.dat");
+
+		Vector<Call> newCalls = new Vector<Call>(response.size());
+		Vector<Call> tmpCalls = new Vector<Call>(response.size());
+		int querySize = 8;
+		boolean result = createCallFromResponse(tmpCalls, response, querySize, response.size()/querySize);
+		if (!result)
+		{
+			throw new IOException("Malformed data while receiving caller list!");
+		}
+		else
+		{
+			newCalls.addAll(tmpCalls);
+		}
+		for (IProgressListener listener: progressListener)
+		{
+			listener.setProgress(100);
+		}
+
+		return newCalls;
+	}
+
 	private boolean createCallFromResponse(Vector<Call> calls, Vector<String> response,
 			int querySize, int stepSize)
 	{
@@ -1093,9 +1160,12 @@ public class FritzBox extends BoxClass {
 				try {
 					int portId = Integer.parseInt(portStr);
 					port = this.getConfiguredPort(portId);
+					if (port == null) { // Fallback auf statisch konfigurierte Ports
+						port = Port.getPort(portId);
+					}
 				} catch (NumberFormatException nfe)
 				{
-
+					Debug.warning("FritzBox: Could not parse portstr as number: " + portStr);
 				}
 				if (port == null)
 				{

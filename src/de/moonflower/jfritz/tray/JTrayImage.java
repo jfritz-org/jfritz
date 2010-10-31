@@ -47,6 +47,16 @@ public class JTrayImage
                 trayIconImage = scaleIconToBufferedImage(ImageIO.read(getClass().getResource("/de/moonflower/jfritz/resources/images/tray32.png")),
                     trayIconSize.width-1, trayIconSize.height-1, BufferedImage.TYPE_INT_ARGB);
             }
+            else if(trayIconSize.height > 32 && trayIconSize.height <= 64)
+            {
+                trayIconImage = scaleIconToBufferedImage(ImageIO.read(getClass().getResource("/de/moonflower/jfritz/resources/images/tray64.png")),
+                    trayIconSize.width-1, trayIconSize.height-1, BufferedImage.TYPE_INT_ARGB);
+            }
+            else if(trayIconSize.height > 64 && trayIconSize.height <= 128)
+            {
+                trayIconImage = scaleIconToBufferedImage(ImageIO.read(getClass().getResource("/de/moonflower/jfritz/resources/images/tray128.png")),
+                    trayIconSize.width-1, trayIconSize.height-1, BufferedImage.TYPE_INT_ARGB);
+            }
             else
             {
                 trayIconImage = ImageIO.read(getClass().getResource("/de/moonflower/jfritz/resources/images/tray16.png"));

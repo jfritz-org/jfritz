@@ -360,6 +360,8 @@ public class FritzBoxFirmware {
 			return "FRITZ!Box 7390"; //$NON-NLS-1$
 		case 87:
 			return "FRITZ!Box 7112"; //$NON-NLS-1$
+		case 99:
+			return "FRITZ!Box 7340"; //$NON-NLS-!$
 		default:
 			return Main.getMessage("unknown"); //$NON-NLS-1$
 		}

@@ -1,6 +1,13 @@
 JFritz 0.7.4.0.3:
+- Neu [0000309]: 4th Localization update for The Netherlands
+- Bugfix [0000286]: Anrufbeantworter werden unter Anschlüsse als Nummern angezeigt 
+- Bugfix [0000297]: Icons für MacOSX in höherer Auflösung
 - Bugfix [0000305]: Redraw-Probleme auf dem Mac  
 - Bugfix [0000306]: Buttons in Jfritz werden erst sichtbar wenn man sie drückt
+- Bugfix [0000307]: Redraw unter WIn7 64 HP
+- Bugfix [0000309]: 4th Localization update for The Netherlands 
+- Bugfix [0000310]: JFritz doesn't recognize FRITZ!Box 7340 
+- Bugfix [0000314]: Doppelte (dreifache) Einträge 
 
 JFritz 0.7.4.0.2:
 - Neu [0000221]: Anzeigen des Ortsnamens als eigene Spalte

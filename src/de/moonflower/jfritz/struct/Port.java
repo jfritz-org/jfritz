@@ -14,7 +14,7 @@ public class Port implements Serializable {
 	 */
 	private static final long serialVersionUID = 3535276686594592176L;
 
-	private static HashMap<Integer, Port> allPorts = null;
+	private static HashMap<Integer, Port> allPorts = addStaticPorts();
 
 	private int id = -1;
 
@@ -32,10 +32,6 @@ public class Port implements Serializable {
 		this.name = name;
 		this.dialPort = dialPort;
 		this.internalNumber = internalNumber;
-		if (allPorts == null)
-		{
-			addStaticPorts();
-		}
 	}
 
 	public String toString()
@@ -70,61 +66,75 @@ public class Port implements Serializable {
 		return id;
 	}
 
-	private void addStaticPorts()
+	private static HashMap<Integer, Port> addStaticPorts()
 	{
-		allPorts = new HashMap<Integer, Port>();
+		HashMap<Integer, Port> hashMap = new HashMap<Integer, Port>();
 
 		// add static analog ports
-		addPort(new Port(0, "Fon 1", "1", "1"));
-		addPort(new Port(1, "Fon 2", "2", "2"));
-		addPort(new Port(2, "Fon 3", "3", "3"));
+		addPort(hashMap, new Port(0, "Fon 1", "1", "1"));
+		addPort(hashMap, new Port(1, "Fon 2", "2", "2"));
+		addPort(hashMap, new Port(2, "Fon 3", "3", "3"));
 
 		// add static isdn ports
-		addPort(new Port(50, "Alle ISDN/DECT Telefone", "50", "50"));
-		addPort(new Port(51, "ISDN 1", "51", "51"));
-		addPort(new Port(52, "ISDN 2", "52", "52"));
-		addPort(new Port(53, "ISDN 3", "53", "53"));
-		addPort(new Port(54, "ISDN 4", "54", "54"));
-		addPort(new Port(55, "ISDN 5", "55", "55"));
-		addPort(new Port(56, "ISDN 6", "56", "56"));
-		addPort(new Port(57, "ISDN 7", "57", "57"));
-		addPort(new Port(58, "ISDN 8", "58", "58"));
-		addPort(new Port(59, "ISDN 9", "59", "59"));
+		addPort(hashMap, new Port(50, "Alle ISDN/DECT Telefone", "50", "50"));
+		addPort(hashMap, new Port(51, "ISDN 1", "51", "51"));
+		addPort(hashMap, new Port(52, "ISDN 2", "52", "52"));
+		addPort(hashMap, new Port(53, "ISDN 3", "53", "53"));
+		addPort(hashMap, new Port(54, "ISDN 4", "54", "54"));
+		addPort(hashMap, new Port(55, "ISDN 5", "55", "55"));
+		addPort(hashMap, new Port(56, "ISDN 6", "56", "56"));
+		addPort(hashMap, new Port(57, "ISDN 7", "57", "57"));
+		addPort(hashMap, new Port(58, "ISDN 8", "58", "58"));
+		addPort(hashMap, new Port(59, "ISDN 9", "59", "59"));
 
 		// add static dect ports
-		addPort(new Port(10, "DECT 1", "60", "610"));
-		addPort(new Port(11, "DECT 2", "61", "611"));
-		addPort(new Port(12, "DECT 3", "62", "612"));
-		addPort(new Port(13, "DECT 4", "63", "613"));
-		addPort(new Port(14, "DECT 5", "64", "614"));
-		addPort(new Port(15, "DECT 6", "65", "615"));
+		addPort(hashMap, new Port(10, "DECT 1", "60", "610"));
+		addPort(hashMap, new Port(11, "DECT 2", "61", "611"));
+		addPort(hashMap, new Port(12, "DECT 3", "62", "612"));
+		addPort(hashMap, new Port(13, "DECT 4", "63", "613"));
+		addPort(hashMap, new Port(14, "DECT 5", "64", "614"));
+		addPort(hashMap, new Port(15, "DECT 6", "65", "615"));
 
 		// add static VoIP-Extension ports
-		addPort(new Port(20, "VoIP-Extension 1", "20", "620"));
-		addPort(new Port(21, "VoIP-Extension 2", "21", "621"));
-		addPort(new Port(22, "VoIP-Extension 3", "22", "622"));
-		addPort(new Port(23, "VoIP-Extension 4", "23", "623"));
-		addPort(new Port(24, "VoIP-Extension 5", "24", "624"));
-		addPort(new Port(25, "VoIP-Extension 6", "25", "625"));
-		addPort(new Port(26, "VoIP-Extension 7", "26", "626"));
-		addPort(new Port(27, "VoIP-Extension 8", "27", "627"));
-		addPort(new Port(28, "VoIP-Extension 9", "28", "628"));
-		addPort(new Port(29, "VoIP-Extension 10", "29", "629"));
+		addPort(hashMap, new Port(20, "VoIP-Extension 1", "20", "620"));
+		addPort(hashMap, new Port(21, "VoIP-Extension 2", "21", "621"));
+		addPort(hashMap, new Port(22, "VoIP-Extension 3", "22", "622"));
+		addPort(hashMap, new Port(23, "VoIP-Extension 4", "23", "623"));
+		addPort(hashMap, new Port(24, "VoIP-Extension 5", "24", "624"));
+		addPort(hashMap, new Port(25, "VoIP-Extension 6", "25", "625"));
+		addPort(hashMap, new Port(26, "VoIP-Extension 7", "26", "626"));
+		addPort(hashMap, new Port(27, "VoIP-Extension 8", "27", "627"));
+		addPort(hashMap, new Port(28, "VoIP-Extension 9", "28", "628"));
+		addPort(hashMap, new Port(29, "VoIP-Extension 10", "29", "629"));
+
+		// add answering machine ports
+		addPort(hashMap, new Port(40, "Anrufbeantworter 1", "-1", "600"));
+		addPort(hashMap, new Port(41, "Anrufbeantworter 2", "-1", "601"));
+		addPort(hashMap, new Port(42, "Anrufbeantworter 3", "-1", "602"));
+		addPort(hashMap, new Port(43, "Anrufbeantworter 4", "-1", "603"));
+		addPort(hashMap, new Port(44, "Anrufbeantworter 5", "-1", "604"));
+		addPort(hashMap, new Port(45, "Anrufbeantworter 6", "-1", "605"));
+		addPort(hashMap, new Port(46, "Anrufbeantworter 7", "-1", "606"));
+		addPort(hashMap, new Port(47, "Anrufbeantworter 8", "-1", "607"));
+		addPort(hashMap, new Port(48, "Anrufbeantworter 9", "-1", "608"));
+		addPort(hashMap, new Port(49, "Anrufbeantworter 10", "-1", "609"));
 
 		// add other static ports
-		addPort(new Port(3, "Durchwahl", "-1", "-1"));
-		addPort(new Port(4, "ISDN", "-1", "-1"));
-		addPort(new Port(5, "FAX/FON", "-1", "-1"));
-		addPort(new Port(6, "Anrufbeantworter", "-1", "-1"));
-		addPort(new Port(32, "DATA Fon 1", "-1", "-1"));
-		addPort(new Port(33, "DATA Fon 2", "-1", "-1"));
-		addPort(new Port(34, "DATA Fon 3", "-1", "-1"));
-		addPort(new Port(36, "DATA Fon S0/ISDN", "-1", "-1"));
+		addPort(hashMap, new Port(3, "Durchwahl", "-1", "-1"));
+		addPort(hashMap, new Port(4, "ISDN", "-1", "-1"));
+		addPort(hashMap, new Port(5, "FAX/FON", "-1", "-1"));
+		addPort(hashMap, new Port(6, "Anrufbeantworter", "-1", "-1"));
+		addPort(hashMap, new Port(32, "DATA Fon 1", "-1", "-1"));
+		addPort(hashMap, new Port(33, "DATA Fon 2", "-1", "-1"));
+		addPort(hashMap, new Port(34, "DATA Fon 3", "-1", "-1"));
+		addPort(hashMap, new Port(36, "DATA Fon S0/ISDN", "-1", "-1"));
+
+		return hashMap;
 	}
 
-	private void addPort(Port port)
+	private static void addPort(HashMap<Integer, Port> map, Port port)
 	{
-		allPorts.put(port.getId(), port);
+		map.put(port.getId(), port);
 	}
 
 	public static Port getPort(int id)
@@ -178,6 +188,11 @@ public class Port implements Serializable {
 		{
 			return true;
 		}
+
+//		if ((this.getName().equals(Port.getPort(port.getId()).getName())
+//				|| (Port.getPort(this.getId()).getName().equals(port.getName())))) {
+//			return true;
+//		}
 
 		if (!"".equals(this.getName()))
 		{
