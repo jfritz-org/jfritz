@@ -916,7 +916,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	public void showAboutDialog() {
 		JOptionPane.showMessageDialog(this, ProgramConstants.PROGRAM_NAME + " v" //$NON-NLS-1$
 				+ ProgramConstants.PROGRAM_VERSION + "\n" //$NON-NLS-1$
-				+ JFritzUtils.getVersionFromCVSTag(Main.CVS_TAG) + "\n" //$NON-NLS-1$
+				+ JFritzUtils.getVersionFromCVSTag(ProgramConstants.CVS_TAG) + "\n" //$NON-NLS-1$
 				+ "(c) 2005-2010 by " + Main.JFRITZ_PROJECT + "\n" //$NON-NLS-1$,  //$NON-NLS-2$
 				+ Main.PROGRAM_URL + "\n\n" 							//$NON-NLS-1$
 				+ "Project-Admin: " + Main.PROJECT_ADMIN + "\n"		//$NON-NLS-1$
@@ -924,8 +924,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				+ "\n\n"
 				+ "Active Developers:\n"
 				+ "Robert Palmer <robotniko@users.sourceforge.net>\n" 	//$NON-NLS-1$
-				+ "Brian Jensen <capncrunch@users.sourceforge.net>\n" 	//$NON-NLS-1$
-				+ "Rainer Ullrich <jfritz@rainerullrich.de>\n" 			//$NON-NLS-1$
 				+ "\n"													//$NON-NLS-1$
 				+ "Former Developers:\n" 								//$NON-NLS-1$
 				+ "Arno Willig <akw@thinkwiki.org>\n"					//$NON-NLS-1$
@@ -934,6 +932,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				+ "Bastian Schaefer <baefer@users.sourceforge.net>\n" 	//$NON-NLS-1$
 				+ "Marc Waldenberger <MarcWaldenberger@gmx.net>\n"		//$NON-NLS-1$
 				+ "Simeon Faensen (Klingeling-Idee)\n"					//$NON-NLS-1$
+				+ "Brian Jensen <capncrunch@users.sourceforge.net>\n" 	//$NON-NLS-1$
+				+ "Rainer Ullrich <jfritz@rainerullrich.de>\n" 			//$NON-NLS-1$
 				+ "\n\n"												//$NON-NLS-1$
 				+ "This tool is developed and released under\n" 		//$NON-NLS-1$
 				+ "the terms of the GNU General Public License\n",		//$NON-NLS-1$

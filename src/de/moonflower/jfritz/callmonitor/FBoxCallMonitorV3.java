@@ -35,10 +35,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
     		if (!this.isConnected()) {
     			connect();
     		}
-    		else
-    		{
-    			readOutput();
-    		}
+    		readOutput();
     	}
     }
 

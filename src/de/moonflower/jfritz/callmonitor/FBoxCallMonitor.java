@@ -35,6 +35,8 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
 
     private boolean running;
 
+    private int connectionCount = 0;
+
     // wird benutzt, um X Sekunden lang zu warten
     protected Random zufallszahl;
 
@@ -62,9 +64,8 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
 
     protected boolean connect() {
     	try {
-//    		Debug.msg("Connecting call monitor ... ");
+//    		Debug.warning("Connecting call monitor ... " + ++connectionCount);
 	        clientSocket = new Socket(fritzBox.getAddress(), 1012); //$NON-NLS-1$
-	        clientSocket.setKeepAlive(true);
 			clientSocket.setSoTimeout(CONNECTION_TIMEOUT);
 			connected = true;
 			clientSocket.setSoTimeout(READ_TIMEOUT);
@@ -147,9 +148,13 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
         if (timeout)
         {
 	        try {
-	        	clientSocket.close();
-	        	in.close();
-	//        	Debug.msg("Closed input stream of call monitor!");
+	        	if (clientSocket != null) {
+	        		clientSocket.close();
+	        	}
+	        	if (in != null) {
+	        		in.close();
+	        	}
+//	        	Debug.info("Closed input stream of call monitor! " + connectionCount);
 	        }
 	        catch (IOException ioe)
 	        {
@@ -168,7 +173,7 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
 
     public void closeConnection()
     {
-        Debug.info("Closing connection"); //$NON-NLS-1$
+        //Debug.info("Closing connection " + connectionCount); //$NON-NLS-1$
         try {
             connected = false;
             if (clientSocket != null)

@@ -925,14 +925,16 @@ public class FritzBox extends BoxClass {
 						if (callMonitor != null)
 						{
 							Debug.errDlg(Main.getMessage("callmonitor_already_started"));
+						} else {
+							callMonitor = new FBoxCallMonitorV3(this, listener);
 						}
-						callMonitor = new FBoxCallMonitorV3(this, listener);
 					} else {
 						if (callMonitor != null)
 						{
 							Debug.errDlg(Main.getMessage("callmonitor_already_started"));
+						} else {
+							callMonitor = new FBoxCallMonitorV1(this, listener);
 						}
-						callMonitor = new FBoxCallMonitorV1(this, listener);
 					}
 					return BoxCallMonitorInterface.CALLMONITOR_STARTED;
 				}

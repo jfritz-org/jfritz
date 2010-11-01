@@ -129,7 +129,8 @@
 			subject="JFritz: Neue Version ${version} verfügbar!"
 			bcclist="${mail-rcp_Hasa}, ${mail-rcp_Stephan}, ${mail-rcp_roman200},
 				 ${mail-rcp_digi1}, ${mail-rcp_yelsip}, ${mail-rcp_ekrieger},
-				 ${mail-rcp_franco}, ${mail-rcp_richard}, ${mail-rcp_valery}">
+				 ${mail-rcp_franco}, ${mail-rcp_richard}, ${mail-rcp_valery},
+				 ${mail-rcp_steve0564}, ${mail-rcp_neubauer}">
 			<to address="${mail-rcp1}" />
 		</mail>
 	</target>
@@ -479,7 +480,7 @@ http://www.jfritz.org/
 		<delete dir="${release}/win/tmp" />
 	</target>
 
-	<target name="scp-beta" description="Copy windows-, linux and mac release files to jfritz.robotniko.de/beta">
+	<target name="scp-beta" depends="getVersion" description="Copy windows-, linux and mac release files to jfritz.robotniko.de/beta">
 		<scp file="${dist}/Changelog.txt" port="${port2}" trust="yes" todir="${user2}@${server2}:${scp-beta-path}" verbose="yes" password="${password2}"/>
 		<scp file="${release}/win/JFritz-${version}-Beta-Win.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
 		<scp file="${release}/win/JFritz-${version}-Beta.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>

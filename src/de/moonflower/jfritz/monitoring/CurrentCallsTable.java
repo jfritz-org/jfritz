@@ -106,14 +106,19 @@ public class CurrentCallsTable extends AbstractTableModel implements
      * Method part of the interface CallMonitorListener
      */
     public void endOfCall(Call call){
-    	//search through the table for the call and remove it
-    	for(int i=0; i < currentCalls.size(); i++){
-    		if(currentCalls.get(i).equals(call)){
-    			currentCalls.remove(i);
-    			fireTableDataChanged();
-    			//fireTableRowsDeleted(i,i);
-    			break;
-    		}
+    	if (call != null) {
+	    	Vector<Call> callsToDelete = new Vector<Call>();
+	    	//search through the table for the call
+	    	for(int i=0; i < currentCalls.size(); i++){
+	    		if(call.equals(currentCalls.get(i))){
+	    			callsToDelete.add(currentCalls.get(i));
+	    		}
+	    	}
+	    	// remove calls
+	    	for (int i=0; i<callsToDelete.size(); i++) {
+	    		currentCalls.remove(callsToDelete.get(i));
+	    	}
+	    	fireTableDataChanged();
     	}
     }
 
