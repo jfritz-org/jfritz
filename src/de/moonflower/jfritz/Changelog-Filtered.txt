@@ -1,3 +1,12 @@
+JFritz 0.7.4.0.5:
+- Bugfix [0000316]: Pictures gelöscht 
+
+JFritz 0.7.4.0.4:
+- Bugfix [0000287]: Nach dem ersten Anruf keine weitere Benachrichtigung  
+- Bugfix [0000293]: Nach erstem Anruf keine Reaktion auf weitere Anrufe
+- Bugfix [0000313]: Derzeit geführte Anrufe werden nach Beendigung des Gesprächs nicht korrekt entfernt
+- Bugfix [0000315]: JFritz läßt sich nicht beenden 
+
 JFritz 0.7.4.0.3:
 - Neu [0000309]: 4th Localization update for The Netherlands
 - Bugfix [0000286]: Anrufbeantworter werden unter Anschlüsse als Nummern angezeigt 
