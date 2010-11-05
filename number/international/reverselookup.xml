@@ -777,7 +777,7 @@
 		</website>
 		<website name="infobel.com" url="http://www.infobel.com/it/Italy/Inverse.aspx?qPhone=$NUMBER" prefix="0">
 			<entry>
-				<name>&lt;div class="result-item"&gt;&lt;h[1-9]&gt;1. (?:&lt;a href=&quot;[^&quot;]*&quot;&gt;)?([^&lt;]*)(?:&lt;/a&gt;)?&lt;!--[^&lt;]*&lt;/h[1-9]&gt;</name>
+				<name>&lt;div class=\"result-item\"&gt;&lt;h[1-9]&gt;[^&lt;]*&lt;a [^&gt;]*&gt;([^&lt;]*)&lt;/a&gt;</name>
 				<street>&lt;div class=&quot;result-box-col&quot;&gt;&lt;div&gt;&lt;strong&gt;([^,]*),.[0-9]+\s*[^&lt;]*&lt;/strong&gt;&lt;/div&gt;</street>
 				<city>&lt;div class=&quot;result-box-col&quot;&gt;&lt;div&gt;&lt;strong&gt;[^,]*,.[0-9]+\s*([^&lt;]*)&lt;/strong&gt;&lt;/div&gt;</city>
 				<zipcode>&lt;div class=&quot;result-box-col&quot;&gt;&lt;div&gt;&lt;strong&gt;[^,]*,.([0-9]+)\s*[^&lt;]*&lt;/strong&gt;&lt;/div&gt;</zipcode>
