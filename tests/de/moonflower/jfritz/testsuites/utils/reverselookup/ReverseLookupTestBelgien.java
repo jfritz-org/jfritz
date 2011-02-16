@@ -11,13 +11,9 @@ import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 
-public class ReverseLookupTestNetherlands extends ReverseLookupTestBase {
+public class ReverseLookupTestBelgien extends ReverseLookupTestBase {
 	private CheckEntry entry;
 	private PhoneNumberOld checkNum;
-
-//	0515 559019 zeigt : Wijnia aber muss sein Wijnia, Germ en Martine
-//	0566 601481 zeigt: Vliet aber muss sein Vliet, M. van
-//	0515 420833 zeigt: Vries aber muss sein Vries, M A V de
 
 	@BeforeClass
 	public static void init() {
@@ -30,19 +26,14 @@ public class ReverseLookupTestNetherlands extends ReverseLookupTestBase {
 	}
 
 	@Test
-	public void testCamping() {
-		checkNum = new PhoneNumberOld("+31117371233", false);
-		entry = new CheckEntry(checkNum, "", "Camping International", "Sint Bavodijk 2/D", "4504AA", "Nieuwvliet");
+	public void test() {
+		//+3225156111, 022824770, 032052011, 061275331
+		checkNum = new PhoneNumberOld("+3225156111", false);
+		entry = new CheckEntry(checkNum, "Vorname", "Nachname", "Adresse", "PLZ", "Stadt");
 		ReverseLookup.lookup(checkNum,  entry, true);
 		checkEntry(entry);
 	}
 
-	@Test
-	public void testSmid() {
-		checkNum = new PhoneNumberOld("+31207711969", false);
-		entry = new CheckEntry(checkNum, "", "Smid", "Westerdok 328", "1013BH", "Amsterdam");
-		ReverseLookup.lookup(checkNum, entry, true);
-		checkEntry(entry);
-	}
+
 }
 

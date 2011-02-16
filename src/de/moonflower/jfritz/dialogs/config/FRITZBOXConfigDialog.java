@@ -65,7 +65,7 @@ public class FRITZBOXConfigDialog extends
 
     public void initDialog() {
         setTitle(Main.getMessage("monitor_settings")); //$NON-NLS-1$
-        this.setPreferredSize(new Dimension(270, 240));
+        this.setPreferredSize(new Dimension(270, 255));
         drawDialog();
         setProperties();
     }
@@ -159,6 +159,8 @@ public class FRITZBOXConfigDialog extends
         panel.add(label, c);
         c.gridy = 4;
         ignoreMSN = new JTextField("", 20); //$NON-NLS-1$
+        ignoreMSN.setMinimumSize(new Dimension(150, 23));
+
         panel.add(ignoreMSN, c);
 
         JPanel buttonPanel = new JPanel();

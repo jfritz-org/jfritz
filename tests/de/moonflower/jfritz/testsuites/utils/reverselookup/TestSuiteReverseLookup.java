@@ -7,6 +7,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
 	ReverseLookupTestAustria.class,
+	ReverseLookupTestBelgien.class,
 	ReverseLookupTestFrance.class,
 	ReverseLookupTestGermany.class,
 	ReverseLookupTestItaly.class,

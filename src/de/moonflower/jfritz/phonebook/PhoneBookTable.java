@@ -140,6 +140,12 @@ public class PhoneBookTable extends JTable implements KeyListener{
 		parentPanel.searchFilter.setText(filterText);
 	}
 
+	public void clearPersonSelection() {
+		getSelectionModel().clearSelection();
+		Rectangle rect = getCellRect(0, 0, true);
+		scrollRectToVisible(rect);
+	}
+
 	public void valueChanged(ListSelectionEvent e) {
 		super.valueChanged(e);
 		// make sure we get the last selectionEvent

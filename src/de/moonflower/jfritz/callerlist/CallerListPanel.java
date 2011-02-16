@@ -185,6 +185,9 @@ public class CallerListPanel extends JPanel implements ActionListener,
 						phoneBookPanel.getPhoneBookTable().showAndSelectPerson(newPerson, true);
 						phoneBookPanel.updateUI();
 						phoneBookPanel.showEditPerson();
+					} else {
+						phoneBookPanel.hideEditPerson();
+						phoneBookPanel.getPhoneBookTable().clearPersonSelection();
 					}
 				}
 
