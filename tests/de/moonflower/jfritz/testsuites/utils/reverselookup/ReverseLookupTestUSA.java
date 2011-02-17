@@ -26,9 +26,9 @@ public class ReverseLookupTestUSA extends ReverseLookupTestBase {
 	}
 
 	@Test
-	public void testAdam() {
+	public void testHoward() {
 		checkNum = new PhoneNumberOld("+19736350430", false);
-		entry = new CheckEntry(checkNum, "Adam", "Levison", "602 Sun Valley Way", "07932", "Florham Park");
+		entry = new CheckEntry(checkNum, "Howard", "Levison", "602 Sun Valley Way", "07932", "Florham Park");
 		ReverseLookup.lookup(checkNum, entry, true);
 		checkEntry(entry);
 	}

@@ -28,7 +28,7 @@ public class ReverseLookupTestLuxembourg extends ReverseLookupTestBase {
 	@Test
 	public void testArcelorMittal() {
 		checkNum = new PhoneNumberOld("+35247921", false);
-		entry = new CheckEntry(checkNum, "International Luxembourg", "ArcelorMittal", "", "", "");
+		entry = new CheckEntry(checkNum, "International Luxembourg", "ArcelorMittal", "24-26 BD D'AVRANCHES", "1160", "LUXEMBOURG");
 		ReverseLookup.lookup(checkNum, entry, true);
 		checkEntry(entry);
 	}
@@ -44,8 +44,7 @@ public class ReverseLookupTestLuxembourg extends ReverseLookupTestBase {
 	@Test
 	public void testSARL() {
 		checkNum = new PhoneNumberOld("+35226203026", false);
-		entry = new CheckEntry(checkNum, "LUXEMBOURG S.A R.L.", "PEARLE", "", "", "");
-//		entry = new CheckEntry(checkNum, "LUXEMBOURG S.A R.L.", "PEARLE", "18 R. NOTRE-DAME", "2240", "LUXEMBOURG");
+		entry = new CheckEntry(checkNum, "LUXEMBOURG S.A R.L.", "PEARLE", "18 R. NOTRE-DAME", "2240", "LUXEMBOURG");
 		ReverseLookup.lookup(checkNum, entry, true);
 		checkEntry(entry);
 	}

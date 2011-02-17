@@ -26,14 +26,35 @@ public class ReverseLookupTestBelgien extends ReverseLookupTestBase {
 	}
 
 	@Test
-	public void test() {
-		//+3225156111, 022824770, 032052011, 061275331
+	public void test1() {
 		checkNum = new PhoneNumberOld("+3225156111", false);
-		entry = new CheckEntry(checkNum, "Vorname", "Nachname", "Adresse", "PLZ", "Stadt");
+		entry = new CheckEntry(checkNum, "communale de et ‡ Ixelles (Ixelles)", "Admin.", "ChaussÈe d'Ixelles 168/a", "1050", "Ixelles");
 		ReverseLookup.lookup(checkNum,  entry, true);
 		checkEntry(entry);
 	}
 
+	@Test
+	public void test2() {
+		checkNum = new PhoneNumberOld("+3222824770", false);
+		entry = new CheckEntry(checkNum, "d'Informatique pour la RÈgion Bruxelloise (CIRB)", "Centre", "Avenue des Arts 21", "1000", "Bruxelles");
+		ReverseLookup.lookup(checkNum,  entry, true);
+		checkEntry(entry);
+	}
 
+	@Test
+	public void test3() {
+		checkNum = new PhoneNumberOld("+3232052011", false);
+		entry = new CheckEntry(checkNum, "Havenbedrijf Antwerpen", "Gemeentelijk", "Entrepotkaai 1", "2000", "Anvers");
+		ReverseLookup.lookup(checkNum,  entry, true);
+		checkEntry(entry);
+	}
+
+	@Test
+	public void test4() {
+		checkNum = new PhoneNumberOld("+3261275331", false);
+		entry = new CheckEntry(checkNum, "du Procureur du Roi de Neufch‚teau (Parquet du Procureur du Roi prËs le tribunal de premiËre instance de Neufch‚teau)", "Parquet", "Place Charles-Bergh 1", "6840", "Neufch‚teau");
+		ReverseLookup.lookup(checkNum,  entry, true);
+		checkEntry(entry);
+	}
 }
 

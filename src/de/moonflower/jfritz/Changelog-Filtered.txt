@@ -1,3 +1,17 @@
+JFritz 0.7.4.1.2:
+- LookupThread überarbeitet, bessere Ergebnisse bei der Rückwärtssuche
+
+JFritz 0.7.4.1.1:
+- Neu: Unterstützung der FRITZ!Box 7320
+- Bugfix: Rückwärtssuche für Niederlande
+- Bugfix: Rückwärtssuche für Norwegen
+- Bugfix: Textfeld zur Eingabe von zu ignorierenden MSNs war in manchen Look&Feels zu klein
+- Bugfix: Vergrößerung der Anzeige bei der Einstellung der zu ignorierenden MSNs
+- Bugfix [0000322]: Falsche Selektion im Telefonbuch bei Doppelklick auf einen Anrufer mit unbekannter Rufnummer in der Anrufliste
+
+JFritz 0.7.4.1:
+Released version
+
 JFritz 0.7.4.0.5:
 - Bugfix [0000316]: Pictures gelöscht 
 

@@ -896,4 +896,36 @@ public class Person implements Cloneable, Serializable{
 		}
 		return googlePrefix+googleLink;
 	}
+
+	public int getNumFilledFields() {
+		int numFilled = 0;
+		if (!"".equals(this.city.trim())) {
+			numFilled++;
+		}
+		if (!"".equals(this.company.trim())) {
+			numFilled++;
+		}
+		if (!"".equals(this.emailAddress.trim())) {
+			numFilled++;
+		}
+		if (!"".equals(this.firstName.trim())) {
+			numFilled++;
+		}
+		if (!"".equals(this.lastName.trim())) {
+			numFilled++;
+		}
+		if (!"".equals(this.lookupSite.trim())) {
+			numFilled++;
+		}
+		if (!"".equals(this.pictureUrl.trim())) {
+			numFilled++;
+		}
+		if (!"".equals(this.postalCode.trim())) {
+			numFilled++;
+		}
+		if (!"".equals(this.street.trim())) {
+			numFilled++;
+		}
+		return numFilled;
+	}
 }

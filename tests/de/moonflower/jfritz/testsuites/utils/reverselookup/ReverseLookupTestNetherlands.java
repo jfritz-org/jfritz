@@ -40,7 +40,7 @@ public class ReverseLookupTestNetherlands extends ReverseLookupTestBase {
 	@Test
 	public void testSmid() {
 		checkNum = new PhoneNumberOld("+31207711969", false);
-		entry = new CheckEntry(checkNum, "", "Smid", "Westerdok 328", "1013BH", "Amsterdam");
+		entry = new CheckEntry(checkNum, "C", "Smid", "Westerdok 328", "1013BH", "Amsterdam");
 		ReverseLookup.lookup(checkNum, entry, true);
 		checkEntry(entry);
 	}

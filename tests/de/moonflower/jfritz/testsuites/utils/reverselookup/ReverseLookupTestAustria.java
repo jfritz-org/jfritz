@@ -36,7 +36,7 @@ public class ReverseLookupTestAustria extends ReverseLookupTestBase {
 	@Test
 	public void testKarin() {
 		checkNum = new PhoneNumberOld("+4353365227", false);
-		entry = new CheckEntry(checkNum, "Böglerhof GmbH u Co KG", "Romantikhotel", "Alpbach , 166", "6236", "Alpbach (T)");
+		entry = new CheckEntry(checkNum, "Böglerhof GmbH", "Romantikhotel", "Alpbach 166", "6236", "Alpbach (T)");
 		ReverseLookup.lookup(checkNum, entry, true);
 		checkEntry(entry);
 	}
@@ -44,7 +44,7 @@ public class ReverseLookupTestAustria extends ReverseLookupTestBase {
 	@Test
 	public void testPrammerRudolf() {
 		checkNum = new PhoneNumberOld("+43732641574", false);
-		entry = new CheckEntry(checkNum, "Rudolf / Edeltraud", "Prammer", "Götzelsdorf , 17", "4221", "Steyregg (OÖ)");
+		entry = new CheckEntry(checkNum, "Rudolf / Edeltraud", "Prammer", "Götzelsdorf 17", "4221", "Steyregg (OÖ)");
 		ReverseLookup.lookup(checkNum, entry, true);
 		checkEntry(entry);
 	}
@@ -52,7 +52,7 @@ public class ReverseLookupTestAustria extends ReverseLookupTestBase {
 	@Test
 	public void testPrammerJohann() {
 		checkNum = new PhoneNumberOld("+4372374145", false);
-		entry = new CheckEntry(checkNum, "Johann", "Prammer", "Stelzhamerstr 7", "4222", "Luftenberg an der Donau");
+		entry = new CheckEntry(checkNum, "Johann", "Prammer", "Stelzhamerstr 7", "4225", "Luftenberg an der Donau");
 		ReverseLookup.lookup(checkNum, entry, true);
 		checkEntry(entry);
 	}
@@ -60,7 +60,7 @@ public class ReverseLookupTestAustria extends ReverseLookupTestBase {
 	@Test
 	public void testPrammerWalter() {
 		checkNum = new PhoneNumberOld("+4372372698", false);
-		entry = new CheckEntry(checkNum, "Walter", "Prammer", "Abwinden , Opalweg 8", "4222", "Luftenberg an der Donau (OÖ)");
+		entry = new CheckEntry(checkNum, "Walter", "Prammer", "Abwinden Opalweg 8", "4225", "Luftenberg an der Donau (OÖ)");
 		ReverseLookup.lookup(checkNum, entry, true);
 		checkEntry(entry);
 	}
