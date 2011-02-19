@@ -1,6 +1,7 @@
 package de.moonflower.jfritz.utils.reverselookup;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -22,6 +23,8 @@ import de.moonflower.jfritz.utils.HTMLUtil;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class ParseSite {
+	public static final int MAX_DATA_LENGTH = 30000;
+
 	private static final String USER_AGENT = "Mozilla/5.0 (Windows; U; Windows NT 6.0; de; rv:1.9.1) Gecko/20090624 Firefox/3.5 (.NET CLR 3.5.30729)";
 	private static final int SPACE_ALTERNATIVE = 160; // hex: a0 = space like ascii character
 
@@ -63,7 +66,7 @@ public class ParseSite {
 
 		Debug.info("Reverse lookup using: "+urlstr);
 		URL url = null;
-		String[] data = new String[LookupThread.MAX_DATA_LENGTH];
+		String[] data = new String[MAX_DATA_LENGTH];
 
 		//open a connection to the site
 		try {
@@ -156,7 +159,7 @@ public class ParseSite {
 	}
 
 	private static String[] readSite(final URLConnection con) throws UnsupportedEncodingException, IOException {
-		String[] result = new String[LookupThread.MAX_DATA_LENGTH];
+		String[] result = new String[MAX_DATA_LENGTH];
 		// Get used Charset
 		BufferedReader d;
 		if (charSet.equals("")) { //$NON-NLS-1$
@@ -173,8 +176,8 @@ public class ParseSite {
 				result[readLines] = tmpLine;
 //				yield();
 				readLines++;
-				if ( readLines >= LookupThread.MAX_DATA_LENGTH ) {
-					System.err.println("Result > " + LookupThread.MAX_DATA_LENGTH + " Lines");
+				if ( readLines >= MAX_DATA_LENGTH ) {
+					System.err.println("Result > " + MAX_DATA_LENGTH + " Lines");
 					break;
 				}
 		}
@@ -531,6 +534,42 @@ public class ParseSite {
 		result.add(lastnameItem);
 		result.add(companyItem);
 
+		return result;
+	}
+
+	@SuppressWarnings("unused")
+	private static void debugOutputSiteResponse(final String[] input) {
+		for (int i=0; i<MAX_DATA_LENGTH; i++ )
+		{
+			if (input[i] != null)
+			{
+				Debug.debug("Lookup-Response: " + input[i]);
+			}
+		}
+	}
+
+	@SuppressWarnings("unused")
+	private static String[] overrideSiteResponse(final String filePath) {
+		Debug.debug("Debug mode: Loading " + filePath); //$NON-NLS-1$
+		String[] result = new String[MAX_DATA_LENGTH];
+		try {
+			String thisLine;
+			BufferedReader in = new BufferedReader(new FileReader(filePath));
+			readLines = 0;
+			while ((thisLine = in.readLine()) != null) {
+				result[readLines] = thisLine;
+//				yield();
+				readLines++;
+				if ( readLines >= MAX_DATA_LENGTH ) {
+					System.err.println("Result > " + MAX_DATA_LENGTH + " Lines");
+					readLines = MAX_DATA_LENGTH;
+					break;
+				}
+			}
+			in.close();
+		} catch (IOException e) {
+			Debug.error("File not found: " + filePath); //$NON-NLS-1$
+		}
 		return result;
 	}
 }

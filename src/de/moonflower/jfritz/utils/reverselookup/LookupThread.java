@@ -1,8 +1,5 @@
 package de.moonflower.jfritz.utils.reverselookup;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Vector;
 
 import de.moonflower.jfritz.struct.Person;
@@ -11,8 +8,6 @@ import de.moonflower.jfritz.struct.ReverseLookupSite;
 import de.moonflower.jfritz.utils.Debug;
 
 public class LookupThread extends Thread {
-	public static final int MAX_DATA_LENGTH = 30000;
-
 	private LookupRequest currentRequest;
 
 	private boolean threadSuspended, quit, terminate, terminated;
@@ -20,8 +15,6 @@ public class LookupThread extends Thread {
 	private Person result;
 
 	private static Vector<ReverseLookupSite> rls_list;
-
-	private static int readLines = 0;
 
 	/**
 	 * sets the default thread state to active
@@ -183,42 +176,6 @@ public class LookupThread extends Thread {
 		foundPersons = sortPersonList(foundPersons);
 
 		return foundPersons.get(0);
-	}
-
-	@SuppressWarnings("unused")
-	private static void debugOutputSiteResponse(final String[] input) {
-		for (int i=0; i<MAX_DATA_LENGTH; i++ )
-		{
-			if (input[i] != null)
-			{
-				Debug.debug("Lookup-Response: " + input[i]);
-			}
-		}
-	}
-
-	@SuppressWarnings("unused")
-	private static String[] overrideSiteResponse(final String filePath) {
-		Debug.debug("Debug mode: Loading " + filePath); //$NON-NLS-1$
-		String[] result = new String[MAX_DATA_LENGTH];
-		try {
-			String thisLine;
-			BufferedReader in = new BufferedReader(new FileReader(filePath));
-			readLines = 0;
-			while ((thisLine = in.readLine()) != null) {
-				result[readLines] = thisLine;
-				yield();
-				readLines++;
-				if ( readLines >= MAX_DATA_LENGTH ) {
-					System.err.println("Result > " + MAX_DATA_LENGTH + " Lines");
-					readLines = MAX_DATA_LENGTH;
-					break;
-				}
-			}
-			in.close();
-		} catch (IOException e) {
-			Debug.error("File not found: " + filePath); //$NON-NLS-1$
-		}
-		return result;
 	}
 
 	private static void fixCityIfNecessary(PhoneNumberOld number, Person person, final String nummer) {
