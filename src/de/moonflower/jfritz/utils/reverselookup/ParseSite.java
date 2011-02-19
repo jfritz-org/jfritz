@@ -22,27 +22,50 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.HTMLUtil;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
-public class ParseSite {
+public class ParseSite extends Thread {
 	public static final int MAX_DATA_LENGTH = 30000;
 
 	private static final String USER_AGENT = "Mozilla/5.0 (Windows; U; Windows NT 6.0; de; rv:1.9.1) Gecko/20090624 Firefox/3.5 (.NET CLR 3.5.30729)";
 	private static final int SPACE_ALTERNATIVE = 160; // hex: a0 = space like ascii character
 
-	private static String charSet;
+	private String charSet;
 
-	private static int readLines = 0;
+	private int readLines = 0;
 
 
-	private static Pattern namePattern = null;
-	private static Pattern streetPattern = null;
-	private static Pattern cityPattern = null;
-	private static Pattern zipcodePattern = null;
-	private static Pattern firstnamePattern = null;
-	private static Pattern lastnamePattern = null;
-	private static Pattern startlinePattern = null;
-	private static Pattern endlinePattern = null;
+	private Pattern namePattern = null;
+	private Pattern streetPattern = null;
+	private Pattern cityPattern = null;
+	private Pattern zipcodePattern = null;
+	private Pattern firstnamePattern = null;
+	private Pattern lastnamePattern = null;
+	private Pattern startlinePattern = null;
+	private Pattern endlinePattern = null;
 
-	public static Vector<Person> parseSite(final String siteName, final ReverseLookupSite rls, final PhoneNumberOld number, String nummer) {
+	private String siteName;
+	private ReverseLookupSite rls;
+	private PhoneNumberOld number;
+	private String nummer;
+
+	private Vector<ParseSiteResultListener> resultListener = new Vector<ParseSiteResultListener>();
+
+	public ParseSite(final String siteName, final ReverseLookupSite rls, final PhoneNumberOld number, final String nummer) {
+		this.siteName = siteName;
+		this.rls = rls;
+		this.number = number;
+		this.nummer = nummer;
+	}
+
+	public void addListener(final ParseSiteResultListener l) {
+		this.resultListener.add(l);
+	}
+
+	@Override
+	public void run() {
+		parseSite(siteName, rls, number, nummer);
+	}
+
+	private Vector<Person> parseSite(final String siteName, final ReverseLookupSite rls, final PhoneNumberOld number, String nummer) {
 		Vector<Person> foundPersonsOnThisSite = new Vector<Person>(5);
 		readLines = 0;
 //		yield();
@@ -100,10 +123,14 @@ public class ParseSite {
 		} catch (Exception e) {
 		    Debug.error("Exception in reverselookup 2"); //$NON-NLS-1$
 	    }
+
+		for (ParseSiteResultListener l: resultListener) {
+			l.finished(foundPersonsOnThisSite);
+		}
 		return foundPersonsOnThisSite;
 	}
 
-	private static String replacePlaceHoldersInURL(final String urlstr, final String prefix, final int ac_length, final String nummer) {
+	private String replacePlaceHoldersInURL(final String urlstr, final String prefix, final int ac_length, final String nummer) {
 		String result = urlstr;
 		if(result.contains("$AREACODE")
 				&& (nummer.length() > (prefix.length()+ac_length))) {
@@ -119,7 +146,7 @@ public class ParseSite {
 		return result;
 	}
 
-	private static URLConnection establishConnection(final URL url, final String lookupSiteName) throws IOException {
+	private URLConnection establishConnection(final URL url, final String lookupSiteName) throws IOException {
 		URLConnection con = url.openConnection();
 		// 5 Sekunden-Timeout für Verbindungsaufbau
 		// 20 Sekunden-Timeout für die Antwort
@@ -158,7 +185,7 @@ public class ParseSite {
 		return con;
 	}
 
-	private static String[] readSite(final URLConnection con) throws UnsupportedEncodingException, IOException {
+	private String[] readSite(final URLConnection con) throws UnsupportedEncodingException, IOException {
 		String[] result = new String[MAX_DATA_LENGTH];
 		// Get used Charset
 		BufferedReader d;
@@ -185,7 +212,7 @@ public class ParseSite {
 		return result;
 	}
 
-	private static Vector<Person> parsePageWithPattern(String[] input, PhoneNumberOld number,
+	private Vector<Person> parsePageWithPattern(String[] input, PhoneNumberOld number,
 			int lines, String[] patterns, int numLinesAtOnce, String lookupSiteName) {
 		Vector<Person> foundPersonsOnThisSiteWithThisPattern = new Vector<Person>(5);
 		List<ParseItem> parseItems = new ArrayList<ParseItem>();
@@ -263,7 +290,7 @@ public class ParseSite {
 
 		return foundPersonsOnThisSiteWithThisPattern;
 	}
-	private static boolean initPatterns(final String[] patterns) {
+	private boolean initPatterns(final String[] patterns) {
 		boolean useStartLine = false;
 		namePattern = null;
 		streetPattern = null;
@@ -321,7 +348,7 @@ public class ParseSite {
 		return useStartLine;
 	}
 
-	private static void matchLine(String[] patterns, List<ParseItem> parseItems,
+	private void matchLine(String[] patterns, List<ParseItem> parseItems,
 			Pattern namePattern, Pattern streetPattern, Pattern cityPattern,
 			Pattern zipcodePattern, Pattern firstnamePattern,
 			Pattern lastnamePattern, String currentLineToMatch, int line) {
@@ -383,7 +410,7 @@ public class ParseSite {
 			}
 		}
 	}
-	private static ParseItem parseLine(final ParseItemType type, final Matcher matcher, final int lineNumber) {
+	private ParseItem parseLine(final ParseItemType type, final Matcher matcher, final int lineNumber) {
 		//read in and concatenate all groupings
 		String str = "";
 		for(int k=1; k <= matcher.groupCount(); k++){
@@ -408,7 +435,7 @@ public class ParseSite {
 		return parseItem;
 	}
 
-	private static Person createPersonsFromParseResults(
+	private Person createPersonsFromParseResults(
 			Vector<Person> foundPersons, Person p, ParseItem parseItem) {
 		switch (parseItem.getType()) {
 			case FIRSTNAME:
@@ -452,13 +479,13 @@ public class ParseSite {
 		return p;
 	}
 
-	private static Person addNewPerson(Vector<Person> foundPersons, Person p) {
+	private Person addNewPerson(Vector<Person> foundPersons, Person p) {
 		foundPersons.add(p);
 		p = new Person();
 		return p;
 	}
 
-	private static List<ParseItem> parseNameFields(String[] patterns, Matcher nameMatcher, int line) {
+	private List<ParseItem> parseNameFields(String[] patterns, Matcher nameMatcher, int line) {
 		//read in and concatenate all groupings
 		String str = "";
 		for(int k=1; k <= nameMatcher.groupCount(); k++){
@@ -538,7 +565,7 @@ public class ParseSite {
 	}
 
 	@SuppressWarnings("unused")
-	private static void debugOutputSiteResponse(final String[] input) {
+	private void debugOutputSiteResponse(final String[] input) {
 		for (int i=0; i<MAX_DATA_LENGTH; i++ )
 		{
 			if (input[i] != null)
@@ -549,7 +576,7 @@ public class ParseSite {
 	}
 
 	@SuppressWarnings("unused")
-	private static String[] overrideSiteResponse(final String filePath) {
+	private String[] overrideSiteResponse(final String filePath) {
 		Debug.debug("Debug mode: Loading " + filePath); //$NON-NLS-1$
 		String[] result = new String[MAX_DATA_LENGTH];
 		try {

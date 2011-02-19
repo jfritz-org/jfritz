@@ -301,7 +301,7 @@ public class ReverseLookup {
 	 * @return the Person this method found
 	 */
 	public static Person busyLookup(PhoneNumberOld callerPhoneNumber) {
-		return LookupThread.lookup(callerPhoneNumber, "");
+		return LookupThread.getInstance().lookup(callerPhoneNumber, "");
 	}
 
 	/** This function loads the file number/international/reverselookup.xml

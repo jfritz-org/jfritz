@@ -7,15 +7,19 @@ import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.ReverseLookupSite;
 import de.moonflower.jfritz.utils.Debug;
 
-public class LookupThread extends Thread {
+public class LookupThread extends Thread implements ParseSiteResultListener {
 	private LookupRequest currentRequest;
 
 	private boolean threadSuspended, quit, terminate, terminated;
 
 	private Person result;
 
-	private static Vector<ReverseLookupSite> rls_list;
+	private Vector<ReverseLookupSite> rls_list;
+	private Vector<Person> foundPersons = new Vector<Person>(10);
 
+	private int pendingSites = 0;
+
+	private static LookupThread INSTANCE = new LookupThread(false);
 	/**
 	 * sets the default thread state to active
 	 *
@@ -27,6 +31,9 @@ public class LookupThread extends Thread {
 		quit = quitOnDone;
 	}
 
+	public static LookupThread getInstance() {
+		return INSTANCE;
+	}
 	/**
 	 * This method iterates over all lookup requests and stops once
 	 * no more are present, in which case it notifies ReverseLookup
@@ -112,9 +119,8 @@ public class LookupThread extends Thread {
 	 * @param number number to be looked up
 	 * @return a new person object containing the results of the search
 	 */
-	static synchronized Person lookup(PhoneNumberOld number, String siteName) {
-
-		Vector<Person> foundPersons = new Vector<Person>(10);
+	synchronized Person lookup(PhoneNumberOld number, String siteName) {
+		foundPersons.clear();
 		String nummer = number.getAreaNumber();
 		if (number.isFreeCall()) {
 			Person p = new Person("", "FreeCall"); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -148,13 +154,20 @@ public class LookupThread extends Thread {
 			}
 
 			//Iterate over all the web sites loaded for the given country
+			pendingSites = 0;
 			for(int i=0; i < rls_list.size(); i++){
 				ReverseLookupSite rls = rls_list.get(i);
-				Vector<Person> foundPersonsOnThisSite = ParseSite.parseSite(siteName, rls, number, nummer);
-				foundPersons.addAll(foundPersonsOnThisSite);
+				ParseSite pSite = new ParseSite(siteName, rls, number, nummer);
+				pSite.addListener(this);
+				pendingSites++;
+				pSite.start();
+//				Vector<Person> foundPersonsOnThisSite = pSite.parseSite(siteName, rls, number, nummer);
+//				foundPersons.addAll(foundPersonsOnThisSite);
 			} // done iterating over all the loaded web sites
-			yield();
 
+			while (pendingSites > 0) {
+				yield();
+			}
 		//no reverse lookup sites available for country
 		} else {
 			Debug.warning("No reverse lookup sites for: "+number.getCountryCode());
@@ -223,6 +236,12 @@ public class LookupThread extends Thread {
 			}
 		}
 		return personList;
+	}
+
+	@Override
+	public void finished(Vector<Person> newPersons) {
+		foundPersons.addAll(newPersons);
+		pendingSites--;
 	}
 }
 
