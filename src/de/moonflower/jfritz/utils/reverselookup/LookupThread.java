@@ -40,8 +40,6 @@ public class LookupThread extends Thread {
 
 	private static Vector<ReverseLookupSite> rls_list;
 
-	private static ReverseLookupSite rls;
-
 	private static int readLines = 0;
 
 	private static int ac_length;
@@ -191,7 +189,7 @@ public class LookupThread extends Thread {
 				Vector<Person> foundPersonsOnThisSite = new Vector<Person>(5);
 				yield();
 
-				rls = rls_list.get(i);
+				ReverseLookupSite rls = rls_list.get(i);
 
 				if(!siteName.equals("") && !siteName.equals(rls.getName())){
 					Debug.warning("This lookup should be done using a specific site, skipping");
@@ -208,7 +206,7 @@ public class LookupThread extends Thread {
 					Debug.debug("Added prefix: " + nummer);
 				}
 
-				urlstr = replacePlaceHoldersInURL();
+				urlstr = replacePlaceHoldersInURL(rls.getURL());
 
 				Debug.info("Reverse lookup using: "+urlstr);
 				URL url = null;
@@ -220,7 +218,7 @@ public class LookupThread extends Thread {
 					if (url != null) {
 
 						try {
-							URLConnection con = establishConnection(url);
+							URLConnection con = establishConnection(url, rls.getName());
 							data = readSite(con);
 
 							Debug.info("Begin processing response from "+rls.getName());
@@ -231,7 +229,7 @@ public class LookupThread extends Thread {
 							//iterate over all patterns for this web site
 							for(int j=0; j < rls.size(); j++){
 								final String[] patterns = rls.getEntry(j);
-								foundPersonsOnThisSite.addAll(parsePageWithPattern(data, number, readLines, patterns));
+								foundPersonsOnThisSite.addAll(parsePageWithPattern(data, number, readLines, patterns, rls.getNumLines(), rls.getName()));
 							} //Done iterating for the given pattern
 
 							yield();
@@ -275,8 +273,8 @@ public class LookupThread extends Thread {
 		return foundPersons.get(0);
 	}
 
-	private static String replacePlaceHoldersInURL() {
-		String result = rls.getURL();
+	private static String replacePlaceHoldersInURL(final String urlstr) {
+		String result = urlstr;
 		if(result.contains("$AREACODE")
 				&& (nummer.length() > (prefix.length()+ac_length))) {
 			result = result.replaceAll("\\$AREACODE", nummer.substring(prefix.length(), ac_length+prefix.length()));
@@ -291,7 +289,7 @@ public class LookupThread extends Thread {
 		return result;
 	}
 
-	private static URLConnection establishConnection(final URL url) throws IOException {
+	private static URLConnection establishConnection(final URL url, final String lookupSiteName) throws IOException {
 		URLConnection con = url.openConnection();
 		// 5 Sekunden-Timeout für Verbindungsaufbau
 		// 20 Sekunden-Timeout für die Antwort
@@ -324,7 +322,7 @@ public class LookupThread extends Thread {
 			}
 			header += headerName + ": " + headerValue + " | "; //$NON-NLS-1$,  //$NON-NLS-2$
 		}
-		Debug.debug("Header of "+rls.getName()+":" + header); //$NON-NLS-1$
+		Debug.debug("Header of "+lookupSiteName+":" + header); //$NON-NLS-1$
 		Debug.debug("CHARSET : " + charSet); //$NON-NLS-1$
 
 		return con;
@@ -394,7 +392,7 @@ public class LookupThread extends Thread {
 	}
 
 	private static Vector<Person> parsePageWithPattern(String[] input, PhoneNumberOld number,
-			int lines, String[] patterns) {
+			int lines, String[] patterns, int numLinesAtOnce, String lookupSiteName) {
 		Vector<Person> foundPersonsOnThisSiteWithThisPattern = new Vector<Person>(5);
 		List<ParseItem> parseItems = new ArrayList<ParseItem>();
 
@@ -411,11 +409,11 @@ public class LookupThread extends Thread {
 		String currentLineToMatch;
 		for (int line=0; line<lines; line++)
 		{
-			if (rls.getNumLines() == 1) {
+			if (numLinesAtOnce == 1) {
 				currentLineToMatch = input[line];
 			} else {
 				currentLineToMatch="";
-				for (int lineIt=0; lineIt<rls.getNumLines(); lineIt++) {
+				for (int lineIt=0; lineIt<numLinesAtOnce; lineIt++) {
 					if (line+lineIt<lines) {
 						if (!input[line+lineIt].trim().equals(""))
 							currentLineToMatch += input[line+lineIt];
@@ -465,7 +463,7 @@ public class LookupThread extends Thread {
 		foundPersonsOnThisSiteWithThisPattern.add(p);
 		// set lookup site and number for all found entries
 		for (Person person: foundPersonsOnThisSiteWithThisPattern) {
-			person.setLookupSite(rls.getName());
+			person.setLookupSite(lookupSiteName);
 			person.addNumber(number.getAreaNumber(), "home"); //$NON-NLS-1$
 		}
 
