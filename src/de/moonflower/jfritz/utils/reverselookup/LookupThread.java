@@ -184,67 +184,9 @@ public class LookupThread extends Thread {
 
 			//Iterate over all the web sites loaded for the given country
 			for(int i=0; i < rls_list.size(); i++){
-				Vector<Person> foundPersonsOnThisSite = new Vector<Person>(5);
-				yield();
-
 				ReverseLookupSite rls = rls_list.get(i);
-
-				if(!siteName.equals("") && !siteName.equals(rls.getName())){
-					Debug.warning("This lookup should be done using a specific site, skipping");
-					continue;
-				}
-
-				String prefix = rls.getPrefix();
-				int ac_length = rls.getAreaCodeLength();
-
-				//needed to make sure international calls are formatted correctly
-				if(!nummer.startsWith(prefix))
-				{
-					nummer = prefix + nummer;
-					Debug.debug("Added prefix: " + nummer);
-				}
-
-				String urlstr = replacePlaceHoldersInURL(rls.getURL(), prefix, ac_length, nummer);
-
-				Debug.info("Reverse lookup using: "+urlstr);
-				URL url = null;
-				String[] data = new String[MAX_DATA_LENGTH];
-
-				//open a connection to the site
-				try {
-					url = new URL(urlstr);
-					if (url != null) {
-
-						try {
-							URLConnection con = establishConnection(url, rls.getName());
-							data = readSite(con);
-
-							Debug.info("Begin processing response from "+rls.getName());
-							// read reverse lookup response from file, only for DEBUG
-							// data = overrideSiteResponse("c://dastelefon.htm"); //$NON-NLS-1$
-							// debugOutputSiteResponse();
-
-							//iterate over all patterns for this web site
-							for(int j=0; j < rls.size(); j++){
-								final String[] patterns = rls.getEntry(j);
-								foundPersonsOnThisSite.addAll(parsePageWithPattern(data, number, readLines, patterns, rls.getNumLines(), rls.getName()));
-							} //Done iterating for the given pattern
-
-							yield();
-						} catch (IOException e1) {
-							Debug.error("Error while retrieving " + urlstr); //$NON-NLS-1$
-						} catch (Exception e) {
-							Debug.error("Exception in reverselookup"); //$NON-NLS-1$
-						}
-					}
-				} catch (MalformedURLException e) {
-					Debug.error("URL invalid: " + urlstr); //$NON-NLS-1$
-				} catch (Exception e) {
-				    Debug.error("Exception in reverselookup 2"); //$NON-NLS-1$
-			    }
-
+				Vector<Person> foundPersonsOnThisSite = parseSite(siteName, rls, number, nummer);
 				foundPersons.addAll(foundPersonsOnThisSite);
-
 			} // done iterating over all the loaded web sites
 			yield();
 
@@ -269,6 +211,66 @@ public class LookupThread extends Thread {
 		foundPersons = sortPersonList(foundPersons);
 
 		return foundPersons.get(0);
+	}
+
+	private static Vector<Person> parseSite(final String siteName, final ReverseLookupSite rls, final PhoneNumberOld number, String nummer) {
+		Vector<Person> foundPersonsOnThisSite = new Vector<Person>(5);
+		yield();
+
+		if(!siteName.equals("") && !siteName.equals(rls.getName())){
+			Debug.warning("This lookup should be done using a specific site, skipping");
+			return foundPersonsOnThisSite;
+		}
+
+		String prefix = rls.getPrefix();
+		int ac_length = rls.getAreaCodeLength();
+
+		//needed to make sure international calls are formatted correctly
+		if(!nummer.startsWith(prefix))
+		{
+			nummer = prefix + nummer;
+			Debug.debug("Added prefix: " + nummer);
+		}
+
+		String urlstr = replacePlaceHoldersInURL(rls.getURL(), prefix, ac_length, nummer);
+
+		Debug.info("Reverse lookup using: "+urlstr);
+		URL url = null;
+		String[] data = new String[MAX_DATA_LENGTH];
+
+		//open a connection to the site
+		try {
+			url = new URL(urlstr);
+			if (url != null) {
+
+				try {
+					URLConnection con = establishConnection(url, rls.getName());
+					data = readSite(con);
+
+					Debug.info("Begin processing response from "+rls.getName());
+					// read reverse lookup response from file, only for DEBUG
+					// data = overrideSiteResponse("c://dastelefon.htm"); //$NON-NLS-1$
+					// debugOutputSiteResponse();
+
+					//iterate over all patterns for this web site
+					for(int j=0; j < rls.size(); j++){
+						final String[] patterns = rls.getEntry(j);
+						foundPersonsOnThisSite.addAll(parsePageWithPattern(data, number, readLines, patterns, rls.getNumLines(), rls.getName()));
+					} //Done iterating for the given pattern
+
+					yield();
+				} catch (IOException e1) {
+					Debug.error("Error while retrieving " + urlstr); //$NON-NLS-1$
+				} catch (Exception e) {
+					Debug.error("Exception in reverselookup"); //$NON-NLS-1$
+				}
+			}
+		} catch (MalformedURLException e) {
+			Debug.error("URL invalid: " + urlstr); //$NON-NLS-1$
+		} catch (Exception e) {
+		    Debug.error("Exception in reverselookup 2"); //$NON-NLS-1$
+	    }
+		return foundPersonsOnThisSite;
 	}
 
 	private static String replacePlaceHoldersInURL(final String urlstr, final String prefix, final int ac_length, final String nummer) {
