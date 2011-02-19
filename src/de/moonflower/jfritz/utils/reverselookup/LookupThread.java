@@ -24,11 +24,11 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class LookupThread extends Thread {
 
-	private static final String userAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.0; de; rv:1.9.1) Gecko/20090624 Firefox/3.5 (.NET CLR 3.5.30729)";
+	private static final String USER_AGENT = "Mozilla/5.0 (Windows; U; Windows NT 6.0; de; rv:1.9.1) Gecko/20090624 Firefox/3.5 (.NET CLR 3.5.30729)";
 
-	private static final int dataLength = 30000;
+	private static final int MAX_DATA_LENGTH = 30000;
 
-	private static final int spaceAlternative = 160; // hex: a0 = space like ascii character
+	private static final int SPACE_ALTERNATIVE = 160; // hex: a0 = space like ascii character
 
 	private LookupRequest currentRequest;
 
@@ -36,14 +36,11 @@ public class LookupThread extends Thread {
 
 	private Person result;
 
-	private static String nummer, urlstr, header,
-		charSet, prefix;
+	private static String nummer, urlstr, charSet, prefix;
 
 	private static Vector<ReverseLookupSite> rls_list;
 
 	private static ReverseLookupSite rls;
-
-	private static URL url;
 
 	private static int readLines = 0;
 
@@ -211,24 +208,11 @@ public class LookupThread extends Thread {
 					Debug.debug("Added prefix: " + nummer);
 				}
 
-
-				//urlstr = rls.getURL().replaceAll("\\$NUMBER", nummer);
-				urlstr = rls.getURL();
-				if(urlstr.contains("$AREACODE")
-						&& (nummer.length() > (prefix.length()+ac_length))) {
-					urlstr = urlstr.replaceAll("\\$AREACODE", nummer.substring(prefix.length(), ac_length+prefix.length()));
-					urlstr = urlstr.replaceAll("\\$NUMBER", nummer.substring(prefix.length()+ac_length));
-				}else if(urlstr.contains("$PFXAREACODE")
-						&& (nummer.length() > (prefix.length()+ac_length))){
-					urlstr = urlstr.replaceAll("\\$PFXAREACODE", nummer.substring(0, prefix.length()+ac_length));
-					urlstr = urlstr.replaceAll("\\$NUMBER", nummer.substring(prefix.length()+ ac_length));
-				}else {
-					urlstr = urlstr.replaceAll("\\$NUMBER", nummer);
-				}
+				urlstr = replacePlaceHoldersInURL();
 
 				Debug.info("Reverse lookup using: "+urlstr);
-				url = null;
-				String[] data = new String[dataLength];
+				URL url = null;
+				String[] data = new String[MAX_DATA_LENGTH];
 
 				//open a connection to the site
 				try {
@@ -291,17 +275,33 @@ public class LookupThread extends Thread {
 		return foundPersons.get(0);
 	}
 
+	private static String replacePlaceHoldersInURL() {
+		String result = rls.getURL();
+		if(result.contains("$AREACODE")
+				&& (nummer.length() > (prefix.length()+ac_length))) {
+			result = result.replaceAll("\\$AREACODE", nummer.substring(prefix.length(), ac_length+prefix.length()));
+			result = result.replaceAll("\\$NUMBER", nummer.substring(prefix.length()+ac_length));
+		}else if(result.contains("$PFXAREACODE")
+				&& (nummer.length() > (prefix.length()+ac_length))){
+			result = result.replaceAll("\\$PFXAREACODE", nummer.substring(0, prefix.length()+ac_length));
+			result = result.replaceAll("\\$NUMBER", nummer.substring(prefix.length()+ ac_length));
+		}else {
+			result = result.replaceAll("\\$NUMBER", nummer);
+		}
+		return result;
+	}
+
 	private static URLConnection establishConnection(final URL url) throws IOException {
 		URLConnection con = url.openConnection();
 		// 5 Sekunden-Timeout für Verbindungsaufbau
 		// 20 Sekunden-Timeout für die Antwort
 		con.setConnectTimeout(5000);
 		con.setReadTimeout(20000);
-		con.addRequestProperty("User-Agent", userAgent);
+		con.addRequestProperty("User-Agent", USER_AGENT);
 		con.connect();
 		//process header
 		//avoid problems with null headers
-		header = "";
+		String header = "";
 		charSet = "";
 
 		for (int j = 0;; j++) {
@@ -331,7 +331,7 @@ public class LookupThread extends Thread {
 	}
 
 	private static String[] readSite(final URLConnection con) throws UnsupportedEncodingException, IOException {
-		String[] result = new String[dataLength];
+		String[] result = new String[MAX_DATA_LENGTH];
 		// Get used Charset
 		BufferedReader d;
 		if (charSet.equals("")) { //$NON-NLS-1$
@@ -348,8 +348,8 @@ public class LookupThread extends Thread {
 				result[readLines] = tmpLine;
 				yield();
 				readLines++;
-				if ( readLines >= dataLength ) {
-					System.err.println("Result > " + dataLength + " Lines");
+				if ( readLines >= MAX_DATA_LENGTH ) {
+					System.err.println("Result > " + MAX_DATA_LENGTH + " Lines");
 					break;
 				}
 		}
@@ -359,7 +359,7 @@ public class LookupThread extends Thread {
 
 	@SuppressWarnings("unused")
 	private static void debugOutputSiteResponse(final String[] input) {
-		for (int i=0; i<dataLength; i++ )
+		for (int i=0; i<MAX_DATA_LENGTH; i++ )
 		{
 			if (input[i] != null)
 			{
@@ -371,7 +371,7 @@ public class LookupThread extends Thread {
 	@SuppressWarnings("unused")
 	private static String[] overrideSiteResponse(final String filePath) {
 		Debug.debug("Debug mode: Loading " + filePath); //$NON-NLS-1$
-		String[] result = new String[dataLength];
+		String[] result = new String[MAX_DATA_LENGTH];
 		try {
 			String thisLine;
 			BufferedReader in = new BufferedReader(new FileReader(filePath));
@@ -380,9 +380,9 @@ public class LookupThread extends Thread {
 				result[readLines] = thisLine;
 				yield();
 				readLines++;
-				if ( readLines >= dataLength ) {
-					System.err.println("Result > " + dataLength + " Lines");
-					readLines = dataLength;
+				if ( readLines >= MAX_DATA_LENGTH ) {
+					System.err.println("Result > " + MAX_DATA_LENGTH + " Lines");
+					readLines = MAX_DATA_LENGTH;
 					break;
 				}
 			}
@@ -424,7 +424,7 @@ public class LookupThread extends Thread {
 			}
 			if (currentLineToMatch != null)
 			{
-				currentLineToMatch = currentLineToMatch.replaceAll(new Character((char)spaceAlternative).toString(), " "); //$NON-NLS-1$
+				currentLineToMatch = currentLineToMatch.replaceAll(new Character((char)SPACE_ALTERNATIVE).toString(), " "); //$NON-NLS-1$
 
 				if (useStartLine)
 				{
