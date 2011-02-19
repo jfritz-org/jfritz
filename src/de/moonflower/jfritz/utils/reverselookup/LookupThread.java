@@ -191,7 +191,7 @@ public class LookupThread extends Thread implements ParseSiteResultListener {
 		return foundPersons.get(0);
 	}
 
-	private static void fixCityIfNecessary(PhoneNumberOld number, Person person, final String nummer) {
+	private void fixCityIfNecessary(PhoneNumberOld number, Person person, final String nummer) {
 		if ((person.getCity() == null) || ("".equals(person.getCity())))
 		{
 			if(number.getCountryCode().equals(ReverseLookup.GERMANY_CODE))
@@ -205,34 +205,28 @@ public class LookupThread extends Thread implements ParseSiteResultListener {
 		}
 	}
 
-	private static Vector<Person> sortPersonList(final Vector<Person> input) {
+	private Vector<Person> sortPersonList(final Vector<Person> input) {
 		Vector<Person> personList = new Vector<Person>();
 
 		Debug.info("" + input.size());
 		boolean notFound = false;
 		while (!notFound) {
 			notFound = true;
-			int numMostFilledFields = -1;
-			Person mostFilledFieldsPerson = null;
-			int tmp = -1;
+			FavouritePerson favPerson = new FavouritePerson(rls_list);
+
 			for (Person p: input) {
 				if (!personList.contains(p)) {
-					tmp = p.getNumFilledFields();
-					if (tmp>numMostFilledFields) {
-						numMostFilledFields = tmp;
-						mostFilledFieldsPerson = p;
-						notFound = false;
-					}
+					notFound = !favPerson.addPerson(p);
 				}
 			}
-			if (mostFilledFieldsPerson != null) {
-				personList.add(mostFilledFieldsPerson);
-				Debug.debug("Next person: " + tmp + " / "
-						+ " site: " + mostFilledFieldsPerson.getLookupSite()
-						+ " fullName: " + mostFilledFieldsPerson.getFullname()
-						+ " street:" + mostFilledFieldsPerson.getStreet()
-						+ " plz:" + mostFilledFieldsPerson.getPostalCode()
-						+ " city:" + mostFilledFieldsPerson.getCity());
+			if (favPerson.getFavourite() != null) {
+				personList.add(favPerson.getFavourite());
+				Debug.debug("Next person: "
+						+ " site: " + favPerson.getFavourite().getLookupSite()
+						+ " fullName: " + favPerson.getFavourite().getFullname()
+						+ " street:" + favPerson.getFavourite().getStreet()
+						+ " plz:" + favPerson.getFavourite().getPostalCode()
+						+ " city:" + favPerson.getFavourite().getCity());
 			}
 		}
 		return personList;

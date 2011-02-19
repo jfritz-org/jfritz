@@ -82,7 +82,6 @@ public class ParseSite extends Thread {
 		if(!nummer.startsWith(prefix))
 		{
 			nummer = prefix + nummer;
-			Debug.debug("Added prefix: " + nummer);
 		}
 
 		String urlstr = replacePlaceHoldersInURL(rls.getURL(), prefix, ac_length, nummer);
@@ -100,7 +99,6 @@ public class ParseSite extends Thread {
 					URLConnection con = establishConnection(url, rls.getName());
 					data = readSite(con);
 
-					Debug.info("Begin processing response from "+rls.getName());
 					// read reverse lookup response from file, only for DEBUG
 					// data = overrideSiteResponse("c://dastelefon.htm"); //$NON-NLS-1$
 					// debugOutputSiteResponse();
@@ -148,10 +146,10 @@ public class ParseSite extends Thread {
 
 	private URLConnection establishConnection(final URL url, final String lookupSiteName) throws IOException {
 		URLConnection con = url.openConnection();
-		// 5 Sekunden-Timeout für Verbindungsaufbau
-		// 20 Sekunden-Timeout für die Antwort
-		con.setConnectTimeout(5000);
-		con.setReadTimeout(20000);
+		// 3 Sekunden-Timeout für Verbindungsaufbau
+		// 10 Sekunden-Timeout für die Antwort
+		con.setConnectTimeout(3000);
+		con.setReadTimeout(10000);
 		con.addRequestProperty("User-Agent", USER_AGENT);
 		con.connect();
 		//process header
@@ -179,8 +177,6 @@ public class ParseSite extends Thread {
 			}
 			header += headerName + ": " + headerValue + " | "; //$NON-NLS-1$,  //$NON-NLS-2$
 		}
-		Debug.debug("Header of "+lookupSiteName+":" + header); //$NON-NLS-1$
-		Debug.debug("CHARSET : " + charSet); //$NON-NLS-1$
 
 		return con;
 	}
@@ -204,7 +200,7 @@ public class ParseSite extends Thread {
 //				yield();
 				readLines++;
 				if ( readLines >= MAX_DATA_LENGTH ) {
-					System.err.println("Result > " + MAX_DATA_LENGTH + " Lines");
+					Debug.error("Result > " + MAX_DATA_LENGTH + " Lines");
 					break;
 				}
 		}
@@ -214,7 +210,7 @@ public class ParseSite extends Thread {
 
 	private Vector<Person> parsePageWithPattern(String[] input, PhoneNumberOld number,
 			int lines, String[] patterns, int numLinesAtOnce, String lookupSiteName) {
-		Vector<Person> foundPersonsOnThisSiteWithThisPattern = new Vector<Person>(5);
+		Vector<Person> foundPersonsOnThisSiteWithThisPattern = new Vector<Person>(1);
 		List<ParseItem> parseItems = new ArrayList<ParseItem>();
 
 //		yield();
@@ -225,7 +221,6 @@ public class ParseSite extends Thread {
 
 		useStartLine = initPatterns(patterns);
 
-		Debug.debug("Parsing " + lines + " lines:");
 		boolean inParseArea = false;
 		String currentLineToMatch;
 		for (int line=0; line<lines; line++)
@@ -318,32 +313,26 @@ public class ParseSite extends Thread {
 				             && patterns[ReverseLookupSite.LASTNAME].equals("")))
 		{
 			namePattern = Pattern.compile(patterns[ReverseLookupSite.NAME]);
-			Debug.debug("Name-Pattern: " + namePattern.toString());
 		}
 		if (!patterns[ReverseLookupSite.STREET].equals(""))
 		{
 			streetPattern = Pattern.compile(patterns[ReverseLookupSite.STREET]);
-			Debug.debug("Street-Pattern: " + streetPattern.toString());
 		}
 		if (!patterns[ReverseLookupSite.CITY].equals(""))
 		{
 			cityPattern = Pattern.compile(patterns[ReverseLookupSite.CITY]);
-			Debug.debug("City-Pattern: " + cityPattern.toString());
 		}
 		if (!patterns[ReverseLookupSite.ZIPCODE].equals(""))
 		{
 			zipcodePattern = Pattern.compile(patterns[ReverseLookupSite.ZIPCODE]);
-			Debug.debug("ZipCode-Pattern: " + zipcodePattern.toString());
 		}
 		if (!patterns[ReverseLookupSite.FIRSTNAME].equals(""))
 		{
 			firstnamePattern = Pattern.compile(patterns[ReverseLookupSite.FIRSTNAME]);
-			Debug.debug("FirstName-Pattern: " + firstnamePattern.toString());
 		}
 		if (!patterns[ReverseLookupSite.LASTNAME].equals(""))
 		{
 			lastnamePattern = Pattern.compile(patterns[ReverseLookupSite.LASTNAME]);
-			Debug.debug("LastName-Pattern: " + lastnamePattern.toString());
 		}
 		return useStartLine;
 	}
@@ -588,7 +577,7 @@ public class ParseSite extends Thread {
 //				yield();
 				readLines++;
 				if ( readLines >= MAX_DATA_LENGTH ) {
-					System.err.println("Result > " + MAX_DATA_LENGTH + " Lines");
+					Debug.error("Result > " + MAX_DATA_LENGTH + " Lines");
 					readLines = MAX_DATA_LENGTH;
 					break;
 				}
