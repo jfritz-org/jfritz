@@ -36,13 +36,12 @@ public class LookupThread extends Thread {
 
 	private Person result;
 
-	private static String nummer, urlstr, charSet, prefix;
+	private static String charSet;
 
 	private static Vector<ReverseLookupSite> rls_list;
 
 	private static int readLines = 0;
 
-	private static int ac_length;
 	private static Pattern namePattern = null;
 	private static Pattern streetPattern = null;
 	private static Pattern cityPattern = null;
@@ -151,7 +150,7 @@ public class LookupThread extends Thread {
 	static synchronized Person lookup(PhoneNumberOld number, String siteName) {
 
 		Vector<Person> foundPersons = new Vector<Person>(10);
-
+		String nummer = number.getAreaNumber();
 		if (number.isFreeCall()) {
 			Person p = new Person("", "FreeCall"); //$NON-NLS-1$,  //$NON-NLS-2$
 			p.addNumber(number);
@@ -164,7 +163,6 @@ public class LookupThread extends Thread {
 			Debug.debug("SIP-Number or QuickDial detected");
 		} else if (ReverseLookup.rlsMap.containsKey(number.getCountryCode())) {
 
-			nummer = number.getAreaNumber();
 			rls_list = ReverseLookup.rlsMap.get(number.getCountryCode());
 
 			Debug.info("Begin reverselookup for: "+nummer);
@@ -196,8 +194,8 @@ public class LookupThread extends Thread {
 					continue;
 				}
 
-				prefix = rls.getPrefix();
-				ac_length = rls.getAreaCodeLength();
+				String prefix = rls.getPrefix();
+				int ac_length = rls.getAreaCodeLength();
 
 				//needed to make sure international calls are formatted correctly
 				if(!nummer.startsWith(prefix))
@@ -206,7 +204,7 @@ public class LookupThread extends Thread {
 					Debug.debug("Added prefix: " + nummer);
 				}
 
-				urlstr = replacePlaceHoldersInURL(rls.getURL());
+				String urlstr = replacePlaceHoldersInURL(rls.getURL(), prefix, ac_length, nummer);
 
 				Debug.info("Reverse lookup using: "+urlstr);
 				URL url = null;
@@ -264,7 +262,7 @@ public class LookupThread extends Thread {
 
 		// fix city for all found persons
 		for (Person person: foundPersons) {
-			fixCityIfNecessary(number, person);
+			fixCityIfNecessary(number, person, nummer);
 		}
 
 		// sorting person list by number of filled fields
@@ -273,7 +271,7 @@ public class LookupThread extends Thread {
 		return foundPersons.get(0);
 	}
 
-	private static String replacePlaceHoldersInURL(final String urlstr) {
+	private static String replacePlaceHoldersInURL(final String urlstr, final String prefix, final int ac_length, final String nummer) {
 		String result = urlstr;
 		if(result.contains("$AREACODE")
 				&& (nummer.length() > (prefix.length()+ac_length))) {
@@ -470,7 +468,7 @@ public class LookupThread extends Thread {
 		return foundPersonsOnThisSiteWithThisPattern;
 	}
 
-	private static void fixCityIfNecessary(PhoneNumberOld number, Person person) {
+	private static void fixCityIfNecessary(PhoneNumberOld number, Person person, final String nummer) {
 		if ((person.getCity() == null) || ("".equals(person.getCity())))
 		{
 			if(number.getCountryCode().equals(ReverseLookup.GERMANY_CODE))
