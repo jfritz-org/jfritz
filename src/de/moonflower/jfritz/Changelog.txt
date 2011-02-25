@@ -7,6 +7,10 @@ Non-JFritz-Changes:
 - Neu: Testklasse zur Überprüfung, ob es für die eigene Box ein FW-Update gibt
 - Neu: Neues Package mit neuer Rufnummer, muss durch externe Komponente ersetzt werden
 
+JFritz 0.7.4.1.3:
+- Viele Klassen, vor allem CallMonitor und Sound, refactoriert.
+- Verwendung von Log4j
+
 JFritz 0.7.4.1.2:
 - LookupThread überarbeitet, bessere Ergebnisse bei der Rückwärtssuche
 

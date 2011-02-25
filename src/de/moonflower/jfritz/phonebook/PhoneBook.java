@@ -46,13 +46,15 @@ import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.ProgramConstants;
 import de.moonflower.jfritz.callerlist.CallerList;
 import de.moonflower.jfritz.callerlist.CallerListListener;
-import de.moonflower.jfritz.importexport.VCardParserAdr;
 import de.moonflower.jfritz.importexport.VCardParser;
+import de.moonflower.jfritz.importexport.VCardParserAdr;
 import de.moonflower.jfritz.importexport.VCardParserEMail;
 import de.moonflower.jfritz.importexport.VCardParserName;
 import de.moonflower.jfritz.importexport.VCardParserOrg;
 import de.moonflower.jfritz.importexport.VCardParserTel;
 import de.moonflower.jfritz.importexport.VCardParserVersion;
+import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
@@ -93,6 +95,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 	private CallerList callerList;
 
 	private boolean allLastCallsSearched = false;
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	/**
 	 * Flag do determine if xml file is now loading. Prevent saving to phonebook on loading from it
@@ -112,6 +115,8 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 	private boolean sortDirection = true;
 
 	private NumberPersonMultiHashMap numberHashMap;
+
+	protected PropertyProvider properties = PropertyProvider.getInstance();
 
 	public PhoneBook(String fileLocation) {
 		this.fileLocation = fileLocation;
@@ -167,7 +172,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		String columnName = getColumnName(columnIndex);
 		// If the wahlhilfe doesnt work, check here again!
-		if (columnName.equals(Main.getMessage("telephoneNumber"))) {
+		if (columnName.equals(messages.getMessage("telephoneNumber"))) {
 			return true;
 		}
 		return false;
@@ -856,9 +861,9 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 		switch (columnIndex) {
 		case 0:
 			if (person.isPrivateEntry()) {
-				return Main.getMessage("yes"); //$NON-NLS-1$
+				return messages.getMessage("yes"); //$NON-NLS-1$
 			} else {
-				return Main.getMessage("no"); //$NON-NLS-1$
+				return messages.getMessage("no"); //$NON-NLS-1$
 			}
 		case 1:
 		{
@@ -986,7 +991,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 
 	public String getColumnName(int column) {
 		try {
-			return Main.getMessage(columnNames[column]);
+			return messages.getMessage(columnNames[column]);
 		} catch (Exception e) {
 			return columnNames[column];
 		}
@@ -1086,10 +1091,10 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 		 * try { JFritz.getJframe().getCallerTable().getCellEditor()
 		 * .cancelCellEditing(); } catch (NullPointerException e) { }
 		 */
-		boolean filter_private = JFritzUtils.parseBoolean(Main
+		boolean filter_private = JFritzUtils.parseBoolean(properties
 				.getStateProperty("filter_private")); //$NON-NLS-1$
 
-		String filterSearch = Main.getStateProperty("filter.Phonebook.search"); //$NON-NLS-1$,  //$NON-NLS-2$
+		String filterSearch = properties.getStateProperty("filter.Phonebook.search"); //$NON-NLS-1$,  //$NON-NLS-2$
 		String keywords[] = filterSearch.split(" "); //$NON-NLS-1$
 
 		if ((!filter_private) && (keywords.length == 0)) {
@@ -1178,15 +1183,15 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 				String msg;
 
 				if (newEntries == 1) {
-					msg = Main.getMessage("imported_contact"); //$NON-NLS-1$
+					msg = messages.getMessage("imported_contact"); //$NON-NLS-1$
 				} else {
 					msg = newEntries
-							+ " " + Main.getMessage("imported_contacts"); //$NON-NLS-1$,  //$NON-NLS-2$
+							+ " " + messages.getMessage("imported_contacts"); //$NON-NLS-1$,  //$NON-NLS-2$
 				}
 				message = msg;
 
 			} else {
-				message = Main.getMessage("no_imported_contacts"); //$NON-NLS-1$
+				message = messages.getMessage("no_imported_contacts"); //$NON-NLS-1$
 			}
 
 			br.close();
@@ -1357,15 +1362,15 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 				String msg;
 
 				if (newEntries == 1) {
-					msg = Main.getMessage("imported_contact"); //$NON-NLS-1$
+					msg = messages.getMessage("imported_contact"); //$NON-NLS-1$
 				} else {
 					msg = newEntries
-							+ " " + Main.getMessage("imported_contacts"); //$NON-NLS-1$,  //$NON-NLS-2$
+							+ " " + messages.getMessage("imported_contacts"); //$NON-NLS-1$,  //$NON-NLS-2$
 				}
 				message = msg;
 
 			} else {
-				message = Main.getMessage("no_imported_contacts"); //$NON-NLS-1$
+				message = messages.getMessage("no_imported_contacts"); //$NON-NLS-1$
 			}
 
 			br.close();
@@ -1480,20 +1485,8 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
                 Debug.info("Add person to database"); //$NON-NLS-1$
                 persons.add(person);
             } else {
-                person = new Person();
-                person.addNumber(callerPhoneNumber);
-                String city = "";
-                Debug.warning("Found no person"); //$NON-NLS-1$
-    			if(callerPhoneNumber.getCountryCode().equals(ReverseLookup.GERMANY_CODE))
-    				city = ReverseLookupGermany.getCity(callerPhoneNumber.getAreaNumber());
-    			else if(callerPhoneNumber.getCountryCode().equals(ReverseLookup.AUSTRIA_CODE))
-    				city = ReverseLookupAustria.getCity(callerPhoneNumber.getIntNumber());
-    			else if(callerPhoneNumber.getCountryCode().startsWith(ReverseLookup.USA_CODE))
-    				city = ReverseLookupUnitedStates.getCity(callerPhoneNumber.getIntNumber());
-    			else if(callerPhoneNumber.getCountryCode().startsWith(ReverseLookup.TURKEY_CODE))
-    				city = ReverseLookupTurkey.getCity(callerPhoneNumber.getIntNumber());
-    			person.setCity(city);
-                Debug.warning("Add dummy person to database"); //$NON-NLS-1$
+                Debug.warning("Found no person. Creating a dummy person instead"); //$NON-NLS-1$
+                person = createDummyPerson(callerPhoneNumber);
                 persons.add(person);
             }
             JFritz.getPhonebook().addEntries(persons);
@@ -1501,6 +1494,24 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
         }
         return person;
     }
+
+	private static Person createDummyPerson(PhoneNumberOld callerPhoneNumber) {
+		Person person;
+		person = new Person();
+		person.addNumber(callerPhoneNumber);
+		String city = "";
+		if(callerPhoneNumber.getCountryCode().equals(ReverseLookup.GERMANY_CODE))
+			city = ReverseLookupGermany.getCity(callerPhoneNumber.getAreaNumber());
+		else if(callerPhoneNumber.getCountryCode().equals(ReverseLookup.AUSTRIA_CODE))
+			city = ReverseLookupAustria.getCity(callerPhoneNumber.getIntNumber());
+		else if(callerPhoneNumber.getCountryCode().startsWith(ReverseLookup.USA_CODE))
+			city = ReverseLookupUnitedStates.getCity(callerPhoneNumber.getIntNumber());
+		else if(callerPhoneNumber.getCountryCode().startsWith(ReverseLookup.TURKEY_CODE))
+			city = ReverseLookupTurkey.getCity(callerPhoneNumber.getIntNumber());
+		person.setCity(city);
+		Debug.warning("Add dummy person to database"); //$NON-NLS-1$
+		return person;
+	}
 
     public Vector<Person> getUnfilteredPersons(){
     	return unfilteredPersons;

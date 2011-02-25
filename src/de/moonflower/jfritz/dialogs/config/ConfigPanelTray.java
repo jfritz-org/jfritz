@@ -10,7 +10,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 
 public class ConfigPanelTray extends JPanel implements ConfigPanel {
 
@@ -19,6 +20,9 @@ public class ConfigPanelTray extends JPanel implements ConfigPanel {
 	private JRadioButton singleClickButton;
 	private JRadioButton doubleClickButton;
 	private boolean settingsChanged = false;
+
+	protected PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public ConfigPanelTray() {
 		setLayout(new BorderLayout());
@@ -32,10 +36,10 @@ public class ConfigPanelTray extends JPanel implements ConfigPanel {
 		c.anchor = GridBagConstraints.WEST;
 
 		JPanel clickPane = new JPanel();
-		singleClickButton = new JRadioButton(Main.getMessage("single_click"));
+		singleClickButton = new JRadioButton(messages.getMessage("single_click"));
 		singleClickButton.setActionCommand("singleClick");
 
-		doubleClickButton = new JRadioButton(Main.getMessage("double_click"));
+		doubleClickButton = new JRadioButton(messages.getMessage("double_click"));
 		doubleClickButton.setActionCommand("doubleClick");
 
 		ButtonGroup clickGroup = new ButtonGroup();
@@ -46,7 +50,7 @@ public class ConfigPanelTray extends JPanel implements ConfigPanel {
 		clickPane.add(doubleClickButton);
 
 		clickPane.setBorder(BorderFactory.createTitledBorder(
-		           BorderFactory.createEtchedBorder(), Main.getMessage("tray_click")));
+		           BorderFactory.createEtchedBorder(), messages.getMessage("tray_click")));
 
 		c.gridy++;
 		trayPane.add(clickPane, c);
@@ -55,7 +59,7 @@ public class ConfigPanelTray extends JPanel implements ConfigPanel {
 	}
 
 	public void loadSettings() {
-		String clickCount = Main.getProperty("tray.clickCount");
+		String clickCount = properties.getProperty("tray.clickCount");
 		if ("1".equals(clickCount)) {
 			singleClickButton.setSelected(true);
 		} else {
@@ -66,23 +70,23 @@ public class ConfigPanelTray extends JPanel implements ConfigPanel {
 
 	public void saveSettings() {
 		if (singleClickButton.isSelected()) {
-			if (!Main.getProperty("tray.clickCount").equals("1"))
+			if (!properties.getProperty("tray.clickCount").equals("1"))
 			{
 				settingsChanged = true;
 			}
-			Main.setProperty("tray.clickCount", "1");
+			properties.setProperty("tray.clickCount", "1");
 		} else {
-			if (Main.getProperty("tray.clickCount").equals("1"))
+			if (properties.getProperty("tray.clickCount").equals("1"))
 			{
 				settingsChanged = true;
 			}
-			Main.setProperty("tray.clickCount", "2");
+			properties.setProperty("tray.clickCount", "2");
 		}
 	}
 
 	public String getPath()
 	{
-		return Main.getMessage("other")+"::"+Main.getMessage("tray");
+		return messages.getMessage("other")+"::"+messages.getMessage("tray");
 	}
 
 	public JPanel getPanel() {

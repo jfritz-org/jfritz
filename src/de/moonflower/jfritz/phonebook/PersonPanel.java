@@ -47,6 +47,8 @@ import javax.swing.table.TableCellRenderer;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 
@@ -100,6 +102,10 @@ public class PersonPanel extends JPanel implements ActionListener,
 	private JFritzWindow parentFrame;
 
 	private boolean updatingGui = false;
+
+	protected PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
+
 	/**
 	 *
 	 */
@@ -127,16 +133,16 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 		JPanel buttonPanel = new JPanel();
 
-		okButton = new JButton(Main.getMessage("save")); //$NON-NLS-1$
+		okButton = new JButton(messages.getMessage("save")); //$NON-NLS-1$
 		okButton.setActionCommand("ok"); //$NON-NLS-1$
 		okButton.setIcon(getImage("okay.png")); //$NON-NLS-1$
 		okButton.addActionListener(this);
 
-		cancelButton = new JButton(Main.getMessage("cancel")); //$NON-NLS-1$
+		cancelButton = new JButton(messages.getMessage("cancel")); //$NON-NLS-1$
 		cancelButton.setActionCommand("cancel"); //$NON-NLS-1$
 		cancelButton.addActionListener(this);
 
-		undoButton = new JButton(Main.getMessage("undo")); //$NON-NLS-1$
+		undoButton = new JButton(messages.getMessage("undo")); //$NON-NLS-1$
 		undoButton.setActionCommand("undo"); //$NON-NLS-1$
 		undoButton.addActionListener(this);
 		undoButton.setEnabled(false);
@@ -167,19 +173,19 @@ public class PersonPanel extends JPanel implements ActionListener,
 		c.gridy = 0;
 		c.gridwidth = 2;
 		c.insets.bottom= 10;
-		pictureButton = new JButton(Main.getMessage("picture_set"));
+		pictureButton = new JButton(messages.getMessage("picture_set"));
 		pictureButton.addActionListener(this);
 		pictureButton.setActionCommand("setPicture"); //$NON-NLS-1$
-		pictureButton.setToolTipText(Main.getMessage("picture_set_desc")); //$NON-NLS-1$
+		pictureButton.setToolTipText(messages.getMessage("picture_set_desc")); //$NON-NLS-1$
 		pictureButtonSize = pictureButton.getSize();
 		pictureButtonBorder = pictureButton.getBorder();
 		configPanel.add(pictureButton, c);
 
 		c.gridy = 1;
-		pictureDelButton = new JButton(Main.getMessage("picture_remove"));
+		pictureDelButton = new JButton(messages.getMessage("picture_remove"));
 		pictureDelButton.addActionListener(this);
 		pictureDelButton.setActionCommand("delPicture");
-		pictureDelButton.setToolTipText(Main.getMessage("picture_remove_desc"));
+		pictureDelButton.setToolTipText(messages.getMessage("picture_remove_desc"));
 		configPanel.add(pictureDelButton, c);
 
 		c.insets.bottom= 1;
@@ -187,7 +193,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
 		c.gridy++;
-		JLabel label = new JLabel(Main.getMessage("private_entry") + ": "); //$NON-NLS-1$,   //$NON-NLS-2$
+		JLabel label = new JLabel(messages.getMessage("private_entry") + ": "); //$NON-NLS-1$,   //$NON-NLS-2$
 		configPanel.add(label, c);
 		c.gridx = 1;
 		chkBoxPrivateEntry = new JCheckBox();
@@ -202,7 +208,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 		c.gridx = 0;
 		c.gridy++;
-		label = new JLabel(Main.getMessage("firstName") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		label = new JLabel(messages.getMessage("firstName") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		configPanel.add(label,c );
 		c.gridx = 1;
 		tfFirstName = new JTextField(25);
@@ -212,7 +218,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 		c.gridx = 0;
 		c.gridy++;
-		label = new JLabel(Main.getMessage("lastName") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		label = new JLabel(messages.getMessage("lastName") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		configPanel.add(label, c);
 		c.gridx = 1;
 		tfLastName = new JTextField();
@@ -221,7 +227,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 		c.gridx = 0;
 		c.gridy++;
-		label = new JLabel(Main.getMessage("company") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		label = new JLabel(messages.getMessage("company") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		configPanel.add(label, c);
 		c.gridx = 1;
 		tfCompany = new JTextField();
@@ -230,7 +236,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 		c.gridx = 0;
 		c.gridy++;
-		label = new JLabel(Main.getMessage("street") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		label = new JLabel(messages.getMessage("street") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		configPanel.add(label, c);
 		c.gridx = 1;
 		tfStreet = new JTextField();
@@ -239,7 +245,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 		c.gridx = 0;
 		c.gridy++;
-		label = new JLabel(Main.getMessage("postalCode") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		label = new JLabel(messages.getMessage("postalCode") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		configPanel.add(label, c);
 		c.gridx = 1;
 		tfPostalCode = new JTextField();
@@ -248,7 +254,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 		c.gridx = 0;
 		c.gridy++;
-		label = new JLabel(Main.getMessage("city") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		label = new JLabel(messages.getMessage("city") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		configPanel.add(label, c);
 		c.gridx = 1;
 		tfCity = new JTextField();
@@ -257,7 +263,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 		c.gridx = 0;
 		c.gridy++;
-		label = new JLabel(Main.getMessage("emailAddress") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		label = new JLabel(messages.getMessage("emailAddress") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		configPanel.add(label, c);
 		c.gridx = 1;
 		tfEmail = new JTextField();
@@ -357,7 +363,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 			delButton.setEnabled((false));
 
 		JLabel label = new JLabel(
-				Main.getMessage("telephoneNumbers") + ":", JLabel.LEFT); //$NON-NLS-1$,  //$NON-NLS-2$
+				messages.getMessage("telephoneNumbers") + ":", JLabel.LEFT); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		JPanel numberButtonPanel = new JPanel(new GridLayout(0, 2));
 		JPanel buttonPanel = new JPanel();
@@ -383,7 +389,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("setPicture")) //$NON-NLS-1$
 		{
-			JFileChooser fc = new JFileChooser(Main.getStateProperty("option.picture.default_path"));  //$NON-NLS-1$
+			JFileChooser fc = new JFileChooser(properties.getStateProperty("option.picture.default_path"));  //$NON-NLS-1$
 			fc.setFileFilter(new FileFilter() {
 				public boolean accept(File f) {
 					return f.isDirectory()
@@ -393,13 +399,13 @@ public class PersonPanel extends JPanel implements ActionListener,
 				}
 
 				public String getDescription() {
-					return Main.getMessage("picture_files");  //$NON-NLS-1$
+					return messages.getMessage("picture_files");  //$NON-NLS-1$
 				}
 			});
 			if (fc.showOpenDialog(parentFrame) != JFileChooser.APPROVE_OPTION) {
 				return;
 			}
-			Main.setStateProperty("option.picture.default_path", fc.getSelectedFile().getAbsolutePath());  //$NON-NLS-1$
+			properties.setStateProperty("option.picture.default_path", fc.getSelectedFile().getAbsolutePath());  //$NON-NLS-1$
 			clonedPerson.setPictureUrl(fc.getSelectedFile().getAbsolutePath());
 			hasChanged = true;
 			firePropertyChange();
@@ -549,7 +555,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 		}
 		else
 		{
-			pictureButton.setText(Main.getMessage("picture_set"));
+			pictureButton.setText(messages.getMessage("picture_set"));
 			pictureButton.setIcon(null);
 			pictureButton.setBorder(pictureButtonBorder);
 			pictureButton.setSize(pictureButtonSize);
@@ -668,9 +674,9 @@ public class PersonPanel extends JPanel implements ActionListener,
 		int result = -1;
 		if ( hasChanged || numberHasChanged )
 		{
-			String[] options = {Main.getMessage("save"), Main.getMessage("discard")}; //$NON-NLS-1$
+			String[] options = {messages.getMessage("save"), messages.getMessage("discard")}; //$NON-NLS-1$
 
-			result = JOptionPane.showOptionDialog(parentFrame, Main.getMessage("save_changes"), Main.getMessage("unsaved_changes"),  //$NON-NLS-1$,  //$NON-NLS-2$
+			result = JOptionPane.showOptionDialog(parentFrame, messages.getMessage("save_changes"), messages.getMessage("unsaved_changes"),  //$NON-NLS-1$,  //$NON-NLS-2$
 					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
 		}

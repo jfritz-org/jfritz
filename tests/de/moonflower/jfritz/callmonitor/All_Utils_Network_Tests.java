@@ -2,7 +2,7 @@
  * Created on 12.09.2006
  *
  */
-package de.moonflower.jfritz.testsuites.utils.network;
+package de.moonflower.jfritz.callmonitor;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;

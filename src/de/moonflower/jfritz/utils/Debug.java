@@ -16,6 +16,8 @@ import javax.swing.JTextArea;
 import javax.swing.filechooser.FileFilter;
 
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -72,6 +74,10 @@ public class Debug {
 	private static JScrollPane scroll_pane;
 
 	private static JFrame display_frame;
+
+	protected static PropertyProvider properties = PropertyProvider.getInstance();
+	protected static MessageProvider messages = MessageProvider.getInstance();
+
 	/**
 	 * Turns debug-mode on
 	 *
@@ -189,8 +195,7 @@ public class Debug {
 	 */
 	public static void msgDlg(String message) {
 		msg(LS_ALWAYS, message);
-		JOptionPane.showMessageDialog(null, message, Main
-				.getMessage("information"), JOptionPane.INFORMATION_MESSAGE); //$NON-NLS-1$
+		JOptionPane.showMessageDialog(null, message, messages.getMessage("information"), JOptionPane.INFORMATION_MESSAGE); //$NON-NLS-1$
 	}
 
 	/**
@@ -201,7 +206,7 @@ public class Debug {
 	public static void errDlg(String message) {
 		error(message);
 		JOptionPane.showMessageDialog(null, message,
-				Main.getMessage("error"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+				messages.getMessage("error"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
 	}
 
 	public static void generatePanel()
@@ -250,7 +255,7 @@ public class Debug {
 		save_button.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser fc = new JFileChooser(Main.SAVE_DIR); //$NON-NLS-1$
-				fc.setDialogTitle(Main.getMessage("save_debug_log")); //$NON-NLS-1$
+				fc.setDialogTitle(messages.getMessage("save_debug_log")); //$NON-NLS-1$
 				fc.setDialogType(JFileChooser.SAVE_DIALOG);
 				fc.setFileFilter(new FileFilter() {
 					public boolean accept(File f) {
@@ -259,19 +264,19 @@ public class Debug {
 					}
 
 					public String getDescription() {
-						return Main.getMessage("debug_files"); //$NON-NLS-1$
+						return messages.getMessage("debug_files"); //$NON-NLS-1$
 					}
 				});
 				if (fc.showSaveDialog(display_frame) == JFileChooser.APPROVE_OPTION) {
 					String path = fc.getSelectedFile().getPath();
 					path = path.substring(0, path.length()
 							- fc.getSelectedFile().getName().length());
-					Main.setProperty("options.exportCSVpath", path); //$NON-NLS-1$
+					properties.setProperty("options.exportCSVpath", path); //$NON-NLS-1$
 					File file = fc.getSelectedFile();
 					if (file.exists()) {
-						if (JOptionPane.showConfirmDialog(display_frame, Main.getMessage(
+						if (JOptionPane.showConfirmDialog(display_frame, messages.getMessage(
 								"overwrite_file").replaceAll("%F", file.getName()), //$NON-NLS-1$, //$NON-NLS-2$
-								Main.getMessage("dialog_title_overwrite_file"), //$NON-NLS-1$
+								messages.getMessage("dialog_title_overwrite_file"), //$NON-NLS-1$
 								JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 							try {
 								log_area.write(new FileWriter(file.getAbsolutePath()));

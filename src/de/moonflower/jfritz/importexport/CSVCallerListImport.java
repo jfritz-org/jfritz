@@ -9,6 +9,7 @@ import java.util.Vector;
 
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.CallerTable;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
@@ -27,6 +28,8 @@ public class CSVCallerListImport extends CSVImport implements ICSVImport {
 	private Vector<String> availableColumns;
 
 	private Vector<Call> importedCalls;
+
+	protected PropertyProvider properties = PropertyProvider.getInstance();
 
 	public CSVCallerListImport(final String fileName) {
 		super(fileName);
@@ -203,7 +206,7 @@ public class CSVCallerListImport extends CSVImport implements ICSVImport {
 				entry.setPhoneNumber(number);
 			}
 		} else if (columnName.equals(CallerTable.COLUMN_NUMBER)) {
-			boolean useDialPrefix = JFritzUtils.parseBoolean(Main.getProperty("option.activateDialPrefix"))
+			boolean useDialPrefix = JFritzUtils.parseBoolean(properties.getProperty("option.activateDialPrefix"))
 									&& (entry.getCalltype().toString().equals(CallType.CALLOUT_STR));
 
 			String callByCall = "";

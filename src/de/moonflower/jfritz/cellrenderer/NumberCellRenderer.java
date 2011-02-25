@@ -13,7 +13,8 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.utils.JFritzUtils;
 /**
@@ -30,6 +31,9 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 	static final String FILESEP = System.getProperty("file.separator");			//$NON-NLS-1$
 
 	private final String lang;
+
+	private PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	/**
 	 * renders the number field in the CallerTable
@@ -59,7 +63,7 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) {
 
-		String countryCode = Main.getProperty("country.code");
+		String countryCode = properties.getProperty("country.code");
 
 		JLabel label = (JLabel) super.getTableCellRendererComponent(table,
 				value, isSelected, hasFocus, row, column);
@@ -73,13 +77,13 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 
 				if(number.isLocalCall()){
 					label.setIcon(imageHome);
-					setToolTipText(Main.getMessage("local_call")); //$NON-NLS-1$
+					setToolTipText(messages.getMessage("local_call")); //$NON-NLS-1$
 				}else if(number.isFreeCall()){
 					label.setIcon(imageFreeCall);
-					setToolTipText(Main.getMessage("freecall")); //$NON-NLS-1$
+					setToolTipText(messages.getMessage("freecall")); //$NON-NLS-1$
 				}else if (!number.isMobile() && number.getIntNumber().startsWith(countryCode)){
 					label.setIcon(imagePhone);
-					setToolTipText(Main.getMessage("long_distance_call")); //$NON-NLS-1$
+					setToolTipText(messages.getMessage("long_distance_call")); //$NON-NLS-1$
 
 				}else{
 					if(!number.getFlagFileName().equals("")){
@@ -87,7 +91,7 @@ public class NumberCellRenderer extends DefaultTableCellRenderer {
 						setToolTipText(number.getDescription());
 					}else{
 						label.setIcon(imageWorld);
-						setToolTipText(Main.getMessage("int_call")); //$NON-NLS-1$
+						setToolTipText(messages.getMessage("int_call")); //$NON-NLS-1$
 					}
 				}
 			}

@@ -25,7 +25,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.ProgramConstants;
 import de.moonflower.jfritz.cellrenderer.CallByCallCellRenderer;
@@ -39,7 +38,9 @@ import de.moonflower.jfritz.cellrenderer.PersonCellRenderer;
 import de.moonflower.jfritz.cellrenderer.PictureCellRenderer;
 import de.moonflower.jfritz.cellrenderer.PortCellRenderer;
 import de.moonflower.jfritz.cellrenderer.RouteCellRenderer;
+import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.phonebook.PhoneBookTable;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.utils.Debug;
@@ -78,6 +79,9 @@ public class CallerTable extends JTable {
 
 	private Vector<JFritzTableColumn> sortedTableColumns = new Vector<JFritzTableColumn>();
 
+	private PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
+
 	/**
 	 * Constructs CallerTable
 	 *
@@ -100,7 +104,7 @@ public class CallerTable extends JTable {
 			public void columnMarginChanged(ChangeEvent arg0) {
 				for (int i = 0; i < colModel.getColumnCount(); i++) {
 					TableColumn col = getColumnModel().getColumn(i);
-					Main.setStateProperty("callerTable.column." + col.getIdentifier() + ".width", ""
+					properties.setStateProperty("callerTable.column." + col.getIdentifier() + ".width", ""
 							+ col.getPreferredWidth());
 				}
 			}
@@ -116,7 +120,7 @@ public class CallerTable extends JTable {
 					for (int i =0; i < sortedTableColumns.size(); i++)
 					{
 						Debug.debug("Sorted columns: " + sortedTableColumns.get(i).getName() + " - visible: " + sortedTableColumns.get(i).isVisible());
-						Main.setStateProperty("callerTable.column" + i + ".name", sortedTableColumns.get(i).getName());
+						properties.setStateProperty("callerTable.column" + i + ".name", sortedTableColumns.get(i).getName());
 					}
 				}
 			}
@@ -181,7 +185,7 @@ public class CallerTable extends JTable {
 //					parentPanel.getStatusBarController().fireStatusChanged(callerList.getTotalDuration());
 				} else if (e.getKeyCode() == KeyEvent.VK_DELETE) {
 					// Delete selected entries
-					if (JOptionPane.showConfirmDialog(parentPanel, Main
+					if (JOptionPane.showConfirmDialog(parentPanel, messages
 							.getMessage("really_delete_entries"), //$NON-NLS-1$
 							ProgramConstants.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 						int rows[] = getSelectedRows();
@@ -213,12 +217,12 @@ public class CallerTable extends JTable {
 			DefaultTableCellRenderer renderer) {
 		TableColumn col = getColumnModel().getColumn(position);
 		col.setIdentifier(columnName);
-		col.setHeaderValue(Main.getMessage(columnName));
+		col.setHeaderValue(messages.getMessage(columnName));
 		col.setCellRenderer(renderer);
-		headerTips.setToolTip(col, Main.getMessage(columnName + "_desc")); //$NON-NLS-1$
+		headerTips.setToolTip(col, messages.getMessage(columnName + "_desc")); //$NON-NLS-1$
 		col.setMinWidth(10);
 		col.setMaxWidth(1600);
-		col.setPreferredWidth(Integer.parseInt(Main.getStateProperty(
+		col.setPreferredWidth(Integer.parseInt(properties.getStateProperty(
 				"callerTable.column." + columnName + ".width"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		JFritzTableColumn jCol = new JFritzTableColumn(columnName);
@@ -345,7 +349,7 @@ public class CallerTable extends JTable {
 		while (columns.hasMoreElements())
 		{
 			currentColumn = columns.nextElement();
-			if (!JFritzUtils.parseBoolean(Main.getProperty(
+			if (!JFritzUtils.parseBoolean(properties.getProperty(
 					"option.showCallerListColumn."+currentColumn))) { //$NON-NLS-1$, //$NON-NLS-2$
 				hideColumn(currentColumn);
 			}
@@ -465,7 +469,7 @@ public class CallerTable extends JTable {
     	sortedTableColumns.clear();
 
 		for (int i = 0; i < allTableColumns.size(); i++) {
-			String columnName = Main.getStateProperty("callerTable.column" + i + ".name"); //$NON-NLS-1$,  //$NON-NLS-2$
+			String columnName = properties.getStateProperty("callerTable.column" + i + ".name"); //$NON-NLS-1$,  //$NON-NLS-2$
 			JFritzTableColumn col = getColumnByName(columnName);
 			if (col != null)
 			{
@@ -473,7 +477,7 @@ public class CallerTable extends JTable {
 				Debug.debug("CallerTable: Adding table column " + columnName + " at position " + i);
 				getColumnModel().addColumn(col.getColumn());
 				sortedTableColumns.add(col);
-				Main.setStateProperty("callerTable.column" + i + ".name", columnName);
+				properties.setStateProperty("callerTable.column" + i + ".name", columnName);
 			}
 			else
 			{

@@ -7,6 +7,7 @@ import java.util.Vector;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.Debug;
@@ -28,6 +29,8 @@ public class NetworkStateMonitor  {
 	public static ClientConnectionListener clientConnectionListener;
 
 	private static Vector<NetworkStateListener> listeners = new Vector<NetworkStateListener>();
+
+	protected static PropertyProvider properties = PropertyProvider.getInstance();
 
 	public static void startServer(){
 		if(clientConnectionListener == null){
@@ -120,10 +123,10 @@ public class NetworkStateMonitor  {
 	 * Check if direct dialing is available, if we are connected to a server
 	 * or if we have a valid firmware
 	 *
-	 * @return wether direct dialing is available
+	 * @return whether direct dialing is available
 	 */
 	public static boolean hasAvailablePorts(){
-		if(Main.getProperty("option.clientCallList").equals("true")
+		if(properties.getProperty("option.clientCallList").equals("true")
 				&& isConnectedToServer())
 		{
 			return serverConnection.hasAvailablePorts();
@@ -157,7 +160,7 @@ public class NetworkStateMonitor  {
 	 *
 	 */
 	public static void doCall(String number, Port port) throws UnsupportedEncodingException, WrongPasswordException, IOException{
-		if(Main.getProperty("option.clientCallList").equals("true")
+		if(properties.getProperty("option.clientCallList").equals("true")
 				&& isConnectedToServer())
 		{
 			serverConnection.requestDoCall(new PhoneNumberOld(number, false, false), port);
@@ -170,7 +173,7 @@ public class NetworkStateMonitor  {
 
 	public static void hangup(Port port) throws IOException, WrongPasswordException
 	{
-		if(Main.getProperty("option.clientCallList").equals("true")
+		if(properties.getProperty("option.clientCallList").equals("true")
 				&& isConnectedToServer())
 		{
 			serverConnection.requestHangup(port);

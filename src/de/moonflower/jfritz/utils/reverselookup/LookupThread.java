@@ -72,7 +72,7 @@ public class LookupThread extends Thread implements ParseSiteResultListener {
 				ReverseLookup.personFound(result);
 
 				try{
-					sleep(2000);
+					sleep(1000);
 				}catch(Exception e){
 					Debug.debug("Exception occourred: " + e.toString());
 					break;
@@ -119,7 +119,7 @@ public class LookupThread extends Thread implements ParseSiteResultListener {
 	 * @param number number to be looked up
 	 * @return a new person object containing the results of the search
 	 */
-	synchronized Person lookup(PhoneNumberOld number, String siteName) {
+	public synchronized Person lookup(PhoneNumberOld number, String siteName) {
 		foundPersons.clear();
 		String nummer = number.getAreaNumber();
 		if (number.isFreeCall()) {
@@ -154,6 +154,7 @@ public class LookupThread extends Thread implements ParseSiteResultListener {
 			}
 
 			//Iterate over all the web sites loaded for the given country
+			//Use own thread for each site
 			pendingSites = 0;
 			for(int i=0; i < rls_list.size(); i++){
 				ReverseLookupSite rls = rls_list.get(i);
@@ -161,8 +162,6 @@ public class LookupThread extends Thread implements ParseSiteResultListener {
 				pSite.addListener(this);
 				pendingSites++;
 				pSite.start();
-//				Vector<Person> foundPersonsOnThisSite = pSite.parseSite(siteName, rls, number, nummer);
-//				foundPersons.addAll(foundPersonsOnThisSite);
 			} // done iterating over all the loaded web sites
 
 			while (pendingSites > 0) {

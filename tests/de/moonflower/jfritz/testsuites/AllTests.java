@@ -4,10 +4,10 @@
  */
 package de.moonflower.jfritz.testsuites;
 
+import de.moonflower.jfritz.callmonitor.All_Utils_Network_Tests;
 import de.moonflower.jfritz.testsuites.callerlist.All_Callerlist_Tests;
 import de.moonflower.jfritz.testsuites.phonebook.All_Phonebook_Tests;
 import de.moonflower.jfritz.testsuites.utils.All_Utils_Tests;
-import de.moonflower.jfritz.testsuites.utils.network.All_Utils_Network_Tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 

@@ -11,8 +11,6 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import de.moonflower.jfritz.struct.Person;
-
 /**
  * This renderer shows a person in the specified way.
  *

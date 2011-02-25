@@ -25,7 +25,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
@@ -55,6 +56,9 @@ public class FRITZBOXConfigDialog extends
 
     private JTextField ignoreMSN;
 
+    protected PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
+
     public FRITZBOXConfigDialog(JDialog parent) {
         super(parent, true);
         initDialog();
@@ -64,7 +68,7 @@ public class FRITZBOXConfigDialog extends
     }
 
     public void initDialog() {
-        setTitle(Main.getMessage("monitor_settings")); //$NON-NLS-1$
+        setTitle(messages.getMessage("monitor_settings")); //$NON-NLS-1$
         this.setPreferredSize(new Dimension(270, 255));
         drawDialog();
         setProperties();
@@ -72,24 +76,24 @@ public class FRITZBOXConfigDialog extends
 
     private void setProperties() {
         monitorIncomingCalls.setSelected(JFritzUtils
-                .parseBoolean(Main.getProperty(
+                .parseBoolean(properties.getProperty(
                         "option.callmonitor.monitorIncomingCalls"))); //$NON-NLS-1$,  //$NON-NLS-2$
         monitorOutgoingCalls.setSelected(JFritzUtils
-                .parseBoolean(Main.getProperty(
+                .parseBoolean(properties.getProperty(
                         "option.callmonitor.monitorOutgoingCalls"))); //$NON-NLS-1$,  //$NON-NLS-2$
         fetchAfterDisconnect.setSelected(JFritzUtils
-                .parseBoolean(Main.getProperty(
+                .parseBoolean(properties.getProperty(
                         "option.callmonitor.fetchAfterDisconnect"))); //$NON-NLS-1$,  //$NON-NLS-2$
-        ignoreMSN.setText(Main.getProperty("option.callmonitor.ignoreMSN")); //$NON-NLS-1$,  //$NON-NLS-2$
+        ignoreMSN.setText(properties.getProperty("option.callmonitor.ignoreMSN")); //$NON-NLS-1$,  //$NON-NLS-2$
     }
 
     private void storeProperties() {
-        Main.setProperty("option.callmonitor.monitorIncomingCalls", Boolean //$NON-NLS-1$
+        properties.setProperty("option.callmonitor.monitorIncomingCalls", Boolean //$NON-NLS-1$
                 .toString(monitorIncomingCalls.isSelected()));
-        Main.setProperty("option.callmonitor.monitorOutgoingCalls", Boolean //$NON-NLS-1$
+        properties.setProperty("option.callmonitor.monitorOutgoingCalls", Boolean //$NON-NLS-1$
                 .toString(monitorOutgoingCalls.isSelected()));
-        Main.setProperty("option.callmonitor.fetchAfterDisconnect", Boolean.toString(fetchAfterDisconnect.isSelected())); //$NON-NLS-1$
-        Main.setProperty("option.callmonitor.ignoreMSN", ignoreMSN.getText()); //$NON-NLS-1$
+        properties.setProperty("option.callmonitor.fetchAfterDisconnect", Boolean.toString(fetchAfterDisconnect.isSelected())); //$NON-NLS-1$
+        properties.setProperty("option.callmonitor.ignoreMSN", ignoreMSN.getText()); //$NON-NLS-1$
     }
 
     public int showConfigDialog() {
@@ -143,19 +147,19 @@ public class FRITZBOXConfigDialog extends
         c.gridwidth = 1;
         c.gridy = 0;
         monitorIncomingCalls = new JCheckBox(
-        		Main.getMessage("monitor_incoming_calls")); //$NON-NLS-1$
+        		messages.getMessage("monitor_incoming_calls")); //$NON-NLS-1$
         panel.add(monitorIncomingCalls, c);
         c.gridy = 1;
         monitorOutgoingCalls = new JCheckBox("" + //$NON-NLS-1$
-        		Main.getMessage("monitor_outgoing_calls")); //$NON-NLS-1$
+        		messages.getMessage("monitor_outgoing_calls")); //$NON-NLS-1$
         panel.add(monitorOutgoingCalls, c);
         c.gridy = 2;
         fetchAfterDisconnect = new JCheckBox(
-        		Main.getMessage("monitor_fetch_disconnect")); //$NON-NLS-1$
+        		messages.getMessage("monitor_fetch_disconnect")); //$NON-NLS-1$
         panel.add(fetchAfterDisconnect, c);
         c.gridy = 3;
         JLabel label = new JLabel(
-        		Main.getMessage("monitor_ignore_msns")); //$NON-NLS-1$
+        		messages.getMessage("monitor_ignore_msns")); //$NON-NLS-1$
         panel.add(label, c);
         c.gridy = 4;
         ignoreMSN = new JTextField("", 20); //$NON-NLS-1$
@@ -164,12 +168,12 @@ public class FRITZBOXConfigDialog extends
         panel.add(ignoreMSN, c);
 
         JPanel buttonPanel = new JPanel();
-        okButton = new JButton(Main.getMessage("okay")); //$NON-NLS-1$
+        okButton = new JButton(messages.getMessage("okay")); //$NON-NLS-1$
         okButton.setActionCommand("ok_pressed"); //$NON-NLS-1$
         okButton.addActionListener(actionListener);
         okButton.addKeyListener(keyListener);
 
-        cancelButton = new JButton(Main.getMessage("cancel")); //$NON-NLS-1$
+        cancelButton = new JButton(messages.getMessage("cancel")); //$NON-NLS-1$
         cancelButton.setActionCommand("cancel_pressed"); //$NON-NLS-1$
         cancelButton.addActionListener(actionListener);
         cancelButton.addKeyListener(keyListener);

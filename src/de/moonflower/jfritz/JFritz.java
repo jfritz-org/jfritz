@@ -5,21 +5,11 @@
 package de.moonflower.jfritz;
 
 import java.awt.event.ActionEvent;
-
 import java.io.IOException;
-import java.net.URL;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.FloatControl;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
@@ -32,7 +22,6 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 import jd.nutils.OSDetector;
-
 import de.moonflower.jfritz.box.BoxClass;
 import de.moonflower.jfritz.box.BoxCommunication;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
@@ -44,9 +33,13 @@ import de.moonflower.jfritz.dialogs.quickdial.QuickDials;
 import de.moonflower.jfritz.dialogs.simple.MessageDlg;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.network.ClientLoginsTableModel;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.phonebook.PhoneBook;
+import de.moonflower.jfritz.properties.PropertyProvider;
+import de.moonflower.jfritz.sounds.PlaySound;
+import de.moonflower.jfritz.sounds.SoundProvider;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.tray.ClickListener;
 import de.moonflower.jfritz.tray.JDICTray;
@@ -89,8 +82,6 @@ public final class JFritz implements  StatusListener {
 
 	private static PhoneBook phonebook;
 
-	private static URL ringSound, callSound;
-
 	private static WatchdogThread watchdog;
 
 	private static Timer watchdogTimer;
@@ -109,6 +100,13 @@ public final class JFritz implements  StatusListener {
 
 	private static BoxCommunication boxCommunication;
 
+	private static SoundProvider soundProvider;
+
+	private static PlaySound playSound;
+
+	protected PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
+
 	/**
 	 * Constructs JFritz object
 	 */
@@ -126,23 +124,21 @@ public final class JFritz implements  StatusListener {
 
 		*/
 
-		if (JFritzUtils.parseBoolean(Main.getProperty(
+		if (JFritzUtils.parseBoolean(properties.getProperty(
 				"option.createBackup"))) { //$NON-NLS-1$,  //$NON-NLS-2$
 			Main.doBackup();
 		}
 
 			//option was removed from the config dialog in 0.7.1, make sure
 			//it is automatically deselected
-		if(Main.getProperty("option.callMonitorType").equals("6"))
-			Main.setProperty("option.callMonitorType", "0");
+		if(properties.getProperty("option.callMonitorType").equals("6"))
+			properties.setProperty("option.callMonitorType", "0");
 
 		// make sure there is a plus on the country code, or else the number
 		// scheme won't work
-		if (!Main.getProperty("country.code").startsWith("+"))
-			Main.setProperty("country.code", "+"
-					+ Main.getProperty("country.code"));
-
-		loadSounds();
+		if (!properties.getProperty("country.code").startsWith("+"))
+			properties.setProperty("country.code", "+"
+					+ properties.getProperty("country.code"));
 
 		if (OSDetector.isMac()) { //$NON-NLS-1$
 			new MacHandler(this);
@@ -169,9 +165,9 @@ public final class JFritz implements  StatusListener {
 		FritzBox fritzBox = new FritzBox("Fritz!Box",
 									     "My Fritz!Box",
 									     "http",
-										 Main.getProperty("box.address"),
-										 Main.getProperty("box.port"),
-										 Encryption.decrypt(Main.getProperty("box.password")),
+										 properties.getProperty("box.address"),
+										 properties.getProperty("box.port"),
+										 Encryption.decrypt(properties.getProperty("box.password")),
 										 ex);
 
 		if ( ex != null)
@@ -188,50 +184,50 @@ public final class JFritz implements  StatusListener {
 
 		// if a mac address is set and this box has a different mac address, ask user
 		// if communication to this box should be allowed.
-		String macStr = Main.getProperty("box.mac");
+		String macStr = properties.getProperty("box.mac");
 		if ((!("".equals(macStr))
 		&& ( !("".equals(fritzBox.getMacAddress())))
 		&& (fritzBox.getMacAddress() != null)))
 		{
 			ComplexJOptionPaneMessage msg = null;
 			int answer = JOptionPane.YES_OPTION;
-			if (Main.getMessage("unknown").equals(fritzBox.getMacAddress()))
+			if (messages.getMessage("unknown").equals(fritzBox.getMacAddress()))
 			{
 				Debug.info("MAC-Address could not be determined. Ask user how to proceed..."); //$NON-NLS-1$
 				msg = new ComplexJOptionPaneMessage("legalInfo.macNotFound",
-						Main.getMessage("mac_not_found") + "\n"
-						+ Main.getMessage("accept_fritzbox_communication")); //$NON-NLS-1$
+						messages.getMessage("mac_not_found") + "\n"
+						+ messages.getMessage("accept_fritzbox_communication")); //$NON-NLS-1$
 				if (msg.showDialogEnabled()) {
 					answer = JOptionPane.showConfirmDialog(null,
 							msg.getComponents(),
-							Main.getMessage("information"), JOptionPane.YES_NO_OPTION);
+							messages.getMessage("information"), JOptionPane.YES_NO_OPTION);
 					if (answer == JOptionPane.YES_OPTION)
 					{
 						msg.saveProperty();
-						Main.saveStateProperties();
+						properties.saveStateProperties();
 					}
 				}
 			} else if ( !(macStr.equals(fritzBox.getMacAddress())))
 			{
 				Debug.info("New FRITZ!Box detected. Ask user how to proceed..."); //$NON-NLS-1$
 				msg = new ComplexJOptionPaneMessage("legalInfo.newBox",
-						Main.getMessage("new_fritzbox") + "\n"
-						+ Main.getMessage("accept_fritzbox_communication")); //$NON-NLS-1$
+						messages.getMessage("new_fritzbox") + "\n"
+						+ messages.getMessage("accept_fritzbox_communication")); //$NON-NLS-1$
 				if (msg.showDialogEnabled()) {
 					answer = JOptionPane.showConfirmDialog(null,
 							msg.getComponents(),
-							Main.getMessage("information"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
+							messages.getMessage("information"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
 					if (answer == JOptionPane.YES_OPTION)
 					{
 						msg.saveProperty();
-						Main.saveStateProperties();
+						properties.saveStateProperties();
 					}
 				}
 			}
 			if (answer == JOptionPane.YES_OPTION) {
 				Debug.info("User decided to accept connection."); //$NON-NLS-1$
-				Main.setProperty("box.mac", fritzBox.getMacAddress());
-				Main.saveConfigProperties();
+				properties.setProperty("box.mac", fritzBox.getMacAddress());
+				properties.saveConfigProperties();
 				result = 0;
 			} else {
 				Debug.info("User decided to prohibit connection."); //$NON-NLS-1$
@@ -260,10 +256,15 @@ public final class JFritz implements  StatusListener {
 //		callerlist.findAllPersons();
 	}
 
-	public void initCallMonitor()
+	public void initSounds() {
+		soundProvider = new SoundProvider();
+		playSound = new PlaySound(soundProvider);
+	}
+
+	public void initCallMonitorListener()
 	{
 		callMonitorList = new CallMonitorList();
-		callMonitorList.addCallMonitorListener(new DisplayCallsMonitor());
+		callMonitorList.addCallMonitorListener(new DisplayCallsMonitor(playSound));
 		callMonitorList.addCallMonitorListener(new DisconnectMonitor());
 	}
 
@@ -303,12 +304,12 @@ public final class JFritz implements  StatusListener {
 		{
 			javax.swing.SwingUtilities.invokeLater(jframe);
 
-			if(Main.getProperty("network.type").equals("1") &&
-					Boolean.parseBoolean(Main.getProperty("option.listenOnStartup"))){
+			if(properties.getProperty("network.type").equals("1") &&
+					Boolean.parseBoolean(properties.getProperty("option.listenOnStartup"))){
 				Debug.info("listening on startup enabled, starting client listener!");
 				NetworkStateMonitor.startServer();
-			}else if(Main.getProperty("network.type").equals("2") &&
-					Boolean.parseBoolean(Main.getProperty("option.connectOnStartup"))){
+			}else if(properties.getProperty("network.type").equals("2") &&
+					Boolean.parseBoolean(properties.getProperty("option.connectOnStartup"))){
 				Debug.info("Connect on startup enabled, connectig to server");
 				NetworkStateMonitor.startClient();
 			}
@@ -335,9 +336,9 @@ public final class JFritz implements  StatusListener {
 
 		// make sure there is a plus on the country code, or else the number
 		// scheme won't work
-		if (!Main.getProperty("country.code").startsWith("+"))
-			Main.setProperty("country.code", "+"
-					+ Main.getProperty("country.code"));
+		if (!properties.getProperty("country.code").startsWith("+"))
+			properties.setProperty("country.code", "+"
+					+ properties.getProperty("country.code"));
 
 		// loadSounds();
 
@@ -349,9 +350,9 @@ public final class JFritz implements  StatusListener {
 		FritzBox fritzBox = new FritzBox("Fritz!Box",
 									     "My Fritz!Box",
 									     "http",
-										 Main.getProperty("box.address"),
-										 Main.getProperty("box.port"),
-										 Encryption.decrypt(Main.getProperty("box.password")),
+										 properties.getProperty("box.address"),
+										 properties.getProperty("box.port"),
+										 Encryption.decrypt(properties.getProperty("box.password")),
 										 ex);
 
 		if ( ex != null)
@@ -376,16 +377,6 @@ public final class JFritz implements  StatusListener {
 	}
 
 	/**
-	 * Loads sounds from resources
-	 */
-	private void loadSounds() {
-		ringSound = getClass().getResource(
-				"/de/moonflower/jfritz/resources/sounds/call_in.wav"); //$NON-NLS-1$
-		callSound = getClass().getResource(
-				"/de/moonflower/jfritz/resources/sounds/call_out.wav"); //$NON-NLS-1$
-	}
-
-	/**
 	 * Creates the tray icon menu
 	 */
 	private void createTrayMenu() {
@@ -394,7 +385,7 @@ public final class JFritz implements  StatusListener {
 		LookAndFeelInfo[] lnfs = UIManager.getInstalledLookAndFeels();
 		ButtonGroup lnfgroup = new ButtonGroup();
 
-		JMenu lnfMenu = new JMenu(Main.getMessage("lnf_menu")); //$NON-NLS-1$
+		JMenu lnfMenu = new JMenu(messages.getMessage("lnf_menu")); //$NON-NLS-1$
 		// Add system dependent look and feels
 		for (int i = 0; i < lnfs.length; i++) {
 			JRadioButtonMenuItem rbmi = new JRadioButtonMenuItem(lnfs[i]
@@ -451,11 +442,11 @@ public final class JFritz implements  StatusListener {
 				menuItem = new TrayMenuItem("IP: " + box.getExternalIP());
 				boxItem.add(menuItem.getJMenuItem());
 				boxItem.addSeparator();
-				menuItem = new TrayMenuItem(Main.getMessage("fetchlist"));
+				menuItem = new TrayMenuItem(messages.getMessage("fetchlist"));
 				menuItem.setActionCommand("fetchList-"+boxName);
 				menuItem.addActionListener(jframe);
 				boxItem.add(menuItem.getJMenuItem());
-				menuItem = new TrayMenuItem(Main.getMessage("renew_ip"));
+				menuItem = new TrayMenuItem(messages.getMessage("renew_ip"));
 				menuItem.setActionCommand("renewIP-"+boxName);
 				menuItem.addActionListener(jframe);
 				boxItem.add(menuItem.getJMenuItem());
@@ -467,29 +458,29 @@ public final class JFritz implements  StatusListener {
 			}
 		}
 		menu.addSeparator();
-		menuItem = new TrayMenuItem(Main.getMessage("fetchlist")); //$NON-NLS-1$
+		menuItem = new TrayMenuItem(messages.getMessage("fetchlist")); //$NON-NLS-1$
 		menuItem.setActionCommand("fetchList"); //$NON-NLS-1$
 		menuItem.addActionListener(jframe);
 		menu.add(menuItem);
-		menuItem = new TrayMenuItem(Main.getMessage("reverse_lookup")); //$NON-NLS-1$
+		menuItem = new TrayMenuItem(messages.getMessage("reverse_lookup")); //$NON-NLS-1$
 		menuItem.setActionCommand("reverselookup"); //$NON-NLS-1$
 		menuItem.addActionListener(jframe);
 		menu.add(menuItem);
-		menuItem = new TrayMenuItem(Main.getMessage("dial_assist")); //$NON-NLS-1$
+		menuItem = new TrayMenuItem(messages.getMessage("dial_assist")); //$NON-NLS-1$
 		menuItem.setActionCommand("callDialog");
 		menuItem.addActionListener(jframe);
 		menu.add(menuItem);
-		menuItem = new TrayMenuItem(Main.getMessage("dial_assist") + "(" + Main.getMessage("clipboard") + ")"); //$NON-NLS-1$
+		menuItem = new TrayMenuItem(messages.getMessage("dial_assist") + "(" + messages.getMessage("clipboard") + ")"); //$NON-NLS-1$
 		menuItem.setActionCommand("callDialogTray");
 		menuItem.addActionListener(jframe);
 		menu.add(menuItem);
 		menu.add(lnfMenu);
-		menuItem = new TrayMenuItem(Main.getMessage("config")); //$NON-NLS-1$
+		menuItem = new TrayMenuItem(messages.getMessage("config")); //$NON-NLS-1$
 		menuItem.setActionCommand("config"); //$NON-NLS-1$
 		menuItem.addActionListener(jframe);
 		menu.add(menuItem);
 		menu.addSeparator();
-		menuItem = new TrayMenuItem(Main.getMessage("prog_exit")); //$NON-NLS-1$
+		menuItem = new TrayMenuItem(messages.getMessage("prog_exit")); //$NON-NLS-1$
 		menuItem.setActionCommand("exit"); //$NON-NLS-1$
 		menuItem.addActionListener(jframe);
 		menu.add(menuItem);
@@ -505,7 +496,7 @@ public final class JFritz implements  StatusListener {
 	}
 
 	private void refreshTrayActionListener() {
-		String trayClick = Main.getProperty("tray.clickCount");
+		String trayClick = properties.getProperty("tray.clickCount");
 		int clickCount = ClickListener.CLICK_COUNT_SINGLE;
 		if ("2".equals(trayClick)) {
 			clickCount = ClickListener.CLICK_COUNT_DOUBLE;
@@ -553,13 +544,13 @@ public final class JFritz implements  StatusListener {
 	 *            Message to be displayed
 	 */
 	public static void infoMsg(String msg) {
-		switch (Integer.parseInt(Main.getProperty("option.popuptype"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+		switch (Integer.parseInt(PropertyProvider.getInstance().getProperty("option.popuptype"))) { //$NON-NLS-1$,  //$NON-NLS-2$
 		case 0: { // No Popup
 			break;
 		}
 		case 1: {
 			MessageDlg msgDialog = new MessageDlg();
-			msgDialog.showMessage(msg, Long.parseLong(Main.getProperty(
+			msgDialog.showMessage(msg, Long.parseLong(PropertyProvider.getInstance().getProperty(
 					"option.popupDelay")) * 1000);
 			msgDialog.repaint();
 			msgDialog.toFront();
@@ -571,78 +562,13 @@ public final class JFritz implements  StatusListener {
 						Tray.MESSAGE_TYPE_INFO);
 			else {
 				MessageDlg msgDialog = new MessageDlg();
-				msgDialog.showMessage(msg, Long.parseLong(Main.getProperty(
+				msgDialog.showMessage(msg, Long.parseLong(PropertyProvider.getInstance().getProperty(
 						"option.popupDelay")) * 1000);
 				msgDialog.repaint();
 				msgDialog.toFront();
 			}
 			break;
 		}
-		}
-	}
-
-
-	/**
-	 * Plays a sound by a given resource URL
-	 *
-	 * @param sound
-	 *            URL of sound to be played
-	 * @param volume
-	 * 			  Volume in percent. 1.0 means 100 percent (loudest volume)
-	 */
-	public static void playSound(URL sound, float volume) {
-		try {
-			AudioInputStream ais = AudioSystem.getAudioInputStream(sound);
-			AudioFormat aFormat     = ais.getFormat();
-			int size      = (int) (aFormat.getFrameSize() * ais.getFrameLength());
-			byte[] audio       = new byte[size];
-			DataLine.Info info      = new DataLine.Info(Clip.class, aFormat, size);
-			ais.read(audio, 0, size);
-
-            Clip clip = (Clip) AudioSystem.getLine(info);
-            clip.open(aFormat, audio, 0, size);
-
-            Debug.debug("ais: " + ais.toString());
-            Debug.debug("aFormat: " + aFormat.toString());
-            Debug.debug("size: " + size);
-            Debug.debug("info: " + info.toString());
-            Debug.debug("clip: " + clip.toString());
-            FloatControl gainControl =
-                (FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);
-//            float min = gainControl.getMinimum();
-//            float max = gainControl.getMaximum();
-//            float diff = max - min;
-            gainControl.setValue(volume);
-			clip.start();
-			int loopCount=0;
-			while (true) {
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e1) {
-		        	Thread.currentThread().interrupt();
-				}
-				loopCount++;
-				if (!clip.isActive() || loopCount > 100) {
-					if (!clip.isActive())
-					{
-						Debug.debug("Sound finished after " + loopCount + " loops!");
-					}
-					else
-					{
-						Debug.debug("Sound aborted after " + loopCount + " loops!");
-					}
-					break;
-				}
-			}
-			clip.stop();
-			clip.close();
-			ais.close();
-		} catch (UnsupportedAudioFileException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (LineUnavailableException e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -712,7 +638,7 @@ public final class JFritz implements  StatusListener {
 	 */
 	public void createNewWindow(Locale l) {
 		Debug.info("Loading new locale"); //$NON-NLS-1$
-		Main.loadMessages(l);
+		messages.loadMessages(l);
 
 		refreshWindow();
 	}
@@ -721,7 +647,7 @@ public final class JFritz implements  StatusListener {
 	 * Sets default Look'n'Feel
 	 */
 	public void setDefaultLookAndFeel() {
-		if (JFritzUtils.parseBoolean(Main.getProperty("window.useDecorations"))) {
+		if (JFritzUtils.parseBoolean(properties.getProperty("window.useDecorations"))) {
 			JFritzWindow.setDefaultLookAndFeelDecorated(true);
 			JDialog.setDefaultLookAndFeelDecorated(true);
 			JFrame.setDefaultLookAndFeelDecorated(true);
@@ -731,8 +657,8 @@ public final class JFritz implements  StatusListener {
 			JFrame.setDefaultLookAndFeelDecorated(false);
 		}
 		try {
-			Debug.info("Changing look and feel to: " + Main.getStateProperty("lookandfeel")); //$NON-NLS-1$
-			UIManager.setLookAndFeel(Main.getStateProperty("lookandfeel")); //$NON-NLS-1$
+			Debug.info("Changing look and feel to: " + properties.getStateProperty("lookandfeel")); //$NON-NLS-1$
+			UIManager.setLookAndFeel(properties.getStateProperty("lookandfeel")); //$NON-NLS-1$
 			if ( jframe != null )
 			{
 				SwingUtilities.updateComponentTreeUI(jframe);
@@ -769,7 +695,7 @@ public final class JFritz implements  StatusListener {
 	boolean maybeExit(int i, boolean check) {
 		boolean exit = true;
 		if (check &&
-				JFritzUtils.parseBoolean(Main.getProperty(
+				JFritzUtils.parseBoolean(properties.getProperty(
 				"option.confirmOnExit"))) { //$NON-NLS-1$ $NON-NLS-2$
 			exit = showExitDialog();
 		}
@@ -787,7 +713,7 @@ public final class JFritz implements  StatusListener {
 
 		if ( jframe != null) {
 			jframe.prepareShutdown();
-			Main.saveStateProperties();
+			properties.saveStateProperties();
 		}
 
 		Debug.info("Stopping reverse lookup");
@@ -831,7 +757,7 @@ public final class JFritz implements  StatusListener {
 	 */
 	boolean showExitDialog() {
 		boolean exit = true;
-		exit = JOptionPane.showConfirmDialog(jframe, Main
+		exit = JOptionPane.showConfirmDialog(jframe, messages
 				.getMessage("really_quit"), ProgramConstants.PROGRAM_NAME, //$NON-NLS-1$
 				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 
@@ -857,14 +783,6 @@ public final class JFritz implements  StatusListener {
 		PhoneNumberOld.loadCbCXMLFile();
 	}
 
-	public static URL getRingSound() {
-		return ringSound;
-	}
-
-	public static URL getCallSound() {
-		return callSound;
-	}
-
 	public static CallMonitorList getCallMonitorList() {
 		return callMonitorList;
 	}
@@ -876,8 +794,8 @@ public final class JFritz implements  StatusListener {
 			int duration = ((Integer)status).intValue();
 			int hours = duration / 3600;
 			int mins = duration % 3600 / 60;
-			 statusMsg = Main.getMessage("telephone_entries").replaceAll("%N", Integer.toString(JFritz.getCallerList().getRowCount())) + ", " //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-					+ Main.getMessage("total_duration") + ": " + hours + "h " //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+			 statusMsg = messages.getMessage("telephone_entries").replaceAll("%N", Integer.toString(JFritz.getCallerList().getRowCount())) + ", " //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+					+ messages.getMessage("total_duration") + ": " + hours + "h " //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 					+ mins + " min " + " (" + duration / 60 + " min)"; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 			;
 		}

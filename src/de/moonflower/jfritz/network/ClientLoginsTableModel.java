@@ -1,15 +1,14 @@
 package de.moonflower.jfritz.network;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Vector;
-
 import java.awt.Component;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Vector;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -25,9 +24,13 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.Main;
-import de.moonflower.jfritz.callerlist.filter.*;
+import de.moonflower.jfritz.callerlist.filter.CallByCallFilter;
+import de.moonflower.jfritz.callerlist.filter.CallFilter;
+import de.moonflower.jfritz.callerlist.filter.DateFilter;
+import de.moonflower.jfritz.callerlist.filter.SearchFilter;
+import de.moonflower.jfritz.callerlist.filter.SipFilter;
 import de.moonflower.jfritz.dialogs.config.PermissionsDialog;
+import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -44,14 +47,15 @@ public class ClientLoginsTableModel extends AbstractTableModel{
 	public static final long serialVersionUID = 100;
 
 	private static Vector<Login> clientLogins = new Vector<Login>();
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public ClientLoginsTableModel(){
 		super();
 	}
 
-    private final String columnNames[] = { Main.getMessage("username"), Main.getMessage("password"), //$NON-NLS-1$,  //$NON-NLS-2$
-    		Main.getMessage("permissions"), Main.getMessage("callerlist_filters"),
-    		Main.getMessage("phonebook_filters")}; //$NON-NLS-1$,  //$NON-NLS-2$
+    private final String columnNames[] = { messages.getMessage("username"), messages.getMessage("password"), //$NON-NLS-1$,  //$NON-NLS-2$
+    		messages.getMessage("permissions"), messages.getMessage("callerlist_filters"),
+    		messages.getMessage("phonebook_filters")}; //$NON-NLS-1$,  //$NON-NLS-2$
 
 	public int getColumnCount(){
 		return columnNames.length;
@@ -75,11 +79,11 @@ public class ClientLoginsTableModel extends AbstractTableModel{
 			case 1:
 				return login.password;
 			case 2:
-				return Main.getMessage("set");
+				return messages.getMessage("set");
 			case 3:
-				return Main.getMessage("set");
+				return messages.getMessage("set");
 			case 4:
-				return Main.getMessage("set");
+				return messages.getMessage("set");
 			default:
 				return "";
 		}
@@ -109,8 +113,8 @@ public class ClientLoginsTableModel extends AbstractTableModel{
 		case 3:
 
 			if(value instanceof JDialog){
-				int resp = JOptionPane.showConfirmDialog((Component) value, Main.getMessage("apply_filter_client"),
-					Main.getMessage("set_client_callfilter"), JOptionPane.YES_NO_OPTION);
+				int resp = JOptionPane.showConfirmDialog((Component) value, messages.getMessage("apply_filter_client"),
+					messages.getMessage("set_client_callfilter"), JOptionPane.YES_NO_OPTION);
 
 				if(resp == 0){
 					Debug.netMsg("Setting call filters for client: "+login.user);

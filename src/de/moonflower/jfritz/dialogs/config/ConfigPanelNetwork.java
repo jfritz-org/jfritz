@@ -32,10 +32,12 @@ import de.moonflower.jfritz.callerlist.filter.CallFilter;
 import de.moonflower.jfritz.cellrenderer.ButtonCellRenderer;
 import de.moonflower.jfritz.cellrenderer.ButtonCellEditor;
 import de.moonflower.jfritz.cellrenderer.PasswordCellRenderer;
+import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.network.ClientLoginsTableModel;
 import de.moonflower.jfritz.network.Login;
 import de.moonflower.jfritz.network.NetworkStateListener;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -69,6 +71,9 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 
 	private JPanel clientPanel;
 
+	protected PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
+
 	public ConfigPanelNetwork(JDialog parent) {
 		this.parent = parent;
 
@@ -79,9 +84,9 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		mainPanel.setLayout(new BorderLayout());
 		setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
 		networkTypeCombo = new JComboBox();
-		networkTypeCombo.addItem(Main.getMessage("no_network_function")); //$NON-NLS-1$
-		networkTypeCombo.addItem(Main.getMessage("network_server_function")); //$NON-NLS-1$
-		networkTypeCombo.addItem(Main.getMessage("network_client_function")); //$NON-NLS-1$
+		networkTypeCombo.addItem(messages.getMessage("no_network_function")); //$NON-NLS-1$
+		networkTypeCombo.addItem(messages.getMessage("network_server_function")); //$NON-NLS-1$
+		networkTypeCombo.addItem(messages.getMessage("network_client_function")); //$NON-NLS-1$
 		networkTypeCombo.addActionListener(this);
 
 		mainPanel.add(networkTypeCombo, BorderLayout.NORTH);
@@ -98,7 +103,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 	}
 
 	public void loadSettings() {
-		String type = Main.getProperty("network.type");
+		String type = properties.getProperty("network.type");
 		if(type.equals("0")){
 			networkTypeCombo.setSelectedIndex(0);
 		}else if(type.equals("1")){
@@ -109,50 +114,50 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 			networkTypeCombo.setSelectedIndex(2);
 		}
 
-		clientTelephoneBook.setSelected(JFritzUtils.parseBoolean(Main
+		clientTelephoneBook.setSelected(JFritzUtils.parseBoolean(properties
 				.getProperty("option.clientTelephoneBook"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		clientCallList.setSelected(JFritzUtils.parseBoolean(Main
+		clientCallList.setSelected(JFritzUtils.parseBoolean(properties
 				.getProperty("option.clientCallList"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		clientCallMonitor.setSelected(JFritzUtils.parseBoolean(Main
+		clientCallMonitor.setSelected(JFritzUtils.parseBoolean(properties
 				.getProperty("option.clientCallMonitor"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		clientStandAlone.setSelected(JFritzUtils.parseBoolean(Main
+		clientStandAlone.setSelected(JFritzUtils.parseBoolean(properties
 				.getProperty("option.clientStandAlone"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		listenOnStartup.setSelected(JFritzUtils.parseBoolean(Main
+		listenOnStartup.setSelected(JFritzUtils.parseBoolean(properties
 				.getProperty("option.clientCallMonitor"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		connectOnStartup.setSelected(JFritzUtils.parseBoolean(Main
+		connectOnStartup.setSelected(JFritzUtils.parseBoolean(properties
 				.getProperty("option.connectOnStartup"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		listenOnStartup.setSelected(JFritzUtils.parseBoolean(Main
+		listenOnStartup.setSelected(JFritzUtils.parseBoolean(properties
 				.getProperty("option.listenOnStartup"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		serverName.setText(Main.getProperty("server.name"));
-		serverPort.setText(Main.getProperty("server.port"));
-		serverLogin.setText(Main.getProperty("server.login"));
-		serverPassword.setText(Encryption.decrypt(Main.getProperty("server.password")));
+		serverName.setText(properties.getProperty("server.name"));
+		serverPort.setText(properties.getProperty("server.port"));
+		serverLogin.setText(properties.getProperty("server.login"));
+		serverPassword.setText(Encryption.decrypt(properties.getProperty("server.password")));
 
-		clientsPort.setText(Main.getProperty("clients.port"));
-		maxConnections.setText(Main.getProperty("max.Connections"));
+		clientsPort.setText(properties.getProperty("clients.port"));
+		maxConnections.setText(properties.getProperty("max.Connections"));
 
 		if(NetworkStateMonitor.isListening()){
 			startServerButton.setSelected(true);
-			startServerButton.setText(Main.getMessage("server_is_listening"));
+			startServerButton.setText(messages.getMessage("server_is_listening"));
 			startClientButton.setSelected(false);
-			startClientButton.setText(Main.getMessage("connect_to_server"));
+			startClientButton.setText(messages.getMessage("connect_to_server"));
 		}else if(NetworkStateMonitor.isConnectedToServer()){
 			startClientButton.setSelected(true);
-			startClientButton.setText(Main.getMessage("client_is_connected"));
+			startClientButton.setText(messages.getMessage("client_is_connected"));
 			startServerButton.setSelected(false);
-			startServerButton.setText(Main.getMessage("start_listening_clients"));
+			startServerButton.setText(messages.getMessage("start_listening_clients"));
 		}else{
 			startClientButton.setSelected(false);
-			startClientButton.setText(Main.getMessage("connect_to_server"));
+			startClientButton.setText(messages.getMessage("connect_to_server"));
 			startServerButton.setSelected(false);
-			startServerButton.setText(Main.getMessage("start_listening_clients"));
+			startServerButton.setText(messages.getMessage("start_listening_clients"));
 		}
 
 	}
@@ -161,32 +166,32 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		// save the various settings
 		int selectedIndex = networkTypeCombo.getSelectedIndex();
 
-		Main.setProperty("option.clientTelephoneBook", Boolean.toString(clientTelephoneBook //$NON-NLS-1$
+		properties.setProperty("option.clientTelephoneBook", Boolean.toString(clientTelephoneBook //$NON-NLS-1$
 				.isSelected()));
-		Main.setProperty("option.clientCallList", Boolean //$NON-NLS-1$
+		properties.setProperty("option.clientCallList", Boolean //$NON-NLS-1$
 				.toString(clientCallList.isSelected()));
 
-		Main.setProperty("option.clientCallMonitor", Boolean
+		properties.setProperty("option.clientCallMonitor", Boolean
 				.toString(clientCallMonitor.isSelected()));
 
-		Main.setProperty("option.clientStandAlone", Boolean
+		properties.setProperty("option.clientStandAlone", Boolean
 				.toString(clientStandAlone.isSelected()));
 
-		Main.setProperty("network.type", String //$NON-NLS-1$
+		properties.setProperty("network.type", String //$NON-NLS-1$
 				.valueOf(selectedIndex));
-		Main.setProperty("option.connectOnStartup", Boolean //$NON-NLS-1$
+		properties.setProperty("option.connectOnStartup", Boolean //$NON-NLS-1$
 				.toString(connectOnStartup.isSelected()));
-		Main.setProperty("option.listenOnStartup", Boolean //$NON-NLS-1$
+		properties.setProperty("option.listenOnStartup", Boolean //$NON-NLS-1$
 				.toString(listenOnStartup.isSelected()));
 
-		Main.setProperty("server.name", serverName.getText());
-		Main.setProperty("server.port", serverPort.getText());
-		Main.setProperty("server.login", serverLogin.getText());
+		properties.setProperty("server.name", serverName.getText());
+		properties.setProperty("server.port", serverPort.getText());
+		properties.setProperty("server.login", serverLogin.getText());
 		String password = new String(serverPassword.getPassword());
-		Main.setProperty("server.password", Encryption.encrypt(password));
+		properties.setProperty("server.password", Encryption.encrypt(password));
 
-		Main.setProperty("clients.port", clientsPort.getText());
-		Main.setProperty("max.Connections", maxConnections.getText());
+		properties.setProperty("clients.port", clientsPort.getText());
+		properties.setProperty("max.Connections", maxConnections.getText());
 
 		NetworkStateMonitor.removeListener(this);
 
@@ -225,18 +230,18 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		c.anchor = GridBagConstraints.WEST;
 
 		c.gridy = 0;
-		optionsPanel.add(new JLabel(Main.getMessage("listen_on_startup")), c);
+		optionsPanel.add(new JLabel(messages.getMessage("listen_on_startup")), c);
 		listenOnStartup = new JCheckBox();
 		optionsPanel.add(listenOnStartup, c);
 
 		c.gridy = 1;
-		optionsPanel.add(new JLabel(Main.getMessage("client_connect_port")), c);
+		optionsPanel.add(new JLabel(messages.getMessage("client_connect_port")), c);
 		clientsPort = new JTextField("", 16);
 		clientsPort.setMinimumSize(new Dimension(200, 20));
 		optionsPanel.add(clientsPort, c);
 
 		c.gridy = 2;
-		optionsPanel.add(new JLabel(Main.getMessage("max_client_connections")), c);
+		optionsPanel.add(new JLabel(messages.getMessage("max_client_connections")), c);
 		maxConnections = new JTextField("", 16);
 		maxConnections.setMinimumSize(new Dimension(200, 20));
 		optionsPanel.add(maxConnections, c);
@@ -245,12 +250,12 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.anchor = GridBagConstraints.CENTER;
 		JPanel buttonsPanel = new JPanel();
-		JButton addButton = new JButton(Main.getMessage("add"));
+		JButton addButton = new JButton(messages.getMessage("add"));
 		addButton.setActionCommand("add");
 		addButton.addActionListener(this);
 		buttonsPanel.add(addButton);
 
-		JButton removeButton = new JButton(Main.getMessage("remove"));
+		JButton removeButton = new JButton(messages.getMessage("remove"));
 		removeButton.setActionCommand("remove");
 		removeButton.addActionListener(this);
 		buttonsPanel.add(removeButton);
@@ -333,7 +338,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 
 		c.weightx = 0.9;
 		c.gridy = 1;
-		label = new JLabel(Main.getMessage("client_call_list"));
+		label = new JLabel(messages.getMessage("client_call_list"));
 		label.setPreferredSize(new Dimension(200, 20));
 		panel.add(label, c);
 		clientCallList = new JCheckBox();
@@ -342,7 +347,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 
 		c.gridy = 2;
 		c.weightx = 0.9;
-		label = new JLabel(Main.getMessage("client_telephone_book"));
+		label = new JLabel(messages.getMessage("client_telephone_book"));
 		label.setPreferredSize(new Dimension(200, 20));
 		panel.add(label, c);
 		clientTelephoneBook = new JCheckBox();
@@ -351,7 +356,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 
 		c.gridy = 3;
 		c.weightx = 0.9;
-		label = new JLabel(Main.getMessage("client_call_monitor"));
+		label = new JLabel(messages.getMessage("client_call_monitor"));
 		label.setPreferredSize(new Dimension(200, 20));
 		panel.add(label, c);
 		clientCallMonitor = new JCheckBox();
@@ -360,7 +365,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 
 		c.gridy = 4;
 		c.weightx = 0.9;
-		label = new JLabel(Main.getMessage("connect_on_startup"));
+		label = new JLabel(messages.getMessage("connect_on_startup"));
 		label.setPreferredSize(new Dimension(200, 20));
 		panel.add(label, c);
 		connectOnStartup = new JCheckBox();
@@ -369,7 +374,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 
 		c.gridy = 5;
 		c.weightx = 0.9;
-		label = new JLabel(Main.getMessage("client_stand_alone"));
+		label = new JLabel(messages.getMessage("client_stand_alone"));
 		label.setPreferredSize(new Dimension(200, 20));
 		panel.add(label, c);
 		clientStandAlone = new JCheckBox();
@@ -379,7 +384,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		c.gridy = 6;
 		c.weightx = 0.9;
 		c.gridx = 0;
-		label = new JLabel(Main.getMessage("server_name"));
+		label = new JLabel(messages.getMessage("server_name"));
 		label.setPreferredSize(new Dimension(100, 20));
 		panel.add(label, c);
 		c.gridx = 1;
@@ -391,7 +396,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		c.weightx = 0.9;
 		c.gridy = 7;
 		c.gridx = 0;
-		label = new JLabel(Main.getMessage("server_login"));
+		label = new JLabel(messages.getMessage("server_login"));
 		label.setPreferredSize(new Dimension(100, 20));
 		panel.add(label, c);
 		c.gridx = 1;
@@ -403,7 +408,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		c.gridy = 8;
 		c.gridx = 0;
 		c.weightx = 0.9;
-		label = new JLabel(Main.getMessage("server_password"));
+		label = new JLabel(messages.getMessage("server_password"));
 		label.setPreferredSize(new Dimension(100, 20));
 		panel.add(label, c);
 		c.gridx = 1;
@@ -415,7 +420,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		c.gridy = 9;
 		c.gridx = 0;
 		c.weightx = 0.9;
-		label = new JLabel(Main.getMessage("server_port"));
+		label = new JLabel(messages.getMessage("server_port"));
 		label.setPreferredSize(new Dimension(100, 20));
 		panel.add(label, c);
 		c.gridx = 1;
@@ -517,26 +522,26 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 	public void clientStateChanged(){
 		if(NetworkStateMonitor.isConnectedToServer()){
 			startClientButton.setSelected(true);
-			startClientButton.setText(Main.getMessage("client_is_connected"));
+			startClientButton.setText(messages.getMessage("client_is_connected"));
 		}else{
 			startClientButton.setSelected(false);
-			startClientButton.setText(Main.getMessage("connect_to_server"));
+			startClientButton.setText(messages.getMessage("connect_to_server"));
 		}
 	}
 
 	public void serverStateChanged(){
 		if(NetworkStateMonitor.isListening()){
 			startClientButton.setSelected(true);
-			startClientButton.setText(Main.getMessage("server_is_listening"));
+			startClientButton.setText(messages.getMessage("server_is_listening"));
 		}else{
 			startClientButton.setSelected(false);
-			startClientButton.setText(Main.getMessage("start_listening_clients"));
+			startClientButton.setText(messages.getMessage("start_listening_clients"));
 		}
 	}
 
 	public String getPath()
 	{
-		return Main.getMessage("network");
+		return messages.getMessage("network");
 	}
 
 	public JPanel getPanel() {

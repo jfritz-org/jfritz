@@ -1,16 +1,16 @@
 package de.moonflower.jfritz.callmonitor;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.URLDecoder;
 import java.util.Vector;
-import java.io.DataOutputStream;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.phonebook.PhoneBook;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.utils.Debug;
@@ -38,6 +38,7 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
     private String boxName = "";
 
     private Vector<CallMonitorStatusListener> stateListener;
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public CallmessageCallMonitor(String boxName, int port, Vector<CallMonitorStatusListener> listener) {
 		super();
@@ -146,7 +147,7 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
 					//JFritz.getCallMonitorList().displayCallInMsg(number, msn, name);
 				} else {
 					// Message
-					JFritz.infoMsg(Main.getMessage("yac_message") + ":\n" //$NON-NLS-1$,  //$NON-NLS-2$
+					JFritz.infoMsg(messages.getMessage("yac_message") + ":\n" //$NON-NLS-1$,  //$NON-NLS-2$
 							+ msg);
 				}
 

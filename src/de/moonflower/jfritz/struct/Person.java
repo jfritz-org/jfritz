@@ -15,7 +15,7 @@ import java.util.Vector;
 
 import javax.swing.ImageIcon;
 
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.HTMLUtil;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
@@ -65,6 +65,7 @@ public class Person implements Cloneable, Serializable{
 	private String[] basicTypes = {"home", "mobile", "homezone", "business", //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$
 			"other", "fax", "sip", "main"}; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$
 
+	protected PropertyProvider properties = PropertyProvider.getInstance();
 
 	public Person() {
 		numbers = new Vector<PhoneNumberOld>();
@@ -837,7 +838,7 @@ public class Person implements Cloneable, Serializable{
 	}
 
 	public String getGoogleLink() {
-		String loc = Main.getProperty("locale");
+		String loc = properties.getProperty("locale");
 		String googlePrefix = "http://maps.google.com/maps?f=q&hl="+ loc.substring(0, 2) +"&q=";
 		String googleLink = "";
 		PhoneNumberOld localNumber = null;

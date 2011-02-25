@@ -7,7 +7,7 @@ package de.moonflower.jfritz.struct;
 
 import java.io.Serializable;
 
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.messages.MessageProvider;
 
 
 /**
@@ -26,6 +26,8 @@ public class CallType implements Serializable {
 	public static final String CALLIN_STR = "call_in"; //$NON-NLS-1$
 	public static final String CALLIN_FAILED_STR = "call_in_failed"; //$NON-NLS-1$
 	public static final String CALLOUT_STR = "call_out"; //$NON-NLS-1$
+
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public byte calltype;
 
@@ -52,11 +54,11 @@ public class CallType implements Serializable {
 
 	public String toDescription() {
 		if (calltype == CALLIN)
-			return Main.getMessage("incoming_call"); //$NON-NLS-1$
+			return messages.getMessage("incoming_call"); //$NON-NLS-1$
 		else if (calltype == CALLIN_FAILED)
-			return Main.getMessage("missed_call"); //$NON-NLS-1$
+			return messages.getMessage("missed_call"); //$NON-NLS-1$
 		else
-			return Main.getMessage("outgoing_call"); //$NON-NLS-1$
+			return messages.getMessage("outgoing_call"); //$NON-NLS-1$
 	}
 
 	public String toString() {

@@ -22,7 +22,7 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.network.Login;
 
 /**
@@ -42,6 +42,7 @@ public class PermissionsDialog extends JDialog {
     public static final int APPROVE_OPTION = 1;
 
     public static final int CANCEL_OPTION = 2;
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 
 	private JCheckBox allowCallList, allowCallListAdd, allowCallListUpdate, allowCallListRemove,
@@ -59,7 +60,7 @@ public class PermissionsDialog extends JDialog {
 	}
 
 	public void init(){
-		setTitle(Main.getMessage("set_client_permissions"));
+		setTitle(messages.getMessage("set_client_permissions"));
 	      setSize(340, 490);
 
 	      drawDialog();
@@ -125,66 +126,66 @@ public class PermissionsDialog extends JDialog {
 	    c.gridwidth = 1;
 
         c.gridy = 0;
-        allowCallList = new JCheckBox(Main.getMessage("allow_client_calllist"));
+        allowCallList = new JCheckBox(messages.getMessage("allow_client_calllist"));
         allowCallList.addActionListener(actionListener);
         panel.add(allowCallList, c);
 
 	    c.gridy = 1;
-        allowCallListAdd = new JCheckBox(Main.getMessage("allow_client_add_calllist"));
+        allowCallListAdd = new JCheckBox(messages.getMessage("allow_client_add_calllist"));
         panel.add(allowCallListAdd, c);
 
         c.gridy = 2;
-        allowCallListRemove = new JCheckBox(Main.getMessage("allow_client_remove_calllist"));
+        allowCallListRemove = new JCheckBox(messages.getMessage("allow_client_remove_calllist"));
         panel.add(allowCallListRemove, c);
 
         c.gridy = 3;
-        allowCallListUpdate = new JCheckBox(Main.getMessage("allow_client_update_calllist"));
+        allowCallListUpdate = new JCheckBox(messages.getMessage("allow_client_update_calllist"));
         panel.add(allowCallListUpdate, c);
 
         c.gridy = 4;
-        allowPhoneBook= new JCheckBox(Main.getMessage("allow_client_phonebook"));
+        allowPhoneBook= new JCheckBox(messages.getMessage("allow_client_phonebook"));
         allowPhoneBook.addActionListener(actionListener);
         panel.add(allowPhoneBook, c);
 
         c.gridy = 5;
-        allowPhoneBookAdd = new JCheckBox(Main.getMessage("allow_client_add_phonebook"));
+        allowPhoneBookAdd = new JCheckBox(messages.getMessage("allow_client_add_phonebook"));
         panel.add(allowPhoneBookAdd, c);
 
         c.gridy = 6;
-        allowPhoneBookRemove = new JCheckBox(Main.getMessage("allow_client_remove_phonebook"));
+        allowPhoneBookRemove = new JCheckBox(messages.getMessage("allow_client_remove_phonebook"));
         panel.add(allowPhoneBookRemove, c);
 
         c.gridy = 7;
-        allowPhoneBookUpdate = new JCheckBox(Main.getMessage("allow_client_update_phoneBook"));
+        allowPhoneBookUpdate = new JCheckBox(messages.getMessage("allow_client_update_phoneBook"));
         panel.add(allowPhoneBookUpdate, c);
 
         c.gridy = 8;
-        allowCallMonitor = new JCheckBox(Main.getMessage("allow_client_callmonitor"));
+        allowCallMonitor = new JCheckBox(messages.getMessage("allow_client_callmonitor"));
         panel.add(allowCallMonitor, c);
 
         c.gridy = 9;
-        allowLookup = new JCheckBox(Main.getMessage("allow_client_lookup"));
+        allowLookup = new JCheckBox(messages.getMessage("allow_client_lookup"));
         panel.add(allowLookup, c);
 
         c.gridy = 10;
-        allowGetCallList = new JCheckBox(Main.getMessage("allow_client_getcalllist"));
+        allowGetCallList = new JCheckBox(messages.getMessage("allow_client_getcalllist"));
         panel.add(allowGetCallList, c);
 
         c.gridy = 11;
-        allowDeleteList = new JCheckBox(Main.getMessage("allow_client_deletelist"));
+        allowDeleteList = new JCheckBox(messages.getMessage("allow_client_deletelist"));
         panel.add(allowDeleteList, c);
 
         c.gridy = 12;
-        allowDoCall = new JCheckBox(Main.getMessage("allow_client_docall"));
+        allowDoCall = new JCheckBox(messages.getMessage("allow_client_docall"));
         panel.add(allowDoCall, c);
 
         JPanel buttonPanel = new JPanel();
-        okButton = new JButton(Main.getMessage("okay")); //$NON-NLS-1$
+        okButton = new JButton(messages.getMessage("okay")); //$NON-NLS-1$
         okButton.setActionCommand("ok_pressed"); //$NON-NLS-1$
         okButton.addActionListener(actionListener);
         okButton.addKeyListener(keyListener);
 
-        cancelButton = new JButton(Main.getMessage("cancel")); //$NON-NLS-1$
+        cancelButton = new JButton(messages.getMessage("cancel")); //$NON-NLS-1$
         cancelButton.setActionCommand("cancel_pressed"); //$NON-NLS-1$
         cancelButton.addActionListener(actionListener);
         cancelButton.addKeyListener(keyListener);

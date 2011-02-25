@@ -1,7 +1,6 @@
 package de.moonflower.jfritz.dialogs.config;
 
 import java.awt.BorderLayout;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -13,13 +12,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.messages.MessageProvider;
 
 public class ConfigPanelBox extends JPanel implements ActionListener, ConfigPanel
 {
 	private static final long serialVersionUID = -9082897750502622409L;
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public ConfigPanelBox()
 	{
@@ -28,7 +28,7 @@ public class ConfigPanelBox extends JPanel implements ActionListener, ConfigPane
 
 		JPanel topPane = new JPanel();
 		JLabel title = new JLabel();
-		title.setText("Configured Boxes"); // @todo: Main.getMessage
+		title.setText("Configured Boxes"); // @todo: messages.getMessage
 		topPane.add(title);
 		this.add(topPane, BorderLayout.NORTH);
 
@@ -42,19 +42,19 @@ public class ConfigPanelBox extends JPanel implements ActionListener, ConfigPane
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.Y_AXIS));
 
-		JButton addButton = new JButton(Main.getMessage("add"));
+		JButton addButton = new JButton(messages.getMessage("add"));
 		buttonPane.add(addButton);
 
-		JButton editButton = new JButton(Main.getMessage("edit"));
+		JButton editButton = new JButton(messages.getMessage("edit"));
 		buttonPane.add(editButton);
 
-		JButton removeButton = new JButton(Main.getMessage("remove"));
+		JButton removeButton = new JButton(messages.getMessage("remove"));
 		buttonPane.add(removeButton);
 
-		JButton moveUpButton = new JButton(Main.getMessage("move_up"));
+		JButton moveUpButton = new JButton(messages.getMessage("move_up"));
 		buttonPane.add(moveUpButton);
 
-		JButton moveDownButton = new JButton(Main.getMessage("move_down"));
+		JButton moveDownButton = new JButton(messages.getMessage("move_down"));
 		buttonPane.add(moveDownButton);
 
 		contentPane.add(tablePane, BorderLayout.CENTER);

@@ -14,6 +14,8 @@ import java.util.GregorianCalendar;
 import java.util.Vector;
 
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 
 /**
  * This class allows to backup files to a
@@ -30,6 +32,8 @@ public class CopyFile {
     private String sourceDirectory, fileFormat;
     private Date date;
     SimpleDateFormat df = new SimpleDateFormat( "yyyy.MM.dd_HH.mm.ss" ); //$NON-NLS-1$
+    protected PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
 
     /**
      * gets all files with the ending "fileFormat" in directory "sourceDirectory"
@@ -177,7 +181,7 @@ public class CopyFile {
      */
     public void copy(String sourceDirectory, String fileFormat, String targetDirectory) {
 
-    	if (JFritzUtils.parseBoolean(Main.getProperty("option.keepImportantBackupsOnly")))
+    	if (JFritzUtils.parseBoolean(properties.getProperty("option.keepImportantBackupsOnly")))
     	{
     		clearOldBackups(fileFormat);
     	}
@@ -192,7 +196,7 @@ public class CopyFile {
     	if ((sourceDirectory != null)
 			&& (sourceDirectory.equals(targetDirectory)))
     	{
-    		Debug.errDlg(Main.getMessage("backup_to_source_directory"));
+    		Debug.errDlg(messages.getMessage("backup_to_source_directory"));
     		return;
     	}
 

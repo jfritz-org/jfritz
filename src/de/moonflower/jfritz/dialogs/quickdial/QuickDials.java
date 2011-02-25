@@ -24,10 +24,10 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.ProgramConstants;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.struct.QuickDial;
 import de.moonflower.jfritz.utils.Debug;
 
@@ -39,6 +39,7 @@ import de.moonflower.jfritz.utils.Debug;
 public class QuickDials extends AbstractTableModel {
 	private static final long serialVersionUID = 1;
 	private static final String QUICKDIALS_DTD_URI = "http://jfritz.moonflower.de/dtd/quickdials.dtd";  //$NON-NLS-1$
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	private static final String QUICKDIALS_DTD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"  //$NON-NLS-1$
 			+ "<!-- DTD for JFritz quickdials -->"  //$NON-NLS-1$
@@ -121,13 +122,13 @@ public class QuickDials extends AbstractTableModel {
 	public String getColumnName(int column) {
 		switch (column) {
 		case 0:
-			return Main.getMessage("quickdial");  //$NON-NLS-1$
+			return messages.getMessage("quickdial");  //$NON-NLS-1$
 		case 1:
-			return Main.getMessage("vanity");  //$NON-NLS-1$
+			return messages.getMessage("vanity");  //$NON-NLS-1$
 		case 2:
-			return Main.getMessage("number");  //$NON-NLS-1$
+			return messages.getMessage("number");  //$NON-NLS-1$
 		case 3:
-			return Main.getMessage("description");  //$NON-NLS-1$
+			return messages.getMessage("description");  //$NON-NLS-1$
 		default:
 			return null;
 		}

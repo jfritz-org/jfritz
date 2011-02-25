@@ -9,8 +9,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Vector;
+
 import javax.swing.table.AbstractTableModel;
-import de.moonflower.jfritz.Main;
+
+import de.moonflower.jfritz.messages.MessageProvider;
 
 /**
  * @author Arno Willig
@@ -19,9 +21,10 @@ import de.moonflower.jfritz.Main;
 public class SipProviderTableModel extends AbstractTableModel {
 
     private static final long serialVersionUID = 100;
+	protected MessageProvider messages = MessageProvider.getInstance();
 
-    private final String columnNames[] = { Main.getMessage("id"), Main.getMessage("active"), //$NON-NLS-1$,  //$NON-NLS-2$
-    		Main.getMessage("sip_numbers"), Main.getMessage("provider") }; //$NON-NLS-1$,  //$NON-NLS-2$
+    private final String columnNames[] = { messages.getMessage("id"), messages.getMessage("active"), //$NON-NLS-1$,  //$NON-NLS-2$
+    		messages.getMessage("sip_numbers"), messages.getMessage("provider") }; //$NON-NLS-1$,  //$NON-NLS-2$
 
     private Vector<SipProvider> providerList;
 
@@ -54,9 +57,9 @@ public class SipProviderTableModel extends AbstractTableModel {
             return Integer.toString(sip.getProviderID());
         case 1:
             if (sip.isActive())
-                return Main.getMessage("yes"); //$NON-NLS-1$
+                return messages.getMessage("yes"); //$NON-NLS-1$
             else
-                return Main.getMessage("no"); //$NON-NLS-1$
+                return messages.getMessage("no"); //$NON-NLS-1$
         case 2:
             return sip.getNumber();
         case 3:

@@ -13,10 +13,11 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.SIDLogin;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -64,6 +65,9 @@ public class FritzBoxFirmware {
 
 	private final static String PATTERN_DETECT_LANGUAGE_EN = "Telephony";
 
+	protected static PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
+
 	/**
 	 * Firmware Constructor using Strings
 	 *
@@ -103,8 +107,8 @@ public class FritzBoxFirmware {
 			InvalidFirmwareException {
 		final String urlstr = box_protocol + "://" + box_address + ":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
 
-		if (Main.getProperty("network.type").equals("2")
-				&& Boolean.parseBoolean(Main
+		if (properties.getProperty("network.type").equals("2")
+				&& Boolean.parseBoolean(properties
 						.getProperty("option.clientCallList"))
 				&& NetworkStateMonitor.isConnectedToServer()) {
 
@@ -365,7 +369,7 @@ public class FritzBoxFirmware {
 		case 100:
 			return "FRITZ!Box 7320"; //$NON-NLS-1$
 		default:
-			return Main.getMessage("unknown"); //$NON-NLS-1$
+			return messages.getMessage("unknown"); //$NON-NLS-1$
 		}
 	}
 

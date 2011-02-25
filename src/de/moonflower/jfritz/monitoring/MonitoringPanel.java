@@ -1,34 +1,20 @@
 package de.moonflower.jfritz.monitoring;
 
-import org.jfree.chart.axis.DateAxis;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.ValueAxis;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.labels.StandardXYToolTipGenerator;
-import org.jfree.chart.renderer.xy.XYAreaRenderer;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.plot.DatasetRenderingOrder;
-
-import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GradientPaint;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.GradientPaint;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Timer;
+import java.util.TimerTask;
 
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -36,19 +22,36 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.TableCellRenderer;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.Timer;
-import java.util.TimerTask;
-
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.labels.StandardXYToolTipGenerator;
+import org.jfree.chart.plot.DatasetRenderingOrder;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYAreaRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.Main;
-import de.moonflower.jfritz.cellrenderer.*;
-import de.moonflower.jfritz.monitoring.CurrentCallsTable;
+import de.moonflower.jfritz.cellrenderer.CallByCallCellRenderer;
+import de.moonflower.jfritz.cellrenderer.CallTypeCellRenderer;
+import de.moonflower.jfritz.cellrenderer.DateCellRenderer;
+import de.moonflower.jfritz.cellrenderer.NumberCellRenderer;
+import de.moonflower.jfritz.cellrenderer.PersonCellRenderer;
+import de.moonflower.jfritz.cellrenderer.PortCellRenderer;
+import de.moonflower.jfritz.cellrenderer.RouteCellRenderer;
+import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.StatusBarController;
 import de.moonflower.jfritz.utils.network.UPNPAddonInfosListener;
 import de.moonflower.jfritz.utils.network.UPNPCommonLinkPropertiesListener;
@@ -100,6 +103,10 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 					upnpControlLabel, pppoePassThroughLabel,
 					sendRateLabel, receivedRateLabel,
 					totalSentLabel, totalReceivedLabel;
+
+	protected PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
+
 	/**
 	 * Creates the two monitoring sub panels and initializes everything
 	 *
@@ -147,13 +154,13 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 
 		c.gridx = 0;
 		c.gridy = 0;
-		staticInformations.add(new JLabel(Main.getMessage("external_ip")), c); //$NON-NLS-1$
+		staticInformations.add(new JLabel(messages.getMessage("external_ip")), c); //$NON-NLS-1$
 		c.gridx = c.gridx + 1;
 		c.insets.right = PADDING_RIGHT;
 		staticInformations.add(externalIPLabel, c);
 		c.insets.right = 0;
 		c.gridx = c.gridx + 1;
-		staticInformations.add(new JLabel(Main.getMessage("uptime")), c); //$NON-NLS-1$
+		staticInformations.add(new JLabel(messages.getMessage("uptime")), c); //$NON-NLS-1$
 		c.gridx = c.gridx + 1;
 		staticInformations.add(uptimeLabel, c);
 
@@ -161,7 +168,7 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 
 		c.gridx = 0;
 		c.gridy = c.gridy + 1;
-		staticInformations.add(new JLabel(Main.getMessage("sync_down")), c); //$NON-NLS-1$
+		staticInformations.add(new JLabel(messages.getMessage("sync_down")), c); //$NON-NLS-1$
 		c.gridx = c.gridx + 1;
 		c.anchor = GridBagConstraints.EAST;
 		c.insets.right = PADDING_RIGHT;
@@ -169,13 +176,13 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		c.insets.right = 0;
 		c.gridx = c.gridx + 1;
 		c.anchor = GridBagConstraints.WEST;
-		staticInformations.add(new JLabel(Main.getMessage("upnp_control")), c); //$NON-NLS-1$
+		staticInformations.add(new JLabel(messages.getMessage("upnp_control")), c); //$NON-NLS-1$
 		c.gridx = c.gridx + 1;
 		staticInformations.add(upnpControlLabel, c);
 
 		c.gridx = 0;
 		c.gridy = c.gridy + 1;
-		staticInformations.add(new JLabel(Main.getMessage("sync_up")), c); //$NON-NLS-1$
+		staticInformations.add(new JLabel(messages.getMessage("sync_up")), c); //$NON-NLS-1$
 		c.gridx = c.gridx + 1;
 		c.anchor = GridBagConstraints.EAST;
 		c.insets.right = PADDING_RIGHT;
@@ -183,43 +190,43 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		c.insets.right = 0;
 		c.gridx = c.gridx + 1;
 		c.anchor = GridBagConstraints.WEST;
-		staticInformations.add(new JLabel(Main.getMessage("pppoe_passthrough")), c); //$NON-NLS-1$
+		staticInformations.add(new JLabel(messages.getMessage("pppoe_passthrough")), c); //$NON-NLS-1$
 		c.gridx = c.gridx + 1;
 		staticInformations.add(pppoePassThroughLabel, c);
 
 		c.gridx = 0;
 		c.gridy = c.gridy + 1;
-		staticInformations.add(new JLabel(Main.getMessage("dns_server_1")), c); //$NON-NLS-1$
+		staticInformations.add(new JLabel(messages.getMessage("dns_server_1")), c); //$NON-NLS-1$
 		c.gridx = c.gridx + 1;
 		c.insets.right = PADDING_RIGHT;
 		staticInformations.add(dns1Label, c);
 		c.insets.right = 0;
 		c.gridx = c.gridx + 1;
-		staticInformations.add(new JLabel(Main.getMessage("dns_server_voip_1")), c); //$NON-NLS-1$
+		staticInformations.add(new JLabel(messages.getMessage("dns_server_voip_1")), c); //$NON-NLS-1$
 		c.gridx = c.gridx + 1;
 		staticInformations.add(voipDnsLabel1, c);
 
 		c.gridx = 0;
 		c.gridy = c.gridy + 1;
-		staticInformations.add(new JLabel(Main.getMessage("dns_server_2")), c); //$NON-NLS-1$
+		staticInformations.add(new JLabel(messages.getMessage("dns_server_2")), c); //$NON-NLS-1$
 		c.gridx = c.gridx + 1;
 		c.insets.right = PADDING_RIGHT;
 		staticInformations.add(dns2Label, c);
 		c.insets.right = 0;
 		c.gridx = c.gridx + 1;
-		staticInformations.add(new JLabel(Main.getMessage("dns_server_voip_2")), c); //$NON-NLS-1$
+		staticInformations.add(new JLabel(messages.getMessage("dns_server_voip_2")), c); //$NON-NLS-1$
 		c.gridx = c.gridx + 1;
 		staticInformations.add(voipDnsLabel2, c);
 
 		c.gridx = 0;
 		c.gridy = c.gridy + 1;
-		staticInformations.add(new JLabel(Main.getMessage("auto_disconnect_time")), c); //$NON-NLS-1$
+		staticInformations.add(new JLabel(messages.getMessage("auto_disconnect_time")), c); //$NON-NLS-1$
 		c.gridx = c.gridx + 1;
 		staticInformations.add(autoDisconnectLabel, c);
 
 		c.gridx = 0;
 		c.gridy = c.gridy + 1;
-		staticInformations.add(new JLabel(Main.getMessage("connection_idle_time")), c); //$NON-NLS-1$
+		staticInformations.add(new JLabel(messages.getMessage("connection_idle_time")), c); //$NON-NLS-1$
 		c.gridx = c.gridx + 1;
 		staticInformations.add(idleTimeLabel, c);
 
@@ -228,13 +235,13 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		c.gridwidth = 4;
 		c.anchor = GridBagConstraints.CENTER;
 		c.insets.top = PADDING_TOP;
-		actualizeStaticData = new JButton(Main.getMessage("actualize")); //$NON-NLS-1$
+		actualizeStaticData = new JButton(messages.getMessage("actualize")); //$NON-NLS-1$
 		actualizeStaticData.setActionCommand("actualizeStaticUpnp"); //$NON-NLS-1$
 		actualizeStaticData.addActionListener(this);
 		staticInformations.add(actualizeStaticData, c);
 		Border lowerEtched = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
 		TitledBorder title = BorderFactory.createTitledBorder(
-			       lowerEtched, Main.getMessage("dsl_information")); //$NON-NLS-1$
+			       lowerEtched, messages.getMessage("dsl_information")); //$NON-NLS-1$
 		title.setTitleJustification(TitledBorder.CENTER);
 		Border upperPanelBorder = BorderFactory.createCompoundBorder(
 				title, new EmptyBorder(15,0,0,0));
@@ -246,10 +253,10 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		dynamicInformations.setLayout(new BorderLayout());
 		//initialize the data series, domain is time
 		//range is the kb/s value
-		inSeries = new XYSeries(Main.getMessage("upload")); //$NON-NLS-1$
+		inSeries = new XYSeries(messages.getMessage("upload")); //$NON-NLS-1$
 		inSeries.add(System.currentTimeMillis(), 0.0);
 
-		outSeries = new XYSeries(Main.getMessage("download")); //$NON-NLS-1$
+		outSeries = new XYSeries(messages.getMessage("download")); //$NON-NLS-1$
 		outSeries.add(System.currentTimeMillis(), 0.0);
 
 		collectionIn = new XYSeriesCollection();
@@ -320,7 +327,7 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		c.gridx = 0;
 		c.gridy = c.gridy + 1;
 		c.insets.top = PADDING_TOP;
-		dynamicLabels.add(new JLabel(Main.getMessage("send_rate")), c); //$NON-NLS-1$
+		dynamicLabels.add(new JLabel(messages.getMessage("send_rate")), c); //$NON-NLS-1$
 		c.gridx = c.gridx + 1;
 		c.anchor = GridBagConstraints.EAST;
 		c.insets.right = PADDING_RIGHT;
@@ -328,7 +335,7 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		c.insets.right = 0;
 		c.gridx = c.gridx + 1;
 		c.anchor = GridBagConstraints.WEST;
-		dynamicLabels.add(new JLabel(Main.getMessage("totaldatasent")), c); //$NON-NLS-1$
+		dynamicLabels.add(new JLabel(messages.getMessage("totaldatasent")), c); //$NON-NLS-1$
 		c.gridx = c.gridx + 1;
 		c.anchor = GridBagConstraints.EAST;
 		dynamicLabels.add(totalSentLabel, c);
@@ -337,7 +344,7 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		c.gridy = c.gridy + 1;
 		c.anchor = GridBagConstraints.WEST;
 		c.insets.top = 0;
-		dynamicLabels.add(new JLabel(Main.getMessage("receive_rate")), c); //$NON-NLS-1$
+		dynamicLabels.add(new JLabel(messages.getMessage("receive_rate")), c); //$NON-NLS-1$
 		c.gridx = c.gridx + 1;
 		c.anchor = GridBagConstraints.EAST;
 		c.insets.right = PADDING_RIGHT;
@@ -345,17 +352,17 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		c.insets.right = 0;
 		c.gridx = c.gridx + 1;
 		c.anchor = GridBagConstraints.WEST;
-		dynamicLabels.add(new JLabel(Main.getMessage("totaldatareceived")), c); //$NON-NLS-1$
+		dynamicLabels.add(new JLabel(messages.getMessage("totaldatareceived")), c); //$NON-NLS-1$
 		c.gridx = c.gridx + 1;
 		c.anchor = GridBagConstraints.EAST;
 		dynamicLabels.add(totalReceivedLabel, c);
 
 		 //setup the monitoring toggle button
-		enableInetMonitoring = new JToggleButton(Main.getMessage("enable_inet_monitoring")); //$NON-NLS-1$
+		enableInetMonitoring = new JToggleButton(messages.getMessage("enable_inet_monitoring")); //$NON-NLS-1$
 		enableInetMonitoring.setActionCommand("toggleInetMonitoring"); //$NON-NLS-1$
 		enableInetMonitoring.addActionListener(this);
 //		enableInetMonitoring.setSize(new Dimension(200,30));
-		if(Main.getStateProperty("inet.monitoring", "false").equals("true")){ //$NON-NLS-1$, //$NON-NLS-2$
+		if(properties.getStateProperty("inet.monitoring", "false").equals("true")){ //$NON-NLS-1$, //$NON-NLS-2$
 			enableInetMonitoring.setSelected(true);
 			setDynamicTimer();
 			actualizeStaticData.setEnabled(false);
@@ -376,7 +383,7 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		//create the border for the panel
 		lowerEtched = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
 		title = BorderFactory.createTitledBorder(
-			       lowerEtched, Main.getMessage("inet_usgage")); //$NON-NLS-1$
+			       lowerEtched, messages.getMessage("inet_usgage")); //$NON-NLS-1$
 		title.setTitleJustification(TitledBorder.CENTER);
 		upperPanelBorder = BorderFactory.createCompoundBorder(
 				title, new EmptyBorder(15,0,0,0));
@@ -458,7 +465,7 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		//create the Border
 		Border lowerEtched = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
 		TitledBorder title = BorderFactory.createTitledBorder(
-			       lowerEtched, Main.getMessage("calls_in_progress")); //$NON-NLS-1$
+			       lowerEtched, messages.getMessage("calls_in_progress")); //$NON-NLS-1$
 		title.setTitleJustification(TitledBorder.CENTER);
 		Border lowerPanelBorder = BorderFactory.createCompoundBorder(
 				title, new EmptyBorder(15,0,5,0));
@@ -509,11 +516,11 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 
 		if (e.getActionCommand().equals("toggleInetMonitoring")){ //$NON-NLS-1$
 			if(enableInetMonitoring.isSelected()){
-				Main.setStateProperty("inet.monitoring", "true"); //$NON-NLS-1$, //$NON-NLS-2$
+				properties.setStateProperty("inet.monitoring", "true"); //$NON-NLS-1$, //$NON-NLS-2$
 				setDynamicTimer();
 				actualizeStaticData.setEnabled(false);
 			}else{
-				Main.setStateProperty("inet.monitoring", "false"); //$NON-NLS-1$, //$NON-NLS-2$
+				properties.setStateProperty("inet.monitoring", "false"); //$NON-NLS-1$, //$NON-NLS-2$
 				if (dynamicUpnpTimer != null)
 					dynamicUpnpTimer.cancel();
 				actualizeStaticData.setEnabled(true);
@@ -611,13 +618,13 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		}
 		if (disconnectTime.equals("0"))
 		{
-			autoDisconnectLabel.setText(Main.getMessage("disabled"));
+			autoDisconnectLabel.setText(messages.getMessage("disabled"));
 		}
 		else
 		{
-			autoDisconnectLabel.setText(disconnectTime + " " + Main.getMessage("second_seconds"));
+			autoDisconnectLabel.setText(disconnectTime + " " + messages.getMessage("second_seconds"));
 		}
-		idleTimeLabel.setText(idleTime + " " + Main.getMessage("second_seconds"));
+		idleTimeLabel.setText(idleTime + " " + messages.getMessage("second_seconds"));
 	}
 
 	public void setOtherInfo(String upnpControl, String routedMode) {
@@ -627,20 +634,20 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		}
 		if (upnpControl.equals("1")) //$NON-NLS-1$
 		{
-			upnpControlLabel.setText(Main.getMessage("enabled")); //$NON-NLS-1$
+			upnpControlLabel.setText(messages.getMessage("enabled")); //$NON-NLS-1$
 		}
 		else
 		{
-			upnpControlLabel.setText(Main.getMessage("disabled")); //$NON-NLS-1$
+			upnpControlLabel.setText(messages.getMessage("disabled")); //$NON-NLS-1$
 		}
 
 		if (routedMode.equals("1")) //$NON-NLS-1$
 		{
-			pppoePassThroughLabel.setText(Main.getMessage("enabled")); //$NON-NLS-1$
+			pppoePassThroughLabel.setText(messages.getMessage("enabled")); //$NON-NLS-1$
 		}
 		else
 		{
-			pppoePassThroughLabel.setText(Main.getMessage("disabled")); //$NON-NLS-1$
+			pppoePassThroughLabel.setText(messages.getMessage("disabled")); //$NON-NLS-1$
 		}
 	}
 
@@ -780,19 +787,19 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		      String uptimeNew = ""; //$NON-NLS-1$
 		      if (tagerg != 0)
 		      {
-		    	  uptimeNew = uptimeNew + tagerg + " " + Main.getMessage("day_days") + " "; //$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$
+		    	  uptimeNew = uptimeNew + tagerg + " " + messages.getMessage("day_days") + " "; //$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$
 		      }
 		      if ((tagerg == 0 && stderg != 0) || tagerg != 0)
 		      {
-		    	  uptimeNew = uptimeNew + stderg + " " + Main.getMessage("hour_hours") + " "; //$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$
+		    	  uptimeNew = uptimeNew + stderg + " " + messages.getMessage("hour_hours") + " "; //$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$
 		      }
 		      if ((tagerg == 0 && stderg == 0 && minerg != 0) || (tagerg != 0) || (stderg != 0))
 		      {
-		    	  uptimeNew = uptimeNew + minerg + " " + Main.getMessage("minute_minutes") + " "; //$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$
+		    	  uptimeNew = uptimeNew + minerg + " " + messages.getMessage("minute_minutes") + " "; //$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$
 		      }
 		      if ((tagerg == 0 && stderg == 0 && minerg == 0 && sekerg != 0) || (tagerg != 0) || (stderg != 0) || (minerg != 0))
 		      {
-		    	  uptimeNew = uptimeNew + sekerg + " " + Main.getMessage("second_seconds"); //$NON-NLS-1$, //$NON-NLS-2$
+		    	  uptimeNew = uptimeNew + sekerg + " " + messages.getMessage("second_seconds"); //$NON-NLS-1$, //$NON-NLS-2$
 		      }
 
 			  uptimeLabel.setText(uptimeNew);

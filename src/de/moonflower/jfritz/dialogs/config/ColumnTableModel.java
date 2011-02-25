@@ -4,13 +4,14 @@ import java.util.Vector;
 
 import javax.swing.table.AbstractTableModel;
 
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.JFritzTableColumn;
+import de.moonflower.jfritz.messages.MessageProvider;
 
 public class ColumnTableModel extends AbstractTableModel {
+	protected MessageProvider messages = MessageProvider.getInstance();
 	private final String columnNames[] = {
-			Main.getMessage("visible"), 	//$NON-NLS-1$
-			Main.getMessage("column") }; 		//$NON-NLS-1$
+			messages.getMessage("visible"), 	//$NON-NLS-1$
+			messages.getMessage("column") }; 		//$NON-NLS-1$
 
 	private static final long serialVersionUID = 5141550318674410834L;
 

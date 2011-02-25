@@ -1,13 +1,12 @@
 package de.moonflower.jfritz.network;
 
 import java.io.IOException;
-
 import java.net.ServerSocket;
 import java.net.SocketException;
-
 import java.util.Vector;
 
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.Debug;
 
 /**
@@ -102,6 +101,9 @@ public class ClientConnectionListener extends Thread {
 
 	private static boolean quit = false;
 
+	protected PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
+
 	public void run(){
 		Debug.netMsg("client connection listener started");
 		connectedClients = new Vector<ClientConnectionThread>();
@@ -120,17 +122,17 @@ public class ClientConnectionListener extends Thread {
 
 				try{
 					serverSocket = new ServerSocket(Integer.parseInt(
-							Main.getProperty("clients.port")));
+							properties.getProperty("clients.port")));
 
 					Debug.netMsg("Listening for client connections on: "+
-							Main.getProperty("clients.port"));
+							properties.getProperty("clients.port"));
 					isListening = true;
 					NetworkStateMonitor.serverStateChanged();
 
 					while(listen){
 
 						//make sure we dont exceed our maximum amount of connections
-						if(Integer.parseInt(Main.getProperty("max.Connections")) <= connectedClients.size()){
+						if(Integer.parseInt(properties.getProperty("max.Connections")) <= connectedClients.size()){
 
 							synchronized(this){
 								try{
@@ -167,7 +169,7 @@ public class ClientConnectionListener extends Thread {
 					}
 
 				}catch(IOException e){
-					Debug.errDlg(Main.getMessage("error_binding_port") + ": " + Main.getProperty("clients.port"));
+					Debug.errDlg(messages.getMessage("error_binding_port") + ": " + properties.getProperty("clients.port"));
 					Debug.error(e.toString());
 					e.printStackTrace();
 				}

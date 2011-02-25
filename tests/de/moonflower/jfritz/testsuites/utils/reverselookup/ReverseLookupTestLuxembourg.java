@@ -6,7 +6,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
@@ -20,8 +21,8 @@ public class ReverseLookupTestLuxembourg extends ReverseLookupTestBase {
 		Debug.on();
     	Debug.setVerbose(true);
     	Debug.setDebugLevel(Debug.LS_DEBUG);
-		Main.loadProperties(false);
-		Main.loadMessages(new Locale("de_DE"));
+		PropertyProvider.getInstance().loadProperties(false);
+		MessageProvider.getInstance().loadMessages(new Locale("de_DE"));
 		JFritz.loadNumberSettings();
 	}
 

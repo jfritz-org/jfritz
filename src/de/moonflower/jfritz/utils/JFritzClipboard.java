@@ -9,11 +9,12 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.util.Vector;
 
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.messages.MessageProvider;
 
 public class JFritzClipboard{
 
-	Clipboard systemClip = null;
+	protected MessageProvider messages = MessageProvider.getInstance();
+	private Clipboard systemClip = null;
 
 	public JFritzClipboard()
 	{
@@ -69,7 +70,7 @@ public class JFritzClipboard{
         }catch(IllegalStateException ise)
         {
         	Debug.error("Cannot copy "+text+" into clipboard (clipboard not available)"); //$NON-NLS-1$,  //$NON-NLS-2$
-        	Debug.errDlg(Main.getMessage("error_clipboard_not_available")); //$NON-NLS-1$
+        	Debug.errDlg(messages.getMessage("error_clipboard_not_available")); //$NON-NLS-1$
         }
     }
 

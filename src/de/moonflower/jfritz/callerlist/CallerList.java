@@ -44,8 +44,10 @@ import de.moonflower.jfritz.box.BoxCallBackListener;
 import de.moonflower.jfritz.callerlist.filter.CallFilter;
 import de.moonflower.jfritz.callerlist.filter.DateFilter;
 import de.moonflower.jfritz.importexport.CSVCallerListImport;
+import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.phonebook.PhoneBook;
 import de.moonflower.jfritz.phonebook.PhoneBookListener;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.IProgressListener;
@@ -131,6 +133,9 @@ public class CallerList extends AbstractTableModel
 	private NumberCallMultiHashMap hashMap;
 
 	private boolean initStage = true;
+
+	private PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	/**
 	 * CallerList Constructor new contrustor, using binary sizes
@@ -440,19 +445,18 @@ public class CallerList extends AbstractTableModel
 			String msg;
 
 			if (newEntries == 1) {
-				msg = Main.getMessage("imported_call"); //$NON-NLS-1$
+				msg = messages.getMessage("imported_call"); //$NON-NLS-1$
 			} else {
-				msg = Main
-						.getMessage("imported_calls").replaceAll("%N", Integer.toString(newEntries)); //$NON-NLS-1$, //$NON-NLS-2$
+				msg = messages.getMessage("imported_calls").replaceAll("%N", Integer.toString(newEntries)); //$NON-NLS-1$, //$NON-NLS-2$
 			}
 
 			// Notify user?
-			if (JFritzUtils.parseBoolean(Main.getProperty("option.notifyOnCalls"))) {
+			if (JFritzUtils.parseBoolean(properties.getProperty("option.notifyOnCalls"))) {
 				JFritz.infoMsg(msg);
 			}
 
 			// Make back-up after fetching the caller list?
-			if (JFritzUtils.parseBoolean(Main.getProperty(
+			if (JFritzUtils.parseBoolean(properties.getProperty(
 							"option.createBackupAfterFetch")))
 			{
 				doBackup();
@@ -1136,7 +1140,7 @@ public class CallerList extends AbstractTableModel
 		if ((rows != null) && (rows.length == 1)) {
 			return this.filteredCallerData.elementAt(rows[0]);
 		} else {
-			Debug.errDlg(Main.getMessage("error_choose_one_call")); //$NON-NLS-1$
+			Debug.errDlg(messages.getMessage("error_choose_one_call")); //$NON-NLS-1$
 		}
 
 		return null;
@@ -1363,7 +1367,7 @@ public class CallerList extends AbstractTableModel
 
 		// Phone number
 		if (!field[2].equals("")) {
-			number = new PhoneNumberOld(field[2], Main.getProperty(
+			number = new PhoneNumberOld(field[2], properties.getProperty(
 					"option.activateDialPrefix").toLowerCase().equals("true")
 					&& (calltype.toInt() == CallType.CALLOUT)
 					&& !field[4].startsWith("Internet"));
@@ -1463,7 +1467,7 @@ public class CallerList extends AbstractTableModel
 
 		// Phone number
 		if (!field[3].equals("")) {
-			number = new PhoneNumberOld(field[3], Main.getProperty(
+			number = new PhoneNumberOld(field[3], properties.getProperty(
 					"option.activateDialPrefix").toLowerCase().equals("true")
 					&& (calltype.toInt() == CallType.CALLOUT)
 					&& !field[5].startsWith("Internet"));
@@ -1577,7 +1581,7 @@ public class CallerList extends AbstractTableModel
 
 		// Phone number
 		if (!field[2].equals("")) {
-			number = new PhoneNumberOld(field[2], Main.getProperty(
+			number = new PhoneNumberOld(field[2], properties.getProperty(
 					"option.activateDialPrefix").toLowerCase().equals("true")
 					&& (calltype.toInt() == CallType.CALLOUT)
 					&& !field[4].startsWith("Internet"));
@@ -1695,7 +1699,7 @@ public class CallerList extends AbstractTableModel
 
 		// Phone number
 		if (!field[3].equals("")) {
-			number = new PhoneNumberOld(field[3], Main.getProperty(
+			number = new PhoneNumberOld(field[3], properties.getProperty(
 					"option.activateDialPrefix").toLowerCase().equals("true")
 					&& (calltype.toInt() == CallType.CALLOUT)
 					&& !field[5].startsWith("Internet"));

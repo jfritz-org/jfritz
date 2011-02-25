@@ -71,10 +71,12 @@ import de.moonflower.jfritz.dialogs.quickdial.QuickDialPanel;
 import de.moonflower.jfritz.dialogs.simple.CallMessageDlg;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.monitoring.MonitoringPanel;
 import de.moonflower.jfritz.network.NetworkStateListener;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.phonebook.PhoneBookPanel;
+import de.moonflower.jfritz.properties.PropertyProvider;
 
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
@@ -158,6 +160,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	private JMenuItem googleItem;
 
+	protected PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
+
 	/**
 	 * Constructs JFritzWindow
 	 *
@@ -182,20 +187,20 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 			public void componentMoved(ComponentEvent arg0) {
 //				Debug.debug("Window moved");
-				Main.setStateProperty("position.left", Integer.toString(getLocation().x)); //$NON-NLS-1$
-				Main.setStateProperty("position.top", Integer.toString(getLocation().y));//$NON-NLS-1$
-				Main.setStateProperty("position.width", Integer.toString(thisWindow.getWidth()));//$NON-NLS-1$
-				Main.setStateProperty("position.height", Integer.toString(thisWindow.getHeight()));//$NON-NLS-1$
+				properties.setStateProperty("position.left", Integer.toString(getLocation().x)); //$NON-NLS-1$
+				properties.setStateProperty("position.top", Integer.toString(getLocation().y));//$NON-NLS-1$
+				properties.setStateProperty("position.width", Integer.toString(thisWindow.getWidth()));//$NON-NLS-1$
+				properties.setStateProperty("position.height", Integer.toString(thisWindow.getHeight()));//$NON-NLS-1$
 			}
 
 			public void componentResized(ComponentEvent arg0) {
 				if (getExtendedState() != Frame.MAXIMIZED_BOTH)
 				{
 //					Debug.debug("Window resized");
-					Main.setStateProperty("position.left", Integer.toString(getLocation().x)); //$NON-NLS-1$
-					Main.setStateProperty("position.top", Integer.toString(getLocation().y));//$NON-NLS-1$
-					Main.setStateProperty("position.width", Integer.toString(thisWindow.getWidth()));//$NON-NLS-1$
-					Main.setStateProperty("position.height", Integer.toString(thisWindow.getHeight()));//$NON-NLS-1$
+					properties.setStateProperty("position.left", Integer.toString(getLocation().x)); //$NON-NLS-1$
+					properties.setStateProperty("position.top", Integer.toString(getLocation().y));//$NON-NLS-1$
+					properties.setStateProperty("position.width", Integer.toString(thisWindow.getWidth()));//$NON-NLS-1$
+					properties.setStateProperty("position.height", Integer.toString(thisWindow.getHeight()));//$NON-NLS-1$
 				}
 			}
 
@@ -206,9 +211,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		addWindowStateListener(new WindowStateListener() {
 
 			public void windowStateChanged(WindowEvent arg0) {
-				Main.setStateProperty("window.state.old", Main.getStateProperty("window.state"));
-				Main.setStateProperty("window.state", Integer.toString(getExtendedState()));
-				Debug.debug("Window state changed: " + Main.getStateProperty("window.state.old") + " -> " + Main.getStateProperty("window.state"));
+				properties.setStateProperty("window.state.old", properties.getStateProperty("window.state"));
+				properties.setStateProperty("window.state", Integer.toString(getExtendedState()));
+				Debug.debug("Window state changed: " + properties.getStateProperty("window.state.old") + " -> " + properties.getStateProperty("window.state"));
 			}
 
 		});
@@ -216,7 +221,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	public void checkStartOptions() {
 		Debug.debug("CHECKSTARTOPTIONS: ");
-		if (!Main.getProperty("option.startMinimized") //$NON-NLS-1$,  //$NON-NLS-2$,
+		if (!properties.getProperty("option.startMinimized") //$NON-NLS-1$,  //$NON-NLS-2$,
 				.equals("true")) { //$NON-NLS-1$
 			setVisible(true);
 			Debug.debug("CHECKSTARTOPTIONS: don't start minimized");
@@ -234,15 +239,15 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	public void checkOptions() {
 		if (!JFritz.isShutdownInvoked())
 		{
-			if (Main.getProperty("option.fetchAfterStart") //$NON-NLS-1$,  //$NON-NLS-2$
+			if (properties.getProperty("option.fetchAfterStart") //$NON-NLS-1$,  //$NON-NLS-2$
 					.equals("true")) { //$NON-NLS-1$
 				fetchButton.doClick();
 			}
-			if (Main.getProperty("option.autostartcallmonitor").equals( //$NON-NLS-1$,  //$NON-NLS-2$
+			if (properties.getProperty("option.autostartcallmonitor").equals( //$NON-NLS-1$,  //$NON-NLS-2$
 					"true")) { //$NON-NLS-1$
 				JFritz.getBoxCommunication().startCallMonitor();
 			}
-			if (Main.getProperty("option.timerAfterStart") //$NON-NLS-1$,  //$NON-NLS-2$
+			if (properties.getProperty("option.timerAfterStart") //$NON-NLS-1$,  //$NON-NLS-2$
 					.equals("true")) { //$NON-NLS-1$
 				taskButton.doClick();
 			}
@@ -277,10 +282,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		monitoringPanel.getStatusBarController().addStatusBarListener(jFritz);
 
 		tabber = new JTabbedPane(SwingConstants.BOTTOM);
-		tabber.addTab(Main.getMessage("callerlist"), callerListPanel); //$NON-NLS-1$
-		tabber.addTab(Main.getMessage("phonebook"), phoneBookPanel); //$NON-NLS-1$
-		tabber.addTab(Main.getMessage("quickdials"), quickDialPanel); //$NON-NLS-1$
-		tabber.addTab(Main.getMessage("monitoring"), monitoringPanel);
+		tabber.addTab(messages.getMessage("callerlist"), callerListPanel); //$NON-NLS-1$
+		tabber.addTab(messages.getMessage("phonebook"), phoneBookPanel); //$NON-NLS-1$
+		tabber.addTab(messages.getMessage("quickdials"), quickDialPanel); //$NON-NLS-1$
+		tabber.addTab(messages.getMessage("monitoring"), monitoringPanel);
 		tabber.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				if (tabSelected("callerlist")) { //$NON-NLS-1$
@@ -320,27 +325,27 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		JFritz.getCallerList().fireTableStructureChanged();
 
 		// Setting size and position
-		int x = Integer.parseInt(Main.getStateProperty(
+		int x = Integer.parseInt(properties.getStateProperty(
 				"position.left")); //$NON-NLS-1$,  //$NON-NLS-2$
-		int y = Integer.parseInt(Main.getStateProperty(
+		int y = Integer.parseInt(properties.getStateProperty(
 				"position.top")); //$NON-NLS-1$,  //$NON-NLS-2$
-		int w = Integer.parseInt(Main.getStateProperty(
+		int w = Integer.parseInt(properties.getStateProperty(
 				"position.width")); //$NON-NLS-1$,  //$NON-NLS-2$
-		int h = Integer.parseInt(Main.getStateProperty(
+		int h = Integer.parseInt(properties.getStateProperty(
 				"position.height")); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		int windowState = Frame.NORMAL;
 
 		Debug.debug("CREATE GUI: ");
-		if ((!Main.getProperty("option.startMinimized").equals("true")) &&
-			(Frame.ICONIFIED == Integer.parseInt(Main.getStateProperty("window.state"))))
+		if ((!properties.getProperty("option.startMinimized").equals("true")) &&
+			(Frame.ICONIFIED == Integer.parseInt(properties.getStateProperty("window.state"))))
 		{ // Old state was iconified and we don't want to startup iconified
 		  // Set previous old state to prevent bug in showing menu bar
-			windowState = Integer.parseInt(Main.getStateProperty("window.state.old"));
+			windowState = Integer.parseInt(properties.getStateProperty("window.state.old"));
 			Debug.debug("CREATE GUI: restore old window state " + Integer.toString(windowState));
 		} else
 		{
-			windowState = Integer.parseInt(Main.getStateProperty("window.state"));
+			windowState = Integer.parseInt(properties.getStateProperty("window.state"));
 			Debug.debug("CREATE GUI: restore window state " + Integer.toString(windowState));
 		}
 		setLocation(x, y);
@@ -350,7 +355,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	private boolean tabSelected(final String name) {
 		return tabber.getTitleAt(tabber.getSelectedIndex()).equals(
-				Main.getMessage(name));
+				messages.getMessage(name));
 	}
 
 	/**
@@ -406,7 +411,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		mBar.setFloatable(true);
 
 		fetchButton = new JButton();
-		fetchButton.setToolTipText(Main.getMessage("fetchlist")); //$NON-NLS-1$
+		fetchButton.setToolTipText(messages.getMessage("fetchlist")); //$NON-NLS-1$
 		fetchButton.setActionCommand("fetchList"); //$NON-NLS-1$
 		fetchButton.addActionListener(this);
 		fetchButton.setIcon(getImage("fetch.png")); //$NON-NLS-1$
@@ -418,32 +423,32 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		// button.setActionCommand("call");
 		// button.addActionListener(this);
 		// button.setIcon(getImage("Phone.gif"));
-		// button.setToolTipText(Main.getMessage("call"));
+		// button.setToolTipText(messages.getMessage("call"));
 		// mBar.add(button);
 
 		taskButton = new JToggleButton();
-		taskButton.setToolTipText(Main.getMessage("fetchtask")); //$NON-NLS-1$
+		taskButton.setToolTipText(messages.getMessage("fetchtask")); //$NON-NLS-1$
 		taskButton.setActionCommand("fetchTask"); //$NON-NLS-1$
 		taskButton.addActionListener(this);
 		taskButton.setIcon(getImage("clock.png")); //$NON-NLS-1$
 		mBar.add(taskButton);
 
 		monitorButton = new JToggleButton();
-		monitorButton.setToolTipText(Main.getMessage("callmonitor")); //$NON-NLS-1$
+		monitorButton.setToolTipText(messages.getMessage("callmonitor")); //$NON-NLS-1$
 		monitorButton.setActionCommand("callMonitor"); //$NON-NLS-1$
 		monitorButton.addActionListener(this);
 		monitorButton.setIcon(getImage("monitor.png")); //$NON-NLS-1$
 		mBar.add(monitorButton);
 
 		calldialogButton = new JButton();
-		calldialogButton.setToolTipText(Main.getMessage("dial_assist"));
+		calldialogButton.setToolTipText(messages.getMessage("dial_assist"));
 		calldialogButton.setActionCommand("callDialog");
 		calldialogButton.addActionListener(this);
 		calldialogButton.setIcon(getImage("PhoneBig.png"));
 		mBar.add(calldialogButton);
 
 		lookupButton = new JToggleButton();
-		lookupButton.setToolTipText(Main.getMessage("reverse_lookup")); //$NON-NLS-1$
+		lookupButton.setToolTipText(messages.getMessage("reverse_lookup")); //$NON-NLS-1$
 		lookupButton.setActionCommand("reverselookup"); //$NON-NLS-1$
 		lookupButton.addActionListener(this);
 		lookupButton.setIcon(getImage("reverselookup.png")); //$NON-NLS-1$
@@ -453,28 +458,28 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		button.setActionCommand("phonebook"); //$NON-NLS-1$
 		button.addActionListener(this);
 		button.setIcon(getImage("phonebook.png")); //$NON-NLS-1$
-		button.setToolTipText(Main.getMessage("phonebook")); //$NON-NLS-1$
+		button.setToolTipText(messages.getMessage("phonebook")); //$NON-NLS-1$
 		mBar.add(button);
 
 		button = new JButton();
 		button.setActionCommand("quickdial"); //$NON-NLS-1$
 		button.addActionListener(this);
 		button.setIcon(getImage("quickdial.png")); //$NON-NLS-1$
-		button.setToolTipText(Main.getMessage("quickdials")); //$NON-NLS-1$
+		button.setToolTipText(messages.getMessage("quickdials")); //$NON-NLS-1$
 		mBar.add(button);
 
 		button = new JButton();
 		button.setActionCommand("delete_fritzbox_callerlist"); //$NON-NLS-1$
 		button.addActionListener(this);
 		button.setIcon(getImage("DeleteList.png")); //$NON-NLS-1$
-		button.setToolTipText(Main.getMessage("delete_fritzbox_callerlist")); //$NON-NLS-1$
+		button.setToolTipText(messages.getMessage("delete_fritzbox_callerlist")); //$NON-NLS-1$
 		mBar.add(button);
 
 		button = new JButton();
 		button.setActionCommand("backup"); //$NON-NLS-1$
 		button.addActionListener(this);
 		button.setIcon(getImage("Backup.gif")); //$NON-NLS-1$
-		button.setToolTipText(Main.getMessage("backup")); //$NON-NLS-1$
+		button.setToolTipText(messages.getMessage("backup")); //$NON-NLS-1$
 		mBar.add(button);
 
 		mBar.addSeparator();
@@ -483,7 +488,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		button.setActionCommand("help"); //$NON-NLS-1$
 		button.addActionListener(this);
 		button.setIcon(getImage("help.png")); //$NON-NLS-1$
-		button.setToolTipText(Main.getMessage("help_menu")); //$NON-NLS-1$
+		button.setToolTipText(messages.getMessage("help_menu")); //$NON-NLS-1$
 		mBar.add(button);
 
 		mBar.addSeparator();
@@ -492,21 +497,21 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		configButton.setActionCommand("config"); //$NON-NLS-1$
 		configButton.addActionListener(this);
 		configButton.setIcon(getImage("config.png")); //$NON-NLS-1$
-		configButton.setToolTipText(Main.getMessage("config")); //$NON-NLS-1$
+		configButton.setToolTipText(messages.getMessage("config")); //$NON-NLS-1$
 		mBar.add(configButton);
 
 		networkButton = new JToggleButton();
 		networkButton.setActionCommand("network");
 		networkButton.addActionListener(this);
 
-		String networkType = Main.getProperty("network.type");
+		String networkType = properties.getProperty("network.type");
 
 		if(networkType.equals("1")){
 			networkButton.setIcon(getImage("server.png"));
-			networkButton.setToolTipText(Main.getMessage("start_listening_clients"));
+			networkButton.setToolTipText(messages.getMessage("start_listening_clients"));
 		}else if(networkType.equals("2")){
 			networkButton.setIcon(getImage("client.png"));
-			networkButton.setToolTipText(Main.getMessage("connect_to_server"));
+			networkButton.setToolTipText(messages.getMessage("connect_to_server"));
 		}else{
 			networkButton.setIcon(getImage("no_network.png"));
 			networkButton.setEnabled(false);
@@ -515,7 +520,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		networkButton.setPreferredSize(new Dimension(32, 32));
 
 		//disable icon if jfritz network functionality not wanted
-		if(Main.getProperty("network.type").equals("0")){
+		if(properties.getProperty("network.type").equals("0")){
 			networkButton.setEnabled(false);
 		}
 
@@ -537,60 +542,60 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		}
 
 		JMenu jfritzMenu = new JMenu(menu_text);
-		// JMenu editMenu = new JMenu(Main.getMessage("edit_menu"));
-		JMenu optionsMenu = new JMenu(Main.getMessage("options_menu")); //$NON-NLS-1$
-		JMenu helpMenu = new JMenu(Main.getMessage("help_menu")); //$NON-NLS-1$
-		JMenu lnfMenu = new JMenu(Main.getMessage("lnf_menu")); //$NON-NLS-1$
-		JMenu importMenu = new JMenu(Main.getMessage("import_menu")); //$NON-NLS-1$
-		JMenu exportMenu = new JMenu(Main.getMessage("export_menu")); //$NON-NLS-1$
-		JMenu viewMenu = new JMenu(Main.getMessage("view_menu")); //$NON-NLS-1$
+		// JMenu editMenu = new JMenu(messages.getMessage("edit_menu"));
+		JMenu optionsMenu = new JMenu(messages.getMessage("options_menu")); //$NON-NLS-1$
+		JMenu helpMenu = new JMenu(messages.getMessage("help_menu")); //$NON-NLS-1$
+		JMenu lnfMenu = new JMenu(messages.getMessage("lnf_menu")); //$NON-NLS-1$
+		JMenu importMenu = new JMenu(messages.getMessage("import_menu")); //$NON-NLS-1$
+		JMenu exportMenu = new JMenu(messages.getMessage("export_menu")); //$NON-NLS-1$
+		JMenu viewMenu = new JMenu(messages.getMessage("view_menu")); //$NON-NLS-1$
 
 		// File menu
-		JMenuItem item = new JMenuItem(Main.getMessage("fetchlist"), 'a'); //$NON-NLS-1$,
+		JMenuItem item = new JMenuItem(messages.getMessage("fetchlist"), 'a'); //$NON-NLS-1$,
 		item.setActionCommand("fetchList"); //$NON-NLS-1$
 		item.addActionListener(this);
 		jfritzMenu.add(item);
-		item = new JMenuItem(Main.getMessage("reverse_lookup"), 'l'); //$NON-NLS-1$,
+		item = new JMenuItem(messages.getMessage("reverse_lookup"), 'l'); //$NON-NLS-1$,
 		item.setActionCommand("reverselookup"); //$NON-NLS-1$
 		item.addActionListener(this);
 		jfritzMenu.add(item);
 
-		googleItem = new JMenuItem(Main.getMessage("show_on_google_maps"));
+		googleItem = new JMenuItem(messages.getMessage("show_on_google_maps"));
 		googleItem.setActionCommand("google");
 		googleItem.addActionListener(callerListPanel);
 		googleItem.setEnabled(false);
 		googleItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.ALT_MASK));
 		jfritzMenu.add(googleItem);
 
-		item = new JMenuItem(Main.getMessage("delete_fritzbox_callerlist")); //$NON-NLS-1$
+		item = new JMenuItem(messages.getMessage("delete_fritzbox_callerlist")); //$NON-NLS-1$
 		item.setActionCommand("delete_fritzbox_callerlist"); //$NON-NLS-1$
 		item.setMnemonic(KeyEvent.VK_F);
 		item.addActionListener(this);
 		jfritzMenu.add(item);
 
-		item = new JMenuItem(Main
+		item = new JMenuItem(messages
 				.getMessage("delete_duplicate_phonebook_entries")); //$NON-NLS-1$
 		item.setActionCommand("delete_duplicate_phonebook_entries"); //$NON-NLS-1$
 		item.addActionListener(this);
 		jfritzMenu.add(item);
 
-		item = new JMenuItem(Main.getMessage("backup")); //$NON-NLS-1$
+		item = new JMenuItem(messages.getMessage("backup")); //$NON-NLS-1$
 		item.setActionCommand("backup"); //$NON-NLS-1$
 		item.addActionListener(this);
 		jfritzMenu.add(item);
 
-		item = new JMenuItem(Main.getMessage("print_callerlist")); //$NON-NLS-1$
+		item = new JMenuItem(messages.getMessage("print_callerlist")); //$NON-NLS-1$
 		item.setActionCommand("print_callerlist"); //$NON-NLS-1$
 		item.addActionListener(this);
 		jfritzMenu.add(item);
 
 		// export submenu
-		item = new JMenuItem(Main.getMessage("export_csv"), 'c'); //$NON-NLS-1$,
+		item = new JMenuItem(messages.getMessage("export_csv"), 'c'); //$NON-NLS-1$,
 		item.setActionCommand("export_csv"); //$NON-NLS-1$
 		item.addActionListener(this);
 		exportMenu.add(item);
 
-		item = new JMenuItem(Main.getMessage("export_csv_phonebook")); //$NON-NLS-1$
+		item = new JMenuItem(messages.getMessage("export_csv_phonebook")); //$NON-NLS-1$
 		item.setActionCommand("export_phonebook"); //$NON-NLS-1$
 		item.addActionListener(this);
 		exportMenu.add(item);
@@ -599,29 +604,29 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 		// import submenu
 
-		item = new JMenuItem(Main.getMessage("import_callerlist_csv"), 'i'); //$NON-NLS-1$,
+		item = new JMenuItem(messages.getMessage("import_callerlist_csv"), 'i'); //$NON-NLS-1$,
 		item.setActionCommand("import_callerlist_csv"); //$NON-NLS-1$
 		item.addActionListener(this);
 		importMenu.add(item);
 
-		item = new JMenuItem(Main.getMessage("phonebook_import")); //$NON-NLS-1$
+		item = new JMenuItem(messages.getMessage("phonebook_import")); //$NON-NLS-1$
 		item.setActionCommand("phonebook_import"); //$NON-NLS-1$
 		item.addActionListener(this);
 		importMenu.add(item);
 
-		item = new JMenuItem(Main.getMessage("import_contacts_thunderbird_csv")); //$NON-NLS-1$
+		item = new JMenuItem(messages.getMessage("import_contacts_thunderbird_csv")); //$NON-NLS-1$
 		item.setActionCommand("import_contacts_thunderbird_csv"); //$NON-NLS-1$
 		item.addActionListener(this);
 		importMenu.add(item);
 
 		if (OSDetector.isWindows()) { //$NON-NLS-1$
-			item = new JMenuItem(Main.getMessage("import_contacts_outlook")); //$NON-NLS-1$
+			item = new JMenuItem(messages.getMessage("import_contacts_outlook")); //$NON-NLS-1$
 			item.setActionCommand("import_outlook"); //$NON-NLS-1$
 			item.addActionListener(this);
 			importMenu.add(item);
 		}
 
-		item = new JMenuItem(Main.getMessage("import_contacts_vcard")); //$NON-NLS-1$
+		item = new JMenuItem(messages.getMessage("import_contacts_vcard")); //$NON-NLS-1$
 		item.setActionCommand("import_vcard");
 		item.addActionListener(this);
 		importMenu.add(item);
@@ -630,7 +635,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 		if (!OSDetector.isMac()) { //$NON-NLS-1$
 			jfritzMenu.add(new JSeparator());
-			item = new JMenuItem(Main.getMessage("prog_exit"), 'x'); //$NON-NLS-1$,
+			item = new JMenuItem(messages.getMessage("prog_exit"), 'x'); //$NON-NLS-1$,
 			// item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
 			// ActionEvent.ALT_MASK));
 			item.setActionCommand("exit"); //$NON-NLS-1$
@@ -684,63 +689,63 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 		optionsMenu.add(lnfMenu);
 
-		item = new JMenuItem(Main.getMessage("config_wizard"), null); //$NON-NLS-1$
+		item = new JMenuItem(messages.getMessage("config_wizard"), null); //$NON-NLS-1$
 		item.setActionCommand("configwizard"); //$NON-NLS-1$
 		item.addActionListener(this);
 		optionsMenu.add(item);
 
 		if (!OSDetector.isMac()) { //$NON-NLS-1$
-			item = new JMenuItem(Main.getMessage("config"), 'e'); //$NON-NLS-1$,
+			item = new JMenuItem(messages.getMessage("config"), 'e'); //$NON-NLS-1$,
 			item.setActionCommand("config"); //$NON-NLS-1$
 			item.addActionListener(this);
 			optionsMenu.add(item);
 		}
 
 		// view menu
-		item = new JMenuItem(Main.getMessage("callerlist"), null); //$NON-NLS-1$
+		item = new JMenuItem(messages.getMessage("callerlist"), null); //$NON-NLS-1$
 		item.setActionCommand("callerlist"); //$NON-NLS-1$
 		item.addActionListener(this);
 		viewMenu.add(item);
 
-		item = new JMenuItem(Main.getMessage("phonebook"), null); //$NON-NLS-1$
+		item = new JMenuItem(messages.getMessage("phonebook"), null); //$NON-NLS-1$
 		item.setActionCommand("phonebook"); //$NON-NLS-1$
 		item.addActionListener(this);
 		viewMenu.add(item);
 
-		item = new JMenuItem(Main.getMessage("quickdials"), null); //$NON-NLS-1$
+		item = new JMenuItem(messages.getMessage("quickdials"), null); //$NON-NLS-1$
 		item.setActionCommand("quickdial"); //$NON-NLS-1$
 		item.addActionListener(this);
 		viewMenu.add(item);
 
 
-		item = new JMenuItem(Main.getMessage("monitoring"), null);
+		item = new JMenuItem(messages.getMessage("monitoring"), null);
 		item.setActionCommand("monitoring");
 		item.addActionListener(this);
 		viewMenu.add(item);
 
 		// help menu
-		item = new JMenuItem(Main.getMessage("help_content"), 'h'); //$NON-NLS-1$,
+		item = new JMenuItem(messages.getMessage("help_content"), 'h'); //$NON-NLS-1$,
 		item.setActionCommand("help"); //$NON-NLS-1$
 		item.addActionListener(this);
 		helpMenu.add(item);
 
-		item = new JMenuItem(Main.getMessage("debug_window"), 'h'); //$NON-NLS-1$,
+		item = new JMenuItem(messages.getMessage("debug_window"), 'h'); //$NON-NLS-1$,
 		item.setActionCommand("debug_window"); //$NON-NLS-1$
 		item.addActionListener(this);
 		helpMenu.add(item);
 
-		item = new JMenuItem(Main.getMessage("jfritz_website"), 'w'); //$NON-NLS-1$,
+		item = new JMenuItem(messages.getMessage("jfritz_website"), 'w'); //$NON-NLS-1$,
 		item.setActionCommand("website"); //$NON-NLS-1$
 		item.addActionListener(this);
 		helpMenu.add(item);
-		item = new JMenuItem(Main.getMessage("update_JFritz"), 'w'); //$NON-NLS-1$,
+		item = new JMenuItem(messages.getMessage("update_JFritz"), 'w'); //$NON-NLS-1$,
 		item.setActionCommand("update"); //$NON-NLS-1$
 		item.addActionListener(this);
 		helpMenu.add(item);
 
 		if (!OSDetector.isMac()) { //$NON-NLS-1$
 			helpMenu.add(new JSeparator());
-			item = new JMenuItem(Main.getMessage("prog_info"), 'i'); //$NON-NLS-1$,
+			item = new JMenuItem(messages.getMessage("prog_info"), 'i'); //$NON-NLS-1$,
 			item.setActionCommand("about"); //$NON-NLS-1$
 			item.addActionListener(this);
 			helpMenu.add(item);
@@ -762,7 +767,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 */
 	private void fetchTask(boolean enabled) {
 		if (enabled) {
-			int interval = Integer.parseInt(Main.getProperty("fetch.timer")) * 60000; //$NON-NLS-1$
+			int interval = Integer.parseInt(properties.getProperty("fetch.timer")) * 60000; //$NON-NLS-1$
 			timerTask = new TimerTask() {
 
 				public void run() {
@@ -793,7 +798,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				// restart timer
 				timer.cancel();
 				timer = null;
-				int interval = Integer.parseInt(Main.getProperty("fetch.timer")) * 60000; //$NON-NLS-1$
+				int interval = Integer.parseInt(properties.getProperty("fetch.timer")) * 60000; //$NON-NLS-1$
 				timerTask.cancel();
 				timerTask = new TimerTask() {
 
@@ -819,7 +824,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		restartFetchListTimer();
 		Debug.info("Fetching list ...");
 		//only send request to the server if we are connected
-		if(Main.getProperty("option.clientCallList").equals("true")
+		if(properties.getProperty("option.clientCallList").equals("true")
 				&& NetworkStateMonitor.isConnectedToServer()){
 
 				//pass on the request to delete the list from the box
@@ -839,7 +844,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					boolean isdone = false;
 					while (!isdone) {
 						setBusy(true);
-						setStatus(Main.getMessage("fetchdata")); //$NON-NLS-1$
+						setStatus(messages.getMessage("fetchdata")); //$NON-NLS-1$
 						JFritz.getBoxCommunication().getCallerList(box);
 						isdone = true;
 					}
@@ -853,7 +858,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					if (!JFritz.isShutdownInvoked())
 					{
 						if ((JFritz.getBoxCommunication().getLastFetchedCallsCount()>0) &&
-								((Main.getProperty("option.deleteAfterFetch").equals("true")))
+								((properties.getProperty("option.deleteAfterFetch").equals("true")))
 								|| (deleteFritzBoxCallerList)) {
 							JFritz.getBoxCommunication().clearCallerList();
 						}
@@ -861,10 +866,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 					if (!JFritz.isShutdownInvoked())
 					{
-						if (Main.getProperty("option.lookupAfterFetch") //$NON-NLS-1$,  //$NON-NLS-2$
+						if (properties.getProperty("option.lookupAfterFetch") //$NON-NLS-1$,  //$NON-NLS-2$
 								.equals("true")) { //$NON-NLS-1$
 
-							if(Main.getProperty("option.clientTelephoneBook").equals("true"))
+							if(properties.getProperty("option.clientTelephoneBook").equals("true"))
 								lookupButton.doClick();
 							else
 								JFritz.getCallerList().reverseLookup(false, false);
@@ -889,12 +894,12 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		configDialog = new ConfigDialog(this, stateListener);
 		configDialog.setLocationRelativeTo(this);
 		if (configDialog.showDialog()) {
-			this.setStatus(Main.getMessage("save_settings"));
+			this.setStatus(messages.getMessage("save_settings"));
 			configDialog.storeValues();
 
-			Main.saveConfigProperties();
+			properties.saveConfigProperties();
 			setBoxConnected("");
-			monitorButton.setEnabled((Integer.parseInt(Main.getProperty(
+			monitorButton.setEnabled((Integer.parseInt(properties.getProperty(
 					"option.callMonitorType")) > 0)); //$NON-NLS-1$,  //$NON-NLS-2$
 
 			callerListPanel.reorderColumns();
@@ -946,7 +951,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	protected void processWindowEvent(WindowEvent e) {
 
 		if (e.getID() == WindowEvent.WINDOW_CLOSING) {
-			if (JFritzUtils.parseBoolean(Main.getProperty("option.minimize"))) //$NON-NLS-1$
+			if (JFritzUtils.parseBoolean(properties.getProperty("option.minimize"))) //$NON-NLS-1$
 			{
 				Debug.debug("PROCESS WINDOW EVENT: minimize statt close");
 				setExtendedState(Frame.ICONIFIED);
@@ -973,7 +978,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					.getClientProperty("lnf name"); //$NON-NLS-1$
 			try {
 //				UIManager.setLookAndFeel(info.getClassName());
-				Main.setStateProperty("lookandfeel", info.getClassName()); //$NON-NLS-1$
+				properties.setStateProperty("lookandfeel", info.getClassName()); //$NON-NLS-1$
 				JFritz.getBoxCommunication().stopCallMonitor();
 				jFritz.refreshWindow();
 			} catch (Exception e) {
@@ -1014,7 +1019,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			lookupButton.setEnabled(!busy);
 			configButton.setEnabled(!busy);
 			monitorButton.setEnabled(!busy
-					&& (Integer.parseInt(Main.getProperty(
+					&& (Integer.parseInt(properties.getProperty(
 							"option.callMonitorType")) > 0)); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 		menu.setEnabled(!busy);
@@ -1056,10 +1061,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		} else if (e.getActionCommand().equals("debug_window")) { //$NON-NLS-1$
 			JFrame debug_frame = new JFrame();
 			debug_frame.add(Debug.getPanel());
-			debug_frame.setTitle(Main.getMessage("debug_window"));
-			Debug.setSaveButtonText(Main.getMessage("save"));
-			Debug.setRefreshButtonText(Main.getMessage("refresh"));
-			Debug.setCloseButtonText(Main.getMessage("close"));
+			debug_frame.setTitle(messages.getMessage("debug_window"));
+			Debug.setSaveButtonText(messages.getMessage("save"));
+			Debug.setRefreshButtonText(messages.getMessage("refresh"));
+			Debug.setCloseButtonText(messages.getMessage("close"));
 			Debug.setFrame(debug_frame);
 			debug_frame.pack();
 			debug_frame.setVisible(true);
@@ -1195,7 +1200,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			//reverseLookup();
 			Object o = e.getSource();
 			if (lookupButton.isSelected() || (o instanceof JMenuItem  && !lookupButton.isSelected())) {
-				if(Main.getProperty("option.clientTelephoneBook").equals("true") &&
+				if(properties.getProperty("option.clientTelephoneBook").equals("true") &&
 						NetworkStateMonitor.isConnectedToServer()){
 					//if connected to server make server to the lookup
 					Debug.netMsg("requesting reverse lookup from server");
@@ -1224,13 +1229,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			showConfigWizard();
 		} else if(e.getActionCommand().equals("network")){
 
-			if(Main.getProperty("network.type").equals("2")){
+			if(properties.getProperty("network.type").equals("2")){
 				if(networkButton.isSelected())
 					NetworkStateMonitor.startClient();
 				else
 					NetworkStateMonitor.stopClient();
 
-			}else if(Main.getProperty("network.type").equals("1")){
+			}else if(properties.getProperty("network.type").equals("1")){
 				if(networkButton.isSelected())
 					NetworkStateMonitor.startServer();
 				else
@@ -1263,18 +1268,18 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					this.setVisible(false);
 				}
 				if (saveState) {
-					Main.setStateProperty("window.state.old", Main.getStateProperty("window.state"));
-					Main.setStateProperty("window.state", Integer.toString(getExtendedState()));
-					Debug.debug("Saving new state: " + Main.getStateProperty("window.state.old")
-							+ " -> " + Main.getStateProperty("window.state"));
+					properties.setStateProperty("window.state.old", properties.getStateProperty("window.state"));
+					properties.setStateProperty("window.state", Integer.toString(getExtendedState()));
+					Debug.debug("Saving new state: " + properties.getStateProperty("window.state.old")
+							+ " -> " + properties.getStateProperty("window.state"));
 				}
 			} else while ( !isVisible() ){
 				Debug.debug("Show JFritz-Window"); //$NON-NLS-1$
 				int windowState = 0;
-				windowState = Integer.parseInt(Main.getStateProperty("window.state.old"));
+				windowState = Integer.parseInt(properties.getStateProperty("window.state.old"));
 
 				Debug.debug("Window state old: " + Integer.toString(windowState));
-				Debug.debug("Windows state:    " + Main.getStateProperty("window.state"));
+				Debug.debug("Windows state:    " + properties.getStateProperty("window.state"));
 
 				if ((windowState != Frame.MAXIMIZED_BOTH) && (windowState != Frame.ICONIFIED))
 				{
@@ -1284,8 +1289,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				if (OSDetector.isGnome())
 				{
 					Debug.debug("Current state1: "
-							+ Main.getStateProperty("window.state.old")
-							+ "/"+Main.getStateProperty("window.state"));
+							+ properties.getStateProperty("window.state.old")
+							+ "/"+properties.getStateProperty("window.state"));
 					Debug.debug("Maximize gnome style");
 		            setExtendedState(windowState);
 		            setVisible(true);
@@ -1293,12 +1298,12 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		            setVisible(false);
 		            setExtendedState(windowState);
 		            setVisible(true);
-		            String tmp = Main.getStateProperty("window.state");
-		            Main.setStateProperty("window.state", Main.getStateProperty("window.state.old"));
-		            Main.setStateProperty("window.state.old", tmp);
+		            String tmp = properties.getStateProperty("window.state");
+		            properties.setStateProperty("window.state", properties.getStateProperty("window.state.old"));
+		            properties.setStateProperty("window.state.old", tmp);
 					Debug.debug("Current state2: "
-							+ Main.getStateProperty("window.state.old")
-							+ "/"+Main.getStateProperty("window.state"));
+							+ properties.getStateProperty("window.state.old")
+							+ "/"+properties.getStateProperty("window.state"));
 				}
 				else
 				{
@@ -1349,9 +1354,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * Exports caller list as CSV
 	 */
 	public void exportCallerListToCSV() {
-		JFileChooser fc = new JFileChooser(Main.getProperty(
+		JFileChooser fc = new JFileChooser(properties.getProperty(
 				"options.exportCSVpath")); //$NON-NLS-1$
-		fc.setDialogTitle(Main.getMessage("export_csv")); //$NON-NLS-1$
+		fc.setDialogTitle(messages.getMessage("export_csv")); //$NON-NLS-1$
 		fc.setDialogType(JFileChooser.SAVE_DIALOG);
 		fc.setSelectedFile(new File(JFritz.CALLS_CSV_FILE));
 		fc.setFileFilter(new FileFilter() {
@@ -1361,19 +1366,19 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			}
 
 			public String getDescription() {
-				return Main.getMessage("csv_files"); //$NON-NLS-1$
+				return messages.getMessage("csv_files"); //$NON-NLS-1$
 			}
 		});
 		if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 			String path = fc.getSelectedFile().getPath();
 			path = path.substring(0, path.length()
 					- fc.getSelectedFile().getName().length());
-			Main.setProperty("options.exportCSVpath", path); //$NON-NLS-1$
+			properties.setProperty("options.exportCSVpath", path); //$NON-NLS-1$
 			File file = fc.getSelectedFile();
 			if (file.exists()) {
-				if (JOptionPane.showConfirmDialog(this, Main.getMessage(
+				if (JOptionPane.showConfirmDialog(this, messages.getMessage(
 						"overwrite_file").replaceAll("%F", file.getName()), //$NON-NLS-1$, //$NON-NLS-2$
-						Main.getMessage("dialog_title_overwrite_file"), //$NON-NLS-1$
+						messages.getMessage("dialog_title_overwrite_file"), //$NON-NLS-1$
 						JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 					JFritz.getCallerList().saveToCSVFile(
 							file.getAbsolutePath(), false);
@@ -1389,10 +1394,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * Exports caller list as XML
 	 */
 	public void exportCallerListToXML() {
-		JFileChooser fc = new JFileChooser(Main.getProperty(
+		JFileChooser fc = new JFileChooser(properties.getProperty(
 				"options.exportXMLpath")); //$NON-NLS-1$
 		fc
-				.setDialogTitle(Main
+				.setDialogTitle(messages
 						.getMessage("dialog_title_export_callerlist_xml")); //$NON-NLS-1$
 		fc.setDialogType(JFileChooser.SAVE_DIALOG);
 		fc.setSelectedFile(new File(JFritz.CALLS_FILE));
@@ -1403,19 +1408,19 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			}
 
 			public String getDescription() {
-				return Main.getMessage("xml_files"); //$NON-NLS-1$
+				return messages.getMessage("xml_files"); //$NON-NLS-1$
 			}
 		});
 		if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 			String path = fc.getSelectedFile().getPath();
 			path = path.substring(0, path.length()
 					- fc.getSelectedFile().getName().length());
-			Main.setProperty("options.exportXMLpath", path); //$NON-NLS-1$
+			properties.setProperty("options.exportXMLpath", path); //$NON-NLS-1$
 			File file = fc.getSelectedFile();
 			if (file.exists()) {
-				if (JOptionPane.showConfirmDialog(this, Main.getMessage(
+				if (JOptionPane.showConfirmDialog(this, messages.getMessage(
 						"overwrite_file").replaceAll("%F", file.getName()), //$NON-NLS-1$, //$NON-NLS-2$
-						Main.getMessage("dialog_title_overwrite_file"), //$NON-NLS-1$
+						messages.getMessage("dialog_title_overwrite_file"), //$NON-NLS-1$
 						JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 					JFritz.getCallerList().saveToXMLFile(
 							file.getAbsolutePath(), false);
@@ -1436,9 +1441,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		// FIXME selbst wenn die callerlist aktiviert ist können im
 		// phonebook einträge ausgewählt sein, dann werden nur diese
 		// exportiert, das kann für verwirrung sorgen.
-		JFileChooser fc = new JFileChooser(Main.getProperty(
+		JFileChooser fc = new JFileChooser(properties.getProperty(
 				"options.exportCSVpathOfPhoneBook")); //$NON-NLS-1$
-		fc.setDialogTitle(Main.getMessage("export_csv_phonebook")); //$NON-NLS-1$
+		fc.setDialogTitle(messages.getMessage("export_csv_phonebook")); //$NON-NLS-1$
 		fc.setDialogType(JFileChooser.SAVE_DIALOG);
 		fc.setSelectedFile(new File(JFritz.PHONEBOOK_CSV_FILE));
 		fc.setFileFilter(new FileFilter() {
@@ -1448,19 +1453,19 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			}
 
 			public String getDescription() {
-				return Main.getMessage("csv_files"); //$NON-NLS-1$
+				return messages.getMessage("csv_files"); //$NON-NLS-1$
 			}
 		});
 		if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 			String path = fc.getSelectedFile().getPath();
 			path = path.substring(0, path.length()
 					- fc.getSelectedFile().getName().length());
-			Main.setProperty("options.exportCSVpathOfPhoneBook", path); //$NON-NLS-1$
+			properties.setProperty("options.exportCSVpathOfPhoneBook", path); //$NON-NLS-1$
 			File file = fc.getSelectedFile();
 			if (file.exists()) {
-				if (JOptionPane.showConfirmDialog(this, Main.getMessage(
+				if (JOptionPane.showConfirmDialog(this, messages.getMessage(
 						"overwrite_file").replaceAll("%F", file.getName()), //$NON-NLS-1$, //$NON-NLS-2$
-						Main.getMessage("dialog_title_overwrite_file"), //$NON-NLS-1$
+						messages.getMessage("dialog_title_overwrite_file"), //$NON-NLS-1$
 						JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 					JFritz.getPhonebook().saveToCSVFile(
 							file.getAbsolutePath(),
@@ -1560,11 +1565,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 */
 	public void deleteFritzBoxCallerList() {
 		// options-object needed to set focus to no-button
-		Object[] options = { Main.getMessage("yes"), //$NON-NLS-1$
-				Main.getMessage("no") }; //$NON-NLS-1$
-		int answer = JOptionPane.showOptionDialog(this, Main
+		Object[] options = { messages.getMessage("yes"), //$NON-NLS-1$
+				messages.getMessage("no") }; //$NON-NLS-1$
+		int answer = JOptionPane.showOptionDialog(this, messages
 				.getMessage("delete_fritzbox_callerlist_confirm_msg"), //$NON-NLS-1$
-				Main.getMessage("delete_fritzbox_callerlist"), //$NON-NLS-1$
+				messages.getMessage("delete_fritzbox_callerlist"), //$NON-NLS-1$
 				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
 				options, options[1]);
 
@@ -1585,17 +1590,16 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		int answer = JOptionPane
 				.showConfirmDialog(
 						this,
-						Main
-								.getMessage("delete_duplicate_phonebook_entries_confirm_msg"), Main //$NON-NLS-1$
-								.getMessage("delete_duplicate_phonebook_entries"), //$NON-NLS-1$
+						messages.getMessage("delete_duplicate_phonebook_entries_confirm_msg"), //$NON-NLS-1$
+						messages.getMessage("delete_duplicate_phonebook_entries"), //$NON-NLS-1$
 						JOptionPane.YES_NO_OPTION);
 
 		if (answer == JOptionPane.YES_OPTION) {
 			int removedEntries = JFritz.getPhonebook().deleteDuplicateEntries();
-			JOptionPane.showMessageDialog(this, Main.getMessage(
+			JOptionPane.showMessageDialog(this, messages.getMessage(
 					"delete_duplicate_phonebook_entries_inform_msg") //$NON-NLS-1$
-					.replaceAll("%N", Integer.toString(removedEntries)), Main //$NON-NLS-1$
-					.getMessage("delete_duplicate_phonebook_entries"), //$NON-NLS-1$
+					.replaceAll("%N", Integer.toString(removedEntries)), //$NON-NLS-1$
+					messages.getMessage("delete_duplicate_phonebook_entries"), //$NON-NLS-1$
 					JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
@@ -1643,9 +1647,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * does a reverse lookup on return
 	 */
 	public void importCallerlistCSV() {
-		JFileChooser fc = new JFileChooser(Main.getProperty(
+		JFileChooser fc = new JFileChooser(properties.getProperty(
 				"options.exportCSVpath")); //$NON-NLS-1$
-		fc.setDialogTitle(Main.getMessage("import_callerlist_csv")); //$NON-NLS-1$
+		fc.setDialogTitle(messages.getMessage("import_callerlist_csv")); //$NON-NLS-1$
 		fc.setDialogType(JFileChooser.OPEN_DIALOG);
 		fc.setSelectedFile(new File(JFritz.CALLS_CSV_FILE));
 		fc.setFileFilter(new FileFilter() {
@@ -1655,26 +1659,26 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			}
 
 			public String getDescription() {
-				return Main.getMessage("csv_files"); //$NON-NLS-1$
+				return messages.getMessage("csv_files"); //$NON-NLS-1$
 			}
 		});
 		if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 			String path = fc.getSelectedFile().getPath();
 			path = path.substring(0, path.length()
 					- fc.getSelectedFile().getName().length());
-			Main.setProperty("options.exportCSVpath", path); //$NON-NLS-1$
+			properties.setProperty("options.exportCSVpath", path); //$NON-NLS-1$
 			File file = fc.getSelectedFile();
 			if (!file.exists()) {
 				JOptionPane
 						.showMessageDialog(
 								this,
-								Main.getMessage("file_not_found"), //$NON-NLS-1$
-								Main.getMessage("dialog_title_file_not_found"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+								messages.getMessage("file_not_found"), //$NON-NLS-1$
+								messages.getMessage("dialog_title_file_not_found"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
 
 			} else {
 
 				JFritz.getCallerList().importFromCSVFile(file.getAbsolutePath());
-				if (JFritzUtils.parseBoolean(Main.getProperty("option.lookupAfterFetch"))) {
+				if (JFritzUtils.parseBoolean(properties.getProperty("option.lookupAfterFetch"))) {
 					JFritz.getCallerList().reverseLookup(false, false);
 				}
 			}
@@ -1689,9 +1693,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 *
 	 */
 	public void importContactsThunderbirdCSV() {
-		JFileChooser fc = new JFileChooser(Main.getProperty(
+		JFileChooser fc = new JFileChooser(properties.getProperty(
 				"options.exportCSVpath")); //$NON-NLS-1$
-		fc.setDialogTitle(Main.getMessage("import_contacts_thunderbird_csv")); //$NON-NLS-1$
+		fc.setDialogTitle(messages.getMessage("import_contacts_thunderbird_csv")); //$NON-NLS-1$
 		fc.setDialogType(JFileChooser.OPEN_DIALOG);
 		fc.setFileFilter(new FileFilter() {
 			public boolean accept(File f) {
@@ -1700,7 +1704,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			}
 
 			public String getDescription() {
-				return Main.getMessage("csv_files"); //$NON-NLS-1$
+				return messages.getMessage("csv_files"); //$NON-NLS-1$
 			}
 		});
 		if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
@@ -1709,20 +1713,20 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			// path = path.substring(0, path.length()
 			// - fc.getSelectedFile().getName().length());
 			// options.import_contacts_thunderbird_CSVpath ???
-			// Main.setProperty("options.exportCSVpath", path);
+			// properties.setProperty("options.exportCSVpath", path);
 			File file = fc.getSelectedFile();
 			if (!file.exists()) {
 				JOptionPane
 						.showMessageDialog(
 								this,
-								Main.getMessage("file_not_found"), //$NON-NLS-1$
-								Main.getMessage("dialog_title_file_not_found"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+								messages.getMessage("file_not_found"), //$NON-NLS-1$
+								messages.getMessage("dialog_title_file_not_found"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
 			} else {
 				String msg = JFritz.getPhonebook()
 						.importFromThunderbirdCSVfile(file.getAbsolutePath());
 				JFritz.infoMsg(msg);
 
-				if (Main.getProperty("option.lookupAfterFetch") //$NON-NLS-1$,  //$NON-NLS-2$
+				if (properties.getProperty("option.lookupAfterFetch") //$NON-NLS-1$,  //$NON-NLS-2$
 						.equals("true")) { //$NON-NLS-1$
 					lookupButton.doClick();
 				}
@@ -1731,8 +1735,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	}
 
 	public void importContactsVCard() {
-		JFileChooser fc = new JFileChooser(Main.getProperty("options.exportCSVpath")); //$NON-NLS-1$
-		fc.setDialogTitle(Main.getMessage("import_contacts_vcard")); //$NON-NLS-1$
+		JFileChooser fc = new JFileChooser(properties.getProperty("options.exportCSVpath")); //$NON-NLS-1$
+		fc.setDialogTitle(messages.getMessage("import_contacts_vcard")); //$NON-NLS-1$
 		fc.setDialogType(JFileChooser.OPEN_DIALOG);
 		fc.setFileFilter(new FileFilter() {
 			public boolean accept(File f) {
@@ -1741,7 +1745,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			}
 
 			public String getDescription() {
-				return Main.getMessage("vcf_files"); //$NON-NLS-1$
+				return messages.getMessage("vcf_files"); //$NON-NLS-1$
 			}
 		});
 		if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
@@ -1750,8 +1754,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				JOptionPane
 						.showMessageDialog(
 								this,
-								Main.getMessage("file_not_found"), //$NON-NLS-1$
-								Main.getMessage("dialog_title_file_not_found"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+								messages.getMessage("file_not_found"), //$NON-NLS-1$
+								messages.getMessage("dialog_title_file_not_found"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
 			} else {
 				Thread importThread = new Thread() {
 					public void run() {
@@ -1759,7 +1763,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 							.importFromVCard(file.getAbsolutePath());
 						JFritz.infoMsg(msg);
 
-						if (Main.getProperty("option.lookupAfterFetch") //$NON-NLS-1$,  //$NON-NLS-2$
+						if (properties.getProperty("option.lookupAfterFetch") //$NON-NLS-1$,  //$NON-NLS-2$
 								.equals("true")) { //$NON-NLS-1$
 							lookupButton.doClick();
 						}
@@ -1880,19 +1884,19 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		networkButton.setEnabled(true);
 		if(NetworkStateMonitor.isConnectedToServer()){
 			networkButton.setSelected(true);
-			networkButton.setToolTipText(Main.getMessage("client_is_connected"));
+			networkButton.setToolTipText(messages.getMessage("client_is_connected"));
 
 			//also activate the call monitor if one is wished
-			if(Main.getProperty("option.clientCallMonitor").equals("true")){
+			if(properties.getProperty("option.clientCallMonitor").equals("true")){
 				this.monitorButton.setSelected(true);
 				this.monitorButton.setEnabled(false);
 			}
 		}else{
 			networkButton.setSelected(false);
-			networkButton.setToolTipText(Main.getMessage("connect_to_server"));
+			networkButton.setToolTipText(messages.getMessage("connect_to_server"));
 
 			//also deactivate the call monitor if one was active
-			if(Main.getProperty("option.clientCallMonitor").equals("true")){
+			if(properties.getProperty("option.clientCallMonitor").equals("true")){
 				this.monitorButton.setEnabled(true);
 				this.monitorButton.setSelected(false);
 			}
@@ -1905,10 +1909,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		networkButton.setEnabled(true);
 		if(NetworkStateMonitor.isListening()){
 			networkButton.setSelected(true);
-			networkButton.setToolTipText(Main.getMessage("server_is_listening"));
+			networkButton.setToolTipText(messages.getMessage("server_is_listening"));
 		}else{
 			networkButton.setSelected(false);
-			networkButton.setToolTipText(Main.getMessage("start_listening_clients"));
+			networkButton.setToolTipText(messages.getMessage("start_listening_clients"));
 		}
 	}
 
@@ -1936,7 +1940,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 */
 	public void setNetworkButton(){
 
-		String networkType = Main.getProperty("network.type");
+		String networkType = properties.getProperty("network.type");
 
 		if(networkType.equals("1")){
 			networkButton.setIcon(getImage("server.png"));
@@ -1964,7 +1968,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	public void setConnectedStatus(String boxName) {
 		//@TODO: if multiple boxes have callmonitors support it here
 		callMonitorConnectButton.setIcon(callMonitorConnectIcon);
-		callMonitorConnectButton.setToolTipText(Main.getMessage("connected_callmonitor"));
+		callMonitorConnectButton.setToolTipText(messages.getMessage("connected_callmonitor"));
 		callMonitorConnectButton.setVisible(true);
 		if (statusBar != null)
 		{
@@ -1980,7 +1984,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	public void setDisconnectedStatus(String boxName) {
 		//@TODO: if multiple boxes have callmonitors support it here
 		callMonitorConnectButton.setIcon(callMonitorDisconnectIcon);
-		callMonitorConnectButton.setToolTipText(Main.getMessage("disconnected_callmonitor"));
+		callMonitorConnectButton.setToolTipText(messages.getMessage("disconnected_callmonitor"));
 		callMonitorConnectButton.setVisible(true);
 		if (statusBar != null)
 		{
@@ -2016,14 +2020,14 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	public void setBoxConnected(String boxName) {
 		Debug.debug("Box connected");
 		connectButton.setIcon(connectIcon);
-		connectButton.setToolTipText(Main.getMessage("connected_fritz"));
+		connectButton.setToolTipText(messages.getMessage("connected_fritz"));
 		statusBar.refresh();
 	}
 
 	public void setBoxDisconnected(String boxName) {
 		Debug.debug("Box disconnected");
 		connectButton.setIcon(disconnectIcon);
-		connectButton.setToolTipText(Main.getMessage("disconnected_fritz"));
+		connectButton.setToolTipText(messages.getMessage("disconnected_fritz"));
 		this.setDisconnectedStatus(""); // set call monitor to disconnected status
 		statusBar.refresh();
 	}

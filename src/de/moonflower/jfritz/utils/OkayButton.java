@@ -9,7 +9,7 @@ import java.awt.Toolkit;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.messages.MessageProvider;
 
 /**
  * @author Arno Willig
@@ -21,9 +21,10 @@ public class OkayButton extends JButton {
 	 *
 	 */
 	private static final long serialVersionUID = 1;
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public OkayButton() {
-		setText(Main.getMessage("okay")); //$NON-NLS-1$
+		setText(messages.getMessage("okay")); //$NON-NLS-1$
 		setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/okay.png")))); //$NON-NLS-1$

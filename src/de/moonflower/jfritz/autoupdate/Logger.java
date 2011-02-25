@@ -4,11 +4,12 @@
  */
 package de.moonflower.jfritz.autoupdate;
 
-import de.moonflower.jfritz.Main;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import javax.swing.JOptionPane;
+
+import de.moonflower.jfritz.messages.MessageProvider;
 
 public final class Logger{
 	private Logger() {}
@@ -16,6 +17,7 @@ public final class Logger{
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy HH:mm:ss", Locale.GERMANY); //$NON-NLS-1$
 
 	private static boolean enabled = false;
+	protected static MessageProvider messages = MessageProvider.getInstance();
 
 	/**
 	 * Turns debug-mode on
@@ -77,8 +79,7 @@ public final class Logger{
 		if (enabled)
 		{
 			msg(message);
-			JOptionPane.showMessageDialog(null, message, Main
-					.getMessage("information"), JOptionPane.INFORMATION_MESSAGE); //$NON-NLS-1$
+			JOptionPane.showMessageDialog(null, message, messages.getMessage("information"), JOptionPane.INFORMATION_MESSAGE); //$NON-NLS-1$
 		}
 	}
 
@@ -90,6 +91,6 @@ public final class Logger{
 	public static void errDlg(final String message) {
 		err(message);
 		JOptionPane.showMessageDialog(null, message,
-				Main.getMessage("error"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+				messages.getMessage("error"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
 	}
 }

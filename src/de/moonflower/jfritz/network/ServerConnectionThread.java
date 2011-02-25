@@ -4,24 +4,30 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-
-import java.security.*;
+import java.security.InvalidKeyException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-
 import java.util.Vector;
 
-import javax.crypto.*;
-import javax.crypto.spec.*;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SealedObject;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.DESKeySpec;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.CallerListListener;
+import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.phonebook.PhoneBookListener;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
@@ -77,6 +83,9 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 	//needed for direct dialing
 	private String[] availablePorts = null;
+
+	protected PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	/**
 	 * Returns the current state of this thread
@@ -148,10 +157,10 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 				String server, user, password;
 				int port;
 
-				server = Main.getProperty("server.name");
-				port = Integer.parseInt(Main.getProperty("server.port"));
-				user = Main.getProperty("server.login");
-				password = Encryption.decrypt(Main.getProperty("server.password"));
+				server = properties.getProperty("server.name");
+				port = Integer.parseInt(properties.getProperty("server.port"));
+				user = properties.getProperty("server.login");
+				password = Encryption.decrypt(properties.getProperty("server.password"));
 
 				Debug.netMsg("Attempting to connect to server");
 				Debug.netMsg("Server: "+ server);
@@ -196,7 +205,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 					}else{
 						Debug.netMsg("Authentication failed!");
-						Debug.errDlg(Main.getMessage("authentification_failed"));
+						Debug.errDlg(messages.getMessage("authentification_failed"));
 						connect = false;
 
 					}
@@ -206,14 +215,14 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 				}catch(ConnectException e){
 
-					Debug.errDlg(Main.getMessage("connection_server_refused"));
+					Debug.errDlg(messages.getMessage("connection_server_refused"));
 					Debug.error("Error connecting to the server");
 					Debug.error(e.toString());
 					e.printStackTrace();
 					connect = false;
 
 				}catch(IOException e){
-					Debug.errDlg(Main.getMessage("connection_server_refused"));
+					Debug.errDlg(messages.getMessage("connection_server_refused"));
 					Debug.error(e.toString());
 					e.printStackTrace();
 				}
@@ -513,11 +522,11 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 							//Call monitor event from the server
 						}else if(change.destination == DataChange.Destination.CALLMONITOR
 								&& JFritz.getJframe() != null && JFritz.getJframe().isCallMonitorStarted()
-								&& Main.getProperty("option.callMonitorType").equals("6")){
+								&& properties.getProperty("option.callMonitorType").equals("6")){
 
 							Debug.netMsg("Call monitor event received from server");
 							//call in or disconnect event received
-							String[] ignoredMSNs = Main.getProperty("option.callmonitor.ignoreMSN").trim().split(";");
+							String[] ignoredMSNs = properties.getProperty("option.callmonitor.ignoreMSN").trim().split(";");
 							boolean ignoreIt = false;
 
 							if(change.original != null){
@@ -541,14 +550,14 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 								//Pending call in event
 								if(change.operation == DataChange.Operation.ADD &&
-										Boolean.parseBoolean(Main.getProperty(
+										Boolean.parseBoolean(properties.getProperty(
 						                        "option.callmonitor.monitorIncomingCalls"))){
 
 									JFritz.getCallMonitorList().invokeIncomingCall(c);
 
 									//Established call in event
 								} else if(change.operation == DataChange.Operation.UPDATE &&
-										Boolean.parseBoolean(Main.getProperty(
+										Boolean.parseBoolean(properties.getProperty(
 						                        "option.callmonitor.monitorIncomingCalls"))){
 
 									JFritz.getCallMonitorList().invokeIncomingCallEstablished(c);
@@ -559,7 +568,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 								}
 
 								// call out event received
-							} else if( change.updated != null && Boolean.parseBoolean(Main.getProperty(
+							} else if( change.updated != null && Boolean.parseBoolean(properties.getProperty(
 										"option.callmonitor.monitorOutgoingCalls"))){
 
 								Call c = (Call) change.updated;

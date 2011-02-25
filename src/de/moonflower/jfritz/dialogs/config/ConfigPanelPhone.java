@@ -11,7 +11,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class ConfigPanelPhone extends JPanel implements ConfigPanel{
@@ -25,6 +26,9 @@ public class ConfigPanelPhone extends JPanel implements ConfigPanel{
 
 	private JCheckBox activateDialPrefix;
 
+	protected PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
+
 	public ConfigPanelPhone() {
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
@@ -37,31 +41,31 @@ public class ConfigPanelPhone extends JPanel implements ConfigPanel{
 		c.anchor = GridBagConstraints.WEST;
 
 		c.gridy = 1;
-		JLabel label = new JLabel(Main.getMessage("area_code")); //$NON-NLS-1$
+		JLabel label = new JLabel(messages.getMessage("area_code")); //$NON-NLS-1$
 		cPane.add(label, c);
 		areaCode = new JTextField("", 6); //$NON-NLS-1$
 		cPane.add(areaCode, c);
 
 		c.gridy = 2;
-		label = new JLabel(Main.getMessage("country_code")); //$NON-NLS-1$
+		label = new JLabel(messages.getMessage("country_code")); //$NON-NLS-1$
 		cPane.add(label, c);
 		countryCode = new JTextField("", 6); //$NON-NLS-1$
 		cPane.add(countryCode, c);
 
 		c.gridy = 3;
-		label = new JLabel(Main.getMessage("area_prefix")); //$NON-NLS-1$
+		label = new JLabel(messages.getMessage("area_prefix")); //$NON-NLS-1$
 		cPane.add(label, c);
 		areaPrefix = new JTextField("", 6); //$NON-NLS-1$
 		cPane.add(areaPrefix, c);
 
 		c.gridy = 4;
-		label = new JLabel(Main.getMessage("country_prefix")); //$NON-NLS-1$
+		label = new JLabel(messages.getMessage("country_prefix")); //$NON-NLS-1$
 		cPane.add(label, c);
 		countryPrefix = new JTextField("", 6); //$NON-NLS-1$
 		cPane.add(countryPrefix, c);
 
         c.gridy = 5;
-        activateDialPrefix = new JCheckBox(Main.getMessage("dial_prefix")); //$NON-NLS-1$
+        activateDialPrefix = new JCheckBox(messages.getMessage("dial_prefix")); //$NON-NLS-1$
         cPane.add(activateDialPrefix, c);
         dialPrefix = new JTextField("", 6); //$NON-NLS-1$
         cPane.add(dialPrefix, c);
@@ -70,13 +74,13 @@ public class ConfigPanelPhone extends JPanel implements ConfigPanel{
 	}
 
 	public void loadSettings() {
-		activateDialPrefix.setSelected(JFritzUtils.parseBoolean(Main.getProperty(
+		activateDialPrefix.setSelected(JFritzUtils.parseBoolean(properties.getProperty(
                 "option.activateDialPrefix"))); //$NON-NLS-1$,  //$NON-NLS-2$
-		areaCode.setText(Main.getProperty("area.code")); //$NON-NLS-1$
-		countryCode.setText(Main.getProperty("country.code")); //$NON-NLS-1$
-        areaPrefix.setText(Main.getProperty("area.prefix")); //$NON-NLS-1$
-        dialPrefix.setText(Main.getProperty("dial.prefix")); //$NON-NLS-1$
-		countryPrefix.setText(Main.getProperty("country.prefix")); //$NON-NLS-1$
+		areaCode.setText(properties.getProperty("area.code")); //$NON-NLS-1$
+		countryCode.setText(properties.getProperty("country.code")); //$NON-NLS-1$
+        areaPrefix.setText(properties.getProperty("area.prefix")); //$NON-NLS-1$
+        dialPrefix.setText(properties.getProperty("dial.prefix")); //$NON-NLS-1$
+		countryPrefix.setText(properties.getProperty("country.prefix")); //$NON-NLS-1$
 	}
 
 	public void saveSettings() {
@@ -84,26 +88,26 @@ public class ConfigPanelPhone extends JPanel implements ConfigPanel{
 		if (areaCode.getText().startsWith(areaPrefix.getText()))
 			areaCode.setText(areaCode.getText().substring(
 					areaPrefix.getText().length()));
-		Main.setProperty(
+		properties.setProperty(
                 "option.activateDialPrefix", Boolean.toString(activateDialPrefix.isSelected())); //$NON-NLS-1$
 
-		Main.setProperty("area.code", areaCode.getText()); //$NON-NLS-1$
+		properties.setProperty("area.code", areaCode.getText()); //$NON-NLS-1$
 
 		//Phone stuff here
 		//make sure country code has a plus on it
 		if(!countryCode.getText().startsWith("+"))
 			countryCode.setText("+"+countryCode.getText());
 
-		Main.setProperty("country.code", countryCode.getText()); //$NON-NLS-1$
-		Main.setProperty("area.prefix", areaPrefix.getText()); //$NON-NLS-1$
-        Main.setProperty("dial.prefix", dialPrefix.getText()); //$NON-NLS-1$
-		Main.setProperty("country.prefix", countryPrefix.getText()); //$NON-NLS-1$
+		properties.setProperty("country.code", countryCode.getText()); //$NON-NLS-1$
+		properties.setProperty("area.prefix", areaPrefix.getText()); //$NON-NLS-1$
+        properties.setProperty("dial.prefix", dialPrefix.getText()); //$NON-NLS-1$
+		properties.setProperty("country.prefix", countryPrefix.getText()); //$NON-NLS-1$
 
 	}
 
 	public String getPath()
 	{
-		return Main.getMessage("telephone");
+		return messages.getMessage("telephone");
 	}
 
 	public JPanel getPanel() {

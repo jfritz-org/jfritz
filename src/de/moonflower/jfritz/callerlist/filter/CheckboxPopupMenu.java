@@ -18,7 +18,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.HyperLinkLabel;
 import de.moonflower.jfritz.utils.LinkClickListener;
@@ -35,6 +36,9 @@ public class CheckboxPopupMenu extends JDialog implements ActionListener, LinkCl
 	private boolean ok_pressed = false;
 
 	private String filterStateProperty = "";
+
+	private PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public CheckboxPopupMenu(JFrame parent, String stateProperty) {
 		super(parent);
@@ -61,8 +65,8 @@ public class CheckboxPopupMenu extends JDialog implements ActionListener, LinkCl
 		buttonPanel.setBorder(BorderFactory.createEtchedBorder());
 		JButton okButton;
 		JButton cancelButton;
-		buttonPanel.add(okButton = new JButton(Main.getMessage("okay")));
-		buttonPanel.add(cancelButton = new JButton(Main.getMessage("cancel")));
+		buttonPanel.add(okButton = new JButton(messages.getMessage("okay")));
+		buttonPanel.add(cancelButton = new JButton(messages.getMessage("cancel")));
 		okButton.setActionCommand("ok");
 		cancelButton.setActionCommand("cancel");
 		okButton.addActionListener(this);
@@ -74,11 +78,11 @@ public class CheckboxPopupMenu extends JDialog implements ActionListener, LinkCl
 			URL allUrl = new URL(allUrlStr);
 			URL noneUrl = new URL(noneUrlStr);
 
-			HyperLinkLabel allLink = new HyperLinkLabel(Main.getMessage("select_all"), allUrl);
+			HyperLinkLabel allLink = new HyperLinkLabel(messages.getMessage("select_all"), allUrl);
 			allLink.addClickListener(this);
 			linkPanel.add(allLink);
 
-			HyperLinkLabel noneLink = new HyperLinkLabel(Main.getMessage("select_none"), noneUrl);;
+			HyperLinkLabel noneLink = new HyperLinkLabel(messages.getMessage("select_none"), noneUrl);;
 			noneLink.addClickListener(this);
 			linkPanel.add(noneLink);
 
@@ -129,8 +133,8 @@ public class CheckboxPopupMenu extends JDialog implements ActionListener, LinkCl
 				}
 			}
 			filter = filter.trim();
-			Main.setStateProperty(filterStateProperty, filter);
-			Main.saveStateProperties();
+			properties.setStateProperty(filterStateProperty, filter);
+			properties.saveStateProperties();
 			ok_pressed = true;
 			this.setVisible(false);
 		} else if (e.getActionCommand().equals("cancel")) {

@@ -30,9 +30,10 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.CallPendingDialog;
@@ -54,6 +55,9 @@ public class CallDialog extends JDialog implements ActionListener {
 
 	private Object cboNumber;
 	private PhoneNumberOld defaultNumber;
+
+	private PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	/**
 	 * This Constructor initializes the CallDialog with a set of numbers and a default number.
@@ -98,21 +102,21 @@ public class CallDialog extends JDialog implements ActionListener {
 		int answer = JOptionPane.YES_OPTION;
 		ComplexJOptionPaneMessage msg = new ComplexJOptionPaneMessage(
                 "legalInfo.telephoneCharges", //$NON-NLS-1$
-				Main.getMessage("telefonCharges_Warning")); //$NON-NLS-1$
+				messages.getMessage("telefonCharges_Warning")); //$NON-NLS-1$
 
 		if (msg.showDialogEnabled()) {
 			answer = JOptionPane.showConfirmDialog(null,
 					msg.getComponents(),
-					Main.getMessage("information"), JOptionPane.YES_NO_OPTION);
+					messages.getMessage("information"), JOptionPane.YES_NO_OPTION);
 			if (answer == JOptionPane.YES_OPTION) {
 				msg.saveProperty();
-				Main.saveStateProperties();
+				properties.saveStateProperties();
 			}
 		}
 
 		if (answer == JOptionPane.YES_OPTION) {
 			super.dialogInit();
-			setTitle(Main.getMessage("call")); //$NON-NLS-1$
+			setTitle(messages.getMessage("call")); //$NON-NLS-1$
 			// this.setAlwaysOnTop(true); //erst ab Java V.5.0 möglich
 			setModal(true);
 			getContentPane().setLayout(new BorderLayout());
@@ -131,7 +135,7 @@ public class CallDialog extends JDialog implements ActionListener {
 
 			c.gridy = 1;
 
-			JLabel label = new JLabel(Main.getMessage("number")+": "); //$NON-NLS-1$,  //$NON-NLS-2$
+			JLabel label = new JLabel(messages.getMessage("number")+": "); //$NON-NLS-1$,  //$NON-NLS-2$
 			topPane.add(label, c);
 
 			//make the number editable
@@ -152,7 +156,7 @@ public class CallDialog extends JDialog implements ActionListener {
 			}
 			topPane.add((Component) cboNumber, c);
 			c.gridy = 2;
-			label = new JLabel(Main.getMessage("extension")+": "); //$NON-NLS-1$,  //$NON-NLS-2$
+			label = new JLabel(messages.getMessage("extension")+": "); //$NON-NLS-1$,  //$NON-NLS-2$
 			topPane.add(label, c);
 
 			portComboBox = new JComboBox();
@@ -175,11 +179,11 @@ public class CallDialog extends JDialog implements ActionListener {
 			topPane.add(portComboBox, c);
 
 			// Bottom Pane
-			okButton = new JButton(Main.getMessage("call")); //$NON-NLS-1$
+			okButton = new JButton(messages.getMessage("call")); //$NON-NLS-1$
 			okButton.setActionCommand("call"); //$NON-NLS-1$
 			okButton.addActionListener(this);
 
-			cancelButton = new JButton(Main.getMessage("cancel")); //$NON-NLS-1$
+			cancelButton = new JButton(messages.getMessage("cancel")); //$NON-NLS-1$
 			cancelButton.setActionCommand("close"); //$NON-NLS-1$
 			cancelButton.addActionListener(this);
 
@@ -206,7 +210,7 @@ public class CallDialog extends JDialog implements ActionListener {
 			if (portComboBox.getItemCount() > 0)
 			{
 				try {
-					int lastPort = Integer.parseInt(Main.getStateProperty("calldialog.lastport"));
+					int lastPort = Integer.parseInt(properties.getStateProperty("calldialog.lastport"));
 					if (portComboBox.getItemCount() > lastPort)
 					{
 						portComboBox.setSelectedIndex(lastPort);
@@ -237,7 +241,7 @@ public class CallDialog extends JDialog implements ActionListener {
 			try {
 				Port port = (Port) portComboBox.getSelectedItem();
 
-				Main.setStateProperty("calldialog.lastport", Integer.toString(portComboBox.getSelectedIndex()));
+				properties.setStateProperty("calldialog.lastport", Integer.toString(portComboBox.getSelectedIndex()));
 
 				if (cboNumber.getClass().toString().equals(
 						"class javax.swing.JTextField")) //$NON-NLS-1$
@@ -255,7 +259,7 @@ public class CallDialog extends JDialog implements ActionListener {
 				setVisible(false);
 
 				//popup new dialog with the possibility to cancel this call
-				String text = Main.getMessage("calldialog_pending_call");
+				String text = messages.getMessage("calldialog_pending_call");
 				if (this.numbers.size() == 1) { // if only one number -> use editable JTextField
 					text = text.replaceAll("%NUMBER", ((JTextField) cboNumber).getText());
 				} else {// if more then one number -> use editable JComboBox
@@ -266,14 +270,14 @@ public class CallDialog extends JDialog implements ActionListener {
 				cancelDialog.setVisible(true);
 				cancelDialog.dispose();
 			} catch (WrongPasswordException e1) {
-				JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
-				Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+				JFritz.errorMsg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
+				Debug.errDlg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
 			} catch (IOException e1) {
-				JFritz.errorMsg(Main.getMessage("box.not_found")); //$NON-NLS-1$
-				Debug.errDlg(Main.getMessage("box.not_found")); //$NON-NLS-1$
+				JFritz.errorMsg(messages.getMessage("box.not_found")); //$NON-NLS-1$
+				Debug.errDlg(messages.getMessage("box.not_found")); //$NON-NLS-1$
 			}
 		} else if (e.getActionCommand().equals("close")) { //$NON-NLS-1$
-			Main.setStateProperty("calldialog.lastport", Integer.toString(portComboBox.getSelectedIndex()));
+			properties.setStateProperty("calldialog.lastport", Integer.toString(portComboBox.getSelectedIndex()));
 			setVisible(false);
 		}
 	}

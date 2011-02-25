@@ -23,8 +23,8 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
+import de.moonflower.jfritz.messages.MessageProvider;
 
 /**
  * @author Robert Palmer
@@ -41,6 +41,7 @@ public class SipConfigDialog extends JDialog {
     private JButton okButton, cancelButton;
 
     private boolean pressedOk = false;
+	protected MessageProvider messages = MessageProvider.getInstance();
 
     public SipConfigDialog(JDialog parent, SipProvider sipProvider) {
         super(parent, true);
@@ -66,11 +67,11 @@ public class SipConfigDialog extends JDialog {
 
         tpane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        okButton = new JButton(Main.getMessage("okay"));
+        okButton = new JButton(messages.getMessage("okay"));
         okButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
                 getClass().getResource(
                         "/de/moonflower/jfritz/resources/images/okay.png"))));
-        cancelButton = new JButton(Main.getMessage("cancel"));
+        cancelButton = new JButton(messages.getMessage("cancel"));
 
         ActionListener actionListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {

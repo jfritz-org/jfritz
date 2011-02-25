@@ -17,6 +17,8 @@ import javax.swing.JScrollPane;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.StartEndFilenameFilter;
@@ -36,6 +38,9 @@ public class ConfigPanelLang extends JPanel implements ConfigPanel{
 
     public JComboBox languageCombo;
 
+    protected PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
+
     public ConfigPanelLang(){
         setLayout(new BorderLayout());
 		setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
@@ -50,7 +55,7 @@ public class ConfigPanelLang extends JPanel implements ConfigPanel{
 
 		JLabel label;
 		c.gridy = 2;
-		label = new JLabel(Main.getMessage("language") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		label = new JLabel(messages.getMessage("language") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		cPane.add(label, c);
 
 		String lang = JFritzUtils.getFullPath(JFritzUtils.langID);
@@ -90,7 +95,7 @@ public class ConfigPanelLang extends JPanel implements ConfigPanel{
 
 	public void loadSettings() {
 		int index = 0;
-		String loc = Main.getProperty("locale");
+		String loc = properties.getProperty("locale");
 		for (int a = 0; a < localeList.length; a++) {
 			if (localeList[a].equals(loc)) index = a;
 		}
@@ -98,8 +103,8 @@ public class ConfigPanelLang extends JPanel implements ConfigPanel{
 	}
 
 	public void saveSettings() {
-		if (!Main.getProperty("locale").equals(localeList[languageCombo.getSelectedIndex()])) { //$NON-NLS-1$ //$NON-NLS-2$
-			Main.setProperty(
+		if (!properties.getProperty("locale").equals(localeList[languageCombo.getSelectedIndex()])) { //$NON-NLS-1$ //$NON-NLS-2$
+			properties.setProperty(
 					"locale", localeList[languageCombo.getSelectedIndex()]); //$NON-NLS-1$
 			String loc = localeList[languageCombo.getSelectedIndex()];
 			JFritz.getJframe().setLanguage(
@@ -109,7 +114,7 @@ public class ConfigPanelLang extends JPanel implements ConfigPanel{
 
 	public String getPath()
 	{
-		return Main.getMessage("language");
+		return messages.getMessage("language");
 	}
 
 	public JPanel getPanel() {

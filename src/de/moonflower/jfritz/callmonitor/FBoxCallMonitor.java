@@ -1,8 +1,5 @@
 package de.moonflower.jfritz.callmonitor;
 
-import de.moonflower.jfritz.box.fritzbox.FritzBox;
-import de.moonflower.jfritz.utils.Debug;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,6 +11,9 @@ import java.net.UnknownHostException;
 import java.util.Random;
 import java.util.Vector;
 
+import de.moonflower.jfritz.box.fritzbox.FritzBox;
+import de.moonflower.jfritz.utils.Debug;
+
 /**
  * Thread. Connects to FritzBox Port 1012. Captures Callermessages.
  *
@@ -22,7 +22,7 @@ import java.util.Vector;
  */
 
 public abstract class FBoxCallMonitor extends Thread implements CallMonitorInterface {
-	private static final int CONNECTION_TIMEOUT = 1000; //15000
+	private static final int CONNECTION_TIMEOUT = 1000;
 
 	private static final int READ_TIMEOUT = 15000; //15000;
 
@@ -47,9 +47,9 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
     private Vector<CallMonitorStatusListener> stateListener;
 
     public FBoxCallMonitor(FritzBox fritzBox,
-    		Vector<CallMonitorStatusListener> listener) {
+    		Vector<CallMonitorStatusListener> stateListener) {
         super("FBoxThread");
-        this.stateListener = listener;
+        this.stateListener = stateListener;
         this.fritzBox = fritzBox;
         Debug.info("Starting FBoxListener"); //$NON-NLS-1$
         this.setDaemon(true);

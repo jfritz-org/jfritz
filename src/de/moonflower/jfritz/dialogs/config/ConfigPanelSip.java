@@ -20,10 +20,10 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.TableCellRenderer;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.dialogs.sip.SipProviderTableModel;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.utils.Debug;
 
 public class ConfigPanelSip extends JPanel implements ConfigPanel {
@@ -35,6 +35,7 @@ public class ConfigPanelSip extends JPanel implements ConfigPanel {
 	private SipProviderTableModel sipProviderTableModel;
 
 	private ConfigPanelFritzBox fritzBoxPanel;
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public ConfigPanelSip() {
 		this.sipProviderTableModel = new SipProviderTableModel();
@@ -89,24 +90,24 @@ public class ConfigPanelSip extends JPanel implements ConfigPanel {
 						fritzBoxPanel.detectBoxType();
 						updateTable();
 					} catch (WrongPasswordException e1) {
-						JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
-						Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+						JFritz.errorMsg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
+						Debug.errDlg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
 					} catch (IOException e1) {
-						JFritz.errorMsg(Main.getMessage("box.not_found")); //$NON-NLS-1$
-						Debug.errDlg(Main.getMessage("box.not_found")); //$NON-NLS-1$
+						JFritz.errorMsg(messages.getMessage("box.not_found")); //$NON-NLS-1$
+						Debug.errDlg(messages.getMessage("box.not_found")); //$NON-NLS-1$
 					} catch (InvalidFirmwareException e1) {
-						JFritz.errorMsg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
-						Debug.errDlg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
+						JFritz.errorMsg(messages.getMessage("unknown_firmware")); //$NON-NLS-1$
+						Debug.errDlg(messages.getMessage("unknown_firmware")); //$NON-NLS-1$
 					}
 					c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				}
 			}
 		};
 
-		JButton b1 = new JButton(Main.getMessage("get_sip_provider_from_box")); //$NON-NLS-1$
+		JButton b1 = new JButton(messages.getMessage("get_sip_provider_from_box")); //$NON-NLS-1$
 		b1.setActionCommand("fetchSIP"); //$NON-NLS-1$
 		b1.addActionListener(actionListener);
-		JButton b2 = new JButton(Main.getMessage("save_sip_provider_on_box")); //$NON-NLS-1$
+		JButton b2 = new JButton(messages.getMessage("save_sip_provider_on_box")); //$NON-NLS-1$
 		b2.setEnabled(false);
 		sipButtonPane.add(b1);
 		sipButtonPane.add(b2);

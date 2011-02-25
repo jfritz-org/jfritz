@@ -35,11 +35,11 @@ import org.jfree.report.modules.gui.base.PreviewFrame;
 import org.jfree.report.style.FontDefinition;
 
 import sun.awt.image.ToolkitImage;
-
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.ProgramConstants;
 import de.moonflower.jfritz.callerlist.CallerTable;
+import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.Port;
@@ -56,6 +56,9 @@ public class PrintCallerList extends Thread {
 
     private JFreeReport report;
 
+    protected PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
+
     private void createColumnWidths() {
         Debug.debug("Create Columns"); //$NON-NLS-1$
         int columnCount = JFritz.getJframe().getCallerTable().getColumnCount();
@@ -69,13 +72,13 @@ public class PrintCallerList extends Thread {
         for (int i = 0; i < columnCount; i++) {
             String columnName = colModel.getColumn(i).getHeaderValue()
                     .toString();
-            if (columnName.equals(Main.getMessage("type"))) { //$NON-NLS-1$
+            if (columnName.equals(messages.getMessage("type"))) { //$NON-NLS-1$
                 // Icon, same Width
                 columnWidth[i] = colModel.getColumn(i).getWidth() - 10;
                 // Minimum size of type-column (icon)
                 if (columnWidth[i] < 20)
                     columnWidth[i] = 20;
-            } else if (columnName.equals(Main.getMessage("picture")))
+            } else if (columnName.equals(messages.getMessage("picture")))
             {
             	// pictures have always the same width
             	columnWidth[i] = colModel.getColumn(i).getWidth();
@@ -97,8 +100,8 @@ public class PrintCallerList extends Thread {
             for (int i = 0; i < columnCount; i++) {
                 String columnName = colModel.getColumn(i).getHeaderValue()
                 .toString();
-                if (!(columnName.equals(Main.getMessage("number"))) //$NON-NLS-1$
-                        && (!columnName.equals(Main.getMessage("participant")))) //$NON-NLS-1$
+                if (!(columnName.equals(messages.getMessage("number"))) //$NON-NLS-1$
+                        && (!columnName.equals(messages.getMessage("participant")))) //$NON-NLS-1$
                 {
                     if (columnWidth[i] > columnWidth[columnWithMaxWidth])
                 	{
@@ -160,7 +163,7 @@ public class PrintCallerList extends Thread {
         TextElement label = LabelElementFactory.createLabelElement("JFritz", //$NON-NLS-1$
                 new Rectangle2D.Float(0, 0, pageWidth, 40), Color.BLACK,
                 ElementAlignment.CENTER, ElementAlignment.MIDDLE, font,
-                ProgramConstants.PROGRAM_NAME + " - " + Main.getMessage("callerlist")); //$NON-NLS-1$,  //$NON-NLS-2$
+                ProgramConstants.PROGRAM_NAME + " - " + messages.getMessage("callerlist")); //$NON-NLS-1$,  //$NON-NLS-2$
         pageHeader.addElement(label);
 
         font = new FontDefinition("Arial", 8, true, false, false, false); //$NON-NLS-1$
@@ -222,7 +225,7 @@ public class PrintCallerList extends Thread {
 
     public JFreeReport createReportDefinition() {
         report = new JFreeReport();
-        report.setName(ProgramConstants.PROGRAM_NAME + "-" + Main.getMessage("callerlist")); //$NON-NLS-1$,  //$NON-NLS-2$
+        report.setName(ProgramConstants.PROGRAM_NAME + "-" + messages.getMessage("callerlist")); //$NON-NLS-1$,  //$NON-NLS-2$
 
         SimplePageDefinition pageDefinition = new SimplePageDefinition(
                 createDINA4PaperLandscape());
@@ -571,7 +574,7 @@ public class PrintCallerList extends Thread {
             // Rand zeichnen
             Debug.debug("Print border ..."); //$NON-NLS-1$
             Rectangle2D.Float border;
-            if (JFritzUtils.parseBoolean(Main.getProperty("option.showCallerListColumn."+CallerTable.COLUMN_PICTURE)))
+            if (JFritzUtils.parseBoolean(properties.getProperty("option.showCallerListColumn."+CallerTable.COLUMN_PICTURE)))
             {
             	border = new Rectangle2D.Float(columnStart[i], 0,
                         columnWidth[i], 55);

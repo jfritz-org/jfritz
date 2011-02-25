@@ -28,7 +28,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.messages.MessageProvider;
 
 /**
  * Simple dialog for Fritz!Box address and password input.
@@ -51,6 +51,7 @@ public class AddressPasswordDialog extends JDialog {
 	private boolean pressedOK = false;
 
 	private boolean isPasswordDlg;
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public AddressPasswordDialog(Frame parent, String title) {
 		super(parent, title);
@@ -98,10 +99,10 @@ public class AddressPasswordDialog extends JDialog {
 	protected void drawDialog() {
 		pass = new JPasswordField("", 20); //$NON-NLS-1$
 		address = new JTextField("", 20); //$NON-NLS-1$
-		okButton = new JButton(Main.getMessage("okay")); //$NON-NLS-1$
-		cancelButton = new JButton(Main.getMessage("cancel")); //$NON-NLS-1$
-		passLabel = new JLabel(Main.getMessage("password") + ": "); //$NON-NLS-1$
-		addressLabel = new JLabel(Main.getMessage("ip_address") + ": "); //$NON-NLS-1$
+		okButton = new JButton(messages.getMessage("okay")); //$NON-NLS-1$
+		cancelButton = new JButton(messages.getMessage("cancel")); //$NON-NLS-1$
+		passLabel = new JLabel(messages.getMessage("password") + ": "); //$NON-NLS-1$
+		addressLabel = new JLabel(messages.getMessage("ip_address") + ": "); //$NON-NLS-1$
 
 		super.dialogInit();
 
@@ -139,7 +140,7 @@ public class AddressPasswordDialog extends JDialog {
 		c.anchor = GridBagConstraints.EAST;
 		c.gridy = 1;
 		if (isPasswordDlg) {
-			setTitle(Main.getMessage("dialog_title_password_dialog")); //$NON-NLS-1$
+			setTitle(messages.getMessage("dialog_title_password_dialog")); //$NON-NLS-1$
 			gridbag.setConstraints(passLabel, c);
 			pane.add(passLabel);
 			gridbag.setConstraints(pass, c);
@@ -147,7 +148,7 @@ public class AddressPasswordDialog extends JDialog {
 			pass.addKeyListener(keyListener);
 			pane.add(pass);
 		} else {
-			setTitle(Main.getMessage("dialog_title_ipaddress_dialog")); //$NON-NLS-1$
+			setTitle(messages.getMessage("dialog_title_ipaddress_dialog")); //$NON-NLS-1$
 			gridbag.setConstraints(addressLabel, c);
 			pane.add(addressLabel);
 			gridbag.setConstraints(address, c);

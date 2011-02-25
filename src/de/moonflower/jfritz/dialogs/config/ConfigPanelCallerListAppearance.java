@@ -14,9 +14,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.CallerTable;
 import de.moonflower.jfritz.callerlist.JFritzTableColumn;
+import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
@@ -27,6 +28,8 @@ public class ConfigPanelCallerListAppearance extends JPanel implements ConfigPan
 	private Vector<String> columnNames = new Vector<String>();
 	private JTable columnTable;
 	private ColumnTableModel columnTableModel = new ColumnTableModel();
+	protected PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public ConfigPanelCallerListAppearance() {
 		setLayout(new BorderLayout());
@@ -44,11 +47,11 @@ public class ConfigPanelCallerListAppearance extends JPanel implements ConfigPan
 
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new GridBagLayout());
-		JButton upButton = new JButton(Main.getMessage("move_up"));
+		JButton upButton = new JButton(messages.getMessage("move_up"));
 		upButton.setActionCommand("up");
 		upButton.addActionListener(this);
 
-		JButton downButton = new JButton(Main.getMessage("move_down"));
+		JButton downButton = new JButton(messages.getMessage("move_down"));
 		downButton.setActionCommand("down");
 		downButton.addActionListener(this);
 
@@ -87,11 +90,11 @@ public class ConfigPanelCallerListAppearance extends JPanel implements ConfigPan
 	public void loadSettings() {
 		for (int i=0; i<CallerTable.getCallerTableColumnsCount(); i++)
 		{
-			String columnName = Main.getStateProperty("callerTable.column"+i+".name");
+			String columnName = properties.getStateProperty("callerTable.column"+i+".name");
 			if ( columnName != null)
 			{
 				JFritzTableColumn jcol = new JFritzTableColumn(columnName);
-				jcol.setVisible(JFritzUtils.parseBoolean(Main.getProperty("option.showCallerListColumn." + columnName)));
+				jcol.setVisible(JFritzUtils.parseBoolean(properties.getProperty("option.showCallerListColumn." + columnName)));
 				columnTableModel.addData(jcol);
 			}
 		}
@@ -100,15 +103,15 @@ public class ConfigPanelCallerListAppearance extends JPanel implements ConfigPan
 	public void saveSettings() {
 		for (int i=0; i<columnTableModel.getDataSize(); i++)
 		{
-			Main.setStateProperty("callerTable.column"+i+".name", columnTableModel.getData(i).getName());
-			Main.setProperty("option.showCallerListColumn." + columnTableModel.getData(i).getName(), columnTableModel.getData(i).isVisible());
+			properties.setStateProperty("callerTable.column"+i+".name", columnTableModel.getData(i).getName());
+			properties.setProperty("option.showCallerListColumn." + columnTableModel.getData(i).getName(), columnTableModel.getData(i).isVisible());
 			Debug.debug("CallerListTableColumn " + i + ": " + columnTableModel.getData(i).getName() + " / visible: " +columnTableModel.getData(i).isVisible());
 		}
 	}
 
 	public String getPath()
 	{
-		return Main.getMessage("callerlist")+"::"+Main.getMessage("appearance");
+		return messages.getMessage("callerlist")+"::"+messages.getMessage("appearance");
 	}
 
 	public JPanel getPanel() {

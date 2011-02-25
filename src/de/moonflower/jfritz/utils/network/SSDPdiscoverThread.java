@@ -7,7 +7,7 @@ package de.moonflower.jfritz.utils.network;
 import java.util.Vector;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.StatusBarController;
 
@@ -19,6 +19,7 @@ public class SSDPdiscoverThread extends Thread {
 
 	int timeout;
 	private StatusBarController statusBarController = new StatusBarController();
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	Vector<SSDPPacket> devices;
 
@@ -35,7 +36,7 @@ public class SSDPdiscoverThread extends Thread {
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
-		statusBarController.fireStatusChanged(Main.getMessage("detect_boxes")); //$NON-NLS-1$
+		statusBarController.fireStatusChanged(messages.getMessage("detect_boxes")); //$NON-NLS-1$
 		JFritz.getJframe().setBusy(true);
 
 		devices = UPNPUtils.SSDP_discoverFritzBoxes(timeout);

@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
@@ -25,6 +26,7 @@ public class WatchdogThread extends Thread {
 
     private int watchdogCalls = 0;
 
+    protected PropertyProvider properties = PropertyProvider.getInstance();
     /**
      *
      * @param interval
@@ -69,7 +71,7 @@ public class WatchdogThread extends Thread {
         {
         	Debug.debug("Restarting call monitor due to STANDBY/SUSPEND TO RAM");
 			restartCallMonitor(true);
-    		if (JFritzUtils.parseBoolean(Main.getProperty("option.watchdog.fetchAfterStandby"))) //$NON-NLS-1$, //$NON-NLS-2$
+    		if (JFritzUtils.parseBoolean(properties.getProperty("option.watchdog.fetchAfterStandby"))) //$NON-NLS-1$, //$NON-NLS-2$
     		{
     			Timer timer = new Timer("Standby-Timer: Fetch-List", true);
     			timer.schedule(new TimerTask() {

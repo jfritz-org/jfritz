@@ -3,23 +3,22 @@
  */
 package de.moonflower.jfritz.dialogs.simple;
 
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import java.awt.BorderLayout;
-import java.awt.Toolkit;
 import java.awt.Dimension;
-
-import javax.swing.JPanel;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JDialog;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-
-import de.moonflower.jfritz.Main;
-
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import de.moonflower.jfritz.messages.MessageProvider;
 
 
 /**
@@ -31,6 +30,8 @@ public class MessageDlg extends JDialog implements ActionListener{
 
 		private Timer timer;
 		private HideTimer task;
+		protected MessageProvider messages = MessageProvider.getInstance();
+
 		public MessageDlg()
 		{
 			super();
@@ -50,9 +51,9 @@ public class MessageDlg extends JDialog implements ActionListener{
 			if(delay > 0)
 				timer.schedule(task, delay);
 
-			setTitle(Main.getMessage("dialog_title_popup_info")); //$NON-NLS-1$
+			setTitle(messages.getMessage("dialog_title_popup_info")); //$NON-NLS-1$
 
-			JButton closeButton = new JButton(Main.getMessage("okay")); //$NON-NLS-1$
+			JButton closeButton = new JButton(messages.getMessage("okay")); //$NON-NLS-1$
 			closeButton.addActionListener(this);
 			getContentPane().setLayout(new BorderLayout(15, 15));
 			getContentPane().add(closeButton, BorderLayout.SOUTH);

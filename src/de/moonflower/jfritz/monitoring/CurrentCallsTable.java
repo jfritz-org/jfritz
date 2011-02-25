@@ -5,8 +5,8 @@ import java.util.Vector;
 import javax.swing.table.AbstractTableModel;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callmonitor.CallMonitorListener;
+import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.utils.Debug;
 
@@ -14,11 +14,12 @@ public class CurrentCallsTable extends AbstractTableModel implements
 	CallMonitorListener {
 
     private static final long serialVersionUID = 1;
+	protected MessageProvider messages = MessageProvider.getInstance();
 
-    private final String columnNames[] = { Main.getMessage("type"), Main.getMessage("date"),
-    	    Main.getMessage("callbycall"), Main.getMessage("number"),
-    		Main.getMessage("name"),	Main.getMessage("port"),
-    		Main.getMessage("route"), Main.getMessage("comment")};
+    private final String columnNames[] = { messages.getMessage("type"), messages.getMessage("date"),
+    	    messages.getMessage("callbycall"), messages.getMessage("number"),
+    		messages.getMessage("name"),	messages.getMessage("port"),
+    		messages.getMessage("route"), messages.getMessage("comment")};
 
     private Vector<Call> currentCalls;
 

@@ -5,8 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.Vector;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
+import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
@@ -24,6 +25,8 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 public class FBoxCallMonitorV1 extends FBoxCallMonitor {
 
 	private boolean connected = false;
+	protected PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
 
     public FBoxCallMonitorV1(FritzBox fritzBox, Vector<CallMonitorStatusListener> stateListener) {
     	super(fritzBox, stateListener);
@@ -49,11 +52,11 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
         for (int i = 0; i < split.length; i++) {
             Debug.debug("Split[" + i + "] = " + split[i]); //$NON-NLS-1$,  //$NON-NLS-2$
         }
-        if (JFritzUtils.parseBoolean(Main.getProperty(
+        if (JFritzUtils.parseBoolean(properties.getProperty(
                 "option.callmonitor.monitorIncomingCalls")) //$NON-NLS-1$, //$NON-NLS-2$
                 && split[1].equals("RING")) { //$NON-NLS-1$
             if (split[3].equals("")) { //$NON-NLS-1$
-                number = Main.getMessage("unknown"); //$NON-NLS-1$
+                number = messages.getMessage("unknown"); //$NON-NLS-1$
             } else
             {
             	number = split[3];
@@ -65,7 +68,7 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
             }
 
             if (split[4].equals("")) { //$NON-NLS-1$
-                provider = Main.getMessage("fixed_network"); //$NON-NLS-1$
+                provider = messages.getMessage("fixed_network"); //$NON-NLS-1$
             } else
             {
                 provider = split[4];
@@ -96,16 +99,16 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
                 e.printStackTrace();
             }
 
-        } else if (JFritzUtils.parseBoolean(Main.getProperty(
+        } else if (JFritzUtils.parseBoolean(properties.getProperty(
                 "option.callmonitor.monitorOutgoingCalls")) //$NON-NLS-1$,  //$NON-NLS-2$
                 && split[1].equals("CALL")) { //$NON-NLS-1$
             if (split[5].equals("")) { //$NON-NLS-1$
-                number = Main.getMessage("unknown"); //$NON-NLS-1$
+                number = messages.getMessage("unknown"); //$NON-NLS-1$
             } else
                 number = split[5];
             if (number.endsWith("#"))number = number.substring(0, number.length() - 1); //$NON-NLS-1$
             if (split[4].equals("")) { //$NON-NLS-1$
-                provider = Main.getMessage("fixed_network"); //$NON-NLS-1$
+                provider = messages.getMessage("fixed_network"); //$NON-NLS-1$
             } else {
                 provider = split[4];
             }
@@ -135,7 +138,7 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
                 Call currentCall = new Call(new CallType(CallType.CALLOUT),
                         new SimpleDateFormat("dd.MM.yy HH:mm:ss")
                                 .parse(split[0]),
-                                new PhoneNumberOld(number, JFritzUtils.parseBoolean(Main.getProperty("option.activateDialPrefix"))),
+                                new PhoneNumberOld(number, JFritzUtils.parseBoolean(properties.getProperty("option.activateDialPrefix"))),
                                 port, provider, 0);
                 JFritz.getCallMonitorList().addNewCall(
                         Integer.parseInt(split[2]), currentCall);
@@ -169,7 +172,7 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
             	port = new Port(0, "", "-1", "-1");
             }
             if (split[4].equals("")) { //$NON-NLS-1$
-                number = Main.getMessage("unknown"); //$NON-NLS-1$
+                number = messages.getMessage("unknown"); //$NON-NLS-1$
             } else
                 number = split[4];
             if (number.endsWith("#")) //$NON-NLS-1$
@@ -178,7 +181,7 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
             Call call = JFritz.getCallMonitorList().getCall(callId);
             PhoneNumberOld pn = new PhoneNumberOld(number, false);
             if (pn.getIntNumber().equals(call.getPhoneNumber().getIntNumber())
-        		|| pn.getIntNumber().equals(Main.getProperty("dial.prefix")+call.getPhoneNumber().getIntNumber())) {
+        		|| pn.getIntNumber().equals(properties.getProperty("dial.prefix")+call.getPhoneNumber().getIntNumber())) {
                 try {
                     if (JFritz.getCallMonitorList().getCall(callId) != null) {
                         JFritz.getCallMonitorList().getCall(callId)

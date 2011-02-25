@@ -2,23 +2,24 @@ package de.moonflower.jfritz.dialogs.configwizard;
 
 import java.awt.Frame;
 import java.io.IOException;
-
-import javax.swing.*;
 import java.util.Locale;
+
+import javax.swing.JComboBox;
 
 import com.nexes.wizard.Wizard;
 import com.nexes.wizard.WizardPanelDescriptor;
 
+import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelCallMonitor;
-import de.moonflower.jfritz.dialogs.config.ConfigPanelLang;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelFritzBox;
+import de.moonflower.jfritz.dialogs.config.ConfigPanelLang;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelMessage;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelPhone;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.Debug;
-import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.Main;
 
 /**
  *
@@ -42,6 +43,9 @@ public class ConfigWizard {
 
 	private boolean languageCanceled = false;
 
+	protected PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
+
 	public ConfigWizard(Frame parent){
 
 		Debug.info("asking the user for the language");
@@ -51,7 +55,7 @@ public class ConfigWizard {
 
 		Debug.info("Create JFritz config wizard");
 		wizard = new Wizard(JFritz.getJframe());
-        wizard.getDialog().setTitle(Main.getMessage("config_wizard"));
+        wizard.getDialog().setTitle(messages.getMessage("config_wizard"));
 
         //initialize the wizard with the correct order of the panels
         WizardPanelDescriptor descriptor1 = new ConfigPanel1Descriptor();
@@ -117,7 +121,7 @@ public class ConfigWizard {
        			((ConfigPanelMessage)descriptor4.getPanelComponent()).saveSettings();
        			((ConfigPanelCallMonitor)descriptor5.getPanelComponent()).saveSettings();
 
-      			Main.saveConfigProperties();
+      			properties.saveConfigProperties();
 
 				return false;
        		case 1:
@@ -142,7 +146,7 @@ public class ConfigWizard {
 	 */
 	public void askLanguage(Frame parent){
 		wizard = new Wizard();
-	    wizard.getDialog().setTitle(Main.getMessage("config_wizard"));
+	    wizard.getDialog().setTitle(messages.getMessage("config_wizard"));
        	wizard.setLocationRelativeToParent(true);
 
 	    if(parent != null)
@@ -162,8 +166,8 @@ public class ConfigWizard {
 			String[] localeList = ((ConfigPanelLang)descriptorLang.getPanelComponent()).localeList;
 
 			//This code is real ugly, i should get around to cleaning it up!
-			if (!Main.getProperty("locale").equals(localeList[languageCombo.getSelectedIndex()])) { //$NON-NLS-1$ //$NON-NLS-2$
-				Main.setProperty(
+			if (!properties.getProperty("locale").equals(localeList[languageCombo.getSelectedIndex()])) { //$NON-NLS-1$ //$NON-NLS-2$
+				properties.setProperty(
 						"locale", localeList[languageCombo.getSelectedIndex()]); //$NON-NLS-1$
 				String loc = localeList[languageCombo.getSelectedIndex()];
 				JFritz.getJframe().setLanguage(

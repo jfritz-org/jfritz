@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.properties.PropertyProvider;
 
 /**
  * Static class for data retrieval from the fritz box and for several global
@@ -45,6 +46,8 @@ public class JFritzUtils {
 	public static final String langID = FILESEP + "lang";
 
 	private final static String PATTERN_WAIT_FOR_X_SECONDS = "var loginBlocked = parseInt\\(\"([^\"]*)\",10\\);";
+
+	protected static PropertyProvider properties = PropertyProvider.getInstance();
 
 	/**
 	 * fetches html data from url using POST requests in one single return
@@ -450,7 +453,7 @@ public class JFritzUtils {
 
 	public static void fillVectorByString(Vector<String> vector, String input,
 			String sep) {
-		String[] parts = Main.getStateProperty(input).split(sep);
+		String[] parts = properties.getStateProperty(input).split(sep);
 		for (String part : parts) {
 			vector.add(part);
 		}

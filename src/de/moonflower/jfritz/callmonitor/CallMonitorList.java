@@ -7,7 +7,7 @@ package de.moonflower.jfritz.callmonitor;
 import java.util.HashMap;
 import java.util.Vector;
 
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.utils.Debug;
@@ -20,9 +20,6 @@ import de.moonflower.jfritz.utils.Debug;
  *
  */
 
-// TODO: ignore MSNs
-/**
- **/
 public class CallMonitorList {
 
     public final static int PENDING = 0;
@@ -44,6 +41,8 @@ public class CallMonitorList {
 
     // Anrufe, bei denen schon eine Verbindung besteht
     private HashMap<Integer, Call> establishedCalls = new HashMap<Integer, Call>();
+
+    protected PropertyProvider properties = PropertyProvider.getInstance();
 
     /**
      * Fügt den Anruf call in die Liste der "schwebenden" Anrufe ein
@@ -250,7 +249,7 @@ public class CallMonitorList {
     }
 
     protected void initIgnoreList() {
-        String ignoreMSNString = Main.getProperty(
+        String ignoreMSNString = properties.getProperty(
                 "option.callmonitor.ignoreMSN"); //$NON-NLS-1$,  //$NON-NLS-2$
         if (ignoreMSNString.length() > 0 && ignoreMSNString.indexOf(";") == -1) { //$NON-NLS-1$
             ignoreMSNString = ignoreMSNString + ";"; //$NON-NLS-1$

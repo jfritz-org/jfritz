@@ -3,6 +3,7 @@ package de.moonflower.jfritz.callerlist;
 import javax.swing.table.TableColumn;
 
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.messages.MessageProvider;
 
 public class JFritzTableColumn {
 
@@ -13,6 +14,7 @@ public class JFritzTableColumn {
 	private String name;
 
 	private TableColumn column;
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public JFritzTableColumn(String columnName)
 	{
@@ -27,7 +29,7 @@ public class JFritzTableColumn {
 
 	public String getI18NName()
 	{
-		return Main.getMessage(name);
+		return messages.getMessage(name);
 	}
 
 	public boolean isVisible()

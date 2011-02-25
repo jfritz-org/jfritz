@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -13,11 +12,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.JFritzEvent.JFritzEventDispatcher;
 import de.moonflower.jfritz.JFritzEvent.JFritzEventTableModel;
 import de.moonflower.jfritz.JFritzEvent.struct.JFritzEventAction;
 import de.moonflower.jfritz.dialogs.config.ConfigPanel;
+import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.utils.Debug;
 
 
@@ -40,6 +39,7 @@ public class JFritzEventGUI extends JPanel implements ConfigPanel, ActionListene
 	private JDialog configDialog;
 	private JTable eventTable;
 	private JFritzEventTableModel eventTableModel;
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public JFritzEventGUI(JDialog configDialog) {
 		this.configDialog = configDialog;
@@ -63,17 +63,17 @@ public class JFritzEventGUI extends JPanel implements ConfigPanel, ActionListene
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.PAGE_AXIS));
 
-		JButton button = new JButton(Main.getMessage("new"));
+		JButton button = new JButton(messages.getMessage("new"));
 		button.setActionCommand("new");
 		button.addActionListener(this);
 		buttonPanel.add(button);
 
-		button = new JButton(Main.getMessage("edit"));
+		button = new JButton(messages.getMessage("edit"));
 		button.setActionCommand("edit");
 		button.addActionListener(this);
 		buttonPanel.add(button);
 
-		button = new JButton(Main.getMessage("delete"));
+		button = new JButton(messages.getMessage("delete"));
 		button.setActionCommand("delete");
 		button.addActionListener(this);
 		buttonPanel.add(button);

@@ -36,6 +36,8 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.ProgramConstants;
+import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.VCardList;
 import de.moonflower.jfritz.utils.BrowserLaunch;
@@ -99,6 +101,9 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 
 	private PhoneBook phonebook;
 	private StatusBarController statusBarController = new StatusBarController();
+
+	protected PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public PhoneBookPanel(PhoneBook phonebook, JFritzWindow parentFrame) {
 		this.phonebook = phonebook;
@@ -170,19 +175,19 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	public JScrollPane createPhoneBookTable() {
 		popupMenu = new JPopupMenu();
 		JMenuItem menuItem;
-		menuItem = new JMenuItem(Main.getMessage("phonebook_delPerson")); //$NON-NLS-1$
+		menuItem = new JMenuItem(messages.getMessage("phonebook_delPerson")); //$NON-NLS-1$
 		menuItem.setActionCommand("deletePerson"); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		popupMenu.add(menuItem);
-		menuItem = new JMenuItem(Main.getMessage("phonebook_editPerson")); //$NON-NLS-1$
+		menuItem = new JMenuItem(messages.getMessage("phonebook_editPerson")); //$NON-NLS-1$
 		menuItem.setActionCommand("editPerson"); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		popupMenu.add(menuItem);
-		menuItem = new JMenuItem(Main.getMessage("phonebook_vcardExport")); //$NON-NLS-1$
+		menuItem = new JMenuItem(messages.getMessage("phonebook_vcardExport")); //$NON-NLS-1$
 		menuItem.setActionCommand("export_vcard"); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		popupMenu.add(menuItem);
-		googleItem = new JMenuItem(Main.getMessage("show_on_google_maps"));
+		googleItem = new JMenuItem(messages.getMessage("show_on_google_maps"));
 		googleItem.setActionCommand("google");
 		googleItem.addActionListener(this);
 		popupMenu.add(googleItem);
@@ -199,21 +204,21 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	public JToolBar createPhoneBookToolBar() {
 		JToolBar toolBar = new JToolBar();
 		toolBar.setFloatable(true);
-		JButton addButton = new JButton(Main.getMessage("new_entry")); //$NON-NLS-1$
+		JButton addButton = new JButton(messages.getMessage("new_entry")); //$NON-NLS-1$
 		addButton.setIcon(getImage("add_person.png")); //$NON-NLS-1$
 		addButton.setActionCommand("addPerson"); //$NON-NLS-1$
 		addButton.addActionListener(this);
 		toolBar.add(addButton);
 
-		JButton editButton = new JButton(Main.getMessage("edit_entry")); //$NON-NLS-1$
-		editButton.setToolTipText(Main.getMessage("edit_entry")); //$NON-NLS-1$
+		JButton editButton = new JButton(messages.getMessage("edit_entry")); //$NON-NLS-1$
+		editButton.setToolTipText(messages.getMessage("edit_entry")); //$NON-NLS-1$
 		editButton.setIcon(getImage("edit_person.png")); //$NON-NLS-1$
 		editButton.setActionCommand("editPerson"); //$NON-NLS-1$
 		editButton.addActionListener(this);
 		toolBar.add(editButton);
 
-		JButton delButton = new JButton(Main.getMessage("delete_entry")); //$NON-NLS-1$
-		delButton.setToolTipText(Main.getMessage("delete_entry")); //$NON-NLS-1$
+		JButton delButton = new JButton(messages.getMessage("delete_entry")); //$NON-NLS-1$
+		delButton.setToolTipText(messages.getMessage("delete_entry")); //$NON-NLS-1$
 		delButton.setIcon(getImage("delete_person.png")); //$NON-NLS-1$
 		delButton.setActionCommand("deletePerson"); //$NON-NLS-1$
 		delButton.addActionListener(this);
@@ -223,7 +228,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 
 		JButton exportVCardButton = new JButton();
 		exportVCardButton.setIcon(getImage("vcard.png")); //$NON-NLS-1$
-		exportVCardButton.setToolTipText(Main.getMessage("export_vcard")); //$NON-NLS-1$
+		exportVCardButton.setToolTipText(messages.getMessage("export_vcard")); //$NON-NLS-1$
 		exportVCardButton.setActionCommand("export_vcard"); //$NON-NLS-1$
 		exportVCardButton.addActionListener(this);
 		toolBar.add(exportVCardButton);
@@ -236,8 +241,8 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		privateFilter.setSelectedIcon(getImage("addbook.png")); //$NON-NLS-1$
 		privateFilter.setActionCommand("filter_private"); //$NON-NLS-1$
 		privateFilter.addActionListener(this);
-		privateFilter.setToolTipText(Main.getMessage("private_entry")); //$NON-NLS-1$
-		privateFilter.setSelected(JFritzUtils.parseBoolean(Main.getStateProperty(
+		privateFilter.setToolTipText(messages.getMessage("private_entry")); //$NON-NLS-1$
+		privateFilter.setSelected(JFritzUtils.parseBoolean(properties.getStateProperty(
 				"filter_private"))); //$NON-NLS-1$,  //$NON-NLS-2$
 		toolBar.add(privateFilter);
 
@@ -246,7 +251,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 
 		JButton importXMLButton = new JButton();
 		importXMLButton.setIcon(getImage("import.gif")); //$NON-NLS-1$
-		importXMLButton.setToolTipText(Main.getMessage("phonebook_import")); //$NON-NLS-1$
+		importXMLButton.setToolTipText(messages.getMessage("phonebook_import")); //$NON-NLS-1$
 		importXMLButton.setActionCommand("import_xml"); //$NON-NLS-1$
 		importXMLButton.addActionListener(this);
 		toolBar.add(importXMLButton);
@@ -254,13 +259,13 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 		toolBar.addSeparator();
 
 		resetButton = new JButton();
-		toolBar.add(new JLabel(Main.getMessage("search") + ": ")); //$NON-NLS-1$, //$NON-NLS-2$
-		searchFilter = new JTextField(Main.getStateProperty("filter.Phonebook.search"), //$NON-NLS-1$,  //$NON-NLS-2$
+		toolBar.add(new JLabel(messages.getMessage("search") + ": ")); //$NON-NLS-1$, //$NON-NLS-2$
+		searchFilter = new JTextField(properties.getStateProperty("filter.Phonebook.search"), //$NON-NLS-1$,  //$NON-NLS-2$
 				10);
 		searchFilter.addKeyListener(this);
 		toolBar.add(searchFilter);
 
-		resetButton = new JButton(Main.getMessage("clear")); //$NON-NLS-1$
+		resetButton = new JButton(messages.getMessage("clear")); //$NON-NLS-1$
 		resetButton.setActionCommand("clearFilter"); //$NON-NLS-1$
 		resetButton.addActionListener(this);
 		toolBar.add(resetButton);
@@ -273,8 +278,8 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	 */
 	public void exportVCard() {
 		VCardList list = new VCardList();
-		JFileChooser fc = new JFileChooser(Main.getStateProperty("options.exportVCARDpath")); //$NON-NLS-1$
-		fc.setDialogTitle(Main.getMessage("export_vcard")); //$NON-NLS-1$
+		JFileChooser fc = new JFileChooser(properties.getStateProperty("options.exportVCARDpath")); //$NON-NLS-1$
+		fc.setDialogTitle(messages.getMessage("export_vcard")); //$NON-NLS-1$
 		fc.setDialogType(JFileChooser.SAVE_DIALOG);
 		fc.setFileFilter(new FileFilter() {
 			public boolean accept(File f) {
@@ -304,12 +309,12 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 			    String path = fc.getSelectedFile().getPath();
 			    path = path.substring(0,path.length()-fc.getSelectedFile().getName().length());
-			    Main.setStateProperty("options.exportVCARDpath", path);  //$NON-NLS-1$
+			    properties.setStateProperty("options.exportVCARDpath", path);  //$NON-NLS-1$
 				File file = fc.getSelectedFile();
 				if (file.exists()) {
 					if (JOptionPane.showConfirmDialog(this,
-							Main.getMessage("overwrite_file").replaceAll("%F", file.getName()),  //$NON-NLS-1$,  //$NON-NLS-2$
-							Main.getMessage("dialog_title_overwrite_file"),  //$NON-NLS-1$
+							messages.getMessage("overwrite_file").replaceAll("%F", file.getName()),  //$NON-NLS-1$,  //$NON-NLS-2$
+							messages.getMessage("dialog_title_overwrite_file"),  //$NON-NLS-1$
 							JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 						list.saveToFile(file);
 					}
@@ -318,7 +323,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 				}
 			}
 		} else {
-		Debug.errDlg(Main.getMessage("error_no_row_chosen"));  //$NON-NLS-1$
+		Debug.errDlg(messages.getMessage("error_no_row_chosen"));  //$NON-NLS-1$
 		}
 	}
 
@@ -343,7 +348,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	}
 
 	public void importFromXML () {
-		JFileChooser fc = new JFileChooser(Main.getStateProperty("option.phonebook.import_xml_path"));  //$NON-NLS-1$
+		JFileChooser fc = new JFileChooser(properties.getStateProperty("option.phonebook.import_xml_path"));  //$NON-NLS-1$
 		fc.setFileFilter(new FileFilter() {
 			public boolean accept(File f) {
 				return f.isDirectory()
@@ -351,13 +356,13 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			}
 
 			public String getDescription() {
-				return Main.getMessage("xml_files");  //$NON-NLS-1$
+				return messages.getMessage("xml_files");  //$NON-NLS-1$
 			}
 		});
 		if (fc.showOpenDialog(parentFrame) != JFileChooser.APPROVE_OPTION) {
 			return;
 		}
-		Main.setStateProperty("option.phonebook.import_xml_path", fc.getSelectedFile().getAbsolutePath());  //$NON-NLS-1$
+		properties.setStateProperty("option.phonebook.import_xml_path", fc.getSelectedFile().getAbsolutePath());  //$NON-NLS-1$
 		phonebook.loadFromXMLFile(fc.getSelectedFile().getAbsolutePath());
 		phonebook.saveToXMLFile(Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
 	}
@@ -378,8 +383,8 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 
 	private void doSearchFilter(final String filter) {
 		// only update filter when the search expression has changed
-		if (! filter.equals(Main.getStateProperty("filter.Phonebook.search"))) {  //$NON-NLS-1$,  //$NON-NLS-2$
-			Main.setStateProperty("filter.Phonebook.search", filter);  //$NON-NLS-1$
+		if (! filter.equals(properties.getStateProperty("filter.Phonebook.search"))) {  //$NON-NLS-1$,  //$NON-NLS-2$
+			properties.setStateProperty("filter.Phonebook.search", filter);  //$NON-NLS-1$
 			if ((phoneBookTable != null)
 				&& (phoneBookTable.getCellEditor() != null))
 			{
@@ -411,11 +416,11 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			String message;
 			if (getPhoneBookTable().getSelectedRowCount() == 1)
 			{
-				message = Main.getMessage("delete_entry");
+				message = messages.getMessage("delete_entry");
 			}
 			else
 			{
-				message = Main.getMessage("delete_entries").replaceAll("%N", Integer.toString(getPhoneBookTable().getSelectedRowCount()));
+				message = messages.getMessage("delete_entries").replaceAll("%N", Integer.toString(getPhoneBookTable().getSelectedRowCount()));
 			}
 			if (JOptionPane.showConfirmDialog(this,
 					message, //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
@@ -434,7 +439,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 
 	private void setPrivateFilter(boolean enabled)
 	{
-		Main.setStateProperty("filter_private", Boolean //$NON-NLS-1$
+		properties.setStateProperty("filter_private", Boolean //$NON-NLS-1$
 				.toString(enabled));
 		privateFilter.setSelected(enabled);
 	}
@@ -442,7 +447,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 	public void setStatus() {
 		PhoneBook pb = (PhoneBook) phoneBookTable.getModel();
 		int entries = pb.getFilteredPersons().size();
-		statusBarController.fireStatusChanged(Main.getMessage("entries").  //$NON-NLS-1$
+		statusBarController.fireStatusChanged(messages.getMessage("entries").  //$NON-NLS-1$
 				replaceAll("%N", Integer.toString(entries)));  //$NON-NLS-1$
 	}
 
@@ -463,7 +468,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 				setStatus();
 			}
 			else {
-				statusBarController.fireStatusChanged(Main.getMessage("phonebook_chosenEntries")  //$NON-NLS-1$
+				statusBarController.fireStatusChanged(messages.getMessage("phonebook_chosenEntries")  //$NON-NLS-1$
 						.replaceAll("%N", Integer.toString(rows.length))); //$NON-NLS-1$,
 			}
 		}
@@ -471,7 +476,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 
 	private void clearAllFilter() {
 		setSearchFilter("");  //$NON-NLS-1$
-		Main.setStateProperty("filter.Phonebook.search", "");  //$NON-NLS-1$,   //$NON-NLS-2$
+		properties.setStateProperty("filter.Phonebook.search", "");  //$NON-NLS-1$,   //$NON-NLS-2$
 		setPrivateFilter(false);
 		phonebook.clearFilterExceptions();
 		phonebook.updateFilter();

@@ -2,7 +2,7 @@ package de.moonflower.jfritz.JFritzEvent.struct;
 
 import javax.swing.JComboBox;
 
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.messages.MessageProvider;
 
 public class ConditionObject {
 	public static final int EQUAL = 0;
@@ -17,6 +17,7 @@ public class ConditionObject {
 	public static final int NOT_GREATER_THEN = 9;
 	public static final int LESS_THEN = 10;
 	public static final int NOT_LESS_THEN = 11;
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	private static String[] conditionNames = {
 				"equal","not_equal","contains","contains_not",
@@ -38,7 +39,7 @@ public class ConditionObject {
 	}
 
 	public String getConditionName() {
-		return Main.getMessage(conditionName);
+		return messages.getMessage(conditionName);
 	}
 
 	public String getConditionPlaceHolder() {
@@ -63,7 +64,7 @@ public class ConditionObject {
 	}
 
 	public String toString() {
-		return Main.getMessage(conditionName);
+		return messages.getMessage(conditionName);
 	}
 
 	public static JComboBox createComboBox() {

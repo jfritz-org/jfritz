@@ -29,6 +29,7 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.StatusBarPanel;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.ReverseLookupSite;
@@ -77,14 +78,16 @@ public class ReverseLookup {
 
 	private static JProgressBar progressBar = null;
 
+	protected static PropertyProvider properties = PropertyProvider.getInstance();
+
 	/**
 	 * This Function does a lookup for a Vector of PhoneNumbers, the caller must
 	 * give an observer, his method personsFound(Vector<Person>) will be called
 	 *
 	 * @param number
-	 *            the number wich will be looked up
+	 *            the number which will be looked up
 	 * @param obs
-	 *            the observer wich will be will receive the Persons
+	 *            the observer which will be will receive the Persons
 	 */
 	public static synchronized void lookup(PhoneNumberOld number,
 			LookupObserver obs) {
@@ -98,9 +101,9 @@ public class ReverseLookup {
 	 * give an observer, his method personsFound(Vector<Person>) will be called
 	 *
 	 * @param number
-	 *            the number wich will be looked up
+	 *            the number which will be looked up
 	 * @param obs
-	 *            the observer wich will be will receive the Persons
+	 *            the observer which will be will receive the Persons
 	 * @param quitOnDone
 	 *            shall the thread be killed after lookup
 	 */
@@ -117,16 +120,16 @@ public class ReverseLookup {
 	 * either on stop or on completion
 	 *
 	 * @param number
-	 *            the numbers wich will be looked up
+	 *            the numbers which will be looked up
 	 * @param obs
-	 *            the observer wich will be will receive the Persons
+	 *            the observer which will be will receive the Persons
 	 * @param quitOnDone
 	 *            shall the thread be killed after lookup
 	 */
 	public static synchronized void lookup(Vector<PhoneNumberOld> numbers,
 			LookupObserver obs, boolean quitOnDone) {
 
-		if(Main.getProperty("option.clientTelephoneBook").equals("true") &&
+		if(properties.getProperty("option.clientTelephoneBook").equals("true") &&
 				NetworkStateMonitor.isConnectedToServer()){
 			//if connected to server make server to the lookup
 			Debug.info("requesting reverse lookup from server");
@@ -175,7 +178,7 @@ public class ReverseLookup {
 	 */
 	public static synchronized void specificLookup(PhoneNumberOld number, String siteName, LookupObserver obs){
 
-		if(Main.getProperty("option.clientTelephoneBook").equals("true") &&
+		if(properties.getProperty("option.clientTelephoneBook").equals("true") &&
 				NetworkStateMonitor.isConnectedToServer()){
 			//if connected to server make server to the lookup
 			Debug.info("requesting specific reverse lookup for "+number+" using "+ siteName+" from server");
@@ -297,7 +300,7 @@ public class ReverseLookup {
 	 * this will start an extra Thread
 	 *
 	 * @param callerPhoneNumber
-	 *            the number wich will be looked up
+	 *            the number which will be looked up
 	 * @return the Person this method found
 	 */
 	public static Person busyLookup(PhoneNumberOld callerPhoneNumber) {

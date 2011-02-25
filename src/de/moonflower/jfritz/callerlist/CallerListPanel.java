@@ -46,10 +46,9 @@ import com.toedter.calendar.JDateChooser;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.ProgramConstants;
 import de.moonflower.jfritz.StatusBarPanel;
-
+import de.moonflower.jfritz.callerlist.filter.AnonymFilter;
 import de.moonflower.jfritz.callerlist.filter.CallByCallFilter;
 import de.moonflower.jfritz.callerlist.filter.CallFilter;
 import de.moonflower.jfritz.callerlist.filter.CallInFailedFilter;
@@ -60,12 +59,13 @@ import de.moonflower.jfritz.callerlist.filter.CommentFilter;
 import de.moonflower.jfritz.callerlist.filter.DateFilter;
 import de.moonflower.jfritz.callerlist.filter.FixedFilter;
 import de.moonflower.jfritz.callerlist.filter.HandyFilter;
-import de.moonflower.jfritz.callerlist.filter.AnonymFilter;
 import de.moonflower.jfritz.callerlist.filter.PortFilter;
 import de.moonflower.jfritz.callerlist.filter.SearchFilter;
 import de.moonflower.jfritz.callerlist.filter.SipFilter;
+import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.phonebook.PhoneBookPanel;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.IProgressListener;
 import de.moonflower.jfritz.struct.Person;
@@ -73,10 +73,10 @@ import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.ReverseLookupSite;
 import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.Debug;
-import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.JFritzClipboard;
-import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
+import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.StatusBarController;
+import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 import de.moonflower.jfritz.utils.threeStateButton.ThreeStateButton;
 
 /**
@@ -280,6 +280,9 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	private CheckboxPopupMenu msnPopupMenu = null;
 	private CheckboxPopupMenu portPopupMenu = null;
 
+	private PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
+
 	/**
 	 * A callerListPanel is a view for a callerlist, it has its own
 	 * resourceBundle to get the localized strings for its components. The
@@ -386,8 +389,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		startDateChooser.setVisible(false);
 		endDateChooser.setVisible(false);
 		searchLabel.setVisible(false);
-		Main.setStateProperty(CallFilter.FILTER_SIP_PROVIDERS, "$ALL$");
-		Main.setStateProperty(CallFilter.FILTER_PORT_LIST, "$ALL$");
+		properties.setStateProperty(CallFilter.FILTER_SIP_PROVIDERS, "$ALL$");
+		properties.setStateProperty(CallFilter.FILTER_PORT_LIST, "$ALL$");
 		callByCallFilterButton.setState(ThreeStateButton.NOTHING);
 		commentFilterButton.setState(ThreeStateButton.NOTHING);
 		dateSpecialSaveString = " ";
@@ -411,38 +414,38 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		JPopupMenu callerlistPopupMenu = new JPopupMenu();
 		JMenuItem menuItem;
 
-		reverseMenu = new JMenu(Main.getMessage("reverse_lookup"));
+		reverseMenu = new JMenu(messages.getMessage("reverse_lookup"));
 		callerlistPopupMenu.add(reverseMenu);
 
-		googleItem = new JMenuItem(Main.getMessage("show_on_google_maps"));
+		googleItem = new JMenuItem(messages.getMessage("show_on_google_maps"));
 		googleItem.setActionCommand("google");
 		googleItem.addActionListener(this);
 		callerlistPopupMenu.add(googleItem);
 
-		menuItem = new JMenuItem(Main.getMessage("reverse_lookup_dummy")); //$NON-NLS-1$
+		menuItem = new JMenuItem(messages.getMessage("reverse_lookup_dummy")); //$NON-NLS-1$
 		menuItem.setActionCommand("reverselookup_dummy"); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		callerlistPopupMenu.add(menuItem);
 
 		callerlistPopupMenu.addSeparator();
 
-		menuItem = new JMenuItem(Main.getMessage("export_csv")); //$NON-NLS-1$
+		menuItem = new JMenuItem(messages.getMessage("export_csv")); //$NON-NLS-1$
 		menuItem.setActionCommand("export_csv"); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		callerlistPopupMenu.add(menuItem);
 
-		menuItem = new JMenuItem(Main.getMessage("import_callerlist_csv")); //$NON-NLS-1$
+		menuItem = new JMenuItem(messages.getMessage("import_callerlist_csv")); //$NON-NLS-1$
 		menuItem.setActionCommand("import_callerlist_csv"); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		menuItem.setEnabled(true);
 		callerlistPopupMenu.add(menuItem);
 
-		menuItem = new JMenuItem(Main.getMessage("export_xml")); //$NON-NLS-1$
+		menuItem = new JMenuItem(messages.getMessage("export_xml")); //$NON-NLS-1$
 		menuItem.setActionCommand("export_xml"); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		callerlistPopupMenu.add(menuItem);
 
-		menuItem = new JMenuItem(Main.getMessage("import_xml")); //$NON-NLS-1$
+		menuItem = new JMenuItem(messages.getMessage("import_xml")); //$NON-NLS-1$
 		menuItem.setActionCommand("import_xml"); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		menuItem.setEnabled(false);
@@ -450,60 +453,60 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 		callerlistPopupMenu.addSeparator();
 
-		JMenu clipboardMenu = new JMenu(Main.getMessage("clipboard")); //$NON-NLS-1$
+		JMenu clipboardMenu = new JMenu(messages.getMessage("clipboard")); //$NON-NLS-1$
 		clipboardMenu.setMnemonic(KeyEvent.VK_Z);
 
-		JMenuItem item = new JMenuItem(Main.getMessage("name"), KeyEvent.VK_N); //$NON-NLS-1$
+		JMenuItem item = new JMenuItem(messages.getMessage("name"), KeyEvent.VK_N); //$NON-NLS-1$
 		item.setActionCommand("clipboard_name"); //$NON-NLS-1$
 		item.addActionListener(this);
 		clipboardMenu.add(item);
 
-		item = new JMenuItem(Main.getMessage("company")); //$NON-NLS-1$
+		item = new JMenuItem(messages.getMessage("company")); //$NON-NLS-1$
 		item.setActionCommand("clipboard_company"); //$NON-NLS-1$
 		item.addActionListener(this);
 		clipboardMenu.add(item);
 
-		item = new JMenuItem(Main.getMessage("number"), KeyEvent.VK_U); //$NON-NLS-1$
+		item = new JMenuItem(messages.getMessage("number"), KeyEvent.VK_U); //$NON-NLS-1$
 		item.setActionCommand("clipboard_number"); //$NON-NLS-1$
 		item.addActionListener(this);
 		clipboardMenu.add(item);
 
-		item = new JMenuItem(Main.getMessage("address"), KeyEvent.VK_A); //$NON-NLS-1$
+		item = new JMenuItem(messages.getMessage("address"), KeyEvent.VK_A); //$NON-NLS-1$
 		item.setActionCommand("clipboard_adress"); //$NON-NLS-1$
 		item.addActionListener(this);
 		clipboardMenu.add(item);
 
-		item = new JMenuItem(Main.getMessage("street"));
+		item = new JMenuItem(messages.getMessage("street"));
 		item.setActionCommand("clipboard_street"); //$NON-NLS-1$
 		item.addActionListener(this);
 		clipboardMenu.add(item);
 
-		item = new JMenuItem(Main.getMessage("postalCode"));
+		item = new JMenuItem(messages.getMessage("postalCode"));
 		item.setActionCommand("clipboard_postalCode"); //$NON-NLS-1$
 		item.addActionListener(this);
 		clipboardMenu.add(item);
 
-		item = new JMenuItem(Main.getMessage("city"));
+		item = new JMenuItem(messages.getMessage("city"));
 		item.setActionCommand("clipboard_city"); //$NON-NLS-1$
 		item.addActionListener(this);
 		clipboardMenu.add(item);
 
-		item = new JMenuItem(Main.getMessage("type_desc"));
+		item = new JMenuItem(messages.getMessage("type_desc"));
 		item.setActionCommand("clipboard_type"); //$NON-NLS-1$
 		item.addActionListener(this);
 		clipboardMenu.add(item);
 
-		item = new JMenuItem(Main.getMessage("date_desc"));
+		item = new JMenuItem(messages.getMessage("date_desc"));
 		item.setActionCommand("clipboard_date"); //$NON-NLS-1$
 		item.addActionListener(this);
 		clipboardMenu.add(item);
 
-		item = new JMenuItem(Main.getMessage("callbycall_desc"));
+		item = new JMenuItem(messages.getMessage("callbycall_desc"));
 		item.setActionCommand("clipboard_callbycall"); //$NON-NLS-1$
 		item.addActionListener(this);
 		clipboardMenu.add(item);
 
-		item = new JMenuItem(Main.getMessage("comment_desc"));
+		item = new JMenuItem(messages.getMessage("comment_desc"));
 		item.setActionCommand("clipboard_comment"); //$NON-NLS-1$
 		item.addActionListener(this);
 		clipboardMenu.add(item);
@@ -531,7 +534,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		toolbarButton.setActionCommand("export_csv"); //$NON-NLS-1$
 		toolbarButton.addActionListener(this);
 		toolbarButton.setIcon(getImageIcon("csv_export.png")); //$NON-NLS-1$
-		toolbarButton.setToolTipText(Main.getMessage("export_csv")); //$NON-NLS-1$
+		toolbarButton.setToolTipText(messages.getMessage("export_csv")); //$NON-NLS-1$
 		upperToolBar.add(toolbarButton);
 
 		toolbarButton = new JButton();
@@ -562,25 +565,22 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		callInFilterButton = new ThreeStateButton(getImageIcon("callin.png"));
 		callInFilterButton.setActionCommand(CallFilter.FILTER_CALLIN_NOTHING);
 		callInFilterButton.addActionListener(this);
-		callInFilterButton.setToolTipText(ThreeStateButton.NOTHING, Main.getMessage(CallFilter.FILTER_CALLIN_NOTHING));
+		callInFilterButton.setToolTipText(ThreeStateButton.NOTHING, messages.getMessage(CallFilter.FILTER_CALLIN_NOTHING));
 
 		callInFailedFilterButton = new ThreeStateButton(
 				getImageIcon("callinfailed.png")); //$NON-NLS-1$
 		callInFailedFilterButton.setActionCommand(CallFilter.FILTER_CALLINFAILED);
 		callInFailedFilterButton.addActionListener(this);
-		callInFailedFilterButton.setToolTipText(ThreeStateButton.NOTHING, Main
-				.getMessage(CallFilter.FILTER_CALLINFAILED));
+		callInFailedFilterButton.setToolTipText(ThreeStateButton.NOTHING, messages.getMessage(CallFilter.FILTER_CALLINFAILED));
 
 		JPopupMenu missedPopupMenu = new JPopupMenu();
 		JMenuItem menuItem;
-		menuItem = new JMenuItem(Main
-				.getMessage("missed_calls_without_comments_last_week")); //$NON-NLS-1$
+		menuItem = new JMenuItem(messages.getMessage("missed_calls_without_comments_last_week")); //$NON-NLS-1$
 		menuItem
 				.setActionCommand("filter_callinfailed_allWithoutCommentLastWeek"); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		missedPopupMenu.add(menuItem);
-		menuItem = new JMenuItem(Main
-				.getMessage("missed_calls_without_comments")); //$NON-NLS-1$
+		menuItem = new JMenuItem(messages.getMessage("missed_calls_without_comments")); //$NON-NLS-1$
 		menuItem.setActionCommand("filter_callinfailed_allWithoutComment"); //$NON-NLS-1$
 		menuItem.addActionListener(this);
 		missedPopupMenu.add(menuItem);
@@ -590,52 +590,52 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		callOutFilterButton = new ThreeStateButton(getImageIcon("callout.png"));
 		callOutFilterButton.setActionCommand(CallFilter.FILTER_CALLOUT);
 		callOutFilterButton.addActionListener(this);
-		callOutFilterButton.setToolTipText(ThreeStateButton.NOTHING, Main.getMessage(CallFilter.FILTER_CALLOUT));
+		callOutFilterButton.setToolTipText(ThreeStateButton.NOTHING, messages.getMessage(CallFilter.FILTER_CALLOUT));
 
 		anonymFilterButton = new ThreeStateButton(getImageIcon("mask.gif")); //$NON-NLS-1$
 		anonymFilterButton.setActionCommand(CallFilter.FILTER_ANONYM);
 		anonymFilterButton.addActionListener(this);
-		anonymFilterButton.setToolTipText(ThreeStateButton.NOTHING, Main.getMessage(CallFilter.FILTER_ANONYM));
+		anonymFilterButton.setToolTipText(ThreeStateButton.NOTHING, messages.getMessage(CallFilter.FILTER_ANONYM));
 
 		fixedFilterButton = new ThreeStateButton(getImageIcon("phone.png")); //$NON-NLS-1$
 		fixedFilterButton.setActionCommand(CallFilter.FILTER_FIXED);
 		fixedFilterButton.addActionListener(this);
-		fixedFilterButton.setToolTipText(ThreeStateButton.NOTHING, Main.getMessage(CallFilter.FILTER_FIXED));
+		fixedFilterButton.setToolTipText(ThreeStateButton.NOTHING, messages.getMessage(CallFilter.FILTER_FIXED));
 
 		handyFilterButton = new ThreeStateButton(getImageIcon("handy.png")); //$NON-NLS-1$
 		handyFilterButton.setActionCommand(CallFilter.FILTER_HANDY);
 		handyFilterButton.addActionListener(this);
-		handyFilterButton.setToolTipText(ThreeStateButton.NOTHING, Main.getMessage(CallFilter.FILTER_HANDY));
+		handyFilterButton.setToolTipText(ThreeStateButton.NOTHING, messages.getMessage(CallFilter.FILTER_HANDY));
 
 		dateFilterButton = new ThreeStateButton(getImageIcon("calendar.png")); //$NON-NLS-1$
 
 		dateFilterButton.setActionCommand(CallFilter.FILTER_DATE);
 		dateFilterButton.addActionListener(this);
-		dateFilterButton.setToolTipText(ThreeStateButton.NOTHING, Main.getMessage(CallFilter.FILTER_DATE));
+		dateFilterButton.setToolTipText(ThreeStateButton.NOTHING, messages.getMessage(CallFilter.FILTER_DATE));
 
 		JPopupMenu datePopupMenu = new JPopupMenu();
-		menuItem = new JMenuItem(Main.getMessage(CallFilter.THIS_DAY));
+		menuItem = new JMenuItem(messages.getMessage(CallFilter.THIS_DAY));
 		menuItem.setActionCommand(CallFilter.THIS_DAY);
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
-		menuItem = new JMenuItem(Main.getMessage(CallFilter.LAST_DAY));
+		menuItem = new JMenuItem(messages.getMessage(CallFilter.LAST_DAY));
 		menuItem.setActionCommand(CallFilter.LAST_DAY);
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
-		menuItem = new JMenuItem(Main.getMessage(CallFilter.THIS_WEEK));
+		menuItem = new JMenuItem(messages.getMessage(CallFilter.THIS_WEEK));
 		menuItem.setActionCommand(CallFilter.THIS_WEEK);
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
-		menuItem = new JMenuItem(Main.getMessage(CallFilter.LAST_WEEK));
+		menuItem = new JMenuItem(messages.getMessage(CallFilter.LAST_WEEK));
 		menuItem.setActionCommand(CallFilter.LAST_WEEK);
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
 
-		menuItem = new JMenuItem(Main.getMessage(CallFilter.THIS_MONTH));
+		menuItem = new JMenuItem(messages.getMessage(CallFilter.THIS_MONTH));
 		menuItem.setActionCommand(CallFilter.THIS_MONTH);
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
-		menuItem = new JMenuItem(Main.getMessage(CallFilter.LAST_MONTH));
+		menuItem = new JMenuItem(messages.getMessage(CallFilter.LAST_MONTH));
 		menuItem.setActionCommand(CallFilter.LAST_MONTH);
 		menuItem.addActionListener(this);
 		datePopupMenu.add(menuItem);
@@ -706,7 +706,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			}
 
 		});
-		sipFilterButton.setToolTipText(Main.getMessage(CallFilter.FILTER_SIP));
+		sipFilterButton.setToolTipText(messages.getMessage(CallFilter.FILTER_SIP));
 
 		portFilterButton = new JToggleButton(getImageIcon("portfilter.png")); //$NON-NLS-1$
 		portFilterButton.setActionCommand(CallFilter.FILTER_PORT);
@@ -763,32 +763,32 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			}
 
 		});
-		portFilterButton.setToolTipText(Main.getMessage(CallFilter.FILTER_PORT));
+		portFilterButton.setToolTipText(messages.getMessage(CallFilter.FILTER_PORT));
 
 		callByCallFilterButton = new ThreeStateButton(
 				getImageIcon("callbycall.png")); //$NON-NLS-1$
 		callByCallFilterButton.setActionCommand(CallFilter.FILTER_CALLBYCALL);
 		callByCallFilterButton.addActionListener(this);
 		callByCallFilterButton.setToolTipText(ThreeStateButton.NOTHING,
-				Main.getMessage(CallFilter.FILTER_CALLBYCALL));
+				messages.getMessage(CallFilter.FILTER_CALLBYCALL));
 
 		commentFilterButton = new ThreeStateButton(
 				getImageIcon("commentFilter.png"));
 		commentFilterButton.setActionCommand(CallFilter.FILTER_COMMENT);
 		commentFilterButton.addActionListener(this);
 		commentFilterButton.setToolTipText(ThreeStateButton.NOTHING,
-				Main.getMessage(CallFilter.FILTER_COMMENT));
+				messages.getMessage(CallFilter.FILTER_COMMENT));
 
 		searchFilterButton = new ThreeStateButton(
 				getImageIcon("searchfilter.png"));
 		searchFilterButton.setActionCommand(CallFilter.FILTER_SEARCH);
 		searchFilterButton.addActionListener(this);
 		searchFilterButton.setToolTipText(ThreeStateButton.NOTHING,
-				Main.getMessage(CallFilter.FILTER_SEARCH));
+				messages.getMessage(CallFilter.FILTER_SEARCH));
 		searchFilterTextField = new JTextField(10);
 
 		deleteEntriesButton = new JButton();
-		deleteEntriesButton.setToolTipText(Main.getMessage(DELETE_ENTRIES)
+		deleteEntriesButton.setToolTipText(messages.getMessage(DELETE_ENTRIES)
 				.replaceAll("%N", "")); //$NON-NLS-1$,  //$NON-NLS-2$,
 		deleteEntriesButton.setActionCommand(DELETE_ENTRY);
 		deleteEntriesButton.addActionListener(this);
@@ -796,12 +796,12 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		deleteEntriesButton.setFocusPainted(false);
 		deleteEntriesButton.setEnabled(false);
 
-		searchLabel = new JLabel(Main.getMessage("search") + ": ");//$NON-NLS-1$,  //$NON-NLS-2$
+		searchLabel = new JLabel(messages.getMessage("search") + ": ");//$NON-NLS-1$,  //$NON-NLS-2$
 		searchLabel.setVisible(false);
 		searchFilterTextField.addKeyListener(this);
 		searchFilterTextField.setVisible(false);
 
-		toolbarButton = new JButton(Main.getMessage("clear")); //$NON-NLS-1$
+		toolbarButton = new JButton(messages.getMessage("clear")); //$NON-NLS-1$
 		toolbarButton.setActionCommand("clearFilter"); //$NON-NLS-1$
 		toolbarButton.addActionListener(this);
 
@@ -1058,8 +1058,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		} else if (command.equals("clearFilter")) { //$NON-NLS-1$
 			clearAllFilter();
 		} else if (command.equals(DELETE_ENTRY)) {
-			if (JOptionPane.showConfirmDialog(jFrame, Main
-					.getMessage("really_delete_entries"), //$NON-NLS-1$
+			if (JOptionPane.showConfirmDialog(jFrame, messages.getMessage("really_delete_entries"), //$NON-NLS-1$
 					ProgramConstants.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 				int rows[] = callerTable.getSelectedRows();
 				Debug.info("Removing " + rows.length + " entries"); //$NON-NLS-1$
@@ -1090,7 +1089,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 				ReverseLookup.lookup(numbers, callerList, false);
 			}
 			//only set the progrss bar and button if we aren't networked
-			if(!Main.getProperty("option.clientTelephoneBook").equals("true") ||
+			if(!properties.getProperty("option.clientTelephoneBook").equals("true") ||
 					!NetworkStateMonitor.isConnectedToServer()){
 
 				JFritz.getJframe().selectLookupButton(true);
@@ -1454,15 +1453,15 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 */
 	public void setDeleteEntriesButton(int rows) {
 		if(rows==0){
-			deleteEntriesButton.setToolTipText(Main.getMessage(DELETE_ENTRIES)
+			deleteEntriesButton.setToolTipText(messages.getMessage(DELETE_ENTRIES)
 					.replaceAll("%N", "")); //$NON-NLS-1$,  //$NON-NLS-2$,
 			deleteEntriesButton.setEnabled(false);
 		}
 		else if(rows ==1){
-			deleteEntriesButton.setToolTipText(Main.getMessage(DELETE_ENTRY));
+			deleteEntriesButton.setToolTipText(messages.getMessage(DELETE_ENTRY));
 			deleteEntriesButton.setEnabled(true);
 		}else{
-			deleteEntriesButton.setToolTipText(Main.getMessage(DELETE_ENTRIES)
+			deleteEntriesButton.setToolTipText(messages.getMessage(DELETE_ENTRIES)
 					.replaceAll("%N", Integer.toString(rows))); //$NON-NLS-1$,
 			deleteEntriesButton.setEnabled(true);
 		}
@@ -1496,43 +1495,43 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 *
 	 */
 	private void saveButtonStatus() {
-		Main.setStateProperty(CallFilter.FILTER_SEARCH_TEXT, searchFilterTextField.getText());
-		Main.setStateProperty(CallFilter.FILTER_SEARCH, "" + searchFilterButton.getState());
-		Main.setStateProperty(CallFilter.FILTER_COMMENT, "" + commentFilterButton.getState());
-		Main.setStateProperty(CallFilter.FILTER_DATE, "" + dateFilterButton.getState());
+		properties.setStateProperty(CallFilter.FILTER_SEARCH_TEXT, searchFilterTextField.getText());
+		properties.setStateProperty(CallFilter.FILTER_SEARCH, "" + searchFilterButton.getState());
+		properties.setStateProperty(CallFilter.FILTER_COMMENT, "" + commentFilterButton.getState());
+		properties.setStateProperty(CallFilter.FILTER_DATE, "" + dateFilterButton.getState());
 		DateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm");
 		Date start = startDateChooser.getDate();
 		Date end = endDateChooser.getDate();
 
 		if (start != null)
 		{
-			Main.setStateProperty(CallFilter.FILTER_DATE_START, df.format(start));
+			properties.setStateProperty(CallFilter.FILTER_DATE_START, df.format(start));
 		}
 		else
 		{
-			Main.setStateProperty(CallFilter.FILTER_DATE_START, "");
+			properties.setStateProperty(CallFilter.FILTER_DATE_START, "");
 		}
 
 		if (end != null)
 		{
-			Main.setStateProperty(CallFilter.FILTER_DATE_END, df.format(end));
+			properties.setStateProperty(CallFilter.FILTER_DATE_END, df.format(end));
 		}
 		else
 		{
-			Main.setStateProperty(CallFilter.FILTER_DATE_END, "");
+			properties.setStateProperty(CallFilter.FILTER_DATE_END, "");
 		}
 
-		Main.setStateProperty(CallFilter.FILTER_DATE_SPECIAL, dateSpecialSaveString);
-		Main.setStateProperty(CallFilter.FILTER_SIP_PROVIDERS, filter[SIP].toString());
-		Main.setStateProperty(CallFilter.FILTER_PORT_LIST, filter[PORT].toString());
-		Main.setStateProperty(CallFilter.FILTER_CALLBYCALL, ""
+		properties.setStateProperty(CallFilter.FILTER_DATE_SPECIAL, dateSpecialSaveString);
+		properties.setStateProperty(CallFilter.FILTER_SIP_PROVIDERS, filter[SIP].toString());
+		properties.setStateProperty(CallFilter.FILTER_PORT_LIST, filter[PORT].toString());
+		properties.setStateProperty(CallFilter.FILTER_CALLBYCALL, ""
 				+ callByCallFilterButton.getState());
-		Main.setStateProperty(CallFilter.FILTER_CALLOUT, "" + callOutFilterButton.getState());
-		Main.setStateProperty(CallFilter.FILTER_ANONYM, "" + anonymFilterButton.getState());
-		Main.setStateProperty(CallFilter.FILTER_FIXED, "" + fixedFilterButton.getState());
-		Main.setStateProperty(CallFilter.FILTER_HANDY, "" + handyFilterButton.getState());
-		Main.setStateProperty(CallFilter.FILTER_CALLIN_NOTHING, "" + callInFilterButton.getState());
-		Main.setStateProperty(CallFilter.FILTER_CALLINFAILED, ""
+		properties.setStateProperty(CallFilter.FILTER_CALLOUT, "" + callOutFilterButton.getState());
+		properties.setStateProperty(CallFilter.FILTER_ANONYM, "" + anonymFilterButton.getState());
+		properties.setStateProperty(CallFilter.FILTER_FIXED, "" + fixedFilterButton.getState());
+		properties.setStateProperty(CallFilter.FILTER_HANDY, "" + handyFilterButton.getState());
+		properties.setStateProperty(CallFilter.FILTER_CALLIN_NOTHING, "" + callInFilterButton.getState());
+		properties.setStateProperty(CallFilter.FILTER_CALLINFAILED, ""
 				+ callInFailedFilterButton.getState());
 	}
 
@@ -1541,29 +1540,29 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 */
 	private void loadButtonStatus() {
 		int state;
-		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_COMMENT));
+		state = JFritzUtils.parseInt(properties.getStateProperty(CallFilter.FILTER_COMMENT));
 		commentFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_DATE));
+		state = JFritzUtils.parseInt(properties.getStateProperty(CallFilter.FILTER_DATE));
 		dateFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_CALLBYCALL));
+		state = JFritzUtils.parseInt(properties.getStateProperty(CallFilter.FILTER_CALLBYCALL));
 		callByCallFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_CALLOUT));
+		state = JFritzUtils.parseInt(properties.getStateProperty(CallFilter.FILTER_CALLOUT));
 		callOutFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_ANONYM));
+		state = JFritzUtils.parseInt(properties.getStateProperty(CallFilter.FILTER_ANONYM));
 		anonymFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_FIXED));
+		state = JFritzUtils.parseInt(properties.getStateProperty(CallFilter.FILTER_FIXED));
 		fixedFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_HANDY));
+		state = JFritzUtils.parseInt(properties.getStateProperty(CallFilter.FILTER_HANDY));
 		handyFilterButton.setState(state);
-		state = JFritzUtils.parseInt(Main.getStateProperty(CallFilter.FILTER_CALLIN_NOTHING));
+		state = JFritzUtils.parseInt(properties.getStateProperty(CallFilter.FILTER_CALLIN_NOTHING));
 		callInFilterButton.setState(state);
 		state = JFritzUtils
-				.parseInt(Main.getStateProperty(CallFilter.FILTER_CALLINFAILED));
+				.parseInt(properties.getStateProperty(CallFilter.FILTER_CALLINFAILED));
 		callInFailedFilterButton.setState(state);
 
 		searchFilterTextField.setText("");
 		searchFilterButton.setState(ThreeStateButton.NOTHING);
-		dateSpecialSaveString = Main.getStateProperty(CallFilter.FILTER_DATE_SPECIAL);
+		dateSpecialSaveString = properties.getStateProperty(CallFilter.FILTER_DATE_SPECIAL);
 		// Debug.msg(dateSpecialSaveString);
 		if (dateSpecialSaveString.equals(CallFilter.THIS_DAY)) {
 			setThisDayFilter();
@@ -1582,8 +1581,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			Date start = new Date();
 			Date end = new Date();
 			try {
-				start = df.parse(Main.getStateProperty(CallFilter.FILTER_DATE_START));
-				end = df.parse(Main.getStateProperty(CallFilter.FILTER_DATE_END));
+				start = df.parse(properties.getStateProperty(CallFilter.FILTER_DATE_START));
+				end = df.parse(properties.getStateProperty(CallFilter.FILTER_DATE_END));
 				startDateChooser.setDate(start); // durch setDate wird über
 													// den
 				endDateChooser.setDate(end); // PropertyListener update
@@ -1662,9 +1661,9 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		{
 			if ( numSelectedCalls != 1 )
 			{
-				String calls = " " + Main.getMessage("entries").replaceAll( //$NON-NLS-1$, //$NON-NLS-2$
+				String calls = " " + messages.getMessage("entries").replaceAll( //$NON-NLS-1$, //$NON-NLS-2$
 						"%N", Integer.toString(numSelectedCalls)) + " "; //$NON-NLS-1$, //$NON-NLS-2$
-				String duration = " " + Main.getMessage("total_duration") + ": " + (durationSelectedCalls / 60) + " min "; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+				String duration = " " + messages.getMessage("total_duration") + ": " + (durationSelectedCalls / 60) + " min "; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 
 				jFrame.setStatus(calls + " " + duration);
 			} else {
@@ -1675,7 +1674,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		{
 			if ( callsLabel != null )
 			{
-				callsLabel.setText(" " + Main.getMessage("telephone_entries").replaceAll("%N", Integer.toString(callerList.getRowCount())) + " "); //$NON-NLS-1$,  //$NON-NLS-2$
+				callsLabel.setText(" " + messages.getMessage("telephone_entries").replaceAll("%N", Integer.toString(callerList.getRowCount())) + " "); //$NON-NLS-1$,  //$NON-NLS-2$
 			}
 			if ( durationLabel != null )
 			{
@@ -1683,7 +1682,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 				int hours = duration / 3600;
 				int mins = duration % 3600 / 60;
 
-				durationLabel.setText(" " + Main.getMessage("total_duration") + ": " + hours + "h " //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+				durationLabel.setText(" " + messages.getMessage("total_duration") + ": " + hours + "h " //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 						+ mins + " min " + " (" + duration / 60 + " min) "); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 			}
 		}

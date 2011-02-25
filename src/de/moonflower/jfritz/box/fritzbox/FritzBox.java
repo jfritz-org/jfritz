@@ -40,6 +40,8 @@ import de.moonflower.jfritz.callmonitor.YACCallMonitor;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.IProgressListener;
@@ -158,6 +160,9 @@ public class FritzBox extends BoxClass {
 	private Vector<BoxStatusListener> boxListener;
 	private Vector<BoxCallBackListener> callBackListener;
 
+	protected PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
+
 	public FritzBox(String name, String description,
 					String protocol, String address, String port, String password,
 					Exception exc)
@@ -180,15 +185,15 @@ public class FritzBox extends BoxClass {
 			updateSettings();
 		} catch (WrongPasswordException e) {
 			exc = e;
-			Debug.error(Main.getMessage("box.wrong_password"));
+			Debug.error(messages.getMessage("box.wrong_password"));
 			setBoxDisconnected();
 		} catch (InvalidFirmwareException e) {
 			exc = e;
-			Debug.error(Main.getMessage("unknown_firmware"));
+			Debug.error(messages.getMessage("unknown_firmware"));
 			setBoxDisconnected();
 		} catch (IOException e) {
 			exc = e;
-			Debug.error(Main.getMessage("box.not_found"));
+			Debug.error(messages.getMessage("box.not_found"));
 			setBoxDisconnected();
 		}
 	}
@@ -227,8 +232,8 @@ public class FritzBox extends BoxClass {
 	 */
 	private void detectFirmware() throws WrongPasswordException, InvalidFirmwareException, IOException {
 		//avoid trying to access the box if running as a client
-		if (Main.getProperty("network.type").equals("2")
-				&& Boolean.parseBoolean(Main.getProperty("option.clientCallList")))
+		if (properties.getProperty("network.type").equals("2")
+				&& Boolean.parseBoolean(properties.getProperty("option.clientCallList")))
 		{
 			Debug.netMsg("JFritz is running as a client and using call list from server, canceling firmware detection");
 		}
@@ -433,10 +438,10 @@ public class FritzBox extends BoxClass {
 									response = getQueryNew(queries);
 									response.add(""); // add empty line to be removed further down in this method
 								} catch (WrongPasswordException e) {
-									Debug.errDlg(Main.getMessage("box.wrong_password"));
+									Debug.errDlg(messages.getMessage("box.wrong_password"));
 									setBoxDisconnected();
 								} catch (InvalidFirmwareException e) {
-									Debug.errDlg(Main.getMessage("box.address_wrong"));
+									Debug.errDlg(messages.getMessage("box.address_wrong"));
 									setBoxDisconnected();
 								} catch (IOException e) {
 									Debug.errDlg("I/O Exception");
@@ -562,10 +567,10 @@ public class FritzBox extends BoxClass {
 									response = getQueryNew(queries);
 									response.add(""); // add empty line to be removed further down in this method
 								} catch (WrongPasswordException e) {
-									Debug.errDlg(Main.getMessage("box.wrong_password"));
+									Debug.errDlg(messages.getMessage("box.wrong_password"));
 									setBoxDisconnected();
 								} catch (InvalidFirmwareException e) {
-									Debug.errDlg(Main.getMessage("box.address_wrong"));
+									Debug.errDlg(messages.getMessage("box.address_wrong"));
 									setBoxDisconnected();
 								} catch (IOException e) {
 									Debug.errDlg("I/O Exception");
@@ -611,7 +616,7 @@ public class FritzBox extends BoxClass {
 			macAddress = getMacFromUPnP();
 			if ("".equals(macAddress))
 			{
-				macAddress = Main.getMessage("unknown");
+				macAddress = messages.getMessage("unknown");
 			}
 		}
 	}
@@ -684,7 +689,7 @@ public class FritzBox extends BoxClass {
 		query.add(QUERY_ANALOG_COUNT);
 		Vector<String> response = getQuery(query);
 
-		addConfiguredPort(new Port(-1, Main.getMessage("analog_telephones_all"), "9", "9"));
+		addConfiguredPort(new Port(-1, messages.getMessage("analog_telephones_all"), "9", "9"));
 		if (response.size() == 1)
 		{
 			try {
@@ -729,7 +734,7 @@ public class FritzBox extends BoxClass {
 				int isdnCount = Integer.parseInt(response.get(0));
 				if (isdnCount > 0)
 				{
-					addConfiguredPort(new Port(50, Main.getMessage("isdn_telephones_all"), "50", "50"));
+					addConfiguredPort(new Port(50, messages.getMessage("isdn_telephones_all"), "50", "50"));
 
 					query.clear();
 					for (int i=0; i<isdnCount; i++)
@@ -868,7 +873,7 @@ public class FritzBox extends BoxClass {
 								String voipName = response.get((i*2) + 1);
 								if ("".equals(voipName))
 								{
-									voipName = Main.getMessage("voip_extension")+ " " + Integer.toString(i+620);
+									voipName = messages.getMessage("voip_extension")+ " " + Integer.toString(i+620);
 								}
 								addConfiguredPort(new Port(20+i,
 										voipName,
@@ -888,14 +893,14 @@ public class FritzBox extends BoxClass {
 	private void addOtherPorts()
 	{
 		// add static configured ports
-		addConfiguredPort(new Port(3, Main.getMessage("call_through"), "-1", "-1"));
-		addConfiguredPort(new Port(4, Main.getMessage("isdn"), "-1", "-1"));
-		addConfiguredPort(new Port(5, Main.getMessage("fax_fon"), "-1", "-1"));
-		addConfiguredPort(new Port(6, Main.getMessage("answering_machine"), "-1", "-1"));
-		addConfiguredPort(new Port(32, Main.getMessage("data_fon_1"), "-1", "-1"));
-		addConfiguredPort(new Port(33, Main.getMessage("data_fon_2"), "-1", "-1"));
-		addConfiguredPort(new Port(34, Main.getMessage("data_fon_3"), "-1", "-1"));
-		addConfiguredPort(new Port(36, Main.getMessage("data_fon_isdn"), "-1", "-1"));
+		addConfiguredPort(new Port(3, messages.getMessage("call_through"), "-1", "-1"));
+		addConfiguredPort(new Port(4, messages.getMessage("isdn"), "-1", "-1"));
+		addConfiguredPort(new Port(5, messages.getMessage("fax_fon"), "-1", "-1"));
+		addConfiguredPort(new Port(6, messages.getMessage("answering_machine"), "-1", "-1"));
+		addConfiguredPort(new Port(32, messages.getMessage("data_fon_1"), "-1", "-1"));
+		addConfiguredPort(new Port(33, messages.getMessage("data_fon_2"), "-1", "-1"));
+		addConfiguredPort(new Port(34, messages.getMessage("data_fon_3"), "-1", "-1"));
+		addConfiguredPort(new Port(36, messages.getMessage("data_fon_isdn"), "-1", "-1"));
 	}
 
 	/**************************************************************************************
@@ -906,13 +911,12 @@ public class FritzBox extends BoxClass {
 	 * @see BoxCallMonitorInterface.startCallMonitor
 	 */
 	public int startCallMonitor(Vector<CallMonitorStatusListener> listener) {
-		switch (Integer.parseInt(Main.getProperty("option.callMonitorType"))) //$NON-NLS-1$
+		switch (Integer.parseInt(properties.getProperty("option.callMonitorType"))) //$NON-NLS-1$
 		{
 			case 1: {
 				if ((firmware != null) && (firmware.getMajorFirmwareVersion() == 3)
 						&& (firmware.getMinorFirmwareVersion() < 96)) {
-					Debug.errDlg(Main
-							.getMessage("callmonitor_error_wrong_firmware")); //$NON-NLS-1$
+					Debug.errDlg(messages.getMessage("callmonitor_error_wrong_firmware")); //$NON-NLS-1$
 
 					for (int i=0; i<listener.size(); i++)
 					{
@@ -924,14 +928,14 @@ public class FritzBox extends BoxClass {
 							&& (firmware.getMinorFirmwareVersion() >= 3)) {
 						if (callMonitor != null)
 						{
-							Debug.errDlg(Main.getMessage("callmonitor_already_started"));
+							Debug.errDlg(messages.getMessage("callmonitor_already_started"));
 						} else {
 							callMonitor = new FBoxCallMonitorV3(this, listener);
 						}
 					} else {
 						if (callMonitor != null)
 						{
-							Debug.errDlg(Main.getMessage("callmonitor_already_started"));
+							Debug.errDlg(messages.getMessage("callmonitor_already_started"));
 						} else {
 							callMonitor = new FBoxCallMonitorV1(this, listener);
 						}
@@ -941,13 +945,13 @@ public class FritzBox extends BoxClass {
 			}
 			case 2: {
 				callMonitor = new YACCallMonitor(name,
-						Integer.parseInt(Main.getProperty("option.yacport")), //$NON-NLS-1$
+						Integer.parseInt(properties.getProperty("option.yacport")), //$NON-NLS-1$
 						listener);
 				return BoxCallMonitorInterface.CALLMONITOR_STARTED;
 			}
 			case 3: {
 				callMonitor = new CallmessageCallMonitor(name,
-						Integer.parseInt(Main.getProperty("option.callmessageport")), //$NON-NLS-1$
+						Integer.parseInt(properties.getProperty("option.callmessageport")), //$NON-NLS-1$
 						listener);
 				return BoxCallMonitorInterface.CALLMONITOR_STARTED;
 			}
@@ -1146,7 +1150,7 @@ public class FritzBox extends BoxClass {
 				// Phone number
 				PhoneNumberOld number;
 				if (!response.get(newOffset+2).equals("")) {
-					number = new PhoneNumberOld(response.get(newOffset+2), Main.getProperty(
+					number = new PhoneNumberOld(response.get(newOffset+2), properties.getProperty(
 							"option.activateDialPrefix").toLowerCase().equals("true")
 							&& (calltype.toInt() == CallType.CALLOUT)
 							&& !response.get(newOffset+6).startsWith("Internet"));
@@ -1181,7 +1185,7 @@ public class FritzBox extends BoxClass {
 					route = response.get(newOffset+5);
 					if ("".equals(route))
 					{
-						route = Main.getMessage("fixed_network");
+						route = messages.getMessage("fixed_network");
 					}
 				}
 				else if (routeType == 1) // SIP

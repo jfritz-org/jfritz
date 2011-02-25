@@ -22,6 +22,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -43,6 +45,9 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 
 	private JSlider timerSlider;
 
+	protected PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
+
 	public ConfigPanelOther(ConfigPanelFritzBox fritzBoxPanel) {
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
@@ -57,7 +62,7 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 		c.anchor = GridBagConstraints.WEST;
 
 		JPanel timerPanel = new JPanel();
-		timerLabel = new JLabel(Main.getMessage("timer_in") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		timerLabel = new JLabel(messages.getMessage("timer_in") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		timerPanel.add(timerLabel);
 
 		timerSlider = new JSlider(0, 120, 30);
@@ -70,7 +75,7 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 				if (timerSlider.getValue() < 3)
 					timerSlider.setValue(3);
 				timerLabel
-						.setText(Main.getMessage("timer") + ": " + timerSlider.getValue() + " " + Main.getMessage("abbreviation_minutes")); //$NON-NLS-1$,  //$NON-NLS-2$
+						.setText(messages.getMessage("timer") + ": " + timerSlider.getValue() + " " + messages.getMessage("abbreviation_minutes")); //$NON-NLS-1$,  //$NON-NLS-2$
 			}
 
 		});
@@ -78,18 +83,16 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 		c.gridy = 0;
 		cPane.add(timerPanel, c);
 
-		checkNewVersionAfterStart = new JCheckBox(Main
-				.getMessage("check_for_new_version_after_start")); //$NON-NLS-1$
+		checkNewVersionAfterStart = new JCheckBox(messages.getMessage("check_for_new_version_after_start")); //$NON-NLS-1$
 		c.gridy++;
 		cPane.add(checkNewVersionAfterStart, c);
 
-		passwordAfterStartButton = new JCheckBox(Main
-				.getMessage("ask_for_password_before_start")); //$NON-NLS-1$
+		passwordAfterStartButton = new JCheckBox(messages.getMessage("ask_for_password_before_start")); //$NON-NLS-1$
 		c.gridy++;
 		cPane.add(passwordAfterStartButton, c);
 
 		JPanel passwordPane = new JPanel();
-		JLabel passwordLabel = new JLabel(Main.getMessage("password") + ": ");
+		JLabel passwordLabel = new JLabel(messages.getMessage("password") + ": ");
 		passwordPane.add(passwordLabel);
 		passwordField = new JPasswordField("", 16);
 		passwordPane.add(passwordField);
@@ -97,49 +100,45 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 		c.gridy++;
 		cPane.add(passwordPane, c);
 
-		timerAfterStartButton = new JCheckBox(Main
-				.getMessage("get_timer_after")); //$NON-NLS-1$
+		timerAfterStartButton = new JCheckBox(messages.getMessage("get_timer_after")); //$NON-NLS-1$
 		c.gridy++;
 		cPane.add(timerAfterStartButton, c);
 
-		startMinimizedButton = new JCheckBox(Main.getMessage("start_minimized")); //$NON-NLS-1$
+		startMinimizedButton = new JCheckBox(messages.getMessage("start_minimized")); //$NON-NLS-1$
 		c.gridy++;
 		cPane.add(startMinimizedButton, c);
 
-		confirmOnExitButton = new JCheckBox(Main.getMessage("confirm_on_exit")); //$NON-NLS-1$
+		confirmOnExitButton = new JCheckBox(messages.getMessage("confirm_on_exit")); //$NON-NLS-1$
 		c.gridy++;
 		cPane.add(confirmOnExitButton, c);
 
-		searchWithSSDP = new JCheckBox(Main.getMessage("search_with_SSDP")); //$NON-NLS-1$
+		searchWithSSDP = new JCheckBox(messages.getMessage("search_with_SSDP")); //$NON-NLS-1$
 		c.gridy++;
 		cPane.add(searchWithSSDP, c);
 
-		minimizeInsteadOfClose = new JCheckBox(Main
-				.getMessage("minimize_instead_close")); //$NON-NLS-1$
+		minimizeInsteadOfClose = new JCheckBox(messages.getMessage("minimize_instead_close")); //$NON-NLS-1$
 		c.gridy++;
 		cPane.add(minimizeInsteadOfClose, c);
 
-		useDecorations = new JCheckBox(Main.getMessage("use_decorations"));
+		useDecorations = new JCheckBox(messages.getMessage("use_decorations"));
 		c.gridy++;
 		cPane.add(useDecorations, c);
 
-		createBackup = new JCheckBox(Main.getMessage("create_backup_start")); //$NON-NLS-1$
+		createBackup = new JCheckBox(messages.getMessage("create_backup_start")); //$NON-NLS-1$
 		c.gridy++;
 		cPane.add(createBackup, c);
 
-		createBackupAfterFetch = new JCheckBox(Main
-				.getMessage("create_backup_fetch")); //$NON-NLS-1$
+		createBackupAfterFetch = new JCheckBox(messages.getMessage("create_backup_fetch")); //$NON-NLS-1$
 		c.gridy++;
 		cPane.add(createBackupAfterFetch, c);
 
-		keepImportantBackupsOnly = new JCheckBox(Main
-				.getMessage("keep_important_backups_only"));
+		keepImportantBackupsOnly = new JCheckBox(messages.getMessage("keep_important_backups_only"));
 		c.gridy++;
 		cPane.add(keepImportantBackupsOnly, c);
 
 		JPanel panel = new JPanel();
 
-		JLabel label = new JLabel(Main.getMessage("save_directory"));
+		JLabel label = new JLabel(messages.getMessage("save_directory"));
 		panel.add(label);
 
 		save_location = new JTextField(Main.SAVE_DIR, 16);
@@ -148,7 +147,7 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser(Main.SAVE_DIR);
-				fc.setDialogTitle(Main.getMessage("save_directory")); //$NON-NLS-1$
+				fc.setDialogTitle(messages.getMessage("save_directory")); //$NON-NLS-1$
 				fc.setDialogType(JFileChooser.SAVE_DIALOG);
 
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -158,9 +157,8 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 						JOptionPane
 								.showMessageDialog(
 										null,
-										Main.getMessage("file_not_found"), //$NON-NLS-1$
-										Main
-												.getMessage("dialog_title_file_not_found"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+										messages.getMessage("file_not_found"), //$NON-NLS-1$
+										messages.getMessage("dialog_title_file_not_found"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
 					} else {
 						save_location.setText(file.getAbsolutePath());
 					}
@@ -168,7 +166,7 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 			}
 		};
 
-		JButton browseButton = new JButton(Main.getMessage("browse"));
+		JButton browseButton = new JButton(messages.getMessage("browse"));
 		browseButton.addActionListener(actionListener);
 
 		panel.add(browseButton);
@@ -180,26 +178,26 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 	}
 
 	public void loadSettings() {
-		checkNewVersionAfterStart.setSelected(JFritzUtils.parseBoolean(Main
+		checkNewVersionAfterStart.setSelected(JFritzUtils.parseBoolean(properties
 				.getProperty("option.checkNewVersionAfterStart")));//$NON-NLS-1$
-		timerAfterStartButton.setSelected(JFritzUtils.parseBoolean(Main
+		timerAfterStartButton.setSelected(JFritzUtils.parseBoolean(properties
 				.getProperty("option.timerAfterStart"))); //$NON-NLS-1$
-		confirmOnExitButton.setSelected(JFritzUtils.parseBoolean(Main
+		confirmOnExitButton.setSelected(JFritzUtils.parseBoolean(properties
 				.getProperty("option.confirmOnExit"))); //$NON-NLS-1$
-		startMinimizedButton.setSelected(JFritzUtils.parseBoolean(Main
+		startMinimizedButton.setSelected(JFritzUtils.parseBoolean(properties
 				.getProperty("option.startMinimized"))); //$NON-NLS-1$
-		minimizeInsteadOfClose.setSelected(JFritzUtils.parseBoolean(Main
+		minimizeInsteadOfClose.setSelected(JFritzUtils.parseBoolean(properties
 				.getProperty("option.minimize"))); //$NON-NLS-1$
-		useDecorations.setSelected(JFritzUtils.parseBoolean(Main
+		useDecorations.setSelected(JFritzUtils.parseBoolean(properties
 				.getProperty("window.useDecorations"))); //$NON-NLS-1$
-		createBackup.setSelected(JFritzUtils.parseBoolean(Main.getProperty(
+		createBackup.setSelected(JFritzUtils.parseBoolean(properties.getProperty(
 				"option.createBackup"))); //$NON-NLS-1$
-		createBackupAfterFetch.setSelected(JFritzUtils.parseBoolean(Main
+		createBackupAfterFetch.setSelected(JFritzUtils.parseBoolean(properties
 				.getProperty("option.createBackupAfterFetch"))); //$NON-NLS-1$
-		keepImportantBackupsOnly.setSelected(JFritzUtils.parseBoolean(Main
+		keepImportantBackupsOnly.setSelected(JFritzUtils.parseBoolean(properties
 				.getProperty("option.keepImportantBackupsOnly"))); //$NON-NLS-1$
 
-		String decrypted_pwd = Encryption.decrypt(Main.getProperty("jfritz.seed"));
+		String decrypted_pwd = Encryption.decrypt(properties.getProperty("jfritz.seed"));
 		if ((decrypted_pwd != null)
 			&& (decrypted_pwd.length() > Main.PROGRAM_SEED.length()))
 		{
@@ -223,20 +221,20 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 		else
 		{
 			String a = Encryption.decrypt(
-					Main.getProperty("jfritz.pwd"));
+					properties.getProperty("jfritz.pwd"));
 			String b = Main.PROGRAM_SECRET + pwd;
 			boolean pwAfterStart = !a.equals(b); //$NON-NLS-1$,  //$NON-NLS-2$
 
 			passwordAfterStartButton.setSelected(pwAfterStart);
 		}
 
-		timerSlider.setValue(Integer.parseInt(Main.getProperty("fetch.timer"))); //$NON-NLS-1$
+		timerSlider.setValue(Integer.parseInt(properties.getProperty("fetch.timer"))); //$NON-NLS-1$
 
-		searchWithSSDP.setSelected(JFritzUtils.parseBoolean(Main.getProperty(
+		searchWithSSDP.setSelected(JFritzUtils.parseBoolean(properties.getProperty(
 				"option.useSSDP"))); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		if(Main.getProperty("network.type").equals("2")
-				&& Boolean.parseBoolean(Main.getProperty("option.clientCallList"))){
+		if(properties.getProperty("network.type").equals("2")
+				&& Boolean.parseBoolean(properties.getProperty("option.clientCallList"))){
 
 			Debug.netMsg("JFritz is running as a client and using call list from server, disabeling some options");
 			searchWithSSDP.setSelected(false);
@@ -251,25 +249,25 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 			Main.changeSaveDir(save_location.getText());
 		}
 
-		Main.setProperty("option.useSSDP", Boolean.toString(searchWithSSDP //$NON-NLS-1$
+		properties.setProperty("option.useSSDP", Boolean.toString(searchWithSSDP //$NON-NLS-1$
 				.isSelected()));
-		Main.setProperty("option.timerAfterStart", Boolean //$NON-NLS-1$
+		properties.setProperty("option.timerAfterStart", Boolean //$NON-NLS-1$
 				.toString(timerAfterStartButton.isSelected()));
-		Main.setProperty("option.confirmOnExit", Boolean //$NON-NLS-1$
+		properties.setProperty("option.confirmOnExit", Boolean //$NON-NLS-1$
 				.toString(confirmOnExitButton.isSelected()));
-		Main.setProperty("option.startMinimized", Boolean //$NON-NLS-1$
+		properties.setProperty("option.startMinimized", Boolean //$NON-NLS-1$
 				.toString(startMinimizedButton.isSelected()));
-		Main.setProperty("option.minimize", Boolean //$NON-NLS-1$
+		properties.setProperty("option.minimize", Boolean //$NON-NLS-1$
 				.toString(minimizeInsteadOfClose.isSelected()));
-		Main.setProperty("window.useDecorations", Boolean //$NON-NLS-1$
+		properties.setProperty("window.useDecorations", Boolean //$NON-NLS-1$
 				.toString(useDecorations.isSelected()));
-		Main.setProperty("option.createBackup", Boolean //$NON-NLS-1$
+		properties.setProperty("option.createBackup", Boolean //$NON-NLS-1$
 				.toString(createBackup.isSelected()));
-		Main.setProperty("option.createBackupAfterFetch", //$NON-NLS-1$
+		properties.setProperty("option.createBackupAfterFetch", //$NON-NLS-1$
 				Boolean.toString(createBackupAfterFetch.isSelected()));
-		Main.setProperty("option.keepImportantBackupsOnly",
+		properties.setProperty("option.keepImportantBackupsOnly",
 				Boolean.toString(keepImportantBackupsOnly.isSelected()));
-		Main.setProperty("option.checkNewVersionAfterStart", //$NON-NLS-1$
+		properties.setProperty("option.checkNewVersionAfterStart", //$NON-NLS-1$
 				Boolean.toString(checkNewVersionAfterStart.isSelected()));
 
 		String passwd = new String(passwordField.getPassword());
@@ -280,25 +278,25 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 			passwordAfterStartButton.setSelected(false);
 		}
 		if (!passwordAfterStartButton.isSelected()) {
-			Main.setProperty("jfritz.seed", Encryption
+			properties.setProperty("jfritz.seed", Encryption
 					.encrypt(Main.PROGRAM_SEED + passwd));
-			Main.setProperty("jfritz.pwd", Encryption //$NON-NLS-1$
+			properties.setProperty("jfritz.pwd", Encryption //$NON-NLS-1$
 					.encrypt(Main.PROGRAM_SECRET + passwd));
 		} else {
-			Main.setProperty("jfritz.seed", Encryption
+			properties.setProperty("jfritz.seed", Encryption
 					.encrypt(Main.PROGRAM_SEED + passwd));
-			Main.removeProperty("jfritz.pwd"); //$NON-NLS-1$
+			properties.removeProperty("jfritz.pwd"); //$NON-NLS-1$
 		}
 		if (timerSlider.getValue() < 3)
 			timerSlider.setValue(3);
-		Main.setProperty("fetch.timer", Integer.toString(timerSlider //$NON-NLS-1$
+		properties.setProperty("fetch.timer", Integer.toString(timerSlider //$NON-NLS-1$
 				.getValue()));
 
 	}
 
 	public String getPath()
 	{
-		return Main.getMessage("other");
+		return messages.getMessage("other");
 	}
 
 	public JPanel getPanel() {

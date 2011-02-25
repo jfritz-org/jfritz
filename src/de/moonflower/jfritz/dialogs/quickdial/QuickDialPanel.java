@@ -31,6 +31,7 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.struct.QuickDial;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.StatusBarController;
@@ -50,6 +51,7 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 	private JButton addButton, delButton;
 
 	private StatusBarController statusBarController = new StatusBarController();
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public QuickDialPanel(QuickDials dataModel) {
 		setLayout(new BorderLayout());
@@ -69,14 +71,14 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 		JToolBar toolBar = new JToolBar();
 		toolBar.setFloatable(true);
 
-		addButton = new JButton(Main.getMessage("new_quickdial"));  //$NON-NLS-1$
+		addButton = new JButton(messages.getMessage("new_quickdial"));  //$NON-NLS-1$
 		addButton.setActionCommand("addSIP");  //$NON-NLS-1$
 		addButton.addActionListener(this);
 		addButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/add.png"))));  //$NON-NLS-1$
 
-		delButton = new JButton(Main.getMessage(
+		delButton = new JButton(messages.getMessage(
 				"delete_quickdial"));  //$NON-NLS-1$
 		delButton.setActionCommand("deleteSIP");  //$NON-NLS-1$
 		delButton.addActionListener(this);
@@ -84,12 +86,12 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/delete.png"))));  //$NON-NLS-1$
 
-		JButton fetchButton = new JButton(Main.getMessage(
+		JButton fetchButton = new JButton(messages.getMessage(
 				"fetch_from_box"));  //$NON-NLS-1$
 		fetchButton.setActionCommand("fetchSIP");  //$NON-NLS-1$
 		fetchButton.addActionListener(this);
 
-		JButton storeButton = new JButton(Main.getMessage(
+		JButton storeButton = new JButton(messages.getMessage(
 				"store_to_box"));  //$NON-NLS-1$
 		storeButton.setEnabled(false);
 		storeButton.setActionCommand("storeSIP");  //$NON-NLS-1$
@@ -173,21 +175,21 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 			try {
 				dataModel.getQuickDialDataFromFritzBox();
 			} catch (WrongPasswordException e1) {
-				JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
-				Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+				JFritz.errorMsg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
+				Debug.errDlg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
 			} catch (IOException e1) {
-				JFritz.errorMsg(Main.getMessage("box.not_found")); //$NON-NLS-1$
-				Debug.errDlg(Main.getMessage("box.not_found")); //$NON-NLS-1$
+				JFritz.errorMsg(messages.getMessage("box.not_found")); //$NON-NLS-1$
+				Debug.errDlg(messages.getMessage("box.not_found")); //$NON-NLS-1$
 			} catch (InvalidFirmwareException e1) {
-				JFritz.errorMsg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
-				Debug.errDlg(Main.getMessage("unknown_firmware")); //$NON-NLS-1$
+				JFritz.errorMsg(messages.getMessage("unknown_firmware")); //$NON-NLS-1$
+				Debug.errDlg(messages.getMessage("unknown_firmware")); //$NON-NLS-1$
 			}
 			dataModel.fireTableDataChanged();
 			JFritz.getQuickDials().saveToXMLFile(Main.SAVE_DIR + JFritz.QUICKDIALS_FILE);
 		} else if (e.getActionCommand().equals("storeSIP")) {  //$NON-NLS-1$
 			Debug.warning("Not yet implemented");  //$NON-NLS-1$
 			JOptionPane.showMessageDialog(null,
-					Main.getMessage("not_implemented"));  //$NON-NLS-1$
+					messages.getMessage("not_implemented"));  //$NON-NLS-1$
 		}
 
 	}
@@ -219,7 +221,7 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 		addButton.setEnabled(addEnabled);
 	}
 	public void setStatus() {
-		statusBarController.fireStatusChanged(Main.getMessage("entries").  //$NON-NLS-1$
+		statusBarController.fireStatusChanged(messages.getMessage("entries").  //$NON-NLS-1$
 				replaceAll("%N", Integer.toString(dataModel.getQuickDials().size())));  //$NON-NLS-1$
 	}
 

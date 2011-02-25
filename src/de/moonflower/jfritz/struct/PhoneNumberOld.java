@@ -23,10 +23,10 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
-import de.moonflower.jfritz.struct.CallByCall;
+import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.CbCFileXMLHandler;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -69,6 +69,9 @@ public class PhoneNumberOld implements Serializable {
 
 	private String countryCode = "";
 
+	protected PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
+
 	/**
 	 * This constructor should be used if the number may be a quickdial and
 	 * needs to be resolved! Or if the number starts with a dial out prefix
@@ -91,8 +94,8 @@ public class PhoneNumberOld implements Serializable {
 		}
 
 		if (parseDialOut
-				&& this.number.startsWith(Main.getProperty("dial.prefix"))) {
-			this.number = number.substring(Main.getProperty("dial.prefix")
+				&& this.number.startsWith(properties.getProperty("dial.prefix"))) {
+			this.number = number.substring(properties.getProperty("dial.prefix")
 					.length());
 			Debug.info("Parsed the dial out prefix, new number: " + this.number);
 		}
@@ -179,7 +182,7 @@ public class PhoneNumberOld implements Serializable {
 			for ( int i=11; i>3; i-- ) {
 				if ( number.length()>i && specificWorldFlagMap.containsKey(number.substring(1, i))) {
 					value = specificWorldFlagMap.get(number.substring(1,i)).split(";");
-					if ( countryCode.equals(Main.getProperty("country.code"))) {
+					if ( countryCode.equals(properties.getProperty("country.code"))) {
 						flagFileName = value[0];
 					}
 					Description = value[1];
@@ -225,7 +228,7 @@ public class PhoneNumberOld implements Serializable {
 	 *
 	 */
 	private void cutCallByCall(){
-		String countryCode = Main.getProperty("country.code");//$NON-NLS-1$
+		String countryCode = properties.getProperty("country.code");//$NON-NLS-1$
 		CallByCall[] cbc;
 
 		if (callbyCallMap != null)
@@ -262,14 +265,14 @@ public class PhoneNumberOld implements Serializable {
 	 */
 	public String convertToIntNumber() {
 		// do nothing if number is an "unknown" number
-		if (number.equals(Main.getMessage("unknown"))) {
+		if (number.equals(messages.getMessage("unknown"))) {
 			return number;
 		}
 
-		String countryCode = Main.getProperty("country.code");//$NON-NLS-1$
-		String countryPrefix = Main.getProperty("country.prefix");//$NON-NLS-1$
-		String areaCode = Main.getProperty("area.code");//$NON-NLS-1$
-		String areaPrefix = Main.getProperty("area.prefix");//$NON-NLS-1$
+		String countryCode = properties.getProperty("country.code");//$NON-NLS-1$
+		String countryPrefix = properties.getProperty("country.prefix");//$NON-NLS-1$
+		String areaCode = properties.getProperty("area.code");//$NON-NLS-1$
+		String areaPrefix = properties.getProperty("area.prefix");//$NON-NLS-1$
 
 		if ((number.length() < 3) // A valid number??
 				|| (number.startsWith("+"))//$NON-NLS-1$
@@ -307,8 +310,8 @@ public class PhoneNumberOld implements Serializable {
 	 * @author Benjamin Schmitt
 	 */
 	public String convertToNationalNumber() {
-		String countryCode = Main.getProperty("country.code");//$NON-NLS-1$, //$NON-NLS-2$
-		String areaPrefix = Main.getProperty("area.prefix"); //$NON-NLS-1$, //$NON-NLS-2$
+		String countryCode = properties.getProperty("country.code");//$NON-NLS-1$, //$NON-NLS-2$
+		String areaPrefix = properties.getProperty("area.prefix"); //$NON-NLS-1$, //$NON-NLS-2$
 
 		if (number.startsWith(countryCode)) //$NON-NLS-1$
 			return areaPrefix + number.substring(3);
@@ -344,9 +347,9 @@ public class PhoneNumberOld implements Serializable {
 	}
 
 	public String getShortNumber() {
-		String countryCode = Main.getProperty("country.code");//$NON-NLS-1$
-		String areaCode = Main.getProperty("area.code"); //$NON-NLS-1$
-		String areaPrefix = Main.getProperty("area.prefix"); //$NON-NLS-1$
+		String countryCode = properties.getProperty("country.code");//$NON-NLS-1$
+		String areaCode = properties.getProperty("area.code"); //$NON-NLS-1$
+		String areaPrefix = properties.getProperty("area.prefix"); //$NON-NLS-1$
 		if (number.startsWith(countryCode + areaCode)) //$NON-NLS-1$
 			return number.substring(countryCode.length() + areaCode.length());
 
@@ -356,8 +359,8 @@ public class PhoneNumberOld implements Serializable {
 	}
 
 	public String getAreaNumber() {
-		String countryCode = Main.getProperty("country.code"); //$NON-NLS-1$
-		String areaPrefix = Main.getProperty("area.prefix"); //$NON-NLS-1$
+		String countryCode = properties.getProperty("country.code"); //$NON-NLS-1$
+		String areaPrefix = properties.getProperty("area.prefix"); //$NON-NLS-1$
 		if (number.startsWith(countryCode)) //$NON-NLS-1$
 			return areaPrefix + number.substring(countryCode.length());
 		return number;
@@ -399,8 +402,8 @@ public class PhoneNumberOld implements Serializable {
 	 * @return True if number is a local number
 	 */
 	public boolean isLocalCall() {
-		String countryCode = Main.getProperty("country.code"); //$NON-NLS-1$
-		String areaCode = Main.getProperty("area.code"); //$NON-NLS-1$
+		String countryCode = properties.getProperty("country.code"); //$NON-NLS-1$
+		String areaCode = properties.getProperty("area.code"); //$NON-NLS-1$
 		return number.startsWith(countryCode + areaCode); //$NON-NLS-1$
 	}
 

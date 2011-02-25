@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="styles"/>
 	<classpathentry kind="src" path="tests"/>
 	<classpathentry kind="lib" path="lang"/>
 	<classpathentry exported="true" kind="lib" path="lib/jdic.jar"/>
@@ -23,5 +24,7 @@
 	<classpathentry kind="lib" path="lib-dev/ant-deb-0.0.1.jar"/>
 	<classpathentry kind="lib" path="lib-dev/junit-4.8.2.jar"/>
 	<classpathentry kind="lib" path="lib-dev/jsch-0.1.42.jar"/>
+	<classpathentry kind="lib" path="lib-dev/mockito-all-1.8.5.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

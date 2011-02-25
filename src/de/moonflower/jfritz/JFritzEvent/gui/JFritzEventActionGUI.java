@@ -24,12 +24,12 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableColumn;
 
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.JFritzEvent.JFritzEventDispatcher;
 import de.moonflower.jfritz.JFritzEvent.events.JFritzEvent;
 import de.moonflower.jfritz.JFritzEvent.struct.ConditionObject;
 import de.moonflower.jfritz.JFritzEvent.struct.JFritzEventAction;
 import de.moonflower.jfritz.callerlist.TextFieldCellEditor;
+import de.moonflower.jfritz.messages.MessageProvider;
 
 
 /**
@@ -59,12 +59,13 @@ public class JFritzEventActionGUI extends JDialog implements ActionListener {
 	private JTextField nameTextField;
 	private JRadioButton none_concatenation, and_concatenation, or_concatenation;
 	private JComboBox eventComboBox;
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public JFritzEventActionGUI(JDialog parent, JFritzEventAction eventAction) {
 		super(parent,true);
 		this.eventAction = eventAction;
 		createGUI();
-		setTitle(Main.getMessage("event_management"));
+		setTitle(messages.getMessage("event_management"));
 //		setSize(600,500);
 		setValues();
 		pack();
@@ -108,11 +109,11 @@ public class JFritzEventActionGUI extends JDialog implements ActionListener {
 		innerPanel.add(conditionLabel, new GridBagConstraints(1, 4, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 		ButtonGroup conditionGroup = new ButtonGroup();
-		none_concatenation = new JRadioButton(Main.getMessage("none_condition"));
+		none_concatenation = new JRadioButton(messages.getMessage("none_condition"));
 		none_concatenation.setActionCommand("none_condition");
-		and_concatenation = new JRadioButton(Main.getMessage("and_condition"));
+		and_concatenation = new JRadioButton(messages.getMessage("and_condition"));
 		and_concatenation.setActionCommand("and_condition");
-		or_concatenation = new JRadioButton(Main.getMessage("or_condition"));
+		or_concatenation = new JRadioButton(messages.getMessage("or_condition"));
 		or_concatenation.setActionCommand("or_condition");
 		none_concatenation.setSelected(true);
 		conditionGroup.add(none_concatenation);

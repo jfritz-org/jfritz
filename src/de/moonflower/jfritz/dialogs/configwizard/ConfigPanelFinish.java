@@ -1,10 +1,12 @@
 package de.moonflower.jfritz.dialogs.configwizard;
 
-import java.awt.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
 
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.utils.MultiLabel;
 
 /**
@@ -21,6 +23,7 @@ public class ConfigPanelFinish extends JPanel{
 	    private static final long serialVersionUID = 1;
 
 	    private JPanel configPanel1;
+		protected MessageProvider messages = MessageProvider.getInstance();
 
 	    public ConfigPanelFinish() {
 
@@ -35,7 +38,7 @@ public class ConfigPanelFinish extends JPanel{
 			c.gridy = 0;
 			c.gridx = 0;
 			c.anchor = GridBagConstraints.LINE_START;
-			MultiLabel label = new MultiLabel(Main.getMessage("config_wizard.finish"));
+			MultiLabel label = new MultiLabel(messages.getMessage("config_wizard.finish"));
 			configPanel1.add(label, c);
 
 			add(configPanel1);

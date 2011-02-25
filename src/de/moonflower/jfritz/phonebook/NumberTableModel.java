@@ -4,16 +4,18 @@ import java.util.Enumeration;
 
 import javax.swing.table.AbstractTableModel;
 
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.PhoneType;
 
 public class NumberTableModel extends AbstractTableModel {
+	protected MessageProvider messages = MessageProvider.getInstance();
+
 	private final String columnNames[] = {
-			Main.getMessage("standard_short"), 	//$NON-NLS-1$
-			Main.getMessage("type"), 			//$NON-NLS-1$
-			Main.getMessage("number") }; 		//$NON-NLS-1$
+			messages.getMessage("standard_short"), 	//$NON-NLS-1$
+			messages.getMessage("type"), 			//$NON-NLS-1$
+			messages.getMessage("number") }; 		//$NON-NLS-1$
 
 	private static final long serialVersionUID = 1;
 

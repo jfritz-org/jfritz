@@ -4,6 +4,7 @@ import java.util.Vector;
 
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.network.SSDPPacket;
@@ -30,7 +31,7 @@ public abstract class BoxClass
 	/** SSDP constants **/
 	private final static int SSDP_TIMEOUT = 1000;
 	protected static SSDPdiscoverThread ssdpthread;
-
+	protected static PropertyProvider properties = PropertyProvider.getInstance();
 	/**
 	 * The user can define a random name describing this box.
 	 * @return The name of the box.
@@ -174,9 +175,9 @@ public abstract class BoxClass
 	 */
 	public static final Vector<SSDPPacket> getDevices() {
 		//avoid using the ssdp thread if jfritz is running as a client and using the call list from server
-		if (JFritzUtils.parseBoolean(Main.getProperty("option.useSSDP")) //$NON-NLS-1$
-			&& !(Main.getProperty("network.type").equals("2")
-						&& Boolean.parseBoolean(Main.getProperty("option.clientCallList")))) { //$NON-NLS-1$
+		if (JFritzUtils.parseBoolean(properties.getProperty("option.useSSDP")) //$NON-NLS-1$
+			&& !(properties.getProperty("network.type").equals("2")
+						&& Boolean.parseBoolean(properties.getProperty("option.clientCallList")))) { //$NON-NLS-1$
 			try {
 				ssdpthread.join();
 			} catch (InterruptedException e) {

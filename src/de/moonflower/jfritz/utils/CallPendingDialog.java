@@ -20,8 +20,8 @@ import javax.swing.JLabel;
 import javax.swing.KeyStroke;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.struct.Port;
 
@@ -38,6 +38,7 @@ public class CallPendingDialog extends JDialog implements ActionListener {
 	private Port port;
 
 	JButton okButton, cancelButton;
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public CallPendingDialog(String infoText, Port port) throws HeadlessException {
 		super(JFritz.getJframe());
@@ -50,7 +51,7 @@ public class CallPendingDialog extends JDialog implements ActionListener {
 
 	public void drawDialog() {
 		super.dialogInit();
-		setTitle(Main.getMessage("information")); //$NON-NLS-1$
+		setTitle(messages.getMessage("information")); //$NON-NLS-1$
 
 		Container c = getContentPane();
 		GridBagLayout gbl = new GridBagLayout();
@@ -66,12 +67,12 @@ public class CallPendingDialog extends JDialog implements ActionListener {
 		addComponent(c, gbl, label, 0, 0, 2, 3, 1.0, 1.0, 15, 15, 15, 15);
 
 		// Center
-		okButton = new JButton(Main.getMessage("okay")); //$NON-NLS-1$
+		okButton = new JButton(messages.getMessage("okay")); //$NON-NLS-1$
 		okButton.setActionCommand("ok"); //$NON-NLS-1$
 		okButton.addActionListener(this);
 		addComponent(c, gbl, okButton, 0, 3, 1, 1, 1.0, 0, 30, 5, 0, 10);
 
-		cancelButton = new JButton(Main.getMessage("cancel")); //$NON-NLS-1$
+		cancelButton = new JButton(messages.getMessage("cancel")); //$NON-NLS-1$
 		cancelButton.setActionCommand("cancel"); //$NON-NLS-1$
 		cancelButton.addActionListener(this);
 		addComponent(c, gbl, cancelButton, 1, 3, 1, 1, 1.0, 0, 5, 30, 0, 10);
@@ -126,11 +127,11 @@ public class CallPendingDialog extends JDialog implements ActionListener {
 				NetworkStateMonitor.hangup(port);
 				setVisible(false);
 			} catch (WrongPasswordException e1) {
-				JFritz.errorMsg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
-				Debug.errDlg(Main.getMessage("box.wrong_password")); //$NON-NLS-1$
+				JFritz.errorMsg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
+				Debug.errDlg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
 			} catch (IOException e1) {
-				JFritz.errorMsg(Main.getMessage("box.not_found")); //$NON-NLS-1$
-				Debug.errDlg(Main.getMessage("box.not_found")); //$NON-NLS-1$
+				JFritz.errorMsg(messages.getMessage("box.not_found")); //$NON-NLS-1$
+				Debug.errDlg(messages.getMessage("box.not_found")); //$NON-NLS-1$
 			}
 		}
 	}

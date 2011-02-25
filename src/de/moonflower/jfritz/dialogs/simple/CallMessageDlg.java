@@ -1,31 +1,10 @@
-/*
- * Created on 19.07.2005
- */
 package de.moonflower.jfritz.dialogs.simple;
 
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import java.awt.BorderLayout;
-import java.awt.Toolkit;
 import java.awt.Dimension;
-
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
-
-import de.moonflower.jfritz.Main;
-import de.moonflower.jfritz.struct.Call;
-import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.PhoneNumberOld;
-import de.moonflower.jfritz.utils.BrowserLaunch;
-import de.moonflower.jfritz.utils.Debug;
-import de.moonflower.jfritz.utils.JFritzUtils;
-
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -36,12 +15,30 @@ import java.text.SimpleDateFormat;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+
+import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
+import de.moonflower.jfritz.struct.Call;
+import de.moonflower.jfritz.struct.Person;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
+import de.moonflower.jfritz.utils.BrowserLaunch;
+import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.JFritzUtils;
+
 /**
  * Class for creating a popup dialog for incoming and outgoing calls. Hides after timeout
  * @author rob
  */
 
-public class CallMessageDlg extends JFrame implements ActionListener{
+public class CallMessageDlg extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1;
 
 	private Timer timer;
@@ -52,6 +49,8 @@ public class CallMessageDlg extends JFrame implements ActionListener{
     private URL imageWorldPath, imagePhonePath, imageHomePath, imageFreeCallPath, imageMobilePath, googlePath;
     private String template_incoming = "", template_outgoing = "";
     private int preferredImageWidth, preferredImageHeight;
+    protected PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public CallMessageDlg()
 	{
@@ -59,8 +58,8 @@ public class CallMessageDlg extends JFrame implements ActionListener{
 	    addWindowListener(new WindowCloseHandle(this));
 		if (System.getProperty("os.name").equals("Linux"))
 			os_file += "//";
-		template_incoming = loadTemplate(JFritzUtils.getFullPath(JFritzUtils.rootID) + "styles" + JFritzUtils.FILESEP + "template-incoming.html");
-		template_outgoing = loadTemplate(JFritzUtils.getFullPath(JFritzUtils.rootID) + "styles" + JFritzUtils.FILESEP + "template-outgoing.html");
+		template_incoming = loadTemplate(JFritzUtils.getFullPath(JFritzUtils.rootID + "styles") + JFritzUtils.FILESEP + "template-incoming.html");
+		template_outgoing = loadTemplate(JFritzUtils.getFullPath(JFritzUtils.rootID + "styles") + JFritzUtils.FILESEP + "template-outgoing.html");
 
 		langPath = JFritzUtils.getFullPath(JFritzUtils.langID);
 		imageWorldPath = getClass().getResource("/de/moonflower/jfritz/resources/images/world.png"); //$NON-NLS-1$
@@ -80,20 +79,20 @@ public class CallMessageDlg extends JFrame implements ActionListener{
 		task = new HideTimer(this);
 
 		//if the delay is <=0 then dont close the dialog
-		long delay = Long.parseLong(Main.getProperty(
+		long delay = Long.parseLong(properties.getProperty(
 				"option.popupDelay")) * 1000;
 		if(delay > 0)
 			timer.schedule(task, delay);
 
 		this.setIconImage(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource("/de/moonflower/jfritz/resources/images/callin.png"))).getImage()); //$NON-NLS-1$)
-		String titleStr = Main.getMessage("dialog_title_callin");
+		String titleStr = messages.getMessage("dialog_title_callin");
 		titleStr = titleStr.replaceAll("%SOURCE%", callerstr);
 		titleStr = titleStr.replaceAll("%DEST%", calledstr);
 		setTitle(titleStr); //$NON-NLS-1$
 
 		Debug.info("Creating call message gui...");
-		JButton closeButton = new JButton(Main.getMessage("okay")); //$NON-NLS-1$
+		JButton closeButton = new JButton(messages.getMessage("okay")); //$NON-NLS-1$
 		closeButton.addActionListener(this);
 		getContentPane().setLayout(new BorderLayout(0, 0));
 		getContentPane().add(closeButton, BorderLayout.SOUTH);
@@ -122,7 +121,7 @@ public class CallMessageDlg extends JFrame implements ActionListener{
 				}
                 else if (hle.getEventType() == HyperlinkEvent.EventType.ENTERED) {
                     tooltip = callInLabel.getToolTipText();
-                    callInLabel.setToolTipText(Main.getMessage("show_on_google_maps"));
+                    callInLabel.setToolTipText(messages.getMessage("show_on_google_maps"));
                 } else if (hle.getEventType() == HyperlinkEvent.EventType.EXITED) {
                 	callInLabel.setToolTipText(tooltip);
                 }
@@ -210,10 +209,10 @@ public class CallMessageDlg extends JFrame implements ActionListener{
 				else
 				{
 					message = message.replaceAll("%FLAG%", "<img src=\"" + imageWorldPath.toString() + "\">");
-					message = message.replaceAll("%COUNTRY%", Main.getMessage("unknown_country"));
+					message = message.replaceAll("%COUNTRY%", messages.getMessage("unknown_country"));
 				}
 
-				String countryCode = Main.getProperty("country.code");
+				String countryCode = properties.getProperty("country.code");
 				URL phoneIcon = imageHomePath;
 				if(number.isLocalCall()){
 					phoneIcon = imageHomePath;
@@ -282,8 +281,8 @@ public class CallMessageDlg extends JFrame implements ActionListener{
 		Dimension screenDim = Toolkit.getDefaultToolkit().getScreenSize();
 		int posXDefault = (screenDim.width / 2) - (this.getWidth() / 2);
 		int posYDefault = (screenDim.height / 2) - (this.getHeight() / 2);
-		int xPos = Integer.parseInt(Main.getStateProperty("callmessenger.popup.xpos", Integer.toString(posXDefault)));
-		int yPos = Integer.parseInt(Main.getStateProperty("callmessenger.popup.ypos", Integer.toString(posYDefault)));
+		int xPos = Integer.parseInt(properties.getStateProperty("callmessenger.popup.xpos", Integer.toString(posXDefault)));
+		int yPos = Integer.parseInt(properties.getStateProperty("callmessenger.popup.ypos", Integer.toString(posYDefault)));
 		if (   (xPos - 40 > screenDim.width)
 			|| (yPos - 40 > screenDim.height)
 			|| (xPos + this.getWidth() + 40 < 0)
@@ -308,20 +307,20 @@ public class CallMessageDlg extends JFrame implements ActionListener{
 		task = new HideTimer(this);
 
 		//if the delay is <=0 then dont close the dialog
-		long delay = Long.parseLong(Main.getProperty(
+		long delay = Long.parseLong(properties.getProperty(
 				"option.popupDelay")) * 1000;
 		if(delay > 0)
 			timer.schedule(task, delay);
 
 		this.setIconImage(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource("/de/moonflower/jfritz/resources/images/callout.png"))).getImage()); //$NON-NLS-1$)
-		String titleStr = Main.getMessage("dialog_title_callout");
+		String titleStr = messages.getMessage("dialog_title_callout");
 		titleStr = titleStr.replaceAll("%SOURCE%", callerstr);
 		titleStr = titleStr.replaceAll("%DEST%", calledstr);
 		setTitle(titleStr); //$NON-NLS-1$
 
 		Debug.info("Creating call message gui...");
-		JButton closeButton = new JButton(Main.getMessage("okay")); //$NON-NLS-1$
+		JButton closeButton = new JButton(messages.getMessage("okay")); //$NON-NLS-1$
 		closeButton.addActionListener(this);
 		getContentPane().setLayout(new BorderLayout(0, 0));
 		getContentPane().add(closeButton, BorderLayout.SOUTH);
@@ -350,7 +349,7 @@ public class CallMessageDlg extends JFrame implements ActionListener{
 				}
                 else if (hle.getEventType() == HyperlinkEvent.EventType.ENTERED) {
                     tooltip = callInLabel.getToolTipText();
-                    callInLabel.setToolTipText(Main.getMessage("show_on_google_maps"));
+                    callInLabel.setToolTipText(messages.getMessage("show_on_google_maps"));
                 } else if (hle.getEventType() == HyperlinkEvent.EventType.EXITED) {
                 	callInLabel.setToolTipText(tooltip);
                 }
@@ -438,10 +437,10 @@ public class CallMessageDlg extends JFrame implements ActionListener{
 				else
 				{
 					message = message.replaceAll("%FLAG%", "<img src=\"" + imageWorldPath.toString() + "\">");
-					message = message.replaceAll("%COUNTRY%", Main.getMessage("unknown_country"));
+					message = message.replaceAll("%COUNTRY%", messages.getMessage("unknown_country"));
 				}
 
-				String countryCode = Main.getProperty("country.code");
+				String countryCode = properties.getProperty("country.code");
 				URL phoneIcon = imageHomePath;
 				if(number.isLocalCall()){
 					phoneIcon = imageHomePath;
@@ -510,8 +509,8 @@ public class CallMessageDlg extends JFrame implements ActionListener{
 		Dimension screenDim = Toolkit.getDefaultToolkit().getScreenSize();
 		int posXDefault = (screenDim.width / 2) - (this.getWidth() / 2);
 		int posYDefault = (screenDim.height / 2) - (this.getHeight() / 2);
-		int xPos = Integer.parseInt(Main.getStateProperty("callmessenger.popup.xpos", Integer.toString(posXDefault)));
-		int yPos = Integer.parseInt(Main.getStateProperty("callmessenger.popup.ypos", Integer.toString(posYDefault)));
+		int xPos = Integer.parseInt(properties.getStateProperty("callmessenger.popup.xpos", Integer.toString(posXDefault)));
+		int yPos = Integer.parseInt(properties.getStateProperty("callmessenger.popup.ypos", Integer.toString(posYDefault)));
 		if (   (xPos - 40 > screenDim.width)
 			|| (yPos - 40 > screenDim.height)
 			|| (xPos + this.getWidth() + 40 < 0)
@@ -542,8 +541,8 @@ public class CallMessageDlg extends JFrame implements ActionListener{
 		task.cancel();
 		String currentXPos = Integer.toString(getLocation().x);
 		String currentYPos = Integer.toString(getLocation().y);
-		Main.setStateProperty("callmessenger.popup.xpos", currentXPos);
-		Main.setStateProperty("callmessenger.popup.ypos", currentYPos);
+		properties.setStateProperty("callmessenger.popup.xpos", currentXPos);
+		properties.setStateProperty("callmessenger.popup.ypos", currentYPos);
 	}
 
 	public String loadTemplate(String filename)

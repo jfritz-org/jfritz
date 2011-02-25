@@ -23,7 +23,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 
 /**
  * @author Robert Palmer
@@ -47,6 +48,9 @@ public class YacConfigDialog extends CallMonitorConfigDialog {
 
     private JTextField yacPort;
 
+    protected PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
+
     public YacConfigDialog(JDialog parent) {
         super(parent, true);
         initDialog();
@@ -56,18 +60,18 @@ public class YacConfigDialog extends CallMonitorConfigDialog {
     }
 
     public void initDialog() {
-        setTitle(Main.getMessage("dialog_title_yac_options")); //$NON-NLS-1$
+        setTitle(messages.getMessage("dialog_title_yac_options")); //$NON-NLS-1$
         setSize(270, 140);
         drawDialog();
         setProperties();
     }
 
     private void setProperties() {
-        yacPort.setText(Main.getProperty("option.yacport")); //$NON-NLS-1$,  //$NON-NLS-2$
+        yacPort.setText(properties.getProperty("option.yacport")); //$NON-NLS-1$,  //$NON-NLS-2$
     }
 
     private void storeProperties() {
-        Main.setProperty("option.yacport", yacPort.getText()); //$NON-NLS-1$
+        properties.setProperty("option.yacport", yacPort.getText()); //$NON-NLS-1$
     }
 
     public int showConfigDialog() {
@@ -122,18 +126,18 @@ public class YacConfigDialog extends CallMonitorConfigDialog {
 
         c.gridwidth = 1;
         c.gridy = 0;
-        JLabel label = new JLabel(Main.getMessage("yac_port")+": "); //$NON-NLS-1$
+        JLabel label = new JLabel(messages.getMessage("yac_port")+": "); //$NON-NLS-1$
         panel.add(label, c);
         yacPort = new JTextField("", 5); //$NON-NLS-1$
         panel.add(yacPort, c);
 
         JPanel buttonPanel = new JPanel();
-        okButton = new JButton(Main.getMessage("okay")); //$NON-NLS-1$
+        okButton = new JButton(messages.getMessage("okay")); //$NON-NLS-1$
         okButton.setActionCommand("ok_pressed"); //$NON-NLS-1$
         okButton.addActionListener(actionListener);
         okButton.addKeyListener(keyListener);
 
-        cancelButton = new JButton(Main.getMessage("cancel")); //$NON-NLS-1$
+        cancelButton = new JButton(messages.getMessage("cancel")); //$NON-NLS-1$
         cancelButton.setActionCommand("cancel_pressed"); //$NON-NLS-1$
         cancelButton.addActionListener(actionListener);
         cancelButton.addKeyListener(keyListener);

@@ -8,7 +8,7 @@ import java.util.MissingResourceException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.messages.MessageProvider;
 
 /**
  * @author Arno Willig
@@ -17,6 +17,8 @@ import de.moonflower.jfritz.Main;
 
 public class PhoneType {
 	String type;
+
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public PhoneType(String type) {
 		this.type = type;
@@ -31,10 +33,10 @@ public class PhoneType {
 			Pattern p = Pattern.compile("([a-z]*)(\\d*)"); //$NON-NLS-1$
 			Matcher m = p.matcher(type);
 			if (m.find()) {
-				return Main.getMessage("phone_" + m.group(1)) + " " //$NON-NLS-1$,  //$NON-NLS-2$
+				return messages.getMessage("phone_" + m.group(1)) + " " //$NON-NLS-1$,  //$NON-NLS-2$
 						+ m.group(2);
 			} else {
-				return Main.getMessage("phone_" + type); //$NON-NLS-1$
+				return messages.getMessage("phone_" + type); //$NON-NLS-1$
 
 			}
 		} catch (MissingResourceException e) {

@@ -5,20 +5,28 @@
 
 package de.moonflower.jfritz.utils;
 
-import com.jacob.activeX.ActiveXComponent;
-import com.jacob.com.Dispatch;
-
-import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.Main;
-import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.PhoneNumberOld;
-
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Enumeration;
 import java.util.Vector;
-import javax.swing.*;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
+import com.jacob.activeX.ActiveXComponent;
+import com.jacob.com.Dispatch;
+
+import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.struct.Person;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 
 
 public class ImportOutlookContactsDialog extends JDialog implements ActionListener,
@@ -28,6 +36,7 @@ public class ImportOutlookContactsDialog extends JDialog implements ActionListen
      *
      */
     private static final long serialVersionUID = 1L;
+	protected static MessageProvider messages = MessageProvider.getInstance();
 
     public Dispatch init() {
         outlookElements.addElement("FirstName"); //$NON-NLS-1$
@@ -64,7 +73,7 @@ public class ImportOutlookContactsDialog extends JDialog implements ActionListen
     }
 
     public ImportOutlookContactsDialog(JFrame parent) {
-        super(parent, Main.getMessage("import_contacts_outlook")); //$NON-NLS-1$
+        super(parent, messages.getMessage("import_contacts_outlook")); //$NON-NLS-1$
         outlookElements = new Vector<String>();
         // contactPics = "resources/images/contacts/";
     }
@@ -78,7 +87,7 @@ public class ImportOutlookContactsDialog extends JDialog implements ActionListen
         JPanel jPanel = new JPanel();
         jPanel.setBounds(0, 0, 400, 500);
         jPanel.setLayout(null);
-        JLabel jLab = new JLabel(Main.getMessage("importing_outlook_contacts")); //$NON-NLS-1$
+        JLabel jLab = new JLabel(messages.getMessage("importing_outlook_contacts")); //$NON-NLS-1$
         jLab.setFont(new Font(null, 1, 22));
         jLab.setBounds(10, 0, 380, 80);
         jPanel.add(jLab);
@@ -216,7 +225,7 @@ public class ImportOutlookContactsDialog extends JDialog implements ActionListen
         }
         JFritz.getPhonebook().addEntries(persons);
         Debug.info("Import done, " + entriesImported + " entries imported"); //$NON-NLS-1$,	//$NON-NLS-2$
-        JButton jButton = new JButton(Main.getMessage("okay")); //$NON-NLS-1$
+        JButton jButton = new JButton(messages.getMessage("okay")); //$NON-NLS-1$
 
         //set default confirm button (Enter)
         this.getRootPane().setDefaultButton(jButton);

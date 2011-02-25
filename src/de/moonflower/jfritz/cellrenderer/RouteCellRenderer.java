@@ -13,7 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.messages.MessageProvider;
 
 /**
  * This renderer shows a callport in the specified way.
@@ -25,6 +25,7 @@ import de.moonflower.jfritz.Main;
 public class RouteCellRenderer extends DefaultTableCellRenderer {
 	private static final long serialVersionUID = 1;
 	final ImageIcon imageSIP, imagePhone;
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public RouteCellRenderer() {
 		super();
@@ -51,18 +52,18 @@ public class RouteCellRenderer extends DefaultTableCellRenderer {
 				// SIP Call and we know the provider
 				String[] parts = route.split("@"); //$NON-NLS-1$
 				routeStr = parts[0];
-				setToolTipText(Main.getMessage("internet_call")+" " + route); //$NON-NLS-1$
+				setToolTipText(messages.getMessage("internet_call")+" " + route); //$NON-NLS-1$
 				setIcon(imageSIP);
 			} else if (route.indexOf("SIP")>=0) { //$NON-NLS-1$
 				// SIP Call but we don't know the provider
 				routeStr = route;
-				setToolTipText(Main.getMessage("internet_call")+" " + route); //$NON-NLS-1$
+				setToolTipText(messages.getMessage("internet_call")+" " + route); //$NON-NLS-1$
 				setIcon(imageSIP);
 			} else {
 				// regular call
 				routeStr = route;
 				setIcon(null);
-				setToolTipText(Main.getMessage("fixed_line_network_call")+" " + route); //$NON-NLS-1$
+				setToolTipText(messages.getMessage("fixed_line_network_call")+" " + route); //$NON-NLS-1$
 				setIcon(imagePhone);
 			}
 

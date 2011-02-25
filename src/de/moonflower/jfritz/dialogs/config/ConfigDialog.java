@@ -24,9 +24,6 @@ import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -38,6 +35,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeSelectionModel;
 import javax.swing.tree.TreeNode;
@@ -51,6 +51,8 @@ import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.callmonitor.CallMonitorStatusListener;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.Debug;
 
@@ -93,11 +95,13 @@ public class ConfigDialog extends JDialog {
 
 	private JLabel helpLinkLabel;
 	private String helpUrl = "";
+	protected PropertyProvider properties = PropertyProvider.getInstance();
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public ConfigDialog(JFritzWindow parent, Vector<CallMonitorStatusListener> stateListener) {
 		super(parent, true);
 		this.parent = parent;
-		setTitle(Main.getMessage("config")); //$NON-NLS-1$
+		setTitle(messages.getMessage("config")); //$NON-NLS-1$
 
 		phonePanel = new ConfigPanelPhone();
 //		boxPanel = new ConfigPanelBox();
@@ -107,9 +111,9 @@ public class ConfigDialog extends JDialog {
 
 		fritzBoxPanel.setSipPanel(sipPanel);
 		sipPanel.setFritzBoxPanel(fritzBoxPanel);
-		sipPanel.setPath(fritzBoxPanel.getPath() + "::" + Main.getMessage("sip_numbers"));
+		sipPanel.setPath(fritzBoxPanel.getPath() + "::" + messages.getMessage("sip_numbers"));
 		callMonitorPanel = new ConfigPanelCallMonitor(this, true, fritzBoxPanel, stateListener);
-		callMonitorPanel.setPath(fritzBoxPanel.getPath() + "::" + Main.getMessage("callmonitor"));
+		callMonitorPanel.setPath(fritzBoxPanel.getPath() + "::" + messages.getMessage("callmonitor"));
 
 		messagePanel = new ConfigPanelMessage();
 		callerListPanel = new ConfigPanelCallerList();
@@ -119,7 +123,7 @@ public class ConfigDialog extends JDialog {
 		networkPanel = new ConfigPanelNetwork(this);
 		trayPanel = new ConfigPanelTray();
 
-		rootNode = new ConfigTreeNode(Main.getMessage("config"));
+		rootNode = new ConfigTreeNode(messages.getMessage("config"));
 		tree = new JTree(rootNode);
 		tree.setRootVisible(true);
 		TreeSelectionModel tsm = new DefaultTreeSelectionModel();
@@ -309,13 +313,13 @@ public class ConfigDialog extends JDialog {
 	}
 
 	protected void drawDialog() {
-		helpLinkLabel = new JLabel(Main.getMessage("help_menu"));
+		helpLinkLabel = new JLabel(messages.getMessage("help_menu"));
 
-		okButton = new JButton(Main.getMessage("okay")); //$NON-NLS-1$
+		okButton = new JButton(messages.getMessage("okay")); //$NON-NLS-1$
 		okButton.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/okay.png")))); //$NON-NLS-1$
-		cancelButton = new JButton(Main.getMessage("cancel")); //$NON-NLS-1$
+		cancelButton = new JButton(messages.getMessage("cancel")); //$NON-NLS-1$
 
 		KeyListener keyListener = (new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
@@ -461,8 +465,8 @@ public class ConfigDialog extends JDialog {
 		this.addConfigPanel(callerListAppearancePanel);
 		this.addConfigPanel(trayPanel);
 
-		int width = Integer.parseInt(Main.getStateProperty("configDialog.width", "700"));
-		int height = Integer.parseInt(Main.getStateProperty("configDialog.height", "470"));
+		int width = Integer.parseInt(properties.getStateProperty("configDialog.width", "700"));
+		int height = Integer.parseInt(properties.getStateProperty("configDialog.height", "470"));
 		setSize(width, height);
 		setResizable(true);
 		if (parent != null)
@@ -483,8 +487,8 @@ public class ConfigDialog extends JDialog {
 	 * function used to adjust the size of the options dialog
 	 */
 	public void stateChanged(ChangeEvent e){
-		int width = Integer.parseInt(Main.getStateProperty("configDialog.width", "700"));
-		int height = Integer.parseInt(Main.getStateProperty("configDialog.height", "470"));
+		int width = Integer.parseInt(properties.getStateProperty("configDialog.width", "700"));
+		int height = Integer.parseInt(properties.getStateProperty("configDialog.height", "470"));
 		setSize(width, height);
 		if (parent != null) {
 			setLocationRelativeTo(parent);
@@ -496,8 +500,8 @@ public class ConfigDialog extends JDialog {
 		if (pressedOK)
 		{
 			// save window position and size
-			Main.setStateProperty("configDialog.width", Integer.toString(this.getWidth()));
-			Main.setStateProperty("configDialog.height", Integer.toString(this.getHeight()));
+			properties.setStateProperty("configDialog.width", Integer.toString(this.getWidth()));
+			properties.setStateProperty("configDialog.height", Integer.toString(this.getHeight()));
 		}
 		ConfigDialog.this.setVisible(false);
 	}

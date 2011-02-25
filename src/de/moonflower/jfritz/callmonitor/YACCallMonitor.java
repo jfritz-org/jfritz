@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.util.Vector;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.utils.Debug;
 
 /**
@@ -31,6 +31,7 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 	private String boxName;
 
 	private Vector<CallMonitorStatusListener> stateListener;
+	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public YACCallMonitor(String boxName, int port, Vector<CallMonitorStatusListener> stateListener) {
 		super();
@@ -97,12 +98,12 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
                             //JFritz.getCallMonitorList().displayCallInMsg(number, "", name); //$NON-NLS-1$
 
 						} else {
-							outputString = Main.getMessage("yac_message") //$NON-NLS-1$
+							outputString = messages.getMessage("yac_message") //$NON-NLS-1$
 									+ ":\n" + msg; //$NON-NLS-1$
 							JFritz.infoMsg(outputString);
 						}
 					} else {
-						outputString = Main.getMessage("yac_message") + ":\n" //$NON-NLS-1$,  //$NON-NLS-2$
+						outputString = messages.getMessage("yac_message") + ":\n" //$NON-NLS-1$,  //$NON-NLS-2$
 								+ msg;
 						JFritz.infoMsg(outputString);
 					}
