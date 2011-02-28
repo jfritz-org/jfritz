@@ -107,7 +107,7 @@ public class FritzBoxFirmware {
 			InvalidFirmwareException {
 		final String urlstr = box_protocol + "://" + box_address + ":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
 
-		if (properties.getProperty("network.type").equals("2")
+		if ("2".equals(properties.getProperty("network.type"))
 				&& Boolean.parseBoolean(properties
 						.getProperty("option.clientCallList"))
 				&& NetworkStateMonitor.isConnectedToServer()) {

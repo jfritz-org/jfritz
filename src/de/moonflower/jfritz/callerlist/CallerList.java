@@ -1,8 +1,3 @@
-/*
- *
- * Created on 08.04.2005
- *
- */
 package de.moonflower.jfritz.callerlist;
 
 import java.io.BufferedWriter;
@@ -1004,7 +999,7 @@ public class CallerList extends AbstractTableModel
 		boolean found = false;
 		Vector<PhoneNumberOld> numbers = person.getNumbers();
 		if (numbers.size() > 0) {
-			Call result = new Call(new CallType(CallType.CALLIN_STR),
+			Call result = new Call(CallType.CALLIN,
 					new Date(0), new PhoneNumberOld("", false),
 					new Port(0, "", "-1", "-1"), "route", 0);
 			for (PhoneNumberOld num:numbers)
@@ -1246,11 +1241,11 @@ public class CallerList extends AbstractTableModel
 		// Perhaps it would be nice to standardize the calltype and export
 		// strings
 		if (field[0].equals("Incoming")) { //$NON-NLS-1$
-			calltype = new CallType("call_in"); //$NON-NLS-1$
+			calltype = CallType.CALLIN;
 		} else if (field[0].equals("Missed")) { //$NON-NLS-1$
-			calltype = new CallType("call_in_failed"); //$NON-NLS-1$
+			calltype = CallType.CALLIN_FAILED;
 		} else if (field[0].equals("Outgoing")) { //$NON-NLS-1$
-			calltype = new CallType("call_out"); //$NON-NLS-1$
+			calltype = CallType.CALLOUT;
 		} else {
 			Debug.error("Invalid Call type in CSV entry!"); //$NON-NLS-1$
 			return null;
@@ -1340,13 +1335,13 @@ public class CallerList extends AbstractTableModel
 		// Why would they change the cvs format in the Push service???
 		if ((field[0].equals("1") && !isPushFile) //$NON-NLS-1$
 				|| (field[0].equals("2") && isPushFile)) { //$NON-NLS-1$
-			calltype = new CallType("call_in"); //$NON-NLS-1$
+			calltype = CallType.CALLIN;
 		} else if ((field[0].equals("2") && !isPushFile) //$NON-NLS-1$
 				|| (field[0].equals("3") && isPushFile)) { //$NON-NLS-1$
-			calltype = new CallType("call_in_failed"); //$NON-NLS-1$
+			calltype = CallType.CALLIN_FAILED;
 		} else if ((field[0].equals("3") && !isPushFile) //$NON-NLS-1$
 				|| (field[0].equals("1") && isPushFile)) { //$NON-NLS-1$
-			calltype = new CallType("call_out"); //$NON-NLS-1$
+			calltype = CallType.CALLOUT;
 		} else {
 			Debug.error("Invalid Call type in CSV entry!"); //$NON-NLS-1$
 			return null;
@@ -1369,7 +1364,7 @@ public class CallerList extends AbstractTableModel
 		if (!field[2].equals("")) {
 			number = new PhoneNumberOld(field[2], properties.getProperty(
 					"option.activateDialPrefix").toLowerCase().equals("true")
-					&& (calltype.toInt() == CallType.CALLOUT)
+					&& (calltype == CallType.CALLOUT)
 					&& !field[4].startsWith("Internet"));
 		} else {
 			number = null;
@@ -1377,33 +1372,6 @@ public class CallerList extends AbstractTableModel
 
 		// split the duration into two stings, hours:minutes
 		String[] time = field[5].split(":");
-
-		// change the port to fit the jfritz naming convention
-//		if (field[3].equals("FON 1")) {
-//			field[3] = "0";
-//		} else if (field[3].equals("FON 2")) {
-//			field[3] = "1";
-//		} else if (field[3].equals("FON 3")) {
-//			field[3] = "2";
-//		} else if (field[3].equals("Durchwahl")) {
-//			field[3] = "3";
-//		} else if (field[3].equals("FON S0")) {
-//			field[3] = "4";
-//		} else if (field[3].equals("DECT 1")) {
-//			field[3] = "10";
-//		} else if (field[3].equals("DECT 2")) {
-//			field[3] = "11";
-//		} else if (field[3].equals("DECT 3")) {
-//			field[3] = "12";
-//		} else if (field[3].equals("DECT 4")) {
-//			field[3] = "13";
-//		} else if (field[3].equals("DECT 5")) {
-//			field[3] = "14";
-//		} else if (field[3].equals("DECT 6")) {
-//			field[3] = "15";
-//		} else if (field[3].equals("DATA S0")) {
-//			field[3] = "36";
-//		}
 
 		// make the call object and exit
 		call = new Call(calltype, calldate, number,
@@ -1442,11 +1410,11 @@ public class CallerList extends AbstractTableModel
 
 		// Call type
 		if ((field[0].equals("1"))) {
-			calltype = new CallType("call_in");
+			calltype = CallType.CALLIN;
 		} else if ((field[0].equals("2"))) {
-			calltype = new CallType("call_in_failed");
+			calltype = CallType.CALLIN_FAILED;
 		} else if ((field[0].equals("3"))) {
-			calltype = new CallType("call_out");
+			calltype = CallType.CALLOUT;
 		} else {
 			Debug.error("Invalid Call type in CSV entry!"); //$NON-NLS-1$
 			return null;
@@ -1469,7 +1437,7 @@ public class CallerList extends AbstractTableModel
 		if (!field[3].equals("")) {
 			number = new PhoneNumberOld(field[3], properties.getProperty(
 					"option.activateDialPrefix").toLowerCase().equals("true")
-					&& (calltype.toInt() == CallType.CALLOUT)
+					&& (calltype == CallType.CALLOUT)
 					&& !field[5].startsWith("Internet"));
 		} else {
 			number = null;
@@ -1477,34 +1445,6 @@ public class CallerList extends AbstractTableModel
 
 		// split the duration into two stings, hours:minutes
 		String[] time = field[6].split(":");
-		// make the call object
-
-		// change the port to fit the jfritz naming convention
-//		if (field[4].equals("FON 1")) {
-//			field[4] = "0";
-//		} else if (field[4].equals("FON 2")) {
-//			field[4] = "1";
-//		} else if (field[4].equals("FON 3")) {
-//			field[4] = "2";
-//		} else if (field[4].equals("Durchwahl")) {
-//			field[4] = "3";
-//		} else if (field[4].equals("DECT 1")) {
-//			field[4] = "10";
-//		} else if (field[4].equals("DECT 2")) {
-//			field[4] = "11";
-//		} else if (field[4].equals("DECT 3")) {
-//			field[4] = "12";
-//		} else if (field[4].equals("DECT 4")) {
-//			field[4] = "13";
-//		} else if (field[4].equals("DECT 5")) {
-//			field[4] = "14";
-//		} else if (field[4].equals("DECT 6")) {
-//			field[4] = "15";
-//		} else if (field[4].equals("FON S0")) {
-//			field[4] = "4";
-//		} else if (field[4].equals("DATA S0")) {
-//			field[4] = "36";
-//		}
 
 		// make the call object and exit
 		call = new Call(calltype, calldate, number,
@@ -1554,13 +1494,13 @@ public class CallerList extends AbstractTableModel
 		// Why would they change the cvs format in the Push file???
 		if ((field[0].equals("1") && !isPushFile) //$NON-NLS-1$
 				|| (field[0].equals("2") && isPushFile)) { //$NON-NLS-1$
-			calltype = new CallType("call_in"); //$NON-NLS-1$
+			calltype = CallType.CALLIN;
 		} else if ((field[0].equals("2") && !isPushFile) //$NON-NLS-1$
 				|| (field[0].equals("3") && isPushFile)) { //$NON-NLS-1$
-			calltype = new CallType("call_in_failed"); //$NON-NLS-1$
+			calltype = CallType.CALLIN_FAILED;
 		} else if ((field[0].equals("3") && !isPushFile) //$NON-NLS-1$
 				|| (field[0].equals("1") && isPushFile)) { //$NON-NLS-1$
-			calltype = new CallType("call_out"); //$NON-NLS-1$
+			calltype = CallType.CALLOUT;
 		} else {
 			Debug.error("Invalid Call type in CSV entry!"); //$NON-NLS-1$
 			return null;
@@ -1583,7 +1523,7 @@ public class CallerList extends AbstractTableModel
 		if (!field[2].equals("")) {
 			number = new PhoneNumberOld(field[2], properties.getProperty(
 					"option.activateDialPrefix").toLowerCase().equals("true")
-					&& (calltype.toInt() == CallType.CALLOUT)
+					&& (calltype == CallType.CALLOUT)
 					&& !field[4].startsWith("Internet"));
 		} else {
 			number = null;
@@ -1591,33 +1531,6 @@ public class CallerList extends AbstractTableModel
 
 		// split the duration into two stings, hours:minutes
 		String[] time = field[5].split(":");
-
-		// change the port to fit the jfritz naming convention
-//		if (field[3].equals("FON 1")) {
-//			field[3] = "0";
-//		} else if (field[3].equals("FON 2")) {
-//			field[3] = "1";
-//		} else if (field[3].equals("FON 3")) {
-//			field[3] = "2";
-//		} else if (field[3].equals("Durchwahl")) {
-//			field[3] = "3";
-//		} else if (field[3].equals("FON S0")) {
-//			field[3] = "4";
-//		} else if (field[3].equals("DECT 1")) {
-//			field[3] = "10";
-//		} else if (field[3].equals("DECT 2")) {
-//			field[3] = "11";
-//		} else if (field[3].equals("DECT 3")) {
-//			field[3] = "12";
-//		} else if (field[3].equals("DECT 4")) {
-//			field[3] = "13";
-//		} else if (field[3].equals("DECT 5")) {
-//			field[3] = "14";
-//		} else if (field[3].equals("DECT 6")) {
-//			field[3] = "15";
-//		} else if (field[3].equals("DATA S0")) {
-//			field[3] = "36";
-//		}
 
 		// make the call object and exit
 		call = new Call(calltype, calldate, number,
@@ -1669,13 +1582,13 @@ public class CallerList extends AbstractTableModel
 		// Why would they change the cvs format in the Push file???
 		if ((field[0].equals("1") && !isPushFile) //$NON-NLS-1$
 				|| (field[0].equals("2") && isPushFile)) { //$NON-NLS-1$
-			calltype = new CallType("call_in"); //$NON-NLS-1$
+			calltype = CallType.CALLIN;
 		} else if ((field[0].equals("2") && !isPushFile) //$NON-NLS-1$
 				|| (field[0].equals("3") && isPushFile)) { //$NON-NLS-1$
-			calltype = new CallType("call_in_failed"); //$NON-NLS-1$
+			calltype = CallType.CALLIN_FAILED;
 		} else if ((field[0].equals("3") && !isPushFile) //$NON-NLS-1$
 				|| (field[0].equals("1") && isPushFile)) { //$NON-NLS-1$
-			calltype = new CallType("call_out"); //$NON-NLS-1$
+			calltype = CallType.CALLOUT;
 		} else {
 			Debug.error("Invalid Call type in CSV entry!"); //$NON-NLS-1$
 			return null;
@@ -1701,7 +1614,7 @@ public class CallerList extends AbstractTableModel
 		if (!field[3].equals("")) {
 			number = new PhoneNumberOld(field[3], properties.getProperty(
 					"option.activateDialPrefix").toLowerCase().equals("true")
-					&& (calltype.toInt() == CallType.CALLOUT)
+					&& (calltype == CallType.CALLOUT)
 					&& !field[5].startsWith("Internet"));
 		} else {
 			number = null;

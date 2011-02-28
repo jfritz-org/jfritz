@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Vector;
 
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.CallerTable;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
@@ -69,26 +68,26 @@ public class CSVCallerListImport extends CSVImport implements ICSVImport {
 	private boolean fillData(Call entry, String columnName, String value) {
 		if (columnName.equals(CallerTable.COLUMN_TYPE)) {
 			if (value.equals(CallType.CALLIN)
-				|| value.equals(CallType.CALLIN_STR)
+				|| value.equals(CallType.CALLIN.toString())
 				|| value.equals("1") // FritzBox CSV
 				|| value.equals("Incoming") // JFritz CSV
 				|| value.equals("accepted")) // jAnrufmonitor CSV
 			{
-				entry.setCallType(new CallType(CallType.CALLIN));
+				entry.setCallType(CallType.CALLIN);
 			} else if (value.equals(CallType.CALLIN_FAILED)
-				|| value.equals(CallType.CALLIN_FAILED_STR)
+				|| value.equals(CallType.CALLIN_FAILED.toString())
 				|| value.equals("2") // FritzBox CSV
 				|| value.equals("Missed") // JFritz CSV
 				|| value.equals("away")) // jAnrufmonitor CSV
 			{
-				entry.setCallType(new CallType(CallType.CALLIN_FAILED));
+				entry.setCallType(CallType.CALLIN_FAILED);
 			} else if (value.equals(CallType.CALLOUT)
-				|| value.equals(CallType.CALLOUT_STR)
+				|| value.equals(CallType.CALLOUT.toString())
 				|| value.equals("3") // FritzBox CSV
 				|| value.equals("Outgoing") // JFritz CSV
 				|| value.equals("outgoing")) // jAnrufmonitor CSV
 			{
-				entry.setCallType(new CallType(CallType.CALLOUT));
+				entry.setCallType(CallType.CALLOUT);
 			} else {
 				Debug.error("Unknown call type: " + value);
 				return true;
@@ -207,7 +206,7 @@ public class CSVCallerListImport extends CSVImport implements ICSVImport {
 			}
 		} else if (columnName.equals(CallerTable.COLUMN_NUMBER)) {
 			boolean useDialPrefix = JFritzUtils.parseBoolean(properties.getProperty("option.activateDialPrefix"))
-									&& (entry.getCalltype().toString().equals(CallType.CALLOUT_STR));
+									&& (entry.getCalltype().toString().equals(CallType.CALLOUT.toString()));
 
 			String callByCall = "";
 			if (entry.getPhoneNumber() != null) {

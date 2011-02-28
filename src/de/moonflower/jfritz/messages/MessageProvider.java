@@ -7,11 +7,12 @@ import java.util.ResourceBundle;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
-import de.moonflower.jfritz.Main;
+import org.apache.log4j.Logger;
 import de.moonflower.jfritz.ProgramConstants;
-import de.moonflower.jfritz.utils.Debug;
 
 public class MessageProvider {
+
+	private final static Logger log = Logger.getLogger(MessageProvider.class);
 
 	private static ResourceBundle messages;
 	private static ResourceBundle en_messages;
@@ -29,7 +30,7 @@ public class MessageProvider {
 	 */
 	public void loadMessages(Locale locale) {
 		try {
-			Debug.info("Loading locale: " + locale);
+			log.info("Loading locale: " + locale);
 			en_messages = ResourceBundle.getBundle("jfritz", new Locale("en","US"));//$NON-NLS-1$
 			messages = ResourceBundle.getBundle("jfritz", locale);//$NON-NLS-1$
 
@@ -38,7 +39,7 @@ public class MessageProvider {
 			UIManager.put("OptionPane.okButtonText", getMessage("okay"));
 			UIManager.put("OptionPane.yesButtonText", getMessage("yes"));
 		} catch (MissingResourceException e) {
-			Debug.error("Can't find i18n resource! (\"jfritz_" + locale + ".properties\")");//$NON-NLS-1$
+			log.error("Can't find i18n resource! (\"jfritz_" + locale + ".properties\")");//$NON-NLS-1$
 			JOptionPane.showMessageDialog(null, ProgramConstants.PROGRAM_NAME + " v"//$NON-NLS-1$
 					+ ProgramConstants.PROGRAM_VERSION
 					+ "\n\nCannot find the language file \"jfritz_" + locale
@@ -52,14 +53,20 @@ public class MessageProvider {
 	public String getMessage(String msg) {
 		String i18n = ""; //$NON-NLS-1$
 		try {
-			if (!messages.getString(msg).equals("")) {
+			if (messages != null && !messages.getString(msg).equals("")) {
 				i18n = messages.getString(msg);
 			} else {
 				i18n = msg;
 			}
 		} catch (MissingResourceException e) {
-			Debug.error("Can't find resource string for " + msg); //$NON-NLS-1$
-			i18n = en_messages.getString(msg);
+			log.error("Can't find resource string for " + msg); //$NON-NLS-1$
+			if (en_messages != null) {
+				i18n = en_messages.getString(msg);
+			} else {
+				String errMsg = "Messages have not been initialized"; //$NON-NLS-1$
+				log.error(errMsg);
+				i18n = errMsg;
+			}
 		}
 		return i18n;
 	}

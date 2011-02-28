@@ -30,10 +30,12 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 
 	protected PropertyProvider properties = PropertyProvider.getInstance();
 	protected MessageProvider messages = MessageProvider.getInstance();
+	protected MonitoredCalls monitoredCalls = JFritz.getCallMonitorList();
 
 	public FBoxCallMonitorV3(FritzBox fritzBox,
-							 Vector<CallMonitorStatusListener> listener) {
-		super(fritzBox, listener);
+							 Vector<CallMonitorStatusListener> listener,
+							 boolean shouldConnect) {
+		super(fritzBox, listener, shouldConnect);
 		log.info("FBoxListener V3"); //$NON-NLS-1$
 	}
 
@@ -102,8 +104,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 		String msn = split[4];
 		String line = split[5];
 
-		CallType callType = new CallType(CallType.CALLIN);
-		createCall(callType, dateStr, callIdStr, portStr, numberStr, msn, line);
+		createCall(CallType.CALLIN, dateStr, callIdStr, portStr, numberStr, msn, line);
 	}
 
 	private void parseCall(final String[] split) {
@@ -114,15 +115,14 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 		String numberStr = parseNumber(split[5]);
 		String line = split[6];
 
-		CallType callType = new CallType(CallType.CALLOUT);
-		createCall(callType, dateStr, callIdStr, portStr, numberStr, msn, line);
+		createCall(CallType.CALLOUT, dateStr, callIdStr, portStr, numberStr, msn, line);
 	}
 
 	private void createCall(CallType callType, String dateStr, String callIdStr, String portStr,
 			String numberStr, String msn, String line) {
 		boolean parseDialOut = false;
 
-		if (callType.getCallType() == CallType.CALLOUT) {
+		if (callType == CallType.CALLOUT) {
 			parseDialOut = properties.getProperty("option.activateDialPrefix").toLowerCase().equals("true");
 		}
 
@@ -134,7 +134,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 			Port port = parsePort(portStr);
 
 			Call currentCall = new Call(callType, date, phoneNumber, port, provider, 0);
-		    JFritz.getCallMonitorList().addNewCall(callId, currentCall);
+			monitoredCalls.addNewCall(callId, currentCall);
 		} catch (ParseException e) {
 		    log.error("Could not convert call", e);
 		}
@@ -154,19 +154,13 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 	}
 
 	private void parseDisconnect(final String[] split) {
-//		try {
-		    int callId = Integer.parseInt(split[2]);
-		    Call call = JFritz.getCallMonitorList().getCall(callId);
-		    if (call != null) {
-		        call.setDuration(Integer.parseInt(split[3]));
-		        JFritz.getCallMonitorList().removeCall(
-		                Integer.parseInt(split[2]), call);
-//		        Thread.sleep(zufallszahl.nextInt(3000));
-		    }
-//		} catch (InterruptedException e) {
-//		    log.error(e.toString());
-//			Thread.currentThread().interrupt();
-//		}
+	    int callId = Integer.parseInt(split[2]);
+	    int duration = Integer.parseInt(split[3]);
+	    Call call = monitoredCalls.getCall(callId);
+	    if (call != null) {
+	        call.setDuration(duration);
+	        monitoredCalls.removeCall(callId, call);
+	    }
 	}
 
 	private void parseConnect(final String[] split) {
@@ -178,7 +172,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 		int callId = Integer.parseInt(callIdStr);
 		Port port = parsePort(portStr);
 
-		Call call = JFritz.getCallMonitorList().getCall(callId);
+		Call call = monitoredCalls.getCall(callId);
 		PhoneNumberOld number = new PhoneNumberOld(numberStr, false);
 		if ( call != null ) {
 			if (number.getIntNumber().equals(call.getPhoneNumber().getIntNumber())
@@ -190,7 +184,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 					} catch (ParseException e) {
 					    log.error("Could not convert call", e);
 					}
-					JFritz.getCallMonitorList().establishCall(callId);
+					monitoredCalls.establishCall(callId);
 			}
 		}
 	}
@@ -210,7 +204,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 		    } else {
 		        provider = msn;
 		    }
-		} else if ("SIP".equals(line)) { //$NON-NLS-1$
+		} else if (line.startsWith("SIP")) { //$NON-NLS-1$
 		    try {
 		    	int id = Integer.parseInt(line.substring(3));
 		    	if ((fritzBox != null)

@@ -51,13 +51,13 @@ public class CallTypeCellRenderer extends DefaultTableCellRenderer {
 			setToolTipText(curType.toDescription());
 
 			label.setText(""); //$NON-NLS-1$
-			if (curType.toInt()==CallType.CALLIN) {
+			if (curType==CallType.CALLIN) {
 				label.setIcon(imageCallIn);
 			}
-			if (curType.toInt()==CallType.CALLIN_FAILED) {
+			if (curType==CallType.CALLIN_FAILED) {
 				label.setIcon(imageCallInFailed);
 			}
-			if (curType.toInt()==CallType.CALLOUT) {
+			if (curType==CallType.CALLOUT) {
 				label.setIcon(imageCallOut);
 			}
 		}

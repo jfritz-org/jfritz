@@ -273,12 +273,12 @@ public class PrintCallerList extends Thread {
                 if (ob == null)
                     return null;
                 CallType callType = (CallType) ob;
-                switch (callType.calltype) {
-	                case CallType.CALLIN:
+                switch (callType) {
+	                case CALLIN:
 	                    return callInImage;
-	                case CallType.CALLIN_FAILED:
+	                case CALLIN_FAILED:
 	                    return callInFailedImage;
-	                case CallType.CALLOUT:
+	                case CALLOUT:
 	                    return callOutImage;
 	                default:
 	                    return null;

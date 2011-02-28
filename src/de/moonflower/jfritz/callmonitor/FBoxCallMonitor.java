@@ -47,17 +47,19 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
     private Vector<CallMonitorStatusListener> stateListener;
 
     public FBoxCallMonitor(FritzBox fritzBox,
-    		Vector<CallMonitorStatusListener> stateListener) {
+    		Vector<CallMonitorStatusListener> stateListener, boolean shouldConnect) {
         super("FBoxThread");
         this.stateListener = stateListener;
         this.fritzBox = fritzBox;
-        Debug.info("Starting FBoxListener"); //$NON-NLS-1$
-        this.setDaemon(true);
-        running = true;
-        start();
-        zufallszahl = new Random();
-        Debug.info("Trying to connect to " //$NON-NLS-1$
-        		+ fritzBox.getAddress() + ":1012"); //$NON-NLS-1$,  //$NON-NLS-2$
+	    zufallszahl = new Random();
+	    this.setDaemon(true);
+        if (shouldConnect) {
+		    Debug.info("Starting FBoxListener"); //$NON-NLS-1$
+		    running = true;
+		    start();
+		    Debug.info("Trying to connect to " //$NON-NLS-1$
+		    		+ fritzBox.getAddress() + ":1012"); //$NON-NLS-1$,  //$NON-NLS-2$
+        }
     }
 
     public abstract void run();

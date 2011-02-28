@@ -26,7 +26,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.box.BoxCallBackListener;
 import de.moonflower.jfritz.box.BoxCallMonitorInterface;
 import de.moonflower.jfritz.box.BoxClass;
@@ -232,7 +231,7 @@ public class FritzBox extends BoxClass {
 	 */
 	private void detectFirmware() throws WrongPasswordException, InvalidFirmwareException, IOException {
 		//avoid trying to access the box if running as a client
-		if (properties.getProperty("network.type").equals("2")
+		if ("2".equals(properties.getProperty("network.type"))
 				&& Boolean.parseBoolean(properties.getProperty("option.clientCallList")))
 		{
 			Debug.netMsg("JFritz is running as a client and using call list from server, canceling firmware detection");
@@ -930,14 +929,14 @@ public class FritzBox extends BoxClass {
 						{
 							Debug.errDlg(messages.getMessage("callmonitor_already_started"));
 						} else {
-							callMonitor = new FBoxCallMonitorV3(this, listener);
+							callMonitor = new FBoxCallMonitorV3(this, listener, true);
 						}
 					} else {
 						if (callMonitor != null)
 						{
 							Debug.errDlg(messages.getMessage("callmonitor_already_started"));
 						} else {
-							callMonitor = new FBoxCallMonitorV1(this, listener);
+							callMonitor = new FBoxCallMonitorV1(this, listener, true);
 						}
 					}
 					return BoxCallMonitorInterface.CALLMONITOR_STARTED;
@@ -1123,11 +1122,11 @@ public class FritzBox extends BoxClass {
 				CallType calltype;
 				// Call type
 				if ((response.get(newOffset+0).equals("1"))) {
-					calltype = new CallType("call_in");
+					calltype = CallType.CALLIN;
 				} else if ((response.get(newOffset+0).equals("2"))) {
-					calltype = new CallType("call_in_failed");
+					calltype = CallType.CALLIN_FAILED;
 				} else if ((response.get(newOffset+0).equals("3"))) {
-					calltype = new CallType("call_out");
+					calltype = CallType.CALLOUT;
 				} else {
 					Debug.error("Invalid Call type while importing caller list!"); //$NON-NLS-1$
 					return false;
@@ -1152,7 +1151,7 @@ public class FritzBox extends BoxClass {
 				if (!response.get(newOffset+2).equals("")) {
 					number = new PhoneNumberOld(response.get(newOffset+2), properties.getProperty(
 							"option.activateDialPrefix").toLowerCase().equals("true")
-							&& (calltype.toInt() == CallType.CALLOUT)
+							&& (calltype == CallType.CALLOUT)
 							&& !response.get(newOffset+6).startsWith("Internet"));
 				} else {
 					number = null;

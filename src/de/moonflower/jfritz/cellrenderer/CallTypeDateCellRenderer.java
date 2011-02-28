@@ -61,11 +61,11 @@ public class CallTypeDateCellRenderer extends DefaultTableCellRenderer {
 			SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm"); //$NON-NLS-1$
 
 			label.setText(df.format(curDate));
-			if (curType.toInt() == CallType.CALLIN) {
+			if (curType == CallType.CALLIN) {
 				label.setIcon(imageCallIn);
-			} else if (curType.toInt() == CallType.CALLIN_FAILED) {
+			} else if (curType == CallType.CALLIN_FAILED) {
 				label.setIcon(imageCallInFailed);
-			} else if (curType.toInt() == CallType.CALLOUT) {
+			} else if (curType == CallType.CALLOUT) {
 				label.setIcon(imageCallOut);
 			}
 		} else {

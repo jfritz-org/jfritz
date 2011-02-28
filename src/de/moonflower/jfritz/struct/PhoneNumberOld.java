@@ -265,7 +265,8 @@ public class PhoneNumberOld implements Serializable {
 	 */
 	public String convertToIntNumber() {
 		// do nothing if number is an "unknown" number
-		if (number.equals(messages.getMessage("unknown"))) {
+		if (messages.getMessage("unknown")!= null
+			&& number.equals(messages.getMessage("unknown"))) {
 			return number;
 		}
 
@@ -282,24 +283,20 @@ public class PhoneNumberOld implements Serializable {
 				|| isQuickDial() // FritzBox QuickDial
 		) {
 			return number;
-		} else if (number.startsWith(countryPrefix)) // International call
+		} else if (countryPrefix != null && number.startsWith(countryPrefix)) // International call
 			return "+" + number.substring(countryPrefix.length());//$NON-NLS-1$
 
-		else if (number.startsWith(areaPrefix))
+		else if (areaPrefix != null && number.startsWith(areaPrefix))
 			return countryCode + number.substring(areaPrefix.length());//$NON-NLS-1$
 
-		/*
-		 * this case should never happen!!! else if
-		 * (number.startsWith(countryCode.substring(1)) && number.length() > 7) //
-		 * International numbers without countryPrefix return "+" +
-		 * number;//$NON-NLS-1$
-		 */
-
-		// if its not any internationl call, or a national call (in germany you
-		// can't dial
-		// a national number using the international prefix), then its a local
-		// call
-		return countryCode + areaCode + number;//$NON-NLS-1$
+		String result = "";
+		if (countryCode != null) {
+			result = countryCode;
+		}
+		if (areaCode != null) {
+			result += result+areaCode;
+		}
+		return result + number;//$NON-NLS-1$
 	}
 
 	/**
@@ -361,7 +358,9 @@ public class PhoneNumberOld implements Serializable {
 	public String getAreaNumber() {
 		String countryCode = properties.getProperty("country.code"); //$NON-NLS-1$
 		String areaPrefix = properties.getProperty("area.prefix"); //$NON-NLS-1$
-		if (number.startsWith(countryCode)) //$NON-NLS-1$
+		if (countryCode != null
+			&& areaPrefix != null
+			&& number.startsWith(countryCode)) //$NON-NLS-1$
 			return areaPrefix + number.substring(countryCode.length());
 		return number;
 	}

@@ -28,8 +28,8 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
 	protected PropertyProvider properties = PropertyProvider.getInstance();
 	protected MessageProvider messages = MessageProvider.getInstance();
 
-    public FBoxCallMonitorV1(FritzBox fritzBox, Vector<CallMonitorStatusListener> stateListener) {
-    	super(fritzBox, stateListener);
+    public FBoxCallMonitorV1(FritzBox fritzBox, Vector<CallMonitorStatusListener> stateListener, boolean shouldConnect) {
+    	super(fritzBox, stateListener, shouldConnect);
         Debug.info("FBoxListener V1"); //$NON-NLS-1$
     }
 
@@ -88,7 +88,7 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
             }
 
             try {
-                Call currentCall = new Call(new CallType(CallType.CALLIN),
+                Call currentCall = new Call(CallType.CALLIN,
                         new SimpleDateFormat("dd.MM.yy HH:mm:ss")
                                 .parse(split[0]), new PhoneNumberOld(number, false),
                                 new Port(0, "", "-1", "-1"), provider, 0);
@@ -135,7 +135,7 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
             	port = new Port(0, "", "-1", "-1");
             }
             try {
-                Call currentCall = new Call(new CallType(CallType.CALLOUT),
+                Call currentCall = new Call(CallType.CALLOUT,
                         new SimpleDateFormat("dd.MM.yy HH:mm:ss")
                                 .parse(split[0]),
                                 new PhoneNumberOld(number, JFritzUtils.parseBoolean(properties.getProperty("option.activateDialPrefix"))),

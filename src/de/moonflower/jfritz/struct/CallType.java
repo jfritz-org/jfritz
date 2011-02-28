@@ -1,72 +1,51 @@
-/*
- *
- * Created on 10.04.2005
- *
- */
 package de.moonflower.jfritz.struct;
-
-import java.io.Serializable;
 
 import de.moonflower.jfritz.messages.MessageProvider;
 
-
 /**
- * This class defines the call types "Call In", "Call In Failed" and "Call out".
- * Three icons are associated with the call types.
- *
- * @author Arno Willig
+ * @author Robert
  */
-public class CallType implements Serializable {
+public enum CallType {
 
-	private static final long serialVersionUID = 103;
+	CALLIN("call_in"),
+	CALLIN_FAILED("call_in_failed"),
+	CALLOUT("call_out");
 
-	public static final byte CALLIN = 1;
-	public static final byte CALLIN_FAILED = 2;
-	public static final byte CALLOUT = 3;
-	public static final String CALLIN_STR = "call_in"; //$NON-NLS-1$
-	public static final String CALLIN_FAILED_STR = "call_in_failed"; //$NON-NLS-1$
-	public static final String CALLOUT_STR = "call_out"; //$NON-NLS-1$
+	private static final String CALLIN_STR = "call_in";
+	private static final String CALLIN_FAILED_STR = "call_in_failed";
+	private static final String CALLOUT_STR = "call_out";
+
 
 	protected MessageProvider messages = MessageProvider.getInstance();
+	private String asString;
 
-	public byte calltype;
-
-	public CallType(byte type) {
-		calltype = type;
-	}
-
-	public CallType(String type) {
-		if (type.equals(CALLIN_STR))
-			calltype = CALLIN;
-		else if (type.equals(CALLIN_FAILED_STR))
-			calltype = CALLIN_FAILED;
-		else if (type.equals(CALLOUT_STR))
-			calltype = CALLOUT;
-	}
-
-	public int toInt() {
-		return calltype;
-	}
-
-	public int getCallType(){
-		return calltype;
-	}
-
-	public String toDescription() {
-		if (calltype == CALLIN)
-			return messages.getMessage("incoming_call"); //$NON-NLS-1$
-		else if (calltype == CALLIN_FAILED)
-			return messages.getMessage("missed_call"); //$NON-NLS-1$
-		else
-			return messages.getMessage("outgoing_call"); //$NON-NLS-1$
+	private CallType(final String s) {
+		this.asString = s;
 	}
 
 	public String toString() {
-		if (calltype == CALLIN)
-			return CALLIN_STR;
-		else if (calltype == CALLIN_FAILED)
-			return CALLIN_FAILED_STR;
-		else
-			return CALLOUT_STR;
+		return this.asString;
+	}
+
+	public String toDescription() {
+		if (this == CALLIN) {
+			return messages.getMessage("incoming_call"); //$NON-NLS-1$
+		} else if (this == CALLIN_FAILED) {
+			return messages.getMessage("missed_call"); //$NON-NLS-1$
+		} else {
+			return messages.getMessage("outgoing_call"); //$NON-NLS-1$
+		}
+	}
+
+	public static CallType getByString(final String input) {
+		if (CALLIN_STR.equals(input)) {
+			return CALLIN;
+		} else if (CALLIN_FAILED_STR.equals(input)) {
+			return CALLIN_FAILED;
+		} else if (CALLOUT_STR.equals(input)) {
+			return CALLOUT;
+		} else {
+			return CALLIN;
+		}
 	}
 }

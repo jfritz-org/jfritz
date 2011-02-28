@@ -9,6 +9,7 @@ Non-JFritz-Changes:
 
 JFritz 0.7.4.1.3:
 - Viele Klassen, vor allem CallMonitor und Sound, refactoriert.
+- Weiterhin CallType, CallState, CallType, CallMonitorList und viele andere Klassen refactoriert
 - Verwendung von Log4j
 
 JFritz 0.7.4.1.2:

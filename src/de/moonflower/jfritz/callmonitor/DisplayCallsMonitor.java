@@ -156,8 +156,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
         	sound.playRingSound(1.0f);
         }
 
-        if (JFritzUtils.parseBoolean(properties.getProperty(
-                "option.startExternProgram"))) { //$NON-NLS-1$,  //$NON-NLS-2$
+        if (JFritzUtils.parseBoolean(properties.getProperty("option.startExternProgram"))) { //$NON-NLS-1$
             startExternalProgramCallIn(callerstr, name, calledstr, port, firstname, surname, company);
         }
 
@@ -181,8 +180,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
         {
           calledstr = calledInput;
           if (!calledInput.startsWith("SIP")) { //$NON-NLS-1$
-              PhoneNumberOld called = new PhoneNumberOld(calledInput, properties.getProperty("option.activateDialPrefix").toLowerCase()
-                      .equals("true")
+              PhoneNumberOld called = new PhoneNumberOld(calledInput, JFritzUtils.parseBoolean(properties.getProperty("option.activateDialPrefix"))
                       && (!(providerInput.indexOf("@") > 0)));
               if (!called.getIntNumber().equals("")) //$NON-NLS-1$
                   calledstr = called.getIntNumber();

@@ -26,7 +26,7 @@ import de.moonflower.jfritz.box.BoxClass;
 import de.moonflower.jfritz.box.BoxCommunication;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.callerlist.CallerList;
-import de.moonflower.jfritz.callmonitor.CallMonitorList;
+import de.moonflower.jfritz.callmonitor.MonitoredCalls;
 import de.moonflower.jfritz.callmonitor.DisconnectMonitor;
 import de.moonflower.jfritz.callmonitor.DisplayCallsMonitor;
 import de.moonflower.jfritz.dialogs.quickdial.QuickDials;
@@ -88,7 +88,7 @@ public final class JFritz implements  StatusListener {
 
 	private static QuickDials quickDials;
 
-	public static CallMonitorList callMonitorList;
+	public static MonitoredCalls callMonitorList;
 
 	private static Main main;
 
@@ -263,7 +263,7 @@ public final class JFritz implements  StatusListener {
 
 	public void initCallMonitorListener()
 	{
-		callMonitorList = new CallMonitorList();
+		callMonitorList = new MonitoredCalls();
 		callMonitorList.addCallMonitorListener(new DisplayCallsMonitor(playSound));
 		callMonitorList.addCallMonitorListener(new DisconnectMonitor());
 	}
@@ -783,7 +783,7 @@ public final class JFritz implements  StatusListener {
 		PhoneNumberOld.loadCbCXMLFile();
 	}
 
-	public static CallMonitorList getCallMonitorList() {
+	public static MonitoredCalls getCallMonitorList() {
 		return callMonitorList;
 	}
 

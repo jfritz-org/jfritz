@@ -105,7 +105,7 @@ public class Call implements Serializable {
 				&& (nr1).equals(nr2)
 				&& (this.getPort().equals(call2.getPort()))
 				&& (this.getDuration() == call2.getDuration())
-				&& (this.getCalltype().toInt() == call2.getCalltype().toInt())
+				&& (this.getCalltype() == call2.getCalltype())
 				&& (route1.equals(route2)))
 		{
 			return true;
@@ -225,7 +225,7 @@ public class Call implements Serializable {
 		sBuffer.append(this.getPhoneNumber().getFullNumber());
 		sBuffer.append(this.getPort());
 		sBuffer.append(this.getDuration());
-		sBuffer.append(this.getCalltype().toInt());
+		sBuffer.append(this.getCalltype());
 		sBuffer.append(this.getRoute());
 		return sBuffer.hashCode();
 	}
@@ -282,16 +282,16 @@ public class Call implements Serializable {
 		StringBuffer outString = new StringBuffer(""); //$NON-NLS-1$
 
 		// type
-		switch (calltype.toInt()) {
-		case 1: {
+		switch (calltype) {
+		case CALLIN: {
 			outString.append("\"Incoming\""); //$NON-NLS-1$
 			break;
 		}
-		case 2: {
+		case CALLIN_FAILED: {
 			outString.append("\"Missed\""); //$NON-NLS-1$
 			break;
 		}
-		case 3: {
+		case CALLOUT: {
 			outString.append("\"Outgoing\""); //$NON-NLS-1$
 			break;
 		}

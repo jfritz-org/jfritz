@@ -78,7 +78,7 @@ public class CallFileXMLHandler extends DefaultHandler {
 				if ("".equals(aName)) //$NON-NLS-1$
 					aName = attrs.getQName(i);
 				if (eName.equals("entry") && aName.equals("calltype")) { //$NON-NLS-1$,  //$NON-NLS-2$
-					calltype = new CallType(attrs.getValue(i));
+					calltype = CallType.getByString(attrs.getValue(i));
 				} else if (eName.equals("caller") && aName.equals("callbycall")) { //$NON-NLS-1$,  //$NON-NLS-2$
 					callbycall = attrs.getValue(i);
 				}
