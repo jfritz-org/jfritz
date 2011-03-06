@@ -13,6 +13,7 @@
 	<property name="src" value="src" />
 	<property name="unittests" value="tests" />
 	<property name="lib" value="lib" />
+	<property name="lib-dev" value="lib-dev" />
 	<property name="lang" value="lang" />
 
 	<!-- build properties -->
@@ -272,12 +273,17 @@
 	<target name="source-archive" depends="archive-init, build" description="Generates source archive">
 		<mkdir dir="${source-archive}" />
 
-		<copy todir="${source-archive}/tmp/${src}">
+		<copy todir="${source-archive}/tmp/JFritz-${version}-Source/${src}">
 			<fileset dir="${src}">
 				<include name="**/*.java" />
+				<include name="**/*.png" />
+				<include name="**/*.jpg" />
+				<include name="**/*.gif" />
+				<include name="**/*.wav" />
+				<include name="**/*.txt" />
 			</fileset>
 		</copy>
-		<copy todir="${source-archive}/tmp/${lib}">
+		<copy todir="${source-archive}/tmp/JFritz-${version}-Source/${lib}">
 			<fileset dir="${lib}">
 				<include name="**/*.jar" />
 				<include name="**/*.dll" />
@@ -290,29 +296,35 @@
 				<include name="**/*.exe" />
 			</fileset>
 		</copy>
-		<copy todir="${source-archive}/tmp/${lang}">
+		<copy todir="${source-archive}/tmp/JFritz-${version}-Source/${lib-dev}">
+			<fileset dir="${lib-dev}">
+				<include name="**/*.jar" />
+				<include name="**/*.txt" />
+			</fileset>
+		</copy>
+		<copy todir="${source-archive}/tmp/JFritz-${version}-Source/${lang}">
 			<fileset dir="${lang}" />
 		</copy>
-		<copy todir="${source-archive}/tmp/number">
+		<copy todir="${source-archive}/tmp/JFritz-${version}-Source/number">
 			<fileset dir="number" />
 		</copy>
-		<copy todir="${source-archive}/tmp/pictures">
+		<copy todir="${source-archive}/tmp/JFritz-${version}-Source/pictures">
 			<fileset dir="pictures">
 				<include name="**/NoPic.jpg" />
 			</fileset>
 		</copy>
-		<copy todir="${source-archive}/tmp/styles">
+		<copy todir="${source-archive}/tmp/JFritz-${version}-Source/styles">
 			<fileset dir="styles">
 				<include name="**/*.html" />
 			</fileset>
 		</copy>
-		<copy file="${lib}/jacob.dll" todir="${source-archive}/tmp" />
-		<copy file="build.xml" todir="${source-archive}/tmp" />
-		<copy file="jfritzlogo.png" todir="${source-archive}/tmp" />
-		<copy file="splash.png" todir="${source-archive}/tmp" />
-		<copy file="status.png" todir="${source-archive}/tmp" />
+		<copy file="${lib}/jacob.dll" todir="${source-archive}/tmp/JFritz-${version}-Source" />
+		<copy file="build.xml" todir="${source-archive}/tmp/JFritz-${version}-Source" />
+		<copy file="jfritzlogo.png" todir="${source-archive}/tmp/JFritz-${version}-Source" />
+		<copy file="splash.png" todir="${source-archive}/tmp/JFritz-${version}-Source" />
+		<copy file="status.png" todir="${source-archive}/tmp/JFritz-${version}-Source" />
 
-		<zip zipfile="${source-archive}/jfritz-${version}-source.zip" basedir="${source-archive}/tmp" />
+		<zip zipfile="${source-archive}/JFritz-${version}-Source.zip" basedir="${source-archive}/tmp" />
 		<delete dir="${source-archive}/tmp" />
 	</target>
 
