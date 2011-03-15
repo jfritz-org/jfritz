@@ -5,7 +5,7 @@ import java.util.Vector;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 
-public class XMLPhoneBook extends PhoneBook {
+public class XMLPhoneBook extends PhoneBookBase {
 
 	private Vector<Person> persons;
 
@@ -46,6 +46,24 @@ public class XMLPhoneBook extends PhoneBook {
 	public void updateEntry(final Person original, final Person updated) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public Vector<Person> getAllEntries() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Person findFirstPerson(PhoneNumberOld number) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Vector<Person> getPersons(PhoneNumberOld number) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -3,9 +3,13 @@ TODO: Timer zum automatischen Aktualisieren der FritzBox-Einstellungen (Telefone
 TODO: charset aus VCard auslesen und verwenden
 
 Non-JFritz-Changes:
-- Neu: Neue Klasse für das Anzeigen von Anruefen auf Samsung-TVs
+- Neu: Neue Klasse für das Anzeigen von Anrufen auf Samsung-TVs
 - Neu: Testklasse zur Überprüfung, ob es für die eigene Box ein FW-Update gibt
 - Neu: Neues Package mit neuer Rufnummer, muss durch externe Komponente ersetzt werden
+
+JFritz 0.7.4.1.4:
+- Log4j in weiteren Klassen eingeführt
+- Internationalisierung extrahiert 
 
 JFritz 0.7.4.1.3:
 - Viele Klassen, vor allem CallMonitor und Sound, refactoriert.

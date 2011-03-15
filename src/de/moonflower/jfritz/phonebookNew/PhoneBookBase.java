@@ -5,11 +5,11 @@ import java.util.Vector;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 
-public abstract class PhoneBook {
+public abstract class PhoneBookBase {
 	private String name = "";
 	private String description = "";
 
-	public PhoneBook(final String name, final String description) {
+	public PhoneBookBase(final String name, final String description) {
 		this.name = name;
 		this.description = description;
 	}
@@ -39,6 +39,9 @@ public abstract class PhoneBook {
 	public abstract void updateEntry(final Person original, final Person updated);
 	public abstract boolean contains(final Person person);
 	public abstract boolean contains(final PhoneNumberOld number);
+	public abstract Vector<Person> getAllEntries();
+	public abstract Person findFirstPerson(final PhoneNumberOld number);
+	public abstract Vector<Person> getPersons(final PhoneNumberOld number);
 
 	protected abstract void addEntry(final Person person);
 	protected abstract void removeEntry(final Person person);

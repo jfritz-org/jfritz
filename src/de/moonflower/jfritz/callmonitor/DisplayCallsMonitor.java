@@ -10,6 +10,8 @@ import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.dialogs.simple.CallMessageDlg;
 import de.moonflower.jfritz.messages.MessageProvider;
@@ -23,6 +25,7 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class DisplayCallsMonitor extends CallMonitorAdaptor {
+	private final static Logger log = Logger.getLogger(DisplayCallsMonitor.class);
 
 	private PlaySound sound;
 
@@ -34,7 +37,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 	}
 
     public void pendingCallOut(Call call) {
-        Debug.info("Displaying call out message...");
+        log.info("Displaying call out message...");
     	Person person = null;
     	if ( call.getPhoneNumber() != null )
     	{
@@ -46,7 +49,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
     }
 
     public void pendingCallIn(Call call) {
-        Debug.info("Displaying call in message...");
+        log.info("Displaying call in message...");
     	Person person = null;
     	if ( call.getPhoneNumber() != null )
     	{
@@ -58,7 +61,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
     }
 
     public void endOfCall(Call call) {
-//        Debug.msg("Anruf beendet. Dauer des Anrufs: " + call.getDuration() + " Sekunden);
+//        log.msg("Anruf beendet. Dauer des Anrufs: " + call.getDuration() + " Sekunden);
     }
 
     /**
@@ -85,10 +88,10 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
      */
     public void displayCallInMsg(Call call, String callerInput, String calledInput, String name, String port, Person person) {
 
-        Debug.debug("Caller: " + callerInput); //$NON-NLS-1$
-        Debug.debug("Called: " + calledInput); //$NON-NLS-1$
-        Debug.debug("Name: " + name); //$NON-NLS-1$
-        Debug.debug("Port: " + port); //$NON-NLS-1$
+        log.debug("Caller: " + callerInput); //$NON-NLS-1$
+        log.debug("Called: " + calledInput); //$NON-NLS-1$
+        log.debug("Name: " + name); //$NON-NLS-1$
+        log.debug("Port: " + port); //$NON-NLS-1$
 
         String callerstr = "", calledstr = ""; //$NON-NLS-1$,  //$NON-NLS-2$ //$NON-NLS-3$
         String firstname = "", surname = "", company = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
@@ -122,10 +125,10 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 
         if (callerstr.startsWith("+49"))callerstr = "0" + callerstr.substring(3); //$NON-NLS-1$,  //$NON-NLS-2$
 
-        Debug.debug("Caller: " + callerstr); //$NON-NLS-1$
-        Debug.debug("Called: " + calledstr); //$NON-NLS-1$
-        Debug.debug("Name: " + name); //$NON-NLS-1$
-        Debug.debug("Port: " + port); //$NON-NLS-1$
+        log.debug("Caller: " + callerstr); //$NON-NLS-1$
+        log.debug("Called: " + calledstr); //$NON-NLS-1$
+        log.debug("Name: " + name); //$NON-NLS-1$
+        log.debug("Port: " + port); //$NON-NLS-1$
 
         switch (Integer.parseInt(properties.getProperty("option.popuptype"))) { //$NON-NLS-1$,  //$NON-NLS-2$
             case 0 : { // No Popup
@@ -169,9 +172,9 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
      *            Called number
      */
     public void displayCallOutMsg(Call call, String calledInput, String providerInput, String port, Person person) {
-        Debug.debug("Called: " + calledInput); //$NON-NLS-1$
-        Debug.debug("Provider: " + providerInput); //$NON-NLS-1$
-        Debug.debug("Port: " + port); //$NON-NLS-1$
+        log.debug("Called: " + calledInput); //$NON-NLS-1$
+        log.debug("Provider: " + providerInput); //$NON-NLS-1$
+        log.debug("Port: " + port); //$NON-NLS-1$
 
         String calledstr = "", providerstr = "", name = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
         String firstname = "", surname = "", company = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
@@ -206,10 +209,10 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 
         if (calledstr.startsWith("+49"))calledstr = "0" + calledstr.substring(3); //$NON-NLS-1$,  //$NON-NLS-2$
 
-        Debug.debug("Provider: " + providerstr); //$NON-NLS-1$
-        Debug.debug("Called: " + calledstr); //$NON-NLS-1$
-        Debug.debug("Name: " + name); //$NON-NLS-1$
-        Debug.debug("Port: " + port); //$NON-NLS-1$
+        log.debug("Provider: " + providerstr); //$NON-NLS-1$
+        log.debug("Called: " + calledstr); //$NON-NLS-1$
+        log.debug("Name: " + name); //$NON-NLS-1$
+        log.debug("Port: " + port); //$NON-NLS-1$
 
         switch (Integer.parseInt(properties.getProperty("option.popuptype"))) { //$NON-NLS-1$,  //$NON-NLS-2$
             case 0 : { // No Popup
@@ -281,7 +284,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 			                URLEncoder.encode(toEncode, "UTF-8")); //$NON-NLS-1$
 			    }
 			} catch (UnsupportedEncodingException uee) {
-			    Debug.error(uee.toString());
+			    log.error(uee.toString());
 			}
 		}
 
@@ -289,13 +292,13 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 		Debug.errDlg(messages.getMessage("no_external_program") //$NON-NLS-1$
 		        + programString);
 		} else {
-			Debug.info("Starte externes Programm: " + programString); //$NON-NLS-1$
+			log.info("Starte externes Programm: " + programString); //$NON-NLS-1$
 			try {
 				Runtime.getRuntime().exec(programString);
 			} catch (IOException e) {
 				Debug.errDlg(messages.getMessage("not_external_program_start") //$NON-NLS-1$
 							+ programString);
-				Debug.error(e.toString());
+				log.error(e.toString());
 			}
 		}
 	}

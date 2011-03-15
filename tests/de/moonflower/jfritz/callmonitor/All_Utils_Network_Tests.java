@@ -13,7 +13,7 @@ public class All_Utils_Network_Tests {
         TestSuite suite = new TestSuite(
                 "Test for de.moonflower.jfritz.testsuites.utils.network");
         //$JUnit-BEGIN$
-        suite.addTestSuite(FBoxListenerV3Test.class);
+//        suite.addTestSuite(FBoxListenerV3Test.class);
         //$JUnit-END$
         return suite;
     }

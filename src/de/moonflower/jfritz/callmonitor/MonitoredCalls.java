@@ -42,7 +42,7 @@ public class MonitoredCalls {
     /**
      * Fügt einen Anruf in die Liste der "schwebenden" Anrufe ein
      *
-     * @param id, id des anrufs
+     * @param id, id des Anrufs
      * @param call, der Anruf ansich
      */
     public void addNewCall(int id, Call call) {

@@ -1,6 +1,5 @@
 package de.moonflower.jfritz.callmonitor;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -11,6 +10,8 @@ import java.util.Locale;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.TestHelper;
@@ -26,8 +27,8 @@ import de.moonflower.jfritz.utils.Debug;
 
 public class DisplayCallsMonitorTest {
 
-	PlaySound sound = mock(PlaySound.class);
-
+	@Mock
+	PlaySound sound;
 	private DisplayCallsMonitor cm = new DisplayCallsMonitor(sound);
 
 	@BeforeClass
@@ -37,6 +38,8 @@ public class DisplayCallsMonitorTest {
 
 	@Before
 	public void init() {
+		MockitoAnnotations.initMocks(this);
+
 		Debug.on();
     	Debug.setVerbose(true);
     	Debug.setDebugLevel(Debug.LS_DEBUG);
@@ -47,7 +50,23 @@ public class DisplayCallsMonitorTest {
 
 	@Test
 	public void test() {
-		CallType callType = new CallType(CallType.CALLIN);
+
+//		properties.getProperty("option.popuptype")
+//		properties.getProperty("option.playSounds")
+//		properties.getProperty("option.startExternProgram")
+//		properties.getProperty("option.activateDialPrefix")
+//		properties.getProperty("option.externProgram"
+
+//		messages.getMessage("unknown")
+//		messages.getMessage("incoming_call")
+//		messages.getMessage("from")
+//		messages.getMessage("to")
+//		messages.getMessage("outgoing_call")
+//		messages.getMessage("through_provider")
+//		messages.getMessage("no_external_program")
+//		messages.getMessage("not_external_program_start")
+
+		CallType callType = CallType.CALLIN;
 		Date now = Calendar.getInstance().getTime();
 		PhoneNumberOld phoneNumber = new PhoneNumberOld("07212542015", false);
 		Port dialPort = new Port(0, "PortName", "21", "621");
