@@ -294,7 +294,7 @@ public class PhoneNumberOld implements Serializable {
 			result = countryCode;
 		}
 		if (areaCode != null) {
-			result += result+areaCode;
+			result += areaCode;
 		}
 		return result + number;//$NON-NLS-1$
 	}
