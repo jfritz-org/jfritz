@@ -72,6 +72,7 @@ public class ConfigDialog extends JDialog {
 	private JFritzWindow parent;
 
 	private ConfigPanelPhone phonePanel;
+	private ConfigPanelProxy proxyPanel;
 //	private ConfigPanelBox boxPanel;
 	private ConfigPanelFritzBox fritzBoxPanel;
 	private ConfigPanelMessage messagePanel;
@@ -104,6 +105,8 @@ public class ConfigDialog extends JDialog {
 		setTitle(messages.getMessage("config")); //$NON-NLS-1$
 
 		phonePanel = new ConfigPanelPhone();
+		proxyPanel = new ConfigPanelProxy();
+
 //		boxPanel = new ConfigPanelBox();
 		fritzBoxPanel = new ConfigPanelFritzBox(
 				(FritzBox) JFritz.getBoxCommunication().getBox(0));
@@ -269,6 +272,7 @@ public class ConfigDialog extends JDialog {
 //		boxPanel.loadSettings();
 		fritzBoxPanel.loadSettings();
 		phonePanel.loadSettings();
+		proxyPanel.loadSettings();
 		messagePanel.loadSettings();
 		callMonitorPanel.loadSettings();
 		languagePanel.loadSettings();
@@ -295,6 +299,7 @@ public class ConfigDialog extends JDialog {
 			parent.setBoxDisconnected("");
 		}
 		phonePanel.saveSettings();
+		proxyPanel.saveSettings();
 		messagePanel.saveSettings();
 		callMonitorPanel.saveSettings();
 		languagePanel.saveSettings();
@@ -347,6 +352,7 @@ public class ConfigDialog extends JDialog {
 //					boxPanel.cancel();
 					fritzBoxPanel.cancel();
 					phonePanel.cancel();
+					proxyPanel.cancel();
 					messagePanel.cancel();
 					callMonitorPanel.cancel();
 					languagePanel.cancel();
@@ -464,6 +470,7 @@ public class ConfigDialog extends JDialog {
 		this.addConfigPanel(otherPanel);
 		this.addConfigPanel(callerListAppearancePanel);
 		this.addConfigPanel(trayPanel);
+		this.addConfigPanel(proxyPanel);
 
 		int width = Integer.parseInt(properties.getStateProperty("configDialog.width", "700"));
 		int height = Integer.parseInt(properties.getStateProperty("configDialog.height", "470"));
@@ -509,6 +516,7 @@ public class ConfigDialog extends JDialog {
 	public boolean shouldRefreshTrayMenu()
 	{
 		if (phonePanel.shouldRefreshTrayMenu()
+				|| proxyPanel.shouldRefreshTrayMenu()
 				|| fritzBoxPanel.shouldRefreshTrayMenu()
 				|| messagePanel.shouldRefreshTrayMenu()
 				|| callerListPanel.shouldRefreshTrayMenu()

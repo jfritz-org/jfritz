@@ -26,5 +26,6 @@
 	<classpathentry kind="lib" path="lib-dev/jsch-0.1.42.jar"/>
 	<classpathentry kind="lib" path="lib-dev/mockito-all-1.8.5.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
+	<classpathentry kind="lib" path="lib/proxy-1.0.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
