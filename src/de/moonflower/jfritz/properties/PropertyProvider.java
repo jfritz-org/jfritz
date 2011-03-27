@@ -123,6 +123,12 @@ public class PropertyProvider {
 		defProps.setProperty("option.playSounds", "true");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.popuptype", "1");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.popupDelay", "0");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.proxy.active", "false");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.proxy.host", "");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.proxy.port", "8080");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.proxy.user", "");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.proxy.password", "");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.proxy.authRequired", "false");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.startExternProgram", "false");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.startMinimized", "false");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.syslogclientip", "192.168.178.21");//$NON-NLS-1$, //$NON-NLS-2$
