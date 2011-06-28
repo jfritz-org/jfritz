@@ -100,10 +100,17 @@ public class Call implements Serializable {
 		if (call2.getRoute() != null) {
 			route2 = call2.getRoute();
 		}
+		String port1 = "", port2 = ""; //$NON-NLS-1$,  //$NON-NLS-2$
+		if (this.getPort() != null) {
+			port1 = this.getPort().toString();
+		}
+		if (call2.getPort() != null) {
+			port2 = call2.getPort().toString();
+		}
 
 		if ( this.getCalldate().equals(call2.getCalldate())
 				&& (nr1).equals(nr2)
-				&& (this.getPort().equals(call2.getPort()))
+				&& (port1.equals(port2))
 				&& (this.getDuration() == call2.getDuration())
 				&& (this.getCalltype() == call2.getCalltype())
 				&& (route1.equals(route2)))

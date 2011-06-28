@@ -9,30 +9,31 @@
 	<property name="javac.version" value="1.5" />
 
 	<!-- directory properties -->
-	<property name="home" value="ant" />
+	<property name="ant" value="ant" />
 	<property name="src" value="src" />
 	<property name="unittests" value="tests" />
 	<property name="lib" value="lib" />
 	<property name="lib-dev" value="lib-dev" />
 	<property name="lang" value="lang" />
+	<property name="conf" value="conf" />
 
 	<!-- build properties -->
-	<property name="build" value="${home}/build" />
-	<property name="buildcallsim" value="${home}/buildcallsim" />
+	<property name="build" value="${ant}/build" />
+	<property name="buildcallsim" value="${ant}/buildcallsim" />
 	<property name="build.classes" value="${build}/classes" />
 	<property name="build.unittests" value="${build}/unittests" />
 	<property name="build.unittests.reports" value="${build.unittests}/reports" />
 
 	<!-- java doc properties -->
-	<property name="doc" value="${home}/doc" />
+	<property name="doc" value="${ant}/doc" />
 
 	<!-- release properties -->
-	<property name="dist" value="${home}/dist" />
-	<property name="archive" value="${home}/archiv" />
+	<property name="dist" value="${ant}/dist" />
+	<property name="archive" value="${ant}/archiv" />
 	<property name="javadoc-archive" value="${archive}/javadoc" />
 	<property name="source-archive" value="${archive}/source" />
 	<property name="binaries-archive" value="${archive}/binaries" />
-	<property name="release" value="${home}/release" />
+	<property name="release" value="${ant}/release" />
 	<property name="jfritzdir" value="D:\Programme\JFritz" />
 
 	<!-- include all jars in lib to classpath -->
@@ -61,7 +62,7 @@
 		<echo message="java version:  ${ant.java.version}" />
 		<echo message="" />
 		<echo message="   ---------------------------------------------------------------" />
-		<echo message="   project home:		${home}" />
+		<echo message="   project ant:		${ant}" />
 		<echo message="   project build:  	${build}" />
 		<echo message="   project source:	${src}" />
 		<echo message="   ---------------------------------------------------------------" />
@@ -106,6 +107,12 @@
 		<!-- copy lang files -->
 		<copy todir="${dist}/lang">
 			<fileset dir="lang">
+			</fileset>
+		</copy>
+
+		<!-- copy conf files -->
+		<copy todir="${dist}/conf">
+			<fileset dir="conf">
 			</fileset>
 		</copy>
 
@@ -181,7 +188,7 @@
 				<exclude name="**/de/moonflower/jfritz/ProgramConstants.java" />
 			</fileset>
 			<manifest>
-				<attribute name="Class-Path" value="./jfritz.jar ./fritzbox.jar ./resources.jar ./reverselookup.jar  ./utils.jar ${lib}/jdic.jar ${lib}/jfreereport-0.8.6-2.jar ${lib}/jcommon-1.0.0-rc1-cvs.jar ${lib}/itext-1.3.4.jar ${lib}/bsh-1.3.0.jar ${lib}/bsf-2.3.0.jar ${lib}/poi-2.5.1-final-20040804.jar ${lib}/jacob.jar ${lang}/ ${lib}/jcalendar-1.3.2.jar ${lib}/jfreechart-1.0.2.jar ${lib}/jdom.jar ${lib}/looks-2.1.4.jar ${lib}/log4j-1.2.16.jar ${lib}/proxy-1.0.0.jar" />
+				<attribute name="Class-Path" value="./jfritz.jar ./fritzbox.jar ./resources.jar ./reverselookup.jar  ./utils.jar ${lib}/jdic.jar ${lib}/jfreereport-0.8.6-2.jar ${lib}/jcommon-1.0.0-rc1-cvs.jar ${lib}/itext-1.3.4.jar ${lib}/bsh-1.3.0.jar ${lib}/bsf-2.3.0.jar ${lib}/poi-2.5.1-final-20040804.jar ${lib}/jacob.jar ${lang}/ ${conf} ${lib}/jcalendar-1.3.2.jar ${lib}/jfreechart-1.0.2.jar ${lib}/jdom.jar ${lib}/looks-2.1.4.jar ${lib}/log4j-1.2.16.jar ${lib}/proxy-1.0.0.jar ${lib}/jfontchooser-1.0.5.jar" />
 			</manifest>
 		</jar>
 
@@ -305,8 +312,14 @@
 		<copy todir="${source-archive}/tmp/JFritz-${version}-Source/${lang}">
 			<fileset dir="${lang}" />
 		</copy>
+		<copy todir="${source-archive}/tmp/JFritz-${version}-Source/${conf}">
+			<fileset dir="${conf}" />
+		</copy>
 		<copy todir="${source-archive}/tmp/JFritz-${version}-Source/number">
 			<fileset dir="number" />
+		</copy>
+		<copy todir="${source-archive}/tmp/JFritz-${version}-Source/conf">
+			<fileset dir="conf" />
 		</copy>
 		<copy todir="${source-archive}/tmp/JFritz-${version}-Source/pictures">
 			<fileset dir="pictures">

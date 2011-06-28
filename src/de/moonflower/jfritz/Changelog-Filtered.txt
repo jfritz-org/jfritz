@@ -1,3 +1,38 @@
+JFritz 0.7.4.1.9:
+- Neue EXE Version für 64-Bit Java
+- TODO: Packaging der neuen EXE ueberpruefen!!!!
+
+JFritz 0.7.4.1.8:
+- Bugfix [0000335]: Erkennung der 7320 verbessert 
+
+JFritz 0.7.4.1.7:
+- Neu: Mapping von FritzBox-ID zu Namen in Datei "conf/boxnames.conf" ausgelagert
+- Neu: Proxy-Einstellungen werden nun auch für AutoUpdate verwendet
+- Bugfix: Proxy ohne Authentifizierung arbeitet nun. TODO überprüfen, ob auch ein Proxy mit Authentifizierung funktioniert
+
+JFritz 0.7.4.1.6:
+- Bugfix [0000325]: Absturz des Anrufmonitors, wenn der Anruf vom AB angenommen wird
+
+JFritz 0.7.4.1.5:
+- Einstellungsdialog für Proxy-Einstellungen
+- Proxy kann nun für Rückwärtssuche verwendet werden
+New Strings:
+proxy_active
+proxy_http
+proxy_port
+proxy_auth
+proxy_user
+proxy_password
+
+JFritz 0.7.4.1.4:
+- Log4j in weiteren Klassen eingeführt
+- Internationalisierung extrahiert 
+
+JFritz 0.7.4.1.3:
+- Viele Klassen, vor allem CallMonitor und Sound, refactoriert.
+- Weiterhin CallType, CallState, CallType, CallMonitorList und viele andere Klassen refactoriert
+- Verwendung von Log4j
+
 JFritz 0.7.4.1.2:
 - LookupThread überarbeitet, bessere Ergebnisse bei der Rückwärtssuche
 

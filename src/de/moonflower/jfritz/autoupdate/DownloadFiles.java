@@ -20,6 +20,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
+import de.moonflower.jfritz.proxy.JFritzProxy;
+
 /**
  * Dieser Thread überprüft, ob eine neue Programmversion verfügbar ist
  *
@@ -121,7 +123,7 @@ public class DownloadFiles extends AutoUpdateMainClass implements Runnable {
 				URLConnection con;
 				try {
 					logMessage("getting remote file list");
-					con = url.openConnection();
+					con = url.openConnection(JFritzProxy.getInstance().getProxy());
 					// 5 Sekunden-Timeout für den Verbindungsaufbau
 					con.setConnectTimeout(5000);
 
@@ -306,7 +308,7 @@ public class DownloadFiles extends AutoUpdateMainClass implements Runnable {
 			logMessage("Download new file from "
 					+ urlstr);
 			url = new URL(urlstr);
-			URLConnection conn = url.openConnection();
+			URLConnection conn = url.openConnection(JFritzProxy.getInstance().getProxy());
 			BufferedInputStream in = new BufferedInputStream(conn
 					.getInputStream());
 			BufferedOutputStream out = new BufferedOutputStream(

@@ -55,7 +55,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 
 import jd.nutils.OSDetector;
-
 import de.moonflower.jfritz.autoupdate.JFritzUpdate;
 import de.moonflower.jfritz.box.BoxClass;
 import de.moonflower.jfritz.box.BoxStatusListener;
@@ -64,7 +63,6 @@ import de.moonflower.jfritz.callerlist.CallerListPanel;
 import de.moonflower.jfritz.callerlist.CallerTable;
 import de.moonflower.jfritz.callerlist.FetchListTimer;
 import de.moonflower.jfritz.callmonitor.CallMonitorStatusListener;
-
 import de.moonflower.jfritz.dialogs.config.ConfigDialog;
 import de.moonflower.jfritz.dialogs.configwizard.ConfigWizard;
 import de.moonflower.jfritz.dialogs.quickdial.QuickDialPanel;
@@ -77,7 +75,6 @@ import de.moonflower.jfritz.network.NetworkStateListener;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.phonebook.PhoneBookPanel;
 import de.moonflower.jfritz.properties.PropertyProvider;
-
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
@@ -286,6 +283,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		tabber.addTab(messages.getMessage("phonebook"), phoneBookPanel); //$NON-NLS-1$
 		tabber.addTab(messages.getMessage("quickdials"), quickDialPanel); //$NON-NLS-1$
 		tabber.addTab(messages.getMessage("monitoring"), monitoringPanel);
+
 		tabber.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				if (tabSelected("callerlist")) { //$NON-NLS-1$
@@ -554,6 +552,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		JMenuItem item = new JMenuItem(messages.getMessage("fetchlist"), 'a'); //$NON-NLS-1$,
 		item.setActionCommand("fetchList"); //$NON-NLS-1$
 		item.addActionListener(this);
+
 		jfritzMenu.add(item);
 		item = new JMenuItem(messages.getMessage("reverse_lookup"), 'l'); //$NON-NLS-1$,
 		item.setActionCommand("reverselookup"); //$NON-NLS-1$
@@ -757,6 +756,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		menu.add(viewMenu);
 		menu.add(helpMenu);
 		menu.setVisible(true);
+
 		return menu;
 	}
 

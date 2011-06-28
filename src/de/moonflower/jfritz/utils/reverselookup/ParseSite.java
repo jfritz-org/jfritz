@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -16,14 +15,13 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.moonflower.jfritz.properties.PropertyProvider;
+import de.moonflower.jfritz.proxy.JFritzProxy;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.ReverseLookupSite;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.HTMLUtil;
 import de.moonflower.jfritz.utils.JFritzUtils;
-import de.robotniko.proxy.api.ProxyFacade;
 
 public class ParseSite extends Thread {
 	public static final int MAX_DATA_LENGTH = 30000;
@@ -148,7 +146,7 @@ public class ParseSite extends Thread {
 	}
 
 	private URLConnection establishConnection(final URL url, final String lookupSiteName) throws IOException {
-		URLConnection con = url.openConnection(getProxy());
+		URLConnection con = url.openConnection(JFritzProxy.getInstance().getProxy());
 		// 3 Sekunden-Timeout für Verbindungsaufbau
 		// 10 Sekunden-Timeout für die Antwort
 		con.setConnectTimeout(3000);
@@ -590,19 +588,5 @@ public class ParseSite extends Thread {
 			Debug.error("File not found: " + filePath); //$NON-NLS-1$
 		}
 		return result;
-	}
-
-	private Proxy getProxy() {
-		boolean proxyActive = Boolean.parseBoolean(PropertyProvider.getInstance().getProperty("option.proxy.active"));
-		boolean authRequired  = Boolean.parseBoolean(PropertyProvider.getInstance().getProperty("option.proxy.authRequired"));
-		String proxyHost = PropertyProvider.getInstance().getProperty("option.proxy.host");
-		int proxyPort = Integer.parseInt(PropertyProvider.getInstance().getProperty("option.proxy.port"));
-		String proxyUser = PropertyProvider.getInstance().getProperty("option.proxy.user");
-		String proxyPassword = PropertyProvider.getInstance().getProperty("option.proxy.password");
-		if (authRequired) {
-			return ProxyFacade.getProxyService().getProxy(proxyActive, proxyHost, proxyPort);
-		} else {
-			return ProxyFacade.getProxyService().getProxy(proxyActive, proxyHost, proxyPort, proxyUser, proxyPassword);
-		}
 	}
 }

@@ -13,6 +13,7 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import de.moonflower.jfritz.conf.SupportedFritzBoxProvider;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
@@ -59,7 +60,7 @@ public class FritzBoxFirmware {
 			"&var%3Alang=de&var%3Amenu=home&var%3Apagename=home&login%3Acommand%2F%LOGINMODE%=", //$NON-NLS-1$
 			"&var%3Alang=en&var%3Amenu=home&var%3Apagename=home&login%3Acommand%2F%LOGINMODE%=" }; //$NON-NLS-1$
 
-	private final static String PATTERN_DETECT_FIRMWARE = "[Firmware|Labor][-| ][V|v]ersion[^\\d]*(\\d\\d).(\\d\\d).(\\d\\d\\d*)([^<]*)"; //$NON-NLS-1$
+	private final static String PATTERN_DETECT_FIRMWARE = "[Firmware|Labor][-| ][V|v]ersion[^\\d]*(\\d\\d\\d*).(\\d\\d).(\\d\\d\\d*)([^<]*)"; //$NON-NLS-1$
 
 	private final static String PATTERN_DETECT_LANGUAGE_DE = "Telefonie";
 
@@ -171,7 +172,7 @@ public class FritzBoxFirmware {
 
 				// read firmware informations from file
 				if (false) {
-					String filename = "c://SpeedFirm.txt"; //$NON-NLS-1$
+					String filename = "/home/robotniko/firmware"; //$NON-NLS-1$
 					Debug.debug("Debug mode: Loading " + filename); //$NON-NLS-1$
 					try {
 						data.clear(); //$NON-NLS-1$
@@ -321,56 +322,7 @@ public class FritzBoxFirmware {
 	}
 
 	public String getBoxName() {
-		switch (boxtype) {
-		case 6:
-			return "FRITZ!Box Fon"; //$NON-NLS-1$
-		case 8:
-			return "FRITZ!Box Fon WLAN"; //$NON-NLS-1$
-		case 14:
-			return "FRITZ!Box 7050"; //$NON-NLS-1$
-		case 12:
-			return "FRITZ!Box 5050"; //$NON-NLS-1$
-		case 11:
-			return "FRITZ!Box ata"; //$NON-NLS-1$
-		case 15:
-			return "Eumex 300ip"; //$NON-NLS-1$
-		case 23:
-			return "FRITZ!Box 5010"; //$NON-NLS-1$
-		case 25:
-			return "FRITZ!Box 5012"; //$NON-NLS-1$
-		case 28:
-			return "FRITZ!Box Fon WLAN Speedport W501V"; //$NON-NLS-1$
-		case 29:
-			return "FRITZ!Box 7170"; //$NON-NLS-1$
-		case 30:
-			return "FRITZ!Box 7140"; //$NON-NLS-1$
-		case 34:
-			return "FRITZ!Box Fon WLAN Speedport W900V"; //$NON-NLS-1$
-		case 39:
-			return "FRITZ!Box 7140 Annex A"; //$NON-NLS-1$
-		case 40:
-			return "FRITZ!Box 7141"; //$NON-NLS-1$
-		case 43:
-			return "FRITZ!Box 5140"; //$NON-NLS-1$
-		case 54:
-			return "FRITZ!Box 7270"; //$NON-NLS-1$
-		case 60:
-			return "FRITZ!Box 7113"; //$NON-NLS-1$
-		case 73:
-			return "FRITZ!Box 7240"; //$NON-NLS-1$
-		case 75:
-			return "FRITZ!Box 7570"; //$NON-NLS-1$
-		case 84:
-			return "FRITZ!Box 7390"; //$NON-NLS-1$
-		case 87:
-			return "FRITZ!Box 7112"; //$NON-NLS-1$
-		case 99:
-			return "FRITZ!Box 7340"; //$NON-NLS-1$
-		case 100:
-			return "FRITZ!Box 7320"; //$NON-NLS-1$
-		default:
-			return messages.getMessage("unknown"); //$NON-NLS-1$
-		}
+		return SupportedFritzBoxProvider.getInstance().getBoxById(boxtype);
 	}
 
 	public final String toString() {

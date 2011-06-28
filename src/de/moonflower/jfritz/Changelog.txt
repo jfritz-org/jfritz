@@ -6,6 +6,25 @@ Non-JFritz-Changes:
 - Neu: Neue Klasse für das Anzeigen von Anrufen auf Samsung-TVs
 - Neu: Testklasse zur Überprüfung, ob es für die eigene Box ein FW-Update gibt
 - Neu: Neues Package mit neuer Rufnummer, muss durch externe Komponente ersetzt werden
+- Neu: Schriftart und -größe kann nun global verändert werden, funktioniert nicht wirklich
+
+JFritz 0.7.4.1.9:
+- Neue EXE Version für 64-Bit Java
+- TODO: Packaging der neuen EXE ueberpruefen!!!!
+- Neue Bibliothek JFontChooser
+New Strings:
+font
+
+JFritz 0.7.4.1.8:
+- Bugfix: Erkennung der 7320 verbessert 
+
+JFritz 0.7.4.1.7:
+- Neu: Mapping von FritzBox-ID zu Namen in Datei "conf/boxnames.conf" ausgelagert
+- Neu: Proxy-Einstellungen werden nun auch für AutoUpdate verwendet
+- Bugfix: Proxy ohne Authentifizierung arbeitet nun. TODO überprüfen, ob auch ein Proxy mit Authentifizierung funktioniert
+
+JFritz 0.7.4.1.6:
+- Bugfix [0000325]: Absturz des Anrufmonitors, wenn der Anruf vom AB angenommen wird
 
 JFritz 0.7.4.1.5:
 - Einstellungsdialog für Proxy-Einstellungen

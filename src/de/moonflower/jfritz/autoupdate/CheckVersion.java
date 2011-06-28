@@ -8,6 +8,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Vector;
 
+import de.moonflower.jfritz.proxy.JFritzProxy;
+
 /**
  * Dieser Thread überprüft, ob eine neue Programmversion verfügbar ist
  *
@@ -91,7 +93,7 @@ public class CheckVersion extends AutoUpdateMainClass implements Runnable {
 
 					URLConnection con;
 					try {
-						con = url.openConnection();
+						con = url.openConnection(JFritzProxy.getInstance().getProxy());
 						// 1 Sekunde-Timeout für den Verbindungsaufbau
 						con.setConnectTimeout(5000);
 
@@ -164,7 +166,7 @@ public class CheckVersion extends AutoUpdateMainClass implements Runnable {
 
 				URLConnection con;
 				try {
-					con = url.openConnection();
+					con = url.openConnection(JFritzProxy.getInstance().getProxy());
 					// 1 Sekunde-Timeout für den Verbindungsaufbau
 					con.setConnectTimeout(5000);
 

@@ -8,12 +8,7 @@
  * Created on 08.04.2005
  *
  * Authors working on the project:
- * 		akw			Arno Willig <akw@thinkwiki.org>
  * 		robotniko	Robert Palmer <robotniko@gmx.de>
- * 		kleinc		Christian Klein <kleinch@users.sourceforge.net>
- *      little_ben  Benjamin Schmitt <little_ben@users.sourceforge.net>
- *      baefer		Bastian Schaefer <baefer@users.sourceforge.net>
- *      capncrunch	Brian Jensen <capncrunch@users.sourceforge.net>
  *
  * This tool is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by
@@ -188,7 +183,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 144 2011-02-25 17:06:16Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 152 2011-06-28 12:13:02Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 

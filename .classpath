@@ -22,10 +22,11 @@
 	<classpathentry kind="lib" path="lib-dev/mail.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib-dev/ant-deb-0.0.1.jar"/>
-	<classpathentry kind="lib" path="lib-dev/junit-4.8.2.jar"/>
+	<classpathentry kind="lib" path="lib-dev/junit-4.8.2.jar" sourcepath="/home/robotniko/.m2/repository/junit/junit/4.8.2/junit-4.8.2-sources.jar"/>
 	<classpathentry kind="lib" path="lib-dev/jsch-0.1.42.jar"/>
 	<classpathentry kind="lib" path="lib-dev/mockito-all-1.8.5.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
 	<classpathentry kind="lib" path="lib/proxy-1.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/jfontchooser-1.0.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

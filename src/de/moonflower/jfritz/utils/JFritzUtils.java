@@ -21,7 +21,6 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.properties.PropertyProvider;
 
@@ -442,6 +441,7 @@ public class JFritzUtils {
 		currentStr = currentStr.replaceAll("&#x[00]*F6;", "ö");
 		currentStr = currentStr.replaceAll("&#x[00]*FC;", "ü");
 		currentStr = currentStr.replaceAll("&#x[00]*DF;", "ß");
+		currentStr = currentStr.replaceAll("&#x[00]*A0;", " ");
 
 		return currentStr;
 	}

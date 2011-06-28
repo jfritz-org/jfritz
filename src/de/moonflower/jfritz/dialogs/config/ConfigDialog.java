@@ -80,6 +80,7 @@ public class ConfigDialog extends JDialog {
 	private ConfigPanelCallerListAppearance callerListAppearancePanel;
 	private ConfigPanelCallMonitor callMonitorPanel;
 	private ConfigPanelLang languagePanel;
+//	private ConfigPanelFont fontPanel;
 	private ConfigPanelOther otherPanel;
 	private ConfigPanelNetwork networkPanel;
 	private ConfigPanelSip sipPanel;
@@ -122,6 +123,7 @@ public class ConfigDialog extends JDialog {
 		callerListPanel = new ConfigPanelCallerList();
 		callerListAppearancePanel = new ConfigPanelCallerListAppearance();
 		languagePanel = new ConfigPanelLang();
+//		fontPanel = new ConfigPanelFont();
 		otherPanel = new ConfigPanelOther(fritzBoxPanel);
 		networkPanel = new ConfigPanelNetwork(this);
 		trayPanel = new ConfigPanelTray();
@@ -276,6 +278,7 @@ public class ConfigDialog extends JDialog {
 		messagePanel.loadSettings();
 		callMonitorPanel.loadSettings();
 		languagePanel.loadSettings();
+//		fontPanel.loadSettings();
 		otherPanel.loadSettings();
 		networkPanel.loadSettings();
 		callerListPanel.loadSettings();
@@ -303,6 +306,7 @@ public class ConfigDialog extends JDialog {
 		messagePanel.saveSettings();
 		callMonitorPanel.saveSettings();
 		languagePanel.saveSettings();
+//		fontPanel.saveSettings();
 		otherPanel.saveSettings();
 		networkPanel.saveSettings();
 		callerListPanel.saveSettings();
@@ -356,6 +360,7 @@ public class ConfigDialog extends JDialog {
 					messagePanel.cancel();
 					callMonitorPanel.cancel();
 					languagePanel.cancel();
+//					fontPanel.cancel();
 					otherPanel.cancel();
 					networkPanel.cancel();
 					callerListPanel.cancel();
@@ -466,6 +471,7 @@ public class ConfigDialog extends JDialog {
 		this.addConfigPanel(callMonitorPanel);
 		this.addConfigPanel(messagePanel);
 		this.addConfigPanel(languagePanel);
+//		this.addConfigPanel(fontPanel);
 		this.addConfigPanel(networkPanel);
 		this.addConfigPanel(otherPanel);
 		this.addConfigPanel(callerListAppearancePanel);
@@ -523,6 +529,7 @@ public class ConfigDialog extends JDialog {
 				|| callerListAppearancePanel.shouldRefreshTrayMenu()
 				|| callMonitorPanel.shouldRefreshTrayMenu()
 				|| languagePanel.shouldRefreshTrayMenu()
+//				|| fontPanel.shouldRefreshTrayMenu()
 				|| otherPanel.shouldRefreshTrayMenu()
 				|| networkPanel.shouldRefreshTrayMenu()
 				|| sipPanel.shouldRefreshTrayMenu()

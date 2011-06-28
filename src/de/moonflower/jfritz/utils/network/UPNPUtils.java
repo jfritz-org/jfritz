@@ -12,6 +12,8 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Vector;
+
+import de.moonflower.jfritz.proxy.JFritzProxy;
 import de.moonflower.jfritz.utils.Debug;
 
 /*
