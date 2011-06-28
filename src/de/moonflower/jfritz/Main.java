@@ -183,7 +183,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 152 2011-06-28 12:13:02Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 153 2011-06-28 14:37:03Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -574,17 +574,24 @@ public class Main implements LookupObserver {
 	private void moveDataToRightSaveDir() {
 		// zeigt auf altes Verzeichnis
 		Debug.debug("Old SAVE_DIR: " + SAVE_DIR);
+		boolean shouldMoveDirectory = false;
+		String newSaveDir = SAVE_DIR;
 		if (SAVE_DIR.equals(System.getProperty("user.dir") + File.separator)) {
-			String newSaveDir = SAVE_DIR;
+			shouldMoveDirectory = true;
 			if (OSDetector.isWindows()) {
 				newSaveDir = System.getenv("APPDATA") + File.separator + "JFritz";
 			} else if (OSDetector.isMac()) {
 				newSaveDir = System.getProperty("user.home") + "/Library/Application Support/JFritz";
 			} else if (OSDetector.isLinux()) {
-				newSaveDir = System.getProperty("user.home") + File.separator + JFRITZ_HIDDEN_DIR;
+				newSaveDir = System.getProperty("user.home") + File.separator + JFRITZ_HIDDEN_DIR + File.separator;
 			} else {
-
 			}
+			if (SAVE_DIR.equals(newSaveDir)) {
+				shouldMoveDirectory = false;
+			}
+		}
+
+		if (shouldMoveDirectory) {
 			showConfWizard = properties.loadProperties(false);
 			if ( properties.getProperty("locale").equals("") )
 			{
