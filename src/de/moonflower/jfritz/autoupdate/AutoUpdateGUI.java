@@ -213,7 +213,7 @@ public class AutoUpdateGUI extends JDialog implements DownloadFilesListener {
 	 * @return
 	 */
 	protected static int showNotifyUpdateDialog() {
-		Object[] options = { UpdateLocale.getMessage("ok") };
+		Object[] options = { UpdateLocale.getMessage("okay") };
 
 		int ok = JOptionPane.showOptionDialog(null, UpdateLocale
 				.getMessage("new_version_notify"), UpdateLocale
