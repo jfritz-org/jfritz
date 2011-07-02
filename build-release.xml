@@ -188,13 +188,13 @@
 		</copy>
 
 		<!-- adapt mapping filepath in jfritz-template.pro" -->
-		<copy file="../../Release/ProGuard/jfritz-template.pro"
+		<copy file="../Release/ProGuard/jfritz-template.pro"
 		             tofile="${dist}/obfuscated/jfritz-${version}.pro"
 					 preservelastmodified="yes"
 					 overwrite="yes">
 	        <filterchain>
 	           <replacetokens>
-					<token key="MAPPING_FILE" value="../../../../../Release/ProGuard/jfritz-${version}.mapping"/>
+					<token key="MAPPING_FILE" value="../../../../Release/ProGuard/jfritz-${version}.mapping"/>
 	            </replacetokens>
 	        </filterchain>
 	    </copy>
@@ -285,7 +285,7 @@
 		</copy>
 		<!-- copy logo to linux directory -->
 		<copy todir="${release}/linux/jfritz-${version}">
-			<fileset dir="../../Release/Linux/">
+			<fileset dir="../Release/Linux/">
 				<include name="jfritz.png" />
 			</fileset>
 		</copy>
@@ -311,7 +311,7 @@
             package="jfritz"
             section="utils"
             depends="sun-java5-jre | sun-java6-jre"
-        	preinst="../../Release/Linux/preinst"
+        	preinst="../Release/Linux/preinst"
         >
             <version upstream="${version}"/>
             <maintainer email="Robert Palmer" name="jfritz@robotniko.de"/>
@@ -328,8 +328,8 @@ http://www.jfritz.org/
 	        	<exclude name="lib/sunos/**"/>
             </tarfileset>
 
-            <tarfileset file="../../Release/Linux/jfritz" prefix="/usr/bin" filemode="755"/>
-            <tarfileset dir="../../Release/Linux/" prefix="/usr/share/doc/jfritz">
+            <tarfileset file="../Release/Linux/jfritz" prefix="/usr/bin" filemode="755"/>
+            <tarfileset dir="../Release/Linux/" prefix="/usr/share/doc/jfritz">
                 <include name="COPYING"/>
                 <include name="README-de"/>
                 <include name="README-en"/>
@@ -363,15 +363,15 @@ http://www.jfritz.org/
 
 		<!-- copy mac-template to release directory -->
 		<copy todir="${release}/mac/tmp">
-			<fileset dir="../../Release/MAC/Vorlage">
+			<fileset dir="../Release/MAC/Vorlage">
 			</fileset>
 		</copy>
 
-		<copy file="../../Release/MAC/Vorlage/__MACOSX/JFritz.app/Contents/._Info.plist"
+		<copy file="../Release/MAC/Vorlage/__MACOSX/JFritz.app/Contents/._Info.plist"
 		             tofile="${release}/mac/tmp/__MACOSX/JFritz.app/Contents/._Info.plist" />
 
 		<!-- adapt version string in Info.plist -->
-		<copy file="../../Release/MAC/Vorlage/JFritz.app/Contents/Info.plist"
+		<copy file="../Release/MAC/Vorlage/JFritz.app/Contents/Info.plist"
 		             tofile="${release}/mac/tmp/JFritz.app/Contents/Info.plist"
 					 overwrite="yes">
 	        <filterchain>
@@ -402,14 +402,15 @@ http://www.jfritz.org/
 
 	<target name="mac-set-execution-bit">
 		<scp file="${release}/mac/JFritz-${version}-Mac.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
-		<sshexec command="mkdir ./public/mac"  username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
-		<sshexec command="cd ./public/mac; unzip ../JFritz-${version}-Mac.zip" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
+		<sshexec command="mkdir -p ./public/mac"  username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
+		<sshexec command="cd ./public/mac; rm * -rf; unzip ../JFritz-${version}-Mac.zip" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<sshexec command="chmod 555 ./public/mac/JFritz.app/Contents/MacOS/JavaApplicationStub" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<sshexec command="rm ./public/JFritz-${version}-Mac.zip" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<sshexec command="cd ./public/mac; zip -r ../JFritz-${version}-Mac.zip *" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<sshexec command="cd ./public/mac; rm * -rf" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<sshexec command="rmdir ./public/mac" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<scp file="${user2}@${server2}:./public/JFritz-${version}-Mac.zip" port="${port2}" trust="yes" todir="${release}/mac/" verbose="yes" password="${password2}"/>
+		<sshexec command="rm ./public/JFritz-${version}-Mac.zip" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 	</target>
 
 	<target name="create-mac-zip" description="Creates a ZIP-File for MacOS!">
@@ -439,7 +440,7 @@ http://www.jfritz.org/
 
 		<!-- copy win template to release directory -->
 		<copy todir="${release}/win/tmp">
-			<fileset dir="../../Release/WIN">
+			<fileset dir="../Release/WIN">
 			</fileset>
 		</copy>
 
@@ -467,7 +468,7 @@ http://www.jfritz.org/
 		<UpdateSetupConfig file="${release}/win/tmp/jfritz-version.txt" appName="${product}" appType="Setup" appVersion="${version}" />
 
 		<!-- generate setup-file -->
-		<exec executable="C:\Program Files (x86)\Inno Setup 5\ISCC.exe">
+		<exec executable="C:\Programme\Inno Setup 5\ISCC.exe">
 			<arg value="${release}/win/tmp/jfritz.iss" />
 		</exec>
 
