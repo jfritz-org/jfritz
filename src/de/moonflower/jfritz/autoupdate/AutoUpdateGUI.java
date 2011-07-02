@@ -184,7 +184,7 @@ public class AutoUpdateGUI extends JDialog implements DownloadFilesListener {
 	 * Zeigt Bestätigungsdialog mit "Ja" und "Nein" an.
 	 * @return
 	 */
-	protected static int showConfirmDialog() {
+	protected static int showConfirmUpdateDialog() {
 		Object[] options = { UpdateLocale.getMessage("yes"),
 				UpdateLocale.getMessage("no"),
 				 UpdateLocale.getMessage("changelog") };
@@ -193,7 +193,7 @@ public class AutoUpdateGUI extends JDialog implements DownloadFilesListener {
 		while ((ok != JOptionPane.YES_OPTION) && (ok != JOptionPane.NO_OPTION))
 		{
 			ok = JOptionPane.showOptionDialog(null, UpdateLocale
-				.getMessage("new_version_text"), UpdateLocale
+				.getMessage("new_version_ask"), UpdateLocale
 				.getMessage("autoupdate_title"), JOptionPane.YES_NO_OPTION,
 				JOptionPane.INFORMATION_MESSAGE, null, // don't use a custom Icon
 				options, // the titles of buttons
@@ -204,6 +204,23 @@ public class AutoUpdateGUI extends JDialog implements DownloadFilesListener {
 				showChangelog();
 			}
 		}
+		return ok;
+	}
+
+
+	/**
+	 * Zeigt nur eine Benachrichtigung an, dass eine neue JFritz-Version verfuegbar ist.
+	 * @return
+	 */
+	protected static int showNotifyUpdateDialog() {
+		Object[] options = { UpdateLocale.getMessage("ok") };
+
+		int ok = JOptionPane.showOptionDialog(null, UpdateLocale
+				.getMessage("new_version_notify"), UpdateLocale
+				.getMessage("autoupdate_title"), JOptionPane.OK_OPTION,
+				JOptionPane.INFORMATION_MESSAGE, null, // don't use a custom Icon
+				options, // the titles of buttons
+				options[0]); // default button title
 		return ok;
 	}
 

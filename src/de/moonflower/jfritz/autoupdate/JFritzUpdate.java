@@ -104,27 +104,30 @@ public class JFritzUpdate extends AutoUpdateMainClass {
 	public void confirmedUpdateJFritz() {
 		shutdownNecessary = false;
 		if (isUpdateAvailable()) {
-			if (askDoUpdate())
-			{
-				if (OSDetector.isWindows() &&
-						(OSDetector.getOSID() == OSDetector.OS_WINDOWS_XP)
-						|| (OSDetector.getOSID() == OSDetector.OS_WINDOWS_VISTA)
-						|| (OSDetector.getOSID() == OSDetector.OS_WINDOWS_7))
-				{
-					try {
-						shutdownNecessary = true;
-						JOptionPane.showMessageDialog(null, "JFritz muss als Administrator gestartet werden, damit das Update erfolgen kann");
-						startUpdateAsAdmin();
-					} catch (Exception e) {
-						logError("Start update as ADMIN failed");
-					}
-				}
-				else
-				{
-					downloadFiles();
-					updateFiles();
-				}
-			}
+
+			AutoUpdateGUI.showNotifyUpdateDialog();
+
+//			if (askDoUpdate())
+//			{
+//				if (OSDetector.isWindows() &&
+//						(OSDetector.getOSID() == OSDetector.OS_WINDOWS_XP)
+//						|| (OSDetector.getOSID() == OSDetector.OS_WINDOWS_VISTA)
+//						|| (OSDetector.getOSID() == OSDetector.OS_WINDOWS_7))
+//				{
+//					try {
+//						shutdownNecessary = true;
+//						JOptionPane.showMessageDialog(null, "JFritz muss als Administrator gestartet werden, damit das Update erfolgen kann");
+//						startUpdateAsAdmin();
+//					} catch (Exception e) {
+//						logError("Start update as ADMIN failed");
+//					}
+//				}
+//				else
+//				{
+//					downloadFiles();
+//					updateFiles();
+//				}
+//			}
 		} else {
 			// gib hier die Meldung aus, dass keine neue Version gefunden
 			// werden konnte
@@ -160,7 +163,7 @@ public class JFritzUpdate extends AutoUpdateMainClass {
 	private boolean askDoUpdate()
 	{
 		AutoUpdateGUI.setChangelog(changelog);
-		return AutoUpdateGUI.showConfirmDialog() == JOptionPane.YES_OPTION;
+		return AutoUpdateGUI.showConfirmUpdateDialog() == JOptionPane.YES_OPTION;
 	}
 
 	private void downloadFiles()

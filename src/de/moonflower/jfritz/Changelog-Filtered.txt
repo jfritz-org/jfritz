@@ -1,3 +1,10 @@
+JFritz 0.7.4.1.11:
+- Autoupdate-Funktionalität wurde deaktiviert. Nun nur noch ein Hinweiß, dass es eine neue Version zum Download auf http://www.jfritz.org gibt.
+
+JFritz 0.7.4.1.10:
+- Bugfix [0000336]: Verschieben des Schreibordners bei frischer Installation
+TODO: DEB erstellen, installieren und schauen ob es nun ok ist!!!
+
 JFritz 0.7.4.1.9:
 - Neue EXE Version für 64-Bit Java
 - TODO: Packaging der neuen EXE ueberpruefen!!!!
