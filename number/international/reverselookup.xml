@@ -27,6 +27,13 @@
 	<country code="+1">
 		<website name="whitepages.com" url="http://www.whitepages.com/search/ReversePhone?phone=$NUMBER" prefix="1">
 			<entry firstOccurance="firstname">
+				<firstname>&lt;span class=&quot;given-name&quot;&gt;([^&lt;]*)&lt;/span&gt;</firstname>
+				<lastname>&lt;span class=&quot;family-name&quot;&gt;([^&lt;]*)&lt;/span&gt;</lastname>
+				<street>&lt;span class=&quot;street-address&quot;&gt;([^&lt;]*)&lt;/span&gt;</street>
+				<city>&lt;span class=&quot;locality&quot;&gt;([^&lt;]*)&lt;/span&gt;</city>
+				<zipcode>()</zipcode>
+			</entry>
+			<entry firstOccurance="firstname">
 				<firstname>'FIRST'\s*:\s*&quot;([^&quot;]*)&quot;,</firstname>
 				<lastname>'LAST'\s*:\s*&quot;([^&quot;]*)&quot;,</lastname>
 				<street>'ADDRESS'\s*:\s*&quot;([^&quot;]*)&quot;,</street>
@@ -551,10 +558,10 @@
 	<country code="+33">
 		<website name="www.infobel.com" url="http://www.infobel.com/en/france/Inverse.aspx?inphCoordType=EPSG&amp;qPhone=$NUMBER" prefix="">
 			<entry firstOccurance="name">
-				<name>&lt;div class=&quot;result-item&quot;&gt;&lt;h2&gt;[^&lt;]*&lt;a href=&quot;[^&quot;]*&quot;&gt;([^&lt;]*)</name>
-				<street>&lt;div class=&quot;result-box&quot;&gt;&lt;div class=&quot;result-box-col&quot;&gt;&lt;div&gt;&lt;strong&gt;([^,]*),\s[^\s]*\s[^&lt;]*&lt;/strong&gt;</street>
-				<zipcode>&lt;div class=&quot;result-box&quot;&gt;&lt;div class=&quot;result-box-col&quot;&gt;&lt;div&gt;&lt;strong&gt;[^,]*,\s([^\s]*)\s[^&lt;]*&lt;/strong&gt;</zipcode>
-				<city>&lt;div class=&quot;result-box&quot;&gt;&lt;div class=&quot;result-box-col&quot;&gt;&lt;div&gt;&lt;strong&gt;[^,]*,\s[^\s]*\s([^&lt;]*)&lt;/strong&gt;</city>
+				<name>&lt;div class=&quot;result-item clearfix&quot;&gt;.*?&lt;span class=&quot;fn org&quot;&gt;([^&lt;]*)</name>
+				<street>&lt;div class=&quot;result-item clearfix&quot;&gt;.*?&lt;span class=&quot;street-address&quot;&gt;([^&lt;]*)</street>
+				<zipcode>&lt;div class=&quot;result-item clearfix&quot;&gt;.*?&lt;span class=&quot;postal-code&quot;&gt;([^&lt;]*)</zipcode>
+				<city>&lt;div class=&quot;result-item clearfix&quot;&gt;.*?&lt;span class=&quot;locality&quot;&gt;([^&lt;]*)</city>
 			</entry>
 		</website>
 	</country>
