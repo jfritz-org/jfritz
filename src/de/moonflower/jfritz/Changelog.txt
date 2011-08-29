@@ -14,6 +14,10 @@ TODO vor dem Release:
 - Debug-Klasse auf Log4j umstellen!
 - Beim ersten Start popup fuer das PW, wenn falscher Login festgestellt wurde!
 
+JFritz 0.7.4.1.13:
+- Feature[0000338]: Klick auf "Suchen"-Button -> Fokus ins Suchfeld, die Taste ESCAPE deaktiviert die aktuelle Suche
+- Feature[0000339]: MAC Shortcut von Ctrl-F auf Command-F legen 
+
 JFritz 0.7.4.1.12:
 - Update jfritz.exe und autoupdate.exe
 - Korrekte Initialisierung von Log4j, Logging sollte nun in eine Datei Log4j.log im Speicherverzeichnis stattfinden

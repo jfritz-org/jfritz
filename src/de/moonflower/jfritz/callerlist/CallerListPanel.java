@@ -1,5 +1,5 @@
 /*
- * Created on 05.06.2005
+* Created on 05.06.2005
  *
  */
 package de.moonflower.jfritz.callerlist;
@@ -945,6 +945,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 				if (searchFilterButton.getState() == ThreeStateButton.INVERTED) {
 					filter[SEARCH].setInvert(true);
 				}
+				searchFilterTextField.requestFocus();
+				searchFilterTextField.selectAll();
 			}
 		} else if (command.equals(CallFilter.FILTER_DATE)) {
 			syncFilterWithButton(filter[DATE], dateFilterButton);
@@ -1350,12 +1352,19 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	 */
 
 	public void keyPressed(KeyEvent arg0) {
-		if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
+		if (arg0.getSource() == searchFilterTextField
+				&& arg0.getKeyCode() == KeyEvent.VK_ENTER) {
 			handleAction(CallFilter.FILTER_SEARCH);
 			callerList.update();
 			updateStatusBar(false);
 //			statusBarController.fireStatusChanged(callerList.getTotalDuration());
 			return;
+		} else if (arg0.getSource() == searchFilterTextField
+				&& arg0.getKeyCode() == KeyEvent.VK_ESCAPE) {
+			searchFilterButton.setState(ThreeStateButton.NOTHING);
+			syncAllFilters();
+			update();
+			callerTable.requestFocus();
 		}
 	}
 
