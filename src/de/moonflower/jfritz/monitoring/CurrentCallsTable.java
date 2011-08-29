@@ -123,4 +123,7 @@ public class CurrentCallsTable extends AbstractTableModel implements
     	}
     }
 
+    public String toString() {
+    	return getClass().getSimpleName();
+    }
 }

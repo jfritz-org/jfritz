@@ -153,6 +153,12 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 
 import jd.nutils.OSDetector;
+
+import org.apache.log4j.Appender;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
+
 import de.moonflower.jfritz.autoupdate.JFritzUpdate;
 import de.moonflower.jfritz.autoupdate.Update;
 import de.moonflower.jfritz.dialogs.simple.AddressPasswordDialog;
@@ -183,7 +189,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 153 2011-06-28 14:37:03Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 162 2011-08-29 16:09:32Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -256,13 +262,18 @@ public class Main implements LookupObserver {
 	}
 
 	public Main(String[] args) {
+		loadSaveDir();
+
+		DOMConfigurator.configure("log4j.xml");
+		initLog4jAppender();
+
 		Calendar cal = Calendar.getInstance();
 		cal.getTime();
 
 		System.out.println(ProgramConstants.PROGRAM_NAME + " v" + ProgramConstants.PROGRAM_VERSION //$NON-NLS-1$
 				+ " (c) 2005-" + cal.get(Calendar.YEAR) + " by " + JFRITZ_PROJECT); //$NON-NLS-1$
 		Thread.currentThread().setPriority(5);
-		Thread.currentThread().setName("JFritz main thread");
+		Thread.currentThread().setName("main thread");
 
 		alreadyDoneShutdown = false;
 
@@ -288,9 +299,6 @@ public class Main implements LookupObserver {
 
 		// load supported languages
 		loadLanguages();
-
-		// Weitere Initialisierung
-		loadSaveDir();
 
 		// move save dir and default file location
 		moveDataToRightSaveDir();
@@ -682,6 +690,25 @@ public class Main implements LookupObserver {
 			Main.createLock();
 			Debug.debug("Write file ~/" + JFRITZ_HIDDEN_DIR + "/" + USER_JFRITZ_FILE);
 			Main.writeSaveDir();
+			// update logger
+			Logger.getRootLogger().removeAppender("log4j-file-appender");
+			initLog4jAppender();
+		}
+	}
+
+	private static void initLog4jAppender() {
+		Appender a = Logger.getRootLogger().getAppender("FileAppender");
+		if (a != null && a instanceof FileAppender) {
+			FileAppender fa = (FileAppender)a;
+			String oldPath = fa.getFile();
+			String path = oldPath;
+			if (oldPath.equals("log4j.log")) {
+				path = Main.SAVE_DIR + "log4j.log";
+				fa.setFile(path);
+				fa.activateOptions();
+				Logger.getRootLogger().info("Setting log4j logging path from " + oldPath + " to " + path);
+			}
+			Logger.getRootLogger().info("Logging to " + fa.getFile());
 		}
 	}
 

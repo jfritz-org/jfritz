@@ -23,4 +23,7 @@ public class CallMonitorAdaptor implements CallMonitorListener {
     public void endOfCall(Call call) {
     }
 
+    public String toString() {
+    	return getClass().getSimpleName();
+    }
 }

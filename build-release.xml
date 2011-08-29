@@ -178,6 +178,7 @@
 		#############################################################################################
 	-->
 	<target name="obfuscate" description="Obfuscates, shrinks and optimizes source code!">
+
 		<mkdir dir="${dist}/obfuscated"/>
 		<mkdir dir="${dist}/origJARs"/>
 
@@ -210,7 +211,7 @@
 		<delete dir="${dist}/obfuscated/" />
 	</target>
 
-	<target name="create-windows">
+	<target name="create-windows" depends="getVersion">
 		<antcall target="prepare-windows" />
 		<antcall target="create-windows-zip" />
 		<antcall target="create-windows-setup" />
@@ -222,7 +223,7 @@
 		<antcall target="finish-windows" />
 	</target>
 
-	<target name="create-linux">
+	<target name="create-linux" depends="getVersion">
 		<antcall target="prepare-linux" />
 		<antcall target="create-linux-deb" />
 		<antcall target="create-linux-targz" />
@@ -232,7 +233,7 @@
 			  tofile="${release}/linux/JFritz-${version}.deb" />
 	</target>
 
-	<target name="create-mac">
+	<target name="create-mac" depends="getVersion">
 		<!-- create mac files -->
 		<antcall target="prepare-mac" />
 		<antcall target="create-mac-zip" />
@@ -325,7 +326,7 @@ http://www.jfritz.org/
                 <include name="**/**"/>
             	<exclude name="lib/windows/**"/>
             	<exclude name="lib/mac/**"/>
-	        	<exclude name="lib/sunos/**"/>
+	        <exclude name="lib/sunos/**"/>
             </tarfileset>
 
             <tarfileset file="../Release/Linux/jfritz" prefix="/usr/bin" filemode="755"/>
@@ -468,7 +469,12 @@ http://www.jfritz.org/
 		<UpdateSetupConfig file="${release}/win/tmp/jfritz-version.txt" appName="${product}" appType="Setup" appVersion="${version}" />
 
 		<!-- generate setup-file -->
-		<exec executable="C:\Programme\Inno Setup 5\ISCC.exe">
+		<!-- windows path -->
+		<!--exec executable="C:\Program Files (x86)\Inno Setup 5\ISCC.exe">
+			<arg value="${release}/win/tmp/jfritz.iss" />
+		</exec-->
+		<!-- linux path -->
+		<exec executable="/usr/local/bin/iscc">
 			<arg value="${release}/win/tmp/jfritz.iss" />
 		</exec>
 

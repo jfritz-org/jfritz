@@ -14,7 +14,7 @@ import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 
 /**
- * Diese Klasse enthält eine Liste aller initialiesierter und etablierter
+ * Diese Klasse enthält eine Liste aller initialisierter und etablierter
  * Anrufe. Sie wird von den Anrufmonitoren verwendet, um Anrufe anzuzeigen.
  *
  * @author Robert Palmer
@@ -252,5 +252,9 @@ public class MonitoredCalls {
         		log.debug(ignoredMSNs[i]);
         	}
         }
+    }
+
+    public String toString() {
+    	return getClass().getSimpleName();
     }
 }

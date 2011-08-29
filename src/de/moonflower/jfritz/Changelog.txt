@@ -11,8 +11,12 @@ Non-JFritz-Changes:
 
 TODO vor dem Release:
 - autoupdate.exe mitliefern
-- Log4j korrekt einrichten und Debug-Klasse auf log4j umstellen!
+- Debug-Klasse auf Log4j umstellen!
 - Beim ersten Start popup fuer das PW, wenn falscher Login festgestellt wurde!
+
+JFritz 0.7.4.1.12:
+- Update jfritz.exe und autoupdate.exe
+- Korrekte Initialisierung von Log4j, Logging sollte nun in eine Datei Log4j.log im Speicherverzeichnis stattfinden
 
 JFritz 0.7.4.1.11:
 - Autoupdate-Funktionalit‰t wurde deaktiviert. Nun nur noch ein Hinweiﬂ, dass es eine neue Version zum Download auf http://www.jfritz.org gibt.

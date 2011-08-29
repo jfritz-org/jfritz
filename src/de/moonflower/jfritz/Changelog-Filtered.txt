@@ -1,3 +1,7 @@
+JFritz 0.7.4.1.12:
+- Update jfritz.exe und autoupdate.exe
+- Korrekte Initialisierung von Log4j, Logging sollte nun in eine Datei Log4j.log im Speicherverzeichnis stattfinden
+
 JFritz 0.7.4.1.11:
 - Autoupdate-Funktionalit‰t wurde deaktiviert. Nun nur noch ein Hinweiﬂ, dass es eine neue Version zum Download auf http://www.jfritz.org gibt.
 

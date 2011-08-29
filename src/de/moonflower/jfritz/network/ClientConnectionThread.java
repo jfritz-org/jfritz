@@ -789,4 +789,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 		Debug.error("Fix writeAvailablePorts() in ClientConnectionThread!");
     }
 
+    public String toString() {
+    	return getClass().getSimpleName();
+    }
 }

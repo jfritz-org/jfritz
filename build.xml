@@ -143,6 +143,7 @@
 		</copy>
 		<copy todir="${dist}/">
 			<fileset dir=".">
+				<include name="log4j.xml" />
 				<include name="splash.png" />
 				<include name="status.png" />
 				<include name="MSVCR71.dll" />
@@ -334,6 +335,7 @@
 		<copy file="${lib}/jacob.dll" todir="${source-archive}/tmp/JFritz-${version}-Source" />
 		<copy file="build.xml" todir="${source-archive}/tmp/JFritz-${version}-Source" />
 		<copy file="jfritzlogo.png" todir="${source-archive}/tmp/JFritz-${version}-Source" />
+		<copy file="log4j.xml" todir="${source-archive}/tmp/JFritz-${version}-Source" />
 		<copy file="splash.png" todir="${source-archive}/tmp/JFritz-${version}-Source" />
 		<copy file="status.png" todir="${source-archive}/tmp/JFritz-${version}-Source" />
 
