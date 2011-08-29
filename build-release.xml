@@ -15,6 +15,7 @@
 	<property name="lib-dev" value="lib-dev" />
 	<property name="docs" value="../Doku" />
 	<property name="scp-beta-path" value="./public/beta" />
+	<property name="src.dir" location=""/>
 
 	<!-- build properties -->
 	<property name="build" value="${home}/build" />
@@ -239,7 +240,7 @@
 		<antcall target="create-mac-zip" />
 		<!-- <antcall target="create-mac-dmg" /> -->
 		<antcall target="finish-mac" />
-		<antcall target="mac-set-execution-bit" />
+		<!-- <antcall target="mac-set-execution-bit" /> -->
 	</target>
 
 	<target name="prepare-beta-files" depends="prepare">
@@ -395,6 +396,7 @@ http://www.jfritz.org/
 			</fileset>
 		</copy>
 
+		<chmod verbose="true" file="${release}/mac/tmp/JFritz.app/Contents/MacOS/JavaApplicationStub" perm="555"/>
 	</target>
 
 	<target name="finish-mac" description="Deletes temporary mac release files!">
@@ -414,8 +416,23 @@ http://www.jfritz.org/
 		<sshexec command="rm ./public/JFritz-${version}-Mac.zip" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 	</target>
 
+	<macrodef name="zipdir">
+	  <attribute name="destfile"/>
+	  <attribute name="sourcedir"/>
+	  <sequential>
+		  <echo>Source dir: @{sourcedir}</echo>
+		  <echo>Building zip: @{destfile}</echo>
+	  <exec executable="zip" dir="@{sourcedir}">
+	    <arg value="-qR"/>
+	    <arg value="@{destfile}"/>
+	    <arg value="*"/>
+	    <arg value="-x *.svn* "/>
+	  </exec>
+	  </sequential>
+	</macrodef>
+
 	<target name="create-mac-zip" description="Creates a ZIP-File for MacOS!">
-		<zip destfile="${release}/mac/JFritz-${version}-Mac.zip" basedir="${release}/mac/tmp" />
+		<zipdir destfile="${src.dir}/${release}/mac/JFritz-${version}-Mac.zip" sourcedir="${src.dir}/${release}/mac/tmp/" />
 	</target>
 
 	<target name="create-mac-dmg" description="Creates a DMG-File for MacOS!">
