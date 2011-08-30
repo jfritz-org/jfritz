@@ -61,12 +61,9 @@
 		# Main Targets
 		#############################################################################################
 	-->
-	<target name="release-beta-files" depends="prepare">
-		<!-- obfuscate the data -->
-		<!-- <antcall target="obfuscate" /> -->
 
-		<!-- prepare all debug-files -->
-		<antcall target="prepare-beta-files" />
+	<!-- add obfuscate dependency if necessary -->
+	<target name="release-beta-files" depends="prepare, create-windows, create-linux, create-mac">
 
 		<!-- scp beta files to jfritz.robotniko.de -->
 		<antcall target="scp-beta" />
@@ -246,26 +243,12 @@
 	<target name="prepare-beta-files" depends="prepare">
 		<antcall target="create-windows" />
 		<!-- rename zip and setup to beta -->
-		<move file="${release}/win/JFritz-${version}-Win.zip"
-			  tofile="${release}/win/JFritz-${version}-Beta.zip" />
-		<move file="${release}/win/JFritz-${version}-Setup.exe"
-			  tofile="${release}/win/JFritz-${version}-Beta-Setup.exe" />
-		<!-- zip setup-file -->
-		<zip destfile="${release}/win/JFritz-${version}-Beta-Win.zip"
-		       basedir="${release}/win/"
-		       includes="JFritz-${version}-Beta-Setup.exe" />
 
 		<!-- create linux files -->
 		<antcall target="create-linux" />
-		<move file="${release}/linux/JFritz-${version}.tar.gz"
-			  tofile="${release}/linux/JFritz-${version}-Beta.tar.gz" />
-		<move file="${release}/linux/JFritz-${version}.deb"
-			  tofile="${release}/linux/JFritz-${version}-Beta.deb" />
 
 		<!-- create mac files -->
 		<antcall target="create-mac" />
-		<move file="${release}/mac/JFritz-${version}-Mac.zip"
-			  tofile="${release}/mac/JFritz-${version}-Beta-Mac.zip" />
 	</target>
 
 	<target name="prepare-release-files" depends="prepare">
@@ -505,6 +488,24 @@ http://www.jfritz.org/
 	</target>
 
 	<target name="scp-beta" depends="getVersion" description="Copy windows-, linux and mac release files to jfritz.robotniko.de/beta">
+		<!-- rename windows files -->
+		<move file="${release}/win/JFritz-${version}.zip"
+			  tofile="${release}/win/JFritz-${version}-Beta.zip" />
+		<move file="${release}/win/JFritz-${version}-Win.zip"
+			  tofile="${release}/win/JFritz-${version}-Beta-Win.zip" />
+		<move file="${release}/win/JFritz-${version}-Setup.exe"
+			  tofile="${release}/win/JFritz-${version}-Beta-Setup.exe" />
+
+		<!-- rename linux files -->
+		<move file="${release}/linux/JFritz-${version}.tar.gz"
+			  tofile="${release}/linux/JFritz-${version}-Beta.tar.gz" />
+		<move file="${release}/linux/JFritz-${version}.deb"
+			  tofile="${release}/linux/JFritz-${version}-Beta.deb" />
+
+		<!-- rename mac files -->
+		<move file="${release}/mac/JFritz-${version}-Mac.zip"
+			  tofile="${release}/mac/JFritz-${version}-Beta-Mac.zip" />
+
 		<scp file="${dist}/Changelog.txt" port="${port2}" trust="yes" todir="${user2}@${server2}:${scp-beta-path}" verbose="yes" password="${password2}"/>
 		<scp file="${release}/win/JFritz-${version}-Beta-Win.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
 		<scp file="${release}/win/JFritz-${version}-Beta.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
@@ -512,15 +513,6 @@ http://www.jfritz.org/
 		<scp file="${release}/linux/JFritz-${version}-Beta.tar.gz" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
 		<scp file="${release}/linux/JFritz-${version}-Beta.deb" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
 		<scp file="${release}/mac/JFritz-${version}-Beta-Mac.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
-
-		<!-- mac deflate and set execute bit -->
-		<sshexec command="mkdir ./public/mac"  username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
-		<sshexec command="cd ./public/mac; unzip ../JFritz-${version}-Beta-Mac.zip" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
-		<sshexec command="chmod 555 ./public/mac/JFritz.app/Contents/MacOS/JavaApplicationStub" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
-		<sshexec command="rm ./public/JFritz-${version}-Beta-Mac.zip" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
-		<sshexec command="cd ./public/mac; zip -r ../JFritz-${version}-Beta-Mac.zip *" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
-		<sshexec command="cd ./public/mac; rm * -rf" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
-		<sshexec command="rmdir ./public/mac" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 
 		<sshexec command="mv -f ${scp-beta-path}/JFritz* ${scp-beta-path}/old"  username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<sshexec command="mv -f ./public/JFritz-${version}-Beta-Mac.zip ${scp-beta-path}" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
