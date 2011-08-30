@@ -15,7 +15,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -258,7 +257,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		statusBar = createStatusBar2();
 
 		addKeyListener(this, KeyEvent.VK_F5, "fetchList", 0); //$NON-NLS-1$
-		addKeyListener(this, KeyEvent.VK_F, "search", InputEvent.CTRL_MASK); //$NON-NLS-1$
+		addKeyListener(this, KeyEvent.VK_F, "search", Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //$NON-NLS-1$
 
 		this.setIconImage(Toolkit
 						.getDefaultToolkit()
@@ -1243,7 +1242,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			}
 		} else if (e.getActionCommand().equals("search")) {
 			if (tabSelected("callerlist")) {
-				this.getCallerListPanel().activateSearchFilter();
+				this.getCallerListPanel().toggleSearchFilter();
 			} else if (tabSelected("phonebook")) {
 				this.getPhoneBookPanel().activateSearchFilter();
 			}

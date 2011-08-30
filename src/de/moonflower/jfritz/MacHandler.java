@@ -1,10 +1,9 @@
 package de.moonflower.jfritz;
 
-import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
-import java.lang.reflect.*;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
-import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.utils.Debug;
 
 
@@ -80,9 +79,6 @@ public class MacHandler {
 			Method registerPrefsHandler = MRJApplicationUtils.getMethod(
 					"registerPrefsHandler", types); //$NON-NLS-1$
 			registerPrefsHandler.invoke(proxy, argslist);
-
-			int MENU_MASK = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-			JFritz.getJframe().addKeyListener(JFritz.getJframe(), KeyEvent.VK_F, "search", MENU_MASK);
 
 		} catch (Throwable e) {
 			Debug.error(e.toString());

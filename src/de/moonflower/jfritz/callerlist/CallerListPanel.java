@@ -5,6 +5,7 @@
 package de.moonflower.jfritz.callerlist;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -282,6 +283,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 	private PropertyProvider properties = PropertyProvider.getInstance();
 	protected MessageProvider messages = MessageProvider.getInstance();
+
+	private Component focusBeforeSearch = null;
 
 	/**
 	 * A callerListPanel is a view for a callerlist, it has its own
@@ -1745,15 +1748,19 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		JFritz.getJframe().setGoogleItem(status);
 	}
 
-	public void activateSearchFilter() {
+	public void toggleSearchFilter() {
 		if (searchFilterButton.getState() != ThreeStateButton.NOTHING)
 		{
 			searchFilterTextField.setVisible(false);
 			searchLabel.setVisible(false);
 			searchFilterButton.setState(ThreeStateButton.NOTHING);
 			this.update();
+			if (focusBeforeSearch != null) {
+				focusBeforeSearch.requestFocus();
+			}
 			filter[SEARCH].setEnabled(false);
 		} else {
+			focusBeforeSearch = JFritz.getJframe().getFocusOwner();
 			searchFilterTextField.setVisible(true);
 			searchLabel.setVisible(true);
 			((SearchFilter) filter[SEARCH])

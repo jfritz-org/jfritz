@@ -189,7 +189,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 162 2011-08-29 16:09:32Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 172 2011-08-30 08:54:44Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -264,7 +264,7 @@ public class Main implements LookupObserver {
 	public Main(String[] args) {
 		loadSaveDir();
 
-		DOMConfigurator.configure("log4j.xml");
+		DOMConfigurator.configure(JFritzUtils.getFullPath("/log4j.xml"));
 		initLog4jAppender();
 
 		Calendar cal = Calendar.getInstance();
