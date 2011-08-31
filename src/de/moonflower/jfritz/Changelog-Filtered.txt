@@ -1,3 +1,7 @@
+JFritz 0.7.4.1.15:
+- Mac OS X: Tastaturkürzel für Google-Maps von ALT+G auf Command+G umgestellt 
+- Telefonbuch: Die Taste ESCAPE deaktiviert die aktuelle Suche
+
 JFritz 0.7.4.1.14:
 - Fokus wird beim deaktivieren der Suche wieder auf das vor der suche fokusierte Element gesetzt
 - Mac OS X: Log4j.xml wird nun im Installationsordner gesucht

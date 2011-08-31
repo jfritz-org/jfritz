@@ -21,6 +21,8 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.properties.PropertyProvider;
 
@@ -32,6 +34,8 @@ import de.moonflower.jfritz.properties.PropertyProvider;
  *
  */
 public class JFritzUtils {
+	private static final Logger log = Logger.getLogger(JFritzUtils.class);
+
 	private static final int READ_TIMEOUT = 30000; //$NON-NLS-1$
 	public static final String FILESEP = System.getProperty("file.separator"); //$NON-NLS-1$
 	public static final String PATHSEP = System.getProperty("path.separator"); //$NON-NLS-1$
@@ -67,13 +71,13 @@ public class JFritzUtils {
 		DataOutputStream printout;
 		String data = ""; //$NON-NLS-1$
 		boolean wrong_pass = false;
-		Debug.debug("Urlstr: " + urlstr);
-		Debug.debug("Postdata: " + postdata);
+		log.debug("Urlstr: " + urlstr);
+		log.debug("Postdata: " + postdata);
 
 		try {
 			url = new URL(urlstr);
 		} catch (MalformedURLException e) {
-			Debug.error("URL invalid: " + urlstr); //$NON-NLS-1$
+			log.error("URL invalid: " + urlstr); //$NON-NLS-1$
 			throw new MalformedURLException("URL invalid: " + urlstr); //$NON-NLS-1$
 		}
 
@@ -96,7 +100,7 @@ public class JFritzUtils {
 					printout.flush();
 					printout.close();
 				} catch (SocketTimeoutException ste) {
-					Debug.error("Could not fetch data from url: "
+					log.error("Could not fetch data from url: "
 							+ ste.toString());
 					throw ste;
 				}
@@ -115,7 +119,7 @@ public class JFritzUtils {
 							|| (str.indexOf("Password not valid") >= 0)
 							|| (str.indexOf("<!--loginPage-->") >= 0)
 							|| (str.indexOf("FRITZ!Box Anmeldung") >= 0)) {
-						Debug.debug("Wrong password detected: " + str);
+						log.debug("Wrong password detected: " + str);
 						wrong_pass = true;
 					}
 					if (retrieveData) {
@@ -166,13 +170,13 @@ public class JFritzUtils {
 		DataOutputStream printout;
 		Vector<String> data = new Vector<String>();
 		boolean wrong_pass = false;
-		Debug.debug("Urlstr: " + urlstr);
-		Debug.debug("Postdata: " + postdata);
+		log.debug("Urlstr: " + urlstr);
+		log.debug("Postdata: " + postdata);
 
 		try {
 			url = new URL(urlstr);
 		} catch (MalformedURLException e) {
-			Debug.error("URL invalid: " + urlstr); //$NON-NLS-1$
+			log.error("URL invalid: " + urlstr); //$NON-NLS-1$
 			throw new MalformedURLException("URL invalid: " + urlstr); //$NON-NLS-1$
 		}
 
@@ -195,11 +199,11 @@ public class JFritzUtils {
 					printout.flush();
 					printout.close();
 				} catch (SocketTimeoutException ste) {
-					Debug.error("Could not fetch data from url: "
+					log.error("Could not fetch data from url: "
 							+ ste.toString());
 					throw ste;
 				} catch (NoRouteToHostException nrthe) {
-					Debug.error("No route to host exception: "
+					log.error("No route to host exception: "
 							+ nrthe.toString());
 					throw nrthe;
 				}
@@ -218,7 +222,7 @@ public class JFritzUtils {
 							|| (str.indexOf("Password not valid") >= 0)
 							|| (str.indexOf("<!--loginPage-->") >= 0)
 							|| (str.indexOf("FRITZ!Box Anmeldung") >= 0)) {
-						Debug.debug("Wrong password detected: " + str);
+						log.debug("Wrong password detected: " + str);
 						wrong_pass = true;
 					}
 					if (retrieveData) {
@@ -237,12 +241,12 @@ public class JFritzUtils {
 				for (int i = 0; i < data.size(); i++) {
 					Matcher m = waitSeconds.matcher(data.get(i));
 					if (m.find()) {
-						Debug.debug("Waiting string: " + data.get(i));
+						log.debug("Waiting string: " + data.get(i));
 						try {
 							wait = Integer.parseInt(m.group(1));
 							break;
 						} catch (Exception e) {
-							Debug.error(e.toString());
+							log.error(e.toString());
 							wait = 4;
 						}
 					}
@@ -407,7 +411,7 @@ public class JFritzUtils {
 		try {
 			return Integer.parseInt(property);
 		} catch (NumberFormatException nfe) {
-			Debug.warning("error converting Int returning 0 instead");
+			log.warn("error converting Int returning 0 instead");
 		}
 		return 0;
 	}
@@ -486,7 +490,7 @@ public class JFritzUtils {
 		days2 += gc2.get(Calendar.DAY_OF_YEAR) - 1;
 
 		if (days1 - days2 < 0) {
-			Debug.debug("Negative date difference: " + date1 + " - " + date2);
+			log.debug("Negative date difference: " + date1 + " - " + date2);
 		}
 		return (days1 - days2);
 	}

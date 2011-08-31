@@ -562,7 +562,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		googleItem.setActionCommand("google");
 		googleItem.addActionListener(callerListPanel);
 		googleItem.setEnabled(false);
-		googleItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.ALT_MASK));
+		if (OSDetector.isMac()) {
+			googleItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		} else {
+			googleItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.ALT_MASK));
+		}
 		jfritzMenu.add(googleItem);
 
 		item = new JMenuItem(messages.getMessage("delete_fritzbox_callerlist")); //$NON-NLS-1$
