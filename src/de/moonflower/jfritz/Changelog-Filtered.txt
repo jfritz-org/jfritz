@@ -1,3 +1,9 @@
+JFritz 0.7.4.1.17:
+- jfritz.txt in INI-Format umgewandelt
+- Windows: Installation und Deinstallation überarbeitet
+- Bugfix: Default-Speicherverzeichnis für JFritz Daten bei Erstinstallation
+- Neu: Namen zu allen derzeit verfügbaren FritzBoxen (danke Rainer) 
+
 JFritz 0.7.4.1.16:
 - Anrufmonitor: Ausführen von externen Programmen refaktoriert
 - Bugfix [0000335]: Anrufmonitor hält aufgerufenes Programm an
