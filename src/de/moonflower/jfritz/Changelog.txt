@@ -15,7 +15,9 @@ TODO vor dem Release:
 - Beim ersten Start popup fuer das PW, wenn falscher Login festgestellt wurde!
 
 JFritz 0.7.4.1.17:
-- jfritz.txt in INI-Format umgewandelt 
+- jfritz.txt in INI-Format umgewandelt
+- Windows: Installation und Deinstallation überarbeitet
+- Bugfix: Default-Speicherverzeichnis für JFritz Daten bei Erstinstallation
 
 JFritz 0.7.4.1.16:
 - Anrufmonitor: Ausführen von externen Programmen refaktoriert
