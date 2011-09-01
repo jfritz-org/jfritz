@@ -43,7 +43,7 @@ TODO: DEB erstellen, installieren und schauen ob es nun ok ist!!!
 
 JFritz 0.7.4.1.9:
 - Neue EXE Version für 64-Bit Java
-- TODO: Packaging der neuen EXE ueberpruefen!!!!
+- Bugfix [0000291]: Jfritz started nicht mit Windows 64 bit und Java 64 bit 
 - Neue Bibliothek JFontChooser
 New Strings:
 font
