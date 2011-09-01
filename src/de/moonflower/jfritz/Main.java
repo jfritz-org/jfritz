@@ -1,4 +1,4 @@
-/**
+ /**
  * JFritz
  * http://jfritz.sourceforge.net/
  *
@@ -189,7 +189,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 178 2011-09-01 19:50:33Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 180 2011-09-01 20:48:53Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -262,6 +262,7 @@ public class Main implements LookupObserver {
 	}
 
 	public Main(String[] args) {
+		SAVE_DIR = getDefaultSaveDirectory();
 		loadSaveDir();
 
 		DOMConfigurator.configure(JFritzUtils.getFullPath("/log4j.xml"));
@@ -443,6 +444,9 @@ public class Main implements LookupObserver {
 
 		splash.setStatus("Loading properties...");
 		showConfWizard = properties.loadProperties(true);
+		if (showConfWizard) {
+			Main.writeSaveDir();
+		}
 
     	Debug.always("OS Language: " + System.getProperty("user.language"));
     	Debug.always("OS Country: " + System.getProperty("user.country"));
@@ -586,14 +590,7 @@ public class Main implements LookupObserver {
 		String newSaveDir = SAVE_DIR;
 		if (SAVE_DIR.equals(System.getProperty("user.dir") + File.separator)) {
 			shouldMoveDirectory = true;
-			if (OSDetector.isWindows()) {
-				newSaveDir = System.getenv("APPDATA") + File.separator + "JFritz";
-			} else if (OSDetector.isMac()) {
-				newSaveDir = System.getProperty("user.home") + "/Library/Application Support/JFritz";
-			} else if (OSDetector.isLinux()) {
-				newSaveDir = System.getProperty("user.home") + File.separator + JFRITZ_HIDDEN_DIR + File.separator;
-			} else {
-			}
+			newSaveDir = getDefaultSaveDirectory();
 			if (SAVE_DIR.equals(newSaveDir)) {
 				shouldMoveDirectory = false;
 			}
@@ -665,6 +662,19 @@ public class Main implements LookupObserver {
 		} else {
 			Debug.debug("Data is already at an exclusive directory: " + SAVE_DIR);
 		}
+	}
+
+	private String getDefaultSaveDirectory() {
+		String defDir = "";
+		if (OSDetector.isWindows()) {
+			defDir = System.getenv("APPDATA") + File.separator + "JFritz" + File.separator;
+		} else if (OSDetector.isMac()) {
+			defDir = System.getProperty("user.home") + "/Library/Application Support/JFritz/";
+		} else if (OSDetector.isLinux()) {
+			defDir = System.getProperty("user.home") + File.separator + JFRITZ_HIDDEN_DIR + File.separator;
+		} else {
+		}
+		return defDir;
 	}
 
 	public static void changeSaveDir(final String path) {
