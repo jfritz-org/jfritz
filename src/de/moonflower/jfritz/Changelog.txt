@@ -14,6 +14,10 @@ TODO vor dem Release:
 - Debug-Klasse auf Log4j umstellen!
 - Beim ersten Start popup fuer das PW, wenn falscher Login festgestellt wurde!
 
+JFritz 0.7.4.1.16:
+- Anrufmonitor: Ausführen von externen Programmen refaktoriert
+- Bugfix [0000335]: Anrufmonitor hält aufgerufenes Programm an
+
 JFritz 0.7.4.1.15:
 - Mac OS X: Tastaturkürzel für Google-Maps von ALT+G auf Command+G umgestellt 
 - Telefonbuch: Die Taste ESCAPE deaktiviert die aktuelle Suche
@@ -21,10 +25,10 @@ JFritz 0.7.4.1.15:
 JFritz 0.7.4.1.14:
 - Anrufliste: Fokus wird beim deaktivieren der Suche wieder auf das vor der suche fokusierte Element gesetzt
 - Mac OS X: Log4j.xml wird nun im Installationsordner gesucht
-- Feature[0000339]: MAC Shortcut von Ctrl-F auf Command-F legen 
+- Feature [0000339]: MAC Shortcut von Ctrl-F auf Command-F legen 
 
 JFritz 0.7.4.1.13:
-- Feature[0000338]: Klick auf "Suchen"-Button -> Fokus ins Suchfeld, die Taste ESCAPE deaktiviert die aktuelle Suche
+- Feature [0000338]: Klick auf "Suchen"-Button -> Fokus ins Suchfeld, die Taste ESCAPE deaktiviert die aktuelle Suche
 
 JFritz 0.7.4.1.12:
 - Update jfritz.exe und autoupdate.exe

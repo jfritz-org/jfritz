@@ -4,7 +4,10 @@
  */
 package de.moonflower.jfritz.callmonitor;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.regex.Matcher;
@@ -291,15 +294,95 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 		if (programString.equals("")) { //$NON-NLS-1$
 		Debug.errDlg(messages.getMessage("no_external_program") //$NON-NLS-1$
 		        + programString);
+		log.error(messages.getMessage("not_external_program")); //$NON-NLS-1$
 		} else {
 			log.info("Starte externes Programm: " + programString); //$NON-NLS-1$
 			try {
-				Runtime.getRuntime().exec(programString);
+				String[] splittedProgArg = splitProgramAndArguments(programString);
+				if (splittedProgArg != null) {
+					String prog = splittedProgArg[0];
+					String args = splittedProgArg[1];
+					executeProgram(prog, args);
+				}
 			} catch (IOException e) {
 				Debug.errDlg(messages.getMessage("not_external_program_start") //$NON-NLS-1$
-							+ programString);
-				log.error(e.toString());
+							+ " " + programString);
+				log.error(messages.getMessage("not_external_program_start") //$NON-NLS-1$
+						+ " " + programString, e);
 			}
 		}
+	}
+
+	protected String[] splitProgramAndArguments(final String input) {
+		if (input == null) {
+			return null;
+		}
+
+		String[] result = new String[2];
+
+		String in = input.trim();
+		if (in.startsWith("\"")) {
+			int nextQuote = in.indexOf("\"", 1);
+			if (nextQuote != -1) {
+				result[0] = in.substring(0, nextQuote+1);
+				result[1] = in.substring(nextQuote+1).trim();
+			} else {
+				result[0] = in;
+				result[1] = "";
+			}
+		} else {
+			int firstSpace = in.indexOf(" ");
+			if (firstSpace != -1) {
+				result[0] = in.substring(0, firstSpace);
+				result[1] = in.substring(firstSpace+1);
+			} else {
+				result[0] = in;
+				result[1] = "";
+			}
+		}
+		return result;
+	}
+
+	protected void executeProgram(final String prog, final String args) throws IOException {
+		ExternalProgram ep = new ExternalProgram(prog, args);
+		ep.start();
+	}
+
+	private class ExternalProgram extends Thread {
+		String prog;
+		String args;
+
+		public ExternalProgram(final String prog, final String args) {
+			this.prog = prog;
+			this.args = args;
+			this.setName("ExternalProgramThread|" + prog);
+		}
+
+	    public void run() {
+			ProcessBuilder pb = new ProcessBuilder(prog, args);
+			pb.redirectErrorStream(true);
+
+			try {
+				log.info("Starting execution of external program");
+				log.info("Program: " + prog);
+				log.info("Arguments: " + args);
+				Process p = pb.start();
+
+				InputStreamReader tempReader = new InputStreamReader(
+						new BufferedInputStream(p.getInputStream()));
+
+				BufferedReader reader = new BufferedReader(tempReader);
+				String line = reader.readLine();
+				while (line != null) {
+					line = reader.readLine();
+				}
+				log.info("Finished execution of external program");
+			} catch (Throwable t) {
+				log.error(messages.getMessage("not_external_program_start") //$NON-NLS-1$
+						+ " " + prog, t);
+				Debug.errDlg(messages.getMessage("not_external_program_start") //$NON-NLS-1$
+						+ " " + prog);
+			}
+	    }
 	}
 }
