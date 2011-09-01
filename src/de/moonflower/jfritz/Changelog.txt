@@ -14,6 +14,9 @@ TODO vor dem Release:
 - Debug-Klasse auf Log4j umstellen!
 - Beim ersten Start popup fuer das PW, wenn falscher Login festgestellt wurde!
 
+JFritz 0.7.4.1.17:
+- jfritz.txt in INI-Format umgewandelt 
+
 JFritz 0.7.4.1.16:
 - Anrufmonitor: Ausführen von externen Programmen refaktoriert
 - Bugfix [0000335]: Anrufmonitor hält aufgerufenes Programm an

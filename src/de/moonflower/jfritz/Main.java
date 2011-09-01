@@ -189,7 +189,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 172 2011-08-30 08:54:44Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 178 2011-09-01 19:50:33Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -974,6 +974,8 @@ public class Main implements LookupObserver {
 				SAVE_DIR = System.getProperty("user.dir") + File.separator;
 			}
 
+			bw.write("[Settings]");
+			bw.newLine();
 			bw.write(SAVE_DIR_TEXT + SAVE_DIR);
 			bw.newLine();
 			bw.close();
@@ -1007,14 +1009,21 @@ public class Main implements LookupObserver {
 						+ " is empty");
 				SAVE_DIR = System.getProperty("user.dir") + File.separator;
 			} else {
-				String[] entries = line.split("=");
-				if (!entries[1].equals("")) {
-					SAVE_DIR = entries[1];
-					File file = new File(SAVE_DIR);
-					if (!file.isDirectory())
-						SAVE_DIR = System.getProperty("user.dir") + File.separator;
-					else if (!SAVE_DIR.endsWith(File.separator))
-						SAVE_DIR = SAVE_DIR + File.separator;
+				while (line != null) {
+					if (line.contains("=")) {
+						String[] entries = line.split("=");
+						if (!entries[1].equals("")) {
+							if (entries[0].equals("Save_Directory")) {
+								SAVE_DIR = entries[1];
+								File file = new File(SAVE_DIR);
+								if (!file.isDirectory())
+									SAVE_DIR = System.getProperty("user.dir") + File.separator;
+								else if (!SAVE_DIR.endsWith(File.separator))
+									SAVE_DIR = SAVE_DIR + File.separator;
+							}
+						}
+					}
+					line = br.readLine();
 				}
 			}
 		} catch (FileNotFoundException e) {
