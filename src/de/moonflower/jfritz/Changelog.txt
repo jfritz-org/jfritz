@@ -19,6 +19,7 @@ JFritz 0.7.4.1.17:
 - Windows: Installation und Deinstallation überarbeitet
 - Bugfix: Default-Speicherverzeichnis für JFritz Daten bei Erstinstallation
 - Neu: Namen zu allen derzeit verfügbaren FritzBoxen (danke Rainer) 
+- Schriftgröße im Einstelldialog (FRITZ!Box) angepasst
 
 JFritz 0.7.4.1.16:
 - Anrufmonitor: Ausführen von externen Programmen refaktoriert
