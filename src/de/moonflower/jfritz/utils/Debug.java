@@ -5,20 +5,6 @@
 package de.moonflower.jfritz.utils;
 
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.filechooser.FileFilter;
-
-import de.moonflower.jfritz.Main;
-import de.moonflower.jfritz.messages.MessageProvider;
-import de.moonflower.jfritz.properties.PropertyProvider;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -33,6 +19,20 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.filechooser.FileFilter;
+
+import de.moonflower.jfritz.JFritzDataDirectory;
+import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 
 /**
  * Write debug messages to STDOUT or FILE. Show Error-Dialog with a special
@@ -110,7 +110,7 @@ public class Debug {
 
 		//if our file name contains no path, then save in our save dir
 		if(!debugLogFile.contains(System.getProperty("file.separator")))
-			debugLogFile = Main.SAVE_DIR + debugLogFile;
+			debugLogFile = JFritzDataDirectory.getInstance().getDataDirectory() + debugLogFile;
 
 		try {
 			// setup the redirection of Sysem.out and System.err
@@ -254,7 +254,7 @@ public class Debug {
 		save_button = new JButton();
 		save_button.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
-				JFileChooser fc = new JFileChooser(Main.SAVE_DIR); //$NON-NLS-1$
+				JFileChooser fc = new JFileChooser(JFritzDataDirectory.getInstance().getDataDirectory()); //$NON-NLS-1$
 				fc.setDialogTitle(messages.getMessage("save_debug_log")); //$NON-NLS-1$
 				fc.setDialogType(JFileChooser.SAVE_DIALOG);
 				fc.setFileFilter(new FileFilter() {

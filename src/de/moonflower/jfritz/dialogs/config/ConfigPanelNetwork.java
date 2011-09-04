@@ -4,11 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.ActionListener;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-
+import java.awt.event.ActionListener;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -27,10 +26,10 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.TableCellRenderer;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.JFritzDataDirectory;
 import de.moonflower.jfritz.callerlist.filter.CallFilter;
-import de.moonflower.jfritz.cellrenderer.ButtonCellRenderer;
 import de.moonflower.jfritz.cellrenderer.ButtonCellEditor;
+import de.moonflower.jfritz.cellrenderer.ButtonCellRenderer;
 import de.moonflower.jfritz.cellrenderer.PasswordCellRenderer;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.network.ClientLoginsTableModel;
@@ -211,7 +210,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		}
 
 		JFritz.getJframe().setNetworkButton();
-		ClientLoginsTableModel.saveToXMLFile(Main.SAVE_DIR + JFritz.CLIENT_SETTINGS_FILE);
+		ClientLoginsTableModel.saveToXMLFile(JFritzDataDirectory.getInstance().getDataDirectory() + JFritz.CLIENT_SETTINGS_FILE);
 
 	}
 

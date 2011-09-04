@@ -14,7 +14,7 @@ import java.util.Vector;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.JFritzDataDirectory;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.Debug;
@@ -51,7 +51,7 @@ public class JFritzBackup {
 
 	public void doBackup() {
     	Date date = Calendar.getInstance().getTime();
-		doBackup(Main.SAVE_DIR, createDirectory(Main.SAVE_DIR + "backup"+File.separator + df.format( date )));
+		doBackup(JFritzDataDirectory.getInstance().getDataDirectory(), createDirectory(JFritzDataDirectory.getInstance().getDataDirectory() + "backup"+File.separator + df.format( date )));
 	}
 
 	public void doBackup(final String sourceDirectory, final String targetDirectory) {
@@ -77,6 +77,7 @@ public class JFritzBackup {
 
     	try {
 			FileUtils.copyDirectory(new File(sourceDirectory), new File(dest), new MyFileFilter("xml"));
+			log.info("Created backup successfully");
 		} catch (IOException e) {
 			log.error("Error while creating backup", e);
 			Debug.errDlg("Error while creating backup");
@@ -87,7 +88,7 @@ public class JFritzBackup {
      * Deletes old backup files and directories.
      */
     public void clearOldBackups() {
-        File dir = new File(Main.SAVE_DIR + "backup");
+        File dir = new File(JFritzDataDirectory.getInstance().getDataDirectory() + "backup");
         final Vector<Date> backupDates = new Vector<Date>(20);
         dir.listFiles(new FileFilter() {
             public boolean accept(File arg0) {

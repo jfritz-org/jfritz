@@ -33,6 +33,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JMenuItem;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.JFritzDataDirectory;
 import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.ProgramConstants;
@@ -373,7 +374,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 				.setStateProperty(
 						"option.phonebook.import_xml_path", fc.getSelectedFile().getAbsolutePath()); //$NON-NLS-1$
 		phonebook.loadFromXMLFile(fc.getSelectedFile().getAbsolutePath());
-		phonebook.saveToXMLFile(Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
+		phonebook.saveToXMLFile(JFritzDataDirectory.getInstance().getDataDirectory() + JFritz.PHONEBOOK_FILE);
 	}
 
 	/**

@@ -21,6 +21,7 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import de.moonflower.jfritz.JFritzDataDirectory;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
@@ -142,12 +143,12 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 		JLabel label = new JLabel(messages.getMessage("save_directory"));
 		panel.add(label);
 
-		save_location = new JTextField(Main.SAVE_DIR, 16);
+		save_location = new JTextField(JFritzDataDirectory.getInstance().getDataDirectory(), 16);
 		panel.add(save_location);
 
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser fc = new JFileChooser(Main.SAVE_DIR);
+				JFileChooser fc = new JFileChooser(JFritzDataDirectory.getInstance().getDataDirectory());
 				fc.setDialogTitle(messages.getMessage("save_directory")); //$NON-NLS-1$
 				fc.setDialogType(JFileChooser.SAVE_DIALOG);
 
@@ -246,8 +247,8 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 
 	public void saveSettings() {
 		// only write the save dir to disk if the user changed something
-		if (!save_location.getText().equals(Main.SAVE_DIR)) {
-			Main.changeSaveDir(save_location.getText());
+		if (!save_location.getText().equals(JFritzDataDirectory.getInstance().getDataDirectory())) {
+			JFritzDataDirectory.getInstance().changeSaveDir(save_location.getText());
 		}
 
 		properties.setProperty("option.useSSDP", Boolean.toString(searchWithSSDP //$NON-NLS-1$

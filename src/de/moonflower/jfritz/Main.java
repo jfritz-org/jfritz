@@ -135,13 +135,8 @@
 package de.moonflower.jfritz;
 
 import java.awt.Frame;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Enumeration;
@@ -187,7 +182,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 185 2011-09-04 11:52:16Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 186 2011-09-04 16:37:28Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -201,11 +196,6 @@ public class Main implements LookupObserver {
 			+ File.separator + JFRITZ_HIDDEN_DIR;
 
 	public final static String USER_JFRITZ_FILE = "jfritz.txt";
-
-	public static String SAVE_DIR = System.getProperty("user.dir")
-			+ File.separator;
-
-	public static String SAVE_DIR_TEXT = "Save_Directory=";
 
 	public final static String LOCK_FILE = ".lock"; //$NON-NLS-1$
 
@@ -251,7 +241,7 @@ public class Main implements LookupObserver {
 	{
 		// NICHT VERWENDEN, nur für TestCases, nicht alles initialisiert. NICHT VERWENDEN!
 		loadLanguages();
-		loadSaveDir();
+		JFritzDataDirectory.getInstance().loadSaveDir();
 		showConfWizard = properties.loadProperties(false);
 		String loc = properties.getProperty("locale");
 		messages.loadMessages(new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_")+1, loc.length()))); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -260,10 +250,8 @@ public class Main implements LookupObserver {
 	}
 
 	public Main(String[] args) {
-		SAVE_DIR = getDefaultSaveDirectory();
-		loadSaveDir();
-
 		DOMConfigurator.configure(JFritzUtils.getFullPath("/log4j.xml"));
+		JFritzDataDirectory.getInstance().loadSaveDir();
 		initLog4jAppender();
 
 		Calendar cal = Calendar.getInstance();
@@ -300,7 +288,7 @@ public class Main implements LookupObserver {
 		loadLanguages();
 
 		// move save dir and default file location
-		moveDataToRightSaveDir();
+		shouldMoveDataToRightSaveDir();
 
 		Debug.on();
 		Debug.always(ProgramConstants.PROGRAM_NAME + " v" + ProgramConstants.PROGRAM_VERSION //$NON-NLS-1$
@@ -443,7 +431,7 @@ public class Main implements LookupObserver {
 		splash.setStatus("Loading properties...");
 		showConfWizard = properties.loadProperties(true);
 		if (showConfWizard) {
-			Main.writeSaveDir();
+			JFritzDataDirectory.getInstance().writeSaveDir();
 		}
 
     	Debug.always("OS Language: " + System.getProperty("user.language"));
@@ -579,125 +567,6 @@ public class Main implements LookupObserver {
 		}
 	}
 
-	private void moveDataToRightSaveDir() {
-		// zeigt auf altes Verzeichnis
-		Debug.debug("Old SAVE_DIR: " + SAVE_DIR);
-		boolean shouldMoveDirectory = false;
-		String newSaveDir = SAVE_DIR;
-		if (SAVE_DIR.equals(System.getProperty("user.dir") + File.separator)) {
-			shouldMoveDirectory = true;
-			newSaveDir = getDefaultSaveDirectory();
-			if (SAVE_DIR.equals(newSaveDir)) {
-				shouldMoveDirectory = false;
-			}
-		}
-
-		if (shouldMoveDirectory) {
-			showConfWizard = properties.loadProperties(false);
-			if ( properties.getProperty("locale").equals("") )
-			{
-				Debug.info("No language set yet ... Setting language to OS language");
-		    	// Check if language is supported. If not switch to english
-		    	if ( supported_languages.contains(new Locale(System.getProperty("user.language"),System.getProperty("user.country"))))
-		    	{
-		        	properties.setProperty("locale", System.getProperty("user.language")+"_"+System.getProperty("user.country"));
-		    	} else {
-		    		Debug.warning("Your language ist not yet supported.");
-		        	properties.setProperty("locale", "en_US");
-		    	}
-			}
-
-			String loc = properties.getProperty("locale");
-			Debug.always("Selected language: " + loc);
-
-			messages.loadMessages(new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_")+1, loc.length()))); //$NON-NLS-1$,  //$NON-NLS-2$
-			loadLocaleMeanings(new Locale("int", "INT"));
-			Debug.debug("Shall JFritz move data from " + SAVE_DIR + " to " + newSaveDir + " ?");
-
-			int answer = JOptionPane.NO_OPTION;
-
-	        File dir = new File(SAVE_DIR);
-	        File[] entries = dir.listFiles(new FileFilter() {
-	            public boolean accept(File arg0) {
-	                if (arg0.getName().endsWith(".xml")) {
-	                	if (!"build-release-pwd.xml".equals(arg0.getName())
-	                		&& !"build-release.xml".equals(arg0.getName())
-	                		&& !"build.xml".equals(arg0.getName()))
-	                	{
-		                	Debug.debug("Found XML-File to move: " + arg0.getName());
-	                		return true;
-	                	}
-	                }
-                	return false;
-	            }
-	        });
-
-			String message = messages.getMessage("moveDataDirectory_Warning"); //$NON-NLS-1$
-
-			message = message.replaceAll("%FROM", preparePattern(SAVE_DIR));
-			message = message.replaceAll("%TO", preparePattern(newSaveDir));
-			ComplexJOptionPaneMessage msg = new ComplexJOptionPaneMessage(
-	                "legalInfo.moveDataDirectory", //$NON-NLS-1$
-					message);
-			if (msg.showDialogEnabled()
-					&& (entries.length != 0)) {
-				Debug.debug("Show confirm dialog to move data");
-				answer = JOptionPane.showConfirmDialog(null,
-						msg.getComponents(),
-						messages.getMessage("information"), JOptionPane.YES_NO_OPTION);
-				msg.saveProperty();
-				properties.saveStateProperties();
-			}
-
-			if (answer == JOptionPane.YES_OPTION
-					|| (entries.length == 0)) {
-				Debug.debug("Moving data from " + SAVE_DIR + " to " + newSaveDir + " !");
-				changeSaveDir(newSaveDir);
-			}
-
-		} else {
-			Debug.debug("Data is already at an exclusive directory: " + SAVE_DIR);
-		}
-	}
-
-	private String getDefaultSaveDirectory() {
-		String defDir = "";
-		if (OSDetector.isWindows()) {
-			defDir = System.getenv("APPDATA") + File.separator + "JFritz" + File.separator;
-		} else if (OSDetector.isMac()) {
-			defDir = System.getProperty("user.home") + "/Library/Application Support/JFritz/";
-		} else if (OSDetector.isLinux()) {
-			defDir = System.getProperty("user.home") + File.separator + JFRITZ_HIDDEN_DIR + File.separator;
-		} else {
-		}
-		return defDir;
-	}
-
-	public static void changeSaveDir(String path) {
-		if (!path.endsWith(File.separator)) {
-			path = path + File.separator;
-		}
-
-		File dst = new File(path);
-		if (!dst.exists()) {
-			Debug.debug("Creating directory");
-			dst.mkdir();
-		}
-		if (dst.isDirectory())
-		{
-			File src = new File(Main.SAVE_DIR);
-			src.renameTo(dst);
-
-			Debug.debug("Change save directory to: " + path);
-			Main.SAVE_DIR = path;
-			Debug.debug("Write file ~/" + JFRITZ_HIDDEN_DIR + "/" + USER_JFRITZ_FILE);
-			Main.writeSaveDir();
-			// update logger
-			Logger.getRootLogger().removeAppender("log4j-file-appender");
-			initLog4jAppender();
-		}
-	}
-
 	private static void initLog4jAppender() {
 		Appender a = Logger.getRootLogger().getAppender("FileAppender");
 		if (a != null && a instanceof FileAppender) {
@@ -705,7 +574,7 @@ public class Main implements LookupObserver {
 			String oldPath = fa.getFile();
 			String path = oldPath;
 			if (oldPath.equals("log4j.log")) {
-				path = Main.SAVE_DIR + "log4j.log";
+				path = JFritzDataDirectory.getInstance().getDataDirectory() + "log4j.log";
 				fa.setFile(path);
 				fa.activateOptions();
 				Logger.getRootLogger().info("Setting log4j logging path from " + oldPath + " to " + path);
@@ -867,13 +736,13 @@ public class Main implements LookupObserver {
 
 	public static boolean lockExists()
 	{
-		File f = new File(SAVE_DIR + LOCK_FILE);
+		File f = new File(JFritzDataDirectory.getInstance().getDataDirectory() + LOCK_FILE);
 		return f.exists();
 	}
 
 	public static void createLock()
 	{
-		File f = new File(SAVE_DIR + LOCK_FILE);
+		File f = new File(JFritzDataDirectory.getInstance().getDataDirectory() + LOCK_FILE);
 		try {
 			if (f.exists())
 			{
@@ -890,7 +759,7 @@ public class Main implements LookupObserver {
 
 	public static void removeLock()
 	{
-		File f = new File(SAVE_DIR + LOCK_FILE);
+		File f = new File(JFritzDataDirectory.getInstance().getDataDirectory() + LOCK_FILE);
 		try {
 			if (f.exists())
 			{
@@ -899,6 +768,87 @@ public class Main implements LookupObserver {
 		} catch (SecurityException se)
 		{
 			Debug.error("Could not delete instance lock");
+		}
+	}
+
+	private void shouldMoveDataToRightSaveDir() {
+		// zeigt auf altes Verzeichnis
+		Debug.debug("Old SAVE_DIR: " + JFritzDataDirectory.getInstance().getDataDirectory());
+		boolean shouldMoveDirectory = false;
+		String newSaveDir = JFritzDataDirectory.getInstance().getDataDirectory();
+		if (JFritzDataDirectory.getInstance().getDataDirectory().equals(System.getProperty("user.dir") + File.separator)) {
+			shouldMoveDirectory = true;
+			newSaveDir = JFritzDataDirectory.getInstance().getDefaultSaveDirectory();
+			if (JFritzDataDirectory.getInstance().getDataDirectory().equals(newSaveDir)) {
+				shouldMoveDirectory = false;
+			}
+		}
+
+		if (shouldMoveDirectory) {
+			showConfWizard = properties.loadProperties(false);
+			if ( properties.getProperty("locale").equals("") )
+			{
+				Debug.info("No language set yet ... Setting language to OS language");
+		    	// Check if language is supported. If not switch to english
+		    	if ( supported_languages.contains(new Locale(System.getProperty("user.language"),System.getProperty("user.country"))))
+		    	{
+		        	properties.setProperty("locale", System.getProperty("user.language")+"_"+System.getProperty("user.country"));
+		    	} else {
+		    		Debug.warning("Your language ist not yet supported.");
+		        	properties.setProperty("locale", "en_US");
+		    	}
+			}
+
+			String loc = properties.getProperty("locale");
+			Debug.always("Selected language: " + loc);
+
+			messages.loadMessages(new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_")+1, loc.length()))); //$NON-NLS-1$,  //$NON-NLS-2$
+			loadLocaleMeanings(new Locale("int", "INT"));
+			Debug.debug("Shall JFritz move data from " + JFritzDataDirectory.getInstance().getDataDirectory() + " to " + newSaveDir + " ?");
+
+			int answer = JOptionPane.NO_OPTION;
+
+	        File dir = new File(JFritzDataDirectory.getInstance().getDataDirectory());
+	        File[] entries = dir.listFiles(new FileFilter() {
+	            public boolean accept(File arg0) {
+	                if (arg0.getName().endsWith(".xml")) {
+	                	if (!"build-release-pwd.xml".equals(arg0.getName())
+	                		&& !"build-release.xml".equals(arg0.getName())
+	                		&& !"build.xml".equals(arg0.getName()))
+	                	{
+		                	Debug.debug("Found XML-File to move: " + arg0.getName());
+	                		return true;
+	                	}
+	                }
+                	return false;
+	            }
+	        });
+
+			String message = messages.getMessage("moveDataDirectory_Warning"); //$NON-NLS-1$
+
+			message = message.replaceAll("%FROM", preparePattern(JFritzDataDirectory.getInstance().getDataDirectory()));
+			message = message.replaceAll("%TO", preparePattern(newSaveDir));
+			ComplexJOptionPaneMessage msg = new ComplexJOptionPaneMessage(
+	                "legalInfo.moveDataDirectory", //$NON-NLS-1$
+					message);
+			if (msg.showDialogEnabled()
+					&& (entries.length != 0)) {
+				Debug.debug("Show confirm dialog to move data");
+				answer = JOptionPane.showConfirmDialog(null,
+						msg.getComponents(),
+						messages.getMessage("information"), JOptionPane.YES_NO_OPTION);
+				msg.saveProperty();
+				properties.saveStateProperties();
+			}
+
+			if (answer == JOptionPane.YES_OPTION
+					|| (entries.length == 0)) {
+				Debug.debug("Moving data from " + JFritzDataDirectory.getInstance().getDataDirectory() + " to " + newSaveDir + " !");
+				JFritzDataDirectory.getInstance().changeSaveDir(newSaveDir);
+			}
+
+		} else {
+			Debug.debug("Data is already at an exclusive directory: " + JFritzDataDirectory.getInstance().getDataDirectory());
 		}
 	}
 
@@ -936,111 +886,6 @@ public class Main implements LookupObserver {
 			}
 		}
 		return result;
-	}
-
-	/**
-	 * This function writes a file $HOME/.jfritz/jfritz.txt, which contains the
-	 * location of the folder containing jfritz's data If the dir $HOME/.jfritz
-	 * does not exist, it is created if the save location isnt a directory, then
-	 * the default save directory is used
-	 *
-	 * @author Brian Jensen
-	 *
-	 */
-	public static void writeSaveDir() {
-		try {
-
-			// if $HOME/.jfritz doesn't exist create it
-			File file = new File(USER_DIR);
-			if (!file.isDirectory() && !file.isFile())
-			{
-				file.mkdir();
-			}
-
-			BufferedWriter bw = new BufferedWriter(new FileWriter(USER_DIR
-					+ File.separator + USER_JFRITZ_FILE, false));
-
-			// make sure the user didn't screw something up
-			if (!SAVE_DIR.endsWith(File.separator))
-			{
-				SAVE_DIR = SAVE_DIR + File.separator;
-			}
-
-			file = new File(SAVE_DIR);
-			if (!file.exists()) {
-				file.mkdir();
-			}
-
-			if (!file.isDirectory())
-			{
-				SAVE_DIR = System.getProperty("user.dir") + File.separator;
-			}
-
-			bw.write("[Settings]");
-			bw.newLine();
-			bw.write(SAVE_DIR_TEXT + SAVE_DIR);
-			bw.newLine();
-			bw.close();
-			Debug.info("Successfully wrote save dir to disk");
-
-		} catch (Exception e) {
-			Debug.warning("Error writing save dir to disk, reverting back to default save dir");
-			SAVE_DIR = System.getProperty("user.dir") + File.separator;
-			// if there was an error, bail out and revert to the default save
-			// location
-		}
-	}
-
-	/**
-	 * Funktion reads the user specified save location from a simple text file
-	 * If any error occurs the function bails out and uses the current directory
-	 * as the save dir, as the functionality was in JFritz < 0.6.0
-	 *
-	 * @author Brian Jensen
-	 *
-	 */
-	public static void loadSaveDir() {
-		BufferedReader br = null;
-		try {
-			br = new BufferedReader(new FileReader(USER_DIR + File.separator
-					+ USER_JFRITZ_FILE));
-			String line = br.readLine();
-			if (line == null) {
-				br.close();
-				Debug.warning("File " + USER_DIR + File.separator + USER_JFRITZ_FILE
-						+ " is empty");
-				SAVE_DIR = System.getProperty("user.dir") + File.separator;
-			} else {
-				while (line != null) {
-					if (line.contains("=")) {
-						String[] entries = line.split("=");
-						if (!entries[1].equals("")) {
-							if (entries[0].equals("Save_Directory")) {
-								SAVE_DIR = entries[1];
-								File file = new File(SAVE_DIR);
-								if (!file.isDirectory())
-									SAVE_DIR = System.getProperty("user.dir") + File.separator;
-								else if (!SAVE_DIR.endsWith(File.separator))
-									SAVE_DIR = SAVE_DIR + File.separator;
-							}
-						}
-					}
-					line = br.readLine();
-				}
-			}
-		} catch (FileNotFoundException e) {
-			Debug.warning("Error processing the user save location(File not found), using defaults");
-			// If something happens, just bail out and use the standard dir
-		} catch (IOException ioe) {
-			Debug.warning("Error processing the user save location, using defaults");
-		} finally {
-			try {
-				if (br != null)
-					br.close();
-			} catch (IOException ioe) {
-				Debug.error("Error closing stream");
-			}
-		}
 	}
 
 	/**

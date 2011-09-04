@@ -7,13 +7,14 @@ package de.moonflower.jfritz.callerlist;
 
 import java.awt.Color;
 import java.awt.Component;
+
 import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.JFritzDataDirectory;
 
 /**
  * This class manages editing of the comment cell in the caller table.
@@ -80,7 +81,7 @@ public class CommentCellEditor extends AbstractCellEditor implements
 	protected void fireEditingStopped() {
 		super.fireEditingStopped();
 		if(!oldText.equals(newText)){
-			JFritz.getCallerList().saveToXMLFile(Main.SAVE_DIR + JFritz.CALLS_FILE, true);
+			JFritz.getCallerList().saveToXMLFile(JFritzDataDirectory.getInstance().getDataDirectory() + JFritz.CALLS_FILE, true);
 		}
 	}
 

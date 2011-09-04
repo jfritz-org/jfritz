@@ -1611,7 +1611,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	public void backupToChoosenDirectory() {
 		try {
 			String directory = new DirectoryChooser().getDirectory(this).toString();
-			JFritzBackup.getInstance().doBackup(Main.SAVE_DIR, directory);
+			JFritzBackup.getInstance().doBackup(JFritzDataDirectory.getInstance().getDataDirectory(), directory);
 		} catch (NullPointerException e) {
 			log.error("No directory choosen for backup!", e);
 		}

@@ -240,7 +240,7 @@ public final class JFritz implements  StatusListener {
 	public void initQuickDials()
 	{
 		quickDials = new QuickDials();
-		quickDials.loadFromXMLFile(Main.SAVE_DIR + JFritz.QUICKDIALS_FILE);
+		quickDials.loadFromXMLFile(JFritzDataDirectory.getInstance().getDataDirectory() + JFritz.QUICKDIALS_FILE);
 	}
 
 	public void initCallerListAndPhoneBook()
@@ -249,8 +249,8 @@ public final class JFritz implements  StatusListener {
 		phonebook = new PhoneBook(PHONEBOOK_FILE);
 		callerlist.setPhoneBook(phonebook);
 		phonebook.setCallerList(callerlist);
-		phonebook.loadFromXMLFile(Main.SAVE_DIR + PHONEBOOK_FILE);
-		callerlist.loadFromXMLFile(Main.SAVE_DIR + CALLS_FILE);
+		phonebook.loadFromXMLFile(JFritzDataDirectory.getInstance().getDataDirectory() + PHONEBOOK_FILE);
+		callerlist.loadFromXMLFile(JFritzDataDirectory.getInstance().getDataDirectory() + CALLS_FILE);
 
 //		phonebook.findAllLastCalls();
 //		callerlist.findAllPersons();
@@ -272,7 +272,7 @@ public final class JFritz implements  StatusListener {
 	{
 		clientLogins = new ClientLoginsTableModel();
 
-		ClientLoginsTableModel.loadFromXMLFile(Main.SAVE_DIR+CLIENT_SETTINGS_FILE);
+		ClientLoginsTableModel.loadFromXMLFile(JFritzDataDirectory.getInstance().getDataDirectory()+CLIENT_SETTINGS_FILE);
 	}
 
 	public void createJFrame(boolean showConfWizard) {

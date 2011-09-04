@@ -33,7 +33,7 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.JFritzDataDirectory;
 import de.moonflower.jfritz.ProgramConstants;
 import de.moonflower.jfritz.backup.JFritzBackup;
 import de.moonflower.jfritz.box.BoxCallBackListener;
@@ -435,7 +435,7 @@ public class CallerList extends AbstractTableModel
 			fireUpdateCallVector();
 			update();
 
-			saveToXMLFile(Main.SAVE_DIR + JFritz.CALLS_FILE, true);
+			saveToXMLFile(JFritzDataDirectory.getInstance().getDataDirectory() + JFritz.CALLS_FILE, true);
 
 			String msg;
 
@@ -505,7 +505,7 @@ public class CallerList extends AbstractTableModel
 				listener.callsUpdated(oldCall, newCall);
 
 			update();
-			saveToXMLFile(Main.SAVE_DIR+JFritz.CALLS_FILE, true);
+			saveToXMLFile(JFritzDataDirectory.getInstance().getDataDirectory()+JFritz.CALLS_FILE, true);
 		}
 	}
 
@@ -530,7 +530,7 @@ public class CallerList extends AbstractTableModel
 			}
 
 			update();
-			saveToXMLFile(Main.SAVE_DIR + JFritz.CALLS_FILE, true);
+			saveToXMLFile(JFritzDataDirectory.getInstance().getDataDirectory() + JFritz.CALLS_FILE, true);
 
 	}
 
@@ -965,7 +965,7 @@ public class CallerList extends AbstractTableModel
 				&& (JFritz.getJframe().getCallerTable() != null)) {
 			JFritz.getJframe().getCallerTable().clearSelection();
 		}
-		saveToXMLFile(Main.SAVE_DIR + JFritz.CALLS_FILE, true);
+		saveToXMLFile(JFritzDataDirectory.getInstance().getDataDirectory() + JFritz.CALLS_FILE, true);
 		fireTableDataChanged();
 	}
 
@@ -996,7 +996,7 @@ public class CallerList extends AbstractTableModel
 				l.callsRemoved((Vector) removedCalls.clone());
 			}
 
-			saveToXMLFile(Main.SAVE_DIR + JFritz.CALLS_FILE, true);
+			saveToXMLFile(JFritzDataDirectory.getInstance().getDataDirectory() + JFritz.CALLS_FILE, true);
 			update();
 			fireTableDataChanged();
 		}
@@ -1093,7 +1093,7 @@ public class CallerList extends AbstractTableModel
 
 			fireUpdateCallVector();
 
-			saveToXMLFile(Main.SAVE_DIR + JFritz.CALLS_FILE, true);
+			saveToXMLFile(JFritzDataDirectory.getInstance().getDataDirectory() + JFritz.CALLS_FILE, true);
 		}
 	}
 

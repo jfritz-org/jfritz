@@ -42,7 +42,7 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.Main;
+import de.moonflower.jfritz.JFritzDataDirectory;
 import de.moonflower.jfritz.ProgramConstants;
 import de.moonflower.jfritz.callerlist.CallerList;
 import de.moonflower.jfritz.callerlist.CallerListListener;
@@ -378,7 +378,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 		fireTableDataChanged();
 		if ( !loadingXMLFile )
 		{
-			this.saveToXMLFile(Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
+			this.saveToXMLFile(JFritzDataDirectory.getInstance().getDataDirectory() + JFritz.PHONEBOOK_FILE);
 		}
 	}
 
@@ -403,7 +403,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 
 		updateFilter();
 		fireTableDataChanged();
-		saveToXMLFile(Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
+		saveToXMLFile(JFritzDataDirectory.getInstance().getDataDirectory() + JFritz.PHONEBOOK_FILE);
 
 	}
 
@@ -427,7 +427,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 
 			updateFilter();
 			fireTableDataChanged();
-			saveToXMLFile(Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
+			saveToXMLFile(JFritzDataDirectory.getInstance().getDataDirectory() + JFritz.PHONEBOOK_FILE);
 
 		}
 	}
@@ -1179,7 +1179,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 
 			if (newEntries > 0) {
 				sortAllUnfilteredRows();
-				saveToXMLFile(Main.SAVE_DIR + fileLocation);
+				saveToXMLFile(JFritzDataDirectory.getInstance().getDataDirectory() + fileLocation);
 				String msg;
 
 				if (newEntries == 1) {
@@ -1358,7 +1358,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 			message = "";
 			if (newEntries > 0) {
 				sortAllUnfilteredRows();
-				saveToXMLFile(Main.SAVE_DIR + fileLocation);
+				saveToXMLFile(JFritzDataDirectory.getInstance().getDataDirectory() + fileLocation);
 				String msg;
 
 				if (newEntries == 1) {
@@ -1420,7 +1420,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 		}
 
 		if (redundantEntries.size() > 0) {
-			saveToXMLFile(Main.SAVE_DIR + fileLocation);
+			saveToXMLFile(JFritzDataDirectory.getInstance().getDataDirectory() + fileLocation);
 			updateFilter();
 		}
 
@@ -1540,7 +1540,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 
 			updateFilter();
 			fireTableDataChanged();
-			saveToXMLFile(Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
+			saveToXMLFile(JFritzDataDirectory.getInstance().getDataDirectory() + JFritz.PHONEBOOK_FILE);
 		}
     }
 

@@ -19,9 +19,8 @@ TODO vor dem Release:
 JFritz 0.7.4.1.18:
 - Windows: Umlaute werden bei Installation wieder korrekt dargestellt
 - Autoupdate: Komplett entfernt
-- Bugfix: Ändern des Speicherverzeichnisses kopiert nun alle Dateien und Ordner und löscht das alte Speicherverzeichnis
-- Apache commons IO wird nun für Backup verwendet
-- Backup refactored
+- Backup refactored, Verwendung von Apache commons IO
+- Speicherverzeichnis refactored, Ändern des Speicherverzeichnisses kopiert nun alle Dateien und Ordner und löscht das alte Speicherverzeichnis
 
 JFritz 0.7.4.1.17:
 - jfritz.txt in INI-Format umgewandelt

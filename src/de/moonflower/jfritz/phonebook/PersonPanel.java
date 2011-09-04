@@ -45,6 +45,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.TableCellRenderer;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.JFritzDataDirectory;
 import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.messages.MessageProvider;
@@ -761,7 +762,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 
 		phoneBook.sortAllFilteredRows();
 		phoneBook.updateFilter();
-		phoneBook.saveToXMLFile(Main.SAVE_DIR + JFritz.PHONEBOOK_FILE);
+		phoneBook.saveToXMLFile(JFritzDataDirectory.getInstance().getDataDirectory() + JFritz.PHONEBOOK_FILE);
 
 		Enumeration<ActionListener> en = actionListener.elements();
 		while (en.hasMoreElements()) {
