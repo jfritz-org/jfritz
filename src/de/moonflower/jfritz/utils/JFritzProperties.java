@@ -37,7 +37,7 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.Main;
-import de.moonflower.jfritz.ProgramConstants;
+import de.moonflower.jfritz.constants.ProgramConstants;
 
 /**
  * Backport of JRE 1.5 Properties class to JRE 1.4.2

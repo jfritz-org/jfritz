@@ -43,9 +43,9 @@ import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzDataDirectory;
-import de.moonflower.jfritz.ProgramConstants;
 import de.moonflower.jfritz.callerlist.CallerList;
 import de.moonflower.jfritz.callerlist.CallerListListener;
+import de.moonflower.jfritz.constants.ProgramConstants;
 import de.moonflower.jfritz.importexport.VCardParser;
 import de.moonflower.jfritz.importexport.VCardParserAdr;
 import de.moonflower.jfritz.importexport.VCardParserEMail;

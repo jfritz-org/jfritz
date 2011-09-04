@@ -1,7 +1,8 @@
-package de.moonflower.jfritz.ant;
+package de.moonflower.jfritz.ant.version;
 
 import org.apache.tools.ant.Project;
-import de.moonflower.jfritz.ProgramConstants;
+
+import de.moonflower.jfritz.constants.ProgramConstants;
 
 public class GetJFritzVersion {
 	Project project;

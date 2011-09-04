@@ -36,8 +36,8 @@ import org.jfree.report.style.FontDefinition;
 
 import sun.awt.image.ToolkitImage;
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.ProgramConstants;
 import de.moonflower.jfritz.callerlist.CallerTable;
+import de.moonflower.jfritz.constants.ProgramConstants;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.CallType;

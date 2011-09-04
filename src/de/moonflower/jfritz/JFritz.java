@@ -30,6 +30,7 @@ import de.moonflower.jfritz.callerlist.CallerList;
 import de.moonflower.jfritz.callmonitor.MonitoredCalls;
 import de.moonflower.jfritz.callmonitor.DisconnectMonitor;
 import de.moonflower.jfritz.callmonitor.DisplayCallsMonitor;
+import de.moonflower.jfritz.constants.ProgramConstants;
 import de.moonflower.jfritz.dialogs.quickdial.QuickDials;
 import de.moonflower.jfritz.dialogs.simple.MessageDlg;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;

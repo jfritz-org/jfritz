@@ -47,7 +47,6 @@ import com.toedter.calendar.JDateChooser;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
-import de.moonflower.jfritz.ProgramConstants;
 import de.moonflower.jfritz.StatusBarPanel;
 import de.moonflower.jfritz.callerlist.filter.AnonymFilter;
 import de.moonflower.jfritz.callerlist.filter.CallByCallFilter;
@@ -63,6 +62,7 @@ import de.moonflower.jfritz.callerlist.filter.HandyFilter;
 import de.moonflower.jfritz.callerlist.filter.PortFilter;
 import de.moonflower.jfritz.callerlist.filter.SearchFilter;
 import de.moonflower.jfritz.callerlist.filter.SipFilter;
+import de.moonflower.jfritz.constants.ProgramConstants;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.phonebook.PhoneBookPanel;

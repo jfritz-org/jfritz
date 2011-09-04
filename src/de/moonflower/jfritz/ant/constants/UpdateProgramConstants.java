@@ -1,4 +1,4 @@
-package de.moonflower.jfritz.ant;
+package de.moonflower.jfritz.ant.constants;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -52,8 +52,8 @@ public class UpdateProgramConstants {
 	}
 
 	public void execute() {
-		copy("src/de/moonflower/jfritz/ProgramConstants.java", "tmp", true);
-		copy("tmp", "src/de/moonflower/jfritz/ProgramConstants.java", false);
+		copy("src/de/moonflower/jfritz/constants/ProgramConstants.java", "tmp", true);
+		copy("tmp", "src/de/moonflower/jfritz/constants/ProgramConstants.java", false);
 		File f = new File("tmp");
 		if (f.exists()) { f.delete(); }
 	}

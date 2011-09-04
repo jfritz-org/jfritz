@@ -8,7 +8,8 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import org.apache.log4j.Logger;
-import de.moonflower.jfritz.ProgramConstants;
+
+import de.moonflower.jfritz.constants.ProgramConstants;
 
 public class MessageProvider {
 

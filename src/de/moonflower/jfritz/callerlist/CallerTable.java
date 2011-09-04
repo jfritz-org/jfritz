@@ -27,7 +27,6 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.ProgramConstants;
 import de.moonflower.jfritz.cellrenderer.CallByCallCellRenderer;
 import de.moonflower.jfritz.cellrenderer.CallTypeCellRenderer;
 import de.moonflower.jfritz.cellrenderer.CityCellRenderer;
@@ -39,6 +38,7 @@ import de.moonflower.jfritz.cellrenderer.PersonCellRenderer;
 import de.moonflower.jfritz.cellrenderer.PictureCellRenderer;
 import de.moonflower.jfritz.cellrenderer.PortCellRenderer;
 import de.moonflower.jfritz.cellrenderer.RouteCellRenderer;
+import de.moonflower.jfritz.constants.ProgramConstants;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.phonebook.PhoneBookTable;
 import de.moonflower.jfritz.properties.PropertyProvider;
