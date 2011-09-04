@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="JFritz-Release" default="scp-update-beta" basedir=".">
+<project name="JFritz-Release" default="create-linux" basedir=".">
 	<import file="build-release-pwd.xml" />
 	<import file="build.xml" />
 
@@ -133,25 +133,25 @@
 		</mail>
 	</target>
 
-	<target name="scp-update-beta" depends="create-updatefiles" description="Uploads update files to jfritz.robotniko.de/update">
+	<!--target name="scp-update-beta" depends="create-updatefiles" description="Uploads update files to jfritz.robotniko.de/update">
 		<zip destfile="${update}/jfritz-${version}-update.zip" basedir="${update}/${version}" />
 		<scp file="${update}/jfritz-${version}-update.zip" port="${port1}" trust="yes" todir="${user1}@${server1}:./public/update/" verbose="yes" password="${password1}" />
 		<sshexec command="unzip ./public/update/jfritz-${version}-update.zip -d ./public/update/${version}" username="${user1}" host="${server1}" port="${port1}" trust="yes" password="${password1}" />
 		<sshexec command="rm ./public/update/jfritz-${version}-update.zip"  username="${user1}" host="${server1}" port="${port1}" trust="yes" password="${password1}" />
 		<scp file="${update}/update.txt" port="${port1}" trust="yes" todir="${user1}@${server1}:./public/update/" verbose="yes" password="${password1}" />
 		<scp file="${update}/current.txt" port="${port1}" trust="yes" todir="${user1}@${server1}:./public/update/" verbose="yes" password="${password1}" />
-	</target>
+	</target-->
 
-	<target name="scp-update" depends="create-updatefiles" description="Uploads files per scp to update.jfritz.org">
+	<!--target name="scp-update" depends="create-updatefiles" description="Uploads files per scp to update.jfritz.org">
 		<zip destfile="${update}/jfritz-${version}-update.zip" basedir="${update}/${version}" />
 		<scp file="${update}/jfritz-${version}-update.zip" port="${port3}" trust="yes" todir="${user3}@${server3}:./htdocs/jfritz.org/update/" verbose="yes" password="${password3}" />
 		<sshexec command="unzip ./htdocs/jfritz.org/update/jfritz-${version}-update.zip -d ./htdocs/jfritz.org/update/${version}" username="${user3}" host="${server3}" port="${port3}" trust="yes" password="${password3}" />
 		<sshexec command="rm ./htdocs/jfritz.org/update/jfritz-${version}-update.zip"  username="${user3}" host="${server3}" port="${port3}" trust="yes" password="${password3}" />
 		<scp file="${update}/update.txt" port="${port3}" trust="yes" todir="${user3}@${server3}:./htdocs/jfritz.org/update/" verbose="yes" password="${password3}" />
 		<scp file="${update}/current.txt" port="${port3}" trust="yes" todir="${user3}@${server3}:./htdocs/jfritz.org/update/" verbose="yes" password="${password3}" />
-	</target>
+	</target-->
 
-	<target name="create-updatefiles" depends="prepare-updatefiles" description="Creates files for auto update">
+	<!--target name="create-updatefiles" depends="prepare-updatefiles" description="Creates files for auto update">
 		<mkdir dir="${update}" />
 		<taskdef name="createUpdateFile" classname="de.moonflower.jfritz.ant.CreateUpdateFile" classpathref="test.classpath" />
 		<createUpdateFile toDir="${update}" version="${version}">
@@ -168,7 +168,7 @@
 		</copy>
 		<delete dir="${build.jars}" />
 		<delete dir="${build.resources}" />
-	</target>
+	</target-->
 
 	<!--
 		#############################################################################################
@@ -539,7 +539,7 @@ http://www.jfritz.org/
 		</mail>
 	</target>
 
-	<target name="prepare-updatefiles" depends="prepare" description="Prepares files for creating update file">
+	<!--target name="prepare-updatefiles" depends="prepare" description="Prepares files for creating update file">
 		<copy todir="${build.resources}/lang/lang">
 			<fileset dir="${dist}/lang" />
 		</copy>
@@ -585,6 +585,6 @@ http://www.jfritz.org/
 			</fileset>
 		</copy>
 
-	</target>
+	</target-->
 
 </project>

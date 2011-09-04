@@ -46,7 +46,6 @@ import javax.swing.tree.TreeSelectionModel;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.callmonitor.CallMonitorStatusListener;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
@@ -318,7 +317,6 @@ public class ConfigDialog extends JDialog {
 //		Save of caller list and phonebook unnecessary at this position
 //		JFritz.getCallerList().saveToXMLFile(Main.SAVE_DIR+JFritz.CALLS_FILE, true);
 //		JFritz.getPhonebook().saveToXMLFile(Main.SAVE_DIR+JFritz.PHONEBOOK_FILE);
-        Main.saveUpdateProperties();
 	}
 
 	protected void drawDialog() {

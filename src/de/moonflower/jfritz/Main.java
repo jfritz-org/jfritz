@@ -159,8 +159,7 @@ import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
-import de.moonflower.jfritz.autoupdate.JFritzUpdate;
-import de.moonflower.jfritz.autoupdate.Update;
+import de.moonflower.jfritz.backup.JFritzBackup;
 import de.moonflower.jfritz.dialogs.simple.AddressPasswordDialog;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
@@ -171,7 +170,6 @@ import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.utils.CLIOption;
 import de.moonflower.jfritz.utils.CLIOptions;
 import de.moonflower.jfritz.utils.ComplexJOptionPaneMessage;
-import de.moonflower.jfritz.utils.CopyFile;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -189,7 +187,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 180 2011-09-01 20:48:53Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 185 2011-09-04 11:52:16Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -468,8 +466,6 @@ public class Main implements LookupObserver {
 		messages.loadMessages(new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_")+1, loc.length()))); //$NON-NLS-1$,  //$NON-NLS-2$
 		loadLocaleMeanings(new Locale("int", "INT"));
 
-		saveUpdateProperties();
-
 		int result = 0;
 		splash.setStatus("Checking startup password...");
 		String ask = properties.getProperty("jfritz.pwd");//$NON-NLS-1$
@@ -677,27 +673,23 @@ public class Main implements LookupObserver {
 		return defDir;
 	}
 
-	public static void changeSaveDir(final String path) {
-		File f = new File(path);
-		if (!f.exists()) {
-			Debug.debug("Creating directory");
-			f.mkdir();
+	public static void changeSaveDir(String path) {
+		if (!path.endsWith(File.separator)) {
+			path = path + File.separator;
 		}
-		if (f.isDirectory())
+
+		File dst = new File(path);
+		if (!dst.exists()) {
+			Debug.debug("Creating directory");
+			dst.mkdir();
+		}
+		if (dst.isDirectory())
 		{
-			CopyFile backup = new CopyFile();
-			try {
-				Debug.debug("Moving data ...");
-				backup.copy(Main.SAVE_DIR, "xml", path); //$NON-NLS-1$,  //$NON-NLS-2$
-			} catch (NullPointerException e) {
-				Debug.error("No directory choosen for backup!"); //$NON-NLS-1$
-			}
-			Debug.debug("Remove lock");
-			Main.removeLock();
+			File src = new File(Main.SAVE_DIR);
+			src.renameTo(dst);
+
 			Debug.debug("Change save directory to: " + path);
 			Main.SAVE_DIR = path;
-			Debug.debug("Create lock at new destination");
-			Main.createLock();
 			Debug.debug("Write file ~/" + JFRITZ_HIDDEN_DIR + "/" + USER_JFRITZ_FILE);
 			Main.writeSaveDir();
 			// update logger
@@ -749,7 +741,7 @@ public class Main implements LookupObserver {
 
 			switch (option.getShortOption()) {
 			case 'b': //$NON-NLS-1$
-				doBackup();
+				JFritzBackup.getInstance().doBackup();
 				break;
 			case 's': //$NON-NLS-1$
 				systraySupport = true;
@@ -1051,11 +1043,6 @@ public class Main implements LookupObserver {
 		}
 	}
 
-	protected static void doBackup() {
-		CopyFile backup = new CopyFile();
-		backup.copy(SAVE_DIR, "xml"); //$NON-NLS-1$,  //$NON-NLS-2$
-	}
-
 	/**
 	 * The function is called mostly from the mac quit handler code to
 	 * safely end jfritz when the program should be terminated
@@ -1146,21 +1133,6 @@ public class Main implements LookupObserver {
 
 	public JFritz getJfritz() {
 		return jfritz;
-	}
-
-	/**
-	 * Speichert die Einstellungen für das automatische Update von JFritz
-	 *
-	 */
-	public static void saveUpdateProperties() {
-		new JFritzUpdate(false, false); // needed for next line (Update update = new Update());
-		Update update = new Update();
-		update.loadSettings();
-		update.setProgramVersion(ProgramConstants.PROGRAM_VERSION);
-		update.setLocale(PropertyProvider.getInstance().getProperty("locale"));
-		update.setUpdateOnStart(JFritzUtils.parseBoolean(PropertyProvider.getInstance().getProperty(
-				"option.checkNewVersionAfterStart")));
-		update.saveSettings();
 	}
 
 //	private void showActiveThreads()

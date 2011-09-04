@@ -35,6 +35,7 @@ import org.xml.sax.XMLReader;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.ProgramConstants;
+import de.moonflower.jfritz.backup.JFritzBackup;
 import de.moonflower.jfritz.box.BoxCallBackListener;
 import de.moonflower.jfritz.callerlist.filter.CallFilter;
 import de.moonflower.jfritz.callerlist.filter.DateFilter;
@@ -49,7 +50,6 @@ import de.moonflower.jfritz.struct.IProgressListener;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
-import de.moonflower.jfritz.utils.CopyFile;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.reverselookup.LookupObserver;
@@ -454,7 +454,7 @@ public class CallerList extends AbstractTableModel
 			if (JFritzUtils.parseBoolean(properties.getProperty(
 							"option.createBackupAfterFetch")))
 			{
-				doBackup();
+				JFritzBackup.getInstance().doBackup();
 			}
 		}
 	}
@@ -531,105 +531,6 @@ public class CallerList extends AbstractTableModel
 
 			update();
 			saveToXMLFile(Main.SAVE_DIR + JFritz.CALLS_FILE, true);
-
-	}
-
-	/**
-	 * This function tests if the given call  is
-	 * contained in the call list
-	 *
-	 * This new method is using a binary search algorithm, that means
-	 * unfilteredCallerData has to be sorted ascending by date or it won't work
-	 *
-	 *
-	 * @author Brian Jensen
-	 *
-	 */
-	private synchronized boolean contains(Call newCall) {
-		int left, right, middle;
-		left = 0;
-		right = unfilteredCallerData.size() - 1;
-
-		if (unfilteredCallerData.isEmpty()) {
-			return false;
-		}
-
-		Call c;
-		while (left <= right) {
-			middle = ((right - left) / 2) + left;
-
-			c = unfilteredCallerData.elementAt(middle);
-			int Compare = newCall.getCalldate().compareTo(c.getCalldate());
-
-			// check if the date is before or after the current element in the
-			// vector
-			// Note: change the values here to fit the current sorting method
-			if (Compare > 0) {
-				right = middle - 1;
-			} else if (Compare < 0) {
-				left = middle + 1;
-			} else {
-				// if we are here, then the dates match
-				// lets check if everything else matches
-				if (c.equals(newCall)) {
-					return true;
-				} else {
-					// two calls, same date, different values...
-					// this is really a performance killer...
-					int tmpMiddle = middle - 1;
-
-					// Yikes! Don't forget to stay in the array bounds
-					if (tmpMiddle >= 0) {
-						c = unfilteredCallerData.elementAt(tmpMiddle);
-
-						// search left as long as the dates still match
-						while (c.getCalldate().equals(newCall.getCalldate())) {
-
-							// check if equal
-							if (c.equals(newCall)) {
-								return true;
-							}
-
-							// make sure we stay in the array bounds
-							if (tmpMiddle > 0) {
-								c = unfilteredCallerData.elementAt(--tmpMiddle);
-							} else {
-								break;
-							}
-						}
-					}
-
-					tmpMiddle = middle + 1;
-					if (tmpMiddle < unfilteredCallerData.size()) {
-						c = unfilteredCallerData.elementAt(middle + 1);
-
-						// search right as long as the dates still match
-						while (c.getCalldate().equals(newCall.getCalldate())) {
-
-							// check if equal
-							if (c.equals(newCall)) {
-								return true;
-							}
-
-							// make sure to stay in the array bounds
-							if (tmpMiddle < (unfilteredCallerData.size() - 1)) {
-								c = unfilteredCallerData.elementAt(++tmpMiddle);
-							} else {
-								break;
-							}
-						}
-
-					}
-
-					// No matching calls found with the same date
-					return false;
-
-				}
-			}
-		}
-
-		// we exited the loop => no matching date found
-		return false;
 
 	}
 
@@ -1119,11 +1020,6 @@ public class CallerList extends AbstractTableModel
 			}
 		}
 		return columnName;
-	}
-
-	private static void doBackup() {
-		CopyFile backup = new CopyFile();
-		backup.copy(Main.SAVE_DIR, "xml"); //$NON-NLS-1$,  //$NON-NLS-2$
 	}
 
 	public Call getSelectedCall() {

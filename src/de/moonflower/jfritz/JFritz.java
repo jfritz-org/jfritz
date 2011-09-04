@@ -22,6 +22,7 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 import jd.nutils.OSDetector;
+import de.moonflower.jfritz.backup.JFritzBackup;
 import de.moonflower.jfritz.box.BoxClass;
 import de.moonflower.jfritz.box.BoxCommunication;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
@@ -124,9 +125,8 @@ public final class JFritz implements  StatusListener {
 
 		*/
 
-		if (JFritzUtils.parseBoolean(properties.getProperty(
-				"option.createBackup"))) { //$NON-NLS-1$,  //$NON-NLS-2$
-			Main.doBackup();
+		if (JFritzUtils.parseBoolean(properties.getProperty("option.createBackup"))) { //$NON-NLS-1$
+			JFritzBackup.getInstance().doBackup();
 		}
 
 			//option was removed from the config dialog in 0.7.1, make sure

@@ -53,8 +53,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 
+import org.apache.log4j.Logger;
+
 import jd.nutils.OSDetector;
-import de.moonflower.jfritz.autoupdate.JFritzUpdate;
+import de.moonflower.jfritz.backup.JFritzBackup;
 import de.moonflower.jfritz.box.BoxClass;
 import de.moonflower.jfritz.box.BoxStatusListener;
 import de.moonflower.jfritz.callerlist.CallDialog;
@@ -78,7 +80,6 @@ import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.utils.BrowserLaunch;
-import de.moonflower.jfritz.utils.CopyFile;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.DirectoryChooser;
 import de.moonflower.jfritz.utils.ImportOutlookContactsDialog;
@@ -97,6 +98,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		BoxStatusListener, WindowListener {
 
 	private static final long serialVersionUID = 7856291642743441767L;
+	private static final Logger log = Logger.getLogger(JFritzWindow.class);
 
 	private FetchListTimer timer = null;
 
@@ -1076,13 +1078,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		} else if (e.getActionCommand().equals("export_csv")) {
 			exportCallerListToCSV();
 		} else if (e.getActionCommand().equals("update")) { //$NON-NLS-1$
-			JFritzUpdate jfritzUpdate = new JFritzUpdate(true, Main.updateBetaUrl);
-			jfritzUpdate.setProgramVersion(ProgramConstants.PROGRAM_VERSION);
-			jfritzUpdate.confirmedUpdateJFritz();
-			if (jfritzUpdate.isShutdownNecessary())
-			{
-				jFritz.maybeExit(0, false);
-			}
+			log.warn("Update not yet implemented");
 		} else if (e.getActionCommand().equals("export_phonebook")) {
 			exportPhoneBookToCSV();
 		} else if (e.getActionCommand().equals("print_callerlist")) {
@@ -1613,13 +1609,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * @author Bastian Schaefer
 	 */
 	public void backupToChoosenDirectory() {
-		CopyFile backup = new CopyFile();
 		try {
-			String directory = new DirectoryChooser().getDirectory(this)
-					.toString();
-			backup.copy(Main.SAVE_DIR, "xml", directory); //$NON-NLS-1$,  //$NON-NLS-2$
+			String directory = new DirectoryChooser().getDirectory(this).toString();
+			JFritzBackup.getInstance().doBackup(Main.SAVE_DIR, directory);
 		} catch (NullPointerException e) {
-			Debug.error("No directory choosen for backup!"); //$NON-NLS-1$
+			log.error("No directory choosen for backup!", e);
 		}
 	}
 

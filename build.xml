@@ -175,7 +175,7 @@
 			</fileset>
 		</copy>
 
-		<jar jarfile="${build}/jfritz-internals.jar" update="yes">
+		<jar jarfile="${build}/jfritz.jar" update="yes">
 			<fileset dir="${build.classes}">
 				<include name="**/*.*" />
 				<exclude name="**/de/moonflower/jfritz/autoupdate/*.*" />
@@ -189,11 +189,12 @@
 				<exclude name="**/de/moonflower/jfritz/ProgramConstants.java" />
 			</fileset>
 			<manifest>
-				<attribute name="Class-Path" value="./jfritz.jar ./fritzbox.jar ./resources.jar ./reverselookup.jar  ./utils.jar ${lib}/jdic.jar ${lib}/jfreereport-0.8.6-2.jar ${lib}/jcommon-1.0.0-rc1-cvs.jar ${lib}/itext-1.3.4.jar ${lib}/bsh-1.3.0.jar ${lib}/bsf-2.3.0.jar ${lib}/poi-2.5.1-final-20040804.jar ${lib}/jacob.jar ${lang}/ ${conf} ${lib}/jcalendar-1.3.2.jar ${lib}/jfreechart-1.0.2.jar ${lib}/jdom.jar ${lib}/looks-2.1.4.jar ${lib}/log4j-1.2.16.jar ${lib}/proxy-1.0.0.jar ${lib}/jfontchooser-1.0.5.jar" />
+				<attribute name="Main-Class" value="de.moonflower.jfritz.Main" />
+				<attribute name="Class-Path" value="./fritzbox.jar ./resources.jar ./reverselookup.jar  ./utils.jar ${lib}/jdic.jar ${lib}/jfreereport-0.8.6-2.jar ${lib}/jcommon-1.0.0-rc1-cvs.jar ${lib}/itext-1.3.4.jar ${lib}/bsh-1.3.0.jar ${lib}/bsf-2.3.0.jar ${lib}/poi-2.5.1-final-20040804.jar ${lib}/jacob.jar ${lang}/ ${conf} ${lib}/jcalendar-1.3.2.jar ${lib}/jfreechart-1.0.2.jar ${lib}/jdom.jar ${lib}/looks-2.1.4.jar ${lib}/log4j-1.2.16.jar ${lib}/proxy-1.0.0.jar ${lib}/jfontchooser-1.0.5.jar ${lib}/commons-io-2.0.1.jar" />
 			</manifest>
 		</jar>
 
-		<jar jarfile="${build}/jfritz.jar" update="yes">
+		<!--jar jarfile="${build}/jfritz.jar" update="yes">
 			<fileset dir="${build.classes}">
 				<include name="**/de/moonflower/jfritz/autoupdate/*.*" />
 			</fileset>
@@ -201,7 +202,7 @@
 				<attribute name="Main-Class" value="de.moonflower.jfritz.autoupdate.JFritzUpdate" />
 				<attribute name="Class-Path" value="./jfritz-internals.jar ./utils.jar" />
 			</manifest>
-		</jar>
+		</jar-->
 
 		<jar jarfile="${build}/fritzbox.jar" update="yes">
 			<fileset dir="${build.classes}">
@@ -270,105 +271,105 @@
 		<javadoc packagenames="de.moonflower.jfritz.*,com.*,org.*" access="public" source="1.5" splitindex="true" sourcepath="${src}" destdir="${doc}" author="true" version="true" use="true" windowtitle="${app.name} API" verbose="false" bottom="Copyright (c) 2005 Robert Palmer. Enjoy ${app.name}!">
 			<doctitle>
 				<![CDATA[<h1>${app.name}</h1>]]></doctitle>
-			<classpath refid="build.classpath" />
-		</javadoc>
-	</target>
+		<classpath refid="build.classpath" />
+	</javadoc>
+</target>
 
-	<target name="archive-init" description="Initializes archive directory">
-		<mkdir dir="${archive}" />
-	</target>
+<target name="archive-init" description="Initializes archive directory">
+	<mkdir dir="${archive}" />
+</target>
 
-	<target name="source-archive" depends="archive-init, build" description="Generates source archive">
-		<mkdir dir="${source-archive}" />
+<target name="source-archive" depends="archive-init, build" description="Generates source archive">
+	<mkdir dir="${source-archive}" />
 
-		<copy todir="${source-archive}/tmp/JFritz-${version}-Source/${src}">
-			<fileset dir="${src}">
-				<include name="**/*.java" />
-				<include name="**/*.png" />
-				<include name="**/*.jpg" />
-				<include name="**/*.gif" />
-				<include name="**/*.wav" />
-				<include name="**/*.txt" />
-			</fileset>
-		</copy>
-		<copy todir="${source-archive}/tmp/JFritz-${version}-Source/${lib}">
-			<fileset dir="${lib}">
-				<include name="**/*.jar" />
-				<include name="**/*.dll" />
-				<include name="**/*.so" />
-				<include name="**/mozembed-linux-gtk1.2" />
-				<include name="**/mozembed-linux-gtk2" />
-				<include name="**/mozembed-solaris-gtk1.2" />
-				<include name="**/mozembed-solaris-gtk2" />
-				<include name="**/*.jnilib" />
-				<include name="**/*.exe" />
-			</fileset>
-		</copy>
-		<copy todir="${source-archive}/tmp/JFritz-${version}-Source/${lib-dev}">
-			<fileset dir="${lib-dev}">
-				<include name="**/*.jar" />
-				<include name="**/*.txt" />
-			</fileset>
-		</copy>
-		<copy todir="${source-archive}/tmp/JFritz-${version}-Source/${lang}">
-			<fileset dir="${lang}" />
-		</copy>
-		<copy todir="${source-archive}/tmp/JFritz-${version}-Source/${conf}">
-			<fileset dir="${conf}" />
-		</copy>
-		<copy todir="${source-archive}/tmp/JFritz-${version}-Source/number">
-			<fileset dir="number" />
-		</copy>
-		<copy todir="${source-archive}/tmp/JFritz-${version}-Source/conf">
-			<fileset dir="conf" />
-		</copy>
-		<copy todir="${source-archive}/tmp/JFritz-${version}-Source/pictures">
-			<fileset dir="pictures">
-				<include name="**/NoPic.jpg" />
-			</fileset>
-		</copy>
-		<copy todir="${source-archive}/tmp/JFritz-${version}-Source/styles">
-			<fileset dir="styles">
-				<include name="**/*.html" />
-			</fileset>
-		</copy>
-		<copy file="${lib}/jacob.dll" todir="${source-archive}/tmp/JFritz-${version}-Source" />
-		<copy file="build.xml" todir="${source-archive}/tmp/JFritz-${version}-Source" />
-		<copy file="jfritzlogo.png" todir="${source-archive}/tmp/JFritz-${version}-Source" />
-		<copy file="log4j.xml" todir="${source-archive}/tmp/JFritz-${version}-Source" />
-		<copy file="splash.png" todir="${source-archive}/tmp/JFritz-${version}-Source" />
-		<copy file="status.png" todir="${source-archive}/tmp/JFritz-${version}-Source" />
+	<copy todir="${source-archive}/tmp/JFritz-${version}-Source/${src}">
+		<fileset dir="${src}">
+			<include name="**/*.java" />
+			<include name="**/*.png" />
+			<include name="**/*.jpg" />
+			<include name="**/*.gif" />
+			<include name="**/*.wav" />
+			<include name="**/*.txt" />
+		</fileset>
+	</copy>
+	<copy todir="${source-archive}/tmp/JFritz-${version}-Source/${lib}">
+		<fileset dir="${lib}">
+			<include name="**/*.jar" />
+			<include name="**/*.dll" />
+			<include name="**/*.so" />
+			<include name="**/mozembed-linux-gtk1.2" />
+			<include name="**/mozembed-linux-gtk2" />
+			<include name="**/mozembed-solaris-gtk1.2" />
+			<include name="**/mozembed-solaris-gtk2" />
+			<include name="**/*.jnilib" />
+			<include name="**/*.exe" />
+		</fileset>
+	</copy>
+	<copy todir="${source-archive}/tmp/JFritz-${version}-Source/${lib-dev}">
+		<fileset dir="${lib-dev}">
+			<include name="**/*.jar" />
+			<include name="**/*.txt" />
+		</fileset>
+	</copy>
+	<copy todir="${source-archive}/tmp/JFritz-${version}-Source/${lang}">
+		<fileset dir="${lang}" />
+	</copy>
+	<copy todir="${source-archive}/tmp/JFritz-${version}-Source/${conf}">
+		<fileset dir="${conf}" />
+	</copy>
+	<copy todir="${source-archive}/tmp/JFritz-${version}-Source/number">
+		<fileset dir="number" />
+	</copy>
+	<copy todir="${source-archive}/tmp/JFritz-${version}-Source/conf">
+		<fileset dir="conf" />
+	</copy>
+	<copy todir="${source-archive}/tmp/JFritz-${version}-Source/pictures">
+		<fileset dir="pictures">
+			<include name="**/NoPic.jpg" />
+		</fileset>
+	</copy>
+	<copy todir="${source-archive}/tmp/JFritz-${version}-Source/styles">
+		<fileset dir="styles">
+			<include name="**/*.html" />
+		</fileset>
+	</copy>
+	<copy file="${lib}/jacob.dll" todir="${source-archive}/tmp/JFritz-${version}-Source" />
+	<copy file="build.xml" todir="${source-archive}/tmp/JFritz-${version}-Source" />
+	<copy file="jfritzlogo.png" todir="${source-archive}/tmp/JFritz-${version}-Source" />
+	<copy file="log4j.xml" todir="${source-archive}/tmp/JFritz-${version}-Source" />
+	<copy file="splash.png" todir="${source-archive}/tmp/JFritz-${version}-Source" />
+	<copy file="status.png" todir="${source-archive}/tmp/JFritz-${version}-Source" />
 
-		<zip zipfile="${source-archive}/JFritz-${version}-Source.zip" basedir="${source-archive}/tmp" />
-		<delete dir="${source-archive}/tmp" />
-	</target>
+	<zip zipfile="${source-archive}/JFritz-${version}-Source.zip" basedir="${source-archive}/tmp" />
+	<delete dir="${source-archive}/tmp" />
+</target>
 
-	<target name="javadoc-archive" depends="archive-init, javadoc" description="Geneartes Javadoc archive">
-		<mkdir dir="${javadoc-archive}" />
+<target name="javadoc-archive" depends="archive-init, javadoc" description="Geneartes Javadoc archive">
+	<mkdir dir="${javadoc-archive}" />
 
-		<tar tarfile="${javadoc-archive}/jfritz-${version}-javadoc.tar" basedir="${doc}" />
-		<gzip src="${javadoc-archive}/jfritz-${version}-javadoc.tar" zipfile="${javadoc-archive}/jfritz-${version}-javadoc.tar.gz" />
-		<delete file="${javadoc-archive}/jfritz-${version}-javadoc.tar" />
-	</target>
+	<tar tarfile="${javadoc-archive}/jfritz-${version}-javadoc.tar" basedir="${doc}" />
+	<gzip src="${javadoc-archive}/jfritz-${version}-javadoc.tar" zipfile="${javadoc-archive}/jfritz-${version}-javadoc.tar.gz" />
+	<delete file="${javadoc-archive}/jfritz-${version}-javadoc.tar" />
+</target>
 
-	<target name="archive" depends="archive-init, build, source-archive, javadoc-archive" description="Generates javadoc-, source- and binary-archives">
-		<copy todir="${binaries-archive}/tmp">
-			<fileset dir="${dist}" />
-		</copy>
-		<zip zipfile="${binaries-archive}/jfritz-${version}.zip" basedir="${binaries-archive}/tmp" />
-		<delete dir="${binaries-archive}/tmp" />
-	</target>
+<target name="archive" depends="archive-init, build, source-archive, javadoc-archive" description="Generates javadoc-, source- and binary-archives">
+	<copy todir="${binaries-archive}/tmp">
+		<fileset dir="${dist}" />
+	</copy>
+	<zip zipfile="${binaries-archive}/jfritz-${version}.zip" basedir="${binaries-archive}/tmp" />
+	<delete dir="${binaries-archive}/tmp" />
+</target>
 
-	<target name="CallSim" description="Create a jar of my call simulator">
-	    <mkdir dir="${buildcallsim}" />
-		<javac srcdir="${src}/de/moonflower/jfritz/utils/callsimulator/" destdir="${buildcallsim}" />
-		<jar jarfile="${buildcallsim}/callsim.jar" update="yes">
-			<fileset dir="${buildcallsim}">
-				<include name="**/de/moonflower/jfritz/utils/callsimulator/*.*" />
-			</fileset>
-			<manifest>
-				<attribute name="Main-Class" value="de.moonflower.jfritz.utils.callsimulator.CallSimulator" />
-			</manifest>
-		</jar>
-    </target>
+<target name="CallSim" description="Create a jar of my call simulator">
+	<mkdir dir="${buildcallsim}" />
+	<javac srcdir="${src}/de/moonflower/jfritz/utils/callsimulator/" destdir="${buildcallsim}" />
+	<jar jarfile="${buildcallsim}/callsim.jar" update="yes">
+		<fileset dir="${buildcallsim}">
+			<include name="**/de/moonflower/jfritz/utils/callsimulator/*.*" />
+		</fileset>
+		<manifest>
+			<attribute name="Main-Class" value="de.moonflower.jfritz.utils.callsimulator.CallSimulator" />
+		</manifest>
+	</jar>
+</target>
 </project>

@@ -10,9 +10,18 @@ Non-JFritz-Changes:
 
 
 TODO vor dem Release:
+- Autoupdate komplett refaktorieren!
 - autoupdate.exe mitliefern
+- About-Dialog anpassen (automatisieren)
 - Debug-Klasse auf Log4j umstellen!
 - Beim ersten Start popup fuer das PW, wenn falscher Login festgestellt wurde!
+
+JFritz 0.7.4.1.18:
+- Windows: Umlaute werden bei Installation wieder korrekt dargestellt
+- Autoupdate: Komplett entfernt
+- Bugfix: Ändern des Speicherverzeichnisses kopiert nun alle Dateien und Ordner und löscht das alte Speicherverzeichnis
+- Apache commons IO wird nun für Backup verwendet
+- Backup refactored
 
 JFritz 0.7.4.1.17:
 - jfritz.txt in INI-Format umgewandelt
