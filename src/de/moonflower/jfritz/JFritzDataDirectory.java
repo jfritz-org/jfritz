@@ -175,9 +175,6 @@ public class JFritzDataDirectory {
 			try {
 				FileUtils.moveDirectory(src, dst);
 				saveNewDirectory(path);
-//				// update logger
-//				Logger.getRootLogger().removeAppender("log4j-file-appender");
-//				initLog4jAppender();
 			} catch (IOException e) {
 				log.error("Could not move data directory!", e);
 				try {
@@ -186,6 +183,9 @@ public class JFritzDataDirectory {
 					log.debug("Changed data directory from '" + SAVE_DIR + "' to '" + path + "'");
 					saveNewDirectory(path);
 					try {
+//						// update logger
+						Logger.getRootLogger().removeAppender("log4j-file-appender");
+						Main.initLog4jAppender();
 						FileUtils.deleteDirectory(src);
 					} catch (IOException e1) {
 						Debug.errDlg("Could not delete old data directory '" + SAVE_DIR + "'!\n" +
