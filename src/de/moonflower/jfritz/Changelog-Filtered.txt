@@ -1,3 +1,6 @@
+JFritz 0.7.4.1.19:
+- SVN Revisionsnummer und Build-Datum im About-Dialog
+
 JFritz 0.7.4.1.18:
 - Windows: Umlaute werden bei Installation wieder korrekt dargestellt
 - Autoupdate: Komplett entfernt
