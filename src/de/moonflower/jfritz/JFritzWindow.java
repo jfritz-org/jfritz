@@ -919,17 +919,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		configDialog.dispose();
 		this.setStatus("");
 	    c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-
-	    if (!properties.getProperty("changeSaveDirectory").equals("")) {
-		    EventQueue.invokeLater(new Runnable() {
-
-				@Override
-				public void run() {
-						JFritzDataDirectory.getInstance().changeSaveDir(properties.getProperty("changeSaveDirectory"));
-						properties.removeProperty("changeSaveDirectory");
-				    }
-		    });
-	    }
 	}
 
 	/**

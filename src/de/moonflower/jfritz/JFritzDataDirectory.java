@@ -174,32 +174,31 @@ public class JFritzDataDirectory {
 		File dst = new File(path);
 		if (!dst.isFile())
 		{
+			LogManager.shutdown();
+			Debug.off();
+
 			File src = new File(SAVE_DIR);
 			try {
 				FileUtils.moveDirectory(src, dst);
 				saveNewDirectory(path);
 			} catch (IOException e) {
-				log.error("Could not move data directory!", e);
 				try {
 					FileUtils.copyDirectory(src, dst);
-					log.debug("Changed data directory from '" + SAVE_DIR + "' to '" + path + "'");
-					LogManager.shutdown();
-					Debug.off();
 					try {
 						FileUtils.deleteDirectory(src);
 					} catch (IOException e1) {
 						Debug.errDlg("Could not delete old data directory '" + src + "'!\n" +
 								e.getMessage());
-					} finally {
-						DOMConfigurator.configure(JFritzUtils.getFullPath("/log4j.xml"));
-						saveNewDirectory(path);
-						Debug.on();
-						Main.initLog4jAppender();
 					}
 				} catch (IOException e1) {
 					Debug.errDlg("Could not copy data directory from '" + SAVE_DIR + "' to '" + path + "'!\n" +
 							e.getMessage());
 				}
+			} finally {
+				DOMConfigurator.configure(JFritzUtils.getFullPath("/log4j.xml"));
+				saveNewDirectory(path);
+				Debug.on();
+				Main.initLog4jAppender();
 			}
 		} else {
 			Debug.errDlg("You selected a file, please choose a directory!");
