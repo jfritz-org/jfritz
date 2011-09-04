@@ -7,7 +7,6 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.Insets;
 import java.awt.Rectangle;
@@ -54,9 +53,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 
+import jd.nutils.OSDetector;
+
 import org.apache.log4j.Logger;
 
-import jd.nutils.OSDetector;
 import de.moonflower.jfritz.backup.JFritzBackup;
 import de.moonflower.jfritz.box.BoxClass;
 import de.moonflower.jfritz.box.BoxStatusListener;
@@ -927,7 +927,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	public void showAboutDialog() {
 		JOptionPane.showMessageDialog(this, ProgramConstants.PROGRAM_NAME + " v" //$NON-NLS-1$
 				+ ProgramConstants.PROGRAM_VERSION + "\n" //$NON-NLS-1$
-				+ JFritzUtils.getVersionFromCVSTag(ProgramConstants.CVS_TAG) + "\n" //$NON-NLS-1$
+				+ "Build date: " + ProgramConstants.BUILD_DATE + "\n"
+				+ "Revision: " + ProgramConstants.REVISION + "\n" //$NON-NLS-1$
 				+ "(c) 2005-2010 by " + Main.JFRITZ_PROJECT + "\n" //$NON-NLS-1$,  //$NON-NLS-2$
 				+ Main.PROGRAM_URL + "\n\n" 							//$NON-NLS-1$
 				+ "Project-Admin: " + Main.PROJECT_ADMIN + "\n"		//$NON-NLS-1$

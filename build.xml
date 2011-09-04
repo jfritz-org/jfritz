@@ -52,12 +52,25 @@
 		</fileset>
 	</path>
 
+	<target name="getSvnRevision">
+		<exec executable="svnversion" outputproperty="svnversion"/>
+	</target>
+
+	<target name="updateProgramConstants">
+		<taskdef name="UpdateProgramConstants" classname="de.moonflower.jfritz.ant.UpdateProgramConstants" classpathref="test.classpath" />
+		<UpdateProgramConstants revision="${svnversion}" date="${TODAY_ROB}"/>
+	</target>
+
 	<target name="getVersion">
 		<taskdef name="GetJFritzVersion" classname="de.moonflower.jfritz.ant.GetJFritzVersion" classpathref="test.classpath" />
 		<GetJFritzVersion/>
 	</target>
 
-	<target name="init" description="Show startup informations">
+	<tstamp>
+		<format property="TODAY_ROB" pattern="dd-MM-yyyy HH:mm:ss" locale="de,DE"/>
+	</tstamp>
+
+	<target name="init" depends="getSvnRevision, updateProgramConstants, getVersion" description="Show startup informations">
 		<echo message="ant version:   ${ant.version}" />
 		<echo message="java version:  ${ant.java.version}" />
 		<echo message="" />
@@ -67,11 +80,7 @@
 		<echo message="   project source:	${src}" />
 		<echo message="   ---------------------------------------------------------------" />
 		<echo message="" />
-		<echo message="Building ${app.name} ..." />
-	</target>
-
-	<target name="update" description="Calls 'cvs update'-command">
-		<cvs command="update" />
+		<echo message="${TODAY_ROB} Building ${app.name} ${version} ${svnversion} ..." />
 	</target>
 
 	<target name="clean" description="Cleans build, dist, doc and archive directories">
