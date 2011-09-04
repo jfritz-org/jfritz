@@ -182,7 +182,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 186 2011-09-04 16:37:28Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 188 2011-09-04 21:24:36Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -567,7 +567,7 @@ public class Main implements LookupObserver {
 		}
 	}
 
-	private static void initLog4jAppender() {
+	public static void initLog4jAppender() {
 		Appender a = Logger.getRootLogger().getAppender("FileAppender");
 		if (a != null && a instanceof FileAppender) {
 			FileAppender fa = (FileAppender)a;

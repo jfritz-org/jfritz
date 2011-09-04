@@ -7,6 +7,7 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.Insets;
 import java.awt.Rectangle;
@@ -918,6 +919,17 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		configDialog.dispose();
 		this.setStatus("");
 	    c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+
+	    if (!properties.getProperty("changeSaveDirectory").equals("")) {
+		    EventQueue.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+						JFritzDataDirectory.getInstance().changeSaveDir(properties.getProperty("changeSaveDirectory"));
+						properties.removeProperty("changeSaveDirectory");
+				    }
+		    });
+	    }
 	}
 
 	/**

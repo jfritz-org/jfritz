@@ -78,6 +78,10 @@ public class Debug {
 	protected static PropertyProvider properties = PropertyProvider.getInstance();
 	protected static MessageProvider messages = MessageProvider.getInstance();
 
+	private static FileOutputStream tmpOutputStream;
+	private static PrintStream outputFileRedirector;
+	private static ConsoleAndFilePrintStream errorFileRedirector;
+
 	/**
 	 * Turns debug-mode on
 	 *
@@ -91,6 +95,20 @@ public class Debug {
 	public static void off() {
 		System.setOut(originalOut);
 		System.setErr(originalErr);
+		if (tmpOutputStream != null) {
+			try {
+				tmpOutputStream.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		if (outputFileRedirector != null) {
+			outputFileRedirector.close();
+		}
+		if (errorFileRedirector != null) {
+			errorFileRedirector.close();
+		}
 	}
 	/**
 	 * This function works by redirecting System.out and System.err to fname The
@@ -114,10 +132,10 @@ public class Debug {
 
 		try {
 			// setup the redirection of Sysem.out and System.err
-			FileOutputStream tmpOutputStream = new FileOutputStream(
+			tmpOutputStream = new FileOutputStream(
 					debugLogFile);
-			PrintStream outputFileRedirector = new PrintStream(tmpOutputStream);
-			ConsoleAndFilePrintStream errorFileRedirector = new ConsoleAndFilePrintStream(tmpOutputStream);
+			outputFileRedirector = new PrintStream(tmpOutputStream);
+			errorFileRedirector = new ConsoleAndFilePrintStream(tmpOutputStream);
 			System.setOut(outputFileRedirector);
 			System.setErr(errorFileRedirector);
 		}

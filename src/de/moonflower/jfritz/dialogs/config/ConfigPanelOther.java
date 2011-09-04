@@ -248,7 +248,9 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 	public void saveSettings() {
 		// only write the save dir to disk if the user changed something
 		if (!save_location.getText().equals(JFritzDataDirectory.getInstance().getDataDirectory())) {
-			JFritzDataDirectory.getInstance().changeSaveDir(save_location.getText());
+			properties.setProperty("changeSaveDirectory", save_location.getText());
+		} else {
+			properties.removeProperty("changeSaveDirectory");
 		}
 
 		properties.setProperty("option.useSSDP", Boolean.toString(searchWithSSDP //$NON-NLS-1$

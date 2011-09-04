@@ -9,12 +9,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
 
 import jd.nutils.OSDetector;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class JFritzDataDirectory {
 	private final static Logger log = Logger.getLogger(JFritzDataDirectory.class);
@@ -179,17 +182,19 @@ public class JFritzDataDirectory {
 				log.error("Could not move data directory!", e);
 				try {
 					FileUtils.copyDirectory(src, dst);
-
 					log.debug("Changed data directory from '" + SAVE_DIR + "' to '" + path + "'");
-					saveNewDirectory(path);
+					LogManager.shutdown();
+					Debug.off();
 					try {
-//						// update logger
-						Logger.getRootLogger().removeAppender("log4j-file-appender");
-						Main.initLog4jAppender();
 						FileUtils.deleteDirectory(src);
 					} catch (IOException e1) {
-						Debug.errDlg("Could not delete old data directory '" + SAVE_DIR + "'!\n" +
+						Debug.errDlg("Could not delete old data directory '" + src + "'!\n" +
 								e.getMessage());
+					} finally {
+						DOMConfigurator.configure(JFritzUtils.getFullPath("/log4j.xml"));
+						saveNewDirectory(path);
+						Debug.on();
+						Main.initLog4jAppender();
 					}
 				} catch (IOException e1) {
 					Debug.errDlg("Could not copy data directory from '" + SAVE_DIR + "' to '" + path + "'!\n" +
