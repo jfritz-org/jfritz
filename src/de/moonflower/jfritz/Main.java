@@ -152,6 +152,7 @@ import jd.nutils.OSDetector;
 import org.apache.log4j.Appender;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.apache.log4j.xml.DOMConfigurator;
 
 import de.moonflower.jfritz.backup.JFritzBackup;
@@ -183,7 +184,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 193 2011-09-04 23:19:07Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 198 2011-09-07 20:55:58Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -569,18 +570,22 @@ public class Main implements LookupObserver {
 	}
 
 	public static void initLog4jAppender() {
-		Appender a = Logger.getRootLogger().getAppender("FileAppender");
-		if (a != null && a instanceof FileAppender) {
-			FileAppender fa = (FileAppender)a;
-			String oldPath = fa.getFile();
-			String path = oldPath;
-			if (oldPath.equals("log4j.log")) {
-				path = JFritzDataDirectory.getInstance().getDataDirectory() + "log4j.log";
-				fa.setFile(path);
-				fa.activateOptions();
-				Logger.getRootLogger().info("Setting log4j logging path from " + oldPath + " to " + path);
-			}
+		Appender oldFileAppender = Logger.getRootLogger().getAppender("FileAppender");
+		if (oldFileAppender != null) {
+			Logger.getRootLogger().removeAppender(oldFileAppender);
+		}
+
+		PatternLayout layout = new PatternLayout();
+		layout.setConversionPattern("%d{dd.MM.yy HH:mm:ss}|%t|%p|%C{1} - %m%n");
+		String path = JFritzDataDirectory.getInstance().getDataDirectory() + "log4j.log";
+		FileAppender fa;
+		try {
+			fa = new FileAppender(layout, path, false);
+			fa.activateOptions();
+			Logger.getRootLogger().addAppender(fa);
 			Logger.getRootLogger().info("Logging to " + fa.getFile());
+		} catch (IOException e) {
+			Logger.getRootLogger().error("Could not write log file to " + path);
 		}
 	}
 
