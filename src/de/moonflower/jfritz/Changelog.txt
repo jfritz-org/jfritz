@@ -10,11 +10,15 @@ Non-JFritz-Changes:
 
 
 TODO vor dem Release:
+- Ankündigung: DOWNGRADE nicht möglich -> jfritz.txt bearbeiten, erste Zeile löschen
 - Autoupdate komplett refaktorieren!
 - autoupdate.exe mitliefern
 - About-Dialog anpassen (automatisieren)
 - Debug-Klasse auf Log4j umstellen!
 - Beim ersten Start popup fuer das PW, wenn falscher Login festgestellt wurde!
+
+JFritz 0.7.4.1.21:
+- About-Dialog überarbeitet
 
 JFritz 0.7.4.1.20:
 - Bugfix: Log4j.log wird nun nicht mehr ins Programmverzeichnis geschrieben

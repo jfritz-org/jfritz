@@ -537,12 +537,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * Creates the menu bar
 	 */
 	public JMenuBar createMenu() {
-		String menu_text = ProgramConstants.PROGRAM_NAME;
+		JMenu jfritzMenu;
 		if (OSDetector.isMac()) {
-			menu_text = "File"; //$NON-NLS-1$
+			jfritzMenu = new JMenu("File"); //$NON-NLS-1$
+		} else {
+			jfritzMenu = new JMenu(ProgramConstants.PROGRAM_NAME);
 		}
 
-		JMenu jfritzMenu = new JMenu(menu_text);
 		// JMenu editMenu = new JMenu(messages.getMessage("edit_menu"));
 		JMenu optionsMenu = new JMenu(messages.getMessage("options_menu")); //$NON-NLS-1$
 		JMenu helpMenu = new JMenu(messages.getMessage("help_menu")); //$NON-NLS-1$
@@ -926,31 +927,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * Shows the about dialog
 	 */
 	public void showAboutDialog() {
-		JOptionPane.showMessageDialog(this, ProgramConstants.PROGRAM_NAME + " v" //$NON-NLS-1$
-				+ ProgramConstants.PROGRAM_VERSION + "\n" //$NON-NLS-1$
-				+ "Build date: " + ProgramConstants.BUILD_DATE + "\n"
-				+ "Revision: " + ProgramConstants.REVISION + "\n" //$NON-NLS-1$
-				+ "(c) 2005-2010 by " + Main.JFRITZ_PROJECT + "\n" //$NON-NLS-1$,  //$NON-NLS-2$
-				+ Main.PROGRAM_URL + "\n\n" 							//$NON-NLS-1$
-				+ "Project-Admin: " + Main.PROJECT_ADMIN + "\n"		//$NON-NLS-1$
-				+ "Project-Initiator: " + "Arno Willig <akw@thinkwiki.org>" //$NON-NLS-1$
-				+ "\n\n"
-				+ "Active Developers:\n"
-				+ "Robert Palmer <robotniko@users.sourceforge.net>\n" 	//$NON-NLS-1$
-				+ "\n"													//$NON-NLS-1$
-				+ "Former Developers:\n" 								//$NON-NLS-1$
-				+ "Arno Willig <akw@thinkwiki.org>\n"					//$NON-NLS-1$
-				+ "Christian Klein <kleinch@users.sourceforge.net>\n" 	//$NON-NLS-1$
-				+ "Benjamin Schmitt <little_ben@users.sourceforge.net>\n" //$NON-NLS-1$
-				+ "Bastian Schaefer <baefer@users.sourceforge.net>\n" 	//$NON-NLS-1$
-				+ "Marc Waldenberger <MarcWaldenberger@gmx.net>\n"		//$NON-NLS-1$
-				+ "Simeon Faensen (Klingeling-Idee)\n"					//$NON-NLS-1$
-				+ "Brian Jensen <capncrunch@users.sourceforge.net>\n" 	//$NON-NLS-1$
-				+ "Rainer Ullrich <jfritz@rainerullrich.de>\n" 			//$NON-NLS-1$
-				+ "\n\n"												//$NON-NLS-1$
-				+ "This tool is developed and released under\n" 		//$NON-NLS-1$
-				+ "the terms of the GNU General Public License\n",		//$NON-NLS-1$
-				"About", JOptionPane.INFORMATION_MESSAGE); 	//$NON-NLS-1$
+		AboutJFritz about = new AboutJFritz(this);
+		about.setVisible(true);
 	}
 
 	/**

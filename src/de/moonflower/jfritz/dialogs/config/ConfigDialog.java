@@ -384,7 +384,7 @@ public class ConfigDialog extends JDialog {
 		cancelButton.addActionListener(actionListener);
 		cancelButton.addKeyListener(keyListener);
 		cancelButton.setMnemonic(KeyEvent.VK_ESCAPE);
-		okcancelpanel.add(cancelButton);
+		okcancelpanel.add(cancelButton, c);
 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BorderLayout());

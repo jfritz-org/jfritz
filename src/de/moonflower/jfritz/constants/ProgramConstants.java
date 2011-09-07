@@ -6,9 +6,9 @@ public class ProgramConstants {
 	// when changing this, don't forget to check the resource bundles!!
 	public final static String PROGRAM_NAME = "JFritz"; //$NON-NLS-1$
 
-	public final static String PROGRAM_VERSION = "0.7.4.1.20"; //$NON-NLS-1$
+	public final static String PROGRAM_VERSION = "0.7.4.1.21"; //$NON-NLS-1$
 
-	public final static String REVISION = "197P";
+	public final static String REVISION = "198P";
 
-	public final static String BUILD_DATE = "05-09-2011 01:30:16";
+	public final static String BUILD_DATE = "07-09-2011 22:56:22";
 }
