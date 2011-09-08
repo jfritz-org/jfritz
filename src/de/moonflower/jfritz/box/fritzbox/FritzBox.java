@@ -669,8 +669,9 @@ public class FritzBox extends BoxClass {
 		Collection<Port> collection = configuredPorts.values();
 		for (Port port: collection)
 		{
-			port.setBox(this);
-			ports.add(port);
+			Port cloned = new Port(port.getId(), port.getName(), port.getDialPort(), port.getInternalNumber());
+			cloned.setBox(this);
+			ports.add(cloned);
 		}
 
 		return ports;

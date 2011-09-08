@@ -184,7 +184,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 198 2011-09-07 20:55:58Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 200 2011-09-08 12:11:41Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -880,7 +880,7 @@ public class Main implements LookupObserver {
 								+ messages.getMessage("lock_error_dialog2") //$NON-NLS-1$
 								+ messages.getMessage("lock_error_dialog3") //$NON-NLS-1$
 								+ messages.getMessage("lock_error_dialog4"), //$NON-NLS-1$
-							messages.getMessage("information"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
+							ProgramConstants.PROGRAM_NAME + " - "  + messages.getMessage("information"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
 				if (answer == JOptionPane.YES_OPTION) {
 					Debug.warning("Multiple instance lock: User decided to shut down this instance."); //$NON-NLS-1$
 					exit(EXIT_CODE_MULTIPLE_INSTANCE_LOCK);
