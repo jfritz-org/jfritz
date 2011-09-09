@@ -115,7 +115,7 @@ public class ConfigPanelProxy extends JPanel implements ConfigPanel, ActionListe
 
 	public String getPath()
 	{
-		return messages.getMessage("proxy");
+		return messages.getMessage("other")+"::"+messages.getMessage("proxy");
 	}
 
 	public JPanel getPanel() {

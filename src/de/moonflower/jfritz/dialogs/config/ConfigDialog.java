@@ -81,7 +81,7 @@ public class ConfigDialog extends JDialog {
 	private ConfigPanelLang languagePanel;
 //	private ConfigPanelFont fontPanel;
 	private ConfigPanelOther otherPanel;
-	private ConfigPanelNetwork networkPanel;
+//	private ConfigPanelNetwork networkPanel;
 	private ConfigPanelSip sipPanel;
 	private ConfigPanelTray trayPanel;
 
@@ -124,7 +124,7 @@ public class ConfigDialog extends JDialog {
 		languagePanel = new ConfigPanelLang();
 //		fontPanel = new ConfigPanelFont();
 		otherPanel = new ConfigPanelOther(fritzBoxPanel);
-		networkPanel = new ConfigPanelNetwork(this);
+//		networkPanel = new ConfigPanelNetwork(this);
 		trayPanel = new ConfigPanelTray();
 
 		rootNode = new ConfigTreeNode(messages.getMessage("config"));
@@ -279,7 +279,7 @@ public class ConfigDialog extends JDialog {
 		languagePanel.loadSettings();
 //		fontPanel.loadSettings();
 		otherPanel.loadSettings();
-		networkPanel.loadSettings();
+//		networkPanel.loadSettings();
 		callerListPanel.loadSettings();
 		callerListAppearancePanel.loadSettings();
 		sipPanel.loadSettings();
@@ -307,7 +307,7 @@ public class ConfigDialog extends JDialog {
 		languagePanel.saveSettings();
 //		fontPanel.saveSettings();
 		otherPanel.saveSettings();
-		networkPanel.saveSettings();
+//		networkPanel.saveSettings();
 		callerListPanel.saveSettings();
 		callerListAppearancePanel.saveSettings();
 		sipPanel.saveSettings();
@@ -360,7 +360,7 @@ public class ConfigDialog extends JDialog {
 					languagePanel.cancel();
 //					fontPanel.cancel();
 					otherPanel.cancel();
-					networkPanel.cancel();
+//					networkPanel.cancel();
 					callerListPanel.cancel();
 					callerListAppearancePanel.cancel();
 					sipPanel.cancel();
@@ -470,7 +470,7 @@ public class ConfigDialog extends JDialog {
 		this.addConfigPanel(messagePanel);
 		this.addConfigPanel(languagePanel);
 //		this.addConfigPanel(fontPanel);
-		this.addConfigPanel(networkPanel);
+//		this.addConfigPanel(networkPanel);
 		this.addConfigPanel(otherPanel);
 		this.addConfigPanel(callerListAppearancePanel);
 		this.addConfigPanel(trayPanel);
@@ -529,7 +529,7 @@ public class ConfigDialog extends JDialog {
 				|| languagePanel.shouldRefreshTrayMenu()
 //				|| fontPanel.shouldRefreshTrayMenu()
 				|| otherPanel.shouldRefreshTrayMenu()
-				|| networkPanel.shouldRefreshTrayMenu()
+//				|| networkPanel.shouldRefreshTrayMenu()
 				|| sipPanel.shouldRefreshTrayMenu()
 				|| trayPanel.shouldRefreshTrayMenu())
 		{

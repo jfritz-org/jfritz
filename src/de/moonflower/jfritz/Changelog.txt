@@ -17,6 +17,10 @@ TODO vor dem Release:
 - Debug-Klasse auf Log4j umstellen!
 - Beim ersten Start popup fuer das PW, wenn falscher Login festgestellt wurde!
 
+JFritz 0.7.4.1.23:
+- Client/Server-Einstellungen entfernt, da eh verbuggt
+- Proxy Einstellungen nach "Weiteres" verschoben
+
 JFritz 0.7.4.1.22:
 - Bugfix: Doppelte Einträge nach Benutzung der Wählhilfe
 - Logging des Anrufmonitors von Debug auf log4j
