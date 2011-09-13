@@ -476,7 +476,7 @@ public class ConfigDialog extends JDialog {
 		this.addConfigPanel(trayPanel);
 		this.addConfigPanel(proxyPanel);
 
-		int width = Integer.parseInt(properties.getStateProperty("configDialog.width", "700"));
+		int width = Integer.parseInt(properties.getStateProperty("configDialog.width", "800"));
 		int height = Integer.parseInt(properties.getStateProperty("configDialog.height", "470"));
 		setSize(width, height);
 		setResizable(true);

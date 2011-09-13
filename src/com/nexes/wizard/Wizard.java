@@ -427,6 +427,22 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
     	locationRelativeToParent = value;
     }
 
+    public static void setBackText(final String newText) {
+    	BACK_TEXT = newText;
+    }
+
+    public static void setNextText(final String newText) {
+    	NEXT_TEXT = newText;
+    }
+
+    public static void setCancelText(final String newText) {
+    	CANCEL_TEXT = newText;
+    }
+
+    public static void setFinishText(final String newText) {
+    	FINISH_TEXT = newText;
+    }
+
     static {
 
         try {

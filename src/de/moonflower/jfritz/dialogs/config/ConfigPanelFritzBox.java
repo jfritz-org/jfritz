@@ -224,10 +224,6 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 		boxtypeButton.addActionListener(this);
 		cPane.add(boxtypeButton, c);
 		boxtypeLabel = new MultiLabel("a\nb\nc\n");
-		Font f = boxtypeLabel.getFont();
-		String fontname = f.getFontName();
-		Font f2 = new Font(fontname, f.getStyle(), f.getSize()-3);
-		boxtypeLabel.setFont(f2);
 		cPane.add(boxtypeLabel, c);
 
 		add(new JScrollPane(cPane), BorderLayout.CENTER);

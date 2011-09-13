@@ -55,6 +55,10 @@ public class ConfigWizard {
 
 		Debug.info("Create JFritz config wizard");
 		wizard = new Wizard(JFritz.getJframe());
+		Wizard.setBackText(messages.getMessage("back"));
+		Wizard.setNextText(messages.getMessage("next"));
+		Wizard.setFinishText(messages.getMessage("finish"));
+		Wizard.setCancelText(messages.getMessage("cancel"));
         wizard.getDialog().setTitle(messages.getMessage("config_wizard"));
 
         //initialize the wizard with the correct order of the panels
@@ -170,8 +174,9 @@ public class ConfigWizard {
 				properties.setProperty(
 						"locale", localeList[languageCombo.getSelectedIndex()]); //$NON-NLS-1$
 				String loc = localeList[languageCombo.getSelectedIndex()];
-				JFritz.getJframe().setLanguage(
-						new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_")+1, loc.length())));
+				Locale locale = new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_")+1, loc.length()));
+				messages.loadMessages(locale);
+				JFritz.getJframe().setLanguage(	locale );
 			}
 
 		}else

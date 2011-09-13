@@ -11,11 +11,20 @@ Non-JFritz-Changes:
 
 TODO vor dem Release:
 - Ankündigung: DOWNGRADE nicht möglich -> jfritz.txt bearbeiten, erste Zeile löschen
+- Setup für Windows unter Windows erstellen, oder aber eine andere Möglichkeit finden, das Setup-Icon auszutauschen
 - Autoupdate komplett refaktorieren!
 - autoupdate.exe mitliefern
 - About-Dialog anpassen (automatisieren)
 - Debug-Klasse auf Log4j umstellen!
 - Beim ersten Start popup fuer das PW, wenn falscher Login festgestellt wurde!
+
+JFritz 0.7.4.1.24:
+- Buttons im Wizard werden nun nach der Sprachwahl in der korrekten Sprache angezeigt
+- Config-Dialog breiter gestaltet und dafür wieder die Schriftgröße der erkannten Firmware vergrößert 
+New Strings:
+back
+finish
+next
 
 JFritz 0.7.4.1.23:
 - Client/Server-Einstellungen entfernt, da eh verbuggt
