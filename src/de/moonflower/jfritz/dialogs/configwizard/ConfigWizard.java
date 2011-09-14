@@ -1,6 +1,8 @@
 package de.moonflower.jfritz.dialogs.configwizard;
 
 import java.awt.Frame;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.util.Locale;
 
@@ -10,6 +12,7 @@ import com.nexes.wizard.Wizard;
 import com.nexes.wizard.WizardPanelDescriptor;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.constants.ProgramConstants;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelCallMonitor;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelFritzBox;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelLang;
@@ -36,6 +39,7 @@ import de.moonflower.jfritz.utils.Debug;
 public class ConfigWizard {
 
 	private Wizard wizard;
+	private Image icon;
 
 	private ConfigPanelFritzBoxDescriptor descriptor3;
 
@@ -47,19 +51,24 @@ public class ConfigWizard {
 	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public ConfigWizard(Frame parent){
+		icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource(
+				"/de/moonflower/jfritz/resources/images/tray16.png")); //$NON-NLS-1$
 
 		Debug.info("asking the user for the language");
+
+		Wizard.setBackText(messages.getMessage("back"));
+		Wizard.setNextText(messages.getMessage("next"));
+		Wizard.setFinishText(messages.getMessage("finish"));
+		Wizard.setCancelText(messages.getMessage("cancel"));
 
 		//if user clicked cancel on the language dialog, return back to jfritz
 		askLanguage(parent);
 
 		Debug.info("Create JFritz config wizard");
 		wizard = new Wizard(JFritz.getJframe());
-		Wizard.setBackText(messages.getMessage("back"));
-		Wizard.setNextText(messages.getMessage("next"));
-		Wizard.setFinishText(messages.getMessage("finish"));
-		Wizard.setCancelText(messages.getMessage("cancel"));
-        wizard.getDialog().setTitle(messages.getMessage("config_wizard"));
+		wizard.getDialog().setIconImage(icon);
+
+        wizard.getDialog().setTitle(ProgramConstants.PROGRAM_NAME + " " + messages.getMessage("config_wizard"));
 
         //initialize the wizard with the correct order of the panels
         WizardPanelDescriptor descriptor1 = new ConfigPanel1Descriptor();
@@ -150,7 +159,9 @@ public class ConfigWizard {
 	 */
 	public void askLanguage(Frame parent){
 		wizard = new Wizard();
-	    wizard.getDialog().setTitle(messages.getMessage("config_wizard"));
+		wizard.getDialog().setIconImage(icon);
+
+	    wizard.getDialog().setTitle(ProgramConstants.PROGRAM_NAME + " " + messages.getMessage("config_wizard"));
        	wizard.setLocationRelativeToParent(true);
 
 	    if(parent != null)
@@ -176,7 +187,13 @@ public class ConfigWizard {
 				String loc = localeList[languageCombo.getSelectedIndex()];
 				Locale locale = new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_")+1, loc.length()));
 				messages.loadMessages(locale);
-				JFritz.getJframe().setLanguage(	locale );
+				if (JFritz.getJframe() != null) {
+					JFritz.getJframe().setLanguage(locale);
+				}
+				Wizard.setBackText(messages.getMessage("back"));
+				Wizard.setNextText(messages.getMessage("next"));
+				Wizard.setFinishText(messages.getMessage("finish"));
+				Wizard.setCancelText(messages.getMessage("cancel"));
 			}
 
 		}else

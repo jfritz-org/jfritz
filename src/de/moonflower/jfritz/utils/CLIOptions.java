@@ -7,11 +7,14 @@ package de.moonflower.jfritz.utils;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 /**
  * @author Arno Willig
  *
  */
 public class CLIOptions {
+	private final static Logger log = Logger.getLogger(CLIOptions.class);
 
 	Vector<CLIOption> CLIOptions;
 
@@ -74,7 +77,8 @@ public class CLIOptions {
 				line += "=[" + option.getParameter() + "]"; //$NON-NLS-1$,  //$NON-NLS-2$
 			line = paddingString(line, 29, ' ', false); //$NON-NLS-1$
 			line += option.getDescription();
-			Debug.always(line);
+			log.info(line);
+			System.out.println(line);
 		}
 	}
 

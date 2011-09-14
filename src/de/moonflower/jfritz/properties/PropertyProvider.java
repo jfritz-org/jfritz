@@ -41,6 +41,7 @@ public class PropertyProvider {
 		config_properties = new JFritzProperties(loadDefaultProperties());
 		try {
 			config_properties.loadFromXML(JFritzDataDirectory.getInstance().getDataDirectory() + CONFIG_PROPERTIES_FILE);
+			showConfWizard = "".equals(config_properties.getProperty("box.address"));
 		} catch (FileNotFoundException e) {
 			Debug.warning("File " + JFritzDataDirectory.getInstance().getDataDirectory() + CONFIG_PROPERTIES_FILE //$NON-NLS-1$
 					+ " not found => showing config wizard"); //$NON-NLS-1$
@@ -80,7 +81,7 @@ public class PropertyProvider {
 		defProps.setProperty("area.code", "721");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("area.prefix", "0");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("backup.path", ".");//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("box.address", "192.168.178.1");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("box.address", "");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("box.mac", "");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("box.password", "121-203-238-10-54-180-181-42");//$NON-NLS-1$, //$NON-NLS-2$ // empty string as default PW
 		defProps.setProperty("box.port", "80");//$NON-NLS-1$, //$NON-NLS-2$

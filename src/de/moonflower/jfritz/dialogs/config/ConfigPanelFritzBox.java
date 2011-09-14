@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
@@ -117,7 +116,18 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 	}
 
 	public ConfigPanelFritzBox(FritzBox fritzBox) {
-		this.fritzBox = fritzBox;
+		if (fritzBox != null) {
+			this.fritzBox = fritzBox;
+		} else {
+			Exception e = null;
+			this.fritzBox = new FritzBox("FRITZ!Box", "", "http", "", "80", "", e);
+			if (e != null) {
+				Debug.error(e.toString());
+			}
+		}
+		if ("".equals(this.fritzBox.getAddress())) {
+			this.fritzBox.setAddress("192.168.178.1");
+		}
 
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
@@ -161,7 +171,7 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 				{
 					deviceAddress.add(p.getIP().getHostAddress());
 					// addressCombo.addItem(p.getShortName());
-					if (p.getIP().getHostAddress().equals(fritzBox.getAddress()))
+					if (p.getIP().getHostAddress().equals(this.fritzBox.getAddress()))
 					{
 						boxAddressAdded = true;
 					}
@@ -171,7 +181,7 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 
 		// make sure the stored address is listed
 		if (!boxAddressAdded) {
-			deviceAddress.add(fritzBox.getAddress());
+			deviceAddress.add(this.fritzBox.getAddress());
 		}
 
 		Collections.sort(deviceAddress);
@@ -181,7 +191,7 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 		}
 
 		for (int i=0; i < addressCombo.getItemCount(); i++) {
-			if (((String)addressCombo.getItemAt(i)).equals(fritzBox.getAddress())) {
+			if (((String)addressCombo.getItemAt(i)).equals(this.fritzBox.getAddress())) {
 				addressCombo.setSelectedIndex(i);
 			}
 		}
@@ -193,21 +203,21 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 		c.gridy = 3;
 		label = new JLabel(messages.getMessage("ip_address") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		cPane.add(label, c);
-		address = new JTextField("", 16); //$NON-NLS-1$
+		address = new JTextField("", 30); //$NON-NLS-1$
 		address.setMinimumSize(new Dimension(200, 20));
 		cPane.add(address, c);
 
 		c.gridy = 4;
 		label = new JLabel(messages.getMessage("password") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		cPane.add(label, c);
-		pass = new JPasswordField("", 16); //$NON-NLS-1$
+		pass = new JPasswordField("", 30); //$NON-NLS-1$
 		pass.setMinimumSize(new Dimension(200, 20));
 		cPane.add(pass, c);
 
 		c.gridy = 5;
 		label = new JLabel(messages.getMessage("box.port") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		cPane.add(label, c);
-		port = new JTextField("", 16); //$NON-NLS-1$
+		port = new JTextField("", 30); //$NON-NLS-1$
 		port.setMinimumSize(new Dimension(200, 20));
 		cPane.add(port, c);
 
@@ -295,8 +305,8 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 	private void setBoxTypeLabel() {
 		if (fritzBox.getFirmware() != null) {
 			boxtypeLabel.setForeground(Color.BLUE);
-			boxtypeLabel.setText(" \n" + fritzBox.getFirmware().getBoxName() + " (" //$NON-NLS-1$
-					+ fritzBox.getFirmware().getFirmwareVersion() + ") \n "); //$NON-NLS-1$
+			boxtypeLabel.setText(" \n" + fritzBox.getFirmware().getBoxName() + "\n" //$NON-NLS-1$
+					+ fritzBox.getFirmware().getFirmwareVersion() + "\n "); //$NON-NLS-1$
 			boxtypeLabel.setPreferredSize(boxtypeLabel.getPreferredSize());
 			boxtypeLabel.repaint();
 			checkDefaultFritzBox();

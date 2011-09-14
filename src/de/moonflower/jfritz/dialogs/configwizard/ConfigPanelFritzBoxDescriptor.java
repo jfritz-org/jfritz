@@ -21,8 +21,14 @@ public class ConfigPanelFritzBoxDescriptor extends WizardPanelDescriptor{
 	  public ConfigPanelFritzBox fritzBoxPanel;
 
 	  public ConfigPanelFritzBoxDescriptor() {
-			fritzBoxPanel = new ConfigPanelFritzBox(
-					(FritzBox) JFritz.getBoxCommunication().getBox(0));
+		  if (JFritz.getBoxCommunication() != null
+				  && JFritz.getBoxCommunication().getBoxCount() > 0
+				  && JFritz.getBoxCommunication().getBox(0) != null) {
+				fritzBoxPanel = new ConfigPanelFritzBox(
+						(FritzBox) JFritz.getBoxCommunication().getBox(0));
+		  } else {
+			  fritzBoxPanel = new ConfigPanelFritzBox(null);
+		  }
 			fritzBoxPanel.loadSettings();
 			setPanelDescriptorIdentifier(IDENTIFIER);
 		    setPanelComponent(fritzBoxPanel);

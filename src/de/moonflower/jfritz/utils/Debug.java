@@ -357,19 +357,21 @@ public class Debug {
 
 	private static LogSeverity returnLineSeverity(String line)
 	{
-		LogSeverity ls = LS_DEBUG;
-		if (line.substring(19).startsWith(LS_DEBUG.getPrefix())) {
-			ls = LS_DEBUG;
-		} else if (line.substring(19).startsWith(LS_INFO.getPrefix())) {
-			ls = LS_INFO;
-		} else if (line.substring(19).startsWith(LS_NETWORK.getPrefix())) {
-			ls = LS_NETWORK;
-		} else if (line.substring(19).startsWith(LS_WARNING.getPrefix())) {
-			ls = LS_WARNING;
-		} else if (line.substring(19).startsWith(LS_ERROR.getPrefix())) {
-			ls = LS_ERROR;
-		} else {
-			ls = LS_ALWAYS;
+		LogSeverity ls = LS_ALWAYS;
+		if (line.length() > 19) {
+			if (line.substring(19).startsWith(LS_DEBUG.getPrefix())) {
+				ls = LS_DEBUG;
+			} else if (line.substring(19).startsWith(LS_INFO.getPrefix())) {
+				ls = LS_INFO;
+			} else if (line.substring(19).startsWith(LS_NETWORK.getPrefix())) {
+				ls = LS_NETWORK;
+			} else if (line.substring(19).startsWith(LS_WARNING.getPrefix())) {
+				ls = LS_WARNING;
+			} else if (line.substring(19).startsWith(LS_ERROR.getPrefix())) {
+				ls = LS_ERROR;
+			} else {
+				ls = LS_ALWAYS;
+			}
 		}
 
 		return ls;

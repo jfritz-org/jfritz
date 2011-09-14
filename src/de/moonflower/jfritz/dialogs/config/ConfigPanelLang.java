@@ -82,7 +82,7 @@ public class ConfigPanelLang extends JPanel implements ConfigPanel{
 
 		languageCombo = new JComboBox(images);
 		LanguageComboBoxRenderer renderer = new LanguageComboBoxRenderer();
-		renderer.setPreferredSize(new Dimension(180, 15));
+		renderer.setPreferredSize(new Dimension(180, 25));
 
 		languageCombo.setRenderer(renderer);
 		languageCombo.setActionCommand("languageCombo"); //$NON-NLS-1$

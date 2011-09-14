@@ -27,9 +27,9 @@ import de.moonflower.jfritz.box.BoxClass;
 import de.moonflower.jfritz.box.BoxCommunication;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.callerlist.CallerList;
-import de.moonflower.jfritz.callmonitor.MonitoredCalls;
 import de.moonflower.jfritz.callmonitor.DisconnectMonitor;
 import de.moonflower.jfritz.callmonitor.DisplayCallsMonitor;
+import de.moonflower.jfritz.callmonitor.MonitoredCalls;
 import de.moonflower.jfritz.constants.ProgramConstants;
 import de.moonflower.jfritz.dialogs.quickdial.QuickDials;
 import de.moonflower.jfritz.dialogs.simple.MessageDlg;
@@ -97,8 +97,6 @@ public final class JFritz implements  StatusListener {
 	private static ClientLoginsTableModel clientLogins;
 
 	private static boolean shutdownInvoked = false;
-
-	private static boolean wizardCanceled = false;
 
 	private static BoxCommunication boxCommunication;
 
@@ -276,7 +274,7 @@ public final class JFritz implements  StatusListener {
 		ClientLoginsTableModel.loadFromXMLFile(JFritzDataDirectory.getInstance().getDataDirectory()+CLIENT_SETTINGS_FILE);
 	}
 
-	public void createJFrame(boolean showConfWizard) {
+	public void createJFrame() {
 		Debug.info("New instance of JFrame"); //$NON-NLS-1$
 		jframe = new JFritzWindow(this);
 		if (Main.checkForSystraySupport()) {
@@ -295,12 +293,9 @@ public final class JFritz implements  StatusListener {
 			}
 		}
 		jframe.checkStartOptions();
+	}
 
-		if (!shutdownInvoked && showConfWizard) {
-			Debug.info("Presenting user with the configuration dialog");
-			wizardCanceled = jframe.showConfigWizard();
-		}
-
+	public void startClientServer() {
 		if (!shutdownInvoked)
 		{
 			javax.swing.SwingUtilities.invokeLater(jframe);
@@ -314,9 +309,10 @@ public final class JFritz implements  StatusListener {
 				Debug.info("Connect on startup enabled, connectig to server");
 				NetworkStateMonitor.startClient();
 			}
-			startWatchdog();
 		}
+	}
 
+	public void registerListeners() {
 		boxCommunication.registerCallMonitorStateListener(jframe);
 		boxCommunication.registerCallListProgressListener(jframe.getCallerListPanel());
 		boxCommunication.registerCallListProgressListener(getCallerList());
@@ -611,7 +607,7 @@ public final class JFritz implements  StatusListener {
 	 * start timer for watchdog
 	 *
 	 */
-	private void startWatchdog() {
+	public void startWatchdog() {
 		if (!shutdownInvoked)
 		{
 			int interval = 5; // seconds
@@ -817,11 +813,6 @@ public final class JFritz implements  StatusListener {
 	public static boolean isShutdownInvoked()
 	{
 		return shutdownInvoked;
-	}
-
-	public static boolean isWizardCanceled()
-	{
-		return wizardCanceled;
 	}
 
 	public static BoxCommunication getBoxCommunication()

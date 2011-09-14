@@ -18,6 +18,11 @@ TODO vor dem Release:
 - Debug-Klasse auf Log4j umstellen!
 - Beim ersten Start popup fuer das PW, wenn falscher Login festgestellt wurde!
 
+JFritz 0.7.4.1.25:
+- Einrichtungsdialog (Wizard) überarbeitet, wird nun vor dem JFritz-Hauptfenster angezeigt
+- Einrichtungsdialog wird jedes angezeigt, solange die FritzBox noch nicht konfiguriert wurde
+- Startreihenfolge der einzelnen Komponenten angepasst (Prüfung auf mehrfachen Start, Einrichtungsdialog) 
+
 JFritz 0.7.4.1.24:
 - Buttons im Wizard werden nun nach der Sprachwahl in der korrekten Sprache angezeigt
 - Config-Dialog breiter gestaltet und dafür wieder die Schriftgröße der erkannten Firmware vergrößert 

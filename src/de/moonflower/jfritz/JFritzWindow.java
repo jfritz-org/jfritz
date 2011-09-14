@@ -22,7 +22,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.event.WindowStateListener;
 import java.io.File;
-import java.io.IOException;
 import java.util.Locale;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -67,10 +66,8 @@ import de.moonflower.jfritz.callerlist.FetchListTimer;
 import de.moonflower.jfritz.callmonitor.CallMonitorStatusListener;
 import de.moonflower.jfritz.constants.ProgramConstants;
 import de.moonflower.jfritz.dialogs.config.ConfigDialog;
-import de.moonflower.jfritz.dialogs.configwizard.ConfigWizard;
 import de.moonflower.jfritz.dialogs.quickdial.QuickDialPanel;
 import de.moonflower.jfritz.dialogs.simple.CallMessageDlg;
-import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.monitoring.MonitoringPanel;
@@ -1206,7 +1203,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		} else if (e.getActionCommand().equals("showhide")) {
 			hideShowJFritz();
 		} else if (e.getActionCommand().equals("configwizard")) {
-			showConfigWizard();
+			Main.showConfigWizard();
 		} else if(e.getActionCommand().equals("network")){
 
 			if(properties.getProperty("network.type").equals("2")){
@@ -1298,36 +1295,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	            repaint();
 			}
 		}
-	}
-
-
-	/**
-	 * @author Brian Jensen This creates and then display the config wizard
-	 * @throws IOException
-	 * @throws InvalidFirmwareException
-	 * @throws WrongPasswordException
-	 *
-	 */
-	public boolean showConfigWizard() {
-		ConfigWizard wizard = new ConfigWizard(this);
-		boolean wizardCanceled = false;
-		try {
-			wizardCanceled = wizard.showWizard();
-			setBoxConnected("");
-		} catch (WrongPasswordException e) {
-			setBoxDisconnected("");
-			e.printStackTrace();
-			return true;
-		} catch (InvalidFirmwareException e) {
-			setBoxDisconnected("");
-			e.printStackTrace();
-			return true;
-		} catch (IOException e) {
-			setBoxDisconnected("");
-			e.printStackTrace();
-			return true;
-		}
-		return wizardCanceled;
 	}
 
 	/**

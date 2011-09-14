@@ -12,8 +12,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.constants.ProgramConstants;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class SplashScreen extends JFrame {
@@ -21,7 +22,7 @@ public class SplashScreen extends JFrame {
 	 *
 	 */
 	private static final long serialVersionUID = -1231912446567250102L;
-
+	private static final Logger log = Logger.getLogger(SplashScreen.class);
 	private JLabel statusBar;
 	private JLabel versionPanel;
 
@@ -71,7 +72,7 @@ public class SplashScreen extends JFrame {
 
 	public void setStatus(String status)
 	{
-		Debug.always(status);
+		log.info(status);
 		statusBar.setText("   " +status);
 	}
 
@@ -82,10 +83,10 @@ public class SplashScreen extends JFrame {
 			setLayout( new BorderLayout() ) ;
 			img = new ImageIcon( background ).getImage() ;
 			if( img == null ) {
-				Debug.error( "Image is null" );
+				log.error( "Image is null" );
 			}
 			if( img.getHeight(this) <= 0 || img.getWidth( this ) <= 0 ) {
-				Debug.error( "Image width or height must be positive" );
+				log.error( "Image width or height must be positive" );
 				img = null;
 			}
 		}
