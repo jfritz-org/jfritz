@@ -1,3 +1,10 @@
+JFritz 0.7.4.1.26:
+- Neu: Feedback bei Deinstallation 
+- Bugfix: Splash wird nach Wizard sofort anzeigen
+- Bugfix: Backup-Verzeichnis wird nun bei Deinstallation auch gelöscht
+- Bugfix: Bei Installation wird überprüft, ob JFritz noch läuft
+- Bugfix: Bei Deinstallation wird überprüft, ob JFritz noch läuft
+
 JFritz 0.7.4.1.25:
 - Einrichtungsdialog (Wizard) überarbeitet, wird nun vor dem JFritz-Hauptfenster angezeigt
 - Einrichtungsdialog wird jedes Mal angezeigt, solange die FritzBox noch nicht konfiguriert wurde

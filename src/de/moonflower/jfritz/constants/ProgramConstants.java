@@ -8,7 +8,7 @@ public class ProgramConstants {
 
 	public final static String PROGRAM_VERSION = "0.7.4.1.26"; //$NON-NLS-1$
 
-	public final static String REVISION = "204P";
+	public final static String REVISION = "206MP";
 
-	public final static String BUILD_DATE = "14-09-2011 20:47:50";
+	public final static String BUILD_DATE = "16-09-2011 20:06:37";
 }
