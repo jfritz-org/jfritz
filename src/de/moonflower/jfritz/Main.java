@@ -186,7 +186,7 @@ public class Main implements LookupObserver {
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 203 2011-09-14 18:37:40Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 206 2011-09-16 16:03:05Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -498,7 +498,7 @@ public class Main implements LookupObserver {
 		if (result == 0 && showConfWizard) {
 			splash.setStatus("Config wizard ...");
 			splash.setVisible(false);
-			wizardCancelled = showConfigWizard();
+			wizardCancelled = showConfigWizard(splash);
 			splash.setVisible(true);
 		}
 
@@ -574,12 +574,12 @@ public class Main implements LookupObserver {
 		}
 	}
 
-	public static boolean showConfigWizard() {
+	public static boolean showConfigWizard(final SplashScreen splash) {
 		Debug.info("Presenting user with the configuration dialog");
 		ConfigWizard wizard = new ConfigWizard(null);
 		boolean wizardCanceled = true;
 		try {
-			wizardCanceled = wizard.showWizard();
+			wizardCanceled = wizard.showWizard(splash);
 		} catch (WrongPasswordException e) {
 			e.printStackTrace();
 		} catch (InvalidFirmwareException e) {

@@ -1203,7 +1203,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		} else if (e.getActionCommand().equals("showhide")) {
 			hideShowJFritz();
 		} else if (e.getActionCommand().equals("configwizard")) {
-			Main.showConfigWizard();
+			Main.showConfigWizard(null);
 		} else if(e.getActionCommand().equals("network")){
 
 			if(properties.getProperty("network.type").equals("2")){

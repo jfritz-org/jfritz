@@ -12,6 +12,7 @@ import com.nexes.wizard.Wizard;
 import com.nexes.wizard.WizardPanelDescriptor;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.SplashScreen;
 import de.moonflower.jfritz.constants.ProgramConstants;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelCallMonitor;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelFritzBox;
@@ -62,37 +63,37 @@ public class ConfigWizard {
 		Wizard.setCancelText(messages.getMessage("cancel"));
 
 		//if user clicked cancel on the language dialog, return back to jfritz
-		askLanguage(parent);
+		if (!askLanguage(parent)) {
 
-		Debug.info("Create JFritz config wizard");
-		wizard = new Wizard(JFritz.getJframe());
-		wizard.getDialog().setIconImage(icon);
+			Debug.info("Create JFritz config wizard");
+			wizard = new Wizard(JFritz.getJframe());
+			wizard.getDialog().setIconImage(icon);
 
-        wizard.getDialog().setTitle(ProgramConstants.PROGRAM_NAME + " " + messages.getMessage("config_wizard"));
+	        wizard.getDialog().setTitle(ProgramConstants.PROGRAM_NAME + " " + messages.getMessage("config_wizard"));
 
-        //initialize the wizard with the correct order of the panels
-        WizardPanelDescriptor descriptor1 = new ConfigPanel1Descriptor();
-        wizard.registerWizardPanel(ConfigPanel1Descriptor.IDENTIFIER, descriptor1);
+	        //initialize the wizard with the correct order of the panels
+	        WizardPanelDescriptor descriptor1 = new ConfigPanel1Descriptor();
+	        wizard.registerWizardPanel(ConfigPanel1Descriptor.IDENTIFIER, descriptor1);
 
-        descriptor2 = new ConfigPanelPhoneDescriptor();
-        wizard.registerWizardPanel(ConfigPanelPhoneDescriptor.IDENTIFIER, descriptor2);
+	        descriptor2 = new ConfigPanelPhoneDescriptor();
+	        wizard.registerWizardPanel(ConfigPanelPhoneDescriptor.IDENTIFIER, descriptor2);
 
-        descriptor3 = new ConfigPanelFritzBoxDescriptor();
-        wizard.registerWizardPanel(ConfigPanelFritzBoxDescriptor.IDENTIFIER, descriptor3);
+	        descriptor3 = new ConfigPanelFritzBoxDescriptor();
+	        wizard.registerWizardPanel(ConfigPanelFritzBoxDescriptor.IDENTIFIER, descriptor3);
 
-        descriptor4 = new ConfigPanelMessageDescriptor();
-        wizard.registerWizardPanel(ConfigPanelMessageDescriptor.IDENTIFIER, descriptor4);
+	        descriptor4 = new ConfigPanelMessageDescriptor();
+	        wizard.registerWizardPanel(ConfigPanelMessageDescriptor.IDENTIFIER, descriptor4);
 
-        descriptor5 = new ConfigPanelCallMonitorDescriptor(descriptor3.getFritzBoxPanel());
-        wizard.registerWizardPanel(ConfigPanelCallMonitorDescriptor.IDENTIFIER, descriptor5);
+	        descriptor5 = new ConfigPanelCallMonitorDescriptor(descriptor3.getFritzBoxPanel());
+	        wizard.registerWizardPanel(ConfigPanelCallMonitorDescriptor.IDENTIFIER, descriptor5);
 
-        WizardPanelDescriptor finishDescriptor= new ConfigPanelFinishDescriptor();
-        wizard.registerWizardPanel(ConfigPanelFinishDescriptor.IDENTIFIER, finishDescriptor);
+	        WizardPanelDescriptor finishDescriptor= new ConfigPanelFinishDescriptor();
+	        wizard.registerWizardPanel(ConfigPanelFinishDescriptor.IDENTIFIER, finishDescriptor);
 
-        //set the first panel to be displayed
-        wizard.setCurrentPanel(ConfigPanel1Descriptor.IDENTIFIER);
-       	wizard.setLocationRelativeToParent(true);
-
+	        //set the first panel to be displayed
+	        wizard.setCurrentPanel(ConfigPanel1Descriptor.IDENTIFIER);
+	       	wizard.setLocationRelativeToParent(true);
+		}
 	}
 	/**
 	 * This function shows the wizard then stores the values if finish is clicked
@@ -103,7 +104,7 @@ public class ConfigWizard {
 	 * @throws WrongPasswordException
 	 *
 	 */
-	public boolean showWizard() throws WrongPasswordException, InvalidFirmwareException, IOException{
+	public boolean showWizard(final SplashScreen splash) throws WrongPasswordException, InvalidFirmwareException, IOException{
 		if(languageCanceled)
 			return true;
 
@@ -114,6 +115,9 @@ public class ConfigWizard {
 
        		case 0:
        			Debug.info("Finished clicked, saving settings");
+       			if (splash != null) {
+       				splash.setVisible(true);
+       			}
 
        			((ConfigPanelPhone)descriptor2.getPanelComponent()).saveSettings();
        			try {
@@ -156,8 +160,9 @@ public class ConfigWizard {
 	 * @author Brian Jensen
 	 *
 	 * @param parent
+	 * @return true if language selection has been canceled
 	 */
-	public void askLanguage(Frame parent){
+	public boolean askLanguage(Frame parent){
 		wizard = new Wizard();
 		wizard.getDialog().setIconImage(icon);
 
@@ -196,9 +201,11 @@ public class ConfigWizard {
 				Wizard.setCancelText(messages.getMessage("cancel"));
 			}
 
-		}else
+		} else {
 			languageCanceled =  true;
+		}
 
+		return languageCanceled;
 	}
 
 }
