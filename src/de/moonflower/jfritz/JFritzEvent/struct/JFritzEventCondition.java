@@ -77,7 +77,7 @@ public class JFritzEventCondition {
 			if ( !checkValue.endsWith(value))
 				return true;
 			break;
-		case ConditionObject.GREATER_THEN:
+		case ConditionObject.GREATER_THAN:
 			try {
 				int valueInt = Integer.parseInt(value);
 				int checkValueInt = Integer.parseInt(checkValue);
@@ -89,7 +89,7 @@ public class JFritzEventCondition {
 					return true;
 			}
 			break;
-		case ConditionObject.NOT_GREATER_THEN:
+		case ConditionObject.NOT_GREATER_THAN:
 			try {
 				int valueInt = Integer.parseInt(value);
 				int checkValueInt = Integer.parseInt(checkValue);
@@ -101,7 +101,7 @@ public class JFritzEventCondition {
 					return true;
 			}
 			break;
-		case ConditionObject.LESS_THEN:
+		case ConditionObject.LESS_THAN:
 			try {
 				int valueInt = Integer.parseInt(value);
 				int checkValueInt = Integer.parseInt(checkValue);
@@ -113,7 +113,7 @@ public class JFritzEventCondition {
 					return true;
 			}
 			break;
-		case ConditionObject.NOT_LESS_THEN:
+		case ConditionObject.NOT_LESS_THAN:
 			try {
 				int valueInt = Integer.parseInt(value);
 				int checkValueInt = Integer.parseInt(checkValue);

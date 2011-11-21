@@ -1,6 +1,7 @@
 TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 TODO: Timer zum automatischen Aktualisieren der FritzBox-Einstellungen (Telefone, SIP-Provider, ...) nach X Minuten (z.B. 60 / 120)
 TODO: charset aus VCard auslesen und verwenden
+TODO: Beim ersten Start popup fuer das PW, wenn falscher Login festgestellt wurde!
 
 Non-JFritz-Changes:
 - Neu: Neue Klasse für das Anzeigen von Anrufen auf Samsung-TVs
@@ -8,15 +9,28 @@ Non-JFritz-Changes:
 - Neu: Neues Package mit neuer Rufnummer, muss durch externe Komponente ersetzt werden
 - Neu: Schriftart und -größe kann nun global verändert werden, funktioniert nicht wirklich
 
-
 TODO vor dem Release:
 - Ankündigung: DOWNGRADE nicht möglich -> jfritz.txt bearbeiten, erste Zeile löschen
 - Setup für Windows unter Windows erstellen, oder aber eine andere Möglichkeit finden, das Setup-Icon auszutauschen
 - Autoupdate komplett refaktorieren!
 - autoupdate.exe mitliefern
-- About-Dialog anpassen (automatisieren)
 - Debug-Klasse auf Log4j umstellen!
-- Beim ersten Start popup fuer das PW, wenn falscher Login festgestellt wurde!
+
+TODO tel.search.ch überprüfen und reparieren
+TODO Reihenfolge tel.search.ch und dann tel.local.ch
+
+JFritz 0.7.4.1.27:
+- Anzeige von Popups/Überwachungstabelle getrennt
+- TODO: Sounds trennen und individualisierbar gestalten
+- TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
+New Strings:
+- popup_incoming_calls
+- popup_outgoing_calls
+- monitortable_incoming_calls
+- monitortable_outgoing_calls
+Strings not used anymore:
+- monitor_incoming_calls
+- monitor_outgoing_calls
 
 JFritz 0.7.4.1.26:
 - Neu: Feedback bei Deinstallation 

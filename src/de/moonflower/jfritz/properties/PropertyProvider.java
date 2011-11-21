@@ -103,8 +103,10 @@ public class PropertyProvider {
 		defProps.setProperty("option.callMonitorType", "1");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.callmonitor.ignoreMSN", "");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.callmonitor.fetchAfterDisconnect", "false");//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("option.callmonitor.monitorIncomingCalls", "true");//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("option.callmonitor.monitorOutgoingCalls", "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.callmonitor.monitorTableIncomingCalls", "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.callmonitor.monitorTableOutgoingCalls", "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.callmonitor.popupIncomingCalls", "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.callmonitor.popupOutgoingCalls", "true");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.checkNewVersionAfterStart", "true");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.clientTelephoneBook", "false");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.clientCallList", "false");//$NON-NLS-1$, //$NON-NLS-2$
@@ -342,6 +344,20 @@ public class PropertyProvider {
 		{
 			config_properties.setProperty("option.showCallerListColumn."+CallerTable.COLUMN_PORT, currentProp);
 			config_properties.remove("option.showPortColumn");
+		}
+
+		currentProp = config_properties.getProperty("option.callmonitor.monitorIncomingCalls");
+		if ( currentProp != null) {
+			config_properties.setProperty("option.callmonitor.popupIncomingCalls", currentProp);
+			config_properties.setProperty("option.callmonitor.monitorTableIncomingCalls", currentProp);
+			config_properties.remove("option.callmonitor.monitorIncomingCalls");
+		}
+
+		currentProp = config_properties.getProperty("option.callmonitor.monitorOutgoingCalls");
+		if ( currentProp != null) {
+			config_properties.setProperty("option.callmonitor.popupOutgoingCalls", currentProp);
+			config_properties.setProperty("option.callmonitor.monitorTableOutgoingCalls", currentProp);
+			config_properties.remove("option.callmonitor.monitorOutgoingCalls");
 		}
 
 		config_properties.remove("telnet.user");

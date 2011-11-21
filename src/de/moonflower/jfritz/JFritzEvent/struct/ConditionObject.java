@@ -13,17 +13,17 @@ public class ConditionObject {
 	public static final int STARTS_NOT_WITH = 5;
 	public static final int ENDS_WITH = 6;
 	public static final int ENDS_NOT_WITH = 7;
-	public static final int GREATER_THEN = 8;
-	public static final int NOT_GREATER_THEN = 9;
-	public static final int LESS_THEN = 10;
-	public static final int NOT_LESS_THEN = 11;
+	public static final int GREATER_THAN = 8;
+	public static final int NOT_GREATER_THAN = 9;
+	public static final int LESS_THAN = 10;
+	public static final int NOT_LESS_THAN = 11;
 	protected MessageProvider messages = MessageProvider.getInstance();
 
 	private static String[] conditionNames = {
 				"equal","not_equal","contains","contains_not",
 				"starts_with","starts_not_with","ends_with",
-				"ends_not_with","greater_then","not_greater_then",
-				"less_then","not_less_then" };
+				"ends_not_with","greater_than","not_greater_than",
+				"less_than","not_less_than" };
 
 	private String conditionName;
 	private int conditionID;

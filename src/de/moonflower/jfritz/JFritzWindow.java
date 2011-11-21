@@ -78,6 +78,7 @@ import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
+import de.moonflower.jfritz.tray.JFritzTray;
 import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.DirectoryChooser;
@@ -911,7 +912,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 			if (configDialog.shouldRefreshTrayMenu()) {
 				Debug.debug("Refreshing tray!");
-				jFritz.refreshTrayMenu();
+				JFritzTray.refreshTrayMenu();
 			}
 		}
 
@@ -1089,7 +1090,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				Debug.debug("Renew IP for box: " + boxName);
 				JFritz.getBoxCommunication().renewIPAddress(box);
 			}
-			jFritz.refreshTrayMenu();
+			JFritzTray.refreshTrayMenu();
 		} else if (e.getActionCommand().startsWith("reboot-")) {
 			String boxName = e.getActionCommand().substring("reboot-".length());
 			BoxClass box = JFritz.getBoxCommunication().getBox(boxName);
@@ -1734,7 +1735,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		jFritz.createNewWindow(locale);
 		// current window will be destroyed and a new one created
 
-		jFritz.refreshTrayMenu();
+		JFritzTray.refreshTrayMenu();
 	}
 
 	/**

@@ -1478,17 +1478,22 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
         if (person != null) {
             Debug.info("Found in local database: " + person.getLastName() + ", " + person.getFirstName()); //$NON-NLS-1$,  //$NON-NLS-2$
         } else {
-            Debug.info("Searching on internet ..."); //$NON-NLS-1$
-            person = ReverseLookup.busyLookup(callerPhoneNumber);
-            if (!person.getFullname().equals("")) { //$NON-NLS-1$
-                Debug.info("Found on internet: " + person.getLastName() + ", " + person.getFirstName()); //$NON-NLS-1$,  //$NON-NLS-2$
-                Debug.info("Add person to database"); //$NON-NLS-1$
-                persons.add(person);
-            } else {
-                Debug.warning("Found no person. Creating a dummy person instead"); //$NON-NLS-1$
-                person = createDummyPerson(callerPhoneNumber);
-                persons.add(person);
-            }
+        	if (MessageProvider.getInstance().getMessage("unknown").equals(caller)) {
+        		person = createDummyPerson(callerPhoneNumber);
+        		persons.add(person);
+        	} else {
+	            Debug.info("Searching on internet ..."); //$NON-NLS-1$
+	            person = ReverseLookup.busyLookup(callerPhoneNumber);
+	            if (!person.getFullname().equals("")) { //$NON-NLS-1$
+	                Debug.info("Found on internet: " + person.getLastName() + ", " + person.getFirstName()); //$NON-NLS-1$,  //$NON-NLS-2$
+	                Debug.info("Add person to database"); //$NON-NLS-1$
+	                persons.add(person);
+	            } else {
+	                Debug.warning("Found no person. Creating a dummy person instead"); //$NON-NLS-1$
+	                person = createDummyPerson(callerPhoneNumber);
+	                persons.add(person);
+	            }
+        	}
             JFritz.getPhonebook().addEntries(persons);
             JFritz.getPhonebook().fireTableDataChanged();
         }

@@ -551,14 +551,14 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 								//Pending call in event
 								if(change.operation == DataChange.Operation.ADD &&
 										Boolean.parseBoolean(properties.getProperty(
-						                        "option.callmonitor.monitorIncomingCalls"))){
+						                        "option.callmonitor.monitorTableIncomingCalls"))){
 
 									JFritz.getCallMonitorList().invokeIncomingCall(c);
 
 									//Established call in event
 								} else if(change.operation == DataChange.Operation.UPDATE &&
 										Boolean.parseBoolean(properties.getProperty(
-						                        "option.callmonitor.monitorIncomingCalls"))){
+						                        "option.callmonitor.monitorTableIncomingCalls"))){
 
 									JFritz.getCallMonitorList().invokeIncomingCallEstablished(c);
 

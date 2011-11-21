@@ -7,8 +7,10 @@ import javax.swing.table.AbstractTableModel;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.callmonitor.CallMonitorListener;
 import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class CurrentCallsTable extends AbstractTableModel implements
 	CallMonitorListener {
@@ -33,11 +35,6 @@ public class CurrentCallsTable extends AbstractTableModel implements
 	}
 
 	public int getRowCount() {
-	/**
-	 * Auskommentiert von Rob, finde ich so schöner
-	 *	if(currentCalls.size() < 5)
-	 *		return currentCalls.size();
-	 **/
 		return currentCalls.size();
 	}
 
@@ -70,11 +67,12 @@ public class CurrentCallsTable extends AbstractTableModel implements
      * Method part of the interface CallMonitorListener
      */
     public void pendingCallIn(Call call){
-    	Debug.info("pendingCallIn was called");
-    	//Nothing here for now
-    	currentCalls.add(call);
-    	fireTableDataChanged();
-
+    	if (JFritzUtils.parseBoolean(
+    			PropertyProvider.getInstance().getProperty(
+    					"option.callmonitor.monitorTableIncomingCalls"))) {
+    		currentCalls.add(call);
+    		fireTableDataChanged();
+    	}
     }
 
     /**
@@ -89,10 +87,12 @@ public class CurrentCallsTable extends AbstractTableModel implements
      * Method part of the interface CallMonitorListener
      */
     public void pendingCallOut(Call call){
-    	//Nothing here for now
-    	currentCalls.add(call);
-    	fireTableDataChanged();
-
+    	if (JFritzUtils.parseBoolean(
+    			PropertyProvider.getInstance().getProperty(
+    					"option.callmonitor.monitorTableOutgoingCalls"))) {
+	    	currentCalls.add(call);
+	    	fireTableDataChanged();
+    	}
     }
 
     /**

@@ -87,13 +87,15 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
     }
 
 	private boolean shouldMonitorOutgoingCalls() {
-		return JFritzUtils.parseBoolean(properties.getProperty(
-		        "option.callmonitor.monitorOutgoingCalls")); //$NON-NLS-1$
+        boolean monitortableOutgoingCalls = JFritzUtils.parseBoolean(properties.getProperty("option.callmonitor.monitorTableOutgoingCalls"));
+        boolean popupOutgoingCalls = JFritzUtils.parseBoolean(properties.getProperty("option.callmonitor.popupOutgoingCalls"));
+        return monitortableOutgoingCalls || popupOutgoingCalls;
 	}
 
 	private boolean shouldMonitorIncomingCalls() {
-		return JFritzUtils.parseBoolean(properties.getProperty(
-		        "option.callmonitor.monitorIncomingCalls")); //$NON-NLS-1$
+        boolean monitortableIncomingCalls = JFritzUtils.parseBoolean(properties.getProperty("option.callmonitor.monitorTableIncomingCalls"));
+        boolean popupIncomingCalls = JFritzUtils.parseBoolean(properties.getProperty("option.callmonitor.popupIncomingCalls"));
+        return monitortableIncomingCalls || popupIncomingCalls;
 	}
 
 	private void parseRing(final String[] split) {

@@ -19,6 +19,10 @@ public class PlaySound {
 
 	private SoundProvider soundProvider;
 
+	public PlaySound() {
+		this.soundProvider = new SoundProvider();
+	}
+
 	public PlaySound(final SoundProvider sp) {
 		this.soundProvider = sp;
 	}
@@ -31,7 +35,7 @@ public class PlaySound {
 		playSound(this.soundProvider.getCallSound());
 	}
 
-	protected void playSound(final File file) {
+	public void playSound(final File file) {
 		try {
 			testPlay(AudioSystem.getAudioInputStream(file));
 		} catch (UnsupportedAudioFileException e) {
@@ -43,7 +47,7 @@ public class PlaySound {
 		}
 	}
 
-	protected void playSound(final URL url) {
+	public void playSound(final URL url) {
 		try {
 			testPlay(AudioSystem.getAudioInputStream(url));
 		} catch (UnsupportedAudioFileException e) {

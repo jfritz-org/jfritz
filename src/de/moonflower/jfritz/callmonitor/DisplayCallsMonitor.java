@@ -40,26 +40,30 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 	}
 
     public void pendingCallOut(Call call) {
-        log.info("Displaying call out message...");
-    	Person person = null;
-    	if ( call.getPhoneNumber() != null )
-    	{
-    		person = PhoneBook.searchFirstAndLastNameToPhoneNumber(call.getPhoneNumber().getAreaNumber());
-            displayCallOutMsg(call, call.getPhoneNumber().getAreaNumber(), call.getRoute(), call.getPort().getName(), person);
-    	} else {
-    		displayCallOutMsg(call, null, call.getRoute(), call.getPort().getName(), person);
+    	if (JFritzUtils.parseBoolean(properties.getProperty("option.callmonitor.popupOutgoingCalls"))) {
+	        log.info("Displaying call out message...");
+	    	Person person = null;
+	    	if ( call.getPhoneNumber() != null )
+	    	{
+	    		person = PhoneBook.searchFirstAndLastNameToPhoneNumber(call.getPhoneNumber().getAreaNumber());
+	            displayCallOutMsg(call, call.getPhoneNumber().getAreaNumber(), call.getRoute(), call.getPort().getName(), person);
+	    	} else {
+	    		displayCallOutMsg(call, null, call.getRoute(), call.getPort().getName(), person);
+	    	}
     	}
     }
 
     public void pendingCallIn(Call call) {
-        log.info("Displaying call in message...");
-    	Person person = null;
-    	if ( call.getPhoneNumber() != null )
-    	{
-    		person = PhoneBook.searchFirstAndLastNameToPhoneNumber(call.getPhoneNumber().getAreaNumber());
-            displayCallInMsg(call, call.getPhoneNumber().getAreaNumber(), call.getRoute(), call.getPort().getName(), person);
-    	} else {
-            displayCallInMsg(call, null, call.getRoute(), call.getPort().getName(), person);
+    	if (JFritzUtils.parseBoolean(properties.getProperty("option.callmonitor.popupIncomingCalls"))) {
+	        log.info("Displaying call in message...");
+	    	Person person = null;
+	    	if ( call.getPhoneNumber() != null )
+	    	{
+	    		person = PhoneBook.searchFirstAndLastNameToPhoneNumber(call.getPhoneNumber().getAreaNumber());
+	            displayCallInMsg(call, call.getPhoneNumber().getAreaNumber(), call.getRoute(), call.getPort().getName(), person);
+	    	} else {
+	            displayCallInMsg(call, null, call.getRoute(), call.getPort().getName(), person);
+	    	}
     	}
     }
 
@@ -75,7 +79,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
      * @param called
      *            Called number
      */
-    public void displayCallInMsg(Call call, String caller, String called, String port, Person person) {
+    private void displayCallInMsg(Call call, String caller, String called, String port, Person person) {
         displayCallInMsg(call, caller, called, "", port, person); //$NON-NLS-1$
     }
 
@@ -90,6 +94,8 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
      *            Known name (only YAC)
      */
     public void displayCallInMsg(Call call, String callerInput, String calledInput, String name, String port, Person person) {
+    	if (!JFritzUtils.parseBoolean(properties.getProperty("option.callmonitor.popupIncomingCalls")))
+    		return;
 
         log.debug("Caller: " + callerInput); //$NON-NLS-1$
         log.debug("Called: " + calledInput); //$NON-NLS-1$
@@ -165,7 +171,6 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
         if (JFritzUtils.parseBoolean(properties.getProperty("option.startExternProgram"))) { //$NON-NLS-1$
             startExternalProgramCallIn(callerstr, name, calledstr, port, firstname, surname, company);
         }
-
     }
 
     /**
@@ -175,7 +180,9 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
      *            Called number
      */
     public void displayCallOutMsg(Call call, String calledInput, String providerInput, String port, Person person) {
-        log.debug("Called: " + calledInput); //$NON-NLS-1$
+    	if (!JFritzUtils.parseBoolean(properties.getProperty("option.callmonitor.popupOutgoingCalls")))
+    		return;
+    	log.debug("Called: " + calledInput); //$NON-NLS-1$
         log.debug("Provider: " + providerInput); //$NON-NLS-1$
         log.debug("Port: " + port); //$NON-NLS-1$
 

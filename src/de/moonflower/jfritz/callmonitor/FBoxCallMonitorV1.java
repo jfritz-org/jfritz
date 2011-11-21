@@ -52,9 +52,16 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
         for (int i = 0; i < split.length; i++) {
             Debug.debug("Split[" + i + "] = " + split[i]); //$NON-NLS-1$,  //$NON-NLS-2$
         }
-        if (JFritzUtils.parseBoolean(properties.getProperty(
-                "option.callmonitor.monitorIncomingCalls")) //$NON-NLS-1$, //$NON-NLS-2$
-                && split[1].equals("RING")) { //$NON-NLS-1$
+
+        boolean monitortableIncomingCalls = JFritzUtils.parseBoolean(properties.getProperty("option.callmonitor.monitorTableIncomingCalls"));
+        boolean popupIncomingCalls = JFritzUtils.parseBoolean(properties.getProperty("option.callmonitor.popupIncomingCalls"));
+        boolean parseIncomingCalls = monitortableIncomingCalls || popupIncomingCalls;
+
+        boolean monitortableOutgoingCalls = JFritzUtils.parseBoolean(properties.getProperty("option.callmonitor.monitorTableOutgoingCalls"));
+        boolean popupOutgoingCalls = JFritzUtils.parseBoolean(properties.getProperty("option.callmonitor.popupOutgoingCalls"));
+        boolean parseOutgoingCalls = monitortableOutgoingCalls || popupOutgoingCalls;
+
+        if (parseIncomingCalls && split[1].equals("RING")) { //$NON-NLS-1$
             if (split[3].equals("")) { //$NON-NLS-1$
                 number = messages.getMessage("unknown"); //$NON-NLS-1$
             } else
@@ -99,9 +106,7 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
                 e.printStackTrace();
             }
 
-        } else if (JFritzUtils.parseBoolean(properties.getProperty(
-                "option.callmonitor.monitorOutgoingCalls")) //$NON-NLS-1$,  //$NON-NLS-2$
-                && split[1].equals("CALL")) { //$NON-NLS-1$
+        } else if (parseOutgoingCalls && split[1].equals("CALL")) { //$NON-NLS-1$
             if (split[5].equals("")) { //$NON-NLS-1$
                 number = messages.getMessage("unknown"); //$NON-NLS-1$
             } else

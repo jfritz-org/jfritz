@@ -16,6 +16,7 @@ import java.awt.event.KeyListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -38,9 +39,6 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 public class FRITZBOXConfigDialog extends
         CallMonitorConfigDialog {
 
-    /**
-     * This avoids compiler warnings I don't know what it's for yet
-     */
     private static final long serialVersionUID = -8662130877265779872L;
 
     private int exitCode = 0;
@@ -52,6 +50,7 @@ public class FRITZBOXConfigDialog extends
     public static final int CANCEL_OPTION = 2;
 
     private JCheckBox monitorIncomingCalls, monitorOutgoingCalls,
+    				  popupIncomingCalls, popupOutgoingCalls,
                       fetchAfterDisconnect;
 
     private JTextField ignoreMSN;
@@ -69,7 +68,6 @@ public class FRITZBOXConfigDialog extends
 
     public void initDialog() {
         setTitle(messages.getMessage("monitor_settings")); //$NON-NLS-1$
-        this.setPreferredSize(new Dimension(270, 255));
         drawDialog();
         setProperties();
     }
@@ -77,10 +75,16 @@ public class FRITZBOXConfigDialog extends
     private void setProperties() {
         monitorIncomingCalls.setSelected(JFritzUtils
                 .parseBoolean(properties.getProperty(
-                        "option.callmonitor.monitorIncomingCalls"))); //$NON-NLS-1$,  //$NON-NLS-2$
+                        "option.callmonitor.monitorTableIncomingCalls"))); //$NON-NLS-1$
         monitorOutgoingCalls.setSelected(JFritzUtils
                 .parseBoolean(properties.getProperty(
-                        "option.callmonitor.monitorOutgoingCalls"))); //$NON-NLS-1$,  //$NON-NLS-2$
+                        "option.callmonitor.monitorTableOutgoingCalls"))); //$NON-NLS-1$
+        popupIncomingCalls.setSelected(JFritzUtils
+                .parseBoolean(properties.getProperty(
+                        "option.callmonitor.popupIncomingCalls"))); //$NON-NLS-1$
+        popupOutgoingCalls.setSelected(JFritzUtils
+                .parseBoolean(properties.getProperty(
+                        "option.callmonitor.popupOutgoingCalls"))); //$NON-NLS-1$
         fetchAfterDisconnect.setSelected(JFritzUtils
                 .parseBoolean(properties.getProperty(
                         "option.callmonitor.fetchAfterDisconnect"))); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -88,10 +92,14 @@ public class FRITZBOXConfigDialog extends
     }
 
     private void storeProperties() {
-        properties.setProperty("option.callmonitor.monitorIncomingCalls", Boolean //$NON-NLS-1$
+        properties.setProperty("option.callmonitor.monitorTableIncomingCalls", Boolean //$NON-NLS-1$
                 .toString(monitorIncomingCalls.isSelected()));
-        properties.setProperty("option.callmonitor.monitorOutgoingCalls", Boolean //$NON-NLS-1$
+        properties.setProperty("option.callmonitor.monitorTableOutgoingCalls", Boolean //$NON-NLS-1$
                 .toString(monitorOutgoingCalls.isSelected()));
+        properties.setProperty("option.callmonitor.popupIncomingCalls", Boolean //$NON-NLS-1$
+                .toString(popupIncomingCalls.isSelected()));
+        properties.setProperty("option.callmonitor.popupOutgoingCalls", Boolean //$NON-NLS-1$
+                .toString(popupOutgoingCalls.isSelected()));
         properties.setProperty("option.callmonitor.fetchAfterDisconnect", Boolean.toString(fetchAfterDisconnect.isSelected())); //$NON-NLS-1$
         properties.setProperty("option.callmonitor.ignoreMSN", ignoreMSN.getText()); //$NON-NLS-1$
     }
@@ -146,26 +154,36 @@ public class FRITZBOXConfigDialog extends
 
         c.gridwidth = 1;
         c.gridy = 0;
+        popupIncomingCalls = new JCheckBox(
+        		messages.getMessage("popup_incoming_calls")); //$NON-NLS-1$
+        panel.add(popupIncomingCalls, c);
+        c.gridy += 1;
+        popupOutgoingCalls = new JCheckBox("" + //$NON-NLS-1$
+        		messages.getMessage("popup_outgoing_calls")); //$NON-NLS-1$
+        panel.add(popupOutgoingCalls, c);
+        c.gridwidth = 1;
+        c.gridy += 1;
         monitorIncomingCalls = new JCheckBox(
-        		messages.getMessage("monitor_incoming_calls")); //$NON-NLS-1$
+        		messages.getMessage("monitortable_incoming_calls")); //$NON-NLS-1$
         panel.add(monitorIncomingCalls, c);
-        c.gridy = 1;
+        c.gridy += 1;
         monitorOutgoingCalls = new JCheckBox("" + //$NON-NLS-1$
-        		messages.getMessage("monitor_outgoing_calls")); //$NON-NLS-1$
+        		messages.getMessage("monitortable_outgoing_calls")); //$NON-NLS-1$
         panel.add(monitorOutgoingCalls, c);
-        c.gridy = 2;
+        c.gridy += 1;
         fetchAfterDisconnect = new JCheckBox(
         		messages.getMessage("monitor_fetch_disconnect")); //$NON-NLS-1$
         panel.add(fetchAfterDisconnect, c);
-        c.gridy = 3;
+        c.gridy += 1;
         JLabel label = new JLabel(
         		messages.getMessage("monitor_ignore_msns")); //$NON-NLS-1$
         panel.add(label, c);
-        c.gridy = 4;
+        c.gridy += 1;
         ignoreMSN = new JTextField("", 20); //$NON-NLS-1$
         ignoreMSN.setMinimumSize(new Dimension(150, 23));
 
         panel.add(ignoreMSN, c);
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
 
         JPanel buttonPanel = new JPanel();
         okButton = new JButton(messages.getMessage("okay")); //$NON-NLS-1$

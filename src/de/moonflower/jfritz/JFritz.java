@@ -4,26 +4,19 @@
 
 package de.moonflower.jfritz;
 
-import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
 import javax.swing.JOptionPane;
-import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
 
 import jd.nutils.OSDetector;
 import de.moonflower.jfritz.backup.JFritzBackup;
-import de.moonflower.jfritz.box.BoxClass;
 import de.moonflower.jfritz.box.BoxCommunication;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.callerlist.CallerList;
@@ -43,12 +36,8 @@ import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.sounds.PlaySound;
 import de.moonflower.jfritz.sounds.SoundProvider;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
-import de.moonflower.jfritz.tray.ClickListener;
-import de.moonflower.jfritz.tray.JDICTray;
-import de.moonflower.jfritz.tray.SwingTray;
+import de.moonflower.jfritz.tray.JFritzTray;
 import de.moonflower.jfritz.tray.Tray;
-import de.moonflower.jfritz.tray.TrayMenu;
-import de.moonflower.jfritz.tray.TrayMenuItem;
 import de.moonflower.jfritz.utils.ComplexJOptionPaneMessage;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
@@ -74,13 +63,9 @@ public final class JFritz implements  StatusListener {
 
 	public final static String PHONEBOOK_CSV_FILE = "contacts.csv"; //$NON-NLS-1$
 
-	private static Tray tray;
-
 	private static JFritzWindow jframe;
 
 	private static CallerList callerlist;
-
-	private static ImageIcon trayIcon;
 
 	private static PhoneBook phonebook;
 
@@ -280,13 +265,7 @@ public final class JFritz implements  StatusListener {
 		if (Main.checkForSystraySupport()) {
 			Debug.info("Check Systray-Support"); //$NON-NLS-1$
 			try {
-				if(Integer.parseInt(System.getProperty("java.version").substring(2, 3)) < 6)
-				{
-					tray = new JDICTray();
-				} else {
-					tray = new SwingTray();
-				}
-				createTrayMenu();
+				JFritzTray.initTray(jframe, getBoxCommunication());
 			} catch (Throwable e) {
 				Main.systraySupport = false;
 				Debug.error(e.toString());
@@ -374,167 +353,6 @@ public final class JFritz implements  StatusListener {
 	}
 
 	/**
-	 * Creates the tray icon menu
-	 */
-	private void createTrayMenu() {
-		System.setProperty("javax.swing.adjustPopupLocationToFit", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
-
-		LookAndFeelInfo[] lnfs = UIManager.getInstalledLookAndFeels();
-		ButtonGroup lnfgroup = new ButtonGroup();
-
-		JMenu lnfMenu = new JMenu(messages.getMessage("lnf_menu")); //$NON-NLS-1$
-		// Add system dependent look and feels
-		for (int i = 0; i < lnfs.length; i++) {
-			JRadioButtonMenuItem rbmi = new JRadioButtonMenuItem(lnfs[i]
-					.getName());
-			lnfMenu.add(rbmi);
-			rbmi.setSelected(UIManager.getLookAndFeel().getClass().getName()
-					.equals(lnfs[i].getClassName()));
-			rbmi.putClientProperty("lnf name", lnfs[i]); //$NON-NLS-1$
-			rbmi.addItemListener(jframe);
-			lnfgroup.add(rbmi);
-		}
-
-		// Add additional look and feels from looks-2.1.4.jar
-		LookAndFeelInfo lnf = new LookAndFeelInfo("Plastic","com.jgoodies.looks.plastic.PlasticLookAndFeel");
-		JRadioButtonMenuItem rb = new JRadioButtonMenuItem(lnf.getName());
-		lnfMenu.add(rb);
-		rb.putClientProperty("lnf name", lnf);
-		rb.setSelected(UIManager.getLookAndFeel().getClass().getName()
-				.equals(lnf.getClassName()));
-		rb.addItemListener(jframe);
-		lnfgroup.add(rb);
-
-		lnf = new LookAndFeelInfo("Plastic 3D","com.jgoodies.looks.plastic.Plastic3DLookAndFeel");
-		rb = new JRadioButtonMenuItem(lnf.getName());
-		lnfMenu.add(rb);
-		rb.putClientProperty("lnf name", lnf);
-		rb.setSelected(UIManager.getLookAndFeel().getClass().getName()
-				.equals(lnf.getClassName()));
-		rb.addItemListener(jframe);
-		lnfgroup.add(rb);
-
-		lnf = new LookAndFeelInfo("Plastic XP","com.jgoodies.looks.plastic.PlasticXPLookAndFeel");
-		rb = new JRadioButtonMenuItem(lnf.getName());
-		lnfMenu.add(rb);
-		rb.putClientProperty("lnf name", lnf);
-		rb.setSelected(UIManager.getLookAndFeel().getClass().getName()
-				.equals(lnf.getClassName()));
-		rb.addItemListener(jframe);
-		lnfgroup.add(rb);
-
-
-		TrayMenu menu = new TrayMenu("JFritz Menu"); //$NON-NLS-1$
-		TrayMenuItem menuItem = new TrayMenuItem(ProgramConstants.PROGRAM_NAME + " v" //$NON-NLS-1$
-				+ ProgramConstants.PROGRAM_VERSION);
-		menuItem.setActionCommand("showhide");
-		menuItem.addActionListener(jframe);
-		menu.add(menuItem);
-		menu.addSeparator();
-		for (int i=0; i<getBoxCommunication().getBoxCount(); i++) {
-			String boxName = getBoxCommunication().getBox(i).getName();
-			BoxClass box = getBoxCommunication().getBox(boxName);
-			if (box != null) {
-				JMenu boxItem = new JMenu(boxName);
-				menuItem = new TrayMenuItem("IP: " + box.getExternalIP());
-				boxItem.add(menuItem.getJMenuItem());
-				boxItem.addSeparator();
-				menuItem = new TrayMenuItem(messages.getMessage("fetchlist"));
-				menuItem.setActionCommand("fetchList-"+boxName);
-				menuItem.addActionListener(jframe);
-				boxItem.add(menuItem.getJMenuItem());
-				menuItem = new TrayMenuItem(messages.getMessage("renew_ip"));
-				menuItem.setActionCommand("renewIP-"+boxName);
-				menuItem.addActionListener(jframe);
-				boxItem.add(menuItem.getJMenuItem());
-				menuItem = new TrayMenuItem("Reboot");
-				menuItem.setActionCommand("reboot-"+boxName);
-				menuItem.addActionListener(jframe);
-				boxItem.add(menuItem.getJMenuItem());
-				menu.add(boxItem);
-			}
-		}
-		menu.addSeparator();
-		menuItem = new TrayMenuItem(messages.getMessage("fetchlist")); //$NON-NLS-1$
-		menuItem.setActionCommand("fetchList"); //$NON-NLS-1$
-		menuItem.addActionListener(jframe);
-		menu.add(menuItem);
-		menuItem = new TrayMenuItem(messages.getMessage("reverse_lookup")); //$NON-NLS-1$
-		menuItem.setActionCommand("reverselookup"); //$NON-NLS-1$
-		menuItem.addActionListener(jframe);
-		menu.add(menuItem);
-		menuItem = new TrayMenuItem(messages.getMessage("dial_assist")); //$NON-NLS-1$
-		menuItem.setActionCommand("callDialog");
-		menuItem.addActionListener(jframe);
-		menu.add(menuItem);
-		menuItem = new TrayMenuItem(messages.getMessage("dial_assist") + "(" + messages.getMessage("clipboard") + ")"); //$NON-NLS-1$
-		menuItem.setActionCommand("callDialogTray");
-		menuItem.addActionListener(jframe);
-		menu.add(menuItem);
-		menu.add(lnfMenu);
-		menuItem = new TrayMenuItem(messages.getMessage("config")); //$NON-NLS-1$
-		menuItem.setActionCommand("config"); //$NON-NLS-1$
-		menuItem.addActionListener(jframe);
-		menu.add(menuItem);
-		menu.addSeparator();
-		menuItem = new TrayMenuItem(messages.getMessage("prog_exit")); //$NON-NLS-1$
-		menuItem.setActionCommand("exit"); //$NON-NLS-1$
-		menuItem.addActionListener(jframe);
-		menu.add(menuItem);
-
-		trayIcon = new ImageIcon(
-				JFritz.class
-						.getResource("/de/moonflower/jfritz/resources/images/trayicon.png")); //$NON-NLS-1$
-
-		tray.add(trayIcon);
-		tray.setTooltip(ProgramConstants.PROGRAM_NAME + " v"+ProgramConstants.PROGRAM_VERSION);
-		tray.setPopupMenu(menu);
-		refreshTrayActionListener();
-	}
-
-	private void refreshTrayActionListener() {
-		String trayClick = properties.getProperty("tray.clickCount");
-		int clickCount = ClickListener.CLICK_COUNT_SINGLE;
-		if ("2".equals(trayClick)) {
-			clickCount = ClickListener.CLICK_COUNT_DOUBLE;
-		}
-
-		tray.clearActionListeners();
-		tray.addActionListener(new ClickListener(ClickListener.CLICK_LEFT,
-												 clickCount) {
-			private long oldTimeStamp = 0;
-			private void showHide() {
-				if ( jframe != null )
-				{
-					jframe.hideShowJFritz(true);
-				}
-			}
-
-			public void actionPerformed(ActionEvent e) {
-				if (tray instanceof JDICTray) {
-					// old JDICTray has no mouse listener,
-					// get timestamp to simulate single/double-click
-					if (this.getClickCount() == ClickListener.CLICK_COUNT_SINGLE) {
-						long timeStamp = e.getWhen();
-						if ( timeStamp-oldTimeStamp>600 ) {
-							showHide();
-							oldTimeStamp = timeStamp;
-						}
-					} else {
-						long timeStamp = e.getWhen();
-						if ( timeStamp-oldTimeStamp<600 ) {
-							showHide();
-						}
-						oldTimeStamp = timeStamp;
-					}
-				} else if (tray instanceof SwingTray) {
-					showHide();
-				}
-			}
-		});
-	}
-
-	/**
 	 * Displays balloon info message
 	 *
 	 * @param msg
@@ -554,8 +372,8 @@ public final class JFritz implements  StatusListener {
 			break;
 		}
 		case 2: {
-			if (tray.isSupported())
-				tray.displayMessage(ProgramConstants.PROGRAM_NAME, msg,
+			if (JFritzTray.isSupported())
+				JFritzTray.displayMessage(ProgramConstants.PROGRAM_NAME, msg,
 						Tray.MESSAGE_TYPE_INFO);
 			else {
 				MessageDlg msgDialog = new MessageDlg();
@@ -576,8 +394,8 @@ public final class JFritz implements  StatusListener {
 	 */
 	public static void errorMsg(String msg) {
 		Debug.error(msg);
-		if (Main.systraySupport && tray != null) {
-			tray.displayMessage(ProgramConstants.PROGRAM_NAME, msg,
+		if (Main.systraySupport) {
+			JFritzTray.displayMessage(ProgramConstants.PROGRAM_NAME, msg,
 					Tray.MESSAGE_TYPE_ERROR);
 		}
 	}
@@ -716,11 +534,9 @@ public final class JFritz implements  StatusListener {
 		Debug.info("Stopping reverse lookup");
 		ReverseLookup.terminate();
 
-		if ( (Main.systraySupport) && (tray != null) )
+		if ( (Main.systraySupport))
 		{
-			Debug.info("Removing systray"); //$NON-NLS-1$
-			tray.remove();
-			tray = null;
+			JFritzTray.removeTrayMenu();
 		}
 
 		Debug.info("Stopping watchdog"); //$NON-NLS-1$
@@ -759,18 +575,6 @@ public final class JFritz implements  StatusListener {
 				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 
 		return exit;
-	}
-
-	/**
-	 * Deletes actual systemtray and creates a new one.
-	 *
-	 * @author Benjamin Schmitt
-	 */
-	public void refreshTrayMenu() {
-		if (tray != null && trayIcon != null) {
-			tray.remove();
-			createTrayMenu();
-		}
 	}
 
 	public static void loadNumberSettings() {
