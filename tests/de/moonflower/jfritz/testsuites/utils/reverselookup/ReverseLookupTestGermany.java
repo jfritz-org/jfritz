@@ -109,7 +109,7 @@ public class ReverseLookupTestGermany extends ReverseLookupTestBase {
 	@Test
 	public void testInfraplan() {
 		checkNum = new PhoneNumberOld("+498962021830", false);
-		entry = new CheckEntry(checkNum, "Hausverwaltung GmbH & Co. Beteiligungs KG", "Infraplan", "Franziskanerstr. 14", "81669", "München");
+		entry = new CheckEntry(checkNum, "Hausverwaltungs GmbH & Co. Betreuungs KG", "Infraplan", "Franziskanerstr. 14", "81669", "München");
 		ReverseLookup.lookup(checkNum, entry, true);
 		checkEntry(entry);
 	}
