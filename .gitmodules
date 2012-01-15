@@ -4,6 +4,9 @@
 [submodule "lib-dev"]
 	path = lib-dev
 	url = ssh://git@git.robotniko.de:774/jfritz_lib-dev
+[submodule "proxy"]
+	path = proxy
+	url = ssh://git@git.robotniko.de:774/jfritz_proxy
 [submodule "reverselookup"]
 	path = reverselookup
 	url = ssh://git@git.robotniko.de:774/jfritz_reverselookup
