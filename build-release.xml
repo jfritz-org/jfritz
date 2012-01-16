@@ -405,12 +405,21 @@ http://www.jfritz.org/
 	  <sequential>
 		  <echo>Source dir: @{sourcedir}</echo>
 		  <echo>Building zip: @{destfile}</echo>
+	  <!-- windows: -->
+	  <exec executable="../zip/zip.exe" dir="@{sourcedir}">
+	    <arg value="-qR"/>
+	    <arg value="@{destfile}"/>
+	    <arg value="*"/>
+	    <arg value="-x *.svn* "/>
+	  </exec>
+	  <!-- linux:
 	  <exec executable="zip" dir="@{sourcedir}">
 	    <arg value="-qR"/>
 	    <arg value="@{destfile}"/>
 	    <arg value="*"/>
 	    <arg value="-x *.svn* "/>
 	  </exec>
+	  -->
 	  </sequential>
 	</macrodef>
 
@@ -469,14 +478,15 @@ http://www.jfritz.org/
 		<UpdateSetupConfig file="${release}/win/tmp/jfritz-version.txt" appName="${product}" appType="Setup" appVersion="${version}" />
 
 		<!-- generate setup-file -->
+		<!-- use QuickStart Pack of InnoSetup: http://www.jrsoftware.org/download.php/ispack.exe -->
 		<!-- windows path -->
-		<!--exec executable="C:\Program Files (x86)\Inno Setup 5\ISCC.exe">
-			<arg value="${release}/win/tmp/jfritz.iss" />
-		</exec-->
-		<!-- linux path -->
-		<exec executable="/usr/local/bin/iscc">
+		<exec executable="C:\Program Files (x86)\Inno Setup 5\ISCC.exe">
 			<arg value="${release}/win/tmp/jfritz.iss" />
 		</exec>
+		<!-- linux path
+		<exec executable="/usr/local/bin/iscc">
+			<arg value="${release}/win/tmp/jfritz.iss" />
+		</exec-->
 
 		<move file="${release}/win/tmp/Output/JFritz-${version}-Setup.exe"
 			  tofile="${release}/win/JFritz-${version}-Setup.exe" />

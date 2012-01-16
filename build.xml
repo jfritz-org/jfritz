@@ -53,7 +53,9 @@
 	</path>
 
 	<target name="getSvnRevision">
-		<exec executable="svnversion" outputproperty="svnversion"/>
+		<!-- linux: <exec executable="svnversion" outputproperty="svnversion"/ -->
+		<!-- windows: exec executable="../subversion/bin/svnversion.exe" outputproperty="svnversion"/ -->
+		<exec executable="../subversion/bin/svnversion.exe" outputproperty="svnversion"/>
 	</target>
 
 	<target name="updateProgramConstants" depends="compile-update-constants">
@@ -229,7 +231,7 @@
 			</fileset>
 			<manifest>
 				<attribute name="Main-Class" value="de.moonflower.jfritz.Main" />
-				<attribute name="Class-Path" value="./fritzbox.jar ./resources.jar ./reverselookup.jar  ./utils.jar ${lib}/jdic.jar ${lib}/jfreereport-0.8.6-2.jar ${lib}/jcommon-1.0.0-rc1-cvs.jar ${lib}/itext-1.3.4.jar ${lib}/bsh-1.3.0.jar ${lib}/bsf-2.3.0.jar ${lib}/poi-2.5.1-final-20040804.jar ${lib}/jacob.jar ${lang}/ ${conf} ${lib}/jcalendar-1.3.2.jar ${lib}/jfreechart-1.0.2.jar ${lib}/jdom.jar ${lib}/looks-2.1.4.jar ${lib}/log4j-1.2.16.jar ${lib}/proxy-1.0.0.jar ${lib}/jfontchooser-1.0.5.jar ${lib}/commons-io-2.0.1.jar" />
+				<attribute name="Class-Path" value="./fritzbox.jar ./resources.jar ./reverselookup.jar  ./utils.jar ${lang}/ ${conf} ${lib}/bsf-2.3.0.jar ${lib}/bsh-1.3.0.jar ${lib}/commons-io-2.0.1.jar ${lib}/itext-1.3.4.jar ${lib}/jacob.jar ${lib}/jcalendar-1.3.2.jar ${lib}/jcommon-1.0.0-rc1-cvs.jar ${lib}/jdic.jar ${lib}/jdom.jar ${lib}/jfontchooser-1.0.5.jar ${lib}/jfreechart-1.0.2.jar ${lib}/jfreereport-0.8.6-2.jar ${lib}/log4j-1.2.16.jar ${lib}/looks-2.1.4.jar ${lib}/pixie-0.8.4.jar ${lib}/poi-2.5.1-final-20040804.jar ${lib}/proxy-1.0.1.jar ${lib}/reverseLookup-1.0.4.jar " />
 			</manifest>
 		</jar>
 

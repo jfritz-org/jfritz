@@ -42,6 +42,9 @@ public class PropertyProvider {
 		try {
 			config_properties.loadFromXML(JFritzDataDirectory.getInstance().getDataDirectory() + CONFIG_PROPERTIES_FILE);
 			showConfWizard = "".equals(config_properties.getProperty("box.address"));
+			if (showConfWizard) {
+				Debug.warning("box.address is empty => showing config wizard"); //$NON-NLS-1$
+			}
 		} catch (FileNotFoundException e) {
 			Debug.warning("File " + JFritzDataDirectory.getInstance().getDataDirectory() + CONFIG_PROPERTIES_FILE //$NON-NLS-1$
 					+ " not found => showing config wizard"); //$NON-NLS-1$
