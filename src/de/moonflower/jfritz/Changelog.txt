@@ -17,17 +17,29 @@ TODO vor dem Release:
 - Debug-Klasse auf Log4j umstellen!
 
 TODO tel.search.ch überprüfen und reparieren
-TODO Reihenfolge tel.search.ch und dann tel.local.ch
+- TODO: Sounds trennen und individualisierbar gestalten
+- TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
 
 JFritz 0.7.4.1.27:
 - Anzeige von Popups/Überwachungstabelle getrennt
-- TODO: Sounds trennen und individualisierbar gestalten
-- TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
+- Neue Suchelemente für Rückwärtssuche: company, houseNumber
+- Rückwärtssuche für Deutschland funktioniert wieder
+- Rückwärtssuche für Österreich funktioniert wieder
+- Rückwärtssuche für Belgien funktioniert wieder
+- Rückwärtssuche für Frankreich funktioniert wieder
+- Rückwärtssuche für Italien funktioniert wieder
+- Rückwärtssuche für Luxemburg funktioniert wieder
+- Rückwärtssuche für Niederlande funktioniert wieder
+- Rückwärtssuche für Norwegen funktioniert wieder
+- Rückwärtssuche für Schweden funktioniert wieder
+- Rückwärtssuche für Schweiz funktioniert wieder
+- Rückwärtssuche für USA funktioniert wieder
 New Strings:
 - popup_incoming_calls
 - popup_outgoing_calls
 - monitortable_incoming_calls
 - monitortable_outgoing_calls
+- start
 Strings not used anymore:
 - monitor_incoming_calls
 - monitor_outgoing_calls

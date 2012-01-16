@@ -4,7 +4,6 @@ import java.util.Vector;
 
 import de.moonflower.jfritz.struct.Person;
 
-public interface ParseSiteResultListener {
-
-	public void finished(Vector<Person> foundPersons);
+public interface IReverseLookupFinishedWithResultListener {
+	public void finished(final Vector<Person> result);
 }

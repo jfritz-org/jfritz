@@ -52,15 +52,16 @@ import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
-import de.moonflower.jfritz.utils.reverselookup.LookupObserver;
-import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
+import de.moonflower.jfritz.utils.reverselookup.IReverseLookupFinishedWithResultListener;
+import de.moonflower.jfritz.utils.reverselookup.IReverseLookupProgressListener;
+import de.moonflower.jfritz.utils.reverselookup.JFritzReverseLookup;
 
 /**
  * This class manages the caller list.
  *
  */
 public class CallerList extends AbstractTableModel
-		implements LookupObserver, PhoneBookListener, IProgressListener,
+		implements PhoneBookListener, IProgressListener,
 		BoxCallBackListener, CallerListInterface {
 	private static final long serialVersionUID = 1;
 
@@ -1798,7 +1799,9 @@ public class CallerList extends AbstractTableModel
 		for (int i = 0; i < rows.length; i++) {
 			call = filteredCallerData.get(rows[i]);
 			if (call.getPhoneNumber() != null) {
-				numbers.add(call.getPhoneNumber());
+				if (!numbers.contains(call.getPhoneNumber())) {
+					numbers.add(call.getPhoneNumber());
+				}
 			}
 		}
 		reverseLookup(numbers);
@@ -1813,38 +1816,29 @@ public class CallerList extends AbstractTableModel
 	public void reverseLookup(Vector<PhoneNumberOld> numbers) {
 		JFritz.getJframe().selectLookupButton(true);
 		JFritz.getJframe().setLookupBusy(true);
-		ReverseLookup.lookup(numbers, this, false);
-	}
+		JFritz.getJframe().getCallerListPanel().createReverselookupProgressBar();
+		JFritzReverseLookup.doAsyncLookup(numbers, 10, 10, new IReverseLookupProgressListener() {
 
-	/**
-	 * for the LookupObserver
-	 */
-	public void personsFound(Vector<Person> persons) {
-		if (persons != null && persons.size() > 0) {
-			phonebook.addEntries(persons);
-			update();
-		}
-		JFritz.getJframe().selectLookupButton(false);
-		JFritz.getJframe().setLookupBusy(false);
+			@Override
+			public void progress(int percent, Vector<Person> result) {
+				JFritz.getJframe().getCallerListPanel().updateReverselookupProgressBar(percent);
+				if (result != null && result.size() > 0) {
+					phonebook.addEntries(result);
+					update();
+				}
+			}
+		}, new IReverseLookupFinishedWithResultListener() {
 
-	}
-
-	/**
-	 * for the LookupObserver
-	 */
-	public void percentOfLookupDone(float f) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/**
-	 * for the LookupObserver
-	 */
-	public void saveFoundEntries(Vector<Person> persons) {
-		if (persons != null) {
-			phonebook.addEntries(persons);
-			update();
-		}
+			@Override
+			public void finished(Vector<Person> result) {
+				if (result != null && result.size() > 0) {
+					phonebook.addEntries(result);
+					update();
+				}
+				JFritz.getJframe().selectLookupButton(false);
+				JFritz.getJframe().setLookupBusy(false);
+			}
+		});
 	}
 
 	public void setPhoneBook(PhoneBook phonebook) {
@@ -1857,7 +1851,7 @@ public class CallerList extends AbstractTableModel
 	}
 
 	public void stopLookup(){
-		ReverseLookup.stopLookup();
+		JFritzReverseLookup.stopAsyncLookup();
 	}
 
 	/**

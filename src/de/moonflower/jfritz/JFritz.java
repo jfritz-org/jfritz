@@ -43,7 +43,7 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.StatusListener;
-import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
+import de.moonflower.jfritz.utils.reverselookup.JFritzReverseLookup;
 
 /**
  *
@@ -532,7 +532,7 @@ public final class JFritz implements  StatusListener {
 		}
 
 		Debug.info("Stopping reverse lookup");
-		ReverseLookup.terminate();
+		JFritzReverseLookup.terminateAsyncLookup();
 
 		if ( (Main.systraySupport))
 		{
@@ -579,7 +579,7 @@ public final class JFritz implements  StatusListener {
 
 	public static void loadNumberSettings() {
 		// load the different area code -> city mappings
-		ReverseLookup.loadSettings();
+		JFritzReverseLookup.loadSettings();
 		PhoneNumberOld.loadFlagMap();
 		PhoneNumberOld.loadCbCXMLFile();
 	}

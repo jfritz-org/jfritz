@@ -25,9 +25,10 @@
 	<classpathentry kind="lib" path="lib-dev/jsch-0.1.42.jar"/>
 	<classpathentry kind="lib" path="lib-dev/mockito-all-1.8.5.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
-	<classpathentry kind="lib" path="lib/proxy-1.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/jfontchooser-1.0.5.jar"/>
 	<classpathentry kind="lib" path="lib/commons-io-2.0.1.jar" sourcepath="/home/robotniko/.m2/repository/commons-io/commons-io/2.0.1/commons-io-2.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib-dev/junit-4.8.2.jar"/>
+	<classpathentry kind="lib" path="lib/proxy-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/reverseLookup-1.0.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

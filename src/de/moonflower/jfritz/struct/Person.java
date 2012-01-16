@@ -18,7 +18,7 @@ import javax.swing.ImageIcon;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.HTMLUtil;
-import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
+import de.moonflower.jfritz.utils.reverselookup.JFritzReverseLookup;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupAustria;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupGermany;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupTurkey;
@@ -85,17 +85,17 @@ public class Person implements Cloneable, Serializable{
 
 		person = (Person) p;
 
-		if ((person.lastName.equals(this.lastName))
-			&& (person.firstName.equals(this.firstName))
-			&& (person.numbers.size() == this.numbers.size())
-			&& (person.standard.equals(this.standard))
-			&& (person.city.equals(this.city))
-			&& (person.street.equals(this.street))
-			&& (person.postalCode.equals(this.postalCode))
-			&& ((person.privateEntry == this.privateEntry))
-			&& (person.pictureUrl.equals(this.pictureUrl))
-			&& (person.company.equals(this.company))
-			&& (person.emailAddress.equals(this.emailAddress)))
+		if ((person.lastName != null ? person.lastName.equals(this.lastName) : this.lastName == null || this.lastName.equals(""))
+			&& (person.firstName != null ? person.firstName.equals(this.firstName) : this.firstName == null || this.firstName.equals(""))
+			&& (person.standard != null ? person.standard.equals(this.standard) : this.standard == null || this.lastName.equals(""))
+			&& (person.city != null ? person.city.equals(this.city) : this.city == null || this.city.equals(""))
+			&& (person.street != null ? person.street.equals(this.street) : this.street == null || this.street.equals(""))
+			&& (person.postalCode != null ? person.postalCode.equals(this.postalCode) : this.postalCode == null || this.postalCode.equals(""))
+			&& (person.pictureUrl != null ? person.pictureUrl.equals(this.pictureUrl) : this.pictureUrl == null || this.pictureUrl.equals(""))
+			&& (person.company != null ? person.company.equals(this.company) : this.company == null || this.company.equals(""))
+			&& (person.emailAddress != null ? person.emailAddress.equals(this.emailAddress) : this.emailAddress == null || this.emailAddress.equals(""))
+			&& (person.numbers != null ? person.numbers.size() == this.numbers.size() : this.numbers == null)
+			&& (person.privateEntry == this.privateEntry))
 		{
 			PhoneNumberOld myNumber;
 			PhoneNumberOld hisNumber;
@@ -867,19 +867,19 @@ public class Person implements Cloneable, Serializable{
 		if ( city.replaceAll(" ", "").equals(""))
 		{
 			if (localNumber != null) {
-				if(localNumber.getCountryCode().equals(ReverseLookup.GERMANY_CODE))
+				if(localNumber.getCountryCode().equals(JFritzReverseLookup.GERMANY_CODE))
 				{
 					googleLink += HTMLUtil.stripEntities(ReverseLookupGermany.getCity(localNumber.getAreaNumber()))+", ";
 				}
-				if(localNumber.getCountryCode().equals(ReverseLookup.AUSTRIA_CODE))
+				if(localNumber.getCountryCode().equals(JFritzReverseLookup.AUSTRIA_CODE))
 				{
 					googleLink += HTMLUtil.stripEntities(ReverseLookupAustria.getCity(localNumber.getAreaNumber()))+", ";
 				}
-				if(localNumber.getCountryCode().equals(ReverseLookup.USA_CODE))
+				if(localNumber.getCountryCode().equals(JFritzReverseLookup.USA_CODE))
 				{
 					googleLink += HTMLUtil.stripEntities(ReverseLookupUnitedStates.getCity(localNumber.getAreaNumber()))+", ";
 				}
-				if(localNumber.getCountryCode().equals(ReverseLookup.TURKEY_CODE))
+				if(localNumber.getCountryCode().equals(JFritzReverseLookup.TURKEY_CODE))
 				{
 					googleLink += HTMLUtil.stripEntities(ReverseLookupTurkey.getCity(localNumber.getAreaNumber()))+", ";
 				}

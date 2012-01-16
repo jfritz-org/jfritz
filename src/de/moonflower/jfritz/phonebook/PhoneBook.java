@@ -60,14 +60,15 @@ import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
-import de.moonflower.jfritz.utils.reverselookup.LookupObserver;
-import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
+import de.moonflower.jfritz.utils.reverselookup.IReverseLookupFinishedWithResultListener;
+import de.moonflower.jfritz.utils.reverselookup.JFritzReverseLookup;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupAustria;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupGermany;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupTurkey;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupUnitedStates;
+import de.robotniko.reverseLookup.api.ReverseLookupResponse;
 
-public class PhoneBook extends AbstractTableModel implements LookupObserver, CallerListListener {
+public class PhoneBook extends AbstractTableModel implements CallerListListener {
 	private static final long serialVersionUID = 1;
 
 	private static final String PHONEBOOK_DTD_URI = "http://jfritz.moonflower.de/dtd/phonebook.dtd"; //$NON-NLS-1$
@@ -304,32 +305,6 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 	public void addFilterException(Person nonFilteredPerson) {
 		filterExceptions.add(nonFilteredPerson);
 	}
-
-	public void personsFound(Vector<Person> persons) {
-		if (persons != null) {
-			addEntries(persons);
-			fireTableDataChanged();
-		}
-	}
-
-	/**
-	 * for the LookupObserver
-	 */
-	public void percentOfLookupDone(float f) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/**
-	 * for the LookupObserver
-	 */
-	public void saveFoundEntries(Vector<Person> persons) {
-		if (persons != null) {
-			addEntries(persons);
-			fireTableDataChanged();
-		}
-	}
-
 
 	/**
 	 * Does a reverse lookup on all calls
@@ -1472,7 +1447,7 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
 
     public static Person searchFirstAndLastNameToPhoneNumber(String caller) {
     	Vector<Person> persons = new Vector<Person>();
-        PhoneNumberOld callerPhoneNumber = new PhoneNumberOld(caller, false);
+        final PhoneNumberOld callerPhoneNumber = new PhoneNumberOld(caller, false);
         Debug.info("Searching in local database for number "+caller+" ..."); //$NON-NLS-1$
         Person person = JFritz.getPhonebook().findPerson(callerPhoneNumber);
         if (person != null) {
@@ -1483,35 +1458,32 @@ public class PhoneBook extends AbstractTableModel implements LookupObserver, Cal
         		persons.add(person);
         	} else {
 	            Debug.info("Searching on internet ..."); //$NON-NLS-1$
-	            person = ReverseLookup.busyLookup(callerPhoneNumber);
-	            if (!person.getFullname().equals("")) { //$NON-NLS-1$
-	                Debug.info("Found on internet: " + person.getLastName() + ", " + person.getFirstName()); //$NON-NLS-1$,  //$NON-NLS-2$
-	                Debug.info("Add person to database"); //$NON-NLS-1$
-	                persons.add(person);
-	            } else {
-	                Debug.warning("Found no person. Creating a dummy person instead"); //$NON-NLS-1$
-	                person = createDummyPerson(callerPhoneNumber);
-	                persons.add(person);
-	            }
+
+	            JFritzReverseLookup.doAsyncLookup(callerPhoneNumber, 1, 1, null, new IReverseLookupFinishedWithResultListener() {
+
+					@Override
+					public void finished(Vector<Person> result) {
+			            JFritz.getPhonebook().addEntries(result);
+			            JFritz.getPhonebook().fireTableDataChanged();
+					}
+				});
         	}
-            JFritz.getPhonebook().addEntries(persons);
-            JFritz.getPhonebook().fireTableDataChanged();
         }
         return person;
     }
 
-	private static Person createDummyPerson(PhoneNumberOld callerPhoneNumber) {
+	public static Person createDummyPerson(PhoneNumberOld callerPhoneNumber) {
 		Person person;
 		person = new Person();
 		person.addNumber(callerPhoneNumber);
 		String city = "";
-		if(callerPhoneNumber.getCountryCode().equals(ReverseLookup.GERMANY_CODE))
+		if(callerPhoneNumber.getCountryCode().equals(JFritzReverseLookup.GERMANY_CODE))
 			city = ReverseLookupGermany.getCity(callerPhoneNumber.getAreaNumber());
-		else if(callerPhoneNumber.getCountryCode().equals(ReverseLookup.AUSTRIA_CODE))
+		else if(callerPhoneNumber.getCountryCode().equals(JFritzReverseLookup.AUSTRIA_CODE))
 			city = ReverseLookupAustria.getCity(callerPhoneNumber.getIntNumber());
-		else if(callerPhoneNumber.getCountryCode().startsWith(ReverseLookup.USA_CODE))
+		else if(callerPhoneNumber.getCountryCode().startsWith(JFritzReverseLookup.USA_CODE))
 			city = ReverseLookupUnitedStates.getCity(callerPhoneNumber.getIntNumber());
-		else if(callerPhoneNumber.getCountryCode().startsWith(ReverseLookup.TURKEY_CODE))
+		else if(callerPhoneNumber.getCountryCode().startsWith(JFritzReverseLookup.TURKEY_CODE))
 			city = ReverseLookupTurkey.getCity(callerPhoneNumber.getIntNumber());
 		person.setCity(city);
 		Debug.warning("Add dummy person to database"); //$NON-NLS-1$

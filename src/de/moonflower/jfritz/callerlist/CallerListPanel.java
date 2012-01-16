@@ -6,6 +6,7 @@ package de.moonflower.jfritz.callerlist;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -64,20 +65,17 @@ import de.moonflower.jfritz.callerlist.filter.SearchFilter;
 import de.moonflower.jfritz.callerlist.filter.SipFilter;
 import de.moonflower.jfritz.constants.ProgramConstants;
 import de.moonflower.jfritz.messages.MessageProvider;
-import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.phonebook.PhoneBookPanel;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.IProgressListener;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
-import de.moonflower.jfritz.struct.ReverseLookupSite;
 import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzClipboard;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.StatusBarController;
-import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
 import de.moonflower.jfritz.utils.threeStateButton.ThreeStateButton;
 
 /**
@@ -133,26 +131,11 @@ public class CallerListPanel extends JPanel implements ActionListener,
 
 						//if calls have different country codes, only offer a generic lookup
 					if(selectedRows.length > 0 && diffCodes){
-						item = new JMenuItem("for "+selectedRows.length+" Calls");
+						item = new JMenuItem(MessageProvider.getInstance().getMessage("start"));
 						item.addActionListener(listener);
 						item.setActionCommand("lookup:");
 						item.setEnabled(true);
 						reverseMenu.add(item);
-					}else if(selectedRows.length > 0 && ReverseLookup.rlsMap.containsKey(countryCode)){
-						reverseMenu.setEnabled(true);
-						Vector<ReverseLookupSite> rls_list;
-
-						//get the list of sites available for this number
-						rls_list = ReverseLookup.rlsMap.get(countryCode);
-						for(ReverseLookupSite rls: rls_list){
-							item = new JMenuItem("using "+rls.getName());
-							item.addActionListener(listener);
-							item.setActionCommand("lookup:"+rls.getName());
-							item.setEnabled(true);
-							reverseMenu.add(item);
-						}
-
-						//no lookup sites for this particular country
 					}else{
 						reverseMenu.setEnabled(false);
 					}
@@ -285,6 +268,10 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	protected MessageProvider messages = MessageProvider.getInstance();
 
 	private Component focusBeforeSearch = null;
+
+	private StatusBarPanel reverseLookupStatusBar = null;
+	private JProgressBar lookupProgressBar = null;
+	private JLabel reverseLookupLabel = null;
 
 	/**
 	 * A callerListPanel is a view for a callerlist, it has its own
@@ -1072,34 +1059,19 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		} else if(command.startsWith("lookup:")){
 
 			Call call;
-			String parts[] = command.split(":");
 			int[] selectedRows = callerTable.getSelectedRows();
-			if ( parts.length > 1 )
-			{
-				//this should run a specific reverse lookup just for one site
-				//get all the selected calls
-				for(int i: selectedRows){
-					call = callerList.getCallAt(i);
-					ReverseLookup.specificLookup(call.getPhoneNumber(), parts[1], callerList);
-				}
-			} else {
-				Vector<PhoneNumberOld> numbers = new Vector<PhoneNumberOld>();
-				for (int i: selectedRows) {
-					call = callerList.getCallAt(i);
-					if ( call.getPhoneNumber() != null )
-					{
+
+			Vector<PhoneNumberOld> numbers = new Vector<PhoneNumberOld>();
+			for (int i: selectedRows) {
+				call = callerList.getCallAt(i);
+				if ( call.getPhoneNumber() != null )
+				{
+					if (!numbers.contains(call.getPhoneNumber())) {
 						numbers.add(call.getPhoneNumber());
 					}
 				}
-				ReverseLookup.lookup(numbers, callerList, false);
 			}
-			//only set the progrss bar and button if we aren't networked
-			if(!properties.getProperty("option.clientTelephoneBook").equals("true") ||
-					!NetworkStateMonitor.isConnectedToServer()){
-
-				JFritz.getJframe().selectLookupButton(true);
-				JFritz.getJframe().setLookupBusy(true);
-			}
+			callerList.reverseLookup(numbers);
 		} else if (command.equals("reverselookup_dummy")) { //$NON-NLS-1$
 			callerList.reverseLookup(true, true);
 		} else if (command.equals("google")) {
@@ -1775,4 +1747,66 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		}
 		update();
 	}
+
+	public void createReverselookupProgressBar()
+	{
+		if ( reverseLookupStatusBar == null )
+		{
+			reverseLookupStatusBar = new StatusBarPanel(2);
+			reverseLookupLabel = new JLabel("Reverse lookup: ");
+			lookupProgressBar = new JProgressBar();
+			lookupProgressBar.setVisible(false);
+			lookupProgressBar.setMinimum(0);
+			lookupProgressBar.setMaximum(100);
+			lookupProgressBar.setValue(0);
+			lookupProgressBar.setStringPainted(true);
+
+			reverseLookupStatusBar.add(reverseLookupLabel);
+			reverseLookupStatusBar.add(lookupProgressBar);
+			if (   (JFritz.getJframe() != null )
+				&& (JFritz.getJframe().getStatusBar() != null ))
+				{
+					JFritz.getJframe().getStatusBar().registerDynamicStatusPanel(reverseLookupStatusBar);
+				}
+			updateReverselookupProgressBar(0);
+		}
+	}
+
+	public void updateReverselookupProgressBar(int percent)
+	{
+		if ( percent == 100)
+		{
+			reverseLookupLabel.setVisible(false);
+			lookupProgressBar.setVisible(false);
+			lookupProgressBar.setValue(0);
+			reverseLookupStatusBar.setVisible(false);
+		}
+		else
+		{
+			reverseLookupStatusBar.setVisible(true);
+			reverseLookupLabel.setVisible(true);
+			lookupProgressBar.setVisible(true);
+			Dimension dim = new Dimension(100, 20);
+			lookupProgressBar.setMinimumSize(dim);
+			lookupProgressBar.setMaximumSize(dim);
+			lookupProgressBar.setPreferredSize(dim);
+			lookupProgressBar.setValue(percent);
+			if ( percent == 0 )
+			{
+				progressBar.setIndeterminate(true);
+				progressBar.setStringPainted(false);
+			}
+			else
+			{
+				progressBar.setIndeterminate(false);
+				progressBar.setStringPainted(true);
+			}
+		}
+
+		if (JFritz.getJframe() != null && JFritz.getJframe().getStatusBar() != null)
+		{
+			JFritz.getJframe().getStatusBar().refresh();
+		}
+	}
+
 }

@@ -172,21 +172,22 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.ShutdownHook;
-import de.moonflower.jfritz.utils.reverselookup.LookupObserver;
-import de.moonflower.jfritz.utils.reverselookup.ReverseLookup;
+import de.moonflower.jfritz.utils.reverselookup.IReverseLookupFinishedWithResultListener;
+import de.moonflower.jfritz.utils.reverselookup.IReverseLookupProgressListener;
+import de.moonflower.jfritz.utils.reverselookup.JFritzReverseLookup;
 
 /**
  * @author robroy
  *
  */
-public class Main implements LookupObserver {
+public class Main  {
 	private final static Logger log = Logger.getLogger(Main.class);
 
 	public final static String PROGRAM_SECRET = "jFrItZsEcReT"; //$NON-NLS-1$
 
 	public final static String PROGRAM_SEED = "10D4KK3L"; //$NON-NLS-1$
 
-	public final static String CVS_TAG = "$Id: Main.java 206 2011-09-16 16:03:05Z robotniko $"; //$NON-NLS-1$
+	public final static String CVS_TAG = "$Id: Main.java 240 2012-01-16 12:31:42Z robotniko $"; //$NON-NLS-1$
 
 	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
 
@@ -1069,36 +1070,23 @@ public class Main implements LookupObserver {
 	 *
 	 */
 	private void doReverseLookup() {
-		ReverseLookup.lookup(JFritz.getCallerList().getAllUnknownEntries(false), this, true);
-		try {
-			ReverseLookup.thread.join();
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-		}
+		JFritzReverseLookup.doAsyncLookup(JFritz.getCallerList().getAllUnknownEntries(false), 10, 10, new IReverseLookupProgressListener() {
 
-	}
+			@Override
+			public void progress(int percent, Vector<Person> result) {
+				if (result != null && result.size() > 0) {
+					JFritz.getPhonebook().addEntries(result);
+				}
+			}
+		}, new IReverseLookupFinishedWithResultListener() {
 
-	/**
-	 * adds the results to the phonebook and saves
-	 */
-	public void personsFound(Vector<Person> persons) {
-		if (persons != null)
-			JFritz.getPhonebook().addEntries(persons);
-	}
-
-	/**
-	 * is called to give progress information
-	 */
-	public void percentOfLookupDone(float f) {
-		// TODO: Update the status here!
-	}
-
-	/**
-	 * is called to save progress
-	 */
-	public void saveFoundEntries(Vector<Person> persons) {
-		if (persons != null)
-			JFritz.getPhonebook().addEntries(persons);
+			@Override
+			public void finished(Vector<Person> result) {
+				if (result != null && result.size() > 0) {
+					JFritz.getPhonebook().addEntries(result);
+				}
+			}
+		});
 	}
 
 	private static void loadLanguages() {
