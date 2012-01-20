@@ -103,39 +103,10 @@ public class CallerListPanel extends JPanel implements ActionListener,
 					//get the selected objects that were right clicked
 					JTable target = (JTable) e.getSource();
 					int[] selectedRows = target.getSelectedRows();
-					String countryCode = null, newCountryCode;
-					boolean diffCodes = false;
-					Vector<Call> calls = new Vector<Call>(selectedRows.length);
-					Call call;
-
-					//make sure all calls have the same country code
-					for(int i: selectedRows){
-
-						newCountryCode = "49";
-						call = callerList.getCallAt(i);
-						calls.add(call);
-						if ( call.getPhoneNumber() != null)
-						{
-							newCountryCode = call.getPhoneNumber().getCountryCode();
-						}
-						if(countryCode == null)
-							countryCode = newCountryCode;
-						else if(!newCountryCode.equals(countryCode)){
-							diffCodes = true;
-						}
-					}
-
-					//remove all the previous choices
-					reverseMenu.removeAll();
-					JMenuItem item;
 
 						//if calls have different country codes, only offer a generic lookup
-					if(selectedRows.length > 0 && diffCodes){
-						item = new JMenuItem(MessageProvider.getInstance().getMessage("start"));
-						item.addActionListener(listener);
-						item.setActionCommand("lookup:");
-						item.setEnabled(true);
-						reverseMenu.add(item);
+					if(selectedRows.length > 0){
+						reverseMenu.setEnabled(true);
 					}else{
 						reverseMenu.setEnabled(false);
 					}
@@ -249,7 +220,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 	private JFritzWindow jFrame;
 	private StatusBarController statusBarController = new StatusBarController();
 
-	private JMenu reverseMenu;
+	private JMenuItem reverseMenu;
 	private JMenuItem googleItem;
 	private String googleLink = null;
 
@@ -404,7 +375,10 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		JPopupMenu callerlistPopupMenu = new JPopupMenu();
 		JMenuItem menuItem;
 
-		reverseMenu = new JMenu(messages.getMessage("reverse_lookup"));
+		reverseMenu = new JMenuItem(messages.getMessage("reverse_lookup"));
+		reverseMenu.setActionCommand("lookup:");
+		reverseMenu.addActionListener(this);
+
 		callerlistPopupMenu.add(reverseMenu);
 
 		googleItem = new JMenuItem(messages.getMessage("show_on_google_maps"));
@@ -1780,6 +1754,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			lookupProgressBar.setVisible(false);
 			lookupProgressBar.setValue(0);
 			reverseLookupStatusBar.setVisible(false);
+			reverseLookupStatusBar = null;
 		}
 		else
 		{

@@ -1,3 +1,23 @@
+JFritz 0.7.4.1.28:
+- Bugfix [0000341]: Could not get Save Directory bei der Verwendung des Windows-Installers
+- Bugfix [0000343]: Rückwärtssuche für einen Eintrag ausgegraut
+- Bugfix [0000344]: Rückwärtssuche für alle Einträge "startet verzögert"
+ 
+JFritz 0.7.4.1.27:
+- Anzeige von Popups/Überwachungstabelle getrennt
+- Neue Suchelemente für Rückwärtssuche: company, houseNumber
+- Rückwärtssuche für Deutschland funktioniert wieder
+- Rückwärtssuche für Österreich funktioniert wieder
+- Rückwärtssuche für Belgien funktioniert wieder
+- Rückwärtssuche für Frankreich funktioniert wieder
+- Rückwärtssuche für Italien funktioniert wieder
+- Rückwärtssuche für Luxemburg funktioniert wieder
+- Rückwärtssuche für Niederlande funktioniert wieder
+- Rückwärtssuche für Norwegen funktioniert wieder
+- Rückwärtssuche für Schweden funktioniert wieder
+- Rückwärtssuche für Schweiz funktioniert wieder
+- Rückwärtssuche für USA funktioniert wieder
+
 JFritz 0.7.4.1.26:
 - Neu: Feedback bei Deinstallation 
 - Bugfix: Splash wird nach Wizard sofort anzeigen
