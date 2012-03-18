@@ -20,6 +20,12 @@ TODO tel.search.ch überprüfen und reparieren
 - TODO: Sounds trennen und individualisierbar gestalten
 - TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
 
+JFritz 0.7.4.1.29:
+- boxnames.conf aktualisiert
+- Auf reverseLookup-1.0.5 upgedated
+- Reverselookup für DasOertliche.de repariert
+- Manuelles Auslösen der Rückwärtssuche sucht nun auch diejenigen Einträge durch, die bisher nur einen Ort zugewiesen bekommen haben
+
 JFritz 0.7.4.1.28:
 - Bugfix [0000341]: Could not get Save Directory bei der Verwendung des Windows-Installers
 - Bugfix [0000343]: Rückwärtssuche für einen Eintrag ausgegraut

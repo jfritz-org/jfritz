@@ -1186,7 +1186,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					lookupButton.setSelected(false);
 				}else{
 					Debug.info("Start reverselookup"); //$NON-NLS-1$
-					JFritz.getCallerList().reverseLookup(true, false);
+					JFritz.getCallerList().reverseLookup(true, true);
 				}
 			} else {
 				Debug.info("Stopping reverse lookup"); //$NON-NLS-1$

@@ -893,17 +893,17 @@
 		</website>
 	</country>
 	<country code="+49">
-		<website name="www.dasoertliche.de" url="http://dasoertliche.de/Controller?form_name=search_inv&amp;ph=$NUMBER" prefix="0" numLines="1">
+		<website name="www.dasoertliche.de" url="http://www.dasoertliche.de/Controller?form_name=search_inv&amp;ph=$NUMBER" prefix="0" numLines="1">
 	        <entry>
-	        	<name>var\s+data\s+=\s+getItemData\('.*', '.*', '.*', '.*', '(.*)', '.*', '.*', '.*'\);</name>
-	        	<street>var\s+data\s+=\s+getItemData\('.*', '.*', '.*', '.*', '.*', '(.*)', '.*', '.*'\);</street>
-	        	<houseNumber>var\s+data\s+=\s+getItemData\('.*', '.*', '.*', '.*', '.*', '.*', '(.*)', '.*'\);</houseNumber>
-	        	<city>var\s+data\s+=\s+getItemData\('.*', '.*', '.*', '(.*)', '.*', '.*', '.*', '.*'\);</city>
-	        	<zipcode>var\s+data\s+=\s+getItemData\('.*', '.*', '(.*)', '.*', '.*', '.*', '.*', '.*'\);</zipcode>
+	        	<name>var\s+data\s*=\s*getItemData\('.*', '.*', '.*', '.*', '.*', '(.*)', '.*', '.*', '.*'\);</name>
+	        	<street>var\s+data\s+=\s+getItemData\('.*', '.*', '.*', '.*', '.*', '.*', '(.*)', '.*', '.*'\);</street>
+	        	<houseNumber>var\s+data\s+=\s+getItemData\('.*', '.*', '.*', '.*', '.*', '.*', '.*', '(.*)', '.*'\);</houseNumber>
+	        	<city>var\s+data\s+=\s+getItemData\('.*', '.*', '.*', '.*', '(.*)', '.*', '.*', '.*', '.*'\);</city>
+	        	<zipcode>var\s+data\s+=\s+getItemData\('.*', '.*', '.*', '(.*)', '.*', '.*', '.*', '.*', '.*'\);</zipcode>
 	        </entry>
 		</website>
 		<website name="www.dastelefonbuch.de" url="http://www3.dastelefonbuch.de/?la=de&amp;kw=$NUMBER&amp;cmd=detail&amp;recSelected=0" prefix="0">
-			<entry>
+			<entry>	
 				<name>&lt;div id=&quot;detail-hl&quot;&gt;&lt;h2&gt;([^&lt;]*)&lt;/h2&gt;</name>
 				<street>&lt;div class=&quot;addr&quot; title=&quot;Adresse&quot;&gt;\s*?&lt;div&gt;.*?&lt;/div&gt;\s*?&lt;div&gt;\s*?([^&lt;]*)&lt;br /&gt;\d{5}&amp;nbsp;[^&lt;]*&lt;br /&gt;&lt;/div&gt;\s*?&lt;/div&gt;</street>
 				<city>&lt;div class=&quot;addr&quot; title=&quot;Adresse&quot;&gt;\s*?&lt;div&gt;.*?&lt;/div&gt;\s*?&lt;div&gt;\s*?[^&lt;]*&lt;br /&gt;\d{5}&amp;nbsp;([^&lt;]*)&lt;br /&gt;&lt;/div&gt;\s*?&lt;/div&gt;</city>
@@ -926,12 +926,12 @@
 	        	<zipcode>&lt;span class=&quot;postcode&quot;&gt;([^&lt;]*)&lt;/span&gt;</zipcode>
 	        </entry>
 		</website>
-		<website name="www.11880.com" url="http://www.11880.com/inverssuche/index/search?method=searchSimple&amp;_dvform_posted=1&amp;phoneNumber=$NUMBER" prefix="0">
+		<website name="www.11880.com" url="http://www.11880.com/Suche/index.cfm?&amp;fuseaction=Suche.rueckwaertssucheresult&amp;init=true&amp;tel=$NUMBER" prefix="0">
 	        <entry>
-	        	<name>&lt;a class="namelink"  href="[^"]*"&gt;&lt;strong&gt;([^&lt;]*)&lt;/strong&gt;&lt;/a&gt;</name>
-	        	<street>&lt;p class="data track"&gt;\s*([^&lt;]*)&lt;br /&gt;\s*\d+ [^\n]*\n*\s*&lt;/p&gt;</street>
-	        	<city>&lt;p class="data track"&gt;[^&lt;]*&lt;br /&gt;\s*\d+ ([^\n]*)\n*\s*&lt;/p&gt;</city>
-	        	<zipcode>&lt;p class="data track"&gt;[^&lt;]*&lt;br /&gt;\s*(\d+) [^\n]*\n*\s*&lt;/p&gt;</zipcode>
+	        	<name>&lt;a style=&quot;text-decoration: underline;&quot; href=&quot;[^&quot;]*?&quot;\s+onclick=&quot;[^&quot;]*?&quot;\s+class=&quot;popup&quot;[^&gt;]*?&gt;([^&lt;]*?)&lt;/a&gt;</name>
+	        	<street>^\t*?([^,\t]*?), [\d]{5} [^&lt;]*?&lt;br /&gt;</street>
+	        	<city>^\t*?[^,\t]*?, [\d]{5} ([^&lt;]*?)&lt;br /&gt;</city>
+	        	<zipcode>^\t*?[^,\t]*?, ([\d]{5}) [^&lt;]*?&lt;br /&gt;</zipcode>
 	        </entry>
 		</website>
 	</country>

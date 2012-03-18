@@ -29,6 +29,6 @@
 	<classpathentry kind="lib" path="lib/commons-io-2.0.1.jar" sourcepath="/home/robotniko/.m2/repository/commons-io/commons-io/2.0.1/commons-io-2.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib-dev/junit-4.8.2.jar"/>
 	<classpathentry kind="lib" path="lib/proxy-1.0.1.jar"/>
-	<classpathentry kind="lib" path="lib/reverseLookup-1.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/reverseLookup-1.0.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

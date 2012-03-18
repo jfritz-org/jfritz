@@ -1753,8 +1753,10 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			reverseLookupLabel.setVisible(false);
 			lookupProgressBar.setVisible(false);
 			lookupProgressBar.setValue(0);
-			reverseLookupStatusBar.setVisible(false);
-			reverseLookupStatusBar = null;
+			if (reverseLookupStatusBar != null) {
+				reverseLookupStatusBar.setVisible(false);
+				reverseLookupStatusBar = null;
+			}
 		}
 		else
 		{
