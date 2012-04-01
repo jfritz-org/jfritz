@@ -540,44 +540,46 @@ public class PhoneNumberOld implements Serializable {
 		if (number.startsWith("**7")) //$NON-NLS-1$
 		// QuickDial
 		{
-			Debug.info("Quickdial: " + number //$NON-NLS-1$
-					+ ", searching for the full number"); //$NON-NLS-1$
-
-			// replace QuickDial with
-			// QuickDial-Entry
-			String quickDialNumber = number.substring(3, 5);
-			Debug.debug("Quickdail number: " + quickDialNumber);
-
-			if (JFritz.getQuickDials()
-					.getQuickDials().size() == 0) {
-
-				// get QuickDials from FritzBox
-				Debug.warning("No Quickdials present in JFritz, retrieving the list from the box");
-				try {
-					JFritz.getQuickDials()
-							.getQuickDialDataFromFritzBox();
-				} catch (WrongPasswordException e1) {
-					// just do nothing. No conversion possible
-				} catch (IOException e1) {
-					// just do nothing. No conversion possible
-				} catch (InvalidFirmwareException e1) {
-					// just do nothing. No conversion possible
-				}
-			}
-			Enumeration<QuickDial> en = JFritz.getQuickDials().getQuickDials().elements();
-			while (en.hasMoreElements()) {
-				QuickDial quickDial = (QuickDial) en.nextElement();
-				if (quickDialNumber.equals(quickDial.getQuickdial())) {
-					number = quickDial.getNumber();
-					Debug.info("Quickdial resolved. Number: " //$NON-NLS-1$
-							+ number);
-				}
-			}
-
-			if (number.startsWith("**7"))
-			{
-				Debug.warning("No quickdial found. Refresh your quickdial list"); //$NON-NLS-1$
-			}
+			Debug.info("Quickdial conversion disabled!");
+//	THIS CODE IS BROKEN!!!
+//			Debug.info("Quickdial: " + number //$NON-NLS-1$
+//					+ ", searching for the full number"); //$NON-NLS-1$
+//
+//			// replace QuickDial with
+//			// QuickDial-Entry
+//			String quickDialNumber = number.substring(3, 5);
+//			Debug.debug("Quickdail number: " + quickDialNumber);
+//
+//			if (JFritz.getQuickDials()
+//					.getQuickDials().size() == 0) {
+//
+//				// get QuickDials from FritzBox
+//				Debug.warning("No Quickdials present in JFritz, retrieving the list from the box");
+//				try {
+//					JFritz.getQuickDials()
+//							.getQuickDialDataFromFritzBox();
+//				} catch (WrongPasswordException e1) {
+//					// just do nothing. No conversion possible
+//				} catch (IOException e1) {
+//					// just do nothing. No conversion possible
+//				} catch (InvalidFirmwareException e1) {
+//					// just do nothing. No conversion possible
+//				}
+//			}
+//			Enumeration<QuickDial> en = JFritz.getQuickDials().getQuickDials().elements();
+//			while (en.hasMoreElements()) {
+//				QuickDial quickDial = (QuickDial) en.nextElement();
+//				if (quickDialNumber.equals(quickDial.getQuickdial())) {
+//					number = quickDial.getNumber();
+//					Debug.info("Quickdial resolved. Number: " //$NON-NLS-1$
+//							+ number);
+//				}
+//			}
+//
+//			if (number.startsWith("**7"))
+//			{
+//				Debug.warning("No quickdial found. Refresh your quickdial list"); //$NON-NLS-1$
+//			}
 		}
 	}
 
