@@ -1190,14 +1190,18 @@ public class FritzBox extends BoxClass {
 				}
 				else if (routeType == 1) // SIP
 				{
-					int id = Integer.parseInt(response.get(newOffset+5));
-					for (SipProvider provider: sipProvider)
-					{
-						if (provider.isProviderID(id))
+					try {
+						int id = Integer.parseInt(response.get(newOffset+5));
+						for (SipProvider provider: sipProvider)
 						{
-							route = provider.toString();
-							break;
+							if (provider.isProviderID(id))
+							{
+								route = provider.toString();
+								break;
+							}
 						}
+					} catch (NumberFormatException nfe) {
+						route = response.get(newOffset+5);
 					}
 				}
 				else

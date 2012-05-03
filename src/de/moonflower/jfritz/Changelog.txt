@@ -22,6 +22,7 @@ TODO tel.search.ch überprüfen und reparieren
 
 JFritz 0.7.4.1.30:
 - Quickdial-Verarbeitung deaktiviert
+- Bugfix: NumberFormatException bei "Telefonie über Mobilfunk"
 
 JFritz 0.7.4.1.29:
 - boxnames.conf aktualisiert
