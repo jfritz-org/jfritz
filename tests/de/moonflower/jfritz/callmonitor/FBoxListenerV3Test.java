@@ -208,8 +208,10 @@ public class FBoxListenerV3Test {
 	}
 
 	private void initWhenRules(int sipId, int portId, Port port) {
-		doReturn("true").when(this.mockedProperties).getProperty("option.callmonitor.monitorIncomingCalls");
-    	doReturn("true").when(this.mockedProperties).getProperty("option.callmonitor.monitorOutgoingCalls");
+		doReturn("true").when(this.mockedProperties).getProperty("option.callmonitor.monitorTableIncomingCalls");
+		doReturn("true").when(this.mockedProperties).getProperty("option.callmonitor.popupIncomingCalls");
+    	doReturn("true").when(this.mockedProperties).getProperty("option.callmonitor.monitorTableOutgoingCalls");
+    	doReturn("true").when(this.mockedProperties).getProperty("option.callmonitor.popupOutgoingCalls");
     	doReturn("false").when(this.mockedProperties).getProperty("option.activateDialPrefix");
     	doReturn("49").when(this.mockedProperties).getProperty("country.code");
     	doReturn("").when(this.mockedProperties).getProperty("option.callmonitor.ignoreMSN");
@@ -219,8 +221,10 @@ public class FBoxListenerV3Test {
 	}
 
 	private void initWhenRules(int sipId, int portId1, Port port1, int portId2, Port port2) {
-		doReturn("true").when(this.mockedProperties).getProperty("option.callmonitor.monitorIncomingCalls");
-    	doReturn("true").when(this.mockedProperties).getProperty("option.callmonitor.monitorOutgoingCalls");
+		doReturn("true").when(this.mockedProperties).getProperty("option.callmonitor.monitorTableIncomingCalls");
+		doReturn("true").when(this.mockedProperties).getProperty("option.callmonitor.popupIncomingCalls");
+    	doReturn("true").when(this.mockedProperties).getProperty("option.callmonitor.monitorTableOutgoingCalls");
+    	doReturn("true").when(this.mockedProperties).getProperty("option.callmonitor.popupOutgoingCalls");
     	doReturn("false").when(this.mockedProperties).getProperty("option.activateDialPrefix");
     	doReturn("49").when(this.mockedProperties).getProperty("country.code");
     	doReturn("").when(this.mockedProperties).getProperty("option.callmonitor.ignoreMSN");
