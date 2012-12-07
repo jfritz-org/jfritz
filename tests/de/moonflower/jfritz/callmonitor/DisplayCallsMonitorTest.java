@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import junit.framework.Assert;
+import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -28,7 +29,7 @@ import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.Debug;
 
-public class DisplayCallsMonitorTest {
+public class DisplayCallsMonitorTest extends TestCase {
 
 	@Mock
 	PlaySound sound;

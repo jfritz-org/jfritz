@@ -10,6 +10,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -28,7 +31,7 @@ import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.Debug;
 
-public class FBoxListenerV3Test {
+public class FBoxListenerV3Test extends TestCase {
 
 	@Mock private FritzBox mockedFritzBox;
     @Mock private PropertyProvider mockedProperties;
@@ -54,7 +57,8 @@ public class FBoxListenerV3Test {
 
         monitoredCalls = new MonitoredCalls();
         monitoredCalls.properties = mockedProperties;
-    	fBoxCallMonitor = new FBoxCallMonitorV3(mockedFritzBox, null, false);
+
+        fBoxCallMonitor = new FBoxCallMonitorV3(mockedFritzBox, null, false);
         fBoxCallMonitor.properties = mockedProperties;
         fBoxCallMonitor.messages = mockedMessages;
         fBoxCallMonitor.monitoredCalls = monitoredCalls;

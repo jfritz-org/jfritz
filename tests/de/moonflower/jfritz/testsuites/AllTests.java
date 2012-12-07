@@ -4,7 +4,7 @@
  */
 package de.moonflower.jfritz.testsuites;
 
-import de.moonflower.jfritz.callmonitor.All_Utils_Network_Tests;
+import de.moonflower.jfritz.callmonitor.All_Callmonitor_Tests;
 import de.moonflower.jfritz.testsuites.callerlist.All_Callerlist_Tests;
 import de.moonflower.jfritz.testsuites.phonebook.All_Phonebook_Tests;
 import de.moonflower.jfritz.testsuites.utils.All_Utils_Tests;
@@ -19,7 +19,7 @@ public class AllTests {
         //$JUnit-BEGIN$
         suite.addTest(All_Callerlist_Tests.suite());
         suite.addTest(All_Utils_Tests.suite());
-        suite.addTest(All_Utils_Network_Tests.suite());
+        suite.addTest(All_Callmonitor_Tests.suite());
 //        suite.addTest(All_Utils_Reverselookup_Tests.suite());
         suite.addTest(All_Phonebook_Tests.suite());
         //$JUnit-END$

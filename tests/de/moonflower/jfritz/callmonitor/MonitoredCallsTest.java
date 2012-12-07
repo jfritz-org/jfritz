@@ -3,6 +3,7 @@ package de.moonflower.jfritz.callmonitor;
 import java.util.Locale;
 
 import junit.framework.Assert;
+import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -17,15 +18,12 @@ import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 
-public class MonitoredCallsTest {
+public class MonitoredCallsTest extends TestCase {
 
-	@Mock
-	PropertyProvider mockedProperties;
+	@Mock private PropertyProvider mockedProperties;
+	@Mock private CallMonitorListener mockedListener;
 
-	@Mock
-	CallMonitorListener mockedListener;
-
-	MonitoredCalls mc;
+	MonitoredCalls monitoredCalls;
 
 	@BeforeClass
 	public static void setup() {
@@ -34,14 +32,15 @@ public class MonitoredCallsTest {
 	}
 
 	@Before
-	public void init() {
+	public void setUp() {
 		MockitoAnnotations.initMocks(this);
-		mc = new MonitoredCalls();
-		mc.addCallMonitorListener(mockedListener);
-		mc.properties = mockedProperties;
 
-		Assert.assertEquals(0, mc.getEstablishedSize());
-		Assert.assertEquals(0, mc.getPendingSize());
+		monitoredCalls = new MonitoredCalls();
+		monitoredCalls.properties = mockedProperties;
+		monitoredCalls.addCallMonitorListener(mockedListener);
+
+		Assert.assertEquals(0, monitoredCalls.getEstablishedSize());
+		Assert.assertEquals(0, monitoredCalls.getPendingSize());
 	}
 
 	@Test
@@ -53,30 +52,30 @@ public class MonitoredCallsTest {
 		doReturn("").when(mockedProperties).getProperty("option.callmonitor.ignoreMSN");
 
 		// add a new call
-		mc.addNewCall(callId, testCall);
-		Assert.assertEquals(CallState.PENDING, mc.getCallState(0));
-		Assert.assertEquals(0, mc.getEstablishedSize());
-		Assert.assertEquals(1, mc.getPendingSize());
-		Call checkCall = mc.getCall(callId);
+		monitoredCalls.addNewCall(callId, testCall);
+		Assert.assertEquals(CallState.PENDING, monitoredCalls.getCallState(0));
+		Assert.assertEquals(0, monitoredCalls.getEstablishedSize());
+		Assert.assertEquals(1, monitoredCalls.getPendingSize());
+		Call checkCall = monitoredCalls.getCall(callId);
 		TestHelper.assertTestCall(checkCall, callType);
 		verify(this.mockedListener, times(1)).pendingCallIn(testCall);
 		verify(this.mockedProperties, times(1)).getProperty("option.callmonitor.ignoreMSN");
 
 		// establish call
-		mc.establishCall(callId);
-		Assert.assertEquals(CallState.ESTABLISHED, mc.getCallState(0));
-		Assert.assertEquals(1, mc.getEstablishedSize());
-		Assert.assertEquals(0, mc.getPendingSize());
-		checkCall = mc.getCall(callId);
+		monitoredCalls.establishCall(callId);
+		Assert.assertEquals(CallState.ESTABLISHED, monitoredCalls.getCallState(0));
+		Assert.assertEquals(1, monitoredCalls.getEstablishedSize());
+		Assert.assertEquals(0, monitoredCalls.getPendingSize());
+		checkCall = monitoredCalls.getCall(callId);
 		TestHelper.assertTestCall(checkCall, callType);
 		verify(this.mockedListener, times(1)).establishedCallIn(testCall);
 
 		// remove call
-		mc.removeCall(callId, testCall);
-		Assert.assertEquals(CallState.NONE, mc.getCallState(0));
-		Assert.assertEquals(0, mc.getEstablishedSize());
-		Assert.assertEquals(0, mc.getPendingSize());
-		checkCall = mc.getCall(callId);
+		monitoredCalls.removeCall(callId, testCall);
+		Assert.assertEquals(CallState.NONE, monitoredCalls.getCallState(0));
+		Assert.assertEquals(0, monitoredCalls.getEstablishedSize());
+		Assert.assertEquals(0, monitoredCalls.getPendingSize());
+		checkCall = monitoredCalls.getCall(callId);
 		Assert.assertNull(checkCall);
 		verify(this.mockedListener, times(1)).endOfCall(testCall);
 

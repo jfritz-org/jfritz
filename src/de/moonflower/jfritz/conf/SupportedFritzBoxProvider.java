@@ -8,24 +8,27 @@ import java.util.MissingResourceException;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.mockito.Mock;
 
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class SupportedFritzBoxProvider {
 
-	private final static Logger log = Logger.getLogger(SupportedFritzBoxProvider.class);
+    private final static Logger log = Logger.getLogger(SupportedFritzBoxProvider.class);
 
 	private static Properties boxes = new Properties();
 
 	private static SupportedFritzBoxProvider INSTANCE = new SupportedFritzBoxProvider();
-	private static String unknownMessage = MessageProvider.getInstance().getMessage("unknown");
+
+	protected MessageProvider messageProvider = MessageProvider.getInstance();
 
 	public static SupportedFritzBoxProvider getInstance() {
 		return INSTANCE;
 	}
 
 	public String getBoxById(byte id) {
+		String unknownMessage = messageProvider.getMessage("unknown");
 		try {
 			if (boxes.size() == 0) {
 				// TODO load boxes
