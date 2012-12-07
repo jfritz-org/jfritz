@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="JFritz-Release" default="create-linux" basedir=".">
-	<import file="../build-release-pwd.xml" />
+<project name="JFritz-Release" default="scp-update-beta" basedir=".">
+	<import file="build-release-pwd.xml" />
 	<import file="build.xml" />
 
 	<property name="product" value="JFritz" />
@@ -15,7 +15,6 @@
 	<property name="lib-dev" value="lib-dev" />
 	<property name="docs" value="../Doku" />
 	<property name="scp-beta-path" value="./public/beta" />
-	<property name="src.dir" location=""/>
 
 	<!-- build properties -->
 	<property name="build" value="${home}/build" />
@@ -61,9 +60,12 @@
 		# Main Targets
 		#############################################################################################
 	-->
+	<target name="release-beta-files" depends="prepare">
+		<!-- obfuscate the data -->
+		<!-- <antcall target="obfuscate" /> -->
 
-	<!-- add obfuscate dependency if necessary -->
-	<target name="release-beta-files" depends="prepare, create-windows, create-linux, create-mac">
+		<!-- prepare all debug-files -->
+		<antcall target="prepare-beta-files" />
 
 		<!-- scp beta files to jfritz.robotniko.de -->
 		<antcall target="scp-beta" />
@@ -133,25 +135,25 @@
 		</mail>
 	</target>
 
-	<!--target name="scp-update-beta" depends="create-updatefiles" description="Uploads update files to jfritz.robotniko.de/update">
+	<target name="scp-update-beta" depends="create-updatefiles" description="Uploads update files to jfritz.robotniko.de/update">
 		<zip destfile="${update}/jfritz-${version}-update.zip" basedir="${update}/${version}" />
 		<scp file="${update}/jfritz-${version}-update.zip" port="${port1}" trust="yes" todir="${user1}@${server1}:./public/update/" verbose="yes" password="${password1}" />
 		<sshexec command="unzip ./public/update/jfritz-${version}-update.zip -d ./public/update/${version}" username="${user1}" host="${server1}" port="${port1}" trust="yes" password="${password1}" />
 		<sshexec command="rm ./public/update/jfritz-${version}-update.zip"  username="${user1}" host="${server1}" port="${port1}" trust="yes" password="${password1}" />
 		<scp file="${update}/update.txt" port="${port1}" trust="yes" todir="${user1}@${server1}:./public/update/" verbose="yes" password="${password1}" />
 		<scp file="${update}/current.txt" port="${port1}" trust="yes" todir="${user1}@${server1}:./public/update/" verbose="yes" password="${password1}" />
-	</target-->
+	</target>
 
-	<!--target name="scp-update" depends="create-updatefiles" description="Uploads files per scp to update.jfritz.org">
+	<target name="scp-update" depends="create-updatefiles" description="Uploads files per scp to update.jfritz.org">
 		<zip destfile="${update}/jfritz-${version}-update.zip" basedir="${update}/${version}" />
 		<scp file="${update}/jfritz-${version}-update.zip" port="${port3}" trust="yes" todir="${user3}@${server3}:./htdocs/jfritz.org/update/" verbose="yes" password="${password3}" />
 		<sshexec command="unzip ./htdocs/jfritz.org/update/jfritz-${version}-update.zip -d ./htdocs/jfritz.org/update/${version}" username="${user3}" host="${server3}" port="${port3}" trust="yes" password="${password3}" />
 		<sshexec command="rm ./htdocs/jfritz.org/update/jfritz-${version}-update.zip"  username="${user3}" host="${server3}" port="${port3}" trust="yes" password="${password3}" />
 		<scp file="${update}/update.txt" port="${port3}" trust="yes" todir="${user3}@${server3}:./htdocs/jfritz.org/update/" verbose="yes" password="${password3}" />
 		<scp file="${update}/current.txt" port="${port3}" trust="yes" todir="${user3}@${server3}:./htdocs/jfritz.org/update/" verbose="yes" password="${password3}" />
-	</target-->
+	</target>
 
-	<!--target name="create-updatefiles" depends="prepare-updatefiles" description="Creates files for auto update">
+	<target name="create-updatefiles" depends="prepare-updatefiles" description="Creates files for auto update">
 		<mkdir dir="${update}" />
 		<taskdef name="createUpdateFile" classname="de.moonflower.jfritz.ant.CreateUpdateFile" classpathref="test.classpath" />
 		<createUpdateFile toDir="${update}" version="${version}">
@@ -168,7 +170,7 @@
 		</copy>
 		<delete dir="${build.jars}" />
 		<delete dir="${build.resources}" />
-	</target-->
+	</target>
 
 	<!--
 		#############################################################################################
@@ -176,7 +178,6 @@
 		#############################################################################################
 	-->
 	<target name="obfuscate" description="Obfuscates, shrinks and optimizes source code!">
-
 		<mkdir dir="${dist}/obfuscated"/>
 		<mkdir dir="${dist}/origJARs"/>
 
@@ -187,13 +188,13 @@
 		</copy>
 
 		<!-- adapt mapping filepath in jfritz-template.pro" -->
-		<copy file="../Release/ProGuard/jfritz-template.pro"
+		<copy file="../../Release/ProGuard/jfritz-template.pro"
 		             tofile="${dist}/obfuscated/jfritz-${version}.pro"
 					 preservelastmodified="yes"
 					 overwrite="yes">
 	        <filterchain>
 	           <replacetokens>
-					<token key="MAPPING_FILE" value="../../../../Release/ProGuard/jfritz-${version}.mapping"/>
+					<token key="MAPPING_FILE" value="../../../../../Release/ProGuard/jfritz-${version}.mapping"/>
 	            </replacetokens>
 	        </filterchain>
 	    </copy>
@@ -209,7 +210,7 @@
 		<delete dir="${dist}/obfuscated/" />
 	</target>
 
-	<target name="create-windows" depends="getVersion">
+	<target name="create-windows">
 		<antcall target="prepare-windows" />
 		<antcall target="create-windows-zip" />
 		<antcall target="create-windows-setup" />
@@ -221,7 +222,7 @@
 		<antcall target="finish-windows" />
 	</target>
 
-	<target name="create-linux" depends="getVersion">
+	<target name="create-linux">
 		<antcall target="prepare-linux" />
 		<antcall target="create-linux-deb" />
 		<antcall target="create-linux-targz" />
@@ -231,24 +232,38 @@
 			  tofile="${release}/linux/JFritz-${version}.deb" />
 	</target>
 
-	<target name="create-mac" depends="getVersion">
+	<target name="create-mac">
 		<!-- create mac files -->
 		<antcall target="prepare-mac" />
 		<antcall target="create-mac-zip" />
 		<!-- <antcall target="create-mac-dmg" /> -->
 		<antcall target="finish-mac" />
-		<!-- <antcall target="mac-set-execution-bit" /> -->
+		<antcall target="mac-set-execution-bit" />
 	</target>
 
 	<target name="prepare-beta-files" depends="prepare">
 		<antcall target="create-windows" />
 		<!-- rename zip and setup to beta -->
+		<move file="${release}/win/JFritz-${version}-Win.zip"
+			  tofile="${release}/win/JFritz-${version}-Beta.zip" />
+		<move file="${release}/win/JFritz-${version}-Setup.exe"
+			  tofile="${release}/win/JFritz-${version}-Beta-Setup.exe" />
+		<!-- zip setup-file -->
+		<zip destfile="${release}/win/JFritz-${version}-Beta-Win.zip"
+		       basedir="${release}/win/"
+		       includes="JFritz-${version}-Beta-Setup.exe" />
 
 		<!-- create linux files -->
 		<antcall target="create-linux" />
+		<move file="${release}/linux/JFritz-${version}.tar.gz"
+			  tofile="${release}/linux/JFritz-${version}-Beta.tar.gz" />
+		<move file="${release}/linux/JFritz-${version}.deb"
+			  tofile="${release}/linux/JFritz-${version}-Beta.deb" />
 
 		<!-- create mac files -->
 		<antcall target="create-mac" />
+		<move file="${release}/mac/JFritz-${version}-Mac.zip"
+			  tofile="${release}/mac/JFritz-${version}-Beta-Mac.zip" />
 	</target>
 
 	<target name="prepare-release-files" depends="prepare">
@@ -270,7 +285,7 @@
 		</copy>
 		<!-- copy logo to linux directory -->
 		<copy todir="${release}/linux/jfritz-${version}">
-			<fileset dir="../Release/Linux/">
+			<fileset dir="../../Release/Linux/">
 				<include name="jfritz.png" />
 			</fileset>
 		</copy>
@@ -296,7 +311,7 @@
             package="jfritz"
             section="utils"
             depends="sun-java5-jre | sun-java6-jre"
-        	preinst="../Release/Linux/preinst"
+        	preinst="../../Release/Linux/preinst"
         >
             <version upstream="${version}"/>
             <maintainer email="Robert Palmer" name="jfritz@robotniko.de"/>
@@ -310,11 +325,11 @@ http://www.jfritz.org/
                 <include name="**/**"/>
             	<exclude name="lib/windows/**"/>
             	<exclude name="lib/mac/**"/>
-	        <exclude name="lib/sunos/**"/>
+	        	<exclude name="lib/sunos/**"/>
             </tarfileset>
 
-            <tarfileset file="../Release/Linux/jfritz" prefix="/usr/bin" filemode="755"/>
-            <tarfileset dir="../Release/Linux/" prefix="/usr/share/doc/jfritz">
+            <tarfileset file="../../Release/Linux/jfritz" prefix="/usr/bin" filemode="755"/>
+            <tarfileset dir="../../Release/Linux/" prefix="/usr/share/doc/jfritz">
                 <include name="COPYING"/>
                 <include name="README-de"/>
                 <include name="README-en"/>
@@ -348,15 +363,15 @@ http://www.jfritz.org/
 
 		<!-- copy mac-template to release directory -->
 		<copy todir="${release}/mac/tmp">
-			<fileset dir="../Release/MAC/Vorlage">
+			<fileset dir="../../Release/MAC/Vorlage">
 			</fileset>
 		</copy>
 
-		<copy file="../Release/MAC/Vorlage/__MACOSX/JFritz.app/Contents/._Info.plist"
+		<copy file="../../Release/MAC/Vorlage/__MACOSX/JFritz.app/Contents/._Info.plist"
 		             tofile="${release}/mac/tmp/__MACOSX/JFritz.app/Contents/._Info.plist" />
 
 		<!-- adapt version string in Info.plist -->
-		<copy file="../Release/MAC/Vorlage/JFritz.app/Contents/Info.plist"
+		<copy file="../../Release/MAC/Vorlage/JFritz.app/Contents/Info.plist"
 		             tofile="${release}/mac/tmp/JFritz.app/Contents/Info.plist"
 					 overwrite="yes">
 	        <filterchain>
@@ -379,7 +394,6 @@ http://www.jfritz.org/
 			</fileset>
 		</copy>
 
-		<chmod verbose="true" file="${release}/mac/tmp/JFritz.app/Contents/MacOS/JavaApplicationStub" perm="555"/>
 	</target>
 
 	<target name="finish-mac" description="Deletes temporary mac release files!">
@@ -388,43 +402,18 @@ http://www.jfritz.org/
 
 	<target name="mac-set-execution-bit">
 		<scp file="${release}/mac/JFritz-${version}-Mac.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
-		<sshexec command="mkdir -p ./public/mac"  username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
-		<sshexec command="cd ./public/mac; rm * -rf; unzip ../JFritz-${version}-Mac.zip" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
+		<sshexec command="mkdir ./public/mac"  username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
+		<sshexec command="cd ./public/mac; unzip ../JFritz-${version}-Mac.zip" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<sshexec command="chmod 555 ./public/mac/JFritz.app/Contents/MacOS/JavaApplicationStub" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<sshexec command="rm ./public/JFritz-${version}-Mac.zip" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<sshexec command="cd ./public/mac; zip -r ../JFritz-${version}-Mac.zip *" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<sshexec command="cd ./public/mac; rm * -rf" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<sshexec command="rmdir ./public/mac" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<scp file="${user2}@${server2}:./public/JFritz-${version}-Mac.zip" port="${port2}" trust="yes" todir="${release}/mac/" verbose="yes" password="${password2}"/>
-		<sshexec command="rm ./public/JFritz-${version}-Mac.zip" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 	</target>
 
-	<macrodef name="zipdir">
-	  <attribute name="destfile"/>
-	  <attribute name="sourcedir"/>
-	  <sequential>
-		  <echo>Source dir: @{sourcedir}</echo>
-		  <echo>Building zip: @{destfile}</echo>
-	  <!-- windows: -->
-	  <exec executable="../zip/zip.exe" dir="@{sourcedir}">
-	    <arg value="-qR"/>
-	    <arg value="@{destfile}"/>
-	    <arg value="*"/>
-	    <arg value="-x *.svn* "/>
-	  </exec>
-	  <!-- linux:
-	  <exec executable="zip" dir="@{sourcedir}">
-	    <arg value="-qR"/>
-	    <arg value="@{destfile}"/>
-	    <arg value="*"/>
-	    <arg value="-x *.svn* "/>
-	  </exec>
-	  -->
-	  </sequential>
-	</macrodef>
-
 	<target name="create-mac-zip" description="Creates a ZIP-File for MacOS!">
-		<zipdir destfile="${src.dir}/${release}/mac/JFritz-${version}-Mac.zip" sourcedir="${src.dir}/${release}/mac/tmp/" />
+		<zip destfile="${release}/mac/JFritz-${version}-Mac.zip" basedir="${release}/mac/tmp" />
 	</target>
 
 	<target name="create-mac-dmg" description="Creates a DMG-File for MacOS!">
@@ -450,7 +439,7 @@ http://www.jfritz.org/
 
 		<!-- copy win template to release directory -->
 		<copy todir="${release}/win/tmp">
-			<fileset dir="../Release/WIN">
+			<fileset dir="../../Release/WIN">
 			</fileset>
 		</copy>
 
@@ -478,15 +467,9 @@ http://www.jfritz.org/
 		<UpdateSetupConfig file="${release}/win/tmp/jfritz-version.txt" appName="${product}" appType="Setup" appVersion="${version}" />
 
 		<!-- generate setup-file -->
-		<!-- use QuickStart Pack of InnoSetup: http://www.jrsoftware.org/download.php/ispack.exe -->
-		<!-- windows path -->
 		<exec executable="C:\Program Files (x86)\Inno Setup 5\ISCC.exe">
 			<arg value="${release}/win/tmp/jfritz.iss" />
 		</exec>
-		<!-- linux path
-		<exec executable="/usr/local/bin/iscc">
-			<arg value="${release}/win/tmp/jfritz.iss" />
-		</exec-->
 
 		<move file="${release}/win/tmp/Output/JFritz-${version}-Setup.exe"
 			  tofile="${release}/win/JFritz-${version}-Setup.exe" />
@@ -498,24 +481,6 @@ http://www.jfritz.org/
 	</target>
 
 	<target name="scp-beta" depends="getVersion" description="Copy windows-, linux and mac release files to jfritz.robotniko.de/beta">
-		<!-- rename windows files -->
-		<move file="${release}/win/JFritz-${version}.zip"
-			  tofile="${release}/win/JFritz-${version}-Beta.zip" />
-		<move file="${release}/win/JFritz-${version}-Win.zip"
-			  tofile="${release}/win/JFritz-${version}-Beta-Win.zip" />
-		<move file="${release}/win/JFritz-${version}-Setup.exe"
-			  tofile="${release}/win/JFritz-${version}-Beta-Setup.exe" />
-
-		<!-- rename linux files -->
-		<move file="${release}/linux/JFritz-${version}.tar.gz"
-			  tofile="${release}/linux/JFritz-${version}-Beta.tar.gz" />
-		<move file="${release}/linux/JFritz-${version}.deb"
-			  tofile="${release}/linux/JFritz-${version}-Beta.deb" />
-
-		<!-- rename mac files -->
-		<move file="${release}/mac/JFritz-${version}-Mac.zip"
-			  tofile="${release}/mac/JFritz-${version}-Beta-Mac.zip" />
-
 		<scp file="${dist}/Changelog.txt" port="${port2}" trust="yes" todir="${user2}@${server2}:${scp-beta-path}" verbose="yes" password="${password2}"/>
 		<scp file="${release}/win/JFritz-${version}-Beta-Win.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
 		<scp file="${release}/win/JFritz-${version}-Beta.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
@@ -523,6 +488,15 @@ http://www.jfritz.org/
 		<scp file="${release}/linux/JFritz-${version}-Beta.tar.gz" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
 		<scp file="${release}/linux/JFritz-${version}-Beta.deb" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
 		<scp file="${release}/mac/JFritz-${version}-Beta-Mac.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
+
+		<!-- mac deflate and set execute bit -->
+		<sshexec command="mkdir ./public/mac"  username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
+		<sshexec command="cd ./public/mac; unzip ../JFritz-${version}-Beta-Mac.zip" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
+		<sshexec command="chmod 555 ./public/mac/JFritz.app/Contents/MacOS/JavaApplicationStub" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
+		<sshexec command="rm ./public/JFritz-${version}-Beta-Mac.zip" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
+		<sshexec command="cd ./public/mac; zip -r ../JFritz-${version}-Beta-Mac.zip *" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
+		<sshexec command="cd ./public/mac; rm * -rf" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
+		<sshexec command="rmdir ./public/mac" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 
 		<sshexec command="mv -f ${scp-beta-path}/JFritz* ${scp-beta-path}/old"  username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<sshexec command="mv -f ./public/JFritz-${version}-Beta-Mac.zip ${scp-beta-path}" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
@@ -549,7 +523,7 @@ http://www.jfritz.org/
 		</mail>
 	</target>
 
-	<!--target name="prepare-updatefiles" depends="prepare" description="Prepares files for creating update file">
+	<target name="prepare-updatefiles" depends="prepare" description="Prepares files for creating update file">
 		<copy todir="${build.resources}/lang/lang">
 			<fileset dir="${dist}/lang" />
 		</copy>
@@ -595,6 +569,6 @@ http://www.jfritz.org/
 			</fileset>
 		</copy>
 
-	</target-->
+	</target>
 
 </project>

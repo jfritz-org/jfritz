@@ -254,9 +254,8 @@ public class PhoneNumberOld implements Serializable {
 	}
 
 	/**
-	 * Converts number to international number Internation numbers have the
-	 * following format in jfritz (+)(Country Code)(Area Code)(Local number)
-	 *
+	 * Converts number to international number
+	 * International numbers have the following format in jfritz (+)(Country Code)(Area Code)(Local number)
 	 *
 	 * @TODO: This function may need to be redone, if number parsing is
 	 *        misbehaving
@@ -280,14 +279,14 @@ public class PhoneNumberOld implements Serializable {
 				// International number
 				|| isSIPNumber() // SIP Number
 				|| isEmergencyCall() // Emergency
-				|| isQuickDial() // FritzBox QuickDial
-		) {
+				|| isQuickDial()) // FritzBox QuickDial
+		{
 			return number;
-		} else if (countryPrefix != null && number.startsWith(countryPrefix)) // International call
+		} else if (countryPrefix != null && number.startsWith(countryPrefix)) {// International call
 			return "+" + number.substring(countryPrefix.length());//$NON-NLS-1$
-
-		else if (areaPrefix != null && number.startsWith(areaPrefix))
+		} else if (areaPrefix != null && number.startsWith(areaPrefix)) {
 			return countryCode + number.substring(areaPrefix.length());//$NON-NLS-1$
+		}
 
 		String result = "";
 		if (countryCode != null) {
