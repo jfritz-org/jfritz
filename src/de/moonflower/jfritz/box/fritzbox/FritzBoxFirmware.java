@@ -19,7 +19,6 @@ import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.struct.SIDLogin;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
@@ -143,18 +142,14 @@ public class FritzBoxFirmware {
 					}
 					if (sidLogin.isSidLogin()) {
 						postdata = postdata.replace("%LOGINMODE%", "response");
-						postdata = postdata
-								+ URLEncoder.encode(sidLogin.getResponse(),
-										"ISO-8859-1");
+						postdata = postdata + URLEncoder.encode(sidLogin.getResponse(), "ISO-8859-1");
 					} else {
 						postdata = postdata.replace("%LOGINMODE%", "password");
-						postdata = postdata
-								+ URLEncoder.encode(box_password, "ISO-8859-1");
+						postdata = postdata + URLEncoder.encode(box_password, "ISO-8859-1");
 					}
 
 					try {
-						data = JFritzUtils.fetchDataFromURLToVector(box_name,
-								urlstr, postdata, true);
+						data = JFritzUtils.fetchDataFromURLToVector(box_name, urlstr, postdata, true);
 						password_wrong = false;
 					} catch (WrongPasswordException wpe) {
 						password_wrong = true;

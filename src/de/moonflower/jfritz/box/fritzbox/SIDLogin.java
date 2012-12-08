@@ -1,4 +1,4 @@
-package de.moonflower.jfritz.struct;
+package de.moonflower.jfritz.box.fritzbox;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -11,17 +11,17 @@ import java.util.regex.Pattern;
 
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.utils.Debug;
-import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class SIDLogin {
 	private boolean sidLogin;
 	private String sessionId;
 	private String sidResponse;
 
-	private final static String POSTDATA_LOGIN_XML = "getpage=../html/login_sid.xml";
 	private final static String PATTERN_WRITE_ACCESS = "<iswriteaccess>([^<]*)</iswriteaccess>";
 	private final static String PATTERN_CHALLENGE = "<Challenge>([^<]*)</Challenge>";
 	private final static String PATTERN_SID = "<input type=\"hidden\" name=\"sid\" value=\"([^\"]*)\"";
+
+	protected FritzBoxLoginHandler loginHandler = FritzBoxLoginHandler.getInstance();
 
 	public SIDLogin() {
 		sidLogin = false;
@@ -29,9 +29,9 @@ public class SIDLogin {
 		sidResponse = "";
 	}
 
-	public void check(String box_name, String urlstr, String box_password) throws WrongPasswordException, IOException {
-		String login_xml = JFritzUtils.fetchDataFromURLToString(box_name, urlstr,
-				POSTDATA_LOGIN_XML, true);
+	public void check(String box_name, String urlstr, String password) throws WrongPasswordException, IOException {
+		String login_xml = loginHandler.getLoginSidResponse(box_name, urlstr);
+		String box_password = replaceInvalidPasswordCharacters(password);
 
 		Pattern writeAccessPattern = Pattern.compile(PATTERN_WRITE_ACCESS);
 		Matcher matcher = writeAccessPattern.matcher(login_xml);
@@ -42,43 +42,15 @@ public class SIDLogin {
 			if (writeAccess == 0) { // answer challenge
 				try {
 					String challenge = "";
-					Pattern challengePattern = Pattern
-							.compile(PATTERN_CHALLENGE);
-					Matcher challengeMatcher = challengePattern
-							.matcher(login_xml);
+					Pattern challengePattern = Pattern.compile(PATTERN_CHALLENGE);
+					Matcher challengeMatcher = challengePattern.matcher(login_xml);
 					if (challengeMatcher.find()) {
 						challenge = challengeMatcher.group(1);
-
-						// replace all unicodecharacters greater than 255 with
-						// the character '.'
-						for (int i = 0; i < box_password.length(); i++) {
-							int codePoint = box_password.codePointAt(i);
-							if (codePoint > 255) {
-								box_password = box_password.substring(0, i)
-										+ '.' + box_password.substring(i + 1);
-							}
-						}
-
-						String pwd = challenge + "-" + box_password;
-
-						MessageDigest m = MessageDigest.getInstance("MD5");
-						String md5Pass = "";
-						byte passwordBytes[] = null;
-						try {
-							passwordBytes = pwd.getBytes("UTF-16LE");
-							m.update(passwordBytes, 0, passwordBytes.length);
-							md5Pass = new BigInteger(1, m.digest())
-									.toString(16);
-						} catch (UnsupportedEncodingException e) {
-							Debug
-									.errDlg("UTF-16LE encoding not supported by your system. Can not communicate with FRITZ!Box!");
-						}
-
+						String md5Pass = generateMD5(challenge + "-" + box_password);
 						sidResponse = challenge + '-' + md5Pass;
 						Debug.debug("Challenge: " + challenge + " Response: " + sidResponse);
 					} else {
-						Debug
-								.error("Could not determine challenge in login_sid.xml");
+						Debug.error("Could not determine challenge in login_sid.xml");
 					}
 				} catch (NoSuchAlgorithmException e) {
 					Debug.netMsg("MD5 Algorithm not present in this JVM!");
@@ -98,6 +70,31 @@ public class SIDLogin {
 		} else {
 			sidLogin = false;
 		}
+	}
+
+	private String generateMD5(String pwd) throws NoSuchAlgorithmException {
+		MessageDigest m = MessageDigest.getInstance("MD5");
+		String md5Pass = "";
+		byte passwordBytes[] = null;
+		try {
+			passwordBytes = pwd.getBytes("UTF-16LE");
+			m.update(passwordBytes, 0, passwordBytes.length);
+			md5Pass = new BigInteger(1, m.digest()).toString(16);
+		} catch (UnsupportedEncodingException e) {
+			Debug.errDlg("UTF-16LE encoding not supported by your system. Can not communicate with FRITZ!Box!");
+		}
+		return md5Pass;
+	}
+
+	private String replaceInvalidPasswordCharacters(String box_password) {
+		// replace all unicodecharacters greater than 255 with the character '.'
+		for (int i = 0; i < box_password.length(); i++) {
+			int codePoint = box_password.codePointAt(i);
+			if (codePoint > 255) {
+				box_password = box_password.substring(0, i) + '.' + box_password.substring(i + 1);
+			}
+		}
+		return box_password;
 	}
 
 	public void getSidFromResponse(Vector<String> data)
