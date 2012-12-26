@@ -41,7 +41,7 @@ public class SIDLoginTest {
     @Test
     public void testPositive() {
     	try {
-			doReturn("<SessionInfo><iswriteaccess>0</iswriteaccess><SID>0000000000000000</SID><Challenge>666a00e0</Challenge></SessionInfo>").when(this.mockedLoginHandler).getLoginSidResponse(anyString(), anyString());
+			doReturn("<SessionInfo><iswriteaccess>0</iswriteaccess><SID>0000000000000000</SID><Challenge>666a00e0</Challenge></SessionInfo>").when(this.mockedLoginHandler).getLoginSidResponseFromXml(anyString(), anyString());
 
 			sidLogin.check("boxip", "urlstring", "password");
 

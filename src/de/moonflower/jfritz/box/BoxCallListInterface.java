@@ -8,8 +8,8 @@ import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.IProgressListener;
 
 public interface BoxCallListInterface {
-	public Vector<Call> getCallerList(Vector<IProgressListener> callListProgressListener)
-			throws IOException, MalformedURLException;
 
+	public Vector<Call> getCallerList(Vector<IProgressListener> callListProgressListener) throws IOException, MalformedURLException;
 	public void clearCallerList();
+
 }

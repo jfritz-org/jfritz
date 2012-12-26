@@ -1,19 +1,12 @@
 package de.moonflower.jfritz.box.fritzbox;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URLEncoder;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -27,9 +20,13 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.box.BoxCallBackListener;
+import de.moonflower.jfritz.box.BoxCallListInterface;
 import de.moonflower.jfritz.box.BoxCallMonitorInterface;
 import de.moonflower.jfritz.box.BoxClass;
 import de.moonflower.jfritz.box.BoxStatusListener;
+import de.moonflower.jfritz.box.fritzbox.callerlist.FritzBoxCallerListFactory;
+import de.moonflower.jfritz.box.fritzbox.query.IQuery;
+import de.moonflower.jfritz.box.fritzbox.query.QueryFactory;
 import de.moonflower.jfritz.callmonitor.CallMonitorInterface;
 import de.moonflower.jfritz.callmonitor.CallMonitorStatusListener;
 import de.moonflower.jfritz.callmonitor.CallmessageCallMonitor;
@@ -42,7 +39,6 @@ import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
-import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.IProgressListener;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
@@ -57,30 +53,11 @@ import de.moonflower.jfritz.utils.network.UPNPUtils;
 
 public class FritzBox extends BoxClass {
 
-	public final static byte QUERY_METHOD_UNKNOWN = 0;
-	public final static byte QUERY_METHOD_OLD = 1;
-	public final static byte QUERY_METHOD_NEW = 2;
-
-	private final static String POSTDATA_QUERY = "getpage=../html/query.txt";
-
-	private final static String PARSE_LOGIN_REASON = "var theReason = parseInt\\(\"([^\"]*)\",10\\)";
 	// <UDN>uuid:75802409-bccb-40e7-8e6c-MACADDRESS</UDN>
 	private final static String PARSE_MAC_ADDRESS = "<UDN>uuid:([^<]*)</UDN>";
 
 	private final static String QUERY_GET_MAC_ADDRESS = "env:settings/macdsl";
-	private final static String QUERY_GET_VERSION = "logic:status/nspver";
 	private final static String QUERY_EXTERNAL_IP = "connection0:status/ip";
-
-	private final static String QUERY_CALLS_REFRESH = "telcfg:settings/RefreshJournal";
-	private final static String QUERY_NUM_CALLS = "telcfg:settings/Journal/count";
-	private final static String QUERY_CALL_X_TYPE = "telcfg:settings/Journal%NUM%/Type";
-	private final static String QUERY_CALL_X_DATE = "telcfg:settings/Journal%NUM%/Date";
-	private final static String QUERY_CALL_X_NUMBER = "telcfg:settings/Journal%NUM%/Number";
-	private final static String QUERY_CALL_X_PORT = "telcfg:settings/Journal%NUM%/Port";
-	private final static String QUERY_CALL_X_DURATION = "telcfg:settings/Journal%NUM%/Duration";
-	private final static String QUERY_CALL_X_ROUTE = "telcfg:settings/Journal%NUM%/Route";
-	private final static String QUERY_CALL_X_ROUTETYPE = "telcfg:settings/Journal%NUM%/RouteType";
-	private final static String QUERY_CALL_X_NAME = "telcfg:settings/Journal%NUM%/Name";
 
 	private final static String QUERY_ANALOG_COUNT = "telcfg:settings/MSN/Port/count";
 	private final static String QUERY_ANALOG_NAME = "telcfg:settings/MSN/Port%NUM%/Name";
@@ -142,25 +119,25 @@ public class FritzBox extends BoxClass {
 	private static String POSTDATA_CALL = "&telcfg:settings/UseClickToDial=1&telcfg:settings/DialPort=$NEBENSTELLE&telcfg:command/Dial=$NUMMER"; //$NON-NLS-1$
 	private static String POSTDATA_HANGUP = "&telcfg:settings/UseClickToDial=1&telcfg:command%2FHangup"; //$NON-NLS-1$
 
-	private static String POSTDATA_CLEAR_JOURNAL = "&telcfg:settings/ClearJournal&telcfg:settings/UseJournal=1";
-
 	private static int max_retry_count = 2;
 
 	private FritzBoxFirmware firmware = null;
 
 	private CallMonitorInterface callMonitor = null;
 
-	private Vector<SipProvider> sipProvider;
+	public Vector<SipProvider> sipProvider;
 
 	private HashMap<Integer, Port> configuredPorts;
 
-	private byte queryMethod = QUERY_METHOD_UNKNOWN;
+	private IQuery queryImpl;
 
 	private Vector<BoxStatusListener> boxListener;
 	private Vector<BoxCallBackListener> callBackListener;
 
 	protected PropertyProvider properties = PropertyProvider.getInstance();
 	protected MessageProvider messages = MessageProvider.getInstance();
+
+	private BoxCallListInterface callList;
 
 	public FritzBox(String name, String description,
 					String protocol, String address, String port, String password,
@@ -207,9 +184,9 @@ public class FritzBox extends BoxClass {
 		end = JFritzUtils.getTimestamp();
 		Debug.debug("UpdateSettings: detectFirmware " + (end - start) + "ms");
 		start = end;
-			detectQueryMethod();
+			queryImpl = QueryFactory.getQueryMethodForFritzBox(this);
 		end = JFritzUtils.getTimestamp();
-		Debug.debug("UpdateSettings: detectQueryMethod " + (end - start) + "ms");
+		Debug.debug("UpdateSettings: getQueryMethodForFritzBox " + (end - start) + "ms");
 		start = end;
 			detectMacAddress();
 		end = JFritzUtils.getTimestamp();
@@ -223,13 +200,14 @@ public class FritzBox extends BoxClass {
 			initializePorts();
 		end = JFritzUtils.getTimestamp();
 		Debug.debug("UpdateSettings: initializePorts " + (end - start) + "ms");
+			callList = FritzBoxCallerListFactory.createFritzBoxCallListFromFirmware(firmware, this, callBackListener);
 	}
 
 	/**
 	 * Detects firmware version
 	 * @return
 	 */
-	private void detectFirmware() throws WrongPasswordException, InvalidFirmwareException, IOException {
+	public void detectFirmware() throws WrongPasswordException, InvalidFirmwareException, IOException {
 		//avoid trying to access the box if running as a client
 		if ("2".equals(properties.getProperty("network.type"))
 				&& Boolean.parseBoolean(properties.getProperty("option.clientCallList")))
@@ -245,7 +223,7 @@ public class FritzBox extends BoxClass {
 		}
 	}
 
-	private String getPostData(String pattern) throws UnsupportedEncodingException
+	public String getPostData(String pattern) throws UnsupportedEncodingException
 	{
 		pattern = pattern.replaceAll("\\$LANG", firmware.getLanguage());
 		if (firmware.getSessionId() != "")
@@ -259,344 +237,16 @@ public class FritzBox extends BoxClass {
 		return firmware.getAccessMethod() + pattern;
 	}
 
-	private final void detectQueryMethod()
+	public final Vector<String> getQuery(Vector<String> queries)
 	{
-		Vector<String> query = new Vector<String>();
-		query.add(QUERY_GET_VERSION);
-		Vector<String> response = new Vector<String>();
-		if (((response = getQueryOld(query)).size() != 0)
-			&& (!"".equals(response.get(0))))
-		{
-			queryMethod = QUERY_METHOD_OLD;
-		}
-		else if (((response = getQueryNew(query)).size() != 0)
-				&& (!"".equals(response.get(0))))
-		{
-			queryMethod = QUERY_METHOD_NEW;
-		}
-		else
-		{
-			queryMethod = QUERY_METHOD_UNKNOWN;
-		}
-	}
-
-	private final Vector<String> getQuery(Vector<String> queries)
-	{
-		Vector<String> result;
-		if (queryMethod == QUERY_METHOD_OLD)
-		{
-			result = getQueryOld(queries);
-		}
-		else if (queryMethod == QUERY_METHOD_NEW)
-		{
-			result = getQueryNew(queries);
-		}
-		else
-		{
-			try {
-				setBoxConnected();
-				updateSettings();
-				return getQuery(queries);
-			} catch (WrongPasswordException wpe)
-			{
-				Debug.error("Wrong password");
-				setBoxDisconnected();
-			} catch (InvalidFirmwareException ife)
-			{
-				Debug.error("Invalid firmware");
-				setBoxDisconnected();
-			} catch (IOException ioe) {
-				Debug.error("IO exception");
-				setBoxDisconnected();
-			}
-			result = new Vector<String>();
-		}
-
+		Vector<String> result = queryImpl.getQuery(queries);
 		Thread.yield();
 		return result;
 	}
 
-	private final Vector<String> getFromFile(final String file)
-	{
-		Vector<String> result = new Vector<String>();
-		BufferedReader br = null;
-		try {
-			FileInputStream fis = new FileInputStream(file);
-			InputStreamReader isr = new InputStreamReader(fis);
-			br = new BufferedReader(isr);
-
-			String line = "";
-			while ((line = br.readLine()) != null) {
-				result.add(line);
-			}
-		} catch (FileNotFoundException fe) {
-			System.err.println("Datei nicht gefunden: " + file);
-		} catch (IOException e) {
-			System.err.println("Kann aus Datei nicht lesen: " + file);
-		} finally {
-			if (br != null) {
-				try {
-					br.close();
-				} catch (IOException e) {
-					System.err.println("Kann Datei nicht schließen: " + file);
-				}
-			}
-		}
-		return result;
-	}
-
-	private final String generatePostDataOld(Vector<String> queries)
-	{
-		String postdata = POSTDATA_QUERY + "&var:cnt=" + queries.size();
-		for (int i=0; i<queries.size(); i++)
-		{
-			postdata = postdata + "&var:n" + i + "="+queries.get(i);
-		}
-
-		if (firmware.isSidLogin())
-		{
-			try {
-			postdata = postdata + "&sid=" + URLEncoder.encode(firmware.getSessionId(), "ISO-8859-1");
-			} catch (UnsupportedEncodingException e) {
-				Debug.error("Encoding not supported");
-				e.printStackTrace();
-			}
-		}
-		else
-		{
-			try {
-				postdata = postdata + "&login:command/password=" + URLEncoder.encode(this.password, "ISO-8859-1");
-			} catch (UnsupportedEncodingException e) {
-				Debug.error("Encoding not supported");
-				e.printStackTrace();
-			}
-		}
-
-		return postdata;
-	}
-
-	private final Vector<String> getQueryOld(Vector<String> queries)
-	{
-		Vector<String> response = new Vector<String>();
-		if (firmware != null)
-		{
-			String postdata = generatePostDataOld(queries);
-
-			final String urlstr = protocol + "://" + address +":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
-
-			boolean finished = false;
-			boolean password_wrong = false;
-			int retry_count = 0;
-
-			while (!finished && (retry_count < max_retry_count))
-			{
-				try {
-					retry_count++;
-					if (password_wrong)
-					{
-						password_wrong = false;
-						Debug.debug("Detecting new firmware, getting new SID");
-						this.detectFirmware();
-						postdata = generatePostDataOld(queries);
-					}
-					response = JFritzUtils.fetchDataFromURLToVector(name, urlstr, postdata, true);
-					finished = true;
-				} catch (WrongPasswordException e) {
-					password_wrong = true;
-					Debug.debug("Wrong password, maybe SID is invalid.");
-					setBoxDisconnected();
-				} catch (SocketTimeoutException ste) {
-					ste.printStackTrace();
-					setBoxDisconnected();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					setBoxDisconnected();
-				} catch (InvalidFirmwareException e) {
-					password_wrong = true;
-					setBoxDisconnected();
-				}
-			}
-
-			if ((response.size() != 0)
-			  && (response.size() > (queries.size()+1)))
-			{
-				Pattern p = Pattern.compile(PARSE_LOGIN_REASON);
-				for (int i=0; i<response.size(); i++)
-				{
-					Matcher m = p.matcher(response.get(i));
-					if (m.find())
-					{
-						try {
-							int loginReason = Integer.parseInt(m.group(1));
-							if (loginReason == 2) // SID-Timeout
-							{
-								try {
-									Debug.debug("SessionID expired, getting new SessionId!");
-									detectFirmware();
-									response = getQueryNew(queries);
-									response.add(""); // add empty line to be removed further down in this method
-								} catch (WrongPasswordException e) {
-									Debug.errDlg(messages.getMessage("box.wrong_password"));
-									setBoxDisconnected();
-								} catch (InvalidFirmwareException e) {
-									Debug.errDlg(messages.getMessage("box.address_wrong"));
-									setBoxDisconnected();
-								} catch (IOException e) {
-									Debug.errDlg("I/O Exception");
-									setBoxDisconnected();
-								}
-							}
-						} catch (NumberFormatException nfe)
-						{
-							Debug.errDlg("Could not login to FritzBox. Please check password and try it again!");
-							setBoxDisconnected();
-						}
-					}
-				}
-			}
-
-			if (response.size() != 0)
-			{
-				response.remove(response.size()-1); // letzte Zeile entfernen (leerzeile)
-			}
-		}
-
-		Debug.debug("Query-Response: ");
-		for (int i=0; i<response.size(); i++)
-		{
-			Debug.debug(response.get(i));
-		}
-		Debug.debug("---");
-		return response;
-	}
-
-	private final String generatePostDataNew(Vector<String> queries)
-	{
-		String postdata = POSTDATA_QUERY;
-
-		for (int i=0; i<queries.size(); i++)
-		{
-			postdata = postdata + "&var:n[" + i + "]="+queries.get(i);
-		}
-
-		if (firmware.isSidLogin())
-		{
-			try {
-			postdata = postdata + "&sid=" + URLEncoder.encode(firmware.getSessionId(), "ISO-8859-1");
-			} catch (UnsupportedEncodingException e) {
-				Debug.error("Encoding not supported");
-				e.printStackTrace();
-			}
-		}
-		else
-		{
-			try {
-				postdata = postdata + "&login:command/password=" + URLEncoder.encode(this.password, "ISO-8859-1");
-			} catch (UnsupportedEncodingException e) {
-				Debug.error("Encoding not supported");
-				e.printStackTrace();
-			}
-		}
-
-		return postdata;
-	}
-
-	private final Vector<String> getQueryNew(Vector<String> queries)
-	{
-		Vector<String> response = new Vector<String>();
-		if (firmware != null)
-		{
-			String postData = generatePostDataNew(queries);
-
-			final String urlstr = protocol + "://" + address +":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
-
-			boolean finished = false;
-			boolean password_wrong = false;
-			int retry_count = 0;
-
-			while (!finished && (retry_count < max_retry_count))
-			{
-				try {
-					if (password_wrong)
-					{
-						password_wrong = false;
-						Debug.debug("Detecting new firmware, getting new SID");
-						this.detectFirmware();
-						postData = generatePostDataNew(queries);
-					}
-					retry_count++;
-					response = JFritzUtils.fetchDataFromURLToVector(name, urlstr, postData, true);
-					finished = true;
-				} catch (WrongPasswordException e) {
-					password_wrong = true;
-					Debug.debug("Wrong password, maybe SID is invalid.");
-					setBoxDisconnected();
-				} catch (SocketTimeoutException ste) {
-					ste.printStackTrace();
-					setBoxDisconnected();
-				} catch (InvalidFirmwareException e) {
-					password_wrong = true;
-					setBoxDisconnected();
-				} catch (IOException e) {
-					e.printStackTrace();
-					setBoxDisconnected();
-				} catch (Exception e) {
-					e.printStackTrace();
-					setBoxDisconnected();
-				}
-			}
-
-			if ((response.size() != 0)
-			  && (response.size() > (queries.size()+1)))
-			{
-				Pattern p = Pattern.compile(PARSE_LOGIN_REASON);
-				for (int i=0; i<response.size(); i++)
-				{
-					Matcher m = p.matcher(response.get(i));
-					if (m.find())
-					{
-						try {
-							int loginReason = Integer.parseInt(m.group(1));
-							if (loginReason == 2) // SID-Timeout
-							{
-								try {
-									Debug.debug("SessionID expired, getting new SessionId!");
-									detectFirmware();
-									response = getQueryNew(queries);
-									response.add(""); // add empty line to be removed further down in this method
-								} catch (WrongPasswordException e) {
-									Debug.errDlg(messages.getMessage("box.wrong_password"));
-									setBoxDisconnected();
-								} catch (InvalidFirmwareException e) {
-									Debug.errDlg(messages.getMessage("box.address_wrong"));
-									setBoxDisconnected();
-								} catch (IOException e) {
-									Debug.errDlg("I/O Exception");
-									setBoxDisconnected();
-								}
-							}
-						} catch (NumberFormatException nfe)
-						{
-							Debug.errDlg("Could not login to FritzBox. Please check password and try it again!");
-						}
-					}
-				}
-			}
-
-			if (response.size() != 0)
-			{
-				response.remove(response.size()-1); // letzte Zeile entfernen (leerzeile)
-			}
-		}
-
-		Debug.debug("Query-Response: ");
-		for (int i=0; i<response.size(); i++)
-		{
-			Debug.debug(response.get(i));
-		}
-		Debug.debug("---");
-		return response;
+	public String getWebcmUrl() {
+		final String urlstr = protocol + "://" + address +":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
+		return urlstr;
 	}
 
 	public void detectMacAddress()
@@ -991,308 +641,25 @@ public class FritzBox extends BoxClass {
 	 **************************************************************************************/
 	public Vector<Call> getCallerList(Vector<IProgressListener> progressListener)
 	throws IOException, MalformedURLException {
-		if (true) {
-			return getCallerListFromBox(progressListener);
+		Vector<Call> result;
+
+		if (callList == null) {
+			Debug.errDlg(messages.getMessage("box.no_caller_list"));
+			result = new Vector<Call>();
 		} else {
-			return getCallerListFromFile(progressListener);
+			result = callList.getCallerList(progressListener);
 		}
-	}
-
-	private Vector<Call> getCallerListFromBox(Vector<IProgressListener> progressListener)
-			throws IOException, MalformedURLException {
-
-		setBoxConnected();
-		// getting number of entries
-		Vector<String> query = new Vector<String>();
-		query.add(QUERY_CALLS_REFRESH);
-		query.add(QUERY_NUM_CALLS);
-
-		Vector<String> response = getQuery(query);
-		if (response.size() == 2)
-		{
-			int stepSize = 10;
-			int querySize = 8;
-			int numCalls = Integer.parseInt(response.get(1));
-			Vector<Call> newCalls = new Vector<Call>(numCalls);
-
-			int numIterations = numCalls / stepSize;
-			int remaining = numCalls % stepSize;
-			if (remaining > 0)
-			{
-				numIterations++;
-			}
-
-			for (IProgressListener listener: progressListener)
-			{
-				listener.setMin(0);
-				listener.setMax(numIterations * stepSize);
-			}
-
-			boolean finish = false;
-			for (int j=0; j<numIterations; j++)
-			{
-				Vector<Call> tmpCalls = new Vector<Call>(stepSize);
-				query.clear();
-				int offset = j * stepSize;
-				if (!finish)
-				{
-					for (int i=0; i<stepSize; i++)
-					{
-						query.add(QUERY_CALL_X_TYPE.replaceAll("%NUM%", Integer.toString(offset+i)));
-						query.add(QUERY_CALL_X_DATE.replaceAll("%NUM%", Integer.toString(offset+i)));
-						query.add(QUERY_CALL_X_NUMBER.replaceAll("%NUM%", Integer.toString(offset+i)));
-						query.add(QUERY_CALL_X_PORT.replaceAll("%NUM%", Integer.toString(offset+i)));
-						query.add(QUERY_CALL_X_DURATION.replaceAll("%NUM%", Integer.toString(offset+i)));
-						query.add(QUERY_CALL_X_ROUTE.replaceAll("%NUM%", Integer.toString(offset+i)));
-						query.add(QUERY_CALL_X_ROUTETYPE.replaceAll("%NUM%", Integer.toString(offset+i)));
-						query.add(QUERY_CALL_X_NAME.replaceAll("%NUM%", Integer.toString(offset+i)));
-					}
-					response = getQuery(query);
-
-					if (response.size() == querySize*stepSize)
-					{
-						boolean result = createCallFromResponse(tmpCalls, response, querySize, stepSize);
-						if (!result)
-						{
-							throw new IOException("Malformed data while receiving caller list!");
-						}
-						else
-						{
-							for (BoxCallBackListener listener: callBackListener)
-							{
-								finish = listener.finishGetCallerList(tmpCalls);
-							}
-							if (!finish)
-							{
-								newCalls.addAll(tmpCalls);
-							}
-						}
-					}
-				}
-
-				for (IProgressListener listener: progressListener)
-				{
-					listener.setProgress(j * stepSize);
-				}
-			}
-
-			return newCalls;
-		}
-		else
-		{
-			// response wrong, set disconnected status
-			setBoxDisconnected();
-		}
-
-		return new Vector<Call>();
-	}
-
-	private Vector<Call> getCallerListFromFile(Vector<IProgressListener> progressListener)
-	throws IOException, MalformedURLException {
-		Vector<String> response = new Vector<String>();
-		response = getFromFile("D:\\callerlist.dat");
-
-		Vector<Call> newCalls = new Vector<Call>(response.size());
-		Vector<Call> tmpCalls = new Vector<Call>(response.size());
-		int querySize = 8;
-		boolean result = createCallFromResponse(tmpCalls, response, querySize, response.size()/querySize);
-		if (!result)
-		{
-			throw new IOException("Malformed data while receiving caller list!");
-		}
-		else
-		{
-			newCalls.addAll(tmpCalls);
-		}
-		for (IProgressListener listener: progressListener)
-		{
-			listener.setProgress(100);
-		}
-
-		return newCalls;
-	}
-
-	private boolean createCallFromResponse(Vector<Call> calls, Vector<String> response,
-			int querySize, int stepSize)
-	{
-		for (int i=0; i<stepSize; i++)
-		{
-			int newOffset = i*querySize;
-			if (!"er".equals(response.get(newOffset+0)))
-			{
-				CallType calltype;
-				// Call type
-				if ((response.get(newOffset+0).equals("1"))) {
-					calltype = CallType.CALLIN;
-				} else if ((response.get(newOffset+0).equals("2"))) {
-					calltype = CallType.CALLIN_FAILED;
-				} else if ((response.get(newOffset+0).equals("3"))) {
-					calltype = CallType.CALLOUT;
-				} else {
-					Debug.error("Invalid Call type while importing caller list!"); //$NON-NLS-1$
-					return false;
-				}
-
-				Date calldate;
-				// Call date and time
-				if (response.get(newOffset+1) != null) {
-					try {
-						calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(response.get(newOffset+1)); //$NON-NLS-1$
-					} catch (ParseException e) {
-						Debug.error("Invalid date format while importing caller list!"); //$NON-NLS-1$
-						return false;
-					}
-				} else {
-					Debug.error("Invalid date format while importing caller list!"); //$NON-NLS-1$
-					return false;
-				}
-
-				// Phone number
-				PhoneNumberOld number;
-				if (!response.get(newOffset+2).equals("")) {
-					number = new PhoneNumberOld(response.get(newOffset+2), properties.getProperty(
-							"option.activateDialPrefix").toLowerCase().equals("true")
-							&& (calltype == CallType.CALLOUT)
-							&& !response.get(newOffset+6).startsWith("Internet"));
-				} else {
-					number = null;
-				}
-
-				// split the duration into two stings, hours:minutes
-				String[] time = response.get(newOffset+4).split(":");
-
-				String portStr = response.get(newOffset+3);
-				Port port = null;
-				try {
-					int portId = Integer.parseInt(portStr);
-					port = this.getConfiguredPort(portId);
-					if (port == null) { // Fallback auf statisch konfigurierte Ports
-						port = Port.getPort(portId);
-					}
-				} catch (NumberFormatException nfe)
-				{
-					Debug.warning("FritzBox: Could not parse portstr as number: " + portStr);
-				}
-				if (port == null)
-				{
-					port = new Port(0, portStr, "-1", "-1");
-				}
-
-				int routeType = Integer.parseInt(response.get(newOffset+6));
-				String route = "";
-				if (routeType == 0) // Festnetz
-				{
-					route = response.get(newOffset+5);
-					if ("".equals(route))
-					{
-						route = messages.getMessage("fixed_network");
-					}
-				}
-				else if (routeType == 1) // SIP
-				{
-					try {
-						int id = Integer.parseInt(response.get(newOffset+5));
-						for (SipProvider provider: sipProvider)
-						{
-							if (provider.isProviderID(id))
-							{
-								route = provider.toString();
-								break;
-							}
-						}
-					} catch (NumberFormatException nfe) {
-						route = response.get(newOffset+5);
-					}
-				}
-				else
-				{
-					route = "ERROR";
-					Debug.error("Could not determine route type: " + routeType);
-				}
-
-				// make the call object and exit
-				Call call = new Call(calltype, calldate, number, port, route,
-						Integer.parseInt(time[0])* 3600 + Integer.parseInt(time[1]) * 60);
-
-				calls.add(call);
-			}
-		}
-
-		return true;
+		return result;
 	}
 
 	public void clearCallerList()
 	{
-		if ((firmware != null) && (firmware.getMajorFirmwareVersion() == 4)
-						&& (firmware.getMinorFirmwareVersion() < 86)) {
-			clearJournalOld();
+		if (callList == null) {
+			Debug.errDlg(messages.getMessage("box.no_clear_caller_list"));
 		} else {
-			clearJournalNew();
+			callList.clearCallerList();
 		}
 	}
-
-	public void clearJournalOld() {
-		Vector<String> query = new Vector<String>();
-		query.add("telcfg:settings/ClearJournal");
-		getQuery(query);
-	}
-
-	public void clearJournalNew()
-	{
-        String postdata = POSTDATA_CLEAR_JOURNAL;
-
-		try {
-			postdata = this.getPostData(postdata);
-		} catch (UnsupportedEncodingException e) {
-			Debug.error("Encoding not supported! " + e.toString());
-		}
-
-		String urlstr = protocol+"://" //$NON-NLS-1$
-			+ this.address + ":" + this.port
-			+ "/cgi-bin/webcm"; //$NON-NLS-1$
-
-		boolean finished = false;
-		boolean password_wrong = false;
-		int retry_count = 0;
-
-		while (!finished && (retry_count < max_retry_count))
-		{
-			try {
-				retry_count++;
-				if (password_wrong)
-				{
-					password_wrong = false;
-					Debug.debug("Detecting new firmware, getting new SID");
-					this.detectFirmware();
-			        postdata = POSTDATA_CLEAR_JOURNAL;
-
-					try {
-						postdata = this.getPostData(postdata);
-					} catch (UnsupportedEncodingException e) {
-						Debug.error("Encoding not supported! " + e.toString());
-					}
-				}
-				JFritzUtils.fetchDataFromURLToVector(
-						this.getName(), urlstr, postdata, true);
-				finished = true;
-			} catch (WrongPasswordException e) {
-				password_wrong = true;
-				Debug.debug("Wrong password, maybe SID is invalid.");
-				setBoxDisconnected();
-			} catch (SocketTimeoutException ste) {
-				ste.printStackTrace();
-				setBoxDisconnected();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				setBoxDisconnected();
-			} catch (InvalidFirmwareException e) {
-				password_wrong = true;
-				setBoxDisconnected();
-			}
-		}
-	}
-
 
 	/**************************************************************************************
 	 * Implementation of the BoxSipProviderInterface
@@ -1331,7 +698,7 @@ public class FritzBox extends BoxClass {
 				for (int i=0; i<sipCount; i++)
 				{
 					int offset = i * numQueries;
-					if (!"er".equals(response.get(offset+0)))
+					if (!"er".equals(response.get(offset+0)) && !"".equals(response.get(offset+0)))
 					{
 						int id = Integer.parseInt(response.get(offset+1));
 						String name = response.get(offset+2);
@@ -1779,9 +1146,7 @@ public class FritzBox extends BoxClass {
 		currentNumber = currentNumber.replaceAll("\\+", "00"); //$NON-NLS-1$,  //$NON-NLS-2$
 
 		String postdata = generateDoCallPostData(currentNumber, port);
-		String urlstr = protocol+"://" //$NON-NLS-1$
-						+ this.address + ":" + this.port
-						+ "/cgi-bin/webcm"; //$NON-NLS-1$
+		String urlstr = getWebcmUrl();
 
 		boolean finished = false;
 		boolean password_wrong = false;
@@ -1830,9 +1195,7 @@ public class FritzBox extends BoxClass {
 			Debug.error("Encoding not supported! " + e.toString());
 		}
 
-		String urlstr = protocol+"://" //$NON-NLS-1$
-			+ this.address + ":" + this.port
-			+ "/cgi-bin/webcm"; //$NON-NLS-1$
+		String urlstr = getWebcmUrl();
 
 		boolean finished = false;
 		boolean password_wrong = false;
@@ -1890,13 +1253,13 @@ public class FritzBox extends BoxClass {
 		}
 	}
 
-	private void setBoxConnected() {
+	public void setBoxConnected() {
 		for (BoxStatusListener listener: boxListener) {
 			listener.setBoxConnected(name);
 		}
 	}
 
-	private void setBoxDisconnected() {
+	public void setBoxDisconnected() {
 		for (BoxStatusListener listener: boxListener) {
 			listener.setBoxDisconnected(name);
 		}
@@ -1910,7 +1273,7 @@ public class FritzBox extends BoxClass {
 	}
 
 	public void reboot() throws WrongPasswordException {
-		final String urlstr = protocol+"://" + address + ":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
+		final String urlstr = getWebcmUrl();
 		boolean password_wrong = true;
 		int retry_count = 0;
 		int max_retry_count = 2;
@@ -1966,5 +1329,9 @@ public class FritzBox extends BoxClass {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public int getMaxRetryCount() {
+		return max_retry_count;
 	}
 }

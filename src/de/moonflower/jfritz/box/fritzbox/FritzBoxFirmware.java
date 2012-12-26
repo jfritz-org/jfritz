@@ -56,10 +56,11 @@ public class FritzBoxFirmware {
 			"getpage=../html/menus/menu2.html" }; //$NON-NLS-1$
 
 	private final static String[] POSTDATA_DETECT_FIRMWARE = {
-			"&var%3Alang=de&var%3Amenu=home&var%3Apagename=home&login%3Acommand%2F%LOGINMODE%=", //$NON-NLS-1$
-			"&var%3Alang=en&var%3Amenu=home&var%3Apagename=home&login%3Acommand%2F%LOGINMODE%=" }; //$NON-NLS-1$
+			"&var%3Alang=de&var%3Amenu=home&var%3Apagename=home", //$NON-NLS-1$
+			"&var%3Alang=en&var%3Amenu=home&var%3Apagename=home" }; //$NON-NLS-1$
 
-	private final static String PATTERN_DETECT_FIRMWARE = "[Firmware|Labor][-| ][V|v]ersion[^\\d]*(\\d\\d\\d*).(\\d\\d).(\\d\\d\\d*)([^<]*)"; //$NON-NLS-1$
+	private final static String PATTERN_DETECT_FIRMWARE = "version=(\\d\\d\\d*).(\\d\\d).(\\d\\d\\d*)"; //$NON-NLS-1$
+	private final static String PATTERN_DETECT_FIRMWARE_OLD = "[Firmware|Labor][-| ][V|v]ersion[^\\d]*(\\d\\d\\d*).(\\d\\d).(\\d\\d\\d*)([^<]*)"; //$NON-NLS-1$
 
 	private final static String PATTERN_DETECT_LANGUAGE_DE = "Telefonie";
 
@@ -105,7 +106,7 @@ public class FritzBoxFirmware {
 			String box_protocol, String box_address, String box_password, String port)
 			throws WrongPasswordException, IOException,
 			InvalidFirmwareException {
-		final String urlstr = box_protocol + "://" + box_address + ":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
+		final String urlstr = box_protocol + "://" + box_address + ":" + port + "/"; //$NON-NLS-1$, //$NON-NLS-2$
 
 		if ("2".equals(properties.getProperty("network.type"))
 				&& Boolean.parseBoolean(properties
@@ -140,16 +141,19 @@ public class FritzBoxFirmware {
 					} catch (WrongPasswordException wpe) {
 						Debug.debug("No SID-Login necessary.");
 					}
-					if (sidLogin.isSidLogin()) {
-						postdata = postdata.replace("%LOGINMODE%", "response");
-						postdata = postdata + URLEncoder.encode(sidLogin.getResponse(), "ISO-8859-1");
-					} else {
-						postdata = postdata.replace("%LOGINMODE%", "password");
-						postdata = postdata + URLEncoder.encode(box_password, "ISO-8859-1");
-					}
 
 					try {
-						data = JFritzUtils.fetchDataFromURLToVector(box_name, urlstr, postdata, true);
+						if (sidLogin.isSidLogin()) {
+							postdata = postdata + "&login%3Acommand%2Fresponse=";
+							postdata = postdata + URLEncoder.encode(sidLogin.getResponse(), "ISO-8859-1");
+							sidLogin.login(box_name, urlstr, postdata);
+							postdata = POSTDATA_ACCESS_METHOD[i] + POSTDATA_DETECT_FIRMWARE[j];
+							data = JFritzUtils.fetchDataFromURLToVector(box_name, urlstr + "cgi-bin/webcm", postdata + "&sid="+sidLogin.getSessionId(), true);
+						} else {
+							postdata = postdata + "&login%3Acommand%2Fpassword=";
+							postdata = postdata + URLEncoder.encode(box_password, "ISO-8859-1");
+							data = JFritzUtils.fetchDataFromURLToVector(box_name, urlstr + "cgi-bin/webcm", postdata, true);
+						}
 						password_wrong = false;
 					} catch (WrongPasswordException wpe) {
 						password_wrong = true;
@@ -222,15 +226,30 @@ public class FritzBoxFirmware {
 		long startTimestamp = JFritzUtils.getTimestamp();
 		Debug.debug("Parsing data (" + data.size()
 				+ " lines) to detect firmware!");
-		Pattern normalFirmware = Pattern.compile(PATTERN_DETECT_FIRMWARE);
+		Pattern firmwarePattern = Pattern.compile(PATTERN_DETECT_FIRMWARE);
+		Pattern firmwarePatternOld = Pattern.compile(PATTERN_DETECT_FIRMWARE_OLD);
 
 		for (int k = data.size() - 1; k > 0; k--) {
-			Matcher m = normalFirmware.matcher(data.get(k));
-			if (m.find()) {
-				String boxtypeString = m.group(1);
-				String majorFirmwareVersion = m.group(2);
-				String minorFirmwareVersion = m.group(3);
-				String modFirmwareVersion = m.group(4).trim();
+			Matcher m = firmwarePattern.matcher(data.get(k));
+			Matcher m2 = firmwarePatternOld.matcher(data.get(k));
+			Matcher found = null;
+			boolean foundOldFirmware = false;
+			boolean foundFirmware = m.find();
+			if (foundFirmware) {
+				found = m;
+			} else {
+				foundOldFirmware = m2.find();
+				found = m2;
+			}
+
+			if (foundFirmware || foundOldFirmware) {
+				String boxtypeString = found.group(1);
+				String majorFirmwareVersion = found.group(2);
+				String minorFirmwareVersion = found.group(3);
+				String modFirmwareVersion = "";
+				if (found.groupCount() > 3) {
+					modFirmwareVersion = found.group(4).trim();
+				}
 
 				Debug.info("Detected Firmware: " + boxtypeString + "."
 						+ majorFirmwareVersion + "." + minorFirmwareVersion
@@ -288,14 +307,14 @@ public class FritzBoxFirmware {
 	/**
 	 * @return Returns the majorFirmwareVersion.
 	 */
-	public final byte getMajorFirmwareVersion() {
+	public byte getMajorFirmwareVersion() {
 		return majorFirmwareVersion;
 	}
 
 	/**
 	 * @return Returns the minorFirmwareVersion.
 	 */
-	public final byte getMinorFirmwareVersion() {
+	public byte getMinorFirmwareVersion() {
 		return minorFirmwareVersion;
 	}
 
@@ -334,5 +353,9 @@ public class FritzBoxFirmware {
 
 	public final String getSessionId() {
 		return sessionId;
+	}
+
+	public final boolean isLowerThan(final int major, final int minor) {
+		return (getMajorFirmwareVersion() < major || (getMajorFirmwareVersion() == major && getMinorFirmwareVersion() < minor));
 	}
 }

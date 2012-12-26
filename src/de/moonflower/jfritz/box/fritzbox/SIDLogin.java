@@ -3,6 +3,7 @@ package de.moonflower.jfritz.box.fritzbox;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.net.SocketTimeoutException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Vector;
@@ -14,12 +15,14 @@ import de.moonflower.jfritz.utils.Debug;
 
 public class SIDLogin {
 	private boolean sidLogin;
+	private boolean newSidLogin;
 	private String sessionId;
 	private String sidResponse;
 
 	private final static String PATTERN_WRITE_ACCESS = "<iswriteaccess>([^<]*)</iswriteaccess>";
-	private final static String PATTERN_CHALLENGE = "<Challenge>([^<]*)</Challenge>";
-	private final static String PATTERN_SID = "<input type=\"hidden\" name=\"sid\" value=\"([^\"]*)\"";
+	private final static String PATTERN_CHALLENGE = "<challenge>([^<]*)</challenge>";
+	private final static String PATTERN_SID = "<sid>([^\"]*)</sid>";
+	private final static String PATTERN_SID_OLD = "<input type=\"hidden\" name=\"sid\" value=\"([^\"]*)\"";
 
 	protected FritzBoxLoginHandler loginHandler = FritzBoxLoginHandler.getInstance();
 
@@ -30,45 +33,72 @@ public class SIDLogin {
 	}
 
 	public void check(String box_name, String urlstr, String password) throws WrongPasswordException, IOException {
-		String login_xml = loginHandler.getLoginSidResponse(box_name, urlstr);
+		String login = "";
+		try {
+			login = loginHandler.getLoginSidResponseFromXml(box_name, urlstr);
+			newSidLogin = false;
+		} catch (WrongPasswordException wpe) {
+			login = loginHandler.getLoginSidResponseFromLua(box_name, urlstr);
+			newSidLogin = true;
+		}
 		String box_password = replaceInvalidPasswordCharacters(password);
 
-		Pattern writeAccessPattern = Pattern.compile(PATTERN_WRITE_ACCESS);
-		Matcher matcher = writeAccessPattern.matcher(login_xml);
-		if (matcher.find()) {
+		Pattern challengePattern = Pattern.compile(PATTERN_CHALLENGE);
+		Matcher challengeMatcher = challengePattern.matcher(login.toLowerCase());
+		if (challengeMatcher.find()) {
 			sidLogin = true;
-			int writeAccess = Integer.parseInt(matcher.group(1));
-
-			if (writeAccess == 0) { // answer challenge
-				try {
-					String challenge = "";
-					Pattern challengePattern = Pattern.compile(PATTERN_CHALLENGE);
-					Matcher challengeMatcher = challengePattern.matcher(login_xml);
-					if (challengeMatcher.find()) {
-						challenge = challengeMatcher.group(1);
-						String md5Pass = generateMD5(challenge + "-" + box_password);
-						sidResponse = challenge + '-' + md5Pass;
-						Debug.debug("Challenge: " + challenge + " Response: " + sidResponse);
-					} else {
-						Debug.error("Could not determine challenge in login_sid.xml");
-					}
-				} catch (NoSuchAlgorithmException e) {
-					Debug.netMsg("MD5 Algorithm not present in this JVM!");
-					Debug.error(e.toString());
-					e.printStackTrace();
-				}
-			} else if (writeAccess == 1) { // no challenge, use SID directly
-				Pattern sidPattern = Pattern.compile(PATTERN_SID);
-				Matcher sidMatcher = sidPattern.matcher(login_xml);
-				if (sidMatcher.find()) {
-					sessionId = sidMatcher.group(1);
-				}
-			} else {
-				Debug.error("Could not determine writeAccess in login_sid.xml");
-			}
-			// Debug.errDlg(Integer.toString(writeAccess) + " " + sessionId);
 		} else {
 			sidLogin = false;
+		}
+
+		if (sidLogin) {
+			Pattern writeAccessPattern = Pattern.compile(PATTERN_WRITE_ACCESS);
+			Matcher matcher = writeAccessPattern.matcher(login.toLowerCase());
+			if (matcher.find()) {
+				int writeAccess = Integer.parseInt(matcher.group(1));
+
+				if (writeAccess == 0) { // answer challenge
+					calculateResponseFromChallenge(login, box_password);
+				} else if (writeAccess == 1) { // no challenge, use SID directly
+					extractSidFromResponse(login);
+				} else {
+					Debug.error("Could not determine writeAccess in login_sid.xml");
+				}
+				// Debug.errDlg(Integer.toString(writeAccess) + " " + sessionId);
+			} else {
+				calculateResponseFromChallenge(login, box_password);
+			}
+		}
+	}
+
+	public void login(String boxName, String urlstr, String postdata) throws SocketTimeoutException, WrongPasswordException, IOException {
+		String response = "";
+		if (newSidLogin) {
+			response = loginHandler.loginLua(boxName, urlstr, "response=" + this.sidResponse);
+		} else {
+			response = loginHandler.loginXml(boxName, urlstr, postdata);
+		}
+		extractSidFromResponse(response);
+	}
+
+	private void calculateResponseFromChallenge(String login,
+			String box_password) {
+		try {
+			String challenge = "";
+			Pattern challengePattern = Pattern.compile(PATTERN_CHALLENGE);
+			Matcher challengeMatcher = challengePattern.matcher(login.toLowerCase());
+			if (challengeMatcher.find()) {
+				challenge = challengeMatcher.group(1);
+				String md5Pass = generateMD5(challenge + "-" + box_password);
+				sidResponse = challenge + '-' + md5Pass;
+				Debug.debug("Challenge: " + challenge + " Response: " + sidResponse);
+			} else {
+				Debug.error("Could not determine challenge in login_sid.xml");
+			}
+		} catch (NoSuchAlgorithmException e) {
+			Debug.netMsg("MD5 Algorithm not present in this JVM!");
+			Debug.error(e.toString());
+			e.printStackTrace();
 		}
 	}
 
@@ -97,18 +127,26 @@ public class SIDLogin {
 		return box_password;
 	}
 
+	private void extractSidFromResponse(String login) {
+		Pattern sidPattern = Pattern.compile(PATTERN_SID);
+		Matcher sidMatcher = sidPattern.matcher(login.toLowerCase());
+		if (sidMatcher.find()) {
+			sessionId = sidMatcher.group(1);
+		} else {
+			sidPattern = Pattern.compile(PATTERN_SID_OLD);
+			sidMatcher = sidPattern.matcher(login.toLowerCase());
+			if (sidMatcher.find()) {
+				sessionId = sidMatcher.group(1);
+			}
+		}
+	}
+
+
 	public void getSidFromResponse(Vector<String> data)
 	{
-		Pattern patternSid = Pattern.compile(PATTERN_SID);
 		for (int i=0; i<data.size(); i++)
 		{
-			Matcher matcherSid = patternSid.matcher(data.get(i));
-			if (matcherSid.find())
-			{
-				sessionId = matcherSid.group(1);
-				Debug.debug("Current session id: " + sessionId);
-				break;
-			}
+			extractSidFromResponse(data.get(i));
 		}
 	}
 
