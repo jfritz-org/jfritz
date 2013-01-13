@@ -8,7 +8,6 @@ import java.util.MissingResourceException;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.mockito.Mock;
 
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.utils.JFritzUtils;
