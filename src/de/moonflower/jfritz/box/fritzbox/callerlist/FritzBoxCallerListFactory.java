@@ -15,8 +15,8 @@ public class FritzBoxCallerListFactory {
 		if (firmware != null) {
 			if (firmware.isLowerThan(4, 86)) {
 				result = new FritzBoxCallList_Pre_04_86(fritzBox, callbackListener);
-			} else if (firmware.isLowerThan(5, 50)) {
-				result = new FritzBoxCallList_Pre_05_50(fritzBox, callbackListener);
+			} else if (firmware.isLowerThan(5, 28)) {
+				result = new FritzBoxCallList_Pre_05_28(fritzBox, callbackListener);
 			} else {
 				result = new FritzBoxCallList_Actual(fritzBox, callbackListener);
 			}

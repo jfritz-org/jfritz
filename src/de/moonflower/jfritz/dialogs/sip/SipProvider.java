@@ -15,6 +15,7 @@ import de.moonflower.jfritz.struct.Call;
  *
  */
 public class SipProvider {
+	public static final int UNKNOWN_SIP_PROVIDER_ID = -99;
 
     private int providerID;
 

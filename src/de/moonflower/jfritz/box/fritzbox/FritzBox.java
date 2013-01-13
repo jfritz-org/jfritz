@@ -34,6 +34,7 @@ import de.moonflower.jfritz.callmonitor.FBoxCallMonitorV1;
 import de.moonflower.jfritz.callmonitor.FBoxCallMonitorV3;
 import de.moonflower.jfritz.callmonitor.YACCallMonitor;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
+import de.moonflower.jfritz.exceptions.FeatureNotSupportedByFirmware;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
@@ -125,7 +126,7 @@ public class FritzBox extends BoxClass {
 
 	private CallMonitorInterface callMonitor = null;
 
-	public Vector<SipProvider> sipProvider;
+	private Vector<SipProvider> sipProvider;
 
 	private HashMap<Integer, Port> configuredPorts;
 
@@ -223,18 +224,22 @@ public class FritzBox extends BoxClass {
 		}
 	}
 
-	public String getPostData(String pattern) throws UnsupportedEncodingException
-	{
+	public String appendSidOrPassword(String request) throws UnsupportedEncodingException {
+		if (firmware.getSessionId() != "") {
+			return request + "&sid=" + firmware.getSessionId();
+		}
+		else {
+			return request + "&login%3Acommand%2Fpassword=" + URLEncoder.encode(password, "ISO-8859-1");
+		}
+	}
+
+	public String getPostData(String pattern) throws UnsupportedEncodingException {
 		pattern = pattern.replaceAll("\\$LANG", firmware.getLanguage());
-		if (firmware.getSessionId() != "")
-		{
-			pattern = pattern + "&sid=" + firmware.getSessionId();
-		}
-		else
-		{
-			pattern = pattern + "&login%3Acommand%2Fpassword=" + URLEncoder.encode(password, "ISO-8859-1");
-		}
-		return firmware.getAccessMethod() + pattern;
+		return appendSidOrPassword(pattern);
+	}
+
+	public String getPostDataWithAccessMethod(String pattern) throws UnsupportedEncodingException {
+		return firmware.getAccessMethod() + getPostData(pattern);
 	}
 
 	public final Vector<String> getQuery(Vector<String> queries)
@@ -244,9 +249,12 @@ public class FritzBox extends BoxClass {
 		return result;
 	}
 
+	public String getUrlPrefix() {
+		return protocol + "://" + address + ":" + port;
+	}
+
 	public String getWebcmUrl() {
-		final String urlstr = protocol + "://" + address +":" + port + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$
-		return urlstr;
+		return getUrlPrefix() + "/cgi-bin/webcm"; //$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$
 	}
 
 	public void detectMacAddress()
@@ -640,7 +648,7 @@ public class FritzBox extends BoxClass {
 	 * Implementation of the BoxCallListInterface
 	 **************************************************************************************/
 	public Vector<Call> getCallerList(Vector<IProgressListener> progressListener)
-	throws IOException, MalformedURLException {
+	throws IOException, MalformedURLException, FeatureNotSupportedByFirmware {
 		Vector<Call> result;
 
 		if (callList == null) {
@@ -708,10 +716,7 @@ public class FritzBox extends BoxClass {
 						if (!"".equals(number))
 						{
 							Debug.debug("SIP-Provider["+i+"]: id="+id+" Number="+number+ " Name="+name);
-							SipProvider newSipProvider =
-								new SipProvider(id,
-												number,
-												name);
+							SipProvider newSipProvider = new SipProvider(id, number, name);
 							if (Integer.parseInt(response.get(offset+0)) == 0)
 							{
 								newSipProvider.setActive(false);
@@ -747,6 +752,24 @@ public class FritzBox extends BoxClass {
 
 	public Vector<SipProvider> getSipProvider() {
 		return sipProvider;
+	}
+
+	public SipProvider getSipProviderByRoute(String route) {
+		for (SipProvider p: sipProvider) {
+			if (p.getNumber().equals(route)) {
+				return p;
+			}
+		}
+
+		// sip provider has not been found!
+		if (route.contains("@")) {
+			String[] splitted = route.split("@");
+			String number = splitted[0];
+			String name = splitted[1];
+			return new SipProvider(SipProvider.UNKNOWN_SIP_PROVIDER_ID, number, name);
+		}
+
+		return null;
 	}
 
 	/**************************************************************************************
@@ -1132,7 +1155,7 @@ public class FritzBox extends BoxClass {
 		postdata = postdata.replaceAll("\\$NEBENSTELLE", port.getDialPort()); //$NON-NLS-1$
 
 		try {
-			postdata = this.getPostData(postdata);
+			postdata = this.getPostDataWithAccessMethod(postdata);
 		} catch (UnsupportedEncodingException e) {
 			Debug.error("Encoding not supported! " + e.toString());
 		}
@@ -1190,7 +1213,7 @@ public class FritzBox extends BoxClass {
         String postdata = POSTDATA_HANGUP;
 
 		try {
-			postdata = this.getPostData(postdata);
+			postdata = this.getPostDataWithAccessMethod(postdata);
 		} catch (UnsupportedEncodingException e) {
 			Debug.error("Encoding not supported! " + e.toString());
 		}
@@ -1213,7 +1236,7 @@ public class FritzBox extends BoxClass {
 			        postdata = POSTDATA_HANGUP;
 
 					try {
-						postdata = this.getPostData(postdata);
+						postdata = this.getPostDataWithAccessMethod(postdata);
 					} catch (UnsupportedEncodingException e) {
 						Debug.error("Encoding not supported! " + e.toString());
 					}

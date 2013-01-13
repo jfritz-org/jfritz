@@ -84,6 +84,7 @@ public class CSVCallerListImport extends CSVImport implements ICSVImport {
 			} else if (value.equals(CallType.CALLOUT)
 				|| value.equals(CallType.CALLOUT.toString())
 				|| value.equals("3") // FritzBox CSV
+				|| value.equals("4") // FritzBox CSV 05.50
 				|| value.equals("Outgoing") // JFritz CSV
 				|| value.equals("outgoing")) // jAnrufmonitor CSV
 			{

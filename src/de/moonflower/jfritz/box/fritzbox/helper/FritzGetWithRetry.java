@@ -1,36 +1,39 @@
-package de.moonflower.jfritz.box.fritzbox.callerlist;
+package de.moonflower.jfritz.box.fritzbox.helper;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.SocketTimeoutException;
 import java.util.Vector;
 
-import de.moonflower.jfritz.box.BoxCallBackListener;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
-public class FritzBoxCallList_Pre_05_50 extends FritzBoxCallList_Pre_04_86 {
+public class FritzGetWithRetry {
 
-	private static String POSTDATA_CLEAR_JOURNAL = "&telcfg:settings/ClearJournal&telcfg:settings/UseJournal=1";
+	private FritzBox fritzBox;
+	private boolean prependAccessMethod = false;
 
-	public FritzBoxCallList_Pre_05_50(FritzBox fritzBox, Vector<BoxCallBackListener> callbackListener) {
-		super(fritzBox, callbackListener);
+	public FritzGetWithRetry(FritzBox fritzBox) {
+		this.fritzBox = fritzBox;
 	}
 
-	@Override
-	public void clearCallerList() {
-        String postdata = POSTDATA_CLEAR_JOURNAL;
+	public void setPrependAccessMethod(boolean shouldPrepend) {
+		this.prependAccessMethod = shouldPrepend;
+	}
+
+	public Vector<String> getToVector(final String url, final String input, boolean shouldGetResult) {
+        Vector<String> result = new Vector<String>();
+
+		String postdata = input;
 
 		try {
-			postdata = fritzBox.getPostData(postdata);
+			postdata = getPostData(postdata);
 		} catch (UnsupportedEncodingException e) {
 			Debug.error("Encoding not supported! " + e.toString());
 		}
-
-		String urlstr = fritzBox.getWebcmUrl();
 
 		boolean finished = false;
 		boolean password_wrong = false;
@@ -45,15 +48,15 @@ public class FritzBoxCallList_Pre_05_50 extends FritzBoxCallList_Pre_04_86 {
 					password_wrong = false;
 					Debug.debug("Detecting new firmware, getting new SID");
 					fritzBox.detectFirmware();
-			        postdata = POSTDATA_CLEAR_JOURNAL;
+			        postdata = input;
 
 					try {
-						postdata = fritzBox.getPostData(postdata);
+						postdata = getPostData(postdata);
 					} catch (UnsupportedEncodingException e) {
 						Debug.error("Encoding not supported! " + e.toString());
 					}
 				}
-				JFritzUtils.fetchDataFromURLToVector(fritzBox.getName(), urlstr, postdata, true);
+				result = JFritzUtils.fetchDataFromURLToVector(fritzBox.getName(), url, postdata, shouldGetResult);
 				finished = true;
 			} catch (WrongPasswordException e) {
 				password_wrong = true;
@@ -70,6 +73,15 @@ public class FritzBoxCallList_Pre_05_50 extends FritzBoxCallList_Pre_04_86 {
 				password_wrong = true;
 				fritzBox.setBoxDisconnected();
 			}
+		}
+		return result;
+	}
+
+	private String getPostData(String pattern) throws UnsupportedEncodingException {
+		if (prependAccessMethod) {
+			return fritzBox.getPostDataWithAccessMethod(pattern);
+		} else {
+			return fritzBox.getPostData(pattern);
 		}
 	}
 }

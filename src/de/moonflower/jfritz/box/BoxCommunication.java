@@ -5,11 +5,13 @@ import java.net.MalformedURLException;
 import java.util.Vector;
 
 import de.moonflower.jfritz.callmonitor.CallMonitorStatusListener;
+import de.moonflower.jfritz.exceptions.FeatureNotSupportedByFirmware;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.IProgressListener;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
+import de.moonflower.jfritz.utils.Debug;
 
 public class BoxCommunication {
 	private static int maxCallsPerBox = 400;
@@ -96,6 +98,8 @@ public class BoxCommunication {
 			try {
 				Vector<Call> tmpCalls = box.getCallerList(callListProgressListener);
 				newCalls.addAll(tmpCalls);
+			} catch (FeatureNotSupportedByFirmware fns) {
+				Debug.warning(fns.getMessage());
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -109,6 +113,8 @@ public class BoxCommunication {
 				try {
 					Vector<Call> tmpCalls = currentBox.getCallerList(callListProgressListener);
 					newCalls.addAll(tmpCalls);
+				} catch (FeatureNotSupportedByFirmware fns) {
+					Debug.warning(fns.getMessage());
 				} catch (MalformedURLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

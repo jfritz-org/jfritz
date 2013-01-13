@@ -24,71 +24,85 @@ public class FritzBoxCallerListFactoryTests {
 
 	@Test
 	public void test_03_30() {
-		when(this.mockedFirmware.getMajorFirmwareVersion()).thenReturn((byte)3);
-		when(this.mockedFirmware.getMinorFirmwareVersion()).thenReturn((byte)30);
+		mockFirmware(3, 30);
 
 		BoxCallListInterface result = FritzBoxCallerListFactory.createFritzBoxCallListFromFirmware(mockedFirmware, mockedFritzBox, null);
 
-		Assert.assertTrue(result instanceof FritzBoxCallList_Pre_04_86);
+		assertFirmwareClass(FritzBoxCallList_Pre_04_86.class, result);
+	}
+
+	private void mockFirmware(final int major, final int minor) {
+		when(this.mockedFirmware.getMajorFirmwareVersion()).thenReturn((byte)major);
+		when(this.mockedFirmware.getMinorFirmwareVersion()).thenReturn((byte)minor);
+	}
+
+	private void assertFirmwareClass(Class expected, BoxCallListInterface actual) {
+		if (expected == FritzBoxCallList_Actual.class) {
+			Assert.assertTrue(actual instanceof FritzBoxCallList_Actual);
+			Assert.assertTrue(actual instanceof FritzBoxCallList_Pre_05_28);
+			Assert.assertTrue(actual instanceof FritzBoxCallList_Pre_04_86);
+		} else if (expected == FritzBoxCallList_Pre_05_28.class) {
+			Assert.assertFalse(actual instanceof FritzBoxCallList_Actual);
+			Assert.assertTrue(actual instanceof FritzBoxCallList_Pre_05_28);
+			Assert.assertTrue(actual instanceof FritzBoxCallList_Pre_04_86);
+		} else if (expected == FritzBoxCallList_Pre_04_86.class) {
+			Assert.assertFalse(actual instanceof FritzBoxCallList_Actual);
+			Assert.assertFalse(actual instanceof FritzBoxCallList_Pre_05_28);
+			Assert.assertTrue(actual instanceof FritzBoxCallList_Pre_04_86);
+		}
 	}
 
 	@Test
 	public void test_04_85() {
-		when(this.mockedFirmware.getMajorFirmwareVersion()).thenReturn((byte)4);
-		when(this.mockedFirmware.getMinorFirmwareVersion()).thenReturn((byte)85);
+		mockFirmware(4, 85);
 
 		BoxCallListInterface result = FritzBoxCallerListFactory.createFritzBoxCallListFromFirmware(mockedFirmware, mockedFritzBox, null);
 
-		Assert.assertTrue(result instanceof FritzBoxCallList_Pre_04_86);
+		assertFirmwareClass(FritzBoxCallList_Pre_04_86.class, result);
 	}
 
 	@Test
 	public void test_04_86() {
-		when(this.mockedFirmware.getMajorFirmwareVersion()).thenReturn((byte)4);
-		when(this.mockedFirmware.getMinorFirmwareVersion()).thenReturn((byte)86);
+		mockFirmware(4, 86);
 
 		BoxCallListInterface result = FritzBoxCallerListFactory.createFritzBoxCallListFromFirmware(mockedFirmware, mockedFritzBox, null);
 
-		Assert.assertTrue(result instanceof FritzBoxCallList_Pre_05_50);
+		assertFirmwareClass(FritzBoxCallList_Pre_05_28.class, result);
 	}
 
 	@Test
 	public void test_04_87() {
-		when(this.mockedFirmware.getMajorFirmwareVersion()).thenReturn((byte)4);
-		when(this.mockedFirmware.getMinorFirmwareVersion()).thenReturn((byte)87);
+		mockFirmware(4, 87);
 
 		BoxCallListInterface result = FritzBoxCallerListFactory.createFritzBoxCallListFromFirmware(mockedFirmware, mockedFritzBox, null);
 
-		Assert.assertTrue(result instanceof FritzBoxCallList_Pre_05_50);
+		assertFirmwareClass(FritzBoxCallList_Pre_05_28.class, result);
 	}
 
 	@Test
-	public void test_05_49() {
-		when(this.mockedFirmware.getMajorFirmwareVersion()).thenReturn((byte)5);
-		when(this.mockedFirmware.getMinorFirmwareVersion()).thenReturn((byte)49);
+	public void test_05_27() {
+		mockFirmware(5, 27);
 
 		BoxCallListInterface result = FritzBoxCallerListFactory.createFritzBoxCallListFromFirmware(mockedFirmware, mockedFritzBox, null);
 
-		Assert.assertTrue(result instanceof FritzBoxCallList_Pre_05_50);
+		assertFirmwareClass(FritzBoxCallList_Pre_05_28.class, result);
+	}
+
+	@Test
+	public void test_05_28() {
+		mockFirmware(5, 28);
+
+		BoxCallListInterface result = FritzBoxCallerListFactory.createFritzBoxCallListFromFirmware(mockedFirmware, mockedFritzBox, null);
+
+		assertFirmwareClass(FritzBoxCallList_Actual.class, result);
 	}
 
 	@Test
 	public void test_05_50() {
-		when(this.mockedFirmware.getMajorFirmwareVersion()).thenReturn((byte)5);
-		when(this.mockedFirmware.getMinorFirmwareVersion()).thenReturn((byte)50);
+		mockFirmware(5, 50);
 
 		BoxCallListInterface result = FritzBoxCallerListFactory.createFritzBoxCallListFromFirmware(mockedFirmware, mockedFritzBox, null);
 
-		Assert.assertTrue(result instanceof FritzBoxCallList_Actual);
-	}
-
-	@Test
-	public void test_05_51() {
-		when(this.mockedFirmware.getMajorFirmwareVersion()).thenReturn((byte)5);
-		when(this.mockedFirmware.getMinorFirmwareVersion()).thenReturn((byte)51);
-
-		BoxCallListInterface result = FritzBoxCallerListFactory.createFritzBoxCallListFromFirmware(mockedFirmware, mockedFritzBox, null);
-
-		Assert.assertTrue(result instanceof FritzBoxCallList_Actual);
+		assertFirmwareClass(FritzBoxCallList_Actual.class, result);
 	}
 }

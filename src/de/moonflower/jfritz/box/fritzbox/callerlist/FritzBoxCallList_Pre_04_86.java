@@ -11,6 +11,7 @@ import de.moonflower.jfritz.box.BoxCallBackListener;
 import de.moonflower.jfritz.box.BoxCallListInterface;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
+import de.moonflower.jfritz.exceptions.FeatureNotSupportedByFirmware;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
@@ -44,9 +45,8 @@ public class FritzBoxCallList_Pre_04_86 implements BoxCallListInterface {
 	}
 
 	@Override
-	public Vector<Call> getCallerList(
-			Vector<IProgressListener> progressListener)
-			throws IOException, MalformedURLException {
+	public Vector<Call> getCallerList(Vector<IProgressListener> progressListener)
+			throws IOException, MalformedURLException, FeatureNotSupportedByFirmware {
 		fritzBox.setBoxConnected();
 		// getting number of entries
 		Vector<String> query = new Vector<String>();
@@ -213,7 +213,7 @@ public class FritzBoxCallList_Pre_04_86 implements BoxCallListInterface {
 				{
 					try {
 						int id = Integer.parseInt(response.get(newOffset+5));
-						for (SipProvider provider: fritzBox.sipProvider)
+						for (SipProvider provider: fritzBox.getSipProvider())
 						{
 							if (provider.isProviderID(id))
 							{
