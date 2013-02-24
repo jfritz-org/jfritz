@@ -83,7 +83,7 @@
 	    <mail
 			mailhost="${mailhost}"
 			mailport="${mailport}"
-			ssl="yes"
+			ssl="${mailssl}"
 			user="${mailuser}"
 			password="${mailpwd}"
 			charset="utf-8"
@@ -101,7 +101,7 @@
 		<mail
 			mailhost="${mailhost}"
 			mailport="${mailport}"
-			ssl="yes"
+			ssl="${mailssl}"
 			user="${mailuser}"
 			password="${mailpwd}"
 			charset="utf-8"
@@ -119,7 +119,7 @@
 		<mail
 			mailhost="${mailhost}"
 			mailport="${mailport}"
-			ssl="yes"
+			ssl="${mailssl}"
 			user="${mailuser}"
 			password="${mailpwd}"
 			charset="utf-8"
@@ -511,7 +511,7 @@ http://www.jfritz.org/
 		<mail
 			mailhost="${mailhost}"
 			mailport="${mailport}"
-			ssl="yes"
+			ssl="${mailssl}"
 			user="${mailuser}"
 			password="${mailpwd}"
 			charset="utf-8"

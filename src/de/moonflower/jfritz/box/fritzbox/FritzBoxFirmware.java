@@ -171,7 +171,7 @@ public class FritzBoxFirmware {
 
 				// read firmware informations from file
 				if (false) {
-					String filename = "/home/robotniko/firmware"; //$NON-NLS-1$
+					String filename = "c:\\seitenquelltext_fb_6360.txt"; //$NON-NLS-1$
 					Debug.debug("Debug mode: Loading " + filename); //$NON-NLS-1$
 					try {
 						data.clear(); //$NON-NLS-1$
