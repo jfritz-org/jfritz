@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="JFritz-Release" default="scp-update-beta" basedir=".">
-	<import file="build-release-pwd.xml" />
+	<import file="../build-release-pwd.xml" />
 	<import file="build.xml" />
 
 	<property name="product" value="JFritz" />
