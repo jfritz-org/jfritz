@@ -215,7 +215,7 @@ public final class JFritz implements  StatusListener {
 				result = 0;
 			} else {
 				Debug.info("User decided to prohibit connection."); //$NON-NLS-1$
-				result = -1;
+				result = Main.EXIT_CODE_FORBID_COMMUNICATION_WITH_FRITZBOX;
 			}
 		}
 		return result;

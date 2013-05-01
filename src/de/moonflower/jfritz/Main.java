@@ -238,6 +238,7 @@ public class Main  {
 	private static int EXIT_CODE_PARAMETER_NOT_FOUND = -2;
 	private static int EXIT_CODE_PARAMETER_WRONG_FORMAT = -3;
 	private static int EXIT_CODE_MULTIPLE_INSTANCE_LOCK = 1;
+	public static int EXIT_CODE_FORBID_COMMUNICATION_WITH_FRITZBOX = 2;
 
 	protected PropertyProvider properties = PropertyProvider.getInstance();
 	protected MessageProvider messages = MessageProvider.getInstance();
@@ -566,6 +567,7 @@ public class Main  {
 
 		log.info("Main is now exiting...");
 		if (result != 0) {
+			splash.dispose();
 			main.exit(result);
 		}
 
