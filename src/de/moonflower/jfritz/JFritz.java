@@ -268,7 +268,6 @@ public final class JFritz implements  StatusListener {
 				JFritzTray.initTray(jframe, getBoxCommunication());
 			} catch (Throwable e) {
 				Main.systraySupport = false;
-				Debug.error(e.toString());
 			}
 		}
 		jframe.checkStartOptions();
