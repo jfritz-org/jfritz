@@ -59,7 +59,7 @@ public class QueryNew implements IQuery {
 					postdata = generatePostDataNew(queries);
 				}
 				retry_count++;
-				response = JFritzUtils.postDataToUrlAndGetVectorResponse(fritzBox.getName(), urlstr, postdata, true, true);
+				response = JFritzUtils.postDataToUrlAndGetVectorResponse(fritzBox, urlstr, postdata, true, true);
 				finished = true;
 			} catch (WrongPasswordException e) {
 				password_wrong = true;

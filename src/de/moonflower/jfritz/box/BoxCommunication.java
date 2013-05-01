@@ -101,11 +101,11 @@ public class BoxCommunication {
 			} catch (FeatureNotSupportedByFirmware fns) {
 				Debug.warning(fns.getMessage());
 			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				box.setBoxDisconnected();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				box.setBoxDisconnected();
 			}
 		} else {
 			for (BoxClass currentBox: registeredBoxes)
@@ -116,11 +116,11 @@ public class BoxCommunication {
 				} catch (FeatureNotSupportedByFirmware fns) {
 					Debug.warning(fns.getMessage());
 				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
+					currentBox.setBoxDisconnected();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
+					currentBox.setBoxDisconnected();
 				}
 			}
 		}

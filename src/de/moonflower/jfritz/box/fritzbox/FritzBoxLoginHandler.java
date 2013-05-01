@@ -9,6 +9,8 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
+import de.moonflower.jfritz.box.BoxClass;
+import de.moonflower.jfritz.exceptions.RedirectToLoginLuaException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
@@ -24,43 +26,43 @@ public class FritzBoxLoginHandler {
 		return INSTANCE;
 	}
 
-	public String getLoginSidResponseFromXml(String box_name, String urlstr) throws SocketTimeoutException, WrongPasswordException, IOException {
+	public String getLoginSidResponseFromXml(BoxClass box, String urlstr) throws SocketTimeoutException, WrongPasswordException, IOException, RedirectToLoginLuaException {
 		List<NameValuePair> postData = new ArrayList<NameValuePair>();
 		postData.add(new BasicNameValuePair("getpage", "../html/login/sid.xml"));
 		
 		try {
-			return JFritzUtils.postDataToUrlAndGetStringResponse(box_name, urlstr + URL_FOR_XML_LOGIN, postData, true, false);
+			return JFritzUtils.postDataToUrlAndGetStringResponse(box, urlstr + URL_FOR_XML_LOGIN, postData, true, false);
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
 		return "";
 	}
 
-	public String getLoginSidResponseFromLua(String box_name, String urlstr) throws SocketTimeoutException, WrongPasswordException, IOException {
+	public String getLoginSidResponseFromLua(BoxClass box, String urlstr) throws SocketTimeoutException, WrongPasswordException, IOException, RedirectToLoginLuaException {
 		try {
-			return JFritzUtils.getDataFromUrlToString(box_name, urlstr + URL_FOR_LUA_LOGIN, true, false);
+			return JFritzUtils.getDataFromUrlToString(box, urlstr + URL_FOR_LUA_LOGIN, true, false);
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
 		return "";
 	}
 
-	public String loginXml(String box_name, String urlstr, List<NameValuePair> postdata) throws SocketTimeoutException, WrongPasswordException, IOException {
+	public String loginXml(BoxClass box, String urlstr, List<NameValuePair> postdata) throws SocketTimeoutException, WrongPasswordException, IOException, RedirectToLoginLuaException {
 		try {
 			postdata.add(new BasicNameValuePair("getpage","../html/login_sid.xml"));
-			return JFritzUtils.postDataToUrlAndGetStringResponse(box_name, urlstr + URL_FOR_XML_LOGIN, postdata, true, false);
+			return JFritzUtils.postDataToUrlAndGetStringResponse(box, urlstr + URL_FOR_XML_LOGIN, postdata, true, false);
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
 		return "";
 	}
 
-	public String loginLua(String box_name, String urlstr, String sidResponse) throws SocketTimeoutException, WrongPasswordException, IOException {
+	public String loginLua(BoxClass box, String urlstr, String sidResponse) throws SocketTimeoutException, WrongPasswordException, IOException, RedirectToLoginLuaException {
 		List<NameValuePair> postData = new ArrayList<NameValuePair>();
 		postData.add(new BasicNameValuePair("response", sidResponse));
 
 		try {
-			return JFritzUtils.postDataToUrlAndGetStringResponse(box_name, urlstr + URL_FOR_LUA_LOGIN, postData, true, false);
+			return JFritzUtils.postDataToUrlAndGetStringResponse(box, urlstr + URL_FOR_LUA_LOGIN, postData, true, false);
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}

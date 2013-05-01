@@ -13,6 +13,8 @@ import java.util.regex.Pattern;
 
 import org.apache.http.NameValuePair;
 
+import de.moonflower.jfritz.box.BoxClass;
+import de.moonflower.jfritz.exceptions.RedirectToLoginLuaException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.utils.Debug;
 
@@ -35,13 +37,16 @@ public class SIDLogin {
 		sidResponse = "";
 	}
 
-	public void check(String box_name, String urlstr, String password) throws WrongPasswordException, IOException {
+	public void check(BoxClass box, String urlstr, String password) throws WrongPasswordException, IOException, RedirectToLoginLuaException {
 		String login = "";
 		try {
-			login = loginHandler.getLoginSidResponseFromXml(box_name, urlstr);
+			login = loginHandler.getLoginSidResponseFromXml(box, urlstr);
 			newSidLogin = false;
 		} catch (WrongPasswordException wpe) {
-			login = loginHandler.getLoginSidResponseFromLua(box_name, urlstr);
+			login = loginHandler.getLoginSidResponseFromLua(box, urlstr);
+			newSidLogin = true;
+		} catch (RedirectToLoginLuaException rd) {
+			login = loginHandler.getLoginSidResponseFromLua(box, urlstr);
 			newSidLogin = true;
 		}
 		String box_password = replaceInvalidPasswordCharacters(password);
@@ -74,12 +79,12 @@ public class SIDLogin {
 		}
 	}
 
-	public void login(String boxName, String urlstr, List<NameValuePair> postdata) throws SocketTimeoutException, WrongPasswordException, IOException {
+	public void login(BoxClass box, String urlstr, List<NameValuePair> postdata) throws SocketTimeoutException, WrongPasswordException, IOException, RedirectToLoginLuaException {
 		String response = "";
 		if (newSidLogin) {
-			response = loginHandler.loginLua(boxName, urlstr, this.sidResponse);
+			response = loginHandler.loginLua(box, urlstr, this.sidResponse);
 		} else {
-			response = loginHandler.loginXml(boxName, urlstr, postdata);
+			response = loginHandler.loginXml(box, urlstr, postdata);
 		}
 		extractSidFromResponse(response);
 	}

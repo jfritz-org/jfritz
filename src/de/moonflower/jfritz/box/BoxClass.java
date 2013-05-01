@@ -2,7 +2,6 @@ package de.moonflower.jfritz.box;
 
 import java.util.Vector;
 
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.Debug;
@@ -19,6 +18,8 @@ public abstract class BoxClass
 			   BoxDoCallInterface,
 			   BoxNewIpInterface
 {
+	private Vector<BoxStatusListener> boxListener;
+
 	protected String name;
 	protected String description;
 
@@ -32,6 +33,37 @@ public abstract class BoxClass
 	private final static int SSDP_TIMEOUT = 1000;
 	protected static SSDPdiscoverThread ssdpthread;
 	protected static PropertyProvider properties = PropertyProvider.getInstance();
+	
+	public BoxClass() {
+		boxListener = new Vector<BoxStatusListener>(4);
+	}
+		
+	public void addBoxStatusListener(BoxStatusListener listener)
+	{
+		if (!boxListener.contains(listener)) {
+			boxListener.add(listener);
+		}
+	}
+
+	public void removeBoxStatusListener(BoxStatusListener listener)
+	{
+		if (boxListener.contains(listener)) {
+			boxListener.remove(listener);
+		}
+	}
+
+	public void setBoxConnected() {
+		for (BoxStatusListener listener: boxListener) {
+			listener.setBoxConnected(name);
+		}
+	}
+
+	public void setBoxDisconnected() {
+		for (BoxStatusListener listener: boxListener) {
+			listener.setBoxDisconnected(name);
+		}
+	}
+
 	/**
 	 * The user can define a random name describing this box.
 	 * @return The name of the box.
@@ -189,12 +221,12 @@ public abstract class BoxClass
 		}
 	}
 
-	public abstract void addBoxStatusListener(BoxStatusListener listener);
-	public abstract void removeBoxStatusListener(BoxStatusListener listener);
-
 	public abstract void addBoxCallBackListener(BoxCallBackListener listener);
 
 	public abstract String getExternalIP();
 
 	public abstract void reboot() throws WrongPasswordException;
+	
+	public abstract void invalidateSession();
+	
 }

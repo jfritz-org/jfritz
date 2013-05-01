@@ -28,7 +28,6 @@ import de.moonflower.jfritz.box.BoxCallBackListener;
 import de.moonflower.jfritz.box.BoxCallListInterface;
 import de.moonflower.jfritz.box.BoxCallMonitorInterface;
 import de.moonflower.jfritz.box.BoxClass;
-import de.moonflower.jfritz.box.BoxStatusListener;
 import de.moonflower.jfritz.box.fritzbox.callerlist.FritzBoxCallerListFactory;
 import de.moonflower.jfritz.box.fritzbox.query.IQuery;
 import de.moonflower.jfritz.box.fritzbox.query.QueryFactory;
@@ -41,6 +40,7 @@ import de.moonflower.jfritz.callmonitor.YACCallMonitor;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.exceptions.FeatureNotSupportedByFirmware;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
+import de.moonflower.jfritz.exceptions.RedirectToLoginLuaException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
@@ -131,7 +131,6 @@ public class FritzBox extends BoxClass {
 
 	private IQuery queryImpl;
 
-	private Vector<BoxStatusListener> boxListener;
 	private Vector<BoxCallBackListener> callBackListener;
 
 	protected PropertyProvider properties = PropertyProvider.getInstance();
@@ -153,7 +152,6 @@ public class FritzBox extends BoxClass {
 
 		sipProvider = new Vector<SipProvider>();
 		configuredPorts = new HashMap<Integer, Port>();
-		boxListener = new Vector<BoxStatusListener>(4);
 		callBackListener = new Vector<BoxCallBackListener>(4);
 		exc = null;
 		try {
@@ -218,8 +216,7 @@ public class FritzBox extends BoxClass {
 		{
 			setBoxConnected();
 			firmware = null;
-			firmware = FritzBoxFirmware.detectFirmwareVersion(name, protocol,
-					address, password, port);
+			firmware = FritzBoxFirmware.detectFirmwareVersion(this, protocol, address, password, port);
 		}
 	}
 
@@ -658,10 +655,24 @@ public class FritzBox extends BoxClass {
 	public Vector<Call> getCallerList(Vector<IProgressListener> progressListener)
 	throws IOException, MalformedURLException, FeatureNotSupportedByFirmware {
 		Vector<Call> result;
-
+		setBoxConnected();
+		
 		if (callList == null) {
-			Debug.errDlg(messages.getMessage("box.no_caller_list"));
-			result = new Vector<Call>();
+			try {
+				updateSettings();
+				if (callList == null) {
+					Debug.errDlg(messages.getMessage("box.no_caller_list"));
+					result = new Vector<Call>();
+				} else {
+					result = getCallerList(progressListener);
+				}
+			} catch (WrongPasswordException e) {
+				Debug.errDlg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
+				result = new Vector<Call>();
+			} catch (InvalidFirmwareException e) {
+				Debug.errDlg(messages.getMessage("unknown_firmware")); //$NON-NLS-1$
+				result = new Vector<Call>();
+			}
 		} else {
 			result = callList.getCallerList(progressListener);
 		}
@@ -1109,7 +1120,7 @@ public class FritzBox extends BoxClass {
 			final String urlstr = protocol+"://" + address +":49000/igddesc.xml"; //$NON-NLS-1$, //$NON-NLS-2$
 
 			try {
-				response = JFritzUtils.getDataFromUrlToVector(name, urlstr, true, true);
+				response = JFritzUtils.getDataFromUrlToVector(this, urlstr, true, true);
 			} catch (WrongPasswordException e) {
 				Debug.debug("Wrong password, maybe SID is invalid.");
 				setBoxDisconnected();
@@ -1193,7 +1204,7 @@ public class FritzBox extends BoxClass {
 					postdata.clear();
 					generateDoCallPostData(postdata, currentNumber, port);
 				}
-				JFritzUtils.postDataToUrlAndGetVectorResponse(this.getName(), urlstr, postdata, false, true);
+				JFritzUtils.postDataToUrlAndGetVectorResponse(this, urlstr, postdata, false, true);
 				finished = true;
 			} catch (WrongPasswordException e) {
 				password_wrong = true;
@@ -1210,6 +1221,9 @@ public class FritzBox extends BoxClass {
 				password_wrong = true;
 				setBoxDisconnected();
 			} catch (URISyntaxException e) {
+				e.printStackTrace();
+				setBoxDisconnected();
+			} catch (RedirectToLoginLuaException e) {
 				e.printStackTrace();
 				setBoxDisconnected();
 			}
@@ -1250,7 +1264,7 @@ public class FritzBox extends BoxClass {
 					postdata.clear();
 					generateHangupPostdata(postdata);
 				}
-				JFritzUtils.postDataToUrlAndGetVectorResponse(this.getName(), urlstr, postdata, false, true);
+				JFritzUtils.postDataToUrlAndGetVectorResponse(this, urlstr, postdata, false, true);
 				finished = true;
 			} catch (WrongPasswordException e) {
 				password_wrong = true;
@@ -1268,33 +1282,10 @@ public class FritzBox extends BoxClass {
 			} catch (URISyntaxException e) {
 				e.printStackTrace();
 				setBoxDisconnected();
+			} catch (RedirectToLoginLuaException e) {
+				e.printStackTrace();
+				setBoxDisconnected();
 			}
-		}
-	}
-
-	public void addBoxStatusListener(BoxStatusListener listener)
-	{
-		if (!boxListener.contains(listener)) {
-			boxListener.add(listener);
-		}
-	}
-
-	public void removeBoxStatusListener(BoxStatusListener listener)
-	{
-		if (boxListener.contains(listener)) {
-			boxListener.remove(listener);
-		}
-	}
-
-	public void setBoxConnected() {
-		for (BoxStatusListener listener: boxListener) {
-			listener.setBoxConnected(name);
-		}
-	}
-
-	public void setBoxDisconnected() {
-		for (BoxStatusListener listener: boxListener) {
-			listener.setBoxDisconnected(name);
 		}
 	}
 
@@ -1337,7 +1328,7 @@ public class FritzBox extends BoxClass {
 
 			Vector<String> data = new Vector<String>(1000);
 			try {
-				data = JFritzUtils.postDataToUrlAndGetVectorResponse(name,urlstr, postdata, true, true);
+				data = JFritzUtils.postDataToUrlAndGetVectorResponse(this, urlstr, postdata, true, true);
 				password_wrong = false;
 				for (int i=0; i<data.size(); i++) {
 					Debug.debug(data.get(i));
@@ -1362,11 +1353,20 @@ public class FritzBox extends BoxClass {
 			} catch (URISyntaxException e) {
 				e.printStackTrace();
 				setBoxDisconnected();
+			} catch (RedirectToLoginLuaException e) {
+				e.printStackTrace();
+				setBoxDisconnected();
 			}
 		}
 	}
 
 	public int getMaxRetryCount() {
 		return max_retry_count;
+	}
+	
+	public void invalidateSession() {
+		if (firmware != null) {
+			firmware.invalidateSessionId();
+		}
 	}
 }

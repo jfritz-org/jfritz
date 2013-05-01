@@ -6,18 +6,13 @@
 package de.moonflower.jfritz.utils;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.NoRouteToHostException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -33,7 +28,6 @@ import org.apache.http.ProtocolException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -45,6 +39,8 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
+import de.moonflower.jfritz.box.BoxClass;
+import de.moonflower.jfritz.exceptions.RedirectToLoginLuaException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.properties.PropertyProvider;
 
@@ -58,7 +54,7 @@ import de.moonflower.jfritz.properties.PropertyProvider;
 public class JFritzUtils {
 	private static final Logger log = Logger.getLogger(JFritzUtils.class);
 
-	private static final int CONNECTION_TIMEOUT = 15000; //$NON-NLS-1$
+	private static final int CONNECTION_TIMEOUT = 5000; //$NON-NLS-1$
 	private static final int READ_TIMEOUT = 120000; //$NON-NLS-1$
 	public static final String FILESEP = System.getProperty("file.separator"); //$NON-NLS-1$
 	public static final String PATHSEP = System.getProperty("path.separator"); //$NON-NLS-1$
@@ -75,9 +71,9 @@ public class JFritzUtils {
 
 	protected static PropertyProvider properties = PropertyProvider.getInstance();
 
-	public static String getDataFromUrlToString(final String affectedBox,
+	public static String getDataFromUrlToString(final BoxClass affectedBox,
 			final String urlstr, boolean retrieveData, boolean isRedirectEnabled)
-			throws WrongPasswordException, SocketTimeoutException, IOException, URISyntaxException {
+			throws WrongPasswordException, SocketTimeoutException, IOException, URISyntaxException, RedirectToLoginLuaException {
 		HttpParams httpParams = initConnectionParameters();
 		
 		DefaultHttpClient httpClient = new DefaultHttpClient(httpParams);
@@ -89,9 +85,9 @@ public class JFritzUtils {
 		return result;
 	}
 
-	public static Vector<String> getDataFromUrlToVector(final String affectedBox,
+	public static Vector<String> getDataFromUrlToVector(final BoxClass affectedBox,
 			final String urlstr, boolean retrieveData, boolean isRedirectEnabled)
-			throws WrongPasswordException, SocketTimeoutException, IOException, URISyntaxException {
+			throws WrongPasswordException, SocketTimeoutException, IOException, URISyntaxException, RedirectToLoginLuaException {
 		HttpParams httpParams = initConnectionParameters();
 		
 		DefaultHttpClient httpClient = new DefaultHttpClient(httpParams);
@@ -117,7 +113,7 @@ public class JFritzUtils {
 		return request;
 	}
 	
-	private static HttpResponse getResponse(final String affectedBox,
+	private static HttpResponse getResponse(final BoxClass affectedBox,
 			DefaultHttpClient httpClient, HttpUriRequest request, String urlstr, final List<NameValuePair> postdata, boolean isRedirectEnabled)
 			throws IOException, ClientProtocolException, WrongPasswordException {
 		if (isRedirectEnabled) {
@@ -129,23 +125,23 @@ public class JFritzUtils {
 		return response;
 	}
 		
-	private static String getResponseToString(final String affectedBox,
+	private static String getResponseToString(final BoxClass affectedBox,
 			DefaultHttpClient httpClient, HttpUriRequest request, String urlstr, final List<NameValuePair> postdata, boolean isRedirectEnabled)
-			throws IOException, ClientProtocolException, WrongPasswordException {
+			throws IOException, ClientProtocolException, WrongPasswordException, RedirectToLoginLuaException {
 		HttpResponse response = getResponse(affectedBox, httpClient, request, urlstr, postdata, isRedirectEnabled);
 		String responseString = EntityUtils.toString(response.getEntity());
 		
 		if (isRedirectToLogonLua(responseString)) {
-			 throw new WrongPasswordException(affectedBox, "Detected redirect to login.lua", 1);
+			 throw new RedirectToLoginLuaException(affectedBox.getName(), "Detected redirect to login.lua");
 		}
 		
 		containsWrongPassword(affectedBox, responseString);
 		return responseString;
 	}
 	
-	private static Vector<String> getResponseToVector(final String affectedBox,
+	private static Vector<String> getResponseToVector(final BoxClass affectedBox,
 			DefaultHttpClient httpClient, HttpUriRequest request, String urlstr, final List<NameValuePair> postdata, boolean isRedirectEnabled)
-			throws IOException, ClientProtocolException, WrongPasswordException {
+			throws IOException, ClientProtocolException, WrongPasswordException, RedirectToLoginLuaException {
 		Vector<String> result = new Vector<String>();
 		HttpResponse response = getResponse(affectedBox, httpClient, request, urlstr, postdata, isRedirectEnabled);
 
@@ -155,7 +151,7 @@ public class JFritzUtils {
 		String line = null;
 		while ((line = br.readLine()) != null) {
 			if (isRedirectToLogonLua(line)) {
-				throw new WrongPasswordException(affectedBox, "Detected redirect to login.lua", 1);
+				throw new RedirectToLoginLuaException(affectedBox.getName(), "Detected redirect to login.lua");
 			}
 			containsWrongPassword(affectedBox, line);
 			
@@ -249,12 +245,13 @@ public class JFritzUtils {
 		return false;
 	}
 
-	private static void containsWrongPassword(final String affectedBox,
+	private static void containsWrongPassword(final BoxClass affectedBox,
 			String responseString) throws WrongPasswordException {
 		if ((responseString.indexOf("Das angegebene Kennwort ist ") >= 0) //$NON-NLS-1$
 				|| (responseString.indexOf("Password not valid") >= 0)
 				|| (responseString.indexOf("<!--loginPage-->") >= 0)
-				|| (responseString.indexOf("FRITZ!Box Anmeldung") >= 0)) {
+				|| (responseString.indexOf("FRITZ!Box Anmeldung") >= 0)
+				|| (responseString.indexOf("login_form") >= 0 )) {
 			log.debug("Wrong password detected: " + responseString);
 
 			int wait = 3;
@@ -267,15 +264,17 @@ public class JFritzUtils {
 					wait = 3;
 				}
 			}
+			
+			affectedBox.invalidateSession();
 
-			throw new WrongPasswordException(affectedBox,
+			throw new WrongPasswordException(affectedBox.getName(),
 					"Password invalid", wait + 2); //$NON-NLS-1$
 		}
 	}
 	
-	public static String postDataToUrlAndGetStringResponse(final String affectedBox,
+	public static String postDataToUrlAndGetStringResponse(final BoxClass affectedBox,
 			final String urlstr, final List<NameValuePair> postdata, boolean retrieveData, boolean isRedirectEnabled)
-			throws WrongPasswordException, SocketTimeoutException, IOException, URISyntaxException {
+			throws WrongPasswordException, SocketTimeoutException, IOException, URISyntaxException, RedirectToLoginLuaException {
 		HttpParams httpParams = initConnectionParameters();
 		
 		DefaultHttpClient httpClient = new DefaultHttpClient(httpParams);
@@ -287,9 +286,9 @@ public class JFritzUtils {
 		return response;
 	}
 
-	public static Vector<String> postDataToUrlAndGetVectorResponse(final String affectedBox,
+	public static Vector<String> postDataToUrlAndGetVectorResponse(final BoxClass affectedBox,
 			final String urlstr, final List<NameValuePair> postdata, boolean retrieveData, boolean isRedirectEnabled)
-			throws WrongPasswordException, SocketTimeoutException, IOException, URISyntaxException {
+			throws WrongPasswordException, SocketTimeoutException, IOException, URISyntaxException, RedirectToLoginLuaException {
 		HttpParams httpParams = initConnectionParameters();
 		
 		DefaultHttpClient httpClient = new DefaultHttpClient(httpParams);
@@ -332,114 +331,6 @@ public class JFritzUtils {
 			request.setEntity(new UrlEncodedFormEntity(postdata));
 		}
 		return request;
-	}
-	
-	/**
-	 * fetches html data from url using POST requests in one single return
-	 * String
-	 *
-	 * @param affectedBox
-	 * @param urlstr
-	 * @param postdata
-	 * @return html data
-	 * @throws WrongPasswordException
-	 * @throws IOException
-	 */
-	public static Vector<String> deprecatedFetchDataFromURLToVector(String affectedBox,
-			String urlstr, String postdata, boolean retrieveData)
-			throws WrongPasswordException, SocketTimeoutException, IOException {
-		URL url = null;
-		URLConnection urlConn;
-		DataOutputStream printout;
-		Vector<String> data = new Vector<String>();
-		boolean wrong_pass = false;
-		log.debug("Urlstr: " + urlstr);
-		log.debug("Postdata: " + postdata);
-
-		try {
-			url = new URL(urlstr);
-		} catch (MalformedURLException e) {
-			log.error("URL invalid: " + urlstr); //$NON-NLS-1$
-			throw new MalformedURLException("URL invalid: " + urlstr); //$NON-NLS-1$
-		}
-
-		if (url != null) {
-			urlConn = url.openConnection();
-			// 5 Sekunden-Timeout für Verbindungsaufbau
-			urlConn.setConnectTimeout(5000);
-			urlConn.setReadTimeout(READ_TIMEOUT);
-
-			urlConn.setDoInput(true);
-			urlConn.setDoOutput(true);
-			urlConn.setUseCaches(false);
-			// Sending postdata
-			if (postdata != null) {
-				urlConn.setRequestProperty("Content-Type", //$NON-NLS-1$
-						"application/x-www-form-urlencoded"); //$NON-NLS-1$
-				try {
-					printout = new DataOutputStream(urlConn.getOutputStream());
-					printout.writeBytes(postdata);
-					printout.flush();
-					printout.close();
-				} catch (SocketTimeoutException ste) {
-					log.error("Could not fetch data from url: "
-							+ ste.toString());
-					throw ste;
-				} catch (NoRouteToHostException nrthe) {
-					log.error("No route to host exception: "
-							+ nrthe.toString());
-					throw nrthe;
-				}
-			}
-
-			BufferedReader d;
-
-			try {
-				// Get response data
-				d = new BufferedReader(new InputStreamReader(urlConn
-						.getInputStream(), "UTF8"));
-				String str;
-				while (null != ((str = HTMLUtil.stripEntities(d.readLine())))) {
-					// Password seems to be wrong
-					if ((str.indexOf("Das angegebene Kennwort ist ungültig") >= 0) //$NON-NLS-1$
-							|| (str.indexOf("Password not valid") >= 0)
-							|| (str.indexOf("<!--loginPage-->") >= 0)
-							|| (str.indexOf("FRITZ!Box Anmeldung") >= 0)) {
-						log.debug("Wrong password detected: " + str);
-						wrong_pass = true;
-					}
-					if (retrieveData) {
-						data.add(str);
-					}
-				}
-				d.close();
-			} catch (IOException e1) {
-				throw new IOException("Network unavailable"); //$NON-NLS-1$
-			}
-
-			if (wrong_pass) {
-				int wait = 3;
-				Pattern waitSeconds = Pattern
-						.compile(PATTERN_WAIT_FOR_X_SECONDS);
-				for (int i = 0; i < data.size(); i++) {
-					Matcher m = waitSeconds.matcher(data.get(i));
-					if (m.find()) {
-						log.debug("Waiting string: " + data.get(i));
-						try {
-							wait = Integer.parseInt(m.group(1));
-							break;
-						} catch (Exception e) {
-							log.error(e.toString());
-							wait = 4;
-						}
-					}
-				}
-
-				throw new WrongPasswordException(affectedBox,
-						"Password invalid", wait + 2); //$NON-NLS-1$
-			}
-		}
-		return data;
 	}
 
 	/**

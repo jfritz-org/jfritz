@@ -15,6 +15,7 @@ import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.box.fritzbox.helper.FritzGetWithRetry;
 import de.moonflower.jfritz.box.fritzboxnew.HttpHelper;
 import de.moonflower.jfritz.exceptions.FeatureNotSupportedByFirmware;
+import de.moonflower.jfritz.exceptions.RedirectToLoginLuaException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.IProgressListener;
@@ -41,12 +42,15 @@ public class FritzBoxCallList_Actual extends FritzBoxCallList_Pre_05_28 {
 
 		String response;
 		try {
-			response = JFritzUtils.postDataToUrlAndGetStringResponse(fritzBox.getName(), requestUrl, postdata, true, true);
+			response = JFritzUtils.postDataToUrlAndGetStringResponse(fritzBox, requestUrl, postdata, true, true);
 			parseResponse(response, progressListener);
 		} catch (WrongPasswordException e) {
 			e.printStackTrace();
 			fritzBox.setBoxDisconnected();
 		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			fritzBox.setBoxDisconnected();
+		} catch (RedirectToLoginLuaException e) {
 			e.printStackTrace();
 			fritzBox.setBoxDisconnected();
 		}

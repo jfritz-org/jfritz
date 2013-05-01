@@ -11,6 +11,7 @@ import org.apache.http.NameValuePair;
 
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
+import de.moonflower.jfritz.exceptions.RedirectToLoginLuaException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
@@ -58,7 +59,7 @@ public class FritzGetWithRetry {
 						Debug.error("Encoding not supported! " + e.toString());
 					}
 				}
-				result = JFritzUtils.postDataToUrlAndGetVectorResponse(fritzBox.getName(), url, postdata, shouldGetResult, true);
+				result = JFritzUtils.postDataToUrlAndGetVectorResponse(fritzBox, url, postdata, shouldGetResult, true);
 				finished = true;
 			} catch (WrongPasswordException e) {
 				password_wrong = true;
@@ -74,6 +75,9 @@ public class FritzGetWithRetry {
 				password_wrong = true;
 				fritzBox.setBoxDisconnected();
 			} catch (URISyntaxException e) {
+				e.printStackTrace();
+				fritzBox.setBoxDisconnected();
+			} catch (RedirectToLoginLuaException e) {
 				e.printStackTrace();
 				fritzBox.setBoxDisconnected();
 			}

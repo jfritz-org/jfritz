@@ -8,6 +8,8 @@ package de.moonflower.jfritz.box.fritzbox;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.SocketTimeoutException;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -19,8 +21,10 @@ import java.util.regex.Pattern;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
+import de.moonflower.jfritz.box.BoxClass;
 import de.moonflower.jfritz.conf.SupportedFritzBoxProvider;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
+import de.moonflower.jfritz.exceptions.RedirectToLoginLuaException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
@@ -35,6 +39,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  *
  */
 public class FritzBoxFirmware {
+	private final static String INVALID_SESSION_ID = "invalid";
 
 	public final static byte ACCESS_METHOD_POST_0342 = 0;
 
@@ -42,6 +47,8 @@ public class FritzBoxFirmware {
 
 	public final static byte ACCESS_METHOD_PRIOR_0342 = 2;
 
+	private BoxClass box;
+	
 	private byte boxtype;
 
 	private byte majorFirmwareVersion;
@@ -54,9 +61,12 @@ public class FritzBoxFirmware {
 
 	private boolean sessionIdNecessary;
 
-	private String sessionId;
+	private String sessionId = INVALID_SESSION_ID;
+	
+	private String accessMethod = null;
+	private String detectedScript = null;
 
-	private final static String[] POSTDATA_ACCESS_METHOD_1 = {
+	private final static String[] POSTDATA_ACCESS_METHOD = {
 			"../html/de/menus/menu2.html", //$NON-NLS-1$
 			"../html/en/menus/menu2.html", //$NON-NLS-1$
 			"../html/menus/menu2.html" }; //$NON-NLS-1$
@@ -91,13 +101,17 @@ public class FritzBoxFirmware {
 	 * @param sidNecessary
 	 * @param sid
 	 */
-	public FritzBoxFirmware(String boxtype, String majorFirmwareVersion,
+	public FritzBoxFirmware(BoxClass box, String boxtype, String majorFirmwareVersion,
 			String minorFirmwareVersion, String modFirmwareVersion,
+			String accessMethod, String detectedScript,
 			String language, boolean sidNecessary, String sid) {
+		this.box = box;
 		this.boxtype = Byte.parseByte(boxtype);
 		this.majorFirmwareVersion = Byte.parseByte(majorFirmwareVersion);
 		this.minorFirmwareVersion = Byte.parseByte(minorFirmwareVersion);
 		this.modFirmwareVersion = modFirmwareVersion;
+		this.accessMethod = accessMethod;
+		this.detectedScript = detectedScript;
 		this.language = language;
 		this.sessionIdNecessary = sidNecessary;
 		this.sessionId = sid;
@@ -113,7 +127,7 @@ public class FritzBoxFirmware {
 	 * @throws WrongPasswordException
 	 * @throws IOException
 	 */
-	public static FritzBoxFirmware detectFirmwareVersion(String box_name,
+	public static FritzBoxFirmware detectFirmwareVersion(BoxClass box,
 			String box_protocol, String box_address, String box_password, String port)
 			throws WrongPasswordException, IOException,
 			InvalidFirmwareException {
@@ -131,48 +145,27 @@ public class FritzBoxFirmware {
 
 		Vector<String> data = new Vector<String>();
 		String language = "de";
+		String detectedAccessMethod = null;
+		String detectedScript = null;
 
 		boolean detected = false;
 
 		SIDLogin sidLogin = new SIDLogin();
-		List<NameValuePair> postdata = new ArrayList<NameValuePair>();
 		
-		for (int i = 0; i < (POSTDATA_ACCESS_METHOD_1).length && !detected; i++) {
+		for (int i = 0; i < (POSTDATA_ACCESS_METHOD).length && !detected; i++) {
 			for (int j = 0; j < (POSTDATA_LANGUAGES).length && !detected; j++) {
-				for (int k=0; k< (POSTDATA_SCRIPTS).length && !detected; k++) {
+				for (int k=0; k< (POSTDATA_SCRIPTS).length && !detected; k++) {					
 					boolean password_wrong = true;
 					int retry_count = 0;
 					int max_retry_count = 2;
 	
 					while ((password_wrong) && (retry_count < max_retry_count)) {
-						postdata.clear();
-						postdata.add(new BasicNameValuePair("getpage", POSTDATA_ACCESS_METHOD_1[i]));
-						postdata.add(new BasicNameValuePair("var%3Alang", POSTDATA_LANGUAGES[j]));
-						postdata.add(new BasicNameValuePair("var%3Amenu","home"));
-						postdata.add(new BasicNameValuePair("var%3Apagename","home"));
-	
 						Debug.debug("Retry count: " + retry_count);
 						retry_count++;
+
 	
 						try {
-							sidLogin.check(box_name, urlstr, box_password);
-						} catch (WrongPasswordException wpe) {
-							Debug.debug("No SID-Login necessary.");
-						}
-	
-						try {
-							if (sidLogin.isSidLogin()) {
-								postdata.add(new BasicNameValuePair("login%3Acommand%2Fresponse", URLEncoder.encode(sidLogin.getResponse(), "ISO-8859-1")));
-								sidLogin.login(box_name, urlstr, postdata);
-								postdata.clear();
-								postdata.add(new BasicNameValuePair("getpage", POSTDATA_ACCESS_METHOD_1[i]));
-								postdata.add(new BasicNameValuePair("var%3Alang", POSTDATA_LANGUAGES[j]));
-								postdata.add(new BasicNameValuePair("sid", sidLogin.getSessionId()));
-								data = JFritzUtils.postDataToUrlAndGetVectorResponse(box_name, urlstr + POSTDATA_SCRIPTS[k], postdata, true, true);
-							} else {
-								postdata.add(new BasicNameValuePair("login%3Acommand%2Fpassword", URLEncoder.encode(box_password, "ISO-8859-1")));
-								data = JFritzUtils.postDataToUrlAndGetVectorResponse(box_name, urlstr + POSTDATA_SCRIPTS[k], postdata, true, true);
-							}
+							data = login(box, urlstr, box_password, POSTDATA_ACCESS_METHOD[i], POSTDATA_LANGUAGES[j], POSTDATA_SCRIPTS[k], sidLogin);
 							password_wrong = false;
 						} catch (WrongPasswordException wpe) {
 							password_wrong = true;
@@ -185,9 +178,6 @@ public class FritzBoxFirmware {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-						} catch (URISyntaxException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
 						}
 					}
 	
@@ -218,6 +208,8 @@ public class FritzBoxFirmware {
 					for (int l = 0; l < data.size(); l++) {
 						Matcher m = detectDE.matcher(data.get(l));
 						if (m.find()) {
+							detectedAccessMethod = POSTDATA_ACCESS_METHOD[i];
+							detectedScript = POSTDATA_SCRIPTS[k];
 							language = "de";
 							detected = true;
 							break;
@@ -226,6 +218,8 @@ public class FritzBoxFirmware {
 						if (!detected) {
 							m = detectEN.matcher(data.get(l));
 							if (m.find()) {
+								detectedAccessMethod = POSTDATA_ACCESS_METHOD[i];
+								detectedScript = POSTDATA_SCRIPTS[k];
 								language = "en";
 								detected = true;
 								break;
@@ -293,9 +287,10 @@ public class FritzBoxFirmware {
 				long endTimestamp = JFritzUtils.getTimestamp();
 				Debug.debug("Used time to detect Firmware: "
 						+ (endTimestamp - startTimestamp) + "ms");
-				return new FritzBoxFirmware(boxtypeString,
+				return new FritzBoxFirmware(box, boxtypeString,
 						majorFirmwareVersion, minorFirmwareVersion,
-						modFirmwareVersion, language, sidLogin.isSidLogin(),
+						modFirmwareVersion, detectedAccessMethod, detectedScript, 
+						language, sidLogin.isSidLogin(),
 						sidLogin.getSessionId());
 			}
 		}
@@ -304,6 +299,54 @@ public class FritzBoxFirmware {
 		throw new InvalidFirmwareException();
 	}
 
+	private static Vector<String> login(BoxClass box, String urlstr, String password, String accessMethod, String language, String loginScript, SIDLogin sidLogin) throws WrongPasswordException {
+		List<NameValuePair> postdata = new ArrayList<NameValuePair>();
+		postdata.add(new BasicNameValuePair("getpage", accessMethod));
+		postdata.add(new BasicNameValuePair("var%3Alang", language));
+		postdata.add(new BasicNameValuePair("var%3Amenu","home"));
+		postdata.add(new BasicNameValuePair("var%3Apagename","home"));
+
+		try {
+			sidLogin.check(box, urlstr, password);
+		} catch (WrongPasswordException wpe) {
+			Debug.debug("No SID-Login necessary.");
+		} catch (RedirectToLoginLuaException e) {
+			e.printStackTrace();
+			Debug.debug("Detected redirect to login lua");
+		} catch (IOException e) {
+			e.printStackTrace();
+			Debug.debug("Detected IO exception");
+		}
+
+		
+		Vector<String> result = new Vector<String>();
+		try {
+			if (sidLogin.isSidLogin()) {
+				postdata.add(new BasicNameValuePair("login%3Acommand%2Fresponse", URLEncoder.encode(sidLogin.getResponse(), "ISO-8859-1")));
+				sidLogin.login(box, urlstr, postdata);
+				postdata.clear();
+				postdata.add(new BasicNameValuePair("getpage", accessMethod));
+				postdata.add(new BasicNameValuePair("var%3Alang", language));
+				postdata.add(new BasicNameValuePair("sid", sidLogin.getSessionId()));
+				result = JFritzUtils.postDataToUrlAndGetVectorResponse(box, urlstr + loginScript, postdata, true, true);
+			} else {
+				postdata.add(new BasicNameValuePair("login%3Acommand%2Fpassword", URLEncoder.encode(password, "ISO-8859-1")));
+				result = JFritzUtils.postDataToUrlAndGetVectorResponse(box, urlstr + loginScript, postdata, true, true);
+			}
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (SocketTimeoutException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (RedirectToLoginLuaException e) {
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
 	/**
 	 * @return Returns the boxtype.
 	 */
@@ -369,7 +412,27 @@ public class FritzBoxFirmware {
 	}
 
 	public final String getSessionId() {
+		if (!isSessionIdValid()) {
+			final String urlstr = box.getProtocol() + "://" + box.getAddress() + ":" + box.getPort() + "/"; //$NON-NLS-1$, //$NON-NLS-2$
+			SIDLogin sidLogin = new SIDLogin();
+			Vector<String> response;
+			try {
+				response = login(box, urlstr, box.getPassword(), accessMethod, language, detectedScript, sidLogin);
+				sidLogin.getSidFromResponse(response);
+				sessionId = sidLogin.getSessionId();
+			} catch (WrongPasswordException e) {
+				sessionId = INVALID_SESSION_ID;
+			}
+		}
 		return sessionId;
+	}
+	
+	public final boolean isSessionIdValid() {
+		return !sessionId.equals(INVALID_SESSION_ID);
+	}
+	
+	public final void invalidateSessionId() {
+		sessionId = INVALID_SESSION_ID;
 	}
 
 	public final boolean isLowerThan(final int major, final int minor) {

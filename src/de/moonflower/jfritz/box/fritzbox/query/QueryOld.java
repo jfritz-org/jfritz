@@ -59,7 +59,7 @@ public class QueryOld implements IQuery {
 					postdata.clear();
 					postdata = generatePostData(queries);
 				}
-				response = JFritzUtils.postDataToUrlAndGetVectorResponse(fritzBox.getName(), urlstr, postdata, true, true);
+				response = JFritzUtils.postDataToUrlAndGetVectorResponse(fritzBox, urlstr, postdata, true, true);
 				finished = true;
 			} catch (WrongPasswordException e) {
 				password_wrong = true;
