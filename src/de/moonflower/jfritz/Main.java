@@ -491,6 +491,7 @@ public class Main  {
 		}
 
 		if (result == 0) {
+			parseMultipleInstanceCheckArgument(args);			
 			if (!main.checkInstanceControl()) {
 				result = -1;
 				splash.dispose();
@@ -621,6 +622,24 @@ public class Main  {
 		return output;
 	}
 
+	private void parseMultipleInstanceCheckArgument(String[] args) {
+		Vector<CLIOption> foundOptions = options.parseOptions(args);
+		Enumeration<CLIOption> en = foundOptions.elements();
+		while (en.hasMoreElements()) {
+			CLIOption option = (CLIOption) en.nextElement();
+
+			switch (option.getShortOption()) {
+			case 'w': //$NON-NLS-1$
+				enableInstanceControl = false;
+				System.err.println("Turning off Multiple instance control!"); //$NON-NLS-1$
+				System.err.println("You were warned! Data loss may occur."); //$NON-NLS-1$
+				break;
+			default:
+				break;
+			}
+		}
+	}
+	
 	/**
 	 * Überprüft die weiteren Kommandozeilenparameter
 	 *
@@ -721,11 +740,6 @@ public class Main  {
 				}
 				messages.loadMessages(new Locale(properties
 						.getProperty("locale"))); //$NON-NLS-1$,  //$NON-NLS-2$
-				break;
-			case 'w': //$NON-NLS-1$
-				enableInstanceControl = false;
-				System.err.println("Turning off Multiple instance control!"); //$NON-NLS-1$
-				System.err.println("You were warned! Data loss may occur."); //$NON-NLS-1$
 				break;
 			case 'p': //$NON-NLS-1$
 				String priority = option.getParameter();
@@ -1038,8 +1052,7 @@ public class Main  {
 				logAndStdOut("Shutting down JFritz..."); //$NON-NLS-1$
 				closeOpenConnections();
 				if (exitCode != -1
-						&& exitCode != EXIT_CODE_MULTIPLE_INSTANCE_LOCK
-						&& Main.isInstanceControlEnabled()) {
+						&& exitCode != EXIT_CODE_MULTIPLE_INSTANCE_LOCK) {
 					logAndStdOut("Multiple instance lock: release lock."); //$NON-NLS-1$
 					removeLock();
 				}
