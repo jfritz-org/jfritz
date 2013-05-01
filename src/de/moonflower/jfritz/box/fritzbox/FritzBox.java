@@ -5,9 +5,12 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,6 +18,8 @@ import java.util.regex.Pattern;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -113,12 +118,6 @@ public class FritzBox extends BoxClass {
 	private static String URN_SERVICE_GENERICPORTMAPPING = "urn:schemas-upnp-org:service:WANIPConnection:1#GetGenericPortMappingEntry";
 	private static String URL_SERVICE_FORCETERMINATION = ":49000/upnp/control/WANIPConn1";
 	private static String URN_SERVICE_FORCETERMINATION = "urn:schemas-upnp-org:service:WANIPConnection:1#ForceTermination";
-
-//	private static String POSTDATA_REBOOT = "getpage=..%2Fhtml%2Freboot.html&errorpage=..%2Fhtml%2Fde%2Fmenus%2Fmenu2.html&var%3Apagename=reset&var%3Aerrorpagename=reset&var%3Amenu=system&var%3Apagemaster=&time%3Asettings%2Ftime=1250935088%2C-120&var%3AtabReset=0&logic%3Acommand%2Freboot=..%2Fgateway%2Fcommands%2Fsaveconfig.html";
-	private static String POSTDATA_REBOOT = "getpage=..%2Fhtml%2Freboot.html&var%3Apagename=reset&var%3Amenu=system&var%3Apagemaster=&time%3Asettings%2Ftime=1250935088%2C-120&var%3AtabReset=0&logic%3Acommand%2Freboot=..%2Fgateway%2Fcommands%2Fsaveconfig.html";
-
-	private static String POSTDATA_CALL = "&telcfg:settings/UseClickToDial=1&telcfg:settings/DialPort=$NEBENSTELLE&telcfg:command/Dial=$NUMMER"; //$NON-NLS-1$
-	private static String POSTDATA_HANGUP = "&telcfg:settings/UseClickToDial=1&telcfg:command%2FHangup"; //$NON-NLS-1$
 
 	private static int max_retry_count = 2;
 
@@ -224,22 +223,31 @@ public class FritzBox extends BoxClass {
 		}
 	}
 
-	public String appendSidOrPassword(String request) throws UnsupportedEncodingException {
+	public void appendSidOrPassword(List<NameValuePair> postdata) throws UnsupportedEncodingException {
 		if (firmware.getSessionId() != "") {
-			return request + "&sid=" + firmware.getSessionId();
-		}
-		else {
-			return request + "&login%3Acommand%2Fpassword=" + URLEncoder.encode(password, "ISO-8859-1");
+			postdata.add(new BasicNameValuePair("sid", firmware.getSessionId()));
+		} else {
+			postdata.add(new BasicNameValuePair("login%3Acommand%2Fpassword", URLEncoder.encode(password, "ISO-8859-1")));
 		}
 	}
 
-	public String getPostData(String pattern) throws UnsupportedEncodingException {
-		pattern = pattern.replaceAll("\\$LANG", firmware.getLanguage());
-		return appendSidOrPassword(pattern);
+	public String getSidOrPassword() throws UnsupportedEncodingException {
+		String result = "";
+		if (firmware.getSessionId() != "") {
+			result = "&sid=" + firmware.getSessionId();
+		} else {
+			result = "&login%3Acommand%2Fpassword="+URLEncoder.encode(password, "ISO-8859-1");
+		}
+		return result;
 	}
 
-	public String getPostDataWithAccessMethod(String pattern) throws UnsupportedEncodingException {
-		return firmware.getAccessMethod() + getPostData(pattern);
+	public void getPostData(List<NameValuePair> postdata) throws UnsupportedEncodingException {
+		appendSidOrPassword(postdata);
+	}
+
+	public void appendAccessMethod(List<NameValuePair> postdata) throws UnsupportedEncodingException {
+		firmware.appendAccessMethodToPostdata(postdata);
+		appendSidOrPassword(postdata);
 	}
 
 	public final Vector<String> getQuery(Vector<String> queries)
@@ -1101,7 +1109,7 @@ public class FritzBox extends BoxClass {
 			final String urlstr = protocol+"://" + address +":49000/igddesc.xml"; //$NON-NLS-1$, //$NON-NLS-2$
 
 			try {
-				response = JFritzUtils.fetchDataFromURLToVector(name, urlstr, null, true);
+				response = JFritzUtils.getDataFromUrlToVector(name, urlstr, true, true);
 			} catch (WrongPasswordException e) {
 				Debug.debug("Wrong password, maybe SID is invalid.");
 				setBoxDisconnected();
@@ -1148,19 +1156,16 @@ public class FritzBox extends BoxClass {
 	/**************************************************************************************
 	 * Implementation of DoCall-Interface
 	 **************************************************************************************/
-	private String generateDoCallPostData(String currentNumber, Port port) {
-		String postdata = POSTDATA_CALL;
-
-		postdata = postdata.replaceAll("\\$NUMMER", currentNumber); //$NON-NLS-1$
-		postdata = postdata.replaceAll("\\$NEBENSTELLE", port.getDialPort()); //$NON-NLS-1$
+	private void generateDoCallPostData(List<NameValuePair> postdata, String currentNumber, Port port) {
+		postdata.add(new BasicNameValuePair("telcfg:settings/UseClickToDial", "1"));
+		postdata.add(new BasicNameValuePair("telcfg:settings/DialPort", port.getDialPort()));
+		postdata.add(new BasicNameValuePair("telcfg:command/Dial", currentNumber));
 
 		try {
-			postdata = this.getPostDataWithAccessMethod(postdata);
+			appendAccessMethod(postdata);
 		} catch (UnsupportedEncodingException e) {
 			Debug.error("Encoding not supported! " + e.toString());
 		}
-
-		return postdata;
 	}
 
 	public void doCall(PhoneNumberOld number, Port port) {
@@ -1168,7 +1173,8 @@ public class FritzBox extends BoxClass {
 		String currentNumber = number.getAreaNumber();
 		currentNumber = currentNumber.replaceAll("\\+", "00"); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		String postdata = generateDoCallPostData(currentNumber, port);
+		List<NameValuePair> postdata = new ArrayList<NameValuePair>();
+		generateDoCallPostData(postdata, currentNumber, port);
 		String urlstr = getWebcmUrl();
 
 		boolean finished = false;
@@ -1184,10 +1190,10 @@ public class FritzBox extends BoxClass {
 					password_wrong = false;
 					Debug.debug("Detecting new firmware, getting new SID");
 					this.detectFirmware();
-					postdata = generateDoCallPostData(currentNumber, port);
+					postdata.clear();
+					generateDoCallPostData(postdata, currentNumber, port);
 				}
-				JFritzUtils.fetchDataFromURLToVector(
-						this.getName(), urlstr, postdata, true);
+				JFritzUtils.postDataToUrlAndGetVectorResponse(this.getName(), urlstr, postdata, false, true);
 				finished = true;
 			} catch (WrongPasswordException e) {
 				password_wrong = true;
@@ -1202,21 +1208,29 @@ public class FritzBox extends BoxClass {
 				setBoxDisconnected();
 			} catch (InvalidFirmwareException e) {
 				password_wrong = true;
+				setBoxDisconnected();
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
 				setBoxDisconnected();
 			}
 		}
 	}
 
-	public void hangup(Port port)
-	{
-		setBoxConnected();
-        String postdata = POSTDATA_HANGUP;
-
+	private void generateHangupPostdata(List<NameValuePair> postdata) {
+		postdata.add(new BasicNameValuePair("telcfg:settings/UseClickToDial", "1"));
+		postdata.add(new BasicNameValuePair("telcfg:command%2FHangup", ""));
 		try {
-			postdata = this.getPostDataWithAccessMethod(postdata);
+			appendAccessMethod(postdata);
 		} catch (UnsupportedEncodingException e) {
 			Debug.error("Encoding not supported! " + e.toString());
 		}
+	}
+	
+	public void hangup(Port port)
+	{
+		setBoxConnected();
+		List<NameValuePair> postdata = new ArrayList<NameValuePair>();
+		generateHangupPostdata(postdata);
 
 		String urlstr = getWebcmUrl();
 
@@ -1233,16 +1247,10 @@ public class FritzBox extends BoxClass {
 					password_wrong = false;
 					Debug.debug("Detecting new firmware, getting new SID");
 					this.detectFirmware();
-			        postdata = POSTDATA_HANGUP;
-
-					try {
-						postdata = this.getPostDataWithAccessMethod(postdata);
-					} catch (UnsupportedEncodingException e) {
-						Debug.error("Encoding not supported! " + e.toString());
-					}
+					postdata.clear();
+					generateHangupPostdata(postdata);
 				}
-				JFritzUtils.fetchDataFromURLToVector(
-						this.getName(), urlstr, postdata, true);
+				JFritzUtils.postDataToUrlAndGetVectorResponse(this.getName(), urlstr, postdata, false, true);
 				finished = true;
 			} catch (WrongPasswordException e) {
 				password_wrong = true;
@@ -1252,11 +1260,13 @@ public class FritzBox extends BoxClass {
 				ste.printStackTrace();
 				setBoxDisconnected();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				setBoxDisconnected();
 			} catch (InvalidFirmwareException e) {
 				password_wrong = true;
+				setBoxDisconnected();
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
 				setBoxDisconnected();
 			}
 		}
@@ -1295,40 +1305,39 @@ public class FritzBox extends BoxClass {
 		}
 	}
 
+	private void generateRebootPostdata(List<NameValuePair> postdata) {
+		postdata.add(new BasicNameValuePair("getpage", "..%2Fhtml%2Freboot.html"));
+		postdata.add(new BasicNameValuePair("var%3Apagename", "reset"));
+		postdata.add(new BasicNameValuePair("var%3Amenu", "system"));
+		postdata.add(new BasicNameValuePair("var%3Apagemaster", ""));
+		postdata.add(new BasicNameValuePair("time%3Asettings%2Ftime", "1250935088%2C-120"));
+		postdata.add(new BasicNameValuePair("var%3AtabReset","0"));
+		postdata.add(new BasicNameValuePair("logic%3Acommand%2Freboot","..%2Fgateway%2Fcommands%2Fsaveconfig.html"));
+		try {
+			appendAccessMethod(postdata);
+		} catch (UnsupportedEncodingException e) {
+			Debug.error("Encoding not supported! " + e.toString());
+		}
+	}
+	
 	public void reboot() throws WrongPasswordException {
 		final String urlstr = getWebcmUrl();
 		boolean password_wrong = true;
 		int retry_count = 0;
 		int max_retry_count = 2;
 
+		List<NameValuePair> postdata = new ArrayList<NameValuePair>();
+		
 		while ((password_wrong) && (retry_count < max_retry_count)) {
-			String postdata = POSTDATA_REBOOT;
+			postdata.clear();
+			generateRebootPostdata(postdata);
+			
 			Debug.debug("Retry count: " + retry_count);
 			retry_count++;
 
-			if (firmware.isSidLogin())
-			{
-				try {
-				postdata = postdata + "&sid=" + URLEncoder.encode(firmware.getSessionId(), "ISO-8859-1");
-				} catch (UnsupportedEncodingException e) {
-					Debug.error("Encoding not supported");
-					e.printStackTrace();
-				}
-			}
-			else
-			{
-				try {
-					postdata = postdata + "&login:command/password=" + URLEncoder.encode(this.password, "ISO-8859-1");
-				} catch (UnsupportedEncodingException e) {
-					Debug.error("Encoding not supported");
-					e.printStackTrace();
-				}
-			}
-
 			Vector<String> data = new Vector<String>(1000);
 			try {
-				data = JFritzUtils.fetchDataFromURLToVector(name,
-						urlstr, postdata, true);
+				data = JFritzUtils.postDataToUrlAndGetVectorResponse(name,urlstr, postdata, true, true);
 				password_wrong = false;
 				for (int i=0; i<data.size(); i++) {
 					Debug.debug(data.get(i));
@@ -1345,11 +1354,14 @@ public class FritzBox extends BoxClass {
 					e.printStackTrace();
 				}
 			} catch (SocketTimeoutException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				setBoxDisconnected();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				setBoxDisconnected();
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+				setBoxDisconnected();
 			}
 		}
 	}

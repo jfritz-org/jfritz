@@ -6,9 +6,12 @@ import java.math.BigInteger;
 import java.net.SocketTimeoutException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.http.NameValuePair;
 
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.utils.Debug;
@@ -71,10 +74,10 @@ public class SIDLogin {
 		}
 	}
 
-	public void login(String boxName, String urlstr, String postdata) throws SocketTimeoutException, WrongPasswordException, IOException {
+	public void login(String boxName, String urlstr, List<NameValuePair> postdata) throws SocketTimeoutException, WrongPasswordException, IOException {
 		String response = "";
 		if (newSidLogin) {
-			response = loginHandler.loginLua(boxName, urlstr, "response=" + this.sidResponse);
+			response = loginHandler.loginLua(boxName, urlstr, this.sidResponse);
 		} else {
 			response = loginHandler.loginXml(boxName, urlstr, postdata);
 		}

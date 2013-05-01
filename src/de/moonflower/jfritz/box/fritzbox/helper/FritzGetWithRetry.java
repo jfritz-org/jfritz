@@ -3,7 +3,11 @@ package de.moonflower.jfritz.box.fritzbox.helper;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.SocketTimeoutException;
+import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Vector;
+
+import org.apache.http.NameValuePair;
 
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
@@ -24,13 +28,11 @@ public class FritzGetWithRetry {
 		this.prependAccessMethod = shouldPrepend;
 	}
 
-	public Vector<String> getToVector(final String url, final String input, boolean shouldGetResult) {
+	public Vector<String> getToVector(final String url, final List<NameValuePair> postdata, boolean shouldGetResult) {
         Vector<String> result = new Vector<String>();
 
-		String postdata = input;
-
 		try {
-			postdata = getPostData(postdata);
+			appendAccessMethodAndAuth(postdata);
 		} catch (UnsupportedEncodingException e) {
 			Debug.error("Encoding not supported! " + e.toString());
 		}
@@ -48,15 +50,15 @@ public class FritzGetWithRetry {
 					password_wrong = false;
 					Debug.debug("Detecting new firmware, getting new SID");
 					fritzBox.detectFirmware();
-			        postdata = input;
 
+					postdata.clear();
 					try {
-						postdata = getPostData(postdata);
+						appendAccessMethodAndAuth(postdata);
 					} catch (UnsupportedEncodingException e) {
 						Debug.error("Encoding not supported! " + e.toString());
 					}
 				}
-				result = JFritzUtils.fetchDataFromURLToVector(fritzBox.getName(), url, postdata, shouldGetResult);
+				result = JFritzUtils.postDataToUrlAndGetVectorResponse(fritzBox.getName(), url, postdata, shouldGetResult, true);
 				finished = true;
 			} catch (WrongPasswordException e) {
 				password_wrong = true;
@@ -66,22 +68,24 @@ public class FritzGetWithRetry {
 				ste.printStackTrace();
 				fritzBox.setBoxDisconnected();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				fritzBox.setBoxDisconnected();
 			} catch (InvalidFirmwareException e) {
 				password_wrong = true;
+				fritzBox.setBoxDisconnected();
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
 				fritzBox.setBoxDisconnected();
 			}
 		}
 		return result;
 	}
 
-	private String getPostData(String pattern) throws UnsupportedEncodingException {
+	private void appendAccessMethodAndAuth(List<NameValuePair> postdata) throws UnsupportedEncodingException {
 		if (prependAccessMethod) {
-			return fritzBox.getPostDataWithAccessMethod(pattern);
+			fritzBox.appendAccessMethod(postdata);
 		} else {
-			return fritzBox.getPostData(pattern);
+			fritzBox.appendSidOrPassword(postdata);
 		}
 	}
 }

@@ -3,10 +3,14 @@ package de.moonflower.jfritz.box.fritzbox.query;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.SocketTimeoutException;
-import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
@@ -17,7 +21,6 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class QueryOld implements IQuery {
 
-	private static final String POSTDATA_QUERY = "getpage=../html/query.txt";
 	private static final String PARSE_LOGIN_REASON = "var theReason = parseInt\\(\"([^\"]*)\",10\\)";
 
 	protected FritzBox fritzBox;
@@ -36,7 +39,7 @@ public class QueryOld implements IQuery {
 			return response;
 		}
 
-		String postdata = generatePostData(queries);
+		List<NameValuePair> postdata = generatePostData(queries);
 
 		final String urlstr = fritzBox.getWebcmUrl();
 
@@ -53,9 +56,10 @@ public class QueryOld implements IQuery {
 					password_wrong = false;
 					Debug.debug("Detecting new firmware, getting new SID");
 					fritzBox.detectFirmware();
+					postdata.clear();
 					postdata = generatePostData(queries);
 				}
-				response = JFritzUtils.fetchDataFromURLToVector(fritzBox.getName(), urlstr, postdata, true);
+				response = JFritzUtils.postDataToUrlAndGetVectorResponse(fritzBox.getName(), urlstr, postdata, true, true);
 				finished = true;
 			} catch (WrongPasswordException e) {
 				password_wrong = true;
@@ -128,36 +132,28 @@ public class QueryOld implements IQuery {
 		return response;
 	}
 
-	private final String generatePostData(Vector<String> queries)
+	private final List<NameValuePair> generatePostData(Vector<String> queries)
 	{
+		List<NameValuePair> postdata = new ArrayList<NameValuePair>();
+		postdata.add(new BasicNameValuePair("getpage","../html/query.txt"));
+		
 		if (fritzBox == null || fritzBox.getFirmware() == null) {
 			// TODO log error
-			return POSTDATA_QUERY + "&var:cnt=0";
+			postdata.add(new BasicNameValuePair("var:cnt", "0"));
+			return postdata;
 		}
 
-		String postdata = POSTDATA_QUERY + "&var:cnt=" + queries.size();
+		postdata.add(new BasicNameValuePair("var:cnt", Integer.toString(queries.size())));
 		for (int i=0; i<queries.size(); i++)
 		{
-			postdata = postdata + "&var:n" + i + "="+queries.get(i);
+			postdata.add(new BasicNameValuePair("var:n" + i, queries.get(i)));
 		}
 
-		if (fritzBox.getFirmware().isSidLogin())
-		{
-			try {
-			postdata = postdata + "&sid=" + URLEncoder.encode(fritzBox.getFirmware().getSessionId(), "ISO-8859-1");
-			} catch (UnsupportedEncodingException e) {
-				Debug.error("Encoding not supported");
-				e.printStackTrace();
-			}
-		}
-		else
-		{
-			try {
-				postdata = postdata + "&login:command/password=" + URLEncoder.encode(fritzBox.getPassword(), "ISO-8859-1");
-			} catch (UnsupportedEncodingException e) {
-				Debug.error("Encoding not supported");
-				e.printStackTrace();
-			}
+		try {
+			fritzBox.appendSidOrPassword(postdata);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			fritzBox.setBoxDisconnected();
 		}
 
 		return postdata;

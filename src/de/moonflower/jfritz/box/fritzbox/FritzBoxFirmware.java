@@ -8,10 +8,16 @@ package de.moonflower.jfritz.box.fritzbox;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 
 import de.moonflower.jfritz.conf.SupportedFritzBoxProvider;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
@@ -50,15 +56,20 @@ public class FritzBoxFirmware {
 
 	private String sessionId;
 
-	private final static String[] POSTDATA_ACCESS_METHOD = {
-			"getpage=../html/de/menus/menu2.html", //$NON-NLS-1$
-			"getpage=../html/en/menus/menu2.html", //$NON-NLS-1$
-			"getpage=../html/menus/menu2.html" }; //$NON-NLS-1$
+	private final static String[] POSTDATA_ACCESS_METHOD_1 = {
+			"../html/de/menus/menu2.html", //$NON-NLS-1$
+			"../html/en/menus/menu2.html", //$NON-NLS-1$
+			"../html/menus/menu2.html" }; //$NON-NLS-1$
 
-	private final static String[] POSTDATA_DETECT_FIRMWARE = {
-			"&var%3Alang=de&var%3Amenu=home&var%3Apagename=home", //$NON-NLS-1$
-			"&var%3Alang=en&var%3Amenu=home&var%3Apagename=home" }; //$NON-NLS-1$
+	private final static String[] POSTDATA_LANGUAGES = {
+			"de", //$NON-NLS-1$
+			"en" }; //$NON-NLS-1$
 
+	private final static String[] POSTDATA_SCRIPTS = {
+		"home/home.lua",
+		"cgi-bin/webcm"
+	};
+	
 	private final static String PATTERN_DETECT_FIRMWARE = "version=(\\d\\d\\d*).(\\d\\d).(\\d\\d\\d*)"; //$NON-NLS-1$
 	private final static String PATTERN_DETECT_FIRMWARE_OLD = "[Firmware|Labor][-| ][V|v]ersion[^\\d]*(\\d\\d\\d*).(\\d\\d).(\\d\\d\\d*)([^<]*)"; //$NON-NLS-1$
 
@@ -124,100 +135,112 @@ public class FritzBoxFirmware {
 		boolean detected = false;
 
 		SIDLogin sidLogin = new SIDLogin();
-		for (int i = 0; i < (POSTDATA_ACCESS_METHOD).length && !detected; i++) {
-			for (int j = 0; j < (POSTDATA_DETECT_FIRMWARE).length && !detected; j++) {
-				boolean password_wrong = true;
-				int retry_count = 0;
-				int max_retry_count = 2;
-
-				while ((password_wrong) && (retry_count < max_retry_count)) {
-					String postdata = POSTDATA_ACCESS_METHOD[i]
-							+ POSTDATA_DETECT_FIRMWARE[j];
-					Debug.debug("Retry count: " + retry_count);
-					retry_count++;
-
-					try {
-						sidLogin.check(box_name, urlstr, box_password);
-					} catch (WrongPasswordException wpe) {
-						Debug.debug("No SID-Login necessary.");
-					}
-
-					try {
-						if (sidLogin.isSidLogin()) {
-							postdata = postdata + "&login%3Acommand%2Fresponse=";
-							postdata = postdata + URLEncoder.encode(sidLogin.getResponse(), "ISO-8859-1");
-							sidLogin.login(box_name, urlstr, postdata);
-							postdata = POSTDATA_ACCESS_METHOD[i] + POSTDATA_DETECT_FIRMWARE[j];
-							data = JFritzUtils.fetchDataFromURLToVector(box_name, urlstr + "cgi-bin/webcm", postdata + "&sid="+sidLogin.getSessionId(), true);
-						} else {
-							postdata = postdata + "&login%3Acommand%2Fpassword=";
-							postdata = postdata + URLEncoder.encode(box_password, "ISO-8859-1");
-							data = JFritzUtils.fetchDataFromURLToVector(box_name, urlstr + "cgi-bin/webcm", postdata, true);
-						}
-						password_wrong = false;
-					} catch (WrongPasswordException wpe) {
-						password_wrong = true;
-						if (retry_count == max_retry_count) {
-							throw wpe;
-						}
+		List<NameValuePair> postdata = new ArrayList<NameValuePair>();
+		
+		for (int i = 0; i < (POSTDATA_ACCESS_METHOD_1).length && !detected; i++) {
+			for (int j = 0; j < (POSTDATA_LANGUAGES).length && !detected; j++) {
+				for (int k=0; k< (POSTDATA_SCRIPTS).length && !detected; k++) {
+					boolean password_wrong = true;
+					int retry_count = 0;
+					int max_retry_count = 2;
+	
+					while ((password_wrong) && (retry_count < max_retry_count)) {
+						postdata.clear();
+						postdata.add(new BasicNameValuePair("getpage", POSTDATA_ACCESS_METHOD_1[i]));
+						postdata.add(new BasicNameValuePair("var%3Alang", POSTDATA_LANGUAGES[j]));
+						postdata.add(new BasicNameValuePair("var%3Amenu","home"));
+						postdata.add(new BasicNameValuePair("var%3Apagename","home"));
+	
+						Debug.debug("Retry count: " + retry_count);
+						retry_count++;
+	
 						try {
-							Thread.sleep(wpe.getRetryTime() * 1000);
-						} catch (InterruptedException e) {
+							sidLogin.check(box_name, urlstr, box_password);
+						} catch (WrongPasswordException wpe) {
+							Debug.debug("No SID-Login necessary.");
+						}
+	
+						try {
+							if (sidLogin.isSidLogin()) {
+								postdata.add(new BasicNameValuePair("login%3Acommand%2Fresponse", URLEncoder.encode(sidLogin.getResponse(), "ISO-8859-1")));
+								sidLogin.login(box_name, urlstr, postdata);
+								postdata.clear();
+								postdata.add(new BasicNameValuePair("getpage", POSTDATA_ACCESS_METHOD_1[i]));
+								postdata.add(new BasicNameValuePair("var%3Alang", POSTDATA_LANGUAGES[j]));
+								postdata.add(new BasicNameValuePair("sid", sidLogin.getSessionId()));
+								data = JFritzUtils.postDataToUrlAndGetVectorResponse(box_name, urlstr + POSTDATA_SCRIPTS[k], postdata, true, true);
+							} else {
+								postdata.add(new BasicNameValuePair("login%3Acommand%2Fpassword", URLEncoder.encode(box_password, "ISO-8859-1")));
+								data = JFritzUtils.postDataToUrlAndGetVectorResponse(box_name, urlstr + POSTDATA_SCRIPTS[k], postdata, true, true);
+							}
+							password_wrong = false;
+						} catch (WrongPasswordException wpe) {
+							password_wrong = true;
+							if (retry_count == max_retry_count) {
+								throw wpe;
+							}
+							try {
+								Thread.sleep(wpe.getRetryTime() * 1000);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						} catch (URISyntaxException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
-				}
-
-				// read firmware informations from file
-				if (false) {
-					String filename = "c:\\seitenquelltext_fb_6360.txt"; //$NON-NLS-1$
-					Debug.debug("Debug mode: Loading " + filename); //$NON-NLS-1$
-					try {
-						data.clear(); //$NON-NLS-1$
-						String thisLine;
-						BufferedReader in = new BufferedReader(new FileReader(
-								filename));
-						while ((thisLine = in.readLine()) != null) {
-							data.add(thisLine);
+	
+					// read firmware informations from file
+					if (false) {
+						String filename = "c:\\seitenquelltext_fb_6360.txt"; //$NON-NLS-1$
+						Debug.debug("Debug mode: Loading " + filename); //$NON-NLS-1$
+						try {
+							data.clear(); //$NON-NLS-1$
+							String thisLine;
+							BufferedReader in = new BufferedReader(new FileReader(
+									filename));
+							while ((thisLine = in.readLine()) != null) {
+								data.add(thisLine);
+							}
+							in.close();
+						} catch (IOException e) {
+							Debug.error("File not found: " + filename); //$NON-NLS-1$
 						}
-						in.close();
-					} catch (IOException e) {
-						Debug.error("File not found: " + filename); //$NON-NLS-1$
 					}
-				}
-
-				// Debug.msg(data);
-
-				Pattern detectDE = Pattern.compile(PATTERN_DETECT_LANGUAGE_DE);
-				Pattern detectEN = Pattern.compile(PATTERN_DETECT_LANGUAGE_EN);
-
-				long startParse = JFritzUtils.getTimestamp();
-				for (int k = 0; k < data.size(); k++) {
-					Matcher m = detectDE.matcher(data.get(k));
-					if (m.find()) {
-						language = "de";
-						detected = true;
-						break;
-					}
-
-					if (!detected) {
-						m = detectEN.matcher(data.get(k));
+	
+					// Debug.msg(data);
+	
+					Pattern detectDE = Pattern.compile(PATTERN_DETECT_LANGUAGE_DE);
+					Pattern detectEN = Pattern.compile(PATTERN_DETECT_LANGUAGE_EN);
+	
+					long startParse = JFritzUtils.getTimestamp();
+					for (int l = 0; l < data.size(); l++) {
+						Matcher m = detectDE.matcher(data.get(l));
 						if (m.find()) {
-							language = "en";
+							language = "de";
 							detected = true;
 							break;
 						}
+	
+						if (!detected) {
+							m = detectEN.matcher(data.get(l));
+							if (m.find()) {
+								language = "en";
+								detected = true;
+								break;
+							}
+						}
 					}
+					long endParse = JFritzUtils.getTimestamp();
+					Debug.debug("Used time to parse response: "
+							+ (endParse - startParse) + "ms");
 				}
-				long endParse = JFritzUtils.getTimestamp();
-				Debug.debug("Used time to parse response: "
-						+ (endParse - startParse) + "ms");
+				if (detected)
+					break;
 			}
-			if (detected)
-				break;
 		}
-
+		
 		if (!detected)
 			throw new InvalidFirmwareException();
 
@@ -288,20 +311,14 @@ public class FritzBoxFirmware {
 		return boxtype;
 	}
 
-	/**
-	 * @return Returns the access method string.
-	 *
-	 */
-	public final String getAccessMethod() {
-		int accessMethod;
-		if (language.equals("en"))
-			accessMethod = ACCESS_METHOD_ENGLISH;
-		else if (majorFirmwareVersion == 3 && minorFirmwareVersion < 42)
-			accessMethod = ACCESS_METHOD_PRIOR_0342;
-		else
-			accessMethod = ACCESS_METHOD_POST_0342;
-
-		return POSTDATA_ACCESS_METHOD[accessMethod];
+	public final void appendAccessMethodToPostdata(List<NameValuePair> postdata) {
+		if (language.equals("en")) {
+			postdata.add(new BasicNameValuePair("getpage", "../html/en/menus/menu2.html"));
+		} else if (majorFirmwareVersion == 3 && minorFirmwareVersion < 42) {
+			postdata.add(new BasicNameValuePair("getpage", "../html/menus/menu2.html"));
+		} else {
+			postdata.add(new BasicNameValuePair("getpage", "../html/de/menus/menu2.html"));
+		}
 	}
 
 	/**

@@ -2,21 +2,27 @@ package de.moonflower.jfritz.box.fritzbox.callerlist;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 
 import de.moonflower.jfritz.box.BoxCallBackListener;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.box.fritzbox.helper.FritzGetWithRetry;
 import de.moonflower.jfritz.box.fritzboxnew.HttpHelper;
 import de.moonflower.jfritz.exceptions.FeatureNotSupportedByFirmware;
+import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.IProgressListener;
-import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class FritzBoxCallList_Actual extends FritzBoxCallList_Pre_05_28 {
 
 	private static String GET_CSV_LIST = "?csv=";
-	private static String POSTDATA_CLEAR_JOURNAL = "&telcfg:settings/ClearJournal&telcfg:settings/UseJournal=1";
 	private FritzGetWithRetry fritzGet;
 
 	protected HttpHelper httpHelper = HttpHelper.getInstance();
@@ -30,10 +36,20 @@ public class FritzBoxCallList_Actual extends FritzBoxCallList_Pre_05_28 {
 	@Override
 	public Vector<Call> getCallerList(Vector<IProgressListener> progressListener) throws IOException, MalformedURLException, FeatureNotSupportedByFirmware {
 		String requestUrl = getFonCallsListLuaUrl() + GET_CSV_LIST;
-		requestUrl = fritzBox.appendSidOrPassword(requestUrl);
+		List<NameValuePair> postdata = new ArrayList<NameValuePair>();
+		fritzBox.appendSidOrPassword(postdata);
 
-		String response = httpHelper.getHttpContentAsString(requestUrl);
-		parseResponse(response, progressListener);
+		String response;
+		try {
+			response = JFritzUtils.postDataToUrlAndGetStringResponse(fritzBox.getName(), requestUrl, postdata, true, true);
+			parseResponse(response, progressListener);
+		} catch (WrongPasswordException e) {
+			e.printStackTrace();
+			fritzBox.setBoxDisconnected();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			fritzBox.setBoxDisconnected();
+		}
 
 		return calls;
 	}
@@ -63,6 +79,10 @@ public class FritzBoxCallList_Actual extends FritzBoxCallList_Pre_05_28 {
 	@Override
 	public void clearCallerList() {
 		fritzGet.setPrependAccessMethod(true);
-		fritzGet.getToVector(fritzBox.getWebcmUrl(), POSTDATA_CLEAR_JOURNAL, false);
+		List<NameValuePair> postdata = new ArrayList<NameValuePair>();
+		postdata.add(new BasicNameValuePair("telcfg:settings/ClearJournal",""));
+		postdata.add(new BasicNameValuePair("telcfg:settings/UseJournal","1"));
+		
+		fritzGet.getToVector(fritzBox.getWebcmUrl(), postdata, false);
 	}
 }
