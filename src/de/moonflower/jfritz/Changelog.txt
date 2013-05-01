@@ -22,7 +22,8 @@ TODO tel.search.ch überprüfen und reparieren
 
 JFritz 0.7.5:
 - Support FritzOS 05.55
-
+- Bugfix 0000372: Anrufliste kann mit v0.7.4.1.32 nicht mehr gelöscht werden
+	
 JFritz 0.7.4.1.32:
 - Fehlende Bibliothek hinzugefügt
 

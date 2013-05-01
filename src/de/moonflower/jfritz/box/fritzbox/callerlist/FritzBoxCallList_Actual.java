@@ -80,9 +80,11 @@ public class FritzBoxCallList_Actual extends FritzBoxCallList_Pre_05_28 {
 	public void clearCallerList() {
 		fritzGet.setPrependAccessMethod(true);
 		List<NameValuePair> postdata = new ArrayList<NameValuePair>();
-		postdata.add(new BasicNameValuePair("telcfg:settings/ClearJournal",""));
-		postdata.add(new BasicNameValuePair("telcfg:settings/UseJournal","1"));
+				
+		postdata.add(new BasicNameValuePair("usejournal","on"));
+		postdata.add(new BasicNameValuePair("clear",""));
+		postdata.add(new BasicNameValuePair("callstab","all"));
 		
-		fritzGet.getToVector(fritzBox.getWebcmUrl(), postdata, false);
+		fritzGet.getToVector(getFonCallsListLuaUrl(), postdata, false);
 	}
 }
