@@ -360,8 +360,13 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 		String args;
 
 		public ExternalProgram(final String prog, final String args) {
-			this.prog = prog;
-			this.args = args;
+			if (prog.endsWith(".bat") || prog.endsWith(".bat\"")) {
+				this.prog = "cmd.exe";
+				this.args = "\"/C\" " + prog + " " + args;
+			} else {
+				this.prog = prog;
+				this.args = args;
+			}
 			this.setName("ExternalProgramThread|" + prog);
 		}
 
