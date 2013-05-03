@@ -8,5 +8,5 @@ public class ProgramConstants {
 
 	public final static String REVISION = "1";
 
-	public final static String BUILD_DATE = "03-05-2013 10:31:00";
+	public final static String BUILD_DATE = "03-05-2013 11:19:03";
 }

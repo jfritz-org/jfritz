@@ -33,10 +33,10 @@ public class UpdateProgramConstants {
 			String currentLine = inFile.readLine();
 
 			while (currentLine != null) {
-				if (replacePlaceholders && currentLine.contains("String REVISION =")) {
-					outFile.write("	public final static String REVISION = \"" + revision + "\";");
-					outFile.newLine();
-				} else if (replacePlaceholders && currentLine.contains("String BUILD_DATE =")) {
+//				if (replacePlaceholders && currentLine.contains("String REVISION =")) {
+//					outFile.write("	public final static String REVISION = \"" + revision + "\";");
+//					outFile.newLine();
+				if (replacePlaceholders && currentLine.contains("String BUILD_DATE =")) {
 					outFile.write("	public final static String BUILD_DATE = \"" + date + "\";");
 					outFile.newLine();
 				} else {
