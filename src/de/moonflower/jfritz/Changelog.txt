@@ -20,7 +20,7 @@ TODO tel.search.ch überprüfen und reparieren
 - TODO: Sounds trennen und individualisierbar gestalten
 - TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
 
-JFritz 0.7.5:
+JFritz 0.7.4.2:
 - Support FritzOS 05.55
 - Bugfix 0000372: Anrufliste kann mit v0.7.4.1.32 nicht mehr gelöscht werden
 - Bugfix 0000390: Erkennung der FritzBox anhand MAC scheint defekt zu sein
