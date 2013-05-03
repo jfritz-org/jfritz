@@ -35,7 +35,8 @@
 	<property name="binaries-archive" value="${archive}/binaries" />
 	<property name="release" value="${ant}/release" />
 	<property name="jfritzdir" value="D:\Programme\JFritz" />
-
+	<property name="svnversion" value="" />
+	
 	<!-- include all jars in lib to classpath -->
 	<path id="build.classpath">
 		<fileset dir="${lib}">
@@ -53,14 +54,15 @@
 	</path>
 
 	<target name="getSvnRevision">
+	    <!-- not using SVN anymore, using GIT -->
 		<!-- linux: <exec executable="svnversion" outputproperty="svnversion"/ -->
 		<!-- windows: exec executable="../subversion/bin/svnversion.exe" outputproperty="svnversion"/ -->
-		<exec executable="../subversion/bin/svnversion.exe" outputproperty="svnversion"/>
+		<!-- <exec executable="../subversion/bin/svnversion.exe" outputproperty="svnversion"/> -->
 	</target>
 
 	<target name="updateProgramConstants" depends="compile-update-constants">
 		<taskdef name="UpdateProgramConstants" classname="de.moonflower.jfritz.ant.constants.UpdateProgramConstants" classpathref="test.classpath" />
-		<UpdateProgramConstants revision="${svnversion}" date="${TODAY_ROB}"/>
+		<UpdateProgramConstants path="${basedir}" revision="${svnversion}" date="${TODAY_ROB}"/>
 	</target>
 
 	<target name="getVersion" depends="compile-JFritz-Constants, compile-getVersion">

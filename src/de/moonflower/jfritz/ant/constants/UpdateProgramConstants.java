@@ -9,9 +9,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class UpdateProgramConstants {
+	String path = "";
 	String revision = "";
 	String date = "";
 
+	public void setPath(String path) {
+		this.path = path;
+	}
+	
 	public void setRevision(String rev) {
 		this.revision = rev;
 	}
@@ -52,8 +57,9 @@ public class UpdateProgramConstants {
 	}
 
 	public void execute() {
-		copy("src/de/moonflower/jfritz/constants/ProgramConstants.java", "tmp", true);
-		copy("tmp", "src/de/moonflower/jfritz/constants/ProgramConstants.java", false);
+		System.out.println("Using path: " + path);
+		copy(path+"/src/de/moonflower/jfritz/constants/ProgramConstants.java", path+"/tmp", true);
+		copy(path+"/tmp", path+"/src/de/moonflower/jfritz/constants/ProgramConstants.java", false);
 		File f = new File("tmp");
 		if (f.exists()) { f.delete(); }
 	}

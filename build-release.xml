@@ -15,7 +15,8 @@
 	<property name="lib-dev" value="lib-dev" />
 	<property name="docs" value="../Doku" />
 	<property name="scp-beta-path" value="./public/beta" />
-
+    <property name="release-templates" value="../Release" />
+    
 	<!-- build properties -->
 	<property name="build" value="${home}/build" />
 	<property name="build.classes" value="${build}/classes" />
@@ -188,13 +189,13 @@
 		</copy>
 
 		<!-- adapt mapping filepath in jfritz-template.pro" -->
-		<copy file="../Release/ProGuard/jfritz-template.pro"
+		<copy file="${release_templates}/ProGuard/jfritz-template.pro"
 		             tofile="${dist}/obfuscated/jfritz-${version}.pro"
 					 preservelastmodified="yes"
 					 overwrite="yes">
 	        <filterchain>
 	           <replacetokens>
-					<token key="MAPPING_FILE" value="../../../../Release/ProGuard/jfritz-${version}.mapping"/>
+					<token key="MAPPING_FILE" value="../../../${release-templates}/ProGuard/jfritz-${version}.mapping"/>
 	            </replacetokens>
 	        </filterchain>
 	    </copy>
@@ -285,7 +286,7 @@
 		</copy>
 		<!-- copy logo to linux directory -->
 		<copy todir="${release}/linux/jfritz-${version}">
-			<fileset dir="../Release/Linux/">
+			<fileset dir="${release-templates}/Linux/">
 				<include name="jfritz.png" />
 			</fileset>
 		</copy>
@@ -311,7 +312,7 @@
             package="jfritz"
             section="utils"
             depends="sun-java5-jre | sun-java6-jre"
-        	preinst="../Release/Linux/preinst"
+        	preinst="${release-templates}/Linux/preinst"
         >
             <version upstream="${version}"/>
             <maintainer email="Robert Palmer" name="jfritz@robotniko.de"/>
@@ -328,8 +329,8 @@ http://www.jfritz.org/
 	        	<exclude name="lib/sunos/**"/>
             </tarfileset>
 
-            <tarfileset file="../Release/Linux/jfritz" prefix="/usr/bin" filemode="755"/>
-            <tarfileset dir="../Release/Linux/" prefix="/usr/share/doc/jfritz">
+            <tarfileset file="${release-templates}/Linux/jfritz" prefix="/usr/bin" filemode="755"/>
+            <tarfileset dir="${release-templates}/Linux/" prefix="/usr/share/doc/jfritz">
                 <include name="COPYING"/>
                 <include name="README-de"/>
                 <include name="README-en"/>
@@ -363,15 +364,15 @@ http://www.jfritz.org/
 
 		<!-- copy mac-template to release directory -->
 		<copy todir="${release}/mac/tmp">
-			<fileset dir="../Release/MAC/Vorlage">
+			<fileset dir="${release-templates}/MAC/Vorlage">
 			</fileset>
 		</copy>
 
-		<copy file="../Release/MAC/Vorlage/__MACOSX/JFritz.app/Contents/._Info.plist"
+		<copy file="${release-templates}/MAC/Vorlage/__MACOSX/JFritz.app/Contents/._Info.plist"
 		             tofile="${release}/mac/tmp/__MACOSX/JFritz.app/Contents/._Info.plist" />
 
 		<!-- adapt version string in Info.plist -->
-		<copy file="../Release/MAC/Vorlage/JFritz.app/Contents/Info.plist"
+		<copy file="${release-templates}/MAC/Vorlage/JFritz.app/Contents/Info.plist"
 		             tofile="${release}/mac/tmp/JFritz.app/Contents/Info.plist"
 					 overwrite="yes">
 	        <filterchain>
@@ -439,7 +440,7 @@ http://www.jfritz.org/
 
 		<!-- copy win template to release directory -->
 		<copy todir="${release}/win/tmp">
-			<fileset dir="../Release/WIN">
+			<fileset dir="${release-templates}/WIN">
 			</fileset>
 		</copy>
 
@@ -464,7 +465,7 @@ http://www.jfritz.org/
 		<!-- creating beta version -->
 		<!-- actualize version of setup file -->
 		<taskdef name="UpdateSetupConfig" classname="de.moonflower.jfritz.ant.UpdateSetupConfig" classpathref="helper.classpath" />
-		<UpdateSetupConfig file="${release}/win/tmp/jfritz-version.txt" appName="${product}" appType="Setup" appVersion="${version}" />
+		<UpdateSetupConfig file="${basedir}/${release}/win/tmp/jfritz-version.txt" appName="${product}" appType="Setup" appVersion="${version}" />
 
 		<!-- generate setup-file -->
 		<exec executable="C:\Program Files (x86)\Inno Setup 5\ISCC.exe">
