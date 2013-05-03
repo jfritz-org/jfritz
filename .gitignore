@@ -5,3 +5,4 @@ bin/*
 # Ignore password file
 build-release-pwd.xml
 /bin
+/ant
