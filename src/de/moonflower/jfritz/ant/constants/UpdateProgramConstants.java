@@ -60,7 +60,9 @@ public class UpdateProgramConstants {
 		System.out.println("Using path: " + path);
 		copy(path+"/src/de/moonflower/jfritz/constants/ProgramConstants.java", path+"/tmp", true);
 		copy(path+"/tmp", path+"/src/de/moonflower/jfritz/constants/ProgramConstants.java", false);
-		File f = new File("tmp");
-		if (f.exists()) { f.delete(); }
+		File f = new File(path+"/tmp");
+		if (f.exists()) { 
+			f.delete(); 
+		}
 	}
 }
