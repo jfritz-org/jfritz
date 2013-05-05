@@ -69,7 +69,12 @@
 		<taskdef name="GetJFritzVersion" classname="de.moonflower.jfritz.ant.version.GetJFritzVersion" classpathref="test.classpath" />
 		<GetJFritzVersion/>
 	</target>
-
+	
+	<target name="getRevision" depends="compile-JFritz-Constants, compile-getVersion">
+		<taskdef name="GetJFritzRevision" classname="de.moonflower.jfritz.ant.version.GetJFritzRevision" classpathref="test.classpath" />
+		<GetJFritzRevision/>
+	</target>
+	
 	<tstamp>
 		<format property="TODAY_ROB" pattern="dd-MM-yyyy HH:mm:ss" locale="de,DE"/>
 	</tstamp>
@@ -104,7 +109,7 @@
 			excludes="de/moonflower/jfritz/simpletests/**, com/nexes/test/**" />
 	</target>
 
-	<target name="init" depends="getSvnRevision, updateProgramConstants, getVersion" description="Show startup informations">
+	<target name="init" depends="getSvnRevision, updateProgramConstants, getVersion, getRevision" description="Show startup informations">
 		<echo message="ant version:   ${ant.version}" />
 		<echo message="java version:  ${ant.java.version}" />
 		<echo message="" />
@@ -202,7 +207,7 @@
 
 	</target>
 
-	<target name="jar" depends="compile, getVersion" description="Generates jar files">
+	<target name="jar" depends="compile, getVersion, getRevision" description="Generates jar files">
 		<!-- copy ThreeStateButton ressource-files -->
 		<copy todir="${build.classes}/de/moonflower/jfritz/utils/threeStateButton/images">
 			<fileset dir="${src}/de/moonflower/jfritz/utils/threeStateButton/images" />
@@ -276,7 +281,7 @@
 
 	</target>
 
-	<target name="junit" depends="compile, getVersion" description="Runs all test cases and generate report">
+	<target name="junit" depends="compile, getVersion, getRevision" description="Runs all test cases and generate report">
 		<mkdir dir="${build.unittests}" />
 		<mkdir dir="${build.unittests.reports}" />
 		<mkdir dir="${build.unittests.reports}/html" />
