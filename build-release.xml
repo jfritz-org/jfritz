@@ -411,6 +411,7 @@ http://www.jfritz.org/
 		<sshexec command="cd ./public/mac; rm * -rf" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<sshexec command="rmdir ./public/mac" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<scp file="${user2}@${server2}:./public/JFritz-${version}-Mac.zip" port="${port2}" trust="yes" todir="${release}/mac/" verbose="yes" password="${password2}"/>
+		<sshexec command="rm ./public/JFritz-${version}-Mac.zip" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />		
 	</target>
 
 	<target name="create-mac-zip" description="Creates a ZIP-File for MacOS!">
