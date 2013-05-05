@@ -6,6 +6,7 @@ JFritz 0.7.4.2:
 - Bugfix 0000374: Kein Abholen der Anrufliste nach Ruhezustand
 - Bugfix 0000388: Reconnect schlägt nach einem FritzBox reboot fehl
 - Bugfix 0000391: Ausführen von externen BAT-Dateien unter Java 1.7.0_21 nicht mehr möglich
+- Bugfix 0000376: Unterstützung der 6360er Unitymedia Firmware
 
 JFritz 0.7.4.1.31:
 - Unterstützung der neuen Firmware

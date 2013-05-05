@@ -28,6 +28,7 @@ public class SIDLogin {
 	private final static String PATTERN_CHALLENGE = "<challenge>([^<]*)</challenge>";
 	private final static String PATTERN_SID = "<sid>([^\"]*)</sid>";
 	private final static String PATTERN_SID_OLD = "<input type=\"hidden\" name=\"sid\" value=\"([^\"]*)\"";
+	private final static String PATTERN_SID_IN_REDIRECT = "location: [^\\?]*\\?sid=([^$]*)$";
 
 	protected FritzBoxLoginHandler loginHandler = FritzBoxLoginHandler.getInstance();
 
@@ -40,12 +41,15 @@ public class SIDLogin {
 	public void check(BoxClass box, String urlstr, String password) throws WrongPasswordException, IOException, RedirectToLoginLuaException {
 		String login = "";
 		try {
+			Debug.debug("Try to get SID from XML");
 			login = loginHandler.getLoginSidResponseFromXml(box, urlstr);
 			newSidLogin = false;
 		} catch (WrongPasswordException wpe) {
+			Debug.debug("Try to get SID from LUA");
 			login = loginHandler.getLoginSidResponseFromLua(box, urlstr);
 			newSidLogin = true;
 		} catch (RedirectToLoginLuaException rd) {
+			Debug.debug("Detected redirect to LUA");
 			login = loginHandler.getLoginSidResponseFromLua(box, urlstr);
 			newSidLogin = true;
 		}
@@ -66,14 +70,17 @@ public class SIDLogin {
 				int writeAccess = Integer.parseInt(matcher.group(1));
 
 				if (writeAccess == 0) { // answer challenge
+					Debug.debug("WriteAccess == 0, calculating response from challenge");
 					calculateResponseFromChallenge(login, box_password);
 				} else if (writeAccess == 1) { // no challenge, use SID directly
+					Debug.debug("WriteAccess == 1, extracting sid from response");
 					extractSidFromResponse(login);
 				} else {
 					Debug.error("Could not determine writeAccess in login_sid.xml");
 				}
 				// Debug.errDlg(Integer.toString(writeAccess) + " " + sessionId);
 			} else {
+				Debug.debug("Could not find writeAccess, calculating response from challenge");
 				calculateResponseFromChallenge(login, box_password);
 			}
 		}
@@ -87,6 +94,10 @@ public class SIDLogin {
 			response = loginHandler.loginXml(box, urlstr, postdata);
 		}
 		extractSidFromResponse(response);
+		if (this.getSessionId().equals("0000000000000000")) {
+			response = loginHandler.loginLuaAlternative(box, urlstr, this.sidResponse);
+			extractSidFromResponse(response);
+		}
 	}
 
 	private void calculateResponseFromChallenge(String login,
@@ -99,7 +110,6 @@ public class SIDLogin {
 				challenge = challengeMatcher.group(1);
 				String md5Pass = generateMD5(challenge + "-" + box_password);
 				sidResponse = challenge + '-' + md5Pass;
-				Debug.debug("Challenge: " + challenge + " Response: " + sidResponse);
 			} else {
 				Debug.error("Could not determine challenge in login_sid.xml");
 			}
@@ -135,16 +145,28 @@ public class SIDLogin {
 		return box_password;
 	}
 
-	private void extractSidFromResponse(String login) {
+	protected void extractSidFromResponse(String login) {
+		Debug.debug("Extracting SID from response: " + login);
 		Pattern sidPattern = Pattern.compile(PATTERN_SID);
 		Matcher sidMatcher = sidPattern.matcher(login.toLowerCase());
 		if (sidMatcher.find()) {
+			Debug.info("Found SID using PATTERN_SID");
 			sessionId = sidMatcher.group(1);
 		} else {
 			sidPattern = Pattern.compile(PATTERN_SID_OLD);
 			sidMatcher = sidPattern.matcher(login.toLowerCase());
 			if (sidMatcher.find()) {
+				Debug.info("Found SID using PATTERN_SID_OLD");
 				sessionId = sidMatcher.group(1);
+			} else {
+				sidPattern = Pattern.compile(PATTERN_SID_IN_REDIRECT);
+				sidMatcher = sidPattern.matcher(login.toLowerCase());
+				if (sidMatcher.find()) {
+					Debug.info("Found SID using PATTERN_SID_IN_REDIRECT");
+					sessionId = sidMatcher.group(1);
+				} else {
+					Debug.error("Could not find SID!");
+				}
 			}
 		}
 	}

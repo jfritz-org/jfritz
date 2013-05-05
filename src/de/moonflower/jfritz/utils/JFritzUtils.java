@@ -21,11 +21,13 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.http.Header;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.ProtocolException;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -74,7 +76,7 @@ public class JFritzUtils {
 	public static String getDataFromUrlToString(final BoxClass affectedBox,
 			final String urlstr, boolean retrieveData, boolean isRedirectEnabled)
 			throws WrongPasswordException, SocketTimeoutException, IOException, URISyntaxException, RedirectToLoginLuaException {
-		HttpParams httpParams = initConnectionParameters();
+		HttpParams httpParams = initConnectionParameters(isRedirectEnabled);
 		
 		DefaultHttpClient httpClient = new DefaultHttpClient(httpParams);
 		HttpUriRequest request = initGetRequest(urlstr);
@@ -88,7 +90,7 @@ public class JFritzUtils {
 	public static Vector<String> getDataFromUrlToVector(final BoxClass affectedBox,
 			final String urlstr, boolean retrieveData, boolean isRedirectEnabled)
 			throws WrongPasswordException, SocketTimeoutException, IOException, URISyntaxException, RedirectToLoginLuaException {
-		HttpParams httpParams = initConnectionParameters();
+		HttpParams httpParams = initConnectionParameters(isRedirectEnabled);
 		
 		DefaultHttpClient httpClient = new DefaultHttpClient(httpParams);
 		HttpUriRequest request = initGetRequest(urlstr);
@@ -99,10 +101,13 @@ public class JFritzUtils {
 		return result;
 	}
 
-	private static HttpParams initConnectionParameters() {
+	private static HttpParams initConnectionParameters(boolean isRedirectEnabled) {
 		HttpParams httpParams = new BasicHttpParams();
+		httpParams.setParameter("http.protocol.handle-redirects", isRedirectEnabled);
+
 		HttpConnectionParams.setConnectionTimeout(httpParams, CONNECTION_TIMEOUT);
 		HttpConnectionParams.setSoTimeout(httpParams, READ_TIMEOUT);
+
 		return httpParams;
 	}
 
@@ -118,6 +123,8 @@ public class JFritzUtils {
 			throws IOException, ClientProtocolException, WrongPasswordException {
 		if (isRedirectEnabled) {
 			setRedirectHandler(httpClient, urlstr, postdata);
+		} else {
+			httpClient.setRedirectStrategy(null);
 		}
 		
 		HttpResponse response = httpClient.execute(request);
@@ -130,6 +137,12 @@ public class JFritzUtils {
 			throws IOException, ClientProtocolException, WrongPasswordException, RedirectToLoginLuaException {
 		HttpResponse response = getResponse(affectedBox, httpClient, request, urlstr, postdata, isRedirectEnabled);
 		String responseString = EntityUtils.toString(response.getEntity());
+		if (response.getStatusLine().getStatusCode() == 303) {
+			Header[] location1 = response.getHeaders("Location");
+			for (Header h: location1) {
+				responseString = "Location: " + h.getValue();
+			}
+		}
 		
 		if (isRedirectToLogonLua(responseString)) {
 			 throw new RedirectToLoginLuaException(affectedBox.getName(), "Detected redirect to login.lua");
@@ -172,7 +185,6 @@ public class JFritzUtils {
             try {
                 isRedirect = super.isRedirected(request, response, context);
             } catch (ProtocolException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             if (!isRedirect) {
@@ -275,7 +287,7 @@ public class JFritzUtils {
 	public static String postDataToUrlAndGetStringResponse(final BoxClass affectedBox,
 			final String urlstr, final List<NameValuePair> postdata, boolean retrieveData, boolean isRedirectEnabled)
 			throws WrongPasswordException, SocketTimeoutException, IOException, URISyntaxException, RedirectToLoginLuaException {
-		HttpParams httpParams = initConnectionParameters();
+		HttpParams httpParams = initConnectionParameters(isRedirectEnabled);
 		
 		DefaultHttpClient httpClient = new DefaultHttpClient(httpParams);
 		HttpUriRequest request = initPostRequest(urlstr, postdata);
@@ -289,7 +301,7 @@ public class JFritzUtils {
 	public static Vector<String> postDataToUrlAndGetVectorResponse(final BoxClass affectedBox,
 			final String urlstr, final List<NameValuePair> postdata, boolean retrieveData, boolean isRedirectEnabled)
 			throws WrongPasswordException, SocketTimeoutException, IOException, URISyntaxException, RedirectToLoginLuaException {
-		HttpParams httpParams = initConnectionParameters();
+		HttpParams httpParams = initConnectionParameters(isRedirectEnabled);
 		
 		DefaultHttpClient httpClient = new DefaultHttpClient(httpParams);
 		HttpUriRequest request = initPostRequest(urlstr, postdata);

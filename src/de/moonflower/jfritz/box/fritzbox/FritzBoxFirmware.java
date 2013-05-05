@@ -138,8 +138,7 @@ public class FritzBoxFirmware {
 						.getProperty("option.clientCallList"))
 				&& NetworkStateMonitor.isConnectedToServer()) {
 
-			Debug
-					.netMsg("JFritz is configured as a client and using call list from server, canceling firmware detection");
+			Debug.netMsg("JFritz is configured as a client and using call list from server, canceling firmware detection");
 			return null;
 		}
 
@@ -307,6 +306,7 @@ public class FritzBoxFirmware {
 		postdata.add(new BasicNameValuePair("var%3Apagename","home"));
 
 		try {
+			Debug.debug("Try to login using: urlstr=" + urlstr + " accessMethod=" + accessMethod + " lang=" + language + " loginScript=" + loginScript);
 			sidLogin.check(box, urlstr, password);
 		} catch (WrongPasswordException wpe) {
 			Debug.debug("No SID-Login necessary.");
@@ -317,11 +317,11 @@ public class FritzBoxFirmware {
 			e.printStackTrace();
 			Debug.debug("Detected IO exception");
 		}
-
 		
 		Vector<String> result = new Vector<String>();
 		try {
 			if (sidLogin.isSidLogin()) {
+				Debug.debug("Detected SID login, try to login using login:command/response");
 				postdata.add(new BasicNameValuePair("login%3Acommand%2Fresponse", URLEncoder.encode(sidLogin.getResponse(), "ISO-8859-1")));
 				sidLogin.login(box, urlstr, postdata);
 				postdata.clear();
@@ -330,19 +330,25 @@ public class FritzBoxFirmware {
 				postdata.add(new BasicNameValuePair("sid", sidLogin.getSessionId()));
 				result = JFritzUtils.postDataToUrlAndGetVectorResponse(box, urlstr + loginScript, postdata, true, true);
 			} else {
+				Debug.debug("Detected normal login, try to login using login:command/password");
 				postdata.add(new BasicNameValuePair("login%3Acommand%2Fpassword", URLEncoder.encode(password, "ISO-8859-1")));
 				result = JFritzUtils.postDataToUrlAndGetVectorResponse(box, urlstr + loginScript, postdata, true, true);
 			}
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
+			Debug.error(e.getMessage());
 		} catch (SocketTimeoutException e) {
 			e.printStackTrace();
+			Debug.error(e.getMessage());
 		} catch (IOException e) {
 			e.printStackTrace();
+			Debug.error(e.getMessage());
 		} catch (RedirectToLoginLuaException e) {
 			e.printStackTrace();
+			Debug.error(e.getMessage());
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
+			Debug.error(e.getMessage());
 		}
 		return result;
 	}
