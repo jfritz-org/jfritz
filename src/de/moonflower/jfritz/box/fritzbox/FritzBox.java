@@ -657,7 +657,7 @@ public class FritzBox extends BoxClass {
 		Vector<Call> result;
 		setBoxConnected();
 		
-		if (callList == null) {
+		if (callList == null || firmware == null) {
 			try {
 				updateSettings();
 				if (callList == null) {
