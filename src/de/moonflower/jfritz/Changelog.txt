@@ -30,6 +30,7 @@ JFritz 0.7.4.2:
 - Bugfix 0000391: Ausführen von externen BAT-Dateien unter Java 1.7.0_21 nicht mehr möglich
 - Bugfix 0000376: Unterstützung der 6360er Unitymedia Firmware
 - Bugfix: Verbindungsverlust nach gewisser Zeit
+- Bugfix: Verbesserte Erkennung von ungültigen Session IDs
 
 JFritz 0.7.4.1.32:
 - Fehlende Bibliothek hinzugefügt
