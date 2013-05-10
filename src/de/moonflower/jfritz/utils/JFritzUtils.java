@@ -263,7 +263,8 @@ public class JFritzUtils {
 				|| (responseString.indexOf("Password not valid") >= 0)
 				|| (responseString.indexOf("<!--loginPage-->") >= 0)
 				|| (responseString.indexOf("FRITZ!Box Anmeldung") >= 0)
-				|| (responseString.indexOf("login_form") >= 0 )) {
+				|| (responseString.indexOf("login_form") >= 0 )
+				|| (responseString.indexOf("uiSubmitLogin") >= 0)) {
 			log.debug("Wrong password detected: " + responseString);
 
 			int wait = 3;

@@ -146,7 +146,6 @@ public class SIDLogin {
 	}
 
 	protected void extractSidFromResponse(String login) {
-		Debug.debug("Extracting SID from response: " + login);
 		Pattern sidPattern = Pattern.compile(PATTERN_SID);
 		Matcher sidMatcher = sidPattern.matcher(login.toLowerCase());
 		if (sidMatcher.find()) {
@@ -165,7 +164,7 @@ public class SIDLogin {
 					Debug.info("Found SID using PATTERN_SID_IN_REDIRECT");
 					sessionId = sidMatcher.group(1);
 				} else {
-					Debug.error("Could not find SID!");
+//					Debug.error("Could not find SID!");
 				}
 			}
 		}
