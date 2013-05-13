@@ -13,6 +13,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -136,7 +137,7 @@ public class JFritzUtils {
 			DefaultHttpClient httpClient, HttpUriRequest request, String urlstr, final List<NameValuePair> postdata, boolean isRedirectEnabled)
 			throws IOException, ClientProtocolException, WrongPasswordException, RedirectToLoginLuaException {
 		HttpResponse response = getResponse(affectedBox, httpClient, request, urlstr, postdata, isRedirectEnabled);
-		String responseString = EntityUtils.toString(response.getEntity());
+		String responseString = EntityUtils.toString(response.getEntity(), Charset.forName("UTF-8"));
 		if (response.getStatusLine().getStatusCode() == 303) {
 			Header[] location1 = response.getHeaders("Location");
 			for (Header h: location1) {
@@ -159,7 +160,7 @@ public class JFritzUtils {
 		HttpResponse response = getResponse(affectedBox, httpClient, request, urlstr, postdata, isRedirectEnabled);
 
 		InputStream is = response.getEntity().getContent();
-		BufferedReader br = new BufferedReader(new InputStreamReader(is), 8*1024);
+		BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")), 8*1024);
 		
 		String line = null;
 		while ((line = br.readLine()) != null) {
@@ -194,7 +195,7 @@ public class JFritzUtils {
 //                } else if (responseCode == 200) {
 //                	String responseBody;
 //					try {
-//						responseBody = EntityUtils.toString(response.getEntity());
+//						responseBody = EntityUtils.toString(response.getEntity(), Charset.forName("UTF-8"));
 //						Pattern p = Pattern.compile("<meta http-equiv=(?:\")?refresh(?:\")? content=\"[^=]*=([^\"]*)\">");
 //
 //						Matcher m = p.matcher(responseBody.toLowerCase());

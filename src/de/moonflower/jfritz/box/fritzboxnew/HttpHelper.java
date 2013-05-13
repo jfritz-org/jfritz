@@ -2,6 +2,7 @@ package de.moonflower.jfritz.box.fritzboxnew;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -43,7 +44,7 @@ public class HttpHelper {
 		    InputStream instream = entity.getContent();
 		    try {
 		        // do something useful
-		    	result = EntityUtils.toString(entity);
+		    	result = EntityUtils.toString(entity, Charset.forName("UTF-8"));
 		    	httpget.abort();
 		    } finally {
 		        instream.close();
