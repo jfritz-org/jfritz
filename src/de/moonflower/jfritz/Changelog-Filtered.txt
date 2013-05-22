@@ -10,6 +10,8 @@ JFritz 0.7.4.2:
 - Bugfix: Verbindungsverlust nach gewisser Zeit
 - Bugfix: Verbesserte Erkennung von ungültigen Session IDs
 - Bugfix: Verwende UTF-8, um Daten von der FritzBox zu lesen 
+- Bugfix 0000393: Es wäre schön, wenn die neu eingeführte Revision-Nummer im Menü des TrayIcon-Menüs angezeigt würde
+- Bugfix 0000394: 7360, HWRev 124 wird nicht erkannt -> boxnames.conf nicht aktuell
 
 JFritz 0.7.4.1.32:
 - Fehlende Bibliothek hinzugefügt

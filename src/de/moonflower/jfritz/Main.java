@@ -433,7 +433,7 @@ public class Main  {
 
 	private void initJFritz(String[] args, Main main) {
 		SplashScreen splash = new SplashScreen(showSplashScreen);
-		splash.setVersion("v" + ProgramConstants.PROGRAM_VERSION);
+		splash.setVersion("v" + ProgramConstants.PROGRAM_VERSION + " Rev: " + ProgramConstants.REVISION);
 		splash.setStatus("Initializing JFritz...");
 
 		splash.setStatus("Loading properties...");

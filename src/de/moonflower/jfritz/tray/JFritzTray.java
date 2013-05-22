@@ -115,7 +115,7 @@ public class JFritzTray {
 
 		TrayMenu menu = new TrayMenu("JFritz Menu"); //$NON-NLS-1$
 		TrayMenuItem menuItem = new TrayMenuItem(ProgramConstants.PROGRAM_NAME + " v" //$NON-NLS-1$
-				+ ProgramConstants.PROGRAM_VERSION);
+				+ ProgramConstants.PROGRAM_VERSION + " Rev: " + ProgramConstants.REVISION);
 		menuItem.setActionCommand("showhide");
 		if (jframe != null) {
 			menuItem.addActionListener(jframe);
