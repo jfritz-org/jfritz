@@ -13,7 +13,6 @@ import org.apache.http.message.BasicNameValuePair;
 import de.moonflower.jfritz.box.BoxCallBackListener;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.box.fritzbox.helper.FritzGetWithRetry;
-import de.moonflower.jfritz.box.fritzboxnew.HttpHelper;
 import de.moonflower.jfritz.exceptions.FeatureNotSupportedByFirmware;
 import de.moonflower.jfritz.exceptions.RedirectToLoginLuaException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
@@ -26,7 +25,6 @@ public class FritzBoxCallList_Actual extends FritzBoxCallList_Pre_05_28 {
 	private static String GET_CSV_LIST = "?csv=";
 	private FritzGetWithRetry fritzGet;
 
-	protected HttpHelper httpHelper = HttpHelper.getInstance();
     private Vector<Call> calls = new Vector<Call>();
 
 	public FritzBoxCallList_Actual(FritzBox fritzBox, Vector<BoxCallBackListener> callbackListener) {
