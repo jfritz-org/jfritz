@@ -19,6 +19,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.message.BasicNameValuePair;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -29,8 +30,6 @@ import de.moonflower.jfritz.box.BoxCallListInterface;
 import de.moonflower.jfritz.box.BoxCallMonitorInterface;
 import de.moonflower.jfritz.box.BoxClass;
 import de.moonflower.jfritz.box.fritzbox.callerlist.FritzBoxCallerListFactory;
-import de.moonflower.jfritz.box.fritzbox.query.IQuery;
-import de.moonflower.jfritz.box.fritzbox.query.QueryFactory;
 import de.moonflower.jfritz.callmonitor.CallMonitorInterface;
 import de.moonflower.jfritz.callmonitor.CallMonitorStatusListener;
 import de.moonflower.jfritz.callmonitor.CallmessageCallMonitor;
@@ -56,15 +55,14 @@ import de.moonflower.jfritz.utils.network.UPNPCommonLinkPropertiesListener;
 import de.moonflower.jfritz.utils.network.UPNPExternalIpListener;
 import de.moonflower.jfritz.utils.network.UPNPStatusInfoListener;
 import de.moonflower.jfritz.utils.network.UPNPUtils;
+import de.robotniko.fboxlib.exceptions.InvalidCredentialsException;
+import de.robotniko.fboxlib.exceptions.LoginBlockedException;
+import de.robotniko.fboxlib.exceptions.PageNotFoundException;
+import de.robotniko.fboxlib.fritzbox.FritzBoxCommunication;
 
 public class FritzBox extends BoxClass {
 
 	// <UDN>uuid:75802409-bccb-40e7-8e6c-MACADDRESS</UDN>
-	private final static String PARSE_MAC_ADDRESS = "<UDN>uuid:([^<]*)</UDN>";
-
-	private final static String QUERY_GET_MAC_ADDRESS = "env:settings/macdsl";
-	private final static String QUERY_EXTERNAL_IP = "connection0:status/ip";
-
 	private final static String QUERY_ANALOG_COUNT = "telcfg:settings/MSN/Port/count";
 	private final static String QUERY_ANALOG_NAME = "telcfg:settings/MSN/Port%NUM%/Name";
 
@@ -129,8 +127,6 @@ public class FritzBox extends BoxClass {
 
 	private HashMap<Integer, Port> configuredPorts;
 
-	private IQuery queryImpl;
-
 	private Vector<BoxCallBackListener> callBackListener;
 
 	protected PropertyProvider properties = PropertyProvider.getInstance();
@@ -138,6 +134,8 @@ public class FritzBox extends BoxClass {
 
 	private BoxCallListInterface callList;
 
+	private FritzBoxCommunication fbc;
+	
 	public FritzBox(String name, String description,
 					String protocol, String address, String port, String password,
 					Exception exc)
@@ -153,6 +151,33 @@ public class FritzBox extends BoxClass {
 		sipProvider = new Vector<SipProvider>();
 		configuredPorts = new HashMap<Integer, Port>();
 		callBackListener = new Vector<BoxCallBackListener>(4);
+		
+		fbc = new FritzBoxCommunication(this.protocol, this.address, this.port);
+		fbc.setPassword(this.password);
+		try {
+			fbc.login();
+		} catch (ClientProtocolException e1) {
+			exc = e1;
+			Debug.error(e1.getMessage());
+			setBoxDisconnected();
+		} catch (InvalidCredentialsException e1) {
+			exc = e1;
+			Debug.error(messages.getMessage("box.wrong_password"));
+			setBoxDisconnected();
+		} catch (LoginBlockedException e1) {
+			exc = e1;
+			Debug.error(e1.getMessage());
+			setBoxDisconnected();
+		} catch (IOException e1) {
+			exc = e1;
+			Debug.error(messages.getMessage("box.not_found"));
+			setBoxDisconnected();
+		} catch (PageNotFoundException e1) {
+			exc = e1;
+			Debug.error(e1.getMessage());
+			setBoxDisconnected();
+		}
+		
 		exc = null;
 		try {
 			setBoxConnected();
@@ -181,10 +206,6 @@ public class FritzBox extends BoxClass {
 			detectFirmware();
 		end = JFritzUtils.getTimestamp();
 		Debug.debug("UpdateSettings: detectFirmware " + (end - start) + "ms");
-		start = end;
-			queryImpl = QueryFactory.getQueryMethodForFritzBox(this);
-		end = JFritzUtils.getTimestamp();
-		Debug.debug("UpdateSettings: getQueryMethodForFritzBox " + (end - start) + "ms");
 		start = end;
 			detectMacAddress();
 		end = JFritzUtils.getTimestamp();
@@ -247,9 +268,23 @@ public class FritzBox extends BoxClass {
 		appendSidOrPassword(postdata);
 	}
 
-	public final Vector<String> getQuery(Vector<String> queries)
+	public final Vector<String> getQuery(Vector<String> queries) //throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException
 	{
-		Vector<String> result = queryImpl.getQuery(queries);
+		// FIXME throw exceptions!!!! 
+		Vector<String> result = new Vector<String>();
+		try {
+			result = fbc.getQuery(queries);
+		} catch (ClientProtocolException e) {
+			Debug.error(e.getMessage());
+		} catch (IOException e) {
+			Debug.error(e.getMessage());
+		} catch (LoginBlockedException e) {
+			Debug.error(e.getMessage());
+		} catch (InvalidCredentialsException e) {
+			Debug.error(e.getMessage());
+		} catch (PageNotFoundException e) {
+			Debug.error(e.getMessage());
+		}
 		Thread.yield();
 		return result;
 	}
@@ -264,34 +299,24 @@ public class FritzBox extends BoxClass {
 
 	public void detectMacAddress()
 	{
-		Vector<String> query = new Vector<String>();
-		query.add(QUERY_GET_MAC_ADDRESS);
+		macAddress = messages.getMessage("unknown");
 
-		Vector<String> response = getQuery(query);
-		if (response.size() == 1)
-		{
-			macAddress = response.get(0);
+		try {
+			macAddress = fbc.getNetworkMethods().getMacAddress();
+		} catch (Exception e) {
+			macAddress = messages.getMessage("unknown");
 		}
-		else
+		
+		if ("".equals(macAddress))
 		{
-			setBoxConnected();
-			macAddress = getMacFromUPnP();
-			if ("".equals(macAddress))
-			{
-				macAddress = messages.getMessage("unknown");
-			}
+			macAddress = messages.getMessage("unknown");
 		}
 	}
 
 	public String getExternalIP() {
-		Vector<String> query = new Vector<String>();
-		query.add(QUERY_EXTERNAL_IP);
-
-		Vector<String> response = getQuery(query);
-		if (response.size() == 1) {
-			return response.get(0);
-		}
-		else {
+		try {
+			return fbc.getNetworkMethods().getExternalIP();
+		} catch (Exception e) {
 			return "No external IP";
 		}
 	}
@@ -1110,58 +1135,6 @@ public class FritzBox extends BoxClass {
 
 		UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
 				URL_SERVICE_FORCETERMINATION, URN_SERVICE_FORCETERMINATION, xml);
-	}
-
-	public String getMacFromUPnP() {
-		String mac = "";
-		Vector<String> response = new Vector<String>();
-		if (firmware != null)
-		{
-			final String urlstr = protocol+"://" + address +":49000/igddesc.xml"; //$NON-NLS-1$, //$NON-NLS-2$
-
-			try {
-				response = JFritzUtils.getDataFromUrlToVector(this, urlstr, true, true);
-			} catch (WrongPasswordException e) {
-				Debug.debug("Wrong password, maybe SID is invalid.");
-				setBoxDisconnected();
-			} catch (SocketTimeoutException ste) {
-				ste.printStackTrace();
-				setBoxDisconnected();
-			} catch (IOException e) {
-				e.printStackTrace();
-				setBoxDisconnected();
-			} catch (Exception e) {
-				e.printStackTrace();
-				setBoxDisconnected();
-			}
-
-			if (response.size() != 0)
-			{
-				Pattern p = Pattern.compile(PARSE_MAC_ADDRESS);
-				for (int i=0; i<response.size(); i++)
-				{
-					Matcher m = p.matcher(response.get(i));
-					if (m.find())
-					{
-						String resp = m.group(1);
-						int idx = resp.lastIndexOf("-");
-						String macTmp = resp.substring(idx+1);
-						for (int j=0; j<macTmp.length(); j++) {
-							mac = mac + macTmp.charAt(j);
-							if ((j != 0)
-								&& (j != macTmp.length()-1)
-								&& ((j-1)%2 == 0))
-							{
-								mac = mac.concat(":");
-							}
-						}
-						break;
-					}
-				}
-			}
-		}
-
-		return mac;
 	}
 
 	/**************************************************************************************
