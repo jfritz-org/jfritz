@@ -20,8 +20,15 @@ TODO tel.search.ch überprüfen und reparieren
 - TODO: Sounds trennen und individualisierbar gestalten
 - TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
 
-JFritz 0.7.4.2:
-- Support FritzOS 05.55
+JFritz 0.7.4.2_12:
+- Bugfix 0000395: Wählhilfe wählt doppelt
+- Bugfix 0000392: Falsche Darstellung der Umlaute
+- Bugfix 0000396: "Firmware-Erkennung gescheitert", aktualisieren der Anrufliste nicht möglich
+- Bugfix 0000397: Keine Angabe / Abholung der Nummern/SIPs
+- Bugfix: Tray disappears after renewing IP address
+
+JFritz 0.7.4.2_11:
+- Support FritzOS 05.55 and FritzOS 05.60
 - Bugfix 0000372: Anrufliste kann mit v0.7.4.1.32 nicht mehr gelöscht werden
 - Bugfix 0000390: Erkennung der FritzBox anhand MAC scheint defekt zu sein
 - Bugfix 0000385: Code -w unterdrückt die Meldung mit mehreren Instanzen nicht mehr
@@ -34,6 +41,7 @@ JFritz 0.7.4.2:
 - Bugfix: Verwende UTF-8, um Daten von der FritzBox zu lesen 
 - Bugfix 0000393: Es wäre schön, wenn die neu eingeführte Revision-Nummer im Menü des TrayIcon-Menüs angezeigt würde
 - Bugfix 0000394: 7360, HWRev 124 wird nicht erkannt -> boxnames.conf nicht aktuell
+
 
 JFritz 0.7.4.1.32:
 - Fehlende Bibliothek hinzugefügt
