@@ -2,11 +2,7 @@ package de.moonflower.jfritz.box.fritzbox;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
-import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -39,7 +35,6 @@ import de.moonflower.jfritz.callmonitor.YACCallMonitor;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.exceptions.FeatureNotSupportedByFirmware;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
-import de.moonflower.jfritz.exceptions.RedirectToLoginLuaException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
@@ -55,9 +50,11 @@ import de.moonflower.jfritz.utils.network.UPNPCommonLinkPropertiesListener;
 import de.moonflower.jfritz.utils.network.UPNPExternalIpListener;
 import de.moonflower.jfritz.utils.network.UPNPStatusInfoListener;
 import de.moonflower.jfritz.utils.network.UPNPUtils;
+import de.robotniko.fboxlib.exceptions.FirmwareNotDetectedException;
 import de.robotniko.fboxlib.exceptions.InvalidCredentialsException;
 import de.robotniko.fboxlib.exceptions.LoginBlockedException;
 import de.robotniko.fboxlib.exceptions.PageNotFoundException;
+import de.robotniko.fboxlib.fritzbox.FirmwareVersion;
 import de.robotniko.fboxlib.fritzbox.FritzBoxCommunication;
 
 public class FritzBox extends BoxClass {
@@ -119,7 +116,7 @@ public class FritzBox extends BoxClass {
 
 	private static int max_retry_count = 2;
 
-	private FritzBoxFirmware firmware = null;
+	private FirmwareVersion firmware = null;
 
 	private CallMonitorInterface callMonitor = null;
 
@@ -152,36 +149,10 @@ public class FritzBox extends BoxClass {
 		configuredPorts = new HashMap<Integer, Port>();
 		callBackListener = new Vector<BoxCallBackListener>(4);
 		
-		fbc = new FritzBoxCommunication(this.protocol, this.address, this.port);
-		fbc.setPassword(this.password);
-		try {
-			fbc.login();
-		} catch (ClientProtocolException e1) {
-			exc = e1;
-			Debug.error(e1.getMessage());
-			setBoxDisconnected();
-		} catch (InvalidCredentialsException e1) {
-			exc = e1;
-			Debug.error(messages.getMessage("box.wrong_password"));
-			setBoxDisconnected();
-		} catch (LoginBlockedException e1) {
-			exc = e1;
-			Debug.error(e1.getMessage());
-			setBoxDisconnected();
-		} catch (IOException e1) {
-			exc = e1;
-			Debug.error(messages.getMessage("box.not_found"));
-			setBoxDisconnected();
-		} catch (PageNotFoundException e1) {
-			exc = e1;
-			Debug.error(e1.getMessage());
-			setBoxDisconnected();
-		}
-		
 		exc = null;
 		try {
 			setBoxConnected();
-			updateSettings();
+			exc = updateSettings();
 		} catch (WrongPasswordException e) {
 			exc = e;
 			Debug.error(messages.getMessage("box.wrong_password"));
@@ -197,15 +168,53 @@ public class FritzBox extends BoxClass {
 		}
 	}
 
-	public void updateSettings() throws WrongPasswordException, InvalidFirmwareException, IOException
+	private Exception detectFirmwareAndLogin() {
+		Exception exc = null;
+		fbc = new FritzBoxCommunication(this.protocol, this.address, this.port);
+		fbc.setPassword(this.password);
+		try {
+			firmware = fbc.getFirmwareVersion();
+			fbc.login();
+		} catch (ClientProtocolException e1) {
+			exc = e1;
+			Debug.error(e1.getMessage());
+			setBoxDisconnected();
+		} catch (InvalidCredentialsException e1) {
+			exc = e1;
+			setBoxDisconnected();
+			handleInvalidCredentialsException(e1);
+		} catch (LoginBlockedException e1) {
+			exc = e1;
+			setBoxDisconnected();
+			handleLoginBlockedException(e1);
+		} catch (IOException e1) {
+			exc = e1;
+			Debug.error(messages.getMessage("box.not_found"));
+			setBoxDisconnected();
+		} catch (PageNotFoundException e1) {
+			exc = e1;
+			setBoxDisconnected();
+			handlePageNotFoundException(e1);
+		} catch (FirmwareNotDetectedException e1) {
+			exc = e1;
+			setBoxDisconnected();
+			handleFirmwareNotDetectedException(e1);
+		}
+		return exc;
+	}
+
+	public Exception updateSettings() throws WrongPasswordException, InvalidFirmwareException, IOException
 	{
+		Exception exc = null;
 		long start = 0;
 		long end = 0;
 
-		start = JFritzUtils.getTimestamp();
-			detectFirmware();
+		start = end;
+			exc = detectFirmwareAndLogin();
 		end = JFritzUtils.getTimestamp();
-		Debug.debug("UpdateSettings: detectFirmware " + (end - start) + "ms");
+		Debug.debug("UpdateSettings: detectFirmwareAndLogin " + (end - start) + "ms");
+		
+
 		start = end;
 			detectMacAddress();
 		end = JFritzUtils.getTimestamp();
@@ -220,52 +229,20 @@ public class FritzBox extends BoxClass {
 		end = JFritzUtils.getTimestamp();
 		Debug.debug("UpdateSettings: initializePorts " + (end - start) + "ms");
 			callList = FritzBoxCallerListFactory.createFritzBoxCallListFromFirmware(firmware, this, callBackListener);
+			
+		return exc;
 	}
-
-	/**
-	 * Detects firmware version
-	 * @return
-	 */
-	public void detectFirmware() throws WrongPasswordException, InvalidFirmwareException, IOException {
-		//avoid trying to access the box if running as a client
-		if ("2".equals(properties.getProperty("network.type"))
-				&& Boolean.parseBoolean(properties.getProperty("option.clientCallList")))
-		{
-			Debug.netMsg("JFritz is running as a client and using call list from server, canceling firmware detection");
-		}
-		else
-		{
-			setBoxConnected();
-			firmware = null;
-			firmware = FritzBoxFirmware.detectFirmwareVersion(this, protocol, address, password, port);
-		}
+	
+	public String getPageAsString(final String url) throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException {
+		return fbc.getPageAsString(url);
 	}
-
-	public void appendSidOrPassword(List<NameValuePair> postdata) throws UnsupportedEncodingException {
-		if (firmware.getSessionId() != "") {
-			postdata.add(new BasicNameValuePair("sid", firmware.getSessionId()));
-		} else {
-			postdata.add(new BasicNameValuePair("login%3Acommand%2Fpassword", URLEncoder.encode(password, "ISO-8859-1")));
-		}
+	
+	public String postToPageAndGetAsString(final String url, List<NameValuePair> params) throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException {
+		return fbc.postToPageAndGetAsString(url, params);
 	}
-
-	public String getSidOrPassword() throws UnsupportedEncodingException {
-		String result = "";
-		if (firmware.getSessionId() != "") {
-			result = "&sid=" + firmware.getSessionId();
-		} else {
-			result = "&login%3Acommand%2Fpassword="+URLEncoder.encode(password, "ISO-8859-1");
-		}
-		return result;
-	}
-
-	public void getPostData(List<NameValuePair> postdata) throws UnsupportedEncodingException {
-		appendSidOrPassword(postdata);
-	}
-
-	public void appendAccessMethod(List<NameValuePair> postdata) throws UnsupportedEncodingException {
-		firmware.appendAccessMethodToPostdata(postdata);
-		appendSidOrPassword(postdata);
+	
+	public Vector<String> postToPageAndGetAsVector(final String url, List<NameValuePair> params) throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException {
+		return fbc.postToPageAndGetAsVector(url, params);
 	}
 
 	public final Vector<String> getQuery(Vector<String> queries) //throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException
@@ -279,11 +256,11 @@ public class FritzBox extends BoxClass {
 		} catch (IOException e) {
 			Debug.error(e.getMessage());
 		} catch (LoginBlockedException e) {
-			Debug.error(e.getMessage());
+			handleLoginBlockedException(e);
 		} catch (InvalidCredentialsException e) {
-			Debug.error(e.getMessage());
+			handleInvalidCredentialsException(e);
 		} catch (PageNotFoundException e) {
-			Debug.error(e.getMessage());
+			handlePageNotFoundException(e);
 		}
 		Thread.yield();
 		return result;
@@ -321,7 +298,7 @@ public class FritzBox extends BoxClass {
 		}
 	}
 
-	public FritzBoxFirmware getFirmware()
+	public FirmwareVersion getFirmware()
 	{
 		return firmware;
 	}
@@ -377,7 +354,7 @@ public class FritzBox extends BoxClass {
 		query.add(QUERY_ANALOG_COUNT);
 		Vector<String> response = getQuery(query);
 
-		addConfiguredPort(new Port(-1, messages.getMessage("analog_telephones_all"), "9", "9"));
+		//addConfiguredPort(new Port(-1, messages.getMessage("analog_telephones_all"), "9", "9"));
 		if (response.size() == 1)
 		{
 			try {
@@ -602,8 +579,8 @@ public class FritzBox extends BoxClass {
 		switch (Integer.parseInt(properties.getProperty("option.callMonitorType"))) //$NON-NLS-1$
 		{
 			case 1: {
-				if ((firmware != null) && (firmware.getMajorFirmwareVersion() == 3)
-						&& (firmware.getMinorFirmwareVersion() < 96)) {
+				if ((firmware != null) && (firmware.getMajor() == 3)
+						&& (firmware.getMinor() < 96)) {
 					Debug.errDlg(messages.getMessage("callmonitor_error_wrong_firmware")); //$NON-NLS-1$
 
 					for (int i=0; i<listener.size(); i++)
@@ -612,8 +589,8 @@ public class FritzBox extends BoxClass {
 					}
 					return BoxCallMonitorInterface.CALLMONITOR_FIRMWARE_INCOMPATIBLE;
 				} else {
-					if ((firmware != null) && (firmware.getMajorFirmwareVersion() >= 4)
-							&& (firmware.getMinorFirmwareVersion() >= 3)) {
+					if ((firmware != null) && (firmware.getMajor() >= 4)
+							&& (firmware.getMinor() >= 3)) {
 						if (callMonitor != null)
 						{
 							Debug.errDlg(messages.getMessage("callmonitor_already_started"));
@@ -678,7 +655,7 @@ public class FritzBox extends BoxClass {
 	 * Implementation of the BoxCallListInterface
 	 **************************************************************************************/
 	public Vector<Call> getCallerList(Vector<IProgressListener> progressListener)
-	throws IOException, MalformedURLException, FeatureNotSupportedByFirmware {
+	throws FeatureNotSupportedByFirmware, ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException {
 		Vector<Call> result;
 		setBoxConnected();
 		
@@ -704,7 +681,7 @@ public class FritzBox extends BoxClass {
 		return result;
 	}
 
-	public void clearCallerList()
+	public void clearCallerList() throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException
 	{
 		if (callList == null) {
 			Debug.errDlg(messages.getMessage("box.no_clear_caller_list"));
@@ -1144,12 +1121,6 @@ public class FritzBox extends BoxClass {
 		postdata.add(new BasicNameValuePair("telcfg:settings/UseClickToDial", "1"));
 		postdata.add(new BasicNameValuePair("telcfg:settings/DialPort", port.getDialPort()));
 		postdata.add(new BasicNameValuePair("telcfg:command/Dial", currentNumber));
-
-		try {
-			appendAccessMethod(postdata);
-		} catch (UnsupportedEncodingException e) {
-			Debug.error("Encoding not supported! " + e.toString());
-		}
 	}
 
 	public void doCall(PhoneNumberOld number, Port port) {
@@ -1159,58 +1130,34 @@ public class FritzBox extends BoxClass {
 
 		List<NameValuePair> postdata = new ArrayList<NameValuePair>();
 		generateDoCallPostData(postdata, currentNumber, port);
-		String urlstr = getWebcmUrl();
 
-		boolean finished = false;
-		boolean password_wrong = false;
-		int retry_count = 0;
-
-		while (!finished && (retry_count < max_retry_count))
-		{
-			try {
-				retry_count++;
-				if (password_wrong)
-				{
-					password_wrong = false;
-					Debug.debug("Detecting new firmware, getting new SID");
-					this.detectFirmware();
-					postdata.clear();
-					generateDoCallPostData(postdata, currentNumber, port);
-				}
-				JFritzUtils.postDataToUrlAndGetVectorResponse(this, urlstr, postdata, false, true);
-				finished = true;
-			} catch (WrongPasswordException e) {
-				password_wrong = true;
-				Debug.debug("Wrong password, maybe SID is invalid.");
-				setBoxDisconnected();
-			} catch (SocketTimeoutException ste) {
-				ste.printStackTrace();
-				setBoxDisconnected();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				setBoxDisconnected();
-			} catch (InvalidFirmwareException e) {
-				password_wrong = true;
-				setBoxDisconnected();
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
-				setBoxDisconnected();
-			} catch (RedirectToLoginLuaException e) {
-				e.printStackTrace();
-				setBoxDisconnected();
-			}
+		try {
+			fbc.postToPageAndGetAsString(FritzBoxCommunication.URL_WEBCM, postdata);
+		} catch (SocketTimeoutException ste) {
+			ste.printStackTrace();
+			setBoxDisconnected();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			setBoxDisconnected();
+		} catch (LoginBlockedException e) {
+			Debug.debug("Wrong password, maybe SID is invalid.");
+			setBoxDisconnected();
+			handleLoginBlockedException(e);
+		} catch (InvalidCredentialsException e) {
+			Debug.debug("Wrong password, maybe SID is invalid.");
+			setBoxDisconnected();
+			handleInvalidCredentialsException(e);
+		} catch (PageNotFoundException e) {
+			Debug.debug("Wrong password, maybe SID is invalid.");
+			setBoxDisconnected();
+			handlePageNotFoundException(e);
 		}
 	}
 
 	private void generateHangupPostdata(List<NameValuePair> postdata) {
 		postdata.add(new BasicNameValuePair("telcfg:settings/UseClickToDial", "1"));
-		postdata.add(new BasicNameValuePair("telcfg:command%2FHangup", ""));
-		try {
-			appendAccessMethod(postdata);
-		} catch (UnsupportedEncodingException e) {
-			Debug.error("Encoding not supported! " + e.toString());
-		}
+		postdata.add(new BasicNameValuePair("telcfg:command/Hangup", ""));
 	}
 	
 	public void hangup(Port port)
@@ -1218,47 +1165,26 @@ public class FritzBox extends BoxClass {
 		setBoxConnected();
 		List<NameValuePair> postdata = new ArrayList<NameValuePair>();
 		generateHangupPostdata(postdata);
-
-		String urlstr = getWebcmUrl();
-
-		boolean finished = false;
-		boolean password_wrong = false;
-		int retry_count = 0;
-
-		while (!finished && (retry_count < max_retry_count))
-		{
-			try {
-				retry_count++;
-				if (password_wrong)
-				{
-					password_wrong = false;
-					Debug.debug("Detecting new firmware, getting new SID");
-					this.detectFirmware();
-					postdata.clear();
-					generateHangupPostdata(postdata);
-				}
-				JFritzUtils.postDataToUrlAndGetVectorResponse(this, urlstr, postdata, false, true);
-				finished = true;
-			} catch (WrongPasswordException e) {
-				password_wrong = true;
-				Debug.debug("Wrong password, maybe SID is invalid.");
-				setBoxDisconnected();
-			} catch (SocketTimeoutException ste) {
-				ste.printStackTrace();
-				setBoxDisconnected();
-			} catch (IOException e) {
-				e.printStackTrace();
-				setBoxDisconnected();
-			} catch (InvalidFirmwareException e) {
-				password_wrong = true;
-				setBoxDisconnected();
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
-				setBoxDisconnected();
-			} catch (RedirectToLoginLuaException e) {
-				e.printStackTrace();
-				setBoxDisconnected();
-			}
+		try {
+			fbc.postToPageAndGetAsVector(FritzBoxCommunication.URL_WEBCM, postdata);
+		} catch (SocketTimeoutException ste) {
+			ste.printStackTrace();
+			setBoxDisconnected();
+		} catch (IOException e) {
+			e.printStackTrace();
+			setBoxDisconnected();
+		} catch (LoginBlockedException e) {
+			Debug.debug("Wrong password, maybe SID is invalid.");
+			setBoxDisconnected();
+			handleLoginBlockedException(e);
+		} catch (InvalidCredentialsException e) {
+			Debug.debug("Wrong password, maybe SID is invalid.");
+			setBoxDisconnected();
+			handleInvalidCredentialsException(e);
+		} catch (PageNotFoundException e) {
+			Debug.debug("Wrong password, maybe SID is invalid.");
+			setBoxDisconnected();
+			handlePageNotFoundException(e);
 		}
 	}
 
@@ -1270,76 +1196,55 @@ public class FritzBox extends BoxClass {
 	}
 
 	private void generateRebootPostdata(List<NameValuePair> postdata) {
-		postdata.add(new BasicNameValuePair("getpage", "..%2Fhtml%2Freboot.html"));
-		postdata.add(new BasicNameValuePair("var%3Apagename", "reset"));
-		postdata.add(new BasicNameValuePair("var%3Amenu", "system"));
-		postdata.add(new BasicNameValuePair("var%3Apagemaster", ""));
-		postdata.add(new BasicNameValuePair("time%3Asettings%2Ftime", "1250935088%2C-120"));
-		postdata.add(new BasicNameValuePair("var%3AtabReset","0"));
-		postdata.add(new BasicNameValuePair("logic%3Acommand%2Freboot","..%2Fgateway%2Fcommands%2Fsaveconfig.html"));
-		try {
-			appendAccessMethod(postdata);
-		} catch (UnsupportedEncodingException e) {
-			Debug.error("Encoding not supported! " + e.toString());
-		}
+		postdata.add(new BasicNameValuePair("getpage", "../html/reboot.html"));
+		postdata.add(new BasicNameValuePair("var:pagename", "reset"));
+		postdata.add(new BasicNameValuePair("var:menu", "system"));
+		postdata.add(new BasicNameValuePair("var:pagemaster", ""));
+		postdata.add(new BasicNameValuePair("time:settings/time", "1250935088%2C-120"));
+		postdata.add(new BasicNameValuePair("var:tabReset","0"));
+		postdata.add(new BasicNameValuePair("logic:command/reboot","../gateway/commands/saveconfig.html"));
 	}
 	
-	public void reboot() throws WrongPasswordException {
-		final String urlstr = getWebcmUrl();
-		boolean password_wrong = true;
-		int retry_count = 0;
-		int max_retry_count = 2;
-
+	public void reboot() {
 		List<NameValuePair> postdata = new ArrayList<NameValuePair>();
+		generateRebootPostdata(postdata);
 		
-		while ((password_wrong) && (retry_count < max_retry_count)) {
-			postdata.clear();
-			generateRebootPostdata(postdata);
-			
-			Debug.debug("Retry count: " + retry_count);
-			retry_count++;
-
-			Vector<String> data = new Vector<String>(1000);
-			try {
-				data = JFritzUtils.postDataToUrlAndGetVectorResponse(this, urlstr, postdata, true, true);
-				password_wrong = false;
-				for (int i=0; i<data.size(); i++) {
-					Debug.debug(data.get(i));
-				}
-			} catch (WrongPasswordException wpe) {
-				password_wrong = true;
-				if (retry_count == max_retry_count) {
-					throw wpe;
-				}
-				try {
-					Thread.sleep(wpe.getRetryTime() * 1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} catch (SocketTimeoutException e) {
-				e.printStackTrace();
-				setBoxDisconnected();
-			} catch (IOException e) {
-				e.printStackTrace();
-				setBoxDisconnected();
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
-				setBoxDisconnected();
-			} catch (RedirectToLoginLuaException e) {
-				e.printStackTrace();
-				setBoxDisconnected();
-			}
+		Vector<String> data = new Vector<String>();
+		try {
+			data = fbc.postToPageAndGetAsVector(FritzBoxCommunication.URL_WEBCM, postdata);
+			System.out.println(data);
+		} catch (SocketTimeoutException e) {
+			e.printStackTrace();
+			setBoxDisconnected();
+		} catch (IOException e) {
+			e.printStackTrace();
+			setBoxDisconnected();
+		} catch (LoginBlockedException e) {
+			handleLoginBlockedException(e);
+		} catch (InvalidCredentialsException e) {
+			handleInvalidCredentialsException(e);
+		} catch (PageNotFoundException e) {
+			handlePageNotFoundException(e);
 		}
 	}
 
+	private void handleInvalidCredentialsException(InvalidCredentialsException e) {
+		Debug.errDlg(messages.getMessage("box.wrong_password"));
+	}
+	
+	private void handleLoginBlockedException(LoginBlockedException e) {
+		Debug.errDlg(messages.getMessage("box.wrong_password") + " Login is currently blocked for " + e.getRemainingBlockTime() + " seconds!");
+	}
+
+	private void handlePageNotFoundException(PageNotFoundException e) {
+		Debug.errDlg("Could not execute command, page not found!");
+	}
+
+	private void handleFirmwareNotDetectedException(FirmwareNotDetectedException e) {
+		Debug.errDlg("Could not detect firmware!");
+	}
+	
 	public int getMaxRetryCount() {
 		return max_retry_count;
-	}
-	
-	public void invalidateSession() {
-		if (firmware != null) {
-			firmware.invalidateSessionId();
-		}
 	}
 }

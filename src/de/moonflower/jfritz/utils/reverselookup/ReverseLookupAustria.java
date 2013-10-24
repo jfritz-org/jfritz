@@ -1,8 +1,9 @@
 package de.moonflower.jfritz.utils.reverselookup;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 
 import de.moonflower.jfritz.utils.Debug;
@@ -33,10 +34,10 @@ public final class ReverseLookupAustria {
 		Debug.info("Loading the austrian number to city list");
 		numberMap = new HashMap<String, String>(1200);
 		BufferedReader br = null;
-		FileReader fr = null;
+		FileInputStream fi = null;
 		try{
-			fr = new FileReader(JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") +JFritzUtils.FILESEP + "austria" + JFritzUtils.FILESEP + "areacodes_austria.csv");
-			br = new BufferedReader(fr);
+			fi = new FileInputStream(JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") +JFritzUtils.FILESEP + "austria" + JFritzUtils.FILESEP + "areacodes_austria.csv");
+			br = new BufferedReader(new InputStreamReader(fi, "UTF-8"));
 			String line;
 			String[] entries;
 			int lines = 0;
@@ -60,8 +61,8 @@ public final class ReverseLookupAustria {
 			Debug.error(e.toString());
 		}finally{
 			try{
-				if(fr!=null)
-					fr.close();
+				if(fi!=null)
+					fi.close();
 				if(br!=null)
 					br.close();
 			}catch (IOException ioe){

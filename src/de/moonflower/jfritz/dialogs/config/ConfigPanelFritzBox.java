@@ -305,8 +305,8 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 	private void setBoxTypeLabel() {
 		if (fritzBox.getFirmware() != null) {
 			boxtypeLabel.setForeground(Color.BLUE);
-			boxtypeLabel.setText(" \n" + fritzBox.getFirmware().getBoxName() + "\n" //$NON-NLS-1$
-					+ fritzBox.getFirmware().getFirmwareVersion() + "\n "); //$NON-NLS-1$
+			boxtypeLabel.setText(" \n" + fritzBox.getFirmware().getName() + "\n" //$NON-NLS-1$
+					+ fritzBox.getFirmware().toSimpleString() + "\n "); //$NON-NLS-1$
 			boxtypeLabel.setPreferredSize(boxtypeLabel.getPreferredSize());
 			boxtypeLabel.repaint();
 			checkDefaultFritzBox();
@@ -384,7 +384,7 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 			fritzBox.updateSettings();
 
 			if (fritzBox.getFirmware() != null) {
-				properties.setProperty("box.firmware", fritzBox.getFirmware().getFirmwareVersion()); //$NON-NLS-1$
+				properties.setProperty("box.firmware", fritzBox.getFirmware().toSimpleString()); //$NON-NLS-1$
 				if (defaultFritzBox.isSelected())
 				{
 					properties.setProperty("box.mac", fritzBox.getMacAddress());

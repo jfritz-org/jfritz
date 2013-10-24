@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Vector;
 
+import org.apache.http.client.ClientProtocolException;
+
 import de.moonflower.jfritz.callmonitor.CallMonitorStatusListener;
 import de.moonflower.jfritz.exceptions.FeatureNotSupportedByFirmware;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
@@ -12,6 +14,9 @@ import de.moonflower.jfritz.struct.IProgressListener;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.Debug;
+import de.robotniko.fboxlib.exceptions.InvalidCredentialsException;
+import de.robotniko.fboxlib.exceptions.LoginBlockedException;
+import de.robotniko.fboxlib.exceptions.PageNotFoundException;
 
 public class BoxCommunication {
 	private static int maxCallsPerBox = 400;
@@ -106,6 +111,15 @@ public class BoxCommunication {
 			} catch (IOException e) {
 				e.printStackTrace();
 				box.setBoxDisconnected();
+			} catch (LoginBlockedException e) {
+				e.printStackTrace();
+				box.setBoxDisconnected();
+			} catch (InvalidCredentialsException e) {
+				e.printStackTrace();
+				box.setBoxDisconnected();
+			} catch (PageNotFoundException e) {
+				e.printStackTrace();
+				box.setBoxDisconnected();
 			}
 		} else {
 			for (BoxClass currentBox: registeredBoxes)
@@ -119,6 +133,15 @@ public class BoxCommunication {
 					e.printStackTrace();
 					currentBox.setBoxDisconnected();
 				} catch (IOException e) {
+					e.printStackTrace();
+					currentBox.setBoxDisconnected();
+				} catch (LoginBlockedException e) {
+					e.printStackTrace();
+					currentBox.setBoxDisconnected();
+				} catch (InvalidCredentialsException e) {
+					e.printStackTrace();
+					currentBox.setBoxDisconnected();
+				} catch (PageNotFoundException e) {
 					e.printStackTrace();
 					currentBox.setBoxDisconnected();
 				}
@@ -142,7 +165,24 @@ public class BoxCommunication {
 	{
 		for (BoxClass box:registeredBoxes)
 		{
-			box.clearCallerList();
+			try {
+				box.clearCallerList();
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+				box.setBoxDisconnected();
+			} catch (IOException e) {
+				e.printStackTrace();
+				box.setBoxDisconnected();
+			} catch (LoginBlockedException e) {
+				e.printStackTrace();
+				box.setBoxDisconnected();
+			} catch (InvalidCredentialsException e) {
+				e.printStackTrace();
+				box.setBoxDisconnected();
+			} catch (PageNotFoundException e) {
+				e.printStackTrace();
+				box.setBoxDisconnected();
+			}
 		}
 	}
 

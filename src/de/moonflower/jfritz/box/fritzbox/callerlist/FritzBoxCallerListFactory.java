@@ -5,11 +5,11 @@ import java.util.Vector;
 import de.moonflower.jfritz.box.BoxCallBackListener;
 import de.moonflower.jfritz.box.BoxCallListInterface;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
-import de.moonflower.jfritz.box.fritzbox.FritzBoxFirmware;
+import de.robotniko.fboxlib.fritzbox.FirmwareVersion;
 
 public class FritzBoxCallerListFactory {
 
-	public static BoxCallListInterface createFritzBoxCallListFromFirmware(FritzBoxFirmware firmware, FritzBox fritzBox, Vector<BoxCallBackListener> callbackListener) {
+	public static BoxCallListInterface createFritzBoxCallListFromFirmware(FirmwareVersion firmware, FritzBox fritzBox, Vector<BoxCallBackListener> callbackListener) {
 		BoxCallListInterface result = null;
 
 		if (firmware != null) {

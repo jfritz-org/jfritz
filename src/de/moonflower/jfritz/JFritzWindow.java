@@ -1090,7 +1090,17 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				Debug.debug("Renew IP for box: " + boxName);
 				JFritz.getBoxCommunication().renewIPAddress(box);
 			}
-			JFritzTray.refreshTrayMenu();
+			Thread t = new Thread() {
+				@Override
+				public void run() {
+					try {
+						Thread.sleep(5000);
+						JFritzTray.refreshTrayMenu();
+					} catch (InterruptedException e) {
+					}
+				}
+			};
+			t.start();
 		} else if (e.getActionCommand().startsWith("reboot-")) {
 			String boxName = e.getActionCommand().substring("reboot-".length());
 			BoxClass box = JFritz.getBoxCommunication().getBox(boxName);

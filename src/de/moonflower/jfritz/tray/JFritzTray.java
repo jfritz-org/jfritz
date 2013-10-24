@@ -246,7 +246,7 @@ public class JFritzTray {
 	public static void refreshTrayMenu() {
 		if (tray != null && trayIcon != null) {
 			tray.remove();
-			createTrayMenu();
+			initTray(jframe, boxCommunication);
 		}
 	}
 

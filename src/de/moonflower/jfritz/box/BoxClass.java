@@ -226,7 +226,4 @@ public abstract class BoxClass
 	public abstract String getExternalIP();
 
 	public abstract void reboot() throws WrongPasswordException;
-	
-	public abstract void invalidateSession();
-	
 }

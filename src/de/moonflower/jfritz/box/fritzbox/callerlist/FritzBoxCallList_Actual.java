@@ -1,63 +1,45 @@
 package de.moonflower.jfritz.box.fritzbox.callerlist;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
 import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.message.BasicNameValuePair;
 
 import de.moonflower.jfritz.box.BoxCallBackListener;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
-import de.moonflower.jfritz.box.fritzbox.helper.FritzGetWithRetry;
 import de.moonflower.jfritz.exceptions.FeatureNotSupportedByFirmware;
-import de.moonflower.jfritz.exceptions.RedirectToLoginLuaException;
-import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.IProgressListener;
-import de.moonflower.jfritz.utils.JFritzUtils;
+import de.robotniko.fboxlib.exceptions.InvalidCredentialsException;
+import de.robotniko.fboxlib.exceptions.LoginBlockedException;
+import de.robotniko.fboxlib.exceptions.PageNotFoundException;
 
 public class FritzBoxCallList_Actual extends FritzBoxCallList_Pre_05_28 {
 
 	private static String GET_CSV_LIST = "?csv=";
-	private FritzGetWithRetry fritzGet;
-
     private Vector<Call> calls = new Vector<Call>();
 
 	public FritzBoxCallList_Actual(FritzBox fritzBox, Vector<BoxCallBackListener> callbackListener) {
 		super(fritzBox, callbackListener);
-		fritzGet = new FritzGetWithRetry(fritzBox);
 	}
 
 	@Override
-	public Vector<Call> getCallerList(Vector<IProgressListener> progressListener) throws IOException, MalformedURLException, FeatureNotSupportedByFirmware {
+	public Vector<Call> getCallerList(Vector<IProgressListener> progressListener) throws FeatureNotSupportedByFirmware, ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException {
 		String requestUrl = getFonCallsListLuaUrl() + GET_CSV_LIST;
 		List<NameValuePair> postdata = new ArrayList<NameValuePair>();
-		fritzBox.appendSidOrPassword(postdata);
 
-		String response;
-		try {
-			response = JFritzUtils.postDataToUrlAndGetStringResponse(fritzBox, requestUrl, postdata, true, true);
-			parseResponse(response, progressListener);
-		} catch (WrongPasswordException e) {
-			e.printStackTrace();
-			fritzBox.setBoxDisconnected();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-			fritzBox.setBoxDisconnected();
-		} catch (RedirectToLoginLuaException e) {
-			e.printStackTrace();
-			fritzBox.setBoxDisconnected();
-		}
+		String response = fritzBox.postToPageAndGetAsString(requestUrl, postdata);
+		parseResponse(response, progressListener);
 
 		return calls;
 	}
 
 	private String getFonCallsListLuaUrl() {
-		return fritzBox.getUrlPrefix() + "/fon_num/foncalls_list.lua"; //$NON-NLS-1$, //$NON-NLS-2$, //$NON-NLS-3$
+		return "/fon_num/foncalls_list.lua"; //$NON-NLS-1$
 	}
 
 
@@ -79,14 +61,13 @@ public class FritzBoxCallList_Actual extends FritzBoxCallList_Pre_05_28 {
 	}
 
 	@Override
-	public void clearCallerList() {
-		fritzGet.setPrependAccessMethod(true);
+	public void clearCallerList() throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException {
 		List<NameValuePair> postdata = new ArrayList<NameValuePair>();
 				
 		postdata.add(new BasicNameValuePair("usejournal","on"));
 		postdata.add(new BasicNameValuePair("clear",""));
 		postdata.add(new BasicNameValuePair("callstab","all"));
 		
-		fritzGet.getToVector(getFonCallsListLuaUrl(), postdata, false);
+		fritzBox.postToPageAndGetAsString(getFonCallsListLuaUrl(), postdata);
 	}
 }

@@ -1,11 +1,12 @@
 package de.moonflower.jfritz.box.fritzbox.callerlist;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
+
+import org.apache.http.client.ClientProtocolException;
 
 import de.moonflower.jfritz.box.BoxCallBackListener;
 import de.moonflower.jfritz.box.BoxCallListInterface;
@@ -20,6 +21,9 @@ import de.moonflower.jfritz.struct.IProgressListener;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.Debug;
+import de.robotniko.fboxlib.exceptions.InvalidCredentialsException;
+import de.robotniko.fboxlib.exceptions.LoginBlockedException;
+import de.robotniko.fboxlib.exceptions.PageNotFoundException;
 
 public class FritzBoxCallList_Pre_04_86 implements BoxCallListInterface {
 
@@ -45,9 +49,7 @@ public class FritzBoxCallList_Pre_04_86 implements BoxCallListInterface {
 	}
 
 	@Override
-	public Vector<Call> getCallerList(Vector<IProgressListener> progressListener)
-			throws IOException, MalformedURLException, FeatureNotSupportedByFirmware {
-		fritzBox.setBoxConnected();
+	public Vector<Call> getCallerList(Vector<IProgressListener> progressListener) throws FeatureNotSupportedByFirmware, ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException	{
 		// getting number of entries
 		Vector<String> query = new Vector<String>();
 		query.add(QUERY_CALLS_REFRESH);
@@ -243,7 +245,7 @@ public class FritzBoxCallList_Pre_04_86 implements BoxCallListInterface {
 	}
 
 	@Override
-	public void clearCallerList() {
+	public void clearCallerList() throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException {
 		Vector<String> query = new Vector<String>();
 		query.add("telcfg:settings/ClearJournal");
 		fritzBox.getQuery(query);

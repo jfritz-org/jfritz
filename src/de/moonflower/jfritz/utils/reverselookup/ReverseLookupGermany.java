@@ -39,7 +39,7 @@ public class ReverseLookupGermany {
 
 		try{
 			fi = new FileInputStream(JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") + JFritzUtils.FILESEP + "germany" + JFritzUtils.FILESEP + "areacodes_germany.csv");
-			br = new BufferedReader(new InputStreamReader(fi, "ISO-8859-1"));
+			br = new BufferedReader(new InputStreamReader(fi, "UTF-8"));
 
 			String line;
 			String[] entries;
