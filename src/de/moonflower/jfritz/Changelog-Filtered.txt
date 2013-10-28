@@ -1,5 +1,5 @@
 JFritz 0.7.4.2:
-- Support FritzOS 05.55
+- Support FritzOS 05.55 und 05.60
 - Bugfix 0000372: Anrufliste kann mit v0.7.4.1.32 nicht mehr gelöscht werden
 - Bugfix 0000390: Erkennung der FritzBox anhand MAC scheint defekt zu sein
 - Bugfix 0000385: Code -w unterdrückt die Meldung mit mehreren Instanzen nicht mehr
@@ -12,10 +12,12 @@ JFritz 0.7.4.2:
 - Bugfix: Verwende UTF-8, um Daten von der FritzBox zu lesen 
 - Bugfix 0000393: Es wäre schön, wenn die neu eingeführte Revision-Nummer im Menü des TrayIcon-Menüs angezeigt würde
 - Bugfix 0000394: 7360, HWRev 124 wird nicht erkannt -> boxnames.conf nicht aktuell
+- Bugfix 0000377: Warning: Could not parse portstr
 - Bugfix 0000395: Wählhilfe wählt doppelt
 - Bugfix 0000392: Falsche Darstellung der Umlaute
 - Bugfix 0000396: "Firmware-Erkennung gescheitert", aktualisieren der Anrufliste nicht möglich
 - Bugfix 0000397: Keine Angabe / Abholung der Nummern/SIPs
+- Bugfix 0000398: JFRITZ --export per Kommandozeile // Datei wird zwar neu erzeugt, aber ohne aktuelle Anrufliste
 - Bugfix: Tray-Icon verschwindet, nachdem man die IP-Adresse über das Tray erneuert hat
 
 JFritz 0.7.4.1.32:

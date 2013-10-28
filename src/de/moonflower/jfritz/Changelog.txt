@@ -21,10 +21,12 @@ TODO tel.search.ch überprüfen und reparieren
 - TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
 
 JFritz 0.7.4.2_12:
+- Bugfix 0000377: Warning: Could not parse portstr
 - Bugfix 0000395: Wählhilfe wählt doppelt
 - Bugfix 0000392: Falsche Darstellung der Umlaute
 - Bugfix 0000396: "Firmware-Erkennung gescheitert", aktualisieren der Anrufliste nicht möglich
 - Bugfix 0000397: Keine Angabe / Abholung der Nummern/SIPs
+- Bugfix 0000398: JFRITZ --export per Kommandozeile // Datei wird zwar neu erzeugt, aber ohne aktuelle Anrufliste
 - Bugfix: Tray disappears after renewing IP address
 
 JFritz 0.7.4.2_11:
