@@ -1,4 +1,5 @@
 JFritz 0.7.4.2:
+- Support FritzOS 06.00
 - Support FritzOS 05.55 und 05.60
 - Bugfix 0000372: Anrufliste kann mit v0.7.4.1.32 nicht mehr gelöscht werden
 - Bugfix 0000390: Erkennung der FritzBox anhand MAC scheint defekt zu sein

@@ -20,6 +20,9 @@ TODO tel.search.ch überprüfen und reparieren
 - TODO: Sounds trennen und individualisierbar gestalten
 - TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
 
+JFritz 0.7.4.2_13:
+- Support FritzOS 06.00
+
 JFritz 0.7.4.2_12:
 - Bugfix 0000377: Warning: Could not parse portstr
 - Bugfix 0000395: Wählhilfe wählt doppelt
