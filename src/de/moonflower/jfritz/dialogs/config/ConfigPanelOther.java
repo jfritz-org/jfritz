@@ -87,7 +87,7 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 		checkNewVersionAfterStart = new JCheckBox(messages.getMessage("check_for_new_version_after_start")); //$NON-NLS-1$
 		c.gridy++;
 		cPane.add(checkNewVersionAfterStart, c);
-		checkNewVersionAfterStart.setEnabled(false);
+		checkNewVersionAfterStart.setEnabled(true);
 
 		passwordAfterStartButton = new JCheckBox(messages.getMessage("ask_for_password_before_start")); //$NON-NLS-1$
 		c.gridy++;

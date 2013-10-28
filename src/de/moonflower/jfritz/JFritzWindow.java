@@ -56,6 +56,7 @@ import jd.nutils.OSDetector;
 
 import org.apache.log4j.Logger;
 
+import de.moonflower.jfritz.autoupate.CheckForUpdate;
 import de.moonflower.jfritz.backup.JFritzBackup;
 import de.moonflower.jfritz.box.BoxClass;
 import de.moonflower.jfritz.box.BoxStatusListener;
@@ -248,6 +249,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			if (properties.getProperty("option.timerAfterStart") //$NON-NLS-1$,  //$NON-NLS-2$
 					.equals("true")) { //$NON-NLS-1$
 				taskButton.doClick();
+			}
+			if (properties.getProperty("option.checkNewVersionAfterStart").equals("true")) {
+				if (CheckForUpdate.isUpdateAvailable()) {
+					CheckForUpdate.showUpdateNotification(this);
+				}
 			}
 		}
 	}
@@ -1057,7 +1063,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		} else if (e.getActionCommand().equals("export_csv")) {
 			exportCallerListToCSV();
 		} else if (e.getActionCommand().equals("update")) { //$NON-NLS-1$
-			log.warn("Update not yet implemented");
+			if (CheckForUpdate.isUpdateAvailable()) {
+				CheckForUpdate.showUpdateNotification(this);
+			}
 		} else if (e.getActionCommand().equals("export_phonebook")) {
 			exportPhoneBookToCSV();
 		} else if (e.getActionCommand().equals("print_callerlist")) {
