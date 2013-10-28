@@ -244,7 +244,7 @@ public class Main  {
 	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public Main() {
-		// NICHT VERWENDEN, nur fÃ¼r TestCases, nicht alles initialisiert. NICHT
+		// NICHT VERWENDEN, nur für TestCases, nicht alles initialisiert. NICHT
 		// VERWENDEN!
 		loadLanguages();
 		JFritzDataDirectory.getInstance().loadSaveDir();
@@ -531,6 +531,11 @@ public class Main  {
 			splash.setStatus("Loading caller list and phonebook...");
 			jfritz.initCallerListAndPhoneBook();
 		}
+		
+		if (result == 0) {
+			// must be called before main.checkCLIParameters
+			jfritz.registerListeners();
+		}
 
 		if (result == 0) {
 			boolean shutdownInvoked = main.checkCLIParameters(args);
@@ -563,7 +568,7 @@ public class Main  {
 			splash.dispose();
 			jfritz.startClientServer();
 			jfritz.startWatchdog();
-			jfritz.registerListeners();
+			jfritz.registerGuiListeners();
 		}
 
 		log.info("Main is now exiting...");

@@ -235,9 +235,6 @@ public final class JFritz implements  StatusListener {
 		phonebook.setCallerList(callerlist);
 		phonebook.loadFromXMLFile(JFritzDataDirectory.getInstance().getDataDirectory() + PHONEBOOK_FILE);
 		callerlist.loadFromXMLFile(JFritzDataDirectory.getInstance().getDataDirectory() + CALLS_FILE);
-
-//		phonebook.findAllLastCalls();
-//		callerlist.findAllPersons();
 	}
 
 	public void initSounds() {
@@ -289,13 +286,16 @@ public final class JFritz implements  StatusListener {
 			}
 		}
 	}
-
+	
 	public void registerListeners() {
+		boxCommunication.registerCallListProgressListener(getCallerList());
+		boxCommunication.registerBoxCallBackListener(JFritz.getCallerList());
+	}
+
+	public void registerGuiListeners() {
 		boxCommunication.registerCallMonitorStateListener(jframe);
 		boxCommunication.registerCallListProgressListener(jframe.getCallerListPanel());
-		boxCommunication.registerCallListProgressListener(getCallerList());
 		boxCommunication.registerBoxStatusListener(jframe);
-		boxCommunication.registerBoxCallBackListener(JFritz.getCallerList());
 	}
 
 	/**

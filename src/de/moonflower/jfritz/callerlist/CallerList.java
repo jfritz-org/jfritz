@@ -447,7 +447,7 @@ public class CallerList extends AbstractTableModel
 			}
 
 			// Notify user?
-			if (JFritzUtils.parseBoolean(properties.getProperty("option.notifyOnCalls"))) {
+			if (JFritz.getJframe() != null && JFritzUtils.parseBoolean(properties.getProperty("option.notifyOnCalls"))) {
 				JFritz.infoMsg(msg);
 			}
 
