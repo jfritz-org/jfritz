@@ -194,8 +194,9 @@ public class FritzBoxCallList_Pre_04_86 implements BoxCallListInterface {
 					}
 				} catch (NumberFormatException nfe)
 				{
-					Debug.warning("FritzBox: Could not parse portstr as number: " + portStr);
+					// nothing to do, just proceed
 				}
+				
 				if (port == null)
 				{
 					port = new Port(0, portStr, "-1", "-1");

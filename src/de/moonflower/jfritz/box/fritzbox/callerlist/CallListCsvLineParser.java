@@ -167,7 +167,7 @@ public class CallListCsvLineParser {
 				port = Port.getPort(portId);
 			}
 		} catch (NumberFormatException nfe) {
-			Debug.warning("FritzBox: Could not parse portstr as number: " + portStr);
+			// nothing to do, just proceed
 		}
 
 		if (port == null) {
