@@ -20,6 +20,7 @@ JFritz 0.7.4.2:
 - Bugfix 0000397: Keine Angabe / Abholung der Nummern/SIPs
 - Bugfix 0000398: JFRITZ --export per Kommandozeile // Datei wird zwar neu erzeugt, aber ohne aktuelle Anrufliste
 - Bugfix: Tray-Icon verschwindet, nachdem man die IP-Adresse über das Tray erneuert hat
+- Bugfix 0000399: IllegalArgumentException im Wizard bei FritzBox-Page
 
 JFritz 0.7.4.1.32:
 - Fehlende Bibliothek hinzugefügt
