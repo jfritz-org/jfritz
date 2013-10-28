@@ -120,7 +120,7 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 			this.fritzBox = fritzBox;
 		} else {
 			Exception e = null;
-			this.fritzBox = new FritzBox("FRITZ!Box", "", "http", "", "80", "", e);
+			this.fritzBox = new FritzBox("FRITZ!Box", "", "http", "", properties.getProperty("box.port"), "", e);
 			if (e != null) {
 				Debug.error(e.toString());
 			}

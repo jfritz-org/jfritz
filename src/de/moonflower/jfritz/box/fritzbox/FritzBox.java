@@ -141,7 +141,6 @@ public class FritzBox extends BoxClass {
 		this.description = description;
 
 		this.protocol = protocol;
-		this.address = address;
 		this.port = port;
 		this.password = password;
 
@@ -150,21 +149,26 @@ public class FritzBox extends BoxClass {
 		callBackListener = new Vector<BoxCallBackListener>(4);
 		
 		exc = null;
-		try {
-			setBoxConnected();
-			exc = updateSettings();
-		} catch (WrongPasswordException e) {
-			exc = e;
-			Debug.error(messages.getMessage("box.wrong_password"));
-			setBoxDisconnected();
-		} catch (InvalidFirmwareException e) {
-			exc = e;
-			Debug.error(messages.getMessage("unknown_firmware"));
-			setBoxDisconnected();
-		} catch (IOException e) {
-			exc = e;
-			Debug.error(messages.getMessage("box.not_found"));
-			setBoxDisconnected();
+		if ("".equals(address)) {
+			this.address = "fritz.box";
+		} else {
+			this.address = address;
+			try {
+				setBoxConnected();
+				exc = updateSettings();
+			} catch (WrongPasswordException e) {
+				exc = e;
+				Debug.error(messages.getMessage("box.wrong_password"));
+				setBoxDisconnected();
+			} catch (InvalidFirmwareException e) {
+				exc = e;
+				Debug.error(messages.getMessage("unknown_firmware"));
+				setBoxDisconnected();
+			} catch (IOException e) {
+				exc = e;
+				Debug.error(messages.getMessage("box.not_found"));
+				setBoxDisconnected();
+			}
 		}
 	}
 
@@ -234,35 +238,51 @@ public class FritzBox extends BoxClass {
 	}
 	
 	public String getPageAsString(final String url) throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException {
-		return fbc.getPageAsString(url);
+		if (fbc.isLoggedIn()) {
+			return fbc.getPageAsString(url);
+		} else {
+			return "";
+		}
 	}
 	
 	public String postToPageAndGetAsString(final String url, List<NameValuePair> params) throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException {
-		return fbc.postToPageAndGetAsString(url, params);
+		if (fbc.isLoggedIn()) {
+			return fbc.postToPageAndGetAsString(url, params);
+		} else {
+			return "";
+		}
 	}
 	
 	public Vector<String> postToPageAndGetAsVector(final String url, List<NameValuePair> params) throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException {
-		return fbc.postToPageAndGetAsVector(url, params);
+		if (fbc.isLoggedIn()) {
+			return fbc.postToPageAndGetAsVector(url, params);
+		} else {
+			return new Vector<String>();
+		}
 	}
 
 	public final Vector<String> getQuery(Vector<String> queries) //throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException
 	{
 		// FIXME throw exceptions!!!! 
 		Vector<String> result = new Vector<String>();
-		try {
-			result = fbc.getQuery(queries);
-		} catch (ClientProtocolException e) {
-			Debug.error(e.getMessage());
-		} catch (IOException e) {
-			Debug.error(e.getMessage());
-		} catch (LoginBlockedException e) {
-			handleLoginBlockedException(e);
-		} catch (InvalidCredentialsException e) {
-			handleInvalidCredentialsException(e);
-		} catch (PageNotFoundException e) {
-			handlePageNotFoundException(e);
+		
+		if (fbc.isLoggedIn()) {
+			try {
+				result = fbc.getQuery(queries);
+			} catch (ClientProtocolException e) {
+				Debug.error(e.getMessage());
+			} catch (IOException e) {
+				Debug.error(e.getMessage());
+			} catch (LoginBlockedException e) {
+				handleLoginBlockedException(e);
+			} catch (InvalidCredentialsException e) {
+				handleInvalidCredentialsException(e);
+			} catch (PageNotFoundException e) {
+				handlePageNotFoundException(e);
+			}
+			Thread.yield();
 		}
-		Thread.yield();
+		
 		return result;
 	}
 
@@ -276,25 +296,33 @@ public class FritzBox extends BoxClass {
 
 	public void detectMacAddress()
 	{
-		macAddress = messages.getMessage("unknown");
-
-		try {
-			macAddress = fbc.getNetworkMethods().getMacAddress();
-		} catch (Exception e) {
+		if (fbc.isLoggedIn()) {
 			macAddress = messages.getMessage("unknown");
-		}
-		
-		if ("".equals(macAddress))
-		{
-			macAddress = messages.getMessage("unknown");
+	
+			try {
+				macAddress = fbc.getNetworkMethods().getMacAddress();
+			} catch (Exception e) {
+				macAddress = messages.getMessage("unknown");
+			}
+			
+			if ("".equals(macAddress))
+			{
+				macAddress = messages.getMessage("unknown");
+			}
+		} else {
+			macAddress = properties.getProperty("box.mac");
 		}
 	}
 
 	public String getExternalIP() {
 		try {
-			return fbc.getNetworkMethods().getExternalIP();
+			if (fbc.isLoggedIn()) {
+				return fbc.getNetworkMethods().getExternalIP();
+			} else {
+				return "No external IP detected";
+			}
 		} catch (Exception e) {
-			return "No external IP";
+			return "No external IP detected";
 		}
 	}
 
@@ -1124,34 +1152,38 @@ public class FritzBox extends BoxClass {
 	}
 
 	public void doCall(PhoneNumberOld number, Port port) {
-		setBoxConnected();
-		String currentNumber = number.getAreaNumber();
-		currentNumber = currentNumber.replaceAll("\\+", "00"); //$NON-NLS-1$,  //$NON-NLS-2$
-
-		List<NameValuePair> postdata = new ArrayList<NameValuePair>();
-		generateDoCallPostData(postdata, currentNumber, port);
-
-		try {
-			fbc.postToPageAndGetAsString(FritzBoxCommunication.URL_WEBCM, postdata);
-		} catch (SocketTimeoutException ste) {
-			ste.printStackTrace();
-			setBoxDisconnected();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			setBoxDisconnected();
-		} catch (LoginBlockedException e) {
-			Debug.debug("Wrong password, maybe SID is invalid.");
-			setBoxDisconnected();
-			handleLoginBlockedException(e);
-		} catch (InvalidCredentialsException e) {
-			Debug.debug("Wrong password, maybe SID is invalid.");
-			setBoxDisconnected();
-			handleInvalidCredentialsException(e);
-		} catch (PageNotFoundException e) {
-			Debug.debug("Wrong password, maybe SID is invalid.");
-			setBoxDisconnected();
-			handlePageNotFoundException(e);
+		if (fbc.isLoggedIn()) {
+			setBoxConnected();
+			String currentNumber = number.getAreaNumber();
+			currentNumber = currentNumber.replaceAll("\\+", "00"); //$NON-NLS-1$,  //$NON-NLS-2$
+	
+			List<NameValuePair> postdata = new ArrayList<NameValuePair>();
+			generateDoCallPostData(postdata, currentNumber, port);
+	
+			try {
+				fbc.postToPageAndGetAsString(FritzBoxCommunication.URL_WEBCM, postdata);
+			} catch (SocketTimeoutException ste) {
+				ste.printStackTrace();
+				setBoxDisconnected();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				setBoxDisconnected();
+			} catch (LoginBlockedException e) {
+				Debug.debug("Wrong password, maybe SID is invalid.");
+				setBoxDisconnected();
+				handleLoginBlockedException(e);
+			} catch (InvalidCredentialsException e) {
+				Debug.debug("Wrong password, maybe SID is invalid.");
+				setBoxDisconnected();
+				handleInvalidCredentialsException(e);
+			} catch (PageNotFoundException e) {
+				Debug.debug("Wrong password, maybe SID is invalid.");
+				setBoxDisconnected();
+				handlePageNotFoundException(e);
+			}
+		} else {
+			// FIXME show error message that we are currently not connected!!
 		}
 	}
 
@@ -1162,29 +1194,33 @@ public class FritzBox extends BoxClass {
 	
 	public void hangup(Port port)
 	{
-		setBoxConnected();
-		List<NameValuePair> postdata = new ArrayList<NameValuePair>();
-		generateHangupPostdata(postdata);
-		try {
-			fbc.postToPageAndGetAsVector(FritzBoxCommunication.URL_WEBCM, postdata);
-		} catch (SocketTimeoutException ste) {
-			ste.printStackTrace();
-			setBoxDisconnected();
-		} catch (IOException e) {
-			e.printStackTrace();
-			setBoxDisconnected();
-		} catch (LoginBlockedException e) {
-			Debug.debug("Wrong password, maybe SID is invalid.");
-			setBoxDisconnected();
-			handleLoginBlockedException(e);
-		} catch (InvalidCredentialsException e) {
-			Debug.debug("Wrong password, maybe SID is invalid.");
-			setBoxDisconnected();
-			handleInvalidCredentialsException(e);
-		} catch (PageNotFoundException e) {
-			Debug.debug("Wrong password, maybe SID is invalid.");
-			setBoxDisconnected();
-			handlePageNotFoundException(e);
+		if (fbc.isLoggedIn()) {
+			setBoxConnected();
+			List<NameValuePair> postdata = new ArrayList<NameValuePair>();
+			generateHangupPostdata(postdata);
+			try {
+				fbc.postToPageAndGetAsVector(FritzBoxCommunication.URL_WEBCM, postdata);
+			} catch (SocketTimeoutException ste) {
+				ste.printStackTrace();
+				setBoxDisconnected();
+			} catch (IOException e) {
+				e.printStackTrace();
+				setBoxDisconnected();
+			} catch (LoginBlockedException e) {
+				Debug.debug("Wrong password, maybe SID is invalid.");
+				setBoxDisconnected();
+				handleLoginBlockedException(e);
+			} catch (InvalidCredentialsException e) {
+				Debug.debug("Wrong password, maybe SID is invalid.");
+				setBoxDisconnected();
+				handleInvalidCredentialsException(e);
+			} catch (PageNotFoundException e) {
+				Debug.debug("Wrong password, maybe SID is invalid.");
+				setBoxDisconnected();
+				handlePageNotFoundException(e);
+			}
+		} else {
+			// FIXME show error message that we are currently not connected!!
 		}
 	}
 
@@ -1206,25 +1242,29 @@ public class FritzBox extends BoxClass {
 	}
 	
 	public void reboot() {
-		List<NameValuePair> postdata = new ArrayList<NameValuePair>();
-		generateRebootPostdata(postdata);
-		
-		Vector<String> data = new Vector<String>();
-		try {
-			data = fbc.postToPageAndGetAsVector(FritzBoxCommunication.URL_WEBCM, postdata);
-			System.out.println(data);
-		} catch (SocketTimeoutException e) {
-			e.printStackTrace();
-			setBoxDisconnected();
-		} catch (IOException e) {
-			e.printStackTrace();
-			setBoxDisconnected();
-		} catch (LoginBlockedException e) {
-			handleLoginBlockedException(e);
-		} catch (InvalidCredentialsException e) {
-			handleInvalidCredentialsException(e);
-		} catch (PageNotFoundException e) {
-			handlePageNotFoundException(e);
+		if (fbc.isLoggedIn()) {
+			List<NameValuePair> postdata = new ArrayList<NameValuePair>();
+			generateRebootPostdata(postdata);
+			
+			Vector<String> data = new Vector<String>();
+			try {
+				data = fbc.postToPageAndGetAsVector(FritzBoxCommunication.URL_WEBCM, postdata);
+				System.out.println(data);
+			} catch (SocketTimeoutException e) {
+				e.printStackTrace();
+				setBoxDisconnected();
+			} catch (IOException e) {
+				e.printStackTrace();
+				setBoxDisconnected();
+			} catch (LoginBlockedException e) {
+				handleLoginBlockedException(e);
+			} catch (InvalidCredentialsException e) {
+				handleInvalidCredentialsException(e);
+			} catch (PageNotFoundException e) {
+				handlePageNotFoundException(e);
+			}
+		} else {
+			// FIXME show error message that we are currently not connected!!
 		}
 	}
 
