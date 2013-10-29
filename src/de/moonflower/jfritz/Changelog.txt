@@ -20,6 +20,9 @@ TODO tel.search.ch überprüfen und reparieren
 - TODO: Sounds trennen und individualisierbar gestalten
 - TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
 
+JFritz 0.7.4.2_15:
+- Bugfix: Areacode und Areaprefix werden nun automatisch korrigiert
+
 JFritz 0.7.4.2_14:
 - Bugfix 0000399: IllegalArgumentException im Wizard bei FritzBox-Page
 

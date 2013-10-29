@@ -91,18 +91,44 @@ public class ConfigPanelPhone extends JPanel implements ConfigPanel{
 		properties.setProperty(
                 "option.activateDialPrefix", Boolean.toString(activateDialPrefix.isSelected())); //$NON-NLS-1$
 
-		properties.setProperty("area.code", areaCode.getText()); //$NON-NLS-1$
-
+		
+		final String fixedAreaCode = fixAreaCode(areaCode.getText(), areaPrefix.getText());
+		final String fixedAreaPrefix = fixAreaPrefix(areaCode.getText(), areaPrefix.getText());
+		
+		areaCode.setText(fixedAreaCode);
+		areaPrefix.setText(fixedAreaPrefix);
+		
 		//Phone stuff here
 		//make sure country code has a plus on it
 		if(!countryCode.getText().startsWith("+"))
 			countryCode.setText("+"+countryCode.getText());
 
+		properties.setProperty("area.code", areaCode.getText()); //$NON-NLS-1$
 		properties.setProperty("country.code", countryCode.getText()); //$NON-NLS-1$
 		properties.setProperty("area.prefix", areaPrefix.getText()); //$NON-NLS-1$
         properties.setProperty("dial.prefix", dialPrefix.getText()); //$NON-NLS-1$
 		properties.setProperty("country.prefix", countryPrefix.getText()); //$NON-NLS-1$
-
+	}
+	
+	protected String fixAreaCode(final String areaCode, final String areaPrefix) {
+		if (areaCode.startsWith("0") && (areaPrefix.startsWith("0"))) {
+			return areaCode.substring(1);
+		} else {
+			return areaCode;
+		}
+	}
+	
+	protected String fixAreaPrefix(final String areaCode, final String areaPrefix) {
+		if (areaCode.length() > 1) {
+			if (!areaPrefix.equals("0") && areaPrefix.endsWith(areaCode)) {
+				String cleanedUpAreaPrefix = areaPrefix.substring(0, areaPrefix.length() - areaCode.length());
+				if ("".equals(cleanedUpAreaPrefix)) {
+					cleanedUpAreaPrefix = "0";
+				}
+				return cleanedUpAreaPrefix;
+			}
+		}
+		return areaPrefix;
 	}
 
 	public String getPath()
