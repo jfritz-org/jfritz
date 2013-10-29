@@ -314,7 +314,7 @@
             todir="${release}/linux"
             package="jfritz"
             section="utils"
-            depends="sun-java5-jre | sun-java6-jre"
+            depends="java-package | java-7-oracle | openjdk-7-jre | openjdk-7-jdk | sun-java6-jre | sun-java6-jdk | openjdk-6-jre | openjdk-6-jdk | sun-java5-jre"
         	preinst="${release-templates}/Linux/preinst"
         >
             <version upstream="${version}"/>
