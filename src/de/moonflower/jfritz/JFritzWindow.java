@@ -158,6 +158,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	public final String WINDOW_PROPERTIES_FILE = "jfritz.window.properties.xml"; //$NON-NLS-1$
 
 	private JMenuItem googleItem;
+	
+	private CheckForUpdate updateCheck;
 
 	protected PropertyProvider properties = PropertyProvider.getInstance();
 	protected MessageProvider messages = MessageProvider.getInstance();
@@ -170,6 +172,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	public JFritzWindow(JFritz jfritz) {
 		super();
 		this.jFritz = jfritz;
+		updateCheck = new CheckForUpdate();
 		Debug.info("Create JFritz-GUI"); //$NON-NLS-1$
 		maxBounds = null;
 		createGUI();
@@ -251,8 +254,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				taskButton.doClick();
 			}
 			if (properties.getProperty("option.checkNewVersionAfterStart").equals("true")) {
-				if (CheckForUpdate.isUpdateAvailable()) {
-					CheckForUpdate.showUpdateNotification(this);
+				if (updateCheck.isUpdateAvailable()) {
+					updateCheck.showUpdateNotification(this);
 				}
 			}
 		}
@@ -1063,8 +1066,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		} else if (e.getActionCommand().equals("export_csv")) {
 			exportCallerListToCSV();
 		} else if (e.getActionCommand().equals("update")) { //$NON-NLS-1$
-			if (CheckForUpdate.isUpdateAvailable()) {
-				CheckForUpdate.showUpdateNotification(this);
+			if (updateCheck.isUpdateAvailable()) {
+				updateCheck.showUpdateNotification(this);
+			} else {
+				updateCheck.showNoUpdateAvailable(this);
 			}
 		} else if (e.getActionCommand().equals("export_phonebook")) {
 			exportPhoneBookToCSV();
