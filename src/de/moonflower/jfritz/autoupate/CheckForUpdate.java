@@ -4,12 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
-import javax.swing.JEditorPane;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 import jd.nutils.OSDetector;
 
@@ -24,12 +20,10 @@ import org.apache.http.util.EntityUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import sun.java2d.loops.ProcessPath.ProcessHandler;
-
 import de.moonflower.jfritz.constants.ProgramConstants;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.messages.UpdateMessageProvider;
-import de.moonflower.jfritz.utils.BrowserLaunch;
+import de.moonflower.jfritz.utils.JOptionPaneHtml;
 import de.robotniko.fboxlib.exceptions.PageNotFoundException;
 
 public class CheckForUpdate {
@@ -72,6 +66,7 @@ public class CheckForUpdate {
 	private void parseResponse(final String result) {
 		JSONObject o = (JSONObject)JSONValue.parse(result);
 		available = (Long)o.get("available") == 1;
+		available = true;
 		url = (String)o.get("url");
 		version = (String)o.get("version");
 		changelog = (String)o.get("changelog");
@@ -83,25 +78,7 @@ public class CheckForUpdate {
 	
 	public void showUpdateNotification(final JFrame parentFrame) {
 		String message = createUpdateMessage();
-		JEditorPane ep = createPanelWithLink(message);
-		JOptionPane.showMessageDialog(parentFrame, ep, messages.getMessage("information"), JOptionPane.INFORMATION_MESSAGE); //$NON-NLS-1$
-	}
-
-	private JEditorPane createPanelWithLink(String message) {
-		JLabel label = new JLabel();
-		JEditorPane ep = new JEditorPane("text/html", message);
-		ep.addHyperlinkListener(new HyperlinkListener() {
-			
-			@Override
-			public void hyperlinkUpdate(HyperlinkEvent e) {
-				if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
-					BrowserLaunch.openURL(e.getURL().toString());
-				}
-			}
-		});
-		ep.setEditable(false);
-		ep.setBackground(label.getBackground());
-		return ep;
+		JOptionPaneHtml.showMessageDialog(parentFrame, message, messages.getMessage("information"), JOptionPane.INFORMATION_MESSAGE); //$NON-NLS-1$
 	}
 	
 	private String createUpdateMessage() {
