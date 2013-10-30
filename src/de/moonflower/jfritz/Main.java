@@ -162,6 +162,7 @@ import de.moonflower.jfritz.dialogs.simple.AddressPasswordDialog;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.messages.UpdateMessageProvider;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Person;
@@ -242,7 +243,8 @@ public class Main  {
 
 	protected PropertyProvider properties = PropertyProvider.getInstance();
 	protected MessageProvider messages = MessageProvider.getInstance();
-
+	protected UpdateMessageProvider updateMessages = UpdateMessageProvider.getInstance();
+	
 	public Main() {
 		// NICHT VERWENDEN, nur für TestCases, nicht alles initialisiert. NICHT
 		// VERWENDEN!
@@ -251,6 +253,7 @@ public class Main  {
 		showConfWizard = properties.loadProperties(false);
 		String loc = properties.getProperty("locale");
 		messages.loadMessages(new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_") + 1, loc.length()))); //$NON-NLS-1$,  //$NON-NLS-2$
+		updateMessages.loadMessages(new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_") + 1, loc.length()))); //$NON-NLS-1$,  //$NON-NLS-2$
 		loadLocaleMeanings(new Locale("int", "INT"));
 
 	}
@@ -462,6 +465,7 @@ public class Main  {
 		log.info("Selected language: " + loc);
 
 		messages.loadMessages(new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_") + 1, loc.length()))); //$NON-NLS-1$,  //$NON-NLS-2$
+		updateMessages.loadMessages(new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_") + 1, loc.length()))); //$NON-NLS-1$,  //$NON-NLS-2$
 		loadLocaleMeanings(new Locale("int", "INT"));
 
 		int result = 0;
@@ -743,8 +747,8 @@ public class Main  {
 					exit(EXIT_CODE_PARAMETER_WRONG_FORMAT);
 					shutdown = true;
 				}
-				messages.loadMessages(new Locale(properties
-						.getProperty("locale"))); //$NON-NLS-1$,  //$NON-NLS-2$
+				messages.loadMessages(new Locale(properties.getProperty("locale"))); //$NON-NLS-1$,  //$NON-NLS-2$
+				updateMessages.loadMessages(new Locale(properties.getProperty("locale"))); //$NON-NLS-1$,  //$NON-NLS-2$
 				break;
 			case 'p': //$NON-NLS-1$
 				String priority = option.getParameter();
@@ -846,6 +850,7 @@ public class Main  {
 			logAndStdOut("Selected language: " + loc);
 
 			messages.loadMessages(new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_") + 1, loc.length()))); //$NON-NLS-1$,  //$NON-NLS-2$
+			updateMessages.loadMessages(new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_") + 1, loc.length()))); //$NON-NLS-1$,  //$NON-NLS-2$
 			loadLocaleMeanings(new Locale("int", "INT"));
 			logAndStdOut("Shall JFritz move data from "
 					+ JFritzDataDirectory.getInstance().getDataDirectory()

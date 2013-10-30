@@ -22,6 +22,7 @@ import de.moonflower.jfritz.dialogs.config.ConfigPanelPhone;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.messages.UpdateMessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.Debug;
 
@@ -192,6 +193,7 @@ public class ConfigWizard {
 				String loc = localeList[languageCombo.getSelectedIndex()];
 				Locale locale = new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_")+1, loc.length()));
 				messages.loadMessages(locale);
+				UpdateMessageProvider.getInstance().loadMessages(locale);
 				if (JFritz.getJframe() != null) {
 					JFritz.getJframe().setLanguage(locale);
 				}

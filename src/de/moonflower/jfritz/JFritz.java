@@ -29,6 +29,7 @@ import de.moonflower.jfritz.dialogs.simple.MessageDlg;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.messages.UpdateMessageProvider;
 import de.moonflower.jfritz.network.ClientLoginsTableModel;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.phonebook.PhoneBook;
@@ -91,6 +92,7 @@ public final class JFritz implements  StatusListener {
 
 	protected PropertyProvider properties = PropertyProvider.getInstance();
 	protected MessageProvider messages = MessageProvider.getInstance();
+	protected UpdateMessageProvider updateMessages = UpdateMessageProvider.getInstance();
 
 	/**
 	 * Constructs JFritz object
@@ -453,6 +455,7 @@ public final class JFritz implements  StatusListener {
 	public void createNewWindow(Locale l) {
 		Debug.info("Loading new locale"); //$NON-NLS-1$
 		messages.loadMessages(l);
+		updateMessages.loadMessages(l);
 
 		refreshWindow();
 	}
