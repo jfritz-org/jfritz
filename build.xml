@@ -2,7 +2,8 @@
 <project name="JFritz" default="build" basedir=".">
 	<property name="app.name" value="JFritz" />
 	<property name="version" value="unknown" />
-
+	<property name="revision" value="unknown" />
+	
 	<!-- compiler flags -->
 	<property name="javac.debug" value="true" />
 	<property name="javac.optimize" value="false" />
@@ -109,6 +110,16 @@
 			excludes="de/moonflower/jfritz/simpletests/**, com/nexes/test/**" />
 	</target>
 
+	<target name="compile-ant-scripts" depends="clean, compile-JFritz-Constants, compile-update-constants, compile-getVersion">
+		<mkdir dir="${build}" />
+		<mkdir dir="${build.classes}" />
+		<javac srcdir="${src}/de/moonflower/jfritz/ant" destdir="${build.classes}"
+			classpathref="test.classpath" debug="${javac.debug}"
+			optimize="${javac.optimize}" source="${javac.version}"
+			target="${javac.version}" encoding="iso-8859-1"
+			excludes="de/moonflower/jfritz/simpletests/**, com/nexes/test/**" />
+	</target>
+	
 	<target name="init" depends="getSvnRevision, updateProgramConstants, getVersion, getRevision" description="Show startup informations">
 		<echo message="ant version:   ${ant.version}" />
 		<echo message="java version:  ${ant.java.version}" />

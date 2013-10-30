@@ -469,7 +469,7 @@ http://www.jfritz.org/
 		<!-- creating beta version -->
 		<!-- actualize version of setup file -->
 		<taskdef name="UpdateSetupConfig" classname="de.moonflower.jfritz.ant.UpdateSetupConfig" classpathref="helper.classpath" />
-		<UpdateSetupConfig file="${basedir}/${release}/win/tmp/jfritz-version.txt" appName="${product}" appType="Setup" appVersion="${version}" />
+		<UpdateSetupConfig file="${basedir}/${release}/win/tmp/jfritz-version.txt" appName="${product}" appType="Setup" appVersion="${version}" appRevision="${revision}"/>
 
 		<!-- generate setup-file -->
 		<exec executable="C:\Program Files (x86)\Inno Setup 5\ISCC.exe">
