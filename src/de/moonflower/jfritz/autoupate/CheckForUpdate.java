@@ -66,7 +66,6 @@ public class CheckForUpdate {
 	private void parseResponse(final String result) {
 		JSONObject o = (JSONObject)JSONValue.parse(result);
 		available = (Long)o.get("available") == 1;
-		available = true;
 		url = (String)o.get("url");
 		version = (String)o.get("version");
 		changelog = (String)o.get("changelog");
