@@ -26,6 +26,7 @@ JFritz 0.7.4.2:
 - Bugfix: Supporting international firmwares > 05.50
 - Bugfix: Debian packaging, Unterstützung mehrerer JREs and JDKs hinzugefügt
 - Neu: Windows Setup übergibt bei Deinstallation die verwendete JFritz-Version und das Betriebssystem per Feedback-EMail
+- Bugfix: Anrufmonitor für FritzOS 06.00
 
 JFritz 0.7.4.1.32:
 - Fehlende Bibliothek hinzugefügt
