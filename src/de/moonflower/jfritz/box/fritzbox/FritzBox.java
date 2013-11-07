@@ -607,8 +607,7 @@ public class FritzBox extends BoxClass {
 		switch (Integer.parseInt(properties.getProperty("option.callMonitorType"))) //$NON-NLS-1$
 		{
 			case 1: {
-				if ((firmware != null) && (firmware.getMajor() == 3)
-						&& (firmware.getMinor() < 96)) {
+				if ((firmware != null) && (firmware.isLowerThan(3, 96))) {
 					Debug.errDlg(messages.getMessage("callmonitor_error_wrong_firmware")); //$NON-NLS-1$
 
 					for (int i=0; i<listener.size(); i++)
