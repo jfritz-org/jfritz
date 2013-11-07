@@ -617,20 +617,19 @@ public class FritzBox extends BoxClass {
 					}
 					return BoxCallMonitorInterface.CALLMONITOR_FIRMWARE_INCOMPATIBLE;
 				} else {
-					if ((firmware != null) && (firmware.getMajor() >= 4)
-							&& (firmware.getMinor() >= 3)) {
+					if ((firmware != null) && firmware.isLowerThan(4, 3)) {
 						if (callMonitor != null)
 						{
 							Debug.errDlg(messages.getMessage("callmonitor_already_started"));
 						} else {
-							callMonitor = new FBoxCallMonitorV3(this, listener, true);
+							callMonitor = new FBoxCallMonitorV1(this, listener, true);
 						}
 					} else {
 						if (callMonitor != null)
 						{
 							Debug.errDlg(messages.getMessage("callmonitor_already_started"));
 						} else {
-							callMonitor = new FBoxCallMonitorV1(this, listener, true);
+							callMonitor = new FBoxCallMonitorV3(this, listener, true);
 						}
 					}
 					return BoxCallMonitorInterface.CALLMONITOR_STARTED;
