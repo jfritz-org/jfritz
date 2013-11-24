@@ -35,6 +35,6 @@
 	<classpathentry kind="lib" path="lib/httpclient-4.3.1.jar"/>
 	<classpathentry kind="lib" path="lib/httpcore-4.3.jar" sourcepath="C:/Users/robotniko/.m2/repository/org/apache/httpcomponents/httpcore/4.3/httpcore-4.3-sources.jar"/>
 	<classpathentry kind="lib" path="lib/json_simple-1.1.jar"/>
-	<classpathentry kind="lib" path="lib/fboxlib-1.0.6.jar"/>
+	<classpathentry kind="lib" path="lib/fboxlib-1.0.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

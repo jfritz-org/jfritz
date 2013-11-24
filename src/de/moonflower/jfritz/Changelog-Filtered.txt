@@ -22,11 +22,12 @@ JFritz 0.7.4.2:
 - Bugfix: Tray-Icon verschwindet, nachdem man die IP-Adresse über das Tray erneuert hat
 - Bugfix 0000399: IllegalArgumentException im Wizard bei FritzBox-Page
 - Bugfix: Areacode und Areaprefix werden nun automatisch korrigiert
-- Neu: Neuen Hinweiß auf neue JFritz Version vorbereitet
+- Neu: Neuen Hinweis auf neue JFritz Version vorbereitet
 - Bugfix: Supporting international firmwares > 05.50
 - Bugfix: Debian packaging, Unterstützung mehrerer JREs and JDKs hinzugefügt
 - Neu: Windows Setup übergibt bei Deinstallation die verwendete JFritz-Version und das Betriebssystem per Feedback-EMail
 - Bugfix: Anrufmonitor für FritzOS 06.00
+- Bugfix: Support 7362 and other boxes
 
 JFritz 0.7.4.1.32:
 - Fehlende Bibliothek hinzugefügt
@@ -131,7 +132,7 @@ JFritz 0.7.4.1.12:
 - Korrekte Initialisierung von Log4j, Logging sollte nun in eine Datei Log4j.log im Speicherverzeichnis stattfinden
 
 JFritz 0.7.4.1.11:
-- Autoupdate-Funktionalität wurde deaktiviert. Nun nur noch ein Hinweiß, dass es eine neue Version zum Download auf http://www.jfritz.org gibt.
+- Autoupdate-Funktionalität wurde deaktiviert. Nun nur noch ein Hinweis, dass es eine neue Version zum Download auf http://www.jfritz.org gibt.
 
 JFritz 0.7.4.1.10:
 - Bugfix [0000336]: Verschieben des Schreibordners bei frischer Installation

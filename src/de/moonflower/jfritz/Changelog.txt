@@ -20,11 +20,14 @@ TODO tel.search.ch überprüfen und reparieren
 - TODO: Sounds trennen und individualisierbar gestalten
 - TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
 
+JFritz 0.7.4.2_17:
+- Bugfix: Support 7362 and other boxes
+
 JFritz 0.7.4.2_16:
 - Bugfix: Anrufmonitor für FritzOS 06.00
 
 JFritz 0.7.4.2_15:
-- Neu: Neuen Hinweiß auf neue JFritz Version vorbereitet
+- Neu: Neuen Hinweis auf neue JFritz Version vorbereitet
 - Bugfix: Areacode und Areaprefix werden nun automatisch korrigiert
 - Bugfix: Supporting international firmwares > 05.50
 - Bugfix: Debian packaging, Unterstützung mehrerer JREs and JDKs hinzugefügt
@@ -177,7 +180,7 @@ JFritz 0.7.4.1.12:
 - Korrekte Initialisierung von Log4j, Logging sollte nun in eine Datei Log4j.log im Speicherverzeichnis stattfinden
 
 JFritz 0.7.4.1.11:
-- Autoupdate-Funktionalität wurde deaktiviert. Nun nur noch ein Hinweiß, dass es eine neue Version zum Download auf http://www.jfritz.org gibt.
+- Autoupdate-Funktionalität wurde deaktiviert. Nun nur noch ein Hinweis, dass es eine neue Version zum Download auf http://www.jfritz.org gibt.
 
 JFritz 0.7.4.1.10:
 - Bugfix [0000336]: Verschieben des Schreibordners bei frischer Installation
