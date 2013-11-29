@@ -20,6 +20,9 @@ TODO tel.search.ch überprüfen und reparieren
 - TODO: Sounds trennen und individualisierbar gestalten
 - TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
 
+JFritz 0.7.4.2_18:
+- Bugfix 0000374: Refresh login (SID) if standby or suspend to ram is detected
+
 JFritz 0.7.4.2_17:
 - Bugfix: Support 7362 and other boxes
 

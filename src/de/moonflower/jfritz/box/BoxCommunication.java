@@ -67,6 +67,17 @@ public class BoxCommunication {
 		return null;
 	}
 
+	public void refreshLogin(BoxClass box) {
+		if (box != null) {
+			box.refreshLogin();
+		} else {
+			for (BoxClass currentBox: registeredBoxes)
+			{
+				currentBox.refreshLogin();
+			}
+		}
+	}
+	
 	public void startCallMonitor()
 	{
 		for (BoxClass box: registeredBoxes)
@@ -81,7 +92,6 @@ public class BoxCommunication {
 		{
 			box.stopCallMonitor(callMonitorStatusListener);
 		}
-
 	}
 
 //	public Vector<Boolean> isCallMonitorRunning()

@@ -1285,4 +1285,11 @@ public class FritzBox extends BoxClass {
 	public int getMaxRetryCount() {
 		return max_retry_count;
 	}
+	
+	public void refreshLogin() {
+		if (fbc != null) {
+			fbc.invalidateSid();
+			detectFirmwareAndLogin();
+		}
+	}
 }

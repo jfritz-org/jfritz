@@ -28,6 +28,7 @@ JFritz 0.7.4.2:
 - Neu: Windows Setup übergibt bei Deinstallation die verwendete JFritz-Version und das Betriebssystem per Feedback-EMail
 - Bugfix: Anrufmonitor für FritzOS 06.00
 - Bugfix: Support 7362 and other boxes
+- Bugfix 0000374: Refresh login (SID) if standby or suspend to ram is detected
 
 JFritz 0.7.4.1.32:
 - Fehlende Bibliothek hinzugefügt
