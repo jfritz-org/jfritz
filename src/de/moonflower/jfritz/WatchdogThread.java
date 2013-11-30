@@ -12,7 +12,6 @@ import java.util.TimerTask;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
-import de.robotniko.fboxlib.fritzbox.FritzBoxCommunication;
 
 public class WatchdogThread extends Thread {
 
@@ -81,6 +80,7 @@ public class WatchdogThread extends Thread {
 
 					@Override
 					public void run() {
+						Debug.debug("Fetching caller list due to STANDBY/SUSPEND TO RAM");
 	        			JFritz.getJframe().fetchList(null, false);
 					}
 

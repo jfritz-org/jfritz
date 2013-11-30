@@ -604,6 +604,7 @@ public class FritzBox extends BoxClass {
 	 * @see BoxCallMonitorInterface.startCallMonitor
 	 */
 	public int startCallMonitor(Vector<CallMonitorStatusListener> listener) {
+		Debug.debug("Starting call monitor ...");
 		switch (Integer.parseInt(properties.getProperty("option.callMonitorType"))) //$NON-NLS-1$
 		{
 			case 1: {
@@ -617,17 +618,21 @@ public class FritzBox extends BoxClass {
 					return BoxCallMonitorInterface.CALLMONITOR_FIRMWARE_INCOMPATIBLE;
 				} else {
 					if ((firmware != null) && firmware.isLowerThan(4, 3)) {
+						Debug.debug("Firmware is greater/or equal than 03.96 but lower than 04.03");
 						if (callMonitor != null)
 						{
 							Debug.errDlg(messages.getMessage("callmonitor_already_started"));
 						} else {
+							Debug.debug("Creating FBoxCallMonitorV1");
 							callMonitor = new FBoxCallMonitorV1(this, listener, true);
 						}
 					} else {
+						Debug.debug("Firmware is greater/or equal than 04.03");
 						if (callMonitor != null)
 						{
 							Debug.errDlg(messages.getMessage("callmonitor_already_started"));
 						} else {
+							Debug.debug("Creating FBoxCallMonitorV3");
 							callMonitor = new FBoxCallMonitorV3(this, listener, true);
 						}
 					}
