@@ -143,6 +143,30 @@ public class CallListCsvLineParserTests {
 		Assert.assertEquals(Call.ROUTE_FIXED_NETWORK, call.getRouteType());
 	}
 
+
+	@Test
+	public void blockedCall() throws FeatureNotSupportedByFirmware {
+		// preconditions
+		SipProvider mockedSipProvider = new SipProvider(0, "12345678", "mockedProvider");
+
+		when(mockedFritzBox.getSipProviderByRoute("12345678")).thenReturn(mockedSipProvider);
+
+		// test
+		Call call = parser.parseLine(mockedFritzBox, "3;25.12.12 17:45;;0123456789;;Internet: 12345678;0:00");
+
+		// verify
+		Assert.assertNotNull(call);
+		assertDate(25, Calendar.DECEMBER, 2012, 17, 45, call.getCalldate());
+		Assert.assertEquals(CallType.CALLIN_BLOCKED, call.getCalltype());
+		Assert.assertEquals("", call.getComment());
+		Assert.assertEquals(-1.0, call.getCost(), 0.5);
+		Assert.assertEquals(0, call.getDuration());
+		Assert.assertEquals("0123456789", call.getPhoneNumber().getIntNumber());
+		Assert.assertEquals("", call.getPort().getName());
+		Assert.assertEquals("12345678@mockedProvider", call.getRoute());
+		Assert.assertEquals(Call.ROUTE_SIP, call.getRouteType());
+	}
+
 	private void assertDate(int day, int month, int year, int hour, int minute, Date actualDate) {
 		Calendar cal = GregorianCalendar.getInstance();
 		cal.set(Calendar.YEAR, year);

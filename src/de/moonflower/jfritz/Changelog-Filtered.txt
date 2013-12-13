@@ -29,6 +29,7 @@ JFritz 0.7.4.2:
 - Bugfix: Anrufmonitor für FritzOS 06.00
 - Bugfix: Support 7362 and other boxes
 - Bugfix 0000374: Refresh login (SID) if standby or suspend to ram is detected
+- Neu: Anrufe während "Klingelsperre" werden nun erkannt und visualisiert (nur für manche Firmwares)
 
 JFritz 0.7.4.1.32:
 - Fehlende Bibliothek hinzugefügt

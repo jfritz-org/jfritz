@@ -242,12 +242,12 @@ public class PrintCallerList extends Thread {
         final Image callInImage = Toolkit.getDefaultToolkit().getImage(
                 getClass().getResource(
                         "/de/moonflower/jfritz/resources/images/callin.png")); //$NON-NLS-1$
-        final Image callInFailedImage = Toolkit
-                .getDefaultToolkit()
-                .getImage(
-                        getClass()
-                                .getResource(
-                                        "/de/moonflower/jfritz/resources/images/callinfailed.png")); //$NON-NLS-1$
+        final Image callInFailedImage = Toolkit.getDefaultToolkit().getImage(
+                getClass().getResource(
+                        "/de/moonflower/jfritz/resources/images/callinfailed.png")); //$NON-NLS-1$
+        final Image callInBlockedImage = Toolkit.getDefaultToolkit().getImage(
+                getClass().getResource(
+                        "/de/moonflower/jfritz/resources/images/callinblocked.png")); //$NON-NLS-1$
         final Image callOutImage = Toolkit.getDefaultToolkit().getImage(
                 getClass().getResource(
                         "/de/moonflower/jfritz/resources/images/callout.png")); //$NON-NLS-1$
@@ -278,6 +278,8 @@ public class PrintCallerList extends Thread {
 	                    return callInImage;
 	                case CALLIN_FAILED:
 	                    return callInFailedImage;
+	                case CALLIN_BLOCKED:
+	                	return callInBlockedImage;
 	                case CALLOUT:
 	                    return callOutImage;
 	                default:

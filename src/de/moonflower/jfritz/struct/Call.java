@@ -298,6 +298,10 @@ public class Call implements Serializable {
 			outString.append("\"Missed\""); //$NON-NLS-1$
 			break;
 		}
+		case CALLIN_BLOCKED: {
+			outString.append("\"Blocked\""); //$NON-NLS-1$
+			break;
+		}
 		case CALLOUT: {
 			outString.append("\"Outgoing\""); //$NON-NLS-1$
 			break;

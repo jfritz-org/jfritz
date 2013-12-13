@@ -51,7 +51,7 @@ public class CallListCsvLineParser {
 
 	private Call parse(final FritzBox fritzBox, final String[] splitted)
 			throws FeatureNotSupportedByFirmware {
-		CallType calltype = parseCallType(splitted[0]);
+		CallType calltype = parseCallType(fritzBox, splitted[0]);
 		Date calldate = parseCallDate(splitted[1]);
 		PhoneNumberOld number = parsePhoneNumber(calltype, splitted[3]);
 		Port port = parsePort(fritzBox, splitted[4]);
@@ -112,14 +112,21 @@ public class CallListCsvLineParser {
 		return routeType;
 	}
 
-	private CallType parseCallType(final String calltypestr)
+	private CallType parseCallType(final FritzBox fritzBox, final String calltypestr)
 			throws FeatureNotSupportedByFirmware {
 		CallType calltype;
 		if ("1".equals(calltypestr)) {
 			calltype = CallType.CALLIN;
 		} else if ("2".equals(calltypestr)) {
 			calltype = CallType.CALLIN_FAILED;
-		} else if ("3".equals(calltypestr) || "4".equals(calltypestr)) {
+		} else if ("3".equals(calltypestr)) {
+			if (fritzBox.getFirmware().isLowerThan(05, 50)) {
+				calltype = CallType.CALLOUT;
+			} else {
+				calltype = CallType.CALLIN_BLOCKED;
+			}
+		} else if ("4".equals(calltypestr)) {
+			// starting from firmware 05.50
 			calltype = CallType.CALLOUT;
 		} else {
 			Debug.error("CallListCsvLineParser: Invalid Call type while importing caller list!"); //$NON-NLS-1$

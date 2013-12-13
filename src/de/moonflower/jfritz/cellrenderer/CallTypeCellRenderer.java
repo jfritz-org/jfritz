@@ -23,7 +23,7 @@ import de.moonflower.jfritz.struct.CallType;
  */
 public class CallTypeCellRenderer extends DefaultTableCellRenderer {
 	private static final long serialVersionUID = 1;
-	final ImageIcon imageCallInFailed, imageCallIn, imageCallOut;
+	final ImageIcon imageCallInFailed, imageCallInBlocked, imageCallIn, imageCallOut;
 
 	/**
 	 * renders call type field in CallerTable
@@ -36,6 +36,9 @@ public class CallTypeCellRenderer extends DefaultTableCellRenderer {
 		imageCallInFailed = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/callinfailed.png"))); //$NON-NLS-1$
+		imageCallInBlocked = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource(
+						"/de/moonflower/jfritz/resources/images/callinblocked.png"))); //$NON-NLS-1$
 		imageCallOut = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/callout.png"))); //$NON-NLS-1$
@@ -53,11 +56,11 @@ public class CallTypeCellRenderer extends DefaultTableCellRenderer {
 			label.setText(""); //$NON-NLS-1$
 			if (curType==CallType.CALLIN) {
 				label.setIcon(imageCallIn);
-			}
-			if (curType==CallType.CALLIN_FAILED) {
+			} else if (curType==CallType.CALLIN_FAILED) {
 				label.setIcon(imageCallInFailed);
-			}
-			if (curType==CallType.CALLOUT) {
+			} else if (curType==CallType.CALLIN_BLOCKED) {
+				label.setIcon(imageCallInBlocked);
+			} else if (curType==CallType.CALLOUT) {
 				label.setIcon(imageCallOut);
 			}
 		}

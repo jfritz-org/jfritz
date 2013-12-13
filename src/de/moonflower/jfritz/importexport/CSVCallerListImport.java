@@ -81,6 +81,13 @@ public class CSVCallerListImport extends CSVImport implements ICSVImport {
 				|| value.equals("away")) // jAnrufmonitor CSV
 			{
 				entry.setCallType(CallType.CALLIN_FAILED);
+			} else if (value.equals(CallType.CALLIN_BLOCKED)
+					|| value.equals(CallType.CALLIN_BLOCKED.toString())
+					|| value.equals("3") // FritzBox CSV
+					|| value.equals("Blocked") // JFritz CSV
+					|| value.equals("blocked")) // jAnrufmonitor CSV
+			{
+				entry.setCallType(CallType.CALLIN_BLOCKED);
 			} else if (value.equals(CallType.CALLOUT)
 				|| value.equals(CallType.CALLOUT.toString())
 				|| value.equals("3") // FritzBox CSV

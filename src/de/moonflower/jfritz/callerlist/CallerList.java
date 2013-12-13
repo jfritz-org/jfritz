@@ -1141,6 +1141,8 @@ public class CallerList extends AbstractTableModel
 			calltype = CallType.CALLIN;
 		} else if (field[0].equals("Missed")) { //$NON-NLS-1$
 			calltype = CallType.CALLIN_FAILED;
+		} else if (field[0].equals("Blocked")) { //$NON-NLS-1$
+			calltype = CallType.CALLIN_BLOCKED;
 		} else if (field[0].equals("Outgoing")) { //$NON-NLS-1$
 			calltype = CallType.CALLOUT;
 		} else {
