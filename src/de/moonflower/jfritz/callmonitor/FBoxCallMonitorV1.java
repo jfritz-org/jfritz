@@ -135,6 +135,9 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
             try {
             	int portId = Integer.parseInt(split[3]);
             	port = fritzBox.getConfiguredPort(portId);
+				if (port == null) { // Fallback auf statisch konfigurierte Ports
+					port = Port.getPort(portId);
+				}
             } catch (NumberFormatException nfe)
             {
             	port = new Port(0, "", "-1", "-1");
@@ -172,6 +175,9 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
             try {
             	int portId = Integer.parseInt(split[3]);
             	port = fritzBox.getConfiguredPort(portId);
+				if (port == null) { // Fallback auf statisch konfigurierte Ports
+					port = Port.getPort(portId);
+				}
             } catch (NumberFormatException nfe)
             {
             	port = new Port(0, "", "-1", "-1");

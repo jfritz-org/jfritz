@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import de.moonflower.jfritz.box.BoxClass;
+import de.moonflower.jfritz.utils.Debug;
 
 public class Port implements Serializable {
 
@@ -145,7 +146,7 @@ public class Port implements Serializable {
 		}
 		else
 		{
-			return null;
+			return new Port(0, Integer.toString(id), "-1", "-1");
 		}
 	}
 

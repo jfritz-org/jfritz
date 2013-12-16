@@ -148,6 +148,9 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 			try {
 				int portId = Integer.parseInt(portStr);
 				port = fritzBox.getConfiguredPort(portId);
+				if (port == null) { // Fallback auf statisch konfigurierte Ports
+					port = Port.getPort(portId);
+				}
 			} catch (NumberFormatException nfe) {
 				log.warn("Could not parse port id", nfe);
 			}

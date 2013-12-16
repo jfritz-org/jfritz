@@ -20,8 +20,11 @@ TODO tel.search.ch überprüfen und reparieren
 - TODO: Sounds trennen und individualisierbar gestalten
 - TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
 
+JFritz 0.7.4.2_21:
+- Bugfix: Nebenstellen mit nummerischem Namen werden nun korrekt verarbeitet  
+
 JFritz 0.7.4.2_20:
-- Detecting "Klingelsperre" calls (blocked calls)
+- Neu: Anrufe während "Klingelsperre" werden nun erkannt und visualisiert (nur für manche Firmwares)
 
 JFritz 0.7.4.2_19:
 - Increased logging for Standby detection
