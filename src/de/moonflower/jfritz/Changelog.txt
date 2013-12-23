@@ -20,6 +20,9 @@ TODO tel.search.ch überprüfen und reparieren
 - TODO: Sounds trennen und individualisierbar gestalten
 - TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
 
+JFritz 0.7.4.2_22:
+- Bugfix: Rückwärtssuche für viele Länder aktualisiert
+
 JFritz 0.7.4.2_21:
 - Bugfix: Nebenstellen mit nummerischem Namen werden nun korrekt verarbeitet  
 

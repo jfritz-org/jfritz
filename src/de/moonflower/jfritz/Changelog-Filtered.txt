@@ -31,6 +31,7 @@ JFritz 0.7.4.2:
 - Bugfix 0000374: Refresh login (SID) if standby or suspend to ram is detected
 - Neu: Anrufe während "Klingelsperre" werden nun erkannt und visualisiert (nur für manche Firmwares)
 - Bugfix: Nebenstellen mit nummerischem Namen werden nun korrekt verarbeitet  
+- Bugfix: Rückwärtssuche für viele Länder aktualisiert
 
 JFritz 0.7.4.1.32:
 - Fehlende Bibliothek hinzugefügt
