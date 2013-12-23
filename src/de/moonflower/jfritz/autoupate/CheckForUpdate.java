@@ -3,6 +3,7 @@ package de.moonflower.jfritz.autoupate;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.util.Calendar;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -23,6 +24,7 @@ import org.json.simple.JSONValue;
 import de.moonflower.jfritz.constants.ProgramConstants;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.messages.UpdateMessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.JOptionPaneHtml;
 import de.robotniko.fboxlib.exceptions.PageNotFoundException;
 
@@ -53,10 +55,13 @@ public class CheckForUpdate {
 			.setSocketTimeout(TIMEOUT_READ)
 			.setConnectTimeout(TIMEOUT_CONNECTION).build();
 
+	protected PropertyProvider properties = PropertyProvider.getInstance();
+
 	public boolean isUpdateAvailable() {
 		try {
 			String result = getHttpContentAsString(UPDATE_URL);
 			parseResponse(result);
+			updateLastUpdateCheckTimestamp();
 			return available;
 		} catch (Exception e) {
 			return false;
@@ -73,6 +78,12 @@ public class CheckForUpdate {
 		if (url.equals("")) {
 			url = "http://jfritz.org";
 		}
+	}
+	
+	private void updateLastUpdateCheckTimestamp() {
+		long now = Calendar.getInstance().getTimeInMillis();
+		properties.setProperty("option.lastupdatetimestamp", Long.toString(now));
+		properties.saveConfigProperties();
 	}
 	
 	public void showUpdateNotification(final JFrame parentFrame) {

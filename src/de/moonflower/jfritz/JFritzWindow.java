@@ -22,6 +22,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.event.WindowStateListener;
 import java.io.File;
+import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -254,8 +255,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				taskButton.doClick();
 			}
 			if (properties.getProperty("option.checkNewVersionAfterStart").equals("true")) {
-				if (updateCheck.isUpdateAvailable()) {
-					updateCheck.showUpdateNotification(this);
+				long lastUpdate = Long.parseLong(properties.getProperty("option.lastupdatetimestamp"));
+				long now = Calendar.getInstance().getTimeInMillis();
+				if (now > (lastUpdate + 86400000)) // execute update check only once per day
+				{
+					if (updateCheck.isUpdateAvailable()) {
+						updateCheck.showUpdateNotification(this);
+					}
 				}
 			}
 		}

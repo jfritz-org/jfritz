@@ -123,6 +123,7 @@ public class PropertyProvider {
 		defProps.setProperty("option.deleteAfterFetch", "false");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.externProgram", "");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.fetchAfterStart", "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.lastupdatetimestamp", "0");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.listenOnStartup", "false");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.lookupAfterFetch", "true");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.minimize", "false");//$NON-NLS-1$, //$NON-NLS-2$
