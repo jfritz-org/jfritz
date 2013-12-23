@@ -62,6 +62,11 @@
 		# Main Targets
 		#############################################################################################
 	-->
+	<target name="release-files" depends="prepare">
+	    <antcall target="prepare-release-files" />
+	    <!-- maybe upload them here as well? -->
+	</target>
+	
 	<target name="release-beta-files" depends="prepare">
 		<!-- obfuscate the data -->
 		<!-- <antcall target="obfuscate" /> -->
