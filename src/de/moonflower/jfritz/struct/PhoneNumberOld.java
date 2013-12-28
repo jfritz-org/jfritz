@@ -310,7 +310,7 @@ public class PhoneNumberOld implements Serializable {
 		String areaPrefix = properties.getProperty("area.prefix"); //$NON-NLS-1$, //$NON-NLS-2$
 
 		if (number.startsWith(countryCode)) //$NON-NLS-1$
-			return areaPrefix + number.substring(3);
+			return areaPrefix + number.substring(countryCode.length());
 
 		Debug.warning("PhoneNumber.convertToNationalNumber: this is no national number, returning unchanged (international) number"); //$NON-NLS-1$
 		return number;
@@ -346,11 +346,26 @@ public class PhoneNumberOld implements Serializable {
 		String countryCode = properties.getProperty("country.code");//$NON-NLS-1$
 		String areaCode = properties.getProperty("area.code"); //$NON-NLS-1$
 		String areaPrefix = properties.getProperty("area.prefix"); //$NON-NLS-1$
+		
+		if (number.startsWith("+41")) {
+			return getShortNumberSwitzerland();
+		}
+		
 		if (number.startsWith(countryCode + areaCode)) //$NON-NLS-1$
 			return number.substring(countryCode.length() + areaCode.length());
 
 		else if (number.startsWith(countryCode)) //$NON-NLS-1$
 			return areaPrefix + number.substring(countryCode.length());
+		return number;
+	}
+	
+	private String getShortNumberSwitzerland() {
+		String countryCode = properties.getProperty("country.code");//$NON-NLS-1$
+		String areaPrefix = properties.getProperty("area.prefix"); //$NON-NLS-1$
+		
+		if (number.startsWith(countryCode)) //$NON-NLS-1$
+			return areaPrefix + number.substring(countryCode.length());
+		
 		return number;
 	}
 
