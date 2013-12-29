@@ -1,6 +1,8 @@
 JFritz 0.7.5_Testversion:
-- Neu: Unterstützung der Anmeldung mit Benutzername
+- Neu 0000383: Anmeldung mit Username / Password unterstützen
 - Neu: Schweizer Rufnummern werden nun mit Ortsvorwahl dargestellt
+- Neu 0000351: verbessertes Startscript (anbei)
+- New: Supporting international firmwares (ES, FR and IT)
 
 JFritz 0.7.5:
 - Weihnachtsversion

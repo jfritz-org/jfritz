@@ -20,8 +20,14 @@ TODO tel.search.ch überprüfen und reparieren
 - TODO: Sounds trennen und individualisierbar gestalten
 - TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
 
-JFritz 0.7.5_1:
-- Neu: Unterstützung der Anmeldung mit Benutzername
+JFritz 0.7.5_4: 
+- New: Supporting international firmwares (ES, FR and IT)
+
+JFritz 0.7.5_3: 
+- Neu 0000351: verbessertes Startscript (anbei)
+
+JFritz 0.7.5_2:
+- Neu 0000383: Anmeldung mit Username / Password unterstützen
 - Neu: Schweizer Rufnummern werden nun mit Ortsvorwahl dargestellt
 
 JFritz 0.7.5:
