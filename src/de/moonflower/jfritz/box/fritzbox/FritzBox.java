@@ -1280,11 +1280,19 @@ public class FritzBox extends BoxClass {
 	}
 
 	private void handleInvalidCredentialsException(InvalidCredentialsException e) {
-		Debug.errDlg(messages.getMessage("box.wrong_password"));
+		if (this.getFirmware().isLowerThan(05, 50)) {
+			Debug.errDlg(messages.getMessage("box.wrong_password"));
+		} else {
+			Debug.errDlg(messages.getMessage("box.wrong_password_or_username"));
+		}
 	}
 	
 	private void handleLoginBlockedException(LoginBlockedException e) {
-		Debug.errDlg(messages.getMessage("box.wrong_password") + " Login is currently blocked for " + e.getRemainingBlockTime() + " seconds!");
+		if (this.getFirmware().isLowerThan(05, 50)) {
+			Debug.errDlg(messages.getMessage("box.wrong_password.wait").replaceAll("%WAIT%", e.getRemainingBlockTime()));
+		} else {
+			Debug.errDlg(messages.getMessage("box.wrong_password_or_username.wait").replaceAll("%WAIT%", e.getRemainingBlockTime()));
+		}
 	}
 
 	private void handlePageNotFoundException(PageNotFoundException e) {
