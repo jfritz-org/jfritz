@@ -14,7 +14,7 @@ public class FritzBoxTests {
 
 	@Before
 	public void setUp() {
-		fritzBox = new FritzBox("testbox", "FritzBox for tests", "http", "192.168.178.1", "80", "", exc);
+		fritzBox = new FritzBox("testbox", "FritzBox for tests", "http", "192.168.178.1", "80", false, "", "", exc);
 	}
 
 	@Test

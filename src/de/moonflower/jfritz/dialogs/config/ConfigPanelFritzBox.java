@@ -18,6 +18,7 @@ import java.util.TimerTask;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -25,6 +26,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
@@ -53,8 +55,11 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 
 	private JTextField address;
 
+	private JTextField user;
 	private JPasswordField pass;
-
+	private JRadioButton useUserButton;
+	private JRadioButton useNoUserButton;
+	
 	private JTextField port;
 
 	private JButton boxtypeButton;
@@ -120,7 +125,7 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 			this.fritzBox = fritzBox;
 		} else {
 			Exception e = null;
-			this.fritzBox = new FritzBox("FRITZ!Box", "", "http", "", properties.getProperty("box.port"), "", e);
+			this.fritzBox = new FritzBox("FRITZ!Box", "", "http", "", properties.getProperty("box.port"), false, "", "", e);
 			if (e != null) {
 				Debug.error(e.toString());
 			}
@@ -132,6 +137,7 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
 
+		int gridPosY = 0;
 		JPanel cPane = new JPanel();
 
 		cPane.setLayout(new GridBagLayout());
@@ -141,7 +147,7 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 		c.insets.left = 5;
 		c.anchor = GridBagConstraints.WEST;
 
-		c.gridy = 1;
+		c.gridy = gridPosY++;
 		ImageIcon boxicon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/fritzbox.png"))); //$NON-NLS-1$
@@ -151,7 +157,7 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 		label = new JLabel(messages.getMessage("FRITZ!Box_Preferences")); //$NON-NLS-1$
 		cPane.add(label, c);
 
-		c.gridy = 2;
+		c.gridy = gridPosY++;
 		label = new JLabel(messages.getMessage("FRITZ!Box") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		cPane.add(label, c);
 
@@ -200,35 +206,71 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 		addressCombo.addActionListener(this);
 		cPane.add(addressCombo, c);
 
-		c.gridy = 3;
+		c.gridy = gridPosY++;
 		label = new JLabel(messages.getMessage("ip_address") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		cPane.add(label, c);
 		address = new JTextField("", 30); //$NON-NLS-1$
 		address.setMinimumSize(new Dimension(200, 20));
 		cPane.add(address, c);
 
-		c.gridy = 4;
-		label = new JLabel(messages.getMessage("password") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		cPane.add(label, c);
-		pass = new JPasswordField("", 30); //$NON-NLS-1$
-		pass.setMinimumSize(new Dimension(200, 20));
-		cPane.add(pass, c);
-
-		c.gridy = 5;
+		c.gridy = gridPosY++;
 		label = new JLabel(messages.getMessage("box.port") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		cPane.add(label, c);
 		port = new JTextField("", 30); //$NON-NLS-1$
 		port.setMinimumSize(new Dimension(200, 20));
 		cPane.add(port, c);
 
-		c.gridy = 6;
+		c.insets.top = 5;
+		c.insets.bottom = 0;
+		ButtonGroup loginTypeGroup = new ButtonGroup();
+		c.gridy = gridPosY++;
+		label = new JLabel("");
+		cPane.add(label, c);
+		useUserButton = new JRadioButton(messages.getMessage("use_login_with_user"));
+		useUserButton.setActionCommand("changedLoginType");
+		useUserButton.addActionListener(this);
+		loginTypeGroup.add(useUserButton);
+		cPane.add(useUserButton, c);
+
+		c.insets.top = 0;
+		c.insets.bottom = 0;
+		c.gridy = gridPosY++;
+		label = new JLabel("");
+		cPane.add(label, c);
+		useNoUserButton = new JRadioButton(messages.getMessage("use_login_without_user"));
+		useNoUserButton.setActionCommand("changedLoginType");
+		useNoUserButton.addActionListener(this);
+		loginTypeGroup.add(useNoUserButton);
+		cPane.add(useNoUserButton, c);
+
+		c.insets.top = 2;
+		c.insets.bottom = 2;	
+		c.gridy = gridPosY++;
+		label = new JLabel(messages.getMessage("username") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		cPane.add(label, c);
+		user = new JTextField("", 30); //$NON-NLS-1$
+		user.setMinimumSize(new Dimension(200, 20));
+		cPane.add(user, c);
+
+		c.insets.top = 2;
+		c.insets.bottom = 2;
+		c.gridy = gridPosY++;
+		label = new JLabel(messages.getMessage("password") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
+		cPane.add(label, c);
+		pass = new JPasswordField("", 30); //$NON-NLS-1$
+		pass.setMinimumSize(new Dimension(200, 20));
+		cPane.add(pass, c);
+		
+		c.insets.top = 5;
+		c.insets.bottom = 5;	
+		c.gridy = gridPosY++;
 		label = new JLabel("");
 		cPane.add(label, c);
 		defaultFritzBox = new JCheckBox(messages.getMessage("set_default_fritzbox"));
 		defaultFritzBox.setSelected(true);
 		cPane.add(defaultFritzBox, c);
 
-		c.gridy = 7;
+		c.gridy = gridPosY++;
 		boxtypeButton = new JButton(messages.getMessage("detect_box_type")); //$NON-NLS-1$
 		boxtypeButton.setActionCommand("detectboxtype"); //$NON-NLS-1$
 		boxtypeButton.addActionListener(this);
@@ -299,6 +341,12 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 				boxtypeLabel.repaint();
 			}
 			c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		} else if (e.getActionCommand().equals("changedLoginType")) { //$NON-NLS-1$
+			if (useUserButton.isSelected()) {
+				user.setEnabled(true);
+			} else {
+				user.setEnabled(false);
+			}
 		}
 	}
 
@@ -335,6 +383,7 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 	}
 
 	public void loadSettings() {
+		user.setText(properties.getProperty("box.username")); //$NON-NLS-1$
 		pass.setText(fritzBox.getPassword()); //$NON-NLS-1$
 		address.setText(fritzBox.getAddress()); //$NON-NLS-1$,  //$NON-NLS-2$
 		port.setText(fritzBox.getPort()); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -352,6 +401,13 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 			Debug.netMsg("JFritz is running as a client and using call list from server, disabeling FritzBox panel");
 			this.boxtypeButton.setEnabled(false);
 		}
+		
+		if (Boolean.parseBoolean(properties.getProperty("box.loginUsingUsername"))) {
+			useUserButton.doClick();
+		} else {
+			useNoUserButton.doClick();
+		}
+				
 		settingsChanged = false;
 	}
 
@@ -367,18 +423,37 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 
 		if ( (!checkChanges)
 			|| (!properties.getProperty("box.address").equals(address.getText()))
+			|| (!properties.getProperty("box.username").equals(user.getText()))
 			|| (!properties.getProperty("box.password").equals(Encryption.encrypt(new String(pass.getPassword()))))
-			|| (!properties.getProperty("box.port").equals(port.getText())))
+			|| (!properties.getProperty("box.port").equals(port.getText()))
+			|| ((useUserButton.isSelected() && Boolean.parseBoolean(properties.getProperty("box.loginUsingUsername")) == false))
+			|| ((useNoUserButton.isSelected() && Boolean.parseBoolean(properties.getProperty("box.loginUsingUsername")) == true))
+			)
+				
 		{
 			settingsChanged = true;
 		}
 
 		if (settingsChanged) {
 			properties.setProperty("box.address", address.getText()); //$NON-NLS-1$
+			properties.setProperty("box.username", user.getText()); //$NON-NLS-1$
 			properties.setProperty("box.password", Encryption.encrypt(new String(pass.getPassword()))); //$NON-NLS-1$
 			properties.setProperty("box.port", port.getText()); //$NON-NLS-1$
 
+			if (useUserButton.isSelected()) {
+				properties.setProperty("box.loginUsingUsername", true);
+			} else {
+				properties.setProperty("box.loginUsingUsername", false);
+			}
+			
 			fritzBox.setAddress(address.getText());
+			if (useUserButton.isSelected()) {
+				fritzBox.setUseUsername(true);
+				fritzBox.setUsername(user.getText());
+			} else {
+				fritzBox.setUseUsername(false);
+				fritzBox.setUsername("");
+			}
 			fritzBox.setPassword(new String(pass.getPassword()));
 			fritzBox.setPort(port.getText());
 			fritzBox.updateSettings();
@@ -396,6 +471,14 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 		}
 	}
 
+	public String getUsername() {
+		return user.getText();
+	}
+	
+	public boolean shouldUseUsername() {
+		return useUserButton.isSelected();
+	}
+	
 	public String getPassword() {
 		return new String(pass.getPassword());
 	}
@@ -430,6 +513,13 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 	public void detectBoxType() throws WrongPasswordException, IOException, InvalidFirmwareException
 	{
 		fritzBox.setAddress(address.getText());
+		if (useUserButton.isSelected()) {
+			fritzBox.setUseUsername(true);
+			fritzBox.setUsername(user.getText());
+		} else {
+			fritzBox.setUseUsername(false);
+			fritzBox.setUsername("");
+		}
 		fritzBox.setPassword(new String(pass.getPassword()));
 		fritzBox.setPort(port.getText());
 		fritzBox.updateSettings();

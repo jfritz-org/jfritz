@@ -86,6 +86,8 @@ public class PropertyProvider {
 		defProps.setProperty("backup.path", ".");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("box.address", "");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("box.mac", "");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("box.loginUsingUsername", "false");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("box.username", "");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("box.password", "121-203-238-10-54-180-181-42");//$NON-NLS-1$, //$NON-NLS-2$ // empty string as default PW
 		defProps.setProperty("box.port", "80");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("clients.port", "4455");//$NON-NLS-1$, //$NON-NLS-2$

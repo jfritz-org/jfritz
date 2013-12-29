@@ -26,8 +26,10 @@ public abstract class BoxClass
 	protected String protocol;
 	protected String address;
 	protected String port;
+	protected String username;
 	protected String password;
 	protected String macAddress;
+	protected boolean useUsername;
 
 	/** SSDP constants **/
 	private final static int SSDP_TIMEOUT = 1000;
@@ -107,6 +109,22 @@ public abstract class BoxClass
 	{
 		return port;
 	}
+	
+	/**
+	 * Should we use the username?
+	 * @return True if username shall be used
+	 */
+	public boolean shallUseUsername() {
+		return useUsername;
+	}
+	
+	/**
+	 * Get the username of the box.
+	 * @return The username of the box.
+	 */
+	public String getUsername() {
+		return username;
+	}
 
 	/**
 	 * Get the password of the box.
@@ -116,7 +134,7 @@ public abstract class BoxClass
 	{
 		return password;
 	}
-
+	
 	/**
 	 * Get the mac address of the box.
 	 * @return
@@ -171,6 +189,20 @@ public abstract class BoxClass
 		this.port = port;
 	}
 
+	/**
+	 * Set use username
+	 */
+	public void setUseUsername(boolean useIt) {
+		this.useUsername = useIt;
+	}
+	
+	/**
+	 * Set the username of the box
+	 */
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
 	/**
 	 * Set the password of the box.
 	 * @param password

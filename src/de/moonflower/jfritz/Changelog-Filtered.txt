@@ -1,3 +1,6 @@
+JFritz 0.7.5_Testversion:
+- Neu: Unterstützung der Anmeldung mit Benutzername
+
 JFritz 0.7.5:
 - Weihnachtsversion
 

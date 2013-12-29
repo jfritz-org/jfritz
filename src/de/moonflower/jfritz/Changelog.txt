@@ -20,6 +20,9 @@ TODO tel.search.ch überprüfen und reparieren
 - TODO: Sounds trennen und individualisierbar gestalten
 - TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
 
+JFritz 0.7.5_1:
+- Neu: Unterstützung der Anmeldung mit Benutzername
+
 JFritz 0.7.5:
 - Weihnachtsversion
 

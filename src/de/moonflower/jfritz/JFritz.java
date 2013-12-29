@@ -153,6 +153,8 @@ public final class JFritz implements  StatusListener {
 									     "http",
 										 properties.getProperty("box.address"),
 										 properties.getProperty("box.port"),
+										 Boolean.parseBoolean(properties.getProperty("box.loginUsingUsername")), 
+										 properties.getProperty("box.username"), 
 										 Encryption.decrypt(properties.getProperty("box.password")),
 										 ex);
 
@@ -329,6 +331,8 @@ public final class JFritz implements  StatusListener {
 									     "http",
 										 properties.getProperty("box.address"),
 										 properties.getProperty("box.port"),
+										 false,
+										 "",
 										 Encryption.decrypt(properties.getProperty("box.password")),
 										 ex);
 

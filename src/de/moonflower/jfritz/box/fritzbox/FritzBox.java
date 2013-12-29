@@ -134,7 +134,7 @@ public class FritzBox extends BoxClass {
 	private FritzBoxCommunication fbc;
 	
 	public FritzBox(String name, String description,
-					String protocol, String address, String port, String password,
+					String protocol, String address, String port, boolean useUsername, String username, String password,
 					Exception exc)
 	{
 		this.name = name;
@@ -142,6 +142,9 @@ public class FritzBox extends BoxClass {
 
 		this.protocol = protocol;
 		this.port = port;
+		
+		this.useUsername = useUsername;
+		this.username = username;
 		this.password = password;
 
 		sipProvider = new Vector<SipProvider>();
@@ -175,6 +178,11 @@ public class FritzBox extends BoxClass {
 	private Exception detectFirmwareAndLogin() {
 		Exception exc = null;
 		fbc = new FritzBoxCommunication(this.protocol, this.address, this.port);
+		if (this.useUsername) {
+			fbc.setUserName(this.username);
+		} else {
+			fbc.setUserName("");
+		}
 		fbc.setPassword(this.password);
 		try {
 			firmware = fbc.getFirmwareVersion();
