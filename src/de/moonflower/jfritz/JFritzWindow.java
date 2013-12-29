@@ -1103,7 +1103,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				fetchList(box, false);
 			}
 		} else if (e.getActionCommand().startsWith("renewIP-")) {
-			String boxName = e.getActionCommand().substring("renewIP-".length());
+			final String boxName = e.getActionCommand().substring("renewIP-".length());
 			BoxClass box = JFritz.getBoxCommunication().getBox(boxName);
 			if (box != null) {
 				Debug.debug("Renew IP for box: " + boxName);
@@ -1112,10 +1112,23 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			Thread t = new Thread() {
 				@Override
 				public void run() {
-					try {
-						Thread.sleep(5000);
-						JFritzTray.refreshTrayMenu();
-					} catch (InterruptedException e) {
+					String externalIp = "";
+					while ("".equals(externalIp)) {
+						try {
+							Thread.sleep(5000);
+							BoxClass box = JFritz.getBoxCommunication().getBox(boxName);
+							if (box != null) {
+								externalIp = box.getExternalIP();
+								Debug.debug("Extenal IP for box (" + boxName + "): " + externalIp);
+							}
+							if ("No external IP detected".equals(externalIp)) {
+								externalIp = "";
+							}
+							if (!"".equals(externalIp)) {
+								JFritzTray.refreshTrayMenu();
+							}
+						} catch (InterruptedException e) {
+						}
 					}
 				}
 			};
