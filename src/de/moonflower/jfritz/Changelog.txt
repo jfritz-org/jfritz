@@ -22,6 +22,7 @@ TODO tel.search.ch überprüfen und reparieren
 
 JFritz 0.7.5_1:
 - Neu: Unterstützung der Anmeldung mit Benutzername
+- Neu: Schweizer Rufnummern werden nun mit Ortsvorwahl dargestellt
 
 JFritz 0.7.5:
 - Weihnachtsversion
