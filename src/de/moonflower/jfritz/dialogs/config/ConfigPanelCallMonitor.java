@@ -22,19 +22,19 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 
 import de.moonflower.jfritz.callmonitor.CallMonitorStatusListener;
-import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
-import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
+import de.robotniko.fboxlib.exceptions.FirmwareNotDetectedException;
+import de.robotniko.fboxlib.exceptions.PageNotFoundException;
 
 public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 		ConfigPanel {
 
 	private static final long serialVersionUID = 7267124419351267208L;
 
-	private JComboBox callMonitorCombo;
+	private JComboBox<String> callMonitorCombo;
 
 	private JCheckBox callMonitorAfterStartButton, soundButton,
 			externProgramCheckBox;
@@ -49,7 +49,7 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 
 	private boolean showButtons;
 
-	private ConfigPanelFritzBox fritzBoxPanel;
+	private ConfigPanelFritzBoxIP fritzBoxPanel;
 
 	private String configPath;
 
@@ -61,7 +61,7 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public ConfigPanelCallMonitor(JDialog parent, boolean showButtons,
-								  ConfigPanelFritzBox fritzBoxPanel,
+								  ConfigPanelFritzBoxIP fritzBoxPanel,
 								  Vector<CallMonitorStatusListener> listener) {
 		this.parent = parent;
 		this.showButtons = showButtons;
@@ -70,7 +70,7 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
-		callMonitorCombo = new JComboBox();
+		callMonitorCombo = new JComboBox<String>();
 		callMonitorCombo.addItem(messages.getMessage("no_call_monitor")); //$NON-NLS-1$
 		callMonitorCombo.addItem(messages.getMessage("fritz_call_monitor")); //$NON-NLS-1$
 		callMonitorCombo.addItem(messages.getMessage("yac_call_monitor")); //$NON-NLS-1$
@@ -259,14 +259,17 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 			try {
 				c.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 				fritzBoxPanel.detectBoxType();
+				if (fritzBoxPanel.getFritzBox().getFirmware() != null) {
+					// TODO login using settings!
+				}
 				this.startStopCallMonitor();
-			} catch (WrongPasswordException e1) {
-				Debug.errDlg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
-				startStopCallMonitorButton.setSelected(!startStopCallMonitorButton.isSelected());
 			} catch (IOException e1) {
 				Debug.errDlg(messages.getMessage("box.not_found")); //$NON-NLS-1$
 				startStopCallMonitorButton.setSelected(!startStopCallMonitorButton.isSelected());
-			} catch (InvalidFirmwareException e1) {
+			} catch (PageNotFoundException e1) {
+				Debug.errDlg(messages.getMessage("box.communication_error")); //$NON-NLS-1$
+				startStopCallMonitorButton.setSelected(!startStopCallMonitorButton.isSelected());
+			} catch (FirmwareNotDetectedException e1) {
 				Debug.errDlg(messages.getMessage("unknown_firmware")); //$NON-NLS-1$
 				startStopCallMonitorButton.setSelected(!startStopCallMonitorButton.isSelected());
 			}

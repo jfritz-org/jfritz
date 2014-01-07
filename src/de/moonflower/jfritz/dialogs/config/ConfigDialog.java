@@ -73,7 +73,8 @@ public class ConfigDialog extends JDialog {
 	private ConfigPanelPhone phonePanel;
 	private ConfigPanelProxy proxyPanel;
 //	private ConfigPanelBox boxPanel;
-	private ConfigPanelFritzBox fritzBoxPanel;
+	private ConfigPanelFritzBoxIP fritzBoxPanelIp;
+	private ConfigPanelFritzBoxLogin fritzBoxPanelLogin;
 	private ConfigPanelMessage messagePanel;
 	private ConfigPanelCallerList callerListPanel;
 	private ConfigPanelCallerListAppearance callerListAppearancePanel;
@@ -108,22 +109,26 @@ public class ConfigDialog extends JDialog {
 		proxyPanel = new ConfigPanelProxy();
 
 //		boxPanel = new ConfigPanelBox();
-		fritzBoxPanel = new ConfigPanelFritzBox(
+		fritzBoxPanelIp = new ConfigPanelFritzBoxIP(
 				(FritzBox) JFritz.getBoxCommunication().getBox(0));
 		sipPanel = new ConfigPanelSip();
 
-		fritzBoxPanel.setSipPanel(sipPanel);
-		sipPanel.setFritzBoxPanel(fritzBoxPanel);
-		sipPanel.setPath(fritzBoxPanel.getPath() + "::" + messages.getMessage("sip_numbers"));
-		callMonitorPanel = new ConfigPanelCallMonitor(this, true, fritzBoxPanel, stateListener);
-		callMonitorPanel.setPath(fritzBoxPanel.getPath() + "::" + messages.getMessage("callmonitor"));
+		fritzBoxPanelLogin = new ConfigPanelFritzBoxLogin(
+				(FritzBox) JFritz.getBoxCommunication().getBox(0));
+		fritzBoxPanelLogin.setSipPanel(sipPanel);
+		fritzBoxPanelLogin.setPath(fritzBoxPanelIp.getPath() + "::" + messages.getMessage("config.login"));
+		
+		sipPanel.setFritzBoxPanel(fritzBoxPanelIp);
+		sipPanel.setPath(fritzBoxPanelIp.getPath() + "::" + messages.getMessage("sip_numbers"));
+		callMonitorPanel = new ConfigPanelCallMonitor(this, true, fritzBoxPanelIp, stateListener);
+		callMonitorPanel.setPath(fritzBoxPanelIp.getPath() + "::" + messages.getMessage("callmonitor"));
 
 		messagePanel = new ConfigPanelMessage();
 		callerListPanel = new ConfigPanelCallerList();
 		callerListAppearancePanel = new ConfigPanelCallerListAppearance();
 		languagePanel = new ConfigPanelLang();
 //		fontPanel = new ConfigPanelFont();
-		otherPanel = new ConfigPanelOther(fritzBoxPanel);
+		otherPanel = new ConfigPanelOther(fritzBoxPanelIp);
 //		networkPanel = new ConfigPanelNetwork(this);
 		trayPanel = new ConfigPanelTray();
 
@@ -133,8 +138,8 @@ public class ConfigDialog extends JDialog {
 		TreeSelectionModel tsm = new DefaultTreeSelectionModel();
 		tsm.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		tree.setSelectionModel(tsm);
-		configPanel = fritzBoxPanel;
-		helpUrl = fritzBoxPanel.getHelpUrl();
+		configPanel = fritzBoxPanelIp;
+		helpUrl = fritzBoxPanelIp.getHelpUrl();
 
 	    DefaultTreeCellRenderer noneRenderer = new DefaultTreeCellRenderer();
 	    noneRenderer.setOpenIcon(null);
@@ -271,7 +276,8 @@ public class ConfigDialog extends JDialog {
 	 */
 	public void setValues() {
 //		boxPanel.loadSettings();
-		fritzBoxPanel.loadSettings();
+		fritzBoxPanelIp.loadSettings();
+		fritzBoxPanelLogin.loadSettings();
 		phonePanel.loadSettings();
 		proxyPanel.loadSettings();
 		messagePanel.loadSettings();
@@ -290,16 +296,16 @@ public class ConfigDialog extends JDialog {
 	 * Stores values in dialog components to programm properties
 	 */
 	public void storeValues() {
+		// save login settings first, because fritzBoxPanelIp.saveSettings() needs username and password
+		fritzBoxPanelLogin.saveSettings(true);
+		
 		try {
 //			boxPanel.saveSettings();
-			fritzBoxPanel.saveSettings(true);
-		} catch (WrongPasswordException e) {
-			parent.setBoxDisconnected("");
+			fritzBoxPanelIp.saveSettings(true);
 		} catch (InvalidFirmwareException e) {
 			parent.setBoxDisconnected("");
-		} catch (IOException e) {
-			parent.setBoxDisconnected("");
 		}
+
 		phonePanel.saveSettings();
 		proxyPanel.saveSettings();
 		messagePanel.saveSettings();
@@ -352,7 +358,8 @@ public class ConfigDialog extends JDialog {
 					closeWindow();
 				} else if (source == cancelButton) {
 //					boxPanel.cancel();
-					fritzBoxPanel.cancel();
+					fritzBoxPanelIp.cancel();
+					fritzBoxPanelLogin.cancel();
 					phonePanel.cancel();
 					proxyPanel.cancel();
 					messagePanel.cancel();
@@ -462,7 +469,8 @@ public class ConfigDialog extends JDialog {
 
 		// new config dialog
 //		this.addConfigPanel(boxPanel);
-		this.addConfigPanel(fritzBoxPanel);
+		this.addConfigPanel(fritzBoxPanelIp);
+		this.addConfigPanel(fritzBoxPanelLogin);
 		this.addConfigPanel(phonePanel);
 		this.addConfigPanel(sipPanel);
 		this.addConfigPanel(callerListPanel);
@@ -521,7 +529,8 @@ public class ConfigDialog extends JDialog {
 	{
 		if (phonePanel.shouldRefreshTrayMenu()
 				|| proxyPanel.shouldRefreshTrayMenu()
-				|| fritzBoxPanel.shouldRefreshTrayMenu()
+				|| fritzBoxPanelIp.shouldRefreshTrayMenu()
+				|| fritzBoxPanelLogin.shouldRefreshTrayMenu()
 				|| messagePanel.shouldRefreshTrayMenu()
 				|| callerListPanel.shouldRefreshTrayMenu()
 				|| callerListAppearancePanel.shouldRefreshTrayMenu()

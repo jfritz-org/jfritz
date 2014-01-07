@@ -15,7 +15,8 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.SplashScreen;
 import de.moonflower.jfritz.constants.ProgramConstants;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelCallMonitor;
-import de.moonflower.jfritz.dialogs.config.ConfigPanelFritzBox;
+import de.moonflower.jfritz.dialogs.config.ConfigPanelFritzBoxIP;
+import de.moonflower.jfritz.dialogs.config.ConfigPanelFritzBoxLogin;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelLang;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelMessage;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelPhone;
@@ -43,9 +44,10 @@ public class ConfigWizard {
 	private Wizard wizard;
 	private Image icon;
 
-	private ConfigPanelFritzBoxDescriptor descriptor3;
+	private ConfigPanelFritzBoxIpDescriptor descriptor3;
+	private ConfigPanelFritzBoxLoginDescriptor descriptor4;
 
-	private WizardPanelDescriptor descriptor2, descriptor4, descriptor5;
+	private WizardPanelDescriptor descriptor2, descriptor5, descriptor6;
 
 	private boolean languageCanceled = false;
 
@@ -79,14 +81,17 @@ public class ConfigWizard {
 	        descriptor2 = new ConfigPanelPhoneDescriptor();
 	        wizard.registerWizardPanel(ConfigPanelPhoneDescriptor.IDENTIFIER, descriptor2);
 
-	        descriptor3 = new ConfigPanelFritzBoxDescriptor();
-	        wizard.registerWizardPanel(ConfigPanelFritzBoxDescriptor.IDENTIFIER, descriptor3);
+	        descriptor3 = new ConfigPanelFritzBoxIpDescriptor();
+	        wizard.registerWizardPanel(ConfigPanelFritzBoxIpDescriptor.IDENTIFIER, descriptor3);
 
-	        descriptor4 = new ConfigPanelMessageDescriptor();
-	        wizard.registerWizardPanel(ConfigPanelMessageDescriptor.IDENTIFIER, descriptor4);
+	        descriptor4 = new ConfigPanelFritzBoxLoginDescriptor();
+	        wizard.registerWizardPanel(ConfigPanelFritzBoxLoginDescriptor.IDENTIFIER, descriptor4);
 
-	        descriptor5 = new ConfigPanelCallMonitorDescriptor(descriptor3.getFritzBoxPanel());
-	        wizard.registerWizardPanel(ConfigPanelCallMonitorDescriptor.IDENTIFIER, descriptor5);
+	        descriptor5 = new ConfigPanelMessageDescriptor();
+	        wizard.registerWizardPanel(ConfigPanelMessageDescriptor.IDENTIFIER, descriptor5);
+
+	        descriptor6 = new ConfigPanelCallMonitorDescriptor(descriptor3.getFritzBoxPanel());
+	        wizard.registerWizardPanel(ConfigPanelCallMonitorDescriptor.IDENTIFIER, descriptor6);
 
 	        WizardPanelDescriptor finishDescriptor= new ConfigPanelFinishDescriptor();
 	        wizard.registerWizardPanel(ConfigPanelFinishDescriptor.IDENTIFIER, finishDescriptor);
@@ -121,23 +126,21 @@ public class ConfigWizard {
        			}
 
        			((ConfigPanelPhone)descriptor2.getPanelComponent()).saveSettings();
+       			
+       			// save settings of FritzBoxLogin before FritzBoxIp, because FritzBoxIp needs username and password
+       			// to get further data in saveSettings()
+       			((ConfigPanelFritzBoxLogin)descriptor4.getPanelComponent()).saveSettings(false);
+       			
        			try {
-           			((ConfigPanelFritzBox)descriptor3.getPanelComponent()).saveSettings(false);
-       			}
-       			catch (WrongPasswordException wpe)
-       			{
-       				Debug.error("Wrong password");
+           			((ConfigPanelFritzBoxIP)descriptor3.getPanelComponent()).saveSettings(false);
        			}
    				catch (InvalidFirmwareException ife)
    				{
    					Debug.error("Invalid firmware");
    				}
-       			catch (IOException ioe)
-       			{
-       				Debug.error("No connection to box!");
-       			}
-       			((ConfigPanelMessage)descriptor4.getPanelComponent()).saveSettings();
-       			((ConfigPanelCallMonitor)descriptor5.getPanelComponent()).saveSettings();
+
+       			((ConfigPanelMessage)descriptor5.getPanelComponent()).saveSettings();
+       			((ConfigPanelCallMonitor)descriptor6.getPanelComponent()).saveSettings();
 
       			properties.saveConfigProperties();
 
@@ -152,6 +155,11 @@ public class ConfigWizard {
        			return true;
        }
 	}
+	
+	public void setNextFinishButtonEnabled(boolean newValue) {
+		wizard.setNextFinishButtonEnabled(newValue);
+	}
+
 
 	/**
 	 * This dialog changes the language used in jfritz

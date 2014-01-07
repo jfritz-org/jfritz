@@ -10,11 +10,10 @@ import de.moonflower.jfritz.dialogs.sip.SipProvider;
 public class FritzBoxTests {
 
 	private FritzBox fritzBox;
-	private Exception exc;
 
 	@Before
 	public void setUp() {
-		fritzBox = new FritzBox("testbox", "FritzBox for tests", "http", "192.168.178.1", "80", false, "", "", exc);
+		fritzBox = new FritzBox("testbox", "FritzBox for tests", "http", "192.168.178.1", "80", false, "", "");
 	}
 
 	@Test

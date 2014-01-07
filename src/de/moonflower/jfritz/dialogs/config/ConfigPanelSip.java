@@ -10,6 +10,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -20,11 +21,14 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.TableCellRenderer;
 
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.dialogs.sip.SipProviderTableModel;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.utils.Debug;
+import de.robotniko.fboxlib.exceptions.FirmwareNotDetectedException;
+import de.robotniko.fboxlib.exceptions.PageNotFoundException;
 
 public class ConfigPanelSip extends JPanel implements ConfigPanel {
 
@@ -34,7 +38,7 @@ public class ConfigPanelSip extends JPanel implements ConfigPanel {
 
 	private SipProviderTableModel sipProviderTableModel;
 
-	private ConfigPanelFritzBox fritzBoxPanel;
+	private ConfigPanelFritzBoxIP fritzBoxPanel;
 	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public ConfigPanelSip() {
@@ -88,14 +92,20 @@ public class ConfigPanelSip extends JPanel implements ConfigPanel {
 					try {
 					    c.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 						fritzBoxPanel.detectBoxType();
+						if (fritzBoxPanel.getFritzBox().getFirmware() != null) {
+							// TODO login using settings!
+						}
 						updateTable();
-					} catch (WrongPasswordException e1) {
-						JFritz.errorMsg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
-						Debug.errDlg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
+//					} catch (WrongPasswordException e1) {
+//						JFritz.errorMsg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
+//						Debug.errDlg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
 					} catch (IOException e1) {
 						JFritz.errorMsg(messages.getMessage("box.not_found")); //$NON-NLS-1$
 						Debug.errDlg(messages.getMessage("box.not_found")); //$NON-NLS-1$
-					} catch (InvalidFirmwareException e1) {
+					} catch (PageNotFoundException e1) {
+						JFritz.errorMsg(messages.getMessage("box.communication_error")); //$NON-NLS-1$
+						Debug.errDlg(messages.getMessage("box.communication_error")); //$NON-NLS-1$
+					} catch (FirmwareNotDetectedException e1) {
 						JFritz.errorMsg(messages.getMessage("unknown_firmware")); //$NON-NLS-1$
 						Debug.errDlg(messages.getMessage("unknown_firmware")); //$NON-NLS-1$
 					}
@@ -107,8 +117,10 @@ public class ConfigPanelSip extends JPanel implements ConfigPanel {
 		JButton b1 = new JButton(messages.getMessage("get_sip_provider_from_box")); //$NON-NLS-1$
 		b1.setActionCommand("fetchSIP"); //$NON-NLS-1$
 		b1.addActionListener(actionListener);
+		
 		JButton b2 = new JButton(messages.getMessage("save_sip_provider_on_box")); //$NON-NLS-1$
 		b2.setEnabled(false);
+		
 		sipButtonPane.add(b1);
 		sipButtonPane.add(b2);
 
@@ -151,17 +163,18 @@ public class ConfigPanelSip extends JPanel implements ConfigPanel {
 	public void updateTable()
 	{
 		if ((fritzBoxPanel != null)
-			&& (fritzBoxPanel.getFritzBox() != null)
-			&& (fritzBoxPanel.getFritzBox().getSipProvider() != null))
+			&& (fritzBoxPanel.getFritzBox() != null))
 		{
-			sipProviderTableModel.updateProviderList(
-					fritzBoxPanel.getFritzBox().getSipProvider());
-			sipProviderTableModel.fireTableDataChanged();
-			JFritz.getCallerList().fireTableDataChanged();
+			Vector<SipProvider> sipProvider = fritzBoxPanel.getFritzBox().getSipProvider();
+			if (sipProvider != null) {
+				sipProviderTableModel.updateProviderList(sipProvider);
+				sipProviderTableModel.fireTableDataChanged();
+				JFritz.getCallerList().fireTableDataChanged();
+			}
 		}
 	}
 
-	public void setFritzBoxPanel(ConfigPanelFritzBox fritzBoxPanel)
+	public void setFritzBoxPanel(ConfigPanelFritzBoxIP fritzBoxPanel)
 	{
 		this.fritzBoxPanel = fritzBoxPanel;
 	}

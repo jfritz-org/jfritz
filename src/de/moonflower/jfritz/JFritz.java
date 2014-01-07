@@ -146,7 +146,6 @@ public final class JFritz implements  StatusListener {
 	public int initFritzBox() throws WrongPasswordException, InvalidFirmwareException, IOException
 	{
 		int result = 0;
-		Exception ex = null;
 
 		FritzBox fritzBox = new FritzBox("Fritz!Box",
 									     "My Fritz!Box",
@@ -155,18 +154,9 @@ public final class JFritz implements  StatusListener {
 										 properties.getProperty("box.port"),
 										 Boolean.parseBoolean(properties.getProperty("box.loginUsingUsername")), 
 										 properties.getProperty("box.username"), 
-										 Encryption.decrypt(properties.getProperty("box.password")),
-										 ex);
+										 Encryption.decrypt(properties.getProperty("box.password")));
 
-		if ( ex != null)
-		{
-			try {
-				throw ex;
-			} catch (Exception e)
-			{
-				Debug.error(e.toString());
-			}
-		}
+
 		boxCommunication = new BoxCommunication();
 		boxCommunication.addBox(fritzBox);
 
@@ -324,8 +314,6 @@ public final class JFritz implements  StatusListener {
 		// loads various country specific number settings and tables
 		loadNumberSettings();
 
-		Exception ex = null;
-
 		FritzBox fritzBox = new FritzBox("Fritz!Box",
 									     "My Fritz!Box",
 									     "http",
@@ -333,18 +321,8 @@ public final class JFritz implements  StatusListener {
 										 properties.getProperty("box.port"),
 										 false,
 										 "",
-										 Encryption.decrypt(properties.getProperty("box.password")),
-										 ex);
+										 Encryption.decrypt(properties.getProperty("box.password")));
 
-		if ( ex != null)
-		{
-			try {
-				throw ex;
-			} catch (Exception e)
-			{
-				Debug.error(e.toString());
-			}
-		}
 		boxCommunication = new BoxCommunication();
 		boxCommunication.addBox(fritzBox);
 

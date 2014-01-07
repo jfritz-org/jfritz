@@ -49,7 +49,7 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 	protected PropertyProvider properties = PropertyProvider.getInstance();
 	protected MessageProvider messages = MessageProvider.getInstance();
 
-	public ConfigPanelOther(ConfigPanelFritzBox fritzBoxPanel) {
+	public ConfigPanelOther(ConfigPanelFritzBoxIP fritzBoxPanel) {
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
 

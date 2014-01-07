@@ -134,8 +134,7 @@ public class FritzBox extends BoxClass {
 	private FritzBoxCommunication fbc;
 	
 	public FritzBox(String name, String description,
-					String protocol, String address, String port, boolean useUsername, String username, String password,
-					Exception exc)
+					String protocol, String address, String port, boolean useUsername, String username, String password)
 	{
 		this.name = name;
 		this.description = description;
@@ -151,32 +150,51 @@ public class FritzBox extends BoxClass {
 		configuredPorts = new HashMap<Integer, Port>();
 		callBackListener = new Vector<BoxCallBackListener>(4);
 		
-		exc = null;
 		if ("".equals(address)) {
 			this.address = "fritz.box";
 		} else {
 			this.address = address;
 			try {
 				setBoxConnected();
-				exc = updateSettings();
+				updateSettings();
 			} catch (WrongPasswordException e) {
-				exc = e;
 				Debug.error(messages.getMessage("box.wrong_password"));
 				setBoxDisconnected();
 			} catch (InvalidFirmwareException e) {
-				exc = e;
 				Debug.error(messages.getMessage("unknown_firmware"));
 				setBoxDisconnected();
 			} catch (IOException e) {
-				exc = e;
 				Debug.error(messages.getMessage("box.not_found"));
 				setBoxDisconnected();
 			}
 		}
 	}
-
-	private Exception detectFirmwareAndLogin() {
-		Exception exc = null;
+	
+	public void detectFirmware() throws IOException, FirmwareNotDetectedException, PageNotFoundException {
+		fbc = new FritzBoxCommunication(this.protocol, this.address, this.port);
+		
+		try {
+			firmware = fbc.getFirmwareVersion();
+		} catch (ClientProtocolException e1) {
+			Debug.error(e1.getMessage());
+			setBoxDisconnected();
+			throw e1;
+		} catch (IOException e1) {
+			Debug.error(messages.getMessage("box.not_found"));
+			setBoxDisconnected();
+			throw e1;
+		} catch (PageNotFoundException e1) {
+			setBoxDisconnected();
+			handlePageNotFoundException(e1);
+			throw e1;
+		} catch (FirmwareNotDetectedException e1) {
+			setBoxDisconnected();
+			handleFirmwareNotDetectedException(e1);
+			throw e1;
+		}
+	}
+	
+	public void detectFirmwareAndLogin() throws InvalidCredentialsException, LoginBlockedException, IOException, PageNotFoundException, FirmwareNotDetectedException {
 		fbc = new FritzBoxCommunication(this.protocol, this.address, this.port);
 		if (this.useUsername) {
 			fbc.setUserName(this.username);
@@ -184,35 +202,9 @@ public class FritzBox extends BoxClass {
 			fbc.setUserName("");
 		}
 		fbc.setPassword(this.password);
-		try {
-			firmware = fbc.getFirmwareVersion();
-			fbc.login();
-		} catch (ClientProtocolException e1) {
-			exc = e1;
-			Debug.error(e1.getMessage());
-			setBoxDisconnected();
-		} catch (InvalidCredentialsException e1) {
-			exc = e1;
-			setBoxDisconnected();
-			handleInvalidCredentialsException(e1);
-		} catch (LoginBlockedException e1) {
-			exc = e1;
-			setBoxDisconnected();
-			handleLoginBlockedException(e1);
-		} catch (IOException e1) {
-			exc = e1;
-			Debug.error(messages.getMessage("box.not_found"));
-			setBoxDisconnected();
-		} catch (PageNotFoundException e1) {
-			exc = e1;
-			setBoxDisconnected();
-			handlePageNotFoundException(e1);
-		} catch (FirmwareNotDetectedException e1) {
-			exc = e1;
-			setBoxDisconnected();
-			handleFirmwareNotDetectedException(e1);
-		}
-		return exc;
+
+		firmware = fbc.getFirmwareVersion();
+		fbc.login();
 	}
 
 	public Exception updateSettings() throws WrongPasswordException, InvalidFirmwareException, IOException
@@ -222,7 +214,28 @@ public class FritzBox extends BoxClass {
 		long end = 0;
 
 		start = end;
-			exc = detectFirmwareAndLogin();
+		try {
+			detectFirmwareAndLogin();
+		} catch (ClientProtocolException e) {
+			Debug.error(e.getMessage());
+			setBoxDisconnected();
+		} catch (InvalidCredentialsException e) {
+			setBoxDisconnected();
+			handleInvalidCredentialsException(e);
+		} catch (LoginBlockedException e) {
+			setBoxDisconnected();
+			handleLoginBlockedException(e);
+		} catch (IOException e) {
+			Debug.error(messages.getMessage("box.not_found"));
+			setBoxDisconnected();
+		} catch (PageNotFoundException e) {
+			setBoxDisconnected();
+			handlePageNotFoundException(e);
+		} catch (FirmwareNotDetectedException e) {
+			setBoxDisconnected();
+			handleFirmwareNotDetectedException(e);
+		}
+		
 		end = JFritzUtils.getTimestamp();
 		Debug.debug("UpdateSettings: detectFirmwareAndLogin " + (end - start) + "ms");
 		
@@ -1310,7 +1323,27 @@ public class FritzBox extends BoxClass {
 	public void refreshLogin() {
 		if (fbc != null) {
 			fbc.invalidateSid();
-			detectFirmwareAndLogin();
+			try {
+				detectFirmwareAndLogin();
+			} catch (ClientProtocolException e) {
+				Debug.error(e.getMessage());
+				setBoxDisconnected();
+			} catch (InvalidCredentialsException e) {
+				setBoxDisconnected();
+				handleInvalidCredentialsException(e);
+			} catch (LoginBlockedException e) {
+				setBoxDisconnected();
+				handleLoginBlockedException(e);
+			} catch (IOException e) {
+				Debug.error(messages.getMessage("box.not_found"));
+				setBoxDisconnected();
+			} catch (PageNotFoundException e) {
+				setBoxDisconnected();
+				handlePageNotFoundException(e);
+			} catch (FirmwareNotDetectedException e) {
+				setBoxDisconnected();
+				handleFirmwareNotDetectedException(e);
+			}
 		}
 	}
 }
