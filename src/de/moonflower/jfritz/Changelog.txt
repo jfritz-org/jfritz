@@ -20,6 +20,11 @@ TODO tel.search.ch überprüfen und reparieren
 - TODO: Sounds trennen und individualisierbar gestalten
 - TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
 
+JFritz 0.7.5_5:
+- Neu: Login nun in zwei Einstellungsdialoge aufgeteilt (IP und Anmeldedaten)
+- Neu: Wizard hat nun auch zwei Schritte für die Einrichtung der FRITZ!Box
+- Neu: Fehlermedlungen bei falschem Benutzer/Passwort verbessert 
+
 JFritz 0.7.5_4: 
 - New: Supporting international firmwares (ES, FR and IT)
 

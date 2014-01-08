@@ -3,6 +3,9 @@ JFritz 0.7.5_Testversion:
 - Neu: Schweizer Rufnummern werden nun mit Ortsvorwahl dargestellt
 - Neu 0000351: verbessertes Startscript (anbei)
 - New: Supporting international firmwares (ES, FR and IT)
+- Neu: Login nun in zwei Einstellungsdialoge aufgeteilt (IP und Anmeldedaten)
+- Neu: Wizard hat nun auch zwei Schritte für die Einrichtung der FRITZ!Box
+- Neu: Fehlermedlungen bei falschem Benutzer/Passwort verbessert 
 
 JFritz 0.7.5:
 - Weihnachtsversion
