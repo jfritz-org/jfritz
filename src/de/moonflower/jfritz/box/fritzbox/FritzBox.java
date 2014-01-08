@@ -50,6 +50,7 @@ import de.moonflower.jfritz.utils.network.UPNPCommonLinkPropertiesListener;
 import de.moonflower.jfritz.utils.network.UPNPExternalIpListener;
 import de.moonflower.jfritz.utils.network.UPNPStatusInfoListener;
 import de.moonflower.jfritz.utils.network.UPNPUtils;
+import de.robotniko.fboxlib.enums.LoginMode;
 import de.robotniko.fboxlib.exceptions.FirmwareNotDetectedException;
 import de.robotniko.fboxlib.exceptions.InvalidCredentialsException;
 import de.robotniko.fboxlib.exceptions.LoginBlockedException;
@@ -175,6 +176,7 @@ public class FritzBox extends BoxClass {
 		
 		try {
 			firmware = fbc.getFirmwareVersion();
+			fbc.detectLoginMethod();
 		} catch (ClientProtocolException e1) {
 			Debug.error(e1.getMessage());
 			setBoxDisconnected();
@@ -256,6 +258,17 @@ public class FritzBox extends BoxClass {
 			callList = FritzBoxCallerListFactory.createFritzBoxCallListFromFirmware(firmware, this, callBackListener);
 			
 		return exc;
+	}
+	
+	public LoginMode getLoginMode() {
+		if (fbc == null) {
+			return LoginMode.NONE;
+		}
+		return fbc.getLoginMode();
+	}
+	
+	public String getLastLoginUserName() {
+		return fbc.getLastUserName();
 	}
 	
 	public String getPageAsString(final String url) throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException {

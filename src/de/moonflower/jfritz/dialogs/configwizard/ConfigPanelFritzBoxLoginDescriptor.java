@@ -21,15 +21,9 @@ public class ConfigPanelFritzBoxLoginDescriptor extends WizardPanelDescriptor{
 
 	  public ConfigPanelFritzBoxLogin fritzBoxPanel;
 
-	  public ConfigPanelFritzBoxLoginDescriptor() {
-		  if (JFritz.getBoxCommunication() != null
-				  && JFritz.getBoxCommunication().getBoxCount() > 0
-				  && JFritz.getBoxCommunication().getBox(0) != null) {
-				fritzBoxPanel = new ConfigPanelFritzBoxLogin(
-						(FritzBox) JFritz.getBoxCommunication().getBox(0));
-		  } else {
-			  fritzBoxPanel = new ConfigPanelFritzBoxLogin(null);
-		  }
+	  public ConfigPanelFritzBoxLoginDescriptor(ConfigPanelFritzBoxIpDescriptor otherConfigPanel) {
+			fritzBoxPanel = new ConfigPanelFritzBoxLogin();
+			fritzBoxPanel.setFritzBoxPanelIp(otherConfigPanel.getFritzBoxPanel());
 			fritzBoxPanel.loadSettings();
 			setPanelDescriptorIdentifier(IDENTIFIER);
 		    setPanelComponent(fritzBoxPanel);

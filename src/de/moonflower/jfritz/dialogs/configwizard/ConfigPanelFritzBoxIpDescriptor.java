@@ -45,4 +45,9 @@ public class ConfigPanelFritzBoxIpDescriptor extends WizardPanelDescriptor{
 	    public ConfigPanelFritzBoxIP getFritzBoxPanel() {
 	    	return fritzBoxPanel;
 	    }
+
+	    @Override
+	    public void aboutToDisplayPanel() {
+	    	fritzBoxPanel.setWizardReference(this.getWizard());
+	    }
 }

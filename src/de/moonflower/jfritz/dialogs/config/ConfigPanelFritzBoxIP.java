@@ -24,6 +24,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
+import com.nexes.wizard.Wizard;
 
 import de.moonflower.jfritz.box.BoxClass;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
@@ -39,7 +43,7 @@ import de.robotniko.fboxlib.exceptions.FirmwareNotDetectedException;
 import de.robotniko.fboxlib.exceptions.PageNotFoundException;
 
 public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
-		ConfigPanel {
+		ConfigPanel, DocumentListener {
 
 	/**
 	 *
@@ -63,6 +67,8 @@ public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 	private FritzBox fritzBox;
 
 	private boolean settingsChanged = false;
+	private Wizard wizard = null;
+	private ConfigPanelFritzBoxLogin fritzBoxPanelLogin;
 
 	protected PropertyProvider properties = PropertyProvider.getInstance();
 	protected MessageProvider messages = MessageProvider.getInstance();
@@ -155,6 +161,7 @@ public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 		cPane.add(label, c);
 		address = new JTextField("", 30); //$NON-NLS-1$
 		address.setMinimumSize(new Dimension(200, 20));
+		address.getDocument().addDocumentListener(this);
 		cPane.add(address, c);
 
 		c.gridy = gridPosY++;
@@ -162,10 +169,11 @@ public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 		cPane.add(label, c);
 		port = new JTextField("", 30); //$NON-NLS-1$
 		port.setMinimumSize(new Dimension(200, 20));
+		port.getDocument().addDocumentListener(this);
 		cPane.add(port, c);
 
-		c.insets.top = 5;
-		c.insets.bottom = 5;	
+		c.insets.top = 3;
+		c.insets.bottom = 3;	
 		c.gridy = gridPosY++;
 		label = new JLabel("");
 		cPane.add(label, c);
@@ -183,6 +191,18 @@ public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 
 		add(new JScrollPane(cPane), BorderLayout.CENTER);
 	}
+	
+	public void setWizardReference(Wizard wizard) {
+		this.wizard = wizard;
+		if (this.fritzBox.getFirmware() == null) {
+			disableNextButtonInWizard();
+		}
+	}
+
+	public void setFritzBoxPanelLogin(ConfigPanelFritzBoxLogin fritzBoxPanel)
+	{
+		this.fritzBoxPanelLogin = fritzBoxPanel;
+	}
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("addresscombo")) { //$NON-NLS-1$
@@ -194,7 +214,7 @@ public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 				Debug.error("Address wrong!"); //$NON-NLS-1$
 				setErrorMessage(messages.getMessage("box.not_found"));
 			}
-			updateFirmwareLabel();
+			disableNextButtonInWizard();
 		} else if (e.getActionCommand().equals("detectboxtype")) { //$NON-NLS-1$
 			Container c = getPanel(); // get the window's content pane
 			c.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -211,6 +231,10 @@ public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 				// nothing to do, already handled in detectBoxType
 			}
 
+			if (fritzBoxPanelLogin != null) {
+				fritzBoxPanelLogin.updateGui();
+			}
+			
 			c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		}
 	}
@@ -258,8 +282,7 @@ public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 
 	public void saveSettings(boolean checkChanges) throws InvalidFirmwareException {
 		if ( (!checkChanges)
-			|| (!properties.getProperty("box.address").equals(address.getText()))
-			|| (!properties.getProperty("box.port").equals(port.getText()))
+				|| somethingChanged()
 			)
 				
 		{
@@ -345,6 +368,7 @@ public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 	private void updateFirmwareLabel() {
 		if (fritzBox.getFirmware() != null) {
 			setSuccessMessage(fritzBox.getFirmware().getName() + "\n" + fritzBox.getFirmware().toSimpleString());
+			enableNextButtonInWizard();
 			checkDefaultFritzBox();
 		} else {
 			setErrorMessage(messages.getMessage("unknown")); //$NON-NLS-1$
@@ -376,5 +400,47 @@ public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 
 	public boolean shouldRefreshTrayMenu() {
 		return false;
+	}
+
+	private boolean somethingChanged() {
+		return (!properties.getProperty("box.address").equals(address.getText()))
+				|| (!properties.getProperty("box.port").equals(port.getText()));
+
+	}
+	
+	@Override
+	public void insertUpdate(DocumentEvent e) {
+		if (wizard != null && somethingChanged()) {
+			disableNextButtonInWizard();
+			setSuccessMessage("");
+		}
+	}
+
+	@Override
+	public void removeUpdate(DocumentEvent e) {
+		if (wizard != null && somethingChanged()) {
+			disableNextButtonInWizard();
+			setSuccessMessage("");
+		}
+	}
+
+	@Override
+	public void changedUpdate(DocumentEvent e) {
+		if (wizard != null && somethingChanged()) {
+			disableNextButtonInWizard();
+			setSuccessMessage("");
+		}
+	}
+	
+	private void disableNextButtonInWizard() {
+		if (wizard != null) {
+			wizard.setNextFinishButtonEnabled(false);
+		}
+	}
+
+	private void enableNextButtonInWizard() {
+		if (wizard != null) {
+			wizard.setNextFinishButtonEnabled(true);
+		}
 	}
 }

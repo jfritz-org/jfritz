@@ -113,12 +113,14 @@ public class ConfigDialog extends JDialog {
 				(FritzBox) JFritz.getBoxCommunication().getBox(0));
 		sipPanel = new ConfigPanelSip();
 
-		fritzBoxPanelLogin = new ConfigPanelFritzBoxLogin(
-				(FritzBox) JFritz.getBoxCommunication().getBox(0));
+		fritzBoxPanelLogin = new ConfigPanelFritzBoxLogin();
+		fritzBoxPanelLogin.setFritzBoxPanelIp(fritzBoxPanelIp);
 		fritzBoxPanelLogin.setSipPanel(sipPanel);
 		fritzBoxPanelLogin.setPath(fritzBoxPanelIp.getPath() + "::" + messages.getMessage("config.login"));
 		
-		sipPanel.setFritzBoxPanel(fritzBoxPanelIp);
+		fritzBoxPanelIp.setFritzBoxPanelLogin(fritzBoxPanelLogin);
+		
+		sipPanel.setFritzBoxPanelIp(fritzBoxPanelIp);
 		sipPanel.setPath(fritzBoxPanelIp.getPath() + "::" + messages.getMessage("sip_numbers"));
 		callMonitorPanel = new ConfigPanelCallMonitor(this, true, fritzBoxPanelIp, stateListener);
 		callMonitorPanel.setPath(fritzBoxPanelIp.getPath() + "::" + messages.getMessage("callmonitor"));

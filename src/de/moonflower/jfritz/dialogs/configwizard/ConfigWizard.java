@@ -84,7 +84,7 @@ public class ConfigWizard {
 	        descriptor3 = new ConfigPanelFritzBoxIpDescriptor();
 	        wizard.registerWizardPanel(ConfigPanelFritzBoxIpDescriptor.IDENTIFIER, descriptor3);
 
-	        descriptor4 = new ConfigPanelFritzBoxLoginDescriptor();
+	        descriptor4 = new ConfigPanelFritzBoxLoginDescriptor(descriptor3);
 	        wizard.registerWizardPanel(ConfigPanelFritzBoxLoginDescriptor.IDENTIFIER, descriptor4);
 
 	        descriptor5 = new ConfigPanelMessageDescriptor();

@@ -23,8 +23,6 @@ import javax.swing.table.TableCellRenderer;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.dialogs.sip.SipProviderTableModel;
-import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
-import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.utils.Debug;
 import de.robotniko.fboxlib.exceptions.FirmwareNotDetectedException;
@@ -38,7 +36,7 @@ public class ConfigPanelSip extends JPanel implements ConfigPanel {
 
 	private SipProviderTableModel sipProviderTableModel;
 
-	private ConfigPanelFritzBoxIP fritzBoxPanel;
+	private ConfigPanelFritzBoxIP fritzBoxPanelIp;
 	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public ConfigPanelSip() {
@@ -91,8 +89,8 @@ public class ConfigPanelSip extends JPanel implements ConfigPanel {
 				    Container c = getPanel(); // get the window's content pane
 					try {
 					    c.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-						fritzBoxPanel.detectBoxType();
-						if (fritzBoxPanel.getFritzBox().getFirmware() != null) {
+						fritzBoxPanelIp.detectBoxType();
+						if (fritzBoxPanelIp.getFritzBox().getFirmware() != null) {
 							// TODO login using settings!
 						}
 						updateTable();
@@ -162,10 +160,10 @@ public class ConfigPanelSip extends JPanel implements ConfigPanel {
 
 	public void updateTable()
 	{
-		if ((fritzBoxPanel != null)
-			&& (fritzBoxPanel.getFritzBox() != null))
+		if ((fritzBoxPanelIp != null)
+			&& (fritzBoxPanelIp.getFritzBox() != null))
 		{
-			Vector<SipProvider> sipProvider = fritzBoxPanel.getFritzBox().getSipProvider();
+			Vector<SipProvider> sipProvider = fritzBoxPanelIp.getFritzBox().getSipProvider();
 			if (sipProvider != null) {
 				sipProviderTableModel.updateProviderList(sipProvider);
 				sipProviderTableModel.fireTableDataChanged();
@@ -174,9 +172,9 @@ public class ConfigPanelSip extends JPanel implements ConfigPanel {
 		}
 	}
 
-	public void setFritzBoxPanel(ConfigPanelFritzBoxIP fritzBoxPanel)
+	public void setFritzBoxPanelIp(ConfigPanelFritzBoxIP fritzBoxPanel)
 	{
-		this.fritzBoxPanel = fritzBoxPanel;
+		this.fritzBoxPanelIp = fritzBoxPanel;
 	}
 
 	public boolean shouldRefreshJFritzWindow() {
