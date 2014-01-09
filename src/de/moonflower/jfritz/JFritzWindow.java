@@ -1978,11 +1978,6 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		{
 			statusBar.refresh();
 		}
-
-		if (monitorButton != null)
-		{
-			monitorButton.setSelected(false);
-		}
 	}
 
 	public void finished(Vector<Call> newCalls) {

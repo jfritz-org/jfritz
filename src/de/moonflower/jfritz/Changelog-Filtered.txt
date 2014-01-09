@@ -6,6 +6,7 @@ JFritz 0.7.5_Testversion:
 - Neu: Login nun in zwei Einstellungsdialoge aufgeteilt (IP und Anmeldedaten)
 - Neu: Wizard hat nun auch zwei Schritte für die Einrichtung der FRITZ!Box
 - Neu: Fehlermedlungen bei falschem Benutzer/Passwort verbessert 
+- Bugfix: Anrufmonitor baut Verbindung nach Verbindungsabbruch schneller wieder auf
 
 JFritz 0.7.5:
 - Weihnachtsversion

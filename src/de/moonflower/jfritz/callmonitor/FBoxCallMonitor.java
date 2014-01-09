@@ -4,11 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
+import java.net.InetSocketAddress;
 import java.net.NoRouteToHostException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
-import java.util.Random;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -28,9 +28,9 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
 
 	private static final int CONNECTION_TIMEOUT = 1000;
 
-	private static final int READ_TIMEOUT = 15000; //15000;
+	private static final int READ_TIMEOUT = 5000;
 
-	private static final int WAIT_UNTIL_RECONNECT = 10000; //15000;
+	private static final int WAIT_UNTIL_RECONNECT = 0; //15000;
 
     // Liest den TCP-Strom ein
     protected BufferedReader in;
@@ -41,9 +41,6 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
 
     private int connectionCount = 0;
 
-    // wird benutzt, um X Sekunden lang zu warten
-    protected Random zufallszahl;
-
     private boolean connected = false;
 
     protected FritzBox fritzBox;
@@ -53,15 +50,15 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
     public FBoxCallMonitor(FritzBox fritzBox,
     		Vector<CallMonitorStatusListener> stateListener, boolean shouldConnect) {
         super("FBoxThread");
+        //log.setLevel(Level.DEBUG);
         this.stateListener = stateListener;
         this.fritzBox = fritzBox;
-	    zufallszahl = new Random();
 	    this.setDaemon(true);
         if (shouldConnect) {
-		    log.info("Starting FBoxListener"); //$NON-NLS-1$
+		    log.info("(CM) Starting FBoxListener"); //$NON-NLS-1$
 		    running = true;
 		    start();
-		    log.info("Trying to connect to " //$NON-NLS-1$
+		    log.info("(CM) Trying to connect to " //$NON-NLS-1$
 		    		+ fritzBox.getAddress() + ":1012"); //$NON-NLS-1$,  //$NON-NLS-2$
         }
     }
@@ -70,17 +67,23 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
 
     protected boolean connect() {
     	try {
-    		log.debug("Connecting call monitor ... " + ++connectionCount);
-	        clientSocket = new Socket(fritzBox.getAddress(), 1012); //$NON-NLS-1$
-			clientSocket.setSoTimeout(CONNECTION_TIMEOUT);
+    		log.info("(CM) [" + ++connectionCount + "] Connecting call monitor ... ");
+	        clientSocket = new Socket();
+	        clientSocket.connect(new InetSocketAddress(fritzBox.getAddress(), 1012), CONNECTION_TIMEOUT);
 			connected = true;
 			clientSocket.setSoTimeout(READ_TIMEOUT);
+			try {
+				clientSocket.setKeepAlive(true);
+			} catch (Exception e) {
+		        log.error("(CM) [" + connectionCount + "] Could not set keep-alive: " + e.toString()); //$NON-NLS-1$
+			}
             in = new BufferedReader(new InputStreamReader(clientSocket
                     .getInputStream()));
 			this.setConnectedStatus();
+    		log.info("(CM) [" + connectionCount + "] Connection to call monitor established!");
 			return true;
     	} catch (SocketTimeoutException stoe) {
-	        log.error("Socket connect timeout: " + stoe.toString()); //$NON-NLS-1$
+	        log.error("(CM) [" + connectionCount + "] Socket connect timeout: " + stoe.toString()); //$NON-NLS-1$
 	        closeConnection();
 	        try {
 				Thread.sleep(WAIT_UNTIL_RECONNECT);
@@ -89,7 +92,7 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
 				e.printStackTrace();
 			}
     	} catch (NoRouteToHostException nrthe) {
-	        log.error("No route to host exception: " + nrthe.toString()); //$NON-NLS-1$
+	        log.error("(CM) [" + connectionCount + "] No route to host exception: " + nrthe.toString()); //$NON-NLS-1$
 	        closeConnection();
 	        try {
 				Thread.sleep(WAIT_UNTIL_RECONNECT);
@@ -98,7 +101,7 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
 				e.printStackTrace();
 			}
 	    } catch (UnknownHostException uhe) {
-	        log.error("Unknown host exception: " + uhe.toString()); //$NON-NLS-1$
+	        log.error("(CM) [" + connectionCount + "] Unknown host exception: " + uhe.toString()); //$NON-NLS-1$
 	        closeConnection();
 	        try {
 				Thread.sleep(WAIT_UNTIL_RECONNECT);
@@ -107,7 +110,7 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
 				e.printStackTrace();
 			}
 	    } catch (ConnectException ce) {
-	        log.error("Connect exception: " + ce.toString()); //$NON-NLS-1$
+	        log.error("(CM) [" + connectionCount + "] Connect exception: " + ce.toString()); //$NON-NLS-1$
 	        closeConnection();
 	        try {
 				Thread.sleep(WAIT_UNTIL_RECONNECT);
@@ -116,6 +119,7 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
 				e.printStackTrace();
 			}
 	    } catch (IOException ioe) {
+	        log.error("(CM) [" + connectionCount + "] IO exception: " + ioe.toString()); //$NON-NLS-1$
 			try {
 				Thread.sleep(WAIT_UNTIL_RECONNECT);
 			} catch (InterruptedException e1) {
@@ -127,59 +131,67 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
     }
 
     protected void readOutput() {
-    	boolean timeout = true;
     	try {
-        	log.debug("Reading call monitor input ... ");
+        	log.debug("(CM) [" + connectionCount + "] Reading call monitor input ... ");
             String currentLine;
-            // lese n√§chste Nachricht ein
+            // lese n‰chste Nachricht ein
         	if (running && connected)
         	{
                 currentLine = in.readLine();
                 if (currentLine != null)
                 {
-                	timeout = false;
                     parseOutput(currentLine);
                 }
                 else
                 {
+                	log.debug("(CM) [" + connectionCount + "] Connection lost! ");
                 	connected = false;
                 	this.setDisconnectedStatus();
-                	in.close();
+                	closeAm();
                 }
         	}
+    	} catch (SocketTimeoutException ste) {
+        	log.debug("(CM) [" + connectionCount + "] Read timeout, just proceed");
+        	try {
+				clientSocket.sendUrgentData(0);
+			} catch (Exception e) {
+				log.warn("(CM) [" + connectionCount + "] Exception when sending urgent data: " + e.getMessage());
+			}
         } catch (IOException ioe) {
+        	log.warn("(CM) [" + connectionCount + "] IOException: " + ioe.getMessage());
             connected = false;
             this.setDisconnectedStatus();
+        	closeAm();
         }
-        if (timeout)
+    }
+    
+    private void closeAm() {
+        try {
+        	if (clientSocket != null) {
+        		clientSocket.close();
+        	}
+        	if (in != null) {
+        		in.close();
+        	}
+        	log.info("(CM) [" + connectionCount + "] Closed input stream of call monitor! ");
+        }
+        catch (IOException ioe)
         {
-	        try {
-	        	if (clientSocket != null) {
-	        		clientSocket.close();
-	        	}
-	        	if (in != null) {
-	        		in.close();
-	        	}
-	        	log.debug("Closed input stream of call monitor! " + connectionCount);
-	        }
-	        catch (IOException ioe)
-	        {
-	        	log.error("IOException while closing call monitor input!");
-	        }
+        	log.error("(CM) [" + connectionCount + "] IOException while closing call monitor input!");
         }
     }
 
     protected abstract void parseOutput(String line);
 
     public void stopCallMonitor() {
-        log.info("Stopping FBoxListener"); //$NON-NLS-1$
+        log.info("(CM) [" + connectionCount + "] Stopping FBoxListener"); //$NON-NLS-1$
     	closeConnection();
         running = false;
     }
 
     public void closeConnection()
     {
-        log.debug("Closing connection " + connectionCount); //$NON-NLS-1$
+        log.info("(CM) [" + connectionCount + "] Closing connection "); //$NON-NLS-1$
         try {
             connected = false;
             if (clientSocket != null)
