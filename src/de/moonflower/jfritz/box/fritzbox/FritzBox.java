@@ -724,14 +724,14 @@ public class FritzBox extends BoxClass {
 		Vector<Call> result;
 		setBoxConnected();
 		
-		if (callList == null || firmware == null) {
+		if (callList == null || firmware == null || !fbc.isLoggedIn()) {
 			try {
 				updateSettings();
 				if (callList == null) {
 					Debug.errDlg(messages.getMessage("box.no_caller_list"));
 					result = new Vector<Call>();
 				} else {
-					result = getCallerList(progressListener);
+					result = callList.getCallerList(progressListener);
 				}
 			} catch (WrongPasswordException e) {
 				Debug.errDlg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$

@@ -181,29 +181,39 @@ public class ConfigPanelFritzBoxLogin extends JPanel implements ActionListener,
 		updateGui();
 	}
 	
+	@Override
+    public void updateUI() {
+		super.updateUI();
+		updateGui();
+	}
+	
 	public void updateGui() {
-		if (fritzBoxPanelIp.getFritzBox().getLoginMode() == LoginMode.PASSWORD) {
-			shouldUseUsername = false;
-			userLabel.setVisible(false);
-			user.setVisible(false);
-			passLabel.setVisible(true);
-			checkLoginButton.setVisible(true);
-			pass.setEnabled(true);
-		} else if (fritzBoxPanelIp.getFritzBox().getLoginMode() == LoginMode.USERNAME_PASSWORD) {
-			shouldUseUsername = true;
-			userLabel.setVisible(true);
-			user.setVisible(true);
-			passLabel.setVisible(true);
-			checkLoginButton.setVisible(true);
-			pass.setEnabled(true);
-		} else {
-			shouldUseUsername = false;
-			userLabel.setVisible(false);
-			user.setVisible(false);
-			passLabel.setVisible(false);
-			checkLoginButton.setVisible(false);
-			enableNextButtonInWizard();
-			pass.setEnabled(false);
+		if (fritzBoxPanelIp != null 
+				&& fritzBoxPanelIp.getFritzBox() != null)
+		{
+			if (fritzBoxPanelIp.getFritzBox().getLoginMode() == LoginMode.PASSWORD) {
+				shouldUseUsername = false;
+				userLabel.setVisible(false);
+				user.setVisible(false);
+				passLabel.setVisible(true);
+				checkLoginButton.setVisible(true);
+				pass.setEnabled(true);
+			} else if (fritzBoxPanelIp.getFritzBox().getLoginMode() == LoginMode.USERNAME_PASSWORD) {
+				shouldUseUsername = true;
+				userLabel.setVisible(true);
+				user.setVisible(true);
+				passLabel.setVisible(true);
+				checkLoginButton.setVisible(true);
+				pass.setEnabled(true);
+			} else {
+				shouldUseUsername = false;
+				userLabel.setVisible(false);
+				user.setVisible(false);
+				passLabel.setVisible(false);
+				checkLoginButton.setVisible(false);
+				enableNextButtonInWizard();
+				pass.setEnabled(false);
+			}
 		}
 	}
 	
@@ -249,6 +259,7 @@ public class ConfigPanelFritzBoxLogin extends JPanel implements ActionListener,
 		}
 
 		if (settingsChanged) {
+			properties.setProperty("box.loginUsingUsername", fritzBoxPanelIp.getFritzBox().getLoginMode() == LoginMode.USERNAME_PASSWORD);
 			properties.setProperty("box.username", user.getText()); //$NON-NLS-1$
 			properties.setProperty("box.password", Encryption.encrypt(new String(pass.getPassword()))); //$NON-NLS-1$
 			
@@ -258,7 +269,8 @@ public class ConfigPanelFritzBoxLogin extends JPanel implements ActionListener,
 	
 	private boolean somethingChanged() {
 		return (!properties.getProperty("box.username").equals(user.getText()))
-				|| (!properties.getProperty("box.password").equals(Encryption.encrypt(new String(pass.getPassword()))));
+				|| (!properties.getProperty("box.password").equals(Encryption.encrypt(new String(pass.getPassword()))))
+				|| (Boolean.parseBoolean(properties.getProperty("box.loginUsingUsername")) != (fritzBoxPanelIp.getFritzBox().getLoginMode() == LoginMode.USERNAME_PASSWORD));
 	}
 
 	public String getUsername() {
