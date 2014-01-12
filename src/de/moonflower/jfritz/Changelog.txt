@@ -25,6 +25,7 @@ JFritz 0.7.5_5:
 - Neu: Wizard hat nun auch zwei Schritte für die Einrichtung der FRITZ!Box
 - Neu: Fehlermedlungen bei falschem Benutzer/Passwort verbessert 
 - Bugfix: Anrufmonitor baut Verbindung nach Verbindungsabbruch schneller wieder auf
+- Bugfix: Erkennen einer abgelaufenen SessionID
 
 JFritz 0.7.5_4: 
 - New: Supporting international firmwares (ES, FR and IT)
