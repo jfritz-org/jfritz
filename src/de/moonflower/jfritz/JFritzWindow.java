@@ -1594,17 +1594,12 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		}
 	}
 
-	/**
-	 * Creates a backup to a user selected directory
-	 *
-	 * @author Bastian Schaefer
-	 */
 	public void backupToChoosenDirectory() {
-		try {
-			String directory = new DirectoryChooser().getDirectory(this).toString();
+		DirectoryChooser chooser = new DirectoryChooser();
+		File selectedDir = chooser.getDirectory(this);
+		if (selectedDir != null) {
+			String directory = selectedDir.toString();
 			JFritzBackup.getInstance().doBackup(JFritzDataDirectory.getInstance().getDataDirectory(), directory);
-		} catch (NullPointerException e) {
-			log.error("No directory choosen for backup!", e);
 		}
 	}
 
