@@ -268,6 +268,7 @@ public class Main  {
 
 		System.out.println(ProgramConstants.PROGRAM_NAME
 			+ " v" + ProgramConstants.PROGRAM_VERSION //$NON-NLS-1$
+			+ " Rev. " + ProgramConstants.REVISION //$NON-NLS-1$
 			+ " (c) 2005-" + cal.get(Calendar.YEAR) + " by " + JFRITZ_PROJECT); //$NON-NLS-1$
 		Thread.currentThread().setPriority(5);
 		Thread.currentThread().setName("main thread");
@@ -302,6 +303,7 @@ public class Main  {
 		Debug.on();
 		logAndStdOut(ProgramConstants.PROGRAM_NAME
 				+ " v" + ProgramConstants.PROGRAM_VERSION //$NON-NLS-1$
+				+ " Rev. " + ProgramConstants.REVISION //$NON-NLS-1$
 				+ " (c) 2005-" + cal.get(Calendar.YEAR) + " by " + JFRITZ_PROJECT); //$NON-NLS-1$
 		logAndStdOut("JFritz runs on " + OSDetector.getOSString());
 

@@ -215,6 +215,7 @@ public class FritzBox extends BoxClass {
 		long start = 0;
 		long end = 0;
 
+		end = JFritzUtils.getTimestamp();
 		start = end;
 		try {
 			detectFirmwareAndLogin();
