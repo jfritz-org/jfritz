@@ -8,6 +8,7 @@ JFritz 0.7.5_Testversion:
 - Neu: Fehlermedlungen bei falschem Benutzer/Passwort verbessert 
 - Bugfix: Anrufmonitor baut Verbindung nach Verbindungsabbruch schneller wieder auf
 - Bugfix: Erkennen einer abgelaufenen SessionID
+- Bugfix: False positives in reverse lookup for italian numbers
 
 JFritz 0.7.5:
 - Weihnachtsversion
