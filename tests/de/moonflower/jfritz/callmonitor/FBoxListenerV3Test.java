@@ -193,12 +193,12 @@ public class FBoxListenerV3Test extends TestCase {
         Assert.assertEquals(pendingSize, monitoredCalls.getPendingSize());
         Assert.assertEquals(establishedSize, monitoredCalls.getEstablishedSize());
         Call call = monitoredCalls.getCall(callId);
-        Assert.assertEquals(call.getCalldate(), getDate(dateStr));
-        Assert.assertEquals(call.getCalltype().toString(), callType.toString());
-        Assert.assertEquals(call.getPort(), port);
-        Assert.assertEquals(call.getPhoneNumber().getAreaNumber(), numberStr);
-        Assert.assertEquals(call.getRoute().split(" ")[0], routeStr);
-        Assert.assertEquals(call.getDuration(), duration);
+        Assert.assertEquals(getDate(dateStr), call.getCalldate());
+        Assert.assertEquals(callType.toString(), call.getCalltype().toString());
+        Assert.assertEquals(port, call.getPort());
+        Assert.assertEquals(numberStr, call.getPhoneNumber().getAreaNumber());
+        Assert.assertEquals(routeStr, call.getRoute().split(" ")[0]);
+        Assert.assertEquals(duration, call.getDuration());
 	}
 
 	private Date getDate(final String input) {
@@ -218,6 +218,7 @@ public class FBoxListenerV3Test extends TestCase {
     	doReturn("true").when(this.mockedProperties).getProperty("option.callmonitor.popupOutgoingCalls");
     	doReturn("false").when(this.mockedProperties).getProperty("option.activateDialPrefix");
     	doReturn("49").when(this.mockedProperties).getProperty("country.code");
+		doReturn("0").when(this.mockedProperties).getProperty("area.prefix");
     	doReturn("").when(this.mockedProperties).getProperty("option.callmonitor.ignoreMSN");
     	doReturn(mockedSipProvider).when(this.mockedFritzBox).getSipProvider(sipId);
     	doReturn("1234567@sipgate.de").when(this.mockedSipProvider).toString();
@@ -231,6 +232,7 @@ public class FBoxListenerV3Test extends TestCase {
     	doReturn("true").when(this.mockedProperties).getProperty("option.callmonitor.popupOutgoingCalls");
     	doReturn("false").when(this.mockedProperties).getProperty("option.activateDialPrefix");
     	doReturn("49").when(this.mockedProperties).getProperty("country.code");
+		doReturn("0").when(this.mockedProperties).getProperty("area.prefix");
     	doReturn("").when(this.mockedProperties).getProperty("option.callmonitor.ignoreMSN");
     	doReturn(mockedSipProvider).when(this.mockedFritzBox).getSipProvider(sipId);
     	doReturn("1234567@sipgate.de").when(this.mockedSipProvider).toString();

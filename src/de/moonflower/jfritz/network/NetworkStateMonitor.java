@@ -163,11 +163,11 @@ public class NetworkStateMonitor  {
 		if(properties.getProperty("option.clientCallList").equals("true")
 				&& isConnectedToServer())
 		{
-			serverConnection.requestDoCall(new PhoneNumberOld(number, false, false), port);
+			serverConnection.requestDoCall(new PhoneNumberOld(properties, number, false, false), port);
 		}
 		else
 		{
-			JFritz.getBoxCommunication().doCall(new PhoneNumberOld(number, false, false), port);
+			JFritz.getBoxCommunication().doCall(new PhoneNumberOld(properties, number, false, false), port);
 		}
 	}
 

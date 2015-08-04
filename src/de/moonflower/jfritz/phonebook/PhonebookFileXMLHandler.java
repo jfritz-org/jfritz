@@ -11,6 +11,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.utils.Debug;
@@ -38,6 +39,7 @@ public class PhonebookFileXMLHandler extends DefaultHandler {
 	boolean privateEntry;
 
 	Vector<Person> persons;
+	protected PropertyProvider properties = PropertyProvider.getInstance();
 
 	public PhonebookFileXMLHandler(PhoneBook phonebook) {
 		super();
@@ -115,7 +117,7 @@ public class PhonebookFileXMLHandler extends DefaultHandler {
 				float versionFloat = Float.parseFloat(version);
 				if (versionFloat == 1.0)
 				{
-					PhoneNumberOld pn = new PhoneNumberOld(chars, false);
+					PhoneNumberOld pn = new PhoneNumberOld(this.properties, chars, false);
 					pn.setType(type);
 					numbers.add(pn);
 				} else if (versionFloat >= 2.0) {
@@ -123,7 +125,7 @@ public class PhonebookFileXMLHandler extends DefaultHandler {
 				}
 			} catch (NumberFormatException nfe)
 			{
-				PhoneNumberOld pn = new PhoneNumberOld(chars, false);
+				PhoneNumberOld pn = new PhoneNumberOld(this.properties, chars, false);
 				pn.setType(type);
 				numbers.add(pn);
 			}

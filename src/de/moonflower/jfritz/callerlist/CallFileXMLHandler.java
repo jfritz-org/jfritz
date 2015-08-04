@@ -14,6 +14,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
@@ -39,6 +40,8 @@ public class CallFileXMLHandler extends DefaultHandler {
 	Date calldate;
 
 	int duration;
+	
+	private PropertyProvider properties = PropertyProvider.getInstance();
 
 	public CallFileXMLHandler(CallerList callerlist) {
 		super();
@@ -114,7 +117,7 @@ public class CallFileXMLHandler extends DefaultHandler {
 			if (callerlist != null) { // Add an entry to the callerlist
 				PhoneNumberOld number = null;
 				if (caller.length() > 0) {
-					number = new PhoneNumberOld(caller, false);
+					number = new PhoneNumberOld(this.properties, caller, false);
 					if (callbycall.length() > 0)
 						number.setCallByCall(callbycall);
 				}

@@ -134,7 +134,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 			Date date = parseDate(dateStr);
 			String provider = parseProvider(line, msn);
 			int callId = Integer.parseInt(callIdStr);
-			PhoneNumberOld phoneNumber = new PhoneNumberOld(numberStr, parseDialOut);
+			PhoneNumberOld phoneNumber = new PhoneNumberOld(this.properties, numberStr, parseDialOut);
 			Port port = parsePort(portStr);
 
 			Call currentCall = new Call(callType, date, phoneNumber, port, provider, 0);
@@ -180,7 +180,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 		Port port = parsePort(portStr);
 
 		Call call = monitoredCalls.getCall(callId);
-		PhoneNumberOld number = new PhoneNumberOld(numberStr, false);
+		PhoneNumberOld number = new PhoneNumberOld(this.properties, numberStr, false);
 		if ( call != null ) {
 			if (number.getIntNumber().equals(call.getPhoneNumber().getIntNumber())
 				|| number.getIntNumber().equals(properties.getProperty("dial.prefix")+call.getPhoneNumber().getIntNumber())) {

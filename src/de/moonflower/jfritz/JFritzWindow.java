@@ -1164,7 +1164,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					number = call.getPhoneNumber();
 				}
 				else {
-					number = new PhoneNumberOld("", false, false);
+					number = new PhoneNumberOld(this.properties, "", false, false);
 				}
 				CallDialog p = new CallDialog(number);
 				p.setVisible(true);
@@ -1177,13 +1177,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					Person person = JFritz.getPhonebook().getFilteredPersons().get(index);
 					dialog = new CallDialog(person.getNumbers(), person.getStandardTelephoneNumber());
 				} else {
-					dialog = new CallDialog(new PhoneNumberOld("", false, false));
+					dialog = new CallDialog(new PhoneNumberOld(this.properties, "", false, false));
 				}
 				dialog.setVisible(true);
 				dialog.dispose();
 			} else {
 				CallDialog dialog = null;
-				dialog = new CallDialog(new PhoneNumberOld("", false, false));
+				dialog = new CallDialog(new PhoneNumberOld(this.properties, "", false, false));
 				dialog.setVisible(true);
 				dialog.dispose();
 			}
@@ -1193,15 +1193,15 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			for (String content:clipBoardContents) {
 				if (content.length() < 30)
 				{
-					PhoneNumberOld number = new PhoneNumberOld(content, false, false);
+					PhoneNumberOld number = new PhoneNumberOld(this.properties, content, false, false);
 					if (!numbers.contains(number))
 					{
-						numbers.add(new PhoneNumberOld(content, false, false));
+						numbers.add(new PhoneNumberOld(this.properties, content, false, false));
 					}
 				}
 			}
 			if (numbers.size() == 0) {
-				numbers.add(new PhoneNumberOld("", false, false));
+				numbers.add(new PhoneNumberOld(this.properties, "", false, false));
 			}
 			CallDialog p = new CallDialog(numbers, numbers.get(0));
 			p.setVisible(true);

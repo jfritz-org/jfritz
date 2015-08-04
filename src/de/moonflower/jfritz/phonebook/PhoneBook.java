@@ -117,7 +117,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 
 	private NumberPersonMultiHashMap numberHashMap;
 
-	protected PropertyProvider properties = PropertyProvider.getInstance();
+	protected static PropertyProvider properties = PropertyProvider.getInstance();
 
 	public PhoneBook(String fileLocation) {
 		this.fileLocation = fileLocation;
@@ -1447,7 +1447,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 
     public static Person searchFirstAndLastNameToPhoneNumber(String caller) {
     	Vector<Person> persons = new Vector<Person>();
-        final PhoneNumberOld callerPhoneNumber = new PhoneNumberOld(caller, false);
+        final PhoneNumberOld callerPhoneNumber = new PhoneNumberOld(properties, caller, false);
         Debug.info("Searching in local database for number "+caller+" ..."); //$NON-NLS-1$
         Person person = JFritz.getPhonebook().findPerson(callerPhoneNumber);
         if (person != null) {

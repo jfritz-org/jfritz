@@ -156,7 +156,7 @@ public class CallListCsvLineParser {
 			final String phoneNumberStr) {
 		PhoneNumberOld number;
 		if (!"".equals(phoneNumberStr)) {
-			number = new PhoneNumberOld(phoneNumberStr,
+			number = new PhoneNumberOld(this.properties, phoneNumberStr,
 					JFritzUtils.parseBoolean(properties.getProperty("option.activateDialPrefix"))
 					&& (calltype == CallType.CALLOUT));
 		} else {

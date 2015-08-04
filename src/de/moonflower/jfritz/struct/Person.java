@@ -168,7 +168,7 @@ public class Person implements Cloneable, Serializable{
 	}
 
 	public void addNumber(final String number, final String type) {
-		final PhoneNumberOld pNumber = new PhoneNumberOld(number, false); // NOPMD
+		final PhoneNumberOld pNumber = new PhoneNumberOld(this.properties, number, false); // NOPMD
 		pNumber.setType(type);
 		addNumber(pNumber);
 	}

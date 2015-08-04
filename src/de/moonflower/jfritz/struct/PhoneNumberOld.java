@@ -69,8 +69,8 @@ public class PhoneNumberOld implements Serializable {
 
 	private String countryCode = "";
 
-	protected PropertyProvider properties = PropertyProvider.getInstance();
-	protected MessageProvider messages = MessageProvider.getInstance();
+	private PropertyProvider properties = null;
+	private MessageProvider messages = MessageProvider.getInstance();
 
 	/**
 	 * This constructor should be used if the number may be a quickdial and
@@ -86,7 +86,8 @@ public class PhoneNumberOld implements Serializable {
 	 * @param convertInt
 	 * 			  should the number be refactored (add country and area code)
 	 */
-	public PhoneNumberOld(String fullNumber, boolean parseDialOut, boolean convertInt) {
+	public PhoneNumberOld(PropertyProvider propertyProvider, String fullNumber, boolean parseDialOut, boolean convertInt) {
+		this.properties = propertyProvider;
 		this.type = "";
 
 		if (fullNumber != null) {
@@ -103,8 +104,8 @@ public class PhoneNumberOld implements Serializable {
 		refactorNumber(convertInt);
 	}
 
-	public PhoneNumberOld(String fullNumber, boolean parseDialOut) {
-		this(fullNumber, parseDialOut, true);
+	public PhoneNumberOld(PropertyProvider properties, String fullNumber, boolean parseDialOut) {
+		this(properties, fullNumber, parseDialOut, true);
 	}
 
 	/**
@@ -802,7 +803,7 @@ public class PhoneNumberOld implements Serializable {
 
 	public PhoneNumberOld clone()
 	{
-		PhoneNumberOld p = new PhoneNumberOld("", false, false);
+		PhoneNumberOld p = new PhoneNumberOld(properties, "", false, false);
 		p.copyFrom(this);
 		return p;
 	}

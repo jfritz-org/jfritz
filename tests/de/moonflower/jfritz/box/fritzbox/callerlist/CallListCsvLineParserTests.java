@@ -2,6 +2,7 @@ package de.moonflower.jfritz.box.fritzbox.callerlist;
 
 import static org.mockito.Mockito.when;
 
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -17,14 +18,17 @@ import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.exceptions.FeatureNotSupportedByFirmware;
 import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.Port;
+import de.robotniko.fboxlib.fritzbox.FirmwareVersion;
 
 public class CallListCsvLineParserTests {
 
 	@Mock private FritzBox mockedFritzBox;
 	@Mock private MessageProvider mockedMessages;
+    @Mock private PropertyProvider mockedProperties;
 
 	private CallListCsvLineParser parser;
 
@@ -33,6 +37,7 @@ public class CallListCsvLineParserTests {
 		MockitoAnnotations.initMocks(this);
 
 		parser = new CallListCsvLineParser(";");
+		parser.properties = mockedProperties;
 	}
 
 	@Test(expected=FeatureNotSupportedByFirmware.class)
@@ -150,7 +155,8 @@ public class CallListCsvLineParserTests {
 		SipProvider mockedSipProvider = new SipProvider(0, "12345678", "mockedProvider");
 
 		when(mockedFritzBox.getSipProviderByRoute("12345678")).thenReturn(mockedSipProvider);
-
+		when(mockedFritzBox.getFirmware()).thenReturn(new FirmwareVersion(01,(byte)05,(byte)50));
+		
 		// test
 		Call call = parser.parseLine(mockedFritzBox, "3;25.12.12 17:45;;0123456789;;Internet: 12345678;0:00");
 

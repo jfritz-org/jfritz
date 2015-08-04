@@ -208,7 +208,7 @@ public class CSVCallerListImport extends CSVImport implements ICSVImport {
 			if (entry.getPhoneNumber() != null) {
 				entry.getPhoneNumber().setCallByCall(value);
 			} else {
-				PhoneNumberOld number = new PhoneNumberOld("", false);
+				PhoneNumberOld number = new PhoneNumberOld(this.properties, "", false);
 				number.setCallByCall(value);
 				entry.setPhoneNumber(number);
 			}
@@ -220,16 +220,16 @@ public class CSVCallerListImport extends CSVImport implements ICSVImport {
 			if (entry.getPhoneNumber() != null) {
 				callByCall = entry.getPhoneNumber().getCallByCall();
 				if (value.equals("unbekannt")) {
-					entry.setPhoneNumber(new PhoneNumberOld("", false));
+					entry.setPhoneNumber(new PhoneNumberOld(this.properties, "", false));
 				} else {
-					entry.setPhoneNumber(new PhoneNumberOld(value, useDialPrefix));
+					entry.setPhoneNumber(new PhoneNumberOld(this.properties, value, useDialPrefix));
 				}
 				entry.getPhoneNumber().setCallByCall(callByCall);
 			} else {
 				if (value.equals("unbekannt")) {
-					entry.setPhoneNumber(new PhoneNumberOld("", false));
+					entry.setPhoneNumber(new PhoneNumberOld(this.properties, "", false));
 				} else {
-					entry.setPhoneNumber(new PhoneNumberOld(value, useDialPrefix));
+					entry.setPhoneNumber(new PhoneNumberOld(this.properties, value, useDialPrefix));
 				}
 			}
 		} else if (columnName.equals(CallerTable.COLUMN_PORT)) {

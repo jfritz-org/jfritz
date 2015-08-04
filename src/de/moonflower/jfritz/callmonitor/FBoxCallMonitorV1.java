@@ -99,7 +99,7 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
             try {
                 Call currentCall = new Call(CallType.CALLIN,
                         new SimpleDateFormat("dd.MM.yy HH:mm:ss")
-                                .parse(split[0]), new PhoneNumberOld(number, false),
+                                .parse(split[0]), new PhoneNumberOld(this.properties, number, false),
                                 new Port(0, "", "-1", "-1"), provider, 0);
                 JFritz.getCallMonitorList().addNewCall(
                         Integer.parseInt(split[2]), currentCall);
@@ -148,7 +148,7 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
                 Call currentCall = new Call(CallType.CALLOUT,
                         new SimpleDateFormat("dd.MM.yy HH:mm:ss")
                                 .parse(split[0]),
-                                new PhoneNumberOld(number, JFritzUtils.parseBoolean(properties.getProperty("option.activateDialPrefix"))),
+                                new PhoneNumberOld(this.properties, number, JFritzUtils.parseBoolean(properties.getProperty("option.activateDialPrefix"))),
                                 port, provider, 0);
                 JFritz.getCallMonitorList().addNewCall(
                         Integer.parseInt(split[2]), currentCall);
@@ -185,7 +185,7 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
                 number = number.substring(0, number.length() - 1);
 
             Call call = JFritz.getCallMonitorList().getCall(callId);
-            PhoneNumberOld pn = new PhoneNumberOld(number, false);
+            PhoneNumberOld pn = new PhoneNumberOld(this.properties, number, false);
             if (pn.getIntNumber().equals(call.getPhoneNumber().getIntNumber())
         		|| pn.getIntNumber().equals(properties.getProperty("dial.prefix")+call.getPhoneNumber().getIntNumber())) {
                 try {

@@ -3,12 +3,15 @@ package de.moonflower.jfritz.importexport;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.utils.Debug;
 
 public class VCardParserTel {
 
+	protected static PropertyProvider properties = PropertyProvider.getInstance();
+	
 	public static boolean parse(VCardParser parser, Person person) {
 		Enumeration<String> en = parser.getPropertyType().keys();
 		Vector<PhoneNumberOld> numbers = null;
@@ -28,7 +31,7 @@ public class VCardParserTel {
 
 
 				if (!containsNumber(numbers, parser.getValues().get(0))) {
-					PhoneNumberOld num = new PhoneNumberOld(parser.getValues().get(0), false);
+					PhoneNumberOld num = new PhoneNumberOld(properties, parser.getValues().get(0), false);
 					if (propertyTypes.contains("home")) {
 						num.setType("home");
 					} else if (propertyTypes.contains("cell")) {

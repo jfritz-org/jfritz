@@ -417,7 +417,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 			firePropertyChange();
 			updateGUI();
 		} else if (e.getActionCommand().equals("add")) { //$NON-NLS-1$
-			clonedPerson.getNumbers().add(new PhoneNumberOld("", false)); //$NON-NLS-1$
+			clonedPerson.getNumbers().add(new PhoneNumberOld(this.properties, "", false)); //$NON-NLS-1$
 			typeModel.setTypes();
 			numberHasChanged = true;
 			firePropertyChange();

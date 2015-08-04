@@ -902,7 +902,7 @@ public class CallerList extends AbstractTableModel
 		Vector<PhoneNumberOld> numbers = person.getNumbers();
 		if (numbers.size() > 0) {
 			Call result = new Call(CallType.CALLIN,
-					new Date(0), new PhoneNumberOld("", false),
+					new Date(0), new PhoneNumberOld(this.properties, "", false),
 					new Port(0, "", "-1", "-1"), "route", 0);
 			for (PhoneNumberOld num:numbers)
 			{
@@ -1166,7 +1166,7 @@ public class CallerList extends AbstractTableModel
 
 		// Phone number
 		if (!field[3].equals("")) {
-			number = new PhoneNumberOld(field[3], false);
+			number = new PhoneNumberOld(this.properties, field[3], false);
 			number.setCallByCall(field[10]);
 		} else {
 			number = null;
@@ -1261,7 +1261,7 @@ public class CallerList extends AbstractTableModel
 
 		// Phone number
 		if (!field[2].equals("")) {
-			number = new PhoneNumberOld(field[2], properties.getProperty(
+			number = new PhoneNumberOld(this.properties, field[2], properties.getProperty(
 					"option.activateDialPrefix").toLowerCase().equals("true")
 					&& (calltype == CallType.CALLOUT)
 					&& !field[4].startsWith("Internet"));
@@ -1334,7 +1334,7 @@ public class CallerList extends AbstractTableModel
 
 		// Phone number
 		if (!field[3].equals("")) {
-			number = new PhoneNumberOld(field[3], properties.getProperty(
+			number = new PhoneNumberOld(this.properties, field[3], properties.getProperty(
 					"option.activateDialPrefix").toLowerCase().equals("true")
 					&& (calltype == CallType.CALLOUT)
 					&& !field[5].startsWith("Internet"));
@@ -1420,7 +1420,7 @@ public class CallerList extends AbstractTableModel
 
 		// Phone number
 		if (!field[2].equals("")) {
-			number = new PhoneNumberOld(field[2], properties.getProperty(
+			number = new PhoneNumberOld(this.properties, field[2], properties.getProperty(
 					"option.activateDialPrefix").toLowerCase().equals("true")
 					&& (calltype == CallType.CALLOUT)
 					&& !field[4].startsWith("Internet"));
@@ -1511,7 +1511,7 @@ public class CallerList extends AbstractTableModel
 
 		// Phone number
 		if (!field[3].equals("")) {
-			number = new PhoneNumberOld(field[3], properties.getProperty(
+			number = new PhoneNumberOld(this.properties, field[3], properties.getProperty(
 					"option.activateDialPrefix").toLowerCase().equals("true")
 					&& (calltype == CallType.CALLOUT)
 					&& !field[5].startsWith("Internet"));

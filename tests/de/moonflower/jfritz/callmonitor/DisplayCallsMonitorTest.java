@@ -72,7 +72,7 @@ public class DisplayCallsMonitorTest extends TestCase {
 
 		CallType callType = CallType.CALLIN;
 		Date now = Calendar.getInstance().getTime();
-		PhoneNumberOld phoneNumber = new PhoneNumberOld("07212542015", false);
+		PhoneNumberOld phoneNumber = new PhoneNumberOld(PropertyProvider.getInstance(), "07212542015", false);
 		Port dialPort = new Port(0, "PortName", "21", "621");
 		String route = "865072";
 		int duration = 0;

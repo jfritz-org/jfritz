@@ -5,6 +5,7 @@ import java.util.Vector;
 
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.phonebook.NumberPersonMultiHashMap;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import junit.framework.TestCase;
@@ -18,9 +19,9 @@ public class NumberMultiHashMapTest extends TestCase {
 		NumberPersonMultiHashMap map = new NumberPersonMultiHashMap();
 
 		// Test insert one object
-		PhoneNumberOld num1_1 = new PhoneNumberOld("1234", false);
-		PhoneNumberOld num1_2 = new PhoneNumberOld("5678", false);
-		PhoneNumberOld num1_3 = new PhoneNumberOld("9101", false);
+		PhoneNumberOld num1_1 = new PhoneNumberOld(PropertyProvider.getInstance(), "1234", false);
+		PhoneNumberOld num1_2 = new PhoneNumberOld(PropertyProvider.getInstance(), "5678", false);
+		PhoneNumberOld num1_3 = new PhoneNumberOld(PropertyProvider.getInstance(), "9101", false);
 
 		Person person = new Person();
 		person.addNumber(num1_1);
@@ -63,7 +64,7 @@ public class NumberMultiHashMapTest extends TestCase {
 
 		// test insert multiple objects
 		Person person2 = new Person();
-		PhoneNumberOld num2 = new PhoneNumberOld("9876", false);
+		PhoneNumberOld num2 = new PhoneNumberOld(PropertyProvider.getInstance(), "9876", false);
 		person2.addNumber(num2);
 		person2.setCity("city2");
 		person2.setCompany("company2");
@@ -80,7 +81,7 @@ public class NumberMultiHashMapTest extends TestCase {
 		vector.add(person2);
 
 		Person person3 = new Person();
-		PhoneNumberOld num3 = new PhoneNumberOld("3772", false);
+		PhoneNumberOld num3 = new PhoneNumberOld(PropertyProvider.getInstance(), "3772", false);
 		person3.addNumber(num3);
 		person3.setCity("city3");
 		person3.setCompany("company3");
@@ -97,7 +98,7 @@ public class NumberMultiHashMapTest extends TestCase {
 		vector.add(person3);
 
 		Person person4 = new Person();
-		PhoneNumberOld num4 = new PhoneNumberOld("3772", false);
+		PhoneNumberOld num4 = new PhoneNumberOld(PropertyProvider.getInstance(), "3772", false);
 		person4.addNumber(num4);
 		person4.setCity("city4");
 		person4.setCompany("company4");

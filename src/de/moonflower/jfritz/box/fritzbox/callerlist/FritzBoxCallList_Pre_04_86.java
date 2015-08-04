@@ -173,7 +173,7 @@ public class FritzBoxCallList_Pre_04_86 implements BoxCallListInterface {
 				// Phone number
 				PhoneNumberOld number;
 				if (!response.get(newOffset+2).equals("")) {
-					number = new PhoneNumberOld(response.get(newOffset+2), properties.getProperty(
+					number = new PhoneNumberOld(this.properties, response.get(newOffset+2), properties.getProperty(
 							"option.activateDialPrefix").toLowerCase().equals("true")
 							&& (calltype == CallType.CALLOUT)
 							&& !response.get(newOffset+6).startsWith("Internet"));
