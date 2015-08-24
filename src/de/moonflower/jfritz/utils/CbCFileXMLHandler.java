@@ -4,9 +4,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.CallByCall;
-import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.struct.PhoneNumberOld;
 
 /**
  * XML Handler for reading the call by call xml file

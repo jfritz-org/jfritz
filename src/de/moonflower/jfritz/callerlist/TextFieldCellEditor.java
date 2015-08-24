@@ -7,6 +7,7 @@ package de.moonflower.jfritz.callerlist;
 
 import java.awt.Color;
 import java.awt.Component;
+
 import javax.swing.AbstractCellEditor;
 import javax.swing.JComponent;
 import javax.swing.JTable;

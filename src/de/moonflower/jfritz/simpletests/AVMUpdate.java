@@ -1,11 +1,5 @@
 package de.moonflower.jfritz.simpletests;
 
-import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.util.Vector;
-
-import de.moonflower.jfritz.exceptions.WrongPasswordException;
-import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class AVMUpdate {
 

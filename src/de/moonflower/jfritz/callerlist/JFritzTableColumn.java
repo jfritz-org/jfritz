@@ -2,11 +2,11 @@ package de.moonflower.jfritz.callerlist;
 
 import javax.swing.table.TableColumn;
 
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.messages.MessageProvider;
 
 public class JFritzTableColumn {
 
+	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1502212011284425475L;
 
 	private boolean visible;

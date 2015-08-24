@@ -2,18 +2,15 @@ package de.moonflower.jfritz.network;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-
 import java.net.InetAddress;
-
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SealedObject;
 
-import de.moonflower.jfritz.callerlist.filter.*;
-import de.moonflower.jfritz.network.Login;
+import de.moonflower.jfritz.callerlist.filter.CallFilter;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.utils.Debug;
@@ -38,6 +35,7 @@ public class ServerSenderThread extends Thread {
 
 	private DataChange<Call> callChange;
 
+	@SuppressWarnings("unused")
 	private DataChange<Person> contactChange;
 
 	private InetAddress remoteAddress;
@@ -46,16 +44,20 @@ public class ServerSenderThread extends Thread {
 
 	private Cipher outCipher;
 
+	@SuppressWarnings("rawtypes")
 	private ConcurrentLinkedQueue<DataChange> changedObjects;
 
 	private Login login;
 
 	private Vector<Call> filteredCalls;
 
+	@SuppressWarnings("unused")
 	private String contactFilter;
 
+	@SuppressWarnings("unused")
 	private Vector<Person> filteredContacts;
 
+	@SuppressWarnings("rawtypes")
 	public ServerSenderThread(ObjectOutputStream oos, InetAddress rAddress, Login login, Cipher cipher){
 
 		objectOut = oos;
@@ -66,6 +68,7 @@ public class ServerSenderThread extends Thread {
 		contactFilter = login.contactFilter;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void run(){
 
 		Debug.netMsg("Sender thread for "+remoteAddress+" started up");

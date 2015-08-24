@@ -66,7 +66,6 @@ import de.moonflower.jfritz.utils.reverselookup.ReverseLookupAustria;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupGermany;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupTurkey;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupUnitedStates;
-import de.robotniko.reverseLookup.api.ReverseLookupResponse;
 
 public class PhoneBook extends AbstractTableModel implements CallerListListener {
 	private static final long serialVersionUID = 1;
@@ -210,6 +209,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 			this.ascending = ascending;
 		}
 
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		public int compare(Person p1, Person p2) {
 			Object o1, o2;
 			switch (colIndex) {
@@ -341,6 +341,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 	 *
 	 * @param persons to be added to the phonebook
 	 */
+	@SuppressWarnings("unchecked")
 	public synchronized void addEntries(Vector<Person> persons) {
 
 		for(Person person: persons)
@@ -368,6 +369,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 	 *
 	 * @param persons
 	 */
+	@SuppressWarnings("unchecked")
 	public synchronized void removeEntries(Vector<Person> persons){
 
 		for(Person person: persons)
@@ -1501,7 +1503,8 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
      *
      * @param rows
      */
-    public synchronized void removePersons(int[] rows){
+    @SuppressWarnings("unchecked")
+	public synchronized void removePersons(int[] rows){
     	if (rows.length > 0) {
 			// Markierte Einträge löschen
 			Vector<Person> personsToDelete = new Vector<Person>();

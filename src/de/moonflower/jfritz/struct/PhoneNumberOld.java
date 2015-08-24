@@ -9,7 +9,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.util.Enumeration;
 import java.util.HashMap;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -22,9 +21,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
-import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
-import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.CbCFileXMLHandler;
@@ -59,6 +55,7 @@ public class PhoneNumberOld implements Serializable {
 
 	static String FLAG_FILE_HEADER = "Country Code;Flag file; Full Text";
 
+	@SuppressWarnings("unused")
 	private final static String CBC_FILE_HEADER  = "Country Code;CallbyCall Prefix:length";
 
 	private String flagFileName = "";
@@ -78,6 +75,8 @@ public class PhoneNumberOld implements Serializable {
 	 *
 	 * @author Brian Jensen
 	 *
+	 * @param propertyProvider
+	 * 			  a property provider instance
 	 * @param fullNumber
 	 *            the telephone number in raw format
 	 * @param parseDialOut,

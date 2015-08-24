@@ -1,6 +1,6 @@
 package de.moonflower.jfritz.dialogs.configwizard;
 
-import com.nexes.wizard.*;
+import com.nexes.wizard.WizardPanelDescriptor;
 /**
  *  @author Brian Jensen
  *

@@ -52,6 +52,7 @@ public class ColumnTableModel extends AbstractTableModel {
 		}
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Class getColumnClass(int columnIndex) {
 		Object o = getValueAt(0, columnIndex);
 		if (o == null) {

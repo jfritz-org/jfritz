@@ -7,6 +7,7 @@ import de.moonflower.jfritz.struct.PhoneNumberOld;
 
 public class XMLPhoneBook extends PhoneBookBase {
 
+	@SuppressWarnings("unused")
 	private Vector<Person> persons;
 
 	public XMLPhoneBook(final String name, final String description) {

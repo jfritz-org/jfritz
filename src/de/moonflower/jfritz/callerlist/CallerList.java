@@ -197,9 +197,8 @@ public class CallerList extends AbstractTableModel
 	 * @param columnIndex
 	 * @return class of column
 	 */
-	@SuppressWarnings("unchecked")
-	public Class getColumnClass(final int columnIndex) {
-		Class result;
+	public Class<?> getColumnClass(final int columnIndex) {
+		Class<?> result;
 		final Object o = getValueAt(0, columnIndex); // NOPMD
 		if (o == null) {
 			result = Object.class;
@@ -467,6 +466,7 @@ public class CallerList extends AbstractTableModel
 	 */
 	private void filterNewCalls(Vector<Call> newCalls)
 	{
+		@SuppressWarnings("unchecked")
 		Vector<Call> copyCalls = (Vector<Call>) unfilteredCallerData.clone();
 		for (int i=0; i<newCalls.size(); i++)
 		{
@@ -545,6 +545,7 @@ public class CallerList extends AbstractTableModel
 	 * @author Brian Jensen
 	 *
 	 */
+	@SuppressWarnings("unchecked")
 	private synchronized void fireUpdateCallVector() {
 		// update the call list and then sort it
 		unfilteredCallerData.addAll(newCalls);
@@ -732,6 +733,7 @@ public class CallerList extends AbstractTableModel
 			return compare(call1, call2);
 		}
 
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		public int compare(Call call1, Call call2) {
 			Object o1 = null, o2 = null;
 			String columnName = getRealColumnName(columnIndex);
@@ -978,11 +980,13 @@ public class CallerList extends AbstractTableModel
 	 * @param rows
 	 *            of the filteredCallerData to be removed
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public synchronized void removeEntries(int[] rows) {
 
 		Vector<Call> removedCalls = new Vector<Call>(rows.length);
 		if (rows.length > 0) {
 			Call call;
+			@SuppressWarnings("unused")
 			Person p;
 			for (int i = 0; i < rows.length; i++) {
 				call = filteredCallerData.get(rows[i]);
@@ -1935,6 +1939,7 @@ public class CallerList extends AbstractTableModel
 	}
 
 	public boolean finishGetCallerList(Vector<Call> calls) {
+		@SuppressWarnings("unchecked")
 		Vector<Call> clone = (Vector<Call>)calls.clone();
 		filterNewCalls(clone);
 		if (clone.size() == 0)

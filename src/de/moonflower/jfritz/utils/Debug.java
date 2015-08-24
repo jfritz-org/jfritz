@@ -52,6 +52,7 @@ public class Debug {
 	public static final LogSeverity LS_INFO = new LogSeverity(4, "LS_INFO", ": INFO");
 	public static final LogSeverity LS_DEBUG = new LogSeverity(5, "LS_DEBUG", ": DEBUG");
 
+	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 9211082107025215527L;
 
 	private static LogSeverity debugLevel;
@@ -81,6 +82,7 @@ public class Debug {
 	private static FileOutputStream tmpOutputStream;
 	private static PrintStream outputFileRedirector;
 	private static ConsoleAndFilePrintStream errorFileRedirector;
+	private static BufferedReader in;
 
 	/**
 	 * Turns debug-mode on
@@ -342,7 +344,7 @@ public class Debug {
 			int selectedLogSeverityIndex = log_severity_box.getSelectedIndex();
 			LogSeverity selectedLogSeverity = (LogSeverity) log_severity_box.getItemAt(selectedLogSeverityIndex);
 			log_area.setText("");
-			BufferedReader in = new BufferedReader(new FileReader(debugLogFile));
+			in = new BufferedReader(new FileReader(debugLogFile));
 			String zeile = null;
 			while ((zeile = in.readLine()) != null) {
 				if (selectedLogSeverity.getId() >= returnLineSeverity(zeile).getId())

@@ -1,10 +1,7 @@
 package de.moonflower.jfritz.dialogs.configwizard;
 
-import com.nexes.wizard.*;
+import com.nexes.wizard.WizardPanelDescriptor;
 
-import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.box.fritzbox.FritzBox;
-import de.moonflower.jfritz.dialogs.config.ConfigPanelFritzBoxIP;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelFritzBoxLogin;
 
 /**

@@ -41,7 +41,9 @@ public class CheckForUpdate {
 	
 	private boolean available = false;
 	private String url;
+	@SuppressWarnings("unused")
 	private String version;
+	@SuppressWarnings("unused")
 	private String changelog;
 	
 	private MessageProvider messages = MessageProvider.getInstance();

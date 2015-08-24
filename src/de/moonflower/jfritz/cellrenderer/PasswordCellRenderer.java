@@ -2,12 +2,12 @@ package de.moonflower.jfritz.cellrenderer;
 
 import java.awt.Component;
 
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import javax.swing.JPasswordField;
 import javax.swing.JTable;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.TableCellRenderer;
 
 public class PasswordCellRenderer extends JPasswordField implements
 		TableCellRenderer {

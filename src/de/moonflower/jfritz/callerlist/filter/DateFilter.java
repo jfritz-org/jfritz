@@ -5,7 +5,9 @@
 package de.moonflower.jfritz.callerlist.filter;
 
 import java.util.Date;
+
 import com.toedter.calendar.JDateChooser;
+
 import de.moonflower.jfritz.struct.Call;
 
 /**

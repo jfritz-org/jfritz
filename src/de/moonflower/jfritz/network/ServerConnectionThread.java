@@ -436,10 +436,11 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 	 * close request from the server
 	 *
 	 */
+	@SuppressWarnings("unchecked")
 	private void listenToServer(){
 		Vector<Call> vCalls;
 		Vector<Person> vPersons;
-		DataChange change;
+		DataChange<?> change;
 		Object o;
 		String message;
 
@@ -450,7 +451,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 				o = sealed_object.getObject(inCipher);
 				if(o instanceof DataChange){
 
-					change = (DataChange) o;
+					change = (DataChange<?>) o;
 						if(change.destination == DataChange.Destination.CALLLIST){
 							if(change.operation == DataChange.Operation.ADD){
 

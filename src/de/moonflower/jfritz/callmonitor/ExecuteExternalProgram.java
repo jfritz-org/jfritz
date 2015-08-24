@@ -16,6 +16,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class ExecuteExternalProgram extends CallMonitorAdaptor {
 
+	@SuppressWarnings("unused")
 	private String replaceParameter(String parameter, String callerNumber, String calledNumber, Person person) {
 		parameter = JFritzUtils.deconvertSpecialChars(parameter);
         parameter = parameter.replaceAll("%Number", callerNumber); //$NON-NLS-1$

@@ -36,7 +36,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.constants.ProgramConstants;
 
 /**

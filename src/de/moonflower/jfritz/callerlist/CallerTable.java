@@ -7,7 +7,6 @@ package de.moonflower.jfritz.callerlist;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -458,7 +457,8 @@ public class CallerTable extends JTable {
         super.removeColumn(column);
     }
 
-    public void reorderColumns()
+    @SuppressWarnings("unused")
+	public void reorderColumns()
     {
     	// remove all columns
     	while (getColumnCount() != 0)

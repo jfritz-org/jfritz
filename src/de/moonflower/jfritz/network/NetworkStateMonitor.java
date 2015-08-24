@@ -5,7 +5,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
@@ -159,7 +158,7 @@ public class NetworkStateMonitor  {
 	 * @throws UnsupportedEncodingException
 	 *
 	 */
-	public static void doCall(String number, Port port) throws UnsupportedEncodingException, WrongPasswordException, IOException{
+	public static void doCall(String number, Port port) throws UnsupportedEncodingException, WrongPasswordException, IOException {
 		if(properties.getProperty("option.clientCallList").equals("true")
 				&& isConnectedToServer())
 		{

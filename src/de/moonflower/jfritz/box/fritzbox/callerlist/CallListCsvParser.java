@@ -93,6 +93,7 @@ public class CallListCsvParser {
 	}
 
 	private void parseSecondLine() {
+		@SuppressWarnings("unused")
 		String headerLine = lines[1];
 		if (progressListener != null) {
 			for (IProgressListener listener: progressListener) {

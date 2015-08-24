@@ -553,6 +553,7 @@ public class CallMessageDlg extends JFrame implements ActionListener {
 		String template = "";
 		try {
 			String line = "";
+			@SuppressWarnings("resource")
 			BufferedReader test =
 				 new BufferedReader(new FileReader(filename));
 			while ( null != (line = test.readLine()))
