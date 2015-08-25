@@ -53,6 +53,7 @@ import de.moonflower.jfritz.utils.network.UPNPUtils;
 import de.robotniko.fboxlib.enums.LoginMode;
 import de.robotniko.fboxlib.exceptions.FirmwareNotDetectedException;
 import de.robotniko.fboxlib.exceptions.InvalidCredentialsException;
+import de.robotniko.fboxlib.exceptions.InvalidSessionIdException;
 import de.robotniko.fboxlib.exceptions.LoginBlockedException;
 import de.robotniko.fboxlib.exceptions.PageNotFoundException;
 import de.robotniko.fboxlib.fritzbox.FirmwareVersion;
@@ -252,12 +253,16 @@ public class FritzBox extends BoxClass {
 		}
 		
 		// 01.08.2015
+		String rep = "";
 		try {
-			String rep = fbc.getNetworkMethods().getUPNPFromIgddesc(); //getUPNPFromIgddesc();
+			rep = fbc.getNetworkMethods().getUPNPFromIgddesc(); //getUPNPFromIgddesc();
 			setIgdupnp(rep);
-		} catch (ClientProtocolException e) {
-			Debug.error(e.getMessage());
+		} catch (InvalidSessionIdException e) {
 			setBoxDisconnected();
+			handleInvalidSessionIdException(e);
+		} catch (ClientProtocolException e) {
+			setBoxDisconnected();
+			Debug.error(e.getMessage());
 		} catch (InvalidCredentialsException e) {
 			setBoxDisconnected();
 			handleInvalidCredentialsException(e);
@@ -306,7 +311,13 @@ public class FritzBox extends BoxClass {
 
 	public String getPageAsString(final String url) throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException {
 		if (fbc.isLoggedIn()) {
-			return fbc.getPageAsString(url);
+			try {
+				return fbc.getPageAsString(url);
+			} catch (InvalidSessionIdException e) {
+				setBoxDisconnected();
+				handleInvalidSessionIdException(e);
+				return "";
+			}
 		} else {
 			return "";
 		}
@@ -314,7 +325,13 @@ public class FritzBox extends BoxClass {
 
 	public String postToPageAndGetAsString(final String url, List<NameValuePair> params) throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException {
 		if (fbc.isLoggedIn()) {
-			return fbc.postToPageAndGetAsString(url, params);
+			try {
+				return fbc.postToPageAndGetAsString(url, params);
+			} catch (InvalidSessionIdException e) {
+				setBoxDisconnected();
+				handleInvalidSessionIdException(e);
+				return "";
+			}
 		} else {
 			return "";
 		}
@@ -322,7 +339,13 @@ public class FritzBox extends BoxClass {
 
 	public Vector<String> postToPageAndGetAsVector(final String url, List<NameValuePair> params) throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException {
 		if (fbc.isLoggedIn()) {
-			return fbc.postToPageAndGetAsVector(url, params);
+			try {
+				return fbc.postToPageAndGetAsVector(url, params);
+			} catch (InvalidSessionIdException e) {
+				setBoxDisconnected();
+				handleInvalidSessionIdException(e);
+				return new Vector<String>();
+			}
 		} else {
 			return new Vector<String>();
 		}
@@ -336,6 +359,8 @@ public class FritzBox extends BoxClass {
 		if (fbc.isLoggedIn()) {
 			try {
 				result = fbc.getQuery(queries);
+			} catch (InvalidSessionIdException e) {
+				handleInvalidSessionIdException(e);
 			} catch (ClientProtocolException e) {
 				Debug.error(e.getMessage());
 			} catch (IOException e) {
@@ -384,7 +409,11 @@ public class FritzBox extends BoxClass {
 	public String getExternalIP() {
 		try {
 			if (fbc.isLoggedIn()) {
-				return fbc.getNetworkMethods().getExternalIP();
+				try {
+					return fbc.getNetworkMethods().getExternalIP();
+				} catch (Exception e) {
+					return "No external IP detected";
+				}
 			} else {
 				return "No external IP detected";
 			}
@@ -798,7 +827,7 @@ public class FritzBox extends BoxClass {
 
 		Vector<String> query = new Vector<String>();
 		if (firmware != null && firmware.isLowerThan(5, 50)) {
-			query.add(QUERY_SIP_MAXCOUNT); // Fehler bei xxx.05.50
+			query.add(QUERY_SIP_MAXCOUNT);
 		} else {
 			query.add(QUERY_SIP_COUNT);
 		}
@@ -1271,16 +1300,21 @@ public class FritzBox extends BoxClass {
 
 	// 01.08.2015
 	public String getQueryDialPort() throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException {
+		final String FALLBACK_DIAL_PORT = "50";
 		Vector<String> query = new Vector<String>();
 		query.add(QUERY_DialPort);
 
-		Vector<String> response = fbc.getQuery(query);
-		if (response.size() == 1) {
-			String ret_q = response.get(0);
-			return ret_q;
-		}
-		else {
-			return "50";
+		try {
+			Vector<String> response = fbc.getQuery(query);
+			if (response.size() == 1) {
+				String ret_q = response.get(0);
+				return ret_q;
+			}
+			else {
+				return FALLBACK_DIAL_PORT;
+			}
+		} catch (Exception e) {
+			return FALLBACK_DIAL_PORT;
 		}
 	}
 
@@ -1310,20 +1344,24 @@ public class FritzBox extends BoxClass {
 			String fbcc = "";
 
 			try {
-				if (firmware != null && firmware.isUpperThan(6, 0)) {
+				if (firmware != null && firmware.isLowerThan(4, 21)) {
+					// TODO: message, that firmware does not support the calling feature
+				} else if (firmware != null && firmware.isLowerThan(6, 1)) {
+					Debug.debug("doCall_Firmware is greater/or equal than 04.21 but lower than 06.1");
+					generateDoCallPostData(postdata, currentNumber, port);
+				    fbc.postToPageAndGetAsString(FritzBoxCommunication.URL_WEBCM, postdata);
+				} else {
 					Debug.debug("doCall_Firmware is greater/or equal than 06.1");
 					dial_query = "dial=" + currentNumber + "&port=" + port.getDialPort();
 					dial_query = dial_query.replace("#", "%23"); // # %23
 					dial_query = dial_query.replace("*", "%2A"); // * %2A
 					fbcc = fbc.getPageAsString(URL_FONBOOK_LIST_LUA + "?" + dial_query);
 					Debug.info("doCall_0L: " + fbcc);					
-				} else if (firmware != null && firmware.isUpperThan(4, 20) && firmware.isLowerThan(6, 1)) {
-					Debug.debug("doCall_Firmware is greater/or equal than 04.21 but lower than 06.1");
-					generateDoCallPostData(postdata, currentNumber, port);
-				    fbc.postToPageAndGetAsString(FritzBoxCommunication.URL_WEBCM, postdata);
-				} else {
-					// TODO: message, that firmware does not support the calling feature
 				}
+			} catch (InvalidSessionIdException e) {
+				e.printStackTrace();
+				setBoxDisconnected();
+				handleInvalidSessionIdException(e);
 			} catch (SocketTimeoutException ste) {
 				ste.printStackTrace();
 				setBoxDisconnected();
@@ -1363,16 +1401,20 @@ public class FritzBox extends BoxClass {
 			String fbcc = "";
 
 			try {
-				if (firmware != null && firmware.isUpperThan(6, 0)) {
-					Debug.debug("hangup_Firmware is greater/or equal than 06.1");
-					fbcc = fbc.getPageAsString(URL_FONBOOK_LIST_LUA + "?" + "hangup=");
-					Debug.info("hangup_0L: " + fbcc);
-				} else if (firmware != null && firmware.isUpperThan(4, 20) && firmware.isLowerThan(6, 1)) {
+				if (firmware != null && firmware.isLowerThan(4, 21)) {
+					// TODO: message, that firmware does not support the calling feature
+				} else if (firmware != null && firmware.isLowerThan(6, 1)) {
 					Debug.debug("hangup_Firmware is greater/or equal than 04.21 but lower than 06.1");
 					generateHangupPostdata(postdata, port);
 					fbcc = fbc.postToPageAndGetAsString(FritzBoxCommunication.URL_WEBCM, postdata);
 				} else {
+					Debug.debug("hangup_Firmware is greater/or equal than 06.1");
+					fbcc = fbc.getPageAsString(URL_FONBOOK_LIST_LUA + "?" + "hangup=");
+					Debug.info("hangup_0L: " + fbcc);
 				}
+			} catch (InvalidSessionIdException e) {
+				setBoxDisconnected();
+				handleInvalidSessionIdException(e);
 			} catch (SocketTimeoutException ste) {
 				ste.printStackTrace();
 				setBoxDisconnected();
@@ -1422,6 +1464,9 @@ public class FritzBox extends BoxClass {
 				generateRebootPostdata(postdata);
 				try {
 					fbc.postToPageAndGetAsVector(FritzBoxCommunication.URL_WEBCM, postdata);
+				} catch (InvalidSessionIdException e) {
+					setBoxDisconnected();
+					handleInvalidSessionIdException(e);
 				} catch (SocketTimeoutException e) {
 					e.printStackTrace();
 					setBoxDisconnected();
@@ -1443,6 +1488,14 @@ public class FritzBox extends BoxClass {
 		}
 	}
 
+	private void handleInvalidSessionIdException(final InvalidSessionIdException e) {
+		try {
+			Debug.errDlg(messages.getMessage("box.invalid_session_id").replaceAll("%FIRMWARE%", fbc.getFirmwareVersion().toString()));
+		} catch (Exception e1) {
+			Debug.errDlg(messages.getMessage("box.invalid_session_id").replaceAll("%FIRMWARE%", "unknown"));
+		}
+	}
+	
 	private void handleInvalidCredentialsException(final InvalidCredentialsException e) {
 		if (this.getFirmware().isLowerThan(05, 50)) {
 			Debug.errDlg(messages.getMessage("box.wrong_password"));
