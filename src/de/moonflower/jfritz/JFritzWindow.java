@@ -520,33 +520,33 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		configButton.setToolTipText(messages.getMessage("config")); //$NON-NLS-1$
 		mBar.add(configButton);
 
-		networkButton = new JToggleButton();
-		networkButton.setActionCommand("network");
-		networkButton.addActionListener(this);
-
-		String networkType = properties.getProperty("network.type");
-
-		if(networkType.equals("1")){
-			networkButton.setIcon(getImage("server.png"));
-			networkButton.setToolTipText(messages.getMessage("start_listening_clients"));
-		}else if(networkType.equals("2")){
-			networkButton.setIcon(getImage("client.png"));
-			networkButton.setToolTipText(messages.getMessage("connect_to_server"));
-		}else{
-			networkButton.setIcon(getImage("no_network.png"));
-			networkButton.setEnabled(false);
-		}
-
-		networkButton.setPreferredSize(new Dimension(32, 32));
-
-		//disable icon if jfritz network functionality not wanted
-		if(properties.getProperty("network.type").equals("0")){
-			networkButton.setEnabled(false);
-		}
-
-		NetworkStateMonitor.addListener(this);
-
-		mBar.add(networkButton);
+//		networkButton = new JToggleButton();
+//		networkButton.setActionCommand("network");
+//		networkButton.addActionListener(this);
+//
+//		String networkType = properties.getProperty("network.type");
+//
+//		if(networkType.equals("1")){
+//			networkButton.setIcon(getImage("server.png"));
+//			networkButton.setToolTipText(messages.getMessage("start_listening_clients"));
+//		}else if(networkType.equals("2")){
+//			networkButton.setIcon(getImage("client.png"));
+//			networkButton.setToolTipText(messages.getMessage("connect_to_server"));
+//		}else{
+//			networkButton.setIcon(getImage("no_network.png"));
+//			networkButton.setEnabled(false);
+//		}
+//
+//		networkButton.setPreferredSize(new Dimension(32, 32));
+//
+//		//disable icon if jfritz network functionality not wanted
+//		if(properties.getProperty("network.type").equals("0")){
+//			networkButton.setEnabled(false);
+//		}
+//
+//		NetworkStateMonitor.addListener(this);
+//
+//		mBar.add(networkButton);
 
 		mBar.addSeparator();
 		return mBar;
