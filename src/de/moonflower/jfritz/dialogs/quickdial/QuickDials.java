@@ -4,12 +4,15 @@
  */
 package de.moonflower.jfritz.dialogs.quickdial;
 
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -25,11 +28,10 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.constants.ProgramConstants;
-import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
-import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.struct.QuickDial;
 import de.moonflower.jfritz.utils.Debug;
+import de.robotniko.fboxlib.fritzbox.FritzBoxCommunication;
 
 /**
  * Table model for QuickDials
@@ -50,6 +52,10 @@ public class QuickDials extends AbstractTableModel {
 			+ "<!ELEMENT vanity (#PCDATA)>"  //$NON-NLS-1$
 			+ "<!ELEMENT description (#PCDATA)>"  //$NON-NLS-1$
 			+ "<!ATTLIST entry id CDATA #REQUIRED>";  //$NON-NLS-1$
+
+	//private static FirmwareVersion firmware = new FirmwareVersion(); // 23.08.2015
+	private static FritzBoxCommunication firmware = new FritzBoxCommunication(); // 23.08.2015
+//	private static QuickDialUpnp quickDialUpnp = new QuickDialUpnp(); // 23.08.2015
 
 	Vector<QuickDial> quickDials;
 
@@ -134,14 +140,23 @@ public class QuickDials extends AbstractTableModel {
 		}
 	}
 
-	public void getQuickDialDataFromFritzBox() throws WrongPasswordException, IOException, InvalidFirmwareException {
+	public void getQuickDialDataFromFritzBox() {// throws WrongPasswordException, IOException, InvalidFirmwareException {
 
-		Debug.error("Fix getQuickDialDataFromFritzBox() in QuickDials!");
+		// 23.08.2015
+//		if ((firmware != null) && firmware.isUpperThan(5, 49)) {
+//			Debug.info("getQuickDialDataFromFritzBox() in QuickDials! " + firmware.isUpperThan(5, 49) + "   " + firmware.getMajor() + "   " + firmware.getMinor());
+//			quickDials = quickDialUpnp.retrieveQuickDialsFromFritzBox(this);
+//			fireTableDataChanged();
+//		} else {
+//			Debug.info("getQuickDialDataFromFritzBox() in QuickDials! " + firmware.isLowerThan(5, 50) + "   " + firmware.getMajor() + "   " + firmware.getMinor());
+//			Debug.error("Fix getQuickDialDataFromFritzBox() in QuickDials!");
 //		if (JFritz.getFritzBox().getFirmware() == null)
 //			if (JFritz.getFritzBox().checkValidFirmware()) {
 //				quickDials = JFritz.getFritzBox().retrieveQuickDialsFromFritzBox(this); //$NON-NLS-1$
 //				fireTableDataChanged();
 //			}
+//		}
+//		}
 	}
 
 	public void addEntry(QuickDial quickDial) {
@@ -209,9 +224,22 @@ public class QuickDials extends AbstractTableModel {
 	 */
 	public void saveToXMLFile(String filename) {
 		Debug.info("Saving to file " + filename); //$NON-NLS-1$
-		FileOutputStream fos;
+		//FileOutputStream fos; // nur ASCII
+		//fos = new FileOutputStream(filename);
+		//Writer fos = null; // 23.08.2015 UTF-8
+		//BufferedWriter fos = null; // 23.08.2015 UTF-8
+		//fos = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "UTF-8")); // 23.08.2015
+
+		BufferedWriter fos = null; // 23.08.2015
 		try {
-			fos = new FileOutputStream(filename);
+			fos = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "UTF-8")); // 23.08.2015
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 			PrintWriter pw = new PrintWriter(fos);
 			pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
 //			pw.println("<!DOCTYPE quickdials SYSTEM \"" + QUICKDIALS_DTD_URI
@@ -229,16 +257,13 @@ public class QuickDials extends AbstractTableModel {
 				if (!current.getVanity().equals("")) //$NON-NLS-1$
 					pw.println("\t\t<vanity>" + current.getVanity() //$NON-NLS-1$
 							+ "</vanity>"); //$NON-NLS-1$
-				if (!current.getDescription().equals("")) //$NON-NLS-1$
+				if (!current.getDescription().equals(""))
 					pw.println("\t\t<description>" + current.getDescription() //$NON-NLS-1$
-							+ "</description>"); //$NON-NLS-1$
+								+ "</description>");
 				pw.println("\t</entry>"); //$NON-NLS-1$
 			}
 			pw.println("</quickdials>"); //$NON-NLS-1$
 			pw.close();
-		} catch (FileNotFoundException e) {
-			Debug.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
-		}
 	}
 
 	public String getDescriptionFromNumber(String number) {

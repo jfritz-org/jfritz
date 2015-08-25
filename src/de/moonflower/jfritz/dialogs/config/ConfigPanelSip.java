@@ -26,6 +26,8 @@ import de.moonflower.jfritz.dialogs.sip.SipProviderTableModel;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.utils.Debug;
 import de.robotniko.fboxlib.exceptions.FirmwareNotDetectedException;
+import de.robotniko.fboxlib.exceptions.InvalidCredentialsException;
+import de.robotniko.fboxlib.exceptions.LoginBlockedException;
 import de.robotniko.fboxlib.exceptions.PageNotFoundException;
 
 public class ConfigPanelSip extends JPanel implements ConfigPanel {
@@ -91,7 +93,8 @@ public class ConfigPanelSip extends JPanel implements ConfigPanel {
 					    c.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 						fritzBoxPanelIp.detectBoxType();
 						if (fritzBoxPanelIp.getFritzBox().getFirmware() != null) {
-							// TODO login using settings!
+							fritzBoxPanelIp.getFritzBox().detectFirmwareAndLogin();
+							fritzBoxPanelIp.getFritzBox().detectSipProvider();
 						}
 						updateTable();
 //					} catch (WrongPasswordException e1) {
@@ -106,6 +109,19 @@ public class ConfigPanelSip extends JPanel implements ConfigPanel {
 					} catch (FirmwareNotDetectedException e1) {
 						JFritz.errorMsg(messages.getMessage("unknown_firmware")); //$NON-NLS-1$
 						Debug.errDlg(messages.getMessage("unknown_firmware")); //$NON-NLS-1$
+					} catch (InvalidCredentialsException e1) {
+						if (fritzBoxPanelIp.getFritzBox().getFirmware().isLowerThan(05, 50)) {
+							JFritz.errorMsg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
+							Debug.errDlg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
+						} else {
+							Debug.errDlg(messages.getMessage("box.wrong_password_or_username"));
+						}
+					} catch (LoginBlockedException e1) {
+						if (fritzBoxPanelIp.getFritzBox().getFirmware().isLowerThan(05, 50)) {
+							Debug.errDlg(messages.getMessage("box.wrong_password.wait").replaceAll("%WAIT%", e1.getRemainingBlockTime()));
+						} else {
+							Debug.errDlg(messages.getMessage("box.wrong_password_or_username.wait").replaceAll("%WAIT%", e1.getRemainingBlockTime()));
+						}
 					}
 					c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				}

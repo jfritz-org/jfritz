@@ -172,18 +172,18 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 			updateButtons();
 			JFritz.getQuickDials().saveToXMLFile(JFritzDataDirectory.getInstance().getDataDirectory() + JFritz.QUICKDIALS_FILE);
 		} else if (e.getActionCommand().equals("fetchSIP")) {  //$NON-NLS-1$
-			try {
-				dataModel.getQuickDialDataFromFritzBox();
-			} catch (WrongPasswordException e1) {
-				JFritz.errorMsg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
-				Debug.errDlg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
-			} catch (IOException e1) {
-				JFritz.errorMsg(messages.getMessage("box.not_found")); //$NON-NLS-1$
-				Debug.errDlg(messages.getMessage("box.not_found")); //$NON-NLS-1$
-			} catch (InvalidFirmwareException e1) {
-				JFritz.errorMsg(messages.getMessage("unknown_firmware")); //$NON-NLS-1$
-				Debug.errDlg(messages.getMessage("unknown_firmware")); //$NON-NLS-1$
-			}
+//			try {
+//				dataModel.getQuickDialDataFromFritzBox();
+//			} catch (WrongPasswordException e1) {
+//				JFritz.errorMsg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
+//				Debug.errDlg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
+//			} catch (IOException e1) {
+//				JFritz.errorMsg(messages.getMessage("box.not_found")); //$NON-NLS-1$
+//				Debug.errDlg(messages.getMessage("box.not_found")); //$NON-NLS-1$
+//			} catch (InvalidFirmwareException e1) {
+//				JFritz.errorMsg(messages.getMessage("unknown_firmware")); //$NON-NLS-1$
+//				Debug.errDlg(messages.getMessage("unknown_firmware")); //$NON-NLS-1$
+//			}
 			dataModel.fireTableDataChanged();
 			JFritz.getQuickDials().saveToXMLFile(JFritzDataDirectory.getInstance().getDataDirectory() + JFritz.QUICKDIALS_FILE);
 		} else if (e.getActionCommand().equals("storeSIP")) {  //$NON-NLS-1$

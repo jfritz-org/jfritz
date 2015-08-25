@@ -18,7 +18,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -49,11 +48,13 @@ import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.callmonitor.CallMonitorStatusListener;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
-import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.Debug;
+import de.robotniko.fboxlib.exceptions.InvalidCredentialsException;
+import de.robotniko.fboxlib.exceptions.LoginBlockedException;
+//import org.apache.http.auth.InvalidCredentialsException;
 
 /**
  * JDialog for JFritz configuration.
@@ -108,7 +109,6 @@ public class ConfigDialog extends JDialog {
 		phonePanel = new ConfigPanelPhone();
 		proxyPanel = new ConfigPanelProxy();
 
-//		boxPanel = new ConfigPanelBox();
 		fritzBoxPanelIp = new ConfigPanelFritzBoxIP(
 				(FritzBox) JFritz.getBoxCommunication().getBox(0));
 		sipPanel = new ConfigPanelSip();
@@ -197,6 +197,7 @@ public class ConfigDialog extends JDialog {
 				rest = "";
 			}
 
+			@SuppressWarnings("unchecked")
 			Enumeration<ConfigTreeNode> en = currentNode.children();
 			ConfigTreeNode child = rootNode;
 			boolean found = false;
@@ -254,7 +255,8 @@ public class ConfigDialog extends JDialog {
         // Traverse children
         TreeNode node = (TreeNode)parent.getLastPathComponent();
         if (node.getChildCount() >= 0) {
-            for (Enumeration e=node.children(); e.hasMoreElements(); ) {
+            for (@SuppressWarnings("rawtypes")
+			Enumeration e=node.children(); e.hasMoreElements(); ) {
                 TreeNode n = (TreeNode)e.nextElement();
                 TreePath path = parent.pathByAddingChild(n);
                 expandAll(tree, path, expand);
@@ -295,19 +297,18 @@ public class ConfigDialog extends JDialog {
 	}
 
 	/**
-	 * Stores values in dialog components to programm properties
+	 * Stores values in dialog components to program properties
 	 */
 	public void storeValues() {
 		// save login settings first, because fritzBoxPanelIp.saveSettings() needs username and password
 		fritzBoxPanelLogin.saveSettings(true);
 		
 		try {
-//			boxPanel.saveSettings();
 			fritzBoxPanelIp.saveSettings(true);
 		} catch (InvalidFirmwareException e) {
 			parent.setBoxDisconnected("");
 		}
-
+		
 		phonePanel.saveSettings();
 		proxyPanel.saveSettings();
 		messagePanel.saveSettings();

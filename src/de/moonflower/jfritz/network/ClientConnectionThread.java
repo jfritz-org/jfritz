@@ -4,20 +4,27 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
-
-import java.security.*;
+import java.security.InvalidKeyException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-
 import java.util.Random;
 import java.util.Timer;
 import java.util.Vector;
 
-import javax.crypto.*;
-import javax.crypto.spec.*;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SealedObject;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.DESKeySpec;
+
+import org.apache.http.auth.InvalidCredentialsException;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.callerlist.CallerListListener;
@@ -26,7 +33,6 @@ import de.moonflower.jfritz.phonebook.PhoneBookListener;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.utils.Debug;
-import de.moonflower.jfritz.utils.reverselookup.JFritzReverseLookup;
 
 /**
  * This class is responsible for interacting with a JFritz client.
@@ -150,6 +156,12 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 		}catch(IOException e){
 			Debug.error(e.toString());
 			e.printStackTrace();
+		} catch (InvalidCredentialsException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (de.robotniko.fboxlib.exceptions.InvalidCredentialsException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		connectionListener.clientConnectionEnded(this);
@@ -160,9 +172,12 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 	/**
 	 * this function listens for client requests until the
 	 * connection is ended.
+	 * @throws de.robotniko.fboxlib.exceptions.InvalidCredentialsException 
+	 * @throws InvalidCredentialsException 
 	 *
 	 */
-	public void waitForClientRequest(){
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void waitForClientRequest() throws InvalidCredentialsException, de.robotniko.fboxlib.exceptions.InvalidCredentialsException{
 		Object o;
 		ClientDataRequest dataRequest;
 		ClientActionRequest actionRequest;

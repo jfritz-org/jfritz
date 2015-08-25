@@ -27,6 +27,10 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.apache.http.auth.InvalidCredentialsException;
+
+//import org.apache.http.auth.InvalidCredentialsException;
+
 import com.nexes.wizard.Wizard;
 
 import de.moonflower.jfritz.box.BoxClass;
@@ -40,6 +44,8 @@ import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.MultiLabel;
 import de.moonflower.jfritz.utils.network.SSDPPacket;
 import de.robotniko.fboxlib.exceptions.FirmwareNotDetectedException;
+//import de.robotniko.fboxlib.exceptions.FirmwareNotDetectedException;
+import de.robotniko.fboxlib.exceptions.LoginBlockedException;
 import de.robotniko.fboxlib.exceptions.PageNotFoundException;
 
 public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
@@ -120,9 +126,9 @@ public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 		devices = BoxClass.getDevices();
 		Vector<String> deviceAddress = new Vector<String>();
 		if (devices != null) {
-			Enumeration<SSDPPacket> en = (Enumeration<SSDPPacket>)devices.elements();
+			Enumeration<SSDPPacket> en = devices.elements();
 			while (en.hasMoreElements()) {
-				SSDPPacket p = (SSDPPacket) en.nextElement();
+				SSDPPacket p = en.nextElement();
 				if (!deviceAddress.contains(p.getIP().getHostAddress()))
 				{
 					deviceAddress.add(p.getIP().getHostAddress());
@@ -204,6 +210,7 @@ public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 		this.fritzBoxPanelLogin = fritzBoxPanel;
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("addresscombo")) { //$NON-NLS-1$
 			String selectedItem = addressCombo.getItemAt(addressCombo.getSelectedIndex()).toString();
@@ -255,9 +262,10 @@ public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 		}
 	}
 
+	@Override
 	public void loadSettings() {
-		address.setText(fritzBox.getAddress()); //$NON-NLS-1$,  //$NON-NLS-2$
-		port.setText(fritzBox.getPort()); //$NON-NLS-1$,  //$NON-NLS-2$
+		address.setText(fritzBox.getAddress());
+		port.setText(fritzBox.getPort());
 
 		for (int i=0; i < addressCombo.getItemCount(); i++) {
 			if (((String)addressCombo.getItemAt(i)).equals(address.getText())) {
@@ -276,6 +284,7 @@ public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 		settingsChanged = false;
 	}
 
+	@Override
 	public void saveSettings() throws WrongPasswordException, InvalidFirmwareException, IOException {
 		saveSettings(true);
 	}
@@ -306,10 +315,10 @@ public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 				// nothing to do, already handled in detectBoxType
 			} catch (PageNotFoundException e1) {
 				// nothing to do, already handled in detectBoxType
-			} catch (WrongPasswordException e) {
+			} catch (WrongPasswordException e1) {
 				// nothing to do, already handled in detectBoxType
 			}
-
+			
 			if (fritzBox.getFirmware() != null) {
 				properties.setProperty("box.firmware", fritzBox.getFirmware().toSimpleString()); //$NON-NLS-1$
 				if (defaultFritzBox.isSelected() && fritzBox.getMacAddress() != null)
@@ -331,18 +340,22 @@ public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 		return port.getText();
 	}
 
+	@Override
 	public String getPath() {
 		return messages.getMessage("FRITZ!Box");
 	}
 
+	@Override
 	public JPanel getPanel() {
 		return this;
 	}
 
+	@Override
 	public String getHelpUrl() {
 		return "http://jfritz.org/wiki/JFritz_Handbuch:Deutsch#FRITZ.21Box";
 	}
 
+	@Override
 	public void cancel() {
 	}
 
@@ -350,19 +363,8 @@ public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 	{
 		fritzBox.setAddress(address.getText());
 		fritzBox.setPort(port.getText());
-		try {
-			fritzBox.detectFirmware();
-			updateFirmwareLabel();
-		} catch (IOException e) {
-			setErrorMessage(messages.getMessage("box.not_found"));
-			throw e;
-		} catch (FirmwareNotDetectedException e) {
-			setErrorMessage(messages.getMessage("box.communication_error")); //$NON-NLS-1$
-			throw e;
-		} catch (PageNotFoundException e) {
-			setErrorMessage(messages.getMessage("unknown")); //$NON-NLS-1$
-			throw e;
-		}
+		fritzBox.detectFirmware();
+		updateFirmwareLabel();
 	}
 
 	private void updateFirmwareLabel() {
@@ -394,10 +396,12 @@ public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 		return fritzBox;
 	}
 	
+	@Override
 	public boolean shouldRefreshJFritzWindow() {
 		return false;
 	}
 
+	@Override
 	public boolean shouldRefreshTrayMenu() {
 		return false;
 	}

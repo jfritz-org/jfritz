@@ -16,6 +16,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import jd.nutils.OSDetector;
+
+import org.apache.http.auth.InvalidCredentialsException;
+
 import de.moonflower.jfritz.backup.JFritzBackup;
 import de.moonflower.jfritz.box.BoxCommunication;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
@@ -45,6 +48,8 @@ import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.StatusListener;
 import de.moonflower.jfritz.utils.reverselookup.JFritzReverseLookup;
+import de.robotniko.fboxlib.exceptions.LoginBlockedException;
+import de.robotniko.fboxlib.exceptions.PageNotFoundException;
 
 /**
  *
@@ -135,6 +140,10 @@ public final class JFritz implements  StatusListener {
 		//stupid concept really, but it has to be done
 		Debug.generatePanel();
 
+		// 15.08.2015
+		String jvm_version = System.getProperty("java.version");
+		Debug.always("Java version: " + jvm_version);
+
 	}
 
 	public void initNumbers()
@@ -148,15 +157,14 @@ public final class JFritz implements  StatusListener {
 		int result = 0;
 
 		FritzBox fritzBox = new FritzBox("Fritz!Box",
-									     "My Fritz!Box",
-									     "http",
-										 properties.getProperty("box.address"),
-										 properties.getProperty("box.port"),
-										 Boolean.parseBoolean(properties.getProperty("box.loginUsingUsername")), 
-										 properties.getProperty("box.username"), 
-										 Encryption.decrypt(properties.getProperty("box.password")));
-
-
+											     "My Fritz!Box",
+											     "http",
+												 properties.getProperty("box.address"),
+												 properties.getProperty("box.port"),
+												 Boolean.parseBoolean(properties.getProperty("box.loginUsingUsername")), 
+												 properties.getProperty("box.username"), 
+												 Encryption.decrypt(properties.getProperty("box.password")));
+		
 		boxCommunication = new BoxCommunication();
 		boxCommunication.addBox(fritzBox);
 
@@ -212,6 +220,7 @@ public final class JFritz implements  StatusListener {
 				result = Main.EXIT_CODE_FORBID_COMMUNICATION_WITH_FRITZBOX;
 			}
 		}
+		Debug.info("connection. --: " + result);
 		return result;
 	}
 
@@ -300,9 +309,13 @@ public final class JFritz implements  StatusListener {
 	 * @throws IOException
 	 * @throws InvalidFirmwareException
 	 * @throws WrongPasswordException
+	 * @throws de.robotniko.fboxlib.exceptions.InvalidCredentialsException 
+	 * @throws InvalidCredentialsException 
+	 * @throws PageNotFoundException 
+	 * @throws LoginBlockedException 
 	 */
-	public JFritz(String test) throws WrongPasswordException, InvalidFirmwareException, IOException {
-
+	public JFritz(String test) throws WrongPasswordException, InvalidFirmwareException, IOException 
+	{
 		// make sure there is a plus on the country code, or else the number
 		// scheme won't work
 		if (!properties.getProperty("country.code").startsWith("+"))

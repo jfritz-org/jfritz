@@ -34,6 +34,7 @@ public class JFritzEventDispatcher extends Thread {
 
 	private static String EVENT_MANAGMENT_FILE_NAME = "jfritz.events.xml";
 
+	@SuppressWarnings("unused")
 	private static PriorityQueue<JFritzEvent> eventQueue = new PriorityQueue<JFritzEvent>();
 
 	private static LinkedList<JFritzEventAction> eventList = new LinkedList<JFritzEventAction>();
@@ -133,10 +134,14 @@ public class JFritzEventDispatcher extends Thread {
     		Element conditionElement;
     		Element actionElement;
 
-	    	List eventActionElements = rootElement.getChildren("eventaction");
-	    	List eventList;
-	    	List conditionList;
-	    	List actionList;
+	    	@SuppressWarnings("rawtypes")
+			List eventActionElements = rootElement.getChildren("eventaction");
+	    	@SuppressWarnings("rawtypes")
+			List eventList;
+	    	@SuppressWarnings("rawtypes")
+			List conditionList;
+	    	@SuppressWarnings("rawtypes")
+			List actionList;
 
 	    	for ( int i=0; i<eventActionElements.size(); i++)
 	    	{
@@ -156,7 +161,8 @@ public class JFritzEventDispatcher extends Thread {
 	    			eventElement = (Element)eventList.get(j);
 
 	    			// create JFritzEvent
-	    			Class eventClass = getEventFromEventName(eventElement.getAttributeValue("eventname")).getClass();
+	    			@SuppressWarnings("rawtypes")
+					Class eventClass = getEventFromEventName(eventElement.getAttributeValue("eventname")).getClass();
 	    			JFritzEvent eventObject = (JFritzEvent) eventClass.newInstance();
 
 					eventAction.setEvent(eventObject);
@@ -188,7 +194,8 @@ public class JFritzEventDispatcher extends Thread {
 		    			actionElement = (Element)actionList.get(m);
 
 		    			// create JFritzEvent
-		    			Class actionClass = getActionFromActionName(actionElement.getAttributeValue("name")).getClass();
+		    			@SuppressWarnings("rawtypes")
+						Class actionClass = getActionFromActionName(actionElement.getAttributeValue("name")).getClass();
 		    			JFritzAction actionObject = (JFritzAction) actionClass.newInstance();
 		    			actionObject.setDescription(actionElement.getAttributeValue("description"));
 		    			actionObject.loadSettings(actionElement);

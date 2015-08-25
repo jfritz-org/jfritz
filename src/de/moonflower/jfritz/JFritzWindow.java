@@ -55,6 +55,7 @@ import javax.swing.filechooser.FileFilter;
 
 import jd.nutils.OSDetector;
 
+import org.apache.http.auth.InvalidCredentialsException;
 import org.apache.log4j.Logger;
 
 import de.moonflower.jfritz.autoupate.CheckForUpdate;
@@ -71,6 +72,7 @@ import de.moonflower.jfritz.dialogs.config.ConfigDialog;
 import de.moonflower.jfritz.dialogs.quickdial.QuickDialPanel;
 import de.moonflower.jfritz.dialogs.simple.CallMessageDlg;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
+//import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.monitoring.MonitoringPanel;
 import de.moonflower.jfritz.network.NetworkStateListener;
@@ -89,6 +91,9 @@ import de.moonflower.jfritz.utils.JFritzClipboard;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.PrintCallerList;
 import de.moonflower.jfritz.utils.SwingWorker;
+import de.robotniko.fboxlib.exceptions.LoginBlockedException;
+import de.robotniko.fboxlib.exceptions.PageNotFoundException;
+//import org.apache.http.auth.InvalidCredentialsException;
 
 /**
  * This is main window class of JFritz, which creates the GUI.
@@ -100,6 +105,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		BoxStatusListener, WindowListener {
 
 	private static final long serialVersionUID = 7856291642743441767L;
+	@SuppressWarnings("unused")
 	private static final Logger log = Logger.getLogger(JFritzWindow.class);
 
 	private FetchListTimer timer = null;
@@ -906,6 +912,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	/**
 	 * Shows the configuration dialog
+	 * @throws de.robotniko.fboxlib.exceptions.InvalidCredentialsException 
+	 * @throws InvalidCredentialsException 
+	 * @throws PageNotFoundException 
+	 * @throws LoginBlockedException 
 	 */
 	public void showConfigDialog() {
 	    Container c = this.getContentPane(); // get the window's content pane

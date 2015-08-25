@@ -149,6 +149,7 @@ import javax.swing.JOptionPane;
 
 import jd.nutils.OSDetector;
 
+import org.apache.http.auth.InvalidCredentialsException;
 import org.apache.log4j.Appender;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
@@ -176,6 +177,9 @@ import de.moonflower.jfritz.utils.ShutdownHook;
 import de.moonflower.jfritz.utils.reverselookup.IReverseLookupFinishedWithResultListener;
 import de.moonflower.jfritz.utils.reverselookup.IReverseLookupProgressListener;
 import de.moonflower.jfritz.utils.reverselookup.JFritzReverseLookup;
+import de.robotniko.fboxlib.exceptions.LoginBlockedException;
+import de.robotniko.fboxlib.exceptions.PageNotFoundException;
+//import org.apache.http.auth.InvalidCredentialsException;
 
 /**
  * @author robroy
@@ -326,6 +330,10 @@ public class Main  {
 	 *
 	 * @param args
 	 *            Program arguments (-h -v ...)
+	 * @throws de.robotniko.fboxlib.exceptions.InvalidCredentialsException 
+	 * @throws InvalidCredentialsException 
+	 * @throws PageNotFoundException 
+	 * @throws LoginBlockedException 
 	 *
 	 */
 	public static void main(String[] args) {
@@ -592,6 +600,7 @@ public class Main  {
 	public static boolean showConfigWizard(final SplashScreen splash) {
 		Debug.info("Presenting user with the configuration dialog");
 		ConfigWizard wizard = new ConfigWizard(null);
+
 		boolean wizardCanceled = true;
 		try {
 			wizardCanceled = wizard.showWizard(splash);
@@ -657,6 +666,7 @@ public class Main  {
 	 * @param args
 	 *            Kommandozeilenargumente
 	 * @return True if shutdown has been invoked, false otherwise.
+	 * @throws InvalidCredentialsException 
 	 */
 	private boolean checkCLIParameters(String[] args) {
 		boolean shutdown = false;
@@ -679,7 +689,7 @@ public class Main  {
 				break;
 			case 'f':
 				logAndStdOut("Fetch caller list from command line ..."); //$NON-NLS-1$
-				JFritz.getBoxCommunication().getCallerList(null); // null = fetch all boxes
+				JFritz.getBoxCommunication().getCallerList(null);
 				shutdown = true;
 				exit(EXIT_CODE_OK);
 				break;
