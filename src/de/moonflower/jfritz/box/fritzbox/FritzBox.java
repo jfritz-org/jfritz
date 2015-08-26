@@ -479,27 +479,34 @@ public class FritzBox extends BoxClass {
 		Vector<String> response = getQuery(query);
 
 		//addConfiguredPort(new Port(-1, messages.getMessage("analog_telephones_all"), "9", "9"));
-		if (response.size() == 1)
-		{
+		if (response.size() != 1) {
+			Debug.warning("addAnalogPorts: received invalid response size. Will not add any analog ports");
+		} else {
 			try {
 				int analogCount = Integer.parseInt(response.get(0));
-				query.clear();
-				for (int i=0; i<analogCount; i++)
-				{
-					query.add(QUERY_ANALOG_NAME.replaceAll("%NUM%", Integer.toString(i)));
-				}
-				response = getQuery(query);
-
-				if (response.size() == 1*analogCount)
-				{
+				Debug.debug("addAnalogPorts: Detected " + analogCount + " analog phones");
+				
+				if (analogCount > 0) {
+					query.clear();
+	
 					for (int i=0; i<analogCount; i++)
 					{
-
-						String analogName = response.get(i+0);
-						if (!"".equals(analogName)
-						 && !"er".equals(analogName))
+						query.add(QUERY_ANALOG_NAME.replaceAll("%NUM%", Integer.toString(i)));
+					}
+					response = getQuery(query);
+	
+					if (response.size() != 1*analogCount) {
+						Debug.warning("addAnalogPorts: Response invalid!");
+					} else {
+						for (int i=0; i<analogCount; i++)
 						{
-							addConfiguredPort(new Port(i, analogName, Integer.toString(i+1), Integer.toString(i+1)));
+							String analogName = response.get(i+0);
+							if (!"".equals(analogName) && !"er".equals(analogName))
+							{
+								Port port = new Port(i, analogName, Integer.toString(i+1), Integer.toString(i+1));
+								Debug.debug("addAnalogPorts: Adding port " + port.toStringDetailed());
+								addConfiguredPort(port);
+							}
 						}
 					}
 				}
@@ -517,10 +524,13 @@ public class FritzBox extends BoxClass {
 		query.add(QUERY_ISDN_COUNT);
 		Vector<String> response = getQuery(query);
 
-		if (response.size() == 1)
-		{
+		if (response.size() != 1) {
+			Debug.warning("addIsdnPorts: received invalid response size. Will not add any ISDN ports");
+		} else {
 			try {
 				int isdnCount = Integer.parseInt(response.get(0));
+				Debug.debug("addIsdnPorts: Detected " + isdnCount + " ISDN phones");
+
 				if (isdnCount > 0)
 				{
 					addConfiguredPort(new Port(50, messages.getMessage("isdn_telephones_all"), "50", "50"));
@@ -533,27 +543,28 @@ public class FritzBox extends BoxClass {
 					}
 					response = getQuery(query);
 
-					if (response.size() == 2*isdnCount)
-					{
+					if (response.size() != 2*isdnCount) {
+						Debug.warning("addIsdnPorts: Response invalid!");
+					} else {
 						for (int i=0; i<isdnCount; i++)
 						{
 							String number = response.get((i*2) + 0);
 							String name = response.get((i*2) + 1);
 
-							if ((!"er".equals(number))
-								&& (!"".equals(number))) // if number is set
-							{
-								if (!"er".equals(name))
-								{
+							if ("er".equals(number) || ("".equals(number))) {
+								Debug.warning("addIsdnPorts: number is not set. Will not add port");
+							} else {
+								if ("er".equals(name)) {
+									Debug.warning("addIsdnPorts: name is not set for number " + number + ". Will not add port");
+								} else {
 									if ("".equals(name)) // if name is empty:
 									{
 										name = "ISDN " + Integer.toString(i+1);
 									}
 
-									addConfiguredPort(new Port(50+(i+1),
-											name,
-											"5"+(i+1),
-											"5"+(i+1)));
+									Port port = new Port(50+(i+1), name, "5"+(i+1), "5"+(i+1));
+									Debug.debug("addIsdnPorts: Adding port " + port.toStringDetailed());
+									addConfiguredPort(port);
 								}
 							}
 						}
@@ -574,10 +585,13 @@ public class FritzBox extends BoxClass {
 		query.add(QUERY_DECT_MINI_COUNT);
 		Vector<String> response = getQuery(query);
 
-		if (response.size() == 1)
-		{
+		if (response.size() != 1) {
+			Debug.warning("addDectMiniPorts: received invalid response size. Will not add any DECT ports");
+		} else {
 			try {
 				int dectCount = Integer.parseInt(response.get(0));
+				Debug.debug("addDectMiniPorts: Detected " + dectCount + " DECT phones");
+
 				if (dectCount > 0)
 				{
 					query.clear();
@@ -590,8 +604,9 @@ public class FritzBox extends BoxClass {
 					}
 					response = getQuery(query);
 
-					if (response.size() == 4*dectCount)
-					{
+					if (response.size() != 4*dectCount) {
+						Debug.warning("addDectMiniPorts: Response invalid!");
+					} else {
 						for (int i=0; i<dectCount; i++)
 						{
 							String id = response.get((i*4) + 0);
@@ -613,11 +628,12 @@ public class FritzBox extends BoxClass {
 								name = "DECT " + i;
 							}
 
-							if (!"".equals(internal)) {
-								addConfiguredPort(new Port(10+Integer.parseInt(num),
-										name,
-										"6"+num,
-										internal));
+							if ("".equals(internal)) {
+								Debug.warning("addDectMiniPorts: internal number is not set. Will not add port");
+							} else {
+								Port port = new Port(10+Integer.parseInt(num), name, "6"+num, internal);
+								Debug.debug("addDectMiniPorts: Adding port " + port.toStringDetailed());
+								addConfiguredPort(port);
 							}
 						}
 					}
@@ -637,14 +653,16 @@ public class FritzBox extends BoxClass {
 		query.add(QUERY_VOIP_COUNT);
 		Vector<String> response = getQuery(query);
 
-		if (response.size() == 2)
-		{
+		if (response.size() != 2) {
+			Debug.warning("addVoIPPorts: received invalid response size. Will not add any VoIP ports");
+		} else {
 			@SuppressWarnings("unused")
 			boolean voipEnabled =  response.get(0).equals("1");
 			try {
 				int voipCount = Integer.parseInt(response.get(1));
-//				if (voipEnabled)
-				{
+				Debug.debug("addVoIPPorts: Detected " + voipCount + " VoIP phones");
+
+				if (voipCount > 0) {
 					query.clear();
 					for (int i=0; i<voipCount; i++)
 					{
@@ -653,22 +671,24 @@ public class FritzBox extends BoxClass {
 					}
 					response = getQuery(query);
 
-					if (response.size()==2*voipCount)
-					{
+					if (response.size()!=2*voipCount) {
+						Debug.warning("addVoIPPorts: Response invalid!");
+					} else {
 						for (int i=0; i<voipCount; i++)
 						{
-							boolean activated = "1".equals(response.get((i*2) + 0));
-							if (activated)
+							String voipName = response.get((i*2) + 1);
+							if ("".equals(voipName))
 							{
-								String voipName = response.get((i*2) + 1);
-								if ("".equals(voipName))
-								{
-									voipName = messages.getMessage("voip_extension")+ " " + Integer.toString(i+620);
-								}
-								addConfiguredPort(new Port(20+i,
-										voipName,
-										Integer.toString(20+i),
-										"62"+Integer.toString(i)));
+								voipName = messages.getMessage("voip_extension")+ " " + Integer.toString(i+620);
+							}
+
+							boolean activated = "1".equals(response.get((i*2) + 0));
+							if (!activated) {
+								Debug.warning("addVoIPPorts: VoIP account '" + voipName + "'is not activated. Will not add port");
+							} else {
+								Port port = new Port(20+i, voipName, Integer.toString(20+i), "62"+Integer.toString(i));
+								Debug.debug("addVoIPPorts: Adding port " + port.toStringDetailed());
+								addConfiguredPort(port);
 							}
 						}
 					}
@@ -1278,15 +1298,8 @@ public class FritzBox extends BoxClass {
 		"</s:Body>\n" +
 		"</s:Envelope>";
 
-		String result = UPNPUtils.getSOAPDataAuth(fbc, protocol+"://" + getAddress() +
+		UPNPUtils.getSOAPDataAuth(fbc, protocol+"://" + getAddress() +
 			    URL_SERVICE_REBOOT, URN_SERVICE_REBOOT, xml);
-
-//		String result = UPNPUtils.getSOAPDataAuth(protocol+"://" + getAddress() +
-//			    URL_SERVICE_CREATEURLSID, URN_SERVICE_CREATEURLSID, xml);
-
-	    //String result = getSIDUPNP();
-	    Debug.info("Result of DeviceConfig Reboot: " + result);
-		//Debug.msg("Result of DeviceConfig Reboot: " + result);
 	}
 
 	/**************************************************************************************

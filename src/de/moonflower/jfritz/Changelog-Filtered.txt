@@ -1,7 +1,8 @@
-JFritz 0.7.5_8:
+JFritz 0.7.5_9:
 - Bugfix: Unterstützung der neuen Firmwares 06.25 und 06.35 (großen Dank an Pikachu)
 - Bugfix: Reverse-Lookup für Deutschland repariert
 - Bugfix: Netzwerk-Button entfernt
+- Logging für das Hinzufügen von Nebenstellen erhöht
 
 JFritz 0.7.5_Testversion:
 - Neu 0000383: Anmeldung mit Username / Password unterstützen
