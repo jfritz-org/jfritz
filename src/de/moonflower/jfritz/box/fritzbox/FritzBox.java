@@ -1353,23 +1353,31 @@ public class FritzBox extends BoxClass {
 
 			List<NameValuePair> postdata = new ArrayList<NameValuePair>();
 
-			String dial_query = "";
-			String fbcc = "";
-
 			try {
 				if (firmware != null && firmware.isLowerThan(4, 21)) {
 					// TODO: message, that firmware does not support the calling feature
 				} else if (firmware != null && firmware.isLowerThan(6, 1)) {
-					Debug.debug("doCall_Firmware is greater/or equal than 04.21 but lower than 06.1");
+					Debug.debug("doCall: Firmware is greater/or equal than 04.21 but lower than 06.1");
 					generateDoCallPostData(postdata, currentNumber, port);
 				    fbc.postToPageAndGetAsString(FritzBoxCommunication.URL_WEBCM, postdata);
 				} else {
-					Debug.debug("doCall_Firmware is greater/or equal than 06.1");
+					Debug.debug("doCall: Firmware is greater/or equal than 06.01");
+					String retDialPort = getQueryDialPort();
+					String port_query = port.getDialPort();
+					
+					if (port_query.equals(retDialPort)) {
+						Debug.debug("doCall: Dialing port already set to " + retDialPort);
+					} else {
+						Debug.debug("doCall: Setting dialing port to " + port_query + " (was "+ retDialPort + ")");
+					   	generateDoCallPostDataDialPortLua(postdata, port_query);
+					   	fbc.postToPageAndGetAsString(URL_DIAL_FONBOOK_LUA, postdata);
+					}
+					
+					String dial_query = "";
 					dial_query = "dial=" + currentNumber + "&port=" + port.getDialPort();
 					dial_query = dial_query.replace("#", "%23"); // # %23
 					dial_query = dial_query.replace("*", "%2A"); // * %2A
-					fbcc = fbc.getPageAsString(URL_FONBOOK_LIST_LUA + "?" + dial_query);
-					Debug.info("doCall_0L: " + fbcc);					
+					fbc.getPageAsString(URL_FONBOOK_LIST_LUA + "?" + dial_query);
 				}
 			} catch (InvalidSessionIdException e) {
 				e.printStackTrace();
@@ -1411,7 +1419,6 @@ public class FritzBox extends BoxClass {
 		if (fbc.isLoggedIn()) {
 			setBoxConnected();
 			List<NameValuePair> postdata = new ArrayList<NameValuePair>();
-			String fbcc = "";
 
 			try {
 				if (firmware != null && firmware.isLowerThan(4, 21)) {
@@ -1419,11 +1426,10 @@ public class FritzBox extends BoxClass {
 				} else if (firmware != null && firmware.isLowerThan(6, 1)) {
 					Debug.debug("hangup_Firmware is greater/or equal than 04.21 but lower than 06.1");
 					generateHangupPostdata(postdata, port);
-					fbcc = fbc.postToPageAndGetAsString(FritzBoxCommunication.URL_WEBCM, postdata);
+					fbc.postToPageAndGetAsString(FritzBoxCommunication.URL_WEBCM, postdata);
 				} else {
-					Debug.debug("hangup_Firmware is greater/or equal than 06.1");
-					fbcc = fbc.getPageAsString(URL_FONBOOK_LIST_LUA + "?" + "hangup=");
-					Debug.info("hangup_0L: " + fbcc);
+					Debug.debug("hangup_Firmware is greater/or equal than 06.01");
+					fbc.getPageAsString(URL_FONBOOK_LIST_LUA + "?" + "hangup=");
 				}
 			} catch (InvalidSessionIdException e) {
 				setBoxDisconnected();
