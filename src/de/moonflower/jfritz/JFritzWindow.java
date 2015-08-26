@@ -6,7 +6,6 @@ package de.moonflower.jfritz;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Insets;
 import java.awt.Rectangle;
@@ -72,7 +71,6 @@ import de.moonflower.jfritz.dialogs.config.ConfigDialog;
 import de.moonflower.jfritz.dialogs.quickdial.QuickDialPanel;
 import de.moonflower.jfritz.dialogs.simple.CallMessageDlg;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
-//import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.monitoring.MonitoringPanel;
 import de.moonflower.jfritz.network.NetworkStateListener;
@@ -93,6 +91,7 @@ import de.moonflower.jfritz.utils.PrintCallerList;
 import de.moonflower.jfritz.utils.SwingWorker;
 import de.robotniko.fboxlib.exceptions.LoginBlockedException;
 import de.robotniko.fboxlib.exceptions.PageNotFoundException;
+//import de.moonflower.jfritz.exceptions.WrongPasswordException;
 //import org.apache.http.auth.InvalidCredentialsException;
 
 /**
