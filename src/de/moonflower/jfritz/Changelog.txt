@@ -22,6 +22,7 @@ TODO tel.search.ch überprüfen und reparieren
 
 JFritz 0.7.5_9:
 - Logging für das Hinzufügen von Nebenstellen erhöht
+- Anrufmonitor versucht bei Problemen nun nicht ständig sofort eine neue Verbindung aufzubauen
 
 JFritz 0.7.5_8:
 - Bugfix: Reverse-Lookup für Deutschland repariert

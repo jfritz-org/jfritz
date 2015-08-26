@@ -3,6 +3,7 @@ JFritz 0.7.5_9:
 - Bugfix: Reverse-Lookup für Deutschland repariert
 - Bugfix: Netzwerk-Button entfernt
 - Logging für das Hinzufügen von Nebenstellen erhöht
+- Anrufmonitor versucht bei Problemen nun nicht ständig sofort eine neue Verbindung aufzubauen
 
 JFritz 0.7.5_Testversion:
 - Neu 0000383: Anmeldung mit Username / Password unterstützen

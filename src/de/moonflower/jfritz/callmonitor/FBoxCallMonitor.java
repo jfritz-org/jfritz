@@ -30,7 +30,9 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
 
 	private static final int READ_TIMEOUT = 5000;
 
-	private static final int WAIT_UNTIL_RECONNECT = 0; //15000;
+	private static final int INITIAL_RECONNECT_WAIT_TIME = 1000;
+
+	private static final int MAXIMUM_RECONNECT_WAIT_TIME = 60000;
 
     // Liest den TCP-Strom ein
     protected BufferedReader in;
@@ -46,6 +48,8 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
     protected FritzBox fritzBox;
 
     private Vector<CallMonitorStatusListener> stateListener;
+    
+    private int currentWaitTime = INITIAL_RECONNECT_WAIT_TIME;
 
     public FBoxCallMonitor(FritzBox fritzBox,
     		Vector<CallMonitorStatusListener> stateListener, boolean shouldConnect) {
@@ -80,56 +84,45 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
             in = new BufferedReader(new InputStreamReader(clientSocket
                     .getInputStream()));
 			this.setConnectedStatus();
+    		currentWaitTime = INITIAL_RECONNECT_WAIT_TIME;
     		log.info("(CM) [" + connectionCount + "] Connection to call monitor established!");
 			return true;
     	} catch (SocketTimeoutException stoe) {
 	        log.error("(CM) [" + connectionCount + "] Socket connect timeout: " + stoe.toString()); //$NON-NLS-1$
 	        closeConnection();
-	        try {
-				Thread.sleep(WAIT_UNTIL_RECONNECT);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+        	waitForReconnect();
     	} catch (NoRouteToHostException nrthe) {
 	        log.error("(CM) [" + connectionCount + "] No route to host exception: " + nrthe.toString()); //$NON-NLS-1$
 	        closeConnection();
-	        try {
-				Thread.sleep(WAIT_UNTIL_RECONNECT);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+        	waitForReconnect();
 	    } catch (UnknownHostException uhe) {
 	        log.error("(CM) [" + connectionCount + "] Unknown host exception: " + uhe.toString()); //$NON-NLS-1$
 	        closeConnection();
-	        try {
-				Thread.sleep(WAIT_UNTIL_RECONNECT);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+        	waitForReconnect();
 	    } catch (ConnectException ce) {
 	        log.error("(CM) [" + connectionCount + "] Connect exception: " + ce.toString()); //$NON-NLS-1$
 	        closeConnection();
-	        try {
-				Thread.sleep(WAIT_UNTIL_RECONNECT);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+        	waitForReconnect();
 	    } catch (IOException ioe) {
 	        log.error("(CM) [" + connectionCount + "] IO exception: " + ioe.toString()); //$NON-NLS-1$
-			try {
-				Thread.sleep(WAIT_UNTIL_RECONNECT);
-			} catch (InterruptedException e1) {
-				System.err.println("Thread interrupted while sleeping!");
-				e1.printStackTrace();
-			}
+        	waitForReconnect();
 	    }
 	    return false;
     }
 
+    private void waitForReconnect() {
+    	log.info("Wating for " + currentWaitTime + " ms to retry to reconnect");
+        try {
+    		Thread.sleep(currentWaitTime);
+        } catch (InterruptedException e) {
+        	log.warn("Wating for " + currentWaitTime + " ms has been interrupted");
+        }
+		currentWaitTime *=2; // double the wait time for the next iteration
+		if (currentWaitTime > MAXIMUM_RECONNECT_WAIT_TIME) {
+			currentWaitTime = MAXIMUM_RECONNECT_WAIT_TIME;
+		}
+    }
+    
     protected void readOutput() {
     	try {
         	log.debug("(CM) [" + connectionCount + "] Reading call monitor input ... ");
@@ -198,7 +191,6 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
             {
                 clientSocket.close();
             }
-//            this.interrupt();
         } catch (IOException e) {
             Debug.error(e.toString());
         }
