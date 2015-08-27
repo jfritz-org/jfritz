@@ -481,6 +481,7 @@ public class FritzBox extends BoxClass {
 		//addConfiguredPort(new Port(-1, messages.getMessage("analog_telephones_all"), "9", "9"));
 		if (response.size() != 1) {
 			Debug.warning("addAnalogPorts: received invalid response size. Will not add any analog ports");
+			outputStringVector(response);
 		} else {
 			try {
 				int analogCount = Integer.parseInt(response.get(0));
@@ -517,6 +518,12 @@ public class FritzBox extends BoxClass {
 		}
 	}
 
+	private void outputStringVector(Vector<String> response) {
+		for (int i=0; i<response.size(); i++) {
+			Debug.warning(response.get(i));
+		}
+	}
+
 	private void addIsdnPorts()
 	{
 		// detect configured ports
@@ -526,6 +533,7 @@ public class FritzBox extends BoxClass {
 
 		if (response.size() != 1) {
 			Debug.warning("addIsdnPorts: received invalid response size. Will not add any ISDN ports");
+			outputStringVector(response);
 		} else {
 			try {
 				int isdnCount = Integer.parseInt(response.get(0));
@@ -587,6 +595,7 @@ public class FritzBox extends BoxClass {
 
 		if (response.size() != 1) {
 			Debug.warning("addDectMiniPorts: received invalid response size. Will not add any DECT ports");
+			outputStringVector(response);
 		} else {
 			try {
 				int dectCount = Integer.parseInt(response.get(0));
@@ -655,6 +664,7 @@ public class FritzBox extends BoxClass {
 
 		if (response.size() != 2) {
 			Debug.warning("addVoIPPorts: received invalid response size. Will not add any VoIP ports");
+			outputStringVector(response);
 		} else {
 			@SuppressWarnings("unused")
 			boolean voipEnabled =  response.get(0).equals("1");
@@ -1362,19 +1372,13 @@ public class FritzBox extends BoxClass {
 				    fbc.postToPageAndGetAsString(FritzBoxCommunication.URL_WEBCM, postdata);
 				} else {
 					Debug.debug("doCall: Firmware is greater/or equal than 06.01");
-					String retDialPort = getQueryDialPort();
-					String port_query = port.getDialPort();
 					
-					if (port_query.equals(retDialPort)) {
-						Debug.debug("doCall: Dialing port already set to " + retDialPort);
-					} else {
-						Debug.debug("doCall: Setting dialing port to " + port_query + " (was "+ retDialPort + ")");
-					   	generateDoCallPostDataDialPortLua(postdata, port_query);
-					   	fbc.postToPageAndGetAsString(URL_DIAL_FONBOOK_LUA, postdata);
-					}
+					Debug.debug("doCall: Setting dialing port to " + port.getDialPort());
+				   	generateDoCallPostDataDialPortLua(postdata, port.getDialPort());
+				   	fbc.postToPageAndGetAsString(URL_DIAL_FONBOOK_LUA, postdata);
 					
 					String dial_query = "";
-					dial_query = "dial=" + currentNumber + "&port=" + port.getDialPort();
+					dial_query = "dial=" + currentNumber + "&orig_port=" + port.getDialPort();
 					dial_query = dial_query.replace("#", "%23"); // # %23
 					dial_query = dial_query.replace("*", "%2A"); // * %2A
 					fbc.getPageAsString(URL_FONBOOK_LIST_LUA + "?" + dial_query);
