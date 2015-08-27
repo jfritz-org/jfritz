@@ -56,18 +56,23 @@ public class Port implements Serializable {
 		}
 
 		output.append("Name: ");
-		output.append(this.name);
-		output.append(" ");
+		if (this.name != null) { 
+			output.append(this.name);
+		}
 		
 		output.append(" ID: ");
 		output.append(this.id);
 
 		output.append(" DialPort: ");
-		output.append(this.dialPort);
+		if (this.dialPort != null) { 
+			output.append(this.dialPort);
+		}
 		
 		output.append(" Internal number: ");
-		output.append(this.internalNumber);
-
+		if (this.internalNumber != null) { 
+			output.append(this.internalNumber);
+		}
+		
 		return output.toString();
 	}
 
