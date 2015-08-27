@@ -169,9 +169,7 @@ public class ClientConnectionListener extends Thread {
 					}
 
 				}catch(IOException e){
-					Debug.errDlg(messages.getMessage("error_binding_port") + ": " + properties.getProperty("clients.port"));
-					Debug.error(e.toString());
-					e.printStackTrace();
+					Debug.errDlg(messages.getMessage("error_binding_port") + ": " + properties.getProperty("clients.port"), e);
 				}
 
 				isListening = false;

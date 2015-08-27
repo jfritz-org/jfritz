@@ -79,8 +79,7 @@ public class JFritzBackup {
 			FileUtils.copyDirectory(new File(sourceDirectory), new File(dest), new MyFileFilter("xml"));
 			log.info("Created backup successfully");
 		} catch (IOException e) {
-			log.error("Error while creating backup", e);
-			Debug.errDlg("Error while creating backup");
+			Debug.errDlg("Error while creating backup", e);
 		}
 	}
 

@@ -217,14 +217,28 @@ public class Debug {
 		msg(LS_ALWAYS, message);
 		JOptionPane.showMessageDialog(null, message, messages.getMessage("information"), JOptionPane.INFORMATION_MESSAGE); //$NON-NLS-1$
 	}
-
+		
 	/**
 	 * Show error Dialog with message
 	 *
 	 * @param message
 	 */
 	public static void errDlg(String message) {
-		error(message);
+		errDlg(message, null);
+	}
+
+	/**
+	 * Show error Dialog with message and detailed throwable stack trace
+	 *
+	 * @param message
+	 * @param throwable
+	 */
+	public static void errDlg(String message, Throwable t) {
+		if (t == null) {
+			error(message);
+		} else {
+			error(message + " -- " + t.getMessage());
+		}
 		JOptionPane.showMessageDialog(null, message,
 				messages.getMessage("error"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
 	}

@@ -206,8 +206,7 @@ public class JFritzEventDispatcher extends Thread {
 	    	}
 	    } catch (JDOMParseException jdomex ) {
 	    	// FIXME: I18N
-	        Debug.errDlg("Error parsing "+EVENT_MANAGMENT_FILE_NAME +"\n"+
-	        		"Line: " + jdomex.getLineNumber() + " Column: " + jdomex.getColumnNumber());
+	        Debug.errDlg("Error parsing "+EVENT_MANAGMENT_FILE_NAME +"\n"+ "Line: " + jdomex.getLineNumber() + " Column: " + jdomex.getColumnNumber(), jdomex);
 	    } catch( Exception ex ) {
 	        ex.printStackTrace();
 	      }

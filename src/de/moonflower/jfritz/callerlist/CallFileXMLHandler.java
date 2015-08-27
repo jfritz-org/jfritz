@@ -108,7 +108,7 @@ public class CallFileXMLHandler extends DefaultHandler {
 				calldate = df.parse(chars.replaceAll("\"", "")); //$NON-NLS-1$,  //$NON-NLS-2$
 			} catch (ParseException e) {
 				Debug.error("Date problem:  " + chars); //$NON-NLS-1$
-				Debug.errDlg("Date problem");
+				Debug.errDlg("Date problem", e);
 				calldate = null;
 				return;
 			}

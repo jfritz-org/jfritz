@@ -215,16 +215,11 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 				}catch(ConnectException e){
 
-					Debug.errDlg(messages.getMessage("connection_server_refused"));
-					Debug.error("Error connecting to the server");
-					Debug.error(e.toString());
-					e.printStackTrace();
+					Debug.errDlg(messages.getMessage("connection_server_refused"), e);
 					connect = false;
 
 				}catch(IOException e){
-					Debug.errDlg(messages.getMessage("connection_server_refused"));
-					Debug.error(e.toString());
-					e.printStackTrace();
+					Debug.errDlg(messages.getMessage("connection_server_refused"), e);
 				}
 
 				isConnected = false;

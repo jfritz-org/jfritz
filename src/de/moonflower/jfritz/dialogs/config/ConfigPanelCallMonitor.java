@@ -264,13 +264,13 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 				}
 				this.startStopCallMonitor();
 			} catch (IOException e1) {
-				Debug.errDlg(messages.getMessage("box.not_found")); //$NON-NLS-1$
+				Debug.errDlg(messages.getMessage("box.not_found"), e1); //$NON-NLS-1$
 				startStopCallMonitorButton.setSelected(!startStopCallMonitorButton.isSelected());
 			} catch (PageNotFoundException e1) {
-				Debug.errDlg(messages.getMessage("box.communication_error")); //$NON-NLS-1$
+				Debug.errDlg(messages.getMessage("box.communication_error"), e1); //$NON-NLS-1$
 				startStopCallMonitorButton.setSelected(!startStopCallMonitorButton.isSelected());
 			} catch (FirmwareNotDetectedException e1) {
-				Debug.errDlg(messages.getMessage("unknown_firmware")); //$NON-NLS-1$
+				Debug.errDlg(messages.getMessage("unknown_firmware"), e1); //$NON-NLS-1$
 				startStopCallMonitorButton.setSelected(!startStopCallMonitorButton.isSelected());
 			}
 			c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

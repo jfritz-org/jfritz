@@ -828,10 +828,10 @@ public class FritzBox extends BoxClass {
 					result = callList.getCallerList(progressListener);
 				}
 			} catch (WrongPasswordException e) {
-				Debug.errDlg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
+				Debug.errDlg(messages.getMessage("box.wrong_password"), e); //$NON-NLS-1$
 				result = new Vector<Call>();
 			} catch (InvalidFirmwareException e) {
-				Debug.errDlg(messages.getMessage("unknown_firmware")); //$NON-NLS-1$
+				Debug.errDlg(messages.getMessage("unknown_firmware"), e); //$NON-NLS-1$
 				result = new Vector<Call>();
 			}
 		} else {
@@ -1514,35 +1514,34 @@ public class FritzBox extends BoxClass {
 
 	private void handleInvalidSessionIdException(final InvalidSessionIdException e) {
 		try {
-			Debug.errDlg(messages.getMessage("box.invalid_session_id").replaceAll("%FIRMWARE%", fbc.getFirmwareVersion().toString()));
+			Debug.errDlg(messages.getMessage("box.invalid_session_id").replaceAll("%FIRMWARE%", fbc.getFirmwareVersion().toString()), e);
 		} catch (Exception e1) {
-			Debug.errDlg(messages.getMessage("box.invalid_session_id").replaceAll("%FIRMWARE%", "unknown"));
+			Debug.errDlg(messages.getMessage("box.invalid_session_id").replaceAll("%FIRMWARE%", "unknown"), e);
 		}
 	}
 	
 	private void handleInvalidCredentialsException(final InvalidCredentialsException e) {
 		if (this.getFirmware().isLowerThan(05, 50)) {
-			Debug.errDlg(messages.getMessage("box.wrong_password"));
+			Debug.errDlg(messages.getMessage("box.wrong_password"), e);
 		} else {
-			Debug.errDlg(messages.getMessage("box.wrong_password_or_username"));
+			Debug.errDlg(messages.getMessage("box.wrong_password_or_username"), e);
 		}
 	}
 
 	private void handleLoginBlockedException(LoginBlockedException e) {
 		if (this.getFirmware().isLowerThan(05, 50)) {
-			Debug.errDlg(messages.getMessage("box.wrong_password.wait").replaceAll("%WAIT%", e.getRemainingBlockTime()));
+			Debug.errDlg(messages.getMessage("box.wrong_password.wait").replaceAll("%WAIT%", e.getRemainingBlockTime()), e);
 		} else {
-			Debug.errDlg(messages.getMessage("box.wrong_password_or_username.wait").replaceAll("%WAIT%", e.getRemainingBlockTime()));
+			Debug.errDlg(messages.getMessage("box.wrong_password_or_username.wait").replaceAll("%WAIT%", e.getRemainingBlockTime()), e);
 		}
 	}
 
 	private void handlePageNotFoundException(PageNotFoundException e) {
-		Debug.errDlg("Could not execute command, page not found!");
+		Debug.errDlg("Could not execute command, page not found!", e);
 	}
 
-	@SuppressWarnings("unused")
 	private void handleFirmwareNotDetectedException(final FirmwareNotDetectedException e) {
-		Debug.errDlg("Could not detect firmware!");
+		Debug.errDlg("Could not detect firmware!", e);
 	}
 
 	public int getMaxRetryCount() {

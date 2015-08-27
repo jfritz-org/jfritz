@@ -122,8 +122,7 @@ public class JFritzProperties extends Properties {
             if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
                     || e.getLocalizedMessage().startsWith(
                             "Invalid system identifier")) { //$NON-NLS-1$
-                Debug.error(e.toString());
-            Debug.errDlg("Error on parsing " + filename);
+            	Debug.errDlg("Error on parsing " + filename, e);
             }
         } catch (IOException e) {
             Debug.error("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$

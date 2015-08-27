@@ -189,11 +189,11 @@ public class JFritzDataDirectory {
 						FileUtils.deleteDirectory(src);
 					} catch (IOException e1) {
 						Debug.errDlg("Could not delete old data directory '" + src + "'!\n" +
-								e.getMessage());
+								e.getMessage(), e1);
 					}
 				} catch (IOException e1) {
 					Debug.errDlg("Could not copy data directory from '" + SAVE_DIR + "' to '" + path + "'!\n" +
-							e.getMessage());
+							e.getMessage(), e1);
 				}
 			} finally {
 				DOMConfigurator.configure(JFritzUtils.getFullPath("/log4j.xml"));
