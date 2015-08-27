@@ -1861,6 +1861,8 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 		monitoringPanel.prepareShutdown();
 
+		JFritz.getBoxCommunication().stopCallMonitor();
+		
 		// TODO: möglicherweise speichern der Einstellungen für
 		// phonebookPanel
 		// quickDialPanel
