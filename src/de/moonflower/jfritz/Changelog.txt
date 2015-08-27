@@ -20,6 +20,10 @@ TODO tel.search.ch überprüfen und reparieren
 - TODO: Sounds trennen und individualisierbar gestalten
 - TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
 
+JFritz 0.7.5_10:
+- Bugfix: Anrufmonitor wird beim Beenden von JFritz korrekt gestoppt
+- Bugfix: Setzen der Nebenstelle bei der Wählhilfe
+
 JFritz 0.7.5_9:
 - Logging für das Hinzufügen von Nebenstellen erhöht
 - Anrufmonitor versucht bei Problemen nun nicht ständig sofort eine neue Verbindung aufzubauen
