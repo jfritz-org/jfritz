@@ -17,7 +17,6 @@
 	<classpathentry kind="lib" path="lib/bsf-2.3.0.jar"/>
 	<classpathentry kind="lib" path="lib/looks-2.1.4.jar"/>
 	<classpathentry kind="lib" path="lib-dev/ant.jar"/>
-	<classpathentry kind="lib" path="lib-dev/imtask.jar"/>
 	<classpathentry kind="lib" path="lib-dev/mail.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib-dev/ant-deb-0.0.1.jar"/>

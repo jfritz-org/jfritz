@@ -74,16 +74,8 @@
 		<!-- prepare all debug-files -->
 		<antcall target="prepare-beta-files" />
 
-		<!-- scp beta files to jfritz.robotniko.de -->
+		<!-- scp beta files to jfritz.org -->
 		<antcall target="scp-beta" />
-	</target>
-
-	<target name="jabber-msg" depends="getVersion">
-		  <taskdef name="jabber" classname="com.tfftech.ant.taskdefs.im.jabber.JabberTask" />
-		  <jabber host="robotniko.de" secure="true" port="25223" from="${jabber-user}" password="${jabber-pwd}"
-		  	tolist="${jabber-rcp1},${jabber-rcp2}">
-		  	<message>Neue Version ${version} ist online: http://jfritz.robotniko.de/beta/</message>
-		  </jabber>
 	</target>
 
 	<target name="email-msg" depends="getVersion">
@@ -142,7 +134,7 @@
 		</mail>
 	</target>
 
-	<target name="scp-update-beta" depends="create-updatefiles" description="Uploads update files to jfritz.robotniko.de/update">
+	<target name="scp-update-beta" depends="create-updatefiles" description="Uploads update files to jfritz.org/update">
 		<zip destfile="${update}/jfritz-${version}-update.zip" basedir="${update}/${version}" />
 		<scp file="${update}/jfritz-${version}-update.zip" port="${port1}" trust="yes" todir="${user1}@${server1}:./public/update/" verbose="yes" password="${password1}" />
 		<sshexec command="unzip ./public/update/jfritz-${version}-update.zip -d ./public/update/${version}" username="${user1}" host="${server1}" port="${port1}" trust="yes" password="${password1}" />
@@ -490,22 +482,31 @@ http://www.jfritz.org/
 		<delete dir="${release}/win/tmp" />
 	</target>
 
-	<target name="scp-beta" depends="getVersion" description="Copy windows-, linux and mac release files to jfritz.robotniko.de/beta">
-		<scp file="${dist}/Changelog.txt" port="${port2}" trust="yes" todir="${user2}@${server2}:${scp-beta-path}" verbose="yes" password="${password2}"/>
-		<scp file="${release}/win/JFritz-${version}_${revision}-Beta-Win.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
-		<scp file="${release}/win/JFritz-${version}_${revision}-Beta.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
-		<scp file="${release}/win/JFritz-${version}_${revision}-Beta-Setup.exe" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
-		<scp file="${release}/linux/JFritz-${version}_${revision}-Beta.tar.gz" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
-		<scp file="${release}/linux/JFritz-${version}_${revision}-Beta.deb" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
-		<scp file="${release}/mac/JFritz-${version}_${revision}-Beta-Mac.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
+	<target name="scp-beta" depends="getVersion" description="Copy windows-, linux and mac release files to jfritz.org/beta">
+		<sshexec username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" command="rm -f ./public/Changelog.txt"/>
+		<sshexec username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" command="rm -f ./public/JFritz-${version}_${revision}-Beta-Mac.zip"/>
+		<sshexec username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" command="rm -f ./public/JFritz-${version}_${revision}-Beta-Win.zip"/>
+		<sshexec username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" command="rm -f ./public/JFritz-${version}_${revision}-Beta.zip"/>
+		<sshexec username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" command="rm -f ./public/JFritz-${version}_${revision}-Beta-Setup.exe"/>
+		<sshexec username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" command="rm -f ./public/JFritz-${version}_${revision}-Beta.tar.gz"/>
+		<sshexec username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" command="rm -f ./public/JFritz-${version}_${revision}-Beta.deb"/>
+	    
+		<scp port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}" file="${dist}/Changelog.txt"/>
+		<scp port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}" file="${release}/win/JFritz-${version}_${revision}-Beta-Win.zip"/>
+		<scp port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}" file="${release}/win/JFritz-${version}_${revision}-Beta.zip"/>
+		<scp port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}" file="${release}/win/JFritz-${version}_${revision}-Beta-Setup.exe"/>
+		<scp port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}" file="${release}/linux/JFritz-${version}_${revision}-Beta.tar.gz"/>
+		<scp port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}" file="${release}/linux/JFritz-${version}_${revision}-Beta.deb"/>
+		<scp port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}" file="${release}/mac/JFritz-${version}_${revision}-Beta-Mac.zip"/>
 
-		<sshexec command="mv -f ${scp-beta-path}/JFritz* ${scp-beta-path}/old"  username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
-		<sshexec command="mv -f ./public/JFritz-${version}_${revision}-Beta-Mac.zip ${scp-beta-path}" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
-		<sshexec command="mv -f ./public/JFritz-${version}_${revision}-Beta-Win.zip ${scp-beta-path}" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
-		<sshexec command="mv -f ./public/JFritz-${version}_${revision}-Beta.zip ${scp-beta-path}" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
-		<sshexec command="mv -f ./public/JFritz-${version}_${revision}-Beta-Setup.exe ${scp-beta-path}" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
-		<sshexec command="mv -f ./public/JFritz-${version}_${revision}-Beta.tar.gz ${scp-beta-path}" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
-		<sshexec command="mv -f ./public/JFritz-${version}_${revision}-Beta.deb ${scp-beta-path}" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
+		<sshexec username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" command="mv -f ${scp-beta-path}/JFritz* ${scp-beta-path}/old"/>
+		<sshexec username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" command="mv -f ./public/Changelog.txt ${scp-beta-path}"/>
+		<sshexec username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" command="mv -f ./public/JFritz-${version}_${revision}-Beta-Mac.zip ${scp-beta-path}"/>
+		<sshexec username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" command="mv -f ./public/JFritz-${version}_${revision}-Beta-Win.zip ${scp-beta-path}"/>
+		<sshexec username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" command="mv -f ./public/JFritz-${version}_${revision}-Beta.zip ${scp-beta-path}"/>
+		<sshexec username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" command="mv -f ./public/JFritz-${version}_${revision}-Beta-Setup.exe ${scp-beta-path}"/>
+		<sshexec username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" command="mv -f ./public/JFritz-${version}_${revision}-Beta.tar.gz ${scp-beta-path}"/>
+		<sshexec username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" command="mv -f ./public/JFritz-${version}_${revision}-Beta.deb ${scp-beta-path}"/>
 	</target>
 
 	<target name="email-test" depends="getVersion">
