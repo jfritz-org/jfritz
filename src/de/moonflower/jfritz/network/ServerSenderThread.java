@@ -10,6 +10,8 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SealedObject;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.callerlist.filter.CallFilter;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
@@ -28,6 +30,7 @@ import de.moonflower.jfritz.utils.Debug;
  *
  */
 public class ServerSenderThread extends Thread {
+	private final static Logger log = Logger.getLogger(ServerSenderThread.class);
 
 	private boolean stop;
 
@@ -115,12 +118,12 @@ public class ServerSenderThread extends Thread {
 						objectOut.reset();
 
 					}catch(IOException e){
-						Debug.error("Error writing change information to client! host: "+remoteAddress);
-						Debug.error(e.toString());
+						Debug.error(log, "Error writing change information to client! host: "+remoteAddress);
+						Debug.error(log, e.toString());
 						e.printStackTrace();
 					} catch (IllegalBlockSizeException e) {
-						Debug.error("Illegal block size exception!");
-						Debug.error(e.toString());
+						Debug.error(log, "Illegal block size exception!");
+						Debug.error(log, e.toString());
 						e.printStackTrace();
 					}
 

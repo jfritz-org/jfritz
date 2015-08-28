@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -28,6 +29,7 @@ import de.moonflower.jfritz.utils.Debug;
  *
  */
 public class CallFileXMLHandler extends DefaultHandler {
+	private final static Logger log = Logger.getLogger(CallFileXMLHandler.class);
 
 	Vector<Call> newCalls;
 
@@ -107,8 +109,8 @@ public class CallFileXMLHandler extends DefaultHandler {
 			try {
 				calldate = df.parse(chars.replaceAll("\"", "")); //$NON-NLS-1$,  //$NON-NLS-2$
 			} catch (ParseException e) {
-				Debug.error("Date problem:  " + chars); //$NON-NLS-1$
-				Debug.errDlg("Date problem", e);
+				Debug.error(log, "Date problem:  " + chars); //$NON-NLS-1$
+				Debug.errDlg(log, "Date problem", e);
 				calldate = null;
 				return;
 			}

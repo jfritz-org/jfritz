@@ -24,6 +24,8 @@
 
 package de.moonflower.jfritz.utils;
 
+import org.apache.log4j.Logger;
+
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
 
@@ -36,6 +38,7 @@ import sun.misc.SignalHandler;
  *      http://www.geeksville.com/~kevinh/projects/javasignals/
  */
 public class ShutdownHook {
+	private final static Logger log = Logger.getLogger(ShutdownHook.class);
 
   /**
    * Register a handler to be called upon VM shutdown/termination, i.e. SIGINT or SIGTERM signal events.
@@ -56,7 +59,7 @@ public class ShutdownHook {
 	            }
 	          }
 	          catch( Throwable t ) {
-	            Debug.error( t.toString() );
+	            Debug.error(log, t.toString() );
 	          }
 	        }
 	      });
@@ -65,7 +68,7 @@ public class ShutdownHook {
     	  // just do nothing, signal may be unknown or already in use
       }
       catch( Throwable t ) {
-          Debug.error( t.toString() );
+          Debug.error(log,  t.toString() );
       }
 
       try {
@@ -80,7 +83,7 @@ public class ShutdownHook {
 	            }
 	          }
 	          catch( Throwable t ) {
-	        	Debug.error(t.toString() );
+	        	Debug.error(log, t.toString() );
 	          }
 	        }
 	      });
@@ -89,7 +92,7 @@ public class ShutdownHook {
     	  // just do nothing, signal may be unknown or already in use
       }
       catch( Throwable t ) {
-          Debug.error( t.toString() );
+          Debug.error(log,  t.toString() );
       }
 
       try {
@@ -104,7 +107,7 @@ public class ShutdownHook {
 	            }
 	          }
 	          catch( Throwable t ) {
-	        	Debug.error( t.toString() );
+	        	Debug.error(log,  t.toString() );
 	          }
 	        }
 	      });
@@ -113,7 +116,7 @@ public class ShutdownHook {
     	  // just do nothing, signal may be unknown or already in use
       }
       catch( Throwable t ) {
-          Debug.error( t.toString() );
+          Debug.error(log,  t.toString() );
       }
 
 
@@ -129,7 +132,7 @@ public class ShutdownHook {
 	            }
 	          }
 	          catch( Throwable t ) {
-	        	Debug.error( t.toString() );
+	        	Debug.error(log,  t.toString() );
 	          }
 	        }
 	      });
@@ -138,7 +141,7 @@ public class ShutdownHook {
     	  // just do nothing, signal may be unknown or already in use
       }
       catch( Throwable t ) {
-          Debug.error( t.toString() );
+          Debug.error(log,  t.toString() );
       }
 
       try {
@@ -153,7 +156,7 @@ public class ShutdownHook {
 	            }
 	          }
 	          catch( Throwable t ) {
-	        	Debug.error( t.toString() );
+	        	Debug.error(log,  t.toString() );
 	          }
 	        }
 	      });
@@ -162,7 +165,7 @@ public class ShutdownHook {
     	  // just do nothing, signal may be unknown or already in use
       }
       catch( Throwable t ) {
-          Debug.error( t.toString() );
+          Debug.error(log,  t.toString() );
       }
   }
 

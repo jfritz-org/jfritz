@@ -2,6 +2,8 @@ package de.moonflower.jfritz.box.fritzbox.callerlist;
 
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.exceptions.FeatureNotSupportedByFirmware;
 import de.moonflower.jfritz.messages.MessageProvider;
@@ -10,6 +12,7 @@ import de.moonflower.jfritz.struct.IProgressListener;
 import de.moonflower.jfritz.utils.Debug;
 
 public class CallListCsvParser {
+	private final static Logger log = Logger.getLogger(CallListCsvParser.class);
 
 	private MessageProvider messages = MessageProvider.getInstance();
 
@@ -30,7 +33,7 @@ public class CallListCsvParser {
 		calls.clear();
 
 		if (input == null || "".equals(input)) {
-			Debug.error("CallListCsvParser: input is null or empty");
+			Debug.error(log, "CallListCsvParser: input is null or empty");
 			throw new FeatureNotSupportedByFirmware("Get caller list", messages.getMessage("box.no_caller_list"));
 		}
 
@@ -57,7 +60,7 @@ public class CallListCsvParser {
 		if (lines.length > 1) {
 			parseSecondLine();
 		} else {
-			Debug.error("CallListCsvParser: missing header line");
+			Debug.error(log, "CallListCsvParser: missing header line");
 			throw new FeatureNotSupportedByFirmware("Get caller list", messages.getMessage("box.no_caller_list"));
 		}
 
@@ -71,7 +74,7 @@ public class CallListCsvParser {
 		if (separatorLine.startsWith("sep=")) {
 			parseSeparatorLine(separatorLine);
 		} else {
-			Debug.error("CallListCsvParser: expected sep=; but got: " + separatorLine);
+			Debug.error(log, "CallListCsvParser: expected sep=; but got: " + separatorLine);
 			throw new FeatureNotSupportedByFirmware("Get caller list", messages.getMessage("box.no_caller_list"));
 		}
 	}
@@ -87,7 +90,7 @@ public class CallListCsvParser {
 				}
 			}
 		} else {
-			Debug.error("CallListCsvParser: could not extract separator from line: " + separatorLine);
+			Debug.error(log, "CallListCsvParser: could not extract separator from line: " + separatorLine);
 			throw new FeatureNotSupportedByFirmware("Get caller list", messages.getMessage("box.no_caller_list"));
 		}
 	}
@@ -117,7 +120,7 @@ public class CallListCsvParser {
 					}
 				}
 			} catch (FeatureNotSupportedByFirmware fns) {
-				Debug.warning(fns.toString());
+				Debug.warning(log, fns.toString());
 			}
 		}
 	}

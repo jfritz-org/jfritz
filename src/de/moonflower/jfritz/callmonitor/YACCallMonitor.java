@@ -7,6 +7,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.utils.Debug;
@@ -19,6 +21,7 @@ import de.moonflower.jfritz.utils.Debug;
  *
  */
 public class YACCallMonitor extends Thread implements CallMonitorInterface{
+	private final static Logger log = Logger.getLogger(YACCallMonitor.class);
 
 	private boolean isRunning = false;
 
@@ -48,11 +51,11 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 	public void startYACListener() {
 		isRunning = true;
 		try {
-			Debug.info("Starting YAC-Monitor"); //$NON-NLS-1$
+			Debug.info(log, "Starting YAC-Monitor"); //$NON-NLS-1$
 			serverSocket = new ServerSocket(port);
 			connected = true;
 			this.setConnectedStatus();
-            Debug.info("YAC-Monitor ready"); //$NON-NLS-1$
+            Debug.info(log, "YAC-Monitor ready"); //$NON-NLS-1$
 			while (isRunning) {
 				Socket socket = serverSocket.accept();
 				BufferedReader input = new BufferedReader(
@@ -63,7 +66,7 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 					if (msg == null)
 						break;
 					// parsing incoming DATA
-					Debug.debug("Got YAC-Data: " + msg); //$NON-NLS-1$
+					Debug.debug(log, "Got YAC-Data: " + msg); //$NON-NLS-1$
 					// if last character is $00, delete it
 					if (msg.length() > 0 && msg.charAt(msg.length() - 1) == 0) {
 						msg = msg.substring(0, msg.length() - 1);
@@ -117,14 +120,14 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 			connected = false;
 			this.setDisconnectedStatus();
 		} catch (IOException e) {
-			Debug.error(e.toString());
+			Debug.error(log, e.toString());
 			connected = false;
 			this.setDisconnectedStatus();
 		}
 	}
 
 	public void stopCallMonitor() {
-		Debug.info("Stopping YACListener"); //$NON-NLS-1$
+		Debug.info(log, "Stopping YACListener"); //$NON-NLS-1$
 		try {
 			if (serverSocket != null)
 			{
@@ -132,7 +135,7 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 			}
 			connected = false;
 		} catch (IOException e) {
-			Debug.error("Fehler beim Schliessen des YAC-Sockets"); //$NON-NLS-1$
+			Debug.error(log, "Fehler beim Schliessen des YAC-Sockets"); //$NON-NLS-1$
 		}
 		isRunning = false;
 		this.setDisconnectedStatus();
@@ -143,7 +146,7 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 	}
 
 	public void closeConnection() {
-		Debug.warning("Method not implemented!");
+		Debug.warning(log, "Method not implemented!");
 	}
 
 	private void setConnectedStatus()

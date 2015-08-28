@@ -6,6 +6,8 @@ package de.moonflower.jfritz.utils.network;
 
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.messages.MessageProvider;
@@ -17,6 +19,7 @@ import de.moonflower.jfritz.utils.StatusBarController;
  *
  */
 public class SSDPdiscoverThread extends Thread {
+	private final static Logger log = Logger.getLogger(SSDPdiscoverThread.class);
 
 	int timeout;
 	private StatusBarController statusBarController = new StatusBarController();
@@ -48,7 +51,7 @@ public class SSDPdiscoverThread extends Thread {
 			jframe.setBusy(false);
 		}
 		statusBarController.fireStatusChanged("");
-		Debug.info("Discover thread");
+		Debug.info(log, "Discover thread");
 	}
 
 	/**

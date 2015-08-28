@@ -32,6 +32,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzDataDirectory;
 import de.moonflower.jfritz.JFritzWindow;
@@ -77,6 +79,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			}
 		}
 	}
+	private final static Logger log = Logger.getLogger(PhoneBookPanel.class);
 
 	private static final long serialVersionUID = 1;
 
@@ -163,11 +166,11 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			clearAllFilter();
 		} else if (e.getActionCommand().equals("google")) { //$NON-NLS-1$
 			if (googleLink != null) {
-				Debug.debug(googleLink);
+				Debug.debug(log, googleLink);
 				BrowserLaunch.openURL(googleLink);
 			}
 		} else {
-			Debug.warning("Unsupported Command: " + e.getActionCommand()); //$NON-NLS-1$
+			Debug.warning(log, "Unsupported Command: " + e.getActionCommand()); //$NON-NLS-1$
 		}
 	}
 
@@ -329,7 +332,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 				}
 			}
 		} else {
-			Debug.errDlg(messages.getMessage("error_no_row_chosen")); //$NON-NLS-1$
+			Debug.errDlg(log, messages.getMessage("error_no_row_chosen")); //$NON-NLS-1$
 		}
 	}
 

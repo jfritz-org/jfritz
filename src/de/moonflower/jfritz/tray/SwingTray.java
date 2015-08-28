@@ -21,6 +21,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.utils.Debug;
 
 /**
@@ -30,7 +32,9 @@ import de.moonflower.jfritz.utils.Debug;
  * QUELLE: http://www.java-forum.org/awt-swing-swt/82465-abstract-windowing-toolkit-trayicon-ubuntu.html
  */
 public class SwingTray implements Tray {
-    private JPopupMenu popupMenu;
+	private final static Logger log = Logger.getLogger(SwingTray.class);
+
+	private JPopupMenu popupMenu;
     private JDialog trayParent;
     private TrayIcon trayIcon;
     private SystemTray tray;
@@ -52,7 +56,7 @@ public class SwingTray implements Tray {
         }
         catch (IOException ex)
         {
-        	Debug.error(ex.toString());
+        	Debug.error(log, ex.toString());
         }
 
         //ClassCastException fix

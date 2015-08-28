@@ -26,10 +26,10 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.apache.http.client.ClientProtocolException;
+import org.apache.log4j.Logger;
 
 import com.nexes.wizard.Wizard;
 
-import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
@@ -46,9 +46,7 @@ import de.robotniko.fboxlib.exceptions.PageNotFoundException;
 public class ConfigPanelFritzBoxLogin extends JPanel implements ActionListener,
 		ConfigPanel, DocumentListener {
 
-	/**
-	 *
-	 */
+	private final static Logger log = Logger.getLogger(ConfigPanelFritzBoxLogin.class);
 	private static final long serialVersionUID = -2094680014900642941L;
 
 	private String configPath;
@@ -327,7 +325,7 @@ public class ConfigPanelFritzBoxLogin extends JPanel implements ActionListener,
 			enableNextButtonInWizard();
 
 		} catch (ClientProtocolException e) {
-			Debug.error(e.getMessage());
+			Debug.error(log, e.getMessage());
 			setErrorMessage(e.getMessage());
 		} catch (InvalidCredentialsException e) {
 			handleInvalidCredentialsException(e);

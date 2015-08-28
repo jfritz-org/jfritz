@@ -8,6 +8,8 @@ import java.util.Locale;
 
 import javax.swing.JComboBox;
 
+import org.apache.log4j.Logger;
+
 import com.nexes.wizard.Wizard;
 import com.nexes.wizard.WizardPanelDescriptor;
 
@@ -40,6 +42,7 @@ import de.moonflower.jfritz.utils.Debug;
  *
  */
 public class ConfigWizard {
+	private final static Logger log = Logger.getLogger(ConfigWizard.class);
 
 	private Wizard wizard;
 	private Image icon;
@@ -58,7 +61,7 @@ public class ConfigWizard {
 		icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource(
 				"/de/moonflower/jfritz/resources/images/tray16.png")); //$NON-NLS-1$
 
-		Debug.info("asking the user for the language");
+		Debug.info(log, "asking the user for the language");
 
 		Wizard.setBackText(messages.getMessage("back"));
 		Wizard.setNextText(messages.getMessage("next"));
@@ -68,7 +71,7 @@ public class ConfigWizard {
 		//if user clicked cancel on the language dialog, return back to jfritz
 		if (!askLanguage(parent)) {
 
-			Debug.info("Create JFritz config wizard");
+			Debug.info(log, "Create JFritz config wizard");
 			wizard = new Wizard(JFritz.getJframe());
 			wizard.getDialog().setIconImage(icon);
 
@@ -120,7 +123,7 @@ public class ConfigWizard {
        switch (ret){
 
        		case 0:
-       			Debug.info("Finished clicked, saving settings");
+       			Debug.info(log, "Finished clicked, saving settings");
        			if (splash != null) {
        				splash.setVisible(true);
        			}
@@ -136,7 +139,7 @@ public class ConfigWizard {
        			}
    				catch (InvalidFirmwareException ife)
    				{
-   					Debug.error("Invalid firmware");
+   					Debug.error(log, "Invalid firmware");
    				}
 
        			((ConfigPanelMessage)descriptor5.getPanelComponent()).saveSettings();
@@ -146,10 +149,10 @@ public class ConfigWizard {
 
 				return false;
        		case 1:
-       			Debug.info("Cancel clicked, not saving values");
+       			Debug.info(log, "Cancel clicked, not saving values");
        			return true;
        		case 2:
-       			Debug.info("Error in the wizard, bailing out..");
+       			Debug.info(log, "Error in the wizard, bailing out..");
        			return true;
        		default:
        			return true;

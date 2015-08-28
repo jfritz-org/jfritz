@@ -18,6 +18,7 @@ import javax.swing.UIManager;
 import jd.nutils.OSDetector;
 
 import org.apache.http.auth.InvalidCredentialsException;
+import org.apache.log4j.Logger;
 
 import de.moonflower.jfritz.backup.JFritzBackup;
 import de.moonflower.jfritz.box.BoxCommunication;
@@ -55,6 +56,8 @@ import de.robotniko.fboxlib.exceptions.PageNotFoundException;
  *
  */
 public final class JFritz implements  StatusListener {
+	private final static Logger log = Logger.getLogger(JFritz.class);
+
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/wiki/Kategorie:Hilfe"; //$NON-NLS-1$
 
 	public final static String CALLS_FILE = "jfritz.calls.xml"; //$NON-NLS-1$
@@ -160,7 +163,7 @@ public final class JFritz implements  StatusListener {
 												 properties.getProperty("box.username"), 
 												 Encryption.decrypt(properties.getProperty("box.password")));
 		
-		boxCommunication = new BoxCommunication();
+		boxCommunication = new BoxCommunication(log);
 		boxCommunication.addBox(fritzBox);
 
 		// if a mac address is set and this box has a different mac address, ask user
@@ -174,7 +177,7 @@ public final class JFritz implements  StatusListener {
 			int answer = JOptionPane.YES_OPTION;
 			if (messages.getMessage("unknown").equals(fritzBox.getMacAddress()))
 			{
-				Debug.info("MAC-Address could not be determined. Ask user how to proceed..."); //$NON-NLS-1$
+				Debug.info(log, "MAC-Address could not be determined. Ask user how to proceed..."); //$NON-NLS-1$
 				msg = new ComplexJOptionPaneMessage("legalInfo.macNotFound",
 						messages.getMessage("mac_not_found") + "\n"
 						+ messages.getMessage("accept_fritzbox_communication")); //$NON-NLS-1$
@@ -190,7 +193,7 @@ public final class JFritz implements  StatusListener {
 				}
 			} else if ( !(macStr.equals(fritzBox.getMacAddress())))
 			{
-				Debug.info("New FRITZ!Box detected. Ask user how to proceed..."); //$NON-NLS-1$
+				Debug.info(log, "New FRITZ!Box detected. Ask user how to proceed..."); //$NON-NLS-1$
 				msg = new ComplexJOptionPaneMessage("legalInfo.newBox",
 						messages.getMessage("new_fritzbox") + "\n"
 						+ messages.getMessage("accept_fritzbox_communication")); //$NON-NLS-1$
@@ -206,16 +209,16 @@ public final class JFritz implements  StatusListener {
 				}
 			}
 			if (answer == JOptionPane.YES_OPTION) {
-				Debug.info("User decided to accept connection."); //$NON-NLS-1$
+				Debug.info(log, "User decided to accept connection."); //$NON-NLS-1$
 				properties.setProperty("box.mac", fritzBox.getMacAddress());
 				properties.saveConfigProperties();
 				result = 0;
 			} else {
-				Debug.info("User decided to prohibit connection."); //$NON-NLS-1$
+				Debug.info(log, "User decided to prohibit connection."); //$NON-NLS-1$
 				result = Main.EXIT_CODE_FORBID_COMMUNICATION_WITH_FRITZBOX;
 			}
 		}
-		Debug.info("connection. --: " + result);
+		Debug.info(log, "connection. --: " + result);
 		return result;
 	}
 
@@ -255,10 +258,10 @@ public final class JFritz implements  StatusListener {
 	}
 
 	public void createJFrame() {
-		Debug.info("New instance of JFrame"); //$NON-NLS-1$
+		Debug.info(log, "New instance of JFrame"); //$NON-NLS-1$
 		jframe = new JFritzWindow(this);
 		if (Main.checkForSystraySupport()) {
-			Debug.info("Check Systray-Support"); //$NON-NLS-1$
+			Debug.info(log, "Check Systray-Support"); //$NON-NLS-1$
 			try {
 				JFritzTray.initTray(jframe, getBoxCommunication());
 			} catch (Throwable e) {
@@ -275,11 +278,11 @@ public final class JFritz implements  StatusListener {
 
 			if(properties.getProperty("network.type").equals("1") &&
 					Boolean.parseBoolean(properties.getProperty("option.listenOnStartup"))){
-				Debug.info("listening on startup enabled, starting client listener!");
+				Debug.info(log, "listening on startup enabled, starting client listener!");
 				NetworkStateMonitor.startServer();
 			}else if(properties.getProperty("network.type").equals("2") &&
 					Boolean.parseBoolean(properties.getProperty("option.connectOnStartup"))){
-				Debug.info("Connect on startup enabled, connectig to server");
+				Debug.info(log, "Connect on startup enabled, connectig to server");
 				NetworkStateMonitor.startClient();
 			}
 		}
@@ -331,7 +334,7 @@ public final class JFritz implements  StatusListener {
 										 "",
 										 Encryption.decrypt(properties.getProperty("box.password")));
 
-		boxCommunication = new BoxCommunication();
+		boxCommunication = new BoxCommunication(log);
 		boxCommunication.addBox(fritzBox);
 
 		callerlist = new CallerList();
@@ -384,7 +387,7 @@ public final class JFritz implements  StatusListener {
 	 * @param msg
 	 */
 	public static void errorMsg(String msg) {
-		Debug.error(msg);
+		Debug.error(log, msg);
 		if (Main.systraySupport) {
 			JFritzTray.displayMessage(ProgramConstants.PROGRAM_NAME, msg,
 					Tray.MESSAGE_TYPE_ERROR);
@@ -430,7 +433,7 @@ public final class JFritz implements  StatusListener {
 					watchdog.run();
 				}
 			}, interval*1000, interval * 1000);
-			Debug.info("Watchdog enabled"); //$NON-NLS-1$
+			Debug.info(log, "Watchdog enabled"); //$NON-NLS-1$
 		}
 	}
 
@@ -443,7 +446,7 @@ public final class JFritz implements  StatusListener {
 	 *            the locale to change the language to
 	 */
 	public void createNewWindow(Locale l) {
-		Debug.info("Loading new locale"); //$NON-NLS-1$
+		Debug.info(log, "Loading new locale"); //$NON-NLS-1$
 		messages.loadMessages(l);
 		updateMessages.loadMessages(l);
 
@@ -464,7 +467,7 @@ public final class JFritz implements  StatusListener {
 			JFrame.setDefaultLookAndFeelDecorated(false);
 		}
 		try {
-			Debug.info("Changing look and feel to: " + properties.getStateProperty("lookandfeel")); //$NON-NLS-1$
+			Debug.info(log, "Changing look and feel to: " + properties.getStateProperty("lookandfeel")); //$NON-NLS-1$
 			UIManager.setLookAndFeel(properties.getStateProperty("lookandfeel")); //$NON-NLS-1$
 			if ( jframe != null )
 			{
@@ -473,7 +476,7 @@ public final class JFritz implements  StatusListener {
 			// Wunsch eines MAC Users, dass das Default LookAndFeel des
 			// Betriebssystems genommen wird
 		} catch (Exception ex) {
-			Debug.error(ex.toString());
+			Debug.error(log, ex.toString());
 		}
 	}
 
@@ -516,14 +519,14 @@ public final class JFritz implements  StatusListener {
 		shutdownInvoked = true;
 
 		// TODO maybe some more cleanup is needed
-		Debug.debug("prepareShutdown in JFritz.java");
+		Debug.debug(log, "prepareShutdown in JFritz.java");
 
 		if ( jframe != null) {
 			jframe.prepareShutdown();
 			properties.saveStateProperties();
 		}
 
-		Debug.info("Stopping reverse lookup");
+		Debug.info(log, "Stopping reverse lookup");
 		JFritzReverseLookup.terminateAsyncLookup();
 
 		if ( (Main.systraySupport))
@@ -531,7 +534,7 @@ public final class JFritz implements  StatusListener {
 			JFritzTray.removeTrayMenu();
 		}
 
-		Debug.info("Stopping watchdog"); //$NON-NLS-1$
+		Debug.info(log, "Stopping watchdog"); //$NON-NLS-1$
 
 		if ( watchdog != null ) {
 			watchdogTimer.cancel();
@@ -541,7 +544,7 @@ public final class JFritz implements  StatusListener {
 //			//			watchdog.interrupt();
 		}
 
-		Debug.debug("prepareShutdown in JFritz.java done");
+		Debug.debug(log, "prepareShutdown in JFritz.java done");
 
 		// Keep this order to properly shutdown windows. First interrupt thread,
 		// then dispose.

@@ -24,6 +24,8 @@ import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
@@ -39,6 +41,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  */
 
 public class CallMessageDlg extends JFrame implements ActionListener {
+	private final static Logger log = Logger.getLogger(CallMessageDlg.class);
 	private static final long serialVersionUID = 1;
 
 	private Timer timer;
@@ -72,7 +75,7 @@ public class CallMessageDlg extends JFrame implements ActionListener {
 
 	public void showIncomingCall(Call call, String callerstr, String calledstr, Person person) {
 
-		Debug.info("Showing incoming call...");
+		Debug.info(log, "Showing incoming call...");
 		toFront();
 
 		timer = new Timer();
@@ -91,7 +94,7 @@ public class CallMessageDlg extends JFrame implements ActionListener {
 		titleStr = titleStr.replaceAll("%DEST%", calledstr);
 		setTitle(titleStr); //$NON-NLS-1$
 
-		Debug.info("Creating call message gui...");
+		Debug.info(log, "Creating call message gui...");
 		JButton closeButton = new JButton(messages.getMessage("okay")); //$NON-NLS-1$
 		closeButton.addActionListener(this);
 		getContentPane().setLayout(new BorderLayout(0, 0));
@@ -265,13 +268,13 @@ public class CallMessageDlg extends JFrame implements ActionListener {
 		}
 
 		message = message.replaceAll("<td></td>", "");
-		Debug.debug(message);
+		Debug.debug(log, message);
 		callInLabel.setText(message);
 		mainPane.add(callInLabel);
 
 		getContentPane().add(mainPane, BorderLayout.CENTER);
 
-		Debug.info("Display message...");
+		Debug.info(log, "Display message...");
 		pack();
 		if ( this.getWidth() < 450 )
 		{
@@ -295,12 +298,12 @@ public class CallMessageDlg extends JFrame implements ActionListener {
 		this.setLocation(xPos, yPos);
 		setVisible(true);
 		toFront();
-		Debug.debug("Should be displayed...");
+		Debug.debug(log, "Should be displayed...");
 	}
 
 	public void showOutgoingCall(Call call, String callerstr, String calledstr, Person person) {
 
-		Debug.info("Showing outgoing call...");
+		Debug.info(log, "Showing outgoing call...");
 		toFront();
 
 		timer = new Timer();
@@ -319,7 +322,7 @@ public class CallMessageDlg extends JFrame implements ActionListener {
 		titleStr = titleStr.replaceAll("%DEST%", calledstr);
 		setTitle(titleStr); //$NON-NLS-1$
 
-		Debug.info("Creating call message gui...");
+		Debug.info(log, "Creating call message gui...");
 		JButton closeButton = new JButton(messages.getMessage("okay")); //$NON-NLS-1$
 		closeButton.addActionListener(this);
 		getContentPane().setLayout(new BorderLayout(0, 0));
@@ -493,13 +496,13 @@ public class CallMessageDlg extends JFrame implements ActionListener {
 		}
 
 		message = message.replaceAll("<td></td>", "");
-		Debug.debug(message);
+		Debug.debug(log, message);
 		callInLabel.setText(message);
 		mainPane.add(callInLabel);
 
 		getContentPane().add(mainPane, BorderLayout.CENTER);
 
-		Debug.info("Display message...");
+		Debug.info(log, "Display message...");
 		pack();
 		if ( this.getWidth() < 450 )
 		{
@@ -523,7 +526,7 @@ public class CallMessageDlg extends JFrame implements ActionListener {
 		this.setLocation(xPos, yPos);
 		setVisible(true);
 		toFront();
-		Debug.debug("Should be displayed...");
+		Debug.debug(log, "Should be displayed...");
 	}
 
 	/**
@@ -547,7 +550,7 @@ public class CallMessageDlg extends JFrame implements ActionListener {
 
 	public String loadTemplate(String filename)
 	{
-		Debug.info("Loading template " + filename + " ... ");
+		Debug.info(log, "Loading template " + filename + " ... ");
 		preferredImageWidth = -1;
 		preferredImageHeight = -1;
 		String template = "";
@@ -571,7 +574,7 @@ public class CallMessageDlg extends JFrame implements ActionListener {
 						pixel = pixel.replaceAll("\t","");
 						preferredImageWidth = Integer.parseInt(pixel);
 					} else {
-						Debug.error("Error in parsing popup-template! Wrong syntax: Use #imagewidth:100 and/or #imageheight:150 to set width of the picture to 100 and height to 150!");
+						Debug.error(log, "Error in parsing popup-template! Wrong syntax: Use #imagewidth:100 and/or #imageheight:150 to set width of the picture to 100 and height to 150!");
 					}
 				} else if ( line.contains("#imageheight"))
 				{
@@ -586,18 +589,18 @@ public class CallMessageDlg extends JFrame implements ActionListener {
 						pixel = pixel.replaceAll("\t","");
 						preferredImageHeight = Integer.parseInt(pixel);
 					} else {
-						Debug.error("Error in parsing popup-template! Wrong syntax: Use #imagewidth:100 and #imageheight:150 to set width of the picture to 100 and height to 150!");
+						Debug.error(log, "Error in parsing popup-template! Wrong syntax: Use #imagewidth:100 and #imageheight:150 to set width of the picture to 100 and height to 150!");
 					}
 				}
 				template += line;
 			}
-			Debug.info("Loding template done!");
+			Debug.info(log, "Loding template done!");
 		} catch (FileNotFoundException e) {
 			//@todo error message or load default style
-			Debug.error("Template not found! " + e.toString());
+			Debug.error(log, "Template not found! " + e.toString());
 		} catch (IOException e) {
 			//@todo error message or load default style
-			Debug.error("IOException! " + e.toString());
+			Debug.error(log, "IOException! " + e.toString());
 		}
 		return template;
 	}

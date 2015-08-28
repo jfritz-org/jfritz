@@ -299,7 +299,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 		}
 
 		if (programString.equals("")) { //$NON-NLS-1$
-			Debug.errDlg(messages.getMessage("no_external_program") //$NON-NLS-1$
+			Debug.errDlg(log, messages.getMessage("no_external_program") //$NON-NLS-1$
 		        + programString);
 			log.error(messages.getMessage("no_external_program")); //$NON-NLS-1$
 		} else {
@@ -312,7 +312,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 					executeProgram(prog, args);
 				}
 			} catch (IOException e) {
-				Debug.errDlg(messages.getMessage("not_external_program_start") //$NON-NLS-1$
+				Debug.errDlg(log, messages.getMessage("not_external_program_start") //$NON-NLS-1$
 							+ " " + programString, e);
 			}
 		}
@@ -390,7 +390,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 			} catch (Throwable t) {
 				log.error(messages.getMessage("not_external_program_start") //$NON-NLS-1$
 						+ " " + prog, t);
-				Debug.errDlg(messages.getMessage("not_external_program_start") //$NON-NLS-1$
+				Debug.errDlg(log, messages.getMessage("not_external_program_start") //$NON-NLS-1$
 						+ " " + prog, t);
 			}
 	    }

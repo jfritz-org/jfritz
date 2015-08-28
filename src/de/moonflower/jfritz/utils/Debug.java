@@ -30,6 +30,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileFilter;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.JFritzDataDirectory;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
@@ -45,9 +47,11 @@ import de.moonflower.jfritz.properties.PropertyProvider;
  *
  */
 public class Debug {
+	private static final Logger log = Logger.getLogger(Debug.class);
+
 	public static final LogSeverity LS_ALWAYS = new LogSeverity(0, "LS_ALWAYS", "");
 	public static final LogSeverity LS_ERROR = new LogSeverity(1, "LS_ERROR", ": ERROR");
-	public static final LogSeverity LS_WARNING = new LogSeverity(2, "LS_WARNING", ": WARNING");
+	public static final LogSeverity LS_WARNING = new LogSeverity(2, "LS_WARNING", ": WARN");
 	public static final LogSeverity LS_NETWORK = new LogSeverity(3, "LS_NETWORK", ": NETWORK");
 	public static final LogSeverity LS_INFO = new LogSeverity(4, "LS_INFO", ": INFO");
 	public static final LogSeverity LS_DEBUG = new LogSeverity(5, "LS_DEBUG", ": DEBUG");
@@ -192,19 +196,23 @@ public class Debug {
 		msg(LS_ALWAYS, msg);
 	}
 
-	public static void error(String msg) {
+	public static void error(Logger logger, String msg) {
+		logger.error(msg);
 		msg(LS_ERROR, msg);
 	}
 
-	public static void warning(String msg) {
+	public static void warning(Logger logger, String msg) {
+		logger.warn(msg);
 		msg(LS_WARNING, msg);
 	}
 
-	public static void info(String msg) {
+	public static void info(Logger logger, String msg) {
+		logger.info(msg);
 		msg(LS_INFO, msg);
 	}
 
-	public static void debug(String msg) {
+	public static void debug(Logger logger, String msg) {
+		logger.debug(msg);
 		msg(LS_DEBUG, msg);
 	}
 
@@ -223,8 +231,8 @@ public class Debug {
 	 *
 	 * @param message
 	 */
-	public static void errDlg(String message) {
-		errDlg(message, null);
+	public static void errDlg(Logger logger, String message) {
+		errDlg(logger, message, null);
 	}
 
 	/**
@@ -233,12 +241,8 @@ public class Debug {
 	 * @param message
 	 * @param throwable
 	 */
-	public static void errDlg(String message, Throwable t) {
-		if (t == null) {
-			error(message);
-		} else {
-			error(message + " -- " + t.getMessage());
-		}
+	public static void errDlg(Logger logger, String message, Throwable t) {
+		logger.error(message, t);
 		JOptionPane.showMessageDialog(null, message,
 				messages.getMessage("error"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
 	}
@@ -315,7 +319,7 @@ public class Debug {
 							try {
 								log_area.write(new FileWriter(file.getAbsolutePath()));
 							} catch (IOException e) {
-								error("Could not save debug log to file: "+file.getAbsolutePath());
+								error(log, "Could not save debug log to file: "+file.getAbsolutePath());
 								e.printStackTrace();
 							}
 						}
@@ -325,7 +329,7 @@ public class Debug {
 							log_area.write(fw);
 							fw.close();
 						} catch (IOException e) {
-							Debug.error("Could not save debug log to file: "+file.getAbsolutePath());
+							Debug.error(log, "Could not save debug log to file: "+file.getAbsolutePath());
 							e.printStackTrace();
 						}
 					}
@@ -436,6 +440,6 @@ public class Debug {
 	public static void setDebugLevel(LogSeverity level)
 	{
 		debugLevel = level;
-		info("Set debug level to " + level.getName());
+		info(log, "Set debug level to " + level.getName());
 	}
 }

@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.util.Vector;
 
 import org.apache.http.client.ClientProtocolException;
+import org.apache.log4j.Logger;
 
 import de.moonflower.jfritz.callmonitor.CallMonitorStatusListener;
 import de.moonflower.jfritz.exceptions.FeatureNotSupportedByFirmware;
@@ -19,6 +20,7 @@ import de.robotniko.fboxlib.exceptions.LoginBlockedException;
 import de.robotniko.fboxlib.exceptions.PageNotFoundException;
 
 public class BoxCommunication {
+	private final Logger log;
 	private static int maxCallsPerBox = 400;
 
 	private int lastFetchedCallsCount = 0;
@@ -29,8 +31,9 @@ public class BoxCommunication {
 
 	Vector<IProgressListener> callListProgressListener;
 
-	public BoxCommunication()
+	public BoxCommunication(Logger log)
 	{
+		this.log = log;
 		registeredBoxes = new Vector<BoxClass>(2);
 		callMonitorStatusListener = new Vector<CallMonitorStatusListener>();
 		callListProgressListener = new Vector<IProgressListener>();
@@ -114,7 +117,7 @@ public class BoxCommunication {
 				Vector<Call> tmpCalls = box.getCallerList(callListProgressListener);
 				newCalls.addAll(tmpCalls);
 			} catch (FeatureNotSupportedByFirmware fns) {
-				Debug.warning(fns.getMessage());
+				Debug.warning(log, fns.getMessage());
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 				box.setBoxDisconnected();
@@ -138,7 +141,7 @@ public class BoxCommunication {
 					Vector<Call> tmpCalls = currentBox.getCallerList(callListProgressListener);
 					newCalls.addAll(tmpCalls);
 				} catch (FeatureNotSupportedByFirmware fns) {
-					Debug.warning(fns.getMessage());
+					Debug.warning(log, fns.getMessage());
 				} catch (MalformedURLException e) {
 					e.printStackTrace();
 					currentBox.setBoxDisconnected();

@@ -27,9 +27,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.apache.http.auth.InvalidCredentialsException;
-
-//import org.apache.http.auth.InvalidCredentialsException;
+import org.apache.log4j.Logger;
 
 import com.nexes.wizard.Wizard;
 
@@ -44,16 +42,15 @@ import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.MultiLabel;
 import de.moonflower.jfritz.utils.network.SSDPPacket;
 import de.robotniko.fboxlib.exceptions.FirmwareNotDetectedException;
-//import de.robotniko.fboxlib.exceptions.FirmwareNotDetectedException;
-import de.robotniko.fboxlib.exceptions.LoginBlockedException;
 import de.robotniko.fboxlib.exceptions.PageNotFoundException;
+//import org.apache.http.auth.InvalidCredentialsException;
+//import de.robotniko.fboxlib.exceptions.FirmwareNotDetectedException;
 
 public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 		ConfigPanel, DocumentListener {
 
-	/**
-	 *
-	 */
+	private final static Logger log = Logger.getLogger(ConfigPanelFritzBoxIP.class);
+
 	private static final long serialVersionUID = -2094680014900642941L;
 
 	private JComboBox<String> addressCombo;
@@ -122,7 +119,7 @@ public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 		boolean boxAddressAdded = false;
 
 		// initialize the drop down box
-		BoxClass.detectBoxesWithSSDP();
+		BoxClass.detectBoxesWithSSDP(log);
 		devices = BoxClass.getDevices();
 		Vector<String> deviceAddress = new Vector<String>();
 		if (devices != null) {
@@ -218,7 +215,7 @@ public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 			{
 				address.setText(selectedItem);
 			} else {
-				Debug.error("Address wrong!"); //$NON-NLS-1$
+				Debug.error(log, "Address wrong!"); //$NON-NLS-1$
 				setErrorMessage(messages.getMessage("box.not_found"));
 			}
 			disableNextButtonInWizard();

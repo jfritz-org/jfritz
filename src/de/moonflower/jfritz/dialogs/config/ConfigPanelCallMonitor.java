@@ -21,6 +21,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.callmonitor.CallMonitorStatusListener;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
@@ -31,6 +33,7 @@ import de.robotniko.fboxlib.exceptions.PageNotFoundException;
 
 public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 		ConfigPanel {
+	private final static Logger log = Logger.getLogger(ConfigPanelCallMonitor.class);
 
 	private static final long serialVersionUID = 7267124419351267208L;
 
@@ -226,25 +229,25 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 			switch (callMonitorCombo.getSelectedIndex()) {
 			case 0: {
 				hideCallMonitorPanel();
-				Debug.info("Call monitor not wanted"); //$NON-NLS-1$
+				Debug.info(log, "Call monitor not wanted"); //$NON-NLS-1$
 				stopAllCallMonitors();
 				break;
 			}
 			case 1: {
 				showCallMonitorPanel();
-				Debug.info("FRITZ!Box call monitor chosen"); //$NON-NLS-1$
+				Debug.info(log, "FRITZ!Box call monitor chosen"); //$NON-NLS-1$
 				stopAllCallMonitors();
 				break;
 			}
 			case 2: {
 				showCallMonitorPanel();
-				Debug.info("YAC call monitor chosen"); //$NON-NLS-1$
+				Debug.info(log, "YAC call monitor chosen"); //$NON-NLS-1$
 				stopAllCallMonitors();
 				break;
 			}
 			case 3: {
 				showCallMonitorPanel();
-				Debug.info("Callmessage call monitor chosen"); //$NON-NLS-1$
+				Debug.info(log, "Callmessage call monitor chosen"); //$NON-NLS-1$
 
 				break;
 			}
@@ -264,13 +267,13 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 				}
 				this.startStopCallMonitor();
 			} catch (IOException e1) {
-				Debug.errDlg(messages.getMessage("box.not_found"), e1); //$NON-NLS-1$
+				Debug.errDlg(log, messages.getMessage("box.not_found"), e1); //$NON-NLS-1$
 				startStopCallMonitorButton.setSelected(!startStopCallMonitorButton.isSelected());
 			} catch (PageNotFoundException e1) {
-				Debug.errDlg(messages.getMessage("box.communication_error"), e1); //$NON-NLS-1$
+				Debug.errDlg(log, messages.getMessage("box.communication_error"), e1); //$NON-NLS-1$
 				startStopCallMonitorButton.setSelected(!startStopCallMonitorButton.isSelected());
 			} catch (FirmwareNotDetectedException e1) {
-				Debug.errDlg(messages.getMessage("unknown_firmware"), e1); //$NON-NLS-1$
+				Debug.errDlg(log, messages.getMessage("unknown_firmware"), e1); //$NON-NLS-1$
 				startStopCallMonitorButton.setSelected(!startStopCallMonitorButton.isSelected());
 			}
 			c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

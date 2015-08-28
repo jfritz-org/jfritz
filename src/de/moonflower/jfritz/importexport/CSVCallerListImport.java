@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.callerlist.CallerTable;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
@@ -23,6 +25,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  *
  */
 public class CSVCallerListImport extends CSVImport implements ICSVImport {
+	private final static Logger log = Logger.getLogger(CSVCallerListImport.class);
 
 	private Vector<String> availableColumns;
 
@@ -97,7 +100,7 @@ public class CSVCallerListImport extends CSVImport implements ICSVImport {
 			{
 				entry.setCallType(CallType.CALLOUT);
 			} else {
-				Debug.error("Unknown call type: " + value);
+				Debug.error(log, "Unknown call type: " + value);
 				return true;
 			}
 		} else if (columnName.equals(CallerTable.COLUMN_DATE)) {
@@ -192,7 +195,7 @@ public class CSVCallerListImport extends CSVImport implements ICSVImport {
 												entry.setCalldate(timeCal.getTime());
 											}
 										} catch (ParseException e3) {
-											Debug.error("Could not parse date: " + value);
+											Debug.error(log, "Could not parse date: " + value);
 											return true;
 										}
 									}
@@ -256,7 +259,7 @@ public class CSVCallerListImport extends CSVImport implements ICSVImport {
 					try {
 						entry.setDuration((Integer.parseInt(time[0]) * 3600) + (Integer.parseInt(time[1])*60));
 					} catch (NumberFormatException nfe2) {
-						Debug.error("Could not parse duration: " + value);
+						Debug.error(log, "Could not parse duration: " + value);
 						return true;
 					}
 				}

@@ -3,10 +3,13 @@ package de.moonflower.jfritz.importexport;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.utils.Debug;
 
 public class VCardParserAdr {
+	private final static Logger log = Logger.getLogger(VCardParserAdr.class);
 
 	public static boolean parse(VCardParser parser, Person person) {
 		Enumeration<String> en = parser.getPropertyType().keys();
@@ -16,7 +19,7 @@ public class VCardParserAdr {
 				Vector<String> propertyTypes = parser.getPropertyType().get(key);
 
 				for (String types: propertyTypes) {
-					Debug.debug(types);
+					Debug.debug(log, types);
 				}
 
 				if (parser.getValues().size() >= 3)
@@ -55,7 +58,7 @@ public class VCardParserAdr {
 					}
 				}
 			} else {
-				Debug.error("Unknown key in VCardParserAdr: " + key);
+				Debug.error(log, "Unknown key in VCardParserAdr: " + key);
 			}
 		}
 		return false;

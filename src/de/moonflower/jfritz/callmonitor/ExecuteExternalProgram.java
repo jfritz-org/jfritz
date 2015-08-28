@@ -9,12 +9,15 @@ import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class ExecuteExternalProgram extends CallMonitorAdaptor {
+	private final static Logger log = Logger.getLogger(ExecuteExternalProgram.class);
 
 	@SuppressWarnings("unused")
 	private String replaceParameter(String parameter, String callerNumber, String calledNumber, Person person) {
@@ -41,7 +44,7 @@ public class ExecuteExternalProgram extends CallMonitorAdaptor {
                             URLEncoder.encode(toEncode, "UTF-8")); //$NON-NLS-1$
                 }
             } catch (UnsupportedEncodingException uee) {
-                Debug.error(uee.toString());
+                Debug.error(log, uee.toString());
             }
         }
         return parameter;

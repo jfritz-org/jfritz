@@ -9,6 +9,8 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.box.BoxClass;
@@ -19,6 +21,8 @@ import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.Debug;
 
 public class JFritzTray {
+	private final static Logger log = Logger.getLogger(JFritzTray.class);
+
 	private static Tray tray;
 	private static MessageProvider messages = MessageProvider.getInstance();
 	private static ImageIcon trayIcon;
@@ -252,7 +256,7 @@ public class JFritzTray {
 
 	public static void removeTrayMenu() {
 		if (tray != null) {
-			Debug.info("Removing systray"); //$NON-NLS-1$
+			Debug.info(log, "Removing systray"); //$NON-NLS-1$
 			tray.remove();
 			tray = null;
 		}

@@ -5,6 +5,8 @@ import java.net.ServerSocket;
 import java.net.SocketException;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.Debug;
@@ -90,6 +92,7 @@ import de.moonflower.jfritz.utils.Debug;
  *
  */
 public class ClientConnectionListener extends Thread {
+	private final static Logger log = Logger.getLogger(ClientConnectionListener.class);
 
 	private static boolean isListening = false;
 
@@ -115,7 +118,7 @@ public class ClientConnectionListener extends Thread {
 					}
 
 				}catch(InterruptedException e){
-					Debug.error("Server thread was interuppted!");
+					Debug.error(log, "Server thread was interuppted!");
 		        	Thread.currentThread().interrupt();
 				}
 			}else {
@@ -139,7 +142,7 @@ public class ClientConnectionListener extends Thread {
 									Debug.netMsg("Max number of clients reached, waiting for one to quit");
 									wait();
 								}catch(InterruptedException e){
-									Debug.error("Client listener interrupted while waiting for connection to close!");
+									Debug.error(log, "Client listener interrupted while waiting for connection to close!");
 						        	Thread.currentThread().interrupt();
 								}
 							}
@@ -164,12 +167,12 @@ public class ClientConnectionListener extends Thread {
 					if(e.getMessage().equals("Socket closed"))
 						Debug.netMsg("Server socket closed");
 					else{
-						Debug.error(e.toString());
+						Debug.error(log, e.toString());
 						e.printStackTrace();
 					}
 
 				}catch(IOException e){
-					Debug.errDlg(messages.getMessage("error_binding_port") + ": " + properties.getProperty("clients.port"), e);
+					Debug.errDlg(log, messages.getMessage("error_binding_port") + ": " + properties.getProperty("clients.port"), e);
 				}
 
 				isListening = false;
@@ -232,7 +235,7 @@ public class ClientConnectionListener extends Thread {
 			serverSocket.close();
 
 		}catch(IOException e){
-			Debug.error("Error closing server socket: " + e.toString());
+			Debug.error(log, "Error closing server socket: " + e.toString());
 			e.printStackTrace();
 		}
 

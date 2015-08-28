@@ -9,14 +9,18 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.utils.Debug;
 
 /**
- * Ermittel anhand der zur VerfÃ¼gung stehenden GrÃ¶ÃŸe in der Statusleiste des
- * Betriebssystems die optimale GrÃ¶ÃŸe und erstellt ein TrayIcon.
+ * Ermittel anhand der zur Verfügung stehenden Größe in der Statusleiste des
+ * Betriebssystems die optimale Größe und erstellt ein TrayIcon.
  */
 public class JTrayImage
 {
+	private final static Logger log = Logger.getLogger(JTrayImage.class);
+
     private TrayIcon trayIcon;
 
     /**
@@ -67,7 +71,7 @@ public class JTrayImage
 
         catch(Exception exp)
         {
-            Debug.error("Fehlerhaftes TrayIcon");
+            Debug.error(log, "Fehlerhaftes TrayIcon");
             trayIcon = new TrayIcon(ImageIO.read(getClass().getResource("/de/moonflower/jfritz/resources/images/tray16.png")));
         }
 

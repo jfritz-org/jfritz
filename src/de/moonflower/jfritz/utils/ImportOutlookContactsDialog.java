@@ -20,6 +20,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import org.apache.log4j.Logger;
+
 import com.jacob.activeX.ActiveXComponent;
 import com.jacob.com.Dispatch;
 
@@ -33,9 +35,7 @@ import de.moonflower.jfritz.struct.PhoneNumberOld;
 public class ImportOutlookContactsDialog extends JDialog implements ActionListener,
         Runnable {
 
-    /**
-     *
-     */
+	private final static Logger log = Logger.getLogger(ImportOutlookContactsDialog.class);
     private static final long serialVersionUID = 1L;
 	protected static MessageProvider messages = MessageProvider.getInstance();
 	protected PropertyProvider properties = PropertyProvider.getInstance();
@@ -81,7 +81,7 @@ public class ImportOutlookContactsDialog extends JDialog implements ActionListen
     }
 
     public void run() {
-        Debug.info("Show Outlook-Import-Dialog"); //$NON-NLS-1$
+        Debug.info(log, "Show Outlook-Import-Dialog"); //$NON-NLS-1$
         toFront();
         setSize(400, 500);
         this.getContentPane().setLayout(null);
@@ -104,11 +104,11 @@ public class ImportOutlookContactsDialog extends JDialog implements ActionListen
         getContentPane().add(jPanel);
         setLocationRelativeTo(JFritz.getJframe());
         setVisible(true);
-        Debug.info("Importing..."); //$NON-NLS-1$
+        Debug.info(log, "Importing..."); //$NON-NLS-1$
         int entriesImported = 0;
         Vector<Person> persons = new Vector<Person>();
 		for (int i = 1; i <= count; i++) {
-			Debug.info("Importing contact "+i);
+			Debug.info(log, "Importing contact "+i);
             boolean hasTel = false;
             Dispatch item = Dispatch.call(items, "Item", Integer.valueOf(i)) //$NON-NLS-1$
                     .toDispatch();
@@ -226,7 +226,7 @@ public class ImportOutlookContactsDialog extends JDialog implements ActionListen
             }
         }
         JFritz.getPhonebook().addEntries(persons);
-        Debug.info("Import done, " + entriesImported + " entries imported"); //$NON-NLS-1$,	//$NON-NLS-2$
+        Debug.info(log, "Import done, " + entriesImported + " entries imported"); //$NON-NLS-1$,	//$NON-NLS-2$
         JButton jButton = new JButton(messages.getMessage("okay")); //$NON-NLS-1$
 
         //set default confirm button (Enter)

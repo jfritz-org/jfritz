@@ -14,6 +14,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.callerlist.CallerTable;
 import de.moonflower.jfritz.callerlist.JFritzTableColumn;
 import de.moonflower.jfritz.messages.MessageProvider;
@@ -22,6 +24,7 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class ConfigPanelCallerListAppearance extends JPanel implements ConfigPanel, ActionListener {
+	private final static Logger log = Logger.getLogger(ConfigPanelCallerListAppearance.class);
 
 	private static final long serialVersionUID = 7267124419351267208L;
 
@@ -105,7 +108,7 @@ public class ConfigPanelCallerListAppearance extends JPanel implements ConfigPan
 		{
 			properties.setStateProperty("callerTable.column"+i+".name", columnTableModel.getData(i).getName());
 			properties.setProperty("option.showCallerListColumn." + columnTableModel.getData(i).getName(), columnTableModel.getData(i).isVisible());
-			Debug.debug("CallerListTableColumn " + i + ": " + columnTableModel.getData(i).getName() + " / visible: " +columnTableModel.getData(i).isVisible());
+			Debug.debug(log, "CallerListTableColumn " + i + ": " + columnTableModel.getData(i).getName() + " / visible: " +columnTableModel.getData(i).isVisible());
 		}
 	}
 
@@ -175,7 +178,7 @@ public class ConfigPanelCallerListAppearance extends JPanel implements ConfigPan
 				columnTable.setRowSelectionInterval(newSelection, newSelection);
 			}
 		} else {
-			Debug.warning("Unknown command received: "+e.getActionCommand());
+			Debug.warning(log, "Unknown command received: "+e.getActionCommand());
 		}
 	}
 

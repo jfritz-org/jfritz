@@ -13,6 +13,7 @@ import java.util.PriorityQueue;
 
 import javax.swing.JComboBox;
 
+import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.JDOMParseException;
@@ -31,6 +32,7 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class JFritzEventDispatcher extends Thread {
+	private final static Logger log = Logger.getLogger(JFritzEventDispatcher.class);
 
 	private static String EVENT_MANAGMENT_FILE_NAME = "jfritz.events.xml";
 
@@ -101,7 +103,7 @@ public class JFritzEventDispatcher extends Thread {
 		for (int i = 0; i < registeredActions.size(); i++) {
 			actionComboBox.addItem(registeredActions.get(i).clone());
 		}
-		Debug.debug(actionComboBox.toString());
+		Debug.debug(log, actionComboBox.toString());
 		return actionComboBox;
 	}
 
@@ -206,7 +208,7 @@ public class JFritzEventDispatcher extends Thread {
 	    	}
 	    } catch (JDOMParseException jdomex ) {
 	    	// FIXME: I18N
-	        Debug.errDlg("Error parsing "+EVENT_MANAGMENT_FILE_NAME +"\n"+ "Line: " + jdomex.getLineNumber() + " Column: " + jdomex.getColumnNumber(), jdomex);
+	        Debug.errDlg(log, "Error parsing "+EVENT_MANAGMENT_FILE_NAME +"\n"+ "Line: " + jdomex.getLineNumber() + " Column: " + jdomex.getColumnNumber(), jdomex);
 	    } catch( Exception ex ) {
 	        ex.printStackTrace();
 	      }
@@ -214,7 +216,7 @@ public class JFritzEventDispatcher extends Thread {
 
 	public static void saveToXML() {
 		String filename = EVENT_MANAGMENT_FILE_NAME;
-		Debug.info("Saving events to file " + filename); //$NON-NLS-1$
+		Debug.info(log, "Saving events to file " + filename); //$NON-NLS-1$
 		try {
 			BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(filename), "UTF8")); //$NON-NLS-1$
@@ -273,11 +275,11 @@ public class JFritzEventDispatcher extends Thread {
 			pw.close();
 
 		} catch (UnsupportedEncodingException e) {
-			Debug.error("UTF-8 not supported"); //$NON-NLS-1$
+			Debug.error(log, "UTF-8 not supported"); //$NON-NLS-1$
 		} catch (FileNotFoundException e) {
-			Debug.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.error(log, "Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		} catch (IOException e) {
-			Debug.error("IOException " + filename); //$NON-NLS-1$
+			Debug.error(log, "IOException " + filename); //$NON-NLS-1$
 		}
 
 	}

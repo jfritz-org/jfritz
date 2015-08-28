@@ -17,6 +17,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.log4j.Logger;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -43,6 +44,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  *
  */
 public class ClientLoginsTableModel extends AbstractTableModel{
+	private final static Logger log = Logger.getLogger(ClientLoginsTableModel.class);
 
 	public static final long serialVersionUID = 100;
 
@@ -144,7 +146,7 @@ public class ClientLoginsTableModel extends AbstractTableModel{
     }
 
     public static void saveToXMLFile(String filename){
-    	Debug.info("Saving to file " + filename); //$NON-NLS-1$
+    	Debug.info(log, "Saving to file " + filename); //$NON-NLS-1$
 		FileOutputStream fos;
 		try {
 			fos = new FileOutputStream(filename);
@@ -179,7 +181,7 @@ public class ClientLoginsTableModel extends AbstractTableModel{
 
 					//process the filters that use extra information
 					if(callFilter.getType() == null){
-						Debug.warning("CallFilter type is null!");
+						Debug.warning(log, "CallFilter type is null!");
 						break;
 					}
 
@@ -234,13 +236,13 @@ public class ClientLoginsTableModel extends AbstractTableModel{
 			pw.println("</clientsettings>"); //$NON-NLS-1$
 			pw.close();
 		} catch (FileNotFoundException e) {
-			Debug.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.error(log, "Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
     }
 
     public static void loadFromXMLFile(String filename){
     	try {
-			Debug.info("loading the client settings xml file: "+filename);
+			Debug.info(log, "loading the client settings xml file: "+filename);
 
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			factory.setValidating(false);
@@ -268,19 +270,19 @@ public class ClientLoginsTableModel extends AbstractTableModel{
 			reader.parse(new InputSource(new FileInputStream(filename)));
 
 		} catch (ParserConfigurationException e) {
-			Debug.error("Error with ParserConfiguration!"); //$NON-NLS-1$
+			Debug.error(log, "Error with ParserConfiguration!"); //$NON-NLS-1$
 		} catch (SAXException e) {
-			Debug.error("Error on parsing client login settings!"); //$NON-NLS-1$,  //$NON-NLS-2$
-			Debug.error(e.toString());
+			Debug.error(log, "Error on parsing client login settings!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.error(log, e.toString());
 			e.printStackTrace();
 
 			if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
 					|| e.getLocalizedMessage().startsWith(
 							"Invalid system identifier")) { //$NON-NLS-1$
-				Debug.error(e.toString());
+				Debug.error(log, e.toString());
 			}
 		} catch (IOException e) {
-			Debug.error("Could not read client login settings! No settings loaded!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.error(log, "Could not read client login settings! No settings loaded!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
     }
 

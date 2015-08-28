@@ -1,5 +1,6 @@
 package de.moonflower.jfritz.utils;
 
+import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -16,6 +17,7 @@ import de.moonflower.jfritz.struct.PhoneNumberOld;
  *
  */
 public class CbCFileXMLHandler extends DefaultHandler {
+	private final static Logger log = Logger.getLogger(CbCFileXMLHandler.class);
 
 	String chars, prefix, country_code;
 
@@ -71,7 +73,7 @@ public class CbCFileXMLHandler extends DefaultHandler {
 		} else if (qName.equals("length")) { //$NON-NLS-1$
 			length = Integer.parseInt(chars);
 		} else if (qName.equals("callbycall")) { //$NON-NLS-1$
-			Debug.info("Call by Call for "+country_code+" added. Prefix: "+
+			Debug.info(log, "Call by Call for "+country_code+" added. Prefix: "+
 					prefix+" Length: "+length);
 			cbc[cbc_count] = new CallByCall(prefix, length);
 			cbc_count++;

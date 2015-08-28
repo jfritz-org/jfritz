@@ -7,6 +7,7 @@ package de.moonflower.jfritz.phonebook;
 
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -24,6 +25,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  *
  */
 public class PhonebookFileXMLHandler extends DefaultHandler {
+	private final static Logger log = Logger.getLogger(PhonebookFileXMLHandler.class);
 
 	String firstName, company, lastName, type, standard, email, street,
 			postCode, city, category, picture, country, area, num;
@@ -121,7 +123,7 @@ public class PhonebookFileXMLHandler extends DefaultHandler {
 					pn.setType(type);
 					numbers.add(pn);
 				} else if (versionFloat >= 2.0) {
-					Debug.debug("DO SOMETHING HERE");
+					Debug.debug(log, "DO SOMETHING HERE");
 				}
 			} catch (NumberFormatException nfe)
 			{

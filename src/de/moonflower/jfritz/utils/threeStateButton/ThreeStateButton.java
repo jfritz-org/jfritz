@@ -12,6 +12,9 @@ import java.awt.image.ImageObserver;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.utils.Debug;
 
 /**
@@ -21,6 +24,7 @@ import de.moonflower.jfritz.utils.Debug;
  *
  */
 public class ThreeStateButton extends JButton implements ImageObserver {
+	private final static Logger log = Logger.getLogger(ThreeStateButton.class);
 	private int state;
 
 	public static final int NOTHING = 0;
@@ -159,11 +163,11 @@ public class ThreeStateButton extends JButton implements ImageObserver {
 				g.drawImage(star, 0, 0, this);
 				//Debug.msg("image loaded: "+star.toString());
 			} catch (InterruptedException ie) {
-				Debug.error("error loading images/stern.gif" + ie);
+				Debug.error(log, "error loading images/stern.gif" + ie);
 	        	Thread.currentThread().interrupt();
 			}
 		} else {
-			Debug.error("images/stern.gif not found for ThreeStateButton");
+			Debug.error(log, "images/stern.gif not found for ThreeStateButton");
 		}
 		ImageIcon result = new ImageIcon(image);
 		return result;

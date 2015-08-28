@@ -43,6 +43,8 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
@@ -52,8 +54,6 @@ import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.Debug;
-import de.robotniko.fboxlib.exceptions.InvalidCredentialsException;
-import de.robotniko.fboxlib.exceptions.LoginBlockedException;
 //import org.apache.http.auth.InvalidCredentialsException;
 
 /**
@@ -64,6 +64,7 @@ import de.robotniko.fboxlib.exceptions.LoginBlockedException;
  *
  */
 public class ConfigDialog extends JDialog {
+	private final static Logger log = Logger.getLogger(ConfigDialog	.class);
 
 	private static final long serialVersionUID = 1;
 
@@ -322,7 +323,7 @@ public class ConfigDialog extends JDialog {
 		sipPanel.saveSettings();
 		trayPanel.saveSettings();
 
-		Debug.info("Saved config"); //$NON-NLS-1$
+		Debug.info(log, "Saved config"); //$NON-NLS-1$
 //		Save of caller list and phonebook unnecessary at this position
 //		JFritz.getCallerList().saveToXMLFile(Main.SAVE_DIR+JFritz.CALLS_FILE, true);
 //		JFritz.getPhonebook().saveToXMLFile(Main.SAVE_DIR+JFritz.PHONEBOOK_FILE);

@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Vector;
 
 import org.apache.http.client.ClientProtocolException;
+import org.apache.log4j.Logger;
 
 import de.moonflower.jfritz.box.BoxCallBackListener;
 import de.moonflower.jfritz.box.BoxCallListInterface;
@@ -26,6 +27,7 @@ import de.robotniko.fboxlib.exceptions.LoginBlockedException;
 import de.robotniko.fboxlib.exceptions.PageNotFoundException;
 
 public class FritzBoxCallList_Pre_04_86 implements BoxCallListInterface {
+	private final static Logger log = Logger.getLogger(FritzBoxCallList_Pre_04_86.class);
 
 	private final static String QUERY_CALLS_REFRESH = "telcfg:settings/RefreshJournal";
 	private final static String QUERY_NUM_CALLS = "telcfg:settings/Journal/count";
@@ -152,7 +154,7 @@ public class FritzBoxCallList_Pre_04_86 implements BoxCallListInterface {
 				} else if ((response.get(newOffset+0).equals("3"))) {
 					calltype = CallType.CALLOUT;
 				} else {
-					Debug.error("Invalid Call type while importing caller list!"); //$NON-NLS-1$
+					Debug.error(log, "Invalid Call type while importing caller list!"); //$NON-NLS-1$
 					return false;
 				}
 
@@ -162,11 +164,11 @@ public class FritzBoxCallList_Pre_04_86 implements BoxCallListInterface {
 					try {
 						calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(response.get(newOffset+1)); //$NON-NLS-1$
 					} catch (ParseException e) {
-						Debug.error("Invalid date format while importing caller list!"); //$NON-NLS-1$
+						Debug.error(log, "Invalid date format while importing caller list!"); //$NON-NLS-1$
 						return false;
 					}
 				} else {
-					Debug.error("Invalid date format while importing caller list!"); //$NON-NLS-1$
+					Debug.error(log, "Invalid date format while importing caller list!"); //$NON-NLS-1$
 					return false;
 				}
 
@@ -231,7 +233,7 @@ public class FritzBoxCallList_Pre_04_86 implements BoxCallListInterface {
 				else
 				{
 					route = "ERROR";
-					Debug.error("Could not determine route type: " + routeType);
+					Debug.error(log, "Could not determine route type: " + routeType);
 				}
 
 				// make the call object and exit

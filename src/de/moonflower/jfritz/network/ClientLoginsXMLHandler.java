@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -28,6 +29,7 @@ import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class ClientLoginsXMLHandler extends DefaultHandler{
+	private final static Logger log = Logger.getLogger(ClientLoginsXMLHandler.class);
 
 	String chars, username, password, type, cbcProviders, sip, dateSpecial,
 			start, end, text;
@@ -325,7 +327,7 @@ public class ClientLoginsXMLHandler extends DefaultHandler{
 							callFilters.add(df);
 
 						} catch (ParseException error) {
-							Debug.error("error parsing date while loading dates from client settings "
+							Debug.error(log, "error parsing date while loading dates from client settings "
 											+ error.toString());
 						}
 

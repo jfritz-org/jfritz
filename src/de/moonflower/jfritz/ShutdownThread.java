@@ -3,13 +3,16 @@
  */
 package de.moonflower.jfritz;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.utils.Debug;
 
 /**
  * @author rob
  */
 public class ShutdownThread extends Thread {
-	Main jfritzMain;
+	private final static Logger log = Logger.getLogger(ShutdownThread.class);
+	private Main jfritzMain;
 
 	public ShutdownThread(Main main) {
 		super("ShutdownThread");
@@ -18,8 +21,8 @@ public class ShutdownThread extends Thread {
 	}
 
 	public void run() {
-		Debug.info("Starting shutdown thread.."); //$NON-NLS-1$
+		Debug.info(log, "Starting shutdown thread.."); //$NON-NLS-1$
 		jfritzMain.prepareShutdown(true, false);
-		Debug.info("Shutdown thread done."); //$NON-NLS-1$
+		Debug.info(log, "Shutdown thread done."); //$NON-NLS-1$
 	}
 }

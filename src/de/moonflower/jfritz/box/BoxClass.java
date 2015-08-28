@@ -2,6 +2,8 @@ package de.moonflower.jfritz.box;
 
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.Debug;
@@ -221,9 +223,9 @@ public abstract class BoxClass
 		this.macAddress = mac;
 	}
 
-	public static final void detectBoxesWithSSDP()
+	public static final void detectBoxesWithSSDP(final Logger log)
 	{
-		Debug.info("Searching for  FritzBox per UPnP / SSDP");//$NON-NLS-1$
+		Debug.info(log, "Searching for  FritzBox per UPnP / SSDP");//$NON-NLS-1$
 
 		ssdpthread = new SSDPdiscoverThread(SSDP_TIMEOUT);
 		ssdpthread.start();

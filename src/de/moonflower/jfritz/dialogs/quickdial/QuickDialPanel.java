@@ -10,7 +10,6 @@ import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.Enumeration;
 
 import javax.swing.ImageIcon;
@@ -27,10 +26,10 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellRenderer;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzDataDirectory;
-import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
-import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.struct.QuickDial;
 import de.moonflower.jfritz.utils.Debug;
@@ -42,6 +41,7 @@ import de.moonflower.jfritz.utils.StatusBarController;
   */
 public class QuickDialPanel extends JPanel implements ActionListener,
 		ListSelectionListener {
+	private final static Logger log = Logger.getLogger(QuickDialPanel.class);
 	private static final long serialVersionUID = 1;
 
 	private QuickDials dataModel;
@@ -187,7 +187,7 @@ public class QuickDialPanel extends JPanel implements ActionListener,
 			dataModel.fireTableDataChanged();
 			JFritz.getQuickDials().saveToXMLFile(JFritzDataDirectory.getInstance().getDataDirectory() + JFritz.QUICKDIALS_FILE);
 		} else if (e.getActionCommand().equals("storeSIP")) {  //$NON-NLS-1$
-			Debug.warning("Not yet implemented");  //$NON-NLS-1$
+			Debug.warning(log, "Not yet implemented");  //$NON-NLS-1$
 			JOptionPane.showMessageDialog(null,
 					messages.getMessage("not_implemented"));  //$NON-NLS-1$
 		}

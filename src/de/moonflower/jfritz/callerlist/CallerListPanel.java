@@ -44,6 +44,8 @@ import javax.swing.JToolBar;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
+import org.apache.log4j.Logger;
+
 import com.toedter.calendar.JDateChooser;
 
 import de.moonflower.jfritz.JFritz;
@@ -158,6 +160,8 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			maybeShowPopup(e);
 		}
 	}
+
+	private final static Logger log = Logger.getLogger(CallerListPanel.class);
 
 	private static final String DELETE_ENTRIES = "delete_entries";
 
@@ -1027,7 +1031,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			if (JOptionPane.showConfirmDialog(jFrame, messages.getMessage("really_delete_entries"), //$NON-NLS-1$
 					ProgramConstants.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 				int rows[] = callerTable.getSelectedRows();
-				Debug.info("Removing " + rows.length + " entries"); //$NON-NLS-1$
+				Debug.info(log, "Removing " + rows.length + " entries"); //$NON-NLS-1$
 				callerList.removeEntries(rows);
 			}
 		} else if(command.startsWith("lookup:")){
@@ -1050,7 +1054,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			callerList.reverseLookup(true, true);
 		} else if (command.equals("google")) {
 			if (googleLink != null) {
-				Debug.debug(googleLink);
+				Debug.debug(log, googleLink);
 				BrowserLaunch.openURL(googleLink);
 			}
 		} else if (command.equals("export_csv")) { //$NON-NLS-1$
@@ -1144,7 +1148,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		} else if (command.equals(CallFilter.FILTER_PORT)) {
 			// do nothing
 		} else {
-			Debug.warning("Unknown command: " + command);
+			Debug.warning(log, "Unknown command: " + command);
 		}
 	}
 
@@ -1548,7 +1552,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			} catch (ParseException e) {
 				startDateChooser.setDate(Calendar.getInstance().getTime());
 				endDateChooser.setDate(Calendar.getInstance().getTime());
-				Debug.error("Error parsing date while loading dates from main properties "
+				Debug.error(log, "Error parsing date while loading dates from main properties "
 								+ e.toString());
 			}
 		}

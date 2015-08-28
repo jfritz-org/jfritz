@@ -14,6 +14,8 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.utils.Debug;
 import de.robotniko.fboxlib.fritzbox.FritzBoxCommunication;
 //import de.moonflower.jfritz.utils.network.MyAuthenticator;
@@ -30,6 +32,7 @@ import de.robotniko.fboxlib.fritzbox.FritzBoxCommunication;
  * TODO: Bugfix: Exception if no UPNP enabled
  */
 public class UPNPUtils {
+	private final static Logger log = Logger.getLogger(UPNPUtils.class);
 
 	private final static int SSDP_MAX_BOXES = 5;
 
@@ -55,11 +58,11 @@ public class UPNPUtils {
 			}
 			socket.close();
 		} catch (SocketTimeoutException e) {
-			Debug.warning("Timeout for SSDP"); //$NON-NLS-1$
+			Debug.warning(log, "Timeout for SSDP"); //$NON-NLS-1$
 		} catch (SocketException e) {
-            Debug.error(e.toString());
+            Debug.error(log, e.toString());
 		} catch (IOException e) {
-			Debug.error(e.toString());
+			Debug.error(log, e.toString());
 		}
 		return devices;
 	}
@@ -71,7 +74,7 @@ public class UPNPUtils {
 		while (en.hasMoreElements()) {
 			SSDPPacket p = en.nextElement();
 			if (p.getServer().toLowerCase().indexOf("avm fritz!box") > 0) { //$NON-NLS-1$
-				Debug.info("Box found at " + p.getIP().toString() + ": " //$NON-NLS-1$,  //$NON-NLS-2$
+				Debug.info(log, "Box found at " + p.getIP().toString() + ": " //$NON-NLS-1$,  //$NON-NLS-2$
 						+ p.getServer());
 				fritzboxes.add(p);
 			}
@@ -131,21 +134,21 @@ public class UPNPUtils {
 			}
 
 		} catch (IOException e) {
-			Debug.error(e.toString());
+			Debug.error(log, e.toString());
 		} finally {
 
 			try {
 				if(d!=null)
 					d.close();
 			}catch(IOException ioe){
-				Debug.error("Error closing Stream");
+				Debug.error(log, "Error closing Stream");
 			}
 
 			try {
 				if(printout!=null)
 					printout.close();
 			}catch(IOException ioe){
-				Debug.error("Error closing Stream");
+				Debug.error(log, "Error closing Stream");
 			}
 		}
 		return data;
@@ -207,19 +210,19 @@ public class UPNPUtils {
 				data += str + "\n"; //$NON-NLS-1$
 
 		} catch (IOException e) {
-			Debug.error(e.toString());
+			Debug.error(log, e.toString());
 		}finally{
 			try{
 				if(d!=null)
 					d.close();
 			}catch(IOException ioe){
-				Debug.error("Error closing Stream");
+				Debug.error(log, "Error closing Stream");
 			}
 			try{
 				if(printout!=null)
 					printout.close();
 			}catch(IOException ioe){
-				Debug.error("Error closing Stream");
+				Debug.error(log, "Error closing Stream");
 			}
 		}
 		//Debug.info("Result of DeviceConfig data 1: " + data);

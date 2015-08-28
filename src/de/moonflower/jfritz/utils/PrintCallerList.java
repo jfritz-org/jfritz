@@ -17,6 +17,7 @@ import java.awt.print.Paper;
 import javax.swing.ImageIcon;
 import javax.swing.table.TableColumnModel;
 
+import org.apache.log4j.Logger;
 import org.jfree.report.ElementAlignment;
 import org.jfree.report.ImageElement;
 import org.jfree.report.JFreeReport;
@@ -49,6 +50,7 @@ import de.moonflower.jfritz.struct.Port;
  *
  */
 public class PrintCallerList extends Thread {
+	private final static Logger log = Logger.getLogger(PrintCallerList.class);
 
     private int[] columnWidth;
 
@@ -60,7 +62,7 @@ public class PrintCallerList extends Thread {
 	protected MessageProvider messages = MessageProvider.getInstance();
 
     private void createColumnWidths() {
-        Debug.debug("Create Columns"); //$NON-NLS-1$
+        Debug.debug(log, "Create Columns"); //$NON-NLS-1$
         int columnCount = JFritz.getJframe().getCallerTable().getColumnCount();
         int fixedColumnsWidth = 0; // width of all columns except "number" and
         // "participant"
@@ -96,7 +98,7 @@ public class PrintCallerList extends Thread {
         do {
             fixedColumnsWidth = 0;
             int columnWithMaxWidth = 0;
-            Debug.debug(columnCount + " Columns"); //$NON-NLS-1$
+            Debug.debug(log, columnCount + " Columns"); //$NON-NLS-1$
             for (int i = 0; i < columnCount; i++) {
                 String columnName = colModel.getColumn(i).getHeaderValue()
                 .toString();
@@ -179,7 +181,7 @@ public class PrintCallerList extends Thread {
                     columnStart[i], 50, columnWidth[i], 20), Color.BLACK,
                     ElementAlignment.CENTER, ElementAlignment.MIDDLE, font,
                     columnName);
-            Debug.debug("Column: " + columnName +  //$NON-NLS-1$
+            Debug.debug(log, "Column: " + columnName +  //$NON-NLS-1$
             		" Start: "+columnStart[i] + //$NON-NLS-1$
             		" Width: " + columnWidth[i]); //$NON-NLS-1$
             pageHeader.addElement(label);
@@ -231,7 +233,7 @@ public class PrintCallerList extends Thread {
                 createDINA4PaperLandscape());
         report.setPageDefinition(pageDefinition);
 
-        Debug.debug("Creating column widths ..."); //$NON-NLS-1$
+        Debug.debug(log, "Creating column widths ..."); //$NON-NLS-1$
         createColumnWidths();
 
         report.setPageHeader(createPageHeader(report.getPageDefinition()
@@ -259,7 +261,7 @@ public class PrintCallerList extends Thread {
         // Set Font size to 8
         Integer fontSize = Integer.valueOf(8);
 
-        Debug.debug("Adding fields ..."); //$NON-NLS-1$
+        Debug.debug(log, "Adding fields ..."); //$NON-NLS-1$
         AbstractExpression exp = new AbstractExpression() {
             /**
 			 *
@@ -287,7 +289,7 @@ public class PrintCallerList extends Thread {
                 }
             }
         };
-        Debug.debug("Adding print field ..."); //$NON-NLS-1$
+        Debug.debug(log, "Adding print field ..."); //$NON-NLS-1$
         exp.setName("print_type"); //$NON-NLS-1$
         report.addExpression(exp);
 
@@ -306,7 +308,7 @@ public class PrintCallerList extends Thread {
                 return ob;
             }
         };
-        Debug.debug("Adding date field ..."); //$NON-NLS-1$
+        Debug.debug(log, "Adding date field ..."); //$NON-NLS-1$
         exp.setName("print_date"); //$NON-NLS-1$
         report.addExpression(exp);
 
@@ -325,7 +327,7 @@ public class PrintCallerList extends Thread {
                 return ob;
             }
         };
-        Debug.debug("Adding callbycall field ..."); //$NON-NLS-1$
+        Debug.debug(log, "Adding callbycall field ..."); //$NON-NLS-1$
         exp.setName("print_callbycall"); //$NON-NLS-1$
         report.addExpression(exp);
 
@@ -344,7 +346,7 @@ public class PrintCallerList extends Thread {
                 return number.toString();
             }
         };
-        Debug.debug("Adding number field ..."); //$NON-NLS-1$
+        Debug.debug(log, "Adding number field ..."); //$NON-NLS-1$
         exp.setName("print_number"); //$NON-NLS-1$
         report.addExpression(exp);
 
@@ -362,7 +364,7 @@ public class PrintCallerList extends Thread {
                 return ((Person) person).getFullname();
             }
         };
-        Debug.debug("Adding name field ..."); //$NON-NLS-1$
+        Debug.debug(log, "Adding name field ..."); //$NON-NLS-1$
         exp.setName("print_personname"); //$NON-NLS-1$
         report.addExpression(exp);
 
@@ -380,7 +382,7 @@ public class PrintCallerList extends Thread {
                 return ((Person) person).getCity();
             }
         };
-        Debug.debug("Adding name field ..."); //$NON-NLS-1$
+        Debug.debug(log, "Adding name field ..."); //$NON-NLS-1$
         exp.setName("print_city"); //$NON-NLS-1$
         report.addExpression(exp);
 
@@ -399,7 +401,7 @@ public class PrintCallerList extends Thread {
                 return port.getName();
             }
         };
-        Debug.debug("Adding port field ..."); //$NON-NLS-1$
+        Debug.debug(log, "Adding port field ..."); //$NON-NLS-1$
         exp.setName("print_port"); //$NON-NLS-1$
         report.addExpression(exp);
 
@@ -418,7 +420,7 @@ public class PrintCallerList extends Thread {
                 return route;
             }
         };
-        Debug.debug("Adding route field ..."); //$NON-NLS-1$
+        Debug.debug(log, "Adding route field ..."); //$NON-NLS-1$
         exp.setName("print_route"); //$NON-NLS-1$
         report.addExpression(exp);
 
@@ -437,7 +439,7 @@ public class PrintCallerList extends Thread {
                 return Integer.toString(duration / 60) + " min"; //$NON-NLS-1$
             }
         };
-        Debug.debug("Adding duration field ..."); //$NON-NLS-1$
+        Debug.debug(log, "Adding duration field ..."); //$NON-NLS-1$
         exp.setName("print_duration"); //$NON-NLS-1$
         report.addExpression(exp);
 
@@ -455,7 +457,7 @@ public class PrintCallerList extends Thread {
                 return obj.toString();
             }
         };
-        Debug.debug("Adding comment field ..."); //$NON-NLS-1$
+        Debug.debug(log, "Adding comment field ..."); //$NON-NLS-1$
         exp.setName("print_comment"); //$NON-NLS-1$
         report.addExpression(exp);
 
@@ -503,11 +505,11 @@ public class PrintCallerList extends Thread {
                 }
             }
         };
-        Debug.debug("Adding picture field ..."); //$NON-NLS-1$
+        Debug.debug(log, "Adding picture field ..."); //$NON-NLS-1$
         exp.setName("print_picture"); //$NON-NLS-1$
         report.addExpression(exp);
 
-        Debug.debug("Creating renderer ..."); //$NON-NLS-1$
+        Debug.debug(log, "Creating renderer ..."); //$NON-NLS-1$
         for (int i = 0; i < JFritz.getJframe().getCallerTable()
                 .getColumnCount(); i++) {
 
@@ -574,7 +576,7 @@ public class PrintCallerList extends Thread {
             }
 
             // Rand zeichnen
-            Debug.debug("Print border ..."); //$NON-NLS-1$
+            Debug.debug(log, "Print border ..."); //$NON-NLS-1$
             Rectangle2D.Float border;
             if (JFritzUtils.parseBoolean(properties.getProperty("option.showCallerListColumn."+CallerTable.COLUMN_PICTURE)))
             {
@@ -602,7 +604,7 @@ public class PrintCallerList extends Thread {
     }
 
     private void print() {
-        Debug.info("Start print report creation"); //$NON-NLS-1$
+        Debug.info(log, "Start print report creation"); //$NON-NLS-1$
         JFreeReport report = createReportDefinition();
         report.setData(JFritz.getCallerList());
         try {
@@ -610,7 +612,7 @@ public class PrintCallerList extends Thread {
             preview.pack();
             preview.setVisible(true);
         } catch (ReportProcessingException e) {
-            Debug.error("Failed to generate report " + e); //$NON-NLS-1$
+            Debug.error(log, "Failed to generate report " + e); //$NON-NLS-1$
         }
     }
 }

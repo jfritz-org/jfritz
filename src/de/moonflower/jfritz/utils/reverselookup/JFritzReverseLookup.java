@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.phonebook.PhoneBook;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
@@ -28,6 +30,8 @@ import de.robotniko.reverseLookup.exceptions.ReverseLookupException;
  *
  */
 public class JFritzReverseLookup {
+	private final static Logger log = Logger.getLogger(JFritzReverseLookup.class);
+
 	public static final String AUSTRIA_CODE = "+43", BELGIUM_CODE = "+32",
 			CHINA_CODE = "+86", CZECH_CODE = "+420", DENMARK_CODE = "+45",
 			FINLAND_CODE = "+358", FRANCE_CODE = "+33", GERMANY_CODE = "+49",
@@ -48,7 +52,7 @@ public class JFritzReverseLookup {
 			ReverseLookupFacade.getReverseLookupService().loadConfigFile(
 					JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") +JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "reverselookup.xml");
 		} catch (ReverseLookupException e) {
-			Debug.error("Could not load reverselookup.xml");
+			Debug.error(log, "Could not load reverselookup.xml");
 		}
 		ReverseLookupGermany.loadAreaCodes();
 		ReverseLookupAustria.loadAreaCodes();
@@ -118,7 +122,7 @@ public class JFritzReverseLookup {
 				}
 			});
 		} catch (ReverseLookupException e) {
-			Debug.error("Exception while doing reverse lookup: " + e.getMessage());
+			Debug.error(log, "Exception while doing reverse lookup: " + e.getMessage());
 		}
 	}
 
@@ -144,7 +148,7 @@ public class JFritzReverseLookup {
 				return p;
 			}
 		} catch (ReverseLookupException e) {
-			Debug.error("Exception while looking up number " + number + ": " + e.getMessage());
+			Debug.error(log, "Exception while looking up number " + number + ": " + e.getMessage());
 		}
 		return PhoneBook.createDummyPerson(number);
 	}

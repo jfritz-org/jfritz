@@ -4,6 +4,8 @@ import java.util.Vector;
 
 import javax.swing.table.AbstractTableModel;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.callmonitor.CallMonitorListener;
 import de.moonflower.jfritz.messages.MessageProvider;
@@ -14,6 +16,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class CurrentCallsTable extends AbstractTableModel implements
 	CallMonitorListener {
+	private final static Logger log = Logger.getLogger(CurrentCallsTable.class);
 
     private static final long serialVersionUID = 1;
 	protected MessageProvider messages = MessageProvider.getInstance();
@@ -79,7 +82,7 @@ public class CurrentCallsTable extends AbstractTableModel implements
      * Method part of the interface CallMonitorListener
      */
     public void establishedCallIn(Call call){
-    	Debug.info("establishedCallIn was called");
+    	Debug.info(log, "establishedCallIn was called");
 
     }
 
@@ -99,7 +102,7 @@ public class CurrentCallsTable extends AbstractTableModel implements
      * Method part of the interface CallMonitorListener
      */
     public void establishedCallOut(Call call){
-    	Debug.info("establishedCallOut was called");
+    	Debug.info(log, "establishedCallOut was called");
 
     }
 

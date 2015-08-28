@@ -15,6 +15,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.log4j.Logger;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -32,6 +33,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  *
  */
 public class PhoneNumberOld implements Serializable {
+	private final static Logger log = Logger.getLogger(PhoneNumberOld.class);
 
 	private static final long serialVersionUID = 102;
 
@@ -97,7 +99,7 @@ public class PhoneNumberOld implements Serializable {
 				&& this.number.startsWith(properties.getProperty("dial.prefix"))) {
 			this.number = number.substring(properties.getProperty("dial.prefix")
 					.length());
-			Debug.info("Parsed the dial out prefix, new number: " + this.number);
+			Debug.info(log, "Parsed the dial out prefix, new number: " + this.number);
 		}
 
 		refactorNumber(convertInt);
@@ -190,7 +192,7 @@ public class PhoneNumberOld implements Serializable {
 				}
 			}
 			if ( countryCode.equals("+")) {
-				Debug.warning("No flag file for "+number+" found!!");
+				Debug.warning(log, "No flag file for "+number+" found!!");
 			}
 
 			//All known mobile numbers are marked in the csv
@@ -312,7 +314,7 @@ public class PhoneNumberOld implements Serializable {
 		if (number.startsWith(countryCode)) //$NON-NLS-1$
 			return areaPrefix + number.substring(countryCode.length());
 
-		Debug.warning("PhoneNumber.convertToNationalNumber: this is no national number, returning unchanged (international) number"); //$NON-NLS-1$
+		Debug.warning(log, "PhoneNumber.convertToNationalNumber: this is no national number, returning unchanged (international) number"); //$NON-NLS-1$
 		return number;
 	}
 
@@ -554,9 +556,9 @@ public class PhoneNumberOld implements Serializable {
 		if (number.startsWith("**7")) //$NON-NLS-1$
 		// QuickDial
 		{
-			Debug.info("Quickdial conversion disabled!");
+			Debug.info(log, "Quickdial conversion disabled!");
 //	THIS CODE IS BROKEN!!!
-//			Debug.info("Quickdial: " + number //$NON-NLS-1$
+//			Debug.info(log, "Quickdial: " + number //$NON-NLS-1$
 //					+ ", searching for the full number"); //$NON-NLS-1$
 //
 //			// replace QuickDial with
@@ -568,7 +570,7 @@ public class PhoneNumberOld implements Serializable {
 //					.getQuickDials().size() == 0) {
 //
 //				// get QuickDials from FritzBox
-//				Debug.warning("No Quickdials present in JFritz, retrieving the list from the box");
+//				Debug.warning(log, "No Quickdials present in JFritz, retrieving the list from the box");
 //				try {
 //					JFritz.getQuickDials()
 //							.getQuickDialDataFromFritzBox();
@@ -585,14 +587,14 @@ public class PhoneNumberOld implements Serializable {
 //				QuickDial quickDial = (QuickDial) en.nextElement();
 //				if (quickDialNumber.equals(quickDial.getQuickdial())) {
 //					number = quickDial.getNumber();
-//					Debug.info("Quickdial resolved. Number: " //$NON-NLS-1$
+//					Debug.info(log, "Quickdial resolved. Number: " //$NON-NLS-1$
 //							+ number);
 //				}
 //			}
 //
 //			if (number.startsWith("**7"))
 //			{
-//				Debug.warning("No quickdial found. Refresh your quickdial list"); //$NON-NLS-1$
+//				Debug.warning(log, "No quickdial found. Refresh your quickdial list"); //$NON-NLS-1$
 //			}
 		}
 	}
@@ -618,7 +620,7 @@ public class PhoneNumberOld implements Serializable {
 	 *
 	 */
 	public static void loadFlagMap(){
-		Debug.info("Loading the country code -> flag map");
+		Debug.info(log, "Loading the country code -> flag map");
 		worldFlagMap = new HashMap<String, String>(2200);
 		BufferedReader br = null;
 		FileInputStream fi = null;
@@ -632,7 +634,7 @@ public class PhoneNumberOld implements Serializable {
 			int lines = 0;
 			String l = br.readLine();
 			if(l==null){
-				Debug.errDlg("File "+JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") +JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "country_codes_world"+" empty");
+				Debug.errDlg(log, "File "+JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") +JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "country_codes_world"+" empty");
 			}
 			//Load the keys and values quick and dirty
 			if(l.equals(FLAG_FILE_HEADER)){
@@ -645,11 +647,11 @@ public class PhoneNumberOld implements Serializable {
 				}
 			}
 
-			Debug.info(lines + " Lines read from country_codes_world.csv");
-			Debug.info("worldFlagMap size: "+worldFlagMap.size());
+			Debug.info(log, lines + " Lines read from country_codes_world.csv");
+			Debug.info(log, "worldFlagMap size: "+worldFlagMap.size());
 
 		}catch(Exception e){
-			Debug.error(e.toString());
+			Debug.error(log, e.toString());
 		}finally{
 			try{
 				if(fi!=null)
@@ -657,7 +659,7 @@ public class PhoneNumberOld implements Serializable {
 				if(br!=null)
 					br.close();
 			}catch (IOException ioe){
-				Debug.error("error closing stream"+ioe.toString());
+				Debug.error(log, "error closing stream"+ioe.toString());
 			}
 		}
 		loadSpecificFlagMap();
@@ -674,7 +676,7 @@ public class PhoneNumberOld implements Serializable {
 	 *
 	 */
 	private static void loadSpecificFlagMap(){
-		Debug.info("Loading the country code -> flag map");
+		Debug.info(log, "Loading the country code -> flag map");
 		specificWorldFlagMap = new HashMap<String, String>(2200);
 		BufferedReader br = null;
 		FileInputStream fi = null;
@@ -688,7 +690,7 @@ public class PhoneNumberOld implements Serializable {
 			int lines = 0;
 			String l = br.readLine();
 			if(l==null){
-				Debug.errDlg("File "+JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") +JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "country_specfic_codes_world.csv"+" empty");
+				Debug.errDlg(log, "File "+JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") +JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "country_specfic_codes_world.csv"+" empty");
 			}
 			//Load the keys and values quick and dirty
 			if(l.equals(FLAG_FILE_HEADER)){
@@ -701,11 +703,11 @@ public class PhoneNumberOld implements Serializable {
 				}
 			}
 
-			Debug.info(lines + " Lines read from country_specfic_codes_world.csv");
-			Debug.info("specificWorldFlagMap size: "+specificWorldFlagMap.size());
+			Debug.info(log, lines + " Lines read from country_specfic_codes_world.csv");
+			Debug.info(log, "specificWorldFlagMap size: "+specificWorldFlagMap.size());
 
 		}catch(Exception e){
-			Debug.error(e.toString());
+			Debug.error(log, e.toString());
 		}finally{
 			try{
 				if(fi!=null)
@@ -713,7 +715,7 @@ public class PhoneNumberOld implements Serializable {
 				if(br!=null)
 					br.close();
 			}catch (IOException ioe){
-				Debug.error("error closing stream"+ioe.toString());
+				Debug.error(log, "error closing stream"+ioe.toString());
 			}
 		}
 
@@ -728,7 +730,7 @@ public class PhoneNumberOld implements Serializable {
 	 */
 	public static void loadCbCXMLFile(){
 		try {
-			Debug.info("Loading the call by call xml file");
+			Debug.info(log, "Loading the call by call xml file");
 			callbyCallMap = new HashMap<String, CallByCall[]>(20);
 
 			SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -758,19 +760,19 @@ public class PhoneNumberOld implements Serializable {
 					JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") + JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "callbycall_world.xml")));
 
 		} catch (ParserConfigurationException e) {
-			Debug.error("Error with ParserConfiguration!"); //$NON-NLS-1$
+			Debug.error(log, "Error with ParserConfiguration!"); //$NON-NLS-1$
 		} catch (SAXException e) {
-			Debug.error("Error on parsing number/internation/callbycall_world.xml! No call by calls loaded!"); //$NON-NLS-1$,  //$NON-NLS-2$
-			Debug.error(e.toString());
+			Debug.error(log, "Error on parsing number/internation/callbycall_world.xml! No call by calls loaded!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.error(log, e.toString());
 			e.printStackTrace();
 
 			if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
 					|| e.getLocalizedMessage().startsWith(
 							"Invalid system identifier")) { //$NON-NLS-1$
-				Debug.error(e.toString());
+				Debug.error(log, e.toString());
 			}
 		} catch (IOException e) {
-			Debug.error("Could not read number/international/callbycall_world.xml! No call by calls loaded!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.error(log, "Could not read number/international/callbycall_world.xml! No call by calls loaded!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 

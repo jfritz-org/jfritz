@@ -25,6 +25,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.log4j.Logger;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
@@ -63,6 +64,8 @@ import de.moonflower.jfritz.utils.reverselookup.JFritzReverseLookup;
 public class CallerList extends AbstractTableModel
 		implements PhoneBookListener, IProgressListener,
 		BoxCallBackListener, CallerListInterface {
+	private final static Logger log = Logger.getLogger(CallerList.class);
+
 	private static final long serialVersionUID = 1;
 
 	private static final String CALLS_DTD_URI = "http://jfritz.moonflower.de/dtd/calls.dtd"; //$NON-NLS-1$
@@ -264,11 +267,11 @@ public class CallerList extends AbstractTableModel
 
 			pw.close();
 		} catch (UnsupportedEncodingException e) {
-			Debug.error("UTF-8 not supported"); //$NON-NLS-1$
+			Debug.error(log, "UTF-8 not supported"); //$NON-NLS-1$
 		} catch (FileNotFoundException e) {
-			Debug.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.error(log, "Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		} catch (IOException e) {
-			Debug.error("IOException " + filename); //$NON-NLS-1$
+			Debug.error(log, "IOException " + filename); //$NON-NLS-1$
 		}
 	}
 
@@ -315,7 +318,7 @@ public class CallerList extends AbstractTableModel
 			}
 			pw.close();
 		} catch (FileNotFoundException e) {
-			Debug.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.error(log, "Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 
@@ -374,20 +377,19 @@ public class CallerList extends AbstractTableModel
 			// Synchronise the call vectors
 			fireUpdateCallVector();
 		} catch (ParserConfigurationException e) {
-			Debug.error("Error with ParserConfiguration!"); //$NON-NLS-1$
+			Debug.error(log, "Error with ParserConfiguration!"); //$NON-NLS-1$
 		} catch (SAXException e) {
-			Debug.error("Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.error(log, "Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 			if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
 					|| e.getLocalizedMessage().startsWith(
 							"Invalid system identifier")) { //$NON-NLS-1$
-				Debug.error(e.toString());
-				Debug
-						.errDlg("STRUKTURÃ„NDERUNG!\n\nBitte in der Datei jfritz.calls.xml\n " //$NON-NLS-1$
+				Debug.error(log, e.toString());
+				Debug.errDlg(log, "STRUKTURÄNDERUNG!\n\nBitte in der Datei jfritz.calls.xml\n " //$NON-NLS-1$
 								+ "die Zeichenkette \"calls.dtd\" durch\n \"" //$NON-NLS-1$
 								+ CALLS_DTD_URI + "\"\n ersetzen!"); //$NON-NLS-1$
 			}
 		} catch (IOException e) {
-			Debug.error("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.error(log, "Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		} finally {
 			initStage = false;
 		}
@@ -420,9 +422,9 @@ public class CallerList extends AbstractTableModel
 	public synchronized void addEntries(Vector<Call> newCalls){
 		int newEntries = 0;
 
-		Debug.debug("Filtering calls...");
+		Debug.debug(log, "Filtering calls...");
 		filterNewCalls(newCalls);
-		Debug.debug("Adding " + newCalls.size() + " new calls.");
+		Debug.debug(log, "Adding " + newCalls.size() + " new calls.");
 
 		for(Call call: newCalls)
 		{
@@ -689,7 +691,7 @@ public class CallerList extends AbstractTableModel
 	}
 
 	public void sortAllUnfilteredRows() {
-		Debug.debug("Sorting unfiltered data"); //$NON-NLS-1$
+		Debug.debug(log, "Sorting unfiltered data"); //$NON-NLS-1$
 
 		int indexOfDate = -1;
 		String columnName = "";
@@ -962,7 +964,7 @@ public class CallerList extends AbstractTableModel
 	}
 
 	public void clearList() {
-		Debug.info("Clearing caller Table"); //$NON-NLS-1$
+		Debug.info(log, "Clearing caller Table"); //$NON-NLS-1$
 		unfilteredCallerData.clear();
 		if ((JFritz.getJframe() != null)
 				&& (JFritz.getJframe().getCallerTable() != null)) {
@@ -1036,7 +1038,7 @@ public class CallerList extends AbstractTableModel
 		if ((rows != null) && (rows.length == 1)) {
 			return this.filteredCallerData.elementAt(rows[0]);
 		} else {
-			Debug.errDlg(messages.getMessage("error_choose_one_call")); //$NON-NLS-1$
+			Debug.errDlg(log, messages.getMessage("error_choose_one_call")); //$NON-NLS-1$
 		}
 
 		return null;
@@ -1046,7 +1048,7 @@ public class CallerList extends AbstractTableModel
 		CSVCallerListImport csvImport = new CSVCallerListImport(file);
 		csvImport.openFile();
 		String firstLine = csvImport.readHeader(0);
-		Debug.debug("Header: " + firstLine);
+		Debug.debug(log, "Header: " + firstLine);
 		if (firstLine.equals(EXPORT_CSV_FORMAT_JFRITZ)) {
 			csvImport.setSeparaor(";");
 			csvImport.mapColumn(0, CallerTable.COLUMN_TYPE);
@@ -1060,7 +1062,7 @@ public class CallerList extends AbstractTableModel
 			csvImport.mapColumn(11, CallerTable.COLUMN_COMMENT);
 		} else if (firstLine.startsWith("sep=")) {
 			String[] split = firstLine.split("=");
-			Debug.debug("Found separator: " + split[1]);
+			Debug.debug(log, "Found separator: " + split[1]);
 			csvImport.setSeparaor(split[1]);
 			String secondLine = csvImport.readHeader(1);
 			if (   secondLine.equals(EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE)
@@ -1094,7 +1096,7 @@ public class CallerList extends AbstractTableModel
 		{
 			JFritz.getCallerList().addEntries(csvImport.getImportedCalls());
 
-			Debug.debug(newEntries + " New entries processed");
+			Debug.debug(log, newEntries + " New entries processed");
 
 			fireUpdateCallVector();
 
@@ -1128,7 +1130,7 @@ public class CallerList extends AbstractTableModel
 		// check if line has correct amount of entries
 		if (field.length < 12) {
 			if (field.length != 1) {
-				Debug.error("Invalid CSV format, incorrect number of fields!"); //$NON-NLS-1$
+				Debug.error(log, "Invalid CSV format, incorrect number of fields!"); //$NON-NLS-1$
 			}
 			return null;
 		}
@@ -1150,7 +1152,7 @@ public class CallerList extends AbstractTableModel
 		} else if (field[0].equals("Outgoing")) { //$NON-NLS-1$
 			calltype = CallType.CALLOUT;
 		} else {
-			Debug.error("Invalid Call type in CSV entry!"); //$NON-NLS-1$
+			Debug.error(log, "Invalid Call type in CSV entry!"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -1160,11 +1162,11 @@ public class CallerList extends AbstractTableModel
 			try {
 				calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(field[1] + " " + field[2]); //$NON-NLS-1$,  //$NON-NLS-2$
 			} catch (ParseException e) {
-				Debug.error("Invalid date format in csv entry!"); //$NON-NLS-1$
+				Debug.error(log, "Invalid date format in csv entry!"); //$NON-NLS-1$
 				return null;
 			}
 		} else {
-			Debug.error("Invalid date format in csv entry!"); //$NON-NLS-1$
+			Debug.error(log, "Invalid date format in csv entry!"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -1221,7 +1223,7 @@ public class CallerList extends AbstractTableModel
 		// check if line has correct amount of entries
 		if (field.length != 6) {
 			if (field.length != 1) {
-				Debug.error("Invalid CSV format, incorrect number of fields!"); // if
+				Debug.error(log, "Invalid CSV format, incorrect number of fields!"); // if
 			}
 			// you
 			// find
@@ -1246,7 +1248,7 @@ public class CallerList extends AbstractTableModel
 				|| (field[0].equals("1") && isPushFile)) { //$NON-NLS-1$
 			calltype = CallType.CALLOUT;
 		} else {
-			Debug.error("Invalid Call type in CSV entry!"); //$NON-NLS-1$
+			Debug.error(log, "Invalid Call type in CSV entry!"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -1255,11 +1257,11 @@ public class CallerList extends AbstractTableModel
 			try {
 				calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(field[1]); //$NON-NLS-1$
 			} catch (ParseException e) {
-				Debug.error("Invalid date format in csv entry!"); //$NON-NLS-1$
+				Debug.error(log, "Invalid date format in csv entry!"); //$NON-NLS-1$
 				return null;
 			}
 		} else {
-			Debug.error("Invalid date format in csv entry!"); //$NON-NLS-1$
+			Debug.error(log, "Invalid date format in csv entry!"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -1306,7 +1308,7 @@ public class CallerList extends AbstractTableModel
 		// check if line has correct amount of entries
 		if (field.length != 7) {
 			if (field.length != 1) {
-				Debug.error("Invalid CSV format, incorrect number fields!");
+				Debug.error(log, "Invalid CSV format, incorrect number fields!");
 			}
 			return null;
 		}
@@ -1319,7 +1321,7 @@ public class CallerList extends AbstractTableModel
 		} else if ((field[0].equals("3"))) {
 			calltype = CallType.CALLOUT;
 		} else {
-			Debug.error("Invalid Call type in CSV entry!"); //$NON-NLS-1$
+			Debug.error(log, "Invalid Call type in CSV entry!"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -1328,11 +1330,11 @@ public class CallerList extends AbstractTableModel
 			try {
 				calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(field[1]); //$NON-NLS-1$
 			} catch (ParseException e) {
-				Debug.error("Invalid date format in csv entry!"); //$NON-NLS-1$
+				Debug.error(log, "Invalid date format in csv entry!"); //$NON-NLS-1$
 				return null;
 			}
 		} else {
-			Debug.error("Invalid date format in csv entry!"); //$NON-NLS-1$
+			Debug.error(log, "Invalid date format in csv entry!"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -1388,7 +1390,7 @@ public class CallerList extends AbstractTableModel
 		// check if line has correct amount of entries
 		if (field.length != 6) {
 			if (field.length != 1) {
-				Debug.error("Invalid CSV format, incorrect number of fields"); // if
+				Debug.error(log, "Invalid CSV format, incorrect number of fields"); // if
 			}
 			return null; // jfritz is broken, the fritz box exports things
 		} // with an extra empty line for whatever reason
@@ -1405,7 +1407,7 @@ public class CallerList extends AbstractTableModel
 				|| (field[0].equals("1") && isPushFile)) { //$NON-NLS-1$
 			calltype = CallType.CALLOUT;
 		} else {
-			Debug.error("Invalid Call type in CSV entry!"); //$NON-NLS-1$
+			Debug.error(log, "Invalid Call type in CSV entry!"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -1414,11 +1416,11 @@ public class CallerList extends AbstractTableModel
 			try {
 				calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(field[1]); //$NON-NLS-1$
 			} catch (ParseException e) {
-				Debug.error("Invalid date format in csv entry!"); //$NON-NLS-1$
+				Debug.error(log, "Invalid date format in csv entry!"); //$NON-NLS-1$
 				return null;
 			}
 		} else {
-			Debug.error("Invalid date format in csv entry!"); //$NON-NLS-1$
+			Debug.error(log, "Invalid date format in csv entry!"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -1476,7 +1478,7 @@ public class CallerList extends AbstractTableModel
 		// check if line has correct amount of entries
 		if (field.length != 7) {
 			if (field.length != 1) {
-				Debug.error("Invalid CSV format, incorrect number of fields"); // if
+				Debug.error(log, "Invalid CSV format, incorrect number of fields"); // if
 			}
 			return null; // jfritz is broken, the fritz box exports things
 		} // with an extra empty line for whatever reason
@@ -1493,7 +1495,7 @@ public class CallerList extends AbstractTableModel
 				|| (field[0].equals("1") && isPushFile)) { //$NON-NLS-1$
 			calltype = CallType.CALLOUT;
 		} else {
-			Debug.error("Invalid Call type in CSV entry!"); //$NON-NLS-1$
+			Debug.error(log, "Invalid Call type in CSV entry!"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -1502,11 +1504,11 @@ public class CallerList extends AbstractTableModel
 			try {
 				calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(field[1]); //$NON-NLS-1$
 			} catch (ParseException e) {
-				Debug.error("Invalid date format in csv entry!"); //$NON-NLS-1$
+				Debug.error(log, "Invalid date format in csv entry!"); //$NON-NLS-1$
 				return null;
 			}
 		} else {
-			Debug.error("Invalid date format in csv entry!"); //$NON-NLS-1$
+			Debug.error(log, "Invalid date format in csv entry!"); //$NON-NLS-1$
 			return null;
 		}
 

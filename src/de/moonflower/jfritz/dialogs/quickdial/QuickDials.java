@@ -20,6 +20,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.log4j.Logger;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
@@ -39,6 +40,7 @@ import de.robotniko.fboxlib.fritzbox.FritzBoxCommunication;
  * @author Arno Willig
  */
 public class QuickDials extends AbstractTableModel {
+	private final static Logger log = Logger.getLogger(QuickDials.class);
 	private static final long serialVersionUID = 1;
 	private static final String QUICKDIALS_DTD_URI = "http://jfritz.moonflower.de/dtd/quickdials.dtd";  //$NON-NLS-1$
 	protected MessageProvider messages = MessageProvider.getInstance();
@@ -208,12 +210,12 @@ public class QuickDials extends AbstractTableModel {
 			reader.parse(new InputSource(new FileInputStream(filename)));
 
 		} catch (ParserConfigurationException e) {
-			Debug.error("Error with ParserConfiguration!"); //$NON-NLS-1$
+			Debug.error(log, "Error with ParserConfiguration!"); //$NON-NLS-1$
 		} catch (SAXException e) {
-			Debug.error("Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
-            Debug.error(e.toString());
+			Debug.error(log, "Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+            Debug.error(log, e.toString());
 		} catch (IOException e) {
-			Debug.error("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			Debug.error(log, "Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 
@@ -223,7 +225,7 @@ public class QuickDials extends AbstractTableModel {
 	 * @param filename
 	 */
 	public void saveToXMLFile(String filename) {
-		Debug.info("Saving to file " + filename); //$NON-NLS-1$
+		Debug.info(log, "Saving to file " + filename); //$NON-NLS-1$
 		//FileOutputStream fos; // nur ASCII
 		//fos = new FileOutputStream(filename);
 		//Writer fos = null; // 23.08.2015 UTF-8

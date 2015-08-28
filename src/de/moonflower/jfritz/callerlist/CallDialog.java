@@ -29,6 +29,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
@@ -45,6 +47,7 @@ import de.moonflower.jfritz.utils.Debug;
  *
  */
 public class CallDialog extends JDialog implements ActionListener {
+	private final static Logger log = Logger.getLogger(CallDialog.class);
 	private static final long serialVersionUID = 1;
 
 	private Vector<PhoneNumberOld> numbers;
@@ -271,10 +274,10 @@ public class CallDialog extends JDialog implements ActionListener {
 				cancelDialog.dispose();
 			} catch (WrongPasswordException e1) {
 				JFritz.errorMsg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
-				Debug.errDlg(messages.getMessage("box.wrong_password"), e1); //$NON-NLS-1$
+				Debug.errDlg(log, messages.getMessage("box.wrong_password"), e1); //$NON-NLS-1$
 			} catch (IOException e1) {
 				JFritz.errorMsg(messages.getMessage("box.not_found")); //$NON-NLS-1$
-				Debug.errDlg(messages.getMessage("box.not_found"), e1); //$NON-NLS-1$
+				Debug.errDlg(log, messages.getMessage("box.not_found"), e1); //$NON-NLS-1$
 			}
 		} else if (e.getActionCommand().equals("close")) { //$NON-NLS-1$
 			properties.setStateProperty("calldialog.lastport", Integer.toString(portComboBox.getSelectedIndex()));

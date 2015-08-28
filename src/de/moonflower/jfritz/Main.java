@@ -318,8 +318,7 @@ public class Main  {
 	}
 
 	private void logAndStdOut(final String msg) {
-		log.info(msg);
-		Debug.info(msg);
+		Debug.info(log, msg);
 	}
 	
 	private void printSystemInfo() {
@@ -494,7 +493,7 @@ public class Main  {
 				&& (decrypted_pwd.length() > Main.PROGRAM_SEED.length())) {
 			pass = decrypted_pwd.substring(Main.PROGRAM_SEED.length());
 		} else {
-			Debug.errDlg("Configuration file \"jfritz.properties.xml\" is corrupt."
+			Debug.errDlg(log, "Configuration file \"jfritz.properties.xml\" is corrupt."
 							+ "\nSend an EMail to support@jfritz.org with this error"
 							+ "\nmessage and the attached \"jfritz.properties.xml\"-file.");
 			result = 1;
@@ -506,7 +505,7 @@ public class Main  {
 				if (password == null) { // PasswordDialog canceled
 					result = 1;
 				} else if (!password.equals(pass)) {
-					Debug.errDlg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
+					Debug.errDlg(log, messages.getMessage("box.wrong_password")); //$NON-NLS-1$
 				}
 			}
 		}
@@ -605,7 +604,7 @@ public class Main  {
 	}
 
 	public static boolean showConfigWizard(final SplashScreen splash) {
-		Debug.info("Presenting user with the configuration dialog");
+		Debug.info(log, "Presenting user with the configuration dialog");
 		ConfigWizard wizard = new ConfigWizard(null);
 
 		boolean wizardCanceled = true;
