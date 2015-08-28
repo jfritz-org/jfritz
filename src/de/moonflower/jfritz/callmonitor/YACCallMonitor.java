@@ -66,7 +66,7 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 					if (msg == null)
 						break;
 					// parsing incoming DATA
-					Debug.debug(log, "Got YAC-Data: " + msg); //$NON-NLS-1$
+					log.debug("Got YAC-Data: " + msg); //$NON-NLS-1$
 					// if last character is $00, delete it
 					if (msg.length() > 0 && msg.charAt(msg.length() - 1) == 0) {
 						msg = msg.substring(0, msg.length() - 1);

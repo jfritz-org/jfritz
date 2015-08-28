@@ -1054,7 +1054,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			callerList.reverseLookup(true, true);
 		} else if (command.equals("google")) {
 			if (googleLink != null) {
-				Debug.debug(log, googleLink);
+				log.debug(googleLink);
 				BrowserLaunch.openURL(googleLink);
 			}
 		} else if (command.equals("export_csv")) { //$NON-NLS-1$

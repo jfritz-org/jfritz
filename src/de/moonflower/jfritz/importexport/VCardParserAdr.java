@@ -19,7 +19,7 @@ public class VCardParserAdr {
 				Vector<String> propertyTypes = parser.getPropertyType().get(key);
 
 				for (String types: propertyTypes) {
-					Debug.debug(log, types);
+					log.debug(types);
 				}
 
 				if (parser.getValues().size() >= 3)

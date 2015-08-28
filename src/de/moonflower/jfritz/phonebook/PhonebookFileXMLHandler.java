@@ -123,7 +123,7 @@ public class PhonebookFileXMLHandler extends DefaultHandler {
 					pn.setType(type);
 					numbers.add(pn);
 				} else if (versionFloat >= 2.0) {
-					Debug.debug(log, "DO SOMETHING HERE");
+					log.debug("DO SOMETHING HERE");
 				}
 			} catch (NumberFormatException nfe)
 			{

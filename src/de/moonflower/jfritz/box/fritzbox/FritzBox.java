@@ -224,7 +224,7 @@ public class FritzBox extends BoxClass {
 			log.warn("Could not detect firmware. SystemStatus: " + fbc.getSystemStatus());
 			throw new FirmwareNotDetectedException("Could not detect firmware, do not try to login");
 		} else {
-			Debug.debug(log, firmware.toString());
+			log.debug(firmware.toString());
 		}
 		fbc.login();
 	}
@@ -238,7 +238,7 @@ public class FritzBox extends BoxClass {
 		end = JFritzUtils.getTimestamp();
 		start = end;
 
-		Debug.debug(log, "UpdateSettings: start of detectFirmwareAndLogin");
+		log.debug("UpdateSettings: start of detectFirmwareAndLogin");
 		try {
 			detectFirmwareAndLogin();
 		} catch (ClientProtocolException e) {
@@ -262,11 +262,11 @@ public class FritzBox extends BoxClass {
 		}
 		
 		end = JFritzUtils.getTimestamp();
-		Debug.debug(log, "UpdateSettings: detectFirmwareAndLogin " + (end - start) + "ms");
+		log.debug("UpdateSettings: detectFirmwareAndLogin " + (end - start) + "ms");
 		start = end;
 
 		// 01.08.2015
-		Debug.debug(log, "UpdateSettings: start of getUPNPFromIgddesc");
+		log.debug("UpdateSettings: start of getUPNPFromIgddesc");
 		String rep = "";
 		try {
 			rep = fbc.getNetworkMethods().getUPNPFromIgddesc(); //getUPNPFromIgddesc();
@@ -289,21 +289,21 @@ public class FritzBox extends BoxClass {
 		}
 
 		end = JFritzUtils.getTimestamp();
-		Debug.debug(log, "UpdateSettings: getUPNPFromIgddesc " + (end - start) + "ms");
+		log.debug("UpdateSettings: getUPNPFromIgddesc " + (end - start) + "ms");
 
 		start = end;
 			detectMacAddress();
 		end = JFritzUtils.getTimestamp();
-		Debug.debug(log, "UpdateSettings: detectMacAddress " + (end - start) + "ms");
+		log.debug("UpdateSettings: detectMacAddress " + (end - start) + "ms");
 		//getSettings();
 		start = end;
 			detectSipProvider();
 		end = JFritzUtils.getTimestamp();
-		Debug.debug(log, "UpdateSettings: detectSipProvider " + (end - start) + "ms");
+		log.debug("UpdateSettings: detectSipProvider " + (end - start) + "ms");
 		start = end;
 			initializePorts();
 		end = JFritzUtils.getTimestamp();
-		Debug.debug(log, "UpdateSettings: initializePorts " + (end - start) + "ms");
+		log.debug("UpdateSettings: initializePorts " + (end - start) + "ms");
 			callList = FritzBoxCallerListFactory.createFritzBoxCallListFromFirmware(firmware, this, callBackListener);
 
 		return exc;
@@ -496,7 +496,7 @@ public class FritzBox extends BoxClass {
 		} else {
 			try {
 				int analogCount = Integer.parseInt(response.get(0));
-				Debug.debug(log, "addAnalogPorts: Detected " + analogCount + " analog phones");
+				log.debug("addAnalogPorts: Detected " + analogCount + " analog phones");
 				
 				if (analogCount > 0) {
 					query.clear();
@@ -516,7 +516,7 @@ public class FritzBox extends BoxClass {
 							if (!"".equals(analogName) && !"er".equals(analogName))
 							{
 								Port port = new Port(i, analogName, Integer.toString(i+1), Integer.toString(i+1));
-								Debug.debug(log, "addAnalogPorts: Adding port " + port.toStringDetailed());
+								log.debug("addAnalogPorts: Adding port " + port.toStringDetailed());
 								addConfiguredPort(port);
 							}
 						}
@@ -548,7 +548,7 @@ public class FritzBox extends BoxClass {
 		} else {
 			try {
 				int isdnCount = Integer.parseInt(response.get(0));
-				Debug.debug(log, "addIsdnPorts: Detected " + isdnCount + " ISDN phones");
+				log.debug("addIsdnPorts: Detected " + isdnCount + " ISDN phones");
 
 				if (isdnCount > 0)
 				{
@@ -582,7 +582,7 @@ public class FritzBox extends BoxClass {
 									}
 
 									Port port = new Port(50+(i+1), name, "5"+(i+1), "5"+(i+1));
-									Debug.debug(log, "addIsdnPorts: Adding port " + port.toStringDetailed());
+									log.debug("addIsdnPorts: Adding port " + port.toStringDetailed());
 									addConfiguredPort(port);
 								}
 							}
@@ -610,7 +610,7 @@ public class FritzBox extends BoxClass {
 		} else {
 			try {
 				int dectCount = Integer.parseInt(response.get(0));
-				Debug.debug(log, "addDectMiniPorts: Detected " + dectCount + " DECT phones");
+				log.debug("addDectMiniPorts: Detected " + dectCount + " DECT phones");
 
 				if (dectCount > 0)
 				{
@@ -637,11 +637,11 @@ public class FritzBox extends BoxClass {
 							if (internal.length() >= 3) {
 								num = internal.substring(2);
 							}
-							Debug.debug(log, "ID: " + id);
-							Debug.debug(log, "Name: " + name);
-							Debug.debug(log, "Internal: " + internal);
-							Debug.debug(log, "Num: " + num);
-							Debug.debug(log, "Type: " + type);
+							log.debug("ID: " + id);
+							log.debug("Name: " + name);
+							log.debug("Internal: " + internal);
+							log.debug("Num: " + num);
+							log.debug("Type: " + type);
 
 							if ("".equals(name))
 							{
@@ -652,7 +652,7 @@ public class FritzBox extends BoxClass {
 								log.warn("addDectMiniPorts: internal number is not set. Will not add port");
 							} else {
 								Port port = new Port(10+Integer.parseInt(num), name, "6"+num, internal);
-								Debug.debug(log, "addDectMiniPorts: Adding port " + port.toStringDetailed());
+								log.debug("addDectMiniPorts: Adding port " + port.toStringDetailed());
 								addConfiguredPort(port);
 							}
 						}
@@ -681,7 +681,7 @@ public class FritzBox extends BoxClass {
 			boolean voipEnabled =  response.get(0).equals("1");
 			try {
 				int voipCount = Integer.parseInt(response.get(1));
-				Debug.debug(log, "addVoIPPorts: Detected " + voipCount + " VoIP phones");
+				log.debug("addVoIPPorts: Detected " + voipCount + " VoIP phones");
 
 				if (voipCount > 0) {
 					query.clear();
@@ -709,7 +709,7 @@ public class FritzBox extends BoxClass {
 							} else {
 								// Wählhilfe mit VoIP geht zumindest ab 06.03 nicht mehr, ging sie davor? (getestet mit 06.03 und 06.30) Ab welcher FW bis zu welcher?
 								Port port = new Port(20+i, voipName, Integer.toString(20+i), "62"+Integer.toString(i));
-								Debug.debug(log, "addVoIPPorts: Adding port " + port.toStringDetailed());
+								log.debug("addVoIPPorts: Adding port " + port.toStringDetailed());
 								addConfiguredPort(port);
 							}
 						}
@@ -743,7 +743,7 @@ public class FritzBox extends BoxClass {
 	 * @see BoxCallMonitorInterface.startCallMonitor
 	 */
 	public int startCallMonitor(Vector<CallMonitorStatusListener> listener) {
-		Debug.debug(log, "Starting call monitor ...");
+		log.debug("Starting call monitor ...");
 		switch (Integer.parseInt(properties.getProperty("option.callMonitorType"))) //$NON-NLS-1$
 		{
 			case 1: {
@@ -757,21 +757,21 @@ public class FritzBox extends BoxClass {
 					return BoxCallMonitorInterface.CALLMONITOR_FIRMWARE_INCOMPATIBLE;
 				} else {
 					if ((firmware != null) && firmware.isLowerThan(4, 3)) {
-						Debug.debug(log, "Firmware is greater/or equal than 03.96 but lower than 04.03");
+						log.debug("Firmware is greater/or equal than 03.96 but lower than 04.03");
 						if (callMonitor != null)
 						{
 							Debug.errDlg(log, messages.getMessage("callmonitor_already_started"));
 						} else {
-							Debug.debug(log, "Creating FBoxCallMonitorV1");
+							log.debug("Creating FBoxCallMonitorV1");
 							callMonitor = new FBoxCallMonitorV1(this, listener, true);
 						}
 					} else {
-						Debug.debug(log, "Firmware is greater/or equal than 04.03");
+						log.debug("Firmware is greater/or equal than 04.03");
 						if (callMonitor != null)
 						{
 							Debug.errDlg(log, messages.getMessage("callmonitor_already_started"));
 						} else {
-							Debug.debug(log, "Creating FBoxCallMonitorV3");
+							log.debug("Creating FBoxCallMonitorV3");
 							callMonitor = new FBoxCallMonitorV3(this, listener, true);
 						}
 					}
@@ -880,7 +880,7 @@ public class FritzBox extends BoxClass {
 		{
 			int numQueries = 8;
 			int sipCount = Integer.parseInt(response.get(0));
-			Debug.debug(log, "Number of SIP Providers: " + sipCount);
+			log.debug("Number of SIP Providers: " + sipCount);
 
 			query.clear();
 			for (int i=0; i<sipCount; i++)
@@ -908,10 +908,10 @@ public class FritzBox extends BoxClass {
 						String name = response.get(offset+2);
 						int numberId = (id * numQueries) + 3;
 						String number = response.get(numberId);
-						Debug.debug(log, "id= " + id + " NumberID=" +numberId + " Number=" + number + " Name="+name);
+						log.debug("id= " + id + " NumberID=" +numberId + " Number=" + number + " Name="+name);
 						if (!"".equals(number))
 						{
-							Debug.debug(log, "SIP-Provider["+i+"]: id="+id+" Number="+number+ " Name="+name);
+							log.debug("SIP-Provider["+i+"]: id="+id+" Number="+number+ " Name="+name);
 							SipProvider newSipProvider = new SipProvider(id, number, name);
 							if (Integer.parseInt(response.get(offset+0)) == 0)
 							{
@@ -1148,7 +1148,7 @@ public class FritzBox extends BoxClass {
 		String result =  UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
 				URL_SERVICE_COMMONLINK.replace("upnp", getIgdupnp()), URN_SERVICE_COMMONLINK, xml); // 01.08.2015
 
-//		Debug.debug(log, "Result of getCommonLinkProperties: "+ result);
+//		log.debug("Result of getCommonLinkProperties: "+ result);
 
 		Pattern p = Pattern.compile("<NewLayer1UpstreamMaxBitRate>([^<]*)</NewLayer1UpstreamMaxBitRate>");
 		Matcher m = p.matcher(result);
@@ -1379,13 +1379,13 @@ public class FritzBox extends BoxClass {
 				if (firmware != null && firmware.isLowerThan(4, 21)) {
 					// TODO: message, that firmware does not support the calling feature
 				} else if (firmware != null && firmware.isLowerThan(6, 1)) {
-					Debug.debug(log, "doCall: Firmware is greater/or equal than 04.21 but lower than 06.1");
+					log.debug("doCall: Firmware is greater/or equal than 04.21 but lower than 06.1");
 					generateDoCallPostData(postdata, currentNumber, port);
 				    fbc.postToPageAndGetAsString(FritzBoxCommunication.URL_WEBCM, postdata);
 				} else {
-					Debug.debug(log, "doCall: Firmware is greater/or equal than 06.01");
+					log.debug("doCall: Firmware is greater/or equal than 06.01");
 					
-					Debug.debug(log, "doCall: Setting dialing port to " + port.getDialPort());
+					log.debug("doCall: Setting dialing port to " + port.getDialPort());
 				   	generateDoCallPostDataDialPortLua(postdata, port.getDialPort());
 				   	fbc.postToPageAndGetAsString(URL_DIAL_FONBOOK_LUA, postdata);
 					
@@ -1406,15 +1406,15 @@ public class FritzBox extends BoxClass {
 				e.printStackTrace();
 				setBoxDisconnected();
 			} catch (LoginBlockedException e) {
-				Debug.debug(log, "Wrong password, maybe SID is invalid.");
+				log.debug("Wrong password, maybe SID is invalid.");
 				setBoxDisconnected();
 				handleLoginBlockedException(e);
 			} catch (InvalidCredentialsException e) {
-				Debug.debug(log, "Wrong password, maybe SID is invalid.");
+				log.debug("Wrong password, maybe SID is invalid.");
 				setBoxDisconnected();
 				handleInvalidCredentialsException(e);
 			} catch (PageNotFoundException e) {
-				Debug.debug(log, "Wrong password, maybe SID is invalid.");
+				log.debug("Wrong password, maybe SID is invalid.");
 				setBoxDisconnected();
 				handlePageNotFoundException(e);
 			}
@@ -1440,11 +1440,11 @@ public class FritzBox extends BoxClass {
 				if (firmware != null && firmware.isLowerThan(4, 21)) {
 					// TODO: message, that firmware does not support the calling feature
 				} else if (firmware != null && firmware.isLowerThan(6, 1)) {
-					Debug.debug(log, "hangup_Firmware is greater/or equal than 04.21 but lower than 06.1");
+					log.debug("hangup_Firmware is greater/or equal than 04.21 but lower than 06.1");
 					generateHangupPostdata(postdata, port);
 					fbc.postToPageAndGetAsString(FritzBoxCommunication.URL_WEBCM, postdata);
 				} else {
-					Debug.debug(log, "hangup_Firmware is greater/or equal than 06.01");
+					log.debug("hangup_Firmware is greater/or equal than 06.01");
 					fbc.getPageAsString(URL_FONBOOK_LIST_LUA + "?" + "hangup=");
 				}
 			} catch (InvalidSessionIdException e) {
@@ -1457,15 +1457,15 @@ public class FritzBox extends BoxClass {
 				e.printStackTrace();
 				setBoxDisconnected();
 			} catch (LoginBlockedException e) {
-				Debug.debug(log, "Wrong password, maybe SID is invalid.");
+				log.debug("Wrong password, maybe SID is invalid.");
 				setBoxDisconnected();
 				handleLoginBlockedException(e);
 			} catch (InvalidCredentialsException e) {
-				Debug.debug(log, "Wrong password, maybe SID is invalid.");
+				log.debug("Wrong password, maybe SID is invalid.");
 				setBoxDisconnected();
 				handleInvalidCredentialsException(e);
 			} catch (PageNotFoundException e) {
-				Debug.debug(log, "Wrong password, maybe SID is invalid.");
+				log.debug("Wrong password, maybe SID is invalid.");
 				setBoxDisconnected();
 				handlePageNotFoundException(e);
 			}

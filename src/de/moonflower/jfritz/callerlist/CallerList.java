@@ -422,9 +422,9 @@ public class CallerList extends AbstractTableModel
 	public synchronized void addEntries(Vector<Call> newCalls){
 		int newEntries = 0;
 
-		Debug.debug(log, "Filtering calls...");
+		log.debug("Filtering calls...");
 		filterNewCalls(newCalls);
-		Debug.debug(log, "Adding " + newCalls.size() + " new calls.");
+		log.debug("Adding " + newCalls.size() + " new calls.");
 
 		for(Call call: newCalls)
 		{
@@ -691,7 +691,7 @@ public class CallerList extends AbstractTableModel
 	}
 
 	public void sortAllUnfilteredRows() {
-		Debug.debug(log, "Sorting unfiltered data"); //$NON-NLS-1$
+		log.debug("Sorting unfiltered data"); //$NON-NLS-1$
 
 		int indexOfDate = -1;
 		String columnName = "";
@@ -1048,7 +1048,7 @@ public class CallerList extends AbstractTableModel
 		CSVCallerListImport csvImport = new CSVCallerListImport(file);
 		csvImport.openFile();
 		String firstLine = csvImport.readHeader(0);
-		Debug.debug(log, "Header: " + firstLine);
+		log.debug("Header: " + firstLine);
 		if (firstLine.equals(EXPORT_CSV_FORMAT_JFRITZ)) {
 			csvImport.setSeparaor(";");
 			csvImport.mapColumn(0, CallerTable.COLUMN_TYPE);
@@ -1062,7 +1062,7 @@ public class CallerList extends AbstractTableModel
 			csvImport.mapColumn(11, CallerTable.COLUMN_COMMENT);
 		} else if (firstLine.startsWith("sep=")) {
 			String[] split = firstLine.split("=");
-			Debug.debug(log, "Found separator: " + split[1]);
+			log.debug("Found separator: " + split[1]);
 			csvImport.setSeparaor(split[1]);
 			String secondLine = csvImport.readHeader(1);
 			if (   secondLine.equals(EXPORT_CSV_FORMAT_FRITZBOX_NEWFIRMWARE)
@@ -1096,7 +1096,7 @@ public class CallerList extends AbstractTableModel
 		{
 			JFritz.getCallerList().addEntries(csvImport.getImportedCalls());
 
-			Debug.debug(log, newEntries + " New entries processed");
+			log.debug(newEntries + " New entries processed");
 
 			fireUpdateCallVector();
 

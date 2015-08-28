@@ -118,12 +118,12 @@ public class CallerTable extends JTable {
 				{
 					for (int i =0; i < sortedTableColumns.size(); i++)
 					{
-						Debug.debug(log, "Sorted columns: " + sortedTableColumns.get(i).getName() + " - visible: " + sortedTableColumns.get(i).isVisible());
+						log.debug("Sorted columns: " + sortedTableColumns.get(i).getName() + " - visible: " + sortedTableColumns.get(i).isVisible());
 					}
 					moveColumn(arg0.getFromIndex(), arg0.getToIndex(), false);
 					for (int i =0; i < sortedTableColumns.size(); i++)
 					{
-						Debug.debug(log, "Sorted columns: " + sortedTableColumns.get(i).getName() + " - visible: " + sortedTableColumns.get(i).isVisible());
+						log.debug("Sorted columns: " + sortedTableColumns.get(i).getName() + " - visible: " + sortedTableColumns.get(i).isVisible());
 						properties.setStateProperty("callerTable.column" + i + ".name", sortedTableColumns.get(i).getName());
 					}
 				}
@@ -415,14 +415,14 @@ public class CallerTable extends JTable {
     	    	JFritzTableColumn fromColumn = sortedTableColumns.get(sortedPositionOld);
     	    	JFritzTableColumn toColumn = sortedTableColumns.get(sortedPositionNew);
 
-    	    	Debug.debug(log, "Old sortedColumn: " + fromColumn);
-        		Debug.debug(log, "New sortedColumn: " + toColumn);
+    	    	log.debug("Old sortedColumn: " + fromColumn);
+        		log.debug("New sortedColumn: " + toColumn);
 
     	        int allColumnsOldIndex  = sortedTableColumns.indexOf(fromColumn);
     	        int allColumnsNewIndex  = sortedTableColumns.indexOf(toColumn);
 
-    	    	Debug.debug(log, "Old sortedColumnIndex: " + allColumnsOldIndex);
-        		Debug.debug(log, "New sortedColumnIndex: " + allColumnsNewIndex);
+    	    	log.debug("Old sortedColumnIndex: " + allColumnsOldIndex);
+        		log.debug("New sortedColumnIndex: " + allColumnsNewIndex);
 
         		if(oldIndex != newIndex) {
     	        	sortedTableColumns.removeElementAt(allColumnsOldIndex);
@@ -433,11 +433,11 @@ public class CallerTable extends JTable {
     	        {
     	        	super.moveColumn(oldIndex, newIndex);
     	        }
-    			Debug.debug(log, "---");
+    			log.debug("---");
 
     			for (int i=0; i<getColumnCount(); i++)
     			{
-    				Debug.debug(log, "Table column " + i + ": " + getColumnModel().getColumn(i).getIdentifier());
+    				log.debug("Table column " + i + ": " + getColumnModel().getColumn(i).getIdentifier());
     			}
     		}
     		else
@@ -479,7 +479,7 @@ public class CallerTable extends JTable {
 			if (col != null)
 			{
 				col.setVisible(true);
-				Debug.debug(log, "CallerTable: Adding table column " + columnName + " at position " + i);
+				log.debug("CallerTable: Adding table column " + columnName + " at position " + i);
 				getColumnModel().addColumn(col.getColumn());
 				sortedTableColumns.add(col);
 				properties.setStateProperty("callerTable.column" + i + ".name", columnName);
@@ -492,16 +492,16 @@ public class CallerTable extends JTable {
 				}
 				else
 				{
-					Debug.debug(log, columnName + " visible:" + col.isVisible());
+					log.debug(columnName + " visible:" + col.isVisible());
 				}
 			}
 		}
 
-		Debug.debug(log, "---");
+		log.debug("---");
 
 		for (int i=0; i<getColumnCount(); i++)
 		{
-			Debug.debug(log, "Table column " + i + ": " + getColumnModel().getColumn(i).getIdentifier());
+			log.debug("Table column " + i + ": " + getColumnModel().getColumn(i).getIdentifier());
 		}
 
 		hideColumns();

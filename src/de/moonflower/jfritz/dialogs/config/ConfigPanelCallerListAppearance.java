@@ -108,7 +108,7 @@ public class ConfigPanelCallerListAppearance extends JPanel implements ConfigPan
 		{
 			properties.setStateProperty("callerTable.column"+i+".name", columnTableModel.getData(i).getName());
 			properties.setProperty("option.showCallerListColumn." + columnTableModel.getData(i).getName(), columnTableModel.getData(i).isVisible());
-			Debug.debug(log, "CallerListTableColumn " + i + ": " + columnTableModel.getData(i).getName() + " / visible: " +columnTableModel.getData(i).isVisible());
+			log.debug("CallerListTableColumn " + i + ": " + columnTableModel.getData(i).getName() + " / visible: " +columnTableModel.getData(i).isVisible());
 		}
 	}
 

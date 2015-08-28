@@ -268,7 +268,7 @@ public class CallMessageDlg extends JFrame implements ActionListener {
 		}
 
 		message = message.replaceAll("<td></td>", "");
-		Debug.debug(log, message);
+		log.debug(message);
 		callInLabel.setText(message);
 		mainPane.add(callInLabel);
 
@@ -298,7 +298,7 @@ public class CallMessageDlg extends JFrame implements ActionListener {
 		this.setLocation(xPos, yPos);
 		setVisible(true);
 		toFront();
-		Debug.debug(log, "Should be displayed...");
+		log.debug("Should be displayed...");
 	}
 
 	public void showOutgoingCall(Call call, String callerstr, String calledstr, Person person) {
@@ -496,7 +496,7 @@ public class CallMessageDlg extends JFrame implements ActionListener {
 		}
 
 		message = message.replaceAll("<td></td>", "");
-		Debug.debug(log, message);
+		log.debug(message);
 		callInLabel.setText(message);
 		mainPane.add(callInLabel);
 
@@ -526,7 +526,7 @@ public class CallMessageDlg extends JFrame implements ActionListener {
 		this.setLocation(xPos, yPos);
 		setVisible(true);
 		toFront();
-		Debug.debug(log, "Should be displayed...");
+		log.debug("Should be displayed...");
 	}
 
 	/**

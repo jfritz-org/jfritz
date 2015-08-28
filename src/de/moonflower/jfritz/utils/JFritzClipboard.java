@@ -83,7 +83,7 @@ public class JFritzClipboard{
     		JFritzClipboard.copy("Text to be copied into systems clipboard."); //$NON-NLS-1$
     		Vector<String> response = JFritzClipboard.paste();
     		for (String resp:response) {
-    			Debug.debug(log, resp);
+    			log.debug(resp);
     		}
     		JFritzClipboard.copy(null);
     		JFritzClipboard.copy(""); //$NON-NLS-1$

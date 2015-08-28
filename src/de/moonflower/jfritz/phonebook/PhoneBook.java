@@ -1079,8 +1079,8 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 		if ((!filter_private) && (keywords.length == 0)) {
 			// Use unfiltered data
 			filteredPersons = unfilteredPersons;
-			Debug.debug(log, "Im updating the filter");
-			Debug.debug(log, "Size of filtered contacts: "+filteredPersons.size());
+			log.debug("Im updating the filter");
+			log.debug("Size of filtered contacts: "+filteredPersons.size());
 		} else {
 			// Data got to be filtered
 			Vector<Person> newFilteredPersons = new Vector<Person>();
@@ -1152,9 +1152,9 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 
 			}
 
-			Debug.debug(log, linesRead
+			log.debug(linesRead
 					+ " Lines read from Thunderbird csv file " + filename); //$NON-NLS-1$
-			Debug.debug(log, newEntries + " New contacts processed"); //$NON-NLS-1$
+			log.debug(newEntries + " New contacts processed"); //$NON-NLS-1$
 
 			if (newEntries > 0) {
 				sortAllUnfilteredRows();
@@ -1282,7 +1282,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 			boolean wrongVersion = false;
 			while (null != (line = br.readLine())) {
 				linesRead++;
-				Debug.debug(log, line);
+				log.debug(line);
 				vcardParser.parseLine(line);
 
 				if (vcardParser.getProperty().equals("begin")) {
@@ -1320,19 +1320,19 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 						person = null;
 					}
 				} else {
-					Debug.debug(log, "Unknown property: " + vcardParser.getProperty());
+					log.debug("Unknown property: " + vcardParser.getProperty());
 					Enumeration<String> en = vcardParser.getPropertyType().keys();
 					while (en.hasMoreElements()) {
 						String key = (String)en.nextElement();
-						Debug.debug(log, "Property values: " + key + "=" + vcardParser.getPropertyType().get(key));
+						log.debug("Property values: " + key + "=" + vcardParser.getPropertyType().get(key));
 					}
-					Debug.debug(log, "Values: " + vcardParser.getValues());
+					log.debug("Values: " + vcardParser.getValues());
 				}
 			}
 
-			Debug.debug(log, linesRead
+			log.debug(linesRead
 					+ " Lines read from VCard file " + filename); //$NON-NLS-1$
-			Debug.debug(log, newEntries + " New contacts processed"); //$NON-NLS-1$
+			log.debug(newEntries + " New contacts processed"); //$NON-NLS-1$
 
 			message = "";
 			if (newEntries > 0) {

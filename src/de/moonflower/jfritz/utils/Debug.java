@@ -80,10 +80,6 @@ public class Debug {
 		logger.error(msg);
 	}
 
-	public static void debug(Logger logger, String msg) {
-		logger.debug(msg);
-	}
-
 	/**
 	 * Show Dialog with message
 	 *

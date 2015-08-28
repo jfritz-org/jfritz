@@ -190,11 +190,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		this.addComponentListener(new ComponentListener() {
 
 			public void componentHidden(ComponentEvent arg0) {
-				Debug.debug(log, "Window hidden");
+				log.debug("Window hidden");
 			}
 
 			public void componentMoved(ComponentEvent arg0) {
-//				Debug.debug(log, "Window moved");
+//				log.debug("Window moved");
 				properties.setStateProperty("position.left", Integer.toString(getLocation().x)); //$NON-NLS-1$
 				properties.setStateProperty("position.top", Integer.toString(getLocation().y));//$NON-NLS-1$
 				properties.setStateProperty("position.width", Integer.toString(thisWindow.getWidth()));//$NON-NLS-1$
@@ -204,7 +204,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			public void componentResized(ComponentEvent arg0) {
 				if (getExtendedState() != Frame.MAXIMIZED_BOTH)
 				{
-//					Debug.debug(log, "Window resized");
+//					log.debug("Window resized");
 					properties.setStateProperty("position.left", Integer.toString(getLocation().x)); //$NON-NLS-1$
 					properties.setStateProperty("position.top", Integer.toString(getLocation().y));//$NON-NLS-1$
 					properties.setStateProperty("position.width", Integer.toString(thisWindow.getWidth()));//$NON-NLS-1$
@@ -213,7 +213,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			}
 
 			public void componentShown(ComponentEvent arg0) {
-				Debug.debug(log, "Window shown");
+				log.debug("Window shown");
 			}
 		});
 		addWindowStateListener(new WindowStateListener() {
@@ -221,18 +221,18 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			public void windowStateChanged(WindowEvent arg0) {
 				properties.setStateProperty("window.state.old", properties.getStateProperty("window.state"));
 				properties.setStateProperty("window.state", Integer.toString(getExtendedState()));
-				Debug.debug(log, "Window state changed: " + properties.getStateProperty("window.state.old") + " -> " + properties.getStateProperty("window.state"));
+				log.debug("Window state changed: " + properties.getStateProperty("window.state.old") + " -> " + properties.getStateProperty("window.state"));
 			}
 
 		});
 	}
 
 	public void checkStartOptions() {
-		Debug.debug(log, "CHECKSTARTOPTIONS: ");
+		log.debug("CHECKSTARTOPTIONS: ");
 		if (!properties.getProperty("option.startMinimized") //$NON-NLS-1$,  //$NON-NLS-2$,
 				.equals("true")) { //$NON-NLS-1$
 			setVisible(true);
-			Debug.debug(log, "CHECKSTARTOPTIONS: don't start minimized");
+			log.debug("CHECKSTARTOPTIONS: don't start minimized");
 		} else {
 			if (!Main.systraySupport) {
 				setVisible(true);
@@ -355,17 +355,17 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 		int windowState = Frame.NORMAL;
 
-		Debug.debug(log, "CREATE GUI: ");
+		log.debug("CREATE GUI: ");
 		if ((!properties.getProperty("option.startMinimized").equals("true")) &&
 			(Frame.ICONIFIED == Integer.parseInt(properties.getStateProperty("window.state"))))
 		{ // Old state was iconified and we don't want to startup iconified
 		  // Set previous old state to prevent bug in showing menu bar
 			windowState = Integer.parseInt(properties.getStateProperty("window.state.old"));
-			Debug.debug(log, "CREATE GUI: restore old window state " + Integer.toString(windowState));
+			log.debug("CREATE GUI: restore old window state " + Integer.toString(windowState));
 		} else
 		{
 			windowState = Integer.parseInt(properties.getStateProperty("window.state"));
-			Debug.debug(log, "CREATE GUI: restore window state " + Integer.toString(windowState));
+			log.debug("CREATE GUI: restore window state " + Integer.toString(windowState));
 		}
 		setLocation(x, y);
 		setSize(w, h);
@@ -935,7 +935,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			callerListPanel.reorderColumns();
 
 			if (configDialog.shouldRefreshTrayMenu()) {
-				Debug.debug(log, "Refreshing tray!");
+				log.debug("Refreshing tray!");
 				JFritzTray.refreshTrayMenu();
 			}
 		}
@@ -961,13 +961,13 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		if (e.getID() == WindowEvent.WINDOW_CLOSING) {
 			if (JFritzUtils.parseBoolean(properties.getProperty("option.minimize"))) //$NON-NLS-1$
 			{
-				Debug.debug(log, "PROCESS WINDOW EVENT: minimize statt close");
+				log.debug("PROCESS WINDOW EVENT: minimize statt close");
 				setExtendedState(Frame.ICONIFIED);
 			} else {
 				jFritz.maybeExit(0, true);
 			}
 		} else if (e.getID() == WindowEvent.WINDOW_ICONIFIED) {
-			Debug.debug(log, "PROCESS WINDOW EVENT: minimize");
+			log.debug("PROCESS WINDOW EVENT: minimize");
 			hideShowJFritz();
 		} else {
 			super.processWindowEvent(e);
@@ -1059,7 +1059,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * Action Listener for menu and toolbar
 	 */
 	public void actionPerformed(ActionEvent e) {
-		Debug.debug(log, "Action " + e.getActionCommand()); //$NON-NLS-1$
+		log.debug("Action " + e.getActionCommand()); //$NON-NLS-1$
 		if (e.getActionCommand().equals("exit")) { //$NON-NLS-1$
 			jFritz.maybeExit(0, true);
 		} else if (e.getActionCommand().equals("about")) {
@@ -1108,14 +1108,14 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			String boxName = e.getActionCommand().substring("fetchlist-".length());
 			BoxClass box = JFritz.getBoxCommunication().getBox(boxName);
 			if (box != null) {
-				Debug.debug(log, "Fetching list for box: " + boxName);
+				log.debug("Fetching list for box: " + boxName);
 				fetchList(box, false);
 			}
 		} else if (e.getActionCommand().startsWith("renewIP-")) {
 			final String boxName = e.getActionCommand().substring("renewIP-".length());
 			BoxClass box = JFritz.getBoxCommunication().getBox(boxName);
 			if (box != null) {
-				Debug.debug(log, "Renew IP for box: " + boxName);
+				log.debug("Renew IP for box: " + boxName);
 				JFritz.getBoxCommunication().renewIPAddress(box);
 			}
 			Thread t = new Thread() {
@@ -1128,7 +1128,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 							BoxClass box = JFritz.getBoxCommunication().getBox(boxName);
 							if (box != null) {
 								externalIp = box.getExternalIP();
-								Debug.debug(log, "Extenal IP for box (" + boxName + "): " + externalIp);
+								log.debug("Extenal IP for box (" + boxName + "): " + externalIp);
 							}
 							if ("No external IP detected".equals(externalIp)) {
 								externalIp = "";
@@ -1146,7 +1146,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			String boxName = e.getActionCommand().substring("reboot-".length());
 			BoxClass box = JFritz.getBoxCommunication().getBox(boxName);
 			if (box != null) {
-				Debug.debug(log, "Rebooting box: " + boxName);
+				log.debug("Rebooting box: " + boxName);
 				try {
 					JFritz.getBoxCommunication().reboot(box);
 				} catch (WrongPasswordException e1) {
@@ -1290,25 +1290,25 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		if (System.currentTimeMillis() > this.lastDeIconifiedEvent + 500) {
 			this.lastDeIconifiedEvent  = System.currentTimeMillis();
 			if (isVisible()) {
-				Debug.debug(log, "Hide JFritz-Window"); //$NON-NLS-1$
+				log.debug("Hide JFritz-Window"); //$NON-NLS-1$
 				if (Main.systraySupport)
 				{
-					Debug.debug(log, "Setting to invisible!");
+					log.debug("Setting to invisible!");
 					this.setVisible(false);
 				}
 				if (saveState) {
 					properties.setStateProperty("window.state.old", properties.getStateProperty("window.state"));
 					properties.setStateProperty("window.state", Integer.toString(getExtendedState()));
-					Debug.debug(log, "Saving new state: " + properties.getStateProperty("window.state.old")
+					log.debug("Saving new state: " + properties.getStateProperty("window.state.old")
 							+ " -> " + properties.getStateProperty("window.state"));
 				}
 			} else while ( !isVisible() ){
-				Debug.debug(log, "Show JFritz-Window"); //$NON-NLS-1$
+				log.debug("Show JFritz-Window"); //$NON-NLS-1$
 				int windowState = 0;
 				windowState = Integer.parseInt(properties.getStateProperty("window.state.old"));
 
-				Debug.debug(log, "Window state old: " + Integer.toString(windowState));
-				Debug.debug(log, "Windows state:    " + properties.getStateProperty("window.state"));
+				log.debug("Window state old: " + Integer.toString(windowState));
+				log.debug("Windows state:    " + properties.getStateProperty("window.state"));
 
 				if ((windowState != Frame.MAXIMIZED_BOTH) && (windowState != Frame.ICONIFIED))
 				{
@@ -1317,10 +1317,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 				if (OSDetector.isGnome())
 				{
-					Debug.debug(log, "Current state1: "
+					log.debug("Current state1: "
 							+ properties.getStateProperty("window.state.old")
 							+ "/"+properties.getStateProperty("window.state"));
-					Debug.debug(log, "Maximize gnome style");
+					log.debug("Maximize gnome style");
 		            setExtendedState(windowState);
 		            setVisible(true);
 		            setExtendedState(Frame.ICONIFIED);
@@ -1330,14 +1330,14 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		            String tmp = properties.getStateProperty("window.state");
 		            properties.setStateProperty("window.state", properties.getStateProperty("window.state.old"));
 		            properties.setStateProperty("window.state.old", tmp);
-					Debug.debug(log, "Current state2: "
+					log.debug("Current state2: "
 							+ properties.getStateProperty("window.state.old")
 							+ "/"+properties.getStateProperty("window.state"));
 				}
 				else
 				{
 					// use this at windows and other systems
-					Debug.debug(log, "Maximize windows style");
+					log.debug("Maximize windows style");
 					setVisible(true);
 					setExtendedState(windowState);
 				}
@@ -1573,7 +1573,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				options, options[1]);
 
 		if (answer == JOptionPane.YES_OPTION) {
-			Debug.debug(log, "Fetching data before deleting list on box!");
+			log.debug("Fetching data before deleting list on box!");
 			fetchList(null, true); // param true indicates that FritzBox-CallerList
 			// is to be deleted
 		}
@@ -2007,14 +2007,14 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	}
 
 	public void setBoxConnected(String boxName) {
-		Debug.debug(log, "Box connected");
+		log.debug("Box connected");
 		connectButton.setIcon(connectIcon);
 		connectButton.setToolTipText(messages.getMessage("connected_fritz"));
 		statusBar.refresh();
 	}
 
 	public void setBoxDisconnected(String boxName) {
-		Debug.debug(log, "Box disconnected");
+		log.debug("Box disconnected");
 		connectButton.setIcon(disconnectIcon);
 		connectButton.setToolTipText(messages.getMessage("disconnected_fritz"));
 		this.setDisconnectedStatus(""); // set call monitor to disconnected status

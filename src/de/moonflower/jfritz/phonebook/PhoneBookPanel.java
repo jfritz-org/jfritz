@@ -166,7 +166,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			clearAllFilter();
 		} else if (e.getActionCommand().equals("google")) { //$NON-NLS-1$
 			if (googleLink != null) {
-				Debug.debug(log, googleLink);
+				log.debug(googleLink);
 				BrowserLaunch.openURL(googleLink);
 			}
 		} else {

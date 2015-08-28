@@ -17,7 +17,7 @@ public class VCardParserEMail {
 			if (key.equals("type")) {
 				Vector<String> propertyTypes = parser.getPropertyType().get(key);
 				for (String types: propertyTypes) {
-					Debug.debug(log, types);
+					log.debug(types);
 				}
 
 				if (propertyTypes.contains("internet")) {

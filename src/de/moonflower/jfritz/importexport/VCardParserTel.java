@@ -23,7 +23,7 @@ public class VCardParserTel {
 			if (key.equals("type")) {
 				Vector<String> propertyTypes = parser.getPropertyType().get(key);
 				for (String types: propertyTypes) {
-					Debug.debug(log, types);
+					log.debug(types);
 				}
 
 				if (person.getNumbers() == null) {

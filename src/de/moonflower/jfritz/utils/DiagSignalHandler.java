@@ -33,9 +33,9 @@ public class DiagSignalHandler implements SignalHandler {
             // Output information for each thread
             Thread[] threadArray = new Thread[Thread.activeCount()];
             int numThreads = Thread.enumerate(threadArray);
-            Debug.debug(log, "Current threads:");
+            log.debug("Current threads:");
             for (int i=0; i < numThreads; i++) {
-                Debug.debug(log, "    "+threadArray[i]);
+                log.debug("    "+threadArray[i]);
             }
 
             // Chain back to previous handler, if one exists

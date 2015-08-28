@@ -519,7 +519,7 @@ public final class JFritz implements  StatusListener {
 		shutdownInvoked = true;
 
 		// TODO maybe some more cleanup is needed
-		Debug.debug(log, "prepareShutdown in JFritz.java");
+		log.debug("prepareShutdown in JFritz.java");
 
 		if ( jframe != null) {
 			jframe.prepareShutdown();
@@ -544,7 +544,7 @@ public final class JFritz implements  StatusListener {
 //			//			watchdog.interrupt();
 		}
 
-		Debug.debug(log, "prepareShutdown in JFritz.java done");
+		log.debug("prepareShutdown in JFritz.java done");
 
 		// Keep this order to properly shutdown windows. First interrupt thread,
 		// then dispose.

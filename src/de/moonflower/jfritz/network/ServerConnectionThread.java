@@ -574,7 +574,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 								//see if we need to ingnore the call
 								for (int i = 0; i < ignoredMSNs.length; i++) {
-						            Debug.debug(log, ignoredMSNs[i]);
+						            log.debug(ignoredMSNs[i]);
 						            if (!ignoredMSNs[i].equals(""))
 						                if (c.getRoute()
 						                        .equals(ignoredMSNs[i])) {

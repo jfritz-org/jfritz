@@ -74,7 +74,7 @@ public class WatchdogThread extends Thread {
         {
         	JFritz.getBoxCommunication().refreshLogin(null);
         	
-        	Debug.debug(log, "Restarting call monitor due to STANDBY/SUSPEND TO RAM");
+        	log.debug("Restarting call monitor due to STANDBY/SUSPEND TO RAM");
 			restartCallMonitor(true);
     		if (JFritzUtils.parseBoolean(properties.getProperty("option.watchdog.fetchAfterStandby"))) //$NON-NLS-1$, //$NON-NLS-2$
     		{
@@ -83,7 +83,7 @@ public class WatchdogThread extends Thread {
 
 					@Override
 					public void run() {
-						Debug.debug(log, "Fetching caller list due to STANDBY/SUSPEND TO RAM");
+						log.debug("Fetching caller list due to STANDBY/SUSPEND TO RAM");
 	        			JFritz.getJframe().fetchList(null, false);
 					}
 

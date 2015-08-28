@@ -154,10 +154,10 @@ public class CheckboxPopupMenu extends JDialog implements ActionListener, LinkCl
 
 	public void clicked(URL url) {
 		if (allUrlStr.equals(url.toString())) {
-			Debug.debug(log, "Select all");
+			log.debug("Select all");
 			this.setSelected("$ALL$", true);
 		} else if (noneUrlStr.equals(url.toString())) {
-			Debug.debug(log, "Select none");
+			log.debug("Select none");
 			this.setSelected("$ALL$", false);
 		} else {
 			log.warn("Unknown url clicked");

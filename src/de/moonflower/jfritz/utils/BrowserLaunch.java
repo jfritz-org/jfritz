@@ -37,18 +37,18 @@ public class BrowserLaunch {
 	String osName = System.getProperty("os.name"); //$NON-NLS-1$
 	   try {
 	      if (osName.startsWith("Mac OS")) { //$NON-NLS-1$
-	    	 Debug.debug(log, "openURL on Mac OS for URL: " + url);
+	    	 log.debug("openURL on Mac OS for URL: " + url);
 	         Class<?> macUtils = Class.forName("com.apple.mrj.MRJFileUtils"); //$NON-NLS-1$
 	         Method openURL = macUtils.getDeclaredMethod("openURL", //$NON-NLS-1$
 	            new Class[] {String.class});
 	         openURL.invoke(null, new Object[] {url});
 	         }
 	      else if (osName.startsWith("Windows")) { //$NON-NLS-1$
-	     	 Debug.debug(log, "openURL on Windows for URL: " + url);
+	     	 log.debug("openURL on Windows for URL: " + url);
 	         Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url); //$NON-NLS-1$
 	      	 }
 	      else { //assume Unix or Linux
-	     	 Debug.debug(log, "openURL on Unix/Linux for URL: " + url);
+	     	 log.debug("openURL on Unix/Linux for URL: " + url);
 	         String[] browsers = {
 	            "firefox", //$NON-NLS-1$
 	            "opera", //$NON-NLS-1$
@@ -64,7 +64,7 @@ public class BrowserLaunch {
 	        	Debug.error(log, "No browser found!");
 	            throw new Exception(messages.getMessage("error_browser_not_found")); //$NON-NLS-1$
 	         }else
-	        	Debug.debug(log, "Executing browser '" + browser + "'");
+	        	log.debug("Executing browser '" + browser + "'");
 	            Runtime.getRuntime().exec(new String[] {browser, url});
 	         }
 	      }

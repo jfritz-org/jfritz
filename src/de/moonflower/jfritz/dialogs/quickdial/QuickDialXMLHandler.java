@@ -75,7 +75,7 @@ public class QuickDialXMLHandler extends DefaultHandler {
 			description = chars;
 		} else if (qName.equals("entry")) { //$NON-NLS-1$
 			if (dataModel != null) { // Add an entry to the dataModel
-				Debug.debug(log, "QuickDial: "+id+ //$NON-NLS-1$
+				log.debug("QuickDial: "+id+ //$NON-NLS-1$
 						", "+number+ //$NON-NLS-1$
 						", "+vanity+ //$NON-NLS-1$
 						", "+description); //$NON-NLS-1$
