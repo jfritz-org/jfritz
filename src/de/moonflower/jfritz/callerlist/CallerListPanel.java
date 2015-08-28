@@ -1148,7 +1148,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 		} else if (command.equals(CallFilter.FILTER_PORT)) {
 			// do nothing
 		} else {
-			Debug.warning(log, "Unknown command: " + command);
+			log.warn("Unknown command: " + command);
 		}
 	}
 

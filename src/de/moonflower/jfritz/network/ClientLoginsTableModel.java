@@ -181,7 +181,7 @@ public class ClientLoginsTableModel extends AbstractTableModel{
 
 					//process the filters that use extra information
 					if(callFilter.getType() == null){
-						Debug.warning(log, "CallFilter type is null!");
+						log.warn("CallFilter type is null!");
 						break;
 					}
 

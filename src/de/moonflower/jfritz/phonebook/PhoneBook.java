@@ -1215,7 +1215,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 		// "+field[10]);
 		if (field[6].equals("") && field[7].equals("") && field[8].equals("") && //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 				field[9].equals("") && field[10].equals("")) { //$NON-NLS-1$,  //$NON-NLS-2$
-			Debug.warning(log, "No phone number present for contact"); //$NON-NLS-1$
+			log.warn("No phone number present for contact"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -1490,7 +1490,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 		else if(callerPhoneNumber.getCountryCode().startsWith(JFritzReverseLookup.TURKEY_CODE))
 			city = ReverseLookupTurkey.getCity(callerPhoneNumber.getIntNumber());
 		person.setCity(city);
-		Debug.warning(log, "Add dummy person to database"); //$NON-NLS-1$
+		log.warn("Add dummy person to database"); //$NON-NLS-1$
 		return person;
 	}
 

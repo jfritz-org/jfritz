@@ -442,7 +442,7 @@ public class CallerTable extends JTable {
     		}
     		else
     		{
-    			Debug.warning(log, "Could not reorder columns. Rebuild old state!");
+    			log.warn("Could not reorder columns. Rebuild old state!");
     			reorderColumns();
     		}
     	}

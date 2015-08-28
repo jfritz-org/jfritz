@@ -115,7 +115,7 @@ public class JFritzEventGUI extends JPanel implements ConfigPanel, ActionListene
 				eventTableModel.fireTableDataChanged();
 			}
 		} else {
-			Debug.warning(log, "Not yet implemented");
+			log.warn("Not yet implemented");
 		}
 	}
 

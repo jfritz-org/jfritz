@@ -47,14 +47,14 @@ public class PropertyProvider {
 			config_properties.loadFromXML(JFritzDataDirectory.getInstance().getDataDirectory() + CONFIG_PROPERTIES_FILE);
 			showConfWizard = "".equals(config_properties.getProperty("box.address"));
 			if (showConfWizard) {
-				Debug.warning(log, "box.address is empty => showing config wizard"); //$NON-NLS-1$
+				log.warn("box.address is empty => showing config wizard"); //$NON-NLS-1$
 			}
 		} catch (FileNotFoundException e) {
-			Debug.warning(log, "File " + JFritzDataDirectory.getInstance().getDataDirectory() + CONFIG_PROPERTIES_FILE //$NON-NLS-1$
+			log.warn("File " + JFritzDataDirectory.getInstance().getDataDirectory() + CONFIG_PROPERTIES_FILE //$NON-NLS-1$
 					+ " not found => showing config wizard"); //$NON-NLS-1$
 			showConfWizard = true;
 		} catch (IOException ioe) {
-			Debug.warning(log, "File " + JFritzDataDirectory.getInstance().getDataDirectory() + CONFIG_PROPERTIES_FILE //$NON-NLS-1$
+			log.warn("File " + JFritzDataDirectory.getInstance().getDataDirectory() + CONFIG_PROPERTIES_FILE //$NON-NLS-1$
 					+ " not readable => showing config wizard"); //$NON-NLS-1$
 			showConfWizard = true;
 		}
@@ -63,10 +63,10 @@ public class PropertyProvider {
 		try {
 			state_properties.loadFromXML(JFritzDataDirectory.getInstance().getDataDirectory() + STATE_PROPERTIES_FILE);
 		} catch (FileNotFoundException e) {
-			Debug.warning(log, "File " + JFritzDataDirectory.getInstance().getDataDirectory() + STATE_PROPERTIES_FILE //$NON-NLS-1$
+			log.warn("File " + JFritzDataDirectory.getInstance().getDataDirectory() + STATE_PROPERTIES_FILE //$NON-NLS-1$
 					+ " not found. Using default values."); //$NON-NLS-1$
 		} catch (IOException ioe) {
-			Debug.warning(log, "File " + JFritzDataDirectory.getInstance().getDataDirectory() + STATE_PROPERTIES_FILE //$NON-NLS-1$
+			log.warn("File " + JFritzDataDirectory.getInstance().getDataDirectory() + STATE_PROPERTIES_FILE //$NON-NLS-1$
 					+ " not readable. Using default values."); //$NON-NLS-1$
 		}
 

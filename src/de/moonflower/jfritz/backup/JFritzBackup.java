@@ -98,7 +98,7 @@ public class JFritzBackup {
 						backupDates.add(date);
 						return true;
 					} catch (ParseException e) {
-						Debug.warning(log, "Directory '"+arg0.getAbsolutePath()+"' is not a valid backup directory!");
+						log.warn("Directory '"+arg0.getAbsolutePath()+"' is not a valid backup directory!");
 					}
             	}
                 return false;

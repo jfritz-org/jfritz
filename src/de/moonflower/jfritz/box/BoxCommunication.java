@@ -117,7 +117,7 @@ public class BoxCommunication {
 				Vector<Call> tmpCalls = box.getCallerList(callListProgressListener);
 				newCalls.addAll(tmpCalls);
 			} catch (FeatureNotSupportedByFirmware fns) {
-				Debug.warning(log, fns.getMessage());
+				log.warn(fns.getMessage());
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 				box.setBoxDisconnected();
@@ -141,7 +141,7 @@ public class BoxCommunication {
 					Vector<Call> tmpCalls = currentBox.getCallerList(callListProgressListener);
 					newCalls.addAll(tmpCalls);
 				} catch (FeatureNotSupportedByFirmware fns) {
-					Debug.warning(log, fns.getMessage());
+					log.warn(fns.getMessage());
 				} catch (MalformedURLException e) {
 					e.printStackTrace();
 					currentBox.setBoxDisconnected();

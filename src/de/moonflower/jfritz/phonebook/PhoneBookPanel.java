@@ -170,7 +170,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 				BrowserLaunch.openURL(googleLink);
 			}
 		} else {
-			Debug.warning(log, "Unsupported Command: " + e.getActionCommand()); //$NON-NLS-1$
+			log.warn("Unsupported Command: " + e.getActionCommand()); //$NON-NLS-1$
 		}
 	}
 

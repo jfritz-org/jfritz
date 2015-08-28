@@ -120,7 +120,7 @@ public class CallListCsvParser {
 					}
 				}
 			} catch (FeatureNotSupportedByFirmware fns) {
-				Debug.warning(log, fns.toString());
+				log.warn(fns.toString());
 			}
 		}
 	}

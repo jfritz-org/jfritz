@@ -1277,7 +1277,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				this.getPhoneBookPanel().activateSearchFilter();
 			}
 		}else {
-			Debug.warning(log, "Unimplemented action: " + e.getActionCommand()); //$NON-NLS-1$
+			log.warn("Unimplemented action: " + e.getActionCommand()); //$NON-NLS-1$
 		}
 	}
 

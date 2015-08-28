@@ -144,7 +144,7 @@ public class CheckboxPopupMenu extends JDialog implements ActionListener, LinkCl
 			ok_pressed = false;
 			this.setVisible(false);
 		} else {
-			Debug.warning(log, "ActionCommand unknown: " + e.toString());
+			log.warn("ActionCommand unknown: " + e.toString());
 		}
 	}
 
@@ -160,7 +160,7 @@ public class CheckboxPopupMenu extends JDialog implements ActionListener, LinkCl
 			Debug.debug(log, "Select none");
 			this.setSelected("$ALL$", false);
 		} else {
-			Debug.warning(log, "Unknown url clicked");
+			log.warn("Unknown url clicked");
 		}
 	}
 }

@@ -80,10 +80,6 @@ public class Debug {
 		logger.error(msg);
 	}
 
-	public static void warning(Logger logger, String msg) {
-		logger.warn(msg);
-	}
-
 	public static void debug(Logger logger, String msg) {
 		logger.debug(msg);
 	}

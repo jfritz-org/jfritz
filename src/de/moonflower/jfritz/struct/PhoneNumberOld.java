@@ -192,7 +192,7 @@ public class PhoneNumberOld implements Serializable {
 				}
 			}
 			if ( countryCode.equals("+")) {
-				Debug.warning(log, "No flag file for "+number+" found!!");
+				log.warn("No flag file for "+number+" found!!");
 			}
 
 			//All known mobile numbers are marked in the csv
@@ -314,7 +314,7 @@ public class PhoneNumberOld implements Serializable {
 		if (number.startsWith(countryCode)) //$NON-NLS-1$
 			return areaPrefix + number.substring(countryCode.length());
 
-		Debug.warning(log, "PhoneNumber.convertToNationalNumber: this is no national number, returning unchanged (international) number"); //$NON-NLS-1$
+		log.warn("PhoneNumber.convertToNationalNumber: this is no national number, returning unchanged (international) number"); //$NON-NLS-1$
 		return number;
 	}
 
@@ -570,7 +570,7 @@ public class PhoneNumberOld implements Serializable {
 //					.getQuickDials().size() == 0) {
 //
 //				// get QuickDials from FritzBox
-//				Debug.warning(log, "No Quickdials present in JFritz, retrieving the list from the box");
+//				log.warn("No Quickdials present in JFritz, retrieving the list from the box");
 //				try {
 //					JFritz.getQuickDials()
 //							.getQuickDialDataFromFritzBox();
@@ -594,7 +594,7 @@ public class PhoneNumberOld implements Serializable {
 //
 //			if (number.startsWith("**7"))
 //			{
-//				Debug.warning(log, "No quickdial found. Refresh your quickdial list"); //$NON-NLS-1$
+//				log.warn("No quickdial found. Refresh your quickdial list"); //$NON-NLS-1$
 //			}
 		}
 	}

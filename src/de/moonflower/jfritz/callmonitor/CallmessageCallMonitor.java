@@ -190,7 +190,7 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
 	}
 
 	public void closeConnection() {
-		Debug.warning(log, "Method not implemented!");
+		log.warn("Method not implemented!");
 	}
 
 	private void setConnectedStatus()

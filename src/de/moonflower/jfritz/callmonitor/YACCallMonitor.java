@@ -146,7 +146,7 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 	}
 
 	public void closeConnection() {
-		Debug.warning(log, "Method not implemented!");
+		log.warn("Method not implemented!");
 	}
 
 	private void setConnectedStatus()

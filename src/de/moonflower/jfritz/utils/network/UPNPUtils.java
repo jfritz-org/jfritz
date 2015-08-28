@@ -58,7 +58,7 @@ public class UPNPUtils {
 			}
 			socket.close();
 		} catch (SocketTimeoutException e) {
-			Debug.warning(log, "Timeout for SSDP"); //$NON-NLS-1$
+			log.warn("Timeout for SSDP"); //$NON-NLS-1$
 		} catch (SocketException e) {
             Debug.error(log, e.toString());
 		} catch (IOException e) {
