@@ -51,11 +51,11 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 	public void startYACListener() {
 		isRunning = true;
 		try {
-			Debug.info(log, "Starting YAC-Monitor"); //$NON-NLS-1$
+			log.info("Starting YAC-Monitor"); //$NON-NLS-1$
 			serverSocket = new ServerSocket(port);
 			connected = true;
 			this.setConnectedStatus();
-            Debug.info(log, "YAC-Monitor ready"); //$NON-NLS-1$
+            log.info("YAC-Monitor ready"); //$NON-NLS-1$
 			while (isRunning) {
 				Socket socket = serverSocket.accept();
 				BufferedReader input = new BufferedReader(
@@ -127,7 +127,7 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 	}
 
 	public void stopCallMonitor() {
-		Debug.info(log, "Stopping YACListener"); //$NON-NLS-1$
+		log.info("Stopping YACListener"); //$NON-NLS-1$
 		try {
 			if (serverSocket != null)
 			{

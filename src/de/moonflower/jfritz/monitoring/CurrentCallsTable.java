@@ -82,7 +82,7 @@ public class CurrentCallsTable extends AbstractTableModel implements
      * Method part of the interface CallMonitorListener
      */
     public void establishedCallIn(Call call){
-    	Debug.info(log, "establishedCallIn was called");
+    	log.info("establishedCallIn was called");
 
     }
 
@@ -102,7 +102,7 @@ public class CurrentCallsTable extends AbstractTableModel implements
      * Method part of the interface CallMonitorListener
      */
     public void establishedCallOut(Call call){
-    	Debug.info(log, "establishedCallOut was called");
+    	log.info("establishedCallOut was called");
 
     }
 

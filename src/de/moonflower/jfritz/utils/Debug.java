@@ -84,10 +84,6 @@ public class Debug {
 		logger.warn(msg);
 	}
 
-	public static void info(Logger logger, String msg) {
-		logger.info(msg);
-	}
-
 	public static void debug(Logger logger, String msg) {
 		logger.debug(msg);
 	}

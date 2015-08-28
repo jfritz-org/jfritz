@@ -216,7 +216,7 @@ public class JFritzEventDispatcher extends Thread {
 
 	public static void saveToXML() {
 		String filename = EVENT_MANAGMENT_FILE_NAME;
-		Debug.info(log, "Saving events to file " + filename); //$NON-NLS-1$
+		log.info("Saving events to file " + filename); //$NON-NLS-1$
 		try {
 			BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(filename), "UTF8")); //$NON-NLS-1$

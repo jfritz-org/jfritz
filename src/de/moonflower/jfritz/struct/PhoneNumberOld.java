@@ -99,7 +99,7 @@ public class PhoneNumberOld implements Serializable {
 				&& this.number.startsWith(properties.getProperty("dial.prefix"))) {
 			this.number = number.substring(properties.getProperty("dial.prefix")
 					.length());
-			Debug.info(log, "Parsed the dial out prefix, new number: " + this.number);
+			log.info("Parsed the dial out prefix, new number: " + this.number);
 		}
 
 		refactorNumber(convertInt);
@@ -556,9 +556,9 @@ public class PhoneNumberOld implements Serializable {
 		if (number.startsWith("**7")) //$NON-NLS-1$
 		// QuickDial
 		{
-			Debug.info(log, "Quickdial conversion disabled!");
+			log.info("Quickdial conversion disabled!");
 //	THIS CODE IS BROKEN!!!
-//			Debug.info(log, "Quickdial: " + number //$NON-NLS-1$
+//			log.info("Quickdial: " + number //$NON-NLS-1$
 //					+ ", searching for the full number"); //$NON-NLS-1$
 //
 //			// replace QuickDial with
@@ -587,7 +587,7 @@ public class PhoneNumberOld implements Serializable {
 //				QuickDial quickDial = (QuickDial) en.nextElement();
 //				if (quickDialNumber.equals(quickDial.getQuickdial())) {
 //					number = quickDial.getNumber();
-//					Debug.info(log, "Quickdial resolved. Number: " //$NON-NLS-1$
+//					log.info("Quickdial resolved. Number: " //$NON-NLS-1$
 //							+ number);
 //				}
 //			}
@@ -620,7 +620,7 @@ public class PhoneNumberOld implements Serializable {
 	 *
 	 */
 	public static void loadFlagMap(){
-		Debug.info(log, "Loading the country code -> flag map");
+		log.info("Loading the country code -> flag map");
 		worldFlagMap = new HashMap<String, String>(2200);
 		BufferedReader br = null;
 		FileInputStream fi = null;
@@ -647,8 +647,8 @@ public class PhoneNumberOld implements Serializable {
 				}
 			}
 
-			Debug.info(log, lines + " Lines read from country_codes_world.csv");
-			Debug.info(log, "worldFlagMap size: "+worldFlagMap.size());
+			log.info(lines + " Lines read from country_codes_world.csv");
+			log.info("worldFlagMap size: "+worldFlagMap.size());
 
 		}catch(Exception e){
 			Debug.error(log, e.toString());
@@ -676,7 +676,7 @@ public class PhoneNumberOld implements Serializable {
 	 *
 	 */
 	private static void loadSpecificFlagMap(){
-		Debug.info(log, "Loading the country code -> flag map");
+		log.info("Loading the country code -> flag map");
 		specificWorldFlagMap = new HashMap<String, String>(2200);
 		BufferedReader br = null;
 		FileInputStream fi = null;
@@ -703,8 +703,8 @@ public class PhoneNumberOld implements Serializable {
 				}
 			}
 
-			Debug.info(log, lines + " Lines read from country_specfic_codes_world.csv");
-			Debug.info(log, "specificWorldFlagMap size: "+specificWorldFlagMap.size());
+			log.info(lines + " Lines read from country_specfic_codes_world.csv");
+			log.info("specificWorldFlagMap size: "+specificWorldFlagMap.size());
 
 		}catch(Exception e){
 			Debug.error(log, e.toString());
@@ -730,7 +730,7 @@ public class PhoneNumberOld implements Serializable {
 	 */
 	public static void loadCbCXMLFile(){
 		try {
-			Debug.info(log, "Loading the call by call xml file");
+			log.info("Loading the call by call xml file");
 			callbyCallMap = new HashMap<String, CallByCall[]>(20);
 
 			SAXParserFactory factory = SAXParserFactory.newInstance();

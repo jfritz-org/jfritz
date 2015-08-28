@@ -61,7 +61,7 @@ public class ConfigWizard {
 		icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource(
 				"/de/moonflower/jfritz/resources/images/tray16.png")); //$NON-NLS-1$
 
-		Debug.info(log, "asking the user for the language");
+		log.info("asking the user for the language");
 
 		Wizard.setBackText(messages.getMessage("back"));
 		Wizard.setNextText(messages.getMessage("next"));
@@ -71,7 +71,7 @@ public class ConfigWizard {
 		//if user clicked cancel on the language dialog, return back to jfritz
 		if (!askLanguage(parent)) {
 
-			Debug.info(log, "Create JFritz config wizard");
+			log.info("Create JFritz config wizard");
 			wizard = new Wizard(JFritz.getJframe());
 			wizard.getDialog().setIconImage(icon);
 
@@ -123,7 +123,7 @@ public class ConfigWizard {
        switch (ret){
 
        		case 0:
-       			Debug.info(log, "Finished clicked, saving settings");
+       			log.info("Finished clicked, saving settings");
        			if (splash != null) {
        				splash.setVisible(true);
        			}
@@ -149,10 +149,10 @@ public class ConfigWizard {
 
 				return false;
        		case 1:
-       			Debug.info(log, "Cancel clicked, not saving values");
+       			log.info("Cancel clicked, not saving values");
        			return true;
        		case 2:
-       			Debug.info(log, "Error in the wizard, bailing out..");
+       			log.info("Error in the wizard, bailing out..");
        			return true;
        		default:
        			return true;

@@ -1031,7 +1031,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			if (JOptionPane.showConfirmDialog(jFrame, messages.getMessage("really_delete_entries"), //$NON-NLS-1$
 					ProgramConstants.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 				int rows[] = callerTable.getSelectedRows();
-				Debug.info(log, "Removing " + rows.length + " entries"); //$NON-NLS-1$
+				log.info("Removing " + rows.length + " entries"); //$NON-NLS-1$
 				callerList.removeEntries(rows);
 			}
 		} else if(command.startsWith("lookup:")){

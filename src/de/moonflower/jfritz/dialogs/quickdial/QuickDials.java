@@ -225,7 +225,7 @@ public class QuickDials extends AbstractTableModel {
 	 * @param filename
 	 */
 	public void saveToXMLFile(String filename) {
-		Debug.info(log, "Saving to file " + filename); //$NON-NLS-1$
+		log.info("Saving to file " + filename); //$NON-NLS-1$
 		//FileOutputStream fos; // nur ASCII
 		//fos = new FileOutputStream(filename);
 		//Writer fos = null; // 23.08.2015 UTF-8

@@ -179,7 +179,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		super();
 		this.jFritz = jfritz;
 		updateCheck = new CheckForUpdate();
-		Debug.info(log, "Create JFritz-GUI"); //$NON-NLS-1$
+		log.info("Create JFritz-GUI"); //$NON-NLS-1$
 		maxBounds = null;
 		createGUI();
     	CallMessageDlg callMsgDialog = new CallMessageDlg();
@@ -799,7 +799,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				public void run() {
 					if (!JFritz.isShutdownInvoked())
 					{
-						Debug.info(log, "Running FetchListTask after Timer ..."); //$NON-NLS-1$
+						log.info("Running FetchListTask after Timer ..."); //$NON-NLS-1$
 						fetchList(null, false);
 					} else {
 						this.cancel();
@@ -808,10 +808,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			};
 			timer = new FetchListTimer("FetchList-Timer", true);
 			timer.schedule(timerTask, interval, interval); //$NON-NLS-1$
-			Debug.info(log, "Timer enabled"); //$NON-NLS-1$
+			log.info("Timer enabled"); //$NON-NLS-1$
 		} else {
 			timer.cancel();
-			Debug.info(log, "Timer disabled"); //$NON-NLS-1$
+			log.info("Timer disabled"); //$NON-NLS-1$
 		}
 	}
 
@@ -829,7 +829,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				timerTask = new TimerTask() {
 
 					public void run() {
-						Debug.info(log, "Running FetchListTask after timer ..."); //$NON-NLS-1$
+						log.info("Running FetchListTask after timer ..."); //$NON-NLS-1$
 						fetchList(null, false);
 					}
 				};
@@ -846,9 +846,9 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	 * @param deleteFritzBoxCallerList delete list?
 	 */
 	public void fetchList(final BoxClass box, final boolean deleteFritzBoxCallerList) {
-		Debug.info(log, "Reset timer ...");
+		log.info("Reset timer ...");
 		restartFetchListTimer();
-		Debug.info(log, "Fetching list ...");
+		log.info("Fetching list ...");
 		//only send request to the server if we are connected
 		if(properties.getProperty("option.clientCallList").equals("true")
 				&& NetworkStateMonitor.isConnectedToServer()){
@@ -1218,10 +1218,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		} else if (e.getActionCommand().equals("callMonitor")) { //$NON-NLS-1$
 			boolean active = ((JToggleButton) e.getSource()).isSelected();
 			if (active) {
-				Debug.info(log, "Start callMonitor"); //$NON-NLS-1$
+				log.info("Start callMonitor"); //$NON-NLS-1$
 				JFritz.getBoxCommunication().startCallMonitor();
 			} else {
-				Debug.info(log, "Stop callMonitor"); //$NON-NLS-1$
+				log.info("Stop callMonitor"); //$NON-NLS-1$
 				JFritz.getBoxCommunication().stopCallMonitor();
 			}
 
@@ -1236,11 +1236,11 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					NetworkStateMonitor.requestLookupFromServer();
 					lookupButton.setSelected(false);
 				}else{
-					Debug.info(log, "Start reverselookup"); //$NON-NLS-1$
+					log.info("Start reverselookup"); //$NON-NLS-1$
 					JFritz.getCallerList().reverseLookup(true, true);
 				}
 			} else {
-				Debug.info(log, "Stopping reverse lookup"); //$NON-NLS-1$
+				log.info("Stopping reverse lookup"); //$NON-NLS-1$
 				JFritz.getCallerList().stopLookup();
 			}
 		} else if (e.getActionCommand().equals("import_callerlist_csv")) {
@@ -1543,7 +1543,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	}
 
 	private void importOutlook() {
-		Debug.info(log, "Starte Import von Outlook"); //$NON-NLS-1$
+		log.info("Starte Import von Outlook"); //$NON-NLS-1$
 		Thread thread = new Thread(new ImportOutlookContactsDialog(this));
 		thread.start();
 		try {
@@ -1855,7 +1855,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 	}
 
 	public void prepareShutdown() {
-		Debug.info(log, "prepareShutdown in JFritzWindow.java");
+		log.info("prepareShutdown in JFritzWindow.java");
 		if ( timer != null )
 			timer.cancel();
 
@@ -1867,7 +1867,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		// phonebookPanel
 		// quickDialPanel
 		// monitoringPanel
-		Debug.info(log, "prepareShutdown in JFritzWindow.java done");
+		log.info("prepareShutdown in JFritzWindow.java done");
 	}
 
 	public void selectLookupButton(boolean select){

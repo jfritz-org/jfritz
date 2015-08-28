@@ -74,7 +74,7 @@ public class UPNPUtils {
 		while (en.hasMoreElements()) {
 			SSDPPacket p = en.nextElement();
 			if (p.getServer().toLowerCase().indexOf("avm fritz!box") > 0) { //$NON-NLS-1$
-				Debug.info(log, "Box found at " + p.getIP().toString() + ": " //$NON-NLS-1$,  //$NON-NLS-2$
+				log.info("Box found at " + p.getIP().toString() + ": " //$NON-NLS-1$,  //$NON-NLS-2$
 						+ p.getServer());
 				fritzboxes.add(p);
 			}

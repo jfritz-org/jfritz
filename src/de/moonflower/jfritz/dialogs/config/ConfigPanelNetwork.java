@@ -453,7 +453,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 			// Zur Darstellung der gewünschten Einstellungspanels
 			switch (networkTypeCombo.getSelectedIndex()) {
 			case 0: {
-				Debug.info(log, "No network functionality chosen"); //$NON-NLS-1$
+				log.info("No network functionality chosen"); //$NON-NLS-1$
 				mainPanel.removeAll();
 				networkTypeCombo.setSelectedIndex(0);
 				mainPanel.add(networkTypeCombo, BorderLayout.NORTH);
@@ -463,7 +463,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 				break;
 			}
 			case 1: {
-				Debug.info(log, "JFritz as a server chosen"); //$NON-NLS-1$
+				log.info("JFritz as a server chosen"); //$NON-NLS-1$
 				mainPanel.removeAll();
 				mainPanel.add(networkTypeCombo, BorderLayout.NORTH);
 				networkTypeCombo.setSelectedIndex(1);
@@ -475,7 +475,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 				break;
 			}
 			case 2: {
-				Debug.info(log, "JFritz as a client chosen"); //$NON-NLS-1$
+				log.info("JFritz as a client chosen"); //$NON-NLS-1$
 				mainPanel.removeAll();
 				mainPanel.add(networkTypeCombo, BorderLayout.NORTH);
 				networkTypeCombo.setSelectedIndex(2);

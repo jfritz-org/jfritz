@@ -21,8 +21,8 @@ public class ShutdownThread extends Thread {
 	}
 
 	public void run() {
-		Debug.info(log, "Starting shutdown thread.."); //$NON-NLS-1$
+		log.info("Starting shutdown thread.."); //$NON-NLS-1$
 		jfritzMain.prepareShutdown(true, false);
-		Debug.info(log, "Shutdown thread done."); //$NON-NLS-1$
+		log.info("Shutdown thread done."); //$NON-NLS-1$
 	}
 }

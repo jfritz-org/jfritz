@@ -234,7 +234,7 @@ public class JFritzProperties extends Properties {
 	}
 
     public void save(String filename) throws IOException {
-        Debug.info(log, "Saving to file " + filename); //$NON-NLS-1$
+        log.info("Saving to file " + filename); //$NON-NLS-1$
         try {
                 BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
                     new FileOutputStream(filename), "UTF8")); //$NON-NLS-1$

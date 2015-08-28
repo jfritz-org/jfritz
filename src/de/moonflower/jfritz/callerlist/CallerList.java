@@ -220,7 +220,7 @@ public class CallerList extends AbstractTableModel
 	 *            Save whole caller list or only selected entries
 	 */
 	public synchronized void saveToXMLFile(final String filename, final boolean wholeCallerList) {
-		Debug.info(log, "Saving to file " + filename); //$NON-NLS-1$
+		log.info("Saving to file " + filename); //$NON-NLS-1$
 		try {
 			BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(filename), "UTF8")); //$NON-NLS-1$
@@ -284,7 +284,7 @@ public class CallerList extends AbstractTableModel
 	 *            Save whole caller list or only selected entries
 	 */
 	public synchronized void saveToCSVFile(String filename, boolean wholeCallerList) {
-		Debug.info(log, "Saving to csv file " + filename); //$NON-NLS-1$
+		log.info("Saving to csv file " + filename); //$NON-NLS-1$
 		FileOutputStream fos;
 		try {
 			fos = new FileOutputStream(filename);
@@ -964,7 +964,7 @@ public class CallerList extends AbstractTableModel
 	}
 
 	public void clearList() {
-		Debug.info(log, "Clearing caller Table"); //$NON-NLS-1$
+		log.info("Clearing caller Table"); //$NON-NLS-1$
 		unfilteredCallerData.clear();
 		if ((JFritz.getJframe() != null)
 				&& (JFritz.getJframe().getCallerTable() != null)) {

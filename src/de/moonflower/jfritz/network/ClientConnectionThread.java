@@ -553,7 +553,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 	 */
 	public synchronized void closeConnection(){
 		try{
-			Debug.info(log, "Notifying client "+remoteAddress+" to close connection");
+			log.info("Notifying client "+remoteAddress+" to close connection");
 			SealedObject sealed_object = new SealedObject("JFRITZ CLOSE", outCipher);
 			objectOut.writeObject(sealed_object);
 			objectOut.flush();

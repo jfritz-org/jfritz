@@ -229,25 +229,25 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 			switch (callMonitorCombo.getSelectedIndex()) {
 			case 0: {
 				hideCallMonitorPanel();
-				Debug.info(log, "Call monitor not wanted"); //$NON-NLS-1$
+				log.info("Call monitor not wanted"); //$NON-NLS-1$
 				stopAllCallMonitors();
 				break;
 			}
 			case 1: {
 				showCallMonitorPanel();
-				Debug.info(log, "FRITZ!Box call monitor chosen"); //$NON-NLS-1$
+				log.info("FRITZ!Box call monitor chosen"); //$NON-NLS-1$
 				stopAllCallMonitors();
 				break;
 			}
 			case 2: {
 				showCallMonitorPanel();
-				Debug.info(log, "YAC call monitor chosen"); //$NON-NLS-1$
+				log.info("YAC call monitor chosen"); //$NON-NLS-1$
 				stopAllCallMonitors();
 				break;
 			}
 			case 3: {
 				showCallMonitorPanel();
-				Debug.info(log, "Callmessage call monitor chosen"); //$NON-NLS-1$
+				log.info("Callmessage call monitor chosen"); //$NON-NLS-1$
 
 				break;
 			}

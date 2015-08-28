@@ -603,7 +603,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 						}
 						//we received the ports list from the server
 				}else if(o instanceof String[]){
-					Debug.info(log, "received available ports from server");
+					log.info("received available ports from server");
 					availablePorts = (String[]) o;
 				}else if(o instanceof String){ //message received from the server
 
@@ -763,7 +763,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 	}
 
 	public synchronized void requestDeleteList(){
-		Debug.info(log, "Requesting server to delete the list from the box");
+		log.info("Requesting server to delete the list from the box");
 		actionRequest.action = ClientActionRequest.ActionType.deleteListFromBox;
 
 		try{

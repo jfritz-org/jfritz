@@ -1305,7 +1305,7 @@ public class FritzBox extends BoxClass {
 			    URL_SERVICE_CREATEURLSID, URN_SERVICE_CREATEURLSID, xml);
 
 		sSID = result;
-		Debug.info(log, "Result of DeviceConfig CreateUrlSID: " + result);
+		log.info("Result of DeviceConfig CreateUrlSID: " + result);
 		return sSID;
 	}
 

@@ -28,7 +28,7 @@ public class DiagSignalHandler implements SignalHandler {
 
     // Signal handler method
     public void handle(Signal sig) {
-        Debug.info(log, "Diagnostic Signal handler called for signal "+sig);
+        log.info("Diagnostic Signal handler called for signal "+sig);
         try {
             // Output information for each thread
             Thread[] threadArray = new Thread[Thread.activeCount()];

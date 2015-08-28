@@ -193,7 +193,7 @@ public class CallerTable extends JTable {
 							.getMessage("really_delete_entries"), //$NON-NLS-1$
 							ProgramConstants.PROGRAM_NAME, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 						int rows[] = getSelectedRows();
-						Debug.info(log, "Removing " + rows.length + " entries"); //$NON-NLS-1$
+						log.info("Removing " + rows.length + " entries"); //$NON-NLS-1$
 //						((CallerList) getModel()).removeEntries(getSelectedRows());
 						callerList.removeEntries(rows);
 					}

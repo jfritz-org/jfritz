@@ -226,7 +226,7 @@ public abstract class BoxClass
 
 	public static final void detectBoxesWithSSDP(final Logger log)
 	{
-		Debug.info(log, "Searching for  FritzBox per UPnP / SSDP");//$NON-NLS-1$
+		log.info("Searching for  FritzBox per UPnP / SSDP");//$NON-NLS-1$
 
 		ssdpthread = new SSDPdiscoverThread(SSDP_TIMEOUT);
 		ssdpthread.start();

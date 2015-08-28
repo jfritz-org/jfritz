@@ -51,7 +51,7 @@ public class SSDPdiscoverThread extends Thread {
 			jframe.setBusy(false);
 		}
 		statusBarController.fireStatusChanged("");
-		Debug.info(log, "Discover thread");
+		log.info("Discover thread");
 	}
 
 	/**

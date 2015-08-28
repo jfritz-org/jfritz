@@ -143,7 +143,7 @@ public class NetworkStateMonitor  {
 	}
 
 	public static Vector<Port> getAvailablePorts(){
-		Debug.info(log, "Fix getAvailablePorts() in NetworkStateMonitor");
+		log.info("Fix getAvailablePorts() in NetworkStateMonitor");
 //		if(Main.getProperty("option.clientCallList").equals("true")
 //				&& isConnectedToServer())
 //		{

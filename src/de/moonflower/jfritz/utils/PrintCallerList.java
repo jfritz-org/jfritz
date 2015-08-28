@@ -89,7 +89,7 @@ public class PrintCallerList extends Thread {
                 columnWidth[i] = colModel.getColumn(i).getWidth() - 20;
             }
             columnStart[i] = 0;
-            Debug.info(log, "Column "+i+ " [" + columnName + "] width: " + columnWidth[i]);
+            log.info("Column "+i+ " [" + columnName + "] width: " + columnWidth[i]);
         }
 
         // Rest width for columns "number" and "participant"
@@ -604,7 +604,7 @@ public class PrintCallerList extends Thread {
     }
 
     private void print() {
-        Debug.info(log, "Start print report creation"); //$NON-NLS-1$
+        log.info("Start print report creation"); //$NON-NLS-1$
         JFreeReport report = createReportDefinition();
         report.setData(JFritz.getCallerList());
         try {

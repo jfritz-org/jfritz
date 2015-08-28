@@ -146,7 +146,7 @@ public class ClientLoginsTableModel extends AbstractTableModel{
     }
 
     public static void saveToXMLFile(String filename){
-    	Debug.info(log, "Saving to file " + filename); //$NON-NLS-1$
+    	log.info("Saving to file " + filename); //$NON-NLS-1$
 		FileOutputStream fos;
 		try {
 			fos = new FileOutputStream(filename);
@@ -242,7 +242,7 @@ public class ClientLoginsTableModel extends AbstractTableModel{
 
     public static void loadFromXMLFile(String filename){
     	try {
-			Debug.info(log, "loading the client settings xml file: "+filename);
+			log.info("loading the client settings xml file: "+filename);
 
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			factory.setValidating(false);

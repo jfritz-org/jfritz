@@ -81,7 +81,7 @@ public class ImportOutlookContactsDialog extends JDialog implements ActionListen
     }
 
     public void run() {
-        Debug.info(log, "Show Outlook-Import-Dialog"); //$NON-NLS-1$
+        log.info("Show Outlook-Import-Dialog"); //$NON-NLS-1$
         toFront();
         setSize(400, 500);
         this.getContentPane().setLayout(null);
@@ -104,11 +104,11 @@ public class ImportOutlookContactsDialog extends JDialog implements ActionListen
         getContentPane().add(jPanel);
         setLocationRelativeTo(JFritz.getJframe());
         setVisible(true);
-        Debug.info(log, "Importing..."); //$NON-NLS-1$
+        log.info("Importing..."); //$NON-NLS-1$
         int entriesImported = 0;
         Vector<Person> persons = new Vector<Person>();
 		for (int i = 1; i <= count; i++) {
-			Debug.info(log, "Importing contact "+i);
+			log.info("Importing contact "+i);
             boolean hasTel = false;
             Dispatch item = Dispatch.call(items, "Item", Integer.valueOf(i)) //$NON-NLS-1$
                     .toDispatch();
@@ -226,7 +226,7 @@ public class ImportOutlookContactsDialog extends JDialog implements ActionListen
             }
         }
         JFritz.getPhonebook().addEntries(persons);
-        Debug.info(log, "Import done, " + entriesImported + " entries imported"); //$NON-NLS-1$,	//$NON-NLS-2$
+        log.info("Import done, " + entriesImported + " entries imported"); //$NON-NLS-1$,	//$NON-NLS-2$
         JButton jButton = new JButton(messages.getMessage("okay")); //$NON-NLS-1$
 
         //set default confirm button (Enter)

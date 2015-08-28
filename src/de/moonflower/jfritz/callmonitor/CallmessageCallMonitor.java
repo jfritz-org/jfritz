@@ -57,7 +57,7 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
 
 	private void startCallmessageListener() {
 		isRunning = true;
-		Debug.info(log, "Starting Callmessage-Monitor on Port " + port); //$NON-NLS-1$
+		log.info("Starting Callmessage-Monitor on Port " + port); //$NON-NLS-1$
 		try {
 			serverSocket = new ServerSocket(port);
 			connected = true;
@@ -76,7 +76,7 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
 			}
 			this.setDisconnectedStatus();
 		}
-        Debug.info(log, "Callmessage-Monitor ready"); //$NON-NLS-1$
+        log.info("Callmessage-Monitor ready"); //$NON-NLS-1$
 		while (isRunning) {
 			try {
 				// Client-Connection accepten, Extra-Socket öffnen
@@ -88,7 +88,7 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
 				String msg = input.readLine();
 				msg = URLDecoder.decode(msg, "ISO-8859-1"); //$NON-NLS-1$
 				msg = msg.substring(5, msg.length() - 9);
-				Debug.info(log, "Got message from callmessageMonitor: " + msg); //$NON-NLS-1$
+				log.info("Got message from callmessageMonitor: " + msg); //$NON-NLS-1$
 
 				// Neuer CallmessageMonitor
 				 if (msg.startsWith("?")) {  //$NON-NLS-1$
@@ -175,7 +175,7 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
 	}
 
 	public void stopCallMonitor() {
-		Debug.info(log, "Stopping CallmessageListener"); //$NON-NLS-1$
+		log.info("Stopping CallmessageListener"); //$NON-NLS-1$
 		try {
 			if (serverSocket != null)
 				serverSocket.close();

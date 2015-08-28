@@ -75,7 +75,7 @@ public class CallMessageDlg extends JFrame implements ActionListener {
 
 	public void showIncomingCall(Call call, String callerstr, String calledstr, Person person) {
 
-		Debug.info(log, "Showing incoming call...");
+		log.info("Showing incoming call...");
 		toFront();
 
 		timer = new Timer();
@@ -94,7 +94,7 @@ public class CallMessageDlg extends JFrame implements ActionListener {
 		titleStr = titleStr.replaceAll("%DEST%", calledstr);
 		setTitle(titleStr); //$NON-NLS-1$
 
-		Debug.info(log, "Creating call message gui...");
+		log.info("Creating call message gui...");
 		JButton closeButton = new JButton(messages.getMessage("okay")); //$NON-NLS-1$
 		closeButton.addActionListener(this);
 		getContentPane().setLayout(new BorderLayout(0, 0));
@@ -274,7 +274,7 @@ public class CallMessageDlg extends JFrame implements ActionListener {
 
 		getContentPane().add(mainPane, BorderLayout.CENTER);
 
-		Debug.info(log, "Display message...");
+		log.info("Display message...");
 		pack();
 		if ( this.getWidth() < 450 )
 		{
@@ -303,7 +303,7 @@ public class CallMessageDlg extends JFrame implements ActionListener {
 
 	public void showOutgoingCall(Call call, String callerstr, String calledstr, Person person) {
 
-		Debug.info(log, "Showing outgoing call...");
+		log.info("Showing outgoing call...");
 		toFront();
 
 		timer = new Timer();
@@ -322,7 +322,7 @@ public class CallMessageDlg extends JFrame implements ActionListener {
 		titleStr = titleStr.replaceAll("%DEST%", calledstr);
 		setTitle(titleStr); //$NON-NLS-1$
 
-		Debug.info(log, "Creating call message gui...");
+		log.info("Creating call message gui...");
 		JButton closeButton = new JButton(messages.getMessage("okay")); //$NON-NLS-1$
 		closeButton.addActionListener(this);
 		getContentPane().setLayout(new BorderLayout(0, 0));
@@ -502,7 +502,7 @@ public class CallMessageDlg extends JFrame implements ActionListener {
 
 		getContentPane().add(mainPane, BorderLayout.CENTER);
 
-		Debug.info(log, "Display message...");
+		log.info("Display message...");
 		pack();
 		if ( this.getWidth() < 450 )
 		{
@@ -550,7 +550,7 @@ public class CallMessageDlg extends JFrame implements ActionListener {
 
 	public String loadTemplate(String filename)
 	{
-		Debug.info(log, "Loading template " + filename + " ... ");
+		log.info("Loading template " + filename + " ... ");
 		preferredImageWidth = -1;
 		preferredImageHeight = -1;
 		String template = "";
@@ -594,7 +594,7 @@ public class CallMessageDlg extends JFrame implements ActionListener {
 				}
 				template += line;
 			}
-			Debug.info(log, "Loding template done!");
+			log.info("Loding template done!");
 		} catch (FileNotFoundException e) {
 			//@todo error message or load default style
 			Debug.error(log, "Template not found! " + e.toString());

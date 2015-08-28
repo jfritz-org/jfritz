@@ -256,7 +256,7 @@ public class JFritzTray {
 
 	public static void removeTrayMenu() {
 		if (tray != null) {
-			Debug.info(log, "Removing systray"); //$NON-NLS-1$
+			log.info("Removing systray"); //$NON-NLS-1$
 			tray.remove();
 			tray = null;
 		}

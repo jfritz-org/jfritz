@@ -320,7 +320,7 @@ public class Main  {
 	}
 
 	private void logAndStdOut(final String msg) {
-		Debug.info(log, msg);
+		log.info(msg);
 	}
 	
 	private void printSystemInfo() {
@@ -597,7 +597,7 @@ public class Main  {
 	}
 
 	public static boolean showConfigWizard(final SplashScreen splash) {
-		Debug.info(log, "Presenting user with the configuration dialog");
+		log.info("Presenting user with the configuration dialog");
 		ConfigWizard wizard = new ConfigWizard(null);
 
 		boolean wizardCanceled = true;

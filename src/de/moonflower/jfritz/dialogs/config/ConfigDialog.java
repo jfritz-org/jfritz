@@ -323,7 +323,7 @@ public class ConfigDialog extends JDialog {
 		sipPanel.saveSettings();
 		trayPanel.saveSettings();
 
-		Debug.info(log, "Saved config"); //$NON-NLS-1$
+		log.info("Saved config"); //$NON-NLS-1$
 //		Save of caller list and phonebook unnecessary at this position
 //		JFritz.getCallerList().saveToXMLFile(Main.SAVE_DIR+JFritz.CALLS_FILE, true);
 //		JFritz.getPhonebook().saveToXMLFile(Main.SAVE_DIR+JFritz.PHONEBOOK_FILE);
