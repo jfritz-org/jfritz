@@ -624,7 +624,7 @@ public class Main  {
 
 		PatternLayout layout = new PatternLayout();
 		layout.setConversionPattern("%d{dd.MM.yy HH:mm:ss}|%t|%p|%C{1} - %m%n");
-		String path = JFritzDataDirectory.getInstance().getDataDirectory() + "log4j.log";
+		String path = Debug.debugLogFilePath;
 		FileAppender fa;
 		try {
 			fa = new FileAppender(layout, path, false);

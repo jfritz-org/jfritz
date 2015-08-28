@@ -54,7 +54,7 @@ public class Debug {
 	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 9211082107025215527L;
 
-	private static String debugLogFile = "log4j.log";
+	public static String debugLogFilePath = JFritzDataDirectory.getInstance().getDataDirectory() + "debug.log";
 
 	private static boolean verboseMode = false;
 
@@ -199,10 +199,8 @@ public class Debug {
 			int selectedLogSeverityIndex = log_severity_box.getSelectedIndex();
 			LogSeverity selectedLogSeverity = (LogSeverity) log_severity_box.getItemAt(selectedLogSeverityIndex);
 			log_area.setText("");
-			if(!debugLogFile.contains(System.getProperty("file.separator")))
-				debugLogFile = JFritzDataDirectory.getInstance().getDataDirectory() + debugLogFile;
 
-			in = new BufferedReader(new FileReader(debugLogFile));
+			in = new BufferedReader(new FileReader(debugLogFilePath));
 			String zeile = null;
 			while ((zeile = in.readLine()) != null) {
 				if (selectedLogSeverity.getId() >= returnLineSeverity(zeile).getId())
