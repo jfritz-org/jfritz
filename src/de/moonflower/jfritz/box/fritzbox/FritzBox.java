@@ -748,7 +748,9 @@ public class FritzBox extends BoxClass {
 		{
 			case 1: {
 				if ((firmware != null) && (firmware.isLowerThan(3, 96))) {
-					Debug.errDlg(log, messages.getMessage("callmonitor_error_wrong_firmware")); //$NON-NLS-1$
+					String message = messages.getMessage("callmonitor_error_wrong_firmware"); //$NON-NLS-1$
+					log.error(message);
+					Debug.errDlg(message);
 
 					for (int i=0; i<listener.size(); i++)
 					{
@@ -760,7 +762,9 @@ public class FritzBox extends BoxClass {
 						log.debug("Firmware is greater/or equal than 03.96 but lower than 04.03");
 						if (callMonitor != null)
 						{
-							Debug.errDlg(log, messages.getMessage("callmonitor_already_started"));
+							String message = messages.getMessage("callmonitor_already_started");
+							log.error(message);
+							Debug.errDlg(message);
 						} else {
 							log.debug("Creating FBoxCallMonitorV1");
 							callMonitor = new FBoxCallMonitorV1(this, listener, true);
@@ -769,7 +773,9 @@ public class FritzBox extends BoxClass {
 						log.debug("Firmware is greater/or equal than 04.03");
 						if (callMonitor != null)
 						{
-							Debug.errDlg(log, messages.getMessage("callmonitor_already_started"));
+							String message = messages.getMessage("callmonitor_already_started");
+							log.error(message);
+							Debug.errDlg(message);
 						} else {
 							log.debug("Creating FBoxCallMonitorV3");
 							callMonitor = new FBoxCallMonitorV3(this, listener, true);
@@ -833,7 +839,9 @@ public class FritzBox extends BoxClass {
 			try {
 				updateSettings();
 				if (callList == null) {
-					Debug.errDlg(log, messages.getMessage("box.no_caller_list"));
+					String message = messages.getMessage("box.no_caller_list");
+					log.error(message);
+					Debug.errDlg(message);
 					result = new Vector<Call>();
 				} else {
 					result = callList.getCallerList(progressListener);
@@ -858,7 +866,9 @@ public class FritzBox extends BoxClass {
 	public void clearCallerList() throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException
 	{
 		if (callList == null) {
-			Debug.errDlg(log, messages.getMessage("box.no_clear_caller_list"));
+			String message = messages.getMessage("box.no_clear_caller_list");
+			log.error(message);
+			Debug.errDlg(message);
 		} else {
 			callList.clearCallerList();
 		}

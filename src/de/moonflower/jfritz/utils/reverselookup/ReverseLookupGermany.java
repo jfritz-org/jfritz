@@ -49,7 +49,9 @@ public class ReverseLookupGermany {
 			int lines = 0;
 			String l = br.readLine();
 			if(l==null){
-				Debug.errDlg(log, "File "+JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") + JFritzUtils.FILESEP + "germany" + JFritzUtils.FILESEP + "areacodes_germany.csv"+" empty");
+				String message = "File "+JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") + JFritzUtils.FILESEP + "germany" + JFritzUtils.FILESEP + "areacodes_germany.csv"+" empty";
+				log.error(message);
+				Debug.errDlg(message);
 			}
 			//Load the keys and values quick and dirty
 			if(l.equals(FILE_HEADER)){

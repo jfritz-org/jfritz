@@ -73,7 +73,7 @@ public class JFritzClipboard{
         }catch(IllegalStateException ise)
         {
         	log.error("Cannot copy "+text+" into clipboard (clipboard not available)", ise); //$NON-NLS-1$,  //$NON-NLS-2$
-        	Debug.errDlg(log, messages.getMessage("error_clipboard_not_available")); //$NON-NLS-1$
+        	Debug.errDlg(messages.getMessage("error_clipboard_not_available")); //$NON-NLS-1$
         }
     }
 

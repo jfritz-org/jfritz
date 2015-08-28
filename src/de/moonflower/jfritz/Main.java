@@ -486,9 +486,11 @@ public class Main  {
 				&& (decrypted_pwd.length() > Main.PROGRAM_SEED.length())) {
 			pass = decrypted_pwd.substring(Main.PROGRAM_SEED.length());
 		} else {
-			Debug.errDlg(log, "Configuration file \"jfritz.properties.xml\" is corrupt."
-							+ "\nSend an EMail to support@jfritz.org with this error"
-							+ "\nmessage and the attached \"jfritz.properties.xml\"-file.");
+			String message = "Configuration file \"jfritz.properties.xml\" is corrupt."
+					+ "\nSend an EMail to support@jfritz.org with this error"
+					+ "\nmessage and the attached \"jfritz.properties.xml\"-file.";
+			log.error(message);
+			Debug.errDlg(message);
 			result = 1;
 		}
 		if (!(Main.PROGRAM_SECRET + pass).equals(Encryption.decrypt(ask))) {
@@ -498,7 +500,8 @@ public class Main  {
 				if (password == null) { // PasswordDialog canceled
 					result = 1;
 				} else if (!password.equals(pass)) {
-					Debug.errDlg(log, messages.getMessage("box.wrong_password")); //$NON-NLS-1$
+					log.error(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
+					Debug.errDlg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
 				}
 			}
 		}

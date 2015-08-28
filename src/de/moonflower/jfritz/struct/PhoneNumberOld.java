@@ -634,7 +634,9 @@ public class PhoneNumberOld implements Serializable {
 			int lines = 0;
 			String l = br.readLine();
 			if(l==null){
-				Debug.errDlg(log, "File "+JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") +JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "country_codes_world"+" empty");
+				String message = "File "+JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") +JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "country_codes_world"+" empty";
+				log.error(message);
+				Debug.errDlg(message);
 			}
 			//Load the keys and values quick and dirty
 			if(l.equals(FLAG_FILE_HEADER)){
@@ -690,7 +692,9 @@ public class PhoneNumberOld implements Serializable {
 			int lines = 0;
 			String l = br.readLine();
 			if(l==null){
-				Debug.errDlg(log, "File "+JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") +JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "country_specfic_codes_world.csv"+" empty");
+				String message = "File "+JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") +JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "country_specfic_codes_world.csv"+" empty";
+				log.error(message);
+				Debug.errDlg(message);
 			}
 			//Load the keys and values quick and dirty
 			if(l.equals(FLAG_FILE_HEADER)){

@@ -49,7 +49,9 @@ public final class ReverseLookupUnitedStates {
 			int lines = 0;
 			String l = br.readLine();
 			if(l==null){
-				Debug.errDlg(log, "File "+JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") + JFritzUtils.FILESEP + "usa" + JFritzUtils.FILESEP + "areacodes_usa.csv"+" empty");
+				String message = "File "+JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") + JFritzUtils.FILESEP + "usa" + JFritzUtils.FILESEP + "areacodes_usa.csv"+" empty";
+				log.error(message);
+				Debug.errDlg(message);
 			}
 			//Load the keys and values quick and dirty
 			if(l.equals(FILE_HEADER)){

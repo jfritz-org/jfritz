@@ -207,8 +207,8 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 						log.info("NETWORKING: Connection to server closed");
 
 					}else{
-						log.info("NETWORKING: Authentication failed!");
-						Debug.errDlg(log, messages.getMessage("authentification_failed"));
+						log.error("NETWORKING: Authentication failed!");
+						Debug.errDlg(messages.getMessage("authentification_failed"));
 						connect = false;
 
 					}

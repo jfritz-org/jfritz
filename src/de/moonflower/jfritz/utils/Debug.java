@@ -76,16 +76,6 @@ public class Debug {
 
 	private static BufferedReader in;
 	
-	
-	/**
-	 * Show error Dialog with message
-	 *
-	 * @param message
-	 */
-	public static void errDlg(Logger logger, String message) {
-		errDlg(message);
-	}
-
 	/**
 	 * Show error Dialog with message
 	 *

@@ -822,9 +822,10 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 			if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
 					|| e.getLocalizedMessage().startsWith(
 							"Invalid system identifier")) { //$NON-NLS-1$
-				log.error(e.toString());
-
-				Debug.errDlg(log, "Error on parsing " + filename);
+				
+				String message = "Error on parsing " + filename;
+				log.error(message, e);
+				Debug.errDlg(message);
 			}
 		} catch (IOException e) {
 			log.error("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$

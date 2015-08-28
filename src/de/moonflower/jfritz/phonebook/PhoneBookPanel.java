@@ -332,7 +332,9 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 				}
 			}
 		} else {
-			Debug.errDlg(log, messages.getMessage("error_no_row_chosen")); //$NON-NLS-1$
+			String message = messages.getMessage("error_no_row_chosen"); //$NON-NLS-1$
+			log.error(message);
+			Debug.errDlg(message);
 		}
 	}
 

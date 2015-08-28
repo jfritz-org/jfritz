@@ -299,9 +299,9 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 		}
 
 		if (programString.equals("")) { //$NON-NLS-1$
-			Debug.errDlg(log, messages.getMessage("no_external_program") //$NON-NLS-1$
-		        + programString);
-			log.error(messages.getMessage("no_external_program")); //$NON-NLS-1$
+			String message = messages.getMessage("no_external_program"); //$NON-NLS-1$
+			log.error(message);
+			Debug.errDlg(message);
 		} else {
 			log.info("Starte externes Programm: " + programString); //$NON-NLS-1$
 			try {

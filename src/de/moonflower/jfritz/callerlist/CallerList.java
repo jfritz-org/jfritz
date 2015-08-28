@@ -383,10 +383,11 @@ public class CallerList extends AbstractTableModel
 			if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
 					|| e.getLocalizedMessage().startsWith(
 							"Invalid system identifier")) { //$NON-NLS-1$
-				log.error(e.toString());
-				Debug.errDlg(log, "STRUKTURÄNDERUNG!\n\nBitte in der Datei jfritz.calls.xml\n " //$NON-NLS-1$
-								+ "die Zeichenkette \"calls.dtd\" durch\n \"" //$NON-NLS-1$
-								+ CALLS_DTD_URI + "\"\n ersetzen!"); //$NON-NLS-1$
+				String message = "STRUKTURÄNDERUNG!\n\nBitte in der Datei jfritz.calls.xml\n " //$NON-NLS-1$
+						+ "die Zeichenkette \"calls.dtd\" durch\n \"" //$NON-NLS-1$
+						+ CALLS_DTD_URI + "\"\n ersetzen!"; //$NON-NLS-1$
+				log.error(message, e);
+				Debug.errDlg(message);
 			}
 		} catch (IOException e) {
 			log.error("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -1038,7 +1039,9 @@ public class CallerList extends AbstractTableModel
 		if ((rows != null) && (rows.length == 1)) {
 			return this.filteredCallerData.elementAt(rows[0]);
 		} else {
-			Debug.errDlg(log, messages.getMessage("error_choose_one_call")); //$NON-NLS-1$
+			String message = messages.getMessage("error_choose_one_call"); //$NON-NLS-1$;
+			log.error(message);
+			Debug.errDlg(message);
 		}
 
 		return null;

@@ -71,7 +71,9 @@ public class JFritzBackup {
     	if ((sourceDirectory != null)
 			&& (sourceDirectory.equals(dest)))
     	{
-    		Debug.errDlg(log, messages.getMessage("backup_to_source_directory"));
+    		String message = messages.getMessage("backup_to_source_directory");
+    		log.error(message);
+    		Debug.errDlg(message);
     		return;
     	}
 
