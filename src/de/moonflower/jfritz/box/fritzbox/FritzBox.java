@@ -230,6 +230,7 @@ public class FritzBox extends BoxClass {
 		end = JFritzUtils.getTimestamp();
 		start = end;
 
+		Debug.debug("UpdateSettings: start of detectFirmwareAndLogin");
 		try {
 			detectFirmwareAndLogin();
 		} catch (ClientProtocolException e) {
@@ -252,7 +253,12 @@ public class FritzBox extends BoxClass {
 			handleFirmwareNotDetectedException(e);
 		}
 		
+		end = JFritzUtils.getTimestamp();
+		Debug.debug("UpdateSettings: detectFirmwareAndLogin " + (end - start) + "ms");
+		start = end;
+
 		// 01.08.2015
+		Debug.debug("UpdateSettings: start of getUPNPFromIgddesc");
 		String rep = "";
 		try {
 			rep = fbc.getNetworkMethods().getUPNPFromIgddesc(); //getUPNPFromIgddesc();
@@ -260,25 +266,22 @@ public class FritzBox extends BoxClass {
 		} catch (InvalidSessionIdException e) {
 			setBoxDisconnected();
 			handleInvalidSessionIdException(e);
-		} catch (ClientProtocolException e) {
-			setBoxDisconnected();
-			Debug.error(e.getMessage());
 		} catch (InvalidCredentialsException e) {
 			setBoxDisconnected();
 			handleInvalidCredentialsException(e);
 		} catch (LoginBlockedException e) {
 			setBoxDisconnected();
 			handleLoginBlockedException(e);
+		} catch (ClientProtocolException e) {
+			// nothing to do, IgdUPNP will be set correctly
 		} catch (IOException e) {
-			Debug.error(messages.getMessage("box.not_found"));
-			setBoxDisconnected();
+			// nothing to do, IgdUPNP will be set correctly
 		} catch (PageNotFoundException e) {
-			setBoxDisconnected();
-			handlePageNotFoundException(e);
+			// nothing to do, IgdUPNP will be set correctly
 		}
 
 		end = JFritzUtils.getTimestamp();
-		Debug.debug("UpdateSettings: detectFirmwareAndLogin " + (end - start) + "ms");
+		Debug.debug("UpdateSettings: getUPNPFromIgddesc " + (end - start) + "ms");
 
 		start = end;
 			detectMacAddress();
