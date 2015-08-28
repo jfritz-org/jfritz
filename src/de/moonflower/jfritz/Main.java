@@ -626,7 +626,7 @@ public class Main  {
 		try {
 			fa = new FileAppender(layout, path, false);
 			fa.activateOptions();
-//			Logger.getRootLogger().setLevel(loggingLevel);
+			Logger.getRootLogger().setLevel(loggingLevel);
 			Logger.getRootLogger().addAppender(fa);
 			Logger.getRootLogger().info("Logging to " + fa.getFile());
 		} catch (IOException e) {
