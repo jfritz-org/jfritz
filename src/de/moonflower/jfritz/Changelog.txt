@@ -22,6 +22,7 @@ TODO tel.search.ch überprüfen und reparieren
 
 JFritz 0.7.5_11:
 - Ignore ClientProtocolException, IOException and PageNotFound exception of getUPNPFromIgddesc()
+- Uninstall: Feedback email now contains detected firmware version
 
 JFritz 0.7.5_10:
 - Bugfix: Anrufmonitor wird beim Beenden von JFritz korrekt gestoppt

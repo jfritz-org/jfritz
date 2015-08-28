@@ -6,6 +6,7 @@
 - Anrufmonitor versucht bei Problemen nun nicht ständig sofort eine neue Verbindung aufzubauen
 - Bugfix: Anrufmonitor wird beim Beenden von JFritz korrekt gestoppt
 - Bugfix: Setzen der Nebenstelle bei der Wählhilfe
+- Uninstall: Feedback email now contains detected firmware version
 
 JFritz 0.7.5_5:
 - Neu 0000383: Anmeldung mit Username / Password unterstützen
