@@ -139,11 +139,6 @@ public final class JFritz implements  StatusListener {
 		//otherwise it will cause ui problems on the mac
 		//stupid concept really, but it has to be done
 		Debug.generatePanel();
-
-		// 15.08.2015
-		String jvm_version = System.getProperty("java.version");
-		Debug.always("Java version: " + jvm_version);
-
 	}
 
 	public void initNumbers()

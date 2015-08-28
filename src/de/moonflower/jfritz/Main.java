@@ -309,8 +309,8 @@ public class Main  {
 				+ " v" + ProgramConstants.PROGRAM_VERSION //$NON-NLS-1$
 				+ " Rev. " + ProgramConstants.REVISION //$NON-NLS-1$
 				+ " (c) 2005-" + cal.get(Calendar.YEAR) + " by " + JFRITZ_PROJECT); //$NON-NLS-1$
-		logAndStdOut("JFritz runs on " + OSDetector.getOSString());
 
+		printSystemInfo();
 		if (checkDebugParameters(args)) { // false if jfritz should stop
 											// execution
 			initJFritz(args, this);
@@ -319,7 +319,16 @@ public class Main  {
 
 	private void logAndStdOut(final String msg) {
 		log.info(msg);
-		System.out.println(msg);
+		Debug.info(msg);
+	}
+	
+	private void printSystemInfo() {
+		logAndStdOut("JFritz runs on " + OSDetector.getOSString());
+		logAndStdOut("OS Language: " + System.getProperty("user.language"));
+		logAndStdOut("OS Country: " + System.getProperty("user.country"));
+		
+		String jvm_version = System.getProperty("java.version");
+		logAndStdOut("Java version: " + jvm_version);
 	}
 
 	/**
@@ -455,8 +464,6 @@ public class Main  {
 			JFritzDataDirectory.getInstance().writeSaveDir();
 		}
 
-		logAndStdOut("OS Language: " + System.getProperty("user.language"));
-		logAndStdOut("OS Country: " + System.getProperty("user.country"));
 		if (properties.getProperty("locale").equals("")) {
 			log.info("No language set yet ... Setting language to OS language");
 			// Check if language is supported. If not switch to english

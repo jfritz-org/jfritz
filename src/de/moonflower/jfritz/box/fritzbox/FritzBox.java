@@ -218,6 +218,12 @@ public class FritzBox extends BoxClass {
 		fbc.setPassword(this.password);
 
 		firmware = fbc.getFirmwareVersion();
+		if (firmware == null) {
+			Debug.warning("Could not detect firmware. SystemStatus: " + fbc.getSystemStatus());
+			throw new FirmwareNotDetectedException("Could not detect firmware, do not try to login");
+		} else {
+			Debug.debug(firmware.toString());
+		}
 		fbc.login();
 	}
 
