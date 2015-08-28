@@ -20,6 +20,9 @@ TODO tel.search.ch überprüfen und reparieren
 - TODO: Sounds trennen und individualisierbar gestalten
 - TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
 
+JFritz 0.7.5_11:
+- Ignore ClientProtocolException, IOException and PageNotFound exception of getUPNPFromIgddesc()
+
 JFritz 0.7.5_10:
 - Bugfix: Anrufmonitor wird beim Beenden von JFritz korrekt gestoppt
 - Bugfix: Setzen der Nebenstelle bei der Wählhilfe
