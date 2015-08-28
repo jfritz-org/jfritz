@@ -118,17 +118,17 @@ public class JFritzProperties extends Properties {
             reader.parse(new InputSource(new FileInputStream(filename)));
 
         } catch (ParserConfigurationException e) {
-            Debug.error(log, "Error with ParserConfiguration!"); //$NON-NLS-1$
+            log.error("Error with ParserConfiguration!"); //$NON-NLS-1$
         } catch (SAXException e) {
-            Debug.error(log, "Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
-            Debug.error(log, e.toString());
+            log.error("Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+            log.error(e.toString());
             if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
                     || e.getLocalizedMessage().startsWith(
                             "Invalid system identifier")) { //$NON-NLS-1$
             	Debug.errDlg(log, "Error on parsing " + filename, e);
             }
         } catch (IOException e) {
-            Debug.error(log, "Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+            log.error("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 
             //make sure that we jfritz.java knows to show the config wizard
             throw new FileNotFoundException();
@@ -268,11 +268,11 @@ public class JFritzProperties extends Properties {
             pw.newLine();
             pw.close();
           } catch (UnsupportedEncodingException e) {
-              Debug.error(log, "UTF-8 not supported."); //$NON-NLS-1$
+              log.error("UTF-8 not supported."); //$NON-NLS-1$
             } catch (FileNotFoundException e) {
-                Debug.error(log, "Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+                log.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
           } catch (IOException e) {
-            Debug.error(log, "IOException " + filename); //$NON-NLS-1$
+            log.error("IOException " + filename); //$NON-NLS-1$
         }
     }
 }

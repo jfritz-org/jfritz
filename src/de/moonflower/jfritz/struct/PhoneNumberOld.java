@@ -651,7 +651,7 @@ public class PhoneNumberOld implements Serializable {
 			log.info("worldFlagMap size: "+worldFlagMap.size());
 
 		}catch(Exception e){
-			Debug.error(log, e.toString());
+			log.error(e.toString());
 		}finally{
 			try{
 				if(fi!=null)
@@ -659,7 +659,7 @@ public class PhoneNumberOld implements Serializable {
 				if(br!=null)
 					br.close();
 			}catch (IOException ioe){
-				Debug.error(log, "error closing stream"+ioe.toString());
+				log.error("error closing stream"+ioe.toString());
 			}
 		}
 		loadSpecificFlagMap();
@@ -707,7 +707,7 @@ public class PhoneNumberOld implements Serializable {
 			log.info("specificWorldFlagMap size: "+specificWorldFlagMap.size());
 
 		}catch(Exception e){
-			Debug.error(log, e.toString());
+			log.error(e.toString());
 		}finally{
 			try{
 				if(fi!=null)
@@ -715,7 +715,7 @@ public class PhoneNumberOld implements Serializable {
 				if(br!=null)
 					br.close();
 			}catch (IOException ioe){
-				Debug.error(log, "error closing stream"+ioe.toString());
+				log.error("error closing stream"+ioe.toString());
 			}
 		}
 
@@ -760,19 +760,19 @@ public class PhoneNumberOld implements Serializable {
 					JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") + JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "callbycall_world.xml")));
 
 		} catch (ParserConfigurationException e) {
-			Debug.error(log, "Error with ParserConfiguration!"); //$NON-NLS-1$
+			log.error("Error with ParserConfiguration!"); //$NON-NLS-1$
 		} catch (SAXException e) {
-			Debug.error(log, "Error on parsing number/internation/callbycall_world.xml! No call by calls loaded!"); //$NON-NLS-1$,  //$NON-NLS-2$
-			Debug.error(log, e.toString());
+			log.error("Error on parsing number/internation/callbycall_world.xml! No call by calls loaded!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.error(e.toString());
 			e.printStackTrace();
 
 			if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
 					|| e.getLocalizedMessage().startsWith(
 							"Invalid system identifier")) { //$NON-NLS-1$
-				Debug.error(log, e.toString());
+				log.error(e.toString());
 			}
 		} catch (IOException e) {
-			Debug.error(log, "Could not read number/international/callbycall_world.xml! No call by calls loaded!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.error("Could not read number/international/callbycall_world.xml! No call by calls loaded!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 

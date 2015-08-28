@@ -210,12 +210,12 @@ public class QuickDials extends AbstractTableModel {
 			reader.parse(new InputSource(new FileInputStream(filename)));
 
 		} catch (ParserConfigurationException e) {
-			Debug.error(log, "Error with ParserConfiguration!"); //$NON-NLS-1$
+			log.error("Error with ParserConfiguration!"); //$NON-NLS-1$
 		} catch (SAXException e) {
-			Debug.error(log, "Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
-            Debug.error(log, e.toString());
+			log.error("Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+            log.error(e.toString());
 		} catch (IOException e) {
-			Debug.error(log, "Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.error("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 

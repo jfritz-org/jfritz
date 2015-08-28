@@ -56,7 +56,7 @@ public class SwingTray implements Tray {
         }
         catch (IOException ex)
         {
-        	Debug.error(log, ex.toString());
+        	log.error(ex.toString());
         }
 
         //ClassCastException fix

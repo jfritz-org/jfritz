@@ -74,7 +74,7 @@ public class VCardList {
 			pw.println(toVCardList());
 			pw.close();
 		} catch (FileNotFoundException e) {
-			Debug.error(log, "Could not write " + file.getName() + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.error("Could not write " + file.getName() + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 

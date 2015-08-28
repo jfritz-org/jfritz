@@ -192,7 +192,7 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
                 clientSocket.close();
             }
         } catch (IOException e) {
-            Debug.error(log, e.toString());
+            log.error(e.toString());
         }
         try {
         	if (in != null)
@@ -200,7 +200,7 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
         		in.close();
         	}
 	    } catch (IOException e) {
-	        Debug.error(log, e.toString());
+	        log.error(e.toString());
 	    }
 	    this.setDisconnectedStatus();
     }

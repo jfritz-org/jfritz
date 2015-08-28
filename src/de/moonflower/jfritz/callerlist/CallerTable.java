@@ -488,7 +488,7 @@ public class CallerTable extends JTable {
 			{
 				if (col == null)
 				{
-					Debug.error(log, columnName + " not found");
+					log.error(columnName + " not found");
 				}
 				else
 				{

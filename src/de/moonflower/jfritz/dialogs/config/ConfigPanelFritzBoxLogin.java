@@ -325,7 +325,7 @@ public class ConfigPanelFritzBoxLogin extends JPanel implements ActionListener,
 			enableNextButtonInWizard();
 
 		} catch (ClientProtocolException e) {
-			Debug.error(log, e.getMessage());
+			log.error(e.getMessage());
 			setErrorMessage(e.getMessage());
 		} catch (InvalidCredentialsException e) {
 			handleInvalidCredentialsException(e);

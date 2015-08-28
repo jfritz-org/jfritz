@@ -21,7 +21,7 @@ public class DiagSignalHandler implements SignalHandler {
         	return diagHandler;
         } catch (IllegalArgumentException iae)
         {
-        	Debug.error(log, iae.toString());
+        	log.error(iae.toString());
         	return null;
         }
     }
@@ -43,7 +43,7 @@ public class DiagSignalHandler implements SignalHandler {
                 oldHandler.handle(sig);
             }
         } catch (Exception e) {
-            Debug.error(log, "Signal handler failed, reason "+e);
+            log.error("Signal handler failed, reason "+e);
         }
     }
 }

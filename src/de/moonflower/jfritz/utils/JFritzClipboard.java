@@ -54,9 +54,9 @@ public class JFritzClipboard{
 					response.add((String)content);
 				}
 			} catch (UnsupportedFlavorException e) {
-				Debug.error(log, "ClipboardException (UnsupportedFlavorException): " + e.getLocalizedMessage());
+				log.error("ClipboardException (UnsupportedFlavorException): " + e.getLocalizedMessage());
 			} catch (IOException e) {
-				Debug.error(log, "ClipboardException (IOException): " + e.getLocalizedMessage());
+				log.error("ClipboardException (IOException): " + e.getLocalizedMessage());
 			}
     	}
 
@@ -72,7 +72,7 @@ public class JFritzClipboard{
         	}
         }catch(IllegalStateException ise)
         {
-        	Debug.error(log, "Cannot copy "+text+" into clipboard (clipboard not available)"); //$NON-NLS-1$,  //$NON-NLS-2$
+        	log.error("Cannot copy "+text+" into clipboard (clipboard not available)"); //$NON-NLS-1$,  //$NON-NLS-2$
         	Debug.errDlg(log, messages.getMessage("error_clipboard_not_available"), ise); //$NON-NLS-1$
         }
     }

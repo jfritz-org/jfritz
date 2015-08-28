@@ -55,7 +55,7 @@ public class VCardParserTel {
 					}
 				}
 			} else {
-				Debug.error(log, "Unknown key in VCardParserTel: " + key);
+				log.error("Unknown key in VCardParserTel: " + key);
 			}
 		}
 		return false;

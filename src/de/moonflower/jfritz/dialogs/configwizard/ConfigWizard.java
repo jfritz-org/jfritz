@@ -139,7 +139,7 @@ public class ConfigWizard {
        			}
    				catch (InvalidFirmwareException ife)
    				{
-   					Debug.error(log, "Invalid firmware");
+   					log.error("Invalid firmware");
    				}
 
        			((ConfigPanelMessage)descriptor5.getPanelComponent()).saveSettings();

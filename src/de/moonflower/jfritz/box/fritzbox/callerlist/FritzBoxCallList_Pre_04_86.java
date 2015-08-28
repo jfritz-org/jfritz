@@ -154,7 +154,7 @@ public class FritzBoxCallList_Pre_04_86 implements BoxCallListInterface {
 				} else if ((response.get(newOffset+0).equals("3"))) {
 					calltype = CallType.CALLOUT;
 				} else {
-					Debug.error(log, "Invalid Call type while importing caller list!"); //$NON-NLS-1$
+					log.error("Invalid Call type while importing caller list!"); //$NON-NLS-1$
 					return false;
 				}
 
@@ -164,11 +164,11 @@ public class FritzBoxCallList_Pre_04_86 implements BoxCallListInterface {
 					try {
 						calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(response.get(newOffset+1)); //$NON-NLS-1$
 					} catch (ParseException e) {
-						Debug.error(log, "Invalid date format while importing caller list!"); //$NON-NLS-1$
+						log.error("Invalid date format while importing caller list!"); //$NON-NLS-1$
 						return false;
 					}
 				} else {
-					Debug.error(log, "Invalid date format while importing caller list!"); //$NON-NLS-1$
+					log.error("Invalid date format while importing caller list!"); //$NON-NLS-1$
 					return false;
 				}
 
@@ -233,7 +233,7 @@ public class FritzBoxCallList_Pre_04_86 implements BoxCallListInterface {
 				else
 				{
 					route = "ERROR";
-					Debug.error(log, "Could not determine route type: " + routeType);
+					log.error("Could not determine route type: " + routeType);
 				}
 
 				// make the call object and exit

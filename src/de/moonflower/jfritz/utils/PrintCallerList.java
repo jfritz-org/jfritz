@@ -612,7 +612,7 @@ public class PrintCallerList extends Thread {
             preview.pack();
             preview.setVisible(true);
         } catch (ReportProcessingException e) {
-            Debug.error(log, "Failed to generate report " + e); //$NON-NLS-1$
+            log.error("Failed to generate report " + e); //$NON-NLS-1$
         }
     }
 }

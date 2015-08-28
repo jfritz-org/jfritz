@@ -33,7 +33,7 @@ public class CallListCsvParser {
 		calls.clear();
 
 		if (input == null || "".equals(input)) {
-			Debug.error(log, "CallListCsvParser: input is null or empty");
+			log.error("CallListCsvParser: input is null or empty");
 			throw new FeatureNotSupportedByFirmware("Get caller list", messages.getMessage("box.no_caller_list"));
 		}
 
@@ -60,7 +60,7 @@ public class CallListCsvParser {
 		if (lines.length > 1) {
 			parseSecondLine();
 		} else {
-			Debug.error(log, "CallListCsvParser: missing header line");
+			log.error("CallListCsvParser: missing header line");
 			throw new FeatureNotSupportedByFirmware("Get caller list", messages.getMessage("box.no_caller_list"));
 		}
 
@@ -74,7 +74,7 @@ public class CallListCsvParser {
 		if (separatorLine.startsWith("sep=")) {
 			parseSeparatorLine(separatorLine);
 		} else {
-			Debug.error(log, "CallListCsvParser: expected sep=; but got: " + separatorLine);
+			log.error("CallListCsvParser: expected sep=; but got: " + separatorLine);
 			throw new FeatureNotSupportedByFirmware("Get caller list", messages.getMessage("box.no_caller_list"));
 		}
 	}
@@ -90,7 +90,7 @@ public class CallListCsvParser {
 				}
 			}
 		} else {
-			Debug.error(log, "CallListCsvParser: could not extract separator from line: " + separatorLine);
+			log.error("CallListCsvParser: could not extract separator from line: " + separatorLine);
 			throw new FeatureNotSupportedByFirmware("Get caller list", messages.getMessage("box.no_caller_list"));
 		}
 	}

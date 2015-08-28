@@ -118,12 +118,12 @@ public class ServerSenderThread extends Thread {
 						objectOut.reset();
 
 					}catch(IOException e){
-						Debug.error(log, "Error writing change information to client! host: "+remoteAddress);
-						Debug.error(log, e.toString());
+						log.error("Error writing change information to client! host: "+remoteAddress);
+						log.error(e.toString());
 						e.printStackTrace();
 					} catch (IllegalBlockSizeException e) {
-						Debug.error(log, "Illegal block size exception!");
-						Debug.error(log, e.toString());
+						log.error("Illegal block size exception!");
+						log.error(e.toString());
 						e.printStackTrace();
 					}
 

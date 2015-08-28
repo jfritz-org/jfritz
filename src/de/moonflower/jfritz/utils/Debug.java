@@ -76,10 +76,6 @@ public class Debug {
 
 	private static BufferedReader in;
 	
-	public static void error(Logger logger, String msg) {
-		logger.error(msg);
-	}
-
 	/**
 	 * Show Dialog with message
 	 *
@@ -181,7 +177,7 @@ public class Debug {
 							try {
 								log_area.write(new FileWriter(file.getAbsolutePath()));
 							} catch (IOException e) {
-								error(log, "Could not save debug log to file: "+file.getAbsolutePath());
+								log.error("Could not save debug log to file: "+file.getAbsolutePath());
 								e.printStackTrace();
 							}
 						}
@@ -191,7 +187,7 @@ public class Debug {
 							log_area.write(fw);
 							fw.close();
 						} catch (IOException e) {
-							Debug.error(log, "Could not save debug log to file: "+file.getAbsolutePath());
+							log.error("Could not save debug log to file: "+file.getAbsolutePath());
 							e.printStackTrace();
 						}
 					}

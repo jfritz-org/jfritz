@@ -120,7 +120,7 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 			connected = false;
 			this.setDisconnectedStatus();
 		} catch (IOException e) {
-			Debug.error(log, e.toString());
+			log.error(e.toString());
 			connected = false;
 			this.setDisconnectedStatus();
 		}
@@ -135,7 +135,7 @@ public class YACCallMonitor extends Thread implements CallMonitorInterface{
 			}
 			connected = false;
 		} catch (IOException e) {
-			Debug.error(log, "Fehler beim Schliessen des YAC-Sockets"); //$NON-NLS-1$
+			log.error("Fehler beim Schliessen des YAC-Sockets"); //$NON-NLS-1$
 		}
 		isRunning = false;
 		this.setDisconnectedStatus();

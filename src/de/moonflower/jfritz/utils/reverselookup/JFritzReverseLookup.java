@@ -52,7 +52,7 @@ public class JFritzReverseLookup {
 			ReverseLookupFacade.getReverseLookupService().loadConfigFile(
 					JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") +JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "reverselookup.xml");
 		} catch (ReverseLookupException e) {
-			Debug.error(log, "Could not load reverselookup.xml");
+			log.error("Could not load reverselookup.xml");
 		}
 		ReverseLookupGermany.loadAreaCodes();
 		ReverseLookupAustria.loadAreaCodes();
@@ -122,7 +122,7 @@ public class JFritzReverseLookup {
 				}
 			});
 		} catch (ReverseLookupException e) {
-			Debug.error(log, "Exception while doing reverse lookup: " + e.getMessage());
+			log.error("Exception while doing reverse lookup: " + e.getMessage());
 		}
 	}
 
@@ -148,7 +148,7 @@ public class JFritzReverseLookup {
 				return p;
 			}
 		} catch (ReverseLookupException e) {
-			Debug.error(log, "Exception while looking up number " + number + ": " + e.getMessage());
+			log.error("Exception while looking up number " + number + ": " + e.getMessage());
 		}
 		return PhoneBook.createDummyPerson(number);
 	}

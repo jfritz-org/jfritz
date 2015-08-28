@@ -59,7 +59,7 @@ public class ShutdownHook {
 	            }
 	          }
 	          catch( Throwable t ) {
-	            Debug.error(log, t.toString() );
+	            log.error(t.toString() );
 	          }
 	        }
 	      });
@@ -68,7 +68,7 @@ public class ShutdownHook {
     	  // just do nothing, signal may be unknown or already in use
       }
       catch( Throwable t ) {
-          Debug.error(log,  t.toString() );
+          log.error( t.toString() );
       }
 
       try {
@@ -83,7 +83,7 @@ public class ShutdownHook {
 	            }
 	          }
 	          catch( Throwable t ) {
-	        	Debug.error(log, t.toString() );
+	        	log.error(t.toString() );
 	          }
 	        }
 	      });
@@ -92,7 +92,7 @@ public class ShutdownHook {
     	  // just do nothing, signal may be unknown or already in use
       }
       catch( Throwable t ) {
-          Debug.error(log,  t.toString() );
+          log.error( t.toString() );
       }
 
       try {
@@ -107,7 +107,7 @@ public class ShutdownHook {
 	            }
 	          }
 	          catch( Throwable t ) {
-	        	Debug.error(log,  t.toString() );
+	        	log.error( t.toString() );
 	          }
 	        }
 	      });
@@ -116,7 +116,7 @@ public class ShutdownHook {
     	  // just do nothing, signal may be unknown or already in use
       }
       catch( Throwable t ) {
-          Debug.error(log,  t.toString() );
+          log.error( t.toString() );
       }
 
 
@@ -132,7 +132,7 @@ public class ShutdownHook {
 	            }
 	          }
 	          catch( Throwable t ) {
-	        	Debug.error(log,  t.toString() );
+	        	log.error( t.toString() );
 	          }
 	        }
 	      });
@@ -141,7 +141,7 @@ public class ShutdownHook {
     	  // just do nothing, signal may be unknown or already in use
       }
       catch( Throwable t ) {
-          Debug.error(log,  t.toString() );
+          log.error( t.toString() );
       }
 
       try {
@@ -156,7 +156,7 @@ public class ShutdownHook {
 	            }
 	          }
 	          catch( Throwable t ) {
-	        	Debug.error(log,  t.toString() );
+	        	log.error( t.toString() );
 	          }
 	        }
 	      });
@@ -165,7 +165,7 @@ public class ShutdownHook {
     	  // just do nothing, signal may be unknown or already in use
       }
       catch( Throwable t ) {
-          Debug.error(log,  t.toString() );
+          log.error( t.toString() );
       }
   }
 

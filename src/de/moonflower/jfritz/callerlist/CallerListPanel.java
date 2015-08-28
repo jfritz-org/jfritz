@@ -1552,7 +1552,7 @@ public class CallerListPanel extends JPanel implements ActionListener,
 			} catch (ParseException e) {
 				startDateChooser.setDate(Calendar.getInstance().getTime());
 				endDateChooser.setDate(Calendar.getInstance().getTime());
-				Debug.error(log, "Error parsing date while loading dates from main properties "
+				log.error("Error parsing date while loading dates from main properties "
 								+ e.toString());
 			}
 		}

@@ -574,7 +574,7 @@ public class CallMessageDlg extends JFrame implements ActionListener {
 						pixel = pixel.replaceAll("\t","");
 						preferredImageWidth = Integer.parseInt(pixel);
 					} else {
-						Debug.error(log, "Error in parsing popup-template! Wrong syntax: Use #imagewidth:100 and/or #imageheight:150 to set width of the picture to 100 and height to 150!");
+						log.error("Error in parsing popup-template! Wrong syntax: Use #imagewidth:100 and/or #imageheight:150 to set width of the picture to 100 and height to 150!");
 					}
 				} else if ( line.contains("#imageheight"))
 				{
@@ -589,7 +589,7 @@ public class CallMessageDlg extends JFrame implements ActionListener {
 						pixel = pixel.replaceAll("\t","");
 						preferredImageHeight = Integer.parseInt(pixel);
 					} else {
-						Debug.error(log, "Error in parsing popup-template! Wrong syntax: Use #imagewidth:100 and #imageheight:150 to set width of the picture to 100 and height to 150!");
+						log.error("Error in parsing popup-template! Wrong syntax: Use #imagewidth:100 and #imageheight:150 to set width of the picture to 100 and height to 150!");
 					}
 				}
 				template += line;
@@ -597,10 +597,10 @@ public class CallMessageDlg extends JFrame implements ActionListener {
 			log.info("Loding template done!");
 		} catch (FileNotFoundException e) {
 			//@todo error message or load default style
-			Debug.error(log, "Template not found! " + e.toString());
+			log.error("Template not found! " + e.toString());
 		} catch (IOException e) {
 			//@todo error message or load default style
-			Debug.error(log, "IOException! " + e.toString());
+			log.error("IOException! " + e.toString());
 		}
 		return template;
 	}

@@ -24,7 +24,7 @@ public class VCardParserEMail {
 					person.setEmailAddress(parser.getValues().get(0));
 				}
 			} else {
-				Debug.error(log, "Unknown key in VCardParserEMail: " + key);
+				log.error("Unknown key in VCardParserEMail: " + key);
 			}
 		}
 		return false;

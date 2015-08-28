@@ -173,13 +173,13 @@ public class FritzBox extends BoxClass {
 				setBoxConnected();
 				updateSettings();
 			} catch (WrongPasswordException e) {
-				Debug.error(log, messages.getMessage("box.wrong_password"));
+				log.error(messages.getMessage("box.wrong_password"));
 				setBoxDisconnected();
 			} catch (InvalidFirmwareException e) {
-				Debug.error(log, messages.getMessage("unknown_firmware"));
+				log.error(messages.getMessage("unknown_firmware"));
 				setBoxDisconnected();
 			} catch (IOException e) {
-				Debug.error(log, messages.getMessage("box.not_found"));
+				log.error(messages.getMessage("box.not_found"));
 				setBoxDisconnected();
 			}
 		}
@@ -192,11 +192,11 @@ public class FritzBox extends BoxClass {
 			firmware = fbc.getFirmwareVersion();
 			fbc.detectLoginMethod();
 		} catch (ClientProtocolException e1) {
-			Debug.error(log, e1.getMessage());
+			log.error(e1.getMessage());
 			setBoxDisconnected();
 			throw e1;
 		} catch (IOException e1) {
-			Debug.error(log, messages.getMessage("box.not_found"));
+			log.error(messages.getMessage("box.not_found"));
 			setBoxDisconnected();
 			throw e1;
 		} catch (PageNotFoundException e1) {
@@ -242,7 +242,7 @@ public class FritzBox extends BoxClass {
 		try {
 			detectFirmwareAndLogin();
 		} catch (ClientProtocolException e) {
-			Debug.error(log, e.getMessage());
+			log.error(e.getMessage());
 			setBoxDisconnected();
 		} catch (InvalidCredentialsException e) {
 			setBoxDisconnected();
@@ -251,7 +251,7 @@ public class FritzBox extends BoxClass {
 			setBoxDisconnected();
 			handleLoginBlockedException(e);
 		} catch (IOException e) {
-			Debug.error(log, messages.getMessage("box.not_found"));
+			log.error(messages.getMessage("box.not_found"));
 			setBoxDisconnected();
 		} catch (PageNotFoundException e) {
 			setBoxDisconnected();
@@ -373,9 +373,9 @@ public class FritzBox extends BoxClass {
 			} catch (InvalidSessionIdException e) {
 				handleInvalidSessionIdException(e);
 			} catch (ClientProtocolException e) {
-				Debug.error(log, e.getMessage());
+				log.error(e.getMessage());
 			} catch (IOException e) {
-				Debug.error(log, e.getMessage());
+				log.error(e.getMessage());
 			} catch (LoginBlockedException e) {
 				handleLoginBlockedException(e);
 			} catch (InvalidCredentialsException e) {
@@ -1021,11 +1021,11 @@ public class FritzBox extends BoxClass {
 				reader.parse(new InputSource(new StringReader(result)));
 
 			} catch (ParserConfigurationException e1) {
-				Debug.error(log, e1.toString());
+				log.error(e1.toString());
 			} catch (SAXException e1) {
-				Debug.error(log, e1.toString());
+				log.error(e1.toString());
 			} catch (IOException e1) {
-				Debug.error(log, e1.toString());
+				log.error(e1.toString());
 			}
 		}
 	}
@@ -1565,7 +1565,7 @@ public class FritzBox extends BoxClass {
 			try {
 				detectFirmwareAndLogin();
 			} catch (ClientProtocolException e) {
-				Debug.error(log, e.getMessage());
+				log.error(e.getMessage());
 				setBoxDisconnected();
 			} catch (InvalidCredentialsException e) {
 				setBoxDisconnected();
@@ -1574,7 +1574,7 @@ public class FritzBox extends BoxClass {
 				setBoxDisconnected();
 				handleLoginBlockedException(e);
 			} catch (IOException e) {
-				Debug.error(log, messages.getMessage("box.not_found"));
+				log.error(messages.getMessage("box.not_found"));
 				setBoxDisconnected();
 			} catch (PageNotFoundException e) {
 				setBoxDisconnected();

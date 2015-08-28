@@ -387,7 +387,7 @@ public final class JFritz implements  StatusListener {
 	 * @param msg
 	 */
 	public static void errorMsg(String msg) {
-		Debug.error(log, msg);
+		log.error(msg);
 		if (Main.systraySupport) {
 			JFritzTray.displayMessage(ProgramConstants.PROGRAM_NAME, msg,
 					Tray.MESSAGE_TYPE_ERROR);
@@ -476,7 +476,7 @@ public final class JFritz implements  StatusListener {
 			// Wunsch eines MAC Users, dass das Default LookAndFeel des
 			// Betriebssystems genommen wird
 		} catch (Exception ex) {
-			Debug.error(log, ex.toString());
+			log.error(ex.toString());
 		}
 	}
 

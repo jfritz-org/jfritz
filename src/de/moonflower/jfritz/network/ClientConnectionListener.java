@@ -118,7 +118,7 @@ public class ClientConnectionListener extends Thread {
 					}
 
 				}catch(InterruptedException e){
-					Debug.error(log, "Server thread was interuppted!");
+					log.error("Server thread was interuppted!");
 		        	Thread.currentThread().interrupt();
 				}
 			}else {
@@ -142,7 +142,7 @@ public class ClientConnectionListener extends Thread {
 									log.info("NETWORKING: Max number of clients reached, waiting for one to quit");
 									wait();
 								}catch(InterruptedException e){
-									Debug.error(log, "Client listener interrupted while waiting for connection to close!");
+									log.error("Client listener interrupted while waiting for connection to close!");
 						        	Thread.currentThread().interrupt();
 								}
 							}
@@ -167,7 +167,7 @@ public class ClientConnectionListener extends Thread {
 					if(e.getMessage().equals("Socket closed"))
 						log.info("NETWORKING: Server socket closed");
 					else{
-						Debug.error(log, e.toString());
+						log.error(e.toString());
 						e.printStackTrace();
 					}
 
@@ -235,7 +235,7 @@ public class ClientConnectionListener extends Thread {
 			serverSocket.close();
 
 		}catch(IOException e){
-			Debug.error(log, "Error closing server socket: " + e.toString());
+			log.error("Error closing server socket: " + e.toString());
 			e.printStackTrace();
 		}
 

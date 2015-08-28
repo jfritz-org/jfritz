@@ -61,7 +61,7 @@ public class BrowserLaunch {
 	                  new String[] {"which", browsers[count]}).waitFor() == 0) //$NON-NLS-1$
 	               browser = browsers[count];
 	         if (browser == null){
-	        	Debug.error(log, "No browser found!");
+	        	log.error("No browser found!");
 	            throw new Exception(messages.getMessage("error_browser_not_found")); //$NON-NLS-1$
 	         }else
 	        	log.debug("Executing browser '" + browser + "'");
@@ -69,7 +69,7 @@ public class BrowserLaunch {
 	         }
 	      }
 	   catch (Exception e) {
-	  	  Debug.error(log, "error on openURL: " + e.toString());
+	  	  log.error("error on openURL: " + e.toString());
 	      JOptionPane.showMessageDialog(null, errMsg + ":\n" + e.toString()); //$NON-NLS-1$
 	      }
 	   }

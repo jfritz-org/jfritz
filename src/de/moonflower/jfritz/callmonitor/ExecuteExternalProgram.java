@@ -44,7 +44,7 @@ public class ExecuteExternalProgram extends CallMonitorAdaptor {
                             URLEncoder.encode(toEncode, "UTF-8")); //$NON-NLS-1$
                 }
             } catch (UnsupportedEncodingException uee) {
-                Debug.error(log, uee.toString());
+                log.error(uee.toString());
             }
         }
         return parameter;

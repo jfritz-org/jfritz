@@ -163,11 +163,11 @@ public class ThreeStateButton extends JButton implements ImageObserver {
 				g.drawImage(star, 0, 0, this);
 				//Debug.msg("image loaded: "+star.toString());
 			} catch (InterruptedException ie) {
-				Debug.error(log, "error loading images/stern.gif" + ie);
+				log.error("error loading images/stern.gif" + ie);
 	        	Thread.currentThread().interrupt();
 			}
 		} else {
-			Debug.error(log, "images/stern.gif not found for ThreeStateButton");
+			log.error("images/stern.gif not found for ThreeStateButton");
 		}
 		ImageIcon result = new ImageIcon(image);
 		return result;

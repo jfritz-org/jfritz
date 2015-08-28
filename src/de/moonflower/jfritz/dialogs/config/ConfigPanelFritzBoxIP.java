@@ -215,7 +215,7 @@ public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 			{
 				address.setText(selectedItem);
 			} else {
-				Debug.error(log, "Address wrong!"); //$NON-NLS-1$
+				log.error("Address wrong!"); //$NON-NLS-1$
 				setErrorMessage(messages.getMessage("box.not_found"));
 			}
 			disableNextButtonInWizard();

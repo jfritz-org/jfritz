@@ -570,7 +570,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 			}
 			pw.close();
 		} catch (Exception e) {
-			Debug.error(log, "Could not write file!"); //$NON-NLS-1$
+			log.error("Could not write file!"); //$NON-NLS-1$
 		}
 	}
 
@@ -631,7 +631,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 			}
 			pw.close();
 		} catch (Exception e) {
-			Debug.error(log, "Could not write file!"); //$NON-NLS-1$
+			log.error("Could not write file!"); //$NON-NLS-1$
 		}
 	}
 
@@ -762,11 +762,11 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 			pw.newLine();
 			pw.close();
 		} catch (UnsupportedEncodingException e) {
-			Debug.error(log, "UTF-8 not supported."); //$NON-NLS-1$
+			log.error("UTF-8 not supported."); //$NON-NLS-1$
 		} catch (FileNotFoundException e) {
-			Debug.error(log, "Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		} catch (IOException e) {
-			Debug.error(log, "IOException " + filename); //$NON-NLS-1$
+			log.error("IOException " + filename); //$NON-NLS-1$
 		}
 
 		this.callerList.fireTableDataChanged();
@@ -815,19 +815,19 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 			reader.parse(new InputSource(new FileInputStream(filename)));
 			updateFilter();
 		} catch (ParserConfigurationException e) {
-			Debug.error(log, "Error with ParserConfiguration!"); //$NON-NLS-1$
+			log.error("Error with ParserConfiguration!"); //$NON-NLS-1$
 		} catch (SAXException e) {
-			Debug.error(log, "Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
-			Debug.error(log, e.toString());
+			log.error("Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.error(e.toString());
 			if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
 					|| e.getLocalizedMessage().startsWith(
 							"Invalid system identifier")) { //$NON-NLS-1$
-				Debug.error(log, e.toString());
+				log.error(e.toString());
 
 				Debug.errDlg(log, "Error on parsing " + filename);
 			}
 		} catch (IOException e) {
-			Debug.error(log, "Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.error("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 		allLastCallsSearched = true;
 		loadingXMLFile = false;
@@ -909,7 +909,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 			}
 			pw.close();
 		} catch (FileNotFoundException e) {
-			Debug.error(log, "Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 
 	}
@@ -943,7 +943,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 			}
 			pw.close();
 		} catch (FileNotFoundException e) {
-			Debug.error(log, "Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 
@@ -1177,10 +1177,10 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 
 		} catch (FileNotFoundException e) {
 			message = "Could not read from " + filename + "!";
-			Debug.error(log, "Could not read from " + filename + "!"); //$NON-NLS-1$, //$NON-NLS-2$
+			log.error("Could not read from " + filename + "!"); //$NON-NLS-1$, //$NON-NLS-2$
 		} catch (IOException e) {
 			message = "IO Exception reading csv file";
-			Debug.error(log, "IO Exception reading csv file"); //$NON-NLS-1$
+			log.error("IO Exception reading csv file"); //$NON-NLS-1$
 		}
 		return message;
 	}
@@ -1206,7 +1206,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 
 		// check if line has correct amount of entries
 		if (field.length < 37) {
-			Debug.error(log, "Invalid Thunderbird CSV format!"); //$NON-NLS-1$
+			log.error("Invalid Thunderbird CSV format!"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -1356,10 +1356,10 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 
 		} catch (FileNotFoundException e) {
 			message = "Could not read from " + filename + "!";
-			Debug.error(log, "Could not read from " + filename + "!"); //$NON-NLS-1$, //$NON-NLS-2$
+			log.error("Could not read from " + filename + "!"); //$NON-NLS-1$, //$NON-NLS-2$
 		} catch (IOException e) {
 			message = "IO Exception reading csv file";
-			Debug.error(log, "IO Exception reading csv file"); //$NON-NLS-1$
+			log.error("IO Exception reading csv file"); //$NON-NLS-1$
 		}
 		return message;
 	}

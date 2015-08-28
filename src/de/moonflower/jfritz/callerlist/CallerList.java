@@ -267,11 +267,11 @@ public class CallerList extends AbstractTableModel
 
 			pw.close();
 		} catch (UnsupportedEncodingException e) {
-			Debug.error(log, "UTF-8 not supported"); //$NON-NLS-1$
+			log.error("UTF-8 not supported"); //$NON-NLS-1$
 		} catch (FileNotFoundException e) {
-			Debug.error(log, "Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		} catch (IOException e) {
-			Debug.error(log, "IOException " + filename); //$NON-NLS-1$
+			log.error("IOException " + filename); //$NON-NLS-1$
 		}
 	}
 
@@ -318,7 +318,7 @@ public class CallerList extends AbstractTableModel
 			}
 			pw.close();
 		} catch (FileNotFoundException e) {
-			Debug.error(log, "Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 
@@ -377,19 +377,19 @@ public class CallerList extends AbstractTableModel
 			// Synchronise the call vectors
 			fireUpdateCallVector();
 		} catch (ParserConfigurationException e) {
-			Debug.error(log, "Error with ParserConfiguration!"); //$NON-NLS-1$
+			log.error("Error with ParserConfiguration!"); //$NON-NLS-1$
 		} catch (SAXException e) {
-			Debug.error(log, "Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.error("Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 			if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
 					|| e.getLocalizedMessage().startsWith(
 							"Invalid system identifier")) { //$NON-NLS-1$
-				Debug.error(log, e.toString());
+				log.error(e.toString());
 				Debug.errDlg(log, "STRUKTURÄNDERUNG!\n\nBitte in der Datei jfritz.calls.xml\n " //$NON-NLS-1$
 								+ "die Zeichenkette \"calls.dtd\" durch\n \"" //$NON-NLS-1$
 								+ CALLS_DTD_URI + "\"\n ersetzen!"); //$NON-NLS-1$
 			}
 		} catch (IOException e) {
-			Debug.error(log, "Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.error("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		} finally {
 			initStage = false;
 		}
@@ -1130,7 +1130,7 @@ public class CallerList extends AbstractTableModel
 		// check if line has correct amount of entries
 		if (field.length < 12) {
 			if (field.length != 1) {
-				Debug.error(log, "Invalid CSV format, incorrect number of fields!"); //$NON-NLS-1$
+				log.error("Invalid CSV format, incorrect number of fields!"); //$NON-NLS-1$
 			}
 			return null;
 		}
@@ -1152,7 +1152,7 @@ public class CallerList extends AbstractTableModel
 		} else if (field[0].equals("Outgoing")) { //$NON-NLS-1$
 			calltype = CallType.CALLOUT;
 		} else {
-			Debug.error(log, "Invalid Call type in CSV entry!"); //$NON-NLS-1$
+			log.error("Invalid Call type in CSV entry!"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -1162,11 +1162,11 @@ public class CallerList extends AbstractTableModel
 			try {
 				calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(field[1] + " " + field[2]); //$NON-NLS-1$,  //$NON-NLS-2$
 			} catch (ParseException e) {
-				Debug.error(log, "Invalid date format in csv entry!"); //$NON-NLS-1$
+				log.error("Invalid date format in csv entry!"); //$NON-NLS-1$
 				return null;
 			}
 		} else {
-			Debug.error(log, "Invalid date format in csv entry!"); //$NON-NLS-1$
+			log.error("Invalid date format in csv entry!"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -1223,7 +1223,7 @@ public class CallerList extends AbstractTableModel
 		// check if line has correct amount of entries
 		if (field.length != 6) {
 			if (field.length != 1) {
-				Debug.error(log, "Invalid CSV format, incorrect number of fields!"); // if
+				log.error("Invalid CSV format, incorrect number of fields!"); // if
 			}
 			// you
 			// find
@@ -1248,7 +1248,7 @@ public class CallerList extends AbstractTableModel
 				|| (field[0].equals("1") && isPushFile)) { //$NON-NLS-1$
 			calltype = CallType.CALLOUT;
 		} else {
-			Debug.error(log, "Invalid Call type in CSV entry!"); //$NON-NLS-1$
+			log.error("Invalid Call type in CSV entry!"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -1257,11 +1257,11 @@ public class CallerList extends AbstractTableModel
 			try {
 				calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(field[1]); //$NON-NLS-1$
 			} catch (ParseException e) {
-				Debug.error(log, "Invalid date format in csv entry!"); //$NON-NLS-1$
+				log.error("Invalid date format in csv entry!"); //$NON-NLS-1$
 				return null;
 			}
 		} else {
-			Debug.error(log, "Invalid date format in csv entry!"); //$NON-NLS-1$
+			log.error("Invalid date format in csv entry!"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -1308,7 +1308,7 @@ public class CallerList extends AbstractTableModel
 		// check if line has correct amount of entries
 		if (field.length != 7) {
 			if (field.length != 1) {
-				Debug.error(log, "Invalid CSV format, incorrect number fields!");
+				log.error("Invalid CSV format, incorrect number fields!");
 			}
 			return null;
 		}
@@ -1321,7 +1321,7 @@ public class CallerList extends AbstractTableModel
 		} else if ((field[0].equals("3"))) {
 			calltype = CallType.CALLOUT;
 		} else {
-			Debug.error(log, "Invalid Call type in CSV entry!"); //$NON-NLS-1$
+			log.error("Invalid Call type in CSV entry!"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -1330,11 +1330,11 @@ public class CallerList extends AbstractTableModel
 			try {
 				calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(field[1]); //$NON-NLS-1$
 			} catch (ParseException e) {
-				Debug.error(log, "Invalid date format in csv entry!"); //$NON-NLS-1$
+				log.error("Invalid date format in csv entry!"); //$NON-NLS-1$
 				return null;
 			}
 		} else {
-			Debug.error(log, "Invalid date format in csv entry!"); //$NON-NLS-1$
+			log.error("Invalid date format in csv entry!"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -1390,7 +1390,7 @@ public class CallerList extends AbstractTableModel
 		// check if line has correct amount of entries
 		if (field.length != 6) {
 			if (field.length != 1) {
-				Debug.error(log, "Invalid CSV format, incorrect number of fields"); // if
+				log.error("Invalid CSV format, incorrect number of fields"); // if
 			}
 			return null; // jfritz is broken, the fritz box exports things
 		} // with an extra empty line for whatever reason
@@ -1407,7 +1407,7 @@ public class CallerList extends AbstractTableModel
 				|| (field[0].equals("1") && isPushFile)) { //$NON-NLS-1$
 			calltype = CallType.CALLOUT;
 		} else {
-			Debug.error(log, "Invalid Call type in CSV entry!"); //$NON-NLS-1$
+			log.error("Invalid Call type in CSV entry!"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -1416,11 +1416,11 @@ public class CallerList extends AbstractTableModel
 			try {
 				calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(field[1]); //$NON-NLS-1$
 			} catch (ParseException e) {
-				Debug.error(log, "Invalid date format in csv entry!"); //$NON-NLS-1$
+				log.error("Invalid date format in csv entry!"); //$NON-NLS-1$
 				return null;
 			}
 		} else {
-			Debug.error(log, "Invalid date format in csv entry!"); //$NON-NLS-1$
+			log.error("Invalid date format in csv entry!"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -1478,7 +1478,7 @@ public class CallerList extends AbstractTableModel
 		// check if line has correct amount of entries
 		if (field.length != 7) {
 			if (field.length != 1) {
-				Debug.error(log, "Invalid CSV format, incorrect number of fields"); // if
+				log.error("Invalid CSV format, incorrect number of fields"); // if
 			}
 			return null; // jfritz is broken, the fritz box exports things
 		} // with an extra empty line for whatever reason
@@ -1495,7 +1495,7 @@ public class CallerList extends AbstractTableModel
 				|| (field[0].equals("1") && isPushFile)) { //$NON-NLS-1$
 			calltype = CallType.CALLOUT;
 		} else {
-			Debug.error(log, "Invalid Call type in CSV entry!"); //$NON-NLS-1$
+			log.error("Invalid Call type in CSV entry!"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -1504,11 +1504,11 @@ public class CallerList extends AbstractTableModel
 			try {
 				calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(field[1]); //$NON-NLS-1$
 			} catch (ParseException e) {
-				Debug.error(log, "Invalid date format in csv entry!"); //$NON-NLS-1$
+				log.error("Invalid date format in csv entry!"); //$NON-NLS-1$
 				return null;
 			}
 		} else {
-			Debug.error(log, "Invalid date format in csv entry!"); //$NON-NLS-1$
+			log.error("Invalid date format in csv entry!"); //$NON-NLS-1$
 			return null;
 		}
 

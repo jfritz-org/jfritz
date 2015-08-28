@@ -60,9 +60,9 @@ public class UPNPUtils {
 		} catch (SocketTimeoutException e) {
 			log.warn("Timeout for SSDP"); //$NON-NLS-1$
 		} catch (SocketException e) {
-            Debug.error(log, e.toString());
+            log.error(e.toString());
 		} catch (IOException e) {
-			Debug.error(log, e.toString());
+			log.error(e.toString());
 		}
 		return devices;
 	}
@@ -134,21 +134,21 @@ public class UPNPUtils {
 			}
 
 		} catch (IOException e) {
-			Debug.error(log, e.toString());
+			log.error(e.toString());
 		} finally {
 
 			try {
 				if(d!=null)
 					d.close();
 			}catch(IOException ioe){
-				Debug.error(log, "Error closing Stream");
+				log.error("Error closing Stream");
 			}
 
 			try {
 				if(printout!=null)
 					printout.close();
 			}catch(IOException ioe){
-				Debug.error(log, "Error closing Stream");
+				log.error("Error closing Stream");
 			}
 		}
 		return data;
@@ -210,19 +210,19 @@ public class UPNPUtils {
 				data += str + "\n"; //$NON-NLS-1$
 
 		} catch (IOException e) {
-			Debug.error(log, e.toString());
+			log.error(e.toString());
 		}finally{
 			try{
 				if(d!=null)
 					d.close();
 			}catch(IOException ioe){
-				Debug.error(log, "Error closing Stream");
+				log.error("Error closing Stream");
 			}
 			try{
 				if(printout!=null)
 					printout.close();
 			}catch(IOException ioe){
-				Debug.error(log, "Error closing Stream");
+				log.error("Error closing Stream");
 			}
 		}
 		//Debug.info("Result of DeviceConfig data 1: " + data);

@@ -990,7 +990,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				JFritz.getBoxCommunication().stopCallMonitor();
 				jFritz.refreshWindow();
 			} catch (Exception e) {
-				Debug.error(log, "Unable to set UI " + e.getMessage()); //$NON-NLS-1$
+				log.error("Unable to set UI " + e.getMessage()); //$NON-NLS-1$
 			}
 		}
 	}

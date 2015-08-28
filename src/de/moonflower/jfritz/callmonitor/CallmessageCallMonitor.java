@@ -64,14 +64,14 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
 			this.setConnectedStatus();
 		} catch (Exception e) {
 			try {
-                Debug.error(log, e.toString()); //$NON-NLS-1$
+                log.error(e.toString()); //$NON-NLS-1$
                 connected = false;
 				synchronized (this) {
 					wait(5000);
 				}
 			} catch (InterruptedException e1) {
 				connected = false;
-                Debug.error(log, e1.toString());
+                log.error(e1.toString());
 	        	Thread.currentThread().interrupt();
 			}
 			this.setDisconnectedStatus();
@@ -160,13 +160,13 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
 				output.writeBytes("HTTP/1.1 204 No Content"); //$NON-NLS-1$
 				connection.close();
 			} catch (SocketException e) {
-				Debug.error(log, e.toString()); //$NON-NLS-1$
+				log.error(e.toString()); //$NON-NLS-1$
 				if (!e.toString().equals("java.net.SocketException: socket closed")) { //$NON-NLS-1$
 					this.setDisconnectedStatus();
 				}
 			} catch (Exception e) {
 				JFritz.infoMsg("Exception " + e); //$NON-NLS-1$
-				Debug.error(log, "CallmessageListener: Exception " + e.toString()); //$NON-NLS-1$
+				log.error("CallmessageListener: Exception " + e.toString()); //$NON-NLS-1$
 				this.setDisconnectedStatus();
 				isRunning = false;
 				//				break;
@@ -180,7 +180,7 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
 			if (serverSocket != null)
 				serverSocket.close();
 		} catch (Exception e) {
-			Debug.error(log, "Error on closing socket: " + e.toString()); //$NON-NLS-1$
+			log.error("Error on closing socket: " + e.toString()); //$NON-NLS-1$
 		}
 		isRunning = false;
 	}

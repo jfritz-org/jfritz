@@ -275,11 +275,11 @@ public class JFritzEventDispatcher extends Thread {
 			pw.close();
 
 		} catch (UnsupportedEncodingException e) {
-			Debug.error(log, "UTF-8 not supported"); //$NON-NLS-1$
+			log.error("UTF-8 not supported"); //$NON-NLS-1$
 		} catch (FileNotFoundException e) {
-			Debug.error(log, "Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		} catch (IOException e) {
-			Debug.error(log, "IOException " + filename); //$NON-NLS-1$
+			log.error("IOException " + filename); //$NON-NLS-1$
 		}
 
 	}

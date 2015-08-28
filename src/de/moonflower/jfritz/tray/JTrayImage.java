@@ -71,7 +71,7 @@ public class JTrayImage
 
         catch(Exception exp)
         {
-            Debug.error(log, "Fehlerhaftes TrayIcon");
+            log.error("Fehlerhaftes TrayIcon");
             trayIcon = new TrayIcon(ImageIO.read(getClass().getResource("/de/moonflower/jfritz/resources/images/tray16.png")));
         }
 

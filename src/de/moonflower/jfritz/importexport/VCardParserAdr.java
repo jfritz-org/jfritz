@@ -58,7 +58,7 @@ public class VCardParserAdr {
 					}
 				}
 			} else {
-				Debug.error(log, "Unknown key in VCardParserAdr: " + key);
+				log.error("Unknown key in VCardParserAdr: " + key);
 			}
 		}
 		return false;

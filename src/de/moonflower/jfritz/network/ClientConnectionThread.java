@@ -156,7 +156,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 			}
 
 		}catch(IOException e){
-			Debug.error(log, e.toString());
+			log.error(e.toString());
 			e.printStackTrace();
 		} catch (InvalidCredentialsException e) {
 			// TODO Auto-generated catch block
@@ -349,19 +349,19 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 
 			}catch(ClassNotFoundException e){
-				Debug.error(log, "unrecognized class received as request from client: " + e.toString());
+				log.error("unrecognized class received as request from client: " + e.toString());
 				e.printStackTrace();
 
 			}catch(SocketException e){
 				if(e.getMessage().toUpperCase().equals("SOCKET CLOSED")){
 					log.info("NETWORKING: socket for "+remoteAddress+" was closed!");
 				}else{
-					Debug.error(log, e.toString());
+					log.error(e.toString());
 					e.printStackTrace();
 				}
 				return;
 			}catch(EOFException e){
-				Debug.error(log, "client "+remoteAddress+" closed stream unexpectedly: " + e.toString());
+				log.error("client "+remoteAddress+" closed stream unexpectedly: " + e.toString());
 				e.printStackTrace();
 				return;
 
@@ -371,7 +371,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 				return;
 
 			} catch (IllegalBlockSizeException e) {
-				Debug.error(log, "Illegal block size exception! " + e.toString());
+				log.error("Illegal block size exception! " + e.toString());
 				e.printStackTrace();
 
 			} catch (BadPaddingException e) {
@@ -482,41 +482,41 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 			}
 		}catch (IllegalBlockSizeException e) {
 			log.info("NETWORKING: Wrong blocksize for sealed object!");
-			Debug.error(log, e.toString());
+			log.error(e.toString());
 			e.printStackTrace();
 
 		}catch(ClassNotFoundException e){
 			log.info("NETWORKING: received unrecognized object from client!");
-			Debug.error(log, e.toString());
+			log.error(e.toString());
 			e.printStackTrace();
 
 		}catch(NoSuchAlgorithmException e){
 			log.info("NETWORKING: MD5 Algorithm not present in this JVM!");
-			Debug.error(log, e.toString());
+			log.error(e.toString());
 			e.printStackTrace();
 
 		}catch(InvalidKeySpecException e){
 			log.info("NETWORKING: Error generating cipher, problems with key spec?");
-			Debug.error(log, e.toString());
+			log.error(e.toString());
 			e.printStackTrace();
 
 		}catch(InvalidKeyException e){
 			log.info("NETWORKING: Error genertating cipher, problems with key?");
-			Debug.error(log, e.toString());
+			log.error(e.toString());
 			e.printStackTrace();
 
 		}catch(NoSuchPaddingException e){
 			log.info("NETWORKING: Error generating cipher, problems with padding?");
-			Debug.error(log, e.toString());
+			log.error(e.toString());
 			e.printStackTrace();
 
 		}catch(IOException e){
 			log.info("NETWORKING: Error authenticating client!");
-			Debug.error(log, e.toString());
+			log.error(e.toString());
 			e.printStackTrace();
 		} catch (BadPaddingException e) {
 			log.info("NETWORKING: Bad padding exception!");
-			Debug.error(log, e.toString());
+			log.error(e.toString());
 			e.printStackTrace();
 		}
 
@@ -541,7 +541,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 			socket.close();
 
 		}catch(IOException e){
-			Debug.error(log, e.toString());
+			log.error(e.toString());
 			e.printStackTrace();
 		}
 	}
@@ -564,17 +564,17 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 		}catch(SocketException e){
 			log.info("NETWORKING: Error closing socket");
-			Debug.error(log, e.toString());
+			log.error(e.toString());
 			e.printStackTrace();
 
 		}catch(IOException e){
-			Debug.error(log, "Error writing close request to client!");
-			Debug.error(log, e.toString());
+			log.error("Error writing close request to client!");
+			log.error(e.toString());
 			e.printStackTrace();
 
 		}catch(IllegalBlockSizeException e){
-			Debug.error(log, "Error with the block size?");
-			Debug.error(log, e.toString());
+			log.error("Error with the block size?");
+			log.error(e.toString());
 			e.printStackTrace();
 		}
 	}
@@ -794,16 +794,16 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 //			objectOut.flush();
 
 //		}catch(IOException e){
-//			Debug.error(log, "Error writing available ports to client!");
-//			Debug.error(log, e.toString());
+//			log.error("Error writing available ports to client!");
+//			log.error(e.toString());
 //			e.printStackTrace();
 //
 //		}catch(IllegalBlockSizeException e){
-//			Debug.error(log, "Error with the block size?");
-//			Debug.error(log, e.toString());
+//			log.error("Error with the block size?");
+//			log.error(e.toString());
 //			e.printStackTrace();
 //		}
-		Debug.error(log, "Fix writeAvailablePorts() in ClientConnectionThread!");
+		log.error("Fix writeAvailablePorts() in ClientConnectionThread!");
     }
 
     public String toString() {

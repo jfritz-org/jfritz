@@ -61,7 +61,7 @@ public final class ReverseLookupAustria {
 			log.info("numberMap size: "+numberMap.size());
 
 		}catch(Exception e){
-			Debug.error(log, e.toString());
+			log.error(e.toString());
 		}finally{
 			try{
 				if(fi!=null)
@@ -69,7 +69,7 @@ public final class ReverseLookupAustria {
 				if(br!=null)
 					br.close();
 			}catch (IOException ioe){
-				Debug.error(log, "error closing stream "+ioe.toString());
+				log.error("error closing stream "+ioe.toString());
 			}
 		}
 	}

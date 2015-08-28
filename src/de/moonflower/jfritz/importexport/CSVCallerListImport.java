@@ -100,7 +100,7 @@ public class CSVCallerListImport extends CSVImport implements ICSVImport {
 			{
 				entry.setCallType(CallType.CALLOUT);
 			} else {
-				Debug.error(log, "Unknown call type: " + value);
+				log.error("Unknown call type: " + value);
 				return true;
 			}
 		} else if (columnName.equals(CallerTable.COLUMN_DATE)) {
@@ -195,7 +195,7 @@ public class CSVCallerListImport extends CSVImport implements ICSVImport {
 												entry.setCalldate(timeCal.getTime());
 											}
 										} catch (ParseException e3) {
-											Debug.error(log, "Could not parse date: " + value);
+											log.error("Could not parse date: " + value);
 											return true;
 										}
 									}
@@ -259,7 +259,7 @@ public class CSVCallerListImport extends CSVImport implements ICSVImport {
 					try {
 						entry.setDuration((Integer.parseInt(time[0]) * 3600) + (Integer.parseInt(time[1])*60));
 					} catch (NumberFormatException nfe2) {
-						Debug.error(log, "Could not parse duration: " + value);
+						log.error("Could not parse duration: " + value);
 						return true;
 					}
 				}
