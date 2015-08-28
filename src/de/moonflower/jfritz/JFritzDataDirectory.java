@@ -189,12 +189,14 @@ public class JFritzDataDirectory {
 					try {
 						FileUtils.deleteDirectory(src);
 					} catch (IOException e1) {
-						Debug.errDlg(log, "Could not delete old data directory '" + src + "'!\n" +
-								e.getMessage(), e1);
+						String errorMessage = "Could not delete old data directory '" + src + "'!";
+						log.error(errorMessage, e1);
+						Debug.errDlg(errorMessage);
 					}
 				} catch (IOException e1) {
-					Debug.errDlg(log, "Could not copy data directory from '" + SAVE_DIR + "' to '" + path + "'!\n" +
-							e.getMessage(), e1);
+					String errorMessage = "Could not copy data directory from '" + SAVE_DIR + "' to '" + path + "'!";
+					log.error(errorMessage, e1);
+					Debug.errDlg(errorMessage);
 				}
 			} finally {
 				DOMConfigurator.configure(JFritzUtils.getFullPath("/log4j.xml"));
@@ -202,7 +204,9 @@ public class JFritzDataDirectory {
 				main.initLog4jAppender();
 			}
 		} else {
-			Debug.errDlg(log, "You selected a file, please choose a directory!");
+			String errorMessage = "You selected a file, please choose a directory!";
+			log.error(errorMessage);
+			Debug.errDlg(errorMessage);
 		}
 	}
 

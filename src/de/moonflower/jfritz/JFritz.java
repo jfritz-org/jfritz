@@ -386,8 +386,8 @@ public final class JFritz implements  StatusListener {
 	 *
 	 * @param msg
 	 */
-	public static void errorMsg(String msg) {
-		log.error(msg);
+	public static void errorMsg(String msg, Throwable t) {
+		log.error(msg, t);
 		if (Main.systraySupport) {
 			JFritzTray.displayMessage(ProgramConstants.PROGRAM_NAME, msg,
 					Tray.MESSAGE_TYPE_ERROR);

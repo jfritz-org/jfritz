@@ -130,11 +130,11 @@ public class CallPendingDialog extends JDialog implements ActionListener {
 				NetworkStateMonitor.hangup(port);
 				setVisible(false);
 			} catch (WrongPasswordException e1) {
-				JFritz.errorMsg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
-				Debug.errDlg(log, messages.getMessage("box.wrong_password"), e1); //$NON-NLS-1$
+				JFritz.errorMsg(messages.getMessage("box.wrong_password"), e1); //$NON-NLS-1$
+				Debug.errDlg(log, messages.getMessage("box.wrong_password")); //$NON-NLS-1$
 			} catch (IOException e1) {
-				JFritz.errorMsg(messages.getMessage("box.not_found")); //$NON-NLS-1$
-				Debug.errDlg(log, messages.getMessage("box.not_found"), e1); //$NON-NLS-1$
+				JFritz.errorMsg(messages.getMessage("box.not_found"), e1); //$NON-NLS-1$
+				Debug.errDlg(log, messages.getMessage("box.not_found")); //$NON-NLS-1$
 			}
 		}
 	}

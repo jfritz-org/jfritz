@@ -312,8 +312,9 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 					executeProgram(prog, args);
 				}
 			} catch (IOException e) {
-				Debug.errDlg(log, messages.getMessage("not_external_program_start") //$NON-NLS-1$
-							+ " " + programString, e);
+				String message = messages.getMessage("not_external_program_start") + " " + programString; //$NON-NLS-1$
+				log.error(message, e);
+				Debug.errDlg(message);
 			}
 		}
 	}
@@ -388,10 +389,9 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 				}
 				log.info("Finished execution of external program");
 			} catch (Throwable t) {
-				log.error(messages.getMessage("not_external_program_start") //$NON-NLS-1$
-						+ " " + prog, t);
-				Debug.errDlg(log, messages.getMessage("not_external_program_start") //$NON-NLS-1$
-						+ " " + prog, t);
+				String message = messages.getMessage("not_external_program_start") + " " + prog; //$NON-NLS-1$
+				log.error(message, t);
+				Debug.errDlg(messages.getMessage("not_external_program_start"+ " " + prog)); //$NON-NLS-1$
 			}
 	    }
 	}

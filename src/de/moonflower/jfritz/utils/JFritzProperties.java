@@ -120,12 +120,12 @@ public class JFritzProperties extends Properties {
         } catch (ParserConfigurationException e) {
             log.error("Error with ParserConfiguration!"); //$NON-NLS-1$
         } catch (SAXException e) {
-            log.error("Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
-            log.error(e.toString());
+        	String message = "Error on parsing " + filename; 
+            log.error(message, e); //$NON-NLS-1$,  //$NON-NLS-2$
             if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
                     || e.getLocalizedMessage().startsWith(
                             "Invalid system identifier")) { //$NON-NLS-1$
-            	Debug.errDlg(log, "Error on parsing " + filename, e);
+            	Debug.errDlg(message);
             }
         } catch (IOException e) {
             log.error("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$

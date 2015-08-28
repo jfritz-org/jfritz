@@ -76,37 +76,26 @@ public class Debug {
 
 	private static BufferedReader in;
 	
-	/**
-	 * Show Dialog with message
-	 *
-	 * @param message
-	 */
-	public static void msgDlg(Logger logger, String message) {
-		logger.info(message);
-		JOptionPane.showMessageDialog(null, message, messages.getMessage("information"), JOptionPane.INFORMATION_MESSAGE); //$NON-NLS-1$
-	}
-		
+	
 	/**
 	 * Show error Dialog with message
 	 *
 	 * @param message
 	 */
 	public static void errDlg(Logger logger, String message) {
-		errDlg(logger, message, null);
+		errDlg(message);
 	}
 
 	/**
-	 * Show error Dialog with message and detailed throwable stack trace
+	 * Show error Dialog with message
 	 *
 	 * @param message
-	 * @param throwable
 	 */
-	public static void errDlg(Logger logger, String message, Throwable t) {
-		logger.error(message, t);
+	public static void errDlg(String message) {
 		JOptionPane.showMessageDialog(null, message,
 				messages.getMessage("error"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
 	}
-
+	
 	public static void generatePanel()
 	{
 		main_panel = new JPanel();

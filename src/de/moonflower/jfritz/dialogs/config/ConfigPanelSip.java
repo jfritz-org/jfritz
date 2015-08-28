@@ -104,26 +104,31 @@ public class ConfigPanelSip extends JPanel implements ConfigPanel {
 //						JFritz.errorMsg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
 //						Debug.errDlg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
 					} catch (IOException e1) {
-						JFritz.errorMsg(messages.getMessage("box.not_found")); //$NON-NLS-1$
-						Debug.errDlg(log, messages.getMessage("box.not_found"), e1); //$NON-NLS-1$
+						JFritz.errorMsg(messages.getMessage("box.not_found"), e1); //$NON-NLS-1$
+						Debug.errDlg(messages.getMessage("box.not_found")); //$NON-NLS-1$
 					} catch (PageNotFoundException e1) {
-						JFritz.errorMsg(messages.getMessage("box.communication_error")); //$NON-NLS-1$
-						Debug.errDlg(log, messages.getMessage("box.communication_error"), e1); //$NON-NLS-1$
+						JFritz.errorMsg(messages.getMessage("box.communication_error"), e1); //$NON-NLS-1$
+						Debug.errDlg(messages.getMessage("box.communication_error")); //$NON-NLS-1$
 					} catch (FirmwareNotDetectedException e1) {
-						JFritz.errorMsg(messages.getMessage("unknown_firmware")); //$NON-NLS-1$
-						Debug.errDlg(log, messages.getMessage("unknown_firmware"), e1); //$NON-NLS-1$
+						JFritz.errorMsg(messages.getMessage("unknown_firmware"), e1); //$NON-NLS-1$
+						Debug.errDlg(messages.getMessage("unknown_firmware")); //$NON-NLS-1$
 					} catch (InvalidCredentialsException e1) {
 						if (fritzBoxPanelIp.getFritzBox().getFirmware().isLowerThan(05, 50)) {
-							JFritz.errorMsg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
-							Debug.errDlg(log, messages.getMessage("box.wrong_password"), e1); //$NON-NLS-1$
+							JFritz.errorMsg(messages.getMessage("box.wrong_password"), e1); //$NON-NLS-1$
+							Debug.errDlg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
 						} else {
-							Debug.errDlg(log, messages.getMessage("box.wrong_password_or_username"), e1);
+							JFritz.errorMsg(messages.getMessage("box.wrong_password_or_username"), e1); //$NON-NLS-1$
+							Debug.errDlg(messages.getMessage("box.wrong_password_or_username"));
 						}
 					} catch (LoginBlockedException e1) {
 						if (fritzBoxPanelIp.getFritzBox().getFirmware().isLowerThan(05, 50)) {
-							Debug.errDlg(log, messages.getMessage("box.wrong_password.wait").replaceAll("%WAIT%", e1.getRemainingBlockTime()), e1);
+							String message =  messages.getMessage("box.wrong_password.wait").replaceAll("%WAIT%", e1.getRemainingBlockTime());
+							log.error(message, e1);
+							Debug.errDlg(message);
 						} else {
-							Debug.errDlg(log, messages.getMessage("box.wrong_password_or_username.wait").replaceAll("%WAIT%", e1.getRemainingBlockTime()), e1);
+							String message =  messages.getMessage("box.wrong_password_or_username.wait").replaceAll("%WAIT%", e1.getRemainingBlockTime());
+							log.error(message, e1);
+							Debug.errDlg(message);
 						}
 					}
 					c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

@@ -35,7 +35,9 @@ public class CSVImport {
 			fileReader = new FileReader(fileName);
 			bufferedReader = new BufferedReader(fileReader);
 		} catch (FileNotFoundException e) {
-			Debug.errDlg(log, "File '" + fileName + "' does not exist!", e);
+			String message = "File '" + fileName + "' does not exist!";
+			log.error(message, e);
+			Debug.errDlg(message);
 		}
 	}
 
