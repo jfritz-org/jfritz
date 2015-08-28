@@ -220,7 +220,7 @@ public class CallerList extends AbstractTableModel
 	 *            Save whole caller list or only selected entries
 	 */
 	public synchronized void saveToXMLFile(final String filename, final boolean wholeCallerList) {
-		Debug.always("Saving to file " + filename); //$NON-NLS-1$
+		Debug.info(log, "Saving to file " + filename); //$NON-NLS-1$
 		try {
 			BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(filename), "UTF8")); //$NON-NLS-1$
@@ -284,7 +284,7 @@ public class CallerList extends AbstractTableModel
 	 *            Save whole caller list or only selected entries
 	 */
 	public synchronized void saveToCSVFile(String filename, boolean wholeCallerList) {
-		Debug.always("Saving to csv file " + filename); //$NON-NLS-1$
+		Debug.info(log, "Saving to csv file " + filename); //$NON-NLS-1$
 		FileOutputStream fos;
 		try {
 			fos = new FileOutputStream(filename);

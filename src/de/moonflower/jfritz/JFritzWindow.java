@@ -808,10 +808,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 			};
 			timer = new FetchListTimer("FetchList-Timer", true);
 			timer.schedule(timerTask, interval, interval); //$NON-NLS-1$
-			Debug.always("Timer enabled"); //$NON-NLS-1$
+			Debug.info(log, "Timer enabled"); //$NON-NLS-1$
 		} else {
 			timer.cancel();
-			Debug.always("Timer disabled"); //$NON-NLS-1$
+			Debug.info(log, "Timer disabled"); //$NON-NLS-1$
 		}
 	}
 
@@ -855,10 +855,10 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 				//pass on the request to delete the list from the box
 			if(deleteFritzBoxCallerList){
-				Debug.netMsg("Requesting server to delete the list from the box");
+				log.info("NETWORKING: Requesting server to delete the list from the box");
 				NetworkStateMonitor.requestDeleteList();
 			}else{
-				Debug.netMsg("requesting get call list from box from the server");
+				log.info("NETWORKING: requesting get call list from box from the server");
 				NetworkStateMonitor.requestGetCallListFromServer();
 			}
 
@@ -1232,7 +1232,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 				if(properties.getProperty("option.clientTelephoneBook").equals("true") &&
 						NetworkStateMonitor.isConnectedToServer()){
 					//if connected to server make server to the lookup
-					Debug.netMsg("requesting reverse lookup from server");
+					log.info("NETWORKING: requesting reverse lookup from server");
 					NetworkStateMonitor.requestLookupFromServer();
 					lookupButton.setSelected(false);
 				}else{

@@ -120,7 +120,7 @@ public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 
 		// initialize the drop down box
 		BoxClass.detectBoxesWithSSDP(log);
-		devices = BoxClass.getDevices();
+		devices = BoxClass.getDevices(log);
 		Vector<String> deviceAddress = new Vector<String>();
 		if (devices != null) {
 			Enumeration<SSDPPacket> en = devices.elements();
@@ -274,7 +274,7 @@ public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 		if(properties.getProperty("network.type").equals("2")
 				&& Boolean.parseBoolean(properties.getProperty("option.clientCallList"))){
 
-			Debug.netMsg("JFritz is running as a client and using call list from server, disabeling FritzBox panel");
+			log.info("NETWORKING: JFritz is running as a client and using call list from server, disabeling FritzBox panel");
 			this.boxtypeButton.setEnabled(false);
 		}
 						

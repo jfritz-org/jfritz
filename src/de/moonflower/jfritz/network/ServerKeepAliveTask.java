@@ -48,7 +48,7 @@ public class ServerKeepAliveTask extends TimerTask {
 
 				//check if client responded to the last keep alive
 			if(connection.isClientAlive()){
-				Debug.netMsg("Sending keep alive string to "+remoteAddress);
+				log.info("NETWORKING: Sending keep alive string to "+remoteAddress);
 
 				SealedObject sealed_object = new SealedObject("Party on, Wayne!", outCipher);
 				objectOut.writeObject(sealed_object);
@@ -59,7 +59,7 @@ public class ServerKeepAliveTask extends TimerTask {
 
 				// if not kill the connection
 			}else{
-				Debug.netMsg("Client has responded to last keep alive, killing the connection");
+				log.info("NETWORKING: Client has responded to last keep alive, killing the connection");
 				connection.closeConnection();
 			}
 

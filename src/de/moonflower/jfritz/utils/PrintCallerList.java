@@ -89,7 +89,7 @@ public class PrintCallerList extends Thread {
                 columnWidth[i] = colModel.getColumn(i).getWidth() - 20;
             }
             columnStart[i] = 0;
-            Debug.always("Column "+i+ " [" + columnName + "] width: " + columnWidth[i]);
+            Debug.info(log, "Column "+i+ " [" + columnName + "] width: " + columnWidth[i]);
         }
 
         // Rest width for columns "number" and "participant"

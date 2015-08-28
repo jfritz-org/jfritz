@@ -1,8 +1,5 @@
 package de.moonflower.jfritz.callmonitor;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -27,7 +24,6 @@ import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
-import de.moonflower.jfritz.utils.Debug;
 
 public class DisplayCallsMonitorTest extends TestCase {
 
@@ -44,9 +40,6 @@ public class DisplayCallsMonitorTest extends TestCase {
 	public void init() {
 		MockitoAnnotations.initMocks(this);
 
-		Debug.on();
-    	Debug.setVerbose(true);
-    	Debug.setDebugLevel(Debug.LS_DEBUG);
 		PropertyProvider.getInstance().loadProperties(false);
 		MessageProvider.getInstance().loadMessages(new Locale("de_DE"));
 		JFritz.loadNumberSettings();

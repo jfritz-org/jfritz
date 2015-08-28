@@ -74,7 +74,7 @@ public class ServerSenderThread extends Thread {
 	@SuppressWarnings("unchecked")
 	public void run(){
 
-		Debug.netMsg("Sender thread for "+remoteAddress+" started up");
+		log.info("NETWORKING: Sender thread for "+remoteAddress+" started up");
 		while(!stop){
 
 			// if no changes are present then sleep
@@ -84,7 +84,7 @@ public class ServerSenderThread extends Thread {
 						wait();
 					}
 				}catch(InterruptedException e){
-					Debug.netMsg("A Server sender thread was interrupted!");
+					log.info("NETWORKING: A Server sender thread was interrupted!");
 		        	Thread.currentThread().interrupt();
 				}
 
@@ -107,7 +107,7 @@ public class ServerSenderThread extends Thread {
 						filterCallData((Vector<Call>) change.data);
 					}
 
-					Debug.netMsg("Writing filtered data to client "+remoteAddress);
+					log.info("NETWORKING: Writing filtered data to client "+remoteAddress);
 
 					// now write it accross the socket connection while leaving the queue open for writing
 					try{
@@ -135,7 +135,7 @@ public class ServerSenderThread extends Thread {
 			}
 		}
 
-		Debug.netMsg("Sender Thread for "+remoteAddress+" stopping");
+		log.info("NETWORKING: Sender Thread for "+remoteAddress+" stopping");
 
 	}
 
@@ -174,7 +174,7 @@ public class ServerSenderThread extends Thread {
 		// because this may change through user editing
 		Vector<CallFilter> callFilters = login.callFilters;
 
-		Debug.netMsg("Filtering outgoing call data for: "+this.remoteAddress
+		log.info("NETWORKING: Filtering outgoing call data for: "+this.remoteAddress
 				+" size of calls: "+calls.size());
 		for(Call call: calls){
 

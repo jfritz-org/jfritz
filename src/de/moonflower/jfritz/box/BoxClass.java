@@ -4,6 +4,7 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
+import de.moonflower.jfritz.JFritzDataDirectory;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.Debug;
@@ -239,7 +240,7 @@ public abstract class BoxClass
 	/**
 	 * @return Returns the fritzbox devices.
 	 */
-	public static final Vector<SSDPPacket> getDevices() {
+	public static final Vector<SSDPPacket> getDevices(Logger log) {
 		//avoid using the ssdp thread if jfritz is running as a client and using the call list from server
 		if (JFritzUtils.parseBoolean(properties.getProperty("option.useSSDP")) //$NON-NLS-1$
 			&& !(properties.getProperty("network.type").equals("2")
@@ -250,7 +251,7 @@ public abstract class BoxClass
 			}
 			return ssdpthread.getDevices();
 		} else {
-			Debug.netMsg("jfritz is configured as a client, canceling box detection");
+			log.info("NETWORKING: jfritz is configured as a client, canceling box detection");
 			return null;
 		}
 	}

@@ -152,6 +152,7 @@ import jd.nutils.OSDetector;
 import org.apache.http.auth.InvalidCredentialsException;
 import org.apache.log4j.Appender;
 import org.apache.log4j.FileAppender;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.xml.DOMConfigurator;
@@ -249,11 +250,13 @@ public class Main  {
 	protected MessageProvider messages = MessageProvider.getInstance();
 	protected UpdateMessageProvider updateMessages = UpdateMessageProvider.getInstance();
 	
+	private Level loggingLevel = Level.INFO;
+	
 	public Main() {
 		// NICHT VERWENDEN, nur für TestCases, nicht alles initialisiert. NICHT
 		// VERWENDEN!
 		loadLanguages();
-		JFritzDataDirectory.getInstance().loadSaveDir();
+		JFritzDataDirectory.getInstance().loadSaveDir(this);
 		showConfWizard = properties.loadProperties(false);
 		String loc = properties.getProperty("locale");
 		messages.loadMessages(new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_") + 1, loc.length()))); //$NON-NLS-1$,  //$NON-NLS-2$
@@ -264,7 +267,7 @@ public class Main  {
 
 	public Main(String[] args) {
 		DOMConfigurator.configure(JFritzUtils.getFullPath("/log4j.xml"));
-		JFritzDataDirectory.getInstance().loadSaveDir();
+		JFritzDataDirectory.getInstance().loadSaveDir(this);
 		initLog4jAppender();
 
 		Calendar cal = Calendar.getInstance();
@@ -304,7 +307,6 @@ public class Main  {
 		// move save dir and default file location
 		shouldMoveDataToRightSaveDir();
 
-		Debug.on();
 		logAndStdOut(ProgramConstants.PROGRAM_NAME
 				+ " v" + ProgramConstants.PROGRAM_VERSION //$NON-NLS-1$
 				+ " Rev. " + ProgramConstants.REVISION //$NON-NLS-1$
@@ -369,8 +371,6 @@ public class Main  {
 				,null, "This short description"); //$NON-NLS-1$
 		options.addOption('i',"lang" //$NON-NLS-1$,  //$NON-NLS-2$
 				,"language", "Set the display language, currently supported: german, english"); //$NON-NLS-1$,  //$NON-NLS-2$
-		options.addOption('l', "logfile" //$NON-NLS-1$,  //$NON-NLS-2$
-				,"filename", "Writes debug messages to logfile"); //$NON-NLS-1$,  //$NON-NLS-2$
 		options.addOption('n', "nosystray" //$NON-NLS-1$,  //$NON-NLS-2$
 				,null, "Turn off systray support"); //$NON-NLS-1$
 		options.addOption('p', "priority" //$NON-NLS-1$,  //$NON-NLS-2$
@@ -424,22 +424,15 @@ public class Main  {
 				Debug.setVerbose(true);
 				String level = option.getParameter();
 				if ("ERROR".equals(level)) {
-					Debug.setDebugLevel(Debug.LS_ERROR);
+					loggingLevel = Level.ERROR;
 				} else if ("WARNING".equals(level)) {
-					Debug.setDebugLevel(Debug.LS_WARNING);
+					loggingLevel = Level.WARN;
 				} else if ("INFO".equals(level)) {
-					Debug.setDebugLevel(Debug.LS_INFO);
+					loggingLevel = Level.INFO;
 				} else if ("DEBUG".equals(level)) {
-					Debug.setDebugLevel(Debug.LS_DEBUG);
+					loggingLevel = Level.DEBUG;
 				}
-				break;
-			case 'l': //$NON-NLS-1$
-				String logFilename = option.getParameter();
-				if (logFilename == null || logFilename.equals("")) { //$NON-NLS-1$
-					Debug.logToFile("Debuglog.txt");
-				} else {
-					Debug.logToFile(logFilename);
-				}
+				Logger.getRootLogger().setLevel(loggingLevel);
 				break;
 			case 'q': //$NON-NLS-1$
 				showSplashScreen = false;
@@ -620,7 +613,7 @@ public class Main  {
 		return wizardCanceled;
 	}
 
-	public static void initLog4jAppender() {
+	public void initLog4jAppender() {
 		Appender oldFileAppender = Logger.getRootLogger().getAppender("FileAppender");
 		if (oldFileAppender != null) {
 			Logger.getRootLogger().removeAppender(oldFileAppender);
@@ -633,6 +626,7 @@ public class Main  {
 		try {
 			fa = new FileAppender(layout, path, false);
 			fa.activateOptions();
+//			Logger.getRootLogger().setLevel(loggingLevel);
 			Logger.getRootLogger().addAppender(fa);
 			Logger.getRootLogger().info("Logging to " + fa.getFile());
 		} catch (IOException e) {

@@ -12,13 +12,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -39,33 +35,28 @@ import de.moonflower.jfritz.properties.PropertyProvider;
 /**
  * Write debug messages to STDOUT or FILE. Show Error-Dialog with a special
  * message
- *
+ * 
  * 14.05.06 Added support for redirecting System.out and System.err Now all
  * exceptions are also included in the debug file Brian Jensen
- *
+ * 
  * @author Robert Palmer
- *
+ * 
  */
 public class Debug {
 	private static final Logger log = Logger.getLogger(Debug.class);
 
-	public static final LogSeverity LS_ALWAYS = new LogSeverity(0, "LS_ALWAYS", "");
-	public static final LogSeverity LS_ERROR = new LogSeverity(1, "LS_ERROR", ": ERROR");
-	public static final LogSeverity LS_WARNING = new LogSeverity(2, "LS_WARNING", ": WARN");
-	public static final LogSeverity LS_NETWORK = new LogSeverity(3, "LS_NETWORK", ": NETWORK");
-	public static final LogSeverity LS_INFO = new LogSeverity(4, "LS_INFO", ": INFO");
-	public static final LogSeverity LS_DEBUG = new LogSeverity(5, "LS_DEBUG", ": DEBUG");
+	public static final LogSeverity LS_ALWAYS = new LogSeverity(1, "LS_ALWAYS", "");
+	public static final LogSeverity LS_ERROR = new LogSeverity(1, "LS_ERROR", "ERROR");
+	public static final LogSeverity LS_WARNING = new LogSeverity(2, "LS_WARNING", "WARN");
+	public static final LogSeverity LS_INFO = new LogSeverity(3, "LS_INFO", "INFO");
+	public static final LogSeverity LS_DEBUG = new LogSeverity(4, "LS_DEBUG", "DEBUG");
 
 	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 9211082107025215527L;
 
-	private static LogSeverity debugLevel;
-	private static String debugLogFile;
+	private static String debugLogFile = "log4j.log";
 
 	private static boolean verboseMode = false;
-
-	private static PrintStream originalOut;
-	private static PrintStream originalErr;
 
 	private static JPanel main_panel = null;
 
@@ -74,7 +65,7 @@ public class Debug {
 	private static JButton close_button;
 	private static JButton save_button;
 	private static JButton refresh_button;
-	private static JComboBox log_severity_box;
+	private static JComboBox<LogSeverity> log_severity_box;
 
 	private static JScrollPane scroll_pane;
 
@@ -83,137 +74,22 @@ public class Debug {
 	protected static PropertyProvider properties = PropertyProvider.getInstance();
 	protected static MessageProvider messages = MessageProvider.getInstance();
 
-	private static FileOutputStream tmpOutputStream;
-	private static PrintStream outputFileRedirector;
-	private static ConsoleAndFilePrintStream errorFileRedirector;
 	private static BufferedReader in;
-
-	/**
-	 * Turns debug-mode on
-	 *
-	 */
-	public static void on() {
-		verboseMode = false;
-		Debug.debugLevel = LS_DEBUG;
-		logToFile("debug.log");
-	}
-
-	public static void off() {
-		System.setOut(originalOut);
-		System.setErr(originalErr);
-		if (tmpOutputStream != null) {
-			try {
-				tmpOutputStream.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		if (outputFileRedirector != null) {
-			outputFileRedirector.close();
-		}
-		if (errorFileRedirector != null) {
-			errorFileRedirector.close();
-		}
-	}
-	/**
-	 * This function works by redirecting System.out and System.err to fname The
-	 * original console stream is saved as originalout 15.05.06 Brian Jensen
-	 *
-	 * Turn on logging mode to file
-	 *
-	 * @param fname
-	 *            Filename to log into
-	 */
-	public static void logToFile(final String fName) {
-		debugLogFile = fName;
-
-		// Save the original outputstream so we can write to the console too!
-		originalOut = System.out;
-		originalErr = System.err;
-
-		//if our file name contains no path, then save in our save dir
-		if(!debugLogFile.contains(System.getProperty("file.separator")))
-			debugLogFile = JFritzDataDirectory.getInstance().getDataDirectory() + debugLogFile;
-
-		try {
-			// setup the redirection of Sysem.out and System.err
-			tmpOutputStream = new FileOutputStream(
-					debugLogFile);
-			outputFileRedirector = new PrintStream(tmpOutputStream);
-			errorFileRedirector = new ConsoleAndFilePrintStream(tmpOutputStream);
-			System.setOut(outputFileRedirector);
-			System.setErr(errorFileRedirector);
-		}
-
-		catch (Exception e) {
-			System.err.println("EXCEPTION when writing to LOGFILE"); //$NON-NLS-1$
-		}
-	}
-
-	/**
-	 *
-	 * @return current Time HH:mm:ss
-	 */
-	private static String getCurrentTime() {
-		Date now = new java.util.Date();
-		SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm:ss"); //$NON-NLS-1$
-		return df.format(now);
-	}
-
-	/**
-	 * Print message with prioriry level
-	 *
-	 * @param level
-	 * @param message
-	 */
-	private static void msg(LogSeverity level, final String msg) {
-		if ( (debugLevel == null)
-				|| (debugLevel != null) && (debugLevel.getId() >= level.getId())) {
-			String message = msg;
-			message = "(" + getCurrentTime() + ")"+ level.getPrefix() + ": "+ message; //$NON-NLS-1$,  //$NON-NLS-2$
-			System.out.println(message);
-
-			// if both verbose mode and logging enabled, make sure output
-			// still lands on the console as well!
-			if (verboseMode) {
-				originalOut.println(message);
-			}
-		}
-	}
-
-	/**
-	 * This is a modified message function, used by the network subsystem
-	 * so the debug output is more readable
-	 *
-	 * @param message
-	 */
-	public static void netMsg(final String msg){
-		msg(LS_NETWORK, msg);
-	}
-
-	public static void always(String msg) {
-		msg(LS_ALWAYS, msg);
-	}
-
+	
 	public static void error(Logger logger, String msg) {
 		logger.error(msg);
-		msg(LS_ERROR, msg);
 	}
 
 	public static void warning(Logger logger, String msg) {
 		logger.warn(msg);
-		msg(LS_WARNING, msg);
 	}
 
 	public static void info(Logger logger, String msg) {
 		logger.info(msg);
-		msg(LS_INFO, msg);
 	}
 
 	public static void debug(Logger logger, String msg) {
 		logger.debug(msg);
-		msg(LS_DEBUG, msg);
 	}
 
 	/**
@@ -221,8 +97,8 @@ public class Debug {
 	 *
 	 * @param message
 	 */
-	public static void msgDlg(String message) {
-		msg(LS_ALWAYS, message);
+	public static void msgDlg(Logger logger, String message) {
+		logger.info(message);
 		JOptionPane.showMessageDialog(null, message, messages.getMessage("information"), JOptionPane.INFORMATION_MESSAGE); //$NON-NLS-1$
 	}
 		
@@ -257,11 +133,9 @@ public class Debug {
 		main_panel.add(scroll_pane, BorderLayout.CENTER);
 
 		JPanel top_panel = new JPanel();
-		log_severity_box = new JComboBox();
-		log_severity_box.addItem(LS_ALWAYS);
+		log_severity_box = new JComboBox<LogSeverity>();
 		log_severity_box.addItem(LS_ERROR);
 		log_severity_box.addItem(LS_WARNING);
-		log_severity_box.addItem(LS_NETWORK);
 		log_severity_box.addItem(LS_INFO);
 		log_severity_box.addItem(LS_DEBUG);
 		log_severity_box.setSelectedItem(LS_DEBUG);
@@ -362,6 +236,9 @@ public class Debug {
 			int selectedLogSeverityIndex = log_severity_box.getSelectedIndex();
 			LogSeverity selectedLogSeverity = (LogSeverity) log_severity_box.getItemAt(selectedLogSeverityIndex);
 			log_area.setText("");
+			if(!debugLogFile.contains(System.getProperty("file.separator")))
+				debugLogFile = JFritzDataDirectory.getInstance().getDataDirectory() + debugLogFile;
+
 			in = new BufferedReader(new FileReader(debugLogFile));
 			String zeile = null;
 			while ((zeile = in.readLine()) != null) {
@@ -378,19 +255,19 @@ public class Debug {
 	private static LogSeverity returnLineSeverity(String line)
 	{
 		LogSeverity ls = LS_ALWAYS;
-		if (line.length() > 19) {
-			if (line.substring(19).startsWith(LS_DEBUG.getPrefix())) {
-				ls = LS_DEBUG;
-			} else if (line.substring(19).startsWith(LS_INFO.getPrefix())) {
-				ls = LS_INFO;
-			} else if (line.substring(19).startsWith(LS_NETWORK.getPrefix())) {
-				ls = LS_NETWORK;
-			} else if (line.substring(19).startsWith(LS_WARNING.getPrefix())) {
-				ls = LS_WARNING;
-			} else if (line.substring(19).startsWith(LS_ERROR.getPrefix())) {
-				ls = LS_ERROR;
+		String[] splitted = line.split("\\|");
+		if (splitted.length > 3) {
+			String logLevel = splitted[2];
+			if (LS_DEBUG.getPrefix().equals(logLevel)) {
+				return LS_DEBUG;
+			} else if (LS_INFO.getPrefix().equals(logLevel)) {
+				return LS_INFO;
+			} else if (LS_WARNING.getPrefix().equals(logLevel)) {
+				return LS_WARNING;
+			} else if (LS_ERROR.getPrefix().equals(logLevel)) {
+				return LS_ERROR;
 			} else {
-				ls = LS_ALWAYS;
+				return LS_ALWAYS;
 			}
 		}
 
@@ -435,11 +312,5 @@ public class Debug {
 
 	public static boolean isVerbose() {
 		return verboseMode;
-	}
-
-	public static void setDebugLevel(LogSeverity level)
-	{
-		debugLevel = level;
-		info(log, "Set debug level to " + level.getName());
 	}
 }

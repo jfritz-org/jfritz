@@ -11,7 +11,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -29,7 +28,6 @@ import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.Port;
-import de.moonflower.jfritz.utils.Debug;
 
 public class FBoxListenerV3Test extends TestCase {
 
@@ -45,10 +43,6 @@ public class FBoxListenerV3Test extends TestCase {
     @BeforeClass
     public static void setup() {
     	TestHelper.initLogging();
-
-    	Debug.on();
-    	Debug.setVerbose(true);
-    	Debug.setDebugLevel(Debug.LS_DEBUG);
     }
 
     @Before

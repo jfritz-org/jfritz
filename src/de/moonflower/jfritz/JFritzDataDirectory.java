@@ -30,6 +30,8 @@ public class JFritzDataDirectory {
 	protected PropertyProvider properties = PropertyProvider.getInstance();
 	protected MessageProvider messages = MessageProvider.getInstance();
 
+	private Main main;
+	
 	private JFritzDataDirectory() {
 		if (SAVE_DIR == null) {
 			SAVE_DIR = getDefaultSaveDirectory();
@@ -70,7 +72,8 @@ public class JFritzDataDirectory {
 	 * @author Brian Jensen
 	 *
 	 */
-	public void loadSaveDir() {
+	public void loadSaveDir(Main main) {
+		this.main = main;
 		BufferedReader br = null;
 		try {
 			final String jfritzConfigFile = Main.USER_DIR + File.separator + Main.USER_JFRITZ_FILE;
@@ -176,8 +179,6 @@ public class JFritzDataDirectory {
 		if (!dst.isFile())
 		{
 			LogManager.shutdown();
-			Debug.off();
-
 			File src = new File(SAVE_DIR);
 			try {
 				FileUtils.moveDirectory(src, dst);
@@ -198,8 +199,7 @@ public class JFritzDataDirectory {
 			} finally {
 				DOMConfigurator.configure(JFritzUtils.getFullPath("/log4j.xml"));
 				saveNewDirectory(path);
-				Debug.on();
-				Main.initLog4jAppender();
+				main.initLog4jAppender();
 			}
 		} else {
 			Debug.errDlg(log, "You selected a file, please choose a directory!");

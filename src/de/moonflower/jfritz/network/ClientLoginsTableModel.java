@@ -119,7 +119,7 @@ public class ClientLoginsTableModel extends AbstractTableModel{
 					messages.getMessage("set_client_callfilter"), JOptionPane.YES_NO_OPTION);
 
 				if(resp == 0){
-					Debug.netMsg("Setting call filters for client: "+login.user);
+					log.info("NETWORKING: Setting call filters for client: "+login.user);
 
 					// stupid shallow cloning of java, we have to clone each callfilter individually!
 					login.callFilters = new Vector<CallFilter>();

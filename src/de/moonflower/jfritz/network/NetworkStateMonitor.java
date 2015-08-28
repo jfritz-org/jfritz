@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.properties.PropertyProvider;
@@ -22,6 +24,7 @@ import de.moonflower.jfritz.utils.Debug;
  *
  */
 public class NetworkStateMonitor  {
+	private final static Logger log = Logger.getLogger(NetworkStateMonitor.class);
 
 	public static ServerConnectionThread serverConnection;
 
@@ -140,7 +143,7 @@ public class NetworkStateMonitor  {
 	}
 
 	public static Vector<Port> getAvailablePorts(){
-		Debug.always("Fix getAvailablePorts() in NetworkStateMonitor");
+		Debug.info(log, "Fix getAvailablePorts() in NetworkStateMonitor");
 //		if(Main.getProperty("option.clientCallList").equals("true")
 //				&& isConnectedToServer())
 //		{
