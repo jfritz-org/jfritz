@@ -445,16 +445,20 @@ public class Main  {
 			case 'v': //$NON-NLS-1$
 				Debug.setVerbose(true);
 				String level = option.getParameter();
-				if ("ERROR".equals(level)) {
-					loggingLevel = Level.ERROR;
-				} else if ("WARNING".equals(level)) {
-					loggingLevel = Level.WARN;
-				} else if ("INFO".equals(level)) {
-					loggingLevel = Level.INFO;
-				} else if ("DEBUG".equals(level)) {
-					loggingLevel = Level.DEBUG;
+				if (level != null && !level.equals("")) {
+					if ("error".equals(level.toLowerCase())) {
+						loggingLevel = Level.ERROR;
+					} else if ("warning".equals(level.toLowerCase())) {
+						loggingLevel = Level.WARN;
+					} else if ("warn".equals(level.toLowerCase())) {
+						loggingLevel = Level.WARN;
+					} else if ("info".equals(level.toLowerCase())) {
+						loggingLevel = Level.INFO;
+					} else if ("debug".equals(level.toLowerCase())) {
+						loggingLevel = Level.DEBUG;
+					}
+					Logger.getLogger("de.moonflower.jfritz").setLevel(loggingLevel);
 				}
-				Logger.getLogger("de.moonflower.jfritz").setLevel(loggingLevel);
 				break;
 			case 'q': //$NON-NLS-1$
 				showSplashScreen = false;

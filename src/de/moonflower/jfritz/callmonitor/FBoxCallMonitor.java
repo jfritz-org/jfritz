@@ -125,7 +125,6 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
     
     protected void readOutput() {
     	try {
-        	log.debug("(CM) [" + connectionCount + "] Reading call monitor input ... ");
             String currentLine;
             // lese nächste Nachricht ein
         	if (running && connected)
@@ -144,7 +143,6 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
                 }
         	}
     	} catch (SocketTimeoutException ste) {
-        	log.debug("(CM) [" + connectionCount + "] Read timeout, just proceed");
         	try {
 				clientSocket.sendUrgentData(0);
 			} catch (Exception e) {
