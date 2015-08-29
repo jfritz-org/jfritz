@@ -911,11 +911,13 @@ public class FritzBox extends BoxClass {
 			}
 
 			response = getQuery(query);
+			log.debug("SIP-Response: " + response);
 			if (response.size() == sipCount*numQueries)
 			{
+				int offset = 0;
 				for (int i=0; i<sipCount; i++)
 				{
-					int offset = i * numQueries;
+					offset = i * numQueries;
 					if (!"er".equals(response.get(offset+0)) && !"".equals(response.get(offset+0)))
 					{
 						int id = Integer.parseInt(response.get(offset+1));

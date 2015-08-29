@@ -20,11 +20,15 @@
   <category name="de.moonflower.jfritz.callerlist">
     <priority value="info"/>
   </category>
-
+  
+  <category name="de.moonflower.jfritz.callmonitor">
+    <priority value="info"/>
+  </category>
+  
   <category name="de.moonflower.jfritz.phonebook">
     <priority value="info"/>
   </category>
-
+  
   <category name="de.moonflower.jfritz.proxy">
     <priority value="info"/>
   </category>

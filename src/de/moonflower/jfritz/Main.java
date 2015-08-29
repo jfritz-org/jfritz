@@ -325,6 +325,26 @@ public class Main  {
 		initLog4jAppender();
 	}
 	
+	public void initLog4jAppender() {
+		Appender oldFileAppender = Logger.getRootLogger().getAppender("FileAppender");
+		if (oldFileAppender != null) {
+			Logger.getRootLogger().removeAppender(oldFileAppender);
+		}
+
+		PatternLayout layout = new PatternLayout();
+		layout.setConversionPattern("%d{dd.MM.yy HH:mm:ss}|%t|%p|%C{1} - %m%n");
+		String path = Debug.debugLogFilePath;
+		FileAppender fa;
+		try {
+			fa = new FileAppender(layout, path, false);
+			fa.activateOptions();
+			Logger.getRootLogger().addAppender(fa);
+			Logger.getRootLogger().info("Logging to " + fa.getFile());
+		} catch (IOException e) {
+			Logger.getRootLogger().error("Could not write log file to " + path);
+		}
+	}
+
 	private void printSystemInfo() {
 		log.info("JFritz runs on " + OSDetector.getOSString());
 		log.info("OS Language: " + System.getProperty("user.language"));
@@ -434,7 +454,7 @@ public class Main  {
 				} else if ("DEBUG".equals(level)) {
 					loggingLevel = Level.DEBUG;
 				}
-				Logger.getRootLogger().setLevel(loggingLevel);
+				Logger.getLogger("de.moonflower.jfritz").setLevel(loggingLevel);
 				break;
 			case 'q': //$NON-NLS-1$
 				showSplashScreen = false;
@@ -616,27 +636,6 @@ public class Main  {
 			e.printStackTrace();
 		}
 		return wizardCanceled;
-	}
-
-	public void initLog4jAppender() {
-		Appender oldFileAppender = Logger.getRootLogger().getAppender("FileAppender");
-		if (oldFileAppender != null) {
-			Logger.getRootLogger().removeAppender(oldFileAppender);
-		}
-
-		PatternLayout layout = new PatternLayout();
-		layout.setConversionPattern("%d{dd.MM.yy HH:mm:ss}|%t|%p|%C{1} - %m%n");
-		String path = Debug.debugLogFilePath;
-		FileAppender fa;
-		try {
-			fa = new FileAppender(layout, path, false);
-			fa.activateOptions();
-			Logger.getRootLogger().setLevel(loggingLevel);
-			Logger.getRootLogger().addAppender(fa);
-			Logger.getRootLogger().info("Logging to " + fa.getFile());
-		} catch (IOException e) {
-			Logger.getRootLogger().error("Could not write log file to " + path);
-		}
 	}
 
 	private String preparePattern(final String input) {
