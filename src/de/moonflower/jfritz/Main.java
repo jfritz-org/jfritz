@@ -446,7 +446,9 @@ public class Main  {
 				Debug.setVerbose(true);
 				String level = option.getParameter();
 				if (level != null && !level.equals("")) {
-					if ("error".equals(level.toLowerCase())) {
+					if ("trace".equals(level.toLowerCase())) {
+						loggingLevel = Level.TRACE;
+					} else if ("error".equals(level.toLowerCase())) {
 						loggingLevel = Level.ERROR;
 					} else if ("warning".equals(level.toLowerCase())) {
 						loggingLevel = Level.WARN;
