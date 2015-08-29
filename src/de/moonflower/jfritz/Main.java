@@ -266,9 +266,9 @@ public class Main  {
 	}
 
 	public Main(String[] args) {
-		DOMConfigurator.configure(JFritzUtils.getFullPath("/log4j.xml"));
-		JFritzDataDirectory.getInstance().loadSaveDir(this);
-		initLog4jAppender();
+		setupLogging();
+		
+		cleanupOldInstallation();
 
 		Calendar cal = Calendar.getInstance();
 		cal.getTime();
@@ -307,7 +307,7 @@ public class Main  {
 		// move save dir and default file location
 		shouldMoveDataToRightSaveDir();
 
-		logAndStdOut(ProgramConstants.PROGRAM_NAME
+		log.info(ProgramConstants.PROGRAM_NAME
 				+ " v" + ProgramConstants.PROGRAM_VERSION //$NON-NLS-1$
 				+ " Rev. " + ProgramConstants.REVISION //$NON-NLS-1$
 				+ " (c) 2005-" + cal.get(Calendar.YEAR) + " by " + JFRITZ_PROJECT); //$NON-NLS-1$
@@ -319,17 +319,19 @@ public class Main  {
 		}
 	}
 
-	private void logAndStdOut(final String msg) {
-		log.info(msg);
+	private void setupLogging() {
+		DOMConfigurator.configure(JFritzUtils.getFullPath("/log4j.xml"));
+		JFritzDataDirectory.getInstance().loadSaveDir(this);
+		initLog4jAppender();
 	}
 	
 	private void printSystemInfo() {
-		logAndStdOut("JFritz runs on " + OSDetector.getOSString());
-		logAndStdOut("OS Language: " + System.getProperty("user.language"));
-		logAndStdOut("OS Country: " + System.getProperty("user.country"));
+		log.info("JFritz runs on " + OSDetector.getOSString());
+		log.info("OS Language: " + System.getProperty("user.language"));
+		log.info("OS Country: " + System.getProperty("user.country"));
 		
 		String jvm_version = System.getProperty("java.version");
-		logAndStdOut("Java version: " + jvm_version);
+		log.info("Java version: " + jvm_version);
 	}
 
 	/**
@@ -407,8 +409,8 @@ public class Main  {
 			CLIOption option = (CLIOption) en.nextElement();
 
 			if (option == null) {
-				logAndStdOut("Unknown command line parameter specified!");
-				logAndStdOut("Usage: java -jar jfritz.jar [Options]"); //$NON-NLS-1$
+				log.info("Unknown command line parameter specified!");
+				log.info("Usage: java -jar jfritz.jar [Options]"); //$NON-NLS-1$
 				options.printOptions();
 				exit(EXIT_CODE_OK);
 				return false;
@@ -416,7 +418,7 @@ public class Main  {
 
 			switch (option.getShortOption()) {
 			case 'h': //$NON-NLS-1$
-				logAndStdOut("Usage: java -jar jfritz.jar [Options]"); //$NON-NLS-1$
+				log.info("Usage: java -jar jfritz.jar [Options]"); //$NON-NLS-1$
 				options.printOptions();
 				exit(EXIT_CODE_HELP);
 				return false;
@@ -691,7 +693,7 @@ public class Main  {
 				checkSystray = false;
 				break;
 			case 'f':
-				logAndStdOut("Fetch caller list from command line ..."); //$NON-NLS-1$
+				log.info("Fetch caller list from command line ..."); //$NON-NLS-1$
 				JFritz.getBoxCommunication().getCallerList(null);
 				shutdown = true;
 				exit(EXIT_CODE_OK);
@@ -709,7 +711,7 @@ public class Main  {
 					exit(EXIT_CODE_PARAMETER_NOT_FOUND);
 					break;
 				}
-				logAndStdOut("Exporting Call list (csv) to " + csvFileName); //$NON-NLS-1$
+				log.info("Exporting Call list (csv) to " + csvFileName); //$NON-NLS-1$
 				JFritz.getCallerList().saveToCSVFile(csvFileName, true);
 				shutdown = true;
 				exit(EXIT_CODE_OK);
@@ -722,7 +724,7 @@ public class Main  {
 				exit(EXIT_CODE_OK);
 				break;
 			case 'c': //$NON-NLS-1$
-				logAndStdOut("Clearing Call List"); //$NON-NLS-1$
+				log.info("Clearing Call List"); //$NON-NLS-1$
 				JFritz.getCallerList().clearList();
 				shutdown = true;
 				exit(EXIT_CODE_OK);
@@ -776,7 +778,7 @@ public class Main  {
 					try {
 						int level = Integer.parseInt(priority);
 						Thread.currentThread().setPriority(level);
-						logAndStdOut("Set priority to level " + priority); //$NON-NLS-1$
+						log.info("Set priority to level " + priority); //$NON-NLS-1$
 					} catch (NumberFormatException nfe) {
 						System.err.println(messages
 								.getMessage("parameter_wrong_priority")); //$NON-NLS-1$
@@ -862,12 +864,12 @@ public class Main  {
 			}
 
 			String loc = properties.getProperty("locale");
-			logAndStdOut("Selected language: " + loc);
+			log.info("Selected language: " + loc);
 
 			messages.loadMessages(new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_") + 1, loc.length()))); //$NON-NLS-1$,  //$NON-NLS-2$
 			updateMessages.loadMessages(new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_") + 1, loc.length()))); //$NON-NLS-1$,  //$NON-NLS-2$
 			loadLocaleMeanings(new Locale("int", "INT"));
-			logAndStdOut("Shall JFritz move data from "
+			log.info("Shall JFritz move data from "
 					+ JFritzDataDirectory.getInstance().getDataDirectory()
 					+ " to " + newSaveDir + " ?");
 
@@ -1074,11 +1076,11 @@ public class Main  {
 			if (!alreadyDoneShutdown) {
 				// showActiveThreads();
 				alreadyDoneShutdown = true;
-				logAndStdOut("Shutting down JFritz..."); //$NON-NLS-1$
+				log.info("Shutting down JFritz..."); //$NON-NLS-1$
 				closeOpenConnections();
 				if (exitCode != -1
 						&& exitCode != EXIT_CODE_MULTIPLE_INSTANCE_LOCK) {
-					logAndStdOut("Multiple instance lock: release lock."); //$NON-NLS-1$
+					log.info("Multiple instance lock: release lock."); //$NON-NLS-1$
 					removeLock();
 				}
 
@@ -1156,5 +1158,24 @@ public class Main  {
 		p.dispose();
 		p = null;
 		return password;
+	}
+	
+	/**
+	 * This method is used to cleanup old installation files
+	 */
+	private void cleanupOldInstallation() {
+		removeLog4jFile();
+	}
+	
+	private void removeLog4jFile() {
+		try {
+			String path = JFritzDataDirectory.getInstance().getDataDirectory() + "log4j.log";
+			File file = new File(path);
+			if (file.exists()) {
+				file.delete();
+			}
+		} catch (Throwable t) {
+			log.warn("Could not delete log4j.log");
+		}
 	}
 }
