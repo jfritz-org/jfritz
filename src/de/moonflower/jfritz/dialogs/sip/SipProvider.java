@@ -24,10 +24,14 @@ public class SipProvider {
     private String providerName, phoneNumber;
 
     public SipProvider(int providerID, String phoneNumber, String providerName) {
+    	this(false, providerID, phoneNumber, providerName);
+    }
+
+    public SipProvider(boolean active, int providerID, String phoneNumber, String providerName) {
+        this.active = active;
         this.providerID = providerID;
         this.providerName = providerName;
         this.phoneNumber = phoneNumber;
-        active = false;
     }
 
     /**
