@@ -20,6 +20,9 @@ TODO tel.search.ch überprüfen und reparieren
 - TODO: Sounds trennen und individualisierbar gestalten
 - TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
 
+JFritz 0.7.5_13:
+- Rückwärtssuche für die Schweiz aktualisiert
+
 JFritz 0.7.5_12: 
 - Logging nach log4j portiert
 

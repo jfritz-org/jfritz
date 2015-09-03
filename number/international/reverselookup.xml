@@ -783,41 +783,35 @@
 		</website>
 	</country>
 	<country code="+41">
-		<website name ="tel.local.ch" url="http://tel.local.ch/de/q/?ext=1&amp;phone=$NUMBER" prefix="0" numLines="6">
-		    <entry>
-		        <name>&lt;h[1-9]&gt;\s*&lt;a href=&quot;[^&quot;]*&quot;&gt;\s*([^&lt;]*)&lt;/a&gt;\s*</name>
-		        <city>&lt;span class='address'&gt;[^,]*, [\d]+ ([^&lt;]*)&lt;/span&gt;</city>
-				<street>&lt;span class='address'&gt;([^,]*), [\d]+ [^&lt;]*&lt;/span&gt;</street>
-				<zipcode>&lt;span class='address'&gt;[^,]*, ([\d]+) [^&lt;]*&lt;/span&gt;</zipcode>
+		<website name ="tel.local.ch" url="http://tel.local.ch/de/q/?ext=1&amp;what=$NUMBER" prefix="0" numLines="6">
+		    <entry firstOccurance="name">
+		        <name>&quot;details-entry-title-link&quot;[^&gt;]*&gt;([^&lt;]*)&lt;</name>
+		        <city>class='address'&gt;[^,]*,\s+[^\s]*\s+([^&lt;]*)&lt;</city>
+		        <street>class='address'&gt;([^,]*),\s+[^\s]*\s+[^&lt;]*&lt;</street>
+		        <zipcode>class='address'&gt;[^,]*,\s+([^\s]*)\s+[^&lt;]*&lt;</zipcode>
 		    </entry>
-			<entry>
-				<name>&lt;h[1-9]\s+class='name fn'&gt;(?:&lt;a[^&gt;]*&gt;)?\s*([^&lt;]*)&lt;</name>
-			    <city>&lt;p class='address'&gt;\s*[^&lt;]*&lt;br/&gt;[^\s]*\s([^&lt;]*)&lt;/p&gt;</city>
-				<street>&lt;p class='address'&gt;\s*([^&lt;]*)&lt;br/&gt;\s*[^&lt;]*&lt;/p&gt;</street>
-				<zipcode>&lt;p class='address'&gt;\s*[^&lt;]*&lt;br/&gt;([^\s]*)\s[^&lt;]*&lt;/p&gt;</zipcode>
-				<company>&lt;div class='profession'&gt;([^&lt;]*)&lt;/div&gt;</company>
-			</entry>
- 			<entry>
-				<name>&lt;h[2-9]&gt;(?:&lt;a[^&gt;]*&gt;)?\s*([^&lt;]*)&lt;</name>
-			    <city>&lt;p class='address'&gt;[^,]*, [\d]+ ([^&lt;]*)&lt;/p&gt;</city>
-				<street>&lt;p class='address'&gt;([^,]*), [\d]+ [^&lt;]*&lt;/p&gt;</street>
-				<zipcode>&lt;p class='address'&gt;[^,]*, ([\d]+) [^&lt;]*&lt;/p&gt;</zipcode>
-			</entry>
-			<entry>
-				<name>&lt;h[1-9]\s+class='n fn'&gt;(?:&lt;a[^&gt;]*&gt;)?\s*([^&lt;]*)&lt;</name>
-				<city>&lt;span class=&quot;locality&quot;&gt;([^&lt;]*)&lt;/span&gt;</city>
-				<street>&lt;span class=&quot;street-address&quot;&gt;([^&lt;]*)&lt;/span&gt;</street>
-				<zipcode>&lt;span class=&quot;postal-code&quot;&gt;([^&lt;]*)&lt;/span&gt;</zipcode>
-				<company>&lt;div class='profession'&gt;([^&lt;]*)&lt;/div&gt;</company>
-			</entry>
+		    <entry firstOccurance="name">
+		        <name>itemprop='name'&gt;([^&lt;]*)&lt;</name>
+		        <company>class='profession'&gt;([^&lt;]*)&lt;</company>
+		        <street>class='adr'&gt;([^&lt;]*)&lt;br</street>
+		        <city>class='adr'&gt;[^&gt;]*&gt;\s*[\d]+\s+([^&lt;]*)&lt;</city>
+		        <zipcode>class='adr'&gt;[^&gt;]*&gt;\s*([\d]+)\s+[^&lt;]*&lt;</zipcode>
+		    </entry>
 		</website>
 		<website name="tel.search.ch" url="http://tel.search.ch/result.html?tel=$NUMBER" prefix="0">
-			<entry>
+			<entry firstOccurance="name">
 				<name>&lt;h[1-9]&gt;&lt;a[^&gt;]*&gt;\s*([^&lt;]*)&lt;</name>
-				<street>&lt;div class=&quot;adr&quot;&gt;&lt;span class=&quot;adrgroup street-address&quot;&gt;([^&lt;]*)&lt;/span&gt;</street>
-				<city>&lt;span class=&quot;locality&quot;&gt;([^&lt;]*)&lt;/span&gt;</city>
-				<zipcode>&lt;span class=&quot;adrgroup&quot;&gt;&lt;span class=&quot;postal-code&quot;&gt;([^&lt;]*)&lt;/span&gt;</zipcode>
-				<company>&lt;div class="roccu"&gt;([^&lt;]*)&lt;/div&gt;</company>
+				<street>&lt;div class=&quot;tel-address&quot;&gt;([^,]*),\s+</street>
+				<city>span class=&quot;locality&quot;&gt;([^&lt;]*)&lt;/span&gt;</city>
+				<zipcode>span class=&quot;postal-code&quot;&gt;([^&lt;]*)&lt;/span&gt;</zipcode>
+				<company>&lt;div class="tel-occupation"&gt;([^&lt;]*)&lt;/div&gt;</company>
+			</entry>
+			<entry firstOccurance="name">
+			    <name>&lt;h1&gt;\s*([^&lt;]*)&lt;/h1&gt;</name>
+				<street>span class=&quot;street-address&quot;&gt;([^&lt;]*)&lt;/span&gt;</street>
+				<city>span class=&quot;locality&quot;&gt;([^&lt;]*)&lt;/span&gt;</city>
+				<zipcode>span class=&quot;postal-code&quot;&gt;([^&lt;]*)&lt;/span&gt;</zipcode>
+			    <company>&lt;div class="tel-occupation"&gt;([^&lt;]*)&lt;/div&gt;</company>
 			</entry>
 		</website>
 	</country>
