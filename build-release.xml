@@ -1,3 +1,4 @@
+<!-- TODO generate/overwrite log4j.xml for beta-builds / release-builds -->
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="JFritz-Release" default="scp-update-beta" basedir=".">
 	<import file="../build-release-pwd.xml" />
