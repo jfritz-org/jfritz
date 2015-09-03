@@ -307,12 +307,16 @@ public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 				detectBoxType();
 				fritzBox.updateSettings();
 			} catch (IOException e1) {
+				// TODO this seems wrong to me, updateSettings also throws exceptions! 
 				// nothing to do, already handled in detectBoxType
 			} catch (FirmwareNotDetectedException e1) {
+				// TODO this seems wrong to me, updateSettings also throws exceptions! 
 				// nothing to do, already handled in detectBoxType
 			} catch (PageNotFoundException e1) {
+				// TODO this seems wrong to me, updateSettings also throws exceptions! 
 				// nothing to do, already handled in detectBoxType
 			} catch (WrongPasswordException e1) {
+				// TODO this seems wrong to me, updateSettings also throws exceptions! 
 				// nothing to do, already handled in detectBoxType
 			}
 			

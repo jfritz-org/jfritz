@@ -10,7 +10,7 @@
   </appender>
 
   <category name="de.moonflower.jfritz">
-    <priority value="debug"/>
+    <priority value="trace"/>
   </category>
 
   <root>

@@ -74,7 +74,6 @@ public class FritzBoxSipProvider {
 	}
 
 	protected void parseResponse(Vector<String> response) {
-		log.debug("SIP-Response: " + response);
 		sipProvider.clear();
 		
 		if (response != null && response.size() % NUM_QUERIES == 0)

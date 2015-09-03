@@ -8,6 +8,7 @@
 - Bugfix: Setzen der Nebenstelle bei der Wählhilfe
 - Uninstall: Feedback E-Mail enthält nun die Firmware-Version
 - Logging nach log4j portiert
+- Bugfix: Es wurden nicht alle SIP-Provider erkannt 
 - Rückwärtssuche für die Schweiz aktualisiert
 
 JFritz 0.7.5_5:
