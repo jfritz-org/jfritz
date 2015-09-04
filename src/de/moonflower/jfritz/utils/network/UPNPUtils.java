@@ -102,7 +102,7 @@ public class UPNPUtils {
 			HttpURLConnection uc = (HttpURLConnection) u.openConnection();
 			uc.setRequestMethod("POST");
 
-			// 5 Sekunden-Timeout für Verbindungsaufbau
+			// 5 Sekunden-Timeout fÃ¼r Verbindungsaufbau
 			uc.setConnectTimeout(5000);
 
 			uc.setReadTimeout(2000);
@@ -178,7 +178,7 @@ public class UPNPUtils {
 			//uc.setRequestProperty("Authorization", "Basic " + getBasicAuthenticationEncoding(username, password));
 			uc.setRequestMethod("POST");
 
-			// 5 Sekunden-Timeout für Verbindungsaufbau
+			// 5 Sekunden-Timeout fÃ¼r Verbindungsaufbau
 			uc.setConnectTimeout(5000);
 
 			uc.setReadTimeout(2000);
