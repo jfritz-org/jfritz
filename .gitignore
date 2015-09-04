@@ -6,3 +6,7 @@ bin/*
 build-release-pwd.xml
 /bin
 /ant
+
+.gradle/
+.idea/
+build/
