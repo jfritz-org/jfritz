@@ -253,7 +253,7 @@ public class Main  {
 	private Level loggingLevel = Level.INFO;
 	
 	public Main() {
-		// NICHT VERWENDEN, nur für TestCases, nicht alles initialisiert. NICHT
+		// NICHT VERWENDEN, nur fÃ¼r TestCases, nicht alles initialisiert. NICHT
 		// VERWENDEN!
 		loadLanguages();
 		JFritzDataDirectory.getInstance().loadSaveDir(this);

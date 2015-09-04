@@ -126,7 +126,7 @@ public abstract class FBoxCallMonitor extends Thread implements CallMonitorInter
     protected void readOutput() {
     	try {
             String currentLine;
-            // lese n‰chste Nachricht ein
+            // lese n√§chste Nachricht ein
         	if (running && connected)
         	{
                 currentLine = in.readLine();

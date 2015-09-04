@@ -383,7 +383,7 @@ public class CallerList extends AbstractTableModel
 			if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
 					|| e.getLocalizedMessage().startsWith(
 							"Invalid system identifier")) { //$NON-NLS-1$
-				String message = "STRUKTURÄNDERUNG!\n\nBitte in der Datei jfritz.calls.xml\n " //$NON-NLS-1$
+				String message = "STRUKTURÃ„NDERUNG!\n\nBitte in der Datei jfritz.calls.xml\n " //$NON-NLS-1$
 						+ "die Zeichenkette \"calls.dtd\" durch\n \"" //$NON-NLS-1$
 						+ CALLS_DTD_URI + "\"\n ersetzen!"; //$NON-NLS-1$
 				log.error(message, e);

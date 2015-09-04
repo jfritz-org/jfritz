@@ -696,7 +696,7 @@ public class FritzBox extends BoxClass {
 							if (!activated) {
 								log.warn("addVoIPPorts: VoIP account '" + voipName + "'is not activated. Will not add port");
 							} else {
-								// Wählhilfe mit VoIP geht zumindest ab 06.03 nicht mehr, ging sie davor? (getestet mit 06.03 und 06.30) Ab welcher FW bis zu welcher?
+								// WÃ¤hlhilfe mit VoIP geht zumindest ab 06.03 nicht mehr, ging sie davor? (getestet mit 06.03 und 06.30) Ab welcher FW bis zu welcher?
 								Port port = new Port(20+i, voipName, Integer.toString(20+i), "62"+Integer.toString(i));
 								log.debug("addVoIPPorts: Adding port " + port.toStringDetailed());
 								addConfiguredPort(port);
