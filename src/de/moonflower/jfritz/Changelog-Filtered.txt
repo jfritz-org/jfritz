@@ -1,4 +1,4 @@
-﻿JFritz 0.7.5_13:
+﻿JFritz 0.7.5_14:
 - Bugfix: Unterstützung der neuen Firmwares 06.25 und 06.35 (großen Dank an Pikachu)
 - Bugfix: Reverse-Lookup für Deutschland repariert
 - Bugfix: Netzwerk-Button entfernt
@@ -8,8 +8,8 @@
 - Bugfix: Setzen der Nebenstelle bei der Wählhilfe
 - Uninstall: Feedback E-Mail enthält nun die Firmware-Version
 - Logging nach log4j portiert
-- Bugfix: Es wurden nicht alle SIP-Provider erkannt 
 - Rückwärtssuche für die Schweiz aktualisiert
+- Bugfix: Es wurden nicht alle SIP-Provider erkannt
 
 JFritz 0.7.5_5:
 - Neu 0000383: Anmeldung mit Username / Password unterstützen
