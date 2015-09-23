@@ -152,8 +152,7 @@ public final class JFritz implements  StatusListener {
 
 	public int initFritzBox() throws WrongPasswordException, InvalidFirmwareException, IOException
 	{
-		int result = 0;
-
+		int result = 0;		
 		FritzBox fritzBox = new FritzBox("Fritz!Box",
 											     "My Fritz!Box",
 											     "http",
@@ -163,61 +162,11 @@ public final class JFritz implements  StatusListener {
 												 properties.getProperty("box.username"), 
 												 Encryption.decrypt(properties.getProperty("box.password")));
 		
+		result = fritzBox.checkMacAddress(fritzBox);
+		
 		boxCommunication = new BoxCommunication(log);
 		boxCommunication.addBox(fritzBox);
 
-		// if a mac address is set and this box has a different mac address, ask user
-		// if communication to this box should be allowed.
-		String macStr = properties.getProperty("box.mac");
-		if ((!("".equals(macStr))
-		&& ( !("".equals(fritzBox.getMacAddress())))
-		&& (fritzBox.getMacAddress() != null)))
-		{
-			ComplexJOptionPaneMessage msg = null;
-			int answer = JOptionPane.YES_OPTION;
-			if (messages.getMessage("unknown").equals(fritzBox.getMacAddress()))
-			{
-				log.info("MAC-Address could not be determined. Ask user how to proceed..."); //$NON-NLS-1$
-				msg = new ComplexJOptionPaneMessage("legalInfo.macNotFound",
-						messages.getMessage("mac_not_found") + "\n"
-						+ messages.getMessage("accept_fritzbox_communication")); //$NON-NLS-1$
-				if (msg.showDialogEnabled()) {
-					answer = JOptionPane.showConfirmDialog(null,
-							msg.getComponents(),
-							messages.getMessage("information"), JOptionPane.YES_NO_OPTION);
-					if (answer == JOptionPane.YES_OPTION)
-					{
-						msg.saveProperty();
-						properties.saveStateProperties();
-					}
-				}
-			} else if ( !(macStr.equals(fritzBox.getMacAddress())))
-			{
-				log.info("New FRITZ!Box detected. Ask user how to proceed..."); //$NON-NLS-1$
-				msg = new ComplexJOptionPaneMessage("legalInfo.newBox",
-						messages.getMessage("new_fritzbox") + "\n"
-						+ messages.getMessage("accept_fritzbox_communication")); //$NON-NLS-1$
-				if (msg.showDialogEnabled()) {
-					answer = JOptionPane.showConfirmDialog(null,
-							msg.getComponents(),
-							messages.getMessage("information"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
-					if (answer == JOptionPane.YES_OPTION)
-					{
-						msg.saveProperty();
-						properties.saveStateProperties();
-					}
-				}
-			}
-			if (answer == JOptionPane.YES_OPTION) {
-				log.info("User decided to accept connection."); //$NON-NLS-1$
-				properties.setProperty("box.mac", fritzBox.getMacAddress());
-				properties.saveConfigProperties();
-				result = 0;
-			} else {
-				log.info("User decided to prohibit connection."); //$NON-NLS-1$
-				result = Main.EXIT_CODE_FORBID_COMMUNICATION_WITH_FRITZBOX;
-			}
-		}
 		log.info("connection. --: " + result);
 		return result;
 	}

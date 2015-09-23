@@ -150,6 +150,7 @@ import javax.swing.JOptionPane;
 import jd.nutils.OSDetector;
 
 import org.apache.http.auth.InvalidCredentialsException;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.log4j.Appender;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
@@ -178,9 +179,12 @@ import de.moonflower.jfritz.utils.ShutdownHook;
 import de.moonflower.jfritz.utils.reverselookup.IReverseLookupFinishedWithResultListener;
 import de.moonflower.jfritz.utils.reverselookup.IReverseLookupProgressListener;
 import de.moonflower.jfritz.utils.reverselookup.JFritzReverseLookup;
+import de.robotniko.fboxlib.exceptions.FirmwareNotDetectedException;
 import de.robotniko.fboxlib.exceptions.LoginBlockedException;
 import de.robotniko.fboxlib.exceptions.PageNotFoundException;
 //import org.apache.http.auth.InvalidCredentialsException;
+import de.robotniko.fboxlib.fritzbox.FritzBoxCommunication;
+import de.robotniko.fboxlib.fritzbox.JSonBoxinfo;
 
 /**
  * @author robroy
@@ -554,6 +558,26 @@ public class Main  {
 			jfritz = new JFritz(main);
 
 			jfritz.initNumbers();
+		}
+		
+		if (result == 0) {
+			splash.setStatus("Detecting Fritz!Box ...");
+			try {
+				FritzBoxCommunication fbc = new FritzBoxCommunication("http", properties.getProperty("box.address"), properties.getProperty("box.port"));
+				JSonBoxinfo jsonBoxinfo = new JSonBoxinfo(fbc);
+				result = checkSerialAddress(jsonBoxinfo.getSerial());
+			} catch (ClientProtocolException e) {
+				log.error("Detecting Fritz!Box ... ClientProtocolExecption", e);
+			} catch (IOException e) {
+				log.error("Detecting Fritz!Box ... IOException", e);
+			} catch (PageNotFoundException e) {
+				log.error("Detecting Fritz!Box ... Page not found", e);
+			} catch (FirmwareNotDetectedException e) {
+				log.error("Detecting Fritz!Box ... Could not detect firmware", e);
+			}
+		}
+		
+		if (result == 0) {
 			splash.setStatus("Initializing Fritz!Box ...");
 			try {
 				result = jfritz.initFritzBox();
@@ -625,6 +649,67 @@ public class Main  {
 				&& JFritz.getJframe() != null) {
 			JFritz.getJframe().checkOptions();
 		}
+	}
+	
+	public int checkSerialAddress(String serial) {
+		int result = 0;
+		String serialStr = properties.getProperty("box.serial");
+		
+		if ("".equals(serialStr)) {
+			// we have not saved any serial.
+			properties.setProperty("box.serial", serial);
+			properties.saveConfigProperties();
+		}
+		
+		// if a serial is set and this box has a different serial, ask user if communication to this box should be allowed.
+		if (!("".equals(serialStr)) && !("".equals(serial)))
+		{
+			ComplexJOptionPaneMessage msg = null;
+			int answer = JOptionPane.YES_OPTION;
+			if (messages.getMessage("unknown").equals(serial))
+			{
+				log.info("Serial could not be determined. Ask user how to proceed..."); //$NON-NLS-1$
+				msg = new ComplexJOptionPaneMessage("legalInfo.serialNotFound",
+						messages.getMessage("serial_not_found") + "\n"
+						+ messages.getMessage("accept_fritzbox_communication")); //$NON-NLS-1$
+				if (msg.showDialogEnabled()) {
+					answer = JOptionPane.showConfirmDialog(null,
+							msg.getComponents(),
+							messages.getMessage("information"), JOptionPane.YES_NO_OPTION);
+					if (answer == JOptionPane.YES_OPTION)
+					{
+						msg.saveProperty();
+						properties.saveStateProperties();
+					}
+				}
+			} else if ( !(serialStr.equals(serial)))
+			{
+				log.info("New FRITZ!Box detected. Ask user how to proceed..."); //$NON-NLS-1$
+				msg = new ComplexJOptionPaneMessage("legalInfo.newBox",
+						messages.getMessage("new_fritzbox") + "\n"
+						+ messages.getMessage("accept_fritzbox_communication")); //$NON-NLS-1$
+				if (msg.showDialogEnabled()) {
+					answer = JOptionPane.showConfirmDialog(null,
+							msg.getComponents(),
+							messages.getMessage("information"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
+					if (answer == JOptionPane.YES_OPTION)
+					{
+						msg.saveProperty();
+						properties.saveStateProperties();
+					}
+				}
+			}
+			if (answer == JOptionPane.YES_OPTION) {
+				log.info("User decided to accept connection."); //$NON-NLS-1$
+				properties.setProperty("box.serial", serial);
+				properties.saveConfigProperties();
+				result = 0;
+			} else {
+				log.info("User decided to prohibit connection."); //$NON-NLS-1$
+				result = Main.EXIT_CODE_FORBID_COMMUNICATION_WITH_FRITZBOX;
+			}
+		}
+		return result;
 	}
 
 	public static boolean showConfigWizard(final SplashScreen splash) {

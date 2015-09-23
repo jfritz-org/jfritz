@@ -11,6 +11,7 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -22,6 +23,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.box.BoxCallBackListener;
 import de.moonflower.jfritz.box.BoxCallListInterface;
 import de.moonflower.jfritz.box.BoxCallMonitorInterface;
@@ -45,6 +47,7 @@ import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.IProgressListener;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
+import de.moonflower.jfritz.utils.ComplexJOptionPaneMessage;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.network.AddonInfosXMLHandler;
@@ -243,6 +246,7 @@ public class FritzBox extends BoxClass {
 			if (startup) {
 				startup = false;
 				if (showLoginDialog(e)) {
+					properties.saveConfigProperties();
 					updateSettings();
 				}
 			}
@@ -252,6 +256,7 @@ public class FritzBox extends BoxClass {
 			if (startup) {
 				startup = false;
 				if (showLoginDialog(e)) {
+					properties.saveConfigProperties();
 					updateSettings();
 				}
 			}
@@ -297,9 +302,10 @@ public class FritzBox extends BoxClass {
 		log.debug("UpdateSettings: getUPNPFromIgddesc " + (end - start) + "ms");
 
 		start = end;
-			detectMacAddress();
+		detectMacAddress();
 		end = JFritzUtils.getTimestamp();
 		log.debug("UpdateSettings: detectMacAddress " + (end - start) + "ms");
+
 		//getSettings();
 		start = end;
 			detectSipProvider();
@@ -1546,5 +1552,62 @@ public class FritzBox extends BoxClass {
 		loginDialog.setException(e);
 		loginDialog.setVisible(true);
 		return loginDialog.hasOkBeenPressed();
+	}
+	
+	public int checkMacAddress(FritzBox fritzBox) {
+		int result = 0;
+		// if a mac address is set and this box has a different mac address, ask user
+		// if communication to this box should be allowed.
+		String macStr = properties.getProperty("box.mac");
+		if ((!("".equals(macStr))
+		&& ( !("".equals(fritzBox.getMacAddress())))
+		&& (fritzBox.getMacAddress() != null)))
+		{
+			ComplexJOptionPaneMessage msg = null;
+			int answer = JOptionPane.YES_OPTION;
+			if (messages.getMessage("unknown").equals(fritzBox.getMacAddress()))
+			{
+				log.info("MAC-Address could not be determined. Ask user how to proceed..."); //$NON-NLS-1$
+				msg = new ComplexJOptionPaneMessage("legalInfo.macNotFound",
+						messages.getMessage("mac_not_found") + "\n"
+						+ messages.getMessage("accept_fritzbox_communication")); //$NON-NLS-1$
+				if (msg.showDialogEnabled()) {
+					answer = JOptionPane.showConfirmDialog(null,
+							msg.getComponents(),
+							messages.getMessage("information"), JOptionPane.YES_NO_OPTION);
+					if (answer == JOptionPane.YES_OPTION)
+					{
+						msg.saveProperty();
+						properties.saveStateProperties();
+					}
+				}
+			} else if ( !(macStr.equals(fritzBox.getMacAddress())))
+			{
+				log.info("New FRITZ!Box detected. Ask user how to proceed..."); //$NON-NLS-1$
+				msg = new ComplexJOptionPaneMessage("legalInfo.newBox",
+						messages.getMessage("new_fritzbox") + "\n"
+						+ messages.getMessage("accept_fritzbox_communication")); //$NON-NLS-1$
+				if (msg.showDialogEnabled()) {
+					answer = JOptionPane.showConfirmDialog(null,
+							msg.getComponents(),
+							messages.getMessage("information"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
+					if (answer == JOptionPane.YES_OPTION)
+					{
+						msg.saveProperty();
+						properties.saveStateProperties();
+					}
+				}
+			}
+			if (answer == JOptionPane.YES_OPTION) {
+				log.info("User decided to accept connection."); //$NON-NLS-1$
+				properties.setProperty("box.mac", fritzBox.getMacAddress());
+				properties.saveConfigProperties();
+				result = 0;
+			} else {
+				log.info("User decided to prohibit connection."); //$NON-NLS-1$
+				result = Main.EXIT_CODE_FORBID_COMMUNICATION_WITH_FRITZBOX;
+			}
+		}
+		return result;
 	}
 }
