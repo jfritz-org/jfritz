@@ -20,6 +20,9 @@ TODO tel.search.ch überprüfen und reparieren
 - TODO: Sounds trennen und individualisierbar gestalten
 - TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
 
+JFritz 0.7.5_15:
+- Neu: Anzeige eines Dialogs zur Eingabe des Benutzernamen/Passworts, wenn falsche Login-Daten erkannt wurden
+
 JFritz 0.7.5_14:
 - Bugfix: Es wurden nicht alle SIP-Provider erkannt
 
