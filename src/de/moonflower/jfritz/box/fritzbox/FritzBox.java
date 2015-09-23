@@ -34,6 +34,7 @@ import de.moonflower.jfritz.callmonitor.CallmessageCallMonitor;
 import de.moonflower.jfritz.callmonitor.FBoxCallMonitorV1;
 import de.moonflower.jfritz.callmonitor.FBoxCallMonitorV3;
 import de.moonflower.jfritz.callmonitor.YACCallMonitor;
+import de.moonflower.jfritz.dialogs.simple.LoginDialog;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.exceptions.FeatureNotSupportedByFirmware;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
@@ -136,6 +137,7 @@ public class FritzBox extends BoxClass {
 	protected MessageProvider messages = MessageProvider.getInstance();
 
 	private BoxCallListInterface callList;
+	private boolean startup = true;
 	
 	public FritzBox(String name, String description,
 					String protocol, String address, String port, boolean useUsername, String username, String password)
@@ -154,23 +156,25 @@ public class FritzBox extends BoxClass {
 		configuredPorts = new HashMap<Integer, Port>();
 		callBackListener = new Vector<BoxCallBackListener>(4);
 
+		startup = true;
 		if ("".equals(address)) {
 			this.address = "fritz.box";
 		} else {
 			this.address = address;
-			try {
-				setBoxConnected();
-				updateSettings();
-			} catch (WrongPasswordException e) {
-				log.error(messages.getMessage("box.wrong_password"));
-				setBoxDisconnected();
-			} catch (InvalidFirmwareException e) {
-				log.error(messages.getMessage("unknown_firmware"));
-				setBoxDisconnected();
-			} catch (IOException e) {
-				log.error(messages.getMessage("box.not_found"));
-				setBoxDisconnected();
-			}
+		}
+		
+		try {
+			setBoxConnected();
+			updateSettings();
+		} catch (WrongPasswordException e) {
+			log.error(messages.getMessage("box.wrong_password"));
+			setBoxDisconnected();
+		} catch (InvalidFirmwareException e) {
+			log.error(messages.getMessage("unknown_firmware"));
+			setBoxDisconnected();
+		} catch (IOException e) {
+			log.error(messages.getMessage("box.not_found"));
+			setBoxDisconnected();
 		}
 	}
 
@@ -236,9 +240,21 @@ public class FritzBox extends BoxClass {
 		} catch (InvalidCredentialsException e) {
 			setBoxDisconnected();
 			handleInvalidCredentialsException(e);
+			if (startup) {
+				startup = false;
+				if (showLoginDialog(e)) {
+					updateSettings();
+				}
+			}
 		} catch (LoginBlockedException e) {
 			setBoxDisconnected();
 			handleLoginBlockedException(e);
+			if (startup) {
+				startup = false;
+				if (showLoginDialog(e)) {
+					updateSettings();
+				}
+			}
 		} catch (IOException e) {
 			log.error(messages.getMessage("box.not_found"));
 			setBoxDisconnected();
@@ -1523,5 +1539,12 @@ public class FritzBox extends BoxClass {
 
 	public void setIgdupnp(String igdupnp) { // 01.08.2015
 		this.igdupnp = igdupnp;
+	}
+	
+	private boolean showLoginDialog(Exception e) {
+		LoginDialog loginDialog = new LoginDialog(this);
+		loginDialog.setException(e);
+		loginDialog.setVisible(true);
+		return loginDialog.hasOkBeenPressed();
 	}
 }

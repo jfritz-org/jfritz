@@ -54,7 +54,6 @@ import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.BrowserLaunch;
 import de.moonflower.jfritz.utils.Debug;
-//import org.apache.http.auth.InvalidCredentialsException;
 
 /**
  * JDialog for JFritz configuration.
@@ -115,7 +114,7 @@ public class ConfigDialog extends JDialog {
 		sipPanel = new ConfigPanelSip();
 
 		fritzBoxPanelLogin = new ConfigPanelFritzBoxLogin();
-		fritzBoxPanelLogin.setFritzBoxPanelIp(fritzBoxPanelIp);
+		fritzBoxPanelLogin.setFritzBox(fritzBoxPanelIp.getFritzBox());
 		fritzBoxPanelLogin.setSipPanel(sipPanel);
 		fritzBoxPanelLogin.setPath(fritzBoxPanelIp.getPath() + "::" + messages.getMessage("config.login"));
 		

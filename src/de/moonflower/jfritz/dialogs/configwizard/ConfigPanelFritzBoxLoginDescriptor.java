@@ -20,7 +20,7 @@ public class ConfigPanelFritzBoxLoginDescriptor extends WizardPanelDescriptor{
 
 	  public ConfigPanelFritzBoxLoginDescriptor(ConfigPanelFritzBoxIpDescriptor otherConfigPanel) {
 			fritzBoxPanel = new ConfigPanelFritzBoxLogin();
-			fritzBoxPanel.setFritzBoxPanelIp(otherConfigPanel.getFritzBoxPanel());
+			fritzBoxPanel.setFritzBox(otherConfigPanel.getFritzBoxPanel().getFritzBox());
 			fritzBoxPanel.loadSettings();
 			setPanelDescriptorIdentifier(IDENTIFIER);
 		    setPanelComponent(fritzBoxPanel);

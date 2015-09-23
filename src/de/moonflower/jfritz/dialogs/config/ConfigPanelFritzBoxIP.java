@@ -43,8 +43,6 @@ import de.moonflower.jfritz.utils.MultiLabel;
 import de.moonflower.jfritz.utils.network.SSDPPacket;
 import de.robotniko.fboxlib.exceptions.FirmwareNotDetectedException;
 import de.robotniko.fboxlib.exceptions.PageNotFoundException;
-//import org.apache.http.auth.InvalidCredentialsException;
-//import de.robotniko.fboxlib.exceptions.FirmwareNotDetectedException;
 
 public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 		ConfigPanel, DocumentListener {
