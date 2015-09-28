@@ -162,7 +162,10 @@ public final class JFritz implements  StatusListener {
 												 properties.getProperty("box.username"), 
 												 Encryption.decrypt(properties.getProperty("box.password")));
 		
-		result = fritzBox.checkMacAddress(fritzBox);
+		if ("not_detected".equals(properties.getProperty("box.serial"))) {
+			// check mac address only, if we did not detect a serial (only for old firmwares)
+			result = fritzBox.checkMacAddress(fritzBox);
+		}
 		
 		boxCommunication = new BoxCommunication(log);
 		boxCommunication.addBox(fritzBox);

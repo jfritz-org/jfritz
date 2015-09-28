@@ -20,6 +20,10 @@ TODO tel.search.ch überprüfen und reparieren
 - TODO: Sounds trennen und individualisierbar gestalten
 - TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
 
+JFritz 0.7.5_17:
+- Bugfix: Mehrfache Bestätigung einer neu gefunden FRITZ!Box unterbunden
+- Bugfix: Update der Firmware in jfritz.properties.xml, wenn eine neue FRITZ!Box gefunden wurde 
+
 JFritz 0.7.5_16:
 - Neu: Überprüfung der FRITZ!Box-Seriennummer beim Start von JFritz, um Kommunikation mit unbekannten FRITZ!Boxen zu erkennen
 New Strings:

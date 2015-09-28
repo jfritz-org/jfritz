@@ -1,4 +1,4 @@
-﻿JFritz 0.7.5_16:
+﻿JFritz 0.7.5_17:
 - Bugfix: Unterstützung der neuen Firmwares 06.25 und 06.35 (großen Dank an Pikachu)
 - Bugfix: Reverse-Lookup für Deutschland repariert
 - Bugfix: Netzwerk-Button entfernt
@@ -12,6 +12,8 @@
 - Bugfix: Es wurden nicht alle SIP-Provider erkannt
 - Neu: Anzeige eines Dialogs zur Eingabe des Benutzernamen/Passworts, wenn falsche Login-Daten erkannt wurden
 - Neu: Überprüfung der FRITZ!Box-Seriennummer beim Start von JFritz, um Kommunikation mit unbekannten FRITZ!Boxen zu erkennen
+- Bugfix: Mehrfache Bestätigung einer neu gefunden FRITZ!Box unterbunden
+- Bugfix: Update der Firmware in jfritz.properties.xml, wenn eine neue FRITZ!Box gefunden wurde 
 New Strings:
 serial_not_found
 

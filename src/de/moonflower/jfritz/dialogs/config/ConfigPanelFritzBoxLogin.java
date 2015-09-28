@@ -271,7 +271,12 @@ public class ConfigPanelFritzBoxLogin extends JPanel implements ActionListener,
 			properties.setProperty("box.loginUsingUsername", fritzBox.getLoginMode() == LoginMode.USERNAME_PASSWORD);
 			properties.setProperty("box.username", user.getText()); //$NON-NLS-1$
 			properties.setProperty("box.password", Encryption.encrypt(new String(pass.getPassword()))); //$NON-NLS-1$
-			
+			if (fritzBox.getFirmware() != null) {
+				properties.setProperty("box.firmware", fritzBox.getFirmware().toSimpleString()); //$NON-NLS-1$
+			} else {
+				properties.removeProperty("box.firmware"); //$NON-NLS-1$
+			}
+
 			checkLoginData();
 		}
 	}
