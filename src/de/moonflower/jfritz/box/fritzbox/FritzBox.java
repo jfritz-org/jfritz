@@ -140,7 +140,7 @@ public class FritzBox extends BoxClass {
 	protected MessageProvider messages = MessageProvider.getInstance();
 
 	private BoxCallListInterface callList;
-	private boolean startup = true;
+	private boolean shouldPopupLoginCredentials = true;
 	
 	public FritzBox(String name, String description,
 					String protocol, String address, String port, boolean useUsername, String username, String password)
@@ -159,13 +159,15 @@ public class FritzBox extends BoxClass {
 		configuredPorts = new HashMap<Integer, Port>();
 		callBackListener = new Vector<BoxCallBackListener>(4);
 
-		startup = true;
 		if ("".equals(address)) {
 			this.address = "fritz.box";
 		} else {
 			this.address = address;
 		}
-		
+	}
+
+	public void init(boolean shouldPopupLoginCredentials) {
+		this.shouldPopupLoginCredentials = shouldPopupLoginCredentials;
 		try {
 			setBoxConnected();
 			updateSettings();
@@ -242,9 +244,9 @@ public class FritzBox extends BoxClass {
 			setBoxDisconnected();
 		} catch (InvalidCredentialsException e) {
 			setBoxDisconnected();
-			handleInvalidCredentialsException(e);
-			if (startup) {
-				startup = false;
+			if (shouldPopupLoginCredentials) {
+				shouldPopupLoginCredentials = false;
+				handleInvalidCredentialsException(e);
 				if (showLoginDialog(e)) {
 					properties.saveConfigProperties();
 					updateSettings();
@@ -252,9 +254,9 @@ public class FritzBox extends BoxClass {
 			}
 		} catch (LoginBlockedException e) {
 			setBoxDisconnected();
-			handleLoginBlockedException(e);
-			if (startup) {
-				startup = false;
+			if (shouldPopupLoginCredentials) {
+				shouldPopupLoginCredentials = false;
+				handleLoginBlockedException(e);
 				if (showLoginDialog(e)) {
 					properties.saveConfigProperties();
 					updateSettings();

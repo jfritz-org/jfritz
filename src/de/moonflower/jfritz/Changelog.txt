@@ -23,6 +23,7 @@ TODO tel.search.ch überprüfen und reparieren
 JFritz 0.7.5_18:
 - Bugfix: Rufnummern, die mit 555, 777 oder 00038 beginnen, wurden fälschlicher weise als SIP-Nummern deklariert.
 - Bugfix: Update der Firmware in jfritz.properties.xml, wenn eine neue FRITZ!Box gefunden wurde 
+- Bugfix: Fehlermeldung Username/Password beim Start, wenn Wizard eine FRITZ!Box erkennt und versucht mit ihr zu kommunizieren 
 
 JFritz 0.7.5_17:
 - Bugfix: Mehrfache Bestätigung einer neu gefunden FRITZ!Box unterbunden

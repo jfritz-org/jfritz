@@ -15,6 +15,7 @@
 - Bugfix: Mehrfache Bestätigung einer neu gefunden FRITZ!Box unterbunden
 - Bugfix: Update der Firmware in jfritz.properties.xml, wenn eine neue FRITZ!Box gefunden wurde 
 - Bugfix: Rufnummern, die mit 555, 777 oder 00038 beginnen, wurden fälschlicher weise als SIP-Nummern deklariert.
+- Bugfix: Fehlermeldung Username/Password beim Start, wenn Wizard eine FRITZ!Box erkennt und versucht mit ihr zu kommunizieren
 New Strings:
 serial_not_found
 

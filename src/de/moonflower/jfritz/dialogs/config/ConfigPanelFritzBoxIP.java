@@ -217,27 +217,31 @@ public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 			}
 			disableNextButtonInWizard();
 		} else if (e.getActionCommand().equals("detectboxtype")) { //$NON-NLS-1$
-			Container c = getPanel(); // get the window's content pane
-			c.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
-			setSuccessMessage(messages.getMessage("detect_firmware"));
-			
-			try {
-				detectBoxType();
-			} catch (IOException e1) {
-				// nothing to do, already handled in detectBoxType
-			} catch (FirmwareNotDetectedException e1) {
-				// nothing to do, already handled in detectBoxType
-			} catch (PageNotFoundException e1) {
-				// nothing to do, already handled in detectBoxType
-			}
-
-			if (fritzBoxPanelLogin != null) {
-				fritzBoxPanelLogin.updateGui();
-			}
-			
-			c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			executeDetectBoxType();
 		}
+	}
+
+	private void executeDetectBoxType() {
+		Container c = getPanel(); // get the window's content pane
+		c.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+		setSuccessMessage(messages.getMessage("detect_firmware"));
+		
+		try {
+			detectBoxType();
+		} catch (IOException e1) {
+			// nothing to do, already handled in detectBoxType
+		} catch (FirmwareNotDetectedException e1) {
+			// nothing to do, already handled in detectBoxType
+		} catch (PageNotFoundException e1) {
+			// nothing to do, already handled in detectBoxType
+		}
+
+		if (fritzBoxPanelLogin != null) {
+			fritzBoxPanelLogin.updateGui();
+		}
+		
+		c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}
 
 	private void checkDefaultFritzBox()
@@ -261,6 +265,8 @@ public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 		address.setText(fritzBox.getAddress());
 		port.setText(fritzBox.getPort());
 
+		executeDetectBoxType();
+		
 		for (int i=0; i < addressCombo.getItemCount(); i++) {
 			if (((String)addressCombo.getItemAt(i)).equals(address.getText())) {
 				addressCombo.setSelectedIndex(i);
