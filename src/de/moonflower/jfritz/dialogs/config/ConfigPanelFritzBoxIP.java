@@ -37,7 +37,6 @@ import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.MultiLabel;
 import de.moonflower.jfritz.utils.network.SSDPPacket;
@@ -406,8 +405,14 @@ public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 	}
 
 	private boolean somethingChanged() {
+		boolean firmwareChanged = false;
+		if (fritzBox != null && fritzBox.getFirmware() != null) {
+			firmwareChanged = !properties.getProperty("box.firmware").equals(fritzBox.getFirmware().toSimpleString());
+		}
+		
 		return (!properties.getProperty("box.address").equals(address.getText()))
-				|| (!properties.getProperty("box.port").equals(port.getText()));
+				|| (!properties.getProperty("box.port").equals(port.getText()))
+				|| (firmwareChanged);
 
 	}
 	
