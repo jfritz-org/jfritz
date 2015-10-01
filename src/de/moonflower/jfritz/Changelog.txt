@@ -20,6 +20,9 @@ TODO tel.search.ch überprüfen und reparieren
 - TODO: Sounds trennen und individualisierbar gestalten
 - TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
 
+JFritz 0.7.5_18:
+- Bugfix: Rufnummern, die mit 555, 777 oder 00038 beginnen, wurden fälschlicher weise als SIP-Nummern deklariert.
+
 JFritz 0.7.5_17:
 - Bugfix: Mehrfache Bestätigung einer neu gefunden FRITZ!Box unterbunden
 - Bugfix: Update der Firmware in jfritz.properties.xml, wenn eine neue FRITZ!Box gefunden wurde 

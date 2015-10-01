@@ -426,14 +426,7 @@ public class PhoneNumberOld implements Serializable {
 	 * @return True if number is a SIP number
 	 */
 	public boolean isSIPNumber() {
-		return ((number.indexOf('@') > 0) //$NON-NLS-1$
-				// PurTel
-				|| number.startsWith("00038") //$NON-NLS-1$
-				// SIPGate
-				|| number.startsWith("555") //$NON-NLS-1$
-		// SIPGate
-		|| number.startsWith("777") //$NON-NLS-1$
-		);
+		return (number.indexOf('@') > 0);
 	}
 
 	/**

@@ -1,4 +1,4 @@
-﻿JFritz 0.7.5_17:
+﻿JFritz 0.7.5_18:
 - Bugfix: Unterstützung der neuen Firmwares 06.25 und 06.35 (großen Dank an Pikachu)
 - Bugfix: Reverse-Lookup für Deutschland repariert
 - Bugfix: Netzwerk-Button entfernt
@@ -14,6 +14,7 @@
 - Neu: Überprüfung der FRITZ!Box-Seriennummer beim Start von JFritz, um Kommunikation mit unbekannten FRITZ!Boxen zu erkennen
 - Bugfix: Mehrfache Bestätigung einer neu gefunden FRITZ!Box unterbunden
 - Bugfix: Update der Firmware in jfritz.properties.xml, wenn eine neue FRITZ!Box gefunden wurde 
+- Bugfix: Rufnummern, die mit 555, 777 oder 00038 beginnen, wurden fälschlicher weise als SIP-Nummern deklariert.
 New Strings:
 serial_not_found
 
