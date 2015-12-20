@@ -1029,7 +1029,7 @@
 	        </entry>
 	    </website>
 -->
-		<website name="www.dastelefonbuch.de" url="http://www.dastelefonbuch.de/Suche?kw=$NUMBER" prefix="0" numLines="5">
+		<website name="www.dastelefonbuch.de" url="http://www.dastelefonbuch.de/Suche?kw=$NUMBER" prefix="0" numLines="6">
 			<entry>	
 				<name>&lt;div class=&quot;vcard clearfix&quot;[^&gt;]*&gt;\s*&lt;h[1-9]&gt;\s*(?:&lt;span itemprop=&quot;name(?: itemreviewed)?&quot;&gt;)?([^&lt;]*)(?:&lt;/span&gt;)?\s*&lt;/h[1-9]&gt;</name>
 				<street>&lt;address&gt;([^&lt;]*)&lt;br /&gt;[^&lt;]*&lt;span itemprop=&quot;locality&quot;&gt;[^&lt;]*&lt;/span&gt;</street>
