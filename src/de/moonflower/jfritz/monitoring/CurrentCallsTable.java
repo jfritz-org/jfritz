@@ -11,7 +11,6 @@ import de.moonflower.jfritz.callmonitor.CallMonitorListener;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class CurrentCallsTable extends AbstractTableModel implements

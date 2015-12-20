@@ -11,7 +11,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import de.moonflower.jfritz.struct.QuickDial;
-import de.moonflower.jfritz.utils.Debug;
 
 /**
  * XML Handler for reading the call file

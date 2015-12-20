@@ -11,8 +11,6 @@ import javax.imageio.ImageIO;
 
 import org.apache.log4j.Logger;
 
-import de.moonflower.jfritz.utils.Debug;
-
 /**
  * Ermittel anhand der zur Verfügung stehenden Größe in der Statusleiste des
  * Betriebssystems die optimale Größe und erstellt ein TrayIcon.

@@ -22,7 +22,6 @@ import org.apache.log4j.Logger;
 
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.HyperLinkLabel;
 import de.moonflower.jfritz.utils.LinkClickListener;
 

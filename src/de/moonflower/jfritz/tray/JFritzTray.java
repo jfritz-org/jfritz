@@ -18,7 +18,6 @@ import de.moonflower.jfritz.box.BoxCommunication;
 import de.moonflower.jfritz.constants.ProgramConstants;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.utils.Debug;
 
 public class JFritzTray {
 	private final static Logger log = Logger.getLogger(JFritzTray.class);

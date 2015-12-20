@@ -15,7 +15,6 @@ import org.apache.log4j.Logger;
 import de.moonflower.jfritz.callerlist.filter.CallFilter;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.utils.Debug;
 
 /**
  * This class is used for filtering and sending data to a client.

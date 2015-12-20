@@ -12,7 +12,6 @@ import java.util.TimerTask;
 import org.apache.log4j.Logger;
 
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class WatchdogThread extends Thread {

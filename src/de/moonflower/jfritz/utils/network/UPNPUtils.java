@@ -16,10 +16,7 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
-import de.moonflower.jfritz.utils.Debug;
 import de.robotniko.fboxlib.fritzbox.FritzBoxCommunication;
-//import de.moonflower.jfritz.utils.network.MyAuthenticator;
-//import com.sun.xml.internal.messaging.saaj.util.Base64;
 
 /*
  * Created on 22.05.2005

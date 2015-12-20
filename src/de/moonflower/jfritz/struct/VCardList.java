@@ -13,8 +13,6 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
-import de.moonflower.jfritz.utils.Debug;
-
 /**
  * Support for VCard-List. Save list to file.
  *

@@ -3,7 +3,6 @@ package de.moonflower.jfritz.importexport;
 import org.apache.log4j.Logger;
 
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.utils.Debug;
 
 public class VCardParserVersion {
 	private final static Logger log = Logger.getLogger(VCardParserVersion.class);

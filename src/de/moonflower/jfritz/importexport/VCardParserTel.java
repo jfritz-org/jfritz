@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
-import de.moonflower.jfritz.utils.Debug;
 
 public class VCardParserTel {
 	private final static Logger log = Logger.getLogger(VCardParserTel.class);

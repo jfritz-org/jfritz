@@ -20,7 +20,6 @@ import de.moonflower.jfritz.callerlist.CallerTable;
 import de.moonflower.jfritz.callerlist.JFritzTableColumn;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class ConfigPanelCallerListAppearance extends JPanel implements ConfigPanel, ActionListener {

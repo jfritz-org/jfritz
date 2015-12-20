@@ -4,10 +4,8 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
-import de.moonflower.jfritz.JFritzDataDirectory;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.network.SSDPPacket;
 import de.moonflower.jfritz.utils.network.SSDPdiscoverThread;

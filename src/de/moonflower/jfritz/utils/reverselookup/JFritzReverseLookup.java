@@ -14,7 +14,6 @@ import org.apache.log4j.Logger;
 import de.moonflower.jfritz.phonebook.PhoneBook;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.robotniko.reverseLookup.api.IReverseLookupFinishedListener;
 import de.robotniko.reverseLookup.api.IReverseLookupResponseListener;

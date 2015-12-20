@@ -31,7 +31,6 @@ import org.xml.sax.XMLReader;
 import de.moonflower.jfritz.constants.ProgramConstants;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.struct.QuickDial;
-import de.moonflower.jfritz.utils.Debug;
 import de.robotniko.fboxlib.fritzbox.FritzBoxCommunication;
 
 /**

@@ -15,7 +15,6 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.phonebook.PhoneBook;
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.utils.Debug;
 
 /**
  * Thread, listens on a TCP-Port on Callmessage messages format:

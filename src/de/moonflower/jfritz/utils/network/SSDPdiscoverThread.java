@@ -11,7 +11,6 @@ import org.apache.log4j.Logger;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.messages.MessageProvider;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.StatusBarController;
 
 /**

@@ -19,7 +19,6 @@ import de.moonflower.jfritz.JFritzEvent.JFritzEventTableModel;
 import de.moonflower.jfritz.JFritzEvent.struct.JFritzEventAction;
 import de.moonflower.jfritz.dialogs.config.ConfigPanel;
 import de.moonflower.jfritz.messages.MessageProvider;
-import de.moonflower.jfritz.utils.Debug;
 
 
 public class JFritzEventGUI extends JPanel implements ConfigPanel, ActionListener {

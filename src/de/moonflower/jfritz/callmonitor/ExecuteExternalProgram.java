@@ -13,7 +13,6 @@ import org.apache.log4j.Logger;
 
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class ExecuteExternalProgram extends CallMonitorAdaptor {

@@ -23,8 +23,6 @@ import javax.swing.event.PopupMenuListener;
 
 import org.apache.log4j.Logger;
 
-import de.moonflower.jfritz.utils.Debug;
-
 /**
  * Ein Swing TrayIcon welches die regulären AWT-Komponenten überschreibt und
  * durch neue Swing-Komponenten ersetzt.

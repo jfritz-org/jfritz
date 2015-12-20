@@ -15,8 +15,6 @@ import javax.swing.JButton;
 
 import org.apache.log4j.Logger;
 
-import de.moonflower.jfritz.utils.Debug;
-
 /**
  * A Button with 3 states for the FilterButtons of the CallerListpanel
  *

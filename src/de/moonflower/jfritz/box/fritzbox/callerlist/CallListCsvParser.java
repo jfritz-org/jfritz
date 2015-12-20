@@ -9,7 +9,6 @@ import de.moonflower.jfritz.exceptions.FeatureNotSupportedByFirmware;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.IProgressListener;
-import de.moonflower.jfritz.utils.Debug;
 
 public class CallListCsvParser {
 	private final static Logger log = Logger.getLogger(CallListCsvParser.class);

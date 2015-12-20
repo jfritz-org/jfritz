@@ -8,7 +8,6 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**

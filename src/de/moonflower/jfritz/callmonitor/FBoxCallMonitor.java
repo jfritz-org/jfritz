@@ -14,7 +14,6 @@ import java.util.Vector;
 import org.apache.log4j.Logger;
 
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
-import de.moonflower.jfritz.utils.Debug;
 
 /**
  * Thread. Connects to FritzBox Port 1012. Captures Callermessages.

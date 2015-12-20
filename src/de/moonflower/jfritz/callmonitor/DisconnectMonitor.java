@@ -9,7 +9,6 @@ import org.apache.log4j.Logger;
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class DisconnectMonitor extends CallMonitorAdaptor {

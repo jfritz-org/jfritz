@@ -33,7 +33,6 @@ import de.moonflower.jfritz.callmonitor.CallMonitorListener;
 import de.moonflower.jfritz.phonebook.PhoneBookListener;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.utils.Debug;
 
 /**
  * This class is responsible for interacting with a JFritz client.

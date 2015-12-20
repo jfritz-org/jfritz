@@ -18,7 +18,6 @@ import javax.swing.ImageIcon;
 import org.apache.log4j.Logger;
 
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.HTMLUtil;
 import de.moonflower.jfritz.utils.reverselookup.JFritzReverseLookup;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupAustria;

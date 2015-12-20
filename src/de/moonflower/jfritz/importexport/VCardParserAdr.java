@@ -6,7 +6,6 @@ import java.util.Vector;
 import org.apache.log4j.Logger;
 
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.utils.Debug;
 
 public class VCardParserAdr {
 	private final static Logger log = Logger.getLogger(VCardParserAdr.class);

@@ -6,8 +6,6 @@ import java.lang.reflect.Proxy;
 
 import org.apache.log4j.Logger;
 
-import de.moonflower.jfritz.utils.Debug;
-
 
 
 /**

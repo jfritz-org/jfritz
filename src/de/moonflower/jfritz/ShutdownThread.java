@@ -5,8 +5,6 @@ package de.moonflower.jfritz;
 
 import org.apache.log4j.Logger;
 
-import de.moonflower.jfritz.utils.Debug;
-
 /**
  * @author rob
  */
