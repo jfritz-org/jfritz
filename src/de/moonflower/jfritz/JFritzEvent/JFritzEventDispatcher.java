@@ -90,18 +90,20 @@ public class JFritzEventDispatcher extends Thread {
 		// TODO In Schleife EventQueue abarbeiten
 	}
 
-	public static JComboBox createEventComboBox() {
-		JComboBox eventComboBox = new JComboBox();
+	public static JComboBox<JFritzEvent> createEventComboBox() {
+		JComboBox<JFritzEvent> eventComboBox = new JComboBox<JFritzEvent>();
 		for (int i = 0; i < registeredEvents.size(); i++) {
-			eventComboBox.addItem(registeredEvents.get(i));
+			JFritzEvent event = registeredEvents.get(i);
+			eventComboBox.addItem(event);
 		}
 		return eventComboBox;
 	}
 
-	public static JComboBox createActionComboBox() {
-		JComboBox actionComboBox = new JComboBox();
+	public static JComboBox<JFritzAction> createActionComboBox() {
+		JComboBox<JFritzAction> actionComboBox = new JComboBox<JFritzAction>();
 		for (int i = 0; i < registeredActions.size(); i++) {
-			actionComboBox.addItem(registeredActions.get(i).clone());
+			JFritzAction action = registeredActions.get(i).clone();
+			actionComboBox.addItem(action);
 		}
 		log.debug(actionComboBox.toString());
 		return actionComboBox;

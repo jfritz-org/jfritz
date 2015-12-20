@@ -50,7 +50,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 
 	private JDialog parent;
 
-	private JComboBox networkTypeCombo;
+	private JComboBox<String> networkTypeCombo;
 
 	private JCheckBox clientTelephoneBook, clientCallList, clientCallMonitor,
 		clientStandAlone, connectOnStartup, listenOnStartup;
@@ -84,7 +84,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
 		setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
-		networkTypeCombo = new JComboBox();
+		networkTypeCombo = new JComboBox<String>();
 		networkTypeCombo.addItem(messages.getMessage("no_network_function")); //$NON-NLS-1$
 		networkTypeCombo.addItem(messages.getMessage("network_server_function")); //$NON-NLS-1$
 		networkTypeCombo.addItem(messages.getMessage("network_client_function")); //$NON-NLS-1$

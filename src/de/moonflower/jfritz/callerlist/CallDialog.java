@@ -52,7 +52,7 @@ public class CallDialog extends JDialog implements ActionListener {
 
 	private Vector<PhoneNumberOld> numbers;
 
-	private JComboBox portComboBox;
+	private JComboBox<Port> portComboBox;
 
 	JButton okButton, cancelButton;
 
@@ -162,7 +162,7 @@ public class CallDialog extends JDialog implements ActionListener {
 			label = new JLabel(messages.getMessage("extension")+": "); //$NON-NLS-1$,  //$NON-NLS-2$
 			topPane.add(label, c);
 
-			portComboBox = new JComboBox();
+			portComboBox = new JComboBox<Port>();
 
 			Vector<Port> ports = NetworkStateMonitor.getAvailablePorts();
 
@@ -173,7 +173,8 @@ public class CallDialog extends JDialog implements ActionListener {
 					if ((!"".equals(ports.get(i).getDialPort()))
 						&& (!"-1".equals(ports.get(i).getDialPort())))
 					{
-						portComboBox.addItem(ports.get(i));
+						Port port = ports.get(i);
+						portComboBox.addItem(port);
 					}
 				}
 			}
