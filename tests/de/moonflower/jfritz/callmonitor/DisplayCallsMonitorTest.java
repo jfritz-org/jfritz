@@ -192,4 +192,54 @@ public class DisplayCallsMonitorTest extends TestCase {
 		Assert.assertEquals("\"/path to/program\"", res[0]);
 		Assert.assertEquals("\"arg1\"", res[1]);
 	}
+	
+	@Test
+	public void testSplitArguments() {
+		String[] args;
+		
+		args = cm.splitArguments(null);
+		Assert.assertNotNull(args);
+		Assert.assertEquals(0, args.length);
+		
+		args = cm.splitArguments("");
+		Assert.assertNotNull(args);
+		Assert.assertEquals(0, args.length);
+		
+		args = cm.splitArguments("arg1");
+		Assert.assertNotNull(args);
+		Assert.assertEquals(1, args.length);
+		Assert.assertEquals("arg1", args[0]);
+		
+		args = cm.splitArguments("arg1 arg2");
+		Assert.assertNotNull(args);
+		Assert.assertEquals(2, args.length);
+		Assert.assertEquals("arg1", args[0]);
+		Assert.assertEquals("arg2", args[1]);
+		
+		args = cm.splitArguments("\"arg 1\"");
+		Assert.assertNotNull(args);
+		Assert.assertEquals(1, args.length);
+		Assert.assertEquals("\"arg 1\"", args[0]);
+		
+		args = cm.splitArguments("\"arg 1\" \"arg 2\"");
+		Assert.assertNotNull(args);
+		Assert.assertEquals(2, args.length);
+		Assert.assertEquals("\"arg 1\"", args[0]);
+		Assert.assertEquals("\"arg 2\"", args[1]);
+		
+		args = cm.splitArguments("\"arg 1\" arg2");
+		Assert.assertNotNull(args);
+		Assert.assertEquals(2, args.length);
+		Assert.assertEquals("\"arg 1\"", args[0]);
+		Assert.assertEquals("arg2", args[1]);
+		
+		args = cm.splitArguments("arg 1 arg 2");
+		Assert.assertNotNull(args);
+		Assert.assertEquals(4, args.length);
+		Assert.assertEquals("arg", args[0]);
+		Assert.assertEquals("1", args[1]);
+		Assert.assertEquals("arg", args[2]);
+		Assert.assertEquals("2", args[3]);
+
+	}
 }
