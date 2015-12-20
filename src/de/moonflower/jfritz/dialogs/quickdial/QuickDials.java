@@ -31,7 +31,7 @@ import org.xml.sax.XMLReader;
 import de.moonflower.jfritz.constants.ProgramConstants;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.struct.QuickDial;
-import de.robotniko.fboxlib.fritzbox.FritzBoxCommunication;
+//import de.robotniko.fboxlib.fritzbox.FritzBoxCommunication;
 
 /**
  * Table model for QuickDials
@@ -55,7 +55,7 @@ public class QuickDials extends AbstractTableModel {
 			+ "<!ATTLIST entry id CDATA #REQUIRED>";  //$NON-NLS-1$
 
 	//private static FirmwareVersion firmware = new FirmwareVersion(); // 23.08.2015
-	private static FritzBoxCommunication firmware = new FritzBoxCommunication(); // 23.08.2015
+	//private static FritzBoxCommunication firmware = new FritzBoxCommunication(); // 23.08.2015
 //	private static QuickDialUpnp quickDialUpnp = new QuickDialUpnp(); // 23.08.2015
 
 	Vector<QuickDial> quickDials;

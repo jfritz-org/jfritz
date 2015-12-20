@@ -19,8 +19,6 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.KeyStroke;
 
-import org.apache.log4j.Logger;
-
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
@@ -33,7 +31,7 @@ import de.moonflower.jfritz.struct.Port;
  */
 
 public class CallPendingDialog extends JDialog implements ActionListener {
-	private final static Logger log = Logger.getLogger(CallPendingDialog.class);
+	//private final static Logger log = Logger.getLogger(CallPendingDialog.class);
 	private static final long serialVersionUID = 1;
 
 	private String infoText;

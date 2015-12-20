@@ -78,7 +78,7 @@ public class CallListCsvLineParserTests {
 		when(mockedFritzBox.getSipProviderByRoute("12345678")).thenReturn(mockedSipProvider);
 
 		// test
-		Call call = parser.parseLine(mockedFritzBox, "0;06.12.12 19:27;;07211234567;FRITZ!App Fon Nexus 10;Internet: 12345678;0:01");
+		parser.parseLine(mockedFritzBox, "0;06.12.12 19:27;;07211234567;FRITZ!App Fon Nexus 10;Internet: 12345678;0:01");
 	}
 
 	@Test(expected=FeatureNotSupportedByFirmware.class)

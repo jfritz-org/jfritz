@@ -34,7 +34,7 @@ public class FBoxCallMonitorNew extends Thread {
 	public void run()
 	{
 		boolean connected = false;
-		while (1==1)
+		while (true) // endless loop
 		{
 			try {
 				if (!connected)

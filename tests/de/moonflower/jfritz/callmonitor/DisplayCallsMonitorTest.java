@@ -1,7 +1,5 @@
 package de.moonflower.jfritz.callmonitor;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 import junit.framework.Assert;
@@ -19,11 +17,6 @@ import de.moonflower.jfritz.TestHelper;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.sounds.PlaySound;
-import de.moonflower.jfritz.struct.Call;
-import de.moonflower.jfritz.struct.CallType;
-import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.PhoneNumberOld;
-import de.moonflower.jfritz.struct.Port;
 
 public class DisplayCallsMonitorTest extends TestCase {
 
@@ -63,18 +56,18 @@ public class DisplayCallsMonitorTest extends TestCase {
 //		messages.getMessage("no_external_program")
 //		messages.getMessage("not_external_program_start")
 
-		CallType callType = CallType.CALLIN;
-		Date now = Calendar.getInstance().getTime();
-		PhoneNumberOld phoneNumber = new PhoneNumberOld(PropertyProvider.getInstance(), "07212542015", false);
-		Port dialPort = new Port(0, "PortName", "21", "621");
-		String route = "865072";
-		int duration = 0;
-		Call call = new Call(callType, now, phoneNumber, dialPort, route, duration);
-
-		String caller = "caller";
-		String called = "called";
-		String port = "port";
-		Person person = null;
+//		CallType callType = CallType.CALLIN;
+//		Date now = Calendar.getInstance().getTime();
+//		PhoneNumberOld phoneNumber = new PhoneNumberOld(PropertyProvider.getInstance(), "07212542015", false);
+//		Port dialPort = new Port(0, "PortName", "21", "621");
+//		String route = "865072";
+//		int duration = 0;
+//		Call call = new Call(callType, now, phoneNumber, dialPort, route, duration);
+//
+//		String caller = "caller";
+//		String called = "called";
+//		String port = "port";
+//		Person person = null;
 //		cm.displayCallInMsg(call, caller, called, port, person);
 
 //		verify(sound, times(1)).playRingSound(1.0f);

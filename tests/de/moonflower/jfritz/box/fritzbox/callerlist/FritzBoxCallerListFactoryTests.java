@@ -1,6 +1,5 @@
 package de.moonflower.jfritz.box.fritzbox.callerlist;
 
-import static org.mockito.Mockito.when;
 import junit.framework.Assert;
 
 import org.junit.Before;

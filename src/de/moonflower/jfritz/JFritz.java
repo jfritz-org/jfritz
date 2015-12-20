@@ -43,7 +43,6 @@ import de.moonflower.jfritz.sounds.SoundProvider;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.tray.JFritzTray;
 import de.moonflower.jfritz.tray.Tray;
-import de.moonflower.jfritz.utils.ComplexJOptionPaneMessage;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
