@@ -372,6 +372,23 @@ public class PropertyProvider {
 
 		config_properties.remove("telnet.user");
 		config_properties.remove("telnet.password");
+		
+		if (config_properties.getProperty("option.externProgramArgs") == null) {
+			// we don't have a separate external program arguments option, convert the old option.externProgram into separate options for program and arguments
+			if (config_properties.getProperty("option.externProgram") != null) {
+				String[] result = splitExternalProgramAndArguments(config_properties.getProperty("option.externProgram"));
+				if (result.length == 2) {
+					config_properties.setProperty("option.externProgram", result[0]);
+					config_properties.setProperty("option.externProgramArgs", result[1]);
+				} else if (result.length == 1) {
+					config_properties.setProperty("option.externProgram", result[0]);
+					config_properties.setProperty("option.externProgramArgs", "");
+				} else {
+					config_properties.setProperty("option.externProgram", "");
+					config_properties.setProperty("option.externProgramArgs", "");
+				}
+			}
+		}
 
 		// no startup password set yet
 		if (config_properties.getProperty("option.syslogEnabled") == null)
@@ -438,6 +455,36 @@ public class PropertyProvider {
 		saveConfigProperties();
 	}
 
+	private String[] splitExternalProgramAndArguments(final String input) {
+		if (input == null) {
+			return null;
+		}
+
+		String[] result = new String[2];
+
+		String in = input.trim();
+		if (in.startsWith("\"")) {
+			int nextQuote = in.indexOf("\"", 1);
+			if (nextQuote != -1) {
+				result[0] = in.substring(0, nextQuote+1);
+				result[1] = in.substring(nextQuote+1).trim();
+			} else {
+				result[0] = in;
+				result[1] = "";
+			}
+		} else {
+			int firstSpace = in.indexOf(" ");
+			if (firstSpace != -1) {
+				result[0] = in.substring(0, firstSpace);
+				result[1] = in.substring(firstSpace+1);
+			} else {
+				result[0] = in;
+				result[1] = "";
+			}
+		}
+		return result;
+	}
+	
 	/**
 	 * Get config properties with default value
 	 * @param property

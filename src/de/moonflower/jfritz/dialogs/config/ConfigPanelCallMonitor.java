@@ -16,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -42,7 +43,9 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 	private JCheckBox callMonitorAfterStartButton, soundButton,
 			externProgramCheckBox;
 
+	private JLabel externProgramArgsLabel, externProgramLabel;
 	private JTextField externProgramTextField;
+	private JTextField externProgramArgsTextField;
 
 	private JToggleButton startStopCallMonitorButton;
 
@@ -104,16 +107,43 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 		pane.add(soundButton, c);
 
 		externProgramCheckBox = new JCheckBox(messages.getMessage("run_external_program")); //$NON-NLS-1$
+		externProgramCheckBox.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				updateExternalProgramUI();
+			}			
+		});
 		c.gridy = 3;
 		pane.add(externProgramCheckBox, c);
 
+		externProgramLabel = new JLabel("          " + messages.getMessage("external_program"));
+		c.gridx = 0;
+		c.gridy = 4;
+		c.gridwidth = 1;
+		pane.add(externProgramLabel, c);
+		
 		externProgramTextField = new JTextField("", 40); //$NON-NLS-1$
 		externProgramTextField.setMinimumSize(new Dimension(300, 20));
+		c.gridx = 1;
 		c.gridy = 4;
+		c.gridwidth = 1;
 		pane.add(externProgramTextField, c);
 
+		externProgramArgsLabel = new JLabel("          " + messages.getMessage("external_program_args"));
 		c.gridx = 0;
 		c.gridy = 5;
+		c.gridwidth = 1;
+		pane.add(externProgramArgsLabel, c);
+
+		externProgramArgsTextField = new JTextField("", 40); //$NON-NLS-1$
+		externProgramArgsTextField.setMinimumSize(new Dimension(300, 20));
+		c.gridx = 1;
+		c.gridy = 5;
+		pane.add(externProgramArgsTextField, c);
+
+		c.gridx = 0;
+		c.gridy = 6;
 		c.gridwidth = 1;
 		startStopCallMonitorButton = new JToggleButton();
 		startStopCallMonitorButton.setActionCommand("startStopCallMonitor"); //$NON-NLS-1$
@@ -122,7 +152,7 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 		pane.add(startStopCallMonitorButton, c);
 
 		c.gridx = 1;
-		c.gridy = 5;
+		c.gridy = 6;
 		callMonitorOptionsButton = new JButton(messages.getMessage("config")); //$NON-NLS-1$
 		callMonitorOptionsButton.setActionCommand("startCallMonitorOptions"); //$NON-NLS-1$
 		callMonitorOptionsButton.addActionListener(this);
@@ -162,7 +192,10 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 				.getProperty("option.startExternProgram"))); //$NON-NLS-1$,  //$NON-NLS-2$
 		externProgramTextField.setText(JFritzUtils.deconvertSpecialChars(properties
 				.getProperty("option.externProgram"))); //$NON-NLS-1$,  //$NON-NLS-2$
-
+		externProgramArgsTextField.setText(JFritzUtils.deconvertSpecialChars(properties
+				.getProperty("option.externProgramArgs"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		
+		updateExternalProgramUI();
 		loadingSettingsDone = true;
 	}
 
@@ -174,6 +207,8 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 				.toString(externProgramCheckBox.isSelected()));
 		properties.setProperty("option.externProgram", JFritzUtils //$NON-NLS-1$
 				.convertSpecialChars(externProgramTextField.getText()));
+		properties.setProperty("option.externProgramArgs", JFritzUtils //$NON-NLS-1$
+				.convertSpecialChars(externProgramArgsTextField.getText()));
 
 
 		properties.setProperty("option.callMonitorType", String //$NON-NLS-1$
@@ -183,15 +218,6 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 				.toString(callMonitorAfterStartButton.isSelected()));
 		properties.setProperty("option.callMonitorType", String //$NON-NLS-1$
 				.valueOf(callMonitorCombo.getSelectedIndex()));
-
-
-		properties.setProperty("option.playSounds", Boolean.toString(soundButton //$NON-NLS-1$
-				.isSelected()));
-
-		properties.setProperty("option.startExternProgram", Boolean //$NON-NLS-1$
-				.toString(externProgramCheckBox.isSelected()));
-		properties.setProperty("option.externProgram",  //$NON-NLS-1$
-				JFritzUtils.convertSpecialChars(externProgramTextField.getText()));
 	}
 
 	private void hideCallMonitorPanel() {
@@ -200,7 +226,10 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 		callMonitorAfterStartButton.setVisible(false);
 		soundButton.setVisible(false);
 		externProgramCheckBox.setVisible(false);
+		externProgramLabel.setVisible(false);
 		externProgramTextField.setVisible(false);
+		externProgramArgsLabel.setVisible(false);
+		externProgramArgsTextField.setVisible(false);
 		repaint();
 	}
 
@@ -210,7 +239,10 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 		callMonitorAfterStartButton.setVisible(true);
 		soundButton.setVisible(true);
 		externProgramCheckBox.setVisible(true);
+		externProgramLabel.setVisible(true);
 		externProgramTextField.setVisible(true);
+		externProgramArgsLabel.setVisible(true);
+		externProgramArgsTextField.setVisible(true);
 		repaint();
 	}
 
@@ -374,4 +406,13 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 		return false;
 	}
 
+	private void updateExternalProgramUI() {
+		if (externProgramCheckBox.isSelected()) {
+			externProgramTextField.setEnabled(true);
+			externProgramArgsTextField.setEnabled(true);
+		} else {
+			externProgramTextField.setEnabled(false);
+			externProgramArgsTextField.setEnabled(false);
+		}
+	}
 }
