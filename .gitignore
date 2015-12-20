@@ -10,3 +10,6 @@ build-release-pwd.xml
 .gradle/
 .idea/
 build/
+
+.metadata/
+.settings/org.eclipse.jdt.core.prefs
