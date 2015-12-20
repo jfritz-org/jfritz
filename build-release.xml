@@ -403,7 +403,7 @@ http://www.jfritz.org/
 	</target>
 
 	<target name="mac-set-execution-bit">
-		<scp file="${release}/mac/JFritz-${version}-Mac.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public/" verbose="yes" password="${password2}"/>
+		<scp file="${release}/mac/JFritz-${version}-Mac.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public" verbose="yes" password="${password2}"/>
 		<sshexec command="mkdir ./public/mac"  username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<sshexec command="cd ./public/mac; unzip ../JFritz-${version}-Mac.zip" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<sshexec command="chmod 555 ./public/mac/JFritz.app/Contents/MacOS/JavaApplicationStub" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
