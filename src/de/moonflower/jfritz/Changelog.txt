@@ -21,7 +21,7 @@ TODO tel.search.ch überprüfen und reparieren
 - TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
 
 JFritz 0.7.5_21:
-- JFritz kann nun mit der FritzBox auch über die Fernwartung kommunizieren
+- Neu 0000216: JFritz kann nun mit der FritzBox auch über die Fernwartung kommunizieren
 - Neuer Parameter für externe Programme: %City
 
 JFritz 0.7.5_20:
