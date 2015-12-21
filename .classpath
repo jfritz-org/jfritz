@@ -34,6 +34,7 @@
 	<classpathentry kind="lib" path="lib/httpmime-4.5.jar"/>
 	<classpathentry kind="lib" path="lib/jdom-1.1.3.jar"/>
 	<classpathentry kind="lib" path="lib/reverseLookup-1.0.8.jar" sourcepath="reverselookup"/>
-	<classpathentry kind="lib" path="lib/fboxlib-1.0.22.jar" sourcepath="/fboxlib"/>
+	<classpathentry kind="lib" path="lib/fboxlib-1.0.23.jar" sourcepath="/fboxlib/src"/>
+	<classpathentry kind="lib" path="lib/commons-codec-1.10.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

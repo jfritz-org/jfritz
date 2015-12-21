@@ -20,6 +20,19 @@ TODO tel.search.ch überprüfen und reparieren
 - TODO: Sounds trennen und individualisierbar gestalten
 - TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
 
+JFritz 0.7.5_21:
+- Neu 0000216: JFritz kann nun mit der FritzBox auch über die Fernwartung kommunizieren
+- Neuer Parameter für externe Programme: %City
+
+JFritz 0.7.5_20:
+- Bugfix: Reverse-Lookup für DasTelefonbuch repariert
+
+JFritz 0.7.5_19:
+- Bugfix 0000349: Anrufmonitor kann keine Argumente mehr an externe Programme übergeben
+New Strings:
+external_program
+external_program_args
+
 JFritz 0.7.5_18:
 - Bugfix: Rufnummern, die mit 555, 777 oder 00038 beginnen, wurden fälschlicher weise als SIP-Nummern deklariert.
 - Bugfix: Update der Firmware in jfritz.properties.xml, wenn eine neue FRITZ!Box gefunden wurde 

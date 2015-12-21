@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -103,7 +105,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
         log.debug("Port: " + port); //$NON-NLS-1$
 
         String callerstr = "", calledstr = ""; //$NON-NLS-1$,  //$NON-NLS-2$ //$NON-NLS-3$
-        String firstname = "", surname = "", company = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+        String firstname = "", surname = "", company = "", city = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$
 
         callerstr = callerInput;
         if ( callerInput != null )
@@ -127,10 +129,12 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
             surname = person.getLastName();
             company = person.getCompany();
             name = person.getFullname();
+            city = person.getCity();
         }
         if (name.equals(""))name = messages.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$
         if (firstname.equals("") && surname.equals(""))surname = messages.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
         if (company.equals(""))company = messages.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$
+        if (city.equals(""))city = messages.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$        
 
         if (callerstr.startsWith("+49"))callerstr = "0" + callerstr.substring(3); //$NON-NLS-1$,  //$NON-NLS-2$
 
@@ -169,7 +173,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
         }
 
         if (JFritzUtils.parseBoolean(properties.getProperty("option.startExternProgram"))) { //$NON-NLS-1$
-            startExternalProgramCallIn(callerstr, name, calledstr, port, firstname, surname, company);
+            startExternalProgramCallIn(callerstr, name, calledstr, port, firstname, surname, company, city);
         }
     }
 
@@ -187,7 +191,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
         log.debug("Port: " + port); //$NON-NLS-1$
 
         String calledstr = "", providerstr = "", name = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-        String firstname = "", surname = "", company = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+        String firstname = "", surname = "", company = "", city = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$, //$NON-NLS-4$ 
 
         if ( calledInput != null )
         {
@@ -211,11 +215,13 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
           surname = person.getLastName();
           company = person.getCompany();
           name = person.getFullname();
+          city = person.getCity();
         }
 
         if (name.equals(""))name = messages.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$
         if (firstname.equals("") && surname.equals(""))surname = messages.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
         if (company.equals(""))company = messages.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$
+        if (city.equals(""))city = messages.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$        
 
         if (calledstr.startsWith("+49"))calledstr = "0" + calledstr.substring(3); //$NON-NLS-1$,  //$NON-NLS-2$
 
@@ -251,68 +257,94 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
         }
 
         if (JFritzUtils.parseBoolean(properties.getProperty("option.startExternProgram"))) { //$NON-NLS-1$
-            startExternalProgramCallOut(calledstr, name, providerstr, port, firstname, surname, company);
+            startExternalProgramCallOut(calledstr, name, providerstr, port, firstname, surname, company, city);
         }
     }
 
-    private void startExternalProgramCallIn(final String number, final String name,
-			final String called, final String port, final String firstname, final String surname, final String company) {
+    private void startExternalProgramCallIn(final String number, final String name, final String called, 
+    		final String port, final String firstname, final String surname, final String company, final String city) {
     	String program = JFritzUtils.deconvertSpecialChars(properties.getProperty("option.externProgram")); //$NON-NLS-1$
-    	startExternalProgram(program, "In", number, name, called, port, firstname, surname, company);
+    	String args = JFritzUtils.deconvertSpecialChars(properties.getProperty("option.externProgramArgs")); //$NON-NLS-1$
+    	startExternalProgram(program, args, "In", number, name, called, port, firstname, surname, company, city);
     }
 
-    private void startExternalProgramCallOut(final String number, final String name,
-			final String called, final String port, final String firstname, final String surname, final String company) {
+    private void startExternalProgramCallOut(final String number, final String name, final String called, 
+    		final String port, final String firstname, final String surname, final String company, final String city) {
     	String program = JFritzUtils.deconvertSpecialChars(properties.getProperty("option.externProgram")); //$NON-NLS-1$
-    	startExternalProgram(program, "Out", number, name, called, port, firstname, surname, company);
+    	String args = JFritzUtils.deconvertSpecialChars(properties.getProperty("option.externProgramArgs")); //$NON-NLS-1$
+    	startExternalProgram(program, args, "Out", number, name, called, port, firstname, surname, company, city);
+    }
+    
+    protected String[] splitArguments(String argString) {
+    	List<String> matchList = new ArrayList<String>();
+    	if (argString != null) {
+	    	Pattern regex = Pattern.compile("[^\\s\"']+|\"[^\"]*\"|'[^']*'");
+	    	Matcher regexMatcher = regex.matcher(argString);
+	    	while (regexMatcher.find()) {
+	    	    matchList.add(regexMatcher.group());
+	    	}
+    	}
+    	return matchList.toArray(new String[0]);
     }
 
-	private void startExternalProgram(final String program, final String calltype, final String number, final String name,
-			final String called, final String port, final String firstname, final String surname, final String company) {
-		String programString = program;
-		programString = programString.replaceAll("%CallType", calltype); //$NON-NLS-1$
-		programString = programString.replaceAll("%Number", number); //$NON-NLS-1$
-		programString = programString.replaceAll("%Name", name); //$NON-NLS-1$
-		programString = programString.replaceAll("%Called", called); //$NON-NLS-1$
-		programString = programString.replaceAll("%Port", port); //$NON-NLS-1$
-		programString = programString.replaceAll("%Firstname", firstname); //$NON-NLS-1$
-		programString = programString.replaceAll("%Surname", surname); //$NON-NLS-1$
-		programString = programString.replaceAll("%Company", company); //$NON-NLS-1$
-
-		if (programString.indexOf("%URLENCODE") > -1) { //$NON-NLS-1$
+    private String replacePlaceholder(final String input, final String calltype, final String number, final String name,
+			final String called, final String port, final String firstname, final String surname, final String company,
+			final String city) {
+    	String result = input;
+		result = result.replaceAll("%CallType", calltype); //$NON-NLS-1$
+		result = result.replaceAll("%Number", number); //$NON-NLS-1$
+		result = result.replaceAll("%Name", name); //$NON-NLS-1$
+		result = result.replaceAll("%Called", called); //$NON-NLS-1$
+		result = result.replaceAll("%Port", port); //$NON-NLS-1$
+		result = result.replaceAll("%Firstname", firstname); //$NON-NLS-1$
+		result = result.replaceAll("%Surname", surname); //$NON-NLS-1$
+		result = result.replaceAll("%Company", company); //$NON-NLS-1$
+		result = result.replaceAll("%City", city); //$NON-NLS-1$
+		
+		if (result.indexOf("%URLENCODE") > -1) { //$NON-NLS-1$
 			try {
 			    Pattern p;
 			    p = Pattern.compile("%URLENCODE\\(([^;]*)\\);"); //$NON-NLS-1$
-			    Matcher m = p.matcher(programString);
+			    Matcher m = p.matcher(result);
 			    while (m.find()) {
 			        String toReplace = m.group();
 			        toReplace = toReplace.replaceAll("\\\\", "\\\\\\\\"); //$NON-NLS-1$,  //$NON-NLS-2$
 			        toReplace = toReplace.replaceAll("\\(", "\\\\("); //$NON-NLS-1$, //$NON-NLS-2$
 			        toReplace = toReplace.replaceAll("\\)", "\\\\)"); //$NON-NLS-1$, //$NON-NLS-2$
 			        String toEncode = m.group(1);
-			        programString = programString.replaceAll(toReplace,
+			        result = result.replaceAll(toReplace,
 			                URLEncoder.encode(toEncode, "UTF-8")); //$NON-NLS-1$
 			    }
 			} catch (UnsupportedEncodingException uee) {
 			    log.error(uee.toString());
 			}
 		}
+		
+		return result;
+    }
+    
+	private void startExternalProgram(final String program, final String programArguments, final String calltype, final String number, final String name,
+			final String called, final String port, final String firstname, final String surname, final String company, final String city) {
+		String[] args = splitArguments(programArguments);
+		
+		for (int i=0; i<args.length; i++) {
+			args[i] = replacePlaceholder(args[i], calltype, number, name, called, port, firstname, surname, company, city);
+		}
 
-		if (programString.equals("")) { //$NON-NLS-1$
+		if (program.equals("")) { //$NON-NLS-1$
 			String message = messages.getMessage("no_external_program"); //$NON-NLS-1$
 			log.error(message);
 			Debug.errDlg(message);
 		} else {
-			log.info("Starte externes Programm: " + programString); //$NON-NLS-1$
+			log.info("Starte externes Programm: " + program + " with arguments ");//$NON-NLS-1$
+			for (int i=0; i<args.length; i++) {
+				log.info("   " + args[i]);
+			}
+			
 			try {
-				String[] splittedProgArg = splitProgramAndArguments(programString);
-				if (splittedProgArg != null) {
-					String prog = splittedProgArg[0];
-					String args = splittedProgArg[1];
-					executeProgram(prog, args);
-				}
+				executeProgram(program, args);
 			} catch (IOException e) {
-				String message = messages.getMessage("not_external_program_start") + " " + programString; //$NON-NLS-1$
+				String message = messages.getMessage("not_external_program_start") + " " + program; //$NON-NLS-1$
 				log.error(message, e);
 				Debug.errDlg(message);
 			}
@@ -349,34 +381,48 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 		return result;
 	}
 
-	protected void executeProgram(final String prog, final String args) throws IOException {
+	protected void executeProgram(final String prog, final String[] args) throws IOException {
 		ExternalProgram ep = new ExternalProgram(prog, args);
 		ep.start();
 	}
 
 	private class ExternalProgram extends Thread {
+		ProcessBuilder pb;
 		String prog;
-		String args;
-
-		public ExternalProgram(final String prog, final String args) {
-			if (prog.endsWith(".bat") || prog.endsWith(".bat\"")) {
+		String[] args;
+		
+		public ExternalProgram(final String program, final String[] arguments) {
+			this.args = arguments;
+			
+			if (program.endsWith(".bat") || program.endsWith(".bat\"")) {
 				this.prog = "cmd.exe";
-				this.args = "\"/C\" " + prog + " " + args;
+				String batchArgs = "";
+				for (String arg: arguments) {
+					batchArgs = batchArgs.concat(arg).concat(" ");
+				}
+				pb = new ProcessBuilder(prog, "\"/C\" " + program + " " + batchArgs);
 			} else {
-				this.prog = prog;
-				this.args = args;
+				this.prog = program;
+				List<String> command = new ArrayList<String>();
+				command.add(program);
+				for (String arg: arguments) {
+					command.add(arg);
+				}
+				
+				pb = new ProcessBuilder(command);
 			}
-			this.setName("ExternalProgramThread|" + prog);
+			pb.redirectErrorStream(true);
+			this.setName("ExternalProgramThread|" + program);
 		}
 
 	    public void run() {
-			ProcessBuilder pb = new ProcessBuilder(prog, args);
-			pb.redirectErrorStream(true);
 
 			try {
 				log.info("Starting execution of external program");
 				log.info("Program: " + prog);
-				log.info("Arguments: " + args);
+				for (int i=0; i<this.args.length; i++) {
+					log.info("   argument " + i + ": " + this.args[i]);
+				}
 				Process p = pb.start();
 
 				InputStreamReader tempReader = new InputStreamReader(
@@ -384,14 +430,16 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 
 				BufferedReader reader = new BufferedReader(tempReader);
 				String line = reader.readLine();
+				log.info("Response of external program: ");
 				while (line != null) {
 					line = reader.readLine();
+					log.info(line);
 				}
 				log.info("Finished execution of external program");
 			} catch (Throwable t) {
 				String message = messages.getMessage("not_external_program_start") + " " + prog; //$NON-NLS-1$
 				log.error(message, t);
-				Debug.errDlg(messages.getMessage("not_external_program_start"+ " " + prog)); //$NON-NLS-1$
+				Debug.errDlg(messages.getMessage("not_external_program_start") + " " + prog); //$NON-NLS-1$
 			}
 	    }
 	}
