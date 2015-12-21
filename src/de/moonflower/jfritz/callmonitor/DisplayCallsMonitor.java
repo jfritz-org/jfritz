@@ -105,7 +105,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
         log.debug("Port: " + port); //$NON-NLS-1$
 
         String callerstr = "", calledstr = ""; //$NON-NLS-1$,  //$NON-NLS-2$ //$NON-NLS-3$
-        String firstname = "", surname = "", company = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+        String firstname = "", surname = "", company = "", city = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$,  //$NON-NLS-4$
 
         callerstr = callerInput;
         if ( callerInput != null )
@@ -129,10 +129,12 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
             surname = person.getLastName();
             company = person.getCompany();
             name = person.getFullname();
+            city = person.getCity();
         }
         if (name.equals(""))name = messages.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$
         if (firstname.equals("") && surname.equals(""))surname = messages.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
         if (company.equals(""))company = messages.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$
+        if (city.equals(""))city = messages.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$        
 
         if (callerstr.startsWith("+49"))callerstr = "0" + callerstr.substring(3); //$NON-NLS-1$,  //$NON-NLS-2$
 
@@ -171,7 +173,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
         }
 
         if (JFritzUtils.parseBoolean(properties.getProperty("option.startExternProgram"))) { //$NON-NLS-1$
-            startExternalProgramCallIn(callerstr, name, calledstr, port, firstname, surname, company);
+            startExternalProgramCallIn(callerstr, name, calledstr, port, firstname, surname, company, city);
         }
     }
 
@@ -189,7 +191,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
         log.debug("Port: " + port); //$NON-NLS-1$
 
         String calledstr = "", providerstr = "", name = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
-        String firstname = "", surname = "", company = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
+        String firstname = "", surname = "", company = "", city = ""; //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$, //$NON-NLS-4$ 
 
         if ( calledInput != null )
         {
@@ -213,11 +215,13 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
           surname = person.getLastName();
           company = person.getCompany();
           name = person.getFullname();
+          city = person.getCity();
         }
 
         if (name.equals(""))name = messages.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$
         if (firstname.equals("") && surname.equals(""))surname = messages.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
         if (company.equals(""))company = messages.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$
+        if (city.equals(""))city = messages.getMessage("unknown"); //$NON-NLS-1$,  //$NON-NLS-2$        
 
         if (calledstr.startsWith("+49"))calledstr = "0" + calledstr.substring(3); //$NON-NLS-1$,  //$NON-NLS-2$
 
@@ -253,22 +257,22 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
         }
 
         if (JFritzUtils.parseBoolean(properties.getProperty("option.startExternProgram"))) { //$NON-NLS-1$
-            startExternalProgramCallOut(calledstr, name, providerstr, port, firstname, surname, company);
+            startExternalProgramCallOut(calledstr, name, providerstr, port, firstname, surname, company, city);
         }
     }
 
-    private void startExternalProgramCallIn(final String number, final String name,
-			final String called, final String port, final String firstname, final String surname, final String company) {
+    private void startExternalProgramCallIn(final String number, final String name, final String called, 
+    		final String port, final String firstname, final String surname, final String company, final String city) {
     	String program = JFritzUtils.deconvertSpecialChars(properties.getProperty("option.externProgram")); //$NON-NLS-1$
     	String args = JFritzUtils.deconvertSpecialChars(properties.getProperty("option.externProgramArgs")); //$NON-NLS-1$
-    	startExternalProgram(program, args, "In", number, name, called, port, firstname, surname, company);
+    	startExternalProgram(program, args, "In", number, name, called, port, firstname, surname, company, city);
     }
 
-    private void startExternalProgramCallOut(final String number, final String name,
-			final String called, final String port, final String firstname, final String surname, final String company) {
+    private void startExternalProgramCallOut(final String number, final String name, final String called, 
+    		final String port, final String firstname, final String surname, final String company, final String city) {
     	String program = JFritzUtils.deconvertSpecialChars(properties.getProperty("option.externProgram")); //$NON-NLS-1$
     	String args = JFritzUtils.deconvertSpecialChars(properties.getProperty("option.externProgramArgs")); //$NON-NLS-1$
-    	startExternalProgram(program, args, "Out", number, name, called, port, firstname, surname, company);
+    	startExternalProgram(program, args, "Out", number, name, called, port, firstname, surname, company, city);
     }
     
     protected String[] splitArguments(String argString) {
@@ -284,7 +288,8 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
     }
 
     private String replacePlaceholder(final String input, final String calltype, final String number, final String name,
-			final String called, final String port, final String firstname, final String surname, final String company) {
+			final String called, final String port, final String firstname, final String surname, final String company,
+			final String city) {
     	String result = input;
 		result = result.replaceAll("%CallType", calltype); //$NON-NLS-1$
 		result = result.replaceAll("%Number", number); //$NON-NLS-1$
@@ -294,6 +299,7 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
 		result = result.replaceAll("%Firstname", firstname); //$NON-NLS-1$
 		result = result.replaceAll("%Surname", surname); //$NON-NLS-1$
 		result = result.replaceAll("%Company", company); //$NON-NLS-1$
+		result = result.replaceAll("%City", city); //$NON-NLS-1$
 		
 		if (result.indexOf("%URLENCODE") > -1) { //$NON-NLS-1$
 			try {
@@ -318,11 +324,11 @@ public class DisplayCallsMonitor extends CallMonitorAdaptor {
     }
     
 	private void startExternalProgram(final String program, final String programArguments, final String calltype, final String number, final String name,
-			final String called, final String port, final String firstname, final String surname, final String company) {
+			final String called, final String port, final String firstname, final String surname, final String company, final String city) {
 		String[] args = splitArguments(programArguments);
 		
 		for (int i=0; i<args.length; i++) {
-			args[i] = replacePlaceholder(args[i], calltype, number, name, called, port, firstname, surname, company);
+			args[i] = replacePlaceholder(args[i], calltype, number, name, called, port, firstname, surname, company, city);
 		}
 
 		if (program.equals("")) { //$NON-NLS-1$

@@ -18,6 +18,7 @@
 - Bugfix: Fehlermeldung Username/Password beim Start, wenn Wizard eine FRITZ!Box erkennt und versucht mit ihr zu kommunizieren
 - Bugfix 0000349: Anrufmonitor kann keine Argumente mehr an externe Programme übergeben
 - JFritz kann nun mit der FritzBox auch über die Fernwartung kommunizieren
+- Neuer Parameter für externe Programme: %City
 
 New Strings:
 serial_not_found

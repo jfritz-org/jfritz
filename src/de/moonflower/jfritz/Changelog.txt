@@ -22,6 +22,7 @@ TODO tel.search.ch überprüfen und reparieren
 
 JFritz 0.7.5_21:
 - JFritz kann nun mit der FritzBox auch über die Fernwartung kommunizieren
+- Neuer Parameter für externe Programme: %City
 
 JFritz 0.7.5_20:
 - Bugfix: Reverse-Lookup für DasTelefonbuch repariert
