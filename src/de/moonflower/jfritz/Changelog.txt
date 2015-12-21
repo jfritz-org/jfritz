@@ -20,6 +20,9 @@ TODO tel.search.ch überprüfen und reparieren
 - TODO: Sounds trennen und individualisierbar gestalten
 - TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
 
+JFritz 0.7.5_21:
+- JFritz kann nun mit der FritzBox auch über die Fernwartung kommunizieren
+
 JFritz 0.7.5_20:
 - Bugfix: Reverse-Lookup für DasTelefonbuch repariert
 

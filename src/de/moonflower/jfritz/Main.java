@@ -564,6 +564,9 @@ public class Main  {
 			splash.setStatus("Detecting Fritz!Box ...");
 			try {
 				FritzBoxCommunication fbc = new FritzBoxCommunication("http", properties.getProperty("box.address"), properties.getProperty("box.port"));
+				fbc.setUserName(properties.getProperty("box.username"));
+				fbc.setPassword(Encryption.decrypt(properties.getProperty("box.password")));
+				
 				JSonBoxinfo jsonBoxinfo = new JSonBoxinfo(fbc);
 				result = checkSerialAddress(jsonBoxinfo.getSerial());
 			} catch (ClientProtocolException e) {

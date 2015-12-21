@@ -1,4 +1,4 @@
-﻿JFritz 0.7.5_19:
+﻿JFritz 0.7.5_21:
 - Bugfix: Unterstützung der neuen Firmwares 06.25 und 06.35 (großen Dank an Pikachu)
 - Bugfix: Reverse-Lookup für Deutschland repariert
 - Bugfix: Netzwerk-Button entfernt
@@ -17,6 +17,7 @@
 - Bugfix: Rufnummern, die mit 555, 777 oder 00038 beginnen, wurden fälschlicher weise als SIP-Nummern deklariert.
 - Bugfix: Fehlermeldung Username/Password beim Start, wenn Wizard eine FRITZ!Box erkennt und versucht mit ihr zu kommunizieren
 - Bugfix 0000349: Anrufmonitor kann keine Argumente mehr an externe Programme übergeben
+- JFritz kann nun mit der FritzBox auch über die Fernwartung kommunizieren
 
 New Strings:
 serial_not_found
