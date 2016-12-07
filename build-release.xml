@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- TODO generate/overwrite log4j.xml for beta-builds / release-builds -->
 <project name="JFritz-Release" default="prepare-beta" basedir=".">
-	<import file="../build-release-pwd.xml" />
 	<import file="build.xml" />
 
 	<property name="product" value="JFritz" />
@@ -313,8 +312,7 @@
             package="jfritz"
             section="utils"
             depends="procps, default-jre | java-package | java-7-oracle | openjdk-7-jre | openjdk-7-jre-headless | openjdk-7-jdk | sun-java6-jre | sun-java6-jdk | openjdk-6-jre | openjdk-6-jre-headless | openjdk-6-jdk | sun-java5-jre"
-        	preinst="${release-templates}/Linux/preinst"
-        >
+            preinst="${release-templates}/Linux/preinst">
             <version upstream="${version}"/>
             <maintainer email="Robert Palmer" name="jfritz@robotniko.de"/>
             <description synopsis="An application to communicate with your FRITZ!Box.">
@@ -396,6 +394,10 @@ http://www.jfritz.org/
 			</fileset>
 		</copy>
 
+            <exec executable="chmod">
+                <arg value="555"/>
+                <arg value="${release}/mac/tmp/JFritz.app/Contents/MacOS/JavaApplicationStub" />
+            </exec>
 	</target>
 
 	<target name="finish-mac" description="Deletes temporary mac release files!">
@@ -403,6 +405,7 @@ http://www.jfritz.org/
 	</target>
 
 	<target name="mac-set-execution-bit">
+<!--
 		<scp file="${release}/mac/JFritz-${version}-Mac.zip" port="${port2}" trust="yes" todir="${user2}@${server2}:./public" verbose="yes" password="${password2}"/>
 		<sshexec command="mkdir ./public/mac"  username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<sshexec command="cd ./public/mac; unzip ../JFritz-${version}-Mac.zip" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
@@ -413,6 +416,7 @@ http://www.jfritz.org/
 		<sshexec command="rmdir ./public/mac" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
 		<scp file="${user2}@${server2}:./public/JFritz-${version}-Mac.zip" port="${port2}" trust="yes" todir="${release}/mac/" verbose="yes" password="${password2}"/>
 		<sshexec command="rm ./public/JFritz-${version}-Mac.zip" username="${user2}" host="${server2}" port="${port2}" trust="yes" password="${password2}" />
+-->
 	</target>
 
 	<target name="create-mac-zip" description="Creates a ZIP-File for MacOS!">
