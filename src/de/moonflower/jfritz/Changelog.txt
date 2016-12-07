@@ -1,57 +1,205 @@
-TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
+ï»¿TODO: Auto-Resize-Callerlist-Columns: CallerTable.setTableProperties();
 TODO: Timer zum automatischen Aktualisieren der FritzBox-Einstellungen (Telefone, SIP-Provider, ...) nach X Minuten (z.B. 60 / 120)
 TODO: charset aus VCard auslesen und verwenden
 TODO: Beim ersten Start popup fuer das PW, wenn falscher Login festgestellt wurde!
 
 Non-JFritz-Changes:
-- Neu: Neue Klasse für das Anzeigen von Anrufen auf Samsung-TVs
-- Neu: Testklasse zur Überprüfung, ob es für die eigene Box ein FW-Update gibt
+- Neu: Neue Klasse fÃ¼r das Anzeigen von Anrufen auf Samsung-TVs
+- Neu: Testklasse zur ÃœberprÃ¼fung, ob es fÃ¼r die eigene Box ein FW-Update gibt
 - Neu: Neues Package mit neuer Rufnummer, muss durch externe Komponente ersetzt werden
-- Neu: Schriftart und -größe kann nun global verändert werden, funktioniert nicht wirklich
+- Neu: Schriftart und -grÃ¶ÃŸe kann nun global verÃ¤ndert werden, funktioniert nicht wirklich
 
 TODO vor dem Release:
-- Ankündigung: DOWNGRADE nicht möglich -> jfritz.txt bearbeiten, erste Zeile löschen
-- Setup für Windows unter Windows erstellen, oder aber eine andere Möglichkeit finden, das Setup-Icon auszutauschen
+- AnkÃ¼ndigung: DOWNGRADE nicht mÃ¶glich -> jfritz.txt bearbeiten, erste Zeile lÃ¶schen
+- Setup fÃ¼r Windows unter Windows erstellen, oder aber eine andere MÃ¶glichkeit finden, das Setup-Icon auszutauschen
 - Autoupdate komplett refaktorieren!
 - autoupdate.exe mitliefern
 - Debug-Klasse auf Log4j umstellen!
 
-TODO tel.search.ch überprüfen und reparieren
+TODO tel.search.ch Ã¼berprÃ¼fen und reparieren
 - TODO: Sounds trennen und individualisierbar gestalten
-- TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
+- TODO: Ist nicht FritzBox-AM spezifisch. FÃ¼r alle AMs implementieren und konfigurierbar gestalten
+
+JFritz 0.7.5_22:
+- Bugfix: Funktioniert mit der neuesten Firmware-Version 06.60 (und der Labor-Version fÃ¼r die kommende Final-Firmware)
+
+JFritz 0.7.5_21:
+- Neu 0000216: JFritz kann nun mit der FritzBox auch Ã¼ber die Fernwartung kommunizieren
+- Neuer Parameter fÃ¼r externe Programme: %City
+
+JFritz 0.7.5_20:
+- Bugfix: Reverse-Lookup fÃ¼r DasTelefonbuch repariert
+
+JFritz 0.7.5_19:
+- Bugfix 0000349: Anrufmonitor kann keine Argumente mehr an externe Programme Ã¼bergeben
+New Strings:
+external_program
+external_program_args
+
+JFritz 0.7.5_18:
+- Bugfix: Rufnummern, die mit 555, 777 oder 00038 beginnen, wurden fÃ¤lschlicher weise als SIP-Nummern deklariert.
+- Bugfix: Update der Firmware in jfritz.properties.xml, wenn eine neue FRITZ!Box gefunden wurde 
+- Bugfix: Fehlermeldung Username/Password beim Start, wenn Wizard eine FRITZ!Box erkennt und versucht mit ihr zu kommunizieren 
+
+JFritz 0.7.5_17:
+- Bugfix: Mehrfache BestÃ¤tigung einer neu gefunden FRITZ!Box unterbunden
+- Bugfix: Update der Firmware in jfritz.properties.xml, wenn eine neue FRITZ!Box gefunden wurde 
+
+JFritz 0.7.5_16:
+- Neu: ÃœberprÃ¼fung der FRITZ!Box-Seriennummer beim Start von JFritz, um Kommunikation mit unbekannten FRITZ!Boxen zu erkennen
+New Strings:
+serial_not_found
+
+JFritz 0.7.5_15:
+- Neu: Anzeige eines Dialogs zur Eingabe des Benutzernamen/Passworts, wenn falsche Login-Daten erkannt wurden
+
+JFritz 0.7.5_14:
+- Bugfix: Es wurden nicht alle SIP-Provider erkannt
+
+JFritz 0.7.5_13:
+- Bugfix: Es wurden nicht alle SIP-Provider erkannt 
+- RÃ¼ckwÃ¤rtssuche fÃ¼r die Schweiz aktualisiert
+
+JFritz 0.7.5_12: 
+- Logging nach log4j portiert
+
+JFritz 0.7.5_11:
+- Ignore ClientProtocolException, IOException and PageNotFound exception of getUPNPFromIgddesc()
+- Uninstall: Feedback E-Mail enthÃ¤lt nun die Firmware-Version
+
+JFritz 0.7.5_10:
+- Bugfix: Anrufmonitor wird beim Beenden von JFritz korrekt gestoppt
+- Bugfix: Setzen der Nebenstelle bei der WÃ¤hlhilfe
+
+JFritz 0.7.5_9:
+- Logging fÃ¼r das HinzufÃ¼gen von Nebenstellen erhÃ¶ht
+- Anrufmonitor versucht bei Problemen nun nicht stÃ¤ndig sofort eine neue Verbindung aufzubauen
+
+JFritz 0.7.5_8:
+- Bugfix: Reverse-Lookup fÃ¼r Deutschland repariert
+- Bugfix: Netzwerk-Button entfernt
+
+JFritz 0.7.5_7:
+- Bugfix: UnterstÃ¼tzung der neuen Firmwares 06.25 und 06.35 (groÃŸen Dank an Pikachu)
+
+JFritz 0.7.5_6:
+- Bugfix: False positives in reverse lookup for italian numbers
+
+JFritz 0.7.5_5:
+- Neu: Login nun in zwei Einstellungsdialoge aufgeteilt (IP und Anmeldedaten)
+- Neu: Wizard hat nun auch zwei Schritte fÃ¼r die Einrichtung der FRITZ!Box
+- Neu: Fehlermedlungen bei falschem Benutzer/Passwort verbessert 
+- Bugfix: Anrufmonitor baut Verbindung nach Verbindungsabbruch schneller wieder auf
+- Bugfix: Erkennen einer abgelaufenen SessionID
+
+JFritz 0.7.5_4: 
+- New: Supporting international firmwares (ES, FR and IT)
+
+JFritz 0.7.5_3: 
+- Neu 0000351: verbessertes Startscript (anbei)
+
+JFritz 0.7.5_2:
+- Neu 0000383: Anmeldung mit Username / Password unterstÃ¼tzen
+- Neu: Schweizer Rufnummern werden nun mit Ortsvorwahl dargestellt
+
+JFritz 0.7.5:
+- Weihnachtsversion
+
+JFritz 0.7.4.2_22:
+- Bugfix: RÃ¼ckwÃ¤rtssuche fÃ¼r viele LÃ¤nder aktualisiert
+- ÃœberprÃ¼fung auf Onlineupdate nur noch max. ein Mal pro Tag
+
+JFritz 0.7.4.2_21:
+- Bugfix: Nebenstellen mit nummerischem Namen werden nun korrekt verarbeitet  
+
+JFritz 0.7.4.2_20:
+- Neu: Anrufe wÃ¤hrend "Klingelsperre" werden nun erkannt und visualisiert (nur fÃ¼r manche Firmwares)
+
+JFritz 0.7.4.2_19:
+- Increased logging for Standby detection
+
+JFritz 0.7.4.2_18:
+- Bugfix 0000374: Refresh login (SID) if standby or suspend to ram is detected
+
+JFritz 0.7.4.2_17:
+- Bugfix: Support 7362 and other boxes
+
+JFritz 0.7.4.2_16:
+- Bugfix: Anrufmonitor fÃ¼r FritzOS 06.00
+
+JFritz 0.7.4.2_15:
+- Neu: Neuen Hinweis auf neue JFritz Version vorbereitet
+- Bugfix: Areacode und Areaprefix werden nun automatisch korrigiert
+- Bugfix: Supporting international firmwares > 05.50
+- Bugfix: Debian packaging, UnterstÃ¼tzung mehrerer JREs and JDKs hinzugefÃ¼gt
+- Neu: Windows Setup Ã¼bergibt bei Deinstallation die verwendete JFritz-Version und das Betriebssystem per Feedback-EMail
+
+JFritz 0.7.4.2_14:
+- Bugfix 0000399: IllegalArgumentException im Wizard bei FritzBox-Page
+
+JFritz 0.7.4.2_13:
+- Support FritzOS 06.00
+
+JFritz 0.7.4.2_12:
+- Bugfix 0000377: Warning: Could not parse portstr
+- Bugfix 0000395: WÃ¤hlhilfe wÃ¤hlt doppelt
+- Bugfix 0000392: Falsche Darstellung der Umlaute
+- Bugfix 0000396: "Firmware-Erkennung gescheitert", aktualisieren der Anrufliste nicht mÃ¶glich
+- Bugfix 0000397: Keine Angabe / Abholung der Nummern/SIPs
+- Bugfix 0000398: JFRITZ --export per Kommandozeile // Datei wird zwar neu erzeugt, aber ohne aktuelle Anrufliste
+- Bugfix: Tray disappears after renewing IP address
+
+JFritz 0.7.4.2_11:
+- Support FritzOS 05.55 and FritzOS 05.60
+- Bugfix 0000372: Anrufliste kann mit v0.7.4.1.32 nicht mehr gelÃ¶scht werden
+- Bugfix 0000390: Erkennung der FritzBox anhand MAC scheint defekt zu sein
+- Bugfix 0000385: Code -w unterdrÃ¼ckt die Meldung mit mehreren Instanzen nicht mehr
+- Bugfix 0000374: Kein Abholen der Anrufliste nach Ruhezustand
+- Bugfix 0000388: Reconnect schlÃ¤gt nach einem FritzBox reboot fehl
+- Bugfix 0000391: AusfÃ¼hren von externen BAT-Dateien unter Java 1.7.0_21 nicht mehr mÃ¶glich
+- Bugfix 0000376: UnterstÃ¼tzung der 6360er Unitymedia Firmware
+- Bugfix: Verbindungsverlust nach gewisser Zeit
+- Bugfix: Verbesserte Erkennung von ungÃ¼ltigen Session IDs
+- Bugfix: Verwende UTF-8, um Daten von der FritzBox zu lesen 
+- Bugfix 0000393: Es wÃ¤re schÃ¶n, wenn die neu eingefÃ¼hrte Revision-Nummer im MenÃ¼ des TrayIcon-MenÃ¼s angezeigt wÃ¼rde
+- Bugfix 0000394: 7360, HWRev 124 wird nicht erkannt -> boxnames.conf nicht aktuell
+
+
+JFritz 0.7.4.1.32:
+- Fehlende Bibliothek hinzugefÃ¼gt
 
 JFritz 0.7.4.1.31:
-- Unterstützung der neuen Firmware
+- UnterstÃ¼tzung der neuen Firmware
 
 JFritz 0.7.4.1.30:
 - Quickdial-Verarbeitung deaktiviert
-- Bugfix: NumberFormatException bei "Telefonie über Mobilfunk"
+- Bugfix: NumberFormatException bei "Telefonie Ã¼ber Mobilfunk"
 
 JFritz 0.7.4.1.29:
 - boxnames.conf aktualisiert
 - Auf reverseLookup-1.0.5 upgedated
-- Reverselookup für DasOertliche.de repariert
-- Manuelles Auslösen der Rückwärtssuche sucht nun auch diejenigen Einträge durch, die bisher nur einen Ort zugewiesen bekommen haben
+- Reverselookup fÃ¼r DasOertliche.de repariert
+- Manuelles AuslÃ¶sen der RÃ¼ckwÃ¤rtssuche sucht nun auch diejenigen EintrÃ¤ge durch, die bisher nur einen Ort zugewiesen bekommen haben
 
 JFritz 0.7.4.1.28:
 - Bugfix [0000341]: Could not get Save Directory bei der Verwendung des Windows-Installers
-- Bugfix [0000343]: Rückwärtssuche für einen Eintrag ausgegraut
-- Bugfix [0000344]: Rückwärtssuche für alle Einträge "startet verzögert"
+- Bugfix [0000343]: RÃ¼ckwÃ¤rtssuche fÃ¼r einen Eintrag ausgegraut
+- Bugfix [0000344]: RÃ¼ckwÃ¤rtssuche fÃ¼r alle EintrÃ¤ge "startet verzÃ¶gert"
  
 JFritz 0.7.4.1.27:
-- Anzeige von Popups/Überwachungstabelle getrennt
-- Neue Suchelemente für Rückwärtssuche: company, houseNumber
-- Rückwärtssuche für Deutschland funktioniert wieder
-- Rückwärtssuche für Österreich funktioniert wieder
-- Rückwärtssuche für Belgien funktioniert wieder
-- Rückwärtssuche für Frankreich funktioniert wieder
-- Rückwärtssuche für Italien funktioniert wieder
-- Rückwärtssuche für Luxemburg funktioniert wieder
-- Rückwärtssuche für Niederlande funktioniert wieder
-- Rückwärtssuche für Norwegen funktioniert wieder
-- Rückwärtssuche für Schweden funktioniert wieder
-- Rückwärtssuche für Schweiz funktioniert wieder
-- Rückwärtssuche für USA funktioniert wieder
+- Anzeige von Popups/Ãœberwachungstabelle getrennt
+- Neue Suchelemente fÃ¼r RÃ¼ckwÃ¤rtssuche: company, houseNumber
+- RÃ¼ckwÃ¤rtssuche fÃ¼r Deutschland funktioniert wieder
+- RÃ¼ckwÃ¤rtssuche fÃ¼r Ã–sterreich funktioniert wieder
+- RÃ¼ckwÃ¤rtssuche fÃ¼r Belgien funktioniert wieder
+- RÃ¼ckwÃ¤rtssuche fÃ¼r Frankreich funktioniert wieder
+- RÃ¼ckwÃ¤rtssuche fÃ¼r Italien funktioniert wieder
+- RÃ¼ckwÃ¤rtssuche fÃ¼r Luxemburg funktioniert wieder
+- RÃ¼ckwÃ¤rtssuche fÃ¼r Niederlande funktioniert wieder
+- RÃ¼ckwÃ¤rtssuche fÃ¼r Norwegen funktioniert wieder
+- RÃ¼ckwÃ¤rtssuche fÃ¼r Schweden funktioniert wieder
+- RÃ¼ckwÃ¤rtssuche fÃ¼r Schweiz funktioniert wieder
+- RÃ¼ckwÃ¤rtssuche fÃ¼r USA funktioniert wieder
 New Strings:
 - popup_incoming_calls
 - popup_outgoing_calls
@@ -65,18 +213,18 @@ Strings not used anymore:
 JFritz 0.7.4.1.26:
 - Neu: Feedback bei Deinstallation 
 - Bugfix: Splash wird nach Wizard sofort anzeigen
-- Bugfix: Backup-Verzeichnis wird nun bei Deinstallation auch gelöscht
-- Bugfix: Bei Installation wird überprüft, ob JFritz noch läuft
-- Bugfix: Bei Deinstallation wird überprüft, ob JFritz noch läuft
+- Bugfix: Backup-Verzeichnis wird nun bei Deinstallation auch gelÃ¶scht
+- Bugfix: Bei Installation wird Ã¼berprÃ¼ft, ob JFritz noch lÃ¤uft
+- Bugfix: Bei Deinstallation wird Ã¼berprÃ¼ft, ob JFritz noch lÃ¤uft
 
 JFritz 0.7.4.1.25:
-- Einrichtungsdialog (Wizard) überarbeitet, wird nun vor dem JFritz-Hauptfenster angezeigt
+- Einrichtungsdialog (Wizard) Ã¼berarbeitet, wird nun vor dem JFritz-Hauptfenster angezeigt
 - Einrichtungsdialog wird jedes Mal angezeigt, solange die FritzBox noch nicht konfiguriert wurde
-- Startreihenfolge der einzelnen Komponenten angepasst (Prüfung auf mehrfachen Start, Einrichtungsdialog) 
+- Startreihenfolge der einzelnen Komponenten angepasst (PrÃ¼fung auf mehrfachen Start, Einrichtungsdialog) 
 
 JFritz 0.7.4.1.24:
 - Buttons im Wizard werden nun nach der Sprachwahl in der korrekten Sprache angezeigt
-- Config-Dialog breiter gestaltet und dafür wieder die Schriftgröße der erkannten Firmware vergrößert 
+- Config-Dialog breiter gestaltet und dafÃ¼r wieder die SchriftgrÃ¶ÃŸe der erkannten Firmware vergrÃ¶ÃŸert 
 New Strings:
 back
 finish
@@ -87,11 +235,11 @@ JFritz 0.7.4.1.23:
 - Proxy Einstellungen nach "Weiteres" verschoben
 
 JFritz 0.7.4.1.22:
-- Bugfix: Doppelte Einträge nach Benutzung der Wählhilfe
+- Bugfix: Doppelte EintrÃ¤ge nach Benutzung der WÃ¤hlhilfe
 - Logging des Anrufmonitors von Debug auf log4j
 
 JFritz 0.7.4.1.21:
-- About-Dialog überarbeitet
+- About-Dialog Ã¼berarbeitet
 
 JFritz 0.7.4.1.20:
 - Bugfix: Log4j.log wird nun nicht mehr ins Programmverzeichnis geschrieben
@@ -103,21 +251,21 @@ JFritz 0.7.4.1.18:
 - Windows: Umlaute werden bei Installation wieder korrekt dargestellt
 - Autoupdate: Komplett entfernt
 - Backup refactored, Verwendung von Apache commons IO
-- Speicherverzeichnis refactored, Ändern des Speicherverzeichnisses kopiert nun alle Dateien und Ordner und löscht das alte Speicherverzeichnis
+- Speicherverzeichnis refactored, Ã„ndern des Speicherverzeichnisses kopiert nun alle Dateien und Ordner und lÃ¶scht das alte Speicherverzeichnis
 
 JFritz 0.7.4.1.17:
 - jfritz.txt in INI-Format umgewandelt
-- Windows: Installation und Deinstallation überarbeitet
-- Bugfix: Default-Speicherverzeichnis für JFritz Daten bei Erstinstallation
-- Neu: Namen zu allen derzeit verfügbaren FritzBoxen (danke Rainer) 
-- Schriftgröße im Einstelldialog (FRITZ!Box) angepasst
+- Windows: Installation und Deinstallation Ã¼berarbeitet
+- Bugfix: Default-Speicherverzeichnis fÃ¼r JFritz Daten bei Erstinstallation
+- Neu: Namen zu allen derzeit verfÃ¼gbaren FritzBoxen (danke Rainer) 
+- SchriftgrÃ¶ÃŸe im Einstelldialog (FRITZ!Box) angepasst
 
 JFritz 0.7.4.1.16:
-- Anrufmonitor: Ausführen von externen Programmen refaktoriert
-- Bugfix [0000335]: Anrufmonitor hält aufgerufenes Programm an
+- Anrufmonitor: AusfÃ¼hren von externen Programmen refaktoriert
+- Bugfix [0000335]: Anrufmonitor hÃ¤lt aufgerufenes Programm an
 
 JFritz 0.7.4.1.15:
-- Mac OS X: Tastaturkürzel für Google-Maps von ALT+G auf Command+G umgestellt 
+- Mac OS X: TastaturkÃ¼rzel fÃ¼r Google-Maps von ALT+G auf Command+G umgestellt 
 - Telefonbuch: Die Taste ESCAPE deaktiviert die aktuelle Suche
 
 JFritz 0.7.4.1.14:
@@ -133,14 +281,14 @@ JFritz 0.7.4.1.12:
 - Korrekte Initialisierung von Log4j, Logging sollte nun in eine Datei Log4j.log im Speicherverzeichnis stattfinden
 
 JFritz 0.7.4.1.11:
-- Autoupdate-Funktionalität wurde deaktiviert. Nun nur noch ein Hinweiß, dass es eine neue Version zum Download auf http://www.jfritz.org gibt.
+- Autoupdate-FunktionalitÃ¤t wurde deaktiviert. Nun nur noch ein Hinweis, dass es eine neue Version zum Download auf http://www.jfritz.org gibt.
 
 JFritz 0.7.4.1.10:
 - Bugfix [0000336]: Verschieben des Schreibordners bei frischer Installation
 TODO: DEB erstellen, installieren und schauen ob es nun ok ist!!!
 
 JFritz 0.7.4.1.9:
-- Neue EXE Version für 64-Bit Java
+- Neue EXE Version fÃ¼r 64-Bit Java
 - Bugfix [0000291]: Jfritz started nicht mit Windows 64 bit und Java 64 bit 
 - Neue Bibliothek JFontChooser
 New Strings:
@@ -151,15 +299,15 @@ JFritz 0.7.4.1.8:
 
 JFritz 0.7.4.1.7:
 - Neu: Mapping von FritzBox-ID zu Namen in Datei "conf/boxnames.conf" ausgelagert
-- Neu: Proxy-Einstellungen werden nun auch für AutoUpdate verwendet
-- Bugfix: Proxy ohne Authentifizierung arbeitet nun. TODO überprüfen, ob auch ein Proxy mit Authentifizierung funktioniert
+- Neu: Proxy-Einstellungen werden nun auch fÃ¼r AutoUpdate verwendet
+- Bugfix: Proxy ohne Authentifizierung arbeitet nun. TODO Ã¼berprÃ¼fen, ob auch ein Proxy mit Authentifizierung funktioniert
 
 JFritz 0.7.4.1.6:
 - Bugfix [0000325]: Absturz des Anrufmonitors, wenn der Anruf vom AB angenommen wird
 
 JFritz 0.7.4.1.5:
-- Einstellungsdialog für Proxy-Einstellungen
-- Proxy kann nun für Rückwärtssuche verwendet werden
+- Einstellungsdialog fÃ¼r Proxy-Einstellungen
+- Proxy kann nun fÃ¼r RÃ¼ckwÃ¤rtssuche verwendet werden
 New Strings:
 proxy_active
 proxy_http
@@ -169,7 +317,7 @@ proxy_user
 proxy_password
 
 JFritz 0.7.4.1.4:
-- Log4j in weiteren Klassen eingeführt
+- Log4j in weiteren Klassen eingefÃ¼hrt
 - Internationalisierung extrahiert 
 
 JFritz 0.7.4.1.3:
@@ -178,52 +326,52 @@ JFritz 0.7.4.1.3:
 - Verwendung von Log4j
 
 JFritz 0.7.4.1.2:
-- LookupThread überarbeitet, bessere Ergebnisse bei der Rückwärtssuche
+- LookupThread Ã¼berarbeitet, bessere Ergebnisse bei der RÃ¼ckwÃ¤rtssuche
 
 JFritz 0.7.4.1.1:
-- Neu: Unterstützung der FRITZ!Box 7320
-- Bugfix: Rückwärtssuche für Niederlande
-- Bugfix: Rückwärtssuche für Norwegen
+- Neu: UnterstÃ¼tzung der FRITZ!Box 7320
+- Bugfix: RÃ¼ckwÃ¤rtssuche fÃ¼r Niederlande
+- Bugfix: RÃ¼ckwÃ¤rtssuche fÃ¼r Norwegen
 - Bugfix: Textfeld zur Eingabe von zu ignorierenden MSNs war in manchen Look&Feels zu klein
-- Bugfix: Vergrößerung der Anzeige bei der Einstellung der zu ignorierenden MSNs
+- Bugfix: VergrÃ¶ÃŸerung der Anzeige bei der Einstellung der zu ignorierenden MSNs
 - Bugfix [0000322]: Falsche Selektion im Telefonbuch bei Doppelklick auf einen Anrufer mit unbekannter Rufnummer in der Anrufliste
 
 JFritz 0.7.4.1:
 Released version
 
 JFritz 0.7.4.0.5:
-- Bugfix [0000316]: Pictures gelöscht 
+- Bugfix [0000316]: Pictures gelÃ¶scht 
 
 JFritz 0.7.4.0.4:
 - Bugfix [0000287]: Nach dem ersten Anruf keine weitere Benachrichtigung  
 - Bugfix [0000293]: Nach erstem Anruf keine Reaktion auf weitere Anrufe
-- Bugfix [0000313]: Derzeit geführte Anrufe werden nach Beendigung des Gesprächs nicht korrekt entfernt
-- Bugfix [0000315]: JFritz läßt sich nicht beenden 
+- Bugfix [0000313]: Derzeit gefÃ¼hrte Anrufe werden nach Beendigung des GesprÃ¤chs nicht korrekt entfernt
+- Bugfix [0000315]: JFritz lÃ¤ÃŸt sich nicht beenden 
 
 JFritz 0.7.4.0.3:
 - Neu [0000309]: 4th Localization update for The Netherlands
-- Bugfix [0000286]: Anrufbeantworter werden unter Anschlüsse als Nummern angezeigt 
-- Bugfix [0000297]: Icons für MacOSX in höherer Auflösung
+- Bugfix [0000286]: Anrufbeantworter werden unter AnschlÃ¼sse als Nummern angezeigt 
+- Bugfix [0000297]: Icons fÃ¼r MacOSX in hÃ¶herer AuflÃ¶sung
 - Bugfix [0000305]: Redraw-Probleme auf dem Mac  
-- Bugfix [0000306]: Buttons in Jfritz werden erst sichtbar wenn man sie drückt
+- Bugfix [0000306]: Buttons in Jfritz werden erst sichtbar wenn man sie drÃ¼ckt
 - Bugfix [0000307]: Redraw unter WIn7 64 HP
 - Bugfix [0000309]: 4th Localization update for The Netherlands 
 - Bugfix [0000310]: JFritz doesn't recognize FRITZ!Box 7340 
-- Bugfix [0000314]: Doppelte (dreifache) Einträge 
+- Bugfix [0000314]: Doppelte (dreifache) EintrÃ¤ge 
 
 JFritz 0.7.4.0.2:
 - Neu [0000221]: Anzeigen des Ortsnamens als eigene Spalte
-- Bugfix: Rückwärtssuche für Norwegen repariert
-- Bugfix: Rückwärtssuche für Schweiz repariert
-- Bugfix: Rückwärtssuche für Frankreich repariert
-- Bugfix [0000297]: Icons für MacOSX in höherer Auflösung
-- Bugfix [0000304]: Rückwärtssuche findet zugehörigen Ort nicht
+- Bugfix: RÃ¼ckwÃ¤rtssuche fÃ¼r Norwegen repariert
+- Bugfix: RÃ¼ckwÃ¤rtssuche fÃ¼r Schweiz repariert
+- Bugfix: RÃ¼ckwÃ¤rtssuche fÃ¼r Frankreich repariert
+- Bugfix [0000297]: Icons fÃ¼r MacOSX in hÃ¶herer AuflÃ¶sung
+- Bugfix [0000304]: RÃ¼ckwÃ¤rtssuche findet zugehÃ¶rigen Ort nicht
 New Strings:
 city_desc
 
 JFritz 0.7.4.0.1:
 - Bugfix [0000106]: Installer findet kein Java
-- Bugfix [0000300]: Rückwärtssuche ausgegraut
+- Bugfix [0000300]: RÃ¼ckwÃ¤rtssuche ausgegraut
 - Bugfix [0000301]: Landesflaggen und Netzbetreiber werden nicht mehr angezeigt 
 - Bugfix [0000302]: JFritz startet nicht unter Mac OSX
 - Bugfix [0000303]: Java 32-Bit wird unter x64 nicht erkannt 
@@ -232,19 +380,19 @@ JFritz 0.7.4:
 - Release of new version
 
 JFritz 0.7.3.35:
-- Bugfix: Löschen der Anrufliste mit Firmware xx.04.86 funktioniert wieder.
+- Bugfix: LÃ¶schen der Anrufliste mit Firmware xx.04.86 funktioniert wieder.
 
 JFritz 0.7.3.34:
 - Neu: Aktivierung des Editierfeldes im Telefonbuch bei Klick aus der Anrufliste
 - Neu: Vorbereitung zur Ersetzung der Rufnummernklasse durch eine verbesserte Implementierung
-- Neu: Phonebook-XML-Handler lädt nun auch Informationen über Land und Area und ist sich der Versionierung bewusst
-- Änderung: Neue JUnit-Version für Tests
+- Neu: Phonebook-XML-Handler lÃ¤dt nun auch Informationen Ã¼ber Land und Area und ist sich der Versionierung bewusst
+- Ã„nderung: Neue JUnit-Version fÃ¼r Tests
 
 JFritz 0.7.3.33:
 - Bugfix: Wizard verhindert Start von JFritz
 
 JFritz 0.7.3.32:
-- Änderung: Redesign Autoupdate
+- Ã„nderung: Redesign Autoupdate
 - Neu: Changelog beim Autoupdate einsehbar
 - Beta-Version nun auch per Autoupdate aktualisierbar
 New Strings:
@@ -252,27 +400,27 @@ changelog (update)
 changelog_title (update)
 
 JFritz 0.7.3.31:
-- Änderung: Code cleanup im Autoupdate
+- Ã„nderung: Code cleanup im Autoupdate
 
 JFritz 0.7.3.30:
-- Bugfix: Reverselookup für Deutschland.
-- Bugfix: Reverselookup für Niederlande.
-- Bugfix: Reverselookup für Norwegen.
+- Bugfix: Reverselookup fÃ¼r Deutschland.
+- Bugfix: Reverselookup fÃ¼r Niederlande.
+- Bugfix: Reverselookup fÃ¼r Norwegen.
 - Neu: Optimierung des Reverselookup.
 
 JFritz 0.7.3.29:
-- Neu: Es können nun mehr Informationen eines Anrufs über das Kontextmenü in die Zwischenablage kopiert werden. 
-- Neu: Unterstützung für FRITZ!Box 7112.
-- Bugfix: Falsche Anzeige bei den Filterbuttons, wenn man mit der Maus drüberfährt.
-- Bugfix: Wählhilfe wieder sichtbar, wenn Tabs Quickdial oder Überwachung ausgewählt waren.
+- Neu: Es kÃ¶nnen nun mehr Informationen eines Anrufs Ã¼ber das KontextmenÃ¼ in die Zwischenablage kopiert werden. 
+- Neu: UnterstÃ¼tzung fÃ¼r FRITZ!Box 7112.
+- Bugfix: Falsche Anzeige bei den Filterbuttons, wenn man mit der Maus drÃ¼berfÃ¤hrt.
+- Bugfix: WÃ¤hlhilfe wieder sichtbar, wenn Tabs Quickdial oder Ãœberwachung ausgewÃ¤hlt waren.
 - Bugfix [0000086]: Start des Telefonbuchs immer im Edit-Modus. 
 - Bugfix [0000143]: Neuer Eintrag bei unbekannter Nummer durch Doppelklick in der Anrufliste 
-- Bugfix [0000204]: Löschen des Anruferbildes ermöglichen. 
+- Bugfix [0000204]: LÃ¶schen des Anruferbildes ermÃ¶glichen. 
 - Bugfix [0000267]: Kommandozeilenparameter -h oder --h 
 - Bugfix [0000269]: Kommandozeilenparameter nimmt alles an ohne fehler 
-- Bugfix [0000272]: Führende Null bei der Wählhilfe störend
-- Änderung: Build.xml und Build-Release.xml überarbeitet und neu strukturiert.
-- Änderung: FritzBox-Klasse, Vorbereitung für Remote-Abfrage per https.
+- Bugfix [0000272]: FÃ¼hrende Null bei der WÃ¤hlhilfe stÃ¶rend
+- Ã„nderung: Build.xml und Build-Release.xml Ã¼berarbeitet und neu strukturiert.
+- Ã„nderung: FritzBox-Klasse, Vorbereitung fÃ¼r Remote-Abfrage per https.
 New Strings:
 edit_entry
 picture_remove_desc
@@ -281,59 +429,59 @@ picture_set
 picture_set_desc
 
 JFritz 0.7.3.28:
-- Bugfix: Rückwärtssuche Schweden.
+- Bugfix: RÃ¼ckwÃ¤rtssuche Schweden.
 - Bugfix: MacOSX-Zip-Build
 
 JFritz 0.7.3.27:
-- Bugfix: Rückwärtssuche Schweden.
+- Bugfix: RÃ¼ckwÃ¤rtssuche Schweden.
 - Bugfix: Daten im Datenverzeichnis speichern (Verzeichnis wurde nicht erstellt).
-- Änderung: Neue MacOSX-Vorlage im Ant-Script.
+- Ã„nderung: Neue MacOSX-Vorlage im Ant-Script.
 
 JFritz 0.7.3.26:
-- Bugfix: Rückwärtssuche Norwegen.
-- Neu: JUnitTest für Rückwärtssuche Norwegens.
-- Neu: Möglichkeit den Vor- und Nachnamen beim parsen der Rückwärtssuche-Seite zu vertauschen (für Norwegen).
-- Neu [0000265]: Tastaturbefehl für Suche (CTRL-F).
+- Bugfix: RÃ¼ckwÃ¤rtssuche Norwegen.
+- Neu: JUnitTest fÃ¼r RÃ¼ckwÃ¤rtssuche Norwegens.
+- Neu: MÃ¶glichkeit den Vor- und Nachnamen beim parsen der RÃ¼ckwÃ¤rtssuche-Seite zu vertauschen (fÃ¼r Norwegen).
+- Neu [0000265]: Tastaturbefehl fÃ¼r Suche (CTRL-F).
 - Neu: Automatische Erstellung von Debian-Paketen.
-- Änderung [0000237]: Daten im Datenverzeichnis speichern. 
+- Ã„nderung [0000237]: Daten im Datenverzeichnis speichern. 
 	XML-Dateien, debug.log und .lock werden nun 
 	unter Windows nach %APPDATA%/JFritz, 
 	unter MacOSX nach ~/Library/Application Support/JFritz und 
 	unter Linux nach ~/.jfritz geschrieben/verschoben. 
-- Änderung: Erkennung des Betriebssystems geändert.
+- Ã„nderung: Erkennung des Betriebssystems geÃ¤ndert.
 New strings:
 moveDataDirectory_Warning
 
 JFritz 0.7.3.25:
-- Neu: Wählhilfe aus Tray übernimmt Nummer aus Zwischenablage.
+- Neu: WÃ¤hlhilfe aus Tray Ã¼bernimmt Nummer aus Zwischenablage.
 - Neu: %CallType bei Start von Externen Programmen zur Unterscheidung von ankommenden ("In") oder ausgehenden ("Out") Anrufen.
 - Neu: VCard-Import
 - Bugfix [0000067]: Backup, nur die letzten X Backups behalten.
-- Bugfix: Textfelder im Wählhilfe-Dialog vergrößert.  
+- Bugfix: Textfelder im WÃ¤hlhilfe-Dialog vergrÃ¶ÃŸert.  
 - Bugfix: Falsche IP bei Selektion einer FritzBox in den Einstellungen.
-- Änderung: CSV-Import der Anrufliste komplett umgeschrieben.
-- Änderung: CSV-Import der Anrufliste von jAnrufmonitor.
+- Ã„nderung: CSV-Import der Anrufliste komplett umgeschrieben.
+- Ã„nderung: CSV-Import der Anrufliste von jAnrufmonitor.
 - Bugfix: Google-Link bei Quickdial
-- Bugfix: Rückwärtssuche Norwegen
+- Bugfix: RÃ¼ckwÃ¤rtssuche Norwegen
 - Bugfix: StdErr nun gleichzeitig auf Console und in Debugdatei
-- Bugfix: TableRenderer im Phonebook fälschlicherweise nach Importieren zurückgesetzt
+- Bugfix: TableRenderer im Phonebook fÃ¤lschlicherweise nach Importieren zurÃ¼ckgesetzt
 New String:
 import_contacts_vcard
 vcf_files 
  
 JFritz 0.7.3.24:
-- Neu: Reboot der FritzBox per Tray-Menü möglich.
+- Neu: Reboot der FritzBox per Tray-MenÃ¼ mÃ¶glich.
 - Bugfix [0000067]: Backup, nur die letzten X Backups behalten 
 - Bugfix [0000258]: 0.7.3.21 beta Anzeige der Telefonate und Gesamtdauer fehlt nach Programmstart 
 - Bugfix [0000259]: Eingabefelder im Adressbuch zu klein 
-- Bugfix [0000262]: Ältere Sicherungskopien automatisch löschen
+- Bugfix [0000262]: Ã„ltere Sicherungskopien automatisch lÃ¶schen
 - Bugfix [0000264]: FB-Verbindungs-Symbol bleibt Rot, beim Wechseln des Look and Feels
 New strings:
 keep_important_backups_only  
  
 JFritz 0.7.3.23:
 - Bugfix [0000240]: Verbindung zur FritzBox unterbrochen 
-- Bugfix [0000260]: Buttons "Alle" und "Keine" bei MSN- und Port-Filter hinzufügen 
+- Bugfix [0000260]: Buttons "Alle" und "Keine" bei MSN- und Port-Filter hinzufÃ¼gen 
 New strings:
 select_none
 Changed strings:
@@ -341,8 +489,8 @@ okay (german Okay -> OK)
 select_all
 
 JFritz 0.7.3.22:
-- Neu [0000239]: Unterstützung für Fritz!Mini
-- Änderung: Erkennung von DECT-Telefonen angepasst, weil Fritz!Mini auf ähnliche Weise erkannt werden.
+- Neu [0000239]: UnterstÃ¼tzung fÃ¼r Fritz!Mini
+- Ã„nderung: Erkennung von DECT-Telefonen angepasst, weil Fritz!Mini auf Ã¤hnliche Weise erkannt werden.
 - Bugfix [0000250]: Dialassist: The Yes/No buttons are always English (Yes/No) instead of localized text. 
 - Bugfix [0000251]: Exit JFritz Window: The Yes/No buttons are always in English (Yes/No) instead of localized text.
 - Bugfix [0000253]: Phonebook tab: Column "Private" is always English text (Yes/No) instead of localized text.
@@ -351,7 +499,7 @@ JFritz 0.7.3.22:
 JFritz 0.7.3.21:
 - Neu: Neue Option (Weiteres) um Fensterdekorationen abzuschalten.
 - Bugfix: Fehlermeldung "Monitor schon gestartet" beim wechseln des Look&Feel aus dem Tray heraus.
-- Änderung: ConfigDialog erkennt die Einstellungen der FritzBox nur, wenn sich die IP, das Passwort oder der Port geändert haben.
+- Ã„nderung: ConfigDialog erkennt die Einstellungen der FritzBox nur, wenn sich die IP, das Passwort oder der Port geÃ¤ndert haben.
 - Feature [0000255]: 3rd Localization update for The Netherlands 
 Changed Strings:
 fetchlist
@@ -368,56 +516,56 @@ tray
 tray_click 
 
 JFritz 0.7.3.19:
-- Neu: Boxen über Tray-Menü steuerbar (Abholen der Anrufliste, Erneuern der WAN-IP)
-- Neu [0000111]: WAN IP über Tray-Icon
-- Bugfix: Tray unter Java 1.6 beim wechseln der Sprache nicht mehr verfügbar.
+- Neu: Boxen Ã¼ber Tray-MenÃ¼ steuerbar (Abholen der Anrufliste, Erneuern der WAN-IP)
+- Neu [0000111]: WAN IP Ã¼ber Tray-Icon
+- Bugfix: Tray unter Java 1.6 beim wechseln der Sprache nicht mehr verfÃ¼gbar.
 New Strings:
 renew_ip
 
 JFritz 0.7.3.18:
-- Änderung: Query-Methode wird nun über logic:status/nspver bestimmt.
+- Ã„nderung: Query-Methode wird nun Ã¼ber logic:status/nspver bestimmt.
 Changed Strings:
 play_sound / added "/outgoing"
 
 JFritz 0.7.3.17:
-- Änderung: Log-Severity wieder auf DEBUG angehoben.
-- Änderung: Query-Methode wird nun über box.localtime bestimmt.
-- Änderung: Fallback auf UPnP um MAC-Adresse zu bestimmen.
+- Ã„nderung: Log-Severity wieder auf DEBUG angehoben.
+- Ã„nderung: Query-Methode wird nun Ã¼ber box.localtime bestimmt.
+- Ã„nderung: Fallback auf UPnP um MAC-Adresse zu bestimmen.
 - Neu: Wenn keine MAC-Adresse bestimmt werden konnte, kommt nun eine Warnung.
-- Neu: Vorbereitung Anrufliste und Telefonbuch auf neues Interface um Client/Server zu überarbeiten.
+- Neu: Vorbereitung Anrufliste und Telefonbuch auf neues Interface um Client/Server zu Ã¼berarbeiten.
 - Bugfix [0000234]: Beta-Version 7.3.7 startet nicht (Erkennung der ATA-Version) 
 New Strings: 
 mac_not_found
 
 JFritz 0.7.3.16:
-- Bugfix [0000191]: Rufnummerübergabe an Wählhilfe funktioniert nicht (für Telefonbuch)
+- Bugfix [0000191]: RufnummerÃ¼bergabe an WÃ¤hlhilfe funktioniert nicht (fÃ¼r Telefonbuch)
 - Bugfix [0000246]: Aufruf von Google-Maps funktioniert auf dem Mac nicht. 
 
 JFritz 0.7.3.15:
-- Bugfix [0000191]: Rufnummerübergabe an Wählhilfe funktioniert nicht (für Anrufliste) 
-- Neu [0000158]: Aufruf von Google-Maps als rechte Maustasten-Menüpunkt im Telefonbuch und in der Anrufliste (Shortcut ALT+G)
+- Bugfix [0000191]: RufnummerÃ¼bergabe an WÃ¤hlhilfe funktioniert nicht (fÃ¼r Anrufliste) 
+- Neu [0000158]: Aufruf von Google-Maps als rechte Maustasten-MenÃ¼punkt im Telefonbuch und in der Anrufliste (Shortcut ALT+G)
  	 
 JFritz 0.7.3.14:
 - Bugfix [0000190]: Trayproblem unter Ubuntu 9.04 nicht behoben.
 - Bugfix [0000243]: Wahlhilfe setzt Ortsvorwahl und Ortsprefix vor Sondernummer
-- Bugfix [0000244]: Kompatibilität zu Java 1.5 wiederhergestellt (Anschluss/Port-Filter).
-- Bugfix: Endlosschleife, wenn JFritz läuft und auf der FritzBox das Passwort geändert wird.
-- Neu [0000245]: Wählhilfe im Tray-Menu anzeigen
+- Bugfix [0000244]: KompatibilitÃ¤t zu Java 1.5 wiederhergestellt (Anschluss/Port-Filter).
+- Bugfix: Endlosschleife, wenn JFritz lÃ¤uft und auf der FritzBox das Passwort geÃ¤ndert wird.
+- Neu [0000245]: WÃ¤hlhilfe im Tray-Menu anzeigen
 New Strings:
 dial_assist
 
 JFritz 0.7.3.13:
-- Änderung: Tooltip-Text für Port-Filter korrigiert.
-- Neu: Anzeige des Filterstatus für MSN- und Port-Filter.
-- Bugfix: Reset-Filter-Knopf setzt nun auch MSN- und Port-Filter zurück.
+- Ã„nderung: Tooltip-Text fÃ¼r Port-Filter korrigiert.
+- Neu: Anzeige des Filterstatus fÃ¼r MSN- und Port-Filter.
+- Bugfix: Reset-Filter-Knopf setzt nun auch MSN- und Port-Filter zurÃ¼ck.
 New Strings:
 filter_port
 
 JFritz 0.7.3.12:
 - Neu: Added support for FRITZ!Box 7140 Annex A
-- Neu: Filter für den Anschluss/Port aller erkannten Anschlüsse
-- Änderung: Neuer MSN-Filter, Popup aller erkannten MSNs
-- Änderung: Einige Icons ersetzt/hinzugefügt (Crystal-Icons: http://www.everaldo.com/crystal)
+- Neu: Filter fÃ¼r den Anschluss/Port aller erkannten AnschlÃ¼sse
+- Ã„nderung: Neuer MSN-Filter, Popup aller erkannten MSNs
+- Ã„nderung: Einige Icons ersetzt/hinzugefÃ¼gt (Crystal-Icons: http://www.everaldo.com/crystal)
 
 JFritz 0.7.3.11:
 - Bugfix [0000151]: JFritz kommt mit Sonderzeichen im FRITZ!Box Passwort nicht zurecht.
@@ -426,30 +574,30 @@ JFritz 0.7.3.10:
 - Release of new Version.
 
 JFritz 0.7.3.9:
-- Bugfix [0000176]: Nervige ständige Meldung das eine neue Fritz!Box gefunden wurde (bei jedem Start, obwohl nur eine immer gleiche Fritte im Netz).
+- Bugfix [0000176]: Nervige stÃ¤ndige Meldung das eine neue Fritz!Box gefunden wurde (bei jedem Start, obwohl nur eine immer gleiche Fritte im Netz).
 - Bugfix [0000219]: Zentralnummern scheinen nicht mehr zu funktionieren. 
 - Bugfix [0000235]: Auf einem frisch aufgesetztem System werden die Anruferdaten zwar von der FB geholt, aber nicht angezeigt/abgespeichert
-- Bugfix: Reverselookup für USA korrigiert.
-- Bugfix: Alle Reverselookup für Deutschland korrigiert.
+- Bugfix: Reverselookup fÃ¼r USA korrigiert.
+- Bugfix: Alle Reverselookup fÃ¼r Deutschland korrigiert.
 - Speedup beim Abholen der Anrufliste.
 
 JFritz 0.7.3.8:
 - Bugfix [0000230]: 2 mal gleiche Nummer in gleicher Uhrzeit-Minute wird nicht erkannt.
 
 JFritz 0.7.3.7:
-- Bugfix [0000180]: doppelte Einträge in der Anrufliste 
+- Bugfix [0000180]: doppelte EintrÃ¤ge in der Anrufliste 
 - Bugfix [0000218]: Rufnummer mit # als Suffix
-- Bugfix: Korrekte Übermittlung der SID bei zweiter Detektion der Firmware
+- Bugfix: Korrekte Ãœbermittlung der SID bei zweiter Detektion der Firmware
 
 JFritz 0.7.3.6:
 - FetchList in allen Klassen vereinheitlicht, restart des Timers.
-- Read-Timeout für Kommunikation mit der FritzBox.
-- Bugfix [0000213]: Wählhilfe nur einmalig nutzbar in der Aktuellen Version 0.7.3  
-- Bugfix [0000224]: Rückwärtssuche hängt
+- Read-Timeout fÃ¼r Kommunikation mit der FritzBox.
+- Bugfix [0000213]: WÃ¤hlhilfe nur einmalig nutzbar in der Aktuellen Version 0.7.3  
+- Bugfix [0000224]: RÃ¼ckwÃ¤rtssuche hÃ¤ngt
 
 JFritz 0.7.3.5:
-- Mehr Debug-Nachrichten für Inverssuche
-- Graphische Rückmeldung, wenn die FritzBox nicht erreicht werden konnte.
+- Mehr Debug-Nachrichten fÃ¼r Inverssuche
+- Graphische RÃ¼ckmeldung, wenn die FritzBox nicht erreicht werden konnte.
 
 JFritz 0.7.3.4:
 - Bugfix [0000231]: Verlust der Verbindung zur FritzBox (SID-Ablauf, Standby, Reboot, usw.)
@@ -458,13 +606,13 @@ JFritz 0.7.3.3:
 - Neu: Mehr Debug-Nachrichten bei getSipProvider um Bug beim Abholen der Sip-Provider zu beheben.
 
 JFritz 0.7.3.2:
-- Bugfix [0000109]: Call-By-Call wird nicht korrekt aufgelöst.
-- Bugfix: Serialisierung von Port für Client/Server-Kommunikation
+- Bugfix [0000109]: Call-By-Call wird nicht korrekt aufgelÃ¶st.
+- Bugfix: Serialisierung von Port fÃ¼r Client/Server-Kommunikation
 
 JFritz 0.7.3.1:
-- Änderung: Default log severity auf LS_DEBUG angehoben.
-- Neu: DebugView hat nun einen Filter für log severity.
-- Änderung: Wenn die Firmwareerkennung ein falsches Passwort meldet, wird nun bis zu 3 mal probiert, 
+- Ã„nderung: Default log severity auf LS_DEBUG angehoben.
+- Neu: DebugView hat nun einen Filter fÃ¼r log severity.
+- Ã„nderung: Wenn die Firmwareerkennung ein falsches Passwort meldet, wird nun bis zu 3 mal probiert, 
   die Firmware zu erkennen bevor die Fehlermeldung weitergeleitet wird.
 
 JFritz 0.7.3:
@@ -472,15 +620,15 @@ JFritz 0.7.3:
 
 JFritz 0.7.2.41:
 - New [0000209]: 2nd Localization update for The Netherlands
-- Bugfix [0000175]: Unter Vista und XP-Notebook ist der Klingelton ganz kurz, EeePC mit XP kommen garkeine Töne. 
+- Bugfix [0000175]: Unter Vista und XP-Notebook ist der Klingelton ganz kurz, EeePC mit XP kommen garkeine TÃ¶ne. 
 - Bugfix: Password-Sperre bei falscher Passworteingabe zu kurz.
 
 JFritz 0.7.2.40:
-- Bugfix [0000044]: Passwortprüfung beim Start vorziehen  
-- Bugfix [0000180]: doppelte Einträge in der Anrufliste 
+- Bugfix [0000044]: PasswortprÃ¼fung beim Start vorziehen  
+- Bugfix [0000180]: doppelte EintrÃ¤ge in der Anrufliste 
 - Bugfix [0000183]: Fehlende Zeilen im Einst./Anrufliste/Aussehen-Dialog 
 - Bugfix [0000192]: Function "Ask for password does not work" 
-- Bugfix: Festnetz/Ferngespräch
+- Bugfix: Festnetz/FerngesprÃ¤ch
 - TODO: Check international term for fixed_network in caller list
 New Strings:
 long_distance_call
@@ -489,11 +637,11 @@ JFritz 0.7.2.39:
 - Bugfix [0000053]: Filter in der Anrufliste ist nach Neustart immer noch da.
 - Bugfix [0000171]: Selektiertes Feld wird nicht aktualisiert 
 - Bugfix [0000182]: Eingetragene MSNs in der Ausnahmeliste werden irgnoriert 
-- Debug-Nachrichten bei Up- und DownStream in der Überwachung.
+- Debug-Nachrichten bei Up- und DownStream in der Ãœberwachung.
 
 JFritz 0.7.2.38:
 - Bugfix [0000165]: Nach dem Wechseln der Sprache scheint der AM nicht mehr zu laufen, tut es aber dennoch. 
-- Bugfix [0000184]: Debug-Fenster vergrößern, Textfeld bleibt gleich 
+- Bugfix [0000184]: Debug-Fenster vergrÃ¶ÃŸern, Textfeld bleibt gleich 
 - Bugfix [0000187]: Anrufmonitor-Symbol Rot, beim Wechseln des Look and Feels 
 
 JFritz 0.7.2.37:
@@ -504,30 +652,30 @@ call_a_number
 
 JFritz 0.7.2.36:
 - Bugfix [0000170]: 0800-Nummer zeigt im AM-Fenster "not found Person" 
-- Bugfix [0000180]: doppelte Einträge in der Anrufliste 
-- Bugfix [0000181]: Löschen eines Eintrags in der Anrufliste mit der DEL-Taste hat keine Sicherheitsabfrage gebracht 
-- Bugfix [0000188]: 0.7.2.34: Löschen der Fritz!Box-Anrufliste ohne Funktion 
+- Bugfix [0000180]: doppelte EintrÃ¤ge in der Anrufliste 
+- Bugfix [0000181]: LÃ¶schen eines Eintrags in der Anrufliste mit der DEL-Taste hat keine Sicherheitsabfrage gebracht 
+- Bugfix [0000188]: 0.7.2.34: LÃ¶schen der Fritz!Box-Anrufliste ohne Funktion 
  	 
 JFritz 0.7.2.35:
 - Bugfix [0000091]: Anrufliste drucken / exportieren funktioniert nicht mehr
-- Bugfix [0000109]: Call-By-Call wird nicht korrekt aufgelöst.
-- Bugfix [0000145]: "Daten sichern" in das JFritz-Daten-Verzeichnis löscht die Daten!
+- Bugfix [0000109]: Call-By-Call wird nicht korrekt aufgelÃ¶st.
+- Bugfix [0000145]: "Daten sichern" in das JFritz-Daten-Verzeichnis lÃ¶scht die Daten!
 - Bugfix [0000151]: JFritz kommt mit Sonderzeichen im FRITZ!Box Passwort nicht zurecht.
-- Bugfix [0000157]: .lock wird nicht gelöscht, wenn der Speicherordner verändert wird.
-- Bugfix [0000166]: Spalte Anschluß Ü/ü und Ä/ä wird nicht richtig angezeigt.
+- Bugfix [0000157]: .lock wird nicht gelÃ¶scht, wenn der Speicherordner verÃ¤ndert wird.
+- Bugfix [0000166]: Spalte AnschluÃŸ Ãœ/Ã¼ und Ã„/Ã¤ wird nicht richtig angezeigt.
 - Neu: Performancemessung bei der Detektierung der Firmware.
 Strings:
 backup_to_source_directory
 
 JFritz 0.7.2.33:
-- Unterstützung für Login per SessionID.
+- UnterstÃ¼tzung fÃ¼r Login per SessionID.
 - Telnet- und Syslog-Anrufmonitor entfernt.
-- Unterstützung für mehrere FritzBoxen vorbereitet, GUI muss noch angepasst werden.
+- UnterstÃ¼tzung fÃ¼r mehrere FritzBoxen vorbereitet, GUI muss noch angepasst werden.
 - Kosten, Freiminuten usw. von SipProvider entfernt.
 - Keine Speicherung von SipProvidern in XML.
 - Sanduhr bei langen Aktionen.
-- Bugfix: ReverseLookup für Luxemburg
-- Neu: Support für FRITZ!Box 7240 
+- Bugfix: ReverseLookup fÃ¼r Luxemburg
+- Neu: Support fÃ¼r FRITZ!Box 7240 
 Strings:
 answering_machine
 appearance
@@ -549,26 +697,26 @@ Strings:
 refresh
 
 JFritz 0.7.2.29:
-- Logger umgeschrieben, unterstützt nun unterschiedliche LOG_SEVERITIES.
-- Über den Kommandozeilenparameter -v / --verbose lässt sich die SEVERITY (ERROR, WARNING, INFO, DEBUG) einstellen.  
+- Logger umgeschrieben, unterstÃ¼tzt nun unterschiedliche LOG_SEVERITIES.
+- Ãœber den Kommandozeilenparameter -v / --verbose lÃ¤sst sich die SEVERITY (ERROR, WARNING, INFO, DEBUG) einstellen.  
 
 JFritz 0.7.2.28:
-- Bugfix: Inverssuche überarbeitet. Explizite Suche für Vor- und Nachnamen eingebaut.
+- Bugfix: Inverssuche Ã¼berarbeitet. Explizite Suche fÃ¼r Vor- und Nachnamen eingebaut.
 
 JFritz 0.7.2.27:
-- Bugfix: Löschen von Einträgen in der Anrufliste
+- Bugfix: LÃ¶schen von EintrÃ¤gen in der Anrufliste
 
 JFritz 0.7.2.26:
-- Inverssuche für Niederlande, Frankreich, Österreich, Italien und Deutschland repariert.
-- Ant-Bibliothek als Development-Bibliothek hinzugefügt.
+- Inverssuche fÃ¼r Niederlande, Frankreich, Ã–sterreich, Italien und Deutschland repariert.
+- Ant-Bibliothek als Development-Bibliothek hinzugefÃ¼gt.
 
 JFritz 0.7.2.25:
-- "LastCall" als Feld in "Person" entfernt. Referenz wird nun über die Anrufliste geholt.
+- "LastCall" als Feld in "Person" entfernt. Referenz wird nun Ã¼ber die Anrufliste geholt.
 
 JFritz 0.7.2.24:
-- "Person" als Feld in "Call" entfernt. Referenz wird nun über das Telefonbuch geholt.
+- "Person" als Feld in "Call" entfernt. Referenz wird nun Ã¼ber das Telefonbuch geholt.
 - PhoneBook::notifyListenersOfUpdate und PhoneBook::notifyListenersOfDelete angepasst.
-- CreateUpdateFile für ANT korrigiert.
+- CreateUpdateFile fÃ¼r ANT korrigiert.
 - Build.xml korrigiert (kein ANT-Unterordner mehr unter DIST).
 
 JFritz 0.7.2.23:
@@ -577,7 +725,7 @@ JFritz 0.7.2.23:
 JFritz 0.7.2.22:
 - Neu: About-Dialog erweitert.
 - Neu: Erkennung der notwendigen Wartezeit, wenn das Passwort falsch eingegeben wurde.
-- WrongPasswordException um Wert für Wartezeit erweitert.
+- WrongPasswordException um Wert fÃ¼r Wartezeit erweitert.
 Strings:
 box.wrong_password.wait
 
@@ -588,35 +736,35 @@ JFritz 0.7.2.20:
 - Bugfix: Relative Pfade korrigiert.
 
 JFritz 0.7.2.19:
-- Support für FRITZ!Box 7570 hinzugefügt.
+- Support fÃ¼r FRITZ!Box 7570 hinzugefÃ¼gt.
 
 JFritz 0.7.2.18:
-- Bugfix: Aktuallisieren der Zuordnung von Call <-> Person nach dem Ändern eines Kontaktes.
-- Bugfix: Nach dem Speichern eines Telefonbucheintrags wird dieser wieder ausgewählt.
+- Bugfix: Aktuallisieren der Zuordnung von Call <-> Person nach dem Ã„ndern eines Kontaktes.
+- Bugfix: Nach dem Speichern eines Telefonbucheintrags wird dieser wieder ausgewÃ¤hlt.
 
 JFritz 0.7.2.17:
 - HashMap zum schnelleren Mapping von Telefonnummer -> Call.
 - Log in Update-Routine wieder aktiviert.
-- Watchdog-Thread startet den AM nicht mehr neu. Am kümmert sich selbst um den Neustart.
+- Watchdog-Thread startet den AM nicht mehr neu. Am kÃ¼mmert sich selbst um den Neustart.
 - Kein Update der Zuordnung Person<->Anruf in initCallerListAndPhoneBook() mehr.
 
 JFritz 0.7.2.16:
 - HashMap zum schnelleren Mapping von Telefonnummer -> Person.
-- TestCase für HashMap.
-- Verbesserung der Nachricht beim Löschen eines oder mehrer Telefonbucheinträge.
-- Bugfix: Absturz, wenn Nummer kürzer als Call-by-Call-Vorwahl.
-- Bugfix: Beim Speichern einer Telefonnummeränderung hat JFritz fälschlicherweise angenommen, dass noch nicht gespeichert wurde. 
+- TestCase fÃ¼r HashMap.
+- Verbesserung der Nachricht beim LÃ¶schen eines oder mehrer TelefonbucheintrÃ¤ge.
+- Bugfix: Absturz, wenn Nummer kÃ¼rzer als Call-by-Call-Vorwahl.
+- Bugfix: Beim Speichern einer TelefonnummerÃ¤nderung hat JFritz fÃ¤lschlicherweise angenommen, dass noch nicht gespeichert wurde. 
 - Bugfix: Abfangen einer ConnectionException im Anrufmonitor.
 
 JFritz 0.7.2.15:
-- Bild zur Person von Image nach ImageIcon geändert (Serialisierbar).
+- Bild zur Person von Image nach ImageIcon geÃ¤ndert (Serialisierbar).
 - Bugfix: Telefonbuch sortieren nach Spalte "Letztes Telefonat". 
 
 JFritz 0.7.2.14:
-- Neu: Ressourcen in eigenes jar gepackt. Nun können diese relativ leicht ausgetauscht werden.
+- Neu: Ressourcen in eigenes jar gepackt. Nun kÃ¶nnen diese relativ leicht ausgetauscht werden.
 
 JFritz 0.7.2.13:
-- Bugfix: Anrufmonitor hat sich aufgehängt und CPU-Last erzeugt.
+- Bugfix: Anrufmonitor hat sich aufgehÃ¤ngt und CPU-Last erzeugt.
 - Minimieren ins Tray wieder auf Stand von 0.7.2.10 gebracht, da es doch nicht funktioniert hat.
   Funktioniert unter Ubuntu nicht! Fix muss noch gefunden werden.
 
@@ -625,13 +773,13 @@ JFritz 0.7.2.12:
 - Minimieren ins Tray funktioniert nun unter Windows-Vista-64.
 
 JFritz 0.7.2.11:
-- Code überarbeitet und gelintet (Person, Call, CallerList).
-- Minimieren ins Tray und wiederherstellen überarbeitet.
+- Code Ã¼berarbeitet und gelintet (Person, Call, CallerList).
+- Minimieren ins Tray und wiederherstellen Ã¼berarbeitet.
 - Bugfix: Spaltenverschiebung korrigiert.
 
 JFritz 0.7.2.10:
 - Statistik-Knopf deaktiviert, weil Internet-Monitor funktioniert.
-- Unterstützung DECT-Telefone der 7270.
+- UnterstÃ¼tzung DECT-Telefone der 7270.
 - Lint der ganzen Files. Viele Warnings und Errors entfernt, dennoch noch eine Menge Warnings und einige Errors da.
 
 JFritz 0.7.2.9:
@@ -640,23 +788,23 @@ JFritz 0.7.2.9:
 - Bugfix [0000072]: Kein Auto-Resize der Anruflisten-Tabelle mehr. (Todo: Resize konfigurierbar gestalten)
 
 JFritz 0.7.2.8:
-- Bugfix: Konvertieren der alten Spalteneinträge korrigiert.
+- Bugfix: Konvertieren der alten SpalteneintrÃ¤ge korrigiert.
 - Bugfix: Verstecken der Spalten korrigiert.
 - Bugfix [0000135]: Speicherung der Einstellungen, wenn FritzBox nicht erreichbar.
 - Code: Alte Einstellungen zum Verstecken der Spalten entfernt.
 
 JFritz 0.7.2.7:
-- Bugfix: Default-Werte für Spaltenreihenfolge angepasst.
+- Bugfix: Default-Werte fÃ¼r Spaltenreihenfolge angepasst.
 - Bugfix: SAX-Parser-Exception, wenn UPNP nicht abgefragt werden konnte.
-- Bugfix [0000096]: Warnung bei Wählhilfe dauerhaft deaktivieren. 
+- Bugfix [0000096]: Warnung bei WÃ¤hlhilfe dauerhaft deaktivieren. 
 
 JFritz 0.7.2.6:
 - Bugfix: Korrektes Anzeigeformat der TotalBytes und currentByteRate.
-- Neu [0000064]: Redesign des Einstellungsdialogs. Navigation über Baumstruktur und zu jeder 
+- Neu [0000064]: Redesign des Einstellungsdialogs. Navigation Ã¼ber Baumstruktur und zu jeder 
 	   Einstellungsseite ist eine Hilfeseite vorhanden (Hilfe-Link oder F1-Taste).
-	   Die Größe des Einstellungsdialogs wird nun gespeichert und wiederhergestellt.
+	   Die GrÃ¶ÃŸe des Einstellungsdialogs wird nun gespeichert und wiederhergestellt.
 - Neu[0000078]: Einlesen von mehr als 10 SIP-Providern.
-- Neu: Ein- und Ausblenden aller Spalten in der Anrufliste möglich.
+- Neu: Ein- und Ausblenden aller Spalten in der Anrufliste mÃ¶glich.
 - Neu: Einstellungen in den XML-Dateien sind nun zur besseren Lesbarkeit sortiert.
 - Code: Einige veraltete Methoden entfernt und Warnungen behoben.
 Strings:
@@ -665,9 +813,9 @@ save_settings
 JFritz 0.7.2.5:
 - Neu: Auswertung weiterer UPNP-Nachrichten.
 - Bugfix: Internetstatistiken werden nun wieder korrekt dargestellt.
-- Bugfix-Telefonbuch: Undo setzt nun wirklich alle Felder korrekt zurück.
-- Bugfix[0000069]: Monitoring-Anzeige komplett überarbeitet.
-- Bugfix: Alten Statistikdialog wieder funktionsfähig gemacht. Ist jedoch durch die neue Monitoring-Anzeige überflüssig. TODO: Entfernen.
+- Bugfix-Telefonbuch: Undo setzt nun wirklich alle Felder korrekt zurÃ¼ck.
+- Bugfix[0000069]: Monitoring-Anzeige komplett Ã¼berarbeitet.
+- Bugfix: Alten Statistikdialog wieder funktionsfÃ¤hig gemacht. Ist jedoch durch die neue Monitoring-Anzeige Ã¼berflÃ¼ssig. TODO: Entfernen.
 - Bugfix-Wahlhilfe: Fenster mit Auflegoption kommt nun bei jedem Wahlvorgang.
 Strings:
 actualize
@@ -699,63 +847,63 @@ uptime
 JFritz 0.7.2.4:
 - Bugfix: Telefonbuch 
 	(korrektes Kopieren und clonen von PhoneNumber)
-	(Person.equals() prüft nun neben dem CSV-Export auch Standard-Nummer und PictureUrl)
+	(Person.equals() prÃ¼ft nun neben dem CSV-Export auch Standard-Nummer und PictureUrl)
 - Neu: Erkennen von Fritzifizierten Speedport W501V.
-- Bugfix-Telefonbuch: Änderung des Rufnummerntyps aktiviert den Undo-Button.
-- Bugfix-Telefonbuch: Änderung der Standardrufnummer aktiviert den Undo-Button.
-- Bugfix-Telefonbuch: Undo-Button setzt nun wirklich alle Felder korrekt zurück. (doch nicht :)
-- Einige überflüssige bzw. veraltete Methoden entfernt.  
+- Bugfix-Telefonbuch: Ã„nderung des Rufnummerntyps aktiviert den Undo-Button.
+- Bugfix-Telefonbuch: Ã„nderung der Standardrufnummer aktiviert den Undo-Button.
+- Bugfix-Telefonbuch: Undo-Button setzt nun wirklich alle Felder korrekt zurÃ¼ck. (doch nicht :)
+- Einige Ã¼berflÃ¼ssige bzw. veraltete Methoden entfernt.  
 
 JFritz 0.7.2.3:
-- Neu [0000061]: Unterdrücken des Splash-Screens mit dem Startparameter -q oder --quiet möglich.
+- Neu [0000061]: UnterdrÃ¼cken des Splash-Screens mit dem Startparameter -q oder --quiet mÃ¶glich.
 - Bugfix: Wiederherstellung des JFritz-Fensters nach minimiertem Start funktioniert nun wieder. Unter KDE, Gnome und MacOS noch zu testen.
 
 JFritz 0.7.2.2:
-- Bugfix [0000094]: Korrekte Anzeige von JFritz, wenn JFritz minimiert gestartet werden soll, jedoch kein Tray verfügbar ist.
-- Neu: Umbau des Trays zur Unterstützung des Java 1.6 SystemTray und JDIC gleichzeitig.
+- Bugfix [0000094]: Korrekte Anzeige von JFritz, wenn JFritz minimiert gestartet werden soll, jedoch kein Tray verfÃ¼gbar ist.
+- Neu: Umbau des Trays zur UnterstÃ¼tzung des Java 1.6 SystemTray und JDIC gleichzeitig.
 
 JFritz 0.7.2.1:
 - Bugfix [0000091]: Print/Export der Anrufliste funktioniert wieder.
 - Bugfix [0000136]: Anzeige der Landesflagge und des Anruferbildes unter Linux.
-- Neu: Drucken des Anruferbildes möglich.
-- Bugfix: Inverssuche funktioniert nun wieder für alle Länder mit Testdatensätzen.
+- Neu: Drucken des Anruferbildes mÃ¶glich.
+- Bugfix: Inverssuche funktioniert nun wieder fÃ¼r alle LÃ¤nder mit TestdatensÃ¤tzen.
 
 JFritz 0.7.2:
 - Release Version
 
 JFritz 0.7.1.18
 - Bugfix: Inverssuche schlug fehl, wenn weniger als 20 Nummern zu suchen waren.
-- Bugfix: Inverssuchen für Niederlande, USA, Italien, Schweiz korrigiert und Tests dafür geschrieben.
+- Bugfix: Inverssuchen fÃ¼r Niederlande, USA, Italien, Schweiz korrigiert und Tests dafÃ¼r geschrieben.
 - Bugfix: Inverssuche: UTF8-Sonderzeichen werden nun korrekt umgewandelt.
 
 JFritz 0.7.1.17
-- Bugfix: Inverssuchen für Österreich und Schweiz korrigiert.
+- Bugfix: Inverssuchen fÃ¼r Ã–sterreich und Schweiz korrigiert.
 - New: New italian translation from Valery. 
 
 JFritz 0.7.1.16
-- Bugfix: Fehler im Telefonbuch beseitigt. Konnte keine neuen Einträge einfügen, ohne den neu erzeugten Eintrag 
-	 neu auszuwählen.
+- Bugfix: Fehler im Telefonbuch beseitigt. Konnte keine neuen EintrÃ¤ge einfÃ¼gen, ohne den neu erzeugten Eintrag 
+	 neu auszuwÃ¤hlen.
 - Changelog von Main.java nach Changelog.txt verschoben.
 - Neu: Datum im Debug-Log.
 - Bugfix: Anrufmonitor wird nun nach Standby wieder korrekt gestartet.
 
 JFritz 0.7.1.15
-- Bugfix: Fehler im Telefonbuch beseitigt. Filter wurden fälschlicherweise Zurückgesetzt, wenn man einen 
-  Telefonbucheintrag ausgewählt hat.
+- Bugfix: Fehler im Telefonbuch beseitigt. Filter wurden fÃ¤lschlicherweise ZurÃ¼ckgesetzt, wenn man einen 
+  Telefonbucheintrag ausgewÃ¤hlt hat.
 - Bugfix: Inverssuche goyellow.de
 - Bugfix: Inverssuche 11880.com (Mozilla-Browser + Optionales <div>)
 - Bugfix: Inverssuche wird nun Zeilenweise geparsed.
 
 JFritz 0.7.1.14
-- I18N: Popup im Telefonbuch, wenn ungespeicherte Änderungen vorhanden sind.
-- Bugfix-Telefonbuch: Wenn ein Eintrag gewählt wurde, der bis auf die Nummer dem zuvor gewählen gleich war
-  und sich bei der Nummer nur in der letzten Stelle unterschied, wurde das Selektieren unmöglich.
-- Bugfix-Telefonbuch: Beim Löschen eines Eintrags wird nun der erste Eintrag selektiert.
-- Neu: Interfaceerweiterung für die Anrufmonitore (Ping, closeConnection).
+- I18N: Popup im Telefonbuch, wenn ungespeicherte Ã„nderungen vorhanden sind.
+- Bugfix-Telefonbuch: Wenn ein Eintrag gewÃ¤hlt wurde, der bis auf die Nummer dem zuvor gewÃ¤hlen gleich war
+  und sich bei der Nummer nur in der letzten Stelle unterschied, wurde das Selektieren unmÃ¶glich.
+- Bugfix-Telefonbuch: Beim LÃ¶schen eines Eintrags wird nun der erste Eintrag selektiert.
+- Neu: Interfaceerweiterung fÃ¼r die Anrufmonitore (Ping, closeConnection).
 - Neu: Ping von AM in den Watchdog verschoben. Watchdog startet nun mit anderem Intervall.
-- Bugfix: Abbruch von Threads, wenn JFritz während des Startups beendet wird.
+- Bugfix: Abbruch von Threads, wenn JFritz wÃ¤hrend des Startups beendet wird.
 - Bugfix: Kein abholen der Anrufliste und kein starten des Anrufmonitors mehr, wenn Wizard abgebrochen wurde.
-- Default-Werte überarbeitet.
+- Default-Werte Ã¼berarbeitet.
 - Bugfix: Fensterstatus wird nun wieder korrekt wiederhergestellt.
 
 Strings:
@@ -773,16 +921,16 @@ JFritz 0.7.1.13
 - Bugfix: Autodetection bei Auswahl der FritzBox in den Einstellungen deaktiviert, weil in die Labor-Firmware eine Sperre wegen falschem Passwort eingebaut wurde.
 
 JFritz 0.7.1.12
-- Bugfix: Splash bleibt beim Start hängen.
+- Bugfix: Splash bleibt beim Start hÃ¤ngen.
 - Bugfix: Anrufliste kann nicht geholt werden, wenn Timer deaktiviert ist.
 - Bugfix: Autostart CallMonitor nach Standby oder verlorener Verbindung.
-- Bugfix: Lautstärke des Klingeltons auf 100% gesetzt.
-- Bugfix: Inverssuche DasÖrtliche korrigiert (Straßenname).
-- New: Status-Icons für den Anrufmonitor.
+- Bugfix: LautstÃ¤rke des Klingeltons auf 100% gesetzt.
+- Bugfix: Inverssuche DasÃ–rtliche korrigiert (StraÃŸenname).
+- New: Status-Icons fÃ¼r den Anrufmonitor.
 - Change: Telefonbuch-Knopf von "Okay" nach "Save" umbenannt.
-- New: Popup im Telefonbuch, wenn ungespeicherte Änderungen vorhanden sind.
+- New: Popup im Telefonbuch, wenn ungespeicherte Ã„nderungen vorhanden sind.
 - Change: Passwort-Dialog nun zentriert.
-- Change: Config-Wizard überarbeitet.
+- Change: Config-Wizard Ã¼berarbeitet.
 
 Strings:
 adapted all german strings to unicode 
@@ -800,13 +948,13 @@ disconnected_calllmonitor (new)
 JFritz 0.7.1.10
 - Bugfix: Reparatur der Tel.Search.Ch-Inverssuche.
 - Bugfix: Manuelles Abholen der Anrufliste startet den Timer zum automatischen Abholen der Anrufliste wieder neu.
-- Änderung des Strings Festnetz zu Ferngespräch
+- Ã„nderung des Strings Festnetz zu FerngesprÃ¤ch
 
 JFritz 0.7.1.9
 - Bugfix: FritzBox-Einstellungen, defaultBox und ComboBox
-- Bugfix: Fritz!Box-Anrufmonitor wird im Wizard als Standard gewählt und nach Abschluss des Wizards automatisch gestartet. 
+- Bugfix: Fritz!Box-Anrufmonitor wird im Wizard als Standard gewÃ¤hlt und nach Abschluss des Wizards automatisch gestartet. 
 			 Auch anzeigen ausgehender Anrufe nun per default aktiviert.
-- Neu: Abbruch eines Wählhilfe-Anrufs möglich.
+- Neu: Abbruch eines WÃ¤hlhilfe-Anrufs mÃ¶glich.
 Strings:
 calldialog_pending_call
 
@@ -817,21 +965,21 @@ JFritz 0.7.1
 - Umstrukturierung des Aufrufs von externen Programmen (noch nicht abgeschlossen)
 - Bugfix: Internet Monitoring funktioniert wieder
 - Umstrukturierung des Statiskdialogs, funktioniert jetzt wieder.
-- Anpassung des Bearbeiten-Dialogs im Telefonbuch an unterschiedliche Bildschirmauflösungen. 
-- Neu: Clients können über den Server die Anrufliste von der Box löschen
-- Neu: Clients können die Wahlhilfe über den Server verwenden.
-- Neu: Bild bei jedem Kontakt möglich. Noch nicht im Client/Server-Modus getestet.
-- Neu: NoPic.png hinzugefügt, welches im Telefonbuch bei Kontakten ohne Bild angezeigt wird.
-- Änderung: Keine Zwangspopup mehr beim Abholen der Anrufliste. 
-- Änderung: Anzeige der Adresse im Telefonbuch in einer Spalte (Stadt-Spalte entfallen).
-- Änderung: Abgespielter Sound bei einem Anruf nur halb so laut. 
-- Bugfix für Java 1.5: JFritz-Menü manchmal nicht sichtbar - Part 2
-- Bugfix: Aktualisierung der Rückwärtssuche mit "Das Telefonbuch"
-- Bugfix: Rückwärtssuche für Türkei und andere Länder korrigiert. CountryCode wurde nicht korrekt extrahiert.
+- Anpassung des Bearbeiten-Dialogs im Telefonbuch an unterschiedliche BildschirmauflÃ¶sungen. 
+- Neu: Clients kÃ¶nnen Ã¼ber den Server die Anrufliste von der Box lÃ¶schen
+- Neu: Clients kÃ¶nnen die Wahlhilfe Ã¼ber den Server verwenden.
+- Neu: Bild bei jedem Kontakt mÃ¶glich. Noch nicht im Client/Server-Modus getestet.
+- Neu: NoPic.png hinzugefÃ¼gt, welches im Telefonbuch bei Kontakten ohne Bild angezeigt wird.
+- Ã„nderung: Keine Zwangspopup mehr beim Abholen der Anrufliste. 
+- Ã„nderung: Anzeige der Adresse im Telefonbuch in einer Spalte (Stadt-Spalte entfallen).
+- Ã„nderung: Abgespielter Sound bei einem Anruf nur halb so laut. 
+- Bugfix fÃ¼r Java 1.5: JFritz-MenÃ¼ manchmal nicht sichtbar - Part 2
+- Bugfix: Aktualisierung der RÃ¼ckwÃ¤rtssuche mit "Das Telefonbuch"
+- Bugfix: RÃ¼ckwÃ¤rtssuche fÃ¼r TÃ¼rkei und andere LÃ¤nder korrigiert. CountryCode wurde nicht korrekt extrahiert.
 - Bugfix: Korrektes Beenden des Lookup-Threads.
 - Bugfix: Kein "Beenden"-Bug mehr nach dem Darstellen eines Popups.
 - Bugfix: Inverssuche aktualisiert.
-- Bugfix: Erstellen eines neuen Eintrags für einen unbekannten Anruf.
+- Bugfix: Erstellen eines neuen Eintrags fÃ¼r einen unbekannten Anruf.
 - Bugfix: Multiple-Instance check.
 - Neu: Neue Anzeige von eingehenden Anrufen.
 - Neu: Neue Statusbar. Unter anderem Anzeige vom Fortschritt der Inverssuche.
@@ -839,17 +987,17 @@ JFritz 0.7.1
 - Neu: Land wird zu jeder Telefonnummer mit abgespeichert.
 - Neu: Bestimmung der MAC-Adresse, um FRITZ!Boxen zu unterscheiden.
 - Bugfix: Beim Doppelklick in der Anrufliste wird der korrekte Telefonbucheintrag angezeigt.
-- Bugfix: Inverssuche für viele Rufnummern korrigiert.
+- Bugfix: Inverssuche fÃ¼r viele Rufnummern korrigiert.
 - Neu: Splash-Screen.
-- Neu: Alle Inverssuche-Seiten aus Klingeling hinzugefügt.
-- Bugfix: Suche nach der Stadt anhand der Vorwahl für die Türkei, USA, Österreich und Deutschland
+- Neu: Alle Inverssuche-Seiten aus Klingeling hinzugefÃ¼gt.
+- Bugfix: Suche nach der Stadt anhand der Vorwahl fÃ¼r die TÃ¼rkei, USA, Ã–sterreich und Deutschland
 - Neu: Fortschrittsanzeige beim Abholen der Anrufliste 
 - Neu: Popup bei keiner Verbindung zur FritzBox entfernt. Stattdessen Anzeige in der neuen Statusbar
 - Neu: Resize der Spalten in der Anrufliste nun intuitiver.
 - Bugfix: Sortieren in Telefonbuch funktioniert nun wieder korrekt.
 - Bugfix: Restart des Anrufmonitors nach Ruhezustand und Standby.
 - Bugfix: Passwortabfrage beim Start funktioniert wieder.
-- Neu: Auflösungsabhängige Größe des Bildes im Edit-Modus des Telefonbuchs.
+- Neu: AuflÃ¶sungsabhÃ¤ngige GrÃ¶ÃŸe des Bildes im Edit-Modus des Telefonbuchs.
 - Bugfix: Signal-Handler
 
 Strings:
@@ -872,39 +1020,39 @@ Strings:
 
 JFritz 0.7.0.1
 - Funktioniert nun wieder mit Java 1.5
-- Bugfix: JFrtz-Menü manchmal nicht sichtbar
-- Bugfix: Rückwärtssuche "Das Telefonbuch"
+- Bugfix: JFrtz-MenÃ¼ manchmal nicht sichtbar
+- Bugfix: RÃ¼ckwÃ¤rtssuche "Das Telefonbuch"
 - Bugfix: Auto-Update
 - Bugfix: Externes Programm bei ausgehendem Anruf
-- Bugfix: Windows-Installer: Fremde JAR-Dateien werden beim Installieren nicht gelöscht
+- Bugfix: Windows-Installer: Fremde JAR-Dateien werden beim Installieren nicht gelÃ¶scht
 
 JFritz 0.7.0
-- Neu: Unterstützung für Fritz!Box 7270, Fritz!Box 7140, Fritz!Box 7141, Fritz!Box 7113, Fritz!Box 5140
+- Neu: UnterstÃ¼tzung fÃ¼r Fritz!Box 7270, Fritz!Box 7140, Fritz!Box 7141, Fritz!Box 7113, Fritz!Box 5140
 - Bugfix: Bug beim Herunterfahren / Abmelden unter Linux, Windows behoben
 - Bugfix: JFritz blockiert das Herunterfahren / Abmelden von OS X nicht mehr
 - Bugfix: Aussehen von JFritz wird nun wieder gespeichert
-- Bugfix: Kein plötzlicher Wechsel vom Telefonbuch zur Anrufliste mehr
-- Neu: Einführung von ServerSenderThreads, jede Verbindung hat eigene Empfänger und Sender-Threads
-- Neu: Clients können den Anrufmonitor vom Server verwenden
-- Neu: Networkcode hinzugefügt! JFritz kann nun entweder als Server oder client arbeiten
+- Bugfix: Kein plÃ¶tzlicher Wechsel vom Telefonbuch zur Anrufliste mehr
+- Neu: EinfÃ¼hrung von ServerSenderThreads, jede Verbindung hat eigene EmpfÃ¤nger und Sender-Threads
+- Neu: Clients kÃ¶nnen den Anrufmonitor vom Server verwenden
+- Neu: Networkcode hinzugefÃ¼gt! JFritz kann nun entweder als Server oder client arbeiten
 - Bugfix: Neue Kontakte werden jetzt richtig in der Anrufliste dargestellt
-- Bugfix: Gelöschte Kontakte werden jetzt auch in der Anrufliste entfernt
-- Bugfix: Geänderte Kontakte werden jetzt auch richtig in der Anrufliste dargestellt
-- Bugfix: Clientseitige / serverseitige Änderungen im Telefonbuch werden bei allen Clients auch richtig in der Anrufliste dargestellt
-- Bugfix: NullPointerException beim Charset-Lesen entfernt, Rückwärtssuche funktioniert bei einigen wieder
+- Bugfix: GelÃ¶schte Kontakte werden jetzt auch in der Anrufliste entfernt
+- Bugfix: GeÃ¤nderte Kontakte werden jetzt auch richtig in der Anrufliste dargestellt
+- Bugfix: Clientseitige / serverseitige Ã„nderungen im Telefonbuch werden bei allen Clients auch richtig in der Anrufliste dargestellt
+- Bugfix: NullPointerException beim Charset-Lesen entfernt, RÃ¼ckwÃ¤rtssuche funktioniert bei einigen wieder
 - Neu: JFritz Log-Datein kann jetzt im beliebigen Verzeichnis gespeichert werden
-- Neu: Neuer Menüpunkt unter "Ansicht" für das Monitoring-Panel
+- Neu: Neuer MenÃ¼punkt unter "Ansicht" fÃ¼r das Monitoring-Panel
 - Fix: About-Dialog korrigiert
-- Bugfix: Zu kleines Fenster bei Popup-Verzögerung behoben
+- Bugfix: Zu kleines Fenster bei Popup-VerzÃ¶gerung behoben
 - Bugfix: MSN-Filter werden jetzt richtig gespeichert und geladen
 - Neu: Drei neue Look&Feels
 - Bugfix: Ubuntu 7.04 trayicon and Sun Java 1.6 funktioniert nun
 - Neu: Sprache wird beim ersten Start von JFritz automatisch auf Betriebssystemsprache eingestellt
-- Neu: Rückwärtssuche kann von der Anrufliste aus für eine ausgewählte Seite ausgeführt werden
-- Neu: Standardmäßiges Einbelden des Bearbeitungsfensters im Telefonbuch
-- Neu: Debug-Nachrichten können nun unter "Hilfe"-"Debug-Fenster" eingesehen und gespeichert werden
+- Neu: RÃ¼ckwÃ¤rtssuche kann von der Anrufliste aus fÃ¼r eine ausgewÃ¤hlte Seite ausgefÃ¼hrt werden
+- Neu: StandardmÃ¤ÃŸiges Einbelden des Bearbeitungsfensters im Telefonbuch
+- Neu: Debug-Nachrichten kÃ¶nnen nun unter "Hilfe"-"Debug-Fenster" eingesehen und gespeichert werden
 - Bugfix: Einstellungsfenster wird zentriert
-- Bugfix: "Verbindungsgerät" in "MSN/Rufnummer" ändern
+- Bugfix: "VerbindungsgerÃ¤t" in "MSN/Rufnummer" Ã¤ndern
 - Bugfix: Anzeige von "Durchwahl" statt "3" in der Anrufliste
 - Neu: Anzeige des Ports beim Anrufmonitor
  
@@ -961,29 +1109,29 @@ JFritz network-v1
 
 JFritz 0.6.2.04
 - Umstrukturierung des Aufrufs von externen Programmen (noch nicht abgeschlossen)
-- Neu: Rückwärtssuche erweitert, jetzt können die Regex Ausdrücke beliebige groupiert werden
-- Bugfix: Rückwärtssuche erkennt die Charset jetzt automatisch
-- Neu: Rückwärtssuche für Türkei eingebaut
-- Neu: Rückwärtssuche nach Ort für Türkei eingebaut
-- Neu: Unterstützung für gemoddete Eumex 300ip (Firmware 15.xx.xx)
-- Neu: Unterstützung für gemoddete Speedport W 900V (Firmware 34.xx.xx)
-- Neu: Beliebige Nummer direkt aus JFritz heraus wählen
-- Bugfix: Rückwärtssuche erkennt die Charset jetzt automatisch
+- Neu: RÃ¼ckwÃ¤rtssuche erweitert, jetzt kÃ¶nnen die Regex AusdrÃ¼cke beliebige groupiert werden
+- Bugfix: RÃ¼ckwÃ¤rtssuche erkennt die Charset jetzt automatisch
+- Neu: RÃ¼ckwÃ¤rtssuche fÃ¼r TÃ¼rkei eingebaut
+- Neu: RÃ¼ckwÃ¤rtssuche nach Ort fÃ¼r TÃ¼rkei eingebaut
+- Neu: UnterstÃ¼tzung fÃ¼r gemoddete Eumex 300ip (Firmware 15.xx.xx)
+- Neu: UnterstÃ¼tzung fÃ¼r gemoddete Speedport W 900V (Firmware 34.xx.xx)
+- Neu: Beliebige Nummer direkt aus JFritz heraus wÃ¤hlen
+- Bugfix: RÃ¼ckwÃ¤rtssuche erkennt die Charset jetzt automatisch
 - Bugfix: Amtskennzahl richtig verarbeitet beim CallMonitor
 
 JFritz 0.6.2.03
 - Autoupdate korrektur
 - Leisere Sounds
-- Doppelklick auf das Trayicon nun möglich
-- Neu: Rückwärtssuche Engine komplette neu geschrieben. Alle paramter in einer XML-Datei einstellbar
-- Bugfix: Rückwärtssuche bleibt nicht mehr stehen, falls die Verbindung zum Server hängt
-- Bugfix: Rückwärtssuche für deutschland wieder angepasst, dastelefonbuch.de und dasoertliche.de eingesetzt
+- Doppelklick auf das Trayicon nun mÃ¶glich
+- Neu: RÃ¼ckwÃ¤rtssuche Engine komplette neu geschrieben. Alle paramter in einer XML-Datei einstellbar
+- Bugfix: RÃ¼ckwÃ¤rtssuche bleibt nicht mehr stehen, falls die Verbindung zum Server hÃ¤ngt
+- Bugfix: RÃ¼ckwÃ¤rtssuche fÃ¼r deutschland wieder angepasst, dastelefonbuch.de und dasoertliche.de eingesetzt
 - Bugfix: Zu kurze Landesvorwahl
-- Bugfix: Falsche Rufnummern gelöscht
+- Bugfix: Falsche Rufnummern gelÃ¶scht
 - Bugfix: JFritz verliert Einstellungen
 - Bugfix: Anrufmonitor funktioniert sporadisch nicht mehr. (Restart alle 5 Minuten)
 - Bugfix: Wizard speichert IP nun wieder korrekt
-- Bugfix: Richtiger Quell- und Zielordner für die Backups
+- Bugfix: Richtiger Quell- und Zielordner fÃ¼r die Backups
 - INTERN: Getrenntes Speichern von config-properties und state-properties.
           config-properties: ip, passwort, optionen ...
           state-properties: filter-state, window-position, window-state, column-width...
@@ -994,34 +1142,34 @@ JFritz 0.6.2.03
 		reverse_lookup_dummy
 
 JFritz 0.6.2.02
-- Bugfix: Problem mit der schweizer Rückwärtssuche behoben
-- Bugfix: Probleme mit der deutschen Rückwärtssuche behoben
+- Bugfix: Problem mit der schweizer RÃ¼ckwÃ¤rtssuche behoben
+- Bugfix: Probleme mit der deutschen RÃ¼ckwÃ¤rtssuche behoben
 - Bugfix: Support for english firmware 14.04.26 corrected
 - Neu: CallbyCall-Vorwahlen jetzt in einer xml-datei ausgelagert
-- Neu: CallbyCall-Vorwahlen jetzt in einer Datei einstellbar, für jedes Land möglich
-- Neu: Unterteilung in Handy/Festnetz jetzt in einer Datei einstellbar, für jedes Land möglich
-- Neu: Eigene Icons für Handybetreiber
+- Neu: CallbyCall-Vorwahlen jetzt in einer Datei einstellbar, fÃ¼r jedes Land mÃ¶glich
+- Neu: Unterteilung in Handy/Festnetz jetzt in einer Datei einstellbar, fÃ¼r jedes Land mÃ¶glich
+- Neu: Eigene Icons fÃ¼r Handybetreiber
 - Neu: JFritz ordnet jede Nummer eine Pfanne aus einer einstellbaren Datei
 - Bugfix: Kurzwahlen
-- Bugfix: Österreichischer Reverselookup
+- Bugfix: Ã–sterreichischer Reverselookup
 - Bugfix: CallMonitor outgoing calls
 - Bugfix: Reverselookup on mac now run with correct character encoding
-- Bugfix: Französischer Reverselookup
-- Bugfix: Rückwärtssuche funktioniert jetzt mit beliebigem Host-Zeichensatz
-- Bugfix: Rückwärtssuche nach Ort zeigt jetzt Stadtnamen mit Umlauts
+- Bugfix: FranzÃ¶sischer Reverselookup
+- Bugfix: RÃ¼ckwÃ¤rtssuche funktioniert jetzt mit beliebigem Host-Zeichensatz
+- Bugfix: RÃ¼ckwÃ¤rtssuche nach Ort zeigt jetzt Stadtnamen mit Umlauts
 
 JFritz 0.6.2.01
 - Neu: Polnische Sprachdateien aktualisiert
 - Neu: Italienische Sprachdateien aktualisiert
 - New: Import english push-service-csv-file
-- Bugfix: Neuer Eintrag im Telefonbuch nun wieder möglich
-- Bugfix: JFritz-Menü wird nun korrekt dargestellt
+- Bugfix: Neuer Eintrag im Telefonbuch nun wieder mÃ¶glich
+- Bugfix: JFritz-MenÃ¼ wird nun korrekt dargestellt
 - Bugfix: number-Ordner nun mitgeliefert
 - Bugfix: Autoupdate in richtigen Ordner
 - Bugfix: Firmwareerkennung korrigiert
 - Bugfix: HTML-Sonderzeichen beim ReverseLookup
-- Bugfix: ReverseLookup für ausländische Nummern
-- Bugfix: Löschen einer Nummer im Telefonbuch
+- Bugfix: ReverseLookup fÃ¼r auslÃ¤ndische Nummern
+- Bugfix: LÃ¶schen einer Nummer im Telefonbuch
 
 Jfritz 0.6.2
 - Neue Strings:
@@ -1038,17 +1186,17 @@ Jfritz 0.6.2
  update_JFritz
  Alle Strings in der Datei update_de_DE.properties
  
-- Bugfix: örtliche Nummer, die mit 49 beginnen, werden jetzt richtig verarbeitet
+- Bugfix: Ã¶rtliche Nummer, die mit 49 beginnen, werden jetzt richtig verarbeitet
 - Bugfix: Callmonitor schreibt die Ortsvorwahl vor unbekannten Rufnummern nicht mehr
-- Neu: MonitoringPanel hinzugefügt, soll Internetverbindung und derzeit geführten Anrufen überwachen
+- Neu: MonitoringPanel hinzugefÃ¼gt, soll Internetverbindung und derzeit gefÃ¼hrten Anrufen Ã¼berwachen
 - Suchfeld in Anrufliste umfasst nun auch die Call-By-Call vorwahlen
 - Bugfix: Suche nach Rufnummern im internationalen Format
 - Neu: JFritz-Fenster wird nun korrekt wiederhergestellt (maximiert...). Neues Property: window.state
-- Neu: Falls Ort per ReverseLookup nicht gefunden wird, wird anhand einer Tabelle der passende Ort zu einer Vorwahl eingetragen werden (Österreich) 
+- Neu: Falls Ort per ReverseLookup nicht gefunden wird, wird anhand einer Tabelle der passende Ort zu einer Vorwahl eingetragen werden (Ã–sterreich) 
 - Neu: Falls Ort per ReverseLookup nicht gefunden wird, wird anhand einer Tabelle der passende Ort zu einer Vorwahl eingetragen werden Deutschland (SF [ 1315144 ]) 
 - Bugfix: Jetzt werden IP-Addressen von den Boxen in der Einstellungen angezeigt. Man kann jetzt Fehlerfrei zwei boxes im gleichen Netz haben. 
-- Neu: Rückwärtssuche für die USA über www.whitepages.com, danke an Reiner Gebhardt
-- Neu: Menüeintrag ->JFritz aktualisieren
+- Neu: RÃ¼ckwÃ¤rtssuche fÃ¼r die USA Ã¼ber www.whitepages.com, danke an Reiner Gebhardt
+- Neu: MenÃ¼eintrag ->JFritz aktualisieren
 - Internationaler FreeCall 00800 (http://www.ip-phone-forum.de/showthread.php?t=111645)
 - Datumsfilter "aktueller-Tag" sollte auch immer den aktuellen Tag anzeigen. (SF [ 1530172 ])
 - INTERN: Filter der Anrufliste in neues Package. Abstrakte Klasse CallFilter
@@ -1056,22 +1204,22 @@ Jfritz 0.6.2
 - INTERN: Diverse JUnit-TestCases
 - INTERN: Neue Klasse CallMonitoring, die alle aktuellen Anrufe verwaltet und die Anrufinformation auf den Bildschirm bringt
 - INTERN: Anrufmonitore in neues Package callmonitor gepackt und umbenannt
-- INTERN: Anzeige der Anrufe, die vom Anrufmonitor erkannt werden, über Listener. Abholen der Anrufliste nach dem Gesprächsende nun über den DisconnectMonitor
-- Neu: Unterstützung für die "Labor-Firmware" (Firmwareerkennung und CSV-Import)
-- Neu: Automatisches Update von JFritz auf neue Version. TODO: Checken, ob es auch mit .so und .dll funktioniert TODO: Am Ende der Update-Prozedur JFritz nicht beenden, sondern neu starten. Blos wie? (mittles eines kleinen zusätlichen programmes, welches die files ersetzt und jfritz neu startet. datenaustausch der programme evtl per kommandozeile. (bastia))
-- Wahlhilfe: Immer mit Ortsvorwahl wählen (getShortNumber in getAreaNumber verändert)
-- Neu: Unterstützung für neue englische Firmware xx.04.20
-- INTERN: Buildfile überarbeitet. TODO: release und junit anpassen
-- Neu: Rückwärtssuche nicht mehr über DasOertliche.de sondern über dastelefonbuch.de
-- Bugifx: Französische Rückwärtssuche funktioniert wieder
-- Neu: Französische Rückwärtssuche nun auch mit Firmenname
+- INTERN: Anzeige der Anrufe, die vom Anrufmonitor erkannt werden, Ã¼ber Listener. Abholen der Anrufliste nach dem GesprÃ¤chsende nun Ã¼ber den DisconnectMonitor
+- Neu: UnterstÃ¼tzung fÃ¼r die "Labor-Firmware" (Firmwareerkennung und CSV-Import)
+- Neu: Automatisches Update von JFritz auf neue Version. TODO: Checken, ob es auch mit .so und .dll funktioniert TODO: Am Ende der Update-Prozedur JFritz nicht beenden, sondern neu starten. Blos wie? (mittles eines kleinen zusÃ¤tlichen programmes, welches die files ersetzt und jfritz neu startet. datenaustausch der programme evtl per kommandozeile. (bastia))
+- Wahlhilfe: Immer mit Ortsvorwahl wÃ¤hlen (getShortNumber in getAreaNumber verÃ¤ndert)
+- Neu: UnterstÃ¼tzung fÃ¼r neue englische Firmware xx.04.20
+- INTERN: Buildfile Ã¼berarbeitet. TODO: release und junit anpassen
+- Neu: RÃ¼ckwÃ¤rtssuche nicht mehr Ã¼ber DasOertliche.de sondern Ã¼ber dastelefonbuch.de
+- Bugifx: FranzÃ¶sische RÃ¼ckwÃ¤rtssuche funktioniert wieder
+- Neu: FranzÃ¶sische RÃ¼ckwÃ¤rtssuche nun auch mit Firmenname
 - Intern: JFritz.java aufgespalten in Main.java und JFritz.java
 - Autoupdate von JFritz
 - Nur noch mit Java 1.5 kompatibel
-- Fenstergröße, -position und -status wird nun korrekt wiederhergestellt
-- Spaltengröße und -reihenfolge korrekt wiederhergestellt
+- FenstergrÃ¶ÃŸe, -position und -status wird nun korrekt wiederhergestellt
+- SpaltengrÃ¶ÃŸe und -reihenfolge korrekt wiederhergestellt
 - Bugfix: Telefonnummern werden nun korrekt gespeichert
-- Bugfix: Importieren von Thunderbird-Einträgen funktioniert nun wieder
+- Bugfix: Importieren von Thunderbird-EintrÃ¤gen funktioniert nun wieder
 
 JFritz 0.6.1
 - Neue Strings: 
@@ -1091,45 +1239,45 @@ JFritz 0.6.1
      
 - Intern: Multiple-Instance-Lock nun Dateibasiert und nicht mehr als Property. (JFritz.LOCK_FILE)
 - Neu: Meldung bei neuer JFritz-Version     
-- Neu: Flaggen werden bei bekannten Ländervorwählen angezeigt anstelle vom Weltkugel, für bekannte Länder siehe PhoneNumber.java
+- Neu: Flaggen werden bei bekannten LÃ¤ndervorwÃ¤hlen angezeigt anstelle vom Weltkugel, fÃ¼r bekannte LÃ¤nder siehe PhoneNumber.java
 - Bugfix: SIP-Routen behalten ihre historische Zuordnung      
-- Neu: Neuer Kommandozeilenparameter: -r, führt eine Rückwärtssuche aus und beendet sich
-- Neu: Rückwärtssuche für Frankreich über http://www.annuaireinverse.com, wird automatisch aufgerufen
-- Neu: Rückwärtssuche für die Niederlande über http://www.gebeld.nl/content.asp?zoek=numm, wird automatisch aufgerufen
-- Neu: Rückwärtssuche für Italien über www.paginebianche.it, wird automatisch aufgerufen     
-- Neu: Rückwärtssuche für die Schweiz über tel.search.ch, JFritz ruft automatisch die richtige Rückwärtssuche auf.
-- Neu: Dummy-Telefonbucheinträge werden gelöscht, falls ein Eintrag mit derselben Nummer existiert 
+- Neu: Neuer Kommandozeilenparameter: -r, fÃ¼hrt eine RÃ¼ckwÃ¤rtssuche aus und beendet sich
+- Neu: RÃ¼ckwÃ¤rtssuche fÃ¼r Frankreich Ã¼ber http://www.annuaireinverse.com, wird automatisch aufgerufen
+- Neu: RÃ¼ckwÃ¤rtssuche fÃ¼r die Niederlande Ã¼ber http://www.gebeld.nl/content.asp?zoek=numm, wird automatisch aufgerufen
+- Neu: RÃ¼ckwÃ¤rtssuche fÃ¼r Italien Ã¼ber www.paginebianche.it, wird automatisch aufgerufen     
+- Neu: RÃ¼ckwÃ¤rtssuche fÃ¼r die Schweiz Ã¼ber tel.search.ch, JFritz ruft automatisch die richtige RÃ¼ckwÃ¤rtssuche auf.
+- Neu: Dummy-TelefonbucheintrÃ¤ge werden gelÃ¶scht, falls ein Eintrag mit derselben Nummer existiert 
 - Neu: Anrufe mit einer AKZ werden jetzt richtig verarbeitet.
-- Neu: Der Speicherordner kann jetzt frei gewählt werden, bleibt nach dem Beenden erhalten. SF-Tracker [1248965]
+- Neu: Der Speicherordner kann jetzt frei gewÃ¤hlt werden, bleibt nach dem Beenden erhalten. SF-Tracker [1248965]
 - Bugfix: Die Sprachauswahlbox zeigt jetzt auch unter Linux Flaggen-Icons an.
 - Bugfix: Das Telefonbuch wird nach einem erfolgreichen Outlook-Import sofort gespeichert. SF-Tracker [ 1503185 ]
-- Neu: Zeit, bis Popup-Nachrichten ausgeblendet sind, einstellbar gemacht (Zeit von 0 bedeutet nie schließen) SF-Request Nr: [1340678] [1518330]
-- Bugfix: JFritz kann jetzt von einem beliebigen Verzeichnis aus aufgerufen (bestätigt unter Linux, Windows, Mac??)
-- Neu: Rückwärtssuche auch für Handynummern
-- Neu: Wählhilfe merkt sich den zuletzt benutzen Port
-- Neu: JFritz kann jetzt beliebige Nummer mit der Wahlhilfe wählen (noch nicht ausführlich getestet, z.B. funktionieren auch die Tastencode?)
+- Neu: Zeit, bis Popup-Nachrichten ausgeblendet sind, einstellbar gemacht (Zeit von 0 bedeutet nie schlieÃŸen) SF-Request Nr: [1340678] [1518330]
+- Bugfix: JFritz kann jetzt von einem beliebigen Verzeichnis aus aufgerufen (bestÃ¤tigt unter Linux, Windows, Mac??)
+- Neu: RÃ¼ckwÃ¤rtssuche auch fÃ¼r Handynummern
+- Neu: WÃ¤hlhilfe merkt sich den zuletzt benutzen Port
+- Neu: JFritz kann jetzt beliebige Nummer mit der Wahlhilfe wÃ¤hlen (noch nicht ausfÃ¼hrlich getestet, z.B. funktionieren auch die Tastencode?)
 - Bugfix: Kurzwahlen werden jetzt korrekt geparst beim Abholen der Anrufliste
 - Neu: Port einstellbar
-- Neu: Konfigurationswizard für Erstbenutzer
-- Neu: Logfiles werden jetzt mittels Stream redirection geschrieben (heißt auch die Exceptions werden in den Logfiles aufgenommen :) )
-- Neu: Entfernen doppelter Einträge beim Telefonbuch
+- Neu: Konfigurationswizard fÃ¼r Erstbenutzer
+- Neu: Logfiles werden jetzt mittels Stream redirection geschrieben (heiÃŸt auch die Exceptions werden in den Logfiles aufgenommen :) )
+- Neu: Entfernen doppelter EintrÃ¤ge beim Telefonbuch
 - Neu: Automatisches Scrollen zum selektierten Telefonbucheintrag
-- Neu: Englische Firmware wird unterstützt
-- Intern: Firmware wird beim Start erkannt und in JFritz.firmware gespeichert. Zugriff nicht mehr über JFritz.getProperties("box.firmware") sondern über JFritz.getFirmware()
+- Neu: Englische Firmware wird unterstÃ¼tzt
+- Intern: Firmware wird beim Start erkannt und in JFritz.firmware gespeichert. Zugriff nicht mehr Ã¼ber JFritz.getProperties("box.firmware") sondern Ã¼ber JFritz.getFirmware()
 - Bugfix: Kurzwahlen werden wieder korrekt abgeholt
-- Bugfix: Standardtelefonnummern können wieder geändert werden
+- Bugfix: Standardtelefonnummern kÃ¶nnen wieder geÃ¤ndert werden
 - Bugfix: Problem mit dem Holen der Anrufliste behoben
-- Bugfix: Nebenstellenbezeichnungen und Route können jetzt Sonderzeichen enthalten
+- Bugfix: Nebenstellenbezeichnungen und Route kÃ¶nnen jetzt Sonderzeichen enthalten
 - Bugfix: Anzeige eines analogen Anrufs beim Anrufmonitor 
 - Bugfix: PersonDialog ("Person editieren") wird nun mittig zum JFritz.JFrame angezeigt - SF.net-Request:[1503523] Adress-/Telefonbuch 
-- Neu: Default- und Close-Button für PersonDialog ("Person editieren"), Icon (JFritz) gesetzt
+- Neu: Default- und Close-Button fÃ¼r PersonDialog ("Person editieren"), Icon (JFritz) gesetzt
 - Bugfix: Wahlhilfe: Anwahl aller analogen Telefone konnte nicht gehen -> Tippfehler in JFritzUtils: JFritz.getMessage("analoge_telephones_all") -> korrigiert in JFritz.getMessage("analog_telephones_all")
-- Neu: Default-Button bei Rückfrage 'Box-Anruferliste löschen' geändert auf 'Nein'  
-- Neu: Berücksichtigung der Metal-Decorations bei Dialogen
+- Neu: Default-Button bei RÃ¼ckfrage 'Box-Anruferliste lÃ¶schen' geÃ¤ndert auf 'Nein'  
+- Neu: BerÃ¼cksichtigung der Metal-Decorations bei Dialogen
 - Intern: Funktionen, die mit der Kommunikation mit der FritzBox zu tun hatten, in eine neue Klasse FritzBox exportiert.
 - Intern: CallDialog: Auswahl der Nummern wiederhergestellt, editierbare JComboBox/JTextField (je nach Anzahl vorhandener Nummern)
-- Neu: Default- und Close-Button für CallDialog ("Anrufen"), Icon (JFritz) gesetzt
-- Neu: Überarbeitung der Dialoge bzgl. OK/Cancel, Icon, Position
+- Neu: Default- und Close-Button fÃ¼r CallDialog ("Anrufen"), Icon (JFritz) gesetzt
+- Neu: Ãœberarbeitung der Dialoge bzgl. OK/Cancel, Icon, Position
   jfritz.dialogs.config.CallmessageDialog, 
   jfritz.dialogs.config.ConfigDialog, 
   jfritz.dialogs.config.FRITZBOXConfigDialog, 
@@ -1150,18 +1298,18 @@ JFritz 0.6.1
 JFritz 0.6.0
 - Neue Strings:
 - Neuer Kommandozeilenparameter: -w, deaktiviert die Kontrolle von mehrfachen Instanzen
-- Bugfix: Alle internationalen Gespräche werden jetzt erkannt.
+- Bugfix: Alle internationalen GesprÃ¤che werden jetzt erkannt.
 - Neu: Sprache einstellbar ( <- Wahlhilfe im Telefonbuch funktioniert bei englischer Sprache nicht (Bastian)
 								<- TrayMenu angepasst (Benjamin)
-								<- komplett geändert, Sprachfiles werden jetzt dynamisch erkannt und können in den Einstellungen ausgewählt werden. (Bastian))
+								<- komplett geÃ¤ndert, Sprachfiles werden jetzt dynamisch erkannt und kÃ¶nnen in den Einstellungen ausgewÃ¤hlt werden. (Bastian))
 - Bugfix: Spracheinstellungen werden gespeichert.
 - Neu: Verbesserte Anzeige des aus- und eingehenden Verbindungstyps bei verwendung des JFritz-Anrufmonitors im Format "interne MSN (Leitungsart)", z.B. "1234 (ISDN)" oder "1234 (SIP)" bei eingehenden Anrufen oder "56789 (88sdg4@dus.net)" bei ausgehenden
 - Bugfix: Anrufmonitor zeigt ausgehende und eingehende Anrufe im gleichen Format an 
-- Bugfix: Neues JFritz-Anrufmonitor-Format besser unterstützt, jetzt wieder Anzeige von angerufener MSN
+- Bugfix: Neues JFritz-Anrufmonitor-Format besser unterstÃ¼tzt, jetzt wieder Anzeige von angerufener MSN
 - Bugfix: MAC-Handling funktioniert wieder
 - Bugfix: Wahlhilfe im Telefonbuch funktioniert jetzt bei englischer Sprache (Brian) 
 - Bugfix: Beim Metal-LAF werden jetzt immer die Metal-Decorations verwendet.
-- Bugfix: Beim Ändern des Look And Feel's werden die Buttons korrekt dargestellt.
+- Bugfix: Beim Ã„ndern des Look And Feel's werden die Buttons korrekt dargestellt.
 - Neu: Fritzbox Anrufliste als CSV-Datei importieren
 - Neu: Thunderbird/Mozilla-Kontakte importieren
 - Neu: Telefonbuch als CSV-Datei exportieren
@@ -1169,51 +1317,51 @@ JFritz 0.6.0
 - Neu: Wahlhilfe (<- funktioniert nicht richtig. Es wird immer der Port vom letzten Versuch benutzt
                      Beispiel: ich habe zuletzt ISDN 1 benutzt, will jetzt mit ISDN 2 anrufen, dann wird aber ISDN 1 benutzt.
                      Benutze ich dann die Wahlhilfe erneut, wird ISDN 2 benutzt - egal welchen Port ich einstelle. D.h., benutze
-                     ich ständig die gleichen Ports, fällt es nicht weiter auf.
-                     Ich denke, das hängt damit zusammen, dass man auf der Weboberfläche erst den Port auswählt, dann übernehmen
-                     drückt und dann erst die Nummer anklickt. Diesen Vorgang müsste man in JFritz nachbilden.  (KCh)
+                     ich stÃ¤ndig die gleichen Ports, fÃ¤llt es nicht weiter auf.
+                     Ich denke, das hÃ¤ngt damit zusammen, dass man auf der WeboberflÃ¤che erst den Port auswÃ¤hlt, dann Ã¼bernehmen
+                     drÃ¼ckt und dann erst die Nummer anklickt. Diesen Vorgang mÃ¼sste man in JFritz nachbilden.  (KCh)
                   <- Eigentlich sollte es auch mit einem direkten URL-Aufruf funktionieren. Machen andere Tools genau so. (Robert)
                   <- Kann denn keiner das Verhalten meiner Box nachvollziehen? Ist das evtl. ISDN-spezifisch? Ich kanns es 100%ig reproduzieren (KCh))
 - Neu: (JFritz)Telefonbuch importieren (XML)
-- Neu: Manuelle Backups erstellen (Menü und Toolbar)
+- Neu: Manuelle Backups erstellen (MenÃ¼ und Toolbar)
 - Neu: per Funktionstaste "F5" Anrufliste aktualisieren
-- Neu: Suchfunktion für Telefonbuch
+- Neu: Suchfunktion fÃ¼r Telefonbuch
 - Neue Option: Nach Standby oder Ruhezustand die Anrufliste automatisch abholen
 - Neue Option: Sicherungskopien bei jedem Laden der Anruferliste erstellen
-- Änderung: Das Durchsuchen der Anruferliste muss nun per [ENTER] gestartet werden.
-- Bugfix: "Übernehmen" Button im Telefonbuch wird nun anklickbar, wenn man eine Telefonnummer geändert hat.
+- Ã„nderung: Das Durchsuchen der Anruferliste muss nun per [ENTER] gestartet werden.
+- Bugfix: "Ãœbernehmen" Button im Telefonbuch wird nun anklickbar, wenn man eine Telefonnummer geÃ¤ndert hat.
 - Bugfix: Sonderzeichen bei "Externes Programm starten" werden korrekt gespeichert 
-- Bugfix: tritt der unwahrscheinliche Fall auf, dass kein Tray-Icon angezeigt wird, der User aber früher einmal
-			 (als das Tray-Icon noch verfügbar war) Tray-Messages zu Benachrichtigung ausgewählt hatte, wurde gar kein
-			 Anruf mehr signalisiert. Jetzt wird in diesem Fall auf ein PopUp zurückgegriffen.
-- Bugfix: unvollständige Anzeige des Einstellungsdialoges -> Weiteres
+- Bugfix: tritt der unwahrscheinliche Fall auf, dass kein Tray-Icon angezeigt wird, der User aber frÃ¼her einmal
+			 (als das Tray-Icon noch verfÃ¼gbar war) Tray-Messages zu Benachrichtigung ausgewÃ¤hlt hatte, wurde gar kein
+			 Anruf mehr signalisiert. Jetzt wird in diesem Fall auf ein PopUp zurÃ¼ckgegriffen.
+- Bugfix: unvollstÃ¤ndige Anzeige des Einstellungsdialoges -> Weiteres
 - Bugfix: Speicherung der Kommentare
-- Bugfix: Überschreiben der Rufnummer im Telefonbuch tritt nicht mehr auf
+- Bugfix: Ãœberschreiben der Rufnummer im Telefonbuch tritt nicht mehr auf
 - INTERN: Bereitstellen von utils.JFritzClipboard und CallerList.getSelectedCall
 - INTERN: JDIC-Update auf "JDIC 20050930 Build"
 
 JFritz 0.5.5
-- Nummer und Anschrift können aus der Anrufliste heraus in die Zwischenablage kopiert werden
-- Schutz vor mehrfachem Programmstart (<- was ist mit Kommandozeilenstart?, =>BS: werden berücksichtigt - enableInstanceControl=false)
-- Löschfunktionalität für Anrufliste der FRITZ!Box (Menü und Toolbar)
+- Nummer und Anschrift kÃ¶nnen aus der Anrufliste heraus in die Zwischenablage kopiert werden
+- Schutz vor mehrfachem Programmstart (<- was ist mit Kommandozeilenstart?, =>BS: werden berÃ¼cksichtigt - enableInstanceControl=false)
+- LÃ¶schfunktionalitÃ¤t fÃ¼r Anrufliste der FRITZ!Box (MenÃ¼ und Toolbar)
 - Bugfix: Start auch bei fehlendem Tray
 - Bugfix: Anrufmonitor arbeitete bei einem Reverselookup einer nicht im Telefonbuch 
           eingetragenen Person nicht mehr
-- Bugfix: Eintragen einer über Reverse-Lookup gefundenen Person korrigiert
-- Neuer Kommandozeilenparameter: -d, --delete_on_box, löscht Anrufliste auf der Box und beendet sich dann (kein GUI)
+- Bugfix: Eintragen einer Ã¼ber Reverse-Lookup gefundenen Person korrigiert
+- Neuer Kommandozeilenparameter: -d, --delete_on_box, lÃ¶scht Anrufliste auf der Box und beendet sich dann (kein GUI)
 - Neuer Kommandozeilenparameter: -b, --backup, erstellt eine Sicherungskopie von allen XML-Dateien
 - Neue Option: Sicherungskopien beim Start erstellen
-- Bugfix: Bei der Suche nach einer Rufnummer werden vor der Zentrale ggf. vorhandene Durchwahlnummern berücksichtigt 
+- Bugfix: Bei der Suche nach einer Rufnummer werden vor der Zentrale ggf. vorhandene Durchwahlnummern berÃ¼cksichtigt 
  
 JFritz 0.5.4
 - Beim neuen Anrufmonitor auf # achten.
-- Callmonitor: Beim Ausführen eines externen Programmes werden %Firstname, %Surname, %Compnay ersetzt.
+- Callmonitor: Beim AusfÃ¼hren eines externen Programmes werden %Firstname, %Surname, %Compnay ersetzt.
 - Beim Beenden von JFritz keine Speicherung von Calls und Phonebook mehr
 - Bei den Einstellungen die MAC weggenommen
 - Bugfix: Sonderzeichen bei "Externes Programm starten" werden korrekt gespeichert 
 - Watchdog: Anrufmonitor wird nach dem Ruhezustand neu gestartet
 - Anrufliste wird per CSV und nicht mehr per Webinterface abgeholt
-- Unterstützung für Firmware xx.04.03
+- UnterstÃ¼tzung fÃ¼r Firmware xx.04.03
 
 JFritz 0.5.3
 - Bugfix-Anrufmonitor: Nummern werden internationalisiert
@@ -1225,7 +1373,7 @@ JFritz 0.5.2
 - FRITZ!Box-Anrufmonitor: Abholen der Anrufliste nach dem Auflegen
 
 JFritz 0.5.1
-- Priorität auf 5 erhöht
+- PrioritÃ¤t auf 5 erhÃ¶ht
 - Kompatibel zur Firmware xx.03.101
 - Datenverbindungen werden als solche angezeigt
 - Outlookimport verbessert
@@ -1233,14 +1381,14 @@ JFritz 0.5.1
 JFritz 0.5.0
 - Neuer Anrufmonitor: FRITZ!Box Anrufmonitor
 - Kompatibel zur Firmware xx.03.99
-- Einstelloption für "minimieren statt schließen"
+- Einstelloption fÃ¼r "minimieren statt schlieÃŸen"
 
 JFritz 0.4.7
-- New Feature: Variable Programmpriorität (1..10)
+- New Feature: Variable ProgrammprioritÃ¤t (1..10)
 - Neuer Kommandozeilenparameter -p5 --priority=5
 - Kompatibel zur FRITZ!Box 7170
-- Anzeige der Gesamtgesprächsdauer in Stunden und Minuten
-- Bugfix: Manche Spalten ließen sich nicht klein genug machen
+- Anzeige der GesamtgesprÃ¤chsdauer in Stunden und Minuten
+- Bugfix: Manche Spalten lieÃŸen sich nicht klein genug machen
 - Bugfix: Kommandozeilenparameter -c funktionierte nicht mehr
 - Bugfix: Outlook-Import
 - Bugfix: RESSOURCES: filter_callbycall, filter_sip
@@ -1248,9 +1396,9 @@ JFritz 0.4.7
 
 JFritz 0.4.6
 - Reset-Button bei den Filtern deaktiviert alle Filter
-- Neuer Filter: Kontextmenü bei "Verpasste Anrufe"-Filter
+- Neuer Filter: KontextmenÃ¼ bei "Verpasste Anrufe"-Filter
 - Neuer Filter: Kommentarfilter
-- Neuer Befehl für "Anrufmonitor - Externes Programm starten": %URLENCODE();
+- Neuer Befehl fÃ¼r "Anrufmonitor - Externes Programm starten": %URLENCODE();
 - Kompatibel zu FritzBox 5010 und 5012
 - Automatische Erkennung der Firmware
 - Bugfix: Danisahne-Mod wird richtig erkannt
@@ -1259,31 +1407,31 @@ JFritz 0.4.6
 - Bugfix: Sortierfunktion beim Telefonbuch korrigiert
 
 JFritz 0.4.5
-- Unterstützung für FRITZ!Box Firmware .85
-- Unterstützung für FRITZ!Box Firmware .87
-- Unterstützung für FRITZ!Box Firmware .88
+- UnterstÃ¼tzung fÃ¼r FRITZ!Box Firmware .85
+- UnterstÃ¼tzung fÃ¼r FRITZ!Box Firmware .87
+- UnterstÃ¼tzung fÃ¼r FRITZ!Box Firmware .88
 - Spalten sind jetzt frei verschiebbar
-- Kommentarspalte hinzugefügt
-- Kommentar- und Anschluß-Spalte können ausgeblendet werden
-- Suche der FritzBox über UPNP/SSDP abschaltbar
+- Kommentarspalte hinzugefÃ¼gt
+- Kommentar- und AnschluÃŸ-Spalte kÃ¶nnen ausgeblendet werden
+- Suche der FritzBox Ã¼ber UPNP/SSDP abschaltbar
 - Telefonbuch nun nach allen Spalten sortierbar
 - Beim Export merkt sich JFritz die Verzeichnisse
 - Drucken der Anrufliste (und Export nach Excel, RTF, PDF, CSV, ...)
-- Neue Kommandozeilenoption -n: Schaltet die Tray-Unterstützung aus
+- Neue Kommandozeilenoption -n: Schaltet die Tray-UnterstÃ¼tzung aus
 - Direkter Import von Outlook-Kontakten
-- Datumsfilter unterstützt nun "Gestern"
-- Unterstützung für die neue Version des Callmessage-Anrufomitors (http://www.evil-dead.org/traymessage/index.php4)
+- Datumsfilter unterstÃ¼tzt nun "Gestern"
+- UnterstÃ¼tzung fÃ¼r die neue Version des Callmessage-Anrufomitors (http://www.evil-dead.org/traymessage/index.php4)
 - Bugfix: Firmware konnte beim ersten Start nicht erkannt werden
 - Bugfix: Spaltenbreite wurde nicht korrekt gespeichert
-- Bugfix: Falsche SIP-ID bei gelöschten Einträgen
+- Bugfix: Falsche SIP-ID bei gelÃ¶schten EintrÃ¤gen
 - Bugfix: Wenn Kurzwahl unbekannt war, wurde eine falsche Rufnummer angezeigt
-- Bugfix: Anrufliste wird nur gelöscht, wenn mind. 1 Eintrag abgeholt wurde
+- Bugfix: Anrufliste wird nur gelÃ¶scht, wenn mind. 1 Eintrag abgeholt wurde
 
 Internal: 
 - SipProvider-Informationen werden nicht mehr in den 
 	 jfritz.properties.xml sondern in jfritz.sipprovider.xml
   gespeichert.
-- Zugriff auf SipProvider über JFritz.getSIPProviderTableModel() 
+- Zugriff auf SipProvider Ã¼ber JFritz.getSIPProviderTableModel() 
 
 JFritz 0.4.4
 - CallByCall information is saved (only 010xy and 0100yy)
@@ -1296,7 +1444,7 @@ JFritz 0.4.4
 - Added context menu to phonebook and callerlist
 - New Callfilter: Route, Fixed call, CallByCall
 - New Datefilter: Right click on date filter button
-- Display more information in status barm Zielfon hör ich "Ihre Nummerwird gehalten...". Bitte Einbauen!! Das ist der Hammer!
+- Display more information in status barm Zielfon hÃ¶r ich "Ihre Nummerwird gehalten...". Bitte Einbauen!! Das ist der Hammer!
 
 - Export to XML
 - Export CallByCall to CSV
@@ -1391,7 +1539,7 @@ JFritz 0.2.6:
 - Support for Fritz!Boxes with modified firmware
 - Improved config dialog
 - Improved firmware detection
-- Initial support für SIP-Provider
+- Initial support fÃ¼r SIP-Provider
 - Firmware/SIP-Provider are saved in config file
 
 JFritz 0.2.4:

@@ -34,6 +34,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.log4j.Logger;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
@@ -66,9 +67,9 @@ import de.moonflower.jfritz.utils.reverselookup.ReverseLookupAustria;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupGermany;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupTurkey;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupUnitedStates;
-import de.robotniko.reverseLookup.api.ReverseLookupResponse;
 
 public class PhoneBook extends AbstractTableModel implements CallerListListener {
+	private final static Logger log = Logger.getLogger(PhoneBook.class);
 	private static final long serialVersionUID = 1;
 
 	private static final String PHONEBOOK_DTD_URI = "http://jfritz.moonflower.de/dtd/phonebook.dtd"; //$NON-NLS-1$
@@ -117,7 +118,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 
 	private NumberPersonMultiHashMap numberHashMap;
 
-	protected PropertyProvider properties = PropertyProvider.getInstance();
+	protected static PropertyProvider properties = PropertyProvider.getInstance();
 
 	public PhoneBook(String fileLocation) {
 		this.fileLocation = fileLocation;
@@ -188,7 +189,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 	}
 
 	public void sortAllUnfilteredRows() {
-		Debug.info("Sorting unfiltered data"); //$NON-NLS-1$
+		log.info("Sorting unfiltered data"); //$NON-NLS-1$
 		Collections.sort(unfilteredPersons, new ColumnSorter(1, true));
 		// Resort filtered data
 		Collections.sort(filteredPersons, new ColumnSorter(sortColumn,
@@ -210,6 +211,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 			this.ascending = ascending;
 		}
 
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		public int compare(Person p1, Person p2) {
 			Object o1, o2;
 			switch (colIndex) {
@@ -313,7 +315,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 	 *            calls to do reverse lookup on
 	 */
 	public void reverseLookupPersons(Vector<Person> persons) {
-		Debug.info("Doing reverse Lookup");
+		log.info("Doing reverse Lookup");
 		for (int i = 0; i < persons.size(); i++) {
 			Person person = persons.get(i);
 			callerList.reverseLookup(person.getNumbers());
@@ -341,6 +343,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 	 *
 	 * @param persons to be added to the phonebook
 	 */
+	@SuppressWarnings("unchecked")
 	public synchronized void addEntries(Vector<Person> persons) {
 
 		for(Person person: persons)
@@ -368,6 +371,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 	 *
 	 * @param persons
 	 */
+	@SuppressWarnings("unchecked")
 	public synchronized void removeEntries(Vector<Person> persons){
 
 		for(Person person: persons)
@@ -515,7 +519,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 	 * @param filename
 	 */
 	public synchronized void saveToBITFBFDialerFormat(String filename) {
-		Debug.info("Saving to BIT FBF Dialer file " + filename); //$NON-NLS-1$
+		log.info("Saving to BIT FBF Dialer file " + filename); //$NON-NLS-1$
 		try {
 			BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(filename), "UTF8")); //$NON-NLS-1$
@@ -566,7 +570,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 			}
 			pw.close();
 		} catch (Exception e) {
-			Debug.error("Could not write file!"); //$NON-NLS-1$
+			log.error("Could not write file!"); //$NON-NLS-1$
 		}
 	}
 
@@ -576,7 +580,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 	 * @param filename
 	 */
 	public synchronized void saveToCallMonitorFormat(String filename) {
-		Debug.info("Saving to Call Monitor file " + filename); //$NON-NLS-1$
+		log.info("Saving to Call Monitor file " + filename); //$NON-NLS-1$
 		try {
 			BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(filename), "UTF8")); //$NON-NLS-1$
@@ -627,7 +631,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 			}
 			pw.close();
 		} catch (Exception e) {
-			Debug.error("Could not write file!"); //$NON-NLS-1$
+			log.error("Could not write file!"); //$NON-NLS-1$
 		}
 	}
 
@@ -637,7 +641,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 	 * @param filename
 	 */
 	public synchronized void saveToXMLFile(String filename) {
-		Debug.info("Saving to file " + filename); //$NON-NLS-1$
+		log.info("Saving to file " + filename); //$NON-NLS-1$
 		try {
 			BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(filename), "UTF8")); //$NON-NLS-1$
@@ -758,11 +762,11 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 			pw.newLine();
 			pw.close();
 		} catch (UnsupportedEncodingException e) {
-			Debug.error("UTF-8 not supported."); //$NON-NLS-1$
+			log.error("UTF-8 not supported."); //$NON-NLS-1$
 		} catch (FileNotFoundException e) {
-			Debug.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		} catch (IOException e) {
-			Debug.error("IOException " + filename); //$NON-NLS-1$
+			log.error("IOException " + filename); //$NON-NLS-1$
 		}
 
 		this.callerList.fireTableDataChanged();
@@ -811,19 +815,20 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 			reader.parse(new InputSource(new FileInputStream(filename)));
 			updateFilter();
 		} catch (ParserConfigurationException e) {
-			Debug.error("Error with ParserConfiguration!"); //$NON-NLS-1$
+			log.error("Error with ParserConfiguration!"); //$NON-NLS-1$
 		} catch (SAXException e) {
-			Debug.error("Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
-			Debug.error(e.toString());
+			log.error("Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.error(e.toString());
 			if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
 					|| e.getLocalizedMessage().startsWith(
 							"Invalid system identifier")) { //$NON-NLS-1$
-				Debug.error(e.toString());
-
-				Debug.errDlg("Error on paring " + filename);
+				
+				String message = "Error on parsing " + filename;
+				log.error(message, e);
+				Debug.errDlg(message);
 			}
 		} catch (IOException e) {
-			Debug.error("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.error("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 		allLastCallsSearched = true;
 		loadingXMLFile = false;
@@ -889,7 +894,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 	 *            Filename to save to Save whole phone book
 	 */
 	public void saveToCSVFile(String filename, char separator) {
-		Debug.info("Saving phone book(" + unfilteredPersons.size() + " lines) to csv file " + filename); //$NON-NLS-1$
+		log.info("Saving phone book(" + unfilteredPersons.size() + " lines) to csv file " + filename); //$NON-NLS-1$
 		FileOutputStream fos;
 		try {
 			fos = new FileOutputStream(filename);
@@ -905,7 +910,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 			}
 			pw.close();
 		} catch (FileNotFoundException e) {
-			Debug.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 
 	}
@@ -923,7 +928,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 			saveToCSVFile(filename, separator);
 			return;
 		}
-		Debug.info("Saving phone book(" + rows.length + " lines) to csv file " + filename); //$NON-NLS-1$
+		log.info("Saving phone book(" + rows.length + " lines) to csv file " + filename); //$NON-NLS-1$
 		FileOutputStream fos;
 		try {
 			fos = new FileOutputStream(filename);
@@ -939,7 +944,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 			}
 			pw.close();
 		} catch (FileNotFoundException e) {
-			Debug.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 
@@ -1075,8 +1080,8 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 		if ((!filter_private) && (keywords.length == 0)) {
 			// Use unfiltered data
 			filteredPersons = unfilteredPersons;
-			Debug.debug("Im updating the filter");
-			Debug.debug("Size of filtered contacts: "+filteredPersons.size());
+			log.debug("Im updating the filter");
+			log.debug("Size of filtered contacts: "+filteredPersons.size());
 		} else {
 			// Data got to be filtered
 			Vector<Person> newFilteredPersons = new Vector<Person>();
@@ -1123,7 +1128,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 	 *            is the path to a valid thunderbird csv file
 	 */
 	public String importFromThunderbirdCSVfile(String filename) {
-		Debug.info("Importing Thunderbird Contacts from csv file " + filename); //$NON-NLS-1$
+		log.info("Importing Thunderbird Contacts from csv file " + filename); //$NON-NLS-1$
 		String line = ""; //$NON-NLS-1$
 		String message;
 		try {
@@ -1148,9 +1153,9 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 
 			}
 
-			Debug.debug(linesRead
+			log.debug(linesRead
 					+ " Lines read from Thunderbird csv file " + filename); //$NON-NLS-1$
-			Debug.debug(newEntries + " New contacts processed"); //$NON-NLS-1$
+			log.debug(newEntries + " New contacts processed"); //$NON-NLS-1$
 
 			if (newEntries > 0) {
 				sortAllUnfilteredRows();
@@ -1173,10 +1178,10 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 
 		} catch (FileNotFoundException e) {
 			message = "Could not read from " + filename + "!";
-			Debug.error("Could not read from " + filename + "!"); //$NON-NLS-1$, //$NON-NLS-2$
+			log.error("Could not read from " + filename + "!"); //$NON-NLS-1$, //$NON-NLS-2$
 		} catch (IOException e) {
 			message = "IO Exception reading csv file";
-			Debug.error("IO Exception reading csv file"); //$NON-NLS-1$
+			log.error("IO Exception reading csv file"); //$NON-NLS-1$
 		}
 		return message;
 	}
@@ -1202,7 +1207,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 
 		// check if line has correct amount of entries
 		if (field.length < 37) {
-			Debug.error("Invalid Thunderbird CSV format!"); //$NON-NLS-1$
+			log.error("Invalid Thunderbird CSV format!"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -1211,7 +1216,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 		// "+field[10]);
 		if (field[6].equals("") && field[7].equals("") && field[8].equals("") && //$NON-NLS-1$,  //$NON-NLS-2$,  //$NON-NLS-3$
 				field[9].equals("") && field[10].equals("")) { //$NON-NLS-1$,  //$NON-NLS-2$
-			Debug.warning("No phone number present for contact"); //$NON-NLS-1$
+			log.warn("No phone number present for contact"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -1263,7 +1268,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 	 *            is the path to a valid thunderbird csv file
 	 */
 	public String importFromVCard(String filename) {
-		Debug.info("Importing VCard Contacts from file " + filename); //$NON-NLS-1$
+		log.info("Importing VCard Contacts from file " + filename); //$NON-NLS-1$
 		String line = ""; //$NON-NLS-1$
 		String message;
 		try {
@@ -1278,7 +1283,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 			boolean wrongVersion = false;
 			while (null != (line = br.readLine())) {
 				linesRead++;
-				Debug.debug(line);
+				log.debug(line);
 				vcardParser.parseLine(line);
 
 				if (vcardParser.getProperty().equals("begin")) {
@@ -1316,19 +1321,19 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 						person = null;
 					}
 				} else {
-					Debug.debug("Unknown property: " + vcardParser.getProperty());
+					log.debug("Unknown property: " + vcardParser.getProperty());
 					Enumeration<String> en = vcardParser.getPropertyType().keys();
 					while (en.hasMoreElements()) {
 						String key = (String)en.nextElement();
-						Debug.debug("Property values: " + key + "=" + vcardParser.getPropertyType().get(key));
+						log.debug("Property values: " + key + "=" + vcardParser.getPropertyType().get(key));
 					}
-					Debug.debug("Values: " + vcardParser.getValues());
+					log.debug("Values: " + vcardParser.getValues());
 				}
 			}
 
-			Debug.debug(linesRead
+			log.debug(linesRead
 					+ " Lines read from VCard file " + filename); //$NON-NLS-1$
-			Debug.debug(newEntries + " New contacts processed"); //$NON-NLS-1$
+			log.debug(newEntries + " New contacts processed"); //$NON-NLS-1$
 
 			message = "";
 			if (newEntries > 0) {
@@ -1352,10 +1357,10 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 
 		} catch (FileNotFoundException e) {
 			message = "Could not read from " + filename + "!";
-			Debug.error("Could not read from " + filename + "!"); //$NON-NLS-1$, //$NON-NLS-2$
+			log.error("Could not read from " + filename + "!"); //$NON-NLS-1$, //$NON-NLS-2$
 		} catch (IOException e) {
 			message = "IO Exception reading csv file";
-			Debug.error("IO Exception reading csv file"); //$NON-NLS-1$
+			log.error("IO Exception reading csv file"); //$NON-NLS-1$
 		}
 		return message;
 	}
@@ -1447,17 +1452,17 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 
     public static Person searchFirstAndLastNameToPhoneNumber(String caller) {
     	Vector<Person> persons = new Vector<Person>();
-        final PhoneNumberOld callerPhoneNumber = new PhoneNumberOld(caller, false);
-        Debug.info("Searching in local database for number "+caller+" ..."); //$NON-NLS-1$
+        final PhoneNumberOld callerPhoneNumber = new PhoneNumberOld(properties, caller, false);
+        log.info("Searching in local database for number "+caller+" ..."); //$NON-NLS-1$
         Person person = JFritz.getPhonebook().findPerson(callerPhoneNumber);
         if (person != null) {
-            Debug.info("Found in local database: " + person.getLastName() + ", " + person.getFirstName()); //$NON-NLS-1$,  //$NON-NLS-2$
+            log.info("Found in local database: " + person.getLastName() + ", " + person.getFirstName()); //$NON-NLS-1$,  //$NON-NLS-2$
         } else {
         	if (MessageProvider.getInstance().getMessage("unknown").equals(caller)) {
         		person = createDummyPerson(callerPhoneNumber);
         		persons.add(person);
         	} else {
-	            Debug.info("Searching on internet ..."); //$NON-NLS-1$
+	            log.info("Searching on internet ..."); //$NON-NLS-1$
 
 	            JFritzReverseLookup.doAsyncLookup(callerPhoneNumber, 1, 1, null, new IReverseLookupFinishedWithResultListener() {
 
@@ -1486,7 +1491,7 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
 		else if(callerPhoneNumber.getCountryCode().startsWith(JFritzReverseLookup.TURKEY_CODE))
 			city = ReverseLookupTurkey.getCity(callerPhoneNumber.getIntNumber());
 		person.setCity(city);
-		Debug.warning("Add dummy person to database"); //$NON-NLS-1$
+		log.warn("Add dummy person to database"); //$NON-NLS-1$
 		return person;
 	}
 
@@ -1501,7 +1506,8 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
      *
      * @param rows
      */
-    public synchronized void removePersons(int[] rows){
+    @SuppressWarnings("unchecked")
+	public synchronized void removePersons(int[] rows){
     	if (rows.length > 0) {
 			// Markierte Einträge löschen
 			Vector<Person> personsToDelete = new Vector<Person>();

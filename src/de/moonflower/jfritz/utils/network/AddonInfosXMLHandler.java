@@ -11,8 +11,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import de.moonflower.jfritz.utils.network.UPNPAddonInfosListener;
-
 /**
  * XML Handler for reading the output of the addonInfos
  * Web service on the box

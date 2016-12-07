@@ -12,7 +12,8 @@ import java.awt.image.ImageObserver;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import de.moonflower.jfritz.utils.Debug;
+
+import org.apache.log4j.Logger;
 
 /**
  * A Button with 3 states for the FilterButtons of the CallerListpanel
@@ -21,6 +22,7 @@ import de.moonflower.jfritz.utils.Debug;
  *
  */
 public class ThreeStateButton extends JButton implements ImageObserver {
+	private final static Logger log = Logger.getLogger(ThreeStateButton.class);
 	private int state;
 
 	public static final int NOTHING = 0;
@@ -159,11 +161,11 @@ public class ThreeStateButton extends JButton implements ImageObserver {
 				g.drawImage(star, 0, 0, this);
 				//Debug.msg("image loaded: "+star.toString());
 			} catch (InterruptedException ie) {
-				Debug.error("error loading images/stern.gif" + ie);
+				log.error("error loading images/stern.gif" + ie);
 	        	Thread.currentThread().interrupt();
 			}
 		} else {
-			Debug.error("images/stern.gif not found for ThreeStateButton");
+			log.error("images/stern.gif not found for ThreeStateButton");
 		}
 		ImageIcon result = new ImageIcon(image);
 		return result;

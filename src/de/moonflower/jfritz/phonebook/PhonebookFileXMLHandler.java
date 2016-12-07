@@ -7,13 +7,14 @@ package de.moonflower.jfritz.phonebook;
 
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
@@ -23,6 +24,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  *
  */
 public class PhonebookFileXMLHandler extends DefaultHandler {
+	private final static Logger log = Logger.getLogger(PhonebookFileXMLHandler.class);
 
 	String firstName, company, lastName, type, standard, email, street,
 			postCode, city, category, picture, country, area, num;
@@ -38,6 +40,7 @@ public class PhonebookFileXMLHandler extends DefaultHandler {
 	boolean privateEntry;
 
 	Vector<Person> persons;
+	protected PropertyProvider properties = PropertyProvider.getInstance();
 
 	public PhonebookFileXMLHandler(PhoneBook phonebook) {
 		super();
@@ -115,15 +118,15 @@ public class PhonebookFileXMLHandler extends DefaultHandler {
 				float versionFloat = Float.parseFloat(version);
 				if (versionFloat == 1.0)
 				{
-					PhoneNumberOld pn = new PhoneNumberOld(chars, false);
+					PhoneNumberOld pn = new PhoneNumberOld(this.properties, chars, false);
 					pn.setType(type);
 					numbers.add(pn);
 				} else if (versionFloat >= 2.0) {
-					Debug.debug("DO SOMETHING HERE");
+					log.debug("DO SOMETHING HERE");
 				}
 			} catch (NumberFormatException nfe)
 			{
-				PhoneNumberOld pn = new PhoneNumberOld(chars, false);
+				PhoneNumberOld pn = new PhoneNumberOld(this.properties, chars, false);
 				pn.setType(type);
 				numbers.add(pn);
 			}

@@ -2,37 +2,41 @@ package de.moonflower.jfritz.box.fritzbox;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
-import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.log4j.Logger;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.box.BoxCallBackListener;
 import de.moonflower.jfritz.box.BoxCallListInterface;
 import de.moonflower.jfritz.box.BoxCallMonitorInterface;
 import de.moonflower.jfritz.box.BoxClass;
-import de.moonflower.jfritz.box.BoxStatusListener;
 import de.moonflower.jfritz.box.fritzbox.callerlist.FritzBoxCallerListFactory;
-import de.moonflower.jfritz.box.fritzbox.query.IQuery;
-import de.moonflower.jfritz.box.fritzbox.query.QueryFactory;
+import de.moonflower.jfritz.box.fritzbox.sipprovider.FritzBoxSipProvider;
 import de.moonflower.jfritz.callmonitor.CallMonitorInterface;
 import de.moonflower.jfritz.callmonitor.CallMonitorStatusListener;
 import de.moonflower.jfritz.callmonitor.CallmessageCallMonitor;
 import de.moonflower.jfritz.callmonitor.FBoxCallMonitorV1;
 import de.moonflower.jfritz.callmonitor.FBoxCallMonitorV3;
 import de.moonflower.jfritz.callmonitor.YACCallMonitor;
+import de.moonflower.jfritz.dialogs.simple.LoginDialog;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.exceptions.FeatureNotSupportedByFirmware;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
@@ -43,6 +47,7 @@ import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.IProgressListener;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
+import de.moonflower.jfritz.utils.ComplexJOptionPaneMessage;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.network.AddonInfosXMLHandler;
@@ -51,15 +56,19 @@ import de.moonflower.jfritz.utils.network.UPNPCommonLinkPropertiesListener;
 import de.moonflower.jfritz.utils.network.UPNPExternalIpListener;
 import de.moonflower.jfritz.utils.network.UPNPStatusInfoListener;
 import de.moonflower.jfritz.utils.network.UPNPUtils;
+import de.robotniko.fboxlib.enums.LoginMode;
+import de.robotniko.fboxlib.exceptions.FirmwareNotDetectedException;
+import de.robotniko.fboxlib.exceptions.InvalidCredentialsException;
+import de.robotniko.fboxlib.exceptions.InvalidSessionIdException;
+import de.robotniko.fboxlib.exceptions.LoginBlockedException;
+import de.robotniko.fboxlib.exceptions.PageNotFoundException;
+import de.robotniko.fboxlib.fritzbox.FirmwareVersion;
+import de.robotniko.fboxlib.fritzbox.FritzBoxCommunication;
 
 public class FritzBox extends BoxClass {
+	private final static Logger log = Logger.getLogger(FritzBox.class);
 
 	// <UDN>uuid:75802409-bccb-40e7-8e6c-MACADDRESS</UDN>
-	private final static String PARSE_MAC_ADDRESS = "<UDN>uuid:([^<]*)</UDN>";
-
-	private final static String QUERY_GET_MAC_ADDRESS = "env:settings/macdsl";
-	private final static String QUERY_EXTERNAL_IP = "connection0:status/ip";
-
 	private final static String QUERY_ANALOG_COUNT = "telcfg:settings/MSN/Port/count";
 	private final static String QUERY_ANALOG_NAME = "telcfg:settings/MSN/Port%NUM%/Name";
 
@@ -78,18 +87,14 @@ public class FritzBox extends BoxClass {
 	private final static String QUERY_VOIP_ACTIVATED = "telcfg:settings/VoipExtension%NUM%/enabled";
 	private final static String QUERY_VOIP_NAME = "telcfg:settings/VoipExtension%NUM%/Name";
 
-	private final static String QUERY_SIP_ID = "sip:settings/sip%NUM%/ID";
-	private final static String QUERY_SIP_ACTIVATED = "sip:settings/sip%NUM%/activated";
-	private final static String QUERY_SIP_REGISTRAR = "sip:settings/sip%NUM%/registrar";
-	private final static String QUERY_SIP_MSN = "telcfg:settings/SIP%NUM%/MSN";
-	private final static String QUERY_SIP_MAXCOUNT = "telcfg:settings/SIP/count";
-//	private final static String QUERY_SIP_COUNT = "sip:settings/sip/count";
-	private final static String QUERY_SIP_NAME = "sip:settings/sip%NUM%/Name";
-	private final static String QUERY_SIP_NUMBER = "sip:settings/sip%NUM%/Number";
-	private final static String QUERY_SIP_DISPLAYNAME = "sip:settings/sip%NUM%/displayname";
-	private final static String QUERY_SIP_USERNAME = "sip:settings/sip%NUM%/username";
-//	private final static String QUERY_SIP_REGISTRY_TYPE = "telcfg:settings/SIP%NUM%/RegistryType";
+// 31.07.2015 Wahl per Lua
+	private final static String URL_DIAL_FONBOOK_LUA = "/fon_num/dial_fonbook.lua";
+	private final static String URL_FONBOOK_LIST_LUA = "/fon_num/fonbook_list.lua";
+	private final static String QUERY_DialPort = "telcfg:settings/DialPort";
 
+	private FritzBoxCommunication fbc;
+
+	private String igdupnp = "upnp";  // 01.08.2015 // fbc.getNetworkMethods().getUPNPFromIgddesc();
 
 	//the following are strings used by the web services on the box
 	//from XX.04.33 onwards
@@ -114,141 +119,289 @@ public class FritzBox extends BoxClass {
 	private static String URL_SERVICE_FORCETERMINATION = ":49000/upnp/control/WANIPConn1";
 	private static String URN_SERVICE_FORCETERMINATION = "urn:schemas-upnp-org:service:WANIPConnection:1#ForceTermination";
 
-//	private static String POSTDATA_REBOOT = "getpage=..%2Fhtml%2Freboot.html&errorpage=..%2Fhtml%2Fde%2Fmenus%2Fmenu2.html&var%3Apagename=reset&var%3Aerrorpagename=reset&var%3Amenu=system&var%3Apagemaster=&time%3Asettings%2Ftime=1250935088%2C-120&var%3AtabReset=0&logic%3Acommand%2Freboot=..%2Fgateway%2Fcommands%2Fsaveconfig.html";
-	private static String POSTDATA_REBOOT = "getpage=..%2Fhtml%2Freboot.html&var%3Apagename=reset&var%3Amenu=system&var%3Apagemaster=&time%3Asettings%2Ftime=1250935088%2C-120&var%3AtabReset=0&logic%3Acommand%2Freboot=..%2Fgateway%2Fcommands%2Fsaveconfig.html";
-
-	private static String POSTDATA_CALL = "&telcfg:settings/UseClickToDial=1&telcfg:settings/DialPort=$NEBENSTELLE&telcfg:command/Dial=$NUMMER"; //$NON-NLS-1$
-	private static String POSTDATA_HANGUP = "&telcfg:settings/UseClickToDial=1&telcfg:command%2FHangup"; //$NON-NLS-1$
+	private static String URL_SERVICE_REBOOT = ":49000/upnp/control/deviceconfig"; // 01.08.2015
+	private static String URN_SERVICE_REBOOT = "urn:dslforum-org:service:DeviceConfig:1#Reboot"; // 01.08.2015
+	private static String URL_SERVICE_CREATEURLSID = ":49000/upnp/control/deviceconfig"; // 01.08.2015
+	private static String URN_SERVICE_CREATEURLSID = "urn:dslforum-org:service:DeviceConfig:1#X_AVM-DE_CreateUrlSID"; // 01.08.2015
 
 	private static int max_retry_count = 2;
 
-	private FritzBoxFirmware firmware = null;
+	private FirmwareVersion firmware = null;
 
 	private CallMonitorInterface callMonitor = null;
 
-	private Vector<SipProvider> sipProvider;
+	private FritzBoxSipProvider sipProvider;
 
 	private HashMap<Integer, Port> configuredPorts;
 
-	private IQuery queryImpl;
-
-	private Vector<BoxStatusListener> boxListener;
 	private Vector<BoxCallBackListener> callBackListener;
 
 	protected PropertyProvider properties = PropertyProvider.getInstance();
 	protected MessageProvider messages = MessageProvider.getInstance();
 
 	private BoxCallListInterface callList;
-
+	private boolean shouldPopupLoginCredentials = true;
+	
 	public FritzBox(String name, String description,
-					String protocol, String address, String port, String password,
-					Exception exc)
+					String protocol, String address, String port, boolean useUsername, String username, String password)
 	{
 		this.name = name;
 		this.description = description;
 
 		this.protocol = protocol;
-		this.address = address;
 		this.port = port;
+
+		this.useUsername = useUsername;
+		this.username = username;
 		this.password = password;
 
-		sipProvider = new Vector<SipProvider>();
+		sipProvider = new FritzBoxSipProvider();
 		configuredPorts = new HashMap<Integer, Port>();
-		boxListener = new Vector<BoxStatusListener>(4);
 		callBackListener = new Vector<BoxCallBackListener>(4);
-		exc = null;
+
+		if ("".equals(address)) {
+			this.address = "fritz.box";
+		} else {
+			this.address = address;
+		}
+	}
+
+	public void init(boolean shouldPopupLoginCredentials) {
+		this.shouldPopupLoginCredentials = shouldPopupLoginCredentials;
 		try {
 			setBoxConnected();
 			updateSettings();
 		} catch (WrongPasswordException e) {
-			exc = e;
-			Debug.error(messages.getMessage("box.wrong_password"));
+			log.error(messages.getMessage("box.wrong_password"));
 			setBoxDisconnected();
 		} catch (InvalidFirmwareException e) {
-			exc = e;
-			Debug.error(messages.getMessage("unknown_firmware"));
+			log.error(messages.getMessage("unknown_firmware"));
 			setBoxDisconnected();
 		} catch (IOException e) {
-			exc = e;
-			Debug.error(messages.getMessage("box.not_found"));
+			log.error(messages.getMessage("box.not_found"));
 			setBoxDisconnected();
 		}
 	}
 
-	public void updateSettings() throws WrongPasswordException, InvalidFirmwareException, IOException
+	public void detectFirmware() throws IOException, FirmwareNotDetectedException, PageNotFoundException {
+		fbc = new FritzBoxCommunication(this.protocol, this.address, this.port);
+		
+		try {
+			firmware = fbc.getFirmwareVersion();
+			fbc.detectLoginMethod();
+		} catch (ClientProtocolException e1) {
+			log.error(e1.getMessage());
+			setBoxDisconnected();
+			throw e1;
+		} catch (IOException e1) {
+			log.error(messages.getMessage("box.not_found"));
+			setBoxDisconnected();
+			throw e1;
+		} catch (PageNotFoundException e1) {
+			setBoxDisconnected();
+			handlePageNotFoundException(e1);
+			throw e1;
+		} catch (FirmwareNotDetectedException e1) {
+			setBoxDisconnected();
+			handleFirmwareNotDetectedException(e1);
+			throw e1;
+		}
+	}
+
+	public void detectFirmwareAndLogin() throws InvalidCredentialsException, LoginBlockedException, IOException, PageNotFoundException, FirmwareNotDetectedException {
+		fbc = new FritzBoxCommunication(this.protocol, this.address, this.port);
+		if (this.useUsername) {
+			fbc.setUserName(this.username);
+		} else {
+			fbc.setUserName("");
+		}
+		fbc.setPassword(this.password);
+
+		firmware = fbc.getFirmwareVersion();
+		if (firmware == null) {
+			log.warn("Could not detect firmware. SystemStatus: " + fbc.getSystemStatus());
+			throw new FirmwareNotDetectedException("Could not detect firmware, do not try to login");
+		} else {
+			log.debug(firmware.toString());
+		}
+		fbc.login();
+	}
+
+	public Exception updateSettings() throws WrongPasswordException, InvalidFirmwareException, IOException
 	{
+		Exception exc = null;
 		long start = 0;
 		long end = 0;
 
-		start = JFritzUtils.getTimestamp();
-			detectFirmware();
 		end = JFritzUtils.getTimestamp();
-		Debug.debug("UpdateSettings: detectFirmware " + (end - start) + "ms");
 		start = end;
-			queryImpl = QueryFactory.getQueryMethodForFritzBox(this);
+
+		log.debug("UpdateSettings: start of detectFirmwareAndLogin");
+		try {
+			detectFirmwareAndLogin();
+		} catch (ClientProtocolException e) {
+			log.error(e.getMessage());
+			setBoxDisconnected();
+		} catch (InvalidCredentialsException e) {
+			setBoxDisconnected();
+			if (shouldPopupLoginCredentials) {
+				shouldPopupLoginCredentials = false;
+				handleInvalidCredentialsException(e);
+				if (showLoginDialog(e)) {
+					properties.saveConfigProperties();
+					updateSettings();
+				}
+			}
+		} catch (LoginBlockedException e) {
+			setBoxDisconnected();
+			if (shouldPopupLoginCredentials) {
+				shouldPopupLoginCredentials = false;
+				handleLoginBlockedException(e);
+				if (showLoginDialog(e)) {
+					properties.saveConfigProperties();
+					updateSettings();
+				}
+			}
+		} catch (IOException e) {
+			log.error(messages.getMessage("box.not_found"));
+			setBoxDisconnected();
+		} catch (PageNotFoundException e) {
+			setBoxDisconnected();
+			handlePageNotFoundException(e);
+		} catch (FirmwareNotDetectedException e) {
+			setBoxDisconnected();
+			handleFirmwareNotDetectedException(e);
+		}
+		
 		end = JFritzUtils.getTimestamp();
-		Debug.debug("UpdateSettings: getQueryMethodForFritzBox " + (end - start) + "ms");
+		log.debug("UpdateSettings: detectFirmwareAndLogin " + (end - start) + "ms");
 		start = end;
-			detectMacAddress();
+
+		// 01.08.2015
+		log.debug("UpdateSettings: start of getUPNPFromIgddesc");
+		String rep = "";
+		try {
+			rep = fbc.getNetworkMethods().getUPNPFromIgddesc(); //getUPNPFromIgddesc();
+			setIgdupnp(rep);
+		} catch (InvalidSessionIdException e) {
+			setBoxDisconnected();
+			handleInvalidSessionIdException(e);
+		} catch (InvalidCredentialsException e) {
+			setBoxDisconnected();
+			handleInvalidCredentialsException(e);
+		} catch (LoginBlockedException e) {
+			setBoxDisconnected();
+			handleLoginBlockedException(e);
+		} catch (ClientProtocolException e) {
+			// nothing to do, IgdUPNP will be set correctly
+		} catch (IOException e) {
+			// nothing to do, IgdUPNP will be set correctly
+		} catch (PageNotFoundException e) {
+			// nothing to do, IgdUPNP will be set correctly
+		}
+
 		end = JFritzUtils.getTimestamp();
-		Debug.debug("UpdateSettings: detectMacAddress " + (end - start) + "ms");
+		log.debug("UpdateSettings: getUPNPFromIgddesc " + (end - start) + "ms");
+
+		start = end;
+		detectMacAddress();
+		end = JFritzUtils.getTimestamp();
+		log.debug("UpdateSettings: detectMacAddress " + (end - start) + "ms");
+
 		//getSettings();
 		start = end;
 			detectSipProvider();
 		end = JFritzUtils.getTimestamp();
-		Debug.debug("UpdateSettings: detectSipProvider " + (end - start) + "ms");
+		log.debug("UpdateSettings: detectSipProvider " + (end - start) + "ms");
 		start = end;
 			initializePorts();
 		end = JFritzUtils.getTimestamp();
-		Debug.debug("UpdateSettings: initializePorts " + (end - start) + "ms");
+		log.debug("UpdateSettings: initializePorts " + (end - start) + "ms");
 			callList = FritzBoxCallerListFactory.createFritzBoxCallListFromFirmware(firmware, this, callBackListener);
+
+		return exc;
 	}
 
-	/**
-	 * Detects firmware version
-	 * @return
-	 */
-	public void detectFirmware() throws WrongPasswordException, InvalidFirmwareException, IOException {
-		//avoid trying to access the box if running as a client
-		if ("2".equals(properties.getProperty("network.type"))
-				&& Boolean.parseBoolean(properties.getProperty("option.clientCallList")))
-		{
-			Debug.netMsg("JFritz is running as a client and using call list from server, canceling firmware detection");
+	public LoginMode getLoginMode() {
+		if (fbc == null) {
+			return LoginMode.NONE;
 		}
-		else
-		{
-			setBoxConnected();
-			firmware = null;
-			firmware = FritzBoxFirmware.detectFirmwareVersion(name, protocol,
-					address, password, port);
-		}
+		return fbc.getLoginMode();
 	}
 
-	public String appendSidOrPassword(String request) throws UnsupportedEncodingException {
-		if (firmware.getSessionId() != "") {
-			return request + "&sid=" + firmware.getSessionId();
-		}
-		else {
-			return request + "&login%3Acommand%2Fpassword=" + URLEncoder.encode(password, "ISO-8859-1");
+	public String getLastLoginUserName() {
+		return fbc.getLastUserName();
+	}
+
+	public String getPageAsString(final String url) throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException {
+		if (fbc.isLoggedIn()) {
+			try {
+				return fbc.getPageAsString(url);
+			} catch (InvalidSessionIdException e) {
+				setBoxDisconnected();
+				handleInvalidSessionIdException(e);
+				return "";
+			}
+		} else {
+			return "";
 		}
 	}
 
-	public String getPostData(String pattern) throws UnsupportedEncodingException {
-		pattern = pattern.replaceAll("\\$LANG", firmware.getLanguage());
-		return appendSidOrPassword(pattern);
+	public String postToPageAndGetAsString(final String url, List<NameValuePair> params) throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException {
+		if (fbc.isLoggedIn()) {
+			try {
+				return fbc.postToPageAndGetAsString(url, params);
+			} catch (InvalidSessionIdException e) {
+				setBoxDisconnected();
+				handleInvalidSessionIdException(e);
+				return "";
+			}
+		} else {
+			return "";
+		}
 	}
 
-	public String getPostDataWithAccessMethod(String pattern) throws UnsupportedEncodingException {
-		return firmware.getAccessMethod() + getPostData(pattern);
+	public Vector<String> postToPageAndGetAsVector(final String url, List<NameValuePair> params) throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException {
+		if (fbc.isLoggedIn()) {
+			try {
+				return fbc.postToPageAndGetAsVector(url, params);
+			} catch (InvalidSessionIdException e) {
+				setBoxDisconnected();
+				handleInvalidSessionIdException(e);
+				return new Vector<String>();
+			}
+		} else {
+			return new Vector<String>();
+		}
 	}
 
-	public final Vector<String> getQuery(Vector<String> queries)
+	public final Vector<String> getQuery(Vector<String> queries) //throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException
 	{
-		Vector<String> result = queryImpl.getQuery(queries);
-		Thread.yield();
+		// FIXME throw exceptions!!!! 
+		Vector<String> result = new Vector<String>();
+		
+		if (fbc.isLoggedIn()) {
+			try {
+				result = fbc.getQuery(queries);
+			} catch (InvalidSessionIdException e) {
+				handleInvalidSessionIdException(e);
+			} catch (ClientProtocolException e) {
+				log.error(e.getMessage());
+			} catch (IOException e) {
+				log.error(e.getMessage());
+			} catch (LoginBlockedException e) {
+				handleLoginBlockedException(e);
+			} catch (InvalidCredentialsException e) {
+				handleInvalidCredentialsException(e);
+			} catch (PageNotFoundException e) {
+				handlePageNotFoundException(e);
+			}
+			Thread.yield();
+		}
+		
 		return result;
 	}
-
+	
 	public String getUrlPrefix() {
 		return protocol + "://" + address + ":" + port;
 	}
@@ -259,39 +412,41 @@ public class FritzBox extends BoxClass {
 
 	public void detectMacAddress()
 	{
-		Vector<String> query = new Vector<String>();
-		query.add(QUERY_GET_MAC_ADDRESS);
+		if (fbc.isLoggedIn()) {
+			macAddress = messages.getMessage("unknown");
 
-		Vector<String> response = getQuery(query);
-		if (response.size() == 1)
-		{
-			macAddress = response.get(0);
-		}
-		else
-		{
-			setBoxConnected();
-			macAddress = getMacFromUPnP();
+			try {
+				macAddress = fbc.getNetworkMethods().getMacAddress();
+			} catch (Exception e) {
+				macAddress = messages.getMessage("unknown");
+			}
+			
 			if ("".equals(macAddress))
 			{
 				macAddress = messages.getMessage("unknown");
 			}
+		} else {
+			macAddress = properties.getProperty("box.mac");
 		}
 	}
 
 	public String getExternalIP() {
-		Vector<String> query = new Vector<String>();
-		query.add(QUERY_EXTERNAL_IP);
-
-		Vector<String> response = getQuery(query);
-		if (response.size() == 1) {
-			return response.get(0);
-		}
-		else {
-			return "No external IP";
+		try {
+			if (fbc.isLoggedIn()) {
+				try {
+					return fbc.getNetworkMethods().getExternalIP();
+				} catch (Exception e) {
+					return "No external IP detected";
+				}
+			} else {
+				return "No external IP detected";
+			}
+		} catch (Exception e) {
+			return "No external IP detected";
 		}
 	}
 
-	public FritzBoxFirmware getFirmware()
+	public FirmwareVersion getFirmware()
 	{
 		return firmware;
 	}
@@ -299,7 +454,7 @@ public class FritzBox extends BoxClass {
 	/**************************************************************************************
 	 * Implementation of port detection
 	 **************************************************************************************/
-	public void initializePorts(){
+	public void initializePorts() {
 		configuredPorts.clear();
 		addAnalogPorts();
 		addIsdnPorts();
@@ -347,35 +502,49 @@ public class FritzBox extends BoxClass {
 		query.add(QUERY_ANALOG_COUNT);
 		Vector<String> response = getQuery(query);
 
-		addConfiguredPort(new Port(-1, messages.getMessage("analog_telephones_all"), "9", "9"));
-		if (response.size() == 1)
-		{
+		//addConfiguredPort(new Port(-1, messages.getMessage("analog_telephones_all"), "9", "9"));
+		if (response.size() != 1) {
+			log.warn("addAnalogPorts: received invalid response size. Will not add any analog ports");
+			outputStringVector(response);
+		} else {
 			try {
 				int analogCount = Integer.parseInt(response.get(0));
-				query.clear();
-				for (int i=0; i<analogCount; i++)
-				{
-					query.add(QUERY_ANALOG_NAME.replaceAll("%NUM%", Integer.toString(i)));
-				}
-				response = getQuery(query);
-
-				if (response.size() == 1*analogCount)
-				{
+				log.debug("addAnalogPorts: Detected " + analogCount + " analog phones");
+				
+				if (analogCount > 0) {
+					query.clear();
+	
 					for (int i=0; i<analogCount; i++)
 					{
-
-						String analogName = response.get(i+0);
-						if (!"".equals(analogName)
-						 && !"er".equals(analogName))
+						query.add(QUERY_ANALOG_NAME.replaceAll("%NUM%", Integer.toString(i)));
+					}
+					response = getQuery(query);
+	
+					if (response.size() != 1*analogCount) {
+						log.warn("addAnalogPorts: Response invalid!");
+					} else {
+						for (int i=0; i<analogCount; i++)
 						{
-							addConfiguredPort(new Port(i, analogName, Integer.toString(i+1), Integer.toString(i+1)));
+							String analogName = response.get(i+0);
+							if (!"".equals(analogName) && !"er".equals(analogName))
+							{
+								Port port = new Port(i, analogName, Integer.toString(i+1), Integer.toString(i+1));
+								log.debug("addAnalogPorts: Adding port " + port.toStringDetailed());
+								addConfiguredPort(port);
+							}
 						}
 					}
 				}
 			} catch (NumberFormatException nfe)
 			{
-				Debug.warning("No analog ports available.");
+				log.warn("No analog ports available.");
 			}
+		}
+	}
+
+	private void outputStringVector(Vector<String> response) {
+		for (int i=0; i<response.size(); i++) {
+			log.warn(response.get(i));
 		}
 	}
 
@@ -386,10 +555,14 @@ public class FritzBox extends BoxClass {
 		query.add(QUERY_ISDN_COUNT);
 		Vector<String> response = getQuery(query);
 
-		if (response.size() == 1)
-		{
+		if (response.size() != 1) {
+			log.warn("addIsdnPorts: received invalid response size. Will not add any ISDN ports");
+			outputStringVector(response);
+		} else {
 			try {
 				int isdnCount = Integer.parseInt(response.get(0));
+				log.debug("addIsdnPorts: Detected " + isdnCount + " ISDN phones");
+
 				if (isdnCount > 0)
 				{
 					addConfiguredPort(new Port(50, messages.getMessage("isdn_telephones_all"), "50", "50"));
@@ -402,27 +575,28 @@ public class FritzBox extends BoxClass {
 					}
 					response = getQuery(query);
 
-					if (response.size() == 2*isdnCount)
-					{
+					if (response.size() != 2*isdnCount) {
+						log.warn("addIsdnPorts: Response invalid!");
+					} else {
 						for (int i=0; i<isdnCount; i++)
 						{
 							String number = response.get((i*2) + 0);
 							String name = response.get((i*2) + 1);
 
-							if ((!"er".equals(number))
-								&& (!"".equals(number))) // if number is set
-							{
-								if (!"er".equals(name))
-								{
+							if ("er".equals(number) || ("".equals(number))) {
+								log.warn("addIsdnPorts: number is not set. Will not add port");
+							} else {
+								if ("er".equals(name)) {
+									log.warn("addIsdnPorts: name is not set for number " + number + ". Will not add port");
+								} else {
 									if ("".equals(name)) // if name is empty:
 									{
 										name = "ISDN " + Integer.toString(i+1);
 									}
 
-									addConfiguredPort(new Port(50+(i+1),
-											name,
-											"5"+(i+1),
-											"5"+(i+1)));
+									Port port = new Port(50+(i+1), name, "5"+(i+1), "5"+(i+1));
+									log.debug("addIsdnPorts: Adding port " + port.toStringDetailed());
+									addConfiguredPort(port);
 								}
 							}
 						}
@@ -431,7 +605,7 @@ public class FritzBox extends BoxClass {
 				}
 			} catch (NumberFormatException nfe)
 			{
-				Debug.warning("No isdn devices available.");
+				log.warn("No isdn devices available.");
 			}
 		}
 	}
@@ -443,10 +617,14 @@ public class FritzBox extends BoxClass {
 		query.add(QUERY_DECT_MINI_COUNT);
 		Vector<String> response = getQuery(query);
 
-		if (response.size() == 1)
-		{
+		if (response.size() != 1) {
+			log.warn("addDectMiniPorts: received invalid response size. Will not add any DECT ports");
+			outputStringVector(response);
+		} else {
 			try {
 				int dectCount = Integer.parseInt(response.get(0));
+				log.debug("addDectMiniPorts: Detected " + dectCount + " DECT phones");
+
 				if (dectCount > 0)
 				{
 					query.clear();
@@ -459,8 +637,9 @@ public class FritzBox extends BoxClass {
 					}
 					response = getQuery(query);
 
-					if (response.size() == 4*dectCount)
-					{
+					if (response.size() != 4*dectCount) {
+						log.warn("addDectMiniPorts: Response invalid!");
+					} else {
 						for (int i=0; i<dectCount; i++)
 						{
 							String id = response.get((i*4) + 0);
@@ -471,29 +650,30 @@ public class FritzBox extends BoxClass {
 							if (internal.length() >= 3) {
 								num = internal.substring(2);
 							}
-							Debug.debug("ID: " + id);
-							Debug.debug("Name: " + name);
-							Debug.debug("Internal: " + internal);
-							Debug.debug("Num: " + num);
-							Debug.debug("Type: " + type);
+							log.debug("ID: " + id);
+							log.debug("Name: " + name);
+							log.debug("Internal: " + internal);
+							log.debug("Num: " + num);
+							log.debug("Type: " + type);
 
 							if ("".equals(name))
 							{
 								name = "DECT " + i;
 							}
 
-							if (!"".equals(internal)) {
-								addConfiguredPort(new Port(10+Integer.parseInt(num),
-										name,
-										"6"+num,
-										internal));
+							if ("".equals(internal)) {
+								log.warn("addDectMiniPorts: internal number is not set. Will not add port");
+							} else {
+								Port port = new Port(10+Integer.parseInt(num), name, "6"+num, internal);
+								log.debug("addDectMiniPorts: Adding port " + port.toStringDetailed());
+								addConfiguredPort(port);
 							}
 						}
 					}
 				}
 			} catch (NumberFormatException nfe)
 			{
-				Debug.warning("No dect/mini devices available.");
+				log.warn("No dect/mini devices available.");
 			}
 		}
 	}
@@ -506,13 +686,17 @@ public class FritzBox extends BoxClass {
 		query.add(QUERY_VOIP_COUNT);
 		Vector<String> response = getQuery(query);
 
-		if (response.size() == 2)
-		{
+		if (response.size() != 2) {
+			log.warn("addVoIPPorts: received invalid response size. Will not add any VoIP ports");
+			outputStringVector(response);
+		} else {
+			@SuppressWarnings("unused")
 			boolean voipEnabled =  response.get(0).equals("1");
 			try {
 				int voipCount = Integer.parseInt(response.get(1));
-//				if (voipEnabled)
-				{
+				log.debug("addVoIPPorts: Detected " + voipCount + " VoIP phones");
+
+				if (voipCount > 0) {
 					query.clear();
 					for (int i=0; i<voipCount; i++)
 					{
@@ -521,29 +705,32 @@ public class FritzBox extends BoxClass {
 					}
 					response = getQuery(query);
 
-					if (response.size()==2*voipCount)
-					{
+					if (response.size()!=2*voipCount) {
+						log.warn("addVoIPPorts: Response invalid!");
+					} else {
 						for (int i=0; i<voipCount; i++)
 						{
-							boolean activated = "1".equals(response.get((i*2) + 0));
-							if (activated)
+							String voipName = response.get((i*2) + 1);
+							if ("".equals(voipName))
 							{
-								String voipName = response.get((i*2) + 1);
-								if ("".equals(voipName))
-								{
-									voipName = messages.getMessage("voip_extension")+ " " + Integer.toString(i+620);
-								}
-								addConfiguredPort(new Port(20+i,
-										voipName,
-										Integer.toString(20+i),
-										"62"+Integer.toString(i)));
+								voipName = messages.getMessage("voip_extension")+ " " + Integer.toString(i+620);
+							}
+
+							boolean activated = "1".equals(response.get((i*2) + 0));
+							if (!activated) {
+								log.warn("addVoIPPorts: VoIP account '" + voipName + "'is not activated. Will not add port");
+							} else {
+								// Wählhilfe mit VoIP geht zumindest ab 06.03 nicht mehr, ging sie davor? (getestet mit 06.03 und 06.30) Ab welcher FW bis zu welcher?
+								Port port = new Port(20+i, voipName, Integer.toString(20+i), "62"+Integer.toString(i));
+								log.debug("addVoIPPorts: Adding port " + port.toStringDetailed());
+								addConfiguredPort(port);
 							}
 						}
 					}
 				}
 			} catch (NumberFormatException nfe)
 			{
-				Debug.warning("No VoIP extensions available.");
+				log.warn("No VoIP extensions available.");
 			}
 		}
 	}
@@ -569,12 +756,14 @@ public class FritzBox extends BoxClass {
 	 * @see BoxCallMonitorInterface.startCallMonitor
 	 */
 	public int startCallMonitor(Vector<CallMonitorStatusListener> listener) {
+		log.debug("Starting call monitor ...");
 		switch (Integer.parseInt(properties.getProperty("option.callMonitorType"))) //$NON-NLS-1$
 		{
 			case 1: {
-				if ((firmware != null) && (firmware.getMajorFirmwareVersion() == 3)
-						&& (firmware.getMinorFirmwareVersion() < 96)) {
-					Debug.errDlg(messages.getMessage("callmonitor_error_wrong_firmware")); //$NON-NLS-1$
+				if ((firmware != null) && (firmware.isLowerThan(3, 96))) {
+					String message = messages.getMessage("callmonitor_error_wrong_firmware"); //$NON-NLS-1$
+					log.error(message);
+					Debug.errDlg(message);
 
 					for (int i=0; i<listener.size(); i++)
 					{
@@ -582,20 +771,27 @@ public class FritzBox extends BoxClass {
 					}
 					return BoxCallMonitorInterface.CALLMONITOR_FIRMWARE_INCOMPATIBLE;
 				} else {
-					if ((firmware != null) && (firmware.getMajorFirmwareVersion() >= 4)
-							&& (firmware.getMinorFirmwareVersion() >= 3)) {
+					if ((firmware != null) && firmware.isLowerThan(4, 3)) {
+						log.debug("Firmware is greater/or equal than 03.96 but lower than 04.03");
 						if (callMonitor != null)
 						{
-							Debug.errDlg(messages.getMessage("callmonitor_already_started"));
+							String message = messages.getMessage("callmonitor_already_started");
+							log.error(message);
+							Debug.errDlg(message);
 						} else {
-							callMonitor = new FBoxCallMonitorV3(this, listener, true);
+							log.debug("Creating FBoxCallMonitorV1");
+							callMonitor = new FBoxCallMonitorV1(this, listener, true);
 						}
 					} else {
+						log.debug("Firmware is greater/or equal than 04.03");
 						if (callMonitor != null)
 						{
-							Debug.errDlg(messages.getMessage("callmonitor_already_started"));
+							String message = messages.getMessage("callmonitor_already_started");
+							log.error(message);
+							Debug.errDlg(message);
 						} else {
-							callMonitor = new FBoxCallMonitorV1(this, listener, true);
+							log.debug("Creating FBoxCallMonitorV3");
+							callMonitor = new FBoxCallMonitorV3(this, listener, true);
 						}
 					}
 					return BoxCallMonitorInterface.CALLMONITOR_STARTED;
@@ -648,22 +844,44 @@ public class FritzBox extends BoxClass {
 	 * Implementation of the BoxCallListInterface
 	 **************************************************************************************/
 	public Vector<Call> getCallerList(Vector<IProgressListener> progressListener)
-	throws IOException, MalformedURLException, FeatureNotSupportedByFirmware {
+	throws FeatureNotSupportedByFirmware, ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException {
 		Vector<Call> result;
+		setBoxConnected();
 
-		if (callList == null) {
-			Debug.errDlg(messages.getMessage("box.no_caller_list"));
-			result = new Vector<Call>();
+		if (callList == null || firmware == null || !fbc.isLoggedIn()) {
+			try {
+				updateSettings();
+				if (callList == null) {
+					String message = messages.getMessage("box.no_caller_list");
+					log.error(message);
+					Debug.errDlg(message);
+					result = new Vector<Call>();
+				} else {
+					result = callList.getCallerList(progressListener);
+				}
+			} catch (WrongPasswordException e) {
+				String message = messages.getMessage("box.wrong_password"); //$NON-NLS-1$
+				log.error(message, e);
+				Debug.errDlg(message);
+				result = new Vector<Call>();
+			} catch (InvalidFirmwareException e) {
+				String message = messages.getMessage("unknown_firmware"); //$NON-NLS-1$
+				log.error(message, e);
+				Debug.errDlg(message);
+				result = new Vector<Call>();
+			}
 		} else {
 			result = callList.getCallerList(progressListener);
 		}
 		return result;
 	}
 
-	public void clearCallerList()
+	public void clearCallerList() throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException
 	{
 		if (callList == null) {
-			Debug.errDlg(messages.getMessage("box.no_clear_caller_list"));
+			String message = messages.getMessage("box.no_clear_caller_list");
+			log.error(message);
+			Debug.errDlg(message);
 		} else {
 			callList.clearCallerList();
 		}
@@ -673,103 +891,20 @@ public class FritzBox extends BoxClass {
 	 * Implementation of the BoxSipProviderInterface
 	 **************************************************************************************/
 	public void detectSipProvider() {
-		setBoxConnected();
-		sipProvider.clear();
-
-		Vector<String> query = new Vector<String>();
-		query.add(QUERY_SIP_MAXCOUNT);
-		Vector<String> response = getQuery(query);
-
-		if (response.size() == 1)
-		{
-			int numQueries = 8;
-			int sipCount = Integer.parseInt(response.get(0));
-			Debug.debug("Number of SIP Providers: " + sipCount);
-
-			query.clear();
-			for (int i=0; i<sipCount; i++)
-			{
-				query.add(QUERY_SIP_ACTIVATED.replaceAll("%NUM%", Integer.toString(i)));
-				query.add(QUERY_SIP_ID.replaceAll("%NUM%", Integer.toString(i)));
-				query.add(QUERY_SIP_REGISTRAR.replaceAll("%NUM%", Integer.toString(i)));
-				query.add(QUERY_SIP_MSN.replaceAll("%NUM%", Integer.toString(i)));
-				query.add(QUERY_SIP_NAME.replaceAll("%NUM%", Integer.toString(i)));
-				query.add(QUERY_SIP_NUMBER.replaceAll("%NUM%", Integer.toString(i)));
-				query.add(QUERY_SIP_DISPLAYNAME.replaceAll("%NUM%", Integer.toString(i)));
-				query.add(QUERY_SIP_USERNAME.replaceAll("%NUM%", Integer.toString(i)));
-//				query.add(QUERY_SIP_REGISTRY_TYPE.replaceAll("%NUM%", Integer.toString(i)));
-			}
-
-			response = getQuery(query);
-			if (response.size() == sipCount*numQueries)
-			{
-				for (int i=0; i<sipCount; i++)
-				{
-					int offset = i * numQueries;
-					if (!"er".equals(response.get(offset+0)) && !"".equals(response.get(offset+0)))
-					{
-						int id = Integer.parseInt(response.get(offset+1));
-						String name = response.get(offset+2);
-						int numberId = (id * numQueries) + 3;
-						String number = response.get(numberId);
-						Debug.debug("id= " + id + " NumberID=" +numberId + " Number=" + number + " Name="+name);
-						if (!"".equals(number))
-						{
-							Debug.debug("SIP-Provider["+i+"]: id="+id+" Number="+number+ " Name="+name);
-							SipProvider newSipProvider = new SipProvider(id, number, name);
-							if (Integer.parseInt(response.get(offset+0)) == 0)
-							{
-								newSipProvider.setActive(false);
-							}
-							else
-							{
-								newSipProvider.setActive(true);
-							}
-							sipProvider.add(newSipProvider);
-						}
-					}
-				}
-			}
-		}
-		else
-		{
-			setBoxDisconnected();
-		}
+		sipProvider.detectSipProvider(this);
 	}
 
 	public SipProvider getSipProvider(int id)
 	{
-		for (int i=0; i<sipProvider.size(); i++)
-		{
-			if (sipProvider.get(i).getProviderID() == id)
-			{
-				return sipProvider.get(i);
-			}
-		}
-
-		return null;
+		return sipProvider.getSipProvider(id);
 	}
 
 	public Vector<SipProvider> getSipProvider() {
-		return sipProvider;
+		return sipProvider.getSipProvider();
 	}
 
 	public SipProvider getSipProviderByRoute(String route) {
-		for (SipProvider p: sipProvider) {
-			if (p.getNumber().equals(route)) {
-				return p;
-			}
-		}
-
-		// sip provider has not been found!
-		if (route.contains("@")) {
-			String[] splitted = route.split("@");
-			String number = splitted[0];
-			String name = splitted[1];
-			return new SipProvider(SipProvider.UNKNOWN_SIP_PROVIDER_ID, number, name);
-		}
-
-		return null;
+		return sipProvider.getSipProviderByRoute(route);
 	}
 
 	/**************************************************************************************
@@ -812,7 +947,7 @@ public class FritzBox extends BoxClass {
 	        "</s:Envelope>";
 
 		String result = UPNPUtils.getSOAPData(protocol + "://" + getAddress() +
-				URL_SERVICE_ADDONINFOS, URN_SERVICE_ADDONINFOS, xml);
+				URL_SERVICE_ADDONINFOS.replace("upnp", getIgdupnp()), URN_SERVICE_ADDONINFOS, xml); // 01.08.2015
 
 //		Debug.msg("Result of getAddonInfos: "+ result);
 
@@ -822,15 +957,14 @@ public class FritzBox extends BoxClass {
 				XMLReader reader = SAXParserFactory.newInstance().newSAXParser()
 						.getXMLReader();
 				reader.setContentHandler(new AddonInfosXMLHandler(listener));
-				reader.parse(new InputSource(new StringReader(
-						result)));
+				reader.parse(new InputSource(new StringReader(result)));
 
 			} catch (ParserConfigurationException e1) {
-				Debug.error(e1.toString());
+				log.error(e1.toString());
 			} catch (SAXException e1) {
-				Debug.error(e1.toString());
+				log.error(e1.toString());
 			} catch (IOException e1) {
-				Debug.error(e1.toString());
+				log.error(e1.toString());
 			}
 		}
 	}
@@ -840,6 +974,7 @@ public class FritzBox extends BoxClass {
 	 * used but may be used in the future
 	 *
 	 */
+	@SuppressWarnings("unused")
 	private void getWebservice(){
 
 		String xml =
@@ -850,9 +985,8 @@ public class FritzBox extends BoxClass {
 	        "</s:Body>\n" +
 	        "</s:Envelope>";
 
-		// String result =
 		UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
-			URL_SERVICE_DSLLINK, URN_SERVICE_DSLLINK, xml);
+				URL_SERVICE_DSLLINK.replace("upnp", getIgdupnp()), URN_SERVICE_DSLLINK, xml); // 01.08.2015
 
 		/*	This is the result of the web service
 			<?xml version="1.0"?>
@@ -862,7 +996,7 @@ public class FritzBox extends BoxClass {
 			<NewLinkStatus>Up</NewLinkStatus>
 			</u:GetDSLLinkInfoResponse>
 			</s:Body> </s:Envelope>
-		 	*/
+	 	*/
 
 //		Debug.msg("Result of GetDSLLinkInfo: "+ result);
 
@@ -879,7 +1013,7 @@ public class FritzBox extends BoxClass {
 	        "</s:Envelope>";
 
 		String result = UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
-				URL_SERVICE_STATUSINFO, URN_SERVICE_STATUSINFO, xml);
+				URL_SERVICE_STATUSINFO.replace("upnp", getIgdupnp()), URN_SERVICE_STATUSINFO, xml); // 01.08.2015
 
 //		Debug.msg("Result of dsl getStatusInfo: "+ result);
 
@@ -913,12 +1047,14 @@ public class FritzBox extends BoxClass {
 			"<?xml version=\"1.0\"?>\n" +
 			"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n"
 			+"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
-			"<s:Body><u:GetExternalIPAddress xmlns:u=\"urn:schemas-upnp-org:service:WANIPConnection:1\"></u:GetExternalIPAddress>\n"	+
+			"<s:Body><u:GetExternalIPAddress xmlns:u=\"urn:schemas-upnp-org:service:WANIPConnection:1\">\n" +
+			"<NewExternalIPAddress>0.0.0.0</NewExternalIPAddress>\n" +
+			"</u:GetExternalIPAddress>\n" +
 			"</s:Body>\n" +
 			"</s:Envelope>";
 
 		String result = UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
-				URL_SERVICE_EXTERNALIP, URN_SERVICE_EXTERNALIP, xml);
+				URL_SERVICE_EXTERNALIP.replace("upnp", getIgdupnp()), URN_SERVICE_EXTERNALIP, xml);
 
 		/*
 		<?xml version="1.0"?>
@@ -949,9 +1085,9 @@ public class FritzBox extends BoxClass {
 			"</s:Envelope>";
 
 		String result =  UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
-				URL_SERVICE_COMMONLINK, URN_SERVICE_COMMONLINK, xml);
+				URL_SERVICE_COMMONLINK.replace("upnp", getIgdupnp()), URN_SERVICE_COMMONLINK, xml); // 01.08.2015
 
-//		Debug.debug("Result of getCommonLinkProperties: "+ result);
+//		log.debug("Result of getCommonLinkProperties: "+ result);
 
 		Pattern p = Pattern.compile("<NewLayer1UpstreamMaxBitRate>([^<]*)</NewLayer1UpstreamMaxBitRate>");
 		Matcher m = p.matcher(result);
@@ -980,6 +1116,7 @@ public class FritzBox extends BoxClass {
 		*/
 	}
 
+	@SuppressWarnings("unused")
 	private void getInfo() {
 		String xml =
 			"<?xml version=\"1.0\"?>\n" +
@@ -989,10 +1126,10 @@ public class FritzBox extends BoxClass {
 			"</s:Body>\n" +
 			"</s:Envelope>";
 
-//		String result =
 			UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
-				URL_SERVICE_GETINFO, URN_SERVICE_GETINFO, xml);
+					URL_SERVICE_GETINFO.replace("upnp", getIgdupnp()), URN_SERVICE_GETINFO, xml); // 01.08.2015
 
+			//Debug.info("Result of getInfo: "+ getIgdupnp());
 //		Debug.msg("Result of getInfo: "+ result);
 
 		/*
@@ -1011,6 +1148,7 @@ public class FritzBox extends BoxClass {
 		</s:Body> </s:Envelope>
 		*/
 	}
+	@SuppressWarnings("unused")
 	private void getAutoConfig() {
 		String xml =
 			"<?xml version=\"1.0\"?>\n" +
@@ -1021,9 +1159,7 @@ public class FritzBox extends BoxClass {
 			"</s:Envelope>";
 
 		String result =  UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
-				URL_SERVICE_AUTOCONFIG, URN_SERVICE_AUTOCONFIG, xml);
-
-		Debug.info("Result of getAutoConfig: "+ result);
+				URL_SERVICE_AUTOCONFIG.replace("upnp", getIgdupnp()), URN_SERVICE_AUTOCONFIG, xml); // 01.08.2015
 
 		/*
 		<?xml version="1.0"?>
@@ -1035,6 +1171,7 @@ public class FritzBox extends BoxClass {
 		 */
 	}
 
+	@SuppressWarnings("unused")
 	private void getConnectionTypeInfo() {
 		String xml =
 			"<?xml version=\"1.0\"?>\n" +
@@ -1044,9 +1181,8 @@ public class FritzBox extends BoxClass {
 			"</s:Body>\n" +
 			"</s:Envelope>";
 
-//		String result =
 			UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
-				URL_SERVICE_CONNECTIONTYPEINFO, URN_SERVICE_CONNECTIONTYPEINFO, xml);
+					URL_SERVICE_CONNECTIONTYPEINFO.replace("upnp", getIgdupnp()), URN_SERVICE_CONNECTIONTYPEINFO, xml); // 01.08.2015
 
 //		Debug.msg("Result of getConnectionTypeInfo: "+ result);
 
@@ -1061,6 +1197,7 @@ public class FritzBox extends BoxClass {
 		 */
 	}
 
+	@SuppressWarnings("unused")
 	private void getGenericPortMappingEntry()
 	{
 		String xml =
@@ -1073,9 +1210,8 @@ public class FritzBox extends BoxClass {
 			"</s:Body>\n" +
 			"</s:Envelope>";
 
-//		String result =
 			UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
-				URL_SERVICE_GENERICPORTMAPPING, URN_SERVICE_GENERICPORTMAPPING, xml);
+					URL_SERVICE_GENERICPORTMAPPING.replace("upnp", getIgdupnp()), URN_SERVICE_GENERICPORTMAPPING, xml); // 01.08.2015
 
 //		Debug.msg("Result of getGenericPortMappingEntry: "+ result);
 	}
@@ -1090,201 +1226,190 @@ public class FritzBox extends BoxClass {
 		"</s:Envelope>";
 
 		UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
-				URL_SERVICE_FORCETERMINATION, URN_SERVICE_FORCETERMINATION, xml);
+				URL_SERVICE_FORCETERMINATION.replace("upnp", getIgdupnp()), URN_SERVICE_FORCETERMINATION, xml); // 01.08.2015
 	}
 
-	public String getMacFromUPnP() {
-		String mac = "";
-		Vector<String> response = new Vector<String>();
-		if (firmware != null)
-		{
-			final String urlstr = protocol+"://" + address +":49000/igddesc.xml"; //$NON-NLS-1$, //$NON-NLS-2$
+	public String getSIDUPNP() { // 15.08.2015
+		String sSID = "0000000000000000";
+		String xml =
+		"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+		"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
+		"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
+		"<s:Body><u:CreateUrlSID xmlns:u=\"urn:dslforum-org:service:DeviceConfig:1\">\n" +
+		"</u:CreateUrlSID>\n" +
+		"</s:Body>\n" +
+		"</s:Envelope>";
 
-			try {
-				response = JFritzUtils.fetchDataFromURLToVector(name, urlstr, null, true);
-			} catch (WrongPasswordException e) {
-				Debug.debug("Wrong password, maybe SID is invalid.");
-				setBoxDisconnected();
-			} catch (SocketTimeoutException ste) {
-				ste.printStackTrace();
-				setBoxDisconnected();
-			} catch (IOException e) {
-				e.printStackTrace();
-				setBoxDisconnected();
-			} catch (Exception e) {
-				e.printStackTrace();
-				setBoxDisconnected();
-			}
+		String result = UPNPUtils.getSOAPDataAuth(fbc, protocol+"://" + getAddress() +
+			    URL_SERVICE_CREATEURLSID, URN_SERVICE_CREATEURLSID, xml);
 
-			if (response.size() != 0)
-			{
-				Pattern p = Pattern.compile(PARSE_MAC_ADDRESS);
-				for (int i=0; i<response.size(); i++)
-				{
-					Matcher m = p.matcher(response.get(i));
-					if (m.find())
-					{
-						String resp = m.group(1);
-						int idx = resp.lastIndexOf("-");
-						String macTmp = resp.substring(idx+1);
-						for (int j=0; j<macTmp.length(); j++) {
-							mac = mac + macTmp.charAt(j);
-							if ((j != 0)
-								&& (j != macTmp.length()-1)
-								&& ((j-1)%2 == 0))
-							{
-								mac = mac.concat(":");
-							}
-						}
-						break;
-					}
-				}
-			}
-		}
+		sSID = result;
+		log.info("Result of DeviceConfig CreateUrlSID: " + result);
+		return sSID;
+	}
 
-		return mac;
+	public void setRebootUPNP() { // 15.08.2015
+	String xml =
+		"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+		"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
+		"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
+		"<s:Body><u:Reboot xmlns:u=\"urn:dslforum-org:service:DeviceConfig:1\">\n" +
+		//"<NewSessionID>" + sSID + "</NewSessionID>\n" +
+		"</u:Reboot>\n" +
+		"</s:Body>\n" +
+		"</s:Envelope>";
+
+		UPNPUtils.getSOAPDataAuth(fbc, protocol+"://" + getAddress() +
+			    URL_SERVICE_REBOOT, URN_SERVICE_REBOOT, xml);
 	}
 
 	/**************************************************************************************
 	 * Implementation of DoCall-Interface
+	 * @throws PageNotFoundException 
+	 * @throws de.robotniko.fboxlib.exceptions.InvalidCredentialsException 
+	 * @throws LoginBlockedException 
+	 * @throws IOException 
+	 * @throws ClientProtocolException 
 	 **************************************************************************************/
-	private String generateDoCallPostData(String currentNumber, Port port) {
-		String postdata = POSTDATA_CALL;
 
-		postdata = postdata.replaceAll("\\$NUMMER", currentNumber); //$NON-NLS-1$
-		postdata = postdata.replaceAll("\\$NEBENSTELLE", port.getDialPort()); //$NON-NLS-1$
+	// 01.08.2015
+	public String getQueryDialPort() throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException {
+		final String FALLBACK_DIAL_PORT = "50";
+		Vector<String> query = new Vector<String>();
+		query.add(QUERY_DialPort);
 
 		try {
-			postdata = this.getPostDataWithAccessMethod(postdata);
-		} catch (UnsupportedEncodingException e) {
-			Debug.error("Encoding not supported! " + e.toString());
+			Vector<String> response = fbc.getQuery(query);
+			if (response.size() == 1) {
+				String ret_q = response.get(0);
+				return ret_q;
+			}
+			else {
+				return FALLBACK_DIAL_PORT;
+			}
+		} catch (Exception e) {
+			return FALLBACK_DIAL_PORT;
 		}
+	}
 
-		return postdata;
+    // 31.07.2015 Wahl per Lua
+	private void generateDoCallPostDataDialPortLua(List<NameValuePair> postdata, String port) {
+		postdata.add(new BasicNameValuePair("clicktodial", "on"));
+		postdata.add(new BasicNameValuePair("port", port)); // port.getDialPort()
+		postdata.add(new BasicNameValuePair("btn_apply", ""));
+	}
+	
+	private void generateDoCallPostData(List<NameValuePair> postdata, String currentNumber, Port port) {
+		postdata.add(new BasicNameValuePair("getpage", ""));
+		postdata.add(new BasicNameValuePair("telcfg:settings/UseClickToDial", "1"));
+		postdata.add(new BasicNameValuePair("telcfg:settings/DialPort", port.getDialPort()));
+		postdata.add(new BasicNameValuePair("telcfg:command/Dial", currentNumber));
 	}
 
 	public void doCall(PhoneNumberOld number, Port port) {
-		setBoxConnected();
-		String currentNumber = number.getAreaNumber();
-		currentNumber = currentNumber.replaceAll("\\+", "00"); //$NON-NLS-1$,  //$NON-NLS-2$
+		if (fbc.isLoggedIn()) {
+			setBoxConnected();
+			String currentNumber = number.getAreaNumber();
+			currentNumber = currentNumber.replaceAll("\\+", "00"); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		String postdata = generateDoCallPostData(currentNumber, port);
-		String urlstr = getWebcmUrl();
+			List<NameValuePair> postdata = new ArrayList<NameValuePair>();
 
-		boolean finished = false;
-		boolean password_wrong = false;
-		int retry_count = 0;
-
-		while (!finished && (retry_count < max_retry_count))
-		{
 			try {
-				retry_count++;
-				if (password_wrong)
-				{
-					password_wrong = false;
-					Debug.debug("Detecting new firmware, getting new SID");
-					this.detectFirmware();
-					postdata = generateDoCallPostData(currentNumber, port);
+				if (firmware != null && firmware.isLowerThan(4, 21)) {
+					// TODO: message, that firmware does not support the calling feature
+				} else if (firmware != null && firmware.isLowerThan(6, 1)) {
+					log.debug("doCall: Firmware is greater/or equal than 04.21 but lower than 06.1");
+					generateDoCallPostData(postdata, currentNumber, port);
+				    fbc.postToPageAndGetAsString(FritzBoxCommunication.URL_WEBCM, postdata);
+				} else {
+					log.debug("doCall: Firmware is greater/or equal than 06.01");
+					
+					log.debug("doCall: Setting dialing port to " + port.getDialPort());
+				   	generateDoCallPostDataDialPortLua(postdata, port.getDialPort());
+				   	fbc.postToPageAndGetAsString(URL_DIAL_FONBOOK_LUA, postdata);
+					
+					String dial_query = "";
+					dial_query = "dial=" + currentNumber + "&orig_port=" + port.getDialPort();
+					dial_query = dial_query.replace("#", "%23"); // # %23
+					dial_query = dial_query.replace("*", "%2A"); // * %2A
+					fbc.getPageAsString(URL_FONBOOK_LIST_LUA + "?" + dial_query);
 				}
-				JFritzUtils.fetchDataFromURLToVector(
-						this.getName(), urlstr, postdata, true);
-				finished = true;
-			} catch (WrongPasswordException e) {
-				password_wrong = true;
-				Debug.debug("Wrong password, maybe SID is invalid.");
+			} catch (InvalidSessionIdException e) {
+				e.printStackTrace();
 				setBoxDisconnected();
+				handleInvalidSessionIdException(e);
 			} catch (SocketTimeoutException ste) {
 				ste.printStackTrace();
 				setBoxDisconnected();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				setBoxDisconnected();
-			} catch (InvalidFirmwareException e) {
-				password_wrong = true;
+			} catch (LoginBlockedException e) {
+				log.debug("Wrong password, maybe SID is invalid.");
 				setBoxDisconnected();
+				handleLoginBlockedException(e);
+			} catch (InvalidCredentialsException e) {
+				log.debug("Wrong password, maybe SID is invalid.");
+				setBoxDisconnected();
+				handleInvalidCredentialsException(e);
+			} catch (PageNotFoundException e) {
+				log.debug("Wrong password, maybe SID is invalid.");
+				setBoxDisconnected();
+				handlePageNotFoundException(e);
 			}
+		} else {
+			// FIXME show error message that we are currently not connected!!
 		}
+	}
+
+	private void generateHangupPostdata(List<NameValuePair> postdata, Port port) {
+		postdata.add(new BasicNameValuePair("getpage", ""));
+		postdata.add(new BasicNameValuePair("telcfg:settings/UseClickToDial", "1"));
+		postdata.add(new BasicNameValuePair("telcfg:settings/DialPort", port.getDialPort()));
+		postdata.add(new BasicNameValuePair("telcfg:command/Hangup", ""));
 	}
 
 	public void hangup(Port port)
 	{
-		setBoxConnected();
-        String postdata = POSTDATA_HANGUP;
+		if (fbc.isLoggedIn()) {
+			setBoxConnected();
+			List<NameValuePair> postdata = new ArrayList<NameValuePair>();
 
-		try {
-			postdata = this.getPostDataWithAccessMethod(postdata);
-		} catch (UnsupportedEncodingException e) {
-			Debug.error("Encoding not supported! " + e.toString());
-		}
-
-		String urlstr = getWebcmUrl();
-
-		boolean finished = false;
-		boolean password_wrong = false;
-		int retry_count = 0;
-
-		while (!finished && (retry_count < max_retry_count))
-		{
 			try {
-				retry_count++;
-				if (password_wrong)
-				{
-					password_wrong = false;
-					Debug.debug("Detecting new firmware, getting new SID");
-					this.detectFirmware();
-			        postdata = POSTDATA_HANGUP;
-
-					try {
-						postdata = this.getPostDataWithAccessMethod(postdata);
-					} catch (UnsupportedEncodingException e) {
-						Debug.error("Encoding not supported! " + e.toString());
-					}
+				if (firmware != null && firmware.isLowerThan(4, 21)) {
+					// TODO: message, that firmware does not support the calling feature
+				} else if (firmware != null && firmware.isLowerThan(6, 1)) {
+					log.debug("hangup_Firmware is greater/or equal than 04.21 but lower than 06.1");
+					generateHangupPostdata(postdata, port);
+					fbc.postToPageAndGetAsString(FritzBoxCommunication.URL_WEBCM, postdata);
+				} else {
+					log.debug("hangup_Firmware is greater/or equal than 06.01");
+					fbc.getPageAsString(URL_FONBOOK_LIST_LUA + "?" + "hangup=");
 				}
-				JFritzUtils.fetchDataFromURLToVector(
-						this.getName(), urlstr, postdata, true);
-				finished = true;
-			} catch (WrongPasswordException e) {
-				password_wrong = true;
-				Debug.debug("Wrong password, maybe SID is invalid.");
+			} catch (InvalidSessionIdException e) {
 				setBoxDisconnected();
+				handleInvalidSessionIdException(e);
 			} catch (SocketTimeoutException ste) {
 				ste.printStackTrace();
 				setBoxDisconnected();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				setBoxDisconnected();
-			} catch (InvalidFirmwareException e) {
-				password_wrong = true;
+			} catch (LoginBlockedException e) {
+				log.debug("Wrong password, maybe SID is invalid.");
 				setBoxDisconnected();
+				handleLoginBlockedException(e);
+			} catch (InvalidCredentialsException e) {
+				log.debug("Wrong password, maybe SID is invalid.");
+				setBoxDisconnected();
+				handleInvalidCredentialsException(e);
+			} catch (PageNotFoundException e) {
+				log.debug("Wrong password, maybe SID is invalid.");
+				setBoxDisconnected();
+				handlePageNotFoundException(e);
 			}
-		}
-	}
-
-	public void addBoxStatusListener(BoxStatusListener listener)
-	{
-		if (!boxListener.contains(listener)) {
-			boxListener.add(listener);
-		}
-	}
-
-	public void removeBoxStatusListener(BoxStatusListener listener)
-	{
-		if (boxListener.contains(listener)) {
-			boxListener.remove(listener);
-		}
-	}
-
-	public void setBoxConnected() {
-		for (BoxStatusListener listener: boxListener) {
-			listener.setBoxConnected(name);
-		}
-	}
-
-	public void setBoxDisconnected() {
-		for (BoxStatusListener listener: boxListener) {
-			listener.setBoxDisconnected(name);
+		} else {
+			// FIXME show error message that we are currently not connected!!
 		}
 	}
 
@@ -1295,66 +1420,196 @@ public class FritzBox extends BoxClass {
 		}
 	}
 
-	public void reboot() throws WrongPasswordException {
-		final String urlstr = getWebcmUrl();
-		boolean password_wrong = true;
-		int retry_count = 0;
-		int max_retry_count = 2;
+	private void generateRebootPostdata(List<NameValuePair> postdata) {
+		postdata.add(new BasicNameValuePair("getpage", "../html/reboot.html"));
+		postdata.add(new BasicNameValuePair("var:pagename", "reset"));
+		postdata.add(new BasicNameValuePair("var:menu", "system"));
+		postdata.add(new BasicNameValuePair("var:pagemaster", ""));
+		postdata.add(new BasicNameValuePair("time:settings/time", "1250935088%2C-120"));
+		postdata.add(new BasicNameValuePair("var:tabReset","0"));
+		postdata.add(new BasicNameValuePair("logic:command/reboot","../gateway/commands/saveconfig.html"));
+	}
 
-		while ((password_wrong) && (retry_count < max_retry_count)) {
-			String postdata = POSTDATA_REBOOT;
-			Debug.debug("Retry count: " + retry_count);
-			retry_count++;
+	public void reboot() {
+		if (fbc.isLoggedIn()) {
+			List<NameValuePair> postdata = new ArrayList<NameValuePair>();
 
-			if (firmware.isSidLogin())
-			{
+			if ((firmware != null) && firmware.isLowerThan(5, 50)) {
+				generateRebootPostdata(postdata);
 				try {
-				postdata = postdata + "&sid=" + URLEncoder.encode(firmware.getSessionId(), "ISO-8859-1");
-				} catch (UnsupportedEncodingException e) {
-					Debug.error("Encoding not supported");
+					fbc.postToPageAndGetAsVector(FritzBoxCommunication.URL_WEBCM, postdata);
+				} catch (InvalidSessionIdException e) {
+					setBoxDisconnected();
+					handleInvalidSessionIdException(e);
+				} catch (SocketTimeoutException e) {
 					e.printStackTrace();
-				}
-			}
-			else
-			{
-				try {
-					postdata = postdata + "&login:command/password=" + URLEncoder.encode(this.password, "ISO-8859-1");
-				} catch (UnsupportedEncodingException e) {
-					Debug.error("Encoding not supported");
+					setBoxDisconnected();
+				} catch (IOException e) {
 					e.printStackTrace();
-				}
+					setBoxDisconnected();
+				} catch (LoginBlockedException e) {
+					handleLoginBlockedException(e);
+				} catch (InvalidCredentialsException e) {
+					handleInvalidCredentialsException(e);
+				} catch (PageNotFoundException e) {
+					handlePageNotFoundException(e);
+				} 
+			} else {
+				setRebootUPNP(); // 01.08.2015
 			}
-
-			Vector<String> data = new Vector<String>(1000);
-			try {
-				data = JFritzUtils.fetchDataFromURLToVector(name,
-						urlstr, postdata, true);
-				password_wrong = false;
-				for (int i=0; i<data.size(); i++) {
-					Debug.debug(data.get(i));
-				}
-			} catch (WrongPasswordException wpe) {
-				password_wrong = true;
-				if (retry_count == max_retry_count) {
-					throw wpe;
-				}
-				try {
-					Thread.sleep(wpe.getRetryTime() * 1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} catch (SocketTimeoutException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		} else {
+			// FIXME show error message that we are currently not connected!!
 		}
+	}
+
+	private void handleInvalidSessionIdException(final InvalidSessionIdException e) {
+		try {
+			String message = messages.getMessage("box.invalid_session_id").replaceAll("%FIRMWARE%", fbc.getFirmwareVersion().toString());
+			log.error(message, e);
+			Debug.errDlg(message);
+		} catch (Exception e1) {
+			String message = messages.getMessage("box.invalid_session_id").replaceAll("%FIRMWARE%", "unknown");
+			log.error(message, e);
+			Debug.errDlg(message);
+		}
+	}
+	
+	private void handleInvalidCredentialsException(final InvalidCredentialsException e) {
+		if (this.getFirmware().isLowerThan(05, 50)) {
+			String message = messages.getMessage("box.wrong_password");
+			log.error(message, e);
+			Debug.errDlg(message);
+		} else {
+			String message = messages.getMessage("box.wrong_password_or_username");
+			log.error(message, e);
+			Debug.errDlg(message);
+		}
+	}
+
+	private void handleLoginBlockedException(LoginBlockedException e) {
+		if (this.getFirmware().isLowerThan(05, 50)) {
+			String message = messages.getMessage("box.wrong_password.wait").replaceAll("%WAIT%", e.getRemainingBlockTime());
+			log.error(message, e);
+			Debug.errDlg(message);
+		} else {
+			String message = messages.getMessage("box.wrong_password_or_username.wait").replaceAll("%WAIT%", e.getRemainingBlockTime());
+			log.error(message, e);
+			Debug.errDlg(message);
+		}
+	}
+
+	private void handlePageNotFoundException(PageNotFoundException e) {
+		String message = "Could not execute command, page not found!";
+		log.error(message, e);
+		Debug.errDlg(message);
+	}
+
+	private void handleFirmwareNotDetectedException(final FirmwareNotDetectedException e) {
+		String message = "Could not detect firmware!";
+		log.error(message, e);
+		Debug.errDlg(message);
 	}
 
 	public int getMaxRetryCount() {
 		return max_retry_count;
+	}
+
+	public void refreshLogin() {
+		if (fbc != null) {
+			fbc.invalidateSid();
+			try {
+				detectFirmwareAndLogin();
+			} catch (ClientProtocolException e) {
+				log.error(e.getMessage());
+				setBoxDisconnected();
+			} catch (InvalidCredentialsException e) {
+				setBoxDisconnected();
+				handleInvalidCredentialsException(e);
+			} catch (LoginBlockedException e) {
+				setBoxDisconnected();
+				handleLoginBlockedException(e);
+			} catch (IOException e) {
+				log.error(messages.getMessage("box.not_found"));
+				setBoxDisconnected();
+			} catch (PageNotFoundException e) {
+				setBoxDisconnected();
+				handlePageNotFoundException(e);
+			} catch (FirmwareNotDetectedException e) {
+				setBoxDisconnected();
+				handleFirmwareNotDetectedException(e);
+			}
+		}
+	}
+
+	public String getIgdupnp() { // 01.08.2015
+		return igdupnp;
+	}
+
+	public void setIgdupnp(String igdupnp) { // 01.08.2015
+		this.igdupnp = igdupnp;
+	}
+	
+	private boolean showLoginDialog(Exception e) {
+		LoginDialog loginDialog = new LoginDialog(this);
+		loginDialog.setException(e);
+		loginDialog.setVisible(true);
+		return loginDialog.hasOkBeenPressed();
+	}
+	
+	public int checkMacAddress(FritzBox fritzBox) {
+		int result = 0;
+		// if a mac address is set and this box has a different mac address, ask user
+		// if communication to this box should be allowed.
+		String macStr = properties.getProperty("box.mac");
+		if ((!("".equals(macStr))
+		&& ( !("".equals(fritzBox.getMacAddress())))
+		&& (fritzBox.getMacAddress() != null)))
+		{
+			ComplexJOptionPaneMessage msg = null;
+			int answer = JOptionPane.YES_OPTION;
+			if (messages.getMessage("unknown").equals(fritzBox.getMacAddress()))
+			{
+				log.info("MAC-Address could not be determined. Ask user how to proceed..."); //$NON-NLS-1$
+				msg = new ComplexJOptionPaneMessage("legalInfo.macNotFound",
+						messages.getMessage("mac_not_found") + "\n"
+						+ messages.getMessage("accept_fritzbox_communication")); //$NON-NLS-1$
+				if (msg.showDialogEnabled()) {
+					answer = JOptionPane.showConfirmDialog(null,
+							msg.getComponents(),
+							messages.getMessage("information"), JOptionPane.YES_NO_OPTION);
+					if (answer == JOptionPane.YES_OPTION)
+					{
+						msg.saveProperty();
+						properties.saveStateProperties();
+					}
+				}
+			} else if ( !(macStr.equals(fritzBox.getMacAddress())))
+			{
+				log.info("New FRITZ!Box detected. Ask user how to proceed..."); //$NON-NLS-1$
+				msg = new ComplexJOptionPaneMessage("legalInfo.newBox",
+						messages.getMessage("new_fritzbox") + "\n"
+						+ messages.getMessage("accept_fritzbox_communication")); //$NON-NLS-1$
+				if (msg.showDialogEnabled()) {
+					answer = JOptionPane.showConfirmDialog(null,
+							msg.getComponents(),
+							messages.getMessage("information"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
+					if (answer == JOptionPane.YES_OPTION)
+					{
+						msg.saveProperty();
+						properties.saveStateProperties();
+					}
+				}
+			}
+			if (answer == JOptionPane.YES_OPTION) {
+				log.info("User decided to accept connection."); //$NON-NLS-1$
+				properties.setProperty("box.mac", fritzBox.getMacAddress());
+				properties.saveConfigProperties();
+				result = 0;
+			} else {
+				log.info("User decided to prohibit connection."); //$NON-NLS-1$
+				result = Main.EXIT_CODE_FORBID_COMMUNICATION_WITH_FRITZBOX;
+			}
+		}
+		return result;
 	}
 }

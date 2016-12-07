@@ -4,20 +4,28 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
-
-import java.security.*;
+import java.security.InvalidKeyException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-
 import java.util.Random;
 import java.util.Timer;
 import java.util.Vector;
 
-import javax.crypto.*;
-import javax.crypto.spec.*;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SealedObject;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.DESKeySpec;
+
+import org.apache.http.auth.InvalidCredentialsException;
+import org.apache.log4j.Logger;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.callerlist.CallerListListener;
@@ -25,8 +33,6 @@ import de.moonflower.jfritz.callmonitor.CallMonitorListener;
 import de.moonflower.jfritz.phonebook.PhoneBookListener;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.utils.Debug;
-import de.moonflower.jfritz.utils.reverselookup.JFritzReverseLookup;
 
 /**
  * This class is responsible for interacting with a JFritz client.
@@ -45,6 +51,7 @@ import de.moonflower.jfritz.utils.reverselookup.JFritzReverseLookup;
  */
 public class ClientConnectionThread extends Thread implements CallerListListener,
 			PhoneBookListener, CallMonitorListener {
+	private final static Logger log = Logger.getLogger(ClientConnectionThread.class);
 
 	private Socket socket;
 
@@ -84,7 +91,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 	public void run(){
 
-		Debug.netMsg("Accepted incoming connection from "+remoteAddress);
+		log.info("NETWORKING: Accepted incoming connection from "+remoteAddress);
 
 		try{
 			objectOut = new ObjectOutputStream(socket.getOutputStream());
@@ -92,7 +99,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 			if((login = authenticateClient()) != null){
 
-				Debug.netMsg("Authentication for client "+remoteAddress+" successful!");
+				log.info("NETWORKING: Authentication for client "+remoteAddress+" successful!");
 
 					//Reset the timeout
 				socket.setSoTimeout(100000);
@@ -148,21 +155,30 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 			}
 
 		}catch(IOException e){
-			Debug.error(e.toString());
+			log.error(e.toString());
+			e.printStackTrace();
+		} catch (InvalidCredentialsException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (de.robotniko.fboxlib.exceptions.InvalidCredentialsException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		connectionListener.clientConnectionEnded(this);
 
-		Debug.netMsg("Client Connection thread for "+remoteAddress+" has ended cleanly");
+		log.info("NETWORKING: Client Connection thread for "+remoteAddress+" has ended cleanly");
 	}
 
 	/**
 	 * this function listens for client requests until the
 	 * connection is ended.
+	 * @throws de.robotniko.fboxlib.exceptions.InvalidCredentialsException 
+	 * @throws InvalidCredentialsException 
 	 *
 	 */
-	public void waitForClientRequest(){
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void waitForClientRequest() throws InvalidCredentialsException, de.robotniko.fboxlib.exceptions.InvalidCredentialsException{
 		Object o;
 		ClientDataRequest dataRequest;
 		ClientActionRequest actionRequest;
@@ -175,7 +191,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 				//requests are supported
 				SealedObject sealed_object = (SealedObject)objectIn.readObject();
 				o = sealed_object.getObject(inCipher);
-				Debug.netMsg("received request from "+remoteAddress);
+				log.info("NETWORKING: received request from "+remoteAddress);
 				if(o instanceof ClientDataRequest){
 
 					dataRequest = (ClientDataRequest) o;
@@ -188,18 +204,18 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 						if(dataRequest.operation == ClientDataRequest.Operation.GET){
 
 							if(dataRequest.timestamp != null){
-								Debug.netMsg("Received call list update request from "+remoteAddress);
-								Debug.netMsg("Timestamp: "+dataRequest.timestamp.toString());
+								log.info("NETWORKING: Received call list update request from "+remoteAddress);
+								log.info("NETWORKING: Timestamp: "+dataRequest.timestamp.toString());
 								callsAdded(JFritz.getCallerList().getNewerCalls(dataRequest.timestamp));
 							}else{
-								Debug.netMsg("Received complete call list request from "+remoteAddress);
+								log.info("NETWORKING: Received complete call list request from "+remoteAddress);
 								callsAdded(JFritz.getCallerList().getUnfilteredCallVector());
 							}
 
 
 						}else if(dataRequest.operation == ClientDataRequest.Operation.ADD && login.allowAddList){
 
-							Debug.netMsg("Received request to add "+dataRequest.data.size()+" calls from "+remoteAddress);
+							log.info("NETWORKING: Received request to add "+dataRequest.data.size()+" calls from "+remoteAddress);
 							synchronized(JFritz.getCallerList()){
 								callsAdded = true;
 								JFritz.getCallerList().addEntries(dataRequest.data);
@@ -208,7 +224,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 						}else if(dataRequest.operation == ClientDataRequest.Operation.REMOVE && login.allowRemoveList){
 
-							Debug.netMsg("Received request to remove "+dataRequest.data.size()+" calls from "+remoteAddress);
+							log.info("NETWORKING: Received request to remove "+dataRequest.data.size()+" calls from "+remoteAddress);
 							synchronized(JFritz.getCallerList()){
 								callsRemoved = true;
 								JFritz.getCallerList().removeEntries(dataRequest.data);
@@ -217,7 +233,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 						}else if(dataRequest.operation == ClientDataRequest.Operation.UPDATE && login.allowUpdateList){
 
-							Debug.netMsg("Received request to update a call from "+remoteAddress);
+							log.info("NETWORKING: Received request to update a call from "+remoteAddress);
 							synchronized(JFritz.getCallerList()){
 								callUpdated = true;
 								JFritz.getCallerList().updateEntry((Call) dataRequest.original, (Call) dataRequest.updated);
@@ -231,12 +247,12 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 						//determine what operation to carry out, if applicable
 						if(dataRequest.operation == ClientDataRequest.Operation.GET){
-							Debug.netMsg("Received complete phone book request from "+remoteAddress);
+							log.info("NETWORKING: Received complete phone book request from "+remoteAddress);
 							contactsAdded(JFritz.getPhonebook().getUnfilteredPersons());
 
 						}else if(dataRequest.operation == ClientDataRequest.Operation.ADD && login.allowAddBook){
 
-							Debug.netMsg("Received request to add "+dataRequest.data.size()+" contacts from "+remoteAddress);
+							log.info("NETWORKING: Received request to add "+dataRequest.data.size()+" contacts from "+remoteAddress);
 							synchronized(JFritz.getPhonebook()){
 								contactsAdded = true;
 								JFritz.getPhonebook().addEntries(dataRequest.data);
@@ -245,7 +261,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 						}else if(dataRequest.operation == ClientDataRequest.Operation.REMOVE && login.allowRemoveBook){
 
-							Debug.netMsg("Received request to remove "+dataRequest.data.size()+" contacts from "+remoteAddress);
+							log.info("NETWORKING: Received request to remove "+dataRequest.data.size()+" contacts from "+remoteAddress);
 							synchronized(JFritz.getPhonebook()){
 								contactsRemoved = true;
 								JFritz.getPhonebook().removeEntries(dataRequest.data);
@@ -253,7 +269,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 							}
 						}else if(dataRequest.operation == ClientDataRequest.Operation.UPDATE && login.allowUpdateBook){
 
-							Debug.netMsg("Received request to update a contact from "+remoteAddress);
+							log.info("NETWORKING: Received request to update a contact from "+remoteAddress);
 							synchronized(JFritz.getPhonebook()){
 								contactUpdated = true;
 								JFritz.getPhonebook().updateEntry((Person) dataRequest.original, (Person) dataRequest.updated);
@@ -262,7 +278,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 						}
 
 					}else{
-						Debug.netMsg("Request from "+remoteAddress+" contained no destination, ignoring");
+						log.info("NETWORKING: Request from "+remoteAddress+" contained no destination, ignoring");
 					}
 				}else if(o instanceof ClientActionRequest){
 					//client has requested to perform an action
@@ -271,22 +287,22 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 							&& login.allowLookup){
 
 						if(actionRequest.number != null && actionRequest.siteName != null){
-							Debug.netMsg("Received request to do specific reverse lookup for "+actionRequest.number
+							log.info("NETWORKING: Received request to do specific reverse lookup for "+actionRequest.number
 									+" using "+actionRequest.siteName+ " from "+remoteAddress);
 //							JFritzReverseLookup.specificLookup(actionRequest.number, actionRequest.siteName, JFritz.getCallerList());
 						}else{
-							Debug.netMsg("Received request to do complete reverse lookup from "+remoteAddress);
+							log.info("NETWORKING: Received request to do complete reverse lookup from "+remoteAddress);
 							JFritz.getJframe().doLookupButtonClick();
 						}
 					}
 					else if(actionRequest.action == ClientActionRequest.ActionType.getCallList
 							&& login.allowGetList){
-						Debug.netMsg("Received request to get call from the box from "+remoteAddress);
+						log.info("NETWORKING: Received request to get call from the box from "+remoteAddress);
 						JFritz.getJframe().doFetchButtonClick();
 					}
 					else if(actionRequest.action == ClientActionRequest.ActionType.deleteListFromBox
 							&& login.allowDeleteList){
-						Debug.netMsg("Received request to delete the list from the box from "+remoteAddress);
+						log.info("NETWORKING: Received request to delete the list from the box from "+remoteAddress);
 						JFritz.getJframe().fetchList(null, true);
 					}
 					else if(actionRequest.action == ClientActionRequest.ActionType.doCall
@@ -294,17 +310,17 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 
 							//client has requested a call
 						if(actionRequest.number == null){
-							Debug.netMsg("Received request to list available ports for "+remoteAddress);
+							log.info("NETWORKING: Received request to list available ports for "+remoteAddress);
 							writeAvailablePorts();
 						}else if(actionRequest.number != null && actionRequest.port != null){
-							Debug.netMsg("Received request to dial number "+actionRequest.number.getIntNumber()
+							log.info("NETWORKING: Received request to dial number "+actionRequest.number.getIntNumber()
 									+ " using port "+actionRequest.port+" from "+remoteAddress);
 
 							//TODO: filtering!!
 							JFritz.getBoxCommunication().doCall(actionRequest.number, actionRequest.port);
 
 						}else
-							Debug.netMsg("Received invalid direct dial request from "+remoteAddress);
+							log.info("NETWORKING: Received invalid direct dial request from "+remoteAddress);
 					}
 					else if(actionRequest.action == ClientActionRequest.ActionType.hangup
 							&& login.allowDoCall){
@@ -317,50 +333,50 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 					message = (String) o;
 
 					if(message.equals("JFRITZ CLOSE")){
-						Debug.netMsg("Client is closing the connection, closing this thread");
+						log.info("NETWORKING: Client is closing the connection, closing this thread");
 						disconnect();
 					}else if(message.equals("Party on, Garth!")){
-						Debug.netMsg("Received keep alive response from client!");
+						log.info("NETWORKING: Received keep alive response from client!");
 						keptAlive = true;
 					}else{
-						Debug.netMsg("Received message from client: "+remoteAddress+": "+message);
+						log.info("NETWORKING: Received message from client: "+remoteAddress+": "+message);
 					}
 
 				}else{
-					Debug.netMsg("Received unexpected object from "+remoteAddress+" ignoring");
+					log.info("NETWORKING: Received unexpected object from "+remoteAddress+" ignoring");
 				}
 
 
 			}catch(ClassNotFoundException e){
-				Debug.error("unrecognized class received as request from client: " + e.toString());
+				log.error("unrecognized class received as request from client: " + e.toString());
 				e.printStackTrace();
 
 			}catch(SocketException e){
 				if(e.getMessage().toUpperCase().equals("SOCKET CLOSED")){
-					Debug.netMsg("socket for "+remoteAddress+" was closed!");
+					log.info("NETWORKING: socket for "+remoteAddress+" was closed!");
 				}else{
-					Debug.error(e.toString());
+					log.error(e.toString());
 					e.printStackTrace();
 				}
 				return;
 			}catch(EOFException e){
-				Debug.error("client "+remoteAddress+" closed stream unexpectedly: " + e.toString());
+				log.error("client "+remoteAddress+" closed stream unexpectedly: " + e.toString());
 				e.printStackTrace();
 				return;
 
 			}catch (IOException e){
-				Debug.netMsg("IOException occured reading client request");
+				log.info("NETWORKING: IOException occured reading client request");
 				e.printStackTrace();
 				return;
 
 			} catch (IllegalBlockSizeException e) {
-				Debug.error("Illegal block size exception! " + e.toString());
+				log.error("Illegal block size exception! " + e.toString());
 				e.printStackTrace();
 
 			} catch (BadPaddingException e) {
 				e.printStackTrace();
 //			} catch (WrongPasswordException e) {
-//				Debug.netMsg("Wrong password exception1");
+//				log.info("NETWORKING: Wrong password exception1");
 //				e.printStackTrace();
 			}
 		}
@@ -454,52 +470,52 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 							objectOut.writeObject(ok_sealed);
 							return login;
 						}else{
-							Debug.netMsg("Client sent false response to challenge!");
+							log.info("NETWORKING: Client sent false response to challenge!");
 						}
 					}else{
-						Debug.netMsg("Client sent false object as response to challenge!");
+						log.info("NETWORKING: Client sent false object as response to challenge!");
 					}
 				}else{
-					Debug.netMsg("client sent unkown username: "+user);
+					log.info("NETWORKING: client sent unkown username: "+user);
 				}
 			}
 		}catch (IllegalBlockSizeException e) {
-			Debug.netMsg("Wrong blocksize for sealed object!");
-			Debug.error(e.toString());
+			log.info("NETWORKING: Wrong blocksize for sealed object!");
+			log.error(e.toString());
 			e.printStackTrace();
 
 		}catch(ClassNotFoundException e){
-			Debug.netMsg("received unrecognized object from client!");
-			Debug.error(e.toString());
+			log.info("NETWORKING: received unrecognized object from client!");
+			log.error(e.toString());
 			e.printStackTrace();
 
 		}catch(NoSuchAlgorithmException e){
-			Debug.netMsg("MD5 Algorithm not present in this JVM!");
-			Debug.error(e.toString());
+			log.info("NETWORKING: MD5 Algorithm not present in this JVM!");
+			log.error(e.toString());
 			e.printStackTrace();
 
 		}catch(InvalidKeySpecException e){
-			Debug.netMsg("Error generating cipher, problems with key spec?");
-			Debug.error(e.toString());
+			log.info("NETWORKING: Error generating cipher, problems with key spec?");
+			log.error(e.toString());
 			e.printStackTrace();
 
 		}catch(InvalidKeyException e){
-			Debug.netMsg("Error genertating cipher, problems with key?");
-			Debug.error(e.toString());
+			log.info("NETWORKING: Error genertating cipher, problems with key?");
+			log.error(e.toString());
 			e.printStackTrace();
 
 		}catch(NoSuchPaddingException e){
-			Debug.netMsg("Error generating cipher, problems with padding?");
-			Debug.error(e.toString());
+			log.info("NETWORKING: Error generating cipher, problems with padding?");
+			log.error(e.toString());
 			e.printStackTrace();
 
 		}catch(IOException e){
-			Debug.netMsg("Error authenticating client!");
-			Debug.error(e.toString());
+			log.info("NETWORKING: Error authenticating client!");
+			log.error(e.toString());
 			e.printStackTrace();
 		} catch (BadPaddingException e) {
-			Debug.netMsg("Bad padding exception!");
-			Debug.error(e.toString());
+			log.info("NETWORKING: Bad padding exception!");
+			log.error(e.toString());
 			e.printStackTrace();
 		}
 
@@ -524,7 +540,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 			socket.close();
 
 		}catch(IOException e){
-			Debug.error(e.toString());
+			log.error(e.toString());
 			e.printStackTrace();
 		}
 	}
@@ -536,7 +552,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 	 */
 	public synchronized void closeConnection(){
 		try{
-			Debug.info("Notifying client "+remoteAddress+" to close connection");
+			log.info("Notifying client "+remoteAddress+" to close connection");
 			SealedObject sealed_object = new SealedObject("JFRITZ CLOSE", outCipher);
 			objectOut.writeObject(sealed_object);
 			objectOut.flush();
@@ -546,18 +562,18 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 			socket.close();
 
 		}catch(SocketException e){
-			Debug.netMsg("Error closing socket");
-			Debug.error(e.toString());
+			log.info("NETWORKING: Error closing socket");
+			log.error(e.toString());
 			e.printStackTrace();
 
 		}catch(IOException e){
-			Debug.error("Error writing close request to client!");
-			Debug.error(e.toString());
+			log.error("Error writing close request to client!");
+			log.error(e.toString());
 			e.printStackTrace();
 
 		}catch(IllegalBlockSizeException e){
-			Debug.error("Error with the block size?");
-			Debug.error(e.toString());
+			log.error("Error with the block size?");
+			log.error(e.toString());
 			e.printStackTrace();
 		}
 	}
@@ -574,7 +590,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 			return;
 		}
 
-		Debug.netMsg("Notifying client "+remoteAddress+" of added calls, size: "+newCalls.size());
+		log.info("NETWORKING: Notifying client "+remoteAddress+" of added calls, size: "+newCalls.size());
 		callsAdd.data =  newCalls;
 
 		sender.addChange(callsAdd.clone());
@@ -593,7 +609,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 			return;
 		}
 
-		Debug.netMsg("Notifying client "+remoteAddress+" of removed calls, size: "+removedCalls.size());
+		log.info("NETWORKING: Notifying client "+remoteAddress+" of removed calls, size: "+removedCalls.size());
 		callsRemove.data = removedCalls;
 
 		sender.addChange(callsRemove.clone());
@@ -607,7 +623,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 		if(callUpdated || !login.allowCallList)
 			return;
 
-		Debug.netMsg("Notifying client "+remoteAddress+" of updated call");
+		log.info("NETWORKING: Notifying client "+remoteAddress+" of updated call");
 		callUpdate.original = original;
 		callUpdate.updated = updated;
 
@@ -625,7 +641,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 		if(contactsAdded || !login.allowPhoneBook)
 			return;
 
-		Debug.netMsg("Notifying client "+remoteAddress+" of added contacts, size: "+newContacts.size());
+		log.info("NETWORKING: Notifying client "+remoteAddress+" of added contacts, size: "+newContacts.size());
 		contactsAdd.data = newContacts;
 
 		sender.addChange(contactsAdd.clone());
@@ -642,7 +658,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 		if(contactsRemoved || !login.allowPhoneBook)
 			return;
 
-		Debug.netMsg("Notifying client "+remoteAddress+" of removed contacts, size: "+removedContacts.size());
+		log.info("NETWORKING: Notifying client "+remoteAddress+" of removed contacts, size: "+removedContacts.size());
 		contactsRemove.data = removedContacts;
 
 		sender.addChange(contactsRemove.clone());
@@ -658,7 +674,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 		if(contactUpdated || !login.allowPhoneBook)
 			return;
 
-		Debug.netMsg("Notifying client "+remoteAddress+" of updated contact");
+		log.info("NETWORKING: Notifying client "+remoteAddress+" of updated contact");
 		contactUpdate.original = original;
 		contactUpdate.updated = updated;
 
@@ -674,7 +690,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
     	if(!login.allowCallMonitor)
     		return;
 
-    	Debug.netMsg("Notifying client "+remoteAddress+" of pending call in");
+    	log.info("NETWORKING: Notifying client "+remoteAddress+" of pending call in");
 		callMonitor.original = call;
 		callMonitor.operation = DataChange.Operation.ADD;
 
@@ -691,7 +707,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
     	if(!login.allowCallMonitor)
     		return;
 
-    	Debug.netMsg("Notifying client "+remoteAddress+" of established call in");
+    	log.info("NETWORKING: Notifying client "+remoteAddress+" of established call in");
 		callMonitor.original = call;
 		callMonitor.operation = DataChange.Operation.UPDATE;
 
@@ -708,7 +724,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
     	if(!login.allowCallMonitor)
     		return;
 
-    	Debug.netMsg("Notifying client "+remoteAddress+" of pending call out");
+    	log.info("NETWORKING: Notifying client "+remoteAddress+" of pending call out");
 		callMonitor.updated = call;
 		callMonitor.operation = DataChange.Operation.ADD;
 
@@ -725,7 +741,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
     	if(!login.allowCallMonitor)
     		return;
 
-    	Debug.netMsg("Notifying client "+remoteAddress+" of pending call");
+    	log.info("NETWORKING: Notifying client "+remoteAddress+" of pending call");
 		callMonitor.updated = call;
 		callMonitor.operation = DataChange.Operation.UPDATE;
 
@@ -742,7 +758,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
     	if(!login.allowCallMonitor)
     		return;
 
-    	Debug.netMsg("Notifying client "+remoteAddress+" of pending call");
+    	log.info("NETWORKING: Notifying client "+remoteAddress+" of pending call");
 		callMonitor.original = call;
 		callMonitor.operation = DataChange.Operation.REMOVE;
 
@@ -777,16 +793,16 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 //			objectOut.flush();
 
 //		}catch(IOException e){
-//			Debug.error("Error writing available ports to client!");
-//			Debug.error(e.toString());
+//			log.error("Error writing available ports to client!");
+//			log.error(e.toString());
 //			e.printStackTrace();
 //
 //		}catch(IllegalBlockSizeException e){
-//			Debug.error("Error with the block size?");
-//			Debug.error(e.toString());
+//			log.error("Error with the block size?");
+//			log.error(e.toString());
 //			e.printStackTrace();
 //		}
-		Debug.error("Fix writeAvailablePorts() in ClientConnectionThread!");
+		log.error("Fix writeAvailablePorts() in ClientConnectionThread!");
     }
 
     public String toString() {

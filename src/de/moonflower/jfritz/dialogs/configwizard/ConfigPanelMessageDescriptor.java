@@ -1,7 +1,8 @@
 package de.moonflower.jfritz.dialogs.configwizard;
 
 
-import com.nexes.wizard.*;
+import com.nexes.wizard.WizardPanelDescriptor;
+
 import de.moonflower.jfritz.dialogs.config.ConfigPanelMessage;
 
 /**
@@ -30,6 +31,6 @@ public class ConfigPanelMessageDescriptor extends WizardPanelDescriptor {
 	    }
 
 	    public Object getBackPanelDescriptor() {
-	    	return ConfigPanelFritzBoxDescriptor.IDENTIFIER;
+	    	return ConfigPanelFritzBoxLoginDescriptor.IDENTIFIER;
 	    }
 }

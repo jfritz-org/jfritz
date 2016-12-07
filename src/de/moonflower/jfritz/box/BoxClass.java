@@ -2,10 +2,10 @@ package de.moonflower.jfritz.box;
 
 import java.util.Vector;
 
-import de.moonflower.jfritz.Main;
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.network.SSDPPacket;
 import de.moonflower.jfritz.utils.network.SSDPdiscoverThread;
@@ -19,19 +19,54 @@ public abstract class BoxClass
 			   BoxDoCallInterface,
 			   BoxNewIpInterface
 {
+	private Vector<BoxStatusListener> boxListener;
+
 	protected String name;
 	protected String description;
 
 	protected String protocol;
 	protected String address;
 	protected String port;
+	protected String username;
 	protected String password;
 	protected String macAddress;
+	protected boolean useUsername;
 
 	/** SSDP constants **/
 	private final static int SSDP_TIMEOUT = 1000;
 	protected static SSDPdiscoverThread ssdpthread;
 	protected static PropertyProvider properties = PropertyProvider.getInstance();
+	
+	public BoxClass() {
+		boxListener = new Vector<BoxStatusListener>(4);
+	}
+		
+	public void addBoxStatusListener(BoxStatusListener listener)
+	{
+		if (!boxListener.contains(listener)) {
+			boxListener.add(listener);
+		}
+	}
+
+	public void removeBoxStatusListener(BoxStatusListener listener)
+	{
+		if (boxListener.contains(listener)) {
+			boxListener.remove(listener);
+		}
+	}
+
+	public void setBoxConnected() {
+		for (BoxStatusListener listener: boxListener) {
+			listener.setBoxConnected(name);
+		}
+	}
+
+	public void setBoxDisconnected() {
+		for (BoxStatusListener listener: boxListener) {
+			listener.setBoxDisconnected(name);
+		}
+	}
+
 	/**
 	 * The user can define a random name describing this box.
 	 * @return The name of the box.
@@ -75,6 +110,22 @@ public abstract class BoxClass
 	{
 		return port;
 	}
+	
+	/**
+	 * Should we use the username?
+	 * @return True if username shall be used
+	 */
+	public boolean shallUseUsername() {
+		return useUsername;
+	}
+	
+	/**
+	 * Get the username of the box.
+	 * @return The username of the box.
+	 */
+	public String getUsername() {
+		return username;
+	}
 
 	/**
 	 * Get the password of the box.
@@ -84,7 +135,7 @@ public abstract class BoxClass
 	{
 		return password;
 	}
-
+	
 	/**
 	 * Get the mac address of the box.
 	 * @return
@@ -140,6 +191,20 @@ public abstract class BoxClass
 	}
 
 	/**
+	 * Set use username
+	 */
+	public void setUseUsername(boolean useIt) {
+		this.useUsername = useIt;
+	}
+	
+	/**
+	 * Set the username of the box
+	 */
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
+	/**
 	 * Set the password of the box.
 	 * @param password
 	 */
@@ -157,9 +222,9 @@ public abstract class BoxClass
 		this.macAddress = mac;
 	}
 
-	public static final void detectBoxesWithSSDP()
+	public static final void detectBoxesWithSSDP(final Logger log)
 	{
-		Debug.info("Searching for  FritzBox per UPnP / SSDP");//$NON-NLS-1$
+		log.info("Searching for  FritzBox per UPnP / SSDP");//$NON-NLS-1$
 
 		ssdpthread = new SSDPdiscoverThread(SSDP_TIMEOUT);
 		ssdpthread.start();
@@ -173,7 +238,7 @@ public abstract class BoxClass
 	/**
 	 * @return Returns the fritzbox devices.
 	 */
-	public static final Vector<SSDPPacket> getDevices() {
+	public static final Vector<SSDPPacket> getDevices(Logger log) {
 		//avoid using the ssdp thread if jfritz is running as a client and using the call list from server
 		if (JFritzUtils.parseBoolean(properties.getProperty("option.useSSDP")) //$NON-NLS-1$
 			&& !(properties.getProperty("network.type").equals("2")
@@ -184,17 +249,16 @@ public abstract class BoxClass
 			}
 			return ssdpthread.getDevices();
 		} else {
-			Debug.netMsg("jfritz is configured as a client, canceling box detection");
+			log.info("NETWORKING: jfritz is configured as a client, canceling box detection");
 			return null;
 		}
 	}
-
-	public abstract void addBoxStatusListener(BoxStatusListener listener);
-	public abstract void removeBoxStatusListener(BoxStatusListener listener);
 
 	public abstract void addBoxCallBackListener(BoxCallBackListener listener);
 
 	public abstract String getExternalIP();
 
 	public abstract void reboot() throws WrongPasswordException;
+	
+	public abstract void refreshLogin();
 }

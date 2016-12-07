@@ -45,6 +45,36 @@ public class Port implements Serializable {
 			return name;
 		}
 	}
+	
+	public String toStringDetailed() {
+		StringBuilder output = new StringBuilder();
+		
+		if (box != null) {
+			output.append("<");
+			output.append(box.getName());
+			output.append("> ");
+		}
+
+		output.append("Name: ");
+		if (this.name != null) { 
+			output.append(this.name);
+		}
+		
+		output.append(" ID: ");
+		output.append(this.id);
+
+		output.append(" DialPort: ");
+		if (this.dialPort != null) { 
+			output.append(this.dialPort);
+		}
+		
+		output.append(" Internal number: ");
+		if (this.internalNumber != null) { 
+			output.append(this.internalNumber);
+		}
+		
+		return output.toString();
+	}
 
 	public String getName()
 	{
@@ -145,7 +175,7 @@ public class Port implements Serializable {
 		}
 		else
 		{
-			return null;
+			return new Port(0, Integer.toString(id), "-1", "-1");
 		}
 	}
 

@@ -2,21 +2,19 @@ package de.moonflower.jfritz.network;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-
 import java.net.InetAddress;
-
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SealedObject;
 
-import de.moonflower.jfritz.callerlist.filter.*;
-import de.moonflower.jfritz.network.Login;
+import org.apache.log4j.Logger;
+
+import de.moonflower.jfritz.callerlist.filter.CallFilter;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.utils.Debug;
 
 /**
  * This class is used for filtering and sending data to a client.
@@ -31,6 +29,7 @@ import de.moonflower.jfritz.utils.Debug;
  *
  */
 public class ServerSenderThread extends Thread {
+	private final static Logger log = Logger.getLogger(ServerSenderThread.class);
 
 	private boolean stop;
 
@@ -38,6 +37,7 @@ public class ServerSenderThread extends Thread {
 
 	private DataChange<Call> callChange;
 
+	@SuppressWarnings("unused")
 	private DataChange<Person> contactChange;
 
 	private InetAddress remoteAddress;
@@ -46,16 +46,20 @@ public class ServerSenderThread extends Thread {
 
 	private Cipher outCipher;
 
+	@SuppressWarnings("rawtypes")
 	private ConcurrentLinkedQueue<DataChange> changedObjects;
 
 	private Login login;
 
 	private Vector<Call> filteredCalls;
 
+	@SuppressWarnings("unused")
 	private String contactFilter;
 
+	@SuppressWarnings("unused")
 	private Vector<Person> filteredContacts;
 
+	@SuppressWarnings("rawtypes")
 	public ServerSenderThread(ObjectOutputStream oos, InetAddress rAddress, Login login, Cipher cipher){
 
 		objectOut = oos;
@@ -66,9 +70,10 @@ public class ServerSenderThread extends Thread {
 		contactFilter = login.contactFilter;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void run(){
 
-		Debug.netMsg("Sender thread for "+remoteAddress+" started up");
+		log.info("NETWORKING: Sender thread for "+remoteAddress+" started up");
 		while(!stop){
 
 			// if no changes are present then sleep
@@ -78,7 +83,7 @@ public class ServerSenderThread extends Thread {
 						wait();
 					}
 				}catch(InterruptedException e){
-					Debug.netMsg("A Server sender thread was interrupted!");
+					log.info("NETWORKING: A Server sender thread was interrupted!");
 		        	Thread.currentThread().interrupt();
 				}
 
@@ -101,7 +106,7 @@ public class ServerSenderThread extends Thread {
 						filterCallData((Vector<Call>) change.data);
 					}
 
-					Debug.netMsg("Writing filtered data to client "+remoteAddress);
+					log.info("NETWORKING: Writing filtered data to client "+remoteAddress);
 
 					// now write it accross the socket connection while leaving the queue open for writing
 					try{
@@ -112,12 +117,12 @@ public class ServerSenderThread extends Thread {
 						objectOut.reset();
 
 					}catch(IOException e){
-						Debug.error("Error writing change information to client! host: "+remoteAddress);
-						Debug.error(e.toString());
+						log.error("Error writing change information to client! host: "+remoteAddress);
+						log.error(e.toString());
 						e.printStackTrace();
 					} catch (IllegalBlockSizeException e) {
-						Debug.error("Illegal block size exception!");
-						Debug.error(e.toString());
+						log.error("Illegal block size exception!");
+						log.error(e.toString());
 						e.printStackTrace();
 					}
 
@@ -129,7 +134,7 @@ public class ServerSenderThread extends Thread {
 			}
 		}
 
-		Debug.netMsg("Sender Thread for "+remoteAddress+" stopping");
+		log.info("NETWORKING: Sender Thread for "+remoteAddress+" stopping");
 
 	}
 
@@ -168,7 +173,7 @@ public class ServerSenderThread extends Thread {
 		// because this may change through user editing
 		Vector<CallFilter> callFilters = login.callFilters;
 
-		Debug.netMsg("Filtering outgoing call data for: "+this.remoteAddress
+		log.info("NETWORKING: Filtering outgoing call data for: "+this.remoteAddress
 				+" size of calls: "+calls.size());
 		for(Call call: calls){
 

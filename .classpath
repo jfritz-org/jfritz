@@ -14,11 +14,9 @@
 	<classpathentry exported="true" kind="lib" path="lib/pixie-0.8.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jcalendar-1.3.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jfreechart-1.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/jdom.jar"/>
 	<classpathentry kind="lib" path="lib/bsf-2.3.0.jar"/>
 	<classpathentry kind="lib" path="lib/looks-2.1.4.jar"/>
 	<classpathentry kind="lib" path="lib-dev/ant.jar"/>
-	<classpathentry kind="lib" path="lib-dev/imtask.jar"/>
 	<classpathentry kind="lib" path="lib-dev/mail.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib-dev/ant-deb-0.0.1.jar"/>
@@ -26,13 +24,17 @@
 	<classpathentry kind="lib" path="lib-dev/mockito-all-1.8.5.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
 	<classpathentry kind="lib" path="lib/jfontchooser-1.0.5.jar"/>
-	<classpathentry kind="lib" path="lib/commons-io-2.0.1.jar" sourcepath="/home/robotniko/.m2/repository/commons-io/commons-io/2.0.1/commons-io-2.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib-dev/junit-4.8.2.jar" sourcepath="C:/Users/robotniko/.m2/repository/junit/junit/4.8.2/junit-4.8.2-sources.jar"/>
 	<classpathentry kind="lib" path="lib/proxy-1.0.1.jar"/>
-	<classpathentry kind="lib" path="lib/reverseLookup-1.0.5.jar"/>
-	<classpathentry kind="lib" path="lib/httpclient-4.2.2.jar"/>
-	<classpathentry kind="lib" path="lib/httpcore-4.2.2.jar"/>
-	<classpathentry kind="lib" path="lib/httpmime-4.2.2.jar"/>
-	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/json_simple-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-io-2.4.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/httpclient-4.5.jar"/>
+	<classpathentry kind="lib" path="lib/httpcore-4.4.1.jar"/>
+	<classpathentry kind="lib" path="lib/httpmime-4.5.jar"/>
+	<classpathentry kind="lib" path="lib/jdom-1.1.3.jar"/>
+	<classpathentry kind="lib" path="lib/reverseLookup-1.0.8.jar" sourcepath="reverselookup"/>
+	<classpathentry kind="lib" path="lib/fboxlib-1.0.23.jar" sourcepath="/fboxlib/src"/>
+	<classpathentry kind="lib" path="lib/commons-codec-1.10.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

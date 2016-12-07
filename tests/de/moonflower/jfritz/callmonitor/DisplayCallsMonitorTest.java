@@ -1,10 +1,5 @@
 package de.moonflower.jfritz.callmonitor;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 import junit.framework.Assert;
@@ -22,12 +17,6 @@ import de.moonflower.jfritz.TestHelper;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.sounds.PlaySound;
-import de.moonflower.jfritz.struct.Call;
-import de.moonflower.jfritz.struct.CallType;
-import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.PhoneNumberOld;
-import de.moonflower.jfritz.struct.Port;
-import de.moonflower.jfritz.utils.Debug;
 
 public class DisplayCallsMonitorTest extends TestCase {
 
@@ -44,9 +33,6 @@ public class DisplayCallsMonitorTest extends TestCase {
 	public void init() {
 		MockitoAnnotations.initMocks(this);
 
-		Debug.on();
-    	Debug.setVerbose(true);
-    	Debug.setDebugLevel(Debug.LS_DEBUG);
 		PropertyProvider.getInstance().loadProperties(false);
 		MessageProvider.getInstance().loadMessages(new Locale("de_DE"));
 		JFritz.loadNumberSettings();
@@ -70,18 +56,18 @@ public class DisplayCallsMonitorTest extends TestCase {
 //		messages.getMessage("no_external_program")
 //		messages.getMessage("not_external_program_start")
 
-		CallType callType = CallType.CALLIN;
-		Date now = Calendar.getInstance().getTime();
-		PhoneNumberOld phoneNumber = new PhoneNumberOld("07212542015", false);
-		Port dialPort = new Port(0, "PortName", "21", "621");
-		String route = "865072";
-		int duration = 0;
-		Call call = new Call(callType, now, phoneNumber, dialPort, route, duration);
-
-		String caller = "caller";
-		String called = "called";
-		String port = "port";
-		Person person = null;
+//		CallType callType = CallType.CALLIN;
+//		Date now = Calendar.getInstance().getTime();
+//		PhoneNumberOld phoneNumber = new PhoneNumberOld(PropertyProvider.getInstance(), "07212542015", false);
+//		Port dialPort = new Port(0, "PortName", "21", "621");
+//		String route = "865072";
+//		int duration = 0;
+//		Call call = new Call(callType, now, phoneNumber, dialPort, route, duration);
+//
+//		String caller = "caller";
+//		String called = "called";
+//		String port = "port";
+//		Person person = null;
 //		cm.displayCallInMsg(call, caller, called, port, person);
 
 //		verify(sound, times(1)).playRingSound(1.0f);
@@ -205,5 +191,55 @@ public class DisplayCallsMonitorTest extends TestCase {
 		Assert.assertNotNull(res);
 		Assert.assertEquals("\"/path to/program\"", res[0]);
 		Assert.assertEquals("\"arg1\"", res[1]);
+	}
+	
+	@Test
+	public void testSplitArguments() {
+		String[] args;
+		
+		args = cm.splitArguments(null);
+		Assert.assertNotNull(args);
+		Assert.assertEquals(0, args.length);
+		
+		args = cm.splitArguments("");
+		Assert.assertNotNull(args);
+		Assert.assertEquals(0, args.length);
+		
+		args = cm.splitArguments("arg1");
+		Assert.assertNotNull(args);
+		Assert.assertEquals(1, args.length);
+		Assert.assertEquals("arg1", args[0]);
+		
+		args = cm.splitArguments("arg1 arg2");
+		Assert.assertNotNull(args);
+		Assert.assertEquals(2, args.length);
+		Assert.assertEquals("arg1", args[0]);
+		Assert.assertEquals("arg2", args[1]);
+		
+		args = cm.splitArguments("\"arg 1\"");
+		Assert.assertNotNull(args);
+		Assert.assertEquals(1, args.length);
+		Assert.assertEquals("\"arg 1\"", args[0]);
+		
+		args = cm.splitArguments("\"arg 1\" \"arg 2\"");
+		Assert.assertNotNull(args);
+		Assert.assertEquals(2, args.length);
+		Assert.assertEquals("\"arg 1\"", args[0]);
+		Assert.assertEquals("\"arg 2\"", args[1]);
+		
+		args = cm.splitArguments("\"arg 1\" arg2");
+		Assert.assertNotNull(args);
+		Assert.assertEquals(2, args.length);
+		Assert.assertEquals("\"arg 1\"", args[0]);
+		Assert.assertEquals("arg2", args[1]);
+		
+		args = cm.splitArguments("arg 1 arg 2");
+		Assert.assertNotNull(args);
+		Assert.assertEquals(4, args.length);
+		Assert.assertEquals("arg", args[0]);
+		Assert.assertEquals("1", args[1]);
+		Assert.assertEquals("arg", args[2]);
+		Assert.assertEquals("2", args[3]);
+
 	}
 }

@@ -118,6 +118,7 @@ public class SipProviderTableModel extends AbstractTableModel {
 			this.ascending = ascending;
 		}
 
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		public int compare(SipProvider v1, SipProvider v2){
 			Object o1, o2;
 			if (colIndex == 0)

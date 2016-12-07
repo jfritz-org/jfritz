@@ -1,62 +1,146 @@
+ï»¿JFritz 0.7.5_22:
+- Bugfix: Funktioniert mit der neuesten Firmware-Version 06.60 (und der Labor-Version fÃ¼r die kommende Final-Firmware)
+
+JFritz 0.7.5_21:
+- Bugfix: UnterstÃ¼tzung der neuen Firmwares 06.25 und 06.35 (groÃŸen Dank an Pikachu)
+- Bugfix: Reverse-Lookup fÃ¼r Deutschland repariert
+- Bugfix: Netzwerk-Button entfernt
+- Logging fÃ¼r das HinzufÃ¼gen von Nebenstellen erhÃ¶ht
+- Anrufmonitor versucht bei Problemen nun nicht stÃ¤ndig sofort eine neue Verbindung aufzubauen
+- Bugfix: Anrufmonitor wird beim Beenden von JFritz korrekt gestoppt
+- Bugfix: Setzen der Nebenstelle bei der WÃ¤hlhilfe
+- Uninstall: Feedback E-Mail enthÃ¤lt nun die Firmware-Version
+- Logging nach log4j portiert
+- RÃ¼ckwÃ¤rtssuche fÃ¼r die Schweiz aktualisiert
+- Bugfix: Es wurden nicht alle SIP-Provider erkannt
+- Neu: Anzeige eines Dialogs zur Eingabe des Benutzernamen/Passworts, wenn falsche Login-Daten erkannt wurden
+- Neu: ÃœberprÃ¼fung der FRITZ!Box-Seriennummer beim Start von JFritz, um Kommunikation mit unbekannten FRITZ!Boxen zu erkennen
+- Bugfix: Mehrfache BestÃ¤tigung einer neu gefunden FRITZ!Box unterbunden
+- Bugfix: Update der Firmware in jfritz.properties.xml, wenn eine neue FRITZ!Box gefunden wurde 
+- Bugfix: Rufnummern, die mit 555, 777 oder 00038 beginnen, wurden fÃ¤lschlicher weise als SIP-Nummern deklariert.
+- Bugfix: Fehlermeldung Username/Password beim Start, wenn Wizard eine FRITZ!Box erkennt und versucht mit ihr zu kommunizieren
+- Bugfix 0000349: Anrufmonitor kann keine Argumente mehr an externe Programme Ã¼bergeben
+- Neu 0000216: JFritz kann nun mit der FritzBox auch Ã¼ber die Fernwartung kommunizieren
+- Neuer Parameter fÃ¼r externe Programme: %City
+
+New Strings:
+serial_not_found
+external_program
+external_program_args
+
+JFritz 0.7.5_5:
+- Neu 0000383: Anmeldung mit Username / Password unterstÃ¼tzen
+- Neu: Schweizer Rufnummern werden nun mit Ortsvorwahl dargestellt
+- Neu 0000351: verbessertes Startscript (anbei)
+- New: Supporting international firmwares (ES, FR and IT)
+- Neu: Login nun in zwei Einstellungsdialoge aufgeteilt (IP und Anmeldedaten)
+- Neu: Wizard hat nun auch zwei Schritte fÃ¼r die Einrichtung der FRITZ!Box
+- Neu: Fehlermedlungen bei falschem Benutzer/Passwort verbessert 
+- Bugfix: Anrufmonitor baut Verbindung nach Verbindungsabbruch schneller wieder auf
+- Bugfix: Erkennen einer abgelaufenen SessionID
+- Bugfix: False positives in reverse lookup for italian numbers
+
+JFritz 0.7.5:
+- Weihnachtsversion
+
+JFritz 0.7.4.2:
+- Support FritzOS 06.00
+- Support FritzOS 05.55 und 05.60
+- Bugfix 0000372: Anrufliste kann mit v0.7.4.1.32 nicht mehr gelÃ¶scht werden
+- Bugfix 0000390: Erkennung der FritzBox anhand MAC scheint defekt zu sein
+- Bugfix 0000385: Code -w unterdrÃ¼ckt die Meldung mit mehreren Instanzen nicht mehr
+- Bugfix 0000374: Kein Abholen der Anrufliste nach Ruhezustand
+- Bugfix 0000388: Reconnect schlÃ¤gt nach einem FritzBox reboot fehl
+- Bugfix 0000391: AusfÃ¼hren von externen BAT-Dateien unter Java 1.7.0_21 nicht mehr mÃ¶glich
+- Bugfix 0000376: UnterstÃ¼tzung der 6360er Unitymedia Firmware
+- Bugfix: Verbindungsverlust nach gewisser Zeit
+- Bugfix: Verbesserte Erkennung von ungÃ¼ltigen Session IDs
+- Bugfix: Verwende UTF-8, um Daten von der FritzBox zu lesen 
+- Bugfix 0000393: Es wÃ¤re schÃ¶n, wenn die neu eingefÃ¼hrte Revision-Nummer im MenÃ¼ des TrayIcon-MenÃ¼s angezeigt wÃ¼rde
+- Bugfix 0000394: 7360, HWRev 124 wird nicht erkannt -> boxnames.conf nicht aktuell
+- Bugfix 0000377: Warning: Could not parse portstr
+- Bugfix 0000395: WÃ¤hlhilfe wÃ¤hlt doppelt
+- Bugfix 0000392: Falsche Darstellung der Umlaute
+- Bugfix 0000396: "Firmware-Erkennung gescheitert", aktualisieren der Anrufliste nicht mÃ¶glich
+- Bugfix 0000397: Keine Angabe / Abholung der Nummern/SIPs
+- Bugfix 0000398: JFRITZ --export per Kommandozeile // Datei wird zwar neu erzeugt, aber ohne aktuelle Anrufliste
+- Bugfix: Tray-Icon verschwindet, nachdem man die IP-Adresse Ã¼ber das Tray erneuert hat
+- Bugfix 0000399: IllegalArgumentException im Wizard bei FritzBox-Page
+- Bugfix: Areacode und Areaprefix werden nun automatisch korrigiert
+- Neu: Neuen Hinweis auf neue JFritz Version vorbereitet
+- Bugfix: Supporting international firmwares > 05.50
+- Bugfix: Debian packaging, UnterstÃ¼tzung mehrerer JREs and JDKs hinzugefÃ¼gt
+- Neu: Windows Setup Ã¼bergibt bei Deinstallation die verwendete JFritz-Version und das Betriebssystem per Feedback-EMail
+- Bugfix: Anrufmonitor fÃ¼r FritzOS 06.00
+- Bugfix: Support 7362 and other boxes
+- Bugfix 0000374: Refresh login (SID) if standby or suspend to ram is detected
+- Neu: Anrufe wÃ¤hrend "Klingelsperre" werden nun erkannt und visualisiert (nur fÃ¼r manche Firmwares)
+- Bugfix: Nebenstellen mit nummerischem Namen werden nun korrekt verarbeitet  
+- Bugfix: RÃ¼ckwÃ¤rtssuche fÃ¼r viele LÃ¤nder aktualisiert
+- ÃœberprÃ¼fung auf Onlineupdate nur noch max. ein Mal pro Tag
+
+JFritz 0.7.4.1.32:
+- Fehlende Bibliothek hinzugefÃ¼gt
+
 JFritz 0.7.4.1.31:
-- Unterstützung der neuen Firmware
+- UnterstÃ¼tzung der neuen Firmware
 
 JFritz 0.7.4.1.30:
 - Quickdial-Verarbeitung deaktiviert
-- Bugfix: NumberFormatException bei "Telefonie über Mobilfunk"
+- Bugfix: NumberFormatException bei "Telefonie Ã¼ber Mobilfunk"
 
 JFritz 0.7.4.1.29:
 - boxnames.conf aktualisiert
 - Auf reverseLookup-1.0.5 upgedated
-- Reverselookup für DasOertliche.de repariert
-- Manuelles Auslösen der Rückwärtssuche sucht nun auch diejenigen Einträge durch, die bisher nur einen Ort zugewiesen bekommen haben
+- Reverselookup fÃ¼r DasOertliche.de repariert
+- Manuelles AuslÃ¶sen der RÃ¼ckwÃ¤rtssuche sucht nun auch diejenigen EintrÃ¤ge durch, die bisher nur einen Ort zugewiesen bekommen haben
 
 JFritz 0.7.4.1.28:
 - Bugfix [0000341]: Could not get Save Directory bei der Verwendung des Windows-Installers
-- Bugfix [0000343]: Rückwärtssuche für einen Eintrag ausgegraut
-- Bugfix [0000344]: Rückwärtssuche für alle Einträge "startet verzögert"
+- Bugfix [0000343]: RÃ¼ckwÃ¤rtssuche fÃ¼r einen Eintrag ausgegraut
+- Bugfix [0000344]: RÃ¼ckwÃ¤rtssuche fÃ¼r alle EintrÃ¤ge "startet verzÃ¶gert"
  
 JFritz 0.7.4.1.27:
-- Anzeige von Popups/Überwachungstabelle getrennt
-- Neue Suchelemente für Rückwärtssuche: company, houseNumber
-- Rückwärtssuche für Deutschland funktioniert wieder
-- Rückwärtssuche für Österreich funktioniert wieder
-- Rückwärtssuche für Belgien funktioniert wieder
-- Rückwärtssuche für Frankreich funktioniert wieder
-- Rückwärtssuche für Italien funktioniert wieder
-- Rückwärtssuche für Luxemburg funktioniert wieder
-- Rückwärtssuche für Niederlande funktioniert wieder
-- Rückwärtssuche für Norwegen funktioniert wieder
-- Rückwärtssuche für Schweden funktioniert wieder
-- Rückwärtssuche für Schweiz funktioniert wieder
-- Rückwärtssuche für USA funktioniert wieder
+- Anzeige von Popups/Ãœberwachungstabelle getrennt
+- Neue Suchelemente fÃ¼r RÃ¼ckwÃ¤rtssuche: company, houseNumber
+- RÃ¼ckwÃ¤rtssuche fÃ¼r Deutschland funktioniert wieder
+- RÃ¼ckwÃ¤rtssuche fÃ¼r Ã–sterreich funktioniert wieder
+- RÃ¼ckwÃ¤rtssuche fÃ¼r Belgien funktioniert wieder
+- RÃ¼ckwÃ¤rtssuche fÃ¼r Frankreich funktioniert wieder
+- RÃ¼ckwÃ¤rtssuche fÃ¼r Italien funktioniert wieder
+- RÃ¼ckwÃ¤rtssuche fÃ¼r Luxemburg funktioniert wieder
+- RÃ¼ckwÃ¤rtssuche fÃ¼r Niederlande funktioniert wieder
+- RÃ¼ckwÃ¤rtssuche fÃ¼r Norwegen funktioniert wieder
+- RÃ¼ckwÃ¤rtssuche fÃ¼r Schweden funktioniert wieder
+- RÃ¼ckwÃ¤rtssuche fÃ¼r Schweiz funktioniert wieder
+- RÃ¼ckwÃ¤rtssuche fÃ¼r USA funktioniert wieder
 
 JFritz 0.7.4.1.26:
 - Neu: Feedback bei Deinstallation 
 - Bugfix: Splash wird nach Wizard sofort anzeigen
-- Bugfix: Backup-Verzeichnis wird nun bei Deinstallation auch gelöscht
-- Bugfix: Bei Installation wird überprüft, ob JFritz noch läuft
-- Bugfix: Bei Deinstallation wird überprüft, ob JFritz noch läuft
+- Bugfix: Backup-Verzeichnis wird nun bei Deinstallation auch gelÃ¶scht
+- Bugfix: Bei Installation wird Ã¼berprÃ¼ft, ob JFritz noch lÃ¤uft
+- Bugfix: Bei Deinstallation wird Ã¼berprÃ¼ft, ob JFritz noch lÃ¤uft
 
 JFritz 0.7.4.1.25:
-- Einrichtungsdialog (Wizard) überarbeitet, wird nun vor dem JFritz-Hauptfenster angezeigt
+- Einrichtungsdialog (Wizard) Ã¼berarbeitet, wird nun vor dem JFritz-Hauptfenster angezeigt
 - Einrichtungsdialog wird jedes Mal angezeigt, solange die FritzBox noch nicht konfiguriert wurde
-- Startreihenfolge der einzelnen Komponenten angepasst (Prüfung auf mehrfachen Start, Einrichtungsdialog) 
+- Startreihenfolge der einzelnen Komponenten angepasst (PrÃ¼fung auf mehrfachen Start, Einrichtungsdialog) 
 
 JFritz 0.7.4.1.24:
 - Buttons im Wizard werden nun nach der Sprachwahl in der korrekten Sprache angezeigt
-- Config-Dialog breiter gestaltet und dafür wieder die Schriftgröße der erkannten Firmware vergrößert 
+- Config-Dialog breiter gestaltet und dafÃ¼r wieder die SchriftgrÃ¶ÃŸe der erkannten Firmware vergrÃ¶ÃŸert 
 
 JFritz 0.7.4.1.23:
 - Client/Server-Einstellungen entfernt, da eh verbuggt
 - Proxy Einstellungen nach "Weiteres" verschoben
 
 JFritz 0.7.4.1.22:
-- Bugfix: Doppelte Einträge nach Benutzung der Wählhilfe
+- Bugfix: Doppelte EintrÃ¤ge nach Benutzung der WÃ¤hlhilfe
 - Logging des Anrufmonitors von Debug auf log4j
 
 JFritz 0.7.4.1.21:
-- About-Dialog überarbeitet
+- About-Dialog Ã¼berarbeitet
 
 JFritz 0.7.4.1.20:
 - Bugfix: Log4j.log wird nun nicht mehr ins Programmverzeichnis geschrieben
@@ -68,21 +152,21 @@ JFritz 0.7.4.1.18:
 - Windows: Umlaute werden bei Installation wieder korrekt dargestellt
 - Autoupdate: Komplett entfernt
 - Backup refactored, Verwendung von Apache commons IO
-- Speicherverzeichnis refactored, Ändern des Speicherverzeichnisses kopiert nun alle Dateien und Ordner und löscht das alte Speicherverzeichnis
+- Speicherverzeichnis refactored, Ã„ndern des Speicherverzeichnisses kopiert nun alle Dateien und Ordner und lÃ¶scht das alte Speicherverzeichnis
 
 JFritz 0.7.4.1.17:
 - jfritz.txt in INI-Format umgewandelt
-- Windows: Installation und Deinstallation überarbeitet
-- Bugfix: Default-Speicherverzeichnis für JFritz Daten bei Erstinstallation
-- Neu: Namen zu allen derzeit verfügbaren FritzBoxen (danke Rainer) 
-- Schriftgröße im Einstelldialog (FRITZ!Box) angepasst
+- Windows: Installation und Deinstallation Ã¼berarbeitet
+- Bugfix: Default-Speicherverzeichnis fÃ¼r JFritz Daten bei Erstinstallation
+- Neu: Namen zu allen derzeit verfÃ¼gbaren FritzBoxen (danke Rainer) 
+- SchriftgrÃ¶ÃŸe im Einstelldialog (FRITZ!Box) angepasst
 
 JFritz 0.7.4.1.16:
-- Anrufmonitor: Ausführen von externen Programmen refaktoriert
-- Bugfix [0000335]: Anrufmonitor hält aufgerufenes Programm an
+- Anrufmonitor: AusfÃ¼hren von externen Programmen refaktoriert
+- Bugfix [0000335]: Anrufmonitor hÃ¤lt aufgerufenes Programm an
 
 JFritz 0.7.4.1.15:
-- Mac OS X: Tastaturkürzel für Google-Maps von ALT+G auf Command+G umgestellt 
+- Mac OS X: TastaturkÃ¼rzel fÃ¼r Google-Maps von ALT+G auf Command+G umgestellt 
 - Telefonbuch: Die Taste ESCAPE deaktiviert die aktuelle Suche
 
 JFritz 0.7.4.1.14:
@@ -98,14 +182,14 @@ JFritz 0.7.4.1.12:
 - Korrekte Initialisierung von Log4j, Logging sollte nun in eine Datei Log4j.log im Speicherverzeichnis stattfinden
 
 JFritz 0.7.4.1.11:
-- Autoupdate-Funktionalität wurde deaktiviert. Nun nur noch ein Hinweiß, dass es eine neue Version zum Download auf http://www.jfritz.org gibt.
+- Autoupdate-FunktionalitÃ¤t wurde deaktiviert. Nun nur noch ein Hinweis, dass es eine neue Version zum Download auf http://www.jfritz.org gibt.
 
 JFritz 0.7.4.1.10:
 - Bugfix [0000336]: Verschieben des Schreibordners bei frischer Installation
 TODO: DEB erstellen, installieren und schauen ob es nun ok ist!!!
 
 JFritz 0.7.4.1.9:
-- Neue EXE Version für 64-Bit Java
+- Neue EXE Version fÃ¼r 64-Bit Java
 - Bugfix [0000291]: Jfritz started nicht mit Windows 64 bit und Java 64 bit 
 
 JFritz 0.7.4.1.8:
@@ -113,15 +197,15 @@ JFritz 0.7.4.1.8:
 
 JFritz 0.7.4.1.7:
 - Neu: Mapping von FritzBox-ID zu Namen in Datei "conf/boxnames.conf" ausgelagert
-- Neu: Proxy-Einstellungen werden nun auch für AutoUpdate verwendet
-- Bugfix: Proxy ohne Authentifizierung arbeitet nun. TODO überprüfen, ob auch ein Proxy mit Authentifizierung funktioniert
+- Neu: Proxy-Einstellungen werden nun auch fÃ¼r AutoUpdate verwendet
+- Bugfix: Proxy ohne Authentifizierung arbeitet nun. TODO Ã¼berprÃ¼fen, ob auch ein Proxy mit Authentifizierung funktioniert
 
 JFritz 0.7.4.1.6:
 - Bugfix [0000325]: Absturz des Anrufmonitors, wenn der Anruf vom AB angenommen wird
 
 JFritz 0.7.4.1.5:
-- Einstellungsdialog für Proxy-Einstellungen
-- Proxy kann nun für Rückwärtssuche verwendet werden
+- Einstellungsdialog fÃ¼r Proxy-Einstellungen
+- Proxy kann nun fÃ¼r RÃ¼ckwÃ¤rtssuche verwendet werden
 New Strings:
 proxy_active
 proxy_http
@@ -131,7 +215,7 @@ proxy_user
 proxy_password
 
 JFritz 0.7.4.1.4:
-- Log4j in weiteren Klassen eingeführt
+- Log4j in weiteren Klassen eingefÃ¼hrt
 - Internationalisierung extrahiert 
 
 JFritz 0.7.4.1.3:
@@ -140,50 +224,50 @@ JFritz 0.7.4.1.3:
 - Verwendung von Log4j
 
 JFritz 0.7.4.1.2:
-- LookupThread überarbeitet, bessere Ergebnisse bei der Rückwärtssuche
+- LookupThread Ã¼berarbeitet, bessere Ergebnisse bei der RÃ¼ckwÃ¤rtssuche
 
 JFritz 0.7.4.1.1:
-- Neu: Unterstützung der FRITZ!Box 7320
-- Bugfix: Rückwärtssuche für Niederlande
-- Bugfix: Rückwärtssuche für Norwegen
+- Neu: UnterstÃ¼tzung der FRITZ!Box 7320
+- Bugfix: RÃ¼ckwÃ¤rtssuche fÃ¼r Niederlande
+- Bugfix: RÃ¼ckwÃ¤rtssuche fÃ¼r Norwegen
 - Bugfix: Textfeld zur Eingabe von zu ignorierenden MSNs war in manchen Look&Feels zu klein
-- Bugfix: Vergrößerung der Anzeige bei der Einstellung der zu ignorierenden MSNs
+- Bugfix: VergrÃ¶ÃŸerung der Anzeige bei der Einstellung der zu ignorierenden MSNs
 - Bugfix [0000322]: Falsche Selektion im Telefonbuch bei Doppelklick auf einen Anrufer mit unbekannter Rufnummer in der Anrufliste
 
 JFritz 0.7.4.1:
 Released version
 
 JFritz 0.7.4.0.5:
-- Bugfix [0000316]: Pictures gelöscht 
+- Bugfix [0000316]: Pictures gelÃ¶scht 
 
 JFritz 0.7.4.0.4:
 - Bugfix [0000287]: Nach dem ersten Anruf keine weitere Benachrichtigung  
 - Bugfix [0000293]: Nach erstem Anruf keine Reaktion auf weitere Anrufe
-- Bugfix [0000313]: Derzeit geführte Anrufe werden nach Beendigung des Gesprächs nicht korrekt entfernt
-- Bugfix [0000315]: JFritz läßt sich nicht beenden 
+- Bugfix [0000313]: Derzeit gefÃ¼hrte Anrufe werden nach Beendigung des GesprÃ¤chs nicht korrekt entfernt
+- Bugfix [0000315]: JFritz lÃ¤ÃŸt sich nicht beenden 
 
 JFritz 0.7.4.0.3:
 - Neu [0000309]: 4th Localization update for The Netherlands
-- Bugfix [0000286]: Anrufbeantworter werden unter Anschlüsse als Nummern angezeigt 
-- Bugfix [0000297]: Icons für MacOSX in höherer Auflösung
+- Bugfix [0000286]: Anrufbeantworter werden unter AnschlÃ¼sse als Nummern angezeigt 
+- Bugfix [0000297]: Icons fÃ¼r MacOSX in hÃ¶herer AuflÃ¶sung
 - Bugfix [0000305]: Redraw-Probleme auf dem Mac  
-- Bugfix [0000306]: Buttons in Jfritz werden erst sichtbar wenn man sie drückt
+- Bugfix [0000306]: Buttons in Jfritz werden erst sichtbar wenn man sie drÃ¼ckt
 - Bugfix [0000307]: Redraw unter WIn7 64 HP
 - Bugfix [0000309]: 4th Localization update for The Netherlands 
 - Bugfix [0000310]: JFritz doesn't recognize FRITZ!Box 7340 
-- Bugfix [0000314]: Doppelte (dreifache) Einträge 
+- Bugfix [0000314]: Doppelte (dreifache) EintrÃ¤ge 
 
 JFritz 0.7.4.0.2:
 - Neu [0000221]: Anzeigen des Ortsnamens als eigene Spalte
-- Bugfix: Rückwärtssuche für Norwegen repariert
-- Bugfix: Rückwärtssuche für Schweiz repariert
-- Bugfix: Rückwärtssuche für Frankreich repariert
-- Bugfix [0000297]: Icons für MacOSX in höherer Auflösung
-- Bugfix [0000304]: Rückwärtssuche findet zugehörigen Ort nicht
+- Bugfix: RÃ¼ckwÃ¤rtssuche fÃ¼r Norwegen repariert
+- Bugfix: RÃ¼ckwÃ¤rtssuche fÃ¼r Schweiz repariert
+- Bugfix: RÃ¼ckwÃ¤rtssuche fÃ¼r Frankreich repariert
+- Bugfix [0000297]: Icons fÃ¼r MacOSX in hÃ¶herer AuflÃ¶sung
+- Bugfix [0000304]: RÃ¼ckwÃ¤rtssuche findet zugehÃ¶rigen Ort nicht
 
 JFritz 0.7.4.0.1:
 - Bugfix [0000106]: Installer findet kein Java
-- Bugfix [0000300]: Rückwärtssuche ausgegraut
+- Bugfix [0000300]: RÃ¼ckwÃ¤rtssuche ausgegraut
 - Bugfix [0000301]: Landesflaggen und Netzbetreiber werden nicht mehr angezeigt 
 - Bugfix [0000302]: JFritz startet nicht unter Mac OSX
 - Bugfix [0000303]: Java 32-Bit wird unter x64 nicht erkannt 

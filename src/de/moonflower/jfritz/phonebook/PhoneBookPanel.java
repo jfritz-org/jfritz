@@ -19,8 +19,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
@@ -29,21 +31,20 @@ import javax.swing.JToolBar;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.JPopupMenu;
-import javax.swing.JMenuItem;
+
+import org.apache.log4j.Logger;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzDataDirectory;
 import de.moonflower.jfritz.JFritzWindow;
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.constants.ProgramConstants;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.VCardList;
 import de.moonflower.jfritz.utils.BrowserLaunch;
-import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.StatusBarController;
 
 /**
@@ -78,6 +79,7 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			}
 		}
 	}
+	private final static Logger log = Logger.getLogger(PhoneBookPanel.class);
 
 	private static final long serialVersionUID = 1;
 
@@ -164,11 +166,11 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 			clearAllFilter();
 		} else if (e.getActionCommand().equals("google")) { //$NON-NLS-1$
 			if (googleLink != null) {
-				Debug.debug(googleLink);
+				log.debug(googleLink);
 				BrowserLaunch.openURL(googleLink);
 			}
 		} else {
-			Debug.warning("Unsupported Command: " + e.getActionCommand()); //$NON-NLS-1$
+			log.warn("Unsupported Command: " + e.getActionCommand()); //$NON-NLS-1$
 		}
 	}
 
@@ -330,7 +332,9 @@ public class PhoneBookPanel extends JPanel implements ListSelectionListener,
 				}
 			}
 		} else {
-			Debug.errDlg(messages.getMessage("error_no_row_chosen")); //$NON-NLS-1$
+			String message = messages.getMessage("error_no_row_chosen"); //$NON-NLS-1$
+			log.error(message);
+			Debug.errDlg(message);
 		}
 	}
 

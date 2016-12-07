@@ -31,6 +31,7 @@ import de.moonflower.jfritz.struct.Port;
  */
 
 public class CallPendingDialog extends JDialog implements ActionListener {
+	//private final static Logger log = Logger.getLogger(CallPendingDialog.class);
 	private static final long serialVersionUID = 1;
 
 	private String infoText;
@@ -127,10 +128,10 @@ public class CallPendingDialog extends JDialog implements ActionListener {
 				NetworkStateMonitor.hangup(port);
 				setVisible(false);
 			} catch (WrongPasswordException e1) {
-				JFritz.errorMsg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
+				JFritz.errorMsg(messages.getMessage("box.wrong_password"), e1); //$NON-NLS-1$
 				Debug.errDlg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
 			} catch (IOException e1) {
-				JFritz.errorMsg(messages.getMessage("box.not_found")); //$NON-NLS-1$
+				JFritz.errorMsg(messages.getMessage("box.not_found"), e1); //$NON-NLS-1$
 				Debug.errDlg(messages.getMessage("box.not_found")); //$NON-NLS-1$
 			}
 		}

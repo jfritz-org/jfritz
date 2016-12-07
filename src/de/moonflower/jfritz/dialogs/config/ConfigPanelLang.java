@@ -15,11 +15,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.StartEndFilenameFilter;
 
@@ -31,6 +32,7 @@ import de.moonflower.jfritz.utils.StartEndFilenameFilter;
  *
  */
 public class ConfigPanelLang extends JPanel implements ConfigPanel{
+	private final static Logger log = Logger.getLogger(ConfigPanelLang.class);
 
     private static final long serialVersionUID = 1;
 
@@ -72,7 +74,7 @@ public class ConfigPanelLang extends JPanel implements ConfigPanel{
 			     lang + JFritzUtils.FILESEP + "flags" + JFritzUtils.FILESEP +	//$NON-NLS-1$,  //$NON-NLS-2$
 			     localeList[i].substring(localeList[i].indexOf("_")+1,
 			         localeList[i].length()).toLowerCase() + ".gif";			//$NON-NLS-1$
-			Debug.info("Found resources for locale '" + localeList[i] +			//$NON-NLS-1$
+			log.info("Found resources for locale '" + localeList[i] +			//$NON-NLS-1$
 			     "', loading flag image '" + imagePath + "'");					//$NON-NLS-1$,  //$NON-NLS-2$
 			images[i] = new ImageIcon(imagePath);
 			images[i].setDescription(Main.getLocaleMeaning(localeList[i]));

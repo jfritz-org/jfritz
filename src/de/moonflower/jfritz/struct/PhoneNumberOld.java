@@ -9,22 +9,19 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.util.Enumeration;
 import java.util.HashMap;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.log4j.Logger;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
-import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
-import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.CbCFileXMLHandler;
@@ -36,6 +33,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  *
  */
 public class PhoneNumberOld implements Serializable {
+	private final static Logger log = Logger.getLogger(PhoneNumberOld.class);
 
 	private static final long serialVersionUID = 102;
 
@@ -59,6 +57,7 @@ public class PhoneNumberOld implements Serializable {
 
 	static String FLAG_FILE_HEADER = "Country Code;Flag file; Full Text";
 
+	@SuppressWarnings("unused")
 	private final static String CBC_FILE_HEADER  = "Country Code;CallbyCall Prefix:length";
 
 	private String flagFileName = "";
@@ -69,8 +68,8 @@ public class PhoneNumberOld implements Serializable {
 
 	private String countryCode = "";
 
-	protected PropertyProvider properties = PropertyProvider.getInstance();
-	protected MessageProvider messages = MessageProvider.getInstance();
+	private PropertyProvider properties = null;
+	private MessageProvider messages = MessageProvider.getInstance();
 
 	/**
 	 * This constructor should be used if the number may be a quickdial and
@@ -78,6 +77,8 @@ public class PhoneNumberOld implements Serializable {
 	 *
 	 * @author Brian Jensen
 	 *
+	 * @param propertyProvider
+	 * 			  a property provider instance
 	 * @param fullNumber
 	 *            the telephone number in raw format
 	 * @param parseDialOut,
@@ -86,7 +87,8 @@ public class PhoneNumberOld implements Serializable {
 	 * @param convertInt
 	 * 			  should the number be refactored (add country and area code)
 	 */
-	public PhoneNumberOld(String fullNumber, boolean parseDialOut, boolean convertInt) {
+	public PhoneNumberOld(PropertyProvider propertyProvider, String fullNumber, boolean parseDialOut, boolean convertInt) {
+		this.properties = propertyProvider;
 		this.type = "";
 
 		if (fullNumber != null) {
@@ -97,14 +99,14 @@ public class PhoneNumberOld implements Serializable {
 				&& this.number.startsWith(properties.getProperty("dial.prefix"))) {
 			this.number = number.substring(properties.getProperty("dial.prefix")
 					.length());
-			Debug.info("Parsed the dial out prefix, new number: " + this.number);
+			log.info("Parsed the dial out prefix, new number: " + this.number);
 		}
 
 		refactorNumber(convertInt);
 	}
 
-	public PhoneNumberOld(String fullNumber, boolean parseDialOut) {
-		this(fullNumber, parseDialOut, true);
+	public PhoneNumberOld(PropertyProvider properties, String fullNumber, boolean parseDialOut) {
+		this(properties, fullNumber, parseDialOut, true);
 	}
 
 	/**
@@ -190,7 +192,7 @@ public class PhoneNumberOld implements Serializable {
 				}
 			}
 			if ( countryCode.equals("+")) {
-				Debug.warning("No flag file for "+number+" found!!");
+				log.warn("No flag file for "+number+" found!!");
 			}
 
 			//All known mobile numbers are marked in the csv
@@ -310,9 +312,9 @@ public class PhoneNumberOld implements Serializable {
 		String areaPrefix = properties.getProperty("area.prefix"); //$NON-NLS-1$, //$NON-NLS-2$
 
 		if (number.startsWith(countryCode)) //$NON-NLS-1$
-			return areaPrefix + number.substring(3);
+			return areaPrefix + number.substring(countryCode.length());
 
-		Debug.warning("PhoneNumber.convertToNationalNumber: this is no national number, returning unchanged (international) number"); //$NON-NLS-1$
+		log.warn("PhoneNumber.convertToNationalNumber: this is no national number, returning unchanged (international) number"); //$NON-NLS-1$
 		return number;
 	}
 
@@ -346,11 +348,26 @@ public class PhoneNumberOld implements Serializable {
 		String countryCode = properties.getProperty("country.code");//$NON-NLS-1$
 		String areaCode = properties.getProperty("area.code"); //$NON-NLS-1$
 		String areaPrefix = properties.getProperty("area.prefix"); //$NON-NLS-1$
+		
+		if (number.startsWith("+41")) {
+			return getShortNumberSwitzerland();
+		}
+		
 		if (number.startsWith(countryCode + areaCode)) //$NON-NLS-1$
 			return number.substring(countryCode.length() + areaCode.length());
 
 		else if (number.startsWith(countryCode)) //$NON-NLS-1$
 			return areaPrefix + number.substring(countryCode.length());
+		return number;
+	}
+	
+	private String getShortNumberSwitzerland() {
+		String countryCode = properties.getProperty("country.code");//$NON-NLS-1$
+		String areaPrefix = properties.getProperty("area.prefix"); //$NON-NLS-1$
+		
+		if (number.startsWith(countryCode)) //$NON-NLS-1$
+			return areaPrefix + number.substring(countryCode.length());
+		
 		return number;
 	}
 
@@ -409,14 +426,7 @@ public class PhoneNumberOld implements Serializable {
 	 * @return True if number is a SIP number
 	 */
 	public boolean isSIPNumber() {
-		return ((number.indexOf('@') > 0) //$NON-NLS-1$
-				// PurTel
-				|| number.startsWith("00038") //$NON-NLS-1$
-				// SIPGate
-				|| number.startsWith("555") //$NON-NLS-1$
-		// SIPGate
-		|| number.startsWith("777") //$NON-NLS-1$
-		);
+		return (number.indexOf('@') > 0);
 	}
 
 	/**
@@ -539,9 +549,9 @@ public class PhoneNumberOld implements Serializable {
 		if (number.startsWith("**7")) //$NON-NLS-1$
 		// QuickDial
 		{
-			Debug.info("Quickdial conversion disabled!");
+			log.info("Quickdial conversion disabled!");
 //	THIS CODE IS BROKEN!!!
-//			Debug.info("Quickdial: " + number //$NON-NLS-1$
+//			log.info("Quickdial: " + number //$NON-NLS-1$
 //					+ ", searching for the full number"); //$NON-NLS-1$
 //
 //			// replace QuickDial with
@@ -553,7 +563,7 @@ public class PhoneNumberOld implements Serializable {
 //					.getQuickDials().size() == 0) {
 //
 //				// get QuickDials from FritzBox
-//				Debug.warning("No Quickdials present in JFritz, retrieving the list from the box");
+//				log.warn("No Quickdials present in JFritz, retrieving the list from the box");
 //				try {
 //					JFritz.getQuickDials()
 //							.getQuickDialDataFromFritzBox();
@@ -570,14 +580,14 @@ public class PhoneNumberOld implements Serializable {
 //				QuickDial quickDial = (QuickDial) en.nextElement();
 //				if (quickDialNumber.equals(quickDial.getQuickdial())) {
 //					number = quickDial.getNumber();
-//					Debug.info("Quickdial resolved. Number: " //$NON-NLS-1$
+//					log.info("Quickdial resolved. Number: " //$NON-NLS-1$
 //							+ number);
 //				}
 //			}
 //
 //			if (number.startsWith("**7"))
 //			{
-//				Debug.warning("No quickdial found. Refresh your quickdial list"); //$NON-NLS-1$
+//				log.warn("No quickdial found. Refresh your quickdial list"); //$NON-NLS-1$
 //			}
 		}
 	}
@@ -603,7 +613,7 @@ public class PhoneNumberOld implements Serializable {
 	 *
 	 */
 	public static void loadFlagMap(){
-		Debug.info("Loading the country code -> flag map");
+		log.info("Loading the country code -> flag map");
 		worldFlagMap = new HashMap<String, String>(2200);
 		BufferedReader br = null;
 		FileInputStream fi = null;
@@ -617,7 +627,9 @@ public class PhoneNumberOld implements Serializable {
 			int lines = 0;
 			String l = br.readLine();
 			if(l==null){
-				Debug.errDlg("File "+JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") +JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "country_codes_world"+" empty");
+				String message = "File "+JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") +JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "country_codes_world"+" empty";
+				log.error(message);
+				Debug.errDlg(message);
 			}
 			//Load the keys and values quick and dirty
 			if(l.equals(FLAG_FILE_HEADER)){
@@ -630,11 +642,11 @@ public class PhoneNumberOld implements Serializable {
 				}
 			}
 
-			Debug.info(lines + " Lines read from country_codes_world.csv");
-			Debug.info("worldFlagMap size: "+worldFlagMap.size());
+			log.info(lines + " Lines read from country_codes_world.csv");
+			log.info("worldFlagMap size: "+worldFlagMap.size());
 
 		}catch(Exception e){
-			Debug.error(e.toString());
+			log.error(e.toString());
 		}finally{
 			try{
 				if(fi!=null)
@@ -642,7 +654,7 @@ public class PhoneNumberOld implements Serializable {
 				if(br!=null)
 					br.close();
 			}catch (IOException ioe){
-				Debug.error("error closing stream"+ioe.toString());
+				log.error("error closing stream"+ioe.toString());
 			}
 		}
 		loadSpecificFlagMap();
@@ -659,7 +671,7 @@ public class PhoneNumberOld implements Serializable {
 	 *
 	 */
 	private static void loadSpecificFlagMap(){
-		Debug.info("Loading the country code -> flag map");
+		log.info("Loading the country code -> flag map");
 		specificWorldFlagMap = new HashMap<String, String>(2200);
 		BufferedReader br = null;
 		FileInputStream fi = null;
@@ -673,7 +685,9 @@ public class PhoneNumberOld implements Serializable {
 			int lines = 0;
 			String l = br.readLine();
 			if(l==null){
-				Debug.errDlg("File "+JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") +JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "country_specfic_codes_world.csv"+" empty");
+				String message = "File "+JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") +JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "country_specfic_codes_world.csv"+" empty";
+				log.error(message);
+				Debug.errDlg(message);
 			}
 			//Load the keys and values quick and dirty
 			if(l.equals(FLAG_FILE_HEADER)){
@@ -686,11 +700,11 @@ public class PhoneNumberOld implements Serializable {
 				}
 			}
 
-			Debug.info(lines + " Lines read from country_specfic_codes_world.csv");
-			Debug.info("specificWorldFlagMap size: "+specificWorldFlagMap.size());
+			log.info(lines + " Lines read from country_specfic_codes_world.csv");
+			log.info("specificWorldFlagMap size: "+specificWorldFlagMap.size());
 
 		}catch(Exception e){
-			Debug.error(e.toString());
+			log.error(e.toString());
 		}finally{
 			try{
 				if(fi!=null)
@@ -698,7 +712,7 @@ public class PhoneNumberOld implements Serializable {
 				if(br!=null)
 					br.close();
 			}catch (IOException ioe){
-				Debug.error("error closing stream"+ioe.toString());
+				log.error("error closing stream"+ioe.toString());
 			}
 		}
 
@@ -713,7 +727,7 @@ public class PhoneNumberOld implements Serializable {
 	 */
 	public static void loadCbCXMLFile(){
 		try {
-			Debug.info("Loading the call by call xml file");
+			log.info("Loading the call by call xml file");
 			callbyCallMap = new HashMap<String, CallByCall[]>(20);
 
 			SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -743,19 +757,19 @@ public class PhoneNumberOld implements Serializable {
 					JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") + JFritzUtils.FILESEP + "international" + JFritzUtils.FILESEP + "callbycall_world.xml")));
 
 		} catch (ParserConfigurationException e) {
-			Debug.error("Error with ParserConfiguration!"); //$NON-NLS-1$
+			log.error("Error with ParserConfiguration!"); //$NON-NLS-1$
 		} catch (SAXException e) {
-			Debug.error("Error on parsing number/internation/callbycall_world.xml! No call by calls loaded!"); //$NON-NLS-1$,  //$NON-NLS-2$
-			Debug.error(e.toString());
+			log.error("Error on parsing number/internation/callbycall_world.xml! No call by calls loaded!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.error(e.toString());
 			e.printStackTrace();
 
 			if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
 					|| e.getLocalizedMessage().startsWith(
 							"Invalid system identifier")) { //$NON-NLS-1$
-				Debug.error(e.toString());
+				log.error(e.toString());
 			}
 		} catch (IOException e) {
-			Debug.error("Could not read number/international/callbycall_world.xml! No call by calls loaded!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.error("Could not read number/international/callbycall_world.xml! No call by calls loaded!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 
@@ -787,7 +801,7 @@ public class PhoneNumberOld implements Serializable {
 
 	public PhoneNumberOld clone()
 	{
-		PhoneNumberOld p = new PhoneNumberOld("", false, false);
+		PhoneNumberOld p = new PhoneNumberOld(properties, "", false, false);
 		p.copyFrom(this);
 		return p;
 	}

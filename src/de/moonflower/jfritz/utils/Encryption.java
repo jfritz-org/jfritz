@@ -14,12 +14,15 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 
+import org.apache.log4j.Logger;
+
 
 /**
  * Encrypting / decrypting of Strings
  *
  */
 public class Encryption {
+	private final static Logger log = Logger.getLogger(Encryption.class);
 	private static final String KEY_STRING = "193-155-248-97-234-56-100-241"; //$NON-NLS-1$
 
 	public static String encrypt(String source) {
@@ -42,7 +45,7 @@ public class Encryption {
 			// Return a String representation of the cipher text
 			return getString(ciphertext);
 		} catch (Exception e) {
-            Debug.error(e.toString());
+            log.error(e.toString());
 		}
 		return null;
 	}
@@ -54,7 +57,7 @@ public class Encryption {
 			byte[] bytes = desKey.getEncoded();
 			return getString(bytes);
 		} catch (Exception e) {
-            Debug.error(e.toString());
+            log.error(e.toString());
 			return null;
 		}
 	}
@@ -82,7 +85,7 @@ public class Encryption {
 			// Return the clear text
 			return new String(cleartext);
 		} catch (Exception e) {
-            Debug.error(e.toString());
+            log.error(e.toString());
 		}
 		return null;
 	}
@@ -95,7 +98,7 @@ public class Encryption {
 			SecretKey s = skf.generateSecret(pass);
 			return s;
 		} catch (Exception e) {
-            Debug.error(e.toString());
+            log.error(e.toString());
 		}
 		return null;
 	}

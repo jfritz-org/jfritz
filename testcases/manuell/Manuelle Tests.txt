@@ -1,0 +1,195 @@
+Datum:         15.09.2011
+OS:            Windows XP Professional Deutsch SP3+ in VM
+Zustand:       Clean, d.h. weder Java noch JFritz waren bisher installiert
+Java:          - 
+JFritz:        V0.7.4.1.25
+Fritzbox:      Speedport W920V (aka 7570)
+Firmware:      internationale 75.04.91
+Anschluß:      T-Com ISDN
+Rufnummern:    10 x ISDN-MSN
+Telefone:      2 x analog, 2 x DECT, 2 x SIP, 1 x S0-TK-Anlage, 1 x S0-ISDN-Telefon, 2 x integrierter AB, 1 x integriertes FAX
+Anruferliste:  198 Anrufe
+
+
+
+// JFritz ohne Java installieren //
+ - User hat Admin-Rechte
+ - JFritz "JFritz-0.7.4.1.25-Beta-Setup.exe" starten
+===> Fehler?: Die Setup.exe hat kein JFritz-Logo mehr. Absicht?
+ - Sprache "Deutsch" auswählen; "OK"
+ -> Fenster mit Fehlermeldung, dass Java nicht installiert ist
+===> ok
+
+
+
+// Java installieren //
+ - User hat Admin-Rechte
+ - Java "jre-7-windows-i586.exe" mit Default-Einstellungen/Vorgaben installiert
+===> ok
+
+
+// JFritz installieren //
+ - User hat Admin-Rechte
+ - JFritz "JFritz-0.7.4.1.25-Beta-Setup.exe" starten
+ - Sprache "Deutsch" auswählen; "OK"
+ - "Willkommen"; "weiter"
+ - "Lizenzvereinbarung"; (x) Ich akzeptiere...; "weiter"
+ - "Information"; "weiter"
+ - "Ziel-Ordner"; default gelassen; "weiter"
+ - "Startmenü-Ordner"; default gelassen; "weiter"
+ - "Zusätzliche Aufgaben"; default gelassen ([x] Desktop-Symbol erstellen); "weiter"
+ - "Installation durchführen"; "Installieren"
+ - "Beenden des Setup-Assistenten", default NICHT gelassen, Haken raus bei "[x] JFritz starten"; "Fertigstellen"
+===> ok
+
+
+
+// JFritz - 1. Start //
+ - User hat Admin-Rechte
+ - JFritz durch Doppelklick auf das am Desktop liegenden JFritz-Icon gestartet
+ -> es kommt sofort der Einrichtungsassistent
+===> ???: Sollte da nicht auch ein Splash kommen, oder schau ich zu langsam? :)
+
+ - "Einrichtungsassistent"; Sprache "Deutsch" (voreingestellt); "Fertig"
+ - "Einrichtungsassistent" (Teil 2), Willkommen; "Weiter"
+ - "Telefon"; "Ortsvorwahl" auf "89" umgestellt, Rest default gelassen; "Weiter"
+ - "Fritzbox-Einstellungen"; IP-Adresse: 192.168.5.1, Passwort eingegeben; Button "Typ erkennen"
+ -> Fritzbox wird richtig erkannt
+ - "Weiter"
+ - "Popupfenster für Informationen"; default gelassen; "Weiter"
+ - "Fritzbox Anrufmonitor"; default gelassen; "Weiter"
+ - "Endfenster des Einrichtugnsassistenten"; "Fertig"
+===> ???: es passiert erstmal ~3 Sekunden nichts, dann erscheint der Splash. War das so gedacht?
+
+ -> Anrufdaten werden geholt; Reverse lookup gestartet und soweit bekannt auch aufgelöst
+===> ok
+
+ - JFritz mittels [x] beendet; "Wirklich beenden?" ; "Ja"
+ -> %userprofile%\.jfritz\jfritz.txt vorhanden  (C:\Dokumente und Einstellungen\Rainer\.jfritz\jfritz.txt)
+ -> %appdata%\JFritz liegen die Daten           (C:\Dokumente und Einstellungen\Rainer\Anwendungsdaten\JFritz)
+
+
+
+// JFritz - 2. Start //
+ - User hat Admin-Rechte
+ - JFritz durch Doppelklick auf das am Desktop liegenden JFritz-Icon gestartet
+ -> schaut alles gut aus; Verbindung zur Box steht, Anrufdaten werden eingelesen
+ - JFritz mittels [x] beendet; "Wirklich beenden?" ; "Ja"
+===> ok
+
+
+
+// JFritz - Datenpfad verändern per Eintragen des neuen Pfades via Hand //
+ - User hat Admin-Rechte
+ - JFritz durch Doppelklick auf das am Desktop liegenden JFritz-Icon gestartet
+ -> schaut alles gut aus; Verbindung zur Box steht, Anrufdaten werden eingelesen
+ - Einstellungen -> Weiteres -> Speicherordner: "c:\JFritz-Daten1" (per Hand eingetragen); "Ok"
+ -> Daten, also der komplette Ordner, wurde an den neuen Ort verschoben
+ -> C:\Dokumente und Einstellungen\Rainer\.jfritz\jfritz.txt wurde angepaßt
+ - JFritz mittels [x] beendet; "Wirklich beenden?" ; "Ja"
+===> ok
+
+
+
+// JFritz - 4. Start //
+ - User hat Admin-Rechte
+ - JFritz durch Doppelklick auf das am Desktop liegenden JFritz-Icon gestartet
+ -> schaut alles gut aus; Daten sind alle da; Verbindung zur Box steht, Anrufdaten werden eingelesen
+ - JFritz mittels [x] beendet; "Wirklich beenden?" ; "Ja"
+===> ok
+
+
+
+// JFritz - Datenpfad verändern per "Aussuchen"-Knopf //
+ - User hat Admin-Rechte
+ - JFritz durch Doppelklick auf das am Desktop liegenden JFritz-Icon gestartet
+ -> schaut alles gut aus; Verbindung zur Box steht, Anrufdaten werden eingelesen
+ - Einstellungen -> Weiteres -> Speicherordner: "Aussuchen"-Button;
+ -> Speicherordner-Auswahldialog geht auf
+ - Arbeitsplatz; "Partition C"; "Neuen Ordner erstellen"-Button, Jfritz-Daten2; "Speichern"
+ -> zurück im Einstelldialog
+ -> "OK"
+ -> Daten, also der komplette Ordner, wurde an den neuen Ort verschoben
+ -> C:\Dokumente und Einstellungen\Rainer\.jfritz\jfritz.txt wurde angepaßt
+ - JFritz mittels [x] beendet; "Wirklich beenden?" ; "Ja"
+===> ok
+
+
+
+// JFritz - 6. Start - kleinere Einstellungen vorgenommen //
+ - User hat Admin-Rechte
+ - JFritz durch Doppelklick auf das am Desktop liegenden JFritz-Icon gestartet
+ -> schaut alles gut aus; Daten sind alle da; Verbindung zur Box steht, Anrufdaten werden eingelesen
+ - Einstellungen -> Weiteres -> Programm minimiert starten
+ - Einstellungen -> Weiteres -> [x] Sicherungskopien beim Start erstellen
+ - JFritz mittels [x] beendet; "Wirklich beenden?" ; "Ja"
+===> ok
+
+
+
+// JFritz - 7. Start //
+ - User hat Admin-Rechte
+ - JFritz durch Doppelklick auf das am Desktop liegenden JFritz-Icon gestartet
+ -> schaut alles gut aus; Daten sind alle da; Verbindung zur Box steht, Anrufdaten werden eingelesen
+ - JFritz mittels [x] beendet; "Wirklich beenden?" ; "Ja"
+===> ok
+
+
+
+// JFritz - Datenpfad verändern per "Aussuchen"-Knopf eines bereits existierenden, nicht leeren Ordners //
+ - Anlegen von "JFritz-Daten-nicht-leer" und irgendeine Datei reinkopieren, sodass das Verzeichnis nicht leer ist
+ - User hat Admin-Rechte
+ - JFritz durch Doppelklick auf das am Desktop liegenden JFritz-Icon gestartet
+ -> schaut alles gut aus; Verbindung zur Box steht, Anrufdaten werden eingelesen
+ - Einstellungen -> Weiteres -> Speicherordner: "Aussuchen"-Button;
+ -> Speicherordner-Auswahldialog geht auf
+ - Arbeitsplatz; "Partition C"; Doppelklick auf "JFritz-Daten-nicht-leer"; "Speichern"
+ -> zurück im Einstelldialog
+ -> "OK"
+ -> Daten, also der komplette Inhalt des alten Ordners, wurde in den neuen Ordner verschoben. 
+    Der Inhalt des "neuen" Ordners blieb scheinbar unberührt. 
+ -> C:\Dokumente und Einstellungen\Rainer\.jfritz\jfritz.txt wurde angepaßt
+ - JFritz mittels [x] beendet; "Wirklich beenden?" ; "Ja"
+===> ok
+
+
+
+// JFritz deinstallieren ohne Daten zu löschen //
+ - User hat Admin-Rechte
+ - Über "Software"; JFritz; "Entfernen"
+===> gut: Logo in "Software" paßt wieder
+
+ - "Sind sie sicher...?"; "Ja"
+ - "Sollen Anruferliste...?" ; "Nein"
+ -> JFritz wurde deinstalliert, Daten sind erhalten geblieben
+===> ok
+
+
+
+// JFritz reinstalliert und gestartet//
+ - User hat Admin-Rechte
+ - .... (siehe oben)
+ -> Daten wurden gefunden und benutzt. Es kam kein Einrichtungsassistent
+===> ok
+
+
+
+// JFritz deinstallieren MIT Daten zu löschen //
+ - User hat Admin-Rechte
+ - Über "Software" JFritz "Entfernen"
+ - "Sind sie sicher...?"; "Ja"
+ - "Sollen Anruferliste...?" ; "Ja"
+ -> JFritz wurde deinstalliert, Daten wurden gelöscht, auch im %userprofile%
+===> ???: Unterverzeichnis "Backup wurde nicht gelöscht. Absicht oder versehen?
+
+
+
+===> ???: Ich habe nochmal JFritz installiert und vor dem Deinstalleiren JFritz nicht beendet.
+          Es wird bei oder vor der Deinstallation NICHT überprüft, ob JFritz noch läuft!
+          Ich würd es als Bug sehen! Evtl kannst Du auf das .lock testen, wobei das ja nicht 
+          eine 100%ige Garantie ist, aber in der Regel ist es weg, wenn JFritz nicht läuft.
+
+
+
+
+weitere Tests folgen....

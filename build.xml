@@ -2,11 +2,12 @@
 <project name="JFritz" default="build" basedir=".">
 	<property name="app.name" value="JFritz" />
 	<property name="version" value="unknown" />
-
+	<property name="revision" value="unknown" />
+	
 	<!-- compiler flags -->
 	<property name="javac.debug" value="true" />
 	<property name="javac.optimize" value="false" />
-	<property name="javac.version" value="1.5" />
+	<property name="javac.version" value="1.6" />
 
 	<!-- directory properties -->
 	<property name="ant" value="ant" />
@@ -35,7 +36,8 @@
 	<property name="binaries-archive" value="${archive}/binaries" />
 	<property name="release" value="${ant}/release" />
 	<property name="jfritzdir" value="D:\Programme\JFritz" />
-
+	<property name="svnversion" value="" />
+	
 	<!-- include all jars in lib to classpath -->
 	<path id="build.classpath">
 		<fileset dir="${lib}">
@@ -53,21 +55,27 @@
 	</path>
 
 	<target name="getSvnRevision">
+	    <!-- not using SVN anymore, using GIT -->
 		<!-- linux: <exec executable="svnversion" outputproperty="svnversion"/ -->
 		<!-- windows: exec executable="../subversion/bin/svnversion.exe" outputproperty="svnversion"/ -->
-		<exec executable="../subversion/bin/svnversion.exe" outputproperty="svnversion"/>
+		<!-- <exec executable="../subversion/bin/svnversion.exe" outputproperty="svnversion"/> -->
 	</target>
 
 	<target name="updateProgramConstants" depends="compile-update-constants">
 		<taskdef name="UpdateProgramConstants" classname="de.moonflower.jfritz.ant.constants.UpdateProgramConstants" classpathref="test.classpath" />
-		<UpdateProgramConstants revision="${svnversion}" date="${TODAY_ROB}"/>
+		<UpdateProgramConstants path="${basedir}" revision="${svnversion}" date="${TODAY_ROB}"/>
 	</target>
 
 	<target name="getVersion" depends="compile-JFritz-Constants, compile-getVersion">
 		<taskdef name="GetJFritzVersion" classname="de.moonflower.jfritz.ant.version.GetJFritzVersion" classpathref="test.classpath" />
 		<GetJFritzVersion/>
 	</target>
-
+	
+	<target name="getRevision" depends="compile-JFritz-Constants, compile-getVersion">
+		<taskdef name="GetJFritzRevision" classname="de.moonflower.jfritz.ant.version.GetJFritzRevision" classpathref="test.classpath" />
+		<GetJFritzRevision/>
+	</target>
+	
 	<tstamp>
 		<format property="TODAY_ROB" pattern="dd-MM-yyyy HH:mm:ss" locale="de,DE"/>
 	</tstamp>
@@ -102,7 +110,17 @@
 			excludes="de/moonflower/jfritz/simpletests/**, com/nexes/test/**" />
 	</target>
 
-	<target name="init" depends="getSvnRevision, updateProgramConstants, getVersion" description="Show startup informations">
+	<target name="compile-ant-scripts" depends="clean, compile-JFritz-Constants, compile-update-constants, compile-getVersion">
+		<mkdir dir="${build}" />
+		<mkdir dir="${build.classes}" />
+		<javac srcdir="${src}/de/moonflower/jfritz/ant" destdir="${build.classes}"
+			classpathref="test.classpath" debug="${javac.debug}"
+			optimize="${javac.optimize}" source="${javac.version}"
+			target="${javac.version}" encoding="iso-8859-1"
+			excludes="de/moonflower/jfritz/simpletests/**, com/nexes/test/**" />
+	</target>
+	
+	<target name="init" depends="getSvnRevision, updateProgramConstants, getVersion, getRevision" description="Show startup informations">
 		<echo message="ant version:   ${ant.version}" />
 		<echo message="java version:  ${ant.java.version}" />
 		<echo message="" />
@@ -200,7 +218,7 @@
 
 	</target>
 
-	<target name="jar" depends="compile, getVersion" description="Generates jar files">
+	<target name="jar" depends="compile, getVersion, getRevision" description="Generates jar files">
 		<!-- copy ThreeStateButton ressource-files -->
 		<copy todir="${build.classes}/de/moonflower/jfritz/utils/threeStateButton/images">
 			<fileset dir="${src}/de/moonflower/jfritz/utils/threeStateButton/images" />
@@ -231,7 +249,7 @@
 			</fileset>
 			<manifest>
 				<attribute name="Main-Class" value="de.moonflower.jfritz.Main" />
-				<attribute name="Class-Path" value="./fritzbox.jar ./resources.jar ./reverselookup.jar  ./utils.jar ${lang}/ ${conf} ${lib}/bsf-2.3.0.jar ${lib}/bsh-1.3.0.jar ${lib}/commons-io-2.0.1.jar ${lib}/itext-1.3.4.jar ${lib}/jacob.jar ${lib}/jcalendar-1.3.2.jar ${lib}/jcommon-1.0.0-rc1-cvs.jar ${lib}/jdic.jar ${lib}/jdom.jar ${lib}/jfontchooser-1.0.5.jar ${lib}/jfreechart-1.0.2.jar ${lib}/jfreereport-0.8.6-2.jar ${lib}/log4j-1.2.16.jar ${lib}/looks-2.1.4.jar ${lib}/pixie-0.8.4.jar ${lib}/poi-2.5.1-final-20040804.jar ${lib}/proxy-1.0.1.jar ${lib}/reverseLookup-1.0.5.jar ${lib}/httpcore-4.2.2.jar ${lib}/commons-codec-1.6.jar ${lib}/commons-logging-1.1.1.jar ${lib}/fluent-hc-4.2.2.jar ${lib}/httpclient-4.2.2.jar ${lib}/httpclient-cache-4.2.2 ${lib}/httpmime-4.2.2.jar" />
+				<attribute name="Class-Path" value="./fritzbox.jar ./resources.jar ./reverselookup.jar  ./utils.jar ${lang}/ ${conf} ${lib}/bsf-2.3.0.jar ${lib}/bsh-1.3.0.jar ${lib}/commons-codec-1.10.jar ${lib}/commons-io-2.4.jar ${lib}/itext-1.3.4.jar ${lib}/jacob.jar ${lib}/jcalendar-1.3.2.jar ${lib}/jcommon-1.0.0-rc1-cvs.jar ${lib}/jdic.jar ${lib}/jdom-1.1.3.jar ${lib}/jfontchooser-1.0.5.jar ${lib}/jfreechart-1.0.2.jar ${lib}/jfreereport-0.8.6-2.jar ${lib}/log4j-1.2.16.jar ${lib}/looks-2.1.4.jar ${lib}/pixie-0.8.4.jar ${lib}/poi-2.5.1-final-20040804.jar ${lib}/proxy-1.0.1.jar ${lib}/reverseLookup-1.0.8.jar ${lib}/httpcore-4.4.1.jar ${lib}/commons-codec-1.10.jar ${lib}/commons-logging-1.2.jar ${lib}/fluent-hc-4.5.jar ${lib}/httpclient-4.5.jar ${lib}/httpclient-cache-4.5.jar ${lib}/httpmime-4.5.jar ${lib}/json_simple-1.1.jar ${lib}/fboxlib-1.0.24.jar"/>
 			</manifest>
 		</jar>
 
@@ -274,7 +292,7 @@
 
 	</target>
 
-	<target name="junit" depends="compile, getVersion" description="Runs all test cases and generate report">
+	<target name="junit" depends="compile, getVersion, getRevision" description="Runs all test cases and generate report">
 		<mkdir dir="${build.unittests}" />
 		<mkdir dir="${build.unittests.reports}" />
 		<mkdir dir="${build.unittests.reports}/html" />
@@ -304,7 +322,7 @@
 	</target>
 
 	<target name="javadoc-clean" description="Cleans Javadoc">
-		<delete dir="${doc}" />
+		<delete dir="${doc}" /> 
 	</target>
 
 	<target name="javadoc" depends="javadoc-clean,init" description="Generate Javadoc">
@@ -381,7 +399,7 @@
 	<copy file="splash.png" todir="${source-archive}/tmp/JFritz-${version}-Source" />
 	<copy file="status.png" todir="${source-archive}/tmp/JFritz-${version}-Source" />
 
-	<zip zipfile="${source-archive}/JFritz-${version}-Source.zip" basedir="${source-archive}/tmp" />
+	<zip zipfile="${source-archive}/JFritz-${version}_${revision}-Source.zip" basedir="${source-archive}/tmp" />
 	<delete dir="${source-archive}/tmp" />
 </target>
 

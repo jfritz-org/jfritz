@@ -45,11 +45,12 @@ import de.moonflower.jfritz.utils.Debug;
  *
  */
 public class CallDialog extends JDialog implements ActionListener {
+	//private final static Logger log = Logger.getLogger(CallDialog.class);
 	private static final long serialVersionUID = 1;
 
 	private Vector<PhoneNumberOld> numbers;
 
-	private JComboBox portComboBox;
+	private JComboBox<Port> portComboBox;
 
 	JButton okButton, cancelButton;
 
@@ -159,7 +160,7 @@ public class CallDialog extends JDialog implements ActionListener {
 			label = new JLabel(messages.getMessage("extension")+": "); //$NON-NLS-1$,  //$NON-NLS-2$
 			topPane.add(label, c);
 
-			portComboBox = new JComboBox();
+			portComboBox = new JComboBox<Port>();
 
 			Vector<Port> ports = NetworkStateMonitor.getAvailablePorts();
 
@@ -170,7 +171,8 @@ public class CallDialog extends JDialog implements ActionListener {
 					if ((!"".equals(ports.get(i).getDialPort()))
 						&& (!"-1".equals(ports.get(i).getDialPort())))
 					{
-						portComboBox.addItem(ports.get(i));
+						Port port = ports.get(i);
+						portComboBox.addItem(port);
 					}
 				}
 			}
@@ -270,11 +272,13 @@ public class CallDialog extends JDialog implements ActionListener {
 				cancelDialog.setVisible(true);
 				cancelDialog.dispose();
 			} catch (WrongPasswordException e1) {
-				JFritz.errorMsg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
-				Debug.errDlg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
+				String message = messages.getMessage("box.wrong_password");  //$NON-NLS-1$ 
+				JFritz.errorMsg(message, e1);
+				Debug.errDlg(message); //$NON-NLS-1$
 			} catch (IOException e1) {
-				JFritz.errorMsg(messages.getMessage("box.not_found")); //$NON-NLS-1$
-				Debug.errDlg(messages.getMessage("box.not_found")); //$NON-NLS-1$
+				String message = messages.getMessage("box.not_found"); //$NON-NLS-1$ 
+				JFritz.errorMsg(message, e1);
+				Debug.errDlg(message); //$NON-NLS-1$
 			}
 		} else if (e.getActionCommand().equals("close")) { //$NON-NLS-1$
 			properties.setStateProperty("calldialog.lastport", Integer.toString(portComboBox.getSelectedIndex()));

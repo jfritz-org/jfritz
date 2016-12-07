@@ -4,3 +4,12 @@ bin/*
 
 # Ignore password file
 build-release-pwd.xml
+/bin
+/ant
+
+.gradle/
+.idea/
+build/
+
+.metadata/
+.settings/org.eclipse.jdt.core.prefs

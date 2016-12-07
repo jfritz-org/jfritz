@@ -25,6 +25,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -36,7 +37,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.constants.ProgramConstants;
 
 /**
@@ -46,6 +46,8 @@ import de.moonflower.jfritz.constants.ProgramConstants;
  *
  */
 public class JFritzProperties extends Properties {
+	private final static Logger log = Logger.getLogger(JFritzProperties.class);
+
 	private static final long serialVersionUID = 1;
 	private static final String PROPS_DTD_URI = "http://java.sun.com/dtd/properties.dtd"; //$NON-NLS-1$
 
@@ -116,18 +118,17 @@ public class JFritzProperties extends Properties {
             reader.parse(new InputSource(new FileInputStream(filename)));
 
         } catch (ParserConfigurationException e) {
-            Debug.error("Error with ParserConfiguration!"); //$NON-NLS-1$
+            log.error("Error with ParserConfiguration!"); //$NON-NLS-1$
         } catch (SAXException e) {
-            Debug.error("Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
-            Debug.error(e.toString());
+        	String message = "Error on parsing " + filename; 
+            log.error(message, e); //$NON-NLS-1$,  //$NON-NLS-2$
             if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
                     || e.getLocalizedMessage().startsWith(
                             "Invalid system identifier")) { //$NON-NLS-1$
-                Debug.error(e.toString());
-            Debug.errDlg("Error on parsing " + filename);
+            	Debug.errDlg(message);
             }
         } catch (IOException e) {
-            Debug.error("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+            log.error("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 
             //make sure that we jfritz.java knows to show the config wizard
             throw new FileNotFoundException();
@@ -233,7 +234,7 @@ public class JFritzProperties extends Properties {
 	}
 
     public void save(String filename) throws IOException {
-        Debug.info("Saving to file " + filename); //$NON-NLS-1$
+        log.info("Saving to file " + filename); //$NON-NLS-1$
         try {
                 BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
                     new FileOutputStream(filename), "UTF8")); //$NON-NLS-1$
@@ -267,11 +268,11 @@ public class JFritzProperties extends Properties {
             pw.newLine();
             pw.close();
           } catch (UnsupportedEncodingException e) {
-              Debug.error("UTF-8 not supported."); //$NON-NLS-1$
+              log.error("UTF-8 not supported."); //$NON-NLS-1$
             } catch (FileNotFoundException e) {
-                Debug.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+                log.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
           } catch (IOException e) {
-            Debug.error("IOException " + filename); //$NON-NLS-1$
+            log.error("IOException " + filename); //$NON-NLS-1$
         }
     }
 }

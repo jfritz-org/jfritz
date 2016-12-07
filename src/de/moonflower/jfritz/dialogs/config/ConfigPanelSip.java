@@ -10,6 +10,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -19,22 +20,28 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableCellRenderer;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.JFritz;
+import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.dialogs.sip.SipProviderTableModel;
-import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
-import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.utils.Debug;
+import de.robotniko.fboxlib.exceptions.FirmwareNotDetectedException;
+import de.robotniko.fboxlib.exceptions.InvalidCredentialsException;
+import de.robotniko.fboxlib.exceptions.LoginBlockedException;
+import de.robotniko.fboxlib.exceptions.PageNotFoundException;
 
 public class ConfigPanelSip extends JPanel implements ConfigPanel {
 
+	private final static Logger log = Logger.getLogger(ConfigPanelSip.class);
 	private static final long serialVersionUID = -630145657490186844L;
 
 	private String configPath;
 
 	private SipProviderTableModel sipProviderTableModel;
 
-	private ConfigPanelFritzBox fritzBoxPanel;
+	private ConfigPanelFritzBoxIP fritzBoxPanelIp;
 	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public ConfigPanelSip() {
@@ -87,17 +94,42 @@ public class ConfigPanelSip extends JPanel implements ConfigPanel {
 				    Container c = getPanel(); // get the window's content pane
 					try {
 					    c.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-						fritzBoxPanel.detectBoxType();
+						fritzBoxPanelIp.detectBoxType();
+						if (fritzBoxPanelIp.getFritzBox().getFirmware() != null) {
+							fritzBoxPanelIp.getFritzBox().detectFirmwareAndLogin();
+							fritzBoxPanelIp.getFritzBox().detectSipProvider();
+						}
 						updateTable();
-					} catch (WrongPasswordException e1) {
-						JFritz.errorMsg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
-						Debug.errDlg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
+//					} catch (WrongPasswordException e1) {
+//						JFritz.errorMsg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
+//						Debug.errDlg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
 					} catch (IOException e1) {
-						JFritz.errorMsg(messages.getMessage("box.not_found")); //$NON-NLS-1$
+						JFritz.errorMsg(messages.getMessage("box.not_found"), e1); //$NON-NLS-1$
 						Debug.errDlg(messages.getMessage("box.not_found")); //$NON-NLS-1$
-					} catch (InvalidFirmwareException e1) {
-						JFritz.errorMsg(messages.getMessage("unknown_firmware")); //$NON-NLS-1$
+					} catch (PageNotFoundException e1) {
+						JFritz.errorMsg(messages.getMessage("box.communication_error"), e1); //$NON-NLS-1$
+						Debug.errDlg(messages.getMessage("box.communication_error")); //$NON-NLS-1$
+					} catch (FirmwareNotDetectedException e1) {
+						JFritz.errorMsg(messages.getMessage("unknown_firmware"), e1); //$NON-NLS-1$
 						Debug.errDlg(messages.getMessage("unknown_firmware")); //$NON-NLS-1$
+					} catch (InvalidCredentialsException e1) {
+						if (fritzBoxPanelIp.getFritzBox().getFirmware().isLowerThan(05, 50)) {
+							JFritz.errorMsg(messages.getMessage("box.wrong_password"), e1); //$NON-NLS-1$
+							Debug.errDlg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
+						} else {
+							JFritz.errorMsg(messages.getMessage("box.wrong_password_or_username"), e1); //$NON-NLS-1$
+							Debug.errDlg(messages.getMessage("box.wrong_password_or_username"));
+						}
+					} catch (LoginBlockedException e1) {
+						if (fritzBoxPanelIp.getFritzBox().getFirmware().isLowerThan(05, 50)) {
+							String message =  messages.getMessage("box.wrong_password.wait").replaceAll("%WAIT%", e1.getRemainingBlockTime());
+							log.error(message, e1);
+							Debug.errDlg(message);
+						} else {
+							String message =  messages.getMessage("box.wrong_password_or_username.wait").replaceAll("%WAIT%", e1.getRemainingBlockTime());
+							log.error(message, e1);
+							Debug.errDlg(message);
+						}
 					}
 					c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				}
@@ -107,8 +139,10 @@ public class ConfigPanelSip extends JPanel implements ConfigPanel {
 		JButton b1 = new JButton(messages.getMessage("get_sip_provider_from_box")); //$NON-NLS-1$
 		b1.setActionCommand("fetchSIP"); //$NON-NLS-1$
 		b1.addActionListener(actionListener);
+		
 		JButton b2 = new JButton(messages.getMessage("save_sip_provider_on_box")); //$NON-NLS-1$
 		b2.setEnabled(false);
+		
 		sipButtonPane.add(b1);
 		sipButtonPane.add(b2);
 
@@ -150,20 +184,21 @@ public class ConfigPanelSip extends JPanel implements ConfigPanel {
 
 	public void updateTable()
 	{
-		if ((fritzBoxPanel != null)
-			&& (fritzBoxPanel.getFritzBox() != null)
-			&& (fritzBoxPanel.getFritzBox().getSipProvider() != null))
+		if ((fritzBoxPanelIp != null)
+			&& (fritzBoxPanelIp.getFritzBox() != null))
 		{
-			sipProviderTableModel.updateProviderList(
-					fritzBoxPanel.getFritzBox().getSipProvider());
-			sipProviderTableModel.fireTableDataChanged();
-			JFritz.getCallerList().fireTableDataChanged();
+			Vector<SipProvider> sipProvider = fritzBoxPanelIp.getFritzBox().getSipProvider();
+			if (sipProvider != null) {
+				sipProviderTableModel.updateProviderList(sipProvider);
+				sipProviderTableModel.fireTableDataChanged();
+				JFritz.getCallerList().fireTableDataChanged();
+			}
 		}
 	}
 
-	public void setFritzBoxPanel(ConfigPanelFritzBox fritzBoxPanel)
+	public void setFritzBoxPanelIp(ConfigPanelFritzBoxIP fritzBoxPanel)
 	{
-		this.fritzBoxPanel = fritzBoxPanel;
+		this.fritzBoxPanelIp = fritzBoxPanel;
 	}
 
 	public boolean shouldRefreshJFritzWindow() {

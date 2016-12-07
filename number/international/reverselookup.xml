@@ -2,9 +2,6 @@
 
 <!-- reverselookup.xml
 
-$Revision: 675 $
-$Date: 2012-07-28 16:21:25 +0200 (Sat, 28 Jul 2012) $
-
 	 The syntax of this file is fairly self-explanatory
      However, a few things need to be said. First and foremost
      everything in here needs to be xml compliant, that means all
@@ -28,8 +25,15 @@ $Date: 2012-07-28 16:21:25 +0200 (Sat, 28 Jul 2012) $
 
 <reverselookup version="1.01">
 	<country code="+1">
-		<website name="whitepages.com" url="http://www.whitepages.com/search/ReversePhone?phone=$NUMBER" prefix="1">
-			<entry firstOccurance="firstname">
+		<website name="whitepages.com" url="http://www.whitepages.com/search/ReversePhone?phone=$NUMBER" prefix="1" numLines="6">
+			<entry swapFirstAndLastName="true">
+			    <name>&lt;div class=&quot;address-card&quot;&gt;\s*&lt;p&gt;([^&lt;]*)&lt;br /&gt;[^&lt;]*&lt;br /&gt;[^&lt;]*&lt;br /&gt;[^,]*,\s*[^&lt;]*&lt;/p&gt;\s*&lt;/div&gt;</name>
+			    <street>&lt;div class=&quot;address-card&quot;&gt;\s*&lt;p&gt;[^&lt;]*&lt;br /&gt;[^&lt;]*&lt;br /&gt;([^&lt;]*)&lt;br /&gt;[^,]*,\s*[^&lt;]*&lt;/p&gt;\s*&lt;/div&gt;</street>
+			    <city>&lt;div class=&quot;address-card&quot;&gt;\s*&lt;p&gt;[^&lt;]*&lt;br /&gt;[^&lt;]*&lt;br /&gt;[^&lt;]*&lt;br /&gt;([^,]*),\s*[^&lt;]*&lt;/p&gt;\s*&lt;/div&gt;</city>
+			    <zipcode>&lt;div class=&quot;address-card&quot;&gt;\s*&lt;p&gt;[^&lt;]*&lt;br /&gt;[^&lt;]*&lt;br /&gt;[^&lt;]*&lt;br /&gt;[^,]*,\s*([^&lt;]*)&lt;/p&gt;\s*&lt;/div&gt;</zipcode>
+			</entry>
+<!-- 
+		    <entry firstOccurance="firstname">
 				<firstname>&lt;span\s+class=&quot;given-name&quot;&gt;([^&lt;]*)&lt;/span&gt;\s*(?:&lt;span\s+class=&quot;additional-name&quot;&gt;([^&lt;]*)&lt;/span&gt;)</firstname>
 				<lastname>&lt;span\s+class=&quot;family-name&quot;&gt;([^&lt;]*)&lt;/span&gt;</lastname>
 				<street>&lt;span\s+class=&quot;street-address&quot;&gt;([^&lt;]*)&lt;/span&gt;</street>
@@ -37,6 +41,7 @@ $Date: 2012-07-28 16:21:25 +0200 (Sat, 28 Jul 2012) $
 				<city>&lt;span\s+class=&quot;locality&quot;&gt;([^&lt;]*)&lt;/span&gt;</city>
 				<zipcode>rzp=([^;]*);</zipcode>
 			</entry>
+-->
 		</website>
 	</country>
 	<country code="+1x">
@@ -386,12 +391,12 @@ $Date: 2012-07-28 16:21:25 +0200 (Sat, 28 Jul 2012) $
 		</website>
 	</country>
 	<country code="+262">
-		<website name="infobel.com" url="http://infobel.com/en/france/Inverse.aspx?qPhone=0262$NUMBER&amp;qSelLang3=&amp;SubmitREV=Search&amp;inphCoordType=EPSG" prefix="">
-			<entry>
-				<name>div\sclass=.result-head.&gt;&lt;h3&gt;1\.\s*([^&lt;]*)&lt;</name>
-				<street>div\sclass=.result-box-col.&gt;&lt;div&gt;&lt;strong&gt;([^,]*),</street>
-				<city>div\sclass=.result-box-col.&gt;&lt;div&gt;&lt;strong&gt;[^,]*,[^\d]*\d{5}\s*([^&lt;]*)&lt;</city>
-				<zipcode>div\sclass=.result-box-col.&gt;&lt;div&gt;&lt;strong&gt;[^,]*,[^\d]*(\d{5})</zipcode>
+		<website name="infobel.com" url="http://infobel.com/en/france/Inverse.aspx?qPhone=0262$NUMBER&amp;qSelLang3=&amp;SubmitREV=Search&amp;inphCoordType=EPSG" prefix=""  numLines="2">
+			<entry firstOccurance="name">
+			    <name>&lt;h2&gt;&lt;a\s+[^&lt;]*&lt;span class=&quot;fn org&quot;>([^&lt;]*)&lt;/span&gt;</name>
+				<street>&lt;span\s+class=&quot;street-address&quot;&gt;([^&lt;]*)&lt;/span&gt;</street>
+				<zipcode>&lt;span\s+class=&quot;postal-code&quot;>([^&lt;]*)&lt;/span&gt;</zipcode>
+				<city>&lt;span\s+class=&quot;locality&quot;>([^&lt;]*)&lt;/span&gt;</city>
 			</entry>
 		</website>
 	</country>
@@ -464,12 +469,12 @@ $Date: 2012-07-28 16:21:25 +0200 (Sat, 28 Jul 2012) $
 		</website>
 	</country>
 	<country code="+269">
-		<website name="infobel.com" url="http://infobel.com/en/france/Inverse.aspx?qPhone=0269$NUMBER&amp;qSelLang3=&amp;SubmitREV=Search&amp;inphCoordType=EPSG" prefix="">
-			<entry>
-				<name>div\sclass=.result-head.&gt;&lt;h3&gt;1\.\s*([^&lt;]*)&lt;</name>
-				<street>div\sclass=.result-box-col.&gt;&lt;div&gt;&lt;strong&gt;([^,]*),</street>
-				<city>div\sclass=.result-box-col.&gt;&lt;div&gt;&lt;strong&gt;[^,]*,[^\d]*\d{5}\s*([^&lt;]*)&lt;</city>
-				<zipcode>div\sclass=.result-box-col.&gt;&lt;div&gt;&lt;strong&gt;[^,]*,[^\d]*(\d{5})</zipcode>
+		<website name="infobel.com" url="http://infobel.com/en/france/Inverse.aspx?qPhone=0269$NUMBER&amp;qSelLang3=&amp;SubmitREV=Search&amp;inphCoordType=EPSG" prefix="" numLines="2">
+			<entry firstOccurance="name">
+			    <name>&lt;h2&gt;&lt;a\s+[^&lt;]*&lt;span class=&quot;fn org&quot;>([^&lt;]*)&lt;/span&gt;</name>
+				<street>&lt;span\s+class=&quot;street-address&quot;&gt;([^&lt;]*)&lt;/span&gt;</street>
+				<zipcode>&lt;span\s+class=&quot;postal-code&quot;>([^&lt;]*)&lt;/span&gt;</zipcode>
+				<city>&lt;span\s+class=&quot;locality&quot;>([^&lt;]*)&lt;/span&gt;</city>
 			</entry>
 		</website>
 		<website name="comorestelecom.km" url="http://www.comorestelecom.km/annu_inverse.php?passage=1&amp;phone=$NUMBER&amp;Submit=Rechercher" prefix="">
@@ -522,7 +527,7 @@ $Date: 2012-07-28 16:21:25 +0200 (Sat, 28 Jul 2012) $
 		</website>
 	</country>
 	<country code="+31">
-		<website name="www.nummerzoeker.com" url="http://www.nummerzoeker.com/?phone=$NUMBER" prefix="0" numLines="5">
+		<website name="nummerzoeker.com" url="http://www.nummerzoeker.com/?phone=$NUMBER" prefix="0" numLines="5">
 			<entry>
 				<name>&lt;td\s+class=&quot;nowrap&quot;&gt;[\d]*-[\d]*&lt;/td&gt;\s*&lt;td&gt;([^&lt;]*)&lt;/td&gt;\s*&lt;td\s+class=&quot;nowrap&quot;&gt;[^&lt;]*&lt;/td&gt;\s*&lt;td\s+class=&quot;nowrap&quot;&gt;[^&lt;]*&lt;/td&gt;\s*&lt;td\s+class=&quot;nowrap&quot;&gt;[^&lt;]*&lt;/td&gt;</name>
 				<street>&lt;td\s+class=&quot;nowrap&quot;&gt;[\d]*-[\d]*&lt;/td&gt;\s*&lt;td&gt;[^&lt;]*&lt;/td&gt;\s*&lt;td\s+class=&quot;nowrap&quot;&gt;([^&lt;]*)&lt;/td&gt;\s*&lt;td\s+class=&quot;nowrap&quot;&gt;[^&lt;]*&lt;/td&gt;\s*&lt;td\s+class=&quot;nowrap&quot;&gt;[^&lt;]*&lt;/td&gt;</street>
@@ -530,38 +535,19 @@ $Date: 2012-07-28 16:21:25 +0200 (Sat, 28 Jul 2012) $
 				<city>&lt;td\s+class=&quot;nowrap&quot;&gt;[\d]*-[\d]*&lt;/td&gt;\s*&lt;td&gt;[^&lt;]*&lt;/td&gt;\s*&lt;td\s+class=&quot;nowrap&quot;&gt;[^&lt;]*&lt;/td&gt;\s*&lt;td\s+class=&quot;nowrap&quot;&gt;[^&lt;]*&lt;/td&gt;\s*&lt;td\s+class=&quot;nowrap&quot;&gt;([^&lt;]*)&lt;/td&gt;</city>
 			</entry>
 		</website>
-		<website name="www.gebeld.nl" url="http://www.gebeld.nl/content.asp?zapp=zapp&amp;land=Nederland&amp;zoek=numm&amp;searchfield1=fullnumber&amp;searchfield2=&amp;queryfield1=$NUMBER" prefix="0">
-			<entry>
-				<firstname>&lt;td &gt;&lt;font size=&quot;2&quot; face=&quot;Verdana, Arial, Helvetica, sans-serif&quot; &gt;\s*(.*?)(?: |&amp;nbsp;)[^ &lt;\r]*\s*&lt;/font&gt;</firstname>
-				<lastname>&lt;td &gt;&lt;font size=&quot;2&quot; face=&quot;Verdana, Arial, Helvetica, sans-serif&quot; &gt;\s*.*?(?: |&amp;nbsp;)([^ &lt;\r]*)\s*&lt;/font&gt;</lastname>
-				<street>&lt;tr bgcolor=&quot;f5f5f5&quot;&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;([^&lt;]*)&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;\s*&lt;tr bgcolor=&quot;f5f5f5&quot;&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;[^&amp;]*&amp;nbsp;[^&lt;]*&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;</street>
-				<city>&lt;tr bgcolor=&quot;f5f5f5&quot;&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;[^&lt;]*&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;\s*&lt;tr bgcolor=&quot;f5f5f5&quot;&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;[^&amp;]*&amp;nbsp;([^&lt;]*)&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;</city>
-				<zipcode>&lt;tr bgcolor=&quot;f5f5f5&quot;&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;[^&lt;]*&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;\s*&lt;tr bgcolor=&quot;f5f5f5&quot;&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;([^&amp;]*)&amp;nbsp;[^&lt;]*&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;</zipcode>
-			</entry>
-		</website>
-		<website name="www.nummerzoeker.com" url="http://www.nummerzoeker.com/?phone=$NUMBER&amp;page=0&amp;export=excel" prefix="0">
-			<entry firstOccurance="lastname">
-				<firstname>^[^,]*,[^,]*,([^,]*),[^,]*,[^,]*,[^,]*$</firstname>
-				<lastname>^[^,]*,([^,]*),[^,]*,[^,]*,[^,]*,[^,]*$</lastname>
-				<street>^[^,]*,[^,]*,[^,]*,([^,]*),[^,]*,[^,]*$</street>
-				<city>^[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,([^,]*)$</city>
-				<zipcode>^[^,]*,[^,]*,[^,]*,[^,]*,([^,]*),[^,]*$</zipcode>
-			</entry>
-		</website>
-		<website name="www.gebeld.nl" url="http://www.gebeld.nl/content.asp?zapp=zapp&amp;land=Nederland&amp;zoek=numm&amp;searchfield1=fullnumber&amp;searchfield2=&amp;queryfield1=$NUMBER" prefix="0">
-			<entry>
-				<firstname>&lt;td &gt;&lt;font size=&quot;2&quot; face=&quot;Verdana, Arial, Helvetica, sans-serif&quot; &gt;\s*(.*?)(?: |&amp;nbsp;)[^ &lt;\r]*\s*&lt;/font&gt;</firstname>
-				<lastname>&lt;td &gt;&lt;font size=&quot;2&quot; face=&quot;Verdana, Arial, Helvetica, sans-serif&quot; &gt;\s*.*?(?: |&amp;nbsp;)([^ &lt;\r]*)\s*&lt;/font&gt;</lastname>
-				<street>&lt;tr bgcolor=&quot;f5f5f5&quot;&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;([^&lt;]*)&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;\s*&lt;tr bgcolor=&quot;f5f5f5&quot;&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;[^&amp;]*&amp;nbsp;[^&lt;]*&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;</street>
-				<city>&lt;tr bgcolor=&quot;f5f5f5&quot;&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;[^&lt;]*&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;\s*&lt;tr bgcolor=&quot;f5f5f5&quot;&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;[^&amp;]*&amp;nbsp;([^&lt;]*)&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;</city>
-				<zipcode>&lt;tr bgcolor=&quot;f5f5f5&quot;&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;[^&lt;]*&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;\s*&lt;tr bgcolor=&quot;f5f5f5&quot;&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;([^&amp;]*)&amp;nbsp;[^&lt;]*&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;</zipcode>
+		<website name="gebeld.nl" url="http://www.gebeld.nl/zoeken.asp?Page=4&amp;searchfield1=fullnumber&amp;action=Zoeken&amp;queryfield1=$NUMBER" prefix="0" numLines="4">
+		    <entry>
+		        <name>&lt;div\s+class=&quot;[\w-\s]+\s*information&quot;&gt;([^&lt;]*)&lt;BR /&gt;[^&lt;]*&lt;br /&gt;\s*[\d\w]+[^&lt;]*&lt;br /&gt;</name>
+		        <street>&lt;div\s+class=&quot;[\w-\s]+\s*information&quot;&gt;[^&lt;]*&lt;BR /&gt;([^&lt;]*)&lt;br /&gt;\s*[\d\w]+[^&lt;]*&lt;br /&gt;</street>
+				<city>&lt;div\s+class=&quot;[\w-\s]+\s*information&quot;&gt;[^&lt;]*&lt;BR /&gt;[^&lt;]*&lt;br /&gt;\s*[\d\w]+([^&lt;]*)&lt;br /&gt;</city>
+				<zipcode>&lt;div\s+class=&quot;[\w-\s]+\s*information&quot;&gt;[^&lt;]*&lt;BR /&gt;[^&lt;]*&lt;br /&gt;\s*([\d\w]+)[^&lt;]*&lt;br /&gt;</zipcode>
 			</entry>
 		</website>
 	</country>
 	<country code="+32">
-		<website name="www.infobel.com" url="http://www.infobel.com/fr/belgium/inverse.aspx?qPhone=$NUMBER" prefix="">
+		<website name="infobel.com" url="http://www.infobel.com/fr/belgium/inverse.aspx?qPhone=$NUMBER" prefix="" numLines="2">
 			<entry firstOccurance="name">
-				<name>&lt;span\s+class=&quot;fn org&quot;&gt;([^&lt;]*)&lt;/span&gt;</name>
+			    <name>&lt;h2&gt;&lt;a\s+[^&lt;]*&lt;span class=&quot;fn org&quot;>([^&lt;]*)&lt;/span&gt;</name>
 				<street>&lt;span\s+class=&quot;street-address&quot;&gt;([^&lt;]*)&lt;/span&gt;</street>
 				<zipcode>&lt;span\s+class=&quot;postal-code&quot;>([^&lt;]*)&lt;/span&gt;</zipcode>
 				<city>&lt;span\s+class=&quot;locality&quot;>([^&lt;]*)&lt;/span&gt;</city>
@@ -569,9 +555,9 @@ $Date: 2012-07-28 16:21:25 +0200 (Sat, 28 Jul 2012) $
 		</website>
 	</country>
 	<country code="+33">
-		<website name="www.infobel.com" url="http://www.infobel.com/en/france/Inverse.aspx?inphCoordType=EPSG&amp;qPhone=$NUMBER" prefix="">
+		<website name="infobel.com" url="http://www.infobel.com/en/france/Inverse.aspx?inphCoordType=EPSG&amp;qPhone=$NUMBER" prefix="" numLines="2">
 			<entry firstOccurance="name">
-				<name>&lt;span\s+class=&quot;fn org&quot;&gt;([^&lt;]*)&lt;/span&gt;</name>
+			    <name>&lt;h2&gt;&lt;a\s+[^&lt;]*&lt;span class=&quot;fn org&quot;>([^&lt;]*)&lt;/span&gt;</name>
 				<street>&lt;span\s+class=&quot;street-address&quot;&gt;([^&lt;]*)&lt;/span&gt;</street>
 				<zipcode>&lt;span\s+class=&quot;postal-code&quot;>([^&lt;]*)&lt;/span&gt;</zipcode>
 				<city>&lt;span\s+class=&quot;locality&quot;>([^&lt;]*)&lt;/span&gt;</city>
@@ -599,9 +585,9 @@ $Date: 2012-07-28 16:21:25 +0200 (Sat, 28 Jul 2012) $
 		</website>
 	</country>
 	<country code="+352">
-		<website name="infobel.com" url="http://www.infobel.com/en/luxembourg/Inverse.aspx?inphCoordType=EPSG&amp;qPhone=$NUMBER" prefix="">
-			<entry>
-				<name>&lt;span\s+class=&quot;fn org&quot;&gt;([^&lt;]*)&lt;/span&gt;</name>
+		<website name="infobel.com" url="http://www.infobel.com/en/luxembourg/Inverse.aspx?inphCoordType=EPSG&amp;qPhone=$NUMBER" prefix="" numLines="2">
+			<entry firstOccurance="name">
+			    <name>&lt;h2&gt;&lt;a\s+[^&lt;]*&lt;span class=&quot;fn org&quot;>([^&lt;]*)&lt;/span&gt;</name>
 				<street>&lt;span\s+class=&quot;street-address&quot;&gt;([^&lt;]*)&lt;/span&gt;</street>
 				<zipcode>&lt;span\s+class=&quot;postal-code&quot;>([^&lt;]*)&lt;/span&gt;</zipcode>
 				<city>&lt;span\s+class=&quot;locality&quot;>([^&lt;]*)&lt;/span&gt;</city>
@@ -759,69 +745,98 @@ $Date: 2012-07-28 16:21:25 +0200 (Sat, 28 Jul 2012) $
 		</website>
 	</country>
 	<country code="+39">
+	    <!-- 
 		<website name="pronto.it" url="http://www.pronto.it/?q=$NUMBER" prefix="0">
-			<entry>
-				<name swapFirstAndLastName="true">&lt;span class="cognome "&gt;([^&gt;]*)&lt;/span&gt;</name>
+			<entry swapFirstAndLastName="true">
+				<name>&lt;span class="cognome "&gt;([^&gt;]*)&lt;/span&gt;</name>
 				<street>&lt;span class="via" title="([^"]*)"&gt;</street>
 				<city>&lt;span class="via" title="[^"]*">[^-]*- \d* ([^-&lt;]*)(?:- [^&lt;]*)?&lt;/span&gt;</city>
 				<zipcode>&lt;span class="via" title="[^"]*">[^-]*- (\d*) [^-&lt;]*&lt;/span&gt;</zipcode>
 			</entry>
 		</website>
+		-->
 		<website name="paginebianche.it" url="http://www.paginebianche.it/ricerca-da-numero?qs=$NUMBER" prefix="0">
 			<entry>
 			    <company>&lt;span\s+class=&quot;insegna&quot;&gt;([^&lt;]*)&lt;/span&gt;</company>
-				<name>class=&quot;org fn&quot;&gt;&lt;h2 class=&quot;rgs&quot;&gt;&lt;a href=&quot;[^&quot;]+&quot; title=&quot;[^&quot;]+&quot; rel=&quot;nofollow&quot;&gt;([^&lt;]*)&lt;</name>
+				<name>class=&quot;org fn&quot;&gt;&lt;h2 class=&quot;rgs&quot;&gt;&lt;a href=&quot;[^&quot;]+&quot; title=&quot;[^&quot;]+&quot; rel=&quot;(?:no)?follow&quot;&gt;([^&lt;]*)&lt;</name>
 				<street>class=&quot;street-address&quot;>([^&lt;]*)&lt;</street>
 				<city>class=&quot;locality&quot;>([^&lt;]*)&lt;</city>
-				<zipcode>-  ([\d]+) &lt;span class=&quot;locality&quot;</zipcode>
+				<zipcode>-\s*([\d]+) &lt;span class=&quot;locality&quot;</zipcode>
+			</entry>
+			<entry>
+			    <name>&lt;div class=&quot;org fn&quot;&gt;&lt;h2 class=&quot;rgs&quot;&gt;&lt;a href=[^&gt;]*&gt;([^&lt;]*)&lt;/a&gt;&lt;/h2&gt;</name>
+			    <street>&lt;span class=&quot;street-address&quot;>([^&lt;]*)&lt;/span&gt;\s+-\s+[\d]+\s+&lt;span class=&quot;locality&quot;&gt;[^&lt;]*&lt;/span&gt;</street>
+			    <city>&lt;span class=&quot;street-address&quot;>[^&lt;]*&lt;/span&gt;\s+-\s+[\d]+\s+&lt;span class=&quot;locality&quot;&gt;([^&lt;]*)&lt;/span&gt;</city>
+			    <zipcode>&lt;span class=&quot;street-address&quot;>[^&lt;]*&lt;/span&gt;\s+-\s+([\d]+)\s+&lt;span class=&quot;locality&quot;&gt;[^&lt;]*&lt;/span&gt;</zipcode>
 			</entry>
 		</website>
-		<website name="infobel.com" url="http://www.infobel.com/it/Italy/Inverse.aspx?qPhone=$NUMBER" prefix="0">
+		<website name="paginegialle.it" url="http://www.paginegialle.it/pgol/7-$NUMBER" prefix="0" numLines="7">
 			<entry>
-				<name>&lt;div class=\"result-item\"&gt;&lt;h[1-9]&gt;[^&lt;]*&lt;a [^&gt;]*&gt;([^&lt;]*)&lt;/a&gt;</name>
-				<street>&lt;div class=&quot;result-box-col&quot;&gt;&lt;div&gt;&lt;strong&gt;([^,]*),.[0-9]+\s*[^&lt;]*&lt;/strong&gt;&lt;/div&gt;</street>
-				<city>&lt;div class=&quot;result-box-col&quot;&gt;&lt;div&gt;&lt;strong&gt;[^,]*,.[0-9]+\s*([^&lt;]*)&lt;/strong&gt;&lt;/div&gt;</city>
-				<zipcode>&lt;div class=&quot;result-box-col&quot;&gt;&lt;div&gt;&lt;strong&gt;[^,]*,.([0-9]+)\s*[^&lt;]*&lt;/strong&gt;&lt;/div&gt;</zipcode>
+			    <company>&lt;a title=&quot;[^&quot;]*&quot; class=&quot;_lms _noc&quot;[^&gt;]*&gt;([^&lt;]*)&lt;/a&gt;</company>
+				<street>&lt;span class=&quot;street-address&quot;&gt;[^,]*,\s*([^&lt;]*)&lt;/span&gt;</street>
+				<housenumber>&lt;span class=&quot;street-address&quot;&gt;([^,]*),\s*[^&lt;]*&lt;/span&gt;</housenumber>
+				<city>&lt;span class=&quot;locality&quot;&gt;\d*\s+([^&lt;]*)&lt;/span&gt;</city>
+				<zipcode>&lt;span class=&quot;locality&quot;&gt;(\d*)\s+[^&lt;]*&lt;/span&gt;</zipcode>
+			</entry>
+			<entry>
+			    <!-- <span class="elementTitle">\s*<a [^>]*>\s*([^<]*)</a> -->
+			    <company>&lt;span\s+class=&quot;elementTitle&quot;&gt;\s*&lt;a\s+[^&gt;]*&gt;\s*([^&lt;]*)&lt;/a&gt;</company>
+			    <!-- <div\s+class="elementAddress">\s*([^,]*),\s+([^-]*)-\s+([\d]+)\s+([^<]*)</div> -->
+			    <street>&lt;div\s+class="elementAddress">\s*[^,]*,\s+([^-]*)-\s+[\d]+\s+[^&lt;]*&lt;/div&gt;</street>
+			    <housenumber>&lt;div\s+class="elementAddress">\s*([^,]*),\s+[^-]*-\s+[\d]+\s+[^&lt;]*&lt;/div&gt;</housenumber>
+			    <city>&lt;div\s+class="elementAddress">\s*[^,]*,\s+[^-]*-\s+[\d]+\s+([^&lt;]*)&lt;/div&gt;</city>
+			    <zipcode>&lt;div\s+class="elementAddress">\s*[^,]*,\s+[^-]*-\s+([\d]+)\s+[^&lt;]*&lt;/div&gt;</zipcode>
+			</entry>
+			<entry>
+			    <!-- <span class="elementTitle">\s*<a [^>]*>\s*([^<]*)</a> -->
+			    <company>&lt;span\s+class=&quot;elementTitle&quot;&gt;\s*&lt;a\s+[^&gt;]*&gt;\s*([^&lt;]*)&lt;/a&gt;</company>
+			    <!-- <div\s+class="elementAddress">\s*([^,]*),\s+([^-]*)-\s+([\d]+)\s+([^<]*)</div> -->
+			    <street>&lt;div\s+class="elementAddress">\s*([^-]*)-\s+[\d]+\s+[^&lt;]*&lt;/div&gt;</street>
+			    <city>&lt;div\s+class="elementAddress">\s*[^-]*-\s+[\d]+\s+([^&lt;]*)&lt;/div&gt;</city>
+			    <zipcode>&lt;div\s+class="elementAddress">\s*[^-]*-\s+([\d]+)\s+[^&lt;]*&lt;/div&gt;</zipcode>
+			</entry>
+		</website>
+		<website name="infobel.com" url="http://www.infobel.com/it/Italy/Inverse.aspx?qPhone=$NUMBER" prefix="0" numLines="2">
+			<entry firstOccurance="name">
+			    <name>&lt;h2&gt;&lt;a\s+[^&lt;]*&lt;span class=&quot;fn org&quot;>([^&lt;]*)&lt;/span&gt;</name>
+				<street>&lt;span\s+class=&quot;street-address&quot;&gt;([^&lt;]*)&lt;/span&gt;</street>
+				<zipcode>&lt;span\s+class=&quot;postal-code&quot;>([^&lt;]*)&lt;/span&gt;</zipcode>
+				<city>&lt;span\s+class=&quot;locality&quot;>([^&lt;]*)&lt;/span&gt;</city>
 			</entry>
 		</website>
 	</country>
 	<country code="+41">
-		<website name ="tel.local.ch" url="http://tel.local.ch/de/q/?ext=1&amp;phone=$NUMBER" prefix="0">
-			<entry>
-				<name>&lt;h4&gt;&lt;a href=&quot;[^&quot;]*&quot;&gt;([^&lt;]*)&lt;/a&gt;&lt;/h4&gt;\s*&lt;p class='organization'&gt;</name>
-				<city>&lt;p class='address'&gt;[^,]*, [\d]+ ([^&lt;]*)&lt;/p&gt;</city>
-				<street>&lt;p class='address'&gt;([^,]*), [\d]+ [^&lt;]*&lt;/p&gt;</street>
-				<zipcode>&lt;p class='address'&gt;[^,]*, ([\d]+) [^&lt;]*&lt;/p&gt;</zipcode>
-			</entry>
-			<entry>
-				<name>&lt;div class='title'&gt;\s*&lt;h1 class='n fn'&gt;([^&lt;]*)&lt;/h1&gt;</name>
-				<city>&lt;span class=&quot;locality&quot;&gt;([^&lt;]*)&lt;/span&gt;</city>
-				<street>&lt;span class=&quot;street-address&quot;&gt;([^&lt;]*)&lt;/span&gt;</street>
-				<zipcode>&lt;span class=&quot;postal-code&quot;&gt;([^&lt;]*)&lt;/span&gt;</zipcode>
-			</entry>
+		<website name ="tel.local.ch" url="http://tel.local.ch/de/q/?ext=1&amp;what=$NUMBER" prefix="0" numLines="6">
+		    <entry firstOccurance="name">
+		        <name>&quot;details-entry-title-link&quot;[^&gt;]*&gt;([^&lt;]*)&lt;</name>
+		        <city>class='address'&gt;[^,]*,\s+[^\s]*\s+([^&lt;]*)&lt;</city>
+		        <street>class='address'&gt;([^,]*),\s+[^\s]*\s+[^&lt;]*&lt;</street>
+		        <zipcode>class='address'&gt;[^,]*,\s+([^\s]*)\s+[^&lt;]*&lt;</zipcode>
+		    </entry>
+		    <entry firstOccurance="name">
+		        <name>itemprop='name'&gt;([^&lt;]*)&lt;</name>
+		        <company>class='profession'&gt;([^&lt;]*)&lt;</company>
+		        <street>class='adr'&gt;([^&lt;]*)&lt;br</street>
+		        <city>class='adr'&gt;[^&gt;]*&gt;\s*[\d]+\s+([^&lt;]*)&lt;</city>
+		        <zipcode>class='adr'&gt;[^&gt;]*&gt;\s*([\d]+)\s+[^&lt;]*&lt;</zipcode>
+		    </entry>
 		</website>
 		<website name="tel.search.ch" url="http://tel.search.ch/result.html?tel=$NUMBER" prefix="0">
-			<entry>
-				<name>&lt;h[1-9]*&gt;&lt;a\s+href=&quot;[^&quot;]*&quot;\s+class=&quot;fn&quot;&gt;([^&lt;]*)&lt;/a&gt;</name>
-				<street>&lt;div class=&quot;adr&quot;&gt;&lt;span class=&quot;adrgroup street-address&quot;&gt;([^&lt;]*)&lt;/span&gt;</street>
-				<city>&lt;span class=&quot;locality&quot;&gt;([^&lt;]*)&lt;/span&gt;</city>
-				<zipcode>&lt;span class=&quot;adrgroup&quot;&gt;&lt;span class=&quot;postal-code&quot;&gt;([^&lt;]*)&lt;/span&gt;</zipcode>
+			<entry firstOccurance="name">
+				<name>&lt;h[1-9]&gt;&lt;a[^&gt;]*&gt;\s*([^&lt;]*)&lt;</name>
+				<street>&lt;div class=&quot;tel-address&quot;&gt;([^,]*),\s+</street>
+				<city>span class=&quot;locality&quot;&gt;([^&lt;]*)&lt;/span&gt;</city>
+				<zipcode>span class=&quot;postal-code&quot;&gt;([^&lt;]*)&lt;/span&gt;</zipcode>
+				<company>&lt;div class="tel-occupation"&gt;([^&lt;]*)&lt;/div&gt;</company>
 			</entry>
-			<entry>
-				<company>&lt;h5&gt;&lt;a href=&quot;[^&quot;]*&quot; class=&quot;fn org&quot;&gt;([^&lt;]*)&lt;/a&gt;&lt;/h5&gt;</company>
-				<street>&lt;div class=&quot;adr&quot;&gt;&lt;span class=&quot;adrgroup street-address&quot;&gt;([^&lt;]*)&lt;/span&gt;</street>
-				<city>&lt;span class=&quot;locality&quot;&gt;([^&lt;]*)&lt;/span&gt;</city>
-				<zipcode>&lt;span class=&quot;adrgroup&quot;&gt;&lt;span class=&quot;postal-code&quot;&gt;([^&lt;]*)&lt;/span&gt;</zipcode>
+			<entry firstOccurance="name">
+			    <name>&lt;h1&gt;\s*([^&lt;]*)&lt;/h1&gt;</name>
+				<street>span class=&quot;street-address&quot;&gt;([^&lt;]*)&lt;/span&gt;</street>
+				<city>span class=&quot;locality&quot;&gt;([^&lt;]*)&lt;/span&gt;</city>
+				<zipcode>span class=&quot;postal-code&quot;&gt;([^&lt;]*)&lt;/span&gt;</zipcode>
+			    <company>&lt;div class="tel-occupation"&gt;([^&lt;]*)&lt;/div&gt;</company>
 			</entry>
 		</website>
-		<website name ="tel.local.ch" url="http://tel.local.ch/de/q/?ext=1&amp;phone=$NUMBER" prefix="0">
-			<entry>
-				<name>&lt;h[1-9](?:&gt;&lt;a)?\sclass=&quot;fn&quot;[^&gt;]*&gt;([^&lt;]*)&lt;</name>
-				<street>&lt;span class=&quot;street-address&quot;&gt;([^&lt;]*)&lt;/span&gt;</street>
-				<city>&lt;span class=&quot;locality&quot;&gt;(?:&lt;a href=[^&gt;]*&gt;)?([^&lt;]*)(?:&lt;/a&gt;)?&lt;/span&gt;</city>
-				<zipcode>&lt;span class=&quot;postal-code&quot;>([^&lt;]*)&lt;/span&gt;</zipcode>
-			</entry>
-		</website>		
 	</country>
 	<country code="+423">
 		<website name="tel.search.ch" url="http://tel.search.ch/result.html?tel=00423$NUMBER" prefix="">
@@ -836,29 +851,26 @@ $Date: 2012-07-28 16:21:25 +0200 (Sat, 28 Jul 2012) $
 	<country code="+43">
 		<website name="herold.at (Privat)" url="http://www.herold.at/servlet/at.herold.sp.servlet.SPWPSearchServlet?searchmask=2&amp;phone=$NUMBER" prefix="0">
 			<entry>
-				<name>&lt;h2 class=&quot;fullw&quot;&gt;&lt;a href=&quot;[^&quot;]*&quot;&gt;([^&lt;]*)&lt;/a&gt;&lt;/h2&gt;&lt;div class=&quot;addr fullw&quot;&gt;&lt;p&gt;[\d]+ [^&lt;]*&lt;br /&gt;</name>
-				<street>&lt;h2 class=&quot;fullw&quot;&gt;&lt;a href=&quot;[^&quot;]*&quot;&gt;[^&lt;]*&lt;/a&gt;&lt;/h2&gt;&lt;div class=&quot;addr fullw&quot;&gt;&lt;p&gt;[\d]+ [^,]*, ([^&lt;]*)&lt;br /&gt;</street>
-				<city>&lt;h2 class=&quot;fullw&quot;&gt;&lt;a href=&quot;[^&quot;]*&quot;&gt;[^&lt;]*&lt;/a&gt;&lt;/h2&gt;&lt;div class=&quot;addr fullw&quot;&gt;&lt;p&gt;[\d]+ ([^,]*), [^&lt;]*&lt;br /&gt;</city>
-				<zipcode>&lt;h2 class=&quot;fullw&quot;&gt;&lt;a href=&quot;[^&quot;]*&quot;&gt;[^&lt;]*&lt;/a&gt;&lt;/h2&gt;&lt;div class=&quot;addr fullw&quot;&gt;&lt;p&gt;([\d]+) [^,]*, [^&lt;]*&lt;br /&gt;</zipcode>
+			    <name>&lt;h2 class=&quot;fullw&quot;&gt;&lt;a\s+[^&gt;]*&gt;([^&lt;]*)&lt;</name>
+				<street>&lt;div class=&quot;addr fullw&quot;&gt;&lt;p&gt;[\d]+ [^,]*, ([^&lt;]*)&lt;br /&gt;</street>
+				<city>&lt;div class=&quot;addr fullw&quot;&gt;&lt;p&gt;[\d]+ ([^,]*), [^&lt;]*&lt;br /&gt;</city>
+				<zipcode>&lt;div class=&quot;addr fullw&quot;&gt;&lt;p&gt;([\d]+) [^,]*, [^&lt;]*&lt;br /&gt;</zipcode>
 			</entry>
 		</website>
 		<website name="herold.at (Firma)" url="http://www.herold.at/servlet/at.herold.sp.servlet.SPYPSearchServlet?searchmask=2&amp;phone=$NUMBER" prefix="0">
 			<entry>
-				<name>&lt;h[1-9]&gt;&lt;a href=&quot;[^&quot;]*&quot;\s*class=&quot;bold&quot;&gt;([^&lt;]*)&lt;/a&gt;&lt;/h[1-9]&gt;</name>
-				<street>&lt;div class=&quot;addrF&quot;&gt;&lt;p class=&quot;bold&quot;&gt;\s*[^,]*,\s*([^&lt;]*)&lt;br/&gt;&lt;/p&gt;</street>
-				<city>&lt;div class=&quot;addrF&quot;&gt;&lt;p class=&quot;bold&quot;&gt;\s*[^\s]*([^,]*),\s[^&lt;]*&lt;br/&gt;&lt;/p&gt;</city>
-				<zipcode>&lt;div class=&quot;addrF&quot;&gt;&lt;p class=&quot;bold&quot;&gt;\s*([^\s]*)\s[^,]*,\s*[^&lt;]*&lt;br/&gt;&lt;/p&gt;</zipcode>
+			    <company>&lt;h2 class=&quot;fullw&quot;&gt;&lt;a\s+[^&gt;]*&gt;([^&lt;]*)&lt;</company>
+				<street>&lt;div class=&quot;addr fullw&quot;&gt;(?:&lt;p[^&gt;]*&gt;)(?:&lt;a href[^&gt;]*&gt;[^&lt;]*&lt;/a&gt;)(?:&lt;/p&gt;)&lt;p&gt;[\d]+ [^,]*, ([^&lt;]*)&lt;br /&gt;&lt;/p&gt;</street>
+				<city>&lt;div class=&quot;addr fullw&quot;&gt;(?:&lt;p[^&gt;]*&gt;)(?:&lt;a href[^&gt;]*&gt;[^&lt;]*&lt;/a&gt;)(?:&lt;/p&gt;)&lt;p&gt;[\d]+ ([^,]*), [^&lt;]*&lt;br /&gt;&lt;/p&gt;</city>
+				<zipcode>&lt;div class=&quot;addr fullw&quot;&gt;(?:&lt;p[^&gt;]*&gt;)(?:&lt;a href[^&gt;]*&gt;[^&lt;]*&lt;/a&gt;)(?:&lt;/p&gt;)&lt;p&gt;([\d]+) [^,]*, [^&lt;]*&lt;br /&gt;&lt;/p&gt;</zipcode>
 			</entry>
 		</website>
-		<website name="tb-online.at" url="http://www.tb-online.at/index.php?pc=in&amp;telnummer=$NUMBER&amp;aktion=suchein" prefix="0">
+		<website name="tb-online.at" url="http://www.dasschnelle.at/result/index?what=$NUMBER" prefix="0" charset="utf-8">
 			<entry>
-				<!-- 
-				zipcode hidden as image...
-				-->
-				<name>&lt;p\s*class=&quot;name&quot;&gt;\s*([^&lt;]*)&lt;/p&gt;</name>
-				<street>&lt;p&gt;([^&lt;]*)&lt;/p&gt;\s*&lt;p&gt;&lt;img class=&quot;img&quot; src=&quot;grafikpng.php?[^&gt;]*&gt;&amp;nbsp;[^&lt;]*&lt;/p&gt;</street>
-				<city>&lt;p&gt;[^&lt;]*&lt;/p&gt;\s*&lt;p&gt;&lt;img class=&quot;img&quot; src=&quot;grafikpng.php?[^&gt;]*&gt;&amp;nbsp;([^&lt;]*)&lt;/p&gt;</city>
-				<zipcode>()</zipcode>
+				<name>name\s*:\s*&quot;([^&quot;]*)&quot;</name>
+				<street>strasse\s*:\s*&quot;([^&quot;]*)&quot;</street>
+				<city>ort\s*:\s*&quot;([^&quot;]*)&quot;</city>
+				<zipcode>plz\s*:\s*&quot;([^&quot;]*)&quot;</zipcode>
 			</entry>
 		</website>				
 	</country>
@@ -873,42 +885,45 @@ $Date: 2012-07-28 16:21:25 +0200 (Sat, 28 Jul 2012) $
 		</website>
 	</country>
 	<country code="+46">
-		<website name="privatpersoner.eniro.se" url="http://privatpersoner.eniro.se/query?what=wp&amp;search_word=$NUMBER&amp;geo_area=" prefix="0">
-			<entry firstOccurance="firstname">
-				<firstname>&lt;span class=&quot;given-name&quot;&gt;([^&lt;]*)&lt;/span&gt;</firstname>
-				<lastname>&lt;span class=&quot;family-name&quot;&gt;([^&lt;]*)&lt;/span&gt;</lastname>
-				<street>&lt;span class=&quot;street-address&quot;&gt;([^&lt;]*)&lt;/span&gt;</street>
-				<city>&lt;span class=&quot;locality&quot;&gt;([^&lt;]*)&lt;/span&gt;</city>
-				<zipcode>&lt;span class=&quot;postal-code&quot;&gt;([^&lt;]*)&lt;/span&gt;</zipcode>
-			</entry>
-			<entry firstOccurance="firstname">
-				<firstname>&lt;span class=&quot;given-name&quot;&gt;([^&lt;]*)&lt;/span&gt;</firstname>
-				<lastname>&lt;span class=&quot;given-name&quot;&gt;([^&lt;]*)&lt;/span&gt;&lt;/a&gt;</lastname>
-				<street>&lt;span class=&quot;street-address&quot;&gt;([^&lt;]*)&lt;/span&gt;</street>
-				<city>&lt;span class=&quot;locality&quot;&gt;([^&lt;]*)&lt;/span&gt;</city>
-				<zipcode>&lt;span class=&quot;postal-code&quot;&gt;([^&lt;]*)&lt;/span&gt;</zipcode>
-			</entry>
-			<entry>
-				<name>fn expand(?:(?:.*owner-of-cell)|[^&gt;]*&gt;)[^&gt;]*&gt;([^&lt;]*)&lt;</name>
-				<street>street-address&quot;?&gt;([^&lt;]*)&lt;</street>
-				<city>locality&quot;?&gt;([^&lt;]*)&lt;</city>
-				<zipcode>postal-code&quot;?&gt;([^&lt;]*)&lt;</zipcode>
-			</entry>
+		<website name="privatpersoner.eniro.se" url="http://personer.eniro.se/query?what=wp&amp;search_word=$NUMBER" prefix="0" numLines="5">
+		    <entry>
+				<name>&lt;span\s+class=&quot;hit-name-ellipsis&quot;&gt;\s*&lt;a[^&gt;]*&gt;([^&lt;]*)&lt;/a&gt;</name>
+				<street>&lt;span\s+class=&quot;hit-street-address&quot;&gt;\s*([^&lt;]*)&lt;/span&gt;</street>
+				<city>&lt;span\s+class=&quot;hit-address-locality&quot;&gt;\s*([^&lt;]*)&lt;/span&gt;</city>
+				<zipcode>&lt;span\s+class=&quot;hit-postal-code&quot;&gt;\s*([^&lt;]*)&lt;/span&gt;</zipcode>
+		    </entry>
 		</website>
 	</country>
 	<country code="+47">
-		<website name="gulesider.no" url="http://www.gulesider.no/gs/categoryList.c?q=$NUMBER" prefix="" numLines="7">
-			<entry>
-				<name swapFirstAndLastName="true">&lt;h2 class=&quot;name&quot;&gt;\s*&lt;a href=&quot;[^&quot;]*&quot;\s*title=&quot;[^&quot;]*&quot;&gt;\s*([^&lt;]*)\s*&lt;span&gt;\s*[^&lt;]*&lt;/span&gt;\s*&lt;/a&gt;\s*&lt;/h2&gt;</name>
-				<street>&lt;div class=&quot;address&quot;&gt;\s*&lt;p&gt;([^,]*),\s*[^\s]*\s[^&lt;]*&lt;/p&gt;\s*&lt;/div&gt;</street>
-				<city>\s*&lt;div class=&quot;address&quot;&gt;\s*&lt;p&gt;[^,]*,\s*[^\s]*\s([^&lt;]*)&lt;/p&gt;\s*&lt;/div&gt;|\s*&lt;div class=&quot;address&quot;&gt;\s*&lt;p&gt;[\d]+\s*([^&lt;]*)&lt;/p&gt;</city>
-				<zipcode>&lt;div class=&quot;address&quot;&gt;\s*&lt;p&gt;[^,]*,\s*([\d]*)\s[^&lt;]*&lt;/p&gt;\s*&lt;/div&gt;|&lt;div class=&quot;address&quot;&gt;\s*&lt;p&gt;([\d]*)\s[^&lt;]*&lt;/p&gt;\s*&lt;/div&gt;</zipcode>
+		<website name="gulesider.no" url="http://www.gulesider.no/gs/categoryList.c?q=$NUMBER" prefix="" numLines="5">
+		    <entry swapFirstAndLastName="true">
+				<company>&lt;span\s+class=&quot;hit-company-name-ellipsis&quot;&gt;\s*&lt;a[^&gt;]*&gt;([^&lt;]*)&lt;/a&gt;</company>
+				<street>&lt;span class=&quot;street-address&quot;&gt;([^&lt;]*)&lt;/span&gt;</street>
+				<city>&lt;span class=&quot;locality&quot;&gt;([^&lt;]*)&lt;/span&gt;</city>
+				<zipcode>&lt;span class=&quot;postal-code&quot;&gt;([^&lt;]*)&lt;/span&gt;</zipcode>
 			</entry>
+			<entry>
+				<name>&lt;h3&gt;\s*&lt;a[^&gt;]*&gt;([^&lt;]*)&lt;/a&gt;</name>
+				<street>&lt;div\s+class=&quot;person-data&quot;&gt;\s*(?:&lt;!-- Address --&gt;)?\s*&lt;span&gt;([^,]*),\s+[\d]+\s+[^&lt;]*&lt;/span&gt;</street>
+				<city>&lt;div\s+class=&quot;person-data&quot;&gt;\s*(?:&lt;!-- Address --&gt;)?\s*&lt;span&gt;[^,]*,\s+[\d]+\s+([^&lt;]*)&lt;/span&gt;</city>
+				<zipcode>&lt;div\s+class=&quot;person-data&quot;&gt;\s*(?:&lt;!-- Address --&gt;)?\s*&lt;span&gt;[^,]*,\s+([\d]+)\s+[^&lt;]*&lt;/span&gt;</zipcode>
+			</entry>
+			<entry>
+				<name>&lt;h3&gt;\s*&lt;a[^&gt;]*&gt;([^&lt;]*)&lt;/a&gt;</name>
+				<city>&lt;div\s+class=&quot;person-data&quot;&gt;\s*&lt;span&gt;[\d]+\s+([^&lt;]*)&lt;/span&gt;</city>
+				<zipcode>&lt;div\s+class=&quot;person-data&quot;&gt;\s*&lt;span&gt;([\d]+)\s+[^&lt;]*&lt;/span&gt;</zipcode>
+			</entry>
+		    <entry>
+				<name>&lt;span\s+class=&quot;hit-name-ellipsis&quot;&gt;\s*&lt;a[^&gt;]*&gt;([^&lt;]*)&lt;/a&gt;</name>
+				<street>&lt;span\s+class=&quot;hit-street-address&quot;&gt;\s*([^&lt;]*)&lt;/span&gt;</street>
+				<city>&lt;span\s+class=&quot;hit-address-locality&quot;&gt;\s*([^&lt;]*)&lt;/span&gt;</city>
+				<zipcode>&lt;span\s+class=&quot;hit-postal-code&quot;&gt;\s*([^&lt;]*)&lt;/span&gt;</zipcode>
+		    </entry>
 		</website>
 
 		<website name="nettkatalogen.no" url="http://www.nettkatalogen.no/default.asp?search=$NUMBER&amp;x=36&amp;y=15&amp;cmd=psok" prefix="">
-			<entry>
-				<name swapFirstAndLastName="true">class='privatsok_oppforing_navn'[\s]valign=top&gt;&lt;b&gt;([^&lt;]*)&lt;/b&gt;</name>
+			<entry swapFirstAndLastName="true">
+				<name>class='privatsok_oppforing_navn'[\s]valign=top&gt;&lt;b&gt;([^&lt;]*)&lt;/b&gt;</name>
 				<street>class='privat_adresse_link'&gt;([^&lt;]*)&lt;/a&gt;</street>
 				<city>&lt;/a&gt;, \d* ([^&lt;]*)&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;</city>
 				<zipcode>&lt;/a&gt;, (\d*) [^&lt;]*&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;</zipcode>
@@ -917,19 +932,25 @@ $Date: 2012-07-28 16:21:25 +0200 (Sat, 28 Jul 2012) $
 
 		<website name="nettkatalogen.no/bransjelist" url="http://www.nettkatalogen.no/bransjelist/$NUMBER/1.htm" prefix="">
 			<entry>
-				<name>class='firmasok_oppforing_link'&gt;&lt;b&gt;([^&lt;]*)&lt;/b&gt;</name>
+				<company>class='firmasok_oppforing_link'&gt;&lt;b&gt;([^&lt;]*)&lt;/b&gt;</company>
 				<street>&lt;div class='firmasok_oppforing_adresse'&gt;([^,^&lt;]*).*&lt;/div&gt;</street>
 				<city>&lt;div class='firmasok_oppforing_adresse'&gt;[^,]*,[\s][\d]*[\s]([^&lt;]*)&lt;/div&gt;</city>
 				<zipcode>'firmasok_oppforing_adresse'&gt;[^,]*,[\s](\d*)[\s]</zipcode>
 			</entry>
+			<entry swapFirstAndLastName="true">
+				<name>class='privatsok_oppforing_navn'[\s]valign=top&gt;&lt;b&gt;([^&lt;]*)&lt;/b&gt;</name>
+				<street>class='privat_adresse_link'&gt;([^&lt;]*)&lt;/a&gt;</street>
+				<city>&lt;/a&gt;, \d* ([^&lt;]*)&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;</city>
+				<zipcode>&lt;/a&gt;, (\d*) [^&lt;]*&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;</zipcode>
+			</entry>
 		</website>
 
-		<website name="gul.no" url="http://gul.no/?q=$NUMBER&amp;PageView=YellowResult" prefix="">
-			<entry>
-				<name swapFirstAndLastName="true">&lt;a id=&quot;ancCompanyName&quot;[^&gt;]*&gt;([^&lt;]*)&lt;/a&gt;</name>
-				<street>class=&quot;sr_showaddress&quot;&gt;([^&lt;]*)&lt;</street>
-				<city>class=&quot;sr_showaddress&quot;&gt;[^&gt;]*&gt;[\d]*([^&lt;]*)&lt;</city>
-				<zipcode>class=&quot;sr_showaddress&quot;&gt;[^&gt;]*&gt;([\d]*)[\s]</zipcode>
+		<website name="gul.no" url="http://gul.no/Lucy?q=$NUMBER" prefix="" numLines="3">
+			<entry firstOccurance="name" swapFirstAndLastName="true">
+				<name>&quot;legalname&quot;:&quot;([^&quot;]*)&quot;,</name>
+				<street>&quot;vaddress&quot;:&quot;([^&quot;]*)&quot;,</street>
+				<city>&quot;vcity&quot;:&quot;([^&quot;]*)&quot;</city>
+				<zipcode>&quot;vzip&quot;:&quot;([^&quot;]*)&quot;</zipcode>
 			</entry>
 		</website>
 	</country>
@@ -954,7 +975,28 @@ $Date: 2012-07-28 16:21:25 +0200 (Sat, 28 Jul 2012) $
 		</website>
 	</country>
 	<country code="+49">
-		<website name="www.dasoertliche.de" url="http://www.dasoertliche.de/Controller?form_name=search_inv&amp;ph=$NUMBER" prefix="0" numLines="1">
+		<website name="www.dasoertliche.de" url="http://www.dasoertliche.de/Controller?form_name=search_inv&amp;ph=$NUMBER" prefix="0" numLines="3">
+		    <entry>
+				<name>(?i)class=&quot;name\s*&quot;(?:\s+onmouseover=&quot;&quot;)?(?:\s+onmouseout=&quot;&quot;)?&gt;&lt;span class=&quot;&quot;&gt;([^&lt;]*)&lt;/span&gt;</name>
+		        <street>(?i)&lt;address&gt;\s*([^,]*),.*&lt;span class=&quot;&quot;&gt;[^&lt;]*&lt;/span&gt;(?:&lt;span.*&lt;/span&gt;)?\s*&lt;/address&gt;</street>
+		        <city>(?i)&lt;address&gt;\s*[^&lt;]*&lt;span class=&quot;&quot;>([^&lt;]*)&lt;/span&gt;(?:&lt;span.*&lt;/span&gt;)?\s*&lt;/address&gt;</city>
+		        <zipcode>(?i)&lt;address&gt;\s*[^,]*,([^&lt;]*)&lt;span class=&quot;&quot;>[^&lt;]*&lt;/span&gt;(?:&lt;span.*&lt;/span&gt;)?\s*&lt;/address&gt;</zipcode>
+			</entry>		    
+		    <entry>
+		        <name>class=&quot;preview iname&quot;[^&gt;]*&gt;&lt;span class=&quot;&quot;&gt;([^&lt;]*)&lt;/span&gt;</name>
+		        <street>&lt;div class=&quot;strasse&quot;&gt;\s*([^,]*),[^\d]*\d*\s*&lt;span class=""&gt;[^&lt;]*&lt;/span&gt;</street>
+		        <city>&lt;div class=&quot;strasse&quot;&gt;\s*[^,]*,[^\d]*\d*\s*&lt;span class=""&gt;([^&lt;]*)&lt;/span&gt;</city>
+		        <zipcode>&lt;div class=&quot;strasse&quot;&gt;\s*[^,]*,[^\d]*(\d*)\s*&lt;span class=""&gt;[^&lt;]*&lt;/span&gt;</zipcode>
+		    </entry>
+		    <entry>
+		        <name>&lt;div class=&quot;name&quot;&gt;\s*&lt;h1&gt;([^&lt;]*)&lt;/h1&gt;\s*&lt;/div&gt;</name>
+		        <street>&lt;div class=&quot;strasse&quot;&gt;\s*([^,]*),[^\d]*\d*\s*&lt;span class=""&gt;[^&lt;]*&lt;/span&gt;</street>
+		        <city>&lt;div class=&quot;strasse&quot;&gt;\s*[^,]*,[^\d]*\d*\s*&lt;span 	class=""&gt;([^&lt;]*)&lt;/span&gt;</city>
+		        <zipcode>&lt;div class=&quot;strasse&quot;&gt;\s*[^,]*,[^\d]*(\d*)\s*&lt;span class=""&gt;[^&lt;]*&lt;/span&gt;</zipcode>
+		    </entry>
+		</website>
+<!-- 
+		<website name="dasoertliche.de" url="http://www.dasoertliche.de/Controller?form_name=search_inv&amp;ph=$NUMBER" prefix="0" numLines="1">
 	        <entry>
 	        	<name>class=&quot;entry&quot;\s*(?:onmouseover=&quot;&quot;)?\s*&gt;([^&lt;]*)&lt;/a&gt;</name>
 	        	<street>^\s*([^,&gt;]+),&amp;nbsp;\d{5}&amp;nbsp;[^&lt;]*&lt;/div&gt;</street>
@@ -986,36 +1028,66 @@ $Date: 2012-07-28 16:21:25 +0200 (Sat, 28 Jul 2012) $
 	        	<zipcode>^[^,]*,&amp;nbsp;(\d{5})&amp;nbsp;[^&lt;]*&lt;/div&gt;</zipcode>
 	        </entry>
 	    </website>
-		<website name="www.dastelefonbuch.de" url="http://www3.dastelefonbuch.de/?la=de&amp;kw=$NUMBER&amp;cmd=detail&amp;recSelected=0" prefix="0">
+-->
+		<website name="www.dastelefonbuch.de" url="http://www.dastelefonbuch.de/Suche?kw=$NUMBER" prefix="0" numLines="6">
 			<entry>	
-				<name>&lt;div id=&quot;detail-hl&quot;&gt;&lt;h2&gt;([^&lt;]*)&lt;/h2&gt;</name>
-				<street>&lt;div class=&quot;addr&quot; title=&quot;Adresse&quot;&gt;\s*?&lt;div&gt;.*?&lt;/div&gt;\s*?&lt;div&gt;\s*?([^&lt;]*)&lt;br /&gt;\d{5}&amp;nbsp;[^&lt;]*&lt;br /&gt;&lt;/div&gt;\s*?&lt;/div&gt;</street>
-				<city>&lt;div class=&quot;addr&quot; title=&quot;Adresse&quot;&gt;\s*?&lt;div&gt;.*?&lt;/div&gt;\s*?&lt;div&gt;\s*?[^&lt;]*&lt;br /&gt;\d{5}&amp;nbsp;([^&lt;]*)&lt;br /&gt;&lt;/div&gt;\s*?&lt;/div&gt;</city>
-				<zipcode>&lt;div class=&quot;addr&quot; title=&quot;Adresse&quot;&gt;\s*?&lt;div&gt;.*?&lt;/div&gt;\s*?&lt;div&gt;\s*?[^&lt;]*&lt;br /&gt;(\d{5})&amp;nbsp;[^&lt;]*&lt;br /&gt;&lt;/div&gt;\s*?&lt;/div&gt;</zipcode>
+				<name>&lt;div class=&quot;vcard clearfix&quot;[^&gt;]*&gt;\s*&lt;h[1-9]&gt;\s*(?:&lt;span itemprop=&quot;name(?: itemreviewed)?&quot;&gt;)?([^&lt;]*)(?:&lt;/span&gt;)?\s*&lt;/h[1-9]&gt;</name>
+				<street>&lt;address&gt;([^&lt;]*)&lt;br /&gt;[^&lt;]*&lt;span itemprop=&quot;locality&quot;&gt;[^&lt;]*&lt;/span&gt;</street>
+				<city>&lt;address&gt;[^&lt;]*&lt;br /&gt;[^&lt;]*&lt;span itemprop=&quot;locality&quot;&gt;([^&lt;]*)&lt;/span&gt;</city>
+				<zipcode>&lt;address&gt;[^&lt;]*&lt;br /&gt;([^&lt;]*)&lt;span itemprop=&quot;locality&quot;&gt;[^&lt;]*&lt;/span&gt;</zipcode>
 			</entry>
-		</website>
-		<website name="www.dastelefonbuch.de" url="http://www.dastelefonbuch.de/?sourceid=Mozilla-search&amp;cmd=search&amp;kw=$NUMBER" prefix="0">
+			<entry>	
+				<name>&lt;div class=&quot;vcard clearfix&quot;[^&gt;]*&gt;\s*&lt;h[1-9]&gt;\s*(?:&lt;span itemprop=&quot;name&quot;&gt;)?([^&lt;]*)(?:&lt;/span&gt;)?\s*&lt;/h[1-9]&gt;</name>
+				<street>&lt;address&gt;([^&lt;]*)&lt;br /&gt;\s*[\d]*\s[^&lt;]*&lt;br /&gt;&lt;/address&gt;</street>
+				<city>&lt;address&gt;[^&lt;]*&lt;br /&gt;\s*[\d]*\s([^&lt;]*)&lt;br /&gt;&lt;/address&gt;</city>
+				<zipcode>&lt;address&gt;[^&lt;]*&lt;br /&gt;\s*([\d]*)\s[^&lt;]*&lt;br /&gt;&lt;/address&gt;</zipcode>
+			</entry>
 			<entry>
-				<name>&lt;div class=&quot;(?:short|long)&quot;&gt;(?:&lt;b&gt;)?&lt;a href=[^&gt;]*&gt;([^&lt;]*)&lt;</name>
-				<street>&lt;td\sclass=&quot;col2&quot;(?: onclick=&quot;[^&quot;]*&quot;)?&gt;([^&lt;]*)&lt;</street>
-				<city>&lt;td class=&quot;col3&quot;(?: onclick=&quot;[^&quot;]*&quot;)?&gt;\d{5}&amp;nbsp;([^&lt;]*)&lt;</city>
-				<zipcode>&lt;td class=&quot;col3&quot;(?: onclick=&quot;[^&quot;]*&quot;)?&gt;(\d{5})</zipcode>
+			    <name>&lt;span itemprop=&quot;name&quot;&gt;([^&lt;]*)&lt;/span&gt;</name>
+			    <street>&lt;span itemprop=&quot;streetAddress&quot;&gt;([^&lt;]*)&lt;/span&gt;</street>
+			    <housenumber>&lt;span itemprop=&quot;streetAddress&quot;&gt;[^&lt;]*&lt;/span&gt;([^,]*),</housenumber>
+			    <city>&lt;span itemprop=&quot;addressLocality&quot;&gt;([^&lt;]*)&lt;/span&gt;</city>
+			    <zipcode>&lt;span itemprop=&quot;postalCode&quot;&gt;([^&lt;]*)&lt;/span&gt;</zipcode>
+			</entry>
+			<entry firstOccurance="name">
+			    <name>&lt;div class=&quot;name&quot; title=&quot;([^&quot;]*)&quot;&gt;</name>
+			    <street>&lt;a href=&quot;#&quot; class=&quot;addr&quot; (?:rel=&quot;nofollow&quot; )?title=&quot;([^,]*),\s+[\d]+\s+[^&quot;]*&quot;&gt;</street>
+			    <city>&lt;a href=&quot;#&quot; class=&quot;addr&quot; (?:rel=&quot;nofollow&quot; )?title=&quot;[^,]*,\s+[\d]+\s+([^&quot;]*)&quot;&gt;</city>
+			    <zipcode>&lt;a href=&quot;#&quot; class=&quot;addr&quot; (?:rel=&quot;nofollow&quot; )?title=&quot;[^,]*,\s+([\d]+)\s+[^&quot;]*&quot;&gt;</zipcode>
 			</entry>
 		</website>
-		<website name="www.goyellow.de" url="http://www.goyellow.de/inverssuche/?TEL=$NUMBER" prefix="0">
+		<website name="www.goyellow.de" url="https://www.goyellow.de/inverssuche/?TEL=$NUMBER" prefix="0" numLines="7">
 	        <entry>
-	        	<name>&lt;a onClick=&quot;[^&quot;]*&quot; title=&quot;[^&quot;]*&quot; href=&quot;[^&quot;]*&quot;&gt;\s*&lt;span class=&quot;normal&quot;&gt;([^&lt;]*)&lt;/span&gt;</name>
-		  		<street>&lt;span class=&quot;street&quot;&gt;([^&lt;]*)&lt;/span&gt;</street>
-	        	<city>&lt;span class=&quot;city&quot;&gt;([^&lt;]*)&lt;/span&gt;</city>
-	        	<zipcode>&lt;span class=&quot;postcode&quot;&gt;([^&lt;]*)&lt;/span&gt;</zipcode>
+ 	            <name>&lt;h\d itemprop=&quot;name&quot;[^&gt;]*&gt;\s*&lt;a[^&gt;]*&gt;\s*&lt;span[^&gt;]*&gt;\s*([^&lt;]*)&lt;/span&gt;\s*&lt;/a&gt;\s*&lt;/h\d&gt;</name>
+		  		<street>&lt;meta itemprop=&quot;streetAddress&quot; content=&quot;([^&quot;]*)&quot; /&gt;</street>
+	        	<city>&lt;meta itemprop=&quot;addressLocality&quot; content=&quot;([^&quot;]*)&quot; /&gt;</city>
+	        	<zipcode>&lt;meta itemprop=&quot;postalCode&quot; content=&quot;([^&quot;]*)&quot; /&gt;</zipcode>
+	        </entry>
+	        <entry>
+	            <name>, na: &quot;([^&quot;]*)&quot;, pos: 0\};</name>
+		  		<street>&lt;meta itemprop=&quot;streetAddress&quot; content=&quot;([^&quot;]*)&quot; /&gt;</street>
+	        	<city>&lt;meta itemprop=&quot;addressLocality&quot; content=&quot;([^&quot;]*)&quot; /&gt;</city>
+	        	<zipcode>&lt;meta itemprop=&quot;postalCode&quot; content=&quot;([^&quot;]*)&quot; /&gt;</zipcode>
 	        </entry>
 		</website>
-		<website name="www.11880.com" url="http://www.11880.com/Suche/index.cfm?&amp;fuseaction=Suche.rueckwaertssucheresult&amp;init=true&amp;tel=$NUMBER" prefix="0">
-	        <entry>
-	        	<name>&lt;a style=&quot;text-decoration: underline;&quot; href=&quot;[^&quot;]*?&quot;\s+onclick=&quot;[^&quot;]*?&quot;\s+class=&quot;popup&quot;[^&gt;]*?&gt;([^&lt;]*?)&lt;/a&gt;</name>
-	        	<street>^\t*?([^,\t]*?), [\d]{5} [^&lt;]*?&lt;br /&gt;</street>
-	        	<city>^\t*?[^,\t]*?, [\d]{5} ([^&lt;]*?)&lt;br /&gt;</city>
-	        	<zipcode>^\t*?[^,\t]*?, ([\d]{5}) [^&lt;]*?&lt;br /&gt;</zipcode>
+		<website name="www.11880.com" url="http://www.11880.com/rueckwaertssuche/$NUMBER" prefix="0" numLines="7">
+   	        <entry firstOccurance="name">
+	            <name>(?i)&lt;h\d (?:class=&quot;headbox&quot;\s*)?itemprop=&quot;name&quot;\s*[^&gt;]*&gt;\s*([^&lt;]*)\s*&lt;/h\d&gt;</name>
+	        	<street>(?i)&lt;div class=&quot;address\s*&quot;&gt;\s*&lt;p[^&gt;]*&gt;\s*([^&lt;]*)&lt;/p&gt;\s*&lt;p[^&gt;]*&gt;[^&lt;]*&lt;/p&gt;\s*&lt;/div&gt;</street>
+	        	<city>(?i)&lt;div class=&quot;address\s*&quot;&gt;\s*&lt;p[^&gt;]*&gt;\s*[^&lt;]*&lt;/p&gt;\s*&lt;p[^&gt;]*&gt;[^\s]*\s([^&lt;]*)&lt;/p&gt;\s*&lt;/div&gt;</city>
+	        	<zipcode>(?i)&lt;div class=&quot;address\s*&quot;&gt;\s*&lt;p[^&gt;]*&gt;\s*[^&lt;]*&lt;/p&gt;\s*&lt;p[^&gt;]*&gt;([^\s]*)\s[^&lt;]*&lt;/p&gt;\s*&lt;/div&gt;</zipcode>
+	        </entry>
+	        <entry firstOccurance="name">
+	            <name>(?i)&lt;h\d (?:class=&quot;headbox&quot;\s*)?itemprop=&quot;name&quot;\s*[^&gt;]*&gt;\s*([^&lt;]*)\s*&lt;/h\d&gt;</name>
+	        	<street>(?i)&lt;div (?:class=&quot;[^&quot;]*&quot;\s*)?itemprop=&quot;streetAddress\s*&quot;[^&gt;]*&gt;\s*([^&lt;]*)\s*&lt;/div&gt;</street>
+	        	<city>(?i)&lt;div (?:class=&quot;[^&quot;]*&quot;\s*)?itemprop=&quot;addressLocality\s*&quot;[^&gt;]*&gt;\s*[^\s]*\s([^&lt;]*)\s*&lt;/div&gt;</city>
+	        	<zipcode>(?i)&lt;div (?:class=&quot;[^&quot;]*&quot;\s*)?itemprop=&quot;addressLocality\s*&quot;[^&gt;]*&gt;\s*([^\s]*)\s[^&lt;]*&lt;/div&gt;</zipcode>
+	        </entry>
+   	        <entry>
+	            <name>&lt;h4&gt;&lt;a href=[^&gt;]*&gt;([^&lt;]*)&lt;/a&gt;&lt;/h4&gt;</name>
+	        	<street>&lt;div class=&quot;entryData&quot;&gt;\s*(?:&lt;p&gt;)?([^&lt;]*)&lt;br&gt;\s*[\d]*\s[^&lt;]*&lt;</street>
+	        	<city>&lt;div class=&quot;entryData&quot;&gt;\s*(?:&lt;p&gt;)?[^&lt;]*&lt;br&gt;\s*[\d]*\s([^&lt;]*)&lt;</city>
+	        	<zipcode>&lt;div class=&quot;entryData&quot;&gt;\s*(?:&lt;p&gt;)?[^&lt;]*&lt;br&gt;\s*([\d]*)\s[^&lt;]*&lt;</zipcode>
 	        </entry>
 		</website>
 	</country>
@@ -1160,12 +1232,12 @@ $Date: 2012-07-28 16:21:25 +0200 (Sat, 28 Jul 2012) $
 		</website>
 	</country>
 	<country code="+590">
-		<website name="infobel.com" url="http://infobel.com/en/france/Inverse.aspx?qPhone=0590$NUMBER&amp;qSelLang3=&amp;SubmitREV=Search&amp;inphCoordType=EPSG" prefix="">
-			<entry>
-				<name>div\sclass=.result-head.&gt;&lt;h3&gt;1\.\s*([^&lt;]*)&lt;</name>
-				<street>div\sclass=.result-box-col.&gt;&lt;div&gt;&lt;strong&gt;([^,]*),</street>
-				<city>div\sclass=.result-box-col.&gt;&lt;div&gt;&lt;strong&gt;[^,]*,[^\d]*\d{5}\s*([^&lt;]*)&lt;</city>
-				<zipcode>div\sclass=.result-box-col.&gt;&lt;div&gt;&lt;strong&gt;[^,]*,[^\d]*(\d{5})</zipcode>
+		<website name="infobel.com" url="http://infobel.com/en/france/Inverse.aspx?qPhone=0590$NUMBER&amp;qSelLang3=&amp;SubmitREV=Search&amp;inphCoordType=EPSG" prefix="" numLines="2">
+			<entry firstOccurance="name">
+			    <name>&lt;h2&gt;&lt;a\s+[^&lt;]*&lt;span class=&quot;fn org&quot;>([^&lt;]*)&lt;/span&gt;</name>
+				<street>&lt;span\s+class=&quot;street-address&quot;&gt;([^&lt;]*)&lt;/span&gt;</street>
+				<zipcode>&lt;span\s+class=&quot;postal-code&quot;>([^&lt;]*)&lt;/span&gt;</zipcode>
+				<city>&lt;span\s+class=&quot;locality&quot;>([^&lt;]*)&lt;/span&gt;</city>
 			</entry>
 		</website>
 	</country>
@@ -1190,12 +1262,12 @@ $Date: 2012-07-28 16:21:25 +0200 (Sat, 28 Jul 2012) $
 		</website>
 	</country>
 	<country code="+594">
-		<website name="infobel.com" url="http://infobel.com/en/france/Inverse.aspx?qPhone=0594$NUMBER&amp;qSelLang3=&amp;SubmitREV=Search&amp;inphCoordType=EPSG" prefix="">
-			<entry>
-				<name>div\sclass=.result-head.&gt;&lt;h3&gt;1\.\s*([^&lt;]*)&lt;</name>
-				<street>div\sclass=.result-box-col.&gt;&lt;div&gt;&lt;strong&gt;([^,]*),</street>
-				<city>div\sclass=.result-box-col.&gt;&lt;div&gt;&lt;strong&gt;[^,]*,[^\d]*\d{5}\s*([^&lt;]*)&lt;</city>
-				<zipcode>div\sclass=.result-box-col.&gt;&lt;div&gt;&lt;strong&gt;[^,]*,[^\d]*(\d{5})</zipcode>
+		<website name="infobel.com" url="http://infobel.com/en/france/Inverse.aspx?qPhone=0594$NUMBER&amp;qSelLang3=&amp;SubmitREV=Search&amp;inphCoordType=EPSG" prefix="" numLines="2">
+			<entry firstOccurance="name">
+			    <name>&lt;h2&gt;&lt;a\s+[^&lt;]*&lt;span class=&quot;fn org&quot;>([^&lt;]*)&lt;/span&gt;</name>
+				<street>&lt;span\s+class=&quot;street-address&quot;&gt;([^&lt;]*)&lt;/span&gt;</street>
+				<zipcode>&lt;span\s+class=&quot;postal-code&quot;>([^&lt;]*)&lt;/span&gt;</zipcode>
+				<city>&lt;span\s+class=&quot;locality&quot;>([^&lt;]*)&lt;/span&gt;</city>
 			</entry>
 		</website>
 	</country>
@@ -1210,12 +1282,12 @@ $Date: 2012-07-28 16:21:25 +0200 (Sat, 28 Jul 2012) $
 		</website>
 	</country>
 	<country code="+596">
-		<website name="infobel.com" url="http://infobel.com/en/france/Inverse.aspx?qPhone=0596$NUMBER&amp;qSelLang3=&amp;SubmitREV=Search&amp;inphCoordType=EPSG" prefix="">
-			<entry>
-				<name>div\sclass=.result-head.&gt;&lt;h3&gt;1\.\s*([^&lt;]*)&lt;</name>
-				<street>div\sclass=.result-box-col.&gt;&lt;div&gt;&lt;strong&gt;([^,]*),</street>
-				<city>div\sclass=.result-box-col.&gt;&lt;div&gt;&lt;strong&gt;[^,]*,[^\d]*\d{5}\s*([^&lt;]*)&lt;</city>
-				<zipcode>div\sclass=.result-box-col.&gt;&lt;div&gt;&lt;strong&gt;[^,]*,[^\d]*(\d{5})</zipcode>
+		<website name="infobel.com" url="http://infobel.com/en/france/Inverse.aspx?qPhone=0596$NUMBER&amp;qSelLang3=&amp;SubmitREV=Search&amp;inphCoordType=EPSG" prefix="" numLines="2">
+			<entry firstOccurance="name">
+			    <name>&lt;h2&gt;&lt;a\s+[^&lt;]*&lt;span class=&quot;fn org&quot;>([^&lt;]*)&lt;/span&gt;</name>
+				<street>&lt;span\s+class=&quot;street-address&quot;&gt;([^&lt;]*)&lt;/span&gt;</street>
+				<zipcode>&lt;span\s+class=&quot;postal-code&quot;>([^&lt;]*)&lt;/span&gt;</zipcode>
+				<city>&lt;span\s+class=&quot;locality&quot;>([^&lt;]*)&lt;/span&gt;</city>
 			</entry>
 		</website>
 	</country>
@@ -1598,6 +1670,3 @@ $Date: 2012-07-28 16:21:25 +0200 (Sat, 28 Jul 2012) $
 		</website>
 	</country>
 </reverselookup>
-	
-
-	

@@ -18,13 +18,15 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.HyperLinkLabel;
 import de.moonflower.jfritz.utils.LinkClickListener;
 
 public class CheckboxPopupMenu extends JDialog implements ActionListener, LinkClickListener {
+	private final static Logger log = Logger.getLogger(CheckboxPopupMenu.class);
 
 	private static final long serialVersionUID = 1L;
 
@@ -141,7 +143,7 @@ public class CheckboxPopupMenu extends JDialog implements ActionListener, LinkCl
 			ok_pressed = false;
 			this.setVisible(false);
 		} else {
-			Debug.warning("ActionCommand unknown: " + e.toString());
+			log.warn("ActionCommand unknown: " + e.toString());
 		}
 	}
 
@@ -151,13 +153,13 @@ public class CheckboxPopupMenu extends JDialog implements ActionListener, LinkCl
 
 	public void clicked(URL url) {
 		if (allUrlStr.equals(url.toString())) {
-			Debug.debug("Select all");
+			log.debug("Select all");
 			this.setSelected("$ALL$", true);
 		} else if (noneUrlStr.equals(url.toString())) {
-			Debug.debug("Select none");
+			log.debug("Select none");
 			this.setSelected("$ALL$", false);
 		} else {
-			Debug.warning("Unknown url clicked");
+			log.warn("Unknown url clicked");
 		}
 	}
 }

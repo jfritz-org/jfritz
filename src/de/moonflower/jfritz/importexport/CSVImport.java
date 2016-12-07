@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.utils.Debug;
 
 /**
@@ -15,6 +17,8 @@ import de.moonflower.jfritz.utils.Debug;
  *
  */
 public class CSVImport {
+	private final static Logger log = Logger.getLogger(CSVImport.class);
+
 	private Hashtable<Integer, String> mappedColumns;
 	private String separator = ";";
 	private String fileName = "";
@@ -31,7 +35,9 @@ public class CSVImport {
 			fileReader = new FileReader(fileName);
 			bufferedReader = new BufferedReader(fileReader);
 		} catch (FileNotFoundException e) {
-			Debug.errDlg("File '" + fileName + "' does not exist!");
+			String message = "File '" + fileName + "' does not exist!";
+			log.error(message, e);
+			Debug.errDlg(message);
 		}
 	}
 

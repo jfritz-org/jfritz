@@ -7,13 +7,14 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.callerlist.CallerTable;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
@@ -23,6 +24,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  *
  */
 public class CSVCallerListImport extends CSVImport implements ICSVImport {
+	private final static Logger log = Logger.getLogger(CSVCallerListImport.class);
 
 	private Vector<String> availableColumns;
 
@@ -81,6 +83,13 @@ public class CSVCallerListImport extends CSVImport implements ICSVImport {
 				|| value.equals("away")) // jAnrufmonitor CSV
 			{
 				entry.setCallType(CallType.CALLIN_FAILED);
+			} else if (value.equals(CallType.CALLIN_BLOCKED)
+					|| value.equals(CallType.CALLIN_BLOCKED.toString())
+					|| value.equals("3") // FritzBox CSV
+					|| value.equals("Blocked") // JFritz CSV
+					|| value.equals("blocked")) // jAnrufmonitor CSV
+			{
+				entry.setCallType(CallType.CALLIN_BLOCKED);
 			} else if (value.equals(CallType.CALLOUT)
 				|| value.equals(CallType.CALLOUT.toString())
 				|| value.equals("3") // FritzBox CSV
@@ -90,7 +99,7 @@ public class CSVCallerListImport extends CSVImport implements ICSVImport {
 			{
 				entry.setCallType(CallType.CALLOUT);
 			} else {
-				Debug.error("Unknown call type: " + value);
+				log.error("Unknown call type: " + value);
 				return true;
 			}
 		} else if (columnName.equals(CallerTable.COLUMN_DATE)) {
@@ -185,7 +194,7 @@ public class CSVCallerListImport extends CSVImport implements ICSVImport {
 												entry.setCalldate(timeCal.getTime());
 											}
 										} catch (ParseException e3) {
-											Debug.error("Could not parse date: " + value);
+											log.error("Could not parse date: " + value);
 											return true;
 										}
 									}
@@ -201,7 +210,7 @@ public class CSVCallerListImport extends CSVImport implements ICSVImport {
 			if (entry.getPhoneNumber() != null) {
 				entry.getPhoneNumber().setCallByCall(value);
 			} else {
-				PhoneNumberOld number = new PhoneNumberOld("", false);
+				PhoneNumberOld number = new PhoneNumberOld(this.properties, "", false);
 				number.setCallByCall(value);
 				entry.setPhoneNumber(number);
 			}
@@ -213,16 +222,16 @@ public class CSVCallerListImport extends CSVImport implements ICSVImport {
 			if (entry.getPhoneNumber() != null) {
 				callByCall = entry.getPhoneNumber().getCallByCall();
 				if (value.equals("unbekannt")) {
-					entry.setPhoneNumber(new PhoneNumberOld("", false));
+					entry.setPhoneNumber(new PhoneNumberOld(this.properties, "", false));
 				} else {
-					entry.setPhoneNumber(new PhoneNumberOld(value, useDialPrefix));
+					entry.setPhoneNumber(new PhoneNumberOld(this.properties, value, useDialPrefix));
 				}
 				entry.getPhoneNumber().setCallByCall(callByCall);
 			} else {
 				if (value.equals("unbekannt")) {
-					entry.setPhoneNumber(new PhoneNumberOld("", false));
+					entry.setPhoneNumber(new PhoneNumberOld(this.properties, "", false));
 				} else {
-					entry.setPhoneNumber(new PhoneNumberOld(value, useDialPrefix));
+					entry.setPhoneNumber(new PhoneNumberOld(this.properties, value, useDialPrefix));
 				}
 			}
 		} else if (columnName.equals(CallerTable.COLUMN_PORT)) {
@@ -249,7 +258,7 @@ public class CSVCallerListImport extends CSVImport implements ICSVImport {
 					try {
 						entry.setDuration((Integer.parseInt(time[0]) * 3600) + (Integer.parseInt(time[1])*60));
 					} catch (NumberFormatException nfe2) {
-						Debug.error("Could not parse duration: " + value);
+						log.error("Could not parse duration: " + value);
 						return true;
 					}
 				}

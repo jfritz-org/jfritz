@@ -23,6 +23,8 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.callerlist.CallerListListener;
 import de.moonflower.jfritz.messages.MessageProvider;
@@ -55,6 +57,7 @@ import de.moonflower.jfritz.utils.Encryption;
  */
 public class ServerConnectionThread extends Thread implements CallerListListener,
 		PhoneBookListener {
+	private final static Logger log = Logger.getLogger(ServerConnectionThread.class);
 
 	private static boolean isConnected = false;
 
@@ -117,7 +120,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			return;
 
 		try{
-			Debug.netMsg("Writing disconnect message to the server");
+			log.info("NETWORKING: Writing disconnect message to the server");
 			SealedObject sealed_object = new SealedObject("JFRITZ CLOSE", outCipher);
 
 			objectOut.writeObject(sealed_object);
@@ -126,12 +129,12 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			objectIn.close();
 			connect = false;
 		}catch(IOException e){
-			Debug.error("Error writing disconnect message to server");
-			Debug.error(e.toString());
+			log.error("Error writing disconnect message to server");
+			log.error(e.toString());
 			e.printStackTrace();
 		}catch(IllegalBlockSizeException e){
-			Debug.error("Problems with the block size");
-			Debug.error(e.toString());
+			log.error("Problems with the block size");
+			log.error(e.toString());
 			e.printStackTrace();
 		}
 	}
@@ -149,7 +152,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 						wait();
 					}
 				}catch(InterruptedException e){
-					Debug.error("SeverConnection Thread was interrupted!");
+					log.error("SeverConnection Thread was interrupted!");
 		        	Thread.currentThread().interrupt();
 				}
 			}else{
@@ -162,15 +165,15 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 				user = properties.getProperty("server.login");
 				password = Encryption.decrypt(properties.getProperty("server.password"));
 
-				Debug.netMsg("Attempting to connect to server");
-				Debug.netMsg("Server: "+ server);
-				Debug.netMsg("Port: "+port);
-				Debug.netMsg("User: "+user);
-				Debug.netMsg("Pass: "+password);
+				log.info("NETWORKING: Attempting to connect to server");
+				log.info("NETWORKING: Server: "+ server);
+				log.info("NETWORKING: Port: "+port);
+				log.info("NETWORKING: User: "+user);
+				log.info("NETWORKING: Pass: "+password);
 
 				try{
 					socket = new Socket(server, port);
-					Debug.netMsg("successfully connected to server, authenticating");
+					log.info("NETWORKING: successfully connected to server, authenticating");
 
 					//set timeout in case server thread is not functioning properly
 					socket.setSoTimeout(20000);
@@ -178,7 +181,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 					objectIn = new ObjectInputStream(socket.getInputStream());
 
 					if(authenticateWithServer(user, password)){
-						Debug.netMsg("Successfully authenticated with server");
+						log.info("NETWORKING: Successfully authenticated with server");
 						isConnected = true;
 						NetworkStateMonitor.clientStateChanged();
 
@@ -201,10 +204,10 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 						JFritz.getCallerList().removeListener(this);
 						JFritz.getPhonebook().removeListener(this);
-						Debug.netMsg("Connection to server closed");
+						log.info("NETWORKING: Connection to server closed");
 
 					}else{
-						Debug.netMsg("Authentication failed!");
+						log.error("NETWORKING: Authentication failed!");
 						Debug.errDlg(messages.getMessage("authentification_failed"));
 						connect = false;
 
@@ -214,17 +217,15 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 					objectIn.close();
 
 				}catch(ConnectException e){
-
-					Debug.errDlg(messages.getMessage("connection_server_refused"));
-					Debug.error("Error connecting to the server");
-					Debug.error(e.toString());
-					e.printStackTrace();
+					String message = messages.getMessage("connection_server_refused");
+					log.error(message, e);
+					Debug.errDlg(message);
 					connect = false;
 
 				}catch(IOException e){
-					Debug.errDlg(messages.getMessage("connection_server_refused"));
-					Debug.error(e.toString());
-					e.printStackTrace();
+					String message = messages.getMessage("connection_server_refused");
+					log.error(message, e);
+					Debug.errDlg(message);
 				}
 
 				isConnected = false;
@@ -237,11 +238,11 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 					synchronized(this){
 
 						try{
-							Debug.netMsg("Waiting 15 secs for retry attempt");
+							log.info("NETWORKING: Waiting 15 secs for retry attempt");
 							wait(15000);
 						}catch(InterruptedException e){
-							Debug.error("ServerConnectionThread interrupted waiting to reconnect!");
-							Debug.error(e.toString());
+							log.error("ServerConnectionThread interrupted waiting to reconnect!");
+							log.error(e.toString());
 							e.printStackTrace();
 				        	Thread.currentThread().interrupt();
 						}
@@ -253,7 +254,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			//TODO: Cleanup code here!
 		}
 
-		Debug.netMsg("Server Connection thread has ended cleanly");
+		log.info("NETWORKING: Server Connection thread has ended cleanly");
 	}
 
 	/**
@@ -275,10 +276,10 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 				//write out the username to the server and close the stream to free all resources
 				response = (String) o;
-				Debug.netMsg("Connected to JFritz Server: "+response);
+				log.info("NETWORKING: Connected to JFritz Server: "+response);
 				if(!response.equals("JFRITZ SERVER 1.1")){
-					Debug.netMsg("Unkown Server version, newer JFritz protocoll version?");
-					Debug.netMsg("Canceling login attempt!");
+					log.info("NETWORKING: Unkown Server version, newer JFritz protocoll version?");
+					log.info("NETWORKING: Canceling login attempt!");
 				}
 				objectOut.writeObject(user);
 				objectOut.flush();
@@ -324,64 +325,64 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 						if(o.equals("OK")){		//server unstands us and we understand it
 							return true;
 						}else{
-							Debug.netMsg("Server sent wrong string as response to authentication challenge!");
+							log.info("NETWORKING: Server sent wrong string as response to authentication challenge!");
 						}
 					}else{
-						Debug.netMsg("Server sent wrong object as response to authentication challenge!");
+						log.info("NETWORKING: Server sent wrong object as response to authentication challenge!");
 					}
 
 
 				}else {
-					Debug.netMsg("Server sent wrong type for data key!");
+					log.info("NETWORKING: Server sent wrong type for data key!");
 				}
 			}
 
 		}catch(ClassNotFoundException e){
-			Debug.error("Server authentication response invalid!");
-			Debug.error(e.toString());
+			log.error("Server authentication response invalid!");
+			log.error(e.toString());
 			e.printStackTrace();
 
 		}catch(NoSuchAlgorithmException e){
-			Debug.netMsg("MD5 Algorithm not present in this JVM!");
-			Debug.error(e.toString());
+			log.info("NETWORKING: MD5 Algorithm not present in this JVM!");
+			log.error(e.toString());
 			e.printStackTrace();
 
 		}catch(InvalidKeySpecException e){
-			Debug.netMsg("Error generating cipher, problems with key spec?");
-			Debug.error(e.toString());
+			log.info("NETWORKING: Error generating cipher, problems with key spec?");
+			log.error(e.toString());
 			e.printStackTrace();
 
 		}catch(InvalidKeyException e){
-			Debug.netMsg("Error genertating cipher, problems with key?");
-			Debug.error(e.toString());
+			log.info("NETWORKING: Error genertating cipher, problems with key?");
+			log.error(e.toString());
 			e.printStackTrace();
 
 		}catch(NoSuchPaddingException e){
-			Debug.netMsg("Error generating cipher, problems with padding?");
-			Debug.error(e.toString());
+			log.info("NETWORKING: Error generating cipher, problems with padding?");
+			log.error(e.toString());
 			e.printStackTrace();
 
 		}catch(EOFException e){
-			Debug.error("Server closed Stream unexpectedly!");
-			Debug.error(e.toString());
+			log.error("Server closed Stream unexpectedly!");
+			log.error(e.toString());
 			e.printStackTrace();
 
 		}catch(SocketTimeoutException e){
-			Debug.error("Read timeout while authenticating with server!");
-			Debug.error(e.toString());
+			log.error("Read timeout while authenticating with server!");
+			log.error(e.toString());
 			e.printStackTrace();
 
 		}catch(IOException e){
-			Debug.error("Error reading response during authentication!");
-			Debug.error(e.toString());
+			log.error("Error reading response during authentication!");
+			log.error(e.toString());
 			e.printStackTrace();
 		} catch (IllegalBlockSizeException e) {
-			Debug.error("Illegal block size exception!");
-			Debug.error(e.toString());
+			log.error("Illegal block size exception!");
+			log.error(e.toString());
 			e.printStackTrace();
 		} catch (BadPaddingException e) {
-			Debug.error("Bad padding exception!");
-			Debug.error(e.toString());
+			log.error("Bad padding exception!");
+			log.error(e.toString());
 			e.printStackTrace();
 		}
 
@@ -395,7 +396,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 	 */
 	private synchronized void synchronizeWithServer(){
 
-		Debug.netMsg("Requesting updates from server");
+		log.info("NETWORKING: Requesting updates from server");
 		try{
 			callListRequest.operation = ClientDataRequest.Operation.GET;
 			callListRequest.timestamp = JFritz.getCallerList().getLastCallDate();
@@ -420,12 +421,12 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			objectOut.reset();
 
 		}catch(IOException e){
-			Debug.error("Error writing synchronizing request to server!");
-			Debug.error(e.toString());
+			log.error("Error writing synchronizing request to server!");
+			log.error(e.toString());
 			e.printStackTrace();
 		} catch (IllegalBlockSizeException e) {
-			Debug.error("Illegal block size exception!");
-			Debug.error(e.toString());
+			log.error("Illegal block size exception!");
+			log.error(e.toString());
 			e.printStackTrace();
 		}
 	}
@@ -436,26 +437,27 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 	 * close request from the server
 	 *
 	 */
+	@SuppressWarnings("unchecked")
 	private void listenToServer(){
 		Vector<Call> vCalls;
 		Vector<Person> vPersons;
-		DataChange change;
+		DataChange<?> change;
 		Object o;
 		String message;
 
-		Debug.netMsg("Listening for commands from server");
+		log.info("NETWORKING: Listening for commands from server");
 		while(true){
 			try{
 				SealedObject sealed_object = (SealedObject)objectIn.readObject();
 				o = sealed_object.getObject(inCipher);
 				if(o instanceof DataChange){
 
-					change = (DataChange) o;
+					change = (DataChange<?>) o;
 						if(change.destination == DataChange.Destination.CALLLIST){
 							if(change.operation == DataChange.Operation.ADD){
 
 								vCalls = (Vector<Call>) change.data;
-								Debug.netMsg("Received request to add "+vCalls.size()+" calls");
+								log.info("NETWORKING: Received request to add "+vCalls.size()+" calls");
 
 								//lock the call list so the new entries don't ping pong back and forth
 								synchronized(JFritz.getCallerList()){
@@ -467,7 +469,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 							}else if(change.operation == DataChange.Operation.REMOVE){
 
 								vCalls = (Vector<Call>) change.data;
-								Debug.netMsg("Received request to remove "+vCalls.size()+" calls");
+								log.info("NETWORKING: Received request to remove "+vCalls.size()+" calls");
 
 								synchronized(JFritz.getCallerList()){
 									callsRemoved = true;
@@ -477,7 +479,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 							}else if(change.operation == DataChange.Operation.UPDATE){
 
-								Debug.netMsg("Received request to upate a call");
+								log.info("NETWORKING: Received request to upate a call");
 								synchronized(JFritz.getCallerList()){
 									callUpdated=true;
 									JFritz.getCallerList().updateEntry((Call) change.original, (Call) change.updated);
@@ -489,7 +491,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 							if(change.operation == DataChange.Operation.ADD){
 
 								vPersons = (Vector<Person>) change.data;
-								Debug.netMsg("Received request to add "+vPersons.size()+" contacts");
+								log.info("NETWORKING: Received request to add "+vPersons.size()+" contacts");
 
 								synchronized(JFritz.getCallerList()){
 									contactsAdded = true;
@@ -500,7 +502,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 							}else if(change.operation == DataChange.Operation.REMOVE){
 
 								vPersons = (Vector<Person>) change.data;
-								Debug.netMsg("Received request to remove "+vPersons.size()+" contacts");
+								log.info("NETWORKING: Received request to remove "+vPersons.size()+" contacts");
 
 								synchronized(JFritz.getPhonebook()){
 									contactsRemoved = true;
@@ -510,7 +512,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 							}else if(change.operation == DataChange.Operation.UPDATE){
 
-								Debug.netMsg("Recieved request to update a contact");
+								log.info("NETWORKING: Recieved request to update a contact");
 
 								synchronized(JFritz.getPhonebook()){
 									contactUpdated = true;
@@ -524,7 +526,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 								&& JFritz.getJframe() != null && JFritz.getJframe().isCallMonitorStarted()
 								&& properties.getProperty("option.callMonitorType").equals("6")){
 
-							Debug.netMsg("Call monitor event received from server");
+							log.info("NETWORKING: Call monitor event received from server");
 							//call in or disconnect event received
 							String[] ignoredMSNs = properties.getProperty("option.callmonitor.ignoreMSN").trim().split(";");
 							boolean ignoreIt = false;
@@ -535,7 +537,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 								// see if we need to ignore this call
 								for (int i = 0; i < ignoredMSNs.length; i++) {
-						            Debug.netMsg(ignoredMSNs[i]);
+						            log.info("NETWORKING: " + ignoredMSNs[i]);
 						            if (!ignoredMSNs[i].equals(""))
 						                if (c.getRoute()
 						                        .equals(ignoredMSNs[i])) {
@@ -575,7 +577,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 
 								//see if we need to ingnore the call
 								for (int i = 0; i < ignoredMSNs.length; i++) {
-						            Debug.debug(ignoredMSNs[i]);
+						            log.debug(ignoredMSNs[i]);
 						            if (!ignoredMSNs[i].equals(""))
 						                if (c.getRoute()
 						                        .equals(ignoredMSNs[i])) {
@@ -600,63 +602,63 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 							}
 
 						}else{
-							Debug.netMsg("destination not chosen for incoming data, ignoring!");
+							log.info("NETWORKING: destination not chosen for incoming data, ignoring!");
 						}
 						//we received the ports list from the server
 				}else if(o instanceof String[]){
-					Debug.info("received available ports from server");
+					log.info("received available ports from server");
 					availablePorts = (String[]) o;
 				}else if(o instanceof String){ //message received from the server
 
 					message = (String) o;
 
 					if(message.equals("JFRITZ CLOSE")){
-						Debug.netMsg("Closing connection with server!");
+						log.info("NETWORKING: Closing connection with server!");
 						disconnect();
 						connect = false;
 						return;
 					}else if(message.equals("Party on, Wayne!")){
-						Debug.netMsg("Received keep alive message from server");
+						log.info("NETWORKING: Received keep alive message from server");
 						replyToKeepAlive();
 					}else{
-						Debug.netMsg("Received message from server: "+message);
+						log.info("NETWORKING: Received message from server: "+message);
 					}
 
 					//TODO: Add other messages here if necessary
 
 				}else {
-					Debug.netMsg(o.toString());
-					Debug.netMsg("received unexpected object, ignoring!");
+					log.info("NETWORKING: " + o.toString());
+					log.info("NETWORKING: received unexpected object, ignoring!");
 				}
 
 			}catch(ClassNotFoundException e){
-				Debug.error("Response from server contained unkown object!");
-				Debug.error(e.toString());
+				log.error("Response from server contained unkown object!");
+				log.error(e.toString());
 				e.printStackTrace();
 			}catch(SocketException e){
 				if(e.getMessage().equals("Socket closed")){
-					Debug.netMsg("Socket closed");	//we closed the socket as requested by the user
+					log.info("NETWORKING: Socket closed");	//we closed the socket as requested by the user
 				}else{
-					Debug.error(e.toString());
+					log.error(e.toString());
 					e.printStackTrace();
 				}
 				return;
 			}catch(EOFException e ){
-				Debug.error("Server closed stream unexpectedly!");
-				Debug.error(e.toString());
+				log.error("Server closed stream unexpectedly!");
+				log.error(e.toString());
 				e.printStackTrace();
 				return;
 			}catch(IOException e){
-				Debug.error(e.toString());
+				log.error(e.toString());
 				e.printStackTrace();
 				return;
 			} catch (IllegalBlockSizeException e) {
-				Debug.error("Illegal block size exception!");
-				Debug.error(e.toString());
+				log.error("Illegal block size exception!");
+				log.error(e.toString());
 				e.printStackTrace();
 			} catch (BadPaddingException e) {
-				Debug.error("Bad padding exception!");
-				Debug.error(e.toString());
+				log.error("Bad padding exception!");
+				log.error(e.toString());
 				e.printStackTrace();
 			}
 		}
@@ -672,8 +674,8 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			objectOut.close();
 			objectIn.close();
 		}catch(IOException e){
-			Debug.error("Error disconnecting from server");
-			Debug.error(e.toString());
+			log.error("Error disconnecting from server");
+			log.error(e.toString());
 			e.printStackTrace();
 		}
 	}
@@ -698,12 +700,12 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			objectOut.reset();
 
 		}catch(IOException e){
-			Debug.error("Error writing lookup request to server");
-			Debug.error(e.toString());
+			log.error("Error writing lookup request to server");
+			log.error(e.toString());
 			e.printStackTrace();
 		} catch (IllegalBlockSizeException e) {
-			Debug.error("Illegal block size exception!");
-			Debug.error(e.toString());
+			log.error("Illegal block size exception!");
+			log.error(e.toString());
 			e.printStackTrace();
 		}
 	}
@@ -728,12 +730,12 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			objectOut.reset();
 
 		}catch(IOException e){
-			Debug.error("Error writing lookup request to server");
-			Debug.error(e.toString());
+			log.error("Error writing lookup request to server");
+			log.error(e.toString());
 			e.printStackTrace();
 		} catch (IllegalBlockSizeException e) {
-			Debug.error("Illegal block size exception!");
-			Debug.error(e.toString());
+			log.error("Illegal block size exception!");
+			log.error(e.toString());
 			e.printStackTrace();
 		}
 
@@ -752,19 +754,19 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			objectOut.reset();
 
 		}catch(IOException e){
-			Debug.error("Error writing do get list request");
-			Debug.error(e.toString());
+			log.error("Error writing do get list request");
+			log.error(e.toString());
 			e.printStackTrace();
 		} catch (IllegalBlockSizeException e) {
-			Debug.error("Illegal block size exception!");
-			Debug.error(e.toString());
+			log.error("Illegal block size exception!");
+			log.error(e.toString());
 			e.printStackTrace();
 		}
 
 	}
 
 	public synchronized void requestDeleteList(){
-		Debug.info("Requesting server to delete the list from the box");
+		log.info("Requesting server to delete the list from the box");
 		actionRequest.action = ClientActionRequest.ActionType.deleteListFromBox;
 
 		try{
@@ -775,18 +777,18 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			objectOut.reset();
 
 		}catch(IOException e){
-			Debug.error("Error writing writing delete list from box request");
-			Debug.error(e.toString());
+			log.error("Error writing writing delete list from box request");
+			log.error(e.toString());
 			e.printStackTrace();
 		} catch (IllegalBlockSizeException e) {
-			Debug.error("Illegal block size exception!");
-			Debug.error(e.toString());
+			log.error("Illegal block size exception!");
+			log.error(e.toString());
 			e.printStackTrace();
 		}
 	}
 
 	public synchronized void requestDoCall(PhoneNumberOld number, Port port){
-		Debug.netMsg("Requesting the server to dial "+number.getIntNumber()+" using "+port);
+		log.info("NETWORKING: Requesting the server to dial "+number.getIntNumber()+" using "+port);
 		actionRequest.action = ClientActionRequest.ActionType.doCall;
 		actionRequest.number = number;
 		actionRequest.port = port;
@@ -799,12 +801,12 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			objectOut.reset();
 
 		}catch(IOException e){
-			Debug.error("Error writing writing doCall request");
-			Debug.error(e.toString());
+			log.error("Error writing writing doCall request");
+			log.error(e.toString());
 			e.printStackTrace();
 		} catch (IllegalBlockSizeException e) {
-			Debug.error("Illegal block size exception!");
-			Debug.error(e.toString());
+			log.error("Illegal block size exception!");
+			log.error(e.toString());
 			e.printStackTrace();
 		}
 
@@ -813,7 +815,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 	}
 
 	public synchronized void requestHangup(Port port){
-		Debug.netMsg("Requesting the server to hangup");
+		log.info("NETWORKING: Requesting the server to hangup");
 		actionRequest.action = ClientActionRequest.ActionType.hangup;
 		actionRequest.port = port;
 
@@ -825,12 +827,12 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			objectOut.reset();
 
 		}catch(IOException e){
-			Debug.error("Error writing writing hangup request");
-			Debug.error(e.toString());
+			log.error("Error writing writing hangup request");
+			log.error(e.toString());
 			e.printStackTrace();
 		} catch (IllegalBlockSizeException e) {
-			Debug.error("Illegal block size exception!");
-			Debug.error(e.toString());
+			log.error("Illegal block size exception!");
+			log.error(e.toString());
 			e.printStackTrace();
 		}
 	}
@@ -841,7 +843,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 		if(callsAdded)
 			return;
 
-		Debug.netMsg("Notifying the server of added calls, size: "+newCalls.size());
+		log.info("NETWORKING: Notifying the server of added calls, size: "+newCalls.size());
 		callListRequest.data = newCalls;
 		callListRequest.operation = ClientDataRequest.Operation.ADD;
 
@@ -852,12 +854,12 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			objectOut.reset();
 
 		}catch(IOException e){
-			Debug.error("Error writing new calls to the server");
-			Debug.error(e.toString());
+			log.error("Error writing new calls to the server");
+			log.error(e.toString());
 			e.printStackTrace();
 		} catch (IllegalBlockSizeException e) {
-			Debug.error("Illegal block size exception!");
-			Debug.error(e.toString());
+			log.error("Illegal block size exception!");
+			log.error(e.toString());
 			e.printStackTrace();
 		}
 
@@ -871,7 +873,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 		if(callsRemoved)
 			return;
 
-		Debug.netMsg("Notifying the server of removed calls, size: "+removedCalls.size());
+		log.info("NETWORKING: Notifying the server of removed calls, size: "+removedCalls.size());
 		callListRequest.data = removedCalls;
 		callListRequest.operation = ClientDataRequest.Operation.REMOVE;
 
@@ -881,12 +883,12 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			objectOut.flush();
 			objectOut.reset();
 		}catch(IOException e){
-			Debug.error("Error writing removed calls to the server");
-			Debug.error(e.toString());
+			log.error("Error writing removed calls to the server");
+			log.error(e.toString());
 			e.printStackTrace();
 		} catch (IllegalBlockSizeException e) {
-			Debug.error("Illegal block size exception!");
-			Debug.error(e.toString());
+			log.error("Illegal block size exception!");
+			log.error(e.toString());
 			e.printStackTrace();
 		}
 
@@ -899,7 +901,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 		if(callUpdated)
 			return;
 
-		Debug.netMsg("Notifying server of updated call");
+		log.info("NETWORKING: Notifying server of updated call");
 		callListRequest.operation = ClientDataRequest.Operation.UPDATE;
 		callListRequest.original = original;
 		callListRequest.updated = updated;
@@ -912,12 +914,12 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			objectOut.reset();
 
 		}catch(IOException e){
-			Debug.error("Error writing updated call to server!");
-			Debug.error(e.toString());
+			log.error("Error writing updated call to server!");
+			log.error(e.toString());
 			e.printStackTrace();
 		} catch (IllegalBlockSizeException e) {
-			Debug.error("Illegal block size exception!");
-			Debug.error(e.toString());
+			log.error("Illegal block size exception!");
+			log.error(e.toString());
 			e.printStackTrace();
 		}
 
@@ -933,7 +935,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 		if(contactsAdded)
 			return;
 
-		Debug.netMsg("Notifying the server of added contacts, size: "+newContacts.size());
+		log.info("NETWORKING: Notifying the server of added contacts, size: "+newContacts.size());
 		phoneBookRequest.data = newContacts;
 		phoneBookRequest.operation = ClientDataRequest.Operation.ADD;
 
@@ -943,12 +945,12 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			objectOut.flush();
 			objectOut.reset();
 		}catch(IOException e){
-			Debug.error("Error writing new contacts to server!");
-			Debug.error(e.toString());
+			log.error("Error writing new contacts to server!");
+			log.error(e.toString());
 			e.printStackTrace();
 		} catch (IllegalBlockSizeException e) {
-			Debug.error("Illegal block size exception!");
-			Debug.error(e.toString());
+			log.error("Illegal block size exception!");
+			log.error(e.toString());
 			e.printStackTrace();
 		}
 
@@ -961,7 +963,7 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 		if(contactsRemoved)
 			return;
 
-		Debug.netMsg("Notifying the server of removed contacts, size: "+removedContacts.size());
+		log.info("NETWORKING: Notifying the server of removed contacts, size: "+removedContacts.size());
 		phoneBookRequest.data = removedContacts;
 		phoneBookRequest.operation = ClientDataRequest.Operation.REMOVE;
 
@@ -973,12 +975,12 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			objectOut.reset();
 
 		}catch(IOException e){
-			Debug.error("Error writing removed contacts to server!");
-			Debug.error(e.toString());
+			log.error("Error writing removed contacts to server!");
+			log.error(e.toString());
 			e.printStackTrace();
 		} catch (IllegalBlockSizeException e) {
-			Debug.error("Illegal block size exception!");
-			Debug.error(e.toString());
+			log.error("Illegal block size exception!");
+			log.error(e.toString());
 			e.printStackTrace();
 		}
 
@@ -1002,12 +1004,12 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 			objectOut.reset();
 
 		}catch(IOException e){
-			Debug.error("Error writing updated contact to server");
-			Debug.error(e.toString());
+			log.error("Error writing updated contact to server");
+			log.error(e.toString());
 			e.printStackTrace();
 		} catch (IllegalBlockSizeException e) {
-			Debug.error("Illegal block size exception!");
-			Debug.error(e.toString());
+			log.error("Illegal block size exception!");
+			log.error(e.toString());
 			e.printStackTrace();
 		}
 
@@ -1023,19 +1025,19 @@ public class ServerConnectionThread extends Thread implements CallerListListener
 	public  synchronized void replyToKeepAlive(){
 		try{
 
-			Debug.netMsg("Replying to servers keep alive message");
+			log.info("NETWORKING: Replying to servers keep alive message");
 			SealedObject sealedPhoneBookRequest = new SealedObject("Party on, Garth!", outCipher);
 			objectOut.writeObject(sealedPhoneBookRequest);
 			objectOut.flush();
 			objectOut.reset();
 
 		}catch(IOException e){
-			Debug.error("Error writing updated contact to server");
-			Debug.error(e.toString());
+			log.error("Error writing updated contact to server");
+			log.error(e.toString());
 			e.printStackTrace();
 		} catch (IllegalBlockSizeException e) {
-			Debug.error("Illegal block size exception!");
-			Debug.error(e.toString());
+			log.error("Illegal block size exception!");
+			log.error(e.toString());
 			e.printStackTrace();
 		}
 	}

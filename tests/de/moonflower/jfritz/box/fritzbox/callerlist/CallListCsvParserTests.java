@@ -39,7 +39,7 @@ public class CallListCsvParserTests {
 		// preconditions
 
 		// test
-		Vector<Call> calls = parser.parseCsvString(mockedFritzBox, null);
+		parser.parseCsvString(mockedFritzBox, null);
 	}
 
 	@Test(expected=FeatureNotSupportedByFirmware.class)
@@ -47,7 +47,7 @@ public class CallListCsvParserTests {
 		// preconditions
 
 		// test
-		Vector<Call> calls = parser.parseCsvString(mockedFritzBox, "");
+		parser.parseCsvString(mockedFritzBox, "");
 	}
 
 	@Test(expected=FeatureNotSupportedByFirmware.class)
@@ -57,7 +57,7 @@ public class CallListCsvParserTests {
 		sb.append(CSV_HEADER);
 
 		// test
-		Vector<Call> calls = parser.parseCsvString(mockedFritzBox, sb.toString());
+		parser.parseCsvString(mockedFritzBox, sb.toString());
 	}
 
 	@Test(expected=FeatureNotSupportedByFirmware.class)
@@ -67,7 +67,7 @@ public class CallListCsvParserTests {
 		sb.append(CSV_SEPARATOR);
 
 		// test
-		Vector<Call> calls = parser.parseCsvString(mockedFritzBox, sb.toString());
+		parser.parseCsvString(mockedFritzBox, sb.toString());
 	}
 
 	@Test

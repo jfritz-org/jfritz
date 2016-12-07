@@ -3,12 +3,17 @@ package de.moonflower.jfritz.importexport;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
-import de.moonflower.jfritz.utils.Debug;
 
 public class VCardParserTel {
+	private final static Logger log = Logger.getLogger(VCardParserTel.class);
 
+	protected static PropertyProvider properties = PropertyProvider.getInstance();
+	
 	public static boolean parse(VCardParser parser, Person person) {
 		Enumeration<String> en = parser.getPropertyType().keys();
 		Vector<PhoneNumberOld> numbers = null;
@@ -17,7 +22,7 @@ public class VCardParserTel {
 			if (key.equals("type")) {
 				Vector<String> propertyTypes = parser.getPropertyType().get(key);
 				for (String types: propertyTypes) {
-					Debug.debug(types);
+					log.debug(types);
 				}
 
 				if (person.getNumbers() == null) {
@@ -28,7 +33,7 @@ public class VCardParserTel {
 
 
 				if (!containsNumber(numbers, parser.getValues().get(0))) {
-					PhoneNumberOld num = new PhoneNumberOld(parser.getValues().get(0), false);
+					PhoneNumberOld num = new PhoneNumberOld(properties, parser.getValues().get(0), false);
 					if (propertyTypes.contains("home")) {
 						num.setType("home");
 					} else if (propertyTypes.contains("cell")) {
@@ -49,7 +54,7 @@ public class VCardParserTel {
 					}
 				}
 			} else {
-				Debug.error("Unknown key in VCardParserTel: " + key);
+				log.error("Unknown key in VCardParserTel: " + key);
 			}
 		}
 		return false;

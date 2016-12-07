@@ -21,16 +21,19 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.JFritzDataDirectory;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class ConfigPanelOther extends JPanel implements ConfigPanel {
 
+	private final static Logger log = Logger.getLogger(ConfigPanelOther.class);
+	
 	private static final long serialVersionUID = -5765034036707188670L;
 
 	private JLabel timerLabel;
@@ -49,7 +52,7 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 	protected PropertyProvider properties = PropertyProvider.getInstance();
 	protected MessageProvider messages = MessageProvider.getInstance();
 
-	public ConfigPanelOther(ConfigPanelFritzBox fritzBoxPanel) {
+	public ConfigPanelOther(ConfigPanelFritzBoxIP fritzBoxPanel) {
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
 
@@ -87,7 +90,7 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 		checkNewVersionAfterStart = new JCheckBox(messages.getMessage("check_for_new_version_after_start")); //$NON-NLS-1$
 		c.gridy++;
 		cPane.add(checkNewVersionAfterStart, c);
-		checkNewVersionAfterStart.setEnabled(false);
+		checkNewVersionAfterStart.setEnabled(true);
 
 		passwordAfterStartButton = new JCheckBox(messages.getMessage("ask_for_password_before_start")); //$NON-NLS-1$
 		c.gridy++;
@@ -238,7 +241,7 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 		if(properties.getProperty("network.type").equals("2")
 				&& Boolean.parseBoolean(properties.getProperty("option.clientCallList"))){
 
-			Debug.netMsg("JFritz is running as a client and using call list from server, disabeling some options");
+			log.info("NETWORKING: JFritz is running as a client and using call list from server, disabeling some options");
 			searchWithSSDP.setSelected(false);
 			searchWithSSDP.setEnabled(false);
 		}

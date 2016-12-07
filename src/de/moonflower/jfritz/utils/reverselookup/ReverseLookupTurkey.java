@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
@@ -17,6 +19,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  *
  */
 public class ReverseLookupTurkey {
+	private final static Logger log = Logger.getLogger(ReverseLookupTurkey.class);
 
 	public final static String FILE_HEADER = "Area Code;City";
 
@@ -32,7 +35,7 @@ public class ReverseLookupTurkey {
 	 *
 	 */
 	public static void loadAreaCodes(){
-	Debug.info("Loading the turkish number to city list");
+	log.info("Loading the turkish number to city list");
 		numberMap = new HashMap<String, String>(5300);
 		BufferedReader br = null;
 		FileInputStream fi = null;
@@ -46,7 +49,9 @@ public class ReverseLookupTurkey {
 			int lines = 0;
 			String l = br.readLine();
 			if(l==null){
-				Debug.errDlg("File "+JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") + JFritzUtils.FILESEP + "turkey" + JFritzUtils.FILESEP + "areacodes_turkey.csv"+" empty");
+				String message = "File "+JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") + JFritzUtils.FILESEP + "turkey" + JFritzUtils.FILESEP + "areacodes_turkey.csv"+" empty";
+				log.error(message);
+				Debug.errDlg(message);
 			}
 			//Load the keys and values quick and dirty
 			if(l.equals(FILE_HEADER)){
@@ -59,11 +64,11 @@ public class ReverseLookupTurkey {
 				}
 			}
 
-			Debug.info(lines + " Lines read from areacodes_turkey.csv");
-			Debug.info("numberMap size: "+numberMap.size());
+			log.info(lines + " Lines read from areacodes_turkey.csv");
+			log.info("numberMap size: "+numberMap.size());
 
 		}catch(Exception e){
-			Debug.error(e.toString());
+			log.error(e.toString());
 		}finally{
 			try{
 				if(fi!=null)
@@ -71,7 +76,7 @@ public class ReverseLookupTurkey {
 					if(br!=null)
 						br.close();
 				}catch (IOException ioe){
-					Debug.error("error closing stream "+ioe.toString());
+					log.error("error closing stream "+ioe.toString());
 				}
 			}
 
@@ -88,7 +93,7 @@ public class ReverseLookupTurkey {
 	 */
 	public static String getCity(String number){
 
-		Debug.info("Looking up city in numberMap: "+number);
+		log.info("Looking up city in numberMap: "+number);
 		String city = "";
 		int l = number.length();
 		if(number.startsWith("0") && numberMap != null){

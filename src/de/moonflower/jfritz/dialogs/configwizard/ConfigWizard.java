@@ -8,6 +8,8 @@ import java.util.Locale;
 
 import javax.swing.JComboBox;
 
+import org.apache.log4j.Logger;
+
 import com.nexes.wizard.Wizard;
 import com.nexes.wizard.WizardPanelDescriptor;
 
@@ -15,15 +17,16 @@ import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.SplashScreen;
 import de.moonflower.jfritz.constants.ProgramConstants;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelCallMonitor;
-import de.moonflower.jfritz.dialogs.config.ConfigPanelFritzBox;
+import de.moonflower.jfritz.dialogs.config.ConfigPanelFritzBoxIP;
+import de.moonflower.jfritz.dialogs.config.ConfigPanelFritzBoxLogin;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelLang;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelMessage;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelPhone;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.messages.UpdateMessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.utils.Debug;
 
 /**
  *
@@ -38,13 +41,15 @@ import de.moonflower.jfritz.utils.Debug;
  *
  */
 public class ConfigWizard {
+	private final static Logger log = Logger.getLogger(ConfigWizard.class);
 
 	private Wizard wizard;
 	private Image icon;
 
-	private ConfigPanelFritzBoxDescriptor descriptor3;
+	private ConfigPanelFritzBoxIpDescriptor descriptor3;
+	private ConfigPanelFritzBoxLoginDescriptor descriptor4;
 
-	private WizardPanelDescriptor descriptor2, descriptor4, descriptor5;
+	private WizardPanelDescriptor descriptor2, descriptor5, descriptor6;
 
 	private boolean languageCanceled = false;
 
@@ -55,7 +60,7 @@ public class ConfigWizard {
 		icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource(
 				"/de/moonflower/jfritz/resources/images/tray16.png")); //$NON-NLS-1$
 
-		Debug.info("asking the user for the language");
+		log.info("asking the user for the language");
 
 		Wizard.setBackText(messages.getMessage("back"));
 		Wizard.setNextText(messages.getMessage("next"));
@@ -65,7 +70,7 @@ public class ConfigWizard {
 		//if user clicked cancel on the language dialog, return back to jfritz
 		if (!askLanguage(parent)) {
 
-			Debug.info("Create JFritz config wizard");
+			log.info("Create JFritz config wizard");
 			wizard = new Wizard(JFritz.getJframe());
 			wizard.getDialog().setIconImage(icon);
 
@@ -78,14 +83,17 @@ public class ConfigWizard {
 	        descriptor2 = new ConfigPanelPhoneDescriptor();
 	        wizard.registerWizardPanel(ConfigPanelPhoneDescriptor.IDENTIFIER, descriptor2);
 
-	        descriptor3 = new ConfigPanelFritzBoxDescriptor();
-	        wizard.registerWizardPanel(ConfigPanelFritzBoxDescriptor.IDENTIFIER, descriptor3);
+	        descriptor3 = new ConfigPanelFritzBoxIpDescriptor();
+	        wizard.registerWizardPanel(ConfigPanelFritzBoxIpDescriptor.IDENTIFIER, descriptor3);
 
-	        descriptor4 = new ConfigPanelMessageDescriptor();
-	        wizard.registerWizardPanel(ConfigPanelMessageDescriptor.IDENTIFIER, descriptor4);
+	        descriptor4 = new ConfigPanelFritzBoxLoginDescriptor(descriptor3);
+	        wizard.registerWizardPanel(ConfigPanelFritzBoxLoginDescriptor.IDENTIFIER, descriptor4);
 
-	        descriptor5 = new ConfigPanelCallMonitorDescriptor(descriptor3.getFritzBoxPanel());
-	        wizard.registerWizardPanel(ConfigPanelCallMonitorDescriptor.IDENTIFIER, descriptor5);
+	        descriptor5 = new ConfigPanelMessageDescriptor();
+	        wizard.registerWizardPanel(ConfigPanelMessageDescriptor.IDENTIFIER, descriptor5);
+
+	        descriptor6 = new ConfigPanelCallMonitorDescriptor(descriptor3.getFritzBoxPanel());
+	        wizard.registerWizardPanel(ConfigPanelCallMonitorDescriptor.IDENTIFIER, descriptor6);
 
 	        WizardPanelDescriptor finishDescriptor= new ConfigPanelFinishDescriptor();
 	        wizard.registerWizardPanel(ConfigPanelFinishDescriptor.IDENTIFIER, finishDescriptor);
@@ -114,43 +122,46 @@ public class ConfigWizard {
        switch (ret){
 
        		case 0:
-       			Debug.info("Finished clicked, saving settings");
+       			log.info("Finished clicked, saving settings");
        			if (splash != null) {
        				splash.setVisible(true);
        			}
 
        			((ConfigPanelPhone)descriptor2.getPanelComponent()).saveSettings();
+       			
+       			// save settings of FritzBoxLogin before FritzBoxIp, because FritzBoxIp needs username and password
+       			// to get further data in saveSettings()
+       			((ConfigPanelFritzBoxLogin)descriptor4.getPanelComponent()).saveSettings(false);
+       			
        			try {
-           			((ConfigPanelFritzBox)descriptor3.getPanelComponent()).saveSettings(false);
-       			}
-       			catch (WrongPasswordException wpe)
-       			{
-       				Debug.error("Wrong password");
+           			((ConfigPanelFritzBoxIP)descriptor3.getPanelComponent()).saveSettings(false);
        			}
    				catch (InvalidFirmwareException ife)
    				{
-   					Debug.error("Invalid firmware");
+   					log.error("Invalid firmware");
    				}
-       			catch (IOException ioe)
-       			{
-       				Debug.error("No connection to box!");
-       			}
-       			((ConfigPanelMessage)descriptor4.getPanelComponent()).saveSettings();
-       			((ConfigPanelCallMonitor)descriptor5.getPanelComponent()).saveSettings();
+
+       			((ConfigPanelMessage)descriptor5.getPanelComponent()).saveSettings();
+       			((ConfigPanelCallMonitor)descriptor6.getPanelComponent()).saveSettings();
 
       			properties.saveConfigProperties();
 
 				return false;
        		case 1:
-       			Debug.info("Cancel clicked, not saving values");
+       			log.info("Cancel clicked, not saving values");
        			return true;
        		case 2:
-       			Debug.info("Error in the wizard, bailing out..");
+       			log.info("Error in the wizard, bailing out..");
        			return true;
        		default:
        			return true;
        }
 	}
+	
+	public void setNextFinishButtonEnabled(boolean newValue) {
+		wizard.setNextFinishButtonEnabled(newValue);
+	}
+
 
 	/**
 	 * This dialog changes the language used in jfritz
@@ -192,6 +203,7 @@ public class ConfigWizard {
 				String loc = localeList[languageCombo.getSelectedIndex()];
 				Locale locale = new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_")+1, loc.length()));
 				messages.loadMessages(locale);
+				UpdateMessageProvider.getInstance().loadMessages(locale);
 				if (JFritz.getJframe() != null) {
 					JFritz.getJframe().setLanguage(locale);
 				}

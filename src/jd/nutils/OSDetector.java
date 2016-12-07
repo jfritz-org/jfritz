@@ -16,10 +16,13 @@
 
 package jd.nutils;
 
+import java.util.Properties;
+
 public class OSDetector {
 
     private static byte OS_ID = -1;
     private static String OS_STRING;
+    private static String OS_VERSION;
     public static final byte OS_LINUX_OTHER = 6;
     public static final byte OS_MAC_OTHER = 5;
     public static final byte OS_WINDOWS_2000 = 2;
@@ -139,7 +142,14 @@ public class OSDetector {
     public static String getOSString() {
         if (OS_STRING == null) OS_STRING = System.getProperty("os.name");
         return OS_STRING;
+    }
 
+    public static String getOSVersion() {
+    	Properties p = System.getProperties();
+    	for (int i=0; i<p.size(); i++) {
+    	}
+        if (OS_VERSION == null) OS_VERSION = System.getProperty("os.version");
+        return OS_VERSION;
     }
 
     public static void setOSString(String property) {

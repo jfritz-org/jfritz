@@ -25,6 +25,8 @@ import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableCellRenderer;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzDataDirectory;
 import de.moonflower.jfritz.callerlist.filter.CallFilter;
@@ -37,18 +39,18 @@ import de.moonflower.jfritz.network.Login;
 import de.moonflower.jfritz.network.NetworkStateListener;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionListener,
 					NetworkStateListener {
+	private final static Logger log = Logger.getLogger(ConfigPanelNetwork.class);
 
 	private static final long serialVersionUID = 100;
 
 	private JDialog parent;
 
-	private JComboBox networkTypeCombo;
+	private JComboBox<String> networkTypeCombo;
 
 	private JCheckBox clientTelephoneBook, clientCallList, clientCallMonitor,
 		clientStandAlone, connectOnStartup, listenOnStartup;
@@ -82,7 +84,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 		mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
 		setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
-		networkTypeCombo = new JComboBox();
+		networkTypeCombo = new JComboBox<String>();
 		networkTypeCombo.addItem(messages.getMessage("no_network_function")); //$NON-NLS-1$
 		networkTypeCombo.addItem(messages.getMessage("network_server_function")); //$NON-NLS-1$
 		networkTypeCombo.addItem(messages.getMessage("network_client_function")); //$NON-NLS-1$
@@ -450,7 +452,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 			// Zur Darstellung der gewünschten Einstellungspanels
 			switch (networkTypeCombo.getSelectedIndex()) {
 			case 0: {
-				Debug.info("No network functionality chosen"); //$NON-NLS-1$
+				log.info("No network functionality chosen"); //$NON-NLS-1$
 				mainPanel.removeAll();
 				networkTypeCombo.setSelectedIndex(0);
 				mainPanel.add(networkTypeCombo, BorderLayout.NORTH);
@@ -460,7 +462,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 				break;
 			}
 			case 1: {
-				Debug.info("JFritz as a server chosen"); //$NON-NLS-1$
+				log.info("JFritz as a server chosen"); //$NON-NLS-1$
 				mainPanel.removeAll();
 				mainPanel.add(networkTypeCombo, BorderLayout.NORTH);
 				networkTypeCombo.setSelectedIndex(1);
@@ -472,7 +474,7 @@ public class ConfigPanelNetwork extends JPanel implements ConfigPanel, ActionLis
 				break;
 			}
 			case 2: {
-				Debug.info("JFritz as a client chosen"); //$NON-NLS-1$
+				log.info("JFritz as a client chosen"); //$NON-NLS-1$
 				mainPanel.removeAll();
 				mainPanel.add(networkTypeCombo, BorderLayout.NORTH);
 				networkTypeCombo.setSelectedIndex(2);

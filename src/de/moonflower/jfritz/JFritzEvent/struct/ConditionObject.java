@@ -67,8 +67,8 @@ public class ConditionObject {
 		return messages.getMessage(conditionName);
 	}
 
-	public static JComboBox createComboBox() {
-		JComboBox combo = new JComboBox();
+	public static JComboBox<ConditionObject> createComboBox() {
+		JComboBox<ConditionObject> combo = new JComboBox<ConditionObject>();
 		for ( int i=0; i<conditionNames.length; i++) {
 			combo.addItem(new ConditionObject(i));
 		}

@@ -4,30 +4,30 @@ import com.nexes.wizard.*;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
-import de.moonflower.jfritz.dialogs.config.ConfigPanelFritzBox;
+import de.moonflower.jfritz.dialogs.config.ConfigPanelFritzBoxIP;
 
 /**
  *  @author Brian Jensen
  *
- *  This is the descriptor for the box setings panel
+ *  This is the descriptor for the box settings panel
  *
  *  @see http://java.sun.com/developer/technicalArticles/GUI/swing/wizard/index.html
  *
  */
-public class ConfigPanelFritzBoxDescriptor extends WizardPanelDescriptor{
+public class ConfigPanelFritzBoxIpDescriptor extends WizardPanelDescriptor{
 
-	  public static final String IDENTIFIER = "FRITZBOX_PANEL";
+	  public static final String IDENTIFIER = "FRITZBOX_IP_PANEL";
 
-	  public ConfigPanelFritzBox fritzBoxPanel;
+	  public ConfigPanelFritzBoxIP fritzBoxPanel;
 
-	  public ConfigPanelFritzBoxDescriptor() {
+	  public ConfigPanelFritzBoxIpDescriptor() {
 		  if (JFritz.getBoxCommunication() != null
 				  && JFritz.getBoxCommunication().getBoxCount() > 0
 				  && JFritz.getBoxCommunication().getBox(0) != null) {
-				fritzBoxPanel = new ConfigPanelFritzBox(
+				fritzBoxPanel = new ConfigPanelFritzBoxIP(
 						(FritzBox) JFritz.getBoxCommunication().getBox(0));
 		  } else {
-			  fritzBoxPanel = new ConfigPanelFritzBox(null);
+			  fritzBoxPanel = new ConfigPanelFritzBoxIP(null);
 		  }
 			fritzBoxPanel.loadSettings();
 			setPanelDescriptorIdentifier(IDENTIFIER);
@@ -35,14 +35,19 @@ public class ConfigPanelFritzBoxDescriptor extends WizardPanelDescriptor{
 	    }
 
 	    public Object getNextPanelDescriptor() {
-	        return ConfigPanelMessageDescriptor.IDENTIFIER;
+	        return ConfigPanelFritzBoxLoginDescriptor.IDENTIFIER;
 	    }
 
 	    public Object getBackPanelDescriptor() {
 	        return ConfigPanelPhoneDescriptor.IDENTIFIER;
 	    }
 
-	    public ConfigPanelFritzBox getFritzBoxPanel() {
+	    public ConfigPanelFritzBoxIP getFritzBoxPanel() {
 	    	return fritzBoxPanel;
+	    }
+
+	    @Override
+	    public void aboutToDisplayPanel() {
+	    	fritzBoxPanel.setWizardReference(this.getWizard());
 	    }
 }

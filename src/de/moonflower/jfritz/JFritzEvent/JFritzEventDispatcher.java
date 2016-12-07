@@ -13,6 +13,7 @@ import java.util.PriorityQueue;
 
 import javax.swing.JComboBox;
 
+import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.JDOMParseException;
@@ -31,9 +32,11 @@ import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class JFritzEventDispatcher extends Thread {
+	private final static Logger log = Logger.getLogger(JFritzEventDispatcher.class);
 
 	private static String EVENT_MANAGMENT_FILE_NAME = "jfritz.events.xml";
 
+	@SuppressWarnings("unused")
 	private static PriorityQueue<JFritzEvent> eventQueue = new PriorityQueue<JFritzEvent>();
 
 	private static LinkedList<JFritzEventAction> eventList = new LinkedList<JFritzEventAction>();
@@ -87,20 +90,22 @@ public class JFritzEventDispatcher extends Thread {
 		// TODO In Schleife EventQueue abarbeiten
 	}
 
-	public static JComboBox createEventComboBox() {
-		JComboBox eventComboBox = new JComboBox();
+	public static JComboBox<JFritzEvent> createEventComboBox() {
+		JComboBox<JFritzEvent> eventComboBox = new JComboBox<JFritzEvent>();
 		for (int i = 0; i < registeredEvents.size(); i++) {
-			eventComboBox.addItem(registeredEvents.get(i));
+			JFritzEvent event = registeredEvents.get(i);
+			eventComboBox.addItem(event);
 		}
 		return eventComboBox;
 	}
 
-	public static JComboBox createActionComboBox() {
-		JComboBox actionComboBox = new JComboBox();
+	public static JComboBox<JFritzAction> createActionComboBox() {
+		JComboBox<JFritzAction> actionComboBox = new JComboBox<JFritzAction>();
 		for (int i = 0; i < registeredActions.size(); i++) {
-			actionComboBox.addItem(registeredActions.get(i).clone());
+			JFritzAction action = registeredActions.get(i).clone();
+			actionComboBox.addItem(action);
 		}
-		Debug.debug(actionComboBox.toString());
+		log.debug(actionComboBox.toString());
 		return actionComboBox;
 	}
 
@@ -133,10 +138,14 @@ public class JFritzEventDispatcher extends Thread {
     		Element conditionElement;
     		Element actionElement;
 
-	    	List eventActionElements = rootElement.getChildren("eventaction");
-	    	List eventList;
-	    	List conditionList;
-	    	List actionList;
+	    	@SuppressWarnings("rawtypes")
+			List eventActionElements = rootElement.getChildren("eventaction");
+	    	@SuppressWarnings("rawtypes")
+			List eventList;
+	    	@SuppressWarnings("rawtypes")
+			List conditionList;
+	    	@SuppressWarnings("rawtypes")
+			List actionList;
 
 	    	for ( int i=0; i<eventActionElements.size(); i++)
 	    	{
@@ -156,7 +165,8 @@ public class JFritzEventDispatcher extends Thread {
 	    			eventElement = (Element)eventList.get(j);
 
 	    			// create JFritzEvent
-	    			Class eventClass = getEventFromEventName(eventElement.getAttributeValue("eventname")).getClass();
+	    			@SuppressWarnings("rawtypes")
+					Class eventClass = getEventFromEventName(eventElement.getAttributeValue("eventname")).getClass();
 	    			JFritzEvent eventObject = (JFritzEvent) eventClass.newInstance();
 
 					eventAction.setEvent(eventObject);
@@ -188,7 +198,8 @@ public class JFritzEventDispatcher extends Thread {
 		    			actionElement = (Element)actionList.get(m);
 
 		    			// create JFritzEvent
-		    			Class actionClass = getActionFromActionName(actionElement.getAttributeValue("name")).getClass();
+		    			@SuppressWarnings("rawtypes")
+						Class actionClass = getActionFromActionName(actionElement.getAttributeValue("name")).getClass();
 		    			JFritzAction actionObject = (JFritzAction) actionClass.newInstance();
 		    			actionObject.setDescription(actionElement.getAttributeValue("description"));
 		    			actionObject.loadSettings(actionElement);
@@ -199,8 +210,9 @@ public class JFritzEventDispatcher extends Thread {
 	    	}
 	    } catch (JDOMParseException jdomex ) {
 	    	// FIXME: I18N
-	        Debug.errDlg("Error parsing "+EVENT_MANAGMENT_FILE_NAME +"\n"+
-	        		"Line: " + jdomex.getLineNumber() + " Column: " + jdomex.getColumnNumber());
+	    	String message = "Error parsing "+EVENT_MANAGMENT_FILE_NAME +"\n"+ "Line: " + jdomex.getLineNumber() + " Column: " + jdomex.getColumnNumber();
+	    	log.error(message, jdomex);
+	        Debug.errDlg(message);
 	    } catch( Exception ex ) {
 	        ex.printStackTrace();
 	      }
@@ -208,7 +220,7 @@ public class JFritzEventDispatcher extends Thread {
 
 	public static void saveToXML() {
 		String filename = EVENT_MANAGMENT_FILE_NAME;
-		Debug.info("Saving events to file " + filename); //$NON-NLS-1$
+		log.info("Saving events to file " + filename); //$NON-NLS-1$
 		try {
 			BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(filename), "UTF8")); //$NON-NLS-1$
@@ -267,11 +279,11 @@ public class JFritzEventDispatcher extends Thread {
 			pw.close();
 
 		} catch (UnsupportedEncodingException e) {
-			Debug.error("UTF-8 not supported"); //$NON-NLS-1$
+			log.error("UTF-8 not supported"); //$NON-NLS-1$
 		} catch (FileNotFoundException e) {
-			Debug.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		} catch (IOException e) {
-			Debug.error("IOException " + filename); //$NON-NLS-1$
+			log.error("IOException " + filename); //$NON-NLS-1$
 		}
 
 	}

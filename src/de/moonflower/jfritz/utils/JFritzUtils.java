@@ -5,15 +5,6 @@
  */
 package de.moonflower.jfritz.utils;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.NoRouteToHostException;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -23,7 +14,6 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
-import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.properties.PropertyProvider;
 
 /**
@@ -36,7 +26,6 @@ import de.moonflower.jfritz.properties.PropertyProvider;
 public class JFritzUtils {
 	private static final Logger log = Logger.getLogger(JFritzUtils.class);
 
-	private static final int READ_TIMEOUT = 30000; //$NON-NLS-1$
 	public static final String FILESEP = System.getProperty("file.separator"); //$NON-NLS-1$
 	public static final String PATHSEP = System.getProperty("path.separator"); //$NON-NLS-1$
 	public static final String binID = FILESEP + "jfritz.jar"; //$NON-NLS-1$
@@ -48,217 +37,8 @@ public class JFritzUtils {
 	 */
 	public static final String langID = FILESEP + "lang";
 
-	private final static String PATTERN_WAIT_FOR_X_SECONDS = "var loginBlocked = parseInt\\(\"([^\"]*)\",10\\);";
-
 	protected static PropertyProvider properties = PropertyProvider.getInstance();
-
-	/**
-	 * fetches html data from url using POST requests in one single return
-	 * String
-	 *
-	 * @param affectedBox
-	 * @param urlstr
-	 * @param postdata
-	 * @return html data
-	 * @throws WrongPasswordException
-	 * @throws IOException
-	 */
-	public static String fetchDataFromURLToString(String affectedBox,
-			String urlstr, String postdata, boolean retrieveData)
-			throws WrongPasswordException, SocketTimeoutException, IOException {
-		URL url = null;
-		URLConnection urlConn;
-		DataOutputStream printout;
-		String data = ""; //$NON-NLS-1$
-		boolean wrong_pass = false;
-		log.debug("Urlstr: " + urlstr);
-		log.debug("Postdata: " + postdata);
-
-		try {
-			url = new URL(urlstr);
-		} catch (MalformedURLException e) {
-			log.error("URL invalid: " + urlstr); //$NON-NLS-1$
-			throw new MalformedURLException("URL invalid: " + urlstr); //$NON-NLS-1$
-		}
-
-		if (url != null) {
-			urlConn = url.openConnection();
-			// 5 Sekunden-Timeout für Verbindungsaufbau
-			urlConn.setConnectTimeout(5000);
-			urlConn.setReadTimeout(READ_TIMEOUT);
-
-			urlConn.setDoInput(true);
-			urlConn.setDoOutput(true);
-			urlConn.setUseCaches(false);
-			// Sending postdata
-			if (postdata != null) {
-				urlConn.setRequestProperty("Content-Type", //$NON-NLS-1$
-						"application/x-www-form-urlencoded"); //$NON-NLS-1$
-				try {
-					printout = new DataOutputStream(urlConn.getOutputStream());
-					printout.writeBytes(postdata);
-					printout.flush();
-					printout.close();
-				} catch (SocketTimeoutException ste) {
-					log.error("Could not fetch data from url: "
-							+ ste.toString());
-					throw ste;
-				}
-			}
-
-			BufferedReader d;
-
-			try {
-				// Get response data
-				d = new BufferedReader(new InputStreamReader(urlConn
-						.getInputStream()));
-				String str;
-				while (null != ((str = HTMLUtil.stripEntities(d.readLine())))) {
-					// Password seems to be wrong
-					if ((str.indexOf("Das angegebene Kennwort ist ungültig") >= 0) //$NON-NLS-1$
-							|| (str.indexOf("Password not valid") >= 0)
-							|| (str.indexOf("<!--loginPage-->") >= 0)
-							|| (str.indexOf("FRITZ!Box Anmeldung") >= 0)) {
-						log.debug("Wrong password detected: " + str);
-						wrong_pass = true;
-					}
-					if (retrieveData) {
-						data += str;
-					}
-				}
-				d.close();
-			} catch (IOException e1) {
-				throw new IOException("Network unavailable"); //$NON-NLS-1$
-			}
-
-			if (wrong_pass) {
-				int wait = 3;
-				Pattern waitSeconds = Pattern
-						.compile(PATTERN_WAIT_FOR_X_SECONDS);
-				Matcher m = waitSeconds.matcher(data);
-				if (m.find()) {
-					try {
-						wait = Integer.parseInt(m.group(1));
-					} catch (NumberFormatException nfe) {
-						wait = 3;
-					}
-				}
-
-				throw new WrongPasswordException(affectedBox,
-						"Password invalid", wait + 2); //$NON-NLS-1$
-			}
-		}
-		return data;
-	}
-
-	/**
-	 * fetches html data from url using POST requests in one single return
-	 * String
-	 *
-	 * @param affectedBox
-	 * @param urlstr
-	 * @param postdata
-	 * @return html data
-	 * @throws WrongPasswordException
-	 * @throws IOException
-	 */
-	public static Vector<String> fetchDataFromURLToVector(String affectedBox,
-			String urlstr, String postdata, boolean retrieveData)
-			throws WrongPasswordException, SocketTimeoutException, IOException {
-		URL url = null;
-		URLConnection urlConn;
-		DataOutputStream printout;
-		Vector<String> data = new Vector<String>();
-		boolean wrong_pass = false;
-		log.debug("Urlstr: " + urlstr);
-		log.debug("Postdata: " + postdata);
-
-		try {
-			url = new URL(urlstr);
-		} catch (MalformedURLException e) {
-			log.error("URL invalid: " + urlstr); //$NON-NLS-1$
-			throw new MalformedURLException("URL invalid: " + urlstr); //$NON-NLS-1$
-		}
-
-		if (url != null) {
-			urlConn = url.openConnection();
-			// 5 Sekunden-Timeout für Verbindungsaufbau
-			urlConn.setConnectTimeout(5000);
-			urlConn.setReadTimeout(READ_TIMEOUT);
-
-			urlConn.setDoInput(true);
-			urlConn.setDoOutput(true);
-			urlConn.setUseCaches(false);
-			// Sending postdata
-			if (postdata != null) {
-				urlConn.setRequestProperty("Content-Type", //$NON-NLS-1$
-						"application/x-www-form-urlencoded"); //$NON-NLS-1$
-				try {
-					printout = new DataOutputStream(urlConn.getOutputStream());
-					printout.writeBytes(postdata);
-					printout.flush();
-					printout.close();
-				} catch (SocketTimeoutException ste) {
-					log.error("Could not fetch data from url: "
-							+ ste.toString());
-					throw ste;
-				} catch (NoRouteToHostException nrthe) {
-					log.error("No route to host exception: "
-							+ nrthe.toString());
-					throw nrthe;
-				}
-			}
-
-			BufferedReader d;
-
-			try {
-				// Get response data
-				d = new BufferedReader(new InputStreamReader(urlConn
-						.getInputStream(), "UTF8"));
-				String str;
-				while (null != ((str = HTMLUtil.stripEntities(d.readLine())))) {
-					// Password seems to be wrong
-					if ((str.indexOf("Das angegebene Kennwort ist ungültig") >= 0) //$NON-NLS-1$
-							|| (str.indexOf("Password not valid") >= 0)
-							|| (str.indexOf("<!--loginPage-->") >= 0)
-							|| (str.indexOf("FRITZ!Box Anmeldung") >= 0)) {
-						log.debug("Wrong password detected: " + str);
-						wrong_pass = true;
-					}
-					if (retrieveData) {
-						data.add(str);
-					}
-				}
-				d.close();
-			} catch (IOException e1) {
-				throw new IOException("Network unavailable"); //$NON-NLS-1$
-			}
-
-			if (wrong_pass) {
-				int wait = 3;
-				Pattern waitSeconds = Pattern
-						.compile(PATTERN_WAIT_FOR_X_SECONDS);
-				for (int i = 0; i < data.size(); i++) {
-					Matcher m = waitSeconds.matcher(data.get(i));
-					if (m.find()) {
-						log.debug("Waiting string: " + data.get(i));
-						try {
-							wait = Integer.parseInt(m.group(1));
-							break;
-						} catch (Exception e) {
-							log.error(e.toString());
-							wait = 4;
-						}
-					}
-				}
-
-				throw new WrongPasswordException(affectedBox,
-						"Password invalid", wait + 2); //$NON-NLS-1$
-			}
-		}
-		return data;
-	}
-
+	
 	/**
 	 * removes all duplicate whitespaces from inputStr
 	 *

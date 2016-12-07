@@ -7,18 +7,28 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import de.moonflower.jfritz.callerlist.filter.*;
-import de.moonflower.jfritz.network.ClientLoginsTableModel;
-import de.moonflower.jfritz.network.Login;
-import de.moonflower.jfritz.utils.Debug;
+import de.moonflower.jfritz.callerlist.filter.AnonymFilter;
+import de.moonflower.jfritz.callerlist.filter.CallByCallFilter;
+import de.moonflower.jfritz.callerlist.filter.CallFilter;
+import de.moonflower.jfritz.callerlist.filter.CallInFailedFilter;
+import de.moonflower.jfritz.callerlist.filter.CallInFilter;
+import de.moonflower.jfritz.callerlist.filter.CallOutFilter;
+import de.moonflower.jfritz.callerlist.filter.CommentFilter;
+import de.moonflower.jfritz.callerlist.filter.DateFilter;
+import de.moonflower.jfritz.callerlist.filter.FixedFilter;
+import de.moonflower.jfritz.callerlist.filter.HandyFilter;
+import de.moonflower.jfritz.callerlist.filter.SearchFilter;
+import de.moonflower.jfritz.callerlist.filter.SipFilter;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class ClientLoginsXMLHandler extends DefaultHandler{
+	private final static Logger log = Logger.getLogger(ClientLoginsXMLHandler.class);
 
 	String chars, username, password, type, cbcProviders, sip, dateSpecial,
 			start, end, text;
@@ -316,7 +326,7 @@ public class ClientLoginsXMLHandler extends DefaultHandler{
 							callFilters.add(df);
 
 						} catch (ParseException error) {
-							Debug.error("error parsing date while loading dates from client settings "
+							log.error("error parsing date while loading dates from client settings "
 											+ error.toString());
 						}
 
@@ -376,7 +386,7 @@ public class ClientLoginsXMLHandler extends DefaultHandler{
 					allowPhoneBookRemove, allowCallMonitor, allowLookup, allowGetCallList,
 					allowDeleteList, allowDoCall, callFilters, "");
 			ClientLoginsTableModel.addLogin(login);
-			Debug.netMsg("Adding client login: "+username+" with "+ callFilters.size()+" Filters");
+			log.info("NETWORKING: Adding client login: "+username+" with "+ callFilters.size()+" Filters");
 		}
 	}
 

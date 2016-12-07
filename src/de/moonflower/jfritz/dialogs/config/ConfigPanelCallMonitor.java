@@ -16,30 +16,36 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.callmonitor.CallMonitorStatusListener;
-import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
-import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
+import de.robotniko.fboxlib.exceptions.FirmwareNotDetectedException;
+import de.robotniko.fboxlib.exceptions.PageNotFoundException;
 
 public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 		ConfigPanel {
+	private final static Logger log = Logger.getLogger(ConfigPanelCallMonitor.class);
 
 	private static final long serialVersionUID = 7267124419351267208L;
 
-	private JComboBox callMonitorCombo;
+	private JComboBox<String> callMonitorCombo;
 
 	private JCheckBox callMonitorAfterStartButton, soundButton,
 			externProgramCheckBox;
 
+	private JLabel externProgramArgsLabel, externProgramLabel;
 	private JTextField externProgramTextField;
+	private JTextField externProgramArgsTextField;
 
 	private JToggleButton startStopCallMonitorButton;
 
@@ -49,7 +55,7 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 
 	private boolean showButtons;
 
-	private ConfigPanelFritzBox fritzBoxPanel;
+	private ConfigPanelFritzBoxIP fritzBoxPanel;
 
 	private String configPath;
 
@@ -61,7 +67,7 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public ConfigPanelCallMonitor(JDialog parent, boolean showButtons,
-								  ConfigPanelFritzBox fritzBoxPanel,
+								  ConfigPanelFritzBoxIP fritzBoxPanel,
 								  Vector<CallMonitorStatusListener> listener) {
 		this.parent = parent;
 		this.showButtons = showButtons;
@@ -70,7 +76,7 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
-		callMonitorCombo = new JComboBox();
+		callMonitorCombo = new JComboBox<String>();
 		callMonitorCombo.addItem(messages.getMessage("no_call_monitor")); //$NON-NLS-1$
 		callMonitorCombo.addItem(messages.getMessage("fritz_call_monitor")); //$NON-NLS-1$
 		callMonitorCombo.addItem(messages.getMessage("yac_call_monitor")); //$NON-NLS-1$
@@ -101,16 +107,43 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 		pane.add(soundButton, c);
 
 		externProgramCheckBox = new JCheckBox(messages.getMessage("run_external_program")); //$NON-NLS-1$
+		externProgramCheckBox.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				updateExternalProgramUI();
+			}			
+		});
 		c.gridy = 3;
 		pane.add(externProgramCheckBox, c);
 
+		externProgramLabel = new JLabel("          " + messages.getMessage("external_program"));
+		c.gridx = 0;
+		c.gridy = 4;
+		c.gridwidth = 1;
+		pane.add(externProgramLabel, c);
+		
 		externProgramTextField = new JTextField("", 40); //$NON-NLS-1$
 		externProgramTextField.setMinimumSize(new Dimension(300, 20));
+		c.gridx = 1;
 		c.gridy = 4;
+		c.gridwidth = 1;
 		pane.add(externProgramTextField, c);
 
+		externProgramArgsLabel = new JLabel("          " + messages.getMessage("external_program_args"));
 		c.gridx = 0;
 		c.gridy = 5;
+		c.gridwidth = 1;
+		pane.add(externProgramArgsLabel, c);
+
+		externProgramArgsTextField = new JTextField("", 40); //$NON-NLS-1$
+		externProgramArgsTextField.setMinimumSize(new Dimension(300, 20));
+		c.gridx = 1;
+		c.gridy = 5;
+		pane.add(externProgramArgsTextField, c);
+
+		c.gridx = 0;
+		c.gridy = 6;
 		c.gridwidth = 1;
 		startStopCallMonitorButton = new JToggleButton();
 		startStopCallMonitorButton.setActionCommand("startStopCallMonitor"); //$NON-NLS-1$
@@ -119,7 +152,7 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 		pane.add(startStopCallMonitorButton, c);
 
 		c.gridx = 1;
-		c.gridy = 5;
+		c.gridy = 6;
 		callMonitorOptionsButton = new JButton(messages.getMessage("config")); //$NON-NLS-1$
 		callMonitorOptionsButton.setActionCommand("startCallMonitorOptions"); //$NON-NLS-1$
 		callMonitorOptionsButton.addActionListener(this);
@@ -159,7 +192,10 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 				.getProperty("option.startExternProgram"))); //$NON-NLS-1$,  //$NON-NLS-2$
 		externProgramTextField.setText(JFritzUtils.deconvertSpecialChars(properties
 				.getProperty("option.externProgram"))); //$NON-NLS-1$,  //$NON-NLS-2$
-
+		externProgramArgsTextField.setText(JFritzUtils.deconvertSpecialChars(properties
+				.getProperty("option.externProgramArgs"))); //$NON-NLS-1$,  //$NON-NLS-2$
+		
+		updateExternalProgramUI();
 		loadingSettingsDone = true;
 	}
 
@@ -171,6 +207,8 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 				.toString(externProgramCheckBox.isSelected()));
 		properties.setProperty("option.externProgram", JFritzUtils //$NON-NLS-1$
 				.convertSpecialChars(externProgramTextField.getText()));
+		properties.setProperty("option.externProgramArgs", JFritzUtils //$NON-NLS-1$
+				.convertSpecialChars(externProgramArgsTextField.getText()));
 
 
 		properties.setProperty("option.callMonitorType", String //$NON-NLS-1$
@@ -180,15 +218,6 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 				.toString(callMonitorAfterStartButton.isSelected()));
 		properties.setProperty("option.callMonitorType", String //$NON-NLS-1$
 				.valueOf(callMonitorCombo.getSelectedIndex()));
-
-
-		properties.setProperty("option.playSounds", Boolean.toString(soundButton //$NON-NLS-1$
-				.isSelected()));
-
-		properties.setProperty("option.startExternProgram", Boolean //$NON-NLS-1$
-				.toString(externProgramCheckBox.isSelected()));
-		properties.setProperty("option.externProgram",  //$NON-NLS-1$
-				JFritzUtils.convertSpecialChars(externProgramTextField.getText()));
 	}
 
 	private void hideCallMonitorPanel() {
@@ -197,7 +226,10 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 		callMonitorAfterStartButton.setVisible(false);
 		soundButton.setVisible(false);
 		externProgramCheckBox.setVisible(false);
+		externProgramLabel.setVisible(false);
 		externProgramTextField.setVisible(false);
+		externProgramArgsLabel.setVisible(false);
+		externProgramArgsTextField.setVisible(false);
 		repaint();
 	}
 
@@ -207,7 +239,10 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 		callMonitorAfterStartButton.setVisible(true);
 		soundButton.setVisible(true);
 		externProgramCheckBox.setVisible(true);
+		externProgramLabel.setVisible(true);
 		externProgramTextField.setVisible(true);
+		externProgramArgsLabel.setVisible(true);
+		externProgramArgsTextField.setVisible(true);
 		repaint();
 	}
 
@@ -226,25 +261,25 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 			switch (callMonitorCombo.getSelectedIndex()) {
 			case 0: {
 				hideCallMonitorPanel();
-				Debug.info("Call monitor not wanted"); //$NON-NLS-1$
+				log.info("Call monitor not wanted"); //$NON-NLS-1$
 				stopAllCallMonitors();
 				break;
 			}
 			case 1: {
 				showCallMonitorPanel();
-				Debug.info("FRITZ!Box call monitor chosen"); //$NON-NLS-1$
+				log.info("FRITZ!Box call monitor chosen"); //$NON-NLS-1$
 				stopAllCallMonitors();
 				break;
 			}
 			case 2: {
 				showCallMonitorPanel();
-				Debug.info("YAC call monitor chosen"); //$NON-NLS-1$
+				log.info("YAC call monitor chosen"); //$NON-NLS-1$
 				stopAllCallMonitors();
 				break;
 			}
 			case 3: {
 				showCallMonitorPanel();
-				Debug.info("Callmessage call monitor chosen"); //$NON-NLS-1$
+				log.info("Callmessage call monitor chosen"); //$NON-NLS-1$
 
 				break;
 			}
@@ -259,15 +294,24 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 			try {
 				c.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 				fritzBoxPanel.detectBoxType();
+				if (fritzBoxPanel.getFritzBox().getFirmware() != null) {
+					// TODO login using settings!
+				}
 				this.startStopCallMonitor();
-			} catch (WrongPasswordException e1) {
-				Debug.errDlg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
-				startStopCallMonitorButton.setSelected(!startStopCallMonitorButton.isSelected());
 			} catch (IOException e1) {
-				Debug.errDlg(messages.getMessage("box.not_found")); //$NON-NLS-1$
+				String message = messages.getMessage("box.not_found"); //$NON-NLS-1$
+				log.error(message, e1);
+				Debug.errDlg(message); 
 				startStopCallMonitorButton.setSelected(!startStopCallMonitorButton.isSelected());
-			} catch (InvalidFirmwareException e1) {
-				Debug.errDlg(messages.getMessage("unknown_firmware")); //$NON-NLS-1$
+			} catch (PageNotFoundException e1) {
+				String message = messages.getMessage("box.communication_error"); //$NON-NLS-1$
+				log.error(message, e1);
+				Debug.errDlg(message); 
+				startStopCallMonitorButton.setSelected(!startStopCallMonitorButton.isSelected());
+			} catch (FirmwareNotDetectedException e1) {
+				String message = messages.getMessage("unknown_firmware"); //$NON-NLS-1$
+				log.error(message, e1);
+				Debug.errDlg(message); 
 				startStopCallMonitorButton.setSelected(!startStopCallMonitorButton.isSelected());
 			}
 			c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -362,4 +406,13 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 		return false;
 	}
 
+	private void updateExternalProgramUI() {
+		if (externProgramCheckBox.isSelected()) {
+			externProgramTextField.setEnabled(true);
+			externProgramArgsTextField.setEnabled(true);
+		} else {
+			externProgramTextField.setEnabled(false);
+			externProgramArgsTextField.setEnabled(false);
+		}
+	}
 }

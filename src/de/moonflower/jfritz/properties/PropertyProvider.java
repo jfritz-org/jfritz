@@ -8,17 +8,20 @@ import java.util.Vector;
 
 import javax.swing.UIManager;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.JFritzDataDirectory;
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.callerlist.CallerTable;
 import de.moonflower.jfritz.callerlist.filter.CallFilter;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzProperties;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.threeStateButton.ThreeStateButton;
 
 public class PropertyProvider {
+	private final static Logger log = Logger.getLogger(PropertyProvider.class);
+	
 	private final static String CONFIG_PROPERTIES_FILE = "jfritz.properties.xml"; //$NON-NLS-1$
 	private final static String STATE_PROPERTIES_FILE = "jfritz.state.properties.xml"; //$NON-NLS-1$
 
@@ -43,14 +46,14 @@ public class PropertyProvider {
 			config_properties.loadFromXML(JFritzDataDirectory.getInstance().getDataDirectory() + CONFIG_PROPERTIES_FILE);
 			showConfWizard = "".equals(config_properties.getProperty("box.address"));
 			if (showConfWizard) {
-				Debug.warning("box.address is empty => showing config wizard"); //$NON-NLS-1$
+				log.warn("box.address is empty => showing config wizard"); //$NON-NLS-1$
 			}
 		} catch (FileNotFoundException e) {
-			Debug.warning("File " + JFritzDataDirectory.getInstance().getDataDirectory() + CONFIG_PROPERTIES_FILE //$NON-NLS-1$
+			log.warn("File " + JFritzDataDirectory.getInstance().getDataDirectory() + CONFIG_PROPERTIES_FILE //$NON-NLS-1$
 					+ " not found => showing config wizard"); //$NON-NLS-1$
 			showConfWizard = true;
 		} catch (IOException ioe) {
-			Debug.warning("File " + JFritzDataDirectory.getInstance().getDataDirectory() + CONFIG_PROPERTIES_FILE //$NON-NLS-1$
+			log.warn("File " + JFritzDataDirectory.getInstance().getDataDirectory() + CONFIG_PROPERTIES_FILE //$NON-NLS-1$
 					+ " not readable => showing config wizard"); //$NON-NLS-1$
 			showConfWizard = true;
 		}
@@ -59,10 +62,10 @@ public class PropertyProvider {
 		try {
 			state_properties.loadFromXML(JFritzDataDirectory.getInstance().getDataDirectory() + STATE_PROPERTIES_FILE);
 		} catch (FileNotFoundException e) {
-			Debug.warning("File " + JFritzDataDirectory.getInstance().getDataDirectory() + STATE_PROPERTIES_FILE //$NON-NLS-1$
+			log.warn("File " + JFritzDataDirectory.getInstance().getDataDirectory() + STATE_PROPERTIES_FILE //$NON-NLS-1$
 					+ " not found. Using default values."); //$NON-NLS-1$
 		} catch (IOException ioe) {
-			Debug.warning("File " + JFritzDataDirectory.getInstance().getDataDirectory() + STATE_PROPERTIES_FILE //$NON-NLS-1$
+			log.warn("File " + JFritzDataDirectory.getInstance().getDataDirectory() + STATE_PROPERTIES_FILE //$NON-NLS-1$
 					+ " not readable. Using default values."); //$NON-NLS-1$
 		}
 
@@ -86,6 +89,9 @@ public class PropertyProvider {
 		defProps.setProperty("backup.path", ".");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("box.address", "");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("box.mac", "");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("box.serial", "");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("box.loginUsingUsername", "false");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("box.username", "");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("box.password", "121-203-238-10-54-180-181-42");//$NON-NLS-1$, //$NON-NLS-2$ // empty string as default PW
 		defProps.setProperty("box.port", "80");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("clients.port", "4455");//$NON-NLS-1$, //$NON-NLS-2$
@@ -123,6 +129,7 @@ public class PropertyProvider {
 		defProps.setProperty("option.deleteAfterFetch", "false");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.externProgram", "");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.fetchAfterStart", "true");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("option.lastupdatetimestamp", "0");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.listenOnStartup", "false");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.lookupAfterFetch", "true");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("option.minimize", "false");//$NON-NLS-1$, //$NON-NLS-2$
@@ -365,6 +372,23 @@ public class PropertyProvider {
 
 		config_properties.remove("telnet.user");
 		config_properties.remove("telnet.password");
+		
+		if (config_properties.getProperty("option.externProgramArgs") == null) {
+			// we don't have a separate external program arguments option, convert the old option.externProgram into separate options for program and arguments
+			if (config_properties.getProperty("option.externProgram") != null) {
+				String[] result = splitExternalProgramAndArguments(config_properties.getProperty("option.externProgram"));
+				if (result.length == 2) {
+					config_properties.setProperty("option.externProgram", result[0]);
+					config_properties.setProperty("option.externProgramArgs", result[1]);
+				} else if (result.length == 1) {
+					config_properties.setProperty("option.externProgram", result[0]);
+					config_properties.setProperty("option.externProgramArgs", "");
+				} else {
+					config_properties.setProperty("option.externProgram", "");
+					config_properties.setProperty("option.externProgramArgs", "");
+				}
+			}
+		}
 
 		// no startup password set yet
 		if (config_properties.getProperty("option.syslogEnabled") == null)
@@ -431,6 +455,36 @@ public class PropertyProvider {
 		saveConfigProperties();
 	}
 
+	private String[] splitExternalProgramAndArguments(final String input) {
+		if (input == null) {
+			return null;
+		}
+
+		String[] result = new String[2];
+
+		String in = input.trim();
+		if (in.startsWith("\"")) {
+			int nextQuote = in.indexOf("\"", 1);
+			if (nextQuote != -1) {
+				result[0] = in.substring(0, nextQuote+1);
+				result[1] = in.substring(nextQuote+1).trim();
+			} else {
+				result[0] = in;
+				result[1] = "";
+			}
+		} else {
+			int firstSpace = in.indexOf(" ");
+			if (firstSpace != -1) {
+				result[0] = in.substring(0, firstSpace);
+				result[1] = in.substring(firstSpace+1);
+			} else {
+				result[0] = in;
+				result[1] = "";
+			}
+		}
+		return result;
+	}
+	
 	/**
 	 * Get config properties with default value
 	 * @param property
@@ -453,10 +507,10 @@ public class PropertyProvider {
 	 */
 	public void saveConfigProperties() {
 		try {
-			Debug.always("Save config properties"); //$NON-NLS-1$
+			log.info("Save config properties"); //$NON-NLS-1$
 			config_properties.storeToXML(JFritzDataDirectory.getInstance().getDataDirectory() + CONFIG_PROPERTIES_FILE);
 		} catch (IOException e) {
-			Debug.error("Couldn't save config properties"); //$NON-NLS-1$
+			log.error("Couldn't save config properties"); //$NON-NLS-1$
 		}
 	}
 
@@ -466,10 +520,10 @@ public class PropertyProvider {
 	 */
 	public void saveStateProperties() {
 		try {
-			Debug.always("Save state properties"); //$NON-NLS-1$
+			log.info("Save state properties"); //$NON-NLS-1$
 			state_properties.storeToXML(JFritzDataDirectory.getInstance().getDataDirectory() + STATE_PROPERTIES_FILE);
 		} catch (IOException e) {
-			Debug.error("Couldn't save state properties"); //$NON-NLS-1$
+			log.error("Couldn't save state properties"); //$NON-NLS-1$
 		}
 	}
 

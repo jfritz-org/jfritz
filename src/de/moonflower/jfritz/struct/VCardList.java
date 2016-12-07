@@ -11,7 +11,7 @@ import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import de.moonflower.jfritz.utils.Debug;
+import org.apache.log4j.Logger;
 
 /**
  * Support for VCard-List. Save list to file.
@@ -22,6 +22,7 @@ import de.moonflower.jfritz.utils.Debug;
 
 
 public class VCardList {
+	private final static Logger log = Logger.getLogger(VCardList.class);
 
 	Vector<Person> list;
 
@@ -71,7 +72,7 @@ public class VCardList {
 			pw.println(toVCardList());
 			pw.close();
 		} catch (FileNotFoundException e) {
-			Debug.error("Could not write " + file.getName() + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.error("Could not write " + file.getName() + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 

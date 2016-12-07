@@ -71,7 +71,9 @@ public class JFritzBackup {
     	if ((sourceDirectory != null)
 			&& (sourceDirectory.equals(dest)))
     	{
-    		Debug.errDlg(messages.getMessage("backup_to_source_directory"));
+    		String message = messages.getMessage("backup_to_source_directory");
+    		log.error(message);
+    		Debug.errDlg(message);
     		return;
     	}
 
@@ -79,8 +81,9 @@ public class JFritzBackup {
 			FileUtils.copyDirectory(new File(sourceDirectory), new File(dest), new MyFileFilter("xml"));
 			log.info("Created backup successfully");
 		} catch (IOException e) {
-			log.error("Error while creating backup", e);
-			Debug.errDlg("Error while creating backup");
+			String message = "Error while creating backup";
+			log.error(message, e);
+			Debug.errDlg(message);
 		}
 	}
 
@@ -99,7 +102,7 @@ public class JFritzBackup {
 						backupDates.add(date);
 						return true;
 					} catch (ParseException e) {
-						Debug.warning("Directory '"+arg0.getAbsolutePath()+"' is not a valid backup directory!");
+						log.warn("Directory '"+arg0.getAbsolutePath()+"' is not a valid backup directory!");
 					}
             	}
                 return false;

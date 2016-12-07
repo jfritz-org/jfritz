@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.messages.MessageProvider;
@@ -12,7 +14,6 @@ import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
@@ -23,6 +24,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  */
 
 public class FBoxCallMonitorV1 extends FBoxCallMonitor {
+	private Logger log = Logger.getLogger(FBoxCallMonitorV1.class);
 
 	private boolean connected = false;
 	protected PropertyProvider properties = PropertyProvider.getInstance();
@@ -30,7 +32,7 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
 
     public FBoxCallMonitorV1(FritzBox fritzBox, Vector<CallMonitorStatusListener> stateListener, boolean shouldConnect) {
     	super(fritzBox, stateListener, shouldConnect);
-        Debug.info("FBoxListener V1"); //$NON-NLS-1$
+        log.info("(CM1) FBoxListener V1"); //$NON-NLS-1$
     }
 
     public void run() {
@@ -44,13 +46,13 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
     }
 
     protected void parseOutput(String line) {
-        Debug.debug("Server: " + line); //$NON-NLS-1$
+        log.debug("(CM1) Server: " + line); //$NON-NLS-1$
         String number = ""; //$NON-NLS-1$
         String provider = ""; //$NON-NLS-1$
         String[] split;
         split = line.split(";", 7); //$NON-NLS-1$
         for (int i = 0; i < split.length; i++) {
-            Debug.debug("Split[" + i + "] = " + split[i]); //$NON-NLS-1$,  //$NON-NLS-2$
+            log.debug("(CM1) Split[" + i + "] = " + split[i]); //$NON-NLS-1$,  //$NON-NLS-2$
         }
 
         boolean monitortableIncomingCalls = JFritzUtils.parseBoolean(properties.getProperty("option.callmonitor.monitorTableIncomingCalls"));
@@ -91,13 +93,13 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
             	}
             } catch (NumberFormatException nfe)
             {
-            	Debug.warning("Provider '" + provider + "' is not a number");
+            	log.warn("(CM1) Provider '" + provider + "' is not a number");
             }
 
             try {
                 Call currentCall = new Call(CallType.CALLIN,
                         new SimpleDateFormat("dd.MM.yy HH:mm:ss")
-                                .parse(split[0]), new PhoneNumberOld(number, false),
+                                .parse(split[0]), new PhoneNumberOld(this.properties, number, false),
                                 new Port(0, "", "-1", "-1"), provider, 0);
                 JFritz.getCallMonitorList().addNewCall(
                         Integer.parseInt(split[2]), currentCall);
@@ -128,13 +130,16 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
             	}
             } catch (NumberFormatException nfe)
             {
-            	Debug.warning("Provider '" + provider + "' is not a number");
+            	log.warn("(CM1) Provider '" + provider + "' is not a number");
             }
 
             Port port = null;
             try {
             	int portId = Integer.parseInt(split[3]);
             	port = fritzBox.getConfiguredPort(portId);
+				if (port == null) { // Fallback auf statisch konfigurierte Ports
+					port = Port.getPort(portId);
+				}
             } catch (NumberFormatException nfe)
             {
             	port = new Port(0, "", "-1", "-1");
@@ -143,28 +148,21 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
                 Call currentCall = new Call(CallType.CALLOUT,
                         new SimpleDateFormat("dd.MM.yy HH:mm:ss")
                                 .parse(split[0]),
-                                new PhoneNumberOld(number, JFritzUtils.parseBoolean(properties.getProperty("option.activateDialPrefix"))),
+                                new PhoneNumberOld(this.properties, number, JFritzUtils.parseBoolean(properties.getProperty("option.activateDialPrefix"))),
                                 port, provider, 0);
                 JFritz.getCallMonitorList().addNewCall(
                         Integer.parseInt(split[2]), currentCall);
             } catch (ParseException e) {
-                Debug.error("FBoxListenerV1: Could not convert call" + e);
+                log.error("(CM1) FBoxListenerV1: Could not convert call" + e);
             }
         } else if (split[1].equals("DISCONNECT")) { //$NON-NLS-1$
-            try {
-                int callId = Integer.parseInt(split[2]);
-                Call call = JFritz.getCallMonitorList().getCall(callId);
-                if (call != null) {
-                    call.setDuration(Integer.parseInt(split[3]));
-                    JFritz.getCallMonitorList().removeCall(
-                            Integer.parseInt(split[2]), call);
-                    Thread.sleep(zufallszahl.nextInt(3000));
-                }
-            } catch (InterruptedException e) {
-                Debug.error(e.toString());
-	        	Thread.currentThread().interrupt();
+            int callId = Integer.parseInt(split[2]);
+            Call call = JFritz.getCallMonitorList().getCall(callId);
+            if (call != null) {
+                call.setDuration(Integer.parseInt(split[3]));
+                JFritz.getCallMonitorList().removeCall(
+                        Integer.parseInt(split[2]), call);
             }
-
         } else if (split[1].equals("CONNECT")) {
             int callId = Integer.parseInt(split[2]);
 
@@ -172,6 +170,9 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
             try {
             	int portId = Integer.parseInt(split[3]);
             	port = fritzBox.getConfiguredPort(portId);
+				if (port == null) { // Fallback auf statisch konfigurierte Ports
+					port = Port.getPort(portId);
+				}
             } catch (NumberFormatException nfe)
             {
             	port = new Port(0, "", "-1", "-1");
@@ -184,7 +185,7 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
                 number = number.substring(0, number.length() - 1);
 
             Call call = JFritz.getCallMonitorList().getCall(callId);
-            PhoneNumberOld pn = new PhoneNumberOld(number, false);
+            PhoneNumberOld pn = new PhoneNumberOld(this.properties, number, false);
             if (pn.getIntNumber().equals(call.getPhoneNumber().getIntNumber())
         		|| pn.getIntNumber().equals(properties.getProperty("dial.prefix")+call.getPhoneNumber().getIntNumber())) {
                 try {

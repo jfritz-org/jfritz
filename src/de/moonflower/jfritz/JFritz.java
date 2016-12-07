@@ -16,6 +16,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import jd.nutils.OSDetector;
+
+import org.apache.http.auth.InvalidCredentialsException;
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.backup.JFritzBackup;
 import de.moonflower.jfritz.box.BoxCommunication;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
@@ -29,6 +33,7 @@ import de.moonflower.jfritz.dialogs.simple.MessageDlg;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.messages.UpdateMessageProvider;
 import de.moonflower.jfritz.network.ClientLoginsTableModel;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.phonebook.PhoneBook;
@@ -38,17 +43,20 @@ import de.moonflower.jfritz.sounds.SoundProvider;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.tray.JFritzTray;
 import de.moonflower.jfritz.tray.Tray;
-import de.moonflower.jfritz.utils.ComplexJOptionPaneMessage;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.StatusListener;
 import de.moonflower.jfritz.utils.reverselookup.JFritzReverseLookup;
+import de.robotniko.fboxlib.exceptions.LoginBlockedException;
+import de.robotniko.fboxlib.exceptions.PageNotFoundException;
 
 /**
  *
  */
 public final class JFritz implements  StatusListener {
+	private final static Logger log = Logger.getLogger(JFritz.class);
+
 	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/wiki/Kategorie:Hilfe"; //$NON-NLS-1$
 
 	public final static String CALLS_FILE = "jfritz.calls.xml"; //$NON-NLS-1$
@@ -91,6 +99,7 @@ public final class JFritz implements  StatusListener {
 
 	protected PropertyProvider properties = PropertyProvider.getInstance();
 	protected MessageProvider messages = MessageProvider.getInstance();
+	protected UpdateMessageProvider updateMessages = UpdateMessageProvider.getInstance();
 
 	/**
 	 * Constructs JFritz object
@@ -132,7 +141,6 @@ public final class JFritz implements  StatusListener {
 		//otherwise it will cause ui problems on the mac
 		//stupid concept really, but it has to be done
 		Debug.generatePanel();
-
 	}
 
 	public void initNumbers()
@@ -143,81 +151,26 @@ public final class JFritz implements  StatusListener {
 
 	public int initFritzBox() throws WrongPasswordException, InvalidFirmwareException, IOException
 	{
-		int result = 0;
-		Exception ex = null;
-
+		int result = 0;		
 		FritzBox fritzBox = new FritzBox("Fritz!Box",
-									     "My Fritz!Box",
-									     "http",
-										 properties.getProperty("box.address"),
-										 properties.getProperty("box.port"),
-										 Encryption.decrypt(properties.getProperty("box.password")),
-										 ex);
-
-		if ( ex != null)
-		{
-			try {
-				throw ex;
-			} catch (Exception e)
-			{
-				Debug.error(e.toString());
-			}
+											     "My Fritz!Box",
+											     "http",
+												 properties.getProperty("box.address"),
+												 properties.getProperty("box.port"),
+												 Boolean.parseBoolean(properties.getProperty("box.loginUsingUsername")), 
+												 properties.getProperty("box.username"), 
+												 Encryption.decrypt(properties.getProperty("box.password")));
+		fritzBox.init(true);
+		
+		if ("not_detected".equals(properties.getProperty("box.serial"))) {
+			// check mac address only, if we did not detect a serial (only for old firmwares)
+			result = fritzBox.checkMacAddress(fritzBox);
 		}
-		boxCommunication = new BoxCommunication();
+		
+		boxCommunication = new BoxCommunication(log);
 		boxCommunication.addBox(fritzBox);
 
-		// if a mac address is set and this box has a different mac address, ask user
-		// if communication to this box should be allowed.
-		String macStr = properties.getProperty("box.mac");
-		if ((!("".equals(macStr))
-		&& ( !("".equals(fritzBox.getMacAddress())))
-		&& (fritzBox.getMacAddress() != null)))
-		{
-			ComplexJOptionPaneMessage msg = null;
-			int answer = JOptionPane.YES_OPTION;
-			if (messages.getMessage("unknown").equals(fritzBox.getMacAddress()))
-			{
-				Debug.info("MAC-Address could not be determined. Ask user how to proceed..."); //$NON-NLS-1$
-				msg = new ComplexJOptionPaneMessage("legalInfo.macNotFound",
-						messages.getMessage("mac_not_found") + "\n"
-						+ messages.getMessage("accept_fritzbox_communication")); //$NON-NLS-1$
-				if (msg.showDialogEnabled()) {
-					answer = JOptionPane.showConfirmDialog(null,
-							msg.getComponents(),
-							messages.getMessage("information"), JOptionPane.YES_NO_OPTION);
-					if (answer == JOptionPane.YES_OPTION)
-					{
-						msg.saveProperty();
-						properties.saveStateProperties();
-					}
-				}
-			} else if ( !(macStr.equals(fritzBox.getMacAddress())))
-			{
-				Debug.info("New FRITZ!Box detected. Ask user how to proceed..."); //$NON-NLS-1$
-				msg = new ComplexJOptionPaneMessage("legalInfo.newBox",
-						messages.getMessage("new_fritzbox") + "\n"
-						+ messages.getMessage("accept_fritzbox_communication")); //$NON-NLS-1$
-				if (msg.showDialogEnabled()) {
-					answer = JOptionPane.showConfirmDialog(null,
-							msg.getComponents(),
-							messages.getMessage("information"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
-					if (answer == JOptionPane.YES_OPTION)
-					{
-						msg.saveProperty();
-						properties.saveStateProperties();
-					}
-				}
-			}
-			if (answer == JOptionPane.YES_OPTION) {
-				Debug.info("User decided to accept connection."); //$NON-NLS-1$
-				properties.setProperty("box.mac", fritzBox.getMacAddress());
-				properties.saveConfigProperties();
-				result = 0;
-			} else {
-				Debug.info("User decided to prohibit connection."); //$NON-NLS-1$
-				result = -1;
-			}
-		}
+		log.info("connection. --: " + result);
 		return result;
 	}
 
@@ -235,9 +188,6 @@ public final class JFritz implements  StatusListener {
 		phonebook.setCallerList(callerlist);
 		phonebook.loadFromXMLFile(JFritzDataDirectory.getInstance().getDataDirectory() + PHONEBOOK_FILE);
 		callerlist.loadFromXMLFile(JFritzDataDirectory.getInstance().getDataDirectory() + CALLS_FILE);
-
-//		phonebook.findAllLastCalls();
-//		callerlist.findAllPersons();
 	}
 
 	public void initSounds() {
@@ -260,15 +210,14 @@ public final class JFritz implements  StatusListener {
 	}
 
 	public void createJFrame() {
-		Debug.info("New instance of JFrame"); //$NON-NLS-1$
+		log.info("New instance of JFrame"); //$NON-NLS-1$
 		jframe = new JFritzWindow(this);
 		if (Main.checkForSystraySupport()) {
-			Debug.info("Check Systray-Support"); //$NON-NLS-1$
+			log.info("Check Systray-Support"); //$NON-NLS-1$
 			try {
 				JFritzTray.initTray(jframe, getBoxCommunication());
 			} catch (Throwable e) {
 				Main.systraySupport = false;
-				Debug.error(e.toString());
 			}
 		}
 		jframe.checkStartOptions();
@@ -281,22 +230,25 @@ public final class JFritz implements  StatusListener {
 
 			if(properties.getProperty("network.type").equals("1") &&
 					Boolean.parseBoolean(properties.getProperty("option.listenOnStartup"))){
-				Debug.info("listening on startup enabled, starting client listener!");
+				log.info("listening on startup enabled, starting client listener!");
 				NetworkStateMonitor.startServer();
 			}else if(properties.getProperty("network.type").equals("2") &&
 					Boolean.parseBoolean(properties.getProperty("option.connectOnStartup"))){
-				Debug.info("Connect on startup enabled, connectig to server");
+				log.info("Connect on startup enabled, connectig to server");
 				NetworkStateMonitor.startClient();
 			}
 		}
 	}
-
+	
 	public void registerListeners() {
+		boxCommunication.registerCallListProgressListener(getCallerList());
+		boxCommunication.registerBoxCallBackListener(JFritz.getCallerList());
+	}
+
+	public void registerGuiListeners() {
 		boxCommunication.registerCallMonitorStateListener(jframe);
 		boxCommunication.registerCallListProgressListener(jframe.getCallerListPanel());
-		boxCommunication.registerCallListProgressListener(getCallerList());
 		boxCommunication.registerBoxStatusListener(jframe);
-		boxCommunication.registerBoxCallBackListener(JFritz.getCallerList());
 	}
 
 	/**
@@ -307,9 +259,13 @@ public final class JFritz implements  StatusListener {
 	 * @throws IOException
 	 * @throws InvalidFirmwareException
 	 * @throws WrongPasswordException
+	 * @throws de.robotniko.fboxlib.exceptions.InvalidCredentialsException 
+	 * @throws InvalidCredentialsException 
+	 * @throws PageNotFoundException 
+	 * @throws LoginBlockedException 
 	 */
-	public JFritz(String test) throws WrongPasswordException, InvalidFirmwareException, IOException {
-
+	public JFritz(String test) throws WrongPasswordException, InvalidFirmwareException, IOException 
+	{
 		// make sure there is a plus on the country code, or else the number
 		// scheme won't work
 		if (!properties.getProperty("country.code").startsWith("+"))
@@ -321,26 +277,17 @@ public final class JFritz implements  StatusListener {
 		// loads various country specific number settings and tables
 		loadNumberSettings();
 
-		Exception ex = null;
-
 		FritzBox fritzBox = new FritzBox("Fritz!Box",
 									     "My Fritz!Box",
 									     "http",
 										 properties.getProperty("box.address"),
 										 properties.getProperty("box.port"),
-										 Encryption.decrypt(properties.getProperty("box.password")),
-										 ex);
+										 false,
+										 "",
+										 Encryption.decrypt(properties.getProperty("box.password")));
+		fritzBox.init(false);
 
-		if ( ex != null)
-		{
-			try {
-				throw ex;
-			} catch (Exception e)
-			{
-				Debug.error(e.toString());
-			}
-		}
-		boxCommunication = new BoxCommunication();
+		boxCommunication = new BoxCommunication(log);
 		boxCommunication.addBox(fritzBox);
 
 		callerlist = new CallerList();
@@ -392,8 +339,8 @@ public final class JFritz implements  StatusListener {
 	 *
 	 * @param msg
 	 */
-	public static void errorMsg(String msg) {
-		Debug.error(msg);
+	public static void errorMsg(String msg, Throwable t) {
+		log.error(msg, t);
 		if (Main.systraySupport) {
 			JFritzTray.displayMessage(ProgramConstants.PROGRAM_NAME, msg,
 					Tray.MESSAGE_TYPE_ERROR);
@@ -439,7 +386,7 @@ public final class JFritz implements  StatusListener {
 					watchdog.run();
 				}
 			}, interval*1000, interval * 1000);
-			Debug.info("Watchdog enabled"); //$NON-NLS-1$
+			log.info("Watchdog enabled"); //$NON-NLS-1$
 		}
 	}
 
@@ -452,8 +399,9 @@ public final class JFritz implements  StatusListener {
 	 *            the locale to change the language to
 	 */
 	public void createNewWindow(Locale l) {
-		Debug.info("Loading new locale"); //$NON-NLS-1$
+		log.info("Loading new locale"); //$NON-NLS-1$
 		messages.loadMessages(l);
+		updateMessages.loadMessages(l);
 
 		refreshWindow();
 	}
@@ -472,7 +420,7 @@ public final class JFritz implements  StatusListener {
 			JFrame.setDefaultLookAndFeelDecorated(false);
 		}
 		try {
-			Debug.info("Changing look and feel to: " + properties.getStateProperty("lookandfeel")); //$NON-NLS-1$
+			log.info("Changing look and feel to: " + properties.getStateProperty("lookandfeel")); //$NON-NLS-1$
 			UIManager.setLookAndFeel(properties.getStateProperty("lookandfeel")); //$NON-NLS-1$
 			if ( jframe != null )
 			{
@@ -481,7 +429,7 @@ public final class JFritz implements  StatusListener {
 			// Wunsch eines MAC Users, dass das Default LookAndFeel des
 			// Betriebssystems genommen wird
 		} catch (Exception ex) {
-			Debug.error(ex.toString());
+			log.error(ex.toString());
 		}
 	}
 
@@ -524,14 +472,14 @@ public final class JFritz implements  StatusListener {
 		shutdownInvoked = true;
 
 		// TODO maybe some more cleanup is needed
-		Debug.debug("prepareShutdown in JFritz.java");
+		log.debug("prepareShutdown in JFritz.java");
 
 		if ( jframe != null) {
 			jframe.prepareShutdown();
 			properties.saveStateProperties();
 		}
 
-		Debug.info("Stopping reverse lookup");
+		log.info("Stopping reverse lookup");
 		JFritzReverseLookup.terminateAsyncLookup();
 
 		if ( (Main.systraySupport))
@@ -539,7 +487,7 @@ public final class JFritz implements  StatusListener {
 			JFritzTray.removeTrayMenu();
 		}
 
-		Debug.info("Stopping watchdog"); //$NON-NLS-1$
+		log.info("Stopping watchdog"); //$NON-NLS-1$
 
 		if ( watchdog != null ) {
 			watchdogTimer.cancel();
@@ -549,7 +497,7 @@ public final class JFritz implements  StatusListener {
 //			//			watchdog.interrupt();
 		}
 
-		Debug.debug("prepareShutdown in JFritz.java done");
+		log.debug("prepareShutdown in JFritz.java done");
 
 		// Keep this order to properly shutdown windows. First interrupt thread,
 		// then dispose.

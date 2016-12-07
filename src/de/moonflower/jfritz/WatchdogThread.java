@@ -9,11 +9,13 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class WatchdogThread extends Thread {
+	private final static Logger log = Logger.getLogger(WatchdogThread.class);
 
     private int interval = 1; // in seconds
     private int factor = 10;
@@ -62,14 +64,16 @@ public class WatchdogThread extends Thread {
             // Computer wahrscheinlich im Ruhezustand gewesen.
             // Starte den Anrufmonitor neu.
 
-            Debug.always("STANDBY or SUSPEND TO RAM detected"); //$NON-NLS-1$
+            log.info("STANDBY or SUSPEND TO RAM detected"); //$NON-NLS-1$
 			JFritz.getJframe().setBoxDisconnected("");
             standbyDetected = true;
         }
 
         if (standbyDetected)
         {
-        	Debug.debug("Restarting call monitor due to STANDBY/SUSPEND TO RAM");
+        	JFritz.getBoxCommunication().refreshLogin(null);
+        	
+        	log.debug("Restarting call monitor due to STANDBY/SUSPEND TO RAM");
 			restartCallMonitor(true);
     		if (JFritzUtils.parseBoolean(properties.getProperty("option.watchdog.fetchAfterStandby"))) //$NON-NLS-1$, //$NON-NLS-2$
     		{
@@ -78,6 +82,7 @@ public class WatchdogThread extends Thread {
 
 					@Override
 					public void run() {
+						log.debug("Fetching caller list due to STANDBY/SUSPEND TO RAM");
 	        			JFritz.getJframe().fetchList(null, false);
 					}
 

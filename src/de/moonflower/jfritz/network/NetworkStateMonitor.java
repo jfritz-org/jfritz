@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.JFritz;
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
-import de.moonflower.jfritz.utils.Debug;
 
 /**
  * This class is used as a sort of static back end for accessing and changing
@@ -23,6 +23,7 @@ import de.moonflower.jfritz.utils.Debug;
  *
  */
 public class NetworkStateMonitor  {
+	private final static Logger log = Logger.getLogger(NetworkStateMonitor.class);
 
 	public static ServerConnectionThread serverConnection;
 
@@ -141,7 +142,7 @@ public class NetworkStateMonitor  {
 	}
 
 	public static Vector<Port> getAvailablePorts(){
-		Debug.always("Fix getAvailablePorts() in NetworkStateMonitor");
+		log.info("Fix getAvailablePorts() in NetworkStateMonitor");
 //		if(Main.getProperty("option.clientCallList").equals("true")
 //				&& isConnectedToServer())
 //		{
@@ -159,15 +160,15 @@ public class NetworkStateMonitor  {
 	 * @throws UnsupportedEncodingException
 	 *
 	 */
-	public static void doCall(String number, Port port) throws UnsupportedEncodingException, WrongPasswordException, IOException{
+	public static void doCall(String number, Port port) throws UnsupportedEncodingException, WrongPasswordException, IOException {
 		if(properties.getProperty("option.clientCallList").equals("true")
 				&& isConnectedToServer())
 		{
-			serverConnection.requestDoCall(new PhoneNumberOld(number, false, false), port);
+			serverConnection.requestDoCall(new PhoneNumberOld(properties, number, false, false), port);
 		}
 		else
 		{
-			JFritz.getBoxCommunication().doCall(new PhoneNumberOld(number, false, false), port);
+			JFritz.getBoxCommunication().doCall(new PhoneNumberOld(properties, number, false, false), port);
 		}
 	}
 

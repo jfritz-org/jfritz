@@ -5,12 +5,12 @@
  */
 package de.moonflower.jfritz.dialogs.quickdial;
 
+import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import de.moonflower.jfritz.struct.QuickDial;
-import de.moonflower.jfritz.utils.Debug;
 
 /**
  * XML Handler for reading the call file
@@ -18,6 +18,7 @@ import de.moonflower.jfritz.utils.Debug;
  * @author Arno Willig
  */
 public class QuickDialXMLHandler extends DefaultHandler {
+	private final static Logger log = Logger.getLogger(QuickDialXMLHandler.class);
 
 	String chars, id, number, vanity, description;
 
@@ -73,7 +74,7 @@ public class QuickDialXMLHandler extends DefaultHandler {
 			description = chars;
 		} else if (qName.equals("entry")) { //$NON-NLS-1$
 			if (dataModel != null) { // Add an entry to the dataModel
-				Debug.debug("QuickDial: "+id+ //$NON-NLS-1$
+				log.debug("QuickDial: "+id+ //$NON-NLS-1$
 						", "+number+ //$NON-NLS-1$
 						", "+vanity+ //$NON-NLS-1$
 						", "+description); //$NON-NLS-1$

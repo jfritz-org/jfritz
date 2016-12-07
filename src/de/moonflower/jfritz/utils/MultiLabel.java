@@ -1,8 +1,14 @@
 package de.moonflower.jfritz.utils;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.*;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Insets;
+import java.util.StringTokenizer;
+
+import javax.swing.JComponent;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 
 public class MultiLabel extends JComponent implements SwingConstants
 {

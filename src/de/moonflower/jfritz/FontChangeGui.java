@@ -17,6 +17,7 @@ public class FontChangeGui implements ActionListener {
 	private JFrame frame;
 
 	public static void main(String[] args) {
+		@SuppressWarnings("unused")
 		FontChangeGui gui = new FontChangeGui();
 	}
 

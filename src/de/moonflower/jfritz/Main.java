@@ -149,8 +149,11 @@ import javax.swing.JOptionPane;
 
 import jd.nutils.OSDetector;
 
+import org.apache.http.auth.InvalidCredentialsException;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.log4j.Appender;
 import org.apache.log4j.FileAppender;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.xml.DOMConfigurator;
@@ -162,6 +165,7 @@ import de.moonflower.jfritz.dialogs.simple.AddressPasswordDialog;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.messages.UpdateMessageProvider;
 import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Person;
@@ -175,6 +179,12 @@ import de.moonflower.jfritz.utils.ShutdownHook;
 import de.moonflower.jfritz.utils.reverselookup.IReverseLookupFinishedWithResultListener;
 import de.moonflower.jfritz.utils.reverselookup.IReverseLookupProgressListener;
 import de.moonflower.jfritz.utils.reverselookup.JFritzReverseLookup;
+import de.robotniko.fboxlib.exceptions.FirmwareNotDetectedException;
+import de.robotniko.fboxlib.exceptions.LoginBlockedException;
+import de.robotniko.fboxlib.exceptions.PageNotFoundException;
+//import org.apache.http.auth.InvalidCredentialsException;
+import de.robotniko.fboxlib.fritzbox.FritzBoxCommunication;
+import de.robotniko.fboxlib.fritzbox.JSonBoxinfo;
 
 /**
  * @author robroy
@@ -238,32 +248,38 @@ public class Main  {
 	private static int EXIT_CODE_PARAMETER_NOT_FOUND = -2;
 	private static int EXIT_CODE_PARAMETER_WRONG_FORMAT = -3;
 	private static int EXIT_CODE_MULTIPLE_INSTANCE_LOCK = 1;
+	public static int EXIT_CODE_FORBID_COMMUNICATION_WITH_FRITZBOX = 2;
 
 	protected PropertyProvider properties = PropertyProvider.getInstance();
 	protected MessageProvider messages = MessageProvider.getInstance();
-
+	protected UpdateMessageProvider updateMessages = UpdateMessageProvider.getInstance();
+	
+	private Level loggingLevel = Level.INFO;
+	
 	public Main() {
 		// NICHT VERWENDEN, nur für TestCases, nicht alles initialisiert. NICHT
 		// VERWENDEN!
 		loadLanguages();
-		JFritzDataDirectory.getInstance().loadSaveDir();
+		JFritzDataDirectory.getInstance().loadSaveDir(this);
 		showConfWizard = properties.loadProperties(false);
 		String loc = properties.getProperty("locale");
 		messages.loadMessages(new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_") + 1, loc.length()))); //$NON-NLS-1$,  //$NON-NLS-2$
+		updateMessages.loadMessages(new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_") + 1, loc.length()))); //$NON-NLS-1$,  //$NON-NLS-2$
 		loadLocaleMeanings(new Locale("int", "INT"));
 
 	}
 
 	public Main(String[] args) {
-		DOMConfigurator.configure(JFritzUtils.getFullPath("/log4j.xml"));
-		JFritzDataDirectory.getInstance().loadSaveDir();
-		initLog4jAppender();
+		setupLogging();
+		
+		cleanupOldInstallation();
 
 		Calendar cal = Calendar.getInstance();
 		cal.getTime();
 
 		System.out.println(ProgramConstants.PROGRAM_NAME
 			+ " v" + ProgramConstants.PROGRAM_VERSION //$NON-NLS-1$
+			+ " Rev. " + ProgramConstants.REVISION //$NON-NLS-1$
 			+ " (c) 2005-" + cal.get(Calendar.YEAR) + " by " + JFRITZ_PROJECT); //$NON-NLS-1$
 		Thread.currentThread().setPriority(5);
 		Thread.currentThread().setName("main thread");
@@ -295,21 +311,51 @@ public class Main  {
 		// move save dir and default file location
 		shouldMoveDataToRightSaveDir();
 
-		Debug.on();
-		logAndStdOut(ProgramConstants.PROGRAM_NAME
+		log.info(ProgramConstants.PROGRAM_NAME
 				+ " v" + ProgramConstants.PROGRAM_VERSION //$NON-NLS-1$
+				+ " Rev. " + ProgramConstants.REVISION //$NON-NLS-1$
 				+ " (c) 2005-" + cal.get(Calendar.YEAR) + " by " + JFRITZ_PROJECT); //$NON-NLS-1$
-		logAndStdOut("JFritz runs on " + OSDetector.getOSString());
 
+		printSystemInfo();
 		if (checkDebugParameters(args)) { // false if jfritz should stop
 											// execution
 			initJFritz(args, this);
 		}
 	}
 
-	private void logAndStdOut(final String msg) {
-		log.info(msg);
-		System.out.println(msg);
+	private void setupLogging() {
+		DOMConfigurator.configure(JFritzUtils.getFullPath("/log4j.xml"));
+		JFritzDataDirectory.getInstance().loadSaveDir(this);
+		initLog4jAppender();
+	}
+	
+	public void initLog4jAppender() {
+		Appender oldFileAppender = Logger.getRootLogger().getAppender("FileAppender");
+		if (oldFileAppender != null) {
+			Logger.getRootLogger().removeAppender(oldFileAppender);
+		}
+
+		PatternLayout layout = new PatternLayout();
+		layout.setConversionPattern("%d{dd.MM.yy HH:mm:ss}|%t|%p|%C{1} - %m%n");
+		String path = Debug.debugLogFilePath;
+		FileAppender fa;
+		try {
+			fa = new FileAppender(layout, path, false);
+			fa.activateOptions();
+			Logger.getRootLogger().addAppender(fa);
+			Logger.getRootLogger().info("Logging to " + fa.getFile());
+		} catch (IOException e) {
+			Logger.getRootLogger().error("Could not write log file to " + path);
+		}
+	}
+
+	private void printSystemInfo() {
+		log.info("JFritz runs on " + OSDetector.getOSString());
+		log.info("OS Language: " + System.getProperty("user.language"));
+		log.info("OS Country: " + System.getProperty("user.country"));
+		
+		String jvm_version = System.getProperty("java.version");
+		log.info("Java version: " + jvm_version);
 	}
 
 	/**
@@ -320,6 +366,10 @@ public class Main  {
 	 *
 	 * @param args
 	 *            Program arguments (-h -v ...)
+	 * @throws de.robotniko.fboxlib.exceptions.InvalidCredentialsException 
+	 * @throws InvalidCredentialsException 
+	 * @throws PageNotFoundException 
+	 * @throws LoginBlockedException 
 	 *
 	 */
 	public static void main(String[] args) {
@@ -347,8 +397,6 @@ public class Main  {
 				,null, "This short description"); //$NON-NLS-1$
 		options.addOption('i',"lang" //$NON-NLS-1$,  //$NON-NLS-2$
 				,"language", "Set the display language, currently supported: german, english"); //$NON-NLS-1$,  //$NON-NLS-2$
-		options.addOption('l', "logfile" //$NON-NLS-1$,  //$NON-NLS-2$
-				,"filename", "Writes debug messages to logfile"); //$NON-NLS-1$,  //$NON-NLS-2$
 		options.addOption('n', "nosystray" //$NON-NLS-1$,  //$NON-NLS-2$
 				,null, "Turn off systray support"); //$NON-NLS-1$
 		options.addOption('p', "priority" //$NON-NLS-1$,  //$NON-NLS-2$
@@ -385,8 +433,8 @@ public class Main  {
 			CLIOption option = (CLIOption) en.nextElement();
 
 			if (option == null) {
-				logAndStdOut("Unknown command line parameter specified!");
-				logAndStdOut("Usage: java -jar jfritz.jar [Options]"); //$NON-NLS-1$
+				log.info("Unknown command line parameter specified!");
+				log.info("Usage: java -jar jfritz.jar [Options]"); //$NON-NLS-1$
 				options.printOptions();
 				exit(EXIT_CODE_OK);
 				return false;
@@ -394,29 +442,28 @@ public class Main  {
 
 			switch (option.getShortOption()) {
 			case 'h': //$NON-NLS-1$
-				logAndStdOut("Usage: java -jar jfritz.jar [Options]"); //$NON-NLS-1$
+				log.info("Usage: java -jar jfritz.jar [Options]"); //$NON-NLS-1$
 				options.printOptions();
 				exit(EXIT_CODE_HELP);
 				return false;
 			case 'v': //$NON-NLS-1$
 				Debug.setVerbose(true);
 				String level = option.getParameter();
-				if ("ERROR".equals(level)) {
-					Debug.setDebugLevel(Debug.LS_ERROR);
-				} else if ("WARNING".equals(level)) {
-					Debug.setDebugLevel(Debug.LS_WARNING);
-				} else if ("INFO".equals(level)) {
-					Debug.setDebugLevel(Debug.LS_INFO);
-				} else if ("DEBUG".equals(level)) {
-					Debug.setDebugLevel(Debug.LS_DEBUG);
-				}
-				break;
-			case 'l': //$NON-NLS-1$
-				String logFilename = option.getParameter();
-				if (logFilename == null || logFilename.equals("")) { //$NON-NLS-1$
-					Debug.logToFile("Debuglog.txt");
-				} else {
-					Debug.logToFile(logFilename);
+				if (level != null && !level.equals("")) {
+					if ("trace".equals(level.toLowerCase())) {
+						loggingLevel = Level.TRACE;
+					} else if ("error".equals(level.toLowerCase())) {
+						loggingLevel = Level.ERROR;
+					} else if ("warning".equals(level.toLowerCase())) {
+						loggingLevel = Level.WARN;
+					} else if ("warn".equals(level.toLowerCase())) {
+						loggingLevel = Level.WARN;
+					} else if ("info".equals(level.toLowerCase())) {
+						loggingLevel = Level.INFO;
+					} else if ("debug".equals(level.toLowerCase())) {
+						loggingLevel = Level.DEBUG;
+					}
+					Logger.getLogger("de.moonflower.jfritz").setLevel(loggingLevel);
 				}
 				break;
 			case 'q': //$NON-NLS-1$
@@ -432,7 +479,7 @@ public class Main  {
 
 	private void initJFritz(String[] args, Main main) {
 		SplashScreen splash = new SplashScreen(showSplashScreen);
-		splash.setVersion("v" + ProgramConstants.PROGRAM_VERSION);
+		splash.setVersion("v" + ProgramConstants.PROGRAM_VERSION + " Rev: " + ProgramConstants.REVISION);
 		splash.setStatus("Initializing JFritz...");
 
 		splash.setStatus("Loading properties...");
@@ -441,8 +488,6 @@ public class Main  {
 			JFritzDataDirectory.getInstance().writeSaveDir();
 		}
 
-		logAndStdOut("OS Language: " + System.getProperty("user.language"));
-		logAndStdOut("OS Country: " + System.getProperty("user.country"));
 		if (properties.getProperty("locale").equals("")) {
 			log.info("No language set yet ... Setting language to OS language");
 			// Check if language is supported. If not switch to english
@@ -461,6 +506,7 @@ public class Main  {
 		log.info("Selected language: " + loc);
 
 		messages.loadMessages(new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_") + 1, loc.length()))); //$NON-NLS-1$,  //$NON-NLS-2$
+		updateMessages.loadMessages(new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_") + 1, loc.length()))); //$NON-NLS-1$,  //$NON-NLS-2$
 		loadLocaleMeanings(new Locale("int", "INT"));
 
 		int result = 0;
@@ -472,9 +518,11 @@ public class Main  {
 				&& (decrypted_pwd.length() > Main.PROGRAM_SEED.length())) {
 			pass = decrypted_pwd.substring(Main.PROGRAM_SEED.length());
 		} else {
-			Debug.errDlg("Configuration file \"jfritz.properties.xml\" is corrupt."
-							+ "\nSend an EMail to support@jfritz.org with this error"
-							+ "\nmessage and the attached \"jfritz.properties.xml\"-file.");
+			String message = "Configuration file \"jfritz.properties.xml\" is corrupt."
+					+ "\nSend an EMail to support@jfritz.org with this error"
+					+ "\nmessage and the attached \"jfritz.properties.xml\"-file.";
+			log.error(message);
+			Debug.errDlg(message);
 			result = 1;
 		}
 		if (!(Main.PROGRAM_SECRET + pass).equals(Encryption.decrypt(ask))) {
@@ -484,12 +532,14 @@ public class Main  {
 				if (password == null) { // PasswordDialog canceled
 					result = 1;
 				} else if (!password.equals(pass)) {
+					log.error(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
 					Debug.errDlg(messages.getMessage("box.wrong_password")); //$NON-NLS-1$
 				}
 			}
 		}
 
 		if (result == 0) {
+			parseMultipleInstanceCheckArgument(args);			
 			if (!main.checkInstanceControl()) {
 				result = -1;
 				splash.dispose();
@@ -508,6 +558,29 @@ public class Main  {
 			jfritz = new JFritz(main);
 
 			jfritz.initNumbers();
+		}
+		
+		if (result == 0) {
+			splash.setStatus("Detecting Fritz!Box ...");
+			try {
+				FritzBoxCommunication fbc = new FritzBoxCommunication("http", properties.getProperty("box.address"), properties.getProperty("box.port"));
+				fbc.setUserName(properties.getProperty("box.username"));
+				fbc.setPassword(Encryption.decrypt(properties.getProperty("box.password")));
+				
+				JSonBoxinfo jsonBoxinfo = new JSonBoxinfo(fbc);
+				result = checkSerialAddress(jsonBoxinfo.getSerial());
+			} catch (ClientProtocolException e) {
+				log.error("Detecting Fritz!Box ... ClientProtocolExecption", e);
+			} catch (IOException e) {
+				log.error("Detecting Fritz!Box ... IOException", e);
+			} catch (PageNotFoundException e) {
+				log.error("Detecting Fritz!Box ... Page not found", e);
+			} catch (FirmwareNotDetectedException e) {
+				log.error("Detecting Fritz!Box ... Could not detect firmware", e);
+			}
+		}
+		
+		if (result == 0) {
 			splash.setStatus("Initializing Fritz!Box ...");
 			try {
 				result = jfritz.initFritzBox();
@@ -528,6 +601,11 @@ public class Main  {
 		if (result == 0) {
 			splash.setStatus("Loading caller list and phonebook...");
 			jfritz.initCallerListAndPhoneBook();
+		}
+		
+		if (result == 0) {
+			// must be called before main.checkCLIParameters
+			jfritz.registerListeners();
 		}
 
 		if (result == 0) {
@@ -561,11 +639,12 @@ public class Main  {
 			splash.dispose();
 			jfritz.startClientServer();
 			jfritz.startWatchdog();
-			jfritz.registerListeners();
+			jfritz.registerGuiListeners();
 		}
 
 		log.info("Main is now exiting...");
 		if (result != 0) {
+			splash.dispose();
 			main.exit(result);
 		}
 
@@ -574,10 +653,72 @@ public class Main  {
 			JFritz.getJframe().checkOptions();
 		}
 	}
+	
+	public int checkSerialAddress(String serial) {
+		int result = 0;
+		String serialStr = properties.getProperty("box.serial");
+		
+		if ("".equals(serialStr)) {
+			// we have not saved any serial.
+			properties.setProperty("box.serial", serial);
+			properties.saveConfigProperties();
+		}
+		
+		// if a serial is set and this box has a different serial, ask user if communication to this box should be allowed.
+		if (!("".equals(serialStr)) && !("".equals(serial)))
+		{
+			ComplexJOptionPaneMessage msg = null;
+			int answer = JOptionPane.YES_OPTION;
+			if (messages.getMessage("unknown").equals(serial))
+			{
+				log.info("Serial could not be determined. Ask user how to proceed..."); //$NON-NLS-1$
+				msg = new ComplexJOptionPaneMessage("legalInfo.serialNotFound",
+						messages.getMessage("serial_not_found") + "\n"
+						+ messages.getMessage("accept_fritzbox_communication")); //$NON-NLS-1$
+				if (msg.showDialogEnabled()) {
+					answer = JOptionPane.showConfirmDialog(null,
+							msg.getComponents(),
+							messages.getMessage("information"), JOptionPane.YES_NO_OPTION);
+					if (answer == JOptionPane.YES_OPTION)
+					{
+						msg.saveProperty();
+						properties.saveStateProperties();
+					}
+				}
+			} else if ( !(serialStr.equals(serial)))
+			{
+				log.info("New FRITZ!Box detected. Ask user how to proceed..."); //$NON-NLS-1$
+				msg = new ComplexJOptionPaneMessage("legalInfo.newBox",
+						messages.getMessage("new_fritzbox") + "\n"
+						+ messages.getMessage("accept_fritzbox_communication")); //$NON-NLS-1$
+				if (msg.showDialogEnabled()) {
+					answer = JOptionPane.showConfirmDialog(null,
+							msg.getComponents(),
+							messages.getMessage("information"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
+					if (answer == JOptionPane.YES_OPTION)
+					{
+						msg.saveProperty();
+						properties.saveStateProperties();
+					}
+				}
+			}
+			if (answer == JOptionPane.YES_OPTION) {
+				log.info("User decided to accept connection."); //$NON-NLS-1$
+				properties.setProperty("box.serial", serial);
+				properties.saveConfigProperties();
+				result = 0;
+			} else {
+				log.info("User decided to prohibit connection."); //$NON-NLS-1$
+				result = Main.EXIT_CODE_FORBID_COMMUNICATION_WITH_FRITZBOX;
+			}
+		}
+		return result;
+	}
 
 	public static boolean showConfigWizard(final SplashScreen splash) {
-		Debug.info("Presenting user with the configuration dialog");
+		log.info("Presenting user with the configuration dialog");
 		ConfigWizard wizard = new ConfigWizard(null);
+
 		boolean wizardCanceled = true;
 		try {
 			wizardCanceled = wizard.showWizard(splash);
@@ -591,26 +732,6 @@ public class Main  {
 		return wizardCanceled;
 	}
 
-	public static void initLog4jAppender() {
-		Appender oldFileAppender = Logger.getRootLogger().getAppender("FileAppender");
-		if (oldFileAppender != null) {
-			Logger.getRootLogger().removeAppender(oldFileAppender);
-		}
-
-		PatternLayout layout = new PatternLayout();
-		layout.setConversionPattern("%d{dd.MM.yy HH:mm:ss}|%t|%p|%C{1} - %m%n");
-		String path = JFritzDataDirectory.getInstance().getDataDirectory() + "log4j.log";
-		FileAppender fa;
-		try {
-			fa = new FileAppender(layout, path, false);
-			fa.activateOptions();
-			Logger.getRootLogger().addAppender(fa);
-			Logger.getRootLogger().info("Logging to " + fa.getFile());
-		} catch (IOException e) {
-			Logger.getRootLogger().error("Could not write log file to " + path);
-		}
-	}
-
 	private String preparePattern(final String input) {
 		String output = input;
 		if (input.indexOf("\\") > -1) {
@@ -619,12 +740,31 @@ public class Main  {
 		return output;
 	}
 
+	private void parseMultipleInstanceCheckArgument(String[] args) {
+		Vector<CLIOption> foundOptions = options.parseOptions(args);
+		Enumeration<CLIOption> en = foundOptions.elements();
+		while (en.hasMoreElements()) {
+			CLIOption option = (CLIOption) en.nextElement();
+
+			switch (option.getShortOption()) {
+			case 'w': //$NON-NLS-1$
+				enableInstanceControl = false;
+				System.err.println("Turning off Multiple instance control!"); //$NON-NLS-1$
+				System.err.println("You were warned! Data loss may occur."); //$NON-NLS-1$
+				break;
+			default:
+				break;
+			}
+		}
+	}
+	
 	/**
 	 * Überprüft die weiteren Kommandozeilenparameter
 	 *
 	 * @param args
 	 *            Kommandozeilenargumente
 	 * @return True if shutdown has been invoked, false otherwise.
+	 * @throws InvalidCredentialsException 
 	 */
 	private boolean checkCLIParameters(String[] args) {
 		boolean shutdown = false;
@@ -646,8 +786,8 @@ public class Main  {
 				checkSystray = false;
 				break;
 			case 'f':
-				logAndStdOut("Fetch caller list from command line ..."); //$NON-NLS-1$
-				JFritz.getBoxCommunication().getCallerList(null); // null = fetch all boxes
+				log.info("Fetch caller list from command line ..."); //$NON-NLS-1$
+				JFritz.getBoxCommunication().getCallerList(null);
 				shutdown = true;
 				exit(EXIT_CODE_OK);
 				break;
@@ -664,7 +804,7 @@ public class Main  {
 					exit(EXIT_CODE_PARAMETER_NOT_FOUND);
 					break;
 				}
-				logAndStdOut("Exporting Call list (csv) to " + csvFileName); //$NON-NLS-1$
+				log.info("Exporting Call list (csv) to " + csvFileName); //$NON-NLS-1$
 				JFritz.getCallerList().saveToCSVFile(csvFileName, true);
 				shutdown = true;
 				exit(EXIT_CODE_OK);
@@ -677,7 +817,7 @@ public class Main  {
 				exit(EXIT_CODE_OK);
 				break;
 			case 'c': //$NON-NLS-1$
-				logAndStdOut("Clearing Call List"); //$NON-NLS-1$
+				log.info("Clearing Call List"); //$NON-NLS-1$
 				JFritz.getCallerList().clearList();
 				shutdown = true;
 				exit(EXIT_CODE_OK);
@@ -717,13 +857,8 @@ public class Main  {
 					exit(EXIT_CODE_PARAMETER_WRONG_FORMAT);
 					shutdown = true;
 				}
-				messages.loadMessages(new Locale(properties
-						.getProperty("locale"))); //$NON-NLS-1$,  //$NON-NLS-2$
-				break;
-			case 'w': //$NON-NLS-1$
-				enableInstanceControl = false;
-				System.err.println("Turning off Multiple instance control!"); //$NON-NLS-1$
-				System.err.println("You were warned! Data loss may occur."); //$NON-NLS-1$
+				messages.loadMessages(new Locale(properties.getProperty("locale"))); //$NON-NLS-1$,  //$NON-NLS-2$
+				updateMessages.loadMessages(new Locale(properties.getProperty("locale"))); //$NON-NLS-1$,  //$NON-NLS-2$
 				break;
 			case 'p': //$NON-NLS-1$
 				String priority = option.getParameter();
@@ -736,7 +871,7 @@ public class Main  {
 					try {
 						int level = Integer.parseInt(priority);
 						Thread.currentThread().setPriority(level);
-						logAndStdOut("Set priority to level " + priority); //$NON-NLS-1$
+						log.info("Set priority to level " + priority); //$NON-NLS-1$
 					} catch (NumberFormatException nfe) {
 						System.err.println(messages
 								.getMessage("parameter_wrong_priority")); //$NON-NLS-1$
@@ -822,11 +957,12 @@ public class Main  {
 			}
 
 			String loc = properties.getProperty("locale");
-			logAndStdOut("Selected language: " + loc);
+			log.info("Selected language: " + loc);
 
 			messages.loadMessages(new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_") + 1, loc.length()))); //$NON-NLS-1$,  //$NON-NLS-2$
+			updateMessages.loadMessages(new Locale(loc.substring(0, loc.indexOf("_")), loc.substring(loc.indexOf("_") + 1, loc.length()))); //$NON-NLS-1$,  //$NON-NLS-2$
 			loadLocaleMeanings(new Locale("int", "INT"));
-			logAndStdOut("Shall JFritz move data from "
+			log.info("Shall JFritz move data from "
 					+ JFritzDataDirectory.getInstance().getDataDirectory()
 					+ " to " + newSaveDir + " ?");
 
@@ -1033,12 +1169,11 @@ public class Main  {
 			if (!alreadyDoneShutdown) {
 				// showActiveThreads();
 				alreadyDoneShutdown = true;
-				logAndStdOut("Shutting down JFritz..."); //$NON-NLS-1$
+				log.info("Shutting down JFritz..."); //$NON-NLS-1$
 				closeOpenConnections();
 				if (exitCode != -1
-						&& exitCode != EXIT_CODE_MULTIPLE_INSTANCE_LOCK
-						&& Main.isInstanceControlEnabled()) {
-					logAndStdOut("Multiple instance lock: release lock."); //$NON-NLS-1$
+						&& exitCode != EXIT_CODE_MULTIPLE_INSTANCE_LOCK) {
+					log.info("Multiple instance lock: release lock."); //$NON-NLS-1$
 					removeLock();
 				}
 
@@ -1116,5 +1251,24 @@ public class Main  {
 		p.dispose();
 		p = null;
 		return password;
+	}
+	
+	/**
+	 * This method is used to cleanup old installation files
+	 */
+	private void cleanupOldInstallation() {
+		removeLog4jFile();
+	}
+	
+	private void removeLog4jFile() {
+		try {
+			String path = JFritzDataDirectory.getInstance().getDataDirectory() + "log4j.log";
+			File file = new File(path);
+			if (file.exists()) {
+				file.delete();
+			}
+		} catch (Throwable t) {
+			log.warn("Could not delete log4j.log");
+		}
 	}
 }

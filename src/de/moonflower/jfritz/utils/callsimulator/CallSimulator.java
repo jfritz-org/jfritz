@@ -34,7 +34,7 @@ public class CallSimulator extends JFrame implements ActionListener {
 
 	private JTextField fromText, toText, lineText, portText, disconnectText;
 
-	private JComboBox callType;
+	private JComboBox<String> callType;
 
 	private DataOutputStream outputStream;
 
@@ -49,7 +49,7 @@ public class CallSimulator extends JFrame implements ActionListener {
 
 	private void createGui() {
 		JLabel callLabel = new JLabel("Call type:");
-		callType = new JComboBox();
+		callType = new JComboBox<String>();
 		callType.addItem("Incoming");
 		callType.addItem("Outgoing");
 
@@ -73,7 +73,7 @@ public class CallSimulator extends JFrame implements ActionListener {
 		disconnectText = new JTextField(3);
 
 		JLabel saveLabel = new JLabel("Saved sessions");
-		JList savedSessions = new JList();
+		JList<String> savedSessions = new JList<String>();
 		JButton loadButton = new JButton("Load");
 		JButton saveButton = new JButton("Save");
 		JTextField saveText = new JTextField(10);

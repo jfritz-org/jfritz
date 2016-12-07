@@ -1,11 +1,13 @@
 package de.moonflower.jfritz.box.fritzbox.callerlist;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
+
+import org.apache.http.client.ClientProtocolException;
+import org.apache.log4j.Logger;
 
 import de.moonflower.jfritz.box.BoxCallBackListener;
 import de.moonflower.jfritz.box.BoxCallListInterface;
@@ -19,9 +21,12 @@ import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.IProgressListener;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
-import de.moonflower.jfritz.utils.Debug;
+import de.robotniko.fboxlib.exceptions.InvalidCredentialsException;
+import de.robotniko.fboxlib.exceptions.LoginBlockedException;
+import de.robotniko.fboxlib.exceptions.PageNotFoundException;
 
 public class FritzBoxCallList_Pre_04_86 implements BoxCallListInterface {
+	private final static Logger log = Logger.getLogger(FritzBoxCallList_Pre_04_86.class);
 
 	private final static String QUERY_CALLS_REFRESH = "telcfg:settings/RefreshJournal";
 	private final static String QUERY_NUM_CALLS = "telcfg:settings/Journal/count";
@@ -45,9 +50,7 @@ public class FritzBoxCallList_Pre_04_86 implements BoxCallListInterface {
 	}
 
 	@Override
-	public Vector<Call> getCallerList(Vector<IProgressListener> progressListener)
-			throws IOException, MalformedURLException, FeatureNotSupportedByFirmware {
-		fritzBox.setBoxConnected();
+	public Vector<Call> getCallerList(Vector<IProgressListener> progressListener) throws FeatureNotSupportedByFirmware, ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException	{
 		// getting number of entries
 		Vector<String> query = new Vector<String>();
 		query.add(QUERY_CALLS_REFRESH);
@@ -150,7 +153,7 @@ public class FritzBoxCallList_Pre_04_86 implements BoxCallListInterface {
 				} else if ((response.get(newOffset+0).equals("3"))) {
 					calltype = CallType.CALLOUT;
 				} else {
-					Debug.error("Invalid Call type while importing caller list!"); //$NON-NLS-1$
+					log.error("Invalid Call type while importing caller list!"); //$NON-NLS-1$
 					return false;
 				}
 
@@ -160,18 +163,18 @@ public class FritzBoxCallList_Pre_04_86 implements BoxCallListInterface {
 					try {
 						calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(response.get(newOffset+1)); //$NON-NLS-1$
 					} catch (ParseException e) {
-						Debug.error("Invalid date format while importing caller list!"); //$NON-NLS-1$
+						log.error("Invalid date format while importing caller list!"); //$NON-NLS-1$
 						return false;
 					}
 				} else {
-					Debug.error("Invalid date format while importing caller list!"); //$NON-NLS-1$
+					log.error("Invalid date format while importing caller list!"); //$NON-NLS-1$
 					return false;
 				}
 
 				// Phone number
 				PhoneNumberOld number;
 				if (!response.get(newOffset+2).equals("")) {
-					number = new PhoneNumberOld(response.get(newOffset+2), properties.getProperty(
+					number = new PhoneNumberOld(this.properties, response.get(newOffset+2), properties.getProperty(
 							"option.activateDialPrefix").toLowerCase().equals("true")
 							&& (calltype == CallType.CALLOUT)
 							&& !response.get(newOffset+6).startsWith("Internet"));
@@ -192,8 +195,9 @@ public class FritzBoxCallList_Pre_04_86 implements BoxCallListInterface {
 					}
 				} catch (NumberFormatException nfe)
 				{
-					Debug.warning("FritzBox: Could not parse portstr as number: " + portStr);
+					// nothing to do, just proceed
 				}
+				
 				if (port == null)
 				{
 					port = new Port(0, portStr, "-1", "-1");
@@ -228,7 +232,7 @@ public class FritzBoxCallList_Pre_04_86 implements BoxCallListInterface {
 				else
 				{
 					route = "ERROR";
-					Debug.error("Could not determine route type: " + routeType);
+					log.error("Could not determine route type: " + routeType);
 				}
 
 				// make the call object and exit
@@ -243,7 +247,7 @@ public class FritzBoxCallList_Pre_04_86 implements BoxCallListInterface {
 	}
 
 	@Override
-	public void clearCallerList() {
+	public void clearCallerList() throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException {
 		Vector<String> query = new Vector<String>();
 		query.add("telcfg:settings/ClearJournal");
 		fritzBox.getQuery(query);

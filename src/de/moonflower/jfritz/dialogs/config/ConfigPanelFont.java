@@ -1,7 +1,6 @@
 package de.moonflower.jfritz.dialogs.config;
 
 import java.awt.BorderLayout;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 

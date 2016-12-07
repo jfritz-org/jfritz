@@ -13,8 +13,6 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -24,9 +22,14 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
+import org.apache.log4j.Logger;
+
+import com.nexes.wizard.Wizard;
 
 import de.moonflower.jfritz.box.BoxClass;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
@@ -34,26 +37,24 @@ import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.MultiLabel;
 import de.moonflower.jfritz.utils.network.SSDPPacket;
+import de.robotniko.fboxlib.exceptions.FirmwareNotDetectedException;
+import de.robotniko.fboxlib.exceptions.PageNotFoundException;
 
-public class ConfigPanelFritzBox extends JPanel implements ActionListener,
-		ConfigPanel {
+public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
+		ConfigPanel, DocumentListener {
 
-	/**
-	 *
-	 */
+	private final static Logger log = Logger.getLogger(ConfigPanelFritzBoxIP.class);
+
 	private static final long serialVersionUID = -2094680014900642941L;
 
-	private JComboBox addressCombo;
+	private JComboBox<String> addressCombo;
 
 	private Vector<SSDPPacket> devices;
 
 	private JTextField address;
-
-	private JPasswordField pass;
 
 	private JTextField port;
 
@@ -63,67 +64,20 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 
 	private JCheckBox defaultFritzBox;
 
-	private RefreshTimeoutTask refreshTimeoutTask = null;
-
 	private FritzBox fritzBox;
 
-	private ConfigPanelSip sipPanel = null;
-
 	private boolean settingsChanged = false;
+	private Wizard wizard = null;
+	private ConfigPanelFritzBoxLogin fritzBoxPanelLogin;
 
 	protected PropertyProvider properties = PropertyProvider.getInstance();
 	protected MessageProvider messages = MessageProvider.getInstance();
 
-	class RefreshTimeoutTask extends TimerTask
-	{
-		private int current;
-		public RefreshTimeoutTask(int start)
-		{
-			current = start;
-		}
-
-		@Override
-		public void run() {
-			if (current > 0)
-			{
-				String error = messages.getMessage("box.wrong_password.wait");
-				error = error.replaceFirst("%WAIT%", Integer.toString(current));
-				boxtypeLabel.setForeground(Color.RED);
-				boxtypeLabel.setText(error); //$NON-NLS-1$
-				boxtypeLabel.setPreferredSize(boxtypeLabel.getPreferredSize());
-				boxtypeLabel.repaint();
-				boxtypeButton.setEnabled(false);
-				current -= 1;
-			}
-			else
-			{
-				String error = " \n" + messages.getMessage("box.wrong_password") + "\n ";
-				error = error.replaceFirst("%WAIT%", Integer.toString(current));
-				boxtypeLabel.setForeground(Color.RED);
-				boxtypeLabel.setText(error); //$NON-NLS-1$
-				boxtypeLabel.setPreferredSize(boxtypeLabel.getPreferredSize());
-				boxtypeLabel.repaint();
-				boxtypeButton.setEnabled(true);
-				this.cancel();
-			}
-		}
-
-		public int getCurrent()
-		{
-			return current;
-		}
-
-	}
-
-	public ConfigPanelFritzBox(FritzBox fritzBox) {
+	public ConfigPanelFritzBoxIP(FritzBox fritzBox) {
 		if (fritzBox != null) {
 			this.fritzBox = fritzBox;
 		} else {
-			Exception e = null;
-			this.fritzBox = new FritzBox("FRITZ!Box", "", "http", "", "80", "", e);
-			if (e != null) {
-				Debug.error(e.toString());
-			}
+			this.fritzBox = new FritzBox("FRITZ!Box", "", "http", "", properties.getProperty("box.port"), false, "", "");
 		}
 		if ("".equals(this.fritzBox.getAddress())) {
 			this.fritzBox.setAddress("192.168.178.1");
@@ -132,6 +86,7 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
 
+		int gridPosY = 0;
 		JPanel cPane = new JPanel();
 
 		cPane.setLayout(new GridBagLayout());
@@ -141,32 +96,33 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 		c.insets.left = 5;
 		c.anchor = GridBagConstraints.WEST;
 
-		c.gridy = 1;
+		c.gridy = gridPosY++;
 		ImageIcon boxicon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 				getClass().getResource(
 						"/de/moonflower/jfritz/resources/images/fritzbox.png"))); //$NON-NLS-1$
+		
 		JLabel label = new JLabel(""); //$NON-NLS-1$
 		label.setIcon(boxicon);
 		cPane.add(label, c);
 		label = new JLabel(messages.getMessage("FRITZ!Box_Preferences")); //$NON-NLS-1$
 		cPane.add(label, c);
 
-		c.gridy = 2;
+		c.gridy = gridPosY++;
 		label = new JLabel(messages.getMessage("FRITZ!Box") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		cPane.add(label, c);
 
-		addressCombo = new JComboBox();
+		addressCombo = new JComboBox<String>();
 		c.fill = GridBagConstraints.HORIZONTAL;
 		boolean boxAddressAdded = false;
 
 		// initialize the drop down box
-		BoxClass.detectBoxesWithSSDP();
-		devices = BoxClass.getDevices();
+		BoxClass.detectBoxesWithSSDP(log);
+		devices = BoxClass.getDevices(log);
 		Vector<String> deviceAddress = new Vector<String>();
 		if (devices != null) {
-			Enumeration<SSDPPacket> en = (Enumeration<SSDPPacket>)devices.elements();
+			Enumeration<SSDPPacket> en = devices.elements();
 			while (en.hasMoreElements()) {
-				SSDPPacket p = (SSDPPacket) en.nextElement();
+				SSDPPacket p = en.nextElement();
 				if (!deviceAddress.contains(p.getIP().getHostAddress()))
 				{
 					deviceAddress.add(p.getIP().getHostAddress());
@@ -200,35 +156,32 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 		addressCombo.addActionListener(this);
 		cPane.add(addressCombo, c);
 
-		c.gridy = 3;
+		c.gridy = gridPosY++;
 		label = new JLabel(messages.getMessage("ip_address") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		cPane.add(label, c);
 		address = new JTextField("", 30); //$NON-NLS-1$
 		address.setMinimumSize(new Dimension(200, 20));
+		address.getDocument().addDocumentListener(this);
 		cPane.add(address, c);
 
-		c.gridy = 4;
-		label = new JLabel(messages.getMessage("password") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
-		cPane.add(label, c);
-		pass = new JPasswordField("", 30); //$NON-NLS-1$
-		pass.setMinimumSize(new Dimension(200, 20));
-		cPane.add(pass, c);
-
-		c.gridy = 5;
+		c.gridy = gridPosY++;
 		label = new JLabel(messages.getMessage("box.port") + ": "); //$NON-NLS-1$,  //$NON-NLS-2$
 		cPane.add(label, c);
 		port = new JTextField("", 30); //$NON-NLS-1$
 		port.setMinimumSize(new Dimension(200, 20));
+		port.getDocument().addDocumentListener(this);
 		cPane.add(port, c);
 
-		c.gridy = 6;
+		c.insets.top = 3;
+		c.insets.bottom = 3;	
+		c.gridy = gridPosY++;
 		label = new JLabel("");
 		cPane.add(label, c);
 		defaultFritzBox = new JCheckBox(messages.getMessage("set_default_fritzbox"));
 		defaultFritzBox.setSelected(true);
 		cPane.add(defaultFritzBox, c);
 
-		c.gridy = 7;
+		c.gridy = gridPosY++;
 		boxtypeButton = new JButton(messages.getMessage("detect_box_type")); //$NON-NLS-1$
 		boxtypeButton.setActionCommand("detectboxtype"); //$NON-NLS-1$
 		boxtypeButton.addActionListener(this);
@@ -238,7 +191,20 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 
 		add(new JScrollPane(cPane), BorderLayout.CENTER);
 	}
+	
+	public void setWizardReference(Wizard wizard) {
+		this.wizard = wizard;
+		if (this.fritzBox.getFirmware() == null) {
+			disableNextButtonInWizard();
+		}
+	}
 
+	public void setFritzBoxPanelLogin(ConfigPanelFritzBoxLogin fritzBoxPanel)
+	{
+		this.fritzBoxPanelLogin = fritzBoxPanel;
+	}
+
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("addresscombo")) { //$NON-NLS-1$
 			String selectedItem = addressCombo.getItemAt(addressCombo.getSelectedIndex()).toString();
@@ -246,76 +212,36 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 			{
 				address.setText(selectedItem);
 			} else {
-				Debug.error("Address wrong!"); //$NON-NLS-1$
-				boxtypeLabel.setForeground(Color.RED);
-				boxtypeLabel.setText(messages.getMessage("box.not_found")); //$NON-NLS-1$
-				boxtypeLabel.setPreferredSize(boxtypeLabel.getPreferredSize());
-				boxtypeLabel.repaint();
+				log.error("Address wrong!"); //$NON-NLS-1$
+				setErrorMessage(messages.getMessage("box.not_found"));
 			}
-			setBoxTypeLabel();
+			disableNextButtonInWizard();
 		} else if (e.getActionCommand().equals("detectboxtype")) { //$NON-NLS-1$
-		   Container c = getPanel(); // get the window's content pane
-			try {
-			   c.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
-				boxtypeLabel.setForeground(Color.BLUE);
-				boxtypeLabel.setText(messages.getMessage("detect_firmware"));//$NON-NLS-1$
-				boxtypeLabel.setPreferredSize(boxtypeLabel.getPreferredSize());
-				boxtypeLabel.repaint();
-
-				detectBoxType();
-				if (sipPanel != null)
-				{
-					sipPanel.updateTable();
-				}
-
-			} catch (WrongPasswordException e1) {
-				Timer wrongPasswordTask = new Timer();
-				if (refreshTimeoutTask != null)
-				{
-					refreshTimeoutTask.cancel();
-				}
-				refreshTimeoutTask = new RefreshTimeoutTask(e1.getRetryTime());
-				wrongPasswordTask.schedule(refreshTimeoutTask, 0, 1000);
-				String error = messages.getMessage("box.wrong_password.wait");
-				error = error.replaceFirst("%WAIT%", Integer.toString(e1.getRetryTime()));
-				Debug.error(error); //$NON-NLS-1$
-				boxtypeLabel.setForeground(Color.RED);
-				boxtypeLabel.setText(error); //$NON-NLS-1$
-				boxtypeLabel.setPreferredSize(boxtypeLabel.getPreferredSize());
-				boxtypeLabel.repaint();
-				this.repaint();
-			} catch (InvalidFirmwareException ife) {
-				Debug.error("Invalid firmware detected"); //$NON-NLS-1$
-				boxtypeLabel.setForeground(Color.RED);
-				boxtypeLabel.setText(messages.getMessage("unknown_firmware")); //$NON-NLS-1$
-				boxtypeLabel.setPreferredSize(boxtypeLabel.getPreferredSize());
-				boxtypeLabel.repaint();
-			} catch (IOException e1) {
-				Debug.error("Address wrong!"); //$NON-NLS-1$
-				boxtypeLabel.setForeground(Color.RED);
-				boxtypeLabel.setText(messages.getMessage("box.not_found")); //$NON-NLS-1$
-				boxtypeLabel.setPreferredSize(boxtypeLabel.getPreferredSize());
-				boxtypeLabel.repaint();
-			}
-			c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			executeDetectBoxType();
 		}
 	}
 
-	private void setBoxTypeLabel() {
-		if (fritzBox.getFirmware() != null) {
-			boxtypeLabel.setForeground(Color.BLUE);
-			boxtypeLabel.setText(" \n" + fritzBox.getFirmware().getBoxName() + "\n" //$NON-NLS-1$
-					+ fritzBox.getFirmware().getFirmwareVersion() + "\n "); //$NON-NLS-1$
-			boxtypeLabel.setPreferredSize(boxtypeLabel.getPreferredSize());
-			boxtypeLabel.repaint();
-			checkDefaultFritzBox();
-		} else {
-			boxtypeLabel.setForeground(Color.RED);
-			boxtypeLabel.setText(" \n" + messages.getMessage("unknown")+"\n "); //$NON-NLS-1$
-			boxtypeLabel.setPreferredSize(boxtypeLabel.getPreferredSize());
-			boxtypeLabel.repaint();
+	private void executeDetectBoxType() {
+		Container c = getPanel(); // get the window's content pane
+		c.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+		setSuccessMessage(messages.getMessage("detect_firmware"));
+		
+		try {
+			detectBoxType();
+		} catch (IOException e1) {
+			// nothing to do, already handled in detectBoxType
+		} catch (FirmwareNotDetectedException e1) {
+			// nothing to do, already handled in detectBoxType
+		} catch (PageNotFoundException e1) {
+			// nothing to do, already handled in detectBoxType
 		}
+
+		if (fritzBoxPanelLogin != null) {
+			fritzBoxPanelLogin.updateGui();
+		}
+		
+		c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}
 
 	private void checkDefaultFritzBox()
@@ -334,58 +260,72 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 		}
 	}
 
+	@Override
 	public void loadSettings() {
-		pass.setText(fritzBox.getPassword()); //$NON-NLS-1$
-		address.setText(fritzBox.getAddress()); //$NON-NLS-1$,  //$NON-NLS-2$
-		port.setText(fritzBox.getPort()); //$NON-NLS-1$,  //$NON-NLS-2$
+		address.setText(fritzBox.getAddress());
+		port.setText(fritzBox.getPort());
 
+		executeDetectBoxType();
+		
 		for (int i=0; i < addressCombo.getItemCount(); i++) {
 			if (((String)addressCombo.getItemAt(i)).equals(address.getText())) {
 				addressCombo.setSelectedIndex(i);
 			}
 		}
-		setBoxTypeLabel();
+		updateFirmwareLabel();
 
 		if(properties.getProperty("network.type").equals("2")
 				&& Boolean.parseBoolean(properties.getProperty("option.clientCallList"))){
 
-			Debug.netMsg("JFritz is running as a client and using call list from server, disabeling FritzBox panel");
+			log.info("NETWORKING: JFritz is running as a client and using call list from server, disabeling FritzBox panel");
 			this.boxtypeButton.setEnabled(false);
 		}
+						
 		settingsChanged = false;
 	}
 
+	@Override
 	public void saveSettings() throws WrongPasswordException, InvalidFirmwareException, IOException {
 		saveSettings(true);
 	}
 
-	public void saveSettings(boolean checkChanges) throws WrongPasswordException, InvalidFirmwareException, IOException {
-		if (refreshTimeoutTask != null)
-		{
-			refreshTimeoutTask.cancel();
-		}
-
+	public void saveSettings(boolean checkChanges) throws InvalidFirmwareException {
 		if ( (!checkChanges)
-			|| (!properties.getProperty("box.address").equals(address.getText()))
-			|| (!properties.getProperty("box.password").equals(Encryption.encrypt(new String(pass.getPassword()))))
-			|| (!properties.getProperty("box.port").equals(port.getText())))
+				|| somethingChanged()
+			)
+				
 		{
 			settingsChanged = true;
 		}
 
 		if (settingsChanged) {
 			properties.setProperty("box.address", address.getText()); //$NON-NLS-1$
-			properties.setProperty("box.password", Encryption.encrypt(new String(pass.getPassword()))); //$NON-NLS-1$
 			properties.setProperty("box.port", port.getText()); //$NON-NLS-1$
-
-			fritzBox.setAddress(address.getText());
-			fritzBox.setPassword(new String(pass.getPassword()));
-			fritzBox.setPort(port.getText());
-			fritzBox.updateSettings();
-
+			
+			fritzBox.setUseUsername(Boolean.parseBoolean(properties.getProperty("box.loginUsingUsername")));
+			fritzBox.setUsername(properties.getProperty("box.username"));
+			fritzBox.setPassword(Encryption.decrypt(properties.getProperty("box.password")));
+			
+			try {
+				detectBoxType();
+				fritzBox.updateSettings();
+			} catch (IOException e1) {
+				// TODO this seems wrong to me, updateSettings also throws exceptions! 
+				// nothing to do, already handled in detectBoxType
+			} catch (FirmwareNotDetectedException e1) {
+				// TODO this seems wrong to me, updateSettings also throws exceptions! 
+				// nothing to do, already handled in detectBoxType
+			} catch (PageNotFoundException e1) {
+				// TODO this seems wrong to me, updateSettings also throws exceptions! 
+				// nothing to do, already handled in detectBoxType
+			} catch (WrongPasswordException e1) {
+				// TODO this seems wrong to me, updateSettings also throws exceptions! 
+				// nothing to do, already handled in detectBoxType
+			}
+			
 			if (fritzBox.getFirmware() != null) {
-				properties.setProperty("box.firmware", fritzBox.getFirmware().getFirmwareVersion()); //$NON-NLS-1$
-				if (defaultFritzBox.isSelected())
+				properties.setProperty("box.firmware", fritzBox.getFirmware().toSimpleString()); //$NON-NLS-1$
+				if (defaultFritzBox.isSelected() && fritzBox.getMacAddress() != null)
 				{
 					properties.setProperty("box.mac", fritzBox.getMacAddress());
 				}
@@ -396,10 +336,6 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 		}
 	}
 
-	public String getPassword() {
-		return new String(pass.getPassword());
-	}
-
 	public String getAddress() {
 		return address.getText();
 	}
@@ -408,50 +344,117 @@ public class ConfigPanelFritzBox extends JPanel implements ActionListener,
 		return port.getText();
 	}
 
+	@Override
 	public String getPath() {
 		return messages.getMessage("FRITZ!Box");
 	}
 
+	@Override
 	public JPanel getPanel() {
 		return this;
 	}
 
+	@Override
 	public String getHelpUrl() {
 		return "http://jfritz.org/wiki/JFritz_Handbuch:Deutsch#FRITZ.21Box";
 	}
 
+	@Override
 	public void cancel() {
-		if (refreshTimeoutTask != null)
-		{
-			refreshTimeoutTask.cancel();
-		}
 	}
 
-	public void detectBoxType() throws WrongPasswordException, IOException, InvalidFirmwareException
+	public void detectBoxType() throws IOException, FirmwareNotDetectedException, PageNotFoundException
 	{
 		fritzBox.setAddress(address.getText());
-		fritzBox.setPassword(new String(pass.getPassword()));
 		fritzBox.setPort(port.getText());
-		fritzBox.updateSettings();
+		fritzBox.detectFirmware();
+		updateFirmwareLabel();
+	}
 
-		setBoxTypeLabel();
+	private void updateFirmwareLabel() {
+		if (fritzBox.getFirmware() != null) {
+			setSuccessMessage(fritzBox.getFirmware().getName() + "\n" + fritzBox.getFirmware().toSimpleString());
+			enableNextButtonInWizard();
+			checkDefaultFritzBox();
+		} else {
+			setErrorMessage(messages.getMessage("unknown")); //$NON-NLS-1$
+		}
+	}
+	
+	private void setSuccessMessage(final String msg) {
+		boxtypeLabel.setForeground(Color.BLUE);
+		boxtypeLabel.setText(" \n" + msg + "\n "); //$NON-NLS-1$
+		boxtypeLabel.setPreferredSize(boxtypeLabel.getPreferredSize());
+		boxtypeLabel.repaint();
+	}
+	
+	private void setErrorMessage(final String msg) {
+		boxtypeLabel.setForeground(Color.RED);
+		boxtypeLabel.setText(" \n" + msg + "\n "); //$NON-NLS-1$ //$NON-NLS-2$
+		boxtypeLabel.setPreferredSize(boxtypeLabel.getPreferredSize());
+		boxtypeLabel.repaint();
 	}
 
 	public FritzBox getFritzBox()
 	{
 		return fritzBox;
 	}
-
-	public void setSipPanel(ConfigPanelSip sipPanel)
-	{
-		this.sipPanel = sipPanel;
-	}
-
+	
+	@Override
 	public boolean shouldRefreshJFritzWindow() {
 		return false;
 	}
 
+	@Override
 	public boolean shouldRefreshTrayMenu() {
 		return false;
+	}
+
+	private boolean somethingChanged() {
+		boolean firmwareChanged = false;
+		if (fritzBox != null && fritzBox.getFirmware() != null) {
+			firmwareChanged = !properties.getProperty("box.firmware").equals(fritzBox.getFirmware().toSimpleString());
+		}
+		
+		return (!properties.getProperty("box.address").equals(address.getText()))
+				|| (!properties.getProperty("box.port").equals(port.getText()))
+				|| (firmwareChanged);
+
+	}
+	
+	@Override
+	public void insertUpdate(DocumentEvent e) {
+		if (wizard != null && somethingChanged()) {
+			disableNextButtonInWizard();
+			setSuccessMessage("");
+		}
+	}
+
+	@Override
+	public void removeUpdate(DocumentEvent e) {
+		if (wizard != null && somethingChanged()) {
+			disableNextButtonInWizard();
+			setSuccessMessage("");
+		}
+	}
+
+	@Override
+	public void changedUpdate(DocumentEvent e) {
+		if (wizard != null && somethingChanged()) {
+			disableNextButtonInWizard();
+			setSuccessMessage("");
+		}
+	}
+	
+	private void disableNextButtonInWizard() {
+		if (wizard != null) {
+			wizard.setNextFinishButtonEnabled(false);
+		}
+	}
+
+	private void enableNextButtonInWizard() {
+		if (wizard != null) {
+			wizard.setNextFinishButtonEnabled(true);
+		}
 	}
 }

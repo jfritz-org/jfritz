@@ -8,12 +8,13 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import jd.nutils.OSDetector;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
-import jd.nutils.OSDetector;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.Debug;
@@ -29,6 +30,8 @@ public class JFritzDataDirectory {
 	protected PropertyProvider properties = PropertyProvider.getInstance();
 	protected MessageProvider messages = MessageProvider.getInstance();
 
+	private Main main;
+	
 	private JFritzDataDirectory() {
 		if (SAVE_DIR == null) {
 			SAVE_DIR = getDefaultSaveDirectory();
@@ -69,7 +72,8 @@ public class JFritzDataDirectory {
 	 * @author Brian Jensen
 	 *
 	 */
-	public void loadSaveDir() {
+	public void loadSaveDir(Main main) {
+		this.main = main;
 		BufferedReader br = null;
 		try {
 			final String jfritzConfigFile = Main.USER_DIR + File.separator + Main.USER_JFRITZ_FILE;
@@ -175,8 +179,6 @@ public class JFritzDataDirectory {
 		if (!dst.isFile())
 		{
 			LogManager.shutdown();
-			Debug.off();
-
 			File src = new File(SAVE_DIR);
 			try {
 				FileUtils.moveDirectory(src, dst);
@@ -187,21 +189,24 @@ public class JFritzDataDirectory {
 					try {
 						FileUtils.deleteDirectory(src);
 					} catch (IOException e1) {
-						Debug.errDlg("Could not delete old data directory '" + src + "'!\n" +
-								e.getMessage());
+						String errorMessage = "Could not delete old data directory '" + src + "'!";
+						log.error(errorMessage, e1);
+						Debug.errDlg(errorMessage);
 					}
 				} catch (IOException e1) {
-					Debug.errDlg("Could not copy data directory from '" + SAVE_DIR + "' to '" + path + "'!\n" +
-							e.getMessage());
+					String errorMessage = "Could not copy data directory from '" + SAVE_DIR + "' to '" + path + "'!";
+					log.error(errorMessage, e1);
+					Debug.errDlg(errorMessage);
 				}
 			} finally {
 				DOMConfigurator.configure(JFritzUtils.getFullPath("/log4j.xml"));
 				saveNewDirectory(path);
-				Debug.on();
-				Main.initLog4jAppender();
+				main.initLog4jAppender();
 			}
 		} else {
-			Debug.errDlg("You selected a file, please choose a directory!");
+			String errorMessage = "You selected a file, please choose a directory!";
+			log.error(errorMessage);
+			Debug.errDlg(errorMessage);
 		}
 	}
 

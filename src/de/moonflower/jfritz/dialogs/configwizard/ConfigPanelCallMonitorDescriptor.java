@@ -1,9 +1,9 @@
 package de.moonflower.jfritz.dialogs.configwizard;
 
-import com.nexes.wizard.*;
+import com.nexes.wizard.WizardPanelDescriptor;
 
 import de.moonflower.jfritz.dialogs.config.ConfigPanelCallMonitor;
-import de.moonflower.jfritz.dialogs.config.ConfigPanelFritzBox;
+import de.moonflower.jfritz.dialogs.config.ConfigPanelFritzBoxIP;
 
 /**
  * @author Brian Jensen
@@ -19,7 +19,7 @@ public class ConfigPanelCallMonitorDescriptor extends WizardPanelDescriptor {
 
 	  public ConfigPanelCallMonitor callMonitorPanel;
 
-	   public ConfigPanelCallMonitorDescriptor(ConfigPanelFritzBox fritzBoxPanel) {
+	   public ConfigPanelCallMonitorDescriptor(ConfigPanelFritzBoxIP fritzBoxPanel) {
 			callMonitorPanel = new ConfigPanelCallMonitor(null, false, fritzBoxPanel, null); //TODO: nicht null, sondern ein richtiges Fenster
 			callMonitorPanel.loadSettings();
 			setPanelDescriptorIdentifier(IDENTIFIER);

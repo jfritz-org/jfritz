@@ -10,31 +10,7 @@
   </appender>
 
   <category name="de.moonflower.jfritz">
-    <priority value="info"/>
-  </category>
-
-  <category name="de.moonflower.jfritz.autoupdate">
-    <priority value="info"/>
-  </category>
-
-  <category name="de.moonflower.jfritz.callerlist">
-    <priority value="info"/>
-  </category>
-
-  <category name="de.moonflower.jfritz.phonebook">
-    <priority value="info"/>
-  </category>
-
-  <category name="de.moonflower.jfritz.proxy">
-    <priority value="info"/>
-  </category>
-
-  <category name="de.moonflower.jfritz.utils.network">
-    <priority value="info"/>
-  </category>
-
-  <category name="de.moonflower.jfritz.utils.reverselookup">
-    <priority value="info"/>
+    <priority value="trace"/>
   </category>
 
   <root>

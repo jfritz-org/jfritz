@@ -1,11 +1,13 @@
 package de.moonflower.jfritz.utils.reverselookup;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 
-import de.moonflower.jfritz.utils.Debug;
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
@@ -15,6 +17,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  *
  */
 public final class ReverseLookupAustria {
+	private final static Logger log = Logger.getLogger(ReverseLookupAustria.class);
 
 	public final static String VORWAHLEN_HEADER = "Number;City";
 
@@ -30,13 +33,13 @@ public final class ReverseLookupAustria {
 	 *
 	 */
 	public static void loadAreaCodes(){
-		Debug.info("Loading the austrian number to city list");
+		log.info("Loading the austrian number to city list");
 		numberMap = new HashMap<String, String>(1200);
 		BufferedReader br = null;
-		FileReader fr = null;
+		FileInputStream fi = null;
 		try{
-			fr = new FileReader(JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") +JFritzUtils.FILESEP + "austria" + JFritzUtils.FILESEP + "areacodes_austria.csv");
-			br = new BufferedReader(fr);
+			fi = new FileInputStream(JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") +JFritzUtils.FILESEP + "austria" + JFritzUtils.FILESEP + "areacodes_austria.csv");
+			br = new BufferedReader(new InputStreamReader(fi, "UTF-8"));
 			String line;
 			String[] entries;
 			int lines = 0;
@@ -53,19 +56,19 @@ public final class ReverseLookupAustria {
 				}
 			}
 
-			Debug.info(lines + " Lines read from areacodes_austria.csv");
-			Debug.info("numberMap size: "+numberMap.size());
+			log.info(lines + " Lines read from areacodes_austria.csv");
+			log.info("numberMap size: "+numberMap.size());
 
 		}catch(Exception e){
-			Debug.error(e.toString());
+			log.error(e.toString());
 		}finally{
 			try{
-				if(fr!=null)
-					fr.close();
+				if(fi!=null)
+					fi.close();
 				if(br!=null)
 					br.close();
 			}catch (IOException ioe){
-				Debug.error("error closing stream "+ioe.toString());
+				log.error("error closing stream "+ioe.toString());
 			}
 		}
 	}
@@ -81,7 +84,7 @@ public final class ReverseLookupAustria {
 
 	public static String getCity(final String number){
 		String currentNum = number;
-		Debug.info("Looking up city in austrian numberMap: "+currentNum);
+		log.info("Looking up city in austrian numberMap: "+currentNum);
 		String city = "";
 		if ( currentNum.startsWith("+43")) {
 			currentNum = "0"+currentNum.substring(3);

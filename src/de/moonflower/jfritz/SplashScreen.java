@@ -51,7 +51,7 @@ public class SplashScreen extends JFrame {
 
 		Dimension screenDim = Toolkit.getDefaultToolkit().getScreenSize();
 
-		this.setTitle(ProgramConstants.PROGRAM_NAME + " v"+ProgramConstants.PROGRAM_VERSION);
+		this.setTitle(ProgramConstants.PROGRAM_NAME + " v"+ProgramConstants.PROGRAM_VERSION  + " Rev: " + ProgramConstants.REVISION);
 		setIconImage(Toolkit.getDefaultToolkit()
 				.getImage(getClass()
 				.getResource("/de/moonflower/jfritz/resources/images/trayicon.png"))); //$NON-NLS-1$

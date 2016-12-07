@@ -2,7 +2,7 @@ package de.moonflower.jfritz.structs;
 
 import org.junit.Test;
 
-import de.moonflower.jfritz.struct.Port;
+//import de.moonflower.jfritz.struct.Port;
 
 public class PortTest {
 

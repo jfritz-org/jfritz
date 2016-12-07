@@ -37,17 +37,16 @@ import javax.swing.ListSelectionModel;
 import javax.swing.border.Border;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.TableCellRenderer;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzDataDirectory;
 import de.moonflower.jfritz.JFritzWindow;
-import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Person;
@@ -417,7 +416,7 @@ public class PersonPanel extends JPanel implements ActionListener,
 			firePropertyChange();
 			updateGUI();
 		} else if (e.getActionCommand().equals("add")) { //$NON-NLS-1$
-			clonedPerson.getNumbers().add(new PhoneNumberOld("", false)); //$NON-NLS-1$
+			clonedPerson.getNumbers().add(new PhoneNumberOld(this.properties, "", false)); //$NON-NLS-1$
 			typeModel.setTypes();
 			numberHasChanged = true;
 			firePropertyChange();

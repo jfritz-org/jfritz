@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
@@ -17,6 +19,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  *
  */
 public class ReverseLookupGermany {
+	private final static Logger log = Logger.getLogger(ReverseLookupGermany.class);
 
 	public final static String FILE_HEADER = "AreaCode;City";
 
@@ -32,21 +35,23 @@ public class ReverseLookupGermany {
 	 *
 	 */
 	public static void loadAreaCodes(){
-		Debug.info("Loading the german number to city list");
+		log.info("Loading the german number to city list");
 		numberMap = new HashMap<String, String>(5300);
 		BufferedReader br = null;
 		FileInputStream fi = null;
 
 		try{
 			fi = new FileInputStream(JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") + JFritzUtils.FILESEP + "germany" + JFritzUtils.FILESEP + "areacodes_germany.csv");
-			br = new BufferedReader(new InputStreamReader(fi, "ISO-8859-1"));
+			br = new BufferedReader(new InputStreamReader(fi, "UTF-8"));
 
 			String line;
 			String[] entries;
 			int lines = 0;
 			String l = br.readLine();
 			if(l==null){
-				Debug.errDlg("File "+JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") + JFritzUtils.FILESEP + "germany" + JFritzUtils.FILESEP + "areacodes_germany.csv"+" empty");
+				String message = "File "+JFritzUtils.getFullPath(JFritzUtils.FILESEP + "number") + JFritzUtils.FILESEP + "germany" + JFritzUtils.FILESEP + "areacodes_germany.csv"+" empty";
+				log.error(message);
+				Debug.errDlg(message);
 			}
 			//Load the keys and values quick and dirty
 			if(l.equals(FILE_HEADER)){
@@ -60,11 +65,11 @@ public class ReverseLookupGermany {
 				}
 			}
 
-			Debug.info(lines + " Lines read from areacodes_germany.csv");
-			Debug.info("numberMap size: "+numberMap.size());
+			log.info(lines + " Lines read from areacodes_germany.csv");
+			log.info("numberMap size: "+numberMap.size());
 
 		}catch(Exception e){
-			Debug.error(e.toString());
+			log.error(e.toString());
 		}finally{
 			try{
 				if(fi!=null)
@@ -72,7 +77,7 @@ public class ReverseLookupGermany {
 				if(br!=null)
 					br.close();
 			}catch (IOException ioe){
-				Debug.error("error closing stream "+ioe.toString());
+				log.error("error closing stream "+ioe.toString());
 			}
 		}
 
@@ -89,7 +94,7 @@ public class ReverseLookupGermany {
 	 */
 	public static String getCity(String number){
 
-		Debug.info("Looking up city in numberMap: "+number);
+		log.info("Looking up city in numberMap: "+number);
 		String city = "";
 		int l = number.length();
 		if(number.startsWith("0") && numberMap != null){

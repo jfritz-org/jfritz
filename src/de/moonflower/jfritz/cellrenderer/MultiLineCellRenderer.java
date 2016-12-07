@@ -1,9 +1,12 @@
 package de.moonflower.jfritz.cellrenderer;
 
-import javax.swing.*;
-import javax.swing.table.*;
-import javax.swing.border.*;
-import java.awt.*;
+import java.awt.Component;
+
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.TableCellRenderer;
 
 /**
  * @version 1.0 11/09/98

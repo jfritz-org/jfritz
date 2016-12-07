@@ -10,10 +10,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
@@ -27,6 +29,7 @@ import de.moonflower.jfritz.utils.Debug;
  *
  */
 public class CallFileXMLHandler extends DefaultHandler {
+	private final static Logger log = Logger.getLogger(CallFileXMLHandler.class);
 
 	Vector<Call> newCalls;
 
@@ -39,6 +42,8 @@ public class CallFileXMLHandler extends DefaultHandler {
 	Date calldate;
 
 	int duration;
+	
+	private PropertyProvider properties = PropertyProvider.getInstance();
 
 	public CallFileXMLHandler(CallerList callerlist) {
 		super();
@@ -104,7 +109,7 @@ public class CallFileXMLHandler extends DefaultHandler {
 			try {
 				calldate = df.parse(chars.replaceAll("\"", "")); //$NON-NLS-1$,  //$NON-NLS-2$
 			} catch (ParseException e) {
-				Debug.error("Date problem:  " + chars); //$NON-NLS-1$
+				log.error("Date problem:  " + chars, e); //$NON-NLS-1$
 				Debug.errDlg("Date problem");
 				calldate = null;
 				return;
@@ -114,7 +119,7 @@ public class CallFileXMLHandler extends DefaultHandler {
 			if (callerlist != null) { // Add an entry to the callerlist
 				PhoneNumberOld number = null;
 				if (caller.length() > 0) {
-					number = new PhoneNumberOld(caller, false);
+					number = new PhoneNumberOld(this.properties, caller, false);
 					if (callbycall.length() > 0)
 						number.setCallByCall(callbycall);
 				}

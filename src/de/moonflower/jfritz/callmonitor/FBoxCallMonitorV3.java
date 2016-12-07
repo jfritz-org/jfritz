@@ -36,7 +36,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 							 Vector<CallMonitorStatusListener> listener,
 							 boolean shouldConnect) {
 		super(fritzBox, listener, shouldConnect);
-		log.info("FBoxListener V3"); //$NON-NLS-1$
+		log.info("(CM3) FBoxListener V3"); //$NON-NLS-1$
 	}
 
     public void run() {
@@ -45,7 +45,9 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
     		if (!this.isConnected()) {
     			connect();
     		}
-    		readOutput();
+    		if (this.isConnected()) {
+    			readOutput();
+    		}
     	}
     }
 
@@ -74,9 +76,9 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 	private String[] splitLine(final String line) {
 		String[] split = line.split(DELIMITER, 7); //$NON-NLS-1$
 		if (log.isDebugEnabled()) {
-		    log.debug("Server: " + line); //$NON-NLS-1$
+		    log.debug("(CM3) Server: " + line); //$NON-NLS-1$
 		    for (int i = 0; i < split.length; i++) {
-		        log.debug("Split[" + i + "] = " + split[i]); //$NON-NLS-1$,  //$NON-NLS-2$
+		        log.debug("(CM3) Split[" + i + "] = " + split[i]); //$NON-NLS-1$,  //$NON-NLS-2$
 		    }
 		}
 		return split;
@@ -132,13 +134,13 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 			Date date = parseDate(dateStr);
 			String provider = parseProvider(line, msn);
 			int callId = Integer.parseInt(callIdStr);
-			PhoneNumberOld phoneNumber = new PhoneNumberOld(numberStr, parseDialOut);
+			PhoneNumberOld phoneNumber = new PhoneNumberOld(this.properties, numberStr, parseDialOut);
 			Port port = parsePort(portStr);
 
 			Call currentCall = new Call(callType, date, phoneNumber, port, provider, 0);
 			monitoredCalls.addNewCall(callId, currentCall);
 		} catch (ParseException e) {
-		    log.error("Could not convert call", e);
+		    log.error("(CM3) Could not convert call", e);
 		}
 	}
 
@@ -148,8 +150,11 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 			try {
 				int portId = Integer.parseInt(portStr);
 				port = fritzBox.getConfiguredPort(portId);
+				if (port == null) { // Fallback auf statisch konfigurierte Ports
+					port = Port.getPort(portId);
+				}
 			} catch (NumberFormatException nfe) {
-				log.warn("Could not parse port id", nfe);
+				log.warn("(CM3) Could not parse port id", nfe);
 			}
 		}
 		return port;
@@ -175,7 +180,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 		Port port = parsePort(portStr);
 
 		Call call = monitoredCalls.getCall(callId);
-		PhoneNumberOld number = new PhoneNumberOld(numberStr, false);
+		PhoneNumberOld number = new PhoneNumberOld(this.properties, numberStr, false);
 		if ( call != null ) {
 			if (number.getIntNumber().equals(call.getPhoneNumber().getIntNumber())
 				|| number.getIntNumber().equals(properties.getProperty("dial.prefix")+call.getPhoneNumber().getIntNumber())) {
@@ -184,7 +189,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 						Date date = parseDate(dateStr);
 						call.setCalldate(date);
 					} catch (ParseException e) {
-					    log.error("Could not convert call", e);
+					    log.error("(CM3) Could not convert call", e);
 					}
 					monitoredCalls.establishCall(callId);
 			}

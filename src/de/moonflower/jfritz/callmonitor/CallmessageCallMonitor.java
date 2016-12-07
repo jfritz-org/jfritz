@@ -9,11 +9,12 @@ import java.net.SocketException;
 import java.net.URLDecoder;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.phonebook.PhoneBook;
 import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.utils.Debug;
 
 /**
  * Thread, listens on a TCP-Port on Callmessage messages format:
@@ -24,6 +25,7 @@ import de.moonflower.jfritz.utils.Debug;
  *
  */
 public class CallmessageCallMonitor extends Thread implements CallMonitorInterface {
+	private final static Logger log = Logger.getLogger(CallmessageCallMonitor.class);
 
 	private boolean isRunning = false;
 
@@ -54,26 +56,26 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
 
 	private void startCallmessageListener() {
 		isRunning = true;
-		Debug.info("Starting Callmessage-Monitor on Port " + port); //$NON-NLS-1$
+		log.info("Starting Callmessage-Monitor on Port " + port); //$NON-NLS-1$
 		try {
 			serverSocket = new ServerSocket(port);
 			connected = true;
 			this.setConnectedStatus();
 		} catch (Exception e) {
 			try {
-                Debug.error(e.toString()); //$NON-NLS-1$
+                log.error(e.toString()); //$NON-NLS-1$
                 connected = false;
 				synchronized (this) {
 					wait(5000);
 				}
 			} catch (InterruptedException e1) {
 				connected = false;
-                Debug.error(e1.toString());
+                log.error(e1.toString());
 	        	Thread.currentThread().interrupt();
 			}
 			this.setDisconnectedStatus();
 		}
-        Debug.info("Callmessage-Monitor ready"); //$NON-NLS-1$
+        log.info("Callmessage-Monitor ready"); //$NON-NLS-1$
 		while (isRunning) {
 			try {
 				// Client-Connection accepten, Extra-Socket öffnen
@@ -85,7 +87,7 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
 				String msg = input.readLine();
 				msg = URLDecoder.decode(msg, "ISO-8859-1"); //$NON-NLS-1$
 				msg = msg.substring(5, msg.length() - 9);
-				Debug.info("Got message from callmessageMonitor: " + msg); //$NON-NLS-1$
+				log.info("Got message from callmessageMonitor: " + msg); //$NON-NLS-1$
 
 				// Neuer CallmessageMonitor
 				 if (msg.startsWith("?")) {  //$NON-NLS-1$
@@ -157,13 +159,13 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
 				output.writeBytes("HTTP/1.1 204 No Content"); //$NON-NLS-1$
 				connection.close();
 			} catch (SocketException e) {
-				Debug.error(e.toString()); //$NON-NLS-1$
+				log.error(e.toString()); //$NON-NLS-1$
 				if (!e.toString().equals("java.net.SocketException: socket closed")) { //$NON-NLS-1$
 					this.setDisconnectedStatus();
 				}
 			} catch (Exception e) {
 				JFritz.infoMsg("Exception " + e); //$NON-NLS-1$
-				Debug.error("CallmessageListener: Exception " + e.toString()); //$NON-NLS-1$
+				log.error("CallmessageListener: Exception " + e.toString()); //$NON-NLS-1$
 				this.setDisconnectedStatus();
 				isRunning = false;
 				//				break;
@@ -172,12 +174,12 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
 	}
 
 	public void stopCallMonitor() {
-		Debug.info("Stopping CallmessageListener"); //$NON-NLS-1$
+		log.info("Stopping CallmessageListener"); //$NON-NLS-1$
 		try {
 			if (serverSocket != null)
 				serverSocket.close();
 		} catch (Exception e) {
-			Debug.error("Error on closing socket: " + e.toString()); //$NON-NLS-1$
+			log.error("Error on closing socket: " + e.toString()); //$NON-NLS-1$
 		}
 		isRunning = false;
 	}
@@ -187,7 +189,7 @@ public class CallmessageCallMonitor extends Thread implements CallMonitorInterfa
 	}
 
 	public void closeConnection() {
-		Debug.warning("Method not implemented!");
+		log.warn("Method not implemented!");
 	}
 
 	private void setConnectedStatus()

@@ -5,6 +5,8 @@ import java.net.ServerSocket;
 import java.net.SocketException;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.Debug;
@@ -90,6 +92,7 @@ import de.moonflower.jfritz.utils.Debug;
  *
  */
 public class ClientConnectionListener extends Thread {
+	private final static Logger log = Logger.getLogger(ClientConnectionListener.class);
 
 	private static boolean isListening = false;
 
@@ -105,7 +108,7 @@ public class ClientConnectionListener extends Thread {
 	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public void run(){
-		Debug.netMsg("client connection listener started");
+		log.info("NETWORKING: client connection listener started");
 		connectedClients = new Vector<ClientConnectionThread>();
 		while(!quit){
 			if(!listen){
@@ -115,7 +118,7 @@ public class ClientConnectionListener extends Thread {
 					}
 
 				}catch(InterruptedException e){
-					Debug.error("Server thread was interuppted!");
+					log.error("Server thread was interuppted!");
 		        	Thread.currentThread().interrupt();
 				}
 			}else {
@@ -124,7 +127,7 @@ public class ClientConnectionListener extends Thread {
 					serverSocket = new ServerSocket(Integer.parseInt(
 							properties.getProperty("clients.port")));
 
-					Debug.netMsg("Listening for client connections on: "+
+					log.info("NETWORKING: Listening for client connections on: "+
 							properties.getProperty("clients.port"));
 					isListening = true;
 					NetworkStateMonitor.serverStateChanged();
@@ -136,16 +139,16 @@ public class ClientConnectionListener extends Thread {
 
 							synchronized(this){
 								try{
-									Debug.netMsg("Max number of clients reached, waiting for one to quit");
+									log.info("NETWORKING: Max number of clients reached, waiting for one to quit");
 									wait();
 								}catch(InterruptedException e){
-									Debug.error("Client listener interrupted while waiting for connection to close!");
+									log.error("Client listener interrupted while waiting for connection to close!");
 						        	Thread.currentThread().interrupt();
 								}
 							}
 						}else{
 							// we have at least one more connection slot free
-							Debug.netMsg("Client Connection Listener waiting for incoming connection");
+							log.info("NETWORKING: Client Connection Listener waiting for incoming connection");
 							ClientConnectionThread connection = new ClientConnectionThread(serverSocket.accept(), this);
 							connection.setName("Client connection listener");
 							connection.setDaemon(true);
@@ -162,22 +165,22 @@ public class ClientConnectionListener extends Thread {
 
 				}catch(SocketException e){
 					if(e.getMessage().equals("Socket closed"))
-						Debug.netMsg("Server socket closed");
+						log.info("NETWORKING: Server socket closed");
 					else{
-						Debug.error(e.toString());
+						log.error(e.toString());
 						e.printStackTrace();
 					}
 
 				}catch(IOException e){
-					Debug.errDlg(messages.getMessage("error_binding_port") + ": " + properties.getProperty("clients.port"));
-					Debug.error(e.toString());
-					e.printStackTrace();
+					String message = messages.getMessage("error_binding_port") + ": " + properties.getProperty("clients.port");
+					log.error(message, e);
+					Debug.errDlg(message);
 				}
 
 				isListening = false;
 				listen = false;
 
-				Debug.netMsg("Closing all open client connections");
+				log.info("NETWORKING: Closing all open client connections");
 				synchronized(this){
 					for(ClientConnectionThread client: connectedClients)
 						client.closeConnection();
@@ -188,7 +191,7 @@ public class ClientConnectionListener extends Thread {
 		}
 
 		//Always display a message, so we know the thread ended cleanly
-		Debug.netMsg("ClientConnectionListener has exited cleanly");
+		log.info("NETWORKING: ClientConnectionListener has exited cleanly");
 
 	}
 
@@ -229,12 +232,12 @@ public class ClientConnectionListener extends Thread {
 	public synchronized void stopListening(){
 		listen = false;
 		quit = true;
-		Debug.netMsg("Stopping client listener!");
+		log.info("NETWORKING: Stopping client listener!");
 		try{
 			serverSocket.close();
 
 		}catch(IOException e){
-			Debug.error("Error closing server socket: " + e.toString());
+			log.error("Error closing server socket: " + e.toString());
 			e.printStackTrace();
 		}
 

@@ -21,7 +21,7 @@ public class WrongPasswordException extends Exception {
         super();
     }
 
-    public WrongPasswordException(final String affectedBox, final String param, final int waitSeconds) {
+    public WrongPasswordException(int a, final String affectedBox, final String param, final int waitSeconds) {
         super(param);
         this.waitSeconds = waitSeconds;
         this.affectedBox = affectedBox;

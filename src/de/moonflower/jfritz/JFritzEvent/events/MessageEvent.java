@@ -8,6 +8,7 @@ public class MessageEvent implements JFritzEvent {
 		new JFritzEventParameter("Text", "$TEXT"),
 		new JFritzEventParameter("ID", "$ID")};
 
+	@SuppressWarnings("unused")
 	private String text;
 
 	public MessageEvent() {

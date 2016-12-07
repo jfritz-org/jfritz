@@ -18,6 +18,7 @@ public class UpdateSetupConfig {
 	String path = "";
 	String appName = "";
 	String appType = "";
+	String appRevision = "";
 
 	public void setFile(String path)
 	{
@@ -33,6 +34,10 @@ public class UpdateSetupConfig {
 		this.appVersion = version;
     }
 
+	public void setAppRevision(String revision) {
+		this.appRevision = revision;
+	}
+	
 	public void setAppType(String appType)
 	{
 		this.appType = appType;
@@ -44,6 +49,7 @@ public class UpdateSetupConfig {
 			out = new BufferedWriter(new FileWriter(path));
 			out.write("#define AppName \"" + appName + "\"\n");
 			out.write("#define AppVersion \"" + appVersion + "\"\n");
+			out.write("#define AppRevision \"" + appRevision + "\"\n");
 			out.write(";AppType can be \"Beta-Setup\" or \"Release-Setup\"\n");
 			out.write("#define AppType \"" + appType + "\"\n");
 			out.close();

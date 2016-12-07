@@ -9,6 +9,8 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.box.BoxClass;
@@ -16,9 +18,10 @@ import de.moonflower.jfritz.box.BoxCommunication;
 import de.moonflower.jfritz.constants.ProgramConstants;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.utils.Debug;
 
 public class JFritzTray {
+	private final static Logger log = Logger.getLogger(JFritzTray.class);
+
 	private static Tray tray;
 	private static MessageProvider messages = MessageProvider.getInstance();
 	private static ImageIcon trayIcon;
@@ -115,7 +118,7 @@ public class JFritzTray {
 
 		TrayMenu menu = new TrayMenu("JFritz Menu"); //$NON-NLS-1$
 		TrayMenuItem menuItem = new TrayMenuItem(ProgramConstants.PROGRAM_NAME + " v" //$NON-NLS-1$
-				+ ProgramConstants.PROGRAM_VERSION);
+				+ ProgramConstants.PROGRAM_VERSION + " Rev: " + ProgramConstants.REVISION);
 		menuItem.setActionCommand("showhide");
 		if (jframe != null) {
 			menuItem.addActionListener(jframe);
@@ -246,13 +249,13 @@ public class JFritzTray {
 	public static void refreshTrayMenu() {
 		if (tray != null && trayIcon != null) {
 			tray.remove();
-			createTrayMenu();
+			initTray(jframe, boxCommunication);
 		}
 	}
 
 	public static void removeTrayMenu() {
 		if (tray != null) {
-			Debug.info("Removing systray"); //$NON-NLS-1$
+			log.info("Removing systray"); //$NON-NLS-1$
 			tray.remove();
 			tray = null;
 		}

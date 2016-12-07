@@ -53,6 +53,7 @@ public class CallByCallFilter extends CallFilter {
 		return type;
 	}
 
+	@SuppressWarnings("unchecked")
 	public CallByCallFilter clone(){
 		CallByCallFilter cbcf = new CallByCallFilter((Vector<String>) this.filteredCallByCallProviders.clone());
 		cbcf.setEnabled(this.isEnabled());

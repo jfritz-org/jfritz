@@ -3,6 +3,7 @@ package de.moonflower.jfritz.utils;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import de.moonflower.jfritz.utils.network.UPNPUtils;
@@ -141,6 +142,9 @@ public class Samsung {
 		Samsung samsung = new Samsung("192.168.1.6");
 //		samsung.showCall("+491797405835", "Robert", "865072", "Daheim");
 //		samsung.showSMS("12345", "Empfaenger", "98765", "Sender", "Dies ist meine Nachricht an den Fernseher!");
-		samsung.showSchedule(new Date(2010, 5, 24, 14, 01, 02), new Date(2010, 5, 24, 14, 05, 00), "12345", "Owner", "Betreff", "Ort", "Dies ist mein Termin!");
+		Date startDate = new GregorianCalendar(2010, 5, 24, 14, 01, 00).getTime();
+		Date endDate = new GregorianCalendar(2010, 5, 24, 14, 05, 00).getTime();
+		
+		samsung.showSchedule(startDate, endDate, "12345", "Owner", "Betreff", "Ort", "Dies ist mein Termin!");		
 	}
 }

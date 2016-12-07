@@ -8,6 +8,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.PatternLayout;
 
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
@@ -53,7 +54,7 @@ public class TestHelper {
 	}
 
 	private static PhoneNumberOld createTestPhoneNumber() {
-		return new PhoneNumberOld("+4972112345678", false);
+		return new PhoneNumberOld(PropertyProvider.getInstance(), "+4972112345678", false);
 	}
 
 	private static Port createTestPort() {

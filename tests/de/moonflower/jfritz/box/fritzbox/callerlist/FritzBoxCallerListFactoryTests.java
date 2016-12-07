@@ -1,6 +1,5 @@
 package de.moonflower.jfritz.box.fritzbox.callerlist;
 
-import static org.mockito.Mockito.when;
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -10,11 +9,11 @@ import org.mockito.MockitoAnnotations;
 
 import de.moonflower.jfritz.box.BoxCallListInterface;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
-import de.moonflower.jfritz.box.fritzbox.FritzBoxFirmware;
+import de.robotniko.fboxlib.fritzbox.FirmwareVersion;
 
 public class FritzBoxCallerListFactoryTests {
 
-	@Mock FritzBoxFirmware mockedFirmware;
+	@Mock FirmwareVersion mockedFirmware;
 	@Mock FritzBox mockedFritzBox;
 
 	@Before
@@ -32,8 +31,7 @@ public class FritzBoxCallerListFactoryTests {
 	}
 
 	private void mockFirmware(final int major, final int minor) {
-		when(this.mockedFirmware.getMajorFirmwareVersion()).thenReturn((byte)major);
-		when(this.mockedFirmware.getMinorFirmwareVersion()).thenReturn((byte)minor);
+		mockedFirmware = new FirmwareVersion((byte)0, (byte)major, (byte)minor);
 	}
 
 	private void assertFirmwareClass(Class expected, BoxCallListInterface actual) {

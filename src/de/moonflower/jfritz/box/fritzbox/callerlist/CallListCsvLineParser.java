@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.exceptions.FeatureNotSupportedByFirmware;
@@ -13,10 +15,10 @@ import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class CallListCsvLineParser {
+	private final static Logger log = Logger.getLogger(CallListCsvParser.class);
 
 	protected MessageProvider messages = MessageProvider.getInstance();
 	protected PropertyProvider properties = PropertyProvider.getInstance();
@@ -30,19 +32,19 @@ public class CallListCsvLineParser {
 	public Call parseLine(final FritzBox fritzBox, final String line)
 			throws FeatureNotSupportedByFirmware {
 		if (fritzBox == null) {
-			Debug.error("CallListCsvLineParser: FritzBox is null!");
+			log.error("CallListCsvLineParser: FritzBox is null!");
 			throw new FeatureNotSupportedByFirmware("Get caller list", messages.getMessage("box.no_caller_list"));
 		}
 
 		if (line == null || "".equals(line)) {
-			Debug.error("CallListCsvLineParser: Could not parse CSV line because it is null or empty");
+			log.error("CallListCsvLineParser: Could not parse CSV line because it is null or empty");
 			throw new FeatureNotSupportedByFirmware("Get caller list", messages.getMessage("box.no_caller_list"));
 		}
 
 		String[] splitted = line.split(separator);
 		if (splitted.length != 7) {
 			// Typ;Datum;Name;Rufnummer;Nebenstelle;Eigene Rufnummer;Dauer
-			Debug.error("CallListCsvLineParser: Expected 7 columns but got: " + splitted.length + " for line: " + line);
+			log.error("CallListCsvLineParser: Expected 7 columns but got: " + splitted.length + " for line: " + line);
 			throw new FeatureNotSupportedByFirmware("Get caller list", messages.getMessage("box.no_caller_list"));
 		}
 
@@ -51,7 +53,7 @@ public class CallListCsvLineParser {
 
 	private Call parse(final FritzBox fritzBox, final String[] splitted)
 			throws FeatureNotSupportedByFirmware {
-		CallType calltype = parseCallType(splitted[0]);
+		CallType calltype = parseCallType(fritzBox, splitted[0]);
 		Date calldate = parseCallDate(splitted[1]);
 		PhoneNumberOld number = parsePhoneNumber(calltype, splitted[3]);
 		Port port = parsePort(fritzBox, splitted[4]);
@@ -84,7 +86,7 @@ public class CallListCsvLineParser {
 			}
 		} else {
 			route = "ERROR";
-			Debug.error("Could not determine route type: " + routeType);
+			log.error("Could not determine route type: " + routeType);
 		}
 		return route;
 	}
@@ -112,17 +114,24 @@ public class CallListCsvLineParser {
 		return routeType;
 	}
 
-	private CallType parseCallType(final String calltypestr)
+	private CallType parseCallType(final FritzBox fritzBox, final String calltypestr)
 			throws FeatureNotSupportedByFirmware {
 		CallType calltype;
 		if ("1".equals(calltypestr)) {
 			calltype = CallType.CALLIN;
 		} else if ("2".equals(calltypestr)) {
 			calltype = CallType.CALLIN_FAILED;
-		} else if ("3".equals(calltypestr) || "4".equals(calltypestr)) {
+		} else if ("3".equals(calltypestr)) {
+			if (fritzBox.getFirmware().isLowerThan(05, 50)) {
+				calltype = CallType.CALLOUT;
+			} else {
+				calltype = CallType.CALLIN_BLOCKED;
+			}
+		} else if ("4".equals(calltypestr)) {
+			// starting from firmware 05.50
 			calltype = CallType.CALLOUT;
 		} else {
-			Debug.error("CallListCsvLineParser: Invalid Call type while importing caller list!"); //$NON-NLS-1$
+			log.error("CallListCsvLineParser: Invalid Call type while importing caller list!"); //$NON-NLS-1$
 			throw new FeatureNotSupportedByFirmware("Get caller list", messages.getMessage("box.no_caller_list"));
 		}
 		return calltype;
@@ -135,11 +144,11 @@ public class CallListCsvLineParser {
 			try {
 				calldate = new SimpleDateFormat("dd.MM.yy HH:mm").parse(datestr); //$NON-NLS-1$
 			} catch (ParseException e) {
-				Debug.error("CallListCsvLineParser: Invalid date format while importing caller list!"); //$NON-NLS-1$
+				log.error("CallListCsvLineParser: Invalid date format while importing caller list!"); //$NON-NLS-1$
 				throw new FeatureNotSupportedByFirmware("Get caller list", messages.getMessage("box.no_caller_list"));
 			}
 		} else {
-			Debug.error("CallListCsvLineParser: Invalid date format while importing caller list!"); //$NON-NLS-1$
+			log.error("CallListCsvLineParser: Invalid date format while importing caller list!"); //$NON-NLS-1$
 			throw new FeatureNotSupportedByFirmware("Get caller list", messages.getMessage("box.no_caller_list"));
 		}
 		return calldate;
@@ -149,7 +158,7 @@ public class CallListCsvLineParser {
 			final String phoneNumberStr) {
 		PhoneNumberOld number;
 		if (!"".equals(phoneNumberStr)) {
-			number = new PhoneNumberOld(phoneNumberStr,
+			number = new PhoneNumberOld(this.properties, phoneNumberStr,
 					JFritzUtils.parseBoolean(properties.getProperty("option.activateDialPrefix"))
 					&& (calltype == CallType.CALLOUT));
 		} else {
@@ -167,7 +176,7 @@ public class CallListCsvLineParser {
 				port = Port.getPort(portId);
 			}
 		} catch (NumberFormatException nfe) {
-			Debug.warning("FritzBox: Could not parse portstr as number: " + portStr);
+			// nothing to do, just proceed
 		}
 
 		if (port == null) {

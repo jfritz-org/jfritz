@@ -28,6 +28,7 @@ import de.moonflower.jfritz.JFritzEvent.JFritzEventDispatcher;
 import de.moonflower.jfritz.JFritzEvent.events.JFritzEvent;
 import de.moonflower.jfritz.JFritzEvent.struct.ConditionObject;
 import de.moonflower.jfritz.JFritzEvent.struct.JFritzEventAction;
+import de.moonflower.jfritz.JFritzEvent.struct.JFritzEventParameter;
 import de.moonflower.jfritz.callerlist.TextFieldCellEditor;
 import de.moonflower.jfritz.messages.MessageProvider;
 
@@ -58,7 +59,7 @@ public class JFritzEventActionGUI extends JDialog implements ActionListener {
 	private JButton cancelButton;
 	private JTextField nameTextField;
 	private JRadioButton none_concatenation, and_concatenation, or_concatenation;
-	private JComboBox eventComboBox;
+	private JComboBox<JFritzEvent> eventComboBox;
 	protected MessageProvider messages = MessageProvider.getInstance();
 
 	public JFritzEventActionGUI(JDialog parent, JFritzEventAction eventAction) {
@@ -136,9 +137,10 @@ public class JFritzEventActionGUI extends JDialog implements ActionListener {
 		conditionTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		TableColumn parameterColumn = conditionTable.getColumnModel().getColumn(0);
-		JComboBox parameterComboBox = new JComboBox();
+		JComboBox<JFritzEventParameter> parameterComboBox = new JComboBox<JFritzEventParameter>();
 		for ( byte i=0; i<eventAction.getEvent().getParameterCount(); i++) {
-			parameterComboBox.addItem(eventAction.getEvent().getParameter(i));
+			JFritzEventParameter eventParameter = eventAction.getEvent().getParameter(i);
+			parameterComboBox.addItem(eventParameter);
 		}
 		parameterColumn.setCellEditor(new DefaultCellEditor(parameterComboBox));
 		TableColumn conditionColumn = conditionTable.getColumnModel().getColumn(1);

@@ -17,6 +17,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.log4j.Logger;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -31,7 +32,6 @@ import de.moonflower.jfritz.callerlist.filter.SearchFilter;
 import de.moonflower.jfritz.callerlist.filter.SipFilter;
 import de.moonflower.jfritz.dialogs.config.PermissionsDialog;
 import de.moonflower.jfritz.messages.MessageProvider;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
@@ -43,6 +43,7 @@ import de.moonflower.jfritz.utils.JFritzUtils;
  *
  */
 public class ClientLoginsTableModel extends AbstractTableModel{
+	private final static Logger log = Logger.getLogger(ClientLoginsTableModel.class);
 
 	public static final long serialVersionUID = 100;
 
@@ -117,7 +118,7 @@ public class ClientLoginsTableModel extends AbstractTableModel{
 					messages.getMessage("set_client_callfilter"), JOptionPane.YES_NO_OPTION);
 
 				if(resp == 0){
-					Debug.netMsg("Setting call filters for client: "+login.user);
+					log.info("NETWORKING: Setting call filters for client: "+login.user);
 
 					// stupid shallow cloning of java, we have to clone each callfilter individually!
 					login.callFilters = new Vector<CallFilter>();
@@ -144,7 +145,7 @@ public class ClientLoginsTableModel extends AbstractTableModel{
     }
 
     public static void saveToXMLFile(String filename){
-    	Debug.info("Saving to file " + filename); //$NON-NLS-1$
+    	log.info("Saving to file " + filename); //$NON-NLS-1$
 		FileOutputStream fos;
 		try {
 			fos = new FileOutputStream(filename);
@@ -179,7 +180,7 @@ public class ClientLoginsTableModel extends AbstractTableModel{
 
 					//process the filters that use extra information
 					if(callFilter.getType() == null){
-						Debug.warning("CallFilter type is null!");
+						log.warn("CallFilter type is null!");
 						break;
 					}
 
@@ -234,13 +235,13 @@ public class ClientLoginsTableModel extends AbstractTableModel{
 			pw.println("</clientsettings>"); //$NON-NLS-1$
 			pw.close();
 		} catch (FileNotFoundException e) {
-			Debug.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.error("Could not write " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
     }
 
     public static void loadFromXMLFile(String filename){
     	try {
-			Debug.info("loading the client settings xml file: "+filename);
+			log.info("loading the client settings xml file: "+filename);
 
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			factory.setValidating(false);
@@ -268,19 +269,19 @@ public class ClientLoginsTableModel extends AbstractTableModel{
 			reader.parse(new InputSource(new FileInputStream(filename)));
 
 		} catch (ParserConfigurationException e) {
-			Debug.error("Error with ParserConfiguration!"); //$NON-NLS-1$
+			log.error("Error with ParserConfiguration!"); //$NON-NLS-1$
 		} catch (SAXException e) {
-			Debug.error("Error on parsing client login settings!"); //$NON-NLS-1$,  //$NON-NLS-2$
-			Debug.error(e.toString());
+			log.error("Error on parsing client login settings!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.error(e.toString());
 			e.printStackTrace();
 
 			if (e.getLocalizedMessage().startsWith("Relative URI") //$NON-NLS-1$
 					|| e.getLocalizedMessage().startsWith(
 							"Invalid system identifier")) { //$NON-NLS-1$
-				Debug.error(e.toString());
+				log.error(e.toString());
 			}
 		} catch (IOException e) {
-			Debug.error("Could not read client login settings! No settings loaded!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.error("Could not read client login settings! No settings loaded!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
     }
 

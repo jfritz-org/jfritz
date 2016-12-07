@@ -12,7 +12,7 @@ public class TestProperties {
 	public final static String PROPERTIES_FILE = "jfritz.properties.xml"; //$NON-NLS-1$
 
 	public static void main(String[] args) {
-		JFritzDataDirectory.getInstance().loadSaveDir();
+		JFritzDataDirectory.getInstance().loadSaveDir(null);
 		windowProperties = new JFritzProperties();
 		try {
 			System.out.println(JFritzDataDirectory.getInstance().getDataDirectory() + PROPERTIES_FILE);

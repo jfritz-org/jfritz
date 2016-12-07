@@ -18,7 +18,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -44,16 +43,16 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.callmonitor.CallMonitorStatusListener;
 import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
-import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.BrowserLaunch;
-import de.moonflower.jfritz.utils.Debug;
 
 /**
  * JDialog for JFritz configuration.
@@ -63,6 +62,7 @@ import de.moonflower.jfritz.utils.Debug;
  *
  */
 public class ConfigDialog extends JDialog {
+	private final static Logger log = Logger.getLogger(ConfigDialog	.class);
 
 	private static final long serialVersionUID = 1;
 
@@ -73,7 +73,8 @@ public class ConfigDialog extends JDialog {
 	private ConfigPanelPhone phonePanel;
 	private ConfigPanelProxy proxyPanel;
 //	private ConfigPanelBox boxPanel;
-	private ConfigPanelFritzBox fritzBoxPanel;
+	private ConfigPanelFritzBoxIP fritzBoxPanelIp;
+	private ConfigPanelFritzBoxLogin fritzBoxPanelLogin;
 	private ConfigPanelMessage messagePanel;
 	private ConfigPanelCallerList callerListPanel;
 	private ConfigPanelCallerListAppearance callerListAppearancePanel;
@@ -107,23 +108,28 @@ public class ConfigDialog extends JDialog {
 		phonePanel = new ConfigPanelPhone();
 		proxyPanel = new ConfigPanelProxy();
 
-//		boxPanel = new ConfigPanelBox();
-		fritzBoxPanel = new ConfigPanelFritzBox(
+		fritzBoxPanelIp = new ConfigPanelFritzBoxIP(
 				(FritzBox) JFritz.getBoxCommunication().getBox(0));
 		sipPanel = new ConfigPanelSip();
 
-		fritzBoxPanel.setSipPanel(sipPanel);
-		sipPanel.setFritzBoxPanel(fritzBoxPanel);
-		sipPanel.setPath(fritzBoxPanel.getPath() + "::" + messages.getMessage("sip_numbers"));
-		callMonitorPanel = new ConfigPanelCallMonitor(this, true, fritzBoxPanel, stateListener);
-		callMonitorPanel.setPath(fritzBoxPanel.getPath() + "::" + messages.getMessage("callmonitor"));
+		fritzBoxPanelLogin = new ConfigPanelFritzBoxLogin();
+		fritzBoxPanelLogin.setFritzBox(fritzBoxPanelIp.getFritzBox());
+		fritzBoxPanelLogin.setSipPanel(sipPanel);
+		fritzBoxPanelLogin.setPath(fritzBoxPanelIp.getPath() + "::" + messages.getMessage("config.login"));
+		
+		fritzBoxPanelIp.setFritzBoxPanelLogin(fritzBoxPanelLogin);
+		
+		sipPanel.setFritzBoxPanelIp(fritzBoxPanelIp);
+		sipPanel.setPath(fritzBoxPanelIp.getPath() + "::" + messages.getMessage("sip_numbers"));
+		callMonitorPanel = new ConfigPanelCallMonitor(this, true, fritzBoxPanelIp, stateListener);
+		callMonitorPanel.setPath(fritzBoxPanelIp.getPath() + "::" + messages.getMessage("callmonitor"));
 
 		messagePanel = new ConfigPanelMessage();
 		callerListPanel = new ConfigPanelCallerList();
 		callerListAppearancePanel = new ConfigPanelCallerListAppearance();
 		languagePanel = new ConfigPanelLang();
 //		fontPanel = new ConfigPanelFont();
-		otherPanel = new ConfigPanelOther(fritzBoxPanel);
+		otherPanel = new ConfigPanelOther(fritzBoxPanelIp);
 //		networkPanel = new ConfigPanelNetwork(this);
 		trayPanel = new ConfigPanelTray();
 
@@ -133,8 +139,8 @@ public class ConfigDialog extends JDialog {
 		TreeSelectionModel tsm = new DefaultTreeSelectionModel();
 		tsm.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		tree.setSelectionModel(tsm);
-		configPanel = fritzBoxPanel;
-		helpUrl = fritzBoxPanel.getHelpUrl();
+		configPanel = fritzBoxPanelIp;
+		helpUrl = fritzBoxPanelIp.getHelpUrl();
 
 	    DefaultTreeCellRenderer noneRenderer = new DefaultTreeCellRenderer();
 	    noneRenderer.setOpenIcon(null);
@@ -190,6 +196,7 @@ public class ConfigDialog extends JDialog {
 				rest = "";
 			}
 
+			@SuppressWarnings("unchecked")
 			Enumeration<ConfigTreeNode> en = currentNode.children();
 			ConfigTreeNode child = rootNode;
 			boolean found = false;
@@ -247,7 +254,8 @@ public class ConfigDialog extends JDialog {
         // Traverse children
         TreeNode node = (TreeNode)parent.getLastPathComponent();
         if (node.getChildCount() >= 0) {
-            for (Enumeration e=node.children(); e.hasMoreElements(); ) {
+            for (@SuppressWarnings("rawtypes")
+			Enumeration e=node.children(); e.hasMoreElements(); ) {
                 TreeNode n = (TreeNode)e.nextElement();
                 TreePath path = parent.pathByAddingChild(n);
                 expandAll(tree, path, expand);
@@ -271,7 +279,8 @@ public class ConfigDialog extends JDialog {
 	 */
 	public void setValues() {
 //		boxPanel.loadSettings();
-		fritzBoxPanel.loadSettings();
+		fritzBoxPanelIp.loadSettings();
+		fritzBoxPanelLogin.loadSettings();
 		phonePanel.loadSettings();
 		proxyPanel.loadSettings();
 		messagePanel.loadSettings();
@@ -287,19 +296,18 @@ public class ConfigDialog extends JDialog {
 	}
 
 	/**
-	 * Stores values in dialog components to programm properties
+	 * Stores values in dialog components to program properties
 	 */
 	public void storeValues() {
+		// save login settings first, because fritzBoxPanelIp.saveSettings() needs username and password
+		fritzBoxPanelLogin.saveSettings(true);
+		
 		try {
-//			boxPanel.saveSettings();
-			fritzBoxPanel.saveSettings(true);
-		} catch (WrongPasswordException e) {
-			parent.setBoxDisconnected("");
+			fritzBoxPanelIp.saveSettings(true);
 		} catch (InvalidFirmwareException e) {
 			parent.setBoxDisconnected("");
-		} catch (IOException e) {
-			parent.setBoxDisconnected("");
 		}
+		
 		phonePanel.saveSettings();
 		proxyPanel.saveSettings();
 		messagePanel.saveSettings();
@@ -313,7 +321,7 @@ public class ConfigDialog extends JDialog {
 		sipPanel.saveSettings();
 		trayPanel.saveSettings();
 
-		Debug.info("Saved config"); //$NON-NLS-1$
+		log.info("Saved config"); //$NON-NLS-1$
 //		Save of caller list and phonebook unnecessary at this position
 //		JFritz.getCallerList().saveToXMLFile(Main.SAVE_DIR+JFritz.CALLS_FILE, true);
 //		JFritz.getPhonebook().saveToXMLFile(Main.SAVE_DIR+JFritz.PHONEBOOK_FILE);
@@ -352,7 +360,8 @@ public class ConfigDialog extends JDialog {
 					closeWindow();
 				} else if (source == cancelButton) {
 //					boxPanel.cancel();
-					fritzBoxPanel.cancel();
+					fritzBoxPanelIp.cancel();
+					fritzBoxPanelLogin.cancel();
 					phonePanel.cancel();
 					proxyPanel.cancel();
 					messagePanel.cancel();
@@ -462,7 +471,8 @@ public class ConfigDialog extends JDialog {
 
 		// new config dialog
 //		this.addConfigPanel(boxPanel);
-		this.addConfigPanel(fritzBoxPanel);
+		this.addConfigPanel(fritzBoxPanelIp);
+		this.addConfigPanel(fritzBoxPanelLogin);
 		this.addConfigPanel(phonePanel);
 		this.addConfigPanel(sipPanel);
 		this.addConfigPanel(callerListPanel);
@@ -521,7 +531,8 @@ public class ConfigDialog extends JDialog {
 	{
 		if (phonePanel.shouldRefreshTrayMenu()
 				|| proxyPanel.shouldRefreshTrayMenu()
-				|| fritzBoxPanel.shouldRefreshTrayMenu()
+				|| fritzBoxPanelIp.shouldRefreshTrayMenu()
+				|| fritzBoxPanelLogin.shouldRefreshTrayMenu()
 				|| messagePanel.shouldRefreshTrayMenu()
 				|| callerListPanel.shouldRefreshTrayMenu()
 				|| callerListAppearancePanel.shouldRefreshTrayMenu()

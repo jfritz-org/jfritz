@@ -2,6 +2,7 @@ package de.moonflower.jfritz.box.fritzbox.callerlist;
 
 import static org.mockito.Mockito.when;
 
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -17,14 +18,17 @@ import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.exceptions.FeatureNotSupportedByFirmware;
 import de.moonflower.jfritz.messages.MessageProvider;
+import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.Port;
+import de.robotniko.fboxlib.fritzbox.FirmwareVersion;
 
 public class CallListCsvLineParserTests {
 
 	@Mock private FritzBox mockedFritzBox;
 	@Mock private MessageProvider mockedMessages;
+    @Mock private PropertyProvider mockedProperties;
 
 	private CallListCsvLineParser parser;
 
@@ -33,6 +37,7 @@ public class CallListCsvLineParserTests {
 		MockitoAnnotations.initMocks(this);
 
 		parser = new CallListCsvLineParser(";");
+		parser.properties = mockedProperties;
 	}
 
 	@Test(expected=FeatureNotSupportedByFirmware.class)
@@ -73,7 +78,7 @@ public class CallListCsvLineParserTests {
 		when(mockedFritzBox.getSipProviderByRoute("12345678")).thenReturn(mockedSipProvider);
 
 		// test
-		Call call = parser.parseLine(mockedFritzBox, "0;06.12.12 19:27;;07211234567;FRITZ!App Fon Nexus 10;Internet: 12345678;0:01");
+		parser.parseLine(mockedFritzBox, "0;06.12.12 19:27;;07211234567;FRITZ!App Fon Nexus 10;Internet: 12345678;0:01");
 	}
 
 	@Test(expected=FeatureNotSupportedByFirmware.class)
@@ -141,6 +146,31 @@ public class CallListCsvLineParserTests {
 		Assert.assertEquals("", call.getPort().getName());
 		Assert.assertEquals("Festnetz", call.getRoute());
 		Assert.assertEquals(Call.ROUTE_FIXED_NETWORK, call.getRouteType());
+	}
+
+
+	@Test
+	public void blockedCall() throws FeatureNotSupportedByFirmware {
+		// preconditions
+		SipProvider mockedSipProvider = new SipProvider(0, "12345678", "mockedProvider");
+
+		when(mockedFritzBox.getSipProviderByRoute("12345678")).thenReturn(mockedSipProvider);
+		when(mockedFritzBox.getFirmware()).thenReturn(new FirmwareVersion(01,(byte)05,(byte)50));
+		
+		// test
+		Call call = parser.parseLine(mockedFritzBox, "3;25.12.12 17:45;;0123456789;;Internet: 12345678;0:00");
+
+		// verify
+		Assert.assertNotNull(call);
+		assertDate(25, Calendar.DECEMBER, 2012, 17, 45, call.getCalldate());
+		Assert.assertEquals(CallType.CALLIN_BLOCKED, call.getCalltype());
+		Assert.assertEquals("", call.getComment());
+		Assert.assertEquals(-1.0, call.getCost(), 0.5);
+		Assert.assertEquals(0, call.getDuration());
+		Assert.assertEquals("0123456789", call.getPhoneNumber().getIntNumber());
+		Assert.assertEquals("", call.getPort().getName());
+		Assert.assertEquals("12345678@mockedProvider", call.getRoute());
+		Assert.assertEquals(Call.ROUTE_SIP, call.getRouteType());
 	}
 
 	private void assertDate(int day, int month, int year, int hour, int minute, Date actualDate) {

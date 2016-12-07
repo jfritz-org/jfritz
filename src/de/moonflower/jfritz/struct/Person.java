@@ -15,8 +15,9 @@ import java.util.Vector;
 
 import javax.swing.ImageIcon;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.HTMLUtil;
 import de.moonflower.jfritz.utils.reverselookup.JFritzReverseLookup;
 import de.moonflower.jfritz.utils.reverselookup.ReverseLookupAustria;
@@ -29,6 +30,7 @@ import de.moonflower.jfritz.utils.reverselookup.ReverseLookupUnitedStates;
  *
  */
 public class Person implements Cloneable, Serializable{
+	private final static Logger log = Logger.getLogger(Person.class);
 
 	private static final long serialVersionUID = 104;
 
@@ -168,7 +170,7 @@ public class Person implements Cloneable, Serializable{
 	}
 
 	public void addNumber(final String number, final String type) {
-		final PhoneNumberOld pNumber = new PhoneNumberOld(number, false); // NOPMD
+		final PhoneNumberOld pNumber = new PhoneNumberOld(this.properties, number, false); // NOPMD
 		pNumber.setType(type);
 		addNumber(pNumber);
 	}
@@ -302,7 +304,7 @@ public class Person implements Cloneable, Serializable{
 			pWriter.println(toVCard());
 			pWriter.close();
 		} catch (FileNotFoundException e) {
-			Debug.error("Could not write " + file.getName() + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.error("Could not write " + file.getName() + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 
@@ -893,7 +895,7 @@ public class Person implements Cloneable, Serializable{
 		try {
 			googleLink = URLEncoder.encode(googleLink, "ISO-8859-1");
 		} catch (UnsupportedEncodingException e) {
-			Debug.error("Unsupported encoding in getGoogleLink: " + e.toString());
+			log.error("Unsupported encoding in getGoogleLink: " + e.toString());
 		}
 		return googlePrefix+googleLink;
 	}

@@ -9,12 +9,14 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import org.apache.log4j.Logger;
+
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class ConfigPanelCallerList extends JPanel implements ConfigPanel {
+	private final static Logger log = Logger.getLogger(ConfigPanelCallerList.class);
 
 	private static final long serialVersionUID = 7267124419351267208L;
 
@@ -71,7 +73,7 @@ public class ConfigPanelCallerList extends JPanel implements ConfigPanel {
 		if(properties.getProperty("network.type").equals("2")
 				&& Boolean.parseBoolean(properties.getProperty("option.clientCallList"))){
 
-			Debug.netMsg("JFritz is running as a client and using call list from server, disabeling some options");
+			log.info("NETWORKING: JFritz is running as a client and using call list from server, disabeling some options");
 			deleteAfterFetchButton.setSelected(false);
 			deleteAfterFetchButton.setEnabled(false);
 		}
