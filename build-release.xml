@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- TODO generate/overwrite log4j.xml for beta-builds / release-builds -->
-<project name="JFritz-Release" default="prepare-beta" basedir=".">
+<project name="JFritz-Release" default="release-files" basedir=".">
 	<import file="build.xml" />
 
 	<property name="product" value="JFritz" />

@@ -1,4 +1,7 @@
-﻿JFritz 0.7.5_22:
+﻿JFritz 0.7.5_23:
+- Neu: Rückwärtssuche unterstützt nun das Setzen des UserAgents via reverselookup.xml
+
+JFritz 0.7.5_22:
 - Bugfix: Funktioniert mit der neuesten Firmware-Version 06.60 (und der Labor-Version für die kommende Final-Firmware)
 
 JFritz 0.7.5_21:

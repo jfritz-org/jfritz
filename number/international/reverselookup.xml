@@ -23,7 +23,8 @@
    	    	 
 -->
 
-<reverselookup version="1.01">
+<reverselookup version="1.10">
+    <userAgent>Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0</userAgent>
 	<country code="+1">
 		<website name="whitepages.com" url="http://www.whitepages.com/search/ReversePhone?phone=$NUMBER" prefix="1" numLines="6">
 			<entry swapFirstAndLastName="true">
