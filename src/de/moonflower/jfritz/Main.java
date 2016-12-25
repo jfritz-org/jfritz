@@ -343,7 +343,6 @@ public class Main  {
 			fa = new FileAppender(layout, path, false);
 			fa.activateOptions();
 			Logger.getRootLogger().addAppender(fa);
-			Logger.getRootLogger().info("Logging to " + fa.getFile());
 		} catch (IOException e) {
 			Logger.getRootLogger().error("Could not write log file to " + path);
 		}
@@ -408,7 +407,7 @@ public class Main  {
 		options.addOption('s', "systray" //$NON-NLS-1$,  //$NON-NLS-2$
 				,null, "Turn on systray support"); //$NON-NLS-1$
 		options.addOption('v',"verbose" //$NON-NLS-1$,  //$NON-NLS-2$
-				,"level", "Turn on debug information on console. Possible values: ERROR, WARNING, INFO, DEBUG"); //$NON-NLS-1$
+				,"level", "Turn on debug information on console. Possible values: OFF, ERROR, WARNING, INFO, DEBUG"); //$NON-NLS-1$
 		options.addOption('u',"updateBeta" //$NON-NLS-1$,  //$NON-NLS-2$
 				,null,"Set update url to check for beta-version. Only for beta-testers, you can loose all your data!"); //$NON-NLS-1$
 		options.addOption('w',"without-control" //$NON-NLS-1$,  //$NON-NLS-2$
@@ -447,10 +446,11 @@ public class Main  {
 				exit(EXIT_CODE_HELP);
 				return false;
 			case 'v': //$NON-NLS-1$
-				Debug.setVerbose(true);
 				String level = option.getParameter();
 				if (level != null && !level.equals("")) {
-					if ("trace".equals(level.toLowerCase())) {
+					if ("off".equals(level.toLowerCase())) {
+						loggingLevel = Level.OFF;
+					} else if ("trace".equals(level.toLowerCase())) {
 						loggingLevel = Level.TRACE;
 					} else if ("error".equals(level.toLowerCase())) {
 						loggingLevel = Level.ERROR;
@@ -464,6 +464,8 @@ public class Main  {
 						loggingLevel = Level.DEBUG;
 					}
 					Logger.getLogger("de.moonflower.jfritz").setLevel(loggingLevel);
+					Logger.getLogger("de.robotniko.helper").setLevel(loggingLevel);
+					Logger.getLogger("de.robotniko.reverseLookup").setLevel(loggingLevel);
 				}
 				break;
 			case 'q': //$NON-NLS-1$

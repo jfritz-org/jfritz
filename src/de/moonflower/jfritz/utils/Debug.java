@@ -45,6 +45,7 @@ import de.moonflower.jfritz.properties.PropertyProvider;
 public class Debug {
 	private static final Logger log = Logger.getLogger(Debug.class);
 
+	public static final LogSeverity LS_OFF = new LogSeverity(0, "LS_OFF", "OFF");
 	public static final LogSeverity LS_ALWAYS = new LogSeverity(1, "LS_ALWAYS", "");
 	public static final LogSeverity LS_ERROR = new LogSeverity(1, "LS_ERROR", "ERROR");
 	public static final LogSeverity LS_WARNING = new LogSeverity(2, "LS_WARNING", "WARN");
@@ -55,8 +56,6 @@ public class Debug {
 	private static final long serialVersionUID = 9211082107025215527L;
 
 	public static String debugLogFilePath = JFritzDataDirectory.getInstance().getDataDirectory() + "debug.log";
-
-	private static boolean verboseMode = false;
 
 	private static JPanel main_panel = null;
 
@@ -97,11 +96,12 @@ public class Debug {
 
 		JPanel top_panel = new JPanel();
 		log_severity_box = new JComboBox<LogSeverity>();
+		log_severity_box.addItem(LS_OFF);
 		log_severity_box.addItem(LS_ERROR);
 		log_severity_box.addItem(LS_WARNING);
 		log_severity_box.addItem(LS_INFO);
 		log_severity_box.addItem(LS_DEBUG);
-		log_severity_box.setSelectedItem(LS_DEBUG);
+		log_severity_box.setSelectedItem(LS_ERROR);
 		log_severity_box.setActionCommand("severity_changed");
 		log_severity_box.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -264,14 +264,5 @@ public class Debug {
 	private static void autoScroll()
 	{
 		log_area.setCaretPosition(log_area.getDocument().getLength());
-	}
-
-	public static void setVerbose(boolean verbose)
-	{
-		verboseMode = verbose;
-	}
-
-	public static boolean isVerbose() {
-		return verboseMode;
 	}
 }

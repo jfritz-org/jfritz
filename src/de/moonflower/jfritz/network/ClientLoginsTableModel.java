@@ -281,7 +281,7 @@ public class ClientLoginsTableModel extends AbstractTableModel{
 				log.error(e.toString());
 			}
 		} catch (IOException e) {
-			log.error("Could not read client login settings! No settings loaded!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.warn("Could not read client login settings! No settings loaded!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
     }
 

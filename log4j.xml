@@ -10,7 +10,15 @@
   </appender>
 
   <category name="de.moonflower.jfritz">
-    <priority value="trace"/>
+    <priority value="error"/>
+  </category>
+  
+  <category name="de.robotniko.helper">
+    <priority value="error"/>
+  </category>
+  
+  <category name="de.robotniko.reverseLookup">
+    <priority value="error"/>
   </category>
 
   <root>

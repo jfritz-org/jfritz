@@ -22,7 +22,9 @@ TODO tel.search.ch überprüfen und reparieren
 
 JFritz 0.7.5_23:
 - Neu: Rückwärtssuche unterstützt nun das Setzen des UserAgents via reverselookup.xml
-
+- Neu: JFritz loggt nun per default nichts mehr ins debug.log (kann mit dem Parameter -v angepasst werden)
+  - mögliche Werte für den Parameter "v": OFF, ERROR, WARNING, INFO, DEBUG
+  
 JFritz 0.7.5_22:
 - Bugfix: Funktioniert mit der neuesten Firmware-Version 06.60 (und der Labor-Version für die kommende Final-Firmware)
 

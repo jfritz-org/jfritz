@@ -214,7 +214,7 @@ public class QuickDials extends AbstractTableModel {
 			log.error("Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
             log.error(e.toString());
 		} catch (IOException e) {
-			log.error("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.warn("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 
