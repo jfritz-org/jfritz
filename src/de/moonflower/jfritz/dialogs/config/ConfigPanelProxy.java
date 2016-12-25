@@ -123,7 +123,7 @@ public class ConfigPanelProxy extends JPanel implements ConfigPanel, ActionListe
 	}
 
 	public String getHelpUrl() {
-		return "http://jfritz.org/wiki/JFritz_Handbuch:Deutsch#Proxy";
+		return "https://jfritz.org/wiki/JFritz_Handbuch:Deutsch#Proxy";
 	}
 
 	public void cancel() {

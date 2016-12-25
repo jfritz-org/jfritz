@@ -59,7 +59,7 @@ public class ConfigPanelFont extends JPanel implements ConfigPanel{
 	}
 
 	public String getHelpUrl() {
-		return "http://jfritz.org/wiki/JFritz_Handbuch:Deutsch#Schriftart";
+		return "https://jfritz.org/wiki/JFritz_Handbuch:Deutsch#Schriftart";
 	}
 
 	public void cancel() {

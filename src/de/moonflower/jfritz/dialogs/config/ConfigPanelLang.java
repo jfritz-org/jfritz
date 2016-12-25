@@ -124,7 +124,7 @@ public class ConfigPanelLang extends JPanel implements ConfigPanel{
 	}
 
 	public String getHelpUrl() {
-		return "http://jfritz.org/wiki/JFritz_Handbuch:Deutsch#Sprache";
+		return "https://jfritz.org/wiki/JFritz_Handbuch:Deutsch#Sprache";
 	}
 
 	public void cancel() {

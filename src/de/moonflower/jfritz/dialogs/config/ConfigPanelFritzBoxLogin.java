@@ -304,7 +304,7 @@ public class ConfigPanelFritzBoxLogin extends JPanel implements ActionListener,
 	}
 
 	public String getHelpUrl() {
-		return "http://jfritz.org/wiki/JFritz_Handbuch:Deutsch#FRITZ.21Box";
+		return "https://jfritz.org/wiki/JFritz_Handbuch:Deutsch#FRITZ.21Box";
 	}
 
 	public void cancel() {

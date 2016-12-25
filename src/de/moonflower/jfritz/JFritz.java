@@ -57,7 +57,7 @@ import de.robotniko.fboxlib.exceptions.PageNotFoundException;
 public final class JFritz implements  StatusListener {
 	private final static Logger log = Logger.getLogger(JFritz.class);
 
-	public final static String DOCUMENTATION_URL = "http://www.jfritz.org/wiki/Kategorie:Hilfe"; //$NON-NLS-1$
+	public final static String DOCUMENTATION_URL = "https://jfritz.org/wiki/Kategorie:Hilfe"; //$NON-NLS-1$
 
 	public final static String CALLS_FILE = "jfritz.calls.xml"; //$NON-NLS-1$
 

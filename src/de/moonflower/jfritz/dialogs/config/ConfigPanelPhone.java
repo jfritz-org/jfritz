@@ -141,7 +141,7 @@ public class ConfigPanelPhone extends JPanel implements ConfigPanel{
 	}
 
 	public String getHelpUrl() {
-		return "http://jfritz.org/wiki/JFritz_Handbuch:Deutsch#Telefon";
+		return "https://jfritz.org/wiki/JFritz_Handbuch:Deutsch#Telefon";
 	}
 
 	public void cancel() {

@@ -372,7 +372,7 @@ public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 	}
 
 	public String getHelpUrl() {
-		return "http://jfritz.org/wiki/JFritz_Handbuch:Deutsch#Anrufmonitor";
+		return "https://jfritz.org/wiki/JFritz_Handbuch:Deutsch#Anrufmonitor";
 	}
 
 	public void cancel() {

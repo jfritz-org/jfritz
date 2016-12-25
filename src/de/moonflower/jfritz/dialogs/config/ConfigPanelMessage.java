@@ -157,7 +157,7 @@ public class ConfigPanelMessage extends JPanel implements ConfigPanel {
 	}
 
 	public String getHelpUrl() {
-		return "http://jfritz.org/wiki/JFritz_Handbuch:Deutsch#Nachrichten";
+		return "https://jfritz.org/wiki/JFritz_Handbuch:Deutsch#Nachrichten";
 	}
 
 	public void cancel() {

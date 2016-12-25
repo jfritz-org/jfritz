@@ -30,7 +30,7 @@ import de.robotniko.fboxlib.exceptions.PageNotFoundException;
 
 public class CheckForUpdate {
 
-	private final String UPDATE_URL = "http://jfritz.org/update/checkUpdate.php";
+	private final String UPDATE_URL = "https://jfritz.org/update/checkUpdate.php";
 	private final String USER_AGENT = "JFritzClient/"
 			+ ProgramConstants.PROGRAM_VERSION + "."
 			+ ProgramConstants.REVISION + " (" + OSDetector.getOSString() + ";" 
@@ -78,7 +78,7 @@ public class CheckForUpdate {
 		changelog = (String)o.get("changelog");
 		
 		if (url.equals("")) {
-			url = "http://jfritz.org";
+			url = "https://jfritz.org";
 		}
 	}
 	

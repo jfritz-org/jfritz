@@ -356,7 +356,7 @@ public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 
 	@Override
 	public String getHelpUrl() {
-		return "http://jfritz.org/wiki/JFritz_Handbuch:Deutsch#FRITZ.21Box";
+		return "https://jfritz.org/wiki/JFritz_Handbuch:Deutsch#FRITZ.21Box";
 	}
 
 	@Override

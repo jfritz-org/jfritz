@@ -309,7 +309,7 @@ public class ConfigPanelOther extends JPanel implements ConfigPanel {
 	}
 
 	public String getHelpUrl() {
-		return "http://jfritz.org/wiki/JFritz_Handbuch:Deutsch#Weiteres";
+		return "https://jfritz.org/wiki/JFritz_Handbuch:Deutsch#Weiteres";
 	}
 
 	public void cancel() {

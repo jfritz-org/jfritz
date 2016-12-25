@@ -199,7 +199,7 @@ public class Main  {
 
 	public final static String CVS_TAG = "$Id: Main.java 240 2012-01-16 12:31:42Z robotniko $"; //$NON-NLS-1$
 
-	public final static String PROGRAM_URL = "http://www.jfritz.org/"; //$NON-NLS-1$
+	public final static String PROGRAM_URL = "https://jfritz.org/"; //$NON-NLS-1$
 
 	public final static String JFRITZ_PROJECT = "all members of the JFritz-Team";
 

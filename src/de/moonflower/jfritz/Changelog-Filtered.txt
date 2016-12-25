@@ -2,6 +2,8 @@
 - Neu: Rückwärtssuche unterstützt nun das Setzen des UserAgents via reverselookup.xml
 - Neu: JFritz loggt nun per default nichts mehr ins debug.log (kann mit dem Parameter -v angepasst werden)
   - mögliche Werte für den Parameter "v": OFF, ERROR, WARNING, INFO, DEBUG
+- Neu: Update-Mechanismus nutzt nun https://jfritz.org
+- Neu: Hilfe-Seiten verweisen auf https://jfritz.org
 
 JFritz 0.7.5_22:
 - Bugfix: Funktioniert mit der neuesten Firmware-Version 06.60 (und der Labor-Version für die kommende Final-Firmware)

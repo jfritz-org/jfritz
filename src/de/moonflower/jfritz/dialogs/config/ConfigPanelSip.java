@@ -174,7 +174,7 @@ public class ConfigPanelSip extends JPanel implements ConfigPanel {
 	}
 
 	public String getHelpUrl() {
-		return "http://jfritz.org/wiki/JFritz_Handbuch:Deutsch#SIP-Nummern";
+		return "https://jfritz.org/wiki/JFritz_Handbuch:Deutsch#SIP-Nummern";
 	}
 
 	public void cancel() {

@@ -94,7 +94,7 @@ public class ConfigPanelTray extends JPanel implements ConfigPanel {
 	}
 
 	public String getHelpUrl() {
-		return "http://jfritz.org/wiki/JFritz_Handbuch:Deutsch#Tray";
+		return "https://jfritz.org/wiki/JFritz_Handbuch:Deutsch#Tray";
 	}
 
 	public void cancel() {

@@ -121,7 +121,7 @@ public class ConfigPanelCallerListAppearance extends JPanel implements ConfigPan
 	}
 
 	public String getHelpUrl() {
-		return "http://jfritz.org/wiki/JFritz_Handbuch:Deutsch#AnruflisteAussehen";
+		return "https://jfritz.org/wiki/JFritz_Handbuch:Deutsch#AnruflisteAussehen";
 	}
 
 	public void actionPerformed(ActionEvent e) {
