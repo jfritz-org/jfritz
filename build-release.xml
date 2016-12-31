@@ -420,7 +420,9 @@ http://www.jfritz.org/
 	</target>
 
 	<target name="create-mac-zip" description="Creates a ZIP-File for MacOS!">
-		<zip destfile="${release}/mac/JFritz-${version}-Mac.zip" basedir="${release}/mac/tmp" />
+		<zip destfile="${release}/mac/JFritz-${version}-Mac.zip" basedir="${release}/mac/tmp" excludes="**/JavaApplicationStub" >
+                   <zipfileset filemode="555" dir="${release-templates}/MAC/Vorlage/JFritz.app/Contents/MacOS/" includes="JavaApplicationStub" prefix="JFritz.app/Contents/MacOS/" />
+                </zip>
 	</target>
 
 	<target name="create-mac-dmg" description="Creates a DMG-File for MacOS!">
