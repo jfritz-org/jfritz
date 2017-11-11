@@ -311,7 +311,7 @@
             todir="${release}/linux"
             package="jfritz"
             section="utils"
-            depends="procps, default-jre | java-package | java-7-oracle | openjdk-7-jre | openjdk-7-jre-headless | openjdk-7-jdk | sun-java6-jre | sun-java6-jdk | openjdk-6-jre | openjdk-6-jre-headless | openjdk-6-jdk | sun-java5-jre"
+            depends="procps, default-jre | java-package | java-9-oracle | openjdk-9-jre | openjdk-9-jre-headless | openjdk-9-jdk | java-8-oracle | openjdk-8-jre | openjdk-8-jre-headless | openjdk-8-jdk | java-7-oracle | openjdk-7-jre | openjdk-7-jre-headless | openjdk-7-jdk | sun-java6-jre | sun-java6-jdk | openjdk-6-jre | openjdk-6-jre-headless | openjdk-6-jdk | sun-java5-jre"
             preinst="${release-templates}/Linux/preinst">
             <version upstream="${version}"/>
             <maintainer email="Robert Palmer" name="jfritz@robotniko.de"/>
@@ -319,7 +319,7 @@
 It is possible to get the caller list, manage phonebook contacts, do reverse lookup for unknown phone numbers,
 show incoming and outgoing calls in real time and to initiate new calls from the computer.
 
-http://www.jfritz.org/
+https://jfritz.org/
             </description>
             <tarfileset dir="${release}/linux/jfritz-${version}" prefix="/opt/JFritz">
                 <include name="**/**"/>
