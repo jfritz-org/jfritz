@@ -16,7 +16,7 @@
 	<property name="lib-dev" value="lib-dev" />
 	<property name="docs" value="../Doku" />
 	<property name="scp-beta-path" value="./public/beta" />
-    <property name="release-templates" value="../Release" />
+    <property name="release-templates" value="./Release" />
     
 	<!-- build properties -->
 	<property name="build" value="${home}/build" />
@@ -475,9 +475,15 @@ http://www.jfritz.org/
 		<taskdef name="UpdateSetupConfig" classname="de.moonflower.jfritz.ant.UpdateSetupConfig" classpathref="helper.classpath" />
 		<UpdateSetupConfig file="${basedir}/${release}/win/tmp/jfritz-version.txt" appName="${product}" appType="Setup" appVersion="${version}" appRevision="${revision}"/>
 
-		<!-- generate setup-file -->
+		<!-- generate setup-file under windows
 		<exec executable="C:\Program Files (x86)\Inno Setup 5\ISCC.exe">
 			<arg value="${release}/win/tmp/jfritz.iss" />
+		</exec>
+		-->
+		<!-- generate setup-file under linux, using wine -->
+		<exec executable="/usr/bin/wine64">
+			<arg value="/home/robert/.wine/drive_c/Program Files (x86)/Inno Setup 5/ISCC.exe" />
+			<arg value="ant/release/win/tmp/jfritz.iss" />
 		</exec>
 
 		<move file="${release}/win/tmp/Output/JFritz-${version}-Setup.exe"
