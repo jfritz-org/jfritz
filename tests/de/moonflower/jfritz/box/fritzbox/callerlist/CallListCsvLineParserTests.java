@@ -22,7 +22,7 @@ import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.Call;
 import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.Port;
-import de.robotniko.fboxlib.fritzbox.FirmwareVersion;
+import org.jfritz.fboxlib.fritzbox.FirmwareVersion;
 
 public class CallListCsvLineParserTests {
 

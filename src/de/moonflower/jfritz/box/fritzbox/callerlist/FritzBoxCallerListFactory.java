@@ -5,7 +5,7 @@ import java.util.Vector;
 import de.moonflower.jfritz.box.BoxCallBackListener;
 import de.moonflower.jfritz.box.BoxCallListInterface;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
-import de.robotniko.fboxlib.fritzbox.FirmwareVersion;
+import org.jfritz.fboxlib.fritzbox.FirmwareVersion;
 
 public class FritzBoxCallerListFactory {
 

@@ -8,5 +8,5 @@ public class ProgramConstants {
 
 	public final static String REVISION = "23"; //$NON-NLS-1$
 
-	public final static String BUILD_DATE = "11-11-2017 18:23:49";
+	public final static String BUILD_DATE = "12-11-2017 00:24:12";
 }

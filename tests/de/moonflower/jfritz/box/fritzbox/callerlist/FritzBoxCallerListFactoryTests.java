@@ -9,7 +9,7 @@ import org.mockito.MockitoAnnotations;
 
 import de.moonflower.jfritz.box.BoxCallListInterface;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
-import de.robotniko.fboxlib.fritzbox.FirmwareVersion;
+import org.jfritz.fboxlib.fritzbox.FirmwareVersion;
 
 public class FritzBoxCallerListFactoryTests {
 

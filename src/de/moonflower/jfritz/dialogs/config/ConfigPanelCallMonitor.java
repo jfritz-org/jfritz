@@ -29,8 +29,8 @@ import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
-import de.robotniko.fboxlib.exceptions.FirmwareNotDetectedException;
-import de.robotniko.fboxlib.exceptions.PageNotFoundException;
+import org.jfritz.fboxlib.exceptions.FirmwareNotDetectedException;
+import org.jfritz.fboxlib.exceptions.PageNotFoundException;
 
 public class ConfigPanelCallMonitor extends JPanel implements ActionListener,
 		ConfigPanel {

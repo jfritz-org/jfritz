@@ -179,12 +179,12 @@ import de.moonflower.jfritz.utils.ShutdownHook;
 import de.moonflower.jfritz.utils.reverselookup.IReverseLookupFinishedWithResultListener;
 import de.moonflower.jfritz.utils.reverselookup.IReverseLookupProgressListener;
 import de.moonflower.jfritz.utils.reverselookup.JFritzReverseLookup;
-import de.robotniko.fboxlib.exceptions.FirmwareNotDetectedException;
-import de.robotniko.fboxlib.exceptions.LoginBlockedException;
-import de.robotniko.fboxlib.exceptions.PageNotFoundException;
+import org.jfritz.fboxlib.exceptions.FirmwareNotDetectedException;
+import org.jfritz.fboxlib.exceptions.LoginBlockedException;
+import org.jfritz.fboxlib.exceptions.PageNotFoundException;
 //import org.apache.http.auth.InvalidCredentialsException;
-import de.robotniko.fboxlib.fritzbox.FritzBoxCommunication;
-import de.robotniko.fboxlib.fritzbox.JSonBoxinfo;
+import org.jfritz.fboxlib.fritzbox.FritzBoxCommunication;
+import org.jfritz.fboxlib.fritzbox.JSonBoxinfo;
 
 /**
  * @author robroy
@@ -365,7 +365,7 @@ public class Main  {
 	 *
 	 * @param args
 	 *            Program arguments (-h -v ...)
-	 * @throws de.robotniko.fboxlib.exceptions.InvalidCredentialsException 
+	 * @throws org.jfritz.fboxlib.exceptions.InvalidCredentialsException 
 	 * @throws InvalidCredentialsException 
 	 * @throws PageNotFoundException 
 	 * @throws LoginBlockedException 
@@ -464,8 +464,8 @@ public class Main  {
 						loggingLevel = Level.DEBUG;
 					}
 					Logger.getLogger("de.moonflower.jfritz").setLevel(loggingLevel);
-					Logger.getLogger("de.robotniko.helper").setLevel(loggingLevel);
-					Logger.getLogger("de.robotniko.reverseLookup").setLevel(loggingLevel);
+					Logger.getLogger("org.jfritz.helper").setLevel(loggingLevel);
+					Logger.getLogger("org.jfritz.reverseLookup").setLevel(loggingLevel);
 				}
 				break;
 			case 'q': //$NON-NLS-1$

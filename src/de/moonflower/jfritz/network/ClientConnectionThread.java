@@ -160,7 +160,7 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 		} catch (InvalidCredentialsException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (de.robotniko.fboxlib.exceptions.InvalidCredentialsException e) {
+		} catch (org.jfritz.fboxlib.exceptions.InvalidCredentialsException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -173,12 +173,12 @@ public class ClientConnectionThread extends Thread implements CallerListListener
 	/**
 	 * this function listens for client requests until the
 	 * connection is ended.
-	 * @throws de.robotniko.fboxlib.exceptions.InvalidCredentialsException 
-	 * @throws InvalidCredentialsException 
+	 * @throws org.jfritz.fboxlib.exceptions.InvalidCredentialsException
+	 * @throws InvalidCredentialsException
 	 *
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void waitForClientRequest() throws InvalidCredentialsException, de.robotniko.fboxlib.exceptions.InvalidCredentialsException{
+	public void waitForClientRequest() throws InvalidCredentialsException, org.jfritz.fboxlib.exceptions.InvalidCredentialsException {
 		Object o;
 		ClientDataRequest dataRequest;
 		ClientActionRequest actionRequest;

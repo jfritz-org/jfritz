@@ -27,10 +27,10 @@ import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.dialogs.sip.SipProviderTableModel;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.utils.Debug;
-import de.robotniko.fboxlib.exceptions.FirmwareNotDetectedException;
-import de.robotniko.fboxlib.exceptions.InvalidCredentialsException;
-import de.robotniko.fboxlib.exceptions.LoginBlockedException;
-import de.robotniko.fboxlib.exceptions.PageNotFoundException;
+import org.jfritz.fboxlib.exceptions.FirmwareNotDetectedException;
+import org.jfritz.fboxlib.exceptions.InvalidCredentialsException;
+import org.jfritz.fboxlib.exceptions.LoginBlockedException;
+import org.jfritz.fboxlib.exceptions.PageNotFoundException;
 
 public class ConfigPanelSip extends JPanel implements ConfigPanel {
 

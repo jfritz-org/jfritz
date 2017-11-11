@@ -12,8 +12,8 @@ import javax.swing.JPanel;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.dialogs.config.ConfigPanelFritzBoxLogin;
 import de.moonflower.jfritz.messages.MessageProvider;
-import de.robotniko.fboxlib.exceptions.InvalidCredentialsException;
-import de.robotniko.fboxlib.exceptions.LoginBlockedException;
+import org.jfritz.fboxlib.exceptions.InvalidCredentialsException;
+import org.jfritz.fboxlib.exceptions.LoginBlockedException;
 
 public class LoginDialog extends JDialog {
 

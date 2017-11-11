@@ -21,9 +21,9 @@ import de.moonflower.jfritz.struct.CallType;
 import de.moonflower.jfritz.struct.IProgressListener;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
-import de.robotniko.fboxlib.exceptions.InvalidCredentialsException;
-import de.robotniko.fboxlib.exceptions.LoginBlockedException;
-import de.robotniko.fboxlib.exceptions.PageNotFoundException;
+import org.jfritz.fboxlib.exceptions.InvalidCredentialsException;
+import org.jfritz.fboxlib.exceptions.LoginBlockedException;
+import org.jfritz.fboxlib.exceptions.PageNotFoundException;
 
 public class FritzBoxCallList_Pre_04_86 implements BoxCallListInterface {
 	private final static Logger log = Logger.getLogger(FritzBoxCallList_Pre_04_86.class);

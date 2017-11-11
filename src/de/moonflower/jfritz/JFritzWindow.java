@@ -89,8 +89,8 @@ import de.moonflower.jfritz.utils.JFritzClipboard;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.PrintCallerList;
 import de.moonflower.jfritz.utils.SwingWorker;
-import de.robotniko.fboxlib.exceptions.LoginBlockedException;
-import de.robotniko.fboxlib.exceptions.PageNotFoundException;
+import org.jfritz.fboxlib.exceptions.LoginBlockedException;
+import org.jfritz.fboxlib.exceptions.PageNotFoundException;
 //import de.moonflower.jfritz.exceptions.WrongPasswordException;
 //import org.apache.http.auth.InvalidCredentialsException;
 

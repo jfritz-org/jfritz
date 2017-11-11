@@ -16,7 +16,7 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
-import de.robotniko.fboxlib.fritzbox.FritzBoxCommunication;
+import org.jfritz.fboxlib.fritzbox.FritzBoxCommunication;
 
 /*
  * Created on 22.05.2005

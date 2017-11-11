@@ -26,7 +26,7 @@ import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.messages.UpdateMessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.JOptionPaneHtml;
-import de.robotniko.fboxlib.exceptions.PageNotFoundException;
+import org.jfritz.fboxlib.exceptions.PageNotFoundException;
 
 public class CheckForUpdate {
 

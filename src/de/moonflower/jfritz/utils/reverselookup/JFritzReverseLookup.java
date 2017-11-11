@@ -15,12 +15,12 @@ import de.moonflower.jfritz.phonebook.PhoneBook;
 import de.moonflower.jfritz.struct.Person;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.utils.JFritzUtils;
-import de.robotniko.reverseLookup.api.IReverseLookupFinishedListener;
-import de.robotniko.reverseLookup.api.IReverseLookupResponseListener;
-import de.robotniko.reverseLookup.api.ReverseLookupFacade;
-import de.robotniko.reverseLookup.api.ReverseLookupRequest;
-import de.robotniko.reverseLookup.api.ReverseLookupResponse;
-import de.robotniko.reverseLookup.exceptions.ReverseLookupException;
+import org.jfritz.reverseLookup.api.IReverseLookupFinishedListener;
+import org.jfritz.reverseLookup.api.IReverseLookupResponseListener;
+import org.jfritz.reverseLookup.api.ReverseLookupFacade;
+import org.jfritz.reverseLookup.api.ReverseLookupRequest;
+import org.jfritz.reverseLookup.api.ReverseLookupResponse;
+import org.jfritz.reverseLookup.exceptions.ReverseLookupException;
 
 /**
  * Class for telephone number reverse lookups using various web sites

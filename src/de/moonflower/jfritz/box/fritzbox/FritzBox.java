@@ -56,14 +56,14 @@ import de.moonflower.jfritz.utils.network.UPNPCommonLinkPropertiesListener;
 import de.moonflower.jfritz.utils.network.UPNPExternalIpListener;
 import de.moonflower.jfritz.utils.network.UPNPStatusInfoListener;
 import de.moonflower.jfritz.utils.network.UPNPUtils;
-import de.robotniko.fboxlib.enums.LoginMode;
-import de.robotniko.fboxlib.exceptions.FirmwareNotDetectedException;
-import de.robotniko.fboxlib.exceptions.InvalidCredentialsException;
-import de.robotniko.fboxlib.exceptions.InvalidSessionIdException;
-import de.robotniko.fboxlib.exceptions.LoginBlockedException;
-import de.robotniko.fboxlib.exceptions.PageNotFoundException;
-import de.robotniko.fboxlib.fritzbox.FirmwareVersion;
-import de.robotniko.fboxlib.fritzbox.FritzBoxCommunication;
+import org.jfritz.fboxlib.enums.LoginMode;
+import org.jfritz.fboxlib.exceptions.FirmwareNotDetectedException;
+import org.jfritz.fboxlib.exceptions.InvalidCredentialsException;
+import org.jfritz.fboxlib.exceptions.InvalidSessionIdException;
+import org.jfritz.fboxlib.exceptions.LoginBlockedException;
+import org.jfritz.fboxlib.exceptions.PageNotFoundException;
+import org.jfritz.fboxlib.fritzbox.FirmwareVersion;
+import org.jfritz.fboxlib.fritzbox.FritzBoxCommunication;
 
 public class FritzBox extends BoxClass {
 	private final static Logger log = Logger.getLogger(FritzBox.class);
@@ -1266,7 +1266,7 @@ public class FritzBox extends BoxClass {
 	/**************************************************************************************
 	 * Implementation of DoCall-Interface
 	 * @throws PageNotFoundException 
-	 * @throws de.robotniko.fboxlib.exceptions.InvalidCredentialsException 
+	 * @throws org.jfritz.fboxlib.exceptions.InvalidCredentialsException 
 	 * @throws LoginBlockedException 
 	 * @throws IOException 
 	 * @throws ClientProtocolException 

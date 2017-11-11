@@ -40,8 +40,8 @@ import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.utils.Encryption;
 import de.moonflower.jfritz.utils.MultiLabel;
 import de.moonflower.jfritz.utils.network.SSDPPacket;
-import de.robotniko.fboxlib.exceptions.FirmwareNotDetectedException;
-import de.robotniko.fboxlib.exceptions.PageNotFoundException;
+import org.jfritz.fboxlib.exceptions.FirmwareNotDetectedException;
+import org.jfritz.fboxlib.exceptions.PageNotFoundException;
 
 public class ConfigPanelFritzBoxIP extends JPanel implements ActionListener,
 		ConfigPanel, DocumentListener {

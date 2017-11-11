@@ -3,7 +3,7 @@ package de.moonflower.jfritz.proxy;
 import java.net.Proxy;
 
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.robotniko.proxy.api.ProxyFacade;
+import org.jfritz.proxy.api.ProxyFacade;
 
 public class JFritzProxy {
 
