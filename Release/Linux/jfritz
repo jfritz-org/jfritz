@@ -1,0 +1,12 @@
+#!/bin/sh
+
+JFRITZ_HOME=/opt/JFritz
+JFRITZ_JAR=$JFRITZ_HOME/jfritz.jar
+
+mkdir -p ~/.jfritz
+cd ~/.jfritz
+
+pgrep -U $USER -f "$JFRITZ_JAR" >/dev/null
+[ $? -eq 1 ] && rm -f .lock
+
+exec java -Xmx512M -jar "$JFRITZ_JAR" "$@" &

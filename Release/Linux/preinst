@@ -1,0 +1,10 @@
+#!/bin/sh
+
+mkdir -p /opt/JFritz/conf
+mkdir -p /opt/JFritz/lang
+mkdir -p /opt/JFritz/lib
+mkdir -p /opt/JFritz/number
+mkdir -p /opt/JFritz/pictures
+mkdir -p /opt/JFritz/styles
+
+exit 0
