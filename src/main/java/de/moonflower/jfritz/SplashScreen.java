@@ -32,7 +32,6 @@ public class SplashScreen extends JFrame {
 		super();
 		this.setUndecorated(true);
 
-		String splashPath = JFritzUtils.getFullPath(JFritzUtils.rootID);
 		ImageIcon splashImage = new ImageIcon(getClass().getClassLoader().getResource("splash/splash.png"));
 		ImageIcon statusImage = new ImageIcon(getClass().getClassLoader().getResource("splash/status.png"));
 		JLabel imageLabel = new JLabel(splashImage);
