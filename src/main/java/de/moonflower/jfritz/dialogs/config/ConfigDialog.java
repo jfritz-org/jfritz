@@ -158,19 +158,19 @@ public class ConfigDialog extends JDialog {
 		TreeSelectionListener selectionListener = new TreeSelectionListener() {
 			public void valueChanged(TreeSelectionEvent e) {
 				ConfigTreeNode node = (ConfigTreeNode)e.getNewLeadSelectionPath().getLastPathComponent();
-				getContentPane().remove(configPanel);
-				configPanel = node.getPanel().getPanel();
-				helpUrl = node.getPanel().getHelpUrl();
-				if (helpUrl.equals(""))
-				{
-					helpLinkLabel.setVisible(false);
+				ConfigPanel p = node.getPanel();
+				if (p != null) {
+					getContentPane().remove(configPanel);
+					configPanel = node.getPanel().getPanel();
+					helpUrl = node.getPanel().getHelpUrl();
+					if (helpUrl.equals("")) {
+						helpLinkLabel.setVisible(false);
+					} else {
+						helpLinkLabel.setVisible(true);
+					}
+					getContentPane().add(configPanel, BorderLayout.CENTER);
+					configPanel.updateUI();
 				}
-				else
-				{
-					helpLinkLabel.setVisible(true);
-				}
-				getContentPane().add(configPanel, BorderLayout.CENTER);
-				configPanel.updateUI();
 			}
 		};
 		tree.addTreeSelectionListener(selectionListener);
