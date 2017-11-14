@@ -87,7 +87,7 @@ public class PropertyProvider {
 		defProps.setProperty("area.code", "721");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("area.prefix", "0");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("backup.path", ".");//$NON-NLS-1$, //$NON-NLS-2$
-		defProps.setProperty("box.address", "");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("box.address", "fritz.box");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("box.mac", "");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("box.serial", "");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("box.loginUsingUsername", "false");//$NON-NLS-1$, //$NON-NLS-2$
