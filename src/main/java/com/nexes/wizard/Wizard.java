@@ -448,7 +448,7 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
         try {
 
             PropertyResourceBundle resources = (PropertyResourceBundle)
-                ResourceBundle.getBundle("wizard");
+                ResourceBundle.getBundle("wizard/wizard");
 
             BACK_TEXT = (String)(resources.getObject("backButtonText"));
             NEXT_TEXT = (String)(resources.getObject("nextButtonText"));
