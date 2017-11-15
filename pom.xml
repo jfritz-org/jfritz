@@ -13,7 +13,22 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.javadoc.skip>true</maven.javadoc.skip>
+
+        <jfritz.distDirectory>${project.build.directory}/dist</jfritz.distDirectory>
+
     </properties>
+
+    <scm>
+        <developerConnection>scm:git:https://github.com/jfritz-org/jfritz.git</developerConnection>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>internal.repo</id>
+            <name>Internal repo</name>
+            <url>file:///${project.basedir}/releases/</url>
+        </repository>
+    </distributionManagement>
 
     <build>
         <plugins>
@@ -26,46 +41,17 @@
                     <target>1.7</target>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
+                <artifactId>maven-jar-plugin</artifactId>
                 <version>3.0.2</version>
-                <executions>
-                    <execution>
-                        <id>copy-resources</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${basedir}/target</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>.</directory>
-                                    <includes>
-                                        <include>log4j.xml</include>
-                                    </includes>
-                                </resource>
-                                <resource>
-                                    <directory>lang</directory>
-                                    <targetPath>${basedir}/target/lang</targetPath>
-                                </resource>
-                                <resource>
-                                    <directory>number</directory>
-                                    <targetPath>${basedir}/target/number</targetPath>
-                                </resource>
-                                <resource>
-                                    <directory>pictures</directory>
-                                    <targetPath>${basedir}/target/pictures</targetPath>
-                                </resource>
-                                <resource>
-                                    <directory>styles</directory>
-                                    <targetPath>${basedir}/target/styles</targetPath>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>flags/</exclude>
+                        <exclude>*.properties</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
 
             <plugin>
@@ -78,7 +64,7 @@
                                 implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                             <manifestEntries>
                                 <Main-Class>de.moonflower.jfritz.Main</Main-Class>
-                                <!--<Class-Path>lang/</Class-Path>-->
+                                <Class-Path>lang/</Class-Path>
                             </manifestEntries>
                         </transformer>
                         <transformer implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
@@ -96,6 +82,66 @@
                 </executions>
             </plugin>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.0.2</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${jfritz.distDirectory}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/target</directory>
+                                    <includes>
+                                        <include>jfritz-*.jar</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>.</directory>
+                                    <includes>
+                                        <include>log4j.xml</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>lang</directory>
+                                    <targetPath>${jfritz.distDirectory}/lang</targetPath>
+                                </resource>
+                                <resource>
+                                    <directory>number</directory>
+                                    <targetPath>${jfritz.distDirectory}/number</targetPath>
+                                </resource>
+                                <resource>
+                                    <directory>pictures</directory>
+                                    <targetPath>${jfritz.distDirectory}/pictures</targetPath>
+                                </resource>
+                                <resource>
+                                    <directory>styles</directory>
+                                    <targetPath>${jfritz.distDirectory}/styles</targetPath>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <filters>
+                        <filter>src/assembly/filter.properties</filter>
+                    </filters>
+                    <descriptors>
+                        <descriptor>src/assembly/compressed.xml</descriptor>
+                    </descriptors>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>external.atlassian.jgitflow</groupId>
                 <artifactId>jgitflow-maven-plugin</artifactId>
@@ -115,18 +161,6 @@
             </resource>
         </resources>
     </build>
-
-    <scm>
-        <developerConnection>scm:git:https://github.com/jfritz-org/jfritz.git</developerConnection>
-    </scm>
-
-    <distributionManagement>
-        <repository>
-            <id>internal.repo</id>
-            <name>Internal repo</name>
-            <url>file:///${project.basedir}/releases/</url>
-        </repository>
-    </distributionManagement>
 
     <dependencies>
         <dependency>
