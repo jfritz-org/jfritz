@@ -248,7 +248,6 @@
                 <artifactId>jgitflow-maven-plugin</artifactId>
                 <version>1.0-m5.1</version>
                 <configuration>
-                    <!-- see goals wiki page for configuration options -->
                 </configuration>
             </plugin>
 
@@ -262,12 +261,10 @@
                         <goals>
                             <goal>jdeb</goal>
                         </goals>
-                        <!-- Customize deb package -->
                         <configuration>
                             <skipPOMs>true</skipPOMs>
                             <verbose>true</verbose>
                             <deb>${project.build.directory}/${artifactId}_${version}.deb</deb>
-                            <!--<installDir>/opt/${artifactId}</installDir>-->
                             <dataSet>
                                 <data>
                                     <src>${jfritz.distDirectory}</src>
