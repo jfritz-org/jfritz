@@ -1,5 +1,0 @@
-#define AppName "JFritz"
-#define AppVersion "0.7.5"
-#define AppRevision "11"
-;AppType can be "Beta-Setup" or "Release-Setup"
-#define AppType "Release-Setup"

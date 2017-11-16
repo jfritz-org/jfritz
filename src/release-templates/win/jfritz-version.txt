@@ -1,0 +1,7 @@
+#define AppName "${capitalizedName}"
+#define AppVersion "${version}"
+#define AppRevision "1"
+;AppType can be "Beta-Setup" or "Release-Setup"
+#define AppType "Setup"
+; cannot use ${jfritz.releaseDirectory} here, because it is interpreted as a relative directory
+#define OutputDir "../release"

@@ -11,12 +11,16 @@
     <url>https://jfritz.org</url>
 
     <properties>
+        <capitalizedName>JFritz</capitalizedName>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.javadoc.skip>true</maven.javadoc.skip>
 
         <jfritz.releaseTemplates>${project.basedir}/src/release-templates</jfritz.releaseTemplates>
         <jfritz.distDirectory>${project.build.directory}/dist</jfritz.distDirectory>
-        <jfritz.tmpMacDirectory>${project.build.directory}/tmpMac</jfritz.tmpMacDirectory>
+        <jfritz.tmpWinDirectory>${project.build.directory}/tmpWin</jfritz.tmpWinDirectory>
+        <jfritz.releaseDirectory>${project.build.directory}/release</jfritz.releaseDirectory>
+        <exec.wine>/usr/bin/wine64</exec.wine>
+        <exec.iscc>/home/robert/.wine/drive_c/Program Files (x86)/Inno Setup 5/ISCC.exe</exec.iscc>
     </properties>
 
     <scm>
@@ -134,8 +138,8 @@
                 <version>3.0.2</version>
                 <configuration>
                     <excludes>
-                        <exclude>flags/</exclude>
-                        <exclude>*.properties</exclude>
+                        <exclude>flags/</exclude> <!-- ignore flags directory -->
+                        <exclude>*.properties</exclude> <!-- ignore all language files -->
                     </excludes>
                 </configuration>
             </plugin>
@@ -175,7 +179,7 @@
                 <version>3.0.2</version>
                 <executions>
                     <execution>
-                        <id>dist</id>
+                        <id>create-dist</id>
                         <phase>package</phase>
                         <goals>
                             <goal>copy-resources</goal>
@@ -194,6 +198,7 @@
                                     <includes>
                                         <include>log4j.xml</include>
                                         <include>LICENSE.GPL</include>
+                                        <include>Changelog.txt</include>
                                     </includes>
                                 </resource>
                                 <resource>
@@ -221,6 +226,42 @@
                             </resources>
                         </configuration>
                     </execution>
+
+                    <execution>
+                        <id>prepare-windows</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${jfritz.tmpWinDirectory}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${jfritz.releaseTemplates}/win</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                                <resource>
+                                    <directory>${jfritz.distDirectory}</directory>
+                                    <targetPath>${jfritz.tmpWinDirectory}/binaries</targetPath>
+                                </resource>
+                                <resource>
+                                    <directory>${jfritz.releaseTemplates}/common</directory>
+                                    <targetPath>${jfritz.tmpWinDirectory}/templates</targetPath>
+                                    <includes>
+                                        <include>*</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>.</directory>
+                                    <targetPath>${jfritz.tmpWinDirectory}/templates</targetPath>
+                                    <includes>
+                                        <include>LICENSE.GPL</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+
                 </executions>
             </plugin>
 
@@ -236,6 +277,7 @@
                         </goals>
 
                         <configuration>
+                            <outputDirectory>${jfritz.releaseDirectory}</outputDirectory>
                             <filters>
                                 <filter>src/assembly/filter.properties</filter>
                             </filters>
@@ -252,6 +294,7 @@
                         </goals>
 
                         <configuration>
+                            <outputDirectory>${jfritz.releaseDirectory}</outputDirectory>
                             <filters>
                                 <filter>src/assembly/filter.properties</filter>
                             </filters>
@@ -283,7 +326,7 @@
                         <configuration>
                             <skipPOMs>true</skipPOMs>
                             <verbose>true</verbose>
-                            <deb>${project.build.directory}/${artifactId}_${version}.deb</deb>
+                            <deb>${jfritz.releaseDirectory}/${artifactId}_${version}.deb</deb>
                             <dataSet>
                                 <data>
                                     <src>${jfritz.distDirectory}</src>
@@ -312,6 +355,29 @@
                                     <type>file</type>
                                 </data>
                             </dataSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.1.1</version>
+                <executions>
+                    <execution>
+                        <id>create-windows-setup-exe</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${exec.wine}</executable>
+                            <workingDirectory>${jfritz.tmpWinDirectory}</workingDirectory>
+                            <arguments>
+                                <argument>${exec.iscc}</argument>
+                                <argument>jfritz.iss</argument>
+                            </arguments>
                         </configuration>
                     </execution>
                 </executions>
