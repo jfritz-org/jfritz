@@ -192,6 +192,7 @@
                                     <directory>.</directory>
                                     <includes>
                                         <include>log4j.xml</include>
+                                        <include>LICENSE.GPL</include>
                                     </includes>
                                 </resource>
                                 <resource>
