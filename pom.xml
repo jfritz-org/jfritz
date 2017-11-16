@@ -15,7 +15,7 @@
         <maven.javadoc.skip>true</maven.javadoc.skip>
 
         <jfritz.distDirectory>${project.build.directory}/dist</jfritz.distDirectory>
-
+        <jfritz.releaseTemplates>${project.basedir}/src/release-templates</jfritz.releaseTemplates>
     </properties>
 
     <scm>
@@ -105,6 +105,8 @@
     </dependencies>
 
     <build>
+        <finalName>${artifactId}</finalName>
+
         <resources>
             <resource>
                 <directory>${project.basedir}/lang/</directory>
@@ -150,7 +152,8 @@
                                 <Class-Path>lang/</Class-Path>
                             </manifestEntries>
                         </transformer>
-                        <transformer implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
+                        <transformer
+                                implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
                             <resource>lang/</resource>
                         </transformer>
                     </transformers>
@@ -182,13 +185,19 @@
                                 <resource>
                                     <directory>${basedir}/target</directory>
                                     <includes>
-                                        <include>jfritz-*.jar</include>
+                                        <include>jfritz.jar</include>
                                     </includes>
                                 </resource>
                                 <resource>
                                     <directory>.</directory>
                                     <includes>
                                         <include>log4j.xml</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>${jfritz.releaseTemplates}/common</directory>
+                                    <includes>
+                                        <include>*</include>
                                     </includes>
                                 </resource>
                                 <resource>
@@ -216,14 +225,23 @@
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.1.0</version>
-                <configuration>
-                    <filters>
-                        <filter>src/assembly/filter.properties</filter>
-                    </filters>
-                    <descriptors>
-                        <descriptor>src/assembly/compressed.xml</descriptor>
-                    </descriptors>
-                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+
+                        <configuration>
+                            <filters>
+                                <filter>src/assembly/filter.properties</filter>
+                            </filters>
+                            <descriptors>
+                                <descriptor>src/assembly/compressed.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>external.atlassian.jgitflow</groupId>
@@ -232,6 +250,55 @@
                 <configuration>
                     <!-- see goals wiki page for configuration options -->
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.vafer</groupId>
+                <artifactId>jdeb</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jdeb</goal>
+                        </goals>
+                        <!-- Customize deb package -->
+                        <configuration>
+                            <skipPOMs>true</skipPOMs>
+                            <verbose>true</verbose>
+                            <deb>${project.build.directory}/${artifactId}_${version}.deb</deb>
+                            <!--<installDir>/opt/${artifactId}</installDir>-->
+                            <dataSet>
+                                <data>
+                                    <src>${jfritz.distDirectory}</src>
+                                    <type>directory</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <prefix>/opt/JFritz</prefix>
+                                    </mapper>
+                                </data>
+
+                                <data>
+                                    <src>${jfritz.releaseTemplates}/linux/jfritz</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <prefix>/usr/bin</prefix>
+                                        <filemode>755</filemode>
+                                        <user>root</user>
+                                        <group>root</group>
+                                    </mapper>
+                                </data>
+
+                                <data>
+                                    <src>${jfritz.releaseTemplates}/linux/JFritz.desktop</src>
+                                    <dst>/usr/share/applications/JFritz.desktop</dst>
+                                    <type>file</type>
+                                </data>
+                            </dataSet>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

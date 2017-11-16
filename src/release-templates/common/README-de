@@ -10,12 +10,12 @@ Die Autoren des Programmes koennen fuer durch die Benutzung verursachte
 Schaeden an Hardware, Software, Menschen, Tieren oder Gegenstaenden nicht 
 haftbar gemacht werden.
 
-JFritz benoetigt mindestens das Java Runtime Environment 1.6.x.
+JFritz benoetigt mindestens das Java Runtime Environment 1.7.x.
 
 Gestartet wird es mit:
 
 java -jar jfritz.jar
 
-Der Quelltext kann per EMail an source@jfritz.org angefordert werden.
+Der Quelltext befindet sich bei GitHub: https://github.com/jfritz-org/jfritz
 
 Viel Spass!

@@ -1,0 +1,1 @@
+su - $SUDO_USER -c "xdg-desktop-icon install --novendor /usr/share/applications/JFritz.desktop"

@@ -1,0 +1,9 @@
+JFritz
+=================================================================
+
+JFritz is a call monitor and a call data manager for the FritzBoxFon of AVM.
+
+JFritz needs at lease Java Runtime Environment 1.7. Start it with the following command:
+java -jar jfritz.jar
+
+Source code can be obtained at https://github.com/jfritz-org/jfritz
