@@ -53,7 +53,10 @@ public class FritzBoxSipProviderTest {
 	
 	@Test
 	public void testParseResponse_OneProvider_Active() {
+		// mock query to MSN
+		fbSipProvider.msnMap.put("sip0", "12345");
 		Vector<String> response = generateTestData(new SipProvider(true, 0, "12345", "registrar"));
+
 		fbSipProvider.parseResponse(response);
 
 		Assert.assertEquals(1, fbSipProvider.getSipProvider().size());
@@ -67,7 +70,10 @@ public class FritzBoxSipProviderTest {
 	
 	@Test
 	public void testParseResponse_OneProvider_NotActive() {
+		// mock query to MSN
+		fbSipProvider.msnMap.put("sip0", "12345");
 		Vector<String> response = generateTestData(new SipProvider(false, 0, "12345", "registrar"));
+
 		fbSipProvider.parseResponse(response);
 
 		Assert.assertEquals(1, fbSipProvider.getSipProvider().size());
@@ -82,6 +88,10 @@ public class FritzBoxSipProviderTest {
 
 	@Test
 	public void testParseResponse_TwoProvider() {
+		// mock query to MSN
+		fbSipProvider.msnMap.put("sip0", "12345");
+		fbSipProvider.msnMap.put("sip1", "98765");
+
 		Vector<String> response = generateTestData(
 				new SipProvider(true, 0, "12345", "registrar"),
 				new SipProvider(true, 1, "98765", "otherregistrar"));
@@ -104,6 +114,11 @@ public class FritzBoxSipProviderTest {
 
 	@Test
 	public void testParseResponse_ThreeProvider() {
+		// mock query to MSN
+		fbSipProvider.msnMap.put("sip0", "12345");
+		fbSipProvider.msnMap.put("sip1", "98765");
+		fbSipProvider.msnMap.put("sip2", "45678");
+
 		Vector<String> response = generateTestData(
 				new SipProvider(true, 0, "12345", "registrar"),
 				new SipProvider(true, 1, "98765", "otherregistrar"),
@@ -134,6 +149,10 @@ public class FritzBoxSipProviderTest {
 
 	@Test
 	public void testParseResponse_TwoProvider_Missing_ID() {
+		// mock query to MSN
+		fbSipProvider.msnMap.put("sip0", "12345");
+		fbSipProvider.msnMap.put("sip2", "45678");
+
 		Vector<String> response = generateTestData(
 				new SipProvider(true, 0, "12345", "registrar"),
 				new SipProvider(true, 2, "45678", "sip.1und1.de")
@@ -164,10 +183,6 @@ public class FritzBoxSipProviderTest {
 			response.add(Integer.toString(sipProvider.getProviderID()));
 			response.add(sipProvider.getProvider());
 			response.add(sipProvider.getNumber());
-			response.add("name_" + sipProvider.getNumber());
-			response.add("number_" + sipProvider.getNumber());
-			response.add("displayname_" + sipProvider.getNumber());
-			response.add("username_" + sipProvider.getNumber());
 		}
 		
 		return response;

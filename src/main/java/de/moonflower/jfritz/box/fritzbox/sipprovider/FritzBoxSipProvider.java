@@ -25,7 +25,7 @@ public class FritzBoxSipProvider {
 	private final static String QUERY_SIP_MSN = "telcfg:settings/SIP%NUM%/MSN";
 	
 	private Vector<SipProvider> sipProvider;
-	private HashMap<String, String> msnMap;
+	protected HashMap<String, String> msnMap;
 
 	public FritzBoxSipProvider() {
 		sipProvider = new Vector<SipProvider>();
