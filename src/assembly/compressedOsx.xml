@@ -1,0 +1,45 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
+    <id>${version}-MAC-bin</id>
+    <baseDirectory></baseDirectory>
+    <formats>
+        <format>zip</format>
+    </formats>
+
+    <fileSets>
+        <fileSet>
+            <directory>${jfritz.releaseTemplates}/osx/JFritz.app</directory>
+            <outputDirectory>JFritz.app</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${jfritz.distDirectory}</directory>
+            <outputDirectory>JFritz.app/Contents/Resources/Java</outputDirectory>
+        </fileSet>
+    </fileSets>
+    <files>
+        <file>
+            <source>${jfritz.releaseTemplates}/osx/__MACOSX/JFritz.app/Contents/._Info.plist</source>
+            <outputDirectory>__MACOSX/JFritz.app/Contents</outputDirectory>
+            <destName>._Info.plist</destName>
+        </file>
+        <file>
+            <source>${jfritz.releaseTemplates}/osx/JFritz.app/Contents/Info.plist</source>
+            <outputDirectory>JFritz.app/Contents</outputDirectory>
+            <destName>Info.plist</destName>
+            <filtered>true</filtered>
+        </file>
+        <file>
+            <source>LICENSE.GPL</source>
+        </file>
+        <file>
+            <source>${jfritz.releaseTemplates}/osx/Readme-MAC.txt</source>
+        </file>
+        <file>
+            <source>${jfritz.releaseTemplates}/common/README-de</source>
+        </file>
+        <file>
+            <source>${jfritz.releaseTemplates}/common/README-en</source>
+        </file>
+    </files>
+</assembly>

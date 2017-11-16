@@ -14,8 +14,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.javadoc.skip>true</maven.javadoc.skip>
 
-        <jfritz.distDirectory>${project.build.directory}/dist</jfritz.distDirectory>
         <jfritz.releaseTemplates>${project.basedir}/src/release-templates</jfritz.releaseTemplates>
+        <jfritz.distDirectory>${project.build.directory}/dist</jfritz.distDirectory>
+        <jfritz.tmpMacDirectory>${project.build.directory}/tmpMac</jfritz.tmpMacDirectory>
     </properties>
 
     <scm>
@@ -174,7 +175,7 @@
                 <version>3.0.2</version>
                 <executions>
                     <execution>
-                        <id>copy-resources</id>
+                        <id>dist</id>
                         <phase>package</phase>
                         <goals>
                             <goal>copy-resources</goal>
@@ -228,6 +229,7 @@
                 <version>3.1.0</version>
                 <executions>
                     <execution>
+                        <id>package-zip-tar</id>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
@@ -239,6 +241,22 @@
                             </filters>
                             <descriptors>
                                 <descriptor>src/assembly/compressed.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>package-osx</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+
+                        <configuration>
+                            <filters>
+                                <filter>src/assembly/filter.properties</filter>
+                            </filters>
+                            <descriptors>
+                                <descriptor>src/assembly/compressedOsx.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>
