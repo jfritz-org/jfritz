@@ -2,6 +2,7 @@
 - Neu: Support Java 9
 - Bugfix: Funktioniert mit der Firmware-Versionen 06.90
 - Änderung: Exportieren / Drucken der Anrufliste funktioniert nicht mehr
+- Änderung: Tray-Icon funktioniert nicht mehr unter Gnome
 
 JFritz 0.7.5_23:
 - Neu: Rückwärtssuche unterstützt nun das Setzen des UserAgents via reverselookup.xml
