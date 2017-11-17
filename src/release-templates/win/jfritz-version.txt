@@ -1,5 +1,5 @@
 #define AppName "${capitalizedName}"
-#define AppVersion "${version}"
+#define AppVersion "${project.version}"
 #define AppRevision "1"
 ;AppType can be "Beta-Setup" or "Release-Setup"
 #define AppType "Setup"
