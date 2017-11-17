@@ -20,6 +20,13 @@ TODO tel.search.ch überprüfen und reparieren
 - TODO: Sounds trennen und individualisierbar gestalten
 - TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
 
+JFritz 0.7.6-SNAPSHOT:
+- Neu: Support Java 9
+- Bugfix: Funktioniert mit der Firmware-Versionen 06.90
+- Änderung: Exportieren / Drucken der Anrufliste funktioniert nicht mehr
+- Neu: Build-Prozess von ANT auf Maven umgestellt
+- Änderung: Erstellen der Packages mittels Maven (unter Linux kann die Setup.exe mit WINE erstellt werden)
+
 JFritz 0.7.5_23:
 - Neu: Rückwärtssuche unterstützt nun das Setzen des UserAgents via reverselookup.xml
 - Neu: JFritz loggt nun per default nichts mehr ins debug.log (kann mit dem Parameter -v angepasst werden)
