@@ -6,6 +6,7 @@
     <artifactId>jfritz</artifactId>
     <version>0.7.6-SNAPSHOT</version>
     <packaging>jar</packaging>
+    <description>A program to communicate with your FRITZ!Box</description>
 
     <name>jfritz</name>
     <url>https://jfritz.org</url>
@@ -431,6 +432,68 @@
                                             </includes>
                                         </resource>
                                     </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                        <artifactId>launch4j-maven-plugin</artifactId>
+                        <version>1.7.21</version>
+                        <executions>
+                            <execution>
+                                <id>create-exe</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>launch4j</goal>
+                                </goals>
+                                <configuration>
+                                    <dontWrapJar>true</dontWrapJar>
+                                    <headerType>gui</headerType>
+                                    <jar>jfritz.jar</jar>
+                                    <outfile>${jfritz.tmpWinDirectory}/templates/jfritz.exe</outfile>
+                                    <errTitle>JFritz</errTitle>
+                                    <priority>normal</priority>
+                                    <downloadUrl>http://java.com/download</downloadUrl>
+                                    <stayAlive>true</stayAlive>
+                                    <icon>${jfritz.releaseTemplates}/win/jFritz.ico</icon>
+                                    <singleInstance>
+                                        <mutexName>jfritz.exe</mutexName>
+                                        <windowTitle>Multiple instances are not allowed!</windowTitle>
+                                    </singleInstance>
+                                    <classPath>
+                                        <mainClass>de.moonflower.jfritz.Main</mainClass>
+                                        <addDependencies>false</addDependencies>
+                                        <preCp>lang</preCp>
+                                    </classPath>
+                                    <jre>
+                                        <minVersion>1.7.0</minVersion>
+                                        <jdkPreference>preferJre</jdkPreference>
+                                        <initialHeapSize>128</initialHeapSize>
+                                        <maxHeapSize>512</maxHeapSize>
+                                        <opts>
+                                            <!--<opt>-Djava.endorsed.dirs=./endorsed</opt>-->
+                                        </opts>
+                                    </jre>
+                                    <versionInfo>
+                                        <fileVersion>1.0.0.0</fileVersion>
+                                        <txtFileVersion>txt file version?</txtFileVersion>
+                                        <fileDescription>a description</fileDescription>
+                                        <copyright>JFritz-Team</copyright>
+                                        <productVersion>1.2.3.4</productVersion>
+                                        <txtProductVersion>${version}</txtProductVersion>
+                                        <productName>${name}</productName>
+                                        <internalName>${name}</internalName>
+                                        <originalFilename>${name}.exe</originalFilename>
+                                    </versionInfo>
+                                    <messages>
+                                        <startupErr>Beim Starten der Anwendung ist ein Fehler aufgetreten. An error occurred while starting the application.</startupErr>
+                                        <bundledJreErr>This application was configured to use a bundled Java Runtime Environment but the runtime is missing or corrupted.</bundledJreErr>
+                                        <jreVersionErr>Auf Ihrem System wurde kein Java gefunden, bitte installieren Sie eine aktuelle Java Version. This application requires a Java Runtime Environment, please install an actual version. http://java.com/download</jreVersionErr>
+                                        <launcherErr>Die Windows-Registry verweist auf eine nicht mehr installierte Java Version. The registry refers to a nonexistent Java Runtime Environment installation or the runtime is corrupted.</launcherErr>
+                                        <instanceAlreadyExistsMsg>Die Anwendung läuft bereits. An application instance is already running.</instanceAlreadyExistsMsg>
+                                    </messages>
                                 </configuration>
                             </execution>
                         </executions>
