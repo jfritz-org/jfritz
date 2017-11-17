@@ -1,6 +1,6 @@
 package de.moonflower.jfritz.tray;
 
-import java.awt.PopupMenu;
+import java.awt.*;
 
 import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
@@ -26,7 +26,10 @@ public class TrayMenu {
 	public void add(JMenu menu)
 	{
 		jPopup.add(menu);
-		//@fixme: add menu also to popup
+	}
+
+	public void add(Menu menu) {
+		popup.add(menu);
 	}
 
 	public void addSeparator()

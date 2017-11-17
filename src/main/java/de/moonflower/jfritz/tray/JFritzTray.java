@@ -33,15 +33,17 @@ public class JFritzTray {
 		jframe = frame;
 		boxCommunication = boxComm;
 		if (SystemTray.isSupported()) {
+			log.info("Using AWTTray as SystemTray");
 			tray = new AWTTray();
 		} else {
+			log.info("Using SwingTray as SystemTray");
 			tray = new SwingTray();
 		}
 
+		initIcon();
+
 		TrayMenu menu = createTrayMenu();
 		tray.setPopupMenu(menu);
-
-		initIcon();
 
 		System.setProperty("javax.swing.adjustPopupLocationToFit", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
 
@@ -123,38 +125,39 @@ public class JFritzTray {
 		}
 		menu.add(menuItem);
 		menu.addSeparator();
-		if (boxCommunication != null) {
-			for (int i=0; i<boxCommunication.getBoxCount(); i++) {
+		if (boxCommunication != null && boxCommunication.getBoxCount() > 0) {
+			for (int i = 0; i < boxCommunication.getBoxCount(); i++) {
 				String boxName = boxCommunication.getBox(i).getName();
 				BoxClass box = boxCommunication.getBox(boxName);
 				if (box != null) {
-					JMenu boxItem = new JMenu(boxName);
+					Menu boxItem = new Menu(boxName);
 					menuItem = new TrayMenuItem("IP: " + box.getExternalIP());
-					boxItem.add(menuItem.getJMenuItem());
+					boxItem.add(menuItem.getMenuItem());
 					boxItem.addSeparator();
 					menuItem = new TrayMenuItem(messages.getMessage("fetchlist"));
-					menuItem.setActionCommand("fetchList-"+boxName);
+					menuItem.setActionCommand("fetchList-" + boxName);
 					if (jframe != null) {
 						menuItem.addActionListener(jframe);
 					}
-					boxItem.add(menuItem.getJMenuItem());
+					boxItem.add(menuItem.getMenuItem());
 					menuItem = new TrayMenuItem(messages.getMessage("renew_ip"));
-					menuItem.setActionCommand("renewIP-"+boxName);
+					menuItem.setActionCommand("renewIP-" + boxName);
 					if (jframe != null) {
 						menuItem.addActionListener(jframe);
 					}
-					boxItem.add(menuItem.getJMenuItem());
+					boxItem.add(menuItem.getMenuItem());
 					menuItem = new TrayMenuItem("Reboot");
-					menuItem.setActionCommand("reboot-"+boxName);
+					menuItem.setActionCommand("reboot-" + boxName);
 					if (jframe != null) {
 						menuItem.addActionListener(jframe);
 					}
-					boxItem.add(menuItem.getJMenuItem());
+					boxItem.add(menuItem.getMenuItem());
 					menu.add(boxItem);
 				}
 			}
+			menu.addSeparator();
 		}
-		menu.addSeparator();
+
 		menuItem = new TrayMenuItem(messages.getMessage("fetchlist")); //$NON-NLS-1$
 		menuItem.setActionCommand("fetchList"); //$NON-NLS-1$
 		if (jframe != null) {

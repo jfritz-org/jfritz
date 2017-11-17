@@ -1110,19 +1110,24 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 					String externalIp = "";
 					while ("".equals(externalIp)) {
 						try {
+							log.debug("Retrieving external ip for box (" + boxName + ") ...");
 							Thread.sleep(5000);
 							BoxClass box = JFritz.getBoxCommunication().getBox(boxName);
 							if (box != null) {
 								externalIp = box.getExternalIP();
-								log.debug("Extenal IP for box (" + boxName + "): " + externalIp);
+								log.debug("External IP for box (" + boxName + "): " + externalIp);
 							}
 							if ("No external IP detected".equals(externalIp)) {
+								externalIp = "";
+							}
+							if ("-".equals(externalIp)) {
 								externalIp = "";
 							}
 							if (!"".equals(externalIp)) {
 								JFritzTray.refreshTrayMenu();
 							}
 						} catch (InterruptedException e) {
+							log.error(e);
 						}
 					}
 				}

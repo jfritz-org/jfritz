@@ -213,11 +213,16 @@ public final class JFritz implements  StatusListener {
 		log.info("New instance of JFrame"); //$NON-NLS-1$
 		jframe = new JFritzWindow(this);
 		if (Main.checkForSystraySupport()) {
-			log.info("Check Systray-Support"); //$NON-NLS-1$
-			try {
-				JFritzTray.initTray(jframe, getBoxCommunication());
-			} catch (Throwable e) {
+			if (OSDetector.isGnome()) {
+				log.info("Systray is not supported on Gnome!"); //$NON-NLS-1$
 				Main.systraySupport = false;
+			} else {
+				log.debug("Check Systray-Support"); //$NON-NLS-1$
+				try {
+					JFritzTray.initTray(jframe, getBoxCommunication());
+				} catch (Throwable e) {
+					Main.systraySupport = false;
+				}
 			}
 		}
 		jframe.checkStartOptions();
