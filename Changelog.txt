@@ -4,6 +4,10 @@
 - Änderung: Exportieren / Drucken der Anrufliste funktioniert nicht mehr
 - Änderung: Tray-Icon funktioniert nicht mehr unter Gnome
 
+New Strings:
+dial_assist_clipboard
+reboot
+
 JFritz 0.7.5_23:
 - Neu: Rückwärtssuche unterstützt nun das Setzen des UserAgents via reverselookup.xml
 - Neu: JFritz loggt nun per default nichts mehr ins debug.log (kann mit dem Parameter -v angepasst werden)
