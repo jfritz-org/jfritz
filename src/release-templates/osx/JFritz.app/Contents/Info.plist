@@ -29,10 +29,8 @@
 		<key>ClassPath</key>
 		<array>
 			<string>$JAVAROOT/log4j.xml</string>
+			<string>$JAVAROOT/lang</string>
 			<string>$JAVAROOT/jfritz.jar</string>
-			<string>$JAVAROOT/fritzbox.jar</string>
-			<string>$JAVAROOT/reverselookup.jar</string>
-			<string>$JAVAROOT/resources.jar</string>
 		</array>
 		<key>JVMVersion</key>
 		<string>1.5+</string>
