@@ -752,9 +752,6 @@ public class FritzBox extends BoxClass {
 	 * Implementation of the BoxCallMonitorInterface
 	 **************************************************************************************/
 
-	/**
-	 * @see BoxCallMonitorInterface.startCallMonitor
-	 */
 	public int startCallMonitor(Vector<CallMonitorStatusListener> listener) {
 		log.debug("Starting call monitor ...");
 		switch (Integer.parseInt(properties.getProperty("option.callMonitorType"))) //$NON-NLS-1$
@@ -815,9 +812,6 @@ public class FritzBox extends BoxClass {
 		}
 	}
 
-	/**
-	 * @see BoxCallMonitorInterface.stopCallMonitor
-	 */
 	public void stopCallMonitor(Vector<CallMonitorStatusListener> listener) {
 		if (callMonitor != null)
 		{
@@ -1324,14 +1318,13 @@ public class FritzBox extends BoxClass {
 				} else {
 					log.debug("doCall: Firmware is greater/or equal than 06.01");
 					
-					log.debug("doCall: Setting dialing port to " + port.getDialPort());
-					if (!port.getDialPort().equals(getQueryDialPort())) { // 18.11.2017 Nur wenn Dialport nicht 50=50 ist
+					if (hasDialportChanged(port)) {
+						log.debug("doCall: Setting dialing port to " + port.getDialPort());
 						generateDoCallPostDataDialPortLua(postdata, port.getDialPort());
 						fbc.postToPageAndGetAsString(URL_DIAL_FONBOOK_LUA, postdata);
 					}
 
-					String dial_query = "";
-					dial_query = "dial=" + currentNumber + "&orig_port=" + port.getDialPort();
+					String dial_query = "dial=" + currentNumber + "&orig_port=" + port.getDialPort();
 					dial_query = dial_query.replace("#", "%23"); // # %23
 					dial_query = dial_query.replace("*", "%2A"); // * %2A
 					fbc.getPageAsString(URL_FONBOOK_LIST_LUA + "?" + dial_query);
@@ -1362,6 +1355,10 @@ public class FritzBox extends BoxClass {
 		} else {
 			// FIXME show error message that we are currently not connected!!
 		}
+	}
+
+	private boolean hasDialportChanged(Port port) throws IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException {
+		return !port.getDialPort().equals(getQueryDialPort());
 	}
 
 	private void generateHangupPostdata(List<NameValuePair> postdata, Port port) {
