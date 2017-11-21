@@ -1,7 +1,7 @@
 package de.moonflower.jfritz.tray;
 
 import java.awt.Menu;
-import java.awt.event.ActionEvent;
+import java.awt.SystemTray;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -30,8 +30,6 @@ public class JFritzTray {
 	private static ImageIcon trayIcon;
 	private static JFritzWindow jframe;
 	private static BoxCommunication boxCommunication;
-
-	private static int clickCount = 1;
 
 	public static void initTray(final JFritzWindow frame, final BoxCommunication boxComm) {
 		jframe = frame;
@@ -205,51 +203,40 @@ public class JFritzTray {
 	}
 
 	private static void refreshTrayActionListener() {
-
-		String trayClick = PropertyProvider.getInstance().getProperty("tray.clickCount");
-
-		int nCLICK_COUNT_SINGLE = 1; // muss 1 sein bei Einfachen Click
-		int nCLICK_COUNT_DOUBLE = 2; // muss 2 sein bei Doppelten Click
-
-		clickCount = nCLICK_COUNT_SINGLE;
-
-	        tray.addMouseListener(new MouseAdapter() {
-			@Override()
-			public void mouseClicked(MouseEvent e) {
-
-		                if (jframe != null) {
-
-		                	if (e.getClickCount() == nCLICK_COUNT_SINGLE && e.getButton() == (MouseEvent.BUTTON1 & MouseEvent.MOUSE_PRESSED) && "1".equals(trayClick)) {
-	        		            	clickCount = ClickListener.CLICK_COUNT_SINGLE;
-        	        		    	jframe.hideShowJFritz(true);
-
-					} else {
-
-                				if (e.getClickCount() == nCLICK_COUNT_DOUBLE && e.getButton() == (MouseEvent.BUTTON1 & MouseEvent.MOUSE_PRESSED) && "2".equals(trayClick)) {
-                					clickCount = ClickListener.CLICK_COUNT_DOUBLE;
-                        				jframe.hideShowJFritz(true);
-                				}
-
-                			}
-	                	}
-            		}
-        	});
-
-		tray.clearActionListeners();
-		tray.addActionListener(new ClickListener(ClickListener.CLICK_LEFT, clickCount) {
-/*
-			private void showHide() {
-				if ( jframe != null )
-				{
-					jframe.hideShowJFritz(true);
-				}
-			}
-*/
-			public void actionPerformed(ActionEvent e) {
-//				showHide();
-			}
-		});
+	    tray.clearActionListeners();
+        tray.addMouseListener(new MouseAdapter() {
+            @Override()
+            public void mouseClicked(MouseEvent e) {
+                if (isOneClickConfigured() && isLeftMouseButtonPressedOnce(e)) {
+                    showHideJfritzWindow();
+                } else if (isTwoClickConfigured() && isLeftMouseButtonPressedTwice(e)) {
+					showHideJfritzWindow();
+                }
+            }
+        });
 	}
+
+	private static boolean isOneClickConfigured() {
+        return "1".equals(PropertyProvider.getInstance().getProperty("tray.clickCount"));
+    }
+
+    private static boolean isTwoClickConfigured() {
+        return "2".equals(PropertyProvider.getInstance().getProperty("tray.clickCount"));
+    }
+
+    private static boolean isLeftMouseButtonPressedOnce(MouseEvent e) {
+        return e.getClickCount() == 1 && e.getButton() == (MouseEvent.BUTTON1 & MouseEvent.MOUSE_PRESSED);
+    }
+
+    private static boolean isLeftMouseButtonPressedTwice(MouseEvent e) {
+        return e.getClickCount() == 2 && e.getButton() == (MouseEvent.BUTTON1 & MouseEvent.MOUSE_PRESSED);
+    }
+
+    private static void showHideJfritzWindow() {
+        if (jframe != null) {
+            jframe.hideShowJFritz(true);
+        }
+    }
 
 	/**
 	 * Deletes actual systemtray and creates a new one.
