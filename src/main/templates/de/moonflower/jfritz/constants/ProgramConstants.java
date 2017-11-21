@@ -1,7 +1,7 @@
 package de.moonflower.jfritz.constants;
 
 public final class ProgramConstants {
-    public static final String PROGRAM_NAME = "${project.artifactId}";
+    public static final String PROGRAM_NAME = "${capitalizedName}";
     public static final String PROGRAM_VERSION_LONG = "${project.version}";
     public static final String REVISION = "${git.shortRevision}";
     public static final String BUILD_DATE = "${buildDateTime}";
