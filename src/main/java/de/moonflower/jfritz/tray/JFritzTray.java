@@ -206,10 +206,10 @@ public class JFritzTray {
 
 	private static void refreshTrayActionListener() {
 
-		String trayClick = PropertyProvider.getInstance().getProperty("tray.clickCount");
+		final String trayClick = PropertyProvider.getInstance().getProperty("tray.clickCount");
 
-		int nCLICK_COUNT_SINGLE = 1; // muss 1 sein bei Einfachen Click
-		int nCLICK_COUNT_DOUBLE = 2; // muss 2 sein bei Doppelten Click
+		final int nCLICK_COUNT_SINGLE = 1; // muss 1 sein bei Einfachen Click
+		final int nCLICK_COUNT_DOUBLE = 2; // muss 2 sein bei Doppelten Click
 
 		clickCount = nCLICK_COUNT_SINGLE;
 
