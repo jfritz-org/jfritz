@@ -1,7 +1,9 @@
 package de.moonflower.jfritz.tray;
 
-import java.awt.*;
+import java.awt.Menu;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -28,6 +30,8 @@ public class JFritzTray {
 	private static ImageIcon trayIcon;
 	private static JFritzWindow jframe;
 	private static BoxCommunication boxCommunication;
+
+	private static int clickCount = 1;
 
 	public static void initTray(final JFritzWindow frame, final BoxCommunication boxComm) {
 		jframe = frame;
@@ -201,25 +205,48 @@ public class JFritzTray {
 	}
 
 	private static void refreshTrayActionListener() {
-		String trayClick = PropertyProvider.getInstance().getProperty("tray.clickCount");
-		int clickCount = ClickListener.CLICK_COUNT_SINGLE;
-		if ("2".equals(trayClick)) {
-			clickCount = ClickListener.CLICK_COUNT_DOUBLE;
-		}
+
+		final String trayClick = PropertyProvider.getInstance().getProperty("tray.clickCount");
+
+		final int nCLICK_COUNT_SINGLE = 1; // muss 1 sein bei Einfachen Click
+		final int nCLICK_COUNT_DOUBLE = 2; // muss 2 sein bei Doppelten Click
+
+		clickCount = nCLICK_COUNT_SINGLE;
+
+	        tray.addMouseListener(new MouseAdapter() {
+			@Override()
+			public void mouseClicked(MouseEvent e) {
+
+		                if (jframe != null) {
+
+		                	if (e.getClickCount() == nCLICK_COUNT_SINGLE && e.getButton() == (MouseEvent.BUTTON1 & MouseEvent.MOUSE_PRESSED) && "1".equals(trayClick)) {
+	        		            	clickCount = ClickListener.CLICK_COUNT_SINGLE;
+        	        		    	jframe.hideShowJFritz(true);
+
+					} else {
+
+                				if (e.getClickCount() == nCLICK_COUNT_DOUBLE && e.getButton() == (MouseEvent.BUTTON1 & MouseEvent.MOUSE_PRESSED) && "2".equals(trayClick)) {
+                					clickCount = ClickListener.CLICK_COUNT_DOUBLE;
+                        				jframe.hideShowJFritz(true);
+                				}
+
+                			}
+	                	}
+            		}
+        	});
 
 		tray.clearActionListeners();
-		tray.addActionListener(new ClickListener(ClickListener.CLICK_LEFT,
-												 clickCount) {
-			private long oldTimeStamp = 0;
+		tray.addActionListener(new ClickListener(ClickListener.CLICK_LEFT, clickCount) {
+/*
 			private void showHide() {
 				if ( jframe != null )
 				{
 					jframe.hideShowJFritz(true);
 				}
 			}
-
+*/
 			public void actionPerformed(ActionEvent e) {
-				showHide();
+//				showHide();
 			}
 		});
 	}
