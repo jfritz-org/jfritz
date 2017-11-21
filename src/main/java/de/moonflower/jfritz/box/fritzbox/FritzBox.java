@@ -1325,9 +1325,11 @@ public class FritzBox extends BoxClass {
 					log.debug("doCall: Firmware is greater/or equal than 06.01");
 					
 					log.debug("doCall: Setting dialing port to " + port.getDialPort());
-				   	generateDoCallPostDataDialPortLua(postdata, port.getDialPort());
-				   	fbc.postToPageAndGetAsString(URL_DIAL_FONBOOK_LUA, postdata);
-					
+					if (!port.getDialPort().equals(getQueryDialPort())) { // 18.11.2017 Nur wenn Dialport nicht 50=50 ist
+						generateDoCallPostDataDialPortLua(postdata, port.getDialPort());
+						fbc.postToPageAndGetAsString(URL_DIAL_FONBOOK_LUA, postdata);
+					}
+
 					String dial_query = "";
 					dial_query = "dial=" + currentNumber + "&orig_port=" + port.getDialPort();
 					dial_query = dial_query.replace("#", "%23"); // # %23
