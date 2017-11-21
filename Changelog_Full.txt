@@ -27,6 +27,9 @@ JFritz 0.7.6-SNAPSHOT:
 - Änderung: Tray-Icon funktioniert nicht mehr unter Gnome
 - Neu: Build-Prozess von ANT auf Maven umgestellt
 - Änderung: Erstellen der Packages mittels Maven (unter Linux kann die Setup.exe mit WINE erstellt werden)
+New Strings:
+dial_assist_clipboard
+reboot
 
 JFritz 0.7.5_23:
 - Neu: Rückwärtssuche unterstützt nun das Setzen des UserAgents via reverselookup.xml

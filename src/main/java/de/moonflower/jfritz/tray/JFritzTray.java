@@ -1,17 +1,5 @@
 package de.moonflower.jfritz.tray;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-
-import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
-import javax.swing.JMenu;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
-
-import org.apache.log4j.Logger;
-
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.JFritzWindow;
 import de.moonflower.jfritz.box.BoxClass;
@@ -19,240 +7,177 @@ import de.moonflower.jfritz.box.BoxCommunication;
 import de.moonflower.jfritz.constants.ProgramConstants;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
+import org.apache.log4j.Logger;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class JFritzTray {
-	private final static Logger log = Logger.getLogger(JFritzTray.class);
+    private final static Logger log = Logger.getLogger(JFritzTray.class);
 
-	private static Tray tray;
-	private static MessageProvider messages = MessageProvider.getInstance();
-	private static ImageIcon trayIcon;
-	private static JFritzWindow jframe;
-	private static BoxCommunication boxCommunication;
+    private static Tray tray;
+    private static MessageProvider messages = MessageProvider.getInstance();
+    private static ImageIcon trayIcon;
+    private static JFritzWindow jframe;
+    private static BoxCommunication boxCommunication;
 
-	public static void initTray(final JFritzWindow frame, final BoxCommunication boxComm) {
-		jframe = frame;
-		boxCommunication = boxComm;
-		if (SystemTray.isSupported()) {
-			log.info("Using AWTTray as SystemTray");
-			tray = new AWTTray();
-		} else {
-			log.info("Using SwingTray as SystemTray");
-			tray = new SwingTray();
-		}
+    public static void initTray(final JFritzWindow frame, final BoxCommunication boxComm) {
+        jframe = frame;
+        boxCommunication = boxComm;
+        if (SystemTray.isSupported()) {
+            log.info("Using AWTTray as SystemTray");
+            tray = new AWTTray();
+        } else {
+            log.info("Using SwingTray as SystemTray");
+            tray = new SwingTray();
+        }
 
-		initIcon();
+        initIcon();
 
-		TrayMenu menu = createTrayMenu();
-		tray.setPopupMenu(menu);
+        TrayMenu menu = createTrayMenu();
+        tray.setPopupMenu(menu);
 
-		System.setProperty("javax.swing.adjustPopupLocationToFit", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
+        System.setProperty("javax.swing.adjustPopupLocationToFit", "false"); //$NON-NLS-1$,  //$NON-NLS-2$
 
-		tray.setTooltip(ProgramConstants.PROGRAM_NAME + " v"+ProgramConstants.PROGRAM_VERSION);
+        tray.setTooltip(ProgramConstants.PROGRAM_NAME + " v" + ProgramConstants.PROGRAM_VERSION);
 
-		refreshTrayActionListener();
+        refreshTrayActionListener();
 
-	}
+    }
 
-	private static void initIcon() {
-		trayIcon = new ImageIcon(JFritz.class.getClassLoader().getResource("images/trayicon.png")); //$NON-NLS-1$
+    private static void initIcon() {
+        trayIcon = new ImageIcon(JFritz.class.getClassLoader().getResource("images/trayicon.png")); //$NON-NLS-1$
 
-		tray.add(trayIcon);
-	}
+        tray.add(trayIcon);
+    }
 
-	/**
-	 * Creates the tray icon menu
-	 */
-	private static TrayMenu createTrayMenu() {
-		LookAndFeelInfo[] lnfs = UIManager.getInstalledLookAndFeels();
-		ButtonGroup lnfgroup = new ButtonGroup();
+    /**
+     * Creates the tray icon menu
+     */
+    private static TrayMenu createTrayMenu() {
+        TrayMenu menu = new TrayMenu("JFritz Menu"); //$NON-NLS-1$
+        String programNameAndVersion = ProgramConstants.PROGRAM_NAME
+                + " v" + ProgramConstants.PROGRAM_VERSION //$NON-NLS-1$
+                + " Rev: " + ProgramConstants.REVISION; //$NON-NLS-1$
 
-		JMenu lnfMenu = new JMenu(messages.getMessage("lnf_menu")); //$NON-NLS-1$
-		// Add system dependent look and feels
-		for (int i = 0; i < lnfs.length; i++) {
-			JRadioButtonMenuItem rbmi = new JRadioButtonMenuItem(lnfs[i]
-					.getName());
-			lnfMenu.add(rbmi);
-			rbmi.setSelected(UIManager.getLookAndFeel().getClass().getName()
-					.equals(lnfs[i].getClassName()));
-			rbmi.putClientProperty("lnf name", lnfs[i]); //$NON-NLS-1$
-			if (jframe != null) {
-				rbmi.addItemListener(jframe);
-			}
-			lnfgroup.add(rbmi);
-		}
+        menu.add(createMenuItem(programNameAndVersion, "showhide"));
+        menu.addSeparator();
 
-		// Add additional look and feels from looks-2.1.4.jar
-		LookAndFeelInfo lnf = new LookAndFeelInfo("Plastic","com.jgoodies.looks.plastic.PlasticLookAndFeel");
-		JRadioButtonMenuItem rb = new JRadioButtonMenuItem(lnf.getName());
-		lnfMenu.add(rb);
-		rb.putClientProperty("lnf name", lnf);
-		rb.setSelected(UIManager.getLookAndFeel().getClass().getName()
-				.equals(lnf.getClassName()));
-		if (jframe != null) {
-			rb.addItemListener(jframe);
-		}
-		lnfgroup.add(rb);
+        createMenuItemsForAllBoxes(menu);
 
-		lnf = new LookAndFeelInfo("Plastic 3D","com.jgoodies.looks.plastic.Plastic3DLookAndFeel");
-		rb = new JRadioButtonMenuItem(lnf.getName());
-		lnfMenu.add(rb);
-		rb.putClientProperty("lnf name", lnf);
-		rb.setSelected(UIManager.getLookAndFeel().getClass().getName()
-				.equals(lnf.getClassName()));
-		if (jframe != null) {
-			rb.addItemListener(jframe);
-		}
-		lnfgroup.add(rb);
+        menu.add(createMenuItem("fetchlist", "fetchList"));  //$NON-NLS-1$,  //$NON-NLS-2$
+        menu.add(createMenuItem("reverse_lookup", "reverselookup"));  //$NON-NLS-1$,  //$NON-NLS-2$
+        menu.add(createMenuItem("dial_assist", "callDialog"));  //$NON-NLS-1$,  //$NON-NLS-2$
+        menu.add(createMenuItem("dial_assist_clipboard", "callDialogTray"));  //$NON-NLS-1$,  //$NON-NLS-2$
+        menu.add(createMenuItem("config", "config"));  //$NON-NLS-1$,  //$NON-NLS-2$
+        menu.addSeparator();
 
-		lnf = new LookAndFeelInfo("Plastic XP","com.jgoodies.looks.plastic.PlasticXPLookAndFeel");
-		rb = new JRadioButtonMenuItem(lnf.getName());
-		lnfMenu.add(rb);
-		rb.putClientProperty("lnf name", lnf);
-		rb.setSelected(UIManager.getLookAndFeel().getClass().getName()
-				.equals(lnf.getClassName()));
-		if (jframe != null) {
-			rb.addItemListener(jframe);
-		}
-		lnfgroup.add(rb);
+        menu.add(createMenuItem("prog_exit", "exit"));  //$NON-NLS-1$,  //$NON-NLS-2$
 
+        return menu;
+    }
 
-		TrayMenu menu = new TrayMenu("JFritz Menu"); //$NON-NLS-1$
-		TrayMenuItem menuItem = new TrayMenuItem(ProgramConstants.PROGRAM_NAME + " v" //$NON-NLS-1$
-				+ ProgramConstants.PROGRAM_VERSION + " Rev: " + ProgramConstants.REVISION);
-		menuItem.setActionCommand("showhide");
-		if (jframe != null) {
-			menuItem.addActionListener(jframe);
-		}
-		menu.add(menuItem);
-		menu.addSeparator();
-		if (boxCommunication != null && boxCommunication.getBoxCount() > 0) {
-			for (int i = 0; i < boxCommunication.getBoxCount(); i++) {
-				String boxName = boxCommunication.getBox(i).getName();
-				BoxClass box = boxCommunication.getBox(boxName);
-				if (box != null) {
-					Menu boxItem = new Menu(boxName);
-					menuItem = new TrayMenuItem("IP: " + box.getExternalIP());
-					boxItem.add(menuItem.getMenuItem());
-					boxItem.addSeparator();
-					menuItem = new TrayMenuItem(messages.getMessage("fetchlist"));
-					menuItem.setActionCommand("fetchList-" + boxName);
-					if (jframe != null) {
-						menuItem.addActionListener(jframe);
-					}
-					boxItem.add(menuItem.getMenuItem());
-					menuItem = new TrayMenuItem(messages.getMessage("renew_ip"));
-					menuItem.setActionCommand("renewIP-" + boxName);
-					if (jframe != null) {
-						menuItem.addActionListener(jframe);
-					}
-					boxItem.add(menuItem.getMenuItem());
-					menuItem = new TrayMenuItem("Reboot");
-					menuItem.setActionCommand("reboot-" + boxName);
-					if (jframe != null) {
-						menuItem.addActionListener(jframe);
-					}
-					boxItem.add(menuItem.getMenuItem());
-					menu.add(boxItem);
-				}
-			}
-			menu.addSeparator();
-		}
+    private static TrayMenuItem createMenuItem(String message, String command) {
+        TrayMenuItem menuItem = new TrayMenuItem(messages.getMessage(message));
+        menuItem.setActionCommand(command);
+        if (jframe != null) {
+            menuItem.addActionListener(jframe);
+        }
+        return menuItem;
+    }
 
-		menuItem = new TrayMenuItem(messages.getMessage("fetchlist")); //$NON-NLS-1$
-		menuItem.setActionCommand("fetchList"); //$NON-NLS-1$
-		if (jframe != null) {
-			menuItem.addActionListener(jframe);
-		}
-		menu.add(menuItem);
-		menuItem = new TrayMenuItem(messages.getMessage("reverse_lookup")); //$NON-NLS-1$
-		menuItem.setActionCommand("reverselookup"); //$NON-NLS-1$
-		if (jframe != null) {
-			menuItem.addActionListener(jframe);
-		}
-		menu.add(menuItem);
-		menuItem = new TrayMenuItem(messages.getMessage("dial_assist")); //$NON-NLS-1$
-		menuItem.setActionCommand("callDialog");
-		if (jframe != null) {
-			menuItem.addActionListener(jframe);
-		}
-		menu.add(menuItem);
-		menuItem = new TrayMenuItem(messages.getMessage("dial_assist") + "(" + messages.getMessage("clipboard") + ")"); //$NON-NLS-1$
-		menuItem.setActionCommand("callDialogTray");
-		if (jframe != null) {
-			menuItem.addActionListener(jframe);
-		}
-		menu.add(menuItem);
-		menu.add(lnfMenu);
-		menuItem = new TrayMenuItem(messages.getMessage("config")); //$NON-NLS-1$
-		menuItem.setActionCommand("config"); //$NON-NLS-1$
-		if (jframe != null) {
-			menuItem.addActionListener(jframe);
-		}
-		menu.add(menuItem);
-		menu.addSeparator();
-		menuItem = new TrayMenuItem(messages.getMessage("prog_exit")); //$NON-NLS-1$
-		menuItem.setActionCommand("exit"); //$NON-NLS-1$
-		if (jframe != null) {
-			menuItem.addActionListener(jframe);
-		}
-		menu.add(menuItem);
+    private static void createMenuItemsForAllBoxes(TrayMenu menu) {
+        if (boxCommunication != null && boxCommunication.getBoxCount() > 0) {
+            for (int i = 0; i < boxCommunication.getBoxCount(); i++) {
+                String boxName = boxCommunication.getBox(i).getName();
+                menu.add(createBoxMenu(boxName));
+            }
+            menu.addSeparator();
+        }
+    }
 
-		return menu;
-	}
+    private static Menu createBoxMenu(String boxName) {
+        Menu boxItem = null;
 
-	private static void refreshTrayActionListener() {
-		String trayClick = PropertyProvider.getInstance().getProperty("tray.clickCount");
-		int clickCount = ClickListener.CLICK_COUNT_SINGLE;
-		if ("2".equals(trayClick)) {
-			clickCount = ClickListener.CLICK_COUNT_DOUBLE;
-		}
+        BoxClass box = boxCommunication.getBox(boxName);
+        if (box != null) {
+            boxItem = new Menu(boxName);
 
-		tray.clearActionListeners();
-		tray.addActionListener(new ClickListener(ClickListener.CLICK_LEFT,
-												 clickCount) {
-			private long oldTimeStamp = 0;
-			private void showHide() {
-				if ( jframe != null )
-				{
-					jframe.hideShowJFritz(true);
-				}
-			}
+            boxItem.add(new TrayMenuItem("IP: " + box.getExternalIP()).getMenuItem());
+            boxItem.addSeparator();
 
-			public void actionPerformed(ActionEvent e) {
-				showHide();
-			}
-		});
-	}
+            boxItem.add(createMenuItem("fetchlist", "fetchList-" + boxName).getMenuItem());
+            boxItem.add(createMenuItem("renew_ip", "renewIP-" + boxName).getMenuItem());
+            boxItem.add(createMenuItem("reboot", "reboot-" + boxName).getMenuItem());
+        }
+        return boxItem;
+    }
 
-	/**
-	 * Deletes actual systemtray and creates a new one.
-	 *
-	 * @author Benjamin Schmitt
-	 */
-	public static void refreshTrayMenu() {
-		if (tray != null && trayIcon != null) {
-			tray.remove();
-			initTray(jframe, boxCommunication);
-		}
-	}
+    private static void refreshTrayActionListener() {
+        tray.clearActionListeners();
+        tray.addMouseListener(new MouseAdapter() {
+            @Override()
+            public void mouseClicked(MouseEvent e) {
+                if (isOneClickConfigured() && isLeftMouseButtonPressedOnce(e)) {
+                    showHideJfritzWindow();
+                } else if (isTwoClickConfigured() && isLeftMouseButtonPressedTwice(e)) {
+                    showHideJfritzWindow();
+                }
+            }
+        });
+    }
 
-	public static void removeTrayMenu() {
-		if (tray != null) {
-			log.info("Removing systray"); //$NON-NLS-1$
-			tray.remove();
-			tray = null;
-		}
-	}
+    private static boolean isOneClickConfigured() {
+        return "1".equals(PropertyProvider.getInstance().getProperty("tray.clickCount"));
+    }
 
-	public static void displayMessage(final String caption, final String message, final int type) {
-		if (tray != null) {
-			tray.displayMessage(caption, message, type);
-		}
-	}
+    private static boolean isTwoClickConfigured() {
+        return "2".equals(PropertyProvider.getInstance().getProperty("tray.clickCount"));
+    }
 
-	public static boolean isSupported() {
-		if (tray == null)
-			return false;
-		return tray.isSupported();
-	}
+    private static boolean isLeftMouseButtonPressedOnce(MouseEvent e) {
+        return e.getClickCount() == 1 && e.getButton() == (MouseEvent.BUTTON1 & MouseEvent.MOUSE_PRESSED);
+    }
+
+    private static boolean isLeftMouseButtonPressedTwice(MouseEvent e) {
+        return e.getClickCount() == 2 && e.getButton() == (MouseEvent.BUTTON1 & MouseEvent.MOUSE_PRESSED);
+    }
+
+    private static void showHideJfritzWindow() {
+        if (jframe != null) {
+            jframe.hideShowJFritz(true);
+        }
+    }
+
+    /**
+     * Deletes actual systemtray and creates a new one.
+     *
+     * @author Benjamin Schmitt
+     */
+    public static void refreshTrayMenu() {
+        if (tray != null && trayIcon != null) {
+            tray.remove();
+            initTray(jframe, boxCommunication);
+        }
+    }
+
+    public static void removeTrayMenu() {
+        if (tray != null) {
+            log.info("Removing systray"); //$NON-NLS-1$
+            tray.remove();
+            tray = null;
+        }
+    }
+
+    public static void displayMessage(final String caption, final String message, final int type) {
+        if (tray != null) {
+            tray.displayMessage(caption, message, type);
+        }
+    }
+
+    public static boolean isSupported() {
+        return tray != null && tray.isSupported();
+    }
 }
