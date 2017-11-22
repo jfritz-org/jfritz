@@ -57,7 +57,7 @@ VersionInfoCompany={#AppName} Team
 LicenseFile=templates\LICENSE.GPL
 AppVerName={#AppName} {#AppVersion} Rev. {#AppRevision}
 ;VersionInfoVersion={#AppVersion}
-OutputBaseFilename={#AppName}-{#AppVersion}-{#AppType}
+OutputBaseFilename={#OutputFileName}
 
 [Languages]
 Name: en; MessagesFile: compiler:Default.isl; InfoBeforeFile: templates\README-en
