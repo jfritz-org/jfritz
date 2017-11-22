@@ -21,6 +21,7 @@
         <jfritz.releaseTemplates>${project.basedir}/src/release-templates</jfritz.releaseTemplates>
         <jfritz.distDirectory>${project.build.directory}/dist</jfritz.distDirectory>
         <jfritz.tmpWinDirectory>${project.build.directory}/tmpWin</jfritz.tmpWinDirectory>
+        <jfritz.tmpOsxDirectory>${project.build.directory}/tmpOsx</jfritz.tmpOsxDirectory>
         <jfritz.releaseDirectory>${project.build.directory}/release</jfritz.releaseDirectory>
         <exec.wine>/usr/bin/wine64</exec.wine>
         <exec.iscc>/home/robert/.wine/drive_c/Program Files (x86)/Inno Setup 5/ISCC.exe</exec.iscc>
@@ -426,7 +427,7 @@
                                 <configuration>
                                     <skipPOMs>true</skipPOMs>
                                     <verbose>true</verbose>
-                                    <deb>${jfritz.releaseDirectory}/${project.artifactId}_${project.version}.deb</deb>
+                                    <deb>${jfritz.releaseDirectory}/${project.build.finalName}-${project.version}.deb</deb>
                                     <dataSet>
                                         <data>
                                             <src>${jfritz.distDirectory}</src>
@@ -472,6 +473,62 @@
             </activation>
             <build>
                 <plugins>
+
+                    <plugin>
+                        <groupId>sh.tak.appbundler</groupId>
+                        <artifactId>appbundle-maven-plugin</artifactId>
+                        <version>1.2.1-SNAPSHOT</version>
+                        <configuration>
+                            <buildDirectory>${jfritz.tmpOsxDirectory}</buildDirectory>
+                            <mainClass>de.moonflower.jfritz.Main</mainClass>
+                            <bundleName>${capitalizedName}</bundleName>
+                            <iconFile>images/jfritz.icns</iconFile>
+                            <jvmVersion>1.7+</jvmVersion>
+                            <jvmOptions>-Xmx512m</jvmOptions>
+                            <additionalClasspath>lang</additionalClasspath>
+                            <workingDirectory>$APP_ROOT/Contents/Java</workingDirectory>
+                            <generateDiskImageFile>true</generateDiskImageFile>
+                            <diskImageFile>${jfritz.releaseDirectory}/${project.build.finalName}-${project.version}.dmg</diskImageFile>
+                            <excludeDependencies>true</excludeDependencies>
+                            <additionalResources>
+                                <fileSet>
+                                    <directory>${jfritz.releaseTemplates}/osx/</directory>
+                                    <includes>
+                                        <include>Readme-MAC.txt</include>
+                                    </includes>
+                                </fileSet>
+                                <fileSet>
+                                    <directory>${jfritz.distDirectory}</directory>
+                                    <targetPath>${jfritz.tmpOsxDirectory}/${capitalizedName}.app/Contents/Java</targetPath>
+                                    <excludes>
+                                        <exclude>*.txt</exclude>
+                                        <exclude>*.jar</exclude>
+                                        <exclude>*.ico</exclude>
+                                        <exclude>*.png</exclude>
+                                        <exclude>README*</exclude>
+                                        <exclude>LICENSE*</exclude>
+                                    </excludes>
+                                </fileSet>
+                                <fileSet>
+                                    <directory>${jfritz.distDirectory}</directory>
+                                    <includes>
+                                        <include>*.txt</include>
+                                        <include>README*</include>
+                                        <include>LICENSE*</include>
+                                    </includes>
+                                </fileSet>
+                            </additionalResources>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>bundle</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
                     <plugin>
                         <artifactId>maven-assembly-plugin</artifactId>
                         <version>3.1.0</version>
