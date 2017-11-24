@@ -67,25 +67,29 @@ public class JFritzTray {
 
         createMenuItemsForAllBoxes(menu);
 
-        menu.add(createMenuItem("fetchlist", "fetchList"));  //$NON-NLS-1$,  //$NON-NLS-2$
-        menu.add(createMenuItem("reverse_lookup", "reverselookup"));  //$NON-NLS-1$,  //$NON-NLS-2$
-        menu.add(createMenuItem("dial_assist", "callDialog"));  //$NON-NLS-1$,  //$NON-NLS-2$
-        menu.add(createMenuItem("dial_assist_clipboard", "callDialogTray"));  //$NON-NLS-1$,  //$NON-NLS-2$
-        menu.add(createMenuItem("config", "config"));  //$NON-NLS-1$,  //$NON-NLS-2$
+        menu.add(createMenuItemTranslated("fetchlist", "fetchList"));  //$NON-NLS-1$,  //$NON-NLS-2$
+        menu.add(createMenuItemTranslated("reverse_lookup", "reverselookup"));  //$NON-NLS-1$,  //$NON-NLS-2$
+        menu.add(createMenuItemTranslated("dial_assist", "callDialog"));  //$NON-NLS-1$,  //$NON-NLS-2$
+        menu.add(createMenuItemTranslated("dial_assist_clipboard", "callDialogTray"));  //$NON-NLS-1$,  //$NON-NLS-2$
+        menu.add(createMenuItemTranslated("config", "config"));  //$NON-NLS-1$,  //$NON-NLS-2$
         menu.addSeparator();
 
-        menu.add(createMenuItem("prog_exit", "exit"));  //$NON-NLS-1$,  //$NON-NLS-2$
+        menu.add(createMenuItemTranslated("prog_exit", "exit"));  //$NON-NLS-1$,  //$NON-NLS-2$
 
         return menu;
     }
 
     private static TrayMenuItem createMenuItem(String message, String command) {
-        TrayMenuItem menuItem = new TrayMenuItem(messages.getMessage(message));
+        TrayMenuItem menuItem = new TrayMenuItem(message);
         menuItem.setActionCommand(command);
         if (jframe != null) {
             menuItem.addActionListener(jframe);
         }
         return menuItem;
+    }
+
+    private static TrayMenuItem createMenuItemTranslated(String messageKey, String command) {
+        return createMenuItem(messages.getMessage(messageKey), command);
     }
 
     private static void createMenuItemsForAllBoxes(TrayMenu menu) {
@@ -108,9 +112,9 @@ public class JFritzTray {
             boxItem.add(new TrayMenuItem("IP: " + box.getExternalIP()).getMenuItem());
             boxItem.addSeparator();
 
-            boxItem.add(createMenuItem("fetchlist", "fetchList-" + boxName).getMenuItem());
-            boxItem.add(createMenuItem("renew_ip", "renewIP-" + boxName).getMenuItem());
-            boxItem.add(createMenuItem("reboot", "reboot-" + boxName).getMenuItem());
+            boxItem.add(createMenuItemTranslated("fetchlist", "fetchList-" + boxName).getMenuItem());
+            boxItem.add(createMenuItemTranslated("renew_ip", "renewIP-" + boxName).getMenuItem());
+            boxItem.add(createMenuItemTranslated("reboot", "reboot-" + boxName).getMenuItem());
         }
         return boxItem;
     }
