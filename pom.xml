@@ -627,7 +627,7 @@
                                     <priority>normal</priority>
                                     <downloadUrl>http://java.com/download</downloadUrl>
                                     <stayAlive>true</stayAlive>
-                                    <icon>${jfritz.releaseTemplates}/win/jFritz.ico</icon>
+                                    <icon>${jfritz.releaseTemplates}/common/jfritz.ico</icon>
                                     <singleInstance>
                                         <mutexName>jfritz.exe</mutexName>
                                         <windowTitle>Multiple instances are not allowed!</windowTitle>

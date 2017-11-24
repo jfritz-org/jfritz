@@ -89,7 +89,7 @@ source: binaries\number\*; DestDir: {app}\number; Flags: ignoreversion recursesu
 source: binaries\pictures\*; DestDir: {app}\pictures; Flags: ignoreversion recursesubdirs
 source: binaries\styles\*; DestDir: {app}\styles; Flags: ignoreversion recursesubdirs
 source: binaries\Changelog.txt; DestDir: {app}; Flags: ignoreversion
-source: jFritz.ico; DestDir: {app}; Flags: ignoreversion
+source: templates\jfritz.ico; DestDir: {app}; Flags: ignoreversion
 
 [INI]
 Filename: {app}\jfritz.url; Section: InternetShortcut; Key: URL; String: http://www.jfritz.org
@@ -98,14 +98,14 @@ Filename: {app}\jfritz.url; Section: InternetShortcut; Key: URL; String: http://
 [Icons]
 Name: {group}\{cm:UninstallProgram,JFritz}; Filename: {uninstallexe}
 Name: {group}\{cm:ProgramOnTheWeb,JFritz}; Filename: {app}\jfritz.url
-Name: {group}\JFritz; Filename: {app}\jfritz.exe; IconFilename: {app}\jFritz.ico; IconIndex: 0; WorkingDir: {app}
+Name: {group}\JFritz; Filename: {app}\jfritz.exe; IconFilename: {app}\jfritz.ico; IconIndex: 0; WorkingDir: {app}
 Name: {group}\Readme; Filename: {app}\README.txt
 Name: {group}\LICENSE; Filename: {app}\LICENSE.GPL
 ;Name: {group}\Handbuch; Filename: {app}\JFritz-Handbuch.pdf;
 Name: {group}\Changelog; Filename: {app}\Changelog.txt
-Name: {userdesktop}\JFritz; Filename: {app}\jfritz.exe; Tasks: desktopicon; IconFilename: {app}\jFritz.ico; IconIndex: 0; WorkingDir: {app}
-Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\JFritz; Filename: {app}\jfritz.exe; Tasks: quicklaunchicon; IconFilename: {app}\jFritz.ico; IconIndex: 0; WorkingDir: {app}
-Name: {commonstartup}\JFritz; Filename: {app}\jfritz.exe; Tasks: autostart; IconFilename: {app}\jFritz.ico; IconIndex: 0; WorkingDir: {app}
+Name: {userdesktop}\JFritz; Filename: {app}\jfritz.exe; Tasks: desktopicon; IconFilename: {app}\jfritz.ico; IconIndex: 0; WorkingDir: {app}
+Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\JFritz; Filename: {app}\jfritz.exe; Tasks: quicklaunchicon; IconFilename: {app}\jfritz.ico; IconIndex: 0; WorkingDir: {app}
+Name: {commonstartup}\JFritz; Filename: {app}\jfritz.exe; Tasks: autostart; IconFilename: {app}\jfritz.ico; IconIndex: 0; WorkingDir: {app}
 
 [Run]
 Filename: {app}\jfritz.exe; Description: {cm:LaunchProgram,JFritz}; Parameters: --lang=de; Flags: nowait postinstall skipifsilent; WorkingDir: {app}; Languages: de
