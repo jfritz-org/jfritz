@@ -1,13 +1,13 @@
 JFritz
-=========================================================================
+======
 
-JFritz ist ein Anrufmonitor und ein Anrufdatenmanager fuer die FritzBoxFon
+JFritz ist ein Anrufmonitor und ein Anrufdatenmanager fuer die FritzBox
 von AVM.
 
 Das Programm steht unter der GNU Public License (GPL) und darf frei
 kopiert werden. Nutzungshinweise sind der Datei COPYING zu entnehmen.
 Die Autoren des Programmes koennen fuer durch die Benutzung verursachte
-Schaeden an Hardware, Software, Menschen, Tieren oder Gegenstaenden nicht 
+Schaeden an Hardware, Software, Menschen, Tieren oder Gegenstaenden nicht
 haftbar gemacht werden.
 
 JFritz benoetigt mindestens das Java Runtime Environment 1.7.x.

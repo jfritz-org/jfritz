@@ -580,8 +580,19 @@
                                     <outputDirectory>${jfritz.tmpWinDirectory}</outputDirectory>
                                     <resources>
                                         <resource>
+                                            <!-- do not filter to keep ISS file encoding as ISO-8859-1 -->
+                                            <directory>${jfritz.releaseTemplates}/win</directory>
+                                            <filtering>false</filtering>
+                                            <includes>
+                                                <include>*.iss</include>
+                                            </includes>
+                                        </resource>
+                                        <resource>
                                             <directory>${jfritz.releaseTemplates}/win</directory>
                                             <filtering>true</filtering>
+                                            <excludes>
+                                                <exclude>*.iss</exclude>
+                                            </excludes>
                                         </resource>
                                         <resource>
                                             <directory>${jfritz.distDirectory}</directory>

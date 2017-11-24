@@ -6,6 +6,8 @@
 - Bugfix: JFritz kann nun mit einem Klick auf das Tray-Symbol versteckt/angezeigt werden
 - Bugfix: Schnellere Wahl von Telefonnummern
 - Neu: Unter OS X wird nun Java > 1.7 unterstützt
+- Bugfix: Icon wird unter Windows korrekt angezeigt
+- Bugfix: Sonderzeichen im Setup-Programm werden unter Windows korrekt angezeigt
 
 New Strings:
 dial_assist_clipboard

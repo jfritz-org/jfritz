@@ -1,7 +1,7 @@
-README zu JFritz für Mac OS X
+README zu JFritz f√ºr Mac OS X
 ------------------------------
-JFritz sollte unter /Applications wie sämtliche andere Programme installiert werden.
+JFritz sollte unter /Applications wie s√§mtliche andere Programme installiert werden.
 
-Alle Einstellungen und die Anwendungsdaten werden unter ~/Library/Application Support/JFritz gespeichert, somit werden keine Schreibrechte für /Applications benoetigt.
+Alle Einstellungen und die Anwendungsdaten werden unter ~/Library/Application Support/JFritz gespeichert, somit werden keine Schreibrechte f√ºr /Applications ben√∂tigt.
 
-JFritz sollte Mac OS X als Betriebssystem erkennen und sein Look and Feel automatisch anpassen. Falls das nicht automatisch gesetzt wurde, kann man den Look and Feel von JFritz über "Optionen -> Look'n'Feel" -> "Mac OS X Aqua" einstellen. Nur so erscheint das Menü Mac-typisch am oberen Desktop-Rand.
+JFritz sollte Mac OS X als Betriebssystem erkennen und sein Look and Feel automatisch anpassen. Falls das nicht automatisch gesetzt wurde, kann man den Look and Feel von JFritz √ºber "Optionen -> Look'n'Feel" -> "Mac OS X Aqua" einstellen. Nur so erscheint das Men√º Mac-typisch am oberen Desktop-Rand.
