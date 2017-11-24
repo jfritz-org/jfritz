@@ -1,0 +1,710 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.jfritz</groupId>
+    <artifactId>jfritz</artifactId>
+    <version>0.7.6-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <description>A program to communicate with your FRITZ!Box</description>
+
+    <name>jfritz</name>
+    <url>https://jfritz.org</url>
+
+    <properties>
+        <capitalizedName>JFritz</capitalizedName>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+        <maven.build.timestamp.format>dd-MM-yyyy HH:mm:ss</maven.build.timestamp.format>
+        <buildDateTime>${maven.build.timestamp}</buildDateTime>
+
+        <jfritz.releaseTemplates>${project.basedir}/src/release-templates</jfritz.releaseTemplates>
+        <jfritz.distDirectory>${project.build.directory}/dist</jfritz.distDirectory>
+        <jfritz.tmpWinDirectory>${project.build.directory}/tmpWin</jfritz.tmpWinDirectory>
+        <jfritz.tmpOsxDirectory>${project.build.directory}/tmpOsx</jfritz.tmpOsxDirectory>
+        <jfritz.releaseDirectory>${project.build.directory}/release</jfritz.releaseDirectory>
+        <exec.wine>/usr/bin/wine64</exec.wine>
+        <exec.iscc>/home/robert/.wine/drive_c/Program Files (x86)/Inno Setup 5/ISCC.exe</exec.iscc>
+    </properties>
+
+    <scm>
+        <developerConnection>scm:git:https://github.com/jfritz-org/jfritz.git</developerConnection>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>internal.repo</id>
+            <name>Internal repo</name>
+            <url>file:///${project.basedir}/releases/</url>
+        </repository>
+    </distributionManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jfritz</groupId>
+            <artifactId>proxy</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jfritz</groupId>
+            <artifactId>fboxlib</artifactId>
+            <version>1.0.26-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jfritz</groupId>
+            <artifactId>reverseLookup</artifactId>
+            <version>1.0.10</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.directory.studio</groupId>
+            <artifactId>org.apache.commons.io</artifactId>
+            <version>2.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom-legacy</artifactId>
+            <version>1.1.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hynnet</groupId>
+            <artifactId>jacob</artifactId>
+            <version>1.18</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.toedter</groupId>
+            <artifactId>jcalendar</artifactId>
+            <version>1.3.2</version> <!-- 1.4 available -->
+        </dependency>
+
+        <dependency>
+            <groupId>jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.0.2</version> <!-- 1.0.2 used, 1.0.13 available, also 1.5.0 -->
+        </dependency>
+
+        <dependency>
+            <groupId>com.jgoodies</groupId> <!-- look and feel -->
+            <artifactId>looks</artifactId>
+            <version>2.2.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.dheid</groupId>
+            <artifactId>fontchooser</artifactId>
+            <version>2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.5</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+
+        <resources>
+            <resource>
+                <directory>src/main/templates</directory>
+                <includes>
+                    <include>**/*.java</include>
+                </includes>
+                <filtering>true</filtering>
+                <targetPath>${project.build.directory}/generated-sources</targetPath>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/lang/</directory>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/src/main/resources/</directory>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>external.atlassian.jgitflow</groupId>
+                <artifactId>jgitflow-maven-plugin</artifactId>
+                <version>1.0-m5.1</version>
+                <configuration>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>ru.concerteza.buildnumber</groupId>
+                <artifactId>maven-jgit-buildnumber-plugin</artifactId>
+                <version>1.2.9</version>
+                <executions>
+                    <execution>
+                        <id>git-buildnumber</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>extract-buildnumber</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>${project.build.directory}/generated-sources</sources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>regex-property-majorVersion</id>
+                        <goals>
+                            <goal>regex-property</goal>
+                        </goals>
+                        <configuration>
+                            <name>app.majorVersion</name>
+
+                            <value>${project.version}</value>
+                            <regex>((.*)|(^))(\d+)\.(\d+)\.(\d+)((.*))</regex>
+                            <replacement>$4</replacement>
+                            <failIfNoMatch>true</failIfNoMatch>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>regex-property-minorVersion</id>
+                        <goals>
+                            <goal>regex-property</goal>
+                        </goals>
+                        <configuration>
+                            <name>app.minorVersion</name>
+
+                            <value>${project.version}</value>
+                            <regex>((.*)|(^))(\d+)\.(\d+)\.(\d+)((.*))</regex>
+                            <replacement>$5</replacement>
+                            <failIfNoMatch>true</failIfNoMatch>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>regex-property-patchVersion</id>
+                        <goals>
+                            <goal>regex-property</goal>
+                        </goals>
+                        <configuration>
+                            <name>app.patchVersion</name>
+
+                            <value>${project.version}</value>
+                            <regex>((.*)|(^))(\d+)\.(\d+)\.(\d+)((.*))</regex>
+                            <replacement>$6</replacement>
+                            <failIfNoMatch>true</failIfNoMatch>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>regex-property-postfixVersion</id>
+                        <goals>
+                            <goal>regex-property</goal>
+                        </goals>
+                        <configuration>
+                            <name>app.version.postfix</name>
+
+                            <value>${project.version}</value>
+                            <regex>((.*)|(^))(\d+)\.(\d+)\.(\d+)((.*))</regex>
+                            <replacement>$7</replacement>
+                            <failIfNoMatch>true</failIfNoMatch>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>regex-property-version</id>
+                        <goals>
+                            <goal>regex-property</goal>
+                        </goals>
+                        <configuration>
+                            <name>app.version</name>
+
+                            <value>${project.version}</value>
+                            <regex>((.*)|(^))(\d+)\.(\d+)\.(\d+)((.*))</regex>
+                            <replacement>$4.$5.$6</replacement>
+                            <failIfNoMatch>true</failIfNoMatch>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                <configuration>
+                    <excludes>
+                        <exclude>flags/</exclude> <!-- ignore flags directory -->
+                        <exclude>*.properties</exclude> <!-- ignore all language files -->
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <transformers>
+                        <transformer
+                                implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                            <manifestEntries>
+                                <Main-Class>de.moonflower.jfritz.Main</Main-Class>
+                                <Class-Path>lang/</Class-Path>
+                            </manifestEntries>
+                        </transformer>
+                        <transformer
+                                implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
+                            <resource>lang/</resource>
+                        </transformer>
+                    </transformers>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.0.2</version>
+                <executions>
+                    <execution>
+                        <id>create-dist</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${jfritz.distDirectory}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/target</directory>
+                                    <includes>
+                                        <include>jfritz.jar</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>.</directory>
+                                    <includes>
+                                        <include>log4j.xml</include>
+                                        <include>LICENSE.GPL</include>
+                                        <include>Changelog.txt</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>${jfritz.releaseTemplates}/common</directory>
+                                    <includes>
+                                        <include>*</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>lang</directory>
+                                    <targetPath>${jfritz.distDirectory}/lang</targetPath>
+                                </resource>
+                                <resource>
+                                    <directory>number</directory>
+                                    <targetPath>${jfritz.distDirectory}/number</targetPath>
+                                </resource>
+                                <resource>
+                                    <directory>pictures</directory>
+                                    <targetPath>${jfritz.distDirectory}/pictures</targetPath>
+                                </resource>
+                                <resource>
+                                    <directory>styles</directory>
+                                    <targetPath>${jfritz.distDirectory}/styles</targetPath>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>packageArchives</id>
+            <activation>
+                <property>
+                    <name>packageAll</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>package-zip-tar</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+
+                                <configuration>
+                                    <outputDirectory>${jfritz.releaseDirectory}</outputDirectory>
+                                    <filters>
+                                        <filter>src/assembly/filter.properties</filter>
+                                    </filters>
+                                    <descriptors>
+                                        <descriptor>src/assembly/compressed.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>packageDeb</id>
+            <activation>
+                <property>
+                    <name>packageAll</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.vafer</groupId>
+                        <artifactId>jdeb</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jdeb</goal>
+                                </goals>
+                                <configuration>
+                                    <skipPOMs>true</skipPOMs>
+                                    <verbose>true</verbose>
+                                    <deb>${jfritz.releaseDirectory}/${project.build.finalName}-${project.version}.deb</deb>
+                                    <dataSet>
+                                        <data>
+                                            <src>${jfritz.distDirectory}</src>
+                                            <type>directory</type>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <prefix>/opt/JFritz</prefix>
+                                            </mapper>
+                                        </data>
+
+                                        <data>
+                                            <src>${jfritz.releaseTemplates}/linux/jfritz</src>
+                                            <type>file</type>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <prefix>/usr/bin</prefix>
+                                                <filemode>755</filemode>
+                                                <user>root</user>
+                                                <group>root</group>
+                                            </mapper>
+                                        </data>
+
+                                        <data>
+                                            <src>${jfritz.releaseTemplates}/linux/JFritz.desktop</src>
+                                            <dst>/usr/share/applications/JFritz.desktop</dst>
+                                            <type>file</type>
+                                        </data>
+                                    </dataSet>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>packageOsx</id>
+            <activation>
+                <property>
+                    <name>packageAll</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+
+                    <plugin>
+                        <groupId>sh.tak.appbundler</groupId>
+                        <artifactId>appbundle-maven-plugin</artifactId>
+                        <version>1.2.1-SNAPSHOT</version>
+                        <configuration>
+                            <buildDirectory>${jfritz.tmpOsxDirectory}</buildDirectory>
+                            <mainClass>de.moonflower.jfritz.Main</mainClass>
+                            <bundleName>${capitalizedName}</bundleName>
+                            <iconFile>images/jfritz.icns</iconFile>
+                            <jvmVersion>1.7+</jvmVersion>
+                            <jvmOptions>-Xmx512m</jvmOptions>
+                            <additionalClasspath>lang</additionalClasspath>
+                            <workingDirectory>$APP_ROOT/Contents/Java</workingDirectory>
+                            <generateDiskImageFile>true</generateDiskImageFile>
+                            <diskImageFile>${jfritz.releaseDirectory}/${project.build.finalName}-${project.version}.dmg</diskImageFile>
+                            <excludeDependencies>true</excludeDependencies>
+                            <additionalResources>
+                                <fileSet>
+                                    <directory>${jfritz.releaseTemplates}/osx/</directory>
+                                    <includes>
+                                        <include>Readme-MAC.txt</include>
+                                    </includes>
+                                </fileSet>
+                                <fileSet>
+                                    <directory>${jfritz.distDirectory}</directory>
+                                    <targetPath>${jfritz.tmpOsxDirectory}/${capitalizedName}.app/Contents/Java</targetPath>
+                                    <excludes>
+                                        <exclude>*.txt</exclude>
+                                        <exclude>*.jar</exclude>
+                                        <exclude>*.ico</exclude>
+                                        <exclude>*.png</exclude>
+                                        <exclude>README*</exclude>
+                                        <exclude>LICENSE*</exclude>
+                                    </excludes>
+                                </fileSet>
+                                <fileSet>
+                                    <directory>${jfritz.distDirectory}</directory>
+                                    <includes>
+                                        <include>*.txt</include>
+                                        <include>README*</include>
+                                        <include>LICENSE*</include>
+                                    </includes>
+                                </fileSet>
+                            </additionalResources>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>bundle</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>package-osx</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+
+                                <configuration>
+                                    <outputDirectory>${jfritz.releaseDirectory}</outputDirectory>
+                                    <filters>
+                                        <filter>src/assembly/filter.properties</filter>
+                                    </filters>
+                                    <descriptors>
+                                        <descriptor>src/assembly/compressedOsx.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>packageWin</id>
+            <activation>
+                <property>
+                    <name>packageAll</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.0.2</version>
+                        <executions>
+                            <execution>
+                                <id>prepare-windows</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${jfritz.tmpWinDirectory}</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${jfritz.releaseTemplates}/win</directory>
+                                            <filtering>true</filtering>
+                                        </resource>
+                                        <resource>
+                                            <directory>${jfritz.distDirectory}</directory>
+                                            <targetPath>${jfritz.tmpWinDirectory}/binaries</targetPath>
+                                        </resource>
+                                        <resource>
+                                            <directory>${jfritz.releaseTemplates}/common</directory>
+                                            <targetPath>${jfritz.tmpWinDirectory}/templates</targetPath>
+                                            <includes>
+                                                <include>*</include>
+                                            </includes>
+                                        </resource>
+                                        <resource>
+                                            <directory>.</directory>
+                                            <targetPath>${jfritz.tmpWinDirectory}/templates</targetPath>
+                                            <includes>
+                                                <include>LICENSE.GPL</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                        <artifactId>launch4j-maven-plugin</artifactId>
+                        <version>1.7.21</version>
+                        <executions>
+                            <execution>
+                                <id>create-exe</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>launch4j</goal>
+                                </goals>
+                                <configuration>
+                                    <dontWrapJar>true</dontWrapJar>
+                                    <headerType>gui</headerType>
+                                    <jar>jfritz.jar</jar>
+                                    <outfile>${jfritz.tmpWinDirectory}/templates/jfritz.exe</outfile>
+                                    <errTitle>JFritz</errTitle>
+                                    <priority>normal</priority>
+                                    <downloadUrl>http://java.com/download</downloadUrl>
+                                    <stayAlive>true</stayAlive>
+                                    <icon>${jfritz.releaseTemplates}/win/jFritz.ico</icon>
+                                    <singleInstance>
+                                        <mutexName>jfritz.exe</mutexName>
+                                        <windowTitle>Multiple instances are not allowed!</windowTitle>
+                                    </singleInstance>
+                                    <classPath>
+                                        <mainClass>de.moonflower.jfritz.Main</mainClass>
+                                        <addDependencies>false</addDependencies>
+                                        <preCp>lang</preCp>
+                                    </classPath>
+                                    <jre>
+                                        <minVersion>1.7.0</minVersion>
+                                        <jdkPreference>preferJre</jdkPreference>
+                                        <initialHeapSize>128</initialHeapSize>
+                                        <maxHeapSize>512</maxHeapSize>
+                                        <opts>
+                                            <!--<opt>-Djava.endorsed.dirs=./endorsed</opt>-->
+                                        </opts>
+                                    </jre>
+                                    <versionInfo>
+                                        <fileVersion>${app.version}.0</fileVersion>
+                                        <txtFileVersion>${project.version}</txtFileVersion>
+                                        <fileDescription>${project.description}</fileDescription>
+                                        <copyright>JFritz-Team</copyright>
+                                        <productVersion>${app.version}.0</productVersion>
+                                        <txtProductVersion>${project.version}</txtProductVersion>
+                                        <productName>${project.name}</productName>
+                                        <internalName>${project.name}</internalName>
+                                        <originalFilename>${project.name}.exe</originalFilename>
+                                    </versionInfo>
+                                    <messages>
+                                        <startupErr>Beim Starten der Anwendung ist ein Fehler aufgetreten. An error
+                                            occurred while starting the application.
+                                        </startupErr>
+                                        <bundledJreErr>This application was configured to use a bundled Java Runtime
+                                            Environment but the runtime is missing or corrupted.
+                                        </bundledJreErr>
+                                        <jreVersionErr>Auf Ihrem System wurde kein Java gefunden, bitte installieren Sie
+                                            eine aktuelle Java Version. This application requires a Java Runtime
+                                            Environment, please install an actual version. http://java.com/download
+                                        </jreVersionErr>
+                                        <launcherErr>Die Windows-Registry verweist auf eine nicht mehr installierte Java
+                                            Version. The registry refers to a nonexistent Java Runtime Environment
+                                            installation or the runtime is corrupted.
+                                        </launcherErr>
+                                        <instanceAlreadyExistsMsg>Die Anwendung läuft bereits. An application instance
+                                            is already running.
+                                        </instanceAlreadyExistsMsg>
+                                    </messages>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.1.1</version>
+                        <executions>
+                            <execution>
+                                <id>create-windows-setup-exe</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>${exec.wine}</executable>
+                                    <workingDirectory>${jfritz.tmpWinDirectory}</workingDirectory>
+                                    <arguments>
+                                        <argument>${exec.iscc}</argument>
+                                        <argument>jfritz.iss</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

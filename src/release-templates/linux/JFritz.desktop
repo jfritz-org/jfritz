@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Name=JFritz
+Comment=An application to communicate with your FRITZ!Box
+Exec=/usr/bin/jfritz
+Icon=/opt/JFritz/jfritz.png
+Categories=Utility;TelephonyTools;Java

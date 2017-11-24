@@ -1,0 +1,11 @@
+Package: [[name]]
+Version: [[project.version]]
+Section: utils
+Priority: optional
+Architecture: all
+Homepage: https://jfritz.org
+Maintainer: Robert Palmer <robert@jfritz.org>
+Depends: default-jre | java9-runtime | java8-runtime | java7-runtime | java-9-oracle | openjdk-9-jre | openjdk-9-jre-headless | openjdk-9-jdk | java-8-oracle | openjdk-8-jre | openjdk-8-jre-headless | openjdk-8-jdk | java-7-oracle | openjdk-7-jre | openjdk-7-jre-headless | openjdk-7-jdk
+Description: An application to communicate with your FRITZ!Box.
+ It is possible to get the caller list, manage phonebook contacts, do reverse lookup for unknown phone numbers,
+ show incoming and outgoing calls in real time and to initiate new calls from the computer.
