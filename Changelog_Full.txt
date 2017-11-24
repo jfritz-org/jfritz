@@ -27,6 +27,10 @@ JFritz 0.7.6-SNAPSHOT:
 - Änderung: Tray-Icon funktioniert nicht mehr unter Gnome
 - Neu: Build-Prozess von ANT auf Maven umgestellt
 - Änderung: Erstellen der Packages mittels Maven (unter Linux kann die Setup.exe mit WINE erstellt werden)
+- Bugfix: JFritz kann nun mit einem Klick auf das Tray-Symbol versteckt/angezeigt werden
+- Bugfix: Schnellere Wahl von Telefonnummern
+- Neu: Unter OS X wird nun Java > 1.7 unterstützt
+
 New Strings:
 dial_assist_clipboard
 reboot

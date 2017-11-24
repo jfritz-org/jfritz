@@ -3,6 +3,9 @@
 - Bugfix: Funktioniert mit der Firmware-Versionen 06.90
 - Änderung: Exportieren / Drucken der Anrufliste funktioniert nicht mehr
 - Änderung: Tray-Icon funktioniert nicht mehr unter Gnome
+- Bugfix: JFritz kann nun mit einem Klick auf das Tray-Symbol versteckt/angezeigt werden
+- Bugfix: Schnellere Wahl von Telefonnummern
+- Neu: Unter OS X wird nun Java > 1.7 unterstützt
 
 New Strings:
 dial_assist_clipboard
