@@ -1,0 +1,26 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
+    <id>${project.version}-WIN-portable</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <fileSets>
+        <fileSet>
+            <directory>${jfritz.distDirectory}</directory>
+            <outputDirectory>./</outputDirectory>
+            <useDefaultExcludes>true</useDefaultExcludes>
+            <excludes>
+                <exclude>**/*.log</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <directory>${jfritz.tmpWinDirectory}/templates/</directory>
+            <outputDirectory>./</outputDirectory>
+            <useDefaultExcludes>true</useDefaultExcludes>
+            <includes>
+                <include>jfritz.exe</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+</assembly>

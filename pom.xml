@@ -488,7 +488,7 @@
                             <additionalClasspath>lang</additionalClasspath>
                             <workingDirectory>$APP_ROOT/Contents/Java</workingDirectory>
                             <generateDiskImageFile>true</generateDiskImageFile>
-                            <diskImageFile>${jfritz.releaseDirectory}/${project.build.finalName}-${project.version}.dmg</diskImageFile>
+                            <diskImageFile>${jfritz.releaseDirectory}/${project.build.finalName}-${project.version}-MAC.dmg</diskImageFile>
                             <excludeDependencies>true</excludeDependencies>
                             <additionalResources>
                                 <fileSet>
@@ -687,6 +687,30 @@
                                             is already running.
                                         </instanceAlreadyExistsMsg>
                                     </messages>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>create-windows-portable-zip</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+
+                                <configuration>
+                                    <outputDirectory>${jfritz.releaseDirectory}</outputDirectory>
+                                    <filters>
+                                        <filter>src/assembly/filter.properties</filter>
+                                    </filters>
+                                    <descriptors>
+                                        <descriptor>src/assembly/compressedWinPortable.xml</descriptor>
+                                    </descriptors>
                                 </configuration>
                             </execution>
                         </executions>
