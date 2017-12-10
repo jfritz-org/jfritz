@@ -53,10 +53,9 @@ public class SplashScreen extends JFrame {
 
 		Dimension screenDim = Toolkit.getDefaultToolkit().getScreenSize();
 
-		this.setTitle(ProgramConstants.PROGRAM_NAME + " v"+ProgramConstants.PROGRAM_VERSION  + " Rev: " +
-				ProgramConstants.REVISION);
-		URL trayIcon = getClass().getClassLoader().getResource("images/trayicon.png");
-		setIconImage(Toolkit.getDefaultToolkit().getImage(trayIcon)); //$NON-NLS-1$
+		this.setTitle(ProgramConstants.PROGRAM_NAME);
+		URL trayIcon = getClass().getClassLoader().getResource("images/trayicon.png"); //$NON-NLS-1$
+		setIconImage(Toolkit.getDefaultToolkit().getImage(trayIcon));
 		this.pack();
 		this.setLocation((screenDim.width / 2) - (this.getWidth() / 2),
 				(screenDim.height / 2) - (this.getHeight() / 2));
@@ -74,7 +73,7 @@ public class SplashScreen extends JFrame {
 
 	public void setStatus(String status)
 	{
-		log.info(status);
+		log.debug(status);
 		statusBar.setText("   " +status);
 	}
 

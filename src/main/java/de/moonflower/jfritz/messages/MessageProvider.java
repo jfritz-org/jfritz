@@ -32,7 +32,7 @@ public class MessageProvider {
 	 */
 	public void loadMessages(Locale locale) {
 		try {
-			log.info("Loading locale: " + locale);
+			log.debug("Loading locale: " + locale);
 			en_messages = ResourceBundle.getBundle("jfritz", new Locale("en","US"));//$NON-NLS-1$
 			messages = ResourceBundle.getBundle("jfritz", locale);//$NON-NLS-1$
 

@@ -274,15 +274,9 @@ public class Main  {
 		
 		cleanupOldInstallation();
 
-		Calendar cal = Calendar.getInstance();
-		cal.getTime();
-
-		System.out.println(ProgramConstants.PROGRAM_NAME
-			+ " v" + ProgramConstants.PROGRAM_VERSION //$NON-NLS-1$
-			+ " Rev. " + ProgramConstants.REVISION //$NON-NLS-1$
-			+ " (c) 2005-" + cal.get(Calendar.YEAR) + " by " + JFRITZ_PROJECT); //$NON-NLS-1$
+		printVersion();
 		Thread.currentThread().setPriority(5);
-		Thread.currentThread().setName("main thread");
+		Thread.currentThread().setName("main");
 
 		alreadyDoneShutdown = false;
 
@@ -310,11 +304,6 @@ public class Main  {
 
 		// move save dir and default file location
 		shouldMoveDataToRightSaveDir();
-
-		log.info(ProgramConstants.PROGRAM_NAME
-				+ " v" + ProgramConstants.PROGRAM_VERSION //$NON-NLS-1$
-				+ " Rev. " + ProgramConstants.REVISION //$NON-NLS-1$
-				+ " (c) 2005-" + cal.get(Calendar.YEAR) + " by " + JFRITZ_PROJECT); //$NON-NLS-1$
 
 		printSystemInfo();
 		if (checkDebugParameters(args)) { // false if jfritz should stop
@@ -348,8 +337,21 @@ public class Main  {
 		}
 	}
 
+	private void printVersion() {
+		Calendar cal = Calendar.getInstance();
+		cal.getTime();
+
+		String infoString = ProgramConstants.PROGRAM_NAME
+				+ " v" + ProgramConstants.PROGRAM_VERSION //$NON-NLS-1$
+				+ " Rev. " + ProgramConstants.REVISION //$NON-NLS-1$
+				+ " (c) 2005-" + cal.get(Calendar.YEAR) + " by " + JFRITZ_PROJECT; //$NON-NLS-1$, //$NON-NLS-2$
+
+		System.out.println(infoString);
+		log.info(infoString);
+	}
+
 	private void printSystemInfo() {
-		log.info("JFritz runs on " + OSDetector.getOSString());
+		log.info("JFritz runs on " + OSDetector.getOSString() + " [" + OSDetector.getOSID() + " (" + OSDetector.getOSVersion() + ")]");
 		log.info("OS Language: " + System.getProperty("user.language"));
 		log.info("OS Country: " + System.getProperty("user.country"));
 		
@@ -466,6 +468,7 @@ public class Main  {
 					Logger.getLogger("de.moonflower.jfritz").setLevel(loggingLevel);
 					Logger.getLogger("org.jfritz.helper").setLevel(loggingLevel);
 					Logger.getLogger("org.jfritz.reverseLookup").setLevel(loggingLevel);
+					log.info("Set logging level to " + loggingLevel);
 				}
 				break;
 			case 'q': //$NON-NLS-1$
@@ -570,6 +573,7 @@ public class Main  {
 				fbc.setPassword(Encryption.decrypt(properties.getProperty("box.password")));
 				
 				JSonBoxinfo jsonBoxinfo = new JSonBoxinfo(fbc);
+				log.info("Detected firmware version: " + fbc.getFirmwareVersion().toSimpleString());
 				result = checkSerialAddress(jsonBoxinfo.getSerial());
 			} catch (ClientProtocolException e) {
 				log.error("Detecting Fritz!Box ... ClientProtocolExecption", e);
@@ -673,7 +677,7 @@ public class Main  {
 			int answer = JOptionPane.YES_OPTION;
 			if (messages.getMessage("unknown").equals(serial))
 			{
-				log.info("Serial could not be determined. Ask user how to proceed..."); //$NON-NLS-1$
+				log.warn("Serial could not be determined. Ask user how to proceed..."); //$NON-NLS-1$
 				msg = new ComplexJOptionPaneMessage("legalInfo.serialNotFound",
 						messages.getMessage("serial_not_found") + "\n"
 						+ messages.getMessage("accept_fritzbox_communication")); //$NON-NLS-1$
@@ -689,7 +693,7 @@ public class Main  {
 				}
 			} else if ( !(serialStr.equals(serial)))
 			{
-				log.info("New FRITZ!Box detected. Ask user how to proceed..."); //$NON-NLS-1$
+				log.warn("New FRITZ!Box detected. Ask user how to proceed..."); //$NON-NLS-1$
 				msg = new ComplexJOptionPaneMessage("legalInfo.newBox",
 						messages.getMessage("new_fritzbox") + "\n"
 						+ messages.getMessage("accept_fritzbox_communication")); //$NON-NLS-1$
@@ -705,12 +709,12 @@ public class Main  {
 				}
 			}
 			if (answer == JOptionPane.YES_OPTION) {
-				log.info("User decided to accept connection."); //$NON-NLS-1$
+				log.debug("User decided to accept connection."); //$NON-NLS-1$
 				properties.setProperty("box.serial", serial);
 				properties.saveConfigProperties();
 				result = 0;
 			} else {
-				log.info("User decided to prohibit connection."); //$NON-NLS-1$
+				log.debug("User decided to prohibit connection."); //$NON-NLS-1$
 				result = Main.EXIT_CODE_FORBID_COMMUNICATION_WITH_FRITZBOX;
 			}
 		}
@@ -1028,7 +1032,7 @@ public class Main  {
 		if (enableInstanceControl) {
 			// check isRunning and exit or set lock
 			if (!lockExists()) {
-				log.info("Multiple instance lock: set lock."); //$NON-NLS-1$
+				log.debug("Multiple instance lock: set lock."); //$NON-NLS-1$
 				result = true;
 				createLock();
 			} else {
@@ -1175,7 +1179,7 @@ public class Main  {
 				closeOpenConnections();
 				if (exitCode != -1
 						&& exitCode != EXIT_CODE_MULTIPLE_INSTANCE_LOCK) {
-					log.info("Multiple instance lock: release lock."); //$NON-NLS-1$
+					log.debug("Multiple instance lock: release lock."); //$NON-NLS-1$
 					removeLock();
 				}
 

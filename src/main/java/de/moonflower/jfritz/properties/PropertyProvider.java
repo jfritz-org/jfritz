@@ -507,7 +507,7 @@ public class PropertyProvider {
 	 */
 	public void saveConfigProperties() {
 		try {
-			log.info("Save config properties"); //$NON-NLS-1$
+			log.debug("Save config properties"); //$NON-NLS-1$
 			config_properties.storeToXML(JFritzDataDirectory.getInstance().getDataDirectory() + CONFIG_PROPERTIES_FILE);
 		} catch (IOException e) {
 			log.error("Couldn't save config properties"); //$NON-NLS-1$
@@ -520,7 +520,7 @@ public class PropertyProvider {
 	 */
 	public void saveStateProperties() {
 		try {
-			log.info("Save state properties"); //$NON-NLS-1$
+			log.debug("Save state properties"); //$NON-NLS-1$
 			state_properties.storeToXML(JFritzDataDirectory.getInstance().getDataDirectory() + STATE_PROPERTIES_FILE);
 		} catch (IOException e) {
 			log.error("Couldn't save state properties"); //$NON-NLS-1$
