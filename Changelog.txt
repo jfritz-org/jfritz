@@ -8,6 +8,7 @@
 - Neu: Unter OS X wird nun Java > 1.7 unterstützt
 - Bugfix: Icon wird unter Windows korrekt angezeigt
 - Bugfix: Sonderzeichen im Setup-Programm werden unter Windows korrekt angezeigt
+- Neu: Revision im Dateinamen
 
 New Strings:
 dial_assist_clipboard
