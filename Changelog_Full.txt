@@ -33,6 +33,7 @@ JFritz 0.7.6-SNAPSHOT:
 - Bugfix: Icon wird unter Windows korrekt angezeigt
 - Bugfix: Sonderzeichen im Setup-Programm werden unter Windows korrekt angezeigt
 - Neu: Revision im Dateinamen
+- Änderung: Verbessertes Logging
 
 New Strings:
 dial_assist_clipboard
