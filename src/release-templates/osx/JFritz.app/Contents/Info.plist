@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleShortVersionString</key>
-	<string>${project.version}</string>
+	<string>${app.version}</string>
 	<key>CFBundleAllowMixedLocalizations</key>
 	<string>true</string>
 	<key>CFBundleDevelopmentRegion</key>

@@ -427,7 +427,7 @@
                                 <configuration>
                                     <skipPOMs>true</skipPOMs>
                                     <verbose>true</verbose>
-                                    <deb>${jfritz.releaseDirectory}/${project.build.finalName}-${project.version}.deb</deb>
+                                    <deb>${jfritz.releaseDirectory}/${project.build.finalName}-${app.version}.${git.shortRevision}.deb</deb>
                                     <dataSet>
                                         <data>
                                             <src>${jfritz.distDirectory}</src>
@@ -488,7 +488,7 @@
                             <additionalClasspath>lang</additionalClasspath>
                             <workingDirectory>$APP_ROOT/Contents/Java</workingDirectory>
                             <generateDiskImageFile>true</generateDiskImageFile>
-                            <diskImageFile>${jfritz.releaseDirectory}/${project.build.finalName}-${project.version}-MAC.dmg</diskImageFile>
+                            <diskImageFile>${jfritz.releaseDirectory}/${project.build.finalName}-${app.version}.${git.shortRevision}-MAC.dmg</diskImageFile>
                             <excludeDependencies>true</excludeDependencies>
                             <additionalResources>
                                 <fileSet>
@@ -659,11 +659,11 @@
                                     </jre>
                                     <versionInfo>
                                         <fileVersion>${app.version}.0</fileVersion>
-                                        <txtFileVersion>${project.version}</txtFileVersion>
+                                        <txtFileVersion>${app.version}.${git.shortRevision}</txtFileVersion>
                                         <fileDescription>${project.description}</fileDescription>
                                         <copyright>JFritz-Team</copyright>
                                         <productVersion>${app.version}.0</productVersion>
-                                        <txtProductVersion>${project.version}</txtProductVersion>
+                                        <txtProductVersion>${app.version}.${git.shortRevision}</txtProductVersion>
                                         <productName>${project.name}</productName>
                                         <internalName>${project.name}</internalName>
                                         <originalFilename>${project.name}.exe</originalFilename>
