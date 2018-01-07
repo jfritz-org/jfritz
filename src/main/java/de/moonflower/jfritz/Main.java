@@ -357,6 +357,8 @@ public class Main  {
 
 		String jvm_version = System.getProperty("java.version");
 		log.info("Java version: " + jvm_version + " (on " + System.getProperty("os.arch") + ")");
+		log.info("Working directory: " + JFritzUtils.getFullPath("/"));
+		log.info("Data directory: " + JFritzDataDirectory.getInstance().getDataDirectory());
 	}
 
 	/**
