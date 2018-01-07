@@ -351,12 +351,12 @@ public class Main  {
 	}
 
 	private void printSystemInfo() {
-		log.info("JFritz runs on " + OSDetector.getOSString() + " [" + OSDetector.getOSID() + " (" + OSDetector.getOSVersion() + ")]");
+		log.info("JFritz runs on " + OSDetector.getOSString() + " [" + OSDetector.getOSVersion() + "]");
 		log.info("OS Language: " + System.getProperty("user.language"));
 		log.info("OS Country: " + System.getProperty("user.country"));
-		
+
 		String jvm_version = System.getProperty("java.version");
-		log.info("Java version: " + jvm_version);
+		log.info("Java version: " + jvm_version + " (on " + System.getProperty("os.arch") + ")");
 	}
 
 	/**
