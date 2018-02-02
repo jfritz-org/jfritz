@@ -33,7 +33,7 @@ public final class ReverseLookupAustria {
 	 *
 	 */
 	public static void loadAreaCodes(){
-		log.info("Loading the austrian number to city list");
+		log.debug("Loading the austrian number to city list");
 		numberMap = new HashMap<String, String>(1200);
 		BufferedReader br = null;
 		FileInputStream fi = null;
@@ -56,8 +56,8 @@ public final class ReverseLookupAustria {
 				}
 			}
 
-			log.info(lines + " Lines read from areacodes_austria.csv");
-			log.info("numberMap size: "+numberMap.size());
+			log.debug(lines + " Lines read from areacodes_austria.csv");
+			log.debug("numberMap size: "+numberMap.size());
 
 		}catch(Exception e){
 			log.error(e.toString());
@@ -84,7 +84,7 @@ public final class ReverseLookupAustria {
 
 	public static String getCity(final String number){
 		String currentNum = number;
-		log.info("Looking up city in austrian numberMap: "+currentNum);
+		log.debug("Looking up city in austrian numberMap: "+currentNum);
 		String city = "";
 		if ( currentNum.startsWith("+43")) {
 			currentNum = "0"+currentNum.substring(3);

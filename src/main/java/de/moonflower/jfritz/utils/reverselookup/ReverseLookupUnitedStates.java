@@ -35,7 +35,7 @@ public final class ReverseLookupUnitedStates {
 	 *
 	 */
 	public static void loadAreaCodes(){
-		log.info("Loading the american number to city list");
+		log.debug("Loading the american number to city list");
 		numberMap = new HashMap<String, String>(500);
 		BufferedReader br = null;
 		FileInputStream fi = null;
@@ -65,8 +65,8 @@ public final class ReverseLookupUnitedStates {
 				}
 			}
 
-			log.info(lines + " Lines read from areacodes_usa.csv");
-			log.info("numberMap size: "+numberMap.size());
+			log.debug(lines + " Lines read from areacodes_usa.csv");
+			log.debug("numberMap size: "+numberMap.size());
 
 		}catch(Exception e){
 			log.error(e.toString());
@@ -94,7 +94,7 @@ public final class ReverseLookupUnitedStates {
 	 */
 	public static String getCity(String number){
 
-		log.info("Looking up city in numberMap: "+number);
+		log.debug("Looking up city in numberMap: "+number);
 		String city = "";
 		int l = number.length();
 		if(number.startsWith("0") && numberMap != null){

@@ -35,7 +35,7 @@ public class ReverseLookupGermany {
 	 *
 	 */
 	public static void loadAreaCodes(){
-		log.info("Loading the german number to city list");
+		log.debug("Loading the german number to city list");
 		numberMap = new HashMap<String, String>(5300);
 		BufferedReader br = null;
 		FileInputStream fi = null;
@@ -65,8 +65,8 @@ public class ReverseLookupGermany {
 				}
 			}
 
-			log.info(lines + " Lines read from areacodes_germany.csv");
-			log.info("numberMap size: "+numberMap.size());
+			log.debug(lines + " Lines read from areacodes_germany.csv");
+			log.debug("numberMap size: "+numberMap.size());
 
 		}catch(Exception e){
 			log.error(e.toString());
@@ -94,7 +94,7 @@ public class ReverseLookupGermany {
 	 */
 	public static String getCity(String number){
 
-		log.info("Looking up city in numberMap: "+number);
+		log.debug("Looking up city in numberMap: "+number);
 		String city = "";
 		int l = number.length();
 		if(number.startsWith("0") && numberMap != null){

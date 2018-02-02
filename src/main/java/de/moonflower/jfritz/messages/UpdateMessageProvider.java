@@ -30,7 +30,7 @@ public class UpdateMessageProvider {
 	 */
 	public void loadMessages(Locale locale) {
 		try {
-			log.info("Loading locale: " + locale);
+			log.debug("Loading locale: " + locale);
 			en_messages = ResourceBundle.getBundle("update", new Locale("en","US"));//$NON-NLS-1$
 			messages = ResourceBundle.getBundle("update", locale);//$NON-NLS-1$
 		} catch (MissingResourceException e) {

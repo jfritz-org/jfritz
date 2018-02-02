@@ -53,10 +53,14 @@ WizardSmallImageFile=setup_small.bmp
 ;WizardImageBackColor=clWhite
 InternalCompressLevel=ultra
 DisableReadyMemo=true
-VersionInfoCompany={#AppName} Team
+VersionInfoCompany={#AppName}-Team
 LicenseFile=templates\LICENSE.GPL
 AppVerName={#AppName} {#AppVersion} Rev. {#AppRevision}
-;VersionInfoVersion={#AppVersion}
+VersionInfoVersion={#AppVersion}.0
+VersionInfoTextVersion={#AppVersion}.{#AppRevision}
+VersionInfoProductVersion={#AppVersion}.0
+VersionInfoProductTextVersion={#AppVersion}.{#AppRevision}
+VersionInfoProductName={#AppName}
 OutputBaseFilename={#OutputFileName}
 
 [Languages]
@@ -164,45 +168,45 @@ Name: {app}\log4j.log; Type: files
 
 [CustomMessages]
 de.NoJavaInstalled1=Setup hat festgestellt das keine Java Runtime installiert ist.
-de.NoJavaInstalled2=Sie müssen mindestens Java Runtime 1.7 oder höher installiert haben um das Setup fortzusetzen.
+de.NoJavaInstalled2=Sie mï¿½ssen mindestens Java Runtime 1.7 oder hï¿½her installiert haben um das Setup fortzusetzen.
 de.NoJavaInstalled3=Bitte gehen Sie zu http://www.java.com/en/download/manual.jsp und installieren eine aktuelle Version.
-de.NoJavaInstalled4=Danach können Sie das Setup erneut ausführen.
+de.NoJavaInstalled4=Danach kï¿½nnen Sie das Setup erneut ausfï¿½hren.
 
 en.NoJavaInstalled1=No Java Runtime installed. To run JFritz you need at least Java Runtime 1.7.
 en.NoJavaInstalled2=Please install the latest Java version (http://www.java.com/en/download/manual.jsp)
 en.NoJavaInstalled3=and then restart installation of JFritz.
 en.NoJavaInstalled4=
 
-de.WrongJavaVersion1=Setup hat festgestellt dass Sie eine Java Version unter 1.7 benutzen, JFritz benötigt aber mindestens Java 1.7.
+de.WrongJavaVersion1=Setup hat festgestellt dass Sie eine Java Version unter 1.7 benutzen, JFritz benï¿½tigt aber mindestens Java 1.7.
 de.WrongJavaVersion2=Bitte gehen Sie zu http://www.java.com/en/download/manual.jsp und installieren eine aktuelle Version.
-de.WrongJavaVersion3=Danach können Sie das Setup erneut ausführen.
+de.WrongJavaVersion3=Danach kï¿½nnen Sie das Setup erneut ausfï¿½hren.
 
 en.WrongJavaVersion1=JFritz need at least Java Runtime Environment 1.7 but you have installed an older version.
 en.WrongJavaVersion2=Please install the latest Java version (http://www.java.com/en/download/manual.jsp)
 en.WrongJavaVersion3=and then restart installation of JFritz.
 
-de.DeleteAllFiles=Sollen die Anrufliste, Einstellungen und das Telefonbuch gelöscht werden?
+de.DeleteAllFiles=Sollen die Anrufliste, Einstellungen und das Telefonbuch gelï¿½scht werden?
 en.DeleteAllFiles=Delete call list, all settings and phonebook-entries?
 
-de.DeleteError=Es konnten nicht alle Dateien gelöscht werden.
+de.DeleteError=Es konnten nicht alle Dateien gelï¿½scht werden.
 en.DeleteError=Could not delete all files.
 
 de.Autostart=JFritz &automatisch beim Windows-Start starten.
 en.Autostart=Start JFritz &automatically on Windows startup.
 
-de.InstallRunning1=JFritz wird derzeit noch ausgeführt. Bitte beenden Sie JFritz, bevor Sie mit der Installation fortfahren.
+de.InstallRunning1=JFritz wird derzeit noch ausgefï¿½hrt. Bitte beenden Sie JFritz, bevor Sie mit der Installation fortfahren.
 de.InstallRunning2=Wollen Sie nun mit der Installation fortfahren?
 
 en.InstallRunning1=JFritz is currently running. Please close JFritz before proceeding.
 en.InstallRunning2=Do you want to proceed with the installation of JFritz?
 
-de.UninstallRunning1=JFritz wird derzeit noch ausgeführt. Bitte beenden Sie JFritz, bevor Sie mit der Deinstallation fortfahren.
+de.UninstallRunning1=JFritz wird derzeit noch ausgefï¿½hrt. Bitte beenden Sie JFritz, bevor Sie mit der Deinstallation fortfahren.
 de.UninstallRunning2=Wollen Sie nun mit der Deinstallation fortfahren?
 
 en.UninstallRunning1=JFritz is currently running. Please close JFritz before proceeding.
 en.UninstallRunning2=Do you want to proceed with the deinstallation of JFritz?
 
-de.UninstallFeedbackTitle=JFritz Deinstallations Rückmeldung
+de.UninstallFeedbackTitle=JFritz Deinstallations Rï¿½ckmeldung
 en.UninstallFeedbackTitle=JFritz Uninstall Feedback
 
 de.Send=&Senden
@@ -211,13 +215,13 @@ en.Send=&Send
 de.Cancel=&Abbruch
 en.Cancel=&Cancel
 
-de.EMailText1=Um JFritz weiter zu verbessern, würden wir gerne über alle Probleme von JFritz informiert werden.
+de.EMailText1=Um JFritz weiter zu verbessern, wï¿½rden wir gerne ï¿½ber alle Probleme von JFritz informiert werden.
 en.EMailText1=To help us with future versions of JFritz, we want to know about any troubles or difficulties you have experienced while using JFritz.
 
 de.EMailText2=Bitte geben Sie uns Bescheid, wieso Sie JFritz deinstallieren. Vielen Dank.
 en.EMailText2=Please let us know why are you uninstalling JFritz. Thank You.
 
-de.EMailSubject=JFritz Deinstallations Rückmeldung
+de.EMailSubject=JFritz Deinstallations Rï¿½ckmeldung
 en.EMailSubject=JFritz Uninstall Feedback
 
 [Code]

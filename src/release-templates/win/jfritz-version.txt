@@ -3,4 +3,4 @@
 #define AppRevision "${git.shortRevision}"
 ; cannot use ${jfritz.releaseDirectory} here, because it is interpreted as a relative directory
 #define OutputDir "../release"
-#define OutputFileName "${project.build.finalName}-${app.version}.${git.shortRevision}-WIN-Setup"
+#define OutputFileName "${project.build.finalName}-${app.version}.${git.shortRevision}-Win-Setup"

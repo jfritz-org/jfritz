@@ -5,14 +5,18 @@
 
   <appender name="ConsoleAppender" class="org.apache.log4j.ConsoleAppender">
     <layout class="org.apache.log4j.PatternLayout">
-      <param name="ConversionPattern" value="%d{dd.MM.yy HH:mm:ss}|%t|%p|%C{1} - %m%n"/>
+      <param name="ConversionPattern" value="%d{dd.MM.yy HH:mm:ss}|%-5p|%t|%C{1} - %m%n"/>
     </layout>
   </appender>
 
   <category name="de.moonflower.jfritz">
     <priority value="error"/>
   </category>
-  
+
+  <category name="de.moonflower.jfritz.Main">
+    <priority value="info"/>
+  </category>
+
   <category name="de.robotniko.helper">
     <priority value="error"/>
   </category>
