@@ -440,6 +440,41 @@ public class PhoneNumberOld implements Serializable {
 		}
 	}
 
+	public boolean isValidForReverseLookup() {
+		return isNumericOrNumericWithPlusSign(number)
+				&& !this.isQuickDial()
+				&& !this.isEmergencyCall()
+				&& !this.isSIPNumber();
+	}
+
+	public static boolean isNumericOrNumericWithPlusSign(String numberToBeChecked) {
+		if (numberToBeChecked == null || numberToBeChecked.isEmpty()) {
+			return false;
+		}
+
+		if (numberToBeChecked.startsWith("+")) {
+			return isNumeric(numberToBeChecked.substring(1));
+		} else {
+			return isNumeric(numberToBeChecked);
+		}
+	}
+
+	public static boolean isNumeric(String numberToBeChecked) {
+		if (numberToBeChecked == null
+				|| numberToBeChecked.isEmpty()
+				|| numberToBeChecked.startsWith("+")
+				|| numberToBeChecked.startsWith("-")) {
+			return false;
+		}
+
+		try {
+			Long.parseLong(numberToBeChecked);
+			return true;
+		} catch (NumberFormatException nfe) {
+			return false;
+		}
+	}
+
 	/**
 	 * @return True if number is an emergency number
 	 */
