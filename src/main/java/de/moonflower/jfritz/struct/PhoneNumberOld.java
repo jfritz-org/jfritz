@@ -99,7 +99,7 @@ public class PhoneNumberOld implements Serializable {
 				&& this.number.startsWith(properties.getProperty("dial.prefix"))) {
 			this.number = number.substring(properties.getProperty("dial.prefix")
 					.length());
-			log.info("Parsed the dial out prefix, new number: " + this.number);
+			log.debug("Parsed the dial out prefix, new number: " + this.number);
 		}
 
 		refactorNumber(convertInt);
@@ -281,7 +281,8 @@ public class PhoneNumberOld implements Serializable {
 				// International number
 				|| isSIPNumber() // SIP Number
 				|| isEmergencyCall() // Emergency
-				|| isQuickDial()) // FritzBox QuickDial
+				|| isQuickDial() // FritzBox QuickDial
+				|| isFbTcode())
 		{
 			return number;
 		} else if (countryPrefix != null && number.startsWith(countryPrefix)) {// International call
@@ -436,6 +437,49 @@ public class PhoneNumberOld implements Serializable {
 		if (number.startsWith("**7") || number.length() < 3) { //$NON-NLS-1$
 			return true;
 		} else {
+			return false;
+		}
+	}
+
+	public boolean isFbTcode() {
+		return isFbTcode(number);
+	}
+
+	public static boolean isFbTcode(String number) {
+		return number.startsWith("*") || number.startsWith("#");
+	}
+
+	public boolean isValidForReverseLookup() {
+		return isNumericOrNumericWithPlusSign(number)
+				&& !this.isQuickDial()
+				&& !this.isEmergencyCall()
+				&& !this.isSIPNumber();
+	}
+
+	public static boolean isNumericOrNumericWithPlusSign(String numberToBeChecked) {
+		if (numberToBeChecked == null || numberToBeChecked.isEmpty()) {
+			return false;
+		}
+
+		if (numberToBeChecked.startsWith("+")) {
+			return isNumeric(numberToBeChecked.substring(1));
+		} else {
+			return isNumeric(numberToBeChecked);
+		}
+	}
+
+	public static boolean isNumeric(String numberToBeChecked) {
+		if (numberToBeChecked == null
+				|| numberToBeChecked.isEmpty()
+				|| numberToBeChecked.startsWith("+")
+				|| numberToBeChecked.startsWith("-")) {
+			return false;
+		}
+
+		try {
+			Long.parseLong(numberToBeChecked);
+			return true;
+		} catch (NumberFormatException nfe) {
 			return false;
 		}
 	}
@@ -613,7 +657,7 @@ public class PhoneNumberOld implements Serializable {
 	 *
 	 */
 	public static void loadFlagMap(){
-		log.info("Loading the country code -> flag map");
+		log.debug("Loading the country code -> flag map");
 		worldFlagMap = new HashMap<String, String>(2200);
 		BufferedReader br = null;
 		FileInputStream fi = null;
@@ -642,8 +686,8 @@ public class PhoneNumberOld implements Serializable {
 				}
 			}
 
-			log.info(lines + " Lines read from country_codes_world.csv");
-			log.info("worldFlagMap size: "+worldFlagMap.size());
+			log.debug(lines + " Lines read from country_codes_world.csv");
+			log.debug("worldFlagMap size: "+worldFlagMap.size());
 
 		}catch(Exception e){
 			log.error(e.toString());
@@ -671,7 +715,7 @@ public class PhoneNumberOld implements Serializable {
 	 *
 	 */
 	private static void loadSpecificFlagMap(){
-		log.info("Loading the country code -> flag map");
+		log.debug("Loading the country code -> flag map");
 		specificWorldFlagMap = new HashMap<String, String>(2200);
 		BufferedReader br = null;
 		FileInputStream fi = null;
@@ -700,8 +744,8 @@ public class PhoneNumberOld implements Serializable {
 				}
 			}
 
-			log.info(lines + " Lines read from country_specfic_codes_world.csv");
-			log.info("specificWorldFlagMap size: "+specificWorldFlagMap.size());
+			log.debug(lines + " Lines read from country_specfic_codes_world.csv");
+			log.debug("specificWorldFlagMap size: "+specificWorldFlagMap.size());
 
 		}catch(Exception e){
 			log.error(e.toString());
@@ -727,7 +771,7 @@ public class PhoneNumberOld implements Serializable {
 	 */
 	public static void loadCbCXMLFile(){
 		try {
-			log.info("Loading the call by call xml file");
+			log.debug("Loading the call by call xml file");
 			callbyCallMap = new HashMap<String, CallByCall[]>(20);
 
 			SAXParserFactory factory = SAXParserFactory.newInstance();

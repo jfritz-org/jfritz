@@ -1783,7 +1783,7 @@ public class CallerList extends AbstractTableModel
 		Person foundPerson;
 		for (int i = 0; i < unfilteredCallerData.size(); i++) {
 			call = unfilteredCallerData.get(i);
-			if (call.getPhoneNumber() != null) {
+			if (call.getPhoneNumber() != null && call.getPhoneNumber().isValidForReverseLookup()) {
 				foundPerson = phonebook.findPerson(call);
 				if ((foundPerson == null || (searchAlsoForDummyEntries && foundPerson.isDummy()))
 						&& !numbers.contains(call.getPhoneNumber())) {

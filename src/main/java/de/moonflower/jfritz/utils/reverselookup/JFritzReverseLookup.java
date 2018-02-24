@@ -83,28 +83,30 @@ public class JFritzReverseLookup {
 		final List<ReverseLookupRequest> requestList = new ArrayList<ReverseLookupRequest>();
 
 		for (final PhoneNumberOld p: numbers) {
-			ReverseLookupRequest request = new ReverseLookupRequest(p.getIntNumber(), priority, new IReverseLookupResponseListener() {
+			if (p.isValidForReverseLookup()) {
+				ReverseLookupRequest request = new ReverseLookupRequest(p.getIntNumber(), priority, new IReverseLookupResponseListener() {
 
-				@Override
-				public void lookupResponse(List<ReverseLookupResponse> responseList, int percent) {
-					Person person = null;
-					if (responseList.size() > 0) {
-						person = convertReverseLookupResponse(responseList.get(0));
-						person.addNumber(p);
-						person.setStandard(p.getIntNumber());
-					} else {
-						person = PhoneBook.createDummyPerson(p);
-					}
-					personList.add(person);
-					if (progressListener != null) {
-						if (personList.size() % progressCount == 0) {
-							progressListener.progress(percent, personList);
-							personList.clear();
+					@Override
+					public void lookupResponse(List<ReverseLookupResponse> responseList, int percent) {
+						Person person = null;
+						if (responseList.size() > 0) {
+							person = convertReverseLookupResponse(responseList.get(0));
+							person.addNumber(p);
+							person.setStandard(p.getIntNumber());
+						} else {
+							person = PhoneBook.createDummyPerson(p);
+						}
+						personList.add(person);
+						if (progressListener != null) {
+							if (personList.size() % progressCount == 0) {
+								progressListener.progress(percent, personList);
+								personList.clear();
+							}
 						}
 					}
-				}
-			});
-			requestList.add(request);
+				});
+				requestList.add(request);
+			}
 		}
         try {
 			ReverseLookupFacade.getReverseLookupService().asynchronousLookup(requestList, new IReverseLookupFinishedListener() {
@@ -134,20 +136,22 @@ public class JFritzReverseLookup {
 	}
 
 	public static Person doBlockingLookup(final PhoneNumberOld number) {
-		final ReverseLookupRequest req = new ReverseLookupRequest(number.getIntNumber());
-		try {
-			List<ReverseLookupResponse> response = ReverseLookupFacade.getReverseLookupService().blockingLookup(req);
-			if (response.size() > 0) {
-				final Person p = convertReverseLookupResponse(response.get(0));
-				p.addNumber(number);
-				p.setStandard(number.getIntNumber());
-				if (p.getCity() == null || p.getCity().equals("")) {
-					fixCity(number, p, number.getAreaNumber());
+		if (number != null && number.isValidForReverseLookup()) {
+			final ReverseLookupRequest req = new ReverseLookupRequest(number.getIntNumber());
+			try {
+				List<ReverseLookupResponse> response = ReverseLookupFacade.getReverseLookupService().blockingLookup(req);
+				if (response.size() > 0) {
+					final Person p = convertReverseLookupResponse(response.get(0));
+					p.addNumber(number);
+					p.setStandard(number.getIntNumber());
+					if (p.getCity() == null || p.getCity().equals("")) {
+						fixCity(number, p, number.getAreaNumber());
+					}
+					return p;
 				}
-				return p;
+			} catch (ReverseLookupException e) {
+				log.error("Exception while looking up number " + number + ": " + e.getMessage());
 			}
-		} catch (ReverseLookupException e) {
-			log.error("Exception while looking up number " + number + ": " + e.getMessage());
 		}
 		return PhoneBook.createDummyPerson(number);
 	}

@@ -1,5 +1,5 @@
 Package: [[name]]
-Version: [[project.version]]
+Version: [[app.version]].[[git.shortRevision]]
 Section: utils
 Priority: optional
 Architecture: all

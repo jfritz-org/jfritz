@@ -1462,16 +1462,17 @@ public class PhoneBook extends AbstractTableModel implements CallerListListener 
         		person = createDummyPerson(callerPhoneNumber);
         		persons.add(person);
         	} else {
-	            log.info("Searching on internet ..."); //$NON-NLS-1$
+				if (callerPhoneNumber.isValidForReverseLookup()) {
+					log.info("Searching on internet ..."); //$NON-NLS-1$
+					JFritzReverseLookup.doAsyncLookup(callerPhoneNumber, 1, 1, null, new IReverseLookupFinishedWithResultListener() {
 
-	            JFritzReverseLookup.doAsyncLookup(callerPhoneNumber, 1, 1, null, new IReverseLookupFinishedWithResultListener() {
-
-					@Override
-					public void finished(Vector<Person> result) {
-			            JFritz.getPhonebook().addEntries(result);
-			            JFritz.getPhonebook().fireTableDataChanged();
-					}
-				});
+						@Override
+						public void finished(Vector<Person> result) {
+							JFritz.getPhonebook().addEntries(result);
+							JFritz.getPhonebook().fireTableDataChanged();
+						}
+					});
+				}
         	}
         }
         return person;

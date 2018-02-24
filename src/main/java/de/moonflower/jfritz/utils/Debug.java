@@ -101,7 +101,7 @@ public class Debug {
 		log_severity_box.addItem(LS_WARNING);
 		log_severity_box.addItem(LS_INFO);
 		log_severity_box.addItem(LS_DEBUG);
-		log_severity_box.setSelectedItem(LS_ERROR);
+		log_severity_box.setSelectedItem(LS_INFO);
 		log_severity_box.setActionCommand("severity_changed");
 		log_severity_box.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

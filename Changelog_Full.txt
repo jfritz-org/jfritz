@@ -20,7 +20,7 @@ TODO tel.search.ch überprüfen und reparieren
 - TODO: Sounds trennen und individualisierbar gestalten
 - TODO: Ist nicht FritzBox-AM spezifisch. Für alle AMs implementieren und konfigurierbar gestalten
 
-JFritz 0.7.6-SNAPSHOT:
+JFritz 0.7.6:
 - Neu: Support Java 9
 - Bugfix: Funktioniert mit der Firmware-Versionen 06.90
 - Änderung: Exportieren / Drucken der Anrufliste funktioniert nicht mehr
@@ -32,6 +32,9 @@ JFritz 0.7.6-SNAPSHOT:
 - Neu: Unter OS X wird nun Java > 1.7 unterstützt
 - Bugfix: Icon wird unter Windows korrekt angezeigt
 - Bugfix: Sonderzeichen im Setup-Programm werden unter Windows korrekt angezeigt
+- Neu: Revision im Dateinamen
+- Änderung: Verbessertes Logging
+- Bugfix: Ungültige Rufnummern werden nicht mehr per Rückwärtssuche aufgelöst
 
 New Strings:
 dial_assist_clipboard

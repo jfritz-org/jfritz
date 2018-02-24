@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.jfritz</groupId>
     <artifactId>jfritz</artifactId>
-    <version>0.7.6-SNAPSHOT</version>
+    <version>0.7.6</version>
     <packaging>jar</packaging>
     <description>A program to communicate with your FRITZ!Box</description>
 
@@ -25,6 +24,23 @@
         <jfritz.releaseDirectory>${project.build.directory}/release</jfritz.releaseDirectory>
         <exec.wine>/usr/bin/wine64</exec.wine>
         <exec.iscc>/home/robert/.wine/drive_c/Program Files (x86)/Inno Setup 5/ISCC.exe</exec.iscc>
+
+        <version.proxy>1.0.2</version.proxy>
+        <version.fboxlib>1.0.26</version.fboxlib>
+        <version.reverseLookup>1.0.10</version.reverseLookup>
+
+        <version.httpClient>4.5.3</version.httpClient>
+        <version.commonsIo>2.4</version.commonsIo>
+        <version.jdom>1.1.3</version.jdom>
+        <version.jacob>1.18</version.jacob>
+        <version.jcalendar>1.3.2</version.jcalendar>
+        <version.jfreechart>1.0.2</version.jfreechart>
+        <version.looks>2.2.2</version.looks>
+        <version.fontchooser>2.0</version.fontchooser>
+        <version.log4j>1.2.17</version.log4j>
+
+        <version.mockito>1.9.5</version.mockito>
+        <version.junit>4.8.1</version.junit>
     </properties>
 
     <scm>
@@ -43,86 +59,86 @@
         <dependency>
             <groupId>org.jfritz</groupId>
             <artifactId>proxy</artifactId>
-            <version>1.0.2</version>
+            <version>${version.proxy}</version>
         </dependency>
 
         <dependency>
             <groupId>org.jfritz</groupId>
             <artifactId>fboxlib</artifactId>
-            <version>1.0.26-SNAPSHOT</version>
+            <version>${version.fboxlib}</version>
         </dependency>
 
         <dependency>
             <groupId>org.jfritz</groupId>
             <artifactId>reverseLookup</artifactId>
-            <version>1.0.10</version>
+            <version>${version.reverseLookup}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.3</version>
+            <version>${version.httpClient}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.directory.studio</groupId>
             <artifactId>org.apache.commons.io</artifactId>
-            <version>2.4</version>
+            <version>${version.commonsIo}</version>
         </dependency>
 
         <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom-legacy</artifactId>
-            <version>1.1.3</version>
+            <version>${version.jdom}</version>
         </dependency>
 
         <dependency>
             <groupId>com.hynnet</groupId>
             <artifactId>jacob</artifactId>
-            <version>1.18</version>
+            <version>${version.jacob}</version>
         </dependency>
 
         <dependency>
             <groupId>com.toedter</groupId>
             <artifactId>jcalendar</artifactId>
-            <version>1.3.2</version> <!-- 1.4 available -->
+            <version>${version.jcalendar}</version> <!-- 1.4 available -->
         </dependency>
 
         <dependency>
             <groupId>jfree</groupId>
             <artifactId>jfreechart</artifactId>
-            <version>1.0.2</version> <!-- 1.0.2 used, 1.0.13 available, also 1.5.0 -->
+            <version>${version.jfreechart}</version> <!-- 1.0.2 used, 1.0.13 available, also 1.5.0 -->
         </dependency>
 
         <dependency>
             <groupId>com.jgoodies</groupId> <!-- look and feel -->
             <artifactId>looks</artifactId>
-            <version>2.2.2</version>
+            <version>${version.looks}</version>
         </dependency>
 
         <dependency>
             <groupId>io.github.dheid</groupId>
             <artifactId>fontchooser</artifactId>
-            <version>2.0</version>
+            <version>${version.fontchooser}</version>
         </dependency>
 
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
+            <version>${version.log4j}</version>
         </dependency>
 
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <version>1.9.5</version>
+            <version>${version.mockito}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.8.1</version>
+            <version>${version.junit}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -287,15 +303,13 @@
                 <version>3.1.0</version>
                 <configuration>
                     <transformers>
-                        <transformer
-                                implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                             <manifestEntries>
                                 <Main-Class>de.moonflower.jfritz.Main</Main-Class>
                                 <Class-Path>lang/</Class-Path>
                             </manifestEntries>
                         </transformer>
-                        <transformer
-                                implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
                             <resource>lang/</resource>
                         </transformer>
                     </transformers>
@@ -427,7 +441,7 @@
                                 <configuration>
                                     <skipPOMs>true</skipPOMs>
                                     <verbose>true</verbose>
-                                    <deb>${jfritz.releaseDirectory}/${project.build.finalName}-${project.version}.deb</deb>
+                                    <deb>${jfritz.releaseDirectory}/${project.build.finalName}-${app.version}.${git.shortRevision}.deb</deb>
                                     <dataSet>
                                         <data>
                                             <src>${jfritz.distDirectory}</src>
@@ -488,7 +502,7 @@
                             <additionalClasspath>lang</additionalClasspath>
                             <workingDirectory>$APP_ROOT/Contents/Java</workingDirectory>
                             <generateDiskImageFile>true</generateDiskImageFile>
-                            <diskImageFile>${jfritz.releaseDirectory}/${project.build.finalName}-${project.version}-MAC.dmg</diskImageFile>
+                            <diskImageFile>${jfritz.releaseDirectory}/${project.build.finalName}-${app.version}.${git.shortRevision}-MAC.dmg</diskImageFile>
                             <excludeDependencies>true</excludeDependencies>
                             <additionalResources>
                                 <fileSet>
@@ -659,11 +673,11 @@
                                     </jre>
                                     <versionInfo>
                                         <fileVersion>${app.version}.0</fileVersion>
-                                        <txtFileVersion>${project.version}</txtFileVersion>
+                                        <txtFileVersion>${app.version}.${git.shortRevision}</txtFileVersion>
                                         <fileDescription>${project.description}</fileDescription>
                                         <copyright>JFritz-Team</copyright>
                                         <productVersion>${app.version}.0</productVersion>
-                                        <txtProductVersion>${project.version}</txtProductVersion>
+                                        <txtProductVersion>${app.version}.${git.shortRevision}</txtProductVersion>
                                         <productName>${project.name}</productName>
                                         <internalName>${project.name}</internalName>
                                         <originalFilename>${project.name}.exe</originalFilename>
