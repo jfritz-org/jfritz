@@ -3,7 +3,7 @@
 
     <groupId>org.jfritz</groupId>
     <artifactId>jfritz</artifactId>
-    <version>0.7.6</version>
+    <version>0.7.7-SNAPSHOT</version>
     <packaging>jar</packaging>
     <description>A program to communicate with your FRITZ!Box</description>
 
