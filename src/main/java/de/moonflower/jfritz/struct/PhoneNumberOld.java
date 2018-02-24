@@ -281,7 +281,8 @@ public class PhoneNumberOld implements Serializable {
 				// International number
 				|| isSIPNumber() // SIP Number
 				|| isEmergencyCall() // Emergency
-				|| isQuickDial()) // FritzBox QuickDial
+				|| isQuickDial() // FritzBox QuickDial
+				|| isFbTcode())
 		{
 			return number;
 		} else if (countryPrefix != null && number.startsWith(countryPrefix)) {// International call
@@ -436,6 +437,49 @@ public class PhoneNumberOld implements Serializable {
 		if (number.startsWith("**7") || number.length() < 3) { //$NON-NLS-1$
 			return true;
 		} else {
+			return false;
+		}
+	}
+
+	public boolean isFbTcode() {
+		return isFbTcode(number);
+	}
+
+	public static boolean isFbTcode(String number) {
+		return number.startsWith("*") || number.startsWith("#");
+	}
+
+	public boolean isValidForReverseLookup() {
+		return isNumericOrNumericWithPlusSign(number)
+				&& !this.isQuickDial()
+				&& !this.isEmergencyCall()
+				&& !this.isSIPNumber();
+	}
+
+	public static boolean isNumericOrNumericWithPlusSign(String numberToBeChecked) {
+		if (numberToBeChecked == null || numberToBeChecked.isEmpty()) {
+			return false;
+		}
+
+		if (numberToBeChecked.startsWith("+")) {
+			return isNumeric(numberToBeChecked.substring(1));
+		} else {
+			return isNumeric(numberToBeChecked);
+		}
+	}
+
+	public static boolean isNumeric(String numberToBeChecked) {
+		if (numberToBeChecked == null
+				|| numberToBeChecked.isEmpty()
+				|| numberToBeChecked.startsWith("+")
+				|| numberToBeChecked.startsWith("-")) {
+			return false;
+		}
+
+		try {
+			Long.parseLong(numberToBeChecked);
+			return true;
+		} catch (NumberFormatException nfe) {
 			return false;
 		}
 	}

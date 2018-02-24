@@ -49,7 +49,7 @@
         <dependency>
             <groupId>org.jfritz</groupId>
             <artifactId>fboxlib</artifactId>
-            <version>1.0.26-SNAPSHOT</version>
+            <version>1.0.26</version>
         </dependency>
 
         <dependency>
